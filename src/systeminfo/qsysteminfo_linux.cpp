@@ -57,7 +57,9 @@
 
 #if !defined(QT_NO_DBUS)
 #include <qhalservice_linux_p.h>
+#ifndef QT_NO_NETWORKMANAGER
 #include <qnetworkmanagerservice_linux_p.h>
+#endif
 #include <QtDBus/QtDBus>
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusError>
@@ -127,48 +129,17 @@ static bool halAvailable()
     return false;
 }
 
+
 bool halIsAvailable;
 //////// QSystemInfo
-QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
- : QObject(parent)
+QSystemInfoPrivate::QSystemInfoPrivate(QSystemInfoLinuxCommonPrivate *parent)
+ : QSystemInfoLinuxCommonPrivate(parent)
 {
     halIsAvailable = halAvailable();
-    langCached = currentLanguage();
-    startLanguagePolling();
 }
 
 QSystemInfoPrivate::~QSystemInfoPrivate()
 {
-}
-
-void QSystemInfoPrivate::startLanguagePolling()
-{
-    QString checkLang = QString::fromLocal8Bit(qgetenv("LANG"));
-    if(langCached.isEmpty()) {
-        currentLanguage();
-    }
-    checkLang = checkLang.left(2);
-    if(checkLang != langCached) {
-        emit currentLanguageChanged(checkLang);
-        langCached = checkLang;
-    }
-    langTimer = new QTimer(this);
-    QTimer::singleShot(1000, this, SLOT(startLanguagePolling()));
-}
-
-// 2 letter ISO 639-1
-QString QSystemInfoPrivate::currentLanguage() const
-{
-    QString lang;
-    if(langCached.isEmpty()) {
-        lang  = QLocale::system().name().left(2);
-        if(lang.isEmpty() || lang == "C") {
-            lang = "en";
-        }
-    } else {
-        lang = langCached;
-    }
-    return lang;
 }
 
 // 2 letter ISO 639-1
@@ -194,17 +165,19 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 }
 
 // "major.minor.build" format.
-QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &parameter)
+QString QSystemInfoPrivate::version(QSystemInfo::Version type,
+                                    const QString &parameter)
 {
     QString errorStr = "Not Available";
+
     bool useDate = false;
     if(parameter == "versionDate") {
         useDate = true;
     }
+
     switch(type) {
-    case QSystemInfo::Os :
+        case QSystemInfo::Firmware :
         {
-#if !defined(QT_NO_DBUS)
             QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
             QString str;
             if (iface.isValid()) {
@@ -212,56 +185,27 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &p
                 if(!str.isEmpty()) {
                     return str;
                 }
+                if(useDate) {
+                    str = iface.getPropertyString("system.firmware.release_date");
+                    if(!str.isEmpty()) {
+                        return str;
+                    }
+                } else {
+                    str = iface.getPropertyString("system.firmware.version");
+                    if(str.isEmpty()) {
+                        if(!str.isEmpty()) {
+                            return str;
+                        }
+                    }
+                }
             }
-#endif
-            QString versionPath = "/proc/version";
-            QFile versionFile(versionPath);
-            if(!versionFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                qWarning()<<"File not opened";
-            } else {
-                QString  strvalue;
-                strvalue = versionFile.readAll().trimmed();
-                strvalue = strvalue.split(" ").at(2);
-                versionFile.close();
-                return strvalue;
-            }
+            break;
         }
-        break;
-    case QSystemInfo::QtCore :
-       return  qVersion();
-       break;
-   case QSystemInfo::Firmware :
-       {
-#if !defined(QT_NO_DBUS)
-           QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
-           QString str;
-           if (iface.isValid()) {
-               if(useDate) {
-                   str = iface.getPropertyString("system.firmware.release_date");
-                   if(!str.isEmpty()) {
-                       return str;
-                   }
-               } else {
-                   str = iface.getPropertyString("system.firmware.version");
-                   if(str.isEmpty()) {
-                       if(!str.isEmpty()) {
-                           return str;
-                       }
-                   }
-               }
-           }
-#endif
-       }
-       break;
+        default:
+            return QSystemInfoLinuxCommonPrivate::version(type, parameter);
+            break;            
     };
-  return errorStr;
-}
-
-
-//2 letter ISO 3166-1
-QString QSystemInfoPrivate::currentCountryCode() const
-{
-    return QLocale::system().name().mid(3,2);
+    return errorStr;
 }
 
 #if !defined(QT_NO_DBUS)
@@ -294,25 +238,6 @@ bool QSystemInfoPrivate::hasHalUsbFeature(qint32 usbClass)
     return false;
 }
 #endif
-
-bool QSystemInfoPrivate::hasSysFeature(const QString &featureStr)
-{
-    QString sysPath = "/sys/class/";
-    QDir sysDir(sysPath);
-    QStringList filters;
-    filters << "*";
-    QStringList sysList = sysDir.entryList( filters ,QDir::Dirs, QDir::Name);
-    foreach(QString dir, sysList) {
-        QDir sysDir2(sysPath + dir);
-        if(dir.contains(featureStr)) {
-            QStringList sysList2 = sysDir2.entryList( filters ,QDir::Dirs, QDir::Name);
-            if(!sysList2.isEmpty()) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
 
 bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 {
@@ -456,10 +381,10 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 }
 
 //////// QSystemNetworkInfo
-QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
-        : QObject(parent)
+QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QSystemNetworkInfoLinuxCommonPrivate *parent)
+        : QSystemNetworkInfoLinuxCommonPrivate(parent)
 {
-#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_NETWORKMANAGER)
     setupNmConnections();
 #endif
 }
@@ -468,7 +393,7 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
 }
 
-#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_NETWORKMANAGER)
 void QSystemNetworkInfoPrivate::setupNmConnections()
 {
     iface = new QNetworkManagerInterface();
@@ -690,7 +615,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
         break;
         case QSystemNetworkInfo::BluetoothMode:
         {
-#if !defined(QT_NO_DBUS)
+#if !defined(QT_NO_NETWORKMANAGER)
             return getBluetoothNetStatus();
 #endif
        }
@@ -1088,7 +1013,6 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
     return QNetworkInterface();
 }
 
-#if !defined(QT_NO_DBUS)
 bool QSystemNetworkInfoPrivate::isDefaultInterface(const QString &deviceName)
 {
     QFile routeFilex("/proc/net/route");
@@ -1110,6 +1034,7 @@ bool QSystemNetworkInfoPrivate::isDefaultInterface(const QString &deviceName)
     return false;
 }
 
+#if !defined(QT_NO_DBUS)
 int QSystemNetworkInfoPrivate::getBluetoothRssi()
 {
     return 0;
@@ -1137,8 +1062,8 @@ QString QSystemNetworkInfoPrivate::getBluetoothInfo(const QString &file)
 #endif
 
 //////// QSystemDisplayInfo
-QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
-        : QObject(parent)
+QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent)
+        : QSystemDisplayInfoLinuxCommonPrivate(parent)
 {
     halIsAvailable = halAvailable();
 }
@@ -1244,10 +1169,8 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
 #endif
 }
 
-
-//////// QSystemStorageInfo
-QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
-        : QObject(parent)
+QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QSystemStorageInfoLinuxCommonPrivate *parent)
+        : QSystemStorageInfoLinuxCommonPrivate(parent)
 {
     halIsAvailable = halAvailable();
 }
@@ -1259,6 +1182,9 @@ QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 
 qint64 QSystemStorageInfoPrivate::availableDiskSpace(const QString &driveVolume)
 {
+    if(driveVolume.left(2) == "//") {
+        return 0;
+    }
     mountEntries();
     struct statfs fs;
     if(statfs(mountEntriesMap[driveVolume].toLatin1(), &fs ) == 0 ) {
@@ -1271,6 +1197,9 @@ qint64 QSystemStorageInfoPrivate::availableDiskSpace(const QString &driveVolume)
 
 qint64 QSystemStorageInfoPrivate::totalDiskSpace(const QString &driveVolume)
 {
+    if(driveVolume.left(2) == "//") {
+        return 0;
+    }
     mountEntries();
     struct statfs fs;
     if(statfs(mountEntriesMap[driveVolume].toLatin1(), &fs ) == 0 ) {
@@ -1312,9 +1241,6 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
         if(driveVolume.contains("mapper")) {
             struct stat stat_buf;
             stat( driveVolume.toLatin1(), &stat_buf);
-            //                    qWarning() << "Device number"
-            //                            << ((stat_buf.st_rdev >> 8) & 0377)
-            //                            << (stat_buf.st_rdev & 0377);
 
             dmFile = QString("/sys/block/dm-%1/removable").arg(stat_buf.st_rdev & 0377);
 
@@ -1344,6 +1270,9 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
             }
         }
     }
+    if(driveVolume.left(2) == "//") {
+        return QSystemStorageInfo::RemoteDrive;
+    }
     return QSystemStorageInfo::InternalDrive;
 }
 
@@ -1356,30 +1285,39 @@ QStringList QSystemStorageInfoPrivate::logicalDrives()
 void QSystemStorageInfoPrivate::mountEntries()
 {
     mountEntriesMap.clear();
-    FILE *mntfp = setmntent( _PATH_MOUNTED/*_PATH_MNTTAB*//*"/proc/mounts"*/, "r" );
+    FILE *mntfp = setmntent( _PATH_MOUNTED, "r" );
     mntent *me = getmntent(mntfp);
+    bool ok;
     while(me != NULL) {
         struct statfs fs;
-        if(statfs(me->mnt_dir, &fs ) ==0 ) {
-            QString num;
-            // weed out a few types
-            if ( fs.f_type != 0x01021994 //tmpfs
-                 && fs.f_type != 0x9fa0 //procfs
-                 && fs.f_type != 0x1cd1 //
-                 && fs.f_type != 0x62656572
-                 && fs.f_type != 0xabababab // ???
-                 && fs.f_type != 0x52654973
-                 && fs.f_type != 0x42494e4d
-                 && fs.f_type != 0x64626720
-                 && fs.f_type != 0x73636673 //securityfs
-                 && fs.f_type != 0x65735543 //fusectl
-                 ) {
-                if(!mountEntriesMap.keys().contains(me->mnt_dir)
-                    && QString(me->mnt_fsname).contains("/dev")) {
-                    mountEntriesMap[me->mnt_fsname] = me->mnt_dir;
+        ok = false;
+        if(strcmp(me->mnt_type, "cifs") != 0) { //smb has probs with statfs
+            if(statfs(me->mnt_dir, &fs ) ==0 ) {
+                QString num;
+                // weed out a few types
+                if ( fs.f_type != 0x01021994 //tmpfs
+                     && fs.f_type != 0x9fa0 //procfs
+                     && fs.f_type != 0x1cd1 //
+                     && fs.f_type != 0x62656572
+                     && fs.f_type != 0xabababab // ???
+                     && fs.f_type != 0x52654973
+                     && fs.f_type != 0x42494e4d
+                     && fs.f_type != 0x64626720
+                     && fs.f_type != 0x73636673 //securityfs
+                     && fs.f_type != 0x65735543 //fusectl
+                     && fs.f_type != 0x65735546 // fuse.gvfs-fuse-daemon
+
+                     ) {
+                    ok = true;
                 }
             }
+        } else {
+            ok = true;
         }
+        if(ok && !mountEntriesMap.keys().contains(me->mnt_dir)) {
+            mountEntriesMap[me->mnt_fsname] = me->mnt_dir;
+        }
+
         me = getmntent(mntfp);
     }
     endmntent(mntfp);
@@ -1387,8 +1325,8 @@ void QSystemStorageInfoPrivate::mountEntries()
 
 
 //////// QSystemDeviceInfo
-QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
-        : QObject(parent)
+QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QSystemDeviceInfoLinuxCommonPrivate *parent)
+        : QSystemDeviceInfoLinuxCommonPrivate(parent)
 {
     halIsAvailable = halAvailable();
     setConnection();
@@ -1900,8 +1838,8 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
 
  //////////////
  ///////
- QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
-         : QObject(parent)
+ QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QSystemScreenSaverLinuxCommonPrivate *parent)
+         : QSystemScreenSaverLinuxCommonPrivate(parent)
  {
      kdeIsRunning = false;
      gnomeIsRunning = false;

@@ -38,8 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QSYSTEMINFO_LINUX_P_H
-#define QSYSTEMINFO_LINUX_P_H
+#ifndef QSYSTEMINFO_MAEMO_P_H
+#define QSYSTEMINFO_MAEMO_P_H
 
 
 //
@@ -58,6 +58,7 @@
 #include <QSize>
 #include <QHash>
 
+#include "qsysteminfo_linux_common_p.h"
 #include "qsysteminfo.h"
 #include <qmobilityglobal.h>
 #if !defined(QT_NO_DBUS)
@@ -74,40 +75,28 @@ QT_END_NAMESPACE
 QTM_BEGIN_NAMESPACE
 
 class QSystemNetworkInfo;
-class QSystemInfoPrivate : public QObject
+class QSystemInfoPrivate : public QSystemInfoLinuxCommonPrivate
 {
     Q_OBJECT
 
 public:
 
-    QSystemInfoPrivate(QObject *parent = 0);
+    QSystemInfoPrivate(QSystemInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemInfoPrivate();
 // general
-    QString currentLanguage() const; // 2 letter ISO 639-1
     QStringList availableLanguages() const;	 // 2 letter ISO 639-1
 
     QString version(QSystemInfo::Version,  const QString &parameter = QString());
 
-    QString currentCountryCode() const; //2 letter ISO 3166-1
 //features
     bool hasFeatureSupported(QSystemInfo::Feature feature);
-Q_SIGNALS:
-    void currentLanguageChanged(const QString &);
 
-private:
+protected:
 #if !defined(QT_NO_DBUS)
     bool hasHalDeviceFeature(const QString &param);
     bool hasHalUsbFeature(qint32 usbClass);
     QHalInterface halIface;
 #endif
-    bool hasSysFeature(const QString &featureStr);
-    QTimer *langTimer;
-    QString langCached;
-
-private Q_SLOTS:
-    void startLanguagePolling();
-
-
 };
 
 class QNetworkManagerInterface;
@@ -115,13 +104,13 @@ class QNetworkManagerInterfaceDeviceWired;
 class QNetworkManagerInterfaceDeviceWireless;
 class QNetworkManagerInterfaceAccessPoint;
 
-class QSystemNetworkInfoPrivate : public QObject
+class QSystemNetworkInfoPrivate : public QSystemNetworkInfoLinuxCommonPrivate
 {
     Q_OBJECT
 
 public:
 
-    QSystemNetworkInfoPrivate(QObject *parent = 0);
+    QSystemNetworkInfoPrivate(QSystemNetworkInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemNetworkInfoPrivate();
 
     QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
@@ -140,15 +129,7 @@ public:
 
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
 
-Q_SIGNALS:
-   void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
-   void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int);
-   void currentMobileCountryCodeChanged(const QString &);
-   void currentMobileNetworkCodeChanged(const QString &);
-   void networkNameChanged(QSystemNetworkInfo::NetworkMode, const QString &);
-   void networkModeChanged(QSystemNetworkInfo::NetworkMode);
-
-private:
+protected:
 #if !defined(QT_NO_DBUS)
     QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
     int getBluetoothRssi();
@@ -158,13 +139,13 @@ private:
 #endif
 };
 
-class QSystemDisplayInfoPrivate : public QObject
+class QSystemDisplayInfoPrivate : public QSystemDisplayInfoLinuxCommonPrivate
 {
     Q_OBJECT
 
 public:
 
-    QSystemDisplayInfoPrivate(QObject *parent = 0);
+    QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemDisplayInfoPrivate();
 
 
@@ -173,13 +154,13 @@ public:
     int colorDepth(int screen);
 };
 
-class QSystemStorageInfoPrivate : public QObject
+class QSystemStorageInfoPrivate : public QSystemStorageInfoLinuxCommonPrivate
 {
     Q_OBJECT
 
 public:
 
-    QSystemStorageInfoPrivate(QObject *parent = 0);
+    QSystemStorageInfoPrivate(QSystemStorageInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemStorageInfoPrivate();
 
     // memory
@@ -188,28 +169,28 @@ public:
     QStringList logicalDrives();
     QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume); //returns enum
 
-private:
+protected:
     QMap<QString, QString> mountEntriesMap;
     void mountEntries();
 
 };
 
-class QSystemDeviceInfoPrivate : public QObject
+class QSystemDeviceInfoPrivate : public QSystemDeviceInfoLinuxCommonPrivate
 {
     Q_OBJECT
 
 public:
 
-    QSystemDeviceInfoPrivate(QObject *parent = 0);
+    QSystemDeviceInfoPrivate(QSystemDeviceInfoLinuxCommonPrivate *parent = 0);
     ~QSystemDeviceInfoPrivate();
 
 // device
 
-    static QString imei();
-    static QString imsi();
-    static QString manufacturer();
-    static QString model();
-    static QString productName();
+    QString imei();
+    QString imsi();
+    QString manufacturer();
+    QString model();
+    QString productName();
 
     QSystemDeviceInfo::InputMethodFlags inputMethodType();
 
@@ -222,15 +203,7 @@ public:
     QSystemDeviceInfo::PowerState currentPowerState();
     void setConnection();
 
-Q_SIGNALS:
-    void batteryLevelChanged(int);
-    void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus );
-
-    void powerStateChanged(QSystemDeviceInfo::PowerState);
-    void currentProfileChanged(QSystemDeviceInfo::Profile);
-    void bluetoothStateChanged(bool);
-
-private:
+protected:
 #if !defined(QT_NO_DBUS)
     QHalInterface *halIface;
     QHalDeviceInterface *halIfaceDevice;
@@ -243,12 +216,12 @@ private Q_SLOTS:
 };
 
 
-class QSystemScreenSaverPrivate : public QObject
+class QSystemScreenSaverPrivate : public QSystemScreenSaverLinuxCommonPrivate
 {
     Q_OBJECT
 
 public:
-    QSystemScreenSaverPrivate(QObject *parent = 0);
+    QSystemScreenSaverPrivate(QSystemScreenSaverLinuxCommonPrivate *parent = 0);
     ~QSystemScreenSaverPrivate();
 
     bool screenSaverInhibited();
@@ -256,7 +229,7 @@ public:
     bool isScreenLockEnabled();
     bool isScreenSaverActive();
 
-private:
+protected:
     QString screenPath;
     QString settingsPath;
     bool screenSaverSecure;
@@ -269,7 +242,7 @@ QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif /*QSYSTEMSINFO_LINUX_P_H*/
+#endif /*QSYSTEMINFO_MAEMO_P_H*/
 
 // End of file
 
