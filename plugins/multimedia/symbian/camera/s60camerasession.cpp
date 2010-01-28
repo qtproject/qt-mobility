@@ -400,10 +400,12 @@ void S60CameraSession::commitVideoEncoderSettings()
 
 void S60CameraSession::setVideoFrameRateFixed(bool fixed)
 {
+#ifndef PRE_S60_50_PLATFORM
     if (m_videoUtility) {
         TRAPD(err, m_videoUtility->SetVideoFrameRateFixedL(fixed));
         setError(err);
     }
+#endif //PRE_S60_50_PLATFORM
 }
 
 void S60CameraSession::saveVideoEncoderSettings(QVideoEncoderSettings &videoSettings)
