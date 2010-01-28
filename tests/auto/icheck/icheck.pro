@@ -1,4 +1,4 @@
-REL_PATH_TO_SRC = ../../../src/icheck/ichecklib/src
+REL_PATH_TO_SRC = ../../../tools/icheck/ichecklib/src
 
 QT += testlib xml
 TARGET=tst_icheck
@@ -23,7 +23,6 @@ include(../../../common.pri)
 
 INCLUDEPATH += . \
     $$REL_PATH_TO_SRC/../ \
-    ../../../src/global \
     $$REL_PATH_TO_SRC/global \
     $$REL_PATH_TO_SRC/plugins \
     $$REL_PATH_TO_SRC/libs \
@@ -31,7 +30,7 @@ INCLUDEPATH += . \
     $$REL_PATH_TO_SRC/tools/ICheck \
     $$REL_PATH_TO_SRC/libs/cplusplus
 
-include(../../../src/icheck/ichecklib/ichecklib.pri)
+include(../../../tools/icheck/ichecklib/ichecklib.pri)
 
 CONFIG += mobility
 MOBILITY = icheck

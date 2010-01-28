@@ -88,18 +88,22 @@ namespace CPlusPlus {
     class ParseManager : public QObject
     {
         Q_OBJECT
-        struct CLASSLISTITEM
+    protected:
+        class CLASSLISTITEM
         {
+        public:
             CPlusPlus::TranslationUnit* trlUnit;
             ClassSpecifierAST* classspec;
         };
-        struct CLASSTREE
+        class CLASSTREE
         {
+        public:
             CLASSLISTITEM* highestlevelclass;
             QList<CLASSLISTITEM*> classlist;
         };
-        struct FUNCTIONITEM
+        class FUNCTIONITEM
         {
+        public:
             const CLASSLISTITEM* highestlevelclass;
             CPlusPlus::TranslationUnit* trlUnit;
             ClassSpecifierAST* classAst;
@@ -108,7 +112,7 @@ namespace CPlusPlus {
             SimpleDeclarationAST* ast;
 
             bool isEqualTo(FUNCTIONITEM* cpfct, bool ignoreName = true);
-            void init()
+            FUNCTIONITEM()
             {
                 highestlevelclass = 0;
                 trlUnit = 0;
@@ -117,8 +121,9 @@ namespace CPlusPlus {
                 ast = 0;
             }
         };
-        struct PROPERTYITEM
+        class PROPERTYITEM
         {
+        public:
             const CLASSLISTITEM* highestlevelclass;
             QStringList classWichIsNotFound;
             QPropertyDeclarationAST *ast;
@@ -134,7 +139,7 @@ namespace CPlusPlus {
             bool foundalldefinedfct;
 
             bool isEqualTo(PROPERTYITEM* cpppt);
-            void init()
+            PROPERTYITEM()
             {
                 highestlevelclass = 0;
                 ast = 0;
@@ -151,8 +156,9 @@ namespace CPlusPlus {
             }
         };
 
-        struct QENUMITEM
+        class QENUMITEM
         {
+        public:
             const CLASSLISTITEM* highestlevelclass;
             CPlusPlus::TranslationUnit* trlUnit;
             QStringList classWichIsNotFound;
@@ -164,7 +170,7 @@ namespace CPlusPlus {
             bool foundallenums;
 
             bool isEqualTo(QENUMITEM *cpenum);
-            void init()
+            QENUMITEM()
             {
                 highestlevelclass = 0;
                 trlUnit = 0;
@@ -174,14 +180,15 @@ namespace CPlusPlus {
             }
         };
 
-        struct ENUMITEM
+        class ENUMITEM
         {
+        public:
             const CLASSLISTITEM* highestlevelclass;
             CPlusPlus::TranslationUnit* trlUnit;
             QStringList classWichIsNotFound;
             EnumSpecifierAST* ast;
 
-            void init()
+            ENUMITEM()
             {
                 highestlevelclass = 0;
                 trlUnit = 0;
@@ -189,8 +196,9 @@ namespace CPlusPlus {
             }
         };
 
-        struct QFLAGITEM
+        class QFLAGITEM
         {
+        public:
             const CLASSLISTITEM* highestlevelclass;
             CPlusPlus::TranslationUnit* trlUnit;
             QStringList classWichIsNotFound;
@@ -199,7 +207,7 @@ namespace CPlusPlus {
             bool foundallenums;
 
             bool isEqualTo(QFLAGITEM *cpflag);
-            void init()
+            QFLAGITEM()
             {
                 highestlevelclass = 0;
                 trlUnit = 0;
@@ -209,21 +217,21 @@ namespace CPlusPlus {
             }
         };
 
-        struct QDECLAREFLAGSITEM
+        class QDECLAREFLAGSITEM
         {
+        public:
             const CLASSLISTITEM* highestlevelclass;
             CPlusPlus::TranslationUnit* trlUnit;
             QStringList classWichIsNotFound;
             QDeclareFlagsDeclarationAST* ast;
 
-            void init()
+            QDECLAREFLAGSITEM()
             {
                 highestlevelclass = 0;
                 trlUnit = 0;
                 ast = 0;
             }
         };
-
 
     public:
         ParseManager();

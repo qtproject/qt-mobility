@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include <QtTest/QtTest>
-#include "../../../src/icheck/ichecklib/ichecklib.h"
+#include "../../../tools/icheck/ichecklib/ichecklib.h"
 #include <qmobilityglobal.h>
 #include <QDir>
 #include <QFile>

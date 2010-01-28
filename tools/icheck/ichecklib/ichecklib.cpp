@@ -1,4 +1,4 @@
-#include "ICheckLib.h"
+#include "ichecklib.h"
 #include "ParseManager.h"
 #include <QtCore/QCoreApplication>
 #include <QString>
