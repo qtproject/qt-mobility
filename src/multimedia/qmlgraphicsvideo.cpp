@@ -51,47 +51,14 @@
 #include <qvideooutputcontrol.h>
 #include <qvideorenderercontrol.h>
 
-// #define QMLGRAPHICSVIDEO_SHADERS
-
 QML_DEFINE_TYPE(Qt,4,6,Video,QTM_PREPEND_NAMESPACE(QmlGraphicsVideo));
 
 QTM_BEGIN_NAMESPACE
 
-void QmlGraphicsVideo::updateVideoRect(const QRectF &geometry, const QSize &videoSize)
+void QmlGraphicsVideo::_q_nativeSizeChanged(const QSizeF &size)
 {
-    if (m_fillMode == Stretch) {
-        m_scaledRect = geometry;
-    } else {
-        QSizeF size = videoSize;
-
-        if (m_fillMode == PreserveAspectFit)
-            size.scale(geometry.size(), Qt::KeepAspectRatio);
-        else
-            size.scale(geometry.size(), Qt::KeepAspectRatioByExpanding);
-
-        m_scaledRect = QRectF(QPointF(), size);
-        m_scaledRect.moveCenter(geometry.center());
-    }
-}
-
-void QmlGraphicsVideo::_q_videoSurfaceFormatChanged(const QVideoSurfaceFormat &format)
-{
-    const QSize implicitSize = format.sizeHint();
-
-    setImplicitWidth(qMax(0, implicitSize.width()));
-    setImplicitHeight(qMax(0, implicitSize.height()));
-
-    updateVideoRect(boundingRect(), format.sizeHint());
-}
-
-void QmlGraphicsVideo::_q_frameChanged()
-{
-    if (isObscured()) {
-        update();
-        m_videoSurface->setReady(true);
-    } else {
-        update();
-    }
+    setImplicitWidth(size.width());
+    setImplicitHeight(size.height());
 }
 
 void QmlGraphicsVideo::_q_error(QMediaPlayer::Error errorCode, const QString &errorString)
@@ -118,41 +85,29 @@ void QmlGraphicsVideo::_q_error(QMediaPlayer::Error errorCode, const QString &er
 
 QmlGraphicsVideo::QmlGraphicsVideo(QmlGraphicsItem *parent)
     : QmlGraphicsItem(parent)
-    , m_videoOutputControl(0)
-    , m_videoRendererControl(0)
-    , m_videoSurface(0)
+    , m_graphicsItem(0)
     , m_fillMode(QmlGraphicsVideo::PreserveAspectFit)
-    , m_updatePaintDevice(true)
+
 {
+    m_graphicsItem = new QGraphicsVideoItem(this);
+    connect(m_graphicsItem, SIGNAL(nativeSizeChanged(QSizeF)),
+            this, SLOT(_q_nativeSizeChanged(QSizeF)));
+
     setObject(this);
 
     if (m_mediaService) {
-        m_videoOutputControl = qobject_cast<QVideoOutputControl *>(
-                m_mediaService->control(QVideoOutputControl_iid));
-        m_videoRendererControl = qobject_cast<QVideoRendererControl *>(
-                m_mediaService->control(QVideoRendererControl_iid));
-
         connect(m_playerControl, SIGNAL(videoAvailableChanged(bool)),
                 this, SIGNAL(hasVideoChanged()));
 
-        if (m_videoOutputControl && m_videoRendererControl) {
-            m_videoSurface = new QPainterVideoSurface;
-            m_videoRendererControl->setSurface(m_videoSurface);
-            m_videoOutputControl->setOutput(QVideoOutputControl::RendererOutput);
-
-            connect(m_videoSurface, SIGNAL(surfaceFormatChanged(QVideoSurfaceFormat)),
-                    this, SLOT(_q_videoSurfaceFormatChanged(QVideoSurfaceFormat)));
-            connect(m_videoSurface, SIGNAL(frameChanged()), this, SLOT(_q_frameChanged()));
-        }
+        m_graphicsItem->setMediaObject(m_mediaObject);
     }
-    setFlag(QGraphicsItem::ItemHasNoContents, false);
 }
 
 QmlGraphicsVideo::~QmlGraphicsVideo()
 {
     shutdown();
 
-    delete m_videoSurface;
+    delete m_graphicsItem;
 }
 
 /*!
@@ -348,24 +303,19 @@ QmlGraphicsVideo::Error QmlGraphicsVideo::error() const
 
     \list
     \o Stretch - the video is scaled to fit.
-    \o PreserveAspectFit - the image is scaled uniformly to fit without cropping
-    \o PreserveAspectCrop - the image is scaled uniformly to fill, cropping if necessary
+    \o PreserveAspectFit - the video is scaled uniformly to fit without cropping
+    \o PreserveAspectCrop - the video is scaled uniformly to fill, cropping if necessary
     \endlist
 */
 
 QmlGraphicsVideo::FillMode QmlGraphicsVideo::fillMode() const
 {
-    return m_fillMode;
+    return FillMode(m_graphicsItem->fillMode());
 }
 
 void QmlGraphicsVideo::setFillMode(FillMode mode)
 {
-    m_fillMode = mode;
-
-    if (m_videoSurface)
-            updateVideoRect(boundingRect(), m_videoSurface->surfaceFormat().sizeHint());
-
-    update();
+    m_graphicsItem->setFillMode(QGraphicsVideoItem::FillMode(mode));
 }
 
 /*!
@@ -401,33 +351,13 @@ void QmlGraphicsVideo::stop()
     m_playerControl->stop();
 }
 
-void QmlGraphicsVideo::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
+void QmlGraphicsVideo::paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *)
 {
-    if (m_videoSurface && m_videoSurface->isActive()) {
-        m_videoSurface->paint(painter, QRect(
-                m_scaledRect.x(), m_scaledRect.y(), m_scaledRect.width(), m_scaledRect.height()));
-        m_videoSurface->setReady(true);
-#ifndef QMLGRAPHICSVIDEO_SHADERS    // Flickers
-    }
-#else
-    } else if (m_updatePaintDevice && (painter->paintEngine()->type() == QPaintEngine::OpenGL
-            || painter->paintEngine()->type() == QPaintEngine::OpenGL2)) {
-        m_updatePaintDevice = false;
-
-        m_videoSurface->setGLContext(const_cast<QGLContext *>(QGLContext::currentContext()));
-        if (m_videoSurface->supportedShaderTypes() & QPainterVideoSurface::GlslShader) {
-            m_videoSurface->setShaderType(QPainterVideoSurface::GlslShader);
-        } else {
-            m_videoSurface->setShaderType(QPainterVideoSurface::FragmentProgramShader);
-        }
-    }
-#endif
 }
 
 void QmlGraphicsVideo::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
-    if (m_videoSurface)
-        updateVideoRect(newGeometry, m_videoSurface->surfaceFormat().sizeHint());
+    m_graphicsItem->setSize(newGeometry.size());
 
     QmlGraphicsItem::geometryChanged(newGeometry, oldGeometry);
 }

@@ -44,6 +44,8 @@
 
 #include <qmlmediabase_p.h>
 
+#include <qgraphicsvideoitem.h>
+
 #include <QtCore/qbasictimer.h>
 #include <QtDeclarative/qmlgraphicsitem.h>
 
@@ -51,10 +53,6 @@ class QTimerEvent;
 class QVideoSurfaceFormat;
 
 QTM_BEGIN_NAMESPACE
-
-class QPainterVideoSurface;
-class QVideoOutputControl;
-class QVideoRendererControl;
 
 class QmlGraphicsVideo : public QmlGraphicsItem, public QmlMediaBase
 {
@@ -80,9 +78,9 @@ class QmlGraphicsVideo : public QmlGraphicsItem, public QmlMediaBase
 public:
     enum FillMode
     {
-        Stretch,
-        PreserveAspectFit,
-        PreserveAspectCrop
+        Stretch            = QGraphicsVideoItem::Stretch,
+        PreserveAspectFit  = QGraphicsVideoItem::PreserveAspectFit,
+        PreserveAspectCrop = QGraphicsVideoItem::PreserveAspectCrop
     };
 
     enum Status
@@ -165,18 +163,13 @@ protected:
     void geometryChanged(const QRectF &geometry, const QRectF &);
 
 private Q_SLOTS:
-    void _q_videoSurfaceFormatChanged(const QVideoSurfaceFormat &);
-    void _q_frameChanged();
+    void _q_nativeSizeChanged(const QSizeF &size);
     void _q_error(QMediaPlayer::Error, const QString &);
 
 private:
     Q_DISABLE_COPY(QmlGraphicsVideo)
 
-    void updateVideoRect(const QRectF &geometry, const QSize &videoSize);
-
-    QVideoOutputControl *m_videoOutputControl;
-    QVideoRendererControl *m_videoRendererControl;
-    QPainterVideoSurface *m_videoSurface;
+    QGraphicsVideoItem *m_graphicsItem;
 
     FillMode m_fillMode;
     QRectF m_scaledRect;

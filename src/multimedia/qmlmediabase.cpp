@@ -53,6 +53,15 @@
 
 QTM_BEGIN_NAMESPACE
 
+class QmlMediaBaseObject : public QMediaObject
+{
+public:
+    QmlMediaBaseObject(QMediaService *service)
+        : QMediaObject(0, service)
+    {
+    }
+};
+
 class QmlMediaBasePlayerControl : public QMediaPlayerControl
 {
 public:
@@ -190,6 +199,7 @@ void QmlMediaBase::_q_metaDataChanged()
 QmlMediaBase::QmlMediaBase()
     : m_mediaService(0)
     , m_playerControl(0)
+    , m_mediaObject(0)
     , m_mediaProvider(0)
     , m_metaDataControl(0)
     , m_metaObject(0)
@@ -207,6 +217,7 @@ QmlMediaBase::~QmlMediaBase()
 void QmlMediaBase::shutdown()
 {
     delete m_metaObject;
+    delete m_mediaObject;
 
     if (m_mediaProvider)
         m_mediaProvider->releaseService(m_mediaService);
@@ -223,6 +234,7 @@ void QmlMediaBase::setObject(QObject *object)
                     m_mediaService->control(QMediaPlayerControl_iid));
             m_metaDataControl = qobject_cast<QMetaDataControl *>(
                     m_mediaService->control(QMetaDataControl_iid));
+            m_mediaObject = new QmlMediaBaseObject(m_mediaService);
         }
     }
 
