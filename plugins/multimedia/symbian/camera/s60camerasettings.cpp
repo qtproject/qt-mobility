@@ -117,7 +117,7 @@ QCamera::FocusMode S60CameraSettings::focusMode()
         }
     } 
 #else
-    return 0;
+
 #endif
 }
 
@@ -238,7 +238,7 @@ QCamera::MeteringMode S60CameraSettings::meteringMode()
         }
     }
 #else
-    return 0;
+
 #endif
 }
 
