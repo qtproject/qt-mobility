@@ -83,7 +83,7 @@ public:
  *
  */
 class CQGeoSatelliteInfoSourceS60 : public INotificationSatelliteCallback,
-        public QGeoSatelliteInfoSource
+            public QGeoSatelliteInfoSource
 
 {
 public:

@@ -380,8 +380,8 @@ void CQMLBackendAO::handlePosUpdateNotification(int aError)
             }
 
             if (mRequester) {
-               mRequester->updatePosition(positionInfo, aError);
-               delete positionInfo;
+                mRequester->updatePosition(positionInfo, aError);
+                delete positionInfo;
             } else {
                 if ((aError != KErrTimedOut) || (mRequestType != RegularUpdate)) {
                     mRequesterSatellite->updatePosition(satInfo, aError, (mRequestType == RegularUpdate));

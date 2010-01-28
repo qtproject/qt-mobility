@@ -91,14 +91,14 @@ bool  QMLBackendMonitorCreateTriggerAO::InitializeTrigger(QGeoAreaMonitorS60* aP
         CLbtGeoCircle* trigArea = NULL;
 
         TRAP(ret, trigArea = CLbtGeoCircle::NewL(
-                                aCoordinate ,//center coordinate
-                                aRadius               //radius in meters. If
-                                //NaN is used, Location
-                                //Triggering Server will
-                                //use minimal size of trigger
-                                //area as the radius of the
-                                //trigger
-                            ));
+                                 aCoordinate ,//center coordinate
+                                 aRadius               //radius in meters. If
+                                 //NaN is used, Location
+                                 //Triggering Server will
+                                 //use minimal size of trigger
+                                 //area as the radius of the
+                                 //trigger
+                             ));
 
         if ((ret != KErrNone) || !trigArea)
             return FALSE;
@@ -110,14 +110,14 @@ bool  QMLBackendMonitorCreateTriggerAO::InitializeTrigger(QGeoAreaMonitorS60* aP
         if (aType == EntryTrigger) {
             //2: Construct a entry type of trigger condition
             TRAP(ret, cond = CLbtTriggerConditionArea::NewL(
-                                trigArea,
-                                CLbtTriggerConditionArea::EFireOnEnter
-                            ));
+                                 trigArea,
+                                 CLbtTriggerConditionArea::EFireOnEnter
+                             ));
         } else if (aType == ExitTrigger) {
             TRAP(ret, cond = CLbtTriggerConditionArea::NewL(
-                                trigArea,
-                                CLbtTriggerConditionArea::EFireOnExit
-                            ));
+                                 trigArea,
+                                 CLbtTriggerConditionArea::EFireOnExit
+                             ));
         }
 
 
@@ -149,10 +149,10 @@ bool  QMLBackendMonitorCreateTriggerAO::InitializeTrigger(QGeoAreaMonitorS60* aP
         CRequestor *req = NULL;
 
         TRAP(ret, req = CRequestor::NewL(
-                           CRequestorBase::ERequestorService,
-                           CRequestorBase::EFormatApplication,
-                           KMyRequestorName
-                       ));
+                            CRequestorBase::ERequestorService,
+                            CRequestorBase::EFormatApplication,
+                            KMyRequestorName
+                        ));
 
         if ((ret != KErrNone) || !req) {
             CleanupStack::PopAndDestroy(&reqStack);
@@ -177,12 +177,12 @@ bool  QMLBackendMonitorCreateTriggerAO::InitializeTrigger(QGeoAreaMonitorS60* aP
         CLbtSessionTrigger* trig = NULL;
 
         TRAP(ret, trig =  CLbtSessionTrigger::NewL(
-                             triggerName,
-                             CLbtTriggerEntry::EStateDisabled,
-                             reqStack,
-                             managerUid,
-                             cond
-                         ));
+                              triggerName,
+                              CLbtTriggerEntry::EStateDisabled,
+                              reqStack,
+                              managerUid,
+                              cond
+                          ));
 
         CleanupStack::PopAndDestroy(&reqStack);
 
@@ -203,7 +203,7 @@ bool  QMLBackendMonitorCreateTriggerAO::InitializeTrigger(QGeoAreaMonitorS60* aP
 
         TRAP(ret, iActiveSchedulerwait = new(ELeave) CActiveSchedulerWait);
 
-        if ((ret !=KErrNone) || !iActiveSchedulerwait) {
+        if ((ret != KErrNone) || !iActiveSchedulerwait) {
             CleanupStack::PopAndDestroy(trig);
             return FALSE;
         }
@@ -235,14 +235,14 @@ bool  QMLBackendMonitorCreateTriggerAO::InitializeTrigger(QGeoAreaMonitorS60* aP
         CLbtGeoCircle* trigArea = NULL;
 
         TRAP(ret, trigArea = CLbtGeoCircle::NewL(
-                                aCoordinate ,   //center coordinate
-                                aRadius          //radius in meters. If
-                                //NaN is used, Location
-                                //Triggering Server will
-                                //use minimal size of trigger
-                                //area as the radius of the
-                                //trigger
-                            ));
+                                 aCoordinate ,   //center coordinate
+                                 aRadius          //radius in meters. If
+                                 //NaN is used, Location
+                                 //Triggering Server will
+                                 //use minimal size of trigger
+                                 //area as the radius of the
+                                 //trigger
+                             ));
 
         if ((ret != KErrNone) || (!trigArea)) {
 
@@ -257,14 +257,14 @@ bool  QMLBackendMonitorCreateTriggerAO::InitializeTrigger(QGeoAreaMonitorS60* aP
         if (aType == EntryTrigger) {
             //2: Construct a entry type of trigger condition
             TRAP(ret, cond = CLbtTriggerConditionArea::NewL(
-                                trigArea,
-                                CLbtTriggerConditionArea::EFireOnEnter
-                            ));
+                                 trigArea,
+                                 CLbtTriggerConditionArea::EFireOnEnter
+                             ));
         } else if (aType == ExitTrigger) {
             TRAP(ret, cond = CLbtTriggerConditionArea::NewL(
-                                trigArea,
-                                CLbtTriggerConditionArea::EFireOnExit
-                            ));
+                                 trigArea,
+                                 CLbtTriggerConditionArea::EFireOnExit
+                             ));
         }
 
 

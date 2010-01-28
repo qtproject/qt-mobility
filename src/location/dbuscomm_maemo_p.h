@@ -73,12 +73,12 @@ private:
     void createUniqueName();
 
 public:
-    enum cmds {CmdStart=1, CmdStop=2, CmdOneShot=3, CmdSetMethods=4,CmdSetInterval=8};
+    enum cmds {CmdStart = 1, CmdStop = 2, CmdOneShot = 3, CmdSetMethods = 4, CmdSetInterval = 8};
 
     DBusComm();
     int  init();
     bool sendDBusRegister();
-    int  sessionConfigRequest(const int command, const int method, 
+    int  sessionConfigRequest(const int command, const int method,
                               const int interval) const;
     int receiveDBusMessage(const QByteArray &message); // called by D-Bus server
     int receivePositionUpdate(const QGeoPositionInfo &update); // called by D-Bus server
