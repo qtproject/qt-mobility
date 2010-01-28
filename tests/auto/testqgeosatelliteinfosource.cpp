@@ -514,44 +514,4 @@ void TestQGeoSatelliteInfoSource::removeSlotForSatellitesInViewUpdated()
     QTRY_VERIFY_WITH_TIMEOUT((m_testSlot2Called == true), 60000);
 }
 
-#if defined(Q_OS_SYMBIAN)
-
-void TestQGeoSatelliteInfoSource::startUpdate_afterDisablingSatelliteBasedMethods()
-{
-    CHECK_SOURCE_VALID;
- 
-    QSignalSpy spyView(m_source,
-                       SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
-    QSignalSpy spyUse(m_source,
-                      SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)));
-
-    QTest::qWait(120000);  //In this waiting period, goto positioning method settings and disable satellite based positioning methods
-    m_source->startUpdates();
-    QTest::qWait(60000);
-    QCOMPARE(spyView.count(), 0);
-    QCOMPARE(spyUse.count(), 0);
-
-    m_source->stopUpdates();
-}
-
-void TestQGeoSatelliteInfoSource::requestUpdate_afterDisablingSatelliteBasedMethods()
-{
-    CHECK_SOURCE_VALID;
- 
-    QSignalSpy spyView(m_source,
-                       SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
-    QSignalSpy spyUse(m_source,
-                      SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)));
-    QSignalSpy spyTimeout(m_source, SIGNAL(requestTimeout()));
-
-    QTest::qWait(120000);  //In this waiting period, goto positioning method settings and disable satellite based positioning methods
-    m_source->requestUpdate(0);
-    QTest::qWait(60000);
-    QCOMPARE(spyView.count(), 0);
-    QCOMPARE(spyUse.count(), 0);
-    QCOMPARE(spyTimeout.count(), 1);
- }
- 
-#endif
-
 #include "testqgeosatelliteinfosource.moc"
