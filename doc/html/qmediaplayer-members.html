@@ -24,6 +24,8 @@
 <li><div class="fn"><b><a href="qmediaplayer.html#QMediaPlayer">QMediaPlayer</a></b> ( QObject *, Flags, QMediaServiceProvider * )</div></li>
 <li><div class="fn"><b><a href="qmediaplayer.html#dtor.QMediaPlayer">~QMediaPlayer</a></b> ()</div></li>
 <li><div class="fn"><b><a href="qmediaobject.html#addPropertyWatch">addPropertyWatch</a></b> ( QByteArray const &amp; )</div></li>
+<li><div class="fn"><b><a href="qmediaobject.html#availabilityChanged">availabilityChanged</a></b> ( bool )</div></li>
+<li><div class="fn"><b><a href="qmediaobject.html#availabilityError">availabilityError</a></b> () const : QtMedia::AvailabilityError</div></li>
 <li><div class="fn"><b><a href="qmediaobject.html#availableExtendedMetaData">availableExtendedMetaData</a></b> () const : QStringList</div></li>
 <li><div class="fn"><b><a href="qmediaobject.html#availableMetaData">availableMetaData</a></b> () const : QList&lt;QtMedia::MetaData&gt;</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#blockSignals">blockSignals</a></b> ( bool )</div></li>
@@ -59,6 +61,7 @@
 <li><div class="fn"><b><a href="qmediaplayer.html#hasSupport">hasSupport</a></b> ( const QString &amp;, const QStringList &amp;, Flags ) : QtMedia::SupportEstimate</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#inherits">inherits</a></b> ( const char * ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#installEventFilter">installEventFilter</a></b> ( QObject * )</div></li>
+<li><div class="fn"><b><a href="qmediaobject.html#isAvailable">isAvailable</a></b> () const : bool</div></li>
 <li><div class="fn"><b><a href="qmediaobject.html#metaDataAvailable-prop">isMetaDataAvailable</a></b> () const : bool</div></li>
 <li><div class="fn"><b><a href="qmediaobject.html#metaDataWritable-prop">isMetaDataWritable</a></b> () const : bool</div></li>
 <li><div class="fn"><b><a href="qmediaplayer.html#muted-prop">isMuted</a></b> () const : bool</div></li>
@@ -67,8 +70,8 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#isWidgetType">isWidgetType</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#killTimer">killTimer</a></b> ( int )</div></li>
 <li><div class="fn"><b><a href="qmediaplayer.html#media-prop">media</a></b> () const : QMediaContent</div></li>
-<li><div class="fn"><b><a href="qmediaplayer.html#mediaChanged">mediaChanged</a></b> ( const QMediaContent &amp; )</div></li>
 </ul></td><td valign="top"><ul>
+<li><div class="fn"><b><a href="qmediaplayer.html#mediaChanged">mediaChanged</a></b> ( const QMediaContent &amp; )</div></li>
 <li><div class="fn"><b><a href="qmediaplayer.html#mediaStatus-prop">mediaStatus</a></b> () const : MediaStatus</div></li>
 <li><div class="fn"><b><a href="qmediaplayer.html#mediaStatusChanged">mediaStatusChanged</a></b> ( QMediaPlayer::MediaStatus )</div></li>
 <li><div class="fn"><b><a href="qmediaplayer.html#mediaStream">mediaStream</a></b> () const : const QIODevice *</div></li>
@@ -78,7 +81,7 @@
 <li><div class="fn"><b><a href="qmediaobject.html#metaDataWritableChanged">metaDataWritableChanged</a></b> ( bool )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#metaObject">metaObject</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#moveToThread">moveToThread</a></b> ( QThread * )</div></li>
-<li><div class="fn"><b><a href="qmediaplayer.html#mutingChanged">mutingChanged</a></b> ( bool )</div></li>
+<li><div class="fn"><b><a href="qmediaplayer.html#mutedChanged">mutedChanged</a></b> ( bool )</div></li>
 <li><div class="fn"><b><a href="qmediaobject.html#notifyInterval-prop">notifyInterval</a></b> () const : int</div></li>
 <li><div class="fn"><b><a href="qmediaobject.html#notifyIntervalChanged">notifyIntervalChanged</a></b> ( int )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#objectName-prop">objectName</a></b> () const</div></li>
@@ -114,11 +117,12 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#staticMetaObject-var">staticMetaObject</a></b> : </div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#staticQtMetaObject-var">staticQtMetaObject</a></b> : </div></li>
 <li><div class="fn"><b><a href="qmediaplayer.html#stop">stop</a></b> ()</div></li>
+<li><div class="fn"><b><a href="qmediaplayer.html#supportedMimeTypes">supportedMimeTypes</a></b> ( Flags ) : QStringList</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#thread">thread</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#timerEvent">timerEvent</a></b> ( QTimerEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#tr">tr</a></b> ( const char *, const char *, int )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#trUtf8">trUtf8</a></b> ( const char *, const char *, int )</div></li>
-<li><div class="fn"><b><a href="qmediaplayer.html#videoAvailabilityChanged">videoAvailabilityChanged</a></b> ( bool )</div></li>
+<li><div class="fn"><b><a href="qmediaplayer.html#videoAvailableChanged">videoAvailableChanged</a></b> ( bool )</div></li>
 <li><div class="fn"><b><a href="qmediaplayer.html#volume-prop">volume</a></b> () const : int</div></li>
 <li><div class="fn"><b><a href="qmediaplayer.html#volumeChanged">volumeChanged</a></b> ( int )</div></li>
 </ul>

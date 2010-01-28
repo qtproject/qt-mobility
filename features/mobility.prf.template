@@ -4,11 +4,11 @@
 } else {
     load(data_caging_paths)
     contains(MOBILITY, contacts|versit) {
-        INCLUDEPATH+=$${EPOCROOT}epoc32/include/app
+        INCLUDEPATH+=$$APP_LAYER_SYSTEMINCLUDE
     }
 
     contains(MOBILITY,bearer|location|publishsubscribe|systeminfo|multimedia|messaging|serviceframework) {
-        INCLUDEPATH+=$${EPOCROOT}epoc32/include/mw
+        INCLUDEPATH+=$$MW_LAYER_SYSTEMINCLUDE
     }
 }
 mac: LIBS += -F$${MOBILITY_LIB}

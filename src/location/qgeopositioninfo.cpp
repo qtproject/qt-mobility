@@ -51,7 +51,7 @@ class QGeoPositionInfoPrivate
 public:
     QDateTime dateTime;
     QGeoCoordinate coord;
-    QHash<int, qreal> doubleProps;
+    QHash<int, qreal> doubleAttribs;
 };
 
 /*!
@@ -67,10 +67,10 @@ public:
 */
 
 /*!
-    \enum QGeoPositionInfo::Property
-    Defines the properties for positional information.
+    \enum QGeoPositionInfo::Attribute
+    Defines the attributes for positional information.
 
-    \value Heading The bearing to true north, in degrees.
+    \value Direction The bearing to true north from the direction of travel, in degrees.
     \value GroundSpeed The ground speed, in metres/sec.
     \value VerticalSpeed The vertical speed, in metres/sec.
     \value MagneticVariation The angle between the horizontal component of the magnetic field and true north, in degrees. Also known as magnetic declination. A positive value indicates a clockwise direction from true north and a negative value indicates a counter-clockwise direction.
@@ -125,7 +125,7 @@ QGeoPositionInfo &QGeoPositionInfo::operator=(const QGeoPositionInfo &other)
 
     d->dateTime = other.d->dateTime;
     d->coord = other.d->coord;
-    d->doubleProps = other.d->doubleProps;
+    d->doubleAttribs = other.d->doubleAttribs;
 
     return *this;
 }
@@ -138,7 +138,7 @@ bool QGeoPositionInfo::operator==(const QGeoPositionInfo &other) const
 {
     return d->dateTime == other.d->dateTime
             && d->coord == other.d->coord
-            && d->doubleProps == other.d->doubleProps;
+            && d->doubleAttribs == other.d->doubleAttribs;
 }
 
 /*!
@@ -205,44 +205,44 @@ QGeoCoordinate QGeoPositionInfo::coordinate() const
 }
 
 /*!
-    Sets the value for \a property to \a value.
+    Sets the value for \a attribute to \a value.
 
-    \sa property()
+    \sa attribute()
 */
-void QGeoPositionInfo::setProperty(Property property, qreal value)
+void QGeoPositionInfo::setAttribute(Attribute attribute, qreal value)
 {
-    d->doubleProps[int(property)] = value;
+    d->doubleAttribs[int(attribute)] = value;
 }
 
 /*!
-    Returns the value of the specified \a property as a qreal value.
+    Returns the value of the specified \a attribute as a qreal value.
 
     Returns -1 if the value has not been set.
 
-    \sa hasProperty(), setProperty()
+    \sa hasAttribute(), setAttribute()
 */
-qreal QGeoPositionInfo::property(Property property) const
+qreal QGeoPositionInfo::attribute(Attribute attribute) const
 {
-    if (d->doubleProps.contains(int(property)))
-        return d->doubleProps[int(property)];
+    if (d->doubleAttribs.contains(int(attribute)))
+        return d->doubleAttribs[int(attribute)];
     return -1;
 }
 
 /*!
-    Removes the specified \a property and its value.
+    Removes the specified \a attribute and its value.
 */
-void QGeoPositionInfo::removeProperty(Property property)
+void QGeoPositionInfo::removeAttribute(Attribute attribute)
 {
-    d->doubleProps.remove(int(property));
+    d->doubleAttribs.remove(int(attribute));
 }
 
 /*!
-    Returns true if the specified \a property is present for this
+    Returns true if the specified \a attribute is present for this
     QGeoPositionInfo object.
 */
-bool QGeoPositionInfo::hasProperty(Property property) const
+bool QGeoPositionInfo::hasAttribute(Attribute attribute) const
 {
-    return d->doubleProps.contains(int(property));
+    return d->doubleAttribs.contains(int(attribute));
 }
 
 #ifndef QT_NO_DEBUG_STREAM
@@ -252,12 +252,12 @@ QDebug operator<<(QDebug dbg, const QGeoPositionInfo &update)
     dbg.nospace() << ", ";
     dbg.nospace() << update.d->coord;
 
-    QList<int> props = update.d->doubleProps.keys();
-    for (int i=0; i<props.count(); i++) {
+    QList<int> attribs = update.d->doubleAttribs.keys();
+    for (int i = 0; i < attribs.count(); i++) {
         dbg.nospace() << ", ";
-        switch (props[i]) {
-            case QGeoPositionInfo::Heading:
-                dbg.nospace() << "Heading=";
+        switch (attribs[i]) {
+            case QGeoPositionInfo::Direction:
+                dbg.nospace() << "Direction=";
                 break;
             case QGeoPositionInfo::GroundSpeed:
                 dbg.nospace() << "GroundSpeed=";
@@ -275,7 +275,7 @@ QDebug operator<<(QDebug dbg, const QGeoPositionInfo &update)
                 dbg.nospace() << "VerticalAccuracy=";
                 break;
         }
-        dbg.nospace() << update.d->doubleProps[props[i]];
+        dbg.nospace() << update.d->doubleAttribs[attribs[i]];
     }
     dbg.nospace() << ')';
     return dbg;
@@ -296,7 +296,7 @@ QDataStream &operator<<(QDataStream &stream, const QGeoPositionInfo &info)
 {
     stream << info.d->dateTime;
     stream << info.d->coord;
-    stream << info.d->doubleProps;
+    stream << info.d->doubleAttribs;
     return stream;
 }
 #endif
@@ -316,7 +316,7 @@ QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo &info)
 {
     stream >> info.d->dateTime;
     stream >> info.d->coord;
-    stream >> info.d->doubleProps;
+    stream >> info.d->doubleAttribs;
     return stream;
 }
 #endif

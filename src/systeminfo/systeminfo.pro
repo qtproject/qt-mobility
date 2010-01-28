@@ -136,15 +136,6 @@ unix: {
 
         TARGET.EPOCALLOWDLLDATA = 1
         TARGET.UID3 = 0x2002ac7d
-        
-        deploy.path = $${EPOCROOT}
-        exportheaders.sources = $$PUBLIC_HEADERS
-        exportheaders.path = epoc32/include/mw
-    
-        for(header, exportheaders.sources) {
-            BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
-        }
-
 
         QtSystemInfoDeployment.sources = QtSystemInfo.dll
         QtSystemInfoDeployment.path = /sys/bin
@@ -153,4 +144,5 @@ unix: {
 }
 
 HEADERS += $$PUBLIC_HEADERS 
+CONFIG += middleware
 include (../../features/deploy.pri)

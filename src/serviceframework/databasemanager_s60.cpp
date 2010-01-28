@@ -284,7 +284,10 @@ void DatabaseManagerSignalMonitor::RunL()
 
 RDatabaseManagerSession::RDatabaseManagerSession()
     : RSessionBase()
-    {   
+    {
+#ifdef __WINS__
+    iServerThread = NULL;
+#endif
     }
 
 TVersion RDatabaseManagerSession::Version() const
@@ -342,6 +345,12 @@ TInt RDatabaseManagerSession::StartServer()
         dbServer.Close();
 #endif
     }
+#ifdef __WINS__
+    if (iServerThread == NULL) {
+        qWarning("Fatal error: several concurrent QServiceManagers in one application not currently supported in WINS Emulator");
+        User::Panic(_L("PLAT (emulator)"), 0); 
+    }
+#endif
     return ret;
     }
 
