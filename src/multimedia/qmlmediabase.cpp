@@ -80,6 +80,7 @@ public:
     bool isMuted() const { return false; }
     void setMuted(bool) {}
     int bufferStatus() const { return 0; }
+    bool isAudioAvailable() const { return false; }
     bool isVideoAvailable() const { return false; }
     bool isSeekable() const { return false; }
     QMediaTimeRange availablePlaybackRanges() const { return QMediaTimeRange(); }

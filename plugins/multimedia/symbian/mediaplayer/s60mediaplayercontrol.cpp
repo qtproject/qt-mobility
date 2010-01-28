@@ -207,6 +207,8 @@ void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *str
         return;
     }
 
+    bool hadAudio = isAudioAvailable();
+    bool hadVideo = isVideoAvailable();
     
     // store to variable as session is created based on the content type.
     m_currentResource = source;
@@ -225,6 +227,17 @@ void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *str
         emit mediaStatusChanged(QMediaPlayer::InvalidMedia);
     }
 
+    if (hadAudio != isAudioAvailable)
+        emit audioAvailableChanged(!hadAudio);
+    if (hadVideo != isVideoAvailable)
+        emit videoAvailableChanged(!hadVideo);
+}
+
+bool S60MediaPlayerControl::isAudioAvailable() const
+{
+    if (m_session)
+        return m_session->isAudioAvailable();
+    return false;
 }
 
 void S60MediaPlayerControl::setVideoOutput(QObject *output)

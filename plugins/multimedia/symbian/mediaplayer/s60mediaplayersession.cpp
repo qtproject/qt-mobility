@@ -56,6 +56,7 @@ S60MediaPlayerSession::S60MediaPlayerSession(QObject *parent)
       m_volume(-1),
       m_playbackRate(1.0),
       m_muted(false),
+      m_audioAvailable(false),
       m_videoAvailable(false),
       m_lastPosition(0),
       m_duration(-1),
@@ -81,6 +82,11 @@ void S60MediaPlayerSession::setVolume(int volume)
 bool S60MediaPlayerSession::isMuted() const
 {
     return m_muted;
+}
+
+bool S60MediaPlayerSession::isAudioAvailable() const
+{
+    return m_audioAvailable;
 }
 
 bool S60MediaPlayerSession::isVideoAvailable() const

@@ -184,6 +184,11 @@ int DirectShowPlayerControl::bufferStatus() const
     return m_service->bufferStatus();
 }
 
+bool DirectShowPlayerControl::isAudioAvailable() const
+{
+    return m_streamTypes & DirectShowPlayerService::AudioStream;
+}
+
 bool DirectShowPlayerControl::isVideoAvailable() const
 {
     return m_streamTypes & DirectShowPlayerService::VideoStream;
@@ -266,8 +271,10 @@ void DirectShowPlayerControl::customEvent(QEvent *event)
         if (properties & PlaybackRateProperty)
             emit playbackRateChanged(m_playbackRate);
 
-        if (properties & StreamTypesProperty)
+        if (properties & StreamTypesProperty) {
+            emit audioAvailableChanged(m_streamTypes & DirectShowPlayerService::AudioStream);
             emit videoAvailableChanged(m_streamTypes & DirectShowPlayerService::VideoStream);
+        }
 
         if (properties & DurationProperty)
             emit durationChanged(m_duration);

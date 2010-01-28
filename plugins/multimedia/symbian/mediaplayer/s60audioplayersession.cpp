@@ -66,6 +66,8 @@ S60AudioPlayerSession::~S60AudioPlayerSession()
 
 void S60AudioPlayerSession::load(const QUrl &url)
 {
+    m_audioAvailable = false;
+
     // we should not load if the player is already loading media
     // this is the case if we have already loaded same media and we set media again
     if (m_mediaStatus != QMediaPlayer::LoadingMedia) {
@@ -176,6 +178,7 @@ void S60AudioPlayerSession::MapcInitComplete(TInt aError, const TTimeIntervalMic
     Q_UNUSED(aDuration);
     if (!aError) {
         m_mediaStatus = QMediaPlayer::LoadedMedia;
+        m_audioAvailable = true;
 
         m_player->GetNumberOfMetaDataEntries(numberOfMetaDataEntries);
         // we need to check volume here
@@ -201,7 +204,8 @@ void S60AudioPlayerSession::MapcInitComplete(TInt aError, const TTimeIntervalMic
         }
         delete entry;
     }
-    emit mediaStatusChanged(m_mediaStatus);    
+    emit mediaStatusChanged(m_mediaStatus);
+    emit audioAvailableChanged(m_audioAvailable);
     emit durationChanged(duration());
     emit metaDataChanged();
 }

@@ -41,10 +41,6 @@
 
 #include "qmlgraphicsvideo_p.h"
 
-#include <QtCore/qcoreevent.h>
-#include <QtMultimedia/qvideosurfaceformat.h>
-#include <QtOpenGL/qgl.h>
-
 #include <qmediaplayercontrol.h>
 #include <qmediaservice.h>
 #include <qpaintervideosurface_p.h>
@@ -96,6 +92,8 @@ QmlGraphicsVideo::QmlGraphicsVideo(QmlGraphicsItem *parent)
     setObject(this);
 
     if (m_mediaService) {
+        connect(m_playerControl, SIGNAL(audioAvailableChanged(bool)),
+                this, SIGNAL(hasAudioChanged()));
         connect(m_playerControl, SIGNAL(videoAvailableChanged(bool)),
                 this, SIGNAL(hasVideoChanged()));
 
@@ -230,6 +228,17 @@ QmlGraphicsVideo::Status QmlGraphicsVideo::status() const
 
     This property holds whether the audio output is muted.
 */
+
+/*!
+    \qmlproperty bool Audio::hasAudio
+
+    This property holds whether the source contains audio.
+*/
+
+bool QmlGraphicsVideo::hasAudio() const
+{
+    return m_playerControl->isAudioAvailable();
+}
 
 /*!
     \qmlproperty bool Video::hasVideo

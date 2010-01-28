@@ -70,6 +70,8 @@ public:
     int volume() const;
     bool isMuted() const;
 
+    virtual bool isAudioAvailable() const;
+
     virtual void setVideoRenderer(QObject *renderer);
     virtual bool isVideoAvailable() const;
 
@@ -100,6 +102,7 @@ signals:
     void mediaStatusChanged(QMediaPlayer::MediaStatus mediaStatus);
     void volumeChanged(int volume);
     void mutedStateChaned(bool muted);
+    void audioAvailableChanged(bool audioAvailable);
     void videoAvailableChanged(bool videoAvailable);
     void bufferingChanged(bool buffering);
     void bufferingProgressChanged(int percentFilled);
@@ -123,6 +126,7 @@ protected:
 
     qreal m_playbackRate;
     bool m_muted;
+    bool m_audioAvailable;
     bool m_videoAvailable;
 
     qint64 m_lastPosition;

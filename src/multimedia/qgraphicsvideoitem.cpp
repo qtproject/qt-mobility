@@ -48,6 +48,8 @@
 #include <qvideorenderercontrol.h>
 
 #include <QtMultimedia/qvideosurfaceformat.h>
+//#include <QtOpenGL/qgl.h>
+//#define QGRAPHICSVIDEOITEM_SHADERS
 
 QTM_BEGIN_NAMESPACE
 
