@@ -115,8 +115,11 @@ void SubscriberDialog::subscriberChanged()
         QVariant v = subscriber->value(subPaths.at(i));
 
         QTableWidgetItem *pathItem = new QTableWidgetItem(subPaths.at(i));
+        pathItem->setFlags(pathItem->flags() & ~Qt::ItemIsEditable);
         QTableWidgetItem *valueItem = new QTableWidgetItem(v.toString());
+        valueItem->setFlags(valueItem->flags() & ~Qt::ItemIsEditable);
         QTableWidgetItem *typeItem = new QTableWidgetItem(v.typeName());
+        typeItem->setFlags(typeItem->flags() & ~Qt::ItemIsEditable);
         ui->values->setItem(i, 0, pathItem);
         ui->values->setItem(i, 1, valueItem);
         ui->values->setItem(i, 2, typeItem);
