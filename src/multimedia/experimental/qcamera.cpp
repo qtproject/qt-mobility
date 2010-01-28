@@ -173,7 +173,8 @@ void QCameraPrivate::initControls()
     if (focusControl) {
         q->connect(focusControl, SIGNAL(focusStatusChanged(QCamera::FocusStatus)),
                 q, SLOT(_q_updateFocusStatus(QCamera::FocusStatus)));
-        q->connect(focusControl, SIGNAL(zoomValueChanged(qreal)), q, SIGNAL(zoomValueChanged(qreal)));
+        q->connect(focusControl, SIGNAL(opticalZoomChanged(qreal)), q, SIGNAL(opticalZoomChanged(qreal)));
+        q->connect(focusControl, SIGNAL(digitalZoomChanged(qreal)), q, SIGNAL(digitalZoomChanged(qreal)));
     }   
 }
 
@@ -828,22 +829,37 @@ qreal QCamera::maximumDigitalZoom() const
 }
 
 /*!
-    Returns the current zoom.
+    Returns the current optical zoom value.
+
+    \sa QCamera::opticalZoomChanged(qreal), QCamera::digitalZoom()
 */
 
-qreal QCamera::zoomValue() const
+qreal QCamera::opticalZoom() const
 {
-    return d_func()->focusControl ? d_func()->focusControl->zoomValue() : 1.0;
+    return d_func()->focusControl ? d_func()->focusControl->opticalZoom() : 1.0;
 }
 
 /*!
-    Set the zoom to \a value.
-*/
+    Returns the current digital zoom value.
 
-void QCamera::zoomTo(qreal value)
+    \sa QCamera::digitalZoomChanged(qreal), QCamera::opticalZoom()
+*/
+qreal QCamera::digitalZoom() const
+{
+    return d_func()->focusControl ? d_func()->focusControl->digitalZoom() : 1.0;
+}
+
+
+/*!
+    Set the camera \a optical and \a digital zoom values.
+*/
+void QCamera::zoomTo(qreal optical, qreal digital)
 {
     if (d_func()->focusControl)
-        d_func()->focusControl->zoomTo(qBound<qreal>(1.0,value,maximumOpticalZoom()*maximumDigitalZoom()));
+        d_func()->focusControl->zoomTo(optical, digital);
+    else
+        d_func()->_q_error(NotSupportedFeatureError, tr("The camera doesn't support zooming."));
+
 }
 
 /*!
