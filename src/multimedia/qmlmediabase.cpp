@@ -41,7 +41,6 @@
 
 #include "qmlmediabase_p.h"
 
-#include <QtCore/qabstractanimation.h>
 #include <QtCore/qcoreevent.h>
 #include <QtCore/qurl.h>
 
@@ -95,7 +94,7 @@ public:
     void stop() {}
 };
 
-class QmlMediaBaseAnimation : public QAbstractAnimation
+class QmlMediaBaseAnimation : public QObject
 {
 public:
     QmlMediaBaseAnimation(QmlMediaBase *media)
@@ -103,19 +102,27 @@ public:
     {
     }
 
-    int duration() const { return -1; }
+    void start() { if (!m_timer.isActive()) m_timer.start(500, this); }
+    void stop() { m_timer.stop(); }
 
 protected:
-    void updateCurrentTime(int)
+    void timerEvent(QTimerEvent *event)
     {
-        if (m_media->m_state == QMediaPlayer::PlayingState)
-            emit m_media->positionChanged();
-        if (m_media->m_status == QMediaPlayer::BufferingMedia || QMediaPlayer::StalledMedia)
-            emit m_media->bufferProgressChanged();
+        if (event->timerId() == m_timer.timerId()) {
+            event->accept();
+
+            if (m_media->m_state == QMediaPlayer::PlayingState)
+                emit m_media->positionChanged();
+            if (m_media->m_status == QMediaPlayer::BufferingMedia || QMediaPlayer::StalledMedia)
+                emit m_media->bufferProgressChanged();
+        } else {
+            QObject::timerEvent(event);
+        }
     }
 
 private:
     QmlMediaBase *m_media;
+    QBasicTimer m_timer;
 };
 
 void QmlMediaBase::_q_stateChanged(QMediaPlayer::State state)
