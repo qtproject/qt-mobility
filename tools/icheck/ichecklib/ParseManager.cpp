@@ -343,6 +343,17 @@ void ParseManager::getElements(QList<FUNCTIONITEM*> &functionlist
             /**********
             Functions
             **********/
+            FunctionDefinitionAST *pfctdef = pmemberlist->value->asFunctionDefinition();
+            if(pfctdef){
+                FUNCTIONITEM* item = new FUNCTIONITEM();
+                item->trlUnit = classitem->trlUnit;
+                item->function = pfctdef->symbol;
+//                item->fctast = pfctdef;
+                item->classAst = classitem->classspec;
+                item->highestlevelclass = highestlevelclass;
+                functionlist.push_back(item);
+            }
+
             SimpleDeclarationAST *pdecl = pmemberlist->value->asSimpleDeclaration();
             if(pdecl){
                 for(List<Declaration*>* decllist = pdecl->symbols; decllist; decllist = decllist->next)
@@ -352,7 +363,7 @@ void ParseManager::getElements(QList<FUNCTIONITEM*> &functionlist
                         FUNCTIONITEM* item = new FUNCTIONITEM();
                         item->trlUnit = classitem->trlUnit;
                         item->function = pfct;
-                        item->ast = pdecl;
+//                        item->ast = pdecl;
                         item->classAst = classitem->classspec;
                         item->highestlevelclass = highestlevelclass;
                         functionlist.push_back(item);
@@ -724,43 +735,42 @@ QString ParseManager::getErrorMessage(FUNCTIONITEM* fct)
         fctstring = classname;
         fctstring += "::";
 
-        unsigned int firsttoken = fct->ast->firstToken();
-        unsigned int lasttoken = fct->ast->lastToken();
-        for(unsigned int i = firsttoken; i < lasttoken; i++){
-            fctstring += fct->trlUnit->spell(i);
-            fctstring += " ";
+        unsigned int token = fct->function->sourceLocation() - 1;
+        if(token >= 0){
+            //tok.isNot(T_EOF_SYMBOL)
+            while(fct->trlUnit->tokenAt(token).isNot(T_EOF_SYMBOL)){
+                fctstring += fct->trlUnit->tokenAt(token).spell();
+                if(*fct->trlUnit->tokenAt(token).spell() == ')')
+                    break;
+                fctstring += " ";
+                token++;
+            }
         }
 
-        SimpleDeclarationAST *psdecl = fct->ast->asSimpleDeclaration();
-        if(psdecl){
-            for(List<Declaration*>* decllist = psdecl->symbols; decllist; decllist = decllist->next)
-            {
-                Function* pfct = decllist->value->type()->asFunctionType();
-                if(pfct){
-                    fcttype = "type: ";
-                    //Check for private, protected and public
-                    if(pfct->isPublic())
-                        fcttype = "public ";
-                    if(pfct->isProtected())
-                        fcttype = "protected ";
-                    if(pfct->isPrivate())
-                        fcttype = "private ";
+        Function* pfct = fct->function;
+        if(pfct){
+            fcttype = "type: ";
+            //Check for private, protected and public
+            if(pfct->isPublic())
+                fcttype = "public ";
+            if(pfct->isProtected())
+                fcttype = "protected ";
+            if(pfct->isPrivate())
+                fcttype = "private ";
 
-                    if(pfct->isVirtual())
-                        fcttype += "virtual ";
-                    if(pfct->isPureVirtual())
-                        fcttype += "pure virtual ";
+            if(pfct->isVirtual())
+                fcttype += "virtual ";
+            if(pfct->isPureVirtual())
+                fcttype += "pure virtual ";
 
-                    if(pfct->isSignal())
-                        fcttype += "Signal ";
-                    if(pfct->isSlot())
-                        fcttype += "Slot ";
-                    if(pfct->isNormal())
-                        fcttype += "Normal ";
-                    if(pfct->isInvokable())
-                        fcttype += "Invokable ";
-                }
-            }
+            if(pfct->isSignal())
+                fcttype += "Signal ";
+            if(pfct->isSlot())
+                fcttype += "Slot ";
+            if(pfct->isNormal())
+                fcttype += "Normal ";
+            if(pfct->isInvokable())
+                fcttype += "Invokable ";
         }
         out << fcttype << fctstring;
     }
@@ -854,31 +864,44 @@ void ParseManager::assignPropertyFunctions(PROPERTYITEM* prop, const QList<QList
         prop->foundalldefinedfct = false;
         foreach(QList<FUNCTIONITEM*> fctlist, fctlookuplist){
             foreach(FUNCTIONITEM* pfct, fctlist){
-                QString fcttype =pfct->trlUnit->spell(pfct->ast->firstToken());
+/*
+                long start = pfct->ast->firstToken();
+                long stop = pfct->ast->lastToken();
+                QString val;
+                for(long i = start; i < stop; i++){
+                    val += pfct->trlUnit->spell(i);
+                    val += " ";
+                }
+                qDebug() << val;
+*/
+                QString fctname = pfct->trlUnit->spell(pfct->function->sourceLocation());
                 //check the function type against the property type
-                QString fctname = pfct->trlUnit->spell(pfct->ast->firstToken() + 1);
-                if(prop->readdefined && fctname == readfctname){
-                    if(type != fcttype)
-                        continue;
-                    prop->readFct = pfct;
-                    needtofind--;
-                }
-                if(prop->writedefined && fctname == writefctname){
-                    prop->writeFct = pfct;
-                    needtofind--;
-                }
-                if(prop->resetdefined && fctname == resetfctname){
-                    prop->resetFct = pfct;
-                    needtofind--;
-                }
-                if(prop->notifydefined && fctname == notifyfctname){
-                    prop->notifyFct = pfct;
-                    needtofind--;
-                }
-                if(needtofind <= 0){
-                    //a flag that indicates if a function was missing
-                    prop->foundalldefinedfct = true;
-                    return;
+                QString fcttype =pfct->trlUnit->spell(pfct->function->sourceLocation() - 1);
+
+                if(fctname.length() > 0 && fcttype.length() > 0){
+                    if(prop->readdefined && fctname == readfctname){
+                        if(type != fcttype)
+                            continue;
+                        prop->readFct = pfct;
+                        needtofind--;
+                    }
+                    if(prop->writedefined && fctname == writefctname){
+                        prop->writeFct = pfct;
+                        needtofind--;
+                    }
+                    if(prop->resetdefined && fctname == resetfctname){
+                        prop->resetFct = pfct;
+                        needtofind--;
+                    }
+                    if(prop->notifydefined && fctname == notifyfctname){
+                        prop->notifyFct = pfct;
+                        needtofind--;
+                    }
+                    if(needtofind <= 0){
+                        //a flag that indicates if a function was missing
+                        prop->foundalldefinedfct = true;
+                        return;
+                    }
                 }
             }
         }

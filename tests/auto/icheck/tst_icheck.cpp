@@ -152,6 +152,7 @@ bool TestCase::run()
 {
     QTextStream out(&errorMsg);
     if(loadXmlInformation()){
+        qDebug() << "Start: " << testName;
         //Start the test
         QString curpath = getTestFileFolder();
         //Create FileInfos for the header files

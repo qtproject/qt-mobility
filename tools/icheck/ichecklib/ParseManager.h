@@ -77,7 +77,6 @@ namespace CPlusPlus {
     class TranslationUnit;
     class AST;
     class ClassSpecifierAST;
-    class SimpleDeclarationAST;
     class QPropertyDeclarationAST;
     class QEnumDeclarationAST;
     class QFlagsDeclarationAST;
@@ -109,7 +108,6 @@ namespace CPlusPlus {
             ClassSpecifierAST* classAst;
             QStringList classWichIsNotFound;
             CPlusPlus::Function* function;
-            SimpleDeclarationAST* ast;
 
             bool isEqualTo(FUNCTIONITEM* cpfct, bool ignoreName = true);
             FUNCTIONITEM()
@@ -118,7 +116,6 @@ namespace CPlusPlus {
                 trlUnit = 0;
                 classAst = 0;
                 function = 0;
-                ast = 0;
             }
         };
         class PROPERTYITEM
