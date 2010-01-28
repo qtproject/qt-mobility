@@ -5,8 +5,11 @@ include(../../common.pri)
 
 DEFINES += QT_BUILD_SENSORS_LIB QT_MAKEDLL
 
-#QMAKE_CXXFLAGS+=-Werror
-#QMAKE_LFLAGS+=-Wl,-no-undefined
+STRICT=$$(STRICT)
+equals(STRICT,1) {
+    QMAKE_CXXFLAGS+=-Werror
+    QMAKE_LFLAGS+=-Wl,-no-undefined
+}
 
 PUBLIC_HEADERS += \
            qsensorbackend.h\

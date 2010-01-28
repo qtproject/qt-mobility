@@ -7,4 +7,9 @@ MOBILITY+=sensors
 INCLUDEPATH += ../../../src/sensors
 SOURCES=main.cpp
 
-#QMAKE_CXXFLAGS+=-Werror
+STRICT=$$(STRICT)
+equals(STRICT,1) {
+    QMAKE_CXXFLAGS+=-Werror
+    QMAKE_LFLAGS+=-Wl,-no-undefined
+}
+

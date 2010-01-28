@@ -9,4 +9,9 @@ SOURCES=main.cpp
 RESOURCES = orientation.qrc
 OTHER_FILES += orientation.qml
 
-#QMAKE_CXXFLAGS+=-Werror
+STRICT=$$(STRICT)
+equals(STRICT,1) {
+    QMAKE_CXXFLAGS+=-Werror
+    QMAKE_LFLAGS+=-Wl,-no-undefined
+}
+
