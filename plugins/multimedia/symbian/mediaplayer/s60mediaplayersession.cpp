@@ -138,6 +138,8 @@ QMediaPlayer::MediaStatus S60MediaPlayerSession::mediaStatus() const
 
 void S60MediaPlayerSession::load(const QUrl &url)
 {
+    // Reset error status on load
+    setError(KErrNone);
     m_localMediaFile = true;
     doStop();
     setMediaStatus(QMediaPlayer::LoadingMedia);
@@ -147,6 +149,8 @@ void S60MediaPlayerSession::load(const QUrl &url)
 
 void S60MediaPlayerSession::loadUrl(const QUrl &url)
 {
+    // Reset error status on load
+    setError(KErrNone);
     m_localMediaFile = false;
     doStop();
     setMediaStatus(QMediaPlayer::LoadingMedia);
@@ -219,12 +223,11 @@ void S60MediaPlayerSession::setMuted(bool muted)
     if (m_muted == muted)
         return;
     
-    if(muted) {
-        setVolume(0);
-        m_muted = muted;
-    } else {
-        m_muted = muted;
-        setVolume(volume());
+    m_muted = muted;
+    
+    if (m_mediaStatus == QMediaPlayer::LoadedMedia) {
+        TRAPD(err, doSetVolumeL((m_muted)?0:m_volume));
+        setError(err);
     }
 }
 
@@ -267,7 +270,8 @@ void S60MediaPlayerSession::initComplete()
         setMediaStatus(QMediaPlayer::LoadedMedia);
         TRAPD(err, updateMetaDataEntriesL());
         setError(err);
-        setVolume(volume());
+        setVolume(m_volume);
+        setMuted(m_muted);
         emit durationChanged(duration());
     } else {
         setError(m_error);
