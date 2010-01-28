@@ -95,11 +95,7 @@ public:
 public Q_SLOTS:
     void lockExposure();
     void unlockExposure();
-    void settingsError(QCamera::Error sError);
     
-Q_SIGNALS:
-    void error(QCamera::Error aError);
-
 private:
     S60CameraSession *m_session;
     S60CameraService *m_service;

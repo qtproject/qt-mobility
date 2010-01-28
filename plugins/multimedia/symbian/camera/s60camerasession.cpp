@@ -62,6 +62,7 @@ _LIT8(KCameraTemp,"test data");
 S60CameraSession::S60CameraSession(QObject *parent)
     : QObject(parent)
     , m_cameraEngine(NULL)
+    , m_advancedSettings(NULL)
     , m_VFProcessor(NULL)
     , m_imageQuality(QtMedia::NormalQuality*KSymbianImageQualityCoefficient)
     , m_captureSize(QSize(1600, 1200))
@@ -71,20 +72,10 @@ S60CameraSession::S60CameraSession(QObject *parent)
     , m_deviceIndex(NULL)
     , m_error(NoError)
     , m_currentcodec(KSymbianDefaultImageCodec)
-    , m_advancedSettings(NULL)
     , m_videoUtility(NULL)
-{
-    
+{   
     // create initial camera
     resetCamera();
-
-    connect(m_advancedSettings, SIGNAL(exposureLocked()), this, SIGNAL(exposureLocked()));
-    connect(m_advancedSettings, SIGNAL(flashReady(bool)), this, SIGNAL(flashReady(bool)));
-    connect(m_advancedSettings, SIGNAL(apertureChanged(qreal)), this, SIGNAL(apertureChanged(qreal)));
-    connect(m_advancedSettings, SIGNAL(apertureRangeChanged()), this, SIGNAL(apertureRangeChanged()));
-    connect(m_advancedSettings, SIGNAL(shutterSpeedChanged(qreal)), this, SIGNAL(shutterSpeedChanged(qreal)));
-    connect(m_advancedSettings, SIGNAL(isoSensitivityChanged(int)), this, SIGNAL(isoSensitivityChanged(int)));
-    connect(m_advancedSettings, SIGNAL(error(QCamera::Error)), this, SIGNAL(error(QCamera::Error)));
 }
 
 S60CameraSession::~S60CameraSession()
@@ -114,16 +105,59 @@ void S60CameraSession::resetCamera()
     m_error = KErrNone;
     m_state = QCamera::StoppedState;
     qDebug() << "S60CameraSession::resetCamera. Creating new camera with index=" << m_deviceIndex;
-    QT_TRAP_THROWING(m_cameraEngine = CCameraEngine::NewL(m_deviceIndex, 0, this));
-    Q_CHECK_PTR(m_cameraEngine);
-    m_advancedSettings = new S60CameraSettings(this, m_cameraEngine);
-
-    QT_TRAP_THROWING(m_videoUtility = CVideoRecorderUtility::NewL(*this));
-    Q_CHECK_PTR(m_videoUtility);
+    TRAPD(err, 
+        m_cameraEngine = CCameraEngine::NewL(m_deviceIndex, 0, this);
+        m_advancedSettings = new S60CameraSettings(this, m_cameraEngine);
+        m_videoUtility = CVideoRecorderUtility::NewL(*this);
+    );
+    setError(err);
 
     updateVideoCaptureCodecs();
 
     qDebug() << "S60CameraSession::resetCamera END";
+}
+
+void S60CameraSession::setError(TInt aError)
+{
+    if (aError == KErrNone)
+        return;
+        
+    m_error = aError;
+    QCamera::Error cameraError = fromSymbianErrorToMultimediaError(m_error);
+    
+    // TODO: fix to user friendly string at some point
+    // These error string are only dev usable
+    QString symbianError; 
+    symbianError.append("Symbian:");
+    symbianError.append(QString::number(m_error));
+    emit error(cameraError, symbianError);
+}
+
+QCamera::Error S60CameraSession::fromSymbianErrorToMultimediaError(int aError)
+{
+    switch(aError) {
+        case KErrNoMemory:
+        case KErrNotFound:
+        case KErrBadHandle:
+            return QCamera::ServiceMissingError;
+        case KErrNotSupported:
+        case KErrECamSettingNotSupported:
+        case KErrECamParameterNotInRange:
+            return QCamera::NotSupportedFeatureError;
+        case KErrCorrupt:
+        case KErrECamSettingDisabled:
+        case KErrECamNotOptimalFocus:
+        case KErrAccessDenied:
+        case KErrLocked:
+        case KErrPermissionDenied:
+            return QCamera::CameraError;
+        case KErrNotReady:
+        case KErrECamCameraDisabled:
+        case KErrInUse:
+            return QCamera::NotReadyToCaptureError;
+        default:
+            return QCamera::NoError;
+    }
 }
 
 void S60CameraSession::startCamera()
@@ -140,10 +174,6 @@ void S60CameraSession::startCamera()
         qDebug() << "S60CameraSession::startCamera, ReserveAndPowerOn"<< m_error;
         m_cameraEngine->ReserveAndPowerOn();
         //updateImageCaptureCodecs();
-    }
-    if (m_error != KErrNone) {
-        qDebug() << "S60CameraSession::startCamera emitting error="<< m_error;
-        emit error(m_error, QString(m_error));
     }
     qDebug() << "S60CameraSession::startCamera END";
 }
@@ -173,19 +203,15 @@ void S60CameraSession::capture(const QString &fileName)
 
     if (m_cameraEngine) {
         TSize size(m_captureSize.width(), m_captureSize.height());
-        TRAP(m_error, m_cameraEngine->PrepareL(size, m_currentcodec));
-        if (m_error == KErrNotSupported) {
-            emit error(QCamera::NotSupportedFeatureError, QLatin1String("unable to prepare picture size and current codec") );
-        }
-        TRAP(m_error, m_cameraEngine->CaptureL());
-        if (m_error == KErrNotReady || m_error == KErrNoMemory) {
-            emit error(QCamera::NotReadyToCaptureError, QLatin1String("camera is not reserved or prepared for capture"));
-        }
+        TRAPD(err, 
+                m_cameraEngine->PrepareL(size, m_currentcodec);       
+                m_cameraEngine->CaptureL();
+        );
+        setError(err);
         m_captureSize = QSize(size.iWidth,size.iHeight); // set size according to aquired value.
     }
     else {
-        m_error = KErrNotReady;
-        emit error(QCamera::NotReadyToCaptureError, QLatin1String("camera is not started or no engine available"));
+        setError(KErrNotReady);
     }
     #ifdef Q_CC_NOKIAX86
     QImage *snapImage = new QImage(QLatin1String("C:/Data/testimage.jpg"));
@@ -205,81 +231,23 @@ bool S60CameraSession::deviceReady()
         return EFalse;
 }
 
-int S60CameraSession::framerate() const
+int S60CameraSession::framerate()
 {
-    int framerate = 0;
     if (m_videoUtility) {
-        TRAPD(err, framerate = m_videoUtility->VideoFrameRateL());
-        if (err == KErrNone)
-            return framerate;
+        int rate = 0;
+        TRAPD(err, rate = m_videoUtility->VideoFrameRateL());
+        setError(err);
+        return rate;
     }
     return -1;
 }
 
 void S60CameraSession::setFrameRate(int rate)
 {
-    if (m_videoUtility)
-        TRAP_IGNORE(m_videoUtility->SetVideoFrameRateL(rate));
-}
-
-int S60CameraSession::brightness() const
-{
-    return -1;
-}
-
-void S60CameraSession::setBrightness(int b)
-{
-    Q_UNUSED(b);
-}
-
-int S60CameraSession::saturation() const
-{
-    return -1;
-}
-
-void S60CameraSession::setSaturation(int s)
-{
-    Q_UNUSED(s);
-}
-
-int S60CameraSession::hue() const
-{
-    return -1;
-}
-
-void S60CameraSession::setHue(int h)
-{
-    Q_UNUSED(h)
-}
-
-int S60CameraSession::sharpness() const
-{
-    return -1;
-}
-
-void S60CameraSession::setSharpness(int s)
-{
-    Q_UNUSED(s)
-}
-
-bool S60CameraSession::backlightCompensation() const
-{
-    return false;
-}
-
-void S60CameraSession::setBacklightCompensation(bool b)
-{
-    Q_UNUSED(b)
-}
-
-int S60CameraSession::rotation() const
-{
-    return 0;
-}
-
-void S60CameraSession::setRotation(int r)
-{
-    Q_UNUSED(r)
+    if (m_videoUtility) {
+        TRAPD(err, m_videoUtility->SetVideoFrameRateL(rate));
+        setError(err);
+    }
 }
 
 QSize S60CameraSession::frameSize() const
@@ -293,7 +261,6 @@ void S60CameraSession::setFrameSize(const QSize& s)
     qDebug() << "S60CameraSession::setFrameSize, size=" << s;
     m_windowSize = s;
 }
-
 
 QList<QVideoFrame::PixelFormat> S60CameraSession::supportedPixelFormats()
 {
@@ -414,17 +381,15 @@ void S60CameraSession::stopRecording()
 void S60CameraSession::MceoCameraReady()
 {
     qDebug() << "S60CameraSession::MCeoCameraReady()";
-    m_error = KErrNone;
     m_state = QCamera::ActiveState;
     emit stateChanged(m_state);
     if (m_cameraEngine) {
         m_VFSize =  TSize(m_VFWidgetSize.width(), m_VFWidgetSize.height());
-        TRAP(m_error, m_cameraEngine->StartViewFinderL(m_VFSize));
-        if (m_error == KErrNotReady || m_error == KErrNoMemory) {
+        TRAPD(err, m_cameraEngine->StartViewFinderL(m_VFSize));
+        if (err == KErrNotReady || err == KErrNoMemory) {
             emit readyForCaptureChanged(false);
-            emit error(QCamera::NotReadyToCaptureError, QLatin1String("viewfinding with bitmaps is not supported"));
-
         }
+        setError(err);
         emit readyForCaptureChanged(true);
     }
 }
@@ -542,13 +507,7 @@ void S60CameraSession::MceoHandleError(TCameraEngineError aErrorType, TInt aErro
     qDebug() << "S60CameraSession::MceoHandleError, errorType"<<aErrorType;
     qDebug() << "S60CameraSession::MceoHandleError, aError"<<aError;
     Q_UNUSED(aErrorType);
-    //EErrAutoFocusMode (-5)
-    m_error = aError;
-    QString errorString = QLatin1String("camera engine errorcode:") + aErrorType;
-    emit error(aError,errorString);
-
-    if (aError == KErrInUse )
-        emit error(QStillImageCapture::NotReadyError, errorString);
+    setError(aError);
 }
 
 // For S60Cameravideodevicecontrol
@@ -865,15 +824,17 @@ void S60CameraSession::setZoomFactor(int value)
         CCamera *camera = m_cameraEngine->Camera();
         if (camera) {
             if (value > m_info.iMaxZoom && value <= m_info.iMaxDigitalZoom) { // digitalzoom
-                TRAP(m_error, camera->SetDigitalZoomFactorL(value));
+                TRAPD(err, camera->SetDigitalZoomFactorL(value));
+                setError(err);
                 qDebug() << "S60CameraSession::setDigitalZoomFactor error: " << m_error;
-                if (m_error == KErrNone) {
+                if (err == KErrNone) {
                     emit zoomValueChanged(value);
                 }
             } else if (value >= m_info.iMinZoom && value <= m_info.iMaxZoom) { //opticalzoom
-                TRAP(m_error, camera->SetZoomFactorL(value));
+                TRAPD(err2, camera->SetZoomFactorL(value));
+                setError(err2);
                 qDebug() << "S60CameraSession::setZoomFactor error: " << m_error;
-                if (m_error == KErrNone) {
+                if (err2 == KErrNone) {
                     emit zoomValueChanged(value);
                 }
             }
@@ -900,18 +861,18 @@ void S60CameraSession::startFocus()
     qDebug() << "S60CameraSession::startFocus";
 
     if (m_cameraEngine) {
-        TRAP(m_error, m_cameraEngine->StartFocusL());
-        if (m_error) {
-            qDebug() << "S60CameraSession::startFocus error: " << m_error;
-        }
+        TRAPD(err, m_cameraEngine->StartFocusL());
+        setError(err);
     }
 }
 
 void S60CameraSession::cancelFocus()
 {
     qDebug() << "S60CameraSession::cancelFocus";
-
-    m_cameraEngine->FocusCancel();
+    if (m_cameraEngine) {
+        TRAPD(err, m_cameraEngine->FocusCancel());
+        setError(err);
+    }
 }
 
 int S60CameraSession::maximumZoom()
@@ -1135,10 +1096,8 @@ void S60CameraSession::setContrast(qreal value)
     if (m_cameraEngine) {
         CCamera* camera = m_cameraEngine->Camera();
         TRAPD(err, camera->SetContrastL(value));
-        if (err == KErrNotSupported) {
-            emit error(QCamera::NotSupportedFeatureError, QLatin1String("specified contrast value is out of range"));
+        setError(err);
         }
-    }
 }
 
 
@@ -1175,37 +1134,42 @@ QCamera::WhiteBalanceMode S60CameraSession::whiteBalanceMode()
 
 void S60CameraSession::setWhiteBalanceMode(QCamera::WhiteBalanceMode mode)
 {
+    TRAPD(err, setWhiteBalanceModeL(mode));
+    setError(err);
+}
+
+void S60CameraSession::setWhiteBalanceModeL(QCamera::WhiteBalanceMode mode)
+{
     if (m_cameraEngine) {
-        TInt m_error;
         CCamera* camera = m_cameraEngine->Camera();
         switch(mode) {
             case QCamera::WhiteBalanceAuto:
-                TRAP(m_error, camera->SetWhiteBalanceL(CCamera::EWBAuto));
+                camera->SetWhiteBalanceL(CCamera::EWBAuto);
                 break;
             case QCamera::WhiteBalanceSunlight:
-                TRAP(m_error, camera->SetWhiteBalanceL(CCamera::EWBDaylight));
+                camera->SetWhiteBalanceL(CCamera::EWBDaylight);
                 break;
             case QCamera::WhiteBalanceCloudy:
-                TRAP(m_error, camera->SetWhiteBalanceL(CCamera::EWBCloudy));
+                camera->SetWhiteBalanceL(CCamera::EWBCloudy);
                 break;
             case QCamera::WhiteBalanceTungsten:
             case QCamera::WhiteBalanceIncandescent:
-                TRAP(m_error, camera->SetWhiteBalanceL(CCamera::EWBTungsten));
+                camera->SetWhiteBalanceL(CCamera::EWBTungsten);
                 break;
             case QCamera::WhiteBalanceFluorescent:
-                TRAP(m_error, camera->SetWhiteBalanceL(CCamera::EWBFluorescent));
+                camera->SetWhiteBalanceL(CCamera::EWBFluorescent);
                 break;
             case QCamera::WhiteBalanceFlash:
-                TRAP(m_error, camera->SetWhiteBalanceL(CCamera::EWBFlash));
+                camera->SetWhiteBalanceL(CCamera::EWBFlash);
                 break;
             case QCamera::WhiteBalanceSunset:
-                TRAP(m_error, camera->SetWhiteBalanceL(CCamera::EWBBeach));
+                camera->SetWhiteBalanceL(CCamera::EWBBeach);
                 break;
             case QCamera::WhiteBalanceManual:
-                TRAP(m_error, camera->SetWhiteBalanceL(CCamera::EWBManual));
+                camera->SetWhiteBalanceL(CCamera::EWBManual);
                 break;
             case QCamera::WhiteBalanceShade:
-                TRAP(m_error, camera->SetWhiteBalanceL(CCamera::EWBShade));
+                camera->SetWhiteBalanceL(CCamera::EWBShade);
                 break;
             default:
                 // not supported
@@ -1255,6 +1219,12 @@ QCamera::WhiteBalanceModes S60CameraSession::supportedWhiteBalanceModes()
 }
 
 void S60CameraSession::updateVideoCaptureCodecs()
+{
+    TRAPD(err, updateVideoCaptureCodecsL());
+    setError(err);
+}
+
+void S60CameraSession::updateVideoCaptureCodecsL()
 {
     m_videoControllerMap.clear();
 
@@ -1342,40 +1312,41 @@ QString S60CameraSession::videoCaptureCodecDescription(const QString &codecName)
     return m_videoControllerMap[codecName].formatDescription;
 }
 
-
-int S60CameraSession::bitrate() const
+int S60CameraSession::bitrate()
 {
-    int bitrate = 0;
     if (m_videoUtility) {
-        TRAPD(err, bitrate = m_videoUtility->VideoBitRateL());
-        if (err == KErrNone)
-            return bitrate;
-    }    
+        TInt rate = 0;
+        TRAPD(err, rate = m_videoUtility->VideoBitRateL());
+        setError(err);
+        return rate;
+    }
     return 0;
 }
 
 void S60CameraSession::setBitrate(const int &bitrate)
 {
-    if (m_videoUtility) 
-        TRAP_IGNORE(m_videoUtility->SetVideoBitRateL(bitrate));         
+    if (m_videoUtility) {
+        TRAPD(err, m_videoUtility->SetVideoBitRateL(bitrate));
+        setError(err);
+    }
 }
 
-QSize S60CameraSession::videoResolution() const
+QSize S60CameraSession::videoResolution()
 {
     TSize size(0,0);
     if (m_videoUtility) {
         TRAPD(err, m_videoUtility->GetVideoFrameSizeL(size));
-        if (err == KErrNone)
-            return QSize(size.iWidth, size.iHeight);            
+        setError(err);
     }
-    return QSize();    
+    return QSize(size.iWidth, size.iHeight);
 }
 
 void S60CameraSession::setVideoResolution(const QSize &resolution)
 {
     if (m_videoUtility) {
         TSize size(resolution.width(), resolution.height());
-        TRAP_IGNORE(m_videoUtility->SetVideoFrameSizeL(size));
+        TRAPD(err, m_videoUtility->SetVideoFrameSizeL(size));
+        setError(err);
     }
 }
 
@@ -1388,11 +1359,13 @@ void S60CameraSession::MvruoOpenComplete(TInt aError)
         commitVideoEncoderSettings();
 #ifndef PRE_S60_50_PLATFORM
         TRAP(err, m_videoUtility->SetVideoQualityL(m_imageQuality));
+        setError(err);
 #endif
         m_videoUtility->Prepare();
         // TODO:
         // update recording status
     }
+    setError(aError);
 }
 
 void S60CameraSession::MvruoPrepareComplete(TInt aError)
@@ -1405,6 +1378,7 @@ void S60CameraSession::MvruoPrepareComplete(TInt aError)
         // TODO:
         // update recording status
     }
+    setError(aError);
 
 }
 
@@ -1415,6 +1389,7 @@ void S60CameraSession::MvruoRecordComplete(TInt aError)
         m_videoUtility->Stop();
         m_videoUtility->Close();
     }
+    setError(aError);
 
 }
 

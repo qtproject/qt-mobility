@@ -120,8 +120,6 @@ private slots:
     void setWBSunlight();
     void setWBCloudy();
     void setWBTungsten();
-    
-    void error(QCamera::Error aError);
 
 private:
     Ui::CameraCapture *ui;
