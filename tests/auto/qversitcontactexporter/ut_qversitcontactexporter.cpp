@@ -111,6 +111,11 @@ public:
 class MyQVersitContactExporterDetailHandler : public QVersitContactExporterDetailHandler
 {
 public:
+    MyQVersitContactExporterDetailHandler()
+    {
+        mPreProcess = false;
+    }
+
     bool preProcessDetail(const QContact& contact,
                           const QContactDetail& detail,
                           QVersitDocument* document)
@@ -236,6 +241,7 @@ void UT_QVersitContactExporter::testContactDetailHandler()
     document = mExporter->exportContacts(contacts).first();
     QCOMPARE(document.properties().count(), 0);
     QList<QContactDetail> unknownDetails = detailHandler.mUnknownDetails;
+    QVERIFY(unknownDetails.size() > 0);
     QString definitionName = contactAvatar.definitionName();
     QContactDetail detail = searchDetail(unknownDetails,definitionName);
     QCOMPARE(definitionName, detail.definitionName());
@@ -253,8 +259,8 @@ void UT_QVersitContactExporter::testContactDetailHandler()
     document = mExporter->exportContacts(contacts).first();
     QCOMPARE(document.properties().count(), 0);
     unknownDetails = detailHandler.mUnknownDetails;
+    QVERIFY(unknownDetails.size() > 0);
     definitionName = onlineAccount.definitionName();
-    detail = QContactDetail();
     detail = searchDetail(unknownDetails, definitionName);
     QCOMPARE(definitionName, detail.definitionName());
 
