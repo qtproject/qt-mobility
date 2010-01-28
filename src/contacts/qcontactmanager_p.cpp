@@ -57,8 +57,14 @@
 
 #include <QDebug>
 #include <QDir>
+#include <QFile>
 
 #include <QApplication>
+
+#if defined(Q_OS_SYMBIAN)
+# include <f32file.h>
+# include "private/qcore_symbian_p.h"
+#endif
 
 #include "qcontactmemorybackend_p.h"
 #include "qcontactinvalidbackend_p.h"
@@ -244,21 +250,51 @@ void QContactManagerData::loadFactories()
                 continue;
             processed.insert(paths.at(i));
             QDir pluginsDir(paths.at(i));
+            if (!pluginsDir.exists())
+                continue;
+
 #if defined(Q_OS_WIN)
-             if (pluginsDir.dirName().toLower() == QLatin1String("debug") || pluginsDir.dirName().toLower() == QLatin1String("release"))
-                 pluginsDir.cdUp();
+            if (pluginsDir.dirName().toLower() == QLatin1String("debug") || pluginsDir.dirName().toLower() == QLatin1String("release"))
+                pluginsDir.cdUp();
 #elif defined(Q_OS_MAC)
-             if (pluginsDir.dirName() == QLatin1String("MacOS")) {
-                 pluginsDir.cdUp();
-                 pluginsDir.cdUp();
-                 pluginsDir.cdUp();
-             }
+            if (pluginsDir.dirName() == QLatin1String("MacOS")) {
+                pluginsDir.cdUp();
+                pluginsDir.cdUp();
+                pluginsDir.cdUp();
+            }
 #endif
-             // In Symbian, going cdUp() in a c:/private/<uid3>/ will result in *platsec* error at fileserver (requires AllFiles capability)
-             // Also, trying to cd() to a nonexistent directory causes *platsec* error. This does not cause functional harm, but should 
-             // nevertheless be changed to use native Symbian methods to avoid unnecessary platsec warnings. See for example: qpluginloader.cpp::setFileName() for solution ideas.
-             // Alternatively, this whole changing directory thing should be altered (see for example Qtmultimedia's plugin loading)
-             if (pluginsDir.cd(QLatin1String("plugins/contacts")) || pluginsDir.cd(QLatin1String("contacts")) || (pluginsDir.cdUp() && pluginsDir.cd(QLatin1String("plugins/contacts")))) { 
+
+#if defined(Q_OS_SYMBIAN)
+            // In Symbian, going cdUp() in a c:/private/<uid3>/ will result in *platsec* error at fileserver (requires AllFiles capability)
+            // Also, trying to cd() to a nonexistent directory causes *platsec* error. This does not cause functional harm, but should
+            // nevertheless be changed to use native Symbian methods to avoid unnecessary platsec warnings (as per qpluginloader.cpp).
+            RFs rfs;
+            qt_symbian_throwIfError(rfs.Connect());
+            bool pluginPathFound = false;
+            QStringList directories;
+            directories << QString("plugins/contacts") << QString("contacts") << QString("../plugins/contacts");
+            foreach (const QString& dirName, directories) {
+                QString testDirPath = pluginDir.currentPath + "/" + dirName;
+                testDirPath = QDir::cleanPath(testDirPath);
+                // Use native Symbian code to check for directory existence, because checking
+                // for files from under non-existent protected dir like E:/private/<uid> using
+                // QDir::exists causes platform security violations on most apps.
+                QString nativePath = QDir::toNativeSeparators(testDirPath);
+                TPtrC ptr = TPtrC16(static_cast<const TUint16*>(string.utf16()), string.length());
+                TUint attributes;
+                TInt err = rfs.Att(ptr, attributes);
+                if (err == KErrNone) {
+                    // yes, the directory exists.
+                    pluginsDir.cd(testDirPath);
+                    pluginPathFound = true;
+                    break;
+                }
+            }
+            rfs.Close;
+            if (pluginPathFound) {
+#else
+            if (pluginsDir.cd(QLatin1String("plugins/contacts")) || pluginsDir.cd(QLatin1String("contacts")) || (pluginsDir.cdUp() && pluginsDir.cd(QLatin1String("plugins/contacts")))) {
+#endif
                 const QStringList& files = pluginsDir.entryList(QDir::Files);
                 qDebug() << "Looking for plugins in" << pluginsDir.path() << files;
                 for (int j=0; j < files.count(); j++) {
