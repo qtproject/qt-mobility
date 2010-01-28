@@ -114,8 +114,11 @@
             QVariant v = subscriber-&gt;value(subPaths.at(i));
 
             QTableWidgetItem *pathItem = new QTableWidgetItem(subPaths.at(i));
+            pathItem-&gt;setFlags(pathItem-&gt;flags() &amp; ~Qt::ItemIsEditable);
             QTableWidgetItem *valueItem = new QTableWidgetItem(v.toString());
+            valueItem-&gt;setFlags(valueItem-&gt;flags() &amp; ~Qt::ItemIsEditable);
             QTableWidgetItem *typeItem = new QTableWidgetItem(v.typeName());
+            typeItem-&gt;setFlags(typeItem-&gt;flags() &amp; ~Qt::ItemIsEditable);
             ui-&gt;values-&gt;setItem(i, 0, pathItem);
             ui-&gt;values-&gt;setItem(i, 1, valueItem);
             ui-&gt;values-&gt;setItem(i, 2, typeItem);
