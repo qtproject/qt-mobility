@@ -63,7 +63,6 @@
 
 #if defined(Q_OS_SYMBIAN)
 # include <f32file.h>
-# include "private/qcore_symbian_p.h"
 #endif
 
 #include "qcontactmemorybackend_p.h"
