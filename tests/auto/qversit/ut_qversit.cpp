@@ -116,9 +116,9 @@ void UT_QVersit::testImportFiles_data()
         QContact contact;
         QContactName name;
         name.setCustomLabel(QLatin1String("Firstname Lastname"));
-        name.setFirst(QLatin1String("Firstname"));
-        name.setLast(QLatin1String("Lastname"));
-        name.setMiddle(QString());
+        name.setFirstName(QLatin1String("Firstname"));
+        name.setLastName(QLatin1String("Lastname"));
+        name.setMiddleName(QString());
         name.setPrefix(QLatin1String("Title"));
         name.setSuffix(QLatin1String("Suffix"));
         contact.saveDetail(&name);
@@ -151,9 +151,9 @@ void UT_QVersit::testImportFiles_data()
         QContact contact;
         QContactName name;
         name.setCustomLabel(QLatin1String("first last"));
-        name.setFirst(QLatin1String("first"));
-        name.setLast(QLatin1String("last"));
-        name.setMiddle(QString());
+        name.setFirstName(QLatin1String("first"));
+        name.setLastName(QLatin1String("last"));
+        name.setMiddleName(QString());
         name.setPrefix(QString());
         name.setSuffix(QString());
         contact.saveDetail(&name);
