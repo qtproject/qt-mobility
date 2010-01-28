@@ -1048,6 +1048,19 @@ bool QCamera::isExposureLocked() const
 */
 
 
+/*!
+    \fn void QCamera::focusReached()
+
+    Signals the focus was reached.
+    This signal is emited after focusStatus changes to QCamera::FocusReached state.
+*/
+
+/*!
+    \fn void QCamera::focusUnableToReach()
+
+    Signals the focus was unable to reach.
+    This signal is emited after focusStatus changes to QCamera::FocusUnableToReach state.
+*/
+
 #include "moc_qcamera.cpp"
 QTM_END_NAMESPACE
-
