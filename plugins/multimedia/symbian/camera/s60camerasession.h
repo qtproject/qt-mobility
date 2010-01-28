@@ -110,8 +110,8 @@ public:
     
     S60CameraSettings* advancedSettings();
 
-    int framerate();
-    void setFrameRate(int rate);
+    qreal framerate();
+    void setFrameRate(qreal rate);
     // camera image properties
     QSize frameSize() const;
     void setFrameSize(const QSize& s);
@@ -120,6 +120,7 @@ public:
     QVideoFrame::PixelFormat pixelFormat() const;
     void setPixelFormat(QVideoFrame::PixelFormat fmt);
     QList<QSize> supportedVideoResolutions();
+    QList<qreal> supportedVideoFrameRates();
 
 
     // media control
@@ -175,6 +176,7 @@ public:
     void setVideoResolution(const QSize &resolution);
     QString videoCaptureCodecDescription(const QString &codecName);
     void saveVideoEncoderSettings(QVideoEncoderSettings &videoSettings);
+    void getCurrentVideoEncoderSettings(QVideoEncoderSettings &videoSettings);
     void commitVideoEncoderSettings();
     
     //camerafocuscontrol

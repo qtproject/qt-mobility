@@ -73,8 +73,8 @@ public:
     QList<qreal>  supportedFrameRates(const QVideoEncoderSettings &settings, bool *continuous = 0) const;
     qreal minimumFrameRate() const;
     qreal maximumFrameRate() const;
-    int frameRate() const;
-    void setFrameRate(int frameRate);    
+    qreal frameRate() const;
+    void setFrameRate(qreal frameRate);    
 
     QList<QSize> supportedResolutions(const QVideoEncoderSettings &settings, bool *continuous = 0) const;
     QSize minimumResolution() const;
