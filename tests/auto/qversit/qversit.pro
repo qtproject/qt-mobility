@@ -4,7 +4,7 @@ TARGET = tst_qversit
 
 wince* {
     DEFINES+= TESTDATA_DIR=\\\".\\\"
-}else:!symbian {
+}else {
     DEFINES += TESTDATA_DIR=\\\"$$PWD/\\\"
 }
 
