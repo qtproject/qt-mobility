@@ -816,26 +816,26 @@ void S60CameraSession::setVideoRenderer(QObject *videoOutput)
     }
 }
 
-void S60CameraSession::setZoomFactor(int value)
+void S60CameraSession::setZoomFactor(qreal optical, qreal digital)
 {
-    qDebug() << "S60CameraSession::setZoomFactor, value: " << value;
+    qDebug() << "S60CameraSession::setZoomFactor, value(optical digital): " << optical << digital;
 
     if (m_cameraEngine && queryCurrentCameraInfo()) {
         CCamera *camera = m_cameraEngine->Camera();
         if (camera) {
-            if (value > m_info.iMaxZoom && value <= m_info.iMaxDigitalZoom) { // digitalzoom
-                TRAPD(err, camera->SetDigitalZoomFactorL(value));
+            if (digital > m_info.iMaxZoom && digital <= m_info.iMaxDigitalZoom) { // digitalzoom
+                TRAPD(err, camera->SetDigitalZoomFactorL(digital));
                 setError(err);
                 qDebug() << "S60CameraSession::setDigitalZoomFactor error: " << m_error;
                 if (err == KErrNone) {
-                    emit zoomValueChanged(value);
+                    emit digitalZoomChanged(digital);
                 }
-            } else if (value >= m_info.iMinZoom && value <= m_info.iMaxZoom) { //opticalzoom
-                TRAPD(err2, camera->SetZoomFactorL(value));
+            } else if (optical >= m_info.iMinZoom && optical <= m_info.iMaxZoom) { //opticalzoom
+                TRAPD(err2, camera->SetZoomFactorL(optical));
                 setError(err2);
                 qDebug() << "S60CameraSession::setZoomFactor error: " << m_error;
                 if (err2 == KErrNone) {
-                    emit zoomValueChanged(value);
+                    emit opticalZoomChanged(optical);
                 }
             }
         }
@@ -848,10 +848,18 @@ int S60CameraSession::zoomFactor()
     int factor = 0;
     if (m_cameraEngine) {
         CCamera *camera = m_cameraEngine->Camera();
-        factor = camera->ZoomFactor();
-        if (factor == 0) {
-            factor = camera->DigitalZoomFactor();
-        }
+        return camera->ZoomFactor();
+    }
+    return factor;
+}
+
+int S60CameraSession::digitalZoomFactor()
+{
+    qDebug() << "S60CameraSession::digitalZoomFactor";
+    int factor = 0;
+    if (m_cameraEngine) {
+        CCamera *camera = m_cameraEngine->Camera();
+        return camera->DigitalZoomFactor();
     }
     return factor;
 }

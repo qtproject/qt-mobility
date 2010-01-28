@@ -202,7 +202,9 @@ Player::Player(QWidget *parent)
     QStringList fileNames = qApp->arguments();
     fileNames.removeAt(0);
     foreach (QString const &fileName, fileNames) {
-        if (QFileInfo(fileName).exists())
+        if (fileName.startsWith(QLatin1String("http://")))
+            playlist->addMedia(QUrl(fileName));
+        else if (QFileInfo(fileName).exists())
             playlist->addMedia(QUrl::fromLocalFile(fileName));
     }
 }
@@ -316,7 +318,7 @@ void Player::statusChanged(QMediaPlayer::MediaStatus status)
 
 void Player::bufferingProgress(int progress)
 {
-    setStatusInfo(tr("Buffering %4%%").arg(progress));
+    setStatusInfo(tr("Buffering %4%").arg(progress));
 }
 
 void Player::setTrackInfo(const QString &info)

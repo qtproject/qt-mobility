@@ -104,6 +104,7 @@ public:
     virtual bool isMuted() const;
     virtual void setMuted(bool muted);
     virtual int bufferStatus() const;
+    virtual bool isAudioAvailable() const;
     virtual bool isVideoAvailable() const;
     virtual bool isSeekable() const;
     virtual QMediaTimeRange availablePlaybackRanges() const;

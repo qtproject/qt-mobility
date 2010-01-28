@@ -183,8 +183,9 @@ public:
     int maximumZoom();
     int minZoom();
     int maxDigitalZoom();
-    void setZoomFactor(int value);
+    void setZoomFactor(qreal optical, qreal digital);
     int zoomFactor();
+    int digitalZoomFactor();
 
     //cameraexposurecontrol
     void setFlashMode(QCamera::FlashMode mode);
@@ -236,7 +237,10 @@ Q_SIGNALS:
     void imageSaved(const QString &fileName);
     //for focuscontrol
     void focusStatusChanged(QCamera::FocusStatus);
-    void zoomValueChanged(qreal value);
+    void opticalZoomChanged(qreal opticalZoom);
+    void digitalZoomChanged(qreal digitalZoom);
+        
+        
 
 private:
     CCameraEngine *m_cameraEngine;
