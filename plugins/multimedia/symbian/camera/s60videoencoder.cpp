@@ -67,7 +67,7 @@ QStringList S60VideoEncoder::supportedVideoCodecs() const
 
 QString S60VideoEncoder::videoCodecDescription(const QString &codecName) const
 {
-    return m_codecDescriptions.value(codecName);    
+    return m_session->videoCaptureCodecDescription(codecName);   
 }
 
 QString S60VideoEncoder::videoCodec() const
@@ -171,19 +171,51 @@ void S60VideoEncoder::setResolution(const QSize resolution)
 }
 
 QStringList S60VideoEncoder::supportedEncodingOptions(const QString &codec) const
-{
-    return m_codecOptions.value(codec);
+{    
+    Q_UNUSED(codec)
+    QStringList list;
+    return list;
 }
 
 QVariant S60VideoEncoder::encodingOption(const QString &codec, const QString &name) const
 {
-    return m_options[codec].value(name);
+    Q_UNUSED(codec)
+ 
+    if(qstrcmp(name.toLocal8Bit().constData(), "bitrate") == 0) {
+        return QVariant(m_session->bitrate());
+    }
+    else if(qstrcmp(name.toLocal8Bit().constData(), "quality") == 0) {
+        return QVariant(m_session->captureQuality());
+    }
+    else if(qstrcmp(name.toLocal8Bit().constData(), "framerate") == 0) {
+        return QVariant(m_session->framerate());
+    }
+    else if(qstrcmp(name.toLocal8Bit().constData(), "resolution") == 0) {
+        return QVariant(m_session->videoResolution());
+    }
+    else
+        return QVariant();    
 }
 
 void S60VideoEncoder::setEncodingOption(
         const QString &codec, const QString &name, const QVariant &value)
-{
-    m_options[codec][name] = value;
+{    
+    Q_UNUSED(codec)
+    
+    if(qstrcmp(name.toLocal8Bit().constData(), "bitrate") == 0) {
+        setBitRate(value.toInt());
+    }
+    else if(qstrcmp(name.toLocal8Bit().constData(), "quality") == 0) {
+        setQuality((QtMedia::EncodingQuality)value.toInt());
+    }
+    else if(qstrcmp(name.toLocal8Bit().constData(), "framerate") == 0) {
+        setFrameRate(value.toInt());
+    }
+    else if(qstrcmp(name.toLocal8Bit().constData(), "resolution") == 0) {
+        setResolution(value.toSize());
+    }
+    else
+        qWarning() << "option: " << name << " is an unknown option!";
 }
 
 QVideoEncoderSettings S60VideoEncoder::videoSettings() const
@@ -199,13 +231,7 @@ QVideoEncoderSettings S60VideoEncoder::videoSettings() const
 
 void S60VideoEncoder::setVideoSettings(const QVideoEncoderSettings &settings)
 {
-   /* setVideoCodec(settings.codec());
-    setBitRate(settings.bitRate());
-    setQuality(settings.quality());
-    setFrameRate(settings.frameRate());
-    setResolution(settings.resolution());*/
     QVideoEncoderSettings tempSettings = settings;    
-    
     m_session->saveVideoEncoderSettings(tempSettings);
 }
 
