@@ -54,8 +54,8 @@ int QGeoSatelliteInfoSourceMaemo::init()
 
     dbusComm = new DBusComm();
     status = dbusComm->init();
-    
-    QObject::connect(dbusComm, SIGNAL(npeMessage(const QByteArray &)), 
+
+    QObject::connect(dbusComm, SIGNAL(npeMessage(const QByteArray &)),
                      this, SLOT(npeMessages(const QByteArray &)));
 
     return status;
@@ -74,11 +74,11 @@ void QGeoSatelliteInfoSourceMaemo::dbusMessages(const QByteArray &msg)
 void QGeoSatelliteInfoSourceMaemo::startUpdates()
 {
 #if 0
-    int len = npe.NewStartTrackingMsg(&msg,client_id_, NpeIf::MethodAll,
+    int len = npe.NewStartTrackingMsg(&msg, client_id_, NpeIf::MethodAll,
                                       NpeIf::OptionNone , 1);
 
     // cout << "ISI Message len " << len << "\n";
-    dbusComm->sendIsiMessage(msg,len);
+    dbusComm->sendIsiMessage(msg, len);
     delete [] msg;
 #endif
 
@@ -111,14 +111,14 @@ void QGeoSatelliteInfoSourceMaemo::stopUpdates()
 void QGeoSatelliteInfoSourceMaemo::requestUpdate(int timeout)
 {
     int a;
-    a = timeout +1;
+    a = timeout + 1;
 
 }
 
 #if 0
-    void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &satellites);
-    void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &satellites);
-    void requestTimeout();
+void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &satellites);
+void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &satellites);
+void requestTimeout();
 #endif
 
 #include "moc_qgeosatelliteinfosource_maemo_p.cpp"

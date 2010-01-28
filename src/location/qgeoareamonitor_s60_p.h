@@ -61,7 +61,7 @@ QTM_BEGIN_NAMESPACE
  *
  */
 class QGeoAreaMonitorS60 : public INotificationMonitorCallback,
-        public QGeoAreaMonitor
+            public QGeoAreaMonitor
 
 {
 public :

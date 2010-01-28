@@ -79,7 +79,7 @@ CMonitorTriggerInfo* CBackendMonitorInfo::getMonitorTriggerInfo(QGeoAreaMonitorS
 }
 
 //creates and adds a new CMonitorTriggerInfo object to the end of linked list
-bool CBackendMonitorInfo::addMonitorTriggerInfo(QGeoAreaMonitorS60* aParent,TLbtTriggerId aTriggerID, enTriggerType aType)
+bool CBackendMonitorInfo::addMonitorTriggerInfo(QGeoAreaMonitorS60* aParent, TLbtTriggerId aTriggerID, enTriggerType aType)
 {
     CMonitorTriggerInfo* currentNode = NULL;
 
