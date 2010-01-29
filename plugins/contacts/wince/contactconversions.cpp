@@ -1568,7 +1568,7 @@ static bool sortPOOMContacts(const SimpleComPointer<IPOutlookItemCollection>& co
     return SUCCEEDED(hr);
 }
 
-QList<QContactLocalId> QContactWinCEEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+QList<QContactLocalId> QContactWinCEEngine::contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
     QString query = convertFilterToQueryString(filter);
 
@@ -1601,10 +1601,10 @@ QList<QContactLocalId> QContactWinCEEngine::contacts(const QContactFilter& filte
         }
     }
     //Fail back to generic filtering
-    return QContactManagerEngine::contacts(filter, sortOrders, error);
+    return QContactManagerEngine::contactIds(filter, sortOrders, error);
 }
 
-QList<QContactLocalId> QContactWinCEEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+QList<QContactLocalId> QContactWinCEEngine::contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
     QList<QContactLocalId> ids;
     error = QContactManager::NoError;

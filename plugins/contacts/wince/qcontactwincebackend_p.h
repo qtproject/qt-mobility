@@ -210,11 +210,11 @@ public:
     QString managerName() const;
 
     /* Filtering */
-    QList<QContactLocalId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
 
     /* Contacts - Accessors and Mutators */
-    QList<QContactLocalId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-    QContact contact(const QContactLocalId& contactId, QContactManager::Error& error) const;
+    QList<QContactLocalId> contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    QContact contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
     bool saveContact(QContact* contact, QContactManager::Error& error);
     bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
 
@@ -231,12 +231,11 @@ public:
     void requestDestroyed(QContactAbstractRequest* req);
     bool startRequest(QContactAbstractRequest* req);
     bool cancelRequest(QContactAbstractRequest* req);
-    bool waitForRequestProgress(QContactAbstractRequest* req, int msecs);
     bool waitForRequestFinished(QContactAbstractRequest* req, int msecs);
 
     /* Capabilities reporting */
     bool hasFeature(QContactManager::ManagerFeature feature) const;
-    bool filterSupported(const QContactFilter& filter) const;
+    bool isFilterSupported(const QContactFilter& filter) const;
     QList<QVariant::Type> supportedDataTypes() const;
 
     /* Synthesize the display label of a contact */
