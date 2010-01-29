@@ -4,7 +4,7 @@
 #include <QtCore/qglobal.h>
 
 
-#ifdef ICHECKTESTBUILD
+#ifdef ICHECK_APP_BUILD
 #  define ICHECKLIBSHARED_EXPORT
 #else
 #  if defined(ICHECKLIB_LIBRARY)

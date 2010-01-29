@@ -11,19 +11,7 @@
 
 using namespace std;
 
-QStringList getQTIncludePath()
-{
-    QStringList ret;
-    QStringList processevironment = QProcess::systemEnvironment();
-    foreach(QString item, processevironment){
-        if(item.indexOf("QTDIR=") == 0){
-            QString qtpath = item.remove("QTDIR=");
-            ret << qtpath + "/include/QtCore";
-            break;
-        }
-    }
-    return ret;
-}
+extern QStringList getQTIncludePath();
 
 int main(int argc, char *argv[])
 {
@@ -91,12 +79,9 @@ int main(int argc, char *argv[])
         }
     }
     else{
-        cout << "CompareHeaderWithHeader.exe";
+        cout << "icheck.exe";
         cout << " \"Interface header\"";
         cout << " \"headerfile to check\"";
     }
-
-    qDebug() << endl << endl << "return value: " << ret;
-    getchar();
     return ret;
 }

@@ -1,10 +1,10 @@
-REL_PATH_TO_SRC = ../../../tools/icheck/ichecklib/src
+REL_PATH_TO_SRC = ../../../tools/icheck/parser/src
 
 QT += testlib xml
 TARGET=tst_icheck
 CONFIG+=testcase
 QT -= gui
-DEFINES += ICHECK_BUILD ICHECKTESTBUILD
+DEFINES += ICHECK_BUILD ICHECK_APP_BUILD
 
 wince*|symbian*: {
     addFiles.sources = testdata/*
@@ -27,13 +27,9 @@ INCLUDEPATH += . \
     $$REL_PATH_TO_SRC/plugins \
     $$REL_PATH_TO_SRC/libs \
     $$REL_PATH_TO_SRC/shared/cplusplus \
-    $$REL_PATH_TO_SRC/tools/ICheck \
     $$REL_PATH_TO_SRC/libs/cplusplus
 
-include(../../../tools/icheck/ichecklib/ichecklib.pri)
-
-CONFIG += mobility
-MOBILITY = icheck
+include(../../../tools/icheck/parser/ichecklib.pri)
 
 SOURCES  += tst_icheck.cpp
 

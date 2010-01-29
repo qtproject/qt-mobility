@@ -50,7 +50,7 @@ with return type, function name
 and their arguments and arguments 
 types.
 **********************************/
-bool ParseManager::FUNCTIONITEM::isEqualTo(ParseManager::FUNCTIONITEM *cpfct, bool ignoreName/* = true*/)
+bool FUNCTIONITEM::isEqualTo(FUNCTIONITEM *cpfct, bool ignoreName/* = true*/)
 {
     if(ignoreName)
         return function->isEqualTo(cpfct->function, true);
@@ -65,7 +65,7 @@ and function types.
 
 Q_PROPERTY( ConnectionState state READ state NOTIFY stateChanged);
 ******************************************************************/
-bool ParseManager::PROPERTYITEM::isEqualTo(ParseManager::PROPERTYITEM *cpppt)
+bool PROPERTYITEM::isEqualTo(PROPERTYITEM *cpppt)
 {
     QString thistype = this->trlUnit->spell(this->ast->type_token);
     QString cppttype = cpppt->trlUnit->spell(cpppt->ast->type_token);
@@ -121,7 +121,7 @@ bool ParseManager::PROPERTYITEM::isEqualTo(ParseManager::PROPERTYITEM *cpppt)
 Compares two enums regarding
 of their values created by the getEnumValueStringList function.
 *****************************************************************/
-bool ParseManager::QENUMITEM::isEqualTo(QENUMITEM *cpenum)
+bool QENUMITEM::isEqualTo(QENUMITEM *cpenum)
 {
     if(this->values.count() != cpenum->values.count())
         return false;
@@ -137,7 +137,7 @@ Compares two flags regarding
 of their enum definitions and their 
 values created by the getEnumValueStringList function.
 *****************************************************************/
-bool ParseManager::QFLAGITEM::isEqualTo(QFLAGITEM *cpflag)
+bool QFLAGITEM::isEqualTo(QFLAGITEM *cpflag)
 {
     if(this->enumvalues.count() != cpflag->enumvalues.count())
         return false;
@@ -236,7 +236,7 @@ void ParseManager::parse(CppTools::Internal::CppPreprocessor *preproc,
 //==> list[0] = {Cl1, Cl11, Cl12}
 //    list[1] = {Cl2, Cl21, Cl22}
 
-QList<ParseManager::CLASSTREE*> ParseManager::CreateClassLists()
+QList<CLASSTREE*> ParseManager::CreateClassLists()
 {
     QList<CLASSTREE*>ret;
     QList<CLASSLISTITEM*> classlist;
@@ -633,7 +633,7 @@ bool ParseManager::checkAllMetadatas(ParseManager* pInterfaceParserManager)
 Function that checks all functions
 which will occur in the MetaData
 ***********************************/
-QList<ParseManager::FUNCTIONITEM*> ParseManager::checkMetadataFunctions(const QList<QList<FUNCTIONITEM*> > &classfctlist, const QList<QList<FUNCTIONITEM*> > &iclassfctlist)
+QList<FUNCTIONITEM*> ParseManager::checkMetadataFunctions(const QList<QList<FUNCTIONITEM*> > &classfctlist, const QList<QList<FUNCTIONITEM*> > &iclassfctlist)
 {
     QList<FUNCTIONITEM*> missingifcts;
     //Compare each function from interface with function from header (incl. baseclass functions)
@@ -678,7 +678,7 @@ Check if all function from iclassfctlist are defined
 in the classfctlist as well.
 It will return all the function they are missing.
 ****************************************************/
-QList<ParseManager::FUNCTIONITEM*> ParseManager::containsAllMetadataFunction(const QList<FUNCTIONITEM*> &classfctlist, const QList<FUNCTIONITEM*> &iclassfctlist)
+QList<FUNCTIONITEM*> ParseManager::containsAllMetadataFunction(const QList<FUNCTIONITEM*> &classfctlist, const QList<FUNCTIONITEM*> &iclassfctlist)
 {
     QList<FUNCTIONITEM*> ret;
     foreach(FUNCTIONITEM* ifct, iclassfctlist){
@@ -783,7 +783,7 @@ QString ParseManager::getErrorMessage(FUNCTIONITEM* fct)
 Function that checks all Property
 which will occur in the MetaData
 ***********************************/
-QList<ParseManager::PROPERTYITEM*> ParseManager::checkMetadataProperties(const QList<QList<PROPERTYITEM*> > &classproplist
+QList<PROPERTYITEM*> ParseManager::checkMetadataProperties(const QList<QList<PROPERTYITEM*> > &classproplist
                                                                          , const QList<QList<FUNCTIONITEM*> > &classfctlist
                                                                          , const QList<QList<PROPERTYITEM*> > &iclassproplist
                                                                          , const QList<QList<FUNCTIONITEM*> > &iclassfctlist)
@@ -913,7 +913,7 @@ Function that checks if all functions
 dependencies in Q_PROPERTY have the
 same arguments and retunr value.
 ***************************************/
-QList<ParseManager::PROPERTYITEM*> ParseManager::containsAllPropertyFunction(const QList<PROPERTYITEM*> &classproplist, const QList<PROPERTYITEM*> &iclassproplist)
+QList<PROPERTYITEM*> ParseManager::containsAllPropertyFunction(const QList<PROPERTYITEM*> &classproplist, const QList<PROPERTYITEM*> &iclassproplist)
 {
     QList<PROPERTYITEM*> ret;
     foreach(PROPERTYITEM* ipropt, iclassproplist){
@@ -1010,7 +1010,7 @@ QString ParseManager::getErrorMessage(PROPERTYITEM* ppt)
 Function that checks all enums
 which will occur in the MetaData
 ***********************************/
-QList<ParseManager::QENUMITEM*> ParseManager::checkMetadataEnums(const QList<QList<QENUMITEM*> > &classqenumlist
+QList<QENUMITEM*> ParseManager::checkMetadataEnums(const QList<QList<QENUMITEM*> > &classqenumlist
                                                 , const QList<QList<ENUMITEM*> > &classenumlist
                                                 , const QList<QList<QENUMITEM*> > &iclassqenumlist
                                                 , const QList<QList<ENUMITEM*> > &iclassenumlist)
@@ -1129,7 +1129,7 @@ Function that checkt if the Q_ENUMS
 are completed defined and if the
 Enum values are the same.
 ***********************************/
-QList<ParseManager::QENUMITEM*> ParseManager::containsAllEnums(const QList<QENUMITEM*> &classqenumlist, const QList<QENUMITEM*> &iclassqenumlist)
+QList<QENUMITEM*> ParseManager::containsAllEnums(const QList<QENUMITEM*> &classqenumlist, const QList<QENUMITEM*> &iclassqenumlist)
 {
     QList<QENUMITEM*> ret;
     foreach(QENUMITEM* iqenum, iclassqenumlist){
@@ -1206,7 +1206,7 @@ QString ParseManager::getErrorMessage(QENUMITEM* qenum)
 Function that checks all flags
 which will occur in the MetaData
 ***********************************/
-QList<ParseManager::QFLAGITEM*> ParseManager::checkMetadataFlags(const QList<QList<QFLAGITEM*> > &classqflaglist
+QList<QFLAGITEM*> ParseManager::checkMetadataFlags(const QList<QList<QFLAGITEM*> > &classqflaglist
                                             , const QList<QList<QDECLAREFLAGSITEM*> > &classqdeclareflaglist
                                             , const QList<QList<ENUMITEM*> > &classenumlist
                                             , const QList<QList<QFLAGITEM*> > &iclassqflaglist
@@ -1307,7 +1307,7 @@ Function that compares if all enums
 and flags assigned by using the Q_FLAGS
 are complete defined.
 *****************************************/
-QList<ParseManager::QFLAGITEM*> ParseManager::containsAllFlags(const QList<QFLAGITEM*> &classqflaglist, const QList<QFLAGITEM*> &iclassqflaglist)
+QList<QFLAGITEM*> ParseManager::containsAllFlags(const QList<QFLAGITEM*> &classqflaglist, const QList<QFLAGITEM*> &iclassqflaglist)
 {
     QList<QFLAGITEM*> ret;
     foreach(QFLAGITEM* iqflags, iclassqflaglist){
