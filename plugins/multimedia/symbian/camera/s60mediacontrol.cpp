@@ -95,10 +95,6 @@ qint64 S60MediaControl::duration() const
 This method is called after encoder configuration is done.
 Encoder can load necessary resources at this point,
 to reduce delay before recording is started.
-
-Commits the encoder settings and performs pre-initialization to reduce delays when recording
-
-is started.
 */
 void S60MediaControl::applySettings()
 {
