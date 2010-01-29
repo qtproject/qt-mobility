@@ -39,16 +39,15 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qvariant.h>
-#include <QtCore/qdebug.h>
 #include <QtGui/qx11info_x11.h>
+#include <QtCore/qdebug.h>
+#include <QtCore/qvariant.h>
 #include <QtMultimedia/qvideosurfaceformat.h>
 
-#include "qx11videosurface.h"
-
-Q_DECLARE_METATYPE(XvImage*);
+#include "qxvideosurface_maemo5_p.h"
 
 static QAbstractVideoBuffer::HandleType XvHandleType = QAbstractVideoBuffer::HandleType(4);
+
 
 struct XvFormatRgb
 {
@@ -136,16 +135,17 @@ static const XvFormatYuv qt_xvYuvLookup[] =
     { QVideoFrame::Format_Y8     , 8 , XvPlanar, 1, 8, 0, 0, 1, 0, 0, 1, 0, 0, "Y"    }
 };
 
-QX11VideoSurface::QX11VideoSurface(QObject *parent)
+QXVideoSurface::QXVideoSurface(QObject *parent)
     : QAbstractVideoSurface(parent)
     , m_winId(0)
     , m_portId(0)
     , m_gc(0)
     , m_image(0)
+    , m_colorKey(16,7,2)
 {
 }
 
-QX11VideoSurface::~QX11VideoSurface()
+QXVideoSurface::~QXVideoSurface()
 {
     if (m_gc)
         XFreeGC(QX11Info::display(), m_gc);
@@ -154,12 +154,12 @@ QX11VideoSurface::~QX11VideoSurface()
         XvUngrabPort(QX11Info::display(), m_portId, 0);
 }
 
-WId QX11VideoSurface::winId() const
+WId QXVideoSurface::winId() const
 {
     return m_winId;
 }
 
-void QX11VideoSurface::setWinId(WId id)
+void QXVideoSurface::setWinId(WId id)
 {
     if (id == m_winId)
         return;
@@ -200,57 +200,27 @@ void QX11VideoSurface::setWinId(WId id)
     emit supportedFormatsChanged();
 }
 
-QRect QX11VideoSurface::displayRect() const
+QRect QXVideoSurface::displayRect() const
 {
     return m_displayRect;
 }
 
-void QX11VideoSurface::setDisplayRect(const QRect &rect)
+void QXVideoSurface::setDisplayRect(const QRect &rect)
 {
     m_displayRect = rect;
 }
 
-int QX11VideoSurface::brightness() const
+QColor QXVideoSurface::colorKey() const
 {
-    return getAttribute("XV_BRIGHTNESS", m_brightnessRange.first, m_brightnessRange.second);
+    return m_colorKey;
 }
 
-void QX11VideoSurface::setBrightness(int brightness)
+void QXVideoSurface::setColorKey(QColor key)
 {
-    setAttribute("XV_BRIGHTNESS", brightness, m_brightnessRange.first, m_brightnessRange.second);
+    m_colorKey = key;
 }
 
-int QX11VideoSurface::contrast() const
-{
-    return getAttribute("XV_CONTRAST", m_contrastRange.first, m_contrastRange.second);
-}
-
-void QX11VideoSurface::setContrast(int contrast)
-{
-    setAttribute("XV_CONTRAST", contrast, m_contrastRange.first, m_contrastRange.second);
-}
-
-int QX11VideoSurface::hue() const
-{
-    return getAttribute("XV_HUE", m_hueRange.first, m_hueRange.second);
-}
-
-void QX11VideoSurface::setHue(int hue)
-{
-    setAttribute("XV_HUE", hue, m_hueRange.first, m_hueRange.second);
-}
-
-int QX11VideoSurface::saturation() const
-{
-    return getAttribute("XV_SATURATION", m_saturationRange.first, m_saturationRange.second);
-}
-
-void QX11VideoSurface::setSaturation(int saturation)
-{
-    setAttribute("XV_SATURATION", saturation, m_saturationRange.first, m_saturationRange.second);
-}
-
-int QX11VideoSurface::getAttribute(const char *attribute, int minimum, int maximum) const
+int QXVideoSurface::getAttribute(const char *attribute) const
 {
     if (m_portId != 0) {
         Display *display = QX11Info::display();
@@ -261,63 +231,74 @@ int QX11VideoSurface::getAttribute(const char *attribute, int minimum, int maxim
 
         XvGetPortAttribute(display, m_portId, atom, &value);
 
-        return redistribute(value, minimum, maximum, -100, 100);
+        return value;
     } else {
         return 0;
     }
 }
 
-void QX11VideoSurface::setAttribute(const char *attribute, int value, int minimum, int maximum)
+void QXVideoSurface::setAttribute(const char *attribute, int value)
 {
     if (m_portId != 0) {
         Display *display = QX11Info::display();
 
         Atom atom = XInternAtom(display, attribute, True);
 
-        XvSetPortAttribute(
-                display, m_portId, atom, redistribute(value, -100, 100, minimum, maximum));
+        XvSetPortAttribute(display, m_portId, atom, value);
     }
 }
 
-int QX11VideoSurface::redistribute(
-        int value, int fromLower, int fromUpper, int toLower, int toUpper)
-{
-    return fromUpper != fromLower
-            ? ((value - fromLower) * (toUpper - toLower) / (fromUpper - fromLower)) + toLower
-            : 0;
-}
-
-QList<QVideoFrame::PixelFormat> QX11VideoSurface::supportedPixelFormats(
+QList<QVideoFrame::PixelFormat> QXVideoSurface::supportedPixelFormats(
         QAbstractVideoBuffer::HandleType handleType) const
 {
-    return handleType == QAbstractVideoBuffer::NoHandle || handleType ==  XvHandleType
-            ? m_supportedPixelFormats
-            : QList<QVideoFrame::PixelFormat>();
+    if ( handleType == QAbstractVideoBuffer::NoHandle ||
+         handleType == XvHandleType )
+        return m_supportedPixelFormats;
+    else
+        return QList<QVideoFrame::PixelFormat>();
 }
 
-bool QX11VideoSurface::start(const QVideoSurfaceFormat &format)
+bool QXVideoSurface::start(const QVideoSurfaceFormat &format)
 {
+    //qDebug() << "QXVideoSurface::start" << format;
+
     if (m_image)
         XFree(m_image);
 
-    int xvFormatId = 0;
+    m_xvFormatId = 0;
     for (int i = 0; i < m_supportedPixelFormats.count(); ++i) {
         if (m_supportedPixelFormats.at(i) == format.pixelFormat()) {
-            xvFormatId = m_formatIds.at(i);
+            m_xvFormatId = m_formatIds.at(i);
             break;
         }
     }
 
-    if (xvFormatId == 0) {
+    if (m_xvFormatId == 0) {
         setError(UnsupportedFormatError);
     } else {
-        XvImage *image = XvCreateImage(
+        XvImage *image = XvShmCreateImage(
                 QX11Info::display(),
                 m_portId,
-                xvFormatId,
+                m_xvFormatId,
                 0,
                 format.frameWidth(),
-                format.frameHeight());
+                format.frameHeight(),
+                &m_shminfo
+                );
+
+        if (!image) {
+            setError(ResourceError);
+            return false;
+        }
+
+        m_shminfo.shmid = shmget(IPC_PRIVATE, image->data_size, IPC_CREAT | 0777);
+        m_shminfo.shmaddr = image->data = (char*)shmat(m_shminfo.shmid, 0, 0);
+        m_shminfo.readOnly = False;
+
+        if (!XShmAttach(QX11Info::display(), &m_shminfo)) {
+            qDebug() << "XShmAttach failed";
+            return false;
+        }
 
         if (!image) {
             setError(ResourceError);
@@ -325,9 +306,19 @@ bool QX11VideoSurface::start(const QVideoSurfaceFormat &format)
             m_viewport = format.viewport();
             m_image = image;
 
+            quint32 c = m_colorKey.rgb();
+            quint16 colorKey16 = ((c >> 3) & 0x001f)
+                   | ((c >> 5) & 0x07e0)
+                   | ((c >> 8) & 0xf800);
+
+            setAttribute("XV_AUTOPAINT_COLORKEY", 0);
+            setAttribute("XV_COLORKEY", colorKey16);
+            setAttribute("XV_OMAP_VSYNC", 1);
+            setAttribute("XV_DOUBLE_BUFFER", 0);
+
             QVideoSurfaceFormat newFormat = format;
             newFormat.setProperty("portId", QVariant(quint64(m_portId)));
-            newFormat.setProperty("xvFormatId", xvFormatId);
+            newFormat.setProperty("xvFormatId", m_xvFormatId);
             newFormat.setProperty("dataSize", image->data_size);
 
             return QAbstractVideoSurface::start(newFormat);
@@ -343,17 +334,18 @@ bool QX11VideoSurface::start(const QVideoSurfaceFormat &format)
     return false;
 }
 
-void QX11VideoSurface::stop()
+void QXVideoSurface::stop()
 {
     if (m_image) {
         XFree(m_image);
         m_image = 0;
+        lastFrame = QVideoFrame();
 
         QAbstractVideoSurface::stop();
     }
 }
 
-bool QX11VideoSurface::present(const QVideoFrame &frame)
+bool QXVideoSurface::present(const QVideoFrame &frame)
 {
     if (!m_image) {
         setError(StoppedError);
@@ -362,77 +354,68 @@ bool QX11VideoSurface::present(const QVideoFrame &frame)
         setError(IncorrectFormatError);
         return false;
     } else {
-        QVideoFrame frameCopy(frame);
+        lastFrame = frame;
 
-        if (!frameCopy.map(QAbstractVideoBuffer::ReadOnly)) {
+        if (!lastFrame.map(QAbstractVideoBuffer::ReadOnly)) {
+            qWarning() << "Failed to map video frame";
             setError(IncorrectFormatError);
             return false;
         } else {
             bool presented = false;
 
             if (frame.handleType() != XvHandleType &&
-                m_image->data_size > frame.mappedBytes()) {
+                m_image->data_size > lastFrame.mappedBytes()) {
                 qWarning("Insufficient frame buffer size");
                 setError(IncorrectFormatError);
             } else if (frame.handleType() != XvHandleType &&
                        m_image->num_planes > 0 &&
-                       m_image->pitches[0] != frame.bytesPerLine()) {
+                       m_image->pitches[0] != lastFrame.bytesPerLine()) {
                 qWarning("Incompatible frame pitches");
                 setError(IncorrectFormatError);
             } else {
-                if (frame.handleType() != XvHandleType) {
-                    m_image->data = reinterpret_cast<char *>(frameCopy.bits());
+                XvImage *img = 0;
 
-                    //qDebug() << "copy frame";
-                    XvPutImage(
-                            QX11Info::display(),
-                            m_portId,
-                            m_winId,
-                            m_gc,
-                            m_image,
-                            m_viewport.x(),
-                            m_viewport.y(),
-                            m_viewport.width(),
-                            m_viewport.height(),
-                            m_displayRect.x(),
-                            m_displayRect.y(),
-                            m_displayRect.width(),
-                            m_displayRect.height());
-
-                    m_image->data = 0;
+                if (frame.handleType() == XvHandleType) {
+                    img = frame.handle().value<XvImage*>();
                 } else {
-                    XvImage *img = frame.handle().value<XvImage*>();
-
-                    //qDebug() << "render directly";
-                    if (img)
-                        XvShmPutImage(
-                           QX11Info::display(),
-                           m_portId,
-                           m_winId,
-                           m_gc,
-                           img,
-                           m_viewport.x(),
-                           m_viewport.y(),
-                           m_viewport.width(),
-                           m_viewport.height(),
-                           m_displayRect.x(),
-                           m_displayRect.y(),
-                           m_displayRect.width(),
-                           m_displayRect.height(),
-                           false);
+                    img = m_image;
+                    memcpy(m_image->data, lastFrame.bits(), qMin(lastFrame.mappedBytes(), m_image->data_size));
                 }
+
+                if (img)
+                    XvShmPutImage(
+                       QX11Info::display(),
+                       m_portId,
+                       m_winId,
+                       m_gc,
+                       img,
+                       m_viewport.x(),
+                       m_viewport.y(),
+                       m_viewport.width(),
+                       m_viewport.height(),
+                       m_displayRect.x(),
+                       m_displayRect.y(),
+                       m_displayRect.width(),
+                       m_displayRect.height(),
+                       false);
 
                 presented = true;
             }
 
-            frameCopy.unmap();
+            lastFrame.unmap();
 
             return presented;
         }
     }
 }
 
-bool QX11VideoSurface::findPort()
+void QXVideoSurface::repaintLastFrame()
+{
+    if (lastFrame.isValid())
+        present(QVideoFrame(lastFrame));
+}
+
+bool QXVideoSurface::findPort()
 {
     unsigned int count = 0;
     XvAdaptorInfo *adaptors = 0;
@@ -453,7 +436,7 @@ bool QX11VideoSurface::findPort()
     return portFound;
 }
 
-void QX11VideoSurface::querySupportedFormats()
+void QXVideoSurface::querySupportedFormats()
 {
     int count = 0;
     if (XvImageFormatValues *imageFormats = XvListImageFormats(
@@ -474,7 +457,10 @@ void QX11VideoSurface::querySupportedFormats()
                 break;
             case XvYUV:
                 for (int j = 0; j < yuvCount; ++j) {
-                    if (imageFormats[i] == qt_xvYuvLookup[j]) {
+                    //skip YUV420P and YV12 formats, they don't work correctly
+                    if (imageFormats[i] == qt_xvYuvLookup[j] &&
+                        qt_xvYuvLookup[j].pixelFormat != QVideoFrame::Format_YUV420P &&
+                        qt_xvYuvLookup[j].pixelFormat != QVideoFrame::Format_YV12) {
                         m_supportedPixelFormats.append(qt_xvYuvLookup[j].pixelFormat);
                         m_formatIds.append(imageFormats[i].id);
                         break;
@@ -484,25 +470,5 @@ void QX11VideoSurface::querySupportedFormats()
             }
         }
         XFree(imageFormats);
-    }
-
-    m_brightnessRange = qMakePair(0, 0);
-    m_contrastRange = qMakePair(0, 0);
-    m_hueRange = qMakePair(0, 0);
-    m_saturationRange = qMakePair(0, 0);
-
-    if (XvAttribute *attributes = XvQueryPortAttributes(QX11Info::display(), m_portId, &count)) {
-        for (int i = 0; i < count; ++i) {
-            if (qstrcmp(attributes[i].name, "XV_BRIGHTNESS") == 0)
-                m_brightnessRange = qMakePair(attributes[i].min_value, attributes[i].max_value);
-            else if (qstrcmp(attributes[i].name, "XV_CONTRAST") == 0)
-                m_contrastRange = qMakePair(attributes[i].min_value, attributes[i].max_value);
-            else if (qstrcmp(attributes[i].name, "XV_HUE") == 0)
-                m_hueRange = qMakePair(attributes[i].min_value, attributes[i].max_value);
-            else if (qstrcmp(attributes[i].name, "XV_SATURATION") == 0)
-                m_saturationRange = qMakePair(attributes[i].min_value, attributes[i].max_value);
-        }
-
-        XFree(attributes);
     }
 }

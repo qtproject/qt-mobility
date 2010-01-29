@@ -99,7 +99,6 @@ SOURCES += qmediacontrol.cpp \
     qaudioendpointselector.cpp \
     qvideodevicecontrol.cpp \
     qmediapluginloader.cpp \
-    qgraphicsvideoitem.cpp \
     qpaintervideosurface.cpp \
     qvideorenderercontrol.cpp \
     qmediatimerange.cpp
@@ -137,6 +136,15 @@ contains(QT_CONFIG, declarative) {
        PRIVATE_HEADERS += qsoundeffect_qsound_p.h
        SOURCES += qsoundeffect_qsound_p.cpp
    }
+}
+
+maemo5 {
+    HEADERS += qxvideosurface_maemo5_p.h
+    SOURCES += qxvideosurface_maemo5.cpp
+    SOURCES += qgraphicsvideoitem_maemo5.cpp
+    LIBS += -lXv
+} else {
+    SOURCES += qgraphicsvideoitem.cpp
 }
 
 include (experimental/experimental.pri)
