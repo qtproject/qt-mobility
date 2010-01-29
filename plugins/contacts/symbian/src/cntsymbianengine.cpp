@@ -139,7 +139,7 @@ QList<QContactLocalId> CntSymbianEngine::contactIds(
          if (rf.relationshipType() == QContactRelationship::HasMember && rf.role() == QContactRelationshipFilter::Second)
          {
              //note participant id should be changed to contact id when the api has been fixed !!
-             QList<QContactRelationship> relationshipsList = relationships(rf.relationshipType(), rf.otherParticipantId(), QContactRelationshipFilter::First, error );
+             QList<QContactRelationship> relationshipsList = relationships(rf.relationshipType(), rf.relatedContactId(), QContactRelationshipFilter::First, error );
              
              if(error == QContactManager::NoError)
              {

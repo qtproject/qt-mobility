@@ -1688,40 +1688,40 @@ void tst_QContactManagerFiltering::unionFiltering()
 void tst_QContactManagerFiltering::relationshipFiltering_data()
 {
     QTest::addColumn<QContactManager *>("cm");
-    QTest::addColumn<int>("role");
+    QTest::addColumn<int>("relatedContactRole");
     QTest::addColumn<QString>("relationshipType");
-    QTest::addColumn<unsigned int>("otherLocalId");
+    QTest::addColumn<unsigned int>("relatedContactLocalId");
     QTest::addColumn<QString>("otherManagerUri");
     QTest::addColumn<QString>("expected");
 
     for (int i = 0; i < managers.size(); i++) {
         QContactManager *manager = managers.at(i);
 
-        // match any contact that plays the "first" role in a "Has Assistant" relationship with ANY OTHER CONTACT
-        QTest::newRow("RF-1") << manager << static_cast<int>(QContactRelationshipFilter::First) << QString(QLatin1String(QContactRelationship::HasAssistant)) << static_cast<unsigned int>(0) << QString() << "ad";
+        // match any contact that has an assistant
+        QTest::newRow("RF-1") << manager << static_cast<int>(QContactRelationshipFilter::Second) << QString(QLatin1String(QContactRelationship::HasAssistant)) << static_cast<unsigned int>(0) << QString() << "ad";
 
-        // match any contact that plays the "second" role in a "Has Assistant" relationship with ANY OTHER CONTACT
-        QTest::newRow("RF-2") << manager << static_cast<int>(QContactRelationshipFilter::Second) << QString(QLatin1String(QContactRelationship::HasAssistant)) << static_cast<unsigned int>(0) << QString() << "abc";
+        // match any contact that is an assistant
+        QTest::newRow("RF-2") << manager << static_cast<int>(QContactRelationshipFilter::First) << QString(QLatin1String(QContactRelationship::HasAssistant)) << static_cast<unsigned int>(0) << QString() << "abc";
 
-        // match any contact that plays any role in a "Has Assistant" relationship with ANY OTHER CONTACT
+        // match any contact that has an assistant or is an assistant
         QTest::newRow("RF-3") << manager << static_cast<int>(QContactRelationshipFilter::Either) << QString(QLatin1String(QContactRelationship::HasAssistant)) << static_cast<unsigned int>(0) << QString() << "abcd";
 
-        // match any contact that plays the "first" role in a "Has Assistant" relationship with contact-A
-        QTest::newRow("RF-4") << manager << static_cast<int>(QContactRelationshipFilter::First) << QString(QLatin1String(QContactRelationship::HasAssistant)) << static_cast<unsigned int>(contactAId.value(manager).localId()) << contactAId.value(manager).managerUri() << "d";
+        // match any contact that have contact-A as an assistant
+        QTest::newRow("RF-4") << manager << static_cast<int>(QContactRelationshipFilter::Second) << QString(QLatin1String(QContactRelationship::HasAssistant)) << static_cast<unsigned int>(contactAId.value(manager).localId()) << contactAId.value(manager).managerUri() << "d";
 
-        // match any contact that plays the "second" role in a "Has Assistant" relationship with contact-A
-        QTest::newRow("RF-5") << manager << static_cast<int>(QContactRelationshipFilter::Second) << QString(QLatin1String(QContactRelationship::HasAssistant)) << static_cast<unsigned int>(contactAId.value(manager).localId()) << contactAId.value(manager).managerUri() << "bc";
+        // match any contact that is an assistant of contact-A
+        QTest::newRow("RF-5") << manager << static_cast<int>(QContactRelationshipFilter::First) << QString(QLatin1String(QContactRelationship::HasAssistant)) << static_cast<unsigned int>(contactAId.value(manager).localId()) << contactAId.value(manager).managerUri() << "bc";
 
-        // match any contact that plays any role in a "Has Assistant" relationship with contact-A
+        // match any contact that has contact-A as an assistant or is an assistant of contact-A
         QTest::newRow("RF-6") << manager << static_cast<int>(QContactRelationshipFilter::Either) << QString(QLatin1String(QContactRelationship::HasAssistant)) << static_cast<unsigned int>(contactAId.value(manager).localId()) << contactAId.value(manager).managerUri() << "bcd";
 
-        // match any contact that plays the "first" role in any relationship with contact-A
-        QTest::newRow("RF-7") << manager << static_cast<int>(QContactRelationshipFilter::First) << QString() << static_cast<unsigned int>(contactAId.value(manager).localId()) << contactAId.value(manager).managerUri() << "d";
+        // match any contact that is the related contact in a relationship with contact-A
+        QTest::newRow("RF-7") << manager << static_cast<int>(QContactRelationshipFilter::Second) << QString() << static_cast<unsigned int>(contactAId.value(manager).localId()) << contactAId.value(manager).managerUri() << "d";
 
-        // match any contact that plays the "second" role in any relationship with contact-A
-        QTest::newRow("RF-8") << manager << static_cast<int>(QContactRelationshipFilter::Second) << QString() << static_cast<unsigned int>(contactAId.value(manager).localId()) << contactAId.value(manager).managerUri() << "bce";
+        // match any contact has contact-A as the related contact
+        QTest::newRow("RF-8") << manager << static_cast<int>(QContactRelationshipFilter::First) << QString() << static_cast<unsigned int>(contactAId.value(manager).localId()) << contactAId.value(manager).managerUri() << "bce";
 
-        // match any contact that plays any role in any relationship with contact-A
+        // match any contact that has any relationship with contact-A
         QTest::newRow("RF-9") << manager << static_cast<int>(QContactRelationshipFilter::Either) << QString() << static_cast<unsigned int>(contactAId.value(manager).localId()) << contactAId.value(manager).managerUri() << "bcde";
     }
 }
@@ -1729,22 +1729,22 @@ void tst_QContactManagerFiltering::relationshipFiltering_data()
 void tst_QContactManagerFiltering::relationshipFiltering()
 {
     QFETCH(QContactManager*, cm);
-    QFETCH(int, role);
+    QFETCH(int, relatedContactRole);
     QFETCH(QString, relationshipType);
-    QFETCH(unsigned int, otherLocalId);
+    QFETCH(unsigned int, relatedContactLocalId);
     QFETCH(QString, otherManagerUri);
     QFETCH(QString, expected);
 
     // first, build the other participant id properly.
-    QContactId otherParticipantId;
-    otherParticipantId.setLocalId(QContactLocalId(otherLocalId));
-    otherParticipantId.setManagerUri(otherManagerUri);
+    QContactId relatedContactId;
+    relatedContactId.setLocalId(QContactLocalId(relatedContactLocalId));
+    relatedContactId.setManagerUri(otherManagerUri);
 
     // then, construct our filter.
     QContactRelationshipFilter crf;
-    crf.setRole(static_cast<QContactRelationshipFilter::Role>(role));
+    crf.setRelatedContactRole(static_cast<QContactRelationshipFilter::Role>(relatedContactRole));
     crf.setRelationshipType(relationshipType);
-    crf.setOtherParticipantId(otherParticipantId);
+    crf.setRelatedContactId(relatedContactId);
 
     // grab our results
     QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
@@ -2790,7 +2790,7 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
         QContactRelationship b2c;
         b2c.setFirst(b.id());
         b2c.setSecond(c.id());
-        b2c.setRelationshipType(QContactRelationship::HasSpouse);
+        b2c.setRelationshipType(QContactRelationship::HasMember);
 
         QContactRelationship d2a;
         d2a.setFirst(d.id());
@@ -2800,7 +2800,7 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
         QContactRelationship a2e;
         a2e.setFirst(a.id());
         a2e.setSecond(e.id());
-        a2e.setRelationshipType(QContactRelationship::HasSpouse);
+        a2e.setRelationshipType(QContactRelationship::HasMember);
 
         // now for a "negative test" - the "either/any/withContactA" test shouldn't match this!
         QContactRelationship d2nonexistent;
@@ -2809,7 +2809,7 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
         nonexistentId.setManagerUri("nonexistent-manager-uri"); // the manager uri is different
         d2nonexistent.setFirst(d.id());
         d2nonexistent.setSecond(nonexistentId);
-        d2nonexistent.setRelationshipType(QContactRelationship::HasSpouse);
+        d2nonexistent.setRelationshipType(QContactRelationship::HasMember);
 
         cm->saveRelationship(&a2b);
         cm->saveRelationship(&a2c);
