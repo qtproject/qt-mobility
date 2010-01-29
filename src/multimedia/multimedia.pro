@@ -98,7 +98,6 @@ SOURCES += qmediacontrol.cpp \
     qaudioendpointselector.cpp \
     qvideodevicecontrol.cpp \
     qmediapluginloader.cpp \
-    qgraphicsvideoitem.cpp \
     qpaintervideosurface.cpp \
     qvideorenderercontrol.cpp
 
@@ -106,6 +105,15 @@ contains(QT_CONFIG, declarative) {
    QT += declarative
    PRIVATE_HEADERS += qmlsound_p.h
    SOURCES += qmlsound.cpp
+}
+
+maemo5 {
+    HEADERS += qxvideosurface_maemo5_p.h
+    SOURCES += qxvideosurface_maemo5.cpp
+    SOURCES += qgraphicsvideoitem_maemo5.cpp
+    LIBS += -lXv
+} else {
+    SOURCES += qgraphicsvideoitem.cpp
 }
 
 include (experimental/experimental.pri)
@@ -123,7 +131,7 @@ symbian {
     deploy.path = $${EPOCROOT}
     exportheaders.sources = $$PUBLIC_HEADERS
     exportheaders.path = epoc32/include
-    
+
     for(header, exportheaders.sources) {
         BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
     }
