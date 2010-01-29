@@ -27,11 +27,12 @@ Rectangle {
             print("Got contacts: " + c.name);
             print(" Available actions: " + c.availableActions);
             print(" details: " + c.details);detailsOpacity
-            print(" context: " + c.context);
+
             var o = c.values("OnlineAccount");
             var q = c.values("Presence");
-            var a = c.values("Avatar");
-            nameModel.append({"name": c.name, "accountPath": "Account: " + o.AccountPath, "presence": "Status: " + q.Presence, "avatarsource": "file:///" + a.Avatar});
+
+
+            nameModel.append({"name": c.name, "accountPath": "Account: " + o.AccountPath, "presence": "Status: " + q.Presence, "email": c.email});
 
             var j;
             for(j in c.details){                
@@ -63,7 +64,7 @@ Rectangle {
             id: wrapper            
             border.width: 2
             radius: 5
-            height: 40
+            height: 70
             width: topItem.width-2;            
             property real detailsOpacity: 0
             Row {
@@ -87,8 +88,14 @@ Rectangle {
                         id: presenceId
                         text: presence
                     }
+                    Text {
+                        y: presenceId.y + presenceId.height
+                        id: emailId
+                        text: email
+                    }
                 }                
             }
+            /*
             Image {
                 id: avatar
                 height: wrapper.height-6
@@ -97,7 +104,7 @@ Rectangle {
                 y: 3                
                 opacity: details.opacity
                 fillMode: Image.PreserveAspectFit
-            }
+            }*/
             states: State {
                 name: "Details"
                 PropertyChanges { target: wrapper; height: presenceId.y + presenceId.height }

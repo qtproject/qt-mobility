@@ -1,7 +1,7 @@
 #include "qmlcontact.h"
-#include <qcontactname.h>
+#include <qcontactdetails.h>
 #include <QtDebug>
-
+#include <QStringList>
 
 QT_USE_NAMESPACE
 QTM_USE_NAMESPACE
@@ -89,6 +89,25 @@ void QmlContact::setName(QString name)
     emit nameChanged(this);
 }
 
+QString QmlContact::email()
+{
+    QList<QContactDetail> allEmails = m_contact.details(QContactEmailAddress::DefinitionName);
+
+    QStringList emails;
+    foreach (const QContactDetail& email, allEmails) {
+        emails << email.value(QContactEmailAddress::FieldEmailAddress);
+    }
+    return emails.join(QString::fromLatin1(","));
+}
+
+void QmlContact::setEmail(QString email)
+{
+    Q_UNUSED(email);
+    qWarning() << "Not implemented yet";
+    emit emailChanged(this);
+}
+
+
 QStringList QmlContact::availableActions()
 {
     QList<QContactActionDescriptor> actions =  m_contact.availableActions();
@@ -127,7 +146,7 @@ QVariantMap QmlContact::values(QString definitionId)
     QStringList strlist;
     QContactDetail detail = m_contact.detail(definitionId);
 
-    QVariantMap map = detail.values();
+    QVariantMap map = detail.variantValues();
     //qWarning() << "Number of e: " << map.count();
     return map;
 

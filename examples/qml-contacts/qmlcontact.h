@@ -11,6 +11,7 @@ class QmlContact : public QObject {
 Q_OBJECT
 Q_PROPERTY(QContact contact READ contact WRITE setContact NOTIFY contactChanged)
 Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+Q_PROPERTY(QString email READ email WRITE setEmail NOTIFY emailChanged)
 Q_PROPERTY(QString test READ test)
 Q_PROPERTY(QStringList availableActions READ availableActions)
 Q_PROPERTY(QStringList details READ details)
@@ -26,6 +27,9 @@ public:
     QString name();
     void setName(QString name);
 
+    QString email();
+    void setEmail(QString email);
+
     QStringList availableActions();
     QStringList details();
 
@@ -38,6 +42,7 @@ public:
 signals:
     void contactChanged(QmlContact* qmlcontact);
     void nameChanged(QmlContact* qmlcontact);
+    void emailChanged(QmlContact* qmlcontact);
 
 private:
     QContact m_contact;
