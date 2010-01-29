@@ -65,8 +65,8 @@ public:
     };
 
     enum CoordinateFormat {
-        DecimalDegrees,
-        DecimalDegreesWithHemisphere,
+        Degrees,
+        DegreesWithHemisphere,
         DegreesMinutes,
         DegreesMinutesWithHemisphere,
         DegreesMinutesSeconds,

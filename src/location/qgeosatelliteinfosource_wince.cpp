@@ -75,12 +75,12 @@ QGeoSatelliteInfoSourceWinCE::QGeoSatelliteInfoSourceWinCE(QObject *parent) : QG
     QGeoSatelliteInfoValidator *validator = new QGeoSatelliteInfoValidator();
 
     // The QGeoInfoThreadWinCE instance takes ownership of the validator.
-    infoThread = new QGeoInfoThreadWinCE(validator, this);
+    infoThread = new QGeoInfoThreadWinCE(validator, false, this);
     infoThread->setUpdateInterval(DefaultUpdateInterval);
 
     // QGeoInfoThreadWinCE takes care of registering GPS_POSITION as a metatype.
     connect(infoThread, SIGNAL(dataUpdated(GPS_POSITION)), this, SLOT(dataUpdated(GPS_POSITION)));
-    connect(infoThread, SIGNAL(requestTimeout()), this, SIGNAL(requestTimeout()));
+    connect(infoThread, SIGNAL(updateTimeout()), this, SIGNAL(requestTimeout()));
 }
 
 QGeoSatelliteInfoSourceWinCE::~QGeoSatelliteInfoSourceWinCE()
@@ -133,12 +133,12 @@ void QGeoSatelliteInfoSourceWinCE::dataUpdated(GPS_POSITION data)
         // The following properties are optional, and so are set if the data is present and valid
         // in the GPS_POSITION structure.
         if ((data.dwValidFields & GPS_VALID_SATELLITES_IN_VIEW_AZIMUTH) != 0) {
-            satellite.setProperty(QGeoSatelliteInfo::Azimuth,
+            satellite.setAttribute(QGeoSatelliteInfo::Azimuth,
                                   data.rgdwSatellitesInViewAzimuth[i]);
         }
 
         if ((data.dwValidFields & GPS_VALID_SATELLITES_IN_VIEW_ELEVATION) != 0) {
-            satellite.setProperty(QGeoSatelliteInfo::Elevation,
+            satellite.setAttribute(QGeoSatelliteInfo::Elevation,
                                   data.rgdwSatellitesInViewElevation[i]);
         }
 
