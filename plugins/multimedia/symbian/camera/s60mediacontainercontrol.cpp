@@ -52,7 +52,7 @@ S60MediaContainerControl::S60MediaContainerControl(QObject *session, QObject *pa
 {
     m_session = qobject_cast<S60CameraSession*>(session);
 
-    m_supportedContainers.append("no mux");
+    m_supportedContainers.append("mp4");
     setContainerMimeType(m_supportedContainers[0]);
 
 }
