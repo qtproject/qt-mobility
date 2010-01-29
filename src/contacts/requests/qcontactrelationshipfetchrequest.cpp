@@ -85,14 +85,14 @@ QContactRelationshipFetchRequest::~QContactRelationshipFetchRequest()
 {
 }
 
-/*! Sets the source contact criterion of the fetch request to \a contactId.
-    If \a contactId is the default-constructed id, or the first contact is not set,
+/*! Sets the source contact criterion of the fetch request to \a firstId.
+    If \a firstId is the default-constructed id, or the first contact id is not set,
     the request will fetch relationships involving any first contact.
 */
-void QContactRelationshipFetchRequest::setFirst(const QContactId& contactId)
+void QContactRelationshipFetchRequest::setFirst(const QContactId& firstId)
 {
     Q_D(QContactRelationshipFetchRequest);
-    d->m_first = contactId;
+    d->m_first = firstId;
 }
 
 /*! Returns the source contact criterion of the fetch request
@@ -121,8 +121,26 @@ QString QContactRelationshipFetchRequest::relationshipType() const
     return d->m_relationshipType;
 }
 
-/*!
+/*! Sets the destination contact criterion of the fetch request to \a secondId.
+    If \a secondId is the default-constructed id, or the second contact id is not set,
+    the request will fetch relationships involving any second contact.
+*/
+void QContactRelationshipFetchRequest::setSecond(const QContactId& secondId)
+{
+    Q_D(QContactRelationshipFetchRequest);
+    d->m_second = secondId;
+}
 
+/*! Returns the destination contact criterion of the fetch request
+ */
+QContactId QContactRelationshipFetchRequest::second() const
+{
+    Q_D(const QContactRelationshipFetchRequest);
+    return d->m_second;
+}
+
+/*!
+  \deprecated
   Sets the participant criterion of the fetch request to \a
   participantUri.  If the \a participantUri references a contact in
   the manager from which the relationships are being fetched and the
@@ -146,23 +164,30 @@ QString QContactRelationshipFetchRequest::relationshipType() const
 void QContactRelationshipFetchRequest::setParticipant(const QContactId& participantUri, QContactRelationshipFilter::Role role)
 {
     Q_D(QContactRelationshipFetchRequest);
+    qWarning("QContactRelationshipFetchRequest::setParticipant() This function is deprecated and will be removed once the transition period has elapsed.  Use setSecond() instead!");
     d->m_participantUri = participantUri;
     d->m_role = role;
 }
 
-/*! Returns the participant criterion of the fetch request
+/*!
+  \deprecated
+  Returns the participant criterion of the fetch request
  */
 QContactId QContactRelationshipFetchRequest::participant() const
 {
     Q_D(const QContactRelationshipFetchRequest);
+    qWarning("QContactRelationshipFetchRequest::participant() This function is deprecated and will be removed once the transition period has elapsed.  Use second() instead!");
     return d->m_participantUri;
 }
 
-/*! Returns the role of the participant criterion of the fetch request
+/*!
+  \deprecated
+  Returns the role of the participant criterion of the fetch request
  */
 QContactRelationshipFilter::Role QContactRelationshipFetchRequest::participantRole() const
 {
     Q_D(const QContactRelationshipFetchRequest);
+    qWarning("QContactRelationshipFetchRequest::participantRole() This function is deprecated and will be removed once the transition period has elapsed.  Use setSecond() instead!");
     return d->m_role;
 }
 

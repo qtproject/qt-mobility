@@ -228,7 +228,7 @@ class QContactRelationshipFetchRequestPrivate : public QContactAbstractRequestPr
 public:
     QContactRelationshipFetchRequestPrivate()
         : QContactAbstractRequestPrivate(),
-        m_role(QContactRelationshipFilter::Either)
+        m_role(QContactRelationshipFilter::Either) // deprecated
     {
     }
 
@@ -241,11 +241,16 @@ public:
         return QContactAbstractRequest::RelationshipFetchRequest;
     }
 
+    // selection criteria
     QContactId m_first;
+    QContactId m_second;
     QString m_relationshipType;
-    QContactId m_participantUri;
-    QContactRelationshipFilter::Role m_role;
+
+    // results
     QList<QContactRelationship> m_relationships;
+
+    QContactId m_participantUri; // deprecated
+    QContactRelationshipFilter::Role m_role; // deprecated
 };
 
 class QContactRelationshipSaveRequestPrivate : public QContactAbstractRequestPrivate

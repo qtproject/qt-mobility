@@ -1153,7 +1153,7 @@ bool QContactManagerEngine::validateContact(const QContact& contact, QContactMan
 
             QContactDetailFieldDefinition field = def.fields().value(key);
             // check that the type of each value corresponds to the allowable field type
-            if (field.dataType() != values.value(key).type()) {
+            if (static_cast<int>(field.dataType()) != values.value(key).userType()) {
                 error = QContactManager::InvalidDetailError;
                 return false; // type doesn't match.
             }
@@ -1788,7 +1788,7 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
 
                 // first, retrieve contact uris
                 QContactId contactUri = contact.id();
-                QContactId participant = rf.otherParticipantId();
+                QContactId relatedContactId = rf.relatedContactId();
 
                 // get the relationships in which this contact is involved.
                 QList<QContactRelationship> allRelationships;
@@ -1804,19 +1804,19 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                 // now check to see if we have a match.
                 foreach (const QContactRelationship& rel, allRelationships) {
                     // perform the matching.
-                    if (rf.role() == QContactRelationshipFilter::First) {
+                    if (rf.relatedContactRole() == QContactRelationshipFilter::Second) { // this is the role of the related contact; ie, to match, contact.id() must be the first in the relationship.
                         if ((rf.relationshipType().isEmpty() || rel.relationshipType() == rf.relationshipType())
-                                && CONTACT_IDS_MATCH(rel.first(), contact.id()) && CONTACT_IDS_MATCH(participant, rel.second())) {
+                                && CONTACT_IDS_MATCH(rel.first(), contact.id()) && CONTACT_IDS_MATCH(relatedContactId, rel.second())) {
                             return true;
                         }
-                    } else if (rf.role() == QContactRelationshipFilter::Second) {
+                    } else if (rf.relatedContactRole() == QContactRelationshipFilter::First) { // this is the role of the related contact; ie, to match, contact.id() must be the second in the relationship.
                         if ((rf.relationshipType().isEmpty() || rel.relationshipType() == rf.relationshipType())
-                                && CONTACT_IDS_MATCH(rel.second(), contact.id()) && CONTACT_IDS_MATCH(participant, rel.first())) {
+                                && CONTACT_IDS_MATCH(rel.second(), contact.id()) && CONTACT_IDS_MATCH(relatedContactId, rel.first())) {
                             return true;
                         }
                     } else { // QContactRelationshipFilter::Either
                         if ((rf.relationshipType().isEmpty() || rel.relationshipType() == rf.relationshipType())
-                                && ((CONTACT_IDS_MATCH(participant, rel.first()) && !CONTACT_IDS_MATCH(contactUri, participant)) || (CONTACT_IDS_MATCH(participant, rel.second()) && !CONTACT_IDS_MATCH(contactUri, participant)))) {
+                                && ((CONTACT_IDS_MATCH(relatedContactId, rel.first()) && !CONTACT_IDS_MATCH(contactUri, relatedContactId)) || (CONTACT_IDS_MATCH(relatedContactId, rel.second()) && !CONTACT_IDS_MATCH(contactUri, relatedContactId)))) {
                             return true;
                         }
                     }

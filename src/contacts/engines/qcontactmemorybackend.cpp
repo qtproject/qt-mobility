@@ -1008,49 +1008,16 @@ void QContactMemoryEngine::performAsynchronousOperation()
             QList<QContactRelationship> allRelationships = relationships(QString(), QContactId(), QContactRelationshipFilter::Either, operationError);
             QList<QContactRelationship> requestedRelationships;
 
-            // first criteria: source contact id must be empty or must match
-            if (r->first() == QContactId()) {
-                // all relationships match this criteria (zero id denotes "any")
-                requestedRelationships = allRelationships;
-            } else {
-                for (int i = 0; i < allRelationships.size(); i++) {
-                    QContactRelationship currRelationship = allRelationships.at(i);
-                    if (r->first() == currRelationship.first()) {
-                        requestedRelationships.append(currRelationship);
-                    }
-                }
-            }
-
-            // second criteria: relationship type must be empty or must match
-            if (!r->relationshipType().isEmpty()) {
-                allRelationships = requestedRelationships;
-                requestedRelationships.clear();
-                for (int i = 0; i < allRelationships.size(); i++) {
-                    QContactRelationship currRelationship = allRelationships.at(i);
-                    if (r->relationshipType() == currRelationship.relationshipType()) {
-                        requestedRelationships.append(currRelationship);
-                    }
-                }
-            }
-
-            // third criteria: participant must be empty or must match (including role in relationship)
-            QString myUri = managerUri();
-            QContactId anonymousParticipant;
-            anonymousParticipant.setLocalId(QContactLocalId(0));
-            anonymousParticipant.setManagerUri(QString());
-            if (r->participant() != anonymousParticipant) {
-                allRelationships = requestedRelationships;
-                requestedRelationships.clear();
-                for (int i = 0; i < allRelationships.size(); i++) {
-                    QContactRelationship currRelationship = allRelationships.at(i);
-                    if ((r->participantRole() == QContactRelationshipFilter::Either || r->participantRole() == QContactRelationshipFilter::Second)
-                            && currRelationship.second() == r->participant()) {
-                        requestedRelationships.append(currRelationship);
-                    } else if ((r->participantRole() == QContactRelationshipFilter::Either || r->participantRole() == QContactRelationshipFilter::First)
-                            && currRelationship.first() == r->participant()) {
-                        requestedRelationships.append(currRelationship);
-                    }
-                }
+            // select the requested relationships.
+            for (int i = 0; i < allRelationships.size(); i++) {
+                QContactRelationship currRel = allRelationships.at(i);
+                if (r->first() != QContactId() && r->first() != currRel.first())
+                    continue;
+                if (r->second() != QContactId() && r->second() != currRel.second())
+                    continue;
+                if (!r->relationshipType().isEmpty() && r->relationshipType() != currRel.relationshipType())
+                    continue;
+                requestedRelationships.append(currRel);
             }
 
             // update the request with the results.
