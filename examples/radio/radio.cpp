@@ -160,9 +160,9 @@ void Radio::freqChanged(int)
 void Radio::signalChanged(int)
 {
     if(radio->signalStrength() > 25)
-    	signal->setText(tr("Got Signal"));
+        signal->setText(tr("Got Signal"));
     else
-    	signal->setText(tr("No Signal"));
+        signal->setText(tr("No Signal"));
 }
 
 void Radio::updateVolume(int v)
