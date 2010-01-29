@@ -1380,6 +1380,3 @@ QString ParseManager::getErrorMessage(QFLAGITEM* pfg)
     }
     return ret;
 }
-
-#include <moc_ParseManager.cpp>
-//--->
