@@ -52,12 +52,13 @@ S60MediaContainerControl::S60MediaContainerControl(QObject *session, QObject *pa
 {
     m_session = qobject_cast<S60CameraSession*>(session);
 
-    m_supportedContainers.append("mp4");
+    m_supportedContainers = m_session->supportedVideoCaptureCodecs();
     setContainerMimeType(m_supportedContainers[0]);
 
 }
 QStringList S60MediaContainerControl::supportedContainers() const
 {
+    //return m_session->supportedVideoCaptureCodecs();
     return m_supportedContainers;
 }
 QString S60MediaContainerControl::containerMimeType() const
@@ -70,6 +71,7 @@ void S60MediaContainerControl::setContainerMimeType(const QString &containerMime
 }
 QString S60MediaContainerControl::containerDescription(const QString &containerMimeType) const
 {
-    return m_containerDescriptions.value(containerMimeType);
+    return m_session->videoCaptureCodecDescription(containerMimeType);
+    //return m_containerDescriptions.value(containerMimeType);
 }
 
