@@ -258,11 +258,11 @@ RDFSelect prepareIMContactsQuery(RDFVariable &imcontact)
     queryidsimacccounts.addColumn("nick", imcontact.optional().property<nco::imContactNickname> ());
     queryidsimacccounts.addColumn("type", imcontact.optional().property<nco::fromIMAccount> ());
     
-    RDFVariable counter  = queryidsimacccounts.newColumn("hasAudio");
+    RDFVariable counter  = queryidsimacccounts.newColumn("capCount");
     {
         RDFSubSelect inner;
         RDFVariable ifrom = inner.newColumnAs(imcontact);
-        inner.addColumn("caps", ifrom.property<nco::imContactCapability>());
+        inner.addColumn("caps", ifrom.optional().property<nco::imContactCapability>());
         inner.newCountColumnAs(counter);
         inner.groupBy(ifrom);
     }
