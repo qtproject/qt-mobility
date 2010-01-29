@@ -275,6 +275,7 @@ void DirectShowPlayerService::doSetUrlSource(QMutexLocker *locker)
 
     HRESULT hr = E_FAIL;
 
+#ifndef QT_NO_WMSDK
     if (url.scheme() == QLatin1String("http") || url.scheme() == QLatin1String("https")) {
         if (IFileSourceFilter *fileSource = com_new<IFileSourceFilter>(CLSID_WMAsfReader)) {
             locker->unlock();
@@ -295,10 +296,13 @@ void DirectShowPlayerService::doSetUrlSource(QMutexLocker *locker)
     }
 
     if (!SUCCEEDED(hr)) {
+#endif
         locker->unlock();
         hr = m_graph->AddSourceFilter(url.toString().utf16(), L"Source", &source);
         locker->relock();
+#ifndef QT_NO_WMSDK
     }
+#endif
 
     if (SUCCEEDED(hr)) {
         m_executedTasks = SetSource;
@@ -833,6 +837,7 @@ void DirectShowPlayerService::doSeek(QMutexLocker *locker)
 
 int DirectShowPlayerService::bufferStatus() const
 {
+#ifndef QT_NO_WMSDK
     QMutexLocker locker(const_cast<QMutex *>(&m_mutex));
 
     if (IWMReaderAdvanced2 *reader = com_cast<IWMReaderAdvanced2>(m_source)) {
@@ -845,6 +850,9 @@ int DirectShowPlayerService::bufferStatus() const
     } else {
         return 0;
     }
+#else
+    return 0;
+#endif
 }
 
 void DirectShowPlayerService::setAudioOutput(IBaseFilter *filter)
