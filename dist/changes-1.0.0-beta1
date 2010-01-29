@@ -68,16 +68,38 @@ QtMessaging
 QtMedia
 ------
  
+ - Added Audio and Video QML elements.
  - Renamed QtMedia::Frequency to QtMedia::SampleRate for consistency and
    clarity.
+ - Renamed QtMedia::CoverArtUriSmall to QtMedia::CoverArtUrlSmall,
+   QtMedia::CoverArtUriLarge to CoverArtUrlLarge, and  QtMedia::PosterUri
+   to QtMedia::PosterUrl.
+ - QGraphicsVideoItem
+    * Added offset(), size(), nativeSize(), and aspectRatioMode()
+      properties.
+ - QGraphicsVideoItem, QMediaPlaylist, QVideoWidget
+    * Replaced QMediaObject* constructor parameter with setMediaObject()
+      function.
+ - QMediaContent
+    * Renamed canonicalUri() to canonicalUrl().
+    * Removed coverArtUriSmall(), coverArtUriLarge(), posterUri(),
+      thumbnailUriSmall(), and thumbnailUriLarge() properties.
  - QMediaPlayer
     * Added static supportedMimeTypes() method.
+    * Added isAudioAvailable() property.
  - Added QMediaTimeRange and QMediaTimeInterval classes to represent time
    periods in media items.
  - QMediaPlayerControl
     * Renamed seekRanges() to availablePlaybackRanges(). This method now
       returns a QMediaTimeRange, which can contain multiple disjoint time
       intervals representing buffered portions of media.
+ - QMediaResource
+    * Renamed uri() to url().
+    * Renamed channels() to channelCount().
+    * Renamed size() to dataSize().
+    * Removed duration() and sampleSize().
+
+
 
 QtPublishSubscribe
 ------
@@ -126,7 +148,7 @@ Qt Mobility for Linux/X11
 Qt Mobility for Windows
 ------
 
- -
+ - Added Direct Show based media player service implementation.
 
 Qt Mobility for Mac OS X
 ------
