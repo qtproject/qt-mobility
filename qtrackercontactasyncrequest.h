@@ -81,6 +81,7 @@ public:
                        ContactMessage,
                        ContactNickname,
                        AccountType,
+                       HasAudio,
                        MetaContact };
                          
     QTrackerContactFetchRequest(QContactAbstractRequest* req, QContactManagerEngine* parent);

@@ -912,6 +912,16 @@ QContactOnlineAccount QTrackerContactFetchRequest::getOnlineAccountFromIMQuery(L
         qDebug() << decoded.value(1); 
         account.setValue(FieldAccountPath, decoded.value(1)); // getImAccountType?
     }
+    int capCount = imAccountQuery->index(queryRow, HasAudio).data().toInt();
+    QString caps;
+    caps = QString("org.freedesktop.Telepathy.Channel.Type.TextChat|");
+    //FIXME
+    // Once #153757 get resolved try to save the exact cap. until then using the caps count
+    if (capCount >= 2) {
+        caps += QString("org.freedesktop.Telepathy.Channel.Type.StreamedMedia");
+    }
+    
+    account.setValue("Capabilities", caps); // getImAccountType?
     account.setNickname(imAccountQuery->index(queryRow, ContactNickname).data().toString()); // nick
 
     QString presence = imAccountQuery->index(queryRow, ContactStatus).data().toString(); // imPresence iri
