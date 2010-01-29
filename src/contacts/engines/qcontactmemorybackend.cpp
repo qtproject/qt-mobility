@@ -1117,6 +1117,20 @@ bool QContactMemoryEngine::hasFeature(QContactManager::ManagerFeature feature, c
 /*!
  * \reimp
  */
+QStringList QContactMemoryEngine::supportedRelationshipTypes(const QString& contactType) const
+{
+    Q_UNUSED(contactType);
+    return QStringList()
+        << QContactRelationship::HasMember
+        << QContactRelationship::Aggregates
+        << QContactRelationship::IsSameAs
+        << QContactRelationship::HasAssistant
+        << QContactRelationship::HasSpouse;
+}
+
+/*!
+ * \reimp
+ */
 QList<QVariant::Type> QContactMemoryEngine::supportedDataTypes() const
 {
     QList<QVariant::Type> st;
