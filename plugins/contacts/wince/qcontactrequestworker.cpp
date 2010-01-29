@@ -554,9 +554,10 @@ void QContactRequestWorker::processContactRelationshipRemoveRequest(QContactRela
 {
     if (req->manager()) {
         QMap<int, QContactManager::Error> errorMap;
+        QContactManager::Error operationError = QContactManager::NoError;
         foreach (const QContactRelationship& relationship, req->relationships()) {
             QList<QContactRelationship> matchingRelationships = req->manager()->relationships(relationship.relationshipType(), relationship.first(), QContactRelationshipFilter::First);
-            QContactManager::Error operationError = req->manager()->error();
+            operationError = req->manager()->error();
 
             for (int i = 0; i < matchingRelationships.size(); i++) {
                 QContactManager::Error tempError;
