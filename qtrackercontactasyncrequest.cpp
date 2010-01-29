@@ -246,18 +246,28 @@ RDFSelect prepareEmailAddressesQuery(RDFVariable &rdfcontact1, bool forAffiliati
 
 RDFSelect prepareIMContactsQuery(RDFVariable &imcontact)
 {
+    //::tracker()->setVerbosity(4);
+
     // columns
-    RDFSelect queryidsimaccounts;
-    queryidsimaccounts.addColumn("contactId", imcontact.property<nco::contactUID> ());
+    RDFSelect queryidsimacccounts;
+    queryidsimacccounts.addColumn("contactId", imcontact.property<nco::contactUID> ());
 
-    queryidsimaccounts.addColumn("IMId", imcontact.property<nco::imContactId> ());
-    queryidsimaccounts.addColumn("status", imcontact.optional().property<nco::imContactPresence> ());
-    queryidsimaccounts.addColumn("message", imcontact.optional().property<nco::imContactStatusMessage> ());
-    queryidsimaccounts.addColumn("nick", imcontact.optional().property<nco::imContactNickname> ());
-    queryidsimaccounts.addColumn("type", imcontact.optional().property<nco::fromIMAccount> ());
-    queryidsimaccounts.addColumn("metacontact", imcontact.optional().property<nco::metacontact>());
-
-    return queryidsimaccounts;
+    queryidsimacccounts.addColumn("IMId", imcontact.property<nco::imContactId> ());
+    queryidsimacccounts.addColumn("status", imcontact.optional().property<nco::imContactPresence> ());
+    queryidsimacccounts.addColumn("message", imcontact.optional().property<nco::imContactStatusMessage> ());
+    queryidsimacccounts.addColumn("nick", imcontact.optional().property<nco::imContactNickname> ());
+    queryidsimacccounts.addColumn("type", imcontact.optional().property<nco::fromIMAccount> ());
+    
+    RDFVariable counter  = queryidsimacccounts.newColumn("hasAudio");
+    {
+        RDFSubSelect inner;
+        RDFVariable ifrom = inner.newColumnAs(imcontact);
+        inner.addColumn("caps", ifrom.property<nco::imContactCapability>());
+        inner.newCountColumnAs(counter);
+        inner.groupBy(ifrom);
+    }
+    queryidsimacccounts.addColumn("metacontact", imcontact.optional().property<nco::metacontact> ());
+    return queryidsimacccounts;
 }
 
 
