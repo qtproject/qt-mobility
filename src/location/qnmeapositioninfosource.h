@@ -81,6 +81,12 @@ public Q_SLOTS:
     void stopUpdates();
     void requestUpdate(int timeout = 0);
 
+protected:
+    virtual bool parsePosInfoFromNmeaData(const char *data, 
+        int size, 
+        QGeoPositionInfo *posInfo, 
+        bool *hasFix);
+
 private:
     Q_DISABLE_COPY(QNmeaPositionInfoSource)
     friend class QNmeaPositionInfoSourcePrivate;

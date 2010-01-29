@@ -24,6 +24,8 @@
 <a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#CaptureMode-enum">CaptureMode</a></b> { CaptureDisabled, CaptureStillImage, CaptureVideo }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#CaptureMode-enum">CaptureModes</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#Error-enum">Error</a></b> { NoError, CameraError, NotReadyToCaptureError, InvalidRequestError, ServiceMissingError, NotSupportedFeatureError }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#ExposureMode-enum">ExposureMode</a></b> { ExposureManual, ExposureAuto, ExposureNight, ExposureBacklight, ..., ExposurePortrait }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#ExposureMode-enum">ExposureModes</a></b></td></tr>
@@ -32,7 +34,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#FlashMode-enum">FlashModes</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#FocusMode-enum">FocusMode</a></b> { ManualFocus, AutoFocus, ContinuousFocus, InfinityFocus, HyperfocalFocus }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#FocusMode-enum">FocusModes</a></b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#FocusStatus-enum">FocusStatus</a></b> { FocusDisabled, FocusRequested, FocusReached, FocusLost, FocusUnableToReach }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#FocusStatus-enum">FocusStatus</a></b> { FocusIntial, FocusRequested, FocusCanceled, FocusReached, FocusLost, FocusUnableToReach }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#MeteringMode-enum">MeteringMode</a></b> { MeteringAverage, MeteringSpot, MeteringMatrix }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#MeteringMode-enum">MeteringModes</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#State-enum">State</a></b> { ActiveState, SuspendedState, StoppedState }</td></tr>
@@ -45,8 +47,8 @@
 <p><table class="propsummary" width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td width="45%" valign="top"><ul>
 <li><div class="fn"><b><a href="qcamera.html#aperture-prop">aperture</a></b> : qreal</div></li>
+<li><div class="fn"><b><a href="qcamera.html#captureMode-prop">captureMode</a></b> : CaptureMode</div></li>
 <li><div class="fn"><b><a href="qcamera.html#isoSensitivity-prop">isoSensitivity</a></b> : int</div></li>
-<li><div class="fn"><b><a href="qcamera.html#readyForCapture-prop">readyForCapture</a></b> : const bool</div></li>
 </ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="qcamera.html#shutterSpeed-prop">shutterSpeed</a></b> : qreal</div></li>
 <li><div class="fn"><b><a href="qcamera.html#state-prop">state</a></b> : const QCamera::State</div></li>
@@ -65,6 +67,7 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#QCamera-2">QCamera</a></b> ( const QByteArray &amp; <i>device</i>, QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#dtor.QCamera">~QCamera</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#aperture-prop">aperture</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">CaptureMode </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#captureMode-prop">captureMode</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">Error </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#error">error</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#errorString">errorString</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#exposureCompensation">exposureCompensation</a></b> () const</td></tr>
@@ -74,21 +77,13 @@
 <tr><td class="memItemLeft" align="right" valign="top">FocusStatus </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#focusStatus">focusStatus</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#isExposureLocked">isExposureLocked</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#isFlashReady">isFlashReady</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#isFocusLocked">isFocusLocked</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#isMacroFocusingSupported">isMacroFocusingSupported</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#readyForCapture-prop">isReadyForCapture</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#isoSensitivity-prop">isoSensitivity</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#macroFocusingEnabled">macroFocusingEnabled</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#manualWhiteBalance">manualWhiteBalance</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#maximumAperture">maximumAperture</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#maximumDigitalZoom">maximumDigitalZoom</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#maximumIsoSensitivity">maximumIsoSensitivity</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#maximumOpticalZoom">maximumOpticalZoom</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#maximumShutterSpeed">maximumShutterSpeed</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">MeteringMode </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#meteringMode">meteringMode</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#minimumAperture">minimumAperture</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#minimumIsoSensitivity">minimumIsoSensitivity</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#minimumShutterSpeed">minimumShutterSpeed</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#setAutoAperture">setAutoAperture</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#setAutoIsoSensitivity">setAutoIsoSensitivity</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#setAutoShutterSpeed">setAutoShutterSpeed</a></b> ()</td></tr>
@@ -104,34 +99,42 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#setMeteringMode">setMeteringMode</a></b> ( MeteringMode <i>mode</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#setWhiteBalanceMode">setWhiteBalanceMode</a></b> ( WhiteBalanceMode <i>mode</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#shutterSpeed-prop">shutterSpeed</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#start">start</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">State </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#state-prop">state</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#stop">stop</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;qreal&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#supportedApertures">supportedApertures</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;qreal&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#supportedApertures">supportedApertures</a></b> ( bool * <i>continuous</i> = 0 ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">CaptureModes </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#supportedCaptureModes">supportedCaptureModes</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">ExposureModes </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#supportedExposureModes">supportedExposureModes</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">FlashModes </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#supportedFlashModes">supportedFlashModes</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">FocusModes </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#supportedFocusModes">supportedFocusModes</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;int&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#supportedIsoSensitivities">supportedIsoSensitivities</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;int&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#supportedIsoSensitivities">supportedIsoSensitivities</a></b> ( bool * <i>continuous</i> = 0 ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">MeteringModes </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#supportedMeteringModes">supportedMeteringModes</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;qreal&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#supportedShutterSpeeds">supportedShutterSpeeds</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;qreal&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#supportedShutterSpeeds">supportedShutterSpeeds</a></b> ( bool * <i>continuous</i> = 0 ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">WhiteBalanceModes </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#supportedWhiteBalanceModes">supportedWhiteBalanceModes</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">WhiteBalanceMode </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#whiteBalanceMode">whiteBalanceMode</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#zoomTo">zoomTo</a></b> ( qreal <i>value</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#zoomValue">zoomValue</a></b> () const</td></tr>
 </table>
+<hr />
+<a name="reimplemented-public-functions"></a>
+<h2>Reimplemented Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">virtual QtMedia::AvailabilityError </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#availabilityError">availabilityError</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#isAvailable">isAvailable</a></b> () const</td></tr>
+</table>
 <ul>
-<li><div bar="2" class="fn"></div>11 public functions inherited from <a href="qmediaobject.html#public-functions">QMediaObject</a></li>
+<li><div bar="2" class="fn"></div>13 public functions inherited from <a href="qmediaobject.html#public-functions">QMediaObject</a></li>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
 <hr />
 <a name="public-slots"></a>
 <h2>Public Slots</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#capture">capture</a></b> ( const QString &amp; <i>file</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#cancelFocusing">cancelFocusing</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#lockExposure">lockExposure</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#lockFocus">lockFocus</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#captureMode-prop">setCaptureMode</a></b> ( QCamera::CaptureMode <i>mode</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#start">start</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#startFocusing">startFocusing</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#stop">stop</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#unlockExposure">unlockExposure</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#unlockFocus">unlockFocus</a></b> ()</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
@@ -142,21 +145,20 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#apertureChanged">apertureChanged</a></b> ( qreal <i>value</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#apertureRangeChanged">apertureRangeChanged</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#captureModeChanged">captureModeChanged</a></b> ( QCamera::CaptureMode )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#error-2">error</a></b> ( QCamera::Error <i>value</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#exposureLocked">exposureLocked</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#flashReady">flashReady</a></b> ( bool <i>ready</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#focusLocked">focusLocked</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#focusReached">focusReached</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#focusStatusChanged">focusStatusChanged</a></b> ( QCamera::FocusStatus <i>status</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#imageCaptured">imageCaptured</a></b> ( const QString &amp; <i>fileName</i>, const QImage &amp; <i>preview</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#imageSaved">imageSaved</a></b> ( const QString &amp; <i>fileName</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#focusUnableToReach">focusUnableToReach</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#isoSensitivityChanged">isoSensitivityChanged</a></b> ( int <i>value</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#readyForCaptureChanged">readyForCaptureChanged</a></b> ( bool <i>ready</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#shutterSpeedChanged">shutterSpeedChanged</a></b> ( qreal <i>speed</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#stateChanged">stateChanged</a></b> ( QCamera::State <i>state</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#zoomValueChanged">zoomValueChanged</a></b> ( qreal <i>value</i> )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>4 signals inherited from <a href="qmediaobject.html#signals">QMediaObject</a></li>
+<li><div bar="2" class="fn"></div>5 signals inherited from <a href="qmediaobject.html#signals">QMediaObject</a></li>
 <li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
 </ul>
 <hr />
@@ -185,13 +187,18 @@
     viewFinder = new QVideoWidget(camera);
     viewFinder-&gt;show();
 
-    recorder = QMediaRecorder(camera);
+    recorder = new QMediaRecorder(camera);
+    imageCapture = new QStillImageCapture(camera);
 
     camera-&gt;start();</pre>
 <p>The Camera API of Qt Mobility is still in <b>ALPHA</b>. It has not undergone the same level of review and testing as the rest of the APIs.</p>
 <p>The API exposed by the classes in this component are not stable, and will undergo modification or removal prior to the final release of Qt Mobility.</p>
 <hr />
 <h2>Member Type Documentation</h2>
+<a name="//apple_ref/cpp/tag/QCamera/CaptureMode"></a>
+<a name="//apple_ref/cpp/tdef/QCamera/CaptureModes"></a>
+<h3 class="flags"><a name="CaptureMode-enum"></a>enum QCamera::CaptureMode<br />flags QCamera::CaptureModes</h3>
+<p>The CaptureModes type is a typedef for <a href="qflags.html">QFlags</a>&lt;CaptureMode&gt;. It stores an OR combination of CaptureMode values.</p>
 <a name="//apple_ref/cpp/tag/QCamera/Error"></a>
 <a name="//apple_ref/cpp/econst/QCamera/NoError"></a>
 <a name="//apple_ref/cpp/econst/QCamera/CameraError"></a>
@@ -284,20 +291,26 @@
 </table></p>
 <p>The FocusModes type is a typedef for <a href="qflags.html">QFlags</a>&lt;FocusMode&gt;. It stores an OR combination of FocusMode values.</p>
 <a name="//apple_ref/cpp/tag/QCamera/FocusStatus"></a>
-<a name="//apple_ref/cpp/econst/QCamera/FocusDisabled"></a>
+<a name="//apple_ref/cpp/econst/QCamera/FocusIntial"></a>
 <a name="//apple_ref/cpp/econst/QCamera/FocusRequested"></a>
+<a name="//apple_ref/cpp/econst/QCamera/FocusCanceled"></a>
 <a name="//apple_ref/cpp/econst/QCamera/FocusReached"></a>
 <a name="//apple_ref/cpp/econst/QCamera/FocusLost"></a>
 <a name="//apple_ref/cpp/econst/QCamera/FocusUnableToReach"></a>
 <h3 class="fn"><a name="FocusStatus-enum"></a>enum QCamera::FocusStatus</h3>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QCamera::FocusDisabled</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">Manual focus mode used or auto focus is not available.</td></tr>
+<tr><td valign="top"><tt>QCamera::FocusIntial</tt></td><td align="center" valign="top">?</td><td valign="top">The initial focus state.</td></tr>
 <tr><td valign="top"><tt>QCamera::FocusRequested</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Focus request is in progress.</td></tr>
-<tr><td valign="top"><tt>QCamera::FocusReached</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Focus has been reached.</td></tr>
-<tr><td valign="top"><tt>QCamera::FocusLost</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">Focus has been lost.</td></tr>
-<tr><td valign="top"><tt>QCamera::FocusUnableToReach</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">Unable to achieve focus.</td></tr>
+<tr><td valign="top"><tt>QCamera::FocusCanceled</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The focus request was canceled.</td></tr>
+<tr><td valign="top"><tt>QCamera::FocusReached</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">Focus has been reached.</td></tr>
+<tr><td valign="top"><tt>QCamera::FocusLost</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">Focus has been lost.</td></tr>
+<tr><td valign="top"><tt>QCamera::FocusUnableToReach</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">Unable to achieve focus.</td></tr>
 </table></p>
+<p>When the <a href="qcamera.html#FocusMode-enum">QCamera::InfinityFocus</a> or <a href="qcamera.html#FocusMode-enum">QCamera::HyperfocalFocus</a> mode is requested, the focus status changes to QCamera::FocusRequested until the requested state is reached and stays in the QCamera::FocusReached status after.</p>
+<p>In manual focusing mode the focus stays in the QCamera::FocusReached status, or, when supported by camera, QCamera::FocusLost and QCamera::FocusReached values could be used for manual focus notifications.</p>
+<p>In autofocus mode, on focus request the status changes to QCamera::FocusRequested, and then depending on request results the focus status changes to QCamera::FocusReached, QCamera::FocusUnableToReach or QCamera::FocusCanceled.</p>
+<p>In countinous autofocus mode, the status changes to QCamera::FocusRequested, and since the focus is reached is stays in QCamera::FocusReached and QCamera::FocusLost states until continous focusing is canceled with cancelAutofocus() or <a href="qcamera.html#setFocusMode">setFocusMode</a>().</p>
 <a name="//apple_ref/cpp/tag/QCamera/MeteringMode"></a>
 <a name="//apple_ref/cpp/econst/QCamera/MeteringAverage"></a>
 <a name="//apple_ref/cpp/econst/QCamera/MeteringSpot"></a>
@@ -355,7 +368,7 @@
 <a name="//apple_ref/cpp/instm/QCamera/setManualAperture"></a>
 <a name="//apple_ref/cpp/instm/QCamera/apertureChanged"></a>
 <h3 class="fn"><a name="aperture-prop"></a>aperture : <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a></h3>
-<p>This property holds lens aperture is specified as an f-number, the ratio of the focal length to effective aperture diameter.</p>
+<p>This property holds lens aperture is specified as an F number, the ratio of the focal length to effective aperture diameter.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b>aperture</b> () const</td></tr>
@@ -364,6 +377,20 @@
 <p><b>Notifier signal:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#apertureChanged">apertureChanged</a></b> ( qreal <i>value</i> )</td></tr>
+</table>
+<a name="//apple_ref/cpp/instm/QCamera/captureMode"></a>
+<a name="//apple_ref/cpp/instm/QCamera/setCaptureMode"></a>
+<a name="//apple_ref/cpp/instm/QCamera/captureModeChanged"></a>
+<h3 class="fn"><a name="captureMode-prop"></a>captureMode : <a href="qcamera.html#CaptureMode-enum">CaptureMode</a></h3>
+<p>Returns the type of media (video or still images), the camera is configured to capture.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">CaptureMode </td><td class="memItemRight" valign="bottom"><b>captureMode</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setCaptureMode</b> ( QCamera::CaptureMode <i>mode</i> )</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#captureModeChanged">captureModeChanged</a></b> ( QCamera::CaptureMode )</td></tr>
 </table>
 <a name="//apple_ref/cpp/instm/QCamera/isoSensitivity"></a>
 <a name="//apple_ref/cpp/instm/QCamera/setManualIsoSensitivity"></a>
@@ -378,18 +405,6 @@
 <p><b>Notifier signal:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#isoSensitivityChanged">isoSensitivityChanged</a></b> ( int <i>value</i> )</td></tr>
-</table>
-<a name="//apple_ref/cpp/instm/QCamera/isReadyForCapture"></a>
-<a name="//apple_ref/cpp/instm/QCamera/readyForCaptureChanged"></a>
-<h3 class="fn"><a name="readyForCapture-prop"></a>readyForCapture : const bool</h3>
-<p>Indicates the camera is ready to capture an image immediately.</p>
-<p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>isReadyForCapture</b> () const</td></tr>
-</table>
-<p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#readyForCaptureChanged">readyForCaptureChanged</a></b> ( bool <i>ready</i> )</td></tr>
 </table>
 <a name="//apple_ref/cpp/instm/QCamera/shutterSpeed"></a>
 <a name="//apple_ref/cpp/instm/QCamera/setManualShutterSpeed"></a>
@@ -433,12 +448,20 @@
 <a name="//apple_ref/cpp/instm/QCamera/apertureRangeChanged"></a>
 <h3 class="fn"><a name="apertureRangeChanged"></a>void QCamera::apertureRangeChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal emitted when aperature range has changed.</p>
+<a name="//apple_ref/cpp/instm/QCamera/availabilityError"></a>
+<h3 class="fn"><a name="availabilityError"></a><a href="qtmedia.html#AvailabilityError-enum">QtMedia::AvailabilityError</a> QCamera::availabilityError () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Reimplemented from <a href="qmediaobject.html#availabilityError">QMediaObject::availabilityError</a>().</p>
+<p>Returns the error state of the camera service.</p>
 <a name="//apple_ref/cpp/clm/QCamera/availableDevices"></a>
 <h3 class="fn"><a name="availableDevices"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a>&gt; QCamera::availableDevices ()&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a list of camera device's available from the default service provider.</p>
-<a name="//apple_ref/cpp/instm/QCamera/capture"></a>
-<h3 class="fn"><a name="capture"></a>void QCamera::capture ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>file</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
-<p>Capture the image and save it to <i>file</i>. This operation is asynchronous in majority of cases, followed by signal <a href="qcamera.html#imageCaptured">QCamera::imageCaptured</a>() or <a href="qcamera.html#error">error</a>()</p>
+<a name="//apple_ref/cpp/instm/QCamera/cancelFocusing"></a>
+<h3 class="fn"><a name="cancelFocusing"></a>void QCamera::cancelFocusing ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<p>Cancels the single autofocus request or stops continuous focusing.</p>
+<p>Does nothing in hyperfocal or infinity focus modes.</p>
+<p>If supported by camera, <a href="qcamera.html#startFocusing">startFocusing</a>() turns off the manual focusing notifications, otherwise it does nothing in manual mode.</p>
+<a name="//apple_ref/cpp/instm/QCamera/captureModeChanged"></a>
+<h3 class="fn"><a name="captureModeChanged"></a>void QCamera::captureModeChanged ( <a href="qcamera.html#CaptureMode-enum">QCamera::CaptureMode</a> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <a name="//apple_ref/cpp/clm/QCamera/deviceDescription"></a>
 <h3 class="fn"><a name="deviceDescription"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QCamera::deviceDescription ( const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>device</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns the description of the <i>device</i>.</p>
@@ -468,34 +491,30 @@
 <a name="//apple_ref/cpp/instm/QCamera/flashReady"></a>
 <h3 class="fn"><a name="flashReady"></a>void QCamera::flashReady ( bool <i>ready</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal emitted when flash status changed, flash is ready if <i>ready</i> true.</p>
-<a name="//apple_ref/cpp/instm/QCamera/focusLocked"></a>
-<h3 class="fn"><a name="focusLocked"></a>void QCamera::focusLocked ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signal emitted when focus is locked.</p>
 <a name="//apple_ref/cpp/instm/QCamera/focusMode"></a>
 <h3 class="fn"><a name="focusMode"></a><a href="qcamera.html#FocusMode-enum">FocusMode</a> QCamera::focusMode () const</h3>
 <p>Returns the focus mode being used.</p>
 <p>See also <a href="qcamera.html#setFocusMode">setFocusMode</a>().</p>
+<a name="//apple_ref/cpp/instm/QCamera/focusReached"></a>
+<h3 class="fn"><a name="focusReached"></a>void QCamera::focusReached ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <a name="//apple_ref/cpp/instm/QCamera/focusStatus"></a>
 <h3 class="fn"><a name="focusStatus"></a><a href="qcamera.html#FocusStatus-enum">FocusStatus</a> QCamera::focusStatus () const</h3>
 <p>Returns the focus status</p>
 <a name="//apple_ref/cpp/instm/QCamera/focusStatusChanged"></a>
 <h3 class="fn"><a name="focusStatusChanged"></a>void QCamera::focusStatusChanged ( <a href="qcamera.html#FocusStatus-enum">QCamera::FocusStatus</a> <i>status</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal emitted when focus <i>status</i> changed.</p>
-<a name="//apple_ref/cpp/instm/QCamera/imageCaptured"></a>
-<h3 class="fn"><a name="imageCaptured"></a>void QCamera::imageCaptured ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>fileName</i>, const <a href="http://qt.nokia.com/doc/4.6/qimage.html">QImage</a> &amp; <i>preview</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signals that an image intendec to be saved to to <i>fileName</i> has been captured and a <i>preview</i> is available.</p>
-<a name="//apple_ref/cpp/instm/QCamera/imageSaved"></a>
-<h3 class="fn"><a name="imageSaved"></a>void QCamera::imageSaved ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>fileName</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signals that an captured image has been saved to <i>fileName</i>.</p>
+<a name="//apple_ref/cpp/instm/QCamera/focusUnableToReach"></a>
+<h3 class="fn"><a name="focusUnableToReach"></a>void QCamera::focusUnableToReach ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<a name="//apple_ref/cpp/instm/QCamera/isAvailable"></a>
+<h3 class="fn"><a name="isAvailable"></a>bool QCamera::isAvailable () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Reimplemented from <a href="qmediaobject.html#isAvailable">QMediaObject::isAvailable</a>().</p>
+<p>Returne true if the camera service is ready to use.</p>
 <a name="//apple_ref/cpp/instm/QCamera/isExposureLocked"></a>
 <h3 class="fn"><a name="isExposureLocked"></a>bool QCamera::isExposureLocked () const</h3>
 <p>Return true if exposure locked.</p>
 <a name="//apple_ref/cpp/instm/QCamera/isFlashReady"></a>
 <h3 class="fn"><a name="isFlashReady"></a>bool QCamera::isFlashReady () const</h3>
 <p>Returns true if flash is charged.</p>
-<a name="//apple_ref/cpp/instm/QCamera/isFocusLocked"></a>
-<h3 class="fn"><a name="isFocusLocked"></a>bool QCamera::isFocusLocked () const</h3>
-<p>Return true if focus locked.</p>
 <a name="//apple_ref/cpp/instm/QCamera/isMacroFocusingSupported"></a>
 <h3 class="fn"><a name="isMacroFocusingSupported"></a>bool QCamera::isMacroFocusingSupported () const</h3>
 <p>Returns true if macro focusing is supported.</p>
@@ -505,9 +524,6 @@
 <a name="//apple_ref/cpp/instm/QCamera/lockExposure"></a>
 <h3 class="fn"><a name="lockExposure"></a>void QCamera::lockExposure ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Lock the exposure.</p>
-<a name="//apple_ref/cpp/instm/QCamera/lockFocus"></a>
-<h3 class="fn"><a name="lockFocus"></a>void QCamera::lockFocus ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
-<p>Lock the focus.</p>
 <a name="//apple_ref/cpp/instm/QCamera/macroFocusingEnabled"></a>
 <h3 class="fn"><a name="macroFocusingEnabled"></a>bool QCamera::macroFocusingEnabled () const</h3>
 <p>Returns true if macro focusing enabled.</p>
@@ -516,39 +532,16 @@
 <h3 class="fn"><a name="manualWhiteBalance"></a>int QCamera::manualWhiteBalance () const</h3>
 <p>Returns the current color temperature if the manual white balance is active, otherwise the return value is undefined.</p>
 <p>See also <a href="qcamera.html#setManualWhiteBalance">setManualWhiteBalance</a>().</p>
-<a name="//apple_ref/cpp/instm/QCamera/maximumAperture"></a>
-<h3 class="fn"><a name="maximumAperture"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> QCamera::maximumAperture () const</h3>
-<p>Returns the largest supported aperture.</p>
-<p>See also <a href="qcamera.html#minimumAperture">minimumAperture</a>() and <a href="qcamera.html#aperture-prop">aperture</a>().</p>
 <a name="//apple_ref/cpp/instm/QCamera/maximumDigitalZoom"></a>
 <h3 class="fn"><a name="maximumDigitalZoom"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> QCamera::maximumDigitalZoom () const</h3>
 <p>Returns the maximum digital zoom</p>
-<a name="//apple_ref/cpp/instm/QCamera/maximumIsoSensitivity"></a>
-<h3 class="fn"><a name="maximumIsoSensitivity"></a>int QCamera::maximumIsoSensitivity () const</h3>
-<p>Returns the largest supported ISO sensitivity.</p>
 <a name="//apple_ref/cpp/instm/QCamera/maximumOpticalZoom"></a>
 <h3 class="fn"><a name="maximumOpticalZoom"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> QCamera::maximumOpticalZoom () const</h3>
 <p>Returns the maximum optical zoom</p>
-<a name="//apple_ref/cpp/instm/QCamera/maximumShutterSpeed"></a>
-<h3 class="fn"><a name="maximumShutterSpeed"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> QCamera::maximumShutterSpeed () const</h3>
-<p>Returns the largest supported shutter speed.</p>
-<p>See also <a href="qcamera.html#shutterSpeed-prop">shutterSpeed</a>().</p>
 <a name="//apple_ref/cpp/instm/QCamera/meteringMode"></a>
 <h3 class="fn"><a name="meteringMode"></a><a href="qcamera.html#MeteringMode-enum">MeteringMode</a> QCamera::meteringMode () const</h3>
 <p>Returns the metering mode being used.</p>
 <p>See also <a href="qcamera.html#setMeteringMode">setMeteringMode</a>().</p>
-<a name="//apple_ref/cpp/instm/QCamera/minimumAperture"></a>
-<h3 class="fn"><a name="minimumAperture"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> QCamera::minimumAperture () const</h3>
-<p>Returns the smallest supported aperture as an F number, corresponding to wide open lens. For example if the camera lenses supports aperture range from F/1.4 to F/32, the minumum aperture value will be 1.4, the maximum - 32</p>
-<a name="//apple_ref/cpp/instm/QCamera/minimumIsoSensitivity"></a>
-<h3 class="fn"><a name="minimumIsoSensitivity"></a>int QCamera::minimumIsoSensitivity () const</h3>
-<p>Returns the smallest supported ISO sensitivity.</p>
-<a name="//apple_ref/cpp/instm/QCamera/minimumShutterSpeed"></a>
-<h3 class="fn"><a name="minimumShutterSpeed"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> QCamera::minimumShutterSpeed () const</h3>
-<p>Returns the smallest supported shutter speed.</p>
-<a name="//apple_ref/cpp/instm/QCamera/readyForCaptureChanged"></a>
-<h3 class="fn"><a name="readyForCaptureChanged"></a>void QCamera::readyForCaptureChanged ( bool <i>ready</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signals that a camera's <i>ready</i> for capture state has changed.</p>
 <a name="//apple_ref/cpp/instm/QCamera/setAutoAperture"></a>
 <h3 class="fn"><a name="setAutoAperture"></a>void QCamera::setAutoAperture ()</h3>
 <p>Turn on auto aperture</p>
@@ -594,19 +587,28 @@
 <h3 class="fn"><a name="shutterSpeedChanged"></a>void QCamera::shutterSpeedChanged ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>speed</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that a camera's shutter <i>speed</i> has changed.</p>
 <a name="//apple_ref/cpp/instm/QCamera/start"></a>
-<h3 class="fn"><a name="start"></a>void QCamera::start ()</h3>
+<h3 class="fn"><a name="start"></a>void QCamera::start ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Starts the camera.</p>
 <p>This can involve powering up the camera device and can be asynchronyous.</p>
 <p>State is changed to <a href="qcamera.html#State-enum">QCamera::ActiveState</a> if camera is started succesfuly, otherwise <a href="qcamera.html#error">error</a>() signal is emited.</p>
+<a name="//apple_ref/cpp/instm/QCamera/startFocusing"></a>
+<h3 class="fn"><a name="startFocusing"></a>void QCamera::startFocusing ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<p>Starts single or continuous autofocus.</p>
+<p>Does nothing in hyperfocal or infinity focus modes.</p>
+<p>If supported by camera, startFocusing() turns on the manual focusing notifications, otherwise it does nothing in manual mode.</p>
 <a name="//apple_ref/cpp/instm/QCamera/stateChanged"></a>
 <h3 class="fn"><a name="stateChanged"></a>void QCamera::stateChanged ( <a href="qcamera.html#State-enum">QCamera::State</a> <i>state</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal emitted when <i>state</i> of the Camera object has changed.</p>
 <a name="//apple_ref/cpp/instm/QCamera/stop"></a>
-<h3 class="fn"><a name="stop"></a>void QCamera::stop ()</h3>
+<h3 class="fn"><a name="stop"></a>void QCamera::stop ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Stops the camera.</p>
 <a name="//apple_ref/cpp/instm/QCamera/supportedApertures"></a>
-<h3 class="fn"><a name="supportedApertures"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a>&gt; QCamera::supportedApertures () const</h3>
-<p>Returns the list of apertures if camera supports only fixed set of aperture values, otherwise returns an empty list.</p>
+<h3 class="fn"><a name="supportedApertures"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a>&gt; QCamera::supportedApertures ( bool * <i>continuous</i> = 0 ) const</h3>
+<p>Returns the list of aperture values camera supports. The apertures list can change depending on the focal length, in such a case the <a href="qcamera.html#apertureRangeChanged">apertureRangeChanged</a>() signal is emited.</p>
+<p>If the camera supports arbitrary aperture values within the supported range, *<i>continuous</i> is set to true, otherwise *<i>continuous</i> is set to false.</p>
+<a name="//apple_ref/cpp/instm/QCamera/supportedCaptureModes"></a>
+<h3 class="fn"><a name="supportedCaptureModes"></a><a href="qcamera.html#CaptureMode-enum">CaptureModes</a> QCamera::supportedCaptureModes () const</h3>
+<p>Returns the supported capture modes.</p>
 <a name="//apple_ref/cpp/instm/QCamera/supportedExposureModes"></a>
 <h3 class="fn"><a name="supportedExposureModes"></a><a href="qcamera.html#ExposureMode-enum">ExposureModes</a> QCamera::supportedExposureModes () const</h3>
 <p>Return the exposure modes available.</p>
@@ -617,23 +619,22 @@
 <h3 class="fn"><a name="supportedFocusModes"></a><a href="qcamera.html#FocusMode-enum">FocusModes</a> QCamera::supportedFocusModes () const</h3>
 <p>Returns the focus modes available.</p>
 <a name="//apple_ref/cpp/instm/QCamera/supportedIsoSensitivities"></a>
-<h3 class="fn"><a name="supportedIsoSensitivities"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;int&gt; QCamera::supportedIsoSensitivities () const</h3>
-<p>Returns the list of ISO senitivities if camera supports only fixed set of ISO sensitivity values, otherwise returns an empty list.</p>
+<h3 class="fn"><a name="supportedIsoSensitivities"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;int&gt; QCamera::supportedIsoSensitivities ( bool * <i>continuous</i> = 0 ) const</h3>
+<p>Returns the list of ISO senitivities camera supports.</p>
+<p>If the camera supports arbitrary ISO sensitivities within the supported range, *<i>continuous</i> is set to true, otherwise *<i>continuous</i> is set to false.</p>
 <a name="//apple_ref/cpp/instm/QCamera/supportedMeteringModes"></a>
 <h3 class="fn"><a name="supportedMeteringModes"></a><a href="qcamera.html#MeteringMode-enum">MeteringModes</a> QCamera::supportedMeteringModes () const</h3>
 <p>Returns the metering modes available.</p>
 <a name="//apple_ref/cpp/instm/QCamera/supportedShutterSpeeds"></a>
-<h3 class="fn"><a name="supportedShutterSpeeds"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a>&gt; QCamera::supportedShutterSpeeds () const</h3>
-<p>Returns the list of shutter speed values if camera supports only fixed set of shutter speed values, otherwise returns an empty list.</p>
+<h3 class="fn"><a name="supportedShutterSpeeds"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a>&gt; QCamera::supportedShutterSpeeds ( bool * <i>continuous</i> = 0 ) const</h3>
+<p>Returns the list of shutter speed values in seconds camera supports.</p>
+<p>If the camera supports arbitrary shutter speed values within the supported range, *<i>continuous</i> is set to true, otherwise *<i>continuous</i> is set to false.</p>
 <a name="//apple_ref/cpp/instm/QCamera/supportedWhiteBalanceModes"></a>
 <h3 class="fn"><a name="supportedWhiteBalanceModes"></a><a href="qcamera.html#WhiteBalanceMode-enum">WhiteBalanceModes</a> QCamera::supportedWhiteBalanceModes () const</h3>
 <p>Returns the white balance modes available.</p>
 <a name="//apple_ref/cpp/instm/QCamera/unlockExposure"></a>
 <h3 class="fn"><a name="unlockExposure"></a>void QCamera::unlockExposure ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Unlock the exposure.</p>
-<a name="//apple_ref/cpp/instm/QCamera/unlockFocus"></a>
-<h3 class="fn"><a name="unlockFocus"></a>void QCamera::unlockFocus ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
-<p>Unlock the focus.</p>
 <a name="//apple_ref/cpp/instm/QCamera/whiteBalanceMode"></a>
 <h3 class="fn"><a name="whiteBalanceMode"></a><a href="qcamera.html#WhiteBalanceMode-enum">WhiteBalanceMode</a> QCamera::whiteBalanceMode () const</h3>
 <p>Returns the white balance mode being used.</p>
