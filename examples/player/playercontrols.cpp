@@ -65,40 +65,40 @@ PlayerControls::PlayerControls(QWidget *parent)
     , rateBox(0)
 #endif    
 {
-    playButton = new QToolButton(this);
+    playButton = new QToolButton;
     playButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
 
     connect(playButton, SIGNAL(clicked()), this, SLOT(playClicked()));
 
-    stopButton = new QToolButton(this);
+    stopButton = new QToolButton;
     stopButton->setIcon(style()->standardIcon(QStyle::SP_MediaStop));
     stopButton->setEnabled(false);
 
     connect(stopButton, SIGNAL(clicked()), this, SIGNAL(stop()));
 
-    nextButton = new QToolButton(this);
+    nextButton = new QToolButton;
     nextButton->setIcon(style()->standardIcon(QStyle::SP_MediaSkipForward));
 
     connect(nextButton, SIGNAL(clicked()), this, SIGNAL(next()));
 
-    previousButton = new QToolButton(this);
+    previousButton = new QToolButton;
     previousButton->setIcon(style()->standardIcon(QStyle::SP_MediaSkipBackward));
 
     connect(previousButton, SIGNAL(clicked()), this, SIGNAL(previous()));
 
-    muteButton = new QToolButton(this);
+    muteButton = new QToolButton;
     muteButton->setIcon(style()->standardIcon(QStyle::SP_MediaVolume));
 
     connect(muteButton, SIGNAL(clicked()), this, SLOT(muteClicked()));
 
 #ifdef Q_OS_SYMBIAN
 #else
-    volumeSlider = new QSlider(Qt::Horizontal, this);
+    volumeSlider = new QSlider(Qt::Horizontal);
     volumeSlider->setRange(0, 100);
 
     connect(volumeSlider, SIGNAL(sliderMoved(int)), this, SIGNAL(changeVolume(int)));
 
-    rateBox = new QComboBox(this);
+    rateBox = new QComboBox;
     rateBox->addItem("0.5x", QVariant(0.5));
     rateBox->addItem("1.0x", QVariant(1.0));
     rateBox->addItem("2.0x", QVariant(2.0));
@@ -153,7 +153,7 @@ PlayerControls::PlayerControls(QWidget *parent)
     layout->addWidget(fullScreenButton);
 #else    
     layout->addWidget(volumeSlider);
-    layout->addWidget(rateBox);    
+    layout->addWidget(rateBox);
 #endif
     setLayout(layout);
 }

@@ -172,6 +172,9 @@ void Dialog::setupDevice()
 
     deviceLockCheckBox->setChecked(di->isDeviceLocked());
 
+#if !defined(QT_NO_DBUS)
+    simComboBox->setCurrentIndex(di->simStatus());
+#endif
     profileComboBox->setCurrentIndex(di->currentProfile());
     connect(di, SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)),
         this, SLOT(updateProfile(QSystemDeviceInfo::Profile)));

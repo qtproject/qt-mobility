@@ -17,7 +17,7 @@ symbian: {
     TARGET.CAPABILITY = UserEnvironment WriteDeviceData ReadDeviceData
     FORMS += cameracapture.ui \
         settings_s60.ui
-    } else {
+} else {
     FORMS += cameracapture.ui \
         settings.ui
 }

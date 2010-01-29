@@ -153,37 +153,22 @@ void AudioRecorder::deviceChanged(int idx)
 
 void AudioRecorder::codecChanged(int idx)
 {
-    //Q_UNUSED(idx);
-    QAudioEncoderSettings audioSettings = capture->audioSettings();
-    audioSettings.setCodec(codecsBox->itemText(idx));
-    //audioSettings.setQuality(QtMedia::HighQuality);
-
-    capture->setEncodingSettings(audioSettings);
+    QAudioEncoderSettings settings = capture->audioSettings();
+    settings.setCodec(codecsBox->itemText(idx));
+    capture->setEncodingSettings(settings);
 }
 
 void AudioRecorder::qualityChanged(int idx)
 {
-    //Q_UNUSED(idx);
-    
-    QAudioEncoderSettings audioSettings = capture->audioSettings();
-
+    QAudioEncoderSettings settings = capture->audioSettings();
     if(qualityBox->itemText(idx).compare("Low") == 0) {
-		// 8000Hz mono is 8kbps
-		audioSettings.setBitRate(8);
-		audioSettings.setSampleRate(8000);
-		audioSettings.setChannelCount(1);
-	} else if(qualityBox->itemText(idx).compare("Medium") == 0) {
-		// 22050Hz mono is 44.1kbps
-		audioSettings.setBitRate(44);
-		audioSettings.setSampleRate(22050);
-		audioSettings.setChannelCount(1);
-	} else if(qualityBox->itemText(idx).compare("High") == 0) {
-		// 44100Hz mono is 88.2kbps
-		audioSettings.setBitRate(88);
-		audioSettings.setSampleRate(44100);
-		audioSettings.setChannelCount(1);
-	}
-    capture->setEncodingSettings(audioSettings);
+        settings.setQuality(QtMedia::LowQuality);
+    } else if(qualityBox->itemText(idx).compare("Medium") == 0) {
+        settings.setQuality(QtMedia::NormalQuality);
+    } else if(qualityBox->itemText(idx).compare("High") == 0) {
+        settings.setQuality(QtMedia::HighQuality);
+    }
+    capture->setEncodingSettings(settings);
 }
 
 void AudioRecorder::toggleRecord()

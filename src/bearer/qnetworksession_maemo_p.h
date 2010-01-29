@@ -70,7 +70,7 @@ class QNetworkSessionPrivate : public QObject
     Q_OBJECT
 public:
     QNetworkSessionPrivate() : 
-	    tx_data(0), rx_data(0), m_activeTime(0), isActive(false),
+        tx_data(0), rx_data(0), m_activeTime(0), isOpen(false),
 #ifdef Q_WS_MAEMO_6
         connectFlags(ICD_CONNECTION_FLAG_USER_EVENT)
 #else

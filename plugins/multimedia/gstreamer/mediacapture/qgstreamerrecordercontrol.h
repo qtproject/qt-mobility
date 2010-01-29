@@ -40,8 +40,8 @@
 ****************************************************************************/
 
 
-#ifndef QGSTREAMERCAPTURECONTROL_H
-#define QGSTREAMERCAPTURECONTROL_H
+#ifndef QGSTREAMERRECORDERCONTROL_H
+#define QGSTREAMERRECORDERCONTROL_H
 
 #include <qmediarecordercontrol.h>
 #include "qgstreamercapturesession.h"

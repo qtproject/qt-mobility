@@ -8,7 +8,7 @@
     }
 
     contains(MOBILITY,bearer|location|publishsubscribe|systeminfo|multimedia|messaging|serviceframework) {
-        INCLUDEPATH+=$$MW_LAYER_SYSTEMINCLUDE 
+        INCLUDEPATH+=$$MW_LAYER_SYSTEMINCLUDE
     }
 }
 mac: LIBS += -F$${MOBILITY_LIB}
