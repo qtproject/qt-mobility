@@ -114,9 +114,6 @@ public:
 
     qreal framerate();
     void setFrameRate(qreal rate);
-    // camera image properties
-    QSize frameSize() const;
-    void setFrameSize(const QSize& s);
 
     QList<QVideoFrame::PixelFormat> supportedPixelFormats();
     QVideoFrame::PixelFormat pixelFormat() const;
@@ -256,7 +253,6 @@ private:
     int m_videoQuality;
     QSize m_captureSize;
     QCamera::State m_state;
-    QSize m_windowSize;
     QVideoFrame::PixelFormat m_pixelF;
     TInt m_deviceIndex; //index indication chosen camera device
     mutable int m_error;

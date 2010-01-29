@@ -71,7 +71,6 @@ S60CameraSession::S60CameraSession(QObject *parent)
     , m_videoQuality(QtMedia::LowQuality*KSymbianImageQualityCoefficient)
     , m_captureSize(QSize())
     , m_state(QCamera::StoppedState)
-    , m_windowSize(QSize(320/2, 240/2))
     , m_pixelF(QVideoFrame::Format_RGB24)
     , m_deviceIndex(NULL)
     , m_error(NoError)
@@ -265,18 +264,6 @@ void S60CameraSession::setFrameRate(qreal rate)
         TRAPD(err, m_videoUtility->SetVideoFrameRateL(rate));
         setError(err);
     }
-}
-
-QSize S60CameraSession::frameSize() const
-{
-    qDebug() << "S60CameraSession::frameSize";
-    return m_windowSize;
-}
-
-void S60CameraSession::setFrameSize(const QSize& s)
-{
-    qDebug() << "S60CameraSession::setFrameSize, size=" << s;
-    m_windowSize = s;
 }
 
 QList<QVideoFrame::PixelFormat> S60CameraSession::supportedPixelFormats()
