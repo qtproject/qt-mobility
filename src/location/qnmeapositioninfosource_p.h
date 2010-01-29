@@ -88,6 +88,11 @@ public:
     void stopUpdates();
     void requestUpdate(int msec);
 
+    bool parsePosInfoFromNmeaData(const char *data, 
+        int size, 
+        QGeoPositionInfo *posInfo, 
+        bool *hasFix);
+
     void notifyNewUpdate(QGeoPositionInfo *update, bool fixStatus);
 
     QNmeaPositionInfoSource::UpdateMode m_updateMode;
@@ -119,6 +124,7 @@ private:
     QDate m_currentDate;
     QTimer *m_requestTimer;
     bool m_noUpdateLastInterval;
+    bool m_updateTimeoutSent;
     bool m_connectedReadyRead;
 };
 

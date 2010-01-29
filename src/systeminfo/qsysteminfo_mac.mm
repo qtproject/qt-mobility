@@ -136,7 +136,6 @@ inline CFStringRef qstringToCFStringRef(const QString &string)
 }
 
 inline QString nsstringToQString(const NSString *nsstr)
-//{ return stringFromCFString(reinterpret_cast<const CFStringRef>(nsstr)); }
 { return QString([nsstr UTF8String]);}
 
 inline NSString *qstringToNSString(const QString &qstr)
@@ -208,7 +207,6 @@ QSystemInfoPrivate::~QSystemInfoPrivate()
 
 }
 
-// 2 letter ISO 639-1
 QString QSystemInfoPrivate::currentLanguage() const
 {
  QString lang = QLocale::system().name().left(2);
@@ -218,14 +216,12 @@ QString QSystemInfoPrivate::currentLanguage() const
     return lang;
 }
 
-// 2 letter ISO 639-1
 QStringList QSystemInfoPrivate::availableLanguages() const
 {
 
     return QStringList() << currentLanguage();
 }
 
-// "major.minor.build" format.
 QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &parameter)
 {
     Q_UNUSED(parameter);
@@ -253,7 +249,6 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &p
 }
 
 
-//2 letter ISO 3166-1
 QString QSystemInfoPrivate::currentCountryCode() const
 {
     return QLocale::system().name().mid(3,2);
@@ -461,8 +456,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
 #ifdef MAC_SDK_10_6
             NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
             CWInterface *wifiInterface = [CWInterface interfaceWithName:  qstringToNSString(interfaceForMode(mode).name())];
-//            qWarning() << __FUNCTION__ << [[wifiInterface interfaceState]intValue];
-//
+
             if([wifiInterface power]) {
                 if(!rssiTimer->isActive())
                     rssiTimer->start(1000);
@@ -516,7 +510,6 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
 
 int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
-//    qWarning() << __FUNCTION__;
     switch(mode) {
         case QSystemNetworkInfo::GsmMode:
         break;
@@ -557,7 +550,6 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
                 if(signalStrengthCache == 0) {
                     networkStatus(QSystemNetworkInfo::WlanMode);
                 }
-//                qWarning() <<__FUNCTION__ << rssiSignal << signalQuality;
                 signalStrengthCache = signalQuality;
                 emit networkSignalStrengthChanged(mode, signalQuality);
             }
@@ -594,13 +586,11 @@ int QSystemNetworkInfoPrivate::locationAreaCode()
     return -1;
 }
 
-// Mobile Country Code
 QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
 {
     return "";
 }
 
-// Mobile Network Code
 QString QSystemNetworkInfoPrivate::currentMobileNetworkCode()
 {
     return "";
@@ -680,7 +670,6 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
         SCNetworkInterfaceRef thisInterface =  (SCNetworkInterfaceRef ) CFArrayGetValueAtIndex(interfaceArray, i);
         type = SCNetworkInterfaceGetInterfaceType(thisInterface);
         iName = SCNetworkInterfaceGetBSDName(thisInterface);
-        //        qWarning() << stringFromCFString(type) <<stringFromCFString( iName);
         if (type != NULL) {
             if (CFEqual(type, kSCNetworkInterfaceTypeBluetooth) && mode == QSystemNetworkInfo::BluetoothMode) {
                 netInterface = QNetworkInterface::interfaceFromName(stringFromCFString(iName));
@@ -725,7 +714,6 @@ runloopThread->stopLoop();
 runloopThread->start();
 }
 
-//////// QSystemDisplayInfo
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
         : QObject(parent)
 {
@@ -770,7 +758,6 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
     return (int)bitsPerPixel;
 }
 
-//////// QSystemStorageInfo
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
         : QObject(parent)
 {
@@ -893,12 +880,6 @@ QStringList QSystemStorageInfoPrivate::logicalDrives()
     count = getmntinfo64(&buf, 0);
     for (i=0; i<count; i++) {
         char *volName = buf[i].f_mntonname;
-//        qWarning() << "Volume:"
-//                << volName
-//                << buf[i].f_bfree
-//                << buf[i].f_bavail
-//                << buf[i].f_fstypename
-//                << buf[i].f_type;
         if(buf[i].f_type != 19
            && buf[i].f_type != 20) {
             drivesList << volName;
@@ -916,7 +897,6 @@ void powerInfoChanged(void* runLoopInfo)
     QSystemDeviceInfoPrivate::instance()->currentPowerState();
 }
 
-//////// QSystemDeviceInfo
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
         : QObject(parent)
 {
@@ -966,7 +946,6 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
         }
 
         powerStateString = (CFStringRef)CFDictionaryGetValue(powerSourceDict, CFSTR(kIOPSPowerSourceStateKey));
-    //    qWarning() << stringFromCFString(powerStateString);
         if(CFStringCompare(powerStateString,CFSTR(kIOPSBatteryPowerValue),0)==kCFCompareEqualTo) {
             //has battery
             state = QSystemDeviceInfo::BatteryPower;
@@ -1047,7 +1026,6 @@ int QSystemDeviceInfoPrivate::batteryLevel()
         powerStateValue = CFDictionaryGetValue(powerSourceDict, CFSTR(kIOPSMaxCapacityKey));
         CFNumberGetValue((CFNumberRef)powerStateValue, kCFNumberSInt32Type, &maxLevel);
         level = (currentLevel/maxLevel) * 100;
-      //  qWarning() << __FUNCTION__<<level;
     }
 
     CFRelease(powerSourcesInfoBlob);
@@ -1085,8 +1063,6 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
     return false;
 }
 
-//////////////
-///////
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
         : QObject(parent), isInhibited(0)
 {
