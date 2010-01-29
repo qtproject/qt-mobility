@@ -526,16 +526,16 @@ void QContactRequestWorker::processContactRelationshipFetchRequest(QContactRelat
         QContactId anonymousParticipant;
         anonymousParticipant.setLocalId(QContactLocalId(0));
         anonymousParticipant.setManagerUri(QString());
-        if (req->participant() != anonymousParticipant) {
+        if (req->second() != anonymousParticipant) {
             allRelationships = requestedRelationships;
             requestedRelationships.clear();
             for (int i = 0; i < allRelationships.size(); i++) {
                 QContactRelationship currRelationship = allRelationships.at(i);
                 if ((req->participantRole() == QContactRelationshipFilter::Either || req->participantRole() == QContactRelationshipFilter::Second)
-                        && currRelationship.second() == req->participant()) {
+                        && currRelationship.second() == req->second()) {
                     requestedRelationships.append(currRelationship);
                 } else if ((req->participantRole() == QContactRelationshipFilter::Either || req->participantRole() == QContactRelationshipFilter::First)
-                        && currRelationship.first() == req->participant()) {
+                        && currRelationship.first() == req->second()) {
                     requestedRelationships.append(currRelationship);
                 }
             }
@@ -554,9 +554,9 @@ void QContactRequestWorker::processContactRelationshipRemoveRequest(QContactRela
 {
     if (req->manager()) {
         QMap<int, QContactManager::Error> errorMap;
+        QContactManager::Error operationError = req->manager()->error();
         foreach (const QContactRelationship& relationship, req->relationships()) {
             QList<QContactRelationship> matchingRelationships = req->manager()->relationships(relationship.relationshipType(), relationship.first(), QContactRelationshipFilter::First);
-            QContactManager::Error operationError = req->manager()->error();
 
             for (int i = 0; i < matchingRelationships.size(); i++) {
                 QContactManager::Error tempError;
