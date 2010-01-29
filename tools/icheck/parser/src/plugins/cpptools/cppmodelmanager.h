@@ -42,7 +42,7 @@
 #include <cplusplus/PreprocessorEnvironment.h>
 #include <cplusplus/pp-engine.h>
 #ifdef ICHECK_BUILD
-#  include "ParseManager.h"
+#  include "parsemanager.h"
 #endif
 #include <QtCore/QHash>
 #include <QtCore/QFutureInterface>
