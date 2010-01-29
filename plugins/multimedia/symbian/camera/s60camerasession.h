@@ -128,7 +128,7 @@ public:
     // media control
     bool setOutputLocation(const QUrl &sink);
     QUrl outputLocation() const;
-    qint64 position() const;
+    qint64 position();
     int state() const;    
 
     //added based on s60 camera needs
@@ -275,6 +275,18 @@ private:
     QHash<QString, VideoControllerData> m_videoControllerMap;
     QString m_videoCodec;
     QVideoEncoderSettings m_videoSettings;
+    
+    enum TVideoCaptureState
+    {
+        ENotInitialized = 0,
+        EInitialized,
+        EOpenCompelete,
+        ERecording,
+        EPaused,
+        ERecordComplete
+    };
+    
+    TVideoCaptureState m_captureState;
 
 };
 
