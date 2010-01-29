@@ -89,7 +89,7 @@
             monitor-&gt;setRadius(100);
         }
 
-    public slots:
+    public Q_SLOTS:
         void areaEntered(const QGeoPositionInfo &amp;update)
         {
             qDebug() &lt;&lt; &quot;Now within 100 meters, current position is&quot; &lt;&lt; update.coordinate();

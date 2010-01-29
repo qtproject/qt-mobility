@@ -377,8 +377,8 @@ public:
 
     void zoomTo(qreal optical, qreal digital)
     {
-        optical = qBound(1.0, optical, maximumOpticalZoom());
-        digital = qBound(1.0, digital, maximumDigitalZoom());
+        optical = qBound<qreal>(1.0, optical, maximumOpticalZoom());
+        digital = qBound<qreal>(1.0, digital, maximumDigitalZoom());
 
         if (!qFuzzyCompare(digital, m_digitalZoom)) {
             m_digitalZoom = digital;

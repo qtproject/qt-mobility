@@ -49,7 +49,9 @@
 #include <QtCore/qdatetime.h>
 #include <QtCore/qdebug.h>
 
-//#define USE_PLAYBIN2
+#ifdef Q_WS_MAEMO_5
+#define USE_PLAYBIN2
+#endif
 
 QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
     :QObject(parent),
