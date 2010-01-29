@@ -67,14 +67,6 @@ public:
     void setImageSettings(const QImageEncoderSettings &settings);
 
 private:
-//    QSize resolution() const;
-//    QSize minimumResolution() const;
-//    QSize maximumResolution() const;
-//    //QList<QSize> supportedResolutions() const;
-//    void setResolution(const QSize &size);
-
-
-private:
     S60CameraSession *m_session;
     QImageEncoderSettings m_imageEncoderSettings;
 };
