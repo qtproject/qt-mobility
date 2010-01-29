@@ -190,8 +190,8 @@ void TestModelUi::populateContacts()
             QContactEmailAddress e;
             QContactAvatar a;
 
-            n.setFirst(nameFirst.at(i));
-            n.setLast(nameLast.at(j));
+            n.setFirstName(nameFirst.at(i));
+            n.setLastName(nameLast.at(j));
             p.setNumber(phoneFirst.at(i) + phoneLast.at(j));
             e.setEmailAddress(emailFirst.at(i) + emailLast.at(j));
             a.setAvatar(avatarFirst.at(i) + avatarLast.at(j));
@@ -211,7 +211,7 @@ void TestModelUi::dataAvailable(QContactFetchRequest* request, bool appendOnly)
     Q_UNUSED(appendOnly);
 
     // first, make sure we can use the data.
-    if (currentState == TestModelUi::WaitingState || request->status() != QContactAbstractRequest::Finished)
+    if (currentState == TestModelUi::WaitingState || request->state() != QContactAbstractRequest::FinishedState)
         return;
 
     // we assume that we need the extra details.
@@ -230,7 +230,7 @@ void TestModelUi::dataAvailable(QContactFetchRequest* request, bool appendOnly)
     foreach (const QContactDetail& det, allDetails) {
         QString defName = det.definitionName();
         text += defName + ":" + "\n";
-        QList<QString> fieldKeys = det.values().keys();
+        QList<QString> fieldKeys = det.variantValues().keys();
         foreach (const QString& key, fieldKeys) {
             text += "\t" + key + " = " + det.value(key) + "\n";
         }
@@ -258,7 +258,7 @@ void TestModelUi::filterResults(QContactFetchRequest* request, bool appendOnly)
     }
     textEdit->setText(text);
 
-    if (request->status() == QContactAbstractRequest::Finished) {
+    if (request->state() == QContactAbstractRequest::FinishedState) {
         if (results.isEmpty())
             textEdit->setText("Matching Contacts:\n\nNo Matches Found!");
         rightButton->setText(tr("Done"));

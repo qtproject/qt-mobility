@@ -1013,7 +1013,9 @@
             <keyword name="subType" id="QContactAnniversary::subType" ref="qcontactanniversary.html#subType"/>
             <keyword name="QContactAvatar" id="QContactAvatar" ref="qcontactavatar.html"/>
             <keyword name="avatar" id="QContactAvatar::avatar" ref="qcontactavatar.html#avatar"/>
+            <keyword name="pixmap" id="QContactAvatar::pixmap" ref="qcontactavatar.html#pixmap"/>
             <keyword name="setAvatar" id="QContactAvatar::setAvatar" ref="qcontactavatar.html#setAvatar"/>
+            <keyword name="setPixmap" id="QContactAvatar::setPixmap" ref="qcontactavatar.html#setPixmap"/>
             <keyword name="setSubType" id="QContactAvatar::setSubType" ref="qcontactavatar.html#setSubType"/>
             <keyword name="subType" id="QContactAvatar::subType" ref="qcontactavatar.html#subType"/>
             <keyword name="QContactBirthday" id="QContactBirthday" ref="qcontactbirthday.html"/>
@@ -1177,6 +1179,7 @@
             <keyword name="QContactFilter::MatchFixedString" id="QContactFilter::MatchFixedString" ref="qcontactfilter.html#MatchFlag-enum"/>
             <keyword name="QContactFilter::MatchCaseSensitive" id="QContactFilter::MatchCaseSensitive" ref="qcontactfilter.html#MatchFlag-enum"/>
             <keyword name="QContactFilter::MatchPhoneNumber" id="QContactFilter::MatchPhoneNumber" ref="qcontactfilter.html#MatchFlag-enum"/>
+            <keyword name="QContactFilter::MatchKeypadCollation" id="QContactFilter::MatchKeypadCollation" ref="qcontactfilter.html#MatchFlag-enum"/>
             <keyword name="QContactFilter::MatchFlags" id="QContactFilter::MatchFlags" ref="qcontactfilter.html#MatchFlag-enum"/>
             <keyword name="operator!=" id="QContactFilter::operator!=" ref="qcontactfilter.html#operator-not-eq"/>
             <keyword name="operator=" id="QContactFilter::operator=" ref="qcontactfilter.html#operator-eq"/>

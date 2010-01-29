@@ -92,13 +92,13 @@ void UT_QVersitProperty::testParameters()
     
     QString name(QString::fromAscii("type"));
     QString value1(QString::fromAscii("home"));
-    mVersitProperty->addParameter(name,value1);
+    mVersitProperty->insertParameter(name,value1);
     QMultiHash<QString,QString> parameters = mVersitProperty->parameters();
     QCOMPARE(parameters.count(), 1);
     QVERIFY(parameters.contains(typeParameterName,QString::fromAscii("HOME")));
     
     QString value2(QString::fromAscii("voice"));
-    mVersitProperty->addParameter(name,value2);
+    mVersitProperty->insertParameter(name,value2);
     parameters = mVersitProperty->parameters();
     QCOMPARE(parameters.count(), 2);
     QVERIFY(parameters.contains(typeParameterName,QString::fromAscii("HOME")));
@@ -109,12 +109,18 @@ void UT_QVersitProperty::testParameters()
     QVERIFY(parameters.contains(typeParameterName,QString::fromAscii("HOME")));
     
     mVersitProperty->removeParameter(name,value2);
-    QCOMPARE(mVersitProperty->parameters().count(), 0);    
+    QCOMPARE(mVersitProperty->parameters().count(), 0);
+
+    mVersitProperty->insertParameter(name, value1);
+    mVersitProperty->insertParameter(name, value2);
+    QCOMPARE(mVersitProperty->parameters().count(), 2);
+    mVersitProperty->removeParameters(name);
+    QCOMPARE(mVersitProperty->parameters().count(), 0);
 }
 
 void UT_QVersitProperty::testValue()
 {
-    QByteArray value("050484747");
+    QString value(QString::fromAscii("050484747"));
     mVersitProperty->setValue(value);
     QCOMPARE(mVersitProperty->value(), value);
 }
@@ -125,9 +131,9 @@ void UT_QVersitProperty::testEmbeddedDocument()
     QVersitProperty property;
     property.setName(QString::fromAscii("X-tension"));
     document.addProperty(property);
-    mVersitProperty->setEmbeddedDocument(document);
+    mVersitProperty->setValue(QVariant::fromValue(document));
     QList<QVersitProperty> embeddedDocumentProperties = 
-        mVersitProperty->embeddedDocument().properties();
+        mVersitProperty->value<QVersitDocument>().properties();
     QCOMPARE(embeddedDocumentProperties.count(),1);
     QCOMPARE(embeddedDocumentProperties[0].name(),QString::fromAscii("X-TENSION"));
 }

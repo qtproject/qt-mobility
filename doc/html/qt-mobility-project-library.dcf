@@ -481,11 +481,14 @@
     <section ref="qcontactavatar.html" title="QContactAvatar Class Reference">
         <keyword ref="qcontactavatar.html">QContactAvatar</keyword>
         <keyword ref="qcontactavatar.html#avatar">avatar</keyword>
+        <keyword ref="qcontactavatar.html#pixmap">pixmap</keyword>
         <keyword ref="qcontactavatar.html#setAvatar">setAvatar</keyword>
+        <keyword ref="qcontactavatar.html#setPixmap">setPixmap</keyword>
         <keyword ref="qcontactavatar.html#setSubType">setSubType</keyword>
         <keyword ref="qcontactavatar.html#subType">subType</keyword>
         <keyword ref="qcontactavatar.html#DefinitionName-var">DefinitionName</keyword>
         <keyword ref="qcontactavatar.html#FieldAvatar-var">FieldAvatar</keyword>
+        <keyword ref="qcontactavatar.html#FieldAvatarPixmap-var">FieldAvatarPixmap</keyword>
         <keyword ref="qcontactavatar.html#FieldSubType-var">FieldSubType</keyword>
         <keyword ref="qcontactavatar.html#SubTypeAudioRingtone-var">SubTypeAudioRingtone</keyword>
         <keyword ref="qcontactavatar.html#SubTypeImage-var">SubTypeImage</keyword>
@@ -698,6 +701,7 @@
         <keyword ref="qcontactfilter.html#MatchFlag-enum">MatchFlag</keyword>
         <keyword ref="qcontactfilter.html#MatchFlag-enum">MatchFlags</keyword>
         <keyword ref="qcontactfilter.html#MatchFlag-enum">QContactFilter::MatchStartsWith</keyword>
+        <keyword ref="qcontactfilter.html#MatchFlag-enum">QContactFilter::MatchKeypadCollation</keyword>
         <keyword ref="qcontactfilter.html#MatchFlag-enum">QContactFilter::MatchEndsWith</keyword>
         <keyword ref="qcontactfilter.html#MatchFlag-enum">QContactFilter::MatchFixedString</keyword>
         <keyword ref="qcontactfilter.html#MatchFlag-enum">QContactFilter::MatchContains</keyword>

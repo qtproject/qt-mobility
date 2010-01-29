@@ -43,33 +43,61 @@
 #define QVERSITCONTACTEXPORTER_H
 
 #include "qmobilityglobal.h"
+#include "qversitresourcehandler.h"
 #include "qversitdocument.h"
 
 #include <qcontact.h>
 
-#include <QObject>
 #include <QImage>
 
 QTM_BEGIN_NAMESPACE
 
 class QVersitContactExporterPrivate;
 
-class Q_VERSIT_EXPORT QVersitContactExporter : public QObject
+class Q_VERSIT_EXPORT QVersitContactExporterDetailHandler
 {
-    Q_OBJECT
+public:
+    virtual ~QVersitContactExporterDetailHandler() {}
+    virtual bool preProcessDetail(const QContact& contact,
+                                  const QContactDetail& detail,
+                                  QVersitDocument* document) = 0;
+    virtual bool postProcessDetail(const QContact& contact,
+                                   const QContactDetail& detail,
+                                   bool alreadyProcessed,
+                                   QVersitDocument* document) = 0;
+};
 
+class Q_VERSIT_EXPORT QVersitContactExporter
+{
 public:
     QVersitContactExporter();
     ~QVersitContactExporter();
 
-    QVersitDocument exportContact(
-        const QContact& contact,
-        QVersitDocument::VersitType versitType=QVersitDocument::VCard21);
-		
-    QList<QContactDetail> unknownContactDetails();
+    QList<QVersitDocument> exportContacts(const QList<QContact>& contacts,
+        QVersitDocument::VersitType versitType=QVersitDocument::VCard30Type);
 
-signals:
-    void scale(const QString& imageFileName, QByteArray& imageData);
+    void setDetailHandler(QVersitContactExporterDetailHandler* handler);
+    QVersitContactExporterDetailHandler* detailHandler() const;
+
+    void setResourceHandler(QVersitResourceHandler* handler);
+    QVersitResourceHandler* resourceHandler() const;
+
+    // Deprecated:
+    QVersitDocument Q_DECL_DEPRECATED exportContact(
+        const QContact& contact,
+        QVersitDocument::VersitType versitType=QVersitDocument::VCard30Type)
+    {
+        qWarning("QVersitContactExporter::exportContact(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  exportContacts() should be used instead.");
+        QList<QContact> list;
+        list.append(contact);
+        return exportContacts(list, versitType).first();
+    }
+
+    QList<QContactDetail> Q_DECL_DEPRECATED unknownContactDetails()
+    {
+        qWarning("QVersitContactExporter::unknownContactDetails(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  A QVersitContactExporterDetailHandler should be used to discover and handle unknown details.");
+        return QList<QContactDetail>();
+    }
 
 private:
     QVersitContactExporterPrivate* d;    

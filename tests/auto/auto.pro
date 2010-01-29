@@ -86,6 +86,7 @@ contains(mobility_modules,versit) {
     SUBDIRS += \
             qvcard21writer \
             qvcard30writer \
+            qversit \
             qversitcontactexporter \
             qversitcontactimporter \
             qversitdocument \

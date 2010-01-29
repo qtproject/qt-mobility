@@ -166,7 +166,9 @@ public:
         m_refCount(QAtomicInt(1)),
         m_phonemeta(PIMPR_INVALID_ID),
         m_emailmeta(PIMPR_INVALID_ID),
-        m_factory(0)
+        m_factory(0),
+        m_avatarmeta(PIMPR_INVALID_ID),
+        m_avatartypemeta(PIMPR_INVALID_ID)
     {
     }
 
@@ -185,6 +187,8 @@ public:
     // The ID of our sekrit extra phone number and email metadata id
     PROPID m_phonemeta;
     PROPID m_emailmeta;
+    PROPID m_avatarmeta;
+    PROPID m_avatartypemeta;
 
     // List of ids (OIDs are equiv to unique ids, yay)
     QList<QContactLocalId> m_ids;
@@ -206,11 +210,11 @@ public:
     QString managerName() const;
 
     /* Filtering */
-    QList<QContactLocalId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
 
     /* Contacts - Accessors and Mutators */
-    QList<QContactLocalId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-    QContact contact(const QContactLocalId& contactId, QContactManager::Error& error) const;
+    QList<QContactLocalId> contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    QContact contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
     bool saveContact(QContact* contact, QContactManager::Error& error);
     bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
 
@@ -227,17 +231,21 @@ public:
     void requestDestroyed(QContactAbstractRequest* req);
     bool startRequest(QContactAbstractRequest* req);
     bool cancelRequest(QContactAbstractRequest* req);
-    bool waitForRequestProgress(QContactAbstractRequest* req, int msecs);
     bool waitForRequestFinished(QContactAbstractRequest* req, int msecs);
 
     /* Capabilities reporting */
     bool hasFeature(QContactManager::ManagerFeature feature) const;
-    bool filterSupported(const QContactFilter& filter) const;
+    bool isFilterSupported(const QContactFilter& filter) const;
     QList<QVariant::Type> supportedDataTypes() const;
 
     /* Synthesize the display label of a contact */
-    virtual QString synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
-
+    virtual QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
+    
+    /*helper functions*/
+    PROPID metaAvatar() const;
+    PROPID metaAvatarType() const;
+    PROPID metaEmail() const;
+    PROPID metaPhone() const;
 private:
     QSharedDataPointer<QContactWinCEEngineData> d;
 
