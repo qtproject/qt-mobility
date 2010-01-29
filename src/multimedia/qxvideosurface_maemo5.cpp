@@ -296,7 +296,7 @@ bool QXVideoSurface::start(const QVideoSurfaceFormat &format)
         m_shminfo.readOnly = False;
 
         if (!XShmAttach(QX11Info::display(), &m_shminfo)) {
-            qDebug() << "XShmAttach failed";
+            //qDebug() << "XShmAttach failed";
             return false;
         }
 
