@@ -234,6 +234,7 @@ private:
 
     void updateVideoCaptureCodecs();
     void updateVideoCaptureCodecsL();
+    void initializeVideoCaptureSettings();
 
 Q_SIGNALS:
     void stateChanged(QCamera::State);
