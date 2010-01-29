@@ -27,9 +27,15 @@ INCLUDEPATH += . \
     $$REL_PATH_TO_SRC/plugins \
     $$REL_PATH_TO_SRC/libs \
     $$REL_PATH_TO_SRC/shared/cplusplus \
-    $$REL_PATH_TO_SRC/libs/cplusplus
+    $$REL_PATH_TO_SRC/libs/cplusplus \
+    ../../../tools/icheck
 
 include(../../../tools/icheck/parser/ichecklib.pri)
 
-SOURCES  += tst_icheck.cpp
+SOURCES += tst_icheck.cpp \
+    ../../../tools/icheck/parsemanager.cpp \
+    ../../../tools/icheck/ichecklib.cpp
+
+HEADERS += ../../../tools/icheck/parsemanager.h \
+    ../../../tools/icheck/ichecklib.h
 
