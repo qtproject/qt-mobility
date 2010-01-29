@@ -97,7 +97,7 @@ S60CameraSession::~S60CameraSession()
 CCamera::TFormat S60CameraSession::defaultCodec()
 {
     if (m_deviceIndex == 0) {
-        return CCamera::EFormatJpeg;
+        return CCamera::EFormatExif;
     }
     else {
         return CCamera::EFormatFbsBitmapColor64K;
