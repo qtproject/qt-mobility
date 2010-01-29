@@ -62,11 +62,11 @@ CameraCapture::CameraCapture(QWidget *parent) :
     videoWidget(0)
 {
     ui->setupUi(this);
-    #if defined(Q_OS_SYMBIAN)
+#if defined(Q_OS_SYMBIAN)
     outputDir = QDir::rootPath(); // this defaults to C:\Data in symbian
-    #else
+#else
     outputDir = QDir::currentPath();
-    #endif
+#endif
 
     //camera devices
     QByteArray cameraDevice;
@@ -106,11 +106,10 @@ void CameraCapture::setCamera(const QByteArray &cameraDevice)
     delete mediaRecorder;
     delete videoWidget;
     delete camera;
-    
-    qDebug() << "CameraCapture::setCamera cameraDevice.isEmpty()=" << cameraDevice.isEmpty();
+
     if (cameraDevice.isEmpty())
         camera = new QCamera;
-    else       
+    else
         camera = new QCamera(cameraDevice);
 
     connect(camera, SIGNAL(stateChanged(QCamera::State)), this, SLOT(updateCameraState(QCamera::State)));
@@ -231,16 +230,14 @@ void CameraCapture::takeImage()
 
 void CameraCapture::toggleCamera()
 {
-    if (camera->state() == QCamera::ActiveState){
+    if (camera->state() == QCamera::ActiveState)
         camera->stop();
-    }
     else
         camera->start();
 }
 
 void CameraCapture::updateCameraState(QCamera::State state)
 {
-    qDebug() << "CameraCapture::updateCameraState(), state="<<state;
     if (state == QCamera::ActiveState) {
         ui->actionCamera->setEnabled(false);
         ui->actionAudio->setEnabled(false);
@@ -298,8 +295,6 @@ void CameraCapture::displayErrorMessage()
 
 void CameraCapture::updateCameraDevice(QAction *action)
 {
-    qDebug() << "CameraCapture::updateCameraDevice(), action="<<action;
-    qDebug() << "CameraCapture::updateCameraDevice(), device="<<action->data().toByteArray();
     setCamera(action->data().toByteArray());
 }
 
@@ -310,9 +305,7 @@ void CameraCapture::updateAudioDevice(QAction *action)
 
 void CameraCapture::focusLocked()
 {
-    qDebug() << "CameraCapture focus locked";
 }
 void CameraCapture::zoomValueChanged(qreal value)
 {
-	qDebug() << "CameraCapture zoom value changed to: " << value;
 }
