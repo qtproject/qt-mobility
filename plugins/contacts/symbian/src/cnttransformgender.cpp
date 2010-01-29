@@ -142,7 +142,7 @@ void CntTransformGender::detailDefinitions(QMap<QString, QContactDetailDefinitio
 
     if(definitions.contains(QContactGender::DefinitionName)) {
         QContactDetailDefinition d = definitions.value(QContactGender::DefinitionName);
-        QMap<QString, QContactDetailDefinitionField> fields = d.fields();
+        QMap<QString, QContactDetailFieldDefinition> fields = d.fields();
 
         // Context not supported in symbian back-end, remove
         fields.remove(QContactGender::FieldContext);

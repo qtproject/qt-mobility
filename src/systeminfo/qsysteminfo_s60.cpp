@@ -49,7 +49,9 @@
 #include <SysUtil.h>
 #include <ptiengine.h>
 #include <FeatDiscovery.h>
+#ifndef KFeatureIdMmc
 #include <featureinfo.h>
+#endif
 #include <hwrmvibra.h>
 #include <AknUtils.h>
 #include <W32STD.H>

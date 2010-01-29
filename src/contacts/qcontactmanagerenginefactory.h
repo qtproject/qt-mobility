@@ -56,9 +56,11 @@ class Q_CONTACTS_EXPORT QContactManagerEngineFactory
 {
 public:
 
-    int version() const
+    // deprecated - removed entirely week 1.
+    int Q_DECL_DEPRECATED version() const
     {
-        return QContactManager::version();
+        return -1;
+        //return QContactManager::version();
     }
 
     virtual QList<int> supportedImplementationVersions() const

@@ -114,8 +114,8 @@ QContactDetail *CntTransformAddress::transformItemField(const CContactItemField&
 
         // Merge detail with existing detail
         detail = new QContactAddress( existingAddress );
-        foreach( QString key, address.values().keys() )
-            detail->setValue( key, address.value(key) );
+        foreach( QString key, address.variantValues().keys() )
+            detail->setValue( key, address.variantValue(key) );
         break;
     }
 
@@ -235,7 +235,15 @@ void CntTransformAddress::detailDefinitions(QMap<QString, QContactDetailDefiniti
 
     if(definitions.contains(QContactAddress::DefinitionName)) {
         QContactDetailDefinition d = definitions.value(QContactAddress::DefinitionName);
-        QMap<QString, QContactDetailDefinitionField> fields = d.fields();
+        QMap<QString, QContactDetailFieldDefinition> fields = d.fields();
+        
+        // Don't support "ContextOther"
+        QContactDetailFieldDefinition f;
+        f.setDataType(QVariant::StringList);
+        f.setAllowableValues(QVariantList() 
+            << QLatin1String(QContactDetail::ContextHome) 
+            << QLatin1String(QContactDetail::ContextWork));
+        fields[QContactDetail::FieldContext] = f;
 
         // Sub-types not supported in symbian back-end, remove
         fields.remove(QContactAddress::FieldSubTypes);

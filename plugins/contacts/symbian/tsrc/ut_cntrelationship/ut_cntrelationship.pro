@@ -4,42 +4,32 @@
 
 TEMPLATE = app
 TARGET = 
-
 QT += testlib
-CONFIG  += qtestlib
+CONFIG += qtestlib
+include(../tsrc.pri)
 
 DEPENDPATH += .
 DEPENDPATH += ../../src
 DEPENDPATH += ../../inc
 INCLUDEPATH += .
-INCLUDEPATH += ../../src
-INCLUDEPATH += ../../inc
-INCLUDEPATH += ../../../../../src/global
-
 
 symbian:
 {
-	INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
+    INCLUDEPATH += $$SYMBIAN_PATHS
+    INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 	
-	# Input
-	HEADERS +=  ut_cntrelationship.h \
-				../../inc/cntsymbiantransformerror.h \ 
-				../../inc/cntrelationship.h \
-				../../inc/cntabstractrelationship.h \
-      	        ../../inc/cntrelationshipgroup.h \
-      	         
-      
-	SOURCES += ut_cntrelationship.cpp \ 
-	            ../../src/cntsymbiantransformerror.cpp \ 
-				../../src/cntrelationship.cpp \
-				../../src/cntabstractrelationship.cpp \
-      	        ../../src/cntrelationshipgroup.cpp  
+    # Input
+    HEADERS +=  $$SYMBIAN_HEADERS \
+                ut_cntrelationship.h
+
+    SOURCES += $$SYMBIAN_SOURCES \
+                ut_cntrelationship.cpp
+
+    CONFIG += mobility
+    MOBILITY = contacts
  
-      
-	TARGET.CAPABILITY = ALL -TCB
-  
-  LIBS += \
-  	-lcntmodel \
-  	-lQtContacts 
+    TARGET.CAPABILITY = ALL -TCB
+
+    LIBS += $$SYMBIAN_LIBS
 }
 

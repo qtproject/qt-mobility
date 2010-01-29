@@ -144,7 +144,7 @@ void CntTransformNickname::detailDefinitions(QMap<QString, QContactDetailDefinit
 
     if(definitions.contains(QContactNickname::DefinitionName)) {
         QContactDetailDefinition d = definitions.value(QContactNickname::DefinitionName);
-        QMap<QString, QContactDetailDefinitionField> fields = d.fields();
+        QMap<QString, QContactDetailFieldDefinition> fields = d.fields();
 
         // Context not supported in symbian back-end, remove
         fields.remove(QContactNickname::FieldContext);

@@ -404,6 +404,9 @@ for module in $MOBILITY_MODULES; do
             ;;
         contacts)
             $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts/details
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts/requests
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts/filters
             ;;
         multimedia)
             $relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia
@@ -416,6 +419,9 @@ for module in $MOBILITY_MODULES; do
             #versit implies contacts
             $relpath/bin/syncheaders $shadowpath/include $relpath/src/versit
             $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts/details
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts/requests
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts/filters
             ;;
         *)
             echo "Cannot generate headers for $module"

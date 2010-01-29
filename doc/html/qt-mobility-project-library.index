@@ -1135,7 +1135,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="bufferStatus" fullname="QMediaPlayerControl::bufferStatus" href="qmediaplayercontrol.html#bufferStatus" location="qmediaplayercontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="int" signature="bufferStatus() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="isVideoAvailable" fullname="QMediaPlayerControl::isVideoAvailable" href="qmediaplayercontrol.html#isVideoAvailable" location="qmediaplayercontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="bool" signature="isVideoAvailable() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="isSeekable" fullname="QMediaPlayerControl::isSeekable" href="qmediaplayercontrol.html#isSeekable" location="qmediaplayercontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="bool" signature="isSeekable() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="seekRange" fullname="QMediaPlayerControl::seekRange" href="qmediaplayercontrol.html#seekRange" location="qmediaplayercontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QPair&lt;qint64, qint64&gt;" signature="seekRange() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="availablePlaybackRanges" fullname="QMediaPlayerControl::availablePlaybackRanges" href="qmediaplayercontrol.html#availablePlaybackRanges" location="qmediaplayercontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QMediaTimeRange" signature="availablePlaybackRanges() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="playbackRate" fullname="QMediaPlayerControl::playbackRate" href="qmediaplayercontrol.html#playbackRate" location="qmediaplayercontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="qreal" signature="playbackRate() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setPlaybackRate" fullname="QMediaPlayerControl::setPlaybackRate" href="qmediaplayercontrol.html#setPlaybackRate" location="qmediaplayercontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setPlaybackRate(qreal rate)">
                 <parameter left="qreal" right="" name="rate" default=""/>
@@ -1179,8 +1179,8 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="seekableChanged" fullname="QMediaPlayerControl::seekableChanged" href="qmediaplayercontrol.html#seekableChanged" location="qmediaplayercontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="seekableChanged(bool seekable)">
                 <parameter left="bool" right="" name="seekable" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="seekRangeChanged" fullname="QMediaPlayerControl::seekRangeChanged" href="qmediaplayercontrol.html#seekRangeChanged" location="qmediaplayercontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="seekRangeChanged(const QPair&lt;qint64, qint64&gt; &amp; range)">
-                <parameter left="const QPair&lt;qint64, qint64&gt; &amp;" right="" name="range" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="availablePlaybackRangesChanged" fullname="QMediaPlayerControl::availablePlaybackRangesChanged" href="qmediaplayercontrol.html#availablePlaybackRangesChanged" location="qmediaplayercontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="availablePlaybackRangesChanged(const QMediaTimeRange &amp; ranges)">
+                <parameter left="const QMediaTimeRange &amp;" right="" name="ranges" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="playbackRateChanged" fullname="QMediaPlayerControl::playbackRateChanged" href="qmediaplayercontrol.html#playbackRateChanged" location="qmediaplayercontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="playbackRateChanged(qreal rate)">
                 <parameter left="qreal" right="" name="rate" default=""/>
@@ -1235,9 +1235,9 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setAudioBitRate" fullname="QMediaResource::setAudioBitRate" href="qmediaresource.html#setAudioBitRate" location="qmediaresource.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setAudioBitRate(int rate)">
                 <parameter left="int" right="" name="rate" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="frequency" fullname="QMediaResource::frequency" href="qmediaresource.html#frequency" location="qmediaresource.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="frequency() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setFrequency" fullname="QMediaResource::setFrequency" href="qmediaresource.html#setFrequency" location="qmediaresource.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setFrequency(int frequency)">
-                <parameter left="int" right="" name="frequency" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="sampleRate" fullname="QMediaResource::sampleRate" href="qmediaresource.html#sampleRate" location="qmediaresource.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="sampleRate() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setSampleRate" fullname="QMediaResource::setSampleRate" href="qmediaresource.html#setSampleRate" location="qmediaresource.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setSampleRate(int sampleRate)">
+                <parameter left="int" right="" name="sampleRate" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="channelCount" fullname="QMediaResource::channelCount" href="qmediaresource.html#channelCount" location="qmediaresource.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="channelCount() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setChannelCount" fullname="QMediaResource::setChannelCount" href="qmediaresource.html#setChannelCount" location="qmediaresource.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setChannelCount(int channels)">
@@ -1550,6 +1550,111 @@
             </function>
             <variable access="protected" threadsafety="unspecified" status="commendable" name="d_ptr" fullname="QMediaControl::d_ptr" href="qmediacontrol.html#d_ptr-var" location="qmediacontrol.h" type="QMediaControlPrivate *" static="false"/>
         </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QMediaTimeInterval" href="qmediatimeinterval.html" location="qmediatimerange.h" bases="" module="">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QMediaTimeInterval" fullname="QMediaTimeInterval::QMediaTimeInterval" href="qmediatimeinterval.html#QMediaTimeInterval" location="qmediatimerange.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMediaTimeInterval()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QMediaTimeInterval" fullname="QMediaTimeInterval::QMediaTimeInterval" href="qmediatimeinterval.html#QMediaTimeInterval-2" location="qmediatimerange.cpp" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QMediaTimeInterval(qint64 start, qint64 end)">
+                <parameter left="qint64" right="" name="start" default=""/>
+                <parameter left="qint64" right="" name="end" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QMediaTimeInterval" fullname="QMediaTimeInterval::QMediaTimeInterval" href="qmediatimeinterval.html#QMediaTimeInterval-3" location="qmediatimerange.cpp" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="3" type="" signature="QMediaTimeInterval(const QMediaTimeInterval &amp; other)">
+                <parameter left="const QMediaTimeInterval &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="start" fullname="QMediaTimeInterval::start" href="qmediatimeinterval.html#start" location="qmediatimerange.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="qint64" signature="start() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="end" fullname="QMediaTimeInterval::end" href="qmediatimeinterval.html#end" location="qmediatimerange.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="qint64" signature="end() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="contains" fullname="QMediaTimeInterval::contains" href="qmediatimeinterval.html#contains" location="qmediatimerange.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="contains(qint64 time) const">
+                <parameter left="qint64" right="" name="time" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isNormal" fullname="QMediaTimeInterval::isNormal" href="qmediatimeinterval.html#isNormal" location="qmediatimerange.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isNormal() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="normalized" fullname="QMediaTimeInterval::normalized" href="qmediatimeinterval.html#normalized" location="qmediatimerange.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMediaTimeInterval" signature="normalized() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="translated" fullname="QMediaTimeInterval::translated" href="qmediatimeinterval.html#translated" location="qmediatimerange.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMediaTimeInterval" signature="translated(qint64 offset) const">
+                <parameter left="qint64" right="" name="offset" default=""/>
+            </function>
+        </class>
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator==" href="qmediatimerange.html#operator==-42" location="qmediatimerange.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="42" relates="QMediaTimeRange" type="bool" signature="operator==(const QMediaTimeInterval &amp; a, const QMediaTimeInterval &amp; b)">
+            <parameter left="const QMediaTimeInterval &amp;" right="" name="a" default=""/>
+            <parameter left="const QMediaTimeInterval &amp;" right="" name="b" default=""/>
+        </function>
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator!=" href="qmediatimerange.html#operator!=-36" location="qmediatimerange.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="36" relates="QMediaTimeRange" type="bool" signature="operator!=(const QMediaTimeInterval &amp; a, const QMediaTimeInterval &amp; b)">
+            <parameter left="const QMediaTimeInterval &amp;" right="" name="a" default=""/>
+            <parameter left="const QMediaTimeInterval &amp;" right="" name="b" default=""/>
+        </function>
+        <class access="public" threadsafety="reentrant" status="commendable" name="QMediaTimeRange" href="qmediatimerange.html" location="qmediatimerange.h" bases="" module="">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QMediaTimeRange" fullname="QMediaTimeRange::QMediaTimeRange" href="qmediatimerange.html#QMediaTimeRange" location="qmediatimerange.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMediaTimeRange()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QMediaTimeRange" fullname="QMediaTimeRange::QMediaTimeRange" href="qmediatimerange.html#QMediaTimeRange-2" location="qmediatimerange.cpp" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QMediaTimeRange(qint64 start, qint64 end)">
+                <parameter left="qint64" right="" name="start" default=""/>
+                <parameter left="qint64" right="" name="end" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QMediaTimeRange" fullname="QMediaTimeRange::QMediaTimeRange" href="qmediatimerange.html#QMediaTimeRange-3" location="qmediatimerange.cpp" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="3" type="" signature="QMediaTimeRange(const QMediaTimeInterval &amp; interval)">
+                <parameter left="const QMediaTimeInterval &amp;" right="" name="interval" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QMediaTimeRange" fullname="QMediaTimeRange::QMediaTimeRange" href="qmediatimerange.html#QMediaTimeRange-4" location="qmediatimerange.cpp" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="4" type="" signature="QMediaTimeRange(const QMediaTimeRange &amp; range)">
+                <parameter left="const QMediaTimeRange &amp;" right="" name="range" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QMediaTimeRange" fullname="QMediaTimeRange::~QMediaTimeRange" href="qmediatimerange.html#dtor.QMediaTimeRange" location="qmediatimerange.cpp" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMediaTimeRange()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QMediaTimeRange::operator=" href="qmediatimerange.html#operator=" location="qmediatimerange.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="QMediaTimeRange &amp;" signature="operator=(const QMediaTimeRange &amp; other)">
+                <parameter left="const QMediaTimeRange &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QMediaTimeRange::operator=" href="qmediatimerange.html#operator=-2" location="qmediatimerange.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="QMediaTimeRange &amp;" signature="operator=(const QMediaTimeInterval &amp; interval)">
+                <parameter left="const QMediaTimeInterval &amp;" right="" name="interval" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="earliestTime" fullname="QMediaTimeRange::earliestTime" href="qmediatimerange.html#earliestTime" location="qmediatimerange.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="qint64" signature="earliestTime() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="latestTime" fullname="QMediaTimeRange::latestTime" href="qmediatimerange.html#latestTime" location="qmediatimerange.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="qint64" signature="latestTime() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="intervals" fullname="QMediaTimeRange::intervals" href="qmediatimerange.html#intervals" location="qmediatimerange.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QMediaTimeInterval&gt;" signature="intervals() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isEmpty" fullname="QMediaTimeRange::isEmpty" href="qmediatimerange.html#isEmpty" location="qmediatimerange.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isEmpty() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isContinuous" fullname="QMediaTimeRange::isContinuous" href="qmediatimerange.html#isContinuous" location="qmediatimerange.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isContinuous() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="contains" fullname="QMediaTimeRange::contains" href="qmediatimerange.html#contains" location="qmediatimerange.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="contains(qint64 time) const">
+                <parameter left="qint64" right="" name="time" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="addInterval" fullname="QMediaTimeRange::addInterval" href="qmediatimerange.html#addInterval-2" location="qmediatimerange.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="void" signature="addInterval(qint64 start, qint64 end)">
+                <parameter left="qint64" right="" name="start" default=""/>
+                <parameter left="qint64" right="" name="end" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="addInterval" fullname="QMediaTimeRange::addInterval" href="qmediatimerange.html#addInterval" location="qmediatimerange.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="addInterval(const QMediaTimeInterval &amp; interval)">
+                <parameter left="const QMediaTimeInterval &amp;" right="" name="interval" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="addTimeRange" fullname="QMediaTimeRange::addTimeRange" href="qmediatimerange.html#addTimeRange" location="qmediatimerange.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="addTimeRange(const QMediaTimeRange &amp; range)">
+                <parameter left="const QMediaTimeRange &amp;" right="" name="range" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="removeInterval" fullname="QMediaTimeRange::removeInterval" href="qmediatimerange.html#removeInterval-2" location="qmediatimerange.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="void" signature="removeInterval(qint64 start, qint64 end)">
+                <parameter left="qint64" right="" name="start" default=""/>
+                <parameter left="qint64" right="" name="end" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="removeInterval" fullname="QMediaTimeRange::removeInterval" href="qmediatimerange.html#removeInterval" location="qmediatimerange.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="removeInterval(const QMediaTimeInterval &amp; interval)">
+                <parameter left="const QMediaTimeInterval &amp;" right="" name="interval" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="removeTimeRange" fullname="QMediaTimeRange::removeTimeRange" href="qmediatimerange.html#removeTimeRange" location="qmediatimerange.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="removeTimeRange(const QMediaTimeRange &amp; range)">
+                <parameter left="const QMediaTimeRange &amp;" right="" name="range" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator+=" fullname="QMediaTimeRange::operator+=" href="qmediatimerange.html#operator+=" location="qmediatimerange.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="QMediaTimeRange &amp;" signature="operator+=(const QMediaTimeRange &amp; other)">
+                <parameter left="const QMediaTimeRange &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator+=" fullname="QMediaTimeRange::operator+=" href="qmediatimerange.html#operator+=-2" location="qmediatimerange.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="QMediaTimeRange &amp;" signature="operator+=(const QMediaTimeInterval &amp; interval)">
+                <parameter left="const QMediaTimeInterval &amp;" right="" name="interval" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator-=" fullname="QMediaTimeRange::operator-=" href="qmediatimerange.html#operator-=" location="qmediatimerange.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="QMediaTimeRange &amp;" signature="operator-=(const QMediaTimeRange &amp; other)">
+                <parameter left="const QMediaTimeRange &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator-=" fullname="QMediaTimeRange::operator-=" href="qmediatimerange.html#operator-=-2" location="qmediatimerange.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="QMediaTimeRange &amp;" signature="operator-=(const QMediaTimeInterval &amp; interval)">
+                <parameter left="const QMediaTimeInterval &amp;" right="" name="interval" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="clear" fullname="QMediaTimeRange::clear" href="qmediatimerange.html#clear" location="qmediatimerange.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="clear()"/>
+        </class>
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator==" href="qmediatimerange.html#operator==-43" location="qmediatimerange.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="43" relates="QMediaTimeRange" type="bool" signature="operator==(const QMediaTimeRange &amp; a, const QMediaTimeRange &amp; b)">
+            <parameter left="const QMediaTimeRange &amp;" right="" name="a" default=""/>
+            <parameter left="const QMediaTimeRange &amp;" right="" name="b" default=""/>
+        </function>
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator!=" href="qmediatimerange.html#operator!=-37" location="qmediatimerange.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="37" relates="QMediaTimeRange" type="bool" signature="operator!=(const QMediaTimeRange &amp; a, const QMediaTimeRange &amp; b)">
+            <parameter left="const QMediaTimeRange &amp;" right="" name="a" default=""/>
+            <parameter left="const QMediaTimeRange &amp;" right="" name="b" default=""/>
+        </function>
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator+" href="#operator+-26" location="qmediatimerange.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="26" type="QMediaTimeRange" signature="operator+(const QMediaTimeRange &amp; r1, const QMediaTimeRange &amp; r2)">
+            <parameter left="const QMediaTimeRange &amp;" right="" name="r1" default=""/>
+            <parameter left="const QMediaTimeRange &amp;" right="" name="r2" default=""/>
+        </function>
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator-" href="#operator--19" location="qmediatimerange.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="19" type="QMediaTimeRange" signature="operator-(const QMediaTimeRange &amp; r1, const QMediaTimeRange &amp; r2)">
+            <parameter left="const QMediaTimeRange &amp;" right="" name="r1" default=""/>
+            <parameter left="const QMediaTimeRange &amp;" right="" name="r2" default=""/>
+        </function>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageId" href="qmessageid.html" location="qmessageid.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageId" fullname="QMessageId::QMessageId" href="qmessageid.html#QMessageId" location="qmessageid_symbian.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMessageId()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageId" fullname="QMessageId::QMessageId" href="qmessageid.html#QMessageId-2" location="qmessageid_symbian.cpp" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QMessageId(const QMessageId &amp; other)">
@@ -1900,6 +2005,10 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="imageSaved" fullname="QImageCaptureControl::imageSaved" href="qimagecapturecontrol.html#imageSaved" location="qimagecapturecontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="imageSaved(const QString &amp; fileName)">
                 <parameter left="const QString &amp;" right="" name="fileName" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QImageCaptureControl::error" href="qimagecapturecontrol.html#error" location="qimagecapturecontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="error(int error, const QString &amp; errorString)">
+                <parameter left="int" right="" name="error" default=""/>
+                <parameter left="const QString &amp;" right="" name="errorString" default=""/>
+            </function>
             <function access="protected" threadsafety="unspecified" status="commendable" name="QImageCaptureControl" fullname="QImageCaptureControl::QImageCaptureControl" href="qimagecapturecontrol.html#QImageCaptureControl" location="qimagecapturecontrol.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QImageCaptureControl(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
@@ -2239,12 +2348,20 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="start" fullname="QCameraControl::start" href="qcameracontrol.html#start" location="qcameracontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="start()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="stop" fullname="QCameraControl::stop" href="qcameracontrol.html#stop" location="qcameracontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="stop()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="state" fullname="QCameraControl::state" href="qcameracontrol.html#state" location="qcameracontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QCamera::State" signature="state() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="captureMode" fullname="QCameraControl::captureMode" href="qcameracontrol.html#captureMode" location="qcameracontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QCamera::CaptureMode" signature="captureMode() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setCaptureMode" fullname="QCameraControl::setCaptureMode" href="qcameracontrol.html#setCaptureMode" location="qcameracontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setCaptureMode(QCamera::CaptureMode )">
+                <parameter left="QCamera::CaptureMode" right="" name="" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="supportedCaptureModes" fullname="QCameraControl::supportedCaptureModes" href="qcameracontrol.html#supportedCaptureModes" location="qcameracontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QCamera::CaptureModes" signature="supportedCaptureModes() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="stateChanged" fullname="QCameraControl::stateChanged" href="qcameracontrol.html#stateChanged" location="qcameracontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="stateChanged(QCamera::State state)">
                 <parameter left="QCamera::State" right="" name="state" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QCameraControl::error" href="qcameracontrol.html#error" location="qcameracontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="error(int error, const QString &amp; errorString)">
                 <parameter left="int" right="" name="error" default=""/>
                 <parameter left="const QString &amp;" right="" name="errorString" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="captureModeChanged" fullname="QCameraControl::captureModeChanged" href="qcameracontrol.html#captureModeChanged" location="qcameracontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="captureModeChanged(QCamera::CaptureMode )">
+                <parameter left="QCamera::CaptureMode" right="" name="" default=""/>
             </function>
             <function access="protected" threadsafety="unspecified" status="commendable" name="QCameraControl" fullname="QCameraControl::QCameraControl" href="qcameracontrol.html#QCameraControl" location="qcameracontrol.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QCameraControl(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
@@ -2637,6 +2754,7 @@
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactAvatar" href="qcontactavatar.html" location="qcontactavatar.h" bases="QContactDetail" module="">
             <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactAvatar::DefinitionName" href="qcontactavatar.html#DefinitionName-var" location="qcontactavatar.h" type="const char *" static="false"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="FieldAvatar" fullname="QContactAvatar::FieldAvatar" href="qcontactavatar.html#FieldAvatar-var" location="qcontactavatar.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldAvatarPixmap" fullname="QContactAvatar::FieldAvatarPixmap" href="qcontactavatar.html#FieldAvatarPixmap-var" location="qcontactavatar.h" type="const char *" static="false"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="FieldSubType" fullname="QContactAvatar::FieldSubType" href="qcontactavatar.html#FieldSubType-var" location="qcontactavatar.h" type="const char *" static="false"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="SubTypeImage" fullname="QContactAvatar::SubTypeImage" href="qcontactavatar.html#SubTypeImage-var" location="qcontactavatar.h" type="const char *" static="false"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="SubTypeVideo" fullname="QContactAvatar::SubTypeVideo" href="qcontactavatar.html#SubTypeVideo-var" location="qcontactavatar.h" type="const char *" static="false"/>
@@ -2647,6 +2765,10 @@
                 <parameter left="const QString &amp;" right="" name="avatar" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="avatar" fullname="QContactAvatar::avatar" href="qcontactavatar.html#avatar" location="qcontactavatar.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="avatar() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="pixmap" fullname="QContactAvatar::pixmap" href="qcontactavatar.html#pixmap" location="qcontactavatar.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QPixmap" signature="pixmap() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setPixmap" fullname="QContactAvatar::setPixmap" href="qcontactavatar.html#setPixmap" location="qcontactavatar.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="setPixmap(const QPixmap &amp; pixmap)">
+                <parameter left="const QPixmap &amp;" right="" name="pixmap" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setSubType" fullname="QContactAvatar::setSubType" href="qcontactavatar.html#setSubType" location="qcontactavatar.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setSubType(const QString &amp; subType)">
                 <parameter left="const QString &amp;" right="" name="subType" default=""/>
             </function>
@@ -3631,6 +3753,10 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="filters" fullname="QContactIntersectionFilter::filters" href="qcontactintersectionfilter.html#filters" location="qcontactintersectionfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContactFilter&gt;" signature="filters() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QCamera" href="qcamera.html" location="qcamera.h" bases="QMediaObject" module="">
+            <property access="public" threadsafety="unspecified" status="commendable" name="captureMode" fullname="QCamera::captureMode" href="qcamera.html#captureMode-prop" location="qcamera.h" type="CaptureMode">
+                <getter name="captureMode"/>
+                <setter name="setCaptureMode"/>
+            </property>
             <property access="public" threadsafety="unspecified" status="commendable" name="aperture" fullname="QCamera::aperture" href="qcamera.html#aperture-prop" location="qcamera.h" type="qreal">
                 <getter name="aperture"/>
                 <setter name="setManualAperture"/>
@@ -3648,6 +3774,12 @@
                 <value name="SuspendedState" value="1"/>
                 <value name="StoppedState" value="2"/>
             </enum>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="CaptureMode" fullname="QCamera::CaptureMode" href="qcamera.html#CaptureMode-enum" location="qcamera.h" typedef="QCamera::CaptureModes">
+                <value name="CaptureDisabled" value="0"/>
+                <value name="CaptureStillImage" value="0x1"/>
+                <value name="CaptureVideo" value="0x2"/>
+            </enum>
+            <typedef access="public" threadsafety="unspecified" status="commendable" name="CaptureModes" fullname="QCamera::CaptureModes" href="qcamera.html#CaptureModes-typedef" location="qcamera.h" enum="QCamera::CaptureMode"/>
             <enum access="public" threadsafety="unspecified" status="commendable" name="Error" fullname="QCamera::Error" href="qcamera.html#Error-enum" location="qcamera.h">
                 <value name="NoError" value="0"/>
                 <value name="CameraError" value="1"/>
@@ -3673,11 +3805,12 @@
             </enum>
             <typedef access="public" threadsafety="unspecified" status="commendable" name="FocusModes" fullname="QCamera::FocusModes" href="qcamera.html#FocusModes-typedef" location="qcamera.h" enum="QCamera::FocusMode"/>
             <enum access="public" threadsafety="unspecified" status="commendable" name="FocusStatus" fullname="QCamera::FocusStatus" href="qcamera.html#FocusStatus-enum" location="qcamera.h">
-                <value name="FocusDisabled" value="0"/>
+                <value name="FocusInitial" value="0"/>
                 <value name="FocusRequested" value="1"/>
-                <value name="FocusReached" value="2"/>
-                <value name="FocusLost" value="3"/>
-                <value name="FocusUnableToReach" value="4"/>
+                <value name="FocusCanceled" value="2"/>
+                <value name="FocusReached" value="3"/>
+                <value name="FocusLost" value="4"/>
+                <value name="FocusUnableToReach" value="5"/>
             </enum>
             <enum access="public" threadsafety="unspecified" status="commendable" name="ExposureMode" fullname="QCamera::ExposureMode" href="qcamera.html#ExposureMode-enum" location="qcamera.h" typedef="QCamera::ExposureModes">
                 <value name="ExposureManual" value="0x1"/>
@@ -3720,9 +3853,6 @@
             <property access="public" threadsafety="unspecified" status="commendable" name="state" fullname="QCamera::state" href="qcamera.html#state-prop" location="qcamera.h" type="QCamera::State">
                 <getter name="state"/>
             </property>
-            <property access="public" threadsafety="unspecified" status="commendable" name="readyForCapture" fullname="QCamera::readyForCapture" href="qcamera.html#readyForCapture-prop" location="qcamera.h" type="bool">
-                <getter name="isReadyForCapture"/>
-            </property>
             <function access="public" threadsafety="unspecified" status="commendable" name="QCamera" fullname="QCamera::QCamera" href="qcamera.html#QCamera" location="qcamera.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QCamera(QObject * parent, QMediaServiceProvider * provider)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
                 <parameter left="QMediaServiceProvider *" right="" name="provider" default="QMediaServiceProvider::defaultServiceProvider()"/>
@@ -3738,9 +3868,9 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="isAvailable" fullname="QCamera::isAvailable" href="qcamera.html#isAvailable" location="qcamera.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="bool" signature="isAvailable() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="availabilityError" fullname="QCamera::availabilityError" href="qcamera.html#availabilityError" location="qcamera.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QtMedia::AvailabilityError" signature="availabilityError() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="start" fullname="QCamera::start" href="qcamera.html#start" location="qcamera.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="start()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="stop" fullname="QCamera::stop" href="qcamera.html#stop" location="qcamera.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="stop()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="state" fullname="QCamera::state" href="qcamera.html#state-prop" location="qcamera.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="state" type="State" signature="state() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="captureMode" fullname="QCamera::captureMode" href="qcamera.html#captureMode-prop" location="qcamera.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="captureMode" type="CaptureMode" signature="captureMode() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="supportedCaptureModes" fullname="QCamera::supportedCaptureModes" href="qcamera.html#supportedCaptureModes" location="qcamera.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="CaptureModes" signature="supportedCaptureModes() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="flashMode" fullname="QCamera::flashMode" href="qcamera.html#flashMode" location="qcamera.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="FlashMode" signature="flashMode() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setFlashMode" fullname="QCamera::setFlashMode" href="qcamera.html#setFlashMode" location="qcamera.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setFlashMode(FlashMode mode)">
                 <parameter left="FlashMode" right="" name="mode" default=""/>
@@ -3812,16 +3942,19 @@
                 <parameter left="qreal" right="" name="value" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="isExposureLocked" fullname="QCamera::isExposureLocked" href="qcamera.html#isExposureLocked" location="qcamera.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isExposureLocked() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isFocusLocked" fullname="QCamera::isFocusLocked" href="qcamera.html#isFocusLocked" location="qcamera.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isFocusLocked() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isReadyForCapture" fullname="QCamera::isReadyForCapture" href="qcamera.html#readyForCapture-prop" location="qcamera.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="readyForCapture" type="bool" signature="isReadyForCapture() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QCamera::error" href="qcamera.html#error" location="qcamera.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="Error" signature="error() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="errorString" fullname="QCamera::errorString" href="qcamera.html#errorString" location="qcamera.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="errorString() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="start" fullname="QCamera::start" href="qcamera.html#start" location="qcamera.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="start()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="stop" fullname="QCamera::stop" href="qcamera.html#stop" location="qcamera.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="stop()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setCaptureMode" fullname="QCamera::setCaptureMode" href="qcamera.html#captureMode-prop" location="qcamera.cpp" virtual="non" meta="slot" const="false" static="false" overload="false" associated-property="captureMode" type="void" signature="setCaptureMode(QCamera::CaptureMode mode)">
+                <parameter left="QCamera::CaptureMode" right="" name="mode" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="lockExposure" fullname="QCamera::lockExposure" href="qcamera.html#lockExposure" location="qcamera.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="lockExposure()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="unlockExposure" fullname="QCamera::unlockExposure" href="qcamera.html#unlockExposure" location="qcamera.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="unlockExposure()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="lockFocus" fullname="QCamera::lockFocus" href="qcamera.html#lockFocus" location="qcamera.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="lockFocus()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="unlockFocus" fullname="QCamera::unlockFocus" href="qcamera.html#unlockFocus" location="qcamera.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="unlockFocus()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="capture" fullname="QCamera::capture" href="qcamera.html#capture" location="qcamera.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="capture(const QString &amp; file)">
-                <parameter left="const QString &amp;" right="" name="file" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="startFocusing" fullname="QCamera::startFocusing" href="qcamera.html#startFocusing" location="qcamera.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="startFocusing()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="cancelFocusing" fullname="QCamera::cancelFocusing" href="qcamera.html#cancelFocusing" location="qcamera.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="cancelFocusing()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="captureModeChanged" fullname="QCamera::captureModeChanged" href="qcamera.html#captureModeChanged" location="qcamera.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="captureModeChanged(QCamera::CaptureMode )">
+                <parameter left="QCamera::CaptureMode" right="" name="" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="flashReady" fullname="QCamera::flashReady" href="qcamera.html#flashReady" location="qcamera.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="flashReady(bool ready)">
                 <parameter left="bool" right="" name="ready" default=""/>
@@ -3843,22 +3976,63 @@
                 <parameter left="int" right="" name="value" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="exposureLocked" fullname="QCamera::exposureLocked" href="qcamera.html#exposureLocked" location="qcamera.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="exposureLocked()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="focusLocked" fullname="QCamera::focusLocked" href="qcamera.html#focusLocked" location="qcamera.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="focusLocked()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="readyForCaptureChanged" fullname="QCamera::readyForCaptureChanged" href="qcamera.html#readyForCaptureChanged" location="qcamera.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="readyForCaptureChanged(bool ready)">
-                <parameter left="bool" right="" name="ready" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="imageCaptured" fullname="QCamera::imageCaptured" href="qcamera.html#imageCaptured" location="qcamera.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="imageCaptured(const QString &amp; fileName, const QImage &amp; preview)">
-                <parameter left="const QString &amp;" right="" name="fileName" default=""/>
-                <parameter left="const QImage &amp;" right="" name="preview" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="imageSaved" fullname="QCamera::imageSaved" href="qcamera.html#imageSaved" location="qcamera.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="imageSaved(const QString &amp; fileName)">
-                <parameter left="const QString &amp;" right="" name="fileName" default=""/>
-            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="focusReached" fullname="QCamera::focusReached" href="qcamera.html#focusReached" location="qcamera.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="focusReached()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="focusUnableToReach" fullname="QCamera::focusUnableToReach" href="qcamera.html#focusUnableToReach" location="qcamera.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="focusUnableToReach()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="stateChanged" fullname="QCamera::stateChanged" href="qcamera.html#stateChanged" location="qcamera.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="stateChanged(QCamera::State state)">
                 <parameter left="QCamera::State" right="" name="state" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QCamera::error" href="qcamera.html#error-2" location="qcamera.h" virtual="non" meta="signal" const="false" static="false" overload="true" overload-number="2" type="void" signature="error(QCamera::Error value)">
                 <parameter left="QCamera::Error" right="" name="value" default=""/>
+            </function>
+        </class>
+        <class access="public" threadsafety="unspecified" status="preliminary" name="QStillImageCapture" href="qstillimagecapture.html" location="qstillimagecapture.h" bases="QMediaObject" module="">
+            <property access="public" threadsafety="unspecified" status="commendable" name="readyForCapture" fullname="QStillImageCapture::readyForCapture" href="qstillimagecapture.html#readyForCapture-prop" location="qstillimagecapture.h" type="bool">
+                <getter name="isReadyForCapture"/>
+            </property>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="Error" fullname="QStillImageCapture::Error" href="qstillimagecapture.html#Error-enum" location="qstillimagecapture.h">
+                <value name="NoError" value="0"/>
+                <value name="NotReadyError" value="1"/>
+                <value name="ResourceError" value="2"/>
+                <value name="NotSupportedFeatureError" value="3"/>
+                <value name="FormatError" value="4"/>
+            </enum>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QStillImageCapture" fullname="QStillImageCapture::QStillImageCapture" href="qstillimagecapture.html#QStillImageCapture" location="qstillimagecapture.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QStillImageCapture(QMediaObject * mediaObject, QObject * parent)">
+                <parameter left="QMediaObject *" right="" name="mediaObject" default=""/>
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QStillImageCapture" fullname="QStillImageCapture::~QStillImageCapture" href="qstillimagecapture.html#dtor.QStillImageCapture" location="qstillimagecapture.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QStillImageCapture()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isAvailable" fullname="QStillImageCapture::isAvailable" href="qstillimagecapture.html#isAvailable" location="qstillimagecapture.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="bool" signature="isAvailable() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="availabilityError" fullname="QStillImageCapture::availabilityError" href="qstillimagecapture.html#availabilityError" location="qstillimagecapture.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QtMedia::AvailabilityError" signature="availabilityError() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QStillImageCapture::error" href="qstillimagecapture.html#error" location="qstillimagecapture.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="Error" signature="error() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="errorString" fullname="QStillImageCapture::errorString" href="qstillimagecapture.html#errorString" location="qstillimagecapture.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="errorString() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isReadyForCapture" fullname="QStillImageCapture::isReadyForCapture" href="qstillimagecapture.html#readyForCapture-prop" location="qstillimagecapture.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="readyForCapture" type="bool" signature="isReadyForCapture() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="supportedImageCodecs" fullname="QStillImageCapture::supportedImageCodecs" href="qstillimagecapture.html#supportedImageCodecs" location="qstillimagecapture.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="supportedImageCodecs() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="imageCodecDescription" fullname="QStillImageCapture::imageCodecDescription" href="qstillimagecapture.html#imageCodecDescription" location="qstillimagecapture.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="imageCodecDescription(const QString &amp; codec) const">
+                <parameter left="const QString &amp;" right="" name="codec" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="supportedResolutions" fullname="QStillImageCapture::supportedResolutions" href="qstillimagecapture.html#supportedResolutions" location="qstillimagecapture.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QSize&gt;" signature="supportedResolutions(const QImageEncoderSettings &amp; settings, bool * continuous) const">
+                <parameter left="const QImageEncoderSettings &amp;" right="" name="settings" default="QImageEncoderSettings()"/>
+                <parameter left="bool *" right="" name="continuous" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="encodingSettings" fullname="QStillImageCapture::encodingSettings" href="qstillimagecapture.html#encodingSettings" location="qstillimagecapture.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QImageEncoderSettings" signature="encodingSettings() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setEncodingSettings" fullname="QStillImageCapture::setEncodingSettings" href="qstillimagecapture.html#setEncodingSettings" location="qstillimagecapture.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setEncodingSettings(const QImageEncoderSettings &amp; settings)">
+                <parameter left="const QImageEncoderSettings &amp;" right="" name="settings" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="capture" fullname="QStillImageCapture::capture" href="qstillimagecapture.html#capture" location="qstillimagecapture.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="capture(const QString &amp; file)">
+                <parameter left="const QString &amp;" right="" name="file" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QStillImageCapture::error" href="qstillimagecapture.html#error-2" location="qstillimagecapture.h" virtual="non" meta="signal" const="false" static="false" overload="true" overload-number="2" type="void" signature="error(QStillImageCapture::Error error)">
+                <parameter left="QStillImageCapture::Error" right="" name="error" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="readyForCaptureChanged" fullname="QStillImageCapture::readyForCaptureChanged" href="qstillimagecapture.html#readyForCaptureChanged" location="qstillimagecapture.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="readyForCaptureChanged(bool ready)">
+                <parameter left="bool" right="" name="ready" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="imageCaptured" fullname="QStillImageCapture::imageCaptured" href="qstillimagecapture.html#imageCaptured" location="qstillimagecapture.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="imageCaptured(const QString &amp; fileName, const QImage &amp; preview)">
+                <parameter left="const QString &amp;" right="" name="fileName" default=""/>
+                <parameter left="const QImage &amp;" right="" name="preview" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="imageSaved" fullname="QStillImageCapture::imageSaved" href="qstillimagecapture.html#imageSaved" location="qstillimagecapture.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="imageSaved(const QString &amp; fileName)">
+                <parameter left="const QString &amp;" right="" name="fileName" default=""/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactId" href="qcontactid.html" location="qcontactid.h" bases="" module="">
@@ -4150,9 +4324,8 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="zoomTo" fullname="QCameraFocusControl::zoomTo" href="qcamerafocuscontrol.html#zoomTo" location="qcamerafocuscontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="zoomTo(qreal value)">
                 <parameter left="qreal" right="" name="value" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isFocusLocked" fullname="QCameraFocusControl::isFocusLocked" href="qcamerafocuscontrol.html#isFocusLocked" location="qcamerafocuscontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="bool" signature="isFocusLocked() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="lockFocus" fullname="QCameraFocusControl::lockFocus" href="qcamerafocuscontrol.html#lockFocus" location="qcamerafocuscontrol.h" virtual="pure" meta="slot" const="false" static="false" overload="false" type="void" signature="lockFocus()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="unlockFocus" fullname="QCameraFocusControl::unlockFocus" href="qcamerafocuscontrol.html#unlockFocus" location="qcamerafocuscontrol.h" virtual="pure" meta="slot" const="false" static="false" overload="false" type="void" signature="unlockFocus()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="startFocusing" fullname="QCameraFocusControl::startFocusing" href="qcamerafocuscontrol.html#startFocusing" location="qcamerafocuscontrol.h" virtual="pure" meta="slot" const="false" static="false" overload="false" type="void" signature="startFocusing()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="cancelFocusing" fullname="QCameraFocusControl::cancelFocusing" href="qcamerafocuscontrol.html#cancelFocusing" location="qcamerafocuscontrol.h" virtual="pure" meta="slot" const="false" static="false" overload="false" type="void" signature="cancelFocusing()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="zoomValueChanged" fullname="QCameraFocusControl::zoomValueChanged" href="qcamerafocuscontrol.html#zoomValueChanged" location="qcamerafocuscontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="zoomValueChanged(qreal zoom)">
                 <parameter left="qreal" right="" name="zoom" default=""/>
             </function>
@@ -4418,7 +4591,7 @@
                 <value name="AverageLevel" value="21"/>
                 <value name="ChannelCount" value="22"/>
                 <value name="PeakValue" value="23"/>
-                <value name="Frequency" value="24"/>
+                <value name="SampleRate" value="24"/>
                 <value name="AlbumTitle" value="25"/>
                 <value name="AlbumArtist" value="26"/>
                 <value name="ContributingArtist" value="27"/>
@@ -4885,7 +5058,7 @@
             <property access="public" threadsafety="unspecified" status="commendable" name="currentCountryCode" fullname="QSystemInfo::currentCountryCode" href="qsysteminfo.html#currentCountryCode-prop" location="qsysteminfo.h" type="QString">
                 <getter name="currentCountryCode"/>
             </property>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QSystemInfo" fullname="QSystemInfo::QSystemInfo" href="qsysteminfo.html#QSystemInfo" location="qsysteminfo.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QSystemInfo(QObject * parent)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QSystemInfo" fullname="QSystemInfo::QSystemInfo" href="qsysteminfo.html#QSystemInfo" location="qsysteminfo.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QSystemInfo(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QSystemInfo" fullname="QSystemInfo::~QSystemInfo" href="qsysteminfo.html#dtor.QSystemInfo" location="qsysteminfo.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QSystemInfo()"/>
@@ -4942,7 +5115,7 @@
             <property access="public" threadsafety="unspecified" status="commendable" name="homeMobileNetworkCode" fullname="QSystemNetworkInfo::homeMobileNetworkCode" href="qsystemnetworkinfo.html#homeMobileNetworkCode-prop" location="qsysteminfo.h" type="QString">
                 <getter name="homeMobileNetworkCode"/>
             </property>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QSystemNetworkInfo" fullname="QSystemNetworkInfo::QSystemNetworkInfo" href="qsystemnetworkinfo.html#QSystemNetworkInfo" location="qsysteminfo.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QSystemNetworkInfo(QObject * parent)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QSystemNetworkInfo" fullname="QSystemNetworkInfo::QSystemNetworkInfo" href="qsystemnetworkinfo.html#QSystemNetworkInfo" location="qsysteminfo.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QSystemNetworkInfo(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QSystemNetworkInfo" fullname="QSystemNetworkInfo::~QSystemNetworkInfo" href="qsystemnetworkinfo.html#dtor.QSystemNetworkInfo" location="qsysteminfo.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QSystemNetworkInfo()"/>
@@ -5012,7 +5185,7 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QSystemDisplayInfo" href="qsystemdisplayinfo.html" location="qsysteminfo.h" bases="QObject" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QSystemDisplayInfo" fullname="QSystemDisplayInfo::QSystemDisplayInfo" href="qsystemdisplayinfo.html#QSystemDisplayInfo" location="qsysteminfo.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QSystemDisplayInfo(QObject * parent)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QSystemDisplayInfo" fullname="QSystemDisplayInfo::QSystemDisplayInfo" href="qsystemdisplayinfo.html#QSystemDisplayInfo" location="qsysteminfo.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QSystemDisplayInfo(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QSystemDisplayInfo" fullname="QSystemDisplayInfo::~QSystemDisplayInfo" href="qsystemdisplayinfo.html#dtor.QSystemDisplayInfo" location="qsysteminfo.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QSystemDisplayInfo()"/>
@@ -5027,7 +5200,7 @@
             <property access="public" threadsafety="unspecified" status="commendable" name="logicalDrives" fullname="QSystemStorageInfo::logicalDrives" href="qsystemstorageinfo.html#logicalDrives-prop" location="qsysteminfo.h" type="QStringList">
                 <getter name="logicalDrives"/>
             </property>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QSystemStorageInfo" fullname="QSystemStorageInfo::QSystemStorageInfo" href="qsystemstorageinfo.html#QSystemStorageInfo" location="qsysteminfo.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QSystemStorageInfo(QObject * parent)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QSystemStorageInfo" fullname="QSystemStorageInfo::QSystemStorageInfo" href="qsystemstorageinfo.html#QSystemStorageInfo" location="qsysteminfo.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QSystemStorageInfo(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QSystemStorageInfo" fullname="QSystemStorageInfo::~QSystemStorageInfo" href="qsystemstorageinfo.html#dtor.QSystemStorageInfo" location="qsysteminfo.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QSystemStorageInfo()"/>
@@ -5086,7 +5259,7 @@
             <property access="public" threadsafety="unspecified" status="commendable" name="isDeviceLocked" fullname="QSystemDeviceInfo::isDeviceLocked" href="qsystemdeviceinfo.html#isDeviceLocked-prop" location="qsysteminfo.h" type="bool">
                 <getter name="isDeviceLocked"/>
             </property>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QSystemDeviceInfo" fullname="QSystemDeviceInfo::QSystemDeviceInfo" href="qsystemdeviceinfo.html#QSystemDeviceInfo" location="qsysteminfo.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QSystemDeviceInfo(QObject * parent)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QSystemDeviceInfo" fullname="QSystemDeviceInfo::QSystemDeviceInfo" href="qsystemdeviceinfo.html#QSystemDeviceInfo" location="qsysteminfo.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QSystemDeviceInfo(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QSystemDeviceInfo" fullname="QSystemDeviceInfo::~QSystemDeviceInfo" href="qsystemdeviceinfo.html#dtor.QSystemDeviceInfo" location="qsysteminfo.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QSystemDeviceInfo()"/>
@@ -5686,6 +5859,7 @@
                 <value name="MatchFixedString" value="Qt::MatchFixedString"/>
                 <value name="MatchCaseSensitive" value="Qt::MatchCaseSensitive"/>
                 <value name="MatchPhoneNumber" value="1024"/>
+                <value name="MatchKeypadCollation" value="1025"/>
             </enum>
             <typedef access="public" threadsafety="unspecified" status="commendable" name="MatchFlags" fullname="QContactFilter::MatchFlags" href="qcontactfilter.html#MatchFlags-typedef" location="qcontactfilter.h" enum="QContactFilter::MatchFlag"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="operator==" fullname="QContactFilter::operator==" href="qcontactfilter.html#operator==" location="qcontactfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator==(const QContactFilter &amp; other) const">
@@ -5717,12 +5891,6 @@
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QNmeaPositionInfoSource" fullname="QNmeaPositionInfoSource::~QNmeaPositionInfoSource" href="qnmeapositioninfosource.html#dtor.QNmeaPositionInfoSource" location="qnmeapositioninfosource.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QNmeaPositionInfoSource()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="parsePosInfoFromNmeaData" fullname="QNmeaPositionInfoSource::parsePosInfoFromNmeaData" href="qnmeapositioninfosource.html#parsePosInfoFromNmeaData" location="qnmeapositioninfosource.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" type="bool" signature="parsePosInfoFromNmeaData(const char * data, int size, QGeoPositionInfo * posInfo, bool * hasFix)">
-                <parameter left="const char *" right="" name="data" default=""/>
-                <parameter left="int" right="" name="size" default=""/>
-                <parameter left="QGeoPositionInfo *" right="" name="posInfo" default=""/>
-                <parameter left="bool *" right="" name="hasFix" default=""/>
-            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="updateMode" fullname="QNmeaPositionInfoSource::updateMode" href="qnmeapositioninfosource.html#updateMode" location="qnmeapositioninfosource.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="UpdateMode" signature="updateMode() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setDevice" fullname="QNmeaPositionInfoSource::setDevice" href="qnmeapositioninfosource.html#setDevice" location="qnmeapositioninfosource.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDevice(QIODevice * device)">
                 <parameter left="QIODevice *" right="" name="device" default=""/>
@@ -5740,6 +5908,12 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="stopUpdates" fullname="QNmeaPositionInfoSource::stopUpdates" href="qnmeapositioninfosource.html#stopUpdates" location="qnmeapositioninfosource.h" virtual="impure" meta="slot" const="false" static="false" overload="false" type="void" signature="stopUpdates()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="requestUpdate" fullname="QNmeaPositionInfoSource::requestUpdate" href="qnmeapositioninfosource.html#requestUpdate" location="qnmeapositioninfosource.h" virtual="impure" meta="slot" const="false" static="false" overload="false" type="void" signature="requestUpdate(int msec)">
                 <parameter left="int" right="" name="msec" default="0"/>
+            </function>
+            <function access="protected" threadsafety="unspecified" status="commendable" name="parsePosInfoFromNmeaData" fullname="QNmeaPositionInfoSource::parsePosInfoFromNmeaData" href="qnmeapositioninfosource.html#parsePosInfoFromNmeaData" location="qnmeapositioninfosource.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="bool" signature="parsePosInfoFromNmeaData(const char * data, int size, QGeoPositionInfo * posInfo, bool * hasFix)">
+                <parameter left="const char *" right="" name="data" default=""/>
+                <parameter left="int" right="" name="size" default=""/>
+                <parameter left="QGeoPositionInfo *" right="" name="posInfo" default=""/>
+                <parameter left="bool *" right="" name="hasFix" default=""/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QVideoWidget" href="qvideowidget.html" location="qvideowidget.h" bases="QWidget" module="">

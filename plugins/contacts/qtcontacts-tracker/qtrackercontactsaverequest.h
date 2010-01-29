@@ -45,6 +45,7 @@
 #include <QObject>
 #include <QPair>
 #include <QList>
+#include <QSet>
 #include <QtTracker/QLive>
 #include <QtTracker/ontologies/nco.h>
 
@@ -67,10 +68,13 @@ public:
     QTrackerContactSaveRequest(QContactAbstractRequest* req, QContactManagerEngine* parent);
     virtual ~QTrackerContactSaveRequest();
 
+private Q_SLOTS:
+    void onTrackerContactsAdded(const QList<QContactLocalId> &addedIds);
+
 private:
     /* worker methods*/
     void saveContacts(const QList<QContact> &contacts);
-    void computeProgress();
+    void computeProgress(const QList<QContactLocalId> &addedIds);
     void addAffiliation(SopranoLive::RDFServicePtr service, QContactLocalId contactId);
     void saveContactDetails(SopranoLive::RDFServicePtr service,SopranoLive::Live<SopranoLive::nco::PersonContact>& ncoContact,const QContact &contact);
     void saveAddresses(SopranoLive::RDFServicePtr service, SopranoLive::RDFVariable &var, const QList<QContactDetail> &details );
@@ -89,6 +93,7 @@ private:
     /* extracted utilities */
     static QStringList detailsDefinitionsInContact(const QContact &c);
     static bool contactHasWorkRelatedDetails(const QContact &c);
+    QSet<QContactLocalId> pendingAddList;
 
 };
 
