@@ -48,7 +48,6 @@
 #include <QtCore/QObject>
 #include <QSharedPointer>
 
-
 class CLlcpSocketType1;
 class CLlcpSocketType2;
 
@@ -130,29 +129,11 @@ public:
     QSharedPointer<QLLCPSocketState>& getBindState() { return m_bindState;}
 
 private:
-    /*
-    enum SocketType
-    {
-       connectionType1 = 1, // ConnectionLess mode
-       connectionType2 = 2, // ConnectionOriented mode
-       connectionUnknown = -1
-    };
-    */
     CLlcpSocketType1* m_symbianSocketType1;
     CLlcpSocketType2* m_symbianSocketType2;
-    //SocketType m_socketType;
 
 private:
-
     QLlcpSocket::Error m_error;
-    /*
-    QLLCPSocketState* m_state;  // not own
-    QLLCPSocketState* m_unconnectedState; // own
-    QLLCPSocketState* m_connectedState; // own
-    QLLCPSocketState* m_connectingState; // own
-    QLLCPSocketState* m_bindState; // own
-    */
-
     QSharedPointer<QLLCPSocketState> m_state;
     QSharedPointer<QLLCPSocketState> m_unconnectedState;
     QSharedPointer<QLLCPSocketState> m_connectedState;
