@@ -5,7 +5,11 @@
 #include "qservicemanager.h"
 #include <QDebug>
 
+#include "qservicefilter.h" //only used to test custom metatype
+
 QTM_USE_NAMESPACE
+
+Q_DECLARE_METATYPE(QServiceFilter);
 
 class TestService : public QObject 
 {
@@ -18,6 +22,13 @@ public:
     {
     }
 
+    Q_INVOKABLE QString testFunctionWithReturnValue(int input)
+    {
+        qDebug() << "TestService::testFunctionWithReturnValue(" << input << ")";
+        QString output("%1 x 3 = %2");
+        output = output.arg(input).arg(input*3);
+        return output;
+    }
 Q_SIGNALS:
     void testSignal();
 public slots:
@@ -30,7 +41,20 @@ public slots:
     {
         QString output("%1, %2, %3");
         output = output.arg(d.constData()).arg(a).arg(variant.toString());
-        qDebug() << "TestService::testSlotWithArgs(" << output << ") called";
+        qDebug() << "TestService::testSlotWithArgs(" << output << ") called" << variant.isValid();
+    }
+    
+    void testSlotWithCustomArg(const QServiceFilter& f)
+    {
+        QString output("%1: %2 - %3.%4");
+        output = output.arg(f.serviceName()).arg(f.interfaceName())
+                .arg(f.majorVersion()).arg(f.minorVersion());
+        qDebug() << "TestService::testSlotWithCustomArg(" << output << ") called";
+    }
+    
+    void testSlotWithUnknownArg(const QServiceInterfaceDescriptor& )
+    {
+        qDebug() << "TestService::testSlotWithUnknownArg(const QServiceInterfaceDescriptor& d)";
     }
 
 };
@@ -44,8 +68,18 @@ public:
         : QObject(parent)
     {
     }
+
+    Q_INVOKABLE QString testFunctionWithReturnValue(int input)
+    {
+        qDebug() << "TestService2::testFunctionWithReturnValue(" << input << ")";
+        QString output("%1 x 3 = %2");
+        output = output.arg(input).arg(input*3);
+        return output;
+    }
 Q_SIGNALS:
     void testSignal();
+
+
 
 public slots:
     void testSlot() {
@@ -57,6 +91,19 @@ public slots:
         QString output("%1, %2, %3");
         output = output.arg(d.constData()).arg(a).arg(variant.toString());
         qDebug() << "TestService2::testSlotWithArgs(" << output << ") called";
+    }
+
+    void testSlotWithCustomArg(const QServiceFilter& f)
+    {
+        QString output("%1: %2 - %3.%4");
+        output = output.arg(f.serviceName()).arg(f.interfaceName())
+                .arg(f.majorVersion()).arg(f.minorVersion());
+        qDebug() << "TestService2::testSlotWithCustomArg(" << output << ") called";
+    }
+    
+    void testSlotWithUnknownArg(const QServiceInterfaceDescriptor& )
+    {
+        qDebug() << "TestService2::testSlotWithUnknownArg(const QServiceInterfaceDescriptor& d)";
     }
 };
 
@@ -76,9 +123,13 @@ void registerExampleService()
         qWarning() << "Cannot register IPCExampleService";
 }
 
+Q_DECLARE_METATYPE(QMetaType::Type);
+
 int main(int argc, char** argv)
 {
     QCoreApplication app(argc, argv);
+    qRegisterMetaType<QServiceFilter>();
+    qRegisterMetaTypeStreamOperators<QServiceFilter>("QServiceFilter");
 
     registerExampleService();
 

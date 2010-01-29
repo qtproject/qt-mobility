@@ -120,7 +120,8 @@ int QServiceProxy::qt_metacall(QMetaObject::Call c, int id, void **a)
             if (variantType == QVariant::Invalid && t == "QVariant") {
                 args << *reinterpret_cast<const QVariant(*)>(a[i+1]);
             } else if ( variantType == 0 ){
-                qWarning("Argument %s has unknown type", t.data());
+                qWarning("%s: argument %s has unknown type",
+                        method.signature(), t.data());
                 return id;
             } else {
                 args << QVariant(variantType, a[i+1]);
@@ -131,9 +132,13 @@ int QServiceProxy::qt_metacall(QMetaObject::Call c, int id, void **a)
             //assume we don't have parameter //TODO
             d->endPoint->invokeRemote(metaIndex, args, returnType);
         } else {
-            //TODO
-            qWarning() << "Cannot handle functions with return type yet.";
-            qWarning() << method.signature();
+            QVariant result = d->endPoint->invokeRemote(metaIndex, args, returnType);
+
+            QByteArray buffer;
+            QDataStream stream(&buffer, QIODevice::ReadWrite);
+            QMetaType::save(stream, returnType, result.constData());
+            stream.device()->seek(0);
+            QMetaType::load(stream, returnType, a[0]);
         }
         
 

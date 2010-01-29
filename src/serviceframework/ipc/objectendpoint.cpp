@@ -222,18 +222,23 @@ void ObjectEndPoint::methodCall(const QServicePackage& p)
 
         QMetaMethod method = service->metaObject()->method(metaIndex);
         const int returnType = QMetaType::type(method.typeName());
-        
+
         const char* typenames[] = {0,0,0,0,0,0,0,0,0,0};
         const void* param[] = {0,0,0,0,0,0,0,0,0,0};
 
         for(int i=0; i<args.size(); i++) {
-            typenames[i] = args[i].typeName();
-            param[i] = args[i].constData();    
+            if (args[i].isValid()) {
+                typenames[i] = args[i].typeName();
+            } else {
+                if (method.parameterTypes().at(i) == "QVariant")
+                    typenames[i] = "QVariant";
+            }
+            param[i] = args[i].constData();
         }
 
+        bool result = false;
         if (returnType == QMetaType::Void) {
-            
-            bool result = method.invoke(service,
+            result = method.invoke(service,
                    QGenericArgument(typenames[0], param[0]),
                    QGenericArgument(typenames[1], param[1]),
                    QGenericArgument(typenames[2], param[2]),
@@ -244,14 +249,53 @@ void ObjectEndPoint::methodCall(const QServicePackage& p)
                    QGenericArgument(typenames[7], param[7]),
                    QGenericArgument(typenames[8], param[8]),
                    QGenericArgument(typenames[9], param[9]));
-            if (!result)
-                qWarning( "%s::%s cannot be called.", service->metaObject()->className(), method.signature());
         } else {
-            //TODO
+            QVariant returnValue;
+            //result buffer
+            if (returnType != QVariant::Invalid) {
+                returnValue = QVariant(returnType, (const void*) 0);
+            }
+
+            QGenericReturnArgument ret(method.typeName(), returnValue.data());
+            result = method.invoke(service, ret,
+                   QGenericArgument(typenames[0], param[0]),
+                   QGenericArgument(typenames[1], param[1]),
+                   QGenericArgument(typenames[2], param[2]),
+                   QGenericArgument(typenames[3], param[3]),
+                   QGenericArgument(typenames[4], param[4]),
+                   QGenericArgument(typenames[5], param[5]),
+                   QGenericArgument(typenames[6], param[6]),
+                   QGenericArgument(typenames[7], param[7]),
+                   QGenericArgument(typenames[8], param[8]),
+                   QGenericArgument(typenames[9], param[9]));
+            QServicePackage response = p.createResponse();
+
+            if (result) {
+                response.d->responseType = QServicePackage::Success;
+                response.d->payload = returnValue;
+            } else {
+                response.d->responseType = QServicePackage::Failed;
+            }
+            dispatch->writePackage(response);
+
         }
+        if (!result)
+            qWarning( "%s::%s cannot be called.", service->metaObject()->className(), method.signature());
     } else {
         qDebug() << p;
-        //TODO
+        Response* response = openRequests()->value(p.d->messageId);
+        if (p.d->responseType == QServicePackage::Failed) {
+            response->result = 0;
+            response->isFinished = true;
+            QTimer::singleShot(0, this, SIGNAL(pendingRequestFinished()));
+            qWarning() << "Service method call failed";
+            return;
+        }
+        QVariant* variant = new QVariant(p.d->payload);
+        response->result = reinterpret_cast<void *>(variant);
+        response->isFinished = true;
+
+        QTimer::singleShot(0, this, SIGNAL(pendingRequestFinished()));
     }
 }
 
@@ -265,14 +309,40 @@ QVariant ObjectEndPoint::invokeRemote(int metaIndex, QVariantList args, int retu
     p.d->packageType = QServicePackage::MethodCall;
     p.d->messageId = QUuid::createUuid();
 
+    QByteArray data;
+    QDataStream stream(&data, QIODevice::WriteOnly|QIODevice::Append);
+    stream << metaIndex << args;
+    p.d->payload = data;
+
     if (returnType == QMetaType::Void) {
-        QByteArray data;
-        QDataStream stream(&data, QIODevice::WriteOnly|QIODevice::Append);
-        stream << metaIndex << args;
-        p.d->payload = data;
         dispatch->writePackage(p);
     } else {
         //create response and block for answer
+        Response* response = new Response();
+        openRequests()->insert(p.d->messageId, response);
+        
+        dispatch->writePackage(p);
+        waitForResponse(p.d->messageId);
+   
+        QVariant result;
+        QVariant* resultPointer; 
+        if (response->isFinished) {
+            if (response->result == 0) {
+                qWarning() << "Request for remote service failed";
+            } else {
+                resultPointer = reinterpret_cast<QVariant* >(response->result);
+                result = (*resultPointer);
+            }
+        } else {
+            qDebug() << "response passed but not finished";
+        }
+         
+        openRequests()->take(p.d->messageId);
+        delete resultPointer;
+        delete response;
+
+        return result;
+
     }
 
     return QVariant();
