@@ -84,152 +84,151 @@ namespace CPlusPlus {
     class EnumSpecifierAST;
     class Function;
 
+    class CLASSLISTITEM
+    {
+    public:
+        CPlusPlus::TranslationUnit* trlUnit;
+        ClassSpecifierAST* classspec;
+    };
+    class CLASSTREE
+    {
+    public:
+        CLASSLISTITEM* highestlevelclass;
+        QList<CLASSLISTITEM*> classlist;
+    };
+    class FUNCTIONITEM
+    {
+    public:
+        const CLASSLISTITEM* highestlevelclass;
+        CPlusPlus::TranslationUnit* trlUnit;
+        ClassSpecifierAST* classAst;
+        QStringList classWichIsNotFound;
+        CPlusPlus::Function* function;
+
+        bool isEqualTo(FUNCTIONITEM* cpfct, bool ignoreName = true);
+        FUNCTIONITEM()
+        {
+            highestlevelclass = 0;
+            trlUnit = 0;
+            classAst = 0;
+            function = 0;
+        }
+    };
+    class PROPERTYITEM
+    {
+    public:
+        const CLASSLISTITEM* highestlevelclass;
+        QStringList classWichIsNotFound;
+        QPropertyDeclarationAST *ast;
+        CPlusPlus::TranslationUnit* trlUnit;
+        bool readdefined;
+        FUNCTIONITEM *readFct;
+        bool writedefined;
+        FUNCTIONITEM *writeFct;
+        bool resetdefined;
+        FUNCTIONITEM *resetFct;
+        bool notifydefined;
+        FUNCTIONITEM *notifyFct;
+        bool foundalldefinedfct;
+
+        bool isEqualTo(PROPERTYITEM* cpppt);
+        PROPERTYITEM()
+        {
+            highestlevelclass = 0;
+            ast = 0;
+            trlUnit = 0;
+            readdefined = false;
+            readFct = 0;
+            writedefined = false;
+            writeFct = 0;
+            resetdefined = false;
+            resetFct = 0;
+            notifydefined = false;
+            notifyFct = 0;
+            foundalldefinedfct = false;
+        }
+    };
+
+    class QENUMITEM
+    {
+    public:
+        const CLASSLISTITEM* highestlevelclass;
+        CPlusPlus::TranslationUnit* trlUnit;
+        QStringList classWichIsNotFound;
+        QEnumDeclarationAST* ast;
+        //an item in this list will be shown like:
+        //EnumName.EnumItemName.Value
+        //ConnectionState.disconnected.0
+        QStringList values;
+        bool foundallenums;
+
+        bool isEqualTo(QENUMITEM *cpenum);
+        QENUMITEM()
+        {
+            highestlevelclass = 0;
+            trlUnit = 0;
+            ast = 0;
+            values.clear();
+            foundallenums = true;
+        }
+    };
+
+    class ENUMITEM
+    {
+    public:
+        const CLASSLISTITEM* highestlevelclass;
+        CPlusPlus::TranslationUnit* trlUnit;
+        QStringList classWichIsNotFound;
+        EnumSpecifierAST* ast;
+
+        ENUMITEM()
+        {
+            highestlevelclass = 0;
+            trlUnit = 0;
+            ast = 0;
+        }
+    };
+
+    class QFLAGITEM
+    {
+    public:
+        const CLASSLISTITEM* highestlevelclass;
+        CPlusPlus::TranslationUnit* trlUnit;
+        QStringList classWichIsNotFound;
+        QFlagsDeclarationAST* ast;
+        QStringList enumvalues;
+        bool foundallenums;
+
+        bool isEqualTo(QFLAGITEM *cpflag);
+        QFLAGITEM()
+        {
+            highestlevelclass = 0;
+            trlUnit = 0;
+            ast = 0;
+            enumvalues.clear();
+            foundallenums = true;
+        }
+    };
+
+    class QDECLAREFLAGSITEM
+    {
+    public:
+        const CLASSLISTITEM* highestlevelclass;
+        CPlusPlus::TranslationUnit* trlUnit;
+        QStringList classWichIsNotFound;
+        QDeclareFlagsDeclarationAST* ast;
+
+        QDECLAREFLAGSITEM()
+        {
+            highestlevelclass = 0;
+            trlUnit = 0;
+            ast = 0;
+        }
+    };
+
     class ParseManager : public QObject
     {
         Q_OBJECT
-    protected:
-        class CLASSLISTITEM
-        {
-        public:
-            CPlusPlus::TranslationUnit* trlUnit;
-            ClassSpecifierAST* classspec;
-        };
-        class CLASSTREE
-        {
-        public:
-            CLASSLISTITEM* highestlevelclass;
-            QList<CLASSLISTITEM*> classlist;
-        };
-        class FUNCTIONITEM
-        {
-        public:
-            const CLASSLISTITEM* highestlevelclass;
-            CPlusPlus::TranslationUnit* trlUnit;
-            ClassSpecifierAST* classAst;
-            QStringList classWichIsNotFound;
-            CPlusPlus::Function* function;
-
-            bool isEqualTo(FUNCTIONITEM* cpfct, bool ignoreName = true);
-            FUNCTIONITEM()
-            {
-                highestlevelclass = 0;
-                trlUnit = 0;
-                classAst = 0;
-                function = 0;
-            }
-        };
-        class PROPERTYITEM
-        {
-        public:
-            const CLASSLISTITEM* highestlevelclass;
-            QStringList classWichIsNotFound;
-            QPropertyDeclarationAST *ast;
-            CPlusPlus::TranslationUnit* trlUnit;
-            bool readdefined;
-            FUNCTIONITEM *readFct;
-            bool writedefined;
-            FUNCTIONITEM *writeFct;
-            bool resetdefined;
-            FUNCTIONITEM *resetFct;
-            bool notifydefined;
-            FUNCTIONITEM *notifyFct;
-            bool foundalldefinedfct;
-
-            bool isEqualTo(PROPERTYITEM* cpppt);
-            PROPERTYITEM()
-            {
-                highestlevelclass = 0;
-                ast = 0;
-                trlUnit = 0;
-                readdefined = false;
-                readFct = 0;
-                writedefined = false;
-                writeFct = 0;
-                resetdefined = false;
-                resetFct = 0;
-                notifydefined = false;
-                notifyFct = 0;
-                foundalldefinedfct = false;
-            }
-        };
-
-        class QENUMITEM
-        {
-        public:
-            const CLASSLISTITEM* highestlevelclass;
-            CPlusPlus::TranslationUnit* trlUnit;
-            QStringList classWichIsNotFound;
-            QEnumDeclarationAST* ast;
-            //an item in this list will be shown like:
-            //EnumName.EnumItemName.Value
-            //ConnectionState.disconnected.0
-            QStringList values;
-            bool foundallenums;
-
-            bool isEqualTo(QENUMITEM *cpenum);
-            QENUMITEM()
-            {
-                highestlevelclass = 0;
-                trlUnit = 0;
-                ast = 0;
-                values.clear();
-                foundallenums = true;
-            }
-        };
-
-        class ENUMITEM
-        {
-        public:
-            const CLASSLISTITEM* highestlevelclass;
-            CPlusPlus::TranslationUnit* trlUnit;
-            QStringList classWichIsNotFound;
-            EnumSpecifierAST* ast;
-
-            ENUMITEM()
-            {
-                highestlevelclass = 0;
-                trlUnit = 0;
-                ast = 0;
-            }
-        };
-
-        class QFLAGITEM
-        {
-        public:
-            const CLASSLISTITEM* highestlevelclass;
-            CPlusPlus::TranslationUnit* trlUnit;
-            QStringList classWichIsNotFound;
-            QFlagsDeclarationAST* ast;
-            QStringList enumvalues;
-            bool foundallenums;
-
-            bool isEqualTo(QFLAGITEM *cpflag);
-            QFLAGITEM()
-            {
-                highestlevelclass = 0;
-                trlUnit = 0;
-                ast = 0;
-                enumvalues.clear();
-                foundallenums = true;
-            }
-        };
-
-        class QDECLAREFLAGSITEM
-        {
-        public:
-            const CLASSLISTITEM* highestlevelclass;
-            CPlusPlus::TranslationUnit* trlUnit;
-            QStringList classWichIsNotFound;
-            QDeclareFlagsDeclarationAST* ast;
-
-            QDECLAREFLAGSITEM()
-            {
-                highestlevelclass = 0;
-                trlUnit = 0;
-                ast = 0;
-            }
-        };
-
     public:
         ParseManager();
         virtual ~ParseManager();
