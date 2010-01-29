@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QVERSITCOMMON_H
-#define QVERSITCOMMON_H
+#ifndef QVERSITRESOURCEHANDLER_H
+#define QVERSITRESOURCEHANDLER_H
 
 #include "qmobilityglobal.h"
 
@@ -70,4 +70,4 @@ public:
 
 QTM_END_NAMESPACE
 
-#endif // QVERSITCOMMON_H
+#endif // QVERSITRESOURCEHANDLER_H

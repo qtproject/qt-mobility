@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qversitresourcehandler.h"
+#include "qversitproperty.h"
 #include <QFile>
 
 QTM_USE_NAMESPACE
