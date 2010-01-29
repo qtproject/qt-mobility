@@ -486,8 +486,16 @@ protected:
 
             const Value left = _value;
             process_or();
-
+#ifdef ICHECK_BUILD
+            Value v = left;
+            if (v.is_ulong () || _value.is_ulong ())
+                v.set_ulong (v.ul && _value.ul);
+            else 
+                v.set_long (v.l && _value.l);
+            _value = v;
+#else
             _value = left && _value;
+#endif
         }
 
         return true;
@@ -503,8 +511,16 @@ protected:
 
             const Value left = _value;
             process_logical_and();
-
+#ifdef ICHECK_BUILD
+            Value v = left;
+            if (v.is_ulong () || _value.is_ulong ())
+                v.set_ulong (v.ul || _value.ul);
+            else 
+                v.set_long (v.l || _value.l);
+            _value = v;
+#else
             _value = left || _value;
+#endif
         }
 
         return true;
