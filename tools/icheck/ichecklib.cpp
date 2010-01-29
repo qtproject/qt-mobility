@@ -1,5 +1,5 @@
 #include "ichecklib.h"
-#include "ParseManager.h"
+#include "parsemanager.h"
 #include <QtCore/QCoreApplication>
 #include <QString>
 #include <QStringList>

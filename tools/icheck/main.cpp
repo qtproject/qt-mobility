@@ -23,17 +23,22 @@ int main(int argc, char *argv[])
         QString checkHeaderFile = argv[2];
         QString curpath = QDir::currentPath();
         //Create FileInfos for the header files
-        QFile ifile(interfaceHeaderFile);
-        if (!ifile.exists())
-            err = "File does not exist: " + interfaceHeaderFile;
+        QFileInfo iFileInfo(interfaceHeaderFile);
+        if (iFileInfo.isDir() || !iFileInfo.exists()){
+            if(iFileInfo.isDir())
+                err = "Cannot compare a directory: " + interfaceHeaderFile;
+            else
+                err = "File does not exist: " + interfaceHeaderFile;
+        }
         if(err == ""){
-            QFile chfile(checkHeaderFile);
-            if (!chfile.exists())
-                err = "File does not exist: " + checkHeaderFile;
+            QFileInfo chFileInfo(checkHeaderFile);
+            if (chFileInfo.isDir() || !chFileInfo.exists()){
+                if(chFileInfo.isDir())
+                    err = "Cannot compare a directory: " + checkHeaderFile;
+                else
+                    err = "File does not exist: " + checkHeaderFile;
+            }
             if(err == ""){
-                QFileInfo iFileInfo(ifile);
-                QFileInfo chFileInfo(chfile);
-
                 //Now create a list of the include path 
                 QString chIncludepath = chFileInfo.absolutePath();
                 QStringList chIncludepathlist;
@@ -83,5 +88,6 @@ int main(int argc, char *argv[])
         cout << " \"Interface header\"";
         cout << " \"headerfile to check\"";
     }
+    cout << endl;
     return ret;
 }

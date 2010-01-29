@@ -27,7 +27,7 @@
 **
 **************************************************************************/
 
-#include "ParseManager.h"
+#include "parsemanager.h"
 #include "cplusplus/CppDocument.h"
 #include "Control.h"
 #include "TranslationUnit.h"

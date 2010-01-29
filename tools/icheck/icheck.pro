@@ -23,4 +23,10 @@ include(../../common.pri)
 include(../../features/deploy.pri)
 include(../../tools/icheck/parser/ichecklib.pri)
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+        ichecklib.cpp \
+        parsemanager.cpp
+
+HEADERS += ichecklib.h \
+        ichecklib_global.h \
+        parsemanager.h

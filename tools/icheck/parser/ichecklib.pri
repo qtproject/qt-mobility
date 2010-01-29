@@ -25,8 +25,6 @@ HEADERS += $$REL_PATH_TO_SRC/shared/cplusplus/Array.h \
     $$REL_PATH_TO_SRC/libs/cplusplus/LookupContext.h \
     $$REL_PATH_TO_SRC/libs/cplusplus/ResolveExpression.h \
     $$REL_PATH_TO_SRC/libs/cplusplus/GenTemplateInstance.h \
-    $$REL_PATH_TO_SRC/../ichecklib.h \
-    $$REL_PATH_TO_SRC/../ichecklib_global.h \
     $$REL_PATH_TO_SRC/shared/cplusplus/Lexer.h \
     $$REL_PATH_TO_SRC/shared/cplusplus/Literals.h \
     $$REL_PATH_TO_SRC/shared/cplusplus/LiteralTable.h \
@@ -38,7 +36,6 @@ HEADERS += $$REL_PATH_TO_SRC/shared/cplusplus/Array.h \
     $$REL_PATH_TO_SRC/shared/cplusplus/NameVisitor.h \
     $$REL_PATH_TO_SRC/shared/cplusplus/ObjectiveCTypeQualifiers.h \
     $$REL_PATH_TO_SRC/libs/cplusplus/Overview.h \
-    $$REL_PATH_TO_SRC/../ParseManager.h \
     $$REL_PATH_TO_SRC/shared/cplusplus/Parser.h \
     $$REL_PATH_TO_SRC/libs/cplusplus/pp-cctype.h \
     $$REL_PATH_TO_SRC/libs/cplusplus/pp-engine.h \
@@ -84,7 +81,6 @@ SOURCES += $$REL_PATH_TO_SRC/shared/cplusplus/Array.cpp \
     $$REL_PATH_TO_SRC/libs/cplusplus/LookupContext.cpp \
     $$REL_PATH_TO_SRC/libs/cplusplus/ResolveExpression.cpp \
     $$REL_PATH_TO_SRC/libs/cplusplus/GenTemplateInstance.cpp \
-    $$REL_PATH_TO_SRC/../ichecklib.cpp \
     $$REL_PATH_TO_SRC/shared/cplusplus/Keywords.cpp \
     $$REL_PATH_TO_SRC/shared/cplusplus/Lexer.cpp \
     $$REL_PATH_TO_SRC/shared/cplusplus/Literals.cpp \
@@ -98,7 +94,6 @@ SOURCES += $$REL_PATH_TO_SRC/shared/cplusplus/Array.cpp \
     $$REL_PATH_TO_SRC/shared/cplusplus/ObjectiveCAtKeywords.cpp \
     $$REL_PATH_TO_SRC/shared/cplusplus/ObjectiveCTypeQualifiers.cpp \
     $$REL_PATH_TO_SRC/libs/cplusplus/Overview.cpp \
-    $$REL_PATH_TO_SRC/../ParseManager.cpp \
     $$REL_PATH_TO_SRC/shared/cplusplus/Parser.cpp \
     $$REL_PATH_TO_SRC/libs/cplusplus/pp-engine.cpp \
     $$REL_PATH_TO_SRC/libs/cplusplus/pp-macro-expander.cpp \
