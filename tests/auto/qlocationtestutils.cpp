@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #include "qlocationtestutils_p.h"
 
 #if defined(Q_OS_SYMBIAN)
@@ -73,8 +74,9 @@ bool QLocationTestUtils::hasDefaultMonitor()
 {
 #if defined(Q_OS_SYMBIAN)
     return true;
-#endif
+#else
     return false;
+#endif
 }
 
 QString QLocationTestUtils::addNmeaChecksumAndBreaks(const QString &sentence)
@@ -103,6 +105,12 @@ QString QLocationTestUtils::createGgaSentence(const QTime &time)
 {
     QString nmea = QString("$GPGGA,%1,2734.76859,S,15305.99361,E,1,04,3.5,49.4,M,39.2,M,,*")
             .arg(time.toString("hhmmss.zzz"));
+    return addNmeaChecksumAndBreaks(nmea);
+}
+
+QString QLocationTestUtils::createGgaSentence(int lat, int lng, const QTime &time) {
+    QString nmea = QString("$GPGGA,%1,%200.00000,S,%300.,E,1,04,3.5,49.4,M,39.2,M,,*")
+            .arg(time.toString("hhmmss.zzz")).arg(lat).arg(lng);
     return addNmeaChecksumAndBreaks(nmea);
 }
 

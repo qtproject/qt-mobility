@@ -74,22 +74,9 @@ public:
     QSystemInfo(QObject *parent = 0);
      virtual ~QSystemInfo();
 
-// general
-
-     //TODO: to Qt QLocale
     static QString currentLanguage(); // 2 letter ISO 639-1 //signal
-    //TODO: to Qt QLocale
     static QStringList availableLanguages(); // 2 letter ISO 639-1
-    //TODO: to Qt QLocale
     static QString currentCountryCode(); //2 letter ISO 3166-1
-//
-// //TODO: to Qt QLocale
-//    static QString currentSystemIsoLanguage(); // 2 letter ISO 639-1
-//    //TODO: to Qt QLocale
-//    static QStringList availableSystemIsoLanguages(); // 2 letter ISO 639-1
-//    //TODO: to Qt QLocale
-//    static QString currentSystemIsoCountry(); //2 letter ISO 3166-1
-//
     enum Version {
         Os = 1,
         QtCore,
@@ -97,10 +84,7 @@ public:
     };
 
     QString version(QSystemInfo::Version type, const QString &parameter = QString());
-//    QPair<int,float> getVersion(QSystemInfo::Version type, const QString &parameter = QString());
 
-
-// features
     enum Feature {
         BluetoothFeature=0,
         CameraFeature,
@@ -125,7 +109,6 @@ private:
     QSystemInfoPrivate *d;
 };
 
-////////
 class  Q_SYSINFO_EXPORT QSystemNetworkInfo : public QObject
 {
     Q_OBJECT
@@ -168,20 +151,20 @@ public:
     };
     Q_DECLARE_FLAGS(NetworkModes, NetworkMode)
 
-    QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode); //signal
-    static int networkSignalStrength(QSystemNetworkInfo::NetworkMode mode); //signal
+    QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
+    static int networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
     QString macAddress(QSystemNetworkInfo::NetworkMode mode);
 
     static int cellId();
     static int locationAreaCode();
 
-    static QString currentMobileCountryCode(); //signal
-    static QString currentMobileNetworkCode(); //signal
+    static QString currentMobileCountryCode();
+    static QString currentMobileNetworkCode();
     static QString homeMobileCountryCode();
     static QString homeMobileNetworkCode();
-    static QString networkName(QSystemNetworkInfo::NetworkMode mode); //signal
-    /*static*/ QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
-// networkmode change //signal
+    static QString networkName(QSystemNetworkInfo::NetworkMode mode);
+    QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
+
 
 Q_SIGNALS:
    void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
@@ -194,7 +177,7 @@ private:
        QSystemNetworkInfoPrivate *d;
 };
 
-////////
+
 class  Q_SYSINFO_EXPORT QSystemDisplayInfo : public QObject
 {
 Q_OBJECT
@@ -204,14 +187,12 @@ public:
     QSystemDisplayInfo(QObject *parent = 0);
     ~QSystemDisplayInfo();
 
-     //TODO: to Qt QDesktopWidget
+
     static int displayBrightness(int screen);
-     //TODO: to Qt QDesktopWidget
     static int colorDepth(int screen);
 };
 
 
-////////
 class  Q_SYSINFO_EXPORT QSystemStorageInfo : public QObject
 {
     Q_OBJECT
@@ -235,12 +216,10 @@ public:
     qlonglong availableDiskSpace(const QString &driveVolume);
     static QStringList logicalDrives();
 
-    QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume); //returns enum
+    QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
 
-    //bool isDiskSpaceCritical(const QString &driveVolume);
 };
 
-////////
 class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
 {
     Q_OBJECT
@@ -302,11 +281,9 @@ public:
     static QString imei();
     static QString imsi();
     static QString manufacturer();
-    static QString model(); //external
-    static QString productName(); //internal name
-
-// ????
-    int batteryLevel() const; //signal
+    static QString model();
+    static QString productName();
+    int batteryLevel() const;
    QSystemDeviceInfo::BatteryStatus batteryStatus();
 
     enum Profile {
@@ -329,8 +306,8 @@ public:
 
     bool isDeviceLocked();
     QSystemDeviceInfo::SimStatus simStatus();
-    QSystemDeviceInfo::Profile currentProfile(); //signal
-    QSystemDeviceInfo::PowerState currentPowerState(); //signal
+    QSystemDeviceInfo::Profile currentProfile();
+    QSystemDeviceInfo::PowerState currentPowerState();
 
 Q_SIGNALS:
     void batteryLevelChanged(int);
@@ -344,7 +321,6 @@ private:
 };
 
 
-////////
 class QSystemScreenSaverPrivate;
 class  Q_SYSINFO_EXPORT QSystemScreenSaver : public QObject
 {
@@ -357,10 +333,7 @@ public:
     QSystemScreenSaver(QObject *parent = 0);
     ~QSystemScreenSaver();
 
-     //TODO: to Qt QDesktopWidget
     bool screenSaverInhibited();
-
-     //TODO: to Qt QDesktopWidget
     bool setScreenSaverInhibit();
 
 private:

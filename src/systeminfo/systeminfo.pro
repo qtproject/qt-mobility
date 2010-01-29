@@ -23,12 +23,11 @@ win32 {
         HEADERS += qwmihelper_win_p.h
 
         LIBS += \
-            Ole32.lib \
-            User32.lib \
-            Gdi32.lib \
-            Ws2_32.lib \
-            Iphlpapi.lib \
-            Oleaut32.lib 
+            -lOle32 \
+            -lUser32 \
+            -lGdi32 \
+            -lIphlpapi \
+            -lOleaut32
     }
 
     win32-g++ : {
@@ -36,31 +35,49 @@ win32 {
     }
 
 
-    wince*:LIBS += aygshell.lib \
-        cellcore.lib \
-        Coredll.lib
+    wince*:LIBS += -Laygshell \
+        -lcellcore \
+        -lCoredll
 }
 
 unix: {
     QT += gui
+    maemo*|linux-*: {
+        SOURCES += qsysteminfo_linux_common.cpp
+        HEADERS += qsysteminfo_linux_common_p.h
+    }
     !maemo*:linux-*: {
         SOURCES += qsysteminfo_linux.cpp
         HEADERS += qsysteminfo_linux_p.h
-        contains(networkmanager_enabled, yes):contains(QT_CONFIG,dbus): {
+        contains(QT_CONFIG,dbus): {
             QT += dbus
-            SOURCES += qhalservice_linux.cpp qnetworkmanagerservice_linux.cpp
-            HEADERS += qhalservice_linux_p.h qnetworkmanagerservice_linux_p.h
-
+            SOURCES += qhalservice_linux.cpp
+            HEADERS += qhalservice_linux_p.h
+                contains(networkmanager_enabled, yes): {
+                    SOURCES += qnetworkmanagerservice_linux.cpp
+                    HEADERS += qnetworkmanagerservice_linux_p.h
+                } else {
+                DEFINES += QT_NO_NETWORKMANAGER
+                }
+        } else {
+           DEFINES += QT_NO_NETWORKMANAGER
         }
     }
     maemo*: {
-            SOURCES += qsysteminfo_maemo.cpp
-            HEADERS += qsysteminfo_maemo_p.h
+            #Qt GConf wrapper added here until a proper place is found for it.
+            CONFIG += link_pkgconfig
+            SOURCES += qsysteminfo_maemo.cpp gconfitem.cpp
+            HEADERS += qsysteminfo_maemo_p.h gconfitem.h
         contains(QT_CONFIG,dbus): {
                 QT += dbus
                 SOURCES += qhalservice_linux.cpp
                 HEADERS += qhalservice_linux_p.h
        }
+       PKGCONFIG += glib-2.0 gconf-2.0
+       CONFIG += create_pc create_prl
+       QMAKE_PKGCONFIG_REQUIRES = glib-2.0 gconf-2.0
+       pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
+       pkgconfig.files = QtSystemInfo.pc
     }
 
     mac: {
@@ -114,7 +131,8 @@ unix: {
             -lprofileengine \
             -lbluetooth
 
-        TARGET.CAPABILITY = LocalServices NetworkServices ReadUserData WriteUserData UserEnvironment Location ReadDeviceData TrustedUI
+        TARGET.CAPABILITY = ALL -TCB
+#        TARGET.CAPABILITY = LocalServices NetworkServices ReadUserData UserEnvironment Location ReadDeviceData TrustedUI
 
         TARGET.EPOCALLOWDLLDATA = 1
         TARGET.UID3 = 0x2002ac7d

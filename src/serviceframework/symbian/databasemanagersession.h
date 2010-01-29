@@ -44,6 +44,9 @@
 #include <qmobilityglobal.h>
 #include <e32base.h>
 #include <QObject>
+#include <QStringList>
+
+class QFileSystemWatcher;
 
 QTM_BEGIN_NAMESPACE
 
@@ -79,6 +82,7 @@ class CDatabaseManagerServerSession : public CSession2
         
         void ServiceRemoved(const QString& aServiceName);
         void ServiceAdded(const QString& aServiceName);
+        void databaseChanged(const QString &path);
         
     private:
         CDatabaseManagerServerSession();
@@ -96,6 +100,8 @@ class CDatabaseManagerServerSession : public CSession2
         RMessage2 iMsg;
         DatabaseManagerSignalHandler* iDatabaseManagerSignalHandler;
         ServiceDatabase *iDb;
+        QStringList m_knownServices;
+        QFileSystemWatcher *m_watcher;
     };
 
 QTM_END_NAMESPACE
