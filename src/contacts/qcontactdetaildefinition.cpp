@@ -157,6 +157,19 @@ QMap<QString, QContactDetailFieldDefinition> QContactDetailDefinition::fields() 
     return d->m_fields;
 }
 
+/*! Inserts the field \a field into the map of fields which constitute the data of details of this definition for the given field key \a key.
+    If another field for that key already exists in the definition, it will be overwritten. */
+void QContactDetailDefinition::insertField(const QString& key, const QContactDetailFieldDefinition& field)
+{
+    d->m_fields.insert(key, field);
+}
+
+/*! Removes the field associated with the given field key \key from teh map of fields which constitute the data of details of this definition. */
+void QContactDetailDefinition::removeField(const QString& key)
+{
+    d->m_fields.remove(key);
+}
+
 /*!
  * \deprecated
  * Returns a reference to the map of keys to fields which are present in details of this definition.

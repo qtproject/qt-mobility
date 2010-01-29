@@ -86,6 +86,8 @@ public:
     void setFields(const QMap<QString, QContactDetailFieldDefinition>& fields);
     QMap<QString, QContactDetailFieldDefinition> fields() const;
     QMap<QString, QContactDetailFieldDefinition> Q_DECL_DEPRECATED &fields(); // deprecated, removed.  unnecessary API.
+    void insertField(const QString& key, const QContactDetailFieldDefinition& field);
+    void removeField(const QString& key);
 
     /* Access constraints which may apply to details of a definition - to be removed week 3 */
     enum AccessConstraint {
