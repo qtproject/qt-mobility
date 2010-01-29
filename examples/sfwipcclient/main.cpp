@@ -84,6 +84,8 @@ public slots:
         o = o.arg(5).arg(result);
         qDebug() << o;
 
+        //test QVariant return types
+
         QTimer::singleShot(1000, this, SLOT(killService()));
     }
 
