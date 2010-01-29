@@ -234,10 +234,11 @@ void tst_qllcpsocketlocal::testCase4()
 {
     QLlcpSocket *localSocket= new QLlcpSocket;
     // STEP 1:
+    QString message("string1");
     QByteArray tmpArray(message.toAscii());
     const char* data =  tmpArray.data();
     qint64 strSize = message.size();
-    qint64 val = socket.writeDatagram(data,strSize,m_target, m_port);
+    qint64 val = localSocket->writeDatagram(data,strSize,m_target, m_port);
     delete localSocket;
 }
 
