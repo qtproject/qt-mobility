@@ -39,43 +39,71 @@
 **
 ****************************************************************************/
 
+#ifndef QXVIDEOSURFACE_MAEMO5_H
+#define QXVIDEOSURFACE_MAEMO5_H
 
-#ifndef QGSTREAMERRECORDERCONTROL_H
-#define QGSTREAMERRECORDERCONTROL_H
+#include <QtCore/qhash.h>
+#include <QtGui/qwidget.h>
+#include <QtMultimedia/qabstractvideosurface.h>
 
-#include <qmediarecordercontrol.h>
-#include "qgstreamercapturesession.h"
-QTM_USE_NAMESPACE
+#include <X11/Xlib.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <X11/extensions/XShm.h>
+#include <X11/Xlib.h>
+#include <X11/extensions/Xv.h>
+#include <X11/extensions/Xvlib.h>
 
-class QGstreamerRecorderControl : public QMediaRecorderControl
+QT_USE_NAMESPACE
+
+class QXVideoSurface : public QAbstractVideoSurface
 {
     Q_OBJECT
-    Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
-
 public:
-    QGstreamerRecorderControl(QGstreamerCaptureSession *session);
-    virtual ~QGstreamerRecorderControl();
+    QXVideoSurface(QObject *parent = 0);
+    ~QXVideoSurface();
 
-    QUrl outputLocation() const;
-    bool setOutputLocation(const QUrl &sink);
+    WId winId() const;
+    void setWinId(WId id);
 
-    QMediaRecorder::State state() const;
+    QRect displayRect() const;
+    void setDisplayRect(const QRect &rect);
 
-    qint64 duration() const;
+    QColor colorKey() const;
+    void setColorKey(QColor key);
 
-    void applySettings() {}
+    QList<QVideoFrame::PixelFormat> supportedPixelFormats(
+            QAbstractVideoBuffer::HandleType handleType = QAbstractVideoBuffer::NoHandle) const;
 
 public slots:
-    void record();
-    void pause();
+    bool start(const QVideoSurfaceFormat &format);
     void stop();
 
-private slots:
-    void updateState();
+    bool present(const QVideoFrame &frame);
+    void repaintLastFrame();
 
 private:
-    QGstreamerCaptureSession *m_session;
-    QMediaRecorder::State m_state;
+    WId m_winId;
+    XvPortID m_portId;
+    int m_xvFormatId;
+    GC m_gc;
+    XvImage *m_image;
+    XShmSegmentInfo	m_shminfo;
+    QList<QVideoFrame::PixelFormat> m_supportedPixelFormats;
+    QVector<int> m_formatIds;
+    QRect m_viewport;
+    QRect m_displayRect;
+    QColor m_colorKey;
+
+    QVideoFrame lastFrame;
+
+    bool findPort();
+    void querySupportedFormats();
+
+    int getAttribute(const char *attribute) const;
+    void setAttribute(const char *attribute, int value);
 };
 
-#endif // QGSTREAMERCAPTURECORNTROL_H
+Q_DECLARE_METATYPE(XvImage*)
+
+#endif
