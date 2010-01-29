@@ -46,6 +46,8 @@
 #include "qllcpsocket.h"
 
 #include <QtCore/QObject>
+#include <QSharedPointer>
+
 
 class CLlcpSocketType1;
 class CLlcpSocketType2;
@@ -121,11 +123,11 @@ public:
 
 // state machine part
 public:
-    void changeState(QLLCPSocketState* state);
-    QLLCPSocketState* getUnconnectedState() { return m_unconnectedState;}
-    QLLCPSocketState* getConnectedState() { return m_connectedState;}
-    QLLCPSocketState* getConnectingState() { return m_connectingState;}
-    QLLCPSocketState* getBindState() { return m_bindState;}
+    void changeState(QSharedPointer<QLLCPSocketState>& );
+    QSharedPointer<QLLCPSocketState>& getUnconnectedState() { return m_unconnectedState;}
+    QSharedPointer<QLLCPSocketState>& getConnectedState() { return m_connectedState;}
+    QSharedPointer<QLLCPSocketState>& getConnectingState() { return m_connectingState;}
+    QSharedPointer<QLLCPSocketState>& getBindState() { return m_bindState;}
 
 private:
     /*
@@ -141,12 +143,21 @@ private:
     //SocketType m_socketType;
 
 private:
+
     QLlcpSocket::Error m_error;
+    /*
     QLLCPSocketState* m_state;  // not own
     QLLCPSocketState* m_unconnectedState; // own
     QLLCPSocketState* m_connectedState; // own
     QLLCPSocketState* m_connectingState; // own
     QLLCPSocketState* m_bindState; // own
+    */
+
+    QSharedPointer<QLLCPSocketState> m_state;
+    QSharedPointer<QLLCPSocketState> m_unconnectedState;
+    QSharedPointer<QLLCPSocketState> m_connectedState;
+    QSharedPointer<QLLCPSocketState> m_connectingState;
+    QSharedPointer<QLLCPSocketState> m_bindState;
 
     QLlcpSocket *q_ptr;
 

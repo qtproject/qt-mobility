@@ -154,7 +154,17 @@ void tst_qllcpsockettype2::echo()
 
     socket.connectToService(m_target, uri);
 
+    // cocoverage add: WaitForBytesWritten will fail when connecting
+    const int secs = 1 * 1000;
+    bool waitRet = socket.waitForBytesWritten(secs);
+    QVERIFY( waitRet == false);
+
     QTRY_VERIFY(!connectedSpy.isEmpty());
+
+    // cocoverage add: connect to Service again when already connected will cause fail
+    socket.connectToService(m_target, uri);
+    QTRY_VERIFY(!errorSpy.isEmpty());
+    errorSpy.clear();
 
     //Send data to server
     QByteArray block;
