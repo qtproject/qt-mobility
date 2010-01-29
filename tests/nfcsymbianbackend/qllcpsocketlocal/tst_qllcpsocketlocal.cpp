@@ -27,6 +27,7 @@ private Q_SLOTS:
     void testCase1();   // handshake 1,2
     void testCase2();   // handshake 3
     void testCase3();
+    void testCase4();
     void coverageTest1();
 
     void negTestCase1();
@@ -166,30 +167,6 @@ void tst_qllcpsocketlocal::testCase1()
                1. The message is sending to remote peer
                2. call waitForBytesWritten successfully
 */
-/*
-void tst_qllcpsocketlocal::testCase2()
-{
-    // STEP 1:
-    QSignalSpy bytesWrittenSpy(m_socket, SIGNAL(bytesWritten(qint64)));
-    QString message("testcase2 string");
-    QByteArray tmpArray(message.toAscii());
-    const char* data =  tmpArray.data();
-    qint64 strSize = message.size();
-
-    m_socket->writeDatagram(data,strSize,m_target, m_port);
-    QVERIFY(bytesWrittenSpy.isEmpty());
-
-    // STEP 2:
-    const int Timeout = 2 * 1000;
-    bool ret = m_socket->waitForBytesWritten(Timeout);
-
-    QString messageBox("handshake 3");
-    QNfcTestUtil::ShowMessage(messageBox);
-
-    QVERIFY(ret == true);
-}
-*/
-
 void tst_qllcpsocketlocal::testCase2()
 {
     // STEP 1:
@@ -248,6 +225,20 @@ void tst_qllcpsocketlocal::testCase3()
 
     QSignalSpy bytesWrittenSpy(&socket, SIGNAL(bytesWritten(qint64)));
     QTRY_VERIFY(bytesWrittenSpy.count() == 2);
+}
+
+/*!
+ Description: coverage testcase - targeted for sender doCancel
+*/
+void tst_qllcpsocketlocal::testCase4()
+{
+    QLlcpSocket *localSocket= new QLlcpSocket;
+    // STEP 1:
+    QByteArray tmpArray(message.toAscii());
+    const char* data =  tmpArray.data();
+    qint64 strSize = message.size();
+    qint64 val = socket.writeDatagram(data,strSize,m_target, m_port);
+    delete localSocket;
 }
 
 /*!
