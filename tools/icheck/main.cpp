@@ -84,9 +84,9 @@ int main(int argc, char *argv[])
         }
     }
     else{
-        cout << "icheck.exe";
-        cout << " \"Interface header\"";
-        cout << " \"headerfile to check\"";
+        cout << "icheck ";
+        cout << "<Interface header>";
+        cout << " <headerfile to check>";
     }
     cout << endl;
     return ret;
