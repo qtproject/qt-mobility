@@ -75,7 +75,7 @@ class QTrackerContactFetchRequest : public QObject, public QTrackerContactAsyncR
     Q_OBJECT
     Q_ENUMS(IMResultColumn)
 public:
-        enum IMResultColumn { ContactId = 0,
+        enum IMResultColumn { ContactId = 1,
                        ContactIMId,
                        ContactStatus,
                        ContactMessage,

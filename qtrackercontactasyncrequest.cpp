@@ -246,27 +246,23 @@ RDFSelect prepareEmailAddressesQuery(RDFVariable &rdfcontact1, bool forAffiliati
 
 RDFSelect prepareIMContactsQuery(RDFVariable &imcontact)
 {
-    //::tracker()->setVerbosity(4);
+    ::tracker()->setVerbosity(4);
 
     // columns
     RDFSelect queryidsimacccounts;
-    queryidsimacccounts.addColumn("contactId", imcontact.property<nco::contactUID> ());
+    RDFVariable contact = queryidsimacccounts.newColumn<nco::IMContact>("contact");
+    queryidsimacccounts.groupBy(contact);
+    queryidsimacccounts.addColumn("contactId", contact.property<nco::contactUID> ());
 
-    queryidsimacccounts.addColumn("IMId", imcontact.property<nco::imContactId> ());
-    queryidsimacccounts.addColumn("status", imcontact.optional().property<nco::imContactPresence> ());
-    queryidsimacccounts.addColumn("message", imcontact.optional().property<nco::imContactStatusMessage> ());
-    queryidsimacccounts.addColumn("nick", imcontact.optional().property<nco::imContactNickname> ());
-    queryidsimacccounts.addColumn("type", imcontact.optional().property<nco::fromIMAccount> ());
-    
-    RDFVariable counter  = queryidsimacccounts.newColumn("capCount");
-    {
-        RDFSubSelect inner;
-        RDFVariable ifrom = inner.newColumnAs(imcontact);
-        inner.addColumn("caps", ifrom.optional().property<nco::imContactCapability>());
-        inner.newCountColumnAs(counter);
-        inner.groupBy(ifrom);
-    }
-    queryidsimacccounts.addColumn("metacontact", imcontact.optional().property<nco::metacontact> ());
+    queryidsimacccounts.addColumn("IMId", contact.property<nco::imContactId> ());
+    queryidsimacccounts.addColumn("status", contact.optional().property<nco::imContactPresence> ());
+    queryidsimacccounts.addColumn("message", contact.optional().property<nco::imContactStatusMessage> ());
+    queryidsimacccounts.addColumn("nick", contact.optional().property<nco::imContactNickname> ());
+    queryidsimacccounts.addColumn("type", contact.optional().property<nco::fromIMAccount> ());
+    queryidsimacccounts.addColumn("capabilities",
+                contact.optional().property<nco::imContactCapability>().filter("GROUP_CONCAT", LiteralValue(",")));
+
+    queryidsimacccounts.addColumn("metacontact", contact.optional().property<nco::metacontact> ());
     return queryidsimacccounts;
 }
 
@@ -912,12 +908,12 @@ QContactOnlineAccount QTrackerContactFetchRequest::getOnlineAccountFromIMQuery(L
         qDebug() << decoded.value(1); 
         account.setValue(FieldAccountPath, decoded.value(1)); // getImAccountType?
     }
-    int capCount = imAccountQuery->index(queryRow, HasAudio).data().toInt();
+    QString cap = imAccountQuery->index(queryRow, HasAudio).data().toString();
     QString caps;
     caps = QString("org.freedesktop.Telepathy.Channel.Type.TextChat|");
     //FIXME
     // Once #153757 get resolved try to save the exact cap. until then using the caps count
-    if (capCount >= 2) {
+    if (cap.contains("nco:im-capability-audio-calls")) {
         caps += QString("org.freedesktop.Telepathy.Channel.Type.StreamedMedia");
     }
     
