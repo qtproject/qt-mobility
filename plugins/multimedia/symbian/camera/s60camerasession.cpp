@@ -68,6 +68,7 @@ S60CameraSession::S60CameraSession(QObject *parent)
     , m_advancedSettings(NULL)
     , m_VFProcessor(NULL)
     , m_imageQuality(QtMedia::NormalQuality*KSymbianImageQualityCoefficient)
+    , m_videoQuality(QtMedia::LowQuality*KSymbianImageQualityCoefficient)
     , m_captureSize(QSize())
     , m_state(QCamera::StoppedState)
     , m_windowSize(QSize(320/2, 240/2))
@@ -388,7 +389,7 @@ qint64 S60CameraSession::position()
 {
     qDebug() << "S60CameraSession::position";
     qint64 position = 0;
-    if (m_captureState == ERecording) {
+    if ( (m_captureState == ERecording) && m_videoUtility) {
         TRAPD(err, position = m_videoUtility->DurationL().Int64() / 1000);
         setError(err);
     }
@@ -402,18 +403,10 @@ int S60CameraSession::state() const
 }
 
 void S60CameraSession::commitVideoEncoderSettings()
-{   
-    setVideoCaptureCodec(m_videoSettings.codec());
+{          
     setVideoResolution(m_videoSettings.resolution());
-    setFrameRate(m_videoSettings.frameRate());
+    setFrameRate(m_videoSettings.frameRate());    
     setBitrate(m_videoSettings.bitRate());
-
-#ifndef PRE_S60_50_PLATFORM    
-    if (!m_videoSettings.bitRate()) {
-        setVideoFrameRateFixed(true); 
-        setVideoCaptureQuality(m_videoSettings.quality());        
-    }    
-#endif //PRE_S60_50_PLATFORM
 }
 
 void S60CameraSession::setVideoFrameRateFixed(bool fixed)
@@ -435,30 +428,29 @@ void S60CameraSession::getCurrentVideoEncoderSettings(QVideoEncoderSettings &vid
 {
     videoSettings = m_videoSettings;
 }
-#ifndef PRE_S60_50_PLATFORM
-void S60CameraSession::setVideoCaptureQuality(QtMedia::EncodingQuality quality)
-{
-    qDebug() << "S60CameraSession::setVideoCaptureQuality: " << quality;
-    int videoQuality = 0;
-    switch(quality) {
-        case QtMedia::VeryLowQuality:
-            videoQuality = 0;
-        case QtMedia::LowQuality:
-            videoQuality = 25;
-        case QtMedia::NormalQuality:
-            videoQuality = 50;
-        case QtMedia::HighQuality:
-            videoQuality = 75;            
-        case QtMedia::VeryHighQuality:
-            videoQuality = 100;
-        default:
-            videoQuality = 50;        
-    }
-    qDebug() << "S60CameraSession::setVideoCaptureQuality - videoquality: " << videoQuality;
-    TRAPD(err, m_videoUtility->SetVideoQualityL(videoQuality));
-    setError(err);
+
+QtMedia::EncodingQuality S60CameraSession::videoCaptureQuality() const
+{    
+    if (m_videoQuality == EVideoQualityLow) 
+        return QtMedia::LowQuality;
+    else if (m_videoQuality == EVideoQualityNormal)
+        return QtMedia::NormalQuality;
+    else if (m_videoQuality == EVideoQualityHigh)
+        return QtMedia::HighQuality;
+    else if (m_videoQuality == EVideoQualityLossless)
+        return QtMedia::VeryHighQuality;        
+    else 
+        return QtMedia::VeryLowQuality;       
 }
+
+void S60CameraSession::setVideoCaptureQuality(QtMedia::EncodingQuality quality)
+{            
+        m_videoQuality = quality*KSymbianImageQualityCoefficient;
+#ifndef PRE_S60_50_PLATFORM        
+        TRAPD(err, m_videoUtility->SetVideoQualityL(m_videoQuality));
+        setError(err);
 #endif //PRE_S60_50_PLATFORM
+}
 
 void S60CameraSession::startRecording()
 {
@@ -1497,7 +1489,7 @@ void S60CameraSession::initializeVideoCaptureSettings()
     // use variable bit rate as initial value
     m_videoSettings.setBitRate(KMMFVariableVideoBitRate);
     
-    m_videoSettings.setQuality(QtMedia::VeryLowQuality);
+    m_videoSettings.setQuality(QtMedia::LowQuality);
 }
 
 

@@ -178,7 +178,8 @@ public:
     QString videoCaptureCodecDescription(const QString &codecName);    
     void saveVideoEncoderSettings(QVideoEncoderSettings &videoSettings);
     void getCurrentVideoEncoderSettings(QVideoEncoderSettings &videoSettings);    
-    
+    QtMedia::EncodingQuality videoCaptureQuality() const;    
+    void setVideoCaptureQuality(QtMedia::EncodingQuality quality);
     
     //camerafocuscontrol
     void startFocus();
@@ -221,9 +222,6 @@ private:
     void setWhiteBalanceModeL(QCamera::WhiteBalanceMode mode);
     void commitVideoEncoderSettings();
     void setVideoFrameRateFixed(bool fixed);
-#ifndef PRE_S60_50_PLATFORM    
-    void setVideoCaptureQuality(QtMedia::EncodingQuality quality);
-#endif //PRE_S60_50_PLATFORM
     void resetCamera();
 
     //from  MVideoRecorderUtilityObserver
@@ -255,6 +253,7 @@ private:
     S60CameraSettings *m_advancedSettings;
     MVFProcessor *m_VFProcessor;
     int m_imageQuality;
+    int m_videoQuality;
     QSize m_captureSize;
     QCamera::State m_state;
     QSize m_windowSize;
