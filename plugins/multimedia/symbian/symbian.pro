@@ -8,9 +8,18 @@ qtAddLibrary(QtMedia)
 
 #includes here so that all defines are added here also
 include(mediaplayer/mediaplayer_s60.pri)
-include(camera/camera_s60.pri)
 include(radio/radio.pri)
 include(audiosource/audiosource_s60.pri)
+
+# depends on camerawrapper, available from forum nokia
+exists($${EPOCROOT}epoc32\include\cameraengine.h) {
+     DEFINES += HAS_CAMERA_WRAPPER
+     include(camera/camera_s60.pri)
+}
+else {
+     message("Symbian camera service disabled, it needs camerawrapper, available from forum.nokia.com")
+}
+
 
 DEPENDPATH += .
 INCLUDEPATH += . \
