@@ -79,7 +79,16 @@ protected:
 class QTrackerContactFetchRequest : public QObject, public QTrackerContactAsyncRequest
 {
     Q_OBJECT
+    Q_ENUMS(IMResultColumn)
 public:
+        enum IMResultColumn { ContactId = 0,
+                       ContactIMId,
+                       ContactStatus,
+                       ContactMessage,
+                       ContactNickname,
+                       AccountType,
+                       MetaContact };
+                         
     QTrackerContactFetchRequest(QContactAbstractRequest* req, QContactManagerEngine* parent);
 public slots:
     void contactsReady();

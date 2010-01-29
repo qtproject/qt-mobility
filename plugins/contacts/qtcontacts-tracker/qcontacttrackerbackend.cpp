@@ -301,6 +301,11 @@ bool QContactTrackerEngine::removeContact(const QContactLocalId& contactId, QCon
     }
     ncoContact->remove();
 
+    //Temporary workaround to get removed- signal
+    QList<QContactLocalId> removed;
+    removed << contactId;
+    emit contactsRemoved(removed);
+
     return true;
 }
 
