@@ -556,11 +556,14 @@ QList<QContactActionDescriptor> QContact::availableActions(const QString& vendor
     return retn.toList();
 }
 
-/*! Set a particular detail as the \a preferredDetail for a given \a actionName.  Returns true if the detail was successfully set as the preferred detail for the action identified by \a actionName, otherwise returns false  */
+/*!
+ * \preliminary
+ * Set a particular detail as the \a preferredDetail for a given \a actionName.  Returns
+ * true if the detail was successfully set as the preferred detail for the action
+ * identified by \a actionName, otherwise returns false
+ */
 bool QContact::setPreferredDetail(const QString& actionName, const QContactDetail& preferredDetail)
 {
-    qWarning("QContact::setPreferredDetail() This function is deprecated and will be removed after the transition period has elapsed.");
-
     // if the given action name is empty, bad argument.
     if (actionName.isEmpty())
         return false;
@@ -574,11 +577,13 @@ bool QContact::setPreferredDetail(const QString& actionName, const QContactDetai
     return true;
 }
 
-/*! Returns true if the given \a detail is a preferred detail for the given \a actionName, or for any action if the \a actionName is empty */
+/*!
+ * \preliminary
+ *
+ * Returns true if the given \a detail is a preferred detail for the given \a actionName, or for any action if the \a actionName is empty
+ */
 bool QContact::isPreferredDetail(const QString& actionName, const QContactDetail& detail) const
 {
-    qWarning("QContact::isPreferredDetail() This function is deprecated and will be removed after the transition period has elapsed.");
-
     if (!d->m_details.contains(detail))
         return false;
 
@@ -592,11 +597,12 @@ bool QContact::isPreferredDetail(const QString& actionName, const QContactDetail
     return false;
 }
 
-/*! Returns the preferred detail for a given \a actionName */
+/*!
+ * \preliminary
+ * Returns the preferred detail for a given \a actionName
+ */
 QContactDetail QContact::preferredDetail(const QString& actionName) const
 {
-    qWarning("QContact::preferredDetail() This function is deprecated and will be removed after the transition period has elapsed.");
-
     // if the given action name is empty, bad argument.
     if (actionName.isEmpty())
         return QContactDetail();

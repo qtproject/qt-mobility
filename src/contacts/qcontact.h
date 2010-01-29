@@ -142,10 +142,10 @@ public:
     /* Actions available to be performed on this contact */
     QList<QContactActionDescriptor> availableActions(const QString& vendorName = QString(), int implementationVersion = -1) const;
 
-    /* Preferences (eg, set a particular detail preferred for the SMS action) - deprecated - unnecessary API - to be removed after transition period has elapsed. */
-    bool Q_DECL_DEPRECATED setPreferredDetail(const QString& actionName, const QContactDetail& preferredDetail); // deprecated
-    bool Q_DECL_DEPRECATED isPreferredDetail(const QString& actionName, const QContactDetail& detail) const;     // deprecated
-    QContactDetail Q_DECL_DEPRECATED preferredDetail(const QString& actionName) const;                           // deprecated
+    /* Preferences (eg, set a particular detail preferred for the SMS action) - subject to change! */
+    bool setPreferredDetail(const QString& actionName, const QContactDetail& preferredDetail);
+    bool isPreferredDetail(const QString& actionName, const QContactDetail& detail) const;
+    QContactDetail preferredDetail(const QString& actionName) const;
 
 private:
     friend class QContactManager;
