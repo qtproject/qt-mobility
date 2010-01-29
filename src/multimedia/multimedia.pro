@@ -150,14 +150,7 @@ symbian {
     TARGET.UID3=0x2002AC77
     MMP_RULES += EXPORTUNFROZEN
     TARGET.CAPABILITY = ALL -TCB
-
-    deploy.path = $${EPOCROOT}
-    exportheaders.sources = $$PUBLIC_HEADERS
-    exportheaders.path = epoc32/include/mw
-    
-    for(header, exportheaders.sources) {
-        BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
-    }
 }
 
+CONFIG += middleware
 include(../../features/deploy.pri)

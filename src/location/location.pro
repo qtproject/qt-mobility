@@ -62,6 +62,19 @@ wince* {
     LIBS += -lgpsapi
 }
 
+maemo6 {
+    CONFIG += qdbus link_pkgconfig
+
+    SOURCES += qgeopositioninfosource_maemo.cpp \
+                qgeosatelliteinfosource_maemo.cpp \
+                dbuscomm_maemo.cpp \
+                dbusserver_maemo.cpp
+    HEADERS += qgeopositioninfosource_maemo_p.h \
+                qgeosatelliteinfosource_maemo_p.h \
+                dbuscomm_maemo_p.h \
+                dbusserver_maemo_p.h
+}
+
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
 SOURCES +=  qlocationutils.cpp \
@@ -84,18 +97,10 @@ symbian {
         LIBS += -llbt
     }
 
-    deploy.path = $$EPOCROOT
-    exportheaders.sources = $$PUBLIC_HEADERS
-    exportheaders.path = epoc32/include/mw
-    
-    #export headers into EPOCROOT
-    for(header, exportheaders.sources) {
-        BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
-    }
-
     QtLocationDeployment.sources = QtLocation.dll
     QtLocationDeployment.path = /sys/bin
     DEPLOYMENT += QtLocationDeployment
 }
 
+CONFIG += middleware
 include(../../features/deploy.pri)

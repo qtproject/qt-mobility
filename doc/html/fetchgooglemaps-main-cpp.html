@@ -53,6 +53,7 @@
     ** $QT_END_LICENSE$
     **
     ****************************************************************************/</span>
+
     #include &lt;QApplication&gt;
 
     #include &quot;mapwindow.h&quot;
@@ -62,7 +63,11 @@
         QApplication app(argc, argv);
 
         MapWindow win;
+    #if defined(Q_OS_SYMBIAN)
+        win.showMaximized();
+    #else
         win.show();
+    #endif
         win.start();
 
         return app.exec();

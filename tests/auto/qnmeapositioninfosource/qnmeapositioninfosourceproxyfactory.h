@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef QNMEAPOSITIONINFOSOURCEPROXYFACTORY_H
 #define QNMEAPOSITIONINFOSOURCEPROXYFACTORY_H
 
