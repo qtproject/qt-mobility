@@ -67,7 +67,6 @@ void VideoWidget::keyPressEvent(QKeyEvent *event)
     } else {
         QVideoWidget::keyPressEvent(event);
     }
-  
 }
 
 void VideoWidget::mouseDoubleClickEvent(QMouseEvent *event)

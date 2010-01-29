@@ -18,8 +18,6 @@ SOURCES = main.cpp \
     playlistmodel.cpp \
     videowidget.cpp
 
-
-
 symbian {
     TARGET.CAPABILITY = UserEnvironment WriteDeviceData ReadDeviceData
     HEADERS += mediakeysobserver.h

@@ -62,8 +62,8 @@ Player::Player(QWidget *parent)
     , colorDialog(0)
 #endif    
 {
-    player = new QMediaPlayer();
-    playlist = new QMediaPlaylist();
+    player = new QMediaPlayer(this);
+    playlist = new QMediaPlaylist(this);
     playlist->setMediaObject(player);
 
     connect(player, SIGNAL(durationChanged(qint64)), SLOT(durationChanged(qint64)));
@@ -74,19 +74,19 @@ Player::Player(QWidget *parent)
             this, SLOT(statusChanged(QMediaPlayer::MediaStatus)));
     connect(player, SIGNAL(bufferStatusChanged(int)), this, SLOT(bufferingProgress(int)));
 
-    videoWidget = new VideoWidget(this);
+    videoWidget = new VideoWidget;
     videoWidget->setMediaObject(player);
 
-    playlistModel = new PlaylistModel();
+    playlistModel = new PlaylistModel(this);
     playlistModel->setPlaylist(playlist);
 
-    playlistView = new QListView(this);
+    playlistView = new QListView;
     playlistView->setModel(playlistModel);
     playlistView->setCurrentIndex(playlistModel->index(playlist->currentIndex(), 0));
 
     connect(playlistView, SIGNAL(activated(QModelIndex)), this, SLOT(jump(QModelIndex)));
 
-    slider = new QSlider(Qt::Horizontal, this);
+    slider = new QSlider(Qt::Horizontal);
     slider->setRange(0, player->duration() / 1000);
 
     connect(slider, SIGNAL(sliderMoved(int)), this, SLOT(seek(int)));
@@ -130,7 +130,7 @@ Player::Player(QWidget *parent)
         fullScreenButton->setEnabled(false);
     }
 
-    QPushButton *colorButton = new QPushButton(tr("Color Options..."), this);
+    QPushButton *colorButton = new QPushButton(tr("Color Options..."));
     if (videoWidget)
         connect(colorButton, SIGNAL(clicked()), this, SLOT(showColorDialog()));
     else
@@ -192,7 +192,7 @@ Player::Player(QWidget *parent)
     QBoxLayout *layout = new QVBoxLayout;
     layout->addLayout(displayLayout);
     layout->addWidget(slider);
-    layout->addLayout(controlLayout);    
+    layout->addLayout(controlLayout);
 #endif    
 
     setLayout(layout);
@@ -280,6 +280,7 @@ void Player::statusChanged(QMediaPlayer::MediaStatus status)
 {
     switch (status) {
     case QMediaPlayer::UnknownMediaStatus:
+    case QMediaPlayer::NoMedia:
     case QMediaPlayer::LoadedMedia:
     case QMediaPlayer::BufferingMedia:
     case QMediaPlayer::BufferedMedia:
@@ -306,7 +307,6 @@ void Player::statusChanged(QMediaPlayer::MediaStatus status)
         setStatusInfo(QString());
         QApplication::alert(this);
         break;
-    case QMediaPlayer::NoMedia:        
     case QMediaPlayer::InvalidMedia:
 #ifndef QT_NO_CURSOR
         unsetCursor();
