@@ -91,7 +91,18 @@ QTM_BEGIN_NAMESPACE
 */
 DatabaseManager::DatabaseManager()
 {
-    iSession.Connect();
+    int err = iSession.Connect();
+    
+    int i = 0;
+    while (err != KErrNone) {
+        if (i > 10)
+            qt_symbian_throwIfError(err);
+        
+        User::After(50);
+        err = iSession.Connect();
+        i++;
+    }
+    
     iDatabaseManagerSignalMonitor = new DatabaseManagerSignalMonitor(*this, iSession);
 }
 
@@ -310,6 +321,7 @@ TInt RDatabaseManagerSession::StartServer()
     TInt ret = KErrNone;
     TFindServer findServer(KDatabaseManagerServerName);
     TFullName name;
+
     if (findServer.Next(name) != KErrNone)
     {
 #ifdef __WINS__
@@ -345,23 +357,12 @@ TInt RDatabaseManagerSession::StartServer()
         dbServer.Close();
 #endif
     }
-#ifdef __WINS__
-    if (iServerThread == NULL) {
-        qWarning("Fatal error: several concurrent QServiceManagers in one application not currently supported in WINS Emulator");
-        User::Panic(_L("PLAT (emulator)"), 0); 
-    }
-#endif
+
     return ret;
     }
 
 void RDatabaseManagerSession::Close()
     {
-#ifdef __WINS__
-    iServerThread->quit();
-    iServerThread->wait();
-    delete iServerThread;
-    iServerThread = NULL;
-#endif
     RSessionBase::Close();
     }
 
@@ -513,7 +514,6 @@ void RDatabaseManagerSession::CancelNotifyServiceSignal() const
     }
 
 
-
 #ifdef __WINS__
 QTM_END_NAMESPACE
     #include "databasemanagerserver.h"
@@ -536,6 +536,7 @@ QTM_BEGIN_NAMESPACE
         RThread::Rendezvous(KErrNone);
 
         exec();
+        
         delete dbManagerServer;
     }
 #endif
