@@ -66,6 +66,31 @@ protected:
     QContactAbstractRequest* req;
 };
 
+namespace IMAccount {
+    enum IMResultColumn {
+        URI,
+        ContactIMId,
+        ContactPresence,
+        ContactMessage,
+        ContactNickname,
+        ContactDisplayname
+    };
+};
+
+namespace IMContact {
+    enum IMResultColumn {
+        URI,
+        ContactId,
+        ContactIMId,
+        ContactPresence,
+        ContactMessage,
+        ContactNickname,
+        AccountType,
+        HasAudio,
+        MetaContact
+    };
+};
+
 /*!
  * Running QContactFetchRequest. Doing the async tracker query and when data is ready setting the
  * finished status of request. \sa QTrackerContactFetchRequest
@@ -73,17 +98,8 @@ protected:
 class QTrackerContactFetchRequest : public QObject, public QTrackerContactAsyncRequest
 {
     Q_OBJECT
-    Q_ENUMS(IMResultColumn)
+//    Q_ENUMS(IMResultColumn)
 public:
-        enum IMResultColumn { ContactId = 1,
-                       ContactIMId,
-                       ContactStatus,
-                       ContactMessage,
-                       ContactNickname,
-                       AccountType,
-                       HasAudio,
-                       MetaContact };
-                         
     QTrackerContactFetchRequest(QContactAbstractRequest* req, QContactManagerEngine* parent);
 public slots:
     void contactsReady();
@@ -91,26 +107,13 @@ public slots:
     void emailAddressesReady();
     void iMAcountsReady();
 
-protected:
-    void applyFilterToContact(SopranoLive::RDFVariable &variable, const QContactFilter &filter);
-
 protected slots:
     virtual void run();
     virtual void emitFinished();
 
-private:
-    // fills received phone number from tracker to list of contacts to QContactPhoneMumber details
-    // all the following methods update \sa result
-    void processQueryPhoneNumbers(SopranoLive::LiveNodes queryPhoneNumbers, bool affiliationNumbers);
-    void processQueryEmailAddresses(SopranoLive::LiveNodes queryEmailAddresses, bool affiliationEmails);
-    void processQueryIMContacts(SopranoLive::LiveNodes queryIMContacts);
-    void validateRequest();
-    void readFromQueryRowToContact(QContact &contact, int queryRow);
-    QContact &linkContactsWithSameMetaContact(QContact &first, QContact &second);
-    void addContactToResultSet(QContact &contact, const QString &metacontact);
-    QContactOnlineAccount getOnlineAccountFromIMQuery(SopranoLive::LiveNodes imAccountQuery, int queryRow);
-
 protected:
+    void applyFilterToContact(SopranoLive::RDFVariable &variable, const QContactFilter &filter);
+
     // contacts query
     SopranoLive::LiveNodes query;
 
@@ -125,11 +128,24 @@ protected:
     QList<QContact> result;
 
 private:
+    bool isMeContact(const QContactFilter &filter);
+    // fills received phone number from tracker to list of contacts to QContactPhoneMumber details
+    // all the following methods update \sa result
+    void processQueryPhoneNumbers(SopranoLive::LiveNodes queryPhoneNumbers, bool affiliationNumbers);
+    void processQueryEmailAddresses(SopranoLive::LiveNodes queryEmailAddresses, bool affiliationEmails);
+    void processQueryIMContacts(SopranoLive::LiveNodes queryIMContacts);
+    void validateRequest();
+    void readFromQueryRowToContact(QContact &contact, int queryRow);
+    QContact &linkContactsWithSameMetaContact(QContact &first, QContact &second);
+    void addContactToResultSet(QContact &contact, const QString &metacontact);
+    QContactOnlineAccount getOnlineAccountFromIMQuery(SopranoLive::LiveNodes imAccountQuery, int queryRow);
+    QContactOnlineAccount getIMAccountFromIMQuery(SopranoLive::LiveNodes imAccountQuery, int queryRow) ;
+    QContactOnlineAccount getIMContactFromIMQuery(SopranoLive::LiveNodes imAccountQuery, int queryRow);
+
     // access existing contacts in result list, contactid to index in \sa result lookup
     QHash<quint32, int> id2ContactLookup;
     // metacontact to index in \sa result lookup - index of metacontact contact: only 1 contact returned when multiple have the same metacontact
     QHash<QString, int> metacontactLookup;
-
 };
 
 #endif /* QTRACKERCONTACTASYNCREQUEST_H_ */

@@ -72,6 +72,7 @@ const ConversionLookup presenceConversion(ConversionLookup()
             <<QPair<QString, QString>("presence-status-busy", QContactOnlineAccount::PresenceBusy)
             <<QPair<QString, QString>("presence-status-unknown", QContactOnlineAccount::PresenceUnknown)
             <<QPair<QString, QString>("presence-status-hidden", QContactOnlineAccount::PresenceHidden)
+            <<QPair<QString, QString>("presence-status-dnd", QContactOnlineAccount::PresenceBusy)
 );
 
 void matchPhoneNumber(RDFVariable &variable, QContactDetailFilter &filter)
@@ -260,6 +261,22 @@ RDFSelect prepareIMContactsQuery(RDFVariable  &imcontact )
 
     queryidsimacccounts.addColumn("metacontact", imcontact.optional().property<nco::metacontact> ());
     return queryidsimacccounts;
+
+}
+
+RDFSelect prepareIMAccountsQuery(RDFVariable &rdfPersonContact)
+{
+    RDFVariable imAccount;
+    imAccount = rdfPersonContact.property<nco::hasIMAccount> ();
+    RDFSelect queryidsimaccounts;
+
+    queryidsimaccounts.addColumn("protocol", imAccount.property<nco::imID> ());
+    queryidsimaccounts.addColumn("presence",imAccount.optional().property<nco::imPresence> ());
+    queryidsimaccounts.addColumn("message", imAccount.optional().property<nco::imStatusMessage> ());
+    queryidsimaccounts.addColumn("nick", imAccount.optional().property<nco::imNickname> ());
+    queryidsimaccounts.addColumn("displayname", imAccount.optional().property<nco::imDisplayName> ());
+
+    return queryidsimaccounts;
 }
 
 
@@ -380,10 +397,20 @@ void QTrackerContactFetchRequest::run()
     if ( r->definitionRestrictions().contains( QContactOnlineAccount::DefinitionName) ) {
         queryIMAccountNodesPending = 1;
 
-        RDFVariable contact4;
-        contact4 = contact4.fromType<nco::IMContact> ();
-        // prepare query to get all im contacts
-        RDFSelect queryidsimacccounts = prepareIMContactsQuery(contact4);
+        RDFSelect queryidsimaccounts;
+        RDFVariable rdfIMContact;
+        rdfIMContact = rdfIMContact.fromType<nco::IMContact> ();
+
+        if(isMeContact(r->filter())) {
+            RDFVariable rdfPersonContact;
+            rdfPersonContact = rdfPersonContact.fromType<nco::PersonContact> ();
+            // Prepare a query to get all IMAccounts from all  accounts.
+            // nco:PersonContact -- nco:hasIMAccount -- nco:IMAccount
+            queryidsimaccounts = prepareIMAccountsQuery(rdfPersonContact);
+        } else {
+            // Prepare a query to get all IMContacts from all accounts.
+            queryidsimaccounts = prepareIMContactsQuery(rdfIMContact);
+        }
 
         if( r->filter().type() != QContactFilter::DefaultFilter )
         {
@@ -400,10 +427,10 @@ void QTrackerContactFetchRequest::run()
             rdfcontact3.property<nco::metacontact> () = rdfcontact1.optional().property<nco::metacontact> ();
 
             // aggregated criteria - only those with im contacts that match rdfcontact1 (same id) or rdfcontact3 (same metacontact)
-            contact4.isMemberOf(RDFVariableList()<<rdfcontact1<<rdfcontact3);
+            rdfIMContact.isMemberOf(RDFVariableList()<<rdfcontact1<<rdfcontact3);
         }
 
-        queryIMAccountNodes = ::tracker()->modelQuery(queryidsimacccounts);
+        queryIMAccountNodes = ::tracker()->modelQuery(queryidsimaccounts);
         QObject::connect(queryIMAccountNodes.model(),
                 SIGNAL(modelUpdated()), SLOT(iMAcountsReady()));
     }
@@ -897,30 +924,12 @@ void QTrackerContactFetchRequest::processQueryEmailAddresses( SopranoLive::LiveN
 QContactOnlineAccount QTrackerContactFetchRequest::getOnlineAccountFromIMQuery(LiveNodes imAccountQuery, int queryRow)
 {
     QContactOnlineAccount account;
-    account.setValue("Account", imAccountQuery->index(queryRow, ContactIMId).data().toString()); // IMId
-    if (!imAccountQuery->index(queryRow, AccountType).data().toString().isEmpty()) {
-        QString accountPathURI = imAccountQuery->index(queryRow, AccountType).data().toString();
-        QStringList decoded = accountPathURI.split(":");
-        qDebug() << decoded.value(1); 
-        account.setValue(FieldAccountPath, decoded.value(1)); // getImAccountType?
+    QContactFetchRequest* r = qobject_cast<QContactFetchRequest*> (req);
+    if(isMeContact(r->filter())) {
+        account = getIMAccountFromIMQuery(imAccountQuery, queryRow);
+    } else {
+        account = getIMContactFromIMQuery(imAccountQuery, queryRow);
     }
-    QString cap = imAccountQuery->index(queryRow, HasAudio).data().toString();
-    QString caps;
-    caps = QString("org.freedesktop.Telepathy.Channel.Type.TextChat|");
-    //FIXME
-    // Once #153757 get resolved try to save the exact cap. until then using the caps count
-    if (cap.contains("nco:im-capability-audio-calls")) {
-        caps += QString("org.freedesktop.Telepathy.Channel.Type.StreamedMedia");
-    }
-    
-    account.setValue("Capabilities", caps); // getImAccountType?
-    account.setNickname(imAccountQuery->index(queryRow, ContactNickname).data().toString()); // nick
-
-    QString presence = imAccountQuery->index(queryRow, ContactStatus).data().toString(); // imPresence iri
-    presence = presence.right(presence.length() - presence.lastIndexOf("presence-status"));
-    account.setPresence(presenceConversion[presence]);
-    account.setStatusMessage(imAccountQuery->index(queryRow, ContactMessage).data().toString()); // imStatusMessage
-
     return account;
 }
 
@@ -935,7 +944,7 @@ void QTrackerContactFetchRequest::processQueryIMContacts(SopranoLive::LiveNodes 
     Q_ASSERT_X(queryIMAccountNodesPending == 0, Q_FUNC_INFO, "IMAccount query was supposed to be ready and it is not." );
     for (int i = 0; i < queryIMContacts->rowCount(); i++) {
         QContactOnlineAccount account = getOnlineAccountFromIMQuery(queryIMContacts, i);
-        QContactLocalId contactid = queryIMContacts->index(i, ContactId).data().toUInt();
+        QContactLocalId contactid = queryIMContacts->index(i, IMContact::ContactId).data().toUInt();
 
         QHash<quint32, int>::const_iterator it = id2ContactLookup.find(contactid);
         if (it != id2ContactLookup.end() && it.key() == contactid && it.value() >= 0 && it.value() < result.size())
@@ -954,8 +963,75 @@ void QTrackerContactFetchRequest::processQueryIMContacts(SopranoLive::LiveNodes 
 
             contact.setId(id);
             contact.saveDetail(&account);
-            QString metacontact = queryIMContacts->index(i, MetaContact).data().toString(); // \sa prepareIMContactsQuery()
+            QString metacontact = queryIMContacts->index(i, IMContact::MetaContact).data().toString(); // \sa prepareIMContactsQuery()
             addContactToResultSet(contact, metacontact);
         }
     }
+}
+
+bool  QTrackerContactFetchRequest::isMeContact(const QContactFilter &filter) {
+    if (filter.type() == QContactFilter::LocalIdFilter) {
+         QContactManagerEngine *engine = dynamic_cast<QContactManagerEngine*>(parent());
+         if(!engine) {
+             qWarning() << __PRETTY_FUNCTION__ << ": Could not get QContactManager. Cannot retrieve IMAccounts for me-contact.";
+             return false;
+         }
+
+        QContactManager::Error e;
+        QContactLocalId selfId = engine->selfContactId(e);
+        QContactLocalIdFilter filt = filter;
+        if (filt.ids().contains(selfId)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+QContactOnlineAccount QTrackerContactFetchRequest::getIMAccountFromIMQuery(LiveNodes imAccountQuery, int queryRow) {
+    QContactOnlineAccount account;
+
+    // Custom value in QContactrOnlineAccount detail to store the account path to - to determine in My Profile to ignore the ring-account.
+    account.setValue("Account", imAccountQuery->index(queryRow, IMAccount::ContactIMId).data().toString()); // IMId
+
+    account.setNickname(imAccountQuery->index(queryRow, IMAccount::ContactNickname).data().toString()); // nick
+
+    QString presence = imAccountQuery->index(queryRow, IMAccount::ContactPresence).data().toString(); // imPresence iri
+    presence = presence.right(presence.length() - presence.lastIndexOf("presence-status"));
+    account.setPresence(presenceConversion[presence]);
+    qDebug() << "Presence converted: " << account.presence() << "raw presence: " << presence;
+
+    account.setStatusMessage(imAccountQuery->index(queryRow, IMAccount::ContactMessage).data().toString()); // imStatusMessage
+
+    return account;
+}
+
+QContactOnlineAccount QTrackerContactFetchRequest::getIMContactFromIMQuery(LiveNodes imContactQuery, int queryRow) {
+    QContactOnlineAccount account;
+
+    account.setValue("Account", imContactQuery->index(queryRow, IMContact::ContactIMId).data().toString()); // IMId
+    if (!imContactQuery->index(queryRow, IMContact::AccountType).data().toString().isEmpty()) {
+        QString accountPathURI = imContactQuery->index(queryRow, IMContact::AccountType).data().toString();
+        QStringList decoded = accountPathURI.split(":");
+        qDebug() << decoded.value(1);
+        account.setValue(FieldAccountPath, decoded.value(1)); // getImAccountType?
+    }
+    account.setNickname(imContactQuery->index(queryRow, IMContact::ContactNickname).data().toString()); // nick
+
+    QString cap = imAccountQuery->index(queryRow, HasAudio).data().toString();
+    QString caps;
+    caps = QString("org.freedesktop.Telepathy.Channel.Type.TextChat|");
+    //FIXME
+    // Once #153757 get resolved try to save the exact cap. until then using the caps count
+    if (cap.contains("nco:im-capability-audio-calls")) {
+        caps += QString("org.freedesktop.Telepathy.Channel.Type.StreamedMedia");
+    }
+    account.setValue("Capabilities", caps); // getImAccountType?
+
+    QString presence = imContactQuery->index(queryRow, IMContact::ContactPresence).data().toString(); // imPresence iri
+    presence = presence.right(presence.length() - presence.lastIndexOf("presence-status"));
+    account.setPresence(presenceConversion[presence]);
+    account.setStatusMessage(imContactQuery->index(queryRow, IMContact::ContactMessage).data().toString()); // imStatusMessage
+
+    return account;
 }
