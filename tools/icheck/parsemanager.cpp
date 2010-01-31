@@ -27,7 +27,7 @@
 **
 **************************************************************************/
 
-#include "ParseManager.h"
+#include "parsemanager.h"
 #include "cplusplus/CppDocument.h"
 #include "Control.h"
 #include "TranslationUnit.h"
@@ -1380,6 +1380,3 @@ QString ParseManager::getErrorMessage(QFLAGITEM* pfg)
     }
     return ret;
 }
-
-#include <moc_ParseManager.cpp>
-//--->
