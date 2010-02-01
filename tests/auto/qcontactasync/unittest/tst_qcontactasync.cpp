@@ -1247,8 +1247,9 @@ void tst_QContactAsync::definitionRemove()
     spy.clear();
 
     QCOMPARE(cm->detailDefinitions().keys().size(), originalCount - 2); // only one more has been removed
-    QCOMPARE(drr.errors().first(), QContactManager::DoesNotExistError);
-    QCOMPARE(drr.errors().at(1), QContactManager::NoError);
+    QVERIFY(drr.errorMap().count() == 1);
+    QVERIFY(drr.errorMap().keys().contains(0));
+    QCOMPARE(drr.errorMap().value(0), QContactManager::DoesNotExistError);
 
     // remove with empty list - nothing should happen.
     removeIds.clear();

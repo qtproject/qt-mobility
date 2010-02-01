@@ -348,8 +348,8 @@ bool TestCntRelationship::validateRelationshipFilter(const QContactRelationshipF
     {
     QContactRelationshipFilter filter;
     filter.setRelationshipType(QContactRelationship::HasMember);
-    filter.setRole(role);
-    filter.setOtherParticipantId(contactId);
+    filter.setRelatedContactRole(role);
+    filter.setRelatedContactId(contactId);
     
     QList<QContactLocalId> result = m_manager->contactIds(filter);
     
