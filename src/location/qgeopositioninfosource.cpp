@@ -44,7 +44,7 @@
 #   include "qgeopositioninfosource_s60_p.h"
 #elif defined(Q_OS_WINCE)
 #   include "qgeopositioninfosource_wince_p.h"
-#elif defined(Q_WS_MAEMO_6)
+#elif (defined(Q_WS_MAEMO_6)) || (defined(Q_WS_MAEMO_5))
 #   include "qgeopositioninfosource_maemo_p.h"
 #endif
 
@@ -196,7 +196,7 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
     return ret;
 #elif defined(Q_OS_WINCE)
     return new QGeoPositionInfoSourceWinCE(parent);
-#elif defined(Q_WS_MAEMO_6)    
+#elif (defined(Q_WS_MAEMO_6)) || (defined(Q_WS_MAEMO_5))
     QGeoPositionInfoSourceMaemo *source = new QGeoPositionInfoSourceMaemo(parent);
 
     int status = source->init();
