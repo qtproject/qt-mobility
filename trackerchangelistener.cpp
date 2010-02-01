@@ -79,10 +79,31 @@ TrackerChangeListener::~TrackerChangeListener()
 // let's see which signals will be used from libqttracker
 QContactLocalId url2UniqueId(const QString &contactUrl)
 {
+
+    /* Telepathy URI would look like telepathy:///org/freedesktop...
+       convert the URI component which contains the 
+       account + contat id to uint32 expected by
+       qcontactlocalid
+    */
+    if (contactUrl.contains("telepathy")) {
+        QContactLocalId id = 0;
+        QStringList decoded = contactUrl.split(":");
+        id = qHash(decoded.value(1).remove(0,1));
+        return id;
+    }
+
+    /* handle conatact:interger URL types comming from
+       which are non telepathy url's
+    */
+    QRegExp rx("(\\d+)");
+    bool conversion = false;
     QContactLocalId id = 0;
-    QStringList decoded = contactUrl.split(":");
-    qDebug() << Q_FUNC_INFO << decoded;
-    id = qHash(decoded.value(1).remove(0,1));
+    if( rx.indexIn(contactUrl) != -1 )
+    {
+        id = rx.cap(1).toUInt(&conversion, 10);
+    }
+    if( !conversion )
+        qWarning() << Q_FUNC_INFO << "unparsed uri to uniqueI:" << contactUrl;
     return id;
 
 }
@@ -92,7 +113,6 @@ void TrackerChangeListener::subjectsAdded(const QStringList &subjects)
     QList<QContactLocalId> added;
     foreach(const QString &uri, subjects)
     {
-        qDebug() << Q_FUNC_INFO <<  uri;
         added << url2UniqueId(uri);
     }
     qDebug() << Q_FUNC_INFO << "added contactids:" << added;
@@ -104,7 +124,6 @@ void TrackerChangeListener::subjectsRemoved(const QStringList &subjects)
     QList<QContactLocalId> added;
     foreach(const QString &uri, subjects)
     {
-        qDebug() << Q_FUNC_INFO <<  uri;
         added << url2UniqueId(uri);
     }
     qDebug() << Q_FUNC_INFO << "removed contactids:" << added;
@@ -116,7 +135,6 @@ void TrackerChangeListener::subjectsChanged(const QStringList &subjects)
 {
     QList<QContactLocalId> changed;
     foreach(const QString &uri, subjects) {
-        qDebug() << Q_FUNC_INFO <<  uri;
         QContactLocalId id = url2UniqueId(uri);
         if (changed.contains(id) == false) {
             changed << id;
