@@ -244,11 +244,11 @@ RDFSelect prepareEmailAddressesQuery(RDFVariable &rdfcontact1, bool forAffiliati
     return queryidsnumbers;
 }
 
-RDFSelect prepareIMContactsQuery(RDFVariable &imcontact)
+RDFSelect prepareIMContactsQuery(RDFVariable  &imcontact )
 {
     // columns
     RDFSelect queryidsimacccounts;
-//    RDFVariable contact = queryidsimacccounts.newColumn<nco::IMContact>("contact");
+    imcontact = queryidsimacccounts.newColumn<nco::IMContact>("contact");
     queryidsimacccounts.groupBy(imcontact);
     queryidsimacccounts.addColumn("contactId", imcontact.property<nco::contactUID> ());
 
