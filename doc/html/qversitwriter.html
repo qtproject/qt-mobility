@@ -122,12 +122,13 @@
 <p>See also <a href="qversitwriter.html#device">device</a>().</p>
 <a name="//apple_ref/cpp/instm/QVersitWriter/startWriting"></a>
 <h3 class="fn"><a name="startWriting"></a>bool QVersitWriter::startWriting ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qversitdocument.html">QVersitDocument</a>&gt; &amp; <i>input</i> )</h3>
-<p>Starts writing <i>input</i> to <a href="qversitwriter.html#device">device</a>() asynchronously. Returns false if the output device has not been set or opened or if there is another asynchronous write operation already pending. Signal <a href="qversitwriter.html#stateChanged">stateChanged</a>() is emitted with parameter <a href="qversitwriter.html#State-enum">FinishedState</a> is emitted when the writing has finished.</p>
+<p>Starts writing <i>input</i> to <a href="qversitwriter.html#device">device</a>() asynchronously. Returns false if the output device has not been set or opened or if there is another asynchronous write operation already pending. Signal <a href="qversitwriter.html#stateChanged">stateChanged</a>() is emitted with parameter <a href="qversitwriter.html#State-enum">FinishedState</a> when the writing has finished.</p>
 <a name="//apple_ref/cpp/instm/QVersitWriter/state"></a>
 <h3 class="fn"><a name="state"></a><a href="qversitwriter.html#State-enum">State</a> QVersitWriter::state () const</h3>
 <p>Returns the state of the writer.</p>
 <a name="//apple_ref/cpp/instm/QVersitWriter/stateChanged"></a>
 <h3 class="fn"><a name="stateChanged"></a>void QVersitWriter::stateChanged ( <a href="qversitwriter.html#State-enum">QVersitWriter::State</a> <i>state</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>The signal is emitted by the writer when its state has changed (eg. when it has finished writing to the device). <i>state</i> is the new state of the writer.</p>
 <a name="//apple_ref/cpp/instm/QVersitWriter/waitForFinished"></a>
 <h3 class="fn"><a name="waitForFinished"></a>bool QVersitWriter::waitForFinished ( int <i>msec</i> = -1 )</h3>
 <p>If the state is <a href="qversitwriter.html#State-enum">ActiveState</a>, blocks until the writer has finished writing or <i>msec</i> milliseconds has elapsed, returning true if it successfully finishes or is cancelled by the user. If the state is <a href="qversitwriter.html#State-enum">FinishedState</a>, returns true immediately. Otherwise, returns false immediately.</p>
