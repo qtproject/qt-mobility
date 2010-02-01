@@ -3502,6 +3502,15 @@
     </section>
 </section>
 <section ref="overviews.html" title="Overviews">
+    <section ref="sensors-backend.html" title="">
+        <keyword ref="sensors-backend.html"></keyword>
+    </section>
+    <section ref="sensors-helpers.html" title="">
+        <keyword ref="sensors-helpers.html"></keyword>
+    </section>
+    <section ref="sensors.html" title="">
+        <keyword ref="sensors.html"></keyword>
+    </section>
     <section ref="functions.html" title="All Functions">
         <keyword ref="functions.html">All Functions</keyword>
     </section>

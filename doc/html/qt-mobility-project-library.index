@@ -7670,6 +7670,9 @@
         <function access="public" threadsafety="unspecified" status="commendable" name="REGISTER_STATIC_PLUGIN" href="qsensormanager.html#REGISTER_STATIC_PLUGIN" location="" virtual="non" meta="macrowithparams" const="false" static="false" overload="false" relates="QSensorManager" type="" signature="REGISTER_STATIC_PLUGIN( pluginname)">
             <parameter left="" right="" name="pluginname" default=""/>
         </function>
+        <page access="public" status="commendable" name="sensors" href="sensors.html" subtype="group" title="" fulltitle="" subtitle="" location="sensors.qdoc"/>
+        <page access="public" status="commendable" name="sensors_helpers" href="sensors-helpers.html" subtype="group" title="" fulltitle="" subtitle="" location="sensors.qdoc"/>
+        <page access="public" status="commendable" name="sensors_backend" href="sensors-backend.html" subtype="group" title="" fulltitle="" subtitle="" location="sensors.qdoc"/>
         <page access="public" status="commendable" name="sensors-api.html" href="sensors-api.html" subtype="page" title="Sensors API" fulltitle="Sensors API" subtitle="" location="sensors.qdoc">
             <contents name="overview" title="Overview" level="1"/>
             <contents name="client-api" title="Client API" level="1"/>
