@@ -58,6 +58,7 @@
 QStringList S60MediaServicePlugin::keys() const
 {
     QStringList list;
+#if defined(TUNERLIBUSED) || defined(RADIOUTILITYLIBUSED)
     list << QLatin1String(Q_MEDIASERVICE_RADIO);
 #ifdef QMEDIA_SYMBIAN_CAMERA
     list << QLatin1String(Q_MEDIASERVICE_CAMERA);
@@ -81,12 +82,12 @@ QMediaService* S60MediaServicePlugin::create(QString const& key)
 #endif
     if (key == QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE))
         return new S60AudioCaptureService;
+    
 #if defined(TUNERLIBUSED) || defined(RADIOUTILITYLIBUSED) 
     if (key == QLatin1String(Q_MEDIASERVICE_RADIO)) 
         return new S60RadioTunerService;
 #endif
     
-    qDebug() << "unsupported key:" << key;
     return 0;
 }
 

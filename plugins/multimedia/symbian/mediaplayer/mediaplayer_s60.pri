@@ -44,7 +44,7 @@ SOURCES += \
     $$PWD/s60videowidget.cpp
 
 exists($${EPOCROOT}epoc32/release/winscw/udeb/mpengine.lib){
-    LIBS += -lMPEngine \
+    LIBS += -lMPEngine
     DEFINES += HAS_MEDIA_PLAYER
 }
 else {

@@ -617,7 +617,7 @@ GstFlowReturn QVideoSurfaceGstSink::buffer_alloc(
         QVideoSurfaceFormat format = formatForCaps(intersection, &bytesPerLine);
 
         if (!sink->delegate->start(format, bytesPerLine)) {
-            qDebug() << "failed to start video surface";
+            //qDebug() << "failed to start video surface";
             return GST_FLOW_NOT_NEGOTIATED;
         }
     }
