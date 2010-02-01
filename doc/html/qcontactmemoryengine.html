@@ -56,6 +56,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#setSelfContactId">setSelfContactId</a></b> ( const QContactLocalId &amp; <i>contactId</i>, QContactManager::Error &amp; <i>error</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#startRequest">startRequest</a></b> ( QContactAbstractRequest * <i>req</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;QVariant::Type&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#supportedDataTypes">supportedDataTypes</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#supportedRelationshipTypes">supportedRelationshipTypes</a></b> ( const QString &amp; <i>contactType</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmemoryengine.html#waitForRequestFinished">waitForRequestFinished</a></b> ( QContactAbstractRequest * <i>req</i>, int <i>msecs</i> )</td></tr>
 </table>
 <ul>
@@ -190,6 +191,9 @@
 <a name="//apple_ref/cpp/instm/QContactMemoryEngine/supportedDataTypes"></a>
 <h3 class="fn"><a name="supportedDataTypes"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qvariant.html#Type-enum">QVariant::Type</a>&gt; QContactMemoryEngine::supportedDataTypes () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#supportedDataTypes">QContactManagerEngine::supportedDataTypes</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactMemoryEngine/supportedRelationshipTypes"></a>
+<h3 class="fn"><a name="supportedRelationshipTypes"></a><a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> QContactMemoryEngine::supportedRelationshipTypes ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>contactType</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Reimplemented from <a href="qcontactmanagerengine.html#supportedRelationshipTypes">QContactManagerEngine::supportedRelationshipTypes</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactMemoryEngine/waitForRequestFinished"></a>
 <h3 class="fn"><a name="waitForRequestFinished"></a>bool QContactMemoryEngine::waitForRequestFinished ( <a href="qcontactabstractrequest.html">QContactAbstractRequest</a> * <i>req</i>, int <i>msecs</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#waitForRequestFinished">QContactManagerEngine::waitForRequestFinished</a>().</p>

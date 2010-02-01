@@ -37,6 +37,49 @@
         <keyword ref="qabstractvaluespacelayer.html#QVALUESPACE_AUTO_INSTALL_LAYER">QVALUESPACE_AUTO_INSTALL_LAYER</keyword>
         <section ref="qabstractvaluespacelayer-members.html" title="List of all members"/>
     </section>
+    <section ref="qaccelerometer.html" title="QAccelerometer Class Reference">
+        <keyword ref="qaccelerometer.html">QAccelerometer</keyword>
+        <keyword ref="qaccelerometer.html#reading">reading</keyword>
+        <section ref="qaccelerometer-members.html" title="List of all members"/>
+    </section>
+    <section ref="qaccelerometerfilter.html" title="QAccelerometerFilter Class Reference">
+        <keyword ref="qaccelerometerfilter.html">QAccelerometerFilter</keyword>
+        <keyword ref="qaccelerometerfilter.html#filter">filter</keyword>
+        <section ref="qaccelerometerfilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qaccelerometerreading.html" title="QAccelerometerReading Class Reference">
+        <keyword ref="qaccelerometerreading.html">QAccelerometerReading</keyword>
+        <keyword ref="qaccelerometerreading.html#x-prop">x</keyword>
+        <keyword ref="qaccelerometerreading.html#y-prop">y</keyword>
+        <keyword ref="qaccelerometerreading.html#z-prop">z</keyword>
+        <keyword ref="qaccelerometerreading.html#setX">setX</keyword>
+        <keyword ref="qaccelerometerreading.html#setY">setY</keyword>
+        <keyword ref="qaccelerometerreading.html#setZ">setZ</keyword>
+        <section ref="qaccelerometerreading-members.html" title="List of all members"/>
+    </section>
+    <section ref="qambientlightfilter.html" title="QAmbientLightFilter Class Reference">
+        <keyword ref="qambientlightfilter.html">QAmbientLightFilter</keyword>
+        <keyword ref="qambientlightfilter.html#filter">filter</keyword>
+        <section ref="qambientlightfilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qambientlightreading.html" title="QAmbientLightReading Class Reference">
+        <keyword ref="qambientlightreading.html">QAmbientLightReading</keyword>
+        <keyword ref="qambientlightreading.html#LightLevel-enum">LightLevel</keyword>
+        <keyword ref="qambientlightreading.html#LightLevel-enum">QAmbientLightReading::Undefined</keyword>
+        <keyword ref="qambientlightreading.html#LightLevel-enum">QAmbientLightReading::Light</keyword>
+        <keyword ref="qambientlightreading.html#LightLevel-enum">QAmbientLightReading::Twilight</keyword>
+        <keyword ref="qambientlightreading.html#LightLevel-enum">QAmbientLightReading::Sunny</keyword>
+        <keyword ref="qambientlightreading.html#LightLevel-enum">QAmbientLightReading::Dark</keyword>
+        <keyword ref="qambientlightreading.html#LightLevel-enum">QAmbientLightReading::Bright</keyword>
+        <keyword ref="qambientlightreading.html#lightLevel-prop">lightLevel</keyword>
+        <keyword ref="qambientlightreading.html#setLightLevel">setLightLevel</keyword>
+        <section ref="qambientlightreading-members.html" title="List of all members"/>
+    </section>
+    <section ref="qambientlightsensor.html" title="QAmbientLightSensor Class Reference">
+        <keyword ref="qambientlightsensor.html">QAmbientLightSensor</keyword>
+        <keyword ref="qambientlightsensor.html#reading">reading</keyword>
+        <section ref="qambientlightsensor-members.html" title="List of all members"/>
+    </section>
     <section ref="qaudiocapturesource.html" title="QAudioCaptureSource Class Reference">
         <keyword ref="qaudiocapturesource.html">QAudioCaptureSource</keyword>
         <keyword ref="qaudiocapturesource.html#activeAudioInput">activeAudioInput</keyword>
@@ -308,6 +351,29 @@
         <keyword ref="qcamerafocuscontrol.html#zoomValueChanged">zoomValueChanged</keyword>
         <keyword ref="qcamerafocuscontrol.html#QCameraFocusControl_iid">QCameraFocusControl_iid</keyword>
         <section ref="qcamerafocuscontrol-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcompass.html" title="QCompass Class Reference">
+        <keyword ref="qcompass.html">QCompass</keyword>
+        <keyword ref="qcompass.html#reading">reading</keyword>
+        <section ref="qcompass-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcompassfilter.html" title="QCompassFilter Class Reference">
+        <keyword ref="qcompassfilter.html">QCompassFilter</keyword>
+        <keyword ref="qcompassfilter.html#filter">filter</keyword>
+        <section ref="qcompassfilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcompassreading.html" title="QCompassReading Class Reference">
+        <keyword ref="qcompassreading.html">QCompassReading</keyword>
+        <keyword ref="qcompassreading.html#CalibrationLevel-enum">CalibrationLevel</keyword>
+        <keyword ref="qcompassreading.html#CalibrationLevel-enum">QCompassReading::Undefined</keyword>
+        <keyword ref="qcompassreading.html#CalibrationLevel-enum">QCompassReading::High</keyword>
+        <keyword ref="qcompassreading.html#CalibrationLevel-enum">QCompassReading::Middle</keyword>
+        <keyword ref="qcompassreading.html#CalibrationLevel-enum">QCompassReading::Low</keyword>
+        <keyword ref="qcompassreading.html#azimuth-prop">azimuth</keyword>
+        <keyword ref="qcompassreading.html#calibrationLevel-prop">calibrationLevel</keyword>
+        <keyword ref="qcompassreading.html#setAzimuth">setAzimuth</keyword>
+        <keyword ref="qcompassreading.html#setCalibrationLevel">setCalibrationLevel</keyword>
+        <section ref="qcompassreading-members.html" title="List of all members"/>
     </section>
     <section ref="qcontact.html" title="QContact Class Reference">
         <keyword ref="qcontact.html">QContact</keyword>
@@ -1018,6 +1084,7 @@
         <keyword ref="qcontactmemoryengine.html#setSelfContactId">setSelfContactId</keyword>
         <keyword ref="qcontactmemoryengine.html#startRequest">startRequest</keyword>
         <keyword ref="qcontactmemoryengine.html#supportedDataTypes">supportedDataTypes</keyword>
+        <keyword ref="qcontactmemoryengine.html#supportedRelationshipTypes">supportedRelationshipTypes</keyword>
         <keyword ref="qcontactmemoryengine.html#waitForRequestFinished">waitForRequestFinished</keyword>
         <keyword ref="qcontactmemoryengine.html#waitForRequestProgress">waitForRequestProgress</keyword>
         <section ref="qcontactmemoryengine-members.html" title="List of all members"/>
@@ -1477,6 +1544,39 @@
         <keyword ref="qimageprocessingcontrol.html#whiteBalanceMode">whiteBalanceMode</keyword>
         <keyword ref="qimageprocessingcontrol.html#QImageProcessingControl_iid">QImageProcessingControl_iid</keyword>
         <section ref="qimageprocessingcontrol-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmagnetometer.html" title="QMagnetometer Class Reference">
+        <keyword ref="qmagnetometer.html">QMagnetometer</keyword>
+        <keyword ref="qmagnetometer.html#reading">reading</keyword>
+        <section ref="qmagnetometer-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmagnetometerfilter.html" title="QMagnetometerFilter Class Reference">
+        <keyword ref="qmagnetometerfilter.html">QMagnetometerFilter</keyword>
+        <keyword ref="qmagnetometerfilter.html#filter">filter</keyword>
+        <section ref="qmagnetometerfilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmagnetometerreading.html" title="QMagnetometerReading Class Reference">
+        <keyword ref="qmagnetometerreading.html">QMagnetometerReading</keyword>
+        <keyword ref="qmagnetometerreading.html#CalibrationLevel-enum">CalibrationLevel</keyword>
+        <keyword ref="qmagnetometerreading.html#CalibrationLevel-enum">QMagnetometerReading::Undefined</keyword>
+        <keyword ref="qmagnetometerreading.html#CalibrationLevel-enum">QMagnetometerReading::High</keyword>
+        <keyword ref="qmagnetometerreading.html#CalibrationLevel-enum">QMagnetometerReading::Middle</keyword>
+        <keyword ref="qmagnetometerreading.html#CalibrationLevel-enum">QMagnetometerReading::Low</keyword>
+        <keyword ref="qmagnetometerreading.html#calibrated_x-prop">calibrated_x</keyword>
+        <keyword ref="qmagnetometerreading.html#calibrated_y-prop">calibrated_y</keyword>
+        <keyword ref="qmagnetometerreading.html#calibrated_z-prop">calibrated_z</keyword>
+        <keyword ref="qmagnetometerreading.html#calibrationLevel-prop">calibrationLevel</keyword>
+        <keyword ref="qmagnetometerreading.html#x-prop">x</keyword>
+        <keyword ref="qmagnetometerreading.html#y-prop">y</keyword>
+        <keyword ref="qmagnetometerreading.html#z-prop">z</keyword>
+        <keyword ref="qmagnetometerreading.html#setCalibrated_x">setCalibrated_x</keyword>
+        <keyword ref="qmagnetometerreading.html#setCalibrated_y">setCalibrated_y</keyword>
+        <keyword ref="qmagnetometerreading.html#setCalibrated_z">setCalibrated_z</keyword>
+        <keyword ref="qmagnetometerreading.html#setCalibrationLevel">setCalibrationLevel</keyword>
+        <keyword ref="qmagnetometerreading.html#setX">setX</keyword>
+        <keyword ref="qmagnetometerreading.html#setY">setY</keyword>
+        <keyword ref="qmagnetometerreading.html#setZ">setZ</keyword>
+        <section ref="qmagnetometerreading-members.html" title="List of all members"/>
     </section>
     <section ref="qmediacontainercontrol.html" title="QMediaContainerControl Class Reference">
         <keyword ref="qmediacontainercontrol.html">QMediaContainerControl</keyword>
@@ -2439,6 +2539,50 @@
         <keyword ref="qnmeapositioninfosource.html#updateMode">updateMode</keyword>
         <section ref="qnmeapositioninfosource-members.html" title="List of all members"/>
     </section>
+    <section ref="qorientationfilter.html" title="QOrientationFilter Class Reference">
+        <keyword ref="qorientationfilter.html">QOrientationFilter</keyword>
+        <keyword ref="qorientationfilter.html#filter">filter</keyword>
+        <section ref="qorientationfilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qorientationreading.html" title="QOrientationReading Class Reference">
+        <keyword ref="qorientationreading.html">QOrientationReading</keyword>
+        <keyword ref="qorientationreading.html#Orientation-enum">Orientation</keyword>
+        <keyword ref="qorientationreading.html#Orientation-enum">QOrientationReading::Undefined</keyword>
+        <keyword ref="qorientationreading.html#Orientation-enum">QOrientationReading::BottomDown</keyword>
+        <keyword ref="qorientationreading.html#Orientation-enum">QOrientationReading::FaceDown</keyword>
+        <keyword ref="qorientationreading.html#Orientation-enum">QOrientationReading::FaceUp</keyword>
+        <keyword ref="qorientationreading.html#Orientation-enum">QOrientationReading::RightUp</keyword>
+        <keyword ref="qorientationreading.html#Orientation-enum">QOrientationReading::BottomUp</keyword>
+        <keyword ref="qorientationreading.html#Orientation-enum">QOrientationReading::LeftUp</keyword>
+        <keyword ref="qorientationreading.html#orientation-prop">orientation</keyword>
+        <keyword ref="qorientationreading.html#setOrientation">setOrientation</keyword>
+        <section ref="qorientationreading-members.html" title="List of all members"/>
+    </section>
+    <section ref="qorientationsensor.html" title="QOrientationSensor Class Reference">
+        <keyword ref="qorientationsensor.html">QOrientationSensor</keyword>
+        <keyword ref="qorientationsensor.html#reading">reading</keyword>
+        <section ref="qorientationsensor-members.html" title="List of all members"/>
+    </section>
+    <section ref="qproximityfilter.html" title="QProximityFilter Class Reference">
+        <keyword ref="qproximityfilter.html">QProximityFilter</keyword>
+        <keyword ref="qproximityfilter.html#filter">filter</keyword>
+        <section ref="qproximityfilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qproximityreading.html" title="QProximityReading Class Reference">
+        <keyword ref="qproximityreading.html">QProximityReading</keyword>
+        <keyword ref="qproximityreading.html#Proximity-enum">Proximity</keyword>
+        <keyword ref="qproximityreading.html#Proximity-enum">QProximityReading::Undefined</keyword>
+        <keyword ref="qproximityreading.html#Proximity-enum">QProximityReading::NotClose</keyword>
+        <keyword ref="qproximityreading.html#Proximity-enum">QProximityReading::Close</keyword>
+        <keyword ref="qproximityreading.html#proximity-prop">proximity</keyword>
+        <keyword ref="qproximityreading.html#setProximity">setProximity</keyword>
+        <section ref="qproximityreading-members.html" title="List of all members"/>
+    </section>
+    <section ref="qproximitysensor.html" title="QProximitySensor Class Reference">
+        <keyword ref="qproximitysensor.html">QProximitySensor</keyword>
+        <keyword ref="qproximitysensor.html#reading">reading</keyword>
+        <section ref="qproximitysensor-members.html" title="List of all members"/>
+    </section>
     <section ref="qradiotuner.html" title="QRadioTuner Class Reference">
         <keyword ref="qradiotuner.html">QRadioTuner</keyword>
         <keyword ref="qradiotuner.html#Band-enum">Band</keyword>
@@ -2535,6 +2679,116 @@
         <keyword ref="qradiotunercontrol.html#volumeChanged">volumeChanged</keyword>
         <keyword ref="qradiotunercontrol.html#QRadioTunerControl_iid">QRadioTunerControl_iid</keyword>
         <section ref="qradiotunercontrol-members.html" title="List of all members"/>
+    </section>
+    <section ref="qrotationfilter.html" title="QRotationFilter Class Reference">
+        <keyword ref="qrotationfilter.html">QRotationFilter</keyword>
+        <keyword ref="qrotationfilter.html#filter">filter</keyword>
+        <section ref="qrotationfilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qrotationreading.html" title="QRotationReading Class Reference">
+        <keyword ref="qrotationreading.html">QRotationReading</keyword>
+        <keyword ref="qrotationreading.html#x-prop">x</keyword>
+        <keyword ref="qrotationreading.html#y-prop">y</keyword>
+        <keyword ref="qrotationreading.html#z-prop">z</keyword>
+        <keyword ref="qrotationreading.html#setX">setX</keyword>
+        <keyword ref="qrotationreading.html#setY">setY</keyword>
+        <keyword ref="qrotationreading.html#setZ">setZ</keyword>
+        <section ref="qrotationreading-members.html" title="List of all members"/>
+    </section>
+    <section ref="qrotationsensor.html" title="QRotationSensor Class Reference">
+        <keyword ref="qrotationsensor.html">QRotationSensor</keyword>
+        <keyword ref="qrotationsensor.html#reading">reading</keyword>
+        <section ref="qrotationsensor-members.html" title="List of all members"/>
+    </section>
+    <section ref="qsensor.html" title="QSensor Class Reference">
+        <keyword ref="qsensor.html">QSensor</keyword>
+        <keyword ref="qsensor.html#UpdatePolicy-enum">UpdatePolicy</keyword>
+        <keyword ref="qsensor.html#UpdatePolicy-enum">UpdatePolicies</keyword>
+        <keyword ref="qsensor.html#UpdatePolicy-enum">QSensor::Undefined</keyword>
+        <keyword ref="qsensor.html#UpdatePolicy-enum">QSensor::OccasionalUpdates</keyword>
+        <keyword ref="qsensor.html#UpdatePolicy-enum">QSensor::OnChangeUpdates</keyword>
+        <keyword ref="qsensor.html#UpdatePolicy-enum">QSensor::TimedUpdates</keyword>
+        <keyword ref="qsensor.html#UpdatePolicy-enum">QSensor::FrequentUpdates</keyword>
+        <keyword ref="qsensor.html#UpdatePolicy-enum">QSensor::InfrequentUpdates</keyword>
+        <keyword ref="qsensor.html#UpdatePolicy-enum">QSensor::PolledUpdates</keyword>
+        <keyword ref="qsensor.html#isAvailable-prop">isAvailable</keyword>
+        <keyword ref="qsensor.html#reading-prop">reading</keyword>
+        <keyword ref="qsensor.html#running-prop">running</keyword>
+        <keyword ref="qsensor.html#running-prop">isActive</keyword>
+        <keyword ref="qsensor.html#running-prop">setActive</keyword>
+        <keyword ref="qsensor.html#sensorid-prop">sensorid</keyword>
+        <keyword ref="qsensor.html#sensorid-prop">identifier</keyword>
+        <keyword ref="qsensor.html#sensorid-prop">setIdentifier</keyword>
+        <keyword ref="qsensor.html#supportedUpdatePolicies-prop">supportedUpdatePolicies</keyword>
+        <keyword ref="qsensor.html#type-prop">type</keyword>
+        <keyword ref="qsensor.html#type-prop">setType</keyword>
+        <keyword ref="qsensor.html#updateInterval-prop">updateInterval</keyword>
+        <keyword ref="qsensor.html#updateInterval-prop">setUpdateInterval</keyword>
+        <keyword ref="qsensor.html#updatePolicy-prop">updatePolicy</keyword>
+        <keyword ref="qsensor.html#updatePolicy-prop">setUpdatePolicy</keyword>
+        <keyword ref="qsensor.html#addFilter">addFilter</keyword>
+        <keyword ref="qsensor.html#connect">connect</keyword>
+        <keyword ref="qsensor.html#isSignalEnabled">isSignalEnabled</keyword>
+        <keyword ref="qsensor.html#poll">poll</keyword>
+        <keyword ref="qsensor.html#readingChanged">readingChanged</keyword>
+        <keyword ref="qsensor.html#removeFilter">removeFilter</keyword>
+        <keyword ref="qsensor.html#setSignalEnabled">setSignalEnabled</keyword>
+        <keyword ref="qsensor.html#start">start</keyword>
+        <keyword ref="qsensor.html#stop">stop</keyword>
+        <keyword ref="qsensor.html#qtimestamp-typedef">qtimestamp</keyword>
+        <section ref="qsensor-members.html" title="List of all members"/>
+    </section>
+    <section ref="qsensorbackend.html" title="QSensorBackend Class Reference">
+        <keyword ref="qsensorbackend.html">QSensorBackend</keyword>
+        <keyword ref="qsensorbackend.html#newReadingAvailable">newReadingAvailable</keyword>
+        <keyword ref="qsensorbackend.html#poll">poll</keyword>
+        <keyword ref="qsensorbackend.html#reading">reading</keyword>
+        <keyword ref="qsensorbackend.html#setReading">setReading</keyword>
+        <keyword ref="qsensorbackend.html#setSupportedUpdatePolicies">setSupportedUpdatePolicies</keyword>
+        <keyword ref="qsensorbackend.html#start">start</keyword>
+        <keyword ref="qsensorbackend.html#stop">stop</keyword>
+        <section ref="qsensorbackend-members.html" title="List of all members"/>
+    </section>
+    <section ref="qsensorbackendfactory.html" title="QSensorBackendFactory Class Reference">
+        <keyword ref="qsensorbackendfactory.html">QSensorBackendFactory</keyword>
+        <keyword ref="qsensorbackendfactory.html#createBackend">createBackend</keyword>
+        <section ref="qsensorbackendfactory-members.html" title="List of all members"/>
+    </section>
+    <section ref="qsensorfactory.html" title="QSensorFactory Class Reference">
+        <keyword ref="qsensorfactory.html">QSensorFactory</keyword>
+        <keyword ref="qsensorfactory.html#createSensor">createSensor</keyword>
+        <keyword ref="qsensorfactory.html#defaultSensorForType">defaultSensorForType</keyword>
+        <keyword ref="qsensorfactory.html#instance">instance</keyword>
+        <keyword ref="qsensorfactory.html#sensorList">sensorList</keyword>
+        <keyword ref="qsensorfactory.html#sensorTypes">sensorTypes</keyword>
+        <keyword ref="qsensorfactory.html#sensorsForType">sensorsForType</keyword>
+        <section ref="qsensorfactory-members.html" title="List of all members"/>
+    </section>
+    <section ref="qsensorfilter.html" title="QSensorFilter Class Reference">
+        <keyword ref="qsensorfilter.html">QSensorFilter</keyword>
+        <keyword ref="qsensorfilter.html#filter">filter</keyword>
+        <section ref="qsensorfilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qsensormanager.html" title="QSensorManager Class Reference">
+        <keyword ref="qsensormanager.html">QSensorManager</keyword>
+        <keyword ref="qsensormanager.html#createBackend">createBackend</keyword>
+        <keyword ref="qsensormanager.html#defaultSensorForType">defaultSensorForType</keyword>
+        <keyword ref="qsensormanager.html#registerBackend">registerBackend</keyword>
+        <keyword ref="qsensormanager.html#REGISTER_STATIC_PLUGIN">REGISTER_STATIC_PLUGIN</keyword>
+        <section ref="qsensormanager-members.html" title="List of all members"/>
+    </section>
+    <section ref="qsensorplugininterface.html" title="QSensorPluginInterface Class Reference">
+        <keyword ref="qsensorplugininterface.html">QSensorPluginInterface</keyword>
+        <keyword ref="qsensorplugininterface.html#registerSensors">registerSensors</keyword>
+        <section ref="qsensorplugininterface-members.html" title="List of all members"/>
+    </section>
+    <section ref="qsensorreading.html" title="QSensorReading Class Reference">
+        <keyword ref="qsensorreading.html">QSensorReading</keyword>
+        <keyword ref="qsensorreading.html#timestamp-prop">timestamp</keyword>
+        <keyword ref="qsensorreading.html#setTimestamp">setTimestamp</keyword>
+        <keyword ref="qsensorreading.html#DECLARE_READING">DECLARE_READING</keyword>
+        <keyword ref="qsensorreading.html#IMPLEMENT_READING">IMPLEMENT_READING</keyword>
+        <section ref="qsensorreading-members.html" title="List of all members"/>
     </section>
     <section ref="qservice.html" title="QService Namespace Reference">
         <keyword ref="qservice.html">QService</keyword>
@@ -2809,6 +3063,36 @@
         <keyword ref="qsystemstorageinfo.html#totalDiskSpace">totalDiskSpace</keyword>
         <keyword ref="qsystemstorageinfo.html#typeForDrive">typeForDrive</keyword>
         <section ref="qsystemstorageinfo-members.html" title="List of all members"/>
+    </section>
+    <section ref="qtapfilter.html" title="QTapFilter Class Reference">
+        <keyword ref="qtapfilter.html">QTapFilter</keyword>
+        <keyword ref="qtapfilter.html#filter">filter</keyword>
+        <section ref="qtapfilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qtapreading.html" title="QTapReading Class Reference">
+        <keyword ref="qtapreading.html">QTapReading</keyword>
+        <keyword ref="qtapreading.html#TapDirection-enum">TapDirection</keyword>
+        <keyword ref="qtapreading.html#TapDirection-enum">QTapReading::Undefined</keyword>
+        <keyword ref="qtapreading.html#TapDirection-enum">QTapReading::X</keyword>
+        <keyword ref="qtapreading.html#TapDirection-enum">QTapReading::Y</keyword>
+        <keyword ref="qtapreading.html#TapDirection-enum">QTapReading::Z</keyword>
+        <keyword ref="qtapreading.html#TapDirection-enum">QTapReading::X_Neg</keyword>
+        <keyword ref="qtapreading.html#TapDirection-enum">QTapReading::Y_Neg</keyword>
+        <keyword ref="qtapreading.html#TapDirection-enum">QTapReading::Z_Neg</keyword>
+        <keyword ref="qtapreading.html#TapDirection-enum">QTapReading::X_Pos</keyword>
+        <keyword ref="qtapreading.html#TapDirection-enum">QTapReading::Y_Pos</keyword>
+        <keyword ref="qtapreading.html#TapDirection-enum">QTapReading::Z_Pos</keyword>
+        <keyword ref="qtapreading.html#doubleTap-prop">doubleTap</keyword>
+        <keyword ref="qtapreading.html#doubleTap-prop">isDoubleTap</keyword>
+        <keyword ref="qtapreading.html#tapDirection-prop">tapDirection</keyword>
+        <keyword ref="qtapreading.html#setDoubleTap">setDoubleTap</keyword>
+        <keyword ref="qtapreading.html#setTapDirection">setTapDirection</keyword>
+        <section ref="qtapreading-members.html" title="List of all members"/>
+    </section>
+    <section ref="qtapsensor.html" title="QTapSensor Class Reference">
+        <keyword ref="qtapsensor.html">QTapSensor</keyword>
+        <keyword ref="qtapsensor.html#reading">reading</keyword>
+        <section ref="qtapsensor-members.html" title="List of all members"/>
     </section>
     <section ref="qtmedia.html" title="QtMedia Namespace Reference">
         <keyword ref="qtmedia.html">QtMedia</keyword>
@@ -3236,6 +3520,9 @@
     <section ref="contacts.html" title="Contacts">
         <keyword ref="contacts.html">Contacts</keyword>
     </section>
+    <section ref="creating-a-sensor-plugin.html" title="Creating a sensor plugin">
+        <keyword ref="creating-a-sensor-plugin.html">Creating a sensor plugin</keyword>
+    </section>
     <section ref="future.html" title="Future Additional APIs">
         <keyword ref="future.html">Future Additional APIs</keyword>
     </section>
@@ -3307,6 +3594,9 @@
     </section>
     <section ref="qtmobility-known-issues.html" title="Release Notes of the QtMobility Project">
         <keyword ref="qtmobility-known-issues.html">Release Notes of the QtMobility Project</keyword>
+    </section>
+    <section ref="sensors-api.html" title="Sensors API">
+        <keyword ref="sensors-api.html">Sensors API</keyword>
     </section>
     <section ref="servicefw.html" title="Service Frameworks Classes">
         <keyword ref="servicefw.html">Service Frameworks Classes</keyword>
