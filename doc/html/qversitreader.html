@@ -20,33 +20,38 @@
 <li><a href="qversitreader-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
+<a name="public-types"></a>
+<h2>Public Types</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qversitreader.html#Error-enum">Error</a></b> { NoError, UnspecifiedError, IOError, OutOfMemoryError, ..., BadDeviceError }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qversitreader.html#State-enum">State</a></b> { InactiveState, ActiveState, CanceledState, FinishedState }</td></tr>
+</table>
+<hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qversitreader.html#QVersitReader">QVersitReader</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qversitreader.html#dtor.QVersitReader">~QVersitReader</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qversitreader.html#cancel">cancel</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QTextCodec * </td><td class="memItemRight" valign="bottom"><b><a href="qversitreader.html#defaultCodec">defaultCodec</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QIODevice * </td><td class="memItemRight" valign="bottom"><b><a href="qversitreader.html#device">device</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qversitreader.html#readAll">readAll</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QVersitDocument&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qversitreader.html#result">result</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">Error </td><td class="memItemRight" valign="bottom"><b><a href="qversitreader.html#error">error</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QVersitDocument&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qversitreader.html#results">results</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qversitreader.html#resultsAvailable">resultsAvailable</a></b> ( QList&lt;QVersitDocument&gt; &amp; <i>results</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qversitreader.html#setDefaultCodec">setDefaultCodec</a></b> ( QTextCodec * <i>codec</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qversitreader.html#setDevice">setDevice</a></b> ( QIODevice * <i>device</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qversitreader.html#startReading">startReading</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">State </td><td class="memItemRight" valign="bottom"><b><a href="qversitreader.html#state">state</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qversitreader.html#waitForFinished">waitForFinished</a></b> ( int <i>msec</i> = -1 )</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
-</ul>
-<hr />
-<a name="signals"></a>
-<h2>Signals</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qversitreader.html#readingDone">readingDone</a></b> ()</td></tr>
-</table>
-<ul>
-<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+<li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
 <li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
@@ -56,7 +61,7 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QVersitReader class provides an interface for reading versit documents such as vCards from a stream.</p>
-<p>QVersitReader reads 0..n versit documents such as vCards from a text stream into 0..n <a href="qversitdocument.html">QVersitDocument</a> instances. QVersitReader supports reading from an abstract I/O device which can be for example a file or a memory buffer. The reading can be done synchronously or asynchronously.</p>
+<p>QVersitReader reads 0..n versit documents such as vCards from a text stream into 0..n <a href="qversitdocument.html">QVersitDocument</a> instances. QVersitReader supports reading from an abstract I/O device which can be for example a file or a memory buffer. The reading can be done asynchronously, and the <a href="qversitreader.html#waitForFinished">waitForFinished</a>() function can be used to make a blocking read.</p>
 <pre><span class="comment">    // An example of reading a simple vCard from a memory buffer:</span>
     QBuffer vCardBuffer;
     vCardBuffer.open(QBuffer::ReadWrite);
@@ -66,11 +71,18 @@
     vCardBuffer.seek(0);
     QVersitReader reader;
     reader.setDevice(&amp;vCardBuffer);
-    if (reader.readAll()) {
-        QList&lt;QVersitDocument&gt; versitDocuments = reader.result();
-        <span class="comment">// Use the resulting document(s)...</span>
+    reader.startReading();
+    reader.waitForFinished();
+    QList&lt;QVersitDocument&gt; versitDocuments = reader.results();
+<span class="comment">    // Use the resulting document(s)...</span>
     }</pre>
 <p>See also <a href="qversitdocument.html">QVersitDocument</a>.</p>
+<hr />
+<h2>Member Type Documentation</h2>
+<a name="//apple_ref/cpp/tag/QVersitReader/Error"></a>
+<h3 class="fn"><a name="Error-enum"></a>enum QVersitReader::Error</h3>
+<a name="//apple_ref/cpp/tag/QVersitReader/State"></a>
+<h3 class="fn"><a name="State-enum"></a>enum QVersitReader::State</h3>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QVersitReader/QVersitReader"></a>
@@ -79,26 +91,42 @@
 <a name="//apple_ref/cpp/instm/QVersitReader/~QVersitReader"></a>
 <h3 class="fn"><a name="dtor.QVersitReader"></a>QVersitReader::~QVersitReader ()</h3>
 <p>Frees the memory used by the reader. Waits until a pending asynchronous reading has been completed.</p>
+<a name="//apple_ref/cpp/instm/QVersitReader/cancel"></a>
+<h3 class="fn"><a name="cancel"></a>void QVersitReader::cancel ()</h3>
+<p>Attempts to asynchronously cancel the read request.</p>
+<a name="//apple_ref/cpp/instm/QVersitReader/defaultCodec"></a>
+<h3 class="fn"><a name="defaultCodec"></a><a href="http://qt.nokia.com/doc/4.6/qtextcodec.html">QTextCodec</a> * QVersitReader::defaultCodec () const</h3>
+<p>Returns the codec the reader uses when parsing the input stream.</p>
+<p>See also <a href="qversitreader.html#setDefaultCodec">setDefaultCodec</a>().</p>
 <a name="//apple_ref/cpp/instm/QVersitReader/device"></a>
 <h3 class="fn"><a name="device"></a><a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> * QVersitReader::device () const</h3>
 <p>Returns the device used for reading input.</p>
 <p>See also <a href="qversitreader.html#setDevice">setDevice</a>().</p>
-<a name="//apple_ref/cpp/instm/QVersitReader/readAll"></a>
-<h3 class="fn"><a name="readAll"></a>bool QVersitReader::readAll ()</h3>
-<p>Reads the input synchronously. Returns false if the input device has not been set or opened or if there is an asynchronous read operation pending. Using this function may block the user thread for an undefined period. In most cases asynchronous <a href="qversitreader.html#startReading">startReading</a>() should be used instead.</p>
-<a name="//apple_ref/cpp/instm/QVersitReader/readingDone"></a>
-<h3 class="fn"><a name="readingDone"></a>void QVersitReader::readingDone ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>The signal is emitted by the reader when the asynchronous reading has been completed.</p>
-<a name="//apple_ref/cpp/instm/QVersitReader/result"></a>
-<h3 class="fn"><a name="result"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qversitdocument.html">QVersitDocument</a>&gt; QVersitReader::result () const</h3>
-<p>Returns the reading result or an empty list if the reading was not completed successfully.</p>
+<a name="//apple_ref/cpp/instm/QVersitReader/error"></a>
+<h3 class="fn"><a name="error"></a><a href="qversitreader.html#Error-enum">Error</a> QVersitReader::error () const</h3>
+<p>Returns the error encountered by the last operation.</p>
+<a name="//apple_ref/cpp/instm/QVersitReader/results"></a>
+<h3 class="fn"><a name="results"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qversitdocument.html">QVersitDocument</a>&gt; QVersitReader::results () const</h3>
+<p>Returns the reading result. Even if there was an error, a partial list of results may be returned.</p>
+<a name="//apple_ref/cpp/instm/QVersitReader/resultsAvailable"></a>
+<h3 class="fn"><a name="resultsAvailable"></a>void QVersitReader::resultsAvailable ( <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qversitdocument.html">QVersitDocument</a>&gt; &amp; <i>results</i> )</h3>
+<a name="//apple_ref/cpp/instm/QVersitReader/setDefaultCodec"></a>
+<h3 class="fn"><a name="setDefaultCodec"></a>void QVersitReader::setDefaultCodec ( <a href="http://qt.nokia.com/doc/4.6/qtextcodec.html">QTextCodec</a> * <i>codec</i> )</h3>
+<p>Sets the codec for the reader to use when parsing the input stream. This codec is not used when overridden with a CHARSET Versit parameter.</p>
+<p>See also <a href="qversitreader.html#defaultCodec">defaultCodec</a>().</p>
 <a name="//apple_ref/cpp/instm/QVersitReader/setDevice"></a>
 <h3 class="fn"><a name="setDevice"></a>void QVersitReader::setDevice ( <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> * <i>device</i> )</h3>
 <p>Sets the device used for reading the input to be the given device <i>device</i>.</p>
 <p>See also <a href="qversitreader.html#device">device</a>().</p>
 <a name="//apple_ref/cpp/instm/QVersitReader/startReading"></a>
 <h3 class="fn"><a name="startReading"></a>bool QVersitReader::startReading ()</h3>
-<p>Starts reading the input asynchronously. Returns false if the input device has not been set or opened or if there is another asynchronous read operation already pending. Signal <a href="qversitreader.html#readingDone">readingDone</a>() is emitted when the reading has finished.</p>
+<p>Starts reading the input asynchronously. Returns false if the input device has not been set or opened or if there is another asynchronous read operation already pending. Signal stateChanged() is emitted with parameter <a href="qversitreader.html#State-enum">FinishedState</a> is emitted when the reading has finished.</p>
+<a name="//apple_ref/cpp/instm/QVersitReader/state"></a>
+<h3 class="fn"><a name="state"></a><a href="qversitreader.html#State-enum">State</a> QVersitReader::state () const</h3>
+<p>Returns the state of the reader.</p>
+<a name="//apple_ref/cpp/instm/QVersitReader/waitForFinished"></a>
+<h3 class="fn"><a name="waitForFinished"></a>bool QVersitReader::waitForFinished ( int <i>msec</i> = -1 )</h3>
+<p>If the state is <a href="qversitreader.html#State-enum">ActiveState</a>, blocks until the reader has finished reading or <i>msec</i> milliseconds has elapsed, returning true if it successfully finishes or is cancelled by the user. If the state is <a href="qversitreader.html#State-enum">FinishedState</a>, returns true immediately. Otherwise, returns false immediately.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

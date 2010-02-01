@@ -26,11 +26,16 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qversitdocument.html#QVersitDocument-2">QVersitDocument</a></b> ( const QVersitDocument &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qversitdocument.html#dtor.QVersitDocument">~QVersitDocument</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qversitdocument.html#addProperty">addProperty</a></b> ( const QVersitProperty &amp; <i>property</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qversitdocument.html#clear">clear</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qversitdocument.html#isEmpty">isEmpty</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QVersitProperty&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qversitdocument.html#properties">properties</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qversitdocument.html#removeProperties">removeProperties</a></b> ( const QString &amp; <i>name</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qversitdocument.html#setVersitType">setVersitType</a></b> ( VersitType <i>type</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">VersitType </td><td class="memItemRight" valign="bottom"><b><a href="qversitdocument.html#versitType">versitType</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qversitdocument.html#removeProperty">removeProperty</a></b> ( const QVersitProperty &amp; <i>property</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qversitdocument.html#setType">setType</a></b> ( VersitType <i>type</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">VersitType </td><td class="memItemRight" valign="bottom"><b><a href="qversitdocument.html#type">type</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qversitdocument.html#operator-not-eq">operator!=</a></b> ( const QVersitDocument &amp; <i>other</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QVersitDocument &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qversitdocument.html#operator-eq">operator=</a></b> ( const QVersitDocument &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qversitdocument.html#operator-eq-eq">operator==</a></b> ( const QVersitDocument &amp; <i>other</i> ) const</td></tr>
 </table>
 <a name="details"></a>
 <hr />
@@ -52,23 +57,38 @@
 <a name="//apple_ref/cpp/instm/QVersitDocument/addProperty"></a>
 <h3 class="fn"><a name="addProperty"></a>void QVersitDocument::addProperty ( const <a href="qversitproperty.html">QVersitProperty</a> &amp; <i>property</i> )</h3>
 <p>Add <i>property</i> to the list of contained versit properties. The property is appended as the last property of the list.</p>
+<a name="//apple_ref/cpp/instm/QVersitDocument/clear"></a>
+<h3 class="fn"><a name="clear"></a>void QVersitDocument::clear ()</h3>
+<p>Clears the document, removing all properties and metadata and resetting the codec to the default.</p>
+<a name="//apple_ref/cpp/instm/QVersitDocument/isEmpty"></a>
+<h3 class="fn"><a name="isEmpty"></a>bool QVersitDocument::isEmpty () const</h3>
+<p>Returns true if the document is empty.</p>
 <a name="//apple_ref/cpp/instm/QVersitDocument/properties"></a>
 <h3 class="fn"><a name="properties"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qversitproperty.html">QVersitProperty</a>&gt; QVersitDocument::properties () const</h3>
 <p>Gets the list of the contained versit properties. Note that the actual properties cannot be modified using the copy.</p>
 <a name="//apple_ref/cpp/instm/QVersitDocument/removeProperties"></a>
 <h3 class="fn"><a name="removeProperties"></a>void QVersitDocument::removeProperties ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>name</i> )</h3>
 <p>Removes all the properties with <i>name</i> from the versit document.</p>
-<a name="//apple_ref/cpp/instm/QVersitDocument/setVersitType"></a>
-<h3 class="fn"><a name="setVersitType"></a>void QVersitDocument::setVersitType ( VersitType <i>type</i> )</h3>
+<a name="//apple_ref/cpp/instm/QVersitDocument/removeProperty"></a>
+<h3 class="fn"><a name="removeProperty"></a>void QVersitDocument::removeProperty ( const <a href="qversitproperty.html">QVersitProperty</a> &amp; <i>property</i> )</h3>
+<p>Removes the property <i>property</i> from the versit document.</p>
+<a name="//apple_ref/cpp/instm/QVersitDocument/setType"></a>
+<h3 class="fn"><a name="setType"></a>void QVersitDocument::setType ( VersitType <i>type</i> )</h3>
 <p>Sets the versit document type to <i>type</i>.</p>
-<p>See also <a href="qversitdocument.html#versitType">versitType</a>().</p>
-<a name="//apple_ref/cpp/instm/QVersitDocument/versitType"></a>
-<h3 class="fn"><a name="versitType"></a>VersitType QVersitDocument::versitType () const</h3>
+<p>See also <a href="qversitdocument.html#type">type</a>().</p>
+<a name="//apple_ref/cpp/instm/QVersitDocument/type"></a>
+<h3 class="fn"><a name="type"></a>VersitType QVersitDocument::type () const</h3>
 <p>Gets the versit document type.</p>
-<p>See also <a href="qversitdocument.html#setVersitType">setVersitType</a>().</p>
+<p>See also <a href="qversitdocument.html#setType">setType</a>().</p>
+<a name="//apple_ref/cpp/instm/QVersitDocument/operator!="></a>
+<h3 class="fn"><a name="operator-not-eq"></a>bool QVersitDocument::operator!= ( const QVersitDocument &amp; <i>other</i> ) const</h3>
+<p>Returns true if this is not equal to other; false if it is equal.</p>
 <a name="//apple_ref/cpp/instm/QVersitDocument/operator="></a>
 <h3 class="fn"><a name="operator-eq"></a>QVersitDocument &amp; QVersitDocument::operator= ( const QVersitDocument &amp; <i>other</i> )</h3>
 <p>Assigns this document to <i>other</i></p>
+<a name="//apple_ref/cpp/instm/QVersitDocument/operator=="></a>
+<h3 class="fn"><a name="operator-eq-eq"></a>bool QVersitDocument::operator== ( const QVersitDocument &amp; <i>other</i> ) const</h3>
+<p>Returns true if this is equal to other; false if it is not equal.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
