@@ -52,7 +52,7 @@ Radio::Radio()
     if(radio->isBandSupported(QRadioTuner::FM))
         radio->setBand(QRadioTuner::FM);
     else {
-        qWarning()<<"Currently only works for FM";
+        qWarning()<<"no radio devices found that support FM radio";
         exit(0);
     }
 
@@ -79,7 +79,6 @@ Radio::Radio()
 #if defined Q_OS_SYMBIAN
     volumeSlider->setRange(0,10);
 #endif
-    qWarning()<<radio->volume();
     volumeSlider->setValue(radio->volume());
     connect(volumeSlider,SIGNAL(valueChanged(int)),this,SLOT(updateVolume(int)));
     topBar->addWidget(volumeSlider);
