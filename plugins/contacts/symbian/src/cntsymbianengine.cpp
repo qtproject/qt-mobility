@@ -1197,4 +1197,6 @@ QString CntSymbianFactory::managerName() const
 }
 
 Q_EXPORT_PLUGIN2(mobapicontactspluginsymbian, CntSymbianFactory);
+
+#include "moc_cntsymbianengine.cpp"
 #endif  //PBK_UNIT_TEST
