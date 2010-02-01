@@ -39,46 +39,32 @@
 **
 ****************************************************************************/
 
-#include "audiocaptureservice.h"
-#include "audiocapturesession.h"
-#include "audioendpointselector.h"
-#include "audioencodercontrol.h"
-#include "audiocontainercontrol.h"
-#include "audiomediarecordercontrol.h"
+#ifndef AUDIOCONTAINERCONTROL_H
+#define AUDIOCONTAINERCONTROL_H
 
-AudioCaptureService::AudioCaptureService(QObject *parent):
-    QMediaService(parent)
+#include <qmediacontainercontrol.h>
+
+#include <QtCore/qstringlist.h>
+#include <QtCore/qmap.h>
+
+class AudioCaptureSession;
+
+QTM_USE_NAMESPACE
+
+class AudioContainerControl : public QMediaContainerControl
 {
-    m_session = new AudioCaptureSession(this);
-    m_encoderControl  = new AudioEncoderControl(m_session);
-    m_containerControl = new AudioContainerControl(m_session);
-    m_mediaControl   = new AudioMediaRecorderControl(m_session);
-    m_endpointSelector  = new AudioEndpointSelector(m_session);
-}
+    Q_OBJECT
+public:
+    AudioContainerControl(QObject *parent);
+    virtual ~AudioContainerControl();
 
-AudioCaptureService::~AudioCaptureService()
-{
-    delete m_encoderControl;
-    delete m_containerControl;
-    delete m_endpointSelector;
-    delete m_mediaControl;
-    delete m_session;
-}
+    QStringList supportedContainers() const;
+    QString containerMimeType() const;
+    void setContainerMimeType(const QString &formatMimeType);
+    QString containerDescription(const QString &formatMimeType) const;
 
-QMediaControl *AudioCaptureService::control(const char *name) const
-{
-    if (qstrcmp(name,QMediaRecorderControl_iid) == 0)
-        return m_mediaControl;
+private:
+    AudioCaptureSession* m_session;
+};
 
-    if (qstrcmp(name,QAudioEncoderControl_iid) == 0)
-        return m_encoderControl;
-
-    if (qstrcmp(name,QAudioEndpointSelector_iid) == 0)
-        return m_endpointSelector;
-
-    if (qstrcmp(name,QMediaContainerControl_iid) == 0)
-        return m_containerControl;
-
-    return 0;
-}
-
+#endif

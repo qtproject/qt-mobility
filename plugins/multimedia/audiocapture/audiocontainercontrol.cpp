@@ -39,46 +39,36 @@
 **
 ****************************************************************************/
 
-#include "audiocaptureservice.h"
-#include "audiocapturesession.h"
-#include "audioendpointselector.h"
-#include "audioencodercontrol.h"
 #include "audiocontainercontrol.h"
-#include "audiomediarecordercontrol.h"
+#include "audiocapturesession.h"
 
-AudioCaptureService::AudioCaptureService(QObject *parent):
-    QMediaService(parent)
+AudioContainerControl::AudioContainerControl(QObject *parent)
+    :QMediaContainerControl(parent)
 {
-    m_session = new AudioCaptureSession(this);
-    m_encoderControl  = new AudioEncoderControl(m_session);
-    m_containerControl = new AudioContainerControl(m_session);
-    m_mediaControl   = new AudioMediaRecorderControl(m_session);
-    m_endpointSelector  = new AudioEndpointSelector(m_session);
+    m_session = qobject_cast<AudioCaptureSession*>(parent);
 }
 
-AudioCaptureService::~AudioCaptureService()
+AudioContainerControl::~AudioContainerControl()
 {
-    delete m_encoderControl;
-    delete m_containerControl;
-    delete m_endpointSelector;
-    delete m_mediaControl;
-    delete m_session;
 }
 
-QMediaControl *AudioCaptureService::control(const char *name) const
+QStringList AudioContainerControl::supportedContainers() const
 {
-    if (qstrcmp(name,QMediaRecorderControl_iid) == 0)
-        return m_mediaControl;
+    return m_session->supportedContainers();
+}
 
-    if (qstrcmp(name,QAudioEncoderControl_iid) == 0)
-        return m_encoderControl;
+QString AudioContainerControl::containerMimeType() const
+{
+    return m_session->containerMimeType();
+}
 
-    if (qstrcmp(name,QAudioEndpointSelector_iid) == 0)
-        return m_endpointSelector;
+void AudioContainerControl::setContainerMimeType(const QString &formatMimeType)
+{
+    m_session->setContainerMimeType(formatMimeType);
+}
 
-    if (qstrcmp(name,QMediaContainerControl_iid) == 0)
-        return m_containerControl;
-
-    return 0;
+QString AudioContainerControl::containerDescription(const QString &formatMimeType) const
+{
+    return m_session->containerDescription(formatMimeType);
 }
 

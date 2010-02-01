@@ -54,6 +54,12 @@ AudioRecorder::AudioRecorder()
     audiosource = new QAudioCaptureSource;
     capture = new QMediaRecorder(audiosource);
 
+    QAudioEncoderSettings audioSettings;
+    audioSettings.setQuality(QtMedia::LowQuality);
+    audioSettings.setEncodingMode(QtMedia::ConstantQualityEncoding);
+    audioSettings.setCodec(capture->supportedAudioCodecs().first());
+    capture->setEncodingSettings(audioSettings,QVideoEncoderSettings(),capture->supportedContainers().first());
+
     // set a default file
 #ifdef Q_OS_SYMBIAN
     capture->setOutputLocation(QUrl("c:\\data\\test.wav"));
@@ -69,8 +75,13 @@ AudioRecorder::AudioRecorder()
     deviceBox = new QComboBox(this);
     deviceBox->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 
+    QLabel* containerLabel = new QLabel;
+    containerLabel->setText("Container");
+    containersBox = new QComboBox(this);
+    containersBox->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+
     QLabel* codecLabel = new QLabel;
-    codecLabel->setText("Codecs");
+    codecLabel->setText("Codec");
     codecsBox = new QComboBox(this);
     codecsBox->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 
@@ -87,6 +98,10 @@ AudioRecorder::AudioRecorder()
     for(int i = 0; i < codecs.count(); i++)
         codecsBox->addItem(codecs.at(i));
 
+    QStringList containers = capture->supportedContainers();
+    for(int i = 0; i < containers.count(); i++)
+        containersBox->addItem(containers.at(i));
+
     qualityBox->addItem("Low");
     qualityBox->addItem("Medium");
     qualityBox->addItem("High");
@@ -98,9 +113,13 @@ AudioRecorder::AudioRecorder()
     connect(deviceBox,SIGNAL(activated(int)),SLOT(deviceChanged(int)));
     layout->addWidget(deviceBox,0,1,1,3,Qt::AlignLeft);
 
-    layout->addWidget(codecLabel,1,0,Qt::AlignHCenter);
+    layout->addWidget(containerLabel,1,0,Qt::AlignHCenter);
+    connect(containersBox,SIGNAL(activated(int)),SLOT(containerChanged(int)));
+    layout->addWidget(containersBox,1,1,Qt::AlignLeft);
+
+    layout->addWidget(codecLabel,1,2,Qt::AlignHCenter);
     connect(codecsBox,SIGNAL(activated(int)),SLOT(codecChanged(int)));
-    layout->addWidget(codecsBox,1,1,Qt::AlignLeft);
+    layout->addWidget(codecsBox,1,3,Qt::AlignLeft);
 
     layout->addWidget(qualityLabel,2,0,Qt::AlignHCenter);
     connect(qualityBox,SIGNAL(activated(int)),SLOT(qualityChanged(int)));
@@ -143,12 +162,18 @@ void AudioRecorder::updateProgress(qint64 pos)
 
 void AudioRecorder::stateChanged(QMediaRecorder::State state)
 {
-    qWarning()<<"stateChanged() "<<state;
+    Q_UNUSED(state)
 }
 
 void AudioRecorder::deviceChanged(int idx)
 {
     audiosource->setAudioInput(deviceBox->itemText(idx));
+}
+
+void AudioRecorder::containerChanged(int idx)
+{
+    QAudioEncoderSettings settings = capture->audioSettings();
+    capture->setEncodingSettings(capture->audioSettings(), QVideoEncoderSettings(), containersBox->itemText(idx));
 }
 
 void AudioRecorder::codecChanged(int idx)
