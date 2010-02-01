@@ -86,6 +86,9 @@ contains(mobility_modules,messaging) {
 
 # Sensors API examples
 contains(mobility_modules,sensors) {
-    SUBDIRS += sensors
+    # Disabling due to strange linker errors
+    !wince* {
+        SUBDIRS += sensors
+    }
 }
 
