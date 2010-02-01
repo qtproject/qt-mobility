@@ -43,13 +43,14 @@
 #include <cplusplus/pp-engine.h>
 #ifdef ICHECK_BUILD
 #  include "parsemanager.h"
+#else
+#  include <QtCore/QHash>
+#  include <QtCore/QFutureInterface>
+#  include <QtCore/QFutureSynchronizer>
+#  include <QtCore/QMutex>
+#  include <QtCore/QTimer>
+#  include <QtGui/QTextEdit> // for QTextEdit::ExtraSelection
 #endif
-#include <QtCore/QHash>
-#include <QtCore/QFutureInterface>
-#include <QtCore/QFutureSynchronizer>
-#include <QtCore/QMutex>
-#include <QtCore/QTimer>
-#include <QtGui/QTextEdit> // for QTextEdit::ExtraSelection
 
 namespace Core {
 class ICore;
