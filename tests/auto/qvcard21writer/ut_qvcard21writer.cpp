@@ -279,5 +279,67 @@ void UT_QVCard21Writer::testEncodeGroupsAndName()
 }
 
 
+void UT_QVCard21Writer::testQuotedPrintableEncode()
+{
+    QByteArray encodedBytes;
+
+    // Nothing to encode
+    QString nothingToEncode(QLatin1String("nothing to encode"));
+    QVERIFY(!mWriter->quotedPrintableEncode(nothingToEncode));
+
+    // Special characters
+    QString inputOutput(QLatin1String("\n"));
+    QVERIFY(mWriter->quotedPrintableEncode(inputOutput));
+    QCOMPARE(inputOutput, QLatin1String("=0A"));
+    inputOutput = QLatin1String("\r");
+    QVERIFY(mWriter->quotedPrintableEncode(inputOutput));
+    QCOMPARE(inputOutput, QLatin1String("=0D"));
+    inputOutput = QLatin1String("!");
+    QVERIFY(mWriter->quotedPrintableEncode(inputOutput));
+    QCOMPARE(inputOutput, QLatin1String("=21"));
+    inputOutput = QLatin1String("\"");
+    QVERIFY(mWriter->quotedPrintableEncode(inputOutput));
+    QCOMPARE(inputOutput, QLatin1String("=22"));
+    inputOutput = QLatin1String("#");
+    QVERIFY(mWriter->quotedPrintableEncode(inputOutput));
+    QCOMPARE(inputOutput, QLatin1String("=23"));
+    inputOutput = QLatin1String("$");
+    QVERIFY(mWriter->quotedPrintableEncode(inputOutput));
+    QCOMPARE(inputOutput, QLatin1String("=24"));
+    inputOutput = QLatin1String("=");
+    QVERIFY(mWriter->quotedPrintableEncode(inputOutput));
+    QCOMPARE(inputOutput, QLatin1String("=3D"));
+    inputOutput = QLatin1String("@");
+    QVERIFY(mWriter->quotedPrintableEncode(inputOutput));
+    QCOMPARE(inputOutput, QLatin1String("=40"));
+    inputOutput = QLatin1String("[");
+    QVERIFY(mWriter->quotedPrintableEncode(inputOutput));
+    QCOMPARE(inputOutput, QLatin1String("=5B"));
+    inputOutput = QLatin1String("\\");
+    QVERIFY(mWriter->quotedPrintableEncode(inputOutput));
+    QCOMPARE(inputOutput, QLatin1String("=5C"));
+    inputOutput = QLatin1String("]");
+    QVERIFY(mWriter->quotedPrintableEncode(inputOutput));
+    QCOMPARE(inputOutput, QLatin1String("=5D"));
+    inputOutput = QLatin1String("^");
+    QVERIFY(mWriter->quotedPrintableEncode(inputOutput));
+    QCOMPARE(inputOutput, QLatin1String("=5E"));
+    inputOutput = QLatin1String("`");
+    QVERIFY(mWriter->quotedPrintableEncode(inputOutput));
+    QCOMPARE(inputOutput, QLatin1String("=60"));
+    inputOutput = QLatin1String("{");
+    QVERIFY(mWriter->quotedPrintableEncode(inputOutput));
+    QCOMPARE(inputOutput, QLatin1String("=7B"));
+    inputOutput = QLatin1String("|");
+    QVERIFY(mWriter->quotedPrintableEncode(inputOutput));
+    QCOMPARE(inputOutput, QLatin1String("=7C"));
+    inputOutput = QLatin1String("}");
+    QVERIFY(mWriter->quotedPrintableEncode(inputOutput));
+    QCOMPARE(inputOutput, QLatin1String("=7D"));
+    inputOutput = QLatin1String("~");
+    QVERIFY(mWriter->quotedPrintableEncode(inputOutput));
+    QCOMPARE(inputOutput, QLatin1String("=7E"));
+}
+
 QTEST_MAIN(UT_QVCard21Writer)
 

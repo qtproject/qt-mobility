@@ -52,25 +52,8 @@ class UT_VersitUtils : public QObject
      Q_OBJECT
 
 private slots:
-    void init();
-    void cleanup();
-    void testSkipLeadingWhiteSpaces();
-    void testParamName();
-    void testParamValue();
-    void testExtractPart();
-    void testExtractParts();
-    void testQuotedPrintableEncode();
-    void testDecodeQuotedPrintable();
     void testBackSlashEscape();
     void testRemoveBackSlashEscaping();
-    void testExtractPropertyGroupsAndName();
-    void testExtractVCard21PropertyParams();
-    void testExtractVCard30PropertyParams();
-    void testGetNextLine();
-    void testExtractParams();
-
-private:
-    QTextCodec* m_asciiCodec;
 };
 
 #endif // UT_VERSITUTILS_H

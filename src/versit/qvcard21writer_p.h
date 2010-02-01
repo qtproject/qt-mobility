@@ -66,6 +66,8 @@ public:
 
     void encodeVersitProperty(const QVersitProperty& property);
     void encodeParameters(const QMultiHash<QString,QString>& parameters);
+    bool quotedPrintableEncode(QString& text) const;
+    bool shouldBeQuotedPrintableEncoded(QChar chr) const;
 };
 
 QTM_END_NAMESPACE

@@ -75,7 +75,7 @@ void QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
 
         // Quoted-Printable encode the value and add Quoted-Printable parameter, if necessary
         if (!parameters.contains(QLatin1String("ENCODING"))) {
-            if (VersitUtils::quotedPrintableEncode(valueString))
+            if (quotedPrintableEncode(valueString))
                 parameters.insert(QLatin1String("ENCODING"), QLatin1String("QUOTED-PRINTABLE"));
         }
 
@@ -132,3 +132,39 @@ void QVCard21Writer::encodeParameters(const QMultiHash<QString,QString>& paramet
     }
 }
 
+
+
+/*!
+ * Encodes special characters in \a text
+ * using Quoted-Printable encoding (RFC 1521).
+ * Returns true if at least one character was encoded.
+ */
+bool QVCard21Writer::quotedPrintableEncode(QString& text) const
+{
+    bool encoded = false;
+    for (int i=0; i<text.length(); i++) {
+        QChar current = text.at(i);
+        if (shouldBeQuotedPrintableEncoded(current)) {
+            QString encodedStr(QString::fromAscii("=%1").
+                               arg(current.unicode(), 2, 16, QLatin1Char('0')).toUpper());
+            text.replace(i, 1, encodedStr);
+            i += 2;
+            encoded = true;
+        }
+    }
+    return encoded;
+}
+
+
+/*!
+ * Checks whether the \a chr should be Quoted-Printable encoded (RFC 1521).
+ */
+bool QVCard21Writer::shouldBeQuotedPrintableEncoded(QChar chr) const
+{
+    int c = chr.unicode();
+    return (c < 32 ||
+            c == '!' || c == '"' || c == '#' || c == '$' ||
+            c == '=' || c == '@' || c == '[' || c == '\\' ||
+            c == ']' || c == '^' || c == '`' ||
+            (c > 122 && c < 256));
+}
