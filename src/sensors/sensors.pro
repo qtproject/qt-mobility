@@ -10,6 +10,7 @@ STRICT=$$(STRICT)
 equals(STRICT,1) {
     QMAKE_CXXFLAGS+=-Werror
     QMAKE_LFLAGS+=-Wl,-no-undefined
+    DEFINES += QT_NO_CAST_FROM_ASCII
 }
 
 PUBLIC_HEADERS += \
