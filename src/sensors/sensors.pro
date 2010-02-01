@@ -5,6 +5,7 @@ include(../../common.pri)
 
 DEFINES += QT_BUILD_SENSORS_LIB QT_MAKEDLL
 symbian:TARGET.EPOCALLOWDLLDATA = 1
+win:INCLUDEPATH+=.
 
 STRICT=$$(STRICT)
 equals(STRICT,1) {
