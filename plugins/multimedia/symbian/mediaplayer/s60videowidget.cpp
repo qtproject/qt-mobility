@@ -168,11 +168,11 @@ bool S60VideoWidgetControl::eventFilter(QObject *object, QEvent *e)
 void S60VideoWidgetControl::videoStateChanged(QMediaPlayer::State state)
 {
     if (state == QMediaPlayer::StoppedState) {
-        qt_widget_private(m_widget)->extraData()->disableBlit = false;
+        qt_widget_private(this)->extraData()->nativePaintMode = QWExtra::ZeroFill;
         m_widget->setUpdatesEnabled(true);
         m_widget->repaint();
     } else if (state == QMediaPlayer::PlayingState) {
-        qt_widget_private(m_widget)->extraData()->disableBlit = true;
+        qt_widget_private(this)->extraData()->nativePaintMode = QWExtra::Default;
         m_widget->setUpdatesEnabled(false);
     }
 }
