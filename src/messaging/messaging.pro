@@ -15,11 +15,7 @@ PUBLIC_HEADERS += \
            qmessagefolderid.h \
            qmessageaccountid.h \
            qmessagecontentcontainer.h \ 
-           qmessagecontentcontainer_p.h \
-           addresshelper_p.h \
 	   qmessageaddress.h \
-           qmessageaddress_p.h \
-           qmessage_p.h \ 
            qmessage.h \
            qmessagefolder.h \
            qmessageaccount.h \
@@ -35,6 +31,7 @@ PUBLIC_HEADERS += \
            qmessageglobal.h
 
 PRIVATE_HEADERS += \
+           addresshelper_p.h \
            qmessageid_p.h \
            qmessagecontentcontainerid_p.h \
            qmessagefolderid_p.h \

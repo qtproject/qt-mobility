@@ -4225,24 +4225,47 @@ QByteArray CMTMEngine::attachmentContent(long int messageId, unsigned int attach
 
 QByteArray CMTMEngine::attachmentContentL(long int messageId, unsigned int attachmentId)
 {
+    QByteArray result;
+    
     CMsvEntry* pEntry = retrieveCMsvEntryAndPushToCleanupStack(messageId);
-    CImEmailMessage* pImEmailMessage = CImEmailMessage::NewLC(*pEntry);
-    RFile file = pImEmailMessage->AttachmentManager().GetAttachmentFileL(attachmentId);
-    CleanupClosePushL(file);
-    TInt fileSize;
-    file.Size(fileSize);
-    TBuf<KMaxFileName> fileName;
-    file.Name(fileName);
-    HBufC8* pFileContent = HBufC8::NewL(fileSize);
-    TPtr8 fileContent(pFileContent->Des());
-    file.Read(fileContent);
-    CleanupStack::PopAndDestroy(&file);
-    CleanupStack::PushL(pFileContent);
-    
-    QByteArray result = QByteArray((char*)pFileContent->Ptr(),pFileContent->Length());
-    
-    CleanupStack::PopAndDestroy(pFileContent);
-    CleanupStack::PopAndDestroy(pImEmailMessage);
+    if (pEntry->Entry().iMtm == KUidMsgTypeMultimedia) { // MMS
+        CMsvStore* pStore = pEntry->ReadStoreL();
+        CleanupStack::PushL(pStore);
+        RFile file = pStore->AttachmentManagerL().GetAttachmentFileL(attachmentId);
+        CleanupClosePushL(file);
+        TInt fileSize;
+        file.Size(fileSize);
+        TBuf<KMaxFileName> fileName;
+        file.Name(fileName);
+        HBufC8* pFileContent = HBufC8::NewL(fileSize);
+        TPtr8 fileContent(pFileContent->Des());
+        file.Read(fileContent);
+        CleanupStack::PopAndDestroy(&file);
+        CleanupStack::PushL(pFileContent);
+        
+        result = QByteArray((char*)pFileContent->Ptr(),pFileContent->Length());
+        
+        CleanupStack::PopAndDestroy(pFileContent);
+        CleanupStack::PopAndDestroy(pStore);
+    } else { // Email
+        CImEmailMessage* pImEmailMessage = CImEmailMessage::NewLC(*pEntry);
+        RFile file = pImEmailMessage->AttachmentManager().GetAttachmentFileL(attachmentId);
+        CleanupClosePushL(file);
+        TInt fileSize;
+        file.Size(fileSize);
+        TBuf<KMaxFileName> fileName;
+        file.Name(fileName);
+        HBufC8* pFileContent = HBufC8::NewL(fileSize);
+        TPtr8 fileContent(pFileContent->Des());
+        file.Read(fileContent);
+        CleanupStack::PopAndDestroy(&file);
+        CleanupStack::PushL(pFileContent);
+        
+        result = QByteArray((char*)pFileContent->Ptr(),pFileContent->Length());
+        
+        CleanupStack::PopAndDestroy(pFileContent);
+        CleanupStack::PopAndDestroy(pImEmailMessage);
+    }
     releaseCMsvEntryAndPopFromCleanupStack(pEntry);
     
     return result;
