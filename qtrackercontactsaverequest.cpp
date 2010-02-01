@@ -70,15 +70,11 @@ QTrackerContactSaveRequest::QTrackerContactSaveRequest(QContactAbstractRequest* 
                                              errors, QContactAbstractRequest::Finished);
         return;
     }
-    TrackerChangeListener *changeListener = new TrackerChangeListener(this);
 
     QList<QContactManager::Error> dummy;
     QContactManagerEngine::updateRequestStatus(req, QContactManager::NoError, dummy,
             QContactAbstractRequest::Active);
 
-
-    connect(changeListener, SIGNAL(contactsAdded(const QList<QContactLocalId> &)),
-            SLOT(onTrackerContactsAdded(const QList<QContactLocalId> &)));
 
     // Save contacts with batch size
     /// @todo where to get reasonable batch size
@@ -88,9 +84,9 @@ QTrackerContactSaveRequest::QTrackerContactSaveRequest(QContactAbstractRequest* 
     }
 }
 
-void QTrackerContactSaveRequest::onTrackerContactsAdded(const QList<QContactLocalId> &addedIds)
+void QTrackerContactSaveRequest::onTrackerSignal(const QList<QContactLocalId> &ids)
 {
-    computeProgress(addedIds);
+    computeProgress(ids);
 }
 
 void QTrackerContactSaveRequest::computeProgress(const QList<QContactLocalId> &addedIds)
@@ -104,10 +100,10 @@ void QTrackerContactSaveRequest::computeProgress(const QList<QContactLocalId> &a
     }
 
     foreach (QContactLocalId id, addedIds) {
-        pendingAddList.remove(id);
+        pendingContactIds.remove(id);
     }
 
-    if (pendingAddList.count() == 0) {
+    if (pendingContactIds.count() == 0) {
         // compute master error - part of qtcontacts api
         QContactManager::Error error = QContactManager::NoError;
         foreach(QContactManager::Error err, errorsOfContactsFinished)
@@ -128,6 +124,7 @@ void QTrackerContactSaveRequest::saveContacts(const QList<QContact> &contacts)
     QSettings definitions(QSettings::IniFormat, QSettings::UserScope, "Nokia", "Trackerplugin");
     QTrackerContactsLive cLive;
     RDFServicePtr service = cLive.service();
+    bool isModified = false;
 
     foreach(QContact contact, contacts) {
         QContactManager::Error error;
@@ -155,10 +152,11 @@ void QTrackerContactSaveRequest::saveContacts(const QList<QContact> &contacts)
             ncoContact->setContactUID(QString::number(m_lastUsedId));
             ncoContact->setContentCreated(QDateTime::currentDateTime());
         }  else {
+            isModified = true;
             ncoContact = service->liveNode(QUrl("contact:"+QString::number(contact.localId())));
             ncoContact->setContentLastModified(QDateTime::currentDateTime());
         }
-        pendingAddList.insert(contact.localId());
+        pendingContactIds.insert(contact.localId());
 
         // if there are work related details, need to be saved to Affiliation.
         if( QTrackerContactSaveRequest::contactHasWorkRelatedDetails(contact)) {
@@ -183,6 +181,15 @@ void QTrackerContactSaveRequest::saveContacts(const QList<QContact> &contacts)
         // TODO add async signal handling of for transaction's commitFinished
         contactsFinished << contact;
         errorsOfContactsFinished << QContactManager::NoError; // TODO ask how to get error code from tracker
+    }
+
+    TrackerChangeListener *changeListener = new TrackerChangeListener(this);
+    if (isModified) {
+        connect(changeListener, SIGNAL(contactsChanged(const QList<QContactLocalId> &)),
+                SLOT(onTrackerSignal(const QList<QContactLocalId> &)));
+    } else {
+        connect(changeListener, SIGNAL(contactsAdded(const QList<QContactLocalId> &)),
+                SLOT(onTrackerSignal(const QList<QContactLocalId> &)));
     }
 
     // remember to commit the transaction, otherwise all changes will be rolled back.
