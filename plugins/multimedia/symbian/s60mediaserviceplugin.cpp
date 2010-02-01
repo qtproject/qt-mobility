@@ -76,13 +76,13 @@ QMediaService* S60MediaServicePlugin::create(QString const& key)
         return new S60CameraService;
 #endif
 #ifdef HAS_MEDIA_PLAYER
-    else if (key == QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER))
+    if (key == QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER))
         return new S60MediaPlayerService;
 #endif
-    else if (key == QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE))
+    if (key == QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE))
         return new S60AudioCaptureService;
 #if defined(TUNERLIBUSED) || defined(RADIOUTILITYLIBUSED) 
-    else if (key == QLatin1String(Q_MEDIASERVICE_RADIO)) 
+    if (key == QLatin1String(Q_MEDIASERVICE_RADIO)) 
         return new S60RadioTunerService;
 #endif
     
