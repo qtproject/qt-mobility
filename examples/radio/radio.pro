@@ -15,4 +15,4 @@ HEADERS = \
 SOURCES = \
     main.cpp \
     radio.cpp
-    
+

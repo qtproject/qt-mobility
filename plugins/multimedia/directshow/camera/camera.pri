@@ -1,5 +1,7 @@
 INCLUDEPATH += $$PWD
 
+DEFINES += QMEDIA_DIRECTSHOW_CAMERA
+
 HEADERS += \
     $$PWD/dscameraservice.h \
     $$PWD/dscameracontrol.h \

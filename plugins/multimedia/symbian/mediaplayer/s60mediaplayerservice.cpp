@@ -50,26 +50,25 @@
 #include "s60mediametadataprovider.h"
 #include "s60videowidget.h"
 #include "s60mediarecognizer.h"
-
-#ifndef QT_NO_MULTIMEDIA
+//#include <qmediatimerange.h>
 #include "s60videooverlay.h"
 #include "s60videorenderer.h"
-#endif
 
 #include <QMediaPlaylistNavigator>
 #include <QMediaPlaylist>
 
 S60MediaPlayerService::S60MediaPlayerService(QObject *parent)
-    : QMediaService(parent),
-      m_videoPlayerSession(NULL),
-      m_audioPlayerSession(NULL),
-      m_videoWindow(NULL),
-      m_videoWidget(NULL),
-      m_videoRenderer(NULL),
-      m_control(NULL),
-      m_videoOutput(NULL),
-      m_metaData(NULL)
-{
+    : QMediaService(parent)
+    , m_control(NULL)
+    , m_mediaRecognizer(NULL)
+    , m_videoOutput(NULL)
+    , m_videoPlayerSession(NULL)
+    , m_audioPlayerSession(NULL)
+    , m_metaData(NULL)
+    , m_videoWidget(NULL) 
+    , m_videoWindow(NULL)
+    , m_videoRenderer(NULL)
+{ 
     m_control = new S60MediaPlayerControl(*this, this);
     m_mediaRecognizer = new S60MediaRecognizer(this);  
     m_metaData = new S60MediaMetaDataProvider(*this);
@@ -80,6 +79,7 @@ S60MediaPlayerService::~S60MediaPlayerService()
     delete m_videoWidget;
     delete m_videoRenderer;
     delete m_videoWindow;
+    delete m_videoOutput;
     delete m_metaData;
 }
 
@@ -98,10 +98,8 @@ QMediaControl *S60MediaPlayerService::control(const char *name) const
             connect(m_videoOutput, SIGNAL(outputChanged(QVideoOutputControl::Output)),
                     this, SLOT(videoOutputChanged(QVideoOutputControl::Output)));
             m_videoOutput->setAvailableOutputs(QList<QVideoOutputControl::Output>() 
-#ifndef QT_NO_MULTIMEDIA
-                        << QVideoOutputControl::RendererOutput
-                        << QVideoOutputControl::WindowOutput
-#endif
+//                        << QVideoOutputControl::RendererOutput
+//                        << QVideoOutputControl::WindowOutput
                         << QVideoOutputControl::WidgetOutput);
             
         }
@@ -114,7 +112,6 @@ QMediaControl *S60MediaPlayerService::control(const char *name) const
         return m_videoWidget;
     }
     
-#ifndef QT_NO_MULTIMEDIA
     if (qstrcmp(name, QVideoRendererControl_iid) == 0) {
         if (m_videoRenderer)
             m_videoRenderer = new S60VideoRenderer;
@@ -126,7 +123,6 @@ QMediaControl *S60MediaPlayerService::control(const char *name) const
             m_videoWindow = new S60VideoOverlay;
         return m_videoWindow;
     }
-#endif
 
     return 0;
 
@@ -139,14 +135,12 @@ void S60MediaPlayerService::videoOutputChanged(QVideoOutputControl::Output outpu
         m_control->setVideoOutput(0);
         break;
 
-#ifndef QT_NO_MULTIMEDIA
     case QVideoOutputControl::RendererOutput:
         m_control->setVideoOutput(m_videoRenderer);
         break;
     case QVideoOutputControl::WindowOutput:
         m_control->setVideoOutput(m_videoWindow);
         break;
-#endif
 
     case QVideoOutputControl::WidgetOutput:
         m_control->setVideoOutput(m_videoWidget);
@@ -160,82 +154,90 @@ void S60MediaPlayerService::videoOutputChanged(QVideoOutputControl::Output outpu
 S60MediaPlayerSession* S60MediaPlayerService::PlayerSession()
 {
     QUrl url = m_control->media().canonicalUrl();
+  
+    if (url.isEmpty() == true) {
+        return NULL;
+    }
+    
     S60MediaRecognizer::MediaType mediaType = m_mediaRecognizer->IdentifyMediaType(url);
     
-    if (mediaType == S60MediaRecognizer::Video) {
-        return VideoPlayerSession();
-    } else if (mediaType == S60MediaRecognizer::Audio) {
-        return AudioPlayerSession();
+    switch (mediaType) {
+    	case S60MediaRecognizer::Video:
+            return VideoPlayerSession(true);
+    	case S60MediaRecognizer::Audio:
+            return AudioPlayerSession();
+    	case S60MediaRecognizer::Url:
+            return VideoPlayerSession(false);
+    	default:	
+    		break;
     }
-   
+    
     return NULL;
 }
 
-S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession()
+S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession(bool isLocal)
 {
     if (!m_videoPlayerSession) {
         m_videoPlayerSession = new S60VideoPlayerSession(this);
-
-        m_videoPlayerSession->setVolume(m_control->mediaControlSettings().m_vol);
-        m_videoPlayerSession->setPlaybackRate(m_control->mediaControlSettings().m_playbackRate);
-        m_videoPlayerSession->setPosition(m_control->mediaControlSettings().m_position);
-        m_videoPlayerSession->setMuted(m_control->mediaControlSettings().m_muted);
         
         connect(m_videoPlayerSession, SIGNAL(positionChanged(qint64)),
                 m_control, SIGNAL(positionChanged(qint64)));
         connect(m_videoPlayerSession, SIGNAL(durationChanged(qint64)),
                 m_control, SIGNAL(durationChanged(qint64)));
-        connect(m_videoPlayerSession, SIGNAL(mutedStateChaned(bool)),
-                m_control, SIGNAL(mutedChanged(bool)));
-        connect(m_videoPlayerSession, SIGNAL(volumeChanged(int)),
-                m_control, SIGNAL(volumeChanged(int)));
         connect(m_videoPlayerSession, SIGNAL(stateChanged(QMediaPlayer::State)),
                 m_control, SIGNAL(stateChanged(QMediaPlayer::State)));
         connect(m_videoPlayerSession, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
                 m_control, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)));
-        connect(m_videoPlayerSession,SIGNAL(bufferingProgressChanged(int)),
+        connect(m_videoPlayerSession,SIGNAL(bufferStatusChanged(int)),
                 m_control, SIGNAL(bufferStatusChanged(int)));
         connect(m_videoPlayerSession, SIGNAL(videoAvailableChanged(bool)),
                 m_control, SIGNAL(videoAvailableChanged(bool)));
         connect(m_videoPlayerSession, SIGNAL(seekableChanged(bool)),
                 m_control, SIGNAL(seekableChanged(bool)));
+        connect(m_videoPlayerSession, SIGNAL(availablePlaybackRangesChanged(const QMediaTimeRange&)),
+                m_control, SIGNAL(availablePlaybackRangesChanged(const QMediaTimeRange&)));
+        connect(m_videoPlayerSession, SIGNAL(error(int, const QString &)),
+                m_control, SIGNAL(error(int, const QString &)));
         connect(m_videoPlayerSession, SIGNAL(metaDataChanged()), 
                 m_metaData, SIGNAL(metaDataChanged()));
     }
+    
+    m_videoPlayerSession->setVolume(m_control->mediaControlSettings().volume());
+    m_videoPlayerSession->setMuted(m_control->mediaControlSettings().isMuted());
+    m_videoPlayerSession->setMediaFileLocal(isLocal);
     return m_videoPlayerSession;
 }
 
-S60MediaPlayerSession* S60MediaPlayerService::AudioPlayerSession()
+S60MediaPlayerSession* S60MediaPlayerService::AudioPlayerSession(bool isLocal)
 {
     if (!m_audioPlayerSession) {
         m_audioPlayerSession = new S60AudioPlayerSession(this);
-        
-        m_audioPlayerSession->setVolume(m_control->mediaControlSettings().m_vol);
-        m_audioPlayerSession->setPlaybackRate(m_control->mediaControlSettings().m_playbackRate);
-        m_audioPlayerSession->setPosition(m_control->mediaControlSettings().m_position);
-        m_audioPlayerSession->setMuted(m_control->mediaControlSettings().m_muted);
         
         connect(m_audioPlayerSession, SIGNAL(positionChanged(qint64)),
                 m_control, SIGNAL(positionChanged(qint64)));
         connect(m_audioPlayerSession, SIGNAL(durationChanged(qint64)),
                 m_control, SIGNAL(durationChanged(qint64)));
-        connect(m_audioPlayerSession, SIGNAL(mutedStateChaned(bool)),
-                m_control, SIGNAL(mutedChanged(bool)));
-        connect(m_audioPlayerSession, SIGNAL(volumeChanged(int)),
-                m_control, SIGNAL(volumeChanged(int)));
         connect(m_audioPlayerSession, SIGNAL(stateChanged(QMediaPlayer::State)),
                 m_control, SIGNAL(stateChanged(QMediaPlayer::State)));
         connect(m_audioPlayerSession, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
                 m_control, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)));
-        connect(m_audioPlayerSession,SIGNAL(bufferingProgressChanged(int)),
+        connect(m_audioPlayerSession,SIGNAL(bufferStatusChanged(int)),
                 m_control, SIGNAL(bufferStatusChanged(int)));
         connect(m_audioPlayerSession, SIGNAL(videoAvailableChanged(bool)),
                 m_control, SIGNAL(videoAvailableChanged(bool)));
         connect(m_audioPlayerSession, SIGNAL(seekableChanged(bool)),
                 m_control, SIGNAL(seekableChanged(bool)));
+        connect(m_audioPlayerSession, SIGNAL(availablePlaybackRangesChanged(const QMediaTimeRange&)),    
+                m_control, SIGNAL(availablePlaybackRangesChanged(const QMediaTimeRange&)));
+        connect(m_audioPlayerSession, SIGNAL(error(int, const QString &)),
+                m_control, SIGNAL(error(int, const QString &)));
         connect(m_audioPlayerSession, SIGNAL(metaDataChanged()), 
                 m_metaData, SIGNAL(metaDataChanged()));
     }
+    
+    m_audioPlayerSession->setVolume(m_control->mediaControlSettings().volume());
+    m_audioPlayerSession->setMuted(m_control->mediaControlSettings().isMuted());
+    m_audioPlayerSession->setMediaFileLocal(isLocal);
     return m_audioPlayerSession;
 }
 
