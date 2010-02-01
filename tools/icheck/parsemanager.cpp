@@ -29,7 +29,7 @@
 
 #include "parsemanager.h"
 #include "cplusplus/CppDocument.h"
-#include "Control.h"
+#include "./parser/src/shared/cplusplus/Control.h"
 #include "TranslationUnit.h"
 #include "AST.h"
 #include "Symbols.h"
