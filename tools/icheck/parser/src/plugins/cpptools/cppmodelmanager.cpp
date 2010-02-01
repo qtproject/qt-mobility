@@ -198,9 +198,8 @@ void CppPreprocessor::setProjectFiles(const QStringList &files)
 void CppPreprocessor::setTodo(const QStringList &files)
 { m_todo = QSet<QString>::fromList(files); }
 
-
-namespace {
 #ifndef ICHECK_BUILD
+namespace {
 class Process: public std::unary_function<Document::Ptr, void>
 {
     QPointer<CppModelManager> _modelManager;
@@ -255,8 +254,8 @@ public:
             _modelManager->emitDocumentUpdated(doc); // ### TODO: compress
     }
 };
-#endif
 } // end of anonymous namespace
+#endif
 
 void CppPreprocessor::run(const QString &fileName)
 {
