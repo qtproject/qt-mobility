@@ -1,5 +1,7 @@
 INCLUDEPATH += $$PWD
 
+DEFINES += QMEDIA_SYMBIAN_CAMERA
+
 exists($${EPOCROOT}epoc32\include\ecamadvancedsettings.h) {
     symbian:LIBS += -lecamadvsettings
     DEFINES += USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
