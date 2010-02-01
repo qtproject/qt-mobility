@@ -417,19 +417,18 @@ void S60CameraSession::getCurrentVideoEncoderSettings(QVideoEncoderSettings &vid
 }
 
 QtMedia::EncodingQuality S60CameraSession::videoCaptureQuality() const
-{  
+{
 #ifndef PRE_S60_50_PLATFORM
-    if (m_videoQuality == EVideoQualityLow) 
+    if (m_videoQuality == EVideoQualityLow)
         return QtMedia::LowQuality;
     else if (m_videoQuality == EVideoQualityNormal)
         return QtMedia::NormalQuality;
     else if (m_videoQuality == EVideoQualityHigh)
         return QtMedia::HighQuality;
     else if (m_videoQuality == EVideoQualityLossless)
-        return QtMedia::VeryHighQuality;        
-    else
-#endif //PRE_S60_50_PLATFORM        
-        return QtMedia::VeryLowQuality;       
+        return QtMedia::VeryHighQuality;  
+#endif
+    return QtMedia::VeryLowQuality;
 }
 
 void S60CameraSession::setVideoCaptureQuality(QtMedia::EncodingQuality quality)
