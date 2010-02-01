@@ -50,24 +50,15 @@ using namespace SopranoLive;
 TrackerChangeListener::TrackerChangeListener(QObject* parent)
 :QObject(parent)
 {
-    SopranoLive::BackEnds::Tracker::ClassUpdateSignaler *signaler =
-            SopranoLive::BackEnds::Tracker::ClassUpdateSignaler::get(
+    SopranoLive::BackEnds::Tracker::ClassUpdateSignaler *signaler;
+
+    signaler = SopranoLive::BackEnds::Tracker::ClassUpdateSignaler::get(
                     nco::Contact::iri());
-    // Note here that we are not using
-    // QAbstractItemModel signals from LiveNodes::model() because
-    // node list for which notification comes is fixed. Those are used for
-    // async implementation
-    if (signaler)
-    {
-        connect(signaler, SIGNAL(subjectsAdded(const QStringList &)),
-                SLOT(subjectsAdded(const QStringList &)));
-        connect(signaler,
-                SIGNAL(baseRemoveSubjectsd(const QStringList &)),
-                SLOT(subjectsRemoved(const QStringList &)));
-        connect(signaler,
-                SIGNAL(subjectsChanged(const QStringList &)),
-                SLOT(subjectsChanged(const QStringList &)));
-    }
+    connectSignals(signaler);
+
+    signaler = SopranoLive::BackEnds::Tracker::ClassUpdateSignaler::get(
+                    nco::IMAccount::iri());
+    connectSignals(signaler);
 }
 
 TrackerChangeListener::~TrackerChangeListener()
@@ -153,3 +144,20 @@ void AsyncQuery::queryReady()
     emit queryReady(this);
 }
 
+void TrackerChangeListener::connectSignals(SopranoLive::BackEnds::Tracker::ClassUpdateSignaler *signaler) {
+    // Note here that we are not using
+    // QAbstractItemModel signals from LiveNodes::model() because
+    // node list for which notification comes is fixed. Those are used for
+    // async implementation
+    if (signaler)
+    {
+        connect(signaler, SIGNAL(subjectsAdded(const QStringList &)),
+                SLOT(subjectsAdded(const QStringList &)));
+        connect(signaler,
+                SIGNAL(baseRemoveSubjectsd(const QStringList &)),
+                SLOT(subjectsRemoved(const QStringList &)));
+        connect(signaler,
+                SIGNAL(subjectsChanged(const QStringList &)),
+                SLOT(subjectsChanged(const QStringList &)));
+    }
+}
