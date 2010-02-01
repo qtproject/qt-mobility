@@ -162,7 +162,6 @@ protected:
     ~QSensorFilter();
     virtual void setSensor(QSensor *sensor);
     QSensor *m_sensor;
-    Q_DISABLE_COPY(QSensorFilter)
 };
 
 class Q_SENSORS_EXPORT QSensorReading : public QObject
