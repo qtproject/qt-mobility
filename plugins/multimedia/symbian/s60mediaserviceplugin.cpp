@@ -60,6 +60,7 @@ QStringList S60MediaServicePlugin::keys() const
     QStringList list;
 #if defined(TUNERLIBUSED) || defined(RADIOUTILITYLIBUSED)
     list << QLatin1String(Q_MEDIASERVICE_RADIO);
+#endif
 #ifdef QMEDIA_SYMBIAN_CAMERA
     list << QLatin1String(Q_MEDIASERVICE_CAMERA);
 #endif
