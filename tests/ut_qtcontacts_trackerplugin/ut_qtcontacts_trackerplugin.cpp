@@ -932,8 +932,6 @@ void ut_qtcontacts_trackerplugin::cleanup()
 
 void ut_qtcontacts_trackerplugin::testNcoTypes()
 {
-    // libqttracker bug 127538
-    // when this passes our bug 127544 can be fixed
     using namespace SopranoLive;
 
     QList<QContactLocalId> ids;
@@ -952,6 +950,7 @@ void ut_qtcontacts_trackerplugin::testNcoTypes()
 
 void ut_qtcontacts_trackerplugin::testAsyncReadContacts()
 {
+    addedContacts.clear();
     // Add at least one contact to be sure that this doesn't fail because tracker is clean
 
     QStringList firstNames, lastNames;
@@ -970,6 +969,10 @@ void ut_qtcontacts_trackerplugin::testAsyncReadContacts()
         QVERIFY(trackerEngine->saveContact(&c, error));
         addedContacts.append(c.localId());
     }
+    
+    // Prepare the filter for the request - we really should test only the contact we add here.
+    QContactLocalIdFilter filter;
+    filter.setIds(addedContacts);
 
     // this one will get complete contacts
 
@@ -983,12 +986,14 @@ void ut_qtcontacts_trackerplugin::testAsyncReadContacts()
     QStringList details; details << QContactName::DefinitionName << QContactAvatar::DefinitionName;
     request.setDefinitionRestrictions(details);
     request.setSorting(sorting);
+    request.setFilter(filter);
 
     QObject::connect(&request, SIGNAL(progress(QContactFetchRequest*, bool)),
             &slot, SLOT(progress(QContactFetchRequest*, bool )));
 
-    // this one only ids and no restrictions
+    // this one only ids
     QContactLocalIdFetchRequest request1;
+    request1.setFilter(filter);
     QObject::connect(&request1, SIGNAL(progress(QContactLocalIdFetchRequest*, bool)),
             &slot, SLOT(progress(QContactLocalIdFetchRequest*, bool )));
 
@@ -1029,7 +1034,7 @@ void ut_qtcontacts_trackerplugin::testAsyncReadContacts()
         qDebug() << "contacts:" << contact.localId() << first0 << last0;
         bool test = last0 < last1 || (last0 == last1 && first0 <= first1);
         if (!test) {
-            qDebug() << "contacts:" << contact1.localId() << first1 << last1;
+            qDebug() << "contacts sort failed. First: " << contact1.localId() << first0 << last1 << "lasts: " << last0 << last1;
         }
         QVERIFY2(test, "Sorting failed.");
     }

@@ -115,7 +115,6 @@ void TrackerChangeListener::subjectsAdded(const QStringList &subjects)
     {
         added << url2UniqueId(uri);
     }
-    qDebug() << Q_FUNC_INFO << "added contactids:" << added;
     emit contactsAdded(added);
 }
 
@@ -126,7 +125,6 @@ void TrackerChangeListener::subjectsRemoved(const QStringList &subjects)
     {
         added << url2UniqueId(uri);
     }
-    qDebug() << Q_FUNC_INFO << "removed contactids:" << added;
     emit contactsRemoved(added);
 }
 
@@ -140,7 +138,6 @@ void TrackerChangeListener::subjectsChanged(const QStringList &subjects)
             changed << id;
         }
     }
-    qDebug() << Q_FUNC_INFO << "changed contactids:" << changed;
     emit contactsChanged(changed);
 }
 
