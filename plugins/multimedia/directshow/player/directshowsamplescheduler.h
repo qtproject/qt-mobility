@@ -92,8 +92,9 @@ public:
     void setClock(IReferenceClock *clock);
 
     bool schedule(IMediaSample *sample);
+    bool scheduleEndOfStream();
 
-    IMediaSample *takeSample();
+    IMediaSample *takeSample(bool *eos);
 
     bool event(QEvent *event);
 
