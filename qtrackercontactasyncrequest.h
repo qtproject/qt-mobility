@@ -86,7 +86,7 @@ namespace IMContact {
         ContactMessage,
         ContactNickname,
         AccountType,
-        HasAudio,
+        Capabilities,
         MetaContact
     };
 };

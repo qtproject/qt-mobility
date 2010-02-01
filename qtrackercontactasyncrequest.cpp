@@ -1018,7 +1018,7 @@ QContactOnlineAccount QTrackerContactFetchRequest::getIMContactFromIMQuery(LiveN
     }
     account.setNickname(imContactQuery->index(queryRow, IMContact::ContactNickname).data().toString()); // nick
 
-    QString cap = imContactQuery->index(queryRow, IMContact::HasAudio).data().toString();
+    QString cap = imContactQuery->index(queryRow, IMContact::Capabilities).data().toString();
     QString caps;
     caps = QString("org.freedesktop.Telepathy.Channel.Type.TextChat|");
     //FIXME

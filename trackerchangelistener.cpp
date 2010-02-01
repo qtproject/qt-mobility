@@ -50,15 +50,13 @@ using namespace SopranoLive;
 TrackerChangeListener::TrackerChangeListener(QObject* parent)
 :QObject(parent)
 {
-    SopranoLive::BackEnds::Tracker::ClassUpdateSignaler *signaler;
-
-    signaler = SopranoLive::BackEnds::Tracker::ClassUpdateSignaler::get(
+    signaler_contact = SopranoLive::BackEnds::Tracker::ClassUpdateSignaler::get(
                     nco::Contact::iri());
-    connectSignals(signaler);
+    connectSignals(signaler_contact);
 
-    signaler = SopranoLive::BackEnds::Tracker::ClassUpdateSignaler::get(
+    signaler_imaccount = SopranoLive::BackEnds::Tracker::ClassUpdateSignaler::get(
                     nco::IMAccount::iri());
-    connectSignals(signaler);
+    connectSignals(signaler_imaccount);
 }
 
 TrackerChangeListener::~TrackerChangeListener()
