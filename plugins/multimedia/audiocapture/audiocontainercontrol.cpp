@@ -39,44 +39,36 @@
 **
 ****************************************************************************/
 
+#include "audiocontainercontrol.h"
+#include "audiocapturesession.h"
 
-#ifndef QGSTREAMERRECORDERCONTROL_H
-#define QGSTREAMERRECORDERCONTROL_H
-
-#include <qmediarecordercontrol.h>
-#include "qgstreamercapturesession.h"
-QTM_USE_NAMESPACE
-
-class QGstreamerRecorderControl : public QMediaRecorderControl
+AudioContainerControl::AudioContainerControl(QObject *parent)
+    :QMediaContainerControl(parent)
 {
-    Q_OBJECT
-    Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
+    m_session = qobject_cast<AudioCaptureSession*>(parent);
+}
 
-public:
-    QGstreamerRecorderControl(QGstreamerCaptureSession *session);
-    virtual ~QGstreamerRecorderControl();
+AudioContainerControl::~AudioContainerControl()
+{
+}
 
-    QUrl outputLocation() const;
-    bool setOutputLocation(const QUrl &sink);
+QStringList AudioContainerControl::supportedContainers() const
+{
+    return m_session->supportedContainers();
+}
 
-    QMediaRecorder::State state() const;
+QString AudioContainerControl::containerMimeType() const
+{
+    return m_session->containerMimeType();
+}
 
-    qint64 duration() const;
+void AudioContainerControl::setContainerMimeType(const QString &formatMimeType)
+{
+    m_session->setContainerMimeType(formatMimeType);
+}
 
-    void applySettings() {}
+QString AudioContainerControl::containerDescription(const QString &formatMimeType) const
+{
+    return m_session->containerDescription(formatMimeType);
+}
 
-public slots:
-    void record();
-    void pause();
-    void stop();
-
-private slots:
-    void updateState();
-
-private:
-    QGstreamerCaptureSession *m_session;
-    QMediaRecorder::State m_state;
-    bool m_hasPreviewState;
-};
-
-#endif // QGSTREAMERCAPTURECORNTROL_H

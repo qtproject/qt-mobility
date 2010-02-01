@@ -39,44 +39,32 @@
 **
 ****************************************************************************/
 
+#ifndef AUDIOCONTAINERCONTROL_H
+#define AUDIOCONTAINERCONTROL_H
 
-#ifndef QGSTREAMERRECORDERCONTROL_H
-#define QGSTREAMERRECORDERCONTROL_H
+#include <qmediacontainercontrol.h>
 
-#include <qmediarecordercontrol.h>
-#include "qgstreamercapturesession.h"
+#include <QtCore/qstringlist.h>
+#include <QtCore/qmap.h>
+
+class AudioCaptureSession;
+
 QTM_USE_NAMESPACE
 
-class QGstreamerRecorderControl : public QMediaRecorderControl
+class AudioContainerControl : public QMediaContainerControl
 {
     Q_OBJECT
-    Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
-
 public:
-    QGstreamerRecorderControl(QGstreamerCaptureSession *session);
-    virtual ~QGstreamerRecorderControl();
+    AudioContainerControl(QObject *parent);
+    virtual ~AudioContainerControl();
 
-    QUrl outputLocation() const;
-    bool setOutputLocation(const QUrl &sink);
-
-    QMediaRecorder::State state() const;
-
-    qint64 duration() const;
-
-    void applySettings() {}
-
-public slots:
-    void record();
-    void pause();
-    void stop();
-
-private slots:
-    void updateState();
+    QStringList supportedContainers() const;
+    QString containerMimeType() const;
+    void setContainerMimeType(const QString &formatMimeType);
+    QString containerDescription(const QString &formatMimeType) const;
 
 private:
-    QGstreamerCaptureSession *m_session;
-    QMediaRecorder::State m_state;
-    bool m_hasPreviewState;
+    AudioCaptureSession* m_session;
 };
 
-#endif // QGSTREAMERCAPTURECORNTROL_H
+#endif

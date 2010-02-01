@@ -113,8 +113,6 @@ void CameraCapture::setCamera(const QByteArray &cameraDevice)
         camera = new QCamera(cameraDevice);
 
     connect(camera, SIGNAL(stateChanged(QCamera::State)), this, SLOT(updateCameraState(QCamera::State)));
-    connect(camera, SIGNAL(focusLocked()), this, SLOT(focusLocked()));
-    connect(camera, SIGNAL(zoomValueChanged(qreal)), this, SLOT(zoomValueChanged(qreal)));
 
     mediaRecorder = new QMediaRecorder(camera);
     connect(mediaRecorder, SIGNAL(stateChanged(QMediaRecorder::State)), this, SLOT(updateRecorderState(QMediaRecorder::State)));
@@ -303,9 +301,3 @@ void CameraCapture::updateAudioDevice(QAction *action)
     audioSource->setAudioInput(action->data().toString());
 }
 
-void CameraCapture::focusLocked()
-{
-}
-void CameraCapture::zoomValueChanged(qreal value)
-{
-}
