@@ -114,9 +114,6 @@ public:
 
     qreal framerate();
     void setFrameRate(qreal rate);
-    // camera image properties
-    QSize frameSize() const;
-    void setFrameSize(const QSize& s);
 
     QList<QVideoFrame::PixelFormat> supportedPixelFormats();
     QVideoFrame::PixelFormat pixelFormat() const;
@@ -128,7 +125,7 @@ public:
     // media control
     bool setOutputLocation(const QUrl &sink);
     QUrl outputLocation() const;
-    qint64 position() const;
+    qint64 position();
     int state() const;    
 
     //added based on s60 camera needs
@@ -178,7 +175,8 @@ public:
     QString videoCaptureCodecDescription(const QString &codecName);    
     void saveVideoEncoderSettings(QVideoEncoderSettings &videoSettings);
     void getCurrentVideoEncoderSettings(QVideoEncoderSettings &videoSettings);    
-    
+    QtMedia::EncodingQuality videoCaptureQuality() const;    
+    void setVideoCaptureQuality(QtMedia::EncodingQuality quality);
     
     //camerafocuscontrol
     void startFocus();
@@ -221,9 +219,6 @@ private:
     void setWhiteBalanceModeL(QCamera::WhiteBalanceMode mode);
     void commitVideoEncoderSettings();
     void setVideoFrameRateFixed(bool fixed);
-#ifndef PRE_S60_50_PLATFORM    
-    void setVideoCaptureQuality(QtMedia::EncodingQuality quality);
-#endif //PRE_S60_50_PLATFORM
     void resetCamera();
 
     //from  MVideoRecorderUtilityObserver
@@ -234,6 +229,7 @@ private:
 
     void updateVideoCaptureCodecs();
     void updateVideoCaptureCodecsL();
+    void initializeVideoCaptureSettings();
 
 Q_SIGNALS:
     void stateChanged(QCamera::State);
@@ -254,9 +250,9 @@ private:
     S60CameraSettings *m_advancedSettings;
     MVFProcessor *m_VFProcessor;
     int m_imageQuality;
+    int m_videoQuality;
     QSize m_captureSize;
     QCamera::State m_state;
-    QSize m_windowSize;
     QVideoFrame::PixelFormat m_pixelF;
     TInt m_deviceIndex; //index indication chosen camera device
     mutable int m_error;
@@ -275,6 +271,18 @@ private:
     QHash<QString, VideoControllerData> m_videoControllerMap;
     QString m_videoCodec;
     QVideoEncoderSettings m_videoSettings;
+    
+    enum TVideoCaptureState
+    {
+        ENotInitialized = 0,
+        EInitialized,
+        EOpenCompelete,
+        ERecording,
+        EPaused,
+        ERecordComplete
+    };
+    
+    TVideoCaptureState m_captureState;
 
 };
 

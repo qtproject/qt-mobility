@@ -303,16 +303,14 @@ void CameraCapture::settings()
 void CameraCapture::record()
 {
     int lastImage = 0;
-    foreach( QString fileName, outputDir.entryList(QStringList() << "clip_*.3gp") ) {
+    foreach( QString fileName, outputDir.entryList(QStringList() << "clip_*.mpg") ) {
         int imgNumber = fileName.mid(5, fileName.size()-9).toInt();
         lastImage = qMax(lastImage, imgNumber);
     }
     
-    qDebug() << outputDir.canonicalPath();
     QUrl location(QDir::toNativeSeparators(outputDir.canonicalPath()+
-        QString("/clip_%1.3gp").arg(lastImage+1,4,10,QLatin1Char('0'))));
+        QString("/clip_%1.mpg").arg(lastImage+1,4,10,QLatin1Char('0'))));
 
-    qDebug() << location.toString();
     mediaRecorder->setOutputLocation(location);
     
     mediaRecorder->record();

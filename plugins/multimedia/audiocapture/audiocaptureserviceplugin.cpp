@@ -58,7 +58,7 @@ QMediaService* AudioCaptureServicePlugin::create(QString const& key)
     if (key == QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE))
         return new AudioCaptureService;
 
-    qDebug() << "unsupported key:" << key;
+    //qDebug() << "unsupported key:" << key;
     return 0;
 }
 
