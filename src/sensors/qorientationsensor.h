@@ -42,7 +42,7 @@
 #ifndef QORIENTATIONSENSOR_H
 #define QORIENTATIONSENSOR_H
 
-#include <qsensor.h>
+#include "qsensor.h"
 
 QTM_BEGIN_NAMESPACE
 

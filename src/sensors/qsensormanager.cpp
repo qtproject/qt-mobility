@@ -39,10 +39,10 @@
 **
 ****************************************************************************/
 
-#include <qsensormanager.h>
+#include "qsensormanager.h"
 #include <QDebug>
 #include "qsensorpluginloader_p.h"
-#include <qsensorplugin.h>
+#include "qsensorplugin.h"
 
 QTM_BEGIN_NAMESPACE
 

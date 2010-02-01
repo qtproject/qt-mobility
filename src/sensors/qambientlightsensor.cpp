@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include <qambientlightsensor.h>
+#include "qambientlightsensor.h"
 #include "qambientlightsensor_p.h"
 
 QTM_BEGIN_NAMESPACE

@@ -42,7 +42,7 @@
 #ifndef QSENSORFACTORY_H
 #define QSENSORFACTORY_H
 
-#include <qsensor.h>
+#include "qsensor.h"
 #include <QList>
 
 QTM_BEGIN_NAMESPACE

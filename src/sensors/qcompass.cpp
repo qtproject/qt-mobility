@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include <qcompass.h>
+#include "qcompass.h"
 #include "qcompass_p.h"
 
 QTM_BEGIN_NAMESPACE

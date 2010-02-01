@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include <qtapsensor.h>
+#include "qtapsensor.h"
 #include "qtapsensor_p.h"
 
 QTM_BEGIN_NAMESPACE

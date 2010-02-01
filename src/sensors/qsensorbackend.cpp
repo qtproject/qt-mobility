@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include <qsensorbackend.h>
+#include "qsensorbackend.h"
 #include "qsensor_p.h"
 
 QTM_BEGIN_NAMESPACE

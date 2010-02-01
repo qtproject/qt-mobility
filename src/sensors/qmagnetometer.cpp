@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include <qmagnetometer.h>
+#include "qmagnetometer.h"
 #include "qmagnetometer_p.h"
 
 QTM_BEGIN_NAMESPACE

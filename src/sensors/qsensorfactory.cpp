@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#include <qsensorfactory.h>
-#include <qsensormanager.h>
+#include "qsensorfactory.h"
+#include "qsensormanager.h"
 
 QTM_BEGIN_NAMESPACE
 

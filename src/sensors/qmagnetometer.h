@@ -42,10 +42,10 @@
 #ifndef QMAGNETOMETER_H
 #define QMAGNETOMETER_H
 
-#include <qsensor.h>
+#include "qsensor.h"
 #include <QtGlobal>
 #include <QSharedData>
-#include <qsensorbackend.h>
+#include "qsensorbackend.h"
 
 QTM_BEGIN_NAMESPACE
 

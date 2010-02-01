@@ -42,8 +42,8 @@
 #ifndef QSENSORBACKEND_H
 #define QSENSORBACKEND_H
 
-#include <qsensor.h>
-#include <qsensormanager.h>
+#include "qsensor.h"
+#include "qsensormanager.h"
 
 QTM_BEGIN_NAMESPACE
 

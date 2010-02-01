@@ -42,7 +42,7 @@
 #ifndef QAMBIENTLIGHTSENSOR_H
 #define QAMBIENTLIGHTSENSOR_H
 
-#include <qsensor.h>
+#include "qsensor.h"
 
 QTM_BEGIN_NAMESPACE
 

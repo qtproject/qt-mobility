@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include <qproximitysensor.h>
+#include "qproximitysensor.h"
 #include "qproximitysensor_p.h"
 
 QTM_BEGIN_NAMESPACE

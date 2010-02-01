@@ -42,7 +42,7 @@
 #ifndef QTAPSENSOR_H
 #define QTAPSENSOR_H
 
-#include <qsensor.h>
+#include "qsensor.h"
 
 QTM_BEGIN_NAMESPACE
 

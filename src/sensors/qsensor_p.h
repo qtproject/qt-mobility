@@ -53,7 +53,7 @@
 // We mean it.
 //
 
-#include <qsensor.h>
+#include "qsensor.h"
 
 QTM_BEGIN_NAMESPACE
 

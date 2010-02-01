@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include <qaccelerometer.h>
+#include "qaccelerometer.h"
 #include "qaccelerometer_p.h"
 
 QTM_BEGIN_NAMESPACE

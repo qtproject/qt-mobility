@@ -42,7 +42,7 @@
 #ifndef QCOMPASS_H
 #define QCOMPASS_H
 
-#include <qsensor.h>
+#include "qsensor.h"
 
 QTM_BEGIN_NAMESPACE
 

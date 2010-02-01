@@ -42,7 +42,7 @@
 #ifndef QACCELEROMETER_H
 #define QACCELEROMETER_H
 
-#include <qsensor.h>
+#include "qsensor.h"
 
 QTM_BEGIN_NAMESPACE
 

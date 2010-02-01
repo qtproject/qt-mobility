@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include <qorientationsensor.h>
+#include "qorientationsensor.h"
 #include "qorientationsensor_p.h"
 
 QTM_BEGIN_NAMESPACE

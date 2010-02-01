@@ -1,4 +1,4 @@
-#include <qsensorplugin.h>
+#include "qsensorplugin.h"
 
 /*!
     \class QSensorPluginInterface

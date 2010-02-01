@@ -45,7 +45,7 @@
 #include <QtCore/qstringlist.h>
 #include <QtCore/qplugin.h>
 #include <QtCore/qfactoryinterface.h>
-#include <qmobilityglobal.h>
+#include "qmobilityglobal.h"
 
 QTM_BEGIN_NAMESPACE
 
