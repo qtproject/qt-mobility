@@ -246,23 +246,21 @@ RDFSelect prepareEmailAddressesQuery(RDFVariable &rdfcontact1, bool forAffiliati
 
 RDFSelect prepareIMContactsQuery(RDFVariable &imcontact)
 {
-    Q_UNUSED(imcontact);
-
     // columns
     RDFSelect queryidsimacccounts;
-    RDFVariable contact = queryidsimacccounts.newColumn<nco::IMContact>("contact");
-    queryidsimacccounts.groupBy(contact);
-    queryidsimacccounts.addColumn("contactId", contact.property<nco::contactUID> ());
+//    RDFVariable contact = queryidsimacccounts.newColumn<nco::IMContact>("contact");
+    queryidsimacccounts.groupBy(imcontact);
+    queryidsimacccounts.addColumn("contactId", imcontact.property<nco::contactUID> ());
 
-    queryidsimacccounts.addColumn("IMId", contact.property<nco::imContactId> ());
-    queryidsimacccounts.addColumn("status", contact.optional().property<nco::imContactPresence> ());
-    queryidsimacccounts.addColumn("message", contact.optional().property<nco::imContactStatusMessage> ());
-    queryidsimacccounts.addColumn("nick", contact.optional().property<nco::imContactNickname> ());
-    queryidsimacccounts.addColumn("type", contact.optional().property<nco::fromIMAccount> ());
+    queryidsimacccounts.addColumn("IMId", imcontact.property<nco::imContactId> ());
+    queryidsimacccounts.addColumn("status", imcontact.optional().property<nco::imContactPresence> ());
+    queryidsimacccounts.addColumn("message", imcontact.optional().property<nco::imContactStatusMessage> ());
+    queryidsimacccounts.addColumn("nick", imcontact.optional().property<nco::imContactNickname> ());
+    queryidsimacccounts.addColumn("type", imcontact.optional().property<nco::fromIMAccount> ());
     queryidsimacccounts.addColumn("capabilities",
-                contact.optional().property<nco::imContactCapability>().filter("GROUP_CONCAT", LiteralValue(",")));
+                imcontact.optional().property<nco::imContactCapability>().filter("GROUP_CONCAT", LiteralValue(",")));
 
-    queryidsimacccounts.addColumn("metacontact", contact.optional().property<nco::metacontact> ());
+    queryidsimacccounts.addColumn("metacontact", imcontact.optional().property<nco::metacontact> ());
     return queryidsimacccounts;
 }
 

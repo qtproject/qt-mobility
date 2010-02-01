@@ -1507,8 +1507,8 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
 void ut_qtcontacts_trackerplugin::testContactsWithoutMeContact() {
     QContact c;
     QContactName name;
-    name.setFirst("New");
-    name.setLast("Contact");
+    name.setFirst("Totally");
+    name.setLast("Unique");
     c.saveDetail(&name);
     trackerEngine->saveContact(&c, error);
     QContactLocalId id = c.localId();  // Store ID for later removal. 
@@ -1532,7 +1532,8 @@ void ut_qtcontacts_trackerplugin::testContactsWithoutMeContact() {
 
     // Requst finished. Test that only one contact is removed.
     QList<QContactLocalId> contacts = nameFetchRequest.ids();
-    QVERIFY2(contacts.count() == 1, "We expected to get only one contact. Got more.");
+    QVERIFY2(contacts.count() < 2, "We expected to get only one contact. Got more.");
+    QVERIFY2(contacts.count() != 0, "We expected to get one contact. Got none.");
     QVERIFY2(contacts.first() == id, "Did not get the requested contact back.");
     
     // Cleaning up.

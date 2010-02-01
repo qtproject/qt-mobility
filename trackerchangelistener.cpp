@@ -41,7 +41,6 @@
 
 
 #include <QtTracker/ontologies/nco.h>
-#include <QDebug>
 
 #include "trackerchangelistener.h"
 #include "qcontact.h"
