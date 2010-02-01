@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qsensorbackend.cpp -->
+<head>
+  <title>Qt Mobility Project 1.0: QSensorBackend Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QSensorBackend"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QSensorBackend Class Reference</h1>
+<p>The QSensorBackend class is a sensor implementation. <a href="#details">More...</a></p>
+<pre>    #include &lt;QSensorBackend&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
+<ul>
+<li><a href="qsensorbackend-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#newReadingAvailable">newReadingAvailable</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#poll">poll</a></b> () = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QSensorReading * </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#reading">reading</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">T * </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#setReading">setReading</a></b> ( T * <i>reading</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#setSupportedUpdatePolicies">setSupportedUpdatePolicies</a></b> ( QSensor::UpdatePolicies <i>policies</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#start">start</a></b> () = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#stop">stop</a></b> () = 0</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+<li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QSensorBackend class is a sensor implementation.</p>
+<p>Sensors on a device will be represented by sub-classes of QSensorBackend.</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QSensorBackend/newReadingAvailable"></a>
+<h3 class="fn"><a name="newReadingAvailable"></a>void QSensorBackend::newReadingAvailable ()</h3>
+<p>Notify the <a href="qsensor.html">QSensor</a> class that a new reading is available.</p>
+<a name="//apple_ref/cpp/instm/QSensorBackend/poll"></a>
+<h3 class="fn"><a name="poll"></a>void QSensorBackend::poll ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Poll the sensor for a reading.</p>
+<a name="//apple_ref/cpp/instm/QSensorBackend/reading"></a>
+<h3 class="fn"><a name="reading"></a><a href="qsensorreading.html">QSensorReading</a> * QSensorBackend::reading () const</h3>
+<p>If the backend has lost its reference to the reading it can call this method to get the address.</p>
+<p>Note that you will need to down-cast to the appropriate type.</p>
+<p>See also <a href="qsensorbackend.html#setReading">setReading</a>().</p>
+<a name="//apple_ref/cpp/instm/QSensorBackend/setReading"></a>
+<h3 class="fn"><a name="setReading"></a>T * QSensorBackend::setReading ( T * <i>reading</i> )</h3>
+<p>This function is called to initialize the <i>reading</i> classes used for a sensor.</p>
+<p>If your backend has already allocated a reading you should pass the address of this to the function. Otherwise you should pass 0 and the function will return the address of the reading your backend should use when it wants to notify the sensor API of new readings.</p>
+<p>Note that this is a template function so it should be called with the appropriate type.</p>
+<pre>    class MyBackend : public QSensorBackend
+    {
+        QAccelerometerReading m_reading;
+    public:
+        MyBackend(QSensor *sensor)
+            : QSensorBackend(sensor)
+        {
+            setReading&lt;QAccelerometerReading&gt;(&amp;m_reading);
+        }
+
+        ...</pre>
+<p>Note that this function must be called or you will not be able to send readings to the front end.</p>
+<p>If you do not wish to store the address of the reading you may use the <a href="qsensorbackend.html#reading">reading</a>() method to get it again later.</p>
+<pre>    class MyBackend : public QSensorBackend
+    {
+    public:
+        MyBackend(QSensor *sensor)
+            : QSensorBackend(sensor)
+        {
+            setReading&lt;QAccelerometerReading&gt;(0);
+        }
+
+        void poll()
+        {
+            qtimestamp timestamp;
+            qreal x, y, z;
+            ...
+            QAccelerometerReading *reading = static_cast&lt;QAccelerometerReading*&gt;(reading());
+            reading-&gt;setTimestamp(timestamp);
+            reading-&gt;setX(x);
+            reading-&gt;setY(y);
+            reading-&gt;setZ(z);
+        }
+
+        ...</pre>
+<p>See also <a href="qsensorbackend.html#reading">reading</a>().</p>
+<a name="//apple_ref/cpp/instm/QSensorBackend/setSupportedUpdatePolicies"></a>
+<h3 class="fn"><a name="setSupportedUpdatePolicies"></a>void QSensorBackend::setSupportedUpdatePolicies ( <a href="qsensor.html#UpdatePolicy-enum">QSensor::UpdatePolicies</a> <i>policies</i> )</h3>
+<p>Set the supported <i>policies</i> for this sensor. If this isn't called the sensor will not report any supported policies to the user.</p>
+<a name="//apple_ref/cpp/instm/QSensorBackend/start"></a>
+<h3 class="fn"><a name="start"></a>void QSensorBackend::start ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Start reporting values.</p>
+<a name="//apple_ref/cpp/instm/QSensorBackend/stop"></a>
+<h3 class="fn"><a name="stop"></a>void QSensorBackend::stop ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Stop reporting values.</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+</tr></table></div></address></body>
+</html>

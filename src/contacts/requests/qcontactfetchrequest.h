@@ -74,7 +74,7 @@ public:
     QList<QContact> contacts() const;
 
 signals:
-    void progress(QContactFetchRequest* self, bool appendOnly);
+    void progress(QContactFetchRequest* self, bool appendOnly); // deprecated
 
 private:
     Q_DISABLE_COPY(QContactFetchRequest)

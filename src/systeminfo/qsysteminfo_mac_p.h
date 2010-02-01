@@ -85,14 +85,12 @@ public:
 
     QSystemInfoPrivate(QObject *parent = 0);
     virtual ~QSystemInfoPrivate();
-// general
-    QString currentLanguage() const; // 2 letter ISO 639-1
-    QStringList availableLanguages() const;	 // 2 letter ISO 639-1
+    QString currentLanguage() const;
+    QStringList availableLanguages() const;
 
     QString version(QSystemInfo::Version,  const QString &parameter = QString());
 
-    QString currentCountryCode() const; //2 letter ISO 3166-1
-//features
+    QString currentCountryCode() const;
     bool hasFeatureSupported(QSystemInfo::Feature feature);
 Q_SIGNALS:
     void currentLanguageChanged(const QString &);
@@ -120,8 +118,8 @@ public:
     int cellId();
     int locationAreaCode();
 
-    QString currentMobileCountryCode(); // Mobile Country Code
-    QString currentMobileNetworkCode(); // Mobile Network Code
+    QString currentMobileCountryCode();
+    QString currentMobileNetworkCode();
 
     QString homeMobileCountryCode();
     QString homeMobileNetworkCode();
@@ -160,8 +158,6 @@ public:
     QSystemDisplayInfoPrivate(QObject *parent = 0);
     virtual ~QSystemDisplayInfoPrivate();
 
-
-// display
     int displayBrightness(int screen);
     int colorDepth(int screen);
 };
@@ -175,11 +171,10 @@ public:
     QSystemStorageInfoPrivate(QObject *parent = 0);
     virtual ~QSystemStorageInfoPrivate();
 
-    // memory
     qint64 availableDiskSpace(const QString &driveVolume);
     qint64 totalDiskSpace(const QString &driveVolume);
     QStringList logicalDrives();
-    QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume); //returns enum
+    QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
 
 private:
     QHash<QString, QString> mountEntriesHash;
@@ -196,8 +191,6 @@ public:
 
     QSystemDeviceInfoPrivate(QObject *parent = 0);
     ~QSystemDeviceInfoPrivate();
-
-// device
 
     static QString imei();
     static QString imsi();

@@ -44,6 +44,9 @@
 #include <qmobilityglobal.h>
 #include <e32base.h>
 #include <QObject>
+#include <QStringList>
+
+class QFileSystemWatcher;
 
 QTM_BEGIN_NAMESPACE
 
@@ -56,8 +59,8 @@ typedef TPckgBuf<TInt> TError;
 class CDatabaseManagerServerSession : public CSession2
     {
     public:
-        static CDatabaseManagerServerSession* NewL();
-        static CDatabaseManagerServerSession* NewLC();
+        static CDatabaseManagerServerSession* NewL(CDatabaseManagerServer& aServer);
+        static CDatabaseManagerServerSession* NewLC(CDatabaseManagerServer& aServer);
         virtual ~CDatabaseManagerServerSession();
     
         void ServiceL(const RMessage2& aMessage);
@@ -79,9 +82,10 @@ class CDatabaseManagerServerSession : public CSession2
         
         void ServiceRemoved(const QString& aServiceName);
         void ServiceAdded(const QString& aServiceName);
+        void databaseChanged(const QString &path);
         
     private:
-        CDatabaseManagerServerSession();
+        CDatabaseManagerServerSession(CDatabaseManagerServer& aServer);
         void ConstructL();
         TError LastErrorCode();
         void initDbPath();
@@ -91,11 +95,14 @@ class CDatabaseManagerServerSession : public CSession2
         void PanicClient(const RMessage2& aMessage, TInt aPanic) const;
         
     private:
+        CDatabaseManagerServer& iServer;
         QByteArray* iByteArray;
         TBool iWaitingAsyncRequest;
         RMessage2 iMsg;
         DatabaseManagerSignalHandler* iDatabaseManagerSignalHandler;
         ServiceDatabase *iDb;
+        QStringList m_knownServices;
+        QFileSystemWatcher *m_watcher;
     };
 
 QTM_END_NAMESPACE

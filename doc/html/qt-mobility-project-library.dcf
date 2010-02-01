@@ -37,6 +37,49 @@
         <keyword ref="qabstractvaluespacelayer.html#QVALUESPACE_AUTO_INSTALL_LAYER">QVALUESPACE_AUTO_INSTALL_LAYER</keyword>
         <section ref="qabstractvaluespacelayer-members.html" title="List of all members"/>
     </section>
+    <section ref="qaccelerometer.html" title="QAccelerometer Class Reference">
+        <keyword ref="qaccelerometer.html">QAccelerometer</keyword>
+        <keyword ref="qaccelerometer.html#reading">reading</keyword>
+        <section ref="qaccelerometer-members.html" title="List of all members"/>
+    </section>
+    <section ref="qaccelerometerfilter.html" title="QAccelerometerFilter Class Reference">
+        <keyword ref="qaccelerometerfilter.html">QAccelerometerFilter</keyword>
+        <keyword ref="qaccelerometerfilter.html#filter">filter</keyword>
+        <section ref="qaccelerometerfilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qaccelerometerreading.html" title="QAccelerometerReading Class Reference">
+        <keyword ref="qaccelerometerreading.html">QAccelerometerReading</keyword>
+        <keyword ref="qaccelerometerreading.html#x-prop">x</keyword>
+        <keyword ref="qaccelerometerreading.html#y-prop">y</keyword>
+        <keyword ref="qaccelerometerreading.html#z-prop">z</keyword>
+        <keyword ref="qaccelerometerreading.html#setX">setX</keyword>
+        <keyword ref="qaccelerometerreading.html#setY">setY</keyword>
+        <keyword ref="qaccelerometerreading.html#setZ">setZ</keyword>
+        <section ref="qaccelerometerreading-members.html" title="List of all members"/>
+    </section>
+    <section ref="qambientlightfilter.html" title="QAmbientLightFilter Class Reference">
+        <keyword ref="qambientlightfilter.html">QAmbientLightFilter</keyword>
+        <keyword ref="qambientlightfilter.html#filter">filter</keyword>
+        <section ref="qambientlightfilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qambientlightreading.html" title="QAmbientLightReading Class Reference">
+        <keyword ref="qambientlightreading.html">QAmbientLightReading</keyword>
+        <keyword ref="qambientlightreading.html#LightLevel-enum">LightLevel</keyword>
+        <keyword ref="qambientlightreading.html#LightLevel-enum">QAmbientLightReading::Undefined</keyword>
+        <keyword ref="qambientlightreading.html#LightLevel-enum">QAmbientLightReading::Light</keyword>
+        <keyword ref="qambientlightreading.html#LightLevel-enum">QAmbientLightReading::Twilight</keyword>
+        <keyword ref="qambientlightreading.html#LightLevel-enum">QAmbientLightReading::Sunny</keyword>
+        <keyword ref="qambientlightreading.html#LightLevel-enum">QAmbientLightReading::Dark</keyword>
+        <keyword ref="qambientlightreading.html#LightLevel-enum">QAmbientLightReading::Bright</keyword>
+        <keyword ref="qambientlightreading.html#lightLevel-prop">lightLevel</keyword>
+        <keyword ref="qambientlightreading.html#setLightLevel">setLightLevel</keyword>
+        <section ref="qambientlightreading-members.html" title="List of all members"/>
+    </section>
+    <section ref="qambientlightsensor.html" title="QAmbientLightSensor Class Reference">
+        <keyword ref="qambientlightsensor.html">QAmbientLightSensor</keyword>
+        <keyword ref="qambientlightsensor.html#reading">reading</keyword>
+        <section ref="qambientlightsensor-members.html" title="List of all members"/>
+    </section>
     <section ref="qaudiocapturesource.html" title="QAudioCaptureSource Class Reference">
         <keyword ref="qaudiocapturesource.html">QAudioCaptureSource</keyword>
         <keyword ref="qaudiocapturesource.html#activeAudioInput">activeAudioInput</keyword>
@@ -97,6 +140,8 @@
     </section>
     <section ref="qcamera.html" title="QCamera Class Reference">
         <keyword ref="qcamera.html">QCamera</keyword>
+        <keyword ref="qcamera.html#CaptureMode-enum">CaptureMode</keyword>
+        <keyword ref="qcamera.html#CaptureMode-enum">CaptureModes</keyword>
         <keyword ref="qcamera.html#Error-enum">Error</keyword>
         <keyword ref="qcamera.html#Error-enum">QCamera::NotReadyToCaptureError</keyword>
         <keyword ref="qcamera.html#Error-enum">QCamera::NoError</keyword>
@@ -137,9 +182,10 @@
         <keyword ref="qcamera.html#FocusMode-enum">QCamera::ManualFocus</keyword>
         <keyword ref="qcamera.html#FocusStatus-enum">FocusStatus</keyword>
         <keyword ref="qcamera.html#FocusStatus-enum">QCamera::FocusReached</keyword>
+        <keyword ref="qcamera.html#FocusStatus-enum">QCamera::FocusIntial</keyword>
         <keyword ref="qcamera.html#FocusStatus-enum">QCamera::FocusUnableToReach</keyword>
         <keyword ref="qcamera.html#FocusStatus-enum">QCamera::FocusRequested</keyword>
-        <keyword ref="qcamera.html#FocusStatus-enum">QCamera::FocusDisabled</keyword>
+        <keyword ref="qcamera.html#FocusStatus-enum">QCamera::FocusCanceled</keyword>
         <keyword ref="qcamera.html#FocusStatus-enum">QCamera::FocusLost</keyword>
         <keyword ref="qcamera.html#MeteringMode-enum">MeteringMode</keyword>
         <keyword ref="qcamera.html#MeteringMode-enum">MeteringModes</keyword>
@@ -164,10 +210,10 @@
         <keyword ref="qcamera.html#WhiteBalanceMode-enum">QCamera::WhiteBalanceShade</keyword>
         <keyword ref="qcamera.html#aperture-prop">aperture</keyword>
         <keyword ref="qcamera.html#aperture-prop">setManualAperture</keyword>
+        <keyword ref="qcamera.html#captureMode-prop">captureMode</keyword>
+        <keyword ref="qcamera.html#captureMode-prop">setCaptureMode</keyword>
         <keyword ref="qcamera.html#isoSensitivity-prop">isoSensitivity</keyword>
         <keyword ref="qcamera.html#isoSensitivity-prop">setManualIsoSensitivity</keyword>
-        <keyword ref="qcamera.html#readyForCapture-prop">readyForCapture</keyword>
-        <keyword ref="qcamera.html#readyForCapture-prop">isReadyForCapture</keyword>
         <keyword ref="qcamera.html#shutterSpeed-prop">shutterSpeed</keyword>
         <keyword ref="qcamera.html#shutterSpeed-prop">setManualShutterSpeed</keyword>
         <keyword ref="qcamera.html#state-prop">state</keyword>
@@ -175,8 +221,11 @@
         <keyword ref="qcamera.html#apertureRangeChanged">apertureRangeChanged</keyword>
         <keyword ref="qcamera.html#availabilityError">availabilityError</keyword>
         <keyword ref="qcamera.html#availableDevices">availableDevices</keyword>
-        <keyword ref="qcamera.html#capture">capture</keyword>
+        <keyword ref="qcamera.html#cancelFocusing">cancelFocusing</keyword>
+        <keyword ref="qcamera.html#captureModeChanged">captureModeChanged</keyword>
         <keyword ref="qcamera.html#deviceDescription">deviceDescription</keyword>
+        <keyword ref="qcamera.html#digitalZoom">digitalZoom</keyword>
+        <keyword ref="qcamera.html#digitalZoomChanged">digitalZoomChanged</keyword>
         <keyword ref="qcamera.html#error">error</keyword>
         <keyword ref="qcamera.html#errorString">errorString</keyword>
         <keyword ref="qcamera.html#exposureCompensation">exposureCompensation</keyword>
@@ -184,26 +233,24 @@
         <keyword ref="qcamera.html#exposureMode">exposureMode</keyword>
         <keyword ref="qcamera.html#flashMode">flashMode</keyword>
         <keyword ref="qcamera.html#flashReady">flashReady</keyword>
-        <keyword ref="qcamera.html#focusLocked">focusLocked</keyword>
         <keyword ref="qcamera.html#focusMode">focusMode</keyword>
+        <keyword ref="qcamera.html#focusReached">focusReached</keyword>
         <keyword ref="qcamera.html#focusStatus">focusStatus</keyword>
         <keyword ref="qcamera.html#focusStatusChanged">focusStatusChanged</keyword>
-        <keyword ref="qcamera.html#imageCaptured">imageCaptured</keyword>
-        <keyword ref="qcamera.html#imageSaved">imageSaved</keyword>
+        <keyword ref="qcamera.html#focusUnableToReach">focusUnableToReach</keyword>
         <keyword ref="qcamera.html#isAvailable">isAvailable</keyword>
         <keyword ref="qcamera.html#isExposureLocked">isExposureLocked</keyword>
         <keyword ref="qcamera.html#isFlashReady">isFlashReady</keyword>
-        <keyword ref="qcamera.html#isFocusLocked">isFocusLocked</keyword>
         <keyword ref="qcamera.html#isMacroFocusingSupported">isMacroFocusingSupported</keyword>
         <keyword ref="qcamera.html#isoSensitivityChanged">isoSensitivityChanged</keyword>
         <keyword ref="qcamera.html#lockExposure">lockExposure</keyword>
-        <keyword ref="qcamera.html#lockFocus">lockFocus</keyword>
         <keyword ref="qcamera.html#macroFocusingEnabled">macroFocusingEnabled</keyword>
         <keyword ref="qcamera.html#manualWhiteBalance">manualWhiteBalance</keyword>
         <keyword ref="qcamera.html#maximumDigitalZoom">maximumDigitalZoom</keyword>
         <keyword ref="qcamera.html#maximumOpticalZoom">maximumOpticalZoom</keyword>
         <keyword ref="qcamera.html#meteringMode">meteringMode</keyword>
-        <keyword ref="qcamera.html#readyForCaptureChanged">readyForCaptureChanged</keyword>
+        <keyword ref="qcamera.html#opticalZoom">opticalZoom</keyword>
+        <keyword ref="qcamera.html#opticalZoomChanged">opticalZoomChanged</keyword>
         <keyword ref="qcamera.html#setAutoAperture">setAutoAperture</keyword>
         <keyword ref="qcamera.html#setAutoIsoSensitivity">setAutoIsoSensitivity</keyword>
         <keyword ref="qcamera.html#setAutoShutterSpeed">setAutoShutterSpeed</keyword>
@@ -217,9 +264,11 @@
         <keyword ref="qcamera.html#setWhiteBalanceMode">setWhiteBalanceMode</keyword>
         <keyword ref="qcamera.html#shutterSpeedChanged">shutterSpeedChanged</keyword>
         <keyword ref="qcamera.html#start">start</keyword>
+        <keyword ref="qcamera.html#startFocusing">startFocusing</keyword>
         <keyword ref="qcamera.html#stateChanged">stateChanged</keyword>
         <keyword ref="qcamera.html#stop">stop</keyword>
         <keyword ref="qcamera.html#supportedApertures">supportedApertures</keyword>
+        <keyword ref="qcamera.html#supportedCaptureModes">supportedCaptureModes</keyword>
         <keyword ref="qcamera.html#supportedExposureModes">supportedExposureModes</keyword>
         <keyword ref="qcamera.html#supportedFlashModes">supportedFlashModes</keyword>
         <keyword ref="qcamera.html#supportedFocusModes">supportedFocusModes</keyword>
@@ -228,20 +277,21 @@
         <keyword ref="qcamera.html#supportedShutterSpeeds">supportedShutterSpeeds</keyword>
         <keyword ref="qcamera.html#supportedWhiteBalanceModes">supportedWhiteBalanceModes</keyword>
         <keyword ref="qcamera.html#unlockExposure">unlockExposure</keyword>
-        <keyword ref="qcamera.html#unlockFocus">unlockFocus</keyword>
         <keyword ref="qcamera.html#whiteBalanceMode">whiteBalanceMode</keyword>
         <keyword ref="qcamera.html#zoomTo">zoomTo</keyword>
-        <keyword ref="qcamera.html#zoomValue">zoomValue</keyword>
-        <keyword ref="qcamera.html#zoomValueChanged">zoomValueChanged</keyword>
         <section ref="qcamera-members.html" title="List of all members"/>
     </section>
     <section ref="qcameracontrol.html" title="QCameraControl Class Reference">
         <keyword ref="qcameracontrol.html">QCameraControl</keyword>
+        <keyword ref="qcameracontrol.html#captureMode">captureMode</keyword>
+        <keyword ref="qcameracontrol.html#captureModeChanged">captureModeChanged</keyword>
         <keyword ref="qcameracontrol.html#error">error</keyword>
+        <keyword ref="qcameracontrol.html#setCaptureMode">setCaptureMode</keyword>
         <keyword ref="qcameracontrol.html#start">start</keyword>
         <keyword ref="qcameracontrol.html#state">state</keyword>
         <keyword ref="qcameracontrol.html#stateChanged">stateChanged</keyword>
         <keyword ref="qcameracontrol.html#stop">stop</keyword>
+        <keyword ref="qcameracontrol.html#supportedCaptureModes">supportedCaptureModes</keyword>
         <keyword ref="qcameracontrol.html#QCameraControl_iid">QCameraControl_iid</keyword>
         <section ref="qcameracontrol-members.html" title="List of all members"/>
     </section>
@@ -285,25 +335,48 @@
     </section>
     <section ref="qcamerafocuscontrol.html" title="QCameraFocusControl Class Reference">
         <keyword ref="qcamerafocuscontrol.html">QCameraFocusControl</keyword>
-        <keyword ref="qcamerafocuscontrol.html#focusLocked">focusLocked</keyword>
+        <keyword ref="qcamerafocuscontrol.html#cancelFocusing">cancelFocusing</keyword>
+        <keyword ref="qcamerafocuscontrol.html#digitalZoom">digitalZoom</keyword>
+        <keyword ref="qcamerafocuscontrol.html#digitalZoomChanged">digitalZoomChanged</keyword>
         <keyword ref="qcamerafocuscontrol.html#focusMode">focusMode</keyword>
         <keyword ref="qcamerafocuscontrol.html#focusStatus">focusStatus</keyword>
         <keyword ref="qcamerafocuscontrol.html#focusStatusChanged">focusStatusChanged</keyword>
-        <keyword ref="qcamerafocuscontrol.html#isFocusLocked">isFocusLocked</keyword>
         <keyword ref="qcamerafocuscontrol.html#isMacroFocusingSupported">isMacroFocusingSupported</keyword>
-        <keyword ref="qcamerafocuscontrol.html#lockFocus">lockFocus</keyword>
         <keyword ref="qcamerafocuscontrol.html#macroFocusingEnabled">macroFocusingEnabled</keyword>
         <keyword ref="qcamerafocuscontrol.html#maximumDigitalZoom">maximumDigitalZoom</keyword>
         <keyword ref="qcamerafocuscontrol.html#maximumOpticalZoom">maximumOpticalZoom</keyword>
+        <keyword ref="qcamerafocuscontrol.html#opticalZoom">opticalZoom</keyword>
+        <keyword ref="qcamerafocuscontrol.html#opticalZoomChanged">opticalZoomChanged</keyword>
         <keyword ref="qcamerafocuscontrol.html#setFocusMode">setFocusMode</keyword>
         <keyword ref="qcamerafocuscontrol.html#setMacroFocusingEnabled">setMacroFocusingEnabled</keyword>
+        <keyword ref="qcamerafocuscontrol.html#startFocusing">startFocusing</keyword>
         <keyword ref="qcamerafocuscontrol.html#supportedFocusModes">supportedFocusModes</keyword>
-        <keyword ref="qcamerafocuscontrol.html#unlockFocus">unlockFocus</keyword>
         <keyword ref="qcamerafocuscontrol.html#zoomTo">zoomTo</keyword>
-        <keyword ref="qcamerafocuscontrol.html#zoomValue">zoomValue</keyword>
-        <keyword ref="qcamerafocuscontrol.html#zoomValueChanged">zoomValueChanged</keyword>
         <keyword ref="qcamerafocuscontrol.html#QCameraFocusControl_iid">QCameraFocusControl_iid</keyword>
         <section ref="qcamerafocuscontrol-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcompass.html" title="QCompass Class Reference">
+        <keyword ref="qcompass.html">QCompass</keyword>
+        <keyword ref="qcompass.html#reading">reading</keyword>
+        <section ref="qcompass-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcompassfilter.html" title="QCompassFilter Class Reference">
+        <keyword ref="qcompassfilter.html">QCompassFilter</keyword>
+        <keyword ref="qcompassfilter.html#filter">filter</keyword>
+        <section ref="qcompassfilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcompassreading.html" title="QCompassReading Class Reference">
+        <keyword ref="qcompassreading.html">QCompassReading</keyword>
+        <keyword ref="qcompassreading.html#CalibrationLevel-enum">CalibrationLevel</keyword>
+        <keyword ref="qcompassreading.html#CalibrationLevel-enum">QCompassReading::Undefined</keyword>
+        <keyword ref="qcompassreading.html#CalibrationLevel-enum">QCompassReading::High</keyword>
+        <keyword ref="qcompassreading.html#CalibrationLevel-enum">QCompassReading::Middle</keyword>
+        <keyword ref="qcompassreading.html#CalibrationLevel-enum">QCompassReading::Low</keyword>
+        <keyword ref="qcompassreading.html#azimuth-prop">azimuth</keyword>
+        <keyword ref="qcompassreading.html#calibrationLevel-prop">calibrationLevel</keyword>
+        <keyword ref="qcompassreading.html#setAzimuth">setAzimuth</keyword>
+        <keyword ref="qcompassreading.html#setCalibrationLevel">setCalibrationLevel</keyword>
+        <section ref="qcompassreading-members.html" title="List of all members"/>
     </section>
     <section ref="qcontact.html" title="QContact Class Reference">
         <keyword ref="qcontact.html">QContact</keyword>
@@ -348,28 +421,37 @@
         <keyword ref="qcontactabstractrequest.html#RequestType-enum">QContactAbstractRequest::DetailDefinitionFetchRequest</keyword>
         <keyword ref="qcontactabstractrequest.html#RequestType-enum">QContactAbstractRequest::ContactFetchRequest</keyword>
         <keyword ref="qcontactabstractrequest.html#RequestType-enum">QContactAbstractRequest::ContactLocalIdFetchRequest</keyword>
+        <keyword ref="qcontactabstractrequest.html#State-enum">State</keyword>
+        <keyword ref="qcontactabstractrequest.html#State-enum">QContactAbstractRequest::Active</keyword>
+        <keyword ref="qcontactabstractrequest.html#State-enum">QContactAbstractRequest::Canceled</keyword>
+        <keyword ref="qcontactabstractrequest.html#State-enum">QContactAbstractRequest::Finished</keyword>
+        <keyword ref="qcontactabstractrequest.html#State-enum">QContactAbstractRequest::Canceling</keyword>
+        <keyword ref="qcontactabstractrequest.html#State-enum">QContactAbstractRequest::Inactive</keyword>
         <keyword ref="qcontactabstractrequest.html#Status-enum">Status</keyword>
-        <keyword ref="qcontactabstractrequest.html#Status-enum">QContactAbstractRequest::Cancelling</keyword>
-        <keyword ref="qcontactabstractrequest.html#Status-enum">QContactAbstractRequest::Active</keyword>
-        <keyword ref="qcontactabstractrequest.html#Status-enum">QContactAbstractRequest::Cancelled</keyword>
-        <keyword ref="qcontactabstractrequest.html#Status-enum">QContactAbstractRequest::Finished</keyword>
-        <keyword ref="qcontactabstractrequest.html#Status-enum">QContactAbstractRequest::Inactive</keyword>
         <keyword ref="qcontactabstractrequest.html#cancel">cancel</keyword>
         <keyword ref="qcontactabstractrequest.html#error">error</keyword>
-        <keyword ref="qcontactabstractrequest.html#errors">errors</keyword>
         <keyword ref="qcontactabstractrequest.html#isActive">isActive</keyword>
+        <keyword ref="qcontactabstractrequest.html#isCanceled">isCanceled</keyword>
         <keyword ref="qcontactabstractrequest.html#isFinished">isFinished</keyword>
+        <keyword ref="qcontactabstractrequest.html#isInactive">isInactive</keyword>
         <keyword ref="qcontactabstractrequest.html#manager">manager</keyword>
+        <keyword ref="qcontactabstractrequest.html#resultsAvailable">resultsAvailable</keyword>
         <keyword ref="qcontactabstractrequest.html#setManager">setManager</keyword>
         <keyword ref="qcontactabstractrequest.html#start">start</keyword>
-        <keyword ref="qcontactabstractrequest.html#status">status</keyword>
+        <keyword ref="qcontactabstractrequest.html#state">state</keyword>
+        <keyword ref="qcontactabstractrequest.html#stateChanged">stateChanged</keyword>
         <keyword ref="qcontactabstractrequest.html#type">type</keyword>
         <keyword ref="qcontactabstractrequest.html#waitForFinished">waitForFinished</keyword>
-        <keyword ref="qcontactabstractrequest.html#waitForProgress">waitForProgress</keyword>
         <section ref="qcontactabstractrequest-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactaction.html" title="QContactAction Class Reference">
         <keyword ref="qcontactaction.html">QContactAction</keyword>
+        <keyword ref="qcontactaction.html#State-enum">State</keyword>
+        <keyword ref="qcontactaction.html#State-enum">QContactAction::FinishedWithErrorState</keyword>
+        <keyword ref="qcontactaction.html#State-enum">QContactAction::InactiveState</keyword>
+        <keyword ref="qcontactaction.html#State-enum">QContactAction::AutonomousState</keyword>
+        <keyword ref="qcontactaction.html#State-enum">QContactAction::ActiveState</keyword>
+        <keyword ref="qcontactaction.html#State-enum">QContactAction::FinishedState</keyword>
         <keyword ref="qcontactaction.html#Status-enum">Status</keyword>
         <keyword ref="qcontactaction.html#Status-enum">QContactAction::FinishedWithError</keyword>
         <keyword ref="qcontactaction.html#Status-enum">QContactAction::Autonomous</keyword>
@@ -382,7 +464,7 @@
         <keyword ref="qcontactaction.html#availableActions">availableActions</keyword>
         <keyword ref="qcontactaction.html#contactFilter">contactFilter</keyword>
         <keyword ref="qcontactaction.html#invokeAction">invokeAction</keyword>
-        <keyword ref="qcontactaction.html#metadatax">metadata</keyword>
+        <keyword ref="qcontactaction.html#metaData">metaData</keyword>
         <keyword ref="qcontactaction.html#progress">progress</keyword>
         <keyword ref="qcontactaction.html#result">result</keyword>
         <keyword ref="qcontactaction.html#supportedDetails">supportedDetails</keyword>
@@ -477,11 +559,14 @@
     <section ref="qcontactavatar.html" title="QContactAvatar Class Reference">
         <keyword ref="qcontactavatar.html">QContactAvatar</keyword>
         <keyword ref="qcontactavatar.html#avatar">avatar</keyword>
+        <keyword ref="qcontactavatar.html#pixmap">pixmap</keyword>
         <keyword ref="qcontactavatar.html#setAvatar">setAvatar</keyword>
+        <keyword ref="qcontactavatar.html#setPixmap">setPixmap</keyword>
         <keyword ref="qcontactavatar.html#setSubType">setSubType</keyword>
         <keyword ref="qcontactavatar.html#subType">subType</keyword>
         <keyword ref="qcontactavatar.html#DefinitionName-var">DefinitionName</keyword>
         <keyword ref="qcontactavatar.html#FieldAvatar-var">FieldAvatar</keyword>
+        <keyword ref="qcontactavatar.html#FieldAvatarPixmap-var">FieldAvatarPixmap</keyword>
         <keyword ref="qcontactavatar.html#FieldSubType-var">FieldSubType</keyword>
         <keyword ref="qcontactavatar.html#SubTypeAudioRingtone-var">SubTypeAudioRingtone</keyword>
         <keyword ref="qcontactavatar.html#SubTypeImage-var">SubTypeImage</keyword>
@@ -527,19 +612,32 @@
     </section>
     <section ref="qcontactdetail.html" title="QContactDetail Class Reference">
         <keyword ref="qcontactdetail.html">QContactDetail</keyword>
+        <keyword ref="qcontactdetail.html#AccessConstraint-enum">AccessConstraint</keyword>
+        <keyword ref="qcontactdetail.html#AccessConstraint-enum">AccessConstraints</keyword>
+        <keyword ref="qcontactdetail.html#AccessConstraint-enum">QContactDetail::NoConstraint</keyword>
+        <keyword ref="qcontactdetail.html#AccessConstraint-enum">QContactDetail::Irremovable</keyword>
+        <keyword ref="qcontactdetail.html#AccessConstraint-enum">QContactDetail::ReadOnly</keyword>
+        <keyword ref="qcontactdetail.html#accessConstraints">accessConstraints</keyword>
         <keyword ref="qcontactdetail.html#assign">assign</keyword>
         <keyword ref="qcontactdetail.html#contexts">contexts</keyword>
         <keyword ref="qcontactdetail.html#definitionName">definitionName</keyword>
+        <keyword ref="qcontactdetail.html#detailUri">detailUri</keyword>
         <keyword ref="qcontactdetail.html#hasValue">hasValue</keyword>
         <keyword ref="qcontactdetail.html#isEmpty">isEmpty</keyword>
+        <keyword ref="qcontactdetail.html#key">key</keyword>
+        <keyword ref="qcontactdetail.html#linkedDetailUris">linkedDetailUris</keyword>
         <keyword ref="qcontactdetail.html#preferredActions">preferredActions</keyword>
         <keyword ref="qcontactdetail.html#removeValue">removeValue</keyword>
+        <keyword ref="qcontactdetail.html#resetKey">resetKey</keyword>
         <keyword ref="qcontactdetail.html#setContexts">setContexts</keyword>
+        <keyword ref="qcontactdetail.html#setDetailUri">setDetailUri</keyword>
+        <keyword ref="qcontactdetail.html#setLinkedDetailUris">setLinkedDetailUris</keyword>
         <keyword ref="qcontactdetail.html#setPreferredActions">setPreferredActions</keyword>
         <keyword ref="qcontactdetail.html#setValue">setValue</keyword>
         <keyword ref="qcontactdetail.html#value">value</keyword>
         <keyword ref="qcontactdetail.html#values">values</keyword>
         <keyword ref="qcontactdetail.html#variantValue">variantValue</keyword>
+        <keyword ref="qcontactdetail.html#variantValues">variantValues</keyword>
         <keyword ref="qcontactdetail.html#operator-not-eq">operator!=</keyword>
         <keyword ref="qcontactdetail.html#operator-eq">operator=</keyword>
         <keyword ref="qcontactdetail.html#operator-eq-eq">operator==</keyword>
@@ -548,16 +646,12 @@
     </section>
     <section ref="qcontactdetaildefinition.html" title="QContactDetailDefinition Class Reference">
         <keyword ref="qcontactdetaildefinition.html">QContactDetailDefinition</keyword>
-        <keyword ref="qcontactdetaildefinition.html#AccessConstraint-enum">AccessConstraint</keyword>
-        <keyword ref="qcontactdetaildefinition.html#AccessConstraint-enum">QContactDetailDefinition::NoConstraint</keyword>
-        <keyword ref="qcontactdetaildefinition.html#AccessConstraint-enum">QContactDetailDefinition::CreateOnly</keyword>
-        <keyword ref="qcontactdetaildefinition.html#AccessConstraint-enum">QContactDetailDefinition::ReadOnly</keyword>
-        <keyword ref="qcontactdetaildefinition.html#accessConstraint">accessConstraint</keyword>
         <keyword ref="qcontactdetaildefinition.html#fields">fields</keyword>
+        <keyword ref="qcontactdetaildefinition.html#insertField">insertField</keyword>
         <keyword ref="qcontactdetaildefinition.html#isEmpty">isEmpty</keyword>
         <keyword ref="qcontactdetaildefinition.html#isUnique">isUnique</keyword>
         <keyword ref="qcontactdetaildefinition.html#name">name</keyword>
-        <keyword ref="qcontactdetaildefinition.html#setAccessConstraint">setAccessConstraint</keyword>
+        <keyword ref="qcontactdetaildefinition.html#removeField">removeField</keyword>
         <keyword ref="qcontactdetaildefinition.html#setFields">setFields</keyword>
         <keyword ref="qcontactdetaildefinition.html#setName">setName</keyword>
         <keyword ref="qcontactdetaildefinition.html#setUnique">setUnique</keyword>
@@ -565,50 +659,49 @@
         <keyword ref="qcontactdetaildefinition.html#operator-eq">operator=</keyword>
         <keyword ref="qcontactdetaildefinition.html#operator-eq-eq">operator==</keyword>
         <section ref="qcontactdetaildefinition-members.html" title="List of all members"/>
+        <section ref="qcontactdetaildefinition-obsolete.html" title="Obsolete members"/>
     </section>
     <section ref="qcontactdetaildefinitionfetchrequest.html" title="QContactDetailDefinitionFetchRequest Class Reference">
         <keyword ref="qcontactdetaildefinitionfetchrequest.html">QContactDetailDefinitionFetchRequest</keyword>
         <keyword ref="qcontactdetaildefinitionfetchrequest.html#contactType">contactType</keyword>
+        <keyword ref="qcontactdetaildefinitionfetchrequest.html#definitionNames">definitionNames</keyword>
         <keyword ref="qcontactdetaildefinitionfetchrequest.html#definitions">definitions</keyword>
-        <keyword ref="qcontactdetaildefinitionfetchrequest.html#names">names</keyword>
+        <keyword ref="qcontactdetaildefinitionfetchrequest.html#errorMap">errorMap</keyword>
         <keyword ref="qcontactdetaildefinitionfetchrequest.html#progress">progress</keyword>
         <keyword ref="qcontactdetaildefinitionfetchrequest.html#setContactType">setContactType</keyword>
-        <keyword ref="qcontactdetaildefinitionfetchrequest.html#setNames">setNames</keyword>
+        <keyword ref="qcontactdetaildefinitionfetchrequest.html#setDefinitionNames">setDefinitionNames</keyword>
         <section ref="qcontactdetaildefinitionfetchrequest-members.html" title="List of all members"/>
-    </section>
-    <section ref="qcontactdetaildefinitionfield.html" title="QContactDetailDefinitionField Class Reference">
-        <keyword ref="qcontactdetaildefinitionfield.html">QContactDetailDefinitionField</keyword>
-        <keyword ref="qcontactdetaildefinitionfield.html#AccessConstraint-enum">AccessConstraint</keyword>
-        <keyword ref="qcontactdetaildefinitionfield.html#AccessConstraint-enum">QContactDetailDefinitionField::NoConstraint</keyword>
-        <keyword ref="qcontactdetaildefinitionfield.html#AccessConstraint-enum">QContactDetailDefinitionField::ReadOnly</keyword>
-        <keyword ref="qcontactdetaildefinitionfield.html#accessConstraint">accessConstraint</keyword>
-        <keyword ref="qcontactdetaildefinitionfield.html#allowableValues">allowableValues</keyword>
-        <keyword ref="qcontactdetaildefinitionfield.html#dataType">dataType</keyword>
-        <keyword ref="qcontactdetaildefinitionfield.html#setAccessConstraint">setAccessConstraint</keyword>
-        <keyword ref="qcontactdetaildefinitionfield.html#setAllowableValues">setAllowableValues</keyword>
-        <keyword ref="qcontactdetaildefinitionfield.html#setDataType">setDataType</keyword>
-        <keyword ref="qcontactdetaildefinitionfield.html#operator-not-eq">operator!=</keyword>
-        <keyword ref="qcontactdetaildefinitionfield.html#operator-eq">operator=</keyword>
-        <keyword ref="qcontactdetaildefinitionfield.html#operator-eq-eq">operator==</keyword>
-        <section ref="qcontactdetaildefinitionfield-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactdetaildefinitionremoverequest.html" title="QContactDetailDefinitionRemoveRequest Class Reference">
         <keyword ref="qcontactdetaildefinitionremoverequest.html">QContactDetailDefinitionRemoveRequest</keyword>
         <keyword ref="qcontactdetaildefinitionremoverequest.html#contactType">contactType</keyword>
-        <keyword ref="qcontactdetaildefinitionremoverequest.html#names">names</keyword>
+        <keyword ref="qcontactdetaildefinitionremoverequest.html#definitionNames">definitionNames</keyword>
+        <keyword ref="qcontactdetaildefinitionremoverequest.html#errorMap">errorMap</keyword>
         <keyword ref="qcontactdetaildefinitionremoverequest.html#progress">progress</keyword>
-        <keyword ref="qcontactdetaildefinitionremoverequest.html#setContactType">setContactType</keyword>
-        <keyword ref="qcontactdetaildefinitionremoverequest.html#setNames">setNames</keyword>
+        <keyword ref="qcontactdetaildefinitionremoverequest.html#setDefinitionNames">setDefinitionNames</keyword>
         <section ref="qcontactdetaildefinitionremoverequest-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactdetaildefinitionsaverequest.html" title="QContactDetailDefinitionSaveRequest Class Reference">
         <keyword ref="qcontactdetaildefinitionsaverequest.html">QContactDetailDefinitionSaveRequest</keyword>
         <keyword ref="qcontactdetaildefinitionsaverequest.html#contactType">contactType</keyword>
         <keyword ref="qcontactdetaildefinitionsaverequest.html#definitions">definitions</keyword>
+        <keyword ref="qcontactdetaildefinitionsaverequest.html#errorMap">errorMap</keyword>
         <keyword ref="qcontactdetaildefinitionsaverequest.html#progress">progress</keyword>
         <keyword ref="qcontactdetaildefinitionsaverequest.html#setContactType">setContactType</keyword>
         <keyword ref="qcontactdetaildefinitionsaverequest.html#setDefinitions">setDefinitions</keyword>
         <section ref="qcontactdetaildefinitionsaverequest-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactdetailfielddefinition.html" title="QContactDetailFieldDefinition Class Reference">
+        <keyword ref="qcontactdetailfielddefinition.html">QContactDetailFieldDefinition</keyword>
+        <keyword ref="qcontactdetailfielddefinition.html#allowableValues">allowableValues</keyword>
+        <keyword ref="qcontactdetailfielddefinition.html#dataType">dataType</keyword>
+        <keyword ref="qcontactdetailfielddefinition.html#setAllowableValues">setAllowableValues</keyword>
+        <keyword ref="qcontactdetailfielddefinition.html#setDataType">setDataType</keyword>
+        <keyword ref="qcontactdetailfielddefinition.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qcontactdetailfielddefinition.html#operator-eq">operator=</keyword>
+        <keyword ref="qcontactdetailfielddefinition.html#operator-eq-eq">operator==</keyword>
+        <section ref="qcontactdetailfielddefinition-members.html" title="List of all members"/>
+        <section ref="qcontactdetailfielddefinition-obsolete.html" title="Obsolete members"/>
     </section>
     <section ref="qcontactdetailfilter.html" title="QContactDetailFilter Class Reference">
         <keyword ref="qcontactdetailfilter.html">QContactDetailFilter</keyword>
@@ -643,6 +736,7 @@
     <section ref="qcontactdisplaylabel.html" title="QContactDisplayLabel Class Reference">
         <keyword ref="qcontactdisplaylabel.html">QContactDisplayLabel</keyword>
         <keyword ref="qcontactdisplaylabel.html#label">label</keyword>
+        <keyword ref="qcontactdisplaylabel.html#match">match</keyword>
         <keyword ref="qcontactdisplaylabel.html#DefinitionName-var">DefinitionName</keyword>
         <keyword ref="qcontactdisplaylabel.html#FieldLabel-var">FieldLabel</keyword>
         <section ref="qcontactdisplaylabel-members.html" title="List of all members"/>
@@ -650,6 +744,7 @@
     <section ref="qcontactemailaddress.html" title="QContactEmailAddress Class Reference">
         <keyword ref="qcontactemailaddress.html">QContactEmailAddress</keyword>
         <keyword ref="qcontactemailaddress.html#emailAddress">emailAddress</keyword>
+        <keyword ref="qcontactemailaddress.html#match">match</keyword>
         <keyword ref="qcontactemailaddress.html#setEmailAddress">setEmailAddress</keyword>
         <keyword ref="qcontactemailaddress.html#DefinitionName-var">DefinitionName</keyword>
         <keyword ref="qcontactemailaddress.html#FieldEmailAddress-var">FieldEmailAddress</keyword>
@@ -694,6 +789,7 @@
         <keyword ref="qcontactfilter.html#MatchFlag-enum">MatchFlag</keyword>
         <keyword ref="qcontactfilter.html#MatchFlag-enum">MatchFlags</keyword>
         <keyword ref="qcontactfilter.html#MatchFlag-enum">QContactFilter::MatchStartsWith</keyword>
+        <keyword ref="qcontactfilter.html#MatchFlag-enum">QContactFilter::MatchKeypadCollation</keyword>
         <keyword ref="qcontactfilter.html#MatchFlag-enum">QContactFilter::MatchEndsWith</keyword>
         <keyword ref="qcontactfilter.html#MatchFlag-enum">QContactFilter::MatchFixedString</keyword>
         <keyword ref="qcontactfilter.html#MatchFlag-enum">QContactFilter::MatchContains</keyword>
@@ -717,8 +813,8 @@
         <keyword ref="qcontactgender.html#GenderUnspecified-var">GenderUnspecified</keyword>
         <section ref="qcontactgender-members.html" title="List of all members"/>
     </section>
-    <section ref="qcontactgeolocation.html" title="QContactGeolocation Class Reference">
-        <keyword ref="qcontactgeolocation.html">QContactGeolocation</keyword>
+    <section ref="qcontactgeolocation.html" title="QContactGeoLocation Class Reference">
+        <keyword ref="qcontactgeolocation.html">QContactGeoLocation</keyword>
         <keyword ref="qcontactgeolocation.html#accuracy">accuracy</keyword>
         <keyword ref="qcontactgeolocation.html#altitude">altitude</keyword>
         <keyword ref="qcontactgeolocation.html#altitudeAccuracy">altitudeAccuracy</keyword>
@@ -737,6 +833,20 @@
         <keyword ref="qcontactgeolocation.html#setTimestamp">setTimestamp</keyword>
         <keyword ref="qcontactgeolocation.html#speed">speed</keyword>
         <keyword ref="qcontactgeolocation.html#timestamp">timestamp</keyword>
+        <keyword ref="qcontactgeolocation.html#DefinitionName-var">DefinitionName</keyword>
+        <keyword ref="qcontactgeolocation.html#FieldAccuracy-var">FieldAccuracy</keyword>
+        <keyword ref="qcontactgeolocation.html#FieldAltitude-var">FieldAltitude</keyword>
+        <keyword ref="qcontactgeolocation.html#FieldAltitudeAccuracy-var">FieldAltitudeAccuracy</keyword>
+        <keyword ref="qcontactgeolocation.html#FieldHeading-var">FieldHeading</keyword>
+        <keyword ref="qcontactgeolocation.html#FieldLabel-var">FieldLabel</keyword>
+        <keyword ref="qcontactgeolocation.html#FieldLatitude-var">FieldLatitude</keyword>
+        <keyword ref="qcontactgeolocation.html#FieldLongitude-var">FieldLongitude</keyword>
+        <keyword ref="qcontactgeolocation.html#FieldSpeed-var">FieldSpeed</keyword>
+        <keyword ref="qcontactgeolocation.html#FieldTimestamp-var">FieldTimestamp</keyword>
+        <section ref="qcontactgeolocation-members.html" title="List of all members"/>
+    </section>
+    <section ref="qcontactgeolocation.html" title="QContactGeolocation Class Reference">
+        <keyword ref="qcontactgeolocation.html">QContactGeolocation</keyword>
         <keyword ref="qcontactgeolocation.html#DefinitionName-var">DefinitionName</keyword>
         <keyword ref="qcontactgeolocation.html#FieldAccuracy-var">FieldAccuracy</keyword>
         <keyword ref="qcontactgeolocation.html#FieldAltitude-var">FieldAltitude</keyword>
@@ -782,7 +892,7 @@
         <keyword ref="qcontactinvalidengine.html">QContactInvalidEngine</keyword>
         <keyword ref="qcontactinvalidengine.html#deref">deref</keyword>
         <keyword ref="qcontactinvalidengine.html#managerName">managerName</keyword>
-        <keyword ref="qcontactinvalidengine.html#synthesizeDisplayLabel">synthesizeDisplayLabel</keyword>
+        <keyword ref="qcontactinvalidengine.html#synthesizedDisplayLabel">synthesizedDisplayLabel</keyword>
         <section ref="qcontactinvalidengine-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactinvalidfilter.html" title="QContactInvalidFilter Class Reference">
@@ -836,6 +946,7 @@
         <keyword ref="qcontactmanager.html#availableManagers">availableManagers</keyword>
         <keyword ref="qcontactmanager.html#buildUri">buildUri</keyword>
         <keyword ref="qcontactmanager.html#contact">contact</keyword>
+        <keyword ref="qcontactmanager.html#contactIds">contactIds</keyword>
         <keyword ref="qcontactmanager.html#contacts">contacts</keyword>
         <keyword ref="qcontactmanager.html#contactsAdded">contactsAdded</keyword>
         <keyword ref="qcontactmanager.html#contactsChanged">contactsChanged</keyword>
@@ -844,13 +955,14 @@
         <keyword ref="qcontactmanager.html#detailDefinition">detailDefinition</keyword>
         <keyword ref="qcontactmanager.html#detailDefinitions">detailDefinitions</keyword>
         <keyword ref="qcontactmanager.html#error">error</keyword>
-        <keyword ref="qcontactmanager.html#filterSupported">filterSupported</keyword>
         <keyword ref="qcontactmanager.html#fromUri">fromUri</keyword>
         <keyword ref="qcontactmanager.html#hasFeature">hasFeature</keyword>
-        <keyword ref="qcontactmanager.html#implementationVersion">implementationVersion</keyword>
+        <keyword ref="qcontactmanager.html#isFilterSupported">isFilterSupported</keyword>
         <keyword ref="qcontactmanager.html#managerName">managerName</keyword>
         <keyword ref="qcontactmanager.html#managerParameters">managerParameters</keyword>
         <keyword ref="qcontactmanager.html#managerUri">managerUri</keyword>
+        <keyword ref="qcontactmanager.html#managerVersion">managerVersion</keyword>
+        <keyword ref="qcontactmanager.html#parseUri">parseUri</keyword>
         <keyword ref="qcontactmanager.html#relationships">relationships</keyword>
         <keyword ref="qcontactmanager.html#relationshipsAdded">relationshipsAdded</keyword>
         <keyword ref="qcontactmanager.html#relationshipsRemoved">relationshipsRemoved</keyword>
@@ -867,12 +979,10 @@
         <keyword ref="qcontactmanager.html#selfContactId">selfContactId</keyword>
         <keyword ref="qcontactmanager.html#selfContactIdChanged">selfContactIdChanged</keyword>
         <keyword ref="qcontactmanager.html#setSelfContactId">setSelfContactId</keyword>
-        <keyword ref="qcontactmanager.html#splitUri">splitUri</keyword>
         <keyword ref="qcontactmanager.html#supportedContactTypes">supportedContactTypes</keyword>
         <keyword ref="qcontactmanager.html#supportedDataTypes">supportedDataTypes</keyword>
         <keyword ref="qcontactmanager.html#supportedRelationshipTypes">supportedRelationshipTypes</keyword>
-        <keyword ref="qcontactmanager.html#synthesizeDisplayLabel">synthesizeDisplayLabel</keyword>
-        <keyword ref="qcontactmanager.html#version">version</keyword>
+        <keyword ref="qcontactmanager.html#synthesizedDisplayLabel">synthesizedDisplayLabel</keyword>
         <section ref="qcontactmanager-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactmanagerengine.html" title="QContactManagerEngine Class Reference">
@@ -882,6 +992,7 @@
         <keyword ref="qcontactmanagerengine.html#compareContact">compareContact</keyword>
         <keyword ref="qcontactmanagerengine.html#compareVariant">compareVariant</keyword>
         <keyword ref="qcontactmanagerengine.html#contact">contact</keyword>
+        <keyword ref="qcontactmanagerengine.html#contactIds">contactIds</keyword>
         <keyword ref="qcontactmanagerengine.html#contacts">contacts</keyword>
         <keyword ref="qcontactmanagerengine.html#contactsAdded">contactsAdded</keyword>
         <keyword ref="qcontactmanagerengine.html#contactsChanged">contactsChanged</keyword>
@@ -890,12 +1001,12 @@
         <keyword ref="qcontactmanagerengine.html#deref">deref</keyword>
         <keyword ref="qcontactmanagerengine.html#detailDefinition">detailDefinition</keyword>
         <keyword ref="qcontactmanagerengine.html#detailDefinitions">detailDefinitions</keyword>
-        <keyword ref="qcontactmanagerengine.html#filterSupported">filterSupported</keyword>
         <keyword ref="qcontactmanagerengine.html#hasFeature">hasFeature</keyword>
-        <keyword ref="qcontactmanagerengine.html#implementationVersion">implementationVersion</keyword>
+        <keyword ref="qcontactmanagerengine.html#isFilterSupported">isFilterSupported</keyword>
         <keyword ref="qcontactmanagerengine.html#managerName">managerName</keyword>
         <keyword ref="qcontactmanagerengine.html#managerParameters">managerParameters</keyword>
         <keyword ref="qcontactmanagerengine.html#managerUri">managerUri</keyword>
+        <keyword ref="qcontactmanagerengine.html#managerVersion">managerVersion</keyword>
         <keyword ref="qcontactmanagerengine.html#relationships">relationships</keyword>
         <keyword ref="qcontactmanagerengine.html#relationshipsAdded">relationshipsAdded</keyword>
         <keyword ref="qcontactmanagerengine.html#relationshipsRemoved">relationshipsRemoved</keyword>
@@ -915,36 +1026,42 @@
         <keyword ref="qcontactmanagerengine.html#selfContactIdChanged">selfContactIdChanged</keyword>
         <keyword ref="qcontactmanagerengine.html#setContactDisplayLabel">setContactDisplayLabel</keyword>
         <keyword ref="qcontactmanagerengine.html#setContactRelationships">setContactRelationships</keyword>
+        <keyword ref="qcontactmanagerengine.html#setDetailAccessConstraints">setDetailAccessConstraints</keyword>
         <keyword ref="qcontactmanagerengine.html#setSelfContactId">setSelfContactId</keyword>
         <keyword ref="qcontactmanagerengine.html#sortContacts">sortContacts</keyword>
         <keyword ref="qcontactmanagerengine.html#startRequest">startRequest</keyword>
         <keyword ref="qcontactmanagerengine.html#supportedContactTypes">supportedContactTypes</keyword>
         <keyword ref="qcontactmanagerengine.html#supportedDataTypes">supportedDataTypes</keyword>
         <keyword ref="qcontactmanagerengine.html#supportedRelationshipTypes">supportedRelationshipTypes</keyword>
-        <keyword ref="qcontactmanagerengine.html#synthesizeDisplayLabel">synthesizeDisplayLabel</keyword>
+        <keyword ref="qcontactmanagerengine.html#synthesizedDisplayLabel">synthesizedDisplayLabel</keyword>
         <keyword ref="qcontactmanagerengine.html#testFilter">testFilter</keyword>
-        <keyword ref="qcontactmanagerengine.html#updateRequest">updateRequest</keyword>
-        <keyword ref="qcontactmanagerengine.html#updateRequestStatus">updateRequestStatus</keyword>
+        <keyword ref="qcontactmanagerengine.html#updateContactFetchRequest">updateContactFetchRequest</keyword>
+        <keyword ref="qcontactmanagerengine.html#updateContactLocalIdFetchRequest">updateContactLocalIdFetchRequest</keyword>
+        <keyword ref="qcontactmanagerengine.html#updateContactRemoveRequest">updateContactRemoveRequest</keyword>
+        <keyword ref="qcontactmanagerengine.html#updateContactSaveRequest">updateContactSaveRequest</keyword>
+        <keyword ref="qcontactmanagerengine.html#updateDefinitionFetchRequest">updateDefinitionFetchRequest</keyword>
+        <keyword ref="qcontactmanagerengine.html#updateDefinitionRemoveRequest">updateDefinitionRemoveRequest</keyword>
+        <keyword ref="qcontactmanagerengine.html#updateDefinitionSaveRequest">updateDefinitionSaveRequest</keyword>
+        <keyword ref="qcontactmanagerengine.html#updateRelationshipFetchRequest">updateRelationshipFetchRequest</keyword>
+        <keyword ref="qcontactmanagerengine.html#updateRelationshipRemoveRequest">updateRelationshipRemoveRequest</keyword>
+        <keyword ref="qcontactmanagerengine.html#updateRelationshipSaveRequest">updateRelationshipSaveRequest</keyword>
+        <keyword ref="qcontactmanagerengine.html#updateRequestState">updateRequestState</keyword>
         <keyword ref="qcontactmanagerengine.html#validateActionFilter">validateActionFilter</keyword>
         <keyword ref="qcontactmanagerengine.html#validateContact">validateContact</keyword>
         <keyword ref="qcontactmanagerengine.html#validateDefinition">validateDefinition</keyword>
-        <keyword ref="qcontactmanagerengine.html#version">version</keyword>
         <keyword ref="qcontactmanagerengine.html#waitForRequestFinished">waitForRequestFinished</keyword>
-        <keyword ref="qcontactmanagerengine.html#waitForRequestProgress">waitForRequestProgress</keyword>
         <section ref="qcontactmanagerengine-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactmanagerenginefactory.html" title="QContactManagerEngineFactory Class Reference">
         <keyword ref="qcontactmanagerenginefactory.html">QContactManagerEngineFactory</keyword>
-        <keyword ref="qcontactmanagerenginefactory.html#engine">engine</keyword>
         <keyword ref="qcontactmanagerenginefactory.html#managerName">managerName</keyword>
-        <keyword ref="qcontactmanagerenginefactory.html#supportedImplementationVersions">supportedImplementationVersions</keyword>
-        <keyword ref="qcontactmanagerenginefactory.html#version">version</keyword>
         <section ref="qcontactmanagerenginefactory-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactmemoryengine.html" title="QContactMemoryEngine Class Reference">
         <keyword ref="qcontactmemoryengine.html">QContactMemoryEngine</keyword>
         <keyword ref="qcontactmemoryengine.html#cancelRequest">cancelRequest</keyword>
         <keyword ref="qcontactmemoryengine.html#contact">contact</keyword>
+        <keyword ref="qcontactmemoryengine.html#contactIds">contactIds</keyword>
         <keyword ref="qcontactmemoryengine.html#contacts">contacts</keyword>
         <keyword ref="qcontactmemoryengine.html#createMemoryEngine">createMemoryEngine</keyword>
         <keyword ref="qcontactmemoryengine.html#deref">deref</keyword>
@@ -970,6 +1087,7 @@
         <keyword ref="qcontactmemoryengine.html#setSelfContactId">setSelfContactId</keyword>
         <keyword ref="qcontactmemoryengine.html#startRequest">startRequest</keyword>
         <keyword ref="qcontactmemoryengine.html#supportedDataTypes">supportedDataTypes</keyword>
+        <keyword ref="qcontactmemoryengine.html#supportedRelationshipTypes">supportedRelationshipTypes</keyword>
         <keyword ref="qcontactmemoryengine.html#waitForRequestFinished">waitForRequestFinished</keyword>
         <keyword ref="qcontactmemoryengine.html#waitForRequestProgress">waitForRequestProgress</keyword>
         <section ref="qcontactmemoryengine-members.html" title="List of all members"/>
@@ -977,22 +1095,26 @@
     <section ref="qcontactname.html" title="QContactName Class Reference">
         <keyword ref="qcontactname.html">QContactName</keyword>
         <keyword ref="qcontactname.html#customLabel">customLabel</keyword>
-        <keyword ref="qcontactname.html#first">first</keyword>
-        <keyword ref="qcontactname.html#last">last</keyword>
-        <keyword ref="qcontactname.html#middle">middle</keyword>
+        <keyword ref="qcontactname.html#firstName">firstName</keyword>
+        <keyword ref="qcontactname.html#lastName">lastName</keyword>
+        <keyword ref="qcontactname.html#match">match</keyword>
+        <keyword ref="qcontactname.html#middleName">middleName</keyword>
         <keyword ref="qcontactname.html#prefix">prefix</keyword>
         <keyword ref="qcontactname.html#setCustomLabel">setCustomLabel</keyword>
-        <keyword ref="qcontactname.html#setFirst">setFirst</keyword>
-        <keyword ref="qcontactname.html#setLast">setLast</keyword>
-        <keyword ref="qcontactname.html#setMiddle">setMiddle</keyword>
+        <keyword ref="qcontactname.html#setFirstName">setFirstName</keyword>
+        <keyword ref="qcontactname.html#setLastName">setLastName</keyword>
+        <keyword ref="qcontactname.html#setMiddleName">setMiddleName</keyword>
         <keyword ref="qcontactname.html#setPrefix">setPrefix</keyword>
         <keyword ref="qcontactname.html#setSuffix">setSuffix</keyword>
         <keyword ref="qcontactname.html#suffix">suffix</keyword>
         <keyword ref="qcontactname.html#DefinitionName-var">DefinitionName</keyword>
         <keyword ref="qcontactname.html#FieldCustomLabel-var">FieldCustomLabel</keyword>
         <keyword ref="qcontactname.html#FieldFirst-var">FieldFirst</keyword>
+        <keyword ref="qcontactname.html#FieldFirstName-var">FieldFirstName</keyword>
         <keyword ref="qcontactname.html#FieldLast-var">FieldLast</keyword>
+        <keyword ref="qcontactname.html#FieldLastName-var">FieldLastName</keyword>
         <keyword ref="qcontactname.html#FieldMiddle-var">FieldMiddle</keyword>
+        <keyword ref="qcontactname.html#FieldMiddleName-var">FieldMiddleName</keyword>
         <keyword ref="qcontactname.html#FieldPrefix-var">FieldPrefix</keyword>
         <keyword ref="qcontactname.html#FieldSuffix-var">FieldSuffix</keyword>
         <section ref="qcontactname-members.html" title="List of all members"/>
@@ -1016,10 +1138,12 @@
     <section ref="qcontactonlineaccount.html" title="QContactOnlineAccount Class Reference">
         <keyword ref="qcontactonlineaccount.html">QContactOnlineAccount</keyword>
         <keyword ref="qcontactonlineaccount.html#accountUri">accountUri</keyword>
+        <keyword ref="qcontactonlineaccount.html#capabilities">capabilities</keyword>
         <keyword ref="qcontactonlineaccount.html#nickname">nickname</keyword>
         <keyword ref="qcontactonlineaccount.html#presence">presence</keyword>
         <keyword ref="qcontactonlineaccount.html#serviceProvider">serviceProvider</keyword>
         <keyword ref="qcontactonlineaccount.html#setAccountUri">setAccountUri</keyword>
+        <keyword ref="qcontactonlineaccount.html#setCapabilities">setCapabilities</keyword>
         <keyword ref="qcontactonlineaccount.html#setNickname">setNickname</keyword>
         <keyword ref="qcontactonlineaccount.html#setPresence">setPresence</keyword>
         <keyword ref="qcontactonlineaccount.html#setServiceProvider">setServiceProvider</keyword>
@@ -1029,6 +1153,7 @@
         <keyword ref="qcontactonlineaccount.html#subTypes">subTypes</keyword>
         <keyword ref="qcontactonlineaccount.html#DefinitionName-var">DefinitionName</keyword>
         <keyword ref="qcontactonlineaccount.html#FieldAccountUri-var">FieldAccountUri</keyword>
+        <keyword ref="qcontactonlineaccount.html#FieldCapabilities-var">FieldCapabilities</keyword>
         <keyword ref="qcontactonlineaccount.html#FieldNickname-var">FieldNickname</keyword>
         <keyword ref="qcontactonlineaccount.html#FieldPresence-var">FieldPresence</keyword>
         <keyword ref="qcontactonlineaccount.html#FieldServiceProvider-var">FieldServiceProvider</keyword>
@@ -1075,13 +1200,13 @@
     </section>
     <section ref="qcontactphonenumber.html" title="QContactPhoneNumber Class Reference">
         <keyword ref="qcontactphonenumber.html">QContactPhoneNumber</keyword>
+        <keyword ref="qcontactphonenumber.html#match">match</keyword>
         <keyword ref="qcontactphonenumber.html#number">number</keyword>
         <keyword ref="qcontactphonenumber.html#setNumber">setNumber</keyword>
         <keyword ref="qcontactphonenumber.html#setSubTypes">setSubTypes</keyword>
         <keyword ref="qcontactphonenumber.html#subTypes">subTypes</keyword>
         <keyword ref="qcontactphonenumber.html#DefinitionName-var">DefinitionName</keyword>
         <keyword ref="qcontactphonenumber.html#FieldNumber-var">FieldNumber</keyword>
-        <keyword ref="qcontactphonenumber.html#FieldSubType-var">FieldSubType</keyword>
         <keyword ref="qcontactphonenumber.html#SubTypeAssistant-var">SubTypeAssistant</keyword>
         <keyword ref="qcontactphonenumber.html#SubTypeBulletinBoardSystem-var">SubTypeBulletinBoardSystem</keyword>
         <keyword ref="qcontactphonenumber.html#SubTypeCar-var">SubTypeCar</keyword>
@@ -1112,20 +1237,19 @@
         <keyword ref="qcontactrelationship.html#HasManager-var">HasManager</keyword>
         <keyword ref="qcontactrelationship.html#HasMember-var">HasMember</keyword>
         <keyword ref="qcontactrelationship.html#HasSpouse-var">HasSpouse</keyword>
-        <keyword ref="qcontactrelationship.html#Is-var">Is</keyword>
+        <keyword ref="qcontactrelationship.html#IsSameAs-var">IsSameAs</keyword>
         <section ref="qcontactrelationship-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactrelationshipfetchrequest.html" title="QContactRelationshipFetchRequest Class Reference">
         <keyword ref="qcontactrelationshipfetchrequest.html">QContactRelationshipFetchRequest</keyword>
         <keyword ref="qcontactrelationshipfetchrequest.html#first">first</keyword>
-        <keyword ref="qcontactrelationshipfetchrequest.html#participant">participant</keyword>
-        <keyword ref="qcontactrelationshipfetchrequest.html#participantRole">participantRole</keyword>
         <keyword ref="qcontactrelationshipfetchrequest.html#progress">progress</keyword>
         <keyword ref="qcontactrelationshipfetchrequest.html#relationshipType">relationshipType</keyword>
         <keyword ref="qcontactrelationshipfetchrequest.html#relationships">relationships</keyword>
+        <keyword ref="qcontactrelationshipfetchrequest.html#second">second</keyword>
         <keyword ref="qcontactrelationshipfetchrequest.html#setFirst">setFirst</keyword>
-        <keyword ref="qcontactrelationshipfetchrequest.html#setParticipant">setParticipant</keyword>
         <keyword ref="qcontactrelationshipfetchrequest.html#setRelationshipType">setRelationshipType</keyword>
+        <keyword ref="qcontactrelationshipfetchrequest.html#setSecond">setSecond</keyword>
         <section ref="qcontactrelationshipfetchrequest-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactrelationshipfilter.html" title="QContactRelationshipFilter Class Reference">
@@ -1134,27 +1258,25 @@
         <keyword ref="qcontactrelationshipfilter.html#Role-enum">QContactRelationshipFilter::Second</keyword>
         <keyword ref="qcontactrelationshipfilter.html#Role-enum">QContactRelationshipFilter::Either</keyword>
         <keyword ref="qcontactrelationshipfilter.html#Role-enum">QContactRelationshipFilter::First</keyword>
-        <keyword ref="qcontactrelationshipfilter.html#otherParticipantId">otherParticipantId</keyword>
+        <keyword ref="qcontactrelationshipfilter.html#relatedContactId">relatedContactId</keyword>
+        <keyword ref="qcontactrelationshipfilter.html#relatedContactRole">relatedContactRole</keyword>
         <keyword ref="qcontactrelationshipfilter.html#relationshipType">relationshipType</keyword>
-        <keyword ref="qcontactrelationshipfilter.html#role">role</keyword>
-        <keyword ref="qcontactrelationshipfilter.html#setOtherParticipantId">setOtherParticipantId</keyword>
+        <keyword ref="qcontactrelationshipfilter.html#setRelatedContactId">setRelatedContactId</keyword>
+        <keyword ref="qcontactrelationshipfilter.html#setRelatedContactRole">setRelatedContactRole</keyword>
         <keyword ref="qcontactrelationshipfilter.html#setRelationshipType">setRelationshipType</keyword>
-        <keyword ref="qcontactrelationshipfilter.html#setRole">setRole</keyword>
         <section ref="qcontactrelationshipfilter-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactrelationshipremoverequest.html" title="QContactRelationshipRemoveRequest Class Reference">
         <keyword ref="qcontactrelationshipremoverequest.html">QContactRelationshipRemoveRequest</keyword>
-        <keyword ref="qcontactrelationshipremoverequest.html#first">first</keyword>
+        <keyword ref="qcontactrelationshipremoverequest.html#errorMap">errorMap</keyword>
         <keyword ref="qcontactrelationshipremoverequest.html#progress">progress</keyword>
-        <keyword ref="qcontactrelationshipremoverequest.html#relationshipType">relationshipType</keyword>
-        <keyword ref="qcontactrelationshipremoverequest.html#second">second</keyword>
-        <keyword ref="qcontactrelationshipremoverequest.html#setFirst">setFirst</keyword>
-        <keyword ref="qcontactrelationshipremoverequest.html#setRelationshipType">setRelationshipType</keyword>
-        <keyword ref="qcontactrelationshipremoverequest.html#setSecond">setSecond</keyword>
+        <keyword ref="qcontactrelationshipremoverequest.html#relationships">relationships</keyword>
+        <keyword ref="qcontactrelationshipremoverequest.html#setRelationships">setRelationships</keyword>
         <section ref="qcontactrelationshipremoverequest-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactrelationshipsaverequest.html" title="QContactRelationshipSaveRequest Class Reference">
         <keyword ref="qcontactrelationshipsaverequest.html">QContactRelationshipSaveRequest</keyword>
+        <keyword ref="qcontactrelationshipsaverequest.html#errorMap">errorMap</keyword>
         <keyword ref="qcontactrelationshipsaverequest.html#progress">progress</keyword>
         <keyword ref="qcontactrelationshipsaverequest.html#relationships">relationships</keyword>
         <keyword ref="qcontactrelationshipsaverequest.html#setRelationships">setRelationships</keyword>
@@ -1162,14 +1284,16 @@
     </section>
     <section ref="qcontactremoverequest.html" title="QContactRemoveRequest Class Reference">
         <keyword ref="qcontactremoverequest.html">QContactRemoveRequest</keyword>
-        <keyword ref="qcontactremoverequest.html#filter">filter</keyword>
+        <keyword ref="qcontactremoverequest.html#contactIds">contactIds</keyword>
+        <keyword ref="qcontactremoverequest.html#errorMap">errorMap</keyword>
         <keyword ref="qcontactremoverequest.html#progress">progress</keyword>
-        <keyword ref="qcontactremoverequest.html#setFilter">setFilter</keyword>
+        <keyword ref="qcontactremoverequest.html#setContactIds">setContactIds</keyword>
         <section ref="qcontactremoverequest-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactsaverequest.html" title="QContactSaveRequest Class Reference">
         <keyword ref="qcontactsaverequest.html">QContactSaveRequest</keyword>
         <keyword ref="qcontactsaverequest.html#contacts">contacts</keyword>
+        <keyword ref="qcontactsaverequest.html#errorMap">errorMap</keyword>
         <keyword ref="qcontactsaverequest.html#progress">progress</keyword>
         <keyword ref="qcontactsaverequest.html#setContacts">setContacts</keyword>
         <section ref="qcontactsaverequest-members.html" title="List of all members"/>
@@ -1363,15 +1487,28 @@
     </section>
     <section ref="qgraphicsvideoitem.html" title="QGraphicsVideoItem Class Reference">
         <keyword ref="qgraphicsvideoitem.html">QGraphicsVideoItem</keyword>
+        <keyword ref="qgraphicsvideoitem.html#FillMode-enum">FillMode</keyword>
+        <keyword ref="qgraphicsvideoitem.html#FillMode-enum">QGraphicsVideoItem::PreserveAspectFit</keyword>
+        <keyword ref="qgraphicsvideoitem.html#FillMode-enum">QGraphicsVideoItem::Stretch</keyword>
+        <keyword ref="qgraphicsvideoitem.html#FillMode-enum">QGraphicsVideoItem::PreserveAspectCrop</keyword>
+        <keyword ref="qgraphicsvideoitem.html#aspectRatioMode-prop">aspectRatioMode</keyword>
+        <keyword ref="qgraphicsvideoitem.html#aspectRatioMode-prop">setAspectRatioMode</keyword>
         <keyword ref="qgraphicsvideoitem.html#mediaObject-prop">mediaObject</keyword>
         <keyword ref="qgraphicsvideoitem.html#mediaObject-prop">setMediaObject</keyword>
+        <keyword ref="qgraphicsvideoitem.html#nativeSize-prop">nativeSize</keyword>
+        <keyword ref="qgraphicsvideoitem.html#offset-prop">offset</keyword>
+        <keyword ref="qgraphicsvideoitem.html#offset-prop">setOffset</keyword>
+        <keyword ref="qgraphicsvideoitem.html#size-prop">size</keyword>
+        <keyword ref="qgraphicsvideoitem.html#size-prop">setSize</keyword>
         <keyword ref="qgraphicsvideoitem.html#boundingRect">boundingRect</keyword>
+        <keyword ref="qgraphicsvideoitem.html#nativeSizeChanged">nativeSizeChanged</keyword>
         <keyword ref="qgraphicsvideoitem.html#paint">paint</keyword>
         <section ref="qgraphicsvideoitem-members.html" title="List of all members"/>
     </section>
     <section ref="qimagecapturecontrol.html" title="QImageCaptureControl Class Reference">
         <keyword ref="qimagecapturecontrol.html">QImageCaptureControl</keyword>
         <keyword ref="qimagecapturecontrol.html#capture">capture</keyword>
+        <keyword ref="qimagecapturecontrol.html#error">error</keyword>
         <keyword ref="qimagecapturecontrol.html#imageCaptured">imageCaptured</keyword>
         <keyword ref="qimagecapturecontrol.html#imageSaved">imageSaved</keyword>
         <keyword ref="qimagecapturecontrol.html#isReadyForCapture">isReadyForCapture</keyword>
@@ -1422,6 +1559,39 @@
         <keyword ref="qimageprocessingcontrol.html#whiteBalanceMode">whiteBalanceMode</keyword>
         <keyword ref="qimageprocessingcontrol.html#QImageProcessingControl_iid">QImageProcessingControl_iid</keyword>
         <section ref="qimageprocessingcontrol-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmagnetometer.html" title="QMagnetometer Class Reference">
+        <keyword ref="qmagnetometer.html">QMagnetometer</keyword>
+        <keyword ref="qmagnetometer.html#reading">reading</keyword>
+        <section ref="qmagnetometer-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmagnetometerfilter.html" title="QMagnetometerFilter Class Reference">
+        <keyword ref="qmagnetometerfilter.html">QMagnetometerFilter</keyword>
+        <keyword ref="qmagnetometerfilter.html#filter">filter</keyword>
+        <section ref="qmagnetometerfilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmagnetometerreading.html" title="QMagnetometerReading Class Reference">
+        <keyword ref="qmagnetometerreading.html">QMagnetometerReading</keyword>
+        <keyword ref="qmagnetometerreading.html#CalibrationLevel-enum">CalibrationLevel</keyword>
+        <keyword ref="qmagnetometerreading.html#CalibrationLevel-enum">QMagnetometerReading::Undefined</keyword>
+        <keyword ref="qmagnetometerreading.html#CalibrationLevel-enum">QMagnetometerReading::High</keyword>
+        <keyword ref="qmagnetometerreading.html#CalibrationLevel-enum">QMagnetometerReading::Middle</keyword>
+        <keyword ref="qmagnetometerreading.html#CalibrationLevel-enum">QMagnetometerReading::Low</keyword>
+        <keyword ref="qmagnetometerreading.html#calibrated_x-prop">calibrated_x</keyword>
+        <keyword ref="qmagnetometerreading.html#calibrated_y-prop">calibrated_y</keyword>
+        <keyword ref="qmagnetometerreading.html#calibrated_z-prop">calibrated_z</keyword>
+        <keyword ref="qmagnetometerreading.html#calibrationLevel-prop">calibrationLevel</keyword>
+        <keyword ref="qmagnetometerreading.html#x-prop">x</keyword>
+        <keyword ref="qmagnetometerreading.html#y-prop">y</keyword>
+        <keyword ref="qmagnetometerreading.html#z-prop">z</keyword>
+        <keyword ref="qmagnetometerreading.html#setCalibrated_x">setCalibrated_x</keyword>
+        <keyword ref="qmagnetometerreading.html#setCalibrated_y">setCalibrated_y</keyword>
+        <keyword ref="qmagnetometerreading.html#setCalibrated_z">setCalibrated_z</keyword>
+        <keyword ref="qmagnetometerreading.html#setCalibrationLevel">setCalibrationLevel</keyword>
+        <keyword ref="qmagnetometerreading.html#setX">setX</keyword>
+        <keyword ref="qmagnetometerreading.html#setY">setY</keyword>
+        <keyword ref="qmagnetometerreading.html#setZ">setZ</keyword>
+        <section ref="qmagnetometerreading-members.html" title="List of all members"/>
     </section>
     <section ref="qmediacontainercontrol.html" title="QMediaContainerControl Class Reference">
         <keyword ref="qmediacontainercontrol.html">QMediaContainerControl</keyword>
@@ -1527,6 +1697,8 @@
         <keyword ref="qmediaplayer.html#State-enum">QMediaPlayer::PausedState</keyword>
         <keyword ref="qmediaplayer.html#State-enum">QMediaPlayer::PlayingState</keyword>
         <keyword ref="qmediaplayer.html#State-enum">QMediaPlayer::StoppedState</keyword>
+        <keyword ref="qmediaplayer.html#audioAvailable-prop">audioAvailable</keyword>
+        <keyword ref="qmediaplayer.html#audioAvailable-prop">isAudioAvailable</keyword>
         <keyword ref="qmediaplayer.html#bufferStatus-prop">bufferStatus</keyword>
         <keyword ref="qmediaplayer.html#duration-prop">duration</keyword>
         <keyword ref="qmediaplayer.html#error-prop">error</keyword>
@@ -1548,6 +1720,7 @@
         <keyword ref="qmediaplayer.html#videoAvailable-prop">isVideoAvailable</keyword>
         <keyword ref="qmediaplayer.html#volume-prop">volume</keyword>
         <keyword ref="qmediaplayer.html#volume-prop">setVolume</keyword>
+        <keyword ref="qmediaplayer.html#audioAvailableChanged">audioAvailableChanged</keyword>
         <keyword ref="qmediaplayer.html#bufferStatusChanged">bufferStatusChanged</keyword>
         <keyword ref="qmediaplayer.html#durationChanged">durationChanged</keyword>
         <keyword ref="qmediaplayer.html#error">error</keyword>
@@ -1570,11 +1743,15 @@
     </section>
     <section ref="qmediaplayercontrol.html" title="QMediaPlayerControl Class Reference">
         <keyword ref="qmediaplayercontrol.html">QMediaPlayerControl</keyword>
+        <keyword ref="qmediaplayercontrol.html#audioAvailableChanged">audioAvailableChanged</keyword>
+        <keyword ref="qmediaplayercontrol.html#availablePlaybackRanges">availablePlaybackRanges</keyword>
+        <keyword ref="qmediaplayercontrol.html#availablePlaybackRangesChanged">availablePlaybackRangesChanged</keyword>
         <keyword ref="qmediaplayercontrol.html#bufferStatus">bufferStatus</keyword>
         <keyword ref="qmediaplayercontrol.html#bufferStatusChanged">bufferStatusChanged</keyword>
         <keyword ref="qmediaplayercontrol.html#duration">duration</keyword>
         <keyword ref="qmediaplayercontrol.html#durationChanged">durationChanged</keyword>
         <keyword ref="qmediaplayercontrol.html#error">error</keyword>
+        <keyword ref="qmediaplayercontrol.html#isAudioAvailable">isAudioAvailable</keyword>
         <keyword ref="qmediaplayercontrol.html#isMuted">isMuted</keyword>
         <keyword ref="qmediaplayercontrol.html#isSeekable">isSeekable</keyword>
         <keyword ref="qmediaplayercontrol.html#isVideoAvailable">isVideoAvailable</keyword>
@@ -1590,8 +1767,6 @@
         <keyword ref="qmediaplayercontrol.html#playbackRateChanged">playbackRateChanged</keyword>
         <keyword ref="qmediaplayercontrol.html#position">position</keyword>
         <keyword ref="qmediaplayercontrol.html#positionChanged">positionChanged</keyword>
-        <keyword ref="qmediaplayercontrol.html#seekRange">seekRange</keyword>
-        <keyword ref="qmediaplayercontrol.html#seekRangeChanged">seekRangeChanged</keyword>
         <keyword ref="qmediaplayercontrol.html#seekableChanged">seekableChanged</keyword>
         <keyword ref="qmediaplayercontrol.html#setMedia">setMedia</keyword>
         <keyword ref="qmediaplayercontrol.html#setMuted">setMuted</keyword>
@@ -1801,18 +1976,18 @@
         <keyword ref="qmediaresource.html#audioCodec">audioCodec</keyword>
         <keyword ref="qmediaresource.html#channelCount">channelCount</keyword>
         <keyword ref="qmediaresource.html#dataSize">dataSize</keyword>
-        <keyword ref="qmediaresource.html#frequency">frequency</keyword>
         <keyword ref="qmediaresource.html#isNull">isNull</keyword>
         <keyword ref="qmediaresource.html#language">language</keyword>
         <keyword ref="qmediaresource.html#mimeType">mimeType</keyword>
         <keyword ref="qmediaresource.html#resolution">resolution</keyword>
+        <keyword ref="qmediaresource.html#sampleRate">sampleRate</keyword>
         <keyword ref="qmediaresource.html#setAudioBitRate">setAudioBitRate</keyword>
         <keyword ref="qmediaresource.html#setAudioCodec">setAudioCodec</keyword>
         <keyword ref="qmediaresource.html#setChannelCount">setChannelCount</keyword>
         <keyword ref="qmediaresource.html#setDataSize">setDataSize</keyword>
-        <keyword ref="qmediaresource.html#setFrequency">setFrequency</keyword>
         <keyword ref="qmediaresource.html#setLanguage">setLanguage</keyword>
         <keyword ref="qmediaresource.html#setResolution">setResolution</keyword>
+        <keyword ref="qmediaresource.html#setSampleRate">setSampleRate</keyword>
         <keyword ref="qmediaresource.html#setVideoBitRate">setVideoBitRate</keyword>
         <keyword ref="qmediaresource.html#setVideoCodec">setVideoCodec</keyword>
         <keyword ref="qmediaresource.html#url">url</keyword>
@@ -1902,6 +2077,34 @@
         <keyword ref="qmediastreamscontrol.html#streamsChanged">streamsChanged</keyword>
         <keyword ref="qmediastreamscontrol.html#QMediaStreamsControl_iid">QMediaStreamsControl_iid</keyword>
         <section ref="qmediastreamscontrol-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmediatimeinterval.html" title="QMediaTimeInterval Class Reference">
+        <keyword ref="qmediatimeinterval.html">QMediaTimeInterval</keyword>
+        <keyword ref="qmediatimeinterval.html#contains">contains</keyword>
+        <keyword ref="qmediatimeinterval.html#end">end</keyword>
+        <keyword ref="qmediatimeinterval.html#isNormal">isNormal</keyword>
+        <keyword ref="qmediatimeinterval.html#normalized">normalized</keyword>
+        <keyword ref="qmediatimeinterval.html#start">start</keyword>
+        <keyword ref="qmediatimeinterval.html#translated">translated</keyword>
+        <section ref="qmediatimeinterval-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmediatimerange.html" title="QMediaTimeRange Class Reference">
+        <keyword ref="qmediatimerange.html">QMediaTimeRange</keyword>
+        <keyword ref="qmediatimerange.html#addInterval">addInterval</keyword>
+        <keyword ref="qmediatimerange.html#addTimeRange">addTimeRange</keyword>
+        <keyword ref="qmediatimerange.html#clear">clear</keyword>
+        <keyword ref="qmediatimerange.html#contains">contains</keyword>
+        <keyword ref="qmediatimerange.html#earliestTime">earliestTime</keyword>
+        <keyword ref="qmediatimerange.html#intervals">intervals</keyword>
+        <keyword ref="qmediatimerange.html#isContinuous">isContinuous</keyword>
+        <keyword ref="qmediatimerange.html#isEmpty">isEmpty</keyword>
+        <keyword ref="qmediatimerange.html#latestTime">latestTime</keyword>
+        <keyword ref="qmediatimerange.html#removeInterval">removeInterval</keyword>
+        <keyword ref="qmediatimerange.html#removeTimeRange">removeTimeRange</keyword>
+        <keyword ref="qmediatimerange.html#operator-2b-eq">operator+=</keyword>
+        <keyword ref="qmediatimerange.html#operator--eq">operator-=</keyword>
+        <keyword ref="qmediatimerange.html#operator-eq">operator=</keyword>
+        <section ref="qmediatimerange-members.html" title="List of all members"/>
     </section>
     <section ref="qmessage.html" title="QMessage Class Reference">
         <keyword ref="qmessage.html">QMessage</keyword>
@@ -2356,6 +2559,50 @@
         <keyword ref="qnmeapositioninfosource.html#updateMode">updateMode</keyword>
         <section ref="qnmeapositioninfosource-members.html" title="List of all members"/>
     </section>
+    <section ref="qorientationfilter.html" title="QOrientationFilter Class Reference">
+        <keyword ref="qorientationfilter.html">QOrientationFilter</keyword>
+        <keyword ref="qorientationfilter.html#filter">filter</keyword>
+        <section ref="qorientationfilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qorientationreading.html" title="QOrientationReading Class Reference">
+        <keyword ref="qorientationreading.html">QOrientationReading</keyword>
+        <keyword ref="qorientationreading.html#Orientation-enum">Orientation</keyword>
+        <keyword ref="qorientationreading.html#Orientation-enum">QOrientationReading::Undefined</keyword>
+        <keyword ref="qorientationreading.html#Orientation-enum">QOrientationReading::BottomDown</keyword>
+        <keyword ref="qorientationreading.html#Orientation-enum">QOrientationReading::FaceDown</keyword>
+        <keyword ref="qorientationreading.html#Orientation-enum">QOrientationReading::FaceUp</keyword>
+        <keyword ref="qorientationreading.html#Orientation-enum">QOrientationReading::RightUp</keyword>
+        <keyword ref="qorientationreading.html#Orientation-enum">QOrientationReading::BottomUp</keyword>
+        <keyword ref="qorientationreading.html#Orientation-enum">QOrientationReading::LeftUp</keyword>
+        <keyword ref="qorientationreading.html#orientation-prop">orientation</keyword>
+        <keyword ref="qorientationreading.html#setOrientation">setOrientation</keyword>
+        <section ref="qorientationreading-members.html" title="List of all members"/>
+    </section>
+    <section ref="qorientationsensor.html" title="QOrientationSensor Class Reference">
+        <keyword ref="qorientationsensor.html">QOrientationSensor</keyword>
+        <keyword ref="qorientationsensor.html#reading">reading</keyword>
+        <section ref="qorientationsensor-members.html" title="List of all members"/>
+    </section>
+    <section ref="qproximityfilter.html" title="QProximityFilter Class Reference">
+        <keyword ref="qproximityfilter.html">QProximityFilter</keyword>
+        <keyword ref="qproximityfilter.html#filter">filter</keyword>
+        <section ref="qproximityfilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qproximityreading.html" title="QProximityReading Class Reference">
+        <keyword ref="qproximityreading.html">QProximityReading</keyword>
+        <keyword ref="qproximityreading.html#Proximity-enum">Proximity</keyword>
+        <keyword ref="qproximityreading.html#Proximity-enum">QProximityReading::Undefined</keyword>
+        <keyword ref="qproximityreading.html#Proximity-enum">QProximityReading::NotClose</keyword>
+        <keyword ref="qproximityreading.html#Proximity-enum">QProximityReading::Close</keyword>
+        <keyword ref="qproximityreading.html#proximity-prop">proximity</keyword>
+        <keyword ref="qproximityreading.html#setProximity">setProximity</keyword>
+        <section ref="qproximityreading-members.html" title="List of all members"/>
+    </section>
+    <section ref="qproximitysensor.html" title="QProximitySensor Class Reference">
+        <keyword ref="qproximitysensor.html">QProximitySensor</keyword>
+        <keyword ref="qproximitysensor.html#reading">reading</keyword>
+        <section ref="qproximitysensor-members.html" title="List of all members"/>
+    </section>
     <section ref="qradiotuner.html" title="QRadioTuner Class Reference">
         <keyword ref="qradiotuner.html">QRadioTuner</keyword>
         <keyword ref="qradiotuner.html#Band-enum">Band</keyword>
@@ -2452,6 +2699,116 @@
         <keyword ref="qradiotunercontrol.html#volumeChanged">volumeChanged</keyword>
         <keyword ref="qradiotunercontrol.html#QRadioTunerControl_iid">QRadioTunerControl_iid</keyword>
         <section ref="qradiotunercontrol-members.html" title="List of all members"/>
+    </section>
+    <section ref="qrotationfilter.html" title="QRotationFilter Class Reference">
+        <keyword ref="qrotationfilter.html">QRotationFilter</keyword>
+        <keyword ref="qrotationfilter.html#filter">filter</keyword>
+        <section ref="qrotationfilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qrotationreading.html" title="QRotationReading Class Reference">
+        <keyword ref="qrotationreading.html">QRotationReading</keyword>
+        <keyword ref="qrotationreading.html#x-prop">x</keyword>
+        <keyword ref="qrotationreading.html#y-prop">y</keyword>
+        <keyword ref="qrotationreading.html#z-prop">z</keyword>
+        <keyword ref="qrotationreading.html#setX">setX</keyword>
+        <keyword ref="qrotationreading.html#setY">setY</keyword>
+        <keyword ref="qrotationreading.html#setZ">setZ</keyword>
+        <section ref="qrotationreading-members.html" title="List of all members"/>
+    </section>
+    <section ref="qrotationsensor.html" title="QRotationSensor Class Reference">
+        <keyword ref="qrotationsensor.html">QRotationSensor</keyword>
+        <keyword ref="qrotationsensor.html#reading">reading</keyword>
+        <section ref="qrotationsensor-members.html" title="List of all members"/>
+    </section>
+    <section ref="qsensor.html" title="QSensor Class Reference">
+        <keyword ref="qsensor.html">QSensor</keyword>
+        <keyword ref="qsensor.html#UpdatePolicy-enum">UpdatePolicy</keyword>
+        <keyword ref="qsensor.html#UpdatePolicy-enum">UpdatePolicies</keyword>
+        <keyword ref="qsensor.html#UpdatePolicy-enum">QSensor::Undefined</keyword>
+        <keyword ref="qsensor.html#UpdatePolicy-enum">QSensor::OccasionalUpdates</keyword>
+        <keyword ref="qsensor.html#UpdatePolicy-enum">QSensor::OnChangeUpdates</keyword>
+        <keyword ref="qsensor.html#UpdatePolicy-enum">QSensor::TimedUpdates</keyword>
+        <keyword ref="qsensor.html#UpdatePolicy-enum">QSensor::FrequentUpdates</keyword>
+        <keyword ref="qsensor.html#UpdatePolicy-enum">QSensor::InfrequentUpdates</keyword>
+        <keyword ref="qsensor.html#UpdatePolicy-enum">QSensor::PolledUpdates</keyword>
+        <keyword ref="qsensor.html#isAvailable-prop">isAvailable</keyword>
+        <keyword ref="qsensor.html#reading-prop">reading</keyword>
+        <keyword ref="qsensor.html#running-prop">running</keyword>
+        <keyword ref="qsensor.html#running-prop">isActive</keyword>
+        <keyword ref="qsensor.html#running-prop">setActive</keyword>
+        <keyword ref="qsensor.html#sensorid-prop">sensorid</keyword>
+        <keyword ref="qsensor.html#sensorid-prop">identifier</keyword>
+        <keyword ref="qsensor.html#sensorid-prop">setIdentifier</keyword>
+        <keyword ref="qsensor.html#supportedUpdatePolicies-prop">supportedUpdatePolicies</keyword>
+        <keyword ref="qsensor.html#type-prop">type</keyword>
+        <keyword ref="qsensor.html#type-prop">setType</keyword>
+        <keyword ref="qsensor.html#updateInterval-prop">updateInterval</keyword>
+        <keyword ref="qsensor.html#updateInterval-prop">setUpdateInterval</keyword>
+        <keyword ref="qsensor.html#updatePolicy-prop">updatePolicy</keyword>
+        <keyword ref="qsensor.html#updatePolicy-prop">setUpdatePolicy</keyword>
+        <keyword ref="qsensor.html#addFilter">addFilter</keyword>
+        <keyword ref="qsensor.html#connect">connect</keyword>
+        <keyword ref="qsensor.html#isSignalEnabled">isSignalEnabled</keyword>
+        <keyword ref="qsensor.html#poll">poll</keyword>
+        <keyword ref="qsensor.html#readingChanged">readingChanged</keyword>
+        <keyword ref="qsensor.html#removeFilter">removeFilter</keyword>
+        <keyword ref="qsensor.html#setSignalEnabled">setSignalEnabled</keyword>
+        <keyword ref="qsensor.html#start">start</keyword>
+        <keyword ref="qsensor.html#stop">stop</keyword>
+        <keyword ref="qsensor.html#qtimestamp-typedef">qtimestamp</keyword>
+        <section ref="qsensor-members.html" title="List of all members"/>
+    </section>
+    <section ref="qsensorbackend.html" title="QSensorBackend Class Reference">
+        <keyword ref="qsensorbackend.html">QSensorBackend</keyword>
+        <keyword ref="qsensorbackend.html#newReadingAvailable">newReadingAvailable</keyword>
+        <keyword ref="qsensorbackend.html#poll">poll</keyword>
+        <keyword ref="qsensorbackend.html#reading">reading</keyword>
+        <keyword ref="qsensorbackend.html#setReading">setReading</keyword>
+        <keyword ref="qsensorbackend.html#setSupportedUpdatePolicies">setSupportedUpdatePolicies</keyword>
+        <keyword ref="qsensorbackend.html#start">start</keyword>
+        <keyword ref="qsensorbackend.html#stop">stop</keyword>
+        <section ref="qsensorbackend-members.html" title="List of all members"/>
+    </section>
+    <section ref="qsensorbackendfactory.html" title="QSensorBackendFactory Class Reference">
+        <keyword ref="qsensorbackendfactory.html">QSensorBackendFactory</keyword>
+        <keyword ref="qsensorbackendfactory.html#createBackend">createBackend</keyword>
+        <section ref="qsensorbackendfactory-members.html" title="List of all members"/>
+    </section>
+    <section ref="qsensorfactory.html" title="QSensorFactory Class Reference">
+        <keyword ref="qsensorfactory.html">QSensorFactory</keyword>
+        <keyword ref="qsensorfactory.html#createSensor">createSensor</keyword>
+        <keyword ref="qsensorfactory.html#defaultSensorForType">defaultSensorForType</keyword>
+        <keyword ref="qsensorfactory.html#instance">instance</keyword>
+        <keyword ref="qsensorfactory.html#sensorList">sensorList</keyword>
+        <keyword ref="qsensorfactory.html#sensorTypes">sensorTypes</keyword>
+        <keyword ref="qsensorfactory.html#sensorsForType">sensorsForType</keyword>
+        <section ref="qsensorfactory-members.html" title="List of all members"/>
+    </section>
+    <section ref="qsensorfilter.html" title="QSensorFilter Class Reference">
+        <keyword ref="qsensorfilter.html">QSensorFilter</keyword>
+        <keyword ref="qsensorfilter.html#filter">filter</keyword>
+        <section ref="qsensorfilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qsensormanager.html" title="QSensorManager Class Reference">
+        <keyword ref="qsensormanager.html">QSensorManager</keyword>
+        <keyword ref="qsensormanager.html#createBackend">createBackend</keyword>
+        <keyword ref="qsensormanager.html#defaultSensorForType">defaultSensorForType</keyword>
+        <keyword ref="qsensormanager.html#registerBackend">registerBackend</keyword>
+        <keyword ref="qsensormanager.html#REGISTER_STATIC_PLUGIN">REGISTER_STATIC_PLUGIN</keyword>
+        <section ref="qsensormanager-members.html" title="List of all members"/>
+    </section>
+    <section ref="qsensorplugininterface.html" title="QSensorPluginInterface Class Reference">
+        <keyword ref="qsensorplugininterface.html">QSensorPluginInterface</keyword>
+        <keyword ref="qsensorplugininterface.html#registerSensors">registerSensors</keyword>
+        <section ref="qsensorplugininterface-members.html" title="List of all members"/>
+    </section>
+    <section ref="qsensorreading.html" title="QSensorReading Class Reference">
+        <keyword ref="qsensorreading.html">QSensorReading</keyword>
+        <keyword ref="qsensorreading.html#timestamp-prop">timestamp</keyword>
+        <keyword ref="qsensorreading.html#setTimestamp">setTimestamp</keyword>
+        <keyword ref="qsensorreading.html#DECLARE_READING">DECLARE_READING</keyword>
+        <keyword ref="qsensorreading.html#IMPLEMENT_READING">IMPLEMENT_READING</keyword>
+        <section ref="qsensorreading-members.html" title="List of all members"/>
     </section>
     <section ref="qservice.html" title="QService Namespace Reference">
         <keyword ref="qservice.html">QService</keyword>
@@ -2552,6 +2909,31 @@
         <keyword ref="qserviceplugininterface.html#installService">installService</keyword>
         <keyword ref="qserviceplugininterface.html#uninstallService">uninstallService</keyword>
         <section ref="qserviceplugininterface-members.html" title="List of all members"/>
+    </section>
+    <section ref="qstillimagecapture.html" title="QStillImageCapture Class Reference">
+        <keyword ref="qstillimagecapture.html">QStillImageCapture</keyword>
+        <keyword ref="qstillimagecapture.html#Error-enum">Error</keyword>
+        <keyword ref="qstillimagecapture.html#Error-enum">QStillImageCapture::NoError</keyword>
+        <keyword ref="qstillimagecapture.html#Error-enum">QStillImageCapture::FormatError</keyword>
+        <keyword ref="qstillimagecapture.html#Error-enum">QStillImageCapture::NotSupportedFeatureError</keyword>
+        <keyword ref="qstillimagecapture.html#Error-enum">QStillImageCapture::NotReadyError</keyword>
+        <keyword ref="qstillimagecapture.html#Error-enum">QStillImageCapture::ResourceError</keyword>
+        <keyword ref="qstillimagecapture.html#readyForCapture-prop">readyForCapture</keyword>
+        <keyword ref="qstillimagecapture.html#readyForCapture-prop">isReadyForCapture</keyword>
+        <keyword ref="qstillimagecapture.html#availabilityError">availabilityError</keyword>
+        <keyword ref="qstillimagecapture.html#capture">capture</keyword>
+        <keyword ref="qstillimagecapture.html#encodingSettings">encodingSettings</keyword>
+        <keyword ref="qstillimagecapture.html#error">error</keyword>
+        <keyword ref="qstillimagecapture.html#errorString">errorString</keyword>
+        <keyword ref="qstillimagecapture.html#imageCaptured">imageCaptured</keyword>
+        <keyword ref="qstillimagecapture.html#imageCodecDescription">imageCodecDescription</keyword>
+        <keyword ref="qstillimagecapture.html#imageSaved">imageSaved</keyword>
+        <keyword ref="qstillimagecapture.html#isAvailable">isAvailable</keyword>
+        <keyword ref="qstillimagecapture.html#readyForCaptureChanged">readyForCaptureChanged</keyword>
+        <keyword ref="qstillimagecapture.html#setEncodingSettings">setEncodingSettings</keyword>
+        <keyword ref="qstillimagecapture.html#supportedImageCodecs">supportedImageCodecs</keyword>
+        <keyword ref="qstillimagecapture.html#supportedResolutions">supportedResolutions</keyword>
+        <section ref="qstillimagecapture-members.html" title="List of all members"/>
     </section>
     <section ref="qsystemdeviceinfo.html" title="QSystemDeviceInfo Class Reference">
         <keyword ref="qsystemdeviceinfo.html">QSystemDeviceInfo</keyword>
@@ -2702,6 +3084,36 @@
         <keyword ref="qsystemstorageinfo.html#typeForDrive">typeForDrive</keyword>
         <section ref="qsystemstorageinfo-members.html" title="List of all members"/>
     </section>
+    <section ref="qtapfilter.html" title="QTapFilter Class Reference">
+        <keyword ref="qtapfilter.html">QTapFilter</keyword>
+        <keyword ref="qtapfilter.html#filter">filter</keyword>
+        <section ref="qtapfilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qtapreading.html" title="QTapReading Class Reference">
+        <keyword ref="qtapreading.html">QTapReading</keyword>
+        <keyword ref="qtapreading.html#TapDirection-enum">TapDirection</keyword>
+        <keyword ref="qtapreading.html#TapDirection-enum">QTapReading::Undefined</keyword>
+        <keyword ref="qtapreading.html#TapDirection-enum">QTapReading::X</keyword>
+        <keyword ref="qtapreading.html#TapDirection-enum">QTapReading::Y</keyword>
+        <keyword ref="qtapreading.html#TapDirection-enum">QTapReading::Z</keyword>
+        <keyword ref="qtapreading.html#TapDirection-enum">QTapReading::X_Neg</keyword>
+        <keyword ref="qtapreading.html#TapDirection-enum">QTapReading::Y_Neg</keyword>
+        <keyword ref="qtapreading.html#TapDirection-enum">QTapReading::Z_Neg</keyword>
+        <keyword ref="qtapreading.html#TapDirection-enum">QTapReading::X_Pos</keyword>
+        <keyword ref="qtapreading.html#TapDirection-enum">QTapReading::Y_Pos</keyword>
+        <keyword ref="qtapreading.html#TapDirection-enum">QTapReading::Z_Pos</keyword>
+        <keyword ref="qtapreading.html#doubleTap-prop">doubleTap</keyword>
+        <keyword ref="qtapreading.html#doubleTap-prop">isDoubleTap</keyword>
+        <keyword ref="qtapreading.html#tapDirection-prop">tapDirection</keyword>
+        <keyword ref="qtapreading.html#setDoubleTap">setDoubleTap</keyword>
+        <keyword ref="qtapreading.html#setTapDirection">setTapDirection</keyword>
+        <section ref="qtapreading-members.html" title="List of all members"/>
+    </section>
+    <section ref="qtapsensor.html" title="QTapSensor Class Reference">
+        <keyword ref="qtapsensor.html">QTapSensor</keyword>
+        <keyword ref="qtapsensor.html#reading">reading</keyword>
+        <section ref="qtapsensor-members.html" title="List of all members"/>
+    </section>
     <section ref="qtmedia.html" title="QtMedia Namespace Reference">
         <keyword ref="qtmedia.html">QtMedia</keyword>
         <keyword ref="qtmedia.html#AvailabilityError-enum">AvailabilityError</keyword>
@@ -2750,9 +3162,9 @@
         <keyword ref="qtmedia.html#MetaData-enum">QtMedia::Saturation</keyword>
         <keyword ref="qtmedia.html#MetaData-enum">QtMedia::Duration</keyword>
         <keyword ref="qtmedia.html#MetaData-enum">QtMedia::Publisher</keyword>
-        <keyword ref="qtmedia.html#MetaData-enum">QtMedia::Frequency</keyword>
         <keyword ref="qtmedia.html#MetaData-enum">QtMedia::MediaType</keyword>
         <keyword ref="qtmedia.html#MetaData-enum">QtMedia::VideoFrameRate</keyword>
+        <keyword ref="qtmedia.html#MetaData-enum">QtMedia::SampleRate</keyword>
         <keyword ref="qtmedia.html#MetaData-enum">QtMedia::Sharpness</keyword>
         <keyword ref="qtmedia.html#MetaData-enum">QtMedia::SubTitle</keyword>
         <keyword ref="qtmedia.html#MetaData-enum">QtMedia::ExposureMode</keyword>
@@ -2841,67 +3253,115 @@
     </section>
     <section ref="qversitcontactexporter.html" title="QVersitContactExporter Class Reference">
         <keyword ref="qversitcontactexporter.html">QVersitContactExporter</keyword>
-        <keyword ref="qversitcontactexporter.html#exportContact">exportContact</keyword>
-        <keyword ref="qversitcontactexporter.html#scale">scale</keyword>
-        <keyword ref="qversitcontactexporter.html#unknownContactDetails">unknownContactDetails</keyword>
+        <keyword ref="qversitcontactexporter.html#detailHandler">detailHandler</keyword>
+        <keyword ref="qversitcontactexporter.html#exportContacts">exportContacts</keyword>
+        <keyword ref="qversitcontactexporter.html#resourceHandler">resourceHandler</keyword>
+        <keyword ref="qversitcontactexporter.html#setDetailHandler">setDetailHandler</keyword>
+        <keyword ref="qversitcontactexporter.html#setResourceHandler">setResourceHandler</keyword>
         <section ref="qversitcontactexporter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qversitcontactexporterdetailhandler.html" title="QVersitContactExporterDetailHandler Class Reference">
+        <keyword ref="qversitcontactexporterdetailhandler.html">QVersitContactExporterDetailHandler</keyword>
+        <keyword ref="qversitcontactexporterdetailhandler.html#postProcessDetail">postProcessDetail</keyword>
+        <keyword ref="qversitcontactexporterdetailhandler.html#preProcessDetail">preProcessDetail</keyword>
+        <section ref="qversitcontactexporterdetailhandler-members.html" title="List of all members"/>
     </section>
     <section ref="qversitcontactimporter.html" title="QVersitContactImporter Class Reference">
         <keyword ref="qversitcontactimporter.html">QVersitContactImporter</keyword>
-        <keyword ref="qversitcontactimporter.html#audioClipPath">audioClipPath</keyword>
-        <keyword ref="qversitcontactimporter.html#imagePath">imagePath</keyword>
-        <keyword ref="qversitcontactimporter.html#importContact">importContact</keyword>
-        <keyword ref="qversitcontactimporter.html#setAudioClipPath">setAudioClipPath</keyword>
-        <keyword ref="qversitcontactimporter.html#setImagePath">setImagePath</keyword>
-        <keyword ref="qversitcontactimporter.html#unknownVersitProperties">unknownVersitProperties</keyword>
+        <keyword ref="qversitcontactimporter.html#importContacts">importContacts</keyword>
+        <keyword ref="qversitcontactimporter.html#propertyHandler">propertyHandler</keyword>
+        <keyword ref="qversitcontactimporter.html#resourceHandler">resourceHandler</keyword>
+        <keyword ref="qversitcontactimporter.html#setPropertyHandler">setPropertyHandler</keyword>
+        <keyword ref="qversitcontactimporter.html#setResourceHandler">setResourceHandler</keyword>
         <section ref="qversitcontactimporter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qversitcontactimporterpropertyhandler.html" title="QVersitContactImporterPropertyHandler Class Reference">
+        <keyword ref="qversitcontactimporterpropertyhandler.html">QVersitContactImporterPropertyHandler</keyword>
+        <keyword ref="qversitcontactimporterpropertyhandler.html#postProcessProperty">postProcessProperty</keyword>
+        <keyword ref="qversitcontactimporterpropertyhandler.html#preProcessProperty">preProcessProperty</keyword>
+        <section ref="qversitcontactimporterpropertyhandler-members.html" title="List of all members"/>
     </section>
     <section ref="qversitdocument.html" title="QVersitDocument Class Reference">
         <keyword ref="qversitdocument.html">QVersitDocument</keyword>
         <keyword ref="qversitdocument.html#addProperty">addProperty</keyword>
+        <keyword ref="qversitdocument.html#clear">clear</keyword>
+        <keyword ref="qversitdocument.html#isEmpty">isEmpty</keyword>
         <keyword ref="qversitdocument.html#properties">properties</keyword>
         <keyword ref="qversitdocument.html#removeProperties">removeProperties</keyword>
-        <keyword ref="qversitdocument.html#setVersitType">setVersitType</keyword>
-        <keyword ref="qversitdocument.html#versitType">versitType</keyword>
+        <keyword ref="qversitdocument.html#removeProperty">removeProperty</keyword>
+        <keyword ref="qversitdocument.html#setType">setType</keyword>
+        <keyword ref="qversitdocument.html#type">type</keyword>
+        <keyword ref="qversitdocument.html#operator-not-eq">operator!=</keyword>
         <keyword ref="qversitdocument.html#operator-eq">operator=</keyword>
+        <keyword ref="qversitdocument.html#operator-eq-eq">operator==</keyword>
         <section ref="qversitdocument-members.html" title="List of all members"/>
+    </section>
+    <section ref="qversitdocumentwriter.html" title="QVersitDocumentWriter Class Reference">
+        <keyword ref="qversitdocumentwriter.html">QVersitDocumentWriter</keyword>
+        <keyword ref="qversitdocumentwriter.html#encodeGroupsAndName">encodeGroupsAndName</keyword>
+        <keyword ref="qversitdocumentwriter.html#encodeParameters">encodeParameters</keyword>
+        <keyword ref="qversitdocumentwriter.html#encodeVersitDocument">encodeVersitDocument</keyword>
+        <keyword ref="qversitdocumentwriter.html#encodeVersitProperty">encodeVersitProperty</keyword>
+        <section ref="qversitdocumentwriter-members.html" title="List of all members"/>
     </section>
     <section ref="qversitproperty.html" title="QVersitProperty Class Reference">
         <keyword ref="qversitproperty.html">QVersitProperty</keyword>
-        <keyword ref="qversitproperty.html#addParameter">addParameter</keyword>
-        <keyword ref="qversitproperty.html#embeddedDocument">embeddedDocument</keyword>
+        <keyword ref="qversitproperty.html#clear">clear</keyword>
         <keyword ref="qversitproperty.html#groups">groups</keyword>
+        <keyword ref="qversitproperty.html#insertParameter">insertParameter</keyword>
+        <keyword ref="qversitproperty.html#isEmpty">isEmpty</keyword>
         <keyword ref="qversitproperty.html#name">name</keyword>
         <keyword ref="qversitproperty.html#parameters">parameters</keyword>
         <keyword ref="qversitproperty.html#removeParameter">removeParameter</keyword>
-        <keyword ref="qversitproperty.html#setEmbeddedDocument">setEmbeddedDocument</keyword>
+        <keyword ref="qversitproperty.html#removeParameters">removeParameters</keyword>
         <keyword ref="qversitproperty.html#setGroups">setGroups</keyword>
         <keyword ref="qversitproperty.html#setName">setName</keyword>
         <keyword ref="qversitproperty.html#setParameters">setParameters</keyword>
         <keyword ref="qversitproperty.html#setValue">setValue</keyword>
         <keyword ref="qversitproperty.html#value">value</keyword>
+        <keyword ref="qversitproperty.html#variantValue">variantValue</keyword>
+        <keyword ref="qversitproperty.html#operator-not-eq">operator!=</keyword>
         <keyword ref="qversitproperty.html#operator-eq">operator=</keyword>
+        <keyword ref="qversitproperty.html#operator-eq-eq">operator==</keyword>
         <section ref="qversitproperty-members.html" title="List of all members"/>
     </section>
     <section ref="qversitreader.html" title="QVersitReader Class Reference">
         <keyword ref="qversitreader.html">QVersitReader</keyword>
+        <keyword ref="qversitreader.html#Error-enum">Error</keyword>
+        <keyword ref="qversitreader.html#State-enum">State</keyword>
+        <keyword ref="qversitreader.html#cancel">cancel</keyword>
+        <keyword ref="qversitreader.html#defaultCodec">defaultCodec</keyword>
         <keyword ref="qversitreader.html#device">device</keyword>
-        <keyword ref="qversitreader.html#readAll">readAll</keyword>
-        <keyword ref="qversitreader.html#readingDone">readingDone</keyword>
-        <keyword ref="qversitreader.html#result">result</keyword>
+        <keyword ref="qversitreader.html#error">error</keyword>
+        <keyword ref="qversitreader.html#results">results</keyword>
+        <keyword ref="qversitreader.html#resultsAvailable">resultsAvailable</keyword>
+        <keyword ref="qversitreader.html#setDefaultCodec">setDefaultCodec</keyword>
         <keyword ref="qversitreader.html#setDevice">setDevice</keyword>
         <keyword ref="qversitreader.html#startReading">startReading</keyword>
+        <keyword ref="qversitreader.html#state">state</keyword>
+        <keyword ref="qversitreader.html#waitForFinished">waitForFinished</keyword>
         <section ref="qversitreader-members.html" title="List of all members"/>
+    </section>
+    <section ref="qversitresourcehandler.html" title="QVersitResourceHandler Class Reference">
+        <keyword ref="qversitresourcehandler.html">QVersitResourceHandler</keyword>
+        <keyword ref="qversitresourcehandler.html#loadResource">loadResource</keyword>
+        <keyword ref="qversitresourcehandler.html#saveResource">saveResource</keyword>
+        <section ref="qversitresourcehandler-members.html" title="List of all members"/>
     </section>
     <section ref="qversitwriter.html" title="QVersitWriter Class Reference">
         <keyword ref="qversitwriter.html">QVersitWriter</keyword>
+        <keyword ref="qversitwriter.html#Error-enum">Error</keyword>
+        <keyword ref="qversitwriter.html#State-enum">State</keyword>
+        <keyword ref="qversitwriter.html#cancel">cancel</keyword>
+        <keyword ref="qversitwriter.html#defaultCodec">defaultCodec</keyword>
         <keyword ref="qversitwriter.html#device">device</keyword>
+        <keyword ref="qversitwriter.html#error">error</keyword>
+        <keyword ref="qversitwriter.html#setDefaultCodec">setDefaultCodec</keyword>
         <keyword ref="qversitwriter.html#setDevice">setDevice</keyword>
-        <keyword ref="qversitwriter.html#setVersitDocument">setVersitDocument</keyword>
         <keyword ref="qversitwriter.html#startWriting">startWriting</keyword>
-        <keyword ref="qversitwriter.html#versitDocument">versitDocument</keyword>
-        <keyword ref="qversitwriter.html#writeAll">writeAll</keyword>
-        <keyword ref="qversitwriter.html#writingDone">writingDone</keyword>
+        <keyword ref="qversitwriter.html#state">state</keyword>
+        <keyword ref="qversitwriter.html#stateChanged">stateChanged</keyword>
+        <keyword ref="qversitwriter.html#waitForFinished">waitForFinished</keyword>
         <section ref="qversitwriter-members.html" title="List of all members"/>
     </section>
     <section ref="qvideodevicecontrol.html" title="QVideoDeviceControl Class Reference">
@@ -3062,6 +3522,15 @@
     </section>
 </section>
 <section ref="overviews.html" title="Overviews">
+    <section ref="sensors-backend.html" title="">
+        <keyword ref="sensors-backend.html"></keyword>
+    </section>
+    <section ref="sensors-helpers.html" title="">
+        <keyword ref="sensors-helpers.html"></keyword>
+    </section>
+    <section ref="sensors.html" title="">
+        <keyword ref="sensors.html"></keyword>
+    </section>
     <section ref="functions.html" title="All Functions">
         <keyword ref="functions.html">All Functions</keyword>
     </section>
@@ -3079,6 +3548,9 @@
     </section>
     <section ref="contacts.html" title="Contacts">
         <keyword ref="contacts.html">Contacts</keyword>
+    </section>
+    <section ref="creating-a-sensor-plugin.html" title="Creating a sensor plugin">
+        <keyword ref="creating-a-sensor-plugin.html">Creating a sensor plugin</keyword>
     </section>
     <section ref="future.html" title="Future Additional APIs">
         <keyword ref="future.html">Future Additional APIs</keyword>
@@ -3151,6 +3623,9 @@
     </section>
     <section ref="qtmobility-known-issues.html" title="Release Notes of the QtMobility Project">
         <keyword ref="qtmobility-known-issues.html">Release Notes of the QtMobility Project</keyword>
+    </section>
+    <section ref="sensors-api.html" title="Sensors API">
+        <keyword ref="sensors-api.html">Sensors API</keyword>
     </section>
     <section ref="servicefw.html" title="Service Frameworks Classes">
         <keyword ref="servicefw.html">Service Frameworks Classes</keyword>

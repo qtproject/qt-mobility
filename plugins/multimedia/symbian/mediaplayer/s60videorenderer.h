@@ -42,9 +42,7 @@
 #ifndef S60VIDEORENDERER_H
 #define S60VIDEORENDERER_H
 
-#ifndef QT_NO_MULTIMEDIA
-
-#include <QObject>
+#include <QtCore/qobject.h>
 #include <QVideoRendererControl>
 
 QTM_USE_NAMESPACE
@@ -64,7 +62,5 @@ private:
 
     QAbstractVideoSurface *m_surface;
 };
-
-#endif // QT_NO_MULTIMEDIA
 
 #endif // S60VIDEORENDERER_H

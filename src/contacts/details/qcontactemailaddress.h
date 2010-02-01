@@ -47,7 +47,7 @@
 
 #include "qtcontactsglobal.h"
 #include "qcontactdetail.h"
-#include "qcontact.h"
+#include "qcontactfilter.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -65,6 +65,9 @@ public:
 
     void setEmailAddress(const QString& emailAddress) {setValue(FieldEmailAddress, emailAddress);}
     QString emailAddress() const {return value(FieldEmailAddress);}
+
+    // Convenience filter
+    static QContactFilter match(const QString& emailAddress);
 };
 
 QTM_END_NAMESPACE

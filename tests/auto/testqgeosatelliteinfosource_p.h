@@ -107,11 +107,6 @@ private slots:
     void removeSlotForSatellitesInUseUpdated();
     void removeSlotForSatellitesInViewUpdated();
 
-#if defined(Q_OS_SYMBIAN)
-    void startUpdate_afterDisablingSatelliteBasedMethods();
-    void requestUpdate_afterDisablingSatelliteBasedMethods();
-#endif
-
 private:
     QGeoSatelliteInfoSource *m_source;
     bool m_testingDefaultSource;

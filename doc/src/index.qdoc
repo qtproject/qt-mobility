@@ -231,6 +231,14 @@
     
     For more details see the \l {Qt Service Framework} {Service Framework API overview}.
 
+    \section2 Sensors
+
+    An API for accessing hardware sensors. This covers both high-level
+    sensors such as screen orientation (portrait, landscape) and low-level,
+    real-time sensors such as accelerometer data.
+    
+    For more details see the \l{Sensors API}{Sensors API overview}.
+
     \section2 System Information
 
     An API to discover system related information and capabilities. Information

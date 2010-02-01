@@ -15,6 +15,7 @@ DEPENDPATH += .
 
 # Input
 HEADERS += audioencodercontrol.h \
+    audiocontainercontrol.h \
     audiomediarecordercontrol.h \
     audioendpointselector.h \
     audiocaptureservice.h \
@@ -22,6 +23,7 @@ HEADERS += audioencodercontrol.h \
     audiocapturesession.h
 
 SOURCES += audioencodercontrol.cpp \
+    audiocontainercontrol.cpp \
     audiomediarecordercontrol.cpp \
     audioendpointselector.cpp \
     audiocaptureservice.cpp \

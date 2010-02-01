@@ -50,7 +50,7 @@
 QTM_BEGIN_NAMESPACE
 
 QNmeaRealTimeReader::QNmeaRealTimeReader(QNmeaPositionInfoSourcePrivate *sourcePrivate)
-    : QNmeaReader(sourcePrivate)
+        : QNmeaReader(sourcePrivate)
 {
 }
 
@@ -62,7 +62,7 @@ void QNmeaRealTimeReader::readAvailableData()
     char buf[1024];
     qint64 size = m_proxy->m_device->readLine(buf, sizeof(buf));
     while (size > 0) {
-        if (m_proxy->parsePosInfoFromNmeaData(buf, size, &update, &hasFix))        
+        if (m_proxy->parsePosInfoFromNmeaData(buf, size, &update, &hasFix))
             m_proxy->notifyNewUpdate(&update, hasFix);
         memset(buf, 0, size);
         size = m_proxy->m_device->readLine(buf, sizeof(buf));
@@ -73,9 +73,9 @@ void QNmeaRealTimeReader::readAvailableData()
 //============================================================
 
 QNmeaSimulatedReader::QNmeaSimulatedReader(QNmeaPositionInfoSourcePrivate *sourcePrivate)
-    : QNmeaReader(sourcePrivate),
-      m_currTimerId(-1),
-      m_hasValidDateTime(false)
+        : QNmeaReader(sourcePrivate),
+        m_currTimerId(-1),
+        m_hasValidDateTime(false)
 {
 }
 
@@ -196,15 +196,15 @@ void QNmeaSimulatedReader::processNextSentence()
 
 
 QNmeaPositionInfoSourcePrivate::QNmeaPositionInfoSourcePrivate(QNmeaPositionInfoSource *parent)
-    : QObject(parent),
-      m_invokedStart(false),
-      m_source(parent),
-      m_nmeaReader(0),
-      m_updateTimer(0),
-      m_requestTimer(0),
-      m_noUpdateLastInterval(false),
-      m_updateTimeoutSent(false),
-      m_connectedReadyRead(false)
+        : QObject(parent),
+        m_invokedStart(false),
+        m_source(parent),
+        m_nmeaReader(0),
+        m_updateTimer(0),
+        m_requestTimer(0),
+        m_noUpdateLastInterval(false),
+        m_updateTimeoutSent(false),
+        m_connectedReadyRead(false)
 {
 }
 
@@ -275,8 +275,8 @@ void QNmeaPositionInfoSourcePrivate::prepareSourceDevice()
     }
 }
 
-bool QNmeaPositionInfoSourcePrivate::parsePosInfoFromNmeaData(const char *data, int size, 
-            QGeoPositionInfo *posInfo, bool *hasFix)
+bool QNmeaPositionInfoSourcePrivate::parsePosInfoFromNmeaData(const char *data, int size,
+        QGeoPositionInfo *posInfo, bool *hasFix)
 {
     return m_source->parsePosInfoFromNmeaData(data, size, posInfo, hasFix);
 }
@@ -395,7 +395,7 @@ void QNmeaPositionInfoSourcePrivate::notifyNewUpdate(QGeoPositionInfo *update, b
 
 void QNmeaPositionInfoSourcePrivate::timerEvent(QTimerEvent *)
 {
-    emitPendingUpdate();    
+    emitPendingUpdate();
 }
 
 void QNmeaPositionInfoSourcePrivate::emitPendingUpdate()
@@ -405,12 +405,12 @@ void QNmeaPositionInfoSourcePrivate::emitPendingUpdate()
         m_noUpdateLastInterval = false;
         emitUpdated(m_pendingUpdate);
         m_pendingUpdate = QGeoPositionInfo();
-    } else {        
+    } else {
         if (m_noUpdateLastInterval && !m_updateTimeoutSent) {
             m_updateTimeoutSent = true;
             m_pendingUpdate = QGeoPositionInfo();
             emit m_source->updateTimeout();
-        }            
+        }
         m_noUpdateLastInterval = true;
     }
 }
@@ -439,12 +439,12 @@ void QNmeaPositionInfoSourcePrivate::emitUpdated(const QGeoPositionInfo &update)
     previously recorded NMEA data.
 
     The source of NMEA data is set with setDevice().
-    
-    Use startUpdates() to start receiving regular position updates and stopUpdates() to stop these 
-    updates.  If you only require updates occasionally, you can call requestUpdate() to request a 
+
+    Use startUpdates() to start receiving regular position updates and stopUpdates() to stop these
+    updates.  If you only require updates occasionally, you can call requestUpdate() to request a
     single update.
-    
-    In both cases the position information is received via the positionUpdated() signal and the 
+
+    In both cases the position information is received via the positionUpdated() signal and the
     last known position can be accessed with lastKnownPosition().
 */
 
@@ -463,8 +463,8 @@ void QNmeaPositionInfoSourcePrivate::emitUpdated(const QGeoPositionInfo &update)
     and \a updateMode.
 */
 QNmeaPositionInfoSource::QNmeaPositionInfoSource(UpdateMode updateMode, QObject *parent)
-    : QGeoPositionInfoSource(parent),
-      d(new QNmeaPositionInfoSourcePrivate(this))
+        : QGeoPositionInfoSource(parent),
+        d(new QNmeaPositionInfoSourcePrivate(this))
 {
     d->m_updateMode = updateMode;
     d->m_device = 0;
@@ -480,20 +480,20 @@ QNmeaPositionInfoSource::~QNmeaPositionInfoSource()
 
 /*!
     Parses an NMEA sentence string into a QGeoPositionInfo.
-    
+
     The default implementation will parse standard NMEA sentences.
-    This method should be reimplemented in a subclass whenever the need to deal with non-standard 
-    NMEA sentences arises.    
-    
-    The parser reads \a size bytes from \a data and uses that information to setup \a posInfo and 
-    \a hasFix.  If \a hasFix is set to false then \a posInfo may contain only the time or the date 
+    This method should be reimplemented in a subclass whenever the need to deal with non-standard
+    NMEA sentences arises.
+
+    The parser reads \a size bytes from \a data and uses that information to setup \a posInfo and
+    \a hasFix.  If \a hasFix is set to false then \a posInfo may contain only the time or the date
     and the time.
 
-    Returns true if the sentence was succsesfully parsed, otherwise returns false and should not 
+    Returns true if the sentence was succsesfully parsed, otherwise returns false and should not
     modifiy \a posInfo or \a hasFix.
 */
 bool QNmeaPositionInfoSource::parsePosInfoFromNmeaData(const char *data, int size,
-                                                       QGeoPositionInfo *posInfo, bool *hasFix)
+        QGeoPositionInfo *posInfo, bool *hasFix)
 {
     return QLocationUtils::getPosInfoFromNmea(data, size, posInfo, hasFix);
 }

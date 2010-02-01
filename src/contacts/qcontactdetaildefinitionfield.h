@@ -42,45 +42,11 @@
 #ifndef QCONTACTDETAILDEFINITIONFIELD_H
 #define QCONTACTDETAILDEFINITIONFIELD_H
 
-#include <QList>
-#include <QVariant>
-#include <QSharedDataPointer>
+#include "qcontactdetailfielddefinition.h"
 
-#include "qtcontactsglobal.h"
-
+// Typedef the old type to the new type
 QTM_BEGIN_NAMESPACE
-
-class QContactDetailDefinitionFieldPrivate;
-class Q_CONTACTS_EXPORT QContactDetailDefinitionField
-{
-public:
-    QContactDetailDefinitionField();
-    ~QContactDetailDefinitionField();
-
-    QContactDetailDefinitionField(const QContactDetailDefinitionField& other);
-    QContactDetailDefinitionField& operator=(const QContactDetailDefinitionField& other);
-
-    QVariant::Type dataType() const;
-    void setDataType(QVariant::Type type);
-
-    QVariantList allowableValues() const;
-    void setAllowableValues(const QVariantList values);
-
-    enum AccessConstraint {
-        NoConstraint = 0,
-        ReadOnly
-    };
-
-    QContactDetailDefinitionField::AccessConstraint accessConstraint() const;
-    void setAccessConstraint(QContactDetailDefinitionField::AccessConstraint constraint);
-
-    bool operator==(const QContactDetailDefinitionField& other) const;
-    bool operator!=(const QContactDetailDefinitionField& other) const;
-
-private:
-    QSharedDataPointer<QContactDetailDefinitionFieldPrivate> d;
-};
-
+typedef QContactDetailFieldDefinition QContactDetailDefinitionField;
 QTM_END_NAMESPACE
 
 #endif

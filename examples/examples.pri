@@ -33,3 +33,10 @@ mac:LIBS+= -F$$OUTPUT_DIR/lib
 LIBS+= -L$$OUTPUT_DIR/lib
 QMAKE_RPATHDIR+=$$OUTPUT_DIR/lib
 INCLUDEPATH+= $$QT_MOBILITY_SOURCE_TREE/src/global
+
+maemo6 {
+    DEFINES+= Q_WS_MAEMO_6
+}
+maemo5 {
+    DEFINES+= Q_WS_MAEMO_5
+}

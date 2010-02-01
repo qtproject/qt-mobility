@@ -47,7 +47,7 @@
 
 #include "qtcontactsglobal.h"
 #include "qcontactdetail.h"
-#include "qcontact.h"
+#include "qcontactfilter.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -96,6 +96,9 @@ public:
     void setSubTypes(const QStringList& subTypes) {setValue(FieldSubTypes, subTypes);}
     void setSubTypes(const QString& subType) {setValue(FieldSubTypes, QStringList(subType));}
     QStringList subTypes() const {return value<QStringList>(FieldSubTypes);}
+
+    // Convenience filter
+    static QContactFilter match(const QString& number);
 };
 //! [0]
 

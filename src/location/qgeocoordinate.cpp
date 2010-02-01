@@ -57,8 +57,14 @@ QTM_BEGIN_NAMESPACE
 
 static const double qgeocoordinate_EARTH_MEAN_RADIUS = 6371.0072;
 
-inline static double qgeocoordinate_degToRad(double deg) { return deg * M_PI / 180; }
-inline static double qgeocoordinate_radToDeg(double rad) { return rad * 180 / M_PI; }
+inline static double qgeocoordinate_degToRad(double deg)
+{
+    return deg * M_PI / 180;
+}
+inline static double qgeocoordinate_radToDeg(double rad)
+{
+    return rad * 180 / M_PI;
+}
 
 
 class QGeoCoordinatePrivate
@@ -68,8 +74,7 @@ public:
     double lng;
     double alt;
 
-    QGeoCoordinatePrivate()
-    {
+    QGeoCoordinatePrivate() {
         lat = qQNaN();
         lng = qQNaN();
         alt = qQNaN();
@@ -121,7 +126,7 @@ public:
     setLatitude() and setLongitude() have been called.
 */
 QGeoCoordinate::QGeoCoordinate()
-    : d(new QGeoCoordinatePrivate)
+        : d(new QGeoCoordinatePrivate)
 {
 }
 
@@ -135,7 +140,7 @@ QGeoCoordinate::QGeoCoordinate()
     \sa isValid()
 */
 QGeoCoordinate::QGeoCoordinate(double latitude, double longitude)
-    : d(new QGeoCoordinatePrivate)
+        : d(new QGeoCoordinatePrivate)
 {
     if (QLocationUtils::isValidLat(latitude) && QLocationUtils::isValidLong(longitude)) {
         d->lat = latitude;
@@ -156,7 +161,7 @@ QGeoCoordinate::QGeoCoordinate(double latitude, double longitude)
     \sa isValid()
 */
 QGeoCoordinate::QGeoCoordinate(double latitude, double longitude, double altitude)
-    : d(new QGeoCoordinatePrivate)
+        : d(new QGeoCoordinatePrivate)
 {
     if (QLocationUtils::isValidLat(latitude) && QLocationUtils::isValidLong(longitude)) {
         d->lat = latitude;
@@ -169,7 +174,7 @@ QGeoCoordinate::QGeoCoordinate(double latitude, double longitude, double altitud
     Constructs a coordinate from the contents of \a other.
 */
 QGeoCoordinate::QGeoCoordinate(const QGeoCoordinate &other)
-    : d(new QGeoCoordinatePrivate)
+        : d(new QGeoCoordinatePrivate)
 {
     operator=(other);
 }
@@ -186,7 +191,7 @@ QGeoCoordinate::~QGeoCoordinate()
     Assigns \a other to this coordinate and returns a reference to this
     coordinate.
 */
-QGeoCoordinate &QGeoCoordinate::operator=(const QGeoCoordinate &other)
+QGeoCoordinate &QGeoCoordinate::operator=(const QGeoCoordinate & other)
 {
     if (this == &other)
         return *this;
@@ -204,9 +209,9 @@ QGeoCoordinate &QGeoCoordinate::operator=(const QGeoCoordinate &other)
 */
 bool QGeoCoordinate::operator==(const QGeoCoordinate &other) const
 {
-    return ( (qIsNaN(d->lat) && qIsNaN(other.d->lat)) || qFuzzyCompare(d->lat, other.d->lat))
-            && ( (qIsNaN(d->lng) && qIsNaN(other.d->lng)) || qFuzzyCompare(d->lng, other.d->lng))
-            && ( (qIsNaN(d->alt) && qIsNaN(other.d->alt)) || qFuzzyCompare(d->alt, other.d->alt));
+    return ((qIsNaN(d->lat) && qIsNaN(other.d->lat)) || qFuzzyCompare(d->lat, other.d->lat))
+           && ((qIsNaN(d->lng) && qIsNaN(other.d->lng)) || qFuzzyCompare(d->lng, other.d->lng))
+           && ((qIsNaN(d->alt) && qIsNaN(other.d->alt)) || qFuzzyCompare(d->alt, other.d->alt));
 }
 
 /*!
@@ -338,9 +343,9 @@ qreal QGeoCoordinate::distanceTo(const QGeoCoordinate &other) const
     double dlat = qgeocoordinate_degToRad(other.d->lat - d->lat);
     double dlon = qgeocoordinate_degToRad(other.d->lng - d->lng);
     double y = sin(dlat / 2.0) * sin(dlat / 2.0)
-            + cos(qgeocoordinate_degToRad(d->lat))
-            * cos(qgeocoordinate_degToRad(other.d->lat))
-            * sin(dlon / 2.0) * sin(dlon / 2.0);
+               + cos(qgeocoordinate_degToRad(d->lat))
+               * cos(qgeocoordinate_degToRad(other.d->lat))
+               * sin(dlon / 2.0) * sin(dlon / 2.0);
     double x = 2 * atan2(sqrt(y), sqrt(1 - y));
     return qreal(x * qgeocoordinate_EARTH_MEAN_RADIUS * 1000);
 }
@@ -423,45 +428,42 @@ QString QGeoCoordinate::toString(CoordinateFormat format) const
 
     switch (format) {
         case Degrees:
-        case DegreesWithHemisphere:
-        {
+        case DegreesWithHemisphere: {
             latStr = QString::number(absLat, 'f', 5) + symbol;
             longStr = QString::number(absLng, 'f', 5) + symbol;
             break;
         }
         case DegreesMinutes:
-        case DegreesMinutesWithHemisphere:
-        {
+        case DegreesMinutesWithHemisphere: {
             double latMin = (absLat - int(absLat)) * 60;
             double lngMin = (absLng - int(absLng)) * 60;
             latStr = QString("%1%2 %3'")
-                    .arg(QString::number(int(absLat)))
-                    .arg(symbol)
-                    .arg(QString::number(latMin, 'f', 3));
+                     .arg(QString::number(int(absLat)))
+                     .arg(symbol)
+                     .arg(QString::number(latMin, 'f', 3));
             longStr = QString("%1%2 %3'")
-                    .arg(QString::number(int(absLng)))
-                    .arg(symbol)
-                    .arg(QString::number(lngMin, 'f', 3));
+                      .arg(QString::number(int(absLng)))
+                      .arg(symbol)
+                      .arg(QString::number(lngMin, 'f', 3));
             break;
         }
         case DegreesMinutesSeconds:
-        case DegreesMinutesSecondsWithHemisphere:
-        {
+        case DegreesMinutesSecondsWithHemisphere: {
             double latMin = (absLat - int(absLat)) * 60;
             double lngMin = (absLng - int(absLng)) * 60;
             double latSec = (latMin - int(latMin)) * 60;
             double lngSec = (lngMin - int(lngMin)) * 60;
 
             latStr = QString("%1%2 %3' %4\"")
-                    .arg(QString::number(int(absLat)))
-                    .arg(symbol)
-                    .arg(QString::number(int(latMin)))
-                    .arg(QString::number(latSec, 'f', 1));
+                     .arg(QString::number(int(absLat)))
+                     .arg(symbol)
+                     .arg(QString::number(int(latMin)))
+                     .arg(QString::number(latSec, 'f', 1));
             longStr = QString("%1%2 %3' %4\"")
-                    .arg(QString::number(int(absLng)))
-                    .arg(symbol)
-                    .arg(QString::number(int(lngMin)))
-                    .arg(QString::number(lngSec, 'f', 1));
+                      .arg(QString::number(int(absLng)))
+                      .arg(symbol)
+                      .arg(QString::number(int(lngMin)))
+                      .arg(QString::number(lngSec, 'f', 1));
             break;
         }
     }
@@ -470,8 +472,7 @@ QString QGeoCoordinate::toString(CoordinateFormat format) const
     switch (format) {
         case Degrees:
         case DegreesMinutes:
-        case DegreesMinutesSeconds:
-        {
+        case DegreesMinutesSeconds: {
             if (d->lat < 0)
                 latStr.insert(0, "-");
             if (d->lng < 0)
@@ -480,8 +481,7 @@ QString QGeoCoordinate::toString(CoordinateFormat format) const
         }
         case DegreesWithHemisphere:
         case DegreesMinutesWithHemisphere:
-        case DegreesMinutesSecondsWithHemisphere:
-        {
+        case DegreesMinutesSecondsWithHemisphere: {
             if (d->lat < 0)
                 latStr.append(" S");
             else if (d->lat > 0)
@@ -527,7 +527,7 @@ QDebug operator<<(QDebug dbg, const QGeoCoordinate &coord)
 #ifndef QT_NO_DATASTREAM
 /*!
     \fn QDataStream &operator<<(QDataStream &stream, const QGeoCoordinate &coordinate)
-    
+
     \relates QGeoCoordinate
 
     Writes the given \a coordinate to the specified \a stream.

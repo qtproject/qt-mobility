@@ -76,16 +76,19 @@ QString S60AudioEncoderControl::audioCodec() const
 bool S60AudioEncoderControl::setAudioCodec(const QString &codecName)
 {
     QAudioFormat fmt = m_session->format();
-    //fmt.setCodec(codecName);
+    fmt.setCodec(codecName);
     return m_session->setFormat(fmt);
 }
 
 QString S60AudioEncoderControl::codecDescription(const QString &codecName) const
 {
-    if(qstrcmp(codecName.toLocal8Bit().constData(), "audio/x-wav") == 0)
+	return m_session->codecDescription(codecName);
+    /*
+	if(qstrcmp(codecName.toLocal8Bit().constData(), "audio/x-wav") == 0)
         return QString("wav file format");
 
     return QString();
+    */
 }
 
 int S60AudioEncoderControl::bitRate() const
@@ -143,8 +146,10 @@ QStringList S60AudioEncoderControl::supportedEncodingOptions(const QString &code
 QVariant S60AudioEncoderControl::encodingOption(const QString &codec, const QString &name) const
 {
     Q_UNUSED(codec)
+	QAudioFormat fmt = m_session->format();
+    
     if(qstrcmp(name.toLocal8Bit().constData(), "bitrate") == 0) {
-        return QVariant(8000);
+        return QVariant(fmt.frequency());
     }
 
     return QVariant();
@@ -156,13 +161,13 @@ void S60AudioEncoderControl::setEncodingOption(
     Q_UNUSED(value)
     Q_UNUSED(codec)
 
-    QAudioFormat fmt = m_session->format();
+    //QAudioFormat fmt = m_session->format();
 
     if(qstrcmp(name.toLocal8Bit().constData(), "bitrate") == 0) {
-        //TODO
+		setBitRate(value.toInt());
 
     } else if(qstrcmp(name.toLocal8Bit().constData(), "quality") == 0) {
-        //TODO
+        setQuality((QtMedia::EncodingQuality)value.toInt());
 
     } else
         qWarning() << "option: " << name << " is an unknown option!";
@@ -227,7 +232,7 @@ QList<int> S60AudioEncoderControl::supportedSampleSizes() const
 QAudioEncoderSettings S60AudioEncoderControl::audioSettings() const
 {
     QAudioEncoderSettings settings;
-    //settings.setCodec(audioCodec());
+    settings.setCodec(audioCodec());
     settings.setBitRate(bitRate());
     settings.setQuality(quality());
     settings.setSampleRate(sampleRate());

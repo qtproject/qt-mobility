@@ -1,7 +1,8 @@
 INCLUDEPATH += $$PWD
 
 symbian:LIBS += -lmediaclientaudio \
-    -lmediaclientaudioinputstream
+    -lmediaclientaudioinputstream \
+    -lmmfcontrollerframework
 
 HEADERS += $$PWD/s60audioencodercontrol.h \
     $$PWD/s60audiomediarecordercontrol.h \

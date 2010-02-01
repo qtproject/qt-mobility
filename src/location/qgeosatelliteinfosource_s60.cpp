@@ -141,12 +141,12 @@ void CQGeoSatelliteInfoSourceS60::ConstructL()
 
             if (index >= 0) {
                 TRAPD(ret, temp = CQMLBackendAO::NewL(this, RegularUpdate,
-                                                     mList[index].mUid));
+                                                      mList[index].mUid));
 
                 if ((ret == KErrNone) && (temp != NULL))
                     break;
 
-                bits = bits & (0XFF ^ (1 << index));
+                bits = bits & (0XFF ^(1 << index));
             }
         } while (index >= 0);
 
@@ -179,7 +179,7 @@ int CQGeoSatelliteInfoSourceS60::minimumUpdateInterval() const
 
     TInt i = checkModule(mCurrentModuleId);
     if (i != -1)
-        return mList[i].mTimeToNextFix.Int64()/1000;             //divide by 1000, to convert microsecond to milisecond
+        return mList[i].mTimeToNextFix.Int64() / 1000;           //divide by 1000, to convert microsecond to milisecond
     return 0;
 }
 
@@ -320,7 +320,7 @@ void CQGeoSatelliteInfoSourceS60::updateStatus(TPositionModuleInfo aModInfo, TIn
             TInt interval = 0;
 
             TRAPD(ret, temp = CQMLBackendAO::NewL(this, RegularUpdate,
-                                                   mList[i].mUid));
+                                                  mList[i].mUid));
 
             if ((ret == KErrNone) && (temp != NULL)) {
                 temp->setUpdateInterval(interval);
@@ -362,12 +362,12 @@ void CQGeoSatelliteInfoSourceS60::updateStatus(TPositionModuleInfo aModInfo, TIn
 
                     if (index >= 0) {
                         TRAPD(ret, temp = CQMLBackendAO::NewL(this, RegularUpdate,
-                                                             mList[index].mUid));
+                                                              mList[index].mUid));
 
                         if ((ret == KErrNone) && (temp != NULL))
                             break;
 
-                        bits = bits & (0XFF ^ (1 << index));
+                        bits = bits & (0XFF ^(1 << index));
                     }
                 } while (index >= 0);
 
@@ -470,11 +470,11 @@ void CQGeoSatelliteInfoSourceS60::TPositionSatelliteInfo2QGeoSatelliteInfo(
     QGeoSatelliteInfo qInfo;
 
     for (TInt i = 0; i < satInView; i++) {
-        aSatInfo.GetSatelliteData(i,satData);
+        aSatInfo.GetSatelliteData(i, satData);
         qInfo.setSignalStrength(satData.SignalStrength());
         qInfo.setPrnNumber(satData.SatelliteId());
-        qInfo.setAttribute(QGeoSatelliteInfo::Elevation,satData.Elevation());
-        qInfo.setAttribute(QGeoSatelliteInfo::Azimuth,satData.Azimuth());
+        qInfo.setAttribute(QGeoSatelliteInfo::Elevation, satData.Elevation());
+        qInfo.setAttribute(QGeoSatelliteInfo::Azimuth, satData.Azimuth());
         if (satData.IsUsed() == TRUE) {
             qListSatInUse.append(qInfo);
         }
@@ -566,7 +566,7 @@ void CQGeoSatelliteInfoSourceS60::requestUpdate(int aTimeout)
             return;
         }
 
-        bits = bits & (0XFF ^ (1 << index));
+        bits = bits & (0XFF ^(1 << index));
 
     } while (index >= 0);
 

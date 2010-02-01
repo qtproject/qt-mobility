@@ -14,16 +14,6 @@ INSERT
 }
 "
 
-echo "Update nco:IMAccount"
-tracker-sparql --update --query "INSERT {
-	<http://www.sopranolive.org/backends/tracker/generated_unique_id/105323876#$2> a nco:IMAccount;
-	    nco:imID '$3';
-	    nco:imNickname '$4';
-	    nco:imPresence $5;
-	    nco:imStatusMessage '$6';
-	    nco:imProtocol '$7'
-}
-"
 echo "create nco:IMContact"
 tracker-sparql -u -q "INSERT
 {
@@ -32,12 +22,21 @@ tracker-sparql -u -q "INSERT
 <http://www.semanticdesktop.org/ontologies/2007/03/22/nco#IMContact>
 }
 "
+echo "create nco:IMContact"
+tracker-sparql --update --query "INSERT {
+	    <contact:$1> a nco:IMContact;
+	    nco:contactUID '$1';
+	    nco:imContactId '$3';
+	    nco:imContactNickname '$4';
+	    nco:imContactPresence $5;
+	    nco:imContactStatusMessage '$6';
+	    nco:fromIMAccount <http://www.sopranolive.org/backends/tracker/generated_unique_id/105323876#$2>;
+	    nco:imContactCapability <bogus>
+}"
 echo "update nco:IMContact"
 tracker-sparql --update --query "INSERT {
         <contact:$1> a nco:IMContact;
-            nco:contactUID $1;
 	    nco:nameGiven '$8';
-	    nco:hasIMAccount <http://www.sopranolive.org/backends/tracker/generated_unique_id/105323876#$2>;
-            nco:nameFamily '$9'
+        nco:nameFamily '$9'
 }
 "

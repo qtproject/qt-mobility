@@ -206,9 +206,9 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
     }
 
     return source;
-#else 
-    Q_UNUSED(parent); 
-#endif 
+#else
+    Q_UNUSED(parent);
+#endif
     return 0;
 }
 
@@ -249,10 +249,10 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
     If setUpdateInterval() has not been called, the source will emit updates
     as soon as they become available.
 
-    An updateTimout() signal will be emitted if this QGeoPositionInfoSource subclass determines 
-    that it will not be able to provide regular updates.  This could happen if a satelllite fix is 
-    lost or if a hardware error is detected.  Position updates will recommence if the data becomes 
-    available later on.  The updateTimout() signal will not be emitted again until after the 
+    An updateTimout() signal will be emitted if this QGeoPositionInfoSource subclass determines
+    that it will not be able to provide regular updates.  This could happen if a satelllite fix is
+    lost or if a hardware error is detected.  Position updates will recommence if the data becomes
+    available later on.  The updateTimout() signal will not be emitted again until after the
     periodic updates resume.
 */
 
@@ -294,11 +294,11 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
 /*!
     \fn void QGeoPositionInfoSource::updateTimeout();
 
-    If requestUpdate() was called, this signal will be emitted if the current position could not 
+    If requestUpdate() was called, this signal will be emitted if the current position could not
     be retrieved within the specified timeout.
 
-    If startUpdates() has been called, this signal will be emitted if this QGeoPositionInfoSource 
-    subclass determines that it will not be able to provide further regular updates.  This signal 
+    If startUpdates() has been called, this signal will be emitted if this QGeoPositionInfoSource
+    subclass determines that it will not be able to provide further regular updates.  This signal
     will not be emitted again until after the regular updates resume.
 */
 

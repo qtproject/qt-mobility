@@ -53,13 +53,19 @@ contains(mobility_modules,systeminfo): SUBDIRS += sysinfo
 #Multimedia
 contains(mobility_modules,multimedia) {
     #disabled on Symbian due to missing backend
-    !symbian:SUBDIRS += \
+    SUBDIRS += \
         radio \
         player \
         cameracapture \
         slideshow \
         streamplayer \
         audiorecorder
+}
+
+contains (QT_CONFIG, declarative) {
+    SUBDIRS += \
+        declarativemusic \
+        declarativevideo
 }
 
 #Messaging examples
@@ -77,3 +83,9 @@ contains(mobility_modules,messaging) {
         }
     }
 }
+
+# Sensors API examples
+contains(mobility_modules,sensors) {
+    SUBDIRS += sensors
+}
+

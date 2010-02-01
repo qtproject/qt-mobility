@@ -167,26 +167,32 @@ QCameraFocusControl::~QCameraFocusControl()
 /*!
   \fn qreal QCameraFocusControl::maximumOpticalZoom() const
 
-  Returns the maximum optical zoom
+  Returns the maximum optical zoom value, or 1.0 if optical zoom is not supported.
 */
 
 
 /*!
   \fn qreal QCameraFocusControl::maximumDigitalZoom() const
 
-  Return the maximum digital zoom
+  Returns the maximum digital zoom value, or 1.0 if digital zoom is not supported.
 */
 
 
 /*!
-  \fn qreal QCameraFocusControl::zoomValue() const
+  \fn qreal QCameraFocusControl::opticalZoom() const
 
-  Return the zoom value.
+  Return the current optical zoom value.
+*/
+
+/*!
+  \fn qreal QCameraFocusControl::digitalZoom() const
+
+  Return the current digital zoom value.
 */
 
 
 /*!
-  \fn void QCameraFocusControl::zoomTo(qreal value)
+  \fn void QCameraFocusControl::zoomTo(qreal opticalZoom, qreal digitalZoom)
 
   Set the zoom value to \a value
 */
@@ -200,9 +206,15 @@ QCameraFocusControl::~QCameraFocusControl()
 
 
 /*!
-    \fn void QCameraFocusControl::zoomValueChanged(qreal zoom)
+    \fn void QCameraFocusControl::opticalZoomChanged(qreal zoom)
 
-    Signal emitted when \a zoom value changed.
+    Signal emitted when the optical \a zoom value changed.
+*/
+
+/*!
+    \fn void QCameraFocusControl::digitalZoomChanged(qreal zoom)
+
+    Signal emitted when the digital \a zoom value changed.
 */
 
 #include "moc_qcamerafocuscontrol.cpp"

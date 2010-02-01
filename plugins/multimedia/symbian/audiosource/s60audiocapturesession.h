@@ -56,6 +56,13 @@
 #include <Mda\Client\Utility.h>
 #include <MdaAudioSampleEditor.h>
 
+struct ItemData
+{
+	int controllerUid;
+	int destinationFormatUid;
+	QString destinationFormatDescription;
+};
+
 
 class S60AudioCaptureSession : public QObject, public MMdaObjectStateChangeObserver
 {
@@ -103,7 +110,10 @@ private:
             TInt aCurrentState, TInt aErrorCode);
     void MoscoStateChangeEventL(CBase* aObject, TInt aPreviousState,
             TInt aCurrentState, TInt aErrorCode);
+    
+    void fetchAudioCodecsL();
 
+    
     QString m_captureDevice;
     QUrl m_sink;
     QMediaRecorder::State m_state;
@@ -112,7 +122,9 @@ private:
     QAudioFormat m_format;
     qint64 m_position;
     bool wavFile;
-
+    
+    QHash<QString, ItemData> m_controllerIdMap;
+    
     // WAV header stuff
 
     struct chunk

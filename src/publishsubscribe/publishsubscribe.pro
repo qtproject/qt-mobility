@@ -1,6 +1,6 @@
 TEMPLATE = lib
 TARGET = QtPublishSubscribe
-QT = core network
+QT = core
 
 include(../../common.pri)
 
@@ -32,14 +32,6 @@ symbian {
     DEFINES += XQSETTINGSMANAGER_NO_CENREPKEY_CREATION_DELETION
     include(xqsettingsmanager_symbian/settingsmanager.pri)
 
-    deploy.path = $$EPOCROOT
-    exportheaders.sources = $$PUBLIC_HEADERS
-    exportheaders.path = epoc32/include/mw
-
-    for(header, exportheaders.sources) {
-        BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
-    }
-
     DEPENDPATH += psmapperserver_symbian
     INCLUDEPATH += psmapperserver_symbian
 
@@ -65,6 +57,8 @@ unix:!symbian {
         CONFIG += link_pkgconfig
         PKGCONFIG += contextsubscriber-1.0 QtDBus
     } else {
+        QT += network
+
         HEADERS += qsystemreadwritelock_p.h \
            	   qmallocpool_p.h \
 		   qpacketprotocol_p.h
@@ -85,4 +79,5 @@ win32 {
     wince*:LIBS += -ltoolhelp
 }
 
+CONFIG += middleware
 include(../../features/deploy.pri)

@@ -80,6 +80,9 @@ public:
 
     int bufferStatus() const;
 
+    bool isAudioAvailable() const;
+    void setAudioAvailable(bool available);
+
     bool isVideoAvailable() const;
     void setVideoAvailable(bool available);
 
@@ -119,6 +122,7 @@ private:
     QMediaPlayer::MediaStatus m_status;
     qint64 m_duration;
     bool m_buffering;
+    bool m_audioAvailable;
     bool m_videoAvailable;
 };
 
