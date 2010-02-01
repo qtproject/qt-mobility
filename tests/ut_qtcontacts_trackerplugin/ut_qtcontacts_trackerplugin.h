@@ -105,8 +105,8 @@ private slots:
     void testContactsWithoutMeContact();
 
 private:
-    void insertContact( QContactLocalId uid, QString imId, QString imStatus );
-    void updateIMContactStatus(QContactLocalId uId, QString imStatus);
+    void insertContact(const QString& URI, QContactLocalId uid, QString imId, QString imStatus );
+    void updateIMContactStatus(const QString& uri, QString imStatus);
     QContact contact(QContactLocalId uid, QStringList detailsToLoad = QStringList());
     QList<QContact> contacts(QList<QContactLocalId> uids, QStringList detailsToLoad = QStringList());
 

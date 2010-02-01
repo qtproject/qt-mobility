@@ -1366,20 +1366,20 @@ void ut_qtcontacts_trackerplugin::testQRelationshipAndMetacontacts()
     }
 }
 
-void ut_qtcontacts_trackerplugin::insertContact( QContactLocalId uid, QString imId, QString imStatus )
+void ut_qtcontacts_trackerplugin::insertContact(const QString& URI, QContactLocalId uid, QString imId, QString imStatus )
 {
     QProcess inserter;
     QStringList args;
-    args << QString::number(uid) << QString::number(uid) << imId << "SomeGuy" << imStatus << "In Helsinki" << "jabber" << "Some" << "Guy";
+    args << URI << QString::number(uid) << imId << "SomeGuy" << imStatus << "In Helsinki" << "jabber" << "Some" << "Guy";
     inserter.start( PATH_TO_SPARQL_TESTS+"/insertTpContact.sparql", args );
     inserter.waitForFinished();
 }
 
-void ut_qtcontacts_trackerplugin::updateIMContactStatus(QContactLocalId uid, QString imStatus)
+void ut_qtcontacts_trackerplugin::updateIMContactStatus(const QString& uri, QString imStatus)
 {
     QProcess inserter;
     QStringList args;
-    args << QString::number(uid) << imStatus;
+    args << uri << imStatus;
     inserter.start( PATH_TO_SPARQL_TESTS+"/updateTpStatus.sparql", args );
     inserter.waitForFinished();
 }
@@ -1395,9 +1395,10 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
     QContactLocalId masterContactId; // using one master contact later for additional testing
     for( int i = 0; i < 2; i++ )
     {
-        unsigned int contactid = 999998+i;
+        unsigned int contactid = qHash(QString("/org/freedesktop/fake/account/") + QString::number(999998+i) + "@ovi.com");
         idstoremove << contactid;
-        insertContact(contactid, QString::number(contactid)+ "@ovi.com", "nco:presence-status-available");
+        insertContact(QString("telepathy://org/freedesktop/fake/account/") + QString::number(999998+i) + "@ovi.com",
+                contactid, QString::number(999998 + i)+ "@ovi.com", "nco:presence-status-available");
         QContact c = contact(contactid, QStringList()<<QContactOnlineAccount::DefinitionName);
         QVERIFY(c.localId() == contactid);
         QContact firstContact;
@@ -1426,7 +1427,7 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
     // all contacts in master contact in order to calculate master presence
     {
         QList<QContact> cons = contacts(QList<QContactLocalId> ()
-                << masterContactId << 999999, QStringList()
+                << masterContactId << qHash(QString("/org/freedesktop/fake/account/") + QString::number(999999) + "@ovi.com"), QStringList()
                 << QContactOnlineAccount::DefinitionName);
         QVERIFY(cons.size() == 1);
         QVERIFY(cons[0].id().localId() == masterContactId);
@@ -1439,17 +1440,17 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
                 {
                     QVERIFY(det.presence() == QContactOnlineAccount::PresenceAvailable);
                     // keeping the reference to tp contact
-                    QVERIFY(det.value("QContactLocalId") == "999999");
+                    QVERIFY(det.value("QContactLocalId") == QString::number(qHash(QString("/org/freedesktop/fake/account/") + QString::number(999999) + "@ovi.com")));
                     containDetail = true;
                 }
             }
         QVERIFY(containDetail);
     }
     //now update presence to IM contact and check it in metacontact (TODO and if signal is emitted)
-    updateIMContactStatus(999999, "nco:presence-status-offline");
+    updateIMContactStatus(QString("telepathy://org/freedesktop/fake/account/") + QString::number(999999) + "@ovi.com", "nco:presence-status-offline");
     {
         QList<QContact> cons = contacts(QList<QContactLocalId> ()
-                << masterContactId << 999999, QStringList()
+                << masterContactId << qHash(QString("/org/freedesktop/fake/account/") + QString::number(999999) + "@ovi.com"), QStringList()
                 << QContactOnlineAccount::DefinitionName);
         QVERIFY(cons.size() == 1);
         QVERIFY(cons[0].id().localId() == masterContactId);
@@ -1462,7 +1463,7 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
                 {
                     QVERIFY(det.presence() == QContactOnlineAccount::PresenceOffline);
                     // keeping the reference to tp contact
-                    QVERIFY(det.value("QContactLocalId") == "999999");
+                    QVERIFY(det.value("QContactLocalId") == QString::number(qHash(QString("/org/freedesktop/fake/account/") + QString::number(999999) + "@ovi.com")));
                     containDetail = true;
                 }
             }
@@ -1485,7 +1486,7 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
                 {
                     QVERIFY(det.presence() == QContactOnlineAccount::PresenceOffline);
                     // keeping the reference to tp contact
-                    QVERIFY(det.value("QContactLocalId") == "999999");
+                    QVERIFY(det.value("QContactLocalId") == QString::number(qHash(QString("/org/freedesktop/fake/account/") + QString::number(999999) + "@ovi.com")));
                     containDetail = true;
                 }
             }

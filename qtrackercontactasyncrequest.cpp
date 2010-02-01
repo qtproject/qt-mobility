@@ -168,8 +168,8 @@ void QTrackerContactFetchRequest::applyFilterToContact(RDFVariable &variable,
             } else if (QContactOnlineAccount::DefinitionName == filt.detailDefinitionName()
                        && filt.detailFieldName() == "Account") {
                 qDebug() << Q_FUNC_INFO;
-                RDFVariable imaccount = variable.property<nco::hasIMAccount>();
-                imaccount.property<nco::imID>().isMemberOf(QStringList()<<filt.value().toString());
+                RDFVariable imaccount = variable.optional().property<nco::hasIMAccount>();
+                imaccount.property<nco::imContactId>().isMemberOf(QStringList()<<filt.value().toString());
             } else {
                 qWarning() << "QContactTrackerEngine: Unsupported QContactFilter::ContactDetail"
                     << filt.detailDefinitionName();
@@ -246,7 +246,7 @@ RDFSelect prepareEmailAddressesQuery(RDFVariable &rdfcontact1, bool forAffiliati
 
 RDFSelect prepareIMContactsQuery(RDFVariable &imcontact)
 {
-    ::tracker()->setVerbosity(4);
+//::tracker()->setVerbosity(4);
 
     // columns
     RDFSelect queryidsimacccounts;
