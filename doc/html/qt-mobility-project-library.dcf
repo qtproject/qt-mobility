@@ -1084,6 +1084,7 @@
         <keyword ref="qcontactmemoryengine.html#setSelfContactId">setSelfContactId</keyword>
         <keyword ref="qcontactmemoryengine.html#startRequest">startRequest</keyword>
         <keyword ref="qcontactmemoryengine.html#supportedDataTypes">supportedDataTypes</keyword>
+        <keyword ref="qcontactmemoryengine.html#supportedRelationshipTypes">supportedRelationshipTypes</keyword>
         <keyword ref="qcontactmemoryengine.html#waitForRequestFinished">waitForRequestFinished</keyword>
         <keyword ref="qcontactmemoryengine.html#waitForRequestProgress">waitForRequestProgress</keyword>
         <section ref="qcontactmemoryengine-members.html" title="List of all members"/>
@@ -3501,15 +3502,6 @@
     </section>
 </section>
 <section ref="overviews.html" title="Overviews">
-    <section ref="sensors-backend.html" title="">
-        <keyword ref="sensors-backend.html"></keyword>
-    </section>
-    <section ref="sensors-helpers.html" title="">
-        <keyword ref="sensors-helpers.html"></keyword>
-    </section>
-    <section ref="sensors.html" title="">
-        <keyword ref="sensors.html"></keyword>
-    </section>
     <section ref="functions.html" title="All Functions">
         <keyword ref="functions.html">All Functions</keyword>
     </section>
