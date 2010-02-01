@@ -59,10 +59,12 @@ public:
     QString deviceDescription(const QByteArray &service, const QByteArray &device);
 
 private:
+#ifdef QMEDIA_DIRECTSHOW_CAMERA
     void updateDevices() const;
 
     mutable QList<QByteArray> m_cameraDevices;
     mutable QStringList m_cameraDescriptions;
+#endif
 };
 
 #endif // DSSERVICEPLUGIN_H

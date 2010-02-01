@@ -40,14 +40,14 @@
 ****************************************************************************/
 
 #include "qversitwriter.h"
-#include "qvcard21writer_p.h"
-#include "qvcard30writer_p.h"
+#include "qversitwriter_p.h"
 #include "versitutils_p.h"
 #include "qmobilityglobal.h"
 
 #include <QStringList>
+#include <QTextCodec>
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
 /*!
   \class QVersitWriter
@@ -60,7 +60,8 @@ QTM_BEGIN_NAMESPACE
   QVersitWriter converts a QVersitDocument into its textual representation.
   QVersitWriter supports writing to an abstract I/O device
   which can be for example a file or a memory buffer.
-  The writing can be done synchronously or asynchronously.
+  The writing can be done asynchronously and the waitForFinished()
+  function can be used to implement a blocking write.
  
   \code
   // An example of writing a simple vCard to a memory buffer:
@@ -73,8 +74,8 @@ QTM_BEGIN_NAMESPACE
   property.setName("N");
   property.setValue("Citizen;John;Q;;");
   document.addProperty(property);
-  writer.setVersitDocument(document);
-  if (writer.writeAll()) {
+  writer.startWriting();
+  if (writer.waitForFinished()) {
       // Use the vCardBuffer...
   }
   \endcode
@@ -83,14 +84,17 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
- * \fn QVersitWriter::writingDone()
- * The signal is emitted by the writer when the asynchronous writing has been completed.
+ * \fn QVersitWriter::stateChanged(QVersitWriter::State state)
+ * The signal is emitted by the writer when its state has changed (eg. when it has finished
+ * writing to the device).
+ * \a state is the new state of the writer.
  */
 
 /*! Constructs a new writer. */
-QVersitWriter::QVersitWriter() : d(new QVCard21Writer)
+QVersitWriter::QVersitWriter() : d(new QVersitWriterPrivate)
 {
-    connect(d,SIGNAL(finished()),this,SIGNAL(writingDone()),Qt::DirectConnection);
+    connect(d, SIGNAL(stateChanged(QVersitWriter::State)),
+            this, SIGNAL(stateChanged(QVersitWriter::State)), Qt::DirectConnection);
 }
 
 /*! 
@@ -101,40 +105,6 @@ QVersitWriter::~QVersitWriter()
 {
     d->wait();
     delete d;
-}
-
-/*!
- * Set the versit document to be written to \a versitDocument and
- * selects the actual writer implementation based on the versit document type.
- */
-void QVersitWriter::setVersitDocument(const QVersitDocument& versitDocument)
-{
-    QVersitWriterPrivate* updatedWriter = 0;
-    switch (versitDocument.versitType()) {
-        case QVersitDocument::VCard21:
-            updatedWriter = new QVCard21Writer;
-            break;
-        case QVersitDocument::VCard30:
-            updatedWriter = new QVCard30Writer;
-            break;
-        default:
-            break;
-    }
-    if (updatedWriter) {
-        updatedWriter->mIoDevice = d->mIoDevice;
-        delete d;
-        d = updatedWriter;
-        connect(d,SIGNAL(finished()),this,SIGNAL(writingDone()),Qt::DirectConnection);
-    }
-    d->mVersitDocument = versitDocument;
-}
-
-/*!
- * Returns the current versit document.
- */
-QVersitDocument QVersitWriter::versitDocument() const
-{
-    return d->mVersitDocument;
 }
 
 /*!
@@ -154,37 +124,116 @@ QIODevice* QVersitWriter::device() const
 }
 
 /*!
- * Starts writing the output asynchronously.
- * Returns false if the output device has not been set or opened or
- * if there is another asynchronous write operation already pending.
- * Signal \l writingDone() is emitted when the writing has finished.
+ * Sets the default codec for the writer to use for writing the entire output.
+ *
+ * If \a codec is NULL, the writer uses the codec according to the specification prescribed default.
+ * (for vCard 2.1, ASCII; for vCard 3.0, UTF-8).
  */
-bool QVersitWriter::startWriting()
+void QVersitWriter::setDefaultCodec(QTextCodec *codec)
 {
-    bool started = false;
-    if (d->isReady() && !d->isRunning()) {
-        d->start();
-        started = true;
-    }
-
-    return started;
+    d->mDefaultCodec = codec;
 }
 
 /*!
- * Writes the output synchronously.
- * Returns false if the output device has not been set or opened or
- * if there is an asynchronous write operation pending.
- * Using this function may block the user thread for an undefined period.
- * In most cases asynchronous \l startWriting() should be used instead.
+ * Returns the document's codec.
  */
-bool QVersitWriter::writeAll()
+QTextCodec* QVersitWriter::defaultCodec() const
 {
-    bool ok = false;
-    if (!d->isRunning())
-        ok = d->write();
-    return ok;
+    return d->mDefaultCodec;
+}
+
+/*!
+ * Starts writing \a input to device() asynchronously.
+ * Returns false if the output device has not been set or opened or
+ * if there is another asynchronous write operation already pending.
+ * Signal \l stateChanged() is emitted with parameter FinishedState
+ * when the writing has finished.
+ */
+bool QVersitWriter::startWriting(const QList<QVersitDocument>& input)
+{
+    d->mInput = input;
+    if (d->state() == ActiveState || d->isRunning()) {
+        d->setError(QVersitWriter::NotReadyError);
+        return false;
+    } else if (!d->mIoDevice || !d->mIoDevice->isWritable()) {
+        d->setError(QVersitWriter::IOError);
+        return false;
+    } else {
+        d->setState(ActiveState);
+        d->setError(NoError);
+        d->start();
+        return true;
+    }
+}
+
+/*!
+ * Attempts to asynchronously cancel the write request.
+ */
+void QVersitWriter::cancel()
+{
+    d->setCanceling(true);
+}
+
+/*!
+ * If the state is ActiveState, blocks until the writer has finished writing or \a msec milliseconds
+ * has elapsed, returning true if it successfully finishes or is cancelled by the user.
+ * If the state is FinishedState, returns true immediately.
+ * Otherwise, returns false immediately.
+ */
+bool QVersitWriter::waitForFinished(int msec)
+{
+    State state = d->state();
+    if (state == ActiveState) {
+        return d->wait(msec);
+    } else if (state == FinishedState) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/*!
+ * Returns the state of the writer.
+ */
+QVersitWriter::State QVersitWriter::state() const
+{
+    return d->state();
+}
+
+/*!
+ * Returns the error encountered by the last operation.
+ */
+QVersitWriter::Error QVersitWriter::error() const
+{
+    return d->error();
+}
+
+
+void Q_DECL_DEPRECATED QVersitWriter::setVersitDocument(const QVersitDocument& versitDocument)
+{
+    qWarning("QVersitWriter::setVersitDocument(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  The document should be passed directly into startWriting().");
+    QList<QVersitDocument> documents;
+    documents.append(versitDocument);
+    d->mInput = documents;
+}
+
+QVersitDocument Q_DECL_DEPRECATED QVersitWriter::versitDocument() const
+{
+    qWarning("QVersitWriter::versitDocument(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!");
+    return QVersitDocument();
+}
+
+bool Q_DECL_DEPRECATED QVersitWriter::startWriting()
+{
+    qWarning("QVersitWriter::startWriting(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  The versit document should be specified as a parameter.");
+    return startWriting(d->mInput);
+}
+
+bool Q_DECL_DEPRECATED QVersitWriter::writeAll()
+{
+    qWarning("QVersitWriter::writeAll(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  startWriting() and waitForFinished() should be used instead.");
+    startWriting(d->mInput);
+    return waitForFinished();
 }
 
 #include "moc_qversitwriter.cpp"
-
-QTM_END_NAMESPACE

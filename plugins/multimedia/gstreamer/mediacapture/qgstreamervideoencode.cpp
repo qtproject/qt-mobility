@@ -150,7 +150,7 @@ GstElement *QGstreamerVideoEncode::createEncoder()
     gst_bin_add(encoderBin, colorspace);
 
     QString codec = m_videoSettings.codec();
-    qDebug() << "create encoder for video codec" << codec;
+    //qDebug() << "create encoder for video codec" << codec;
 
     GstElement *encoderElement = gst_element_factory_make( m_elementNames.value(codec).constData(), "video-encoder");
     gst_bin_add(encoderBin, encoderElement);

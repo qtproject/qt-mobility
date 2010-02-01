@@ -66,6 +66,9 @@ private slots:
     void displayName();
     void type();
     void emptiness();
+    void traits();
+    void idTraits();
+    void localIdTraits();
 };
 
 tst_QContact::tst_QContact()
@@ -169,6 +172,7 @@ void tst_QContact::details()
     QVERIFY(p == p3);
 
     // now we want to add multiple details of the same type, and test that retrieval works correctly.
+    p2 = QContactPhoneNumber();
     p2.setNumber("22222");
     p2.setValue("nonexistent-field", QVariant("22222-2"));
     c.saveDetail(&p);
@@ -596,7 +600,7 @@ void tst_QContact::displayName()
     /*
      * The display label is not updated until you save the contact!
      */
-    QString synth = cm.synthesizeDisplayLabel(d);
+    QString synth = cm.synthesizedDisplayLabel(d);
     QVERIFY(d.displayLabel().isEmpty());
     //QVERIFY(synth == name.customLabel()); // XXX Perhaps not guaranteed, depends on backend synth rules.
 
@@ -640,6 +644,40 @@ void tst_QContact::emptiness()
     QVERIFY(c.type() == QString(QLatin1String(QContactType::TypeContact)));
     QVERIFY(c.isEmpty() == true); // type doesn't affect emptiness
 }
+
+void tst_QContact::traits()
+{
+    QVERIFY(sizeof(QContact) == sizeof(void *));
+    QTypeInfo<QTM_PREPEND_NAMESPACE(QContact)> ti;
+    QVERIFY(ti.isComplex);
+    QVERIFY(!ti.isStatic);
+    QVERIFY(!ti.isLarge);
+    QVERIFY(!ti.isPointer);
+    QVERIFY(!ti.isDummy);
+}
+
+void tst_QContact::idTraits()
+{
+    QVERIFY(sizeof(QContactId) == sizeof(void *));
+    QTypeInfo<QTM_PREPEND_NAMESPACE(QContactId)> ti;
+    QVERIFY(ti.isComplex);
+    QVERIFY(!ti.isStatic);
+    QVERIFY(!ti.isLarge);
+    QVERIFY(!ti.isPointer);
+    QVERIFY(!ti.isDummy);
+}
+
+void tst_QContact::localIdTraits()
+{
+    QVERIFY(sizeof(QContactId) == sizeof(void *));
+    QTypeInfo<QTM_PREPEND_NAMESPACE(QContactLocalId)> ti;
+    QVERIFY(!ti.isComplex);
+    QVERIFY(!ti.isStatic);
+    QVERIFY(!ti.isLarge);
+    QVERIFY(!ti.isPointer);
+    QVERIFY(!ti.isDummy);
+}
+
 
 QTEST_MAIN(tst_QContact)
 #include "tst_qcontact.moc"

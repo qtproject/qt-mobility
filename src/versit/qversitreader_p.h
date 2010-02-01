@@ -54,18 +54,24 @@
 // We mean it.
 //
 
+#include "qmobilityglobal.h"
+#include "qversitreader.h"
 #include "qversitdocument.h"
 #include "qversitproperty.h"
-#include "qmobilityglobal.h"
+#include "versitutils_p.h"
 
 #include <QObject>
 #include <QThread>
 #include <QByteArray>
 #include <QIODevice>
 #include <QList>
-#include <QTimer>
+#include <QPointer>
+#include <QByteArray>
+#include <QMutex>
+#include <QWaitCondition>
 
 QTM_BEGIN_NAMESPACE
+
 
 class Q_AUTOTEST_EXPORT QVersitReaderPrivate : public QThread
 {
@@ -75,39 +81,68 @@ public: // Constructors and destructor
     QVersitReaderPrivate(); 
     ~QVersitReaderPrivate();
 
-public: // New functions
-    bool isReady() const;
-    bool read();
+signals:
+    void stateChanged(QVersitReader::State state);
+    void resultsAvailable(QList<QVersitDocument>& results);
 
-    bool parseVersitDocument(QByteArray& text, QVersitDocument& document);
+public: // New functions
+    void read();
+
+    bool parseVersitDocument(VersitCursor& cursor,
+                             QVersitDocument& document,
+                             bool foundBegin = false);
 
     QVersitProperty parseNextVersitProperty(
         QVersitDocument::VersitType versitType,
-        QByteArray& text);
+        VersitCursor& text);
 
     void parseVCard21Property(
-        QByteArray& text,
+        VersitCursor& text,
         QVersitProperty& property);
 
     void parseVCard30Property(
-        QByteArray& text,
+        VersitCursor& text,
         QVersitProperty& property);
 
     void parseAgentProperty(
-        QByteArray& text,
+        VersitCursor& text,
         QVersitProperty& property);
 
     bool setVersionFromProperty(
         QVersitDocument& document,
         const QVersitProperty& property) const;
 
+    void unencode(
+        QVariant& value,
+        VersitCursor& cursor,
+        QVersitProperty& property,
+        QTextCodec* codec) const;
+
+    QString decodeCharset(
+        const QByteArray& value,
+        QVersitProperty& property,
+        QTextCodec** codec) const;
+
+    // mutexed getters and setters.
+    void setState(QVersitReader::State);
+    QVersitReader::State state() const;
+    void setError(QVersitReader::Error);
+    QVersitReader::Error error() const;
+    void setCanceling(bool cancelling);
+    bool isCanceling();
+
 protected: // From QThread
      void run();
 
 public: // Data
-    QIODevice* mIoDevice;
+    QPointer<QIODevice> mIoDevice;
     QList<QVersitDocument> mVersitDocuments;
     int mDocumentNestingLevel; // Depth in parsing nested Versit documents
+    QTextCodec* mDefaultCodec;
+    QVersitReader::State mState;
+    QVersitReader::Error mError;
+    bool mIsCanceling;
+    mutable QMutex mMutex;
 };
 
 QTM_END_NAMESPACE

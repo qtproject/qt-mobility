@@ -120,6 +120,11 @@
 #      else
 #        define Q_SYSINFO_EXPORT Q_DECL_IMPORT
 #      endif
+#      if defined(QT_BUILD_SENSORS_LIB)
+#        define Q_SENSORS_EXPORT Q_DECL_EXPORT
+#      else
+#        define Q_SENSORS_EXPORT Q_DECL_IMPORT
+#      endif
 #    elif defined(QT_DLL) /* use a Qt DLL library */
 #      define Q_BEARER_EXPORT Q_DECL_IMPORT
 #      define Q_PUBLISHSUBSCRIBE_EXPORT Q_DECL_IMPORT
@@ -130,6 +135,7 @@
 #      define Q_MESSAGING_EXPORT Q_DECL_IMPORT
 #      define Q_SERVICEFW_EXPORT Q_DECL_IMPORT
 #      define Q_SYSINFO_EXPORT Q_DECL_IMPORT
+#      define Q_SENSORS_EXPORT Q_DECL_IMPORT
 #    endif
 #  else
 #  endif
@@ -144,6 +150,7 @@
 #      define Q_MESSAGING_EXPORT Q_DECL_EXPORT
 #      define Q_SERVICEFW_EXPORT Q_DECL_EXPORT
 #      define Q_SYSINFO_EXPORT Q_DECL_EXPORT
+#      define Q_SENSORS_EXPORT Q_DECL_EXPORT
 #    else
 #      define Q_BEARER_EXPORT
 #      define Q_PUBLISHSUBSCRIBE_EXPORT
@@ -154,6 +161,7 @@
 #      define Q_MESSAGING_EXPORT
 #      define Q_SERVICEFW_EXPORT
 #      define Q_SYSINFO_EXPORT
+#      define Q_SENSORS_EXPORT
 #    endif
 #  endif
 #endif

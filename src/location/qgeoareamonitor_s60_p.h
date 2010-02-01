@@ -61,7 +61,7 @@ QTM_BEGIN_NAMESPACE
  *
  */
 class QGeoAreaMonitorS60 : public INotificationMonitorCallback,
-        public QGeoAreaMonitor
+            public QGeoAreaMonitor
 
 {
 public :
@@ -100,6 +100,8 @@ private:
     QMLBackendMonitorAO *iTriggerAO;
     QMLBackendMonitorCreateTriggerAO* iTriggerCreateAO;
     QMLBackendTriggerChangeAO *iNotifyTriggerAO;
+    bool connectedLbt;
+    static TInt refCount;
 };
 
 QTM_END_NAMESPACE

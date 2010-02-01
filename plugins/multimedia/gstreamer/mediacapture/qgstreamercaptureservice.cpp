@@ -162,24 +162,24 @@ QGstreamerCaptureService::QGstreamerCaptureService(const QString &service, QObje
 
         if (m_videoInputDevice->deviceCount())
             m_cameraControl->setDevice(m_videoInputDevice->deviceName(m_videoInputDevice->selectedDevice()));
+
+        m_videoOutput = new QGstreamerVideoOutputControl(this);
+        connect(m_videoOutput, SIGNAL(outputChanged(QVideoOutputControl::Output)),
+                this, SLOT(videoOutputChanged(QVideoOutputControl::Output)));
+
+        m_videoRenderer = new QGstreamerVideoRenderer(this);
+        m_videoRendererFactory = new QGstreamerVideoRendererWrapper(m_videoRenderer);
+        m_videoWindow = new QGstreamerVideoOverlay(this);
+        m_videoWindowFactory = new QGstreamerVideoRendererWrapper(m_videoWindow);
+
+        m_videoWidgetControl = new QGstreamerVideoWidgetControl(this);
+        m_videoWidgetFactory = new QGstreamerVideoRendererWrapper(m_videoWidgetControl);
+
+        m_videoOutput->setAvailableOutputs(QList<QVideoOutputControl::Output>()
+                                           << QVideoOutputControl::RendererOutput
+                                           << QVideoOutputControl::WindowOutput
+                                           << QVideoOutputControl::WidgetOutput);
     }
-
-    m_videoOutput = new QGstreamerVideoOutputControl(this);
-    connect(m_videoOutput, SIGNAL(outputChanged(QVideoOutputControl::Output)),
-            this, SLOT(videoOutputChanged(QVideoOutputControl::Output)));
-
-    m_videoRenderer = new QGstreamerVideoRenderer(this);
-    m_videoRendererFactory = new QGstreamerVideoRendererWrapper(m_videoRenderer);
-    m_videoWindow = new QGstreamerVideoOverlay(this);
-    m_videoWindowFactory = new QGstreamerVideoRendererWrapper(m_videoWindow);
-
-    m_videoWidgetControl = new QGstreamerVideoWidgetControl(this);
-    m_videoWidgetFactory = new QGstreamerVideoRendererWrapper(m_videoWidgetControl);
-
-    m_videoOutput->setAvailableOutputs(QList<QVideoOutputControl::Output>()
-            << QVideoOutputControl::RendererOutput
-            << QVideoOutputControl::WindowOutput
-            << QVideoOutputControl::WidgetOutput);
 
     m_audioInputEndpointSelector = new QGstreamerAudioInputEndpointSelector(this);
     connect(m_audioInputEndpointSelector, SIGNAL(activeEndpointChanged(QString)), m_captureSession, SLOT(setCaptureDevice(QString)));

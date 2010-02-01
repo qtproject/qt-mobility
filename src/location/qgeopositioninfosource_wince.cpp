@@ -74,7 +74,7 @@ QGeoPositionInfoSourceWinCE::QGeoPositionInfoSourceWinCE(QObject *parent)
 
     // The QGeoInfoThreadWinCE instance takes ownership of the validator.
     infoThread = new QGeoInfoThreadWinCE(validator, true, this);
-
+    infoThread->start();
     // QGeoInfoThreadWinCE takes care of registering GPS_POSITION as a metatype.
     connect(infoThread, SIGNAL(dataUpdated(GPS_POSITION)), this, SLOT(dataUpdated(GPS_POSITION)));
     connect(infoThread, SIGNAL(updateTimeout()), this, SIGNAL(updateTimeout()));

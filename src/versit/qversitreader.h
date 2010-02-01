@@ -47,9 +47,8 @@
 
 #include <QObject>
 
-QT_BEGIN_NAMESPACE
 class QIODevice;
-QT_END_NAMESPACE
+class QTextCodec;
 
 QTM_BEGIN_NAMESPACE
 
@@ -61,6 +60,24 @@ class Q_VERSIT_EXPORT QVersitReader : public QObject
     Q_OBJECT  
     
 public:
+    enum Error {
+        NoError = 0,
+        UnspecifiedError,
+        IOError,
+        OutOfMemoryError,
+        NotReadyError,
+        ParseError,
+        InvalidCharsetError,
+        BadDeviceError
+    };
+
+    enum State {
+        InactiveState = 0,   // operation not yet started
+        ActiveState,         // operation started, not yet finished
+        CanceledState,       // operation is finished due to cancelation
+        FinishedState        // operation successfully completed
+    };
+
     QVersitReader();
     ~QVersitReader();
 
@@ -68,20 +85,43 @@ public:
     void setDevice(QIODevice* device);
     QIODevice* device() const;
 
+    void setDefaultCodec(QTextCodec* codec);
+    QTextCodec* defaultCodec() const;
+
     // reading:
     bool startReading();
-    bool readAll();
+    void cancel();
+    bool waitForFinished(int msec = -1);
 
     // output:
-    QList<QVersitDocument> result() const;
+    QList<QVersitDocument> results() const;
+
+    State state() const;
+    Error error() const;
+
+    // Deprecated
+    bool Q_DECL_DEPRECATED readAll()
+    {
+        qWarning("QVersitDocument::readAll(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  startReading() and waitForFinished() should be used instead.");
+        startReading();
+        return waitForFinished();
+    }
+    QList<QVersitDocument> Q_DECL_DEPRECATED result() const
+    {
+        qWarning("QVersitDocument::result(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  results() should be used instead.");
+        return results();
+    }
 
 signals:
-    void readingDone();
+    void stateChanged(QVersitReader::State state);
+    void resultsAvailable(QList<QVersitDocument>& results);
     
 private: // data
     QVersitReaderPrivate* d;   
 };
 
 QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QVersitReader::State))
 
 #endif // QVERSITREADER_H

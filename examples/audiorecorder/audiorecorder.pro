@@ -17,4 +17,7 @@ HEADERS = \
 SOURCES = \
     main.cpp \
     audiorecorder.cpp
-    
+
+symbian: {
+    TARGET.CAPABILITY = UserEnvironment ReadDeviceData
+}

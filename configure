@@ -63,7 +63,7 @@ QMAKE_CACHE="$shadowpath/.qmake.cache"
 LIB_PATH="lib"
 BIN_PATH="bin"
 MAC_SDK=
-MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework"
+MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors"
 MOBILITY_MODULES_UNPARSED=
 
 usage() 
@@ -166,7 +166,7 @@ while [ "$#" -gt 0 ]; do
             MOBILITY_MODULES=
             for m in $MOBILITY_MODULES_UNPARSED; do
                 case "$m" in
-                    bearer|contacts|location|messaging|multimedia|publishsubscribe|serviceframework|systeminfo|versit)
+                    bearer|contacts|location|messaging|multimedia|publishsubscribe|serviceframework|systeminfo|versit|sensors)
                         MOBILITY_MODULES="$MOBILITY_MODULES $m";
                         ;;
                     *)
@@ -384,7 +384,6 @@ echo "Generating Mobility Headers..."
 #remove old headers
 rm -rf $shadowpath/include
 mkdir $shadowpath/include
-$relpath/bin/syncheaders $shadowpath/include $relpath/src/global
 for module in $MOBILITY_MODULES; do
     case "$module" in 
         bearer)
@@ -404,6 +403,9 @@ for module in $MOBILITY_MODULES; do
             ;;
         contacts)
             $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts/details
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts/requests
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts/filters
             ;;
         multimedia)
             $relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia
@@ -416,6 +418,12 @@ for module in $MOBILITY_MODULES; do
             #versit implies contacts
             $relpath/bin/syncheaders $shadowpath/include $relpath/src/versit
             $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts/details
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts/requests
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts/filters
+            ;;
+        sensors)
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/sensors
             ;;
         *)
             echo "Cannot generate headers for $module"

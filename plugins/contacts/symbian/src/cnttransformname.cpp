@@ -54,9 +54,9 @@ QList<CContactItemField *> CntTransformName::transformDetailL(const QContactDeta
 
     //create new fields without contexts
     transformToTextFieldL(name, fieldList, name.prefix(), KUidContactFieldPrefixName, KUidContactFieldVCardMapUnusedN, false);
-    transformToTextFieldL(name, fieldList, name.first(), KUidContactFieldGivenName, KUidContactFieldVCardMapUnusedN, false);
-    transformToTextFieldL(name, fieldList, name.middle(), KUidContactFieldAdditionalName, KUidContactFieldVCardMapUnusedN, false);
-    transformToTextFieldL(name, fieldList, name.last(), KUidContactFieldFamilyName, KUidContactFieldVCardMapUnusedN, false);
+    transformToTextFieldL(name, fieldList, name.firstName(), KUidContactFieldGivenName, KUidContactFieldVCardMapUnusedN, false);
+    transformToTextFieldL(name, fieldList, name.middleName(), KUidContactFieldAdditionalName, KUidContactFieldVCardMapUnusedN, false);
+    transformToTextFieldL(name, fieldList, name.lastName(), KUidContactFieldFamilyName, KUidContactFieldVCardMapUnusedN, false);
     transformToTextFieldL(name, fieldList, name.suffix(), KUidContactFieldSuffixName, KUidContactFieldVCardMapUnusedN, false);
     transformToTextFieldL(name, fieldList, name.customLabel(), KUidContactFieldTemplateLabel, KUidContactFieldVCardMapUnusedN, false);
 
@@ -78,15 +78,15 @@ QContactDetail *CntTransformName::transformItemField(const CContactItemField& fi
         }
         //First name
         else if (field.ContentType().FieldType(i) == KUidContactFieldGivenName) {
-            name->setFirst(nameValue);
+            name->setFirstName(nameValue);
         }
         //Middle name
         else if (field.ContentType().FieldType(i) == KUidContactFieldAdditionalName) {
-            name->setMiddle(nameValue);
+            name->setMiddleName(nameValue);
         }
         //Last name
         else if (field.ContentType().FieldType(i) == KUidContactFieldFamilyName) {
-            name->setLast(nameValue);
+            name->setLastName(nameValue);
         }
         //Suffix
         else if (field.ContentType().FieldType(i) == KUidContactFieldSuffixName) {
@@ -197,7 +197,7 @@ void CntTransformName::detailDefinitions(QMap<QString, QContactDetailDefinition>
 {
     if(definitions.contains(QContactName::DefinitionName)) {
         QContactDetailDefinition d = definitions.value(QContactName::DefinitionName);
-        QMap<QString, QContactDetailDefinitionField> fields = d.fields();
+        QMap<QString, QContactDetailFieldDefinition> fields = d.fields();
 
         // groups support only custom label
         if(contactType == QContactType::TypeGroup) {
