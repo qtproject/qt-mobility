@@ -95,7 +95,7 @@ QVersitDefaultResourceHandler::~QVersitDefaultResourceHandler()
 /*!
  * Default resource loader.
  * Loads file from given \a location into \a contents and returns true if successful.
- * Does not set \a mimeType.
+ * Sets the \a mimeType based on the file extension.
  */
 bool QVersitDefaultResourceHandler::loadResource(const QString& location,
                                                  QByteArray* contents,
