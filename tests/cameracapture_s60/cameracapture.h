@@ -84,6 +84,9 @@ private slots:
     void takeImage();
 
     void settings();
+#ifdef Q_OS_SYMBIAN
+    void stillSettings();
+#endif
 
     void displayErrorMessage();
 

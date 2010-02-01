@@ -42,6 +42,9 @@
 #include "cameracapture.h"
 #include "ui_cameracapture.h"
 #include "settings.h"
+#ifdef Q_OS_SYMBIAN
+#include "stillsettings.h"
+#endif
 
 #include <qmediaservice.h>
 #include <qmediarecorder.h>
@@ -119,6 +122,7 @@ CameraCapture::CameraCapture(QWidget *parent) :
 
 CameraCapture::~CameraCapture()
 {
+    delete imageCapture;
     delete mediaRecorder;
     delete videoWidget;
     delete camera;
@@ -299,6 +303,18 @@ void CameraCapture::settings()
                 settingsDialog.format());
     }
 }
+
+#ifdef Q_OS_SYMBIAN
+void CameraCapture::stillSettings()
+{    
+    StillSettings settingsDialog(imageCapture);    
+    settingsDialog.setImageSettings(imageCapture->encodingSettings());
+    
+    if (settingsDialog.exec() == QDialog::Accepted) {
+        imageCapture->setEncodingSettings(settingsDialog.imageSettings());
+    }
+}
+#endif
 
 void CameraCapture::record()
 {

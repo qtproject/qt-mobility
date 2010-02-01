@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>300</width>
-    <height>383</height>
+    <width>240</width>
+    <height>320</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -234,8 +234,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>300</width>
-     <height>18</height>
+     <width>240</width>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -249,6 +249,7 @@
      <string>Devices</string>
     </property>
     <addaction name="separator"/>
+    <addaction name="actionStilllSettings"/>
     <addaction name="actionSettings"/>
     <addaction name="separator"/>
     <addaction name="actionCamera"/>
@@ -310,7 +311,7 @@
   </action>
   <action name="actionSettings">
    <property name="text">
-    <string>Settings</string>
+    <string>Video Camera Settings</string>
    </property>
   </action>
   <action name="actionCamera">
@@ -396,6 +397,11 @@
   <action name="actionTungsten">
    <property name="text">
     <string>Tungsten</string>
+   </property>
+  </action>
+  <action name="actionStilllSettings">
+   <property name="text">
+    <string>Stilll Camera Settings</string>
    </property>
   </action>
  </widget>
@@ -510,6 +516,22 @@
     <hint type="destinationlabel">
      <x>149</x>
      <y>191</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionStilllSettings</sender>
+   <signal>triggered()</signal>
+   <receiver>CameraCapture</receiver>
+   <slot>stillSettings()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>119</x>
+     <y>159</y>
     </hint>
    </hints>
   </connection>
