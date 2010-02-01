@@ -19,6 +19,10 @@ CONFIG(debug, debug|release) {
     SUBDIRPART=Release
 }
 
+maemo5 {
+    DEFINES += Q_WS_MAEMO_5
+}
+
 OUTPUT_DIR = $$QT_MOBILITY_BUILD_TREE
 DESTDIR = $$OUTPUT_DIR/bin/examples
 MOC_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/moc
