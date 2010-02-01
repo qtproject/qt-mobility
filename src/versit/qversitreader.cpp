@@ -58,8 +58,8 @@ QTM_USE_NAMESPACE
 
   \ingroup versit
  
-  QVersitReader reads 0..n versit documents such as vCards
-  from a text stream into 0..n QVersitDocument instances.
+  QVersitReader reads a number of Versit documents such as vCards
+  from a text stream and returns a list of QVersitDocument instances.
   QVersitReader supports reading from an abstract I/O device
   which can be for example a file or a memory buffer.
   The reading can be done asynchronously, and the
@@ -87,8 +87,15 @@ QTM_USE_NAMESPACE
  */
 
 /*!
- * \fn QVersitReader::finished()
- * The signal is emitted by the reader when the asynchronous reading has been completed.
+ * \fn QVersitReader::stateChanged(QVersitReader::State state)
+ * The signal is emitted by the reader when its state has changed (eg. when it has finished
+ * reading from the device).
+ * \a state is the new state of the reader.
+ *
+ * \fn QVersitReader::resultsAvailable(QList<QVersitDocument>& results)
+ * The signal is emitted by the reader as it reads from the device when it has made more Versit
+ * documents available.
+ * \a results is the complete list of documents read so far.
  */
 
 /*! Constructs a new reader. */
@@ -111,7 +118,7 @@ QVersitReader::~QVersitReader()
 }
 
 /*!
- * Sets the device used for reading the input to be the given device \a device.
+ * Sets the device used for reading the input to be the given \a device.
  */
 void QVersitReader::setDevice(QIODevice* device)
 {
@@ -128,14 +135,14 @@ QIODevice* QVersitReader::device() const
 
 /*!
  * Sets the codec for the reader to use when parsing the input stream.
- * This codec is not used when overridden with a CHARSET Versit parameter.
+ * This codec is not used for values where the CHARSET Versit parameter occurs.
  */
 void QVersitReader::setDefaultCodec(QTextCodec *codec)
 {
     if (codec != NULL) {
         d->mDefaultCodec = codec;
     } else {
-        d->mDefaultCodec = QTextCodec::codecForName("ISO 8859-1");
+        d->mDefaultCodec = QTextCodec::codecForName("UTF-8");
     }
 }
 
@@ -152,7 +159,7 @@ QTextCodec* QVersitReader::defaultCodec() const
  * Returns false if the input device has not been set or opened or
  * if there is another asynchronous read operation already pending.
  * Signal \l stateChanged() is emitted with parameter FinishedState
- * is emitted when the reading has finished.
+ * when the reading has finished.
  */
 bool QVersitReader::startReading()
 {    if (d->state() == ActiveState || d->isRunning()) {
@@ -197,8 +204,8 @@ bool QVersitReader::waitForFinished(int msec)
 }
 
 /*!
- * Returns the reading result.  Even if there was an error, a partial list of results may be
- * returned.
+ * Returns the reading result.  Even if there was an error or reading has not completed, a partial
+ * list of results may be returned.
  */
 QList<QVersitDocument> QVersitReader::results() const
 {

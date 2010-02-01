@@ -48,15 +48,15 @@ QTM_USE_NAMESPACE
 /*!
  * \class QVersitResourceHandler
  *
- * \brief The QVersitResourceHandler class is an interface for clients wishing to implement file
- * saving to disk when importing.
+ * \brief The QVersitResourceHandler class is an interface for clients wishing to implement custom
+ * behaviour for loading and saving files to disk when exporting and importing, respectively.
  *
  * \ingroup versit
  *
  * \sa QVersitContactImporter
  * \sa QVersitContactExporter
  *
- * \fn virtual bool QVersitResourceHandler::saveFile(const QByteArray& contents, const QVersitProperty& property, QString* filename) = 0;
+ * \fn virtual bool QVersitResourceHandler::saveResource(const QByteArray& contents, const QVersitProperty& property, QString* location) = 0;
  * Saves the binary data \a contents to a file on a persistent storage medium.
  *
  * \a property holds the QVersitProperty which is the context in which the binary is coming from.
@@ -76,7 +76,7 @@ QTM_USE_NAMESPACE
 /*!
  * Default resource loader.
  * Loads file from given \a location into \a contents and returns true if successful.
- * Does not set \a mimeType.
+ * Sets the \a mimeType based on the file extension.
  */
 bool QVersitDefaultResourceHandler::loadResource(const QString& location,
                                                  QByteArray* contents,
