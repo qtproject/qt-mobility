@@ -62,7 +62,7 @@ public:
     virtual ~QTrackerContactSaveRequest();
 
 private Q_SLOTS:
-    void onTrackerContactsAdded(const QList<QContactLocalId> &addedIds);
+    void onTrackerSignal(const QList<QContactLocalId> &ids);
 
 private:
     /* worker methods*/
@@ -86,7 +86,7 @@ private:
     /* extracted utilities */
     static QStringList detailsDefinitionsInContact(const QContact &c);
     static bool contactHasWorkRelatedDetails(const QContact &c);
-    QSet<QContactLocalId> pendingAddList;
+    QSet<QContactLocalId> pendingContactIds;
 
 };
 
