@@ -54,17 +54,20 @@ QTM_USE_NAMESPACE
   \brief The QVersitProperty class stores the name, value and parameters of a versit property.
 
   \ingroup versit
- 
-  For example a vCard can be presented as a QVersitDocument that
-  consists of 0..n properties such as a name (N),
-  a telephone number (TEL) and an email address (EMAIL) to name a few.
-  Each of these properties is stored as
-  an instance of a QVersitProperty in a QVersitDocument.
+
+  For example a vCard can be presented as a QVersitDocument that consists of a number of properties
+  such as a name (N), a telephone number (TEL) and an email address (EMAIL) to name a few.
+  Each of these properties is stored as an instance of a QVersitProperty in a QVersitDocument.
  
   QVersitProperty supports implicit sharing.
-  The property name and parameters of a QVersitProperty are converted
-  to upper-case when they are stored to a QVersitProperty.
-  The value of a QVersitProperty is raw data and it is case-sensitive.
+  The property name and parameters of a QVersitProperty are converted to upper-case when they are
+  stored to a QVersitProperty.
+
+  The value of a QVersitProperty is stored as a QVariant and should always be one of three types:
+  QString for textual values, QByteArray for binary data (eg. images), or QVersitDocument for
+  nested documents.  The \l QVersitReader will parse Versit properties and assign the correct type
+  of object to the property value.  The \l QVersitWriter will serialise objects of these types
+  correctly into the (text-based) Versit format.
  
   \sa QVersitDocument
  */
@@ -93,7 +96,7 @@ QVersitProperty& QVersitProperty::operator=(const QVersitProperty& other)
     return *this;    
 }
 
-/*! Returns true if this is equal to other; false if it is not equal. */
+/*! Returns true if this is equal to other; false otherwise. */
 bool QVersitProperty::operator==(const QVersitProperty& other) const
 {
     return d->mGroups == other.d->mGroups &&
@@ -102,7 +105,7 @@ bool QVersitProperty::operator==(const QVersitProperty& other) const
             d->mValue == other.d->mValue;
 }
 
-/*! Returns true if this is not equal to other; false if it is equal. */
+/*! Returns true if this is not equal to other; false otherwise. */
 bool QVersitProperty::operator!=(const QVersitProperty& other) const
 {
     return !(*this == other);
@@ -120,7 +123,7 @@ void QVersitProperty::setGroups(const QStringList& groups)
 }
 
 /*!
- * Gets the groups part of the property.
+ * Gets the groups of the property.
  */
 QStringList QVersitProperty::groups() const
 {
@@ -203,7 +206,7 @@ QMultiHash<QString,QString> QVersitProperty::parameters() const
 }
 
 /*!
- * Sets the \a value of the property.
+ * Sets the property value to \a value.
  */
 void QVersitProperty::setValue(const QVariant& value)
 {
@@ -224,8 +227,9 @@ QVariant QVersitProperty::variantValue() const
 }
 
 /*!
- * Returns the value of the property as a string if possible, otherwise
- * return an empty string.
+ * Returns the value of the property as a string if possible, otherwise return an empty string.
+ * If the property is stored as a QByteArray, it is decoded using the charset specified in the
+ * property's parameters.
  * \sa QVariant::toString()
  */
 QString QVersitProperty::value() const

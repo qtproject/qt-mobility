@@ -84,8 +84,10 @@ QTM_USE_NAMESPACE
  */
 
 /*!
- * \fn QVersitWriter::finished()
- * The signal is emitted by the writer when the asynchronous writing has been completed.
+ * \fn QVersitWriter::stateChanged(QVersitWriter::State state)
+ * The signal is emitted by the writer when its state has changed (eg. when it has finished
+ * writing to the device).
+ * \a state is the new state of the writer.
  */
 
 /*! Constructs a new writer. */
@@ -145,7 +147,7 @@ QTextCodec* QVersitWriter::defaultCodec() const
  * Returns false if the output device has not been set or opened or
  * if there is another asynchronous write operation already pending.
  * Signal \l stateChanged() is emitted with parameter FinishedState
- * is emitted when the writing has finished.
+ * when the writing has finished.
  */
 bool QVersitWriter::startWriting(const QList<QVersitDocument>& input)
 {
