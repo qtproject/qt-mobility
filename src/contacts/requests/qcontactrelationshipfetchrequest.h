@@ -69,15 +69,20 @@ public:
     void setRelationshipType(const QString& relationshipType);
     QString relationshipType() const;
 
-    void setParticipant(const QContactId& participant, QContactRelationshipFilter::Role role = QContactRelationshipFilter::Either);
-    QContactId participant() const;
-    QContactRelationshipFilter::Role participantRole() const;
+    // we no longer use "participant" or "participant role" -- deprecated and will be removed after transition period has elapsed.
+    void Q_DECL_DEPRECATED setParticipant(const QContactId& participant, QContactRelationshipFilter::Role role = QContactRelationshipFilter::Either); // deprecated
+    QContactId Q_DECL_DEPRECATED participant() const; // deprecated
+    QContactRelationshipFilter::Role Q_DECL_DEPRECATED participantRole() const; // deprecated
+
+    // replaces the above functions.
+    void setSecond(const QContactId& secondId);
+    QContactId second() const;
 
     /* Results */
     QList<QContactRelationship> relationships() const;
 
 signals:
-    void progress(QContactRelationshipFetchRequest* self, bool appendOnly);
+    void progress(QContactRelationshipFetchRequest* self, bool appendOnly); // deprecated
 
 private:
     Q_DISABLE_COPY(QContactRelationshipFetchRequest)

@@ -76,12 +76,14 @@ public:
             QContactManager* cm = QContactManager::fromUri(mgrUri);
             if (cm) {
                 QList<QContact> contacts;
-                foreach (const QContactLocalId id,  cm->contacts()) {
+                foreach (const QContactLocalId id,  cm->contactIds()) {
                     contacts.push_back(cm->contact(id));
                 }
                 savedContacts.insert(cm->managerName(),contacts);
-                QList<QContactLocalId> ids = cm->contacts();
-                cm->removeContacts(&ids);
+                QList<QContactLocalId> ids = cm->contactIds();
+                QMap<int, QContactManager::Error> errorMap;
+                cm->removeContacts(&ids, &errorMap);
+                delete cm;
             }
         }
     }
@@ -100,6 +102,7 @@ public:
                     c.setId(QContactId());
                     cm->saveContact(&c);
                 }
+                delete cm;
             }
         }
     }

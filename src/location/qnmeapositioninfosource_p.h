@@ -70,8 +70,7 @@ QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
 class QNmeaReader;
-struct QPendingGeoPositionInfo
-{
+struct QPendingGeoPositionInfo {
     QGeoPositionInfo info;
     bool hasFix;
 };
@@ -88,10 +87,10 @@ public:
     void stopUpdates();
     void requestUpdate(int msec);
 
-    bool parsePosInfoFromNmeaData(const char *data, 
-        int size, 
-        QGeoPositionInfo *posInfo, 
-        bool *hasFix);
+    bool parsePosInfoFromNmeaData(const char *data,
+                                  int size,
+                                  QGeoPositionInfo *posInfo,
+                                  bool *hasFix);
 
     void notifyNewUpdate(QGeoPositionInfo *update, bool fixStatus);
 
@@ -133,7 +132,7 @@ class QNmeaReader
 {
 public:
     explicit QNmeaReader(QNmeaPositionInfoSourcePrivate *sourcePrivate)
-        : m_proxy(sourcePrivate) {}
+            : m_proxy(sourcePrivate) {}
     virtual ~QNmeaReader() {}
 
     virtual void readAvailableData() = 0;

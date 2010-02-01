@@ -43,7 +43,9 @@
 #include "qversitdocument_p.h"
 #include "qmobilityglobal.h"
 
-QTM_BEGIN_NAMESPACE
+#include <QTextCodec>
+
+QTM_USE_NAMESPACE
 
 /*!
   \class QVersitDocument
@@ -86,10 +88,23 @@ QVersitDocument& QVersitDocument::operator=(const QVersitDocument& other)
     return *this;    
 }
 
+/*! Returns true if this is equal to other; false if it is not equal. */
+bool QVersitDocument::operator==(const QVersitDocument& other) const
+{
+    return d->mVersitType == other.d->mVersitType &&
+            d->mProperties == other.d->mProperties;
+}
+
+/*! Returns true if this is not equal to other; false if it is equal. */
+bool QVersitDocument::operator!=(const QVersitDocument& other) const
+{
+    return !(*this == other);
+}
+
 /*!
  * Sets the versit document type to \a type.
  */
-void QVersitDocument::setVersitType(VersitType type)
+void QVersitDocument::setType(VersitType type)
 {
     d->mVersitType = type;
 }
@@ -97,7 +112,7 @@ void QVersitDocument::setVersitType(VersitType type)
 /*!
  * Gets the versit document type.
  */
-QVersitDocument::VersitType QVersitDocument::versitType() const
+QVersitDocument::VersitType QVersitDocument::type() const
 {
     return d->mVersitType;
 }
@@ -112,12 +127,11 @@ void QVersitDocument::addProperty(const QVersitProperty& property)
 }
 
 /*!
- * Gets the list of the contained versit properties.
- * Note that the actual properties cannot be modified using the copy.
+ * Removes the property \a property from the versit document.
  */
-QList<QVersitProperty> QVersitDocument::properties() const
+void QVersitDocument::removeProperty(const QVersitProperty& property)
 {
-    return d->mProperties;  
+    d->mProperties.removeAll(property);
 }
 
 /*!
@@ -132,4 +146,29 @@ void QVersitDocument::removeProperties(const QString& name)
     }
 }
 
-QTM_END_NAMESPACE
+/*!
+ * Clears the document, removing all properties and metadata
+ * and resetting the codec to the default.
+ */
+void QVersitDocument::clear()
+{
+    d->mProperties.clear();
+    d->mVersitType = QVersitDocument::InvalidType;
+}
+
+/*!
+ * Gets the list of the contained versit properties.
+ * Note that the actual properties cannot be modified using the copy.
+ */
+QList<QVersitProperty> QVersitDocument::properties() const
+{
+    return d->mProperties;
+}
+
+/*!
+ * Returns true if the document is empty.
+ */
+bool QVersitDocument::isEmpty() const
+{
+    return d->mProperties.count() == 0;
+}

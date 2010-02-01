@@ -106,7 +106,7 @@ void tst_details::dumpContact(const QContact& contact)
     QList<QContactDetail> details = contact.details();
     foreach(QContactDetail d, details) {
         qDebug() << "  " << d.definitionName() << ":";
-        foreach( QString key, d.values().keys() )
+        foreach( QString key, d.variantValues().keys() )
             qDebug() << "    " << key << d.variantValue(key);
     }
 }
@@ -119,7 +119,7 @@ void tst_details::initTestCase()
     QVERIFY(QContactManager::availableManagers().contains("symbian"));
 
     QContactManager cm("symbian");
-    QList<QContactLocalId> ids = cm.contacts();
+    QList<QContactLocalId> ids = cm.contactIds();
     cm.removeContacts( &ids );
 }
 
@@ -296,9 +296,9 @@ void tst_details::testName()
 
     QContactName n;
     n.setPrefix( "prefix" );
-    n.setFirst( "first" );
-    n.setMiddle( "middle" );
-    n.setLast( "last" );
+    n.setFirstName( "first" );
+    n.setMiddleName( "middle" );
+    n.setLastName( "last" );
     n.setSuffix( "suffix" );
     c.saveDetail( &n );
 

@@ -15,11 +15,7 @@ PUBLIC_HEADERS += \
            qmessagefolderid.h \
            qmessageaccountid.h \
            qmessagecontentcontainer.h \ 
-           qmessagecontentcontainer_p.h \
-           addresshelper_p.h \
 	   qmessageaddress.h \
-           qmessageaddress_p.h \
-           qmessage_p.h \ 
            qmessage.h \
            qmessagefolder.h \
            qmessageaccount.h \
@@ -30,9 +26,12 @@ PUBLIC_HEADERS += \
            qmessagefilter.h \
            qmessagemanager.h \
            qmessagesortorder.h \
-           qmessageservice.h
+           qmessageservice.h \
+           qmessagedatacomparator.h \
+           qmessageglobal.h
 
 PRIVATE_HEADERS += \
+           addresshelper_p.h \
            qmessageid_p.h \
            qmessagecontentcontainerid_p.h \
            qmessagefolderid_p.h \
@@ -142,13 +141,6 @@ symbian {
     TARGET.CAPABILITY = ALL -TCB
     TARGET.UID3 = 0x2002AC82
 
-    deploy.path = $${EPOCROOT}
-    exportheaders.sources = $$PUBLIC_HEADERS
-    exportheaders.path = epoc32/include/mw
-    for(header, exportheaders.sources) {
-        BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
-    }
-            
     QtMessaging.sources = QtMessaging.dll
     QtMessaging.path = /sys/bin
     DEPLOYMENT += QtMessaging
@@ -251,4 +243,5 @@ SOURCES += qmessageid_qmf.cpp \
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
+CONFIG += middleware
 include(../../features/deploy.pri)

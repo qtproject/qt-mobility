@@ -25,10 +25,10 @@ contains(mobility_modules,location) {
     	SUBDIRS += flickrdemo \
 		    weatherinfo \
 		    lightmaps
+        contains(QT_CONFIG, webkit) {
+            SUBDIRS += fetchgooglemaps
+        }
     }		
-    contains(QT_CONFIG, webkit) {
-        SUBDIRS += fetchgooglemaps
-    }
 }
 
 #Contacts examples

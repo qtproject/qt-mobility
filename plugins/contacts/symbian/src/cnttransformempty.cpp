@@ -111,8 +111,8 @@ void CntTransformEmpty::detailDefinitions(QMap<QString, QContactDetailDefinition
     if(definitions.contains(QContactGender::DefinitionName)) {
         definitions.remove(QContactGender::DefinitionName);
     }
-    if(definitions.contains(QContactGeolocation::DefinitionName)) {
-        definitions.remove(QContactGeolocation::DefinitionName);
+    if(definitions.contains(QContactGeoLocation::DefinitionName)) {
+        definitions.remove(QContactGeoLocation::DefinitionName);
     }
     if(definitions.contains(QContactOnlineAccount::DefinitionName)) {
         definitions.remove(QContactOnlineAccount::DefinitionName);
