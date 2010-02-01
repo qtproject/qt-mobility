@@ -179,7 +179,7 @@ public:
 protected:
     explicit QSensorReading(QObject *parent, QSensorReadingPrivate *d);
     QScopedPointer<QSensorReadingPrivate> *d_ptr() { return &d; }
-    virtual void operator=(QSensorReading &other) = 0;
+    virtual void copyValuesFrom(QSensorReading *other) = 0;
 
 private:
     QScopedPointer<QSensorReadingPrivate> d;
@@ -211,7 +211,7 @@ private:
     public:\
         classname(QObject *parent = 0);\
         virtual ~classname();\
-        void operator=(QSensorReading &other);\
+        void copyValuesFrom(QSensorReading *other);\
     private:\
         qTypedWrapper<pclassname> d;
 
@@ -224,12 +224,12 @@ private:
         , d(d_ptr())\
         {}\
     classname::~classname() {}\
-    void classname::operator=(QSensorReading &_other)\
+    void classname::copyValuesFrom(QSensorReading *_other)\
     {\
         /* No need to verify types, only called by QSensorBackend */\
-        classname &other = static_cast<classname &>(_other);\
+        classname *other = static_cast<classname *>(_other);\
         pclassname *my_ptr = static_cast<pclassname*>(d_ptr()->data());\
-        pclassname *other_ptr = static_cast<pclassname*>(other.d_ptr()->data());\
+        pclassname *other_ptr = static_cast<pclassname*>(other->d_ptr()->data());\
         /* Do a direct copy of the private class */\
         *(my_ptr) = *(other_ptr);\
     }
