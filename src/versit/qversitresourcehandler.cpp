@@ -41,6 +41,8 @@
 
 #include "qversitresourcehandler.h"
 #include "qversitproperty.h"
+#include "qversitdefaultresourcehandler_p.h"
+#include "qversitdefs_p.h"
 #include <QFile>
 
 QTM_USE_NAMESPACE
@@ -73,6 +75,23 @@ QTM_USE_NAMESPACE
  * Returns true on success, false on failure.
 */
 
+QVersitDefaultResourceHandler::QVersitDefaultResourceHandler()
+    : d(new QVersitDefaultResourceHandlerPrivate)
+{
+    // File extension mappings
+    int fileExtensionCount = sizeof(versitFileExtensionMappings)/sizeof(VersitMapping);
+    for (int i = 0; i < fileExtensionCount; i++) {
+        d->mFileExtensionMapping.insert(
+            QLatin1String(versitFileExtensionMappings[i].contactString),
+            QLatin1String(versitFileExtensionMappings[i].versitString));
+    }
+}
+
+QVersitDefaultResourceHandler::~QVersitDefaultResourceHandler()
+{
+    delete d;
+}
+
 /*!
  * Default resource loader.
  * Loads file from given \a location into \a contents and returns true if successful.
@@ -82,8 +101,8 @@ bool QVersitDefaultResourceHandler::loadResource(const QString& location,
                                                  QByteArray* contents,
                                                  QString* mimeType)
 {
-    // XXX TODO: fill in the mimetype.
-    Q_UNUSED(mimeType)
+    QString extension = location.split(QLatin1Char('.')).last().toLower();
+    *mimeType = d->mFileExtensionMapping.value(extension);
     if (location.isEmpty())
         return false;
     QFile file(location);

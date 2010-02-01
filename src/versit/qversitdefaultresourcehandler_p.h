@@ -39,41 +39,18 @@
 **
 ****************************************************************************/
 
-#ifndef QVERSITRESOURCEHANDLER_H
-#define QVERSITRESOURCEHANDLER_H
+#ifndef QVERSITDEFAULTRESOURCEHANDLER_P_H
+#define QVERSITDEFAULTRESOURCEHANDLER_P_H
 
-#include "qmobilityglobal.h"
-
-#include <QString>
-#include <QByteArray>
+#include <QMap>
 
 QTM_BEGIN_NAMESPACE
 
-class QVersitDefaultResourceHandlerPrivate;
-class QVersitProperty;
-
-class Q_VERSIT_EXPORT QVersitResourceHandler
-{
+class QVersitDefaultResourceHandlerPrivate {
 public:
-    virtual ~QVersitResourceHandler() {}
-    virtual bool loadResource(const QString& location, QByteArray* contents, QString* mimeType) = 0;
-    virtual bool saveResource(const QByteArray& contents, const QVersitProperty& property,
-                              QString* location) = 0;
-};
-
-class Q_VERSIT_EXPORT QVersitDefaultResourceHandler : public QVersitResourceHandler
-{
-public:
-    QVersitDefaultResourceHandler();
-    virtual ~QVersitDefaultResourceHandler();
-    virtual bool loadResource(const QString& location, QByteArray* contents, QString* mimeType);
-    virtual bool saveResource(const QByteArray& contents, const QVersitProperty& property,
-                              QString* location);
-
-protected:
-    QVersitDefaultResourceHandlerPrivate* d;
+    QMap<QString,QString> mFileExtensionMapping;
 };
 
 QTM_END_NAMESPACE
 
-#endif // QVERSITRESOURCEHANDLER_H
+#endif // QVERSITDEFAULTRESOURCEHANDLER_P_H

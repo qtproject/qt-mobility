@@ -1239,6 +1239,15 @@ void UT_QVersitContactExporter::testEncodeDisplayLabel()
         QString::fromAscii("Custom\\,Label"));
 }
 
+void UT_QVersitContactExporter::testDefaultResourceHandler()
+{
+    QVersitDefaultResourceHandler handler;
+    QByteArray contents;
+    QString mimeType;
+    handler.loadResource("test.jpg", &contents, &mimeType);
+    QCOMPARE(mimeType, QLatin1String("image/jpeg"));
+}
+
 // Test utility functions
 QContactDetail UT_QVersitContactExporter::searchDetail(
     QList<QContactDetail> details,

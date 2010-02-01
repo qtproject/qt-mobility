@@ -109,14 +109,6 @@ QVersitContactImporterPrivate::QVersitContactImporterPrivate() :
             QString::fromAscii(versitSubTypeMappings[i].versitString),
             QString::fromAscii(versitSubTypeMappings[i].contactString));
     }
-
-    // File extension mappings
-    int fileExtensionCount = sizeof(versitFileExtensionMappings)/sizeof(VersitMapping);
-    for (int i=0; i < fileExtensionCount; i++) {
-        mFileExtensionMappings.insert(
-            QString::fromAscii(versitFileExtensionMappings[i].versitString),
-            QString::fromAscii(versitFileExtensionMappings[i].contactString));
-    }
 }
 
 /*!
