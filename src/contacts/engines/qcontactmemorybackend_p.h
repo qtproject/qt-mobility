@@ -173,6 +173,7 @@ public:
 
     /* Capabilities reporting */
     bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const;
+    QStringList supportedRelationshipTypes(const QString& contactType) const;
     bool filterSupported(const QContactFilter& filter) const;
     QList<QVariant::Type> supportedDataTypes() const;
 
