@@ -7,6 +7,7 @@ include(../../../common.pri)
 TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(sensors_dummy)
+symbian:TARGET.EPOCALLOWDLLDATA = 1
 
 QT=core
 CONFIG+=mobility
