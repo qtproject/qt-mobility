@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 //#include <QtGui/qx11info_x11.h>
-#include <QVideoSurfaceFormat>
+#include <QtMultimedia/qvideosurfaceformat.h>
 
 #include "s60videosurface.h"
 

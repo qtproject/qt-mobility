@@ -39,10 +39,8 @@
 **
 ****************************************************************************/
 
-#include "s60videooverlay.h"
-
 #include <QVideoSurfaceFormat>
-
+#include "s60videooverlay.h"
 #include "s60videosurface.h"
 
 S60VideoOverlay::S60VideoOverlay(QObject *parent)

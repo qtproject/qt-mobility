@@ -58,7 +58,7 @@ QMediaService* QPhononServicePlugin::create(QString const& key)
     if (key == QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER))
         return new QPhononPlayerService;
 
-    qDebug() << "unsupported key:" << key;
+    //qDebug() << "unsupported key:" << key;
     return 0;
 }
 
