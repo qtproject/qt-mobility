@@ -65,23 +65,23 @@ S60CameraVideoDeviceControl::~S60CameraVideoDeviceControl()
 
 int S60CameraVideoDeviceControl::deviceCount() const
 {
-    qDebug() << "S60CameraVideoDeviceControl::deviceCount" ;
+    //qDebug() << "S60CameraVideoDeviceControl::deviceCount" ;
     return S60CameraSession::deviceCount();
 }
 
 QString S60CameraVideoDeviceControl::deviceName(int index) const
 {
-    qDebug() << "S60CameraVideoDeviceControl::deviceName, index=" << index;
+    //qDebug() << "S60CameraVideoDeviceControl::deviceName, index=" << index;
     return S60CameraSession::name(index);
 }
 QString S60CameraVideoDeviceControl::deviceDescription(int index) const
 {
-    qDebug() << "S60CameraVideoDeviceControl::deviceDescription, index=" << index;
+    //qDebug() << "S60CameraVideoDeviceControl::deviceDescription, index=" << index;
     return S60CameraSession::description(index);
 }
 QIcon S60CameraVideoDeviceControl::deviceIcon(int index) const
 {
-    qDebug() << "S60CameraVideoDeviceControl::deviceIcon(), index="<<index;
+    //qDebug() << "S60CameraVideoDeviceControl::deviceIcon(), index="<<index;
     return QIcon();
 }
 int S60CameraVideoDeviceControl::defaultDevice() const

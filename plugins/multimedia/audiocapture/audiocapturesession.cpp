@@ -163,7 +163,6 @@ void AudioCaptureSession::setContainerMimeType(const QString &formatMimeType)
             m_format.setCodec(formatMimeType);
         }
     }
-    qWarning()<<"wavfile="<<wavFile;
 }
 
 QString AudioCaptureSession::containerMimeType() const

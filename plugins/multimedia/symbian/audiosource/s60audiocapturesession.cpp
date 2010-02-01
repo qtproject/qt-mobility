@@ -348,11 +348,14 @@ void S60AudioCaptureSession::fetchAudioCodecsL()
 			if (count > 0) {
 				TPtrC8 mimeType = mimeTypes[0];
 				QString type = QString::fromUtf8((char *)mimeType.Ptr(), mimeType.Length()); 
-				ItemData data;
-				data.controllerUid = controllers[index]->Uid().iUid;
-				data.destinationFormatUid = recordFormats[j]->Uid().iUid;
-				data.destinationFormatDescription = qt_TDesC2QString(recordFormats[j]->DisplayName());
-				m_controllerIdMap[type] = data;
+                // Currently only support for audio/wav due to quality issues.
+                if (type == "audio/wav") {
+                    ItemData data;
+                    data.controllerUid = controllers[index]->Uid().iUid;
+                    data.destinationFormatUid = recordFormats[j]->Uid().iUid;
+                    data.destinationFormatDescription = qt_TDesC2QString(recordFormats[j]->DisplayName());
+                    m_controllerIdMap[type] = data;
+                }
 			}
 		}
 	}

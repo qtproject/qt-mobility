@@ -91,7 +91,7 @@ QMediaService* DSServicePlugin::create(QString const& key)
         return new DirectShowPlayerService;
 #endif
 
-    qDebug() << "unsupported key:" << key;
+    //qDebug() << "unsupported key:" << key;
     return 0;
 }
 

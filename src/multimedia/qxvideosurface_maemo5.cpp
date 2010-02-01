@@ -129,6 +129,7 @@ static const XvFormatYuv qt_xvYuvLookup[] =
     { QVideoFrame::Format_YUV420P, 12, XvPlanar, 3, 8, 8, 8, 1, 2, 2, 1, 2, 2, "YUV"  },
     { QVideoFrame::Format_YV12   , 12, XvPlanar, 3, 8, 8, 8, 1, 2, 2, 1, 2, 2, "YVU"  },
     { QVideoFrame::Format_UYVY   , 16, XvPacked, 1, 8, 8, 8, 1, 2, 2, 1, 1, 1, "UYVY" },
+    { QVideoFrame::Format_YUYV   , 16, XvPacked, 1, 8, 8, 8, 1, 2, 2, 1, 1, 1, "YUY2" },
     { QVideoFrame::Format_YUYV   , 16, XvPacked, 1, 8, 8, 8, 1, 2, 2, 1, 1, 1, "YUYV" },
     { QVideoFrame::Format_NV12   , 12, XvPlanar, 2, 8, 8, 8, 1, 2, 2, 1, 2, 2, "YUV"  },
     { QVideoFrame::Format_NV12   , 12, XvPlanar, 2, 8, 8, 8, 1, 2, 2, 1, 2, 2, "YVU"  },
@@ -296,7 +297,7 @@ bool QXVideoSurface::start(const QVideoSurfaceFormat &format)
         m_shminfo.readOnly = False;
 
         if (!XShmAttach(QX11Info::display(), &m_shminfo)) {
-            qDebug() << "XShmAttach failed";
+            //qDebug() << "XShmAttach failed";
             return false;
         }
 
@@ -457,7 +458,8 @@ void QXVideoSurface::querySupportedFormats()
                 break;
             case XvYUV:
                 for (int j = 0; j < yuvCount; ++j) {
-                    //skip YUV420P and YV12 formats, they don't work correctly
+                    //skip YUV420P and YV12 formats, they don't work correctly and slow,
+                    //YUV2 == YUYV is just slow
                     if (imageFormats[i] == qt_xvYuvLookup[j] &&
                         qt_xvYuvLookup[j].pixelFormat != QVideoFrame::Format_YUV420P &&
                         qt_xvYuvLookup[j].pixelFormat != QVideoFrame::Format_YV12) {

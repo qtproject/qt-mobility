@@ -91,11 +91,11 @@ void S60CameraSettings::setFocusMode(QCamera::FocusMode mode)
     if (m_advancedSettings) {
         switch(mode) {
             case QCamera::ManualFocus: // Manual focus mode
-                qDebug() << "Settings: set manual focus";
+                //qDebug() << "Settings: set manual focus";
                 m_advancedSettings->SetFocusMode(CCamera::CCameraAdvancedSettings::EFocusModeManual);
                 break;
             case QCamera::AutoFocus: // One-shot auto focus mode
-                qDebug() << "Settings: set auto focus";
+                //qDebug() << "Settings: set auto focus";
                 m_advancedSettings->SetAutoFocusType(CCamera::CCameraAdvancedSettings::EAutoFocusTypeSingle);
                 m_advancedSettings->SetFocusMode(CCamera::CCameraAdvancedSettings::EFocusModeAuto);
                 break;
