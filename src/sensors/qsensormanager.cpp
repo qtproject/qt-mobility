@@ -138,7 +138,7 @@ QSensorBackend *QSensorManager::createBackend(QSensor *sensor)
         LOG() << "Trying the default" << defaultIdentifier;
         // No identifier set, try the default
         factory = factoryByIdentifier[defaultIdentifier];
-        LOG() << "factory" << QString().sprintf("0x%08x", (unsigned int)factory);
+        //LOG() << "factory" << QString().sprintf("0x%08x", (unsigned int)factory);
         sensor->setIdentifier(defaultIdentifier); // the factory requires this
         backend = factory->createBackend(sensor);
         if (backend) return backend; // Got it!
@@ -148,7 +148,7 @@ QSensorBackend *QSensorManager::createBackend(QSensor *sensor)
             LOG() << "Trying" << identifier;
             if (identifier == defaultIdentifier) continue; // Don't do the default one again
             factory = factoryByIdentifier[identifier];
-            LOG() << "factory" << QString().sprintf("0x%08x", (unsigned int)factory);
+            //LOG() << "factory" << QString().sprintf("0x%08x", (unsigned int)factory);
             sensor->setIdentifier(identifier); // the factory requires this
             backend = factory->createBackend(sensor);
             if (backend) return backend; // Got it!
@@ -163,7 +163,7 @@ QSensorBackend *QSensorManager::createBackend(QSensor *sensor)
 
         // We were given an explicit identifier so don't substitute other backends if it fails to instantiate
         factory = factoryByIdentifier[sensor->identifier()];
-        LOG() << "factory" << QString().sprintf("0x%08x", (unsigned int)factory);
+        //LOG() << "factory" << QString().sprintf("0x%08x", (unsigned int)factory);
         backend = factory->createBackend(sensor);
         if (backend) return backend; // Got it!
     }
