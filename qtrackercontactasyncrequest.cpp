@@ -246,7 +246,7 @@ RDFSelect prepareEmailAddressesQuery(RDFVariable &rdfcontact1, bool forAffiliati
 
 RDFSelect prepareIMContactsQuery(RDFVariable &imcontact)
 {
-    ::tracker()->setVerbosity(4);
+    Q_UNUSED(imcontact);
 
     // columns
     RDFSelect queryidsimacccounts;
