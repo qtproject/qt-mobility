@@ -264,7 +264,10 @@ void tst_QNetworkSession::sessionProperties()
 
     // QNetworkSession::interface() should return an invalid interface unless
     // session is in the connected state.
+#if !(defined(Q_OS_SYMBIAN) && defined(__WINS__))
+    // On Symbian emulator, the support for data bearers is limited
     QCOMPARE(session.state() == QNetworkSession::Connected, session.interface().isValid());
+#endif
 
     if (!configuration.isValid()) {
         QVERIFY(configuration.state() == QNetworkConfiguration::Undefined &&
@@ -311,12 +314,13 @@ void tst_QNetworkSession::userChoiceSession()
 
     QNetworkSession session(configuration);
 
+    // Check that configuration was really set
     QVERIFY(session.configuration() == configuration);
 
     QVERIFY(!session.isOpen());
 
+    // Check that session is not active
     QVERIFY(session.sessionProperty("ActiveConfiguration").toString().isEmpty());
-
 
     // The remaining tests require the session to be not NotAvailable.
     if (session.state() == QNetworkSession::NotAvailable)
@@ -367,7 +371,10 @@ void tst_QNetworkSession::userChoiceSession()
                 QTRY_VERIFY(!stateChangedSpy.isEmpty());
 
             QVERIFY(session.state() == QNetworkSession::Connected);
+#if !(defined(Q_OS_SYMBIAN) && defined(__WINS__))
+            // On Symbian emulator, the support for data bearers is limited
             QVERIFY(session.interface().isValid());
+#endif
 
             const QString userChoiceIdentifier =
                 session.sessionProperty("UserChoiceConfiguration").toString();
@@ -507,7 +514,10 @@ void tst_QNetworkSession::sessionOpenCloseStop()
             }
 
             QVERIFY(session.state() == QNetworkSession::Connected);
+#if !(defined(Q_OS_SYMBIAN) && defined(__WINS__))
+            // On Symbian emulator, the support for data bearers is limited
             QVERIFY(session.interface().isValid());
+#endif
         } else {
             QFAIL("Timeout waiting for session to open.");
         }
@@ -540,7 +550,10 @@ void tst_QNetworkSession::sessionOpenCloseStop()
         QVERIFY(session2.isOpen());
         QVERIFY(session.state() == QNetworkSession::Connected);
         QVERIFY(session2.state() == QNetworkSession::Connected);
+#if !(defined(Q_OS_SYMBIAN) && defined(__WINS__))
+        // On Symbian emulator, the support for data bearers is limited
         QVERIFY(session.interface().isValid());
+#endif
         QCOMPARE(session.interface().hardwareAddress(), session2.interface().hardwareAddress());
         QCOMPARE(session.interface().index(), session2.interface().index());
     }
@@ -713,7 +726,10 @@ void tst_QNetworkSession::sessionOpenCloseStop()
             QVERIFY(!session2.isOpen());
             QVERIFY(session.state() == QNetworkSession::Connected);
             QVERIFY(session2.state() == QNetworkSession::Connected);
+#if !(defined(Q_OS_SYMBIAN) && defined(__WINS__))
+            // On Symbian emulator, the support for data bearers is limited
             QVERIFY(session.interface().isValid());
+#endif
             QCOMPARE(session.interface().hardwareAddress(), session2.interface().hardwareAddress());
             QCOMPARE(session.interface().index(), session2.interface().index());
         }
@@ -788,6 +804,9 @@ QDebug operator<<(QDebug debug, const QList<QNetworkConfiguration> &list)
 
 void tst_QNetworkSession::outOfProcessSession()
 {
+#if defined(Q_OS_SYMBIAN) && defined(__WINS__)
+    QSKIP("Symbian emulator does not support two [QR]PRocesses linking a dll (QtBearer.dll) with global writeable static data.", SkipAll);
+#endif
     QNetworkConfigurationManager manager;
 
     QList<QNetworkConfiguration> before = manager.allConfigurations(QNetworkConfiguration::Active);
