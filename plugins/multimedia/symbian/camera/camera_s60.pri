@@ -17,7 +17,9 @@ exists($${EPOCROOT}epoc32\include\ecamadvsettings.h) {
 symbian:LIBS += -lcamerawrapper \
     -lfbscli \
     -lmediaclientvideo \
-    -lecam
+    -lecam \
+    -lbafl \
+    -lPlatformEnv
     
 HEADERS += $$PWD/s60camerafocuscontrol.h \
     $$PWD/s60cameraexposurecontrol.h \

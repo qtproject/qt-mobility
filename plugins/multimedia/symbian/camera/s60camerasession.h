@@ -230,6 +230,8 @@ private:
     void updateVideoCaptureCodecs();
     void updateVideoCaptureCodecsL();
     void initializeVideoCaptureSettings();
+    
+    void saveImageL(TDesC8* aData);
 
 Q_SIGNALS:
     void stateChanged(QCamera::State);
