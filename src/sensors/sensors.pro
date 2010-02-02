@@ -8,10 +8,17 @@ symbian:TARGET.EPOCALLOWDLLDATA = 1
 
 STRICT=$$(STRICT)
 equals(STRICT,1) {
-    QMAKE_CXXFLAGS+=-Werror
-    QMAKE_LFLAGS+=-Wl,-no-undefined
+    win32 {
+        QMAKE_CXXFLAGS+=-WX
+    } else {
+        QMAKE_CXXFLAGS+=-Werror
+        QMAKE_LFLAGS+=-Wl,-no-undefined
+    }
     DEFINES += QT_NO_CAST_FROM_ASCII
 }
+
+INCLUDEPATH += .
+DEPENDPATH += .
 
 PUBLIC_HEADERS += \
            qsensorbackend.h\
