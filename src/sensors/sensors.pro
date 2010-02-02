@@ -49,4 +49,5 @@ for(s,SENSORS) {
 
 HEADERS = $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
+CONFIG += middleware
 include(../../features/deploy.pri)
