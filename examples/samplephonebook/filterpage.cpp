@@ -176,8 +176,8 @@ void FilterPage::addClicked()
     fil.setDetailDefinitionName(defName, fieldName);
     fil.setValue(m_valueCriteriaEdit->text());
 
-    QContactFilter::MatchFlags flag = m_criteriaTypeCombo->itemData(m_criteriaTypeCombo->currentIndex()).toInt();
-    fil.setMatchFlags(flag);
+    int flag = m_criteriaTypeCombo->itemData(m_criteriaTypeCombo->currentIndex()).toInt();
+    fil.setMatchFlags(QContactFilter::MatchFlags(flag));
     exprMatch = m_criteriaTypeCombo->currentText().toLower();
 
     // if OR then join with OR
