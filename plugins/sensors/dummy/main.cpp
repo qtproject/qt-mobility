@@ -66,7 +66,7 @@ public:
     }
 };
 
-Q_EXPORT_PLUGIN2(libsensors_dummy, dummySensorPlugin);
+Q_EXPORT_PLUGIN2(libsensors_dummy, dummySensorPlugin)
 
 #include "main.moc"
 

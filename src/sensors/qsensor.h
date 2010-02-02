@@ -155,7 +155,7 @@ private:
     Q_DISABLE_COPY(QSensor)
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(QSensor::UpdatePolicies);
+Q_DECLARE_OPERATORS_FOR_FLAGS(QSensor::UpdatePolicies)
 
 class Q_SENSORS_EXPORT QSensorFilter
 {
