@@ -1244,7 +1244,7 @@ void UT_QVersitContactExporter::testDefaultResourceHandler()
     QVersitDefaultResourceHandler handler;
     QByteArray contents;
     QString mimeType;
-    handler.loadResource("test.jpg", &contents, &mimeType);
+    handler.loadResource(QLatin1String("test.jpg"), &contents, &mimeType);
     QCOMPARE(mimeType, QLatin1String("image/jpeg"));
 }
 
