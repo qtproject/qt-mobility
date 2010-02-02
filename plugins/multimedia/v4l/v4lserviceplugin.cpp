@@ -40,8 +40,9 @@
 ****************************************************************************/
 
 #include <QtCore/qstring.h>
+#include <QtCore/qfile.h>
 #include <QtCore/qdebug.h>
-#include <QtCore/QFile>
+#include <QtCore/qdir.h>
 
 #include "v4lserviceplugin.h"
 #include "v4lcameraservice.h"
@@ -65,7 +66,6 @@ QMediaService* V4LServicePlugin::create(QString const& key)
     if (key == QLatin1String(Q_MEDIASERVICE_CAMERA))
         return new V4LCameraService;
 
-    //qDebug() << "unsupported key:" << key;
     return 0;
 }
 
@@ -105,29 +105,32 @@ void V4LServicePlugin::updateDevices() const
     m_cameraDevices.clear();
     m_cameraDescriptions.clear();
 
-    QString name;
-    QFile video0("/sys/class/video4linux/video0/name");
-    if (video0.exists()) {
-        m_cameraDevices.append("v4l:/dev/video0");
-        char str[31];
-        memset(str,0,31);
-        video0.open(QIODevice::ReadOnly);
-        video0.read(str,30);
-        name = QString(str);
-        m_cameraDescriptions.append(name.simplified());
-        video0.close();
-    }
-
-    QFile video1("/sys/class/video4linux/video1/name");
-    if (video0.exists()) {
-        m_cameraDevices.append("v4l:/dev/video1");
-        char str[31];
-        memset(str,0,31);
-        video1.open(QIODevice::ReadOnly);
-        video1.read(str,30);
-        name = QString(str);
-        m_cameraDescriptions.append(name.simplified());
-        video1.close();
+    QDir cameras = QDir::root();
+    cameras.setFilter(QDir::NoDotAndDotDot | QDir::AllEntries);
+    if (!cameras.cd("sys/class/video4linux"))
+        return;
+    else {
+        QFileInfoList list = cameras.entryInfoList();
+        for (int i = 0; i < list.size(); ++i) {
+            QFileInfo fileInfo = list.at(i);
+            if (fileInfo.fileName().contains(QLatin1String("video"))) {
+                QString videoName = QString("%1/%2/name").arg("/sys/class/video4linux").
+                    arg(fileInfo.fileName());
+                QFile videoFile(videoName);
+                if (videoFile.exists()) {
+                    if (videoFile.open(QIODevice::ReadOnly)) {
+                        char str[31];
+                        memset(str,0,31);
+                        if (videoFile.read(str,30) > 0) {
+                            m_cameraDevices.append(QString("v4l:/dev/%1").arg(fileInfo.fileName()).
+                                    toLocal8Bit().constData());
+                            m_cameraDescriptions.append(QString(str).simplified());
+                        }
+                        videoFile.close();
+                    }
+                }
+            }
+        }
     }
 }
 

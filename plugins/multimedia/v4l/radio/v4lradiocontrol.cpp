@@ -344,31 +344,32 @@ void V4LRadioControl::setMuted(bool muted)
 
 bool V4LRadioControl::isSearching() const
 {
-    //TODO
-    return false;
+    return scanning;
 }
 
 void V4LRadioControl::cancelSearch()
 {
-    //TODO
+    scanning = false;
+    timer->stop();
 }
 
 void V4LRadioControl::searchForward()
 {
     // Scan up
     if(scanning) {
-        scanning = false;
+        cancelSearch();
         return;
     }
     scanning = true;
     forward  = true;
+    timer->start();
 }
 
 void V4LRadioControl::searchBackward()
 {
     // Scan down
     if(scanning) {
-        scanning = false;
+        cancelSearch();
         return;
     }
     scanning = true;
@@ -407,12 +408,16 @@ void V4LRadioControl::search()
 
     if(!scanning) return;
 
+    if (signal > 25) {
+        cancelSearch();
+        return;
+    }
+
     if(forward) {
         setFrequency(currentFreq+step);
     } else {
         setFrequency(currentFreq-step);
     }
-    emit signalStrengthChanged(signalStrength());
 }
 
 bool V4LRadioControl::initRadio()
@@ -426,7 +431,7 @@ bool V4LRadioControl::initRadio()
     available = false;
     freqMin = freqMax = currentFreq = 0;
 
-    fd = ::open("/dev/radio", O_RDWR);
+    fd = ::open("/dev/radio0", O_RDWR);
 
     if(fd != -1) {
         // Capabilites
@@ -478,8 +483,6 @@ bool V4LRadioControl::initRadio()
                     currentFreq = freq.frequency * 62500;
             }
         }
-
-        qWarning()<<"min="<<freqMin<<", max="<<freqMax<<", current="<<currentFreq;
 
         // stereo
         bool stereo = false;
