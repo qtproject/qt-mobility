@@ -107,7 +107,6 @@ QGstreamerCaptureSession::~QGstreamerCaptureSession()
     gst_object_unref(GST_OBJECT(m_pipeline));
 }
 
-
 GstElement *QGstreamerCaptureSession::buildEncodeBin()
 {
     bool ok = true;
@@ -714,6 +713,9 @@ void QGstreamerCaptureSession::setState(QGstreamerCaptureSession::State newState
     }
 
     if (newMode != m_pipelineMode) {
+        //select suitable default codecs/containers, if necessary
+        m_recorderControl->applySettings();
+
         gst_element_set_state(m_pipeline, GST_STATE_NULL);
 
         //It would be better to do this async. but
