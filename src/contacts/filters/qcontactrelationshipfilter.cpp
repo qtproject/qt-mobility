@@ -160,7 +160,7 @@ QContactRelationshipFilter::Role QContactRelationshipFilter::relatedContactRole(
  *
  * This function has been deprecated - you should pass the opposite value (e.g. First instead of Second, Second
  * instead of First) to \c setRelatedContactRole().
- * \sa setRelatedContactRole();
+ * \sa setRelatedContactRole()
  */
 void QContactRelationshipFilter::setRole(QContactRelationshipFilter::Role roleInRelationship)
 {

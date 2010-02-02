@@ -164,7 +164,7 @@ void QContactDetailDefinition::insertField(const QString& key, const QContactDet
     d->m_fields.insert(key, field);
 }
 
-/*! Removes the field associated with the given field key \key from teh map of fields which constitute the data of details of this definition. */
+/*! Removes the field associated with the given field key \a key from the map of fields which constitute the data of details of this definition. */
 void QContactDetailDefinition::removeField(const QString& key)
 {
     d->m_fields.remove(key);

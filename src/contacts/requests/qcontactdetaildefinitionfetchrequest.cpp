@@ -78,6 +78,7 @@ QContactDetailDefinitionFetchRequest::~QContactDetailDefinitionFetchRequest()
 }
 
 /*!
+ * \fn Q_DECL_DEPRECATED QContactDetailDefinitionFetchRequest::setNames(const QStringList& names)
  * \deprecated
  * Sets the names of the detail definitions to retrieve to \a names
  */
@@ -89,6 +90,7 @@ void Q_DECL_DEPRECATED QContactDetailDefinitionFetchRequest::setNames(const QStr
 }
 
 /*!
+ * \fn Q_DECL_DEPRECATED QContactDetailDefinitionFetchRequest::names() const
  * \deprecated
  * Returns the list of names of the detail definitions that will be retrieved
  */

@@ -1846,7 +1846,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
 
 /*!
    \fn QContactName::setLastName(const QString& lastName)
-   Sets the last name segment of the name stored in this detail to \a last.
+   Sets the last name segment of the name stored in this detail to \a lastName.
  */
 
 /*!
