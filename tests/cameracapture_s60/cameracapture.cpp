@@ -245,6 +245,10 @@ void CameraCapture::setCamera(const QByteArray &cameraDevice)
     updateCameraState(camera->state());
     updateRecorderState(mediaRecorder->state());
     updateAudioDevices();
+    
+    ui->recordButton->setEnabled(false);
+    ui->pauseButton->setEnabled(false);
+    ui->stopButton->setEnabled(false);
 
     connect(imageCapture, SIGNAL(readyForCaptureChanged(bool)), ui->takeImageButton, SLOT(setEnabled(bool)));
     connect(imageCapture, SIGNAL(imageCaptured(QString,QImage)), this, SLOT(processCapturedImage(QString,QImage)));
@@ -285,7 +289,7 @@ void CameraCapture::updateRecordTime()
 
 void CameraCapture::processCapturedImage(const QString& fname, const QImage& img)
 {
-    ui->lastImagePreviewLabel->setPixmap( QPixmap::fromImage(img.scaledToWidth(128)) );
+    ui->lastImagePreviewLabel->setPixmap( QPixmap::fromImage(img.scaledToWidth(170)) );
     qDebug() << "image captured:" << fname;
 }
 
@@ -383,6 +387,8 @@ void CameraCapture::updateCameraState(QCamera::State state)
         ui->startCameraButton->setChecked(true);
         //ui->imageCaptureBox->setEnabled(true);
         //ui->videoCaptureBox->setEnabled(true);
+        ui->recordButton->setEnabled(true);
+        
     } else {
         ui->actionCamera->setEnabled(true);
         ui->actionAudio->setEnabled(true);
@@ -390,6 +396,11 @@ void CameraCapture::updateCameraState(QCamera::State state)
 
         ui->startCameraButton->setText(tr("Start Camera"));
         ui->startCameraButton->setChecked(false);
+        
+        ui->recordButton->setEnabled(false);
+        ui->pauseButton->setEnabled(false);
+        ui->stopButton->setEnabled(false);
+        
         //ui->imageCaptureBox->setEnabled(false);
         //ui->videoCaptureBox->setEnabled(false);
     }
@@ -407,7 +418,7 @@ void CameraCapture::updateRecorderState(QMediaRecorder::State state)
     switch (state) {
     case QMediaRecorder::StoppedState:
         ui->recordButton->setEnabled(true);
-        ui->pauseButton->setEnabled(true);
+        ui->pauseButton->setEnabled(false);
         ui->stopButton->setEnabled(false);
         break;
     case QMediaRecorder::PausedState:

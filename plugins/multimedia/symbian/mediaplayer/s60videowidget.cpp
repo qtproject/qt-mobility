@@ -54,6 +54,11 @@ public:
         setAttribute(Qt::WA_OpaquePaintEvent, true);
         setAttribute(Qt::WA_NoSystemBackground, true);
         setAutoFillBackground(false);
+        
+#if QT_VERSION >= 0x040601        
+        qt_widget_private(this)->extraData()->nativePaintMode = QWExtra::ZeroFill;
+        qt_widget_private(this)->extraData()->receiveNativePaintEvents = true;
+#endif        
     }
     
 protected:
@@ -168,11 +173,15 @@ bool S60VideoWidgetControl::eventFilter(QObject *object, QEvent *e)
 void S60VideoWidgetControl::videoStateChanged(QMediaPlayer::State state)
 {
     if (state == QMediaPlayer::StoppedState) {
+#if QT_VERSION <= 0x040600
         qt_widget_private(m_widget)->extraData()->disableBlit = false;
+#endif        
         m_widget->setUpdatesEnabled(true);
         m_widget->repaint();
     } else if (state == QMediaPlayer::PlayingState) {
+#if QT_VERSION <= 0x040600        
         qt_widget_private(m_widget)->extraData()->disableBlit = true;
+#endif        
         m_widget->setUpdatesEnabled(false);
     }
 }
