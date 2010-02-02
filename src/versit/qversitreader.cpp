@@ -52,7 +52,7 @@ QTM_USE_NAMESPACE
 
 /*!
   \class QVersitReader
- 
+  \preliminary
   \brief The QVersitReader class provides an interface
   for reading versit documents such as vCards from a stream.
 
