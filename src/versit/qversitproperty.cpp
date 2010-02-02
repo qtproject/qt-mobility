@@ -50,7 +50,7 @@ QTM_USE_NAMESPACE
 
 /*!
   \class QVersitProperty
- 
+  \preliminary
   \brief The QVersitProperty class stores the name, value and parameters of a versit property.
 
   \ingroup versit
