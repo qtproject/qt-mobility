@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Test>
     <case>
+        <Name>Multi class</Name>
+        <InterfaceHeader>IMultiClassFct.h</InterfaceHeader>
+        <CompareHeader>MultiClassFct.h</CompareHeader>
+        <ExpectedResult>
+        </ExpectedResult>
+    </case>
+    <case>
         <Name>Property Functions</Name>
         <InterfaceHeader>IPropertyFct.h</InterfaceHeader>
         <CompareHeader>PropertyFct.h</CompareHeader>

@@ -242,7 +242,7 @@ void ParseManager::parse(CppTools::Internal::CppPreprocessor *preproc,
 //==> list[0] = {Cl1, Cl11, Cl12}
 //    list[1] = {Cl2, Cl21, Cl22}
 
-QList<CLASSTREE*> ParseManager::CreateClassLists()
+QList<CLASSTREE*> ParseManager::CreateClassLists(bool isInterfaceHeader)
 {
     QList<CLASSTREE*>ret;
     QList<CLASSLISTITEM*> classlist;
@@ -302,7 +302,7 @@ QList<CLASSTREE*> ParseManager::CreateClassLists()
         QString classname = cltree->highestlevelclass->trlUnit->spell(cltree->highestlevelclass->classspec->name->firstToken());
         Trace("- " + classname + " class found");
         QList<CLASSLISTITEM*> baseclasslist;
-        getBaseClasses(cltree->highestlevelclass, baseclasslist, allclasslist, 0);
+        getBaseClasses(cltree->highestlevelclass, baseclasslist, allclasslist, 0, isInterfaceHeader);
         cltree->classlist.append(baseclasslist);
     }
     return ret;
@@ -312,7 +312,11 @@ QList<CLASSTREE*> ParseManager::CreateClassLists()
 Gets all the baseclass from a class and 
 add those base classes into the baseclasslist
 ********************************************/
-void ParseManager::getBaseClasses(const CLASSLISTITEM* pclass, QList<CLASSLISTITEM*> &baseclasslist, const QList<CLASSLISTITEM*> &allclasslist, int level)
+void ParseManager::getBaseClasses(const CLASSLISTITEM* pclass
+                                  , QList<CLASSLISTITEM*> &baseclasslist
+                                  , const QList<CLASSLISTITEM*> &allclasslist
+                                  , int level
+                                  , bool isInterfaceHeader)
 {
     //iteration over the base_clause_list of the current class
     QString levelmarker = "  ";
@@ -320,30 +324,36 @@ void ParseManager::getBaseClasses(const CLASSLISTITEM* pclass, QList<CLASSLISTIT
         levelmarker += "   ";
     levelmarker += "|- ";
     QList<CLASSLISTITEM*>child;
+
     for(BaseSpecifierListAST *pBaseSpecList = pclass->classspec->base_clause_list; pBaseSpecList; pBaseSpecList = pBaseSpecList->next)
     {
         BaseSpecifierAST *pBaseSpec = pBaseSpecList->value;
         bool found = false;
         foreach(CLASSLISTITEM* pclspec, allclasslist)
         {
-            if(pclspec->classspec->symbol->name()->isEqualTo(pBaseSpec->symbol->name()))
+            if(pclspec->classspec->symbol->name() 
+                && pBaseSpec->symbol->name() 
+                && pclspec->classspec->symbol->name()->isEqualTo(pBaseSpec->symbol->name()))
             {
                 child.push_back(pclspec);
                 baseclasslist.push_back(pclspec);
                 QString classname = pclspec->trlUnit->spell(pclspec->classspec->name->firstToken());
                 Trace(levelmarker + classname + " class found");
                 found = true;
-                //break;
+                break;
             }
         }
-        if(!found){
+        if(!found && pBaseSpec->name){
             QString classname = pclass->trlUnit->spell(pBaseSpec->name->firstToken());
-            Trace(levelmarker + classname + " class not found!");
+            if(isInterfaceHeader)
+                Trace(levelmarker + classname + " class not found! Interface classes should not be inherited from Qt Objects!");
+            else
+                Trace(levelmarker + classname + " class not found!");
         }
     }
     //call the function recursive because all the basclasses can have other base classes
     foreach(CLASSLISTITEM* pchclass, child){
-        getBaseClasses(pchclass, baseclasslist, allclasslist, ++level);
+        getBaseClasses(pchclass, baseclasslist, allclasslist, ++level, isInterfaceHeader);
     }
 }
 
@@ -511,7 +521,7 @@ bool ParseManager::checkAllMetadatas(ParseManager* pInterfaceParserManager, QStr
     Get all elements from the interface header file
     ************************************************/
     Trace("### Get all elements from the interface header file ###");
-    QList<CLASSTREE*> ilookuplist = pInterfaceParserManager->CreateClassLists();
+    QList<CLASSTREE*> ilookuplist = pInterfaceParserManager->CreateClassLists(true);
     QList<QList<FUNCTIONITEM*> > ifunctionslookuplist;
     QList<QList<PROPERTYITEM*> > ipropertieslookuplist;
     QList<QList<QENUMITEM*> > iqenumlookuplist;
@@ -553,7 +563,7 @@ bool ParseManager::checkAllMetadatas(ParseManager* pInterfaceParserManager, QStr
     ************************************************/
     Trace("\n");
     Trace("### Get all elements from the compare header file ###");
-    QList<CLASSTREE*> lookuplist = CreateClassLists();
+    QList<CLASSTREE*> lookuplist = CreateClassLists(false);
     QList<QList<FUNCTIONITEM*> > functionslookuplist;
     QList<QList<PROPERTYITEM*> > propertieslookuplist;
     QList<QList<QENUMITEM*> > qenumlookuplist;
@@ -599,7 +609,7 @@ bool ParseManager::checkAllMetadatas(ParseManager* pInterfaceParserManager, QStr
     QList<FUNCTIONITEM*> missingifcts = checkMetadataFunctions(functionslookuplist, ifunctionslookuplist);
     if(missingifcts.size() > 0){
         foreach(FUNCTIONITEM* ifct, missingifcts){
-            m_errormsgs.push_back(getErrorMessage(ifct));
+            m_errormsgs.append(getErrorMessage(ifct));
         }
         ret =  false;
         Trace("- Failed!");
@@ -615,7 +625,7 @@ bool ParseManager::checkAllMetadatas(ParseManager* pInterfaceParserManager, QStr
     QList<PROPERTYITEM*> missingippts = checkMetadataProperties(propertieslookuplist, functionslookuplist, ipropertieslookuplist, ifunctionslookuplist);
     if(missingippts.size() > 0){
         foreach(PROPERTYITEM* ippt, missingippts){
-            m_errormsgs.push_back(getErrorMessage(ippt));
+            m_errormsgs.append(getErrorMessage(ippt));
         }
         ret =  false;
         Trace("- Failed!");
@@ -631,7 +641,7 @@ bool ParseManager::checkAllMetadatas(ParseManager* pInterfaceParserManager, QStr
     QList<QENUMITEM*> missingiqenums = checkMetadataEnums(qenumlookuplist, enumlookuplist, iqenumlookuplist, ienumlookuplist);
     if(missingiqenums.size() > 0){
         foreach(QENUMITEM* ienum, missingiqenums){
-            m_errormsgs.push_back(getErrorMessage(ienum));
+            m_errormsgs.append(getErrorMessage(ienum));
         }
         ret =  false;
         Trace("- Failed!");
@@ -648,7 +658,7 @@ bool ParseManager::checkAllMetadatas(ParseManager* pInterfaceParserManager, QStr
                                                         , iqflaglookuplist, iqdeclareflaglookuplist, ienumlookuplist);
     if(missingiqflags.size() > 0){
         foreach(QFLAGITEM* iflags, missingiqflags){
-            m_errormsgs.push_back(getErrorMessage(iflags));
+            m_errormsgs.append(getErrorMessage(iflags));
         }
         ret =  false;
         Trace("- Failed!");
@@ -739,8 +749,10 @@ QList<FUNCTIONITEM*> ParseManager::checkMetadataFunctions(const QList<QList<FUNC
         if(classfctlist.count() > 0){
             foreach(QList<FUNCTIONITEM*>functionlist, classfctlist){
                 QList<FUNCTIONITEM*> tmpl = containsAllMetadataFunction(functionlist, ifunctionlist);
-                if(tmpl.size() == 0)
+                if(tmpl.size() == 0){
                     ifcts.clear();
+                    break;
+                }
                 else
                     ifcts.append(tmpl);
             }
@@ -814,16 +826,15 @@ Function that gives back an error
 string for a MetaData function
 mismatch.
 ************************************/
-QString ParseManager::getErrorMessage(FUNCTIONITEM* fct)
+QStringList ParseManager::getErrorMessage(FUNCTIONITEM* fct)
 {
-    QString ret = "";
-    QTextStream out(&ret);
+    QStringList ret;
     QString fctstring = "";
     QString fcttype = "";
 
     foreach(QString classname, fct->classWichIsNotFound){
-        if(ret.size() > 0)
-            out << endl;
+        QString tmp;
+        QTextStream out(&tmp);
 
         fcttype = "";
         fctstring = classname;
@@ -867,6 +878,7 @@ QString ParseManager::getErrorMessage(FUNCTIONITEM* fct)
                 fcttype += "Invokable ";
         }
         out << fcttype << fctstring;
+        ret << tmp;
     }
     return ret;
 }
@@ -961,16 +973,6 @@ void ParseManager::assignPropertyFunctions(PROPERTYITEM* prop, const QList<QList
         prop->foundalldefinedfct = false;
         foreach(QList<FUNCTIONITEM*> fctlist, fctlookuplist){
             foreach(FUNCTIONITEM* pfct, fctlist){
-/*
-                long start = pfct->ast->firstToken();
-                long stop = pfct->ast->lastToken();
-                QString val;
-                for(long i = start; i < stop; i++){
-                    val += pfct->trlUnit->spell(i);
-                    val += " ";
-                }
-                qDebug() << val;
-*/
                 QString fctname = pfct->trlUnit->spell(pfct->function->sourceLocation());
                 //check the function type against the property type
                 QString fcttype =pfct->trlUnit->spell(pfct->function->sourceLocation() - 1);
@@ -1056,15 +1058,16 @@ QList<PROPERTYITEM*> ParseManager::containsAllPropertyFunction(const QList<PROPE
 Function that gives back an error 
 string for a Q_PROPERTY mismatch.
 ************************************/
-QString ParseManager::getErrorMessage(PROPERTYITEM* ppt)
+QStringList ParseManager::getErrorMessage(PROPERTYITEM* ppt)
 {
-    QString ret = "";
-    QTextStream out(&ret);
+    QStringList ret;
     QString pptstring = "";
-    QString ppttype = "";
 
     if(!ppt->foundalldefinedfct)
     {
+        QString tmp;
+        QTextStream out(&tmp);
+
         unsigned int firsttoken = ppt->highestlevelclass->classspec->name->firstToken();
         unsigned int lasttoken = ppt->highestlevelclass->classspec->name->lastToken();
         for(unsigned int i = firsttoken; i < lasttoken; i++){
@@ -1086,10 +1089,11 @@ QString ParseManager::getErrorMessage(PROPERTYITEM* ppt)
         if(ppt->notifydefined && !ppt->notifyFct)
             out << "NOTIFY ";
         out << "functions missing." << endl;
+        ret << tmp;
     }
     for(int i = 0; i < ppt->classWichIsNotFound.size(); i++){
-        if(ret.size() > 0)
-            out << endl;
+        QString tmp;
+        QTextStream out(&tmp);
 
         pptstring = ppt->classWichIsNotFound[i];
         pptstring += "::";
@@ -1101,7 +1105,8 @@ QString ParseManager::getErrorMessage(PROPERTYITEM* ppt)
             pptstring += " ";
         }
 
-        out << ppttype << pptstring;
+        out << pptstring;
+        ret << tmp;
     }
     return ret;
 }
@@ -1271,13 +1276,15 @@ QList<QENUMITEM*> ParseManager::containsAllEnums(const QList<QENUMITEM*> &classq
 Function that gives back an error 
 string for a Q_ENUMS mismatch.
 ************************************/
-QString ParseManager::getErrorMessage(QENUMITEM* qenum)
+QStringList ParseManager::getErrorMessage(QENUMITEM* qenum)
 {
-    QString ret = "";
-    QTextStream out(&ret);
+    QStringList ret;
 
     if(!qenum->foundallenums)
     {
+        QString tmp;
+        QTextStream out(&tmp);
+
         unsigned int firsttoken = qenum->highestlevelclass->classspec->name->firstToken();
         unsigned int lasttoken = qenum->highestlevelclass->classspec->name->lastToken();
         for(unsigned int i = firsttoken; i < lasttoken; i++){
@@ -1290,11 +1297,12 @@ QString ParseManager::getErrorMessage(QENUMITEM* qenum)
             out << qenum->trlUnit->spell(i) << " ";
         out << ")";
         out << endl << " - one or more Enums missing." << endl;
+        ret << tmp;
     }
 
     for(int i = 0; i < qenum->classWichIsNotFound.size(); i++){
-        if(ret.size() > 0)
-            out << endl;
+        QString tmp;
+        QTextStream out(&tmp);
 
         out << qenum->classWichIsNotFound[i] << "::Q_ENUMS ( ";
 
@@ -1303,6 +1311,7 @@ QString ParseManager::getErrorMessage(QENUMITEM* qenum)
         for(unsigned int i = firsttoken; i < lasttoken; i++)
             out << qenum->trlUnit->spell(i) << " ";
         out << ")";
+        ret << tmp;
     }
     return ret;
 }
@@ -1457,13 +1466,15 @@ QList<QFLAGITEM*> ParseManager::containsAllFlags(const QList<QFLAGITEM*> &classq
 Function that gives back an error 
 string for a Q_FLAGS mismatch.
 ************************************/
-QString ParseManager::getErrorMessage(QFLAGITEM* pfg)
+QStringList ParseManager::getErrorMessage(QFLAGITEM* pfg)
 {
-    QString ret = "";
-    QTextStream out(&ret);
+    QStringList ret;
 
     if(!pfg->foundallenums)
     {
+        QString tmp;
+        QTextStream out(&tmp);
+
         unsigned int firsttoken = pfg->highestlevelclass->classspec->name->firstToken();
         unsigned int lasttoken = pfg->highestlevelclass->classspec->name->lastToken();
         for(unsigned int i = firsttoken; i < lasttoken; i++){
@@ -1476,10 +1487,11 @@ QString ParseManager::getErrorMessage(QFLAGITEM* pfg)
             out << pfg->trlUnit->spell(i) << " ";
         out << ")";
         out << endl << " - one or more Enums missing." << endl;
+        ret << tmp;
     }
     for(int i = 0; i < pfg->classWichIsNotFound.size(); i++){
-        if(ret.size() > 0)
-            out << endl;
+        QString tmp;
+        QTextStream out(&tmp);
 
         out << pfg->classWichIsNotFound[i] << "::Q_FLAGS ( ";
 
@@ -1488,6 +1500,7 @@ QString ParseManager::getErrorMessage(QFLAGITEM* pfg)
         for(unsigned int i = firsttoken; i < lasttoken; i++)
             out << pfg->trlUnit->spell(i) << " ";
         out << ")";
+        ret << tmp;
     }
     return ret;
 }

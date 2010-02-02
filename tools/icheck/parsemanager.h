@@ -237,14 +237,18 @@ namespace CPlusPlus {
         void parse(const QStringList &sourceFiles);
         bool checkAllMetadatas(ParseManager* pInterfaceParserManager, QString resultfile);
         CppTools::Internal::CppPreprocessor *getPreProcessor() { return pCppPreprocessor; }
-        QList<CLASSTREE*> CreateClassLists();
+        QList<CLASSTREE*> CreateClassLists(bool isInterfaceHeader);
         QStringList getErrorMsg() { return m_errormsgs; }
 
     private:
         void parse(CppTools::Internal::CppPreprocessor *preproc, const QStringList &files);
         void Trace(QString value);
         inline QString getTraceFuntionString(const FUNCTIONITEM* fctitem, const QString& classname);
-        void getBaseClasses(const CLASSLISTITEM* pclass, QList<CLASSLISTITEM*> &baseclasslist, const QList<CLASSLISTITEM*> &allclasslist, int level);
+        void getBaseClasses(const CLASSLISTITEM* pclass
+                , QList<CLASSLISTITEM*> &baseclasslist
+                , const QList<CLASSLISTITEM*> &allclasslist
+                , int level
+                , bool isInterfaceHeader);
         void getElements(QList<FUNCTIONITEM*> &functionlist
             , QList<PROPERTYITEM*> &propertylist
             , QList<QENUMITEM*> &qenumlist
@@ -258,7 +262,7 @@ namespace CPlusPlus {
         QList<FUNCTIONITEM*> checkMetadataFunctions(const QList<QList<FUNCTIONITEM*> > &classfctlist, const QList<QList<FUNCTIONITEM*> > &iclassfctlist);
         bool isMetaObjFunction(FUNCTIONITEM* fct);
         QList<FUNCTIONITEM*> containsAllMetadataFunction(const QList<FUNCTIONITEM*> &classfctlist, const QList<FUNCTIONITEM*> &iclassfctlist);
-        QString getErrorMessage(FUNCTIONITEM* fct);
+        QStringList getErrorMessage(FUNCTIONITEM* fct);
         //--->
 
         //<--- for Q_PROPERTY functions checks
@@ -268,7 +272,7 @@ namespace CPlusPlus {
             , const QList<QList<FUNCTIONITEM*> > &iclassfctlist);
         void assignPropertyFunctions(PROPERTYITEM* prop, const QList<QList<FUNCTIONITEM*> > &fctlookuplist);
         QList<PROPERTYITEM*> containsAllPropertyFunction(const QList<PROPERTYITEM*> &classproplist, const QList<PROPERTYITEM*> &iclassproplist);
-        QString getErrorMessage(PROPERTYITEM* ppt);
+        QStringList getErrorMessage(PROPERTYITEM* ppt);
         //--->
 
         //<--- for Q_ENUMS checks
@@ -279,7 +283,7 @@ namespace CPlusPlus {
         QStringList getEnumValueStringList(ENUMITEM *penum, QString mappedenumname = "");
         void assignEnumValues(QENUMITEM* qenum, const QList<QList<ENUMITEM*> > &enumlookuplist);
         QList<QENUMITEM*> containsAllEnums(const QList<QENUMITEM*> &classqenumlist, const QList<QENUMITEM*> &iclassqenumlist);
-        QString getErrorMessage(QENUMITEM* qenum);
+        QStringList getErrorMessage(QENUMITEM* qenum);
         //--->
 
         //<--- for QFlags checks --->
@@ -291,7 +295,7 @@ namespace CPlusPlus {
             , const QList<QList<ENUMITEM*> > &iclassenumlist);
         void assignFlagValues(QFLAGITEM* qflags, const QList<QList<QDECLAREFLAGSITEM*> > &qdeclareflagslookuplist, const QList<QList<ENUMITEM*> > &enumlookuplist);
         QList<QFLAGITEM*> containsAllFlags(const QList<QFLAGITEM*> &classqflaglist, const QList<QFLAGITEM*> &iclassqflaglist);
-        QString getErrorMessage(QFLAGITEM* pfg);
+        QStringList getErrorMessage(QFLAGITEM* pfg);
         //--->
 
     private:
