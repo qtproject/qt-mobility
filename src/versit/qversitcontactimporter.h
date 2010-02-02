@@ -79,10 +79,10 @@ public:
     // XXX We need some way of importing/exporting groups and "self-contact" from vCard.
     QList<QContact> importContacts(const QList<QVersitDocument>& documents);
 
-    void setPropertyHandler(QVersitContactImporterPropertyHandler* importer);
+    void setPropertyHandler(QVersitContactImporterPropertyHandler* handler);
     QVersitContactImporterPropertyHandler* propertyHandler() const;
     
-    void setResourceHandler(QVersitResourceHandler* saver);
+    void setResourceHandler(QVersitResourceHandler* handler);
     QVersitResourceHandler* resourceHandler() const;
 
 

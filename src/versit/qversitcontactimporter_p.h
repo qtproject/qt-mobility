@@ -147,7 +147,6 @@ private: // Data
     QHash<QString,QPair<QString,QString> > mDetailMappings;
     QHash<QString,QString> mContextMappings;
     QHash<QString,QString> mSubTypeMappings;
-    QHash<QString,QString> mFileExtensionMappings;
 };
 
 QTM_END_NAMESPACE

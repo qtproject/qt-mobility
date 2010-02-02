@@ -41,6 +41,8 @@
 
 #include "qversitresourcehandler.h"
 #include "qversitproperty.h"
+#include "qversitdefaultresourcehandler_p.h"
+#include "qversitdefs_p.h"
 #include <QFile>
 
 QTM_USE_NAMESPACE
@@ -48,15 +50,15 @@ QTM_USE_NAMESPACE
 /*!
  * \class QVersitResourceHandler
  *
- * \brief The QVersitResourceHandler class is an interface for clients wishing to implement file
- * saving to disk when importing.
+ * \brief The QVersitResourceHandler class is an interface for clients wishing to implement custom
+ * behaviour for loading and saving files to disk when exporting and importing, respectively.
  *
  * \ingroup versit
  *
  * \sa QVersitContactImporter
  * \sa QVersitContactExporter
  *
- * \fn virtual bool QVersitResourceHandler::saveFile(const QByteArray& contents, const QVersitProperty& property, QString* filename) = 0;
+ * \fn virtual bool QVersitResourceHandler::saveResource(const QByteArray& contents, const QVersitProperty& property, QString* location) = 0;
  * Saves the binary data \a contents to a file on a persistent storage medium.
  *
  * \a property holds the QVersitProperty which is the context in which the binary is coming from.
@@ -73,17 +75,34 @@ QTM_USE_NAMESPACE
  * Returns true on success, false on failure.
 */
 
+QVersitDefaultResourceHandler::QVersitDefaultResourceHandler()
+    : d(new QVersitDefaultResourceHandlerPrivate)
+{
+    // File extension mappings
+    int fileExtensionCount = sizeof(versitFileExtensionMappings)/sizeof(VersitMapping);
+    for (int i = 0; i < fileExtensionCount; i++) {
+        d->mFileExtensionMapping.insert(
+            QLatin1String(versitFileExtensionMappings[i].contactString),
+            QLatin1String(versitFileExtensionMappings[i].versitString));
+    }
+}
+
+QVersitDefaultResourceHandler::~QVersitDefaultResourceHandler()
+{
+    delete d;
+}
+
 /*!
  * Default resource loader.
  * Loads file from given \a location into \a contents and returns true if successful.
- * Does not set \a mimeType.
+ * Sets the \a mimeType based on the file extension.
  */
 bool QVersitDefaultResourceHandler::loadResource(const QString& location,
                                                  QByteArray* contents,
                                                  QString* mimeType)
 {
-    // XXX TODO: fill in the mimetype.
-    Q_UNUSED(mimeType)
+    QString extension = location.split(QLatin1Char('.')).last().toLower();
+    *mimeType = d->mFileExtensionMapping.value(extension);
     if (location.isEmpty())
         return false;
     QFile file(location);
