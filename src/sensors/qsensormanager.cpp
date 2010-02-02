@@ -154,7 +154,7 @@ QSensorBackend *QSensorManager::createBackend(QSensor *sensor)
     QSensorBackend *backend;
 
     if (sensor->identifier().isEmpty()) {
-        QByteArray defaultIdentifier = defaultSensorForType(sensor->type());
+        QByteArray defaultIdentifier = QSensor::defaultSensorForType(sensor->type());
         LOG() << "Trying the default" << defaultIdentifier;
         // No identifier set, try the default
         factory = factoryByIdentifier[defaultIdentifier];
