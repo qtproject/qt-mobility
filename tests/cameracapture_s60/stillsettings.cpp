@@ -49,7 +49,7 @@
 #include <QtGui/qcombobox.h>
 #include <QtCore/qdebug.h>
 #include <qimageencodercontrol.h>
-#include <qstillimagecapture.h>
+#include <experimental/qstillimagecapture.h>
 #include <qmediaencodersettings.h>
 #include <qmediaservice.h>
 #include <QFile>
