@@ -62,7 +62,8 @@ CameraCapture::CameraCapture(QWidget *parent) :
     imageCapture(0),
     mediaRecorder(0),
     audioSource(0),
-    videoWidget(0)
+    videoWidget(0),
+    imageProcessingControl(0)
 {
     ui->setupUi(this);
     #if defined(Q_OS_SYMBIAN)
@@ -231,6 +232,7 @@ void CameraCapture::setCamera(const QByteArray &cameraDevice)
     delete videoWidget;
     delete camera;
 
+    delete imageProcessingControl;
     
     qDebug() << "CameraCapture::setCamera cameraDevice.isEmpty()=" << cameraDevice.isEmpty();
     if (cameraDevice.isEmpty())
