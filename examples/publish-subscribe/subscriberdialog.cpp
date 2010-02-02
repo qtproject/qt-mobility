@@ -44,6 +44,10 @@
 
 #include <qvaluespacesubscriber.h>
 
+#include <QTableWidget>
+#include <QListWidget>
+#include <QDesktopWidget>
+
 #ifdef QTM_SMALL_SCREEN
 #include <QPushButton>
 #include <QSizePolicy>
@@ -54,7 +58,8 @@
 SubscriberDialog::SubscriberDialog(QWidget *parent) :
         QDialog(parent),
         ui(new Ui::SubscriberDialog),
-        subscriber(0)
+        subscriber(0),
+        tableWidget(0), listWidget(0)
 {
     ui->setupUi(this);
 
@@ -65,6 +70,24 @@ SubscriberDialog::SubscriberDialog(QWidget *parent) :
     switchButton->show();
     connect(switchButton, SIGNAL(clicked()), this, SIGNAL(switchRequested()));
 #endif
+
+    QDesktopWidget desktopWidget;
+    if (desktopWidget.availableGeometry().width() < 400) {
+        // Screen is too small to fit a table widget without scrolling, use a list widget instead.
+        listWidget = new QListWidget;
+        listWidget->setAlternatingRowColors(true);
+        ui->verticalLayout->insertWidget(2, listWidget);
+    } else {
+        tableWidget = new QTableWidget;
+        QStringList headerLabels;
+        headerLabels << tr("Key") << tr("Value") << tr("Type");
+        tableWidget->setColumnCount(3);
+        tableWidget->setHorizontalHeaderLabels(headerLabels);
+        tableWidget->horizontalHeader()->setStretchLastSection(true);
+        tableWidget->verticalHeader()->setVisible(false);
+
+        ui->verticalLayout->insertWidget(2, tableWidget);
+    }
 
     connect(ui->connectButton, SIGNAL(clicked()), this, SLOT(changeSubscriberPath()));
     changeSubscriberPath();
@@ -90,7 +113,10 @@ void SubscriberDialog::changeEvent(QEvent *e)
 //! [0]
 void SubscriberDialog::changeSubscriberPath()
 {
-    ui->values->clearContents();
+    if (listWidget)
+        listWidget->clear();
+    else if (tableWidget)
+        tableWidget->clearContents();
 
     if (!subscriber)
         subscriber = new QValueSpaceSubscriber(ui->basePath->text(), this);
@@ -106,23 +132,37 @@ void SubscriberDialog::changeSubscriberPath()
 //! [1]
 void SubscriberDialog::subscriberChanged()
 {
-    ui->values->clearContents();
-
     QStringList subPaths = subscriber->subPaths();
-    ui->values->setRowCount(subPaths.count());
+
+    if (listWidget) {
+        listWidget->clear();
+    } else if (tableWidget) {
+        tableWidget->clearContents();
+        tableWidget->setRowCount(subPaths.count());
+    }
 
     for (int i = 0; i < subPaths.count(); ++i) {
         QVariant v = subscriber->value(subPaths.at(i));
 
-        QTableWidgetItem *pathItem = new QTableWidgetItem(subPaths.at(i));
-        pathItem->setFlags(pathItem->flags() & ~Qt::ItemIsEditable);
-        QTableWidgetItem *valueItem = new QTableWidgetItem(v.toString());
-        valueItem->setFlags(valueItem->flags() & ~Qt::ItemIsEditable);
-        QTableWidgetItem *typeItem = new QTableWidgetItem(v.typeName());
-        typeItem->setFlags(typeItem->flags() & ~Qt::ItemIsEditable);
-        ui->values->setItem(i, 0, pathItem);
-        ui->values->setItem(i, 1, valueItem);
-        ui->values->setItem(i, 2, typeItem);
+        if (listWidget) {
+            const QString itemTemplate("%1 (%2)\n%3");
+
+            QListWidgetItem *item =
+                new QListWidgetItem(itemTemplate.arg(subPaths.at(i), v.typeName(), v.toString()));
+            item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+            listWidget->addItem(item);
+        } else if (tableWidget) {
+            QTableWidgetItem *pathItem = new QTableWidgetItem(subPaths.at(i));
+            pathItem->setFlags(pathItem->flags() & ~Qt::ItemIsEditable);
+            QTableWidgetItem *valueItem = new QTableWidgetItem(v.toString());
+            valueItem->setFlags(valueItem->flags() & ~Qt::ItemIsEditable);
+            QTableWidgetItem *typeItem = new QTableWidgetItem(v.typeName());
+            typeItem->setFlags(typeItem->flags() & ~Qt::ItemIsEditable);
+
+            tableWidget->setItem(i, 0, pathItem);
+            tableWidget->setItem(i, 1, valueItem);
+            tableWidget->setItem(i, 2, typeItem);
+        }
     }
 }
 //! [1]
