@@ -52,12 +52,17 @@ QTM_USE_NAMESPACE
 /*!
  * \class QVersitContactExporterDetailHandler
  *
- * \brief The QVersitContactExporterDetailHandler class is an interface for clients wishing to implement
- * custom export behaviour for certain contact details.
+ * \brief The QVersitContactExporterDetailHandler class is an interface for clients wishing to
+ * implement custom export behaviour for certain contact details.
  *
  * \ingroup versit
  *
  * \sa QVersitContactExporter
+ */
+
+/*!
+ * \fn virtual QVersitContactExporterDetailHandler::~QVersitContactExporterDetailHandler()
+ * Frees any memory in use by this handler.
  */
 
 /*!
@@ -75,18 +80,20 @@ QTM_USE_NAMESPACE
  * \fn virtual bool QVersitContactExporterDetailHandler::postProcessDetail(const QContact& contact, const QContactDetail& detail, bool alreadyProcessed, QVersitDocument* document) = 0;
  * Process \a detail and update \a document with the corresponding QVersitProperty(s).
  * \a contact provides the context within which the detail was found.
+ * \a alreadyProcessed is true if the detail has already been processed either by
+ * \l preProcessDetail() or by QVersitContactExporter itself.
  *
  * Returns true if the detail has been handled, false otherwise.
  *
- * This function is called on every \l QContactDetail encountered during an export which is not
- * handled by either \l preProcessDetail() or by QVersitContactExporter.  This can be used to
- * implement support for \l QContactDetail(s) not supported by QVersitContactExporter.
+ * This function is called on every \l QContactDetail encountered during an export.  This can be
+ * used to implement support for QContactDetails not supported by QVersitContactExporter.
  */
 
 /*!
  * \class QVersitContactExporter
  *
- * \brief The QVersitContactExporter class converts \l QContact(s) into \l QVersitDocument(s).
+ * \brief The QVersitContactExporter class converts \l {QContact}{QContacts} into
+ * \l {QVersitDocument}{QVersitDocuments}.
  *
  * \ingroup versit
  *
@@ -146,7 +153,7 @@ QTM_USE_NAMESPACE
  *
  * \endcode
  *
- * \sa QVersitDocument, QVersitProperty, QVersitContactExporterDetailHandler, QVersitResourceLoader
+ * \sa QVersitDocument, QVersitProperty, QVersitContactExporterDetailHandler, QVersitResourceHandler
  */
 
 /*!
