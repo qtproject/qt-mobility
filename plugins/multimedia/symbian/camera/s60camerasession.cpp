@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include <BADESCA.H>
+#include <BAUTILS.H>
 
 #include <QtCore/qdebug.h>
 #include <QtCore/qstring.h>
@@ -51,6 +52,7 @@
 #include <fbs.h>
 #include <qglobal.h>
 #include <QDir>
+#include <pathinfo.h> 
 
 const int KSymbianImageQualityCoefficient = 25;
 
@@ -206,7 +208,7 @@ void S60CameraSession::stopCamera()
 
 void S60CameraSession::capture(const QString &fileName)
 {
-    //qDebug() << "S60CameraSession::capture to file="<< fileName;
+    qDebug() << "S60CameraSession::capture to file="<< fileName;
     m_error = KErrNone;
     m_stillCaptureFileName = fileName;
     emit readyForCaptureChanged(false);
@@ -505,19 +507,43 @@ void S60CameraSession::MceoFocusComplete()
 
 void S60CameraSession::MceoCapturedDataReady(TDesC8* aData)
 {
-    //qDebug() << "S60CameraSession::MceoCapturedDataReady()";
+    qDebug() << "S60CameraSession::MceoCapturedDataReady()";
     QImage snapImage = QImage::fromData((const uchar *)aData->Ptr(), aData->Length());
     //qDebug() << "S60CameraSession::MceoCapturedDataReady(), image constructed, byte count="<<snapImage.byteCount();
     // inform capture done
     emit imageCaptured(m_stillCaptureFileName, snapImage);
     // try to save image and inform if it was succcesful
-    if (snapImage.save(m_stillCaptureFileName,0, m_imageQuality))
-        emit imageSaved(m_stillCaptureFileName);
+    TRAPD(err, saveImageL(aData));
+    setError(err);
+    emit imageSaved(m_stillCaptureFileName);
     // release image resources
     releaseImageBuffer();
 }
 
-void S60CameraSession::releaseImageBuffer()
+void S60CameraSession::saveImageL(TDesC8* aData) 
+{
+    // Create path for filename
+    TFileName path = PathInfo::PhoneMemoryRootPath(); 
+    path.Append(PathInfo::ImagesPath());  
+    RFs fs;
+    User::LeaveIfError(fs.Connect());
+    CleanupClosePushL(fs);
+    
+    // Ensure that path exists
+    BaflUtils::EnsurePathExistsL(fs, path);
+    TPtrC16 attachmentPath(KNullDesC);
+    attachmentPath.Set(reinterpret_cast<const TUint16*>(m_stillCaptureFileName.utf16()));
+    path.Append(attachmentPath);
+    RFile file;
+    User::LeaveIfError(file.Create(fs, path, EFileWrite));
+    CleanupClosePushL(file);
+    User::LeaveIfError(file.Write(*aData));
+     
+    CleanupStack::PopAndDestroy(&file);
+    CleanupStack::PopAndDestroy(&fs);
+}
+
+void S60CameraSession::releaseImageBuffer() 
 {
     if (m_cameraEngine)
         m_cameraEngine->ReleaseImageBuffer();

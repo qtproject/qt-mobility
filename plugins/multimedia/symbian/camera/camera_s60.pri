@@ -21,8 +21,10 @@ exists($${EPOCROOT}epoc32\include\cameraengine.h) {
     symbian:LIBS += -lcamerawrapper \
         -lfbscli \
         -lmediaclientvideo \
-        -lecam
-        
+        -lecam \
+        -lbafl \
+        -lPlatformEnv
+            
     HEADERS += $$PWD/s60camerafocuscontrol.h \
         $$PWD/s60cameraexposurecontrol.h \
         $$PWD/s60cameracontrol.h \

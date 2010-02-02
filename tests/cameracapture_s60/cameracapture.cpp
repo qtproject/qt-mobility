@@ -354,6 +354,7 @@ void CameraCapture::takeImage()
         camera->startFocusing();
     } else {
         int lastImage = 0;
+        outputDir.cd("Images");
         foreach( QString fileName, outputDir.entryList(QStringList() << "img_*.jpg") ) {
             int imgNumber = fileName.mid(4, fileName.size()-8).toInt();
             lastImage = qMax(lastImage, imgNumber);
@@ -450,6 +451,7 @@ void CameraCapture::focusStatusChanged(QCamera::FocusStatus status)
     qDebug() << "CameraCapture focus locked";
     if (status == QCamera::FocusReached && m_takeImage) {
         int lastImage = 0;
+        outputDir.cd("Images");
         foreach( QString fileName, outputDir.entryList(QStringList() << "img_*.jpg") ) {
             int imgNumber = fileName.mid(4, fileName.size()-8).toInt();
             lastImage = qMax(lastImage, imgNumber);
@@ -485,24 +487,4 @@ void CameraCapture::handleMediaKeyEvent(MediaKeysObserver::MediaKeys key)
 void CameraCapture::error(QCamera::Error aError)
 {
     qDebug() << "CameraCapture error: " << aError;
-    QMessageBox msgBox;
-    msgBox.setStandardButtons(QMessageBox::Close);
-
-    if (aError == QCamera::NoError) {
-    msgBox.setText(tr("NoError"));
-    } else if (aError == QCamera::NotReadyToCaptureError) {
-        msgBox.setText(tr("NotReadyToCaptureError"));
-    } else if (aError == QCamera::InvalidRequestError) {
-        msgBox.setText(tr("InvalidRequestError"));
-    } else if (aError == QCamera::ServiceMissingError) {
-        msgBox.setText(tr("ServiceMissingError"));
-    } else if (aError == QCamera::NotSupportedFeatureError) {
-        msgBox.setText(tr("NotSupportedFeatureError"));
-    } else if (aError == QCamera::CameraError) {
-        msgBox.setText(tr("CameraError"));
-    }
-    else {
-        msgBox.setText(tr("Other error"));
-    }  
-    msgBox.exec();
 }
