@@ -840,16 +840,16 @@ void S60CameraSession::updateImageCaptureCodecs()
     if (m_cameraEngine && queryCurrentCameraInfo()) {
 
         TUint32 supportedFormats = m_info.iImageFormatsSupported;
-        QStringList allFormats = formatMap().keys();
-        int formatMask = 1;
-
-        for ( int i = 0; i < allFormats.count() ; ++i ) {
-            if ( supportedFormats & formatMask ) {
-                //qDebug() << "S60CameraSession::updateImageCaptureCodecs, adding format="<<allFormats.at(i);
-                m_formats << i; // store index of supported format
-            }
-
-            formatMask <<= 1;
+       
+#ifdef PRE_S60_50_PLATFORM
+        int maskEnd = CCamera::EFormatFbsBitmapColor16MU;
+#else
+        int maskEnd = CCamera::EFormatEncodedH264;        
+#endif
+        for ( int mask = CCamera::EFormatMonochrome; mask == maskEnd; mask<<=1 ) {
+            if ( supportedFormats & mask )
+                //qDebug() << "Supported format mask: " << mask;
+            m_formats << mask; // store mask of supported format
         }
     }
     //qDebug() << "S60CameraSession::updateImageCaptureCodecs END";
