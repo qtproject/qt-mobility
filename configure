@@ -433,6 +433,7 @@ done
 
 mv "$CONFIG_IN" config.pri
 mkdir -p "$shadowpath/features"
+cp -f "$relpath/features/strict_flags.prf" "$shadowpath/features"
 
 echo "Running qmake..."
 if qmake -recursive "$relpath/qtmobility.pro"; then
