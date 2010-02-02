@@ -22,7 +22,6 @@ DEPENDPATH += .
 
 PUBLIC_HEADERS += \
            qsensorbackend.h\
-           qsensorfactory.h\
            qsensormanager.h\
            qsensorplugin.h\
 
@@ -30,7 +29,6 @@ PRIVATE_HEADERS += \
            qsensorpluginloader_p.h\
 
 SOURCES += qsensorbackend.cpp\
-           qsensorfactory.cpp\
            qsensormanager.cpp\
            qsensorplugin.cpp\
            qsensorpluginloader.cpp\

@@ -73,7 +73,26 @@ public:
     QHash<QByteArray, QByteArray> firstIdentifierForType;
 };
 
-Q_GLOBAL_STATIC(QSensorManagerPrivate, d_ptr)
+Q_GLOBAL_STATIC(QSensorManagerPrivate, sensorManagerPrivate)
+
+static void loadPlugins()
+{
+    QSensorManagerPrivate *d = sensorManagerPrivate();
+    d->pluginsLoaded = true;
+
+    qDebug() << "initializing static plugins";
+    foreach (CreatePluginFunc func, d->staticRegistrations) {
+        QSensorPluginInterface *plugin = func();
+        plugin->registerSensors();
+    }
+
+    qDebug() << "initializing plugins";
+    foreach (QSensorPluginInterface *plugin, pluginLoader()->plugins()) {
+        plugin->registerSensors();
+    }
+}
+
+// =====================================================================
 
 /*!
     \class QSensorManager
@@ -93,7 +112,7 @@ Q_GLOBAL_STATIC(QSensorManagerPrivate, d_ptr)
 */
 void QSensorManager::registerBackend(const QByteArray &type, const QByteArray &identifier, QSensorBackendFactory *factory)
 {
-    QSensorManagerPrivate *d = d_ptr();
+    QSensorManagerPrivate *d = sensorManagerPrivate();
     if (!d->backendsByType.contains(type)) {
         (void)d->backendsByType[type];
         d->firstIdentifierForType[type] = identifier;
@@ -108,7 +127,7 @@ void QSensorManager::registerBackend(const QByteArray &type, const QByteArray &i
 */
 void QSensorManager::registerStaticPlugin(CreatePluginFunc func)
 {
-    QSensorManagerPrivate *d = d_ptr();
+    QSensorManagerPrivate *d = sensorManagerPrivate();
     d->staticRegistrations.append(func);
 }
 
@@ -119,7 +138,7 @@ QSensorBackend *QSensorManager::createBackend(QSensor *sensor)
 {
     Q_ASSERT(sensor);
 
-    QSensorManagerPrivate *d = d_ptr();
+    QSensorManagerPrivate *d = sensorManagerPrivate();
     if (!d->pluginsLoaded)
         loadPlugins();
 
@@ -173,15 +192,42 @@ QSensorBackend *QSensorManager::createBackend(QSensor *sensor)
     return 0;
 }
 
+// =====================================================================
+
+/*!
+    Returns a list of all sensor types.
+*/
+QList<QByteArray> QSensor::sensorTypes()
+{
+    QSensorManagerPrivate *d = sensorManagerPrivate();
+    if (!d->pluginsLoaded)
+        loadPlugins();
+
+    return d->backendsByType.keys();
+}
+
+/*!
+    Returns a list of ids for each of the sensors for \a type.
+    If there are no sensors of that type available the list will be empty.
+*/
+QList<QByteArray> QSensor::sensorsForType(const QByteArray &type)
+{
+    QSensorManagerPrivate *d = sensorManagerPrivate();
+    if (!d->pluginsLoaded)
+        loadPlugins();
+
+    return d->backendsByType[type].keys();
+}
+
 /*!
     Returns the default sensor identifier for \a type.
     This is set in a config file and can be overridden if required.
     If no default is available the system will return the first registered
     sensor for \a type.
 */
-QByteArray QSensorManager::defaultSensorForType(const QByteArray &type)
+QByteArray QSensor::defaultSensorForType(const QByteArray &type)
 {
-    QSensorManagerPrivate *d = d_ptr();
+    QSensorManagerPrivate *d = sensorManagerPrivate();
     if (!d->pluginsLoaded)
         loadPlugins();
 
@@ -201,22 +247,7 @@ QByteArray QSensorManager::defaultSensorForType(const QByteArray &type)
     return d->firstIdentifierForType[type];
 }
 
-void QSensorManager::loadPlugins()
-{
-    QSensorManagerPrivate *d = d_ptr();
-    d->pluginsLoaded = true;
-
-    qDebug() << "initializing static plugins";
-    foreach (CreatePluginFunc func, d->staticRegistrations) {
-        QSensorPluginInterface *plugin = func();
-        plugin->registerSensors();
-    }
-
-    qDebug() << "initializing plugins";
-    foreach (QSensorPluginInterface *plugin, pluginLoader()->plugins()) {
-        plugin->registerSensors();
-    }
-}
+// =====================================================================
 
 /*!
     \class QSensorBackendFactory

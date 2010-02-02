@@ -43,7 +43,6 @@
 #include "qsensor_p.h"
 #include "qsensorbackend.h"
 #include "qsensormanager.h"
-#include "qsensorfactory.h"
 #include <QDebug>
 
 QTM_BEGIN_NAMESPACE

@@ -131,6 +131,11 @@ public:
     // The readings are exposed via this object
     QSensorReading *reading() const;
 
+    // Information about available sensors
+    static QList<QByteArray> sensorTypes();
+    static QList<QByteArray> sensorsForType(const QByteArray &type);
+    static QByteArray defaultSensorForType(const QByteArray &type);
+
 public Q_SLOTS:
     // Start receiving values from the sensor
     void start();
