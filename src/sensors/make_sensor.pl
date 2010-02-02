@@ -53,8 +53,9 @@ if (! -e $pheader) {
 
 QTM_BEGIN_NAMESPACE
 
-struct '.$reading_private.' : public QSensorReadingPrivate
+class '.$reading_private.' : public QSensorReadingPrivate
 {
+public:
     '.$reading_private.'()
         : myprop(0)
     {

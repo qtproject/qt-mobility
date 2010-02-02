@@ -54,8 +54,9 @@ Q_GLOBAL_STATIC_WITH_ARGS(QSensorPluginLoader, pluginLoader, (QSensorPluginInter
 typedef QHash<QByteArray,QSensorBackendFactory*> FactoryForIdentifierMap;
 typedef QHash<QByteArray,FactoryForIdentifierMap> BackendIdentifiersForTypeMap;
 
-struct QSensorManagerPrivate
+class QSensorManagerPrivate
 {
+public:
     QSensorManagerPrivate()
         : pluginsLoaded(false)
     {

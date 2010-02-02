@@ -71,8 +71,9 @@ private:
     static void loadPlugins();
 };
 
-struct Q_SENSORS_EXPORT QSensorBackendFactory
+class Q_SENSORS_EXPORT QSensorBackendFactory
 {
+public:
     virtual QSensorBackend *createBackend(QSensor *sensor) = 0;
 protected:
     ~QSensorBackendFactory() {}
