@@ -69,6 +69,7 @@
 #include <CoreFoundation/CFNumber.h>
 #include <CoreFoundation/CFNotificationCenter.h>
 #include <IOKit/graphics/IOGraphicsLib.h>
+#include <CoreFoundation/CoreFoundation.h>
 
 #include <IOKit/usb/IOUSBLib.h>
 #include <IOKit/pwr_mgt/IOPM.h>
@@ -112,7 +113,6 @@
 #include <net/if_media.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
-
 
 //
 ////////
@@ -172,9 +172,9 @@ inline NSString *qstringToNSString(const QString &qstr)
 
 -(void)dealloc
 {
-    [currentInterface release];
-    [center release];
-    [super dealloc];
+   [center release];
+//       [currentInterface release];
+   [super dealloc];
 }
 
 -(void)remove
@@ -184,7 +184,6 @@ inline NSString *qstringToNSString(const QString &qstr)
 
 - (void)notificationHandler:(NSNotification *)notification
 {
-    qWarning() << __FUNCTION__;
     QTM_NAMESPACE::QSystemNetworkInfoPrivate::instance()->networkChanged( nsstringToQString([notification name]), nsstringToQString([[notification object]name]));
 }
 
