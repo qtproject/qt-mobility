@@ -9,5 +9,9 @@ CONFIG+= testcase
 
 include(../../../../common.pri)
 
+symbian {
+    TARGET.CAPABILITY = All -TCB
+}
+
 CONFIG += mobility
 MOBILITY = bearer
