@@ -80,18 +80,19 @@ Rectangle {
                     opacity: wrapper.detailsOpacity
                     Text {
                         y: nameTxt.height
+                        id: emailId
+                        text: email
+                    }
+                    Text {
+                        y: emailId.y + emailId.height
                         id: accountPathId
                         text: accountPath
                     }
                     Text {
-                        y: accountPathId.y + accountPathId.height                        
+                        y: accountPathId.y
+                        x: accountPathId.x + accountPathId.width + 5
                         id: presenceId
                         text: presence
-                    }
-                    Text {
-                        y: presenceId.y + presenceId.height
-                        id: emailId
-                        text: email
                     }
                 }                
             }
