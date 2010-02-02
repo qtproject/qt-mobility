@@ -4,7 +4,10 @@ TARGET = QtSensors
 include(../../common.pri)
 
 DEFINES += QT_BUILD_SENSORS_LIB QT_MAKEDLL
-symbian:TARGET.EPOCALLOWDLLDATA = 1
+symbian {
+    TARGET.EPOCALLOWDLLDATA = 1
+    TARGET.UID3 = 0x2002BFC0
+}
 
 STRICT=$$(STRICT)
 equals(STRICT,1) {
