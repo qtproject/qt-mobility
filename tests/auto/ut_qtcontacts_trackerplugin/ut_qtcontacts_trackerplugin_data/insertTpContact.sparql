@@ -17,15 +17,15 @@ INSERT
 echo "create nco:IMContact"
 tracker-sparql -u -q "INSERT
 {
-<contact:$1>
+<$1>
 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>
 <http://www.semanticdesktop.org/ontologies/2007/03/22/nco#IMContact>
 }
 "
 echo "create nco:IMContact"
 tracker-sparql --update --query "INSERT {
-	    <contact:$1> a nco:IMContact;
-	    nco:contactUID '$1';
+	    <$1> a nco:IMContact;
+	    nco:contactUID '$2';
 	    nco:imContactId '$3';
 	    nco:imContactNickname '$4';
 	    nco:imContactPresence $5;
@@ -35,7 +35,7 @@ tracker-sparql --update --query "INSERT {
 }"
 echo "update nco:IMContact"
 tracker-sparql --update --query "INSERT {
-        <contact:$1> a nco:IMContact;
+        <$1> a nco:IMContact;
 	    nco:nameGiven '$8';
         nco:nameFamily '$9'
 }
