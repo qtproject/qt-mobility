@@ -104,7 +104,6 @@ QList<QContactLocalId> CntSymbianFilter::contacts(
     QContactManager::Error &error)
 {
     QList<QContactLocalId> result;
-    filterSupportedFlag = true;
 
     // No need to proceed if some of the filters in the chain is not supported
     if(!filterSupportedFlag) return result;
@@ -211,55 +210,64 @@ bool CntSymbianFilter::filterSupported(const QContactFilter& filter)
  */
 CntAbstractContactFilter::FilterSupport CntSymbianFilter::filterSupportLevel(const QContactFilter& filter)
 {
-    FilterSupport filterSupported(NotSupported);
-
     if (filter.type() == QContactFilter::ContactDetailFilter) {
         const QContactDetailFilter &detailFilter = static_cast<const QContactDetailFilter &>(filter);
-        const QContactFilter::MatchFlags matchFlags = detailFilter.matchFlags();
+        QContactFilter::MatchFlags matchFlags = detailFilter.matchFlags();
         const QString defName = detailFilter.detailDefinitionName();
-        const int KMatchFlagsUnset(0);
-        QContactFilter::MatchFlags supportedFlags(KMatchFlagsUnset);
-        QContactFilter::MatchFlags preFilterFlags(KMatchFlagsUnset);
-        bool validDetailFilter(false);
 
         // Phone numbers
         if (defName == QContactPhoneNumber::DefinitionName) {
-            validDetailFilter = true;
-            supportedFlags = QContactFilter::MatchFlags(QContactFilter::MatchPhoneNumber);
-            preFilterFlags = QContactFilter::MatchFlags(QContactFilter::MatchEndsWith)
-                             | QContactFilter::MatchFlags(QContactFilter::MatchExactly);
+            
+            if (matchFlags == QContactFilter::MatchPhoneNumber) {
+                return Supported;
+            }
+            
+            if (matchFlags == QContactFilter::MatchExactly ||
+                matchFlags == QContactFilter::MatchEndsWith) {
+                return SupportedPreFilterOnly;
+            }
         // Names
         } else if (defName == QContactName::DefinitionName
                 || defName == QContactNickname::DefinitionName
                 || defName == QContactEmailAddress::DefinitionName) {
-            validDetailFilter = true;
-            supportedFlags = QContactFilter::MatchFlags(QContactFilter::MatchContains);
-            preFilterFlags = QContactFilter::MatchFlags(QContactFilter::MatchExactly)
-                             | QContactFilter::MatchFlags(QContactFilter::MatchStartsWith)
-                             | QContactFilter::MatchFlags(QContactFilter::MatchEndsWith)
-                             | QContactFilter::MatchFlags(QContactFilter::MatchCaseSensitive);
+
+            if (matchFlags == QContactFilter::MatchContains) {
+                return Supported;
+            }
+
+            // Don't care about case sensitivity flag because: 
+            // 1) We do not support it. 2) We are doing prefiltering only.
+            matchFlags &= ~QContactFilter::MatchFlags(QContactFilter::MatchCaseSensitive);
+            
+            if (matchFlags == QContactFilter::MatchExactly ||
+                matchFlags == QContactFilter::MatchContains ||
+                matchFlags == QContactFilter::MatchStartsWith ||
+                matchFlags == QContactFilter::MatchEndsWith) {
+                return SupportedPreFilterOnly;
+            }            
         // display label, this is a special case that contains several name
         // fields and company name
         //TODO: "unnamed" display label is not supported currently
         } else if (defName == QContactDisplayLabel::DefinitionName) {
-            validDetailFilter = true;
-            supportedFlags = QContactFilter::MatchFlags(QContactFilter::MatchStartsWith)
-                             | QContactFilter::MatchFlags(QContactFilter::MatchContains);
-            preFilterFlags = QContactFilter::MatchFlags(QContactFilter::MatchExactly)
-                             | QContactFilter::MatchFlags(QContactFilter::MatchEndsWith)
-                             | QContactFilter::MatchFlags(QContactFilter::MatchCaseSensitive);
-        }
-
-        if(validDetailFilter) {
-            if (matchFlags != QContactFilter::MatchFlags(QContactFilter::MatchExactly)
-                    && (matchFlags | supportedFlags) == supportedFlags ) {
-                filterSupported = Supported;
-            } else if ((matchFlags | preFilterFlags) == preFilterFlags ) {
-                filterSupported = SupportedPreFilterOnly;
+            
+            if (matchFlags == QContactFilter::MatchContains ||
+                matchFlags == QContactFilter::MatchStartsWith) {
+                return Supported;
             }
+            
+            // Don't care about case sensitivity flag because: 
+            // 1) We do not support it. 2) We are doing prefiltering only.
+            matchFlags &= ~QContactFilter::MatchFlags(QContactFilter::MatchCaseSensitive);
+            
+            if (matchFlags == QContactFilter::MatchExactly ||
+                matchFlags == QContactFilter::MatchContains ||
+                matchFlags == QContactFilter::MatchStartsWith ||
+                matchFlags == QContactFilter::MatchEndsWith) {
+                return SupportedPreFilterOnly;
+            }              
         }
     }
-    return filterSupported;
+    return NotSupported;
 }
 
 QList<QContactLocalId> CntSymbianFilter::filterContacts(
