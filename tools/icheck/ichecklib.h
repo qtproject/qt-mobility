@@ -11,7 +11,7 @@ class ICHECKLIBSHARED_EXPORT ICheckLib {
 public:
     ICheckLib();
     void ParseHeader(const QStringList& includePath, const QStringList& filelist);
-    bool check(const ICheckLib& ichecklib /*ICheckLib from interface header*/);
+    bool check(const ICheckLib& ichecklib /*ICheckLib from interface header*/, QString outputfile);
     QStringList getErrorMsg();
 private:
     CPlusPlus::ParseManager* pParseManager;

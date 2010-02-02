@@ -183,7 +183,7 @@ bool TestCase::run()
         ICheckLib ichecklib;
         ichecklib.ParseHeader(chIncludepathlist, chFilelist);
 
-        ichecklib.check(i_ichecklib);
+        ichecklib.check(i_ichecklib, "");
         QStringList result = ichecklib.getErrorMsg();
         if(result.count() != expectedResult.count()){
             out << testName << " failed. Expected result line count doesn't equals to the result line count." << endl;

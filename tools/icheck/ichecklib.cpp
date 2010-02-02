@@ -17,7 +17,32 @@ QStringList getQTIncludePath()
     foreach(QString item, processevironment){
         if(item.indexOf("QTDIR=") == 0){
             QString qtpath = item.remove("QTDIR=");
+            ret << qtpath + "/include";
+            ret << qtpath + "/include/ActiveQt";
+            ret << qtpath + "/include/phonon";
+            ret << qtpath + "/include/phonon_compat";
+            ret << qtpath + "/include/Qt";
+            ret << qtpath + "/include/Qt3Support";
+            ret << qtpath + "/include/QtAssistant";
             ret << qtpath + "/include/QtCore";
+            ret << qtpath + "/include/QtDBus";
+            ret << qtpath + "/include/QtDeclarative";
+            ret << qtpath + "/include/QtDesigner";
+            ret << qtpath + "/include/QtGui";
+            ret << qtpath + "/include/QtHelp";
+            ret << qtpath + "/include/QtMultimedia";
+            ret << qtpath + "/include/QtNetwork";
+            ret << qtpath + "/include/QtOpenGL";
+            ret << qtpath + "/include/QtOpenVG";
+            ret << qtpath + "/include/QtScript";
+            ret << qtpath + "/include/QtScriptTools";
+            ret << qtpath + "/include/QtSql";
+            ret << qtpath + "/include/QtSvg";
+            ret << qtpath + "/include/QtTest";
+            ret << qtpath + "/include/QtUiTools";
+            ret << qtpath + "/include/QtWebKit";
+            ret << qtpath + "/include/QtXml";
+            ret << qtpath + "/include/QtXmlPatterns";
             break;
         }
     }
@@ -39,11 +64,11 @@ void ICheckLib::ParseHeader(const QStringList& includePath, const QStringList& f
     pParseManager->parse(filelist);
 }
 
-bool ICheckLib::check(const ICheckLib& ichecklib /*ICheckLib from interface header*/)
+bool ICheckLib::check(const ICheckLib& ichecklib /*ICheckLib from interface header*/, QString outputfile)
 {
     if(pParseManager){
         CPlusPlus::ParseManager* cpparsemanager = ichecklib.pParseManager;
-        return pParseManager->checkAllMetadatas(cpparsemanager);
+        return pParseManager->checkAllMetadatas(cpparsemanager, outputfile);
     }
     return false;
 }

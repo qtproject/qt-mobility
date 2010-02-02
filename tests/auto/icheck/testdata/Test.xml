@@ -37,4 +37,11 @@
             <msg>protected Signal IMyInterfaceImpl::void noSingnal ( )</msg>
         </ExpectedResult>
     </case>
+    <case>
+        <Name>Enum and flags</Name>
+        <InterfaceHeader>IEnumFlagsFct.h</InterfaceHeader>
+        <CompareHeader>IEnumFlagsFct.h</CompareHeader>
+        <ExpectedResult>
+        </ExpectedResult>
+    </case>
 </Test>
