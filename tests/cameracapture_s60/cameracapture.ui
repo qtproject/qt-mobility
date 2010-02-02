@@ -302,10 +302,19 @@
      <addaction name="actionCloudy"/>
      <addaction name="actionTungsten"/>
     </widget>
+    <widget class="QMenu" name="menuSharpness">
+     <property name="title">
+      <string>Sharpness</string>
+     </property>
+     <addaction name="actionHard"/>
+     <addaction name="actionNormal"/>
+     <addaction name="actionSoft"/>
+    </widget>
     <addaction name="menuFlash_On"/>
     <addaction name="menuFocus"/>
     <addaction name="menuExposure"/>
     <addaction name="menuWhiteBalance"/>
+    <addaction name="menuSharpness"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuDevices"/>
@@ -405,6 +414,21 @@
   <action name="actionTungsten">
    <property name="text">
     <string>Tungsten</string>
+   </property>
+  </action>
+  <action name="actionHard">
+   <property name="text">
+    <string>Hard</string>
+   </property>
+  </action>
+  <action name="actionNormal">
+   <property name="text">
+    <string>Normal</string>
+   </property>
+  </action>
+  <action name="actionSoft">
+   <property name="text">
+    <string>Soft</string>
    </property>
   </action>
  </widget>

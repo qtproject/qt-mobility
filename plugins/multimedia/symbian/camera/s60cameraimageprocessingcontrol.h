@@ -44,6 +44,7 @@
 
 #include <QtCore/qobject.h>
 #include "qimageprocessingcontrol.h"
+#include "s60camerasettings.h"
 
 QTM_USE_NAMESPACE
 
@@ -81,6 +82,7 @@ public:
 private:
     S60CameraSession *m_session;
     S60CameraService *m_service;
+    S60CameraSettings *m_advancedSettings;
 };
 
 #endif

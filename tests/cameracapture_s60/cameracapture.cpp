@@ -109,6 +109,10 @@ CameraCapture::CameraCapture(QWidget *parent) :
     connect(ui->actionCloudy, SIGNAL(triggered()), this, SLOT(setWBCloudy())); 
     connect(ui->actionTungsten, SIGNAL(triggered()), this, SLOT(setWBTungsten()));
     
+    connect(ui->actionHard, SIGNAL(triggered()), this, SLOT(setSharpnessHard()));
+    connect(ui->actionNormal, SIGNAL(triggered()), this, SLOT(setSharpnessNormal()));
+    connect(ui->actionSoft, SIGNAL(triggered()), this, SLOT(setSharpnessSoft()));
+    
     ui->actionAudio->setMenu(new QMenu(this));
 
     setCamera(cameraDevice);
@@ -201,12 +205,28 @@ void CameraCapture::setWBTungsten()
     camera->setWhiteBalanceMode(QCamera::WhiteBalanceTungsten);
 }
 
+void CameraCapture::setSharpnessHard()
+{
+    // no qcamera implementation
+}
+
+void CameraCapture::setSharpnessNormal()
+{
+    // no qcamera implementation
+}
+
+void CameraCapture::setSharpnessSoft()
+{
+    // no qcamera implementation
+}
+
 void CameraCapture::setCamera(const QByteArray &cameraDevice)
 {
     delete imageCapture;
     delete mediaRecorder;
     delete videoWidget;
     delete camera;
+    delete imageProcessingControl;
     
     qDebug() << "CameraCapture::setCamera cameraDevice.isEmpty()=" << cameraDevice.isEmpty();
     if (cameraDevice.isEmpty())
