@@ -34,7 +34,6 @@ load(data_caging_paths)
 TARGET.EPOCALLOWDLLDATA = 1
 TARGET.UID3=0x2002AC76
 TARGET.CAPABILITY = ALL -TCB
-MMP_RULES += EXPORTUNFROZEN
 
 #make a sis package from plugin + api + stub (plugin)
 pluginDep.sources = $${TARGET}.dll

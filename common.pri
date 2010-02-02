@@ -152,7 +152,7 @@ mac:contains(QT_CONFIG,qt_framework) {
 LIBS += -L$$OUTPUT_DIR/lib
 
 # For symbian, we are not freezing yet
-symbian:MMP_RULES += "EXPORTUNFROZEN"
+#symbian:MMP_RULES += "EXPORTUNFROZEN"
 
 DEPENDPATH += . $$SOURCE_DIR
 INCLUDEPATH += $$SOURCE_DIR/src/global
