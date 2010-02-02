@@ -64,7 +64,7 @@ Rectangle {
             id: wrapper            
             border.width: 2
             radius: 5
-            height: 70
+            height: 40
             width: topItem.width-2;            
             property real detailsOpacity: 0
             Row {
@@ -166,7 +166,7 @@ Rectangle {
         orientation: "Vertical"
         position: mainList.visibleArea.yPosition
         pageSize: mainList.visibleArea.heightRatio
-        width: 8
+        width: 40
         height: mainList.height
         anchors.right: mainList.right
         // Only show the scrollbar when the view is moving.
