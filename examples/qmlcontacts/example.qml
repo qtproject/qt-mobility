@@ -159,7 +159,7 @@ Rectangle {
         orientation: "Vertical"
         position: mainList.visibleArea.yPosition
         pageSize: mainList.visibleArea.heightRatio
-        width: 8
+        width: 40
         height: mainList.height
         anchors.right: mainList.right
         // Only show the scrollbar when the view is moving.
