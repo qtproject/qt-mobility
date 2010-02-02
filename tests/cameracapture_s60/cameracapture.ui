@@ -244,7 +244,7 @@
      <x>0</x>
      <y>0</y>
      <width>240</width>
-     <height>320</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -303,10 +303,19 @@
      <addaction name="actionCloudy"/>
      <addaction name="actionTungsten"/>
     </widget>
+    <widget class="QMenu" name="menuSharpness">
+     <property name="title">
+      <string>Sharpness</string>
+     </property>
+     <addaction name="actionHard"/>
+     <addaction name="actionNormal"/>
+     <addaction name="actionSoft"/>
+    </widget>
     <addaction name="menuFlash_On"/>
     <addaction name="menuFocus"/>
     <addaction name="menuExposure"/>
     <addaction name="menuWhiteBalance"/>
+    <addaction name="menuSharpness"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuDevices"/>
@@ -411,6 +420,21 @@
   <action name="actionStilllSettings">
    <property name="text">
     <string>Stilll Camera Settings</string>
+   </property>
+  </action>
+  <action name="actionHard">
+   <property name="text">
+    <string>Hard</string>
+   </property>
+  </action>
+  <action name="actionNormal">
+   <property name="text">
+    <string>Normal</string>
+   </property>
+  </action>
+  <action name="actionSoft">
+   <property name="text">
+    <string>Soft</string>
    </property>
   </action>
  </widget>
