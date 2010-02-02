@@ -84,7 +84,7 @@ public:
     \sa isValid()
 */
 QGeoPositionInfo::QGeoPositionInfo()
-    : d(new QGeoPositionInfoPrivate)
+        : d(new QGeoPositionInfoPrivate)
 {
 }
 
@@ -92,7 +92,7 @@ QGeoPositionInfo::QGeoPositionInfo()
     Creates a QGeoPositionInfo for the given \a coordinate and \a dateTime.
 */
 QGeoPositionInfo::QGeoPositionInfo(const QGeoCoordinate &coordinate, const QDateTime &dateTime)
-    : d(new QGeoPositionInfoPrivate)
+        : d(new QGeoPositionInfoPrivate)
 {
     d->dateTime = dateTime;
     d->coord = coordinate;
@@ -102,7 +102,7 @@ QGeoPositionInfo::QGeoPositionInfo(const QGeoCoordinate &coordinate, const QDate
     Creates a QGeoPositionInfo with the values of \a other.
 */
 QGeoPositionInfo::QGeoPositionInfo(const QGeoPositionInfo &other)
-    : d(new QGeoPositionInfoPrivate)
+        : d(new QGeoPositionInfoPrivate)
 {
     operator=(other);
 }
@@ -118,7 +118,7 @@ QGeoPositionInfo::~QGeoPositionInfo()
 /*!
     Assigns the values from \a other to this QGeoPositionInfo.
 */
-QGeoPositionInfo &QGeoPositionInfo::operator=(const QGeoPositionInfo &other)
+QGeoPositionInfo &QGeoPositionInfo::operator=(const QGeoPositionInfo & other)
 {
     if (this == &other)
         return *this;
@@ -137,8 +137,8 @@ QGeoPositionInfo &QGeoPositionInfo::operator=(const QGeoPositionInfo &other)
 bool QGeoPositionInfo::operator==(const QGeoPositionInfo &other) const
 {
     return d->dateTime == other.d->dateTime
-            && d->coord == other.d->coord
-            && d->doubleAttribs == other.d->doubleAttribs;
+           && d->coord == other.d->coord
+           && d->doubleAttribs == other.d->doubleAttribs;
 }
 
 /*!

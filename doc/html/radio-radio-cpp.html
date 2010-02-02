@@ -74,6 +74,9 @@
         QWidget *window = new QWidget;
         QVBoxLayout* layout = new QVBoxLayout;
         QHBoxLayout* buttonBar = new QHBoxLayout;
+    #if defined Q_OS_SYMBIAN <span class="comment">// this is so that we can see all buttons also in 3.1 devices, where the screens are smaller..</span>
+        QHBoxLayout* buttonBar2 = new QHBoxLayout;
+    #endif
         QHBoxLayout* topBar = new QHBoxLayout;
 
         layout-&gt;addLayout(topBar);
@@ -88,12 +91,18 @@
 
         volumeSlider = new QSlider(Qt::Vertical,this);
         volumeSlider-&gt;setRange(0,100);
+    #if defined Q_OS_SYMBIAN
+        volumeSlider-&gt;setRange(0,10);
+    #endif
         qWarning()&lt;&lt;radio-&gt;volume();
         volumeSlider-&gt;setValue(radio-&gt;volume());
         connect(volumeSlider,SIGNAL(valueChanged(int)),this,SLOT(updateVolume(int)));
         topBar-&gt;addWidget(volumeSlider);
 
         layout-&gt;addLayout(buttonBar);
+    #if defined Q_OS_SYMBIAN
+        layout-&gt;addLayout(buttonBar2);
+    #endif
 
         searchLeft = new QPushButton;
         searchLeft-&gt;setText(tr(&quot;scan Down&quot;));
@@ -103,12 +112,20 @@
         left = new QPushButton;
         left-&gt;setText(tr(&quot;Freq Down&quot;));
         connect(left,SIGNAL(clicked()),SLOT(freqDown()));
+    #if defined Q_OS_SYMBIAN
+        buttonBar2-&gt;addWidget(left);
+    #else
         buttonBar-&gt;addWidget(left);
+    #endif
 
         right = new QPushButton;
         connect(right,SIGNAL(clicked()),SLOT(freqUp()));
         right-&gt;setText(tr(&quot;Freq Up&quot;));
+    #if defined Q_OS_SYMBIAN
+        buttonBar2-&gt;addWidget(right);
+    #else
         buttonBar-&gt;addWidget(right);
+    #endif
 
         searchRight = new QPushButton;
         searchRight-&gt;setText(tr(&quot;scan Up&quot;));

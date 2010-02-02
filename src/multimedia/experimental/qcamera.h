@@ -224,8 +224,10 @@ public:
 
     qreal maximumOpticalZoom() const;
     qreal maximumDigitalZoom() const;
-    qreal zoomValue() const;
-    void zoomTo(qreal value);
+    qreal opticalZoom() const;
+    qreal digitalZoom() const;
+
+    void zoomTo(qreal opticalZoom, qreal digitalZoom);
 
     bool isExposureLocked() const;
 
@@ -248,7 +250,8 @@ Q_SIGNALS:
     void captureModeChanged(QCamera::CaptureMode);
     void flashReady(bool);
     void focusStatusChanged(QCamera::FocusStatus);
-    void zoomValueChanged(qreal);
+    void opticalZoomChanged(qreal);
+    void digitalZoomChanged(qreal);
 
     void apertureChanged(qreal);
     void apertureRangeChanged();

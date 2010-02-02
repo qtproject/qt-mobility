@@ -9,7 +9,8 @@ contains(mobility_modules,serviceframework) {
            qservicefilter \
            qservicemanager \
            qabstractsecuritysession \
-           qservicecontext
+           qservicecontext \
+           icheck
 
 # servicedatabase is not compiled into the serviceframework library on symbian,
 # special handling is needed
@@ -86,6 +87,7 @@ contains(mobility_modules,versit) {
     SUBDIRS += \
             qvcard21writer \
             qvcard30writer \
+            qversit \
             qversitcontactexporter \
             qversitcontactimporter \
             qversitdocument \
@@ -119,7 +121,17 @@ contains(mobility_modules,multimedia) {
                 qgraphicsvideoitem \
                 qpaintervideosurface
 
-}
+    }
+
+    symbian: {
+        #symbian spesific autotests
+        SUBDIRS += symbian 
+        SUBDIRS -= \
+                qcamera \
+                qmediaplayer \
+                qradiotuner \
+                qmediaobject
+    }
 }
 #Messaging
 contains(mobility_modules,messaging) {

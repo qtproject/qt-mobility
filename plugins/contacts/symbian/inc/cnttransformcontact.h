@@ -105,7 +105,7 @@ private:
 	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact) const;
 	void transformPreferredDetailL(const QContact& contact, const QContactDetail& detail, QList<CContactItemField*> &fieldList) const;
 	void transformPreferredDetail(const CContactItemField& field, const QContactDetail& detail, QContact& contact) const;
-	
+
 private:
 	QMap<ContactData, CntTransformContactData*> m_transformContactData;
 };

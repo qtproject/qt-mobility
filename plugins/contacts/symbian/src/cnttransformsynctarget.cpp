@@ -137,8 +137,8 @@ void CntTransformSyncTarget::detailDefinitions(QMap<QString, QContactDetailDefin
 
     if(definitions.contains(QContactSyncTarget::DefinitionName)) {
         QContactDetailDefinition d = definitions.value(QContactSyncTarget::DefinitionName);
-        QMap<QString, QContactDetailDefinitionField> fields = d.fields();
-        QContactDetailDefinitionField f;
+        QMap<QString, QContactDetailFieldDefinition> fields = d.fields();
+        QContactDetailFieldDefinition f;
 
         // Not all fields are supported, replace:
         fields.clear();

@@ -43,7 +43,9 @@
 #define S60CAMERAIMAGECAPTURECONTROL_H
 
 #include <QtCore/qobject.h>
-#include "multimedia/experimental/qimagecapturecontrol.h"
+#include "qimagecapturecontrol.h"
+
+QTM_USE_NAMESPACE
 
 class S60CameraService;
 class S60CameraSession;
@@ -59,10 +61,6 @@ public:
     bool isReadyForCapture() const;
     void capture(const QString &fileName);
     
-/*Q_SIGNALS:
-    void readyForCaptureChanged(bool);
-    void imageCaptured(const QString &fileName, const QImage &preview);
-*/
 private:
     S60CameraSession *m_session;
     S60CameraService *m_service;

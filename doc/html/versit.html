@@ -74,94 +74,11 @@
 <a name="mapping-the-vcard-constants"></a>
 <h3>Mapping the vCard constants</h3>
 <p>vCard properties are mapped to QContactDetails as follows:</p>
-<pre><span class="comment">    // Mappings from versit property names to Qt contact details</span>
-    const versitContactDetailMapping versitContactDetailMappings[] = {
-        {&quot;ADR&quot;,           QContactAddress::DefinitionName.str,
-                          &quot;&quot;},
-        {&quot;BDAY&quot;,          QContactBirthday::DefinitionName.str,
-                          QContactBirthday::FieldBirthday.str},
-        {&quot;FN&quot;,            QContactDisplayLabel::DefinitionName.str,
-                          &quot;&quot;},
-        {&quot;GEO&quot;,           QContactGeolocation::DefinitionName.str,
-                          &quot;&quot;},
-        {&quot;EMAIL&quot;,         QContactEmailAddress::DefinitionName.str,
-                          QContactEmailAddress::FieldEmailAddress.str},
-        {&quot;IMPP&quot;,          QContactOnlineAccount::DefinitionName.str,
-                          QContactOnlineAccount::SubTypeImpp.str},
-        {&quot;LOGO&quot;,          QContactOrganization::DefinitionName.str,
-                          QContactOrganization::FieldLogo.str},
-        {&quot;N&quot;,             QContactName::DefinitionName.str,
-                          &quot;&quot;},
-        {&quot;NICKNAME&quot;,      QContactNickname::DefinitionName.str,
-                          QContactNickname::FieldNickname.str},
-        {&quot;NOTE&quot;,          QContactNote::DefinitionName.str,
-                          QContactNote::FieldNote.str},
-        {&quot;ORG&quot;,           QContactOrganization::DefinitionName.str,
-                          QContactOrganization::FieldName.str},
-        {&quot;PHOTO&quot;,         QContactAvatar::DefinitionName.str,
-                          QContactAvatar::SubTypeImage.str},
-        {&quot;REV&quot;,           QContactTimestamp::DefinitionName.str,
-                          &quot;&quot;},
-        {&quot;ROLE&quot;,          QContactOrganization::DefinitionName.str,
-                          QContactOrganization::FieldRole.str},
-        {&quot;SOUND&quot;,         QContactAvatar::DefinitionName.str,
-                          QContactAvatar::SubTypeAudioRingtone.str},
-        {&quot;TEL&quot;,           QContactPhoneNumber::DefinitionName.str,
-                          QContactPhoneNumber::FieldNumber.str},
-        {&quot;TITLE&quot;,         QContactOrganization::DefinitionName.str,
-                          QContactOrganization::FieldTitle.str},
-        {&quot;UID&quot;,           QContactGuid::DefinitionName.str,
-                          QContactGuid::FieldGuid.str},
-        {&quot;URL&quot;,           QContactUrl::DefinitionName.str,
-                          QContactUrl::FieldUrl.str},
-        {&quot;X-ANNIVERSARY&quot;, QContactAnniversary::DefinitionName.str,
-                          &quot;&quot;},
-        {&quot;X-ASSISTANT&quot;,   QContactOrganization::DefinitionName.str,
-                          QContactOrganization::FieldAssistantName.str},
-        {&quot;X-CHILDREN&quot;,    QContactFamily::DefinitionName.str,
-                          QContactFamily::FieldChildren.str},
-        {&quot;X-GENDER&quot;,      QContactGender::DefinitionName.str,
-                          QContactGender::FieldGender.str},
-        {&quot;X-IMPP&quot;,        QContactOnlineAccount::DefinitionName.str,
-                          QContactOnlineAccount::SubTypeImpp.str},
-        {&quot;X-NICKNAME&quot;,    QContactNickname::DefinitionName.str,
-                          QContactNickname::FieldNickname.str},
-        {&quot;X-SIP&quot;,         QContactOnlineAccount::DefinitionName.str,
-                          &quot;&quot;},
-        {&quot;X-SPOUSE&quot;,      QContactFamily::DefinitionName.str,
-                          QContactFamily::FieldSpouse.str}
-    };</pre>
+<pre></pre>
 <p>vCard type parameters are mapped to subtypes in QContactDetails as follows:</p>
-<pre><span class="comment">    // Mappings from versit TYPE parameters to Qt contact detail subtypes</span>
-    const versitMapping versitSubTypeMappings[] = {
-        {&quot;DOM&quot;,    QContactAddress::SubTypeDomestic.str},
-        {&quot;INTL&quot;,   QContactAddress::SubTypeInternational.str},
-        {&quot;POSTAL&quot;, QContactAddress::SubTypePostal.str},
-        {&quot;PARCEL&quot;, QContactAddress::SubTypeParcel.str},
-        {&quot;VOICE&quot;,  QContactPhoneNumber::SubTypeVoice.str},
-        {&quot;CELL&quot;,   QContactPhoneNumber::SubTypeMobile.str},
-        {&quot;MODEM&quot;,  QContactPhoneNumber::SubTypeModem.str},
-        {&quot;CAR&quot;,    QContactPhoneNumber::SubTypeCar.str},
-        {&quot;VIDEO&quot;,  QContactPhoneNumber::SubTypeVideo.str},
-        {&quot;FAX&quot;,    QContactPhoneNumber::SubTypeFacsimile.str},
-        {&quot;BBS&quot;,    QContactPhoneNumber::SubTypeBulletinBoardSystem.str},
-        {&quot;PAGER&quot;,  QContactPhoneNumber::SubTypePager.str},
-        {&quot;SWIS&quot;,   QContactOnlineAccount::SubTypeVideoShare.str},
-        {&quot;VOIP&quot;,   QContactOnlineAccount::SubTypeSipVoip.str}
-    };</pre>
+<pre></pre>
 <p>File extensions in vCards are mapped to the file system file extensions as follows:</p>
-<pre><span class="comment">    // Mappings from file types in versit specifications to file extensions</span>
-    const versitMapping versitFileExtensionMappings[] = {
-        {&quot;JPEG&quot;, &quot;JPG&quot;},
-        {&quot;WAVE&quot;, &quot;WAV&quot;},
-        {&quot;PICT&quot;, &quot;PCT&quot;},
-        {&quot;TIFF&quot;, &quot;TIF&quot;},
-        {&quot;MPEG&quot;, &quot;MPG&quot;},
-        {&quot;MPEG2&quot;, &quot;M2P&quot;},
-        {&quot;QTIME&quot;, &quot;QT&quot;},
-        {&quot;AIFF&quot;, &quot;AIF&quot;},
-        {&quot;GIF&quot;, &quot;GIF&quot;}
-    };</pre>
+<pre></pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

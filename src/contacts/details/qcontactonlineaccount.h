@@ -63,6 +63,7 @@ public:
     const char* FieldNickname;
     const char* FieldPresence;
     const char* FieldStatusMessage;
+    const char* FieldCapabilities;
     const char* PresenceAvailable;
     const char* PresenceHidden;
     const char* PresenceBusy;
@@ -81,6 +82,7 @@ public:
     Q_DECLARE_LATIN1_LITERAL(FieldNickname, "Nickname");
     Q_DECLARE_LATIN1_LITERAL(FieldPresence, "Presence");
     Q_DECLARE_LATIN1_LITERAL(FieldStatusMessage, "StatusMessage");
+    Q_DECLARE_LATIN1_LITERAL(FieldCapabilities, "Capabilities");
     Q_DECLARE_LATIN1_LITERAL(FieldSubTypes, "SubTypes");
     Q_DECLARE_LATIN1_LITERAL(PresenceAvailable, "Available");
     Q_DECLARE_LATIN1_LITERAL(PresenceHidden, "Hidden");
@@ -105,6 +107,8 @@ public:
     QString presence() const {return value(FieldPresence);}
     void setStatusMessage(const QString& statusMessage) {setValue(FieldStatusMessage, statusMessage);}
     QString statusMessage() const {return value(FieldStatusMessage);}
+    void setCapabilities(const QStringList& capabilities) {setValue(FieldCapabilities, capabilities);}
+    QStringList capabilities() const {return value<QStringList>(FieldCapabilities);}
 
     void setSubTypes(const QStringList& subTypes) {setValue(FieldSubTypes, subTypes);}
     void setSubTypes(const QString& subType) {setValue(FieldSubTypes, QStringList(subType));}

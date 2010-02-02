@@ -195,7 +195,7 @@ The following QCRML file defines Value Space paths for power state properties st
 Properties:
 \code
 <?xml version="1.0" encoding="UTF-8"?>
-<repository target="RProperty" version="" uidName="KPSUidHWRMPowerState" uidValue="0x10205041">
+<repository target="RProperty" uidValue="0x10205041">
     <key ref="/resources/battery/level" int="0x00000001"/>
     <key ref="/resources/battery/status" int="0x00000002"/>
     <key ref="/resources/charging/status" int="0x00000003"/>
@@ -206,7 +206,7 @@ The following QCRML file defines a Value Space path for the "current profile id"
 Repository:
 \code
 <?xml version="1.0" encoding="UTF-8"?>
-<repository target="CRepository" version="" uidName="KCRUidProfileEngine" uidValue="0x101f8798">
+<repository target="CRepository" uidValue="0x101f8798">
     <key ref="/profile/id" int="0x7e000001"/>
 </repository>
 \endcode

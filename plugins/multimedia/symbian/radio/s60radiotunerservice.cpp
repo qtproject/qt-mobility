@@ -39,28 +39,25 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qvariant.h>
-#include <QtCore/qdebug.h>
-#include <QtGui/qwidget.h>
-#include <QtCore/qfile.h>
-
 #include "s60radiotunerservice.h"
-#include "s60radiotunercontrol.h"
+
 
 S60RadioTunerService::S60RadioTunerService(QObject *parent)
     : QMediaService(parent)
 {
-    m_control = new S60RadioTunerControl(this);
+	m_playerControl = new S60RadioTunerControl(this);
 }
 
 S60RadioTunerService::~S60RadioTunerService()
 {
+	delete m_playerControl;
 }
 
 QMediaControl *S60RadioTunerService::control(const char* name) const
 {
-    Q_UNUSED(name)
+	if (qstrcmp(name, QRadioTunerControl_iid) == 0)
+		return m_playerControl;
 
-    return m_control;
+	return 0;
 }
 

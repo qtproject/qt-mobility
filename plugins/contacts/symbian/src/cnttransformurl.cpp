@@ -168,15 +168,20 @@ void CntTransformUrl::detailDefinitions(QMap<QString, QContactDetailDefinition> 
 
     if(definitions.contains(QContactUrl::DefinitionName)) {
         QContactDetailDefinition d = definitions.value(QContactUrl::DefinitionName);
-        QMap<QString, QContactDetailDefinitionField> fields = d.fields();
-        QContactDetailDefinitionField f;
+        QMap<QString, QContactDetailFieldDefinition> fields = d.fields();
+        QContactDetailFieldDefinition f;
 
         f.setDataType(QVariant::String); //only allowed to be a single subtype
         f.setAllowableValues(QVariantList()
                 << QString(QLatin1String(QContactUrl::SubTypeHomePage)));
         fields.insert(QContactUrl::FieldSubType, f);
-        // Context not supported in symbian back-end, remove
-        //fields.remove(QContactUrl::FieldContext);
+
+        // Don't support "ContextOther"
+        f.setDataType(QVariant::StringList);
+        f.setAllowableValues(QVariantList() 
+            << QLatin1String(QContactDetail::ContextHome) 
+            << QLatin1String(QContactDetail::ContextWork));
+        fields[QContactDetail::FieldContext] = f;
 
         d.setFields(fields);
 

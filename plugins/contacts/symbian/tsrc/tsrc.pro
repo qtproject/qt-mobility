@@ -9,5 +9,6 @@ SUBDIRS += performance \
            ut_cntfiltering \
            ut_cntrelationship \
            ut_cntsymbiandatabase \
+           tst_qcontactmanagersymbian
 #           tst_details
            
