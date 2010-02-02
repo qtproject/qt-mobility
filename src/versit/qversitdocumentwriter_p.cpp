@@ -8,12 +8,17 @@ QTM_USE_NAMESPACE
 
 /*!
  * \class QVersitDocumentWriter
- *
+ * \internal
  * \brief The QVersitDocumentWriter class provides an interface for writing a
  * single versit document into a vCard text string.
  */
 
-/*! Constructs a writer. */
+/*! Constructs a writer.
+ * \a documentType is the type of Versit document, as printed on the BEGIN line of output
+ * eg. "VCARD"
+ * \a version is the version of the Versit format, as printed on the VERSION line of output.
+ * eg. "2.1"
+ */
 QVersitDocumentWriter::QVersitDocumentWriter(
     const QByteArray& documentType,
     const QByteArray& version)
@@ -24,7 +29,7 @@ QVersitDocumentWriter::QVersitDocumentWriter(
 
 
 /*!
-* Encodes the \a document to text.
+* Encodes the \a document to text using the given \a codec.
 */
 QByteArray QVersitDocumentWriter::encodeVersitDocument(const QVersitDocument& document,
                                                        QTextCodec* codec)
@@ -44,7 +49,7 @@ QByteArray QVersitDocumentWriter::encodeVersitDocument(const QVersitDocument& do
 }
 
 /*!
- * Encodes the groups and name in the \a property to text.
+ * Encodes the groups and name in the \a property to text using the given \a codec.
  */
 QByteArray QVersitDocumentWriter::encodeGroupsAndName(const QVersitProperty& property,
                                                       QTextCodec* codec) const
