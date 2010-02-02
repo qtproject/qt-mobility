@@ -124,9 +124,14 @@ QList<QContactRelationship> CntRelationship::relationships(const QString& relati
             }
             
             // return empty list if there was an error
-            if (error != QContactManager::NoError) {
+            if (error != QContactManager::NoError && error != QContactManager::DoesNotExistError) {
                 return QList<QContactRelationship>();
             }
+        }
+        // if relationships found, update error
+        if (!returnValue.isEmpty() && error == QContactManager::DoesNotExistError) {
+            // this can be the case if nothing is found for last relationship type
+            error = QContactManager::NoError;
         }
     }
     //check if we support the relationship
