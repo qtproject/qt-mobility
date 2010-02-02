@@ -52,8 +52,7 @@ QTM_USE_NAMESPACE
 /*!
   \class QVersitWriter
  
-  \brief The QVersitWriter class provides an interface
-  for writing a versit document such as a vCard to a text stream.
+  \brief The QVersitWriter class writes Versit documents such as vCards to a device.
 
   \ingroup versit
  
@@ -62,23 +61,6 @@ QTM_USE_NAMESPACE
   which can be for example a file or a memory buffer.
   The writing can be done asynchronously and the waitForFinished()
   function can be used to implement a blocking write.
- 
-  \code
-  // An example of writing a simple vCard to a memory buffer:
-  QBuffer vCardBuffer;
-  vCardBuffer.open(QBuffer::ReadWrite);
-  QVersitWriter writer;
-  writer.setDevice(&vCardBuffer);
-  QVersitDocument document;
-  QVersitProperty property;
-  property.setName("N");
-  property.setValue("Citizen;John;Q;;");
-  document.addProperty(property);
-  writer.startWriting();
-  if (writer.waitForFinished()) {
-      // Use the vCardBuffer...
-  }
-  \endcode
  
   \sa QVersitDocument, QVersitProperty
  */

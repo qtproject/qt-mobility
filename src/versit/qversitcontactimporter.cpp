@@ -110,63 +110,11 @@ QTM_USE_NAMESPACE
  * setPropertyHandler(), the client can pass in a handler to override the processing of properties
  * and/or handle properties that QVersitContactImporter doesn't support.
  *
- * \code
+ * An example property handler that logs unknown properties:
+ * \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Property handler
  *
- * class MyPropertyHandler : public QVersitContactImporterPropertyHandler {
- * public:
- *    bool preProcessProperty(const QVersitDocument& document, const QVersitProperty& property,
- *                            int contactIndex, QContact* contact) {
- *        return false;
- *    }
- *    bool postProcessProperty(const QVersitDocument& document, const QVersitProperty& property,
- *                             bool alreadyProcessed, int contactIndex, QContact* contact) {
- *        if (!alreadyProcessed)
- *            mUnknownProperties.append(property);
- *        return false;
- *    }
- *    QList<QVersitProperty> mUnknownProperties;
- * };
- *
- * class MyResourceHandler : public QVersitResourceHandler {
- * public:
- *    bool saveResource(const QByteArray& contents, const QVersitProperty& property,
- *                      QString* location) {
- *        *location = QString::number(qrand());
- *        QFile file(*location);
- *        file.open(QIODevice::WriteOnly);
- *        file.write(contents);
- *        return true;
- *    }
- *    bool loadResource(const QString& location, QByteArray* contents, QString* mimeType)
- *    {
- *        return false;
- *    }
- * }
- *
- * MyPropertyHandler propertyHandler;
- * importer.setPropertyHandler(&propertyHandler);
- * MyResourceHandler resourceHandler;
- * importer.setResourceHandler(&resourceHandler);
- *
- * QVersitDocument document;
- *
- * QVersitProperty property;
- * property.setName(QString::fromAscii("N"));
- * property.setValue("Citizen;John;Q;;");
- * document.addProperty(property);
- *
- * property.setName(QString::fromAscii("X-UNKNOWN-PROPERTY"));
- * property.setValue("some value");
- * document.addProperty(property);
- *
- * QList<QVersitDocument> list;
- * list.append(document);
- *
- * QList<QContact> contactList = importer.importContacts(list);
- * // contactList.first() now contains the "N" property as a QContactName
- * // propertyHandler.mUnknownProperties contains the list of unknown properties
- *
- * \endcode
+ * An example usage of QVersitContactImporter
+ * \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Import example
  *
  * \sa QVersitDocument, QVersitReader, QVersitContactImporterPropertyHandler
  */

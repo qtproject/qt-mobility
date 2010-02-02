@@ -53,35 +53,17 @@ QTM_USE_NAMESPACE
 /*!
   \class QVersitReader
  
-  \brief The QVersitReader class provides an interface
-  for reading versit documents such as vCards from a stream.
+  \brief The QVersitReader class reads Versit documents such as vCards from a device.
 
   \ingroup versit
  
-  QVersitReader reads a number of Versit documents such as vCards
+  QVersitReader concatenation of Versit documents such as vCards
   from a text stream and returns a list of QVersitDocument instances.
   QVersitReader supports reading from an abstract I/O device
   which can be for example a file or a memory buffer.
   The reading can be done asynchronously, and the
   waitForFinished() function can be used to make a blocking
   read.
- 
-  \code
-  // An example of reading a simple vCard from a memory buffer:
-  QBuffer vCardBuffer;
-  vCardBuffer.open(QBuffer::ReadWrite);
-  QByteArray vCard =
-      "BEGIN:VCARD\r\nVERSION:2.1\r\nN:Citizen;John;Q;;\r\nEND:VCARD\r\n";
-  vCardBuffer.write(vCard);
-  vCardBuffer.seek(0);
-  QVersitReader reader;
-  reader.setDevice(&vCardBuffer);
-  reader.startReading();
-  reader.waitForFinished();
-  QList<QVersitDocument> versitDocuments = reader.results();
-  // Use the resulting document(s)...
-  }
-  \endcode
  
   \sa QVersitDocument
  */
