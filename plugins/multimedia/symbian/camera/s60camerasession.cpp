@@ -841,7 +841,13 @@ void S60CameraSession::updateImageCaptureCodecs()
     if (m_cameraEngine && queryCurrentCameraInfo()) {
 
         TUint32 supportedFormats = m_info.iImageFormatsSupported;
-        for ( int mask = CCamera::EFormatMonochrome; mask == CCamera::EFormatEncodedH264; mask<<=1 ) {
+        
+#ifdef PRE_S60_50_PLATFORM
+        int maskEnd = CCamera::EFormatFbsBitmapColor16MU;
+#else
+        int maskEnd = CCamera::EFormatEncodedH264;        
+#endif
+        for ( int mask = CCamera::EFormatMonochrome; mask == maskEnd; mask<<=1 ) {
             if ( supportedFormats & mask )
                 qDebug() << "Supported format mask: " << mask;
                 m_formats << mask; // store mask of supported format

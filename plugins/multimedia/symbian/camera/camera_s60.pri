@@ -1,8 +1,11 @@
 INCLUDEPATH += $$PWD
 
 exists($${EPOCROOT}epoc32\include\ecamadvancedsettings.h) {
-    symbian:LIBS += -lecamadvsettings
-    DEFINES += USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
+MMP_RULES += \
+    "$${LITERAL_HASH}ifndef WINSCW" \
+    "LIBRARY ecamadvsettings.lib" \
+    "MACRO USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER" \
+    "$${LITERAL_HASH}endif"
     message("Using from s60 3.2 CCameraAdvancedSettings header")  
 }
 exists($${EPOCROOT}epoc32\include\ecamadvsettings.h) {
