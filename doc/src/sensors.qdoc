@@ -40,18 +40,6 @@
 ****************************************************************************/
 
 /*!
-\group sensors
-*/
-
-/*!
-\group sensors_helpers
-*/
-
-/*!
-\group sensors_backend
-*/
-
-/*!
 \page sensors-api.html
 \title Sensors API (technology preview)
 \brief The Sensors API provides access to hardware sensors.

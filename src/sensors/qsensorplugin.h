@@ -52,8 +52,9 @@ QTM_BEGIN_NAMESPACE
 class QSensorBackend;
 
 // Plugin interface
-struct Q_SENSORS_EXPORT QSensorPluginInterface
+class Q_SENSORS_EXPORT QSensorPluginInterface
 {
+public:
     virtual void registerSensors() = 0;
 protected:
     ~QSensorPluginInterface() {}

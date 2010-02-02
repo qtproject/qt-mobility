@@ -89,7 +89,7 @@ void QSensorBackend::newReadingAvailable()
     QSensorPrivate *d = m_sensor->d_func();
 
     // Copy the values from the device reading to the filter reading
-    *(d->filter_reading) = *(d->device_reading);
+    d->filter_reading->copyValuesFrom(d->device_reading);
 
     for (QFilterList::const_iterator it = d->filters.constBegin(); it != d->filters.constEnd(); ++it) {
         QSensorFilter *filter = (*it);
@@ -98,7 +98,7 @@ void QSensorBackend::newReadingAvailable()
     }
 
     // Copy the values from the filter reading to the cached reading
-    *(d->cache_reading) = *(d->filter_reading);
+    d->cache_reading->copyValuesFrom(d->filter_reading);
 
 #if 0
     if (d->updatePolicy == QSensor::PolledUpdates)
