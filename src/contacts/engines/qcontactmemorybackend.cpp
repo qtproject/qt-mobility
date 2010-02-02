@@ -137,7 +137,7 @@ QString QContactMemoryEngine::managerName() const
     return d->m_engineName;
 }
 
-/*! \reimp */
+/*! This function is deprecated and should not be used.  Use QContactMemoryEngine::managerVersion() instead! */
 int QContactMemoryEngine::implementationVersion() const
 {
     return d->m_engineVersion;
@@ -799,7 +799,10 @@ bool QContactMemoryEngine::cancelRequest(QContactAbstractRequest* req)
     return true;
 }
 
-/*! \reimp */
+/*! This function is deprecated!  Use QContactMemoryEngine::waitForRequestFinished() instead!
+    Waits up to \a msecs milliseconds for the request \a req to emit the progress() signal.
+    Returns true if the progress() signal was emitted during the period, otherwise false.
+*/
 bool QContactMemoryEngine::waitForRequestProgress(QContactAbstractRequest* req, int msecs)
 {
     Q_UNUSED(msecs);
@@ -1150,7 +1153,8 @@ QList<QVariant::Type> QContactMemoryEngine::supportedDataTypes() const
 }
 
 /*!
- * \reimp
+ * This function is deprecated.  Use QContactManagerEngine::isFilterSupported() instead!
+ * The function returns true if the backend natively supports the given filter \a filter, otherwise false.
  */
 bool QContactMemoryEngine::filterSupported(const QContactFilter& filter) const
 {

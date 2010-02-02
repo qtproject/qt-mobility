@@ -487,7 +487,7 @@ QList<QContactManager::Error> QContactManager::saveContacts(QList<QContact>* con
 }
 
 /*!
- * Adds the list of contacts given by \a contact list to the database.
+ * Adds the list of contacts given by \a contacts list to the database.
  * Returns true if the contacts were saved successfully, otherwise false.
  *
  * The manager might populate \a errorMap (the map of indices of the \a contacts list to
@@ -725,6 +725,7 @@ bool QContactManager::removeDetailDefinition(const QString& definitionName, cons
  * This enum describes the possible features that a particular manager may support
  * \value Groups The manager supports all QContactGroup related operations, and emits the appropriate signals
  * \value ActionPreferences The manager supports saving preferred details per action per contact
+ * \value DetailOrdering When a contact is retrieved, the manager will return the details in the same order in which they were saved
  * \value Relationships The manager supports at least some types of relationships between contacts
  * \value ArbitraryRelationshipTypes The manager supports relationships of arbitrary types between contacts
  * \value RelationshipOrdering The manager supports relationships (re)ordering
@@ -751,6 +752,7 @@ QList<QVariant::Type> QContactManager::supportedDataTypes() const
 }
 
 /*!
+ * \fn Q_DECL_DEPRECATED QContactManager::filterSupported(const QContactFilter& filter) const
  * \deprecated
  * Returns true if the given \a filter is supported natively by the
  * manager, and false if the filter behaviour would be emulated.

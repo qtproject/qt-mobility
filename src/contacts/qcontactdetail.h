@@ -101,7 +101,7 @@ public:
     void setPreferredActions(const QList<QContactActionDescriptor>& preferredActions);
     QList<QContactActionDescriptor> preferredActions() const;
 
-    QVariantMap values() const; // deprecated
+    QVariantMap Q_DECL_DEPRECATED values() const; // deprecated
     QString value(const QString& key) const;
     bool setValue(const QString& key, const QVariant& value);
     bool removeValue(const QString& key);

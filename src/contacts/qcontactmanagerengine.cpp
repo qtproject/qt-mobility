@@ -493,6 +493,7 @@ QList<QContactManager::Error> QContactManagerEngine::removeRelationships(const Q
 }
 
 /*!
+ * \fn Q_DECL_DEPRECATED QContactManagerEngine::synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const
  * \deprecated
  * Synthesizes the display label of the given \a contact in a platform specific manner.
  * Any error that occurs will be stored in \a error.
@@ -598,6 +599,7 @@ bool QContactManagerEngine::hasFeature(QContactManager::ManagerFeature feature, 
 }
 
 /*!
+ * \fn Q_DECL_DEPRECATED QContactManagerEngine::filterSupported(const QContactFilter& filter) const
  * \deprecated
  * Returns a whether the supplied \a filter can be implemented
  * natively by this engine.  If not, the base class implementation
@@ -655,14 +657,18 @@ QStringList QContactManagerEngine::supportedContactTypes() const
 }
 
 /*! 
- * Returns the version number of the QTContacts API 
+ * \fn Q_DECL_DEPRECATED QContactManagerEngine::version()
+ * \deprecated
+ * Returns the version number of the QtContacts API
  */ 
-int QContactManagerEngine::version() 
+int Q_DECL_DEPRECATED QContactManagerEngine::version()
 { 
     return QTCONTACTS_VERSION; 
 } 
  
 /*! 
+ * \fn Q_DECL_DEPRECATED QContactManagerEngine::implementationVersion() const
+ * \deprecated
  * Returns the engine backend implementation version number 
  */ 
 int Q_DECL_DEPRECATED QContactManagerEngine::implementationVersion() const
@@ -1077,7 +1083,7 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
  * return \c false and \a error will be set to \c QContactManager::InvalidRelationshipError.
  *
  * The engine must automatically synthesize the display label of the contact when it is saved,
- * by either using the built in \l synthesizeDisplayLabel() function or overriding it, and
+ * by either using the built in \l synthesizedDisplayLabel() function or overriding it, and
  * then calling \l setContactDisplayLabel().
  *
  * Returns false on failure, or true on
@@ -1336,10 +1342,10 @@ bool QContactManagerEngine::removeDetailDefinition(const QString& definitionName
  * Application code should not call this function, since validation of the
  * detail will happen in the engine in any case.
  */
-void QContactManagerEngine::setDetailAccessConstraints(QContactDetail *detail, QContactDetail::AccessConstraints constraint) const
+void QContactManagerEngine::setDetailAccessConstraints(QContactDetail *detail, QContactDetail::AccessConstraints constraints) const
 {
     if (detail) {
-        QContactDetailPrivate::setAccessConstraints(detail, constraint);
+        QContactDetailPrivate::setAccessConstraints(detail, constraints);
     }
 }
 
@@ -1393,7 +1399,7 @@ QList<QContactManager::Error> QContactManagerEngine::saveContacts(QList<QContact
 }
 
 /*!
- * Adds the list of contacts given by \a contact list to the database.
+ * Adds the list of contacts given by \a contacts list to the database.
  * Returns true if the contacts were saved successfully, otherwise false.
  *
  * The manager might populate \a errorMap (the map of indices of the \a contacts list to
@@ -2214,8 +2220,8 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
 }
 
 /*!
- * Updates the given asynchronous request \a req by setting the overall operation \a error, and the new \a state
- * of the request.  It then causes the progress signal to be emitted by the request (XXX)
+ * Updates the given asynchronous request \a req by setting the new \a state
+ * of the request.  It then causes the stateChanged() signal to be emitted by the request.
  */
 void QContactManagerEngine::updateRequestState(QContactAbstractRequest* req, QContactAbstractRequest::State state)
 {
@@ -2436,7 +2442,7 @@ void QContactManagerEngine::updateRelationshipRemoveRequest(QContactRelationship
 }
 
 /*!
- * Updates the given QContactRelationshipFetchRequest \a req with the latest results \a result, operation error \a error, and map of input index to individual error \a errorMap.
+ * Updates the given QContactRelationshipFetchRequest \a req with the latest results \a result, and operation error \a error.
  * It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
  */
 void QContactManagerEngine::updateRelationshipFetchRequest(QContactRelationshipFetchRequest* req, const QList<QContactRelationship>& result, QContactManager::Error error)
