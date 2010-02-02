@@ -46,7 +46,6 @@
 #include <qmediarecorder.h>
 #include <experimental/qstillimagecapture.h>
 #include <qaudiocapturesource.h>
-#include <qimageprocessingcontrol.h>
 
 #include "mediakeysobserver.h"
 
@@ -138,7 +137,6 @@ private:
     QMediaRecorder* mediaRecorder;
     QAudioCaptureSource *audioSource;
     QVideoWidget *videoWidget;
-    QImageProcessingControl *imageProcessingControl;
     
     MediaKeysObserver *mediaKeysObserver;
     
