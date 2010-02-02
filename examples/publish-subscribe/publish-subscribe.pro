@@ -13,7 +13,7 @@ symbian {
     TARGET.UID3 = 0x2002AC79
 }
 
-symbian:maemo* {
+symbian|maemo* {
     DEFINES += QTM_SMALL_SCREEN
 }
 
