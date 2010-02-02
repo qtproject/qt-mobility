@@ -10,7 +10,8 @@ CONFIG+= testcase
 include(../../../../common.pri)
 
 symbian {
-    TARGET.CAPABILITY = All -TCB
+     # Needed for interprocess communication and opening QNetworkSession
+     TARGET.CAPABILITY = NetworkControl NetworkServices
 }
 
 CONFIG += mobility
