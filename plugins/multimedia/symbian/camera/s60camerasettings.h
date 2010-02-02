@@ -83,6 +83,13 @@ public:
     void setShutterSpeed(TInt speed);
     QList<qreal> supportedShutterSpeeds(bool *continuous);
     
+    void setSharpeningLevel(qreal value);
+    bool isSharpeningSupported() const;
+    qreal sharpeningLevel() const;
+    
+    void setSaturation(qreal value);
+    qreal saturation() const;
+    
 Q_SIGNALS:
     void exposureLocked();
     void flashReady(bool ready);
@@ -106,6 +113,7 @@ private:
 private:
 #if defined(USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER) || defined(USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER)
     CCamera::CCameraAdvancedSettings *m_advancedSettings;
+    CCamera::CCameraImageProcessing * m_imageProcessingSettings;
 #endif
     CCameraEngine *m_cameraEngine;
 

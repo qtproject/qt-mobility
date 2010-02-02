@@ -46,6 +46,7 @@
 #include <qmediarecorder.h>
 #include <experimental/qstillimagecapture.h>
 #include <qaudiocapturesource.h>
+#include <qimageprocessingcontrol.h>
 
 #include "mediakeysobserver.h"
 
@@ -122,6 +123,11 @@ private slots:
     void setWBSunlight();
     void setWBCloudy();
     void setWBTungsten();
+    
+    void setSharpnessHard();
+    void setSharpnessNormal();
+    void setSharpnessSoft();
+
 
 private:
     Ui::CameraCapture *ui;
@@ -132,6 +138,7 @@ private:
     QMediaRecorder* mediaRecorder;
     QAudioCaptureSource *audioSource;
     QVideoWidget *videoWidget;
+    QImageProcessingControl *imageProcessingControl;
     
     MediaKeysObserver *mediaKeysObserver;
     
