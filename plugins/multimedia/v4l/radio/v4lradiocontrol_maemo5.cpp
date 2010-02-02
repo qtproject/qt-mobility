@@ -39,10 +39,12 @@
 **
 ****************************************************************************/
 
-#include "v4lradiocontrol.h"
+#include "v4lradiocontrol_maemo5.h"
 #include "v4lradioservice.h"
 
 #include <QtCore/qdebug.h>
+
+//#include <QtDBus/QDBusInterface>
 
 #include <fcntl.h>
 
@@ -59,45 +61,31 @@
 #include <linux/videodev.h>
 #include <linux/soundcard.h>
 
-
 V4LRadioControl::V4LRadioControl(QObject *parent)
     : QRadioTunerControl(parent)
+    , fd(1)
+    , m_error(false)
     , muted(false)
     , stereo(false)
-    , m_error(false)
-    , sig(0)
-    , currentBand(QRadioTuner::FM)
     , step(100000)
+    , sig(0)
     , scanning(false)
-    , fd(1)
+    , currentBand(QRadioTuner::FM)
+    , pipeline(0)
 {
     if (QDBusConnection::systemBus().isConnected()) {
-        FMRCEnablerIFace = new QDBusInterface("de.pycage.FMRXEnabler",
+        FMRXEnablerIFace = new QDBusInterface("de.pycage.FMRXEnabler",
                                              "/de/pycage/FMRXEnabler",
                                              "de.pycage.FMRXEnabler",
                                              QDBusConnection::systemBus());
     }
 
-    keepFMRXEnabled();
+    enableFMRX();
     createGstPipeline();
     initRadio();
-    initHeadPhone();
+    setupHeadPhone();
 
-
-    /*struct v4l2_control vctrl;
-    vctrl.id = V4L2_CID_AUDIO_MUTE;
-    vctrl.value = 0;
-    int r = ioctl(fd, VIDIOC_S_CTRL, &vctrl);
-    if(r<0)
-    {
-        qDebug() <<"mute failed";
-    }
-    else
-    {
-        qDebug() <<"mute succeeded ";
-    }*/
-
-    //setVolume(80);
+    setMuted(false);
 
     timer = new QTimer(this);
     timer->setInterval(200);
@@ -106,27 +94,32 @@ V4LRadioControl::V4LRadioControl(QObject *parent)
 
     tickTimer = new QTimer(this);
     tickTimer->setInterval(10000);
-    connect(tickTimer,SIGNAL(timeout()),this,SLOT(keepFMRXEnabled()));
+    connect(tickTimer,SIGNAL(timeout()),this,SLOT(enableFMRX()));
     tickTimer->start();
 }
 
 V4LRadioControl::~V4LRadioControl()
 {
-    timer->stop();
+    if (pipeline)
+    {
+        gst_element_set_state (pipeline, GST_STATE_NULL);
+        gst_object_unref (GST_OBJECT (pipeline));
+    }
 
     if(fd > 0)
         ::close(fd);
 }
 
-void V4LRadioControl::keepFMRXEnabled()
+void V4LRadioControl::enableFMRX()
 {
-    if (FMRCEnablerIFace->isValid()) {
-        QDBusMessage ret = FMRCEnablerIFace->call("request");
-        // TODO:
+    if (FMRXEnablerIFace && FMRXEnablerIFace->isValid()) {
+        QDBusMessage ret = FMRXEnablerIFace->call("request");
+        if (!ret.errorName().isEmpty())
+            qDebug() << "Error: " << ret.errorName() << ": "<< ret.errorMessage();
     }
 }
 
-// Workaround to capture sound from the PGA line and play it back
+// Workaround to capture sound from the PGA line and play it back using gstreamer
 // because N900 doesn't output sound directly to speakers
 bool V4LRadioControl::createGstPipeline()
 {
@@ -138,9 +131,9 @@ bool V4LRadioControl::createGstPipeline()
     source = gst_element_factory_make ("pulsesrc", "source");
     sink = gst_element_factory_make ("pulsesink", "sink");
 
-    gst_bin_add_many (GST_BIN (pipeline), source, sink, NULL);
+    gst_bin_add_many (GST_BIN (pipeline), source, sink, (char *)NULL);
 
-    if (!gst_element_link_many (source, sink, NULL)) {
+    if (!gst_element_link_many (source, sink, (char *)NULL)) {
         return false;
     }
 
@@ -270,10 +263,10 @@ void V4LRadioControl::setFrequency(int frequency)
         f = freqMin;
 
     if(fd > 0) {
-        memset( &freq, 0, sizeof( freq ) );
+        memset(&freq, 0, sizeof(freq));
         // Use the first tuner
         freq.tuner = 0;
-        if ( ::ioctl( fd, VIDIOC_G_FREQUENCY, &freq ) >= 0 ) {
+        if (::ioctl(fd, VIDIOC_G_FREQUENCY, &freq) >= 0) {
             if(low) {
                 // For low, freq in units of 62.5Hz, so convert from Hz to units.
                 freq.frequency = (int)(f/62.5);
@@ -281,7 +274,7 @@ void V4LRadioControl::setFrequency(int frequency)
                 // For high, freq in units of 62.5kHz, so convert from Hz to units.
                 freq.frequency = (int)(f/62500);
             }
-            ::ioctl( fd, VIDIOC_S_FREQUENCY, &freq );
+            ::ioctl(fd, VIDIOC_S_FREQUENCY, &freq);
             currentFreq = f;
             emit frequencyChanged(currentFreq);
         }
@@ -307,15 +300,15 @@ void V4LRadioControl::setStereoMode(QRadioTuner::StereoMode mode)
 
     v4l2_tuner tuner;
 
-    memset( &tuner, 0, sizeof( tuner ) );
+    memset(&tuner, 0, sizeof(tuner));
 
-    if ( ioctl( fd, VIDIOC_G_TUNER, &tuner ) >= 0 ) {
+    if (ioctl(fd, VIDIOC_G_TUNER, &tuner) >= 0) {
         if(stereo)
             tuner.audmode = V4L2_TUNER_MODE_STEREO;
         else
             tuner.audmode = V4L2_TUNER_MODE_MONO;
 
-        if ( ioctl( fd, VIDIOC_S_TUNER, &tuner ) >= 0 ) {
+        if (ioctl(fd, VIDIOC_S_TUNER, &tuner) >= 0) {
             emit stereoStatusChanged(stereo);
         }
     }
@@ -325,68 +318,96 @@ int V4LRadioControl::signalStrength() const
 {
     v4l2_tuner tuner;
 
-    // Return the first tuner founds signal strength.
-    for ( int index = 0; index < tuners; ++index ) {
-        memset( &tuner, 0, sizeof( tuner ) );
-        tuner.index = index;
-        if ( ioctl( fd, VIDIOC_G_TUNER, &tuner ) < 0 )
-            continue;
-        if ( tuner.type != V4L2_TUNER_RADIO )
-            continue;
-        // percentage signal strength
-        return tuner.signal*100/65535;
+    tuner.index = 0;
+    if (ioctl(fd, VIDIOC_G_TUNER, &tuner) < 0 || tuner.type != V4L2_TUNER_RADIO)
+        return 0;
+    return tuner.signal*100/65535;
+}
+
+int  V4LRadioControl::vol(snd_hctl_elem_t *elem) const
+{
+    const QString card("hw:0");
+    int err;
+    snd_ctl_elem_id_t *id;
+    snd_ctl_elem_info_t *info;
+    snd_ctl_elem_value_t *control;
+    snd_ctl_elem_id_alloca(&id);
+    snd_ctl_elem_info_alloca(&info);
+    snd_ctl_elem_value_alloca(&control);
+    if ((err = snd_hctl_elem_info(elem, info)) < 0) {
+        qDebug() << QString("Control %1 snd_hctl_elem_info error: %2").arg(card).arg(snd_strerror(err));
+        return 0;
     }
 
-    return 0;
+    snd_hctl_elem_get_id(elem, id);
+    snd_hctl_elem_read(elem, control);
+
+    return snd_ctl_elem_value_get_integer(control, 0);
 }
 
 int V4LRadioControl::volume() const
 {
-    /*v4l2_queryctrl queryctrl;
+    const QString ctlName("Line DAC Playback Volume");
+    const QString card("hw:0");
 
-    if(fd > 0) {
-        memset( &queryctrl, 0, sizeof( queryctrl ) );
-        queryctrl.id = V4L2_CID_AUDIO_VOLUME;
-        if ( ioctl( fd, VIDIOC_QUERYCTRL, &queryctrl ) >= 0 ) {
-            if(queryctrl.maximum == 0) {
-                return vol;
-            } else {
-                // percentage volume returned
-                return queryctrl.default_value*100/queryctrl.maximum;
-            }
-        }
-    }*/
+    int volume = 0;
+    int err;
+    static snd_ctl_t *handle = NULL;
+    snd_ctl_elem_info_t *info;
+    snd_ctl_elem_id_t *id;
+    snd_ctl_elem_value_t *control;
 
-    return 0;
+    snd_ctl_elem_info_alloca(&info);
+    snd_ctl_elem_id_alloca(&id);
+    snd_ctl_elem_value_alloca(&control);
+    snd_ctl_elem_id_set_interface(id, SND_CTL_ELEM_IFACE_MIXER);	/* MIXER */
+
+    snd_ctl_elem_id_set_name(id, ctlName.toAscii());
+
+    if ((err = snd_ctl_open(&handle, card.toAscii(), 0)) < 0) {
+        qDebug() << "Control open error" << card << err;
+        return 0;
+    }
+
+    snd_ctl_elem_info_set_id(info, id);
+    if ((err = snd_ctl_elem_info(handle, info)) < 0) {
+        qDebug() << "Cannot find the given element from control: " << card;
+        snd_ctl_close(handle);
+        handle = NULL;
+        return 0;
+    }
+
+    snd_ctl_elem_info_get_id(info, id);	/* FIXME: Remove it when hctl find works ok !!! */
+    snd_ctl_elem_value_set_id(control, id);
+
+    snd_ctl_close(handle);
+    handle = NULL;
+
+    snd_hctl_t *hctl;
+    snd_hctl_elem_t *elem;
+    if ((err = snd_hctl_open(&hctl, card.toAscii(), 0)) < 0) {
+        qDebug() << QString("Control %1 open error: %2").arg(card).arg(snd_strerror(err));
+        return 0;
+    }
+    if ((err = snd_hctl_load(hctl)) < 0) {
+        qDebug() << QString("Control %1 load error: %2").arg(card).arg(snd_strerror(err));
+        return 0;
+    }
+    elem = snd_hctl_find_elem(hctl, id);
+    if (elem)
+        volume = vol(elem);
+    else
+        qDebug() << "Could not find the specified element";
+    snd_hctl_close(hctl);
+
+    return (volume/63.0) * 100;
 }
 
 void V4LRadioControl::setVolume(int volume)
 {
-    int vol;
-    vol = (volume / 100.0) * 63; // 63 is the headphone max setting
 
-    callAmixer("HP DAC Playback Volume", QString().setNum(vol)+QString(",")+QString().setNum(vol));
-    /*v4l2_queryctrl queryctrl;
-
-    if(fd > 0) {
-        memset( &queryctrl, 0, sizeof( queryctrl ) );
-        queryctrl.id = V4L2_CID_AUDIO_VOLUME;
-        if ( ioctl( fd, VIDIOC_QUERYCTRL, &queryctrl ) >= 0 ) {
-            v4l2_control control;You have to capture the sound from the PGA line and play it back.
-            qDebug() << "Maximum: " << queryctrl.maximum;
-            if(queryctrl.maximum > 0) {
-                memset( &control, 0, sizeof( control ) );
-                control.id = V4L2_CID_AUDIO_VOLUME;
-                control.value = volume*queryctrl.maximum/100;
-                qDebug () << "Volume: " << volume*queryctrl.maximum/100;
-                ioctl( fd, VIDIOC_S_CTRL, &control );
-            } else {
-                setVol(volume);
-            }
-            emit volumeChanged(volume);
-
-        }
-    }*/
+    int vol = (volume / 100.0) * 63; // 63 is a headphone max setting
+    callAmixer("Line DAC Playback Volume", QString().setNum(vol)+QString(",")+QString().setNum(vol));
 }
 
 bool V4LRadioControl::isMuted() const
@@ -396,24 +417,13 @@ bool V4LRadioControl::isMuted() const
 
 void V4LRadioControl::setMuted(bool muted)
 {
-    /*v4l2_queryctrl queryctrl;
-
-    if(fd > 0) {
-        memset( &queryctrl, 0, sizeof( queryctrl ) );
-        queryctrl.id = V4L2_CID_AUDIO_MUTE;
-        if ( ioctl( fd, VIDIOC_QUERYCTRL, &queryctrl ) >= 0 ) {
-            v4l2_control control;
-            memset( &control, 0, sizeof( control ) );
-            control.id = V4L2_CID_AUDIO_MUTE;
-            control.value = (muted ? queryctrl.maximum : queryctrl.minimum );
-            ioctl( fd, VIDIOC_S_CTRL, &control );
-            this->muted = muted;
-            emit mutedChanged(muted);
-        }
-    }*/
+    struct v4l2_control vctrl;
+    vctrl.id = V4L2_CID_AUDIO_MUTE;
+    vctrl.value = muted ? 1 : 0;
+    ioctl(fd, VIDIOC_S_CTRL, &vctrl);
 }
 
-void V4LRadioControl::initHeadPhone()
+void V4LRadioControl::setupHeadPhone()
 {
     QMap<QString, QString> settings;
 
@@ -421,7 +431,7 @@ void V4LRadioControl::initHeadPhone()
     settings["Left DAC_L1 Mixer HP Switch"] = "off";
     settings["Right DAC_R1 Mixer HP Switch"] = "off";
     settings["Line DAC Playback Switch"] = "on";
-    settings["Line DAC Playback Volume"] = "118,118";
+    settings["Line DAC Playback Volume"] = "63,63"; // Volume is set to 100%
     settings["HPCOM DAC Playback Switch"] = "off";
     settings["Left DAC_L1 Mixer HP Switch"] = "off";
     settings["Left DAC_L1 Mixer Line Switch"] = "on";
@@ -444,14 +454,12 @@ void V4LRadioControl::initHeadPhone()
     while (i.hasNext()) {
         i.next();
         callAmixer(i.key(), i.value());
-        qDebug() << i.key() << ":" << i.value();
+        //qDebug() << i.key() << ":" << i.value();
     }
 }
 
 void V4LRadioControl::callAmixer(const QString& target, const QString& value)
 {
-    // not fully implemented
-    // check amixer for implementation details
     int err;
     long tmp;
     unsigned int count;
@@ -477,7 +485,7 @@ void V4LRadioControl::callAmixer(const QString& target, const QString& value)
     if (handle == NULL && (err = snd_ctl_open(&handle, card.toAscii(), 0)) < 0)
     {
         qDebug() << "Control open error" << card << err;
-        //return err;
+        return;
     }
 
     snd_ctl_elem_info_set_id(info, id);
@@ -486,12 +494,13 @@ void V4LRadioControl::callAmixer(const QString& target, const QString& value)
         qDebug() << "Cannot find the given element from control: " << card;
         snd_ctl_close(handle);
         handle = NULL;
-        //return err;
+        return;
     }
 
     snd_ctl_elem_info_get_id(info, id);	/* FIXME: Remove it when hctl find works ok !!! */
     type = snd_ctl_elem_info_get_type(info);
     count = snd_ctl_elem_info_get_count(info);
+
     snd_ctl_elem_value_set_id(control, id);
 
     tmp = 0;
@@ -539,19 +548,18 @@ void V4LRadioControl::callAmixer(const QString& target, const QString& value)
         qDebug() << "Control element write error" << card ;
         snd_ctl_close(handle);
         handle = NULL;
-        //return err;
+        return;
     }
 
     snd_ctl_close(handle);
     handle = NULL;
-    //return 0;
 }
 
 
 int V4LRadioControl::getEnumItemIndex(snd_ctl_t *handle, snd_ctl_elem_info_t *info,
-       const  QString &value)
+       const QString &value)
 {
-    int items, i, len;
+    int items, i;
 
     items = snd_ctl_elem_info_get_items(info);
     if (items <= 0)
@@ -575,13 +583,12 @@ int V4LRadioControl::getEnumItemIndex(snd_ctl_t *handle, snd_ctl_elem_info_t *in
 
 bool V4LRadioControl::isSearching() const
 {
-    //TODO
-    return false;
+    return scanning;
 }
 
 void V4LRadioControl::cancelSearch()
 {
-    //TODO
+    scanning = false;
 }
 
 void V4LRadioControl::searchForward()
@@ -604,7 +611,6 @@ void V4LRadioControl::searchBackward()
     }
     scanning = true;
     forward  = false;
-    timer->start();
 }
 
 void V4LRadioControl::start()
@@ -649,7 +655,6 @@ void V4LRadioControl::search()
 bool V4LRadioControl::initRadio()
 {
     v4l2_tuner tuner;
-    v4l2_input input;
     v4l2_frequency freq;
     v4l2_capability cap;
 
@@ -661,34 +666,22 @@ bool V4LRadioControl::initRadio()
 
     if(fd != -1) {
         // Capabilites
-        memset( &cap, 0, sizeof( cap ) );
+        memset(&cap, 0, sizeof(cap));
         if(::ioctl(fd, VIDIOC_QUERYCAP, &cap ) >= 0) {
             if(((cap.capabilities & V4L2_CAP_RADIO) == 0) && ((cap.capabilities & V4L2_CAP_AUDIO) == 0))
                 available = true;
-        // TODO:  qDebug() << "Available: " << available;
         }
 
         tuner.index = 0;
 
-        if ( ioctl( fd, VIDIOC_G_TUNER, &tuner ) < 0 ) {
-            // TODO:
+        if (ioctl(fd, VIDIOC_G_TUNER, &tuner) < 0) {
+            return false;
         }
 
-        qDebug() << "index:         " << tuner.index;
-        qDebug() << "type:          " << tuner.type << ((tuner.type==V4L2_TUNER_RADIO)?"radio":"not radio");
-        qDebug() << "name:          " << QString((const char*)tuner.name);
-        qDebug() << "capability:    " << QString().setNum(tuner.capability,16);
-        qDebug() << "range low:     " << tuner.rangelow;
-        qDebug() << "range high:    " << tuner.rangehigh;
-        qDebug() << "rxsubchans:    " << tuner.rxsubchans;
-        qDebug() << "audmode:       " << tuner.audmode;
-        qDebug() << "signal:        " << tuner.signal;
-        qDebug() << "afc:           " << tuner.afc;
-
-        if ( tuner.type != V4L2_TUNER_RADIO )
+        if (tuner.type != V4L2_TUNER_RADIO)
             return false;
 
-        if ( ( tuner.capability & V4L2_TUNER_CAP_LOW ) != 0 ) {
+        if ((tuner.capability & V4L2_TUNER_CAP_LOW) != 0) {
             // Units are 1/16th of a kHz.
             low = true;
         }
@@ -702,10 +695,10 @@ bool V4LRadioControl::initRadio()
         }
 
         // frequency
-        memset( &freq, 0, sizeof( freq ) );
+        memset(&freq, 0, sizeof(freq));
 
-        if(::ioctl(fd, VIDIOC_G_FREQUENCY, &freq ) >= 0) {
-            if ( ((int)freq.frequency) != -1 ) {    // -1 means not set.
+        if(::ioctl(fd, VIDIOC_G_FREQUENCY, &freq) >= 0) {
+            if (((int)freq.frequency) != -1) {    // -1 means not set.
                 if(low)
                     currentFreq = freq.frequency * 62.5;
                 else
@@ -717,13 +710,11 @@ bool V4LRadioControl::initRadio()
 
         // stereo
         bool stereo = false;
-        memset( &tuner, 0, sizeof( tuner ) );
-        if ( ioctl( fd, VIDIOC_G_TUNER, &tuner ) >= 0 ) {
+        memset(&tuner, 0, sizeof(tuner));
+        if (ioctl(fd, VIDIOC_G_TUNER, &tuner) >= 0) {
             if((tuner.rxsubchans & V4L2_TUNER_SUB_STEREO) != 0)
                 stereo = true;
         }
-
-        vol = getVol();
 
         return true;
     }
@@ -733,53 +724,3 @@ bool V4LRadioControl::initRadio()
 
     return false;
 }
-
-//void V4LRadioControl::setVol(int v)
-//{
-
-
-    /*qDebug() << "setVolume";
-    int fd = ::open( "/dev/mixer", O_RDWR, 0 );
-    if ( fd < 0 ) {
-        qDebug() << "mixer not opened";
-        return;
-    }
-    int volume = v;
-    if ( volume < 0 )
-        volume = 0;
-    else if ( volume > 100 )
-        volume = 100;
-    vol = volume;
-    volume += volume << 8;
-    ::ioctl( fd, MIXER_WRITE(SOUND_MIXER_VOLUME), &volume );
-    ::close( fd );*/
-//}
-
-int V4LRadioControl::getVol()
-{
-    /*int fd = ::open( "/dev/mixer", O_RDWR, 0 );
-    if ( fd >= 0 ) {
-        int volume = 0;
-        ::ioctl( fd, MIXER_READ(SOUND_MIXER_VOLUME), &volume );
-        int left = ( volume & 0xFF );
-        int right = ( ( volume >> 8 ) & 0xFF );
-        if ( left > right )
-            vol = left;
-        else
-            vol = right;
-        ::close( fd );
-        return vol;
-    }*/
-
-    return 0;
-}
-
-
-
-
-
-
-
-
-
-

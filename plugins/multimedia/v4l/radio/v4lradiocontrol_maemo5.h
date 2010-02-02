@@ -44,19 +44,10 @@
 
 #include <QtCore/qobject.h>
 #include <QtCore/qtimer.h>
-#include <QtCore/qdatetime.h>
 
 #include <qradiotunercontrol.h>
 
-#include <linux/types.h>
-#include <sys/time.h>
-#include <sys/ioctl.h>
-#include <linux/videodev2.h>
-
 #include <QtDBus/QtDBus>
-#include <QtDBus/QDBusConnection>
-#include <QtDBus/QDBusInterface>
-
 #include <gst/gst.h>
 
 #include <alsa/asoundlib.h>
@@ -112,17 +103,17 @@ public:
 
 private slots:
     void search();
-    void keepFMRXEnabled();
+    void enableFMRX();
 
 private:
     bool initRadio();
-    void initHeadPhone();
+    void setupHeadPhone();
     bool createGstPipeline();
     void callAmixer(const QString& target, const QString& value);
     int getEnumItemIndex(snd_ctl_t *handle, snd_ctl_elem_info_t *info, const  QString &value);
-    //void setVol(int v);
-    int  getVol();
+    int vol(snd_hctl_elem_t *elem) const;
 
+private:
     int fd;
 
     bool m_error;
@@ -132,7 +123,6 @@ private:
     bool available;
     int  tuners;
     int  step;
-    int  vol;
     int  sig;
     bool scanning;
     bool forward;
@@ -145,7 +135,7 @@ private:
 
     GstElement *pipeline;
 
-    QDBusInterface* FMRCEnablerIFace;
+    QDBusInterface* FMRXEnablerIFace;
 };
 
 #endif
