@@ -89,7 +89,7 @@ CameraCapture::CameraCapture(QWidget *parent) :
         ui->actionCamera->menu()->addAction(videoDeviceAction);
     }
     
-    m_autoFocus = true;
+    m_autoFocus = false;
     m_takeImage = false;
 
     connect(videoDevicesGroup, SIGNAL(triggered(QAction*)), this, SLOT(updateCameraDevice(QAction*)));
@@ -230,7 +230,7 @@ void CameraCapture::setCamera(const QByteArray &cameraDevice)
     delete mediaRecorder;
     delete videoWidget;
     delete camera;
-    delete imageProcessingControl;
+
     
     qDebug() << "CameraCapture::setCamera cameraDevice.isEmpty()=" << cameraDevice.isEmpty();
     if (cameraDevice.isEmpty())

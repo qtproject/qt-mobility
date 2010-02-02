@@ -19,7 +19,7 @@
      <widget class="QWidget" name="widget" native="true">
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout" stretch="2,2">
+        <layout class="QHBoxLayout" name="horizontalLayout" stretch="3,3">
          <item>
           <widget class="QStackedWidget" name="stackedWidget">
            <property name="sizePolicy">
