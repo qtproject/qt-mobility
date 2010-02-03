@@ -99,6 +99,16 @@ public:
         KErrECamSettingNotSupported = -12103, //  This parameter or operation is not supported. 
         KErrECamNotOptimalFocus = -12104 // The optimum focus is lost  
     };
+    
+    enum TVideoCaptureState
+    {
+        ENotInitialized = 0,
+        EInitialized,
+        EOpenCompelete,
+        ERecording,
+        EPaused,
+        ERecordComplete
+    };    
 
     S60CameraSession(QObject *parent = 0);
     ~S60CameraSession();
@@ -126,15 +136,15 @@ public:
     bool setOutputLocation(const QUrl &sink);
     QUrl outputLocation() const;
     qint64 position();
-    int state() const;    
-
+    int videoCaptureState() const;        
+    
     //added based on s60 camera needs
     void releaseImageBuffer();
     void startCamera();
     void stopCamera();
     void capture(const QString &fileName);
-
-
+    int state() const;
+    
     // for mediacontrol
     void startRecording();
     void pauseRecording();
@@ -176,7 +186,7 @@ public:
     void saveVideoEncoderSettings(QVideoEncoderSettings &videoSettings);
     void getCurrentVideoEncoderSettings(QVideoEncoderSettings &videoSettings);    
     QtMedia::EncodingQuality videoCaptureQuality() const;    
-    void setVideoCaptureQuality(QtMedia::EncodingQuality quality);
+    void setVideoCaptureQuality(QtMedia::EncodingQuality quality);    
     
     //camerafocuscontrol
     void startFocus();
@@ -243,9 +253,7 @@ Q_SIGNALS:
     //for focuscontrol
     void focusStatusChanged(QCamera::FocusStatus);
     void opticalZoomChanged(qreal opticalZoom);
-    void digitalZoomChanged(qreal digitalZoom);
-        
-        
+    void digitalZoomChanged(qreal digitalZoom);        
 
 private:
     CCameraEngine *m_cameraEngine;
@@ -266,24 +274,11 @@ private:
     QSize m_VFWidgetSize;
     TSize m_VFSize;
     QString m_stillCaptureFileName;
-
     mutable TCameraInfo m_info; // information about camera
-
     CVideoRecorderUtility* m_videoUtility;
     QHash<QString, VideoControllerData> m_videoControllerMap;
     QString m_videoCodec;
-    QVideoEncoderSettings m_videoSettings;
-    
-    enum TVideoCaptureState
-    {
-        ENotInitialized = 0,
-        EInitialized,
-        EOpenCompelete,
-        ERecording,
-        EPaused,
-        ERecordComplete
-    };
-    
+    QVideoEncoderSettings m_videoSettings;    
     TVideoCaptureState m_captureState;
 
 };
