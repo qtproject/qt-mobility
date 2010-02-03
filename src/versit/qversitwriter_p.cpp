@@ -68,16 +68,6 @@ QVersitWriterPrivate::~QVersitWriterPrivate()
 }
 
 /*!
- * Checks whether the writer is ready for writing.
- */
-bool QVersitWriterPrivate::isReady() const
-{
-    return state() != QVersitWriter::ActiveState
-            && mIoDevice
-            && mIoDevice->isOpen();
-}
-
-/*!
  * Do the actual writing and set the error and state appropriately.
  */
 void QVersitWriterPrivate::write()

@@ -167,7 +167,7 @@ QList<QVersitProperty> QVersitDocument::properties() const
  */
 bool QVersitDocument::isEmpty() const
 {
-    return d->mProperties.count() == 0;
+    return d->mProperties.count() == 0 && d->mVersitType == QVersitDocument::InvalidType;
 }
 
 /*! \internal */

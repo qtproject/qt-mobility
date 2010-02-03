@@ -65,7 +65,8 @@ private slots:
     void testAddProperty();
     void testRemoveProperty();
     void testRemoveAllProperties();
-    
+    void testEquality();
+
 private: // data
     QVersitDocument* mVersitDocument;
 };

@@ -51,6 +51,7 @@ QTM_BEGIN_NAMESPACE
 class QVersitContactExporter;
 class QVersitContactExporterPrivate;
 class MyQVersitResourceHandler;
+class MyQVersitContactExporterDetailHandler;
 
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
@@ -94,7 +95,8 @@ private slots:
 private: // Data
     QVersitContactExporter* mExporter;
     QVersitContactExporterPrivate* mExporterPrivate;
-    MyQVersitResourceHandler* mResourceLoader;
+    MyQVersitResourceHandler* mResourceHandler;
+    MyQVersitContactExporterDetailHandler* mDetailHandler;
 };
 
 #endif // UT_QVERSITCONTACTEXPORTER_H

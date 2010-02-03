@@ -136,7 +136,8 @@ private:
 
     QString saveContentToFile(const QVersitProperty& property, const QByteArray& data) const;
 
-    QString getFirstAndLastName(const QVersitDocument& document) const;
+    bool saveDataFromProperty(const QVersitProperty& property,
+                                 QString* location, QByteArray* data) const;
     
 public: // Data
     QVersitContactImporterPropertyHandler* mPropertyHandler;

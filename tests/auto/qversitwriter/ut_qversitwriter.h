@@ -78,6 +78,7 @@ private slots: // Tests
     void cleanup();
 
     void testDevice();
+    void testDefaultCodec();
     void testWriting21();
     void testWriting30();
 

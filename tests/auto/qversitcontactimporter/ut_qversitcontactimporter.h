@@ -51,6 +51,8 @@ QTM_BEGIN_NAMESPACE
 
 class QVersitContactImporter;
 class QVersitContactImporterPrivate;
+class MyQVersitContactImporterPropertyHandler;
+class MyQVersitResourceHandler;
 
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
@@ -82,6 +84,7 @@ private slots: // Tests
     void testNickname();
     void testAvatarStored();
     void testAvatarUrl();
+    void testAvatarInvalid();
     void testGeo();
     void testNote();
     void testOnlineAccount();
@@ -102,6 +105,8 @@ private: // Utilities
 private:
     QVersitContactImporter* mImporter;
     QVersitContactImporterPrivate* mImporterPrivate;
+    MyQVersitContactImporterPropertyHandler* mPropertyHandler;
+    MyQVersitResourceHandler* mResourceHandler;
 };
 
 #endif // UT_QVERSITCONTACTIMPORTER_H

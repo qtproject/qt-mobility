@@ -108,6 +108,13 @@ void UT_QVersitReader::testDevice()
     QVERIFY(mReader->device() == mInputDevice);
 }
 
+void UT_QVersitReader::testDefaultCodec()
+{
+    QCOMPARE(mReader->defaultCodec(), QTextCodec::codecForName("UTF-8"));
+    mReader->setDefaultCodec(QTextCodec::codecForName("UTF-16BE"));
+    QCOMPARE(mReader->defaultCodec(), QTextCodec::codecForName("UTF-16BE"));
+}
+
 void UT_QVersitReader::testReading()
 {
     // No I/O device set
@@ -221,12 +228,11 @@ BEGIN:VCARD\r\nFN:Jane\r\nEND:VCARD";
     QCOMPARE(mReader->error(), QVersitReader::ParseError);
     QCOMPARE(mReader->results().count(),4);
 
-
     // Asynchronous reading
     delete mInputDevice;
     mInputDevice = new QBuffer;
     mInputDevice->open(QBuffer::ReadWrite);
-    mInputDevice->write(oneDocument);
+    mInputDevice->write(twoDocuments);
     mInputDevice->seek(0);
     mReader->setDevice(mInputDevice);
     mSignalCatcher->mReceived.clear();
@@ -234,8 +240,26 @@ BEGIN:VCARD\r\nFN:Jane\r\nEND:VCARD";
     QTRY_VERIFY(mSignalCatcher->mReceived.count() >= 2);
     QCOMPARE(mSignalCatcher->mReceived.at(0), QVersitReader::ActiveState);
     QCOMPARE(mSignalCatcher->mReceived.at(1), QVersitReader::FinishedState);
-    QCOMPARE(mReader->results().size(), 1);
+    QCOMPARE(mReader->results().size(), 2);
     QCOMPARE(mReader->error(), QVersitReader::NoError);
+
+    // Cancelling
+    delete mInputDevice;
+    mInputDevice = new QBuffer;
+    mInputDevice->open(QBuffer::ReadWrite);
+    mInputDevice->write(twoDocuments);
+    mInputDevice->seek(0);
+    mReader->setDevice(mInputDevice);
+    mSignalCatcher->mReceived.clear();
+    QVERIFY(mReader->startReading());
+    mReader->cancel();
+    mReader->waitForFinished();
+    QTRY_VERIFY(mSignalCatcher->mReceived.count() >= 2);
+    QCOMPARE(mSignalCatcher->mReceived.at(0), QVersitReader::ActiveState);
+    QVersitReader::State state(mSignalCatcher->mReceived.at(1));
+    // It's possible that it finishes before it cancels.
+    QVERIFY(state == QVersitReader::CanceledState
+            || state == QVersitReader::FinishedState);
 }
 
 void UT_QVersitReader::testResult()

@@ -92,6 +92,13 @@ void UT_QVersitWriter::testDevice()
     QVERIFY(mWriter->device() == mOutputDevice);
 }
 
+void UT_QVersitWriter::testDefaultCodec()
+{
+    QVERIFY(mWriter->defaultCodec() == 0);
+    mWriter->setDefaultCodec(QTextCodec::codecForName("UTF-16BE"));
+    QCOMPARE(mWriter->defaultCodec(), QTextCodec::codecForName("UTF-16BE"));
+}
+
 void UT_QVersitWriter::testWriting21()
 {
     // vCard 2.1
