@@ -1,4 +1,3 @@
-
 HEADERS += \
     $$PWD/support.h
 
@@ -17,6 +16,10 @@ symbian|win32 {
         }
 
     }
+} maemo5|maemo6 {
+    CONFIG += link_pkgconfig
+    PKGCONFIG += glib-2.0 gconf-2.0
+    SOURCES += $$PWD/support_maemo5.cpp
 } else {
     # QMF headers must be located at $QMF_INCLUDEDIR
     INCLUDEPATH += $$(QMF_INCLUDEDIR) $$(QMF_INCLUDEDIR)/support
@@ -26,4 +29,3 @@ symbian|win32 {
 
     SOURCES += $$PWD/support_qmf.cpp
 }
-
