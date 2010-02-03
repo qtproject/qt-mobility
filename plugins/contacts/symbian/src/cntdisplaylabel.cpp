@@ -99,6 +99,7 @@ void CntDisplayLabel::setDisplayLabelDetails()
 QString CntDisplayLabel::synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const
 {
     QString displayLabel;
+    error = QContactManager::NoError;
     
     //contact
     if(contact.type() == QContactType::TypeContact) {

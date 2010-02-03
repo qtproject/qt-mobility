@@ -462,7 +462,7 @@ void TestSymbianEngine::retrieveContacts()
 
     // Retrieve contacts with invalid filter
     cnt_ids = m_engine->contactIds(invalidFilter, s, err);
-    QVERIFY(err == QContactManager::NoError);
+    QVERIFY(err == QContactManager::NotSupportedError);
 
     // Retrieve sorted contacts
     QContactSortOrder sortOrder;
@@ -665,26 +665,8 @@ void TestSymbianEngine::filterSupport()
     QContactDetailFilter df;
     df.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldSubTypes);
     QVERIFY(m_engine->isFilterSupported(df));
-    /*  To move to filter test cases
-    QContactActionFilter af;
-    QVERIFY(!m_engine->filterSupported(af));
-    QContactChangeLogFilter clf;
-    QVERIFY(!m_engine->filterSupported(clf));
-    QContactDetailRangeFilter drf;
-    QVERIFY(!m_engine->filterSupported(drf));
-    QContactIntersectionFilter isf;
-    QVERIFY(!m_engine->filterSupported(isf));
-    QContactInvalidFilter invf;
-    QVERIFY(!m_engine->filterSupported(invf));
-    QContactLocalIdFilter liff;
-    QVERIFY(!m_engine->filterSupported(liff));
-    QContactRelationshipFilter rf;
-    QVERIFY(!m_engine->filterSupported(rf));
-    QContactUnionFilter uf;
-    QVERIFY(!m_engine->filterSupported(uf));
-    */
     QContactFilter f;
-    QVERIFY(!m_engine->filterSupported(f));
+    QVERIFY(m_engine->filterSupported(f));
 }
 
 void TestSymbianEngine::featureSupport()

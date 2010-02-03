@@ -1419,6 +1419,10 @@ QList<QContactManager::Error> QContactManagerEngine::saveContacts(QList<QContact
  */
 bool QContactManagerEngine::saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error)
 {
+    if(errorMap) {
+        errorMap->clear();
+    }
+
     if (!contacts) {
         error = QContactManager::BadArgumentError;
         return false;
@@ -1518,6 +1522,10 @@ QList<QContactManager::Error> QContactManagerEngine::removeContacts(QList<QConta
  */
 bool QContactManagerEngine::removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error)
 {
+    if(errorMap) {
+        errorMap->clear();
+    }
+
     if (!contactIds) {
         error = QContactManager::BadArgumentError;
         return false;

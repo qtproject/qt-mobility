@@ -400,6 +400,10 @@ QList<QContactManager::Error> QContactMemoryEngine::saveContacts(QList<QContact>
 /*! \reimp */
 bool QContactMemoryEngine::saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error)
 {
+    if(errorMap) {
+        errorMap->clear();
+    }
+
     if (!contacts) {
         error = QContactManager::BadArgumentError;
         return false;
@@ -420,8 +424,8 @@ bool QContactMemoryEngine::saveContacts(QList<QContact>* contacts, QMap<int, QCo
 
     error = operationError;
     changeSet.emitSignals(this);
-    // XXX TODO: do we return true or false if some error occurred?
-    return true;
+    // return false if some error occurred
+    return error == QContactManager::NoError;
 }
 
 bool QContactMemoryEngine::removeContact(const QContactLocalId& contactId, QContactChangeSet& changeSet, QContactManager::Error& error)
@@ -525,8 +529,8 @@ bool QContactMemoryEngine::removeContacts(QList<QContactLocalId>* contactIds, QM
 
     error = operationError;
     changeSet.emitSignals(this);
-    // XXX TODO: return true or false if some errors occurred?
-    return true;
+    // return false if some errors occurred
+    return error == QContactManager::NoError;
 }
 
 /*! \reimp */
