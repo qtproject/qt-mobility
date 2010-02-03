@@ -54,7 +54,6 @@
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#setValue">setValue</a></b> ( const QString &amp; <i>key</i>, const QVariant &amp; <i>value</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">T </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#value">value</a></b> ( const QString &amp; <i>key</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#value-2">value</a></b> ( const QString &amp; <i>key</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QVariantMap </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#values">values</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#variantValue">variantValue</a></b> ( const QString &amp; <i>key</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QVariantMap </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#variantValues">variantValues</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#operator-not-eq">operator!=</a></b> ( const QContactDetail &amp; <i>other</i> ) const</td></tr>
@@ -226,13 +225,11 @@
 <p>See also <a href="qcontactdetail.html#value">value</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactDetail/value"></a>
 <h3 class="fn"><a name="value"></a>T QContactDetail::value ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>key</i> ) const</h3>
-<p>Returns the value stored in this detail for the given <i>key</i> as a <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>, or an empty <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> if no value for the given <i>key</i> exists</p>
+<p>Returns the value of the template type associated with the given <i>key</i></p>
 <p>See also <a href="qcontactdetail.html#setValue">setValue</a>().</p>
 <h3 class="fn"><a name="value-2"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QContactDetail::value ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>key</i> ) const</h3>
 <p>This is an overloaded function.</p>
-<p>Returns the value of the template type associated with the given <i>key</i></p>
-<a name="//apple_ref/cpp/instm/QContactDetail/values"></a>
-<h3 class="fn"><a name="values"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html#QVariantMap-typedef">QVariantMap</a> QContactDetail::values () const</h3>
+<p>Returns the value stored in this detail for the given <i>key</i> as a <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>, or an empty <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> if no value for the given <i>key</i> exists</p>
 <a name="//apple_ref/cpp/instm/QContactDetail/variantValue"></a>
 <h3 class="fn"><a name="variantValue"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QContactDetail::variantValue ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>key</i> ) const</h3>
 <p>Returns the value stored in this detail for the given <i>key</i> as a <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a>, or an invalid <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> if no value for the given <i>key</i> exists</p>
@@ -261,7 +258,7 @@
     #ifdef Q_QDOC
         const char* DefinitionName;
         const char* FieldNumber;
-        const char* FieldSubType;
+        const char* FieldSubTypes;
         const char* SubTypeLandline;
         const char* SubTypeMobile;
         const char* SubTypeFacsimile;

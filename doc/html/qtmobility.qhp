@@ -548,11 +548,11 @@
                     <section ref="qversitcontactimporterpropertyhandler.html" title="QVersitContactImporterPropertyHandler Class Reference">
                         <section ref="qversitcontactimporterpropertyhandler-members.html" title="List of all members"/>
                     </section>
+                    <section ref="qversitdefaultresourcehandler.html" title="QVersitDefaultResourceHandler Class Reference">
+                        <section ref="qversitdefaultresourcehandler-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qversitdocument.html" title="QVersitDocument Class Reference">
                         <section ref="qversitdocument-members.html" title="List of all members"/>
-                    </section>
-                    <section ref="qversitdocumentwriter.html" title="QVersitDocumentWriter Class Reference">
-                        <section ref="qversitdocumentwriter-members.html" title="List of all members"/>
                     </section>
                     <section ref="qversitproperty.html" title="QVersitProperty Class Reference">
                         <section ref="qversitproperty-members.html" title="List of all members"/>
@@ -603,7 +603,6 @@
                     <section ref="declarative.html" title="Declarative Example"/>
                     <section ref="fetchgooglemaps.html" title="Fetch Google Maps Example"/>
                     <section ref="filemanagerplugin.html" title="File Manager Plugin Example"/>
-                    <section ref="incomingcalls.html" title="Incoming Call Simulator"/>
                     <section ref="keepintouch.html" title="Keep in Touch Example"/>
                     <section ref="logfilepositionsource.html" title="Log File Position Source Example"/>
                     <section ref="player.html" title="Media Player Example"/>
@@ -614,6 +613,7 @@
                     <section ref="radio.html" title="Radio Example"/>
                     <section ref="recorder.html" title="Recorder Example"/>
                     <section ref="samplephonebook.html" title="Sample Phonebook Example"/>
+                    <section ref="qmlcontacts.html" title="Sample QML-based Phonebook Example"/>
                     <section ref="serviceactions.html" title="Service Actions Example"/>
                     <section ref="servicebrowser.html" title="Service Browser Example"/>
                     <section ref="declarative.html" title="Service Framework using QML Example"/>
@@ -655,14 +655,14 @@
                     <section ref="service-frameworks.html" title="Qt Service Framework"/>
                     <section ref="service-framework-on-symbian.html" title="Qt Service Framework on Symbian"/>
                     <section ref="qtmobility-known-issues.html" title="Release Notes of the QtMobility Project"/>
-                    <section ref="sensors-api.html" title="Sensors API"/>
+                    <section ref="sensors-api.html" title="Sensors API (technology preview)"/>
                     <section ref="servicefw.html" title="Service Frameworks Classes"/>
                     <section ref="systeminfo.html" title="System Information"/>
                     <section ref="systeminfo.html" title="System Information Classes"/>
                     <section ref="preview.html" title="Technology Preview"/>
                     <section ref="3rdparty.html" title="Third-Party Licenses Used in Qt"/>
                     <section ref="trademarks.html" title="Trademarks"/>
-                    <section ref="versit.html" title="Versit API"/>
+                    <section ref="versit.html" title="Versit API (technology preview)"/>
                 </section>
             </section>
         </toc>
@@ -690,7 +690,6 @@
             <keyword name="GNU General Public License (GPL)" id="GNU General Public License (GPL)" ref="gpl.html"/>
             <keyword name="GNU Lesser General Public License (LGPL)" id="GNU Lesser General Public License (LGPL)" ref="lgpl.html"/>
             <keyword name="IMPLEMENT_READING" id="IMPLEMENT_READING" ref="qsensorreading.html#IMPLEMENT_READING"/>
-            <keyword name="Incoming Call Simulator" id="Incoming Call Simulator" ref="incomingcalls.html"/>
             <keyword name="Inheritance Hierarchy" id="Inheritance Hierarchy" ref="hierarchy.html"/>
             <keyword name="Installation Guide" id="Installation Guide" ref="installation.html"/>
             <keyword name="Keep in Touch Example" id="Keep in Touch Example" ref="keepintouch.html"/>
@@ -1242,7 +1241,6 @@
             <keyword name="setPreferredActions" id="QContactDetail::setPreferredActions" ref="qcontactdetail.html#setPreferredActions"/>
             <keyword name="setValue" id="QContactDetail::setValue" ref="qcontactdetail.html#setValue"/>
             <keyword name="value" id="QContactDetail::value" ref="qcontactdetail.html#value"/>
-            <keyword name="values" id="QContactDetail::values" ref="qcontactdetail.html#values"/>
             <keyword name="variantValue" id="QContactDetail::variantValue" ref="qcontactdetail.html#variantValue"/>
             <keyword name="variantValues" id="QContactDetail::variantValues" ref="qcontactdetail.html#variantValues"/>
             <keyword name="~QContactDetail" id="QContactDetail::~QContactDetail" ref="qcontactdetail.html#dtor.QContactDetail"/>
@@ -3334,6 +3332,9 @@
             <keyword name="postProcessProperty" id="QVersitContactImporterPropertyHandler::postProcessProperty" ref="qversitcontactimporterpropertyhandler.html#postProcessProperty"/>
             <keyword name="preProcessProperty" id="QVersitContactImporterPropertyHandler::preProcessProperty" ref="qversitcontactimporterpropertyhandler.html#preProcessProperty"/>
             <keyword name="~QVersitContactImporterPropertyHandler" id="QVersitContactImporterPropertyHandler::~QVersitContactImporterPropertyHandler" ref="qversitcontactimporterpropertyhandler.html#dtor.QVersitContactImporterPropertyHandler"/>
+            <keyword name="QVersitDefaultResourceHandler" id="QVersitDefaultResourceHandler" ref="qversitdefaultresourcehandler.html"/>
+            <keyword name="loadResource" id="QVersitDefaultResourceHandler::loadResource" ref="qversitdefaultresourcehandler.html#loadResource"/>
+            <keyword name="saveResource" id="QVersitDefaultResourceHandler::saveResource" ref="qversitdefaultresourcehandler.html#saveResource"/>
             <keyword name="QVersitDocument" id="QVersitDocument" ref="qversitdocument.html"/>
             <keyword name="addProperty" id="QVersitDocument::addProperty" ref="qversitdocument.html#addProperty"/>
             <keyword name="clear" id="QVersitDocument::clear" ref="qversitdocument.html#clear"/>
@@ -3347,11 +3348,6 @@
             <keyword name="setType" id="QVersitDocument::setType" ref="qversitdocument.html#setType"/>
             <keyword name="type" id="QVersitDocument::type" ref="qversitdocument.html#type"/>
             <keyword name="~QVersitDocument" id="QVersitDocument::~QVersitDocument" ref="qversitdocument.html#dtor.QVersitDocument"/>
-            <keyword name="QVersitDocumentWriter" id="QVersitDocumentWriter" ref="qversitdocumentwriter.html"/>
-            <keyword name="encodeGroupsAndName" id="QVersitDocumentWriter::encodeGroupsAndName" ref="qversitdocumentwriter.html#encodeGroupsAndName"/>
-            <keyword name="encodeParameters" id="QVersitDocumentWriter::encodeParameters" ref="qversitdocumentwriter.html#encodeParameters"/>
-            <keyword name="encodeVersitDocument" id="QVersitDocumentWriter::encodeVersitDocument" ref="qversitdocumentwriter.html#encodeVersitDocument"/>
-            <keyword name="encodeVersitProperty" id="QVersitDocumentWriter::encodeVersitProperty" ref="qversitdocumentwriter.html#encodeVersitProperty"/>
             <keyword name="QVersitProperty" id="QVersitProperty" ref="qversitproperty.html"/>
             <keyword name="clear" id="QVersitProperty::clear" ref="qversitproperty.html#clear"/>
             <keyword name="groups" id="QVersitProperty::groups" ref="qversitproperty.html#groups"/>
@@ -3379,8 +3375,6 @@
             <keyword name="QVersitReader::OutOfMemoryError" id="QVersitReader::OutOfMemoryError" ref="qversitreader.html#Error-enum"/>
             <keyword name="QVersitReader::NotReadyError" id="QVersitReader::NotReadyError" ref="qversitreader.html#Error-enum"/>
             <keyword name="QVersitReader::ParseError" id="QVersitReader::ParseError" ref="qversitreader.html#Error-enum"/>
-            <keyword name="QVersitReader::InvalidCharsetError" id="QVersitReader::InvalidCharsetError" ref="qversitreader.html#Error-enum"/>
-            <keyword name="QVersitReader::BadDeviceError" id="QVersitReader::BadDeviceError" ref="qversitreader.html#Error-enum"/>
             <keyword name="QVersitReader::State" id="QVersitReader::State" ref="qversitreader.html#State-enum"/>
             <keyword name="QVersitReader::InactiveState" id="QVersitReader::InactiveState" ref="qversitreader.html#State-enum"/>
             <keyword name="QVersitReader::ActiveState" id="QVersitReader::ActiveState" ref="qversitreader.html#State-enum"/>
@@ -3396,6 +3390,7 @@
             <keyword name="setDevice" id="QVersitReader::setDevice" ref="qversitreader.html#setDevice"/>
             <keyword name="startReading" id="QVersitReader::startReading" ref="qversitreader.html#startReading"/>
             <keyword name="state" id="QVersitReader::state" ref="qversitreader.html#state"/>
+            <keyword name="stateChanged" id="QVersitReader::stateChanged" ref="qversitreader.html#stateChanged"/>
             <keyword name="waitForFinished" id="QVersitReader::waitForFinished" ref="qversitreader.html#waitForFinished"/>
             <keyword name="~QVersitReader" id="QVersitReader::~QVersitReader" ref="qversitreader.html#dtor.QVersitReader"/>
             <keyword name="QVersitResourceHandler" id="QVersitResourceHandler" ref="qversitresourcehandler.html"/>
@@ -3409,9 +3404,6 @@
             <keyword name="QVersitWriter::IOError" id="QVersitWriter::IOError" ref="qversitwriter.html#Error-enum"/>
             <keyword name="QVersitWriter::OutOfMemoryError" id="QVersitWriter::OutOfMemoryError" ref="qversitwriter.html#Error-enum"/>
             <keyword name="QVersitWriter::NotReadyError" id="QVersitWriter::NotReadyError" ref="qversitwriter.html#Error-enum"/>
-            <keyword name="QVersitWriter::ParseError" id="QVersitWriter::ParseError" ref="qversitwriter.html#Error-enum"/>
-            <keyword name="QVersitWriter::InvalidCharsetError" id="QVersitWriter::InvalidCharsetError" ref="qversitwriter.html#Error-enum"/>
-            <keyword name="QVersitWriter::BadDeviceError" id="QVersitWriter::BadDeviceError" ref="qversitwriter.html#Error-enum"/>
             <keyword name="QVersitWriter::State" id="QVersitWriter::State" ref="qversitwriter.html#State-enum"/>
             <keyword name="QVersitWriter::InactiveState" id="QVersitWriter::InactiveState" ref="qversitwriter.html#State-enum"/>
             <keyword name="QVersitWriter::ActiveState" id="QVersitWriter::ActiveState" ref="qversitwriter.html#State-enum"/>
@@ -3681,7 +3673,8 @@
             <keyword name="Recorder Example" id="Recorder Example" ref="recorder.html"/>
             <keyword name="Release Notes of the QtMobility Project" id="Release Notes of the QtMobility Project" ref="qtmobility-known-issues.html"/>
             <keyword name="Sample Phonebook Example" id="Sample Phonebook Example" ref="samplephonebook.html"/>
-            <keyword name="Sensors API" id="Sensors API" ref="sensors-api.html"/>
+            <keyword name="Sample QML-based Phonebook Example" id="Sample QML-based Phonebook Example" ref="qmlcontacts.html"/>
+            <keyword name="Sensors API (technology preview)" id="Sensors API (technology preview)" ref="sensors-api.html"/>
             <keyword name="Service Actions Example" id="Service Actions Example" ref="serviceactions.html"/>
             <keyword name="Service Browser Example" id="Service Browser Example" ref="servicebrowser.html"/>
             <keyword name="Service Framework using QML Example" id="Service Framework using QML Example" ref="declarative.html"/>
@@ -3695,19 +3688,16 @@
             <keyword name="Technology Preview" id="Technology Preview" ref="preview.html"/>
             <keyword name="Third-Party Licenses Used in Qt" id="Third-Party Licenses Used in Qt" ref="3rdparty.html"/>
             <keyword name="Trademarks" id="Trademarks" ref="trademarks.html"/>
-            <keyword name="Versit API" id="Versit API" ref="versit.html"/>
+            <keyword name="Versit API (technology preview)" id="Versit API (technology preview)" ref="versit.html"/>
             <keyword name="Write Message Example" id="Write Message Example" ref="writemessage.html"/>
             <keyword name="qtimestamp" id="qtimestamp" ref="qsensor.html#qtimestamp-typedef"/>
         </keywords>
         <files>
             <file>images/bearermonitor-example.png</file>
-            <file>incomingcalls-testmodelui-cpp.html</file>
             <file>qaccelerometerreading.html</file>
             <file>qmessageaddress-members.html</file>
             <file>qstillimagecapture.html</file>
-            <file>qversitdocumentwriter-members.html</file>
             <file>logfilepositionsource-clientapplication-cpp.html</file>
-            <file>incomingcalls-filterdialog-h.html</file>
             <file>qradiotunercontrol.html</file>
             <file>qproximityfilter-members.html</file>
             <file>qvideoencodercontrol-members.html</file>
@@ -3727,6 +3717,7 @@
             <file>qsensorbackendfactory-members.html</file>
             <file>streamplayer-streamplayer-h.html</file>
             <file>qcontactname.html</file>
+            <file>qversitdefaultresourcehandler-members.html</file>
             <file>qaudioendpointselector.html</file>
             <file>qml-audio.html</file>
             <file>filemanagerplugin-filemanagerplugin-h.html</file>
@@ -3771,7 +3762,6 @@
             <file>qcontactdetailrangefilter.html</file>
             <file>logfilepositionsource-clientapplication-h.html</file>
             <file>qcontactrelationshipfilter-members.html</file>
-            <file>incomingcalls-incomingcalls-pro.html</file>
             <file>keepintouch-addressfinder-h.html</file>
             <file>qcameracontrol-members.html</file>
             <file>qmediaobject-members.html</file>
@@ -3792,7 +3782,6 @@
             <file>qmessagefolderfilter-members.html</file>
             <file>battery-charge-battery-charge-pro.html</file>
             <file>qproximityfilter.html</file>
-            <file>incomingcalls.html</file>
             <file>images/servicexmlgen.png</file>
             <file>qversitreader.html</file>
             <file>publish-subscribe-publisherdialog-cpp.html</file>
@@ -3842,8 +3831,8 @@
             <file>samplephonebook-contacteditor-h.html</file>
             <file>location-overview.html</file>
             <file>qcontactinvalidfilter.html</file>
-            <file>qmessagemanager.html</file>
             <file>qmediaplayercontrol-members.html</file>
+            <file>qmessagemanager.html</file>
             <file>qorientationreading.html</file>
             <file>qmessage-members.html</file>
             <file>qcontactemailaddress-members.html</file>
@@ -3875,12 +3864,12 @@
             <file>qcamerafocuscontrol.html</file>
             <file>qtmedia.html</file>
             <file>servicebrowser-servicebrowser-h.html</file>
+            <file>qmlcontacts-qmlcontacts-cpp.html</file>
             <file>images/publish-subscribe-publisher.png</file>
             <file>filemanagerplugin-filemanagertransfer-h.html</file>
             <file>images/slideshow-img1.png</file>
             <file>qaccelerometerfilter.html</file>
             <file>streamplayer-streamplayer-pro.html</file>
-            <file>incomingcalls-testmodelui-h.html</file>
             <file>qmessagesortorder-members.html</file>
             <file>qrotationreading.html</file>
             <file>qvideoencodersettings.html</file>
@@ -3911,7 +3900,6 @@
             <file>samplephonebook-contacteditor-cpp.html</file>
             <file>qcontactnote.html</file>
             <file>qcontactonlineaccount-members.html</file>
-            <file>incomingcalls-qcontactlistmodel-cpp.html</file>
             <file>bearercloud-unknown-svg.html</file>
             <file>qsystemstorageinfo.html</file>
             <file>qvideorenderercontrol-members.html</file>
@@ -3941,6 +3929,7 @@
             <file>qcontactaddress.html</file>
             <file>player-main-cpp.html</file>
             <file>qmediaplaylistioplugin.html</file>
+            <file>qmlcontacts-qmlcontactsa-h.html</file>
             <file>radio-radio-pro.html</file>
             <file>writemessage-messagesender-cpp.html</file>
             <file>bearer-management.html</file>
@@ -3986,6 +3975,7 @@
             <file>bearermonitor-bearermonitor-cpp.html</file>
             <file>qimageencodersettings-members.html</file>
             <file>qsensorbackend.html</file>
+            <file>qmlcontacts.html</file>
             <file>qcontactbirthday.html</file>
             <file>qmessageaccountsortorder.html</file>
             <file>qcontactdetailfielddefinition.html</file>
@@ -4050,6 +4040,7 @@
             <file>qmediatimeinterval-members.html</file>
             <file>bluetoothtransferplugin-bluetoothtransferplugin-pro.html</file>
             <file>battery-charge-battery-subscriber-battery-subscriber-pro.html</file>
+            <file>qmlcontacts-qmlcontact-h.html</file>
             <file>qmediaplaylistreader.html</file>
             <file>classes.html</file>
             <file>qml-qsoundeffect.html</file>
@@ -4161,7 +4152,6 @@
             <file>qml-video.html</file>
             <file>qtapfilter.html</file>
             <file>qcontactmemoryengine.html</file>
-            <file>incomingcalls-qcontactlistmodel-p-h.html</file>
             <file>images/roaming-states.png</file>
             <file>qcontactemailaddress.html</file>
             <file>qcameraexposurecontrol.html</file>
@@ -4245,15 +4235,15 @@
             <file>qversitdocument-members.html</file>
             <file>qtmobility-known-issues.html</file>
             <file>images/spb-screen.png</file>
-            <file>incomingcalls-filterdialog-cpp.html</file>
+            <file>qmlcontacts-qmlcontact-cpp.html</file>
             <file>qmessagecontentcontainer.html</file>
             <file>qambientlightsensor.html</file>
             <file>qcontactsynctarget.html</file>
             <file>qradiotunercontrol-members.html</file>
             <file>qmediacontent-members.html</file>
             <file>qmediacontainercontrol.html</file>
+            <file>qmlcontacts-qmlcontacts-pro.html</file>
             <file>qrotationsensor-members.html</file>
-            <file>qversitdocumentwriter.html</file>
             <file>audiorecorder-audiorecorder-pro.html</file>
             <file>qmediaplaylist-members.html</file>
             <file>multimedia.html</file>
@@ -4261,6 +4251,7 @@
             <file>qmagnetometerfilter-members.html</file>
             <file>player-mediakeysobserver-cpp.html</file>
             <file>qcameracontrol.html</file>
+            <file>qmlcontacts-main-cpp.html</file>
             <file>qmediaserviceprovider.html</file>
             <file>qcontactabstractrequest.html</file>
             <file>qgeopositioninfosource.html</file>
@@ -4278,7 +4269,6 @@
             <file>qmediaservicesupportedformatsinterface.html</file>
             <file>qrotationfilter-members.html</file>
             <file>location.html</file>
-            <file>incomingcalls-qcontactlistmodel-h.html</file>
             <file>classlists.html</file>
             <file>slideshow-slideshow-pro.html</file>
             <file>qcontactgender.html</file>
@@ -4304,7 +4294,7 @@
             <file>images/battery-publisher.png</file>
             <file>qsensormanager.html</file>
             <file>serviceactions-attachmentlistwidget-cpp.html</file>
-            <file>incomingcalls-main-cpp.html</file>
+            <file>qmlcontacts-qmlcontacts-qrc.html</file>
             <file>writemessage-writemessage-pro.html</file>
             <file>sensors-api.html</file>
             <file>qmessagefolderid-members.html</file>
@@ -4314,6 +4304,7 @@
             <file>qcamera.html</file>
             <file>declarative-declarative-pro.html</file>
             <file>radio.html</file>
+            <file>qversitdefaultresourcehandler.html</file>
             <file>qcontactguid-members.html</file>
             <file>qcontactfamily.html</file>
             <file>qcontactlocalidfilter-members.html</file>

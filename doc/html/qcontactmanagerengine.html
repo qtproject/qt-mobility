@@ -114,7 +114,7 @@
 <a name="protected-functions"></a>
 <h2>Protected Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanagerengine.html#setDetailAccessConstraints">setDetailAccessConstraints</a></b> ( QContactDetail * <i>detail</i>, QContactDetail::AccessConstraints <i>constraint</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanagerengine.html#setDetailAccessConstraints">setDetailAccessConstraints</a></b> ( QContactDetail * <i>detail</i>, QContactDetail::AccessConstraints <i>constraints</i> ) const</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
@@ -269,14 +269,14 @@
 <p>Alternatively, the function will update the existing contact in the database if <i>contact</i> has a non-zero id and currently exists in the database.</p>
 <p>If the <i>contact</i> contains one or more details whose definitions have not yet been saved with the manager, the operation will fail and <i>error</i> will be set to <tt>QContactManager::UnsupportedError</tt>.</p>
 <p>If the <i>contact</i> has had its relationships reordered, the manager will check to make sure that every relationship that the contact is currently involved in is included in the reordered list, and that no relationships which either do not involve the contact, or have not been saved in the manager are included in the list. If these conditions are not met, the function will return <tt>false</tt> and <i>error</i> will be set to <tt>QContactManager::InvalidRelationshipError</tt>.</p>
-<p>The engine must automatically synthesize the display label of the contact when it is saved, by either using the built in synthesizeDisplayLabel() function or overriding it, and then calling <a href="qcontactmanagerengine.html#setContactDisplayLabel">setContactDisplayLabel</a>().</p>
+<p>The engine must automatically synthesize the display label of the contact when it is saved, by either using the built in <a href="qcontactmanagerengine.html#synthesizedDisplayLabel">synthesizedDisplayLabel</a>() function or overriding it, and then calling <a href="qcontactmanagerengine.html#setContactDisplayLabel">setContactDisplayLabel</a>().</p>
 <p>Returns false on failure, or true on success. On successful save of a contact with an id of zero, its id will be set to a new, valid id with the manager URI set to the URI of this manager, and the local id set to a new, valid local id.</p>
 <p>This function is called by the contacts framework in both the single contact save and batch contact save, if the saveContacts function is not overridden.</p>
 <p>The backend must emit the appropriate signals to inform clients of changes to the database resulting from this operation.</p>
 <p>Any errors encountered during this operation should be stored to <i>error</i>.</p>
 <a name="//apple_ref/cpp/instm/QContactManagerEngine/saveContacts"></a>
 <h3 class="fn"><a name="saveContacts"></a>bool QContactManagerEngine::saveContacts ( <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontact.html">QContact</a>&gt; * <i>contacts</i>, <a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; * <i>errorMap</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> &amp; <i>error</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Adds the list of contacts given by <i>contact</i> list to the database. Returns true if the contacts were saved successfully, otherwise false.</p>
+<p>Adds the list of contacts given by <i>contacts</i> list to the database. Returns true if the contacts were saved successfully, otherwise false.</p>
 <p>The manager might populate <i>errorMap</i> (the map of indices of the <i>contacts</i> list to the error which occurred when saving the contact at that index) for every index for which the contact could not be saved, if it is able. The <a href="qcontactmanager.html#error">QContactManager::error</a>() function will only return <tt>QContactManager::NoError</tt> if all contacts were saved successfully.</p>
 <p>For each newly saved contact that was successful, the id of the contact in the <i>contacts</i> list will be updated with the new value. If a failure occurs when saving a new contact, the id will be cleared.</p>
 <p>Any errors encountered during this operation should be stored to <i>error</i>.</p>
@@ -313,7 +313,7 @@
 <h3 class="fn"><a name="setContactRelationships"></a>void QContactManagerEngine::setContactRelationships ( <a href="qcontact.html">QContact</a> * <i>contact</i>, const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; &amp; <i>relationships</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Sets the cached relationships in the given <i>contact</i> to <i>relationships</i></p>
 <a name="//apple_ref/cpp/instm/QContactManagerEngine/setDetailAccessConstraints"></a>
-<h3 class="fn"><a name="setDetailAccessConstraints"></a>void QContactManagerEngine::setDetailAccessConstraints ( <a href="qcontactdetail.html">QContactDetail</a> * <i>detail</i>, <a href="qcontactdetail.html#AccessConstraint-enum">QContactDetail::AccessConstraints</a> <i>constraint</i> ) const&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<h3 class="fn"><a name="setDetailAccessConstraints"></a>void QContactManagerEngine::setDetailAccessConstraints ( <a href="qcontactdetail.html">QContactDetail</a> * <i>detail</i>, <a href="qcontactdetail.html#AccessConstraint-enum">QContactDetail::AccessConstraints</a> <i>constraints</i> ) const&nbsp;&nbsp;<tt> [protected]</tt></h3>
 <p>Sets the access constraints of <i>detail</i> to the supplied <i>constraints</i>.</p>
 <p>This function is provided to allow engine implementations to report the access constraints of retrieved details, without generally allowing the access constraints to be modified after retrieval.</p>
 <p>Application code should not call this function, since validation of the detail will happen in the engine in any case.</p>
@@ -367,7 +367,7 @@
 <p>Updates the given <a href="qcontactdetaildefinitionsaverequest.html">QContactDetailDefinitionSaveRequest</a> <i>req</i> with the latest results <i>result</i>, operation error <i>error</i>, and map of input index to individual error <i>errorMap</i>. It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.</p>
 <a name="//apple_ref/cpp/clm/QContactManagerEngine/updateRelationshipFetchRequest"></a>
 <h3 class="fn"><a name="updateRelationshipFetchRequest"></a>void QContactManagerEngine::updateRelationshipFetchRequest ( <a href="qcontactrelationshipfetchrequest.html">QContactRelationshipFetchRequest</a> * <i>req</i>, const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; &amp; <i>result</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> <i>error</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
-<p>Updates the given <a href="qcontactrelationshipfetchrequest.html">QContactRelationshipFetchRequest</a> <i>req</i> with the latest results <i>result</i>, operation error <i>error</i>, and map of input index to individual error <i>errorMap</i>. It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.</p>
+<p>Updates the given <a href="qcontactrelationshipfetchrequest.html">QContactRelationshipFetchRequest</a> <i>req</i> with the latest results <i>result</i>, and operation error <i>error</i>. It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.</p>
 <a name="//apple_ref/cpp/clm/QContactManagerEngine/updateRelationshipRemoveRequest"></a>
 <h3 class="fn"><a name="updateRelationshipRemoveRequest"></a>void QContactManagerEngine::updateRelationshipRemoveRequest ( <a href="qcontactrelationshipremoverequest.html">QContactRelationshipRemoveRequest</a> * <i>req</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> <i>error</i>, const <a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; &amp; <i>errorMap</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Updates the given <a href="qcontactrelationshipremoverequest.html">QContactRelationshipRemoveRequest</a> <i>req</i> with the operation error <i>error</i>, and map of input index to individual error <i>errorMap</i>. It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.</p>
@@ -376,7 +376,7 @@
 <p>Updates the given <a href="qcontactrelationshipsaverequest.html">QContactRelationshipSaveRequest</a> <i>req</i> with the latest results <i>result</i>, operation error <i>error</i>, and map of input index to individual error <i>errorMap</i>. It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.</p>
 <a name="//apple_ref/cpp/clm/QContactManagerEngine/updateRequestState"></a>
 <h3 class="fn"><a name="updateRequestState"></a>void QContactManagerEngine::updateRequestState ( <a href="qcontactabstractrequest.html">QContactAbstractRequest</a> * <i>req</i>, <a href="qcontactabstractrequest.html#State-enum">QContactAbstractRequest::State</a> <i>state</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
-<p>Updates the given asynchronous request <i>req</i> by setting the overall operation <i>error</i>, and the new <i>state</i> of the request. It then causes the progress signal to be emitted by the request (XXX)</p>
+<p>Updates the given asynchronous request <i>req</i> by setting the new <i>state</i> of the request. It then causes the stateChanged() signal to be emitted by the request.</p>
 <a name="//apple_ref/cpp/clm/QContactManagerEngine/validateActionFilter"></a>
 <h3 class="fn"><a name="validateActionFilter"></a>bool QContactManagerEngine::validateActionFilter ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>filter</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Given a <a href="qcontactfilter.html">QContactFilter</a> <i>filter</i> retrieved from a <a href="qcontactaction.html">QContactAction</a>, check that it is valid and cannot cause infinite recursion.</p>

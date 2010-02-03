@@ -130,11 +130,13 @@
 <p>Reimplemented from <a href="qcontactmanagerengine.html#detailDefinitions">QContactManagerEngine::detailDefinitions</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactMemoryEngine/filterSupported"></a>
 <h3 class="fn"><a name="filterSupported"></a>bool QContactMemoryEngine::filterSupported ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>filter</i> ) const</h3>
+<p>This function is deprecated. Use <a href="qcontactmanagerengine.html#isFilterSupported">QContactManagerEngine::isFilterSupported</a>() instead! The function returns true if the backend natively supports the given filter <i>filter</i>, otherwise false.</p>
 <a name="//apple_ref/cpp/instm/QContactMemoryEngine/hasFeature"></a>
 <h3 class="fn"><a name="hasFeature"></a>bool QContactMemoryEngine::hasFeature ( <a href="qcontactmanager.html#ManagerFeature-enum">QContactManager::ManagerFeature</a> <i>feature</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>contactType</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#hasFeature">QContactManagerEngine::hasFeature</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactMemoryEngine/implementationVersion"></a>
 <h3 class="fn"><a name="implementationVersion"></a>int QContactMemoryEngine::implementationVersion () const</h3>
+<p>This function is deprecated and should not be used. Use <a href="qcontactmanagerengine.html#managerVersion">QContactMemoryEngine::managerVersion</a>() instead!</p>
 <a name="//apple_ref/cpp/instm/QContactMemoryEngine/managerName"></a>
 <h3 class="fn"><a name="managerName"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QContactMemoryEngine::managerName () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#managerName">QContactManagerEngine::managerName</a>().</p>
@@ -199,6 +201,7 @@
 <p>Reimplemented from <a href="qcontactmanagerengine.html#waitForRequestFinished">QContactManagerEngine::waitForRequestFinished</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactMemoryEngine/waitForRequestProgress"></a>
 <h3 class="fn"><a name="waitForRequestProgress"></a>bool QContactMemoryEngine::waitForRequestProgress ( <a href="qcontactabstractrequest.html">QContactAbstractRequest</a> * <i>req</i>, int <i>msecs</i> )</h3>
+<p>This function is deprecated! Use <a href="qcontactmemoryengine.html#waitForRequestFinished">QContactMemoryEngine::waitForRequestFinished</a>() instead! Waits up to <i>msecs</i> milliseconds for the request <i>req</i> to emit the progress() signal. Returns true if the progress() signal was emitted during the period, otherwise false.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

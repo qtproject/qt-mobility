@@ -59,7 +59,7 @@
 
     #include &lt;qvaluespacepublisher.h&gt;
 
-    #ifdef Q_OS_SYMBIAN
+    #ifdef QTM_SMALL_SCREEN
     #include &lt;QPushButton&gt;
     #endif
 
@@ -70,7 +70,7 @@
     {
         ui-&gt;setupUi(this);
 
-    #ifdef Q_OS_SYMBIAN
+    #ifdef QTM_SMALL_SCREEN
         QPushButton *switchButton = new QPushButton(&quot;Switch&quot;, this);
         switchButton-&gt;setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
         ui-&gt;gridLayout-&gt;addWidget(switchButton);
