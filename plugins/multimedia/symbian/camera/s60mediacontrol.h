@@ -47,7 +47,9 @@
 
 #include "qmediarecorder.h"
 #include "qmediarecordercontrol.h"
-#include "experimental/qcameracontrol.h"
+#include "qcameracontrol.h"
+
+QTM_USE_NAMESPACE
 
 class S60CameraSession;
 

@@ -75,9 +75,11 @@
         connect(imageViewer, SIGNAL(stateChanged(QMediaImageViewer::State)),
                 this, SLOT(stateChanged(QMediaImageViewer::State)));
 
-        playlist = new QMediaPlaylist(imageViewer);
+        playlist = new QMediaPlaylist;
+        playlist-&gt;setMediaObject(imageViewer);
 
-        QVideoWidget *videoWidget = new QVideoWidget(imageViewer);
+        QVideoWidget *videoWidget = new QVideoWidget;
+        videoWidget-&gt;setMediaObject(imageViewer);
 
         QMenu *openMenu = new QMenu(this);
         openMenu-&gt;addAction(tr(&quot;Directory...&quot;), this, SLOT(openDirectory()));
@@ -153,9 +155,9 @@
             foreach (const QString &amp;fileName, dir.entryList(QDir::Files)) {
                 QString absolutePath = dir.absoluteFilePath(fileName);
     #ifndef Q_OS_WIN
-                playlist-&gt;appendItem(QUrl(QLatin1String(&quot;file:<span class="comment">//&quot;) + absolutePath));</span>
+                playlist-&gt;addMedia(QUrl(QLatin1String(&quot;file:<span class="comment">//&quot;) + absolutePath));</span>
     #else
-                playlist-&gt;appendItem(QUrl(QLatin1String(&quot;file:<span class="comment">///&quot;) + absolutePath));</span>
+                playlist-&gt;addMedia(QUrl(QLatin1String(&quot;file:<span class="comment">///&quot;) + absolutePath));</span>
     #endif
             }
         }

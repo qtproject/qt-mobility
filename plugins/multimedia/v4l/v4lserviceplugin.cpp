@@ -65,7 +65,7 @@ QMediaService* V4LServicePlugin::create(QString const& key)
     if (key == QLatin1String(Q_MEDIASERVICE_CAMERA))
         return new V4LCameraService;
 
-    qDebug() << "unsupported key:" << key;
+    //qDebug() << "unsupported key:" << key;
     return 0;
 }
 

@@ -146,6 +146,11 @@ QList<QContactRelationship> CntRelationship::relationships(const QString& relati
     else{
         error = QContactManager::NotSupportedError;
     }
+    
+    // No relationships found?
+    if (error == QContactManager::NoError && returnValue.count() == 0 ) {
+        error = QContactManager::DoesNotExistError;
+    }
 
     return returnValue;
 }

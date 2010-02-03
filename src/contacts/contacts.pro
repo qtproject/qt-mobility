@@ -26,6 +26,7 @@ PUBLIC_HEADERS += \
     qcontactdetail.h \
     qcontactdetaildefinition.h \
     qcontactdetaildefinitionfield.h \
+    qcontactdetailfielddefinition.h \
     qcontactfilter.h \
     qcontactid.h \
     qcontactmanager.h \
@@ -44,7 +45,7 @@ PRIVATE_HEADERS += \
     qcontactchangeset_p.h \
     qcontactdetail_p.h \
     qcontactdetaildefinition_p.h \
-    qcontactdetaildefinitionfield_p.h \
+    qcontactdetailfielddefinition_p.h \
     qcontactfilter_p.h \
     qcontactid_p.h \
     qcontactmanager_p.h \
@@ -60,7 +61,7 @@ SOURCES += \
     qcontactchangeset.cpp \
     qcontactdetail.cpp \
     qcontactdetaildefinition.cpp \
-    qcontactdetaildefinitionfield.cpp \
+    qcontactdetailfielddefinition.cpp \
     qcontactfilter.cpp \
     qcontactid.cpp \
     qcontactmanager_p.cpp \
@@ -78,6 +79,10 @@ maemo {
     isEmpty(CONTACTS_DEFAULT_ENGINE): CONTACTS_DEFAULT_ENGINE=tracker
 }
 
+wince* {
+    isEmpty(CONTACTS_DEFAULT_ENGINE): CONTACTS_DEFAULT_ENGINE=wince
+}
+
 symbian {
     isEmpty(CONTACTS_DEFAULT_ENGINE): CONTACTS_DEFAULT_ENGINE=symbian
 
@@ -85,23 +90,16 @@ symbian {
     TARGET.CAPABILITY = ALL -TCB
     TARGET.UID3 = 0x2002AC7A
 
+    LIBS += -lefsrv
+
     ### Contacts
     # Main library
     CONTACTS_DEPLOYMENT.sources = QtContacts.dll
     CONTACTS_DEPLOYMENT.path = \sys\bin
     DEPLOYMENT += CONTACTS_DEPLOYMENT
-
-    deploy.path = $$EPOCROOT
-    exportheaders.sources = $$PUBLIC_HEADERS
-    exportheaders.path = epoc32/include/app
-
-    #export headers into EPOCROOT
-    for(header, exportheaders.sources) {
-        BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
-    }
 }
 
-!isEmpty(CONTACTS_DEFAULT_ENGINE): DEFINES += Q_CONTACTS_DEFAULT_ENGINE=$$CONTACTS_ENGINE
+!isEmpty(CONTACTS_DEFAULT_ENGINE): DEFINES += Q_CONTACTS_DEFAULT_ENGINE=CONTACTS_DEFAULT_ENGINE
 
+CONFIG += app
 include(../../features/deploy.pri)
-

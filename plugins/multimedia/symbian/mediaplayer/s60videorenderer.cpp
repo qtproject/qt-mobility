@@ -41,13 +41,11 @@
 
 #include "s60videorenderer.h"
 
-#ifndef QT_NO_MULTIMEDIA
-
-#include <QEvent>
-#include <QApplication>
+#include <QtCore/qcoreevent.h>
+#include <QtGui/qapplication.h>
 
 S60VideoRenderer::S60VideoRenderer(QObject *parent)
-    :QVideoRendererControl(parent)
+    : QVideoRendererControl(parent)
 {
 }
 
@@ -66,5 +64,3 @@ void S60VideoRenderer::setSurface(QAbstractVideoSurface *surface)
     m_surface = surface;
 }
 
-
-#endif

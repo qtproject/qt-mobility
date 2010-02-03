@@ -27,8 +27,15 @@
     SOURCES = main.cpp \
         cameracapture.cpp \
         settings.cpp
-    FORMS += cameracapture.ui \
-        settings.ui</pre>
+
+    symbian: {
+        TARGET.CAPABILITY = UserEnvironment WriteDeviceData ReadDeviceData
+        FORMS += cameracapture.ui \
+            settings_s60.ui
+    } else {
+        FORMS += cameracapture.ui \
+            settings.ui
+    }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

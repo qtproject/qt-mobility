@@ -141,7 +141,7 @@ QTM_BEGIN_NAMESPACE
 
     \value UnknownSessionError          An unidentified error occurred.
     \value SessionAbortedError          The session was aborted by the user or system.
-    \value RoamingError                 The session cannot roam to the new configuration.
+    \value RoamingError                 The session cannot roam to a new configuration.
     \value OperationNotSupportedError   The operation is not supported for current configuration.
     \value InvalidConfigurationError    The operation cannot currently be performed for the
                                         current configuration.
@@ -408,6 +408,9 @@ QNetworkConfiguration QNetworkSession::configuration() const
     This function only returns a valid QNetworkInterface when this session is \l Connected.
 
     The returned interface may change as a result of a roaming process.
+    
+    Note: this function does not work in Symbian emulator due to the way the 
+    connectivity is emulated on Windows.
 
     \sa state()
 */
