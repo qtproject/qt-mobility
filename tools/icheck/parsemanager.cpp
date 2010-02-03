@@ -48,7 +48,7 @@ using namespace CPlusPlus;
 /**********************************
 Compares function with function
 with return type, function name
-and their arguments and arguments 
+and their arguments and arguments
 types.
 **********************************/
 bool FUNCTIONITEM::isEqualTo(FUNCTIONITEM *cpfct, bool ignoreName/* = true*/)
@@ -60,8 +60,8 @@ bool FUNCTIONITEM::isEqualTo(FUNCTIONITEM *cpfct, bool ignoreName/* = true*/)
 
 /*****************************************************************
 Compares two property regarding
-of their function definition, 
-type definition, function arguments 
+of their function definition,
+type definition, function arguments
 and function types.
 
 Q_PROPERTY( ConnectionState state READ state NOTIFY stateChanged);
@@ -70,7 +70,7 @@ bool PROPERTYITEM::isEqualTo(PROPERTYITEM *cpppt)
 {
     QString thistype = this->trlUnit->spell(this->ast->type_token);
     QString cppttype = cpppt->trlUnit->spell(cpppt->ast->type_token);
-    
+
     if(thistype != cppttype)
         return false;
 
@@ -135,7 +135,7 @@ bool QENUMITEM::isEqualTo(QENUMITEM *cpenum)
 
 /*****************************************************************
 Compares two flags regarding
-of their enum definitions and their 
+of their enum definitions and their
 values created by the getEnumValueStringList function.
 *****************************************************************/
 bool QFLAGITEM::isEqualTo(QFLAGITEM *cpflag)
@@ -179,7 +179,7 @@ void ParseManager::setIncludePath(const QStringList &includePath)
 
 /**************************************
 public Function that starts the parsing
-all of the files in the sourceFiles 
+all of the files in the sourceFiles
 string list.
 **************************************/
 void ParseManager::parse(const QStringList &sourceFiles)
@@ -189,7 +189,7 @@ void ParseManager::parse(const QStringList &sourceFiles)
         delete pCppPreprocessor;
         pCppPreprocessor = 0;
     }
-        
+
     if (! sourceFiles.isEmpty()) {
         m_strHeaderFile = sourceFiles[0];
         pCppPreprocessor = new CppTools::Internal::CppPreprocessor(QPointer<CPlusPlus::ParseManager>(this));
@@ -231,7 +231,7 @@ void ParseManager::parse(CppTools::Internal::CppPreprocessor *preproc,
     }
 }
 
-//This function creates a class list for each class and its base classes in 
+//This function creates a class list for each class and its base classes in
 //the header file that needs to be checked.
 //e.g.
 //      Cl1          Cl2
@@ -1546,4 +1546,4 @@ void ParseManager::Trace(QString value)
             out << value << endl;
     }
 }
-
+//--->

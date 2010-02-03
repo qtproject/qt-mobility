@@ -214,6 +214,8 @@ public:
     bool parseUsingDirective(DeclarationAST *&node);
     bool parseWhileStatement(StatementAST *&node);
 
+    void parseExpressionWithOperatorPrecedence(ExpressionAST *&lhs, int minPrecedence);
+
     // Qt MOC run
     bool parseQtMethod(ExpressionAST *&node);
 
@@ -230,7 +232,6 @@ public:
     bool parseObjCProtocolExpression(ExpressionAST *&node);
     bool parseObjCSelectorExpression(ExpressionAST *&node);
     bool parseObjCStringLiteral(ExpressionAST *&node);
-    bool parseObjCMethodSignature();
     bool parseObjCMessageExpression(ExpressionAST *&node);
     bool parseObjCMessageReceiver(ExpressionAST *&node);
     bool parseObjCMessageArguments(ObjCSelectorAST *&selNode, ObjCMessageArgumentListAST *& argNode);
@@ -266,7 +267,6 @@ public:
     bool lookAtStorageClassSpecifier() const;
     bool lookAtBuiltinTypeSpecifier() const;
     bool lookAtClassKey() const;
-    bool lookAtAssignmentOperator() const;
 
     void match(int kind, unsigned *token);
 
@@ -314,6 +314,7 @@ private:
     bool _objCEnabled: 1;
     bool _inFunctionBody: 1;
     bool _inObjCImplementationContext: 1;
+    int _expressionDepth;
 
     std::map<unsigned, TemplateArgumentListEntry> _templateArgumentList;
 

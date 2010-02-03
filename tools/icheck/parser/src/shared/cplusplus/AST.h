@@ -94,7 +94,7 @@ public:
         // ### assert(0);
         return 0;
     }
-
+    
     _Tp value;
     List *next;
 };
@@ -143,15 +143,11 @@ public:
     virtual unsigned firstToken() const = 0;
     virtual unsigned lastToken() const = 0;
 
+    virtual AST *clone(MemoryPool *pool) const = 0;
+
     virtual AccessDeclarationAST *asAccessDeclaration() { return 0; }
     virtual ArrayAccessAST *asArrayAccess() { return 0; }
     virtual ArrayDeclaratorAST *asArrayDeclarator() { return 0; }
-#ifdef ICHECK_BUILD
-    virtual QPropertyDeclarationAST *asQPropertyDeclarationAST() { return 0; }
-    virtual QEnumDeclarationAST *asQEnumDeclarationAST() { return 0; }
-    virtual QFlagsDeclarationAST *asQFlagsDeclarationAST() { return 0; }
-    virtual QDeclareFlagsDeclarationAST *asQDeclareFlagsDeclarationAST() { return 0; }
-#endif
     virtual ArrayInitializerAST *asArrayInitializer() { return 0; }
     virtual AsmDefinitionAST *asAsmDefinition() { return 0; }
     virtual AttributeAST *asAttribute() { return 0; }
@@ -282,6 +278,12 @@ public:
     virtual UsingAST *asUsing() { return 0; }
     virtual UsingDirectiveAST *asUsingDirective() { return 0; }
     virtual WhileStatementAST *asWhileStatement() { return 0; }
+#ifdef ICHECK_BUILD
+    virtual QPropertyDeclarationAST *asQPropertyDeclarationAST() { return 0; }
+    virtual QEnumDeclarationAST *asQEnumDeclarationAST() { return 0; }
+    virtual QFlagsDeclarationAST *asQFlagsDeclarationAST() { return 0; }
+    virtual QDeclareFlagsDeclarationAST *asQDeclareFlagsDeclarationAST() { return 0; }
+#endif
 
 protected:
     virtual void accept0(ASTVisitor *visitor) = 0;
@@ -292,18 +294,25 @@ class CPLUSPLUS_EXPORT StatementAST: public AST
 {
 public:
     virtual StatementAST *asStatement() { return this; }
+
+    virtual StatementAST *clone(MemoryPool *pool) const = 0;
 };
 
 class CPLUSPLUS_EXPORT ExpressionAST: public AST
 {
 public:
     virtual ExpressionAST *asExpression() { return this; }
+
+    virtual ExpressionAST *clone(MemoryPool *pool) const = 0;
 };
 
 class CPLUSPLUS_EXPORT DeclarationAST: public AST
 {
 public:
     virtual DeclarationAST *asDeclaration() { return this; }
+
+    virtual DeclarationAST *clone(MemoryPool *pool) const = 0;
+
 #ifdef ICHECK_BUILD
     unsigned invoke_token;
 #endif
@@ -316,36 +325,48 @@ public: // annotations
 
 public:
     virtual NameAST *asName() { return this; }
+
+    virtual NameAST *clone(MemoryPool *pool) const = 0;
 };
 
 class CPLUSPLUS_EXPORT SpecifierAST: public AST
 {
 public:
     virtual SpecifierAST *asSpecifier() { return this; }
+
+    virtual SpecifierAST *clone(MemoryPool *pool) const = 0;
 };
 
 class CPLUSPLUS_EXPORT PtrOperatorAST: public AST
 {
 public:
     virtual PtrOperatorAST *asPtrOperator() { return this; }
+
+    virtual PtrOperatorAST *clone(MemoryPool *pool) const = 0;
 };
 
 class CPLUSPLUS_EXPORT PostfixAST: public AST
 {
 public:
     virtual PostfixAST *asPostfix() { return this; }
+
+    virtual PostfixAST *clone(MemoryPool *pool) const = 0;
 };
 
 class CPLUSPLUS_EXPORT CoreDeclaratorAST: public AST
 {
 public:
     virtual CoreDeclaratorAST *asCoreDeclarator() { return this; }
+
+    virtual CoreDeclaratorAST *clone(MemoryPool *pool) const = 0;
 };
 
 class CPLUSPLUS_EXPORT PostfixDeclaratorAST: public AST
 {
 public:
     virtual PostfixDeclaratorAST *asPostfixDeclarator() { return this; }
+
+    virtual PostfixDeclaratorAST *clone(MemoryPool *pool) const = 0;
 };
 
 class CPLUSPLUS_EXPORT ObjCSelectorAST: public AST
@@ -355,6 +376,8 @@ public: // annotation
 
 public:
     virtual ObjCSelectorAST *asObjCSelector() { return this; }
+
+    virtual ObjCSelectorAST *clone(MemoryPool *pool) const = 0;
 };
 
 class CPLUSPLUS_EXPORT SimpleSpecifierAST: public SpecifierAST
@@ -367,6 +390,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual SimpleSpecifierAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -389,6 +414,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual AttributeSpecifierAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -409,6 +436,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual AttributeAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -427,6 +456,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual TypeofSpecifierAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -450,6 +481,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual DeclaratorAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -472,6 +505,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual SimpleDeclarationAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -487,6 +522,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual EmptyDeclarationAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -505,6 +542,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual AccessDeclarationAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -547,6 +586,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual QPropertyDeclarationAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -566,6 +607,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual QEnumDeclarationAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -587,6 +630,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual QFlagsDeclarationAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -607,6 +652,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual QDeclareFlagsDeclarationAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -631,6 +678,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual AsmDefinitionAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -652,6 +701,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual BaseSpecifierAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -670,6 +721,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual CompoundLiteralAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -690,6 +743,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual QtMethodAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -709,6 +764,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual QtMemberDeclarationAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -726,6 +783,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual BinaryExpressionAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -745,6 +804,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual CastExpressionAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -772,6 +833,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual ClassSpecifierAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -790,6 +853,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual CaseStatementAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -812,6 +877,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual CompoundStatementAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -828,6 +895,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual ConditionAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -848,6 +917,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual ConditionalExpressionAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -871,6 +942,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual CppCastExpressionAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -888,6 +961,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual CtorInitializerAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -904,6 +979,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual DeclarationStatementAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -919,6 +996,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual DeclaratorIdAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -937,6 +1016,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual NestedDeclaratorAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -962,6 +1043,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual FunctionDeclaratorAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -979,6 +1062,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual ArrayDeclaratorAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -999,6 +1084,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual DeleteExpressionAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -1022,6 +1109,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual DoStatementAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -1037,6 +1126,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual NamedTypeSpecifierAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -1054,6 +1145,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual ElaboratedTypeSpecifierAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -1075,6 +1168,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual EnumSpecifierAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -1093,6 +1188,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual EnumeratorAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -1110,6 +1207,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual ExceptionDeclarationAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -1131,6 +1230,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual ExceptionSpecificationAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -1148,6 +1249,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual ExpressionOrDeclarationStatementAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -1164,6 +1267,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual ExpressionStatementAST *clone(MemoryPool *pool) const;;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -1187,6 +1292,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual FunctionDefinitionAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -1217,6 +1324,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual ForeachStatementAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -1243,6 +1352,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual ForStatementAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -1268,6 +1379,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual IfStatementAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -1285,6 +1398,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual ArrayInitializerAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -1304,6 +1419,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual LabeledStatementAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -1320,6 +1437,8 @@ public:
     virtual LinkageBodyAST *asLinkageBody() { return this; }
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual LinkageBodyAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -1338,6 +1457,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual LinkageSpecificationAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -1358,6 +1479,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual MemInitializerAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -1374,6 +1497,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual NestedNameSpecifierAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -1393,6 +1518,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual QualifiedNameAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -1409,6 +1536,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual OperatorFunctionIdAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -1428,6 +1557,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual ConversionFunctionIdAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -1443,6 +1574,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual SimpleNameAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -1460,6 +1593,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual DestructorNameAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -1479,6 +1614,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual TemplateIdAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -1502,6 +1639,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual NamespaceAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -1522,6 +1661,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual NamespaceAliasDefinitionAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -1540,6 +1681,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual NewPlacementAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -1557,6 +1700,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual NewArrayDeclaratorAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -1584,6 +1729,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual NewExpressionAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -1601,6 +1748,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual NewInitializerAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -1620,6 +1769,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual NewTypeIdAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -1637,6 +1788,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual OperatorAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -1660,6 +1813,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual ParameterDeclarationAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -1676,6 +1831,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual ParameterDeclarationClauseAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -1695,6 +1852,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual CallAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -1713,6 +1872,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual ArrayAccessAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -1728,6 +1889,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual PostIncrDecrAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -1747,6 +1910,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual MemberAccessAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -1765,6 +1930,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual TypeidExpressionAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -1786,6 +1953,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual TypenameCallExpressionAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -1805,6 +1974,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual TypeConstructorCallAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -1821,6 +1992,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual PostfixExpressionAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -1841,6 +2014,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual PointerToMemberAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -1858,6 +2033,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual PointerAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -1873,6 +2050,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual ReferenceAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -1891,6 +2070,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual BreakStatementAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -1907,6 +2088,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual ContinueStatementAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -1926,6 +2109,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual GotoStatementAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -1943,6 +2128,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual ReturnStatementAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -1963,6 +2150,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual SizeofExpressionAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -1978,6 +2167,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual NumericLiteralAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -1995,6 +2186,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual BoolLiteralAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -2010,6 +2203,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual ThisExpressionAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -2029,6 +2224,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual NestedExpressionAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -2045,6 +2242,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual StringLiteralAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -2069,6 +2268,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual SwitchStatementAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -2090,6 +2291,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual TemplateDeclarationAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -2107,6 +2310,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual ThrowExpressionAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -2122,6 +2327,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual TranslationUnitAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -2140,6 +2347,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual TryBlockStatementAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -2164,6 +2373,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual CatchClauseAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -2180,6 +2391,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual TypeIdAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -2202,6 +2415,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual TypenameTypeParameterAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -2229,6 +2444,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual TemplateTypeParameterAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -2245,6 +2462,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual UnaryExpressionAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -2268,6 +2487,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual UsingAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -2289,6 +2510,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual UsingDirectiveAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -2313,6 +2536,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual WhileStatementAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -2334,6 +2559,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual ObjCClassForwardDeclarationAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -2366,6 +2593,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual ObjCClassDeclarationAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -2387,6 +2616,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual ObjCProtocolForwardDeclarationAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -2412,6 +2643,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual ObjCProtocolDeclarationAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -2430,6 +2663,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual ObjCProtocolRefsAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -2445,6 +2680,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual ObjCMessageArgumentAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -2466,6 +2703,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual ObjCMessageExpressionAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -2485,6 +2724,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual ObjCProtocolExpressionAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -2494,7 +2735,7 @@ class CPLUSPLUS_EXPORT ObjCTypeNameAST: public AST
 {
 public:
     unsigned lparen_token;
-    unsigned type_qualifier;
+    unsigned type_qualifier_token;
     ExpressionAST *type_id;
     unsigned rparen_token;
 
@@ -2503,6 +2744,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual ObjCTypeNameAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -2521,6 +2764,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual ObjCEncodeExpressionAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -2536,6 +2781,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual ObjCSelectorWithoutArgumentsAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -2554,6 +2801,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual ObjCSelectorArgumentAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -2569,6 +2818,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual ObjCSelectorWithArgumentsAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -2589,6 +2840,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual ObjCSelectorExpressionAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -2607,6 +2860,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual ObjCInstanceVariablesDeclarationAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -2622,6 +2877,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual ObjCVisibilityDeclarationAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -2640,6 +2897,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual ObjCPropertyAttributeAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -2665,6 +2924,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual ObjCPropertyDeclarationAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -2685,6 +2946,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual ObjCMessageArgumentDeclarationAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -2710,6 +2973,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual ObjCMethodPrototypeAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -2728,6 +2993,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual ObjCMethodDeclarationAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -2736,15 +3003,17 @@ protected:
 class CPLUSPLUS_EXPORT ObjCSynthesizedPropertyAST: public AST
 {
 public:
-    unsigned property_identifier;
+    unsigned property_identifier_token;
     unsigned equals_token;
-    unsigned property_alias_identifier;
+    unsigned alias_identifier_token;
 
 public:
     virtual ObjCSynthesizedPropertyAST *asObjCSynthesizedProperty() { return this; }
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual ObjCSynthesizedPropertyAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -2764,6 +3033,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual ObjCSynthesizedPropertiesDeclarationAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -2781,6 +3052,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual ObjCDynamicPropertiesDeclarationAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);
@@ -2813,6 +3086,8 @@ public:
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
 
+    virtual ObjCFastEnumerationAST *clone(MemoryPool *pool) const;
+
 protected:
     virtual void accept0(ASTVisitor *visitor);
     virtual bool match0(AST *, ASTMatcher *);
@@ -2832,6 +3107,8 @@ public:
 
     virtual unsigned firstToken() const;
     virtual unsigned lastToken() const;
+
+    virtual ObjCSynchronizedStatementAST *clone(MemoryPool *pool) const;
 
 protected:
     virtual void accept0(ASTVisitor *visitor);

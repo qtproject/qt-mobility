@@ -61,6 +61,7 @@
 #endif
 
 #include <utils/qtcassert.h>
+
 #include <TranslationUnit.h>
 #include <Semantic.h>
 #include <AST.h>
@@ -73,7 +74,9 @@
 #include <ASTVisitor.h>
 #include <Lexer.h>
 #include <Token.h>
+
 #include <cplusplus/LookupContext.h>
+
 #include <QtCore/QCoreApplication>
 #include <QtCore/QDebug>
 #include <QtCore/QMutexLocker>
@@ -845,7 +848,7 @@ QFuture<void> CppModelManager::refreshSourceFiles(const QStringList &sourceFiles
 
             m_synchronizer.clearFutures();
 
-            foreach (QFuture<void> future, futures) {
+            foreach (const QFuture<void> &future, futures) {
                 if (! (future.isFinished() || future.isCanceled()))
                     m_synchronizer.addFuture(future);
             }

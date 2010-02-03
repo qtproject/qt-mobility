@@ -211,6 +211,7 @@ public:
 } // end of anonymous namespace
 
 #ifdef ICHECK_BUILD
+//Symbian compiler has some difficulties to understand the templates.
 static void delete_array_entries(std::vector<Symbol *> vt)
 {
     std::vector<Symbol *>::iterator it;
