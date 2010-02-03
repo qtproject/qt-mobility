@@ -68,7 +68,8 @@ contains(mobility_modules,systeminfo) {
 }
 
 contains(mobility_modules,contacts) {
-    SUBDIRS +=  qcontact \                      #Contacts
+    #Contacts
+    SUBDIRS +=  qcontact \
             qcontactactions \
             qcontactasync \
             qcontactdetail \
@@ -79,6 +80,19 @@ contains(mobility_modules,contacts) {
             qcontactmanagerplugins \
             qcontactmanagerfiltering \
             qcontactrelationship
+
+    SUBDIRS +=  qcontact_deprecated \
+            qcontactactions_deprecated \
+            qcontactasync_deprecated \
+            qcontactdetail_deprecated \
+            qcontactdetaildefinition_deprecated \
+            qcontactdetails_deprecated \
+            qcontactfilter_deprecated \
+            qcontactmanager_deprecated \
+            qcontactmanagerplugins_deprecated \
+            qcontactmanagerfiltering_deprecated \
+            qcontactrelationship_deprecated
+
 }
 
 contains(mobility_modules,versit) {
