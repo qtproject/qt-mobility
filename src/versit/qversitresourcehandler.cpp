@@ -55,23 +55,61 @@ QTM_USE_NAMESPACE
  *
  * \sa QVersitContactImporter
  * \sa QVersitContactExporter
- *
+ */
+
+/*!
+ * \fn virtual QVersitResourceHandler::~QVersitResourceHandler()
+ * Frees any memory used by the handler.
+ */
+
+/*!
  * \fn virtual bool QVersitResourceHandler::saveResource(const QByteArray& contents, const QVersitProperty& property, QString* location) = 0;
  * Saves the binary data \a contents to a file on a persistent storage medium.
  *
  * \a property holds the QVersitProperty which is the context in which the binary is coming from.
  * The QVersitResourceHandler can use this, for example, to determine file extension it should choose.
- * \a *filename is filled with the contents of the file.
+ * *\a location is filled with the contents of the file.
  * Returns true on success, false on failure.
- *
- *
- * \fn virtual bool QVersitResourceHandler::loadResource(const QString& location, QByteArray* contents, QString* mimeType) = 0;
- * Loads a file from \a location.
- *
- * \a *contents is filled with the contents of the file and \a *mimeType is set to the MIME
- * type that it is determined to be.
- * Returns true on success, false on failure.
+ */
+
+/*!
+ \fn virtual bool QVersitResourceHandler::loadResource(const QString& location, QByteArray* contents, QString* mimeType) = 0
+ Loads a file from \a location.
+ *\a contents is filled with the contents of the file and *\a mimeType is set to the MIME
+ type that it is determined to be.
+ Returns true on success, false on failure.
 */
+
+/*!
+ * \class QVersitDefaultResourceHandler
+ *
+ * \brief The QVersitDefaultResourceHandler class provides a default implementation of a Versit
+ * resource handler.
+ *
+ * \ingroup versit
+ *
+ * \sa QVersitContactImporter, QVersitContactExporter
+ */
+
+QVersitDefaultResourceHandler::QVersitDefaultResourceHandler()
+    : d(new QVersitDefaultResourceHandlerPrivate)
+{
+    // File extension mappings
+    int fileExtensionCount = sizeof(versitFileExtensionMappings)/sizeof(VersitMapping);
+    for (int i = 0; i < fileExtensionCount; i++) {
+        d->mFileExtensionMapping.insert(
+            QLatin1String(versitFileExtensionMappings[i].contactString),
+            QLatin1String(versitFileExtensionMappings[i].versitString));
+    }
+}
+
+/*!
+ * Frees any memory used by the resource handler.
+ */
+QVersitDefaultResourceHandler::~QVersitDefaultResourceHandler()
+{
+    delete d;
+}
 
 /*!
  * Default resource loader.
@@ -96,8 +134,8 @@ bool QVersitDefaultResourceHandler::loadResource(const QString& location,
 
 /*!
  * Default resource saver.
- * Does nothing and returns false.  By default, resources aren't persisted because we don't know
- * when it is safe to remove them.
+ * Does nothing and returns false, ignoring \a contents, \a property and \a location.  By default,
+ * resources aren't persisted because we don't know when it is safe to remove them.
  */
 bool QVersitDefaultResourceHandler::saveResource(const QByteArray& contents,
                                                  const QVersitProperty& property,

@@ -61,6 +61,11 @@ QTM_USE_NAMESPACE
  */
 
 /*!
+ * \fn virtual QVersitContactExporterDetailHandler::~QVersitContactExporterDetailHandler()
+ * Frees any memory in use by this handler.
+ */
+
+/*!
  * \fn virtual bool QVersitContactExporterDetailHandler::preProcessDetail(const QContact& contact, const QContactDetail& detail, QVersitDocument* document) = 0;
  * Process \a detail and update \a document with the corresponding QVersitProperty(s).
  * \a contact provides the context within which the detail was found.
@@ -75,12 +80,13 @@ QTM_USE_NAMESPACE
  * \fn virtual bool QVersitContactExporterDetailHandler::postProcessDetail(const QContact& contact, const QContactDetail& detail, bool alreadyProcessed, QVersitDocument* document) = 0;
  * Process \a detail and update \a document with the corresponding QVersitProperty(s).
  * \a contact provides the context within which the detail was found.
+ * \a alreadyProcessed is true if the detail has already been processed either by
+ * \l preProcessDetail() or by QVersitContactExporter itself.
  *
  * Returns true if the detail has been handled, false otherwise.
  *
- * This function is called on every \l QContactDetail encountered during an export which is not
- * handled by either \l preProcessDetail() or by QVersitContactExporter.  This can be used to
- * implement support for \l QContactDetail(s) not supported by QVersitContactExporter.
+ * This function is called on every \l QContactDetail encountered during an export.  This can be
+ * used to implement support for QContactDetails not supported by QVersitContactExporter.
  */
 
 /*!
@@ -146,7 +152,7 @@ QTM_USE_NAMESPACE
  *
  * \endcode
  *
- * \sa QVersitDocument, QVersitProperty, QVersitContactExporterDetailHandler, QVersitResourceLoader
+ * \sa QVersitDocument, QVersitProperty, QVersitContactExporterDetailHandler, QVersitResourceHandler
  */
 
 /*!

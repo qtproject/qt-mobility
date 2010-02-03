@@ -83,6 +83,30 @@ QTM_USE_NAMESPACE
   \sa QVersitDocument, QVersitProperty
  */
 
+
+/*!
+ * \enum QVersitWriter::Error
+ * This enum specifies an error that occurred during the most recent operation:
+ * \value NoError The most recent operation was successful
+ * \value UnspecifiedError The most recent operation failed for an undocumented reason
+ * \value IOError The most recent operation failed because of a problem with the device
+ * \value OutOfMemoryError The most recent operation failed due to running out of memory
+ * \value NotReadyError The most recent operation failed because there is an operation in progress
+ * \omitvalue ParseError
+ * \omitvalue InvalidCharsetError
+ * \omitvalue BadDeviceError
+ */
+// XXX Remove ParseError, InvalidCharsetError and BadDeviceError
+
+/*!
+ * \enum QVersitWriter::State
+ * Enumerates the various states that a reader may be in at any given time
+ * \value InactiveState Write operation not yet started
+ * \value ActiveState Write operation started, not yet finished
+ * \value CanceledState Write operation is finished due to cancelation
+ * \value FinishedState Write operation successfully completed
+ */
+
 /*!
  * \fn QVersitWriter::stateChanged(QVersitWriter::State state)
  * The signal is emitted by the writer when its state has changed (eg. when it has finished

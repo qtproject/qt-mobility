@@ -116,11 +116,11 @@ QByteArray outputVCard(output.readAll());
 \section1 Mapping the vCard constants
 
 vCard properties are mapped to QContactDetails as follows:
-\snippet ../../src/versit/qversitdefs.h Property name mappings
+\snippet ../../src/versit/qversitdefs_p.h Property name mappings
 
 vCard type parameters are mapped to subtypes in QContactDetails as follows:
-\snippet ../../src/versit/qversitdefs.h Property type parameter mappings
+\snippet ../../src/versit/qversitdefs_p.h Property type parameter mappings
 
 File extensions in vCards are mapped to the file system file extensions as follows:
-\snippet ../../src/versit/qversitdefs.h File extension mappings
+\snippet ../../src/versit/qversitdefs_p.h File extension mappings
 */

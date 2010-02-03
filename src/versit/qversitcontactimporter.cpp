@@ -59,13 +59,18 @@ QTM_USE_NAMESPACE
  */
 
 /*!
- * \fn virtual bool preProcessProperty(const QVersitDocument& document, const QVersitProperty& property, int contactIndex, QContact* contact) = 0;
+ * \fn QVersitContactImporterPropertyHandler::~QVersitContactImporterPropertyHandler()
+ * Frees any memory in use by this handler.
+ */
+
+/*!
+ * \fn virtual bool QVersitContactImporterPropertyHandler::preProcessProperty(const QVersitDocument& document, const QVersitProperty& property, int contactIndex, QContact* contact) = 0;
  * Process \a property and update \a contact with the corresponding QContactDetail(s).
  * \a document provides the context within which the property was found.
  * \a contactIndex specifies the position that \a contact will take in the list returned by
  * \l QVersitContactImporter::importContacts().
  *
- * Returns true if the property has been handled and requires no furthur processing, false
+ * Returns true if the property has been handled and requires no further processing, false
  * otherwise.
  *
  * This function is called on every QVersitProperty encountered during an import.  Supply this
@@ -73,18 +78,18 @@ QTM_USE_NAMESPACE
  */
 
 /*!
- * \fn virtual bool postProcessProperty(const QVersitDocument& document, const QVersitProperty& property, bool alreadyProcessed, int contactIndex, QContact* contact) = 0;
+ * \fn virtual bool QVersitContactImporterPropertyHandler::postProcessProperty(const QVersitDocument& document, const QVersitProperty& property, bool alreadyProcessed, int contactIndex, QContact* contact) = 0;
  * Process \a property and update \a contact with the corresponding QContactDetail(s).
  * \a document provides the context within which the property was found.
  * \a contactIndex specifies the position that \a contact will take in the list returned by
  * \l QVersitContactImporter::importContacts().
+ * \a alreadyProcessed is true if the detail has already been processed either by
+ * \l preProcessProperty() or by QVersitContactImporter itself.
  *
  * Returns true if the property has been handled, false otherwise.
  *
- * This function is called on every QVersitProperty encountered during an import which is not
- * handled by either \l preProcessProperty() or by QVersitContactImporter.  Supply this
- * function and return true to implement support for QVersitProperty(s) not supported by
- * QVersitContactImporter.
+ * This function is called on every QVersitProperty encountered during an import.  This can be
+ * used to implement support for QVersitProperties not supported by QVersitContactImporter.
  */
 
 /*!

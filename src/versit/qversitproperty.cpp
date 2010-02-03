@@ -96,7 +96,7 @@ QVersitProperty& QVersitProperty::operator=(const QVersitProperty& other)
     return *this;    
 }
 
-/*! Returns true if this is equal to other; false otherwise. */
+/*! Returns true if this is equal to \a other; false otherwise. */
 bool QVersitProperty::operator==(const QVersitProperty& other) const
 {
     return d->mGroups == other.d->mGroups &&
@@ -105,7 +105,7 @@ bool QVersitProperty::operator==(const QVersitProperty& other) const
             d->mValue == other.d->mValue;
 }
 
-/*! Returns true if this is not equal to other; false otherwise. */
+/*! Returns true if this is not equal to \a other; false otherwise. */
 bool QVersitProperty::operator!=(const QVersitProperty& other) const
 {
     return !(*this == other);
@@ -179,7 +179,7 @@ void QVersitProperty::insertParameter(const QString& name, const QString& value)
 /*!
  * Removes a parameter with \a name and \a value.
  *
- * \sa removeParameters();
+ * \sa removeParameters()
  */
 void QVersitProperty::removeParameter(const QString& name, const QString& value)
 {
@@ -225,6 +225,13 @@ QVariant QVersitProperty::variantValue() const
 {
     return d->mValue;
 }
+
+/*!
+ * \fn T QVersitProperty::value() const
+ * \overload
+ * Returns the value of the property as a \tt T.  This function is actually const but because of a
+ * problem with qdoc, it doesn't appear to be in the generated documentation.
+ */
 
 /*!
  * Returns the value of the property as a string if possible, otherwise return an empty string.
