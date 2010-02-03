@@ -48,6 +48,12 @@ QFeedbackController::QFeedbackController(QObject *parent) :
 {
 }
 
+bool QFeedbackController::performEffect(const QFeedbackEffect&) const
+{
+    return false;
+}
+
+
 #include "moc_qfeedbackcontroller.cpp"
 
 QTM_END_NAMESPACE

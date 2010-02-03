@@ -7,6 +7,7 @@ TEMPLATE = lib
 TARGET = QtFeedback
 DEFINES += QT_BUILD_FEEDBACK_LIB QT_MAKEDLL QT_ASCII_CAST_WARNINGS
 include(../../common.pri)
+INCLUDEPATH += .
 
 # Input
 PUBLIC_HEADERS += \

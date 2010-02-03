@@ -47,4 +47,14 @@ QFeedbackEffect::QFeedbackEffect()
 {
 }
 
+QFeedbackEffect::~QFeedbackEffect()
+{
+}
+
+QFeedbackEffect::EffectType QFeedbackEffect::effectType() const
+{
+    return InvalidEffect;
+}
+
+
 QTM_END_NAMESPACE
