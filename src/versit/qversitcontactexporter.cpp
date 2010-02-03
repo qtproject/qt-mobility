@@ -186,7 +186,6 @@ QVersitResourceHandler* QVersitContactExporter::resourceHandler() const
 QVersitDocument QVersitContactExporter::exportContact(const QContact& contact,
                                                       QVersitDocument::VersitType versitType)
 {
-    qWarning("QVersitContactExporter::exportContact(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  exportContacts() should be used instead.");
     QList<QContact> list;
     list.append(contact);
     return exportContacts(list, versitType).first();
@@ -195,6 +194,5 @@ QVersitDocument QVersitContactExporter::exportContact(const QContact& contact,
 /*! \internal */
 QList<QContactDetail> QVersitContactExporter::unknownContactDetails()
 {
-    qWarning("QVersitContactExporter::unknownContactDetails(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  A QVersitContactExporterDetailHandler should be used to discover and handle unknown details.");
     return QList<QContactDetail>();
 }

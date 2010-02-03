@@ -218,7 +218,6 @@ QVersitWriter::Error QVersitWriter::error() const
 /*! \internal */
 void QVersitWriter::setVersitDocument(const QVersitDocument& versitDocument)
 {
-    qWarning("QVersitWriter::setVersitDocument(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  The document should be passed directly into startWriting().");
     QList<QVersitDocument> documents;
     documents.append(versitDocument);
     d->mInput = documents;
@@ -227,21 +226,18 @@ void QVersitWriter::setVersitDocument(const QVersitDocument& versitDocument)
 /*! \internal */
 QVersitDocument QVersitWriter::versitDocument() const
 {
-    qWarning("QVersitWriter::versitDocument(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!");
     return QVersitDocument();
 }
 
 /*! \internal */
 bool QVersitWriter::startWriting()
 {
-    qWarning("QVersitWriter::startWriting(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  The versit document should be specified as a parameter.");
     return startWriting(d->mInput);
 }
 
 /*! \internal */
 bool QVersitWriter::writeAll()
 {
-    qWarning("QVersitWriter::writeAll(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  startWriting() and waitForFinished() should be used instead.");
     startWriting(d->mInput);
     return waitForFinished();
 }

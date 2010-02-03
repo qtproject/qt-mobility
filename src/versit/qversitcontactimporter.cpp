@@ -181,35 +181,30 @@ QVersitResourceHandler* QVersitContactImporter::resourceHandler() const
 /*! \internal */
 void QVersitContactImporter::setImagePath(const QString& path)
 {
-    qWarning("QVersitContactImporter::setImagePath(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  A QVersitResourceHandler should be used to handle images.");
     Q_UNUSED(path)
 }
 
 /*! \internal */
 QString QVersitContactImporter::imagePath() const
 {
-    qWarning("QVersitContactImporter::imagePath(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  A QVersitResourceHandler should be used to handle images.");
     return QString();
 }
 
 /*! \internal */
 void QVersitContactImporter::setAudioClipPath(const QString& path)
 {
-    qWarning("QVersitContactImporter::setAudioClipPath(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  A QVersitResourceHandler should be used to handle audio.");
     Q_UNUSED(path)
 }
 
 /*! \internal */
 QString QVersitContactImporter::audioClipPath() const
 {
-    qWarning("QVersitContactImporter::audioClipPath(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  A QVersitResourceHandler should be used to handle audio.");
     return QString();
 }
 
 /*! \internal */
 QContact QVersitContactImporter::importContact(const QVersitDocument& versitDocument)
 {
-    qWarning("QVersitContactImporter::importContact(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  importContacts() should be used instead.");
     QList<QVersitDocument> list;
     list.append(versitDocument);
     return importContacts(list).first();
@@ -218,6 +213,5 @@ QContact QVersitContactImporter::importContact(const QVersitDocument& versitDocu
 /*! \internal */
 QList<QVersitProperty> QVersitContactImporter::unknownVersitProperties()
 {
-    qWarning("QVersitContactImporter::unknownVersitProperties(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  A QVersitContactImporterPropertyHandler should be used to discover and handle unknown details.");
     return QList<QVersitProperty>();
 }
