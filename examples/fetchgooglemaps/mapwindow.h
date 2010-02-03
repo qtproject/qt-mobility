@@ -51,7 +51,9 @@ class QLabel;
 QTM_BEGIN_NAMESPACE
 class QGeoPositionInfo;
 class QGeoPositionInfoSource;
+#ifndef Q_WS_MAEMO_5
 class QNetworkSession;
+#endif
 QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
@@ -77,7 +79,9 @@ private:
     QLabel *headingAndSpeedLabel;
     QLabel *dateTimeLabel;
     bool loading;
+#ifndef Q_WS_MAEMO_5
     QNetworkSession *session;
+#endif
     bool usingLogFile;
     QGeoPositionInfoSource *location;
     bool waitingForFix;

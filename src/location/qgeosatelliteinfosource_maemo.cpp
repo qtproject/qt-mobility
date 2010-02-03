@@ -50,6 +50,7 @@ QGeoSatelliteInfoSourceMaemo::QGeoSatelliteInfoSourceMaemo(QObject *parent) : QG
 
 int QGeoSatelliteInfoSourceMaemo::init()
 {
+#ifndef Q_WS_MAEMO_5
     int status;
 
     dbusComm = new DBusComm();
@@ -59,6 +60,8 @@ int QGeoSatelliteInfoSourceMaemo::init()
                      this, SLOT(npeMessages(const QByteArray &)));
 
     return status;
+#endif
+    return 0;
 }
 
 // This method receives messages from DBus.

@@ -45,8 +45,10 @@
 #include <qgeopositioninfosource.h>
 #include <qnmeapositioninfosource.h>
 #include <qgeosatelliteinfosource.h>
+#ifndef Q_WS_MAEMO_5
 #include <qnetworksession.h>
 #include <qnetworkconfigmanager.h>
+#endif
 
 #include "satellitedialog.h"
 
@@ -78,7 +80,11 @@ MapWindow::MapWindow(QWidget *parent, Qt::WFlags flags)
         usingLogFile = true;
     }
 
+#ifdef Q_WS_MAEMO_5
+    location->startUpdates();
+#else
     location->setUpdateInterval(5000);
+#endif
     connect(location, SIGNAL(positionUpdated(QGeoPositionInfo)),
             this, SLOT(positionUpdated(QGeoPositionInfo)));
 
@@ -98,13 +104,17 @@ MapWindow::MapWindow(QWidget *parent, Qt::WFlags flags)
 #endif
     setWindowTitle(tr("Google Maps Demo"));
 
+#ifndef Q_WS_MAEMO_5
     QTimer::singleShot(0, this, SLOT(delayedInit()));
+#endif
 }
 
 MapWindow::~MapWindow()
 {
     location->stopUpdates();
+#ifndef Q_WS_MAEMO_5
     session->close();
+#endif
 }
 
 void MapWindow::delayedInit()
@@ -117,6 +127,7 @@ void MapWindow::delayedInit()
         location->stopUpdates();
     }
 
+#ifndef Q_WS_MAEMO_5
     // Set Internet Access Point
     QNetworkConfigurationManager manager;
     const bool canStartIAP = (manager.capabilities()
@@ -132,7 +143,7 @@ void MapWindow::delayedInit()
     session = new QNetworkSession(cfg, this);
     session->open();
     session->waitForOpened(-1);
-
+#endif
     connect(location, SIGNAL(updateTimeout()), this, SLOT(waitForFix()));
 
     location->startUpdates();
