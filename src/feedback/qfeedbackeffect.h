@@ -45,7 +45,35 @@
 #include <QPoint>
 #include <qmobilityglobal.h>
 
+class QWidget;
+
 QTM_BEGIN_NAMESPACE
+
+enum ContinuousEffect {
+    ContinuousNone, ContinuousSmooth, ContinuousSlider, ContinuousPopup,
+    ContinuousInput, ContinuousPinch, NumberOfContinuousFeedbacks, NoContinuousOverride,
+    ContinuousUser = 1000, ContinuousMaxUser = 65535
+};
+
+enum InstantEffect {
+  InstantNone, InstantBasic, InstantSensitive, InstantBasicButton,
+  InstantSensitiveButton, InstantBasicKeypad, InstantSensitiveKeypad, InstantBasicSlider,
+  InstantSensitiveSlider, InstantBasicItem, InstantSensitiveItem, InstantItemScroll,
+  InstantItemPick, InstantItemDrop, InstantItemMoveOver, InstantBounceEffect,
+  InstantCheckbox, InstantMultipleCheckbox, InstantEditor, InstantTextSelection,
+  InstantBlankSelection, InstantLineSelection, InstantEmptyLineSelection, InstantPopUp,
+  InstantPopupOpen, InstantPopupClose, InstantFlick, InstantStopFlick,
+  InstantMultitouchActivate, InstantRotateStep, InstantNumberOfInstantFeedbacks,
+  InstantNoOverride, InstantUser = 65535, InstantMaxUser = 262140
+};
+
+enum TacticonEffect {
+  TacticonNone, TacticonPositive, TacticonNeutral, TacticonNegative
+};
+
+enum EffectType {
+    ContinuousFeedback, InstantFeedback, TacticonFeedback
+};
 
 class Q_FEEDBACK_EXPORT QFeedbackEffect
 {
@@ -53,82 +81,80 @@ public:
     QFeedbackEffect();
     virtual ~QFeedbackEffect();
 
-    enum EffectType {
-        InvalidEffect,
-        // Physical effects
-        SimpleVibrateEffect,
-        PulsedVibrateEffect,
 
-        // semi logical
-        LocalizedFeedbackEffect,
+    virtual EffectType effectType() const = 0;
 
-        // Logical
-        LogicalFeedbackEffect,
-    };
+    void setOwningWindow(QWidget *w);
+    QWidget *owningWindow() const;
 
-    EffectType effectType() const; // or perhaps pure virtual
+private:
+    QWidget *m_owner;
 };
 
 //
-// Bread and butter (legacy vibrate)
+// feedback used when the program need to decide dynamically the duration
+// and intensity
 //
-class Q_FEEDBACK_EXPORT QSimpleVibrateEffect : public QFeedbackEffect
+class Q_FEEDBACK_EXPORT QContinuousEffect : public QFeedbackEffect
 {
 public:
-    void setDuration(int msecs);
-    int duration() const;
+    QContinuousEffect();
+    ~QContinuousEffect();
 
-    void setIntensity(int intensity);
-    int intensity();
+    EffectType effectType() const;
+
+    void setTimeout(int msecs);
+    int timeout() const;
+
+    void setIntensity(qreal intensity);
+    qreal intensity() const;
+
+    void setContinuousEffect(ContinuousEffect effect);
+    ContinuousEffect continuousEffect() const;
+
+private:
+    int m_timeout;
+    qreal m_intensity;
+    ContinuousEffect m_effect;
 };
 
 //
-// Convenience class, really
+// instantaneous feedback. You can also register it for a rectangle on a widget/item
+// TODO: find a better name
 //
-class Q_FEEDBACK_EXPORT QPulsedVibrateEffect : public QFeedbackEffect
+class Q_FEEDBACK_EXPORT QInstantEffect : public QFeedbackEffect
 {
 public:
-    void setOnDuration(int msecs);
-    int onDuration() const;
+    QInstantEffect();
+    ~QInstantEffect();
 
-    void setOffDuration(int msecs);
-    int offDuration() const;
+    EffectType effectType() const;
 
-    void setIntensity(int intensity);
-    int intensity();
+    void setInstantEffect(InstantEffect effect);
+    InstantEffect instantEffect() const;
+private:
+    InstantEffect m_effect;
 };
 
+
 //
-// Class for describing some feedback in a specific location
-// e.g. 43,20 of the screen, or 1 inch to the right of the bottom left corner
+// tacticon effects...
 //
-// Doesn't really work as described below.
-//
-class Q_FEEDBACK_EXPORT QLocalizedFeedbackEffect : public QFeedbackEffect
+class Q_FEEDBACK_EXPORT QTacticonEffect : public QFeedbackEffect
 {
 public:
-    void setLocation(const QPoint& pos);
-    QPoint location() const;
+    QTacticonEffect();
+    ~QTacticonEffect();
 
-    enum LocationContext {
-        PrimaryScreenContext,
-        SecondaryScreenContext,
-        DeviceContext,
-        DisplayContext
-    };
+    EffectType effectType() const;
+
+    void setTacticonEffect(TacticonEffect effect);
+    TacticonEffect tacticonEffect() const;
+private:
+    TacticonEffect m_effect;
 };
 
-//
-// Themeable, stylable logical effect
-// Gets translated by the backend/controllers etc to
-// produce audio/tactile/visual feedback
-//
-class Q_FEEDBACK_EXPORT QLogicalFeedbackEffect : public QFeedbackEffect
-{
-public:
-    void setLogicalType(const QString& effectType); // e.g. "SensitiveButton", "PopupOpen"
-    QString logicalType() const;
-};
+
 
 QTM_END_NAMESPACE
 

@@ -51,9 +51,105 @@ QFeedbackEffect::~QFeedbackEffect()
 {
 }
 
-QFeedbackEffect::EffectType QFeedbackEffect::effectType() const
+void QFeedbackEffect::setOwningWindow(QWidget *w)
 {
-    return InvalidEffect;
+    m_owner = w;
+}
+
+QWidget *QFeedbackEffect::owningWindow() const
+{
+    return m_owner;
+}
+
+//the default timeout is 250 (like for the animations
+QContinuousEffect::QContinuousEffect() : m_timeout(250), m_intensity(1), m_effect(ContinuousNone)
+{
+}
+
+QContinuousEffect::~QContinuousEffect()
+{
+}
+
+EffectType QContinuousEffect::effectType() const
+{
+    return ContinuousFeedback;
+}
+
+void QContinuousEffect::setTimeout(int msecs)
+{
+    m_timeout = msecs;
+}
+
+int QContinuousEffect::timeout() const
+{
+    return m_timeout;
+}
+
+//the intensity. Value should be between 0 and 1
+void QContinuousEffect::setIntensity(qreal intensity)
+{
+    m_intensity = intensity;
+}
+
+qreal QContinuousEffect::intensity() const
+{
+    return m_intensity;
+}
+
+void QContinuousEffect::setContinuousEffect(ContinuousEffect effect)
+{
+    m_effect = effect;
+}
+
+ContinuousEffect QContinuousEffect::continuousEffect() const
+{
+    return m_effect;
+}
+
+QInstantEffect::QInstantEffect() : m_effect(InstantNone)
+{
+}
+
+QInstantEffect::~QInstantEffect()
+{
+}
+
+EffectType QInstantEffect::effectType() const
+{
+    return InstantFeedback;
+}
+
+void QInstantEffect::setInstantEffect(InstantEffect effect)
+{
+    m_effect = effect;
+}
+
+InstantEffect QInstantEffect::instantEffect() const
+{
+    return m_effect;
+}
+
+QTacticonEffect::QTacticonEffect() : m_effect(TacticonNone)
+{
+}
+
+QTacticonEffect::~QTacticonEffect()
+{
+}
+
+EffectType QTacticonEffect::effectType() const
+{
+    return TacticonFeedback;
+}
+
+void QTacticonEffect::setTacticonEffect(TacticonEffect effect)
+{
+    m_effect = effect;
+}
+
+TacticonEffect QTacticonEffect::tacticonEffect() const
+{
+    return m_effect;
 }
 
 

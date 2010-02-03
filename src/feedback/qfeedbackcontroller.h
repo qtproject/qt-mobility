@@ -64,7 +64,7 @@ public:
     static QList<QFeedbackController*> allControllers();
 
     // Metadata
-    QList<QFeedbackEffect::EffectType> supportedEffectTypes(); // might need emulatedTypes
+    QList<EffectType> supportedEffectTypes(); // might need emulatedTypes
 
     // Number of channels?? Or some way of describing links to another controller?
     // (e.g. gamepad with two independent eccentric mass engines.. although
