@@ -248,12 +248,12 @@ void tst_QContactManager::dumpContactDifferences(const QContact& ca, const QCont
     bDetails = b.details();
     foreach(QContactDetail d, aDetails) {
         if (d.definitionName() != QContactDisplayLabel::DefinitionName && d.definitionName() != QContactType::DefinitionName)
-            qDebug() << "A contact had extra detail:" << d.definitionName() << d.values();
+            qDebug() << "A contact had extra detail:" << d.definitionName() << d.variantValues();
     }
     // and same for B
     foreach(QContactDetail d, bDetails) {
         if (d.definitionName() != QContactDisplayLabel::DefinitionName && d.definitionName() != QContactType::DefinitionName)
-            qDebug() << "B contact had extra detail:" << d.definitionName() << d.values();
+            qDebug() << "B contact had extra detail:" << d.definitionName() << d.variantValues();
     }
 
     // now test specifically the display label and the type
@@ -314,7 +314,7 @@ void tst_QContactManager::dumpContact(const QContact& contact)
     QList<QContactDetail> details = contact.details();
     foreach(QContactDetail d, details) {
         qDebug() << "  " << d.definitionName() << ":";
-        qDebug() << "    Vals:" << d.values();
+        qDebug() << "    Vals:" << d.variantValues();
     }
 }
 

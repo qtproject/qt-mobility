@@ -2935,12 +2935,12 @@ void tst_QContactManagerFiltering::dumpContactDifferences(const QContact& ca, co
     bDetails = b.details();
     foreach(QContactDetail d, aDetails) {
         if (d.definitionName() != QContactDisplayLabel::DefinitionName)
-            qDebug() << "A contact had extra detail:" << d.definitionName() << d.values();
+            qDebug() << "A contact had extra detail:" << d.definitionName() << d.variantValues();
     }
     // and same for B
     foreach(QContactDetail d, bDetails) {
         if (d.definitionName() != QContactDisplayLabel::DefinitionName)
-            qDebug() << "B contact had extra detail:" << d.definitionName() << d.values();
+            qDebug() << "B contact had extra detail:" << d.definitionName() << d.variantValues();
     }
 
     QCOMPARE(b, a);
@@ -2993,7 +2993,7 @@ void tst_QContactManagerFiltering::dumpContact(const QContact& contact)
     QList<QContactDetail> details = contact.details();
     foreach(QContactDetail d, details) {
         qDebug() << "  " << d.definitionName() << ":";
-        qDebug() << "    Vals:" << d.values();
+        qDebug() << "    Vals:" << d.variantValues();
     }
 }
 

@@ -526,7 +526,7 @@ void tst_QContactDetail::values()
     QVERIFY(p.variantValues().contains("string"));
     QVERIFY(p.value("string") == QString("stringvalue"));
     p.setValue("string", QVariant());
-    QVERIFY(!p.values().contains("string"));
+    QVERIFY(!p.variantValues().contains("string"));
 
     /* Check adding a field whose value is an empty string */
     p.setValue("string", "");
