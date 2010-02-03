@@ -77,7 +77,7 @@ QString MaliciousAsyncManagerEngine::managerName() const
 
 bool MaliciousAsyncManagerEngine::startRequest(QContactAbstractRequest* req)
 {
-    QContactManager::Error errorResult = QContactManager::NoError;
+    //QContactManager::Error errorResult = QContactManager::NoError;
     QList<QContactManager::Error> errorsResult;
     QList<QContactLocalId> idResult;
     QList<QContact> contactResult;

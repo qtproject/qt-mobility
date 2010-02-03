@@ -733,7 +733,7 @@ void tst_QContactAsync::contactRemove()
     int originalCount = cm->contactIds().size();
     QContactDetailFilter dfil;
     dfil.setDetailDefinitionName(QContactUrl::DefinitionName, QContactUrl::FieldUrl);
-    crr.setFilter(dfil);
+    crr.setContactIds(cm->contactIds(dfil));
     crr.setManager(cm.data());
     QCOMPARE(crr.manager(), cm.data());
     QVERIFY(!crr.isActive());
@@ -742,7 +742,6 @@ void tst_QContactAsync::contactRemove()
     QVERIFY(!crr.waitForFinished());
     qRegisterMetaType<QContactRemoveRequest*>("QContactRemoveRequest*");
     QThreadSignalSpy spy(&crr, SIGNAL(stateChanged(QContactAbstractRequest::State)));
-    QVERIFY(crr.filter() == dfil);
     QVERIFY(!crr.cancel()); // not started
 
     QVERIFY(!cm->contactIds(dfil).isEmpty());
@@ -763,8 +762,8 @@ void tst_QContactAsync::contactRemove()
 
     // remove all contacts
     dfil.setDetailDefinitionName(QContactDisplayLabel::DefinitionName); // delete everything.
-    crr.setFilter(dfil);
-    QVERIFY(crr.filter() == dfil);
+    crr.setContactIds(cm->contactIds(dfil));
+    
     QVERIFY(!crr.cancel()); // not started
     QVERIFY(crr.start());
 
@@ -784,7 +783,7 @@ void tst_QContactAsync::contactRemove()
     nameDetail.setFirstName("Should not be removed");
     temp.saveDetail(&nameDetail);
     cm->saveContact(&temp);
-    crr.setFilter(dfil);
+    crr.setContactIds(cm->contactIds(dfil));
 
     int bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT; // attempt to cancel 40 times.  If it doesn't work due to threading, bail out.
     while (true) {
@@ -796,7 +795,7 @@ void tst_QContactAsync::contactRemove()
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
             crr.waitForFinished();
-            crr.setFilter(dfil);
+            crr.setContactIds(cm->contactIds(dfil));
             temp.setId(QContactId());
             if (!cm->saveContact(&temp)) {
                 QSKIP("Unable to save temporary contact for remove request cancellation test!", SkipSingle);
@@ -834,7 +833,7 @@ void tst_QContactAsync::contactRemove()
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
             crr.waitForFinished();
-            crr.setFilter(dfil);
+            crr.setContactIds(cm->contactIds(dfil));
             temp.setId(QContactId());
             cm->saveContact(&temp);
             bailoutCount -= 1;
@@ -1610,8 +1609,8 @@ void tst_QContactAsync::relationshipFetch()
             break;
         }
     }
-    rfr.setParticipant(bId, QContactRelationshipFilter::Second);
-    QVERIFY(rfr.participantRole() == QContactRelationshipFilter::Second);
+    rfr.setSecond(bId);
+    
     QVERIFY(!rfr.cancel()); // not started
     QVERIFY(rfr.start());
 
@@ -1639,8 +1638,8 @@ void tst_QContactAsync::relationshipFetch()
             break;
         }
     }
-    rfr.setParticipant(cId, QContactRelationshipFilter::First);
-    QVERIFY(rfr.participantRole() == QContactRelationshipFilter::First);
+    rfr.setSecond(cId);
+    
     QVERIFY(!rfr.cancel()); // not started
     QVERIFY(rfr.start());
 
@@ -1659,8 +1658,8 @@ void tst_QContactAsync::relationshipFetch()
 
     // specific participant retrieval #3 - either participant
     rfr.setFirst(QContactId());
-    rfr.setParticipant(aId, QContactRelationshipFilter::Either);
-    QVERIFY(rfr.participantRole() == QContactRelationshipFilter::Either);
+    rfr.setSecond(aId);
+    
     QVERIFY(!rfr.cancel()); // not started
     QVERIFY(rfr.start());
 
