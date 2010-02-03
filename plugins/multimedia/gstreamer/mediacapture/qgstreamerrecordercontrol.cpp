@@ -48,6 +48,7 @@ QGstreamerRecorderControl::QGstreamerRecorderControl(QGstreamerCaptureSession *s
     connect(m_session, SIGNAL(stateChanged(QGstreamerCaptureSession::State)), SLOT(updateState()));
     connect(m_session, SIGNAL(error(int,QString)), SIGNAL(error(int,QString)));
     connect(m_session, SIGNAL(durationChanged(qint64)), SIGNAL(durationChanged(qint64)));
+    m_hasPreviewState = m_session->captureMode() != QGstreamerCaptureSession::Audio;
 }
 
 QGstreamerRecorderControl::~QGstreamerRecorderControl()
@@ -99,7 +100,7 @@ qint64 QGstreamerRecorderControl::duration() const
 void QGstreamerRecorderControl::record()
 {
     m_session->dumpGraph("before-record");
-    if (m_session->state() != QGstreamerCaptureSession::StoppedState)
+    if (!m_hasPreviewState || m_session->state() != QGstreamerCaptureSession::StoppedState)
         m_session->setState(QGstreamerCaptureSession::RecordingState);
     else
         emit error(QMediaRecorder::ResourceError, tr("Service has not been started"));
@@ -110,7 +111,7 @@ void QGstreamerRecorderControl::record()
 void QGstreamerRecorderControl::pause()
 {
     m_session->dumpGraph("before-pause");
-    if (m_session->state() != QGstreamerCaptureSession::StoppedState)
+    if (!m_hasPreviewState || m_session->state() != QGstreamerCaptureSession::StoppedState)
         m_session->setState(QGstreamerCaptureSession::PausedState);
     else
         emit error(QMediaRecorder::ResourceError, tr("Service has not been started"));
@@ -118,8 +119,10 @@ void QGstreamerRecorderControl::pause()
 
 void QGstreamerRecorderControl::stop()
 {
-    if (m_session->state() != QGstreamerCaptureSession::StoppedState)
-        m_session->setState(QGstreamerCaptureSession::PreviewState);
-    else
-        emit error(QMediaRecorder::ResourceError, tr("Service has not been started"));
+    if (!m_hasPreviewState) {
+        m_session->setState(QGstreamerCaptureSession::StoppedState);
+    } else {
+        if (m_session->state() != QGstreamerCaptureSession::StoppedState)
+            m_session->setState(QGstreamerCaptureSession::PreviewState);
+    }
 }

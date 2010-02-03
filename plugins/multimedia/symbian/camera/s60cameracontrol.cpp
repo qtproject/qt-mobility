@@ -48,41 +48,66 @@
 
 
 S60CameraControl::S60CameraControl(QObject *parent)
-    :QCameraControl(parent)
+    : QCameraControl(parent), m_captureMode(QCamera::CaptureStillImage)
 {
 }
 
 S60CameraControl::S60CameraControl(QObject *session, QObject *parent)
-   :QCameraControl(parent)
+   : QCameraControl(parent), m_captureMode(QCamera::CaptureStillImage)
 {
     // use cast if we want to change session class later on..
     m_session = qobject_cast<S60CameraSession*>(session);
+    // connect signals to session
+    connect (m_session,SIGNAL(stateChanged(QCamera::State)),this,SIGNAL(stateChanged(QCamera::State)));
+    connect (m_session,SIGNAL(error(int,const QString &)),this,SIGNAL(error(int,const QString &)));
 }
 
 S60CameraControl::~S60CameraControl()
 {
 }
+
 void S60CameraControl::start()
 {
-    // start the default (primary camera)
-    // this is also called with enable preview.
-    if (m_session->startCamera()) {
-        //TODO fix error code
-        emit error(-1, QLatin1String("Unable to start camera or no cameras in devices"));
+    if (m_session) {
+        m_session->startCamera();
     }
-        
 }
 void S60CameraControl::stop()
 {
-    m_session->stopCamera();
+    if (m_session)
+        m_session->stopCamera();
 }
+
 QCamera::State S60CameraControl::state() const
 {
-    return (QCamera::State)m_session->state();
+    if (m_session) {
+       return (QCamera::State)m_session->state();
+    }
+    // we have no session, thus no camera is active.
+    return QCamera::StoppedState;
 }
+QCamera::CaptureMode S60CameraControl::captureMode() const
+{
+    return m_captureMode;
+}
+void S60CameraControl::setCaptureMode(QCamera::CaptureMode mode)
+{
+    //TODO: set capture mode for session
+    if (m_captureMode != mode) {
+        m_captureMode = mode;
+        emit captureModeChanged(mode);
+    }
+    
+}
+QCamera::CaptureModes S60CameraControl::supportedCaptureModes() const
+{
+    return QCamera::CaptureStillImage | QCamera::CaptureVideo;
+}
+
 
 void S60CameraControl::setVideoOutput(QObject *output)
 {
-    m_session->setVideoRenderer(output);
+    if (m_session)
+        m_session->setVideoRenderer(output);
 }
 

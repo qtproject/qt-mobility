@@ -40,6 +40,12 @@
 ****************************************************************************/
 
 #include "contactlistpage.h"
+#ifdef BUILD_VERSIT
+#include "qversitreader.h"
+#include "qversitcontactimporter.h"
+#include "qversitwriter.h"
+#include "qversitcontactexporter.h"
+#endif
 
 #include <QtGui>
 
@@ -49,38 +55,50 @@ ContactListPage::ContactListPage(QWidget *parent)
     m_manager = 0;
     m_currentFilter = QContactFilter();
 
-    m_backendsLabel = new QLabel("Store:", this);
-    m_backendsLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_backendsCombo = new QComboBox(this);
     QStringList availableManagers = QContactManager::availableManagers();
     m_backendsCombo->addItems(availableManagers);
     connect(m_backendsCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(backendSelected()));
-    m_filterActiveLabel = new QLabel("Filter: Inactive");
+    m_filterActiveLabel = new QLabel("Inactive");
     m_filterActiveLabel->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
 
     m_contactsList = new QListWidget(this);
 
-    m_addContactBtn = new QPushButton("Add", this);
+    QPushButton* m_addContactBtn = new QPushButton("Add", this);
     connect(m_addContactBtn, SIGNAL(clicked()), this, SLOT(addContactClicked()));
-    m_editBtn = new QPushButton("Edit", this);
+    QPushButton* m_editBtn = new QPushButton("Edit", this);
     connect(m_editBtn, SIGNAL(clicked()), this, SLOT(editClicked()));
-    m_findBtn = new QPushButton("Find", this);
-    connect(m_findBtn, SIGNAL(clicked()), this, SLOT(findClicked()));
+    QPushButton* m_deleteBtn = new QPushButton("Delete", this);
+    connect(m_deleteBtn, SIGNAL(clicked()), this, SLOT(deleteClicked()));
+    QPushButton* m_filterBtn = new QPushButton("Filter", this);
+    connect(m_filterBtn, SIGNAL(clicked()), this, SLOT(filterClicked()));
+    QPushButton* m_importBtn = new QPushButton("Import");
+    connect(m_importBtn, SIGNAL(clicked()), this, SLOT(importClicked()));
+    QPushButton* m_exportBtn = new QPushButton("Export");
+    connect(m_exportBtn, SIGNAL(clicked()), this, SLOT(exportClicked()));
 
-    QHBoxLayout *backendLayout = new QHBoxLayout;
-    backendLayout->addWidget(m_backendsLabel);
-    backendLayout->addWidget(m_backendsCombo);
-    backendLayout->addWidget(m_filterActiveLabel);
 
-    QHBoxLayout *btnLayout = new QHBoxLayout;
-    btnLayout->addWidget(m_addContactBtn);
-    btnLayout->addWidget(m_editBtn);
-    btnLayout->addWidget(m_findBtn);
+    QFormLayout *backendLayout = new QFormLayout;
+    backendLayout->addRow("Store:", m_backendsCombo);
+    backendLayout->addRow("Filter:", m_filterActiveLabel);
+
+    QHBoxLayout *btnLayout1 = new QHBoxLayout;
+    btnLayout1->addWidget(m_addContactBtn);
+    btnLayout1->addWidget(m_editBtn);
+    btnLayout1->addWidget(m_deleteBtn);
+    btnLayout1->addWidget(m_filterBtn);
+
+    QHBoxLayout *btnLayout2 = new QHBoxLayout;
+    btnLayout2->addWidget(m_importBtn);
+    btnLayout2->addWidget(m_exportBtn);
 
     QVBoxLayout *bookLayout = new QVBoxLayout;
     bookLayout->addLayout(backendLayout);
     bookLayout->addWidget(m_contactsList);
-    bookLayout->addLayout(btnLayout);
+    bookLayout->addLayout(btnLayout1);
+#ifdef BUILD_VERSIT
+    bookLayout->addLayout(btnLayout2);
+#endif
 
     setLayout(bookLayout);
 
@@ -124,15 +142,15 @@ void ContactListPage::rebuildList(const QContactFilter& filter)
 {
     // first, check to see whether the filter does anything
     if (filter == QContactFilter())
-        m_filterActiveLabel->setText("Filter: Inactive");
+        m_filterActiveLabel->setText("Inactive");
     else
-        m_filterActiveLabel->setText("Filter: Active");
+        m_filterActiveLabel->setText("Active");
 
     QContact currContact;
     m_currentFilter = filter;
     m_contactsList->clear();
     m_idToListIndex.clear();
-    QList<QContactLocalId> contactIds = m_manager->contacts(m_currentFilter);
+    QList<QContactLocalId> contactIds = m_manager->contactIds(m_currentFilter);
     foreach (const QContactLocalId& id, contactIds) {
         QListWidgetItem *currItem = new QListWidgetItem;
         currContact = m_manager->contact(id);
@@ -155,7 +173,78 @@ void ContactListPage::editClicked()
     // else, nothing selected; ignore.
 }
 
-void ContactListPage::findClicked()
+void ContactListPage::filterClicked()
 {
     emit showFilterPage(m_currentFilter);
+}
+
+void ContactListPage::deleteClicked()
+{
+    if (!m_manager) {
+        qWarning() << "No manager selected; cannot delete.";
+        return;
+    }
+
+    if (!m_contactsList->currentItem()) {
+        qWarning() << "Nothing to delete.";
+        return;
+    }
+        
+    QContactLocalId contactId = QContactLocalId(m_contactsList->currentItem()->data(Qt::UserRole).toUInt());
+    bool success = m_manager->removeContact(contactId);
+    if (success) {
+        delete m_contactsList->takeItem(m_contactsList->currentRow());
+        QMessageBox::information(this, "Success!", "Contact deleted successfully!");
+    }
+    else
+        QMessageBox::information(this, "Failed!", "Failed to delete contact!");
+}
+
+void ContactListPage::importClicked()
+{
+#ifdef BUILD_VERSIT
+    if (!m_manager) {
+        qWarning() << "No manager selected; cannot import";
+        return;
+    }
+    QString fileName = QFileDialog::getOpenFileName(this,
+       tr("Select vCard file"), ".", tr("vCard files (*.vcf)"));
+    QFile file(fileName);
+    file.open(QIODevice::ReadOnly);
+    if (file.isReadable()) {
+        QVersitReader reader;
+        reader.setDevice(&file);
+        if (reader.startReading() && reader.waitForFinished()) {
+            QVersitContactImporter importer;
+            QList<QContact> contacts = importer.importContacts(reader.results());
+            QMap<int, QContactManager::Error> errorMap;
+            m_manager->saveContacts(&contacts, &errorMap);
+            rebuildList(m_currentFilter);
+        }
+    }
+#endif
+}
+
+void ContactListPage::exportClicked()
+{
+#ifdef BUILD_VERSIT
+    if (!m_manager) {
+        qWarning() << "No manager selected; cannot import";
+        return;
+    }
+    QList<QContact> contacts = m_manager->contacts(QList<QContactSortOrder>(), QStringList());
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save vCard"),
+                                                    "./contacts.vcf",
+                                                    tr("vCards (*.vcf)"));
+    QFile file(fileName);
+    file.open(QIODevice::WriteOnly);
+    if (file.isWritable()) {
+        QVersitContactExporter exporter;
+        QList<QVersitDocument> documents = exporter.exportContacts(contacts);
+        QVersitWriter writer;
+        writer.setDevice(&file);
+        writer.startWriting(documents);
+        writer.waitForFinished();
+    }
+#endif
 }

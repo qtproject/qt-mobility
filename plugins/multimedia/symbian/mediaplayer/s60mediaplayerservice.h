@@ -58,18 +58,14 @@ QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
-class S60VideoOutputControl;
 class S60VideoPlayerSession;
 class S60AudioPlayerSession;
 class S60MediaPlayerControl;
 class S60MediaMetaDataProvider;
 class S60VideoWidgetControl;
 class S60MediaRecognizer;
-
-#ifndef QT_NO_MULTIMEDIA
 class S60VideoRenderer;
 class S60VideoOverlay;
-#endif
 
 class QMediaPlaylistNavigator;
 
@@ -88,8 +84,8 @@ private slots:
 
 protected: // From MS60MediaPlayerResolver
     S60MediaPlayerSession* PlayerSession();
-    S60MediaPlayerSession* VideoPlayerSession();
-    S60MediaPlayerSession* AudioPlayerSession();
+    S60MediaPlayerSession* VideoPlayerSession(bool isLocal = true);
+    S60MediaPlayerSession* AudioPlayerSession(bool isLocal = true);
     
 private:
     S60MediaPlayerControl *m_control;
@@ -97,12 +93,10 @@ private:
     mutable S60VideoOutputControl *m_videoOutput;
     S60VideoPlayerSession *m_videoPlayerSession;
     S60AudioPlayerSession *m_audioPlayerSession;
-    mutable S60MediaMetaDataProvider *m_metaData;   
-#ifndef QT_NO_MULTIMEDIA
-    mutable S60VideoRenderer *m_videoRenderer;
-    mutable S60VideoOverlay *m_videoWindow;
-#endif
+    mutable S60MediaMetaDataProvider *m_metaData;
     mutable S60VideoWidgetControl *m_videoWidget;
+    mutable S60VideoOverlay *m_videoWindow;
+    mutable S60VideoRenderer *m_videoRenderer;
 };
 
 #endif

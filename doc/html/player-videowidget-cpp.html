@@ -58,14 +58,19 @@
 
     #include &lt;QtGui&gt;
 
-    VideoWidget::VideoWidget(QMediaObject *object, QWidget *parent)
-        : QVideoWidget(object, parent)
+    VideoWidget::VideoWidget(QWidget *parent)
+        : QVideoWidget(parent)
     {
         setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     }
 
     void VideoWidget::keyPressEvent(QKeyEvent *event)
     {
+    #ifdef Q_OS_SYMBIAN
+        if (isFullScreen())
+            setFullScreen(false);
+    #endif
+
         if (event-&gt;key() == Qt::Key_Escape &amp;&amp; isFullScreen()) {
             showNormal();
 

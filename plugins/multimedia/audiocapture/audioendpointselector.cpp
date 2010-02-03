@@ -42,8 +42,6 @@
 #include "audiocapturesession.h"
 #include "audioendpointselector.h"
 
-#include <QtCore/QDebug>
-
 #include <QtMultimedia/qaudiodeviceinfo.h>
 
 

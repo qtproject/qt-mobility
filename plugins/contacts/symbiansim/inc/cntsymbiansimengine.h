@@ -54,7 +54,12 @@
 //
 #include "qcontactmanagerengine.h"
 #include "qcontactmanagerenginefactory.h"
+
+#ifdef SYMBIANSIM_BACKEND_USE_ETEL_TESTSERVER
+#include <etelmm_etel_test_server.h>
+#else
 #include <etelmm.h>
+#endif
 
 QTM_USE_NAMESPACE
 
@@ -71,22 +76,39 @@ public:
     QString managerName() const;
 
     /* Contacts - Accessors and Mutators */
-    QList<QContactLocalId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-    QList<QContactLocalId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    QList<QContactLocalId> contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     QContact contact(const QContactLocalId& contactId, QContactManager::Error& error) const;
+    bool saveContact(QContact* contact, QContactManager::Error& error);
+    bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
+
+    /* Definitions - Accessors and Mutators */
+    QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error& error) const;
+
+    /* Functionality reporting */
+    bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType = QContactType::TypeContact) const;
+    //QStringList supportedRelationshipTypes(const QString& contactType = QContactType::TypeContact) const;
+    //QList<QVariant::Type> supportedDataTypes() const;
+    //bool filterSupported(const QContactFilter& filter) const;
+    QStringList supportedContactTypes() const;
+
+    /* Synthesize the display label of a contact */
+    QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
 
 private:
     QContact fetchContactL(const QContactLocalId &localId) const;
     QList<QContact> fetchContactsL() const;
+    void saveContactL(QContact* contact) const;
     void transformError(TInt symbianError, QContactManager::Error& qtError) const;
     QList<QContact> decodeSimContactsL(TDes8& rawData) const;
+    QContact encodeSimContactL(const QContact* contact, TDes8& rawData) const;
 
 private:
-    RTelServer etelServer;
-    RMobilePhone etelPhone;
-    RMobilePhoneBookStore etelStore;
-    RMobilePhoneBookStore::TMobilePhoneBookInfoV1 etelStoreInfo;
-    RMobilePhoneBookStore::TMobilePhoneBookInfoV1Pckg etelInfoPckg;
+    RTelServer m_etelServer;
+    RMobilePhone m_etelPhone;
+    RMobilePhoneBookStore m_etelStore;
+    RMobilePhoneBookStore::TMobilePhoneBookInfoV5 m_etelStoreInfo;
+    RMobilePhoneBookStore::TMobilePhoneBookInfoV5Pckg m_etelInfoPckg;
 
     QString m_managerUri;
 };

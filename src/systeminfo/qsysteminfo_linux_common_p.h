@@ -82,13 +82,11 @@ public:
 
     QSystemInfoLinuxCommonPrivate(QObject *parent = 0);
     virtual ~QSystemInfoLinuxCommonPrivate();
-// general
-    QString currentLanguage() const; // 2 letter ISO 639-1
-    QStringList availableLanguages() const {return QStringList();}	 // 2 letter ISO 639-1
+    QString currentLanguage() const;
+    QStringList availableLanguages() const {return QStringList();}
 
     QString version(QSystemInfo::Version,  const QString &/*parameter*/ = QString());
-    QString currentCountryCode() const; //2 letter ISO 3166-1
-//features
+    QString currentCountryCode() const;
     bool hasFeatureSupported(QSystemInfo::Feature /*feature*/) {return false;}
     bool hasSysFeature(const QString &featureStr);
 
@@ -122,8 +120,8 @@ public:
     int cellId() {return 0;}
     int locationAreaCode() {return 0;}
 
-    QString currentMobileCountryCode() {return QString();} // Mobile Country Code
-    QString currentMobileNetworkCode() {return QString();} // Mobile Network Code
+    QString currentMobileCountryCode() {return QString();}
+    QString currentMobileNetworkCode() {return QString();}
 
     QString homeMobileCountryCode() {return QString();}
     QString homeMobileNetworkCode() {return QString();}
@@ -151,8 +149,6 @@ public:
     QSystemDisplayInfoLinuxCommonPrivate(QObject *parent = 0);
     virtual ~QSystemDisplayInfoLinuxCommonPrivate();
 
-
-// display
     int displayBrightness(int /*screen*/) {return 0;}
     int colorDepth(int /*screen*/) {return 0;}
 };
@@ -166,7 +162,6 @@ public:
     QSystemStorageInfoLinuxCommonPrivate(QObject *parent = 0);
     virtual ~QSystemStorageInfoLinuxCommonPrivate();
 
-    // memory
     qint64 availableDiskSpace(const QString &/*driveVolume*/) {return 0;}
     qint64 totalDiskSpace(const QString &/*driveVolume*/) {return 0;}
     QStringList logicalDrives()  {return QStringList();}
@@ -181,8 +176,6 @@ public:
 
     QSystemDeviceInfoLinuxCommonPrivate(QObject *parent = 0);
     virtual ~QSystemDeviceInfoLinuxCommonPrivate();
-
-// device
 
     QString imei() {return QString();}
     QString imsi() {return QString();}

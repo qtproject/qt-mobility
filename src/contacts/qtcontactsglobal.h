@@ -123,4 +123,7 @@ template<int N> bool operator!=(const QString& b, const Latin1Literal<N>& a)
 
 QTM_END_NAMESPACE
 
+// Not needed since this is a typedef, and qglobal already does this for the base type
+// Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QContactLocalId), Q_PRIMITIVE_TYPE);
+
 #endif

@@ -39,6 +39,9 @@
 **
 ****************************************************************************/
 #include "qsysteminfo_linux_common_p.h"
+#include <QTimer>
+#include <QFile>
+#include <QDir>
 
 QTM_BEGIN_NAMESPACE
 
@@ -80,10 +83,10 @@ QString QSystemInfoLinuxCommonPrivate::currentLanguage() const
     return lang;
 }
 
-// "major.minor.build" format.
 QString QSystemInfoLinuxCommonPrivate::version(QSystemInfo::Version type,
                                                const QString &parameter)
 {
+    Q_UNUSED(parameter);
     QString errorStr = "Not Available";
 
     switch(type) {
@@ -121,7 +124,6 @@ QString QSystemInfoLinuxCommonPrivate::version(QSystemInfo::Version type,
     return errorStr;
 }
 
-//2 letter ISO 3166-1
 QString QSystemInfoLinuxCommonPrivate::currentCountryCode() const
 {
     return QLocale::system().name().mid(3,2);

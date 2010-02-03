@@ -23,12 +23,11 @@ win32 {
         HEADERS += qwmihelper_win_p.h
 
         LIBS += \
-            Ole32.lib \
-            User32.lib \
-            Gdi32.lib \
-            Ws2_32.lib \
-            Iphlpapi.lib \
-            Oleaut32.lib 
+            -lOle32 \
+            -lUser32 \
+            -lGdi32 \
+            -lIphlpapi \
+            -lOleaut32
     }
 
     win32-g++ : {
@@ -36,9 +35,9 @@ win32 {
     }
 
 
-    wince*:LIBS += aygshell.lib \
-        cellcore.lib \
-        Coredll.lib
+    wince*:LIBS += -Laygshell \
+        -lcellcore \
+        -lCoredll
 }
 
 unix: {
@@ -137,15 +136,6 @@ unix: {
 
         TARGET.EPOCALLOWDLLDATA = 1
         TARGET.UID3 = 0x2002ac7d
-        
-        deploy.path = $${EPOCROOT}
-        exportheaders.sources = $$PUBLIC_HEADERS
-        exportheaders.path = epoc32/include/mw
-    
-        for(header, exportheaders.sources) {
-            BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
-        }
-
 
         QtSystemInfoDeployment.sources = QtSystemInfo.dll
         QtSystemInfoDeployment.path = /sys/bin
@@ -154,4 +144,5 @@ unix: {
 }
 
 HEADERS += $$PUBLIC_HEADERS 
+CONFIG += middleware
 include (../../features/deploy.pri)

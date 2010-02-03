@@ -55,7 +55,11 @@
     ****************************************************************************/</span>
 
     #include &quot;settings.h&quot;
+    #ifdef Q_OS_SYMBIAN
+    #include &quot;ui_settings_s60.h&quot;
+    #else
     #include &quot;ui_settings.h&quot;
+    #endif
 
     #include &lt;QtGui/qcombobox.h&gt;
     #include &lt;QtCore/qdebug.h&gt;
@@ -106,8 +110,8 @@
         }
 
         <span class="comment">//containers</span>
-        foreach(const QString &amp;format, mediaRecorder-&gt;supportedFormats()) {
-            ui-&gt;containerFormatBox-&gt;addItem(format+&quot;:&quot;+mediaRecorder-&gt;formatDescription(format),
+        foreach(const QString &amp;format, mediaRecorder-&gt;supportedContainers()) {
+            ui-&gt;containerFormatBox-&gt;addItem(format+&quot;:&quot;+mediaRecorder-&gt;containerDescription(format),
                                             QVariant(format));
         }
     }

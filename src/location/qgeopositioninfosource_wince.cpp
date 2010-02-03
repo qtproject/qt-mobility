@@ -73,21 +73,16 @@ QGeoPositionInfoSourceWinCE::QGeoPositionInfoSourceWinCE(QObject *parent)
     QGeoInfoValidator *validator = new QGeoPositionInfoValidator();
 
     // The QGeoInfoThreadWinCE instance takes ownership of the validator.
-    infoThread = new QGeoInfoThreadWinCE(validator, this);
-
+    infoThread = new QGeoInfoThreadWinCE(validator, true, this);
+    infoThread->start();
     // QGeoInfoThreadWinCE takes care of registering GPS_POSITION as a metatype.
     connect(infoThread, SIGNAL(dataUpdated(GPS_POSITION)), this, SLOT(dataUpdated(GPS_POSITION)));
-    connect(infoThread, SIGNAL(requestTimeout()), this, SIGNAL(requestTimeout()));
+    connect(infoThread, SIGNAL(updateTimeout()), this, SIGNAL(updateTimeout()));
 }
 
 QGeoPositionInfoSourceWinCE::~QGeoPositionInfoSourceWinCE()
 {
     delete infoThread;
-}
-
-void QGeoPositionInfoSourceWinCE::setPreferredPositioningMethods(PositioningMethods /*methods*/)
-{
-    QGeoPositionInfoSource::setPreferredPositioningMethods(QGeoPositionInfoSource::SatellitePositioningMethods);
 }
 
 QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSourceWinCE::supportedPositioningMethods() const
@@ -130,9 +125,9 @@ void QGeoPositionInfoSourceWinCE::requestUpdate(int timeout)
 {
     // A timeout of 0 means to use the default timeout, which is handled by the QGeoInfoThreadWinCE
     // instance, otherwise if timeout is less than the minimum update interval we emit a
-    // requestTimeout signal
+    // updateTimeout signal
     if (timeout < minimumUpdateInterval() && timeout != 0)
-        emit requestTimeout();
+        emit updateTimeout();
     else
         infoThread->requestUpdate(timeout);
 }
@@ -161,20 +156,20 @@ void QGeoPositionInfoSourceWinCE::dataUpdated(GPS_POSITION data)
     QTime time(data.stUTCTime.wHour, data.stUTCTime.wMinute, data.stUTCTime.wSecond,
                data.stUTCTime.wMilliseconds);
 
-    QDateTime dateTime(date, time);
+    QDateTime dateTime(date, time, Qt::UTC);
 
     QGeoPositionInfo pos(coordinate, dateTime);
 
     // The following properties are optional, and so are set if the data is present and valid in
     // the GPS_POSITION structure.
     if ((data.dwValidFields & GPS_VALID_SPEED) != 0)
-        pos.setProperty(QGeoPositionInfo::GroundSpeed, data.flSpeed);
+        pos.setAttribute(QGeoPositionInfo::GroundSpeed, data.flSpeed);
 
     if ((data.dwValidFields & GPS_VALID_HEADING) != 0)
-        pos.setProperty(QGeoPositionInfo::Heading, data.flHeading);
+        pos.setAttribute(QGeoPositionInfo::Direction, data.flHeading);
 
     if ((data.dwValidFields & GPS_VALID_MAGNETIC_VARIATION) != 0)
-        pos.setProperty(QGeoPositionInfo::MagneticVariation, data.dblMagneticVariation);
+        pos.setAttribute(QGeoPositionInfo::MagneticVariation, data.dblMagneticVariation);
 
     lastPosition = pos;
     emit positionUpdated(pos);

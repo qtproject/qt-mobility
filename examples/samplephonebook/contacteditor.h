@@ -72,18 +72,20 @@ public slots:
 
 private slots:
     void saveClicked();
-    void deleteClicked();
     void cancelClicked();
     void avatarClicked();
 
 private:
     QString nameField();
 
+#ifdef Q_OS_SYMBIAN
+    QAction* m_saveBtn;
+    QAction* m_cancelBtn;
+#else
     QPushButton *m_saveBtn;
-    QPushButton *m_deleteBtn;
     QPushButton *m_cancelBtn;
+#endif
 
-    QScrollArea *m_detailsArea; // contains the below elements.
     QLineEdit *m_nameEdit;
     QLineEdit *m_phoneEdit;
     QLineEdit *m_emailEdit;
