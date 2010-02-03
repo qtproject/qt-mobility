@@ -308,7 +308,8 @@ class MockCameraFocusControl : public QCameraFocusControl
 public:
     MockCameraFocusControl(QObject *parent = 0):
         QCameraFocusControl(parent),
-        m_zoomValue(1.0),
+        m_opticalZoom(1.0),
+        m_digitalZoom(1.0),
         m_macroFocusingEnabled(false),
         m_focusMode(QCamera::AutoFocus),
         m_focusStatus(QCamera::FocusInitial)
@@ -364,15 +365,30 @@ public:
         return 4.0;
     }
 
-    qreal zoomValue() const
+    qreal opticalZoom() const
     {
-        return m_zoomValue;
+        return m_opticalZoom;
     }
 
-
-    void zoomTo(qreal value)
+    qreal digitalZoom() const
     {
-        m_zoomValue = value;
+        return m_digitalZoom;
+    }
+
+    void zoomTo(qreal optical, qreal digital)
+    {
+        optical = qBound<qreal>(1.0, optical, maximumOpticalZoom());
+        digital = qBound<qreal>(1.0, digital, maximumDigitalZoom());
+
+        if (!qFuzzyCompare(digital, m_digitalZoom)) {
+            m_digitalZoom = digital;
+            emit digitalZoomChanged(m_digitalZoom);
+        }
+
+        if (!qFuzzyCompare(optical, m_opticalZoom)) {
+            m_opticalZoom = optical;
+            emit opticalZoomChanged(m_opticalZoom);
+        }
     }
 
 public Q_SLOTS:
@@ -385,7 +401,8 @@ public Q_SLOTS:
     }
 
 private:
-    qreal m_zoomValue;
+    qreal m_opticalZoom;
+    qreal m_digitalZoom;
     bool m_macroFocusingEnabled;
     QCamera::FocusMode m_focusMode;
     QCamera::FocusStatus m_focusStatus;
@@ -745,9 +762,14 @@ void tst_QCamera::testSimpleCameraFocus()
 
     QCOMPARE(camera.maximumOpticalZoom(), 1.0);
     QCOMPARE(camera.maximumDigitalZoom(), 1.0);
-    QCOMPARE(camera.zoomValue(), 1.0);
-    camera.zoomTo(100);
-    QCOMPARE(camera.zoomValue(), 1.0);
+    QCOMPARE(camera.opticalZoom(), 1.0);
+    QCOMPARE(camera.digitalZoom(), 1.0);
+    QSignalSpy errorSignal(&camera, SIGNAL(error(QCamera::Error)));
+    camera.zoomTo(100.0, 100.0);
+    QCOMPARE(camera.opticalZoom(), 1.0);
+    QCOMPARE(camera.digitalZoom(), 1.0);
+    QCOMPARE(errorSignal.count(), 1);
+    QCOMPARE(camera.error(), QCamera::NotSupportedFeatureError);
 }
 
 void tst_QCamera::testSimpleCameraCapture()
@@ -938,20 +960,20 @@ void tst_QCamera::testCameraFocus()
 
     QVERIFY(camera.maximumOpticalZoom() >= 1.0);
     QVERIFY(camera.maximumDigitalZoom() >= 1.0);
-    QCOMPARE(camera.zoomValue(), 1.0);
-    camera.zoomTo(0.5);
-    QCOMPARE(camera.zoomValue(), 1.0);
-    camera.zoomTo(2.0);
-    QCOMPARE(camera.zoomValue(), 2.0);
-    camera.zoomTo(2000000.0);
-    QVERIFY(qFuzzyCompare(camera.zoomValue(), camera.maximumOpticalZoom()*camera.maximumDigitalZoom()));
-
-
-    /*QCOMPARE(camera.isFocusLocked(), false);
-    camera.lockFocus();
-    QCOMPARE(camera.isFocusLocked(), true);
-    camera.unlockFocus();
-    QCOMPARE(camera.isFocusLocked(), false);*/
+    QCOMPARE(camera.opticalZoom(), 1.0);
+    QCOMPARE(camera.digitalZoom(), 1.0);
+    camera.zoomTo(0.5, 1.0);
+    QCOMPARE(camera.opticalZoom(), 1.0);
+    QCOMPARE(camera.digitalZoom(), 1.0);
+    camera.zoomTo(2.0, 0.5);
+    QCOMPARE(camera.opticalZoom(), 2.0);
+    QCOMPARE(camera.digitalZoom(), 1.0);
+    camera.zoomTo(2.0, 2.5);
+    QCOMPARE(camera.opticalZoom(), 2.0);
+    QCOMPARE(camera.digitalZoom(), 2.5);
+    camera.zoomTo(2000000.0, 1000000.0);
+    QVERIFY(qFuzzyCompare(camera.opticalZoom(), camera.maximumOpticalZoom()));
+    QVERIFY(qFuzzyCompare(camera.digitalZoom(), camera.maximumDigitalZoom()));
 }
 
 void tst_QCamera::testImageSettings()

@@ -42,10 +42,8 @@
 #ifndef S60VIDEOSURFACE_H
 #define S60VIDEOSURFACE_H
 
-#ifndef QT_NO_MULTIMEDIA
-
 #include <QtGui/qwidget.h>
-#include <QAbstractVideoSurface>
+#include <QtMultimedia/qabstractvideosurface.h>
 
 class S60VideoSurface : public QAbstractVideoSurface
 {
@@ -104,7 +102,5 @@ private:
 
     static int redistribute(int value, int fromLower, int fromUpper, int toLower, int toUpper);
 };
-
-#endif
 
 #endif

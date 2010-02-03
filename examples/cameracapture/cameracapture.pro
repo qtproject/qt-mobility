@@ -12,5 +12,12 @@ HEADERS = cameracapture.h \
 SOURCES = main.cpp \
     cameracapture.cpp \
     settings.cpp
-FORMS += cameracapture.ui \
-    settings.ui
+
+symbian: {
+    TARGET.CAPABILITY = UserEnvironment WriteDeviceData ReadDeviceData
+    FORMS += cameracapture.ui \
+        settings_s60.ui
+} else {
+    FORMS += cameracapture.ui \
+        settings.ui
+}

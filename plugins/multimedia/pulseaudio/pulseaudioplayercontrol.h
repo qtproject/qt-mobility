@@ -80,6 +80,7 @@ public:
 
     int bufferStatus() const;
 
+    bool isAudioAvailable() const;
     bool isVideoAvailable() const;
 
     bool isSeekable() const;

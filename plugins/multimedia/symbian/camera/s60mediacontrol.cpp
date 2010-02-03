@@ -55,6 +55,9 @@ S60MediaControl::S60MediaControl(QObject *session, QObject *parent)
 {
     // use cast if we want to change session class later on..
     m_session = qobject_cast<S60CameraSession*>(session);
+
+    connect(m_session,SIGNAL(stateChanged(QCamera::State)),this,SIGNAL(stateChanged(QCamera::State)));
+    connect(m_session,SIGNAL(error(int,const QString &)),this,SIGNAL(error(int,const QString &)));
 }
 
 S60MediaControl::~S60MediaControl()
@@ -63,22 +66,30 @@ S60MediaControl::~S60MediaControl()
 
 QUrl S60MediaControl::outputLocation() const
 {
-    return m_session->outputLocation();
+    if (m_session)
+        return m_session->outputLocation();
+    return QUrl();
 }
 
 bool S60MediaControl::setOutputLocation(const QUrl& sink)
 {
-    return m_session->setOutputLocation(sink);
+    if (m_session)
+        return m_session->setOutputLocation(sink);
+    return false;
 }
 
 QMediaRecorder::State S60MediaControl::state() const
 {
-    return (QMediaRecorder::State)m_session->state();
+    if (m_session)
+        return (QMediaRecorder::State)m_session->state();
+    return QMediaRecorder::StoppedState;
 }
 
 qint64 S60MediaControl::duration() const
 {
-    return m_session->position();
+    if (m_session)
+        return m_session->position();
+    return -1;
 }
 /*
 This method is called after encoder configuration is done.
@@ -87,20 +98,26 @@ to reduce delay before recording is started.
 */
 void S60MediaControl::applySettings()
 {
-    //TODO: create impl.
+
 }
 
 void S60MediaControl::record()
 {
-    m_session->startRecording();
+    if (m_session)
+        m_session->startRecording();
+    emit stateChanged(QMediaRecorder::RecordingState);
 }
 
 void S60MediaControl::pause()
 {
-    m_session->pauseRecording();
+    if (m_session)
+        m_session->pauseRecording();
+    emit stateChanged(QMediaRecorder::PausedState);
 }
 
 void S60MediaControl::stop()
 {
-    m_session->stopRecording();
+    if (m_session)
+        m_session->stopRecording();
+    emit stateChanged(QMediaRecorder::StoppedState);
 }

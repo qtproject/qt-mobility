@@ -63,7 +63,9 @@
 
 #include "qsoundeffect_pulse_p.h"
 
-#include <pulse/pulseaudio.h>
+#if(QT_MULTIMEDIA_MAEMO5)
+#include <pulse/ext-stream-restore.h>
+#endif
 
 // Less than ideal
 #define PA_SCACHE_ENTRY_SIZE_MAX (1024*1024*16)
@@ -124,9 +126,16 @@ public:
         return m_context;
     }
 
+    int volume()
+    {
+        return m_volume;
+    }
+
 private:
     void prepare()
     {
+        m_volume = 100;
+
         m_mainLoop = pa_threaded_mainloop_new();
         if (m_mainLoop == 0) {
             qWarning("PulseAudioService: unable to create pulseaudio mainloop");
@@ -143,6 +152,10 @@ private:
 
         lock();
         m_context = pa_context_new(m_mainLoopApi, QString("QtPulseAudio:%1").arg(::getpid()).toAscii().constData());
+
+#if(QT_MULTIMEDIA_MAEMO5)
+        pa_context_set_state_callback(m_context, context_state_callback, this);
+#endif
         if (m_context == 0) {
             qWarning("PulseAudioService: Unable to create new pulseaudio context");
             pa_threaded_mainloop_free(m_mainLoop);
@@ -168,6 +181,47 @@ private:
         m_prepared = false;
     }
 
+#if(QT_MULTIMEDIA_MAEMO5)
+    static void context_state_callback(pa_context *c, void *userdata)
+    {
+        PulseDaemon *self = reinterpret_cast<PulseDaemon*>(userdata);
+        switch (pa_context_get_state(c)) {
+            case PA_CONTEXT_CONNECTING:
+            case PA_CONTEXT_AUTHORIZING:
+            case PA_CONTEXT_SETTING_NAME:
+                break;
+            case PA_CONTEXT_READY:
+                pa_ext_stream_restore_set_subscribe_cb(c, &stream_restore_monitor_callback, self);
+                pa_ext_stream_restore_subscribe(c, 1, NULL, self);
+                break;
+            default:
+                break;
+        }
+    }
+    static void stream_restore_monitor_callback(pa_context *c, void *userdata)
+    {
+        PulseDaemon *self = reinterpret_cast<PulseDaemon*>(userdata);
+        pa_ext_stream_restore2_read(c, &stream_restore_info_callback, self);
+    }
+    static void stream_restore_info_callback(pa_context *c, const pa_ext_stream_restore2_info *info,
+            int eol, void *userdata)
+    {
+        Q_UNUSED(c)
+
+        PulseDaemon *self = reinterpret_cast<PulseDaemon*>(userdata);
+
+        if (!eol) {
+            if (QString(info->name).startsWith(QLatin1String("sink-input-by-media-role:x-maemo"))) {
+                const unsigned str_length = 256;
+                char str[str_length];
+                pa_cvolume_snprint(str, str_length, &info->volume);
+                self->m_volume = QString(str).replace(" ","").replace("%","").mid(2).toInt();
+            }
+        }
+    }
+#endif
+
+    int  m_volume;
     bool m_prepared;
     pa_context *m_context;
     pa_threaded_mainloop *m_mainLoop;
@@ -243,6 +297,9 @@ void QSoundEffectPrivate::play()
     pa_volume_t m_vol = PA_VOLUME_NORM;
 
     daemon()->lock();
+#if(QT_MULTIMEDIA_MAEMO5)
+    m_vol = PA_VOLUME_NORM/100*((daemon()->volume()+m_volume)/2);
+#endif
     pa_operation_unref(
             pa_context_play_sample(daemon()->context(),
                 m_name.constData(),
@@ -442,3 +499,4 @@ void QSoundEffectPrivate::play_callback(pa_context *c, int success, void *userda
         emit self->stateChanged(self->m_state);
     }
 }
+

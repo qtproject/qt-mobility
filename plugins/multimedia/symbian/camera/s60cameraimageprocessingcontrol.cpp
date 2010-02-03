@@ -66,17 +66,20 @@ S60CameraImageProcessingControl::~S60CameraImageProcessingControl()
 
 QCamera::WhiteBalanceMode S60CameraImageProcessingControl::whiteBalanceMode() const
 {
-    return QCamera::WhiteBalanceManual;
+    return m_session->whiteBalanceMode();
 }
 
 void S60CameraImageProcessingControl::setWhiteBalanceMode(QCamera::WhiteBalanceMode mode)
 {
-    Q_UNUSED(mode)
+    QCamera::WhiteBalanceModes supportedModes = supportedWhiteBalanceModes();
+    if (supportedModes & mode) {
+        m_session->setWhiteBalanceMode(mode);
+    }
 }
 
 QCamera::WhiteBalanceModes S60CameraImageProcessingControl::supportedWhiteBalanceModes() const
 {
-    return QCamera::WhiteBalanceManual;
+    return m_session->supportedWhiteBalanceModes();
 }
 
 int S60CameraImageProcessingControl::manualWhiteBalance() const
@@ -91,11 +94,11 @@ void S60CameraImageProcessingControl::setManualWhiteBalance(int colorTemperature
 
 void S60CameraImageProcessingControl::setContrast(qreal value)
 {
-    Q_UNUSED(value);
+    m_session->setContrast(value);
 }
 qreal S60CameraImageProcessingControl::contrast() const
 {
-    return 0;
+    return m_session->contrast();
 }
 
 void S60CameraImageProcessingControl::setSaturation(qreal value)

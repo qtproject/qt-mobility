@@ -25,10 +25,10 @@ contains(mobility_modules,location) {
     	SUBDIRS += flickrdemo \
 		    weatherinfo \
 		    lightmaps
+        contains(QT_CONFIG, webkit) {
+            SUBDIRS += fetchgooglemaps
+        }
     }		
-    contains(QT_CONFIG, webkit) {
-        SUBDIRS += fetchgooglemaps
-    }
 }
 
 #Contacts examples
@@ -55,13 +55,19 @@ contains(mobility_modules,systeminfo): SUBDIRS += sysinfo
 #Multimedia
 contains(mobility_modules,multimedia) {
     #disabled on Symbian due to missing backend
-    !symbian:SUBDIRS += \
+    SUBDIRS += \
         radio \
         player \
         cameracapture \
         slideshow \
         streamplayer \
         audiorecorder
+}
+
+contains (QT_CONFIG, declarative) {
+    SUBDIRS += \
+        declarativemusic \
+        declarativevideo
 }
 
 #Messaging examples
@@ -79,3 +85,9 @@ contains(mobility_modules,messaging) {
         }
     }
 }
+
+# Sensors API examples
+contains(mobility_modules,sensors) {
+    SUBDIRS += sensors
+}
+

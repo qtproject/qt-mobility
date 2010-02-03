@@ -61,6 +61,7 @@
 #include <QTextEdit>
 #include <QTimer>
 #include <QDebug>
+#include <QScrollArea>
 
 #ifdef USE_TABBED_LAYOUT
 #include <QTabWidget>
@@ -77,6 +78,17 @@ MessageSender::MessageSender(QWidget *parent, Qt::WindowFlags flags)
       addButton(0),
       attachmentsList(0)
 {
+    QVBoxLayout* vbl = new QVBoxLayout(this);
+    vbl->setSpacing(0);
+    vbl->setContentsMargins(0,0,0,0);
+
+    QWidget* mainWidget = new QWidget(this);
+
+    QScrollArea* sa = new QScrollArea(this);
+    vbl->addWidget(sa);
+    sa->setWidget(mainWidget);
+    sa->setWidgetResizable(true);
+
     setWindowTitle(tr("Write Message"));
 
     accountCombo = new QComboBox;
@@ -146,7 +158,7 @@ MessageSender::MessageSender(QWidget *parent, Qt::WindowFlags flags)
     tabWidget->addTab(attachmentsGroup, tr("Attachments"));
 #endif
 
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    QVBoxLayout *mainLayout = new QVBoxLayout(mainWidget);
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->addLayout(metaDataLayout, 0);
 #ifdef USE_TABBED_LAYOUT

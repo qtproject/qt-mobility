@@ -63,19 +63,25 @@
     #include &lt;experimental/qcamera.h&gt;
     #include &lt;qvideowidget.h&gt;
 
+    #include &lt;qmessagebox.h&gt;
+
     #include &lt;QtGui&gt;
 
     CameraCapture::CameraCapture(QWidget *parent) :
         QMainWindow(parent),
         ui(new Ui::CameraCapture),
         camera(0),
+        imageCapture(0),
         mediaRecorder(0),
         audioSource(0),
         videoWidget(0)
     {
         ui-&gt;setupUi(this);
-
+    #if defined(Q_OS_SYMBIAN)
+        outputDir = QDir::rootPath(); <span class="comment">// this defaults to C:\Data in symbian</span>
+    #else
         outputDir = QDir::currentPath();
+    #endif
 
         <span class="comment">//camera devices</span>
         QByteArray cameraDevice;
@@ -111,6 +117,7 @@
 
     void CameraCapture::setCamera(const QByteArray &amp;cameraDevice)
     {
+        delete imageCapture;
         delete mediaRecorder;
         delete videoWidget;
         delete camera;
@@ -124,6 +131,8 @@
 
         mediaRecorder = new QMediaRecorder(camera);
         connect(mediaRecorder, SIGNAL(stateChanged(QMediaRecorder::State)), this, SLOT(updateRecorderState(QMediaRecorder::State)));
+
+        imageCapture = new QStillImageCapture(camera);
 
         audioSource = new QAudioCaptureSource(camera);
         connect(audioSource, SIGNAL(availableAudioInputsChanged()), SLOT(updateAudioDevices()));
@@ -143,8 +152,8 @@
         updateRecorderState(mediaRecorder-&gt;state());
         updateAudioDevices();
 
-        connect(camera, SIGNAL(readyForCaptureChanged(bool)), ui-&gt;imageCaptureBox, SLOT(setEnabled(bool)));
-        connect(camera, SIGNAL(imageCaptured(QString,QImage)), this, SLOT(processCapturedImage(QString,QImage)));
+        connect(imageCapture, SIGNAL(readyForCaptureChanged(bool)), ui-&gt;imageCaptureBox, SLOT(setEnabled(bool)));
+        connect(imageCapture, SIGNAL(imageCaptured(QString,QImage)), this, SLOT(processCapturedImage(QString,QImage)));
 
     }
 
@@ -168,7 +177,7 @@
                     audioDeviceAction-&gt;setChecked(true);
             }
         } else {
-            qWarning() &lt;&lt; &quot;Camera service is not available&quot;;
+            qWarning() &lt;&lt; &quot;No audio device for camera service available&quot;;
         }
 
         connect(audioDevicesGroup, SIGNAL(triggered(QAction*)), this, SLOT(updateAudioDevice(QAction*)));
@@ -226,10 +235,10 @@
             lastImage = qMax(lastImage, imgNumber);
         }
 
-        camera-&gt;capture(QString(&quot;img_%1.jpg&quot;).arg(lastImage+1,
-                                                  4, <span class="comment">//fieldWidth</span>
-                                                  10,
-                                                  QLatin1Char('0')));
+        imageCapture-&gt;capture(QString(&quot;img_%1.jpg&quot;).arg(lastImage+1,
+                                                        4, <span class="comment">//fieldWidth</span>
+                                                        10,
+                                                        QLatin1Char('0')));
     }
 
     void CameraCapture::toggleCamera()
@@ -245,10 +254,11 @@
         if (state == QCamera::ActiveState) {
             ui-&gt;actionCamera-&gt;setEnabled(false);
             ui-&gt;actionAudio-&gt;setEnabled(false);
-            ui-&gt;actionSettings-&gt;setEnabled(false);
+            ui-&gt;actionSettings-&gt;setEnabled(true);
 
             ui-&gt;startCameraButton-&gt;setText(tr(&quot;Stop Camera&quot;));
             ui-&gt;startCameraButton-&gt;setChecked(true);
+            ui-&gt;imageCaptureBox-&gt;setEnabled(true);
             ui-&gt;videoCaptureBox-&gt;setEnabled(true);
         } else {
             ui-&gt;actionCamera-&gt;setEnabled(true);

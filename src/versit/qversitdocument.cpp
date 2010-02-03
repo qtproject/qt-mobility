@@ -49,9 +49,8 @@ QTM_USE_NAMESPACE
 
 /*!
   \class QVersitDocument
- 
+  \preliminary
   \brief The QVersitDocument class is a container for a list of versit properties.
-
   \ingroup versit
  
   For example a vCard can be presented as a QVersitDocument that consists of a number of properties

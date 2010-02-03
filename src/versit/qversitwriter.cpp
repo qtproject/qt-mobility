@@ -51,9 +51,8 @@ QTM_USE_NAMESPACE
 
 /*!
   \class QVersitWriter
- 
+  \preliminary 
   \brief The QVersitWriter class writes Versit documents such as vCards to a device.
-
   \ingroup versit
  
   QVersitWriter converts a QVersitDocument into its textual representation.
