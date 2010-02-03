@@ -70,7 +70,7 @@ int main(int argc, char** argv)
         canvas.setUrl(QUrl("qrc:/player.qml"));
         QmlContext* context = canvas.rootContext();
         context->setContextProperty("videoUrl", videoUrl);
-
+        canvas.setContentResizable(true);
         canvas.execute();
         canvas.show();
         return app.exec();
