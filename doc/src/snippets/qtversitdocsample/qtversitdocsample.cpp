@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+#include "qmobilityglobal.h"
 #include "qtcontacts.h"
 #include "qversitreader.h"
 #include "qversitcontactimporter.h"
@@ -52,7 +53,7 @@
 #include <QList>
 #include <QFile>
 
-using namespace QtMobility;
+QTM_USE_NAMESPACE
 
 void completeExample();
 void exportExample();

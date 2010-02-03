@@ -7,7 +7,8 @@
 TEMPLATE = app
 TARGET = qtversitdocsample
 include(../../../../common.pri)
-INCLUDEPATH += ../../../../src/contacts \
+INCLUDEPATH += ../../../../src/global \
+               ../../../../src/contacts \
                ../../../../src/contacts/requests \
                ../../../../src/contacts/filters \
                ../../../../src/contacts/details \
