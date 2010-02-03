@@ -94,26 +94,6 @@ QTM_USE_NAMESPACE
   \sa QVersitContactImporter, QVersitContactExporter, QVersitResourceHandler
  */
 
-QVersitDefaultResourceHandler::QVersitDefaultResourceHandler()
-    : d(new QVersitDefaultResourceHandlerPrivate)
-{
-    // File extension mappings
-    int fileExtensionCount = sizeof(versitFileExtensionMappings)/sizeof(VersitMapping);
-    for (int i = 0; i < fileExtensionCount; i++) {
-        d->mFileExtensionMapping.insert(
-            QLatin1String(versitFileExtensionMappings[i].contactString),
-            QLatin1String(versitFileExtensionMappings[i].versitString));
-    }
-}
-
-/*!
-   Frees any memory used by the resource handler.
- */
-QVersitDefaultResourceHandler::~QVersitDefaultResourceHandler()
-{
-    delete d;
-}
-
 /*!
    Default resource loader.
    Loads file from given \a location into \a contents and returns true if successful.
