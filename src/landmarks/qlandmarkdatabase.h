@@ -42,27 +42,48 @@
 #ifndef QLANDMARKDATABASE_H
 #define QLANDMARKDATABASE_H
 
-#include <qlandmark.h>
+#include <QObject>
+
+class QLandmark;
+class QLandmarkCategory;
+class QSearchFilter;
+class QLandmarkSortOrder;
+class QFile;
+class QLandmarkSearchResult;
 
 class QLandmarkDatabase: public QObject
 {
     Q_OBJECT
 public:
-    enum Error{NoError, NonWritablePlatform,...}
-    static LandmarkDatabase instance(const QString &name = QString());
+    enum Error{NoError, NonWritablePlatform};
+    enum SearchStatus{Active, Cancelled, Done};
+    enum FileFormat{LMX, GPX, CSV, KML, Auto};
+    static QLandmarkDatabase instance(const QString &name = QString());
+    virtual ~QLandmarkDatabase(){}
+
     bool addLandmark(const QLandmark &landmark);
-    bool updateLandmark(const QLandmark &landmark);
+    bool updateLandmark(const QLandmark &oldLandmark, const QLandmark &newLandmark);
     bool deleteLandmark(const QLandmark &landmark);
 
     bool addCategory(const QLandmarkCategory &category);
-    bool updateCategory(const QLandmarkCategory &category);
-    bool deleteCategory(const QLandmarkCAtegory &category);
+    bool updateCategory(const QLandmarkCategory &oldCategory);
+    bool deleteCategory(const QLandmarkCategory &category);
+    bool deleteCategory(const QString &);
+    QList<QLandmarkCategory> allCategories() const;
+    bool isCategoryModifiable(const QLandmarkCategory &category);
 
+    QList<QLandmark> search(QList<QSearchFilter> filters,
+                        QList<QLandmarkSortOrder> sortOrders) const;
+    QList<QLandmark> search(QSearchFilter filter,
+                            QLandmarkSortOrder sortOrder) const;
+    bool searchRequest(QList<QSearchFilter> filters,
+                        QList<QLandmarkSortOrder> sortOrders) const;
+    bool searchRequest(QSearchFilter filter, QLandmarkSortOrder) const;
+    SearchStatus searchStatus() const;
+    bool cancelSearchRequest();
 
-    QList<QLandmark> search(QList<QSearchFilter> filters) const;
-
-    bool importDatabase(const QFile &file);
-    bool exportDatabase(QFile &file);
+    bool importDatabase(const QFile &file, FileFormat format);
+    bool exportDatabase(QFile &file, FileFormat format);
 
     Error error() const;
     QString errorString() const;
@@ -75,6 +96,10 @@ Q_SIGNALS:
     void categoryAdded(const QString &category);
     void categoryRenamed(const QString &oldCategory);
     void categoryDeleted(const QString &category);
+
+    void searchResult(const QLandmarkSearchResult &result);
+private:
+    QLandmarkDatabase();
 };
 
 #endif

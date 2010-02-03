@@ -42,58 +42,105 @@
 #ifndef QSEARCHFILTER_H
 #define QSERACHFILTER_H
 
+#include "qmobilityglobal.h"
+
+#include <QObject>
+#include <QPair>
+#include "qlandmarkdatabase.h"
+
+class QLandmark;
+class QGeoCoordinate;
+class QLandmarkCategory;
+
 class QSearchFilter : public QObject
 {
     Q_OBJECT
 public:
-    SearchFilter(int maxMatches=-1);
+    QSearchFilter(int maxMatches = -1);
+    virtual ~QSearchFilter(){}
     void setMaxMatches(int maxMatches);
     int maxMatches() const;
 };
 
-class NameFilter : public QSearchFilter {
+class QLandmarkNameFilter : public QSearchFilter {
 public:
-    NameFilter(const QString &searchString);
-    QString searchString();
-    setSearchString(const QString &searchString);
+    QLandmarkNameFilter(const QString &name);
+    virtual ~QLandmarkNameFilter();
+    QString name();
+    void setName(const QString &name);
 };
 
-class ProximityFilter : public QSeachFilter
-{
+class QLandmarkProximityFilter : public QSearchFilter {
 public:
-    ProximityFilter(const QGeoCoordinate &coordinate, double range);
-    setCentralCoordinate(const QGeoCoordinate &coordinate);
-    QGeoCooordinate centralCoordinate() const;
+    QLandmarkProximityFilter(const QGeoCoordinate &coordinate, double range);
+    virtual ~QLandmarkProximityFilter();
+
+    QGeoCoordinate centralCoordinate() const;
+    void setCentralCoordinate(const QGeoCoordinate &coordinate);
 
     double range();
     void setRange(double range);
 };
 
-class NearestFilter : public QSearchFilter
+class QLandmarkNearestFilter : public QSearchFilter
 {
 public:
-    NearestFilter( const QGeoCoordinate &coordinate);
+    QLandmarkNearestFilter( const QGeoCoordinate &coordinate);
+    virtual ~QLandmarkNearestFilter();
 
     QGeoCoordinate centralCoordinate() const;
     void setCentralCoordinate(const QGeoCoordinate &centralCoordinate);
 };
 
-class CategoryFilter : public QSearchFilter
+class QLandmarkCategoryFilter : public QSearchFilter
 {
 public:
-    CategoryFilter (const QString &category);
+    QLandmarkCategoryFilter(const QLandmarkCategory &category);
+    virtual ~QLandmarkCategoryFilter();
 
-    QString category() const;
-    void setCategory(const QString &category);
+    QLandmarkCategory category() const;
+    void setCategory(const QLandmarkCategory &category);
 };
 
-class RegionFilter: public QSearchFilter
+class QLandmarkRegionFilter: public QSearchFilter
 {
 public:
-    RegionFilter(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight);
+    QLandmarkRegionFilter(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight);
+    virtual ~QLandmarkRegionFilter();
 
-    QPair<QGeoCooordinate, QGeoCoordinate> searchRegion() const;
+    QPair<QGeoCoordinate, QGeoCoordinate> searchRegion() const;
     void setSearchRegion(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight);
+};
+
+class QLandmarkSortOrder : public QObject
+{
+};
+
+class QLandmarkNameSort : public QLandmarkSortOrder
+{
+public:
+    enum Type{Ascending, Descending};
+    QLandmarkNameSort(Type orderType);
+    virtual ~QLandmarkNameSort();
+};
+
+class QLandmarkDistanceSort : public QLandmarkSortOrder
+{
+public:
+    enum Type{NearestFirst,FurthestFirst};
+    QLandmarkDistanceSort(Type orderType);
+    virtual ~QLandmarkDistanceSort();
+};
+
+class QLandmarkSearchResult: public QList<QLandmark>
+{
+public:
+    int newIndex() const;
+    QLandmarkDatabase::SearchStatus status();
+
+    virtual ~QLandmarkSearchResult();
+private:
+    QLandmarkSearchResult();
 };
 
 #endif

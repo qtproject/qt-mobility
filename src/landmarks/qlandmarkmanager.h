@@ -42,13 +42,20 @@
 #ifndef QLANDMARKMANAGER_H
 #define QLANDMARKMANAGER_H
 
+#include <QString>
+#include <QUrl>
+
 class QLandmarkDatabaseManager
 {
 public:
-    enum Error{NoError, ...}
-    bool addDatabase(const QString &name, const QURL &location);
+    enum Error{NoError, DoesNotExist};
+    QLandmarkDatabaseManager();
+    virtual ~QLandmarkDatabaseManager();
+    bool addDatabase(const QString &name, const QUrl &location);
     bool deleteDatabase(const QString& name);
+
     QStringList listDatabases() const;
+    QUrl databaseURL(const QString &name);
 
     QString defaultDatabase();
     bool setDefaultDatabase(const QString &name);

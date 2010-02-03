@@ -42,51 +42,74 @@
 #ifndef QLANDMARK_H
 #define QLANDMARK_H
 
-#include <QGeoCoordinate>
+#include <QObject>
+class QGeoCoordinate;
 
-class LandmarkCategory
+class QLandmarkCategory
 {
+    QLandmarkCategory();
+    virtual ~QLandmarkCategory();
+
     QString name() const;
     void setName(const QString &);
 
-    QString iconFileName() const;
-    void setIconFileName(const QString &fileName);
-}
+    QString icon() const;
+    void setIcon(const QString &fileName);
 
-class QLandmark:public QObject
+    QString description() const;
+    void setDescription(const QString &description);
+};
+
+class QLandmark
 {
-    Q_OBJECT
-    Q_PROPERTY(QString name READ name WRITE setName);
-    Q_PROPERTY(QGeoCoordinate coordinate READ coordinate WRITE setCoordinate);
-    Q_PROPERTY(QStringList categories READ categories WRITE setCategories);
-    Q_PROPERTY(QString description READ description WRITE setDescription);
-    Q_PROPERTY(QString READ iconFileName WRITE setIconFileName);
-    Q_PROPERTY(QContact contact READ contact WRITE setContact);
-    Q_PROPERTY(QVariant attribute READ attribute WRITE setAttribute);
+    public:
+    QLandmark();
+    virtual ~QLandmark();
 
-public:
     QString name() const;
     void setName(const QString &name);
 
     QGeoCoordinate coordinate() const;
     void setCoordinate(const QGeoCoordinate& coordinate);
 
-    QList<LandmarkCategories> categories() const;
-    void setCategories(const QList<LandmarkCategory> &categories);
-    void addCategory(const QCategory &category);
-    void removeCategory(const QCategory &category);
+    QList<QLandmarkCategory> categories() const;
+    void setCategories(const QList<QLandmarkCategory> &categories);
+    void addCategory(const QLandmarkCategory &category);
+    void removeCategory(const QLandmarkCategory &category);
 
     QString description() const;
     void setDescription(const QString &description);
 
-    QString iconFileName() const;
-    void setIconFileName(const QString &iconFileName);
+    QString icon() const;
+    void setIcon(const QString &iconFileName);
 
-    QContact contact() const;
-    void setContact(const QContact &);
+    double radius() const;
+    void setRadius(double radius);
 
     QVariant attribute(const QString &attributeName) const;
     void setAttribute(const QString &attributeName, const QVariant &value);
+    QStringList attributeList() const;
+
+    QString street() const;
+    void setStreet(const QString &street);
+
+    QString locality() const;
+    void setLocality(const QString &locality);
+
+    QString region() const;
+    void setRegion(const QString &region);
+
+    QString country() const;
+    void setCountry(const QString &country);
+
+    QString postcode() const;
+    void setPostcode(const QString &postCode);
+
+    QString phone() const;
+    void setPhone(const QString &phone);
+
+    QString url() const;
+    void setUrl(const QString &url);
 };
 
 #endif
