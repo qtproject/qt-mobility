@@ -170,3 +170,15 @@ bool QVersitDocument::isEmpty() const
 {
     return d->mProperties.count() == 0;
 }
+
+/*! \internal */
+void QVersitDocument::setVersitType(VersitType type)
+{
+    setType(type);
+}
+
+/*! \internal */
+QVersitDocument::VersitType QVersitDocument::versitType() const
+{
+    return type();
+}

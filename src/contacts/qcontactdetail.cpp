@@ -152,12 +152,6 @@ Q_DEFINE_LATIN1_LITERAL(QContactDetail::ContextWork, "Work");
  */
 
 /*!
- * \fn T QContactDetail::value(const QString& key) const
- * \overload
- * Returns the value of the template type associated with the given \a key
- */
-
-/*!
  * Constructs a new, empty detail
  */
 QContactDetail::QContactDetail()
@@ -273,13 +267,21 @@ void QContactDetail::resetKey()
     d->m_id = QContactDetailPrivate::lastDetailKey.fetchAndAddOrdered(1);
 }
 
-/*! Returns the value stored in this detail for the given \a key as a QString, or an empty QString if no value for the given \a key exists */
+/*! \overload
+ * Returns the value stored in this detail for the given \a key as a QString, or an empty QString if
+ * no value for the given \a key exists */
 QString QContactDetail::value(const QString& key) const
 {
     if (d.constData()->m_values.contains(key))
         return d.constData()->m_values.value(key).toString();
     return QString();
 }
+
+// A bug in qdoc means this comment needs to appear below the comment for the other value().
+/*!
+ * \fn T QContactDetail::value(const QString& key) const
+ * Returns the value of the template type associated with the given \a key
+ */
 
 /*! Returns the value stored in this detail for the given \a key as a QVariant, or an invalid QVariant if no value for the given \a key exists */
 QVariant QContactDetail::variantValue(const QString& key) const
@@ -321,12 +323,12 @@ bool QContactDetail::removeValue(const QString& key)
 }
 
 /*!
+ * \fn Q_DECL_DEPRECATED QContactDetail::values() const
  * \deprecated
  * Returns the values stored in this detail
  */
 QVariantMap Q_DECL_DEPRECATED QContactDetail::values() const
 {
-    qWarning("QContactDetail::values() This function was deprecated in week 1 and will be removed after the transition period has elapsed!  Use variantValues() instead!");
     return d.constData()->m_values;
 }
 

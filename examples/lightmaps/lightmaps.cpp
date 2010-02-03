@@ -370,7 +370,6 @@ private slots:
 
     void networkSessionOpened() {
         m_location = QGeoPositionInfoSource::createDefaultSource(this);
-        m_location->setUpdateInterval(10000);
 
         if (!m_location) {
             QNmeaPositionInfoSource *nmeaLocation = new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode, this);
@@ -380,6 +379,8 @@ private slots:
             m_location = nmeaLocation;
             m_usingLogFile = true;
         }
+
+        m_location->setUpdateInterval(10000);
 
         connect(m_location,
                 SIGNAL(positionUpdated(QGeoPositionInfo)),

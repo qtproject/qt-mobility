@@ -39,78 +39,58 @@
 **
 ****************************************************************************/
 
-
-#ifndef FILTERDIALOG_H
-#define FILTERDIALOG_H
-
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include <QWidget>
-#include "qcontactfilter.h"
-#include "qcontactintersectionfilter.h"
-
-QT_BEGIN_NAMESPACE
-class QLabel;
-class QLineEdit;
-class QComboBox;
-class QPushButton;
-class QFormLayout;
-class QVBoxLayout;
-class QHBoxLayout;
-QT_END_NAMESPACE
-
+#include <QApplication>
+#include <QtGui>
+#include <QmlEngine>
+#include <QmlComponent>
+#include <QDebug>
+#include <QmlGraphicsItem>
+#include <QmlView>
+#include <QContactManager>
+#include "qmlcontactsa.h"
+QT_USE_NAMESPACE
 QTM_USE_NAMESPACE
 
-class FilterDialog : public QWidget
+int main(int argc, char ** argv)
 {
-    Q_OBJECT
-
-public:
-    FilterDialog(QWidget *parent = 0);
-    ~FilterDialog();
-
-    QContactFilter filter() const;
-    int status() const;
-
-signals:
-    void hidden();
-
-public slots:
-    void showDialog();
-
-private slots:
-    void cancelClicked();
-    void addClicked();
-    void doneClicked();
-
-private:
-    QLineEdit *value;
-    QComboBox *field;
-    QComboBox *match;
-    QComboBox *join;
-    QLabel *expression;
-    QFormLayout *formLayout;
-    QHBoxLayout *btnLayout;
-    QVBoxLayout *vertLayout;
-
-    QPushButton *cancel;
-    QPushButton *add;
-    QPushButton *done;
-
-    mutable QContactIntersectionFilter total;
-    mutable bool noFiltersYet;
-    mutable int state;
-    mutable QString expressionSoFar;
-};
+    QApplication app(argc, argv);
 
 
-#endif
+    QmlEngine engine;
+    QmlComponent component(&engine, ":example.qml");
+//    QMLContactManager *qcm = qobject_cast<QMLContactManager *>(component.create());
+//    if (qcm) {
+//        qWarning() << "Available back ends: " << qcm->availableManagers();
+//        qWarning() << "Current Backend: " << qcm->manager();
+//        //qWarning() << "They wear a" << person->shoeSize() << "sized shoe";
+//    } else {
+//
+//        qWarning() << "An error occured";
+//        qWarning() << component.errorsString();
+//        exit(-1);
+//    }
+//    QmlGraphicsItem *qcm = qobject_cast<QmlGraphicsItem *>(component.create());
+//    if(!qcm){
+//                qWarning() << "An error occured";
+//                qWarning() << component.errorsString();
+//                exit(-1);
+//
+//    }
+//    qcm->show();
+
+    QWidget *b = new QWidget;
+    QVBoxLayout *vbox = new QVBoxLayout;
+    vbox->setMargin(0);
+    b->setLayout(vbox);
+
+    QmlView *view = new QmlView(b);
+    view->setFocusPolicy(Qt::StrongFocus);
+    view->setContentResizable(true);
+    view->setUrl(QUrl("qrc:/example.qml"));
+    view->execute();
+    vbox->addWidget(view);
+    b->resize(800,480);
+    b->show();    
+
+    return app.exec();
+}

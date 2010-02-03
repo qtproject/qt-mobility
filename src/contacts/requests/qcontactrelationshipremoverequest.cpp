@@ -77,57 +77,63 @@ QContactRelationshipRemoveRequest::~QContactRelationshipRemoveRequest()
 {
 }
 
-/*! Sets the first contact criterion of the remove request to \a firstId.
+/*!
+ * \deprecated
+ *  Sets the first contact criterion of the remove request to \a firstId.
  *  If \a firstId is the default-constructed id, or the first contact is not set,
  *  the request will remove relationships involving any first contact. */
 void QContactRelationshipRemoveRequest::setFirst(const QContactId& firstId)
 {
     Q_D(QContactRelationshipRemoveRequest);
-    qWarning("QContactRelationshipRemoveRequest::setFirst() This function was deprecated in week 4 and will be removed once the transition period has elapsed.  Use setRelationships() instead!");
     d->m_first = firstId;
 }
 
-/*! Returns the first contact criterion of the remove request */
+/*!
+ * \deprecated
+ * Returns the first contact criterion of the remove request */
 QContactId QContactRelationshipRemoveRequest::first() const
 {
     Q_D(const QContactRelationshipRemoveRequest);
-    qWarning("QContactRelationshipRemoveRequest::first() This function was deprecated in week 4 and will be removed once the transition period has elapsed.  Use relationships() instead!");
     return d->m_first;
 }
 
-/*! Sets the relationship type criterion of the remove request to \a relationshipType.
+/*!
+ * \deprecated
+ *  Sets the relationship type criterion of the remove request to \a relationshipType.
  *  If \a relationshipType is empty, or the relationship type is not set,
  *  the request will remove relationships of any type. */
 void QContactRelationshipRemoveRequest::setRelationshipType(const QString& relationshipType)
 {
     Q_D(QContactRelationshipRemoveRequest);
-    qWarning("QContactRelationshipRemoveRequest::setRelationshipType() This function was deprecated in week 4 and will be removed once the transition period has elapsed.  Use setRelationships() instead!");
     d->m_relationshipType = relationshipType;
 }
 
-/*! Returns the relationship type criterion of the fetch request */
+/*!
+ * \deprecated
+ * Returns the relationship type criterion of the fetch request */
 QString QContactRelationshipRemoveRequest::relationshipType() const
 {
     Q_D(const QContactRelationshipRemoveRequest);
-    qWarning("QContactRelationshipRemoveRequest::relationshipType() This function was deprecated in week 4 and will be removed once the transition period has elapsed.  Use setRelationships() instead!");
     return d->m_relationshipType;
 }
 
-/*! Sets the second contact criterion of the remove request to \a secondId.
- *  If \a secondId is the default-constructed id, or the second contact is not set,
- *  the request will remove relationships involving any second contact. */
+/*!
+ * \deprecated
+ * Sets the second contact criterion of the remove request to \a secondId.
+ * If \a secondId is the default-constructed id, or the second contact is not set,
+ * the request will remove relationships involving any second contact. */
 void QContactRelationshipRemoveRequest::setSecond(const QContactId& secondId)
 {
     Q_D(QContactRelationshipRemoveRequest);
-    qWarning("QContactRelationshipRemoveRequest::setSecond() This function was deprecated in week 4 and will be removed once the transition period has elapsed.  Use setRelationships() instead!");
     d->m_second = secondId;
 }
 
-/*! Returns the second contact criterion of the remove request */
+/*!
+ * \deprecated
+ * Returns the second contact criterion of the remove request */
 QContactId QContactRelationshipRemoveRequest::second() const
 {
     Q_D(const QContactRelationshipRemoveRequest);
-    qWarning("QContactRelationshipRemoveRequest::second() This function was deprecated in week 4 and will be removed once the transition period has elapsed.  Use setRelationships() instead!");
     return d->m_second;
 }
 

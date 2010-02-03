@@ -90,16 +90,8 @@ public:
     void clear();
 
     // Deprecated:
-    void Q_DECL_DEPRECATED setVersitType(VersitType type)
-    {
-        qWarning("QVersitDocument::setVersitType(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  setType() should be used instead.");
-        setType(type);
-    }
-    VersitType Q_DECL_DEPRECATED versitType() const
-    {
-        qWarning("QVersitDocument::versitType(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  type() should be used instead.");
-        return type();
-    }
+    void Q_DECL_DEPRECATED setVersitType(VersitType type);
+    VersitType Q_DECL_DEPRECATED versitType() const;
 
 private:
     
