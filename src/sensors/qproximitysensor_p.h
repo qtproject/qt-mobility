@@ -57,8 +57,9 @@
 
 QTM_BEGIN_NAMESPACE
 
-struct QProximityReadingPrivate : public QSensorReadingPrivate
+class QProximityReadingPrivate : public QSensorReadingPrivate
 {
+public:
     QProximityReadingPrivate()
         : proximity(0)
     {

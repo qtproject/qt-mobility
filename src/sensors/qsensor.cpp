@@ -43,7 +43,6 @@
 #include "qsensor_p.h"
 #include "qsensorbackend.h"
 #include "qsensormanager.h"
-#include "qsensorfactory.h"
 #include <QDebug>
 
 QTM_BEGIN_NAMESPACE
@@ -564,13 +563,13 @@ void QSensorReading::setTimestamp(qtimestamp timestamp)
 }
 
 /*!
-    \fn QSensorReading::operator=(QSensorReading &other)
+    \fn QSensorReading::copyValuesFrom(QSensorReading *other)
     \internal
 
     Copy values from other into this reading. Implemented by sub-classes
     using the DECLARE_READING() and IMPLEMENT_READING() macros.
 
-    Note that this method is only be called by QSensorBackend.
+    Note that this method should only be called by QSensorBackend.
 */
 
 /*!
