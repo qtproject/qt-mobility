@@ -38,3 +38,6 @@ SOURCES +=  servicemetadata.cpp \
             databasemanagersignalhandler.cpp
 
 TARGET.CAPABILITY = ALL -TCB
+
+
+symbian:MMP_RULES += "EXPORTUNFROZEN"
