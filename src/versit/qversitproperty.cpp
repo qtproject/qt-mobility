@@ -276,3 +276,25 @@ void QVersitProperty::clear()
     d->mValue.clear();
     d->mParameters.clear();
 }
+
+/*! \internal */
+void QVersitProperty::addParameter(const QString& name, const QString& value)
+{
+    qWarning("QVersitProperty::addParameter(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  insertParameter() should be used instead.");
+    Q_UNUSED(name)
+    Q_UNUSED(value)
+}
+
+/*! \internal */
+void QVersitProperty::setEmbeddedDocument(const QVersitDocument& document)
+{
+    qWarning("QVersitProperty::setEmbeddedDocument(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  setValue(QVariant::fromValue(document)) should be used instead.");
+    setValue(QVariant::fromValue(document));
+}
+
+/*! \internal */
+QVersitDocument QVersitProperty::embeddedDocument() const
+{
+    qWarning("QVersitProperty::embeddedDocument(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  value<QVersitDocument>() should be used instead.");
+    return value<QVersitDocument>();
+}

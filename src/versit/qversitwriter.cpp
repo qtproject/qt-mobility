@@ -215,7 +215,8 @@ QVersitWriter::Error QVersitWriter::error() const
 }
 
 
-void Q_DECL_DEPRECATED QVersitWriter::setVersitDocument(const QVersitDocument& versitDocument)
+/*! \internal */
+void QVersitWriter::setVersitDocument(const QVersitDocument& versitDocument)
 {
     qWarning("QVersitWriter::setVersitDocument(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  The document should be passed directly into startWriting().");
     QList<QVersitDocument> documents;
@@ -223,19 +224,22 @@ void Q_DECL_DEPRECATED QVersitWriter::setVersitDocument(const QVersitDocument& v
     d->mInput = documents;
 }
 
-QVersitDocument Q_DECL_DEPRECATED QVersitWriter::versitDocument() const
+/*! \internal */
+QVersitDocument QVersitWriter::versitDocument() const
 {
     qWarning("QVersitWriter::versitDocument(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!");
     return QVersitDocument();
 }
 
-bool Q_DECL_DEPRECATED QVersitWriter::startWriting()
+/*! \internal */
+bool QVersitWriter::startWriting()
 {
     qWarning("QVersitWriter::startWriting(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  The versit document should be specified as a parameter.");
     return startWriting(d->mInput);
 }
 
-bool Q_DECL_DEPRECATED QVersitWriter::writeAll()
+/*! \internal */
+bool QVersitWriter::writeAll()
 {
     qWarning("QVersitWriter::writeAll(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  startWriting() and waitForFinished() should be used instead.");
     startWriting(d->mInput);
