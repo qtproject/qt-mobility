@@ -147,7 +147,7 @@ QList<QContact> QVersitContactImporter::importContacts(const QList<QVersitDocume
 }
 
 /*!
- * Sets \a handler to be the handler for processing QVersitProperties
+ * Sets \a handler to be the handler for processing QVersitProperties, or 0 to have no handler.
  */
 void QVersitContactImporter::setPropertyHandler(QVersitContactImporterPropertyHandler* handler)
 {
@@ -155,7 +155,7 @@ void QVersitContactImporter::setPropertyHandler(QVersitContactImporterPropertyHa
 }
 
 /*!
- * Gets the handler for processing QVersitProperties
+ * Gets the handler for processing QVersitProperties.
  */
 QVersitContactImporterPropertyHandler* QVersitContactImporter::propertyHandler() const
 {
@@ -163,7 +163,7 @@ QVersitContactImporterPropertyHandler* QVersitContactImporter::propertyHandler()
 }
 
 /*!
- * Sets \a handler to be the handler to save files with.
+ * Sets \a handler to be the handler to save files with, or 0 to have no handler.
  */
 void QVersitContactImporter::setResourceHandler(QVersitResourceHandler* handler)
 {
