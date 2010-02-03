@@ -47,8 +47,6 @@
 QT_USE_NAMESPACE
 QTM_USE_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
-
 QmlContact::QmlContact(QContact& contact, QObject *parent)
     : QObject(parent), m_contact(contact)
 {   
@@ -183,5 +181,5 @@ QVariantMap QmlContact::values(QString definitionId)
 }
 
 #include "moc_qmlcontact.cpp"
-QTM_END_NAMESPACE
+
 QML_DEFINE_TYPE(QmlContact, 1, 0, QmlContact, QmlContact)
