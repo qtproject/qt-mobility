@@ -170,3 +170,17 @@ bool QVersitDocument::isEmpty() const
 {
     return d->mProperties.count() == 0;
 }
+
+/*! \internal */
+void QVersitDocument::setVersitType(VersitType type)
+{
+    qWarning("QVersitDocument::setVersitType(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  setType() should be used instead.");
+    setType(type);
+}
+
+/*! \internal */
+QVersitDocument::VersitType QVersitDocument::versitType() const
+{
+    qWarning("QVersitDocument::versitType(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  type() should be used instead.");
+    return type();
+}

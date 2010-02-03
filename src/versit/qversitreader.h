@@ -100,17 +100,8 @@ public:
     Error error() const;
 
     // Deprecated
-    bool Q_DECL_DEPRECATED readAll()
-    {
-        qWarning("QVersitDocument::readAll(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  startReading() and waitForFinished() should be used instead.");
-        startReading();
-        return waitForFinished();
-    };
-    QList<QVersitDocument> Q_DECL_DEPRECATED result() const
-    {
-        qWarning("QVersitDocument::result(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  results() should be used instead.");
-        return results();
-    };
+    bool Q_DECL_DEPRECATED readAll();
+    QList<QVersitDocument> Q_DECL_DEPRECATED result() const;
 
 signals:
     void stateChanged(QVersitReader::State state);
