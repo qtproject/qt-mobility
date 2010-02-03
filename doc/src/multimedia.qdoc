@@ -61,7 +61,7 @@ collection of media content.
 
 Multimedia provides a set of APIs that allow the developer to play, record
 and manage a collection of media content. It is dependent on the
-QtMultimedia API.
+QtMultimedia API. This API is planned to replace Phonon at a later stage.
 
 \tableofcontents
 

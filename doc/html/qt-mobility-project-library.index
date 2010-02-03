@@ -7340,8 +7340,13 @@
         <page access="public" status="commendable" name="preview.html" href="preview.html" subtype="page" title="Technology Preview" fulltitle="Technology Preview" subtitle="" location="preview.qdoc">
             <target name="management-of-versit-documents"/>
             <target name="camera-support"/>
+            <target name="sensor-classes"/>
             <contents name="management-of-versit-documents" title="Management of Versit Documents" level="1"/>
-            <contents name="camera-support" title="Camera Support" level="1"/>
+            <contents name="camera-support-multimedia" title="Camera Support (Multimedia)" level="1"/>
+            <contents name="sensor-api" title="Sensor API" level="1"/>
+            <contents name="main-classes" title="Main Classes" level="2"/>
+            <contents name="helper-classes" title="Helper Classes" level="2"/>
+            <contents name="backend-classes" title="Backend Classes" level="2"/>
         </page>
         <page access="public" status="commendable" name="gpl.html" href="gpl.html" subtype="page" title="GNU General Public License (GPL)" fulltitle="GNU General Public License (GPL)" subtitle="" location="gpl.qdoc">
             <contents name="the-gnu-general-public-license-version-3" title="The GNU General Public License (Version 3)" level="1"/>
@@ -7452,9 +7457,12 @@
             <contents name="messaging" title="Messaging" level="2"/>
             <contents name="multimedia" title="Multimedia" level="2"/>
             <contents name="service-framework" title="Service Framework" level="2"/>
-            <contents name="sensors" title="Sensors" level="2"/>
             <contents name="system-information" title="System Information" level="2"/>
-            <contents name="future-additions-and-considerations" title="Future Additions and Considerations" level="1"/>
+            <contents name="included-technology-preview-apis" title="Included Technology Preview APIs" level="1"/>
+            <contents name="camera" title="Camera" level="2"/>
+            <contents name="sensors" title="Sensors" level="2"/>
+            <contents name="versit" title="Versit" level="2"/>
+            <contents name="the-qtmobility-namespace" title="The QtMobility Namespace" level="1"/>
             <contents name="platform-compatability" title="Platform Compatability" level="1"/>
             <contents name="feedback-and-bug-reports" title="Feedback and bug reports" level="1"/>
         </page>
