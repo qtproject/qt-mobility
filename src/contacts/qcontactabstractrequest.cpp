@@ -187,7 +187,6 @@ QContactManager::Error QContactAbstractRequest::error() const
  */
 QList<QContactManager::Error> QContactAbstractRequest::errors() const
 {
-    qWarning("QContactAbstractRequest::errors() This function is deprecated and will be removed in week 3!");
     return QList<QContactManager::Error>();
 }
 
@@ -206,7 +205,6 @@ QContactAbstractRequest::RequestType QContactAbstractRequest::type() const
  */
 QContactAbstractRequest::Status Q_DECL_DEPRECATED QContactAbstractRequest::status() const
 {
-    qWarning("QContactAbstractRequest::status() This function was deprecated in week 1 and will be removed after the transition period has elapsed.  Use QContactAbstractRequest::state() instead!");
     return static_cast<QContactAbstractRequest::Status>(d_ptr->m_state);
 }
 
@@ -276,7 +274,6 @@ bool QContactAbstractRequest::waitForFinished(int msecs)
     Returns true if the request was cancelled or more partial results were made available within the given period, otherwise false. */
 bool QContactAbstractRequest::waitForProgress(int msecs)
 {
-    qWarning("QContactAbstractRequest::waitForProgress() This function was deprecated in week 1 and will be removed after the transition period has elapsed.");
     QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
     if (engine && (d_ptr->m_state == QContactAbstractRequest::ActiveState)) {
         return engine->waitForRequestProgress(this, msecs);

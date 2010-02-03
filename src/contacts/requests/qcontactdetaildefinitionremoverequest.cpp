@@ -84,7 +84,6 @@ QContactDetailDefinitionRemoveRequest::~QContactDetailDefinitionRemoveRequest()
 void Q_DECL_DEPRECATED QContactDetailDefinitionRemoveRequest::setNames(const QStringList& names)
 {
     Q_D(QContactDetailDefinitionRemoveRequest);
-    qWarning("QContactDetailDefinitionRemoveRequest::setNames() This function was deprecated in week 1 and will be removed after the transition period has elapsed!  Use setDefinitionNames() instead!");
     d->m_names = names;
 }
 
@@ -96,7 +95,6 @@ void Q_DECL_DEPRECATED QContactDetailDefinitionRemoveRequest::setNames(const QSt
 QStringList Q_DECL_DEPRECATED QContactDetailDefinitionRemoveRequest::names() const
 {
     Q_D(const QContactDetailDefinitionRemoveRequest);
-    qWarning("QContactDetailDefinitionRemoveRequest::names() This function was deprecated in week 1 and will be removed after the transition period has elapsed!  Use definitionNames() instead!");
     return d->m_names;
 }
 
