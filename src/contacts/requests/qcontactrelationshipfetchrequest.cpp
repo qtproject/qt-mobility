@@ -164,7 +164,6 @@ QContactId QContactRelationshipFetchRequest::second() const
 void QContactRelationshipFetchRequest::setParticipant(const QContactId& participantUri, QContactRelationshipFilter::Role role)
 {
     Q_D(QContactRelationshipFetchRequest);
-    qWarning("QContactRelationshipFetchRequest::setParticipant() This function is deprecated and will be removed once the transition period has elapsed.  Use setSecond() instead!");
     d->m_participantUri = participantUri;
     d->m_role = role;
 }
@@ -176,7 +175,6 @@ void QContactRelationshipFetchRequest::setParticipant(const QContactId& particip
 QContactId QContactRelationshipFetchRequest::participant() const
 {
     Q_D(const QContactRelationshipFetchRequest);
-    qWarning("QContactRelationshipFetchRequest::participant() This function is deprecated and will be removed once the transition period has elapsed.  Use second() instead!");
     return d->m_participantUri;
 }
 
@@ -187,7 +185,6 @@ QContactId QContactRelationshipFetchRequest::participant() const
 QContactRelationshipFilter::Role QContactRelationshipFetchRequest::participantRole() const
 {
     Q_D(const QContactRelationshipFetchRequest);
-    qWarning("QContactRelationshipFetchRequest::participantRole() This function is deprecated and will be removed once the transition period has elapsed.  Use setSecond() instead!");
     return d->m_role;
 }
 

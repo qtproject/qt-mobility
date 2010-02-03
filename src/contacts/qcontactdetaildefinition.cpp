@@ -178,7 +178,6 @@ void QContactDetailDefinition::removeField(const QString& key)
  */
 QMap<QString, QContactDetailFieldDefinition>& QContactDetailDefinition::fields()
 {
-    qWarning("QContactDetailDefinition::fields() This function was deprecated in week 1 and will be removed after the transition period has elapsed!  (Unnecessary API)");
     return d->m_fields;
 }
 
