@@ -1772,9 +1772,14 @@ void tst_QContactAsync::relationshipRemove()
     }
 
     // specific source, destination and type removal
-    rrr.setFirst(aId);
-    rrr.setSecond(cId);
-    rrr.setRelationshipType(QContactRelationship::HasAssistant);
+    QList<QContactRelationship> relationships;
+    QContactRelationship r;
+    r.setFirst(aId);
+    r.setSecond(cId);
+    r.setRelationshipType(QContactRelationship::HasAssistant);
+    relationships.push_back(r);
+
+    rrr.setRelationships(relationships);
     rrr.setManager(cm.data());
     qRegisterMetaType<QContactRelationshipRemoveRequest*>("QContactRelationshipRemoveRequest*");
     QThreadSignalSpy spy(&rrr, SIGNAL(stateChanged(QContactAbstractRequest::State)));
@@ -1783,7 +1788,7 @@ void tst_QContactAsync::relationshipRemove()
     QVERIFY(!rrr.isFinished());
     QVERIFY(!rrr.cancel());
     QVERIFY(!rrr.waitForFinished());
-    QVERIFY(rrr.relationshipType() == QString(QLatin1String(QContactRelationship::HasAssistant)));
+    
     QVERIFY(!rrr.cancel()); // not started
     QVERIFY(rrr.start());
 
@@ -1797,15 +1802,19 @@ void tst_QContactAsync::relationshipRemove()
     QCOMPARE(cm->relationships(QContactRelationship::HasAssistant, cId, QContactRelationshipFilter::Second).size(), 1);
 
     // specific relationship type removal
-    rrr.setFirst(QContactId());
-    rrr.setSecond(QContactId());
-    rrr.setRelationshipType(QContactRelationship::HasSpouse);
+    
+    r.setFirst(QContactId());
+    r.setSecond(QContactId());
+    r.setRelationshipType(QContactRelationship::HasSpouse);
+    relationships.clear();
+    relationships.push_back(r);
+    rrr.setRelationships(relationships);
     rrr.setManager(cm.data());
     QCOMPARE(rrr.manager(), cm.data());
     QVERIFY(!rrr.isActive());
     QVERIFY(!rrr.cancel());
     QVERIFY(!rrr.waitForFinished());
-    QVERIFY(rrr.relationshipType() == QString(QLatin1String(QContactRelationship::HasSpouse)));
+    
     QVERIFY(!rrr.cancel()); // not started
     QVERIFY(rrr.start());
 
@@ -1820,9 +1829,12 @@ void tst_QContactAsync::relationshipRemove()
 //    QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
 
     // remove (asynchronously) a nonexistent relationship - should fail.
-    rrr.setFirst(cId);
-    rrr.setSecond(aId);
-    rrr.setRelationshipType(QContactRelationship::HasManager);
+    r.setFirst(cId);
+    r.setSecond(aId);
+    r.setRelationshipType(QContactRelationship::HasManager);
+    relationships.clear();
+    relationships.push_back(r);
+    rrr.setRelationships(relationships);
     rrr.setManager(cm.data());
     QVERIFY(!rrr.cancel()); // not started
     QVERIFY(rrr.start());
@@ -1839,15 +1851,18 @@ void tst_QContactAsync::relationshipRemove()
 //    QCOMPARE(rrr.error(), QContactManager::DoesNotExistError);
 
     // specific relationship type plus source removal
-    rrr.setFirst(bId);
-    rrr.setSecond(QContactId());
-    rrr.setRelationshipType(QContactRelationship::HasAssistant);
+    r.setFirst(bId);
+    r.setSecond(QContactId());
+    r.setRelationshipType(QContactRelationship::HasAssistant);
+    relationships.clear();
+    relationships.push_back(r);
+    rrr.setRelationships(relationships);
     rrr.setManager(cm.data());
     QCOMPARE(rrr.manager(), cm.data());
     QVERIFY(!rrr.isActive());
     QVERIFY(!rrr.cancel());
     QVERIFY(!rrr.waitForFinished());
-    QVERIFY(rrr.relationshipType() == QString(QLatin1String(QContactRelationship::HasAssistant)));
+
     QVERIFY(!rrr.cancel()); // not started
     QVERIFY(rrr.start());
 
@@ -1863,15 +1878,18 @@ void tst_QContactAsync::relationshipRemove()
 //    QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
 
     // specific source removal
-    rrr.setFirst(aId);
-    rrr.setSecond(QContactId());
-    rrr.setRelationshipType(QString());
+    r.setFirst(aId);
+    r.setSecond(QContactId());
+    r.setRelationshipType(QString());
+    relationships.clear();
+    relationships.push_back(r);
+    rrr.setRelationships(relationships);
     rrr.setManager(cm.data());
     QCOMPARE(rrr.manager(), cm.data());
     QVERIFY(!rrr.isActive());
     QVERIFY(!rrr.cancel());
     QVERIFY(!rrr.waitForFinished());
-    QVERIFY(rrr.relationshipType() == QString());
+
     QVERIFY(!rrr.cancel()); // not started
     QVERIFY(rrr.start());
 
@@ -1887,8 +1905,11 @@ void tst_QContactAsync::relationshipRemove()
 //    QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
 
     // cancelling
-    rrr.setFirst(cId);
-    rrr.setSecond(QContactId());
+    r.setFirst(cId);
+    r.setSecond(QContactId());
+    relationships.clear();
+    relationships.push_back(r);
+    
 
     int bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT; // attempt to cancel 40 times.  If it doesn't work due to threading, bail out.
     while (true) {
@@ -1899,8 +1920,7 @@ void tst_QContactAsync::relationshipRemove()
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
             rrr.waitForFinished();
-            rrr.setFirst(cId);
-            rrr.setSecond(QContactId());
+            rrr.setRelationships(relationships);
             bailoutCount -= 1;
             if (!bailoutCount) {
                 qWarning("Unable to test cancelling due to thread scheduling!");
@@ -1934,8 +1954,7 @@ void tst_QContactAsync::relationshipRemove()
             // due to thread scheduling, async cancel might be attempted
             // after the request has already finished.. so loop and try again.
             rrr.waitForFinished();
-            rrr.setFirst(cId);
-            rrr.setSecond(QContactId());
+            rrr.setRelationships(relationships);
             bailoutCount -= 1;
             if (!bailoutCount) {
                 qWarning("Unable to test cancelling due to thread scheduling!");
@@ -2176,7 +2195,7 @@ void tst_QContactAsync::maliciousManager()
     QVERIFY(cifr.cancel());
 
     QContactRemoveRequest crr;
-    crr.setFilter(fil);
+    crr.setContactIds(mcm.contactIds(fil));
     crr.setManager(&mcm);
     QVERIFY(crr.start());
     QVERIFY(crr.cancel());
