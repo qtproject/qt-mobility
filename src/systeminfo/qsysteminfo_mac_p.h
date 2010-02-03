@@ -256,10 +256,8 @@ class QRunLoopThread : public QThread
 public:
     QRunLoopThread(QObject *parent = 0);
     ~QRunLoopThread();
-    bool done;
-
-    void stopLoop();
-    void startLoop();
+    bool keepRunning;
+    void quit();
 
 protected:
     void run();

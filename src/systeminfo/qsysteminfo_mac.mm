@@ -192,9 +192,9 @@ inline NSString *qstringToNSString(const QString &qstr)
 
 QTM_BEGIN_NAMESPACE
 
-#ifdef MAC_SDK_10_6
-QNSListener *listener;
-#endif
+//#ifdef MAC_SDK_10_6
+//QNSListener *listener;
+//#endif
 
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
  : QObject(parent)
@@ -350,53 +350,46 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 }
 
 QSystemNetworkInfoPrivate *QSystemNetworkInfoPrivate::self = 0;
-
+#ifdef MAC_SDK_10_6
+QNSListener *listener;
+#endif
 QRunLoopThread::QRunLoopThread(QObject *parent)
-    :QThread(parent), done(false)
+    :QThread(parent)
 {
 }
 
 QRunLoopThread::~QRunLoopThread()
 {
-    stopLoop();
 #ifdef MAC_SDK_10_6
     [listener release];
 #endif
 }
 
+void QRunLoopThread::quit()
+{
+    mutex.lock();
+    keepRunning = false;
+    mutex.unlock();
+ }
+
 void QRunLoopThread::run()
 {
 #ifdef MAC_SDK_10_6
+    mutex.lock();
+    keepRunning = true;
+    mutex.unlock();
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
     listener = [[QNSListener alloc] init];
 
-    NSDate *loopUntil = [NSDate dateWithTimeIntervalSinceNow:0.1];
-    while (!done && [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode beforeDate:loopUntil]) {
-        loopUntil = [NSDate dateWithTimeIntervalSinceNow:0.1];
+    NSDate *loopUntil = [NSDate dateWithTimeIntervalSinceNow:1.0];
+    while (keepRunning &&
+        [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode beforeDate: loopUntil]) {
+        loopUntil = [NSDate dateWithTimeIntervalSinceNow:1.0];
     }
-
     [pool release];
 #endif
 }
-
-void QRunLoopThread::stopLoop()
-{
-    done = false;
-}
-
-void QRunLoopThread::startLoop()
-{
-#ifdef MAC_SDK_10_6
-    listener = [[QNSListener alloc] init];
-#endif
-}
-
-void qax_winEventFilter(void *message)
-{
-    NSNotification *notification = (NSNotification *)message;
-    qWarning() << __FUNCTION__ << notification;
-}
-
 
 QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
         : QObject(parent), signalStrengthCache(0)
@@ -417,7 +410,8 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
 #ifdef MAC_SDK_10_6
-   runloopThread->stopLoop();
+    runloopThread->quit();
+    runloopThread->wait();
 #endif
 }
 
@@ -691,7 +685,8 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
 void QSystemNetworkInfoPrivate::networkChanged(const QString &notification, const QString interfaceName)
 {
     qWarning() << __FUNCTION__ << notification;
-runloopThread->stopLoop();
+   // runloopThread->stopLoop();
+
     if(notification == "SSID_CHANGED_NOTIFICATION") {
         emit networkNameChanged(QSystemNetworkInfo::WlanMode, networkName(QSystemNetworkInfo::WlanMode));
     }
@@ -704,15 +699,19 @@ runloopThread->stopLoop();
 #ifdef MAC_SDK_10_6
         CWInterface *wifiInterface = [CWInterface interfaceWithName:  qstringToNSString(interfaceName)];
         if([wifiInterface power]) {
-            if(!rssiTimer->isActive())
+            if(!rssiTimer->isActive()) {
+                qWarning() << __FUNCTION__ << "start timer";
                 rssiTimer->start(1000);
+            }
         }  else {
-            if(rssiTimer->isActive())
+            if(rssiTimer->isActive()) {
+                qWarning() << __FUNCTION__ << "stop timer";
             rssiTimer->stop();
+        }
         }
 #endif
     }
-runloopThread->start();
+ //   runloopThread->start();
 }
 
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
