@@ -82,6 +82,8 @@ private:
     TInt m_maxBufferSize;
     TPtr8 m_bufPtr;
     bool m_isInitialized;
+    
+    friend class ut_cntsymbianfiltersqlhelper;
 };
 
 #endif //CNTSRVCONNECTION_H

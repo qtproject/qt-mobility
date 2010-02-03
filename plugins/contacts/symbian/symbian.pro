@@ -57,7 +57,9 @@ symbian: {
         inc/cntsymbiansrvconnection.h \
         inc/cntsymbiantransformerror.h \
         inc/cntsymbiandatabase.h \
-	    inc/cntdisplaylabel.h 
+        inc/cntdisplaylabel.h \
+        inc/cntdisplaylabelsqlfilter.h \
+	inc/cntsqlsearch.h
       
     SOURCES += \
         src/cntsymbianengine.cpp \
@@ -93,7 +95,11 @@ symbian: {
         src/cntsymbiansrvconnection.cpp \
         src/cntsymbiantransformerror.cpp \
         src/cntsymbiandatabase.cpp \
-	    src/cntdisplaylabel.cpp
+        src/cntdisplaylabel.cpp \
+        src/cntdisplaylabelsqlfilter.cpp \
+	src/cntsqlsearch.cpp 
+
+
       
     CONFIG += mobility
     MOBILITY = contacts
@@ -113,12 +119,22 @@ symbian: {
     INSTALLS += target
 
     exists($${EPOCROOT}epoc32/data/z/system/install/Series60v5.2.sis) {
-        DEFINES += SYMBIAN_BACKEND_USE_SQLITE
-        cntmodelResourceFile = \
-            "START RESOURCE ../rss/cntmodel.rss" \
-            "TARGETPATH $${CONTACTS_RESOURCE_DIR}" \
-            "END"
-        MMP_RULES += cntmodelResourceFile
+        exists($${EPOCROOT}epoc32/release/winscw/udeb/VPbkEng.dll) \
+        | exists($${EPOCROOT}epoc32/release/armv5/urel/VPbkEng.dll) {
+            message("TB 9.2 platform")
+        } else {
+            message("TB 10.1 or later platform")
+            DEFINES += SYMBIAN_BACKEND_USE_SQLITE
+            cntmodelResourceFile = \
+                "START RESOURCE ../rss/cntmodel.rss" \
+                "TARGETPATH $${CONTACTS_RESOURCE_DIR}" \
+                "END"
+            MMP_RULES += cntmodelResourceFile
+        }
+    }
+    
+    contains(S60_VERSION, 3.2) {
+    	DEFINES += SYMBIAN_BACKEND_S60_VERSION_32
     }
 
     symbianplugin.sources = $${TARGET}.dll

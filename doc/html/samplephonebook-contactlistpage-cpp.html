@@ -55,6 +55,12 @@
     ****************************************************************************/</span>
 
     #include &quot;contactlistpage.h&quot;
+    #ifdef BUILD_VERSIT
+    #include &quot;qversitreader.h&quot;
+    #include &quot;qversitcontactimporter.h&quot;
+    #include &quot;qversitwriter.h&quot;
+    #include &quot;qversitcontactexporter.h&quot;
+    #endif
 
     #include &lt;QtGui&gt;
 
@@ -64,38 +70,49 @@
         m_manager = 0;
         m_currentFilter = QContactFilter();
 
-        m_backendsLabel = new QLabel(&quot;Store:&quot;, this);
-        m_backendsLabel-&gt;setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         m_backendsCombo = new QComboBox(this);
         QStringList availableManagers = QContactManager::availableManagers();
         m_backendsCombo-&gt;addItems(availableManagers);
         connect(m_backendsCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(backendSelected()));
-        m_filterActiveLabel = new QLabel(&quot;Filter: Inactive&quot;);
+        m_filterActiveLabel = new QLabel(&quot;Inactive&quot;);
         m_filterActiveLabel-&gt;setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
 
         m_contactsList = new QListWidget(this);
 
-        m_addContactBtn = new QPushButton(&quot;Add&quot;, this);
+        QPushButton* m_addContactBtn = new QPushButton(&quot;Add&quot;, this);
         connect(m_addContactBtn, SIGNAL(clicked()), this, SLOT(addContactClicked()));
-        m_editBtn = new QPushButton(&quot;Edit&quot;, this);
+        QPushButton* m_editBtn = new QPushButton(&quot;Edit&quot;, this);
         connect(m_editBtn, SIGNAL(clicked()), this, SLOT(editClicked()));
-        m_findBtn = new QPushButton(&quot;Find&quot;, this);
-        connect(m_findBtn, SIGNAL(clicked()), this, SLOT(findClicked()));
+        QPushButton* m_deleteBtn = new QPushButton(&quot;Delete&quot;, this);
+        connect(m_deleteBtn, SIGNAL(clicked()), this, SLOT(deleteClicked()));
+        QPushButton* m_filterBtn = new QPushButton(&quot;Filter&quot;, this);
+        connect(m_filterBtn, SIGNAL(clicked()), this, SLOT(filterClicked()));
+        QPushButton* m_importBtn = new QPushButton(&quot;Import&quot;);
+        connect(m_importBtn, SIGNAL(clicked()), this, SLOT(importClicked()));
+        QPushButton* m_exportBtn = new QPushButton(&quot;Export&quot;);
+        connect(m_exportBtn, SIGNAL(clicked()), this, SLOT(exportClicked()));
 
-        QHBoxLayout *backendLayout = new QHBoxLayout;
-        backendLayout-&gt;addWidget(m_backendsLabel);
-        backendLayout-&gt;addWidget(m_backendsCombo);
-        backendLayout-&gt;addWidget(m_filterActiveLabel);
+        QFormLayout *backendLayout = new QFormLayout;
+        backendLayout-&gt;addRow(&quot;Store:&quot;, m_backendsCombo);
+        backendLayout-&gt;addRow(&quot;Filter:&quot;, m_filterActiveLabel);
 
-        QHBoxLayout *btnLayout = new QHBoxLayout;
-        btnLayout-&gt;addWidget(m_addContactBtn);
-        btnLayout-&gt;addWidget(m_editBtn);
-        btnLayout-&gt;addWidget(m_findBtn);
+        QHBoxLayout *btnLayout1 = new QHBoxLayout;
+        btnLayout1-&gt;addWidget(m_addContactBtn);
+        btnLayout1-&gt;addWidget(m_editBtn);
+        btnLayout1-&gt;addWidget(m_deleteBtn);
+        btnLayout1-&gt;addWidget(m_filterBtn);
+
+        QHBoxLayout *btnLayout2 = new QHBoxLayout;
+        btnLayout2-&gt;addWidget(m_importBtn);
+        btnLayout2-&gt;addWidget(m_exportBtn);
 
         QVBoxLayout *bookLayout = new QVBoxLayout;
         bookLayout-&gt;addLayout(backendLayout);
         bookLayout-&gt;addWidget(m_contactsList);
-        bookLayout-&gt;addLayout(btnLayout);
+        bookLayout-&gt;addLayout(btnLayout1);
+    #ifdef BUILD_VERSIT
+        bookLayout-&gt;addLayout(btnLayout2);
+    #endif
 
         setLayout(bookLayout);
 
@@ -139,15 +156,15 @@
     {
         <span class="comment">// first, check to see whether the filter does anything</span>
         if (filter == QContactFilter())
-            m_filterActiveLabel-&gt;setText(&quot;Filter: Inactive&quot;);
+            m_filterActiveLabel-&gt;setText(&quot;Inactive&quot;);
         else
-            m_filterActiveLabel-&gt;setText(&quot;Filter: Active&quot;);
+            m_filterActiveLabel-&gt;setText(&quot;Active&quot;);
 
         QContact currContact;
         m_currentFilter = filter;
         m_contactsList-&gt;clear();
         m_idToListIndex.clear();
-        QList&lt;QContactLocalId&gt; contactIds = m_manager-&gt;contacts(m_currentFilter);
+        QList&lt;QContactLocalId&gt; contactIds = m_manager-&gt;contactIds(m_currentFilter);
         foreach (const QContactLocalId&amp; id, contactIds) {
             QListWidgetItem *currItem = new QListWidgetItem;
             currContact = m_manager-&gt;contact(id);
@@ -170,9 +187,80 @@
         <span class="comment">// else, nothing selected; ignore.</span>
     }
 
-    void ContactListPage::findClicked()
+    void ContactListPage::filterClicked()
     {
         emit showFilterPage(m_currentFilter);
+    }
+
+    void ContactListPage::deleteClicked()
+    {
+        if (!m_manager) {
+            qWarning() &lt;&lt; &quot;No manager selected; cannot delete.&quot;;
+            return;
+        }
+
+        if (!m_contactsList-&gt;currentItem()) {
+            qWarning() &lt;&lt; &quot;Nothing to delete.&quot;;
+            return;
+        }
+
+        QContactLocalId contactId = QContactLocalId(m_contactsList-&gt;currentItem()-&gt;data(Qt::UserRole).toUInt());
+        bool success = m_manager-&gt;removeContact(contactId);
+        if (success) {
+            delete m_contactsList-&gt;takeItem(m_contactsList-&gt;currentRow());
+            QMessageBox::information(this, &quot;Success!&quot;, &quot;Contact deleted successfully!&quot;);
+        }
+        else
+            QMessageBox::information(this, &quot;Failed!&quot;, &quot;Failed to delete contact!&quot;);
+    }
+
+    void ContactListPage::importClicked()
+    {
+    #ifdef BUILD_VERSIT
+        if (!m_manager) {
+            qWarning() &lt;&lt; &quot;No manager selected; cannot import&quot;;
+            return;
+        }
+        QString fileName = QFileDialog::getOpenFileName(this,
+           tr(&quot;Select vCard file&quot;), &quot;.&quot;, tr(&quot;vCard files (*.vcf)&quot;));
+        QFile file(fileName);
+        file.open(QIODevice::ReadOnly);
+        if (file.isReadable()) {
+            QVersitReader reader;
+            reader.setDevice(&amp;file);
+            if (reader.startReading() &amp;&amp; reader.waitForFinished()) {
+                QVersitContactImporter importer;
+                QList&lt;QContact&gt; contacts = importer.importContacts(reader.results());
+                QMap&lt;int, QContactManager::Error&gt; errorMap;
+                m_manager-&gt;saveContacts(&amp;contacts, &amp;errorMap);
+                rebuildList(m_currentFilter);
+            }
+        }
+    #endif
+    }
+
+    void ContactListPage::exportClicked()
+    {
+    #ifdef BUILD_VERSIT
+        if (!m_manager) {
+            qWarning() &lt;&lt; &quot;No manager selected; cannot import&quot;;
+            return;
+        }
+        QList&lt;QContact&gt; contacts = m_manager-&gt;contacts(QList&lt;QContactSortOrder&gt;(), QStringList());
+        QString fileName = QFileDialog::getSaveFileName(this, tr(&quot;Save vCard&quot;),
+                                                        &quot;./contacts.vcf&quot;,
+                                                        tr(&quot;vCards (*.vcf)&quot;));
+        QFile file(fileName);
+        file.open(QIODevice::WriteOnly);
+        if (file.isWritable()) {
+            QVersitContactExporter exporter;
+            QList&lt;QVersitDocument&gt; documents = exporter.exportContacts(contacts);
+            QVersitWriter writer;
+            writer.setDevice(&amp;file);
+            writer.startWriting(documents);
+            writer.waitForFinished();
+        }
+    #endif
     }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

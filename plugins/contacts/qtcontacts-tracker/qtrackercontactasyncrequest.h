@@ -79,7 +79,16 @@ protected:
 class QTrackerContactFetchRequest : public QObject, public QTrackerContactAsyncRequest
 {
     Q_OBJECT
+    Q_ENUMS(IMResultColumn)
 public:
+        enum IMResultColumn { ContactId = 0,
+                       ContactIMId,
+                       ContactStatus,
+                       ContactMessage,
+                       ContactNickname,
+                       AccountType,
+                       MetaContact };
+                         
     QTrackerContactFetchRequest(QContactAbstractRequest* req, QContactManagerEngine* parent);
 public slots:
     void contactsReady();
@@ -99,7 +108,7 @@ private:
     // all the following methods update \sa result
     void processQueryPhoneNumbers(SopranoLive::LiveNodes queryPhoneNumbers, bool affiliationNumbers);
     void processQueryEmailAddresses(SopranoLive::LiveNodes queryEmailAddresses, bool affiliationEmails);
-    void processQueryIMAccounts(SopranoLive::LiveNodes queryIMAccounts);
+    void processQueryIMContacts(SopranoLive::LiveNodes queryIMContacts);
     void validateRequest();
     void readFromQueryRowToContact(QContact &contact, int queryRow);
     QContact &linkContactsWithSameMetaContact(QContact &first, QContact &second);

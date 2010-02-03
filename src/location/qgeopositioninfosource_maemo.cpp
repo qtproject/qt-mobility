@@ -42,28 +42,28 @@
 #include "qgeopositioninfosource_maemo_p.h"
 #include <iostream>
 
-#if 0 
+#if 0
 void dumpQByteArray(const QByteArray &msg)
 {
     std::cout << "QByteArray dump:\n";
     std::cout << msg.size() << "  \n";
     int i =  msg.size();
-    for(int k=0; k<i ;k++)
-        printf("msg[%d]=%2.2x\n",k,(unsigned char)msg[k]);
+    for (int k = 0; k < i ;k++)
+        printf("msg[%d]=%2.2x\n", k, (unsigned char)msg[k]);
 }
-#endif 
+#endif
 
 using namespace std;
 
 QTM_BEGIN_NAMESPACE
 
-QGeoPositionInfoSourceMaemo::QGeoPositionInfoSourceMaemo(QObject *parent):QGeoPositionInfoSource(parent)
+QGeoPositionInfoSourceMaemo::QGeoPositionInfoSourceMaemo(QObject *parent): QGeoPositionInfoSource(parent)
 {
     // default values
     time_interval_ = 5000;
     distance_interval_ = 10;
     registered_ = false;
-    validLastUpdate = false; 
+    validLastUpdate = false;
     validLastSatUpdate = false;
     availableMethods = AllPositioningMethods;
 }
@@ -75,10 +75,10 @@ int QGeoPositionInfoSourceMaemo::init()
     dbusComm = new DBusComm();
     status = dbusComm->init();
 
-    QObject::connect(dbusComm, SIGNAL(receivedMessage(const QByteArray &)), 
+    QObject::connect(dbusComm, SIGNAL(receivedMessage(const QByteArray &)),
                      this, SLOT(dbusMessages(const QByteArray &)));
 
-    QObject::connect(dbusComm, SIGNAL(receivedPositionUpdate(const QGeoPositionInfo &)), 
+    QObject::connect(dbusComm, SIGNAL(receivedPositionUpdate(const QGeoPositionInfo &)),
                      this, SLOT(newPositionUpdate(const QGeoPositionInfo &)));
 
     return status;
@@ -104,11 +104,11 @@ void QGeoPositionInfoSourceMaemo::newPositionUpdate(const QGeoPositionInfo &upda
 
 QGeoPositionInfo QGeoPositionInfoSourceMaemo::lastKnownPosition(bool fromSatellitePositioningMethodsOnly) const
 {
-    if(validLastSatUpdate)
+    if (validLastSatUpdate)
         return lastSatUpdate;
 
-    if(!fromSatellitePositioningMethodsOnly)
-        if(validLastUpdate)
+    if (!fromSatellitePositioningMethodsOnly)
+        if (validLastUpdate)
             return lastUpdate;
 
     return QGeoPositionInfo();
@@ -123,7 +123,7 @@ QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSourceMaemo::supporte
 
 void QGeoPositionInfoSourceMaemo::setUpdateInterval(int msec)
 {
-    msec = (msec<MinimumUpdateInterval)?MinimumUpdateInterval:msec;
+    msec = (msec < MinimumUpdateInterval) ? MinimumUpdateInterval : msec;
 
     QGeoPositionInfoSource::setUpdateInterval(msec);
     if (registered_ == false)
@@ -135,7 +135,7 @@ void QGeoPositionInfoSourceMaemo::setPreferredPositioningMethods(PositioningMeth
 {
     QGeoPositionInfoSource::setPreferredPositioningMethods(sources);
     if (registered_ == false)
-        registered_ = dbusComm->sendDBusRegister(); 
+        registered_ = dbusComm->sendDBusRegister();
     dbusComm->sessionConfigRequest(dbusComm->CmdSetMethods, sources, 0);
 }
 
@@ -168,7 +168,7 @@ void QGeoPositionInfoSourceMaemo::stopUpdates()
 
 void QGeoPositionInfoSourceMaemo::requestUpdate(int timeout)
 {
-    if(timeout) {}
+    if (timeout) {}
 }
 
 #include "moc_qgeopositioninfosource_maemo_p.cpp"

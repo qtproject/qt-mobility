@@ -39,6 +39,9 @@
 **
 ****************************************************************************/
 #include "qsysteminfo_linux_common_p.h"
+#include <QTimer>
+#include <QFile>
+#include <QDir>
 
 QTM_BEGIN_NAMESPACE
 
