@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+#include "qmobilityglobal.h"
 #include "qtcontacts.h"
 #include "requestexample.h"
 
@@ -46,6 +47,8 @@
 #include <QCoreApplication>
 #include <QObject>
 #include <QTimer>
+
+QTM_USE_NAMESPACE
 
 static void addContact(QContactManager*);
 static void callContact(QContactManager*);

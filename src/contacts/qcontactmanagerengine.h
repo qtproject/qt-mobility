@@ -186,7 +186,7 @@ public:
     static void setContactRelationships(QContact* contact, const QList<QContactRelationship>& relationships);
 
 protected:
-    void setDetailAccessConstraints(QContactDetail* detail, QContactDetail::AccessConstraints) const;
+    void setDetailAccessConstraints(QContactDetail* detail, QContactDetail::AccessConstraints constraints) const;
 
 private:
     /* QContactChangeSet is a utility class used to emit the appropriate signals */

@@ -92,13 +92,23 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
- * \enum QContactAbstractRequest::State
- * Enumerates the various states that a request may be in at any given time
+ * \enum QContactAbstractRequest::Status
+ * \deprecated
+ * Enumerates the various states that a request may be in at any given time.  Deprecated - use QContactAbstractRequest::State instead!
  * \value Inactive Operation not yet started
  * \value Active Operation started, not yet finished
- * \value Canceling Operation started then cancelled, not yet finished
- * \value Canceled Operation is finished due to cancellation
+ * \value Cancelling Operation started then cancelled, not yet finished
+ * \value Cancelled Operation is finished due to cancellation
  * \value Finished Operation successfully completed
+ */
+
+/*!
+ * \enum QContactAbstractRequest::State
+ * Enumerates the various states that a request may be in at any given time
+ * \value InactiveState Operation not yet started
+ * \value ActiveState Operation started, not yet finished
+ * \value CanceledState Operation is finished due to cancellation
+ * \value FinishedState Operation successfully completed
  */
 
 /*!
@@ -189,6 +199,7 @@ QContactAbstractRequest::RequestType QContactAbstractRequest::type() const
 }
 
 /*!
+ * \fn Q_DECL_DEPRECATED QContactAbstractRequest::status() const
  * \deprecated
  * Returns the current status of the request.
  */

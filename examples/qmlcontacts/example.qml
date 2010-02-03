@@ -79,11 +79,17 @@ Rectangle {
                     opacity: wrapper.detailsOpacity
                     Text {
                         y: nameTxt.height
+                        id: emailId
+                        text: email
+                    }
+                    Text {
+                        y: emailId.y + emailId.height
                         id: accountPathId
                         text: accountPath
                     }
                     Text {
-                        y: accountPathId.y + accountPathId.height                        
+                        y: accountPathId.y
+                        x: accountPathId.x + accountPathId.width + 5
                         id: presenceId
                         text: presence
                     }
@@ -159,7 +165,7 @@ Rectangle {
         orientation: "Vertical"
         position: mainList.visibleArea.yPosition
         pageSize: mainList.visibleArea.heightRatio
-        width: 8
+        width: 40
         height: mainList.height
         anchors.right: mainList.right
         // Only show the scrollbar when the view is moving.

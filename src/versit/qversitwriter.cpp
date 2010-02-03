@@ -52,8 +52,8 @@ QTM_USE_NAMESPACE
 /*!
   \class QVersitWriter
   \preliminary
-  \brief The QVersitWriter class provides an interface
-  for writing a versit document such as a vCard to a text stream.
+ 
+  \brief The QVersitWriter class writes Versit documents such as vCards to a device.
 
   \ingroup versit
  
@@ -63,24 +63,31 @@ QTM_USE_NAMESPACE
   The writing can be done asynchronously and the waitForFinished()
   function can be used to implement a blocking write.
  
-  \code
-  // An example of writing a simple vCard to a memory buffer:
-  QBuffer vCardBuffer;
-  vCardBuffer.open(QBuffer::ReadWrite);
-  QVersitWriter writer;
-  writer.setDevice(&vCardBuffer);
-  QVersitDocument document;
-  QVersitProperty property;
-  property.setName("N");
-  property.setValue("Citizen;John;Q;;");
-  document.addProperty(property);
-  writer.startWriting();
-  if (writer.waitForFinished()) {
-      // Use the vCardBuffer...
-  }
-  \endcode
- 
   \sa QVersitDocument, QVersitProperty
+ */
+
+
+/*!
+ * \enum QVersitWriter::Error
+ * This enum specifies an error that occurred during the most recent operation:
+ * \value NoError The most recent operation was successful
+ * \value UnspecifiedError The most recent operation failed for an undocumented reason
+ * \value IOError The most recent operation failed because of a problem with the device
+ * \value OutOfMemoryError The most recent operation failed due to running out of memory
+ * \value NotReadyError The most recent operation failed because there is an operation in progress
+ * \omitvalue ParseError
+ * \omitvalue InvalidCharsetError
+ * \omitvalue BadDeviceError
+ */
+// XXX Remove ParseError, InvalidCharsetError and BadDeviceError
+
+/*!
+ * \enum QVersitWriter::State
+ * Enumerates the various states that a reader may be in at any given time
+ * \value InactiveState Write operation not yet started
+ * \value ActiveState Write operation started, not yet finished
+ * \value CanceledState Write operation is finished due to cancelation
+ * \value FinishedState Write operation successfully completed
  */
 
 /*!
@@ -209,29 +216,29 @@ QVersitWriter::Error QVersitWriter::error() const
 }
 
 
-void Q_DECL_DEPRECATED QVersitWriter::setVersitDocument(const QVersitDocument& versitDocument)
+/*! \internal */
+void QVersitWriter::setVersitDocument(const QVersitDocument& versitDocument)
 {
-    qWarning("QVersitWriter::setVersitDocument(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  The document should be passed directly into startWriting().");
     QList<QVersitDocument> documents;
     documents.append(versitDocument);
     d->mInput = documents;
 }
 
-QVersitDocument Q_DECL_DEPRECATED QVersitWriter::versitDocument() const
+/*! \internal */
+QVersitDocument QVersitWriter::versitDocument() const
 {
-    qWarning("QVersitWriter::versitDocument(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!");
     return QVersitDocument();
 }
 
-bool Q_DECL_DEPRECATED QVersitWriter::startWriting()
+/*! \internal */
+bool QVersitWriter::startWriting()
 {
-    qWarning("QVersitWriter::startWriting(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  The versit document should be specified as a parameter.");
     return startWriting(d->mInput);
 }
 
-bool Q_DECL_DEPRECATED QVersitWriter::writeAll()
+/*! \internal */
+bool QVersitWriter::writeAll()
 {
-    qWarning("QVersitWriter::writeAll(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  startWriting() and waitForFinished() should be used instead.");
     startWriting(d->mInput);
     return waitForFinished();
 }

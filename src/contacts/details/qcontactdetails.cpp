@@ -1846,6 +1846,46 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
 
 /*!
    \fn QContactName::setLastName(const QString& lastName)
+   Sets the last name segment of the name stored in this detail to \a lastName.
+ */
+
+/*!
+   \fn Q_DECL_DEPRECATED QContactName::first() const
+   \deprecated
+   Returns the first (given) name segment of the name stored in this detail.
+ */
+
+/*!
+   \fn Q_DECL_DEPRECATED QContactName::setFirst(const QString& first)
+   \deprecated
+   Sets the first name segment of the name stored in this detail to \a first.
+ */
+
+/*!
+   \fn Q_DECL_DEPRECATED QContactName::middle() const
+   \deprecated
+
+   Returns the middle (additional, or other) name segment of the name
+   stored in this detail.
+ */
+
+/*!
+   \fn Q_DECL_DEPRECATED QContactName::setMiddle(const QString& middle)
+   \deprecated
+   Sets the middle name segment of the name stored in this detail to \a middle.
+ */
+
+/*!
+   \fn Q_DECL_DEPRECATED QContactName::last() const
+   \deprecated
+
+   Returns the last (family, or surname) name segment of the name
+   stored in this detail.
+ */
+
+/*!
+   \fn Q_DECL_DEPRECATED QContactName::setLast(const QString& last)
+   \deprecated
    Sets the last name segment of the name stored in this detail to \a last.
  */
 

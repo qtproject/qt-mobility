@@ -55,6 +55,7 @@
 //
 
 #include <QObject>
+#include "qmobilityglobal.h"
 #include "qcontactfetchrequest.h"
 
 QTM_USE_NAMESPACE
