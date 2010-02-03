@@ -103,9 +103,12 @@ QNetworkConfigurationManagerPrivate::QNetworkConfigurationManagerPrivate()
 
     updateConfigurations();
     updateStatesToSnaps();
+
+    updateAvailableAccessPoints(); // On first time updates synchronously (without WLAN scans)
     
     // Start monitoring IAP and/or SNAP changes in Symbian CommsDB
     startCommsDatabaseNotifications();
+    iFirstUpdate = false;
 }
 
 QNetworkConfigurationManagerPrivate::~QNetworkConfigurationManagerPrivate() 
@@ -372,8 +375,6 @@ void QNetworkConfigurationManagerPrivate::updateConfigurationsL()
             emit configurationRemoved(item);
         }
     }
-
-    iFirstUpdate = false;
 }
 
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE
@@ -955,11 +956,22 @@ void AccessPointsAvailabilityScanner::DoCancel()
 
 void AccessPointsAvailabilityScanner::StartScanning()
 {
-    iConnectionMonitor.GetPckgAttribute(EBearerIdAll, 0, KIapAvailability, iIapBuf, iStatus);
-    if (!IsActive()) {
-        SetActive();
+    if (iOwner.iFirstUpdate) {
+        // On first update (the mgr is being instantiated) update only those bearers who
+        // don't need time-consuming scans (WLAN).
+        // Note: EBearerIdWCDMA covers also GPRS bearer
+        iConnectionMonitor.GetPckgAttribute(EBearerIdWCDMA, 0, KIapAvailability, iIapBuf, iStatus);
+        User::WaitForRequest(iStatus);
+        if (iStatus.Int() == KErrNone) {
+            iOwner.accessPointScanningReady(true,iIapBuf());
+        }
+    } else {
+        iConnectionMonitor.GetPckgAttribute(EBearerIdAll, 0, KIapAvailability, iIapBuf, iStatus);
+        if (!IsActive()) {
+            SetActive();
+        }
     }
-}    
+}
 
 void AccessPointsAvailabilityScanner::RunL()
 {
