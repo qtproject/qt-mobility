@@ -18,6 +18,6 @@ DESTDIR = $$QT_MOBILITY_BUILD_TREE/bin/examples
 QMAKE_RPATHDIR+=$$OUTPUT_DIR/lib
 
 CONFIG += mobility
-MOBILITY = versit
+MOBILITY = contacts versit
 
 SOURCES += qtversitdocsample.cpp
