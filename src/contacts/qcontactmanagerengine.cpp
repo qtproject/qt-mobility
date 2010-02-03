@@ -2104,6 +2104,9 @@ bool QContactManagerEngine::waitForRequestFinished(QContactAbstractRequest* req,
  * \deprecated
  * This function takes a QContactAbstractRequest::Status parameter and hence has been deprecated.
  * Use the related function of similar signature which takes a QContactAbstractRequest::State parameter instead.
+ *
+ * Updates the request \a req with the error information \a error and \a errors.
+ * The request state will be updated to \a status.  If the sorting of the results remains unchanged, \a appendOnly will be set to true.
  */
 void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QContactManager::Error error, QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
@@ -2119,6 +2122,9 @@ void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QC
  * \deprecated
  * This function takes a QContactAbstractRequest::Status parameter and hence has been deprecated.
  * Use the related function of similar signature which takes a QContactAbstractRequest::State parameter instead.
+ *
+ * Updates the request \a req with the result \a result and error information \a error and \a errors.
+ * The request state will be updated to \a status.  If the sorting of the results remains unchanged, \a appendOnly will be set to true.
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactLocalId>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
@@ -2134,6 +2140,9 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
  * \deprecated
  * This function takes a QContactAbstractRequest::Status parameter and hence has been deprecated.
  * Use the related function of similar signature which takes a QContactAbstractRequest::State parameter instead.
+ *
+ * Updates the request \a req with the result \a result and error information \a error and \a errors.
+ * The request state will be updated to \a status.  If the sorting of the results remains unchanged, \a appendOnly will be set to true.
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContact>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
@@ -2160,6 +2169,9 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
  * \deprecated
  * This function takes a QContactAbstractRequest::Status parameter and hence has been deprecated.
  * Use the related function of similar signature which takes a QContactAbstractRequest::State parameter instead.
+ *
+ * Updates the request \a req with the result \a result and error information \a error and \a errors.
+ * The request state will be updated to \a status.
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
 {
@@ -2179,6 +2191,9 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QL
  * \deprecated
  * This function takes a QContactAbstractRequest::Status parameter and hence has been deprecated.
  * Use the related function of similar signature which takes a QContactAbstractRequest::State parameter instead.
+ *
+ * Updates the request \a req with the result \a result and error information \a error and \a errors.
+ * The request state will be updated to \a status.  If the sorting of the results remains unchanged, \a appendOnly will be set to true.
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QMap<QString, QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
@@ -2198,6 +2213,9 @@ void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QM
 /*!
  * \deprecated
  * This function has been entirely deprecated and has no effect.  It was deprecated in week 1 and will be removed once the transition period has elapsed.
+ *
+ * Updates the request \a req with the result \a result and error information \a error and \a errors.
+ * The request state will be updated to \a status.  If the sorting of the results remains unchanged, \a appendOnly will be set to true.
  */
 void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactRelationship>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
