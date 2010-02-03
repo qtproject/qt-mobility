@@ -75,19 +75,21 @@ QContactRemoveRequest::~QContactRemoveRequest()
 {
 }
 
-/*! Sets the filter which will be used to select the contacts to remove to \a filter */
+/*!
+ * \deprecated
+ * Sets the filter which will be used to select the contacts to remove to \a filter */
 void QContactRemoveRequest::setFilter(const QContactFilter& filter)
 {
     Q_D(QContactRemoveRequest);
-    qWarning("QContactRemoveRequest::setFilter() This function was deprecated in week 4 and will be removed once the transition period has elapsed.  Use setContacts() instead!");
     d->m_filter = filter;
 }
 
-/*! Returns the filter which will be used to select the contacts to remove */
+/*!
+ * \deprecated
+ * Returns the filter which will be used to select the contacts to remove */
 QContactFilter QContactRemoveRequest::filter() const
 {
     Q_D(const QContactRemoveRequest);
-    qWarning("QContactRemoveRequest::setFilter() This function was deprecated in week 4 and will be removed once the transition period has elapsed.  Use contacts() instead!");
     return d->m_filter;
 }
 
