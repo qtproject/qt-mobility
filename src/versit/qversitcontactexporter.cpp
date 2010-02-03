@@ -105,52 +105,11 @@ QTM_USE_NAMESPACE
  * setDetailHandler(), the client can pass in a handler to override the processing of details and/or
  * handle details that QVersitContactExporter doesn't support.
  *
- * \code
+ * An example detail handler that logs unknown properties:
+ * \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Detail handler
  *
- * class MyDetailHandler : public QVersitContactExporterDetailHandler {
- * public:
- *     bool preProcessDetail(const QContact& contact, const QContactDetail& detail, QVersitDocument* document) {
- *         return false;
- *     }
- *     bool postProcessDetail(const QContact& contact, const QContactDetail& detail, bool alreadyProcessed, QVersitDocument* document) {
- *         if (!alreadyProcessed)
- *             mUnknownDetails.append(detail);
- *         return false;
- *     }
- *     QList<QContactDetail> mUnknownDetails;
- * };
- *
- * // An example of exporting a QContact:
- * QVersitContactExporter contactExporter;
- *
- * MyDetailHandler detailHandler;
- * contactExporter.setDetailHandler(&detailHandler);
- *
- * QContact contact;
- * // Create a name
- * QContactName name;
- * name.setFirst(QString::fromAscii("John"));
- * contact.saveDetail(&name);
- *
- * // Create an avatar type which is not supported by the exporter
- * QContactAvatar contactAvatar;
- * contactAvatar.setAvatar(QString::fromAscii("/my/image/avatar_path/texture.type"));
- * contactAvatar.setSubType(QContactAvatar::SubTypeTexturedMesh);
- * contact.saveDetail(&contactAvatar);
- *
- * // Create an organization detail with a title and a logo
- * QContactOrganization organization;
- * organization.setTitle(QString::fromAscii("Developer"));
- * organization.setLogo(QString::fromAscii("/my/image/logo_path/logo.jpg"));
- * contact.saveDetail(&organization);
- *
- * QList<QContact> contactList;
- * contactList.append(contact);
- * QList<QVersitDocument> versitDocuments = contactExporter.exportContacts(contactList);
- *
- * // detailHandler.mUnknownDetails now contains the list of unknown details
- *
- * \endcode
+ * An example usage of QVersitContactExporter
+ * \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Export example
  *
  * \sa QVersitDocument, QVersitProperty, QVersitContactExporterDetailHandler, QVersitResourceHandler
  */

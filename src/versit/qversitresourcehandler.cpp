@@ -49,12 +49,13 @@ QTM_USE_NAMESPACE
  * \class QVersitResourceHandler
  * \preliminary
  * \brief The QVersitResourceHandler class is an interface for clients wishing to implement custom
- * behaviour for loading and saving files to disk when exporting and importing, respectively.
+ * behaviour for loading and saving files to disk when exporting and importing.
  *
  * \ingroup versit
  *
  * \sa QVersitContactImporter
  * \sa QVersitContactExporter
+ * \sa QVersitDefaultResourceHandler
  */
 
 /*!
@@ -86,9 +87,11 @@ QTM_USE_NAMESPACE
  * \brief The QVersitDefaultResourceHandler class provides a default implementation of a Versit
  * resource handler.
  *
+ * An example resource handler implementation:
+ * \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Resource handler
  * \ingroup versit
  *
- * \sa QVersitContactImporter, QVersitContactExporter
+ * \sa QVersitContactImporter, QVersitContactExporter, QVersitResourceHandler
  */
 
 QVersitDefaultResourceHandler::QVersitDefaultResourceHandler()
