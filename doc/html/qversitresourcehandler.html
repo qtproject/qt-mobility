@@ -40,11 +40,11 @@
 <p>Frees any memory used by the handler.</p>
 <a name="//apple_ref/cpp/instm/QVersitResourceHandler/loadResource"></a>
 <h3 class="fn"><a name="loadResource"></a>bool QVersitResourceHandler::loadResource ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>location</i>, <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> * <i>contents</i>, <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> * <i>mimeType</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Loads a file from <i>location</i>. *<i>contents</i> is filled with the contents of the file and *<i>mimeType</i> is set to the MIME type that it is determined to be. Returns true on success, false on failure.</p>
+<p>Loads a file from <i>location</i>. <i>contents</i> is filled with the contents of the file and *<i>mimeType</i> is set to the MIME type that it is determined to be. Returns true on success, false on failure.</p>
 <a name="//apple_ref/cpp/instm/QVersitResourceHandler/saveResource"></a>
 <h3 class="fn"><a name="saveResource"></a>bool QVersitResourceHandler::saveResource ( const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>contents</i>, const <a href="qversitproperty.html">QVersitProperty</a> &amp; <i>property</i>, <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> * <i>location</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Saves the binary data <i>contents</i> to a file on a persistent storage medium.</p>
-<p><i>property</i> holds the <a href="qversitproperty.html">QVersitProperty</a> which is the context in which the binary is coming from. The <a href="qversitresourcehandler.html">QVersitResourceHandler</a> can use this, for example, to determine file extension it should choose. *<i>location</i> is filled with the contents of the file. Returns true on success, false on failure.</p>
+<p><i>property</i> holds the <a href="qversitproperty.html">QVersitProperty</a> which is the context in which the binary is coming from. The <a href="qversitresourcehandler.html">QVersitResourceHandler</a> can use this, for example, to determine file extension it should choose. <i>location</i> is filled with the contents of the file. Returns true on success, false on failure.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
