@@ -53,12 +53,11 @@ QTM_USE_NAMESPACE
 /*!
   \class QVersitReader
   \preliminary
-  \brief The QVersitReader class provides an interface
-  for reading versit documents such as vCards from a stream.
+  \brief The QVersitReader class reads Versit documents such as vCards from a device.
 
   \ingroup versit
  
-  QVersitReader reads a number of Versit documents such as vCards
+  QVersitReader concatenation of Versit documents such as vCards
   from a text stream and returns a list of QVersitDocument instances.
   QVersitReader supports reading from an abstract I/O device
   which can be for example a file or a memory buffer.
@@ -66,24 +65,29 @@ QTM_USE_NAMESPACE
   waitForFinished() function can be used to make a blocking
   read.
  
-  \code
-  // An example of reading a simple vCard from a memory buffer:
-  QBuffer vCardBuffer;
-  vCardBuffer.open(QBuffer::ReadWrite);
-  QByteArray vCard =
-      "BEGIN:VCARD\r\nVERSION:2.1\r\nN:Citizen;John;Q;;\r\nEND:VCARD\r\n";
-  vCardBuffer.write(vCard);
-  vCardBuffer.seek(0);
-  QVersitReader reader;
-  reader.setDevice(&vCardBuffer);
-  reader.startReading();
-  reader.waitForFinished();
-  QList<QVersitDocument> versitDocuments = reader.results();
-  // Use the resulting document(s)...
-  }
-  \endcode
- 
   \sa QVersitDocument
+ */
+
+/*!
+ * \enum QVersitReader::Error
+ * This enum specifies an error that occurred during the most recent operation:
+ * \value NoError The most recent operation was successful
+ * \value UnspecifiedError The most recent operation failed for an undocumented reason
+ * \value IOError The most recent operation failed because of a problem with the device
+ * \value OutOfMemoryError The most recent operation failed due to running out of memory
+ * \value NotReadyError The most recent operation failed because there is an operation in progress
+ * \value ParseError The most recent operation failed because the input was malformed
+ * \omitvalue InvalidCharsetError
+ * \omitvalue BadDeviceError
+ */
+
+/*!
+ * \enum QVersitReader::State
+ * Enumerates the various states that a reader may be in at any given time
+ * \value InactiveState Read operation not yet started
+ * \value ActiveState Read operation started, not yet finished
+ * \value CanceledState Read operation is finished due to cancellation
+ * \value FinishedState Read operation successfully completed
  */
 
 /*!
@@ -91,7 +95,9 @@ QTM_USE_NAMESPACE
  * The signal is emitted by the reader when its state has changed (eg. when it has finished
  * reading from the device).
  * \a state is the new state of the reader.
- *
+ */
+
+/*!
  * \fn QVersitReader::resultsAvailable(QList<QVersitDocument>& results)
  * The signal is emitted by the reader as it reads from the device when it has made more Versit
  * documents available.
@@ -134,7 +140,7 @@ QIODevice* QVersitReader::device() const
 }
 
 /*!
- * Sets the codec for the reader to use when parsing the input stream.
+ * Sets \a codec as the codec for the reader to use when parsing the input stream to.
  * This codec is not used for values where the CHARSET Versit parameter occurs.
  */
 void QVersitReader::setDefaultCodec(QTextCodec *codec)
@@ -227,6 +233,19 @@ QVersitReader::State QVersitReader::state() const
 QVersitReader::Error QVersitReader::error() const
 {
     return d->error();
+}
+
+/*! \internal */
+bool QVersitReader::readAll()
+{
+    startReading();
+    return waitForFinished();
+}
+
+/*! \internal */
+QList<QVersitDocument> QVersitReader::result() const
+{
+    return results();
 }
 
 #include "moc_qversitreader.cpp"

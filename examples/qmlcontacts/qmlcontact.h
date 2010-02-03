@@ -42,12 +42,13 @@
 #ifndef QMLCONTACT_H
 #define QMLCONTACT_H
 
+#include <qmobilityglobal.h>
 #include <QObject>
 #include <QContact>
 #include <qml.h>
 
+QTM_USE_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
 class QmlContact : public QObject {
 Q_OBJECT
 Q_PROPERTY(QContact contact READ contact WRITE setContact NOTIFY contactChanged)
@@ -85,7 +86,5 @@ private:
 };
 
 QML_DECLARE_TYPE(QmlContact);
-
-QTM_END_NAMESPACE
 
 #endif // QMLCONTACT_H

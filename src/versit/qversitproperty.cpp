@@ -96,7 +96,7 @@ QVersitProperty& QVersitProperty::operator=(const QVersitProperty& other)
     return *this;    
 }
 
-/*! Returns true if this is equal to other; false otherwise. */
+/*! Returns true if this is equal to \a other; false otherwise. */
 bool QVersitProperty::operator==(const QVersitProperty& other) const
 {
     return d->mGroups == other.d->mGroups &&
@@ -105,7 +105,7 @@ bool QVersitProperty::operator==(const QVersitProperty& other) const
             d->mValue == other.d->mValue;
 }
 
-/*! Returns true if this is not equal to other; false otherwise. */
+/*! Returns true if this is not equal to \a other; false otherwise. */
 bool QVersitProperty::operator!=(const QVersitProperty& other) const
 {
     return !(*this == other);
@@ -179,7 +179,7 @@ void QVersitProperty::insertParameter(const QString& name, const QString& value)
 /*!
  * Removes a parameter with \a name and \a value.
  *
- * \sa removeParameters();
+ * \sa removeParameters()
  */
 void QVersitProperty::removeParameter(const QString& name, const QString& value)
 {
@@ -210,11 +210,6 @@ QMultiHash<QString,QString> QVersitProperty::parameters() const
  */
 void QVersitProperty::setValue(const QVariant& value)
 {
-    if (value.type() == QVariant::ByteArray) {
-        // setValue(QByteArray) has been replaced with setValue(QVariant).
-        // XXX remove this when removing deprecated functions.
-        qWarning("QVersitProperty::setValue() called with a QByteArray.  This should only happen if the data is of binary nature (eg. an image).  If this was called with textual data, a QString should be passed in instead.");
-    }
     d->mValue = value;
 }
 
@@ -225,6 +220,13 @@ QVariant QVersitProperty::variantValue() const
 {
     return d->mValue;
 }
+
+/*!
+ * \fn T QVersitProperty::value() const
+ * \overload
+ * Returns the value of the property as a \tt T.  This function is actually const but because of a
+ * problem with qdoc, it doesn't appear to be in the generated documentation.
+ */
 
 /*!
  * Returns the value of the property as a string if possible, otherwise return an empty string.
@@ -268,4 +270,23 @@ void QVersitProperty::clear()
     d->mName.clear();
     d->mValue.clear();
     d->mParameters.clear();
+}
+
+/*! \internal */
+void QVersitProperty::addParameter(const QString& name, const QString& value)
+{
+    Q_UNUSED(name)
+    Q_UNUSED(value)
+}
+
+/*! \internal */
+void QVersitProperty::setEmbeddedDocument(const QVersitDocument& document)
+{
+    setValue(QVariant::fromValue(document));
+}
+
+/*! \internal */
+QVersitDocument QVersitProperty::embeddedDocument() const
+{
+    return value<QVersitDocument>();
 }

@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the examples of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -26,7 +26,6 @@
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** If you have questions regarding the use of this file, please contact
-
 ** Nokia at qt-info@nokia.com.
 **
 **
@@ -39,16 +38,22 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef QMLCONTACTS_H
 #define QMLCONTACTS_H
 
 #include <QObject>
+#include <qmobilityglobal.h>
 #include <QContactManager>
 
 #include "qmlcontact.h"
 
 QTM_BEGIN_NAMESPACE
 class QContactFetchRequest;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
+
 // ![0]
 #include <qml.h>
 
@@ -101,7 +106,5 @@ private:
 };
 QML_DECLARE_TYPE(QMLContactManagerAsync);
 // ![0]
-
-QTM_END_NAMESPACE
 
 #endif // QMLCONTACTS_H

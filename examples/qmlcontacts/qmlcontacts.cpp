@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the examples of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -33,8 +33,6 @@
 **
 **
 **
-
-[sbox-maemo6-i486: ~/w/QMLContacts] > xeyes
 **
 **
 ** $QT_END_LICENSE$
@@ -53,8 +51,6 @@
 
 QT_USE_NAMESPACE
 QTM_USE_NAMESPACE
-
-QTM_BEGIN_NAMESPACE
 
 // ![0]
 QMLContactManagerAsync::QMLContactManagerAsync(QObject *parent)
@@ -200,5 +196,4 @@ QString QMLContactManagerAsync::idToName(QString name)
 
 #include "moc_qmlcontactsa.cpp"
 
-QTM_END_NAMESPACE
 QML_DEFINE_TYPE(QMLContactManagerAsync, 1, 0, QMLContactManagerAsync, QMLContactManagerAsync);

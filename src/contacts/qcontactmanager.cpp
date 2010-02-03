@@ -137,7 +137,6 @@ QStringList QContactManager::availableManagers()
  */
 bool QContactManager::splitUri(const QString& uri, QString* pManagerId, QMap<QString, QString>* pParams)
 {
-    qWarning("QContactManager::splitUri() This function was deprecated in week 1 and will be removed after the transition period has elapsed!  Use parseUri() instead!");
     return parseUri(uri, pManagerId, pParams);
 }
 
@@ -342,7 +341,6 @@ QContactManager::Error QContactManager::error() const
  */
 QList<QContactLocalId> QContactManager::contacts(const QList<QContactSortOrder>& sortOrders) const
 {
-    qWarning("QContactManager::contacts() This function was deprecated in week 1 and will be removed after the transition period has elapsed.  Use contactIds() instead!");
     return d->m_engine->contacts(sortOrders, d->m_error);
 }
 
@@ -353,7 +351,6 @@ QList<QContactLocalId> QContactManager::contacts(const QList<QContactSortOrder>&
  */
 QList<QContactLocalId> QContactManager::contacts(const QContactFilter &filter, const QList<QContactSortOrder>& sortOrders) const
 {
-    qWarning("QContactManager::contacts() This function was deprecated in week 1 and will be removed after the transition period has elapsed.  Use contactIds() instead!");
     return d->m_engine->contacts(filter, sortOrders, d->m_error);
 }
 
@@ -482,12 +479,11 @@ bool QContactManager::removeContact(const QContactLocalId& contactId)
  */
 QList<QContactManager::Error> QContactManager::saveContacts(QList<QContact>* contactList)
 {
-    qWarning("QContactManager::saveContacts() This function was deprecated in week 1 and will be removed after the transition period has elapsed.  Use the other saveContacts() function instead!");
     return d->m_engine->saveContacts(contactList, d->m_error);
 }
 
 /*!
- * Adds the list of contacts given by \a contact list to the database.
+ * Adds the list of contacts given by \a contacts list to the database.
  * Returns true if the contacts were saved successfully, otherwise false.
  *
  * The manager might populate \a errorMap (the map of indices of the \a contacts list to
@@ -554,7 +550,6 @@ bool QContactManager::removeContacts(QList<QContactLocalId>* contactIds, QMap<in
  */
 QList<QContactManager::Error> QContactManager::removeContacts(QList<QContactLocalId>* idList)
 {
-    qWarning("QContactManager::removeContacts() This function was deprecated in week 1 and will be removed after the transition period has elapsed.  Use the other removeContacts() function instead!");
     return d->m_engine->removeContacts(idList, d->m_error);
 }
 
@@ -564,7 +559,6 @@ QList<QContactManager::Error> QContactManager::removeContacts(QList<QContactLoca
  */
 QString QContactManager::synthesizeDisplayLabel(const QContact& contact) const
 {
-    qWarning("QContactManager::synthesizeDisplayLabel() This function was deprecated in week 1 and will be removed after the transition period has elapsed!  Use synthesizedDisplayLabel() instead!");
     return d->m_engine->synthesizedDisplayLabel(contact, d->m_error);
 }
 
@@ -725,6 +719,7 @@ bool QContactManager::removeDetailDefinition(const QString& definitionName, cons
  * This enum describes the possible features that a particular manager may support
  * \value Groups The manager supports all QContactGroup related operations, and emits the appropriate signals
  * \value ActionPreferences The manager supports saving preferred details per action per contact
+ * \value DetailOrdering When a contact is retrieved, the manager will return the details in the same order in which they were saved
  * \value Relationships The manager supports at least some types of relationships between contacts
  * \value ArbitraryRelationshipTypes The manager supports relationships of arbitrary types between contacts
  * \value RelationshipOrdering The manager supports relationships (re)ordering
@@ -751,6 +746,7 @@ QList<QVariant::Type> QContactManager::supportedDataTypes() const
 }
 
 /*!
+ * \fn Q_DECL_DEPRECATED QContactManager::filterSupported(const QContactFilter& filter) const
  * \deprecated
  * Returns true if the given \a filter is supported natively by the
  * manager, and false if the filter behaviour would be emulated.
@@ -762,7 +758,6 @@ QList<QVariant::Type> QContactManager::supportedDataTypes() const
  */
 bool Q_DECL_DEPRECATED QContactManager::filterSupported(const QContactFilter& filter) const
 {
-    qWarning("QContactManager::filterSupported() This function was deprecated in week 1 and will be removed after the transition period has elapsed!  Use isFilterSupported() instead!");
     return d->m_engine->isFilterSupported(filter);
 }
 
@@ -811,7 +806,6 @@ QStringList QContactManager::supportedContactTypes() const
  */
 int QContactManager::version() 
 {
-    qWarning("QContactManager::version() This function was deprecated in week 1 and will be removed after the transition period has elapsed!  (Unnecessary API)");
     return QTCONTACTS_VERSION; 
 }
 
@@ -821,7 +815,6 @@ int QContactManager::version()
  */
 int QContactManager::implementationVersion() const 
 {
-    qWarning("QContactManager::implementationVersion() This function was deprecated in week 1 and will be removed after the transition period has elapsed!  Use managerVersion() instead!");
     return d->m_engine->managerVersion();
 }
 
