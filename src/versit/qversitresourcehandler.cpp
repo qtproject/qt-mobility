@@ -46,31 +46,31 @@
 QTM_USE_NAMESPACE
 
 /*!
- * \class QVersitResourceHandler
- *
- * \brief The QVersitResourceHandler class is an interface for clients wishing to implement custom
- * behaviour for loading and saving files to disk when exporting and importing, respectively.
- *
- * \ingroup versit
- *
- * \sa QVersitContactImporter
- * \sa QVersitContactExporter
- *
- * \fn virtual bool QVersitResourceHandler::saveResource(const QByteArray& contents, const QVersitProperty& property, QString* location) = 0;
- * Saves the binary data \a contents to a file on a persistent storage medium.
- *
- * \a property holds the QVersitProperty which is the context in which the binary is coming from.
- * The QVersitResourceHandler can use this, for example, to determine file extension it should choose.
- * \a *filename is filled with the contents of the file.
- * Returns true on success, false on failure.
- *
- *
- * \fn virtual bool QVersitResourceHandler::loadResource(const QString& location, QByteArray* contents, QString* mimeType) = 0;
- * Loads a file from \a location.
- *
- * \a *contents is filled with the contents of the file and \a *mimeType is set to the MIME
- * type that it is determined to be.
- * Returns true on success, false on failure.
+  \class QVersitResourceHandler
+ 
+  \brief The QVersitResourceHandler class is an interface for clients wishing to implement custom
+  behaviour for loading and saving files to disk when exporting and importing, respectively.
+ 
+  \ingroup versit
+ 
+  \sa QVersitContactImporter
+  \sa QVersitContactExporter
+ 
+  \fn virtual bool QVersitResourceHandler::saveResource(const QByteArray& contents, const QVersitProperty& property, QString* location) = 0;
+  Saves the binary data \a contents to a file on a persistent storage medium.
+ 
+  \a property holds the QVersitProperty which is the context in which the binary is coming from.
+  The QVersitResourceHandler can use this, for example, to determine file extension it should choose.
+  \a *filename is filled with the contents of the file.
+  Returns true on success, false on failure.
+ 
+ 
+  \fn virtual bool QVersitResourceHandler::loadResource(const QString& location, QByteArray* contents, QString* mimeType) = 0;
+  Loads a file from \a location.
+ 
+  \a *contents is filled with the contents of the file and \a *mimeType is set to the MIME
+  type that it is determined to be.
+  Returns true on success, false on failure.
 */
 
 /*!
