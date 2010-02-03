@@ -150,7 +150,7 @@ QList<QVersitDocument> QVersitContactExporter::exportContacts(
 }
 
 /*!
- * Sets \a handler to be the handler for processing QContactDetails.
+ * Sets \a handler to be the handler for processing QContactDetails, or 0 to have no handler.
  */
 void QVersitContactExporter::setDetailHandler(QVersitContactExporterDetailHandler* handler)
 {
@@ -166,7 +166,7 @@ QVersitContactExporterDetailHandler* QVersitContactExporter::detailHandler() con
 }
 
 /*!
- * Sets \a handler to be the handler to load files with.
+ * Sets \a handler to be the handler to load files with, or 0 to have no handler.
  */
 void QVersitContactExporter::setResourceHandler(QVersitResourceHandler* handler)
 {
