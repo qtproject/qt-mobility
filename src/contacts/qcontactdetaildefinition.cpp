@@ -187,7 +187,7 @@ QMap<QString, QContactDetailFieldDefinition>& QContactDetailDefinition::fields()
  *
  * \obsolete
  *
- * This function is obsolete - use \l QContactDetail::accessConstraint()
+ * This function is obsolete - use \l QContactDetail::accessConstraints()
  */
 QContactDetailDefinition::AccessConstraint QContactDetailDefinition::accessConstraint() const
 {
