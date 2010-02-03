@@ -54,11 +54,14 @@ AudioRecorder::AudioRecorder()
     audiosource = new QAudioCaptureSource;
     capture = new QMediaRecorder(audiosource);
 
-    QAudioEncoderSettings audioSettings;
-    audioSettings.setQuality(QtMedia::LowQuality);
-    audioSettings.setEncodingMode(QtMedia::ConstantQualityEncoding);
-    audioSettings.setCodec(capture->supportedAudioCodecs().first());
-    capture->setEncodingSettings(audioSettings,QVideoEncoderSettings(),capture->supportedContainers().first());
+    if (capture->supportedAudioCodecs().size() > 0) {
+        QAudioEncoderSettings audioSettings;
+        audioSettings.setQuality(QtMedia::LowQuality);
+        audioSettings.setEncodingMode(QtMedia::ConstantQualityEncoding);
+        audioSettings.setCodec(capture->supportedAudioCodecs().first());
+        capture->setEncodingSettings(audioSettings,QVideoEncoderSettings(),
+                capture->supportedContainers().first());
+    }
 
     // set a default file
 #ifdef Q_OS_SYMBIAN
