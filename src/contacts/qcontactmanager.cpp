@@ -137,7 +137,6 @@ QStringList QContactManager::availableManagers()
  */
 bool QContactManager::splitUri(const QString& uri, QString* pManagerId, QMap<QString, QString>* pParams)
 {
-    qWarning("QContactManager::splitUri() This function was deprecated in week 1 and will be removed after the transition period has elapsed!  Use parseUri() instead!");
     return parseUri(uri, pManagerId, pParams);
 }
 
@@ -342,7 +341,6 @@ QContactManager::Error QContactManager::error() const
  */
 QList<QContactLocalId> QContactManager::contacts(const QList<QContactSortOrder>& sortOrders) const
 {
-    qWarning("QContactManager::contacts() This function was deprecated in week 1 and will be removed after the transition period has elapsed.  Use contactIds() instead!");
     return d->m_engine->contacts(sortOrders, d->m_error);
 }
 
@@ -353,7 +351,6 @@ QList<QContactLocalId> QContactManager::contacts(const QList<QContactSortOrder>&
  */
 QList<QContactLocalId> QContactManager::contacts(const QContactFilter &filter, const QList<QContactSortOrder>& sortOrders) const
 {
-    qWarning("QContactManager::contacts() This function was deprecated in week 1 and will be removed after the transition period has elapsed.  Use contactIds() instead!");
     return d->m_engine->contacts(filter, sortOrders, d->m_error);
 }
 
@@ -482,7 +479,6 @@ bool QContactManager::removeContact(const QContactLocalId& contactId)
  */
 QList<QContactManager::Error> QContactManager::saveContacts(QList<QContact>* contactList)
 {
-    qWarning("QContactManager::saveContacts() This function was deprecated in week 1 and will be removed after the transition period has elapsed.  Use the other saveContacts() function instead!");
     return d->m_engine->saveContacts(contactList, d->m_error);
 }
 
@@ -554,7 +550,6 @@ bool QContactManager::removeContacts(QList<QContactLocalId>* contactIds, QMap<in
  */
 QList<QContactManager::Error> QContactManager::removeContacts(QList<QContactLocalId>* idList)
 {
-    qWarning("QContactManager::removeContacts() This function was deprecated in week 1 and will be removed after the transition period has elapsed.  Use the other removeContacts() function instead!");
     return d->m_engine->removeContacts(idList, d->m_error);
 }
 
@@ -564,7 +559,6 @@ QList<QContactManager::Error> QContactManager::removeContacts(QList<QContactLoca
  */
 QString QContactManager::synthesizeDisplayLabel(const QContact& contact) const
 {
-    qWarning("QContactManager::synthesizeDisplayLabel() This function was deprecated in week 1 and will be removed after the transition period has elapsed!  Use synthesizedDisplayLabel() instead!");
     return d->m_engine->synthesizedDisplayLabel(contact, d->m_error);
 }
 
@@ -762,7 +756,6 @@ QList<QVariant::Type> QContactManager::supportedDataTypes() const
  */
 bool Q_DECL_DEPRECATED QContactManager::filterSupported(const QContactFilter& filter) const
 {
-    qWarning("QContactManager::filterSupported() This function was deprecated in week 1 and will be removed after the transition period has elapsed!  Use isFilterSupported() instead!");
     return d->m_engine->isFilterSupported(filter);
 }
 
@@ -811,7 +804,6 @@ QStringList QContactManager::supportedContactTypes() const
  */
 int QContactManager::version() 
 {
-    qWarning("QContactManager::version() This function was deprecated in week 1 and will be removed after the transition period has elapsed!  (Unnecessary API)");
     return QTCONTACTS_VERSION; 
 }
 
@@ -821,7 +813,6 @@ int QContactManager::version()
  */
 int QContactManager::implementationVersion() const 
 {
-    qWarning("QContactManager::implementationVersion() This function was deprecated in week 1 and will be removed after the transition period has elapsed!  Use managerVersion() instead!");
     return d->m_engine->managerVersion();
 }
 

@@ -165,7 +165,6 @@ QContactRelationshipFilter::Role QContactRelationshipFilter::relatedContactRole(
 void QContactRelationshipFilter::setRole(QContactRelationshipFilter::Role roleInRelationship)
 {
     Q_D(QContactRelationshipFilter);
-    qWarning("QContactRelationshipFilter::setRole() This function is deprecated and will be removed after the transition period has elapsed.  Use setRelatedContactRole() instead!");
     switch(roleInRelationship) {
         case QContactRelationshipFilter::Either:
             d->m_relatedContactRole = QContactRelationshipFilter::Either;
@@ -187,7 +186,6 @@ void QContactRelationshipFilter::setRole(QContactRelationshipFilter::Role roleIn
 void QContactRelationshipFilter::setOtherParticipantId(const QContactId& id)
 {
     Q_D(QContactRelationshipFilter);
-    qWarning("QContactRelationshipFilter::setOtherParticipantId() This function is deprecated and will be removed after the transition period has elapsed.  Use setRelatedContactId() instead!");
     d->m_relatedContactId = id;
 }
 
@@ -198,7 +196,6 @@ void QContactRelationshipFilter::setOtherParticipantId(const QContactId& id)
 QContactRelationshipFilter::Role QContactRelationshipFilter::role() const
 {
     Q_D(const QContactRelationshipFilter);
-    qWarning("QContactRelationshipFilter::role() This function is deprecated and will be removed after the transition period has elapsed.  Use relatedContactRole() instead!");
     switch(d->m_relatedContactRole) {
         case QContactRelationshipFilter::First:
             return QContactRelationshipFilter::Second;
@@ -217,7 +214,6 @@ QContactRelationshipFilter::Role QContactRelationshipFilter::role() const
 QContactId QContactRelationshipFilter::otherParticipantId() const
 {
     Q_D(const QContactRelationshipFilter);
-    qWarning("QContactRelationshipFilter::otherParticipantId() This function is deprecated and will be removed after the transition period has elapsed.  Use relatedContactId() instead!");
     return d->m_relatedContactId;
 }
 
