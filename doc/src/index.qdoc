@@ -499,5 +499,10 @@
 
     And please report any bugs you may find to \l {http://bugreports.qt.nokia.com}
 
+    \section1 Acknowledgements
+
+    The icheck tool uses the following third-party component:
+
+    \bold {Open Source front-end for C++ (MIT license)}, Roberto Raggi <roberto.raggi@gmail.com>, QTMOBILITY/tools/icheck/parser/src
 */
 
