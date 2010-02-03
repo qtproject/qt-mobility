@@ -241,11 +241,11 @@ if %FIRST% == bearer (
 ) else if %FIRST% == systeminfo (
     echo     Systeminfo selected
 ) else if %FIRST% == serviceframework (
-    echo     SerficeFramework selected
-) else if %FIRST% == sensors (
-    echo     Sensors selected
+    echo     ServiceFramework selected
 ) else if %FIRST% == versit (
     echo     Versit selected ^(implies Contacts^)
+) else if %FIRST% == sensors (
+    echo     Sensors selected
 ) else (
     echo     Unknown module %FIRST%
     goto errorTag

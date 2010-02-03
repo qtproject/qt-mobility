@@ -57,8 +57,9 @@
 
 QTM_BEGIN_NAMESPACE
 
-struct QTapReadingPrivate : public QSensorReadingPrivate
+class QTapReadingPrivate : public QSensorReadingPrivate
 {
+public:
     QTapReadingPrivate()
         : tapDirection(0)
         , doubleTap(false)
