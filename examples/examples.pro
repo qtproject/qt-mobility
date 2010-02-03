@@ -33,8 +33,7 @@ contains(mobility_modules,location) {
 
 #Contacts examples
 contains(mobility_modules,contacts) {
-    SUBDIRS += samplephonebook \
-            incomingcalls
+    SUBDIRS += samplephonebook
     contains(QT_CONFIG, declarative) {
         SUBDIRS += qmlcontacts
     }
