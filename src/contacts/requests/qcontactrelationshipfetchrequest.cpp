@@ -70,6 +70,8 @@ QTM_BEGIN_NAMESPACE
   including a pointer to \a self, and contains an \a appendOnly flag
   which signifies whether or not the total ordering of the results
   have been maintained since the last progress signal was emitted.
+  This signal is deprecated and will be removed once the transition period has elapsed.
+  Use the signals emitted by the base class, combined with \l QObject::sender(), instead.
  */
 
 /*! Constructs a new relationship fetch request
@@ -140,6 +142,7 @@ QContactId QContactRelationshipFetchRequest::second() const
 }
 
 /*!
+  \fn Q_DECL_DEPRECATED QContactRelationshipFetchRequest::setParticipant(const QContactId& participantUri, QContactRelationshipFilter::Role role)
   \deprecated
   Sets the participant criterion of the fetch request to \a
   participantUri.  If the \a participantUri references a contact in
@@ -161,7 +164,7 @@ QContactId QContactRelationshipFetchRequest::second() const
   zero contact id, or if the participant criterion is not set, the
   request will fetch relationships involving any participant.
  */
-void QContactRelationshipFetchRequest::setParticipant(const QContactId& participantUri, QContactRelationshipFilter::Role role)
+void Q_DECL_DEPRECATED QContactRelationshipFetchRequest::setParticipant(const QContactId& participantUri, QContactRelationshipFilter::Role role)
 {
     Q_D(QContactRelationshipFetchRequest);
     d->m_participantUri = participantUri;
@@ -169,20 +172,22 @@ void QContactRelationshipFetchRequest::setParticipant(const QContactId& particip
 }
 
 /*!
+  \fn Q_DECL_DEPRECATED QContactRelationshipFetchRequest::participant() const
   \deprecated
   Returns the participant criterion of the fetch request
  */
-QContactId QContactRelationshipFetchRequest::participant() const
+QContactId Q_DECL_DEPRECATED QContactRelationshipFetchRequest::participant() const
 {
     Q_D(const QContactRelationshipFetchRequest);
     return d->m_participantUri;
 }
 
 /*!
+  \fn Q_DECL_DEPRECATED QContactRelationshipFetchRequest::participantRole() const
   \deprecated
   Returns the role of the participant criterion of the fetch request
  */
-QContactRelationshipFilter::Role QContactRelationshipFetchRequest::participantRole() const
+QContactRelationshipFilter::Role Q_DECL_DEPRECATED QContactRelationshipFetchRequest::participantRole() const
 {
     Q_D(const QContactRelationshipFetchRequest);
     return d->m_role;
