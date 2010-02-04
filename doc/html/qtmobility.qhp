@@ -470,9 +470,6 @@
                     <section ref="qsensorbackendfactory.html" title="QSensorBackendFactory Class Reference">
                         <section ref="qsensorbackendfactory-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qsensorfactory.html" title="QSensorFactory Class Reference">
-                        <section ref="qsensorfactory-members.html" title="List of all members"/>
-                    </section>
                     <section ref="qsensorfilter.html" title="QSensorFilter Class Reference">
                         <section ref="qsensorfilter-members.html" title="List of all members"/>
                     </section>
@@ -655,14 +652,14 @@
                     <section ref="service-frameworks.html" title="Qt Service Framework"/>
                     <section ref="service-framework-on-symbian.html" title="Qt Service Framework on Symbian"/>
                     <section ref="qtmobility-known-issues.html" title="Release Notes of the QtMobility Project"/>
-                    <section ref="sensors-api.html" title="Sensors API"/>
+                    <section ref="sensors-api.html" title="Sensors API (technology preview)"/>
                     <section ref="servicefw.html" title="Service Frameworks Classes"/>
                     <section ref="systeminfo.html" title="System Information"/>
                     <section ref="systeminfo.html" title="System Information Classes"/>
                     <section ref="preview.html" title="Technology Preview"/>
                     <section ref="3rdparty.html" title="Third-Party Licenses Used in Qt"/>
                     <section ref="trademarks.html" title="Trademarks"/>
-                    <section ref="versit.html" title="Versit API"/>
+                    <section ref="versit.html" title="Versit API (technology preview)"/>
                 </section>
             </section>
         </toc>
@@ -2958,6 +2955,7 @@
             <keyword name="QSensor::PolledUpdates" id="QSensor::PolledUpdates" ref="qsensor.html#UpdatePolicy-enum"/>
             <keyword name="addFilter" id="QSensor::addFilter" ref="qsensor.html#addFilter"/>
             <keyword name="connect" id="QSensor::connect" ref="qsensor.html#connect"/>
+            <keyword name="defaultSensorForType" id="QSensor::defaultSensorForType" ref="qsensor.html#defaultSensorForType"/>
             <keyword name="identifier" id="QSensor::identifier" ref="qsensor.html#sensorid-prop"/>
             <keyword name="isActive" id="QSensor::isActive" ref="qsensor.html#running-prop"/>
             <keyword name="isAvailable" id="QSensor::isAvailable" ref="qsensor.html#isAvailable-prop"/>
@@ -2967,7 +2965,9 @@
             <keyword name="readingChanged" id="QSensor::readingChanged" ref="qsensor.html#readingChanged"/>
             <keyword name="removeFilter" id="QSensor::removeFilter" ref="qsensor.html#removeFilter"/>
             <keyword name="running" id="QSensor::running" ref="qsensor.html#running-prop"/>
+            <keyword name="sensorTypes" id="QSensor::sensorTypes" ref="qsensor.html#sensorTypes"/>
             <keyword name="sensorid" id="QSensor::sensorid" ref="qsensor.html#sensorid-prop"/>
+            <keyword name="sensorsForType" id="QSensor::sensorsForType" ref="qsensor.html#sensorsForType"/>
             <keyword name="setActive" id="QSensor::setActive" ref="qsensor.html#running-prop"/>
             <keyword name="setIdentifier" id="QSensor::setIdentifier" ref="qsensor.html#sensorid-prop"/>
             <keyword name="setSignalEnabled" id="QSensor::setSignalEnabled" ref="qsensor.html#setSignalEnabled"/>
@@ -2991,19 +2991,11 @@
             <keyword name="stop" id="QSensorBackend::stop" ref="qsensorbackend.html#stop"/>
             <keyword name="QSensorBackendFactory" id="QSensorBackendFactory" ref="qsensorbackendfactory.html"/>
             <keyword name="createBackend" id="QSensorBackendFactory::createBackend" ref="qsensorbackendfactory.html#createBackend"/>
-            <keyword name="QSensorFactory" id="QSensorFactory" ref="qsensorfactory.html"/>
-            <keyword name="createSensor" id="QSensorFactory::createSensor" ref="qsensorfactory.html#createSensor"/>
-            <keyword name="defaultSensorForType" id="QSensorFactory::defaultSensorForType" ref="qsensorfactory.html#defaultSensorForType"/>
-            <keyword name="instance" id="QSensorFactory::instance" ref="qsensorfactory.html#instance"/>
-            <keyword name="sensorList" id="QSensorFactory::sensorList" ref="qsensorfactory.html#sensorList"/>
-            <keyword name="sensorTypes" id="QSensorFactory::sensorTypes" ref="qsensorfactory.html#sensorTypes"/>
-            <keyword name="sensorsForType" id="QSensorFactory::sensorsForType" ref="qsensorfactory.html#sensorsForType"/>
             <keyword name="QSensorFilter" id="QSensorFilter" ref="qsensorfilter.html"/>
             <keyword name="filter" id="QSensorFilter::filter" ref="qsensorfilter.html#filter"/>
             <keyword name="~QSensorFilter" id="QSensorFilter::~QSensorFilter" ref="qsensorfilter.html#dtor.QSensorFilter"/>
             <keyword name="QSensorManager" id="QSensorManager" ref="qsensormanager.html"/>
             <keyword name="createBackend" id="QSensorManager::createBackend" ref="qsensormanager.html#createBackend"/>
-            <keyword name="defaultSensorForType" id="QSensorManager::defaultSensorForType" ref="qsensormanager.html#defaultSensorForType"/>
             <keyword name="registerBackend" id="QSensorManager::registerBackend" ref="qsensormanager.html#registerBackend"/>
             <keyword name="QSensorPluginInterface" id="QSensorPluginInterface" ref="qsensorplugininterface.html"/>
             <keyword name="registerSensors" id="QSensorPluginInterface::registerSensors" ref="qsensorplugininterface.html#registerSensors"/>
@@ -3681,7 +3673,7 @@
             <keyword name="Recorder Example" id="Recorder Example" ref="recorder.html"/>
             <keyword name="Release Notes of the QtMobility Project" id="Release Notes of the QtMobility Project" ref="qtmobility-known-issues.html"/>
             <keyword name="Sample Phonebook Example" id="Sample Phonebook Example" ref="samplephonebook.html"/>
-            <keyword name="Sensors API" id="Sensors API" ref="sensors-api.html"/>
+            <keyword name="Sensors API (technology preview)" id="Sensors API (technology preview)" ref="sensors-api.html"/>
             <keyword name="Service Actions Example" id="Service Actions Example" ref="serviceactions.html"/>
             <keyword name="Service Browser Example" id="Service Browser Example" ref="servicebrowser.html"/>
             <keyword name="Service Framework using QML Example" id="Service Framework using QML Example" ref="declarative.html"/>
@@ -3695,7 +3687,7 @@
             <keyword name="Technology Preview" id="Technology Preview" ref="preview.html"/>
             <keyword name="Third-Party Licenses Used in Qt" id="Third-Party Licenses Used in Qt" ref="3rdparty.html"/>
             <keyword name="Trademarks" id="Trademarks" ref="trademarks.html"/>
-            <keyword name="Versit API" id="Versit API" ref="versit.html"/>
+            <keyword name="Versit API (technology preview)" id="Versit API (technology preview)" ref="versit.html"/>
             <keyword name="Write Message Example" id="Write Message Example" ref="writemessage.html"/>
             <keyword name="qtimestamp" id="qtimestamp" ref="qsensor.html#qtimestamp-typedef"/>
         </keywords>
@@ -3811,7 +3803,6 @@
             <file>radio-radio-h.html</file>
             <file>qversitcontactimporter.html</file>
             <file>bearercloud-cloud-h.html</file>
-            <file>qsensorfactory.html</file>
             <file>qimageprocessingcontrol-members.html</file>
             <file>cameracapture-settings-cpp.html</file>
             <file>player-videowidget-cpp.html</file>
@@ -3977,7 +3968,6 @@
             <file>qgeocoordinate.html</file>
             <file>qcontactnote-members.html</file>
             <file>qcontactactionfactory.html</file>
-            <file>qsensorfactory-members.html</file>
             <file>qcontactdetaildefinition-members.html</file>
             <file>qcontactlocalidfetchrequest-members.html</file>
             <file>qmessageid.html</file>
