@@ -70,7 +70,12 @@
         , videoWidget(0)
         , coverLabel(0)
         , slider(0)
+    #ifdef Q_OS_SYMBIAN
+        , mediaKeysObserver(0)
+        , playlistDialog(0)
+    #else
         , colorDialog(0)
+    #endif
     {
         player = new QMediaPlayer(this);
         playlist = new QMediaPlaylist(this);
@@ -101,11 +106,14 @@
 
         connect(slider, SIGNAL(sliderMoved(int)), this, SLOT(seek(int)));
 
-        QPushButton *openButton = new QPushButton(tr(&quot;Open&quot;));
+    #ifdef Q_OS_SYMBIAN
+    #else
+        QPushButton *openButton = new QPushButton(tr(&quot;Open&quot;), this);
 
         connect(openButton, SIGNAL(clicked()), this, SLOT(open()));
 
-        PlayerControls *controls = new PlayerControls;
+    #endif
+        PlayerControls *controls = new PlayerControls(this);
         controls-&gt;setState(player-&gt;state());
         controls-&gt;setVolume(player-&gt;volume());
         controls-&gt;setMuted(controls-&gt;isMuted());
@@ -124,7 +132,9 @@
         connect(player, SIGNAL(volumeChanged(int)), controls, SLOT(setVolume(int)));
         connect(player, SIGNAL(mutedChanged(bool)), controls, SLOT(setMuted(bool)));
 
-        QPushButton *fullScreenButton = new QPushButton(tr(&quot;FullScreen&quot;));
+    #ifdef Q_OS_SYMBIAN
+    #else
+        QPushButton *fullScreenButton = new QPushButton(tr(&quot;FullScreen&quot;), this);
         fullScreenButton-&gt;setCheckable(true);
 
         if (videoWidget != 0) {
@@ -141,6 +151,43 @@
         else
             colorButton-&gt;setEnabled(false);
 
+    #endif
+
+    #ifdef Q_OS_SYMBIAN
+        <span class="comment">// Set some sensible default volume.</span>
+        player-&gt;setVolume(50);
+
+        QLabel *label = new QLabel(tr(&quot;Playlist&quot;), this);
+        QVBoxLayout *playlistDialogLayout = new QVBoxLayout;
+        playlistDialogLayout-&gt;addWidget(label);
+        playlistDialogLayout-&gt;addWidget(playlistView);
+        playlistDialog = new QDialog(this);
+        playlistDialog-&gt;setWindowTitle(tr(&quot;Playlist&quot;));
+        playlistDialog-&gt;setLayout(playlistDialogLayout);
+        playlistDialog-&gt;setContextMenuPolicy(Qt::NoContextMenu);
+
+        QAction *close = new QAction(tr(&quot;Close&quot;), this);
+        close-&gt;setSoftKeyRole(QAction::NegativeSoftKey);
+        playlistDialog-&gt;addAction(close);
+
+        mediaKeysObserver = new MediaKeysObserver(this);
+
+        slider-&gt;setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
+        slider-&gt;setMinimumSize(1, 1);
+
+        connect(controls, SIGNAL(open()), this, SLOT(open()));
+        connect(controls, SIGNAL(fullScreen(bool)), this, SLOT(handleFullScreen(bool)));
+        connect(videoWidget, SIGNAL(fullScreenChanged(bool)), this, SLOT(handleFullScreen(bool)));
+        connect(controls, SIGNAL(openPlayList()), this, SLOT(showPlayList()));
+        connect(player, SIGNAL(stateChanged(QMediaPlayer::State)), this, SLOT(handleStateChange(QMediaPlayer::State)));
+        connect(mediaKeysObserver, SIGNAL(mediaKeyPressed(MediaKeysObserver::MediaKeys)), this, SLOT(handleMediaKeyEvent(MediaKeysObserver::MediaKeys)));
+        connect(close, SIGNAL(triggered()), playlistDialog, SLOT(reject()));
+
+        QBoxLayout *layout = new QVBoxLayout;
+        layout-&gt;addWidget(videoWidget, 7);
+        layout-&gt;addWidget(slider, 1);
+        layout-&gt;addWidget(controls, 2);
+    #else
         QBoxLayout *displayLayout = new QHBoxLayout;
         if (videoWidget)
             displayLayout-&gt;addWidget(videoWidget, 2);
@@ -161,6 +208,7 @@
         layout-&gt;addLayout(displayLayout);
         layout-&gt;addWidget(slider);
         layout-&gt;addLayout(controlLayout);
+    #endif
 
         setLayout(layout);
 
@@ -169,14 +217,20 @@
         QStringList fileNames = qApp-&gt;arguments();
         fileNames.removeAt(0);
         foreach (QString const &amp;fileName, fileNames) {
-            if (QFileInfo(fileName).exists())
+            if (fileName.startsWith(QLatin1String(&quot;http:<span class="comment">//&quot;)))</span>
+                playlist-&gt;addMedia(QUrl(fileName));
+            else if (QFileInfo(fileName).exists())
                 playlist-&gt;addMedia(QUrl::fromLocalFile(fileName));
         }
     }
 
     Player::~Player()
     {
+    #ifdef Q_OS_SYMBIAN
+        delete playlistDialog;
+    #else
         delete playlist;
+    #endif
         delete player;
     }
 
@@ -217,6 +271,10 @@
 
     void Player::jump(const QModelIndex &amp;index)
     {
+    #ifdef Q_OS_SYMBIAN
+        if (playlistDialog-&gt;isVisible())
+            playlistDialog-&gt;accept();
+    #endif
         if (index.isValid()) {
             playlist-&gt;setCurrentIndex(index.row());
             player-&gt;play();
@@ -275,7 +333,7 @@
 
     void Player::bufferingProgress(int progress)
     {
-        setStatusInfo(tr(&quot;Buffering %4%%&quot;).arg(progress));
+        setStatusInfo(tr(&quot;Buffering %4%&quot;).arg(progress));
     }
 
     void Player::setTrackInfo(const QString &amp;info)
@@ -298,7 +356,8 @@
         else
             setWindowTitle(trackInfo);
     }
-
+    #ifdef Q_OS_SYMBIAN
+    #else
     void Player::showColorDialog()
     {
         if (!colorDialog) {
@@ -337,7 +396,52 @@
             colorDialog-&gt;setLayout(layout);
         }
         colorDialog-&gt;show();
-    }</pre>
+    }
+    #endif
+    #ifdef Q_OS_SYMBIAN
+    void Player::handleFullScreen(bool isFullscreen)
+    {
+        if(isFullscreen) {
+            showFullScreen();
+            if(player-&gt;state()==QMediaPlayer::PlayingState ||
+               player-&gt;state()==QMediaPlayer::PausedState)
+                videoWidget-&gt;setFullScreen(true);
+            else
+                videoWidget-&gt;setFullScreen(false);
+
+        } else
+            showMaximized();
+    }
+
+    void Player::handleStateChange(QMediaPlayer::State state)
+    {
+        if (state == QMediaPlayer::PausedState)
+            return;
+
+        handleFullScreen(isFullScreen());
+    }
+
+    void Player::handleMediaKeyEvent(MediaKeysObserver::MediaKeys key)
+    {
+        switch (key) {
+            case MediaKeysObserver::EVolIncKey:
+                player-&gt;setVolume(player-&gt;volume() + 10);
+                break;
+            case MediaKeysObserver::EVolDecKey:
+                player-&gt;setVolume(player-&gt;volume() - 10);
+                break;
+            default:
+            break;
+        }
+    }
+    void Player::showPlayList()
+    {
+        if (!playlistDialog)
+            return;
+
+        playlistDialog-&gt;exec();
+    }
+    #endif</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

@@ -107,6 +107,7 @@ private:
     int msecsTo(QDateTime from, QDateTime to);
 
     QGeoInfoValidator *validator;
+    bool timeoutsForPeriodicUpdates;
 
     bool requestScheduled;
     qint32 requestInterval;
@@ -116,7 +117,7 @@ private:
     qint32 updatesInterval;
     QDateTime updatesNextTime;
 
-    bool timeoutsForPeriodicUpdates;
+    bool stopping;
 
     bool gpsReachedOnState;
 
@@ -126,6 +127,7 @@ private:
     GPS_POSITION m_lastPosition;
 
     QMutex mutex;
+    QWaitCondition statusUpdated;
 
     HANDLE m_gps;
     HANDLE m_newDataEvent;

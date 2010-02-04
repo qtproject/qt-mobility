@@ -69,7 +69,7 @@ public :
 
     void RunL();
 
-    void SetTriggerState(QGeoAreaMonitorS60* aParent,enTriggerType aType,bool aStatus);
+    void SetTriggerState(QGeoAreaMonitorS60* aParent, enTriggerType aType, bool aStatus);
 
     TInt getRadius(qreal& radius);
 

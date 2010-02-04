@@ -66,7 +66,7 @@ class QContactAbstractRequestPrivate
 public:
     QContactAbstractRequestPrivate()
         : m_error(QContactManager::NoError),
-            m_status(QContactAbstractRequest::Inactive),
+            m_state(QContactAbstractRequest::InactiveState),
             m_manager(0)
     {
     }
@@ -81,9 +81,8 @@ public:
     }
 
     QContactManager::Error m_error;
-    QContactAbstractRequest::Status m_status;
+    QContactAbstractRequest::State m_state;
     QPointer<QContactManager> m_manager;
-    QList<QContactManager::Error> m_errors;
 };
 
 QTM_END_NAMESPACE

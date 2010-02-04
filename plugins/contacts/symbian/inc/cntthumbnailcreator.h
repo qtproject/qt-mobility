@@ -65,6 +65,7 @@ public:
     CntThumbnailCreator();
     ~CntThumbnailCreator();
     void addThumbnailFieldL(QList<CContactItemField *> *fieldList, const TFileName &filename, const TSize& maxSize);
+    void addThumbnailFieldL(QList<CContactItemField *> *fieldList, CFbsBitmap *bitmap, const TSize& maxSize);
 
 private: // from CActive
     void RunL();

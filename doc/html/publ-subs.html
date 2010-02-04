@@ -74,14 +74,14 @@
 <p>QCRML files are XML files that can be used to declare available Value Space paths that are visible to the clients. Each path defines whether the actual value is stored in CRepository or RPropery as well as needed Category/Repository/Key UIDs.</p>
 <p>The following QCRML file defines Value Space paths for power state properties stored in Symbian OS Properties:</p>
 <pre>    &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-    &lt;repository target=&quot;RProperty&quot; version=&quot;&quot; uidName=&quot;KPSUidHWRMPowerState&quot; uidValue=&quot;0x10205041&quot;&gt;
+    &lt;repository target=&quot;RProperty&quot; uidValue=&quot;0x10205041&quot;&gt;
         &lt;key ref=&quot;/resources/battery/level&quot; int=&quot;0x00000001&quot;/&gt;
         &lt;key ref=&quot;/resources/battery/status&quot; int=&quot;0x00000002&quot;/&gt;
         &lt;key ref=&quot;/resources/charging/status&quot; int=&quot;0x00000003&quot;/&gt;
     &lt;/repository&gt;</pre>
 <p>The following QCRML file defines a Value Space path for the &quot;current profile id&quot; stored in Central Repository:</p>
 <pre>    &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-    &lt;repository target=&quot;CRepository&quot; version=&quot;&quot; uidName=&quot;KCRUidProfileEngine&quot; uidValue=&quot;0x101f8798&quot;&gt;
+    &lt;repository target=&quot;CRepository&quot; uidValue=&quot;0x101f8798&quot;&gt;
         &lt;key ref=&quot;/profile/id&quot; int=&quot;0x7e000001&quot;/&gt;
     &lt;/repository&gt;</pre>
 <p>The <tt>qcrmlgen</tt> tool located in the <tt>tools</tt> directory can be used to create QCRML files.</p>

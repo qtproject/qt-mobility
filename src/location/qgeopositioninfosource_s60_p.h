@@ -87,7 +87,7 @@ public:
  *
  */
 class CQGeoPositionInfoSourceS60 : public INotificationCallback,
-        public QGeoPositionInfoSource
+            public QGeoPositionInfoSource
 
 {
 public:

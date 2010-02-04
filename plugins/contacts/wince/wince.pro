@@ -21,4 +21,5 @@ INSTALLS+=target
 LIBS += pimstore.lib -lole32
 CONFIG += mobility
 MOBILITY = contacts
+QT += network
 

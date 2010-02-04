@@ -43,10 +43,13 @@
 #define QCONTACTAVATAR_H
 
 #include <QString>
-
+#include <QPixmap>
 #include "qtcontactsglobal.h"
 #include "qcontactdetail.h"
 #include "qcontact.h"
+
+class QPixmap;
+class QSize;
 
 QTM_BEGIN_NAMESPACE
 
@@ -57,6 +60,7 @@ public:
 #ifdef Q_QDOC
     const char* DefinitionName;
     const char* FieldAvatar;
+    const char* FieldAvatarPixmap;
     const char* FieldSubType;
     const char* SubTypeImage;
     const char* SubTypeVideo;
@@ -66,6 +70,7 @@ public:
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactAvatar, "Avatar")
     Q_DECLARE_LATIN1_LITERAL(FieldAvatar, "Avatar");
+    Q_DECLARE_LATIN1_LITERAL(FieldAvatarPixmap, "AvatarPixmap");
     Q_DECLARE_LATIN1_LITERAL(FieldSubType, "SubType");
     Q_DECLARE_LATIN1_LITERAL(SubTypeImage, "Image");
     Q_DECLARE_LATIN1_LITERAL(SubTypeVideo, "Video");
@@ -76,7 +81,13 @@ public:
 
     void setAvatar(const QString& avatarPath) {setValue(FieldAvatar, avatarPath);}
     QString avatar() const {return value(FieldAvatar);}
-
+    QPixmap pixmap() const {return value<QPixmap>(QContactAvatar::FieldAvatarPixmap);}
+    bool setPixmap(const QPixmap& pixmap)
+    {
+        setSubType(SubTypeImage);
+        return setValue(FieldAvatarPixmap, QVariant::fromValue(pixmap));
+    }
+    
     void setSubType(const QString& subType) {setValue(FieldSubType, subType);}
     QString subType() const {return value(FieldSubType);}
 };

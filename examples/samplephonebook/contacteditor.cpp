@@ -44,46 +44,67 @@
 #include <QtGui>
 
 ContactEditor::ContactEditor(QWidget *parent)
-        : QWidget(parent)
+        :QWidget(parent)
 {
     m_manager = 0;
     m_contactId = QContactLocalId(0);
 
+#ifdef Q_OS_SYMBIAN    
+    // In symbian "save" and "cancel" buttons are softkeys.
+    m_saveBtn = new QAction("Save", this);
+    m_saveBtn->setSoftKeyRole(QAction::PositiveSoftKey);
+    addAction(m_saveBtn);
+    connect(m_saveBtn, SIGNAL(triggered(bool)), this, SLOT(saveClicked()));
+    m_cancelBtn = new QAction("Cancel", this);
+    m_cancelBtn->setSoftKeyRole(QAction::NegativeSoftKey);
+    addAction(m_cancelBtn);
+    connect(m_cancelBtn, SIGNAL(triggered(bool)), this, SLOT(cancelClicked()));     
+#else
     m_saveBtn = new QPushButton("Save", this);
     connect(m_saveBtn, SIGNAL(clicked()), this, SLOT(saveClicked()));
-    m_deleteBtn = new QPushButton("Delete", this);
-    connect(m_deleteBtn, SIGNAL(clicked()), this, SLOT(deleteClicked()));
     m_cancelBtn = new QPushButton("Cancel", this);
     connect(m_cancelBtn, SIGNAL(clicked()), this, SLOT(cancelClicked()));
+#endif
 
     m_nameEdit = new QLineEdit(this);
     m_phoneEdit = new QLineEdit(this);
     m_emailEdit = new QLineEdit(this);
     m_addrEdit = new QLineEdit(this);
-    m_avatarBtn = new QPushButton(this);
+    m_avatarBtn = new QPushButton("Add image", this);
     m_avatarBtn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(m_avatarBtn, SIGNAL(clicked()), this, SLOT(avatarClicked()));
 
-    m_detailsArea = new QScrollArea(this);
-    m_detailsArea->setWidgetResizable(true);
     QFormLayout *detailsLayout = new QFormLayout;
-    detailsLayout->addRow("Name", m_nameEdit);
-    detailsLayout->addRow("Phone", m_phoneEdit);
-    detailsLayout->addRow("Email", m_emailEdit);
-    detailsLayout->addRow("Address", m_addrEdit);
-    detailsLayout->addRow("Avatar", m_avatarBtn);
+    detailsLayout->addRow(new QLabel("Name", this));
+    detailsLayout->addRow(m_nameEdit);
+    detailsLayout->addRow(new QLabel("Phone", this));
+    detailsLayout->addRow(m_phoneEdit);
+    detailsLayout->addRow(new QLabel("Email", this));
+    detailsLayout->addRow(m_emailEdit);
+    detailsLayout->addRow(new QLabel("Address", this));
+    detailsLayout->addRow(m_addrEdit);
+    detailsLayout->addRow(new QLabel("Avatar", this));
+    detailsLayout->addRow(m_avatarBtn);
     detailsLayout->setFieldGrowthPolicy(QFormLayout::ExpandingFieldsGrow);
     detailsLayout->setSizeConstraint(QLayout::SetMinAndMaxSize);
-    m_detailsArea->setLayout(detailsLayout);
+    
+    QScrollArea *detailsScrollArea = new QScrollArea(this);
+    detailsScrollArea->setWidgetResizable(true);
+    QWidget *detailsContainer = new QWidget(detailsScrollArea);
+    detailsContainer->setLayout(detailsLayout);
+    detailsScrollArea->setWidget(detailsContainer);
 
+#ifndef Q_OS_SYMBIAN    
     QHBoxLayout *btnLayout = new QHBoxLayout;
     btnLayout->addWidget(m_saveBtn);
-    btnLayout->addWidget(m_deleteBtn);
     btnLayout->addWidget(m_cancelBtn);
+#endif
 
     QVBoxLayout *editLayout = new QVBoxLayout;
-    editLayout->addWidget(m_detailsArea);
+    editLayout->addWidget(detailsScrollArea);
+#ifndef Q_OS_SYMBIAN
     editLayout->addLayout(btnLayout);
+#endif
 
     setLayout(editLayout);
 }
@@ -104,18 +125,17 @@ void ContactEditor::setCurrentContact(QContactManager* manager, QContactLocalId 
         m_phoneEdit->setText("");
         m_emailEdit->setText("");
         m_addrEdit->setText("");
+        m_avatarBtn->setText("Add image");
         m_avatarBtn->setIcon(QIcon());
 
         if (manager == 0)
             m_saveBtn->setEnabled(false);
-        m_deleteBtn->setEnabled(false);
 
         return;
     }
 
     // enable the UI.
     m_saveBtn->setEnabled(true);
-    m_deleteBtn->setEnabled(true);
 
     // otherwise, build from the contact details.
     QContact curr = manager->contact(m_contactId);
@@ -125,15 +145,24 @@ void ContactEditor::setCurrentContact(QContactManager* manager, QContactLocalId 
     QContactAddress adr = curr.detail(QContactAddress::DefinitionName);
     QContactAvatar av = curr.detail(QContactAvatar::DefinitionName);
 
-    QString saveNameField = nameField();
-    if (!saveNameField.isEmpty())
-        m_nameEdit->setText(nm.value(saveNameField));
-    else
-        m_nameEdit->setText(QString());
+    m_nameEdit->setText(manager->synthesizedDisplayLabel(curr));
     m_phoneEdit->setText(phn.value(QContactPhoneNumber::FieldNumber));
     m_emailEdit->setText(em.value(QContactEmailAddress::FieldEmailAddress));
     m_addrEdit->setText(adr.value(QContactAddress::FieldStreet)); // ugly hack.
-    m_avatarBtn->setIcon(QIcon(av.value(QContactAvatar::FieldAvatar)));
+    
+    m_avatarBtn->setText(QString());
+    m_avatarBtn->setIcon(QIcon());
+    
+    if (av.pixmap().isNull()) {
+        if (av.avatar().isEmpty()) {
+            m_avatarBtn->setText("Add image");
+        } else {
+            m_avatarBtn->setIcon(QIcon(QPixmap(av.avatar())));
+        }
+    } else {
+        m_newAvatarPath = av.avatar();
+        m_avatarBtn->setIcon(QIcon(av.pixmap()));
+    }
 }
 
 QString ContactEditor::nameField()
@@ -158,9 +187,12 @@ void ContactEditor::avatarClicked()
     // put up a file dialog, and update the new avatar path.
     QString fileName = QFileDialog::getOpenFileName(this,
        tr("Select Avatar Image"), ".", tr("Image Files (*.png *.jpg *.bmp)"));
-
-    m_newAvatarPath = fileName;
-    m_avatarBtn->setIcon(QIcon(m_newAvatarPath));
+    
+    if (!fileName.isEmpty()) {
+        m_newAvatarPath = fileName;
+        m_avatarBtn->setText(QString());
+        m_avatarBtn->setIcon(QIcon(m_newAvatarPath));
+    }
 }
 
 void ContactEditor::saveClicked()
@@ -178,12 +210,19 @@ void ContactEditor::saveClicked()
         QContactAvatar av = curr.detail(QContactAvatar::DefinitionName);
 
         QString saveNameField = nameField();
-        if (!saveNameField.isEmpty())
-            nm.setValue(nameField(), m_nameEdit->text());
+        if (!saveNameField.isEmpty()) {
+            // if the name has changed (ie, is different to the synthed label) then save it as a custom label.
+            if (m_nameEdit->text() != m_manager->synthesizedDisplayLabel(curr)) {
+                nm.setValue(nameField(), m_nameEdit->text());
+            }
+        }
         phn.setNumber(m_phoneEdit->text());
         em.setEmailAddress(m_emailEdit->text());
         adr.setStreet(m_addrEdit->text());
         av.setAvatar(m_newAvatarPath);
+
+        QPixmap pix(m_newAvatarPath);
+        av.setPixmap(pix);
 
         curr.saveDetail(&nm);
         curr.saveDetail(&phn);
@@ -196,24 +235,6 @@ void ContactEditor::saveClicked()
             QMessageBox::information(this, "Success!", "Contact saved successfully!");
         else
             QMessageBox::information(this, "Failed!", "Failed to save contact!");
-    }
-
-    emit showListPage();
-}
-
-void ContactEditor::deleteClicked()
-{
-    if (!m_manager) {
-        qWarning() << "No manager selected; cannot delete.";
-    } else {
-        if (m_contactId == QContactLocalId(0))
-            qWarning() << "Contact is invalid; cannot delete.";
-
-        bool success = m_manager->removeContact(m_contactId);
-        if (success)
-            QMessageBox::information(this, "Success!", "Contact deleted successfully!");
-        else
-            QMessageBox::information(this, "Failed!", "Failed to delete contact!");
     }
 
     emit showListPage();
