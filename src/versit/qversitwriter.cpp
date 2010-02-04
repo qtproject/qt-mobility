@@ -51,7 +51,7 @@ QTM_USE_NAMESPACE
 
 /*!
   \class QVersitWriter
- 
+  \preliminary
   \brief The QVersitWriter class provides an interface
   for writing a versit document such as a vCard to a text stream.
 

@@ -43,7 +43,6 @@
 #include <qsensorplugin.h>
 #include <qsensorbackend.h>
 #include <qsensormanager.h>
-#include <qsensorfactory.h>
 #include <QFile>
 #include <QDebug>
 
@@ -62,7 +61,7 @@ public:
     {
         if (sensor->identifier() == genericorientationsensor::id) {
             // Can't make this unless we have an accelerometer
-            if (!QSensorManager::defaultSensorForType(QAccelerometer::type).isEmpty())
+            if (!QSensor::defaultSensorForType(QAccelerometer::type).isEmpty())
                 return new genericorientationsensor(sensor);
             qDebug() << "can't make" << sensor->identifier() << "because no" << QAccelerometer::type << "sensors exist";
         }

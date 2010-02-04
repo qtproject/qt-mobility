@@ -52,7 +52,7 @@ QTM_BEGIN_NAMESPACE
 QSensorPluginLoader::QSensorPluginLoader(const char *iid, const QString &location)
     : m_iid(iid)
 {
-    m_location = location + "/";
+    m_location = location + QLatin1String("/");
     load();
 }
 

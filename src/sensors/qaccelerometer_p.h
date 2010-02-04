@@ -57,8 +57,9 @@
 
 QTM_BEGIN_NAMESPACE
 
-struct QAccelerometerReadingPrivate : public QSensorReadingPrivate
+class QAccelerometerReadingPrivate : public QSensorReadingPrivate
 {
+public:
     QAccelerometerReadingPrivate()
         : x(0)
         , y(0)

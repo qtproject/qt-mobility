@@ -42,17 +42,18 @@
 /*!
 
 \page versit.html
-
-\title Versit API
-
+\title Versit API (technology preview)
 \brief An API to manage Versit documents.
+\ingroup mobility
 
+\warning This API should be considered in a technology preview state. It is
+under development and subject to change.
 
 \tableofcontents
 
 \section1 Overview 
 Versit API provides a set of methods to parse/read (\l{QVersitReader}) and
-encode/write (\l{QVersitWriter}) versit* documents such as vCards
+encode/write (\l{QVersitWriter}) Versit \reg documents such as vCards
 (\l http://www.imc.org/pdi/).
 Currently \l{QVersitReader} and \l{QVersitWriter} support
 reading and writing vCard 2.1 and 3.0 formats.
@@ -61,7 +62,7 @@ Versit API also provides utilities to import (\l{QVersitContactImporter})
 QContacts from versit documents and export (\l{QVersitContactExporter})
 QContacts to versit documents.
 
-[*] Versit is a trademark of the Internet Mail Consortium.
+Versit \reg is a trademark of the Internet Mail Consortium.
 
 \section1 Usage
 \code

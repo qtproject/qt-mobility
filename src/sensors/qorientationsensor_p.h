@@ -57,8 +57,9 @@
 
 QTM_BEGIN_NAMESPACE
 
-struct QOrientationReadingPrivate : public QSensorReadingPrivate
+class QOrientationReadingPrivate : public QSensorReadingPrivate
 {
+public:
     QOrientationReadingPrivate()
         : orientation(0)
     {

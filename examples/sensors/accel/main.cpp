@@ -41,7 +41,6 @@
 
 #include <QtCore>
 #include <qaccelerometer.h>
-#include <qsensorfactory.h>
 
 QTM_USE_NAMESPACE
 
