@@ -134,7 +134,8 @@ private slots:
 private:
     Ui::CameraCapture *ui;
 
-    QDir outputDir;
+    QDir outputDirVideo;
+    QDir outputDirImage;
     QCamera *camera;
     QStillImageCapture *imageCapture;
     QMediaRecorder* mediaRecorder;
