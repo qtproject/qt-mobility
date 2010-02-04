@@ -158,8 +158,12 @@ QtServiceFramework
 QtSystemInfo
 ------
 
- - foo
-    * bar
+ - New features for Maemo5 backend
+    * simStatus
+    * Available languages
+    * hasFeatureSupported completed
+    * displayBrightness
+    * imsi
 
 Qt Mobility Plugins
 ------
