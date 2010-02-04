@@ -669,9 +669,10 @@ void QNetworkConfigurationManagerPrivate::accessPointScanningReady(TBool scanSuc
 
     updateStatesToSnaps();
     
-    startCommsDatabaseNotifications();
-    
-    emit this->configurationUpdateComplete();
+    if (!iFirstUpdate) {
+        startCommsDatabaseNotifications();
+        emit this->configurationUpdateComplete();
+    }
 }
 
 void QNetworkConfigurationManagerPrivate::updateStatesToSnaps()
