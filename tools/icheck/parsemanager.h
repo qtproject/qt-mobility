@@ -1,20 +1,19 @@
-/**************************************************************************
+/****************************************************************************
 **
-** This file is part of Qt Creator
-**
-** Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
-**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** Commercial Usage
+** This file is part of the Qt Mobility Components.
 **
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Commercial License Agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and Nokia.
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
-**
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
@@ -22,41 +21,23 @@
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at http://qt.nokia.com/contact.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** Description:
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** The ParseManager parses and compares to different header files
-** of its metadata. This can be used for checking if an Interface
-** is implemented complete.
 **
-** How to use it:
 **
-**    //Parse the interface header
-**    ParseManager* iParseManager = new ParseManager();
-**    iParseManager->setIncludePath(iIncludepathlist);
-**    iParseManager->parse(iFilelist);
 **
-**    //Parse the header that needs to be compared against the interface header
-**    ParseManager* chParseManager = new ParseManager();
-**    chIncludepathlist << getQTIncludePath();
-**    chParseManager->setIncludePath(chIncludepathlist);
-**    chParseManager->parse(chFilelist);
 **
-**    if(!chParseManager->checkAllMetadatas(iParseManager)){
-**        cout << "Folowing interface items are missing:" << endl;
-**        QStringList errorlist = chParseManager->getErrorMsg();
-**        foreach(QString msg, errorlist){
-**            cout << (const char *)msg.toLatin1() << endl;
-**        }
-**        return -1;
-**    }
-**    else
-**        cout << "Interface is full defined.";
 **
-**************************************************************************/
-
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
 
 #ifndef PARSEMANAGER_H
 #define PARSEMANAGER_H
