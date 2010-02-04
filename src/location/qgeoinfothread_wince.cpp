@@ -139,13 +139,6 @@ void QGeoInfoThreadWinCE::requestUpdate(int timeout)
 
         locker.unlock();
         wakeUp();
-        /*
-        // See comments above run() to see why we're doing things like this
-        if (!isRunning())
-            start();
-        else
-            wakeUp();
-            */
     }
 }
 
@@ -162,13 +155,6 @@ void QGeoInfoThreadWinCE::startUpdates()
 
         locker.unlock();
         wakeUp();
-        /*
-        // See comments above run() to see why we're doing things like this
-        if (!isRunning())
-            start();
-        else
-            wakeUp();
-            */
     }
 }
 
@@ -355,7 +341,6 @@ void QGeoInfoThreadWinCE::run()
 
             // The GPS state has been updated.
 
-            /* If this takes ages we can mark the on state from updates and check for the off state after timeouts
             if (dwRet == WAIT_OBJECT_0 + 1) {
                 GPS_DEVICE device;
                 device.dwVersion = GPS_VERSION_1;
@@ -372,7 +357,6 @@ void QGeoInfoThreadWinCE::run()
                     m_gps = GPSOpenDevice(m_newDataEvent, m_gpsStateChange, NULL, 0);
                 }
             }
-            */
 
             // We reach this point if the gps state has changed, if the wake up event has been
             // triggered, if we received data we were not interested in from the GPS,
