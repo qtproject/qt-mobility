@@ -39,33 +39,44 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qstring.h>
-#include <QtCore/qdebug.h>
+#ifndef STILLSETTINGS_H
+#define STILLSETTINGS_H
 
-#include "audiocaptureserviceplugin.h"
-#include "audiocaptureservice.h"
+#include <QtGui/QDialog>
+#include <qmediaencodersettings.h>
 
-#include <qmediaserviceprovider.h>
+QTM_BEGIN_NAMESPACE
+class QStillImageCapture;
+QTM_END_NAMESPACE
 
+QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
-QStringList AudioCaptureServicePlugin::keys() const
-{
-    return QStringList() << QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE);
+QT_BEGIN_NAMESPACE
+class QComboBox;
+namespace Ui {
+    class StillSettingsUi;
 }
+QT_END_NAMESPACE
 
-QMediaService* AudioCaptureServicePlugin::create(QString const& key)
-{
-    if (key == QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE))
-        return new AudioCaptureService;
+class StillSettings : public QDialog {
+    Q_OBJECT
+public:
+    StillSettings(QStillImageCapture *imageCapture, QWidget *parent = 0);
+    ~StillSettings();
 
-    //qDebug() << "unsupported key:" << key;
-    return 0;
-}
+    QImageEncoderSettings imageSettings() const;
+    void setImageSettings(const QImageEncoderSettings&);
 
-void AudioCaptureServicePlugin::release(QMediaService *service)
-{
-    delete service;
-}
+protected:
+    void changeEvent(QEvent *e);
 
-Q_EXPORT_PLUGIN2(audioengine, AudioCaptureServicePlugin);
+private:
+    QVariant boxValue(const QComboBox*) const;
+    void selectComboBoxItem(QComboBox *box, const QVariant &value);
 
+    Ui::StillSettingsUi *ui;
+    QStillImageCapture *imageCapture;
+};
+
+#endif // STILLSETTINGS_H

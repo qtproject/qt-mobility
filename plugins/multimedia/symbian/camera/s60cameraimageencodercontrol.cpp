@@ -64,8 +64,7 @@ QList<QSize> S60CameraImageEncoderControl::supportedResolutions(
         const QImageEncoderSettings &settings, bool *continuous) const
 {
     // we support arbitary resolutions. they are converted to nearest real resolution
-    *continuous = true;
-
+    //*continuous = true;
     QList<QSize> resolutions;
     if (m_session)
         resolutions = m_session->supportedCaptureSizesForCodec(settings.codec());

@@ -63,6 +63,7 @@ class S60CameraExposureControl;
 class S60CameraImageProcessingControl;
 class S60CameraImageCaptureControl;
 class S60ViewFinderWidgetControl;
+class S60CameraImageEncoderControl;
 
 class S60CameraService : public QMediaService
 {
@@ -108,6 +109,7 @@ private:
     S60VideoOutputControl *m_videoOutput;
     S60MediaControl  *m_media;
     S60ViewFinderWidgetControl *m_viewFinderWidget;
+    S60CameraImageEncoderControl *m_imageEncoderControl;
 };
 
 #endif

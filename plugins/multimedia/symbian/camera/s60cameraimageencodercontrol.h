@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef S60CAMERACONTROL_H
-#define S60CAMERACONTROL_H
+#ifndef S60CAMERAIMAGEENCODERCONTROL_H
+#define S60CAMERAIMAGEENCODERCONTROL_H
 
 #include <QtCore/qobject.h>
 #include "qimageencodercontrol.h"
@@ -63,7 +63,7 @@ public:
     QList<QSize> supportedResolutions(const QImageEncoderSettings &settings,
                                               bool *continuous = 0) const;
 
-    QImageEncoderSettings imageSettings() const = 0;
+    QImageEncoderSettings imageSettings() const;
     void setImageSettings(const QImageEncoderSettings &settings);
 
 private:

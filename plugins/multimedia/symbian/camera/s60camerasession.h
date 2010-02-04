@@ -99,6 +99,16 @@ public:
         KErrECamSettingNotSupported = -12103, //  This parameter or operation is not supported. 
         KErrECamNotOptimalFocus = -12104 // The optimum focus is lost  
     };
+    
+    enum TVideoCaptureState
+    {
+        ENotInitialized = 0,
+        EInitialized,
+        EOpenCompelete,
+        ERecording,
+        EPaused,
+        ERecordComplete
+    };    
 
     S60CameraSession(QObject *parent = 0);
     ~S60CameraSession();
@@ -114,9 +124,6 @@ public:
 
     qreal framerate();
     void setFrameRate(qreal rate);
-    // camera image properties
-    QSize frameSize() const;
-    void setFrameSize(const QSize& s);
 
     QList<QVideoFrame::PixelFormat> supportedPixelFormats();
     QVideoFrame::PixelFormat pixelFormat() const;
@@ -129,15 +136,15 @@ public:
     bool setOutputLocation(const QUrl &sink);
     QUrl outputLocation() const;
     qint64 position();
-    int state() const;    
-
+    int videoCaptureState() const;        
+    
     //added based on s60 camera needs
     void releaseImageBuffer();
     void startCamera();
     void stopCamera();
     void capture(const QString &fileName);
-
-
+    int state() const;
+    
     // for mediacontrol
     void startRecording();
     void pauseRecording();
@@ -179,7 +186,7 @@ public:
     void saveVideoEncoderSettings(QVideoEncoderSettings &videoSettings);
     void getCurrentVideoEncoderSettings(QVideoEncoderSettings &videoSettings);    
     QtMedia::EncodingQuality videoCaptureQuality() const;    
-    void setVideoCaptureQuality(QtMedia::EncodingQuality quality);
+    void setVideoCaptureQuality(QtMedia::EncodingQuality quality);    
     
     //camerafocuscontrol
     void startFocus();
@@ -233,6 +240,8 @@ private:
     void updateVideoCaptureCodecs();
     void updateVideoCaptureCodecsL();
     void initializeVideoCaptureSettings();
+    
+    void saveImageL(TDesC8* aData);
 
 Q_SIGNALS:
     void stateChanged(QCamera::State);
@@ -244,9 +253,7 @@ Q_SIGNALS:
     //for focuscontrol
     void focusStatusChanged(QCamera::FocusStatus);
     void opticalZoomChanged(qreal opticalZoom);
-    void digitalZoomChanged(qreal digitalZoom);
-        
-        
+    void digitalZoomChanged(qreal digitalZoom);        
 
 private:
     CCameraEngine *m_cameraEngine;
@@ -256,7 +263,6 @@ private:
     int m_videoQuality;
     QSize m_captureSize;
     QCamera::State m_state;
-    QSize m_windowSize;
     QVideoFrame::PixelFormat m_pixelF;
     TInt m_deviceIndex; //index indication chosen camera device
     mutable int m_error;
@@ -268,24 +274,11 @@ private:
     QSize m_VFWidgetSize;
     TSize m_VFSize;
     QString m_stillCaptureFileName;
-
     mutable TCameraInfo m_info; // information about camera
-
     CVideoRecorderUtility* m_videoUtility;
     QHash<QString, VideoControllerData> m_videoControllerMap;
     QString m_videoCodec;
-    QVideoEncoderSettings m_videoSettings;
-    
-    enum TVideoCaptureState
-    {
-        ENotInitialized = 0,
-        EInitialized,
-        EOpenCompelete,
-        ERecording,
-        EPaused,
-        ERecordComplete
-    };
-    
+    QVideoEncoderSettings m_videoSettings;    
     TVideoCaptureState m_captureState;
 
 };

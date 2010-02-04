@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>300</width>
-    <height>383</height>
+    <width>240</width>
+    <height>320</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -167,6 +167,9 @@
         <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,0,0">
          <item>
           <widget class="QToolButton" name="stopButton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
              <horstretch>0</horstretch>
@@ -186,6 +189,9 @@
          </item>
          <item>
           <widget class="QToolButton" name="pauseButton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
              <horstretch>0</horstretch>
@@ -205,6 +211,9 @@
          </item>
          <item>
           <widget class="QToolButton" name="recordButton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
              <horstretch>0</horstretch>
@@ -234,8 +243,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>300</width>
-     <height>18</height>
+     <width>240</width>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -249,6 +258,7 @@
      <string>Devices</string>
     </property>
     <addaction name="separator"/>
+    <addaction name="actionStilllSettings"/>
     <addaction name="actionSettings"/>
     <addaction name="separator"/>
     <addaction name="actionCamera"/>
@@ -293,10 +303,19 @@
      <addaction name="actionCloudy"/>
      <addaction name="actionTungsten"/>
     </widget>
+    <widget class="QMenu" name="menuSharpness">
+     <property name="title">
+      <string>Sharpness</string>
+     </property>
+     <addaction name="actionHard"/>
+     <addaction name="actionNormal"/>
+     <addaction name="actionSoft"/>
+    </widget>
     <addaction name="menuFlash_On"/>
     <addaction name="menuFocus"/>
     <addaction name="menuExposure"/>
     <addaction name="menuWhiteBalance"/>
+    <addaction name="menuSharpness"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuDevices"/>
@@ -310,7 +329,7 @@
   </action>
   <action name="actionSettings">
    <property name="text">
-    <string>Settings</string>
+    <string>Video Camera Settings</string>
    </property>
   </action>
   <action name="actionCamera">
@@ -396,6 +415,26 @@
   <action name="actionTungsten">
    <property name="text">
     <string>Tungsten</string>
+   </property>
+  </action>
+  <action name="actionStilllSettings">
+   <property name="text">
+    <string>Stilll Camera Settings</string>
+   </property>
+  </action>
+  <action name="actionHard">
+   <property name="text">
+    <string>Hard</string>
+   </property>
+  </action>
+  <action name="actionNormal">
+   <property name="text">
+    <string>Normal</string>
+   </property>
+  </action>
+  <action name="actionSoft">
+   <property name="text">
+    <string>Soft</string>
    </property>
   </action>
  </widget>
@@ -510,6 +549,22 @@
     <hint type="destinationlabel">
      <x>149</x>
      <y>191</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionStilllSettings</sender>
+   <signal>triggered()</signal>
+   <receiver>CameraCapture</receiver>
+   <slot>stillSettings()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>119</x>
+     <y>159</y>
     </hint>
    </hints>
   </connection>

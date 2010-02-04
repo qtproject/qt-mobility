@@ -43,13 +43,13 @@ SOURCES += \
     $$PWD/s60audioplayersession.cpp \
     $$PWD/s60videowidget.cpp
 
-exists($${EPOCROOT}epoc32/release/winscw/udeb/mpengine.lib){
-    LIBS += -lMPEngine \
+contains(S60_VERSION, 3.1) {
+    MMP_RULES += "$${LITERAL_HASH}ifndef WINSCW" \
+    "LIBRARY    MPEngine.lib" \
+    "MACRO    HAS_MEDIA_PLAYER" \
+    "$${LITERAL_HASH}endif"
+} else {
+    LIBS += -lMPEngine
     DEFINES += HAS_MEDIA_PLAYER
 }
-else {
-    MMP_RULES += "$${LITERAL_HASH}ifndef WINSCW" \
-        "LIBRARY		MPEngine.lib" \
-        "MACRO		HAS_MEDIA_PLAYER" \
-        "$${LITERAL_HASH}endif"
-}
+
