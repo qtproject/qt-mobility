@@ -177,7 +177,7 @@ void QContactDetailDefinition::removeField(const QString& key)
 
   You can make changes to the returned map.
  */
-QMap<QString, QContactDetailFieldDefinition>& Q_DECL_DEPRECATED QContactDetailDefinition::fields()
+QMap<QString, QContactDetailFieldDefinition> Q_DECL_DEPRECATED & QContactDetailDefinition::fields()
 {
     return d->m_fields;
 }
