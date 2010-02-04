@@ -8,3 +8,4 @@ contains(QT_CONFIG, declarative) {
     SUBDIRS += orientation
 }
 
+SUBDIRS += grueplugin grueapp
