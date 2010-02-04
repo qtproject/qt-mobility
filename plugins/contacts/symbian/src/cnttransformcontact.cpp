@@ -142,7 +142,7 @@ void CntTransformContact::initializeCntTransformContactData()
  * \param contact A reference to a symbian contact item to be converted.
  * \return Qt Contact
  */
-QContact CntTransformContact::transformContactL(CContactItem &contact) const
+QContact CntTransformContact::transformContactL(CContactItem &contact, const QStringList& definitionRestrictions) const
 {
     // Create a new QContact
     QContact newQtContact;
@@ -169,8 +169,12 @@ QContact CntTransformContact::transformContactL(CContactItem &contact) const
 
         if(detail)
         {
-            newQtContact.saveDetail(detail);
-            transformPreferredDetail(fields[i], *detail, newQtContact);
+            // add detail if user requested it.
+            if(definitionRestrictions.isEmpty() || definitionRestrictions.contains(detail->definitionName())) 
+            {
+                newQtContact.saveDetail(detail);
+                transformPreferredDetail(fields[i], *detail, newQtContact);
+            }
             delete detail;
             detail = 0;
         }

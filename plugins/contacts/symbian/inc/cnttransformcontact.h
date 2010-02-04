@@ -64,7 +64,7 @@ public:
 	virtual ~CntTransformContact();
 
 public:
-	QContact transformContactL(CContactItem &contact) const;
+	QContact transformContactL(CContactItem &contact, const QStringList& definitionRestrictions = QStringList()) const;
 	void transformPostSaveDetailsL(
 	        const CContactItem& contactItem,
 	        QContact& contact,
