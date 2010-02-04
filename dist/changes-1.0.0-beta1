@@ -131,8 +131,14 @@ QtMedia
 QtPublishSubscribe
 ------
 
- - foo
-    * bar
+ - Symbian backend improvements
+    * MOBILITY-387 fixed
+    * Support for removeValue
+    * subPaths only returs the values that are really available
+    * Unsupported data types are published as serialized QByteArrays
+      All QVariant data types can be passed through the Publish and Subscribe.
+    * PSPathMapper server added so the QCRML files no longer need to be parsed
+      in client-side.
 
 QtServiceFramework
 ------
