@@ -60,7 +60,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-struct QSensorPluginInterface;
+class QSensorPluginInterface;
 
 class Q_AUTOTEST_EXPORT QSensorPluginLoader
 {

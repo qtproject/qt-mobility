@@ -41,6 +41,7 @@
 
 #include <QApplication>
 #include <QMainWindow>
+#include <QMessageBox>
 #include <QTimer>
 #include <qgeopositioninfosource.h>
 #include <qgeosatelliteinfosource.h>
@@ -58,8 +59,14 @@ int main(int argc, char* argv[])
             SatelliteDialog::ScaleToMaxPossible);
 
     QGeoPositionInfoSource *posSource = QGeoPositionInfoSource::createDefaultSource(0);
-    posSource->setUpdateInterval(5000);
     QGeoSatelliteInfoSource *satSource = QGeoSatelliteInfoSource::createDefaultSource(0);
+
+    if ((posSource == 0) || (satSource == 0)) {
+        QMessageBox::critical(0, "SatelliteDialog", "This examples requires a valid location source and no valid location sources are available on this platform.");
+        return -1;
+    }
+
+    posSource->setUpdateInterval(5000);
 
     dialog->connectSources(posSource, satSource);
 
