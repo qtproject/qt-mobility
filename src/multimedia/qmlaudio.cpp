@@ -58,9 +58,9 @@ QTM_BEGIN_NAMESPACE
     \brief The QmlAudio class provides a audio item that you can add to a QmlView.
 */
 
-void QmlAudio::_q_error(QMediaPlayer::Error errorCode, const QString &errorString)
+void QmlAudio::_q_error(int errorCode, const QString &errorString)
 {
-    m_error = errorCode;
+    m_error = QMediaPlayer::Error(errorCode);
     m_errorString = errorString;
 
     emit error(Error(errorCode), errorString);
