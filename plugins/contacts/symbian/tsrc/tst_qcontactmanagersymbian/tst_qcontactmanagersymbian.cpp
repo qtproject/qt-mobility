@@ -43,6 +43,8 @@
 #include <QObject>
 
 #include <qtcontacts.h>
+#include <cntdb.h>
+#include <cntitem.h>
 
 QTM_USE_NAMESPACE
 
@@ -77,19 +79,26 @@ private slots:
     void avatarPixmap();
     void avatarPixmap_data();
     void avatarPathAndPixmap();
+    void invalidContactItems();
 
 private:
+    void addContactItemWithInvalidFieldsL(TContactItemId& itemId);
+
+    CContactDatabase* m_contactDatabase;
     QContactManager* m_cm;
     QContactId m_contactId;
 };
 
 tst_QContactManagerSymbian::tst_QContactManagerSymbian()
 {
-	m_cm = QContactManager::fromUri("qtcontacts:symbian");
+    m_cm = QContactManager::fromUri("qtcontacts:symbian");
+    TRAPD(err, m_contactDatabase = CContactDatabase::OpenL());
+    QVERIFY(err == KErrNone);
 }
 
 tst_QContactManagerSymbian::~tst_QContactManagerSymbian()
 {
+    delete m_contactDatabase;
 	delete m_cm;
 }
 
@@ -107,7 +116,7 @@ void tst_QContactManagerSymbian::init()
 void tst_QContactManagerSymbian::cleanup()
 {
     // Commented out => leave generated contacts into database
-    //QVERIFY(m_cm->removeContact(m_contactId.localId()));
+    QVERIFY(m_cm->removeContact(m_contactId.localId()));
 }
 
 void tst_QContactManagerSymbian::avatarSubTypes_data()
@@ -216,5 +225,44 @@ void tst_QContactManagerSymbian::avatarPathAndPixmap()
     QVERIFY(!pixmap.isNull());
 }
 
+void tst_QContactManagerSymbian::invalidContactItems()
+{
+    // 1. Empty contact
+    QContact empty;
+    QVERIFY(m_cm->saveContact(&empty));
+    empty = m_cm->contact(empty.localId(), QStringList());
+    QVERIFY(m_cm->error() == QContactManager::NoError);
+    QVERIFY(empty.id() != QContactId());
+    QVERIFY(m_cm->removeContact(empty.localId()));
+    
+    // 2. CContactItem with invalid fields 
+    TContactItemId itemId(0);
+    TRAPD(err, addContactItemWithInvalidFieldsL(itemId));
+    QCOMPARE(err, KErrNone);
+    QContact invalidContact = m_cm->contact(itemId);
+    QVERIFY(invalidContact.id() != QContactId());
+    // TODO: check that 3 fields are removed during save?
+    QVERIFY(m_cm->saveContact(&invalidContact));
+    QVERIFY(m_cm->removeContact(invalidContact.localId()));
+}
+
+void tst_QContactManagerSymbian::addContactItemWithInvalidFieldsL(TContactItemId& itemId)
+{
+    // Create a contact with invalid item fields to the database
+    CContactItem* contactItem = CContactCard::NewLC();
+    // Note! No TFieldType defined!
+    CContactItemField* field = CContactItemField::NewLC(KStorageTypeContactItemId);
+    contactItem->AddFieldL(*field);
+    CleanupStack::Pop(field);
+    CContactItemField* field2 = CContactItemField::NewLC(KStorageTypeStore);
+    contactItem->AddFieldL(*field2);
+    CleanupStack::Pop(field2);
+    CContactItemField* field3 = CContactItemField::NewLC(KStorageTypeDateTime);
+    contactItem->AddFieldL(*field3);
+    CleanupStack::Pop(field3);
+
+    itemId = m_contactDatabase->AddNewContactL(*contactItem);
+    CleanupStack::PopAndDestroy(contactItem);
+}
 QTEST_MAIN(tst_QContactManagerSymbian)
 #include "tst_qcontactmanagersymbian.moc"

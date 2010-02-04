@@ -356,16 +356,19 @@ QList<CContactItemField *> CntTransformContact::transformDetailL(const QContactD
 QContactDetail *CntTransformContact::transformItemField(const CContactItemField& field, const QContact &contact) const
 {
 	QContactDetail *detail(0);
-	TUint32 fieldType(field.ContentType().FieldType(0).iUid);
 
-	QMap<ContactData, CntTransformContactData*>::const_iterator i = m_transformContactData.constBegin();
-	while (i != m_transformContactData.constEnd()) {
-        if (i.value()->supportsField(fieldType)) {
-            detail = i.value()->transformItemField(field, contact);
-            break;
-        }
-        ++i;
-	 }
+	if(field.ContentType().FieldTypeCount()) {
+	    TUint32 fieldType(field.ContentType().FieldType(0).iUid);
+
+	    QMap<ContactData, CntTransformContactData*>::const_iterator i = m_transformContactData.constBegin();
+	    while (i != m_transformContactData.constEnd()) {
+	        if (i.value()->supportsField(fieldType)) {
+	            detail = i.value()->transformItemField(field, contact);
+	            break;
+	        }
+	        ++i;
+	     }
+	}
 
 	return detail;
 }
