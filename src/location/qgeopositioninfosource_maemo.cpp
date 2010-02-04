@@ -63,7 +63,11 @@ QTM_BEGIN_NAMESPACE
 QGeoPositionInfoSourceMaemo::QGeoPositionInfoSourceMaemo(QObject *parent): QGeoPositionInfoSource(parent)
 {
     // default values
+#ifdef Q_WS_MAEMO_5
+    time_interval_ = LOCATION_INTERVAL_5S;
+#else
     time_interval_ = 5000;
+#endif
     distance_interval_ = 10;
     registered_ = false;
     validLastUpdate = false;
@@ -77,26 +81,40 @@ int QGeoPositionInfoSourceMaemo::init()
     g_type_init();
 
     locationControl = location_gpsd_control_get_default();
-    g_object_set(G_OBJECT(locationControl),
-                 "preferred-method", LOCATION_METHOD_USER_SELECTED,
-                 "preferred-interval", LOCATION_INTERVAL_DEFAULT,
-                 NULL);
+    if(locationControl) {        
+        g_object_set(G_OBJECT(locationControl),
+                     "preferred-method", LOCATION_METHOD_USER_SELECTED,
+                     "preferred-interval", time_interval_,
+                     NULL);
+    } else {
+        return -1;
+    }
 
     locationDevice = 
             (LocationGPSDevice*)g_object_new(LOCATION_TYPE_GPS_DEVICE, 
                                              NULL);
 
-    g_signal_connect(G_OBJECT(locationControl), "error-verbose",
-                     G_CALLBACK(&locationError), static_cast<void*>(this));
-    g_signal_connect(G_OBJECT(locationDevice), "changed",
-                     G_CALLBACK(&locationChanged), static_cast<void*>(this));
-    g_signal_connect(G_OBJECT(locationDevice), "connected",
-                     G_CALLBACK(&deviceConnected), static_cast<void*>(this));
-    g_signal_connect(G_OBJECT(locationDevice), "disconnected",
-                     G_CALLBACK(&deviceDisconnected), static_cast<void*>(this));
-
-    location_gpsd_control_start(locationControl);
-    return 0;
+    if(locationDevice) {
+        errorHandlerId =
+            g_signal_connect(G_OBJECT(locationControl), "error-verbose",
+                             G_CALLBACK(&locationError), 
+                             static_cast<void*>(this));
+        posChangedId =
+            g_signal_connect(G_OBJECT(locationDevice), "changed",
+                             G_CALLBACK(&locationChanged), 
+                             static_cast<void*>(this));
+        connectedId =
+            g_signal_connect(G_OBJECT(locationDevice), "connected",
+                             G_CALLBACK(&deviceConnected), 
+                             static_cast<void*>(this));
+        disconnectedId = 
+            g_signal_connect(G_OBJECT(locationDevice), "disconnected",
+                             G_CALLBACK(&deviceDisconnected), 
+                             static_cast<void*>(this));
+        return 0;
+    } else {
+        return -1;
+    }
 #else
     int status;
 
@@ -150,17 +168,18 @@ QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSourceMaemo::supporte
 
 void QGeoPositionInfoSourceMaemo::setUpdateInterval(int msec)
 {
-#ifdef Q_WS_MAEMO_5
-    if(locationControl)
-        g_object_set(G_OBJECT(locationControl),
-                     "preferred-method", LOCATION_METHOD_USER_SELECTED,
-                     "preferred-interval", msec,
-                     NULL);
-#else
     msec = (msec < MinimumUpdateInterval) ? MinimumUpdateInterval : msec;
-
     QGeoPositionInfoSource::setUpdateInterval(msec);
 
+#ifdef Q_WS_MAEMO_5
+    time_interval_ = msec/100;
+    if(locationControl) {
+        g_object_set(G_OBJECT(locationControl),
+                     "preferred-method", LOCATION_METHOD_USER_SELECTED,
+                     "preferred-interval", time_interval_,
+                     NULL);
+    }
+#else
     if (registered_ == false)
         registered_ = dbusComm->sendDBusRegister();
     dbusComm->sessionConfigRequest(dbusComm->CmdSetInterval, 0, msec);
@@ -189,8 +208,39 @@ int QGeoPositionInfoSourceMaemo::minimumUpdateInterval() const
 void QGeoPositionInfoSourceMaemo::startUpdates()
 {
 #ifdef Q_WS_MAEMO_5
-    if(locationControl)
+    if(locationControl) {
+        if(!errorHandlerId) {
+            errorHandlerId =
+                g_signal_connect(G_OBJECT(locationControl), "error-verbose",
+                                 G_CALLBACK(&locationError), 
+                                 static_cast<void*>(this));            
+        }
+
+        if(!posChangedId) {
+            posChangedId =
+                g_signal_connect(G_OBJECT(locationDevice), "changed",
+                                 G_CALLBACK(&locationChanged), 
+                                 static_cast<void*>(this));            
+        }
+        
+        if(!connectedId) {
+            connectedId = 
+                g_signal_connect(G_OBJECT(locationDevice), "connected",
+                                 G_CALLBACK(&deviceConnected), 
+                                 static_cast<void*>(this));            
+        }
+        
+        if(!disconnectedId) {
+            disconnectedId = 
+                g_signal_connect(G_OBJECT(locationDevice), "disconnected",
+                                 G_CALLBACK(&deviceDisconnected), 
+                                 static_cast<void*>(this));                        
+        }
+        
         location_gpsd_control_start(locationControl);
+    } else {
+        
+    }
 #else
     if (registered_ == false)
         registered_ = dbusComm->sendDBusRegister();
@@ -204,8 +254,25 @@ void QGeoPositionInfoSourceMaemo::startUpdates()
 void QGeoPositionInfoSourceMaemo::stopUpdates()
 {
 #ifdef Q_WS_MAEMO_5
-    if(locationControl)
+    if(locationControl) {
+        if(errorHandlerId)
+            g_signal_handler_disconnect(G_OBJECT(locationControl), 
+                                        errorHandlerId);
+        if(posChangedId)
+            g_signal_handler_disconnect(G_OBJECT(locationDevice), 
+                                        posChangedId);
+        if(connectedId)
+            g_signal_handler_disconnect(G_OBJECT(locationDevice), 
+                                        connectedId);
+        if(disconnectedId)
+            g_signal_handler_disconnect(G_OBJECT(locationDevice), 
+                                        disconnectedId);
+        errorHandlerId = 0;
+        posChangedId = 0;
+        connectedId = 0;
+        disconnectedId = 0;        
         location_gpsd_control_stop(locationControl);
+    }
 #else
     if (registered_ == false)
         return; // nothing to stop
@@ -294,6 +361,7 @@ void QGeoPositionInfoSourceMaemo::locationChanged(LocationGPSDevice *device,
     QGeoCoordinate coordinate;
     QGeoPositionInfoSourceMaemo *object;
 
+
     if (!data || !device)
         return;
 
@@ -329,15 +397,17 @@ void QGeoPositionInfoSourceMaemo::locationChanged(LocationGPSDevice *device,
         }
 
     }
-    posInfo.setCoordinate(coordinate);
-    object->setLocation(posInfo);
+   
+    if(device->status == LOCATION_GPS_DEVICE_STATUS_FIX) {
+        posInfo.setCoordinate(coordinate);        
+        object->setLocation(posInfo);
+    }
 }
 
 void QGeoPositionInfoSourceMaemo::setLocation(const QGeoPositionInfo &update)
 {
     lastSatUpdate = update;
     validLastSatUpdate = true;
-
     emit positionUpdated(update);
 }
 #endif // Q_WS_MAEMO_5
