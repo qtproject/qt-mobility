@@ -7,7 +7,8 @@ SOURCES += tst_contacts.cpp
 QT += core \
       network
 
-LIBS += -L../../../lib -lQtDBus -lQtXml -lQtGui
+LIBS += -L../../../lib
+
 INCLUDEPATH += ../../../src/contacts
 
 include(../../../common.pri)
@@ -18,4 +19,8 @@ MOBILITY = contacts
 
 symbian {
     TARGET.CAPABILITY = All -TCB
+}
+
+maemo {
+    LIBS += -lQtDBus -lQtXml -lQtGui
 }

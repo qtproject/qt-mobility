@@ -41,7 +41,7 @@
 #include <QApplication>
 #include <QtTest/QtTest>
 //#include "contact.h"
-#include <QContactManager>
+//#include <QContactManager>
 #include <QDebug>
 #include <QEventLoop>
 #include <QTimer>
@@ -107,6 +107,8 @@ private:
     QList<QContactLocalId> id_list;
 
     int m_run;
+    
+    int m_num_start;
 
     QTimer *m_timer;
     QStringList firstNames;
@@ -122,10 +124,7 @@ void tst_Contact::setBackend(QString backend)
 
 void tst_Contact::initTestCase()
 {
-    //qRegisterMetaType<QSystemInfo::Version>("QSystemInfo::Version");
-    //qRegisterMetaType<QSystemInfo::Feature>("QSystemInfo::Feature");
-    qDebug() << "Managers: " << QContactManager::availableManagers();
-    manager = "";
+    qDebug() << "Managers: " << QContactManager::availableManagers();    
     m_run = 0;
 
 #if defined(Q_WS_MAEMO_6)
@@ -145,6 +144,23 @@ void tst_Contact::initTestCase()
     m_qm = new QContactManager(manager);
 #elif defined(Q_WS_MAEMO_5)
     QFAIL("Maemo 5 does not support QContacts");
+#elif defined(Q_OS_SYMBIAN)
+    QStringList list = QContactManager::availableManagers();
+    int found = 0;
+    while(!list.empty()){
+        if(list.takeFirst() == "symbian"){
+            found = 1;
+            break;
+        }
+    }
+    if(!found) {
+        QFAIL("Unable to find Symbian plugin. Please check install");
+    }
+        
+    if(manager.isEmpty()) {
+        manager = "symbian";
+    }    
+    m_qm = new QContactManager(manager);
 #else
     QFAIL("Platform not supported");
 #endif
@@ -158,14 +174,14 @@ void tst_Contact::initTestCase()
 
     QList<QContactLocalId> qcl = m_qm->contactIds();
     int before = qcl.count();
-    qDebug() << "Number of Contact: " << before;
+    m_num_start = before;
+    qDebug() << "Number of Contact: " << m_num_start;    
 
     for(int i = 0; i < 20; i++){
         createContact();
     }
     qcl = m_qm->contactIds();
     int after = qcl.count();
-    qDebug() << "Number of Contacts after: " << after;
     if(after - before != 20){
         qWarning() << "Failed to create 20 contacts";
     }
@@ -178,6 +194,10 @@ void tst_Contact::initTestCase()
 void tst_Contact::cleanupTestCase()
 {
     clearContacts();
+    QList<QContactLocalId> qcl = m_qm->contactIds();       
+    if(m_num_start != qcl.count()){
+      QFAIL(QString("Number of contacts ending: %2 is different that starting number %1.  Poor cleanup").arg(m_num_start).arg(qcl.count()).toAscii());
+    }
 }
 
 void tst_Contact::clearContacts()
@@ -213,6 +233,7 @@ void tst_Contact::tst_fetchOneContact()
 
     m_run++;
 
+#if defined(Q_WS_MAEMO_6)
     QContactFetchRequest* req = new QContactFetchRequest;
 
     QList<QContactLocalId> qcl = m_qm->contactIds();
@@ -232,7 +253,6 @@ void tst_Contact::tst_fetchOneContact()
     m_num_contacts = 1;
     m_timer->start(1000);
 
-#if defined(Q_WS_MAEMO_6)
     QBENCHMARK {
         req->start();
         ret = loop->exec();
@@ -243,9 +263,18 @@ void tst_Contact::tst_fetchOneContact()
     if(ret){
         QFAIL("Failed to load one contact");
     }
-
-#endif    
     delete req;
+
+#elif defined(Q_OS_SYMBIAN)    
+    QList<QContactLocalId> qcl = m_qm->contactIds();    
+    if(qcl.count() < 1)
+        QFAIL("No contacts to pull from tracker");
+    
+    QBENCHMARK {
+       c = m_qm->contact(qcl.first());
+    }       
+#endif
+                
 
 }
 
@@ -258,6 +287,7 @@ void tst_Contact::tst_fetchTenContact()
 
     m_run++;
 
+#if defined(Q_WS_MAEMO_6)
     QContactFetchRequest* req = new QContactFetchRequest;
 
     QList<QContactLocalId> qcl = m_qm->contactIds();
@@ -280,7 +310,6 @@ void tst_Contact::tst_fetchTenContact()
 
     m_timer->start(1000);
 
-#if defined(Q_WS_MAEMO_6)
     QBENCHMARK {
         req->start();
         ret = loop->exec();
@@ -294,6 +323,28 @@ void tst_Contact::tst_fetchTenContact()
 
     delete req;
 
+#elif defined(Q_OS_SYMBIAN)
+    QList<QContactLocalId> qcl = m_qm->contactIds();
+    if(qcl.count() < 10){
+        QFAIL("No enough contacts to get 10");
+    }
+    QList<QContactLocalId> one;
+    for(int i = 0; i<10; i++)
+        one += qcl.takeFirst();
+
+    QContactLocalIdFilter idFil;
+    idFil.setIds(one);
+    
+    QList<QContact> qlc;
+    
+    QBENCHMARK {
+      qlc = m_qm->contacts(idFil, QList<QContactSortOrder>(), QStringList());
+    }
+    
+    if(qlc.count() != 10){
+      QFAIL("Did not get 10 contacts back");    
+    }
+    
 #endif    
 
 }
@@ -411,11 +462,20 @@ void tst_Contact::tst_removeOneContact()
     QList<QContactLocalId> one;
     QMap<int, QContactManager::Error> errorMap;
 
+    if(id_list.count() < 1){ // incase we run out of contacts
+      createContact();
+    }
+    
     one += id_list.takeFirst();
     QBENCHMARK {
-        m_qm->removeContacts(&id_list, &errorMap);
+        m_qm->removeContacts(&one, &errorMap);
     }
 
+//    QMapIterator<int, QContactManager::Error> i(errorMap);
+//    while(i.hasNext()){
+//        i.next();
+//        qDebug() << "Error deleting: " << i.key() << " error: " << i.value();
+//    }
 
 }
 
@@ -429,81 +489,13 @@ void tst_Contact::tst_removeAllContacts()
             createContact();
         }
     }
+    
+    //qDebug() << "Removing: " << id_list.count() << " contacts";
+    
     QBENCHMARK {
         clearContacts();
     }
 }
-
-//void tst_Contact::tst_currentLanguage()
-//{
-//    QSystemInfo si;
-//    QBENCHMARK {
-//        QString s = si.currentLanguage();
-//    }
-//
-//}
-//
-//void tst_Contact::tst_availableLanguages()
-//{
-//    QSystemInfo si;
-//    QBENCHMARK {
-//        QStringList available = si.availableLanguages();
-//    }
-//}
-//
-//void tst_Contact::tst_versions_data()
-//{
-//    QTest::addColumn<QSystemInfo::Version>("version");
-//    QTest::addColumn<QString>("parameter");
-//
-//    QTest::newRow("Os") << QSystemInfo::Os << "";
-//    QTest::newRow("QtCore") << QSystemInfo::QtCore << "";
-//    QTest::newRow("Firmware") << QSystemInfo::Firmware << "";
-//
-//}
-//
-//void tst_Contact::tst_versions()
-//{
-//    QBENCHMARK {
-//        QFETCH(QSystemInfo::Version, version);
-//        QFETCH(QString, parameter);
-//        QSystemInfo si;
-//        QString vers = si.version(version, parameter);
-//    }
-//}
-//
-//void tst_Contact::tst_hasFeatures_data()
-//{
-//    QTest::addColumn<QSystemInfo::Feature>("feature");
-//
-//    QTest::newRow("Bluetooth") << QSystemInfo::BluetoothFeature;
-//    QTest::newRow("CameraFeature") << QSystemInfo::CameraFeature;
-//    QTest::newRow("FmradioFeature") << QSystemInfo::FmradioFeature;
-//    QTest::newRow("IrFeature") << QSystemInfo::IrFeature;
-//    QTest::newRow("LedFeature") << QSystemInfo::LedFeature;
-//    QTest::newRow("MemcardFeature") << QSystemInfo::MemcardFeature;
-//    QTest::newRow("UsbFeature") << QSystemInfo::UsbFeature;
-//    QTest::newRow("VibFeature") << QSystemInfo::VibFeature;
-//    QTest::newRow("WlanFeature") << QSystemInfo::WlanFeature;
-//    QTest::newRow("SimFeature") << QSystemInfo::SimFeature;
-//    QTest::newRow("LocationFeature") << QSystemInfo::LocationFeature;
-//    QTest::newRow("VideoOutFeature") << QSystemInfo::VideoOutFeature;
-//    QTest::newRow("HapticsFeature") << QSystemInfo::HapticsFeature;
-//}
-//
-//void tst_Contact::tst_hasFeatures()
-//{
-//    QBENCHMARK {
-//        QFETCH(QSystemInfo::Feature, feature);
-//        QSystemInfo si;
-//        si.hasFeatureSupported(feature);
-//
-//    }
-//}
-
-
-//QTEST_APPLESS_MAIN(tst_Contact)
-//QTEST_MAIN(tst_Contact)
 
 int main(int argc, char **argv){
 
@@ -516,6 +508,11 @@ int main(int argc, char **argv){
 //    tst_Contact test2;
 //    test2.setBackend("tracker");
 //    QTest::qExec(&test2, argc, argv);
+#if defined(Q_OS_SYMBIAN)
+    tst_Contact test2;
+    test2.setBackend("symbian");
+    QTest::qExec(&test2, argc, argv);
+#endif
 }
 
 #include "tst_contacts.moc"
