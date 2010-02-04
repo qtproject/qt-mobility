@@ -1,0 +1,15 @@
+Source: qtcontacts-tracker
+Priority: extra
+Maintainer: tapio <tapio.laxstrom@plenware.fi>
+Build-Depends: debhelper (>= 7),
+        libqttracker-dev,
+        libqtcontacts-dev
+Standards-Version: 3.8.1
+Section: comm
+
+Package: qtcontacts-tracker0
+Section: comm
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Replaces: libqtcontacts-tracker
+Description: QtContact tracker stroge plugin.
