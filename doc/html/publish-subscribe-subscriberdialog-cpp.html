@@ -79,10 +79,8 @@
         ui-&gt;setupUi(this);
 
     #ifdef QTM_SMALL_SCREEN
-        QPushButton *switchButton = new QPushButton(&quot;Switch&quot;, this);
-        switchButton-&gt;setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
-        ui-&gt;verticalLayout-&gt;addWidget(switchButton);
-        switchButton-&gt;show();
+        QPushButton *switchButton =
+            ui-&gt;buttonBox-&gt;addButton(tr(&quot;Switch&quot;), QDialogButtonBox::ActionRole);
         connect(switchButton, SIGNAL(clicked()), this, SIGNAL(switchRequested()));
     #endif
 

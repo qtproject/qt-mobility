@@ -16,7 +16,7 @@ EXPORTS
 	??0QSensor@QtMobility@@QAE@PAVQObject@@@Z @ 15 NONAME ; QtMobility::QSensor::QSensor(class QObject *)
 	??0QSensorBackend@QtMobility@@QAE@PAVQSensor@1@@Z @ 16 NONAME ; QtMobility::QSensorBackend::QSensorBackend(class QtMobility::QSensor *)
 	??0QSensorFilter@QtMobility@@IAE@XZ @ 17 NONAME ; QtMobility::QSensorFilter::QSensorFilter(void)
-	??0QSensorReading@QtMobility@@IAE@PAVQObject@@PAVQSensorReadingPrivate@1@@Z @ 18 NONAME ; QtMobility::QSensorReading::QSensorReading(class QObject *, class QtMobility::QSensorReadingPrivate *)
+	??0QSensorReading@QtMobility@@IAE@PAVQObject@@PAUQSensorReadingPrivate@1@@Z @ 18 NONAME ; QtMobility::QSensorReading::QSensorReading(class QObject *, struct QtMobility::QSensorReadingPrivate *)
 	??0QTapReading@QtMobility@@QAE@PAVQObject@@@Z @ 19 NONAME ; QtMobility::QTapReading::QTapReading(class QObject *)
 	??0QTapSensor@QtMobility@@QAE@PAVQObject@@@Z @ 20 NONAME ; QtMobility::QTapSensor::QTapSensor(class QObject *)
 	??1QAccelerometer@QtMobility@@UAE@XZ @ 21 NONAME ; QtMobility::QAccelerometer::~QAccelerometer(void)
@@ -189,8 +189,8 @@ EXPORTS
 	?reading@QSensorBackend@QtMobility@@QBEPAVQSensorReading@2@XZ @ 188 NONAME ; class QtMobility::QSensorReading * QtMobility::QSensorBackend::reading(void) const
 	?reading@QTapSensor@QtMobility@@QBEPAVQTapReading@2@XZ @ 189 NONAME ; class QtMobility::QTapReading * QtMobility::QTapSensor::reading(void) const
 	?readingChanged@QSensor@QtMobility@@IAEXXZ @ 190 NONAME ; void QtMobility::QSensor::readingChanged(void)
-	?registerBackend@QSensorManager@QtMobility@@SAXABVQByteArray@@0PAVQSensorBackendFactory@2@@Z @ 191 NONAME ; void QtMobility::QSensorManager::registerBackend(class QByteArray const &, class QByteArray const &, class QtMobility::QSensorBackendFactory *)
-	?registerStaticPlugin@QSensorManager@QtMobility@@SAXP6APAVQSensorPluginInterface@2@XZ@Z @ 192 NONAME ; void QtMobility::QSensorManager::registerStaticPlugin(class QtMobility::QSensorPluginInterface * (*)(void))
+	?registerBackend@QSensorManager@QtMobility@@SAXABVQByteArray@@0PAUQSensorBackendFactory@2@@Z @ 191 NONAME ; void QtMobility::QSensorManager::registerBackend(class QByteArray const &, class QByteArray const &, struct QtMobility::QSensorBackendFactory *)
+	?registerStaticPlugin@QSensorManager@QtMobility@@SAXP6APAUQSensorPluginInterface@2@XZ@Z @ 192 NONAME ; void QtMobility::QSensorManager::registerStaticPlugin(struct QtMobility::QSensorPluginInterface * (*)(void))
 	?removeFilter@QSensor@QtMobility@@QAEXPAVQSensorFilter@2@@Z @ 193 NONAME ; void QtMobility::QSensor::removeFilter(class QtMobility::QSensorFilter *)
 	?sensorList@QSensorFactory@QtMobility@@QBE?AV?$QList@VQByteArray@@@@XZ @ 194 NONAME ; class QList<class QByteArray> QtMobility::QSensorFactory::sensorList(void) const
 	?sensorTypes@QSensorFactory@QtMobility@@QBE?AV?$QList@VQByteArray@@@@XZ @ 195 NONAME ; class QList<class QByteArray> QtMobility::QSensorFactory::sensorTypes(void) const
