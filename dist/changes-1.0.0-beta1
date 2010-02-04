@@ -214,6 +214,10 @@ Qt Mobility for Windows CE
 
  -
 
+Qt Mobility for Maemo5
+------
+
+ - Experimental support for QtLocation
 
 ****************************************************************************
 *                          Tools                                           *
