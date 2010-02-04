@@ -320,7 +320,7 @@ void tst_QContactManager::dumpContact(const QContact& contact)
 
 void tst_QContactManager::dumpContacts(QContactManager *cm)
 {
-    QList<QContactLocalId> ids = cm->contactIds();
+    QList<QContactLocalId> ids = cm->contacts();
 
     qDebug() << "There are" << ids.count() << "contacts in" << cm->managerUri();
 
@@ -654,12 +654,12 @@ void tst_QContactManager::add()
     ph.setSubTypes(QStringList("Mobile"));
 
     alice.saveDetail(&ph);
-    int currCount = cm->contactIds().count();
+    int currCount = cm->contacts().count();
     QVERIFY(cm->saveContact(&alice));
     QVERIFY(cm->error() == QContactManager::NoError);
 
     QVERIFY(alice.id() != QContactId());
-    QCOMPARE(cm->contactIds().count(), currCount+1);
+    QCOMPARE(cm->contacts().count(), currCount+1);
 
     QContact added = cm->contact(alice.id().localId());
     QVERIFY(added.id() != QContactId());
@@ -799,8 +799,8 @@ void tst_QContactManager::update()
     /* Save a new contact first */
     QContact alice;
     QContactName na;
-    na.setFirstName("Alice");
-    na.setLastName("inWonderland");
+    na.setFirst("Alice");
+    na.setLast("inWonderland");
     alice.saveDetail(&na);
 
     QContactPhoneNumber ph;
@@ -813,19 +813,19 @@ void tst_QContactManager::update()
     QVERIFY(cm->saveContact(&alice));
     QVERIFY(cm->error() == QContactManager::NoError);
 
-    QList<QContactLocalId> ids = cm->contactIds();
+    QList<QContactLocalId> ids = cm->contacts();
     for(int i = 0; i < ids.count(); i++) {
         QContact current = cm->contact(ids.at(i));
         QContactName nc = current.detail(QContactName::DefinitionName);
-        if (nc.firstName() == "Alice" && nc.lastName() == "inWonderland") {
-            nc.setMiddleName("Fictional");
+        if (nc.first() == "Alice" && nc.last() == "inWonderland") {
+            nc.setMiddle("Fictional");
             current.saveDetail(&nc);
             QVERIFY(cm->saveContact(&current));
             QVERIFY(cm->error() == QContactManager::NoError);
 
             QContact updated = cm->contact(ids.at(i));
             QContactName cn = updated.detail(QContactName::DefinitionName);
-            QCOMPARE(cn.middleName(), nc.middleName());
+            QCOMPARE(cn.middle(), nc.middle());
             didUpdate = true;
             break;
         }
@@ -875,15 +875,15 @@ void tst_QContactManager::remove()
     QVERIFY(cm->error() == QContactManager::NoError);
 
     bool atLeastOne = false;
-    QList<QContactLocalId> ids = cm->contactIds();
+    QList<QContactLocalId> ids = cm->contacts();
     for(int i = 0; i < ids.count(); i++) {
         QContact current = cm->contact(ids.at(i));
         QContactName nc = current.detail(QContactName::DefinitionName);
-        if (nc.firstName() == "Alice" && nc.lastName() == "inWonderland") {
-            int currCount = cm->contactIds().count();
+        if (nc.first() == "Alice" && nc.last() == "inWonderland") {
+            int currCount = cm->contacts().count();
             atLeastOne = cm->removeContact(current.id().localId());
             QVERIFY(atLeastOne);
-            QCOMPARE(cm->contactIds().count(), currCount - 1);
+            QCOMPARE(cm->contacts().count(), currCount - 1);
         }
     }
 
@@ -905,17 +905,17 @@ void tst_QContactManager::batch()
     /* Now add 3 contacts, all valid */
     QContact a;
     QContactName na;
-    na.setFirstName("XXXXXX Albert");
+    na.setFirst("XXXXXX Albert");
     a.saveDetail(&na);
 
     QContact b;
     QContactName nb;
-    nb.setFirstName("XXXXXX Bob");
+    nb.setFirst("XXXXXX Bob");
     b.saveDetail(&nb);
 
     QContact c;
     QContactName nc;
-    nc.setFirstName("XXXXXX Carol");
+    nc.setFirst("XXXXXX Carol");
     c.saveDetail(&nc);
 
     QList<QContact> contacts;
@@ -1104,7 +1104,7 @@ void tst_QContactManager::invalidManager()
     QVERIFY(anotherManager.managerVersion() == 0);
 
     /* Now test that all the operations fail */
-    QVERIFY(manager.contactIds().count() == 0);
+    QVERIFY(manager.contacts().count() == 0);
     QVERIFY(manager.error() == QContactManager::NotSupportedError);
 
     QContact foo;
@@ -1118,7 +1118,7 @@ void tst_QContactManager::invalidManager()
     QVERIFY(manager.saveContact(&foo) == false);
     QVERIFY(manager.error() == QContactManager::NotSupportedError);
     QVERIFY(foo.id() == QContactId());
-    QVERIFY(manager.contactIds().count() == 0);
+    QVERIFY(manager.contacts().count() == 0);
 
     QVERIFY(manager.contact(foo.id().localId()).id() == QContactId());
     QVERIFY(manager.contact(foo.id().localId()).isEmpty());
@@ -1268,32 +1268,32 @@ void tst_QContactManager::memoryManager()
     /* test that m1 != m2 != m3 and that m3 == m4 */
 
     // check the counts are correct - especially note m4 and m3.
-    QCOMPARE(m1.contactIds().count(), 1);
-    QCOMPARE(m2.contactIds().count(), 2);
-    QCOMPARE(m3.contactIds().count(), 1);
-    QCOMPARE(m4.contactIds().count(), 1);
-    QCOMPARE(m5.contactIds().count(), 0);
+    QCOMPARE(m1.contacts().count(), 1);
+    QCOMPARE(m2.contacts().count(), 2);
+    QCOMPARE(m3.contacts().count(), 1);
+    QCOMPARE(m4.contacts().count(), 1);
+    QCOMPARE(m5.contacts().count(), 0);
 
     // remove c2 from m2 - ensure that this doesn't affect any other manager.
     m2.removeContact(c2.id().localId());
-    QCOMPARE(m1.contactIds().count(), 1);
-    QCOMPARE(m2.contactIds().count(), 1);
-    QCOMPARE(m3.contactIds().count(), 1);
-    QCOMPARE(m4.contactIds().count(), 1);
-    QCOMPARE(m5.contactIds().count(), 0);
+    QCOMPARE(m1.contacts().count(), 1);
+    QCOMPARE(m2.contacts().count(), 1);
+    QCOMPARE(m3.contacts().count(), 1);
+    QCOMPARE(m4.contacts().count(), 1);
+    QCOMPARE(m5.contacts().count(), 0);
 
     // check that the contacts contained within are different.
     // note that in the m1->m2 case, only the id will be different!
-    QVERIFY(m1.contact(m1.contactIds().at(0)) != m2.contact(m2.contactIds().at(0)));
-    QVERIFY(m1.contact(m1.contactIds().at(0)) != m3.contact(m3.contactIds().at(0)));
-    QVERIFY(m2.contact(m2.contactIds().at(0)) != m3.contact(m3.contactIds().at(0)));
-    QVERIFY(m3.contact(m3.contactIds().at(0)) == m4.contact(m4.contactIds().at(0)));
+    QVERIFY(m1.contact(m1.contacts().at(0)) != m2.contact(m2.contacts().at(0)));
+    QVERIFY(m1.contact(m1.contacts().at(0)) != m3.contact(m3.contacts().at(0)));
+    QVERIFY(m2.contact(m2.contacts().at(0)) != m3.contact(m3.contacts().at(0)));
+    QVERIFY(m3.contact(m3.contacts().at(0)) == m4.contact(m4.contacts().at(0)));
 
     // now, we should be able to remove from m4, and have m3 empty
     QVERIFY(m4.removeContact(c.id().localId()));
-    QCOMPARE(m3.contactIds().count(), 0);
-    QCOMPARE(m4.contactIds().count(), 0);
-    QCOMPARE(m5.contactIds().count(), 0);
+    QCOMPARE(m3.contacts().count(), 0);
+    QCOMPARE(m4.contacts().count(), 0);
+    QCOMPARE(m5.contacts().count(), 0);
 }
 
 void tst_QContactManager::nameSynthesis_data()

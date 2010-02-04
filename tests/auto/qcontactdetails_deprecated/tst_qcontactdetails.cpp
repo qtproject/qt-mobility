@@ -541,21 +541,21 @@ void tst_QContactDetails::name()
 
     // test property set
     n1.setPrefix("Dr");
-    n1.setFirstName("Freddy");
-    n1.setMiddleName("William Preston");
-    n1.setLastName("Gumboots");
+    n1.setFirst("Freddy");
+    n1.setMiddle("William Preston");
+    n1.setLast("Gumboots");
     n1.setSuffix("Esquire");
     QCOMPARE(n1.prefix(), QString("Dr"));
-    QCOMPARE(n1.firstName(), QString("Freddy"));
-    QCOMPARE(n1.middleName(), QString("William Preston"));
-    QCOMPARE(n1.lastName(), QString("Gumboots"));
+    QCOMPARE(n1.first(), QString("Freddy"));
+    QCOMPARE(n1.middle(), QString("William Preston"));
+    QCOMPARE(n1.last(), QString("Gumboots"));
     QCOMPARE(n1.suffix(), QString("Esquire"));
 
     // test property add
     QVERIFY(c.saveDetail(&n1));
     QCOMPARE(c.details(QContactName::DefinitionName).count(), 1);
-    n2.setFirstName("Billy");
-    n2.setLastName("Galoshes");
+    n2.setFirst("Billy");
+    n2.setLast("Galoshes");
     QVERIFY(c.saveDetail(&n2));
     QCOMPARE(c.details(QContactName::DefinitionName).count(), 2);
 

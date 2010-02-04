@@ -358,7 +358,7 @@ void tst_QContactAsync::contactFetch()
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
-    QList<QContactLocalId> contactIds = cm->contactIds();
+    QList<QContactLocalId> contactIds = cm->contacts();
     QList<QContact> contacts = cfr.contacts();
     QCOMPARE(contactIds.size(), contacts.size());
     for (int i = 0; i < contactIds.size(); i++) {
@@ -594,7 +594,7 @@ void tst_QContactAsync::contactIdFetch()
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
-    QList<QContactLocalId> contactIds = cm->contactIds();
+    QList<QContactLocalId> contactIds = cm->contacts();
     QList<QContactLocalId> result = cfr.ids();
     QCOMPARE(contactIds, result);
 
@@ -730,7 +730,7 @@ void tst_QContactAsync::contactRemove()
     QVERIFY(!crr.waitForFinished());
 
     // specific contact removal via detail filter
-    int originalCount = cm->contactIds().size();
+    int originalCount = cm->contacts().size();
     QContactDetailFilter dfil;
     dfil.setDetailDefinitionName(QContactUrl::DefinitionName, QContactUrl::FieldUrl);
     crr.setFilter(dfil);
@@ -758,7 +758,7 @@ void tst_QContactAsync::contactRemove()
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
-    QCOMPARE(cm->contactIds().size(), originalCount - 1);
+    QCOMPARE(cm->contacts().size(), originalCount - 1);
     QVERIFY(cm->contactIds(dfil).isEmpty());
 
     // remove all contacts
@@ -774,7 +774,7 @@ void tst_QContactAsync::contactRemove()
     QVERIFY(crr.isFinished());
     QVERIFY(!crr.isActive());
 
-    QCOMPARE(cm->contactIds().size(), 0); // no contacts should be left.
+    QCOMPARE(cm->contacts().size(), 0); // no contacts should be left.
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
@@ -818,8 +818,8 @@ void tst_QContactAsync::contactRemove()
         QVERIFY(crr.isFinished());
         QVERIFY(!crr.isActive());
         QVERIFY(crr.state() == QContactAbstractRequest::CanceledState);
-        QCOMPARE(cm->contactIds().size(), 1);
-        QCOMPARE(cm->contact(cm->contactIds().first()), temp);
+        QCOMPARE(cm->contacts().size(), 1);
+        QCOMPARE(cm->contact(cm->contacts().first()), temp);
         QVERIFY(spy.count() >= 1); // active + cancelling + cancelled progress signals
         spy.clear();
         break;
@@ -850,8 +850,8 @@ void tst_QContactAsync::contactRemove()
         QVERIFY(crr.isFinished());
         QVERIFY(!crr.isActive());
         QVERIFY(crr.state() == QContactAbstractRequest::CanceledState);
-        QCOMPARE(cm->contactIds().size(), 1);
-        QCOMPARE(cm->contact(cm->contactIds().first()), temp);
+        QCOMPARE(cm->contacts().size(), 1);
+        QCOMPARE(cm->contact(cm->contacts().first()), temp);
         QVERIFY(spy.count() >= 1); // active + cancelling + cancelled progress signals
         spy.clear();
         break;
@@ -874,7 +874,7 @@ void tst_QContactAsync::contactSave()
     QVERIFY(!csr.waitForFinished());
 
     // save a new contact
-    int originalCount = cm->contactIds().size();
+    int originalCount = cm->contacts().size();
     QContact testContact;
     QContactName nameDetail;
     nameDetail.setFirstName("Test Contact");
@@ -903,10 +903,10 @@ void tst_QContactAsync::contactSave()
     spy.clear();
 
     QList<QContact> expected;
-    expected << cm->contact(cm->contactIds().last());
+    expected << cm->contact(cm->contacts().last());
     QList<QContact> result = csr.contacts();
     QCOMPARE(expected, result);
-    QCOMPARE(cm->contactIds().size(), originalCount + 1);
+    QCOMPARE(cm->contacts().size(), originalCount + 1);
 
     // update a previously saved contact
     QContactPhoneNumber phn;
@@ -930,7 +930,7 @@ void tst_QContactAsync::contactSave()
     spy.clear();
 
     expected.clear();
-    expected << cm->contact(cm->contactIds().last());
+    expected << cm->contact(cm->contacts().last());
     result = csr.contacts();
     QCOMPARE(expected, result);
 
@@ -938,7 +938,7 @@ void tst_QContactAsync::contactSave()
     //QVERIFY(containsIgnoringTimestamps(expected, testContact));
     QVERIFY(expected.at(0).detail<QContactPhoneNumber>().number() == phn.number());
     
-    QCOMPARE(cm->contactIds().size(), originalCount + 1);
+    QCOMPARE(cm->contacts().size(), originalCount + 1);
 
     // cancelling
     QContact temp = testContact;
@@ -959,7 +959,7 @@ void tst_QContactAsync::contactSave()
             // after the request has already finished.. so loop and try again.
             csr.waitForFinished();
             saveList = csr.contacts();
-            if (cm->contactIds().size() > (originalCount + 1) && !cm->removeContact(saveList.at(0).localId())) {
+            if (cm->contacts().size() > (originalCount + 1) && !cm->removeContact(saveList.at(0).localId())) {
                 QSKIP("Unable to remove saved contact to test cancellation of contact save request", SkipSingle);
             }
             saveList.clear();
@@ -987,12 +987,12 @@ void tst_QContactAsync::contactSave()
 
         // verify that the changes were not saved
         expected.clear();
-        QList<QContactLocalId> allContacts = cm->contactIds();
+        QList<QContactLocalId> allContacts = cm->contacts();
         for (int i = 0; i < allContacts.size(); i++) {
             expected.append(cm->contact(allContacts.at(i)));
         }
         QVERIFY(!expected.contains(temp));
-        QCOMPARE(cm->contactIds().size(), originalCount + 1);
+        QCOMPARE(cm->contacts().size(), originalCount + 1);
         break;
     }
     // restart, and wait for progress after cancel.
@@ -1006,7 +1006,7 @@ void tst_QContactAsync::contactSave()
             // after the request has already finished.. so loop and try again.
             csr.waitForFinished();
             saveList = csr.contacts();
-            if (cm->contactIds().size() > (originalCount + 1) && !cm->removeContact(saveList.at(0).localId())) {
+            if (cm->contacts().size() > (originalCount + 1) && !cm->removeContact(saveList.at(0).localId())) {
                 QSKIP("Unable to remove saved contact to test cancellation of contact save request", SkipSingle);
             }
             saveList.clear();
@@ -1030,12 +1030,12 @@ void tst_QContactAsync::contactSave()
 
         // verify that the changes were not saved
         expected.clear();
-        QList<QContactLocalId> allContacts = cm->contactIds();
+        QList<QContactLocalId> allContacts = cm->contacts();
         for (int i = 0; i < allContacts.size(); i++) {
             expected.append(cm->contact(allContacts.at(i)));
         }
         QVERIFY(!expected.contains(temp));
-        QCOMPARE(cm->contactIds().size(), originalCount + 1);
+        QCOMPARE(cm->contacts().size(), originalCount + 1);
         break;
     }
 }
@@ -1574,7 +1574,7 @@ void tst_QContactAsync::relationshipFetch()
 
     // specific source contact retrieval
     rfr.setRelationshipType(QString());
-    QList<QContactLocalId> contacts = cm->contactIds();
+    QList<QContactLocalId> contacts = cm->contacts();
     QContactId aId;
     foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
@@ -1601,7 +1601,7 @@ void tst_QContactAsync::relationshipFetch()
 
     // specific participant retrieval #1 - destination participant
     rfr.setFirst(QContactId());
-    contacts = cm->contactIds();
+    contacts = cm->contacts();
     QContactId bId;
     foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
@@ -1630,7 +1630,7 @@ void tst_QContactAsync::relationshipFetch()
 
     // specific participant retrieval #2 - source participant
     rfr.setFirst(QContactId());
-    contacts = cm->contactIds();
+    contacts = cm->contacts();
     QContactId cId;
     foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
@@ -1754,7 +1754,7 @@ void tst_QContactAsync::relationshipRemove()
     QVERIFY(!rrr.cancel());
     QVERIFY(!rrr.waitForFinished());
 
-    QList<QContactLocalId> contacts = cm->contactIds();
+    QList<QContactLocalId> contacts = cm->contacts();
     QContactId aId, bId, cId;
     foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
@@ -1972,7 +1972,7 @@ void tst_QContactAsync::relationshipSave()
     QVERIFY(!rsr.cancel());
     QVERIFY(!rsr.waitForFinished());
 
-    QList<QContactLocalId> contacts = cm->contactIds();
+    QList<QContactLocalId> contacts = cm->contacts();
     QContactId cId, aId, bId;
     foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
@@ -2339,7 +2339,7 @@ QContactManager* tst_QContactAsync::prepareModel(const QString& managerUri)
 
     // XXX TODO: ensure that this is the case:
     // there should be no contacts in the database.
-    QList<QContactLocalId> toRemove = cm->contactIds();
+    QList<QContactLocalId> toRemove = cm->contacts();
     foreach (const QContactLocalId& removeId, toRemove)
         cm->removeContact(removeId);
 
