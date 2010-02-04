@@ -336,7 +336,7 @@ qreal QmlMediaBase::volume() const
 
 void QmlMediaBase::setVolume(qreal volume)
 {
-    m_playerControl->setVolume(volume * 100);
+    m_playerControl->setVolume(qRound(volume * 100));
 }
 
 bool QmlMediaBase::isMuted() const
