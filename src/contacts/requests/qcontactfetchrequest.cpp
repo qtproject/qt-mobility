@@ -64,6 +64,8 @@ QTM_BEGIN_NAMESPACE
   status or an update of results, or both.  It identifies which request the signal originated from
   by including a pointer to \a self, and contains an \a appendOnly flag which signifies whether or not the total
   ordering of the results have been maintained since the last progress signal was emitted.
+  This signal is deprecated and will be removed once the transition period has elapsed.
+  Use the signals emitted by the base class, combined with \l QObject::sender(), instead.
  */
 
 /*! Constructs a new contact fetch request */
