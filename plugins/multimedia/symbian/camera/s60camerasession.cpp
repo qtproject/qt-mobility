@@ -129,6 +129,7 @@ void S60CameraSession::resetCamera()
     setError(err);
 
     updateVideoCaptureCodecs();
+    updateImageCaptureCodecs();
     
     initializeVideoCaptureSettings();
     
@@ -776,8 +777,14 @@ QList<QSize> S60CameraSession::supportedCaptureSizesForCodec(const QString &code
     QList<QSize> list;
     // if we have cameraengine loaded and we can update camerainfo
     if (m_cameraEngine && queryCurrentCameraInfo()) {
-        int codecIndex = formatMap().value(codecName);
-        CCamera::TFormat format = static_cast<CCamera::TFormat>( codecIndex );
+        CCamera::TFormat format;
+        if (codecName == "") {
+            format = defaultCodec();
+        }
+        else {
+            int codecIndex = formatMap().value(codecName);
+            format = static_cast<CCamera::TFormat>( codecIndex );
+        }
         CCamera *camera = m_cameraEngine->Camera();
         for (int i=0; i < m_info.iNumImageSizesSupported; i++) {
             TSize size;
@@ -857,13 +864,13 @@ QStringList S60CameraSession::supportedImageCaptureCodecs()
     for (int i = 0; i < m_formats.length() ; i++) {
         list << formatMap().key(m_formats.at(i));
     }
+    
     //qDebug()<< "S60CameraSession::supportedImageCaptureCodecs, return formatList.count()="<<list.count();
     return list;
 }
 void S60CameraSession::updateImageCaptureCodecs()
 {
     m_formats.clear();
-    //qDebug() << "S60CameraSession::updateImageCaptureCodecs START";
     if (m_cameraEngine && queryCurrentCameraInfo()) {
 
         TUint32 supportedFormats = m_info.iImageFormatsSupported;
@@ -873,9 +880,8 @@ void S60CameraSession::updateImageCaptureCodecs()
 #else
         int maskEnd = CCamera::EFormatEncodedH264;        
 #endif
-        for ( int mask = CCamera::EFormatMonochrome; mask == maskEnd; mask<<=1 ) {
+        for ( int mask = CCamera::EFormatMonochrome; mask <= maskEnd; mask<<=1 ) {
             if ( supportedFormats & mask )
-                qDebug() << "Supported format mask: " << mask;
                 m_formats << mask; // store mask of supported format
         }
     }
