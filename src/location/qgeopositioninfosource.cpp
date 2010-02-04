@@ -193,6 +193,8 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
 #if defined(Q_OS_SYMBIAN)
     QGeoPositionInfoSource *ret = NULL;
     TRAPD(error, ret = CQGeoPositionInfoSourceS60::NewL(parent));
+    if (error != KErrNone)
+        return 0;
     return ret;
 #elif defined(Q_OS_WINCE)
     return new QGeoPositionInfoSourceWinCE(parent);
@@ -208,8 +210,8 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
     return source;
 #else
     Q_UNUSED(parent);
-#endif
     return 0;
+#endif
 }
 
 /*!

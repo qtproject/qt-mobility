@@ -130,6 +130,9 @@ void QGeoAreaMonitorS60::handleTriggerEvent(TPositionInfo aPosInfo, enTriggerTyp
         case ExitTrigger :             //emit areaExited trigger
             emit areaExited(posInfo);
             break;
+        case NotifyChangesTrigger:
+        case InvalidTrigger:
+            break;
     }
 
 }

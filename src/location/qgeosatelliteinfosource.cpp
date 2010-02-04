@@ -88,6 +88,8 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *p
 #if defined(Q_OS_SYMBIAN)
     CQGeoSatelliteInfoSourceS60 *ret = NULL;
     TRAPD(error, ret = CQGeoSatelliteInfoSourceS60::NewL(parent));
+    if (error != KErrNone)
+        return 0;
     return ret;
 #elif defined(Q_OS_WINCE)
     return new QGeoSatelliteInfoSourceWinCE(parent);
@@ -103,8 +105,8 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *p
     return source;
 #else
     Q_UNUSED(parent);
-#endif
     return 0;
+#endif
 }
 
 /*!
