@@ -60,7 +60,7 @@ TInt QMLBackendTriggerChangeAO::refCount = 0;
 void QMLBackendTriggerChangeAO::NotifyChangeEvent()
 {
     if (!IsActive()) {
-        iStatue = KRequestPending;
+        iStatus = KRequestPending;
         iLbt.NotifyTriggerChangeEvent(iTriggerChangeEvent, iStatus);
         SetActive();
     }
