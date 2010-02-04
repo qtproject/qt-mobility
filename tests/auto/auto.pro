@@ -113,6 +113,7 @@ contains(mobility_modules,multimedia) {
         qmediaservice \
         qmediaserviceprovider \
         qmediacontent \
+        qmlgraphicsvideo \
         qradiotuner \
         qpaintervideosurface \
         qvideowidget \
