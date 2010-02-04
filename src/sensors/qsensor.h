@@ -241,5 +241,7 @@ private:
 
 QTM_END_NAMESPACE
 
+Q_DECLARE_METATYPE(QTM_NAMESPACE::qtimestamp)
+
 #endif
 

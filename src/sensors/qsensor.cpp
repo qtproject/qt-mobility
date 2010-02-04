@@ -60,6 +60,9 @@ QTM_BEGIN_NAMESPACE
     comparable (as they may choose different fixed points for their reference).
 */
 
+// A bit of a hack to call qRegisterMetaType when the library is loaded.
+static int qtimestamp_id = qRegisterMetaType<qtimestamp>("qtimestamp");
+
 // =====================================================================
 
 /*!
