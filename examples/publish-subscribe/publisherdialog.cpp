@@ -56,10 +56,8 @@ PublisherDialog::PublisherDialog(QWidget *parent)
     ui->setupUi(this);
 
 #ifdef QTM_SMALL_SCREEN
-    QPushButton *switchButton = new QPushButton("Switch", this);
-    switchButton->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
-    ui->gridLayout->addWidget(switchButton);
-    switchButton->show();
+    QPushButton *switchButton =
+        ui->buttonBox->addButton(tr("Switch"), QDialogButtonBox::ActionRole);
     connect(switchButton, SIGNAL(clicked()), this, SIGNAL(switchRequested()));
 #endif
 
