@@ -75,7 +75,7 @@ public:
     qint64 duration() const { return 0; }
     qint64 position() const { return 0; }
     void setPosition(qint64) {}
-    int volume() const { return 100; }
+    int volume() const { return 0; }
     void setVolume(int) {}
     bool isMuted() const { return false; }
     void setMuted(bool) {}
@@ -264,6 +264,8 @@ void QmlMediaBase::setObject(QObject *object)
 
         m_animation = new QmlMediaBaseAnimation(this);
     } else {
+        m_error = QMediaPlayer::ServiceMissingError;
+
         m_playerControl = new QmlMediaBasePlayerControl(object);
     }
 
