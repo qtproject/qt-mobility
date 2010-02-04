@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qtrackercontactsaverequest.h"
+#include "trackerchangelistener.h"
 
 #include <QtTracker/Tracker>
 using namespace SopranoLive;
@@ -65,12 +66,19 @@ QTrackerContactSaveRequest::QTrackerContactSaveRequest(QContactAbstractRequest* 
 
     if(contacts.isEmpty()) {
         QList<QContactManager::Error> errors(QList<QContactManager::Error>()<<QContactManager::BadArgumentError);
-        QContactManagerEngine::updateRequest(req, contacts, QContactManager::BadArgumentError, errors, QContactAbstractRequest::Finished);
+        QContactManagerEngine::updateRequest(req, contacts, QContactManager::BadArgumentError,
+                                             errors, QContactAbstractRequest::Finished);
         return;
     }
+    TrackerChangeListener *changeListener = new TrackerChangeListener(this);
+
     QList<QContactManager::Error> dummy;
     QContactManagerEngine::updateRequestStatus(req, QContactManager::NoError, dummy,
             QContactAbstractRequest::Active);
+
+
+    connect(changeListener, SIGNAL(contactsAdded(const QList<QContactLocalId> &)),
+            SLOT(onTrackerContactsAdded(const QList<QContactLocalId> &)));
 
     // Save contacts with batch size
     /// @todo where to get reasonable batch size
@@ -80,7 +88,12 @@ QTrackerContactSaveRequest::QTrackerContactSaveRequest(QContactAbstractRequest* 
     }
 }
 
-void QTrackerContactSaveRequest::computeProgress()
+void QTrackerContactSaveRequest::onTrackerContactsAdded(const QList<QContactLocalId> &addedIds)
+{
+    computeProgress(addedIds);
+}
+
+void QTrackerContactSaveRequest::computeProgress(const QList<QContactLocalId> &addedIds)
 {
     Q_ASSERT(req->type() == QContactAbstractRequest::ContactSaveRequest);
     QContactSaveRequest* r = qobject_cast<QContactSaveRequest*>(req);
@@ -90,8 +103,11 @@ void QTrackerContactSaveRequest::computeProgress()
         return;
     }
 
-    if( r->contacts().size() == contactsFinished.size() )
-    {
+    foreach (QContactLocalId id, addedIds) {
+        pendingAddList.remove(id);
+    }
+
+    if (pendingAddList.count() == 0) {
         // compute master error - part of qtcontacts api
         QContactManager::Error error = QContactManager::NoError;
         foreach(QContactManager::Error err, errorsOfContactsFinished)
@@ -120,7 +136,7 @@ void QTrackerContactSaveRequest::saveContacts(const QList<QContact> &contacts)
         if(!engine->validateContact(contact, error)) {
             contactsFinished << contact;
             errorsOfContactsFinished << error;
-            computeProgress();
+            computeProgress(QList<QContactLocalId>());
             continue;
         }
 
@@ -142,6 +158,7 @@ void QTrackerContactSaveRequest::saveContacts(const QList<QContact> &contacts)
             ncoContact = service->liveNode(QUrl("contact:"+QString::number(contact.localId())));
             ncoContact->setContentLastModified(QDateTime::currentDateTime());
         }
+        pendingAddList.insert(contact.localId());
 
         // if there are work related details, need to be saved to Affiliation.
         if( QTrackerContactSaveRequest::contactHasWorkRelatedDetails(contact)) {
@@ -166,12 +183,10 @@ void QTrackerContactSaveRequest::saveContacts(const QList<QContact> &contacts)
         // TODO add async signal handling of for transaction's commitFinished
         contactsFinished << contact;
         errorsOfContactsFinished << QContactManager::NoError; // TODO ask how to get error code from tracker
-        computeProgress();
     }
 
     // remember to commit the transaction, otherwise all changes will be rolled back.
     cLive.commit();
-    computeProgress();
 }
 
 
@@ -337,7 +352,13 @@ void QTrackerContactSaveRequest::savePhoneNumbers(RDFServicePtr service, RDFVari
     RDFVariable varForInsert = var.deepCopy();
     foreach(const QContactDetail& det, details)
     {
-        QString value = det.value(QContactPhoneNumber::FieldNumber);
+        QString formattedValue = det.value(QContactPhoneNumber::FieldNumber);
+        // Strip RFC 3966 visual-separators reg exp "[(|-|.|)| ]"
+        QString value = formattedValue.replace( QRegExp("[\\(|" \
+                                                        "\\-|" \
+                                                        "\\.|" \
+                                                        "\\)|" \
+                                                        " ]"), "");
         // Temporary, because affiliation is still used - to be refactored next week to use Live nodes
         // using RFC 3966 canonical URI form
         QUrl newPhone = QString("tel:%1").arg(value);

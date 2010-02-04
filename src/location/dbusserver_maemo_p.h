@@ -64,7 +64,7 @@ private:
     DBusComm* handler;
 
 public slots:
-    Q_NOREPLY void positionUpdate(const QByteArray &update); 
+    Q_NOREPLY void positionUpdate(const QByteArray &update);
     Q_NOREPLY void currentSettings(const QGeoPositionInfoSource::PositioningMethod methods,
                                    const int interval);
 };

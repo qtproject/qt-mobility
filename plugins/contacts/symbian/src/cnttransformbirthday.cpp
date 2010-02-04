@@ -143,7 +143,7 @@ void CntTransformBirthday::detailDefinitions(QMap<QString, QContactDetailDefinit
 
     if(definitions.contains(QContactBirthday::DefinitionName)) {
         QContactDetailDefinition d = definitions.value(QContactBirthday::DefinitionName);
-        QMap<QString, QContactDetailDefinitionField> fields = d.fields();
+        QMap<QString, QContactDetailFieldDefinition> fields = d.fields();
 
         // Context not supported in symbian back-end, remove
         fields.remove(QContactBirthday::FieldContext);

@@ -97,8 +97,10 @@ public:
     /* Manager plugins */
     static QHash<QString, QContactManagerEngineFactory*> m_engines;
     static bool m_discovered;
+    static bool m_discoveredStatic;
     static QStringList m_pluginPaths;
     static void loadFactories();
+    static void loadStaticFactories();
 
     /* Action Implementations */
     typedef QHash<QContactActionDescriptor, QContactActionFactory*> DescriptorHash;

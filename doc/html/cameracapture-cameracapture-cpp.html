@@ -63,6 +63,8 @@
     #include &lt;experimental/qcamera.h&gt;
     #include &lt;qvideowidget.h&gt;
 
+    #include &lt;qmessagebox.h&gt;
+
     #include &lt;QtGui&gt;
 
     CameraCapture::CameraCapture(QWidget *parent) :
@@ -75,8 +77,11 @@
         videoWidget(0)
     {
         ui-&gt;setupUi(this);
-
+    #if defined(Q_OS_SYMBIAN)
+        outputDir = QDir::rootPath(); <span class="comment">// this defaults to C:\Data in symbian</span>
+    #else
         outputDir = QDir::currentPath();
+    #endif
 
         <span class="comment">//camera devices</span>
         QByteArray cameraDevice;
@@ -172,7 +177,7 @@
                     audioDeviceAction-&gt;setChecked(true);
             }
         } else {
-            qWarning() &lt;&lt; &quot;Camera service is not available&quot;;
+            qWarning() &lt;&lt; &quot;No audio device for camera service available&quot;;
         }
 
         connect(audioDevicesGroup, SIGNAL(triggered(QAction*)), this, SLOT(updateAudioDevice(QAction*)));
@@ -249,10 +254,11 @@
         if (state == QCamera::ActiveState) {
             ui-&gt;actionCamera-&gt;setEnabled(false);
             ui-&gt;actionAudio-&gt;setEnabled(false);
-            ui-&gt;actionSettings-&gt;setEnabled(false);
+            ui-&gt;actionSettings-&gt;setEnabled(true);
 
             ui-&gt;startCameraButton-&gt;setText(tr(&quot;Stop Camera&quot;));
             ui-&gt;startCameraButton-&gt;setChecked(true);
+            ui-&gt;imageCaptureBox-&gt;setEnabled(true);
             ui-&gt;videoCaptureBox-&gt;setEnabled(true);
         } else {
             ui-&gt;actionCamera-&gt;setEnabled(true);

@@ -68,6 +68,7 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#dtor.QCamera">~QCamera</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#aperture-prop">aperture</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">CaptureMode </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#captureMode-prop">captureMode</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#digitalZoom">digitalZoom</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">Error </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#error">error</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#errorString">errorString</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#exposureCompensation">exposureCompensation</a></b> () const</td></tr>
@@ -84,6 +85,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#maximumDigitalZoom">maximumDigitalZoom</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#maximumOpticalZoom">maximumOpticalZoom</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">MeteringMode </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#meteringMode">meteringMode</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#opticalZoom">opticalZoom</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#setAutoAperture">setAutoAperture</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#setAutoIsoSensitivity">setAutoIsoSensitivity</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#setAutoShutterSpeed">setAutoShutterSpeed</a></b> ()</td></tr>
@@ -110,8 +112,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;qreal&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#supportedShutterSpeeds">supportedShutterSpeeds</a></b> ( bool * <i>continuous</i> = 0 ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">WhiteBalanceModes </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#supportedWhiteBalanceModes">supportedWhiteBalanceModes</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">WhiteBalanceMode </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#whiteBalanceMode">whiteBalanceMode</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#zoomTo">zoomTo</a></b> ( qreal <i>value</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#zoomValue">zoomValue</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#zoomTo">zoomTo</a></b> ( qreal <i>optical</i>, qreal <i>digital</i> )</td></tr>
 </table>
 <hr />
 <a name="reimplemented-public-functions"></a>
@@ -146,6 +147,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#apertureChanged">apertureChanged</a></b> ( qreal <i>value</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#apertureRangeChanged">apertureRangeChanged</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#captureModeChanged">captureModeChanged</a></b> ( QCamera::CaptureMode )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#digitalZoomChanged">digitalZoomChanged</a></b> ( qreal )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#error-2">error</a></b> ( QCamera::Error <i>value</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#exposureLocked">exposureLocked</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#flashReady">flashReady</a></b> ( bool <i>ready</i> )</td></tr>
@@ -153,9 +155,9 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#focusStatusChanged">focusStatusChanged</a></b> ( QCamera::FocusStatus <i>status</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#focusUnableToReach">focusUnableToReach</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#isoSensitivityChanged">isoSensitivityChanged</a></b> ( int <i>value</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#opticalZoomChanged">opticalZoomChanged</a></b> ( qreal )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#shutterSpeedChanged">shutterSpeedChanged</a></b> ( qreal <i>speed</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#stateChanged">stateChanged</a></b> ( QCamera::State <i>state</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamera.html#zoomValueChanged">zoomValueChanged</a></b> ( qreal <i>value</i> )</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>5 signals inherited from <a href="qmediaobject.html#signals">QMediaObject</a></li>
@@ -465,6 +467,12 @@
 <a name="//apple_ref/cpp/clm/QCamera/deviceDescription"></a>
 <h3 class="fn"><a name="deviceDescription"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QCamera::deviceDescription ( const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>device</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns the description of the <i>device</i>.</p>
+<a name="//apple_ref/cpp/instm/QCamera/digitalZoom"></a>
+<h3 class="fn"><a name="digitalZoom"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> QCamera::digitalZoom () const</h3>
+<p>Returns the current digital zoom value.</p>
+<p>See also QCamera::digitalZoomChanged(qreal) and <a href="qcamera.html#opticalZoom">QCamera::opticalZoom</a>().</p>
+<a name="//apple_ref/cpp/instm/QCamera/digitalZoomChanged"></a>
+<h3 class="fn"><a name="digitalZoomChanged"></a>void QCamera::digitalZoomChanged ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <a name="//apple_ref/cpp/instm/QCamera/error"></a>
 <h3 class="fn"><a name="error"></a><a href="qcamera.html#Error-enum">Error</a> QCamera::error () const</h3>
 <p>Returns the error state of the object.</p>
@@ -497,6 +505,7 @@
 <p>See also <a href="qcamera.html#setFocusMode">setFocusMode</a>().</p>
 <a name="//apple_ref/cpp/instm/QCamera/focusReached"></a>
 <h3 class="fn"><a name="focusReached"></a>void QCamera::focusReached ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signals the focus was reached. This signal is emited after focusStatus changes to <a href="qcamera.html#FocusStatus-enum">QCamera::FocusReached</a> state.</p>
 <a name="//apple_ref/cpp/instm/QCamera/focusStatus"></a>
 <h3 class="fn"><a name="focusStatus"></a><a href="qcamera.html#FocusStatus-enum">FocusStatus</a> QCamera::focusStatus () const</h3>
 <p>Returns the focus status</p>
@@ -505,6 +514,7 @@
 <p>Signal emitted when focus <i>status</i> changed.</p>
 <a name="//apple_ref/cpp/instm/QCamera/focusUnableToReach"></a>
 <h3 class="fn"><a name="focusUnableToReach"></a>void QCamera::focusUnableToReach ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signals the focus was unable to reach. This signal is emited after focusStatus changes to <a href="qcamera.html#FocusStatus-enum">QCamera::FocusUnableToReach</a> state.</p>
 <a name="//apple_ref/cpp/instm/QCamera/isAvailable"></a>
 <h3 class="fn"><a name="isAvailable"></a>bool QCamera::isAvailable () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qmediaobject.html#isAvailable">QMediaObject::isAvailable</a>().</p>
@@ -542,6 +552,12 @@
 <h3 class="fn"><a name="meteringMode"></a><a href="qcamera.html#MeteringMode-enum">MeteringMode</a> QCamera::meteringMode () const</h3>
 <p>Returns the metering mode being used.</p>
 <p>See also <a href="qcamera.html#setMeteringMode">setMeteringMode</a>().</p>
+<a name="//apple_ref/cpp/instm/QCamera/opticalZoom"></a>
+<h3 class="fn"><a name="opticalZoom"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> QCamera::opticalZoom () const</h3>
+<p>Returns the current optical zoom value.</p>
+<p>See also QCamera::opticalZoomChanged(qreal) and <a href="qcamera.html#digitalZoom">QCamera::digitalZoom</a>().</p>
+<a name="//apple_ref/cpp/instm/QCamera/opticalZoomChanged"></a>
+<h3 class="fn"><a name="opticalZoomChanged"></a>void QCamera::opticalZoomChanged ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <a name="//apple_ref/cpp/instm/QCamera/setAutoAperture"></a>
 <h3 class="fn"><a name="setAutoAperture"></a>void QCamera::setAutoAperture ()</h3>
 <p>Turn on auto aperture</p>
@@ -640,14 +656,8 @@
 <p>Returns the white balance mode being used.</p>
 <p>See also <a href="qcamera.html#setWhiteBalanceMode">setWhiteBalanceMode</a>().</p>
 <a name="//apple_ref/cpp/instm/QCamera/zoomTo"></a>
-<h3 class="fn"><a name="zoomTo"></a>void QCamera::zoomTo ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>value</i> )</h3>
-<p>Set the zoom to <i>value</i>.</p>
-<a name="//apple_ref/cpp/instm/QCamera/zoomValue"></a>
-<h3 class="fn"><a name="zoomValue"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> QCamera::zoomValue () const</h3>
-<p>Returns the current zoom.</p>
-<a name="//apple_ref/cpp/instm/QCamera/zoomValueChanged"></a>
-<h3 class="fn"><a name="zoomValueChanged"></a>void QCamera::zoomValueChanged ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>value</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signal emitted when zoom value changes to new <i>value</i>.</p>
+<h3 class="fn"><a name="zoomTo"></a>void QCamera::zoomTo ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>optical</i>, <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>digital</i> )</h3>
+<p>Set the camera <i>optical</i> and <i>digital</i> zoom values.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

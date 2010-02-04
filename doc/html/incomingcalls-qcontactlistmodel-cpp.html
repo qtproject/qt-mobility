@@ -566,7 +566,7 @@
         Q_UNUSED(appendOnly);
 
         <span class="comment">// first, check to make sure that the request is still valid.</span>
-        if (d-&gt;m_manager != request-&gt;manager() || request-&gt;status() == QContactAbstractRequest::Cancelled) {
+        if (d-&gt;m_manager != request-&gt;manager() || request-&gt;state() == QContactAbstractRequest::CanceledState) {
             d-&gt;m_requestCentreRows.remove(request);
             delete request;
             return; <span class="comment">// ignore these results.</span>
@@ -586,8 +586,8 @@
             rowMap.insert(fetchedRow, fetchedRow);
         }
 
-        <span class="comment">// check to see if the request status is &quot;finished&quot; - clean up.</span>
-        if (request-&gt;status() == QContactAbstractRequest::Finished) {
+        <span class="comment">// check to see if the request state is &quot;finished&quot; - clean up.</span>
+        if (request-&gt;state() == QContactAbstractRequest::FinishedState) {
             d-&gt;m_requestCentreRows.remove(request);
             delete request;
         }

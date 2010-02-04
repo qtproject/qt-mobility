@@ -89,12 +89,19 @@ QString QSfwTestUtil::systemDirectory()
 
 QString QSfwTestUtil::tempSettingsPath(const char *path)
 {
+#if defined(Q_OS_SYMBIAN) && defined(__WINS__)
+    // On emulator, use hardcoded path instead of private directories to
+    // enable a shared database.
+    Q_UNUSED(path);
+    return QDir::toNativeSeparators("C:/Data/temp/QtServiceFW");
+#else
     // Temporary path for files that are specified explictly in the constructor.
     //QString tempPath = QDir::tempPath();
     QString tempPath = QCoreApplication::applicationDirPath();
     if (tempPath.endsWith("/"))
         tempPath.truncate(tempPath.size() - 1);
     return QDir::toNativeSeparators(tempPath + "/QtServiceFramework_tests/" + QLatin1String(path));
+#endif
 }
 
 void QSfwTestUtil::removeDirectory(const QString &path)
@@ -138,8 +145,7 @@ void QSfwTestUtil::removeDatabases()
     CleanupClosePushL(fs);
     CFileMan* fileMan=CFileMan::NewL(fs);
     CleanupStack::PushL(fileMan);
-    fileMan->RmDir(_L("c:\\private\\E3b48c24\\Nokia\\")); //Server's fixed UID3
-    fileMan->RmDir(_L("c:\\data\\.config\\Nokia\\"));
+    fileMan->RmDir(_L("c:\\private\\2002AC7F\\Nokia\\")); //Server's fixed UID3
     CleanupStack::PopAndDestroy(2, &fs);    
 }
 #endif

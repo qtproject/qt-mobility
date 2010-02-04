@@ -282,7 +282,22 @@ quint32 CntTransformPhoneNumber::getIdForField(const QString& fieldName) const
  */
 void CntTransformPhoneNumber::detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString& contactType) const
 {
-    Q_UNUSED(definitions);
     Q_UNUSED(contactType);
-    // Does not modify the default schema
+
+    if(definitions.contains(QContactPhoneNumber::DefinitionName)) {
+        QContactDetailDefinition d = definitions.value(QContactPhoneNumber::DefinitionName);
+        QMap<QString, QContactDetailFieldDefinition> fields = d.fields();
+        
+        // Don't support "ContextOther"
+        QContactDetailFieldDefinition f;
+        f.setDataType(QVariant::StringList);
+        f.setAllowableValues(QVariantList() 
+            << QLatin1String(QContactDetail::ContextHome) 
+            << QLatin1String(QContactDetail::ContextWork));
+        fields[QContactDetail::FieldContext] = f;
+        d.setFields(fields);
+
+        // Replace original definitions
+        definitions.insert(d.name(), d);
+    }
 }

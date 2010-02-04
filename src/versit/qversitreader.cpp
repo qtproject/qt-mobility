@@ -45,21 +45,26 @@
 #include "versitutils_p.h"
 #include "qmobilityglobal.h"
 
-QTM_BEGIN_NAMESPACE
+#include <QTextCodec>
+#include <QMutexLocker>
+
+QTM_USE_NAMESPACE
 
 /*!
   \class QVersitReader
- 
+  \preliminary
   \brief The QVersitReader class provides an interface
   for reading versit documents such as vCards from a stream.
 
   \ingroup versit
  
-  QVersitReader reads 0..n versit documents such as vCards
-  from a text stream into 0..n QVersitDocument instances.
+  QVersitReader reads a number of Versit documents such as vCards
+  from a text stream and returns a list of QVersitDocument instances.
   QVersitReader supports reading from an abstract I/O device
   which can be for example a file or a memory buffer.
-  The reading can be done synchronously or asynchronously.
+  The reading can be done asynchronously, and the
+  waitForFinished() function can be used to make a blocking
+  read.
  
   \code
   // An example of reading a simple vCard from a memory buffer:
@@ -71,9 +76,10 @@ QTM_BEGIN_NAMESPACE
   vCardBuffer.seek(0);
   QVersitReader reader;
   reader.setDevice(&vCardBuffer);
-  if (reader.readAll()) {
-      QList<QVersitDocument> versitDocuments = reader.result();
-      // Use the resulting document(s)...
+  reader.startReading();
+  reader.waitForFinished();
+  QList<QVersitDocument> versitDocuments = reader.results();
+  // Use the resulting document(s)...
   }
   \endcode
  
@@ -81,14 +87,24 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
- * \fn QVersitReader::readingDone()
- * The signal is emitted by the reader when the asynchronous reading has been completed.
+ * \fn QVersitReader::stateChanged(QVersitReader::State state)
+ * The signal is emitted by the reader when its state has changed (eg. when it has finished
+ * reading from the device).
+ * \a state is the new state of the reader.
+ *
+ * \fn QVersitReader::resultsAvailable(QList<QVersitDocument>& results)
+ * The signal is emitted by the reader as it reads from the device when it has made more Versit
+ * documents available.
+ * \a results is the complete list of documents read so far.
  */
 
 /*! Constructs a new reader. */
 QVersitReader::QVersitReader() : d(new QVersitReaderPrivate)
 {
-    connect(d,SIGNAL(finished()),this,SIGNAL(readingDone()),Qt::DirectConnection);
+    connect(d, SIGNAL(stateChanged(QVersitReader::State)),
+            this, SIGNAL(stateChanged(QVersitReader::State)),Qt::DirectConnection);
+    connect(d, SIGNAL(resultsAvailable(QList<QVersitDocument>&)),
+            this, SIGNAL(resultsAvailable(QList<QVersitDocument>&)), Qt::DirectConnection);
 }
     
 /*! 
@@ -102,7 +118,7 @@ QVersitReader::~QVersitReader()
 }
 
 /*!
- * Sets the device used for reading the input to be the given device \a device.
+ * Sets the device used for reading the input to be the given \a device.
  */
 void QVersitReader::setDevice(QIODevice* device)
 {
@@ -118,45 +134,99 @@ QIODevice* QVersitReader::device() const
 }
 
 /*!
+ * Sets the codec for the reader to use when parsing the input stream.
+ * This codec is not used for values where the CHARSET Versit parameter occurs.
+ */
+void QVersitReader::setDefaultCodec(QTextCodec *codec)
+{
+    if (codec != NULL) {
+        d->mDefaultCodec = codec;
+    } else {
+        d->mDefaultCodec = QTextCodec::codecForName("UTF-8");
+    }
+}
+
+/*!
+ * Returns the codec the reader uses when parsing the input stream.
+ */
+QTextCodec* QVersitReader::defaultCodec() const
+{
+    return d->mDefaultCodec;
+}
+
+/*!
  * Starts reading the input asynchronously.
  * Returns false if the input device has not been set or opened or
  * if there is another asynchronous read operation already pending.
- * Signal \l readingDone() is emitted when the reading has finished.
+ * Signal \l stateChanged() is emitted with parameter FinishedState
+ * when the reading has finished.
  */
 bool QVersitReader::startReading()
-{
-    bool started = false;
-    if (d->isReady() && !d->isRunning()) {
+{    if (d->state() == ActiveState || d->isRunning()) {
+        d->setError(QVersitReader::NotReadyError);
+        return false;
+    } else if (!d->mIoDevice || !d->mIoDevice->isReadable()) {
+        d->setError(QVersitReader::IOError);
+        return false;
+    } else {
+        d->setState(ActiveState);
+        d->setError(NoError);
+        d->setCanceling(false);
         d->start();
-        started = true;
+        return true;
     }
-    return started;
 }
 
 /*!
- * Reads the input synchronously.
- * Returns false if the input device has not been set or opened or
- * if there is an asynchronous read operation pending.
- * Using this function may block the user thread for an undefined period.
- * In most cases asynchronous \l startReading() should be used instead.
+ * Attempts to asynchronously cancel the read request.
  */
-bool QVersitReader::readAll()
+void QVersitReader::cancel()
 {
-    bool ok = false;
-    if (!d->isRunning()) 
-        ok = d->read();
-    return ok;
+    d->setCanceling(true);
 }
 
 /*!
- * Returns the reading result or an empty list
- * if the reading was not completed successfully.
+ * If the state is ActiveState, blocks until the reader has finished reading or \a msec milliseconds
+ * has elapsed, returning true if it successfully finishes or is cancelled by the user.
+ * If the state is FinishedState, returns true immediately.
+ * Otherwise, returns false immediately.
  */
-QList<QVersitDocument> QVersitReader::result() const
+bool QVersitReader::waitForFinished(int msec)
 {
+    State state = d->state();
+    if (state == ActiveState) {
+        return d->wait(msec);
+    } else if (state == FinishedState) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/*!
+ * Returns the reading result.  Even if there was an error or reading has not completed, a partial
+ * list of results may be returned.
+ */
+QList<QVersitDocument> QVersitReader::results() const
+{
+    QMutexLocker locker(&d->mMutex);
     return d->mVersitDocuments;
 }
 
-#include "moc_qversitreader.cpp"
+/*!
+ * Returns the state of the reader.
+ */
+QVersitReader::State QVersitReader::state() const
+{
+    return d->state();
+}
 
-QTM_END_NAMESPACE
+/*!
+ * Returns the error encountered by the last operation.
+ */
+QVersitReader::Error QVersitReader::error() const
+{
+    return d->error();
+}
+
+#include "moc_qversitreader.cpp"

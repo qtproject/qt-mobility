@@ -63,6 +63,10 @@
     #include &lt;qmediaplaylist.h&gt;
     #include &lt;qvideowidget.h&gt;
 
+    #ifdef Q_OS_SYMBIAN
+    #include &quot;mediakeysobserver.h&quot;
+    #endif
+
     class QAbstractItemView;
     class QLabel;
     class QModelIndex;
@@ -100,7 +104,14 @@
         void statusChanged(QMediaPlayer::MediaStatus status);
         void bufferingProgress(int progress);
 
+    #ifdef Q_OS_SYMBIAN
+        void handleFullScreen(bool isFullscreen);
+        void handleStateChange(QMediaPlayer::State state);
+        void handleMediaKeyEvent(MediaKeysObserver::MediaKeys key);
+        void showPlayList();
+    #else
         void showColorDialog();
+    #endif
 
     private:
         void setTrackInfo(const QString &amp;info);
@@ -113,9 +124,14 @@
         QSlider *slider;
         PlaylistModel *playlistModel;
         QAbstractItemView *playlistView;
-        QDialog *colorDialog;
         QString trackInfo;
         QString statusInfo;
+    #ifdef Q_OS_SYMBIAN
+        MediaKeysObserver *mediaKeysObserver;
+        QDialog *playlistDialog;
+    #else
+        QDialog *colorDialog;
+    #endif
     };
 
     #endif</pre>

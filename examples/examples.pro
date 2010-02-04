@@ -83,3 +83,9 @@ contains(mobility_modules,messaging) {
         }
     }
 }
+
+# Sensors API examples
+contains(mobility_modules,sensors) {
+    SUBDIRS += sensors
+}
+

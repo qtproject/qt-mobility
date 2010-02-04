@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<repository target="RProperty" version="" uidName="KPSUidHWRMPowerState" uidValue="0x10205041">
+<repository target="RProperty" uidValue="0x10205041">
 <key ref="/resources/battery/level" int="0x00000001"/>
 <key ref="/resources/battery/status" int="0x00000002"/>
 <key ref="/resources/charging/status" int="0x00000003"/>
