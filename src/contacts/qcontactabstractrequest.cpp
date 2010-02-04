@@ -263,8 +263,14 @@ bool QContactAbstractRequest::cancel()
 bool QContactAbstractRequest::waitForFinished(int msecs)
 {
     QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
-    if (engine && (d_ptr->m_state == QContactAbstractRequest::ActiveState)) {
-        return engine->waitForRequestFinished(this, msecs);
+    if (engine) {
+        switch (d_ptr->m_state) {
+        case QContactAbstractRequest::ActiveState:
+            return engine->waitForRequestFinished(this, msecs);
+        case QContactAbstractRequest::CanceledState:
+        case QContactAbstractRequest::FinishedState:
+            return true;
+        }
     }
 
     return false; // unable to wait for operation; not in progress or no engine.
@@ -276,8 +282,14 @@ bool QContactAbstractRequest::waitForFinished(int msecs)
 bool QContactAbstractRequest::waitForProgress(int msecs)
 {
     QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
-    if (engine && (d_ptr->m_state == QContactAbstractRequest::ActiveState)) {
-        return engine->waitForRequestProgress(this, msecs);
+    if (engine) {
+        switch (d_ptr->m_state) {
+        case QContactAbstractRequest::ActiveState:
+            return engine->waitForRequestProgress(this, msecs);
+        case QContactAbstractRequest::CanceledState:
+        case QContactAbstractRequest::FinishedState:
+            return true;
+        }
     }
 
     return false; // unable to wait for operation; not in progress or no engine.
