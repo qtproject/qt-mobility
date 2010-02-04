@@ -224,10 +224,10 @@ void QGeoAreaMonitorS60::TPositionInfoToQGeoPositionInfo(TPositionInfo& aPosInfo
     aQInfo.setDateTime(dt);
 
     //store the horizontal accuracy
-    aQInfo.setProperty(QGeoPositionInfo::HorizontalAccuracy, pos.HorizontalAccuracy());
+    aQInfo.setAttribute(QGeoPositionInfo::HorizontalAccuracy, pos.HorizontalAccuracy());
 
     //store the vertical accuracy
-    aQInfo.setProperty(QGeoPositionInfo::VerticalAccuracy, pos.VerticalAccuracy());
+    aQInfo.setAttribute(QGeoPositionInfo::VerticalAccuracy, pos.VerticalAccuracy());
 
 }
 

@@ -11,5 +11,5 @@ INCLUDEPATH += .
 # Input
 SOURCES += main.cpp
 
-INCLUDEPATH += $$EPOCROOT\epoc32\include\LBTHeaders
+INCLUDEPATH += $${EPOCROOT}epoc32\include\LBTHeaders
 LIBS += -llbt
