@@ -99,6 +99,7 @@ contains(mobility_modules,multimedia) {
     SUBDIRS += \             #Multimedia
         qaudiocapturesource \
         qcamera \
+        qgraphicsvideoitem \
         qmediaimageviewer \
         qmediaobject \
         qmediaplayer \
@@ -111,14 +112,13 @@ contains(mobility_modules,multimedia) {
         qmediaserviceprovider \
         qmediacontent \
         qradiotuner \
+        qpaintervideosurface \
         qvideowidget \
         qmediatimerange
 
-    contains(QT_CONFIG, multimedia) {
+    contains(QT_CONFIG, declarative) {
         SUBDIRS += \
-                qgraphicsvideoitem \
-                qpaintervideosurface
-
+            qmlaudio
     }
 
     symbian: {
