@@ -44,8 +44,19 @@ Optimizations
 QtBearer
 ------
 
- - foo
-    * bar
+ - Various memory leaks.
+ - Documentation fixes.
+ - QNetworkSession API changes.
+    * Renamed isActive() to isOpen().
+    * Renamed property key "ActiveConfigurationIdentifier" to
+      "ActiveConfiguration".
+    * Renamed property key "UserChoiceConfigurationIdentifier" to
+      "UserChoiceConfiguration".
+    * bearerName() function moved to QNetworkConfiguration::bearerName().
+ - Symbian
+    * Add Symbian build time declarations to examples and tests (capabilities,
+      UIDs etc).
+ - Improved unit test coverage and stability.
 
 QtContacts
 ------
