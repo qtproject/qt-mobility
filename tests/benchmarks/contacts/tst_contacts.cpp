@@ -47,9 +47,9 @@
 #include <QTimer>
 
 #include <qcontactabstractrequest.h>
-#include <qcontactfetchrequest.h>
-#include <qcontactlocalidfilter.h>
-#include <qcontactdetails.h>
+#include <requests/qcontactfetchrequest.h>
+#include <filters/qcontactlocalidfilter.h>
+#include <details/qcontactdetails.h>
 
 
 QTM_USE_NAMESPACE
@@ -75,6 +75,8 @@ private slots:
     void tst_createContact();    
     void tst_saveContact();
 
+    void tst_nameFilter();
+
     void tst_removeOneContact();
     void tst_removeAllContacts();
 
@@ -94,6 +96,7 @@ public slots:
     void stateChanged(QContactAbstractRequest::State newState);
     void timeout();
     void resultsAvailable();
+    void resultsAvailableFilter();
     void setBackend(QString);
 
 private:
@@ -347,6 +350,18 @@ void tst_Contact::resultsAvailable()
 
 }
 
+void tst_Contact::resultsAvailableFilter()
+{
+
+    QContactFetchRequest *req = qobject_cast<QContactFetchRequest *>(sender());
+    if(req){
+        if(!req->contacts().empty()) { // we got enough certainly...don't know how many are coming back with the filter
+            loop->exit(0);
+            return; // got one or more
+        }
+    }
+}
+
 void tst_Contact::stateChanged(QContactAbstractRequest::State newState)
 {
     qDebug() << "Got state change";
@@ -402,6 +417,46 @@ void tst_Contact::createContact()
     }
     id_list.append(c->localId());
     delete c;
+
+}
+
+void tst_Contact::tst_nameFilter()
+{    
+    QContactFilter fil = QContactName::match(firstNames.first(),""); // pick one first name to find
+    //QContactFilter fil = QContactName::match("sdfsdfsdfjhsjkdfshdkf", ""); // pick one first name to find
+    QContact c;
+    int ret;
+
+    m_run++;
+
+    QContactFetchRequest* req = new QContactFetchRequest;
+    req->setFilter(fil);
+    req->setManager(m_qm);
+
+    connect(req, SIGNAL(resultsAvailable()), this, SLOT(resultsAvailableFilter()));
+
+    m_timer->start(1000);
+
+#if defined(Q_WS_MAEMO_6)
+    QBENCHMARK {
+        req->start();
+        ret = loop->exec();
+    }
+    m_timer->stop();
+
+    //qDebug() << "Got Contact: " << qm->synthesizeDisplayLabel(c);
+    if(ret){
+        QFAIL("Failed to load one contact");
+    }
+
+    QList<QContact> qcl = req->contacts();
+    while(!qcl.isEmpty()){
+        QContact c = qcl.takeFirst();
+        qDebug() << "Contact: " << c.displayLabel();
+    }
+
+#endif
+    delete req;
 
 }
 
