@@ -66,9 +66,13 @@ CameraCapture::CameraCapture(QWidget *parent) :
 {
     ui->setupUi(this);
     #if defined(Q_OS_SYMBIAN)
-    outputDir = QDir::rootPath(); // this defaults to C:\Data in symbian
+    outputDirVideo = QDir::rootPath(); // this defaults to C:\Data\Videos in symbian
+    outputDirVideo.cd("Videos");
+    outputDirImage = QDir::rootPath(); // this defaults to C:\Data\Images in symbian
+    outputDirImage.cd("Images");
     #else
-    outputDir = QDir::currentPath();
+    outputDirVideo = QDir::currentPath();
+    outputDirImage = QDir::currentPath();
     #endif
 
     //camera devices
@@ -342,12 +346,12 @@ void CameraCapture::stillSettings()
 void CameraCapture::record()
 {
     int lastImage = 0;
-    foreach( QString fileName, outputDir.entryList(QStringList() << "clip_*.mpg") ) {
+    foreach( QString fileName, outputDirVideo.entryList(QStringList() << "clip_*.mpg") ) {
         int imgNumber = fileName.mid(5, fileName.size()-9).toInt();
         lastImage = qMax(lastImage, imgNumber);
     }
     
-    QUrl location(QDir::toNativeSeparators(outputDir.canonicalPath()+
+    QUrl location(QDir::toNativeSeparators(outputDirVideo.canonicalPath()+
         QString("/clip_%1.mpg").arg(lastImage+1,4,10,QLatin1Char('0'))));
 
     mediaRecorder->setOutputLocation(location);
@@ -373,8 +377,7 @@ void CameraCapture::takeImage()
         camera->startFocusing();
     } else {
         int lastImage = 0;
-        outputDir.cd("Images");
-        foreach( QString fileName, outputDir.entryList(QStringList() << "img_*.jpg") ) {
+        foreach( QString fileName, outputDirImage.entryList(QStringList() << "img_*.jpg") ) {
             int imgNumber = fileName.mid(4, fileName.size()-8).toInt();
             lastImage = qMax(lastImage, imgNumber);
         }
@@ -477,8 +480,7 @@ void CameraCapture::focusStatusChanged(QCamera::FocusStatus status)
     qDebug() << "CameraCapture focus locked";
     if (status == QCamera::FocusReached && m_takeImage) {
         int lastImage = 0;
-        outputDir.cd("Images");
-        foreach( QString fileName, outputDir.entryList(QStringList() << "img_*.jpg") ) {
+        foreach( QString fileName, outputDirImage.entryList(QStringList() << "img_*.jpg") ) {
             int imgNumber = fileName.mid(4, fileName.size()-8).toInt();
             lastImage = qMax(lastImage, imgNumber);
         }

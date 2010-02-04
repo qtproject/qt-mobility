@@ -392,6 +392,13 @@ int S60CameraSession::state() const
     return m_state;
 }
 
+int S60CameraSession::videoCaptureState() const
+{
+    //qDebug() << "S60CameraSession::state";
+    return m_captureState;
+}
+
+
 void S60CameraSession::commitVideoEncoderSettings()
 {          
     setVideoResolution(m_videoSettings.resolution());
@@ -1403,7 +1410,7 @@ void S60CameraSession::updateVideoCaptureCodecsL()
             if (count > 0) {
                 TPtrC8 mimeType = mimeTypes[0];
                 QString type = QString::fromUtf8((char *)mimeType.Ptr(),
-                        mimeType.Length());
+                        mimeType.Length());                               
                 // Currently only support for video/mp4 due to resolution and frame rate issues.
                 if (type == "video/mp4") {
                     VideoControllerData data;
@@ -1417,7 +1424,7 @@ void S60CameraSession::updateVideoCaptureCodecsL()
             }
         }
     }
-
+        
     CleanupStack::PopAndDestroy(&controllers);
     CleanupStack::PopAndDestroy(&mediaIds);
     CleanupStack::PopAndDestroy(format);
