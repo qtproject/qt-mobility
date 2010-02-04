@@ -297,8 +297,11 @@ QtPublishSubscribe
 QtServiceFramework
 ------
 
- - foo
-    * bar
+ - Symbian backend
+    * Maturity improvements in emulator environment
+    * DB handling server is terminated automatically when any client no
+      longer uses it
+    * Fixed how library existence is checked in Symbian
 
 QtSystemInfo
 ------
