@@ -120,6 +120,7 @@ void S60CameraSession::resetCamera()
     m_cameraEngine = NULL;  
     m_error = KErrNone;
     m_state = QCamera::StoppedState;
+    m_currentcodec = defaultCodec();
     //qDebug() << "S60CameraSession::resetCamera. Creating new camera with index=" << m_deviceIndex;
     TRAPD(err, 
         m_cameraEngine = CCameraEngine::NewL(m_deviceIndex, 0, this);
@@ -133,7 +134,7 @@ void S60CameraSession::resetCamera()
     
     initializeVideoCaptureSettings();
     
-    //qDebug() << "S60CameraSession::resetCamera END";
+	//qDebug() << "S60CameraSession::resetCamera END";
 }
 
 void S60CameraSession::setError(TInt aError)
@@ -224,7 +225,7 @@ void S60CameraSession::capture(const QString &fileName)
     if (m_cameraEngine) {
         TSize size(m_captureSize.width(), m_captureSize.height());
         TRAPD(err, 
-                m_cameraEngine->PrepareL(size, m_currentcodec);       
+                m_cameraEngine->PrepareL(size, m_currentcodec);
                 m_cameraEngine->CaptureL();
         );
         setError(err);
@@ -500,6 +501,7 @@ void S60CameraSession::MceoCameraReady()
     if (m_cameraEngine) {
         m_VFSize =  TSize(m_VFWidgetSize.width(), m_VFWidgetSize.height());
         TRAPD(err, m_cameraEngine->StartViewFinderL(m_VFSize));
+        //qDebug() << "S60CameraSession::MCeoCameraReady() error: "<< err;
         if (err == KErrNotReady || err == KErrNoMemory) {
             emit readyForCaptureChanged(false);
         }
@@ -516,7 +518,7 @@ void S60CameraSession::MceoFocusComplete()
 
 void S60CameraSession::MceoCapturedDataReady(TDesC8* aData)
 {
-    qDebug() << "S60CameraSession::MceoCapturedDataReady()";
+    //qDebug() << "S60CameraSession::MceoCapturedDataReady()";
     QImage snapImage = QImage::fromData((const uchar *)aData->Ptr(), aData->Length());
     //qDebug() << "S60CameraSession::MceoCapturedDataReady(), image constructed, byte count="<<snapImage.byteCount();
     // inform capture done
@@ -642,8 +644,8 @@ void S60CameraSession::MceoViewFinderFrameReady(CFbsBitmap& aFrame)
 
 void S60CameraSession::MceoHandleError(TCameraEngineError aErrorType, TInt aError)
 {
-    //qDebug() << "S60CameraSession::MceoHandleError, errorType"<<aErrorType;
-    //qDebug() << "S60CameraSession::MceoHandleError, aError"<<aError;
+	//qDebug() << "S60CameraSession::MceoHandleError, errorType"<<aErrorType;
+	//qDebug() << "S60CameraSession::MceoHandleError, aError"<<aError;
     Q_UNUSED(aErrorType);
     setError(aError);
 }
