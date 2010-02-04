@@ -61,91 +61,111 @@ these domains have dependencies and these are outlined below:
 
 \table 80%
 \header
-    \o API  \o Dependency \o compile time \o runtime
+    \o API
+    \o Dependency
+    \o compile time
+    \o runtime
 \row
-    \o  Messaging
-    \o  {1,1}
-        The linux backend depends on QMF.
-        For more information on QMF visit
-        \l {http://labs.trolltech.com/blogs/category/qtmessaging}
-        {QMF Labs article} 
+    \o Bearer Management
+    \o The Linux backend depends on QtDBus (auto-detected) and \l {http://projects.gnome.org/NetworkManager/} {NetworkManager},
+       although Bearer Management will compile without them there will be reduced functionality.
 
-        The Windows Mobile backend depends on ActiveSync version 4.5. 
-
-        While not supported for this release the Windows Desktop backend 
-        requires Microsoft Outlook 2003 or later, and Microsoft Windows XP 
-        to be installed.
-
-        The messaging API SMS/MMS functionality requires that the platform 
-        provides SMS/MMS facilites. Email functionality requires that an email 
-        account is available on the platform.
-    \o   N
-
-    \o  Y
+       On Mac, QtBearer depends on CoreWLAN (auto-detected) if Mac OS X SDK 10.6 is available. Functionality will be reduced if CoreWLAN is not available.
+    \o N(Y)
+    \o N  
 \row
-    \o  Contacts
-    \o  The Maemo 6 backend depends on libqttracker.
-        For more information on libqttracker visit
-        \l {http://maemo.gitorious.org/maemo-af/libqttracker}
-        {libqttracker public repository}.
-        Other components offered by the Maemo 6 platform may be required
-        in order to support the full functionality of the Maemo 6 backend.
-    \o  Y
-    \o  N
+    \o Contacts
+    \o The Maemo 6 backend depends on \l {http://maemo.gitorious.org/maemo-af/libqttracker}{libqttracker}.
+       Other components offered by the Maemo 6 platform may be required in order to support the full functionality of the Maemo 6 backend.
+    \o Y
+    \o N
+\row
+    \o Location
+    \o The Symbian backend uses the LBT (Location Based Triggering) library for area notifications.
+       Area notifications will be disabled at compile time if the LBT library is not found.
+
+       The LBT library is not publicly available at the time of writing.
+       The developer documentation for \l {http://carbidehelp.nokia.com/help/index.jsp?topic=/S60_5th_Edition_Cpp_Developers_Library/GUID-759FBC7F-5384-4487-8457-A8D4B76F6AA6/html/Location_ServicesIndexPage.html}
+       {S60 Location Services} is probably the best source for LBT availability updates, as it
+       will be updated when the library is relased.
+    \o N(Y)
+    \o N
+\row
+    \o Messaging
+    \o On Linux, QtMessaging depends on qtopiamail from \l {http://labs.trolltech.com/blogs/category/qtmessaging}{QMF}.
+
+       The Windows Mobile backend depends on ActiveSync version 4.5.
+
+       While not supported for this release the desktop Windows backend
+       requires that a MAPI subsystem is installed. Note that messaging
+       functionality will not work if you are using the MinGW compiler.
+
+       The messaging API SMS/MMS functionality requires that the platform
+       provides SMS/MMS facilites. Email functionality requires that an email
+       account is available on the platform.
+    \o N
+    \o Y
+\row
+    \o Multimedia
+    \o On all platforms, QtMedia depends on QtMultimedia and QtNetwork.
+
+       On all platforms, QML elements for sound effects and music and video playing are exported if QtDeclarative (auto-detected) is available.
+
+       On all platforms, additional rendering paths are enabled of QtOpenGL (auto-detected) is available.
+
+       On Maemo 5, QtMedia depends on \l {http://www.pulseaudio.org}{PulseAudio} if QtDeclarative is used.
+    \o
+    \o
+\row
+    \o Multimedia mediaservice plugins
+    \o The audioengine plugin for Unix depends on QtMultimedia.
+
+       The dsengine plugin for desktop Windows depends on QtMultimedia.
+
+       The gstengine plugin for Linux and Maemo depends on gstreamer-0.10 (>= 0.10.19), gstreamer-audio-0.10 (>= 0.10.19), gstreamer-base-0.10 (>= 0.10.19), gstreamer-interfaces-0.10 (>= 0.10.19) and gstreamer-video-0.10 (>= 0.10.19).
+       If asound (auto-detected) is available, ALSA device detection will be enabled.
+
+       The phononengine plugin for Mac depends on phonon.
+
+       The QtMobilityMultimediaEngine for Symbian depends on QtMultimedia. 
+       To enable all mediaservices on symbian one must download sdk plugins. Sdk plugins are available at \l http://wiki.forum.nokia.com/index.php/SDK_API_Plug-in
+       For 5th edition sdk plugins are installed with installer (all at once), but for FP1 and FP2 devices a zip is provided. You will need following plugins to compile all features: 
+       MediaPlayerEngine (MediaPlayerUtilityAPI for 3rd FP2), AudioRoutingAPI , Tuner Utility (only for 3rd FP1) Radio Utility API (for 3rd FP2 and 5th ed), SymbianOnboardCameraAdvancedSettingsAPI(for 3rd FP2 and 5th ed) and 
+       autofocus_extension_library_s60_3rd_ed for (3rd FP1 included in the camera example \l http://sw.nokia.com/id/2f492479-ac8c-4c3e-aa90-cc883e190d83/S60_Platform_Camera_Example_with_AutoFocus_Support_v2_2_en.zip)
+       To get camera service working you will also need camera wrapper from Forum Nokia at \l http://sw.nokia.com/id/1cde08b0-1f57-41ba-851b-776c43fdec6c/S60_Platform_Camera_Example_v3_0_en.zip Example application contains camerawrapper binaries and sis for the device
+       
+    \o Y
+    \o N
+\row
+    \o Publish & Subscribe
+    \o On Linux, QtPublishSubscribe depends on QtNetwork.
+
+       On Maemo 6, it depends on contextsubscriber-1.0 from \l {http://maemo.gitorious.org/maemo-af/contextkit}{Context Kit}
+    \o Y
+    \o N
 \row
     \o  Service Framework
-    \o  The Service Framework depends on SQLite version 3 and that
-        Qt has been built with an sqlite driver.  Building
-        the driver by Qt is most easily achieved by
-        using one of the following configure options:
-        \c {-qt-sql-sqlite, -plugin-sql-sqlite or -system-sqlite}
+    \o  On all platforms, QtServiceFramework depends on QtSql. QtSql also needs the SQLite 3 driver (enabled by default) at runtime.
     \o  N
     \o  Y
 \row
-    \o  Multimedia
-    \o  The Multimedia component depends on the QtMultimedia
-        module in Qt.  Qt by default is configured to make this
-        module with the \c {-multimedia} option.
-        
-        The linux X11 backend requires that gstreamer be installed, including
-        libgstreamer, gstreamer-devel, plugins-base and plugins-good packages.
-        The linux backend was tested with gstreamer 0.10.19 and newer versions.
-    \o  Y 
-    \o  N
-\row
-    \o  Location
-    \o
-        The Symbian backend uses the LBT (Location Based Triggering) library for area notifications.
-        Area notifications will be disabled at compile time if the LBT library is not found.  
+    \o System Information
+    \o On all platforms, QtSystemInfo depends on QtNetwork.
 
-        The LBT library is not publicly available at the time of writing.
-        The developer documentation for \l {http://carbidehelp.nokia.com/help/index.jsp?topic=/S60_5th_Edition_Cpp_Developers_Library/GUID-759FBC7F-5384-4487-8457-A8D4B76F6AA6/html/Location_ServicesIndexPage.html} 
-        {S60 Location Services} is probably the best source for LBT availability updates, as it 
-        will be updated when the library is relased.
-    \o  N(Y)
-    \o  N
-
-\row
-    \o  System Information
-    \o  The Linux backend depands on QtDBus, HAL and \l {http://projects.gnome.org/NetworkManager/} {NetworkManager}, 
-        although System Information will compile without them, there will be reduced functionality.
+       On Linux, it depends on QtDBus (auto-detected), HAL and \l {http://projects.gnome.org/NetworkManager/} {NetworkManager},
+       although System Information will compile without them, there will be reduced functionality. It also depends on QtGui.
        
-        On Mac OS X, System Information depends on the 10.6 SDK (XCode 3.2.1), although it will compile
-        with older SDK's there will be reduced functionality.
-    \o  N(Y)
-    \o  N
+       On Mac, it depends on CoreWLAN (auto-detected) if the Mac OS X 10.6 SDK is available. It will compile
+       with older SDK's but there will be reduced functionality.
+
+       On Maemo, it depends on QtDBus (auto-detected). QtDBus is used to communicate with HAL, and functionality will be reduced if either is unavailable.
+    \o N(Y)
+    \o N
 \row
-    \o  Publish & Subscribe
-    \o  The Maemo 6 backend depends on \l {http://maemo.gitorious.org/maemo-af/contextkit}
-        {Context Kit}
-    \o  Y
-    \o  N
-\row
-    \o  Bearer Management
-    \o  The Linux backend depends on QtDBus and \l {http://projects.gnome.org/NetworkManager/} {NetworkManager}, 
-        although Bearer Management will compile without them there will be reduced functionality.
-    \o  N(Y)
-    \o  N
+    \o QtVersit
+    \o On all platforms, QtVersit depends on QtContacts.
+    \o
+    \o
 \endtable
 
 \section1 Unpacking

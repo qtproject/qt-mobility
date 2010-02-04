@@ -252,15 +252,19 @@ void CntTransformContact::transformContactL(
             QString detailName = detail->definitionName();
             QList<CContactItemField *> fieldList = transformDetailL(*detail);
             int fieldCount = fieldList.count();
-
+            
             // save preferred detail
-            transformPreferredDetailL(contact, detailList.at(i), fieldList);
-
+            transformPreferredDetailL(contact, detailList.at(i), fieldList);            
+            
             for (int j = 0; j < fieldCount; j++)
             {
                 //Add field to fieldSet
                 fieldSet->AddL(*fieldList.at(j));
             }
+	    }
+	    else {
+	        // remove empty details
+	        contact.removeDetail(detail.data());
 	    }
 	}
 

@@ -41,14 +41,14 @@
 
 #include "qvcard30writer_p.h"
 #include "versitutils_p.h"
-#include "qversitdefs.h"
 #include "qmobilityglobal.h"
+#include <QTextCodec>
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
 /*! Constructs a writer. */
 QVCard30Writer::QVCard30Writer()
-    : QVersitWriterPrivate(QByteArray("VCARD"),QByteArray("3.0"))
+    : QVersitDocumentWriter(QByteArray("VCARD"),QByteArray("3.0"))
 {
     mPropertyNameMappings.insert(
         QString::fromAscii("X-NICKNAME"),QString::fromAscii("NICKNAME"));
@@ -64,22 +64,34 @@ QVCard30Writer::~QVCard30Writer()
 /*!
  * Encodes the \a property to text. 
  */
-QByteArray QVCard30Writer::encodeVersitProperty(const QVersitProperty& property)
+QByteArray QVCard30Writer::encodeVersitProperty(const QVersitProperty& property, QTextCodec* codec)
 {
     QVersitProperty modifiedProperty(property);
     QString name = mPropertyNameMappings.value(property.name(),property.name());
     modifiedProperty.setName(name);
-    QByteArray encodedProperty(encodeGroupsAndName(modifiedProperty));
-    encodedProperty.append(encodeParameters(modifiedProperty.parameters()));
-    encodedProperty.append(":");
-    QByteArray value(modifiedProperty.value());
-    if (modifiedProperty.name() == QString::fromAscii("AGENT")) {
-        QVersitDocument embeddedDocument = modifiedProperty.embeddedDocument();
-        value = encodeVersitDocument(embeddedDocument);
-        VersitUtils::backSlashEscape(value);
-    }    
+    QByteArray encodedProperty(encodeGroupsAndName(modifiedProperty, codec));
+
+    QVariant variant(modifiedProperty.variantValue());
+    if (variant.type() == QVariant::ByteArray) {
+        modifiedProperty.insertParameter(QLatin1String("ENCODING"), QLatin1String("b"));
+    }
+    encodedProperty.append(encodeParameters(modifiedProperty.parameters(), codec));
+    encodedProperty.append(codec->fromUnicode(QLatin1String(":")));
+
+    QByteArray value;
+    if (variant.canConvert<QVersitDocument>()) {
+        QVersitDocument embeddedDocument = variant.value<QVersitDocument>();
+        value = encodeVersitDocument(embeddedDocument, codec);
+        QString escapedValue(QString::fromAscii(value));
+        VersitUtils::backSlashEscape(escapedValue);
+        value = codec->fromUnicode(escapedValue);
+    } else if (variant.type() == QVariant::String) {
+        value = codec->fromUnicode(variant.toString());
+    } else if (variant.type() == QVariant::ByteArray) {
+        value = codec->fromUnicode(QLatin1String(variant.toByteArray().toBase64().data()));
+    }
     encodedProperty.append(value);
-    encodedProperty.append("\r\n");
+    encodedProperty.append(codec->fromUnicode(QLatin1String("\r\n")));
 
     return encodedProperty;
 }
@@ -88,32 +100,26 @@ QByteArray QVCard30Writer::encodeVersitProperty(const QVersitProperty& property)
  * Encodes the \a parameters to text.
  */
 QByteArray QVCard30Writer::encodeParameters(
-    const QMultiHash<QString,QString>& parameters) const
+    const QMultiHash<QString,QString>& parameters,
+    QTextCodec* codec) const
 {
     QByteArray encodedParameters;
     QList<QString> names = parameters.uniqueKeys();
     foreach (QString nameString, names) {
-        encodedParameters.append(";");
-        QByteArray name = nameString.toAscii();
-        VersitUtils::backSlashEscape(name);
-        encodedParameters.append(name);
-        encodedParameters.append("=");
+        encodedParameters.append(codec->fromUnicode(QLatin1String(";")));
         QStringList values = parameters.values(nameString);
+        VersitUtils::backSlashEscape(nameString);
+        encodedParameters.append(codec->fromUnicode(nameString));
+        encodedParameters.append(codec->fromUnicode(QLatin1String("=")));
         for (int i=0; i<values.size(); i++) {
             if (i > 0)
-                encodedParameters.append(",");
-            QByteArray value = values.at(i).toAscii();
-            // QVersitContactExporterPrivate implementation may have added
-            // base64 encoding parameter according to vCard 2.1.
-            // Convert it to vCard 3.0 compatible.
-            if (name == "ENCODING" && value == "BASE64")
-                value = "B";
+                encodedParameters.append(codec->fromUnicode(QLatin1String(",")));
+            QString value = values.at(i);
+
             VersitUtils::backSlashEscape(value);
-            encodedParameters.append(value);
+            encodedParameters.append(codec->fromUnicode(value));
         }
     }
 
     return encodedParameters;
 }
-
-QTM_END_NAMESPACE

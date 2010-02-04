@@ -54,16 +54,29 @@
     **
     ****************************************************************************/</span>
 
-    #include &lt;QApplication&gt;
-
+    #include &lt;QCoreApplication&gt;
     #include &lt;qmessagemanager.h&gt;
     #include &lt;qdebug.h&gt;
+    #ifdef Q_OS_SYMBIAN
+    #include &lt;iostream&gt;
+    #endif
 
     QTM_USE_NAMESPACE
 
+    static void printMessage(const QString&amp; msg)
+    {
+    #ifdef Q_OS_SYMBIAN
+        std::cout &lt;&lt; qPrintable(msg) &lt;&lt; std::endl;
+    #else
+        qDebug() &lt;&lt; qPrintable(msg);
+    #endif
+    }
+
     int main(int argc, char *argv[])
     {
-        QApplication app(argc, argv);
+        QCoreApplication app(argc, argv);
+
+        printMessage(&quot;Querying messages...&quot;);
 
         <span class="comment">// Match all messages whose status field includes the Incoming flag</span>
         QMessageFilter filter(QMessageFilter::byStatus(QMessage::Incoming));
@@ -125,9 +138,12 @@
                     }
                 }
 
-                qDebug() &lt;&lt; qPrintable(QString::number(++n) + '\t') &lt;&lt; qPrintable(result.join(&quot;\t&quot;));
+                printMessage(QString::number(++n) + '\t' + result.join(&quot;\t&quot;));
             }
         }
+
+        if(matchingIds.isEmpty())
+            printMessage(&quot;No matching messages!&quot;);
 
         return 0;
     }</pre>

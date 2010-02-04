@@ -67,7 +67,7 @@ QtMessaging
 
 QtMedia
 ------
- 
+
  - Added Audio and Video QML elements.
  - Renamed QtMedia::Frequency to QtMedia::SampleRate for consistency and
    clarity.
@@ -98,8 +98,6 @@ QtMedia
     * Renamed channels() to channelCount().
     * Renamed size() to dataSize().
     * Removed duration() and sampleSize().
-
-
 
 QtPublishSubscribe
 ------
@@ -147,7 +145,6 @@ Qt Mobility for Linux/X11
 
 Qt Mobility for Windows
 ------
-
  - Added Direct Show based media player service implementation.
 
 Qt Mobility for Mac OS X
@@ -169,3 +166,4 @@ Qt Mobility for Windows CE
 
  - tool
     * foo
+

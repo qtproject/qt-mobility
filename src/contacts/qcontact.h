@@ -142,7 +142,7 @@ public:
     /* Actions available to be performed on this contact */
     QList<QContactActionDescriptor> availableActions(const QString& vendorName = QString(), int implementationVersion = -1) const;
 
-    /* Preferences (eg, set a particular detail preferred for the SMS action) */
+    /* Preferences (eg, set a particular detail preferred for the SMS action) - subject to change! */
     bool setPreferredDetail(const QString& actionName, const QContactDetail& preferredDetail);
     bool isPreferredDetail(const QString& actionName, const QContactDetail& detail) const;
     QContactDetail preferredDetail(const QString& actionName) const;
@@ -156,6 +156,9 @@ private:
 };
 
 QTM_END_NAMESPACE
+
+Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QContact), Q_MOVABLE_TYPE);
+
 
 #endif
 

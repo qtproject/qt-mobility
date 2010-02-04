@@ -10,8 +10,9 @@ SOURCES = logfilepositionsource.cpp \
 CONFIG += console
 
 include(../examples.pri)
-CONFIG+=mobility
-MOBILITY+= location
+
+CONFIG += mobility
+MOBILITY = location
 
 symbian|wince*: {
     symbian: {

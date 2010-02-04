@@ -174,6 +174,7 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,
     switch(type) {
         case QSystemInfo::Firmware :
         {
+#if !defined(QT_NO_DBUS)
             QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
             QString str;
             if (iface.isValid()) {
@@ -196,10 +197,11 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,
                 }
             }
             break;
+#endif            
         }
         default:
             return QSystemInfoLinuxCommonPrivate::version(type, parameter);
-            break;            
+            break;
     };
     return errorStr;
 }

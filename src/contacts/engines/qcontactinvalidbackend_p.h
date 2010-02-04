@@ -68,7 +68,7 @@ public:
     QContactInvalidEngine();
     void deref();
     QString managerName() const;
-    QString synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
+    QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
 };
 
 QTM_END_NAMESPACE

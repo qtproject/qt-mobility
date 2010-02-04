@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<repository target="RProperty" version="" uidName="qvaluespacesubscriber" uidValue="0x2002ac86">
+<repository target="RProperty" uidValue="0x2002ac86">
 <key ref="/home/user/bool" int="0x00000001"/>
 <key ref="/home/user/int" int="0x00000002"/>
 <key ref="/home/user/QString" int="0x00000003"/>

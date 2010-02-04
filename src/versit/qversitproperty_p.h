@@ -42,6 +42,17 @@
 #ifndef QVERSITPROPERTY_P_H
 #define QVERSITPROPERTY_P_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
 #include "qversitdocument.h"
 #include "qmobilityglobal.h"
 
@@ -50,6 +61,7 @@
 #include <QStringList>
 #include <QMultiHash>
 #include <QByteArray>
+#include <QVariant>
 
 QTM_BEGIN_NAMESPACE
 
@@ -65,8 +77,7 @@ public:
         mGroups(other.mGroups),
         mName(other.mName),
         mParameters(other.mParameters),
-        mValue(other.mValue),
-        mDocument(other.mDocument)
+        mValue(other.mValue)
     {
     }     
     
@@ -75,8 +86,7 @@ public:
     QStringList mGroups;
     QString mName;
     QMultiHash<QString,QString> mParameters;
-    QByteArray mValue;
-    QVersitDocument mDocument;
+    QVariant mValue;
 };
 
 QTM_END_NAMESPACE

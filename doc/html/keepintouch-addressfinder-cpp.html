@@ -77,6 +77,7 @@
     #include &lt;QApplication&gt;
     #include &lt;QMenuBar&gt;
     #include &lt;QTabWidget&gt;
+    #include &lt;QScrollArea&gt;
 
     namespace {
 
@@ -382,7 +383,10 @@
         connect(tabWidget,SIGNAL(currentChanged(int)),this,SLOT(tabChanged(int)));
     #else
         QWidget* centralWidget = new QWidget(this);
-        setCentralWidget(centralWidget);
+        QScrollArea* sa = new QScrollArea(this);
+        sa-&gt;setWidget(centralWidget);
+        sa-&gt;setWidgetResizable(true);
+        setCentralWidget(sa);
         QVBoxLayout* centralLayout = new QVBoxLayout(centralWidget);
     #endif
 

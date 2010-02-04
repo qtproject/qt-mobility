@@ -15,10 +15,10 @@ Video {
     }
 
     Item {
-        x: 0
-        y: 470
         width: 800
         height: 120
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
 
         Image {
             source: "qrc:/images/play.png"

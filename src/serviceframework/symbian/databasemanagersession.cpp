@@ -44,6 +44,7 @@
 #include "databasemanagerserver.pan"
 #include "databasemanagersignalhandler.h"
 #include "servicedatabase_p.h"
+#include "databasemanagerserver.h"
     
 #include <QFileSystemWatcher>
 
@@ -57,16 +58,16 @@ bool lessThan(const QServiceInterfaceDescriptor &d1,
             && d1.minorVersion() < d2.minorVersion());
     }
 
-CDatabaseManagerServerSession* CDatabaseManagerServerSession::NewL()
+CDatabaseManagerServerSession* CDatabaseManagerServerSession::NewL(CDatabaseManagerServer& aServer)
     {
-    CDatabaseManagerServerSession* self = CDatabaseManagerServerSession::NewLC();
+    CDatabaseManagerServerSession* self = CDatabaseManagerServerSession::NewLC(aServer);
     CleanupStack::Pop(self);
     return self;
     }
 
-CDatabaseManagerServerSession* CDatabaseManagerServerSession::NewLC()
+CDatabaseManagerServerSession* CDatabaseManagerServerSession::NewLC(CDatabaseManagerServer& aServer)
     {
-    CDatabaseManagerServerSession* self = new (ELeave) CDatabaseManagerServerSession();
+    CDatabaseManagerServerSession* self = new (ELeave) CDatabaseManagerServerSession(aServer);
     CleanupStack::PushL(self);
     self->ConstructL();
     return self;
@@ -79,15 +80,18 @@ void CDatabaseManagerServerSession::ConstructL()
     iDatabaseManagerSignalHandler = new DatabaseManagerSignalHandler(*this);
     }
 
-CDatabaseManagerServerSession::CDatabaseManagerServerSession() 
+CDatabaseManagerServerSession::CDatabaseManagerServerSession(CDatabaseManagerServer& aServer) 
     : iDatabaseManagerSignalHandler(NULL),
       iDb(NULL),
-      m_watcher(NULL)
+      m_watcher(NULL),
+      iServer(aServer)
     {
+    iServer.IncreaseSessions();
     }
 
 CDatabaseManagerServerSession::~CDatabaseManagerServerSession()
     {
+    iServer.DecreaseSessions();
     delete iDatabaseManagerSignalHandler;
     delete iDb;
     delete iByteArray;
@@ -557,7 +561,20 @@ void CDatabaseManagerServerSession::initDbPath()
     QSettings settings(QSettings::IniFormat, settingsScope,
             QLatin1String("Nokia"), QLatin1String("QtServiceFramework"));
     QFileInfo fi(settings.fileName());
+#ifdef __WINS__
+    // In emulator use commmon place for service database
+    // instead of server's private directory (server is in thread, so each
+    // application gets its own private directory)
+    QDir dir;
+    QString serviceDbPath = QDir::toNativeSeparators("C:/Data/temp/QtServiceFW");
+    dir.mkpath(serviceDbPath);
+    if (!dir.cd(serviceDbPath)) {
+        qWarning() << "Fatal error: could not create needed path for serviceDatabase: " << serviceDbPath;
+        User::Panic(_L("PLAT (emulator)"), 0);
+    }
+#else
     QDir dir = fi.dir();
+#endif
     QString qtVersion(qVersion());
     qtVersion = qtVersion.left(qtVersion.size() -2); //strip off patch version
     QString dbName = QString("QtServiceFramework_") + qtVersion + dbIdentifier + QLatin1String(".db");

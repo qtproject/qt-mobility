@@ -73,7 +73,10 @@ private slots:
     void boringFilters();
     void idListFilter();
 
+    void traits();
+
     void sortObject(); // should perhaps be in a different test :)
+    void sortTraits();
 };
 
 tst_QContactFilter::tst_QContactFilter()
@@ -914,7 +917,27 @@ void tst_QContactFilter::idListFilter()
     idf.setIds(ids); // force a detach
 }
 
+void tst_QContactFilter::traits()
+{
+    // QCOMPARE(sizeof(QContactFilter), sizeof(void *));
+    QTypeInfo<QTM_PREPEND_NAMESPACE(QContactFilter)> ti;
+    QVERIFY(ti.isComplex);
+    QVERIFY(!ti.isStatic);
+    QVERIFY(ti.isLarge); // virtual table + d pointer
+    QVERIFY(!ti.isPointer);
+    QVERIFY(!ti.isDummy);
+}
 
+void tst_QContactFilter::sortTraits()
+{
+    QCOMPARE(sizeof(QContactSortOrder), sizeof(void *));
+    QTypeInfo<QTM_PREPEND_NAMESPACE(QContactSortOrder)> ti;
+    QVERIFY(ti.isComplex);
+    QVERIFY(!ti.isStatic);
+    QVERIFY(!ti.isLarge);
+    QVERIFY(!ti.isPointer);
+    QVERIFY(!ti.isDummy);
+}
 
 
 QTEST_MAIN(tst_QContactFilter)

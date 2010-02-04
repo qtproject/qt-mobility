@@ -309,11 +309,17 @@ void tst_QServiceManager::initTestCase()
 
 void tst_QServiceManager::init()
 {
+#if defined(Q_OS_SYMBIAN)
+    // Wait a millisecond so that QServiceManagers are destroyed and release
+    // the database file (otherwise QFile::remove will get a permission denied -->
+    // in next case, the isEmpty() check fails).
+    QTest::qWait(1);
+#endif
     QSfwTestUtil::removeTempUserDb();
     QSfwTestUtil::removeTempSystemDb();
-    #if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
-        QSfwTestUtil::removeDatabases();
-    #endif
+#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
+    QSfwTestUtil::removeDatabases();
+#endif
     QSettings settings("com.nokia.qt.serviceframework.tests", "SampleServicePlugin");
     settings.setValue("installed", false);
 }
@@ -1279,9 +1285,6 @@ void tst_QServiceManager::interfaceDefault()
 
 void tst_QServiceManager::serviceAdded()
 {
-#if defined(Q_OS_SYMBIAN) && defined(__WINS__)
-    QSKIP("Multiple concurrent QServiceManagers not supported in WINS emulator", SkipAll);
-#endif
     QFETCH(QByteArray, xml);
     QFETCH(QString, serviceName);
     QFETCH(QService::Scope, scope_modify);
@@ -1327,7 +1330,8 @@ void tst_QServiceManager::serviceAdded()
         QTRY_COMPARE(spyRemove.count(), 1);
     }
 
-#ifndef Q_OS_WIN    // on win, cannot delete the database while it is in use
+#if not defined (Q_OS_WIN) && not defined (Q_OS_SYMBIAN)
+    // on win and symbian, cannot delete the database while it is in use
     // try it again after deleting the database
     deleteTestDatabasesAndWaitUntilDone();
 #else
@@ -1394,9 +1398,6 @@ void tst_QServiceManager::serviceAdded_data()
 
 void tst_QServiceManager::serviceRemoved()
 {
-#if defined(Q_OS_SYMBIAN) && defined(__WINS__)
-    QSKIP("Multiple concurrent QServiceManagers not supported in WINS emulator", SkipAll);
-#endif
     QFETCH(QByteArray, xml);
     QFETCH(QString, serviceName);
     QFETCH(QService::Scope, scope_modify);
@@ -1442,14 +1443,14 @@ void tst_QServiceManager::serviceRemoved()
     }
     listener->params.clear();
 
-#ifndef Q_OS_WIN    // on win, cannot delete the database while it is in use
+#if not defined (Q_OS_WIN) && not defined (Q_OS_SYMBIAN)
+    // on win and symbian, cannot delete the database while it is in use
     // try it again after deleting the database
     deleteTestDatabasesAndWaitUntilDone();
 #else
     // Pause between file changes so they are detected separately
     QTest::qWait(2000);
 #endif
-
     spyAdd.clear();
     buffer.seek(0);
     QVERIFY2(mgr_modify.addService(&buffer), PRINT_ERR(mgr_modify));
