@@ -92,6 +92,10 @@ private:
     static void deviceDisconnected(LocationGPSDevice *device, gpointer data);
     static void deviceConnected(LocationGPSDevice *device, gpointer data);
     static void locationChanged(LocationGPSDevice *device, gpointer data);
+    int errorHandlerId;
+    int posChangedId;
+    int connectedId;
+    int disconnectedId;    
 #endif
     void dumpNMEA(const char *msg);
     DBusComm* dbusComm;
@@ -110,7 +114,7 @@ signals:
     void online(bool status);
 
     Q_SIGNALS:
-    void positionUpdated(const QGeoPositionInfo &cupdate);
+    void positionUpdated(const QGeoPositionInfo &update);
 
 private Q_SLOTS:
     void setOnline(bool status);

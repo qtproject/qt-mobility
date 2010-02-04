@@ -80,11 +80,8 @@ MapWindow::MapWindow(QWidget *parent, Qt::WFlags flags)
         usingLogFile = true;
     }
 
-#ifdef Q_WS_MAEMO_5
-    location->startUpdates();
-#else
     location->setUpdateInterval(5000);
-#endif
+
     connect(location, SIGNAL(positionUpdated(QGeoPositionInfo)),
             this, SLOT(positionUpdated(QGeoPositionInfo)));
 
@@ -104,9 +101,7 @@ MapWindow::MapWindow(QWidget *parent, Qt::WFlags flags)
 #endif
     setWindowTitle(tr("Google Maps Demo"));
 
-#ifndef Q_WS_MAEMO_5
     QTimer::singleShot(0, this, SLOT(delayedInit()));
-#endif
 }
 
 MapWindow::~MapWindow()
