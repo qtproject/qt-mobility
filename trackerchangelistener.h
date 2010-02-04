@@ -49,6 +49,7 @@
 #include <QtTracker/QLive>
 #include <QtTracker/Tracker>
 
+QTM_USE_NAMESPACE
 
 QContactLocalId url2UniqueId(const QString &contactUrl);
 

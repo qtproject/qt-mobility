@@ -49,8 +49,12 @@
 #include <qcontact.h>
 #include <qcontactonlineaccount.h>
 
+QTM_BEGIN_NAMESPACE
 class QContactAbstractRequest;
 class QContactManagerEngine;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 /*!
  * Current implementation only server get all contacts requests.

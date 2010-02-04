@@ -47,8 +47,12 @@
 #include <qtcontacts.h>
 #include <QtTracker/QLive>
 
+QTM_BEGIN_NAMESPACE
 class QContactAbstractRequest;
 class QContactManagerEngine;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 class QTrackerRelationshipSaveRequest: public QObject, public QTrackerContactAsyncRequest
 {

@@ -62,6 +62,8 @@ namespace ContactContext {
     };
 }
 
+QTM_USE_NAMESPACE
+
 /**
  * This class will abstact and hide how contact information is saved to Tracker
  * by using Live node.

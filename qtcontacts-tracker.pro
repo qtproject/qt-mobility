@@ -3,13 +3,18 @@
 # #####################################################################
 
 # include version number for the plugin
-include(version.pri)
-
-include(qtcontacts-tracker.pri)
-
 TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(qtcontacts_tracker)
+PLUGIN_TYPE=contacts
+
+LIBS += -lqttracker
+CONFIG += mobility
+MOBILITY = contacts
+
+include(version.pri)
+include(qtcontacts-tracker.pri)
+
 LIBS += -L/usr/lib 
 
 MOC_DIR = .moc/

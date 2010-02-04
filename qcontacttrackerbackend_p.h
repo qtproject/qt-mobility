@@ -58,12 +58,19 @@
 #include <QtTracker/ontologies/nco.h>
 #include <QtTracker/QLive>
 
-using namespace SopranoLive;
+#include <qmobilityglobal.h>
 #include "qtcontacts.h"
+#include <qcontactmanagerenginefactory.h>
+
+using namespace SopranoLive;
 #include "qtrackercontactasyncrequest.h"
 
+QTM_BEGIN_NAMESPACE
 class QContactAbstractRequest;
 class QContactChangeSet;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 class QContactTrackerEngineData : public QSharedData
 {
@@ -156,10 +163,10 @@ private:
     friend class ut_qtcontacts_trackerplugin;
 };
 
-class Q_DECL_EXPORT ContactTrackerFactory : public QObject, public QContactManagerEngineFactory
+class Q_DECL_EXPORT ContactTrackerFactory : public QObject, public QtMobility::QContactManagerEngineFactory
 {
     Q_OBJECT
-    Q_INTERFACES(QContactManagerEngineFactory)
+    Q_INTERFACES(QtMobility::QContactManagerEngineFactory)
     public:
         QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error&);
         QString managerName() const;
