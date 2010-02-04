@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "dummyaccelerometer.h"
+#include "dummylightsensor.h"
 #include <qsensorplugin.h>
 #include <qsensorbackend.h>
 #include <qsensormanager.h>
@@ -55,6 +56,7 @@ public:
     {
         qDebug() << "loaded the dummy plugin";
         QSensorManager::registerBackend(QAccelerometer::type, dummyaccelerometer::id, this);
+        QSensorManager::registerBackend(QAmbientLightSensor::type, dummylightsensor::id, this);
     }
 
     QSensorBackend *createBackend(QSensor *sensor)
@@ -62,6 +64,11 @@ public:
         if (sensor->identifier() == dummyaccelerometer::id) {
             return new dummyaccelerometer(sensor);
         }
+
+        if (sensor->identifier() == dummylightsensor::id) {
+            return new dummylightsensor(sensor);
+        }
+
         return 0;
     }
 };

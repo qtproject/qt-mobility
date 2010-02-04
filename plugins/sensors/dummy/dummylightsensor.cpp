@@ -39,25 +39,25 @@
 **
 ****************************************************************************/
 
-#include "dummyaccelerometer.h"
+#include "dummylightsensor.h"
 #include <QDebug>
 #include <QtGlobal>
 
-const char *dummyaccelerometer::id("dummy.accelerometer");
+const char *dummylightsensor::id("dummy.lightsensor");
 
-dummyaccelerometer::dummyaccelerometer(QSensor *sensor)
+dummylightsensor::dummylightsensor(QSensor *sensor)
     : dummycommon(sensor)
 {
-    setReading<QAccelerometerReading>(&m_reading);
+    setReading<QAmbientLightReading>(&m_reading);
 }
 
-void dummyaccelerometer::poll()
+void dummylightsensor::poll()
 {
     m_reading.setTimestamp(getTimestamp());
-    // Your average desktop computer doesn't move :)
-    m_reading.setX(0);
-    m_reading.setY(0);
-    m_reading.setZ(9.8);
+    if ((qrand() % 100) == 0)
+        m_reading.setLightLevel(QAmbientLightReading::Dark);
+    else
+        m_reading.setLightLevel(QAmbientLightReading::Light);
 
     newReadingAvailable();
 }
