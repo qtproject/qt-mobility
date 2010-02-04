@@ -173,10 +173,6 @@ private:
 
     QGraphicsVideoItem *m_graphicsItem;
 
-    FillMode m_fillMode;
-    QRectF m_scaledRect;
-    bool m_updatePaintDevice;
-
     Q_PRIVATE_SLOT(mediaBase(), void _q_stateChanged(QMediaPlayer::State))
     Q_PRIVATE_SLOT(mediaBase(), void _q_mediaStatusChanged(QMediaPlayer::MediaStatus))
     Q_PRIVATE_SLOT(mediaBase(), void _q_metaDataChanged())
