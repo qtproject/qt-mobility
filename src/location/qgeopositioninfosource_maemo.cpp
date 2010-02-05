@@ -64,7 +64,7 @@ QGeoPositionInfoSourceMaemo::QGeoPositionInfoSourceMaemo(QObject *parent): QGeoP
 {
     // default values
 #ifdef Q_WS_MAEMO_5
-    time_interval_ = LOCATION_INTERVAL_5S;
+    time_interval_ = LOCATION_INTERVAL_DEFAULT;
     availableMethods = SatellitePositioningMethods;
 #else
     time_interval_ = 5000;
