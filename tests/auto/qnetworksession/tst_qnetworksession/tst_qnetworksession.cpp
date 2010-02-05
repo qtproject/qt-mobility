@@ -211,10 +211,42 @@ void tst_QNetworkSession::cleanupTestCase()
 
 void tst_QNetworkSession::invalidSession()
 {
+    // Verify that session created with invalid configuration remains in invalid state
     QNetworkSession session(QNetworkConfiguration(), 0);
     QVERIFY(!session.isOpen());
     QVERIFY(session.state() == QNetworkSession::Invalid);
+    
+    // Verify that opening session with invalid configuration both 1) emits invalidconfigurationerror
+    // and 2) sets session's state as invalid.
+    QSignalSpy errorSpy(&session, SIGNAL(error(QNetworkSession::SessionError)));
+    session.open();
+    session.waitForOpened(1000); // Should bail out right away
+    QVERIFY(errorSpy.count() == 1); 
+    QNetworkSession::SessionError error =
+           qvariant_cast<QNetworkSession::SessionError> (errorSpy.first().at(0));
+    QVERIFY(error == QNetworkSession::InvalidConfigurationError);
+    QVERIFY(session.state() == QNetworkSession::Invalid);
+
+    // Check same thing with a config from platform (there are subtle differences
+    // because emtpy configuration does not have private pointer). Test with config 
+    // in '(un)defined' state
+    QList<QNetworkConfiguration> allConfigs = manager.allConfigurations();
+    foreach(QNetworkConfiguration config, allConfigs) {
+        if ((config.state() & QNetworkConfiguration::Discovered) != QNetworkConfiguration::Discovered) {
+            QNetworkSession session2(config);
+            QSignalSpy errorSpy2(&session2, SIGNAL(error(QNetworkSession::SessionError)));
+            session2.open();
+            session2.waitForOpened(1000); // Should bail out right away
+            QVERIFY(errorSpy2.count() == 1); 
+            QNetworkSession::SessionError error2 =
+                       qvariant_cast<QNetworkSession::SessionError> (errorSpy2.first().at(0));
+            QVERIFY(error2 == QNetworkSession::InvalidConfigurationError);
+            QVERIFY(session2.state() == QNetworkSession::Invalid);
+            break; // Once is enough
+        }
+    }
 }
+
 
 void tst_QNetworkSession::sessionProperties_data()
 {
@@ -233,7 +265,7 @@ void tst_QNetworkSession::sessionProperties()
     QFETCH(QNetworkConfiguration, configuration);
 
     QNetworkSession session(configuration);
-
+    
     QVERIFY(session.configuration() == configuration);
 
     QStringList validBearerNames = QStringList() << QLatin1String("Unknown")
@@ -803,7 +835,7 @@ QDebug operator<<(QDebug debug, const QList<QNetworkConfiguration> &list)
 }
 
 // Note: outOfProcessSession requires that at least one configuration is
-// at Discovered -state (Defined is ok for symbian as well, as long as it is possible to open).
+// at Discovered -state.
 void tst_QNetworkSession::outOfProcessSession()
 {
 #if defined(Q_OS_SYMBIAN) && defined(__WINS__)
