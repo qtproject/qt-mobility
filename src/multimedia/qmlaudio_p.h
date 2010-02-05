@@ -51,7 +51,7 @@ class QTimerEvent;
 
 QTM_BEGIN_NAMESPACE
 
-class QmlAudio : public QObject, public QmlMediaBase, public QmlParserStatus
+class Q_AUTOTEST_EXPORT QmlAudio : public QObject, public QmlMediaBase, public QmlParserStatus
 {
     Q_OBJECT
     Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
@@ -139,7 +139,7 @@ Q_SIGNALS:
     void error(QmlAudio::Error error, const QString &errorString);
 
 private Q_SLOTS:
-    void _q_error(QMediaPlayer::Error, const QString &);
+    void _q_error(int, const QString &);
 
 private:
     Q_DISABLE_COPY(QmlAudio)

@@ -63,7 +63,7 @@ public:
 
     qint64 duration() const;
 
-    void applySettings() {}
+    void applySettings();
 
 public slots:
     void record();
@@ -76,6 +76,7 @@ private slots:
 private:
     QGstreamerCaptureSession *m_session;
     QMediaRecorder::State m_state;
+    bool m_hasPreviewState;
 };
 
 #endif // QGSTREAMERCAPTURECORNTROL_H

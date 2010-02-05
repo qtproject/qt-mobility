@@ -39,7 +39,10 @@
 **
 ****************************************************************************/
 #include <QDebug>
-
+#include <QByteArray>
+#include <QBuffer>
+#include <QUrl>
+#include <QPixmap>
 #include "qcontactmanager.h"
 #include "qtcontacts.h"
 #include "qcontactwincebackend_p.h"
@@ -164,7 +167,7 @@ static CEPROPVAL convertToCEPropVal(const CEPROPID& id, const QDateTime& value)
 
 // Our fields to POOM
 // QMap<definition, {QMap<field, poomid>, datatype, maxnumber}>
-typedef bool (*processContactPoomElement)(const QContactDetail& detail, QVector<CEPROPVAL>& props);
+typedef bool (*processContactPoomElement)(const QContactWinCEEngine* e, IItem* contact, const QContactDetail& detail, QVector<CEPROPVAL>& props);
 
 // POOM to us
 // something like
@@ -172,7 +175,7 @@ typedef bool (*processContactPoomElement)(const QContactDetail& detail, QVector<
 // Might then need PIMPR -> bag above
 
 struct PoomContactElement;
-typedef void (*processPoomContactElement)(const QContactWinCEEngine* e, const QVariantList& values, QContact& ret);
+typedef void (*processPoomContactElement)(const QContactWinCEEngine* e, IItem* contact, const QVariantList& values, QContact& ret);
 
 struct PoomContactElement {
     QList<CEPROPID> poom;
@@ -185,7 +188,7 @@ static void setIfNotEmpty(QContactDetail& detail, const QString& field, const QS
         detail.setValue(field, value);
 }
 
-static void processName(const QContactWinCEEngine* engine, const QVariantList& values, QContact& ret)
+static void processName(const QContactWinCEEngine* /*engine*/, IItem* /*contact*/, const QVariantList& values, QContact& ret)
 {
     QContactName name;
     setIfNotEmpty(name, QContactName::FieldPrefix, values[0].toString());
@@ -194,9 +197,126 @@ static void processName(const QContactWinCEEngine* engine, const QVariantList& v
     setIfNotEmpty(name, QContactName::FieldLast, values[3].toString());
     setIfNotEmpty(name, QContactName::FieldSuffix, values[4].toString());
     setIfNotEmpty(name, QContactName::FieldCustomLabel, values[5].toString());
-    //ret = engine->setContactDisplayLabel(values[5].toString(), ret);
     if (!name.isEmpty())
         ret.saveDetail(&name);
+}
+
+static bool GetStreamSize(IStream* pStream, ULONG* pulSize)
+{
+    HRESULT hr;
+    LARGE_INTEGER  li = {0};
+    ULARGE_INTEGER uliZero = {0};
+    ULARGE_INTEGER uli;
+
+    if (pStream != NULL && pulSize != NULL) {
+        hr = pStream->Seek(li, STREAM_SEEK_END, &uli);
+        if (SUCCEEDED(hr)) {
+            *pulSize = uli.LowPart;
+            hr = pStream->Seek(li, STREAM_SEEK_SET, &uliZero);
+            return SUCCEEDED(hr);
+        }
+    }
+    return false;
+}
+
+static bool loadAvatarData(IItem* contact, QByteArray* data)
+{
+    HRESULT   hr;
+    SimpleComPointer<IStream>  pStream = NULL;
+    ULONG     ulSize;
+    // Extract the picture from the contact
+    hr = contact->OpenProperty(PIMPR_PICTURE, GENERIC_READ, &pStream);
+    if (FAILED(hr))
+        return false;
+
+    hr = GetStreamSize(pStream, &ulSize);
+    if (FAILED(hr))
+        return false;
+
+    // In some cases, the property may exist even if there is no picture.
+    // Make sure we can access the stream and don't have a 0 byte stream
+    if (ulSize > 0 && pStream != NULL) {
+
+        ULONG     ulSize, readSize;
+        if (!GetStreamSize(pStream, &ulSize))
+            return false;
+
+        // Prepares the data buffer
+        data->resize(ulSize);
+        
+        // Read all into the data buffer until reach the end of stream
+        readSize = 0;
+        char* p = data->data();
+        while(ulSize && SUCCEEDED(hr)) {
+            p += readSize;
+            hr = pStream->Read(p, ulSize, &readSize);
+            ulSize -= readSize;
+        }
+        if (FAILED(hr))
+            return false;
+            
+    }
+    return true;
+}
+
+static bool saveAvatarData(IItem* contact, const QByteArray& data)
+{
+    HRESULT   hr;
+    SimpleComPointer<IStream>  pStream = NULL;
+
+    hr = contact->OpenProperty(PIMPR_PICTURE, GENERIC_WRITE, &pStream);
+    if (FAILED(hr))
+        return false;
+
+    ULONG     ulWrittenSize;
+    pStream->Write(data.data(), data.size(), &ulWrittenSize);
+
+    if (FAILED(hr))
+        return false;
+
+    hr = pStream->Commit(0);
+
+    if (FAILED(hr))
+        return false;
+
+    hr = contact->Save();
+
+    if (FAILED(hr))
+        return false;
+        
+    return true;
+}
+
+
+
+static void processAvatar(const QContactWinCEEngine* /*engine*/, IItem* contact, const QVariantList& values, QContact& ret)
+{
+    QContactAvatar avatar;
+
+    QByteArray data;
+    if (loadAvatarData(contact, &data)) {
+        if (!data.isEmpty()) {
+            QPixmap pixmap;
+            pixmap.loadFromData(data, "PNG");
+            avatar.setPixmap(pixmap);
+        }
+    }
+
+    if (values[0].toString().isEmpty()) {
+        if (!data.isEmpty()) {
+            QUrl url(QUrl::fromEncoded(data.toPercentEncoding()));
+            url.setScheme("data");
+            avatar.setAvatar(url.toString());
+        }
+    } else {
+        avatar.setAvatar(values[0].toString());
+    }
+
+    setIfNotEmpty(avatar, QContactAvatar::FieldSubType, values[1].toString());
+    
+        
+    if (!avatar.isEmpty())
+        ret.saveDetail(&avatar);
 }
 
 static void processAddress(const QContactWinCEEngine*, const QString& context, const QVariantList& values, QContact& ret)
@@ -212,22 +332,22 @@ static void processAddress(const QContactWinCEEngine*, const QString& context, c
         ret.saveDetail(&address);
 }
 
-static void processHomeAddress(const QContactWinCEEngine* e, const QVariantList& values, QContact& ret)
+static void processHomeAddress(const QContactWinCEEngine* e, IItem* /*contact*/, const QVariantList& values, QContact& ret)
 {
     processAddress(e, QContactDetail::ContextHome, values, ret);
 }
 
-static void processWorkAddress(const QContactWinCEEngine* e, const QVariantList& values, QContact& ret)
+static void processWorkAddress(const QContactWinCEEngine* e, IItem* /*contact*/, const QVariantList& values, QContact& ret)
 {
     processAddress(e, QContactDetail::ContextWork, values, ret);
 }
 
-static void processOtherAddress(const QContactWinCEEngine* e, const QVariantList& values, QContact& ret)
+static void processOtherAddress(const QContactWinCEEngine* e, IItem* /*contact*/, const QVariantList& values, QContact& ret)
 {
     processAddress(e, QContactDetail::ContextOther, values, ret);
 }
 
-static void processEmails(const QContactWinCEEngine*, const QVariantList& values, QContact& ret)
+static void processEmails(const QContactWinCEEngine*, IItem* /*contact*/, const QVariantList& values, QContact& ret)
 {
     // First value is our additional metadata..
     // takes the form of a single character for each email address for the context
@@ -251,7 +371,7 @@ static void processEmails(const QContactWinCEEngine*, const QVariantList& values
     }
 }
 
-static void processPhones(const QContactWinCEEngine*, const QVariantList& values, QContact& ret)
+static void processPhones(const QContactWinCEEngine*, IItem* /*contact*/, const QVariantList& values, QContact& ret)
 {
     // Just like emails, the first value is our additional metadata
     // metadata for phone numbers is somewhat crazy.
@@ -337,7 +457,7 @@ static void processPhones(const QContactWinCEEngine*, const QVariantList& values
     }
 }
 
-static void processDates(const QContactWinCEEngine*, const QVariantList& values, QContact& ret)
+static void processDates(const QContactWinCEEngine*, IItem* /*contact*/, const QVariantList& values, QContact& ret)
 {
     // We get anniversary, then birthday
     if (!values[0].toDate().isNull()) {
@@ -352,7 +472,7 @@ static void processDates(const QContactWinCEEngine*, const QVariantList& values,
     }
 }
 
-static void processId(const QContactWinCEEngine* e, const QVariantList& values, QContact& ret)
+static void processId(const QContactWinCEEngine* e, IItem* /*contact*/, const QVariantList& values, QContact& ret)
 {
     QContactId id;
     id.setLocalId(values.at(0).toUInt());
@@ -360,7 +480,7 @@ static void processId(const QContactWinCEEngine* e, const QVariantList& values, 
     ret.setId(id);
 }
 
-static void processNickname(const QContactWinCEEngine*, const QVariantList& values, QContact& ret)
+static void processNickname(const QContactWinCEEngine*, IItem* /*contact*/, const QVariantList& values, QContact& ret)
 {
     QContactNickname nick;
     setIfNotEmpty(nick, QContactNickname::FieldNickname, values[0].toString());
@@ -369,7 +489,7 @@ static void processNickname(const QContactWinCEEngine*, const QVariantList& valu
         ret.saveDetail(&nick);
 }
 
-static void processWebpage(const QContactWinCEEngine*, const QVariantList& values, QContact& ret)
+static void processWebpage(const QContactWinCEEngine*, IItem* /*contact*/, const QVariantList& values, QContact& ret)
 {
     QContactUrl url;
     setIfNotEmpty(url, QContactUrl::FieldUrl, values[0].toString());
@@ -378,7 +498,7 @@ static void processWebpage(const QContactWinCEEngine*, const QVariantList& value
         ret.saveDetail(&url);
 }
 
-static void processOrganisation(const QContactWinCEEngine*, const QVariantList& values, QContact& ret)
+static void processOrganisation(const QContactWinCEEngine*, IItem* /*contact*/, const QVariantList& values, QContact& ret)
 {
     QContactOrganization org;
     setIfNotEmpty(org, QContactOrganization::FieldName, values[0].toString());
@@ -391,7 +511,7 @@ static void processOrganisation(const QContactWinCEEngine*, const QVariantList& 
         ret.saveDetail(&org);
 }
 
-static void processFamily(const QContactWinCEEngine*, const QVariantList& values, QContact& ret)
+static void processFamily(const QContactWinCEEngine*, IItem* /*contact*/, const QVariantList& values, QContact& ret)
 {
     QContactFamily family;
     setIfNotEmpty(family, QContactFamily::FieldSpouse, values[0].toString());
@@ -401,7 +521,7 @@ static void processFamily(const QContactWinCEEngine*, const QVariantList& values
         ret.saveDetail(&family);
 }
 
-static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, QHash<CEPROPID, PoomContactElement>& prophash, QVector<CEPROPID>& propids)
+static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, CEPROPID avatarMeta, CEPROPID avatarTypeMeta, QHash<CEPROPID, PoomContactElement>& prophash, QVector<CEPROPID>& propids)
 {
     static QHash<CEPROPID, PoomContactElement> hash;
     static QVector<CEPROPID> ids;
@@ -479,11 +599,19 @@ static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, QHash<C
         org.poom << PIMPR_COMPANY_NAME << PIMPR_DEPARTMENT << PIMPR_OFFICE_LOCATION << PIMPR_JOB_TITLE << PIMPR_ASSISTANT_NAME;
         org.func = processOrganisation;
         list.append(org);
-
+        
+        // Family
         PoomContactElement family;
         family.poom << PIMPR_SPOUSE <<  PIMPR_CHILDREN;
         family.func = processFamily;
         list.append(family);
+
+        // Avatar
+        PoomContactElement avatar;
+        avatar.poom << avatarMeta << avatarTypeMeta; //PIMPR_PICTURE need to be handled inside the processAvatar() function seperately.
+        avatar.func = processAvatar;
+        list.append(avatar);
+
 
         // XXX Unhandled:
         //
@@ -501,7 +629,6 @@ static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, QHash<C
         //
         //  PIMPR_IM[123]_ADDRESS
         //
-        //  PIMPR_PICTURE
         //  PIMPR_RINGTONE
 
         //  PIMPR_YOMI_FILEAS
@@ -526,7 +653,7 @@ static void addIfNotEmpty(const CEPROPID& id, const QString& value, QVector<CEPR
         props.append(convertToCEPropVal(id, value));
 }
 
-static bool processQName(const QContactDetail& detail, QVector<CEPROPVAL>& props)
+static bool processQName(const QContactWinCEEngine*, IItem* /*contact*/, const QContactDetail& detail, QVector<CEPROPVAL>& props)
 {
     addIfNotEmpty(PIMPR_TITLE, detail.value(QContactName::FieldPrefix), props);
     addIfNotEmpty(PIMPR_FIRST_NAME, detail.value(QContactName::FieldFirst), props);
@@ -537,7 +664,25 @@ static bool processQName(const QContactDetail& detail, QVector<CEPROPVAL>& props
     return true;
 }
 
-static bool processQFamily(const QContactDetail& detail, QVector<CEPROPVAL>& props)
+static bool processQAvatar(const QContactWinCEEngine* engine, IItem* contact, const QContactDetail& detail, QVector<CEPROPVAL>& props)
+{
+    QString avatarData = detail.value(QContactAvatar::FieldAvatar);
+    QPixmap avatarPixmap = detail.value<QPixmap>(QContactAvatar::FieldAvatarPixmap);
+
+    addIfNotEmpty(engine->metaAvatarType(), detail.value(QContactAvatar::FieldSubType), props);
+    addIfNotEmpty(engine->metaAvatar(), avatarData, props);
+
+    if (!avatarPixmap.isNull()) {
+        QByteArray data;
+        QBuffer buffer(&data);
+        buffer.open(QIODevice::WriteOnly);
+        if (!avatarPixmap.save(&buffer, "PNG") || !saveAvatarData(contact, data))
+            return false;
+    }
+    return true;
+}
+
+static bool processQFamily(const QContactWinCEEngine*, IItem* /*contact*/, const QContactDetail& detail, QVector<CEPROPVAL>& props)
 {
     addIfNotEmpty(PIMPR_SPOUSE, detail.value(QContactFamily::FieldSpouse), props);
     addIfNotEmpty(PIMPR_CHILDREN, detail.value(QContactFamily::FieldChildren), props);
@@ -551,7 +696,7 @@ static bool validateDate(const QVariant& val)
     return date.year() >= 1900 && date.year() <= 2999;
 }
 
-static bool processQBirthday(const QContactDetail& detail, QVector<CEPROPVAL>& props)
+static bool processQBirthday(const QContactWinCEEngine*, IItem* /*contact*/, const QContactDetail& detail, QVector<CEPROPVAL>& props)
 {
     if (detail.variantValue(QContactBirthday::FieldBirthday).isValid()) {
         if (!validateDate(detail.variantValue(QContactBirthday::FieldBirthday)))
@@ -561,7 +706,7 @@ static bool processQBirthday(const QContactDetail& detail, QVector<CEPROPVAL>& p
     return true;
 }
 
-static bool processQAnniversary(const QContactDetail& detail, QVector<CEPROPVAL>& props)
+static bool processQAnniversary(const QContactWinCEEngine*, IItem* /*contact*/, const QContactDetail& detail, QVector<CEPROPVAL>& props)
 {
     if (detail.variantValue(QContactAnniversary::FieldOriginalDate).isValid()) {
         if (!validateDate(detail.variantValue(QContactAnniversary::FieldOriginalDate)))
@@ -571,13 +716,13 @@ static bool processQAnniversary(const QContactDetail& detail, QVector<CEPROPVAL>
     return true;
 }
 
-static bool processQNickname(const QContactDetail& detail, QVector<CEPROPVAL>& props)
+static bool processQNickname(const QContactWinCEEngine*, IItem* /*contact*/, const QContactDetail& detail, QVector<CEPROPVAL>& props)
 {
     addIfNotEmpty(PIMPR_NICKNAME, detail.value(QContactNickname::FieldNickname), props);
     return true;
 }
 
-static bool processQOrganisation(const QContactDetail& detail, QVector<CEPROPVAL>& props)
+static bool processQOrganisation(const QContactWinCEEngine*, IItem* /*contact*/, const QContactDetail& detail, QVector<CEPROPVAL>& props)
 {
     QContactOrganization org(detail);
 
@@ -590,7 +735,7 @@ static bool processQOrganisation(const QContactDetail& detail, QVector<CEPROPVAL
     return true;
 }
 
-static bool processQWebpage(const QContactDetail& detail, QVector<CEPROPVAL>& props)
+static bool processQWebpage(const QContactWinCEEngine*, IItem* /*contact*/, const QContactDetail& detail, QVector<CEPROPVAL>& props)
 {
     QContactUrl url(detail);
 
@@ -804,6 +949,7 @@ static void contactQ2PTransforms(QHash<QString, processContactPoomElement>& ret)
         hash.insert(QContactOrganization::DefinitionName, processQOrganisation);
         hash.insert(QContactUrl::DefinitionName, processQWebpage);
         hash.insert(QContactFamily::DefinitionName, processQFamily);
+        hash.insert(QContactAvatar::DefinitionName, processQAvatar);
     }
     ret = hash;
 }
@@ -827,7 +973,7 @@ QContact QContactWinCEEngine::convertToQContact(IItem *contact) const
     QVector<CEPROPID> props;
 
     // Get our mapping tables
-    contactP2QTransforms(d->m_phonemeta, d->m_emailmeta, hash, props);
+    contactP2QTransforms(d->m_phonemeta, d->m_emailmeta, d->m_avatartypemeta, d->m_avatarmeta, hash, props);
 
     CEPROPVAL *propvals = 0;
     HRESULT hr = contact->GetProps(props.constData(), CEDB_ALLOWREALLOC, props.count(), &propvals, &cbSize, GetProcessHeap());
@@ -856,20 +1002,19 @@ QContact QContactWinCEEngine::convertToQContact(IItem *contact) const
                 foreach(const CEPROPID& id, qmap.poom) {
                     vl << valueHash.take(id);
                 }
-                qmap.func(this, vl, ret);
+                qmap.func(this, contact, vl, ret);
             } else {
                 qDebug() << "Didn't match property for id:" << QString::number(id, 16);
                 // Remove the ignored value so we don't infinite loop
                 valueHash.take(id);
             }
         }
-
         HeapFree(GetProcessHeap(), 0, propvals);
     }
 
     // Synthesize the display label.
     QContactManager::Error error;
-    QString synth = synthesizeDisplayLabel(ret, error);
+    QString synth = synthesizedDisplayLabel(ret, error);
     ret = setContactDisplayLabel(synth, ret);
 
     return ret;
@@ -891,7 +1036,7 @@ bool QContactWinCEEngine::convertFromQContact(const QContact& contact, IItem* it
     foreach (const QContactDetail& detail, details) {
         func = transforms.value(detail.definitionName());
         if (func) {
-            if (!func(detail, props)) {
+            if (!func(this, item, detail, props)) {
                 error = QContactManager::InvalidDetailError;
                 return false;
             }
@@ -902,19 +1047,17 @@ bool QContactWinCEEngine::convertFromQContact(const QContact& contact, IItem* it
     processQPhones(contact.details<QContactPhoneNumber>(), d->m_phonemeta, props);
     processQEmails(contact.details<QContactEmailAddress>(), d->m_emailmeta, props);
     processQAddresses(contact.details<QContactAddress>(), props);
-
+    
     // Now set it
     HRESULT hr = item->SetProps(0, props.count(), props.data());
-    if (SUCCEEDED(hr)) {
-        return true;
-    } else {
-        qDebug() << QString("Failed to set props: %1 (%2)").arg(hr, 0, 16).arg(HRESULT_CODE(hr), 0, 16);
+    if (FAILED(hr)) {
+        qWarning() << QString("Failed to set props: %1 (%2)").arg(hr, 0, 16).arg(HRESULT_CODE(hr), 0, 16);
         error = QContactManager::UnspecifiedError;
     }
     
     wcsdupHelper.clear();
 
-    return false;
+    return true;
 }
 
 /**
@@ -1425,7 +1568,7 @@ static bool sortPOOMContacts(const SimpleComPointer<IPOutlookItemCollection>& co
     return SUCCEEDED(hr);
 }
 
-QList<QContactLocalId> QContactWinCEEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+QList<QContactLocalId> QContactWinCEEngine::contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
     QString query = convertFilterToQueryString(filter);
 
@@ -1458,10 +1601,10 @@ QList<QContactLocalId> QContactWinCEEngine::contacts(const QContactFilter& filte
         }
     }
     //Fail back to generic filtering
-    return QContactManagerEngine::contacts(filter, sortOrders, error);
+    return QContactManagerEngine::contactIds(filter, sortOrders, error);
 }
 
-QList<QContactLocalId> QContactWinCEEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+QList<QContactLocalId> QContactWinCEEngine::contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
     QList<QContactLocalId> ids;
     error = QContactManager::NoError;
@@ -1490,3 +1633,4 @@ QList<QContactLocalId> QContactWinCEEngine::contacts(const QList<QContactSortOrd
     }
     return ids;
 }
+

@@ -61,16 +61,19 @@ public:
     ~QContactDetailDefinitionFetchRequest();
 
     /* Selection */
-    void setNames(const QStringList& names);
-    QStringList names() const;
+    void Q_DECL_DEPRECATED setNames(const QStringList& names); // deprecated
+    QStringList Q_DECL_DEPRECATED names() const;               // deprecated
+    void setDefinitionNames(const QStringList& names); // replaces ^^
+    QStringList definitionNames() const;               // replaces ^^
     void setContactType(const QString& contactType);
     QString contactType() const;
 
     /* Results */
     QMap<QString, QContactDetailDefinition> definitions() const;
+    QMap<int, QContactManager::Error> errorMap() const;
 
 signals:
-    void progress(QContactDetailDefinitionFetchRequest* self, bool appendOnly);
+    void progress(QContactDetailDefinitionFetchRequest* self, bool appendOnly); // DEPRECATED
 
 private:
     Q_DISABLE_COPY(QContactDetailDefinitionFetchRequest)

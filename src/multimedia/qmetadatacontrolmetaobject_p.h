@@ -45,8 +45,20 @@
 #include <qtmedianamespace.h>
 
 #include <QtCore/qmetaobject.h>
-#include <QtCore/private/qobject_p.h>
-#include <QtDeclarative/private/qmetaobjectbuilder_p.h>
+
+// Mirrored from qobject_p.h.
+#ifndef QOBJECT_P_H
+QT_BEGIN_NAMESPACE
+
+struct Q_CORE_EXPORT QAbstractDynamicMetaObject : public QMetaObject
+{
+    virtual ~QAbstractDynamicMetaObject() {}
+    virtual int metaCall(QMetaObject::Call, int _id, void **) { return _id; }
+    virtual int createProperty(const char *, const char *) { return -1; }
+};
+
+QT_END_NAMESPACE
+#endif
 
 QTM_BEGIN_NAMESPACE
 
@@ -66,13 +78,11 @@ public:
 private:
     QMetaDataControl *m_control;
     QObject *m_object;
-    QMetaObject *m_mem;
+    char *m_string;
+    uint *m_data;
 
     int m_propertyOffset;
     int m_signalOffset;
-
-    QVector<QtMedia::MetaData> m_keys;
-    QMetaObjectBuilder m_builder;
 };
 
 QTM_END_NAMESPACE

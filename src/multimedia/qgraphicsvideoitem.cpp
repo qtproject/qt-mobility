@@ -47,6 +47,8 @@
 #include <qvideooutputcontrol.h>
 #include <qvideorenderercontrol.h>
 
+#include <QtCore/qcoreevent.h>
+
 #include <QtMultimedia/qvideosurfaceformat.h>
 //#include <QtOpenGL/qgl.h>
 //#define QGRAPHICSVIDEOITEM_SHADERS
@@ -282,7 +284,7 @@ void QGraphicsVideoItem::setMediaObject(QMediaObject *object)
         d->service = d->mediaObject->service();
 
         if (d->service) {
-            connect(d->service, SIGNAL(destroyed()), this, SLOT(_q_serviceDestroyed()));            
+            connect(d->service, SIGNAL(destroyed()), this, SLOT(_q_serviceDestroyed()));
 
             d->outputControl = qobject_cast<QVideoOutputControl *>(
                     d->service->control(QVideoOutputControl_iid));
@@ -436,6 +438,11 @@ QVariant QGraphicsVideoItem::itemChange(GraphicsItemChange change, const QVarian
     } else {
         return QGraphicsItem::itemChange(change, value);
     }
+}
+
+void QGraphicsVideoItem::timerEvent(QTimerEvent *event)
+{
+    QGraphicsObject::timerEvent(event);
 }
 
 #include "moc_qgraphicsvideoitem.cpp"

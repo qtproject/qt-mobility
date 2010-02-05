@@ -67,7 +67,9 @@ public:
     QGeoSatelliteInfo &operator=(const QGeoSatelliteInfo &other);
 
     bool operator==(const QGeoSatelliteInfo &other) const;
-    inline bool operator!=(const QGeoSatelliteInfo &other) const { return !operator==(other); }
+    inline bool operator!=(const QGeoSatelliteInfo &other) const {
+        return !operator==(other);
+    }
 
     void setPrnNumber(int prn);
     int prnNumber() const;

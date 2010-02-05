@@ -75,7 +75,7 @@ public:
     Creates a satellite information object.
 */
 QGeoSatelliteInfo::QGeoSatelliteInfo()
-    : d(new QGeoSatelliteInfoPrivate)
+        : d(new QGeoSatelliteInfoPrivate)
 {
     d->prn = -1;
     d->signal = -1;
@@ -86,7 +86,7 @@ QGeoSatelliteInfo::QGeoSatelliteInfo()
 */
 
 QGeoSatelliteInfo::QGeoSatelliteInfo(const QGeoSatelliteInfo &other)
-    : d(new QGeoSatelliteInfoPrivate)
+        : d(new QGeoSatelliteInfoPrivate)
 {
     operator=(other);
 }
@@ -102,7 +102,7 @@ QGeoSatelliteInfo::~QGeoSatelliteInfo()
 /*!
     Assigns the values from \a other to this object.
 */
-QGeoSatelliteInfo &QGeoSatelliteInfo::operator=(const QGeoSatelliteInfo &other)
+QGeoSatelliteInfo &QGeoSatelliteInfo::operator=(const QGeoSatelliteInfo & other)
 {
     if (this == &other)
         return *this;
@@ -120,8 +120,8 @@ QGeoSatelliteInfo &QGeoSatelliteInfo::operator=(const QGeoSatelliteInfo &other)
 bool QGeoSatelliteInfo::operator==(const QGeoSatelliteInfo &other) const
 {
     return d->prn == other.d->prn
-            && d->signal == other.d->signal
-            && d->doubleAttribs == other.d->doubleAttribs;
+           && d->signal == other.d->signal
+           && d->doubleAttribs == other.d->doubleAttribs;
 }
 
 /*!

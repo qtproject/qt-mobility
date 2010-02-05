@@ -57,6 +57,7 @@
 #include <QObject>
 #include <QQueue>
 
+#include <qmobilityglobal.h>
 #include "qtcontactsglobal.h"
 #include "qcontact.h"
 #include "qcontactname.h"
@@ -89,41 +90,44 @@ public:
     CntSymbianEngine(const CntSymbianEngine& other);
     ~CntSymbianEngine();
     void deref();
+    
+    /* URI reporting */
+    QString managerName() const;
 
     /* Contacts - Accessors and Mutators */
-    QList<QContactLocalId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-    QList<QContactLocalId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-
-    QContact contact(const QContactLocalId& contactId, QContactManager::Error& error) const;
+    QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    QList<QContactLocalId> contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    QList<QContact> contacts(const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
+    QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
+    QContact contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
+    
     bool saveContact(QContact* contact, QContactManager::Error& error);
-    QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QContactManager::Error& error);
+    bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error);
     bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
-    QList<QContactManager::Error> removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error);
+    bool removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error);
 
+    /* Synthesize the display label of a contact */
+    QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
+    
+    /* "Self" contact id (MyCard) */
+    bool setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& error);
+    QContactLocalId selfContactId(QContactManager::Error& error) const;
+    
     /* Relationships between contacts */
-    QStringList supportedRelationshipTypes(const QString& contactType) const;
     QList<QContactRelationship> relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const;
     bool saveRelationship(QContactRelationship* relationship, QContactManager::Error& error);
     QList<QContactManager::Error> saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error);
     bool removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error);
     QList<QContactManager::Error> removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error);
 
-    /* Definitions */
+    /* Definitions - Accessors and Mutators */
     QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error& error) const;
 
     /* Capabilities reporting */
     bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const;
-    bool filterSupported(const QContactFilter& filter) const;
+    QStringList supportedRelationshipTypes(const QString& contactType) const;
+    bool isFilterSupported(const QContactFilter& filter) const;
     QList<QVariant::Type> supportedDataTypes() const;
-
-    /* Synthesize the display label of a contact */
-    QString synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
-
-    /* "Self" contact id (MyCard) */
-    bool setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& error);
-    QContactLocalId selfContactId(QContactManager::Error& error) const;
-
-    QString managerName() const;
 
 private:
     QList<QContactLocalId> slowFilter(const QContactFilter& filter, const QList<QContactLocalId>& contacts, QContactManager::Error& error) const;

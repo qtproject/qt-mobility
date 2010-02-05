@@ -46,6 +46,8 @@
 
 QTM_BEGIN_NAMESPACE
 
+TInt QGeoAreaMonitorS60::refCount = 0;
+
 QGeoAreaMonitorS60* QGeoAreaMonitorS60::NewL(QObject *aParent)
 {
     QGeoAreaMonitorS60 *self = QGeoAreaMonitorS60::NewLC(aParent);
@@ -75,7 +77,7 @@ void QGeoAreaMonitorS60::setMonitoredArea(const QGeoCoordinate & aCoordinate, qr
 
     //Intialize the trigger and enable the trigger if atleast one slot is  connected to the areaEntered
     //signal
-    if ((iTriggerCreateAO->InitializeTrigger(this,EntryTrigger, coord, aRadius)) &&
+    if ((iTriggerCreateAO->InitializeTrigger(this, EntryTrigger, coord, aRadius)) &&
             (receivers(SIGNAL(areaEntered(const QGeoPositionInfo&))) > 0)) {
         iTriggerCreateAO->SetTriggerState(this, EntryTrigger, true);
         iTriggerAO->NotifyFiredEvent();
@@ -137,6 +139,7 @@ void QGeoAreaMonitorS60::handleTriggerEvent(TPositionInfo aPosInfo, enTriggerTyp
 //destructor cleaning up the resources
 QGeoAreaMonitorS60::~QGeoAreaMonitorS60()
 {
+
     if (iTriggerAO || iNotifyTriggerAO || iTriggerCreateAO) {
         QMLBackendMonitorAO::DeleteAO(this);
         iTriggerAO = NULL;
@@ -144,7 +147,12 @@ QGeoAreaMonitorS60::~QGeoAreaMonitorS60()
         iNotifyTriggerAO = NULL;
         delete iTriggerCreateAO;
         iTriggerCreateAO = NULL;
-        lbtServ.Close();
+    }
+    if (connectedLbt) {
+        --refCount;
+        if (refCount == 0) {
+            lbtServ.Close();
+        }
     }
 }
 
@@ -165,6 +173,9 @@ void QGeoAreaMonitorS60::ConstructL()
     if (lbtServ.Connect() == KErrNone) {
         CleanupClosePushL(lbtServ);
 
+        connectedLbt = true;
+        ++refCount;
+
         iTriggerAO = QMLBackendMonitorAO::NewL(lbtServ);
 
         if (!iTriggerAO)
@@ -178,6 +189,8 @@ void QGeoAreaMonitorS60::ConstructL()
         iNotifyTriggerAO = QMLBackendTriggerChangeAO::NewL(lbtServ);
 
         CleanupStack::Pop(1);
+    } else {
+        connectedLbt = false;
     }
 }
 
@@ -205,7 +218,7 @@ void QGeoAreaMonitorS60::TPositionInfoToQGeoPositionInfo(TPositionInfo& aPosInfo
     TDateTime datetime = pos.Time().DateTime();
     QDateTime dt(QDate(datetime.Year(), datetime.Month() + 1, datetime.Day() + 1),
                  QTime(datetime.Hour(), datetime.Minute(), datetime.Second(),
-                       datetime.MicroSecond()/1000));
+                       datetime.MicroSecond() / 1000));
 
     //store the time stamp
     aQInfo.setDateTime(dt);

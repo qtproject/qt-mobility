@@ -66,13 +66,19 @@ public:
         Either
     };
 
-    void setRole(QContactRelationshipFilter::Role roleInRelationship);
     void setRelationshipType(const QString& relationshipType);
-    void setOtherParticipantId(const QContactId& contactId);
+    void setRelatedContactId(const QContactId& relatedContactId);
+    void setRelatedContactRole(QContactRelationshipFilter::Role relatedContactRole);
 
-    QContactRelationshipFilter::Role role() const;
     QString relationshipType() const;
-    QContactId otherParticipantId() const;
+    QContactId relatedContactId() const;
+    QContactRelationshipFilter::Role relatedContactRole() const;
+
+    // deprecated and will be removed after transition period has elapsed.  replaced by setRelatedContactRole / setRelatedContactId.
+    void Q_DECL_DEPRECATED setRole(QContactRelationshipFilter::Role roleInRelationship);
+    void Q_DECL_DEPRECATED setOtherParticipantId(const QContactId& contactId);
+    QContactRelationshipFilter::Role Q_DECL_DEPRECATED role() const;
+    QContactId Q_DECL_DEPRECATED otherParticipantId() const;
 
 private:
     Q_DECLARE_CONTACTFILTER_PRIVATE(QContactRelationshipFilter)

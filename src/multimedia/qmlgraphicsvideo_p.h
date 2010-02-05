@@ -54,7 +54,7 @@ class QVideoSurfaceFormat;
 
 QTM_BEGIN_NAMESPACE
 
-class QmlGraphicsVideo : public QmlGraphicsItem, public QmlMediaBase
+class Q_AUTOTEST_EXPORT QmlGraphicsVideo : public QmlGraphicsItem, public QmlMediaBase
 {
     Q_OBJECT
     Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
@@ -166,16 +166,12 @@ protected:
 
 private Q_SLOTS:
     void _q_nativeSizeChanged(const QSizeF &size);
-    void _q_error(QMediaPlayer::Error, const QString &);
+    void _q_error(int, const QString &);
 
 private:
     Q_DISABLE_COPY(QmlGraphicsVideo)
 
     QGraphicsVideoItem *m_graphicsItem;
-
-    FillMode m_fillMode;
-    QRectF m_scaledRect;
-    bool m_updatePaintDevice;
 
     Q_PRIVATE_SLOT(mediaBase(), void _q_stateChanged(QMediaPlayer::State))
     Q_PRIVATE_SLOT(mediaBase(), void _q_mediaStatusChanged(QMediaPlayer::MediaStatus))

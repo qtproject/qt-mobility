@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<repository target="RProperty" version="" uidName="repo" uidValue="0x2002AC79">
+<repository target="RProperty" uidValue="0x2002AC79">
 <key ref="/example/intValue" int="0x1"/>
 <key ref="/example/stringValue" int="0x2"/>
 <key ref="/example/byteArrayValue" int="0x3"/>
