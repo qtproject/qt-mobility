@@ -165,6 +165,13 @@ QtSystemInfo
     * displayBrightness
     * imsi
 
+ - New features for Mac backend
+    * added network signaling
+
+ - New features for Linux backend
+    * code refactoring
+
+
 Qt Mobility Plugins
 ------
 
