@@ -49,7 +49,7 @@ using namespace SopranoLive;
 
 // TODO better error handling when saving
 QTrackerContactSaveRequest::QTrackerContactSaveRequest(QContactAbstractRequest* req, QContactManagerEngine* parent)
-: QObject(parent), QTrackerContactAsyncRequest(req)
+: QObject(parent), QTrackerContactAsyncRequest(req), errorCount(0)
 {
     Q_ASSERT(req);
     Q_ASSERT(req->type() == QContactAbstractRequest::ContactSaveRequest);
@@ -57,23 +57,22 @@ QTrackerContactSaveRequest::QTrackerContactSaveRequest(QContactAbstractRequest* 
 
     QContactSaveRequest* r = qobject_cast<QContactSaveRequest*>(req);
     if (!r) {
-        QList<QContactManager::Error> dummy;
-        QContactManagerEngine::updateRequestStatus(req, QContactManager::UnspecifiedError, dummy, QContactAbstractRequest::Finished);
+        QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::FinishedState);
         return;
     }
 
     QList<QContact> contacts = r->contacts();
 
     if(contacts.isEmpty()) {
-        QList<QContactManager::Error> errors(QList<QContactManager::Error>()<<QContactManager::BadArgumentError);
-        QContactManagerEngine::updateRequest(req, contacts, QContactManager::BadArgumentError,
-                                             errors, QContactAbstractRequest::Finished);
+        QMap<int, QContactManager::Error> errors; 
+        errors[0] = QContactManager::BadArgumentError;
+        QContactSaveRequest* saveRequest = qobject_cast<QContactSaveRequest*>(req);
+        QContactManagerEngine::updateContactSaveRequest(saveRequest, contacts, QContactManager::BadArgumentError,
+                                             errors);
         return;
     }
 
-    QList<QContactManager::Error> dummy;
-    QContactManagerEngine::updateRequestStatus(req, QContactManager::NoError, dummy,
-            QContactAbstractRequest::Active);
+    QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::ActiveState);
 
 
     // Save contacts with batch size
@@ -94,8 +93,7 @@ void QTrackerContactSaveRequest::computeProgress(const QList<QContactLocalId> &a
     Q_ASSERT(req->type() == QContactAbstractRequest::ContactSaveRequest);
     QContactSaveRequest* r = qobject_cast<QContactSaveRequest*>(req);
     if (!r) {
-        QList<QContactManager::Error> dummy;
-        QContactManagerEngine::updateRequestStatus(req, QContactManager::UnspecifiedError, dummy, QContactAbstractRequest::Finished);
+        QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::FinishedState);
         return;
     }
 
@@ -112,7 +110,7 @@ void QTrackerContactSaveRequest::computeProgress(const QList<QContactLocalId> &a
                 error = err;
                 break;
             }
-        QContactManagerEngine::updateRequest(req, contactsFinished, error, errorsOfContactsFinished, QContactAbstractRequest::Finished);
+        QContactManagerEngine::updateContactSaveRequest(r, contactsFinished, error, errorsOfContactsFinished);
     }
 }
 
@@ -132,7 +130,7 @@ void QTrackerContactSaveRequest::saveContacts(const QList<QContact> &contacts)
         // Ensure that the contact data is ok. This comes from QContactModelEngine
         if(!engine->validateContact(contact, error)) {
             contactsFinished << contact;
-            errorsOfContactsFinished << error;
+            errorsOfContactsFinished[errorCount++] =  error;
             computeProgress(QList<QContactLocalId>());
             continue;
         }
@@ -180,7 +178,7 @@ void QTrackerContactSaveRequest::saveContacts(const QList<QContact> &contacts)
 
         // TODO add async signal handling of for transaction's commitFinished
         contactsFinished << contact;
-        errorsOfContactsFinished << QContactManager::NoError; // TODO ask how to get error code from tracker
+        errorsOfContactsFinished[1] =  QContactManager::NoError; // TODO ask how to get error code from tracker
     }
 
     TrackerChangeListener *changeListener = new TrackerChangeListener(this);
