@@ -92,8 +92,12 @@ S60CameraSession::~S60CameraSession()
     m_videoUtility = NULL;
     delete m_advancedSettings;
     m_advancedSettings = NULL;
-    delete m_cameraEngine;
-    m_cameraEngine = NULL;
+    if (m_cameraEngine) {
+        m_cameraEngine->ReleaseAndPowerOff();
+        delete m_cameraEngine;
+        m_cameraEngine = NULL;
+    }
+    
 }
 CCamera::TFormat S60CameraSession::defaultCodec()
 {
