@@ -620,6 +620,7 @@
                     <section ref="slideshow.html" title="SlideShow Example"/>
                     <section ref="slideshow.html" title="Slideshow Example"/>
                     <section ref="streamplayer.html" title="Stream Player Example"/>
+                    <section ref="sysinfo.html" title="SysInfo Dialog Example"/>
                     <section ref="sysinfo.html" title="System Information Example"/>
                     <section ref="writemessage.html" title="Write Message Example"/>
                 </section>
@@ -3682,6 +3683,7 @@
             <keyword name="SlideShow Example" id="SlideShow Example" ref="slideshow.html"/>
             <keyword name="Slideshow Example" id="Slideshow Example" ref="slideshow.html"/>
             <keyword name="Stream Player Example" id="Stream Player Example" ref="streamplayer.html"/>
+            <keyword name="SysInfo Dialog Example" id="SysInfo Dialog Example" ref="sysinfo.html"/>
             <keyword name="System Information" id="System Information" ref="systeminfo.html"/>
             <keyword name="System Information Classes" id="System Information Classes" ref="systeminfo.html"/>
             <keyword name="System Information Example" id="System Information Example" ref="sysinfo.html"/>
@@ -3831,8 +3833,8 @@
             <file>samplephonebook-contacteditor-h.html</file>
             <file>location-overview.html</file>
             <file>qcontactinvalidfilter.html</file>
-            <file>qmediaplayercontrol-members.html</file>
             <file>qmessagemanager.html</file>
+            <file>qmediaplayercontrol-members.html</file>
             <file>qorientationreading.html</file>
             <file>qmessage-members.html</file>
             <file>qcontactemailaddress-members.html</file>
@@ -4020,6 +4022,7 @@
             <file>qcameraexposurecontrol-members.html</file>
             <file>qserviceinterfacedescriptor.html</file>
             <file>index.html</file>
+            <file>images/sysinfo-devices.png</file>
             <file>bearercloud.html</file>
             <file>publish-subscribe-main-cpp.html</file>
             <file>bearercloud-bearercloud-h.html</file>
@@ -4314,6 +4317,7 @@
             <file>images/servicebrowser-attributes.png</file>
             <file>images/sensors-overview.png</file>
             <file>images/bearercloud-example.png</file>
+            <file>images/sysinfo-devices.png</file>
             <file>images/writemessage-example.png</file>
             <file>images/publish-subscribe-publisher.png</file>
             <file>images/qtlogo.png</file>
