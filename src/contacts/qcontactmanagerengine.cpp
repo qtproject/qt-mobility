@@ -218,7 +218,6 @@ QString QContactManagerEngine::managerUri() const
 }
 
 /*!
-  \fn Q_DECL_DEPRECATED QContactManagerEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
   \internal
 
   Return the list of contact ids present in this engine, sorted according to the given \a sortOrders.
@@ -227,7 +226,7 @@ QString QContactManagerEngine::managerUri() const
 
   This function is obsolete; use contactIds() instead.
  */
-QList<QContactLocalId> Q_DECL_DEPRECATED QContactManagerEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+QList<QContactLocalId> QContactManagerEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
     Q_UNUSED(sortOrders);
     error = QContactManager::NotSupportedError;
@@ -235,7 +234,6 @@ QList<QContactLocalId> Q_DECL_DEPRECATED QContactManagerEngine::contacts(const Q
 }
 
 /*!
-  \fn Q_DECL_DEPRECATED QContactManagerEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
   \internal
   Returns a list of the ids of contacts that match the supplied \a filter, sorted according to the given \a sortOrders.
   Any error that occurs will be stored in \a error.
@@ -244,7 +242,7 @@ QList<QContactLocalId> Q_DECL_DEPRECATED QContactManagerEngine::contacts(const Q
 
   This function is obsolete; use contactIds() instead.
  */
-QList<QContactLocalId> Q_DECL_DEPRECATED QContactManagerEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+QList<QContactLocalId> QContactManagerEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
     /* Slow way */
     QList<QContactLocalId> ret;
@@ -266,7 +264,6 @@ QList<QContactLocalId> Q_DECL_DEPRECATED QContactManagerEngine::contacts(const Q
 }
 
 /*!
-  \fn Q_DECL_DEPRECATED QContactManagerEngine::contact(const QContactLocalId& contactId, QContactManager::Error& error) const
   \internal
 
   Returns the contact in the database identified by \a contactId
@@ -275,7 +272,7 @@ QList<QContactLocalId> Q_DECL_DEPRECATED QContactManagerEngine::contacts(const Q
 
   This function is obsolete; use the contact() function which takes an optional set of details to restrict the returned contact to, instead.
  */
-QContact Q_DECL_DEPRECATED QContactManagerEngine::contact(const QContactLocalId& contactId, QContactManager::Error& error) const
+QContact QContactManagerEngine::contact(const QContactLocalId& contactId, QContactManager::Error& error) const
 {
     Q_UNUSED(contactId);
     error = QContactManager::NotSupportedError;
@@ -498,13 +495,12 @@ QList<QContactManager::Error> QContactManagerEngine::removeRelationships(const Q
 }
 
 /*!
-  \fn Q_DECL_DEPRECATED QContactManagerEngine::synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const
   \internal
   Synthesizes the display label of the given \a contact in a platform specific manner.
   Any error that occurs will be stored in \a error.
   Returns the synthesized display label.
  */
-QString Q_DECL_DEPRECATED QContactManagerEngine::synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const
+QString QContactManagerEngine::synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const
 {
     return synthesizedDisplayLabel(contact, error);
 }
@@ -603,13 +599,12 @@ bool QContactManagerEngine::hasFeature(QContactManager::ManagerFeature feature, 
 }
 
 /*!
-  \fn Q_DECL_DEPRECATED QContactManagerEngine::filterSupported(const QContactFilter& filter) const
   \internal
   Returns a whether the supplied \a filter can be implemented
   natively by this engine.  If not, the base class implementation
   will emulate the functionality.
  */
-bool Q_DECL_DEPRECATED QContactManagerEngine::filterSupported(const QContactFilter& filter) const
+bool QContactManagerEngine::filterSupported(const QContactFilter& filter) const
 {
     Q_UNUSED(filter);
     return false;
@@ -659,22 +654,20 @@ QStringList QContactManagerEngine::supportedContactTypes() const
     return retn;
 }
 
-/*! 
-  \fn Q_DECL_DEPRECATED QContactManagerEngine::version()
+/*!
   \internal
   Returns the version number of the QtContacts API
  */ 
-int Q_DECL_DEPRECATED QContactManagerEngine::version()
+int QContactManagerEngine::version()
 { 
     return QTCONTACTS_VERSION; 
 } 
  
-/*! 
-  \fn Q_DECL_DEPRECATED QContactManagerEngine::implementationVersion() const
+/*!
   \internal
   Returns the engine backend implementation version number
  */ 
-int Q_DECL_DEPRECATED QContactManagerEngine::implementationVersion() const
+int QContactManagerEngine::implementationVersion() const
 {
     return 0;
 } 
@@ -1352,7 +1345,6 @@ void QContactManagerEngine::setDetailAccessConstraints(QContactDetail *detail, Q
 }
 
 /*!
-  \fn Q_DECL_DEPRECATED QContactManagerEngine::saveContacts(QList<QContact>* contacts, QContactManager::Error& error)
   \internal
 
   Adds the list of contacts given by \a contacts to the database.
@@ -1376,7 +1368,7 @@ void QContactManagerEngine::setDetailAccessConstraints(QContactDetail *detail, Q
 
   \sa QContactManager::saveContact()
  */
-QList<QContactManager::Error> Q_DECL_DEPRECATED QContactManagerEngine::saveContacts(QList<QContact>* contacts, QContactManager::Error& error)
+QList<QContactManager::Error> QContactManagerEngine::saveContacts(QList<QContact>* contacts, QContactManager::Error& error)
 {
     QList<QContactManager::Error> ret;
     if (!contacts) {
@@ -1444,7 +1436,6 @@ bool QContactManagerEngine::saveContacts(QList<QContact>* contacts, QMap<int, QC
 }
 
 /*!
-  \fn Q_DECL_DEPRECATED QContactManagerEngine::removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error)
   \internal
   Remove the list of contacts identified in \a contactIds.
   Returns a list of the error codes corresponding to the contact ids in
@@ -1469,7 +1460,7 @@ bool QContactManagerEngine::saveContacts(QList<QContact>* contacts, QMap<int, QC
 
   \sa QContactManager::removeContact()
  */
-QList<QContactManager::Error> Q_DECL_DEPRECATED QContactManagerEngine::removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error)
+QList<QContactManager::Error> QContactManagerEngine::removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error)
 {
     QList<QContactManager::Error> ret;
     if (!contactIds) {
@@ -2071,7 +2062,6 @@ bool QContactManagerEngine::cancelRequest(QContactAbstractRequest* req)
 }
 
 /*!
-  \fn Q_DECL_DEPRECATED QContactManagerEngine::waitForRequestProgress(QContactAbstractRequest* req, int msecs)
   \internal
   Blocks until the manager engine has completed some part (or all) of the given request \a req
   which was previously started, or until \a msecs milliseconds have passed.
@@ -2080,7 +2070,7 @@ bool QContactManagerEngine::cancelRequest(QContactAbstractRequest* req)
 
   \sa startRequest()
  */
-bool Q_DECL_DEPRECATED QContactManagerEngine::waitForRequestProgress(QContactAbstractRequest* req, int msecs)
+bool QContactManagerEngine::waitForRequestProgress(QContactAbstractRequest* req, int msecs)
 {
     Q_UNUSED(req);
     Q_UNUSED(msecs);
@@ -2103,7 +2093,6 @@ bool QContactManagerEngine::waitForRequestFinished(QContactAbstractRequest* req,
 }
 
 /*!
-  \fn Q_DECL_DEPRECATED QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QContactManager::Error error, QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
   \internal
   This function takes a QContactAbstractRequest::Status parameter and hence has been deprecated.
   Use the related function of similar signature which takes a QContactAbstractRequest::State parameter instead.
@@ -2111,7 +2100,7 @@ bool QContactManagerEngine::waitForRequestFinished(QContactAbstractRequest* req,
   Updates the request \a req with the error information \a error and \a errors.
   The request state will be updated to \a status.  If the sorting of the results remains unchanged, \a appendOnly will be set to true.
  */
-void Q_DECL_DEPRECATED QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QContactManager::Error error, QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
+void QContactManagerEngine::updateRequestStatus(QContactAbstractRequest* req, QContactManager::Error error, QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
     Q_UNUSED(error);
     Q_UNUSED(errors);
@@ -2121,7 +2110,6 @@ void Q_DECL_DEPRECATED QContactManagerEngine::updateRequestStatus(QContactAbstra
 
 
 /*!
-  \fn Q_DECL_DEPRECATED QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactLocalId>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
   \internal
   This function takes a QContactAbstractRequest::Status parameter and hence has been deprecated.
   Use the related function of similar signature which takes a QContactAbstractRequest::State parameter instead.
@@ -2129,7 +2117,7 @@ void Q_DECL_DEPRECATED QContactManagerEngine::updateRequestStatus(QContactAbstra
   Updates the request \a req with the result \a result and error information \a error and \a errors.
   The request state will be updated to \a status.  If the sorting of the results remains unchanged, \a appendOnly will be set to true.
  */
-void Q_DECL_DEPRECATED QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactLocalId>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
+void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactLocalId>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
     Q_UNUSED(errors);
     Q_UNUSED(appendOnly);
@@ -2139,7 +2127,6 @@ void Q_DECL_DEPRECATED QContactManagerEngine::updateRequest(QContactAbstractRequ
 
 
 /*!
-  \fn Q_DECL_DEPRECATED QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContact>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
   \internal
   This function takes a QContactAbstractRequest::Status parameter and hence has been deprecated.
   Use the related function of similar signature which takes a QContactAbstractRequest::State parameter instead.
@@ -2147,7 +2134,7 @@ void Q_DECL_DEPRECATED QContactManagerEngine::updateRequest(QContactAbstractRequ
   Updates the request \a req with the result \a result and error information \a error and \a errors.
   The request state will be updated to \a status.  If the sorting of the results remains unchanged, \a appendOnly will be set to true.
  */
-void Q_DECL_DEPRECATED QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContact>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
+void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContact>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
     Q_UNUSED(errors);
     Q_UNUSED(appendOnly);
@@ -2168,7 +2155,6 @@ void Q_DECL_DEPRECATED QContactManagerEngine::updateRequest(QContactAbstractRequ
 
 
 /*!
-  \fn Q_DECL_DEPRECATED QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
   \internal
   This function takes a QContactAbstractRequest::Status parameter and hence has been deprecated.
   Use the related function of similar signature which takes a QContactAbstractRequest::State parameter instead.
@@ -2176,7 +2162,7 @@ void Q_DECL_DEPRECATED QContactManagerEngine::updateRequest(QContactAbstractRequ
   Updates the request \a req with the result \a result and error information \a error and \a errors.
   The request state will be updated to \a status.
  */
-void Q_DECL_DEPRECATED QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
+void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status)
 {
     QMap<int, QContactManager::Error> errorMap;
     for (int i = 0; i < errors.size(); i++) {
@@ -2190,7 +2176,6 @@ void Q_DECL_DEPRECATED QContactManagerEngine::updateRequest(QContactAbstractRequ
 
 
 /*!
-  \fn Q_DECL_DEPRECATED QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QMap<QString, QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
   \internal
   This function takes a QContactAbstractRequest::Status parameter and hence has been deprecated.
   Use the related function of similar signature which takes a QContactAbstractRequest::State parameter instead.
@@ -2198,7 +2183,7 @@ void Q_DECL_DEPRECATED QContactManagerEngine::updateRequest(QContactAbstractRequ
   Updates the request \a req with the result \a result and error information \a error and \a errors.
   The request state will be updated to \a status.  If the sorting of the results remains unchanged, \a appendOnly will be set to true.
  */
-void Q_DECL_DEPRECATED QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QMap<QString, QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
+void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QMap<QString, QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
     Q_UNUSED(appendOnly);
     QMap<int, QContactManager::Error> errorMap;
@@ -2213,14 +2198,13 @@ void Q_DECL_DEPRECATED QContactManagerEngine::updateRequest(QContactAbstractRequ
 
 
 /*!
-  \fn Q_DECL_DEPRECATED QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactRelationship>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
   \internal
   This function has been entirely deprecated and has no effect.  It was deprecated in week 1 and will be removed once the transition period has elapsed.
 
   Updates the request \a req with the result \a result and error information \a error and \a errors.
   The request state will be updated to \a status.  If the sorting of the results remains unchanged, \a appendOnly will be set to true.
  */
-void Q_DECL_DEPRECATED QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactRelationship>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
+void QContactManagerEngine::updateRequest(QContactAbstractRequest* req, const QList<QContactRelationship>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly)
 {
     Q_UNUSED(errors);
     Q_UNUSED(appendOnly);

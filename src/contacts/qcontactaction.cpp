@@ -93,7 +93,7 @@ QContactAction::~QContactAction()
  */
 
 /*!
-  \fn Q_DECL_DEPRECATED QContactAction::metadata() const
+  \fn QContactAction::metadata() const
   \internal
   Returns the metadata associated with this action, such as icons, labels or sound cues
  */

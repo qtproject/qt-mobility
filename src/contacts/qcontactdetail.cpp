@@ -322,11 +322,10 @@ bool QContactDetail::removeValue(const QString& key)
 }
 
 /*!
-  \fn Q_DECL_DEPRECATED QContactDetail::values() const
   \internal
   Returns the values stored in this detail
  */
-QVariantMap Q_DECL_DEPRECATED QContactDetail::values() const
+QVariantMap QContactDetail::values() const
 {
     return d.constData()->m_values;
 }

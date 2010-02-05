@@ -1532,131 +1532,224 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
    it to "Unspecified".
  */
 
+
+
+
+
+
+
 /*!
-   \fn QContactGeolocation::setLabel(const QString& label)
    \internal
    Sets the label of the location stored in the detail to \a label.
+   The QContactGeolocation class is deprecated and will be removed after the transition period has elapsed.
+   Use the QContactGeoLocation class instead!
  */
+void QContactGeolocation::setLabel(const QString& label)
+{
+    setValue(FieldLabel, label);
+}
 
 /*!
-   \fn QContactGeolocation::label() const
    \internal
    Returns the label of the location stored in the detail.
+   The QContactGeolocation class is deprecated and will be removed after the transition period has elapsed.
+   Use the QContactGeoLocation class instead!
  */
+QString QContactGeolocation::label() const
+{
+    return value(FieldLabel);
+}
 
 /*!
-   \fn QContactGeolocation::setLatitude(double latitude)
    \internal
    Sets the latitude portion of the coordinate (in decimal degrees) of
    the location stored in the detail to \a latitude.
+   The QContactGeolocation class is deprecated and will be removed after the transition period has elapsed.
+   Use the QContactGeoLocation class instead!
  */
+void QContactGeolocation::setLatitude(double latitude)
+{
+    setValue(FieldLatitude, latitude);
+}
 
 /*!
-   \fn QContactGeolocation::latitude() const
    \internal
    Returns the latitude portion of the coordinate (specified in
    decimal degrees) of the location stored in the detail.
+   The QContactGeolocation class is deprecated and will be removed after the transition period has elapsed.
+   Use the QContactGeoLocation class instead!
  */
+double QContactGeolocation::latitude() const
+{
+    return variantValue(FieldLatitude).toDouble();
+}
 
 /*!
-   \fn QContactGeolocation::setLongitude(double longitude)
    \internal
    Sets the longitude portion of the coordinate (in decimal degrees)
    of the location stored in the detail to \a longitude.
+   The QContactGeolocation class is deprecated and will be removed after the transition period has elapsed.
+   Use the QContactGeoLocation class instead!
  */
+void QContactGeolocation::setLongitude(double longitude)
+{
+    setValue(FieldLongitude, longitude);
+}
 
 /*!
-   \fn QContactGeolocation::longitude() const
    \internal
    Returns the longitude portion of the coordinate (specified in
    decimal degrees) of the location stored in the detail.
+   The QContactGeolocation class is deprecated and will be removed after the transition period has elapsed.
+   Use the QContactGeoLocation class instead!
  */
+double QContactGeolocation::longitude() const
+{
+    return variantValue(FieldLongitude).toDouble();
+}
 
 /*!
-   \fn QContactGeolocation::setAccuracy(double accuracy)
    \internal
    Specifies that the latitude and longitude portions of the location
    stored in the detail are accurate to within \a accuracy metres.
+   The QContactGeolocation class is deprecated and will be removed after the transition period has elapsed.
+   Use the QContactGeoLocation class instead!
  */
+void QContactGeolocation::setAccuracy(double accuracy) {setValue(FieldAccuracy, accuracy);}
 
 /*!
-   \fn QContactGeolocation::accuracy() const
    \internal
    Returns the accuracy (in metres) of the latitude and longitude of
    the location stored in the detail.
+   The QContactGeolocation class is deprecated and will be removed after the transition period has elapsed.
+   Use the QContactGeoLocation class instead!
  */
+double QContactGeolocation::accuracy() const
+{
+    return variantValue(FieldAccuracy).toDouble();
+}
 
 /*!
-   \fn QContactGeolocation::setAltitude(double altitude)
    \internal
    Sets the altitude portion of the coordinate (in metres above the
    ellipsoid) of the location stored in the detail to \a altitude.
+   The QContactGeolocation class is deprecated and will be removed after the transition period has elapsed.
+   Use the QContactGeoLocation class instead!
  */
+void QContactGeolocation::setAltitude(double altitude)
+{
+    setValue(FieldAltitude, altitude);
+}
 
 /*!
-   \fn QContactGeolocation::altitude() const
    \internal
    Returns the altitude (in metres) of the location stored in the detail.
+   The QContactGeolocation class is deprecated and will be removed after the transition period has elapsed.
+   Use the QContactGeoLocation class instead!
  */
+double QContactGeolocation::altitude() const
+{
+    return variantValue(FieldAltitude).toDouble();
+}
 
 /*!
-   \fn QContactGeolocation::setAltitudeAccuracy(double altitudeAccuracy)
    \internal
    Sets the altitude-accuracy portion of the coordinate (in metres) of
    the location stored in the detail to \a altitudeAccuracy.
+   The QContactGeolocation class is deprecated and will be removed after the transition period has elapsed.
+   Use the QContactGeoLocation class instead!
  */
+void QContactGeolocation::setAltitudeAccuracy(double altitudeAccuracy)
+{
+    setValue(FieldAltitudeAccuracy, altitudeAccuracy);
+}
 
 /*!
-   \fn QContactGeolocation::altitudeAccuracy() const
    \internal
    Returns the accuracy of the altitude portion of the location stored
    in the detail.
+   The QContactGeolocation class is deprecated and will be removed after the transition period has elapsed.
+   Use the QContactGeoLocation class instead!
  */
+double QContactGeolocation::altitudeAccuracy() const
+{
+    return variantValue(FieldAltitudeAccuracy).toDouble();
+}
 
 /*!
-   \fn QContactGeolocation::setHeading(double heading)
    \internal
    Sets the heading portion of the coordinate (in decimal degrees
    clockwise relative to true north) of the location-aware device at
    the time of measurement to \a heading.
+   The QContactGeolocation class is deprecated and will be removed after the transition period has elapsed.
+   Use the QContactGeoLocation class instead!
  */
+void QContactGeolocation::setHeading(double heading)
+{
+    setValue(FieldHeading, heading);
+}
 
 /*!
-   \fn QContactGeolocation::heading() const
    \internal
    Returns the heading (at the time of measurement) of the
    location-aware device that recorded (or was provided) the
    measurement.
+   The QContactGeolocation class is deprecated and will be removed after the transition period has elapsed.
+   Use the QContactGeoLocation class instead!
  */
+double QContactGeolocation::heading() const
+{
+    return variantValue(FieldHeading).toDouble();
+}
 
 /*!
-   \fn QContactGeolocation::setSpeed(double speed)
    \internal
    Sets the speed portion of the coordinate (in metres per second) of
    the location-aware device at the time of measurement to \a speed.
+   The QContactGeolocation class is deprecated and will be removed after the transition period has elapsed.
+   Use the QContactGeoLocation class instead!
  */
+void QContactGeolocation::setSpeed(double speed)
+{
+    setValue(FieldSpeed, speed);
+}
 
 /*!
-   \fn QContactGeolocation::speed() const
    \internal
    Returns the speed (at the time of measurement) of the
    location-aware device that recorded (or was provided) the
    measurement.
+   The QContactGeolocation class is deprecated and will be removed after the transition period has elapsed.
+   Use the QContactGeoLocation class instead!
  */
+double QContactGeolocation::speed() const
+{
+    return variantValue(FieldSpeed).toDouble();
+}
 
 /*!
-   \fn QContactGeolocation::setTimestamp(const QDateTime& timestamp)
    \internal
    Sets the creation (or first-valid) timestamp of the location
    information to \a timestamp.
+   The QContactGeolocation class is deprecated and will be removed after the transition period has elapsed.
+   Use the QContactGeoLocation class instead!
  */
+void QContactGeolocation::setTimestamp(const QDateTime& timestamp)
+{
+    setValue(FieldTimestamp, timestamp);
+}
 
 /*!
-   \fn QContactGeolocation::timestamp() const
    \internal
    Returns the timestamp associated with the location stored in the
    detail.
+   The QContactGeolocation class is deprecated and will be removed after the transition period has elapsed.
+   Use the QContactGeoLocation class instead!
  */
+QDateTime QContactGeolocation::timestamp() const
+{
+    return variantValue(FieldTimestamp).toDateTime();
+}
 
 
 
@@ -1850,44 +1943,68 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
  */
 
 /*!
-   \fn Q_DECL_DEPRECATED QContactName::first() const
    \internal
    Returns the first (given) name segment of the name stored in this detail.
+   Deprecated.  Use QContactName::firstName() instead.
  */
+QString QContactName::first() const
+{
+    return firstName();
+}
 
 /*!
-   \fn Q_DECL_DEPRECATED QContactName::setFirst(const QString& first)
    \internal
    Sets the first name segment of the name stored in this detail to \a first.
+   Deprecated.  Use QContactName::setFirstName() instead.
  */
+void QContactName::setFirst(const QString& first)
+{
+    setFirstName(first);
+}
 
 /*!
-   \fn Q_DECL_DEPRECATED QContactName::middle() const
    \internal
 
    Returns the middle (additional, or other) name segment of the name
    stored in this detail.
+   Deprecated.  Use QContactName::middleName() instead.
  */
+QString QContactName::middle() const
+{
+    return middleName();
+}
 
 /*!
-   \fn Q_DECL_DEPRECATED QContactName::setMiddle(const QString& middle)
    \internal
    Sets the middle name segment of the name stored in this detail to \a middle.
+   Deprecated.  Use QContactName::setMiddleName() instead.
  */
+void QContactName::setMiddle(const QString& middle)
+{
+    setMiddleName(middle);
+}
 
 /*!
-   \fn Q_DECL_DEPRECATED QContactName::last() const
    \internal
 
    Returns the last (family, or surname) name segment of the name
    stored in this detail.
+   Deprecated.  Use QContactName::lastName() instead.
  */
+QString QContactName::last() const
+{
+    return lastName();
+}
 
 /*!
-   \fn Q_DECL_DEPRECATED QContactName::setLast(const QString& last)
    \internal
    Sets the last name segment of the name stored in this detail to \a last.
+   Deprecated.  Use QContactName::setLastName() instead.
  */
+void QContactName::setLast(const QString& last)
+{
+    setLastName(last);
+}
 
 /*!
    \fn QContactName::suffix() const

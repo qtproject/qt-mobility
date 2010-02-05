@@ -155,7 +155,6 @@ QContactRelationshipFilter::Role QContactRelationshipFilter::relatedContactRole(
 }
 
 /*!
-  \fn Q_DECL_DEPRECATED QContactRelationshipFilter::setRole(QContactRelationshipFilter::Role roleInRelationship)
   \internal
   Sets the role in the relationship that a contact must be in order to match this filter to \a roleInRelationship
 
@@ -163,7 +162,7 @@ QContactRelationshipFilter::Role QContactRelationshipFilter::relatedContactRole(
   instead of First) to \c setRelatedContactRole().
   \sa setRelatedContactRole()
  */
-void Q_DECL_DEPRECATED QContactRelationshipFilter::setRole(QContactRelationshipFilter::Role roleInRelationship)
+void QContactRelationshipFilter::setRole(QContactRelationshipFilter::Role roleInRelationship)
 {
     Q_D(QContactRelationshipFilter);
     switch(roleInRelationship) {
@@ -180,23 +179,21 @@ void Q_DECL_DEPRECATED QContactRelationshipFilter::setRole(QContactRelationshipF
 }
 
 /*!
-  \fn Q_DECL_DEPRECATED QContactRelationshipFilter::setOtherParticipantId(const QContactId& id)
   \internal
   Sets the contact id of the other participant which must be present in the relationship with the contact
   in order for the contact to match the filter to be \a id
  */
-void Q_DECL_DEPRECATED QContactRelationshipFilter::setOtherParticipantId(const QContactId& id)
+void QContactRelationshipFilter::setOtherParticipantId(const QContactId& id)
 {
     Q_D(QContactRelationshipFilter);
     d->m_relatedContactId = id;
 }
 
 /*!
-  \fn Q_DECL_DEPRECATED QContactRelationshipFilter::role() const
   \internal
   Returns the role that a contact must have in a relationship in order to match the filter
  */
-QContactRelationshipFilter::Role Q_DECL_DEPRECATED QContactRelationshipFilter::role() const
+QContactRelationshipFilter::Role QContactRelationshipFilter::role() const
 {
     Q_D(const QContactRelationshipFilter);
     switch(d->m_relatedContactRole) {
@@ -211,11 +208,10 @@ QContactRelationshipFilter::Role Q_DECL_DEPRECATED QContactRelationshipFilter::r
 }
 
 /*!
-  \fn Q_DECL_DEPRECATED QContactRelationshipFilter::otherParticipantId() const
   \internal
   Returns the id of another contact with whom a contact must have a relationship in order to match the filter
  */
-QContactId Q_DECL_DEPRECATED QContactRelationshipFilter::otherParticipantId() const
+QContactId QContactRelationshipFilter::otherParticipantId() const
 {
     Q_D(const QContactRelationshipFilter);
     return d->m_relatedContactId;

@@ -171,13 +171,12 @@ void QContactDetailDefinition::removeField(const QString& key)
 }
 
 /*!
-  \fn Q_DECL_DEPRECATED QContactDetailDefinition::fields()
   \internal
   Returns a reference to the map of keys to fields which are present in details of this definition.
 
   You can make changes to the returned map.
  */
-QMap<QString, QContactDetailFieldDefinition> Q_DECL_DEPRECATED & QContactDetailDefinition::fields()
+QMap<QString, QContactDetailFieldDefinition>& QContactDetailDefinition::fields()
 {
     return d->m_fields;
 }

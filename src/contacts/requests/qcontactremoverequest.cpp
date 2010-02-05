@@ -78,24 +78,22 @@ QContactRemoveRequest::~QContactRemoveRequest()
 }
 
 /*!
-  \fn Q_DECL_DEPRECATED QContactRemoveRequest::setFilter(const QContactFilter& filter)
   \internal
   Sets the filter which will be used to select the contacts to remove to \a filter.
   This function is obsolete; set the list of contacts that will be removed by calling setContactIds().
  */
-void Q_DECL_DEPRECATED QContactRemoveRequest::setFilter(const QContactFilter& filter)
+void QContactRemoveRequest::setFilter(const QContactFilter& filter)
 {
     Q_D(QContactRemoveRequest);
     d->m_filter = filter;
 }
 
 /*!
-  \fn Q_DECL_DEPRECATED QContactRemoveRequest::filter() const
   \internal
   Returns the filter which will be used to select the contacts to remove.
   This function is obsolete; retrieve the list of contacts that will be removed by calling contactIds().
  */
-QContactFilter Q_DECL_DEPRECATED QContactRemoveRequest::filter() const
+QContactFilter QContactRemoveRequest::filter() const
 {
     Q_D(const QContactRemoveRequest);
     return d->m_filter;

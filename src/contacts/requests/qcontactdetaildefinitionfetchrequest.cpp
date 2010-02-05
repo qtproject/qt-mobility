@@ -80,22 +80,20 @@ QContactDetailDefinitionFetchRequest::~QContactDetailDefinitionFetchRequest()
 }
 
 /*!
-  \fn Q_DECL_DEPRECATED QContactDetailDefinitionFetchRequest::setNames(const QStringList& names)
   \internal
   Sets the names of the detail definitions to retrieve to \a names
  */
-void Q_DECL_DEPRECATED QContactDetailDefinitionFetchRequest::setNames(const QStringList& names)
+void QContactDetailDefinitionFetchRequest::setNames(const QStringList& names)
 {
     Q_D(QContactDetailDefinitionFetchRequest);
     d->m_names = names;
 }
 
 /*!
-  \fn Q_DECL_DEPRECATED QContactDetailDefinitionFetchRequest::names() const
   \internal
   Returns the list of names of the detail definitions that will be retrieved
  */
-QStringList Q_DECL_DEPRECATED QContactDetailDefinitionFetchRequest::names() const
+QStringList QContactDetailDefinitionFetchRequest::names() const
 {
     Q_D(const QContactDetailDefinitionFetchRequest);
     return d->m_names;
