@@ -233,7 +233,9 @@ void Player::durationChanged(qint64 duration)
 
 void Player::positionChanged(qint64 progress)
 {
-    slider->setValue(progress / 1000);
+    if (!slider->isSliderDown()) {
+        slider->setValue(progress / 1000);
+    }
 }
 
 void Player::metaDataChanged()

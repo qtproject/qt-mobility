@@ -94,9 +94,7 @@ bool S60MediaPlayerSession::isMuted() const
 
 bool S60MediaPlayerSession::isSeekable() const
 {
-    if (m_metaDataMap.isEmpty())
-        return true;
-    return m_metaDataMap.value("seekable").toBool();
+    return true;
 }
 
 void S60MediaPlayerSession::setMediaStatus(QMediaPlayer::MediaStatus status)
