@@ -34,21 +34,13 @@
 <li><div bar="2" class="fn"></div>9 public functions inherited from <a href="qcontactabstractrequest.html#public-functions">QContactAbstractRequest</a></li>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
-<hr />
-<a name="signals"></a>
-<h2>Signals</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinitionremoverequest.html#progress">progress</a></b> ( QContactDetailDefinitionRemoveRequest * <i>self</i> )&nbsp;&nbsp;<tt> (deprecated)</tt></td></tr>
-</table>
-<ul>
-<li><div bar="2" class="fn"></div>2 signals inherited from <a href="qcontactabstractrequest.html#signals">QContactAbstractRequest</a></li>
-<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
-</ul>
 <h3>Additional Inherited Members</h3>
 <ul>
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 <li><div class="fn"></div>3 public slots inherited from <a href="qcontactabstractrequest.html#public-slots">QContactAbstractRequest</a></li>
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+<li><div class="fn"></div>2 signals inherited from <a href="qcontactabstractrequest.html#signals">QContactAbstractRequest</a></li>
+<li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
 <li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
@@ -77,10 +69,6 @@
 <a name="//apple_ref/cpp/instm/QContactDetailDefinitionRemoveRequest/errorMap"></a>
 <h3 class="fn"><a name="errorMap"></a><a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; QContactDetailDefinitionRemoveRequest::errorMap () const</h3>
 <p>Returns the map of input name list indices to errors which occurred</p>
-<a name="//apple_ref/cpp/instm/QContactDetailDefinitionRemoveRequest/progress"></a>
-<h3 class="fn"><a name="progress"></a>void QContactDetailDefinitionRemoveRequest::progress ( QContactDetailDefinitionRemoveRequest * <i>self</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>This function is deprecated.</p>
-<p>This signal is emitted when some progress has been made on the request, causing either a change of status or an update of results, or both. It identifies which request the signal originated from by including a pointer to <i>self</i>.</p>
 <a name="//apple_ref/cpp/instm/QContactDetailDefinitionRemoveRequest/setDefinitionNames"></a>
 <h3 class="fn"><a name="setDefinitionNames"></a>void QContactDetailDefinitionRemoveRequest::setDefinitionNames ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>contactType</i>, const <a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> &amp; <i>names</i> )</h3>
 <p>Sets the type of contact for which detail definitions should be removed to <i>contactType</i>, and the names of the detail definitions to remove from the manager to <i>names</i>. Managers may store different definitions which are valid for different contact types, and so attempting to remove definitions with certain names may fail if no such definitions exist for contacts of the given contact type, or if <i>contactType</i> is empty.</p>
