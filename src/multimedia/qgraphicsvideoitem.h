@@ -87,6 +87,7 @@ Q_SIGNALS:
     void nativeSizeChanged(const QSizeF &size) const;
 
 protected:
+    void timerEvent(QTimerEvent *event);
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
     QGraphicsVideoItemPrivate *d_ptr;
