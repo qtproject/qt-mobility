@@ -91,8 +91,69 @@ QtLocation
 QtMessaging
 ------
 
- - foo
-    * bar
+ - Wrap QMessageStore with QMessageManager.
+    * In order to provide a consistent interface with other components
+      of QtMobility that provide a central data manager interface, the
+      existing QMessageStore interface is now private, and replaced in
+      the public interface by the QMessageManager class.
+    
+      The new class provides exactly the same interface as the old class
+      except that it is instantiated as a handle rather than accessed as
+      a singleton.  Internally the handle object can be instantiated as
+      needed, but in documentation or examples the class should be treated
+      as if it were potentially expensive to create and destroy; this will
+      give a consistent form of use for all Q{x}Manager classes between
+      the various QtMobility projects.
+    
+      The old QMessageStore class is still used internally by the
+      QMessageManager, so the latter class need not be reimplemented for
+      multiple platforms.
+
+ - Rename Q{X}Ordering to Q{X}SortOrder.
+    * For increased consistency between QtMobility APIs.
+
+ - Support ordering via a list of SortOrder objects.
+    * For consistency with other QtMobility APIs, allow a composite ordering
+      to be specified using a list of Q{X}SortOrder objects rather than
+      requiring the objects to be accumulated via the + operator.
+
+ - Rename QMessageDataComparator::Options to MatchFlags.
+
+ - Rename QMessageServiceAction to QMessageService.
+    * The term 'action' is already used with conflicting meanings;
+      it can represnt a user-input (QAction), or a facility provided
+      by a service provider which is exposed to the user (as in
+      QContactAction).
+    
+      QMessageService provides a proxy, dispatcher or broker
+      facility, but adding any of these terms to the class name has
+      been judged as not constituting an improvement to readability.
+
+ - Return int from size() functions.
+    * Consistent with standard Qt practice.
+
+ - Rename write{Text}ContentTo to write{Text}Content.
+    * For improved consistentcy with Qt naming.
+
+ - Rename QMessageManager::ErrorCode to QMessageManager::Error.
+    * For improved consistency with Qt naming.
+
+ - Reorder the parameters for QMessageAddress(Type, Address).
+    * There is a logical dependency of address on type.
+
+ - API improvements to QMessageService.
+    * Use the same State enum values as used by the QtMobility Contacts
+      API, and provide the same stateChanged() signal signature.
+    
+      Rename cancelOperation() to cancel() for consistency with Qt.
+
+ - Rename QMessageStore:: and QMessageManager::lastError() to error().
+    * This is the more common form in Qt, and in line with the equivalent
+      Contacts interface name.
+
+ - Rename QMessageFolder::displayName() to name().
+    * DisplayName should be used where the name used for display purposes
+      differs from the fundamental name property.
 
 QtMedia
 ------
