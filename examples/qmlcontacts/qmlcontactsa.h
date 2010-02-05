@@ -45,6 +45,7 @@
 #include <QObject>
 #include <qmobilityglobal.h>
 #include <QContactManager>
+#include <QContactAbstractRequest>
 
 #include "qmlcontact.h"
 
@@ -94,7 +95,7 @@ Q_SIGNALS:
 
 private slots:
 
-    void contactProgress(QContactFetchRequest* request, bool appendOnly);
+    void contactProgress(QContactAbstractRequest::State newState);
 
 private:
     QContactManager *qc;    

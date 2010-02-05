@@ -157,6 +157,7 @@ QStringList QmlContact::availableActions()
     }
     return names;
 }
+
 QStringList QmlContact::details()
 {
     QStringList dets;
@@ -179,24 +180,13 @@ QStringList QmlContact::contexts()
     return dets;
 }
 
-//QStringList QmlContact::values(QString definitionId)
 QVariantMap QmlContact::values(QString definitionId)
 {
     QStringList strlist;
     QContactDetail detail = m_contact.detail(definitionId);
 
     QVariantMap map = detail.variantValues();
-    //qWarning() << "Number of e: " << map.count();
     return map;
-
-//    QMap<QString, QVariant>::const_iterator i = map.constBegin();
-//    while (i != map.constEnd()) {
-//        qWarning() << "Key: " << i.key() << " Value: " << i.value();
-//        strlist += i.key() + ": " + i.value().toString();
-//        ++i;
-//    }
-//
-//    return strlist;
 }
 
 #include "moc_qmlcontact.cpp"
