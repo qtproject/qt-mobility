@@ -92,6 +92,7 @@ private:
     static void deviceDisconnected(LocationGPSDevice *device, gpointer data);
     static void deviceConnected(LocationGPSDevice *device, gpointer data);
     static void locationChanged(LocationGPSDevice *device, gpointer data);
+    int mapUpdateInterval(int msec);
     int errorHandlerId;
     int posChangedId;
     int connectedId;

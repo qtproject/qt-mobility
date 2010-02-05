@@ -169,17 +169,19 @@ QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSourceMaemo::supporte
 void QGeoPositionInfoSourceMaemo::setUpdateInterval(int msec)
 {
     msec = (msec < MinimumUpdateInterval) ? MinimumUpdateInterval : msec;
-    QGeoPositionInfoSource::setUpdateInterval(msec);
 
 #ifdef Q_WS_MAEMO_5
-    time_interval_ = msec/100;
+    time_interval_ = mapUpdateInterval(msec);
+    QGeoPositionInfoSource::setUpdateInterval(time_interval_*100);    
     if(locationControl) {
         g_object_set(G_OBJECT(locationControl),
                      "preferred-method", LOCATION_METHOD_USER_SELECTED,
                      "preferred-interval", time_interval_,
-                     NULL);
+                     NULL) ;      
     }
 #else
+    QGeoPositionInfoSource::setUpdateInterval(msec);
+
     if (registered_ == false)
         registered_ = dbusComm->sendDBusRegister();
     dbusComm->sessionConfigRequest(dbusComm->CmdSetInterval, 0, msec);
@@ -410,6 +412,26 @@ void QGeoPositionInfoSourceMaemo::setLocation(const QGeoPositionInfo &update)
     validLastSatUpdate = true;
     emit positionUpdated(update);
 }
+
+int QGeoPositionInfoSourceMaemo::mapUpdateInterval(int msec) {
+    if (msec < 1000)
+        return LOCATION_INTERVAL_1S;
+    else if ((msec >= 1000) && (msec < 3500))
+        return LOCATION_INTERVAL_2S;
+    else if ((msec >= 3500) && (msec < 7500))
+        return LOCATION_INTERVAL_5S;
+    else if ((msec >= 7500) && (msec < 15000))
+        return LOCATION_INTERVAL_10S;
+    else if ((msec >= 15000) && (msec < 25000))
+        return LOCATION_INTERVAL_20S;
+    else if ((msec >= 25000) && (msec < 45000))
+        return LOCATION_INTERVAL_30S;
+    else if ((msec >= 45000) && (msec < 90000))
+        return LOCATION_INTERVAL_60S;
+    else if (msec >= 90000)
+        return LOCATION_INTERVAL_120S;
+}
+    
 #endif // Q_WS_MAEMO_5
 
 
