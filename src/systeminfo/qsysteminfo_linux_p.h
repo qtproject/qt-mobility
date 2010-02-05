@@ -154,12 +154,10 @@ private:
     inline QSystemNetworkInfo::NetworkMode deviceTypeToMode(quint32 type);
 #endif
     QString getSysNetName(QSystemNetworkInfo::NetworkMode mode);
-//    QString getSysEthNetName();
 
 private Q_SLOTS:
     void nmPropertiesChanged( const QString &, QMap<QString,QVariant>);
     void nmAPPropertiesChanged( const QString &, QMap<QString,QVariant>);
-//    void updateDeviceInterfaceState(const QString &, quint32);
 #if !defined(QT_NO_NETWORKMANAGER)
     void getPrimaryMode();
 #endif
