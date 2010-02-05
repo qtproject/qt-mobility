@@ -233,7 +233,7 @@ Qt Mobility for Symbian
     * When filtering with QContactDisplayLabel and match flag MatchStartsWith is set the filtering rules follow the platform Phonebook's name list view filtering rules.
     * When filtering with a phone number detail and match flags MatchPhoneNumber is set the filtering rules follow the platform Phonebook's phone number matching rules. Known issue: the matched phone number needs to be at least 7 digits.
     * Contact filtering: added support for intersection and union filters. This improves performance in those cases where the contained filters give only a sub-set of the contacts.
-    * Fixed a bug where setting the self contact id failed if the id was already set as the self contact id.
+    * Fixed a bug where modifying the details of a self-contact failed.
     * Added an experimental support for SIM ADN contacts with QContactManager implementation named "symbiansim".
     * Several bug fixes to contact relationships.
     * Fixed the error handling when a client tries to update the contact type. This is not supported.
