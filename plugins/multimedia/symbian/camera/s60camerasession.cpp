@@ -212,7 +212,7 @@ void S60CameraSession::stopCamera()
 
 void S60CameraSession::capture(const QString &fileName)
 {
-    qDebug() << "S60CameraSession::capture to file="<< fileName;
+    //qDebug() << "S60CameraSession::capture to file="<< fileName;
     m_error = KErrNone;
     m_stillCaptureFileName = fileName;
     emit readyForCaptureChanged(false);
@@ -518,7 +518,7 @@ void S60CameraSession::MceoFocusComplete()
 
 void S60CameraSession::MceoCapturedDataReady(TDesC8* aData)
 {
-    qDebug() << "S60CameraSession::MceoCapturedDataReady()";
+    //qDebug() << "S60CameraSession::MceoCapturedDataReady()";
     QImage snapImage = QImage::fromData((const uchar *)aData->Ptr(), aData->Length());
     //qDebug() << "S60CameraSession::MceoCapturedDataReady(), image constructed, byte count="<<snapImage.byteCount();
     // inform capture done
@@ -533,7 +533,7 @@ void S60CameraSession::MceoCapturedDataReady(TDesC8* aData)
 
 void S60CameraSession::saveImageL(TDesC8* aData) 
 {
-    qDebug() << "S60CameraSession::saveImageL()";
+    //qDebug() << "S60CameraSession::saveImageL()";
     // Create path for filename
     TFileName path = PathInfo::PhoneMemoryRootPath(); 
     path.Append(PathInfo::ImagesPath());  
@@ -551,7 +551,7 @@ void S60CameraSession::saveImageL(TDesC8* aData)
     CleanupClosePushL(file);
     User::LeaveIfError(file.Write(*aData));
     
-    qDebug() << "S60CameraSession::saveImageL(), image saved";
+    //qDebug() << "S60CameraSession::saveImageL(), image saved";
     CleanupStack::PopAndDestroy(&file);
     CleanupStack::PopAndDestroy(&fs);
 }
@@ -566,7 +566,7 @@ void S60CameraSession::releaseImageBuffer()
 
 void S60CameraSession::MceoCapturedBitmapReady(CFbsBitmap* aBitmap)
 {
-    qDebug() << "S60CameraSession::MceoCapturedBitmapReady()";
+    //qDebug() << "S60CameraSession::MceoCapturedBitmapReady()";
     if(aBitmap)
     {
         TSize size = aBitmap->SizeInPixels();
@@ -584,7 +584,7 @@ void S60CameraSession::MceoCapturedBitmapReady(CFbsBitmap* aBitmap)
         aBitmap->UnlockHeap();
 
         TDisplayMode displayMode = aBitmap->DisplayMode();
-        qDebug() << "S60CameraSession::MceoCapturedBitmapReady(), displaymode: "<<displayMode;
+        //qDebug() << "S60CameraSession::MceoCapturedBitmapReady(), displaymode: "<<displayMode;
 
         QImage::Format format = QImage::Format_Invalid;
         switch(displayMode)
@@ -1205,7 +1205,7 @@ void S60CameraSession::setExposureMode(QCamera::ExposureMode mode)
 
 void S60CameraSession::setExposureModeL(QCamera::ExposureMode mode)
 {
-    qDebug() << "S60CameraSession::setExposureModeL()";
+    //qDebug() << "S60CameraSession::setExposureModeL()";
     if (m_cameraEngine) {
         CCamera *camera = m_cameraEngine->Camera();
         switch(mode) {
