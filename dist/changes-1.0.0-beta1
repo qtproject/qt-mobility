@@ -67,7 +67,7 @@ QtMessaging
 
 QtMedia
 ------
- 
+
  - Added Audio and Video QML elements.
  - Renamed QtMedia::Frequency to QtMedia::SampleRate for consistency and
    clarity.
@@ -98,8 +98,6 @@ QtMedia
     * Renamed channels() to channelCount().
     * Renamed size() to dataSize().
     * Removed duration() and sampleSize().
-
-
 
 QtPublishSubscribe
 ------
@@ -147,7 +145,6 @@ Qt Mobility for Linux/X11
 
 Qt Mobility for Windows
 ------
-
  - Added Direct Show based media player service implementation.
 
 Qt Mobility for Mac OS X
@@ -162,6 +159,28 @@ Qt Mobility for Windows CE
 
  -
 
+Qt Mobility for Symbian
+------
+
+ - Multimedia
+    * Symbian backend added for 3rd ed FP1, 3rd ed FP2 and 5th ed. Following services supported
+      - AudioCapture
+        * limited codec support
+      - Radio
+        * listen radio
+        * search channels / frequency
+        * change volume
+      - Mediaplayer
+        * play local files
+        * play stream
+        * retrieve metadata, writing metada not supported
+        * codec support depends on device model
+        * AudioDeviceControl not implemented for mediaplayer, defaults to device default.
+      - Camera
+        * camera support is expiremental
+        * still capture
+        * mediacapture
+        * recording codec support is limited to video/mp4
 
 ****************************************************************************
 *                          Tools                                           *
@@ -169,3 +188,4 @@ Qt Mobility for Windows CE
 
  - tool
     * foo
+
