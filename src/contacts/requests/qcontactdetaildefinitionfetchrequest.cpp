@@ -59,7 +59,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \fn QContactDetailDefinitionFetchRequest::progress(QContactDetailDefinitionFetchRequest* self, bool appendOnly)
-  \deprecated
+  \internal
   This signal is emitted when some progress has been made on the request, causing either a change of
   status or an update of results, or both.  It identifies which request the signal originated from
   by including a pointer to \a self, and contains an \a appendOnly flag which signifies whether or not the total
@@ -81,7 +81,7 @@ QContactDetailDefinitionFetchRequest::~QContactDetailDefinitionFetchRequest()
 
 /*!
   \fn Q_DECL_DEPRECATED QContactDetailDefinitionFetchRequest::setNames(const QStringList& names)
-  \deprecated
+  \internal
   Sets the names of the detail definitions to retrieve to \a names
  */
 void Q_DECL_DEPRECATED QContactDetailDefinitionFetchRequest::setNames(const QStringList& names)
@@ -92,7 +92,7 @@ void Q_DECL_DEPRECATED QContactDetailDefinitionFetchRequest::setNames(const QStr
 
 /*!
   \fn Q_DECL_DEPRECATED QContactDetailDefinitionFetchRequest::names() const
-  \deprecated
+  \internal
   Returns the list of names of the detail definitions that will be retrieved
  */
 QStringList Q_DECL_DEPRECATED QContactDetailDefinitionFetchRequest::names() const

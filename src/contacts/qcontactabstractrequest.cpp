@@ -93,7 +93,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \enum QContactAbstractRequest::Status
-  \deprecated
+  \internal
   Enumerates the various states that a request may be in at any given time.  Deprecated - use QContactAbstractRequest::State instead!
   \value Inactive Operation not yet started
   \value Active Operation started, not yet finished
@@ -183,7 +183,7 @@ QContactManager::Error QContactAbstractRequest::error() const
 
 /*!
   \fn Q_DECL_DEPRECATED QContactAbstractRequest::errors() const
-  \deprecated
+  \internal
   Returns the list of errors which occurred during the most recent asynchronous operation.  Each individual error in the list corresponds to a result in the result list.
  */
 QList<QContactManager::Error> Q_DECL_DEPRECATED QContactAbstractRequest::errors() const
@@ -201,7 +201,7 @@ QContactAbstractRequest::RequestType QContactAbstractRequest::type() const
 
 /*!
   \fn Q_DECL_DEPRECATED QContactAbstractRequest::status() const
-  \deprecated
+  \internal
   Returns the current status of the request.
  */
 QContactAbstractRequest::Status Q_DECL_DEPRECATED QContactAbstractRequest::status() const

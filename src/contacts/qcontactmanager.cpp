@@ -133,7 +133,7 @@ QStringList QContactManager::availableManagers()
 
 /*!
   \fn Q_DECL_DEPRECATED QContactManager::splitUri(const QString& uri, QString* pManagerId, QMap<QString, QString>* pParams)
-  \deprecated
+  \internal
   Splits the given \a uri into the manager, store, and parameters that it describes, and places the information into the memory addressed by \a pManagerId and \a pParams respectively.  Returns true if \a uri could be split successfully, otherwise returns false.
   This function is obsolete; use parseUri() instead.
  */
@@ -339,7 +339,7 @@ QContactManager::Error QContactManager::error() const
 
 /*!
   \fn Q_DECL_DEPRECATED QContactManager::contacts(const QList<QContactSortOrder>& sortOrders) const
-  \deprecated
+  \internal
   Return the list of added contact ids, sorted according to the given list of \a sortOrders.
   This function is obsolete; use contactIds() instead.
  */
@@ -350,7 +350,7 @@ QList<QContactLocalId> Q_DECL_DEPRECATED QContactManager::contacts(const QList<Q
 
 /*!
   \fn Q_DECL_DEPRECATED QContactManager::contacts(const QContactFilter &filter, const QList<QContactSortOrder>& sortOrders) const
-  \deprecated
+  \internal
   Returns a list of contact ids that match the given \a filter, sorted according to the given list of \a sortOrders.
   Depending on the backend, this filtering operation may involve retrieving all the contacts.
   This function is obsolete; use contactIds() instead.
@@ -468,7 +468,7 @@ bool QContactManager::removeContact(const QContactLocalId& contactId)
 
 /*!
   \fn Q_DECL_DEPRECATED QContactManager::saveContacts(QList<QContact>* contactList)
-  \deprecated
+  \internal
   Adds the list of contacts given by \a contactList to the database.
   Returns a list of the error codes corresponding to the contacts in
   the \a contactList.  The \l QContactManager::error() function will
@@ -538,7 +538,7 @@ bool QContactManager::removeContacts(QList<QContactLocalId>* contactIds, QMap<in
 
 /*!
   \fn Q_DECL_DEPRECATED QContactManager::removeContacts(QList<QContactLocalId>* idList)
-  \deprecated
+  \internal
   Remove the list of contacts identified in \a idList.
   Returns a list of the error codes corresponding to the contact ids in
   the \a idList.  The \l QContactManager::error() function will
@@ -563,7 +563,7 @@ QList<QContactManager::Error> Q_DECL_DEPRECATED QContactManager::removeContacts(
 
 /*!
   \fn Q_DECL_DEPRECATED QContactManager::synthesizeDisplayLabel(const QContact& contact) const
-  \deprecated
+  \internal
   Returns a display label for a \a contact which is synthesized from its details in a platform-specific manner
  */
 QString Q_DECL_DEPRECATED QContactManager::synthesizeDisplayLabel(const QContact& contact) const
@@ -756,7 +756,7 @@ QList<QVariant::Type> QContactManager::supportedDataTypes() const
 
 /*!
   \fn Q_DECL_DEPRECATED QContactManager::filterSupported(const QContactFilter& filter) const
-  \deprecated
+  \internal
   Returns true if the given \a filter is supported natively by the
   manager, and false if the filter behaviour would be emulated.
 
@@ -811,7 +811,7 @@ QStringList QContactManager::supportedContactTypes() const
 
 /*!
   \fn Q_DECL_DEPRECATED QContactManager::version()
-  \deprecated
+  \internal
   Returns the version number of the Qt Mobility Contacts API
  */
 int Q_DECL_DEPRECATED QContactManager::version()
@@ -821,7 +821,7 @@ int Q_DECL_DEPRECATED QContactManager::version()
 
 /*!
   \fn Q_DECL_DEPRECATED QContactManager::implementationVersion() const
-  \deprecated
+  \internal
   Returns the engine backend implementation version number.
   This function is obsolete; use managerVersion() instead.
  */

@@ -62,7 +62,7 @@ QTM_BEGIN_NAMESPACE
 /*!
 
   \fn QContactRelationshipFetchRequest::progress(QContactRelationshipFetchRequest* self, bool appendOnly)
-  \deprecated
+  \internal
 
   This signal is emitted when some progress has been made on the
   request, causing either a change of status or an update of results,
@@ -143,7 +143,7 @@ QContactId QContactRelationshipFetchRequest::second() const
 
 /*!
   \fn Q_DECL_DEPRECATED QContactRelationshipFetchRequest::setParticipant(const QContactId& participantUri, QContactRelationshipFilter::Role role)
-  \deprecated
+  \internal
   Sets the participant criterion of the fetch request to \a
   participantUri.  If the \a participantUri references a contact in
   the manager from which the relationships are being fetched and the
@@ -173,7 +173,7 @@ void Q_DECL_DEPRECATED QContactRelationshipFetchRequest::setParticipant(const QC
 
 /*!
   \fn Q_DECL_DEPRECATED QContactRelationshipFetchRequest::participant() const
-  \deprecated
+  \internal
   Returns the participant criterion of the fetch request
  */
 QContactId Q_DECL_DEPRECATED QContactRelationshipFetchRequest::participant() const
@@ -184,7 +184,7 @@ QContactId Q_DECL_DEPRECATED QContactRelationshipFetchRequest::participant() con
 
 /*!
   \fn Q_DECL_DEPRECATED QContactRelationshipFetchRequest::participantRole() const
-  \deprecated
+  \internal
   Returns the role of the participant criterion of the fetch request
  */
 QContactRelationshipFilter::Role Q_DECL_DEPRECATED QContactRelationshipFetchRequest::participantRole() const

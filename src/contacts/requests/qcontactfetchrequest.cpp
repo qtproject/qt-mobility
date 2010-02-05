@@ -59,7 +59,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \fn QContactFetchRequest::progress(QContactFetchRequest* self, bool appendOnly)
-  \deprecated
+  \internal
   This signal is emitted when some progress has been made on the request, causing either a change of
   status or an update of results, or both.  It identifies which request the signal originated from
   by including a pointer to \a self, and contains an \a appendOnly flag which signifies whether or not the total
