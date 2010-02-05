@@ -22,6 +22,7 @@ OBJECTS_DIR = .obj/
 
 DEPENDPATH += .
 INCLUDEPATH += . 
+INCLUDEPATH += /usr/include 
 
 LIBS += -lqttracker
 

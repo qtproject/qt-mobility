@@ -44,6 +44,8 @@
 
 #include <qcontactmanager.h>
 
+QTM_USE_NAMESPACE
+
 /**
  * Constructs a single instance of QContactManager for "tracker"
  * backend. This way the plugin loading is done only once. For other

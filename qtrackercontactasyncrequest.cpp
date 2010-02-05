@@ -668,9 +668,9 @@ void QTrackerContactFetchRequest::readFromQueryRowToContact(QContact &contact, i
     int column = 2; // 0 - for QContactLocalId, 1 for metacontact
     QContactName name = contact.detail(QContactName::DefinitionName);
     name.setPrefix(query->index(i, column++).data().toString());
-    name.setFirst(query->index(i, column++).data().toString());
-    name.setMiddle(query->index(i, column++).data().toString());
-    name.setLast(query->index(i, column++).data().toString());
+    name.setFirstName(query->index(i, column++).data().toString());
+    name.setMiddleName(query->index(i, column++).data().toString());
+    name.setLastName(query->index(i, column++).data().toString());
     contact.saveDetail(&name);
 
     QContactAvatar avatar = contact.detail(QContactAvatar::DefinitionName);
