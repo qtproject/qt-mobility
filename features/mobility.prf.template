@@ -7,7 +7,7 @@
         INCLUDEPATH+=$${EPOCROOT}epoc32/include/app
     }
 
-    contains(MOBILITY,bearer|location|publishsubscribe|systeminfo|multimedia|messaging|serviceframework) {
+    contains(MOBILITY,bearer|landmarks|location|publishsubscribe|systeminfo|multimedia|messaging|serviceframework) {
         INCLUDEPATH+=$${EPOCROOT}epoc32/include/mw
     }
 }
@@ -24,6 +24,10 @@ contains(MOBILITY, publishsubscribe) {
 
 contains(MOBILITY, location) {
     qtAddLibrary(QtLocation)
+}
+
+contains(MOBILITY, landmarks) {
+    qtAddLibrary(QtLandmarks)
 }
 
 contains(MOBILITY, serviceframework) {

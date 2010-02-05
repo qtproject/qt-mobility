@@ -56,7 +56,7 @@ set QT_MOBILITY_LIB=
 set BUILD_UNITTESTS=no
 set BUILD_EXAMPLES=no
 set BUILD_DOCS=yes
-set MOBILITY_MODULES=bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework
+set MOBILITY_MODULES=bearer location landmarks contacts multimedia publishsubscribe versit messaging systeminfo serviceframework
 set MOBILITY_MODULES_UNPARSED=
 set VC_TEMPLATE_OPTION=
 set QT_PATH=
@@ -118,7 +118,7 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo -examples ......... Build example applications
     echo -no-docs .......... Do not build documentation (build by default)
     echo -modules ^<list^> ... Build only the specified modules (default all)
-    echo                     Choose from: bearer contacts location publishsubscribe
+    echo                     Choose from: bearer contacts landmarks location publishsubscribe
     echo                     messaging multimedia systeminfo serviceframework versit
     echo                     Modules should be separated by a space and surrounded
     echo                     by double quotation. If a
@@ -230,6 +230,8 @@ if %FIRST% == bearer (
     echo     Bearer Management selected
 ) else if %FIRST% == contacts (
     echo     Contacts selected
+) else if %FIRST% == landmarks (
+    echo     Landmarks selected
 ) else if %FIRST% == location (
     echo     Location selected
 ) else if %FIRST% == messaging (
@@ -454,6 +456,8 @@ if %FIRST% == bearer (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\bearer
 ) else if %FIRST% == contacts (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts
+) else if %FIRST% == landmarks (
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\landmarks
 ) else if %FIRST% == location (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\location
 ) else if %FIRST% == messaging (
