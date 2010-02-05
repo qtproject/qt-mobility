@@ -134,7 +134,7 @@ QtPublishSubscribe
  - Rename QValueSpacePublisher::attributeInterestChanged() to
    QValueSpacePublisher::interestChanged().
  - Symbian backend improvements
-    * MOBILITY-387 fixed.
+    * MOBILITY-387: Symbian central repository related compile error fixed
     * Support for removeValue.
     * subPaths only returns the values that are really available.
     * Unsupported data types are published as serialized QByteArrays.
