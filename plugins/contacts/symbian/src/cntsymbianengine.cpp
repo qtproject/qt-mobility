@@ -242,12 +242,12 @@ QList<QContact> CntSymbianEngine::contacts(const QContactFilter& filter, const Q
  */
 QContact CntSymbianEngine::contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const
 {
-    // TODO: implementation for definitionRestrictions!
-    Q_UNUSED(definitionRestrictions);
     QContact* contact = new QContact();
-    TRAPD(err, *contact = fetchContactL(contactId));
+    TRAPD(err, *contact = fetchContactL(contactId, definitionRestrictions));
     CntSymbianTransformError::transformError(err, error);
-    if(error == QContactManager::NoError) {
+    //check relationship only if there are no definition restrictions, otherwise
+    //skip this time expensive operation. 
+    if(error == QContactManager::NoError && definitionRestrictions.isEmpty()) {
         updateDisplayLabel(*contact);
         QContactManager::Error relationshipError;
         QList<QContactRelationship> relationships = this->relationships(QString(), contact->id(), QContactRelationshipFilter::Either, relationshipError);
@@ -389,7 +389,7 @@ bool CntSymbianEngine::doSaveContact(QContact* contact, QContactChangeSet& chang
 /*!
  * Private leaving implementation for contact()
  */
-QContact CntSymbianEngine::fetchContactL(const QContactLocalId &localId) const
+QContact CntSymbianEngine::fetchContactL(const QContactLocalId &localId, const QStringList& definitionRestrictions) const
 {
     // A contact with a zero id is not expected to exist.
     // Symbian contact database uses id 0 internally as the id of the
@@ -402,7 +402,7 @@ QContact CntSymbianEngine::fetchContactL(const QContactLocalId &localId) const
     CleanupStack::PushL(contactItem);
 
     // Convert to a QContact
-    QContact contact = m_transformContact->transformContactL(*contactItem);
+    QContact contact = m_transformContact->transformContactL(*contactItem, definitionRestrictions);
 
     // Transform details that are not available until the contact has been saved
     m_transformContact->transformPostSaveDetailsL(*contactItem, contact, *m_dataBase->contactDatabase(), m_managerUri);

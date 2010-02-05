@@ -1730,6 +1730,11 @@ void tst_QContactManagerFiltering::relationshipFiltering_data()
         QTest::newRow("RF-17") << manager << static_cast<int>(QContactRelationshipFilter::First) << QString(QLatin1String(QContactRelationship::HasSpouse)) << static_cast<unsigned int>(0) << QString() << "b";
         QTest::newRow("RF-18") << manager << static_cast<int>(QContactRelationshipFilter::Either) << QString(QLatin1String(QContactRelationship::HasSpouse)) << static_cast<unsigned int>(0) << QString() << "ab";
 
+        // Unknown relationship
+        QTest::newRow("RF-19") << manager << static_cast<int>(QContactRelationshipFilter::Second) << QString(QLatin1String("UnknownRelationship")) << static_cast<unsigned int>(0) << QString() << "";
+        QTest::newRow("RF-20") << manager << static_cast<int>(QContactRelationshipFilter::First) << QString(QLatin1String("UnknownRelationship")) << static_cast<unsigned int>(0) << QString() << "";
+        QTest::newRow("RF-21") << manager << static_cast<int>(QContactRelationshipFilter::Either) << QString(QLatin1String("UnknownRelationship")) << static_cast<unsigned int>(0) << QString() << "";
+
         // match any contact that is the related contact in a relationship with contact-A
         //QTest::newRow("RF-19") << manager << static_cast<int>(QContactRelationshipFilter::Second) << QString() << static_cast<unsigned int>(contactAId.value(manager).localId()) << contactAId.value(manager).managerUri() << "h";
         // match any contact has contact-A as the related contact
@@ -1788,10 +1793,14 @@ void tst_QContactManagerFiltering::relationshipFiltering()
     h2i.setFirst(firstId);
     h2i.setSecond(secondId);
     h2i.setRelationshipType(relationshipType);
-
+    if (relationshipType == "UnknownRelationship")
+        qDebug() << "hi mum";
     // save and check error code
-    if(cm->hasFeature(QContactManager::Relationships)
-        && cm->supportedRelationshipTypes().contains(relationshipType)) {
+    bool succeeded = false;
+    if((cm->hasFeature(QContactManager::Relationships)
+        && cm->supportedRelationshipTypes().contains(relationshipType))
+        || cm->hasFeature(QContactManager::ArbitraryRelationshipTypes)) {
+        succeeded = true;
         QVERIFY(cm->saveRelationship(&h2i));
         QCOMPARE(cm->error(), QContactManager::NoError);
     } else {
@@ -1817,8 +1826,7 @@ void tst_QContactManagerFiltering::relationshipFiltering()
     QString output = convertIds(contacts, ids);
 
     // 5. Remove the created relationship and contacts
-    if(cm->hasFeature(QContactManager::Relationships)
-        && cm->supportedRelationshipTypes().contains(relationshipType)) {
+    if(succeeded) {
         // Check that an existing relationship can be removed
         QVERIFY(cm->removeRelationship(h2i));
         QCOMPARE(cm->error(), QContactManager::NoError);

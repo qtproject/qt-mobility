@@ -296,4 +296,3 @@ void UT_CntSqlSearch::testCreateSpaceString()
 
 }
 
-QTEST_MAIN(UT_CntSqlSearch)

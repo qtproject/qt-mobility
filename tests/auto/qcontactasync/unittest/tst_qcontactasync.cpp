@@ -351,9 +351,8 @@ void tst_QContactAsync::contactFetch()
     QVERIFY(cfr.start());
     //QVERIFY(cfr.isFinished() || !cfr.start());  // already started. // thread scheduling means this is untestable
     QVERIFY((cfr.isActive() && cfr.state() == QContactAbstractRequest::ActiveState) || cfr.isFinished());
-    QVERIFY(cfr.waitForFinished() || cfr.isFinished());
+    QVERIFY(cfr.waitForFinished());
     QVERIFY(cfr.isFinished());
-    QVERIFY(!cfr.isActive());
 
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
@@ -376,9 +375,8 @@ void tst_QContactAsync::contactFetch()
     QVERIFY(cfr.start());
     QVERIFY((cfr.isActive() && cfr.state() == QContactAbstractRequest::ActiveState) || cfr.isFinished());
     //QVERIFY(cfr.isFinished() || !cfr.start());  // already started. // thread scheduling means this is untestable
-    QVERIFY(cfr.waitForFinished() || cfr.isFinished());
+    QVERIFY(cfr.waitForFinished());
     QVERIFY(cfr.isFinished());
-    QVERIFY(!cfr.isActive());
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
@@ -402,9 +400,8 @@ void tst_QContactAsync::contactFetch()
     QVERIFY(cfr.start());
     QVERIFY((cfr.isActive() && cfr.state() == QContactAbstractRequest::ActiveState) || cfr.isFinished());
     //QVERIFY(cfr.isFinished() || !cfr.start());  // already started. // thread scheduling means this is untestable
-    QVERIFY(cfr.waitForFinished() || cfr.isFinished());
+    QVERIFY(cfr.waitForFinished());
     QVERIFY(cfr.isFinished());
-    QVERIFY(!cfr.isActive());
 
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
@@ -427,9 +424,8 @@ void tst_QContactAsync::contactFetch()
     QVERIFY(cfr.start());
     QVERIFY((cfr.isActive() && cfr.state() == QContactAbstractRequest::ActiveState) || cfr.isFinished());
     //QVERIFY(cfr.isFinished() || !cfr.start());  // already started. // thread scheduling means this is untestable
-    QVERIFY(cfr.waitForFinished() || cfr.isFinished());
+    QVERIFY(cfr.waitForFinished());
     QVERIFY(cfr.isFinished());
-    QVERIFY(!cfr.isActive());
 
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
@@ -463,9 +459,9 @@ void tst_QContactAsync::contactFetch()
         QVERIFY(found); // must exist or fail.
 
         // ensure that the contact is the same (except synth fields)
-        QList<QContactDetail> fdets = retrievedRestricted.details();
-        QList<QContactDetail> rdets = currRestricted.details();
-        foreach (const QContactDetail& det, fdets) {
+        QList<QContactDetail> retrievedDetails = retrievedRestricted.details();
+        QList<QContactDetail> expectedDetails = currRestricted.details();
+        foreach (const QContactDetail& det, expectedDetails) {
             // ignore backend synthesised details
             // again, this requires a "default contact details" function to work properly.
             if (det.definitionName() == QContactDisplayLabel::DefinitionName
@@ -473,10 +469,8 @@ void tst_QContactAsync::contactFetch()
                 continue;
             }
 
-            // everything else must exist in both.
-            if(!rdets.contains(det)) {
-                qWarning("A detail exists in retrieved contact which doesn't exist in restricted contact!  This could be due to backend synthesization, or represent a bug!  (Definition name: %s)", det.definitionName().toAscii().constData());
-            }
+            // everything else in the expected contact should be in the retrieved one.
+            QVERIFY(retrievedDetails.contains(det));
         }
     }
 
@@ -510,14 +504,10 @@ void tst_QContactAsync::contactFetch()
         }
 
         // if we get here, then we are cancelling the request.
-        QVERIFY(cfr.state() == QContactAbstractRequest::CanceledState);
-        QVERIFY(cfr.waitForFinished() || cfr.isFinished());
-        QVERIFY(cfr.state() == QContactAbstractRequest::CanceledState);
-        QVERIFY(cfr.isFinished());
-        QVERIFY(!cfr.isActive());
-        QVERIFY(cfr.state() == QContactAbstractRequest::CanceledState);
+        QVERIFY(cfr.waitForFinished());
+        QVERIFY(cfr.isCanceled());
 
-        QVERIFY(spy.count() >= 1); // active + cancelling + cancelled progress signals
+        QVERIFY(spy.count() >= 1); // active + cancelled progress signals
         spy.clear();
         break;
     }
@@ -545,9 +535,8 @@ void tst_QContactAsync::contactFetch()
             continue;
         }
         cfr.waitForFinished();
-        QVERIFY(spy.count() >= 1); // active + cancelling + cancelled progress signals
+        QVERIFY(spy.count() >= 1); // active + cancelled progress signals
         spy.clear();
-        QVERIFY(cfr.isFinished());
         QVERIFY(!cfr.isActive());
         QVERIFY(cfr.state() == QContactAbstractRequest::CanceledState);
         break;
@@ -587,9 +576,8 @@ void tst_QContactAsync::contactIdFetch()
 
     QVERIFY((cfr.isActive() &&cfr.state() == QContactAbstractRequest::ActiveState) || cfr.isFinished());
     //QVERIFY(cfr.isFinished() || !cfr.start());  // already started. // thread scheduling means this is untestable
-    QVERIFY(cfr.waitForFinished() || cfr.isFinished());
+    QVERIFY(cfr.waitForFinished());
     QVERIFY(cfr.isFinished());
-    QVERIFY(!cfr.isActive());
 
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
@@ -608,9 +596,8 @@ void tst_QContactAsync::contactIdFetch()
     QVERIFY(cfr.start());
     QVERIFY((cfr.isActive() && cfr.state() == QContactAbstractRequest::ActiveState) || cfr.isFinished());
     //QVERIFY(cfr.isFinished() || !cfr.start());  // already started. // thread scheduling means this is untestable
-    QVERIFY(cfr.waitForFinished() || cfr.isFinished());
+    QVERIFY(cfr.waitForFinished());
     QVERIFY(cfr.isFinished());
-    QVERIFY(!cfr.isActive());
 
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
@@ -631,9 +618,8 @@ void tst_QContactAsync::contactIdFetch()
     QVERIFY(cfr.start());
     QVERIFY((cfr.isActive() && cfr.state() == QContactAbstractRequest::ActiveState) || cfr.isFinished());
     //QVERIFY(cfr.isFinished() || !cfr.start());  // already started. // thread scheduling means this is untestable
-    QVERIFY(cfr.waitForFinished() || cfr.isFinished());
+    QVERIFY(cfr.waitForFinished());
     QVERIFY(cfr.isFinished());
-    QVERIFY(!cfr.isActive());
 
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
@@ -670,14 +656,10 @@ void tst_QContactAsync::contactIdFetch()
         }
 
         // if we get here, then we are cancelling the request.
-        QVERIFY(cfr.state() == QContactAbstractRequest::CanceledState);
-        QVERIFY(cfr.waitForFinished() || cfr.isFinished());
-        QVERIFY(cfr.state() == QContactAbstractRequest::CanceledState);
-        QVERIFY(cfr.isFinished());
-        QVERIFY(!cfr.isActive());
-        QVERIFY(cfr.state() == QContactAbstractRequest::CanceledState);
+        QVERIFY(cfr.waitForFinished());
+        QVERIFY(cfr.isCanceled());
 
-        QVERIFY(spy.count() >= 1); // active + cancelling + cancelled progress signals
+        QVERIFY(spy.count() >= 1); // active + cancelled progress signals
         spy.clear();
 
         break;
@@ -704,11 +686,9 @@ void tst_QContactAsync::contactIdFetch()
             continue;
         }
         cfr.waitForFinished();
-        QVERIFY(cfr.isFinished());
-        QVERIFY(!cfr.isActive());
-        QVERIFY(cfr.state() == QContactAbstractRequest::CanceledState);
+        QVERIFY(cfr.isCanceled());
 
-        QVERIFY(spy.count() >= 1); // active + cancelling + cancelled progress signals
+        QVERIFY(spy.count() >= 1); // active + cancelled progress signals
         spy.clear();
         break;
     }
@@ -750,9 +730,8 @@ void tst_QContactAsync::contactRemove()
 
     QVERIFY((crr.isActive() &&crr.state() == QContactAbstractRequest::ActiveState) || crr.isFinished());
     //QVERIFY(crr.isFinished() || !crr.start());  // already started. // thread scheduling means this is untestable
-    QVERIFY(crr.waitForFinished() || crr.isFinished());
+    QVERIFY(crr.waitForFinished());
     QVERIFY(crr.isFinished());
-    QVERIFY(!crr.isActive());
 
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
@@ -769,9 +748,8 @@ void tst_QContactAsync::contactRemove()
 
     QVERIFY((crr.isActive() && crr.state() == QContactAbstractRequest::ActiveState) || crr.isFinished());
     //QVERIFY(crr.isFinished() || !crr.start());  // already started. // thread scheduling means this is untestable
-    QVERIFY(crr.waitForFinished() || crr.isFinished());
+    QVERIFY(crr.waitForFinished());
     QVERIFY(crr.isFinished());
-    QVERIFY(!crr.isActive());
 
     QCOMPARE(cm->contactIds().size(), 0); // no contacts should be left.
     QVERIFY(spy.count() >= 1); // active + finished progress signals
@@ -811,15 +789,11 @@ void tst_QContactAsync::contactRemove()
         }
 
         // if we get here, then we are cancelling the request.
-        QVERIFY(crr.state() == QContactAbstractRequest::CanceledState);
-        QVERIFY(crr.waitForFinished() || crr.isFinished());
-        QVERIFY(crr.state() == QContactAbstractRequest::CanceledState);
-        QVERIFY(crr.isFinished());
-        QVERIFY(!crr.isActive());
-        QVERIFY(crr.state() == QContactAbstractRequest::CanceledState);
+        QVERIFY(crr.waitForFinished());
+        QVERIFY(crr.isCanceled());
         QCOMPARE(cm->contactIds().size(), 1);
         QCOMPARE(cm->contact(cm->contactIds().first()), temp);
-        QVERIFY(spy.count() >= 1); // active + cancelling + cancelled progress signals
+        QVERIFY(spy.count() >= 1); // active + cancelled progress signals
         spy.clear();
         break;
     }
@@ -846,12 +820,10 @@ void tst_QContactAsync::contactRemove()
             continue;
         }
         crr.waitForFinished();
-        QVERIFY(crr.isFinished());
-        QVERIFY(!crr.isActive());
-        QVERIFY(crr.state() == QContactAbstractRequest::CanceledState);
+        QVERIFY(crr.isCanceled());
         QCOMPARE(cm->contactIds().size(), 1);
         QCOMPARE(cm->contact(cm->contactIds().first()), temp);
-        QVERIFY(spy.count() >= 1); // active + cancelling + cancelled progress signals
+        QVERIFY(spy.count() >= 1); // active + cancelled progress signals
         spy.clear();
         break;
     }
@@ -895,9 +867,8 @@ void tst_QContactAsync::contactSave()
 
     QVERIFY((csr.isActive() && csr.state() == QContactAbstractRequest::ActiveState) || csr.isFinished());
     //QVERIFY(csr.isFinished() || !csr.start());  // already started. // thread scheduling means this is untestable
-    QVERIFY(csr.waitForFinished() || csr.isFinished());
+    QVERIFY(csr.waitForFinished());
     QVERIFY(csr.isFinished());
-    QVERIFY(!csr.isActive());
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
@@ -921,10 +892,9 @@ void tst_QContactAsync::contactSave()
 
     QVERIFY((csr.isActive() && csr.state() == QContactAbstractRequest::ActiveState) || csr.isFinished());
     //QVERIFY(csr.isFinished() || !csr.start());  // already started. // thread scheduling means this is untestable
-    QVERIFY(csr.waitForFinished() || csr.isFinished());
+    QVERIFY(csr.waitForFinished());
 
     QVERIFY(csr.isFinished());
-    QVERIFY(!csr.isActive());
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
@@ -975,13 +945,9 @@ void tst_QContactAsync::contactSave()
         }
 
         // if we get here, then we are cancelling the request.
-        QVERIFY(csr.state() == QContactAbstractRequest::CanceledState);
-        QVERIFY(csr.waitForFinished() || csr.isFinished());
-        QVERIFY(csr.state() == QContactAbstractRequest::CanceledState);
-        QVERIFY(csr.isFinished());
-        QVERIFY(!csr.isActive());
-        QVERIFY(csr.state() == QContactAbstractRequest::CanceledState);
-        QVERIFY(spy.count() >= 1); // active + cancelling + cancelled progress signals
+        QVERIFY(csr.waitForFinished());
+        QVERIFY(csr.isCanceled());
+        QVERIFY(spy.count() >= 1); // active + cancelled progress signals
         spy.clear();
 
         // verify that the changes were not saved
@@ -1021,10 +987,8 @@ void tst_QContactAsync::contactSave()
             continue;
         }
         csr.waitForFinished(); // now wait until finished (if it hasn't already).
-        QVERIFY(csr.isFinished());
-        QVERIFY(!csr.isActive());
-        QVERIFY(csr.state() == QContactAbstractRequest::CanceledState);
-        QVERIFY(spy.count() >= 1); // active + cancelling + cancelled progress signals
+        QVERIFY(csr.isCanceled());
+        QVERIFY(spy.count() >= 1); // active + cancelled progress signals
         spy.clear();
 
         // verify that the changes were not saved
@@ -1070,9 +1034,8 @@ void tst_QContactAsync::definitionFetch()
 
     QVERIFY((dfr.isActive() && dfr.state() == QContactAbstractRequest::ActiveState) || dfr.isFinished());
     //QVERIFY(dfr.isFinished() || !dfr.start());  // already started. // thread scheduling means this is untestable
-    QVERIFY(dfr.waitForFinished() || dfr.isFinished());
+    QVERIFY(dfr.waitForFinished());
     QVERIFY(dfr.isFinished());
-    QVERIFY(!dfr.isActive());
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
@@ -1089,9 +1052,8 @@ void tst_QContactAsync::definitionFetch()
 
     QVERIFY((dfr.isActive() && dfr.state() == QContactAbstractRequest::ActiveState) || dfr.isFinished());
     //QVERIFY(dfr.isFinished() || !dfr.start());  // already started. // thread scheduling means this is untestable
-    QVERIFY(dfr.waitForFinished() || dfr.isFinished());
+    QVERIFY(dfr.waitForFinished());
     QVERIFY(dfr.isFinished());
-    QVERIFY(!dfr.isActive());
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
@@ -1124,13 +1086,9 @@ void tst_QContactAsync::definitionFetch()
         }
 
         // if we get here, then we are cancelling the request.
-        QVERIFY(dfr.state() == QContactAbstractRequest::CanceledState);
-        QVERIFY(dfr.waitForFinished() || dfr.isFinished());
-        QVERIFY(dfr.state() == QContactAbstractRequest::CanceledState);
-        QVERIFY(dfr.isFinished());
-        QVERIFY(!dfr.isActive());
-        QVERIFY(dfr.state() == QContactAbstractRequest::CanceledState);
-        QVERIFY(spy.count() >= 1); // active + cancelling + cancelled progress signals
+        QVERIFY(dfr.waitForFinished());
+        QVERIFY(dfr.isCanceled());
+        QVERIFY(spy.count() >= 1); // active + cancelled progress signals
         spy.clear();
         break;
     }
@@ -1155,10 +1113,8 @@ void tst_QContactAsync::definitionFetch()
             continue;
         }
         dfr.waitForFinished();
-        QVERIFY(dfr.isFinished());
-        QVERIFY(!dfr.isActive());
-        QVERIFY(dfr.state() == QContactAbstractRequest::CanceledState);
-        QVERIFY(spy.count() >= 1); // active + cancelling + cancelled progress signals
+        QVERIFY(dfr.isCanceled());
+        QVERIFY(spy.count() >= 1); // active + cancelled progress signals
         spy.clear();
 
         break;
@@ -1205,9 +1161,8 @@ void tst_QContactAsync::definitionRemove()
 
     QVERIFY((drr.isActive() && drr.state() == QContactAbstractRequest::ActiveState) || drr.isFinished());
     //QVERIFY(drr.isFinished() || !drr.start());  // already started. // thread scheduling means this is untestable
-    QVERIFY(drr.waitForFinished() || drr.isFinished());
+    QVERIFY(drr.waitForFinished());
     QVERIFY(drr.isFinished());
-    QVERIFY(!drr.isActive());
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
@@ -1222,9 +1177,8 @@ void tst_QContactAsync::definitionRemove()
 
     QVERIFY((drr.isActive() && drr.state() == QContactAbstractRequest::ActiveState) || drr.isFinished());
     //QVERIFY(drr.isFinished() || !drr.start());  // already started. // thread scheduling means this is untestable
-    QVERIFY(drr.waitForFinished() || drr.isFinished());
+    QVERIFY(drr.waitForFinished());
     QVERIFY(drr.isFinished());
-    QVERIFY(!drr.isActive());
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
@@ -1239,9 +1193,8 @@ void tst_QContactAsync::definitionRemove()
 
     QVERIFY((drr.isActive() && drr.state() == QContactAbstractRequest::ActiveState) || drr.isFinished());
     //QVERIFY(drr.isFinished() || !drr.start());  // already started. // thread scheduling means this is untestable
-    QVERIFY(drr.waitForFinished() || drr.isFinished());
+    QVERIFY(drr.waitForFinished());
     QVERIFY(drr.isFinished());
-    QVERIFY(!drr.isActive());
     QVERIFY(spy.count() >= 1); // active + finished signals
     spy.clear();
 
@@ -1256,12 +1209,11 @@ void tst_QContactAsync::definitionRemove()
     QVERIFY(!drr.cancel()); // not started
     QVERIFY(drr.start());
 
-    QVERIFY((drr.isActive() && drr.state() == QContactAbstractRequest::ActiveState) || drr.isFinished());
+    QVERIFY(drr.isActive() || drr.isFinished());
     //QVERIFY(drr.isFinished() || !drr.start());  // already started. // thread scheduling means this is untestable
-    QVERIFY(drr.waitForFinished() || drr.isFinished());
+    QVERIFY(drr.waitForFinished());
 
     QVERIFY(drr.isFinished());
-    QVERIFY(!drr.isActive());
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
@@ -1296,13 +1248,9 @@ void tst_QContactAsync::definitionRemove()
         }
 
         // if we get here, then we are cancelling the request.
-        QVERIFY(drr.state() == QContactAbstractRequest::CanceledState);
-        QVERIFY(drr.waitForFinished() || drr.isFinished());
-        QVERIFY(drr.state() == QContactAbstractRequest::CanceledState);
-        QVERIFY(drr.isFinished());
-        QVERIFY(!drr.isActive());
-        QVERIFY(drr.state() == QContactAbstractRequest::CanceledState);
-        QVERIFY(spy.count() >= 1); // active + cancelling + cancelled progress signals
+        QVERIFY(drr.waitForFinished());
+        QVERIFY(drr.isCanceled());
+        QVERIFY(spy.count() >= 1); // active + cancelled progress signals
         spy.clear();
 
         QCOMPARE(cm->detailDefinitions().keys().size(), originalCount - 2); // hasn't changed
@@ -1329,10 +1277,8 @@ void tst_QContactAsync::definitionRemove()
             continue;
         }
         drr.waitForFinished();
-        QVERIFY(drr.isFinished());
-        QVERIFY(!drr.isActive());
-        QVERIFY(drr.state() == QContactAbstractRequest::CanceledState);
-        QVERIFY(spy.count() >= 1); // active + cancelling + cancelled progress signals
+        QVERIFY(drr.isCanceled());
+        QVERIFY(spy.count() >= 1); // active + cancelled progress signals
         spy.clear();
 
         QCOMPARE(cm->detailDefinitions().keys().size(), originalCount - 2); // hasn't changed
@@ -1390,9 +1336,8 @@ void tst_QContactAsync::definitionSave()
 
     QVERIFY((dsr.isActive() && dsr.state() == QContactAbstractRequest::ActiveState) || dsr.isFinished());
     //QVERIFY(dsr.isFinished() || !dsr.start());  // already started. // thread scheduling means this is untestable
-    QVERIFY(dsr.waitForFinished() || dsr.isFinished());
+    QVERIFY(dsr.waitForFinished());
     QVERIFY(dsr.isFinished());
-    QVERIFY(!dsr.isActive());
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
@@ -1415,9 +1360,8 @@ void tst_QContactAsync::definitionSave()
 
     QVERIFY((dsr.isActive() && dsr.state() == QContactAbstractRequest::ActiveState) || dsr.isFinished());
     //QVERIFY(dsr.isFinished() || !dsr.start());  // already started. // thread scheduling means this is untestable
-    QVERIFY(dsr.waitForFinished() || dsr.isFinished());
+    QVERIFY(dsr.waitForFinished());
     QVERIFY(dsr.isFinished());
-    QVERIFY(!dsr.isActive());
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
@@ -1459,19 +1403,15 @@ void tst_QContactAsync::definitionSave()
         }
 
         // if we get here, then we are cancelling the request.
-        QVERIFY(dsr.state() == QContactAbstractRequest::CanceledState);
-        QVERIFY(dsr.waitForFinished() || dsr.isFinished());
-        QVERIFY(dsr.state() == QContactAbstractRequest::CanceledState);
-        QVERIFY(dsr.isFinished());
-        QVERIFY(!dsr.isActive());
-        QVERIFY(dsr.state() == QContactAbstractRequest::CanceledState);
-        QVERIFY(spy.count() >= 1); // active + cancelling + cancelled progress signals
+        QVERIFY(dsr.waitForFinished());
+        QVERIFY(dsr.isCanceled());
+        QVERIFY(spy.count() >= 1); // active + cancelled progress signals
         spy.clear();
 
         // verify that the changes were not saved
         QList<QContactDetailDefinition> allDefs = cm->detailDefinitions().values();
         QVERIFY(!allDefs.contains(testDef));
-        QCOMPARE(cm->detailDefinitions().values().size(), originalCount);
+        QCOMPARE(cm->detailDefinitions().values().size(), originalCount + 1);
 
         break;
     }
@@ -1499,16 +1439,14 @@ void tst_QContactAsync::definitionSave()
             continue;
         }
         dsr.waitForFinished();
-        QVERIFY(dsr.isFinished());
-        QVERIFY(!dsr.isActive());
-        QVERIFY(dsr.state() == QContactAbstractRequest::CanceledState);
-        QVERIFY(spy.count() >= 1); // active + cancelling + cancelled progress signals
+        QVERIFY(dsr.isCanceled());
+        QVERIFY(spy.count() >= 1); // active + cancelled progress signals
         spy.clear();
 
         // verify that the changes were not saved
         QList<QContactDetailDefinition> allDefs = cm->detailDefinitions().values();
         QVERIFY(!allDefs.contains(testDef));
-        QCOMPARE(cm->detailDefinitions().values().size(), originalCount);
+        QCOMPARE(cm->detailDefinitions().values().size(), originalCount + 1);
 
         break;
     }
@@ -1543,10 +1481,9 @@ void tst_QContactAsync::relationshipFetch()
 
     QVERIFY((rfr.isActive() && rfr.state() == QContactAbstractRequest::ActiveState) || rfr.isFinished());
     //QVERIFY(rfr.isFinished() || !rfr.start());  // already started. // thread scheduling means this is untestable
-    QVERIFY(rfr.waitForFinished() || rfr.isFinished());
+    QVERIFY(rfr.waitForFinished());
 
     QVERIFY(rfr.isFinished());
-    QVERIFY(!rfr.isActive());
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
@@ -1561,9 +1498,8 @@ void tst_QContactAsync::relationshipFetch()
 
     QVERIFY((rfr.isActive() && rfr.state() == QContactAbstractRequest::ActiveState) || rfr.isFinished());
     //QVERIFY(rfr.isFinished() || !rfr.start());  // already started. // thread scheduling means this is untestable
-    QVERIFY(rfr.waitForFinished() || rfr.isFinished());
+    QVERIFY(rfr.waitForFinished());
     QVERIFY(rfr.isFinished());
-    QVERIFY(!rfr.isActive());
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
@@ -1588,9 +1524,8 @@ void tst_QContactAsync::relationshipFetch()
 
     QVERIFY((rfr.isActive() && rfr.state() == QContactAbstractRequest::ActiveState) || rfr.isFinished());
     //QVERIFY(rfr.isFinished() || !rfr.start());  // already started. // thread scheduling means this is untestable
-    QVERIFY(rfr.waitForFinished() || rfr.isFinished());
+    QVERIFY(rfr.waitForFinished());
     QVERIFY(rfr.isFinished());
-    QVERIFY(!rfr.isActive());
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
@@ -1616,9 +1551,8 @@ void tst_QContactAsync::relationshipFetch()
 
     QVERIFY((rfr.isActive() && rfr.state() == QContactAbstractRequest::ActiveState) || rfr.isFinished());
     //QVERIFY(rfr.isFinished() || !rfr.start());  // already started. // thread scheduling means this is untestable
-    QVERIFY(rfr.waitForFinished() || rfr.isFinished());
+    QVERIFY(rfr.waitForFinished());
     QVERIFY(rfr.isFinished());
-    QVERIFY(!rfr.isActive());
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
@@ -1645,34 +1579,18 @@ void tst_QContactAsync::relationshipFetch()
 
     QVERIFY((rfr.isActive() && rfr.state() == QContactAbstractRequest::ActiveState) || rfr.isFinished());
     //QVERIFY(rfr.isFinished() || !rfr.start());  // already started. // thread scheduling means this is untestable
-    QVERIFY(rfr.waitForFinished() || rfr.isFinished());
+    QVERIFY(rfr.waitForFinished());
     QVERIFY(rfr.isFinished());
-    QVERIFY(!rfr.isActive());
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
     // retrieve rels where first = id of C and compare the results
-    rels = cm->relationships(cId, QContactRelationshipFilter::First);
-    result = rfr.relationships();
-    QCOMPARE(rels, result);
-
-    // specific participant retrieval #3 - either participant
-    rfr.setFirst(QContactId());
-    rfr.setSecond(aId);
-    
-    QVERIFY(!rfr.cancel()); // not started
+    rfr.setFirst(cId);
+    rfr.setSecond(QContactId());
     QVERIFY(rfr.start());
-
-    QVERIFY((rfr.isActive() && rfr.state() == QContactAbstractRequest::ActiveState) || rfr.isFinished());
-    //QVERIFY(rfr.isFinished() || !rfr.start());  // already started. // thread scheduling means this is untestable
-    QVERIFY(rfr.waitForFinished() || rfr.isFinished());
-    QVERIFY(rfr.isFinished());
-    QVERIFY(!rfr.isActive());
-    QVERIFY(spy.count() >= 1); // active + finished progress signals
-    spy.clear();
-
-    rels = cm->relationships(aId); // either role.
+    QVERIFY(rfr.waitForFinished());
     result = rfr.relationships();
+    rels = cm->relationships(cId, QContactRelationshipFilter::First);
     QCOMPARE(rels, result);
 
     // cancelling
@@ -1699,13 +1617,9 @@ void tst_QContactAsync::relationshipFetch()
         }
 
         // if we get here, then we are cancelling the request.
-        QVERIFY(rfr.state() == QContactAbstractRequest::CanceledState);
-        QVERIFY(rfr.waitForFinished() || rfr.isFinished());
-        QVERIFY(rfr.state() == QContactAbstractRequest::CanceledState);
-        QVERIFY(rfr.isFinished());
-        QVERIFY(!rfr.isActive());
-        QVERIFY(rfr.state() == QContactAbstractRequest::CanceledState);
-        QVERIFY(spy.count() >= 1); // active + cancelling + cancelled progress signals
+        QVERIFY(rfr.waitForFinished());
+        QVERIFY(rfr.isCanceled());
+        QVERIFY(spy.count() >= 1); // active + cancelled progress signals
         spy.clear();
         break;
     }
@@ -1730,10 +1644,8 @@ void tst_QContactAsync::relationshipFetch()
             continue;
         }
         rfr.waitForFinished();
-        QVERIFY(rfr.isFinished());
-        QVERIFY(!rfr.isActive());
-        QVERIFY(rfr.state() == QContactAbstractRequest::CanceledState);
-        QVERIFY(spy.count() >= 1); // active + cancelling + cancelled progress signals
+        QVERIFY(rfr.isCanceled());
+        QVERIFY(spy.count() >= 1); // active + cancelled progress signals
         spy.clear();
         break;
     }
@@ -1794,39 +1706,11 @@ void tst_QContactAsync::relationshipRemove()
 
     QVERIFY((rrr.isActive() && rrr.state() == QContactAbstractRequest::ActiveState) || rrr.isFinished());
     //QVERIFY(rrr.isFinished() || !rrr.start());  // already started. // thread scheduling means this is untestable
-    QVERIFY(rrr.waitForFinished() || rrr.isFinished());
+    QVERIFY(rrr.waitForFinished());
     QVERIFY(rrr.isFinished());
-    QVERIFY(!rrr.isActive());
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
     QCOMPARE(cm->relationships(QContactRelationship::HasAssistant, cId, QContactRelationshipFilter::Second).size(), 1);
-
-    // specific relationship type removal
-    
-    r.setFirst(QContactId());
-    r.setSecond(QContactId());
-    r.setRelationshipType(QContactRelationship::HasSpouse);
-    relationships.clear();
-    relationships.push_back(r);
-    rrr.setRelationships(relationships);
-    rrr.setManager(cm.data());
-    QCOMPARE(rrr.manager(), cm.data());
-    QVERIFY(!rrr.isActive());
-    QVERIFY(!rrr.cancel());
-    QVERIFY(!rrr.waitForFinished());
-    
-    QVERIFY(!rrr.cancel()); // not started
-    QVERIFY(rrr.start());
-
-    QVERIFY((rrr.isActive() && rrr.state() == QContactAbstractRequest::ActiveState) || rrr.isFinished());
-    //QVERIFY(rrr.isFinished() || !rrr.start());  // already started. // thread scheduling means this is untestable
-    QVERIFY(rrr.waitForFinished() || rrr.isFinished());
-    QVERIFY(rrr.isFinished());
-    QVERIFY(!rrr.isActive());
-    QVERIFY(spy.count() >= 1); // active + finished progress signals
-    spy.clear();
-    QCOMPARE(cm->relationships(QContactRelationship::HasSpouse).size(), 0);
-//    QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
 
     // remove (asynchronously) a nonexistent relationship - should fail.
     r.setFirst(cId);
@@ -1841,68 +1725,13 @@ void tst_QContactAsync::relationshipRemove()
 
     QVERIFY((rrr.isActive() && rrr.state() == QContactAbstractRequest::ActiveState) || rrr.isFinished());
     //QVERIFY(rrr.isFinished() || !rrr.start());  // already started. // thread scheduling means this is untestable
-    QVERIFY(rrr.waitForFinished() || rrr.isFinished());
+    QVERIFY(rrr.waitForFinished());
     QVERIFY(rrr.isFinished());
-    QVERIFY(!rrr.isActive());
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
     QCOMPARE(cm->relationships(QContactRelationship::HasManager, cId, QContactRelationshipFilter::First).size(), 0);
 //    QCOMPARE(rrr.error(), QContactManager::DoesNotExistError);
-
-    // specific relationship type plus source removal
-    r.setFirst(bId);
-    r.setSecond(QContactId());
-    r.setRelationshipType(QContactRelationship::HasAssistant);
-    relationships.clear();
-    relationships.push_back(r);
-    rrr.setRelationships(relationships);
-    rrr.setManager(cm.data());
-    QCOMPARE(rrr.manager(), cm.data());
-    QVERIFY(!rrr.isActive());
-    QVERIFY(!rrr.cancel());
-    QVERIFY(!rrr.waitForFinished());
-
-    QVERIFY(!rrr.cancel()); // not started
-    QVERIFY(rrr.start());
-
-    QVERIFY((rrr.isActive() && rrr.state() == QContactAbstractRequest::ActiveState) || rrr.isFinished());
-    //QVERIFY(rrr.isFinished() || !rrr.start());  // already started. // thread scheduling means this is untestable
-    QVERIFY(rrr.waitForFinished() || rrr.isFinished());
-    QVERIFY(rrr.isFinished());
-    QVERIFY(!rrr.isActive());
-    QVERIFY(spy.count() >= 1); // active + finished progress signals
-    spy.clear();
-
-    QCOMPARE(cm->relationships(QContactRelationship::HasAssistant, bId, QContactRelationshipFilter::First).size(), 0);
-//    QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
-
-    // specific source removal
-    r.setFirst(aId);
-    r.setSecond(QContactId());
-    r.setRelationshipType(QString());
-    relationships.clear();
-    relationships.push_back(r);
-    rrr.setRelationships(relationships);
-    rrr.setManager(cm.data());
-    QCOMPARE(rrr.manager(), cm.data());
-    QVERIFY(!rrr.isActive());
-    QVERIFY(!rrr.cancel());
-    QVERIFY(!rrr.waitForFinished());
-
-    QVERIFY(!rrr.cancel()); // not started
-    QVERIFY(rrr.start());
-
-    QVERIFY((rrr.isActive() && rrr.state() == QContactAbstractRequest::ActiveState) || rrr.isFinished());
-    //QVERIFY(rrr.isFinished() || !rrr.start());  // already started. // thread scheduling means this is untestable
-    QVERIFY(rrr.waitForFinished() || rrr.isFinished());
-    QVERIFY(rrr.isFinished());
-    QVERIFY(!rrr.isActive());
-    QVERIFY(spy.count() >= 1); // active + finished progress signals
-    spy.clear();
-
-    QCOMPARE(cm->relationships(aId).size(), 0);
-//    QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
 
     // cancelling
     r.setFirst(cId);
@@ -1932,13 +1761,9 @@ void tst_QContactAsync::relationshipRemove()
         }
 
         // if we get here, then we are cancelling the request.
-        QVERIFY(rrr.state() == QContactAbstractRequest::CanceledState);
-        QVERIFY(rrr.waitForFinished() || rrr.isFinished());
-        QVERIFY(rrr.state() == QContactAbstractRequest::CanceledState);
-        QVERIFY(rrr.isFinished());
-        QVERIFY(!rrr.isActive());
-        QVERIFY(rrr.state() == QContactAbstractRequest::CanceledState);
-        QVERIFY(spy.count() >= 1); // active + cancelling + cancelled progress signals
+        QVERIFY(rrr.waitForFinished());
+        QVERIFY(rrr.isCanceled());
+        QVERIFY(spy.count() >= 1); // active + cancelled progress signals
         spy.clear();
 
         QVERIFY(cm->relationships(cId).size() != 0); // didn't remove them.
@@ -1965,10 +1790,8 @@ void tst_QContactAsync::relationshipRemove()
             continue;
         }
         rrr.waitForFinished();
-        QVERIFY(rrr.isFinished());
-        QVERIFY(!rrr.isActive());
-        QVERIFY(rrr.state() == QContactAbstractRequest::CanceledState);
-        QVERIFY(spy.count() >= 1); // active + cancelling + cancelled progress signals
+        QVERIFY(rrr.isCanceled());
+        QVERIFY(spy.count() >= 1); // active + cancelled progress signals
         spy.clear();
 
         QVERIFY(cm->relationships(cId).size() != 0); // didn't remove them.
@@ -2026,9 +1849,8 @@ void tst_QContactAsync::relationshipSave()
 
     QVERIFY((rsr.isActive() && rsr.state() == QContactAbstractRequest::ActiveState) || rsr.isFinished());
     //QVERIFY(rsr.isFinished() || !rsr.start());  // already started. // thread scheduling means this is untestable
-    QVERIFY(rsr.waitForFinished() || rsr.isFinished());
+    QVERIFY(rsr.waitForFinished());
     QVERIFY(rsr.isFinished());
-    QVERIFY(!rsr.isActive());
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
@@ -2049,9 +1871,8 @@ void tst_QContactAsync::relationshipSave()
 
     QVERIFY((rsr.isActive() && rsr.state() == QContactAbstractRequest::ActiveState) || rsr.isFinished());
     //QVERIFY(rsr.isFinished() || !rsr.start());  // already started. // thread scheduling means this is untestable
-    QVERIFY(rsr.waitForFinished() || rsr.isFinished());
+    QVERIFY(rsr.waitForFinished());
     QVERIFY(rsr.isFinished());
-    QVERIFY(!rsr.isActive());
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
@@ -2091,13 +1912,9 @@ void tst_QContactAsync::relationshipSave()
         }
 
         // if we get here, then we are cancelling the request.
-        QVERIFY(rsr.state() == QContactAbstractRequest::CanceledState);
-        QVERIFY(rsr.waitForFinished() || rsr.isFinished());
-        QVERIFY(rsr.state() == QContactAbstractRequest::CanceledState);
-        QVERIFY(rsr.isFinished());
-        QVERIFY(!rsr.isActive());
-        QVERIFY(rsr.state() == QContactAbstractRequest::CanceledState);
-        QVERIFY(spy.count() >= 1); // active + cancelling + cancelled progress signals
+        QVERIFY(rsr.waitForFinished());
+        QVERIFY(rsr.isCanceled());
+        QVERIFY(spy.count() >= 1); // active + cancelled progress signals
         spy.clear();
 
         // verify that the changes were not saved
@@ -2131,10 +1948,8 @@ void tst_QContactAsync::relationshipSave()
             continue;
         }
         rsr.waitForFinished();
-        QVERIFY(rsr.isFinished());
-        QVERIFY(!rsr.isActive());
-        QVERIFY(rsr.state() == QContactAbstractRequest::CanceledState);
-        QVERIFY(spy.count() >= 1); // active + cancelling + cancelled progress signals
+        QVERIFY(rsr.isCanceled());
+        QVERIFY(spy.count() >= 1); // active + cancelled progress signals
         spy.clear();
 
         // verify that the changes were not saved
@@ -2179,7 +1994,7 @@ void tst_QContactAsync::maliciousManager()
     cfr.setManager(&mcm);
     QVERIFY(cfr.start());
     QVERIFY(cfr.cancel());
-    QVERIFY(!cfr.waitForFinished(100));
+    QVERIFY(cfr.waitForFinished(100));
     QVERIFY(cfr.start());
     QVERIFY(!cfr.waitForFinished(100));
     QVERIFY(cfr.cancel());
@@ -2189,7 +2004,7 @@ void tst_QContactAsync::maliciousManager()
     cifr.setManager(&mcm);
     QVERIFY(cifr.start());
     QVERIFY(cifr.cancel());
-    QVERIFY(!cifr.waitForFinished(100));
+    QVERIFY(cifr.waitForFinished(100));
     QVERIFY(cifr.start());
     QVERIFY(!cifr.waitForFinished(100));
     QVERIFY(cifr.cancel());
@@ -2199,7 +2014,7 @@ void tst_QContactAsync::maliciousManager()
     crr.setManager(&mcm);
     QVERIFY(crr.start());
     QVERIFY(crr.cancel());
-    QVERIFY(!crr.waitForFinished(100));
+    QVERIFY(crr.waitForFinished(100));
     QVERIFY(crr.start());
     QVERIFY(!crr.waitForFinished(100));
     QVERIFY(crr.cancel());
@@ -2209,7 +2024,7 @@ void tst_QContactAsync::maliciousManager()
     csr.setManager(&mcm);
     QVERIFY(csr.start());
     QVERIFY(csr.cancel());
-    QVERIFY(!csr.waitForFinished(100));
+    QVERIFY(csr.waitForFinished(100));
     QVERIFY(csr.start());
     QVERIFY(!csr.waitForFinished(100));
     QVERIFY(csr.cancel());
@@ -2219,7 +2034,7 @@ void tst_QContactAsync::maliciousManager()
     dfr.setManager(&mcm);
     QVERIFY(dfr.start());
     QVERIFY(dfr.cancel());
-    QVERIFY(!dfr.waitForFinished(100));
+    QVERIFY(dfr.waitForFinished(100));
     QVERIFY(dfr.start());
     QVERIFY(!dfr.waitForFinished(100));
     QVERIFY(dfr.cancel());
@@ -2229,7 +2044,7 @@ void tst_QContactAsync::maliciousManager()
     dsr.setManager(&mcm);
     QVERIFY(dsr.start());
     QVERIFY(dsr.cancel());
-    QVERIFY(!dsr.waitForFinished(100));
+    QVERIFY(dsr.waitForFinished(100));
     QVERIFY(dsr.start());
     QVERIFY(!dsr.waitForFinished(100));
     QVERIFY(dsr.cancel());
@@ -2239,7 +2054,7 @@ void tst_QContactAsync::maliciousManager()
     drr.setManager(&mcm);
     QVERIFY(drr.start());
     QVERIFY(drr.cancel());
-    QVERIFY(!drr.waitForFinished(100));
+    QVERIFY(drr.waitForFinished(100));
     QVERIFY(drr.start());
     QVERIFY(!drr.waitForFinished(100));
     QVERIFY(drr.cancel());

@@ -39,50 +39,53 @@
 **
 ****************************************************************************/
 
-#ifndef UT_CNTSQLSEARCH_H
-#define UT_CNTSQLSEARCH_H
+#ifndef TESTRUNNER_H
+#define TESTRUNNER_H
 
-#include <QObject>
+#include <QXmlDefaultHandler>
 
-class CntSqlSearch;
 
-class UT_CntSqlSearch : public QObject                 
+class TestRunner : public QXmlDefaultHandler
 {
-     Q_OBJECT
+public: // Constructors and destructor
+    TestRunner(const QString& name);
+    ~TestRunner();
+       
+public: // New functions
     
-private slots:
-
-/*
- * In addition, there are four private slots that are not treated as testfunctions. 
- * They will be executed by the testing framework and can be used to initialize and clean up 
- * either the entire test or the current test function.
- * 
- * initTestCase() will be called before the first testfunction is executed.
- * cleanupTestCase() will be called after the last testfunction was executed.
- * init() will be called before each testfunction is executed.
- * cleanup() will be called after every testfunction.
-*/
-    void initTestCase();
-    void cleanupTestCase();
-    void init();
-    void cleanup();
-
-private slots: //test methods
-
-    void testPredictiveSearch();
-    void testSelectTableView();
-    void testIsSubStringSearch();
-    void testGetNumber();
-    void testCreateSubStringSearch();
-    void testCreateStringSearch();
-    void testCreateSpaceStringSearch();
-    void testCreateSpaceString();
-
+    int runTests(QObject& testObject);
+    void printResults();
     
-private:
- 
-    CntSqlSearch* mCntSqlSearch;  
+protected: // From QXmlContentHandler 
+    bool startElement(
+        const QString& namespaceURI,
+        const QString& localName,
+        const QString& qName,
+        const QXmlAttributes& atts);
+    
+    bool endElement(
+        const QString& namespaceURI,
+        const QString& localName,
+        const QString& qName);
+    
+    bool characters(const QString& ch);
+
+private: // New functions
+
+    void parse(const QString& fileName);
+
+private: // Data
+    QStringList mTestRunParams;
+    QString mHomeDir;
+    int mTestCount;
+    QStringList mErrors;
+    bool mParsingIncidentElement;
+    bool mParsingDescriptionElement;
+    bool mCurrentTestFailed;
+    QString mCurrentTestName;
+    QString mCurrentTestFile;
+    int mCurrentTestFailureLine;
 };
 
 
-#endif //UT_SQLSEARCH_
+#endif // TESTRUNNER_H

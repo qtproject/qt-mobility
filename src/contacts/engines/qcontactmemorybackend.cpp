@@ -1001,8 +1001,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
             }
 
             // there are no results, so just update the status with the error.
-            if (!errorMap.isEmpty() || operationError != QContactManager::NoError)
-                updateDefinitionRemoveRequest(r, operationError, errorMap); // emit resultsAvailable()
+            updateDefinitionRemoveRequest(r, operationError, errorMap); // emit resultsAvailable()
             updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
         }
         break;
@@ -1132,6 +1131,7 @@ QStringList QContactMemoryEngine::supportedRelationshipTypes(const QString& cont
         << QContactRelationship::Aggregates
         << QContactRelationship::IsSameAs
         << QContactRelationship::HasAssistant
+        << QContactRelationship::HasManager
         << QContactRelationship::HasSpouse;
 }
 

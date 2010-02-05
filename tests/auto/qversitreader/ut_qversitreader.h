@@ -77,6 +77,7 @@ private slots: // Tests
     void cleanup();
 
     void testDevice();
+    void testDefaultCodec();
     void testReading();
     void testResult();
     void testSetVersionFromProperty();

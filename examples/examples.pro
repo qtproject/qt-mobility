@@ -62,12 +62,12 @@ contains(mobility_modules,multimedia) {
         slideshow \
         streamplayer \
         audiorecorder
-}
 
-contains (QT_CONFIG, declarative) {
-    SUBDIRS += \
-        declarativemusic \
-        declarativevideo
+    contains (QT_CONFIG, declarative) {
+        SUBDIRS += \
+            declarativemusic \
+            declarativevideo
+    }
 }
 
 #Messaging examples

@@ -942,5 +942,3 @@ void TestSymbianEngine::definitionDetails()
     defs = m_engine->detailDefinitions(QContactType::TypeGroup, err);
     QVERIFY(err == QContactManager::NoError);
 }
-
-QTEST_MAIN(TestSymbianEngine);

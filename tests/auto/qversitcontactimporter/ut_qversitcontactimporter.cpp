@@ -104,6 +104,15 @@ public:
         return false;
     }
 
+    void clear()
+    {
+        mPreProcess = false;
+        mPropertyNamesToProcess.clear();
+        mUnknownProperties.clear();
+        mPreProcessedProperties.clear();
+        mPostProcessedProperties.clear();
+    }
+
     // a hook to control what preProcess returns:
     bool mPreProcess;
     QStringList mPropertyNamesToProcess;
@@ -136,6 +145,12 @@ public:
         return false;
     }
 
+    void clear()
+    {
+        mIndex = 0;
+        mObjects.clear();
+    }
+
     int mIndex;
     QMap<QString, QByteArray> mObjects;
 };
@@ -149,13 +164,23 @@ QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
 
 void UT_QVersitContactImporter::init()
-{    
+{
     mImporter = new QVersitContactImporter();
     mImporterPrivate = new QVersitContactImporterPrivate();
+    mResourceHandler = new MyQVersitResourceHandler();
+    mImporter->setResourceHandler(mResourceHandler);
+    mPropertyHandler = new MyQVersitContactImporterPropertyHandler();
+    mImporter->setPropertyHandler(mPropertyHandler);
 }
 
 void UT_QVersitContactImporter::cleanup()
 {
+    QVERIFY(mImporter->propertyHandler() == mPropertyHandler);
+    mImporter->setPropertyHandler(0);
+    delete mPropertyHandler;
+    QVERIFY(mImporter->resourceHandler() == mResourceHandler);
+    mImporter->setResourceHandler(0);
+    delete mResourceHandler;
     delete mImporter;
     delete mImporterPrivate;
 }
@@ -503,8 +528,6 @@ void UT_QVersitContactImporter::testOrganizationLogo()
     QVersitDocument document;
     QVersitProperty property;
     QList<QVersitDocument> documentList;
-    MyQVersitResourceHandler resourceHandler;
-    mImporter->setResourceHandler(&resourceHandler);
 
     // Embedded LOGO
     property.setName(QString::fromAscii("LOGO"));
@@ -519,7 +542,7 @@ void UT_QVersitContactImporter::testOrganizationLogo()
     contact = mImporter->importContacts(documentList).first();
     QContactOrganization organization =
         static_cast<QContactOrganization>(contact.detail(QContactOrganization::DefinitionName));
-    QByteArray content = resourceHandler.mObjects.value(organization.logo());
+    QByteArray content = mResourceHandler->mObjects.value(organization.logo());
     QCOMPARE(content, logo);
 
     // LOGO as a URL
@@ -864,8 +887,6 @@ void UT_QVersitContactImporter::testNickname()
 
 void UT_QVersitContactImporter::testAvatarStored()
 {
-    MyQVersitResourceHandler resourceHandler;
-    mImporter->setResourceHandler(&resourceHandler);
     QByteArray gif(SAMPLE_GIF);
     QStringList nameValues(QString::fromAscii("John")); // First name
     nameValues.append(QString::fromAscii("Citizen")); // Last name
@@ -878,33 +899,97 @@ void UT_QVersitContactImporter::testAvatarStored()
     QVERIFY(!detail.isEmpty());
     QContactAvatar avatar = static_cast<QContactAvatar>(detail);
     QVERIFY(avatar.subType() == QContactAvatar::SubTypeImage);
-    QByteArray content = resourceHandler.mObjects.value(avatar.avatar());
+    QByteArray content = mResourceHandler->mObjects.value(avatar.avatar());
     QCOMPARE(content, gif);
-
     QPixmap pixmap(avatar.pixmap());
     QPixmap expectedPixmap;
     expectedPixmap.loadFromData(gif);
     QCOMPARE(pixmap, expectedPixmap);
+
+    // Without the resource handler, the pixmap should still be set.
+    mImporter->setResourceHandler(0);
+    contact = mImporter->importContacts(documentList).first();
+    avatar = contact.detail<QContactAvatar>();
+    QVERIFY(avatar.subType() == QContactAvatar::SubTypeImage);
+    QVERIFY(avatar.avatar().isEmpty());
+    pixmap = avatar.pixmap();
+    QCOMPARE(pixmap, expectedPixmap);
+
+    // Empty photo.  The avatar should not be added to the QContact.
+    QVersitProperty property;
+    property.setName(QLatin1String("PHOTO"));
+    property.setValue(QByteArray());
+    document.clear();
+    document.addProperty(property);
+    documentList.clear();
+    documentList.append(document);
+    contact = mImporter->importContacts(documentList).first();
+    QCOMPARE(contact.details(QContactAvatar::DefinitionName).size(), 0);
+
+    mImporter->setResourceHandler(mResourceHandler);
 }
+
 void UT_QVersitContactImporter::testAvatarUrl()
 {
     QVersitProperty property;
-    property.setName(QString::fromAscii("PHOTO"));
-    QString value(QString::fromAscii("file:///jgpublic."));
+    property.setName(QLatin1String("PHOTO"));
+    QString value(QLatin1String("http://example.com/example.jpg"));
     property.setValue(value);
-    property.insertParameter(
-        QString::fromAscii("VALUE"),QString::fromAscii("URL"));
+    property.insertParameter(QLatin1String("VALUE"), QLatin1String("URL"));
 
     QVersitDocument document;
     document.addProperty(property);
-
     QList<QVersitDocument> documentList;
     documentList.append(document);
+
     QContact contact = mImporter->importContacts(documentList).first();
     QContactAvatar avatar =
         static_cast<QContactAvatar>(contact.detail(QContactAvatar::DefinitionName));
-    QCOMPARE(avatar.avatar(), QString::fromAscii("file:///jgpublic."));
+    QCOMPARE(avatar.avatar(), QLatin1String("http://example.com/example.jpg"));
     QVERIFY(avatar.subType() == QContactAvatar::SubTypeImage);
+
+
+    // A URL disguised inside a QByteArray.
+    document.clear();
+    property.clear();
+    property.setName(QLatin1String("PHOTO"));
+    property.setValue(QByteArray("http://example.com/example.jpg"));
+    property.insertParameter(QLatin1String("VALUE"), QLatin1String("URL"));
+    property.insertParameter(QLatin1String("CHARSET"), QLatin1String("UTF-8"));
+    document.addProperty(property);
+    documentList.clear();
+    documentList.append(document);
+    contact = mImporter->importContacts(documentList).first();
+    avatar =
+        static_cast<QContactAvatar>(contact.detail(QContactAvatar::DefinitionName));
+    QCOMPARE(avatar.avatar(), QLatin1String("http://example.com/example.jpg"));
+    QVERIFY(avatar.subType() == QContactAvatar::SubTypeImage);
+}
+
+void UT_QVersitContactImporter::testAvatarInvalid()
+{
+    // An avatar that's a QVersitDocument?  It shouldn't work.
+    QVersitDocument document;
+    QVersitProperty property;
+    property.setName(QLatin1String("PHOTO"));
+    QVersitDocument nestedDocument;
+    property.setValue(QVariant::fromValue(nestedDocument));
+    property.insertParameter(QLatin1String("VALUE"), QLatin1String("URL"));
+    document.addProperty(property);
+    QList<QVersitDocument> list;
+    list.append(document);
+    QContact contact = mImporter->importContacts(list).first();
+    QCOMPARE(contact.details(QContactAvatar::DefinitionName).size(), 0);
+
+    document.clear();
+    property.clear();
+    list.clear();
+    property.setName(QLatin1String("PHOTO"));
+    property.setValue(QVariant::fromValue(nestedDocument));
+    document.addProperty(property);
+    list.append(document);
+    contact = mImporter->importContacts(list).first();
+    QCOMPARE(contact.details(QContactAvatar::DefinitionName).size(), 0);
 }
 
 void UT_QVersitContactImporter::testGeo()
@@ -1153,8 +1238,6 @@ void UT_QVersitContactImporter::testFamily()
 
 void UT_QVersitContactImporter::testSound()
 {
-    MyQVersitResourceHandler resourceHandler;
-    mImporter->setResourceHandler(&resourceHandler);
     QVersitDocument document;
     QVersitProperty nameProperty;
     nameProperty.setName(QString::fromAscii("N"));
@@ -1174,7 +1257,7 @@ void UT_QVersitContactImporter::testSound()
     QContact contact = mImporter->importContacts(documents).first();
     QContactAvatar avatar = (QContactAvatar)contact.detail(QContactAvatar::DefinitionName);
     QCOMPARE(avatar.value(QContactAvatar::FieldSubType),QContactAvatar::SubTypeAudioRingtone.operator QString());
-    QByteArray content = resourceHandler.mObjects.value(avatar.avatar());
+    QByteArray content = mResourceHandler->mObjects.value(avatar.avatar());
     QCOMPARE(content, val);
 }
 
@@ -1184,30 +1267,28 @@ void UT_QVersitContactImporter::testPropertyHandler()
     QVersitProperty property;
 
     // No unconverted properties, no converted properties either
-    MyQVersitContactImporterPropertyHandler propertyHandler;
-    mImporter->setPropertyHandler(&propertyHandler);
     QList<QVersitDocument> documents;
     documents.append(document);
     mImporter->importContacts(documents);
-    QCOMPARE(propertyHandler.mUnknownProperties.size(), 0);
-    QCOMPARE(propertyHandler.mPreProcessedProperties.size(), 0);
-    QCOMPARE(propertyHandler.mPostProcessedProperties.size(), 0);
+    QCOMPARE(mPropertyHandler->mUnknownProperties.size(), 0);
+    QCOMPARE(mPropertyHandler->mPreProcessedProperties.size(), 0);
+    QCOMPARE(mPropertyHandler->mPostProcessedProperties.size(), 0);
 
     // No unconverted properties, one converted property
-    propertyHandler = MyQVersitContactImporterPropertyHandler();
+    mPropertyHandler->clear();
     property.setName(QString::fromAscii("N"));
     property.setValue(QString::fromAscii("Citizen;John;Q;;"));
     document.addProperty(property);
     documents.clear();
     documents.append(document);
     QContact contact = mImporter->importContacts(documents).first();
-    QCOMPARE(propertyHandler.mUnknownProperties.size(), 0);
-    QCOMPARE(propertyHandler.mPreProcessedProperties.size(), 1);
-    QCOMPARE(propertyHandler.mPostProcessedProperties.size(), 1);
+    QCOMPARE(mPropertyHandler->mUnknownProperties.size(), 0);
+    QCOMPARE(mPropertyHandler->mPreProcessedProperties.size(), 1);
+    QCOMPARE(mPropertyHandler->mPostProcessedProperties.size(), 1);
 
     // Set the handler to override handling of the property
-    propertyHandler = MyQVersitContactImporterPropertyHandler();
-    propertyHandler.mPreProcess = true;
+    mPropertyHandler->clear();
+    mPropertyHandler->mPreProcess = true;
     document = QVersitDocument();
     property.setName(QString::fromAscii("N"));
     property.setValue(QString::fromAscii("Citizen;John;Q;;"));
@@ -1215,34 +1296,34 @@ void UT_QVersitContactImporter::testPropertyHandler()
     documents.clear();
     documents.append(document);
     contact = mImporter->importContacts(documents).first();
-    QCOMPARE(propertyHandler.mUnknownProperties.size(), 0);
-    QCOMPARE(propertyHandler.mPreProcessedProperties.size(), 1);
-    QCOMPARE(propertyHandler.mPostProcessedProperties.size(), 0);
+    QCOMPARE(mPropertyHandler->mUnknownProperties.size(), 0);
+    QCOMPARE(mPropertyHandler->mPreProcessedProperties.size(), 1);
+    QCOMPARE(mPropertyHandler->mPostProcessedProperties.size(), 0);
     QContactDetail nameDetail = contact.detail(QContactName::DefinitionName);
     QVERIFY(nameDetail.isEmpty());
 
     // One unknown property
-    propertyHandler = MyQVersitContactImporterPropertyHandler();
+    mPropertyHandler->clear();
     property.setName(QString::fromAscii("X-EXTENSION-1"));
     property.setValue(QString::fromAscii("extension value 1"));
     document.addProperty(property);
     documents.clear();
     documents.append(document);
     mImporter->importContacts(documents);
-    QList<QVersitProperty> unknownProperties = propertyHandler.mUnknownProperties;
+    QList<QVersitProperty> unknownProperties = mPropertyHandler->mUnknownProperties;
     QCOMPARE(unknownProperties.count(), 1);
     QCOMPARE(unknownProperties[0].name(), QString::fromAscii("X-EXTENSION-1"));
     QCOMPARE(unknownProperties[0].value(), QString::fromAscii("extension value 1"));
 
     // Two unknown properties
-    propertyHandler = MyQVersitContactImporterPropertyHandler();
+    mPropertyHandler->clear();
     property.setName(QString::fromAscii("X-EXTENSION-2"));
     property.setValue(QString::fromAscii("extension value 2"));
     document.addProperty(property);
     documents.clear();
     documents.append(document);
     mImporter->importContacts(documents);
-    unknownProperties = propertyHandler.mUnknownProperties;
+    unknownProperties = mPropertyHandler->mUnknownProperties;
     QCOMPARE(unknownProperties.count(), 2);
     QCOMPARE(unknownProperties[0].name(), QString::fromAscii("X-EXTENSION-1"));
     QCOMPARE(unknownProperties[0].value(), QString::fromAscii("extension value 1"));

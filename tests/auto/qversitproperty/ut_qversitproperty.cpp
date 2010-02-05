@@ -138,5 +138,31 @@ void UT_QVersitProperty::testEmbeddedDocument()
     QCOMPARE(embeddedDocumentProperties[0].name(),QString::fromAscii("X-TENSION"));
 }
 
+void UT_QVersitProperty::testEquality()
+{
+    QVersitProperty property1;
+    QVersitProperty property2;
+    QVERIFY(property1.isEmpty());
+    QVERIFY(property1 == property2);
+    QVERIFY(!(property1 != property2));
+    property2.setName(QLatin1String("FN"));
+    property2.setValue(QLatin1String("John Citizen"));
+    QVERIFY(!(property1 == property2));
+    QVERIFY(property1 != property2);
+    QVERIFY(!property2.isEmpty());
+
+    property1.setName(QLatin1String("FN"));
+    property1.setValue(QLatin1String("John Citizen"));
+    QVERIFY(property1 == property2);
+    QVERIFY(!(property1 != property2));
+
+    property2.clear();
+    QVERIFY(property2.isEmpty());
+
+    property1.clear();
+    QVERIFY(property1 == property2);
+    QVERIFY(!(property1 != property2));
+}
+
 QTEST_MAIN(UT_QVersitProperty)
 

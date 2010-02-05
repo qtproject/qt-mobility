@@ -128,4 +128,3 @@ void TestCntSymbianDatabase::databaseEvents()
     delete db;
 }
 
-QTEST_MAIN(TestCntSymbianDatabase);

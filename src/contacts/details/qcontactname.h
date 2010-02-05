@@ -93,12 +93,12 @@ public:
     void setCustomLabel(const QString& customLabel) {setValue(FieldCustomLabel, customLabel);}
 
     // deprecated functions, will be removed after transition period according to process.
-    QString Q_DECL_DEPRECATED first() const {return firstName();}
-    QString Q_DECL_DEPRECATED middle() const {return middleName();}
-    QString Q_DECL_DEPRECATED last() const {return lastName();}
-    void Q_DECL_DEPRECATED setFirst(const QString& first) {setFirstName(first);}
-    void Q_DECL_DEPRECATED setMiddle(const QString& middle) {setMiddleName(middle);}
-    void Q_DECL_DEPRECATED setLast(const QString& last) {setLastName(last);}
+    QString Q_DECL_DEPRECATED first() const;
+    QString Q_DECL_DEPRECATED middle() const;
+    QString Q_DECL_DEPRECATED last() const;
+    void Q_DECL_DEPRECATED setFirst(const QString& first);
+    void Q_DECL_DEPRECATED setMiddle(const QString& middle);
+    void Q_DECL_DEPRECATED setLast(const QString& last);
 
     // Convenience filter
     static QContactFilter match(const QString& name);

@@ -142,7 +142,7 @@ void CntTransformContact::initializeCntTransformContactData()
  * \param contact A reference to a symbian contact item to be converted.
  * \return Qt Contact
  */
-QContact CntTransformContact::transformContactL(CContactItem &contact) const
+QContact CntTransformContact::transformContactL(CContactItem &contact, const QStringList& definitionRestrictions) const
 {
     // Create a new QContact
     QContact newQtContact;
@@ -169,8 +169,12 @@ QContact CntTransformContact::transformContactL(CContactItem &contact) const
 
         if(detail)
         {
-            newQtContact.saveDetail(detail);
-            transformPreferredDetail(fields[i], *detail, newQtContact);
+            // add detail if user requested it.
+            if(definitionRestrictions.isEmpty() || definitionRestrictions.contains(detail->definitionName())) 
+            {
+                newQtContact.saveDetail(detail);
+                transformPreferredDetail(fields[i], *detail, newQtContact);
+            }
             delete detail;
             detail = 0;
         }
@@ -356,16 +360,19 @@ QList<CContactItemField *> CntTransformContact::transformDetailL(const QContactD
 QContactDetail *CntTransformContact::transformItemField(const CContactItemField& field, const QContact &contact) const
 {
 	QContactDetail *detail(0);
-	TUint32 fieldType(field.ContentType().FieldType(0).iUid);
 
-	QMap<ContactData, CntTransformContactData*>::const_iterator i = m_transformContactData.constBegin();
-	while (i != m_transformContactData.constEnd()) {
-        if (i.value()->supportsField(fieldType)) {
-            detail = i.value()->transformItemField(field, contact);
-            break;
-        }
-        ++i;
-	 }
+	if(field.ContentType().FieldTypeCount()) {
+	    TUint32 fieldType(field.ContentType().FieldType(0).iUid);
+
+	    QMap<ContactData, CntTransformContactData*>::const_iterator i = m_transformContactData.constBegin();
+	    while (i != m_transformContactData.constEnd()) {
+	        if (i.value()->supportsField(fieldType)) {
+	            detail = i.value()->transformItemField(field, contact);
+	            break;
+	        }
+	        ++i;
+	     }
+	}
 
 	return detail;
 }

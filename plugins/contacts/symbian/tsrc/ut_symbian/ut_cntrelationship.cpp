@@ -362,4 +362,3 @@ bool TestCntRelationship::validateRelationshipFilter(const QContactRelationshipF
     return (result == expectedContacts);
     }
 
-QTEST_MAIN(TestCntRelationship);

@@ -48,10 +48,10 @@ QTM_USE_NAMESPACE
 #define MAX_CHARS_FOR_LINE 76
 
 /*!
- * \class QVersitDocumentWriter
- * \internal
- * \brief The QVersitDocumentWriter class provides an interface for writing a
- * single versit document into a vCard text string.
+  \class QVersitDocumentWriter
+  \internal
+  \brief The QVersitDocumentWriter class provides an interface for writing a
+  single versit document into a vCard text string.
  */
 
 /*! Constructs a writer.

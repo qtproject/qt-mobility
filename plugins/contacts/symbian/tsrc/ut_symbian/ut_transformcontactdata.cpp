@@ -1845,4 +1845,3 @@ void TestCntTransformContactData::validateSupportedSortingFieldTypes(
 
 }
 
-QTEST_MAIN(TestCntTransformContactData);

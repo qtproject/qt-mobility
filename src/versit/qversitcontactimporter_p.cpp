@@ -315,20 +315,10 @@ void QVersitContactImporterPrivate::setOrganizationLogo(
     const QVersitProperty& property) const
 {
     QString location;
-
-    const QString valueParam =
-        property.parameters().value(QString::fromAscii("VALUE"));
-
-    QVariant variant(property.variantValue());
-    if (variant.type() == QVariant::String) {
-        location = variant.toString();
-    } else if (variant.type() == QVariant::ByteArray
-               && valueParam != QString::fromAscii("URL")) {
-        QByteArray data = variant.toByteArray();
-        location = saveContentToFile(property, data);
-    }
-
-    org.setLogo(location);
+    QByteArray data;
+    saveDataFromProperty(property, &location, &data);
+    if (!location.isEmpty())
+        org.setLogo(location);
 }
 
 /*!
@@ -423,29 +413,21 @@ QContactDetail* QVersitContactImporterPrivate::createAvatar(
     const QVersitProperty& property,
     const QString& subType) const
 {
-    QContactAvatar* avatar = 0;
-
-    const QString valueParam =
-        property.parameters().value(QString::fromAscii("VALUE"));
     QString location;
-    QVariant variant(property.variantValue());
-    if (variant.type() == QVariant::String) {
-        avatar = new QContactAvatar();
-        location = variant.toString();
-    } else if (variant.type() == QVariant::ByteArray
-               && valueParam != QString::fromAscii("URL")) {
-        avatar = new QContactAvatar();
-        QByteArray data = variant.toByteArray();
-        location = saveContentToFile(property, data);
+    QByteArray data;
+    if (!(saveDataFromProperty(property, &location, &data)))
+        return 0;
+
+    QContactAvatar* avatar = new QContactAvatar();
+    if (!location.isEmpty())
+        avatar->setAvatar(location);
+    if (!data.isEmpty()) {
         QPixmap pixmap;
         if (pixmap.loadFromData(data))
             avatar->setPixmap(pixmap);
     }
-
-    if (avatar) {
-        avatar->setAvatar(location);
+    if (avatar)
         avatar->setSubType(subType);
-    }
     return avatar;
 }
 
@@ -576,6 +558,32 @@ QDateTime QVersitContactImporterPrivate::parseDateTime(
 }
 
 /*!
+ * Extracts either a location (URI/filepath) from a \a property, or data (eg. if it was base64
+ * encoded).  If the property contains data, an attempt is made to save it and the location of the
+ * saved resource is recovered to *\a location.  The data is stored into *\a data.
+ */
+bool QVersitContactImporterPrivate::saveDataFromProperty(const QVersitProperty &property,
+                                                            QString *location,
+                                                            QByteArray *data) const
+{
+    bool found = false;
+    const QString valueParam = property.parameters().value(QLatin1String("VALUE"));
+    QVariant variant(property.variantValue());
+    if (variant.type() == QVariant::String
+        || valueParam == QLatin1String("URL")) {
+        *location = property.value();
+        found |= !location->isEmpty();
+    } else if (variant.type() == QVariant::ByteArray) {
+        *data = variant.toByteArray();
+        if (!data->isEmpty()) {
+            found = true;
+            *location = saveContentToFile(property, *data);
+        }
+    }
+    return found;
+}
+
+/*!
  * Writes \a data to a file and returns the filename.  \a property specifies the context in which
  * the data was found.
  */
@@ -587,23 +595,4 @@ QString QVersitContactImporterPrivate::saveContentToFile(
     if (mResourceHandler)
         ok = mResourceHandler->saveResource(data, property, &filename);
     return ok ? filename : QString();
-}
-
-/*!
- * Extracts the first and last name from \a document to a string.
- */
-QString QVersitContactImporterPrivate::getFirstAndLastName(
-    const QVersitDocument& document) const
-{
-    QString name;
-    const QList<QVersitProperty> properties = document.properties();
-    foreach(const QVersitProperty& nameProperty, properties) {
-        if (nameProperty.name() == QString::fromAscii("N")) {
-            QStringList values = nameProperty.value().split(QChar::fromAscii(';'));
-            name.append(takeFirst(values));
-            name.append(takeFirst(values));
-            break;
-        }
-    }
-    return name;
 }

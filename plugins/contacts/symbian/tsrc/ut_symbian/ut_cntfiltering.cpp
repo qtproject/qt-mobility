@@ -573,7 +573,7 @@ void TestFiltering::testZeroSearch()
 }
 
 //QTEST_MAIN(TestFiltering);
-int main(int argc, char *argv[]) 
+/*int main(int argc, char *argv[]) 
 {
     bool promptOnExit(true);
     for (int i=0; i<argc; i++) {
@@ -597,3 +597,4 @@ int main(int argc, char *argv[])
     }
     return 0;   
 }
+*/
