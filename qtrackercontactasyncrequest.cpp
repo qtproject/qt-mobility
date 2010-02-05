@@ -348,9 +348,7 @@ QTrackerContactFetchRequest::QTrackerContactFetchRequest(QContactAbstractRequest
 {
     Q_ASSERT(parent);
     Q_ASSERT(request);
-    QList<QContactManager::Error> dummy;
-    QContactManagerEngine::updateRequestStatus(req, QContactManager::NoError, dummy,
-                                QContactAbstractRequest::Active);
+    QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::ActiveState);
 
     QTimer::singleShot(0, this, SLOT(run()));
 }
@@ -529,9 +527,7 @@ void QTrackerContactFetchRequest::contactsReady()
     Q_ASSERT( request ); // signal is supposed to be used only for contact fetch
     // fastest way to get this working. refactor
     if (!request) {
-        QList<QContactManager::Error> dummy;
-        QContactManagerEngine::updateRequestStatus(req, QContactManager::UnspecifiedError, dummy,
-                                    QContactAbstractRequest::Finished);
+        QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::FinishedState);
         return;
     }
 
@@ -610,7 +606,7 @@ void QTrackerContactFetchRequest::contactsReady()
         QContactDisplayLabel dl = cont.detail(QContactDisplayLabel::DefinitionName);
         if (dl.label().isEmpty()) {
             QContactManager::Error synthError;
-            result[i] = engine->setContactDisplayLabel(engine->synthesizeDisplayLabel(cont, synthError), cont);
+            result[i] = engine->setContactDisplayLabel(engine->synthesizedDisplayLabel(cont, synthError), cont);
         }
     }
     emitFinished();
@@ -618,9 +614,12 @@ void QTrackerContactFetchRequest::contactsReady()
 
 void QTrackerContactFetchRequest::emitFinished()
 {
-    QContactManagerEngine::updateRequest(req, result, QContactManager::NoError,
-                              QList<QContactManager::Error> (),
-                              QContactAbstractRequest::Finished, true);
+    QContactFetchRequest *fetchRequest = qobject_cast<QContactFetchRequest *>(req);
+    Q_ASSERT(fetchRequest);
+    if(fetchRequest) {
+        QContactManagerEngine::updateRequestState(fetchRequest, QContactAbstractRequest::FinishedState);
+        QContactManagerEngine::updateContactFetchRequest(fetchRequest, result, QContactManager::NoError);
+    }
 }
 
 /*!
