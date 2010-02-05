@@ -97,6 +97,17 @@
 <li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
 </ul>
 <hr />
+<a name="static-public-members"></a>
+<h2>Static Public Members</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QByteArray </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#defaultSensorForType">defaultSensorForType</a></b> ( const QByteArray &amp; <i>type</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QByteArray&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#sensorTypes">sensorTypes</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QByteArray&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#sensorsForType">sensorsForType</a></b> ( const QByteArray &amp; <i>type</i> )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+</ul>
+<hr />
 <a name="related-non-members"></a>
 <h2>Related Non-Members</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -105,7 +116,6 @@
 <h3>Additional Inherited Members</h3>
 <ul>
 <li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
-<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
@@ -243,6 +253,9 @@
 <p>You can test for failure with the <a href="qsensor.html#isAvailable-prop">isAvailable</a>() function.</p>
 <p>The type must be set before calling this method if you are using <a href="qsensor.html">QSensor</a> directly.</p>
 <p>See also <a href="qsensor.html#isAvailable-prop">isAvailable</a>().</p>
+<a name="//apple_ref/cpp/clm/QSensor/defaultSensorForType"></a>
+<h3 class="fn"><a name="defaultSensorForType"></a><a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> QSensor::defaultSensorForType ( const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>type</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<p>Returns the default sensor identifier for <i>type</i>. This is set in a config file and can be overridden if required. If no default is available the system will return the first registered sensor for <i>type</i>.</p>
 <a name="//apple_ref/cpp/instm/QSensor/isSignalEnabled"></a>
 <h3 class="fn"><a name="isSignalEnabled"></a>bool QSensor::isSignalEnabled () const</h3>
 <p>Returns true if the <a href="qsensor.html#readingChanged">readingChanged</a>() signal will be emitted.</p>
@@ -256,6 +269,12 @@
 <h3 class="fn"><a name="removeFilter"></a>void QSensor::removeFilter ( <a href="qsensorfilter.html">QSensorFilter</a> * <i>filter</i> )</h3>
 <p>Remove <i>filter</i> from the sensor.</p>
 <p>See also <a href="qsensorfilter.html">QSensorFilter</a>.</p>
+<a name="//apple_ref/cpp/clm/QSensor/sensorTypes"></a>
+<h3 class="fn"><a name="sensorTypes"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a>&gt; QSensor::sensorTypes ()&nbsp;&nbsp;<tt> [static]</tt></h3>
+<p>Returns a list of all sensor types.</p>
+<a name="//apple_ref/cpp/clm/QSensor/sensorsForType"></a>
+<h3 class="fn"><a name="sensorsForType"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a>&gt; QSensor::sensorsForType ( const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>type</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<p>Returns a list of ids for each of the sensors for <i>type</i>. If there are no sensors of that type available the list will be empty.</p>
 <a name="//apple_ref/cpp/instm/QSensor/setSignalEnabled"></a>
 <h3 class="fn"><a name="setSignalEnabled"></a>void QSensor::setSignalEnabled ( bool <i>enabled</i> )</h3>
 <p>Call with <i>enabled</i> as false to turn off the <a href="qsensor.html#readingChanged">readingChanged</a>() signal.</p>
