@@ -1,20 +1,19 @@
-/**************************************************************************
+/****************************************************************************
 **
-** This file is part of Qt Creator
-**
-** Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
-**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** Commercial Usage
+** This file is part of the Qt Mobility Components.
 **
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Commercial License Agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and Nokia.
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
-**
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
@@ -22,10 +21,23 @@
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at http://qt.nokia.com/contact.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-**************************************************************************/
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
 /*
   Copyright 2005 Roberto Raggi <roberto@kdevelop.org>
 
@@ -246,10 +258,10 @@ protected:
         return text;
     }
 
-    bool process_expression()
-    { return process_constant_expression(); }
+    inline void process_expression()
+    { process_constant_expression(); }
 
-    bool process_primary()
+    void process_primary()
     {
         if ((*_lex)->is(T_NUMERIC_LITERAL)) {
             int base = 10;
@@ -262,13 +274,11 @@ protected:
             }
             _value.set_long(tokenSpell().toLong(0, base));
             ++(*_lex);
-            return true;
         } else if (isTokenDefined()) {
             ++(*_lex);
             if ((*_lex)->is(T_IDENTIFIER)) {
                 _value.set_long(isMacroDefined(tokenSpell(), (*_lex)->offset, env, client));
                 ++(*_lex);
-                return true;
             } else if ((*_lex)->is(T_LPAREN)) {
                 ++(*_lex);
                 if ((*_lex)->is(T_IDENTIFIER)) {
@@ -276,261 +286,61 @@ protected:
                     ++(*_lex);
                     if ((*_lex)->is(T_RPAREN)) {
                         ++(*_lex);
-                        return true;
                     }
                 }
-                return false;
             }
-            return true;
         } else if ((*_lex)->is(T_IDENTIFIER)) {
             _value.set_long(0);
             ++(*_lex);
-            return true;
         } else if ((*_lex)->is(T_MINUS)) {
             ++(*_lex);
             process_primary();
             _value.set_long(- _value.l);
-            return true;
         } else if ((*_lex)->is(T_PLUS)) {
             ++(*_lex);
             process_primary();
-            return true;
         } else if ((*_lex)->is(T_EXCLAIM)) {
             ++(*_lex);
             process_primary();
             _value.set_long(_value.is_zero());
-            return true;
         } else if ((*_lex)->is(T_LPAREN)) {
             ++(*_lex);
             process_expression();
             if ((*_lex)->is(T_RPAREN))
                 ++(*_lex);
-            return true;
         }
-
-        return false;
     }
 
-    bool process_multiplicative()
+    Value process_expression_with_operator_precedence(const Value &lhs, int minPrecedence)
+    {
+        Value result = lhs;
+
+        while (precedence((*_lex)->kind()) >= minPrecedence) {
+            const int oper = (*_lex)->kind();
+            const int operPrecedence = precedence(oper);
+            ++(*_lex);
+            process_primary();
+            Value rhs = _value;
+
+            for (int LA_token_kind = (*_lex)->kind(), LA_precedence = precedence(LA_token_kind);
+                    LA_precedence > operPrecedence && isBinaryOperator(LA_token_kind);
+                    LA_token_kind = (*_lex)->kind(), LA_precedence = precedence(LA_token_kind)) {
+                rhs = process_expression_with_operator_precedence(rhs, LA_precedence);
+            }
+
+            result = evaluate_expression(oper, result, rhs);
+        }
+
+        return result;
+    }
+
+    void process_constant_expression()
     {
         process_primary();
+        _value = process_expression_with_operator_precedence(_value, precedence(T_PIPE_PIPE));
 
-        while ((*_lex)->is(T_STAR) || (*_lex)->is(T_SLASH) || (*_lex)->is(T_PERCENT)) {
-            const Token op = *(*_lex);
-            ++(*_lex);
-
-            const Value left = _value;
-            process_primary();
-
-            if (op.is(T_STAR)) {
-                _value = left * _value;
-            } else if (op.is(T_SLASH)) {
-                if (_value.is_zero())
-                    _value.set_long(0);
-                else
-                    _value = left / _value;
-            } else if (op.is(T_PERCENT)) {
-                if (_value.is_zero())
-                    _value.set_long(0);
-                else
-                    _value = left % _value;
-            }
-        }
-
-        return true;
-    }
-
-    bool process_additive()
-    {
-        process_multiplicative();
-
-        while ((*_lex)->is(T_PLUS) || (*_lex)->is(T_MINUS)) {
-            const Token op = *(*_lex);
-            ++(*_lex);
-
-            const Value left = _value;
-            process_multiplicative();
-
-            if (op.is(T_PLUS))
-                _value = left + _value;
-            else if (op.is(T_MINUS))
-                _value = left - _value;
-        }
-
-        return true;
-    }
-
-    bool process_shift()
-    {
-        process_additive();
-
-        while ((*_lex)->is(T_MINUS_MINUS) || (*_lex)->is(T_GREATER_GREATER)) {
-            const Token op = *(*_lex);
-            ++(*_lex);
-
-            const Value left = _value;
-            process_additive();
-
-            if (op.is(T_MINUS_MINUS))
-                _value = left << _value;
-            else if (op.is(T_GREATER_GREATER))
-                _value = left >> _value;
-        }
-
-        return true;
-    }
-
-    bool process_relational()
-    {
-        process_shift();
-
-        while ((*_lex)->is(T_LESS)    || (*_lex)->is(T_LESS_EQUAL) ||
-               (*_lex)->is(T_GREATER) || (*_lex)->is(T_GREATER_EQUAL)) {
-            const Token op = *(*_lex);
-            ++(*_lex);
-
-            const Value left = _value;
-            process_shift();
-
-            if (op.is(T_LESS))
-                _value = left < _value;
-            else if (op.is(T_LESS_EQUAL))
-                _value = left <= _value;
-            else if (op.is(T_GREATER))
-                _value = left > _value;
-            else if (op.is(T_GREATER_EQUAL))
-                _value = left >= _value;
-        }
-
-        return true;
-    }
-
-    bool process_equality()
-    {
-        process_relational();
-
-        while ((*_lex)->is(T_EXCLAIM_EQUAL) || (*_lex)->is(T_EQUAL_EQUAL)) {
-            const Token op = *(*_lex);
-            ++(*_lex);
-
-            const Value left = _value;
-            process_relational();
-
-            if (op.is(T_EXCLAIM_EQUAL))
-                _value = left != _value;
-            else if (op.is(T_EQUAL_EQUAL))
-                _value = left == _value;
-        }
-
-        return true;
-    }
-
-    bool process_and()
-    {
-        process_equality();
-
-        while ((*_lex)->is(T_AMPER)) {
-            const Token op = *(*_lex);
-            ++(*_lex);
-
-            const Value left = _value;
-            process_equality();
-
-            _value = left & _value;
-        }
-
-        return true;
-    }
-
-    bool process_xor()
-    {
-        process_and();
-
-        while ((*_lex)->is(T_CARET)) {
-            const Token op = *(*_lex);
-            ++(*_lex);
-
-            const Value left = _value;
-            process_and();
-
-            _value = left ^ _value;
-        }
-
-        return true;
-    }
-
-    bool process_or()
-    {
-        process_xor();
-
-        while ((*_lex)->is(T_PIPE)) {
-            const Token op = *(*_lex);
-            ++(*_lex);
-
-            const Value left = _value;
-            process_xor();
-
-            _value = left | _value;
-        }
-
-        return true;
-    }
-
-    bool process_logical_and()
-    {
-        process_or();
-
-        while ((*_lex)->is(T_AMPER_AMPER)) {
-            const Token op = *(*_lex);
-            ++(*_lex);
-
-            const Value left = _value;
-            process_or();
-#ifdef ICHECK_BUILD
-            Value v = left;
-            if (v.is_ulong () || _value.is_ulong ())
-                v.set_ulong (v.ul && _value.ul);
-            else 
-                v.set_long (v.l && _value.l);
-            _value = v;
-#else
-            _value = left && _value;
-#endif
-        }
-
-        return true;
-    }
-
-    bool process_logical_or()
-    {
-        process_logical_and();
-
-        while ((*_lex)->is(T_PIPE_PIPE)) {
-            const Token op = *(*_lex);
-            ++(*_lex);
-
-            const Value left = _value;
-            process_logical_and();
-#ifdef ICHECK_BUILD
-            Value v = left;
-            if (v.is_ulong () || _value.is_ulong ())
-                v.set_ulong (v.ul || _value.ul);
-            else 
-                v.set_long (v.l || _value.l);
-            _value = v;
-#else
-            _value = left || _value;
-#endif
-        }
-
-        return true;
-    }
-
-    bool process_constant_expression()
-    {
-        process_logical_or();
-        const Value cond = _value;
         if ((*_lex)->is(T_QUESTION)) {
+            const Value cond = _value;
             ++(*_lex);
             process_constant_expression();
             Value left = _value, right;
@@ -541,8 +351,89 @@ protected:
             }
             _value = ! cond.is_zero() ? left : right;
         }
+    }
 
-        return true;
+private:
+    inline int precedence(int tokenKind) const
+    {
+        switch (tokenKind) {
+        case T_PIPE_PIPE:       return 0;
+        case T_AMPER_AMPER:     return 1;
+        case T_PIPE:            return 2;
+        case T_CARET:           return 3;
+        case T_AMPER:           return 4;
+        case T_EQUAL_EQUAL:
+        case T_EXCLAIM_EQUAL:   return 5;
+        case T_GREATER:
+        case T_LESS:
+        case T_LESS_EQUAL:
+        case T_GREATER_EQUAL:   return 6;
+        case T_LESS_LESS:
+        case T_GREATER_GREATER: return 7;
+        case T_PLUS:
+        case T_MINUS:           return 8;
+        case T_STAR:
+        case T_SLASH:
+        case T_PERCENT:         return 9;
+
+        default:
+            return -1;
+        }
+    }
+
+    static inline bool isBinaryOperator(int tokenKind)
+    {
+        switch (tokenKind) {
+        case T_PIPE_PIPE:
+        case T_AMPER_AMPER:
+        case T_PIPE:
+        case T_CARET:
+        case T_AMPER:
+        case T_EQUAL_EQUAL:
+        case T_EXCLAIM_EQUAL:
+        case T_GREATER:
+        case T_LESS:
+        case T_LESS_EQUAL:
+        case T_GREATER_EQUAL:
+        case T_LESS_LESS:
+        case T_GREATER_GREATER:
+        case T_PLUS:
+        case T_MINUS:
+        case T_STAR:
+        case T_SLASH:
+        case T_PERCENT:
+            return true;
+
+        default:
+            return false;
+        }
+    }
+
+    static inline Value evaluate_expression(int tokenKind, const Value &lhs, const Value &rhs)
+    {
+        switch (tokenKind) {
+        case T_PIPE_PIPE:       return lhs || rhs;
+        case T_AMPER_AMPER:     return lhs && rhs;
+        case T_PIPE:            return lhs | rhs;
+        case T_CARET:           return lhs ^ rhs;
+        case T_AMPER:           return lhs & rhs;
+        case T_EQUAL_EQUAL:     return lhs == rhs;
+        case T_EXCLAIM_EQUAL:   return lhs != rhs;
+        case T_GREATER:         return lhs > rhs;
+        case T_LESS:            return lhs < rhs;
+        case T_LESS_EQUAL:      return lhs <= rhs;
+        case T_GREATER_EQUAL:   return lhs >= rhs;
+        case T_LESS_LESS:       return lhs << rhs;
+        case T_GREATER_GREATER: return lhs >> rhs;
+        case T_PLUS:            return lhs + rhs;
+        case T_MINUS:           return lhs - rhs;
+        case T_STAR:            return lhs * rhs;
+        case T_SLASH:           return rhs.is_zero() ? Value() : lhs / rhs;
+        case T_PERCENT:         return rhs.is_zero() ? Value() : lhs % rhs;
+
+        default:
+            return Value();
+        }
     }
 
 private:
