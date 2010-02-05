@@ -570,13 +570,7 @@ QList<QContactRelationship> QContactMemoryEngine::relationships(const QString& r
 bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, QContactChangeSet& changeSet, QContactManager::Error& error)
 {
     // Attempt to validate the relationship.
-    // first, check the relationship type is valid
-    if (!supportedRelationshipTypes(QString()).contains(relationship->relationshipType())) {
-        error = QContactManager::NotSupportedError;
-        return false;
-    }
-
-    // second, check that the source contact exists and is in this manager.
+    // first, check that the source contact exists and is in this manager.
     QString myUri = managerUri();
     if ((!relationship->first().managerUri().isEmpty() && relationship->first().managerUri() != myUri)
             ||!d->m_contactIds.contains(relationship->first().localId())) {
@@ -584,7 +578,7 @@ bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, 
         return false;
     }
 
-    // third, check that the second contact exists (if it's local); we cannot check other managers' contacts.
+    // second, check that the second contact exists (if it's local); we cannot check other managers' contacts.
     QContactId dest = relationship->second();
 
     if (dest.managerUri().isEmpty() || dest.managerUri() == myUri) {
