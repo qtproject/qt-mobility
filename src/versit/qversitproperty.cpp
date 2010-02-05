@@ -51,8 +51,7 @@ QTM_USE_NAMESPACE
 /*!
   \class QVersitProperty
   \preliminary
-  \brief The QVersitProperty class stores the name, value and parameters of a versit property.
-
+  \brief The QVersitProperty class stores the name, value, groups and parameters of a Versit property.
   \ingroup versit
 
   For example a vCard can be presented as a QVersitDocument that consists of a number of properties
