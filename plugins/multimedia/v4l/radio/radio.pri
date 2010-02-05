@@ -2,8 +2,12 @@ INCLUDEPATH += $$PWD
 
 maemo5 {
     QT += dbus
-    INCLUDEPATH += /usr/include/gstreamer-0.10;/usr/include/glib-2.0;/usr/lib/glib-2.0/include/;/usr/include/libxml2/
-    LIBS += -lgstreamer-0.10 -L/usr/lib -lasound
+
+    CONFIG += link_pkgconfig
+
+    PKGCONFIG += gstreamer-0.10
+
+    LIBS += -lasound
 
     HEADERS += \
 	$$PWD/v4lradiocontrol_maemo5.h \
