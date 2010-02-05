@@ -124,6 +124,8 @@ QtContacts
     * deprecated errors() function from base QContactAbstractRequest class
     * added errorMap() function to various leaf classes where that class' selection input is a list of items
        - errorMap() returns a map of input list index to an error which occurred for the item at that index.
+ - SamplePhonebook
+    * UI layout refactored to fit small screen better
 
 QtLocation
 ------
@@ -367,6 +369,23 @@ Qt Mobility for Maemo5
 
  - Experimental support for QtLocation
  - Experimental support for QtSystemInfo
+
+
+Qt Mobility for Symbian
+------
+
+ - QContactManager backends
+    * QContactAvatar: Added support for pixmap field and VideoRingtone subtype. For pixmap field there is a known issue that it is not always shown in the name list view of S60 platform Phonebook.
+    * The display label now uses the same formatting rules as the platform phonebook application, except that "unnamed" contact label is not localised.
+    * When filtering with QContactDisplayLabel and match flag MatchStartsWith is set the filtering rules follow the platform Phonebook's name list view filtering rules.
+    * When filtering with a phone number detail and match flags MatchPhoneNumber is set the filtering rules follow the platform Phonebook's phone number matching rules. Known issue: the matched phone number needs to be at least 7 digits.
+    * Contact filtering: added support for intersection and union filters. This improves performance in those cases where the contained filters give only a sub-set of the contacts.
+    * Fixed a bug where setting the self contact id failed if the id was already set as the self contact id.
+    * Added an experimental support for SIM ADN contacts with QContactManager implementation named "symbiansim".
+    * Several bug fixes to contact relationships.
+    * Fixed the error handling when a client tries to update the contact type. This is not supported.
+    * Bugfix: Saving and deleting contacts in quick successive manner caused the contact database server to fail on S60 3.2 devices.
+    * Bugfix [QTMOBILITY-54]: Loading a QContact for a contact database contact with an undefined field type caused a crash. 
 
 ****************************************************************************
 *                          Tools                                           *
