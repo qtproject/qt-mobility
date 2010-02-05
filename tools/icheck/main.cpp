@@ -57,11 +57,12 @@ extern QStringList getQTIncludePath();
 int main(int argc, char *argv[])
 {
     int ret = 0;
-    if(argc == 3){
+    if(argc >= 3){
         QString err = "";
         //Extract the file name and path from the arguments
         QString interfaceHeaderFile = argv[1];
         QString checkHeaderFile = argv[2];
+
         QString curpath = QDir::currentPath();
         //Create FileInfos for the header files
         QFileInfo iFileInfo(interfaceHeaderFile);
@@ -80,6 +81,20 @@ int main(int argc, char *argv[])
                     err = "File does not exist: " + checkHeaderFile;
             }
             if(err == ""){
+                //Read other parameters
+                QString outputfile;
+                for(int i = 3; i < argc; i++)
+                {
+                    //Read output file
+                    int size = strlen(argv[i]);
+                    if(strncmp(argv[i], "-output", size) == 0){
+                        if( (i + 1) < argc){
+                            outputfile = argv[i + 1];
+                            i++;
+                        }
+                    }
+                }
+
                 //Now create a list of the include path 
                 QString chIncludepath = chFileInfo.absolutePath();
                 QStringList chIncludepathlist;
@@ -104,7 +119,7 @@ int main(int argc, char *argv[])
                 ICheckLib ichecklib;
                 ichecklib.ParseHeader(chIncludepathlist, chFilelist);
 
-                if(!ichecklib.check(i_ichecklib)){
+                if(!ichecklib.check(i_ichecklib, outputfile)){
                     cout << "Folowing interface items are missing:" << endl;
                     QStringList errorlist = ichecklib.getErrorMsg();
                     foreach(QString msg, errorlist){
@@ -125,9 +140,8 @@ int main(int argc, char *argv[])
         }
     }
     else{
-        cout << "icheck ";
-        cout << "<Interface header>";
-        cout << " <headerfile to check>";
+        cout << "Usage: icheck <Interface header> <headerfile to check>" << endl;
+        cout << "-output ...... Textfile name containing the output result." << endl;
     }
     cout << endl;
     return ret;

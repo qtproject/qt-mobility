@@ -143,11 +143,23 @@ private:
     QNetworkManagerInterfaceAccessPoint *accessPointIface;
 
     void setupNmConnections();
+    bool isDefaultConnectionPath(const QString &path);
+    QString getNetworkNameForConnectionPath(const QString &path);
+
+    QMap <QString, QString> activePaths;
+    void updateActivePaths();
+    
+    QString getNmNetName(QSystemNetworkInfo::NetworkMode mode);
+
+    inline QSystemNetworkInfo::NetworkMode deviceTypeToMode(quint32 type);
+#endif
+    QString getSysNetName(QSystemNetworkInfo::NetworkMode mode);
 
 private Q_SLOTS:
     void nmPropertiesChanged( const QString &, QMap<QString,QVariant>);
     void nmAPPropertiesChanged( const QString &, QMap<QString,QVariant>);
-    void updateDeviceInterfaceState(const QString &, quint32);
+#if !defined(QT_NO_NETWORKMANAGER)
+    void getPrimaryMode();
 #endif
 };
 
