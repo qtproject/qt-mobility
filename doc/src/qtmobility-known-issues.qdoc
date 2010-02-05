@@ -153,11 +153,10 @@ Support is present for the following System Info API classes
 
 \section2 Contacts API
 \list
-    \o S60: Async contact operations not supported
-    \o S60: Support for SIM contacts is not supported
-    \o S60: Extending contact fields at runtime is not supported on most Symbian platforms because would compromise compatibility with the S60 platform Phonebook application.
-    \o S60: auto test failures for tst_qcontactasync and tst_qcontactmanager
-    \o S60: samplephonebook not operating properly due to backend problems
+    \o Async contact operations not supported
+    \o Extending contact fields at runtime is not supported on most Symbian platforms because would compromise compatibility with the S60 platform Phonebook application.
+    \o auto test failures for tst_qcontactasync and tst_qcontactmanager
+    \o samplephonebook not operating properly due to backend problems
 \endlist
 
 \section2 Location API
