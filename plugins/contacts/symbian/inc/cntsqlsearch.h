@@ -68,7 +68,7 @@ private:
     
     QString CreateSpaceStringSearch(QStringList numbers);
     
-    QString CreateSpaceString(QString number);
+    QString CreateSpaceString(QString number );
 
     friend class UT_CntSqlSearch;
 };

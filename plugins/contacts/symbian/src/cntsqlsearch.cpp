@@ -51,10 +51,9 @@ CntSqlSearch::CntSqlSearch()
 QString CntSqlSearch ::CreatePredictiveSearch(const QString &pattern)
 {
     if (pattern.length() == 1)
-    {
-    return "SELECT * FROM " + SelectTableView(pattern) +  " WHERE " +
-           CreateSubStringSearch(pattern) + " ORDER BY first_name_as_number ASC;";
-    }
+        {
+        return "SELECT contact_id FROM " + SelectTableView(pattern) + " ORDER BY first_name_as_number ASC;";
+        }
     else
     {
     return "SELECT contact_id FROM " + SelectTableView(pattern) + " WHERE " +
@@ -180,37 +179,22 @@ QString queryItem;
 
 for( int i = 0; i < numbers.count(); i++ )
     {
-    if ( numbers.count() == 1 )
-        {
-        queryItem += CreateSpaceString(numbers.at(i));
-        }
-    else if ( numbers.count() - 1 == i )
+    if ((numbers.count() == 1) || ((numbers.count() - 1) == i ))
         {
         queryItem += CreateSpaceString(numbers.at(i));
         }
     else
         {
-        queryItem += CreateSpaceString(numbers.at(i)) + " AND ";
+        queryItem += CreateSpaceString(numbers.at(i)) + " OR ";
         }
     }
-if (numbers.count() == 1)
-    {
-    queryString = " OR " + queryItem;
-    }
-else
-    {
-    queryString = " OR (" + queryItem + ")";
-    }
 
-return queryString;
+return queryString  = " OR " + queryItem;
 }
 
 QString CntSqlSearch::CreateSpaceString(QString number)
 {
-QString queryString;
-queryString = "((first_name_as_number LIKE % " + number +
-        "%) OR (last_name_as_number LIKE % " + number + "%))";
-return queryString;
+return QString("((first_name_as_number LIKE % " + number + "%) AND (first_name_as_number LIKE %_ " + number + "%)) OR ((last_name_as_number LIKE % " + number + "%) AND (last_name_as_number LIKE %_ " + number + "%))");
 }
 
 
