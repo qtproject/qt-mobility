@@ -459,9 +459,9 @@ void tst_QContactAsync::contactFetch()
         QVERIFY(found); // must exist or fail.
 
         // ensure that the contact is the same (except synth fields)
-        QList<QContactDetail> fdets = retrievedRestricted.details();
-        QList<QContactDetail> rdets = currRestricted.details();
-        foreach (const QContactDetail& det, fdets) {
+        QList<QContactDetail> retrievedDetails = retrievedRestricted.details();
+        QList<QContactDetail> expectedDetails = currRestricted.details();
+        foreach (const QContactDetail& det, expectedDetails) {
             // ignore backend synthesised details
             // again, this requires a "default contact details" function to work properly.
             if (det.definitionName() == QContactDisplayLabel::DefinitionName
@@ -469,10 +469,8 @@ void tst_QContactAsync::contactFetch()
                 continue;
             }
 
-            // everything else must exist in both.
-            if(!rdets.contains(det)) {
-                qWarning("A detail exists in retrieved contact which doesn't exist in restricted contact!  This could be due to backend synthesization, or represent a bug!  (Definition name: %s)", det.definitionName().toAscii().constData());
-            }
+            // everything else in the expected contact should be in the retrieved one.
+            QVERIFY(retrievedDetails.contains(det));
         }
     }
 

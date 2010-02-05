@@ -268,6 +268,8 @@ bool QContactAbstractRequest::waitForFinished(int msecs)
         case QContactAbstractRequest::CanceledState:
         case QContactAbstractRequest::FinishedState:
             return true;
+        default:
+            return false;
         }
     }
 
@@ -287,6 +289,8 @@ bool QContactAbstractRequest::waitForProgress(int msecs)
         case QContactAbstractRequest::CanceledState:
         case QContactAbstractRequest::FinishedState:
             return true;
+        default:
+            return false;
         }
     }
 
