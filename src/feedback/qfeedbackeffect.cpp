@@ -148,23 +148,23 @@ void QHitAreaEffect::setRect(const QRect &rect)
 
 void QHitAreaEffect::setRect(const QWidget* widget)
 {
-        // null rectangle
-        m_rect = QRect();
+    // null rectangle
+    m_rect = QRect();
 
-        if (!widget)
-            return;
+    if (!widget)
+        return;
 
-        QWidget *tlw = widget->window();
-        QPoint topLeft = widget->mapTo(tlw, QPoint(0, 0));
-        m_rect = QRect(topLeft, widget->size());
+    QWidget *tlw = widget->window();
+    QPoint topLeft = widget->mapTo(tlw, QPoint(0, 0));
+    m_rect = QRect(topLeft, widget->size());
 
-        //TODO: Shouldn't we call setWindow here?
+    //TODO: Shouldn't we call setWindow here?
 }
 
 void QHitAreaEffect::setRect(const QGraphicsItem* graphicsItem, const QGraphicsView* graphicsView)
 {
     // null rectangle
-    QRect mappedRect = QRect();
+    m_rect = QRect();
 
     if (!graphicsItem || !graphicsView || graphicsItem->scene() != graphicsView->scene())
         return;
@@ -176,7 +176,8 @@ void QHitAreaEffect::setRect(const QGraphicsItem* graphicsItem, const QGraphicsV
 
     // from graphics view to window coordinates
     QPoint topLeft = graphicsView->mapTo(graphicsView->window(), m_rect.topLeft());
-    mappedRect = QRect(topLeft, m_rect.size());
+    m_rect = QRect(topLeft, m_rect.size());
+
     //TODO: Shouldn't we call setWindow here?
 }
 
