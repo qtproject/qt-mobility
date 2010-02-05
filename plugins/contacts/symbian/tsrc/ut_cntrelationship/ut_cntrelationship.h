@@ -49,6 +49,8 @@
 class CContactDatabase;
 class CntRelationship;
 
+QTM_USE_NAMESPACE
+
 class TestCntRelationship : public QObject
 {
     Q_OBJECT
@@ -56,10 +58,10 @@ class TestCntRelationship : public QObject
 private slots:
 	void initTestCase();
 	void cleanupTestCase();
-	
+
 	void init();
 	void cleanup();
-	
+
 	void invalidRelationship();
 	void validGroupRelationship();
 	void validGroupRelationships();
@@ -68,10 +70,10 @@ private slots:
 	void invalidSecondContactGroupRelationship();
 	void invalidFirstAndSecondContactGroupRelationship();
 
-private: 
+private:
     bool TestCntRelationship::validateRelationshipFilter(const QContactRelationshipFilter::Role role, const QContactId contactId, const QList<QContactLocalId> expectedContacts);
 
-private: 
+private:
      QContactManager  *m_manager;
      CContactDatabase *m_database;
      CntRelationship  *m_relationship;

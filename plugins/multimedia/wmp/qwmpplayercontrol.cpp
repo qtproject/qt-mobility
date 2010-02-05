@@ -61,6 +61,7 @@ QWmpPlayerControl::QWmpPlayerControl(IWMPCore3 *player, QWmpEvents *events, QObj
     , m_state(QMediaPlayer::StoppedState)
     , m_duration(0)
     , m_buffering(false)
+    , m_audioAvailable(false)
     , m_videoAvailable(false)
 {
     m_player->get_controls(&m_controls);
@@ -175,10 +176,21 @@ bool QWmpPlayerControl::isVideoAvailable() const
     return m_videoAvailable;
 }
 
+bool QWmpPlayerControl::isAudioAvailable() const
+{
+    return m_audioAvailable;
+}
+
+void QWmpPlayerControl::setAudioAvailable(bool available)
+{
+    if (m_audioAvailable != available)
+        emit audioAvailableChanged(m_audioAvailable = available);
+}
+
 void QWmpPlayerControl::setVideoAvailable(bool available)
 {
     if (m_videoAvailable != available)
-        emit this->videoAvailableChanged(m_videoAvailable = available);
+        emit videoAvailableChanged(m_videoAvailable = available);
 }
 
 bool QWmpPlayerControl::isSeekable() const

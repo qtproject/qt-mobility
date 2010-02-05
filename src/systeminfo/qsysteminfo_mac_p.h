@@ -66,6 +66,9 @@
 #include <QtCore/qmutex.h>
  #include <QEventLoop>
 
+#include <SystemConfiguration/SystemConfiguration.h>
+//#include <CoreFoundation/CoreFoundation.h>
+
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
@@ -85,14 +88,12 @@ public:
 
     QSystemInfoPrivate(QObject *parent = 0);
     virtual ~QSystemInfoPrivate();
-// general
-    QString currentLanguage() const; // 2 letter ISO 639-1
-    QStringList availableLanguages() const;	 // 2 letter ISO 639-1
+    QString currentLanguage() const;
+    QStringList availableLanguages() const;
 
     QString version(QSystemInfo::Version,  const QString &parameter = QString());
 
-    QString currentCountryCode() const; //2 letter ISO 3166-1
-//features
+    QString currentCountryCode() const;
     bool hasFeatureSupported(QSystemInfo::Feature feature);
 Q_SIGNALS:
     void currentLanguageChanged(const QString &);
@@ -120,8 +121,8 @@ public:
     int cellId();
     int locationAreaCode();
 
-    QString currentMobileCountryCode(); // Mobile Country Code
-    QString currentMobileNetworkCode(); // Mobile Network Code
+    QString currentMobileCountryCode();
+    QString currentMobileNetworkCode();
 
     QString homeMobileCountryCode();
     QString homeMobileNetworkCode();
@@ -132,6 +133,7 @@ public:
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
     static QSystemNetworkInfoPrivate *instance() {return self;}
     void networkChanged(const QString &notification, const QString interfaceName);
+    QString getDefaultInterface();
 
 Q_SIGNALS:
    void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
@@ -141,12 +143,18 @@ Q_SIGNALS:
    void networkNameChanged(QSystemNetworkInfo::NetworkMode, const QString &);
    void networkModeChanged(QSystemNetworkInfo::NetworkMode);
 
+public slots:
+   void primaryInterface();
+
 private:
     bool isInterfaceActive(const char* netInterface);
     QTimer *rssiTimer;
     int signalStrengthCache;
     static QSystemNetworkInfoPrivate *self;
-    QRunLoopThread * runloopThread ;
+    QRunLoopThread * runloopThread;
+    QString defaultInterface;
+    QSystemNetworkInfo::NetworkMode modeForInterface(QString interfaceName);
+
 private slots:
     void rssiTimeout();
 };
@@ -160,8 +168,6 @@ public:
     QSystemDisplayInfoPrivate(QObject *parent = 0);
     virtual ~QSystemDisplayInfoPrivate();
 
-
-// display
     int displayBrightness(int screen);
     int colorDepth(int screen);
 };
@@ -175,11 +181,10 @@ public:
     QSystemStorageInfoPrivate(QObject *parent = 0);
     virtual ~QSystemStorageInfoPrivate();
 
-    // memory
     qint64 availableDiskSpace(const QString &driveVolume);
     qint64 totalDiskSpace(const QString &driveVolume);
     QStringList logicalDrives();
-    QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume); //returns enum
+    QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
 
 private:
     QHash<QString, QString> mountEntriesHash;
@@ -196,8 +201,6 @@ public:
 
     QSystemDeviceInfoPrivate(QObject *parent = 0);
     ~QSystemDeviceInfoPrivate();
-
-// device
 
     static QString imei();
     static QString imsi();
@@ -263,17 +266,18 @@ class QRunLoopThread : public QThread
 public:
     QRunLoopThread(QObject *parent = 0);
     ~QRunLoopThread();
-    bool done;
-
-    void stopLoop();
-    void startLoop();
+    bool keepRunning;
+    void quit();
 
 protected:
     void run();
 
 private:
-
+    void startNetworkChangeLoop();
     QMutex mutex;
+    SCDynamicStoreRef storeSession;// = NULL;
+    CFRunLoopSourceRef runloopSource;
+
 private slots:
 };
 

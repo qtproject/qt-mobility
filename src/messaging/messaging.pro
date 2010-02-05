@@ -141,13 +141,6 @@ symbian {
     TARGET.CAPABILITY = ALL -TCB
     TARGET.UID3 = 0x2002AC82
 
-    deploy.path = $${EPOCROOT}
-    exportheaders.sources = $$PUBLIC_HEADERS
-    exportheaders.path = epoc32/include/mw
-    for(header, exportheaders.sources) {
-        BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
-    }
-            
     QtMessaging.sources = QtMessaging.dll
     QtMessaging.path = /sys/bin
     DEPLOYMENT += QtMessaging
@@ -250,4 +243,5 @@ SOURCES += qmessageid_qmf.cpp \
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
+CONFIG += middleware
 include(../../features/deploy.pri)

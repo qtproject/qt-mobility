@@ -135,7 +135,7 @@ void CntTransformNote::detailDefinitions(QMap<QString, QContactDetailDefinition>
 
     if(definitions.contains(QContactNote::DefinitionName)) {
         QContactDetailDefinition d = definitions.value(QContactNote::DefinitionName);
-        QMap<QString, QContactDetailDefinitionField> fields = d.fields();
+        QMap<QString, QContactDetailFieldDefinition> fields = d.fields();
 
         // Context not supported in symbian back-end, remove
         fields.remove(QContactNote::FieldContext);

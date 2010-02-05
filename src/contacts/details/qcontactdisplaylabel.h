@@ -47,6 +47,7 @@
 
 #include "qtcontactsglobal.h"
 #include "qcontactdetail.h"
+#include "qcontactfilter.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -63,6 +64,8 @@ public:
 #endif
 
     QString label() const {return value(FieldLabel);}
+
+    static QContactFilter match(const QString& label);
 };
 
 QTM_END_NAMESPACE

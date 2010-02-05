@@ -322,18 +322,15 @@ typedef void (WINAPI *WLAN_NOTIFICATION_CALLBACK) (WLAN_NOTIFICATION_DATA *, PVO
 typedef struct _BLUETOOTH_FIND_RADIO_PARAMS {
     DWORD   dwSize;             //  IN  sizeof this structure
 } BLUETOOTH_FIND_RADIO_PARAMS;
-//typedef HANDLE      HBLUETOOTH_RADIO_FIND;
 
 
-//
 typedef DWORD (WINAPI *WlanOpenHandleProto)
     (DWORD dwClientVersion, PVOID pReserved, PDWORD pdwNegotiatedVersion, PHANDLE phClientHandle);
 static WlanOpenHandleProto local_WlanOpenHandle = 0;
-//
+
 typedef DWORD (WINAPI *WlanCloseHandleProto)(HANDLE hClientHandle, PVOID pReserved);
 static WlanCloseHandleProto local_WlanCloseHandle = 0;
 
-//
 #if !defined(Q_OS_WINCE)
 typedef DWORD (WINAPI *WlanEnumInterfacesProto)
     (HANDLE hClientHandle, PVOID pReserved, WLAN_INTERFACE_INFO_LIST **ppInterfaceList);
@@ -351,14 +348,12 @@ typedef DWORD (WINAPI *WlanRegisterNotificationProto)
 static WlanRegisterNotificationProto local_WlanRegisterNotification = 0;
 #endif
 
-//
 typedef VOID (WINAPI *WlanFreeMemoryProto)(PVOID pMemory);
 static WlanFreeMemoryProto local_WlanFreeMemory = 0;
-//
+
 typedef BOOL (WINAPI *BluetoothFindRadioClose)(HANDLE hFind);
 static BluetoothFindRadioClose local_BluetoothFindRadioClose=0;
 
-//
 typedef HANDLE (WINAPI *BluetoothFindFirstRadio)(const BLUETOOTH_FIND_RADIO_PARAMS * pbtfrp,HANDLE * phRadio);
 static BluetoothFindFirstRadio local_BluetoothFindFirstRadio=0;
 
@@ -454,7 +449,6 @@ static WLAN_CONNECTION_ATTRIBUTES *getWifiConnectionAttributes()
 }
 #endif
 
-////////
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
  : QObject(parent)
 {
@@ -478,7 +472,6 @@ void QSystemInfoPrivate::currentLanguageTimeout()
     QTimer::singleShot(1000, this,SLOT(currentLanguageTimeout()));
 }
 
-// 2 letter ISO 639-1
 QString QSystemInfoPrivate::currentLanguage() const
 {
  QString lang = QLocale::system().name().left(2);
@@ -489,7 +482,6 @@ QString QSystemInfoPrivate::currentLanguage() const
 }
 
 
-// 2 letter ISO 639-1
 QStringList QSystemInfoPrivate::availableLanguages() const
 {
     QDir transDir(QLibraryInfo::location (QLibraryInfo::TranslationsPath));
@@ -510,7 +502,6 @@ QStringList QSystemInfoPrivate::availableLanguages() const
     return QStringList() << currentLanguage();
 }
 
-// "major.minor.build" format.
 QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &parameter)
 {
     Q_UNUSED(parameter);
@@ -555,7 +546,6 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &p
 }
 
 
-//2 letter ISO 3166-1
 QString QSystemInfoPrivate::currentCountryCode() const
 {
     return QLocale::system().name().mid(3,2);
@@ -589,26 +579,6 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     case QSystemInfo::CameraFeature :
         {
 #if !defined( Q_CC_MINGW) && !defined( Q_OS_WINCE)
-
-            /*ICreateDevEnum *devEnum = NULL;
-            IEnumMoniker *monikerEnum = NULL;
-            QUuid qSystemDeviceEnumClsid(0x62BE5D10,0x60EB,0x11d0,0xBD,0x3B,0x00,0xA0,0xC9,0x11,0xCE,0x86);
-            QUuid qCreateDevEnumIid = "29840822-5B84-11D0-BD3B-00A0C911CE86";
-            QUuid qVideoInputDeviceCategoryClsid(0x860BB310,0x5D01,0x11d0,0xBD,0x3B,0x00,0xA0,0xC9,0x11,0xCE,0x86);
-
-            HRESULT hr = CoCreateInstance(qSystemDeviceEnumClsid, NULL,
-                                          CLSCTX_INPROC_SERVER, qCreateDevEnumIid,
-                                          reinterpret_cast<void**>(&devEnum));
-            if (hr == S_OK) {
-                hr = devEnum->CreateClassEnumerator( qVideoInputDeviceCategoryClsid, &monikerEnum, 0);
-                if(hr != S_FALSE) {
-                  //  qWarning() << "available";
-                    featureSupported = true;
-                    break;
-                } else {
-                 //   qWarning() << "Not available";
-                }
-            }*/
 #endif
         }
         break;
@@ -729,7 +699,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 }
 
 QTM_END_NAMESPACE
-//////// QSystemNetworkInfo
+
 Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QSystemNetworkInfo)::NetworkMode)
 Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QSystemNetworkInfo)::NetworkStatus)
 QTM_BEGIN_NAMESPACE
@@ -1109,13 +1079,11 @@ int QSystemNetworkInfoPrivate::locationAreaCode()
     return -1;
 }
 
-// Mobile Country Code
 QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
 {
     return QString();
 }
 
-// Mobile Network Code
 QString QSystemNetworkInfoPrivate::currentMobileNetworkCode()
 {
     return QString();
@@ -1274,7 +1242,7 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
             }
         }
 #endif
-    } //end interfaceList
+    }
 
     return QNetworkInterface();
 }
@@ -1305,7 +1273,6 @@ bool QSystemNetworkInfoPrivate::isDefaultMode(QSystemNetworkInfo::NetworkMode mo
 }
 
 
-//////// QSystemDisplayInfo
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
         : QObject(parent)
 {
@@ -1370,7 +1337,6 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
     return bpp;
 }
 
-//////// QSystemStorageInfo
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
         : QObject(parent)
 {
@@ -1423,22 +1389,22 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
     uint result =  GetDriveType((WCHAR *)driveVolume.utf16());
     switch(result) {
     case 0:
-    case 1: //unknown
+    case 1:
         return QSystemStorageInfo::NoDrive;
         break;
-    case 2://removable
+    case 2:
         return QSystemStorageInfo::RemovableDrive;
         break;
-    case 3:   //fixed
+    case 3:
         return QSystemStorageInfo::InternalDrive;
         break;
-    case 4: //remote:
+    case 4:
         return QSystemStorageInfo::RemoteDrive;
         break;
-    case 5: //cdrom
+    case 5:
         return QSystemStorageInfo::CdromDrive;
         break;
-    case 6: //ramdisk
+    case 6:
         break;
     };
 #endif
@@ -1465,7 +1431,6 @@ QPowerNotificationThread::QPowerNotificationThread(QSystemDeviceInfoPrivate *par
     done(false)
 {
     wakeUpEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-    // handle / report error
 }
 
 QPowerNotificationThread::~QPowerNotificationThread() {
@@ -1579,7 +1544,6 @@ bool qax_winEventFilter(void *message)
 }
 #endif
 
-//////// QSystemDeviceInfo
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
         : QObject(parent)
 {
@@ -1915,8 +1879,6 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
     return false;
 }
 
-//////////////
-///////
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
         : QObject(parent)
 {

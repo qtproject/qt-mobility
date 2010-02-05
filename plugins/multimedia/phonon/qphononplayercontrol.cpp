@@ -215,6 +215,11 @@ void QPhononPlayerControl::setMedia(const QMediaContent &content, QIODevice *str
         m_session->setCurrentSource(Phonon::MediaSource(url));
 }
 
+bool QPhononPlayerControl::isAudioAvailable() const
+{
+    return true;
+}
+
 bool QPhononPlayerControl::isVideoAvailable() const
 {
     return m_session->hasVideo();

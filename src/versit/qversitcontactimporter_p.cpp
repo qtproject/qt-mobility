@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qversitdefs.h"
+#include "qversitdefs_p.h"
 #include "qversitcontactimporter_p.h"
 #include "qversitdocument.h"
 #include "qversitproperty.h"
@@ -69,16 +69,20 @@
 #include <QHash>
 #include <QFile>
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
 /*!
  * Constructor.
  */
-QVersitContactImporterPrivate::QVersitContactImporterPrivate()
+QVersitContactImporterPrivate::QVersitContactImporterPrivate() :
+    mPropertyHandler(NULL),
+    mDefaultResourceHandler(new QVersitDefaultResourceHandler)
 {
+    mResourceHandler = mDefaultResourceHandler;
+
     // Contact detail mappings
     int versitPropertyCount =
-        sizeof(versitContactDetailMappings)/sizeof(versitContactDetailMapping);
+        sizeof(versitContactDetailMappings)/sizeof(VersitContactDetailMapping);
     for (int i=0; i < versitPropertyCount; i++) {
         QString versitPropertyName =
             QString::fromAscii(versitContactDetailMappings[i].versitPropertyName);
@@ -91,7 +95,7 @@ QVersitContactImporterPrivate::QVersitContactImporterPrivate()
     }
 
     // Context mappings
-    int contextCount = sizeof(versitContextMappings)/sizeof(versitMapping);
+    int contextCount = sizeof(versitContextMappings)/sizeof(VersitMapping);
     for (int i=0; i < contextCount; i++) {
         mContextMappings.insert(
             QString::fromAscii(versitContextMappings[i].versitString),
@@ -99,7 +103,7 @@ QVersitContactImporterPrivate::QVersitContactImporterPrivate()
     }
 
     // Subtype mappings
-    int subTypeCount = sizeof(versitSubTypeMappings)/sizeof(versitMapping);
+    int subTypeCount = sizeof(versitSubTypeMappings)/sizeof(VersitMapping);
     for (int i=0; i < subTypeCount; i++) {
         mSubTypeMappings.insert(
             QString::fromAscii(versitSubTypeMappings[i].versitString),
@@ -107,7 +111,7 @@ QVersitContactImporterPrivate::QVersitContactImporterPrivate()
     }
 
     // File extension mappings
-    int fileExtensionCount = sizeof(versitFileExtensionMappings)/sizeof(versitMapping);
+    int fileExtensionCount = sizeof(versitFileExtensionMappings)/sizeof(VersitMapping);
     for (int i=0; i < fileExtensionCount; i++) {
         mFileExtensionMappings.insert(
             QString::fromAscii(versitFileExtensionMappings[i].versitString),
@@ -120,18 +124,22 @@ QVersitContactImporterPrivate::QVersitContactImporterPrivate()
  */
 QVersitContactImporterPrivate::~QVersitContactImporterPrivate()
 {
+    delete mDefaultResourceHandler;
 }
 
 /*!
  * Generates a QContact from \a versitDocument.
  */
 QContact QVersitContactImporterPrivate::importContact(
-     const QVersitDocument& versitDocument)
+     const QVersitDocument& document, int contactIndex)
 {
-    mUnknownVersitProperties.clear();
     QContact contact;
-    const QList<QVersitProperty> properties = versitDocument.properties();
+    const QList<QVersitProperty> properties = document.properties();
     foreach (QVersitProperty property, properties) {
+        if (mPropertyHandler
+            && mPropertyHandler->preProcessProperty(document, property, contactIndex, &contact))
+            continue;
+
         QPair<QString,QString> detailDefinition =
             mDetailMappings.value(property.name());
         QString detailDefinitionName = detailDefinition.first;
@@ -149,7 +157,7 @@ QContact QVersitContactImporterPrivate::importContact(
         } else if (detailDefinitionName == QContactNickname::DefinitionName) {
             createNicknames(property,contact);
         } else if (detailDefinitionName == QContactAvatar::DefinitionName) {
-            detail = createAvatar(property,versitDocument,detailDefinition.second);
+            detail = createAvatar(property,detailDefinition.second);
         } else if (detailDefinitionName == QContactTimestamp::DefinitionName) {
             detail = createTimeStamp(property);
         } else if (detailDefinitionName == QContactPhoneNumber::DefinitionName) {
@@ -164,8 +172,6 @@ QContact QVersitContactImporterPrivate::importContact(
             detail = createLabel(property, contact);
         } else {
             detail = createNameValueDetail(property);
-            if (!detail)
-                mUnknownVersitProperties.append(property);
         }
 
         if (detail) {
@@ -174,6 +180,11 @@ QContact QVersitContactImporterPrivate::importContact(
                 detail->setContexts(contexts);
             contact.saveDetail(detail);
             delete detail;
+            if (mPropertyHandler)
+                mPropertyHandler->postProcessProperty(document, property, true, contactIndex, &contact);
+        } else {
+            if (mPropertyHandler)
+                mPropertyHandler->postProcessProperty(document, property, false, contactIndex, &contact);
         }
     }
 
@@ -189,20 +200,20 @@ QContactDetail* QVersitContactImporterPrivate::createName(
     QContactName* name = 0;
     QContactDetail detail = contact.detail(QContactName::DefinitionName);
     if (!detail.isEmpty()) {
-        name = new QContactName(static_cast<QContactName>(detail));
         // If multiple name properties exist,
         // discard all except the first occurence
-        if (!name->first().isEmpty()) {
+        if (!detail.value(QContactName::FieldFirst).isEmpty())
             return 0;
-        }
+        else
+            name = new QContactName(static_cast<QContactName>(detail));
     } else {
         name = new QContactName();
     }
 
-    QList<QByteArray> values = property.value().split(';');
-    name->setLast(takeFirst(values));
-    name->setFirst(takeFirst(values));
-    name->setMiddle(takeFirst(values));
+    QStringList values = property.value().split(QChar::fromAscii(';'));
+    name->setLastName(takeFirst(values));
+    name->setFirstName(takeFirst(values));
+    name->setMiddleName(takeFirst(values));
     name->setPrefix(takeFirst(values));
     name->setSuffix(takeFirst(values));
     return name;
@@ -215,7 +226,7 @@ QContactDetail* QVersitContactImporterPrivate::createPhone(
     const QVersitProperty& property) const
 {
     QContactPhoneNumber* phone = new QContactPhoneNumber();
-    phone->setNumber(QString::fromAscii(property.value()));
+    phone->setNumber(property.value());
     phone->setSubTypes(extractSubTypes(property));
     return phone;
 }
@@ -228,7 +239,7 @@ QContactDetail* QVersitContactImporterPrivate::createAddress(
 {
     QContactAddress* address = new QContactAddress();
     
-    QList<QByteArray> addressParts = property.value().split(';');
+    QStringList addressParts = property.value().split(QChar::fromAscii(';'));
     address->setPostOfficeBox(takeFirst(addressParts));
     // There is no setter for the Extended Address in QContactAddress:
     if (!addressParts.isEmpty())
@@ -270,13 +281,13 @@ QContactDetail* QVersitContactImporterPrivate::createOrganization(
     if (fieldName == QContactOrganization::FieldName) {
         setOrganizationNames(*organization,property);
     } else if (fieldName == QContactOrganization::FieldTitle) {
-        organization->setTitle(QString::fromAscii(property.value()));
+        organization->setTitle(property.value());
     } else if (fieldName == QContactOrganization::FieldRole) {
-        organization->setRole(QString::fromAscii(property.value()));
+        organization->setRole(property.value());
     } else if (fieldName == QContactOrganization::FieldLogo) {
         setOrganizationLogo(*organization,property);
     } else if (fieldName == QContactOrganization::FieldAssistantName) {
-        organization->setAssistantName(QString::fromAscii(property.value()));
+        organization->setAssistantName(property.value());
     } else {
         delete organization;
         organization = 0;
@@ -291,16 +302,16 @@ void QVersitContactImporterPrivate::setOrganizationNames(
     QContactOrganization& organization,
     const QVersitProperty& property) const
 {
-    QByteArray value = property.value();
-    int firstSemicolon = value.indexOf(";");
+    QString value = property.value();
+    int firstSemicolon = value.indexOf(QString::fromAscii(";"));
     if (firstSemicolon >= 0) {
-        organization.setName(QString::fromAscii(value.left(firstSemicolon)));
-        QString departmentsStr(QString::fromAscii(value.mid(firstSemicolon+1)));
+        organization.setName(value.left(firstSemicolon));
+        QString departmentsStr(value.mid(firstSemicolon+1));
         QStringList departments =
             departmentsStr.split(QString::fromAscii(";"),QString::SkipEmptyParts);
         organization.setDepartment(departments);
     } else {
-        organization.setName(QString::fromAscii(value));
+        organization.setName(value);
     }
 }
 
@@ -311,20 +322,21 @@ void QVersitContactImporterPrivate::setOrganizationLogo(
     QContactOrganization& org,
     const QVersitProperty& property) const
 {
-    QString value(QString::fromAscii(property.value()));
+    QString location;
 
     const QString valueParam =
         property.parameters().value(QString::fromAscii("VALUE"));
 
-    if (valueParam != QString::fromAscii("URL")) {
-        QString path(mImagePath);
-        if (!path.endsWith(QString::fromAscii("/")))
-            path += QString::fromAscii("/");
-        // Let saveContentToFile to generate a random string as the name
-        value = saveContentToFile(path,property);
+    QVariant variant(property.variantValue());
+    if (variant.type() == QVariant::String) {
+        location = variant.toString();
+    } else if (variant.type() == QVariant::ByteArray
+               && valueParam != QString::fromAscii("URL")) {
+        QByteArray data = variant.toByteArray();
+        location = saveContentToFile(property, data);
     }
 
-    org.setLogo(value);
+    org.setLogo(location);
 }
 
 /*!
@@ -334,12 +346,12 @@ QContactDetail* QVersitContactImporterPrivate::createTimeStamp(
     const QVersitProperty& property) const
 {
     QContactTimestamp* timeStamp = new QContactTimestamp();
-    QByteArray value(property.value());
-    bool utc = (value.endsWith("Z") || value.endsWith("z"));
+    QString value(property.value());
+    bool utc = (value.endsWith(QString::fromAscii("Z")) || value.endsWith(QString::fromAscii("z")));
     if (utc)
         value.chop(1); // take away z from end;
 
-    QDateTime dateTime = parseDateTime(value,"yyyyMMddThhmmss");
+    QDateTime dateTime = parseDateTime(value,QString::fromAscii("yyyyMMddThhmmss"));
     if (utc)
         dateTime.setTimeSpec(Qt::UTC);
     timeStamp->setLastModified(dateTime);
@@ -354,7 +366,7 @@ QContactDetail* QVersitContactImporterPrivate::createAnniversary(
 {
     QContactAnniversary* anniversary = new QContactAnniversary();
     QDateTime dateTime =
-        parseDateTime(property.value(),"yyyyMMdd");
+        parseDateTime(property.value(),QString::fromAscii("yyyyMMdd"));
     anniversary->setOriginalDate(dateTime.date());
     return anniversary;
 }
@@ -367,7 +379,7 @@ QContactDetail* QVersitContactImporterPrivate::createBirthday(
 {
     QContactBirthday* bday = new QContactBirthday();
     QDateTime dateTime =
-        parseDateTime(property.value(),"yyyyMMdd");
+        parseDateTime(property.value(),QString::fromAscii("yyyyMMdd"));
     bday->setDate(dateTime.date());
     return bday;
 }
@@ -379,10 +391,10 @@ void QVersitContactImporterPrivate::createNicknames(
     const QVersitProperty& property,
     QContact& contact) const
 {
-    QList<QByteArray> values = property.value().split(',');
-    foreach(QByteArray value,values) {
+    QStringList values = property.value().split(QLatin1Char(','));
+    foreach(QString value, values) {
         QContactNickname* nickName = new QContactNickname();
-        nickName->setNickname(QString::fromAscii(value));
+        nickName->setNickname(value);
         contact.saveDetail(nickName);
         delete nickName;
     }
@@ -395,7 +407,7 @@ QContactDetail* QVersitContactImporterPrivate::createOnlineAccount(
     const QVersitProperty& property) const
 {    
     QContactOnlineAccount* onlineAccount = new QContactOnlineAccount();
-    onlineAccount->setAccountUri(QString::fromAscii(property.value()));
+    onlineAccount->setAccountUri(property.value());
     if (property.name() == QString::fromAscii("X-SIP")) {
         QStringList subTypes = extractSubTypes(property);
         if (subTypes.count() == 0)
@@ -417,28 +429,29 @@ QContactDetail* QVersitContactImporterPrivate::createOnlineAccount(
  */
 QContactDetail* QVersitContactImporterPrivate::createAvatar(
     const QVersitProperty& property,
-    const QVersitDocument& versitDocument,
     const QString& subType) const
 {
-    QString value(QString::fromAscii(property.value()));
+    QContactAvatar* avatar = 0;
 
     const QString valueParam =
         property.parameters().value(QString::fromAscii("VALUE"));
-
-    if (valueParam != QString::fromAscii("URL")) {
-        QString pathAndName(mImagePath);
-        if (subType == QContactAvatar::SubTypeAudioRingtone)
-            pathAndName = mAudioClipPath;
-        if (!pathAndName.endsWith(QString::fromAscii("/")))
-            pathAndName += QString::fromAscii("/");
-        pathAndName += getFirstAndLastName(versitDocument);
-        value = saveContentToFile(pathAndName,property);
+    QString location;
+    QVariant variant(property.variantValue());
+    if (variant.type() == QVariant::String) {
+        avatar = new QContactAvatar();
+        location = variant.toString();
+    } else if (variant.type() == QVariant::ByteArray
+               && valueParam != QString::fromAscii("URL")) {
+        avatar = new QContactAvatar();
+        QByteArray data = variant.toByteArray();
+        location = saveContentToFile(property, data);
+        QPixmap pixmap;
+        if (pixmap.loadFromData(data))
+            avatar->setPixmap(pixmap);
     }
 
-    QContactAvatar* avatar = 0;
-    if (!value.isEmpty()) {
-        avatar = new QContactAvatar();
-        avatar->setAvatar(value);
+    if (avatar) {
+        avatar->setAvatar(location);
         avatar->setSubType(subType);
     }
     return avatar;
@@ -450,8 +463,8 @@ QContactDetail* QVersitContactImporterPrivate::createAvatar(
 QContactDetail* QVersitContactImporterPrivate::createGeoLocation(
     const QVersitProperty& property) const
 {
-    QContactGeolocation* geo = new QContactGeolocation();
-    QList<QByteArray> values = property.value().split(',');
+    QContactGeoLocation* geo = new QContactGeoLocation();
+    QStringList values = property.value().split(QChar::fromAscii(','));
     geo->setLongitude(takeFirst(values).toDouble());
     geo->setLatitude(takeFirst(values).toDouble());
     return geo;
@@ -464,7 +477,7 @@ QContactDetail* QVersitContactImporterPrivate::createFamily(
     const QVersitProperty& property,
     const QContact& contact) const
 {
-    QString val = QString::fromAscii(property.value());
+    QString val = property.value();
     QContactFamily family =
         static_cast<QContactFamily>(contact.detail(QContactFamily::DefinitionName));
     if (property.name() == QString::fromAscii("X-SPOUSE")) {
@@ -487,7 +500,7 @@ QContactDetail* QVersitContactImporterPrivate::createNameValueDetail(
     if (nameAndValueType.first.length() > 0) {
         detail = new QContactDetail(nameAndValueType.first);
         detail->setValue(
-            nameAndValueType.second,QString::fromAscii(property.value()));
+            nameAndValueType.second,property.value());
     }
     return detail;
 }
@@ -508,7 +521,7 @@ QContactDetail* QVersitContactImporterPrivate::createLabel(
     }
 
     // Setting the QContactDisplayLabel is done by the backend
-    name->setCustomLabel(QString::fromAscii(property.value()));
+    name->setCustomLabel(property.value());
     return name;
 }
 
@@ -547,69 +560,41 @@ QStringList QVersitContactImporterPrivate::extractSubTypes(
 }
 
 /*!
- * Takes the first value in \a list and converts it to a QString.
- * An empty QString is returned, if the list is empty.
+ * Takes the first value in \a list, or an empty QString is if the list is empty.
  */
-QString QVersitContactImporterPrivate::takeFirst(QList<QByteArray>& list) const
+QString QVersitContactImporterPrivate::takeFirst(QList<QString>& list) const
 {
-    QString first;
-    if (!list.isEmpty())
-        first = QString::fromAscii(list.takeFirst());
-    return first; 
+    return list.empty() ? QString() : list.takeFirst();
 }
 
 /*!
  * Parses a date and time from text
  */
 QDateTime QVersitContactImporterPrivate::parseDateTime(
-    const QByteArray& text,
-    const QByteArray& format) const
+    const QString& value,
+    const QString& format) const
 {
     QDateTime dateTime;
-    QString value(QString::fromAscii(text));
-    if (text.contains("-")) {
+    if (value.contains(QString::fromAscii("-"))) {
         dateTime = QDateTime::fromString(value,Qt::ISODate);
     } else {
-        dateTime = QDateTime::fromString(value, QString::fromAscii(format));
+        dateTime = QDateTime::fromString(value, format);
     }
     return dateTime;
 }
 
 /*!
- * Save the value of the \a property to a file with name \a pathAndName.
+ * Writes \a data to a file and returns the filename.  \a property specifies the context in which
+ * the data was found.
  */
 QString QVersitContactImporterPrivate::saveContentToFile(
-    const QString& pathAndName,
-    const QVersitProperty& property) const
+    const QVersitProperty& property, const QByteArray& data) const
 {
-    QString encoding =
-        property.parameters().value(QString::fromAscii("ENCODING"));
-    QByteArray content = property.value();
-
-    QString type =
-        property.parameters().value(QString::fromAscii("TYPE"));
-    // Use the type parameter value as it is, if not found in the mapping table
-    QString extension = mFileExtensionMappings.value(type,type);
-
-    QString fileName(pathAndName);
-    fileName += QString::number(qrand());
-    fileName += QString::fromAscii(".");
-    fileName += extension.toLower();
-
-    QFile file(fileName);
-    qint64 writeResult = -1;
-    if (file.open(QIODevice::WriteOnly)) {
-        if (encoding == QString::fromAscii("BASE64") ||
-            encoding == QString::fromAscii("B")) {
-            writeResult = file.write(QByteArray::fromBase64(property.value()));
-        } else {
-            // default assumption
-            // quoted-printable encoding is parsed already in the reader
-            writeResult = file.write(property.value());
-        }
-    }
-    file.close();
-    return (writeResult > 0) ? fileName : QString();
+    QString filename;
+    bool ok = false;
+    if (mResourceHandler)
+        ok = mResourceHandler->saveResource(data, property, &filename);
+    return ok ? filename : QString();
 }
 
 /*!
@@ -622,7 +607,7 @@ QString QVersitContactImporterPrivate::getFirstAndLastName(
     const QList<QVersitProperty> properties = document.properties();
     foreach(const QVersitProperty& nameProperty, properties) {
         if (nameProperty.name() == QString::fromAscii("N")) {
-            QList<QByteArray> values = nameProperty.value().split(';');
+            QStringList values = nameProperty.value().split(QChar::fromAscii(';'));
             name.append(takeFirst(values));
             name.append(takeFirst(values));
             break;
@@ -630,5 +615,3 @@ QString QVersitContactImporterPrivate::getFirstAndLastName(
     }
     return name;
 }
-
-QTM_END_NAMESPACE

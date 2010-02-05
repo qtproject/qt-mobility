@@ -72,8 +72,8 @@ private:
     QString metaDataKeyAsString(QtMedia::MetaData key) const;
 
 private:
-    mutable S60MediaPlayerSession *m_session;
     MS60MediaPlayerResolver& m_mediaPlayerResolver;
+    mutable S60MediaPlayerSession *m_session;
 };
 
 #endif // S60VIDEOMETADATAPROVIDER_H
