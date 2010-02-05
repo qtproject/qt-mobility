@@ -175,10 +175,10 @@ void UT_QVersitContactImporter::init()
 
 void UT_QVersitContactImporter::cleanup()
 {
-    QCOMPARE(mImporter->propertyHandler(), mPropertyHandler);
+    QVERIFY(mImporter->propertyHandler() == mPropertyHandler);
     mImporter->setPropertyHandler(0);
     delete mPropertyHandler;
-    QCOMPARE(mImporter->resourceHandler(), mResourceHandler);
+    QVERIFY(mImporter->resourceHandler() == mResourceHandler);
     mImporter->setResourceHandler(0);
     delete mResourceHandler;
     delete mImporter;

@@ -187,10 +187,10 @@ void UT_QVersitContactExporter::init()
 
 void UT_QVersitContactExporter::cleanup()
 {
-    QCOMPARE(mExporter->detailHandler(), mDetailHandler);
+    QVERIFY(mExporter->detailHandler() == mDetailHandler);
     mExporter->setDetailHandler(0);
     delete mDetailHandler;
-    QCOMPARE(mExporter->resourceHandler(), mResourceHandler);
+    QVERIFY(mExporter->resourceHandler() == mResourceHandler);
     mExporter->setResourceHandler(0);
     delete mResourceHandler;
     delete mExporterPrivate;
@@ -272,7 +272,7 @@ void UT_QVersitContactExporter::testContactDetailHandler()
     QCOMPARE(mDetailHandler->mPostProcessedDetails.count(), 0);
     QCOMPARE(mDetailHandler->mUnknownDetails.count(), 0);
 
-    QCOMPARE(mExporter->detailHandler(), mDetailHandler);
+    QVERIFY(mExporter->detailHandler() == mDetailHandler);
 }
 
 void UT_QVersitContactExporter::testEncodeName()

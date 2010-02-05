@@ -110,9 +110,9 @@ void UT_QVersitReader::testDevice()
 
 void UT_QVersitReader::testDefaultCodec()
 {
-    QCOMPARE(mReader->defaultCodec(), QTextCodec::codecForName("UTF-8"));
+    QVERIFY(mReader->defaultCodec() == QTextCodec::codecForName("UTF-8"));
     mReader->setDefaultCodec(QTextCodec::codecForName("UTF-16BE"));
-    QCOMPARE(mReader->defaultCodec(), QTextCodec::codecForName("UTF-16BE"));
+    QVERIFY(mReader->defaultCodec() == QTextCodec::codecForName("UTF-16BE"));
 }
 
 void UT_QVersitReader::testReading()
