@@ -522,7 +522,7 @@ void S60CameraSession::MceoFocusComplete()
 
 void S60CameraSession::MceoCapturedDataReady(TDesC8* aData)
 {
-    //qDebug() << "S60CameraSession::MceoCapturedDataReady()";
+    qDebug() << "S60CameraSession::MceoCapturedDataReady()";
     QImage snapImage = QImage::fromData((const uchar *)aData->Ptr(), aData->Length());
     //qDebug() << "S60CameraSession::MceoCapturedDataReady(), image constructed, byte count="<<snapImage.byteCount();
     // inform capture done
@@ -537,6 +537,7 @@ void S60CameraSession::MceoCapturedDataReady(TDesC8* aData)
 
 void S60CameraSession::saveImageL(TDesC8* aData) 
 {
+    qDebug() << "S60CameraSession::saveImageL()";
     // Create path for filename
     TFileName path = PathInfo::PhoneMemoryRootPath(); 
     path.Append(PathInfo::ImagesPath());  
@@ -553,7 +554,8 @@ void S60CameraSession::saveImageL(TDesC8* aData)
     User::LeaveIfError(file.Create(fs, path, EFileWrite));
     CleanupClosePushL(file);
     User::LeaveIfError(file.Write(*aData));
-     
+    
+    qDebug() << "S60CameraSession::saveImageL(), image saved";
     CleanupStack::PopAndDestroy(&file);
     CleanupStack::PopAndDestroy(&fs);
 }
@@ -568,7 +570,7 @@ void S60CameraSession::releaseImageBuffer()
 
 void S60CameraSession::MceoCapturedBitmapReady(CFbsBitmap* aBitmap)
 {
-    //qDebug() << "S60CameraSession::MceoCapturedBitmapReady()";
+    qDebug() << "S60CameraSession::MceoCapturedBitmapReady()";
     if(aBitmap)
     {
         TSize size = aBitmap->SizeInPixels();
@@ -586,6 +588,7 @@ void S60CameraSession::MceoCapturedBitmapReady(CFbsBitmap* aBitmap)
         aBitmap->UnlockHeap();
 
         TDisplayMode displayMode = aBitmap->DisplayMode();
+        qDebug() << "S60CameraSession::MceoCapturedBitmapReady(), displaymode: "<<displayMode;
 
         QImage::Format format = QImage::Format_Invalid;
         switch(displayMode)
@@ -1011,7 +1014,6 @@ int S60CameraSession::digitalZoomFactor()
 void S60CameraSession::startFocus()
 {
     //qDebug() << "S60CameraSession::startFocus";
-
     if (m_cameraEngine) {
         TRAPD(err, m_cameraEngine->StartFocusL());
         setError(err);
@@ -1064,22 +1066,29 @@ int S60CameraSession::maxDigitalZoom()
 
 void S60CameraSession::setFlashMode(QCamera::FlashMode mode)
 {
+    TRAPD(err, setFlashModeL(mode));
+    setError(err);
+}
+
+void S60CameraSession::setFlashModeL(QCamera::FlashMode mode)
+{
     if (m_cameraEngine) {
+        CCamera *camera = m_cameraEngine->Camera();
         switch(mode) {
             case QCamera::FlashOff:
-                m_cameraEngine->SetFlash(CCamera::EFlashNone);
+                camera->SetFlashL(CCamera::EFlashNone);
                 break;
             case QCamera::FlashAuto:
-                m_cameraEngine->SetFlash(CCamera::EFlashAuto);
+                camera->SetFlashL(CCamera::EFlashAuto);
                 break;
             case QCamera::FlashOn:
-                m_cameraEngine->SetFlash(CCamera::EFlashForced);
+                camera->SetFlashL(CCamera::EFlashForced);
                 break;
             case QCamera::FlashRedEyeReduction:
-                m_cameraEngine->SetFlash(CCamera::EFlashRedEyeReduce);
+                camera->SetFlashL(CCamera::EFlashRedEyeReduce);
                 break;
             case QCamera::FlashFill:
-                m_cameraEngine->SetFlash(CCamera::EFlashFillIn);
+                camera->SetFlashL(CCamera::EFlashFillIn);
                 break;
             default:
                 break;
@@ -1091,7 +1100,8 @@ void S60CameraSession::setFlashMode(QCamera::FlashMode mode)
 QCamera::FlashMode S60CameraSession::flashMode()
 {
     if (m_cameraEngine) {
-        TInt mode = m_cameraEngine->Flash();
+        CCamera *camera = m_cameraEngine->Camera();
+        TInt mode = camera->Flash();
         switch(mode) {
             case CCamera::EFlashAuto:
                 return QCamera::FlashAuto;
@@ -1110,9 +1120,10 @@ QCamera::FlashMode S60CameraSession::flashMode()
 
 QCamera::FlashModes S60CameraSession::supportedFlashModes()
 {
+  //  qDebug() << "S60CameraSession::supportedFlashModes()";
     QCamera::FlashModes modes = QCamera::FlashOff;
-    if (m_cameraEngine) {
-        TInt supportedModes =  m_cameraEngine->SupportedFlashModes();
+    if (queryCurrentCameraInfo()) {
+        TInt supportedModes = m_info.iFlashModesSupported;
         if (supportedModes == 0)
             return modes;
         if (supportedModes & CCamera::EFlashManual) {
@@ -1163,8 +1174,9 @@ QCamera::ExposureMode S60CameraSession::exposureMode()
 
 QCamera::ExposureModes S60CameraSession::supportedExposureModes()
 {
+   // qDebug() << "S60CameraSession::supportedExposureModes()";
     QCamera::ExposureModes modes = QCamera::ExposureAuto;
-    if (m_cameraEngine) {
+    if (queryCurrentCameraInfo()) {
         TInt supportedModes = m_info.iExposureModesSupported;
         if (supportedModes == 0) {
             return modes;
@@ -1196,33 +1208,41 @@ QCamera::ExposureModes S60CameraSession::supportedExposureModes()
 
 void S60CameraSession::setExposureMode(QCamera::ExposureMode mode)
 {
+    TRAPD(err, setExposureModeL(mode));
+    setError(err);
+}
+
+void S60CameraSession::setExposureModeL(QCamera::ExposureMode mode)
+{
+    qDebug() << "S60CameraSession::setExposureModeL()";
     if (m_cameraEngine) {
+        CCamera *camera = m_cameraEngine->Camera();
         switch(mode) {
             case QCamera::ExposureManual:
-                m_cameraEngine->SetExposure(CCamera::EExposureManual);
+                camera->SetExposureL(CCamera::EExposureManual);
                 break;
             case QCamera::ExposureAuto:
-                m_cameraEngine->SetExposure(CCamera::EExposureAuto);
+                camera->SetExposureL(CCamera::EExposureAuto);
                 break;
             case QCamera::ExposureNight:
-                m_cameraEngine->SetExposure(CCamera::EExposureNight);
+                camera->SetExposureL(CCamera::EExposureNight);
                 break;
             case QCamera::ExposureBacklight:
-                m_cameraEngine->SetExposure(CCamera::EExposureBacklight);
+                camera->SetExposureL(CCamera::EExposureBacklight);
                 break;
             case QCamera::ExposureSports:
-                m_cameraEngine->SetExposure(CCamera::EExposureSport);
+                camera->SetExposureL(CCamera::EExposureSport);
                 break;
             case QCamera::ExposureSnow:
-                m_cameraEngine->SetExposure(CCamera::EExposureSnow);
+                camera->SetExposureL(CCamera::EExposureSnow);
                 break;
             case QCamera::ExposureBeach:
-                m_cameraEngine->SetExposure(CCamera::EExposureBeach);
+                camera->SetExposureL(CCamera::EExposureBeach);
                 break;
             case QCamera::ExposureLargeAperture:
             case QCamera::ExposureSmallAperture:
                 //TODO:
-                //m_cameraEngine->SetExposure(CCamera::EExposureAperturePriority);
+                //camera->SetExposureL(CCamera::EExposureAperturePriority);
                 break;
             case QCamera::ExposurePortrait:
             case QCamera::ExposureSpotlight:
