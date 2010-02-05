@@ -55,7 +55,7 @@ public:
         setAttribute(Qt::WA_NoSystemBackground, true);
         setAutoFillBackground(false);
         
-#if QT_VERSION >= 0x040601        
+#if QT_VERSION >= 0x040601 && !defined(__WINSCW__)
         qt_widget_private(this)->extraData()->nativePaintMode = QWExtra::ZeroFill;
         qt_widget_private(this)->extraData()->receiveNativePaintEvents = true;
 #endif        
