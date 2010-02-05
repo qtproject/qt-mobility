@@ -50,7 +50,7 @@
 #include "s60mediaplayerservice.h"
 #endif
 #include "s60audiocaptureservice.h"
-#ifdef HAS_CAMERA_WRAPPER
+#ifdef QMEDIA_SYMBIAN_CAMERA
 #include "s60cameraservice.h"
 #endif
 
@@ -60,7 +60,7 @@ QStringList S60MediaServicePlugin::keys() const
 #if defined(TUNERLIBUSED) || defined(RADIOUTILITYLIBUSED)
     list << QLatin1String(Q_MEDIASERVICE_RADIO);
 #endif    
-#ifdef HAS_CAMERA_WRAPPER    
+#ifdef QMEDIA_SYMBIAN_CAMERA    
     list << QLatin1String(Q_MEDIASERVICE_CAMERA);
 #endif    
 #ifdef HAS_MEDIA_PLAYER  
@@ -72,7 +72,7 @@ QStringList S60MediaServicePlugin::keys() const
 
 QMediaService* S60MediaServicePlugin::create(QString const& key)
 {
-#ifdef HAS_CAMERA_WRAPPER
+#ifdef QMEDIA_SYMBIAN_CAMERA
     if (key == QLatin1String(Q_MEDIASERVICE_CAMERA))
         return new S60CameraService;
 #endif    
@@ -100,7 +100,7 @@ void S60MediaServicePlugin::release(QMediaService *service)
 
 QList<QByteArray> S60MediaServicePlugin::devices(const QByteArray &service) const
 {
-#ifdef HAS_CAMERA_WRAPPER
+#ifdef QMEDIA_SYMBIAN_CAMERA
     if (service == Q_MEDIASERVICE_CAMERA) {
         if (m_cameraDevices.isEmpty())
             updateDevices();
@@ -113,7 +113,7 @@ QList<QByteArray> S60MediaServicePlugin::devices(const QByteArray &service) cons
 
 QString S60MediaServicePlugin::deviceDescription(const QByteArray &service, const QByteArray &device)
 {
-#ifdef HAS_CAMERA_WRAPPER
+#ifdef QMEDIA_SYMBIAN_CAMERA
     if (service == Q_MEDIASERVICE_CAMERA) {
         if (m_cameraDevices.isEmpty())
             updateDevices();
@@ -128,7 +128,7 @@ QString S60MediaServicePlugin::deviceDescription(const QByteArray &service, cons
 
 void S60MediaServicePlugin::updateDevices() const
 {
-#ifdef HAS_CAMERA_WRAPPER
+#ifdef QMEDIA_SYMBIAN_CAMERA
     m_cameraDevices.clear();
     m_cameraDescriptions.clear();
     for (int i=0; i < S60CameraService::deviceCount(); i ++) {
