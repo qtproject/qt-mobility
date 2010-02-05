@@ -563,7 +563,9 @@ void ut_qtcontacts_trackerplugin::testSaveContacts()
         c.saveDetail(&name);
         contacts.append(c);
     }
-    trackerEngine->saveContacts(&contacts, error);
+
+    QMap<int, QContactManager::Error>* errorMap;    
+    trackerEngine->saveContacts(&contacts, errorMap, error);
     QCOMPARE(error, QContactManager::NoError);
     for (int i = 0; i < contacts.count(); i++) {
         QVERIFY(contacts[i].localId() != 0);
@@ -590,27 +592,24 @@ void ut_qtcontacts_trackerplugin::testRemoveContacts()
     toApiRemove.append(addedIds.takeLast());
     QList<QContactLocalId> toPluginRemove(addedIds);
     // Remove all, but last of the added contacts
-    QList<QContactManager::Error> errors = trackerEngine->removeContacts(&toPluginRemove, error);
-    QCOMPARE(errors.count(), toPluginRemove.count());
-    for (int i = 0; i < errors.count(); i++) {
-        QCOMPARE(errors[i], QContactManager::NoError);
+    bool success = trackerEngine->removeContacts(&toPluginRemove, errorMap);
+    QCOMPARE(success, true);
+    for (int i = 0; i < errorMap->count(); i++) {
         QVERIFY(toPluginRemove[i] == 0);
     }
     QCOMPARE(error, QContactManager::NoError);
 
-    errors = ContactManager::instance()->removeContacts(&toApiRemove);
-    QCOMPARE(ContactManager::instance()->error(), QContactManager::NoError);
-    QCOMPARE(errors.count(), toApiRemove.count());
-    for (int i = 0; i < errors.count(); i++) {
-        QCOMPARE(errors[i], QContactManager::NoError);
+    success = ContactManager::instance()->removeContacts(&toApiRemove, errorMap);
+    QCOMPARE(success, true);
+    QCOMPARE(errorMap->count(), toApiRemove.count());
+    for (int i = 0; i < errorMap->count(); i++) {
         QVERIFY(toApiRemove[i] == 0);
     }
 
     // Try to remove some previously removed contacts, but one valid contact
-    errors = trackerEngine->removeContacts(&addedIds, error);
-    QCOMPARE(errors.count(), addedIds.count());
-    for (int i = 0; i < errors.count() - 1; i++) {
-        QVERIFY2(errors[i] == QContactManager::DoesNotExistError, "Failed to report error of trying to remove previously removed");
+    success = trackerEngine->removeContacts(&addedIds, errorMap);
+    QCOMPARE(errorMap->count(), addedIds.count());
+    for (int i = 0; i < errorMap->count() - 1; i++) {
         QVERIFY2(addedIds[i] != 0, "Manager should not mark id as zero");
     }
 }

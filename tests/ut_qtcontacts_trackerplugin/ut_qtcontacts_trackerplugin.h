@@ -116,6 +116,7 @@ private:
 private:
     QContactTrackerEngine *trackerEngine;
     QContactManager::Error error;
+    QMap<int, QContactManager::Error>* errorMap;
     // Filtering and sort options used for QContactTrackerEngine.
     // Not used.
     QContactFilter queryFilter;
