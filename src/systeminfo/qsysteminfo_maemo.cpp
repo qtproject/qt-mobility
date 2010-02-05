@@ -1275,6 +1275,38 @@ void QSystemDeviceInfoPrivate::halChanged(int,QVariantList map)
 
 QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
 {
+#if !defined(QT_NO_DBUS)
+    QDBusInterface connectionInterface("com.nokia.profiled",
+                                      "/com/nokia/profiled",
+                                      "com.nokia.profiled",
+                                      QDBusConnection::sessionBus());
+    if(!connectionInterface.isValid()) {
+       qWarning() << "interface not valid";
+       return QSystemDeviceInfo::UnknownProfile;
+    }
+
+    QDBusReply<QString> profileReply = connectionInterface.call("get_profile");
+    if (!profileReply.isValid()) return QSystemDeviceInfo::UnknownProfile;
+    QString profileName = profileReply.value();
+
+    QDBusReply<QString> ringingAlertType = connectionInterface.call("get_value", profileName, "ringing.alert.type");
+    if (!ringingAlertType.isValid()) return QSystemDeviceInfo::UnknownProfile;
+    QDBusReply<QString> vibratingAlertEnabled = connectionInterface.call("get_value", profileName, "vibrating.alert.enabled");
+    if (!vibratingAlertEnabled.isValid()) return QSystemDeviceInfo::UnknownProfile;
+    QDBusReply<QString> ringingAlertVolume = connectionInterface.call("get_value", profileName, "ringing.alert.volume");
+    if (!ringingAlertVolume.isValid()) return QSystemDeviceInfo::UnknownProfile;
+
+    bool isSilent = ringingAlertType.value() == "silent";
+    bool isLoud = ringingAlertVolume.value().toInt() > 75;
+    bool isVibrating = vibratingAlertEnabled.value() == "On";
+
+    //TODO: Handle OfflineProfile
+    if (isSilent && isVibrating) return QSystemDeviceInfo::VibProfile;
+    if (isSilent) return QSystemDeviceInfo::SilentProfile;
+    if (isLoud) return QSystemDeviceInfo::LoudProfile;
+    return QSystemDeviceInfo::NormalProfile;
+#endif
+
     return QSystemDeviceInfo::UnknownProfile;
 }
 
