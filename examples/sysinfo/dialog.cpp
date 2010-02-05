@@ -627,6 +627,9 @@ void Dialog::networkModeChanged(QSystemNetworkInfo::NetworkMode mode)
     if(mode == QSystemNetworkInfo::WcdmaMode) {
         primaryModeLabel->setText("Wcdma");
     }
+    if(mode == QSystemNetworkInfo::UnknownMode) {
+        primaryModeLabel->setText("None");
+    }
 }
 
 

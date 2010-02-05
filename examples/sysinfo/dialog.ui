@@ -583,9 +583,6 @@
           </item>
           <item row="1" column="2">
            <widget class="QLabel" name="cellNetworkStatusLabel">
-            <property name="frameShape">
-             <enum>QFrame::StyledPanel</enum>
-            </property>
             <property name="frameShadow">
              <enum>QFrame::Sunken</enum>
             </property>
@@ -642,7 +639,7 @@
           <item row="5" column="0" colspan="2">
            <widget class="QLabel" name="label">
             <property name="text">
-             <string>Primary Mode:</string>
+             <string>Network Mode:</string>
             </property>
            </widget>
           </item>
@@ -650,6 +647,20 @@
            <widget class="QLabel" name="primaryModeLabel">
             <property name="text">
              <string>test</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="2">
+           <widget class="QLabel" name="operatorNameLabel">
+            <property name="text">
+             <string>.</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0">
+           <widget class="QLabel" name="label_52">
+            <property name="text">
+             <string>Network Name</string>
             </property>
            </widget>
           </item>
@@ -833,26 +844,6 @@
              </size>
             </property>
            </spacer>
-          </item>
-          <item row="6" column="0">
-           <widget class="QLabel" name="label_52">
-            <property name="text">
-             <string>Network Name</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="1">
-           <widget class="QLabel" name="operatorNameLabel">
-            <property name="frameShape">
-             <enum>QFrame::StyledPanel</enum>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Sunken</enum>
-            </property>
-            <property name="text">
-             <string>.</string>
-            </property>
-           </widget>
           </item>
          </layout>
         </widget>
