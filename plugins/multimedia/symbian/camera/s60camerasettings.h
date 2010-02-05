@@ -78,6 +78,7 @@ public:
     void setFocusMode(QCamera::FocusMode mode);
     QCamera::FocusMode focusMode();
     QCamera::FocusModes supportedFocusModes();
+    void cancelFocusing();
     
     TInt shutterSpeed();
     void setShutterSpeed(TInt speed);

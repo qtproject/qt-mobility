@@ -58,7 +58,7 @@ S60CameraSettings::S60CameraSettings(QObject *parent, CCameraEngine *engine)
     m_cameraEngine = engine;
     queryAdvancedSettingsInfo();
 #if (defined(USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER) || defined(USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER))
-    TRAPD(err, m_imageProcessingSettings = CCamera::CCameraImageProcessing::NewL(*m_cameraEngine->Camera()));
+    TRAP_IGNORE(m_imageProcessingSettings = CCamera::CCameraImageProcessing::NewL(*m_cameraEngine->Camera()));
 #endif
 }
 
@@ -81,7 +81,7 @@ bool S60CameraSettings::queryAdvancedSettingsInfo()
 #if (defined(USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER) || defined(USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER))
     if (m_cameraEngine) {
         m_advancedSettings = NULL;
-        m_advancedSettings = m_cameraEngine->AdvancedSettings();
+        TRAP_IGNORE(m_advancedSettings = CCamera::CCameraAdvancedSettings::NewL(*m_cameraEngine->Camera()));
         if (m_advancedSettings)
             returnValue = true;
     }
@@ -104,6 +104,15 @@ void S60CameraSettings::setFocusMode(QCamera::FocusMode mode)
                 m_advancedSettings->SetFocusMode(CCamera::CCameraAdvancedSettings::EFocusModeAuto);
                 break;
         }
+    }
+#endif
+}
+
+void S60CameraSettings::cancelFocusing()
+{
+#if (defined(USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER) || defined(USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER))
+    if (m_advancedSettings) {
+        m_advancedSettings->SetAutoFocusType( CCamera::CCameraAdvancedSettings::EAutoFocusTypeOff ); 
     }
 #endif
 }
