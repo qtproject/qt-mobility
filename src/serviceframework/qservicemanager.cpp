@@ -51,7 +51,6 @@
 #include <QObject>
 #include <QPluginLoader>
 #include <QFile>
-//#include <QDebug>
 #include <QCoreApplication>
 #include <QDir>
 
@@ -74,22 +73,19 @@ static QString qservicemanager_resolveLibraryPath(const QString &libNameOrPath)
             libPath = fi.completeBaseName() + QLatin1String(".qtplugin");
         else
             libPath += QLatin1String(".qtplugin");
-#endif       
-        
+
+        QLibrary lib(libPath);
+        if (QFile::exists(libPath) && lib.load()) {
+            lib.unload();
+            return libPath;
+        }
+#else       
         QLibrary lib(libPath);  
         if (lib.load()) {
             lib.unload();
-#ifdef Q_OS_SYMBIAN
-            QFileInfo fi2(libPath);
-            QString fileName = lib.fileName();
-            fileName.chop(4); // .dll is removed
-            libPath = QDir::toNativeSeparators(fi2.absolutePath()) + QDir::separator() + fileName + QLatin1String(".qtplugin");
-            // qDebug() << libPath;
-            return libPath;
-#else
             return lib.fileName();
-#endif
         }
+#endif        
     }
     return QString();
 }

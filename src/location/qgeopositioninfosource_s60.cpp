@@ -215,7 +215,7 @@ int CQGeoPositionInfoSourceS60::minimumUpdateInterval() const
         return 0;
 
     TInt i = checkModule(mCurrentModuleId);
-    if (i!= -1)
+    if (i != -1)
         return mList[i].mTimeToNextFix.Int64() / 1000;           //divide by 1000, to convert microsecond to milisecond
     return 0;
 }
@@ -421,7 +421,7 @@ void CQGeoPositionInfoSourceS60::updateStatus(TPositionModuleInfo aModInfo, TInt
             interval = QGeoPositionInfoSource::updateInterval();
 
             TRAPD(ret, temp = CQMLBackendAO::NewL(this, RegularUpdate,
-                                                   mList[i].mUid));
+                                                  mList[i].mUid));
 
             if ((ret == KErrNone) && (temp != NULL)) {
                 temp->setUpdateInterval(interval);
@@ -469,12 +469,12 @@ void CQGeoPositionInfoSourceS60::updateStatus(TPositionModuleInfo aModInfo, TInt
 
                     if (index >= 0) {
                         TRAPD(ret, temp = CQMLBackendAO::NewL(this, RegularUpdate,
-                                                             mList[index].mUid));
+                                                              mList[index].mUid));
 
                         if ((ret == KErrNone) && (temp != NULL))
                             break;
 
-                        bits = bits & (0XFF ^ (1 << index));
+                        bits = bits & (0XFF ^(1 << index));
                     }
                 } while (index >= 0);
 
@@ -501,7 +501,7 @@ void CQGeoPositionInfoSourceS60::updateStatus(TPositionModuleInfo aModInfo, TInt
                     mCurrentModuleId = TUid::Null();
                     mCurrentMethod = PositioningMethod(0);
                     QGeoPositionInfoSource::setPreferredPositioningMethods(mCurrentMethod);
-		    emit updateTimeout();
+                    emit updateTimeout();
                 }
 
             }
@@ -597,9 +597,9 @@ void CQGeoPositionInfoSourceS60::TPositionInfo2QGeoPositionInfo(
     aPosInfo2.setCoordinate(coord);
 
     TDateTime datetime = pos.Time().DateTime();
-    QDateTime dt(QDate(datetime.Year() ,datetime.Month() + 1, datetime.Day() + 1),
-                 QTime(datetime.Hour() ,datetime.Minute(), datetime.Second(),
-                       datetime.MicroSecond()/1000));
+    QDateTime dt(QDate(datetime.Year() , datetime.Month() + 1, datetime.Day() + 1),
+                 QTime(datetime.Hour() , datetime.Minute(), datetime.Second(),
+                       datetime.MicroSecond() / 1000));
 
     //store the time stamp
     aPosInfo2.setDateTime(dt);
@@ -708,7 +708,7 @@ void CQGeoPositionInfoSourceS60::requestUpdate(int aTimeout)
             return;
         }
 
-        TRAPD(ret, temp = CQMLBackendAO::NewL(this,OnceUpdate,mList[index].mUid));
+        TRAPD(ret, temp = CQMLBackendAO::NewL(this, OnceUpdate, mList[index].mUid));
 
         if ((ret == KErrNone) && (temp != NULL)) {
             //delete the old reqest update
@@ -726,7 +726,7 @@ void CQGeoPositionInfoSourceS60::requestUpdate(int aTimeout)
             return;
         }
 
-        bits = bits & (0XFF ^ (1 << index));
+        bits = bits & (0XFF ^(1 << index));
 
     } while (index >= 0);
 
@@ -789,7 +789,7 @@ void CQGeoPositionInfoSourceS60::setPreferredPositioningMethods(PositioningMetho
             if (temp != NULL)
                 break;
 
-            bits = bits & (0XFF ^ (1 << index));
+            bits = bits & (0XFF ^(1 << index));
         }
     } while (index >= 0);
 

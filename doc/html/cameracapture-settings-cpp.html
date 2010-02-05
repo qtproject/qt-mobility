@@ -55,7 +55,11 @@
     ****************************************************************************/</span>
 
     #include &quot;settings.h&quot;
+    #ifdef Q_OS_SYMBIAN
+    #include &quot;ui_settings_s60.h&quot;
+    #else
     #include &quot;ui_settings.h&quot;
+    #endif
 
     #include &lt;QtGui/qcombobox.h&gt;
     #include &lt;QtCore/qdebug.h&gt;

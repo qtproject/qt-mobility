@@ -41,6 +41,7 @@
 
 #include "directshowsamplescheduler.h"
 
+#include <QtCore/qcoreapplication.h>
 #include <QtCore/qcoreevent.h>
 
 class DirectShowTimedSample
@@ -50,6 +51,7 @@ public:
         : m_next(0)
         , m_sample(sample)
         , m_cookie(0)
+        , m_lastSample(false)
     {
         m_sample->AddRef();
     }
@@ -72,10 +74,14 @@ public:
 
     bool isReady(IReferenceClock *clock) const;
 
+    bool isLast() const { return m_lastSample; }
+    void setLast() { m_lastSample = true; }
+
 private:
     DirectShowTimedSample *m_next;
     IMediaSample *m_sample;
     DWORD_PTR m_cookie;
+    bool m_lastSample;
 };
 
 bool DirectShowTimedSample::schedule(
@@ -110,28 +116,25 @@ bool DirectShowTimedSample::isReady(IReferenceClock *clock) const
 }
 
 DirectShowSampleScheduler::DirectShowSampleScheduler(IUnknown *pin, QObject *parent)
-    : QWinEventNotifier(parent)
+    : QObject(parent)
     , m_pin(pin)
     , m_clock(0)
     , m_allocator(0)
     , m_head(0)
     , m_tail(0)
-    , m_maximumSamples(2)
+    , m_maximumSamples(1)
     , m_state(Stopped)
     , m_startTime(0)
     , m_timeoutEvent(::CreateEvent(0, 0, 0, 0))
+    , m_flushEvent(::CreateEvent(0, 0, 0, 0))
 {
     m_semaphore.release(m_maximumSamples);
-
-    setHandle(m_timeoutEvent);
-    setEnabled(true);
 }
 
 DirectShowSampleScheduler::~DirectShowSampleScheduler()
 {
-    setEnabled(false);
-
     ::CloseHandle(m_timeoutEvent);
+    ::CloseHandle(m_flushEvent);
 
     Q_ASSERT(!m_clock);
     Q_ASSERT(!m_allocator);
@@ -247,11 +250,19 @@ HRESULT DirectShowSampleScheduler::Receive(IMediaSample *pSample)
         if (m_state == Running) {
             if (!timedSample->schedule(m_clock, m_startTime, m_timeoutEvent)) {
                 // Timing information is unavailable, so schedule frames immediately.
-                QMetaObject::invokeMethod(this, "timerActivated", Qt::QueuedConnection);
+                QCoreApplication::postEvent(this, new QEvent(QEvent::UpdateRequest));
+            } else {
+                locker.unlock();
+                HANDLE handles[] = { m_flushEvent, m_timeoutEvent };
+                DWORD result = ::WaitForMultipleObjects(2, handles, FALSE, INFINITE);
+                locker.relock();
+
+                if (result == WAIT_OBJECT_0 + 1)
+                    QCoreApplication::postEvent(this, new QEvent(QEvent::UpdateRequest));
             }
         } else if (m_tail == m_head) {
             // If this is the first frame make is available.
-            QMetaObject::invokeMethod(this, "timerActivated", Qt::QueuedConnection);
+            QCoreApplication::postEvent(this, new QEvent(QEvent::UpdateRequest));
         }
 
         return S_OK;
@@ -288,6 +299,9 @@ void DirectShowSampleScheduler::run(REFERENCE_TIME startTime)
     for (DirectShowTimedSample *sample = m_head; sample; sample = sample->nextSample()) {
         sample->schedule(m_clock, m_startTime, m_timeoutEvent);
     }
+
+    if (!(m_state & Flushing))
+        ::ResetEvent(m_flushEvent);
 }
 
 void DirectShowSampleScheduler::pause()
@@ -298,6 +312,9 @@ void DirectShowSampleScheduler::pause()
 
     for (DirectShowTimedSample *sample = m_head; sample; sample = sample->nextSample())
         sample->unschedule(m_clock);
+
+    if (!(m_state & Flushing))
+        ::ResetEvent(m_flushEvent);
 }
 
 void DirectShowSampleScheduler::stop()
@@ -314,6 +331,8 @@ void DirectShowSampleScheduler::stop()
 
     m_head = 0;
     m_tail = 0;
+
+    ::SetEvent(m_flushEvent);
 }
 
 void DirectShowSampleScheduler::setFlushing(bool flushing)
@@ -333,8 +352,13 @@ void DirectShowSampleScheduler::setFlushing(bool flushing)
             }
             m_head = 0;
             m_tail = 0;
+
+            ::SetEvent(m_flushEvent);
         } else {
             m_state &= ~Flushing;
+
+            if (m_state != Stopped)
+                ::ResetEvent(m_flushEvent);
         }
     }
 }
@@ -352,7 +376,7 @@ void DirectShowSampleScheduler::setClock(IReferenceClock *clock)
         m_clock->AddRef();
 }
 
-IMediaSample *DirectShowSampleScheduler::takeSample()
+IMediaSample *DirectShowSampleScheduler::takeSample(bool *eos)
 {
     QMutexLocker locker(&m_mutex);
 
@@ -361,6 +385,8 @@ IMediaSample *DirectShowSampleScheduler::takeSample()
         sample->AddRef();
 
         if (m_state == Running) {
+            *eos =  m_head->isLast();
+
             m_head = m_head->remove();
 
             if (!m_head)
@@ -375,15 +401,26 @@ IMediaSample *DirectShowSampleScheduler::takeSample()
     }
 }
 
+bool DirectShowSampleScheduler::scheduleEndOfStream()
+{
+    QMutexLocker locker(&m_mutex);
+
+    if (m_tail) {
+        m_tail->setLast();
+
+        return true;
+    } else {
+        return false;
+    }
+}
+
 bool DirectShowSampleScheduler::event(QEvent *event)
 {
-    if (event->type() == QEvent::WinEventAct) {
-        QObject::event(event);
-
+    if (event->type() == QEvent::UpdateRequest) {
         emit sampleReady();
 
         return true;
     } else {
-        return QWinEventNotifier::event(event);
+        return QObject::event(event);
     }
 }

@@ -54,15 +54,16 @@
 #include "s60cameraservice.h"
 #endif
 
+
 QStringList S60MediaServicePlugin::keys() const
 {
     QStringList list;
 #if defined(TUNERLIBUSED) || defined(RADIOUTILITYLIBUSED)
     list << QLatin1String(Q_MEDIASERVICE_RADIO);
-#endif    
-#ifdef QMEDIA_SYMBIAN_CAMERA    
+#endif
+#ifdef QMEDIA_SYMBIAN_CAMERA
     list << QLatin1String(Q_MEDIASERVICE_CAMERA);
-#endif    
+#endif
 #ifdef HAS_MEDIA_PLAYER  
     list << QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER);
 #endif
@@ -75,13 +76,11 @@ QMediaService* S60MediaServicePlugin::create(QString const& key)
 #ifdef QMEDIA_SYMBIAN_CAMERA
     if (key == QLatin1String(Q_MEDIASERVICE_CAMERA))
         return new S60CameraService;
-#endif    
-    
+#endif
 #ifdef HAS_MEDIA_PLAYER
     if (key == QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER))
         return new S60MediaPlayerService;
 #endif
-    
     if (key == QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE))
         return new S60AudioCaptureService;
     
@@ -122,7 +121,7 @@ QString S60MediaServicePlugin::deviceDescription(const QByteArray &service, cons
             if (m_cameraDevices[i] == device)
                 return m_cameraDescriptions[i];
     }
-#endif    
+#endif
     return QString();
 }
 
@@ -135,7 +134,7 @@ void S60MediaServicePlugin::updateDevices() const
         m_cameraDevices.append(S60CameraService::deviceName(i).toUtf8());
         m_cameraDescriptions.append(S60CameraService::deviceDescription(i));
     }
-#endif    
+#endif
 }
 
 Q_EXPORT_PLUGIN2(QtMobilityMultimediaEngine, S60MediaServicePlugin);

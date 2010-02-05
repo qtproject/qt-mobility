@@ -40,7 +40,6 @@
 ****************************************************************************/
 
 #include <QtCore/qstring.h>
-#include <QtCore/qdebug.h>
 
 #include "audiocaptureserviceplugin.h"
 #include "audiocaptureservice.h"
@@ -58,7 +57,6 @@ QMediaService* AudioCaptureServicePlugin::create(QString const& key)
     if (key == QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE))
         return new AudioCaptureService;
 
-    //qDebug() << "unsupported key:" << key;
     return 0;
 }
 

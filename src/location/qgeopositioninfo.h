@@ -76,7 +76,9 @@ public:
     QGeoPositionInfo &operator=(const QGeoPositionInfo &other);
 
     bool operator==(const QGeoPositionInfo &other) const;
-    inline bool operator!=(const QGeoPositionInfo &other) const { return !operator==(other); }
+    inline bool operator!=(const QGeoPositionInfo &other) const {
+        return !operator==(other);
+    }
 
     bool isValid() const;
 

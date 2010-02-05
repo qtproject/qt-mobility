@@ -39,8 +39,10 @@
 **
 ****************************************************************************/
 
-#include <QFile>
-#include <QtGui/QIcon>
+#include <QtCore/qfile.h>
+#include <QtCore/qdir.h>
+#include <QtGui/qicon.h>
+
 #include "v4lvideodevicecontrol.h"
 #include "v4lcamerasession.h"
 
@@ -49,29 +51,32 @@ V4LVideoDeviceControl::V4LVideoDeviceControl(QObject *parent)
 {
     m_session = qobject_cast<V4LCameraSession*>(parent);
 
-    QString name;
-    QFile video0("/sys/class/video4linux/video0/name");
-    if (video0.exists()) {
-        devices.append("v4l:/dev/video0");
-        char str[31];
-        memset(str,0,31);
-        video0.open(QIODevice::ReadOnly);
-        video0.read(str,30);
-        name = QString(str);
-        descriptions.append(name.simplified());
-        video0.close();
-    }
-
-    QFile video1("/sys/class/video4linux/video1/name");
-    if (video0.exists()) {
-        devices.append("v4l:/dev/video1");
-        char str[31];
-        memset(str,0,31);
-        video1.open(QIODevice::ReadOnly);
-        video1.read(str,30);
-        name = QString(str);
-        descriptions.append(name.simplified());
-        video1.close();
+    QDir cameras = QDir::root();
+    cameras.setFilter(QDir::NoDotAndDotDot | QDir::AllEntries);
+    if (!cameras.cd("sys/class/video4linux"))
+        return;
+    else {
+        QFileInfoList list = cameras.entryInfoList();
+        for (int i = 0; i < list.size(); ++i) {
+            QFileInfo fileInfo = list.at(i);
+            if (fileInfo.fileName().contains(QLatin1String("video"))) {
+                QString videoName = QString("%1/%2/name").arg("/sys/class/video4linux").
+                    arg(fileInfo.fileName());
+                QFile videoFile(videoName);
+                if (videoFile.exists()) {
+                    if (videoFile.open(QIODevice::ReadOnly)) {
+                        char str[31];
+                        memset(str,0,31);
+                        if (videoFile.read(str,30) > 0) {
+                            devices.append(QString("v4l:/dev/%1").arg(fileInfo.fileName()).
+                                    toLocal8Bit().constData());
+                            descriptions.append(QString(str).simplified());
+                        }
+                        videoFile.close();
+                    }
+                }
+            }
+        }
     }
     selected = 0;
 }

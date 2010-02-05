@@ -42,6 +42,7 @@
 #include "videosurfacefilter.h"
 
 #include "directshoweventloop.h"
+#include "directshowglobal.h"
 #include "directshowpinenum.h"
 #include "mediasamplevideobuffer.h"
 
@@ -439,6 +440,18 @@ HRESULT VideoSurfaceFilter::QueryInternalConnections(IPin **apPin, ULONG *nPin)
 
 HRESULT VideoSurfaceFilter::EndOfStream()
 {
+    QMutexLocker locker(&m_mutex);
+
+    if (!m_sampleScheduler.scheduleEndOfStream()) {
+        if (IMediaEventSink *sink = com_cast<IMediaEventSink>(m_graph)) {
+            sink->Notify(
+                    EC_COMPLETE,
+                    S_OK,
+                    reinterpret_cast<LONG_PTR>(static_cast<IBaseFilter *>(this)));
+            sink->Release();
+        }
+    }
+
     return S_OK;
 }
 
@@ -581,7 +594,9 @@ void VideoSurfaceFilter::supportedFormatsChanged()
 
 void VideoSurfaceFilter::sampleReady()
 {
-    IMediaSample *sample = m_sampleScheduler.takeSample();
+    bool eos = false;
+
+    IMediaSample *sample = m_sampleScheduler.takeSample(&eos);
 
     if (sample) {
         m_surface->present(QVideoFrame(
@@ -590,6 +605,16 @@ void VideoSurfaceFilter::sampleReady()
                 m_surfaceFormat.pixelFormat()));
 
         sample->Release();
+
+        if (eos) {
+            if (IMediaEventSink *sink = com_cast<IMediaEventSink>(m_graph)) {
+                sink->Notify(
+                        EC_COMPLETE,
+                        S_OK,
+                        reinterpret_cast<LONG_PTR>(static_cast<IBaseFilter *>(this)));
+                sink->Release();
+            }
+        }
     }
 }
 

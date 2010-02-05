@@ -129,6 +129,7 @@ static const XvFormatYuv qt_xvYuvLookup[] =
     { QVideoFrame::Format_YUV420P, 12, XvPlanar, 3, 8, 8, 8, 1, 2, 2, 1, 2, 2, "YUV"  },
     { QVideoFrame::Format_YV12   , 12, XvPlanar, 3, 8, 8, 8, 1, 2, 2, 1, 2, 2, "YVU"  },
     { QVideoFrame::Format_UYVY   , 16, XvPacked, 1, 8, 8, 8, 1, 2, 2, 1, 1, 1, "UYVY" },
+    { QVideoFrame::Format_YUYV   , 16, XvPacked, 1, 8, 8, 8, 1, 2, 2, 1, 1, 1, "YUY2" },
     { QVideoFrame::Format_YUYV   , 16, XvPacked, 1, 8, 8, 8, 1, 2, 2, 1, 1, 1, "YUYV" },
     { QVideoFrame::Format_NV12   , 12, XvPlanar, 2, 8, 8, 8, 1, 2, 2, 1, 2, 2, "YUV"  },
     { QVideoFrame::Format_NV12   , 12, XvPlanar, 2, 8, 8, 8, 1, 2, 2, 1, 2, 2, "YVU"  },
@@ -262,6 +263,8 @@ bool QXVideoSurface::start(const QVideoSurfaceFormat &format)
 {
     //qDebug() << "QXVideoSurface::start" << format;
 
+    m_lastFrame = QVideoFrame();
+
     if (m_image)
         XFree(m_image);
 
@@ -339,7 +342,7 @@ void QXVideoSurface::stop()
     if (m_image) {
         XFree(m_image);
         m_image = 0;
-        lastFrame = QVideoFrame();
+        m_lastFrame = QVideoFrame();
 
         QAbstractVideoSurface::stop();
     }
@@ -354,9 +357,9 @@ bool QXVideoSurface::present(const QVideoFrame &frame)
         setError(IncorrectFormatError);
         return false;
     } else {
-        lastFrame = frame;
+        m_lastFrame = frame;
 
-        if (!lastFrame.map(QAbstractVideoBuffer::ReadOnly)) {
+        if (!m_lastFrame.map(QAbstractVideoBuffer::ReadOnly)) {
             qWarning() << "Failed to map video frame";
             setError(IncorrectFormatError);
             return false;
@@ -364,12 +367,12 @@ bool QXVideoSurface::present(const QVideoFrame &frame)
             bool presented = false;
 
             if (frame.handleType() != XvHandleType &&
-                m_image->data_size > lastFrame.mappedBytes()) {
+                m_image->data_size > m_lastFrame.mappedBytes()) {
                 qWarning("Insufficient frame buffer size");
                 setError(IncorrectFormatError);
             } else if (frame.handleType() != XvHandleType &&
                        m_image->num_planes > 0 &&
-                       m_image->pitches[0] != lastFrame.bytesPerLine()) {
+                       m_image->pitches[0] != m_lastFrame.bytesPerLine()) {
                 qWarning("Incompatible frame pitches");
                 setError(IncorrectFormatError);
             } else {
@@ -379,7 +382,7 @@ bool QXVideoSurface::present(const QVideoFrame &frame)
                     img = frame.handle().value<XvImage*>();
                 } else {
                     img = m_image;
-                    memcpy(m_image->data, lastFrame.bits(), qMin(lastFrame.mappedBytes(), m_image->data_size));
+                    memcpy(m_image->data, m_lastFrame.bits(), qMin(m_lastFrame.mappedBytes(), m_image->data_size));
                 }
 
                 if (img)
@@ -402,7 +405,7 @@ bool QXVideoSurface::present(const QVideoFrame &frame)
                 presented = true;
             }
 
-            lastFrame.unmap();
+            m_lastFrame.unmap();
 
             return presented;
         }
@@ -411,8 +414,8 @@ bool QXVideoSurface::present(const QVideoFrame &frame)
 
 void QXVideoSurface::repaintLastFrame()
 {
-    if (lastFrame.isValid())
-        present(QVideoFrame(lastFrame));
+    if (m_lastFrame.isValid())
+        present(QVideoFrame(m_lastFrame));
 }
 
 bool QXVideoSurface::findPort()
@@ -457,7 +460,8 @@ void QXVideoSurface::querySupportedFormats()
                 break;
             case XvYUV:
                 for (int j = 0; j < yuvCount; ++j) {
-                    //skip YUV420P and YV12 formats, they don't work correctly
+                    //skip YUV420P and YV12 formats, they don't work correctly and slow,
+                    //YUV2 == YUYV is just slow
                     if (imageFormats[i] == qt_xvYuvLookup[j] &&
                         qt_xvYuvLookup[j].pixelFormat != QVideoFrame::Format_YUV420P &&
                         qt_xvYuvLookup[j].pixelFormat != QVideoFrame::Format_YV12) {

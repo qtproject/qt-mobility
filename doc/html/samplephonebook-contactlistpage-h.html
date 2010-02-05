@@ -90,18 +90,17 @@
         void backendSelected();
         void addContactClicked();
         void editClicked();
-        void findClicked();
+        void filterClicked();
+        void deleteClicked();
+        void importClicked();
+        void exportClicked();
 
     private:
         <span class="comment">// elements of the contact list &quot;page&quot;</span>
-        QLabel *m_backendsLabel;
         QComboBox *m_backendsCombo;
         QLabel *m_filterActiveLabel;
 
         QListWidget *m_contactsList;
-        QPushButton *m_addContactBtn;
-        QPushButton *m_editBtn;
-        QPushButton *m_findBtn;
 
         <span class="comment">// data</span>
         QContactManager *m_manager;

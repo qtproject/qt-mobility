@@ -60,7 +60,7 @@ TInt QMLBackendTriggerChangeAO::refCount = 0;
 void QMLBackendTriggerChangeAO::NotifyChangeEvent()
 {
     if (!IsActive()) {
-    	iStatue = KRequestPending;
+        iStatue = KRequestPending;
         iLbt.NotifyTriggerChangeEvent(iTriggerChangeEvent, iStatus);
         SetActive();
     }
@@ -139,7 +139,7 @@ void QMLBackendTriggerChangeAO::RunL()
                         //exit trigger in the linked list
                         if (triggerInfo1->iType == EntryTrigger)
                             triggerInfo3 = iTriggerMonitorInfo->getMonitorTriggerInfo(
-                                               triggerInfo1->iParent ,ExitTrigger);
+                                               triggerInfo1->iParent , ExitTrigger);
 
                         //if triggerinfo1->triggerid is found in the trigger list,
                         //and if it is an entry trigger, search for the corresponding

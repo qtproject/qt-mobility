@@ -26,6 +26,7 @@ PUBLIC_HEADERS += \
     qcontactdetail.h \
     qcontactdetaildefinition.h \
     qcontactdetaildefinitionfield.h \
+    qcontactdetailfielddefinition.h \
     qcontactfilter.h \
     qcontactid.h \
     qcontactmanager.h \
@@ -44,7 +45,7 @@ PRIVATE_HEADERS += \
     qcontactchangeset_p.h \
     qcontactdetail_p.h \
     qcontactdetaildefinition_p.h \
-    qcontactdetaildefinitionfield_p.h \
+    qcontactdetailfielddefinition_p.h \
     qcontactfilter_p.h \
     qcontactid_p.h \
     qcontactmanager_p.h \
@@ -60,7 +61,7 @@ SOURCES += \
     qcontactchangeset.cpp \
     qcontactdetail.cpp \
     qcontactdetaildefinition.cpp \
-    qcontactdetaildefinitionfield.cpp \
+    qcontactdetailfielddefinition.cpp \
     qcontactfilter.cpp \
     qcontactid.cpp \
     qcontactmanager_p.cpp \
@@ -78,12 +79,18 @@ maemo {
     isEmpty(CONTACTS_DEFAULT_ENGINE): CONTACTS_DEFAULT_ENGINE=tracker
 }
 
+wince* {
+    isEmpty(CONTACTS_DEFAULT_ENGINE): CONTACTS_DEFAULT_ENGINE=wince
+}
+
 symbian {
     isEmpty(CONTACTS_DEFAULT_ENGINE): CONTACTS_DEFAULT_ENGINE=symbian
 
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL -TCB
     TARGET.UID3 = 0x2002AC7A
+
+    LIBS += -lefsrv
 
     ### Contacts
     # Main library
@@ -92,7 +99,7 @@ symbian {
     DEPLOYMENT += CONTACTS_DEPLOYMENT
 }
 
-!isEmpty(CONTACTS_DEFAULT_ENGINE): DEFINES += Q_CONTACTS_DEFAULT_ENGINE=$$CONTACTS_ENGINE
+!isEmpty(CONTACTS_DEFAULT_ENGINE): DEFINES += Q_CONTACTS_DEFAULT_ENGINE=CONTACTS_DEFAULT_ENGINE
 
 CONFIG += app
 include(../../features/deploy.pri)

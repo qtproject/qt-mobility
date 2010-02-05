@@ -27,6 +27,7 @@ contains(mobility_modules,publishsubscribe) {
 
 contains(mobility_modules,systeminfo): SUBDIRS += systeminfo
 contains(mobility_modules,versit): SUBDIRS += versit
+contains(mobility_modules,sensors): SUBDIRS += sensors
 
 # Versit depends on Contacts
 versit.subdir=versit
@@ -42,3 +43,4 @@ contains(mobility_modules,messaging) {
 symbian {
     SUBDIRS += s60installs/s60installs.pro
 }
+

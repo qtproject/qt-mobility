@@ -1,11 +1,11 @@
 TEMPLATE = app
 TARGET = querymessages
 
-QT += gui
+QT -= gui
 
 include(../examples.pri)
 
-CONFIG += mobility
+CONFIG += mobility console
 MOBILITY = messaging
 INCLUDEPATH += ../../src/messaging
 

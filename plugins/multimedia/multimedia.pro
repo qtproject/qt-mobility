@@ -8,6 +8,10 @@ TEMPLATE = subdirs
 
 SUBDIRS += m3u
 
+win32 {
+    contains(QT_CONFIG, multimedia): SUBDIRS += audiocapture
+}
+
 win32:!wince* {
     win32-msvc2005|win32-msvc2008: SUBDIRS *= directshow wmp
 }

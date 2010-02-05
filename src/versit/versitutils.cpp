@@ -43,9 +43,14 @@
 #include "qmobilityglobal.h"
 
 #include <QMap>
-#include <QRegExp>
+#include <QTextCodec>
+#include <QScopedPointer>
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
+
+QTextCodec* VersitUtils::m_previousCodec = 0;
+QList<QByteArray>* VersitUtils::m_newlineList = 0;
+QByteArray VersitUtils::m_encodingMap[256];
 
 /*!
  * Folds \a text by making all lines \a maxChars long.
@@ -81,52 +86,19 @@ QByteArray VersitUtils::fold(QByteArray& text, int maxChars)
 }
 
 /*!
- * Unfolds \a text by removing all the CRLFs
- *followed immediately by a linear whitespace (SPACE or TAB).
+ * Advances the cursor \a line past any horizontal whitespace, using \a codec to determine what a
+ * space is.
  */
-QByteArray VersitUtils::unfold(QByteArray& text)
+void VersitUtils::skipLeadingWhiteSpaces(VersitCursor &line, QTextCodec* codec)
 {
-    char previous = 0;
-    char previousOfTheprevious = 0;
-    for (int i=0; i<text.length(); i++) {
-        char current = text.at(i);
-        if ((current == ' ' || current == '\t') &&
-             previous == '\n' &&
-             previousOfTheprevious == '\r') {
-            text.replace(i-2,3,QByteArray());
-            previous = 0;
-            previousOfTheprevious = 0;
-            i--;
-        } else {
-            previousOfTheprevious = previous;
-            previous = current;
-        }
+    QByteArray space = encode(' ', codec);
+    QByteArray tab = encode('\t', codec);
+    while (line.data.size() - line.position >= space.length() && (
+            containsAt(line.data, space, line.position)
+            || containsAt(line.data, tab, line.position))) {
+        // We don't bother with newline characters because getNextLine can handle those.
+        line.position += space.length();
     }
-
-    return text;
-}
-
-/*!
- * Returns the count of leading whitespaces in /a text
- * starting from /a pos.
- */
-int VersitUtils::countLeadingWhiteSpaces(const QByteArray& text, int pos)
-{
-    int whiteSpaceCount = 0;
-    bool nonWhiteSpaceFound = false;
-    for (int i=pos; i<text.length() && !nonWhiteSpaceFound; i++) {
-        char current = text.at(i);
-        if (current == ' ' ||
-            current == '\t' ||
-            current == '\r' ||
-            current == '\n') {
-            whiteSpaceCount++;
-        } else {
-            nonWhiteSpaceFound = true;
-        }
-    }
-
-    return whiteSpaceCount;
 }
 
 /*!
@@ -134,15 +106,15 @@ int VersitUtils::countLeadingWhiteSpaces(const QByteArray& text, int pos)
  * using Quoted-Printable encoding (RFC 1521).
  * Returns true if at least one character was encoded.
  */
-bool VersitUtils::quotedPrintableEncode(QByteArray& text)
+bool VersitUtils::quotedPrintableEncode(QString& text)
 {    
     bool encoded = false;
     for (int i=0; i<text.length(); i++) {
-        char current = text.at(i);
+        QChar current = text.at(i);
         if (shouldBeQuotedPrintableEncoded(current)) {
-            QString encodedStr;
-            encodedStr.sprintf("=%02X",current);
-            text.replace(i,1,encodedStr.toAscii());
+            QString encodedStr(QString::fromAscii("=%1").
+                               arg(current.unicode(), 2, 16, QLatin1Char('0')).toUpper());
+            text.replace(i, 1, encodedStr);
             i += 2;
             encoded = true;
         }
@@ -153,30 +125,26 @@ bool VersitUtils::quotedPrintableEncode(QByteArray& text)
 /*!
  * Decodes Quoted-Printable encoded (RFC 1521) characters in /a text.
  */
-void VersitUtils::decodeQuotedPrintable(QByteArray& text)
+void VersitUtils::decodeQuotedPrintable(QString& text)
 {
     for (int i=0; i < text.length(); i++) {
-        char current = text.at(i);
-        if (current == '=' && i+2 < text.length()) {
-            char next = text.at(i+1);
-            char nextAfterNext = text.at(i+2);
-            if (next == '\r' && nextAfterNext == '\n') {
-                text.remove(i,3);
-            }
+        QChar current = text.at(i);
+        if (current == QLatin1Char('=') && i+2 < text.length()) {
+            int next = text.at(i+1).unicode();
+            int nextAfterNext = text.at(i+2).unicode();
             if (((next >= 'a' && next <= 'f') ||
                  (next >= 'A' && next <= 'F') ||
                  (next >= '0' && next <= '9')) &&
                 ((nextAfterNext >= 'a' && nextAfterNext <= 'f') ||
                  (nextAfterNext >= 'A' && nextAfterNext <= 'F') ||
                  (nextAfterNext >= '0' && nextAfterNext <= '9'))) {
-                QByteArray hexEncodedChar(text.mid(i+1,2));
-                bool decoded = false; 
-                char decodedChar = hexEncodedChar.toInt(&decoded,16);
-                QByteArray decodedCharAsByteArray;
-                decodedCharAsByteArray.append(decodedChar);
-                if (decoded) {
-                    text.replace(i,3,decodedCharAsByteArray);
-                }
+                bool ok;
+                QChar decodedChar(text.mid(i+1, 2).toInt(&ok,16));
+                if (ok)
+                    text.replace(i, 3, decodedChar);
+            } else if (next == '\r' && nextAfterNext == '\n') {
+                // Newlines can still be found here if they are encoded in a non-default charset.
+                text.remove(i, 3);
             }
         }
     }
@@ -186,25 +154,25 @@ void VersitUtils::decodeQuotedPrintable(QByteArray& text)
  * Performs backslash escaping for line breaks (CRLFs),
  * semicolons, backslashes and commas according to RFC 2426.
  */
-bool VersitUtils::backSlashEscape(QByteArray& text)
+bool VersitUtils::backSlashEscape(QString& text)
 {
     bool escaped = false;
     bool withinQuotes = false;
-    char previous = 0;
+    ushort previous = 0;
     for (int i=0; i < text.length(); i++) {
-        char current = text.at(i);
+        ushort current = text.at(i).unicode();
         if (previous != '\\' && !withinQuotes) {
-            char next = 0;
+            int next = 0;
             if (i != text.length()-1)
-                 next = text.at(i+1);
+                 next = text.at(i+1).unicode();
             if (current == ';' || current == ',' ||
                 (current == '\\' &&
                  next != '\\' && next != ';' && next != ',' && next != 'n')) {
-                text.insert(i,'\\');
+                text.insert(i,QChar::fromAscii('\\'));
                 i++;
                 escaped = true;
             } else if (previous == '\r' && current == '\n') {
-                text.replace(i-1,2,"\\n");
+                text.replace(i-1,2,QString::fromAscii("\\n"));
                 escaped = true;
             } else {
                 // NOP
@@ -221,17 +189,18 @@ bool VersitUtils::backSlashEscape(QByteArray& text)
  * Removes backslash escaping for line breaks (CRLFs),
  * semicolons, backslashes and commas according to RFC 2426.
  */
-void VersitUtils::removeBackSlashEscaping(QByteArray& text)
+void VersitUtils::removeBackSlashEscaping(QString& text)
 {
-    char previous = 0;
+    // XXX build up a list of escapes and do them all at once?
+    ushort previous = 0;
     bool withinQuotes = false;
     for (int i=0; i < text.length(); i++) {
-        char current = text.at(i);
+        ushort current = text.at(i).unicode();
         if (previous == '\\' && !withinQuotes) {
-            if (current == ';' || current == ',' || current == '\\') {
+            if (current == ';' || current == ',' || current == '\\' || current == ':') {
                 text.remove(i-1,1);
             } else if (current == 'n' || current == 'N') {
-                text.replace(i-1,2,"\r\n");
+                text.replace(i-1,2,QString::fromAscii("\r\n"));
             } else {
                 // NOP
             }
@@ -243,42 +212,33 @@ void VersitUtils::removeBackSlashEscaping(QByteArray& text)
 }
 
 /*!
- * Finds the position of the first non-soft line break 
- * in a Quoted-Printable encoded string.
+ * Extracts the groups and the name of the property using \a codec to determine the delimeters
+ *
+ * On entry, \a line should select a whole line.
+ * On exit, \a line will be updated to point after the groups and name.
  */
-int VersitUtils::findHardLineBreakInQuotedPrintable(const QByteArray& encoded)
+QPair<QStringList,QString> VersitUtils::extractPropertyGroupsAndName(VersitCursor& line,
+                                                                     QTextCodec *codec)
 {
-    int crlfIndex = encoded.indexOf("\r\n");
-    if (crlfIndex <= 0)
-        return -1;
-    while (crlfIndex > 0 && encoded.at(crlfIndex-1) == '=') {
-        crlfIndex = encoded.indexOf("\r\n",crlfIndex+2);
-    }
-
-    return crlfIndex;
-}
-
-/*!
- * Extracts the groups and the name of the property.
- */
-QPair<QStringList,QString> VersitUtils::extractPropertyGroupsAndName(
-    const QByteArray& property)
-{
+    const QByteArray semicolon = encode(';', codec);
+    const QByteArray colon = encode(':', codec);
+    const QByteArray backslash = encode('\\', codec);
     QPair<QStringList,QString> groupsAndName;
     int length = 0;
-    char previous = 0;
-    for (int i=0; i < property.length(); i++) {
-        char current = property.at(i);
-        if ((current == ';' && previous != '\\') ||
-            current == ':') {
-            length = i;
+    Q_ASSERT(line.data.size() > line.position);
+    
+    int separatorLength = semicolon.length();
+    for (int i = line.position; i < line.selection - separatorLength + 1; i++) {
+        if ((containsAt(line.data, semicolon, i)
+                && !containsAt(line.data, backslash, i-separatorLength))
+            || containsAt(line.data, colon, i)) {
+            length = i - line.position;
             break;
         }
-        previous = current;
     }
     if (length > 0) {
         QString trimmedGroupsAndName =
-            QString::fromAscii(property.left(length).trimmed());
+                codec->toUnicode(line.data.mid(line.position, length)).trimmed();
         QStringList parts = trimmedGroupsAndName.split(QString::fromAscii("."));
         if (parts.count() > 1) {
             groupsAndName.second = parts.takeLast();
@@ -286,6 +246,7 @@ QPair<QStringList,QString> VersitUtils::extractPropertyGroupsAndName(
         } else {
             groupsAndName.second = trimmedGroupsAndName;
         }
+        line.setPosition(length + line.position);
     }
 
     return groupsAndName;
@@ -293,30 +254,36 @@ QPair<QStringList,QString> VersitUtils::extractPropertyGroupsAndName(
 
 /*!
  * Extracts the value of the property.
- * Returns an empty string if the value was not found
+ * Returns an empty string if the value was not found.
+ *
+ * On entry \a line should point to the value anyway.
+ * On exit \a line should point to newline after the value
  */
-QByteArray VersitUtils::extractPropertyValue(const QByteArray& property)
+QByteArray VersitUtils::extractPropertyValue(VersitCursor& line)
 {
-    QByteArray value;
-    int index = property.indexOf(':') + 1;
-    if (index > 0 && property.length() > index)
-        value = property.mid(index);
+    QByteArray value = line.data.mid(line.position, line.selection - line.position);
+
+    /* Now advance the cursor in all cases (TODO in state based should go to pending).. */
+    line.position = line.selection;
     return value;
 }
 
 /*!
- * Extracts the property parameters as a QMultiHash.
+ * Extracts the property parameters as a QMultiHash using \a codec to determine the delimeters.
  * The parameters without names are added as "TYPE" parameters.
+ *
+ * On entry \a line should contain the entire line.
+ * On exit, line will be updated to point to the start of the value.
  */
-QMultiHash<QString,QString> VersitUtils::extractVCard21PropertyParams(
-    const QByteArray& property)
+QMultiHash<QString,QString> VersitUtils::extractVCard21PropertyParams(VersitCursor& line,
+                                                                      QTextCodec *codec)
 {
     QMultiHash<QString,QString> result;
-    QList<QByteArray> paramList = extractParams(property);
+    QList<QByteArray> paramList = extractParams(line, codec);
     while (!paramList.isEmpty()) {
         QByteArray param = paramList.takeLast();
-        QString name = QString::fromAscii(paramName(param));
-        QString value = QString::fromAscii(paramValue(param));
+        QString name = paramName(param, codec);
+        QString value = paramValue(param, codec);
         result.insert(name,value);
     }
 
@@ -324,24 +291,33 @@ QMultiHash<QString,QString> VersitUtils::extractVCard21PropertyParams(
 }
 
 /*!
- * Extracts the property parameters as a QMultiHash.
+ * Extracts the property parameters as a QMultiHash using \a codec to determine the delimeters.
  * The parameters without names are added as "TYPE" parameters.
  */
-QMultiHash<QString,QString> VersitUtils::extractVCard30PropertyParams(
-    const QByteArray& property)
+QMultiHash<QString,QString> VersitUtils::extractVCard30PropertyParams(VersitCursor& line,
+                                                                      QTextCodec *codec)
 {
     QMultiHash<QString,QString> result;
-    QList<QByteArray> paramList = extractParams(property);
+    QList<QByteArray> paramList = extractParams(line, codec);
     while (!paramList.isEmpty()) {
         QByteArray param = paramList.takeLast();
-        QByteArray name = paramName(param);
+        QString name(paramName(param, codec));
         removeBackSlashEscaping(name);
-        QByteArray values = paramValue(param);
-        QList<QByteArray> valueList = extractParts(values,',');
-        while (!valueList.isEmpty()) {
-            QByteArray value(valueList.takeLast());
-            removeBackSlashEscaping(value);
-            result.insert(QString::fromAscii(name),QString::fromAscii(value));
+        QString values = paramValue(param, codec);
+        QList<QString> valueList = values.split(QString::fromAscii(","), QString::SkipEmptyParts);
+        QString buffer; // for any part ending in a backslash, join it to the next.
+        foreach (QString value, valueList) {
+            if (value.endsWith(QChar::fromAscii('\\'))) {
+                value.chop(1);
+                buffer.append(value);
+                buffer.append(QString::fromAscii(",")); // because the comma got nuked by split()
+            }
+            else {
+                buffer.append(value);
+                removeBackSlashEscaping(buffer);
+                result.insert(name, buffer);
+                buffer.clear();
+            }
         }
     }
 
@@ -349,43 +325,122 @@ QMultiHash<QString,QString> VersitUtils::extractVCard30PropertyParams(
 }
 
 /*!
- * Extracts the parameters as delimited by semicolons.
+ * Get the next line of input to parse using \a codec to determine the line delimeters.
+ * Also performs unfolding by removing sequences of newline-space from the retrieved line.
+ *
+ * On entry, \a line should contain the current data buffer and offset.
+ * On exit, \a line will have the updated selection corresponding to the
+ * total line (to the point just before the newline).
+ *
+ * Returns true if a full line was found, false otherwise.
  */
-QList<QByteArray> VersitUtils::extractParams(const QByteArray& property)
+bool VersitUtils::getNextLine(VersitCursor &line, QTextCodec* codec)
 {
+    // This function works by searching for DOS, UNIX and Mac newline delimeters in turn. It may
+    // need to do this multiple times (either if it finds a newline at the start, or a "folding"
+    // newline.  If it finds a folding newline, it is likely that it will continue to find a
+    // series of folds (eg. the line contains a base64 encoded image).  In this case, it is more
+    // efficient to search only for the newline type that it has already found, rather than
+    // continuing to loop through all three.  This has the side-effect that if a Mac newline is
+    // used to fold, and somewhere later, a DOS newline is used, this function will not recognise
+    // the DOS newline.
+
+    int crlfPos;
+
+    QList<QByteArray>* crlfList = newlineList(codec);
+    QScopedPointer<QList<QByteArray> > crlfScopedPointer;
+    QByteArray space = encode(' ', codec);
+    QByteArray tab = encode('\t', codec);
+
+    int i = line.position;
+    forever {
+        foreach(QByteArray crlf, *crlfList) {
+            int newlineLength = crlf.length();
+            crlfPos = line.data.indexOf(crlf, i);
+            if (crlfPos == line.position) {
+                // Newline at start of line.  Set position to directly after it.
+                line.position += newlineLength;
+                i = line.position;
+                break;
+            } else if (crlfPos > line.position) {
+                // Found the newline.  Check that it's not followed by a whitespace.
+                if (containsAt(line.data, space, crlfPos + newlineLength)
+                    || containsAt(line.data, tab, crlfPos + newlineLength)) {
+                    line.data.remove(crlfPos, newlineLength + space.length());
+                    i = crlfPos;
+
+                    // Do the optimisation, if not already done (see big comment above).
+                    if (crlfScopedPointer.isNull()) {
+                        crlfList = new QList<QByteArray>;
+                        crlfList->append(crlf);
+                        crlfScopedPointer.reset(crlfList); // to ensure it's deleted on return.
+                    }
+                    break;
+                } else {
+                    line.selection = crlfPos;
+                    return true;
+                }
+            }
+        }
+        if (crlfPos == -1) {
+            // No crlf - return false
+            return false;
+        }
+    }
+}
+
+
+/*!
+ * Extracts the parameters as delimited by semicolons using \a codec to determine the delimeters.
+ *
+ * On entry \a line should point to the start of the parameter section (past the name).
+ * On exit, \a line will be updated to point to the start of the value.
+ */
+QList<QByteArray> VersitUtils::extractParams(VersitCursor& line, QTextCodec *codec)
+{
+    const QByteArray colon = encode(':', codec);
     QList<QByteArray> params;
-    int colonIndex = property.indexOf(':');
-    if (colonIndex > 0) {
-        QByteArray nameAndParamsString = property.left(colonIndex);
-        params = extractParts(nameAndParamsString,';');
-        if (!params.isEmpty())
-            params.removeFirst(); // Remove property name
+
+    /* find the end of the name&params */
+    int colonIndex = line.data.indexOf(colon, line.position);
+    if (colonIndex > line.position && colonIndex < line.selection) {
+        QByteArray nameAndParamsString = line.data.mid(line.position, colonIndex - line.position);
+        params = extractParts(nameAndParamsString, encode(';', codec), codec);
+
+        /* Update line */
+        line.setPosition(colonIndex + colon.length());
+    } else if (colonIndex == line.position) {
+        // No parameters.. advance past it
+        line.setPosition(line.position + colon.length());
     }
 
     return params;
 }
 
 /*!
- * Extracts the parts separated by separator
- * discarding the separators escaped with a backslash
+ * Extracts the parts separated by separator discarding the separators escaped with a backslash
+ * encoded with \a codec
  */
-QList<QByteArray> VersitUtils::extractParts(
-    const QByteArray& text,
-    char separator)
+QList<QByteArray> VersitUtils::extractParts(const QByteArray& text, const QByteArray& separator,
+                                            QTextCodec* codec)
 {
     QList<QByteArray> parts;
     int partStartIndex = 0;
-    char previous = 0;
-    for (int i=0; i<text.length(); i++) {
-        char current = text.at(i);
-        if (current == separator && previous != '\\') {
+    int textLength = text.length();
+    int separatorLength = separator.length();
+    QByteArray backslash = encode('\\', codec);
+    int backslashLength = backslash.length();
+
+    for (int i=0; i < textLength-separatorLength+1; i++) {
+        if (containsAt(text, separator, i)
+            && (i < backslashLength
+                || !containsAt(text, backslash, i-backslashLength))) {
             int length = i-partStartIndex;
             QByteArray part = extractPart(text,partStartIndex,length);
             if (part.length() > 0)
                 parts.append(part);
-            partStartIndex = i+1;
+            partStartIndex = i+separatorLength;
         }
-        previous = current;
     }
 
     // Add the last or only part
@@ -398,10 +453,7 @@ QList<QByteArray> VersitUtils::extractParts(
 /*!
  * Extracts a substring limited by /a startPosition and /a length.
  */
-QByteArray VersitUtils::extractPart(
-    const QByteArray& text,
-    int startPosition, 
-    int length)
+QByteArray VersitUtils::extractPart(const QByteArray& text, int startPosition, int length)
 {
     QByteArray part;
     if (startPosition >= 0)
@@ -410,50 +462,121 @@ QByteArray VersitUtils::extractPart(
 }
 
 /*!
- * Extracts the name of the parameter.
+ * Extracts the name of the parameter using \a codec to determine the delimeters.
  * No name is interpreted as an implicit "TYPE".
  */
-QByteArray VersitUtils::paramName(const QByteArray& parameter)
+QString VersitUtils::paramName(const QByteArray& parameter, QTextCodec* codec)
 {
      if (parameter.trimmed().length() == 0)
-         return QByteArray();
-     int equalsIndex = parameter.indexOf('=');
+         return QString();
+     QByteArray equals = encode('=', codec);
+     int equalsIndex = parameter.indexOf(equals);
      if (equalsIndex > 0) {
-         return parameter.left(equalsIndex).trimmed();
+         return codec->toUnicode(parameter.left(equalsIndex)).trimmed();
      }
 
-     return QByteArray("TYPE");
+     return QString::fromAscii("TYPE");
 }
 
 /*!
- * Extracts the value of the parameter
+ * Extracts the value of the parameter using \a codec to determine the delimeters
  */
-QByteArray VersitUtils::paramValue(const QByteArray& parameter)
+QString VersitUtils::paramValue(const QByteArray& parameter, QTextCodec* codec)
 {
     QByteArray value(parameter);
-    int equalsIndex = parameter.indexOf('=');
+    QByteArray equals = encode('=', codec);
+    int equalsIndex = parameter.indexOf(equals);
     if (equalsIndex > 0) {
-        if (equalsIndex == parameter.length()-1) {
-            value = QByteArray();
-        } else {
-            int valueLength = parameter.length() - (equalsIndex + 1);
-            value = parameter.right(valueLength).trimmed();
-        }    
+        int valueLength = parameter.length() - (equalsIndex + equals.length());
+        value = parameter.right(valueLength).trimmed();
     }
 
-    return value;
+    return codec->toUnicode(value);
+}
+
+/*!
+ * Returns true if and only if \a text contains \a ba at \a index
+ *
+ * On entry, index must be >= 0
+ */
+bool VersitUtils::containsAt(const QByteArray& text, const QByteArray& match, int index)
+{
+    int n = match.length();
+    if (text.length() - index < n)
+        return false;
+    const char* textData = text.data();
+    const char* matchData = match.data();
+    for (int i = n-1; i >= 0; i--) {
+        if (textData[index+i] != matchData[i])
+            return false;
+    }
+    return true;
 }
 
 /*!
  * Checks whether the \a chr should be Quoted-Printable encoded (RFC 1521). 
  */
-bool VersitUtils::shouldBeQuotedPrintableEncoded(char chr)
+bool VersitUtils::shouldBeQuotedPrintableEncoded(QChar chr)
 {
-    return (chr < 32 || 
-            chr == '!' || chr == '"' || chr == '#' || chr == '$' || 
-            chr == '=' || chr == '@' || chr == '[' || chr == '\\' || 
-            chr == ']' || chr == '^' || chr == '`' ||
-            chr > 122 ); 
+    int c = chr.unicode();
+    return (c < 32 ||
+            c == '!' || c == '"' || c == '#' || c == '$' ||
+            c == '=' || c == '@' || c == '[' || c == '\\' ||
+            c == ']' || c == '^' || c == '`' ||
+            (c > 122 && c < 256));
 }
 
-QTM_END_NAMESPACE
+/*!
+ * Encode \a ch with \a codec, without adding an byte-order mark
+ */
+QByteArray VersitUtils::encode(char ch, QTextCodec* codec)
+{
+    if (codec != m_previousCodec) {
+        changeCodec(codec);
+    }
+    return m_encodingMap[(int)ch];
+}
+
+/*!
+ * Encode \a ba with \a codec, without adding an byte-order mark.  \a ba is interpreted as ASCII
+ */
+QByteArray VersitUtils::encode(const QByteArray& ba, QTextCodec* codec)
+{
+    QTextCodec::ConverterState state(QTextCodec::IgnoreHeader);
+    return codec->fromUnicode(QString::fromAscii(ba.data()).data(), ba.length(), &state);
+}
+
+/*!
+ * Returns the list of DOS, UNIX and Mac newline characters for \a codec.
+ */
+QList<QByteArray>* VersitUtils::newlineList(QTextCodec* codec)
+{
+    if (m_newlineList != 0 && codec == m_previousCodec) {
+        return m_newlineList;
+    }
+    changeCodec(codec);
+    return m_newlineList;
+}
+
+/*!
+ * Update the cached tables of pregenerated encoded text with \a codec.
+ */
+void VersitUtils::changeCodec(QTextCodec* codec) {
+    // Build m_encodingMap
+    QChar qch;
+    QTextCodec::ConverterState state(QTextCodec::IgnoreHeader);
+    for (int c = 0; c < 256; c++) {
+        qch = QChar::fromAscii(c);
+        m_encodingMap[c] = codec->fromUnicode(&qch, 1, &state);
+    }
+
+    // Build m_newlineList
+    if (m_newlineList != 0)
+        delete m_newlineList;
+    m_newlineList = new QList<QByteArray>;
+    m_newlineList->append(encode("\r\n", codec));
+    m_newlineList->append(encode("\n", codec));
+    m_newlineList->append(encode("\r", codec));
+
+    m_previousCodec = codec;
+}
