@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtGui module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -42,10 +42,14 @@
 #ifndef QFEEDBACKEFFECT_H
 #define QFEEDBACKEFFECT_H
 
-#include <QPoint>
+#include <QtCore/QPoint>
+#include <QtCore/QRect>
 #include <qmobilityglobal.h>
 
 class QWidget;
+class QGraphicsView;
+class QGraphicsItem;
+
 
 QTM_BEGIN_NAMESPACE
 
@@ -67,6 +71,11 @@ enum InstantEffect {
   InstantNoOverride, InstantUser = 65535, InstantMaxUser = 262140
 };
 
+enum HitAreaType {
+    HitAreaMouseButtonPress,
+    HitAreaMouseButtonRelease
+};
+
 enum TacticonEffect {
   TacticonNone, TacticonPositive, TacticonNeutral, TacticonNegative
 };
@@ -84,11 +93,11 @@ public:
 
     virtual EffectType effectType() const = 0;
 
-    void setOwningWindow(QWidget *w);
-    QWidget *owningWindow() const;
+    void setWindow(const QWidget *w);
+    const QWidget *window() const;
 
 private:
-    QWidget *m_owner;
+    const QWidget *m_win;
 };
 
 //
@@ -125,7 +134,7 @@ private:
 class Q_FEEDBACK_EXPORT QInstantEffect : public QFeedbackEffect
 {
 public:
-    QInstantEffect();
+    QInstantEffect(InstantEffect effect = InstantNone);
     ~QInstantEffect();
 
     EffectType effectType() const;
@@ -135,6 +144,27 @@ public:
 private:
     InstantEffect m_effect;
 };
+
+
+//that is the one you can register
+class Q_FEEDBACK_EXPORT QHitAreaEffect : public QInstantEffect
+{
+public:
+    QHitAreaEffect();
+    ~QHitAreaEffect();
+
+    void setHitAreaType(HitAreaType hitAreaType);
+    HitAreaType hitAreaType() const;
+
+    void setRect(const QRect &rect);
+    void setRect(const QWidget* widget);
+    void setRect(const QGraphicsItem* graphicsItem, const QGraphicsView* graphicsView);
+    QRect rect() const;
+private:
+    QRect m_rect;
+    HitAreaType m_hitAreaType;
+};
+
 
 
 //

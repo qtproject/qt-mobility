@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtGui module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -41,6 +41,9 @@
 
 #include "qfeedbackeffect.h"
 
+#include <QtGui/QGraphicsView>
+#include <QtGui/QGraphicsItem>
+
 QTM_BEGIN_NAMESPACE
 
 QFeedbackEffect::QFeedbackEffect()
@@ -51,14 +54,14 @@ QFeedbackEffect::~QFeedbackEffect()
 {
 }
 
-void QFeedbackEffect::setOwningWindow(QWidget *w)
+void QFeedbackEffect::setWindow(const QWidget *w)
 {
-    m_owner = w;
+    m_win = w;
 }
 
-QWidget *QFeedbackEffect::owningWindow() const
+const QWidget *QFeedbackEffect::window() const
 {
-    return m_owner;
+    return m_win;
 }
 
 //the default timeout is 250 (like for the animations
@@ -106,7 +109,7 @@ ContinuousEffect QContinuousEffect::continuousEffect() const
     return m_effect;
 }
 
-QInstantEffect::QInstantEffect() : m_effect(InstantNone)
+QInstantEffect::QInstantEffect(InstantEffect effect) : m_effect(effect)
 {
 }
 
@@ -128,6 +131,70 @@ InstantEffect QInstantEffect::instantEffect() const
 {
     return m_effect;
 }
+
+
+QHitAreaEffect::QHitAreaEffect() : m_hitAreaType(HitAreaMouseButtonPress)
+{
+}
+
+QHitAreaEffect::~QHitAreaEffect()
+{
+}
+
+void QHitAreaEffect::setRect(const QRect &rect)
+{
+    m_rect = rect;
+}
+
+void QHitAreaEffect::setRect(const QWidget* widget)
+{
+        // null rectangle
+        m_rect = QRect();
+
+        if (!widget)
+            return;
+
+        QWidget *tlw = widget->window();
+        QPoint topLeft = widget->mapTo(tlw, QPoint(0, 0));
+        m_rect = QRect(topLeft, widget->size());
+
+        //TODO: Shouldn't we call setWindow here?
+}
+
+void QHitAreaEffect::setRect(const QGraphicsItem* graphicsItem, const QGraphicsView* graphicsView)
+{
+    // null rectangle
+    QRect mappedRect = QRect();
+
+    if (!graphicsItem || !graphicsView || graphicsItem->scene() != graphicsView->scene())
+        return;
+
+    // from scene to graphics view coordinates
+    m_rect = graphicsView->mapFromScene(
+            graphicsItem->mapToScene(graphicsItem->boundingRect()).boundingRect()
+            ).boundingRect();
+
+    // from graphics view to window coordinates
+    QPoint topLeft = graphicsView->mapTo(graphicsView->window(), m_rect.topLeft());
+    mappedRect = QRect(topLeft, m_rect.size());
+    //TODO: Shouldn't we call setWindow here?
+}
+
+void QHitAreaEffect::setHitAreaType(HitAreaType hitAreaType)
+{
+    m_hitAreaType = hitAreaType;
+}
+
+HitAreaType QHitAreaEffect::hitAreaType() const
+{
+    return m_hitAreaType;
+}
+
+QRect QHitAreaEffect::rect() const
+{
+    return m_rect;
+}
+
 
 QTacticonEffect::QTacticonEffect() : m_effect(TacticonNone)
 {

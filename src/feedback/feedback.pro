@@ -5,27 +5,28 @@ TEMPLATE = lib
 
 # Target gets fixed up in common.pri
 TARGET = QtFeedback
-DEFINES += QT_BUILD_FEEDBACK_LIB QT_MAKEDLL QT_ASCII_CAST_WARNINGS
+DEFINES += QT_BUILD_FEEDBACK_LIB \
+    QT_MAKEDLL \
+    QT_ASCII_CAST_WARNINGS
 include(../../common.pri)
 INCLUDEPATH += .
 
 # Input
-PUBLIC_HEADERS += \
-            qfeedbackcontroller.h \
-            qfeedbackeffect.h
+PUBLIC_HEADERS += qfeedbackcontroller.h \
+    qfeedbackeffect.h
 
 # Private Headers
 PRIVATE_HEADERS += 
-
-SOURCES +=  qfeedbackcontroller.cpp \
-            qfeedbackeffect.cpp
-
-HEADERS +=  $$PUBLIC_HEADERS \
-            $$PRIVATE_HEADERS \
-
+SOURCES += qfeedbackcontroller.cpp \
+    qfeedbackeffect.cpp
+HEADERS += $$PUBLIC_HEADERS \
+    $$PRIVATE_HEADERS
 symbian { 
+    SOURCES += qfeedbackcontroller_symbian.cpp
+    LIBS += -ltouchfeedback
     TARGET.EPOCALLOWDLLDATA = 1
-    TARGET.CAPABILITY = ALL -TCB
+    TARGET.CAPABILITY = ALL \
+        -TCB
     
     # # Need a new UID
     # # TARGET.UID3 = 0x2002AC7A
@@ -41,4 +42,5 @@ symbian {
     # export headers into EPOCROOT
     for(header, exportheaders.sources):BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
 }
+else:SOURCES += qfeedbackcontroller_stub.cpp
 include(../../features/deploy.pri)

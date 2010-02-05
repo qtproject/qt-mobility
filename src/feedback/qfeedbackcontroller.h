@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtGui module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -43,58 +43,40 @@
 #ifndef QFEEDBACKCONTROLLER_H
 #define QFEEDBACKCONTROLLER_H
 
-#include <QObject>
+#include <QtCore/QObject>
 
 #include <qmobilityglobal.h>
-#include <qfeedbackeffect.h>
+#include "qfeedbackeffect.h"
 
 QTM_BEGIN_NAMESPACE
 
 class QFeedbackEffect;
+class QFeedbackControllerPrivate;
 class Q_FEEDBACK_EXPORT QFeedbackController : public QObject
 {
     Q_OBJECT
 public:
     explicit QFeedbackController(QObject *parent = 0);
+    ~QFeedbackController();
 
-    // Default factory (smart system controller)
-    static QFeedbackController* defaultController();
+    static QFeedbackController* instance();
 
-    // All controllers (e.g. attached gamepads, bluetooth/usb devices, piezo/eccentric mass engines)
-    static QList<QFeedbackController*> allControllers();
-
-    // Metadata
-    QList<EffectType> supportedEffectTypes(); // might need emulatedTypes
-
-    // Number of channels?? Or some way of describing links to another controller?
-    // (e.g. gamepad with two independent eccentric mass engines.. although
-    // that can just be handled with an effect that specifies the source location)
+    void playFeedback(const QInstantEffect &feedback);
+    void playFeedback(const QTacticonEffect &feedback);
 
 
-    // Type of feedback, for those that care
-    enum FeedbackType {
-        VibrationTactile,
-        PiezoTactile,
-        Auditory,
-        Visual,
-        LinearForce,
-        RotatingForce,
-        Temperature // Not common yet :)
-    };
+    int startContinuousFeedback(const QContinuousEffect &feedback);
+    void updateContinuousFeedback(int identifier, const QContinuousEffect &feedback);
+    void cancelContinuousFeedback(int identifier);
+    void cancelContinuousFeedbacks();
 
-    QList<FeedbackType> supportedFeedbackTypes() const;
+    int insertHitArea(const QHitAreaEffect &feedback);
+    void updateHitArea(int identifier, const QHitAreaEffect &feedback);
+    void removeHitArea(int identifier);
+    void removeHitAreas();
 
-    enum Error {
-        NoError,
-        PermissionsError,
-        DeviceBusyError,
-    };
-    Error error() const;
-
-signals:
-
-public slots:
-    bool performEffect(const QFeedbackEffect& effect) const;
+private:
+    QFeedbackControllerPrivate *d;
 };
 
 QTM_END_NAMESPACE
