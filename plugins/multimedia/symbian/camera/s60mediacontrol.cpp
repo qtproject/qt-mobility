@@ -114,27 +114,36 @@ void S60MediaControl::applySettings()
 
 void S60MediaControl::record()
 {
-    if (m_session) {
+    if (m_session->state() != QCamera::StoppedState) {
         m_session->startRecording();
-        if (m_session->videoCaptureState() != QMediaRecorder::RecordingState)
+        if (state() != QMediaRecorder::RecordingState)
             emit stateChanged(QMediaRecorder::RecordingState);
+    }
+    else {
+        emit error(QMediaRecorder::ResourceError, tr("Service has not been started"));
     }
 }
 
 void S60MediaControl::pause()
 {
-    if (m_session) {
+    if (m_session->state() != QCamera::StoppedState) {
         m_session->pauseRecording();
-        if (m_session->videoCaptureState() != QMediaRecorder::PausedState)
+        if (state() != QMediaRecorder::PausedState)
             emit stateChanged(QMediaRecorder::PausedState);
+    }
+    else {
+        emit error(QMediaRecorder::ResourceError, tr("Service has not been started"));
     }
 }
 
 void S60MediaControl::stop()
 {
-    if (m_session)  {
+    if (m_session->state() != QCamera::StoppedState) {
         m_session->stopRecording();
-        if (m_session->videoCaptureState() != QMediaRecorder::StoppedState)
+        if (state() != QMediaRecorder::StoppedState)
             emit stateChanged(QMediaRecorder::StoppedState);
+    }
+    else {
+        emit error(QMediaRecorder::ResourceError, tr("Service has not been started"));
     }
 }

@@ -241,6 +241,8 @@ private:
     void updateVideoCaptureCodecsL();
     void initializeVideoCaptureSettings();
     
+    void setFlashModeL(QCamera::FlashMode mode);
+    void setExposureModeL(QCamera::ExposureMode mode);
     void saveImageL(TDesC8* aData);
 
 Q_SIGNALS:

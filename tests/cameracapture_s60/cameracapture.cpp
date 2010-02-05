@@ -312,7 +312,7 @@ void CameraCapture::updateRecordTime()
 
 void CameraCapture::processCapturedImage(const QString& fname, const QImage& img)
 {
-    ui->lastImagePreviewLabel->setPixmap( QPixmap::fromImage(img.scaledToWidth(170)) );
+    ui->lastImagePreviewLabel->setPixmap( QPixmap::fromImage(img.scaledToWidth(128)) );
     qDebug() << "image captured:" << fname;
 }
 
@@ -419,6 +419,7 @@ void CameraCapture::updateCameraState(QCamera::State state)
 
         ui->startCameraButton->setText(tr("Start Camera"));
         ui->startCameraButton->setChecked(false);
+        ui->takeImageButton->setEnabled(false);
         
         ui->recordButton->setEnabled(false);
         ui->pauseButton->setEnabled(false);
@@ -438,6 +439,7 @@ void CameraCapture::updateCameraState(QCamera::State state)
 
 void CameraCapture::updateRecorderState(QMediaRecorder::State state)
 {
+    qDebug() << "CameraCapture::updateRecorderState";
     switch (state) {
     case QMediaRecorder::StoppedState:
         ui->recordButton->setEnabled(true);
