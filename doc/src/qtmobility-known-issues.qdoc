@@ -141,13 +141,12 @@ Support is present for the following System Info API classes
 
 \section2 Issues Affecting All Platforms
 \list
-    \o  Messaging filtering and Sorting functions are not fully optimized.
-    \o  Versit support for Contacts API is ALPHA, see \c {src/versit/README}
-    \o  Not all example applications will display(fit) well on small screens.
+    \o Messaging filtering and Sorting functions are not fully optimized.
+    \o Camera support classes in Multimedia API is in technology preview state.
+    \o Versit support for Contacts API is in technology preview state, see \c {src/versit/README}.
+    \o Sensors API is in technology preview state.
+    \o Not all example applications will display(fit) well on small screens.
 \endlist
-
-
-
 
 \section2 Symbian/S60 Specific
 
