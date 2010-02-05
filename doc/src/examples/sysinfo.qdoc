@@ -40,29 +40,11 @@
 ****************************************************************************/
 
 /*!
-\page future.html
+    \example sysinfo
+    \title SysInfo Dialog Example
 
-\title Future Additional APIs
+    The SysInfo Dialog example shows how to use various functions in the System
+    Information API.
 
-\brief Additional APIs under development.
-
-
-\target {Management of Versit Documents}
-\section1 Management of Versit Documents
-
-\l{Versit API (technology preview)}{Versit API Documentation}
-
-Versit Classes.
-\annotatedlist versit
-
-
-\target {Camera Support}
-\section1 Camera Support (Multimedia)
-
-\annotatedlist camera
-
-
-
+    \image sysinfo-devices.png
 */
-
-
