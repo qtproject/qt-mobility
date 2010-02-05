@@ -60,7 +60,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \fn QContactDetailDefinitionSaveRequest::progress(QContactDetailDefinitionSaveRequest* self)
-  \deprecated
+  \internal
   This signal is emitted when some progress has been made on the request, causing either a change of
   status or an update of results, or both.  It identifies which request the signal originated from
   by including a pointer to \a self.

@@ -59,7 +59,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \fn QContactDetailDefinitionRemoveRequest::progress(QContactDetailDefinitionRemoveRequest* self)
-  \deprecated
+  \internal
   This signal is emitted when some progress has been made on the request, causing either a change of
   status or an update of results, or both.  It identifies which request the signal originated from
   by including a pointer to \a self.
@@ -80,7 +80,7 @@ QContactDetailDefinitionRemoveRequest::~QContactDetailDefinitionRemoveRequest()
 
 /*!
   \fn Q_DECL_DEPRECATED QContactDetailDefinitionRemoveRequest::setNames(const QStringList& names)
-  \deprecated
+  \internal
   Sets the names of the detail definitions to remove from the manager to be \a names
  */
 void Q_DECL_DEPRECATED QContactDetailDefinitionRemoveRequest::setNames(const QStringList& names)
@@ -91,7 +91,7 @@ void Q_DECL_DEPRECATED QContactDetailDefinitionRemoveRequest::setNames(const QSt
 
 /*!
   \fn Q_DECL_DEPRECATED QContactDetailDefinitionRemoveRequest::names() const
-  \deprecated
+  \internal
   Returns the list of names of the detail definitions that will be removed from the manager
  */
 QStringList Q_DECL_DEPRECATED QContactDetailDefinitionRemoveRequest::names() const

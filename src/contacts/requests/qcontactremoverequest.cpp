@@ -58,7 +58,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \fn QContactRemoveRequest::progress(QContactRemoveRequest* self)
-  \deprecated
+  \internal
   This signal is emitted when some progress has been made on the request, causing either a change of
   status or an update of results, or both.  It identifies which request the signal originated from
   by including a pointer to \a self.
@@ -79,7 +79,7 @@ QContactRemoveRequest::~QContactRemoveRequest()
 
 /*!
   \fn Q_DECL_DEPRECATED QContactRemoveRequest::setFilter(const QContactFilter& filter)
-  \deprecated
+  \internal
   Sets the filter which will be used to select the contacts to remove to \a filter.
   This function is obsolete; set the list of contacts that will be removed by calling setContactIds().
  */
@@ -91,7 +91,7 @@ void Q_DECL_DEPRECATED QContactRemoveRequest::setFilter(const QContactFilter& fi
 
 /*!
   \fn Q_DECL_DEPRECATED QContactRemoveRequest::filter() const
-  \deprecated
+  \internal
   Returns the filter which will be used to select the contacts to remove.
   This function is obsolete; retrieve the list of contacts that will be removed by calling contactIds().
  */

@@ -94,7 +94,7 @@ QContactAction::~QContactAction()
 
 /*!
   \fn Q_DECL_DEPRECATED QContactAction::metadata() const
-  \deprecated
+  \internal
   Returns the metadata associated with this action, such as icons, labels or sound cues
  */
 
@@ -152,7 +152,7 @@ QList<QContactDetail> QContactAction::supportedDetails(const QContact& contact) 
 
 /*!
   \enum QContactAction::Status
-  \deprecated This enum has been deprecated and will be replaced by the State enum.
+  \internal This enum has been deprecated and will be replaced by the State enum.
   Describes the current status of the asynchronous action operation
   \value Inactive The operation has not yet been initiated
   \value Autonomous The operation was initiated but no further information is or will be available
@@ -173,7 +173,7 @@ QList<QContactDetail> QContactAction::supportedDetails(const QContact& contact) 
 
 /*!
   \fn QContactAction::progress(QContactAction::Status status, const QVariantMap& result)
-  \deprecated This function was deprecated in week 1 and will be replaced by the progress signal which includes a State after the transition period has elapsed.
+  \internal This function was deprecated in week 1 and will be replaced by the progress signal which includes a State after the transition period has elapsed.
   This signal is emitted by an action instance whose functionality has been initiated with \l invokeAction().
   It provides clients with the current \a status of the action, and any \a result associated with the action.
   This signal must be emitted at least once by every action instance after \l invokeAction() is called.
