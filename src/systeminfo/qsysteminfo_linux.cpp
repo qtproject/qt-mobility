@@ -384,8 +384,8 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QSystemNetworkInfoLinuxComm
 #if !defined(QT_NO_NETWORKMANAGER)
     setupNmConnections();
     updateActivePaths();
-#endif
     QTimer::singleShot(200, this,SLOT(getPrimaryMode()));
+#endif
 }
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
