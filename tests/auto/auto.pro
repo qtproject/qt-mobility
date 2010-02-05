@@ -113,7 +113,6 @@ contains(mobility_modules,multimedia) {
         qmediaservice \
         qmediaserviceprovider \
         qmediacontent \
-        qmlgraphicsvideo \
         qradiotuner \
         qpaintervideosurface \
         qvideowidget \
@@ -121,7 +120,8 @@ contains(mobility_modules,multimedia) {
 
     contains(QT_CONFIG, declarative) {
         SUBDIRS += \
-            qmlaudio
+            qmlaudio \
+            qmlgraphicsvideo
     }
 
     symbian: {
