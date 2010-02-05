@@ -79,22 +79,20 @@ QContactDetailDefinitionRemoveRequest::~QContactDetailDefinitionRemoveRequest()
 }
 
 /*!
-  \fn Q_DECL_DEPRECATED QContactDetailDefinitionRemoveRequest::setNames(const QStringList& names)
   \internal
   Sets the names of the detail definitions to remove from the manager to be \a names
  */
-void Q_DECL_DEPRECATED QContactDetailDefinitionRemoveRequest::setNames(const QStringList& names)
+void QContactDetailDefinitionRemoveRequest::setNames(const QStringList& names)
 {
     Q_D(QContactDetailDefinitionRemoveRequest);
     d->m_names = names;
 }
 
 /*!
-  \fn Q_DECL_DEPRECATED QContactDetailDefinitionRemoveRequest::names() const
   \internal
   Returns the list of names of the detail definitions that will be removed from the manager
  */
-QStringList Q_DECL_DEPRECATED QContactDetailDefinitionRemoveRequest::names() const
+QStringList QContactDetailDefinitionRemoveRequest::names() const
 {
     Q_D(const QContactDetailDefinitionRemoveRequest);
     return d->m_names;

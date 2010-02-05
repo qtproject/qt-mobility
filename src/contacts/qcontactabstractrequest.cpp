@@ -182,11 +182,10 @@ QContactManager::Error QContactAbstractRequest::error() const
 }
 
 /*!
-  \fn Q_DECL_DEPRECATED QContactAbstractRequest::errors() const
   \internal
   Returns the list of errors which occurred during the most recent asynchronous operation.  Each individual error in the list corresponds to a result in the result list.
  */
-QList<QContactManager::Error> Q_DECL_DEPRECATED QContactAbstractRequest::errors() const
+QList<QContactManager::Error> QContactAbstractRequest::errors() const
 {
     return QList<QContactManager::Error>();
 }
@@ -200,11 +199,10 @@ QContactAbstractRequest::RequestType QContactAbstractRequest::type() const
 }
 
 /*!
-  \fn Q_DECL_DEPRECATED QContactAbstractRequest::status() const
   \internal
   Returns the current status of the request.
  */
-QContactAbstractRequest::Status Q_DECL_DEPRECATED QContactAbstractRequest::status() const
+QContactAbstractRequest::Status QContactAbstractRequest::status() const
 {
     return static_cast<QContactAbstractRequest::Status>(d_ptr->m_state);
 }

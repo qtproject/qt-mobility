@@ -142,7 +142,6 @@ QContactId QContactRelationshipFetchRequest::second() const
 }
 
 /*!
-  \fn Q_DECL_DEPRECATED QContactRelationshipFetchRequest::setParticipant(const QContactId& participantUri, QContactRelationshipFilter::Role role)
   \internal
   Sets the participant criterion of the fetch request to \a
   participantUri.  If the \a participantUri references a contact in
@@ -164,7 +163,7 @@ QContactId QContactRelationshipFetchRequest::second() const
   zero contact id, or if the participant criterion is not set, the
   request will fetch relationships involving any participant.
  */
-void Q_DECL_DEPRECATED QContactRelationshipFetchRequest::setParticipant(const QContactId& participantUri, QContactRelationshipFilter::Role role)
+void QContactRelationshipFetchRequest::setParticipant(const QContactId& participantUri, QContactRelationshipFilter::Role role)
 {
     Q_D(QContactRelationshipFetchRequest);
     d->m_participantUri = participantUri;
@@ -172,22 +171,20 @@ void Q_DECL_DEPRECATED QContactRelationshipFetchRequest::setParticipant(const QC
 }
 
 /*!
-  \fn Q_DECL_DEPRECATED QContactRelationshipFetchRequest::participant() const
   \internal
   Returns the participant criterion of the fetch request
  */
-QContactId Q_DECL_DEPRECATED QContactRelationshipFetchRequest::participant() const
+QContactId QContactRelationshipFetchRequest::participant() const
 {
     Q_D(const QContactRelationshipFetchRequest);
     return d->m_participantUri;
 }
 
 /*!
-  \fn Q_DECL_DEPRECATED QContactRelationshipFetchRequest::participantRole() const
   \internal
   Returns the role of the participant criterion of the fetch request
  */
-QContactRelationshipFilter::Role Q_DECL_DEPRECATED QContactRelationshipFetchRequest::participantRole() const
+QContactRelationshipFilter::Role QContactRelationshipFetchRequest::participantRole() const
 {
     Q_D(const QContactRelationshipFetchRequest);
     return d->m_role;
