@@ -126,6 +126,29 @@ QtMessaging
     * DisplayName should be used where the name used for display purposes
       differs from the fundamental name property.
 
+ - Symbian specific fixes
+    * Added correct Symbian UID to Messaging DLL
+    * Corrected exporting of public headers (to /epoc32/include/)
+    * Changed DLL capability to: ALL -TCB (was previously: ALL -TCB -AllFiles -DRM)
+    * Fixed "." (application private) folder support (attachments)
+      Now all auto tests can use "." folder for test files
+    * Fixed auto tests to use "." folder (just like in other backends)
+    * Fixed file type recognition bug (.png files)
+    * Fixed bug: Messaging queries list unknown (for example bluetooth)
+                 messages from Inbox
+    * Nested filters support for account, folder & message filters finalized, all auto tests pass
+    * MIME type handling related bugs fixed
+    * Character set handling bugs fixes
+    * Default account bug fixed
+    * Message attachment memory usage optimized
+    * Standard folder support for emails improved (Inbox filtering)
+    * Message size calculation accuracy improved
+    * CEikonEnv usages removed (relations to Symbian UI Framework)
+    * message type handling improved (if message type is not defined, message type is retrieved from parentAccount)
+      Related to bug that prevented MMS message sending from MessagingEx
+      (Note: MMS message sending in writemessage example worked)
+    * MMS Message content retrieval bug fixed (related to QByteArray QMessageContentContainer::content() const; bug)
+
 QtMedia
 ------
 
