@@ -24,6 +24,17 @@ symbian: {
     EPOCROOT31 = $${EPOCROOT31}
     EPOCROOT32 = $${EPOCROOT32}    
     EPOCROOT50 = $${EPOCROOT50}
+
+    # default to EPOCROOT if EPOCROOTxy not defined
+    isEmpty(EPOCROOT31) {
+        EPOCROOT31 = $${EPOCROOT}
+    }
+    isEmpty(EPOCROOT32) {
+        EPOCROOT32 = $${EPOCROOT}
+    }
+    isEmpty(EPOCROOT50) {
+        EPOCROOT50 = $${EPOCROOT}
+    }
     
     qtmobilitydeployment.sources = \
         $$(EPOCROOT50)epoc32/release/armv5/urel/QtMessaging.dll \
@@ -53,12 +64,13 @@ symbian: {
         "IF package(0x1028315F)" \
         "   \"$$(EPOCROOT50)epoc32/release/armv5/urel/mobapicontactspluginsymbian.dll\" - \"!:\\sys\\bin\\mobapicontactspluginsymbian.dll\"" \
         "ELSEIF package(0x102752AE)" \
-        "   \"$$(EPOCROOT50)epoc32/release/armv5/urel/mobapicontactspluginsymbian.dll\" - \"!:\\sys\\bin\\mobapicontactspluginsymbian.dll\"" \
+        "   \"$$(EPOCROOT32)epoc32/release/armv5/urel/mobapicontactspluginsymbian.dll\" - \"!:\\sys\\bin\\mobapicontactspluginsymbian.dll\"" \
         "ELSEIF package(0x102032BE)" \
         "   \"$$(EPOCROOT31)epoc32/release/armv5/urel/mobapicontactspluginsymbian.dll\" - \"!:\\sys\\bin\\mobapicontactspluginsymbian.dll\"" \
         "ELSE" \
         "   \"$$(EPOCROOT50)epoc32/release/armv5/urel/mobapicontactspluginsymbian.dll\" - \"!:\\sys\\bin\\mobapicontactspluginsymbian.dll\"" \
-        "ENDIF"
+        "ENDIF" \
+        "\"$$(EPOCROOT50)epoc32/release/armv5/urel/mobapicontactspluginsymbiansim.dll\" - \"!:\\sys\\bin\\mobapicontactspluginsymbiansim.dll\""
         
     multimedia = \
         "IF package(0x1028315F)" \
@@ -73,6 +85,7 @@ symbian: {
 
     pluginstubs = \
         "\"$$QT_MOBILITY_BUILD_TREE/plugins/contacts/symbian/qmakepluginstubs/mobapicontactspluginsymbian.qtplugin\"  - \"!:\\resource\\qt\\plugins\\contacts\\mobapicontactspluginsymbian.qtplugin\"" \
+        "\"$$QT_MOBILITY_BUILD_TREE/plugins/contacts/symbian/qmakepluginstubs/mobapicontactspluginsymbiansim.qtplugin\"  - \"!:\\resource\\qt\\plugins\\contacts\\mobapicontactspluginsymbiansim.qtplugin\"" \
         "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/qmakepluginstubs/QtMobilityMultimediaEngine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\QtMobilityMultimediaEngine.qtplugin\"" \
         "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/m3u/qmakepluginstubs/m3u.qtplugin\"     - \"!:\\resource\\qt\\plugins\\playlistformats\\m3u.qtplugin\""        
 
