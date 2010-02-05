@@ -317,10 +317,8 @@ public:
         // Is there default access point, use it
         QNetworkConfiguration cfg1 = manager.defaultConfiguration();
         if (!cfg1.isValid() || (!canStartIAP && cfg1.state() != QNetworkConfiguration::Active)) {
-            m_networkSetupError = QString(tr("Avaliable Access Points not found."));
-            m_normalMap = 0;
-            m_largeMap = 0;
-            QTimer::singleShot(0, this, SLOT(delayedInit()));
+            m_networkSetupError = QString(tr("This example requires networking, and no avaliable networks or access points could be found."));
+            QTimer::singleShot(0, this, SLOT(networkSetupError()));
             return;
         }
 
@@ -368,6 +366,12 @@ public slots:
 
 private slots:
 
+    void networkSetupError() {
+        QMessageBox::critical(this, tr("LightMaps"),
+                                 m_networkSetupError);
+        QTimer::singleShot(0, qApp, SLOT(quit()));
+    }
+
     void networkSessionOpened() {
         m_location = QGeoPositionInfoSource::createDefaultSource(this);
 
@@ -393,11 +397,6 @@ private slots:
         } else {
             waitForFix();
             m_location->stopUpdates();
-        }
-
-        if (!m_networkSetupError.isEmpty()) {
-            QMessageBox::information(this, tr("LightMaps"),
-                                     m_networkSetupError);
         }
 
         m_normalMap = new SlippyMap(m_session, m_location, this);
