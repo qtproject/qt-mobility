@@ -268,7 +268,8 @@ bool QContactAbstractRequest::waitForFinished(int msecs)
     return false; // unable to wait for operation; not in progress or no engine.
 }
 
-/*! Blocks until the manager engine signals that more partial results are available for the request, or until \a msecs milliseconds has elapsed.
+/*! \internal
+    Blocks until the manager engine signals that more partial results are available for the request, or until \a msecs milliseconds has elapsed.
     If \a msecs is zero, this function will block indefinitely.
     Returns true if the request was cancelled or more partial results were made available within the given period, otherwise false. */
 bool QContactAbstractRequest::waitForProgress(int msecs)
