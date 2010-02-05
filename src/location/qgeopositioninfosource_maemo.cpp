@@ -412,7 +412,7 @@ void QGeoPositionInfoSourceMaemo::setLocation(const QGeoPositionInfo &update)
 }
 #endif // Q_WS_MAEMO_5
 
->
+
 #include "moc_qgeopositioninfosource_maemo_p.cpp"
 QTM_END_NAMESPACE
 
