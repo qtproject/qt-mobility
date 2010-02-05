@@ -57,8 +57,9 @@
 
 QTM_BEGIN_NAMESPACE
 
-struct QAmbientLightReadingPrivate : public QSensorReadingPrivate
+class QAmbientLightReadingPrivate : public QSensorReadingPrivate
 {
+public:
     QAmbientLightReadingPrivate()
         : lightLevel(0)
     {
