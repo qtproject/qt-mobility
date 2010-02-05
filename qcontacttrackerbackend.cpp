@@ -260,8 +260,6 @@ bool QContactTrackerEngine::waitForRequestFinished(QContactAbstractRequest* req,
 
 bool QContactTrackerEngine::saveContact( QContact* contact, QContactManager::Error& error)
 {
-    Q_UNUSED(error)
-
     // Signal emitted from TrackerChangeListener
     QContactSaveRequest request;
     QList<QContact> contacts(QList<QContact>()<<*contact);
@@ -270,9 +268,11 @@ bool QContactTrackerEngine::saveContact( QContact* contact, QContactManager::Err
     engine.startRequest(&request);
     // 10 seconds should be enough
     engine.waitForRequestFinished(&request, 10000);
+    error = request.error();
     Q_ASSERT(request.contacts().size() == 1);
     *contact = request.contacts()[0];
-    if( request.isFinished() )
+
+    if( request.isFinished() && error == QContactManager::NoError)
         return true;
     else
         return false;
