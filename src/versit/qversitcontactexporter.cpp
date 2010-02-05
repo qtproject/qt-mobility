@@ -91,7 +91,7 @@ QTM_USE_NAMESPACE
 /*!
  * \class QVersitContactExporter
  * \preliminary
- * \brief The QVersitContactExporter class converts \l QContact(s) into \l QVersitDocument(s).
+ * \brief The QVersitContactExporter class converts \l {QContact}(s) into \l {QVersitDocument}(s).
  *
  * \ingroup versit
  *

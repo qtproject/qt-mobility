@@ -44,8 +44,19 @@ Optimizations
 QtBearer
 ------
 
- - foo
-    * bar
+ - Various memory leaks.
+ - Documentation fixes.
+ - QNetworkSession API changes.
+    * Renamed isActive() to isOpen().
+    * Renamed property key "ActiveConfigurationIdentifier" to
+      "ActiveConfiguration".
+    * Renamed property key "UserChoiceConfigurationIdentifier" to
+      "UserChoiceConfiguration".
+    * bearerName() function moved to QNetworkConfiguration::bearerName().
+ - Symbian
+    * Add Symbian build time declarations to examples and tests (capabilities,
+      UIDs etc).
+ - Improved unit test coverage and stability.
 
 QtContacts
 ------
@@ -120,8 +131,23 @@ QtMedia
 QtPublishSubscribe
 ------
 
- - foo
-    * bar
+ - Rename QValueSpacePublisher::attributeInterestChanged() to
+   QValueSpacePublisher::interestChanged().
+ - Symbian backend improvements
+    * MOBILITY-387: Symbian central repository related compile error fixed
+    * Support for removeValue.
+    * subPaths only returns the values that are really available.
+    * Unsupported data types are published as serialized QByteArrays.
+      All QVariant data types can be passed through the Publish and Subscribe.
+    * PSPathMapper server added so the QCRML files no longer need to be parsed
+      in client-side.
+    * QCRML files can now be installed on any drive.
+ - Fixed bugs
+    * QTMOBILITY-38: The table/list view in the subscriber window of publish
+      and subscribe example is now readonly.
+    * QTMOBILITY-39: Compile failure with gcc 4.4.
+    * QTMOBILITY-43: Rework P&S example to support small screen sizes.
+    * Memory leak in Registry Layer.
 
 QtServiceFramework
 ------
@@ -132,8 +158,19 @@ QtServiceFramework
 QtSystemInfo
 ------
 
- - foo
-    * bar
+ - New features for Maemo5 backend
+    * simStatus
+    * Available languages
+    * hasFeatureSupported completed
+    * displayBrightness
+    * imsi
+
+ - New features for Mac backend
+    * added network signaling
+
+ - New features for Linux backend
+    * code refactoring
+
 
 Qt Mobility Plugins
 ------

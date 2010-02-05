@@ -3767,6 +3767,9 @@
     <section ref="streamplayer.html" title="Stream Player Example">
         <keyword ref="streamplayer.html">Stream Player Example</keyword>
     </section>
+    <section ref="sysinfo.html" title="SysInfo Dialog Example">
+        <keyword ref="sysinfo.html">SysInfo Dialog Example</keyword>
+    </section>
     <section ref="sysinfo.html" title="System Information Example">
         <keyword ref="sysinfo.html">System Information Example</keyword>
     </section>

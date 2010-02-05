@@ -3178,9 +3178,13 @@ SessionManager::SessionManager()
 
 bool SessionManager::initialize(MapiSession *newSession)
 {
-    ptr = MapiSessionPtr(newSession);
-    ptr->_self = ptr;
-    return true;
+    if(newSession->_mapiSession)
+    {
+        ptr = MapiSessionPtr(newSession);
+        ptr->_self = ptr;
+        return true;
+    }
+    return false;
 }
 
 const MapiSessionPtr &SessionManager::session() const
