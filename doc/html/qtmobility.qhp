@@ -148,7 +148,6 @@
                     <section ref="qcontactgeolocation.html" title="QContactGeoLocation Class Reference">
                         <section ref="qcontactgeolocation-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qcontactgeolocation.html" title="QContactGeolocation Class Reference"/>
                     <section ref="qcontactguid.html" title="QContactGuid Class Reference">
                         <section ref="qcontactguid-members.html" title="List of all members"/>
                     </section>
@@ -1087,12 +1086,6 @@
             <keyword name="QContactAbstractRequest::ActiveState" id="QContactAbstractRequest::ActiveState" ref="qcontactabstractrequest.html#State-enum"/>
             <keyword name="QContactAbstractRequest::CanceledState" id="QContactAbstractRequest::CanceledState" ref="qcontactabstractrequest.html#State-enum"/>
             <keyword name="QContactAbstractRequest::FinishedState" id="QContactAbstractRequest::FinishedState" ref="qcontactabstractrequest.html#State-enum"/>
-            <keyword name="QContactAbstractRequest::Status" id="QContactAbstractRequest::Status" ref="qcontactabstractrequest.html#Status-enum"/>
-            <keyword name="QContactAbstractRequest::Inactive" id="QContactAbstractRequest::Inactive" ref="qcontactabstractrequest.html#Status-enum"/>
-            <keyword name="QContactAbstractRequest::Active" id="QContactAbstractRequest::Active" ref="qcontactabstractrequest.html#Status-enum"/>
-            <keyword name="QContactAbstractRequest::Cancelled" id="QContactAbstractRequest::Cancelled" ref="qcontactabstractrequest.html#Status-enum"/>
-            <keyword name="QContactAbstractRequest::Finished" id="QContactAbstractRequest::Finished" ref="qcontactabstractrequest.html#Status-enum"/>
-            <keyword name="QContactAbstractRequest::Cancelling" id="QContactAbstractRequest::Cancelling" ref="qcontactabstractrequest.html#Status-enum"/>
             <keyword name="cancel" id="QContactAbstractRequest::cancel" ref="qcontactabstractrequest.html#cancel"/>
             <keyword name="error" id="QContactAbstractRequest::error" ref="qcontactabstractrequest.html#error"/>
             <keyword name="isActive" id="QContactAbstractRequest::isActive" ref="qcontactabstractrequest.html#isActive"/>
@@ -1115,12 +1108,6 @@
             <keyword name="QContactAction::ActiveState" id="QContactAction::ActiveState" ref="qcontactaction.html#State-enum"/>
             <keyword name="QContactAction::FinishedState" id="QContactAction::FinishedState" ref="qcontactaction.html#State-enum"/>
             <keyword name="QContactAction::FinishedWithErrorState" id="QContactAction::FinishedWithErrorState" ref="qcontactaction.html#State-enum"/>
-            <keyword name="QContactAction::Status" id="QContactAction::Status" ref="qcontactaction.html#Status-enum"/>
-            <keyword name="QContactAction::Inactive" id="QContactAction::Inactive" ref="qcontactaction.html#Status-enum"/>
-            <keyword name="QContactAction::Autonomous" id="QContactAction::Autonomous" ref="qcontactaction.html#Status-enum"/>
-            <keyword name="QContactAction::Active" id="QContactAction::Active" ref="qcontactaction.html#Status-enum"/>
-            <keyword name="QContactAction::Finished" id="QContactAction::Finished" ref="qcontactaction.html#Status-enum"/>
-            <keyword name="QContactAction::FinishedWithError" id="QContactAction::FinishedWithError" ref="qcontactaction.html#Status-enum"/>
             <keyword name="action" id="QContactAction::action" ref="qcontactaction.html#action"/>
             <keyword name="actionDescriptor" id="QContactAction::actionDescriptor" ref="qcontactaction.html#actionDescriptor"/>
             <keyword name="actionDescriptors" id="QContactAction::actionDescriptors" ref="qcontactaction.html#actionDescriptors"/>
@@ -1268,7 +1255,6 @@
             <keyword name="definitionNames" id="QContactDetailDefinitionFetchRequest::definitionNames" ref="qcontactdetaildefinitionfetchrequest.html#definitionNames"/>
             <keyword name="definitions" id="QContactDetailDefinitionFetchRequest::definitions" ref="qcontactdetaildefinitionfetchrequest.html#definitions"/>
             <keyword name="errorMap" id="QContactDetailDefinitionFetchRequest::errorMap" ref="qcontactdetaildefinitionfetchrequest.html#errorMap"/>
-            <keyword name="progress" id="QContactDetailDefinitionFetchRequest::progress" ref="qcontactdetaildefinitionfetchrequest.html#progress"/>
             <keyword name="setContactType" id="QContactDetailDefinitionFetchRequest::setContactType" ref="qcontactdetaildefinitionfetchrequest.html#setContactType"/>
             <keyword name="setDefinitionNames" id="QContactDetailDefinitionFetchRequest::setDefinitionNames" ref="qcontactdetaildefinitionfetchrequest.html#setDefinitionNames"/>
             <keyword name="~QContactDetailDefinitionFetchRequest" id="QContactDetailDefinitionFetchRequest::~QContactDetailDefinitionFetchRequest" ref="qcontactdetaildefinitionfetchrequest.html#dtor.QContactDetailDefinitionFetchRequest"/>
@@ -1276,14 +1262,12 @@
             <keyword name="contactType" id="QContactDetailDefinitionRemoveRequest::contactType" ref="qcontactdetaildefinitionremoverequest.html#contactType"/>
             <keyword name="definitionNames" id="QContactDetailDefinitionRemoveRequest::definitionNames" ref="qcontactdetaildefinitionremoverequest.html#definitionNames"/>
             <keyword name="errorMap" id="QContactDetailDefinitionRemoveRequest::errorMap" ref="qcontactdetaildefinitionremoverequest.html#errorMap"/>
-            <keyword name="progress" id="QContactDetailDefinitionRemoveRequest::progress" ref="qcontactdetaildefinitionremoverequest.html#progress"/>
             <keyword name="setDefinitionNames" id="QContactDetailDefinitionRemoveRequest::setDefinitionNames" ref="qcontactdetaildefinitionremoverequest.html#setDefinitionNames"/>
             <keyword name="~QContactDetailDefinitionRemoveRequest" id="QContactDetailDefinitionRemoveRequest::~QContactDetailDefinitionRemoveRequest" ref="qcontactdetaildefinitionremoverequest.html#dtor.QContactDetailDefinitionRemoveRequest"/>
             <keyword name="QContactDetailDefinitionSaveRequest" id="QContactDetailDefinitionSaveRequest" ref="qcontactdetaildefinitionsaverequest.html"/>
             <keyword name="contactType" id="QContactDetailDefinitionSaveRequest::contactType" ref="qcontactdetaildefinitionsaverequest.html#contactType"/>
             <keyword name="definitions" id="QContactDetailDefinitionSaveRequest::definitions" ref="qcontactdetaildefinitionsaverequest.html#definitions"/>
             <keyword name="errorMap" id="QContactDetailDefinitionSaveRequest::errorMap" ref="qcontactdetaildefinitionsaverequest.html#errorMap"/>
-            <keyword name="progress" id="QContactDetailDefinitionSaveRequest::progress" ref="qcontactdetaildefinitionsaverequest.html#progress"/>
             <keyword name="setContactType" id="QContactDetailDefinitionSaveRequest::setContactType" ref="qcontactdetaildefinitionsaverequest.html#setContactType"/>
             <keyword name="setDefinitions" id="QContactDetailDefinitionSaveRequest::setDefinitions" ref="qcontactdetaildefinitionsaverequest.html#setDefinitions"/>
             <keyword name="~QContactDetailDefinitionSaveRequest" id="QContactDetailDefinitionSaveRequest::~QContactDetailDefinitionSaveRequest" ref="qcontactdetaildefinitionsaverequest.html#dtor.QContactDetailDefinitionSaveRequest"/>
@@ -1339,7 +1323,6 @@
             <keyword name="contacts" id="QContactFetchRequest::contacts" ref="qcontactfetchrequest.html#contacts"/>
             <keyword name="definitionRestrictions" id="QContactFetchRequest::definitionRestrictions" ref="qcontactfetchrequest.html#definitionRestrictions"/>
             <keyword name="filter" id="QContactFetchRequest::filter" ref="qcontactfetchrequest.html#filter"/>
-            <keyword name="progress" id="QContactFetchRequest::progress" ref="qcontactfetchrequest.html#progress"/>
             <keyword name="setDefinitionRestrictions" id="QContactFetchRequest::setDefinitionRestrictions" ref="qcontactfetchrequest.html#setDefinitionRestrictions"/>
             <keyword name="setFilter" id="QContactFetchRequest::setFilter" ref="qcontactfetchrequest.html#setFilter"/>
             <keyword name="setSorting" id="QContactFetchRequest::setSorting" ref="qcontactfetchrequest.html#setSorting"/>
@@ -1394,7 +1377,6 @@
             <keyword name="setTimestamp" id="QContactGeoLocation::setTimestamp" ref="qcontactgeolocation.html#setTimestamp"/>
             <keyword name="speed" id="QContactGeoLocation::speed" ref="qcontactgeolocation.html#speed"/>
             <keyword name="timestamp" id="QContactGeoLocation::timestamp" ref="qcontactgeolocation.html#timestamp"/>
-            <keyword name="QContactGeolocation" id="QContactGeolocation" ref="qcontactgeolocation.html"/>
             <keyword name="QContactGuid" id="QContactGuid" ref="qcontactguid.html"/>
             <keyword name="guid" id="QContactGuid::guid" ref="qcontactguid.html#guid"/>
             <keyword name="setGuid" id="QContactGuid::setGuid" ref="qcontactguid.html#setGuid"/>
@@ -1422,7 +1404,6 @@
             <keyword name="QContactLocalIdFetchRequest" id="QContactLocalIdFetchRequest" ref="qcontactlocalidfetchrequest.html"/>
             <keyword name="filter" id="QContactLocalIdFetchRequest::filter" ref="qcontactlocalidfetchrequest.html#filter"/>
             <keyword name="ids" id="QContactLocalIdFetchRequest::ids" ref="qcontactlocalidfetchrequest.html#ids"/>
-            <keyword name="progress" id="QContactLocalIdFetchRequest::progress" ref="qcontactlocalidfetchrequest.html#progress"/>
             <keyword name="setFilter" id="QContactLocalIdFetchRequest::setFilter" ref="qcontactlocalidfetchrequest.html#setFilter"/>
             <keyword name="setSorting" id="QContactLocalIdFetchRequest::setSorting" ref="qcontactlocalidfetchrequest.html#setSorting"/>
             <keyword name="sorting" id="QContactLocalIdFetchRequest::sorting" ref="qcontactlocalidfetchrequest.html#sorting"/>
@@ -1564,7 +1545,10 @@
             <keyword name="validateDefinition" id="QContactManagerEngine::validateDefinition" ref="qcontactmanagerengine.html#validateDefinition"/>
             <keyword name="waitForRequestFinished" id="QContactManagerEngine::waitForRequestFinished" ref="qcontactmanagerengine.html#waitForRequestFinished"/>
             <keyword name="QContactManagerEngineFactory" id="QContactManagerEngineFactory" ref="qcontactmanagerenginefactory.html"/>
+            <keyword name="engine" id="QContactManagerEngineFactory::engine" ref="qcontactmanagerenginefactory.html#engine"/>
             <keyword name="managerName" id="QContactManagerEngineFactory::managerName" ref="qcontactmanagerenginefactory.html#managerName"/>
+            <keyword name="supportedImplementationVersions" id="QContactManagerEngineFactory::supportedImplementationVersions" ref="qcontactmanagerenginefactory.html#supportedImplementationVersions"/>
+            <keyword name="~QContactManagerEngineFactory" id="QContactManagerEngineFactory::~QContactManagerEngineFactory" ref="qcontactmanagerenginefactory.html#dtor.QContactManagerEngineFactory"/>
             <keyword name="QContactMemoryEngine" id="QContactMemoryEngine" ref="qcontactmemoryengine.html"/>
             <keyword name="cancelRequest" id="QContactMemoryEngine::cancelRequest" ref="qcontactmemoryengine.html#cancelRequest"/>
             <keyword name="contact" id="QContactMemoryEngine::contact" ref="qcontactmemoryengine.html#contact"/>
@@ -1666,7 +1650,6 @@
             <keyword name="~QContactRelationship" id="QContactRelationship::~QContactRelationship" ref="qcontactrelationship.html#dtor.QContactRelationship"/>
             <keyword name="QContactRelationshipFetchRequest" id="QContactRelationshipFetchRequest" ref="qcontactrelationshipfetchrequest.html"/>
             <keyword name="first" id="QContactRelationshipFetchRequest::first" ref="qcontactrelationshipfetchrequest.html#first"/>
-            <keyword name="progress" id="QContactRelationshipFetchRequest::progress" ref="qcontactrelationshipfetchrequest.html#progress"/>
             <keyword name="relationshipType" id="QContactRelationshipFetchRequest::relationshipType" ref="qcontactrelationshipfetchrequest.html#relationshipType"/>
             <keyword name="relationships" id="QContactRelationshipFetchRequest::relationships" ref="qcontactrelationshipfetchrequest.html#relationships"/>
             <keyword name="second" id="QContactRelationshipFetchRequest::second" ref="qcontactrelationshipfetchrequest.html#second"/>
@@ -1687,20 +1670,17 @@
             <keyword name="setRelationshipType" id="QContactRelationshipFilter::setRelationshipType" ref="qcontactrelationshipfilter.html#setRelationshipType"/>
             <keyword name="QContactRelationshipRemoveRequest" id="QContactRelationshipRemoveRequest" ref="qcontactrelationshipremoverequest.html"/>
             <keyword name="errorMap" id="QContactRelationshipRemoveRequest::errorMap" ref="qcontactrelationshipremoverequest.html#errorMap"/>
-            <keyword name="progress" id="QContactRelationshipRemoveRequest::progress" ref="qcontactrelationshipremoverequest.html#progress"/>
             <keyword name="relationships" id="QContactRelationshipRemoveRequest::relationships" ref="qcontactrelationshipremoverequest.html#relationships"/>
             <keyword name="setRelationships" id="QContactRelationshipRemoveRequest::setRelationships" ref="qcontactrelationshipremoverequest.html#setRelationships"/>
             <keyword name="~QContactRelationshipRemoveRequest" id="QContactRelationshipRemoveRequest::~QContactRelationshipRemoveRequest" ref="qcontactrelationshipremoverequest.html#dtor.QContactRelationshipRemoveRequest"/>
             <keyword name="QContactRelationshipSaveRequest" id="QContactRelationshipSaveRequest" ref="qcontactrelationshipsaverequest.html"/>
             <keyword name="errorMap" id="QContactRelationshipSaveRequest::errorMap" ref="qcontactrelationshipsaverequest.html#errorMap"/>
-            <keyword name="progress" id="QContactRelationshipSaveRequest::progress" ref="qcontactrelationshipsaverequest.html#progress"/>
             <keyword name="relationships" id="QContactRelationshipSaveRequest::relationships" ref="qcontactrelationshipsaverequest.html#relationships"/>
             <keyword name="setRelationships" id="QContactRelationshipSaveRequest::setRelationships" ref="qcontactrelationshipsaverequest.html#setRelationships"/>
             <keyword name="~QContactRelationshipSaveRequest" id="QContactRelationshipSaveRequest::~QContactRelationshipSaveRequest" ref="qcontactrelationshipsaverequest.html#dtor.QContactRelationshipSaveRequest"/>
             <keyword name="QContactRemoveRequest" id="QContactRemoveRequest" ref="qcontactremoverequest.html"/>
             <keyword name="contactIds" id="QContactRemoveRequest::contactIds" ref="qcontactremoverequest.html#contactIds"/>
             <keyword name="errorMap" id="QContactRemoveRequest::errorMap" ref="qcontactremoverequest.html#errorMap"/>
-            <keyword name="progress" id="QContactRemoveRequest::progress" ref="qcontactremoverequest.html#progress"/>
             <keyword name="setContactIds" id="QContactRemoveRequest::setContactIds" ref="qcontactremoverequest.html#setContactIds"/>
             <keyword name="~QContactRemoveRequest" id="QContactRemoveRequest::~QContactRemoveRequest" ref="qcontactremoverequest.html#dtor.QContactRemoveRequest"/>
             <keyword name="QContactSaveRequest" id="QContactSaveRequest" ref="qcontactsaverequest.html"/>
