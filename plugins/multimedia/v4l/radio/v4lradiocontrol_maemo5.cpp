@@ -42,24 +42,14 @@
 #include "v4lradiocontrol_maemo5.h"
 #include "v4lradioservice.h"
 
-#include <QtCore/qdebug.h>
-
-//#include <QtDBus/QDBusInterface>
-
-#include <fcntl.h>
-
-#include <sys/ioctl.h>
 #include "linux/videodev2.h"
-
+#include <linux/videodev.h>
 #include <sys/soundcard.h>
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/ioctl.h>
 #include <fcntl.h>
 #include <unistd.h>
-
-#include <linux/videodev.h>
-#include <linux/soundcard.h>
 
 V4LRadioControl::V4LRadioControl(QObject *parent)
     : QRadioTunerControl(parent)
@@ -113,9 +103,7 @@ V4LRadioControl::~V4LRadioControl()
 void V4LRadioControl::enableFMRX()
 {
     if (FMRXEnablerIFace && FMRXEnablerIFace->isValid()) {
-        QDBusMessage ret = FMRXEnablerIFace->call("request");
-        if (!ret.errorName().isEmpty())
-            qDebug() << "Error: " << ret.errorName() << ": "<< ret.errorMessage();
+        FMRXEnablerIFace->call("request"); // Return value ignored
     }
 }
 
@@ -213,7 +201,6 @@ void V4LRadioControl::setBand(QRadioTuner::Band b)
         step = 500; // 500Hz steps
         emit bandChanged(currentBand);
     }
-    //playTime.restart();
 }
 
 int V4LRadioControl::frequency() const
@@ -335,7 +322,6 @@ int  V4LRadioControl::vol(snd_hctl_elem_t *elem) const
     snd_ctl_elem_info_alloca(&info);
     snd_ctl_elem_value_alloca(&control);
     if ((err = snd_hctl_elem_info(elem, info)) < 0) {
-        qDebug() << QString("Control %1 snd_hctl_elem_info error: %2").arg(card).arg(snd_strerror(err));
         return 0;
     }
 
@@ -365,13 +351,11 @@ int V4LRadioControl::volume() const
     snd_ctl_elem_id_set_name(id, ctlName.toAscii());
 
     if ((err = snd_ctl_open(&handle, card.toAscii(), 0)) < 0) {
-        qDebug() << "Control open error" << card << err;
         return 0;
     }
 
     snd_ctl_elem_info_set_id(info, id);
     if ((err = snd_ctl_elem_info(handle, info)) < 0) {
-        qDebug() << "Cannot find the given element from control: " << card;
         snd_ctl_close(handle);
         handle = NULL;
         return 0;
@@ -386,18 +370,15 @@ int V4LRadioControl::volume() const
     snd_hctl_t *hctl;
     snd_hctl_elem_t *elem;
     if ((err = snd_hctl_open(&hctl, card.toAscii(), 0)) < 0) {
-        qDebug() << QString("Control %1 open error: %2").arg(card).arg(snd_strerror(err));
         return 0;
     }
     if ((err = snd_hctl_load(hctl)) < 0) {
-        qDebug() << QString("Control %1 load error: %2").arg(card).arg(snd_strerror(err));
         return 0;
     }
     elem = snd_hctl_find_elem(hctl, id);
     if (elem)
         volume = vol(elem);
-    else
-        qDebug() << "Could not find the specified element";
+
     snd_hctl_close(hctl);
 
     return (volume/63.0) * 100;
@@ -454,7 +435,6 @@ void V4LRadioControl::setupHeadPhone()
     while (i.hasNext()) {
         i.next();
         callAmixer(i.key(), i.value());
-        //qDebug() << i.key() << ":" << i.value();
     }
 }
 
@@ -470,8 +450,6 @@ void V4LRadioControl::callAmixer(const QString& target, const QString& value)
     snd_ctl_elem_value_t *control;
     snd_ctl_elem_type_t type;
 
-    qDebug() << "start control fun" << target << value;
-
     snd_ctl_elem_info_alloca(&info);
     snd_ctl_elem_id_alloca(&id);
     snd_ctl_elem_value_alloca(&control);
@@ -484,14 +462,12 @@ void V4LRadioControl::callAmixer(const QString& target, const QString& value)
 
     if (handle == NULL && (err = snd_ctl_open(&handle, card.toAscii(), 0)) < 0)
     {
-        qDebug() << "Control open error" << card << err;
         return;
     }
 
     snd_ctl_elem_info_set_id(info, id);
     if ((err = snd_ctl_elem_info(handle, info)) < 0)
     {
-        qDebug() << "Cannot find the given element from control: " << card;
         snd_ctl_close(handle);
         handle = NULL;
         return;
@@ -512,25 +488,17 @@ void V4LRadioControl::callAmixer(const QString& target, const QString& value)
                 qDebug() << "SND_CTL_ELEM_TYPE_BOOLEAN" << SND_CTL_ELEM_TYPE_BOOLEAN;
                 if ((value == "on") ||(value == "1"))
                 {
-                    qDebug() << "Set value On";
                     tmp = 1;
                 }
                 snd_ctl_elem_value_set_boolean(control, idx, tmp);
                 break;
             case SND_CTL_ELEM_TYPE_ENUMERATED:
-                qDebug() << "SND_CTL_ELEM_TYPE_ENUMERATED" << SND_CTL_ELEM_TYPE_ENUMERATED;
                 tmp = getEnumItemIndex(handle, info, value);
-                if (tmp < 0)
-                {
-                    qDebug() << "Enum value not found, Check control  !!!!!!!!!!!!! " << target << value;
-
-                }
                 snd_ctl_elem_value_set_enumerated(control, idx, tmp);
                 break;
             case SND_CTL_ELEM_TYPE_INTEGER:
                 qDebug() << "SND_CTL_ELEM_TYPE_INTEGER" << SND_CTL_ELEM_TYPE_INTEGER;
                 tmp = atoi(value.toAscii());
-                qDebug() << "Value to Set" << tmp;
                 if (tmp <  snd_ctl_elem_info_get_min(info))
                     tmp = snd_ctl_elem_info_get_min(info);
                 else if (tmp > snd_ctl_elem_info_get_max(info))
@@ -538,14 +506,12 @@ void V4LRadioControl::callAmixer(const QString& target, const QString& value)
                 snd_ctl_elem_value_set_integer(control, idx, tmp);
                 break;
             default:
-                qDebug() << "!!!!!!!!!!!!!!!! Unknown type" << type;
                 break;
 
         }
     }
 
     if ((err = snd_ctl_elem_write(handle, control)) < 0) {
-        qDebug() << "Control element write error" << card ;
         snd_ctl_close(handle);
         handle = NULL;
         return;
@@ -571,10 +537,8 @@ int V4LRadioControl::getEnumItemIndex(snd_ctl_t *handle, snd_ctl_elem_info_t *in
         if (snd_ctl_elem_info(handle, info) < 0)
             return -1;
         QString name = snd_ctl_elem_info_get_item_name(info);
-        qDebug() << " Enum loop: check" << name << " to" << value ;
         if(name == value)
         {
-            qDebug() << " Enum found";
             return i;
         }
     }
@@ -705,8 +669,6 @@ bool V4LRadioControl::initRadio()
                     currentFreq = freq.frequency * 62500;
             }
         }
-
-        qWarning()<<"min="<<freqMin<<", max="<<freqMax<<", current="<<currentFreq;
 
         // stereo
         bool stereo = false;
