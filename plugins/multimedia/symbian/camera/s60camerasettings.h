@@ -43,8 +43,8 @@
 #define S60CAMERASETTINGS_H
 
 #include <QtCore/qobject.h>
-#include <cameraengine.h>
-#include <cameraengineobserver.h>
+#include <s60cameraengine.h>
+#include <s60cameraengineobserver.h>
 
 #include "qcamera.h"
 

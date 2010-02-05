@@ -54,8 +54,8 @@
 #include "qstillimagecapture.h"
 #include "s60camerasettings.h"
 #include <e32base.h>
-#include <cameraengine.h>
-#include <cameraengineobserver.h>
+#include <s60cameraengine.h>
+#include <s60cameraengineobserver.h>
 
 #include <VideoRecorder.h>
 
