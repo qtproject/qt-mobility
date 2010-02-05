@@ -175,16 +175,16 @@ void tst_QContactManagerSymbianSim::addContact_data()
     // TODO: what name field to use for a sim contact name? first name is not very logical choice...
     // Note: With the current implementation the value must not contain a ':' character
     QTest::newRow("first name") << 
-        (QStringList() << "Name:First:James");
+        (QStringList() << "Name:FirstName:James");
 
     QTest::newRow("first name and nick name") <<
-        (QStringList() << "Name:First:James" << "Nickname:Nickname:Hunt the Shunt");
+        (QStringList() << "Name:FirstName:James" << "Nickname:Nickname:Hunt the Shunt");
 
     QTest::newRow("first name and phone number") <<
-        (QStringList() << "Name:First:James" << "PhoneNumber:PhoneNumber:+44752222222");
+        (QStringList() << "Name:FirstName:James" << "PhoneNumber:PhoneNumber:+44752222222");
 
     QTest::newRow("first name and email") <<
-        (QStringList() << "Name:First:James" << "EmailAddress:EmailAddress:james.hunt@mclaren.com");
+        (QStringList() << "Name:FirstName:James" << "EmailAddress:EmailAddress:james.hunt@mclaren.com");
 }
 
 void tst_QContactManagerSymbianSim::addContact()
@@ -198,14 +198,17 @@ void tst_QContactManagerSymbianSim::addContact()
         QStringList detailParts = detail.split(QChar(':'), QString::KeepEmptyParts, Qt::CaseSensitive);
         QVERIFY(detailParts.count() == 3);
         QContactDetail contactDetail(detailParts[0]);
+        // use existing detail if available
+        if(!contact.detail(detailParts[0]).isEmpty()) {
+            contactDetail = contact.detail(detailParts[0]);
+        }
         contactDetail.setValue(detailParts[1], detailParts[2]);
         contact.saveDetail(&contactDetail);
     }
 
     if(isContactSupported(contact))
     {
-        bool result = m_cm->saveContact(&contact);
-        QCOMPARE(result, true);
+        QVERIFY(m_cm->saveContact(&contact));
         QCOMPARE(m_cm->error(), QContactManager::NoError);
     } else {
         QSKIP("Manager does not support all the contact details", SkipSingle);

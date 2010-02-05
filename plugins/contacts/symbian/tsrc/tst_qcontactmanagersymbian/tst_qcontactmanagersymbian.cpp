@@ -79,6 +79,8 @@ private slots:
     void avatarPixmap();
     void avatarPixmap_data();
     void avatarPathAndPixmap();
+    void displayLabel_data();
+    void displayLabel();
     void invalidContactItems();
 
 private:
@@ -223,6 +225,102 @@ void tst_QContactManagerSymbian::avatarPathAndPixmap()
     QCOMPARE(avatar.avatar(), fileName);
     QPixmap pixmap = avatar.pixmap();
     QVERIFY(!pixmap.isNull());
+}
+
+void tst_QContactManagerSymbian::displayLabel_data()
+{
+    // A string list containing the detail fields in format <detail definition name>:<field name>:<value>
+    // For example first name: Name:First:James
+    QTest::addColumn<QString>("displayLabel");
+    // Note: With the current implementation the value must not contain a ':' character
+    QTest::addColumn<QStringList>("details");
+
+    QTest::newRow("first name")
+        << "James"
+        << (QStringList()
+            << "Name:FirstName:James");
+
+    QTest::newRow("last name")
+        << "Hunt"
+        << (QStringList()
+            << "Name:LastName:Hunt");
+
+    QTest::newRow("first and last name") // fail
+        << "James Hunt"
+        << (QStringList()
+            << "Name:FirstName:James"
+            << "Name:LastName:Hunt");
+
+    QTest::newRow("multi-part first name and last name") // fail
+        << "James Simon Wallis Hunt"
+        << (QStringList()
+            << "Name:FirstName:James Simon Wallis"
+            << "Name:LastName:Hunt");
+
+    QTest::newRow("all names")
+        << "James Hunt"
+        << (QStringList()
+            << "Name:FirstName:James"
+            << "Name:LastName:Hunt"
+            << "Name:MiddleName:Simon Wallis"
+            << "Name:Suffix:Suffix"
+            << "Name:Prefix:Pre");
+
+    QTest::newRow("first name, organization")
+        << "James"
+        << (QStringList()
+            << "Name:FirstName:James"
+            << "Organization:Name:McLaren");
+
+    QTest::newRow("last name, organization")
+        << "Hunt"
+        << (QStringList()
+            << "Name:LastName:Hunt"
+            << "Organization:Name:McLaren");
+
+    QTest::newRow("first name, last name, organization")
+        << "James Hunt"
+        << (QStringList()
+            << "Name:FirstName:James"
+            << "Name:LastName:Hunt"
+            << "Organization:Name:McLaren");
+
+    QTest::newRow("organization")
+        << "McLaren"
+        << (QStringList()
+            << "Organization:Name:McLaren");
+}
+
+void tst_QContactManagerSymbian::displayLabel()
+{
+    qDebug() << QTest::currentDataTag();
+    QFETCH(QString, displayLabel);
+    QFETCH(QStringList, details);
+
+    // Parse details and add them to the contact
+    QContact contact;
+    foreach(QString detail, details) {
+        // the expected format is <detail definition name>:<field name>:<value>
+        QStringList detailParts = detail.split(QChar(':'), QString::KeepEmptyParts, Qt::CaseSensitive);
+        QVERIFY(detailParts.count() == 3);
+        QContactDetail contactDetail(detailParts[0]);
+        // use existing detail if available
+        if(!contact.detail(detailParts[0]).isEmpty()) {
+            contactDetail = contact.detail(detailParts[0]);
+        }
+        contactDetail.setValue(detailParts[1], detailParts[2]);
+        QVERIFY(contact.saveDetail(&contactDetail));
+    }
+
+    // Save contact
+    QVERIFY(m_cm->saveContact(&contact));
+    QCOMPARE(m_cm->error(), QContactManager::NoError);
+
+    // Check the generated display label
+    if(contact.displayLabel() != displayLabel) {
+        //qDebug() << Wrong display label;
+        QCOMPARE(contact.displayLabel(), displayLabel);
+    }
 }
 
 void tst_QContactManagerSymbian::invalidContactItems()
