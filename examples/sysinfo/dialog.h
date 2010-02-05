@@ -91,6 +91,7 @@ private slots:
      void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
      void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int);
      void networkNameChanged(QSystemNetworkInfo::NetworkMode,const QString &);
+     void networkModeChanged(QSystemNetworkInfo::NetworkMode);
 
 };
 

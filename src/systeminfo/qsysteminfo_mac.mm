@@ -69,6 +69,7 @@
 #include <CoreFoundation/CFNumber.h>
 #include <CoreFoundation/CFNotificationCenter.h>
 #include <IOKit/graphics/IOGraphicsLib.h>
+#include <CoreFoundation/CoreFoundation.h>
 
 #include <IOKit/usb/IOUSBLib.h>
 #include <IOKit/pwr_mgt/IOPM.h>
@@ -112,7 +113,6 @@
 #include <net/if_media.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
-
 
 //
 ////////
@@ -172,9 +172,9 @@ inline NSString *qstringToNSString(const QString &qstr)
 
 -(void)dealloc
 {
-    [currentInterface release];
-    [center release];
-    [super dealloc];
+   [center release];
+   [currentInterface release];
+   [super dealloc];
 }
 
 -(void)remove
@@ -184,7 +184,6 @@ inline NSString *qstringToNSString(const QString &qstr)
 
 - (void)notificationHandler:(NSNotification *)notification
 {
-    qWarning() << __FUNCTION__;
     QTM_NAMESPACE::QSystemNetworkInfoPrivate::instance()->networkChanged( nsstringToQString([notification name]), nsstringToQString([[notification object]name]));
 }
 
@@ -192,10 +191,6 @@ inline NSString *qstringToNSString(const QString &qstr)
 #endif
 
 QTM_BEGIN_NAMESPACE
-
-#ifdef MAC_SDK_10_6
-QNSListener *listener;
-#endif
 
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
  : QObject(parent)
@@ -352,56 +347,118 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 
 QSystemNetworkInfoPrivate *QSystemNetworkInfoPrivate::self = 0;
 
+
+void networkChangeCallback(SCDynamicStoreRef/* store*/, CFArrayRef /*changedKeys*/, void */*info*/)
+{
+    QTM_NAMESPACE::QSystemNetworkInfoPrivate::instance()->getDefaultInterface();
+    return;
+}
+
+#ifdef MAC_SDK_10_6
+#endif
 QRunLoopThread::QRunLoopThread(QObject *parent)
-    :QThread(parent), done(false)
+    :QThread(parent)
 {
 }
 
 QRunLoopThread::~QRunLoopThread()
 {
-    stopLoop();
-#ifdef MAC_SDK_10_6
-    [listener release];
-#endif
+    CFRelease(storeSession);
+    CFRelease(runloopSource);
+}
+
+void QRunLoopThread::quit()
+{
+
+    mutex.lock();
+    keepRunning = false;
+    mutex.unlock();
 }
 
 void QRunLoopThread::run()
 {
 #ifdef MAC_SDK_10_6
+
+    startNetworkChangeLoop();
+
+    mutex.lock();
+    keepRunning = true;
+    mutex.unlock();
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+    QNSListener *listener;
     listener = [[QNSListener alloc] init];
 
-    NSDate *loopUntil = [NSDate dateWithTimeIntervalSinceNow:0.1];
-    while (!done && [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode beforeDate:loopUntil]) {
-        loopUntil = [NSDate dateWithTimeIntervalSinceNow:0.1];
+    NSDate *loopUntil = [NSDate dateWithTimeIntervalSinceNow:1.0];
+    while (keepRunning &&
+        [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode beforeDate: loopUntil]) {
+        loopUntil = [NSDate dateWithTimeIntervalSinceNow:1.0];
     }
-
+  //  [listener release]; //crash
     [pool release];
 #endif
 }
 
-void QRunLoopThread::stopLoop()
+void QRunLoopThread::startNetworkChangeLoop()
 {
-    done = false;
-}
+    storeSession = NULL;
 
-void QRunLoopThread::startLoop()
-{
-#ifdef MAC_SDK_10_6
-    listener = [[QNSListener alloc] init];
-#endif
-}
+    SCDynamicStoreContext dynStoreContext = { 0, (void *)storeSession, NULL, NULL, NULL };
+    storeSession  = SCDynamicStoreCreate(NULL,
+                                 CFSTR("networkChangeCallback"),
+                                 networkChangeCallback,
+                                 &dynStoreContext);
+    if (!storeSession ) {
+        qWarning() << "could not open dynamic store: error:" << SCErrorString(SCError());
+        return;
+    }
 
-void qax_winEventFilter(void *message)
-{
-    NSNotification *notification = (NSNotification *)message;
-    qWarning() << __FUNCTION__ << notification;
+    CFMutableArrayRef notificationKeys;
+    notificationKeys = CFArrayCreateMutable(NULL, 0, &kCFTypeArrayCallBacks);
+    CFMutableArrayRef patternsArray;
+    patternsArray = CFArrayCreateMutable(NULL, 0, &kCFTypeArrayCallBacks);
+
+    CFStringRef storeKey;
+    storeKey = SCDynamicStoreKeyCreateNetworkGlobalEntity(NULL,
+                                                     kSCDynamicStoreDomainState,
+                                                     kSCEntNetIPv4);
+    CFArrayAppendValue(notificationKeys, storeKey);
+    CFRelease(storeKey);
+
+    storeKey = SCDynamicStoreKeyCreateNetworkServiceEntity(NULL,
+                                                      kSCDynamicStoreDomainState,
+                                                      kSCCompAnyRegex,
+                                                      kSCEntNetIPv4);
+    CFArrayAppendValue(patternsArray, storeKey);
+    CFRelease(storeKey);
+
+    if (!SCDynamicStoreSetNotificationKeys(storeSession , notificationKeys, patternsArray)) {
+        qWarning() << "register notification error:"<< SCErrorString(SCError());
+        CFRelease(storeSession );
+        CFRelease(notificationKeys);
+        CFRelease(patternsArray);
+        return;
+    }
+    CFRelease(notificationKeys);
+    CFRelease(patternsArray);
+
+    runloopSource = SCDynamicStoreCreateRunLoopSource(NULL, storeSession , 0);
+    if (!runloopSource) {
+        qWarning() << "runloop source error:"<< SCErrorString(SCError());
+        CFRelease(storeSession );
+        return;
+    }
+
+    CFRunLoopAddSource(CFRunLoopGetCurrent(), runloopSource, kCFRunLoopDefaultMode);
+    return;
 }
 
 
 QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
-        : QObject(parent), signalStrengthCache(0)
+        : QObject(parent), signalStrengthCache(0), defaultInterface(0)
 {
+    qRegisterMetaType<QSystemNetworkInfo::NetworkMode>("QSystemNetworkInfo::NetworkMode");
+    qRegisterMetaType<QSystemNetworkInfo::NetworkStatus>("QSystemNetworkInfo::NetworkStatus");
 #ifdef MAC_SDK_10_6
     runloopThread = new QRunLoopThread(this);
     runloopThread->start();
@@ -411,13 +468,86 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
     connect(rssiTimer, SIGNAL(timeout()), this, SLOT(rssiTimeout()));
     if(!self)
         self = this;
+    QTimer::singleShot(200, this, SLOT(primaryInterface()));
 }
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
 #ifdef MAC_SDK_10_6
-   runloopThread->stopLoop();
+    runloopThread->quit();
+    runloopThread->wait();
 #endif
+}
+
+void QSystemNetworkInfoPrivate::primaryInterface()
+{
+    defaultInterface = getDefaultInterface();
+}
+
+QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::modeForInterface(QString interfaceName)
+{
+    QSystemNetworkInfo::NetworkMode mode = QSystemNetworkInfo::UnknownMode;
+    CFArrayRef interfaceArray = SCNetworkInterfaceCopyAll(); //10.4
+    CFStringRef iName;
+    CFStringRef type;
+
+    for ( long i = 0; i < CFArrayGetCount(interfaceArray); i++) {
+        SCNetworkInterfaceRef thisInterface =  (SCNetworkInterfaceRef ) CFArrayGetValueAtIndex(interfaceArray, i);
+        type = SCNetworkInterfaceGetInterfaceType(thisInterface);
+        iName = SCNetworkInterfaceGetBSDName(thisInterface);
+        if( interfaceName == stringFromCFString(iName)) {
+            if (type != NULL) {
+                if (CFEqual(type, kSCNetworkInterfaceTypeBluetooth)) {
+                    mode = QSystemNetworkInfo::BluetoothMode;
+                    break;
+                } else if (CFEqual(type, kSCNetworkInterfaceTypeEthernet)) {
+                    mode = QSystemNetworkInfo::EthernetMode;
+                    break;
+                } else if (CFEqual(type, kSCNetworkInterfaceTypeIEEE80211)) {
+                    mode = QSystemNetworkInfo::WlanMode;
+                    break;
+                }
+            }
+        }
+    }
+    CFRelease(interfaceArray);
+    return mode;
+}
+
+QString QSystemNetworkInfoPrivate::getDefaultInterface()
+{
+    SCDynamicStoreRef storeSession2;
+    CFStringRef key;
+    CFDictionaryRef	globalDict;
+    CFStringRef primaryInterface = NULL;
+    QString interfaceName;
+
+    storeSession2 = SCDynamicStoreCreate(NULL, CFSTR("getPrimary"), NULL, NULL);
+    if (!storeSession2) {
+    }
+    key = SCDynamicStoreKeyCreateNetworkGlobalEntity(NULL, kSCDynamicStoreDomainState,kSCEntNetIPv4);
+    globalDict = (const __CFDictionary*)SCDynamicStoreCopyValue(storeSession2, key);
+    CFRelease(key);
+    if (globalDict) {
+
+        primaryInterface = (CFStringRef )CFDictionaryGetValue(globalDict,
+                                                                   kSCDynamicStorePropNetPrimaryInterface);
+        if (primaryInterface) {
+            CFRetain(primaryInterface);
+        }
+        CFRelease(globalDict);
+    }
+
+    CFRelease(storeSession2);
+    if (primaryInterface) {
+        interfaceName = stringFromCFString(primaryInterface);
+        if(interfaceName != defaultInterface) {
+            emit networkModeChanged(modeForInterface(interfaceName));
+             defaultInterface = interfaceName;
+        }
+    }
+//    qWarning() << __FUNCTION__ << interfaceName;
+    return interfaceName;
 }
 
 void QSystemNetworkInfoPrivate::rssiTimeout()
@@ -690,7 +820,8 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
 void QSystemNetworkInfoPrivate::networkChanged(const QString &notification, const QString interfaceName)
 {
     qWarning() << __FUNCTION__ << notification;
-runloopThread->stopLoop();
+   // runloopThread->stopLoop();
+
     if(notification == "SSID_CHANGED_NOTIFICATION") {
         emit networkNameChanged(QSystemNetworkInfo::WlanMode, networkName(QSystemNetworkInfo::WlanMode));
     }
@@ -703,15 +834,19 @@ runloopThread->stopLoop();
 #ifdef MAC_SDK_10_6
         CWInterface *wifiInterface = [CWInterface interfaceWithName:  qstringToNSString(interfaceName)];
         if([wifiInterface power]) {
-            if(!rssiTimer->isActive())
+            if(!rssiTimer->isActive()) {
+                qWarning() << __FUNCTION__ << "start timer";
                 rssiTimer->start(1000);
+            }
         }  else {
-            if(rssiTimer->isActive())
+            if(rssiTimer->isActive()) {
+                qWarning() << __FUNCTION__ << "stop timer";
             rssiTimer->stop();
+        }
         }
 #endif
     }
-runloopThread->start();
+ //   runloopThread->start();
 }
 
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
