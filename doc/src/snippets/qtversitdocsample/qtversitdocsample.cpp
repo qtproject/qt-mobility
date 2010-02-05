@@ -64,10 +64,12 @@ class MyDetailHandler : public QVersitContactExporterDetailHandler {
 public:
     bool preProcessDetail(const QContact& contact, const QContactDetail& detail,
                           QVersitDocument* document) {
+        Q_UNUSED(contact) Q_UNUSED(detail) Q_UNUSED(document)
         return false;
     }
     bool postProcessDetail(const QContact& contact, const QContactDetail& detail,
                            bool alreadyProcessed, QVersitDocument* document) {
+        Q_UNUSED(contact) Q_UNUSED(document)
         if (!alreadyProcessed)
             mUnknownDetails.append(detail);
         return false;
@@ -81,10 +83,12 @@ class MyPropertyHandler : public QVersitContactImporterPropertyHandler {
 public:
    bool preProcessProperty(const QVersitDocument& document, const QVersitProperty& property,
                            int contactIndex, QContact* contact) {
+       Q_UNUSED(document) Q_UNUSED(property) Q_UNUSED(contactIndex) Q_UNUSED(contact)
        return false;
    }
    bool postProcessProperty(const QVersitDocument& document, const QVersitProperty& property,
                             bool alreadyProcessed, int contactIndex, QContact* contact) {
+       Q_UNUSED(document) Q_UNUSED(contactIndex) Q_UNUSED(contact)
        if (!alreadyProcessed)
            mUnknownProperties.append(property);
        return false;
@@ -98,6 +102,7 @@ class MyResourceHandler : public QVersitDefaultResourceHandler {
 public:
    bool saveResource(const QByteArray& contents, const QVersitProperty& property,
                      QString* location) {
+       Q_UNUSED(property)
        *location = QString::number(qrand());
        QFile file(*location);
        file.open(QIODevice::WriteOnly);
