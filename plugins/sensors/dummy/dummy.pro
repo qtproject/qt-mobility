@@ -15,8 +15,12 @@ MOBILITY+=sensors
 
 STRICT=$$(STRICT)
 equals(STRICT,1) {
-    QMAKE_CXXFLAGS+=-Werror
-    QMAKE_LFLAGS+=-Wl,-no-undefined
+    win32 {
+        QMAKE_CXXFLAGS+=-WX
+    } else {
+        QMAKE_CXXFLAGS+=-Werror
+        QMAKE_LFLAGS+=-Wl,-no-undefined
+    }
 }
 
 DESTDIR = $$OUTPUT_DIR/bin/examples/sensors

@@ -68,7 +68,11 @@ tst_qgeosatelliteinfosource.exe
 tst_qgeopositioninfosource.exe
 tst_qgeoareamonitor.exe
 tst_qlocationutils.exe
-tst_qnmeapositioninfosource.exe
+tst_dummynmeapositioninfosource.exe
+tst_qnmeapositioninfosource_realtime.exe
+tst_qnmeapositioninfosource_realtime_generic.exe
+tst_qnmeapositioninfosource_simulation.exe
+tst_qnmeapositioninfosource_simulation_generic.exe
 
 ::Publish and Subscribe
 tst_qvaluespace.exe

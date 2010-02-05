@@ -199,6 +199,7 @@
 <p>Returns the network interface that is used by this session.</p>
 <p>This function only returns a valid <a href="http://qt.nokia.com/doc/4.6/qnetworkinterface.html">QNetworkInterface</a> when this session is <a href="qnetworksession.html#State-enum">Connected</a>.</p>
 <p>The returned interface may change as a result of a roaming process.</p>
+<p>Note: this function does not work in Symbian emulator due to the way the connectivity is emulated on Windows.</p>
 <p>See also <a href="qnetworksession.html#state">state</a>().</p>
 <a name="//apple_ref/cpp/instm/QNetworkSession/isOpen"></a>
 <h3 class="fn"><a name="isOpen"></a>bool QNetworkSession::isOpen () const</h3>

@@ -57,8 +57,9 @@
 
 QTM_BEGIN_NAMESPACE
 
-struct QMagnetometerReadingPrivate : public QSensorReadingPrivate
+class QMagnetometerReadingPrivate : public QSensorReadingPrivate
 {
+public:
     QMagnetometerReadingPrivate()
         : x(0)
         , y(0)

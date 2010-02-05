@@ -64,15 +64,11 @@ public:
 
     // For static plugins
     static void registerStaticPlugin(CreatePluginFunc func);
-
-    static QByteArray defaultSensorForType(const QByteArray &type);
-
-private:
-    static void loadPlugins();
 };
 
-struct Q_SENSORS_EXPORT QSensorBackendFactory
+class Q_SENSORS_EXPORT QSensorBackendFactory
 {
+public:
     virtual QSensorBackend *createBackend(QSensor *sensor) = 0;
 protected:
     ~QSensorBackendFactory() {}
