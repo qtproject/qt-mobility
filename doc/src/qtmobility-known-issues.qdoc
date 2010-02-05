@@ -166,7 +166,6 @@ No specific issues to highlight.
 \section3 Contacts API
 \list
     \o Async contact operations not supported
-    \o Support for SIM contacts is not supported
     \o Extending contact fields at runtime is not supported on most Symbian platforms because would compromise compatibility with the S60 platform Phonebook application.
     \o auto test failures for tst_qcontactasync and tst_qcontactmanager
     \o samplephonebook not operating properly due to backend problems
