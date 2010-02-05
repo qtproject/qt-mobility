@@ -48,14 +48,14 @@
 QTM_USE_NAMESPACE
 
 /*!
- * \class QVersitContactImporterPropertyHandler
- * \preliminary
- * \brief The QVersitContactImporterPropertyHandler class is an interface for clients wishing to
- * implement custom import behaviour for versit properties
- *
- * \ingroup versit
- *
- * \sa QVersitContactImporter
+  \class QVersitContactImporterPropertyHandler
+  \preliminary
+  \brief The QVersitContactImporterPropertyHandler class is an interface for clients wishing to
+  implement custom import behaviour for versit properties
+ 
+  \ingroup versit
+ 
+  \sa QVersitContactImporter
  */
 
 /*!
