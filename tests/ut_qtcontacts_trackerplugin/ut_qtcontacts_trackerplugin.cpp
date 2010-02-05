@@ -593,7 +593,7 @@ void ut_qtcontacts_trackerplugin::testRemoveContacts()
     toApiRemove.append(addedIds.takeLast());
     QList<QContactLocalId> toPluginRemove(addedIds);
     // Remove all, but last of the added contacts
-    bool success = trackerEngine->removeContacts(&toPluginRemove, errorMap);
+    bool success = trackerEngine->removeContacts(&toPluginRemove, errorMap, error);
     QCOMPARE(success, true);
     for (int i = 0; i < errorMap->count(); i++) {
         QVERIFY(toPluginRemove[i] == 0);
@@ -602,13 +602,12 @@ void ut_qtcontacts_trackerplugin::testRemoveContacts()
 
     success = ContactManager::instance()->removeContacts(&toApiRemove, errorMap);
     QCOMPARE(success, true);
-    QCOMPARE(errorMap->count(), toApiRemove.count());
     for (int i = 0; i < errorMap->count(); i++) {
         QVERIFY(toApiRemove[i] == 0);
     }
 
     // Try to remove some previously removed contacts, but one valid contact
-    success = trackerEngine->removeContacts(&addedIds, errorMap);
+    success = trackerEngine->removeContacts(&addedIds, errorMap, error);
     QCOMPARE(errorMap->count(), addedIds.count());
     for (int i = 0; i < errorMap->count() - 1; i++) {
         QVERIFY2(addedIds[i] != 0, "Manager should not mark id as zero");
@@ -1569,7 +1568,7 @@ QList<QContact> ut_qtcontacts_trackerplugin::contacts(QList<QContactLocalId> ids
 void Slots::progress(QContactLocalIdFetchRequest* self, bool appendOnly)
 {
     Q_UNUSED(appendOnly)
-    if( self->status() == QContactAbstractRequest::Finished )
+    if( self->state() == QContactAbstractRequest::FinishedState )
     {
         ids << self->ids();
     }

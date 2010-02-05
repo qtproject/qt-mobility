@@ -346,15 +346,19 @@ bool QContactTrackerEngine::saveContacts(QList<QContact>* contacts, QMap<int, QC
     return (request.errorMap().isEmpty() && error == QContactManager::NoError);
 }
 
-bool QContactTrackerEngine::removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap)
+bool QContactTrackerEngine::removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error)
 {
     // Cannot report errors - giving up.
     if(!errorMap) {
+        error = QContactManager::BadArgumentError;
         return false;
     }
 
+    // let's clear the error hash so there is nothing old haunting us.
+    errorMap->clear();
+
     if (!contactIds) {
-        errorMap->insert(0, QContactManager::BadArgumentError);
+        error = QContactManager::BadArgumentError;
         return false;
     }
 
