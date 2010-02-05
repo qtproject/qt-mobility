@@ -1352,6 +1352,7 @@ void QContactManagerEngine::setDetailAccessConstraints(QContactDetail *detail, Q
 }
 
 /*!
+  \fn Q_DECL_DEPRECATED QContactManagerEngine::saveContacts(QList<QContact>* contacts, QContactManager::Error& error)
   \deprecated
 
   Adds the list of contacts given by \a contacts to the database.
@@ -1375,7 +1376,7 @@ void QContactManagerEngine::setDetailAccessConstraints(QContactDetail *detail, Q
 
   \sa QContactManager::saveContact()
  */
-QList<QContactManager::Error> QContactManagerEngine::saveContacts(QList<QContact>* contacts, QContactManager::Error& error)
+QList<QContactManager::Error> Q_DECL_DEPRECATED QContactManagerEngine::saveContacts(QList<QContact>* contacts, QContactManager::Error& error)
 {
     QList<QContactManager::Error> ret;
     if (!contacts) {
@@ -1447,6 +1448,7 @@ bool QContactManagerEngine::saveContacts(QList<QContact>* contacts, QMap<int, QC
 }
 
 /*!
+  \fn Q_DECL_DEPRECATED QContactManagerEngine::removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error)
   \deprecated
   Remove the list of contacts identified in \a contactIds.
   Returns a list of the error codes corresponding to the contact ids in
@@ -1471,7 +1473,7 @@ bool QContactManagerEngine::saveContacts(QList<QContact>* contacts, QMap<int, QC
 
   \sa QContactManager::removeContact()
  */
-QList<QContactManager::Error> QContactManagerEngine::removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error)
+QList<QContactManager::Error> Q_DECL_DEPRECATED QContactManagerEngine::removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error)
 {
     QList<QContactManager::Error> ret;
     if (!contactIds) {
