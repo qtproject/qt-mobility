@@ -348,6 +348,11 @@ bool QContactTrackerEngine::saveContacts(QList<QContact>* contacts, QMap<int, QC
 
 bool QContactTrackerEngine::removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap)
 {
+    // Cannot report errors - giving up.
+    if(!errorMap) {
+        return false;
+    }
+
     if (!contactIds) {
         errorMap->insert(0, QContactManager::BadArgumentError);
         return false;

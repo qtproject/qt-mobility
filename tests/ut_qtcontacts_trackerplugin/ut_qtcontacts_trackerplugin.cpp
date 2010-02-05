@@ -71,6 +71,7 @@ void ut_qtcontacts_trackerplugin::initTestCase()
 {
     QMap<QString, QString> trackerEngineParams;
     trackerEngine = new QContactTrackerEngine(trackerEngineParams);
+    errorMap = new QMap<int, QContactManager::Error>();
 }
 
 void ut_qtcontacts_trackerplugin::testContacts()
@@ -918,6 +919,7 @@ void ut_qtcontacts_trackerplugin::testGroupsRemovedSince()
 void ut_qtcontacts_trackerplugin::cleanupTestCase()
 {
     delete trackerEngine;
+    delete errorMap;
 }
 
 void ut_qtcontacts_trackerplugin::cleanup()
