@@ -104,13 +104,16 @@ void QTrackerContactSaveRequest::computeProgress(const QList<QContactLocalId> &a
     if (pendingContactIds.count() == 0) {
         // compute master error - part of qtcontacts api
         QContactManager::Error error = QContactManager::NoError;
-        foreach(QContactManager::Error err, errorsOfContactsFinished)
+        
+        foreach(QContactManager::Error err, errorsOfContactsFinished.values()) {
             if( QContactManager::NoError != err )
             {
                 error = err;
                 break;
             }
+        }
         QContactManagerEngine::updateContactSaveRequest(r, contactsFinished, error, errorsOfContactsFinished);
+        QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::FinishedState);
     }
 }
 
@@ -178,7 +181,7 @@ void QTrackerContactSaveRequest::saveContacts(const QList<QContact> &contacts)
 
         // TODO add async signal handling of for transaction's commitFinished
         contactsFinished << contact;
-        errorsOfContactsFinished[1] =  QContactManager::NoError; // TODO ask how to get error code from tracker
+        errorsOfContactsFinished[errorCount++] =  QContactManager::NoError; // TODO ask how to get error code from tracker
     }
 
     TrackerChangeListener *changeListener = new TrackerChangeListener(this);

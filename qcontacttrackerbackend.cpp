@@ -253,7 +253,7 @@ bool QContactTrackerEngine::waitForRequestFinished(QContactAbstractRequest* req,
         if(req->isFinished())
             return true;
     }
-    qDebug() << Q_FUNC_INFO << "not finished";
+    qDebug() << Q_FUNC_INFO <<"Status Finished" << req->isFinished();
     return req->isFinished();
 
 }
