@@ -218,6 +218,7 @@ Qt Mobility for Maemo5
 ------
 
  - Experimental support for QtLocation
+ - Experimental support for QtSystemInfo
 
 ****************************************************************************
 *                          Tools                                           *
