@@ -80,6 +80,8 @@ QTM_BEGIN_NAMESPACE
 
 class QSystemNetworkInfo;
 
+class QLangLoopThread;
+
 class QSystemInfoPrivate : public QObject
 {
     Q_OBJECT
@@ -95,12 +97,17 @@ public:
 
     QString currentCountryCode() const;
     bool hasFeatureSupported(QSystemInfo::Feature feature);
+    void languageChanged(const QString &);
+    static QSystemInfoPrivate *instance() {return self;}
+
 Q_SIGNALS:
     void currentLanguageChanged(const QString &);
 
 private:
     QTimer *langTimer;
     QString langCached;
+    QLangLoopThread * langloopThread;
+    static QSystemInfoPrivate *self;
 
 private Q_SLOTS:
 
@@ -277,6 +284,25 @@ private:
     QMutex mutex;
     SCDynamicStoreRef storeSession;// = NULL;
     CFRunLoopSourceRef runloopSource;
+
+private slots:
+};
+
+class QLangLoopThread : public QThread
+{
+    Q_OBJECT
+
+public:
+    QLangLoopThread(QObject *parent = 0);
+    ~QLangLoopThread();
+    bool keepRunning;
+    void quit();
+
+protected:
+    void run();
+
+private:
+    QMutex mutex;
 
 private slots:
 };

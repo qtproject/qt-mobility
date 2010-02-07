@@ -70,6 +70,8 @@
 #include <CoreFoundation/CFNotificationCenter.h>
 #include <IOKit/graphics/IOGraphicsLib.h>
 #include <CoreFoundation/CoreFoundation.h>
+#include <CoreFoundation/CFLocale.h>
+//#include <ScreenSaver/ScreenSaverDefaults.h>
 
 #include <IOKit/usb/IOUSBLib.h>
 #include <IOKit/pwr_mgt/IOPM.h>
@@ -141,6 +143,17 @@ inline QString nsstringToQString(const NSString *nsstr)
 inline NSString *qstringToNSString(const QString &qstr)
 { return [reinterpret_cast<const NSString *>(qstringToCFStringRef(qstr)) autorelease]; }
 
+inline QStringList nsarrayToQStringList(void *nsarray)
+{
+    NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
+    QStringList result;
+    NSArray *array = static_cast<NSArray *>(nsarray);
+    for (NSUInteger i=0; i<[array count]; ++i)
+        result << nsstringToQString([array objectAtIndex:i]);
+    [autoreleasepool release];
+    return result;
+}
+
 
 #ifdef MAC_SDK_10_6
 
@@ -150,6 +163,7 @@ inline NSString *qstringToNSString(const QString &qstr)
     CWInterface * currentInterface;
 }
 - (void)notificationHandler:(NSNotification *)notification;
+- (void)languageHandler:(NSNotification *)notification;
 - (void)remove;
 @end
 
@@ -166,6 +180,7 @@ inline NSString *qstringToNSString(const QString &qstr)
     [center addObserver:self selector:@selector(notificationHandler:) name:kCWCountryCodeDidChangeNotification object:nil];
     [center addObserver:self selector:@selector(notificationHandler:) name:kCWLinkDidChangeNotification object:nil];
     [center addObserver:self selector:@selector(notificationHandler:) name:kCWPowerDidChangeNotification object:nil];
+
 
     return self;
 }
@@ -186,20 +201,82 @@ inline NSString *qstringToNSString(const QString &qstr)
 {
     QTM_NAMESPACE::QSystemNetworkInfoPrivate::instance()->networkChanged( nsstringToQString([notification name]), nsstringToQString([[notification object]name]));
 }
-
 @end
+
+
+@interface QLangListener : NSObject
+{
+    NSNotificationCenter *center;
+    QString currentLanguage;
+}
+- (void)languageHandler:(NSNotification *)notification;
+- (void)remove;
+- (void)getCurrentLanguage;
+@end
+
+
+
+@implementation QLangListener
+- (id) init
+{
+    [super init];
+    center = [NSNotificationCenter defaultCenter];
+    [center addObserver:self selector:@selector(languageHandler:) name:NSCurrentLocaleDidChangeNotification object:nil];
+    [self getCurrentLanguage];
+    return self;
+}
+
+-(void)dealloc
+{
+    [center release];
+    [super dealloc];
+}
+
+-(void)remove
+{
+    [center removeObserver:self];
+}
+
+- (void)getCurrentLanguage
+{
+    NSUserDefaults* defs = [NSUserDefaults standardUserDefaults];
+    NSArray* languages = [defs objectForKey:@"AppleLanguages"];
+    NSString* language = [languages objectAtIndex:0];
+
+    QString langString = nsstringToQString(language);
+    if(langString != currentLanguage) {
+        if(!currentLanguage.isEmpty())
+            QTM_NAMESPACE::QSystemInfoPrivate::instance()->languageChanged(currentLanguage);
+        currentLanguage = langString;
+    }
+}
+
+- (void)languageHandler:(NSNotification *)notification
+{
+    [self getCurrentLanguage];
+}
+@end
+
+
 #endif
 
 QTM_BEGIN_NAMESPACE
 
+QSystemInfoPrivate *QSystemInfoPrivate::self = 0;
+
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
  : QObject(parent)
 {
+    langloopThread = new QLangLoopThread(this);
+    langloopThread->start();
+    if(!self)
+        self = this;
 }
 
 QSystemInfoPrivate::~QSystemInfoPrivate()
 {
-
+    langloopThread->quit();
+    langloopThread->wait();
 }
 
 QString QSystemInfoPrivate::currentLanguage() const
@@ -214,8 +291,24 @@ QString QSystemInfoPrivate::currentLanguage() const
 QStringList QSystemInfoPrivate::availableLanguages() const
 {
 
-    return QStringList() << currentLanguage();
+    NSUserDefaults* defs = [NSUserDefaults standardUserDefaults];
+    NSArray* languages = [defs objectForKey:@"AppleLanguages"];
+    QStringList langList = nsarrayToQStringList(languages);
+
+    QStringList returnList;
+    foreach(QString lang, langList) {
+     QString language = lang.left(2);
+     if(!returnList.contains(language))
+         returnList << language;
+    }
+    return returnList;
 }
+
+void QSystemInfoPrivate::languageChanged(const QString &lang)
+{
+    emit currentLanguageChanged(lang);
+}
+
 
 QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &parameter)
 {
@@ -356,6 +449,44 @@ void networkChangeCallback(SCDynamicStoreRef/* store*/, CFArrayRef /*changedKeys
 
 #ifdef MAC_SDK_10_6
 #endif
+QLangLoopThread::QLangLoopThread(QObject *parent)
+    :QThread(parent)
+{
+}
+
+QLangLoopThread::~QLangLoopThread()
+{
+}
+
+void QLangLoopThread::quit()
+{
+    mutex.lock();
+    keepRunning = false;
+    mutex.unlock();
+}
+
+void QLangLoopThread::run()
+{
+#ifdef MAC_SDK_10_6
+    mutex.lock();
+    keepRunning = true;
+    mutex.unlock();
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+    QLangListener *listener;
+    listener = [[QLangListener alloc] init];
+
+    NSDate *loopUntil = [NSDate dateWithTimeIntervalSinceNow:1.0];
+    while (keepRunning &&
+        [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode beforeDate: loopUntil]) {
+        loopUntil = [NSDate dateWithTimeIntervalSinceNow:1.0];
+    }
+  //  [listener release]; //crash
+    [pool release];
+#endif
+}
+
+
 QRunLoopThread::QRunLoopThread(QObject *parent)
     :QThread(parent)
 {
@@ -1195,6 +1326,13 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 
 bool QSystemDeviceInfoPrivate::isDeviceLocked()
 {
+// this only works correctly if the user has a screensaver enabeled
+
+//    ScreenSaverDefaults *ssDefaults;
+//    ssDefaults = [ScreenSaverDefaults defaultsForModuleWithName:@"com.apple.screensaver"];
+//    int passWordProtected = [ssDefaults integerForKey:@"askForPassword"];
+//    qWarning() << __FUNCTION__ << passWordProtected;
+
     return false;
 }
 
