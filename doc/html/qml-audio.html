@@ -24,8 +24,10 @@
 <li><div class="fn"></div><b><b><a href="qml-audio.html#error-prop">error</a></b></b> : enum</li>
 <li><div class="fn"></div><b><b><a href="qml-audio.html#errorString-prop">errorString</a></b></b> : string</li>
 <li><div class="fn"></div><b><b><a href="qml-audio.html#muted-prop">muted</a></b></b> : bool</li>
+<li><div class="fn"></div><b><b><a href="qml-audio.html#onError-28error-2c-prop">onError(error,</a></b></b> : Error</li>
 <li><div class="fn"></div><b><b><a href="qml-audio.html#paused-prop">paused</a></b></b> : bool</li>
 </ul></td><td valign="top"><ul>
+<li><div class="fn"></div><b><b><a href="qml-audio.html#playbackRate-prop">playbackRate</a></b></b> : qreal</li>
 <li><div class="fn"></div><b><b><a href="qml-audio.html#playing-prop">playing</a></b></b> : bool</li>
 <li><div class="fn"></div><b><b><a href="qml-audio.html#position-prop">position</a></b></b> : int</li>
 <li><div class="fn"></div><b><b><a href="qml-audio.html#seekable-prop">seekable</a></b></b> : bool</li>
@@ -40,6 +42,7 @@
 <ul>
 <li><div class="fn"></div><b><b><a href="qml-audio.html#onBuffered-signal">onBuffered</a></b></b></li>
 <li><div class="fn"></div><b><b><a href="qml-audio.html#onBuffering-signal">onBuffering</a></b></b></li>
+<li><div class="fn"></div><b><b><a href="qml-audio.html#onEndOfMedia-signal">onEndOfMedia</a></b></b></li>
 <li><div class="fn"></div><b><b><a href="qml-audio.html#onLoaded-signal">onLoaded</a></b></b></li>
 <li><div class="fn"></div><b><b><a href="qml-audio.html#onPaused-signal">onPaused</a></b></b></li>
 <li><div class="fn"></div><b><b><a href="qml-audio.html#onResumed-signal">onResumed</a></b></b></li>
@@ -77,7 +80,11 @@
 </div></div><br />
 <div class="qmlitem"><div class="qmlproto"><table width="100%" class="qmlname"><tr><td><a name="muted-prop"></a>muted : bool</td></tr></table></div><div class="qmldoc"><p>This property holds whether the audio output is muted.</p>
 </div></div><br />
+<div class="qmlitem"><div class="qmlproto"><table width="100%" class="qmlname"><tr><td><a name="onError-28error-2c-prop"></a>onError(error, : Error</td></tr></table></div><div class="qmldoc"><p>This property is called when an error has occurred. The <a href="qml-audio.html#errorString-prop">errorString</a> parameter may contain more detailed information about the error.</p>
+</div></div><br />
 <div class="qmlitem"><div class="qmlproto"><table width="100%" class="qmlname"><tr><td><a name="paused-prop"></a>paused : bool</td></tr></table></div><div class="qmldoc"><p>This property holds whether the audio is paused.</p>
+</div></div><br />
+<div class="qmlitem"><div class="qmlproto"><table width="100%" class="qmlname"><tr><td><a name="playbackRate-prop"></a>playbackRate : <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a></td></tr></table></div><div class="qmldoc"><p>This property holds the rate at which audio is played at as a multiple of the normal rate.</p>
 </div></div><br />
 <div class="qmlitem"><div class="qmlproto"><table width="100%" class="qmlname"><tr><td><a name="playing-prop"></a>playing : bool</td></tr></table></div><div class="qmldoc"><p>This property holds whether the audio is playing.</p>
 </div></div><br />
@@ -106,6 +113,8 @@
 <div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr><td><a name="onBuffered-signal"></a>Audio::onBuffered ()</td></tr></table></div><div class="qmldoc"><p>This handler is called when the video stream has finished buffering.</p>
 </div></div><br />
 <div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr><td><a name="onBuffering-signal"></a>Audio::onBuffering ()</td></tr></table></div><div class="qmldoc"><p>This handler is called when the video stream starts buffering.</p>
+</div></div><br />
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr><td><a name="onEndOfMedia-signal"></a>Audio::onEndOfMedia ()</td></tr></table></div><div class="qmldoc"><p>This handler is called when playback stops because end of the video has been reached.</p>
 </div></div><br />
 <div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr><td><a name="onLoaded-signal"></a>Audio::onLoaded ()</td></tr></table></div><div class="qmldoc"><p>This handler is called when the video source has been loaded.</p>
 </div></div><br />

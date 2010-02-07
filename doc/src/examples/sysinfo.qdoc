@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,38 +39,12 @@
 **
 ****************************************************************************/
 
-#ifndef GENTEMPLATEINSTANCE_H
-#define GENTEMPLATEINSTANCE_H
+/*!
+    \example sysinfo
+    \title SysInfo Dialog Example
 
-#include <TypeVisitor.h>
-#include <NameVisitor.h>
-#include <FullySpecifiedType.h>
+    The SysInfo Dialog example shows how to use various functions in the System
+    Information API.
 
-#include "LookupContext.h"
-
-#include <QtCore/QList>
-#include <QtCore/QPair>
-
-namespace CPlusPlus {
-
-class CPLUSPLUS_EXPORT GenTemplateInstance
-{
-public:
-    typedef QList< QPair<const Identifier *, FullySpecifiedType> > Substitution;
-
-public:
-    GenTemplateInstance(const LookupContext &context, const Substitution &substitution);
-
-    FullySpecifiedType operator()(Symbol *symbol);
-
-    Control *control() const;
-
-private:
-    Symbol *_symbol;
-    LookupContext _context;
-    const Substitution _substitution;
-};
-
-} // end of namespace CPlusPlus
-
-#endif // GENTEMPLATEINSTANCE_H
+    \image sysinfo-devices.png
+*/

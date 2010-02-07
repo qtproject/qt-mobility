@@ -45,12 +45,29 @@
 #include "qgeopositioninfosource.h"
 #include "dbuscomm_maemo_p.h"
 
+#ifdef Q_WS_MAEMO_5
+#include "qgeocoordinate.h"
+
+extern "C" {
+   #include <glib.h>
+   #include <location/location-gpsd-control.h>
+   #include <location/location-gps-device.h>
+   #include <location/location-misc.h>
+   #include <location/location-distance-utils.h>
+}
+#endif
+
 QTM_BEGIN_NAMESPACE
 
 class DBusComm;
 class QGeoPositionInfoSourceMaemo : public QGeoPositionInfoSource
 {
     Q_OBJECT
+
+#ifdef Q_WS_MAEMO_5
+    Q_PROPERTY(bool online READ isOnline)
+#endif
+
 public:
 
     QGeoPositionInfoSourceMaemo(QObject *parent = 0);
@@ -63,7 +80,23 @@ public:
     virtual PositioningMethods supportedPositioningMethods() const;
     virtual int minimumUpdateInterval() const;
 
+#ifdef Q_WS_MAEMO_5
+    bool isOnline() const;
+#endif
+
 private:
+#ifdef Q_WS_MAEMO_5
+    LocationGPSDControl *locationControl;
+    LocationGPSDevice *locationDevice;
+    static void locationError(LocationGPSDevice *device, gint code, gpointer data);
+    static void deviceDisconnected(LocationGPSDevice *device, gpointer data);
+    static void deviceConnected(LocationGPSDevice *device, gpointer data);
+    static void locationChanged(LocationGPSDevice *device, gpointer data);
+    int errorHandlerId;
+    int posChangedId;
+    int connectedId;
+    int disconnectedId;    
+#endif
     void dumpNMEA(const char *msg);
     DBusComm* dbusComm;
     QGeoPositionInfo lastUpdate;
@@ -76,6 +109,17 @@ private:
     bool registered_;
     PositioningMethods availableMethods;
 
+#ifdef Q_WS_MAEMO_5
+signals:
+    void online(bool status);
+
+    Q_SIGNALS:
+    void positionUpdated(const QGeoPositionInfo &update);
+
+private Q_SLOTS:
+    void setOnline(bool status);
+    void setLocation(const QGeoPositionInfo &update);
+#endif
 public slots:
     void startUpdates();
     void stopUpdates();

@@ -154,33 +154,32 @@ void QMLContactManagerAsync::contacts()
     idFil.setIds(qc->contactIds());
     req->setFilter(idFil);
     req->setManager(qc);
-    connect(req, SIGNAL(progress(QContactFetchRequest*, bool)), this, SLOT(contactProgress(QContactFetchRequest*,bool)));
+    connect(req, SIGNAL(stateChanged(QContactAbstractRequest::State)), this, SLOT(contactProgress(QContactAbstractRequest::State)));
     req->start();
 }
 
-void QMLContactManagerAsync::contactProgress(QContactFetchRequest *request, bool appendOnly)
+void QMLContactManagerAsync::contactProgress(QContactAbstractRequest::State newState)
 {
-    Q_UNUSED(appendOnly);
+    QContactFetchRequest *request = qobject_cast<QContactFetchRequest*>(sender());
 
     // first, check to make sure that the request is still valid.
     if (qc != request->manager() ||
-        request->state() == QContactAbstractRequest::CanceledState) {
-        delete request;
+        newState == QContactAbstractRequest::CanceledState) {
+        request->deleteLater();
         return; // ignore these results.
     }
 
     if(request->contacts().count() > 0) {
         QContact c;
         foreach(c, request->contacts()) {
-            //qWarning() << "Local Id: " << c.localId() << " count: " << m_contactIds.count();
             QmlContact qmlc(c);
             emit contactsLoaded(&qmlc);
         }
     }
 
     // check to see if the request status is "finished" - clean up.
-    if (request->state() == QContactAbstractRequest::FinishedState) {        
-        delete request;
+    if (newState == QContactAbstractRequest::FinishedState) {
+        request->deleteLater();
         emit contactsLoadedDone();
     }
 

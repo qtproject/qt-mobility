@@ -267,13 +267,13 @@
     sensors such as screen orientation (portrait, landscape) and low-level,
     real-time sensors such as accelerometer data.
 
-    For more details see the \l{Sensors API}{Sensors API overview}.
+    For more details see the \l{Sensors API (technology preview)}{Sensors API overview}.
 
     \section2 Versit
 
     An API to manage Versit \reg documents, such as vCards.
 
-    For more details see the \l{Versit API}{Versit API overview}.
+    For more details see the \l{Versit API (technology preview)}{Versit API overview}.
     
     \section1 The QtMobility Namespace 
 

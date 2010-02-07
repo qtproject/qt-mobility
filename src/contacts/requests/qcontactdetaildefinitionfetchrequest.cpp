@@ -59,11 +59,13 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \fn QContactDetailDefinitionFetchRequest::progress(QContactDetailDefinitionFetchRequest* self, bool appendOnly)
-  \deprecated
+  \internal
   This signal is emitted when some progress has been made on the request, causing either a change of
   status or an update of results, or both.  It identifies which request the signal originated from
   by including a pointer to \a self, and contains an \a appendOnly flag which signifies whether or not the total
   ordering of the results have been maintained since the last progress signal was emitted.
+  This signal is deprecated and will be removed once the transition period has elapsed.
+  Use the signals emitted by the base class, combined with \l QObject::sender(), instead.
  */
 
 /*! Constructs a new detail definition fetch request */
@@ -78,22 +80,20 @@ QContactDetailDefinitionFetchRequest::~QContactDetailDefinitionFetchRequest()
 }
 
 /*!
- * \fn Q_DECL_DEPRECATED QContactDetailDefinitionFetchRequest::setNames(const QStringList& names)
- * \deprecated
- * Sets the names of the detail definitions to retrieve to \a names
+  \internal
+  Sets the names of the detail definitions to retrieve to \a names
  */
-void Q_DECL_DEPRECATED QContactDetailDefinitionFetchRequest::setNames(const QStringList& names)
+void QContactDetailDefinitionFetchRequest::setNames(const QStringList& names)
 {
     Q_D(QContactDetailDefinitionFetchRequest);
     d->m_names = names;
 }
 
 /*!
- * \fn Q_DECL_DEPRECATED QContactDetailDefinitionFetchRequest::names() const
- * \deprecated
- * Returns the list of names of the detail definitions that will be retrieved
+  \internal
+  Returns the list of names of the detail definitions that will be retrieved
  */
-QStringList Q_DECL_DEPRECATED QContactDetailDefinitionFetchRequest::names() const
+QStringList QContactDetailDefinitionFetchRequest::names() const
 {
     Q_D(const QContactDetailDefinitionFetchRequest);
     return d->m_names;
@@ -128,7 +128,7 @@ QString QContactDetailDefinitionFetchRequest::contactType() const
 }
 
 /*!
- * Returns the map of detail definition names to detail definitions that was the result of the request
+  Returns the map of detail definition names to detail definitions that was the result of the request
  */
 QMap<QString, QContactDetailDefinition> QContactDetailDefinitionFetchRequest::definitions() const
 {

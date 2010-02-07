@@ -86,7 +86,8 @@ public:
 
 private slots:
     void performRequest();
-    void printContacts(QContactFetchRequest* request, bool appendOnly);
+    void printContacts();
+    void stateChanged(QContactAbstractRequest::State state);
 
 private:
     int m_previousLastIndex;
