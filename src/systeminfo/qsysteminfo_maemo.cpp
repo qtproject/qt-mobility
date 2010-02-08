@@ -1276,12 +1276,26 @@ void QSystemDeviceInfoPrivate::halChanged(int,QVariantList map)
 QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
 {
 #if !defined(QT_NO_DBUS)
+
+    QDBusInterface mceConnectionInterface("com.nokia.mce",
+                                      "/com/nokia/mce/request",
+                                      "com.nokia.mce.request",
+                                      QDBusConnection::systemBus());
+    if(!mceConnectionInterface.isValid()) {
+       qWarning() << "mce interface not valid";
+       return QSystemDeviceInfo::UnknownProfile;
+    }
+    QDBusReply<QString> deviceModeReply = mceConnectionInterface.call("get_device_mode");
+    if (deviceModeReply.value() == "flight")
+        return QSystemDeviceInfo::OfflineProfile;
+
+
     QDBusInterface connectionInterface("com.nokia.profiled",
                                       "/com/nokia/profiled",
                                       "com.nokia.profiled",
                                       QDBusConnection::sessionBus());
     if(!connectionInterface.isValid()) {
-       qWarning() << "interface not valid";
+       qWarning() << "profiled interface not valid";
        return QSystemDeviceInfo::UnknownProfile;
     }
 
@@ -1300,10 +1314,13 @@ QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
     bool isLoud = ringingAlertVolume.value().toInt() > 75;
     bool isVibrating = vibratingAlertEnabled.value() == "On";
 
-    //TODO: Handle OfflineProfile
-    if (isSilent && isVibrating) return QSystemDeviceInfo::VibProfile;
-    if (isSilent) return QSystemDeviceInfo::SilentProfile;
-    if (isLoud) return QSystemDeviceInfo::LoudProfile;
+    if (isSilent && isVibrating)
+        return QSystemDeviceInfo::VibProfile;
+    if (isSilent)
+        return QSystemDeviceInfo::SilentProfile;
+    if (isLoud)
+        return QSystemDeviceInfo::LoudProfile;
+
     return QSystemDeviceInfo::NormalProfile;
 #endif
 
