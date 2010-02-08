@@ -48,7 +48,7 @@ QTM_USE_NAMESPACE
 
 class GrueSensorReadingPrivate;
 
-class Q_SENSORS_EXPORT GrueSensorReading : public QSensorReading
+class GrueSensorReading : public QSensorReading
 {
     Q_OBJECT
     Q_PROPERTY(qreal chanceOfBeingEaten READ chanceOfBeingEaten WRITE setChanceOfBeingEaten)
@@ -60,7 +60,7 @@ public:
 
 // begin generated code
 
-class Q_SENSORS_EXPORT GrueFilter : public QSensorFilter
+class GrueFilter : public QSensorFilter
 {
 public:
     virtual bool filter(GrueSensorReading *reading) = 0;
@@ -68,7 +68,7 @@ private:
     bool filter(QSensorReading *reading) { return filter(static_cast<GrueSensorReading*>(reading)); }
 };
 
-class Q_SENSORS_EXPORT GrueSensor : public QSensor
+class GrueSensor : public QSensor
 {
     Q_OBJECT
 public:
