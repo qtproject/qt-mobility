@@ -157,6 +157,7 @@ void tst_serviceframework::tst_loadService()
 
     QBENCHMARK {        
         QObject *o = qsm.loadInterface(interface);
+        Q_UNUSED(o);
     }
 }
 

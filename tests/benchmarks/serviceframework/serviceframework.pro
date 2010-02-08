@@ -2,7 +2,7 @@ TARGET = tst_bm_serviceframework
 CONFIG+=testcase
 
 SOURCES  += tst_serviceframework.cpp
-QT = core network xml gui sql dbus
+QT = core
 INCLUDEPATH += ../../../src/serviceframework
 
 include(../../../common.pri)
