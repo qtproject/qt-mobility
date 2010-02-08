@@ -1331,9 +1331,12 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
     QString autologinname = loginSettings.value("autoLoginUser").toString();
 
 // find out if locked screensaver is used.
+    int passWordProtected = 0;
+#if defined(QT_ARCH_X86_64)  && !defined(MAC_SDK_10_6)
     ScreenSaverDefaults *ssDefaults;
     ssDefaults = [ScreenSaverDefaults defaultsForModuleWithName:@"com.apple.screensaver"];
-    int passWordProtected = [ssDefaults integerForKey:@"askForPassword"];
+    passWordProtected = [ssDefaults integerForKey:@"askForPassword"];
+#endif
 
     if(autologinname.isEmpty() || passWordProtected == 1) {
         return true;
