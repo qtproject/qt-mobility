@@ -200,10 +200,15 @@ protected:
     QHalInterface *halIface;
     QHalDeviceInterface *halIfaceDevice;
     void setupBluetooth();
+    void setupProfileMonitoring();
 
 private Q_SLOTS:
     void halChanged(int,QVariantList);
     void bluezPropertyChanged(const QString&, QDBusVariant);
+    void deviceModeChanged(QString newMode);
+
+private:
+    bool flightMode;
 #endif
 };
 

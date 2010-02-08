@@ -1173,8 +1173,10 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QSystemDeviceInfoLinuxCommonP
 {
     halIsAvailable = halAvailable();
     setConnection();
+    flightMode = false;
  #if !defined(QT_NO_DBUS)
     setupBluetooth();
+    setupProfileMonitoring();
 #endif
 }
 
@@ -1275,21 +1277,10 @@ void QSystemDeviceInfoPrivate::halChanged(int,QVariantList map)
 
 QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
 {
-#if !defined(QT_NO_DBUS)
-
-    QDBusInterface mceConnectionInterface("com.nokia.mce",
-                                      "/com/nokia/mce/request",
-                                      "com.nokia.mce.request",
-                                      QDBusConnection::systemBus());
-    if(!mceConnectionInterface.isValid()) {
-       qWarning() << "mce interface not valid";
-       return QSystemDeviceInfo::UnknownProfile;
-    }
-    QDBusReply<QString> deviceModeReply = mceConnectionInterface.call("get_device_mode");
-    if (deviceModeReply.value() == "flight")
+    if (flightMode)
         return QSystemDeviceInfo::OfflineProfile;
 
-
+#if !defined(QT_NO_DBUS)
     QDBusInterface connectionInterface("com.nokia.profiled",
                                       "/com/nokia/profiled",
                                       "com.nokia.profiled",
@@ -1763,6 +1754,41 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
      qWarning() << str << v.variant().toBool();
      emit bluetoothStateChanged(v.variant().toBool());
  }
+#endif
+
+#if !defined(QT_NO_DBUS)
+void QSystemDeviceInfoPrivate::setupProfileMonitoring()
+{
+    QDBusConnection dbusConnection = QDBusConnection::systemBus();
+
+    QDBusInterface mceConnectionInterface("com.nokia.mce",
+                                      "/com/nokia/mce/request",
+                                      "com.nokia.mce.request",
+                                      dbusConnection);
+    if (!mceConnectionInterface.isValid()) {
+        qWarning() << "mce interface not valid";
+    } else {
+        QDBusReply<QString> deviceModeReply = mceConnectionInterface.call("get_device_mode");
+        flightMode = deviceModeReply.value() == "flight";
+    }
+    if (!dbusConnection.connect("com.nokia.mce",
+                           "/com/nokia/mce/signal",
+                           "com.nokia.mce.signal",
+                           "sig_device_mode_ind",
+                           this, SLOT(deviceModeChanged(QString)))) {
+        qWarning() << "unable to connect to req_device_mode_change";
+    }
+}
+
+void QSystemDeviceInfoPrivate::deviceModeChanged(QString newMode)
+{
+    qDebug() << "deviceModeChanged";
+    bool previousFlightMode = flightMode;
+    flightMode = newMode == "flight";
+    if (previousFlightMode != flightMode)
+        emit currentProfileChanged(currentProfile());
+}
+
 #endif
 
  //////////////
