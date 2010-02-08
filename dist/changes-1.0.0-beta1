@@ -108,11 +108,37 @@ QtPublishSubscribe
 QtServiceFramework
 ------
 
+ - QService namespace added
+    * Renamed QServiceManager::Scope to QService::Scope
+ - QServiceFilter
+    * Renamed customPropertyKeys() to customAttributes()
+    * Renamed setCustomProperty() to setCustomAttribute()
+    * Removed removeCustomProperty()
+    * Renamed clearCustomProperties() to clearCustomAttribute()
+    * Renamed CapabilityMatchRule::MatchAll to CapabilityMatchRule::MatchMinimum
+    * Renamed interfaceMajorVersion() to majorVersion()
+    * Renamed interfaceMinorVersion() to minorVersion()
+ - QServiceInterfaceDescriptor
+    * Renamed inSystemScope() to scope()
+    * Renamed PropertyKey to Attribute
+    * Renamed property() to attribute()
+    * Renamed customProperty() to customAttribute()
+    * Renamed customPropertyKeys() to customAttributes()
+ - QServiceManager
+    * Renamed getInterface() to loadLocalTypedInterface()
+
+
+ - error reporting for Service XML parsing imporved
+ - export macro name changed due to name clash
+ - multiple unit test fixes
  - Symbian backend
     * Maturity improvements in emulator environment
     * DB handling server is terminated automatically when any client no
       longer uses it
     * Fixed how library existence is checked in Symbian
+    * databasemanager server UID added
+    * All emulator processes use common service framework database
+    * Multiple QServiceManager instance issue on emulator fixed
 
 QtSystemInfo
 ------
@@ -155,13 +181,17 @@ Qt Mobility for Mac OS X
 
  -
 
-
-
 Qt Mobility for Windows CE
 ------
 
  -
 
+Qt Mobility for Symbian
+------
+
+ - Installpath for Symbian headers changed
+    * Contacts and Versit installed to EPOCROOT/include/app
+    * All other API headers installed to EPOCROOT/include/mw
 
 ****************************************************************************
 *                          Tools                                           *
