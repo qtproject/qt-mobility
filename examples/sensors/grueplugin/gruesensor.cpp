@@ -42,8 +42,6 @@
 #include "gruesensor.h"
 #include "gruesensor_p.h"
 
-QTM_BEGIN_NAMESPACE
-
 IMPLEMENT_READING(GrueSensorReading)
 
 /*!
@@ -142,4 +140,3 @@ const char *GrueSensor::type("GrueSensor");
 // end generated code
 
 #include "moc_gruesensor.cpp"
-QTM_END_NAMESPACE

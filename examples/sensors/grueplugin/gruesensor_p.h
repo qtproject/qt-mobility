@@ -55,8 +55,6 @@
 
 #include "qsensor_p.h"
 
-QTM_BEGIN_NAMESPACE
-
 class GrueSensorReadingPrivate : public QSensorReadingPrivate
 {
 public:
@@ -67,7 +65,5 @@ public:
 
     qreal chanceOfBeingEaten;
 };
-
-QTM_END_NAMESPACE
 
 #endif

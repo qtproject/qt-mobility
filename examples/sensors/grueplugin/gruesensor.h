@@ -44,7 +44,7 @@
 
 #include <qsensor.h>
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
 class GrueSensorReadingPrivate;
 
@@ -79,7 +79,5 @@ public:
     static const char *type;
 };
 // end generated code
-
-QTM_END_NAMESPACE
 
 #endif
