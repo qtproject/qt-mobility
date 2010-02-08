@@ -414,7 +414,6 @@ QMap<QString, QContactDetailDefinition> QContactTrackerEngine::detailDefinitions
                     QContactUrl::DefinitionName);
             QContactDetailDefinition newUrlDef;
 
-            QMap<QString, QContactDetailFieldDefinition> &fields(urlDef.fields());
             QMap<QString, QContactDetailDefinitionField> urlFieldNames = urlDef.fields();
             QMap<QString, QContactDetailDefinitionField> &fields(urlFieldNames);
             QContactDetailFieldDefinition f;
@@ -436,8 +435,10 @@ QMap<QString, QContactDetailDefinition> QContactTrackerEngine::detailDefinitions
             const QContactDetailDefinition accDef = d->m_definitions.value(QContactOnlineAccount::DefinitionName);
             QContactDetailDefinition newAccountDefinition;
 
-            QMap<QString, QContactDetailFieldDefinition> &fields(accDef.fields());
-            QContactDetailFieldDefinition f;
+            QMap<QString, QContactDetailDefinitionField> accountFieldName = accDef.fields();
+            QMap<QString, QContactDetailDefinitionField> &fields(accountFieldName);
+            QContactDetailDefinitionField f;
+
             f.setDataType(QVariant::String);
             fields.insert("Account", f);
             fields.insert("AccountPath", f);
