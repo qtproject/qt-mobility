@@ -55,11 +55,11 @@ class QLandmarkDatabase: public QObject
 {
     Q_OBJECT
 public:
-    enum Error{NoError, NonWritablePlatform};
-    enum SearchStatus{Active, Cancelled, Done};
-    enum FileFormat{LMX, GPX, CSV, KML, Auto};
+    enum Error {NoError, NonWritablePlatform};
+    enum SearchStatus {Active, Cancelled, Done};
+    enum FileFormat {LMX, GPX, CSV, KML, Auto};
     static QLandmarkDatabase instance(const QString &name = QString());
-    virtual ~QLandmarkDatabase(){}
+    virtual ~QLandmarkDatabase() {}
 
     bool addLandmark(const QLandmark &landmark);
     bool updateLandmark(const QLandmark &oldLandmark, const QLandmark &newLandmark);
@@ -73,11 +73,11 @@ public:
     bool isCategoryModifiable(const QLandmarkCategory &category);
 
     QList<QLandmark> search(QList<QSearchFilter> filters,
-                        QList<QLandmarkSortOrder> sortOrders) const;
+                            QList<QLandmarkSortOrder> sortOrders) const;
     QList<QLandmark> search(QSearchFilter filter,
                             QLandmarkSortOrder sortOrder) const;
     bool searchRequest(QList<QSearchFilter> filters,
-                        QList<QLandmarkSortOrder> sortOrders) const;
+                       QList<QLandmarkSortOrder> sortOrders) const;
     bool searchRequest(QSearchFilter filter, QLandmarkSortOrder) const;
     SearchStatus searchStatus() const;
     bool cancelSearchRequest();

@@ -38,30 +38,61 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QLANDMARK_P_H
+#define QLANDMARK_P_H
 
-#ifndef QLANDMARKMANAGER_H
-#define QLANDMARKMANAGER_H
+#include "qlandmark.h"
 
-#include <QString>
-#include <QUrl>
+#include <QList>
+#include <QHash>
 
-class QLandmarkDatabaseManager
+QTM_BEGIN_NAMESPACE
+
+class QLandmarkCategoryPrivate
 {
 public:
-    enum Error {NoError, DoesNotExist};
-    QLandmarkDatabaseManager();
-    virtual ~QLandmarkDatabaseManager();
-    bool addDatabase(const QString &name, const QUrl &location);
-    bool deleteDatabase(const QString& name);
+    QLandmarkCategoryPrivate();
+    QLandmarkCategoryPrivate(const QLandmarkCategoryPrivate &other);
+    ~QLandmarkCategoryPrivate();
 
-    QStringList listDatabases() const;
-    QUrl databaseURL(const QString &name);
+    QLandmarkCategoryPrivate& operator= (const QLandmarkCategoryPrivate &other);
 
-    QString defaultDatabase();
-    bool setDefaultDatabase(const QString &name);
+    bool operator== (const QLandmarkCategoryPrivate &other) const;
+    // consider inline != in terms of ==?
 
-    Error error() const;
-    QString errorString() const;
+    QString name;
+    QString icon;
+    QString description;
 };
+
+class QLandmarkPrivate
+{
+public:
+    QLandmarkPrivate();
+    QLandmarkPrivate(const QLandmarkPrivate &other);
+    ~QLandmarkPrivate();
+
+    QLandmarkPrivate& operator= (const QLandmarkPrivate &other);
+
+    bool operator== (const QLandmarkPrivate &other) const;
+    // consider inline != in terms of ==?
+
+    QString name;
+    QGeoCoordinate coordinate;
+    QList<QLandmarkCategory> categories;
+    QString description;
+    QString icon;
+    double radius;
+    QHash<QString, QVariant> attributes;
+    QString street;
+    QString locality;
+    QString region;
+    QString country;
+    QString postcode;
+    QString phone;
+    QString url;
+};
+
+QTM_END_NAMESPACE
 
 #endif

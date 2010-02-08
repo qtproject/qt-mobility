@@ -42,29 +42,54 @@
 #ifndef QLANDMARK_H
 #define QLANDMARK_H
 
-#include <QObject>
-class QGeoCoordinate;
+#include "qmobilityglobal.h"
+#include "qgeocoordinate.h"
 
-class QLandmarkCategory
+#include <QObject>
+
+QT_BEGIN_HEADER
+
+QTM_BEGIN_NAMESPACE
+
+class QLandmarkCategoryPrivate;
+class QLandmarkPrivate;
+
+class Q_LANDMARKS_EXPORT QLandmarkCategory
 {
+public:
     QLandmarkCategory();
+    QLandmarkCategory(const QLandmarkCategory &other);
     virtual ~QLandmarkCategory();
 
+    QLandmarkCategory& operator= (const QLandmarkCategory &other);
+
+    bool operator== (const QLandmarkCategory &other) const;
+    // consider inline != in terms of ==?
+
     QString name() const;
-    void setName(const QString &);
+    void setName(const QString &name);
 
     QString icon() const;
     void setIcon(const QString &fileName);
 
     QString description() const;
     void setDescription(const QString &description);
+
+private:
+    QLandmarkCategoryPrivate *d;
 };
 
-class QLandmark
+class Q_LANDMARKS_EXPORT QLandmark
 {
-    public:
+public:
     QLandmark();
+    QLandmark(const QLandmark &other);
     virtual ~QLandmark();
+
+    QLandmark& operator= (const QLandmark &other);
+
+    bool operator== (const QLandmark &other) const;
+    // consider inline != in terms of ==?
 
     QString name() const;
     void setName(const QString &name);
@@ -110,6 +135,12 @@ class QLandmark
 
     QString url() const;
     void setUrl(const QString &url);
+private:
+    QLandmarkPrivate *d;
 };
+
+QTM_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif

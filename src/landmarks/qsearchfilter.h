@@ -57,12 +57,13 @@ class QSearchFilter : public QObject
     Q_OBJECT
 public:
     QSearchFilter(int maxMatches = -1);
-    virtual ~QSearchFilter(){}
+    virtual ~QSearchFilter() {}
     void setMaxMatches(int maxMatches);
     int maxMatches() const;
 };
 
-class QLandmarkNameFilter : public QSearchFilter {
+class QLandmarkNameFilter : public QSearchFilter
+{
 public:
     QLandmarkNameFilter(const QString &name);
     virtual ~QLandmarkNameFilter();
@@ -70,7 +71,8 @@ public:
     void setName(const QString &name);
 };
 
-class QLandmarkProximityFilter : public QSearchFilter {
+class QLandmarkProximityFilter : public QSearchFilter
+{
 public:
     QLandmarkProximityFilter(const QGeoCoordinate &coordinate, double range);
     virtual ~QLandmarkProximityFilter();
@@ -85,7 +87,7 @@ public:
 class QLandmarkNearestFilter : public QSearchFilter
 {
 public:
-    QLandmarkNearestFilter( const QGeoCoordinate &coordinate);
+    QLandmarkNearestFilter(const QGeoCoordinate &coordinate);
     virtual ~QLandmarkNearestFilter();
 
     QGeoCoordinate centralCoordinate() const;
@@ -119,7 +121,7 @@ class QLandmarkSortOrder : public QObject
 class QLandmarkNameSort : public QLandmarkSortOrder
 {
 public:
-    enum Type{Ascending, Descending};
+    enum Type {Ascending, Descending};
     QLandmarkNameSort(Type orderType);
     virtual ~QLandmarkNameSort();
 };
@@ -127,7 +129,7 @@ public:
 class QLandmarkDistanceSort : public QLandmarkSortOrder
 {
 public:
-    enum Type{NearestFirst,FurthestFirst};
+    enum Type {NearestFirst, FurthestFirst};
     QLandmarkDistanceSort(Type orderType);
     virtual ~QLandmarkDistanceSort();
 };

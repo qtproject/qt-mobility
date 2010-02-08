@@ -70,6 +70,10 @@ tst_qgeoareamonitor.exe
 tst_qlocationutils.exe
 tst_qnmeapositioninfosource.exe
 
+::Landmarks
+tst_qlandmark.exe
+tst_qlandmarkcategory.exe
+
 ::Publish and Subscribe
 tst_qvaluespace.exe
 tst_qvaluespaceprovider.exe

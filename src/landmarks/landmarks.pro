@@ -17,11 +17,11 @@ PUBLIC_HEADERS += qlandmark.h \
                   qlandmarkmanager.h \
                   qsearchfilter.h
 
-#PRIVATE_HEADERS += 
+PRIVATE_HEADERS += qlandmark_p.h
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
-#SOURCES += 
+SOURCES += qlandmark.cpp
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

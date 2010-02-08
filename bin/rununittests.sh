@@ -79,6 +79,10 @@ cd $shell_path/../build/tests/bin
 ./tst_qlocationutils
 ./tst_qnmeapositioninfosource
 
+#Landmarks
+./tst_qlandmark
+./tst_qlandmarkcategory
+
 #Publish and Subscribe
 ./tst_qmallocpool
 ./tst_qpacket
