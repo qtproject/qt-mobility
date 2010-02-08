@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = tst_qsysteminfo
+TARGET = tst_bm_qsysteminfo
 CONFIG += testcase
 
 SOURCES += tst_qsysteminfo.cpp

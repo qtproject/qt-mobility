@@ -52,9 +52,9 @@ SampleServicePlugin::~SampleServicePlugin()
 
 QObject* SampleServicePlugin::createInstance(const QServiceInterfaceDescriptor& descriptor, QServiceContext* context, QAbstractSecuritySession* session)
 {
-    if ( descriptor.interfaceName() == "com.nokia.qt.TestInterfaceA" ) {
+    if ( descriptor.interfaceName() == "com.nokia.qt.bm.TestInterfaceA" ) {
         return new SampleServicePluginClass(descriptor, context, session);
-    } else if (descriptor.interfaceName() == "com.nokia.qt.TestInterfaceB") {
+    } else if (descriptor.interfaceName() == "com.nokia.qt.bm.TestInterfaceB") {
         return new DerivedSampleServicePluginClass(descriptor, context, session);
     }
 
@@ -65,13 +65,13 @@ QObject* SampleServicePlugin::createInstance(const QServiceInterfaceDescriptor& 
 
 void SampleServicePlugin::installService()
 {
-    QSettings settings("com.nokia.qt.serviceframework.tests", "SampleServicePlugin");
+    QSettings settings("com.nokia.qt.bm.serviceframework.tests", "SampleServicePlugin");
     settings.setValue("installed", true);
 }
 
 void SampleServicePlugin::uninstallService()
 {
-    QSettings settings("com.nokia.qt.serviceframework.tests", "SampleServicePlugin");
+    QSettings settings("com.nokia.qt.bm.serviceframework.tests", "SampleServicePlugin");
     settings.setValue("installed", false);
 }
 

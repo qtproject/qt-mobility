@@ -1,4 +1,4 @@
-TARGET = tst_serviceframework
+TARGET = tst_bm_serviceframework
 CONFIG+=testcase
 
 SOURCES  += tst_serviceframework.cpp

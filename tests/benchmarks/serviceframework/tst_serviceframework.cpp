@@ -57,9 +57,6 @@ private slots:
 
     void tst_findServices();
 
-    void tst_hasFeatures_data();
-    void tst_hasFeatures();
-
     void tst_loadService_data();
     void tst_loadService();
 
@@ -74,9 +71,10 @@ void tst_serviceframework::initTestCase()
 {
     manager = new QServiceManager;
     QStringList exampleXmlFiles;
-    exampleXmlFiles <<"voipdialerservice.xml" << "landlinedialerservice.xml";
+    //exampleXmlFiles <<"voipdialerservice.xml" << "landlinedialerservice.xml";
+    exampleXmlFiles << "bm_sampleservice.xml";
     foreach (const QString &fileName, exampleXmlFiles) {
-        QString path = QCoreApplication::applicationDirPath() + "/xmldata/" + fileName;
+        QString path = QCoreApplication::applicationDirPath() + "/plugins" + "/xmldata/" + fileName;
         //qDebug() << "Addning: " << path;
         manager->addService(path);
     }
@@ -94,9 +92,10 @@ void tst_serviceframework::tst_addService_data()
     QTest::addColumn<QString>("service");
 
     QStringList exampleXmlFiles;
-    exampleXmlFiles <<"voipdialerservice.xml" << "landlinedialerservice.xml";
-    foreach (const QString &fileName, exampleXmlFiles) {
-        QString path = QCoreApplication::applicationDirPath() + "/xmldata/" + fileName;
+    //exampleXmlFiles <<"voipdialerservice.xml" << "landlinedialerservice.xml";
+    exampleXmlFiles << "bm_sampleservice.xml";
+    foreach (const QString &fileName, exampleXmlFiles) {        
+        QString path = QCoreApplication::applicationDirPath() + "/plugins" + "/xmldata/" + fileName;
         //qDebug() << "Addning: " << path;
         QTest::newRow(fileName.toAscii()) << path;
     }
@@ -123,10 +122,11 @@ void tst_serviceframework::tst_loadService_data()
     QTest::addColumn<QServiceInterfaceDescriptor>("interface");    
 
     QStringList exampleXmlFiles;
-    exampleXmlFiles <<"voipdialerservice.xml" << "landlinedialerservice.xml";
+    //exampleXmlFiles <<"voipdialerservice.xml" << "landlinedialerservice.xml";
+    exampleXmlFiles << "bm_sampleservice.xml";
     foreach (const QString &fileName, exampleXmlFiles) {
         QServiceManager qsm;
-        QString path = QCoreApplication::applicationDirPath() + "/xmldata/" + fileName;
+        QString path = QCoreApplication::applicationDirPath() + "/plugins" + "/xmldata/" + fileName;
         //qDebug() << "Adding: " << path;
         qsm.addService(path);
         QStringList servicesList = qsm.findServices();
@@ -179,35 +179,6 @@ void tst_serviceframework::tst_invalidLoad()
     }
 }
 
-
-void tst_serviceframework::tst_hasFeatures_data()
-{
-//    QTest::addColumn<QSystemInfo::Feature>("feature");
-//
-//    QTest::newRow("Bluetooth") << QSystemInfo::BluetoothFeature;
-//    QTest::newRow("CameraFeature") << QSystemInfo::CameraFeature;
-//    QTest::newRow("FmradioFeature") << QSystemInfo::FmradioFeature;
-//    QTest::newRow("IrFeature") << QSystemInfo::IrFeature;
-//    QTest::newRow("LedFeature") << QSystemInfo::LedFeature;
-//    QTest::newRow("MemcardFeature") << QSystemInfo::MemcardFeature;
-//    QTest::newRow("UsbFeature") << QSystemInfo::UsbFeature;
-//    QTest::newRow("VibFeature") << QSystemInfo::VibFeature;
-//    QTest::newRow("WlanFeature") << QSystemInfo::WlanFeature;
-//    QTest::newRow("SimFeature") << QSystemInfo::SimFeature;
-//    QTest::newRow("LocationFeature") << QSystemInfo::LocationFeature;
-//    QTest::newRow("VideoOutFeature") << QSystemInfo::VideoOutFeature;
-//    QTest::newRow("HapticsFeature") << QSystemInfo::HapticsFeature;
-}
-
-void tst_serviceframework::tst_hasFeatures()
-{
-//    QBENCHMARK {
-//        QFETCH(QSystemInfo::Feature, feature);
-//        QSystemInfo si;
-//        si.hasFeatureSupported(feature);
-//
-//    }
-}
 
 
 QTEST_MAIN(tst_serviceframework)

@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = tst_contacts
+TARGET = tst_bm_contacts
 CONFIG += testcase
 
 SOURCES += tst_contacts.cpp
