@@ -18,6 +18,7 @@ CONFIG += mobility
 MOBILITY = contacts
 
 symbian {
+	LIBS += -lcntmodel
     TARGET.CAPABILITY = All -TCB
 }
 

@@ -51,6 +51,16 @@
 #include <filters/qcontactlocalidfilter.h>
 #include <details/qcontactdetails.h>
 
+#ifdef Q_OS_SYMBIAN
+#include <cntfilt.h>
+#include <cntitem.h>
+#include <cntdb.h>
+#include <cntitem.h>
+#include <cntfield.h>
+#include <cntfldst.h>
+#include <cntdef.h>
+#include <cntdef.hrh> 
+#endif
 
 QTM_USE_NAMESPACE
 
@@ -102,7 +112,12 @@ public slots:
 private:
     void createContact();
     void clearContacts();
+    int countContacts();
 
+    enum {
+      BackendQContacts,
+      BackendContactsModel
+    } m_backend;
     QString manager;
     QEventLoop *loop;
     QContactManager *m_qm;
@@ -115,14 +130,18 @@ private:
 
     QTimer *m_timer;
     QStringList firstNames;
-    QStringList lastNames;
-
+    QStringList lastNames;    
 
 };
 
 void tst_Contact::setBackend(QString backend)
 {
     manager = backend;
+    if(manager == "SymbianContactsModel") // Only one at the moment
+      m_backend = BackendContactsModel;
+    else
+      m_backend = BackendQContacts;
+    qWarning() << "Backend set to: " << manager;
 }
 
 void tst_Contact::initTestCase()
@@ -148,22 +167,27 @@ void tst_Contact::initTestCase()
 #elif defined(Q_WS_MAEMO_5)
     QFAIL("Maemo 5 does not support QContacts");
 #elif defined(Q_OS_SYMBIAN)
-    QStringList list = QContactManager::availableManagers();
-    int found = 0;
-    while(!list.empty()){
+    if(m_backend != BackendContactsModel) {
+      QStringList list = QContactManager::availableManagers();
+      int found = 0;
+      while(!list.empty()){
         if(list.takeFirst() == "symbian"){
-            found = 1;
-            break;
+          found = 1;
+          break;
         }
-    }
-    if(!found) {
+      }
+      if(!found) {
         QFAIL("Unable to find Symbian plugin. Please check install");
-    }
-        
-    if(manager.isEmpty()) {
+      }
+
+      if(manager.isEmpty()) {
         manager = "symbian";
-    }    
-    m_qm = new QContactManager(manager);
+      }    
+      m_qm = new QContactManager(manager);
+    }
+    else {
+      m_qm = 0x0;
+    }
 #else
     QFAIL("Platform not supported");
 #endif
@@ -174,18 +198,17 @@ void tst_Contact::initTestCase()
 
     firstNames << "Anahera" << "Anaru" << "Hemi" << "Hine" << "Kiri" << "Maata" << "Mere" << "Moana" << "Paora" << "Petera" << "Piripi" << "Ruiha" << "Tane" << "Whetu";
     lastNames << "Ati Awa" << "Kai Taho" << "Moriori" << "Muaupoko" << "Nga Rauru" << "Taranaki" << "Opotoki" << "Aotea" << "Taninui" << "Tuhourangi" << "Tainui" << "Waitaha";
+    
+    m_num_start = countContacts();
+    qDebug() << "Number of Contact: " << m_num_start;
 
-    QList<QContactLocalId> qcl = m_qm->contactIds();
-    int before = qcl.count();
-    m_num_start = before;
-    qDebug() << "Number of Contact: " << m_num_start;    
 
     for(int i = 0; i < 20; i++){
         createContact();
     }
-    qcl = m_qm->contactIds();
-    int after = qcl.count();
-    if(after - before != 20){
+    
+    int after = countContacts();
+    if(after - m_num_start != 20){
         qWarning() << "Failed to create 20 contacts";
     }
 
@@ -194,24 +217,67 @@ void tst_Contact::initTestCase()
 
 }
 
+int tst_Contact::countContacts()
+{  
+  if(m_backend == BackendQContacts) {
+    QList<QContactLocalId> qcl = m_qm->contactIds();
+    int before = qcl.count();
+    return qcl.count();
+  }
+  else if(m_backend == BackendContactsModel){
+#ifdef Q_OS_SYMBIAN
+    CContactDatabase* contactsDb = CContactDatabase::OpenL();
+    CleanupStack::PushL(contactsDb);
+    
+    int num = contactsDb->CountL();
+    
+    CleanupStack::PopAndDestroy(contactsDb);
+    
+    return num;    
+#endif
+    
+  }
+  qWarning("No backend support in countContacts()");
+  return 0;
+
+}
+
 void tst_Contact::cleanupTestCase()
 {
     clearContacts();
-    QList<QContactLocalId> qcl = m_qm->contactIds();       
-    if(m_num_start != qcl.count()){
-      QFAIL(QString("Number of contacts ending: %2 is different that starting number %1.  Poor cleanup").arg(m_num_start).arg(qcl.count()).toAscii());
+    int num_end = countContacts();          
+    if(m_num_start != num_end){
+      QFAIL(QString("Number of contacts ending: %2 is different that starting number %1.  Poor cleanup").arg(m_num_start).arg(num_end).toAscii());
     }
 }
 
 void tst_Contact::clearContacts()
 {
+  if(m_backend == BackendQContacts) {
     QMap<int, QContactManager::Error> errorMap;
     m_qm->removeContacts(&id_list, &errorMap);
     id_list.clear();
+  }
+  else if(m_backend == BackendContactsModel){
+#ifdef Q_OS_SYMBIAN
+    CContactDatabase* db = CContactDatabase::OpenL();
+    CleanupStack::PushL(db);
+
+    CContactIdArray* idArray = CContactIdArray::NewLC();
+    while(!id_list.isEmpty())
+      idArray->AddL(id_list.takeFirst());
+    db->DeleteContactsL(*idArray);    
+    
+    CleanupStack::PopAndDestroy(2); //idArray, contactsDb
+#endif
+  }
+
 }
 
 void tst_Contact::tst_createTime()
-{    
+{
+  
+  if(m_backend == BackendQContacts){
     QContactManager *qm = 0x0;
 
     QBENCHMARK {
@@ -219,24 +285,61 @@ void tst_Contact::tst_createTime()
     }
 
     delete qm;
+  }
+  else if(m_backend == BackendContactsModel){
+#ifdef Q_OS_SYMBIAN
+    CContactDatabase* db = 0x0;
+    QBENCHMARK {
+      db = CContactDatabase::OpenL();     
+    }
+    CleanupStack::PushL(db);
+    CleanupStack::PopAndDestroy(1); //db
+#endif
+  }
 }
 
 void tst_Contact::tst_fetchAllContactIds()
 {    
+  if(m_backend == BackendQContacts) {
     QList<QContactLocalId> ql;
     QBENCHMARK {
         ql = m_qm->contactIds();
     }        
+  }
+  else if(m_backend == BackendContactsModel){
+#ifdef Q_OS_SYMBIAN
+    //open database
+    // Open the default contact database
+    CContactDatabase* contactsDb = CContactDatabase::OpenL();
+    CleanupStack::PushL(contactsDb);
+
+    CCntFilter *filter = CCntFilter::NewLC();
+
+    //get all contact items (no groups, templates...)
+    filter->SetContactFilterTypeALL(EFalse);
+    filter->SetContactFilterTypeCard(ETrue);
+    
+    CContactIdArray *iContacts = 0x0;
+    
+    QBENCHMARK {
+      contactsDb->FilterDatabaseL(*filter);
+      iContacts = CContactIdArray::NewLC(filter->iIds);
+    }
+    
+    CleanupStack::PopAndDestroy(3); //iContacts, filter, contactsDb    
+#endif 
+  }
 }
 
 void tst_Contact::tst_fetchOneContact()
 {
-    QContact c;
-    int ret;    
+  if(m_backend == BackendQContacts){
+    QContact c;    
 
     m_run++;
 
 #if defined(Q_WS_MAEMO_6)
+    int ret;   
     QContactFetchRequest* req = new QContactFetchRequest;
 
     QList<QContactLocalId> qcl = m_qm->contactIds();
@@ -275,22 +378,51 @@ void tst_Contact::tst_fetchOneContact()
     
     QBENCHMARK {
        c = m_qm->contact(qcl.first());
-    }       
+    }
 #endif
-                
+  }
+  else if(m_backend == BackendContactsModel){
+#ifdef Q_OS_SYMBIAN
+    //open database
+    // Open the default contact database
+    CContactDatabase* contactDb = CContactDatabase::OpenL();
+    CleanupStack::PushL(contactDb);
+    
+    int id = id_list.takeFirst();
+    id_list.append(id);
+    
+    CContactItem *item;
+    TInt r;
+        
+    QBENCHMARK {
+      TRAP(r, item = contactDb->ReadContactL(id));
+    }
+    CleanupStack::PushL(item);
+    
+    if(r != KErrNone){ qWarning() << "Error by OpenContactL: " << r; }
+        
+//    TRAP(r, contactDb->CloseContactL(id));
+//    if(r != KErrNone){qWarning() << "Error by CloseContactL: " << r; }
+    
+    //qDebug() << "Call FetchContactDone: " << id;        
+    
+    CleanupStack::PopAndDestroy(2); //contact, lock, contactsDb    
 
+#endif
+  }                
 }
 
 
 
 void tst_Contact::tst_fetchTenContact()
 {
+  if(m_backend == BackendQContacts){
     QContact c;
-    int ret;
-
     m_run++;
 
 #if defined(Q_WS_MAEMO_6)
+    int ret;
+
     QContactFetchRequest* req = new QContactFetchRequest;
 
     QList<QContactLocalId> qcl = m_qm->contactIds();
@@ -349,7 +481,76 @@ void tst_Contact::tst_fetchTenContact()
     }
     
 #endif    
-
+  }
+  else if(m_backend == BackendContactsModel){
+#ifdef Q_OS_SYMBIAN
+    //open database
+    // Open the default contact database
+    CContactDatabase* contactDb = CContactDatabase::OpenL();
+    CleanupStack::PushL(contactDb);
+    
+    int id = id_list.takeFirst();
+    id_list.append(id);
+    
+    TInt r;
+    
+    CContactItem *item1;
+    CContactItem *item2;
+    CContactItem *item3;
+    CContactItem *item4;
+    CContactItem *item5;
+    CContactItem *item6;
+    CContactItem *item7;
+    CContactItem *item8;
+    CContactItem *item9;
+    CContactItem *item10;        
+        
+    QBENCHMARK {
+      TRAP(r, item1 = contactDb->ReadContactL(id));
+      id = id_list.takeFirst();
+      id_list.append(id);
+      TRAP(r, item2 = contactDb->ReadContactL(id));
+      id = id_list.takeFirst();
+      id_list.append(id);
+      TRAP(r, item3 = contactDb->ReadContactL(id));
+      id = id_list.takeFirst();
+      id_list.append(id);
+      TRAP(r, item4 = contactDb->ReadContactL(id));
+      id = id_list.takeFirst();
+      id_list.append(id);
+      TRAP(r, item5 = contactDb->ReadContactL(id));
+      id = id_list.takeFirst();
+      id_list.append(id);
+      TRAP(r, item6 = contactDb->ReadContactL(id));
+      id = id_list.takeFirst();
+      id_list.append(id);
+      TRAP(r, item7 = contactDb->ReadContactL(id));
+      id = id_list.takeFirst();
+      id_list.append(id);
+      TRAP(r, item8 = contactDb->ReadContactL(id));
+      id = id_list.takeFirst();
+      id_list.append(id);
+      TRAP(r, item9 = contactDb->ReadContactL(id));
+      id = id_list.takeFirst();
+      id_list.append(id);
+      TRAP(r, item10 = contactDb->ReadContactL(id));
+    }
+    CleanupStack::PushL(item1);
+    CleanupStack::PushL(item2);
+    CleanupStack::PushL(item3);
+    CleanupStack::PushL(item4);
+    CleanupStack::PushL(item5);
+    CleanupStack::PushL(item6);
+    CleanupStack::PushL(item7);
+    CleanupStack::PushL(item8);
+    CleanupStack::PushL(item9);
+    CleanupStack::PushL(item10);
+     
+    if(r != KErrNone){ qWarning() << "Error by OpenContactL: " << r; }
+            
+    CleanupStack::PopAndDestroy(11); //10*item + contactsDb    
+#endif
+  }
 }
 
 void tst_Contact::timeout()
@@ -427,28 +628,86 @@ void tst_Contact::tst_createContact()
 
 void tst_Contact::tst_saveContact()
 {
-
+  if(m_backend == BackendQContacts) {    
     QContact *c = new QContact;
     c->setType("Contact");
-    QContactName name;
-    name.setFirstName("FirstName");
-    name.setLastName("LastName");
-    name.setPrefix("Mr");
-    c->saveDetail(&name);
+    QContactName cname;
+    QString name;
+    name = firstNames.takeFirst();
+    firstNames.push_back(name);
+    cname.setFirstName(name);
+    name = lastNames.takeFirst();
+    lastNames.push_back(name);
+    cname.setLastName(name);
+    cname.setPrefix("Mr");
+    c->saveDetail(&cname);
 
+    int ret = 0; 
+    
     QBENCHMARK {
-        m_qm->saveContact(c);
+      ret = m_qm->saveContact(c);
+    }
+    if(!ret){
+      qDebug() << "Failed to create contact durring setup";
+      return;
     }
     id_list.append(c->localId());
-
     delete c;
+  }
+  else if(m_backend == BackendContactsModel){
+#ifdef Q_OS_SYMBIAN
+    // Create a contact card and add a work phone number. Numeric values are 
+    // stored in a text field (storage type = KStorageTypeText).
+    
+    CContactDatabase* db = CContactDatabase::OpenL();
+    CleanupStack::PushL(db);
+
+    CContactCard* newCard = CContactCard::NewLC();    
+    
+    QString name;
+    
+    // Create the firstName field and add the data to it
+    name = firstNames.takeFirst();
+    firstNames.push_back(name);        
+    CContactItemField* firstName = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldGivenName);
+    TPtrC Firstname(reinterpret_cast<const TUint16*>(name.utf16()));
+    firstName->TextStorage()->SetTextL(Firstname);      
+    newCard->AddFieldL(*firstName);
+    CleanupStack::Pop(firstName);
+
+    // Create the lastName field and add the data to it
+    name = lastNames.takeFirst();
+    lastNames.push_back(name);        
+    CContactItemField* lastName= CContactItemField::NewLC(KStorageTypeText, KUidContactFieldFamilyName);
+    TPtrC Lastname(reinterpret_cast<const TUint16*>(name.utf16()));
+    lastName->TextStorage()->SetTextL(Lastname);
+    newCard->AddFieldL(*lastName);
+    CleanupStack::Pop(lastName);
+    
+    CContactItemField* prefix = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldPrefixName);
+    _LIT(KPrefix, "Mr");
+    prefix->TextStorage()->SetTextL(KPrefix);
+    newCard->AddFieldL(*prefix);
+    CleanupStack::Pop(prefix);
+    
+    QBENCHMARK {
+      // Add newCard to the database
+      const TContactItemId contactId = db->AddNewContactL(*newCard);
+      db->CloseContactL(contactId);
+      id_list.append(contactId);      
+    }
+        
+    CleanupStack::PopAndDestroy(2); //newCard, contactsDb
+#else
+    qWarning("ContactModel set but Q_OS_SYMBIAN not set, this doesn't make sense");
+#endif 
+  }
 }
 
 
 void tst_Contact::createContact()
 {
-
-    static int id = 0;
+  if(m_backend == BackendQContacts) {    
     QContact *c = new QContact;
     c->setType("Contact");
     QContactName cname;
@@ -463,23 +722,71 @@ void tst_Contact::createContact()
     c->saveDetail(&cname);
 
     if(!m_qm->saveContact(c)){
-        qDebug() << "Failed to create contact durring setup";
-        return;
+      qDebug() << "Failed to create contact durring setup";
+      return;
     }
     id_list.append(c->localId());
     delete c;
+  }
+  else if(m_backend == BackendContactsModel){
+#ifdef Q_OS_SYMBIAN
+    // Create a contact card and add a work phone number. Numeric values are 
+    // stored in a text field (storage type = KStorageTypeText).
+    
+    CContactDatabase* db = CContactDatabase::OpenL();
+    CleanupStack::PushL(db);
 
+    CContactCard* newCard = CContactCard::NewLC();    
+    
+    QString name;
+    
+    // Create the firstName field and add the data to it
+    name = firstNames.takeFirst();
+    firstNames.push_back(name);        
+    CContactItemField* firstName = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldGivenName);
+    TPtrC Firstname(reinterpret_cast<const TUint16*>(name.utf16()));
+    firstName->TextStorage()->SetTextL(Firstname);      
+    newCard->AddFieldL(*firstName);
+    CleanupStack::Pop(firstName);
+
+    // Create the lastName field and add the data to it
+    name = lastNames.takeFirst();
+    lastNames.push_back(name);        
+    CContactItemField* lastName= CContactItemField::NewLC(KStorageTypeText, KUidContactFieldFamilyName);
+    TPtrC Lastname(reinterpret_cast<const TUint16*>(name.utf16()));
+    lastName->TextStorage()->SetTextL(Lastname);
+    newCard->AddFieldL(*lastName);
+    CleanupStack::Pop(lastName);
+    
+    CContactItemField* prefix = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldPrefixName);
+    _LIT(KPrefix, "Mr");
+    prefix->TextStorage()->SetTextL(KPrefix);
+    newCard->AddFieldL(*prefix);
+    CleanupStack::Pop(prefix);
+    
+    // Add newCard to the database
+    const TContactItemId contactId = db->AddNewContactL(*newCard);
+    db->CloseContactL(contactId);    
+    
+    id_list.append(contactId);
+    CleanupStack::PopAndDestroy(2); //newCard, contactsDb
+#else
+    qWarning("ContactModel set but Q_OS_SYMBIAN not set, this doesn't make sense");
+#endif 
+  }
 }
 
 void tst_Contact::tst_nameFilter()
 {    
+  if(m_backend == BackendQContacts){
     QContactFilter fil = QContactName::match(firstNames.first(),""); // pick one first name to find
     //QContactFilter fil = QContactName::match("sdfsdfsdfjhsjkdfshdkf", ""); // pick one first name to find
-    QContact c;
-    int ret;
+    QContact c;    
 
     m_run++;
 
+#if defined(Q_WS_MAEMO_6)
+    int ret;
     QContactFetchRequest* req = new QContactFetchRequest;
     req->setFilter(fil);
     req->setManager(m_qm);
@@ -488,7 +795,6 @@ void tst_Contact::tst_nameFilter()
 
     m_timer->start(1000);
 
-#if defined(Q_WS_MAEMO_6)
     QBENCHMARK {
         req->start();
         ret = loop->exec();
@@ -500,20 +806,60 @@ void tst_Contact::tst_nameFilter()
         QFAIL("Failed to load one contact");
     }
 
-    QList<QContact> qcl = req->contacts();
-    while(!qcl.isEmpty()){
-        QContact c = qcl.takeFirst();
-        qDebug() << "Contact: " << c.displayLabel();
-    }
-
-#endif
+//    QList<QContact> qcl = req->contacts();
+//    while(!qcl.isEmpty()){
+//        QContact c = qcl.takeFirst();
+//        qDebug() << "Contact: " << c.displayLabel();
+//    }
     delete req;
-
+    
+#elif defined(Q_OS_SYMBIAN)
+    QList<QContact> qlc;
+    
+    QBENCHMARK {
+      qlc = m_qm->contacts(fil, QList<QContactSortOrder>(), QStringList());
+    }
+    
+//    while(!qlc.isEmpty()){
+//        QContact c = qlc.takeFirst();
+//        qDebug() << "Contact: " << c.displayLabel();
+//    }
+#endif
+  }
+  else if(m_backend == BackendContactsModel){
+#ifdef Q_OS_SYMBIAN
+    //open database
+    // Open the default contact database
+    CContactDatabase* contactDb = CContactDatabase::OpenL();
+    CleanupStack::PushL(contactDb);
+       
+    CContactItem *item = 0x0;
+            
+    const TPtrC Firstname(reinterpret_cast<const TUint16*>(firstNames.first().utf16()));
+    CContactIdArray* idArray;
+    
+    CContactItemFieldDef* fieldDef = new (ELeave) CContactItemFieldDef();
+    CleanupStack::PushL(fieldDef);
+    
+    fieldDef->AppendL( KUidContactFieldGivenName);
+       
+    QBENCHMARK {      
+      idArray = contactDb->FindLC(Firstname, fieldDef);      
+      if(idArray->Count() > 0)
+        item = contactDb->ReadContactL((*idArray)[0]);
+      else
+        QFAIL("No contacts returned from CContactDatabase::FindLC");
+    }
+    CleanupStack::PushL(item);    
+    
+    CleanupStack::PopAndDestroy(4); //item, idArray, fielddef, lock, contactsDb
+#endif
+  }
 }
 
 void tst_Contact::tst_removeOneContact()
 {
-
+  if(m_backend == BackendQContacts){
     QList<QContactLocalId> one;
     QMap<int, QContactManager::Error> errorMap;
 
@@ -526,18 +872,30 @@ void tst_Contact::tst_removeOneContact()
         m_qm->removeContacts(&one, &errorMap);
     }
 
-//    QMapIterator<int, QContactManager::Error> i(errorMap);
-//    while(i.hasNext()){
-//        i.next();
-//        qDebug() << "Error deleting: " << i.key() << " error: " << i.value();
-//    }
-
+  }
+  else if(m_backend == BackendContactsModel){    
+#ifdef Q_OS_SYMBIAN
+    CContactDatabase* db = CContactDatabase::OpenL();
+    CleanupStack::PushL(db);    
+        
+    if(id_list.isEmpty())
+      QFAIL("no contacts available to be removed for tst_removeOnContact()");
+    
+    
+    TInt32 id = id_list.takeFirst();
+    
+    QBENCHMARK {
+      db->DeleteContactL(id);
+    }
+    
+    CleanupStack::PopAndDestroy(1); //idArray, contactsDb
+#endif
+  }
 }
 
 void tst_Contact::tst_removeAllContacts()
-{
-    QList<QContactLocalId> qcl = m_qm->contactIds();
-    int before = qcl.count();
+{    
+    int before = countContacts();
 
     if(before < 20) {
         for(int i = before; i < 20; i++){
@@ -545,11 +903,10 @@ void tst_Contact::tst_removeAllContacts()
         }
     }
     
-    //qDebug() << "Removing: " << id_list.count() << " contacts";
-    
     QBENCHMARK {
         clearContacts();
     }
+    
 }
 
 int main(int argc, char **argv){
@@ -563,11 +920,16 @@ int main(int argc, char **argv){
 //    tst_Contact test2;
 //    test2.setBackend("tracker");
 //    QTest::qExec(&test2, argc, argv);
-#if defined(Q_OS_SYMBIAN)
+#if defined(Q_OS_SYMBIAN)   
     tst_Contact test2;
     test2.setBackend("symbian");
     QTest::qExec(&test2, argc, argv);
+    
+    tst_Contact test3;
+    test3.setBackend("SymbianContactsModel");
+    QTest::qExec(&test3, argc, argv);
 #endif
 }
 
 #include "tst_contacts.moc"
+
