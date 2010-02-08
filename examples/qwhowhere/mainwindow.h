@@ -40,7 +40,6 @@ private:
     void openDialog();
 
 public slots:
-    void setupBearer();
     void positionUpdated(QGeoPositionInfo gpsPos);
     void mapImageLoaded(QPixmap);
     void askFriendLocation();
@@ -50,6 +49,11 @@ public slots:
     void friendLocationSMSReceived(QString latitude, QString longitude);
     void friendAskLocationSMS(QString friendPhoneNumber);
     void updateMap();
+
+private slots:
+    void delayedInit();
+    void bearerError(QNetworkSession::SessionError error);
+    void bearerOpened();
 
 private:
     // Graphics view fw
@@ -80,7 +84,7 @@ private:
     QNetworkSession* m_session;
 
     // Location data
-    QPointer<QGeoPositionInfoSource> m_location;
+    QGeoPositionInfoSource *m_location;
     QGeoPositionInfo m_YougeoPosInfo;
     qreal m_friend_longitude;
     qreal m_friend_latitude;

@@ -28,6 +28,11 @@ contains(mobility_modules,location) {
         contains(QT_CONFIG, webkit) {
             SUBDIRS += fetchgooglemaps
         }
+        contains(mobility_modules,contacts) {
+            contains(mobility_modules,messaging) {
+                SUBDIRS += qwhowhere
+            }
+        }
     }		
 }
 

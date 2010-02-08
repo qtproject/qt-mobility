@@ -9,7 +9,9 @@
 #include "message.h"
 
 MainWindow::MainWindow(QWidget *parent) :
-        QMainWindow(parent)
+        QMainWindow(parent),
+        m_session(0),
+        m_location(0)
 {
     setWindowTitle("QWhoWhere");
     m_friend_longitude = 0.0;
@@ -59,45 +61,94 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 #endif
 
-    // Start listening GPS
-    startGps();
-
-    // Set up bearer
-    QTimer::singleShot(0, this, SLOT(setupBearer()));
+    QTimer::singleShot(0, this, SLOT(delayedInit()));
 }
 
 MainWindow::~MainWindow()
 {
-    m_location->stopUpdates();
-    m_session->close();
+    if (m_location)
+        m_location->stopUpdates();
+    if (m_session)
+        m_session->close();
 }
 
-void MainWindow::setupBearer()
+void MainWindow::delayedInit()
 {
-    // Set Internet Access Point
+    // Set up the GPS
+    m_location = QGeoPositionInfoSource::createDefaultSource(this);
+
+    if (!m_location)
+    {
+        QMessageBox::warning(this, "QWhoWhere", tr("This example requires GPS support in order to function."));
+        QTimer::singleShot(0, qApp, SLOT(quit()));
+        return;
+    }
+
+    QObject::connect(m_location, SIGNAL(positionUpdated(QGeoPositionInfo)),
+                     this, SLOT(positionUpdated(QGeoPositionInfo)));
+
+    // Set up the bearer management
     QNetworkConfigurationManager manager;
     const bool canStartIAP = (manager.capabilities()
                               & QNetworkConfigurationManager::CanStartAndStopInterfaces);
+
     // Is there default access point, use it
     QNetworkConfiguration cfg = manager.defaultConfiguration();
-    if (!cfg.isValid() || !canStartIAP) {
-        QMessageBox::information(this, "QWhoWhere", "Available Access Points not found");
+    if (!cfg.isValid() || (!canStartIAP && cfg.state() != QNetworkConfiguration::Active)) {
+        QMessageBox::warning(this, "QWhoWhere", tr("This example requires network access in order to function."));
+        QTimer::singleShot(0, qApp, SLOT(quit()));
         return;
     }
+
     m_session = new QNetworkSession(cfg);
+    connect(m_session,
+            SIGNAL(error(QNetworkSession::SessionError)),
+            this,
+            SLOT(bearerError(QNetworkSession::SessionError)));
+    connect(m_session,
+            SIGNAL(opened()),
+            this,
+            SLOT(bearerOpened()));
+
     m_session->open();
-    m_session->waitForOpened();
+}
+
+void MainWindow::bearerError(QNetworkSession::SessionError error)
+{
+    QMessageBox msgBox(this);
+    msgBox.setIcon(QMessageBox::Warning);
+    msgBox.setStandardButtons(QMessageBox::Retry | QMessageBox::Cancel);
+    msgBox.setDefaultButton(QMessageBox::Retry);
+
+    if (error == QNetworkSession::UnknownSessionError) {
+        // No network found or user failed to select a network from a list of options
+        msgBox.setText(tr("This examples requires network access in order to function."));
+        msgBox.setInformativeText(tr("Press Cancel to quit this example."));
+    } else if (error == QNetworkSession::SessionAbortedError) {
+        // User went out of range or shutdown network
+        msgBox.setText(tr("Out of range of network."));
+        msgBox.setInformativeText(tr("Move back into range and press Retry, or press cancel to quit this example."));
+    } else {
+        msgBox.setText(tr("A networking error has occurred."));
+        msgBox.setInformativeText(tr("Press Retry to attempt to connect to the network again, or press Cancel to quit the example."));
+    }
+
+    int ret = msgBox.exec();
+    if (ret == QMessageBox::Retry) {
+        QTimer::singleShot(0, m_session, SLOT(open()));
+    } else {
+        QTimer::singleShot(0, qApp, SLOT(quit()));
+    }
+}
+
+void MainWindow::bearerOpened()
+{
+    startGps();
 }
 
 void MainWindow::startGps()
 {
-    // QGeoPositionInfoSource: Start GPS and listen position changes
     showSearchingGpsIcon(true);
-    if (!m_location) {
-        m_location = QGeoPositionInfoSource::createDefaultSource(this);
-        QObject::connect(m_location, SIGNAL(positionUpdated(QGeoPositionInfo)),
-                         this, SLOT(positionUpdated(QGeoPositionInfo)));
-    }
     m_location->startUpdates();
 }
 
