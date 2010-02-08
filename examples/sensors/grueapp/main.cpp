@@ -20,8 +20,7 @@ int main(int argc, char **argv)
 
     QSensor sensor;
     sensor.setType("GrueSensor");
-    sensor.connect();
-    if (!sensor.isAvailable()) {
+    if (!sensor.connect()) {
         qWarning("Grue sensor is not available!");
         return 1;
     }

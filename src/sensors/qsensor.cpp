@@ -111,16 +111,18 @@ QSensor::~QSensor()
 }
 
 /*!
-    \property QSensor::isAvailable
-    \brief the validity of the sensor.
+    \property QSensor::connected
+    \brief a value indicating if the sensor has connected to a backend.
 
-    If the sensor is not valid then you cannot use it.
+    A sensor that has not been connected to a backend cannot do anything useful.
+
+    Call the connect() method to force the sensor to connect to a backend immediately.
 */
 
 /*!
     Returns true if the sensor is connected to a backend.
 */
-bool QSensor::isAvailable() const
+bool QSensor::isConnected() const
 {
     return (d->backend != 0);
 }
@@ -129,7 +131,8 @@ bool QSensor::isAvailable() const
     \property QSensor::sensorid
     \brief the backend identifier for the sensor.
 
-    Note if the sensor is not connected to a backend the identifier may be empty.
+    Note that the identifier is filled out automatically
+    when the sensor is connected to a backend.
 */
 
 /*!
@@ -180,20 +183,24 @@ void QSensor::setType(const QByteArray &type)
 /*!
     Try to connect to a sensor backend.
 
-    You can test for failure with the isAvailable() function.
+    Returns true if a suitable backend could be found, false otherwise.
 
     The type must be set before calling this method if you are using QSensor directly.
 
-    \sa isAvailable()
+    \sa isConnected()
 */
-void QSensor::connect()
+bool QSensor::connect()
 {
     if (d->backend)
-        return;
+        return true;
 
-    Q_ASSERT(!d->type.isEmpty());
+    if (d->type.isEmpty()) {
+        qWarning() << "QSensor::connect - Cannot call this method unless the type is set.";
+        return false;
+    }
 
     d->backend = QSensorManager::createBackend(this);
+    return (d->backend != 0);
 }
 
 /*!
@@ -344,6 +351,10 @@ int QSensor::updateInterval() const
 
 /*!
     Returns the update policies that the sensor supports.
+
+    Note that this will return QSensor::Undefined until a sensor backend is connected.
+
+    \sa isConnected()
 */
 QSensor::UpdatePolicies QSensor::supportedUpdatePolicies() const
 {
@@ -355,26 +366,20 @@ QSensor::UpdatePolicies QSensor::supportedUpdatePolicies() const
 */
 void QSensor::poll()
 {
-    if (d->updatePolicy == PolledUpdates && d->backend)
+    if (!connect())
+        return;
+    if (d->updatePolicy == PolledUpdates)
         d->backend->poll();
 }
 
 /*!
     Start retrieving values from the sensor.
-
-    Note that some sensors require exclusive access so this function
-    may fail and return false.
-
-    Also note that some sensors may not honour settings set after
-    this method is called.
 */
 void QSensor::start()
 {
     if (d->active)
         return;
-    if (!d->backend)
-        connect();
-    if (!d->backend)
+    if (!connect())
         return;
     d->active = true;
     d->backend->start();
@@ -385,9 +390,7 @@ void QSensor::start()
 */
 void QSensor::stop()
 {
-    if (!d->active)
-        return;
-    if (!d->backend)
+    if (!d->active || !d->backend)
         return;
     d->active = false;
     d->backend->stop();
@@ -398,6 +401,10 @@ void QSensor::stop()
     \brief the reading class.
 
     The reading class provides access to sensor readings.
+
+    Note that this will return 0 until a sensor backend is connected.
+
+    \sa isConnected()
 */
 
 /*!

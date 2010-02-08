@@ -66,7 +66,7 @@ class Q_SENSORS_EXPORT QSensor : public QObject
     Q_FLAGS(UpdatePolicies)
     Q_PROPERTY(QByteArray sensorid READ identifier WRITE setIdentifier)
     Q_PROPERTY(QByteArray type READ type WRITE setType)
-    Q_PROPERTY(bool isAvailable READ isAvailable)
+    Q_PROPERTY(bool connected READ isConnected)
     Q_PROPERTY(UpdatePolicies supportedUpdatePolicies READ supportedUpdatePolicies)
     Q_PROPERTY(UpdatePolicy updatePolicy READ updatePolicy WRITE setUpdatePolicy)
     Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval)
@@ -82,8 +82,8 @@ public:
     QByteArray type() const;
     void setType(const QByteArray &type);
 
-    Q_INVOKABLE void connect();
-    bool isAvailable() const;
+    Q_INVOKABLE bool connect();
+    bool isConnected() const;
 
     bool isActive() const;
     void setActive(bool running);
