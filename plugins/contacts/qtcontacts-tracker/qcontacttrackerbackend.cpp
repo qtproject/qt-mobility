@@ -597,7 +597,7 @@ bool QContactTrackerEngine::startRequest(QContactAbstractRequest* req)
 }
 
 /*! \reimp */
-QString QContactTrackerEngine::synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const
+QString QContactTrackerEngine::synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const
 {
     QString label = QContactManagerEngine::synthesizedDisplayLabel(contact, error);
     if (label.isEmpty())

@@ -148,7 +148,7 @@ public:
     int implementationVersion() const;
 
     /* Synthesise the display label of a contact */
-    QString synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
+    QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
 
 
 private:
