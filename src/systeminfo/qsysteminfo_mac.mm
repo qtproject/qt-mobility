@@ -163,7 +163,6 @@ inline QStringList nsarrayToQStringList(void *nsarray)
     CWInterface * currentInterface;
 }
 - (void)notificationHandler:(NSNotification *)notification;
-- (void)languageHandler:(NSNotification *)notification;
 - (void)remove;
 @end
 
