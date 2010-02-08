@@ -43,10 +43,16 @@
 
 #include "cnttransformcontactdata.h"
 
+class CntThumbnailCreator;
+
 QTM_USE_NAMESPACE
 
 class CntTransformAvatarSimple : public CntTransformContactData
 {
+public:
+    CntTransformAvatarSimple();
+    ~CntTransformAvatarSimple();
+
 protected:
 	QList<CContactItemField *> transformDetailL(const QContactDetail &detail);
 	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact);
@@ -56,6 +62,8 @@ protected:
     bool supportsSubType(const QString& subType) const;
     quint32 getIdForField(const QString& fieldName) const;
     void detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString& contactType) const;
+private:
+    CntThumbnailCreator* m_thumbnailCreator;
 };
 
 #endif

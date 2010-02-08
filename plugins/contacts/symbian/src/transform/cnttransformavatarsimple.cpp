@@ -51,6 +51,16 @@ const TUid KUidContactFieldVideoRingTone={KUidContactFieldVideoRingToneValue};
 // The max. size of the thumbnail image that is saved into contacts database
 const TSize KMaxThumbnailSize(80, 96);
 
+CntTransformAvatarSimple::CntTransformAvatarSimple() :
+    m_thumbnailCreator(0)
+{
+}
+
+CntTransformAvatarSimple::~CntTransformAvatarSimple()
+{
+    delete m_thumbnailCreator;
+}
+
 QList<CContactItemField *> CntTransformAvatarSimple::transformDetailL(const QContactDetail &detail)
 {
     if(detail.definitionName() != QContactAvatar::DefinitionName)
@@ -103,8 +113,10 @@ QList<CContactItemField *> CntTransformAvatarSimple::transformDetailL(const QCon
     }
 
 	if(!avatar.pixmap().isNull()) {
-	    CntThumbnailCreator* creator = new (ELeave) CntThumbnailCreator();
-        CleanupStack::PushL(creator);
+	    // lazy instantiation
+	    if(!m_thumbnailCreator) {
+	        m_thumbnailCreator = new (ELeave) CntThumbnailCreator();
+	    }
 
         // Scaling is done before converting to CFbsBitmap because
         // toSymbianCFbsBitmap may generate a duplicate of the bitmap data
@@ -114,10 +126,8 @@ QList<CContactItemField *> CntTransformAvatarSimple::transformDetailL(const QCon
         CFbsBitmap* bitmap = scaled.toSymbianCFbsBitmap();
         CleanupStack::PushL(bitmap);
 
-        creator->addThumbnailFieldL(&fieldList, bitmap, KMaxThumbnailSize);
-        //creator->addThumbnailFieldL(&fieldList, _L("C:\\data\\Images\\contact.jpg"), KMaxThumbnailSize);
+        m_thumbnailCreator->addThumbnailFieldL(&fieldList, bitmap, KMaxThumbnailSize);
         CleanupStack::Pop(bitmap); // ownership transferred
-        CleanupStack::PopAndDestroy(creator);
     }
 
 	return fieldList;
@@ -127,7 +137,7 @@ QContactDetail *CntTransformAvatarSimple::transformItemField(const CContactItemF
 {
 	Q_UNUSED(contact);
 	QContactAvatar *avatar = new QContactAvatar();
-	
+
 	if (field.ContentType().ContainsFieldType(KUidContactFieldCodImage)) {
 	    CContactTextField* storage = field.TextStorage();
 	    QString avatarString = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
@@ -138,7 +148,8 @@ QContactDetail *CntTransformAvatarSimple::transformItemField(const CContactItemF
         QString avatarString = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
         avatar->setAvatar(avatarString);
         avatar->setSubType(QContactAvatar::SubTypeAudioRingtone);
-	} else if (field.ContentType().ContainsFieldType(KUidContactFieldPicture)) {
+	} else if (field.ContentType().ContainsFieldType(KUidContactFieldPicture)
+	    || field.ContentType().ContainsFieldType(KUidContactFieldVCardMapJPEG)) {
 	    // use the existing QContactAvatar (if available) in case of a pixmap
 	    // field.
 	    delete avatar;

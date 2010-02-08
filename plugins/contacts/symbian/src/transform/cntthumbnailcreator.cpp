@@ -39,7 +39,9 @@
 **
 ****************************************************************************/
 #include "cntthumbnailcreator.h"
-#include "cntsymbiantransformerror.h"
+
+#include <cntdb.h> 
+#include <cntitem.h>
 
 #include <cntdef.h>
 #include <cntfield.h>
@@ -67,7 +69,8 @@ CntThumbnailCreator::CntThumbnailCreator() :
     CActive(EPriorityStandard),
     m_state(EStateInitialized),
     m_thumbnailSize(KThumbnailSizeUninitialized),
-    m_err(KErrNone)
+    m_err(KErrNone),
+    m_thumbnailFieldType(KNullUid)
 {
     CActiveScheduler::Add(this);
 }
@@ -254,14 +257,13 @@ void CntThumbnailCreator::CreateContactFieldL()
 {
     __ASSERT_DEBUG(m_imageData, User::Panic(KPanicCategory, KPanicUnitialized));
 
-    // Note! There is a bug in S60 Phonebook or Symbian Contact model;
-    // The field types must be inserted in order KUidContactFieldVCardMapJPEG,
-    // KUidContactFieldPicture (not the other way around), otherwise the
-    // thumbnail is not shown in S60 Phonebook!
     CContactItemField *thumbnailField = CContactItemField::NewLC(
-            KStorageTypeStore, KUidContactFieldVCardMapJPEG);
+        KStorageTypeStore, thumbnailFieldTypeL());
     thumbnailField->SetMapping(KUidContactFieldVCardMapPHOTO);
-    thumbnailField->AddFieldTypeL(KUidContactFieldPicture);
+    if(m_thumbnailFieldType != KUidContactFieldVCardMapJPEG) {
+        thumbnailField->AddFieldTypeL(KUidContactFieldVCardMapJPEG);
+    }
+
     thumbnailField->StoreStorage()->SetThingL(*m_imageData);
     QT_TRYCATCH_LEAVING(m_fieldList->append(thumbnailField));
     CleanupStack::Pop(thumbnailField);
@@ -270,4 +272,37 @@ void CntThumbnailCreator::CreateContactFieldL()
     TRequestStatus *status = &iStatus;
     User::RequestComplete(status, KErrNone);
     SetActive();
+}
+
+/*
+ * The expected field type of the thumbnail field depends on the S60 version.
+ * This function can be used to check which of the two possible field types
+ * exists in the system template.
+ */
+TUid CntThumbnailCreator::thumbnailFieldTypeL()
+{
+    // Assume the system template field for thumbnail is not changed run-time
+    // and fetch it only when SetThumbnailFieldTypeL is called for the first
+    // time (requires the CntThumbnailCreator instance to live longer than one
+    // thumbnail create operation to be effective, otherwise we would end up
+    // opening contact database and reading the system template every time a
+    // thumbnail is stored).
+    if(m_thumbnailFieldType == KNullUid) {
+        CContactDatabase *contactDatabase = CContactDatabase::OpenL();
+        CleanupStack::PushL(contactDatabase);
+        CContactItem *systemTemplate = contactDatabase->OpenContactL(contactDatabase->TemplateId());
+        const CContactItemFieldSet& fields = systemTemplate->CardFields();
+        // Assumes that if KUidContactFieldVCardMapJPEG is not found in the
+        // system template, then KUidContactFieldPicture is to be used for
+        // thumbnails 
+        if(fields.Find(KUidContactFieldVCardMapJPEG) == KErrNotFound){
+            m_thumbnailFieldType = KUidContactFieldPicture;
+        } else {
+            m_thumbnailFieldType = KUidContactFieldVCardMapJPEG;
+        }
+        CleanupStack::PushL(systemTemplate);
+        CleanupStack::PopAndDestroy(systemTemplate);
+        CleanupStack::PopAndDestroy(contactDatabase);
+    }
+    return m_thumbnailFieldType;
 }
