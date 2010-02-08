@@ -64,20 +64,12 @@ public:
         : x(0)
         , y(0)
         , z(0)
-        , calibrated_x(0)
-        , calibrated_y(0)
-        , calibrated_z(0)
-        , calibrationLevel(0)
     {
     }
 
     qreal x;
     qreal y;
     qreal z;
-    qreal calibrated_x;
-    qreal calibrated_y;
-    qreal calibrated_z;
-    int calibrationLevel;
 };
 
 QTM_END_NAMESPACE

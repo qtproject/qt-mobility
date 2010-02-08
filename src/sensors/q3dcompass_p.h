@@ -39,57 +39,38 @@
 **
 ****************************************************************************/
 
-#ifndef QMAGNETOMETER_H
-#define QMAGNETOMETER_H
+#ifndef Q3DCOMPASS_P_H
+#define Q3DCOMPASS_P_H
 
-#include "qsensor.h"
-#include <QtGlobal>
-#include <QSharedData>
-#include "qsensorbackend.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API. It exists purely as an
+// implementation detail. This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include "qsensor_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QMagnetometerReadingPrivate;
-
-class Q_SENSORS_EXPORT QMagnetometerReading : public QSensorReading
-{
-    Q_OBJECT
-    Q_PROPERTY(qreal x READ x)
-    Q_PROPERTY(qreal y READ y)
-    Q_PROPERTY(qreal z READ z)
-    DECLARE_READING(QMagnetometerReading)
-public:
-    qreal x() const;
-    void setX(qreal x);
-
-    qreal y() const;
-    void setY(qreal y);
-
-    qreal z() const;
-    void setZ(qreal z);
-};
-
-// begin generated code
-
-class Q_SENSORS_EXPORT QMagnetometerFilter : public QSensorFilter
+class Q3dCompassReadingPrivate : public QSensorReadingPrivate
 {
 public:
-    virtual bool filter(QMagnetometerReading *reading) = 0;
-private:
-    bool filter(QSensorReading *reading) { return filter(static_cast<QMagnetometerReading*>(reading)); }
-};
+    Q3dCompassReadingPrivate()
+        : x(0)
+        , y(0)
+        , z(0)
+    {
+    }
 
-class Q_SENSORS_EXPORT QMagnetometer : public QSensor
-{
-    Q_OBJECT
-public:
-    explicit QMagnetometer(QObject *parent = 0) : QSensor(parent)
-    { setType(QMagnetometer::type); }
-    virtual ~QMagnetometer() {}
-    QMagnetometerReading *reading() const { return static_cast<QMagnetometerReading*>(QSensor::reading()); }
-    static const char *type;
+    qreal x;
+    qreal y;
+    qreal z;
 };
-// end generated code
 
 QTM_END_NAMESPACE
 

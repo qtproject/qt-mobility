@@ -38,6 +38,7 @@ SENSORS=\
     qproximitysensor\
     qrotationsensor\
     qtapsensor\
+    q3dcompass\
 
 for(s,SENSORS) {
     # Client API

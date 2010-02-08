@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QMAGNETOMETER_H
-#define QMAGNETOMETER_H
+#ifndef Q3DCOMPASS_H
+#define Q3DCOMPASS_H
 
 #include "qsensor.h"
 #include <QtGlobal>
@@ -49,15 +49,15 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QMagnetometerReadingPrivate;
+class Q3dCompassReadingPrivate;
 
-class Q_SENSORS_EXPORT QMagnetometerReading : public QSensorReading
+class Q_SENSORS_EXPORT Q3dCompassReading : public QSensorReading
 {
     Q_OBJECT
     Q_PROPERTY(qreal x READ x)
     Q_PROPERTY(qreal y READ y)
     Q_PROPERTY(qreal z READ z)
-    DECLARE_READING(QMagnetometerReading)
+    DECLARE_READING(Q3dCompassReading)
 public:
     qreal x() const;
     void setX(qreal x);
@@ -71,22 +71,22 @@ public:
 
 // begin generated code
 
-class Q_SENSORS_EXPORT QMagnetometerFilter : public QSensorFilter
+class Q_SENSORS_EXPORT Q3dCompassFilter : public QSensorFilter
 {
 public:
-    virtual bool filter(QMagnetometerReading *reading) = 0;
+    virtual bool filter(Q3dCompassReading *reading) = 0;
 private:
-    bool filter(QSensorReading *reading) { return filter(static_cast<QMagnetometerReading*>(reading)); }
+    bool filter(QSensorReading *reading) { return filter(static_cast<Q3dCompassReading*>(reading)); }
 };
 
-class Q_SENSORS_EXPORT QMagnetometer : public QSensor
+class Q_SENSORS_EXPORT Q3dCompass : public QSensor
 {
     Q_OBJECT
 public:
-    explicit QMagnetometer(QObject *parent = 0) : QSensor(parent)
-    { setType(QMagnetometer::type); }
-    virtual ~QMagnetometer() {}
-    QMagnetometerReading *reading() const { return static_cast<QMagnetometerReading*>(QSensor::reading()); }
+    explicit Q3dCompass(QObject *parent = 0) : QSensor(parent)
+    { setType(Q3dCompass::type); }
+    virtual ~Q3dCompass() {}
+    Q3dCompassReading *reading() const { return static_cast<Q3dCompassReading*>(QSensor::reading()); }
     static const char *type;
 };
 // end generated code

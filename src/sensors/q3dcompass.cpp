@@ -39,22 +39,25 @@
 **
 ****************************************************************************/
 
-#include "qmagnetometer.h"
-#include "qmagnetometer_p.h"
+#include "q3dcompass.h"
+#include "q3dcompass_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-IMPLEMENT_READING(QMagnetometerReading)
+IMPLEMENT_READING(Q3dCompassReading)
 
 /*!
-    \class QMagnetometerReading
+    \class Q3dCompassReading
     \ingroup sensors
 
     \preliminary
-    \brief The QMagnetometerReading class represents one reading from the
-           magnetometer.
+    \brief The Q3dCompassReading class represents one reading from the
+           3D compass.
 
-    The magnetometer returns magnetic flux density values along 3 axes.
+    The 3D compass returns magnetic flux density values along 3 axes.
+    Unlike the \l{QMagnetometerReading}{Magnetometer}, the 3D compass
+    represents a filtered and processed view that aims to reflect only
+    on the magnetic field of the earth.
     The scale of the values is teslas. The axes are arranged as follows.
 
 \code
@@ -79,14 +82,14 @@ IMPLEMENT_READING(QMagnetometerReading)
 */
 
 /*!
-    \property QMagnetometerReading::x
+    \property Q3dCompassReading::x
     \brief the flux density on the X axis.
 */
 
 /*!
     Returns the flux density on the X axis.
 */
-qreal QMagnetometerReading::x() const
+qreal Q3dCompassReading::x() const
 {
     return d->x;
 }
@@ -94,20 +97,20 @@ qreal QMagnetometerReading::x() const
 /*!
     Sets the flux density on the X axis to \a x.
 */
-void QMagnetometerReading::setX(qreal x)
+void Q3dCompassReading::setX(qreal x)
 {
     d->x = x;
 }
 
 /*!
-    \property QMagnetometerReading::y
+    \property Q3dCompassReading::y
     \brief the flux density on the Y axis.
 */
 
 /*!
     Returns the flux density on the Y axis.
 */
-qreal QMagnetometerReading::y() const
+qreal Q3dCompassReading::y() const
 {
     return d->y;
 }
@@ -115,20 +118,20 @@ qreal QMagnetometerReading::y() const
 /*!
     Sets the flux density on the Y axis to \a y.
 */
-void QMagnetometerReading::setY(qreal y)
+void Q3dCompassReading::setY(qreal y)
 {
     d->y = y;
 }
 
 /*!
-    \property QMagnetometerReading::z
+    \property Q3dCompassReading::z
     \brief the flux density on the Z axis.
 */
 
 /*!
     Returns the flux density on the Z axis.
 */
-qreal QMagnetometerReading::z() const
+qreal Q3dCompassReading::z() const
 {
     return d->z;
 }
@@ -136,7 +139,7 @@ qreal QMagnetometerReading::z() const
 /*!
     Sets the flux density on the Z axis to \a z.
 */
-void QMagnetometerReading::setZ(qreal z)
+void Q3dCompassReading::setZ(qreal z)
 {
     d->z = z;
 }
@@ -146,56 +149,56 @@ void QMagnetometerReading::setZ(qreal z)
 // begin generated code
 
 /*!
-    \class QMagnetometerFilter
+    \class Q3dCompassFilter
     \ingroup sensors_helpers
 
     \preliminary
-    \brief The QMagnetometerFilter class is a convenience wrapper around QSensorFilter.
+    \brief The Q3dCompassFilter class is a convenience wrapper around QSensorFilter.
 
-    The only difference is that the filter() method features a pointer to QMagnetometerReading
+    The only difference is that the filter() method features a pointer to Q3dCompassReading
     instead of QSensorReading.
 */
 
 /*!
-    \fn QMagnetometerFilter::filter(QMagnetometerReading *reading)
+    \fn Q3dCompassFilter::filter(Q3dCompassReading *reading)
 
     Called when \a reading changes. Returns false to prevent the reading from propagating.
 
     \sa QSensorFilter::filter()
 */
 
-const char *QMagnetometer::type("QMagnetometer");
+const char *Q3dCompass::type("Q3dCompass");
 
 /*!
-    \class QMagnetometer
+    \class Q3dCompass
     \ingroup sensors_helpers
 
     \preliminary
-    \brief The QMagnetometer class is a convenience wrapper around QSensor.
+    \brief The Q3dCompass class is a convenience wrapper around QSensor.
 
     The only behavioural difference is that this class sets the type properly.
 
-    This class also features a reading() function that returns a QMagnetometerReading instead of a QSensorReading.
+    This class also features a reading() function that returns a Q3dCompassReading instead of a QSensorReading.
 
-    For details about how the sensor works, see \l QMagnetometerReading.
+    For details about how the sensor works, see \l Q3dCompassReading.
 
-    \sa QMagnetometerReading
+    \sa Q3dCompassReading
 */
 
 /*!
-    \fn QMagnetometer::QMagnetometer(QObject *parent)
+    \fn Q3dCompass::Q3dCompass(QObject *parent)
 
     Construct the sensor as a child of \a parent.
 */
 
 /*!
-    \fn QMagnetometer::~QMagnetometer()
+    \fn Q3dCompass::~Q3dCompass()
 
     Destroy the sensor. Stops the sensor if it has not already been stopped.
 */
 
 /*!
-    \fn QMagnetometer::reading() const
+    \fn Q3dCompass::reading() const
 
     Returns the reading class for this sensor.
 
@@ -203,6 +206,6 @@ const char *QMagnetometer::type("QMagnetometer");
 */
 // end generated code
 
-#include "moc_qmagnetometer.cpp"
+#include "moc_q3dcompass.cpp"
 QTM_END_NAMESPACE
 
