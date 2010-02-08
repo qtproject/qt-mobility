@@ -319,12 +319,15 @@ void Dialog::getVersion(int index)
     QSystemInfo::Version version;
     switch(index) {
     case 0:
-        version = QSystemInfo::Os;
+        versionLineEdit->setText("");
         break;
     case 1:
-        version = QSystemInfo::QtCore;
+        version = QSystemInfo::Os;
         break;
     case 2:
+        version = QSystemInfo::QtCore;
+        break;
+    case 3:
         version = QSystemInfo::Firmware;
         break;
     };
@@ -338,42 +341,45 @@ void Dialog::getFeature(int index)
     QSystemInfo::Feature feature;
     switch(index) {
     case 0:
-        feature = QSystemInfo::BluetoothFeature;
+        return;
         break;
     case 1:
-        feature = QSystemInfo::CameraFeature;
+        feature = QSystemInfo::BluetoothFeature;
         break;
     case 2:
-        feature = QSystemInfo::FmradioFeature;
+        feature = QSystemInfo::CameraFeature;
         break;
     case 3:
-        feature = QSystemInfo::IrFeature;
+        feature = QSystemInfo::FmradioFeature;
         break;
     case 4:
-        feature = QSystemInfo::LedFeature;
+        feature = QSystemInfo::IrFeature;
         break;
     case 5:
-        feature = QSystemInfo::MemcardFeature;
+        feature = QSystemInfo::LedFeature;
         break;
     case 6:
-        feature = QSystemInfo::UsbFeature;
+        feature = QSystemInfo::MemcardFeature;
         break;
     case 7:
-        feature = QSystemInfo::VibFeature;
+        feature = QSystemInfo::UsbFeature;
         break;
     case 8:
-        feature = QSystemInfo::WlanFeature;
+        feature = QSystemInfo::VibFeature;
         break;
     case 9:
-        feature = QSystemInfo::SimFeature;
+        feature = QSystemInfo::WlanFeature;
         break;
     case 10:
-        feature = QSystemInfo::LocationFeature;
+        feature = QSystemInfo::SimFeature;
         break;
     case 11:
-        feature = QSystemInfo::VideoOutFeature;
+        feature = QSystemInfo::LocationFeature;
         break;
     case 12:
+        feature = QSystemInfo::VideoOutFeature;
+        break;
+    case 13:
         feature = QSystemInfo::HapticsFeature;
         break;
     };
