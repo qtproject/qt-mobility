@@ -1,12 +1,12 @@
 TEMPLATE      = lib
 CONFIG       += plugin testplugin
-INCLUDEPATH  += ../../src/serviceframework
+INCLUDEPATH  += ../../../src/serviceframework
 HEADERS       = sampleserviceplugin.h
 SOURCES       = sampleserviceplugin.cpp
 TARGET        = tst_sfw_sampleserviceplugin
 DESTDIR = .
 
-include(../../common.pri)
+include(../../../common.pri)
 CONFIG += mobility
 MOBILITY = serviceframework
 

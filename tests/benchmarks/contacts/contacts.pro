@@ -7,9 +7,11 @@ SOURCES += tst_contacts.cpp
 QT += core \
       network
 
-LIBS += -L../../../lib
+#LIBS += -L../../../lib
 
-INCLUDEPATH += ../../../src/contacts
+INCLUDEPATH += ../../../src/contacts\
+                ../../../src/contacts/details \
+                ../../../src/contacts/filters
 
 include(../../../common.pri)
 
@@ -23,5 +25,6 @@ symbian {
 }
 
 maemo {
-    LIBS += -lQtDBus -lQtXml -lQtGui
+    QT += dbus xml gui
+    #LIBS += -lQtDBus -lQtXml -lQtGui
 }

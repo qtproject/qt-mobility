@@ -1,20 +1,19 @@
-/**************************************************************************
+/****************************************************************************
 **
-** This file is part of Qt Creator
-**
-** Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
-**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** Commercial Usage
+** This file is part of the Qt Mobility Components.
 **
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Commercial License Agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and Nokia.
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
-**
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
@@ -22,10 +21,23 @@
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at http://qt.nokia.com/contact.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-**************************************************************************/
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
 // Copyright (c) 2008 Roberto Raggi <roberto.raggi@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -59,6 +71,7 @@
 #endif
 
 #define CPLUSPLUS_NO_DEBUG_RULE
+#define MAX_EXPRESSION_DEPTH 100
 
 using namespace CPlusPlus;
 
@@ -85,6 +98,93 @@ public:
 
 int DebugRule::depth = 0;
 
+inline bool lookAtAssignmentOperator(int tokenKind)
+{
+    switch (tokenKind) {
+    case T_EQUAL:
+    case T_AMPER_EQUAL:
+    case T_CARET_EQUAL:
+    case T_SLASH_EQUAL:
+    case T_GREATER_GREATER_EQUAL:
+    case T_LESS_LESS_EQUAL:
+    case T_MINUS_EQUAL:
+    case T_PERCENT_EQUAL:
+    case T_PIPE_EQUAL:
+    case T_PLUS_EQUAL:
+    case T_STAR_EQUAL:
+    case T_TILDE_EQUAL:
+        return true;
+    default:
+        return false;
+    } // switch
+}
+
+namespace Prec {
+enum {
+    Unknown         = 0,
+    Comma           = 1,
+    Assignment      = 2,
+    Conditional     = 3,
+    LogicalOr       = 4,
+    LogicalAnd      = 5,
+    InclusiveOr     = 6,
+    ExclusiveOr     = 7,
+    And             = 8,
+    Equality        = 9,
+    Relational      = 10,
+    Shift           = 11,
+    Additive        = 12,
+    Multiplicative  = 13,
+    PointerToMember = 14
+};
+} // end of namespace Precedece
+
+inline int precedence(int tokenKind, bool templateArguments)
+{
+    // ### this will/might need some tuning for C++0x
+    // (see: [temp.names]p3)
+    if (templateArguments && tokenKind == T_GREATER)
+        return -1;
+
+    if (lookAtAssignmentOperator(tokenKind))
+        return Prec::Assignment;
+
+    switch (tokenKind) {
+    case T_COMMA:           return Prec::Comma;
+    case T_QUESTION:        return Prec::Conditional;
+    case T_PIPE_PIPE:       return Prec::LogicalOr;
+    case T_AMPER_AMPER:     return Prec::LogicalAnd;
+    case T_PIPE:            return Prec::InclusiveOr;
+    case T_CARET:           return Prec::ExclusiveOr;
+    case T_AMPER:           return Prec::And;
+    case T_EQUAL_EQUAL:
+    case T_EXCLAIM_EQUAL:   return Prec::Equality;
+    case T_GREATER:
+    case T_LESS:
+    case T_LESS_EQUAL:
+    case T_GREATER_EQUAL:   return Prec::Relational;
+    case T_LESS_LESS:
+    case T_GREATER_GREATER: return Prec::ExclusiveOr;
+    case T_PLUS:
+    case T_MINUS:           return Prec::Additive;
+    case T_STAR:
+    case T_SLASH:
+    case T_PERCENT:         return Prec::Multiplicative;
+    case T_ARROW_STAR:
+    case T_DOT_STAR:        return Prec::PointerToMember;
+    default:                return Prec::Unknown;
+    }
+}
+
+inline bool isBinaryOperator(int tokenKind)
+{ return precedence(tokenKind, false) != Prec::Unknown; }
+
+inline bool isRightAssociative(int tokenKind)
+{
+    const int prec = precedence(tokenKind, false);
+    return prec == Prec::Conditional || prec == Prec::Assignment;
+}
+
 } // end of anonymous namespace
 
 #ifndef CPLUSPLUS_NO_DEBUG_RULE
@@ -92,6 +192,17 @@ int DebugRule::depth = 0;
 #else
 #  define DEBUG_THIS_RULE() do {} while (0)
 #endif
+
+#define PARSE_EXPRESSION_WITH_OPERATOR_PRECEDENCE(node, minPrecedence) { \
+    if (LA() == T_THROW) { \
+        if (!parseThrowExpression(node)) \
+            return false; \
+    } else if (!parseCastExpression(node)) \
+        return false; \
+    \
+    parseExpressionWithOperatorPrecedence(node, minPrecedence); \
+    return true; \
+}
 
 class Parser::Rewind
 {
@@ -126,7 +237,8 @@ Parser::Parser(TranslationUnit *unit)
       _qtMocRunEnabled(false),
       _objCEnabled(false),
       _inFunctionBody(false),
-      _inObjCImplementationContext(false)
+      _inObjCImplementationContext(false),
+      _expressionDepth(0)
 { }
 
 Parser::~Parser()
@@ -207,7 +319,7 @@ void Parser::skipUntilDeclaration()
                 lookAtFunctionSpecifier() || lookAtStorageClassSpecifier())
                 return;
         } // switch
-    }    
+    }
 }
 
 bool Parser::skipUntilStatement()
@@ -1602,9 +1714,16 @@ bool Parser::parseClassSpecifier(SpecifierListAST *&node)
             unsigned start_declaration = cursor();
             DeclarationAST *declaration = 0;
             if (parseMemberSpecification(declaration)) {
-                *declaration_ptr = new (_pool) DeclarationListAST;
-                (*declaration_ptr)->value = declaration;
-                declaration_ptr = &(*declaration_ptr)->next;
+                if (declaration) {  // paranoia check
+                    *declaration_ptr = new (_pool) DeclarationListAST;
+                    (*declaration_ptr)->value = declaration;
+                    declaration_ptr = &(*declaration_ptr)->next;
+                }
+
+                if (cursor() == start_declaration) { // more paranoia
+                    rewind(start_declaration + 1);
+                    skipUntilDeclaration();
+                }
             } else {
                 _translationUnit->error(start_declaration, "expected a declaration");
                 rewind(start_declaration + 1);
@@ -2220,14 +2339,27 @@ bool Parser::parseStringLiteral(ExpressionAST *&node)
 bool Parser::parseExpressionStatement(StatementAST *&node)
 {
     DEBUG_THIS_RULE();
-    ExpressionAST *expression = 0;
-    if (LA() == T_SEMICOLON || parseExpression(expression)) {
+    if (LA() == T_SEMICOLON) {
         ExpressionStatementAST *ast = new (_pool) ExpressionStatementAST;
-        ast->expression = expression;
         match(T_SEMICOLON, &ast->semicolon_token);
         node = ast;
         return true;
     }
+
+    ExpressionAST *expression = 0;
+    MemoryPool *oldPool = _pool;
+    MemoryPool tmp;
+    _pool = &tmp;
+    if (parseExpression(expression)) {
+        ExpressionStatementAST *ast = new (oldPool) ExpressionStatementAST;
+        ast->expression = expression->clone(oldPool);
+        match(T_SEMICOLON, &ast->semicolon_token);
+        node = ast;
+        _pool = oldPool;
+        return true;
+    }
+    _pool = oldPool;
+
     return false;
 }
 
@@ -2290,8 +2422,7 @@ bool Parser::parseStatement(StatementAST *&node)
     }
 
     case T_AT_SYNCHRONIZED:
-        if (objCEnabled())
-            return parseObjCSynchronizedStatement(node);
+        return objCEnabled() && parseObjCSynchronizedStatement(node);
 
     case T_Q_D:
     case T_Q_Q: {
@@ -2309,7 +2440,7 @@ bool Parser::parseStatement(StatementAST *&node)
 
         return parseExpressionOrDeclarationStatement(node);
     } // switch
-    return false;
+    return false; //Avoid compiler warning
 }
 
 bool Parser::parseBreakStatement(StatementAST *&node)
@@ -2413,7 +2544,7 @@ bool Parser::maybeAmbiguousStatement(DeclarationStatementAST *ast) const
                 if (declarator->postfix_declarator_list && declarator->postfix_declarator_list->value->asFunctionDeclarator()
                                                      && ! declarator->initializer) {
                     return false;
-                }                
+                }
             }
 
             return true;
@@ -2644,6 +2775,10 @@ bool Parser::parseCompoundStatement(StatementAST *&node)
     if (LA() == T_LBRACE) {
         CompoundStatementAST *ast = new (_pool) CompoundStatementAST;
         ast->lbrace_token = consumeToken();
+
+        // ### TODO: the GNU "local label" extension: "__label__ X, Y, Z;"
+        // These are only allowed at the start of a compound stmt regardless of the language.
+
         StatementListAST **statement_ptr = &ast->statement_list;
         while (int tk = LA()) {
             if (tk == T_RBRACE)
@@ -2893,16 +3028,31 @@ bool Parser::parseAttributeSpecifier(SpecifierListAST *&node)
     return true;
 }
 
-bool Parser::parseAttributeList(AttributeListAST *&) // ### create the AST
+bool Parser::parseAttributeList(AttributeListAST *&node)
 {
     DEBUG_THIS_RULE();
 
+    AttributeListAST **iter = &node;
     while (LA() == T_CONST || LA() == T_IDENTIFIER) {
-        if (LA() == T_CONST)
-            consumeToken();
-        else if (LA() == T_IDENTIFIER) {
-            ExpressionAST *expression = 0;
-            parseExpression(expression);
+        *iter = new (_pool) AttributeListAST;
+
+        if (LA() == T_CONST) {
+            AttributeAST *attr = new (_pool) AttributeAST;
+            attr->identifier_token = consumeToken();
+
+            (*iter)->value = attr;
+            iter = &(*iter)->next;
+        } else if (LA() == T_IDENTIFIER) {
+            AttributeAST *attr = new (_pool) AttributeAST;
+            attr->identifier_token = consumeToken();
+            if (LA() == T_LPAREN) {
+                attr->lparen_token = consumeToken();
+                parseExpressionList(attr->expression_list);
+                match(T_RPAREN, &attr->rparen_token);
+            }
+
+            (*iter)->value = attr;
+            iter = &(*iter)->next;
         }
 
         if (LA() != T_COMMA)
@@ -3410,9 +3560,9 @@ bool Parser::parseObjCProtocolExpression(ExpressionAST *&node)
 
     ObjCProtocolExpressionAST *ast = new (_pool) ObjCProtocolExpressionAST;
     ast->protocol_token = consumeToken();
-    match(T_LPAREN, &(ast->lparen_token));
-    match(T_IDENTIFIER, &(ast->identifier_token));
-    match(T_RPAREN, &(ast->rparen_token));
+    match(T_LPAREN, &ast->lparen_token);
+    match(T_IDENTIFIER, &ast->identifier_token);
+    match(T_RPAREN, &ast->rparen_token);
     node = ast;
     return true;
 }
@@ -3425,7 +3575,7 @@ bool Parser::parseObjCSelectorExpression(ExpressionAST *&node)
 
     ObjCSelectorExpressionAST *ast = new (_pool) ObjCSelectorExpressionAST;
     ast->selector_token = consumeToken();
-    match(T_LPAREN, &(ast->lparen_token));
+    match(T_LPAREN, &ast->lparen_token);
 
     unsigned identifier_token = 0;
     match(T_IDENTIFIER, &identifier_token);
@@ -3442,8 +3592,8 @@ bool Parser::parseObjCSelectorExpression(ExpressionAST *&node)
             last->next = new (_pool) ObjCSelectorArgumentListAST;
             last = last->next;
             last->value = new (_pool) ObjCSelectorArgumentAST;
-            match(T_IDENTIFIER, &(last->value->name_token));
-            match(T_COLON, &(last->value->colon_token));
+            match(T_IDENTIFIER, &last->value->name_token);
+            match(T_COLON, &last->value->colon_token);
         }
     } else {
         ObjCSelectorWithoutArgumentsAST *args = new (_pool) ObjCSelectorWithoutArgumentsAST;
@@ -3451,7 +3601,7 @@ bool Parser::parseObjCSelectorExpression(ExpressionAST *&node)
         args->name_token = identifier_token;
     }
 
-    match(T_RPAREN, &(ast->rparen_token));
+    match(T_RPAREN, &ast->rparen_token);
     node = ast;
     return true;
 }
@@ -3478,7 +3628,7 @@ bool Parser::parseObjCMessageExpression(ExpressionAST *&node)
         ast->selector = selector;
         ast->argument_list = argument_list;
 
-        match(T_RBRACKET, &(ast->rbracket_token));
+        match(T_RBRACKET, &ast->rbracket_token);
         node = ast;
 
         return true;
@@ -3526,14 +3676,14 @@ bool Parser::parseObjCMessageArguments(ObjCSelectorAST *&selNode, ObjCMessageArg
         }
 
         if (LA() == T_COMMA) {
-            ExpressionAST **lastExpression = &(lastArgument->value->parameter_value_expression);
+            ExpressionAST **lastExpression = &lastArgument->value->parameter_value_expression;
 
             while (LA() == T_COMMA) {
                 BinaryExpressionAST *binaryExpression = new (_pool) BinaryExpressionAST;
                 binaryExpression->left_expression = *lastExpression;
                 binaryExpression->binary_op_token = consumeToken(); // T_COMMA
                 parseAssignmentExpression(binaryExpression->right_expression);
-                lastExpression = &(binaryExpression->right_expression);
+                lastExpression = &binaryExpression->right_expression;
             }
         }
 
@@ -3573,7 +3723,7 @@ bool Parser::parseObjCSelectorArg(ObjCSelectorArgumentAST *&selNode, ObjCMessage
     selNode->colon_token = consumeToken();
 
     argNode = new (_pool) ObjCMessageArgumentAST;
-    ExpressionAST **expr = &(argNode->parameter_value_expression);
+    ExpressionAST **expr = &argNode->parameter_value_expression;
     unsigned expressionStart = cursor();
     if (parseAssignmentExpression(*expr) && LA() == T_COLON && (*expr)->asCastExpression()) {
         rewind(expressionStart);
@@ -3581,20 +3731,6 @@ bool Parser::parseObjCSelectorArg(ObjCSelectorArgumentAST *&selNode, ObjCMessage
         //
     }
     return true;
-}
-
-bool Parser::parseObjCMethodSignature()
-{
-    DEBUG_THIS_RULE();
-    unsigned selector_token = 0;
-    if (parseObjCSelector(selector_token)) {
-        while (LA() == T_COMMA) {
-            consumeToken(); // skip T_COMMA
-            parseObjCSelector(selector_token);
-        }
-        return true;
-    }
-    return false;
 }
 
 bool Parser::parseNameId(NameAST *&name)
@@ -4153,320 +4289,62 @@ bool Parser::parseCastExpression(ExpressionAST *&node)
 
 bool Parser::parsePmExpression(ExpressionAST *&node)
 {
-    DEBUG_THIS_RULE();
-    if (! parseCastExpression(node))
-        return false;
-
-    while (LA() == T_ARROW_STAR || LA() == T_DOT_STAR) {
-        unsigned op = consumeToken();
-
-        ExpressionAST *rightExpr = 0;
-        if (! parseCastExpression(rightExpr)) {
-            _translationUnit->error(op, "expected expression after token `%s'",
-                                    _translationUnit->spell(op));
-            return false;
-        }
-
-        BinaryExpressionAST *ast = new (_pool) BinaryExpressionAST;
-        ast->binary_op_token = op;
-        ast->left_expression = node;
-        ast->right_expression = rightExpr;
-        node = ast;
-    }
-    return true;
+    PARSE_EXPRESSION_WITH_OPERATOR_PRECEDENCE(node, Prec::PointerToMember)
 }
 
 bool Parser::parseMultiplicativeExpression(ExpressionAST *&node)
 {
-    DEBUG_THIS_RULE();
-    if (! parsePmExpression(node))
-        return false;
-
-    while (LA() == T_STAR || LA() == T_SLASH || LA() == T_PERCENT) {
-        unsigned op = consumeToken();
-
-        ExpressionAST *rightExpr = 0;
-        if (! parsePmExpression(rightExpr)) {
-            _translationUnit->error(op, "expected expression after token `%s'",
-                                    _translationUnit->spell(op));
-            return false;
-        }
-
-        BinaryExpressionAST *ast = new (_pool) BinaryExpressionAST;
-        ast->binary_op_token = op;
-        ast->left_expression = node;
-        ast->right_expression = rightExpr;
-        node = ast;
-    }
-    return true;
+    PARSE_EXPRESSION_WITH_OPERATOR_PRECEDENCE(node, Prec::Multiplicative)
 }
 
 bool Parser::parseAdditiveExpression(ExpressionAST *&node)
 {
-    DEBUG_THIS_RULE();
-    if (! parseMultiplicativeExpression(node))
-        return false;
-
-    while (LA() == T_PLUS || LA() == T_MINUS) {
-        unsigned op = consumeToken();
-
-        ExpressionAST *rightExpr = 0;
-        if (! parseMultiplicativeExpression(rightExpr)) {
-            _translationUnit->error(op, "expected expression after token `%s'",
-                                    _translationUnit->spell(op));
-            return false;
-        }
-
-        BinaryExpressionAST *ast = new (_pool) BinaryExpressionAST;
-        ast->binary_op_token = op;
-        ast->left_expression = node;
-        ast->right_expression = rightExpr;
-        node = ast;
-    }
-    return true;
+    PARSE_EXPRESSION_WITH_OPERATOR_PRECEDENCE(node, Prec::Additive)
 }
 
 bool Parser::parseShiftExpression(ExpressionAST *&node)
 {
-    DEBUG_THIS_RULE();
-    if (! parseAdditiveExpression(node))
-        return false;
-
-    while (LA() == T_LESS_LESS || LA() == T_GREATER_GREATER) {
-        unsigned op = consumeToken();
-
-        ExpressionAST *rightExpr = 0;
-        if (! parseAdditiveExpression(rightExpr)) {
-            _translationUnit->error(op, "expected expression after token `%s'",
-                                    _translationUnit->spell(op));
-            return false;
-        }
-
-        BinaryExpressionAST *ast = new (_pool) BinaryExpressionAST;
-        ast->binary_op_token = op;
-        ast->left_expression = node;
-        ast->right_expression = rightExpr;
-        node = ast;
-    }
-    return true;
+    PARSE_EXPRESSION_WITH_OPERATOR_PRECEDENCE(node, Prec::Shift)
 }
 
 bool Parser::parseRelationalExpression(ExpressionAST *&node)
 {
-    DEBUG_THIS_RULE();
-    if (! parseShiftExpression(node))
-        return false;
-
-    while (LA() == T_LESS || (LA() == T_GREATER && ! _templateArguments) ||
-           LA() == T_LESS_EQUAL || LA() == T_GREATER_EQUAL) {
-        unsigned op = consumeToken();
-
-        ExpressionAST *rightExpr = 0;
-        if (! parseShiftExpression(rightExpr)) {
-            _translationUnit->error(op, "expected expression after token `%s'",
-                                    _translationUnit->spell(op));
-            return false;
-        }
-
-        BinaryExpressionAST *ast = new (_pool) BinaryExpressionAST;
-        ast->binary_op_token = op;
-        ast->left_expression = node;
-        ast->right_expression = rightExpr;
-        node = ast;
-    }
-    return true;
+    PARSE_EXPRESSION_WITH_OPERATOR_PRECEDENCE(node, Prec::Relational)
 }
 
 bool Parser::parseEqualityExpression(ExpressionAST *&node)
 {
-    DEBUG_THIS_RULE();
-    if (! parseRelationalExpression(node))
-        return false;
-
-    while (LA() == T_EQUAL_EQUAL || LA() == T_EXCLAIM_EQUAL) {
-        unsigned op = consumeToken();
-
-        ExpressionAST *rightExpr = 0;
-        if (! parseRelationalExpression(rightExpr)) {
-            _translationUnit->error(op, "expected expression after token `%s'",
-                                    _translationUnit->spell(op));
-            return false;
-        }
-
-        BinaryExpressionAST *ast = new (_pool) BinaryExpressionAST;
-        ast->binary_op_token = op;
-        ast->left_expression = node;
-        ast->right_expression = rightExpr;
-        node = ast;
-    }
-    return true;
+    PARSE_EXPRESSION_WITH_OPERATOR_PRECEDENCE(node, Prec::Equality)
 }
 
 bool Parser::parseAndExpression(ExpressionAST *&node)
 {
-    DEBUG_THIS_RULE();
-    if (! parseEqualityExpression(node))
-        return false;
-
-    while (LA() == T_AMPER) {
-        unsigned op = consumeToken();
-
-        ExpressionAST *rightExpr = 0;
-        if (! parseEqualityExpression(rightExpr)) {
-            _translationUnit->error(op, "expected expression after token `%s'",
-                                    _translationUnit->spell(op));
-            return false;
-        }
-
-        BinaryExpressionAST *ast = new (_pool) BinaryExpressionAST;
-        ast->binary_op_token = op;
-        ast->left_expression = node;
-        ast->right_expression = rightExpr;
-        node = ast;
-    }
-    return true;
+    PARSE_EXPRESSION_WITH_OPERATOR_PRECEDENCE(node, Prec::And)
 }
 
 bool Parser::parseExclusiveOrExpression(ExpressionAST *&node)
 {
-    DEBUG_THIS_RULE();
-    if (! parseAndExpression(node))
-        return false;
-
-    while (LA() == T_CARET) {
-        unsigned op = consumeToken();
-
-        ExpressionAST *rightExpr = 0;
-        if (! parseAndExpression(rightExpr)) {
-            _translationUnit->error(op, "expected expression after token `%s'",
-                                    _translationUnit->spell(op));
-            return false;
-        }
-
-        BinaryExpressionAST *ast = new (_pool) BinaryExpressionAST;
-        ast->binary_op_token = op;
-        ast->left_expression = node;
-        ast->right_expression = rightExpr;
-        node = ast;
-    }
-    return true;
+    PARSE_EXPRESSION_WITH_OPERATOR_PRECEDENCE(node, Prec::ExclusiveOr)
 }
 
 bool Parser::parseInclusiveOrExpression(ExpressionAST *&node)
 {
-    DEBUG_THIS_RULE();
-    if (! parseExclusiveOrExpression(node))
-        return false;
-
-    while (LA() == T_PIPE) {
-        unsigned op = consumeToken();
-
-        ExpressionAST *rightExpr = 0;
-        if (! parseExclusiveOrExpression(rightExpr)) {
-            _translationUnit->error(op, "expected expression after token `%s'",
-                                    _translationUnit->spell(op));
-            return false;
-        }
-
-        BinaryExpressionAST *ast = new (_pool) BinaryExpressionAST;
-        ast->binary_op_token = op;
-        ast->left_expression = node;
-        ast->right_expression = rightExpr;
-        node = ast;
-    }
-
-    return true;
+    PARSE_EXPRESSION_WITH_OPERATOR_PRECEDENCE(node, Prec::InclusiveOr)
 }
 
 bool Parser::parseLogicalAndExpression(ExpressionAST *&node)
 {
-    DEBUG_THIS_RULE();
-    if (! parseInclusiveOrExpression(node))
-        return false;
-
-    while (LA() == T_AMPER_AMPER) {
-        unsigned op = consumeToken();
-
-        ExpressionAST *rightExpr = 0;
-        if (! parseInclusiveOrExpression(rightExpr)) {
-            _translationUnit->error(op, "expected expression after token `%s'",
-                                    _translationUnit->spell(op));
-            return false;
-        }
-
-        BinaryExpressionAST *ast = new (_pool) BinaryExpressionAST;
-        ast->binary_op_token = op;
-        ast->left_expression = node;
-        ast->right_expression = rightExpr;
-        node = ast;
-    }
-    return true;
+    PARSE_EXPRESSION_WITH_OPERATOR_PRECEDENCE(node, Prec::LogicalAnd)
 }
 
 bool Parser::parseLogicalOrExpression(ExpressionAST *&node)
 {
-    DEBUG_THIS_RULE();
-    if (! parseLogicalAndExpression(node))
-        return false;
-
-    while (LA() == T_PIPE_PIPE) {
-        unsigned op = consumeToken();
-
-        ExpressionAST *rightExpr = 0;
-        if (! parseLogicalAndExpression(rightExpr)) {
-            _translationUnit->error(op, "expected expression after token `%s'",
-                                    _translationUnit->spell(op));
-            return false;
-        }
-
-        BinaryExpressionAST *ast = new (_pool) BinaryExpressionAST;
-        ast->binary_op_token = op;
-        ast->left_expression = node;
-        ast->right_expression = rightExpr;
-        node = ast;
-    }
-
-    return true;
+    PARSE_EXPRESSION_WITH_OPERATOR_PRECEDENCE(node, Prec::LogicalOr)
 }
 
 bool Parser::parseConditionalExpression(ExpressionAST *&node)
 {
-    DEBUG_THIS_RULE();
-    if (! parseLogicalOrExpression(node))
-        return false;
-
-    if (LA() != T_QUESTION)
-        return true;
-
-    ConditionalExpressionAST *ast = new (_pool) ConditionalExpressionAST;
-    ast->condition = node;
-    ast->question_token = consumeToken();
-    parseAssignmentExpression(ast->left_expression);
-    match(T_COLON, &ast->colon_token);
-    parseAssignmentExpression(ast->right_expression);
-    node = ast;
-    return true;
-}
-
-bool Parser::lookAtAssignmentOperator() const
-{
-    switch (LA()) {
-    case T_EQUAL:
-    case T_AMPER_EQUAL:
-    case T_CARET_EQUAL:
-    case T_SLASH_EQUAL:
-    case T_GREATER_GREATER_EQUAL:
-    case T_LESS_LESS_EQUAL:
-    case T_MINUS_EQUAL:
-    case T_PERCENT_EQUAL:
-    case T_PIPE_EQUAL:
-    case T_PLUS_EQUAL:
-    case T_STAR_EQUAL:
-    case T_TILDE_EQUAL:
-        return true;
-    default:
-        return false;
-    } // switch
+    PARSE_EXPRESSION_WITH_OPERATOR_PRECEDENCE(node, Prec::Conditional)
 }
 
 bool Parser::parseAssignmentExpression(ExpressionAST *&node)
@@ -4474,27 +4352,8 @@ bool Parser::parseAssignmentExpression(ExpressionAST *&node)
     DEBUG_THIS_RULE();
     if (LA() == T_THROW)
         return parseThrowExpression(node);
-    else if (! parseConditionalExpression(node))
-        return false;
-
-    if (lookAtAssignmentOperator()) {
-        unsigned op = consumeToken();
-
-        ExpressionAST *rightExpr = 0;
-        if (! parseAssignmentExpression(rightExpr)) {
-            _translationUnit->error(op, "expected expression after token `%s'",
-                                    _translationUnit->spell(op));
-            return false;
-        }
-
-        BinaryExpressionAST *ast = new (_pool) BinaryExpressionAST;
-        ast->binary_op_token = op;
-        ast->left_expression = node;
-        ast->right_expression = rightExpr;
-        node = ast;
-    }
-
-    return true;
+    else
+        PARSE_EXPRESSION_WITH_OPERATOR_PRECEDENCE(node, Prec::Assignment)
 }
 
 bool Parser::parseQtMethod(ExpressionAST *&node)
@@ -4523,29 +4382,75 @@ bool Parser::parseConstantExpression(ExpressionAST *&node)
 bool Parser::parseExpression(ExpressionAST *&node)
 {
     DEBUG_THIS_RULE();
-    return parseCommaExpression(node);
+
+    if (_expressionDepth > MAX_EXPRESSION_DEPTH)
+        return false;
+
+    ++_expressionDepth;
+    bool success = parseCommaExpression(node);
+    --_expressionDepth;
+    return success;
+}
+
+void Parser::parseExpressionWithOperatorPrecedence(ExpressionAST *&lhs, int minPrecedence)
+{
+    DEBUG_THIS_RULE();
+
+    while (precedence(tok().kind(), _templateArguments) >= minPrecedence) {
+        const int operPrecedence = precedence(tok().kind(), _templateArguments);
+        const int oper = consumeToken();
+
+        ConditionalExpressionAST *condExpr = 0;
+        if (operPrecedence == Prec::Conditional) {
+            condExpr = new (_pool) ConditionalExpressionAST;
+            condExpr->question_token = oper;
+            if (oper == T_COLON) {
+                // GNU extension:
+                //   logical-or-expression '?' ':' conditional-expression
+                condExpr->left_expression = 0;
+            } else {
+                parseExpression(condExpr->left_expression);
+            }
+            match(T_COLON, &condExpr->colon_token);
+        }
+
+        ExpressionAST *rhs = 0;
+        const bool isCPlusPlus = true;
+        if (operPrecedence <= Prec::Conditional && isCPlusPlus) {
+            // in C++ you can put a throw in the right-most expression of a conditional expression,
+            // or an assignment, so some special handling:
+            if (!parseAssignmentExpression(rhs))
+                return;
+        } else {
+            // for C & all other expressions:
+            if (!parseCastExpression(rhs))
+                return;
+        }
+
+        for (int tokenKindAhead = tok().kind(), precedenceAhead = precedence(tokenKindAhead, _templateArguments);
+                precedenceAhead > operPrecedence && isBinaryOperator(tokenKindAhead)
+                        || precedenceAhead == operPrecedence && isRightAssociative(tokenKindAhead);
+                tokenKindAhead = tok().kind(), precedenceAhead = precedence(tokenKindAhead, _templateArguments)) {
+            parseExpressionWithOperatorPrecedence(rhs, precedenceAhead);
+        }
+
+        if (condExpr) { // we were parsing a ternairy conditional expression
+            condExpr->condition = lhs;
+            condExpr->right_expression = rhs;
+            lhs = condExpr;
+        } else {
+            BinaryExpressionAST *expr = new (_pool) BinaryExpressionAST;
+            expr->left_expression = lhs;
+            expr->binary_op_token = oper;
+            expr->right_expression = rhs;
+            lhs = expr;
+        }
+    }
 }
 
 bool Parser::parseCommaExpression(ExpressionAST *&node)
 {
-    DEBUG_THIS_RULE();
-    if (! parseAssignmentExpression(node))
-        return false;
-
-    while (LA() == T_COMMA) {
-        unsigned op = consumeToken();
-
-        ExpressionAST *rightExpr = 0;
-        if (! parseAssignmentExpression(rightExpr))
-            return false;
-
-        BinaryExpressionAST *ast = new (_pool) BinaryExpressionAST;
-        ast->binary_op_token = op;
-        ast->left_expression = node;
-        ast->right_expression = rightExpr;
-        node = ast;
-    }
-    return true;
+    PARSE_EXPRESSION_WITH_OPERATOR_PRECEDENCE(node, Prec::Comma)
 }
 
 bool Parser::parseThrowExpression(ExpressionAST *&node)
@@ -4604,7 +4509,7 @@ bool Parser::parseObjCClassForwardDeclaration(DeclarationAST *&node)
     SimpleNameAST *name = new (_pool) SimpleNameAST;
     name->identifier_token = identifier_token;
     ast->identifier_list->value = name;
-    ObjCIdentifierListAST **nextId = &(ast->identifier_list->next);
+    ObjCIdentifierListAST **nextId = &ast->identifier_list->next;
 
     while (LA() == T_COMMA) {
         consumeToken(); // consume T_COMMA
@@ -4614,10 +4519,10 @@ bool Parser::parseObjCClassForwardDeclaration(DeclarationAST *&node)
         name = new (_pool) SimpleNameAST;
         name->identifier_token = identifier_token;
         (*nextId)->value = name;
-        nextId = &((*nextId)->next);
+        nextId = &(*nextId)->next;
     }
 
-    match(T_SEMICOLON, &(ast->semicolon_token));
+    match(T_SEMICOLON, &ast->semicolon_token);
     node = ast;
     return true;
 }
@@ -4668,26 +4573,26 @@ bool Parser::parseObjCInterface(DeclarationAST *&node,
         class_name->identifier_token= identifier_token;
         ast->class_name = class_name;
 
-        match(T_LPAREN, &(ast->lparen_token));
+        match(T_LPAREN, &ast->lparen_token);
         if (LA() == T_IDENTIFIER) {
             SimpleNameAST *category_name = new (_pool) SimpleNameAST;
             category_name->identifier_token = consumeToken();
             ast->category_name = category_name;
         }
 
-        match(T_RPAREN, &(ast->rparen_token));
+        match(T_RPAREN, &ast->rparen_token);
 
         parseObjCProtocolRefs(ast->protocol_refs);
 
-        DeclarationListAST **nextMembers = &(ast->member_declaration_list);
+        DeclarationListAST **nextMembers = &ast->member_declaration_list;
         DeclarationAST *declaration = 0;
         while (parseObjCInterfaceMemberDeclaration(declaration)) {
             *nextMembers = new (_pool) DeclarationListAST;
             (*nextMembers)->value = declaration;
-            nextMembers = &((*nextMembers)->next);
+            nextMembers = &(*nextMembers)->next;
         }
 
-        match(T_AT_END, &(ast->end_token));
+        match(T_AT_END, &ast->end_token);
 
         node = ast;
         return true;
@@ -4703,22 +4608,22 @@ bool Parser::parseObjCInterface(DeclarationAST *&node,
         if (LA() == T_COLON) {
             ast->colon_token = consumeToken();
             SimpleNameAST *superclass = new (_pool) SimpleNameAST;
-            match(T_IDENTIFIER, &(superclass->identifier_token));
+            match(T_IDENTIFIER, &superclass->identifier_token);
             ast->superclass = superclass;
         }
 
         parseObjCProtocolRefs(ast->protocol_refs);
         parseObjClassInstanceVariables(ast->inst_vars_decl);
 
-        DeclarationListAST **nextMembers = &(ast->member_declaration_list);
+        DeclarationListAST **nextMembers = &ast->member_declaration_list;
         DeclarationAST *declaration = 0;
         while (parseObjCInterfaceMemberDeclaration(declaration)) {
             *nextMembers = new (_pool) DeclarationListAST;
             (*nextMembers)->value = declaration;
-            nextMembers = &((*nextMembers)->next);
+            nextMembers = &(*nextMembers)->next;
         }
 
-        match(T_AT_END, &(ast->end_token));
+        match(T_AT_END, &ast->end_token);
 
         node = ast;
         return true;
@@ -4754,7 +4659,7 @@ bool Parser::parseObjCProtocol(DeclarationAST *&node,
         SimpleNameAST *name = new (_pool) SimpleNameAST;
         name->identifier_token = identifier_token;
         ast->identifier_list->value = name;
-        ObjCIdentifierListAST **nextId = &(ast->identifier_list->next);
+        ObjCIdentifierListAST **nextId = &ast->identifier_list->next;
 
         while (LA() == T_COMMA) {
             consumeToken(); // consume T_COMMA
@@ -4764,7 +4669,7 @@ bool Parser::parseObjCProtocol(DeclarationAST *&node,
             name = new (_pool) SimpleNameAST;
             name->identifier_token = identifier_token;
             (*nextId)->value = name;
-            nextId = &((*nextId)->next);
+            nextId = &(*nextId)->next;
         }
 
         match(T_SEMICOLON, &ast->semicolon_token);
@@ -4781,15 +4686,15 @@ bool Parser::parseObjCProtocol(DeclarationAST *&node,
 
         parseObjCProtocolRefs(ast->protocol_refs);
 
-        DeclarationListAST **nextMembers = &(ast->member_declaration_list);
+        DeclarationListAST **nextMembers = &ast->member_declaration_list;
         DeclarationAST *declaration = 0;
         while (parseObjCInterfaceMemberDeclaration(declaration)) {
             *nextMembers = new (_pool) DeclarationListAST;
             (*nextMembers)->value = declaration;
-            nextMembers = &((*nextMembers)->next);
+            nextMembers = &(*nextMembers)->next;
         }
 
-        match(T_AT_END, &(ast->end_token));
+        match(T_AT_END, &ast->end_token);
 
         node = ast;
         return true;
@@ -4818,14 +4723,14 @@ bool Parser::parseObjCImplementation(DeclarationAST *&node)
         class_name->identifier_token = identifier_token;
         ast->class_name = class_name;
 
-        match(T_LPAREN, &(ast->lparen_token));
+        match(T_LPAREN, &ast->lparen_token);
         SimpleNameAST *category_name = new (_pool) SimpleNameAST;
-        match(T_IDENTIFIER, &(category_name->identifier_token));
+        match(T_IDENTIFIER, &category_name->identifier_token);
         ast->category_name = category_name;
-        match(T_RPAREN, &(ast->rparen_token));
+        match(T_RPAREN, &ast->rparen_token);
 
         parseObjCMethodDefinitionList(ast->member_declaration_list);
-        match(T_AT_END, &(ast->end_token));
+        match(T_AT_END, &ast->end_token);
 
         node = ast;
     } else {
@@ -4839,13 +4744,13 @@ bool Parser::parseObjCImplementation(DeclarationAST *&node)
         if (LA() == T_COLON) {
             ast->colon_token = consumeToken();
             SimpleNameAST *superclass = new (_pool) SimpleNameAST;
-            match(T_IDENTIFIER, &(superclass->identifier_token));
+            match(T_IDENTIFIER, &superclass->identifier_token);
             ast->superclass = superclass;
         }
 
         parseObjClassInstanceVariables(ast->inst_vars_decl);
         parseObjCMethodDefinitionList(ast->member_declaration_list);
-        match(T_AT_END, &(ast->end_token));
+        match(T_AT_END, &ast->end_token);
 
         node = ast;
     }
@@ -4881,12 +4786,12 @@ bool Parser::parseObjCMethodDefinitionList(DeclarationListAST *&node)
             ObjCSynthesizedPropertyListAST *last = new (_pool) ObjCSynthesizedPropertyListAST;
             ast->property_identifier_list = last;
             last->value = new (_pool) ObjCSynthesizedPropertyAST;
-            match(T_IDENTIFIER, &(last->value->property_identifier));
+            match(T_IDENTIFIER, &last->value->property_identifier_token);
 
             if (LA() == T_EQUAL) {
                 last->value->equals_token = consumeToken();
 
-                match(T_IDENTIFIER, &(last->value->property_alias_identifier));
+                match(T_IDENTIFIER, &last->value->alias_identifier_token);
             }
 
             while (LA() == T_COMMA) {
@@ -4896,16 +4801,16 @@ bool Parser::parseObjCMethodDefinitionList(DeclarationListAST *&node)
                 last = last->next;
 
                 last->value = new (_pool) ObjCSynthesizedPropertyAST;
-                match(T_IDENTIFIER, &(last->value->property_identifier));
+                match(T_IDENTIFIER, &last->value->property_identifier_token);
 
                 if (LA() == T_EQUAL) {
                     last->value->equals_token = consumeToken();
 
-                    match(T_IDENTIFIER, &(last->value->property_alias_identifier));
+                    match(T_IDENTIFIER, &last->value->alias_identifier_token);
                 }
             }
 
-            match(T_SEMICOLON, &(ast->semicolon_token));
+            match(T_SEMICOLON, &ast->semicolon_token);
 
             declaration = ast;
             break;
@@ -4916,7 +4821,7 @@ bool Parser::parseObjCMethodDefinitionList(DeclarationListAST *&node)
             ast->dynamic_token = consumeToken();
             ast->property_identifier_list = new (_pool) ObjCIdentifierListAST;
             SimpleNameAST *name = new (_pool) SimpleNameAST;
-            match(T_IDENTIFIER, &(name->identifier_token));
+            match(T_IDENTIFIER, &name->identifier_token);
             ast->property_identifier_list->value = name;
 
             ObjCIdentifierListAST *last = ast->property_identifier_list;
@@ -4930,7 +4835,7 @@ bool Parser::parseObjCMethodDefinitionList(DeclarationListAST *&node)
                 last->value = name;
             }
 
-            match(T_SEMICOLON, &(ast->semicolon_token));
+            match(T_SEMICOLON, &ast->semicolon_token);
 
             declaration = ast;
             break;
@@ -4954,7 +4859,7 @@ bool Parser::parseObjCMethodDefinitionList(DeclarationListAST *&node)
         if (declaration) {
             *next = new (_pool) DeclarationListAST;
             (*next)->value = declaration;
-            next = &((*next)->next);
+            next = &(*next)->next;
         }
     }
 
@@ -4995,7 +4900,7 @@ bool Parser::parseObjCProtocolRefs(ObjCProtocolRefsAST *&node)
 
     ObjCProtocolRefsAST *ast = new (_pool) ObjCProtocolRefsAST;
 
-    match(T_LESS, &(ast->less_token));
+    match(T_LESS, &ast->less_token);
 
     unsigned identifier_token = 0;
     match(T_IDENTIFIER, &identifier_token);
@@ -5003,7 +4908,7 @@ bool Parser::parseObjCProtocolRefs(ObjCProtocolRefsAST *&node)
     SimpleNameAST *name = new (_pool) SimpleNameAST;
     name->identifier_token = identifier_token;
     ast->identifier_list->value = name;
-    ObjCIdentifierListAST **nextId = &(ast->identifier_list->next);
+    ObjCIdentifierListAST **nextId = &ast->identifier_list->next;
 
     while (LA() == T_COMMA) {
         consumeToken(); // consume T_COMMA
@@ -5013,10 +4918,10 @@ bool Parser::parseObjCProtocolRefs(ObjCProtocolRefsAST *&node)
         name = new (_pool) SimpleNameAST;
         name->identifier_token = identifier_token;
         (*nextId)->value = name;
-        nextId = &((*nextId)->next);
+        nextId = &(*nextId)->next;
     }
 
-    match(T_GREATER, &(ast->greater_token));
+    match(T_GREATER, &ast->greater_token);
     node = ast;
     return true;
 }
@@ -5032,9 +4937,9 @@ bool Parser::parseObjClassInstanceVariables(ObjCInstanceVariablesDeclarationAST 
         return false;
 
     ObjCInstanceVariablesDeclarationAST *ast = new (_pool) ObjCInstanceVariablesDeclarationAST;
-    match(T_LBRACE, &(ast->lbrace_token));
+    match(T_LBRACE, &ast->lbrace_token);
 
-    for (DeclarationListAST **next = &(ast->instance_variable_list); LA(); next = &((*next)->next)) {
+    for (DeclarationListAST **next = &ast->instance_variable_list; LA(); next = &(*next)->next) {
         if (LA() == T_RBRACE)
             break;
 
@@ -5050,7 +4955,7 @@ bool Parser::parseObjClassInstanceVariables(ObjCInstanceVariablesDeclarationAST 
         }
     }
 
-    match(T_RBRACE, &(ast->rbrace_token));
+    match(T_RBRACE, &ast->rbrace_token);
 
     node = ast;
     return true;
@@ -5085,7 +4990,7 @@ bool Parser::parseObjCInterfaceMemberDeclaration(DeclarationAST *&node)
     case T_MINUS: {
         ObjCMethodDeclarationAST *ast = new (_pool) ObjCMethodDeclarationAST;
         if (parseObjCMethodPrototype(ast->method_prototype)) {
-            match(T_SEMICOLON, &(ast->semicolon_token));
+            match(T_SEMICOLON, &ast->semicolon_token);
             node = ast;
             return true;
         } else {
@@ -5143,7 +5048,7 @@ bool Parser::parseObjCPropertyDeclaration(DeclarationAST *&node, SpecifierListAS
     ast->property_token = consumeToken();
 
     if (LA() == T_LPAREN) {
-        match(T_LPAREN, &(ast->lparen_token));
+        match(T_LPAREN, &ast->lparen_token);
 
         ObjCPropertyAttributeAST *property_attribute = 0;
         if (parseObjCPropertyAttribute(property_attribute)) {
@@ -5158,19 +5063,19 @@ bool Parser::parseObjCPropertyDeclaration(DeclarationAST *&node, SpecifierListAS
                 if (!parseObjCPropertyAttribute(last->value)) {
                     _translationUnit->error(_tokenIndex, "expected token `%s' got `%s'",
                                             Token::name(T_IDENTIFIER), tok().spell());
-                    while (LA() != T_RPAREN)
-                        consumeToken();
                     break;
                 }
             }
         }
 
-        match(T_RPAREN, &(ast->rparen_token));
+        match(T_RPAREN, &ast->rparen_token);
     }
 
-    parseSimpleDeclaration(ast->simple_declaration, /*accept-struct-declarators = */ true);
+    if (parseSimpleDeclaration(ast->simple_declaration, /*accept-struct-declarators = */ true))
+        node = ast;
+    else
+        _translationUnit->error(_tokenIndex, "expected a simple declaration");
 
-    node = ast;
     return true;
 }
 
@@ -5273,21 +5178,21 @@ bool Parser::parseObjCPropertyAttribute(ObjCPropertyAttributeAST *&node)
 
     case Token_getter: {
         node->attribute_identifier_token = consumeToken();
-        match(T_EQUAL, &(node->equals_token));
+        match(T_EQUAL, &node->equals_token);
         ObjCSelectorWithoutArgumentsAST *selector = new (_pool) ObjCSelectorWithoutArgumentsAST;
-        match(T_IDENTIFIER, &(selector->name_token));
+        match(T_IDENTIFIER, &selector->name_token);
         node->method_selector = selector;
         return true;
     }
 
     case Token_setter: {
         node->attribute_identifier_token = consumeToken();
-        match(T_EQUAL, &(node->equals_token));
+        match(T_EQUAL, &node->equals_token);
         ObjCSelectorWithArgumentsAST *selector = new (_pool) ObjCSelectorWithArgumentsAST;
         selector->selector_argument_list = new (_pool) ObjCSelectorArgumentListAST;
         selector->selector_argument_list->value = new (_pool) ObjCSelectorArgumentAST;
-        match(T_IDENTIFIER, &(selector->selector_argument_list->value->name_token));
-        match(T_COLON, &(selector->selector_argument_list->value->colon_token));
+        match(T_IDENTIFIER, &selector->selector_argument_list->value->name_token);
+        match(T_COLON, &selector->selector_argument_list->value->colon_token);
         node->method_selector = selector;
         return true;
     }
@@ -5306,10 +5211,10 @@ bool Parser::parseObjCTypeName(ObjCTypeNameAST *&node)
         return false;
 
     ObjCTypeNameAST *ast = new (_pool) ObjCTypeNameAST;
-    match(T_LPAREN, &(ast->lparen_token));
-    parseObjCTypeQualifiers(ast->type_qualifier);
+    match(T_LPAREN, &ast->lparen_token);
+    parseObjCTypeQualifiers(ast->type_qualifier_token);
     parseTypeId(ast->type_id);
-    match(T_RPAREN, &(ast->rparen_token));
+    match(T_RPAREN, &ast->rparen_token);
     node = ast;
     return true;
 }
@@ -5338,7 +5243,7 @@ bool Parser::parseObjCKeywordDeclaration(ObjCSelectorArgumentAST *&argument, Obj
     argument = new (_pool) ObjCSelectorArgumentAST;
 
     parseObjCSelector(argument->name_token);
-    match(T_COLON, &(argument->colon_token));
+    match(T_COLON, &argument->colon_token);
 
     parseObjCTypeName(node->type_name);
 
@@ -5346,7 +5251,7 @@ bool Parser::parseObjCKeywordDeclaration(ObjCSelectorArgumentAST *&argument, Obj
     while (parseAttributeSpecifier(*attr))
         attr = &(*attr)->next;
 
-    match(T_IDENTIFIER, &(node->param_name_token));
+    match(T_IDENTIFIER, &node->param_name_token);
 
     return true;
 }

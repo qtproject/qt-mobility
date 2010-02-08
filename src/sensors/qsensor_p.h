@@ -59,8 +59,9 @@ QTM_BEGIN_NAMESPACE
 
 typedef QList<QSensorFilter*> QFilterList;
 
-struct QSensorPrivate
+class QSensorPrivate
 {
+public:
     QSensorPrivate()
         : supportedUpdatePolicies(QSensor::Undefined)
         , updatePolicy(QSensor::Undefined)
@@ -95,8 +96,9 @@ struct QSensorPrivate
     bool complete;
 };
 
-struct QSensorReadingPrivate
+class QSensorReadingPrivate
 {
+public:
     QSensorReadingPrivate()
         : timestamp(0)
     {

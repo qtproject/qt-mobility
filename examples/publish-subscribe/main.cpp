@@ -72,8 +72,6 @@ int main(int argc, char *argv[])
         QObject::connect(publisher, SIGNAL(rejected()), &app, SLOT(quit()));
 #ifndef QTM_SMALL_SCREEN
         publisher->show();
-#else
-        publisher->showMaximized();
 #endif
     }
 

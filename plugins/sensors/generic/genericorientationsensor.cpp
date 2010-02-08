@@ -40,7 +40,6 @@
 ****************************************************************************/
 
 #include "genericorientationsensor.h"
-#include <qsensorfactory.h>
 #include <QDebug>
 
 const char *genericorientationsensor::id("generic.orientation");

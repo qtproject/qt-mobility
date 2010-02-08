@@ -57,8 +57,9 @@
 
 QTM_BEGIN_NAMESPACE
 
-struct QCompassReadingPrivate : public QSensorReadingPrivate
+class QCompassReadingPrivate : public QSensorReadingPrivate
 {
+public:
     QCompassReadingPrivate()
         : azimuth(0)
         , calibrationLevel(0)
