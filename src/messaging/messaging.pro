@@ -72,8 +72,8 @@ SOURCES += qmessageid.cpp \
            qmessageservice.cpp
 
 
-symbian|win32|maemo6 {
-maemo6 {
+symbian|win32|maemo6|maemo5 {
+maemo6|maemo5 {
     QT += dbus
     CONFIG += link_pkgconfig
 
@@ -82,6 +82,7 @@ maemo6 {
 
     HEADERS += qmessagecontentcontainer_maemo_p.h \
                modestengine_maemo_p.h \
+               telepathyengine_maemo_p.h \
                maemohelpers_p.h
 
     SOURCES += qmessageid_maemo.cpp \
@@ -101,15 +102,16 @@ maemo6 {
                qmessagestore_maemo.cpp \
                qmessageservice_maemo.cpp \
                modestengine_maemo.cpp \
+               telepathyengine_maemo.cpp \
                maemohelpers.cpp
 
     documentation.path = $$QT_MOBILITY_PREFIX/doc
     documentation.files = doc/html
 
-    PKGCONFIG += glib-2.0 dbus-glib-1 gconf-2.0 libosso libmodest-dbus-client-1.0
+    PKGCONFIG += glib-2.0 dbus-glib-1 gconf-2.0 libosso libmodest-dbus-client-1.0 TpSession TelepathyQt4
 
     CONFIG += create_pc create_prl
-    QMAKE_PKGCONFIG_REQUIRES = glib-2.0 dbus-glib-1 gconf-2.0 osso modest-dbus-client-1.0
+    QMAKE_PKGCONFIG_REQUIRES = glib-2.0 dbus-glib-1 gconf-2.0 osso modest-dbus-client-1.0 TpSession TelepathyQt4
     pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
     pkgconfig.files = QtMessaging.pc
 

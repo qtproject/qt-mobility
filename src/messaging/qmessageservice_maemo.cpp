@@ -40,6 +40,7 @@
 ****************************************************************************/
 #include "qmessageservice.h"
 #include "modestengine_maemo_p.h"
+#include "telepathyengine_maemo_p.h"
 #include <QDebug>
 
 QTM_BEGIN_NAMESPACE
@@ -208,9 +209,9 @@ bool QMessageService::send(QMessage &message)
 
     if (retVal) {
         if (account.messageTypes() & QMessage::Sms) {
-            d_ptr->_error = QMessageManager::NotYetImplemented; //TODO:
-            qWarning() << "QMessageService::send not yet implemented for SMS";
-            retVal = false;
+            retVal = TelepathyEngine::instance()->sendMessage(message);
+        } else if (account.messageTypes() & QMessage::Xmpp) {
+            retVal = TelepathyEngine::instance()->sendMessage(message);
         } else if (account.messageTypes() & QMessage::Mms) {
             d_ptr->_error = QMessageManager::NotYetImplemented;
             qWarning() << "QMessageService::send not yet implemented for MMS";

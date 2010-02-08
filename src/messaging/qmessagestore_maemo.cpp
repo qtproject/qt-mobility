@@ -41,6 +41,7 @@
 #include "qmessagestore.h"
 #include "qmessagestore_p.h"
 #include "modestengine_maemo_p.h"
+#include "telepathyengine_maemo_p.h"
 #include "maemohelpers_p.h"
 
 
@@ -141,6 +142,10 @@ QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilter &
     if (!isFiltered) {
         MessagingHelper::filterAccounts(accountIds, filter);
     }
+    accountIds += TelepathyEngine::instance()->queryAccounts(filter, sortOrder, limit, offset, isFiltered, isSorted);
+    if (!isFiltered) {
+        MessagingHelper::filterAccounts(accountIds, filter);
+    }
     if (!isSorted) {
         MessagingHelper::orderAccounts(accountIds, sortOrder);
     }
@@ -166,7 +171,7 @@ int QMessageStore::countAccounts(const QMessageAccountFilter& filter) const
     int count = 0;
 
     count += ModestEngine::instance()->countAccounts(filter);
-
+    count += TelepathyEngine::instance()->countAccounts(filter);
     return count;
 }
 
@@ -210,7 +215,9 @@ QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
 
 QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
 {
-    return ModestEngine::instance()->account(id);
+    QMessageAccount acc=ModestEngine::instance()->account(id);
+    if(acc.id()==id) return acc;
+    return  TelepathyEngine::instance()->account(id);
 }
 
 QMessageManager::NotificationFilterId QMessageStore::registerNotificationFilter(const QMessageFilter &filter)
