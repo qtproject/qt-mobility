@@ -197,6 +197,6 @@ Qt Mobility for Symbian
 *                          Tools                                           *
 ****************************************************************************
 
- - tool
-    * foo
+ - ICheck added 
+    * Validation tool for meta object defined service framework interfaces
 
