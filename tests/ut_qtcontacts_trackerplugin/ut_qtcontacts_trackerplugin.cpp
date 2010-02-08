@@ -360,10 +360,7 @@ void ut_qtcontacts_trackerplugin::testPhoneNumberContext()
         }
         QVERIFY(contactToTest.localId() == contactToSave.localId()); // Just to be sure we got the saved contact
         qDebug()<<contactToTest.details<QContactPhoneNumber>().count();
-        foreach(QContactPhoneNumber numbber, contactToTest.details<QContactPhoneNumber>())
-        {
-            qDebug()<<numbber.values();
-        }
+        
         QVERIFY(contactToTest.details<QContactPhoneNumber>().count() == 1);
         if (0 == iterations) {
             // perform context change
