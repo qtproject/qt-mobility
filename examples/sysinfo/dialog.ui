@@ -207,12 +207,21 @@
             <property name="text">
              <string>Unknown Power</string>
             </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item row="1" column="0">
            <widget class="QRadioButton" name="radioButton_2">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
             <property name="text">
              <string>Battery Power</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -221,12 +230,18 @@
             <property name="text">
              <string>Wall Power</string>
             </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item row="3" column="0">
            <widget class="QRadioButton" name="radioButton_4">
             <property name="text">
              <string>Wall Power charging Battery</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -313,13 +328,6 @@
         <widget class="QLabel" name="productLabel">
          <property name="text">
           <string>TextLabel</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0">
-        <widget class="QCheckBox" name="deviceLockCheckBox">
-         <property name="text">
-          <string>Device locked</string>
          </property>
         </widget>
        </item>
@@ -429,6 +437,46 @@
         <widget class="QLabel" name="inputMethodLabel">
          <property name="text">
           <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0">
+        <widget class="QPushButton" name="deviceLockPushButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="mouseTracking">
+          <bool>true</bool>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="examples.qrc">
+           <normaloff>:/unlocked/general_unlock.png</normaloff>
+           <normalon>:/locked/general_locked.png</normalon>:/unlocked/general_unlock.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>32</width>
+           <height>32</height>
+          </size>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="1">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Device lock</string>
          </property>
         </widget>
        </item>
@@ -894,6 +942,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="examples.qrc"/>
+ </resources>
  <connections/>
 </ui>

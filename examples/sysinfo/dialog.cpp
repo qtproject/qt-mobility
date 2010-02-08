@@ -53,9 +53,10 @@ Dialog::Dialog() :
     connect(tabWidget,SIGNAL(currentChanged(int)),this,SLOT(tabChanged(int)));
     connect(versionComboBox,SIGNAL(activated(int)), this,SLOT(getVersion(int)));
     connect(featureComboBox,SIGNAL(activated(int)), this,SLOT(getFeature(int)));
-    QTimer *timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(updateDeviceLockedState()));
-    timer->start(1000);
+    updateDeviceLockedState();
+//    QTimer *timer = new QTimer(this);
+//    connect(timer, SIGNAL(timeout()), this, SLOT(updateDeviceLockedState()));
+//    timer->start(1000);
 }
 
 Dialog::~Dialog()
@@ -170,7 +171,7 @@ void Dialog::setupDevice()
     modelLabel->setText(di->model());
     productLabel->setText(di->productName());
 
-    deviceLockCheckBox->setChecked(di->isDeviceLocked());
+    deviceLockPushButton->setChecked(di->isDeviceLocked());
 
 #if !defined(QT_NO_DBUS)
     simComboBox->setCurrentIndex(di->simStatus());
@@ -216,7 +217,8 @@ void Dialog::setupDevice()
 void Dialog::updateDeviceLockedState()
 {
     if (di)
-        deviceLockCheckBox->setChecked(di->isDeviceLocked());
+        deviceLockPushButton->setChecked(di->isDeviceLocked());
+//        deviceLockPushButton->setDown(di->isDeviceLocked());
 }
 
 void Dialog::updateProfile(QSystemDeviceInfo::Profile profile)
