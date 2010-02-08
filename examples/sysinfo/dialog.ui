@@ -69,6 +69,11 @@
         <widget class="QComboBox" name="versionComboBox">
          <item>
           <property name="text">
+           <string/>
+          </property>
+         </item>
+         <item>
+          <property name="text">
            <string>Os</string>
           </property>
          </item>
@@ -96,6 +101,11 @@
        </item>
        <item row="4" column="2" colspan="2">
         <widget class="QComboBox" name="featureComboBox">
+         <item>
+          <property name="text">
+           <string/>
+          </property>
+         </item>
          <item>
           <property name="text">
            <string>Bluetooth</string>
@@ -185,8 +195,8 @@
       <attribute name="title">
        <string>Device</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_11">
-       <item row="0" column="0" colspan="2">
+      <layout class="QGridLayout" name="gridLayout_6">
+       <item row="0" column="0">
         <widget class="QProgressBar" name="batteryLevelBar">
          <property name="maximum">
           <number>100</number>
@@ -196,7 +206,7 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="2" rowspan="4" colspan="2">
+       <item row="0" column="2" rowspan="3">
         <widget class="QGroupBox" name="groupBox_4">
          <property name="title">
           <string>Power state</string>
@@ -331,115 +341,6 @@
          </property>
         </widget>
        </item>
-       <item row="8" column="0">
-        <widget class="QLabel" name="label_37">
-         <property name="text">
-          <string>Sim status:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="1" colspan="2">
-        <widget class="QComboBox" name="simComboBox">
-         <item>
-          <property name="text">
-           <string>Sim not available</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Single available</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Dual available</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Locked</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="8" column="3">
-        <spacer name="horizontalSpacer_9">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>201</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="9" column="0">
-        <widget class="QLabel" name="label_38">
-         <property name="text">
-          <string>current Profile:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="1" colspan="2">
-        <widget class="QComboBox" name="profileComboBox">
-         <item>
-          <property name="text">
-           <string>Unknown Profile</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Silent Profile</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Normal Profile</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Loud profile</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Vib profile</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Offline profile</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Powersave profile</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Custom profile</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="10" column="0">
-        <widget class="QLabel" name="label_39">
-         <property name="text">
-          <string>Input method:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="10" column="1">
-        <widget class="QLabel" name="inputMethodLabel">
-         <property name="text">
-          <string>TextLabel</string>
-         </property>
-        </widget>
-       </item>
        <item row="7" column="0">
         <widget class="QPushButton" name="deviceLockPushButton">
          <property name="enabled">
@@ -477,6 +378,61 @@
         <widget class="QLabel" name="label_2">
          <property name="text">
           <string>Device lock</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0">
+        <widget class="QLabel" name="label_37">
+         <property name="text">
+          <string>Sim status:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="1">
+        <widget class="QLabel" name="simStatusLabel">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="2">
+        <spacer name="horizontalSpacer_9">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>201</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="9" column="0">
+        <widget class="QLabel" name="label_38">
+         <property name="text">
+          <string>current Profile:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="1">
+        <widget class="QLabel" name="profileLabel">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="0">
+        <widget class="QLabel" name="label_39">
+         <property name="text">
+          <string>Input method:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="1">
+        <widget class="QLabel" name="inputMethodLabel">
+         <property name="text">
+          <string>TextLabel</string>
          </property>
         </widget>
        </item>
@@ -577,6 +533,11 @@
          <layout class="QGridLayout" name="gridLayout_3">
           <item row="0" column="0">
            <widget class="QComboBox" name="netStatusComboBox">
+            <item>
+             <property name="text">
+              <string/>
+             </property>
+            </item>
             <item>
              <property name="text">
               <string>Gsm</string>

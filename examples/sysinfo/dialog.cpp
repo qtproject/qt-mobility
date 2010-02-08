@@ -173,10 +173,9 @@ void Dialog::setupDevice()
 
     deviceLockPushButton->setChecked(di->isDeviceLocked());
 
-#if !defined(QT_NO_DBUS)
-    simComboBox->setCurrentIndex(di->simStatus());
-#endif
-    profileComboBox->setCurrentIndex(di->currentProfile());
+    updateSimStatus();
+    updateProfile();
+
     connect(di, SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)),
         this, SLOT(updateProfile(QSystemDeviceInfo::Profile)));
 
@@ -218,13 +217,13 @@ void Dialog::updateDeviceLockedState()
 {
     if (di)
         deviceLockPushButton->setChecked(di->isDeviceLocked());
-//        deviceLockPushButton->setDown(di->isDeviceLocked());
 }
 
-void Dialog::updateProfile(QSystemDeviceInfo::Profile profile)
+void Dialog::updateProfile(QSystemDeviceInfo::Profile /*profile*/)
 {
-    profileComboBox->setCurrentIndex(profile);
+   updateProfile();
 }
+
 
 void Dialog::setupDisplay()
 {
@@ -381,38 +380,6 @@ void Dialog::getFeature(int index)
     QSystemInfo si;
     featuresLineEdit->setText((si.hasFeatureSupported(feature) ? "true":"false" ));
 }
-
-//void Dialog::doVolumes(int /*index*/)
-//{
-//    QSystemStorageInfo mi;
-//    QString vol = volumesComboBox->currentText();
-//    int index2 = diskComboBox->currentIndex();
-//    switch(index2) {
-//    case 0:
-//        //total
-//        diskSpaceLineEdit->setText( QString::number(mi.totalDiskSpace(vol)));
-//        break;
-//        case 1:
-//        //available
-//        diskSpaceLineEdit->setText( QString::number(mi.availableDiskSpace(vol)));
-//        break;
-//        case 2:
-//        //type
-//        QSystemStorageInfo::VolumeType volType;
-//        volType = mi.getVolumeType(vol);
-//        if(volType == QSystemStorageInfo::Internal) {
-//                diskSpaceLineEdit->setText( "Internal");
-//        } else
-//        if(volType == QSystemStorageInfo::Removable) {
-//                diskSpaceLineEdit->setText( "Removable");
-//        }
-//        if(volType == QSystemStorageInfo::Cdrom) {
-//                diskSpaceLineEdit->setText( "Cdrom");
-//        }
-//        break;
-//    };
-//
-//}
 
 void Dialog::setupSaver()
 {
@@ -669,3 +636,88 @@ void Dialog::displayNetworkStatus(QSystemNetworkInfo::NetworkStatus status)
     };
     cellNetworkStatusLabel->setText(stat);
 }
+
+void Dialog::updateProfile()
+{
+    if(di) {
+        QString profilestring;
+        switch(di->currentProfile()) {
+            case QSystemDeviceInfo::UnknownProfile:
+            {
+                profilestring = "Unknown";
+            }
+            break;
+            case QSystemDeviceInfo::SilentProfile:
+            {
+                profilestring = "Silent";
+            }
+            break;
+            case QSystemDeviceInfo::NormalProfile:
+            {
+                profilestring = "Normal";
+            }
+            break;
+            case QSystemDeviceInfo::LoudProfile:
+            {
+                profilestring = "Loud";
+            }
+            break;
+            case QSystemDeviceInfo::VibProfile:
+            {
+                profilestring = "Vibrate";
+            }
+            break;
+            case QSystemDeviceInfo::OfflineProfile:
+            {
+                profilestring = "Offline";
+            }
+            break;
+            case QSystemDeviceInfo::PowersaveProfile:
+            {
+                profilestring = "Powersave";
+            }
+            break;
+            case QSystemDeviceInfo::CustomProfile:
+                {
+                    profilestring = "custom";
+                }
+                break;
+        };
+        profileLabel->setText(profilestring);
+    }
+}
+
+
+void Dialog::updateSimStatus()
+{
+    if(di) {
+        QString simstring;
+        switch(di->simStatus()) {
+        case QSystemDeviceInfo::SimLocked:
+            {
+                simstring = "Sim Locked";
+            }
+            break;
+        case QSystemDeviceInfo::SimNotAvailable:
+            {
+                simstring = "Sim not available";
+            }
+            break;
+        case QSystemDeviceInfo::SingleSimAvailable:
+            {
+                simstring = "Single Sim Available";
+
+            }
+            break;
+        case QSystemDeviceInfo::DualSimAvailable:
+            {
+                simstring = "Dual Sim available";
+            }
+            break;
+
+        };
+        simStatusLabel->setText(simstring);
+    }
+}
+
+

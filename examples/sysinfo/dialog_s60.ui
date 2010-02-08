@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>346</width>
+    <width>794</width>
     <height>529</height>
    </rect>
   </property>
@@ -547,37 +547,7 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
-        <widget class="QComboBox" name="simComboBox">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <item>
-          <property name="text">
-           <string>Sim not available</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Single available</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Dual available</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Locked</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="3" column="0">
+       <item row="4" column="0">
         <widget class="QLabel" name="label_38">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -590,57 +560,7 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="0">
-        <widget class="QComboBox" name="profileComboBox">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <item>
-          <property name="text">
-           <string>Unknown Profile</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Silent Profile</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Normal Profile</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Loud profile</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Vib profile</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Offline profile</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Powersave profile</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Custom profile</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="5" column="0">
+       <item row="6" column="0">
         <widget class="QLabel" name="label_39">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -653,7 +573,7 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="1" rowspan="2">
+       <item row="6" column="1" rowspan="2">
         <spacer name="horizontalSpacer_13">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -666,7 +586,7 @@
          </property>
         </spacer>
        </item>
-       <item row="6" column="0">
+       <item row="7" column="0">
         <widget class="QLabel" name="inputMethodLabel">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -682,7 +602,7 @@
          </property>
         </widget>
        </item>
-       <item row="7" column="0">
+       <item row="8" column="0">
         <spacer name="verticalSpacer_14">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -694,6 +614,20 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="simStatusLabel">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="profileLabel">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
