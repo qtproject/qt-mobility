@@ -208,7 +208,7 @@ inline QStringList nsarrayToQStringList(void *nsarray)
     NSNotificationCenter *center;
     QString currentLanguage;
 }
-- (void)languageHandler:(NSNotification *)notification;
+- (void)languageHandler;//:(NSNotification *)notification;
 - (void)remove;
 - (void)getCurrentLanguage;
 @end
@@ -250,7 +250,7 @@ inline QStringList nsarrayToQStringList(void *nsarray)
     }
 }
 
-- (void)languageHandler:(NSNotification *)notification
+- (void)languageHandler;//:(NSNotification *)notification
 {
     [self getCurrentLanguage];
 }
