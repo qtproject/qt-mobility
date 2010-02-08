@@ -47,11 +47,14 @@
 #include <QString>
 #include <qcontactrequests.h>
 
-
-
+QTM_BEGIN_NAMESPACE
 class QContactLocalIdFetchRequest;
 class QContactFetchRequest;
+QTM_END_NAMESPACE
+
 class QContactTrackerEngine;
+QTM_USE_NAMESPACE
+
 /**
  * QtContacts Tracker plugin unittests
  */
@@ -113,6 +116,7 @@ private:
 private:
     QContactTrackerEngine *trackerEngine;
     QContactManager::Error error;
+    QMap<int, QContactManager::Error>* errorMap;
     // Filtering and sort options used for QContactTrackerEngine.
     // Not used.
     QContactFilter queryFilter;

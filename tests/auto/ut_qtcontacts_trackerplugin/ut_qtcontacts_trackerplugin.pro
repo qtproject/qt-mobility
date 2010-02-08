@@ -15,6 +15,7 @@ OBJECTS_DIR = .obj
 
 # CONFIG += contacts
 INCLUDEPATH += /usr/include/qt4/QtContacts \
+               /usr/include \
                $$QCONTACTS_TRACKER_BACKENDDIR
 
 ## Include source files under test.

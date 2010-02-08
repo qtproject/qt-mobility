@@ -60,9 +60,15 @@
 
 #include <qmobilityglobal.h>
 #include "qtcontacts.h"
+#include <qcontactmanagerenginefactory.h>
 
 using namespace SopranoLive;
 #include "qtrackercontactasyncrequest.h"
+
+QTM_BEGIN_NAMESPACE
+class QContactAbstractRequest;
+class QContactChangeSet;
+QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
@@ -117,12 +123,12 @@ public:
     QList<QContactLocalId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     QContact contact(const QContactLocalId& contactId, QContactManager::Error& error) const;
 
-    bool saveContact(QContact* contact, QContactManager::Error& error);
-
-    QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QContactManager::Error& error);
+    /* Save contacts - single and in batch */
+    bool saveContact( QContact* contact, QContactManager::Error& error);
+    bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error);
 
     bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
-    QList<QContactManager::Error> removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error);
+    bool removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error) ;
 
     /* Definitions - Accessors and Mutators */
     QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error& error) const;
@@ -157,7 +163,7 @@ private:
     friend class ut_qtcontacts_trackerplugin;
 };
 
-class Q_DECL_EXPORT ContactTrackerFactory : public QObject, public QContactManagerEngineFactory
+class Q_DECL_EXPORT ContactTrackerFactory : public QObject, public QtMobility::QContactManagerEngineFactory
 {
     Q_OBJECT
     Q_INTERFACES(QtMobility::QContactManagerEngineFactory)

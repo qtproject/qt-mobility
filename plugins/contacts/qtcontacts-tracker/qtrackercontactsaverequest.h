@@ -88,7 +88,9 @@ private:
 private:
     /*holding the data about status of async operation*/
     QList<QContact> contactsFinished;
-    QList<QContactManager::Error> errorsOfContactsFinished;
+    //QList<QContactManager::Error> errorsOfContactsFinished;
+    QMap<int, QContactManager::Error> errorsOfContactsFinished;
+    int errorCount;
 
     /* extracted utilities */
     static QStringList detailsDefinitionsInContact(const QContact &c);

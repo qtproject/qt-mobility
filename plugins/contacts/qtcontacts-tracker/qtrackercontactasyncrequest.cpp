@@ -348,9 +348,7 @@ QTrackerContactFetchRequest::QTrackerContactFetchRequest(QContactAbstractRequest
 {
     Q_ASSERT(parent);
     Q_ASSERT(request);
-    QList<QContactManager::Error> dummy;
-    QContactManagerEngine::updateRequestStatus(req, QContactManager::NoError, dummy,
-                                QContactAbstractRequest::Active);
+    QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::ActiveState);
 
     QTimer::singleShot(0, this, SLOT(run()));
 }
@@ -529,9 +527,7 @@ void QTrackerContactFetchRequest::contactsReady()
     Q_ASSERT( request ); // signal is supposed to be used only for contact fetch
     // fastest way to get this working. refactor
     if (!request) {
-        QList<QContactManager::Error> dummy;
-        QContactManagerEngine::updateRequestStatus(req, QContactManager::UnspecifiedError, dummy,
-                                    QContactAbstractRequest::Finished);
+        QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::FinishedState);
         return;
     }
 
@@ -610,7 +606,7 @@ void QTrackerContactFetchRequest::contactsReady()
         QContactDisplayLabel dl = cont.detail(QContactDisplayLabel::DefinitionName);
         if (dl.label().isEmpty()) {
             QContactManager::Error synthError;
-            result[i] = engine->setContactDisplayLabel(engine->synthesizeDisplayLabel(cont, synthError), cont);
+            result[i] = engine->setContactDisplayLabel(engine->synthesizedDisplayLabel(cont, synthError), cont);
         }
     }
     emitFinished();
@@ -618,9 +614,12 @@ void QTrackerContactFetchRequest::contactsReady()
 
 void QTrackerContactFetchRequest::emitFinished()
 {
-    QContactManagerEngine::updateRequest(req, result, QContactManager::NoError,
-                              QList<QContactManager::Error> (),
-                              QContactAbstractRequest::Finished, true);
+    QContactFetchRequest *fetchRequest = qobject_cast<QContactFetchRequest *>(req);
+    Q_ASSERT(fetchRequest);
+    if(fetchRequest) {
+        QContactManagerEngine::updateRequestState(fetchRequest, QContactAbstractRequest::FinishedState);
+        QContactManagerEngine::updateContactFetchRequest(fetchRequest, result, QContactManager::NoError);
+    }
 }
 
 /*!
@@ -668,9 +667,9 @@ void QTrackerContactFetchRequest::readFromQueryRowToContact(QContact &contact, i
     int column = 2; // 0 - for QContactLocalId, 1 for metacontact
     QContactName name = contact.detail(QContactName::DefinitionName);
     name.setPrefix(query->index(i, column++).data().toString());
-    name.setFirst(query->index(i, column++).data().toString());
-    name.setMiddle(query->index(i, column++).data().toString());
-    name.setLast(query->index(i, column++).data().toString());
+    name.setFirstName(query->index(i, column++).data().toString());
+    name.setMiddleName(query->index(i, column++).data().toString());
+    name.setLastName(query->index(i, column++).data().toString());
     contact.saveDetail(&name);
 
     QContactAvatar avatar = contact.detail(QContactAvatar::DefinitionName);
@@ -1014,23 +1013,17 @@ QContactOnlineAccount QTrackerContactFetchRequest::getIMContactFromIMQuery(LiveN
         QString accountPathURI = imContactQuery->index(queryRow, IMContact::AccountType).data().toString();
         QStringList decoded = accountPathURI.split(":");
         qDebug() << decoded.value(1);
-        account.setValue(FieldAccountPath, decoded.value(1)); // getImAccountType?
+        account.setValue(FieldAccountPath, decoded.value(1));
     }
     account.setNickname(imContactQuery->index(queryRow, IMContact::ContactNickname).data().toString()); // nick
 
     QString cap = imContactQuery->index(queryRow, IMContact::Capabilities).data().toString();
-    QString caps;
-    caps = QString("org.freedesktop.Telepathy.Channel.Type.TextChat|");
-    //FIXME
-    // Once #153757 get resolved try to save the exact cap. until then using the caps count
-    if (cap.contains("nco:im-capability-audio-calls")) {
-        caps += QString("org.freedesktop.Telepathy.Channel.Type.StreamedMedia");
-    }
-    account.setValue("Capabilities", caps); // getImAccountType?
+    account.setValue("Capabilities", cap);
 
     QString presence = imContactQuery->index(queryRow, IMContact::ContactPresence).data().toString(); // imPresence iri
     presence = presence.right(presence.length() - presence.lastIndexOf("presence-status"));
     account.setPresence(presenceConversion[presence]);
+ 
     account.setStatusMessage(imContactQuery->index(queryRow, IMContact::ContactMessage).data().toString()); // imStatusMessage
 
     return account;
