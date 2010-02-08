@@ -888,6 +888,12 @@ bool QCamera::isExposureLocked() const
     \value FlashAuto            Automatic flash.
     \value FlashRedEyeReduction Red eye reduction flash.
     \value FlashFill            Use flash to fillin shadows.
+    \value FlashTorch           Constant light source, useful for focusing and video capture.
+    \value FlashSlowSyncFrontCurtain 
+                                Use the flash in conjunction with a slow shutter speed. 
+                                This mode allows better exposure of distant objects and/or motion blur effect.
+    \value FlashSlowSyncRearCurtain 
+                                The similar mode to FlashSlowSyncFrontCurtain but flash is fired at the end of exposure.
 */
 
 /*!
