@@ -522,13 +522,13 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 
 	if (!accessPointConfigurations.contains(iap_id)) {
 	    QNetworkConfigurationPrivate* cpPriv = new QNetworkConfigurationPrivate();
-	    //cpPriv->name = iap_info.value().toString();
 	    cpPriv->name = saved_ap.value("name").toString();
-	    if (cpPriv->name.isEmpty())
+	    if (cpPriv->name.isEmpty()) {
 		if (!ssid.isEmpty() && ssid.size() > 0)
 		    cpPriv->name = ssid.data();
 		else
 		    cpPriv->name = iap_id;
+	    }
 	    cpPriv->isValid = true;
 	    cpPriv->id = iap_id;
 	    cpPriv->network_id = ssid;
