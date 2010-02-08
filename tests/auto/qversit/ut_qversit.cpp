@@ -88,7 +88,7 @@ QTM_USE_NAMESPACE
 #define TESTDATA_DIR "./"
 #endif
 
-Q_DECLARE_METATYPE(QList<QContact>);
+Q_DECLARE_METATYPE(QList<QContact>)
 
 void UT_QVersit::testImportFiles()
 {
