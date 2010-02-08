@@ -74,10 +74,12 @@ maemo* {
 }
 
 maemo5 {
-    PKGCONFIG += glib-2.0
+    SOURCES += gconfitem.cpp
+    HEADERS += gconfitem.h
+    PKGCONFIG += glib-2.0  gconf-2.0
     CONFIG += create_pc create_prl
     LIBS += -llocation
-    QMAKE_PKGCONFIG_REQUIRES = glib-2.0
+    QMAKE_PKGCONFIG_REQUIRES = glib-2.0 gconf-2.0
     pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
     pkgconfig.files = QtLocation.pc
 }

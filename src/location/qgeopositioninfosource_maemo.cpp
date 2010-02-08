@@ -44,6 +44,7 @@
 
 #ifdef Q_WS_MAEMO_5
 #include <QDateTime>
+#include "gconfitem.h" // Temporarily here.
 #endif
 #if 0
 void dumpQByteArray(const QByteArray &msg)
@@ -150,6 +151,7 @@ void QGeoPositionInfoSourceMaemo::newPositionUpdate(const QGeoPositionInfo &upda
 
 QGeoPositionInfo QGeoPositionInfoSourceMaemo::lastKnownPosition(bool fromSatellitePositioningMethodsOnly) const
 {
+  qDebug() << "TAALLA!!!!!!!!!!";
     if (validLastSatUpdate)
         return lastSatUpdate;
 
@@ -157,7 +159,27 @@ QGeoPositionInfo QGeoPositionInfoSourceMaemo::lastKnownPosition(bool fromSatelli
         if (validLastUpdate)
             return lastUpdate;
 
+#ifdef Q_WS_MAEMO_5
+    QGeoPositionInfo posInfo;
+    QGeoCoordinate coordinate;
+    double longitude;
+    double latitude;    
+
+    GConfItem lastKnownPositionLongitude("/system/nokia/location/lastknown/longitude");
+    GConfItem lastKnownPositionLatitude("/system/nokia/location/lastknown/latitude");
+
+    longitude = lastKnownPositionLongitude.value().toDouble();
+    latitude = lastKnownPositionLatitude.value().toDouble();
+
+    if (longitude && latitude) {
+        coordinate.setLongitude(longitude);
+        coordinate.setLatitude(latitude);
+        posInfo.setCoordinate(coordinate);
+    }
+    return posInfo;
+#else  
     return QGeoPositionInfo();
+#endif
 }
 
 
@@ -431,6 +453,8 @@ int QGeoPositionInfoSourceMaemo::mapUpdateInterval(int msec) {
         return LOCATION_INTERVAL_60S;
     else if (msec >= 90000)
         return LOCATION_INTERVAL_120S;
+    else
+        return LOCATION_INTERVAL_DEFAULT;
 }
     
 #endif // Q_WS_MAEMO_5
