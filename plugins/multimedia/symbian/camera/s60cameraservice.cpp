@@ -58,6 +58,7 @@
 #include "S60videooutputcontrol.h"
 #include "S60mediacontainercontrol.h"
 #include "s60videoencoder.h"
+#include "s60cameraimageencodercontrol.h"
 
 S60CameraService::S60CameraService(QObject *parent)
     : QMediaService(parent)
@@ -77,11 +78,14 @@ S60CameraService::S60CameraService(QObject *parent)
     m_videoEncoder = new S60VideoEncoder(m_session, this);
     m_viewFinderWidget = new S60ViewFinderWidgetControl(this);
     m_videoOutput = new S60VideoOutputControl(this);
+    m_imageEncoderControl = new S60CameraImageEncoderControl(m_session, this);
+
     connect(m_videoOutput, SIGNAL(outputChanged(QVideoOutputControl::Output)),
             this, SLOT(videoOutputChanged(QVideoOutputControl::Output)));
     
     m_videoOutput->setAvailableOutputs(QList<QVideoOutputControl::Output>() 
             << QVideoOutputControl::WidgetOutput);
+    
 }
 
 S60CameraService::~S60CameraService()
@@ -123,6 +127,8 @@ QMediaControl *S60CameraService::control(const char *name) const
     if(qstrcmp(name,QVideoDeviceControl_iid) == 0)
         return m_videoDeviceControl;
 
+    if(qstrcmp(name,QImageEncoderControl_iid) == 0)
+        return m_imageEncoderControl;
 
     return 0;
 }

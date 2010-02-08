@@ -56,7 +56,8 @@ S60MediaControl::S60MediaControl(QObject *session, QObject *parent)
     // use cast if we want to change session class later on..
     m_session = qobject_cast<S60CameraSession*>(session);
 
-    connect(m_session,SIGNAL(stateChanged(QCamera::State)),this,SIGNAL(stateChanged(QCamera::State)));
+//    connect(m_session,SIGNAL(stateChanged(QMediaRecorder::State)),this,SIGNAL(stateChanged(QMediaRecorder::State)));
+   // connect(m_session, SIGNAL(positionChanged(qint64)), this, SIGNAL(durationChanged(qint64)));
     connect(m_session,SIGNAL(error(int,const QString &)),this,SIGNAL(error(int,const QString &)));
 }
 
@@ -80,9 +81,19 @@ bool S60MediaControl::setOutputLocation(const QUrl& sink)
 
 QMediaRecorder::State S60MediaControl::state() const
 {
-    if (m_session)
-        return (QMediaRecorder::State)m_session->state();
-    return QMediaRecorder::StoppedState;
+    if (m_session) {
+        switch ( m_session->videoCaptureState() ) {
+            case S60CameraSession::ERecording:
+                return QMediaRecorder::RecordingState;
+            case S60CameraSession::EPaused:
+                return QMediaRecorder::PausedState;
+            case S60CameraSession::EOpenCompelete:
+            case S60CameraSession::ERecordComplete:
+            case S60CameraSession::EInitialized:
+                return QMediaRecorder::StoppedState;
+        }        
+    }
+    return QMediaRecorder::StoppedState;    
 }
 
 qint64 S60MediaControl::duration() const
@@ -103,21 +114,36 @@ void S60MediaControl::applySettings()
 
 void S60MediaControl::record()
 {
-    if (m_session)
+    if (m_session->state() != QCamera::StoppedState) {
         m_session->startRecording();
-    emit stateChanged(QMediaRecorder::RecordingState);
+        if (state() != QMediaRecorder::RecordingState)
+            emit stateChanged(QMediaRecorder::RecordingState);
+    }
+    else {
+        emit error(QMediaRecorder::ResourceError, tr("Service has not been started"));
+    }
 }
 
 void S60MediaControl::pause()
 {
-    if (m_session)
+    if (m_session->state() != QCamera::StoppedState) {
         m_session->pauseRecording();
-    emit stateChanged(QMediaRecorder::PausedState);
+        if (state() != QMediaRecorder::PausedState)
+            emit stateChanged(QMediaRecorder::PausedState);
+    }
+    else {
+        emit error(QMediaRecorder::ResourceError, tr("Service has not been started"));
+    }
 }
 
 void S60MediaControl::stop()
 {
-    if (m_session)
+    if (m_session->state() != QCamera::StoppedState) {
         m_session->stopRecording();
-    emit stateChanged(QMediaRecorder::StoppedState);
+        if (state() != QMediaRecorder::StoppedState)
+            emit stateChanged(QMediaRecorder::StoppedState);
+    }
+    else {
+        emit error(QMediaRecorder::ResourceError, tr("Service has not been started"));
+    }
 }

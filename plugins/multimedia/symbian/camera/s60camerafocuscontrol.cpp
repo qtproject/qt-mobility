@@ -146,14 +146,22 @@ void S60CameraFocusControl::zoomTo(qreal optical, qreal digital)
 
 void S60CameraFocusControl::startFocusing()
 {
+#if (defined(USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER) || defined(USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER))
+    m_advancedSettings->setFocusMode(m_focusMode);
+#else
     m_session->startFocus();
+#endif
     m_focusStatus = QCamera::FocusRequested;
     emit focusStatusChanged(QCamera::FocusRequested);
 }
 
 void S60CameraFocusControl::cancelFocusing()
 {
+#if (defined(USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER) || defined(USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER))
+    m_advancedSettings->cancelFocusing();
+#else
     m_session->cancelFocus();
+#endif
     m_focusStatus = QCamera::FocusCanceled;
     emit focusStatusChanged(QCamera::FocusCanceled);
 }

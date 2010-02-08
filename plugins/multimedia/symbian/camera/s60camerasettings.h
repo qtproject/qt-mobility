@@ -43,8 +43,8 @@
 #define S60CAMERASETTINGS_H
 
 #include <QtCore/qobject.h>
-#include <cameraengine.h>
-#include <cameraengineobserver.h>
+#include <s60cameraengine.h>
+#include <s60cameraengineobserver.h>
 
 #include "qcamera.h"
 
@@ -78,10 +78,18 @@ public:
     void setFocusMode(QCamera::FocusMode mode);
     QCamera::FocusMode focusMode();
     QCamera::FocusModes supportedFocusModes();
+    void cancelFocusing();
     
     TInt shutterSpeed();
     void setShutterSpeed(TInt speed);
     QList<qreal> supportedShutterSpeeds(bool *continuous);
+    
+    void setSharpeningLevel(qreal value);
+    bool isSharpeningSupported() const;
+    qreal sharpeningLevel() const;
+    
+    void setSaturation(qreal value);
+    qreal saturation() const;
     
 Q_SIGNALS:
     void exposureLocked();
@@ -106,6 +114,7 @@ private:
 private:
 #if defined(USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER) || defined(USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER)
     CCamera::CCameraAdvancedSettings *m_advancedSettings;
+    CCamera::CCameraImageProcessing * m_imageProcessingSettings;
 #endif
     CCameraEngine *m_cameraEngine;
 

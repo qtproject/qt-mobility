@@ -39,44 +39,44 @@
 **
 ****************************************************************************/
 
-#ifndef S60MEDIACONTROL_H
-#define S60MEDIACONTROL_H
+#ifndef STILLSETTINGS_H
+#define STILLSETTINGS_H
 
-#include <QtCore/qobject.h>
-#include <QUrl>
+#include <QtGui/QDialog>
+#include <qmediaencodersettings.h>
 
-#include "qmediarecorder.h"
-#include "qmediarecordercontrol.h"
-#include "qcameracontrol.h"
+QTM_BEGIN_NAMESPACE
+class QStillImageCapture;
+QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
-class S60CameraSession;
+QT_BEGIN_NAMESPACE
+class QComboBox;
+namespace Ui {
+    class StillSettingsUi;
+}
+QT_END_NAMESPACE
 
-class S60MediaControl : public QMediaRecorderControl
-{
+class StillSettings : public QDialog {
     Q_OBJECT
 public:
-    S60MediaControl(QObject *parent = 0);
-    S60MediaControl(QObject *session, QObject *parent = 0);
-    ~S60MediaControl();
+    StillSettings(QStillImageCapture *imageCapture, QWidget *parent = 0);
+    ~StillSettings();
 
-    QUrl outputLocation() const;
-    bool setOutputLocation(const QUrl &sink);
+    QImageEncoderSettings imageSettings() const;
+    void setImageSettings(const QImageEncoderSettings&);
 
-    QMediaRecorder::State state() const;
-
-    qint64 duration() const;
-
-    void applySettings();
-
-public slots:
-    void record();
-    void pause();
-    void stop();
+protected:
+    void changeEvent(QEvent *e);
 
 private:
-    S60CameraSession* m_session;
+    QVariant boxValue(const QComboBox*) const;
+    void selectComboBoxItem(QComboBox *box, const QVariant &value);
+
+    Ui::StillSettingsUi *ui;
+    QStillImageCapture *imageCapture;
 };
 
-#endif
+#endif // STILLSETTINGS_H

@@ -14,5 +14,5 @@ contains(mobility_modules,multimedia) {
             qmediaobject \
             qmediaplayer \
             qmediaplaylist \
-            qradiotuner
+            qradiotuner             
 }

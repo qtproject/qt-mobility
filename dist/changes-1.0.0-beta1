@@ -159,6 +159,28 @@ Qt Mobility for Windows CE
 
  -
 
+Qt Mobility for Symbian
+------
+
+ - Multimedia
+    * Symbian backend added for 3rd ed FP1, 3rd ed FP2 and 5th ed. Following services supported
+      - AudioCapture
+        * limited codec support
+      - Radio
+        * listen radio
+        * search channels / frequency
+        * change volume
+      - Mediaplayer
+        * play local files
+        * play stream
+        * retrieve metadata, writing metada not supported
+        * codec support depends on device model
+        * AudioDeviceControl not implemented for mediaplayer, defaults to device default.
+      - Camera
+        * camera support is expiremental
+        * still capture
+        * mediacapture
+        * recording codec support is limited to video/mp4
 
 ****************************************************************************
 *                          Tools                                           *

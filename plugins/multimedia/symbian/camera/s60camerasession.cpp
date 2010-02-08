@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include <BADESCA.H>
+#include <BAUTILS.H>
 
 #include <QtCore/qdebug.h>
 #include <QtCore/qstring.h>
@@ -51,6 +52,7 @@
 #include <fbs.h>
 #include <qglobal.h>
 #include <QDir>
+#include <pathinfo.h> 
 
 const int KSymbianImageQualityCoefficient = 25;
 
@@ -90,8 +92,12 @@ S60CameraSession::~S60CameraSession()
     m_videoUtility = NULL;
     delete m_advancedSettings;
     m_advancedSettings = NULL;
-    delete m_cameraEngine;
-    m_cameraEngine = NULL;
+    if (m_cameraEngine) {
+        m_cameraEngine->ReleaseAndPowerOff();
+        delete m_cameraEngine;
+        m_cameraEngine = NULL;
+    }
+    
 }
 CCamera::TFormat S60CameraSession::defaultCodec()
 {
@@ -118,6 +124,7 @@ void S60CameraSession::resetCamera()
     m_cameraEngine = NULL;  
     m_error = KErrNone;
     m_state = QCamera::StoppedState;
+    m_currentcodec = defaultCodec();
     //qDebug() << "S60CameraSession::resetCamera. Creating new camera with index=" << m_deviceIndex;
     TRAPD(err, 
         m_cameraEngine = CCameraEngine::NewL(m_deviceIndex, 0, this);
@@ -127,10 +134,11 @@ void S60CameraSession::resetCamera()
     setError(err);
 
     updateVideoCaptureCodecs();
+    updateImageCaptureCodecs();
     
     initializeVideoCaptureSettings();
     
-    //qDebug() << "S60CameraSession::resetCamera END";
+	//qDebug() << "S60CameraSession::resetCamera END";
 }
 
 void S60CameraSession::setError(TInt aError)
@@ -221,7 +229,7 @@ void S60CameraSession::capture(const QString &fileName)
     if (m_cameraEngine) {
         TSize size(m_captureSize.width(), m_captureSize.height());
         TRAPD(err, 
-                m_cameraEngine->PrepareL(size, m_currentcodec);       
+                m_cameraEngine->PrepareL(size, m_currentcodec);
                 m_cameraEngine->CaptureL();
         );
         setError(err);
@@ -389,6 +397,13 @@ int S60CameraSession::state() const
     return m_state;
 }
 
+int S60CameraSession::videoCaptureState() const
+{
+    //qDebug() << "S60CameraSession::state";
+    return m_captureState;
+}
+
+
 void S60CameraSession::commitVideoEncoderSettings()
 {          
     setVideoResolution(m_videoSettings.resolution());
@@ -490,6 +505,7 @@ void S60CameraSession::MceoCameraReady()
     if (m_cameraEngine) {
         m_VFSize =  TSize(m_VFWidgetSize.width(), m_VFWidgetSize.height());
         TRAPD(err, m_cameraEngine->StartViewFinderL(m_VFSize));
+        //qDebug() << "S60CameraSession::MCeoCameraReady() error: "<< err;
         if (err == KErrNotReady || err == KErrNoMemory) {
             emit readyForCaptureChanged(false);
         }
@@ -512,13 +528,39 @@ void S60CameraSession::MceoCapturedDataReady(TDesC8* aData)
     // inform capture done
     emit imageCaptured(m_stillCaptureFileName, snapImage);
     // try to save image and inform if it was succcesful
-    if (snapImage.save(m_stillCaptureFileName,0, m_imageQuality))
-        emit imageSaved(m_stillCaptureFileName);
+    TRAPD(err, saveImageL(aData));
+    setError(err);
+    emit imageSaved(m_stillCaptureFileName);
     // release image resources
     releaseImageBuffer();
 }
 
-void S60CameraSession::releaseImageBuffer()
+void S60CameraSession::saveImageL(TDesC8* aData) 
+{
+    //qDebug() << "S60CameraSession::saveImageL()";
+    // Create path for filename
+    TFileName path = PathInfo::PhoneMemoryRootPath(); 
+    path.Append(PathInfo::ImagesPath());  
+    RFs fs;
+    User::LeaveIfError(fs.Connect());
+    CleanupClosePushL(fs);
+    
+    // Ensure that path exists
+    BaflUtils::EnsurePathExistsL(fs, path);
+    TPtrC16 attachmentPath(KNullDesC);
+    attachmentPath.Set(reinterpret_cast<const TUint16*>(m_stillCaptureFileName.utf16()));
+    path.Append(attachmentPath);
+    RFile file;
+    User::LeaveIfError(file.Create(fs, path, EFileWrite));
+    CleanupClosePushL(file);
+    User::LeaveIfError(file.Write(*aData));
+    
+    //qDebug() << "S60CameraSession::saveImageL(), image saved";
+    CleanupStack::PopAndDestroy(&file);
+    CleanupStack::PopAndDestroy(&fs);
+}
+
+void S60CameraSession::releaseImageBuffer() 
 {
     if (m_cameraEngine)
         m_cameraEngine->ReleaseImageBuffer();
@@ -546,6 +588,7 @@ void S60CameraSession::MceoCapturedBitmapReady(CFbsBitmap* aBitmap)
         aBitmap->UnlockHeap();
 
         TDisplayMode displayMode = aBitmap->DisplayMode();
+        //qDebug() << "S60CameraSession::MceoCapturedBitmapReady(), displaymode: "<<displayMode;
 
         QImage::Format format = QImage::Format_Invalid;
         switch(displayMode)
@@ -608,8 +651,8 @@ void S60CameraSession::MceoViewFinderFrameReady(CFbsBitmap& aFrame)
 
 void S60CameraSession::MceoHandleError(TCameraEngineError aErrorType, TInt aError)
 {
-    //qDebug() << "S60CameraSession::MceoHandleError, errorType"<<aErrorType;
-    //qDebug() << "S60CameraSession::MceoHandleError, aError"<<aError;
+	//qDebug() << "S60CameraSession::MceoHandleError, errorType"<<aErrorType;
+	//qDebug() << "S60CameraSession::MceoHandleError, aError"<<aError;
     Q_UNUSED(aErrorType);
     setError(aError);
 }
@@ -750,8 +793,14 @@ QList<QSize> S60CameraSession::supportedCaptureSizesForCodec(const QString &code
     QList<QSize> list;
     // if we have cameraengine loaded and we can update camerainfo
     if (m_cameraEngine && queryCurrentCameraInfo()) {
-        int codecIndex = formatMap().value(codecName);
-        CCamera::TFormat format = static_cast<CCamera::TFormat>( codecIndex );
+        CCamera::TFormat format;
+        if (codecName == "") {
+            format = defaultCodec();
+        }
+        else {
+            int codecIndex = formatMap().value(codecName);
+            format = static_cast<CCamera::TFormat>( codecIndex );
+        }
         CCamera *camera = m_cameraEngine->Camera();
         for (int i=0; i < m_info.iNumImageSizesSupported; i++) {
             TSize size;
@@ -831,26 +880,25 @@ QStringList S60CameraSession::supportedImageCaptureCodecs()
     for (int i = 0; i < m_formats.length() ; i++) {
         list << formatMap().key(m_formats.at(i));
     }
+    
     //qDebug()<< "S60CameraSession::supportedImageCaptureCodecs, return formatList.count()="<<list.count();
     return list;
 }
 void S60CameraSession::updateImageCaptureCodecs()
 {
     m_formats.clear();
-    //qDebug() << "S60CameraSession::updateImageCaptureCodecs START";
     if (m_cameraEngine && queryCurrentCameraInfo()) {
 
         TUint32 supportedFormats = m_info.iImageFormatsSupported;
-        QStringList allFormats = formatMap().keys();
-        int formatMask = 1;
-
-        for ( int i = 0; i < allFormats.count() ; ++i ) {
-            if ( supportedFormats & formatMask ) {
-                //qDebug() << "S60CameraSession::updateImageCaptureCodecs, adding format="<<allFormats.at(i);
-                m_formats << i; // store index of supported format
-            }
-
-            formatMask <<= 1;
+        
+#ifdef PRE_S60_50_PLATFORM
+        int maskEnd = CCamera::EFormatFbsBitmapColor16MU;
+#else
+        int maskEnd = CCamera::EFormatEncodedH264;        
+#endif
+        for ( int mask = CCamera::EFormatMonochrome; mask <= maskEnd; mask<<=1 ) {
+            if ( supportedFormats & mask )
+                m_formats << mask; // store mask of supported format
         }
     }
     //qDebug() << "S60CameraSession::updateImageCaptureCodecs END";
@@ -966,7 +1014,6 @@ int S60CameraSession::digitalZoomFactor()
 void S60CameraSession::startFocus()
 {
     //qDebug() << "S60CameraSession::startFocus";
-
     if (m_cameraEngine) {
         TRAPD(err, m_cameraEngine->StartFocusL());
         setError(err);
@@ -1019,22 +1066,29 @@ int S60CameraSession::maxDigitalZoom()
 
 void S60CameraSession::setFlashMode(QCamera::FlashMode mode)
 {
+    TRAPD(err, setFlashModeL(mode));
+    setError(err);
+}
+
+void S60CameraSession::setFlashModeL(QCamera::FlashMode mode)
+{
     if (m_cameraEngine) {
+        CCamera *camera = m_cameraEngine->Camera();
         switch(mode) {
             case QCamera::FlashOff:
-                m_cameraEngine->SetFlash(CCamera::EFlashNone);
+                camera->SetFlashL(CCamera::EFlashNone);
                 break;
             case QCamera::FlashAuto:
-                m_cameraEngine->SetFlash(CCamera::EFlashAuto);
+                camera->SetFlashL(CCamera::EFlashAuto);
                 break;
             case QCamera::FlashOn:
-                m_cameraEngine->SetFlash(CCamera::EFlashForced);
+                camera->SetFlashL(CCamera::EFlashForced);
                 break;
             case QCamera::FlashRedEyeReduction:
-                m_cameraEngine->SetFlash(CCamera::EFlashRedEyeReduce);
+                camera->SetFlashL(CCamera::EFlashRedEyeReduce);
                 break;
             case QCamera::FlashFill:
-                m_cameraEngine->SetFlash(CCamera::EFlashFillIn);
+                camera->SetFlashL(CCamera::EFlashFillIn);
                 break;
             default:
                 break;
@@ -1046,7 +1100,8 @@ void S60CameraSession::setFlashMode(QCamera::FlashMode mode)
 QCamera::FlashMode S60CameraSession::flashMode()
 {
     if (m_cameraEngine) {
-        TInt mode = m_cameraEngine->Flash();
+        CCamera *camera = m_cameraEngine->Camera();
+        TInt mode = camera->Flash();
         switch(mode) {
             case CCamera::EFlashAuto:
                 return QCamera::FlashAuto;
@@ -1065,9 +1120,10 @@ QCamera::FlashMode S60CameraSession::flashMode()
 
 QCamera::FlashModes S60CameraSession::supportedFlashModes()
 {
+  //  qDebug() << "S60CameraSession::supportedFlashModes()";
     QCamera::FlashModes modes = QCamera::FlashOff;
-    if (m_cameraEngine) {
-        TInt supportedModes =  m_cameraEngine->SupportedFlashModes();
+    if (queryCurrentCameraInfo()) {
+        TInt supportedModes = m_info.iFlashModesSupported;
         if (supportedModes == 0)
             return modes;
         if (supportedModes & CCamera::EFlashManual) {
@@ -1118,8 +1174,9 @@ QCamera::ExposureMode S60CameraSession::exposureMode()
 
 QCamera::ExposureModes S60CameraSession::supportedExposureModes()
 {
+   // qDebug() << "S60CameraSession::supportedExposureModes()";
     QCamera::ExposureModes modes = QCamera::ExposureAuto;
-    if (m_cameraEngine) {
+    if (queryCurrentCameraInfo()) {
         TInt supportedModes = m_info.iExposureModesSupported;
         if (supportedModes == 0) {
             return modes;
@@ -1151,33 +1208,41 @@ QCamera::ExposureModes S60CameraSession::supportedExposureModes()
 
 void S60CameraSession::setExposureMode(QCamera::ExposureMode mode)
 {
+    TRAPD(err, setExposureModeL(mode));
+    setError(err);
+}
+
+void S60CameraSession::setExposureModeL(QCamera::ExposureMode mode)
+{
+    //qDebug() << "S60CameraSession::setExposureModeL()";
     if (m_cameraEngine) {
+        CCamera *camera = m_cameraEngine->Camera();
         switch(mode) {
             case QCamera::ExposureManual:
-                m_cameraEngine->SetExposure(CCamera::EExposureManual);
+                camera->SetExposureL(CCamera::EExposureManual);
                 break;
             case QCamera::ExposureAuto:
-                m_cameraEngine->SetExposure(CCamera::EExposureAuto);
+                camera->SetExposureL(CCamera::EExposureAuto);
                 break;
             case QCamera::ExposureNight:
-                m_cameraEngine->SetExposure(CCamera::EExposureNight);
+                camera->SetExposureL(CCamera::EExposureNight);
                 break;
             case QCamera::ExposureBacklight:
-                m_cameraEngine->SetExposure(CCamera::EExposureBacklight);
+                camera->SetExposureL(CCamera::EExposureBacklight);
                 break;
             case QCamera::ExposureSports:
-                m_cameraEngine->SetExposure(CCamera::EExposureSport);
+                camera->SetExposureL(CCamera::EExposureSport);
                 break;
             case QCamera::ExposureSnow:
-                m_cameraEngine->SetExposure(CCamera::EExposureSnow);
+                camera->SetExposureL(CCamera::EExposureSnow);
                 break;
             case QCamera::ExposureBeach:
-                m_cameraEngine->SetExposure(CCamera::EExposureBeach);
+                camera->SetExposureL(CCamera::EExposureBeach);
                 break;
             case QCamera::ExposureLargeAperture:
             case QCamera::ExposureSmallAperture:
                 //TODO:
-                //m_cameraEngine->SetExposure(CCamera::EExposureAperturePriority);
+                //camera->SetExposureL(CCamera::EExposureAperturePriority);
                 break;
             case QCamera::ExposurePortrait:
             case QCamera::ExposureSpotlight:
@@ -1371,7 +1436,7 @@ void S60CameraSession::updateVideoCaptureCodecsL()
             if (count > 0) {
                 TPtrC8 mimeType = mimeTypes[0];
                 QString type = QString::fromUtf8((char *)mimeType.Ptr(),
-                        mimeType.Length());
+                        mimeType.Length());                               
                 // Currently only support for video/mp4 due to resolution and frame rate issues.
                 if (type == "video/mp4") {
                     VideoControllerData data;
@@ -1385,7 +1450,7 @@ void S60CameraSession::updateVideoCaptureCodecsL()
             }
         }
     }
-
+        
     CleanupStack::PopAndDestroy(&controllers);
     CleanupStack::PopAndDestroy(&mediaIds);
     CleanupStack::PopAndDestroy(format);
