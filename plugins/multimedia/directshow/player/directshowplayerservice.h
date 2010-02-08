@@ -113,6 +113,7 @@ private:
     int findStreamType(IPin *pin) const;
 
     bool isConnected(IBaseFilter *filter, PIN_DIRECTION direction) const;
+    IBaseFilter *getConnected(IBaseFilter *filter, PIN_DIRECTION direction) const;
 
     void run();
 
