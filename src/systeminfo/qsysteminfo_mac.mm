@@ -71,7 +71,7 @@
 #include <IOKit/graphics/IOGraphicsLib.h>
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreFoundation/CFLocale.h>
-//#include <ScreenSaver/ScreenSaverDefaults.h>
+#include <ScreenSaver/ScreenSaverDefaults.h>
 
 #include <IOKit/usb/IOUSBLib.h>
 #include <IOKit/pwr_mgt/IOPM.h>
@@ -1326,14 +1326,22 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 
 bool QSystemDeviceInfoPrivate::isDeviceLocked()
 {
-// this only works correctly if the user has a screensaver enabeled
+    // find out if auto login is being used.
+    QSettings loginSettings("/Library/Preferences/com.apple.loginwindow.plist", QSettings::NativeFormat);
+    QString autologinname = loginSettings.value("autoLoginUser").toString();
 
-//    ScreenSaverDefaults *ssDefaults;
-//    ssDefaults = [ScreenSaverDefaults defaultsForModuleWithName:@"com.apple.screensaver"];
-//    int passWordProtected = [ssDefaults integerForKey:@"askForPassword"];
-//    qWarning() << __FUNCTION__ << passWordProtected;
+// find out is screensaver is used.
+    ScreenSaverDefaults *ssDefaults;
+    ssDefaults = [ScreenSaverDefaults defaultsForModuleWithName:@"com.apple.screensaver"];
+    int passWordProtected = [ssDefaults integerForKey:@"askForPassword"];
+    qWarning() << __FUNCTION__ << passWordProtected;
 
-    return false;
+    if(autologinname.isEmpty() || passWordProtected == 1) {
+        qWarning() << "device is locked";
+        return true;
+    } else {
+        return false;
+    }
 }
 
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
