@@ -2507,10 +2507,10 @@
                 <value name="PreserveAspectFit" value="1"/>
                 <value name="PreserveAspectCrop" value="2"/>
             </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QGraphicsVideoItem" fullname="QGraphicsVideoItem::QGraphicsVideoItem" href="qgraphicsvideoitem.html#QGraphicsVideoItem" location="qgraphicsvideoitem.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGraphicsVideoItem(QGraphicsItem * parent)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QGraphicsVideoItem" fullname="QGraphicsVideoItem::QGraphicsVideoItem" href="qgraphicsvideoitem.html#QGraphicsVideoItem" location="qgraphicsvideoitem_maemo5.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGraphicsVideoItem(QGraphicsItem * parent)">
                 <parameter left="QGraphicsItem *" right="" name="parent" default="0"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QGraphicsVideoItem" fullname="QGraphicsVideoItem::~QGraphicsVideoItem" href="qgraphicsvideoitem.html#dtor.QGraphicsVideoItem" location="qgraphicsvideoitem.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGraphicsVideoItem()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QGraphicsVideoItem" fullname="QGraphicsVideoItem::~QGraphicsVideoItem" href="qgraphicsvideoitem.html#dtor.QGraphicsVideoItem" location="qgraphicsvideoitem_maemo5.cpp" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGraphicsVideoItem()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="mediaObject" fullname="QGraphicsVideoItem::mediaObject" href="qgraphicsvideoitem.html#mediaObject-prop" location="qgraphicsvideoitem_maemo5.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="mediaObject" type="QMediaObject *" signature="mediaObject() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setMediaObject" fullname="QGraphicsVideoItem::setMediaObject" href="qgraphicsvideoitem.html#mediaObject-prop" location="qgraphicsvideoitem_maemo5.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="mediaObject" type="void" signature="setMediaObject(QMediaObject * object)">
                 <parameter left="QMediaObject *" right="" name="object" default=""/>
@@ -2528,8 +2528,8 @@
                 <parameter left="const QSizeF &amp;" right="" name="size" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="nativeSize" fullname="QGraphicsVideoItem::nativeSize" href="qgraphicsvideoitem.html#nativeSize-prop" location="qgraphicsvideoitem_maemo5.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="nativeSize" type="QSizeF" signature="nativeSize() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="boundingRect" fullname="QGraphicsVideoItem::boundingRect" href="qgraphicsvideoitem.html#boundingRect" location="qgraphicsvideoitem.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QRectF" signature="boundingRect() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="paint" fullname="QGraphicsVideoItem::paint" href="qgraphicsvideoitem.html#paint" location="qgraphicsvideoitem.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="boundingRect" fullname="QGraphicsVideoItem::boundingRect" href="qgraphicsvideoitem.html#boundingRect" location="qgraphicsvideoitem_maemo5.cpp" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QRectF" signature="boundingRect() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="paint" fullname="QGraphicsVideoItem::paint" href="qgraphicsvideoitem.html#paint" location="qgraphicsvideoitem_maemo5.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)">
                 <parameter left="QPainter *" right="" name="painter" default=""/>
                 <parameter left="const QStyleOptionGraphicsItem *" right="" name="option" default=""/>
                 <parameter left="QWidget *" right="" name="widget" default="0"/>
@@ -7388,6 +7388,7 @@
             <contents name="the-qtmobility-namespace" title="The QtMobility Namespace" level="1"/>
             <contents name="platform-compatability" title="Platform Compatability" level="1"/>
             <contents name="feedback-and-bug-reports" title="Feedback and bug reports" level="1"/>
+            <contents name="acknowledgements" title="Acknowledgements" level="1"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QAudioEncoderControl_iid" href="qaudioencodercontrol.html#QAudioEncoderControl_iid" location="qaudioencodercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QAudioEncoderControl" type="" signature="QAudioEncoderControl_iid()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="Q_MEDIA_DECLARE_CONTROL" href="qmediacontrol.html#Q_MEDIA_DECLARE_CONTROL" location="" virtual="non" meta="macrowithparams" const="false" static="false" overload="false" relates="QMediaControl" type="" signature="Q_MEDIA_DECLARE_CONTROL( Class,  IId)">
@@ -7639,12 +7640,58 @@
             <page access="public" status="commendable" name="position" href="position.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
             <page access="public" status="commendable" name="volume" href="volume.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
             <page access="public" status="commendable" name="muted" href="muted.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="hasAudio" href="hasaudio.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
             <page access="public" status="commendable" name="hasVideo" href="hasvideo.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
             <page access="public" status="commendable" name="bufferProgress" href="bufferprogress.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
             <page access="public" status="commendable" name="seekable" href="seekable.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
             <page access="public" status="commendable" name="error" href="error.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
             <page access="public" status="commendable" name="errorString" href="errorstring.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
-            <page access="public" status="commendable" name="FillMode" href="fillmode.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="fillMode" href="fillmode.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="title" href="title.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="subTitle" href="subtitle.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="author" href="author.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="comment" href="comment.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="description" href="description.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="category" href="category.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="genre" href="genre.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="year" href="year.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="date" href="date.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="userRating" href="userrating.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="keywords" href="keywords.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="language" href="language.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="publisher" href="publisher.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="copyright" href="copyright.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="parentalRating" href="parentalrating.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="ratingOrganisation" href="ratingorganisation.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="size" href="size.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="mediaType" href="mediatype.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="audioBitRate" href="audiobitrate.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="audioCodec" href="audiocodec.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="averageLevel" href="averagelevel.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="channelCount" href="channelcount.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="peakValue" href="peakvalue.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="sampleRate" href="samplerate.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="albumTitle" href="albumtitle.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="albumArtist" href="albumartist.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="contributingArtist" href="contributingartist.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="composer" href="composer.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="conductor" href="conductor.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="lyrics" href="lyrics.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="mood" href="mood.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="trackNumber" href="tracknumber.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="trackCount" href="trackcount.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="coverArtUrlSmall" href="coverarturlsmall.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="coverArtUrlLarge" href="coverarturllarge.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="resolution" href="resolution.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="pixelAspectRatio" href="pixelaspectratio.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="videoFrameRate" href="videoframerate.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="videoBitRate" href="videobitrate.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="videoCodec" href="videocodec.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="posterUrl" href="posterurl.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="chapterNumber" href="chapternumber.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="director" href="director.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="leadPerformer" href="leadperformer.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="writer" href="writer.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoRendererControl_iid" href="qvideorenderercontrol.html#QVideoRendererControl_iid" location="qvideorenderercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoRendererControl" type="" signature="QVideoRendererControl_iid()"/>
         <page access="public" status="commendable" name="service-framework-on-symbian.html" href="service-framework-on-symbian.html" subtype="page" title="Qt Service Framework on Symbian" fulltitle="Qt Service Framework on Symbian" subtitle="" location="sfw_s60.qdoc">
@@ -7699,6 +7746,51 @@
             <page access="public" status="commendable" name="error" href="error.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
             <page access="public" status="commendable" name="errorString" href="errorstring.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
             <page access="public" status="commendable" name="onError(error," href="onerror-error.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="title" href="title.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="subTitle" href="subtitle.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="author" href="author.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="comment" href="comment.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="description" href="description.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="category" href="category.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="genre" href="genre.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="year" href="year.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="date" href="date.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="userRating" href="userrating.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="keywords" href="keywords.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="language" href="language.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="publisher" href="publisher.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="copyright" href="copyright.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="parentalRating" href="parentalrating.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="ratingOrganisation" href="ratingorganisation.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="size" href="size.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="mediaType" href="mediatype.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="audioBitRate" href="audiobitrate.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="audioCodec" href="audiocodec.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="averageLevel" href="averagelevel.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="channelCount" href="channelcount.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="peakValue" href="peakvalue.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="sampleRate" href="samplerate.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="albumTitle" href="albumtitle.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="albumArtist" href="albumartist.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="contributingArtist" href="contributingartist.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="composer" href="composer.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="conductor" href="conductor.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="lyrics" href="lyrics.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="mood" href="mood.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="trackNumber" href="tracknumber.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="trackCount" href="trackcount.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="coverArtUrlSmall" href="coverarturlsmall.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="coverArtUrlLarge" href="coverarturllarge.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="resolution" href="resolution.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="pixelAspectRatio" href="pixelaspectratio.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="videoFrameRate" href="videoframerate.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="videoBitRate" href="videobitrate.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="videoCodec" href="videocodec.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="posterUrl" href="posterurl.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="chapterNumber" href="chapternumber.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="director" href="director.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="leadPerformer" href="leadperformer.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="writer" href="writer.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
         </page>
         <page access="public" status="commendable" name="querymessages" href="querymessages.html" subtype="example" title="Query Messages Example" fulltitle="Query Messages Example" subtitle="" location="querymessages.qdoc">
             <page access="public" status="commendable" name="querymessages/main.cpp" href="querymessages-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="querymessages/main.cpp" location=""/>
