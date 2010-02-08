@@ -132,6 +132,8 @@ const VersitContactDetailMapping versitContactDetailMappings[] = {
                       QContactOrganization::FieldAssistantName.str},
     {"X-CHILDREN",    QContactFamily::DefinitionName.str,
                       QContactFamily::FieldChildren.str},
+    {"X-EPOCSECONDNAME",QContactNickname::DefinitionName.str,
+                      QContactNickname::FieldNickname.str},
     {"X-GENDER",      QContactGender::DefinitionName.str,
                       QContactGender::FieldGender.str},
     {"X-IMPP",        QContactOnlineAccount::DefinitionName.str,
