@@ -146,12 +146,6 @@ QtSystemInfo
  - foo
     * bar
 
-Qt Mobility Plugins
-------
-
- - foo
-    * bar
-
 
 ****************************************************************************
 *                      Platform Specific Changes                           *
