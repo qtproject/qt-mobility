@@ -123,8 +123,13 @@ void TestCntSymbianDatabase::databaseEvents()
     db = new CntSymbianDatabase(engine, error);
     QVERIFY(db != 0);
     QVERIFY(db->m_contactDatabase != 0);
+    // This only defined when the mock database is used
+#if 0
     TRAPD(err, db->m_contactDatabase->sendEventsL());
     QVERIFY(err == KErrNone);
+#else
+    QFAIL("Mock database not currently compiled in, test meaningless?");
+#endif
     delete db;
 }
 
