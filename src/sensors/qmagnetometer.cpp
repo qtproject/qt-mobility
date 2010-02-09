@@ -79,12 +79,21 @@ IMPLEMENT_READING(QMagnetometerReading)
 */
 
 /*!
-    \property QMagnetometerReading::x
-    \brief the flux density on the X axis.
+    \enum QMagnetometerReading::CalibrationLevel
+
+    \value Undefined The calibration level is not defined or is too low.
+    \value Low       The calibrated values may be inaccurate by up to 3 micro Teslas.
+    \value Middle    The calibrated values may be inaccurate by up to 2 micro Teslas.
+    \value High      The calibrated values may be inaccurate by up to 1 micro Tesla.
 */
 
 /*!
-    Returns the flux density on the X axis.
+    \property QMagnetometerReading::x
+    \brief the raw flux density on the X axis.
+*/
+
+/*!
+    Returns the raw flux density on the X axis.
 */
 qreal QMagnetometerReading::x() const
 {
@@ -92,7 +101,7 @@ qreal QMagnetometerReading::x() const
 }
 
 /*!
-    Sets the flux density on the X axis to \a x.
+    Sets the raw flux density on the X axis to \a x.
 */
 void QMagnetometerReading::setX(qreal x)
 {
@@ -101,11 +110,11 @@ void QMagnetometerReading::setX(qreal x)
 
 /*!
     \property QMagnetometerReading::y
-    \brief the flux density on the Y axis.
+    \brief the raw flux density on the Y axis.
 */
 
 /*!
-    Returns the flux density on the Y axis.
+    Returns the raw flux density on the Y axis.
 */
 qreal QMagnetometerReading::y() const
 {
@@ -113,7 +122,7 @@ qreal QMagnetometerReading::y() const
 }
 
 /*!
-    Sets the flux density on the Y axis to \a y.
+    Sets the raw flux density on the Y axis to \a y.
 */
 void QMagnetometerReading::setY(qreal y)
 {
@@ -122,11 +131,11 @@ void QMagnetometerReading::setY(qreal y)
 
 /*!
     \property QMagnetometerReading::z
-    \brief the flux density on the Z axis.
+    \brief the raw flux density on the Z axis.
 */
 
 /*!
-    Returns the flux density on the Z axis.
+    Returns the raw flux density on the Y axis.
 */
 qreal QMagnetometerReading::z() const
 {
@@ -134,11 +143,97 @@ qreal QMagnetometerReading::z() const
 }
 
 /*!
-    Sets the flux density on the Z axis to \a z.
+    Sets the raw flux density on the Z axis to \a z.
 */
 void QMagnetometerReading::setZ(qreal z)
 {
     d->z = z;
+}
+
+/*!
+    \property QMagnetometerReading::calibrated_x
+    \brief the calibrated flux density on the X axis.
+*/
+
+/*!
+    Returns the calibrated flux density on the X axis.
+*/
+qreal QMagnetometerReading::calibrated_x() const
+{
+    return d->calibrated_x;
+}
+
+/*!
+    Sets the calibrated flux density on the X axis to \a calibrated_x.
+*/
+void QMagnetometerReading::setCalibrated_x(qreal calibrated_x)
+{
+    d->calibrated_x = calibrated_x;
+}
+
+/*!
+    \property QMagnetometerReading::calibrated_y
+    \brief the calibrated flux density on the Y axis.
+*/
+
+/*!
+    Returns the calibrated flux density on the Y axis.
+*/
+qreal QMagnetometerReading::calibrated_y() const
+{
+    return d->calibrated_y;
+}
+
+/*!
+    Sets the calibrated flux density on the Y axis to \a calibrated_y.
+*/
+void QMagnetometerReading::setCalibrated_y(qreal calibrated_y)
+{
+    d->calibrated_y = calibrated_y;
+}
+
+/*!
+    \property QMagnetometerReading::calibrated_z
+    \brief the calibrated flux density on the Z axis.
+*/
+
+/*!
+    Returns the calibrated flux density on the Z axis.
+*/
+qreal QMagnetometerReading::calibrated_z() const
+{
+    return d->calibrated_z;
+}
+
+/*!
+    Sets the calibrated flux density on the Z axis to \a calibrated_z.
+*/
+void QMagnetometerReading::setCalibrated_z(qreal calibrated_z)
+{
+    d->calibrated_z = calibrated_z;
+}
+
+/*!
+    \property QMagnetometerReading::calibrationLevel
+    \brief the calibration level of the reading.
+
+    The higher the calibration, the more accurate the measurement is.
+*/
+
+/*!
+    Returns the calibration level of the reading.
+*/
+QMagnetometerReading::CalibrationLevel QMagnetometerReading::calibrationLevel() const
+{
+    return static_cast<QMagnetometerReading::CalibrationLevel>(d->calibrationLevel);
+}
+
+/*!
+    Sets the calibration level of the reading to \a calibrationLevel.
+*/
+void QMagnetometerReading::setCalibrationLevel(QMagnetometerReading::CalibrationLevel calibrationLevel)
+{
+    d->calibrationLevel = calibrationLevel;
 }
 
 // =====================================================================

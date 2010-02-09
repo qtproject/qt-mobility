@@ -51,15 +51,23 @@ class QCompassReadingPrivate;
 class Q_SENSORS_EXPORT QCompassReading : public QSensorReading
 {
     Q_OBJECT
+    Q_ENUMS(CalibrationLevel)
     Q_PROPERTY(qreal azimuth READ azimuth)
-    Q_PROPERTY(qreal uncertaintyArc READ uncertaintyArc)
+    Q_PROPERTY(CalibrationLevel calibrationLevel READ calibrationLevel)
     DECLARE_READING(QCompassReading)
 public:
+    enum CalibrationLevel {
+        Undefined = 0,
+        Low       = 1,
+        Middle    = 2,
+        High      = 3
+    };
+
     qreal azimuth() const;
     void setAzimuth(qreal azimuth);
 
-    qreal uncertaintyArc() const;
-    void setUncertaintyArc(qreal uncertaintyArc);
+    CalibrationLevel calibrationLevel() const;
+    void setCalibrationLevel(CalibrationLevel calibrationLevel);
 };
 
 // begin generated code

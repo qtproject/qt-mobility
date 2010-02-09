@@ -62,12 +62,12 @@ class QCompassReadingPrivate : public QSensorReadingPrivate
 public:
     QCompassReadingPrivate()
         : azimuth(0)
-        , uncertaintyArc(0)
+        , calibrationLevel(0)
     {
     }
 
     qreal azimuth;
-    qreal uncertaintyArc;
+    int calibrationLevel;
 };
 
 QTM_END_NAMESPACE

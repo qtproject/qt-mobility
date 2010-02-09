@@ -58,12 +58,21 @@ IMPLEMENT_READING(QCompassReading)
     magnetic north in a clockwise direction based on the top of the device.
     Note that the top of the device is a fixed point and may not represent the
     orientation that the user is holding the device in.
-    There is also an uncertainty arc. This will be larger when
-    compass readings are less accurate.
+    There is also a value to indicate the calibration status of the device.
+    If the device is not calibrated the azimuth may not be accurate.
 
     Digital compasses are susceptible to magnetic interference and may need
     calibration after being placed near anything that emits a magnetic force.
     Accuracy of the compass can be affected by any ferrous materials that are nearby.
+*/
+
+/*!
+    \enum QCompassReading::CalibrationLevel
+
+    \value Undefined The calibration level is not defined or is too low.
+    \value Low       The reported azimuth may be off by up to 15.4 degrees.
+    \value Middle    The reported azimuth may be off by up to 11.8 degrees.
+    \value High      The reported azimuth may be off by up to 7.4 degrees.
 */
 
 /*!
@@ -88,26 +97,26 @@ void QCompassReading::setAzimuth(qreal azimuth)
 }
 
 /*!
-    \property QCompassReading::uncertaintyArc
-    \brief the angle of uncertainty.
+    \property QCompassReading::calibrationLevel
+    \brief the calibration level of the reading.
 
-    The arc will increase as the accuracty of the compass drops.
+    The higher the calibration, the more accurate the measurement is.
 */
 
 /*!
-    Returns the uncertainty arc.
+    Returns the calibration level of the reading.
 */
-qreal QCompassReading::uncertaintyArc() const
+QCompassReading::CalibrationLevel QCompassReading::calibrationLevel() const
 {
-    return d->uncertaintyArc;
+    return static_cast<QCompassReading::CalibrationLevel>(d->calibrationLevel);
 }
 
 /*!
-    Sets the uncertainty arc to \a uncertaintyArc.
+    Sets the calibration level of the reading to \a calibrationLevel.
 */
-void QCompassReading::setUncertaintyArc(qreal uncertaintyArc)
+void QCompassReading::setCalibrationLevel(QCompassReading::CalibrationLevel calibrationLevel)
 {
-    d->uncertaintyArc = uncertaintyArc;
+    d->calibrationLevel = calibrationLevel;
 }
 
 // =====================================================================

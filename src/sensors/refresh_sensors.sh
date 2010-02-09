@@ -8,5 +8,4 @@
 ./make_sensor.pl QProximitySensor
 ./make_sensor.pl QRotationSensor
 ./make_sensor.pl QTapSensor
-./make_sensor.pl Q3dCompass
 
