@@ -71,6 +71,9 @@ class QGeoPositionInfoSourceMaemo : public QGeoPositionInfoSource
 public:
 
     QGeoPositionInfoSourceMaemo(QObject *parent = 0);
+#ifdef Q_WS_MAEMO_5    
+    ~QGeoPositionInfoSourceMaemo();
+#endif
     int init();
 
     virtual void setUpdateInterval(int interval);

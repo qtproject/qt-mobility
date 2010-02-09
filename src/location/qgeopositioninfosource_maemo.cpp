@@ -77,6 +77,16 @@ QGeoPositionInfoSourceMaemo::QGeoPositionInfoSourceMaemo(QObject *parent): QGeoP
     validLastSatUpdate = false;
 }
 
+#ifdef Q_WS_MAEMO_5
+QGeoPositionInfoSourceMaemo::~QGeoPositionInfoSourceMaemo()
+{
+    if(locationDevice)
+        g_object_unref(locationDevice);
+    if(locationControl)
+        g_object_unref(locationControl);
+}
+#endif
+
 int QGeoPositionInfoSourceMaemo::init()
 {
 #ifdef Q_WS_MAEMO_5

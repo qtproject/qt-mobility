@@ -65,6 +65,9 @@ class QGeoSatelliteInfoSourceMaemo : public QGeoSatelliteInfoSource
     Q_OBJECT
 public:
     explicit QGeoSatelliteInfoSourceMaemo(QObject *parent = 0);
+#ifdef Q_WS_MAEMO_5
+    ~QGeoSatelliteInfoSourceMaemo();
+#endif    
     int init();
 
 private:

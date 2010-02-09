@@ -52,6 +52,16 @@ QGeoSatelliteInfoSourceMaemo::QGeoSatelliteInfoSourceMaemo(QObject *parent) : QG
 #endif    
 }
 
+#ifdef Q_WS_MAEMO_5
+QGeoSatelliteInfoSourceMaemo::~QGeoSatelliteInfoSourceMaemo()
+{
+    if(satelliteDevice)
+        g_object_unref(satelliteDevice);
+    if(satelliteControl)
+        g_object_unref(satelliteControl);
+}
+#endif
+
 int QGeoSatelliteInfoSourceMaemo::init()
 {
 #ifdef Q_WS_MAEMO_5
