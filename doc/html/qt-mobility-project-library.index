@@ -78,7 +78,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="reading" fullname="QAmbientLightSensor::reading" href="qambientlightsensor.html#reading" location="qambientlightsensor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QAmbientLightReading *" signature="reading() const"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QAmbientLightSensor::type" href="qambientlightsensor.html#type-var" location="qambientlightsensor.h" type="const char *" static="true"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QVersitContactExporterDetailHandler" href="qversitcontactexporterdetailhandler.html" location="qversitcontactexporter.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="preliminary" name="QVersitContactExporterDetailHandler" href="qversitcontactexporterdetailhandler.html" location="qversitcontactexporter.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="~QVersitContactExporterDetailHandler" fullname="QVersitContactExporterDetailHandler::~QVersitContactExporterDetailHandler" href="qversitcontactexporterdetailhandler.html#dtor.QVersitContactExporterDetailHandler" location="qversitcontactexporter.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QVersitContactExporterDetailHandler()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="preProcessDetail" fullname="QVersitContactExporterDetailHandler::preProcessDetail" href="qversitcontactexporterdetailhandler.html#preProcessDetail" location="qversitcontactexporter.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="preProcessDetail(const QContact &amp; contact, const QContactDetail &amp; detail, QVersitDocument * document)">
                 <parameter left="const QContact &amp;" right="" name="contact" default=""/>
@@ -92,7 +92,7 @@
                 <parameter left="QVersitDocument *" right="" name="document" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QVersitContactExporter" href="qversitcontactexporter.html" location="qversitcontactexporter.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="preliminary" name="QVersitContactExporter" href="qversitcontactexporter.html" location="qversitcontactexporter.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QVersitContactExporter" fullname="QVersitContactExporter::QVersitContactExporter" href="qversitcontactexporter.html#QVersitContactExporter" location="qversitcontactexporter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QVersitContactExporter()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QVersitContactExporter" fullname="QVersitContactExporter::~QVersitContactExporter" href="qversitcontactexporter.html#dtor.QVersitContactExporter" location="qversitcontactexporter.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QVersitContactExporter()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="exportContacts" fullname="QVersitContactExporter::exportContacts" href="qversitcontactexporter.html#exportContacts" location="qversitcontactexporter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QList&lt;QVersitDocument&gt;" signature="exportContacts(const QList&lt;QContact&gt; &amp; contacts, QVersitDocument::VersitType versitType)">
@@ -226,7 +226,7 @@
             </enum>
             <typedef access="public" threadsafety="unspecified" status="commendable" name="LayerOptions" fullname="QValueSpace::LayerOptions" href="qvaluespace.html#LayerOptions-typedef" location="qvaluespace.h" enum="QValueSpace::LayerOption"/>
         </namespace>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QVersitContactImporterPropertyHandler" href="qversitcontactimporterpropertyhandler.html" location="qversitcontactimporter.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="preliminary" name="QVersitContactImporterPropertyHandler" href="qversitcontactimporterpropertyhandler.html" location="qversitcontactimporter.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="~QVersitContactImporterPropertyHandler" fullname="QVersitContactImporterPropertyHandler::~QVersitContactImporterPropertyHandler" href="qversitcontactimporterpropertyhandler.html#dtor.QVersitContactImporterPropertyHandler" location="qversitcontactimporter.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QVersitContactImporterPropertyHandler()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="preProcessProperty" fullname="QVersitContactImporterPropertyHandler::preProcessProperty" href="qversitcontactimporterpropertyhandler.html#preProcessProperty" location="qversitcontactimporter.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="preProcessProperty(const QVersitDocument &amp; document, const QVersitProperty &amp; property, int contactIndex, QContact * contact)">
                 <parameter left="const QVersitDocument &amp;" right="" name="document" default=""/>
@@ -242,7 +242,7 @@
                 <parameter left="QContact *" right="" name="contact" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QVersitContactImporter" href="qversitcontactimporter.html" location="qversitcontactimporter.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="preliminary" name="QVersitContactImporter" href="qversitcontactimporter.html" location="qversitcontactimporter.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QVersitContactImporter" fullname="QVersitContactImporter::QVersitContactImporter" href="qversitcontactimporter.html#QVersitContactImporter" location="qversitcontactimporter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QVersitContactImporter()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QVersitContactImporter" fullname="QVersitContactImporter::~QVersitContactImporter" href="qversitcontactimporter.html#dtor.QVersitContactImporter" location="qversitcontactimporter.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QVersitContactImporter()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="importContacts" fullname="QVersitContactImporter::importContacts" href="qversitcontactimporter.html#importContacts" location="qversitcontactimporter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QList&lt;QContact&gt;" signature="importContacts(const QList&lt;QVersitDocument&gt; &amp; documents)">
@@ -685,20 +685,6 @@
             <function access="public" threadsafety="unspecified" status="deprecated" name="progress" fullname="QContactRelationshipFetchRequest::progress" href="qcontactrelationshipfetchrequest.html#progress" location="qcontactrelationshipfetchrequest.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="progress(QContactRelationshipFetchRequest * self, bool appendOnly)">
                 <parameter left="QContactRelationshipFetchRequest *" right="" name="self" default=""/>
                 <parameter left="bool" right="" name="appendOnly" default=""/>
-            </function>
-        </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QSensorFactory" href="qsensorfactory.html" location="qsensorfactory.h" bases="" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="instance" fullname="QSensorFactory::instance" href="qsensorfactory.html#instance" location="qsensorfactory.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QSensorFactory *" signature="instance()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="defaultSensorForType" fullname="QSensorFactory::defaultSensorForType" href="qsensorfactory.html#defaultSensorForType" location="qsensorfactory.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QByteArray" signature="defaultSensorForType(const QByteArray &amp; type) const">
-                <parameter left="const QByteArray &amp;" right="" name="type" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="sensorsForType" fullname="QSensorFactory::sensorsForType" href="qsensorfactory.html#sensorsForType" location="qsensorfactory.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QByteArray&gt;" signature="sensorsForType(const QByteArray &amp; type) const">
-                <parameter left="const QByteArray &amp;" right="" name="type" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="sensorList" fullname="QSensorFactory::sensorList" href="qsensorfactory.html#sensorList" location="qsensorfactory.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QByteArray&gt;" signature="sensorList() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="sensorTypes" fullname="QSensorFactory::sensorTypes" href="qsensorfactory.html#sensorTypes" location="qsensorfactory.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QByteArray&gt;" signature="sensorTypes() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="createSensor" fullname="QSensorFactory::createSensor" href="qsensorfactory.html#createSensor" location="qsensorfactory.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QSensor *" signature="createSensor(const QByteArray &amp; identifier) const">
-                <parameter left="const QByteArray &amp;" right="" name="identifier" default=""/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QImageProcessingControl" href="qimageprocessingcontrol.html" location="qimageprocessingcontrol.h" bases="QMediaControl" module="">
@@ -1467,7 +1453,7 @@
             </function>
         </class>
         <typedef access="public" threadsafety="unspecified" status="commendable" name="QMediaResourceList" href="#QMediaResourceList-typedef" location="qmediaresource.h"/>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QVersitReader" href="qversitreader.html" location="qversitreader.h" bases="QObject" module="">
+        <class access="public" threadsafety="unspecified" status="preliminary" name="QVersitReader" href="qversitreader.html" location="qversitreader.h" bases="QObject" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="Error" fullname="QVersitReader::Error" href="qversitreader.html#Error-enum" location="qversitreader.h">
                 <value name="NoError" value="0"/>
                 <value name="UnspecifiedError" value="1"/>
@@ -1747,9 +1733,6 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="createBackend" fullname="QSensorManager::createBackend" href="qsensormanager.html#createBackend" location="qsensormanager.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QSensorBackend *" signature="createBackend(QSensor * sensor)">
                 <parameter left="QSensor *" right="" name="sensor" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="defaultSensorForType" fullname="QSensorManager::defaultSensorForType" href="qsensormanager.html#defaultSensorForType" location="qsensormanager.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QByteArray" signature="defaultSensorForType(const QByteArray &amp; type)">
-                <parameter left="const QByteArray &amp;" right="" name="type" default=""/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QSensorBackendFactory" href="qsensorbackendfactory.html" location="qsensormanager.h" bases="" module="">
@@ -2085,7 +2068,7 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="requestTimeout" fullname="QGeoSatelliteInfoSource::requestTimeout" href="qgeosatelliteinfosource.html#requestTimeout" location="qgeosatelliteinfosource.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="requestTimeout()"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QVersitWriter" href="qversitwriter.html" location="qversitwriter.h" bases="QObject" module="">
+        <class access="public" threadsafety="unspecified" status="preliminary" name="QVersitWriter" href="qversitwriter.html" location="qversitwriter.h" bases="QObject" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="Error" fullname="QVersitWriter::Error" href="qversitwriter.html#Error-enum" location="qversitwriter.h">
                 <value name="NoError" value="0"/>
                 <value name="UnspecifiedError" value="1"/>
@@ -2448,7 +2431,7 @@
                 <parameter left="const QString &amp;" right="" name="actionName" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QVersitProperty" href="qversitproperty.html" location="qversitproperty.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="preliminary" name="QVersitProperty" href="qversitproperty.html" location="qversitproperty.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QVersitProperty" fullname="QVersitProperty::QVersitProperty" href="qversitproperty.html#QVersitProperty" location="qversitproperty.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QVersitProperty()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QVersitProperty" fullname="QVersitProperty::QVersitProperty" href="qversitproperty.html#QVersitProperty-2" location="qversitproperty.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QVersitProperty(const QVersitProperty &amp; other)">
                 <parameter left="const QVersitProperty &amp;" right="" name="other" default=""/>
@@ -4744,7 +4727,7 @@
                 <parameter left="const QStringList &amp;" right="" name="capabilities" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QVersitResourceHandler" href="qversitresourcehandler.html" location="qversitresourcehandler.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="preliminary" name="QVersitResourceHandler" href="qversitresourcehandler.html" location="qversitresourcehandler.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="~QVersitResourceHandler" fullname="QVersitResourceHandler::~QVersitResourceHandler" href="qversitresourcehandler.html#dtor.QVersitResourceHandler" location="qversitresourcehandler.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QVersitResourceHandler()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="loadResource" fullname="QVersitResourceHandler::loadResource" href="qversitresourcehandler.html#loadResource" location="qversitresourcehandler.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="loadResource(const QString &amp; location, QByteArray * contents, QString * mimeType)">
                 <parameter left="const QString &amp;" right="" name="location" default=""/>
@@ -6119,6 +6102,13 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="poll" fullname="QSensor::poll" href="qsensor.html#poll" location="qsensor.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="poll()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="reading" fullname="QSensor::reading" href="qsensor.html#reading-prop" location="qsensor.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="reading" type="QSensorReading *" signature="reading() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="sensorTypes" fullname="QSensor::sensorTypes" href="qsensor.html#sensorTypes" location="qsensor.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QList&lt;QByteArray&gt;" signature="sensorTypes()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="sensorsForType" fullname="QSensor::sensorsForType" href="qsensor.html#sensorsForType" location="qsensor.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QList&lt;QByteArray&gt;" signature="sensorsForType(const QByteArray &amp; type)">
+                <parameter left="const QByteArray &amp;" right="" name="type" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="defaultSensorForType" fullname="QSensor::defaultSensorForType" href="qsensor.html#defaultSensorForType" location="qsensor.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QByteArray" signature="defaultSensorForType(const QByteArray &amp; type)">
+                <parameter left="const QByteArray &amp;" right="" name="type" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="start" fullname="QSensor::start" href="qsensor.html#start" location="qsensor.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="start()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="stop" fullname="QSensor::stop" href="qsensor.html#stop" location="qsensor.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="stop()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="readingChanged" fullname="QSensor::readingChanged" href="qsensor.html#readingChanged" location="qsensor.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="readingChanged()"/>
@@ -6788,7 +6778,7 @@
             </function>
             <variable access="protected" threadsafety="unspecified" status="commendable" name="d_ptr" fullname="QVideoWidget::d_ptr" href="qvideowidget.html#d_ptr-var" location="qvideowidget.h" type="QVideoWidgetPrivate *" static="false"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QVersitDocument" href="qversitdocument.html" location="qversitdocument.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="preliminary" name="QVersitDocument" href="qversitdocument.html" location="qversitdocument.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QVersitDocument" fullname="QVersitDocument::QVersitDocument" href="qversitdocument.html#QVersitDocument" location="qversitdocument.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QVersitDocument()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QVersitDocument" fullname="QVersitDocument::QVersitDocument" href="qversitdocument.html#QVersitDocument-2" location="qversitdocument.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QVersitDocument(const QVersitDocument &amp; other)">
                 <parameter left="const QVersitDocument &amp;" right="" name="other" default=""/>
@@ -7340,8 +7330,13 @@
         <page access="public" status="commendable" name="preview.html" href="preview.html" subtype="page" title="Technology Preview" fulltitle="Technology Preview" subtitle="" location="preview.qdoc">
             <target name="management-of-versit-documents"/>
             <target name="camera-support"/>
+            <target name="sensor-classes"/>
             <contents name="management-of-versit-documents" title="Management of Versit Documents" level="1"/>
-            <contents name="camera-support" title="Camera Support" level="1"/>
+            <contents name="camera-support-multimedia" title="Camera Support (Multimedia)" level="1"/>
+            <contents name="sensor-api" title="Sensor API" level="1"/>
+            <contents name="main-classes" title="Main Classes" level="2"/>
+            <contents name="helper-classes" title="Helper Classes" level="2"/>
+            <contents name="backend-classes" title="Backend Classes" level="2"/>
         </page>
         <page access="public" status="commendable" name="gpl.html" href="gpl.html" subtype="page" title="GNU General Public License (GPL)" fulltitle="GNU General Public License (GPL)" subtitle="" location="gpl.qdoc">
             <contents name="the-gnu-general-public-license-version-3" title="The GNU General Public License (Version 3)" level="1"/>
@@ -7383,7 +7378,7 @@
             <contents name="example-creating-a-custom-location-data-source" title="Example: Creating a custom location data source" level="1"/>
             <contents name="classes" title="Classes" level="1"/>
         </page>
-        <page access="public" status="commendable" name="versit.html" href="versit.html" subtype="page" title="Versit API" fulltitle="Versit API" subtitle="" location="versit.qdoc">
+        <page access="public" status="commendable" name="versit.html" href="versit.html" subtype="page" title="Versit API (technology preview)" fulltitle="Versit API (technology preview)" subtitle="" location="versit.qdoc">
             <contents name="overview" title="Overview" level="1"/>
             <contents name="usage" title="Usage" level="1"/>
             <contents name="classes" title="Classes" level="1"/>
@@ -7452,11 +7447,15 @@
             <contents name="messaging" title="Messaging" level="2"/>
             <contents name="multimedia" title="Multimedia" level="2"/>
             <contents name="service-framework" title="Service Framework" level="2"/>
-            <contents name="sensors" title="Sensors" level="2"/>
             <contents name="system-information" title="System Information" level="2"/>
-            <contents name="future-additions-and-considerations" title="Future Additions and Considerations" level="1"/>
+            <contents name="included-technology-preview-apis" title="Included Technology Preview APIs" level="1"/>
+            <contents name="camera" title="Camera" level="2"/>
+            <contents name="sensors" title="Sensors" level="2"/>
+            <contents name="versit" title="Versit" level="2"/>
+            <contents name="the-qtmobility-namespace" title="The QtMobility Namespace" level="1"/>
             <contents name="platform-compatability" title="Platform Compatability" level="1"/>
             <contents name="feedback-and-bug-reports" title="Feedback and bug reports" level="1"/>
+            <contents name="acknowledgements" title="Acknowledgements" level="1"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QAudioEncoderControl_iid" href="qaudioencodercontrol.html#QAudioEncoderControl_iid" location="qaudioencodercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QAudioEncoderControl" type="" signature="QAudioEncoderControl_iid()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="Q_MEDIA_DECLARE_CONTROL" href="qmediacontrol.html#Q_MEDIA_DECLARE_CONTROL" location="" virtual="non" meta="macrowithparams" const="false" static="false" overload="false" relates="QMediaControl" type="" signature="Q_MEDIA_DECLARE_CONTROL( Class,  IId)">
@@ -7665,21 +7664,15 @@
             <contents name="service-framework-api" title="Service Framework API" level="3"/>
             <contents name="system-info-api" title="System Info API" level="3"/>
             <contents name="known-issues" title="Known Issues" level="1"/>
-            <contents name="issues-affecting-all-platforms" title="Issues Affecting All Platforms" level="2"/>
-            <contents name="symbian-s60-specific" title="Symbian/S60 Specific" level="2"/>
-            <contents name="bearer-management" title="Bearer Management" level="3"/>
-            <contents name="contacts-api" title="Contacts API" level="3"/>
-            <contents name="location-api" title="Location API" level="3"/>
-            <contents name="messaging-api" title="Messaging API" level="3"/>
-            <contents name="multimedia-api" title="Multimedia API" level="3"/>
-            <contents name="publish-and-subscribe-api" title="Publish and Subscribe API" level="3"/>
-            <contents name="service-framework-api" title="Service Framework API" level="3"/>
-            <contents name="system-info-api" title="System Info API" level="3"/>
-            <contents name="maemo-specific" title="Maemo Specific" level="2"/>
-            <contents name="windows-mobile-specific" title="Windows Mobile Specific" level="2"/>
-            <contents name="contacts-api" title="Contacts API" level="3"/>
-            <contents name="messaging-api" title="Messaging API" level="3"/>
-            <contents name="windows-specific" title="Windows Specific" level="2"/>
+            <contents name="non-api-specific-issues" title="Non-API specific issues" level="2"/>
+            <contents name="contacts-api" title="Contacts API" level="2"/>
+            <contents name="location-api" title="Location API" level="2"/>
+            <contents name="messaging-api" title="Messaging API" level="2"/>
+            <contents name="multimedia-api" title="Multimedia API" level="2"/>
+            <contents name="publish-and-subscribe-api" title="Publish and Subscribe API" level="2"/>
+            <contents name="sensors-api" title="Sensors API" level="2"/>
+            <contents name="system-info-api" title="System Info API" level="2"/>
+            <contents name="versit-api" title="Versit API" level="2"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoEncoderControl_iid" href="qvideoencodercontrol.html#QVideoEncoderControl_iid" location="qvideoencodercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoEncoderControl" type="" signature="QVideoEncoderControl_iid()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QMediaPlaylistControl_iid" href="qmediaplaylistcontrol.html#QMediaPlaylistControl_iid" location="qmediaplaylistcontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QMediaPlaylistControl" type="" signature="QMediaPlaylistControl_iid()"/>
@@ -7761,10 +7754,7 @@
         <function access="public" threadsafety="unspecified" status="commendable" name="REGISTER_STATIC_PLUGIN" href="qsensormanager.html#REGISTER_STATIC_PLUGIN" location="" virtual="non" meta="macrowithparams" const="false" static="false" overload="false" relates="QSensorManager" type="" signature="REGISTER_STATIC_PLUGIN( pluginname)">
             <parameter left="" right="" name="pluginname" default=""/>
         </function>
-        <page access="public" status="commendable" name="sensors" href="sensors.html" subtype="group" title="" fulltitle="" subtitle="" location="sensors.qdoc"/>
-        <page access="public" status="commendable" name="sensors_helpers" href="sensors-helpers.html" subtype="group" title="" fulltitle="" subtitle="" location="sensors.qdoc"/>
-        <page access="public" status="commendable" name="sensors_backend" href="sensors-backend.html" subtype="group" title="" fulltitle="" subtitle="" location="sensors.qdoc"/>
-        <page access="public" status="commendable" name="sensors-api.html" href="sensors-api.html" subtype="page" title="Sensors API" fulltitle="Sensors API" subtitle="" location="sensors.qdoc">
+        <page access="public" status="commendable" name="sensors-api.html" href="sensors-api.html" subtype="page" title="Sensors API (technology preview)" fulltitle="Sensors API (technology preview)" subtitle="" location="sensors.qdoc">
             <contents name="overview" title="Overview" level="1"/>
             <contents name="client-api" title="Client API" level="1"/>
             <contents name="backend-api" title="Backend API" level="1"/>

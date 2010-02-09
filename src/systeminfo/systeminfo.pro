@@ -85,7 +85,7 @@ unix: {
         HEADERS += qsysteminfo_mac_p.h
         LIBS += -framework SystemConfiguration -framework CoreFoundation \
          -framework IOKit -framework ApplicationServices -framework Foundation \
-         -framework CoreServices
+         -framework CoreServices -framework ScreenSaver -framework QTKit
 
             contains(corewlan_enabled, yes) {
                      isEmpty(QMAKE_MAC_SDK) {
@@ -100,6 +100,8 @@ unix: {
                         LIBS += -framework CoreWLAN  -framework IOBluetooth
                         DEFINES += MAC_SDK_10_6
                 }
+           } else {
+               CONFIG += no_keywords
            }
     
     TEMPLATE = lib
