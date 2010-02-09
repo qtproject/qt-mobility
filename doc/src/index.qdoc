@@ -385,7 +385,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="lightgreen"></td>
     <td bgcolor="lightgreen"></td>
-    <td bgcolor="lightgray"></td>
+    <td bgcolor="lightgreen"></td>
     <td bgcolor="lightgreen"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -417,7 +417,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="lightgray"></td>
+    <td bgcolor="lightgreen"></td>
     <td bgcolor="lightgreen"></td>
     <td bgcolor="green"></td>
     <td bgcolor="gray"></td>
@@ -449,7 +449,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="lightgreen"></td>
     <td bgcolor="lightgreen"></td>
-    <td bgcolor="lightgray"></td>
+    <td bgcolor="lightgreen"></td>
     <td bgcolor="lightgray"></td>
     <td bgcolor="lightgreen"></td>
     <td bgcolor="green"></td>
@@ -464,8 +464,8 @@
     <td bgcolor="lightgray"></td>
     <td bgcolor="lightgray"></td>
     <td bgcolor="lightgray"></td>
-    <td bgcolor="gray"></td>
     <td bgcolor="lightgreen"></td>
+    <td bgcolor="lightgray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
@@ -474,16 +474,16 @@
     </tr>
     <td>Camera</td>
     <td>TP</td>
-    <td bgcolor="lightgray"></td>
-    <td bgcolor="lightgray"></td>
-    <td bgcolor="lightgray"></td>
+    <td bgcolor="lightgreen"></td>
+    <td bgcolor="lightgreen"></td>
+    <td bgcolor="lightgreen"></td>
     <td bgcolor="lightgray"></td>
     <td bgcolor="lightgray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
+    <td bgcolor="lightgreen"></td>
     <td bgcolor="gray"></td>
     <td></td>
     </tr>
