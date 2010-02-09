@@ -298,7 +298,7 @@ void Dialog::setupNetwork()
 void Dialog::netStatusComboActivated(int index)
 {
     QString status;
-    int reIndex = index +1;
+    int reIndex = index;
 
     displayNetworkStatus(ni->networkStatus((QSystemNetworkInfo::NetworkMode)reIndex));
 
@@ -438,7 +438,14 @@ void Dialog::updatePowerState(QSystemDeviceInfo::PowerState newState)
         }
         break;
     case QSystemDeviceInfo::WallPowerChargingBattery:
-        radioButton_4->setChecked(true);
+        {
+            radioButton_4->setChecked(true);
+        }
+        break;
+    case QSystemDeviceInfo::NoBatteryLevel:
+        {
+            radioButton->setChecked(true);
+        }
         break;
     };
 }
@@ -472,6 +479,11 @@ void Dialog::displayBatteryStatus(QSystemDeviceInfo::BatteryStatus status)
             {
                 msg = "Battery is Normal (greater than 40%)";
                 QMessageBox::information(this,"QSystemInfo",msg);
+            }
+            break;
+        case QSystemDeviceInfo::NoBatteryLevel:
+            {
+
             }
             break;
         };
