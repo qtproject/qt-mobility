@@ -163,8 +163,8 @@ bool QVersitReaderPrivate::parseVersitDocument(VersitCursor& cursor, QVersitDocu
             property = parseNextVersitProperty(document.type(), cursor);
 
             /* Discard embedded vcard documents - not supported yet.  Discard the entire vCard */
-            if (property.name() == QString::fromAscii("BEGIN") &&
-                property.value().trimmed().toUpper() == QString::fromAscii("VCARD")) {
+            if (property.name() == QLatin1String("BEGIN") &&
+                property.value().trimmed().toUpper() == QLatin1String("VCARD")) {
                 parsingOk = false;
                 QVersitDocument nestedDocument;
                 if (!parseVersitDocument(cursor, nestedDocument, true))
@@ -178,10 +178,10 @@ bool QVersitReaderPrivate::parseVersitDocument(VersitCursor& cursor, QVersitDocu
             }
 
             /* Nope, something else.. just add it */
-            if (property.name() != QString::fromAscii("VERSION") && 
-                property.name() != QString::fromAscii("END"))
+            if (property.name() != QLatin1String("VERSION") &&
+                property.name() != QLatin1String("END"))
                 document.addProperty(property);
-        } while (property.name().length() > 0 && property.name() != QString::fromAscii("END"));
+        } while (property.name().length() > 0 && property.name() != QLatin1String("END"));
     }
     mDocumentNestingLevel--;
     if (!parsingOk)
@@ -230,7 +230,7 @@ void QVersitReaderPrivate::parseVCard21Property(VersitCursor& cursor, QVersitPro
     int origPos = cursor.position;
     QByteArray value = VersitUtils::extractPropertyValue(cursor);
 
-    if (property.name() == QString::fromAscii("AGENT")) {
+    if (property.name() == QLatin1String("AGENT")) {
         // Well, try to parse the agent thing
         cursor.setPosition(origPos); // XXX backtracks a little..
         parseAgentProperty(cursor, property);
@@ -261,7 +261,7 @@ void QVersitReaderPrivate::parseVCard30Property(VersitCursor& cursor, QVersitPro
     QString valueString(decodeCharset(value, property, &codec));
     VersitUtils::removeBackSlashEscaping(valueString);
 
-    if (property.name() == QString::fromAscii("AGENT")) {
+    if (property.name() == QLatin1String("AGENT")) {
         // this means 2.1 agent handling doesn't work (you only get the first line)
         VersitCursor agentCursor(valueString.toAscii());
         parseAgentProperty(agentCursor, property);
@@ -301,14 +301,14 @@ void  QVersitReaderPrivate::parseAgentProperty(VersitCursor& cursor, QVersitProp
 bool QVersitReaderPrivate::setVersionFromProperty(QVersitDocument& document, const QVersitProperty& property) const
 {
     bool valid = true;
-    if (property.name() == QString::fromAscii("VERSION")) {
+    if (property.name() == QLatin1String("VERSION")) {
         QString value = property.value().trimmed();
         if (property.parameters().contains(
-                QString::fromAscii("ENCODING"),QString::fromAscii("BASE64")))
-            value = QString::fromAscii(QByteArray::fromBase64(value.toAscii()));
-        if (value == QString::fromAscii("2.1")) {
+                QLatin1String("ENCODING"),QLatin1String("BASE64")))
+            value = QLatin1String(QByteArray::fromBase64(value.toAscii()));
+        if (value == QLatin1String("2.1")) {
             document.setType(QVersitDocument::VCard21Type);
-        } else if (value == QString::fromAscii("3.0")) {
+        } else if (value == QLatin1String("3.0")) {
             document.setType(QVersitDocument::VCard30Type);
         } else {
             valid = false;
@@ -367,7 +367,7 @@ QString QVersitReaderPrivate::decodeCharset(const QByteArray& value,
                                             QVersitProperty& property,
                                             QTextCodec** codec) const
 {
-    const QString charset(QString::fromAscii("CHARSET"));
+    const QString charset(QLatin1String("CHARSET"));
     if (property.parameters().contains(charset)) {
         QString charsetValue = *property.parameters().find(charset);
         property.removeParameters(charset);

@@ -168,11 +168,11 @@ bool VersitUtils::backSlashEscape(QString& text)
             if (current == ';' || current == ',' ||
                 (current == '\\' &&
                  next != '\\' && next != ';' && next != ',' && next != 'n')) {
-                text.insert(i,QChar::fromAscii('\\'));
+                text.insert(i, QLatin1Char('\\'));
                 i++;
                 escaped = true;
             } else if (previous == '\r' && current == '\n') {
-                text.replace(i-1,2,QString::fromAscii("\\n"));
+                text.replace(i-1, 2, QLatin1String("\\n"));
                 escaped = true;
             } else {
                 // NOP
@@ -200,7 +200,7 @@ void VersitUtils::removeBackSlashEscaping(QString& text)
             if (current == ';' || current == ',' || current == '\\' || current == ':') {
                 text.remove(i-1,1);
             } else if (current == 'n' || current == 'N') {
-                text.replace(i-1,2,QString::fromAscii("\r\n"));
+                text.replace(i-1,2,QLatin1String("\r\n"));
             } else {
                 // NOP
             }
@@ -239,7 +239,7 @@ QPair<QStringList,QString> VersitUtils::extractPropertyGroupsAndName(VersitCurso
     if (length > 0) {
         QString trimmedGroupsAndName =
                 codec->toUnicode(line.data.mid(line.position, length)).trimmed();
-        QStringList parts = trimmedGroupsAndName.split(QString::fromAscii("."));
+        QStringList parts = trimmedGroupsAndName.split(QLatin1Char('.'));
         if (parts.count() > 1) {
             groupsAndName.second = parts.takeLast();
             groupsAndName.first = parts;
@@ -304,13 +304,13 @@ QMultiHash<QString,QString> VersitUtils::extractVCard30PropertyParams(VersitCurs
         QString name(paramName(param, codec));
         removeBackSlashEscaping(name);
         QString values = paramValue(param, codec);
-        QList<QString> valueList = values.split(QString::fromAscii(","), QString::SkipEmptyParts);
+        QList<QString> valueList = values.split(QLatin1Char(','), QString::SkipEmptyParts);
         QString buffer; // for any part ending in a backslash, join it to the next.
         foreach (QString value, valueList) {
-            if (value.endsWith(QChar::fromAscii('\\'))) {
+            if (value.endsWith(QLatin1Char('\\'))) {
                 value.chop(1);
                 buffer.append(value);
-                buffer.append(QString::fromAscii(",")); // because the comma got nuked by split()
+                buffer.append(QLatin1Char(',')); // because the comma got nuked by split()
             }
             else {
                 buffer.append(value);
@@ -475,7 +475,7 @@ QString VersitUtils::paramName(const QByteArray& parameter, QTextCodec* codec)
          return codec->toUnicode(parameter.left(equalsIndex)).trimmed();
      }
 
-     return QString::fromAscii("TYPE");
+     return QLatin1String("TYPE");
 }
 
 /*!
@@ -566,7 +566,7 @@ void VersitUtils::changeCodec(QTextCodec* codec) {
     QChar qch;
     QTextCodec::ConverterState state(QTextCodec::IgnoreHeader);
     for (int c = 0; c < 256; c++) {
-        qch = QChar::fromAscii(c);
+        qch = QLatin1Char(c);
         m_encodingMap[c] = codec->fromUnicode(&qch, 1, &state);
     }
 

@@ -51,9 +51,9 @@ QVCard30Writer::QVCard30Writer()
     : QVersitDocumentWriter(QByteArray("VCARD"),QByteArray("3.0"))
 {
     mPropertyNameMappings.insert(
-        QString::fromAscii("X-NICKNAME"),QString::fromAscii("NICKNAME"));
+        QLatin1String("X-NICKNAME"),QLatin1String("NICKNAME"));
     mPropertyNameMappings.insert(
-        QString::fromAscii("X-IMPP"),QString::fromAscii("IMPP"));
+        QLatin1String("X-IMPP"),QLatin1String("IMPP"));
 }
 
 /*! Destroys a writer. */
@@ -82,7 +82,7 @@ QByteArray QVCard30Writer::encodeVersitProperty(const QVersitProperty& property,
     if (variant.canConvert<QVersitDocument>()) {
         QVersitDocument embeddedDocument = variant.value<QVersitDocument>();
         value = encodeVersitDocument(embeddedDocument, codec);
-        QString escapedValue(QString::fromAscii(value));
+        QString escapedValue = QLatin1String(value);
         VersitUtils::backSlashEscape(escapedValue);
         value = codec->fromUnicode(escapedValue);
     } else if (variant.type() == QVariant::String) {

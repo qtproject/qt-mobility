@@ -85,12 +85,12 @@ QVersitContactImporterPrivate::QVersitContactImporterPrivate() :
         sizeof(versitContactDetailMappings)/sizeof(VersitContactDetailMapping);
     for (int i=0; i < versitPropertyCount; i++) {
         QString versitPropertyName =
-            QString::fromAscii(versitContactDetailMappings[i].versitPropertyName);
+            QLatin1String(versitContactDetailMappings[i].versitPropertyName);
         QPair<QString,QString> contactDetail;
         contactDetail.first =
-            QString::fromAscii(versitContactDetailMappings[i].contactDetailDefinitionName);
+            QLatin1String(versitContactDetailMappings[i].contactDetailDefinitionName);
         contactDetail.second =
-            QString::fromAscii(versitContactDetailMappings[i].contactDetailValueKey);
+            QLatin1String(versitContactDetailMappings[i].contactDetailValueKey);
         mDetailMappings.insert(versitPropertyName,contactDetail);
     }
 
@@ -98,16 +98,16 @@ QVersitContactImporterPrivate::QVersitContactImporterPrivate() :
     int contextCount = sizeof(versitContextMappings)/sizeof(VersitMapping);
     for (int i=0; i < contextCount; i++) {
         mContextMappings.insert(
-            QString::fromAscii(versitContextMappings[i].versitString),
-            QString::fromAscii(versitContextMappings[i].contactString));
+            QLatin1String(versitContextMappings[i].versitString),
+            QLatin1String(versitContextMappings[i].contactString));
     }
 
     // Subtype mappings
     int subTypeCount = sizeof(versitSubTypeMappings)/sizeof(VersitMapping);
     for (int i=0; i < subTypeCount; i++) {
         mSubTypeMappings.insert(
-            QString::fromAscii(versitSubTypeMappings[i].versitString),
-            QString::fromAscii(versitSubTypeMappings[i].contactString));
+            QLatin1String(versitSubTypeMappings[i].versitString),
+            QLatin1String(versitSubTypeMappings[i].contactString));
     }
 }
 
@@ -194,7 +194,7 @@ bool QVersitContactImporterPrivate::createName(
             name = QContactName(static_cast<QContactName>(detail));
     }
 
-    QStringList values = property.value().split(QChar::fromAscii(';'));
+    QStringList values = property.value().split(QLatin1Char(';'));
     name.setLastName(takeFirst(values));
     name.setFirstName(takeFirst(values));
     name.setMiddleName(takeFirst(values));
@@ -227,7 +227,7 @@ bool QVersitContactImporterPrivate::createAddress(
 {
     QContactAddress address;
     
-    QStringList addressParts = property.value().split(QChar::fromAscii(';'));
+    QStringList addressParts = property.value().split(QLatin1Char(';'));
     address.setPostOfficeBox(takeFirst(addressParts));
     // There is no setter for the Extended Address in QContactAddress:
     if (!addressParts.isEmpty())
@@ -285,12 +285,12 @@ void QVersitContactImporterPrivate::setOrganizationNames(
     QContactOrganization& organization, const QVersitProperty& property) const
 {
     QString value = property.value();
-    int firstSemicolon = value.indexOf(QString::fromAscii(";"));
+    int firstSemicolon = value.indexOf(QLatin1Char(';'));
     if (firstSemicolon >= 0) {
         organization.setName(value.left(firstSemicolon));
         QString departmentsStr(value.mid(firstSemicolon+1));
         QStringList departments =
-            departmentsStr.split(QString::fromAscii(";"), QString::SkipEmptyParts);
+            departmentsStr.split(QLatin1Char(';'), QString::SkipEmptyParts);
         organization.setDepartment(departments);
     } else {
         organization.setName(value);
@@ -322,7 +322,7 @@ bool QVersitContactImporterPrivate::createTimeStamp(
     if (utc)
         value.chop(1); // take away z from end;
 
-    QDateTime dateTime = parseDateTime(value,QString::fromAscii("yyyyMMddThhmmss"));
+    QDateTime dateTime = parseDateTime(value,QLatin1String("yyyyMMddThhmmss"));
     if (utc)
         dateTime.setTimeSpec(Qt::UTC);
     timeStamp.setLastModified(dateTime);
@@ -339,7 +339,7 @@ bool QVersitContactImporterPrivate::createAnniversary(
 {
     QContactAnniversary anniversary;
     QDateTime dateTime =
-        parseDateTime(property.value(), QString::fromAscii("yyyyMMdd"));
+        parseDateTime(property.value(), QLatin1String("yyyyMMdd"));
     anniversary.setOriginalDate(dateTime.date());
 
     saveDetailWithContext(contact, &anniversary, extractContexts(property));
@@ -354,7 +354,7 @@ bool QVersitContactImporterPrivate::createBirthday(
 {
     QContactBirthday bday;
     QDateTime dateTime =
-        parseDateTime(property.value(), QString::fromAscii("yyyyMMdd"));
+        parseDateTime(property.value(), QLatin1String("yyyyMMdd"));
     bday.setDate(dateTime.date());
 
     saveDetailWithContext(contact, &bday, extractContexts(property));
@@ -385,14 +385,14 @@ bool QVersitContactImporterPrivate::createOnlineAccount(
 {    
     QContactOnlineAccount onlineAccount;
     onlineAccount.setAccountUri(property.value());
-    if (property.name() == QString::fromAscii("X-SIP")) {
+    if (property.name() == QLatin1String("X-SIP")) {
         QStringList subTypes = extractSubTypes(property);
         if (subTypes.count() == 0)
             subTypes.append(QContactOnlineAccount::SubTypeSip);
         onlineAccount.setSubTypes(subTypes);
     }
-    else if (property.name() == QString::fromAscii("X-IMPP") ||
-             property.name() == QString::fromAscii("IMPP")) {
+    else if (property.name() == QLatin1String("X-IMPP") ||
+             property.name() == QLatin1String("IMPP")) {
         onlineAccount.setSubTypes(QContactOnlineAccount::SubTypeImpp);
     }
     else {
@@ -435,7 +435,7 @@ bool QVersitContactImporterPrivate::createGeoLocation(
     const QVersitProperty& property, QContact* contact) const
 {
     QContactGeoLocation geo;
-    QStringList values = property.value().split(QChar::fromAscii(','));
+    QStringList values = property.value().split(QLatin1Char(','));
     geo.setLongitude(takeFirst(values).toDouble());
     geo.setLatitude(takeFirst(values).toDouble());
 
@@ -504,7 +504,7 @@ QStringList QVersitContactImporterPrivate::extractContexts(
     const QVersitProperty& property) const
 {   
     QStringList types = 
-        property.parameters().values(QString::fromAscii("TYPE"));
+        property.parameters().values(QLatin1String("TYPE"));
     QStringList contexts;
     foreach (QString type, types) {   
         QString value = mContextMappings.value(type);
@@ -521,7 +521,7 @@ QStringList QVersitContactImporterPrivate::extractSubTypes(
     const QVersitProperty& property) const
 {
     QStringList types = 
-        property.parameters().values(QString::fromAscii("TYPE"));
+        property.parameters().values(QLatin1String("TYPE"));
     QStringList subTypes;
     foreach (QString type, types) {
         QString subType = mSubTypeMappings.value(type);
@@ -547,7 +547,7 @@ QDateTime QVersitContactImporterPrivate::parseDateTime(
     const QString& format) const
 {
     QDateTime dateTime;
-    if (value.contains(QString::fromAscii("-"))) {
+    if (value.contains(QLatin1Char('-'))) {
         dateTime = QDateTime::fromString(value,Qt::ISODate);
     } else {
         dateTime = QDateTime::fromString(value, format);
