@@ -2,9 +2,6 @@ INCLUDEPATH += $$PWD
 
 #build camera service
 DEFINES += QMEDIA_SYMBIAN_CAMERA
-# depends on camerawrapper, available from forum nokia
-exists($${EPOCROOT}epoc32\include\cameraengine.h) {
-    DEFINES += QMEDIA_SYMBIAN_CAMERA
 
     exists($${EPOCROOT}epoc32\include\ecamadvancedsettings.h) {
         MMP_RULES += \
@@ -68,9 +65,4 @@ exists($${EPOCROOT}epoc32\include\cameraengine.h) {
         $$PWD/s60cameraimageencodercontrol.cpp \
         $$PWD/s60viewfinderwidget.cpp \
         $$PWD/s60camerasettings.cpp \
-        $$PWD/s60camerasettings.cpp \
         $$PWD/s60cameraengine.cpp
-}
-else {
-     message("Symbian camera service disabled, it needs camerawrapper, available from forum.nokia.com")
-}
