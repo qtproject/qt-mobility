@@ -7,7 +7,6 @@ SOURCES += tst_contacts.cpp
 QT += core \
       network
 
-#LIBS += -L../../../lib
 
 INCLUDEPATH += ../../../src/contacts\
                 ../../../src/contacts/details \
@@ -20,11 +19,10 @@ CONFIG += mobility
 MOBILITY = contacts
 
 symbian {
-	LIBS += -lcntmodel
+    LIBS += -lcntmodel
     TARGET.CAPABILITY = All -TCB
 }
 
 maemo {
     QT += dbus xml gui
-    #LIBS += -lQtDBus -lQtXml -lQtGui
 }

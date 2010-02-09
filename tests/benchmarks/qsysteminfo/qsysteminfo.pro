@@ -4,10 +4,8 @@ CONFIG += testcase
 
 SOURCES += tst_qsysteminfo.cpp
 
-QT += core \
-      network
+QT += core
 
-LIBS += -L../../../lib -lQtDBus -lQtXml -lQtGui
 INCLUDEPATH += ../../../src/systeminfo
 
 include(../../../common.pri)

@@ -51,7 +51,7 @@ contains(mobility_modules,publishsubscribe) {
             qsystemreadwritelock_oop
     }
 
-    unix:!symbian:!maemo6: {
+    unix:!symbian:!maemo6:!maemo5 {
         SUBDIRS+= \
                qpacket \
                qmallocpool \

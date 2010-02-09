@@ -219,12 +219,10 @@ void tst_Contact::initTestCase()
 
 int tst_Contact::countContacts()
 {  
-  if(m_backend == BackendQContacts) {
-    QList<QContactLocalId> qcl = m_qm->contactIds();
-    int before = qcl.count();
-    return qcl.count();
-  }
-  else if(m_backend == BackendContactsModel){
+    if(m_backend == BackendQContacts) {
+        QList<QContactLocalId> qcl = m_qm->contactIds();
+        return qcl.count();
+    } else if(m_backend == BackendContactsModel){
 #ifdef Q_OS_SYMBIAN
     CContactDatabase* contactsDb = CContactDatabase::OpenL();
     CleanupStack::PushL(contactsDb);
@@ -235,10 +233,10 @@ int tst_Contact::countContacts()
     
     return num;    
 #endif
-    
-  }
-  qWarning("No backend support in countContacts()");
-  return 0;
+    }
+
+    qWarning("No backend support in countContacts()");
+    return 0;
 
 }
 
@@ -614,7 +612,7 @@ void tst_Contact::resultsAvailableFilter()
     }
 }
 
-void tst_Contact::stateChanged(QContactAbstractRequest::State newState)
+void tst_Contact::stateChanged(QContactAbstractRequest::State /*newState*/)
 {
     qDebug() << "Got state change";
 }
