@@ -192,13 +192,12 @@ QGeoPositionInfo QGeoPositionInfoSourceMaemo::lastKnownPosition(bool fromSatelli
     if (longitude && latitude) {
         coordinate.setLongitude(longitude);
         coordinate.setLatitude(latitude);
+        if (altitude) {
+            coordinate.setAltitude(altitude);
+        }
         posInfo.setCoordinate(coordinate);
     }
-    
-    if (altitude) {
-        coordinate.setAltitude(altitude);
-    }
-    
+        
     if (speed) {
         posInfo.setAttribute(QGeoPositionInfo::GroundSpeed, speed);
     }
@@ -477,9 +476,9 @@ void QGeoPositionInfoSourceMaemo::setLocation(const QGeoPositionInfo &update)
 }
 
 int QGeoPositionInfoSourceMaemo::mapUpdateInterval(int msec) {
-    if (msec < 1000)
+    if (msec < 1500)
         return LOCATION_INTERVAL_1S;
-    else if ((msec >= 1000) && (msec < 3500))
+    else if ((msec >= 1500) && (msec < 3500))
         return LOCATION_INTERVAL_2S;
     else if ((msec >= 3500) && (msec < 7500))
         return LOCATION_INTERVAL_5S;
