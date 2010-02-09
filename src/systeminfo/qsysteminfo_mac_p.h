@@ -150,7 +150,7 @@ Q_SIGNALS:
    void networkNameChanged(QSystemNetworkInfo::NetworkMode, const QString &);
    void networkModeChanged(QSystemNetworkInfo::NetworkMode);
 
-public slots:
+public Q_SLOTS:
    void primaryInterface();
 
 private:
@@ -162,7 +162,7 @@ private:
     QString defaultInterface;
     QSystemNetworkInfo::NetworkMode modeForInterface(QString interfaceName);
 
-private slots:
+private Q_SLOTS:
     void rssiTimeout();
 };
 
@@ -261,7 +261,7 @@ private:
     bool isInhibited;
     QTimer *ssTimer;
 
-private slots:
+private Q_SLOTS:
     void activityTimeout();
 
 };
@@ -285,7 +285,7 @@ private:
     SCDynamicStoreRef storeSession;// = NULL;
     CFRunLoopSourceRef runloopSource;
 
-private slots:
+private Q_SLOTS:
 };
 
 class QLangLoopThread : public QThread
@@ -304,7 +304,7 @@ protected:
 private:
     QMutex mutex;
 
-private slots:
+private Q_SLOTS:
 };
 
 QTM_END_NAMESPACE

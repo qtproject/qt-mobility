@@ -72,6 +72,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreFoundation/CFLocale.h>
 #include <ScreenSaver/ScreenSaverDefaults.h>
+#include <QTKit/QTKit.h>
 
 #include <IOKit/usb/IOUSBLib.h>
 #include <IOKit/pwr_mgt/IOPM.h>
@@ -295,8 +296,8 @@ QStringList QSystemInfoPrivate::availableLanguages() const
     QStringList langList = nsarrayToQStringList(languages);
 
     QStringList returnList;
-    foreach(QString lang, langList) {
-     QString language = lang.left(2);
+    for(int i = 0; i < langList.count(); i++) {
+     QString language = langList.at(i).left(2);
      if(!returnList.contains(language))
          returnList << language;
     }
@@ -305,7 +306,7 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 
 void QSystemInfoPrivate::languageChanged(const QString &lang)
 {
-    emit currentLanguageChanged(lang);
+    Q_EMIT currentLanguageChanged(lang);
 }
 
 
@@ -358,14 +359,12 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::CameraFeature:
         {
-//            CFDictionaryRef match = 0;
-//
-//            match = IOServiceMatching("IOUSBDeviceClientV2");
-//            if(match != NULL) {
-//                featureSupported = true;
-//            }
-//ICCameraDevice
-            //ICCameraDeviceCanTakePicture
+
+           NSArray * videoDevices;
+           videoDevices = [[QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeVideo] arrayByAddingObjectsFromArray:[QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeMuxed]];
+           if([videoDevices count] > 0) {
+               featureSupported = true;
+           }
         }
         break;
     case QSystemInfo::FmradioFeature:
@@ -672,7 +671,7 @@ QString QSystemNetworkInfoPrivate::getDefaultInterface()
     if (primaryInterface) {
         interfaceName = stringFromCFString(primaryInterface);
         if(interfaceName != defaultInterface) {
-            emit networkModeChanged(modeForInterface(interfaceName));
+            Q_EMIT networkModeChanged(modeForInterface(interfaceName));
              defaultInterface = interfaceName;
         }
     }
@@ -811,7 +810,7 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
                     networkStatus(QSystemNetworkInfo::WlanMode);
                 }
                 signalStrengthCache = signalQuality;
-                emit networkSignalStrengthChanged(mode, signalQuality);
+                Q_EMIT networkSignalStrengthChanged(mode, signalQuality);
             }
             [autoreleasepool release];
 #endif
@@ -953,12 +952,12 @@ void QSystemNetworkInfoPrivate::networkChanged(const QString &notification, cons
    // runloopThread->stopLoop();
 
     if(notification == "SSID_CHANGED_NOTIFICATION") {
-        emit networkNameChanged(QSystemNetworkInfo::WlanMode, networkName(QSystemNetworkInfo::WlanMode));
+        Q_EMIT networkNameChanged(QSystemNetworkInfo::WlanMode, networkName(QSystemNetworkInfo::WlanMode));
     }
 
     if(notification == "BSSID_CHANGED_NOTIFICATION") {
         QSystemNetworkInfo::NetworkStatus status =  networkStatus(QSystemNetworkInfo::WlanMode);
-        emit networkStatusChanged( QSystemNetworkInfo::WlanMode, status);
+        Q_EMIT networkStatusChanged( QSystemNetworkInfo::WlanMode, status);
     }
     if(notification == "POWER_CHANGED_NOTIFICATION") {
 #ifdef MAC_SDK_10_6
@@ -1232,7 +1231,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 
     if( currentPowerStateCache != state) {
         currentPowerStateCache = state;
-        emit powerStateChanged(state);
+        Q_EMIT powerStateChanged(state);
     }
     return state;
 }
@@ -1298,21 +1297,21 @@ int QSystemDeviceInfoPrivate::batteryLevel()
 
     if(batteryLevelCache != level) {
         batteryLevelCache = level;
-        emit batteryLevelChanged(level);
+        Q_EMIT batteryLevelChanged(level);
     }
 
     if(batteryLevelCache < 4 && batteryStatusCache != QSystemDeviceInfo::BatteryCritical) {
         batteryStatusCache = QSystemDeviceInfo::BatteryCritical;
-        emit batteryStatusChanged(batteryStatusCache);
+        Q_EMIT batteryStatusChanged(batteryStatusCache);
     } else if((batteryLevelCache > 3 && batteryLevelCache < 11) && batteryStatusCache != QSystemDeviceInfo::BatteryVeryLow) {
         batteryStatusCache = QSystemDeviceInfo::BatteryVeryLow;
-        emit batteryStatusChanged(batteryStatusCache);
+        Q_EMIT batteryStatusChanged(batteryStatusCache);
     } else if((batteryLevelCache > 10 && batteryLevelCache < 41) && batteryStatusCache != QSystemDeviceInfo::BatteryLow) {
         batteryStatusCache = QSystemDeviceInfo::BatteryLow;
-        emit batteryStatusChanged(batteryStatusCache);
+        Q_EMIT batteryStatusChanged(batteryStatusCache);
     } else if(batteryLevelCache > 40 && batteryStatusCache != QSystemDeviceInfo::BatteryNormal) {
         batteryStatusCache = QSystemDeviceInfo::BatteryNormal;
-        emit batteryStatusChanged(batteryStatusCache);
+        Q_EMIT batteryStatusChanged(batteryStatusCache);
     }
 
     return (int)level;
