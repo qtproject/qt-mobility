@@ -1,0 +1,135 @@
+EXPORTS
+	_ZN10QtMobility13QVersitReader11qt_metacallEN11QMetaObject4CallEiPPv @ 1 NONAME
+	_ZN10QtMobility13QVersitReader11qt_metacastEPKc @ 2 NONAME
+	_ZN10QtMobility13QVersitReader12startReadingEv @ 3 NONAME
+	_ZN10QtMobility13QVersitReader12stateChangedENS0_5StateE @ 4 NONAME
+	_ZN10QtMobility13QVersitReader15setDefaultCodecEP10QTextCodec @ 5 NONAME
+	_ZN10QtMobility13QVersitReader15waitForFinishedEi @ 6 NONAME
+	_ZN10QtMobility13QVersitReader16resultsAvailableER5QListINS_15QVersitDocumentEE @ 7 NONAME
+	_ZN10QtMobility13QVersitReader16staticMetaObjectE @ 8 NONAME DATA 16
+	_ZN10QtMobility13QVersitReader19getStaticMetaObjectEv @ 9 NONAME
+	_ZN10QtMobility13QVersitReader6cancelEv @ 10 NONAME
+	_ZN10QtMobility13QVersitReader7readAllEv @ 11 NONAME
+	_ZN10QtMobility13QVersitReader9setDeviceEP9QIODevice @ 12 NONAME
+	_ZN10QtMobility13QVersitReaderC1Ev @ 13 NONAME
+	_ZN10QtMobility13QVersitReaderC2Ev @ 14 NONAME
+	_ZN10QtMobility13QVersitReaderD0Ev @ 15 NONAME
+	_ZN10QtMobility13QVersitReaderD1Ev @ 16 NONAME
+	_ZN10QtMobility13QVersitReaderD2Ev @ 17 NONAME
+	_ZN10QtMobility13QVersitWriter11qt_metacallEN11QMetaObject4CallEiPPv @ 18 NONAME
+	_ZN10QtMobility13QVersitWriter11qt_metacastEPKc @ 19 NONAME
+	_ZN10QtMobility13QVersitWriter12startWritingERK5QListINS_15QVersitDocumentEE @ 20 NONAME
+	_ZN10QtMobility13QVersitWriter12startWritingEv @ 21 NONAME
+	_ZN10QtMobility13QVersitWriter12stateChangedENS0_5StateE @ 22 NONAME
+	_ZN10QtMobility13QVersitWriter15setDefaultCodecEP10QTextCodec @ 23 NONAME
+	_ZN10QtMobility13QVersitWriter15waitForFinishedEi @ 24 NONAME
+	_ZN10QtMobility13QVersitWriter16staticMetaObjectE @ 25 NONAME DATA 16
+	_ZN10QtMobility13QVersitWriter17setVersitDocumentERKNS_15QVersitDocumentE @ 26 NONAME
+	_ZN10QtMobility13QVersitWriter19getStaticMetaObjectEv @ 27 NONAME
+	_ZN10QtMobility13QVersitWriter6cancelEv @ 28 NONAME
+	_ZN10QtMobility13QVersitWriter8writeAllEv @ 29 NONAME
+	_ZN10QtMobility13QVersitWriter9setDeviceEP9QIODevice @ 30 NONAME
+	_ZN10QtMobility13QVersitWriterC1Ev @ 31 NONAME
+	_ZN10QtMobility13QVersitWriterC2Ev @ 32 NONAME
+	_ZN10QtMobility13QVersitWriterD0Ev @ 33 NONAME
+	_ZN10QtMobility13QVersitWriterD1Ev @ 34 NONAME
+	_ZN10QtMobility13QVersitWriterD2Ev @ 35 NONAME
+	_ZN10QtMobility15QVersitDocument11addPropertyERKNS_15QVersitPropertyE @ 36 NONAME
+	_ZN10QtMobility15QVersitDocument13setVersitTypeENS0_10VersitTypeE @ 37 NONAME
+	_ZN10QtMobility15QVersitDocument14removePropertyERKNS_15QVersitPropertyE @ 38 NONAME
+	_ZN10QtMobility15QVersitDocument16removePropertiesERK7QString @ 39 NONAME
+	_ZN10QtMobility15QVersitDocument5clearEv @ 40 NONAME
+	_ZN10QtMobility15QVersitDocument7setTypeENS0_10VersitTypeE @ 41 NONAME
+	_ZN10QtMobility15QVersitDocumentC1ERKS0_ @ 42 NONAME
+	_ZN10QtMobility15QVersitDocumentC1Ev @ 43 NONAME
+	_ZN10QtMobility15QVersitDocumentC2ERKS0_ @ 44 NONAME
+	_ZN10QtMobility15QVersitDocumentC2Ev @ 45 NONAME
+	_ZN10QtMobility15QVersitDocumentD1Ev @ 46 NONAME
+	_ZN10QtMobility15QVersitDocumentD2Ev @ 47 NONAME
+	_ZN10QtMobility15QVersitDocumentaSERKS0_ @ 48 NONAME
+	_ZN10QtMobility15QVersitProperty12addParameterERK7QStringS3_ @ 49 NONAME
+	_ZN10QtMobility15QVersitProperty13setParametersERK10QMultiHashI7QStringS2_E @ 50 NONAME
+	_ZN10QtMobility15QVersitProperty15insertParameterERK7QStringS3_ @ 51 NONAME
+	_ZN10QtMobility15QVersitProperty15removeParameterERK7QStringS3_ @ 52 NONAME
+	_ZN10QtMobility15QVersitProperty16removeParametersERK7QString @ 53 NONAME
+	_ZN10QtMobility15QVersitProperty19setEmbeddedDocumentERKNS_15QVersitDocumentE @ 54 NONAME
+	_ZN10QtMobility15QVersitProperty5clearEv @ 55 NONAME
+	_ZN10QtMobility15QVersitProperty7setNameERK7QString @ 56 NONAME
+	_ZN10QtMobility15QVersitProperty8setValueERK8QVariant @ 57 NONAME
+	_ZN10QtMobility15QVersitProperty9setGroupsERK11QStringList @ 58 NONAME
+	_ZN10QtMobility15QVersitPropertyC1ERKS0_ @ 59 NONAME
+	_ZN10QtMobility15QVersitPropertyC1Ev @ 60 NONAME
+	_ZN10QtMobility15QVersitPropertyC2ERKS0_ @ 61 NONAME
+	_ZN10QtMobility15QVersitPropertyC2Ev @ 62 NONAME
+	_ZN10QtMobility15QVersitPropertyD1Ev @ 63 NONAME
+	_ZN10QtMobility15QVersitPropertyD2Ev @ 64 NONAME
+	_ZN10QtMobility15QVersitPropertyaSERKS0_ @ 65 NONAME
+	_ZN10QtMobility21QVersitDocumentWriter20encodeVersitDocumentERKNS_15QVersitDocumentEP10QTextCodec @ 66 NONAME
+	_ZN10QtMobility21QVersitDocumentWriterC2ERK10QByteArrayS3_ @ 67 NONAME
+	_ZN10QtMobility22QVersitContactExporter13exportContactERKNS_8QContactENS_15QVersitDocument10VersitTypeE @ 68 NONAME
+	_ZN10QtMobility22QVersitContactExporter14exportContactsERK5QListINS_8QContactEENS_15QVersitDocument10VersitTypeE @ 69 NONAME
+	_ZN10QtMobility22QVersitContactExporter16setDetailHandlerEPNS_35QVersitContactExporterDetailHandlerE @ 70 NONAME
+	_ZN10QtMobility22QVersitContactExporter18setResourceHandlerEPNS_22QVersitResourceHandlerE @ 71 NONAME
+	_ZN10QtMobility22QVersitContactExporter21unknownContactDetailsEv @ 72 NONAME
+	_ZN10QtMobility22QVersitContactExporterC1Ev @ 73 NONAME
+	_ZN10QtMobility22QVersitContactExporterC2Ev @ 74 NONAME
+	_ZN10QtMobility22QVersitContactExporterD1Ev @ 75 NONAME
+	_ZN10QtMobility22QVersitContactExporterD2Ev @ 76 NONAME
+	_ZN10QtMobility22QVersitContactImporter12setImagePathERK7QString @ 77 NONAME
+	_ZN10QtMobility22QVersitContactImporter13importContactERKNS_15QVersitDocumentE @ 78 NONAME
+	_ZN10QtMobility22QVersitContactImporter14importContactsERK5QListINS_15QVersitDocumentEE @ 79 NONAME
+	_ZN10QtMobility22QVersitContactImporter16setAudioClipPathERK7QString @ 80 NONAME
+	_ZN10QtMobility22QVersitContactImporter18setPropertyHandlerEPNS_37QVersitContactImporterPropertyHandlerE @ 81 NONAME
+	_ZN10QtMobility22QVersitContactImporter18setResourceHandlerEPNS_22QVersitResourceHandlerE @ 82 NONAME
+	_ZN10QtMobility22QVersitContactImporter23unknownVersitPropertiesEv @ 83 NONAME
+	_ZN10QtMobility22QVersitContactImporterC1Ev @ 84 NONAME
+	_ZN10QtMobility22QVersitContactImporterC2Ev @ 85 NONAME
+	_ZN10QtMobility22QVersitContactImporterD1Ev @ 86 NONAME
+	_ZN10QtMobility22QVersitContactImporterD2Ev @ 87 NONAME
+	_ZN10QtMobility29QVersitDefaultResourceHandler12loadResourceERK7QStringP10QByteArrayPS1_ @ 88 NONAME
+	_ZN10QtMobility29QVersitDefaultResourceHandler12saveResourceERK10QByteArrayRKNS_15QVersitPropertyEP7QString @ 89 NONAME
+	_ZNK10QtMobility13QVersitReader10metaObjectEv @ 90 NONAME
+	_ZNK10QtMobility13QVersitReader12defaultCodecEv @ 91 NONAME
+	_ZNK10QtMobility13QVersitReader5errorEv @ 92 NONAME
+	_ZNK10QtMobility13QVersitReader5stateEv @ 93 NONAME
+	_ZNK10QtMobility13QVersitReader6deviceEv @ 94 NONAME
+	_ZNK10QtMobility13QVersitReader6resultEv @ 95 NONAME
+	_ZNK10QtMobility13QVersitReader7resultsEv @ 96 NONAME
+	_ZNK10QtMobility13QVersitWriter10metaObjectEv @ 97 NONAME
+	_ZNK10QtMobility13QVersitWriter12defaultCodecEv @ 98 NONAME
+	_ZNK10QtMobility13QVersitWriter14versitDocumentEv @ 99 NONAME
+	_ZNK10QtMobility13QVersitWriter5errorEv @ 100 NONAME
+	_ZNK10QtMobility13QVersitWriter5stateEv @ 101 NONAME
+	_ZNK10QtMobility13QVersitWriter6deviceEv @ 102 NONAME
+	_ZNK10QtMobility15QVersitDocument10propertiesEv @ 103 NONAME
+	_ZNK10QtMobility15QVersitDocument10versitTypeEv @ 104 NONAME
+	_ZNK10QtMobility15QVersitDocument4typeEv @ 105 NONAME
+	_ZNK10QtMobility15QVersitDocument7isEmptyEv @ 106 NONAME
+	_ZNK10QtMobility15QVersitDocumenteqERKS0_ @ 107 NONAME
+	_ZNK10QtMobility15QVersitDocumentneERKS0_ @ 108 NONAME
+	_ZNK10QtMobility15QVersitProperty10parametersEv @ 109 NONAME
+	_ZNK10QtMobility15QVersitProperty12variantValueEv @ 110 NONAME
+	_ZNK10QtMobility15QVersitProperty16embeddedDocumentEv @ 111 NONAME
+	_ZNK10QtMobility15QVersitProperty4nameEv @ 112 NONAME
+	_ZNK10QtMobility15QVersitProperty5valueEv @ 113 NONAME
+	_ZNK10QtMobility15QVersitProperty6groupsEv @ 114 NONAME
+	_ZNK10QtMobility15QVersitProperty7isEmptyEv @ 115 NONAME
+	_ZNK10QtMobility15QVersitPropertyeqERKS0_ @ 116 NONAME
+	_ZNK10QtMobility15QVersitPropertyneERKS0_ @ 117 NONAME
+	_ZNK10QtMobility21QVersitDocumentWriter19encodeGroupsAndNameERKNS_15QVersitPropertyEP10QTextCodec @ 118 NONAME
+	_ZNK10QtMobility22QVersitContactExporter13detailHandlerEv @ 119 NONAME
+	_ZNK10QtMobility22QVersitContactExporter15resourceHandlerEv @ 120 NONAME
+	_ZNK10QtMobility22QVersitContactImporter13audioClipPathEv @ 121 NONAME
+	_ZNK10QtMobility22QVersitContactImporter15propertyHandlerEv @ 122 NONAME
+	_ZNK10QtMobility22QVersitContactImporter15resourceHandlerEv @ 123 NONAME
+	_ZNK10QtMobility22QVersitContactImporter9imagePathEv @ 124 NONAME
+	_ZTIN10QtMobility13QVersitReaderE @ 125 NONAME ; #<TI>#
+	_ZTIN10QtMobility13QVersitWriterE @ 126 NONAME ; #<TI>#
+	_ZTIN10QtMobility21QVersitDocumentWriterE @ 127 NONAME ; #<TI>#
+	_ZTIN10QtMobility22QVersitResourceHandlerE @ 128 NONAME ; #<TI>#
+	_ZTIN10QtMobility29QVersitDefaultResourceHandlerE @ 129 NONAME ; #<TI>#
+	_ZTVN10QtMobility13QVersitReaderE @ 130 NONAME ; #<VT>#
+	_ZTVN10QtMobility13QVersitWriterE @ 131 NONAME ; #<VT>#
+	_ZTVN10QtMobility21QVersitDocumentWriterE @ 132 NONAME ; #<VT>#
+	_ZTVN10QtMobility29QVersitDefaultResourceHandlerE @ 133 NONAME ; #<VT>#
+
