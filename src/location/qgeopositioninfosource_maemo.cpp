@@ -151,7 +151,6 @@ void QGeoPositionInfoSourceMaemo::newPositionUpdate(const QGeoPositionInfo &upda
 
 QGeoPositionInfo QGeoPositionInfoSourceMaemo::lastKnownPosition(bool fromSatellitePositioningMethodsOnly) const
 {
-  qDebug() << "TAALLA!!!!!!!!!!";
     if (validLastSatUpdate)
         return lastSatUpdate;
 
@@ -162,20 +161,56 @@ QGeoPositionInfo QGeoPositionInfoSourceMaemo::lastKnownPosition(bool fromSatelli
 #ifdef Q_WS_MAEMO_5
     QGeoPositionInfo posInfo;
     QGeoCoordinate coordinate;
-    double longitude;
+    double time;
     double latitude;    
-
-    GConfItem lastKnownPositionLongitude("/system/nokia/location/lastknown/longitude");
+    double longitude;
+    double altitude;
+    double speed;
+    double track;
+    double climb;
+    
+    GConfItem lastKnownPositionTime("/system/nokia/location/lastknown/time");
     GConfItem lastKnownPositionLatitude("/system/nokia/location/lastknown/latitude");
-
-    longitude = lastKnownPositionLongitude.value().toDouble();
+    GConfItem lastKnownPositionLongitude("/system/nokia/location/lastknown/longitude");
+    GConfItem lastKnownPositionAltitude("/system/nokia/location/lastknown/altitude");
+    GConfItem lastKnownPositionSpeed("/system/nokia/location/lastknown/speed");
+    GConfItem lastKnownPositionTrack("/system/nokia/location/lastknown/track");
+    GConfItem lastKnownPositionClimb("/system/nokia/location/lastknown/climb");
+    
+    time = lastKnownPositionTime.value().toDouble();
     latitude = lastKnownPositionLatitude.value().toDouble();
-
+    longitude = lastKnownPositionLongitude.value().toDouble();
+    altitude = lastKnownPositionAltitude.value().toDouble();
+    speed = lastKnownPositionSpeed.value().toDouble();
+    track = lastKnownPositionTrack.value().toDouble();
+    climb = lastKnownPositionClimb.value().toDouble();
+    
+    if (time) {
+        posInfo.setDateTime(QDateTime::fromTime_t(time));
+    }
+    
     if (longitude && latitude) {
         coordinate.setLongitude(longitude);
         coordinate.setLatitude(latitude);
         posInfo.setCoordinate(coordinate);
     }
+    
+    if (altitude) {
+        coordinate.setAltitude(altitude);
+    }
+    
+    if (speed) {
+        posInfo.setAttribute(QGeoPositionInfo::GroundSpeed, speed);
+    }
+    
+    if (track) {
+        posInfo.setAttribute(QGeoPositionInfo::Direction, track);
+    }
+    
+    if (climb) {
+        posInfo.setAttribute(QGeoPositionInfo::VerticalSpeed, climb);        
+    }
+    
     return posInfo;
 #else  
     return QGeoPositionInfo();
@@ -416,6 +451,11 @@ void QGeoPositionInfoSourceMaemo::locationChanged(LocationGPSDevice *device,
                                  device->fix->speed);
         }
 
+        if (device->fix->fields & LOCATION_GPS_DEVICE_CLIMB_SET) {
+            posInfo.setAttribute(QGeoPositionInfo::VerticalSpeed,
+                                 device->fix->climb);
+        }
+  
         if (device->fix->fields & LOCATION_GPS_DEVICE_TRACK_SET) {
             posInfo.setAttribute(QGeoPositionInfo::Direction,
                                  device->fix->track);            
