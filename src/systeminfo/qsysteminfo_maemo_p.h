@@ -63,6 +63,16 @@
 #include <qmobilityglobal.h>
 #if !defined(QT_NO_DBUS)
 #include <qhalservice_linux_p.h>
+
+struct ProfileDataValue {
+    QString key;
+    QString val;
+    QString type;
+    };
+
+Q_DECLARE_METATYPE(ProfileDataValue)
+Q_DECLARE_METATYPE(QList<ProfileDataValue>)
+
 #endif
 
 QT_BEGIN_HEADER
@@ -200,15 +210,20 @@ protected:
     QHalInterface *halIface;
     QHalDeviceInterface *halIfaceDevice;
     void setupBluetooth();
-    void setupProfileMonitoring();
+    void setupProfile();
 
 private Q_SLOTS:
     void halChanged(int,QVariantList);
     void bluezPropertyChanged(const QString&, QDBusVariant);
     void deviceModeChanged(QString newMode);
+    void profileChanged(bool changed, bool active, QString profile, QList<ProfileDataValue> values);
 
 private:
     bool flightMode;
+    QString profileName;
+    bool silentProfile;
+    bool vibratingAlertEnabled;
+    int ringingAlertVolume;
 #endif
 };
 

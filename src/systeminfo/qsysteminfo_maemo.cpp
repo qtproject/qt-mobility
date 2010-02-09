@@ -110,6 +110,24 @@
 
 #include <QDBusInterface>
 
+#if !defined(QT_NO_DBUS)
+QDBusArgument &operator<<(QDBusArgument &argument, const ProfileDataValue &value)
+{
+  argument.beginStructure();
+  argument << value.key << value.val << value.type;
+  argument.endStructure();
+  return argument;
+}
+
+const QDBusArgument &operator>>(const QDBusArgument &argument, ProfileDataValue &value)
+{
+  argument.beginStructure();
+  argument >> value.key >> value.val >> value.type;
+  argument.endStructure();
+  return argument;
+}
+#endif
+
 QTM_BEGIN_NAMESPACE
 
 static bool halAvailable()
@@ -1176,7 +1194,7 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QSystemDeviceInfoLinuxCommonP
     flightMode = false;
  #if !defined(QT_NO_DBUS)
     setupBluetooth();
-    setupProfileMonitoring();
+    setupProfile();
 #endif
 }
 
@@ -1277,39 +1295,14 @@ void QSystemDeviceInfoPrivate::halChanged(int,QVariantList map)
 
 QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
 {
+#if !defined(QT_NO_DBUS)
     if (flightMode)
         return QSystemDeviceInfo::OfflineProfile;
 
-#if !defined(QT_NO_DBUS)
-    QDBusInterface connectionInterface("com.nokia.profiled",
-                                      "/com/nokia/profiled",
-                                      "com.nokia.profiled",
-                                      QDBusConnection::sessionBus());
-    if(!connectionInterface.isValid()) {
-       qWarning() << "profiled interface not valid";
-       return QSystemDeviceInfo::UnknownProfile;
-    }
+    if (silentProfile )
+        return vibratingAlertEnabled ? QSystemDeviceInfo::VibProfile : QSystemDeviceInfo::SilentProfile;
 
-    QDBusReply<QString> profileReply = connectionInterface.call("get_profile");
-    if (!profileReply.isValid()) return QSystemDeviceInfo::UnknownProfile;
-    QString profileName = profileReply.value();
-
-    QDBusReply<QString> ringingAlertType = connectionInterface.call("get_value", profileName, "ringing.alert.type");
-    if (!ringingAlertType.isValid()) return QSystemDeviceInfo::UnknownProfile;
-    QDBusReply<QString> vibratingAlertEnabled = connectionInterface.call("get_value", profileName, "vibrating.alert.enabled");
-    if (!vibratingAlertEnabled.isValid()) return QSystemDeviceInfo::UnknownProfile;
-    QDBusReply<QString> ringingAlertVolume = connectionInterface.call("get_value", profileName, "ringing.alert.volume");
-    if (!ringingAlertVolume.isValid()) return QSystemDeviceInfo::UnknownProfile;
-
-    bool isSilent = ringingAlertType.value() == "silent";
-    bool isLoud = ringingAlertVolume.value().toInt() > 75;
-    bool isVibrating = vibratingAlertEnabled.value() == "On";
-
-    if (isSilent && isVibrating)
-        return QSystemDeviceInfo::VibProfile;
-    if (isSilent)
-        return QSystemDeviceInfo::SilentProfile;
-    if (isLoud)
+    if (ringingAlertVolume > 75)
         return QSystemDeviceInfo::LoudProfile;
 
     return QSystemDeviceInfo::NormalProfile;
@@ -1757,36 +1750,96 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
 #endif
 
 #if !defined(QT_NO_DBUS)
-void QSystemDeviceInfoPrivate::setupProfileMonitoring()
+
+void QSystemDeviceInfoPrivate::setupProfile()
 {
-    QDBusConnection dbusConnection = QDBusConnection::systemBus();
+    QDBusConnection systemDbusConnection = QDBusConnection::systemBus();
 
     QDBusInterface mceConnectionInterface("com.nokia.mce",
                                       "/com/nokia/mce/request",
                                       "com.nokia.mce.request",
-                                      dbusConnection);
+                                      systemDbusConnection);
     if (!mceConnectionInterface.isValid()) {
         qWarning() << "mce interface not valid";
+        return;
     } else {
         QDBusReply<QString> deviceModeReply = mceConnectionInterface.call("get_device_mode");
         flightMode = deviceModeReply.value() == "flight";
     }
-    if (!dbusConnection.connect("com.nokia.mce",
+
+    if (!systemDbusConnection.connect("com.nokia.mce",
                            "/com/nokia/mce/signal",
                            "com.nokia.mce.signal",
                            "sig_device_mode_ind",
                            this, SLOT(deviceModeChanged(QString)))) {
-        qWarning() << "unable to connect to req_device_mode_change";
+        qWarning() << "unable to connect to sig_device_mode_ind";
     }
+
+
+    QDBusInterface connectionInterface("com.nokia.profiled",
+                                      "/com/nokia/profiled",
+                                      "com.nokia.profiled",
+                                      QDBusConnection::sessionBus());
+    if(!connectionInterface.isValid()) {
+       qWarning() << "profiled interface not valid";
+       return;
+    }
+
+    QDBusReply<QString> profileNameReply = connectionInterface.call("get_profile");
+    if (profileNameReply.isValid())
+        profileName = profileNameReply.value();
+
+    QDBusReply<QString> ringingAlertTypeReply = connectionInterface.call("get_value", profileName, "ringing.alert.type");
+    if (ringingAlertTypeReply.isValid())
+        silentProfile = ringingAlertTypeReply.value() == "silent";
+
+    QDBusReply<QString> vibratingAlertEnabledReply = connectionInterface.call("get_value", profileName, "vibrating.alert.enabled");
+    if (vibratingAlertEnabledReply.isValid())
+        vibratingAlertEnabled = vibratingAlertEnabledReply.value() == "On";
+
+    QDBusReply<QString> ringingAlertVolumeReply = connectionInterface.call("get_value", profileName, "ringing.alert.volume");
+    if (ringingAlertVolumeReply.isValid())
+        ringingAlertVolume = ringingAlertVolumeReply.value().toInt();
+
+    qDBusRegisterMetaType<ProfileDataValue>();
+    qDBusRegisterMetaType<QList<ProfileDataValue> >();
+
+    QDBusConnection sessionDbusConnection = QDBusConnection::sessionBus();
+    if (!sessionDbusConnection.connect("com.nokia.profiled",
+                           "/com/nokia/profiled",
+                           "com.nokia.profiled",
+                           "profile_changed",
+                           this, SLOT(profileChanged(bool, bool, QString, QList<ProfileDataValue>)))) {
+        qWarning() << "unable to connect to profile_changed";
+    }
+
 }
 
 void QSystemDeviceInfoPrivate::deviceModeChanged(QString newMode)
 {
-    qDebug() << "deviceModeChanged";
     bool previousFlightMode = flightMode;
     flightMode = newMode == "flight";
     if (previousFlightMode != flightMode)
         emit currentProfileChanged(currentProfile());
+}
+
+void QSystemDeviceInfoPrivate::profileChanged(bool changed, bool active, QString profile, QList<ProfileDataValue> values)
+{
+    QSystemDeviceInfo::Profile previousProfile = currentProfile();
+
+    profileName = profile;
+    foreach (ProfileDataValue value, values) {
+        if (value.key == "ringing.alert.type")
+            silentProfile = value.val == "silent";
+        else if (value.key == "vibrating.alert.enabled")
+            vibratingAlertEnabled = value.val == "On";
+        else if (value.key == "ringing.alert.volume")
+            ringingAlertVolume = value.val.toInt();
+    }
+
+    QSystemDeviceInfo::Profile newProfile = currentProfile();
+    if (previousProfile != newProfile)
+        emit currentProfileChanged(newProfile);
 }
 
 #endif
