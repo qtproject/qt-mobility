@@ -1257,6 +1257,7 @@ void UT_QVersitContactImporter::testSound()
     QContact contact = mImporter->importContacts(documents).first();
     QContactAvatar avatar = (QContactAvatar)contact.detail(QContactAvatar::DefinitionName);
     QCOMPARE(avatar.value(QContactAvatar::FieldSubType),QContactAvatar::SubTypeAudioRingtone.operator QString());
+    QVERIFY(!avatar.hasValue(QContactAvatar::FieldAvatarPixmap));
     QByteArray content = mResourceHandler->mObjects.value(avatar.avatar());
     QCOMPARE(content, val);
 }

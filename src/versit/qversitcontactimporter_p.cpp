@@ -417,7 +417,7 @@ bool QVersitContactImporterPrivate::createAvatar(
     QContactAvatar avatar;
     if (!location.isEmpty())
         avatar.setAvatar(location);
-    if (!data.isEmpty()) {
+    if (subType == QContactAvatar::SubTypeImage && !data.isEmpty()) {
         QPixmap pixmap;
         if (pixmap.loadFromData(data))
             avatar.setPixmap(pixmap);
