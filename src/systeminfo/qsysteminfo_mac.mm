@@ -70,6 +70,9 @@
 #include <CoreFoundation/CFNotificationCenter.h>
 #include <IOKit/graphics/IOGraphicsLib.h>
 #include <CoreFoundation/CoreFoundation.h>
+#include <CoreFoundation/CFLocale.h>
+#include <ScreenSaver/ScreenSaverDefaults.h>
+#include <QTKit/QTKit.h>
 
 #include <IOKit/usb/IOUSBLib.h>
 #include <IOKit/pwr_mgt/IOPM.h>
@@ -141,6 +144,17 @@ inline QString nsstringToQString(const NSString *nsstr)
 inline NSString *qstringToNSString(const QString &qstr)
 { return [reinterpret_cast<const NSString *>(qstringToCFStringRef(qstr)) autorelease]; }
 
+inline QStringList nsarrayToQStringList(void *nsarray)
+{
+    NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
+    QStringList result;
+    NSArray *array = static_cast<NSArray *>(nsarray);
+    for (NSUInteger i=0; i<[array count]; ++i)
+        result << nsstringToQString([array objectAtIndex:i]);
+    [autoreleasepool release];
+    return result;
+}
+
 
 #ifdef MAC_SDK_10_6
 
@@ -167,6 +181,7 @@ inline NSString *qstringToNSString(const QString &qstr)
     [center addObserver:self selector:@selector(notificationHandler:) name:kCWLinkDidChangeNotification object:nil];
     [center addObserver:self selector:@selector(notificationHandler:) name:kCWPowerDidChangeNotification object:nil];
 
+
     return self;
 }
 
@@ -186,20 +201,82 @@ inline NSString *qstringToNSString(const QString &qstr)
 {
     QTM_NAMESPACE::QSystemNetworkInfoPrivate::instance()->networkChanged( nsstringToQString([notification name]), nsstringToQString([[notification object]name]));
 }
-
 @end
+
+
+@interface QLangListener : NSObject
+{
+    NSNotificationCenter *center;
+    QString currentLanguage;
+}
+- (void)languageHandler;//:(NSNotification *)notification;
+- (void)remove;
+- (void)getCurrentLanguage;
+@end
+
+
+
+@implementation QLangListener
+- (id) init
+{
+    [super init];
+    center = [NSNotificationCenter defaultCenter];
+    [center addObserver:self selector:@selector(languageHandler:) name:NSCurrentLocaleDidChangeNotification object:nil];
+    [self getCurrentLanguage];
+    return self;
+}
+
+-(void)dealloc
+{
+    [center release];
+    [super dealloc];
+}
+
+-(void)remove
+{
+    [center removeObserver:self];
+}
+
+- (void)getCurrentLanguage
+{
+    NSUserDefaults* defs = [NSUserDefaults standardUserDefaults];
+    NSArray* languages = [defs objectForKey:@"AppleLanguages"];
+    NSString* language = [languages objectAtIndex:0];
+
+    QString langString = nsstringToQString(language);
+    if(langString != currentLanguage) {
+        if(!currentLanguage.isEmpty())
+            QTM_NAMESPACE::QSystemInfoPrivate::instance()->languageChanged(currentLanguage);
+        currentLanguage = langString;
+    }
+}
+
+- (void)languageHandler;//:(NSNotification *)notification
+{
+    [self getCurrentLanguage];
+}
+@end
+
+
 #endif
 
 QTM_BEGIN_NAMESPACE
 
+QSystemInfoPrivate *QSystemInfoPrivate::self = 0;
+
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
  : QObject(parent)
 {
+    langloopThread = new QLangLoopThread(this);
+    langloopThread->start();
+    if(!self)
+        self = this;
 }
 
 QSystemInfoPrivate::~QSystemInfoPrivate()
 {
-
+    langloopThread->quit();
+    langloopThread->wait();
 }
 
 QString QSystemInfoPrivate::currentLanguage() const
@@ -214,8 +291,24 @@ QString QSystemInfoPrivate::currentLanguage() const
 QStringList QSystemInfoPrivate::availableLanguages() const
 {
 
-    return QStringList() << currentLanguage();
+    NSUserDefaults* defs = [NSUserDefaults standardUserDefaults];
+    NSArray* languages = [defs objectForKey:@"AppleLanguages"];
+    QStringList langList = nsarrayToQStringList(languages);
+
+    QStringList returnList;
+    for(int i = 0; i < langList.count(); i++) {
+     QString language = langList.at(i).left(2);
+     if(!returnList.contains(language))
+         returnList << language;
+    }
+    return returnList;
 }
+
+void QSystemInfoPrivate::languageChanged(const QString &lang)
+{
+    Q_EMIT currentLanguageChanged(lang);
+}
+
 
 QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &parameter)
 {
@@ -266,14 +359,12 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::CameraFeature:
         {
-//            CFDictionaryRef match = 0;
-//
-//            match = IOServiceMatching("IOUSBDeviceClientV2");
-//            if(match != NULL) {
-//                featureSupported = true;
-//            }
-//ICCameraDevice
-            //ICCameraDeviceCanTakePicture
+
+           NSArray * videoDevices;
+           videoDevices = [[QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeVideo] arrayByAddingObjectsFromArray:[QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeMuxed]];
+           if([videoDevices count] > 0) {
+               featureSupported = true;
+           }
         }
         break;
     case QSystemInfo::FmradioFeature:
@@ -356,6 +447,44 @@ void networkChangeCallback(SCDynamicStoreRef/* store*/, CFArrayRef /*changedKeys
 
 #ifdef MAC_SDK_10_6
 #endif
+QLangLoopThread::QLangLoopThread(QObject *parent)
+    :QThread(parent)
+{
+}
+
+QLangLoopThread::~QLangLoopThread()
+{
+}
+
+void QLangLoopThread::quit()
+{
+    mutex.lock();
+    keepRunning = false;
+    mutex.unlock();
+}
+
+void QLangLoopThread::run()
+{
+#ifdef MAC_SDK_10_6
+    mutex.lock();
+    keepRunning = true;
+    mutex.unlock();
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+    QLangListener *listener;
+    listener = [[QLangListener alloc] init];
+
+    NSDate *loopUntil = [NSDate dateWithTimeIntervalSinceNow:1.0];
+    while (keepRunning &&
+        [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode beforeDate: loopUntil]) {
+        loopUntil = [NSDate dateWithTimeIntervalSinceNow:1.0];
+    }
+  //  [listener release]; //crash
+    [pool release];
+#endif
+}
+
+
 QRunLoopThread::QRunLoopThread(QObject *parent)
     :QThread(parent)
 {
@@ -542,7 +671,7 @@ QString QSystemNetworkInfoPrivate::getDefaultInterface()
     if (primaryInterface) {
         interfaceName = stringFromCFString(primaryInterface);
         if(interfaceName != defaultInterface) {
-            emit networkModeChanged(modeForInterface(interfaceName));
+            Q_EMIT networkModeChanged(modeForInterface(interfaceName));
              defaultInterface = interfaceName;
         }
     }
@@ -681,7 +810,7 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
                     networkStatus(QSystemNetworkInfo::WlanMode);
                 }
                 signalStrengthCache = signalQuality;
-                emit networkSignalStrengthChanged(mode, signalQuality);
+                Q_EMIT networkSignalStrengthChanged(mode, signalQuality);
             }
             [autoreleasepool release];
 #endif
@@ -823,12 +952,12 @@ void QSystemNetworkInfoPrivate::networkChanged(const QString &notification, cons
    // runloopThread->stopLoop();
 
     if(notification == "SSID_CHANGED_NOTIFICATION") {
-        emit networkNameChanged(QSystemNetworkInfo::WlanMode, networkName(QSystemNetworkInfo::WlanMode));
+        Q_EMIT networkNameChanged(QSystemNetworkInfo::WlanMode, networkName(QSystemNetworkInfo::WlanMode));
     }
 
     if(notification == "BSSID_CHANGED_NOTIFICATION") {
         QSystemNetworkInfo::NetworkStatus status =  networkStatus(QSystemNetworkInfo::WlanMode);
-        emit networkStatusChanged( QSystemNetworkInfo::WlanMode, status);
+        Q_EMIT networkStatusChanged( QSystemNetworkInfo::WlanMode, status);
     }
     if(notification == "POWER_CHANGED_NOTIFICATION") {
 #ifdef MAC_SDK_10_6
@@ -1102,7 +1231,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 
     if( currentPowerStateCache != state) {
         currentPowerStateCache = state;
-        emit powerStateChanged(state);
+        Q_EMIT powerStateChanged(state);
     }
     return state;
 }
@@ -1168,21 +1297,21 @@ int QSystemDeviceInfoPrivate::batteryLevel()
 
     if(batteryLevelCache != level) {
         batteryLevelCache = level;
-        emit batteryLevelChanged(level);
+        Q_EMIT batteryLevelChanged(level);
     }
 
     if(batteryLevelCache < 4 && batteryStatusCache != QSystemDeviceInfo::BatteryCritical) {
         batteryStatusCache = QSystemDeviceInfo::BatteryCritical;
-        emit batteryStatusChanged(batteryStatusCache);
+        Q_EMIT batteryStatusChanged(batteryStatusCache);
     } else if((batteryLevelCache > 3 && batteryLevelCache < 11) && batteryStatusCache != QSystemDeviceInfo::BatteryVeryLow) {
         batteryStatusCache = QSystemDeviceInfo::BatteryVeryLow;
-        emit batteryStatusChanged(batteryStatusCache);
+        Q_EMIT batteryStatusChanged(batteryStatusCache);
     } else if((batteryLevelCache > 10 && batteryLevelCache < 41) && batteryStatusCache != QSystemDeviceInfo::BatteryLow) {
         batteryStatusCache = QSystemDeviceInfo::BatteryLow;
-        emit batteryStatusChanged(batteryStatusCache);
+        Q_EMIT batteryStatusChanged(batteryStatusCache);
     } else if(batteryLevelCache > 40 && batteryStatusCache != QSystemDeviceInfo::BatteryNormal) {
         batteryStatusCache = QSystemDeviceInfo::BatteryNormal;
-        emit batteryStatusChanged(batteryStatusCache);
+        Q_EMIT batteryStatusChanged(batteryStatusCache);
     }
 
     return (int)level;
@@ -1195,7 +1324,23 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 
 bool QSystemDeviceInfoPrivate::isDeviceLocked()
 {
-    return false;
+    // find out if auto login is being used.
+    QSettings loginSettings("/Library/Preferences/com.apple.loginwindow.plist", QSettings::NativeFormat);
+    QString autologinname = loginSettings.value("autoLoginUser").toString();
+
+// find out if locked screensaver is used.
+    int passWordProtected = 0;
+#if defined(QT_ARCH_X86_64)  && !defined(MAC_SDK_10_6)
+    ScreenSaverDefaults *ssDefaults;
+    ssDefaults = [ScreenSaverDefaults defaultsForModuleWithName:@"com.apple.screensaver"];
+    passWordProtected = [ssDefaults integerForKey:@"askForPassword"];
+#endif
+
+    if(autologinname.isEmpty() || passWordProtected == 1) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)

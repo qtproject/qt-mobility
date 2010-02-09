@@ -566,7 +566,7 @@ void QSystemNetworkInfoPrivate::nmPropertiesChanged( const QString & path, QMap<
     QMapIterator<QString, QVariant> i(map);
     while (i.hasNext()) {
         i.next();
-     //   qWarning() << __FUNCTION__ <<  i.key();
+//        qWarning() << __FUNCTION__ <<  i.key();
 
         if( i.key() == "State") {
             QNetworkManagerInterfaceDevice *devIface = new QNetworkManagerInterfaceDevice(path);
@@ -599,6 +599,8 @@ void QSystemNetworkInfoPrivate::nmPropertiesChanged( const QString & path, QMap<
                     if(devWirelessIfaceL->activeAccessPoint().path().length() > 2) {
                         QNetworkManagerInterfaceAccessPoint *accessPointIfaceL;
                         accessPointIfaceL = new QNetworkManagerInterfaceAccessPoint(devWirelessIfaceL->activeAccessPoint().path());
+                        QString ssid = accessPointIfaceL->ssid();
+                        emit networkNameChanged(QSystemNetworkInfo::WlanMode, ssid);
                         emit networkSignalStrengthChanged(QSystemNetworkInfo::WlanMode, accessPointIfaceL->strength());
                     }
                 }
@@ -606,14 +608,12 @@ void QSystemNetworkInfoPrivate::nmPropertiesChanged( const QString & path, QMap<
         }
         if( i.key() == "ActiveAccessPoint") {
             accessPointIface = new QNetworkManagerInterfaceAccessPoint(path);
+
             accessPointIface->setConnections();
             if(!connect(accessPointIface, SIGNAL(propertiesChanged(const QString &,QMap<QString,QVariant>)),
                         this,SLOT(nmAPPropertiesChanged( const QString &, QMap<QString,QVariant>)))) {
              //   qWarning() << "connect is false";
             }
-
-            QString ssid = accessPointIface->ssid();
-            emit networkNameChanged(QSystemNetworkInfo::WlanMode, ssid);
 
         }
         if( i.key() == "Carrier") {

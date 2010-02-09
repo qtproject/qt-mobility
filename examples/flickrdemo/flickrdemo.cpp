@@ -460,12 +460,12 @@ void FlickrDemo::httpRequestFinished(int requestId, bool error)
         return;
     }
 
-    if (!m_downloadPictureList) {
+    if (!m_downloadPictureList && m_file) {
         m_file->close();
     }
 
     if (error) {
-        if (!m_downloadPictureList) {
+        if (!m_downloadPictureList && m_file) {
             m_file->remove();
         }
         QMessageBox::information(this,
@@ -493,11 +493,12 @@ void FlickrDemo::displayImage()
     dialog.showMaximized();
 #endif
     if (!dialog.exec()) {
-        if (m_file->exists()) {
+        if (m_file && m_file->exists()) {
             m_file->remove();
         }
     }
-    delete m_file;
+    if(m_file)
+        delete m_file;
     m_file = 0;
 }
 

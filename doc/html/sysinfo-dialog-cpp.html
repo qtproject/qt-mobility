@@ -298,6 +298,9 @@
         connect(ni,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)),
                 this,SLOT(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)));
 
+        connect(ni,SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)),
+                this,SLOT(networkModeChanged(QSystemNetworkInfo::NetworkMode)));
+
         cellIdLabel-&gt;setText(QString::number(ni-&gt;cellId()));
         locationAreaCodeLabel-&gt;setText(QString::number(ni-&gt;locationAreaCode()));
         currentMMCLabel-&gt;setText(ni-&gt;currentMobileCountryCode());
@@ -613,6 +616,32 @@
             }
         }
 
+    }
+
+    void Dialog::networkModeChanged(QSystemNetworkInfo::NetworkMode mode)
+    {
+        if(mode == QSystemNetworkInfo::WlanMode) {
+            primaryModeLabel-&gt;setText(&quot;Wlan&quot;);
+        }
+
+        if(mode == QSystemNetworkInfo::EthernetMode) {
+            primaryModeLabel-&gt;setText(&quot;Ethernet&quot;);
+        }
+
+        if(mode == QSystemNetworkInfo::GsmMode) {
+            primaryModeLabel-&gt;setText(&quot;Gsm&quot;);
+        }
+
+        if(mode == QSystemNetworkInfo::CdmaMode) {
+            primaryModeLabel-&gt;setText(&quot;Cdma&quot;);
+        }
+
+        if(mode == QSystemNetworkInfo::WcdmaMode) {
+            primaryModeLabel-&gt;setText(&quot;Wcdma&quot;);
+        }
+        if(mode == QSystemNetworkInfo::UnknownMode) {
+            primaryModeLabel-&gt;setText(&quot;None&quot;);
+        }
     }
 
     void Dialog::displayNetworkStatus(QSystemNetworkInfo::NetworkStatus status)
