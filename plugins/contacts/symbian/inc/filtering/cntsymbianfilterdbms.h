@@ -93,6 +93,9 @@ private:
     CContactDatabase &m_contactDatabase;
     CntAbstractContactSorter *m_contactSorter;
     CntTransformContact *m_transformContact;
+#ifdef PBK_UNIT_TEST
+    friend class ut_cntfilteringdbms;
+#endif
 };
 
 #endif /*SYMBIAN_BACKEND_USE_SQLITE*/

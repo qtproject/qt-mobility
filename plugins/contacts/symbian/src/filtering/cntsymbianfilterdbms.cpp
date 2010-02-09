@@ -214,6 +214,12 @@ CntAbstractContactFilter::FilterSupport CntSymbianFilter::filterSupportLevel(con
         const QContactDetailFilter &detailFilter = static_cast<const QContactDetailFilter &>(filter);
         QContactFilter::MatchFlags matchFlags = detailFilter.matchFlags();
         const QString defName = detailFilter.detailDefinitionName();
+        const QString fieldName = detailFilter.detailFieldName();
+        
+        // Filter must target a certain field
+        if (fieldName.isEmpty()) {
+            return NotSupported;
+        }         
 
         // Phone numbers
         if (defName == QContactPhoneNumber::DefinitionName) {
@@ -223,7 +229,8 @@ CntAbstractContactFilter::FilterSupport CntSymbianFilter::filterSupportLevel(con
             }
             
             if (matchFlags == QContactFilter::MatchExactly ||
-                matchFlags == QContactFilter::MatchEndsWith) {
+                matchFlags == QContactFilter::MatchEndsWith ||
+                matchFlags == QContactFilter::MatchFixedString) {
                 return SupportedPreFilterOnly;
             }
         // Names
@@ -242,7 +249,8 @@ CntAbstractContactFilter::FilterSupport CntSymbianFilter::filterSupportLevel(con
             if (matchFlags == QContactFilter::MatchExactly ||
                 matchFlags == QContactFilter::MatchContains ||
                 matchFlags == QContactFilter::MatchStartsWith ||
-                matchFlags == QContactFilter::MatchEndsWith) {
+                matchFlags == QContactFilter::MatchEndsWith ||
+                matchFlags == QContactFilter::MatchFixedString) {
                 return SupportedPreFilterOnly;
             }            
         // display label, this is a special case that contains several name
@@ -250,8 +258,7 @@ CntAbstractContactFilter::FilterSupport CntSymbianFilter::filterSupportLevel(con
         //TODO: "unnamed" display label is not supported currently
         } else if (defName == QContactDisplayLabel::DefinitionName) {
             
-            if (matchFlags == QContactFilter::MatchContains ||
-                matchFlags == QContactFilter::MatchStartsWith) {
+            if (matchFlags == QContactFilter::MatchStartsWith) {
                 return Supported;
             }
             
@@ -259,10 +266,7 @@ CntAbstractContactFilter::FilterSupport CntSymbianFilter::filterSupportLevel(con
             // 1) We do not support it. 2) We are doing prefiltering only.
             matchFlags &= ~QContactFilter::MatchFlags(QContactFilter::MatchCaseSensitive);
             
-            if (matchFlags == QContactFilter::MatchExactly ||
-                matchFlags == QContactFilter::MatchContains ||
-                matchFlags == QContactFilter::MatchStartsWith ||
-                matchFlags == QContactFilter::MatchEndsWith) {
+            if (matchFlags == QContactFilter::MatchStartsWith) {
                 return SupportedPreFilterOnly;
             }              
         }
