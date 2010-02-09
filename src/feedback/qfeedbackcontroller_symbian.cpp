@@ -62,9 +62,6 @@ static TTouchContinuousFeedback convertToSymbian(ContinuousEffect effect)
         case ContinuousSlider:
             continuousFeedbackSymbian = ETouchContinuousSlider;
             break;
-        case ContinuousScroll:
-            continuousFeedbackSymbian = ETouchContinuousFlick;
-            break;
         case ContinuousPopup:
             continuousFeedbackSymbian = ETouchContinuousSmooth;
             break;
@@ -80,7 +77,7 @@ static TTouchContinuousFeedback convertToSymbian(ContinuousEffect effect)
     return continuousFeedbackSymbian;
 }
 
-static TTacticonType convertTacticonToSymbian(TacticonEffect effect)
+static TTacticonType convertToSymbian(TacticonEffect effect)
 {
     TTacticonType type = ENoTacticon;
     switch (effect) {
@@ -120,18 +117,6 @@ static TTouchLogicalFeedback convertToSymbian(InstantEffect effect)
     case InstantSensitiveButton:
         instantFeedbackSymbian = ETouchFeedbackSensitiveButton;
         break;
-    case InstantBasicList:
-        instantFeedbackSymbian = ETouchFeedbackList;
-        break;
-    case InstantSensitiveList:
-        instantFeedbackSymbian = ETouchFeedbackSensitiveList;
-        break;
-    case InstantCircleItem:
-        instantFeedbackSymbian = ETouchFeedbackSensitiveList;
-        break;
-    case InstantSensitiveGrid:
-        instantFeedbackSymbian = ETouchFeedbackSensitiveList;
-        break;
     case InstantBounceEffect:
         instantFeedbackSymbian = ETouchFeedbackBoundaryList;
         break;
@@ -147,44 +132,8 @@ static TTouchLogicalFeedback convertToSymbian(InstantEffect effect)
     case InstantSensitiveSlider:
         instantFeedbackSymbian = ETouchFeedbackSlider;
         break;
-    case InstantBasicFlick:
-        instantFeedbackSymbian = ETouchFeedbackFlick;
-        break;
-    case InstantSensitiveSwipe:
-        instantFeedbackSymbian = ETouchFeedbackFlick;
-        break;
-    case InstantSensitiveEdit:
-        instantFeedbackSymbian = ETouchFeedbackEdit;
-        break;
-    case InstantTextEdit:
-        instantFeedbackSymbian = ETouchFeedbackTextSelection;
-        break;
-    case InstantBlankEdit:
-        instantFeedbackSymbian = ETouchFeedbackBlankSelection;
-        break;
-    case InstantLineEdit:
-        instantFeedbackSymbian = ETouchFeedbackLineSelection;
-        break;
-    case InstantEmptyLineEdit:
-        instantFeedbackSymbian = ETouchFeedbackEmptyLineSelection;
-        break;
     case InstantCheckbox:
         instantFeedbackSymbian = ETouchFeedbackCheckbox;
-        break;
-    case InstantSensitiveMultiselection:
-        instantFeedbackSymbian = ETouchFeedbackCheckbox;
-        break;
-    case InstantSensitiveInput:
-        instantFeedbackSymbian = ETouchFeedbackSensitiveButton;
-        break;
-    case InstantBasicInput:
-        instantFeedbackSymbian = ETouchFeedbackBasicButton;
-        break;
-    case InstantSensitiveMultitouch:
-        instantFeedbackSymbian = ETouchFeedbackMultiTouchRecognized;
-        break;
-    case InstantRotate90Degrees:
-        instantFeedbackSymbian = ETouchFeedbackBasic;
         break;
 #endif
     default:
@@ -242,7 +191,7 @@ public:
         if (!iFeedback) {
             for(QHash<int, QContinuousEffect>::const_iterator it = ongoingContinuousFeedbacks.begin();
                     it != ongoingContinuousFeedbacks.end(); ++it) {
-                iFeedback->StopFeedback(convertToSymbian(it.key()));
+                iFeedback->StopFeedback(it.value().window()->winId());
             }
         }
 #endif
@@ -366,7 +315,7 @@ void QFeedbackController::cancelContinuousFeedback(int identifier)
         return;
 
 #ifdef ADVANCED_TACTILE_SUPPORT
-    d->iFeedback->StopFeedback(d->ongoingContinuousFeedbacks[identifier]->winId());
+    d->iFeedback->StopFeedback(d->ongoingContinuousFeedbacks[identifier].window()->winId());
 #endif
     d->ongoingContinuousFeedbacks.remove(identifier);
 }
