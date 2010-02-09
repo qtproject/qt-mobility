@@ -362,7 +362,6 @@ Q_GLOBAL_STATIC(QSystemNetworkInfoPrivate, netInfoPrivate)
 Q_GLOBAL_STATIC(QSystemDisplayInfoPrivate, displayInfoPrivate)
 Q_GLOBAL_STATIC(QSystemStorageInfoPrivate, storageInfoPrivate)
 Q_GLOBAL_STATIC(QSystemDeviceInfoPrivate, deviceInfoPrivate)
-Q_GLOBAL_STATIC(QSystemScreenSaverPrivate, screenSaverPrivate)
 
 
  /*!
@@ -864,6 +863,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfo::currentPowerState()
 QSystemScreenSaver::QSystemScreenSaver(QObject *parent)
     : QObject(parent)
 {
+    d = new QSystemScreenSaverPrivate(parent);
     screenSaverIsInhibited = screenSaverInhibited();
 }
 
@@ -873,9 +873,7 @@ QSystemScreenSaver::QSystemScreenSaver(QObject *parent)
 QSystemScreenSaver::~QSystemScreenSaver()
 {
     qWarning() << Q_FUNC_INFO;
-//    if(screenSaverIsInhibited != screenSaverInhibited())
-//        setScreenSaverEnabled(screenSaverIsInhibited);
-
+    delete d;
 }
 
 /*!
@@ -889,7 +887,7 @@ QSystemScreenSaver::~QSystemScreenSaver()
 */
 bool QSystemScreenSaver::setScreenSaverInhibit()
 {
-    return screenSaverPrivate()->setScreenSaverInhibit();
+    return d->setScreenSaverInhibit();
 }
 
 /*!
@@ -900,7 +898,7 @@ bool QSystemScreenSaver::setScreenSaverInhibit()
 */
 bool QSystemScreenSaver::screenSaverInhibited()
 {
-    return screenSaverPrivate()->screenSaverInhibited();
+    return d->screenSaverInhibited();
 }
 
 
