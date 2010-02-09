@@ -4,6 +4,7 @@ TARGET = $$qtLibraryTarget(mobapicontactspluginsymbian)
 PLUGIN_TYPE=contacts
 
 include(../../../common.pri)
+include(symbian_defines.pri)
 symbian: { 
     load(data_caging_paths)
 
@@ -20,7 +21,7 @@ symbian: {
     INCLUDEPATH += $$SOURCE_DIR/contacts/filters
     INCLUDEPATH += $$SOURCE_DIR/contacts/requests
 
-  HEADERS += \
+    HEADERS += \
         $$PUBLIC_HEADERS \
         inc/cntsymbianengine.h \
         inc/cntabstractrelationship.h \
@@ -91,16 +92,14 @@ symbian: {
         src/filtering/cntsymbiansrvconnection.cpp \
         src/filtering/cntdisplaylabelsqlfilter.cpp \
         src/filtering/cntsqlsearch.cpp \
-    		src/cntsymbianengine.cpp \
+    	src/cntsymbianengine.cpp \
         src/cntabstractrelationship.cpp \
         src/cntrelationshipgroup.cpp \
         src/cntsymbiantransformerror.cpp \
         src/cntsymbiandatabase.cpp \
         src/cntdisplaylabel.cpp \
         src/cntrelationship.cpp 
-        
 
-      
     CONFIG += mobility
     MOBILITY = contacts
 
@@ -118,25 +117,14 @@ symbian: {
     target.path = /sys/bin
     INSTALLS += target
 
-    exists($${EPOCROOT}epoc32/data/z/system/install/Series60v5.2.sis) {
-        exists($${EPOCROOT}epoc32/release/winscw/udeb/VPbkEng.dll) \
-        | exists($${EPOCROOT}epoc32/release/armv5/urel/VPbkEng.dll) {
-            message("TB 9.2 platform")
-        } else {
-            message("TB 10.1 or later platform")
-            DEFINES += SYMBIAN_BACKEND_USE_SQLITE
-            cntmodelResourceFile = \
-                "START RESOURCE ../../rss/cntmodel.rss" \
-                "TARGETPATH $${CONTACTS_RESOURCE_DIR}" \
-                "END"
-            MMP_RULES += cntmodelResourceFile
-        }
+    contains(DEFINES, SYMBIAN_BACKEND_USE_SQLITE) {
+        cntmodelResourceFile = \
+            "START RESOURCE ../../rss/cntmodel.rss" \
+            "TARGETPATH $${CONTACTS_RESOURCE_DIR}" \
+            "END"
+        MMP_RULES += cntmodelResourceFile
     }
     
-    contains(S60_VERSION, 3.2) {
-    	DEFINES += SYMBIAN_BACKEND_S60_VERSION_32
-    }
-
     symbianplugin.sources = $${TARGET}.dll
     symbianplugin.path = /resource/qt/plugins/contacts
     DEPLOYMENT += symbianplugin

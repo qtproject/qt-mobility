@@ -1,3 +1,5 @@
+include(../symbian_defines.pri)
+
 # Symbian plugin header and source files
 SYMBIAN_PATHS += \
         ../../inc \
@@ -46,7 +48,7 @@ SYMBIAN_HEADERS += \
         ../../inc/cntsymbiandatabase.h \
         ../../inc/cntdisplaylabel.h \
         ../../inc/filtering/cntdisplaylabelsqlfilter.h \
-			  ../../inc/filtering/cntsqlsearch.h
+        ../../inc/filtering/cntsqlsearch.h
 
 SYMBIAN_SOURCES += \
         ../../src/cntsymbianengine.cpp \
@@ -84,17 +86,7 @@ SYMBIAN_SOURCES += \
         ../../src/cntsymbiandatabase.cpp \
         ../../src/cntdisplaylabel.cpp \
         ../../src/filtering/cntdisplaylabelsqlfilter.cpp \
-			  ../../src/filtering/cntsqlsearch.cpp
- 
-exists($${EPOCROOT}epoc32/data/z/system/install/Series60v5.2.sis) {
-    exists($${EPOCROOT}epoc32/release/winscw/udeb/VPbkEng.dll) \
-    | exists($${EPOCROOT}epoc32/release/armv5/urel/VPbkEng.dll) {
-        # TB 9.2 platform
-    } else {
-        # TB 10.1 or later platform
-        DEFINES += SYMBIAN_BACKEND_USE_SQLITE
-    }
-}
+        ../../src/filtering/cntsqlsearch.cpp
  
 SYMBIAN_LIBS += \
         -lcntmodel \
@@ -105,5 +97,4 @@ SYMBIAN_LIBS += \
         -lfbscli \
         -limageconversion \
         -lbitmaptransforms \ 
-        -lbafl
-        
+        -lbafl   
