@@ -151,6 +151,7 @@
         }
         return names;
     }
+
     QStringList QmlContact::details()
     {
         QStringList dets;
@@ -173,24 +174,13 @@
         return dets;
     }
 
-<span class="comment">    //QStringList QmlContact::values(QString definitionId)</span>
     QVariantMap QmlContact::values(QString definitionId)
     {
         QStringList strlist;
         QContactDetail detail = m_contact.detail(definitionId);
 
-        QVariantMap map = detail.values();
-        <span class="comment">//qWarning() &lt;&lt; &quot;Number of e: &quot; &lt;&lt; map.count();</span>
+        QVariantMap map = detail.variantValues();
         return map;
-
-<span class="comment">    //    QMap&lt;QString, QVariant&gt;::const_iterator i = map.constBegin();</span>
-<span class="comment">    //    while (i </span>!= map.constEnd()) {
-<span class="comment">    //        qWarning() &lt;&lt; &quot;Key: &quot; &lt;&lt; i.key() &lt;&lt; &quot; Value: &quot; &lt;&lt; i.value();</span>
-<span class="comment">    //        strlist += i.key() + &quot;: &quot; + i.value().toString();</span>
-<span class="comment">    //        ++i;</span>
-<span class="comment">    //    }</span>
-<span class="comment">    //</span>
-<span class="comment">    //    return strlist;</span>
     }
 
     #include &quot;moc_qmlcontact.cpp&quot;

@@ -176,52 +176,6 @@ void QGraphicsVideoItemPrivate::_q_mediaObjectDestroyed()
     clearService();
 }
 
-/*!
-    \class QGraphicsVideoItem
-
-    \brief The QGraphicsVideoItem class provides a graphics item which display video produced by a QMediaObject.
-
-    \ingroup multimedia
-
-    Attaching a QGraphicsVideoItem to a QMediaObject allows it to display
-    the video or image output of that media object.  A QGraphicsVideoItem
-    is attached to a media object by passing a pointer to the QMediaObject
-    to the setMediaObject() function.
-
-    \code
-    player = new QMediaPlayer(this);
-
-    QGraphicsVideoItem *item = new QGraphicsVideoItem;
-    item->setMediaObject(player);
-    graphicsView->scence()->addItem(item);
-    graphicsView->show();
-
-    player->setMedia(video);
-    player->play();
-    \endcode
-
-    \bold {Note}: Only a single display output can be attached to a media object at one time.
-
-    \sa QMediaObject, QMediaPlayer, QVideoWidget
-*/
-
-/*!
-    \enum QGraphicsVideoItem::FillMode
-
-    Enumerates the methods of scaling a video to fit a graphics item.
-
-    \value Stretch The video is stretched to fit the item's size.
-    \value PreserveAspectFit The video is uniformly scaled to fix the item's
-    size without cropping.
-    \value PreserveAspectCrop The video is uniformly scaled to fill the item's
-    size, cropping if necessary.
-*/
-
-/*!
-    Constructs a graphics item that displays video.
-
-    The \a parent is passed to QGraphicsItem.
-*/
 QGraphicsVideoItem::QGraphicsVideoItem(QGraphicsItem *parent)
     : QGraphicsObject(parent)
     , d_ptr(new QGraphicsVideoItemPrivate)
@@ -240,9 +194,6 @@ QGraphicsVideoItem::QGraphicsVideoItem(QGraphicsItem *parent)
     connect(d_ptr->surface, SIGNAL(activeChanged(bool)), this, SLOT(_q_present()));
 }
 
-/*!
-    Destroys a video graphics item.
-*/
 QGraphicsVideoItem::~QGraphicsVideoItem()
 {
 
@@ -258,11 +209,6 @@ QGraphicsVideoItem::~QGraphicsVideoItem()
     delete d_ptr->surface;
     delete d_ptr;
 }
-
-/*!
-    \property QGraphicsVideoItem::mediaObject
-    \brief the media object which provides the video displayed by a graphics item.
-*/
 
 QMediaObject *QGraphicsVideoItem::mediaObject() const
 {
@@ -310,11 +256,6 @@ void QGraphicsVideoItem::setMediaObject(QMediaObject *object)
     }
 }
 
-/*!
-    \property QGraphicsVideoItem::aspectRatioMode
-    \brief how a video is scaled to fit the graphics item's size.
-*/
-
 Qt::AspectRatioMode QGraphicsVideoItem::aspectRatioMode() const
 {
     return d_func()->aspectRatioMode;
@@ -327,14 +268,6 @@ void QGraphicsVideoItem::setAspectRatioMode(Qt::AspectRatioMode mode)
     d->aspectRatioMode = mode;
     d->updateRects();
 }
-
-/*!
-    \property QGraphicsVideoItem::offset
-    \brief the video item's offset.
-
-    QGraphicsVideoItem will draw video using the offset for its top left
-    corner.
-*/
 
 QPointF QGraphicsVideoItem::offset() const
 {
@@ -349,14 +282,6 @@ void QGraphicsVideoItem::setOffset(const QPointF &offset)
     d->updateRects();
 }
 
-/*!
-    \property QGraphicsVideoItem::size
-    \brief the video item's size.
-
-    QGraphicsVideoItem will draw video scaled to fit size according to its
-    fillMode.
-*/
-
 QSizeF QGraphicsVideoItem::size() const
 {
     return d_func()->rect.size();
@@ -370,35 +295,16 @@ void QGraphicsVideoItem::setSize(const QSizeF &size)
     d->updateRects();
 }
 
-/*!
-    \property QGraphicsVideoItem::nativeSize
-    \brief the native size of the video.
-*/
-
 QSizeF QGraphicsVideoItem::nativeSize() const
 {
     return d_func()->nativeSize;
 }
 
-/*!
-    \fn QGraphicsVideoItem::nativeSizeChanged(const QSizeF &size)
-
-    Signals that the native \a size of the video has changed.
-*/
-
-
-/*!
-    \reimp
-*/
 QRectF QGraphicsVideoItem::boundingRect() const
 {
     return d_func()->boundingRect;
 }
 
-
-/*!
-    \reimp
-*/
 void QGraphicsVideoItem::paint(
         QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
@@ -463,11 +369,6 @@ void QGraphicsVideoItem::paint(
     painter->fillRect(d->boundingRect, colorKey);
 }
 
-/*!
-    \reimp
-
-    \internal
-*/
 QVariant QGraphicsVideoItem::itemChange(GraphicsItemChange change, const QVariant &value)
 {
     Q_D(QGraphicsVideoItem);
