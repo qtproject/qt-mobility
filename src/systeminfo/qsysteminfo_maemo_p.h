@@ -213,13 +213,20 @@ class QSystemScreenSaverPrivate : public QSystemScreenSaverLinuxCommonPrivate
     Q_OBJECT
 
 public:
-    QSystemScreenSaverPrivate(QSystemScreenSaverLinuxCommonPrivate *parent = 0);
+    QSystemScreenSaverPrivate(QObject *parent = 0);
     ~QSystemScreenSaverPrivate();
 
     bool screenSaverInhibited();
     bool setScreenSaverInhibit();
     bool isScreenLockEnabled();
     bool isScreenSaverActive();
+
+private Q_SLOTS:
+    void display_blanking_pause();
+
+private:    //data
+    bool m_screenSaverInhibited;
+    QTimer *ssTimer;
 
 protected:
     QString screenPath;

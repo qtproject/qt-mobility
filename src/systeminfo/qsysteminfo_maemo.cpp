@@ -1765,27 +1765,53 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
  }
 #endif
 
- //////////////
- ///////
- QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QSystemScreenSaverLinuxCommonPrivate *parent)
-         : QSystemScreenSaverLinuxCommonPrivate(parent)
- {
- }
+//////////////
+///////
+QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
+        : QSystemScreenSaverLinuxCommonPrivate(parent), m_screenSaverInhibited(false)
 
- QSystemScreenSaverPrivate::~QSystemScreenSaverPrivate()
- {
- }
-
- bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
- {
-    return false;
+{
+    ssTimer = new QTimer(this);
 }
 
+QSystemScreenSaverPrivate::~QSystemScreenSaverPrivate()
+{
+     if(ssTimer->isActive())
+         ssTimer->stop();
+
+     m_screenSaverInhibited = false;
+}
 
 bool QSystemScreenSaverPrivate::screenSaverInhibited()
 {
+    return m_screenSaverInhibited;
+}
 
-    return false;
+bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
+{
+    if (m_screenSaverInhibited)
+        return true;
+
+     m_screenSaverInhibited = true;
+     display_blanking_pause();
+     connect(ssTimer, SIGNAL(timeout()), this, SLOT(display_blanking_pause()));
+     ssTimer->start(3000); //3 seconds interval
+     return true;
+}
+
+void QSystemScreenSaverPrivate::display_blanking_pause()
+{
+#if !defined(QT_NO_DBUS)
+    QDBusInterface connectionInterface("com.nokia.mce",
+                                       "/com/nokia/mce/request",
+                                       "com.nokia.mce.request",
+                                       QDBusConnection::systemBus());
+    if (!connectionInterface.isValid()) {
+        qWarning() << "interface not valid";
+        return;
+    }
+    connectionInterface.call("req_display_blanking_pause");
+#endif
 }
 
 bool QSystemScreenSaverPrivate::isScreenLockEnabled()
