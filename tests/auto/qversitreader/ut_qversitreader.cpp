@@ -321,6 +321,8 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard21()
     vCard.append("\r\n");
     // The value here is "UXQgaXMgZ3JlYXQh", which is the base64 encoding of "Qt is great!".
     vCard.append("PHOTO;ENCODING=BASE64: U\t XQgaX MgZ\t3Jl YXQh\r\n\r\n");
+    // Again, but without the explicity "ENCODING" parameter
+    vCard.append("PHOTO;BASE64: U\t XQgaX MgZ\t3Jl YXQh\r\n\r\n");
     vCard.append("HOME.Springfield.EMAIL;Encoding=Quoted-Printable:john.citizen=40exam=\r\nple.com\r\n");
     vCard.append("EMAIL;ENCODING=QUOTED-PRINTABLE;CHARSET=UTF-16BE:");
     vCard.append(codec->fromUnicode(QLatin1String("john.citizen=40exam=\r\nple.com")));
@@ -358,6 +360,12 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard21()
     QCOMPARE(property.variantValue().type(), QVariant::ByteArray);
     QCOMPARE(property.value<QByteArray>(), QByteArray("Qt is great!"));
     // Ensure that base-64 encoded strings can be retrieved as strings.
+    QCOMPARE(property.value(), QLatin1String("Qt is great!"));
+
+    property = mReaderPrivate->parseNextVersitProperty(type, cursor);
+    QCOMPARE(property.name(),QString::fromAscii("PHOTO"));
+    QCOMPARE(property.variantValue().type(), QVariant::ByteArray);
+    QCOMPARE(property.value<QByteArray>(), QByteArray("Qt is great!"));
     QCOMPARE(property.value(), QLatin1String("Qt is great!"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
@@ -411,12 +419,14 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard30()
     vCard.append(KATAKANA_NOKIA);
     vCard.append("\r\n");
     // "NOKIA" in Katakana, UTF-8 encoded, then base-64 encoded:
-    vCard.append("NOTE;ENCODING=BASE64;CHARSET=UTF-8:");
+    vCard.append("NOTE;ENCODING=B;CHARSET=UTF-8:");
     vCard.append(KATAKANA_NOKIA.toBase64());
     vCard.append("\r\n");
     vCard.append("TEL;TYPE=PREF;HOME:123\r\n");
     // The value here is "UXQgaXMgZ3JlYXQh", which is the base64 encoding of "Qt is great!".
     vCard.append("PHOTO;ENCODING=B:UXQgaXMgZ3JlYXQh\r\n");
+    // Again, but without the explicity "ENCODING" parameter
+    vCard.append("PHOTO;B:UXQgaXMgZ3JlYXQh\r\n");
     vCard.append("EMAIL:john.citizen@example.com\r\n");
     vCard.append("AGENT:BEGIN:VCARD\\nFN:Jenny\\nEND:VCARD\\n\r\n");
     vCard.append("End:VCARD\r\n");
@@ -453,6 +463,12 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard30()
     QCOMPARE(property.variantValue().type(), QVariant::ByteArray);
     QCOMPARE(property.value<QByteArray>(), QByteArray("Qt is great!"));
     // Ensure that base-64 encoded strings can be retrieved as strings.
+    QCOMPARE(property.value(), QLatin1String("Qt is great!"));
+
+    property = mReaderPrivate->parseNextVersitProperty(type, cursor);
+    QCOMPARE(property.name(),QString::fromAscii("PHOTO"));
+    QCOMPARE(property.variantValue().type(), QVariant::ByteArray);
+    QCOMPARE(property.value<QByteArray>(), QByteArray("Qt is great!"));
     QCOMPARE(property.value(), QLatin1String("Qt is great!"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, cursor);
@@ -546,6 +562,31 @@ VERSION:4.0\r\n\
 FN:Nobody\r\n\
 END:VCARD\r\n";
     vCard = wrongVersion;
+    cursor.setData(vCard);
+    document = QVersitDocument();
+    QVERIFY(!mReaderPrivate->parseVersitDocument(cursor, document));
+    QCOMPARE(document.properties().count(),0);
+    QCOMPARE(mReaderPrivate->mDocumentNestingLevel,0);
+
+    // No trailing crlf
+    const char noCrlf[] =
+"BEGIN:VCARD\r\n\
+VERSION:2.1\r\n\
+FN:Nobody\r\n\
+END:VCARD";
+    vCard = noCrlf;
+    cursor.setData(vCard);
+    document = QVersitDocument();
+    QVERIFY(mReaderPrivate->parseVersitDocument(cursor, document));
+    QCOMPARE(document.properties().count(),1);
+    QCOMPARE(mReaderPrivate->mDocumentNestingLevel,0);
+
+    // No end
+    const char noEnd[] =
+"BEGIN:VCARD\r\n\
+VERSION:2.1\r\n\
+FN:Nobody\r\n";
+    vCard = noEnd;
     cursor.setData(vCard);
     document = QVersitDocument();
     QVERIFY(!mReaderPrivate->parseVersitDocument(cursor, document));

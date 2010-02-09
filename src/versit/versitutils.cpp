@@ -225,7 +225,7 @@ QPair<QStringList,QString> VersitUtils::extractPropertyGroupsAndName(VersitCurso
     const QByteArray backslash = encode('\\', codec);
     QPair<QStringList,QString> groupsAndName;
     int length = 0;
-    Q_ASSERT(line.data.size() > line.position);
+    Q_ASSERT(line.data.size() >= line.position);
     
     int separatorLength = semicolon.length();
     for (int i = line.position; i < line.selection - separatorLength + 1; i++) {
@@ -383,8 +383,13 @@ bool VersitUtils::getNextLine(VersitCursor &line, QTextCodec* codec)
             }
         }
         if (crlfPos == -1) {
-            // No crlf - return false
-            return false;
+            // No crlf - return rest of line.
+            if (line.data.length() > line.position) {
+                line.selection = line.data.length();
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 }

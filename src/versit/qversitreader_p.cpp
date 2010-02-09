@@ -182,6 +182,8 @@ bool QVersitReaderPrivate::parseVersitDocument(VersitCursor& cursor, QVersitDocu
                 property.name() != QLatin1String("END"))
                 document.addProperty(property);
         } while (property.name().length() > 0 && property.name() != QLatin1String("END"));
+        if (property.name() != QLatin1String("END"))
+            parsingOk = false;
     }
     mDocumentNestingLevel--;
     if (!parsingOk)
@@ -238,12 +240,6 @@ void QVersitReaderPrivate::parseVCard21Property(VersitCursor& cursor, QVersitPro
         QTextCodec* codec;
         QVariant valueVariant(decodeCharset(value, property, &codec));
         unencode(valueVariant, cursor, property, codec);
-        if (valueVariant.type() == QVariant::ByteArray) {
-            // hack: add the charset parameter back in (even if there wasn't one to start with and
-            // the default codec was used).  This will help later on if someone calls valueString()
-            // on the property.
-            property.insertParameter(QLatin1String("CHARSET"), QLatin1String(codec->name()));
-        }
         property.setValue(valueVariant);
     }
 }
@@ -268,12 +264,6 @@ void QVersitReaderPrivate::parseVCard30Property(VersitCursor& cursor, QVersitPro
     } else {
         QVariant valueVariant(valueString);
         unencode(valueVariant, cursor, property, codec);
-        if (valueVariant.type() == QVariant::ByteArray) {
-            // hack: add the charset parameter back in (even if there wasn't one to start with and
-            // the default codec was used).  This will help later on if someone calls valueString()
-            // on the property.
-            property.insertParameter(QLatin1String("CHARSET"), QLatin1String(codec->name()));
-        }
         property.setValue(valueVariant);
     }
 }
@@ -303,8 +293,8 @@ bool QVersitReaderPrivate::setVersionFromProperty(QVersitDocument& document, con
     bool valid = true;
     if (property.name() == QLatin1String("VERSION")) {
         QString value = property.value().trimmed();
-        if (property.parameters().contains(
-                QLatin1String("ENCODING"),QLatin1String("BASE64")))
+        if (property.parameters().contains(QLatin1String("ENCODING"),QLatin1String("BASE64"))
+            || property.parameters().contains(QLatin1String("TYPE"),QLatin1String("BASE64")))
             value = QLatin1String(QByteArray::fromBase64(value.toAscii()));
         if (value == QLatin1String("2.1")) {
             document.setType(QVersitDocument::VCard21Type);
@@ -323,15 +313,11 @@ bool QVersitReaderPrivate::setVersionFromProperty(QVersitDocument& document, con
 void QVersitReaderPrivate::unencode(QVariant& value, VersitCursor& cursor,
                                     QVersitProperty& property, QTextCodec* codec) const
 {
-    const QString encoding(QLatin1String("ENCODING"));
-    const QString quotedPrintable(QLatin1String("QUOTED-PRINTABLE"));
-    const QString base64(QLatin1String("BASE64"));
-    const QString b(QLatin1String("B"));
     Q_ASSERT(value.type() == QVariant::String);
 
     QString valueString = value.toString();
 
-    if (property.parameters().contains(encoding, quotedPrintable)) {
+    if (property.parameters().contains(QLatin1String("ENCODING"), QLatin1String("QUOTED-PRINTABLE"))) {
         // At this point, we need to accumulate bytes until we hit a real line break (no = before
         // it) value already contains everything up to the character before the newline
         while (valueString.endsWith(QLatin1Char('='))) {
@@ -345,17 +331,23 @@ void QVersitReaderPrivate::unencode(QVariant& value, VersitCursor& cursor,
         }
         VersitUtils::decodeQuotedPrintable(valueString);
         // Remove the encoding parameter as the value is now decoded
-        property.removeParameters(encoding);
+        property.removeParameters(QLatin1String("ENCODING"));
         value.setValue(valueString);
-    } else if (property.parameters().contains(encoding, base64)
-        || property.parameters().contains(encoding, b)) {
+    } else if (property.parameters().contains(QLatin1String("ENCODING"), QLatin1String("BASE64"))
+        || property.parameters().contains(QLatin1String("ENCODING"), QLatin1String("B"))
+        || property.parameters().contains(QLatin1String("TYPE"), QLatin1String("BASE64"))
+        || property.parameters().contains(QLatin1String("TYPE"), QLatin1String("B"))) {
         // Remove any left-over linear whitespaces
         valueString.remove(QLatin1Char(' '));
         valueString.remove(QLatin1Char('\t'));
         // and do the conversion.
         value.setValue(QByteArray::fromBase64(valueString.toAscii()));
         // Remove the encoding parameter as the value is now decoded
-        property.removeParameters(encoding);
+        property.removeParameters(QLatin1String("ENCODING"));
+        // Hack: add the charset parameter back in (even if there wasn't one to start with and
+        // the default codec was used).  This will help later on if someone calls valueString()
+        // on the property.
+        property.insertParameter(QLatin1String("CHARSET"), QLatin1String(codec->name()));
     }
 }
 
