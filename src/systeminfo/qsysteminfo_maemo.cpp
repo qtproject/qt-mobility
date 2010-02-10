@@ -1554,13 +1554,20 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 
 bool QSystemDeviceInfoPrivate::isDeviceLocked()
 {
-    QSystemScreenSaverPrivate priv;
+#if !defined(QT_NO_DBUS)
+    QDBusConnection systemDbusConnection = QDBusConnection::systemBus();
 
-    if(priv.isScreenLockEnabled()
-        && priv.isScreenSaverActive()) {
-        return true;
+    QDBusInterface mceConnectionInterface("com.nokia.mce",
+                                      "/com/nokia/mce/request",
+                                      "com.nokia.mce.request",
+                                      systemDbusConnection);
+    if (mceConnectionInterface.isValid()) {
+        QDBusReply<QString> tkLockModeReply = mceConnectionInterface.call("get_tklock_mode");
+        return tkLockModeReply.value() == "locked";
     }
 
+    qWarning() << "mce interface not valid";
+#endif
     return false;
 }
 
