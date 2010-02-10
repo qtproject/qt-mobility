@@ -450,11 +450,11 @@ void QVersitContactExporterPrivate::encodeNickname(
     QVersitProperty property;
     property.setName(QLatin1String("X-NICKNAME"));
     bool found = false;
-    for (int i=0; i < document.properties().count() && !found; i++) {
-        QVersitProperty currentProperty = document.properties()[i];
+    foreach (QVersitProperty currentProperty, document.properties()) {
         if (currentProperty.name() == QLatin1String("X-NICKNAME")) {
             property = currentProperty;
             found = true;
+            break;
         }
     }
     QString value(property.value());

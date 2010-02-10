@@ -176,9 +176,6 @@ const QString TEST_AUDIO_FILE(QLatin1String("versitTest001.wav"));
 void UT_QVersitContactExporter::init()
 {
     mExporter = new QVersitContactExporter();
-    mExporterPrivate = new QVersitContactExporterPrivate();
-    QVERIFY(!mExporterPrivate->mParameterMappings.empty());
-    QVERIFY(!mExporterPrivate->mPropertyMappings.empty());
     mDetailHandler = new MyQVersitContactExporterDetailHandler;
     mExporter->setDetailHandler(mDetailHandler);
     mResourceHandler = new MyQVersitResourceHandler;
@@ -193,7 +190,6 @@ void UT_QVersitContactExporter::cleanup()
     QVERIFY(mExporter->resourceHandler() == mResourceHandler);
     mExporter->setResourceHandler(0);
     delete mResourceHandler;
-    delete mExporterPrivate;
     delete mExporter;
 }
 
@@ -323,7 +319,7 @@ void UT_QVersitContactExporter::testEncodeName()
     QCOMPARE(document.type(),QVersitDocument::VCard30Type);
 
     // Each Contact has display label detail by default. Display label is enocded
-    // if some value exisit for the Label or if value for Name exisit.
+    // if some value exists for the Label or if value for Name exisit.
     QCOMPARE(document.properties().count(), 2);
     displayProperty = document.properties().at(0);
     nameProperty = document.properties().at(1);
@@ -926,6 +922,18 @@ void UT_QVersitContactExporter::testEncodeEmbeddedContent()
     document = mExporter->exportContacts(contacts).first();
     QCOMPARE(document.properties().count(), 0);
     QVERIFY(!mResourceHandler->mLoadResourceCalled);
+
+    // Without a resource handler
+    mExporter->setResourceHandler(0);
+    contactAvatar.setAvatar(TEST_PHOTO_FILE);
+    contactAvatar.setSubType(QContactAvatar::SubTypeImage);
+    contact.saveDetail(&contactAvatar);
+    contacts.clear();
+    contacts.append(contact);
+    document = mExporter->exportContacts(contacts).first();
+    QCOMPARE(document.properties().count(), 0);
+
+    mExporter->setResourceHandler(mResourceHandler);
 }
 
 void UT_QVersitContactExporter::testEncodeParameters()
@@ -1029,30 +1037,36 @@ void UT_QVersitContactExporter::testEncodeGender()
 void UT_QVersitContactExporter::testEncodeNickName()
 {
     QContact contact;
-    QVersitDocument document;
-    document.setType(QVersitDocument::VCard21Type);
 
-    // Nickname not yet in the document
-    QContactNickname nicknameDetail;
-    QString firstNickname(QString::fromAscii("Homie"));
-    nicknameDetail.setNickname(firstNickname);
+    // Add an extra detail
+    QContactGender gender;
+    gender.setGender(QContactGender::GenderMale);
+    contact.saveDetail(&gender);
 
-    contact.saveDetail(&nicknameDetail);
-    mExporterPrivate->exportContact(contact, document);
+    // One nickname given
+    QContactNickname firstNickname;
+    firstNickname.setNickname(QLatin1String("Homie"));
+    contact.saveDetail(&firstNickname);
+    QList<QContact> contacts;
+    contacts.append(contact);
+    QVersitDocument document = mExporter->exportContacts(contacts).first();
+    QCOMPARE(document.properties().count(), 2);
+    QVersitProperty property = document.properties().at(1);
+    QCOMPARE(property.name(), QLatin1String("X-NICKNAME"));
+    QCOMPARE(property.value(), QLatin1String("Homie"));
 
-    QCOMPARE(document.properties().count(), 1);
-    QVersitProperty property = document.properties().at(0);
-    QCOMPARE(property.name(), QString::fromAscii("X-NICKNAME"));
-    QCOMPARE(property.value(), firstNickname);
-
-    // Nickname already in the document, append to the existing property
-    QString secondNickname(QString::fromAscii("Jay"));
-    nicknameDetail.setNickname(secondNickname);
-
-    contact.saveDetail(&nicknameDetail);
-    mExporterPrivate->exportContact(contact, document);
-    QCOMPARE(document.properties().count(), 1);
-    property = document.properties().at(0);
+    // Two nicknames given, should be collated into a single property
+    contact.clearDetails();
+    contact.saveDetail(&gender);
+    contact.saveDetail(&firstNickname);
+    QContactNickname secondNickname;
+    secondNickname.setNickname(QLatin1String("Jay"));
+    contact.saveDetail(&secondNickname);
+    contacts.clear();
+    contacts.append(contact);
+    document = mExporter->exportContacts(contacts).first();
+    QCOMPARE(document.properties().count(), 2);
+    property = document.properties().at(1);
     QCOMPARE(property.name(), QString::fromAscii("X-NICKNAME"));
     QCOMPARE(property.value(), QString::fromAscii("Homie,Jay"));
 }

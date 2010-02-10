@@ -94,7 +94,6 @@ private slots:
 
 private: // Data
     QVersitContactExporter* mExporter;
-    QVersitContactExporterPrivate* mExporterPrivate;
     MyQVersitResourceHandler* mResourceHandler;
     MyQVersitContactExporterDetailHandler* mDetailHandler;
 };
