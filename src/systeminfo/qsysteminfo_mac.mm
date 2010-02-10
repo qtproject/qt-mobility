@@ -72,7 +72,10 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreFoundation/CFLocale.h>
 #include <ScreenSaver/ScreenSaverDefaults.h>
+
 #include <QTKit/QTKit.h>
+#include <CoreLocation/CLLocation.h>
+#include <CoreLocation/CLLocationManager.h>
 
 #include <IOKit/usb/IOUSBLib.h>
 #include <IOKit/pwr_mgt/IOPM.h>
@@ -154,6 +157,17 @@ inline QStringList nsarrayToQStringList(void *nsarray)
     [autoreleasepool release];
     return result;
 }
+
+bool hasIOServiceMatching(const QString &classstr)
+{
+    io_iterator_t ioIterator = NULL;
+    IOServiceGetMatchingServices(kIOMasterPortDefault, IOServiceNameMatching(classstr.toAscii()), &ioIterator);
+    if(ioIterator) {
+        return true;
+    }
+    return false;
+}
+
 
 
 #ifdef MAC_SDK_10_6
@@ -371,10 +385,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::IrFeature:
         {
-            CFDictionaryRef match = 0;
-
-            match = IOServiceMatching("AppleIRController");
-            if(match != NULL) {
+            if(hasIOServiceMatching("AppleIRController")) {
                 featureSupported = true;
             }
         }
@@ -391,12 +402,9 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::UsbFeature:
         {
-               CFDictionaryRef match = 0;
-
-               match = IOServiceMatching(kIOUSBDeviceClassName);
-               if(match != NULL) {
-                   featureSupported = true;
-               }
+            if(hasIOServiceMatching(kIOUSBDeviceClassName)) {
+                featureSupported = true;
+            }
         }
         break;
     case QSystemInfo::VibFeature:
@@ -419,7 +427,11 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::LocationFeature:
         {
-
+            CLLocationManager *locationManager = [[CLLocationManager alloc] init];
+            if ([locationManager locationServicesEnabled]) {
+                featureSupported = true;
+            }
+            [locationManager release];
         }
         break;
     case QSystemInfo::VideoOutFeature:
@@ -1185,9 +1197,23 @@ QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
     return QSystemDeviceInfo::UnknownProfile;
 }
 
+
 QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
 {
-    QSystemDeviceInfo::InputMethodFlags methods;
+    QSystemDeviceInfo::InputMethodFlags methods = 0;
+
+    if(hasIOServiceMatching("AppleUSBTCButtons")) {
+        methods = (methods | QSystemDeviceInfo::Keys);
+    }
+    if(hasIOServiceMatching("AppleUSBTCKeyboard")) {
+        methods = (methods | QSystemDeviceInfo::Keyboard);
+    }
+    if(hasIOServiceMatching("AppleUSBMultitouchDriver")) {
+        methods = (methods | QSystemDeviceInfo::MultiTouch);
+    }
+    if(hasIOServiceMatching("IOHIDPointing")) {
+        methods = (methods | QSystemDeviceInfo::Mouse);
+    }
     return methods;
 }
 
