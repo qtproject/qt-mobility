@@ -14,10 +14,10 @@ symbian: {
 
     vendorinfo = \
         "; Localised Vendor name" \
-        "%{\"Nokia, Qt\"}" \
+        "%{\"Nokia\"}" \
         " " \
         "; Unique Vendor name" \
-        ":\"Nokia, Qt\"" \
+        ":\"Nokia\"" \
         " "
     qtmobilitydeployment.pkg_prerules += vendorinfo
 
