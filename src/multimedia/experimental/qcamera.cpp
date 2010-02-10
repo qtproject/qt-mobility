@@ -282,7 +282,7 @@ QCamera::CaptureModes QCamera::supportedCaptureModes() const
 /*!
   \property QCamera::captureMode
 
-  Returns the type of media (video or still images),
+  The type of media (video or still images),
   the camera is configured to capture.
 */
 
@@ -499,7 +499,7 @@ QCamera::FocusModes QCamera::supportedFocusModes() const
 }
 
 /*!
-    Returns the focus status
+    Returns the focus status.
 */
 
 QCamera::FocusStatus QCamera::focusStatus() const
@@ -533,6 +533,75 @@ void QCamera::setMacroFocusingEnabled(bool enabled)
 {
     if (d_func()->focusControl)
         d_func()->focusControl->setMacroFocusingEnabled(enabled);
+}
+
+/*!
+  \property QCamera::focusPointMode
+  The camera focus point selection mode.
+*/
+
+QCamera::FocusPointMode QCamera::focusPointMode() const
+{
+    return d_func()->focusControl ?
+            d_func()->focusControl->focusPointMode() :
+            QCamera::FocusPointAuto;
+}
+
+void QCamera::setFocusPointMode(QCamera::FocusPointMode mode)
+{
+    if (d_func()->focusControl)
+        d_func()->focusControl->setFocusPointMode(mode);
+    else if ( mode != QCamera::FocusPointAuto ) {
+        d_func()->_q_error(NotSupportedFeatureError, tr("Focus points mode selection is not supported"));
+    }
+}
+
+/*!
+  Returns supported focus selection modes.
+ */
+QCamera::FocusPointModes QCamera::supportedFocusPointModes() const
+{
+    return d_func()->focusControl ?
+            d_func()->focusControl->supportedFocusPointModes() :
+            QCamera::FocusPointAuto;
+
+}
+
+/*!
+  \property QCamera::customFocusPoint
+
+  Position of custom focus point, in relative frame coordinates:
+  QPointF(0,0) points to the left top frame point, QPointF(0.5,0.5) points to the frame center.
+
+  Custom focus point is used only in FocusPointCustom focus mode.
+ */
+
+QPointF QCamera::customFocusPoint() const
+{
+    return d_func()->focusControl ?
+            d_func()->focusControl->customFocusPoint() :
+            QPointF(0.5,0.5);
+}
+
+void QCamera::setCustomFocusPoint(const QPointF &point)
+{
+    if (d_func()->focusControl)
+        d_func()->focusControl->setCustomFocusPoint(point);
+    else {
+        d_func()->_q_error(NotSupportedFeatureError, tr("Focus points selection is not supported"));
+    }
+}
+
+/*!
+  \property QCamera::focusZones
+
+  The list of zones, the camera is actually focused on.
+ */
+QList<QRectF> QCamera::focusZones() const
+{
+    return d_func()->focusControl ?
+            d_func()->focusControl->focusZones() :
+            QList<QRectF>();
 }
 
 /*!
@@ -907,6 +976,16 @@ bool QCamera::isExposureLocked() const
                                 All objects at distances from half of this
                                 distance out to infinity will be acceptably sharp.
 */
+
+/*!
+    \enum QCamera::FocusPointMode
+
+    \value FocusPointAuto       Automaticaly select one or multiple focus points.
+    \value FocusPointCenter     Focus to the frame center.
+    \value FocusPointFaceDetection Focus on faces in the frame.
+    \value FocusPointCustom     Focus to the custom point, defined by QCamera::customFocusPoint property.
+*/
+
 
 /*!
     \enum QCamera::FocusStatus
