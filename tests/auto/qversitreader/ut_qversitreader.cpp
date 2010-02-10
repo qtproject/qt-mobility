@@ -123,7 +123,7 @@ void UT_QVersitReader::testReading()
     
     // Device set, no data
     mReader->setDevice(mInputDevice);
-    mInputDevice->open(QBuffer::ReadWrite);
+    mInputDevice->open(QBuffer::ReadOnly);
     QVERIFY(mReader->startReading());
     QVERIFY(mReader->waitForFinished());
     QList<QVersitDocument> results(mReader->results());
@@ -134,7 +134,9 @@ void UT_QVersitReader::testReading()
     // Device set, one document
     const QByteArray& oneDocument = 
         "BEGIN:VCARD\r\nVERSION:2.1\r\nFN:John\r\nEND:VCARD\r\n";
-    mInputDevice->write(oneDocument);
+    mInputDevice->close();
+    mInputDevice->setData(oneDocument);
+    mInputDevice->open(QBuffer::ReadOnly);
     mInputDevice->seek(0);
     QVERIFY(mReader->startReading());
     QVERIFY(mReader->waitForFinished());
@@ -147,12 +149,10 @@ void UT_QVersitReader::testReading()
     QTextCodec* codec = QTextCodec::codecForName("UTF-16BE");
     const QByteArray& wideDocument =
             VersitUtils::encode("BEGIN:VCARD\r\nVERSION:2.1\r\nFN:John\r\nEND:VCARD\r\n", codec);
-    delete mInputDevice;
-    mInputDevice = new QBuffer;
-    mInputDevice->open(QBuffer::ReadWrite);
-    mInputDevice->write(wideDocument);
+    mInputDevice->close();
+    mInputDevice->setData(wideDocument);
+    mInputDevice->open(QBuffer::ReadOnly);
     mInputDevice->seek(0);
-    mReader->setDevice(mInputDevice);
     mReader->setDefaultCodec(codec);
     QVERIFY(mReader->startReading());
     QVERIFY(mReader->waitForFinished());
@@ -165,18 +165,30 @@ void UT_QVersitReader::testReading()
     // Two documents
     const QByteArray& twoDocuments =
         " \r\n BEGIN:VCARD\r\nFN:Jenny\r\nEND:VCARD\r\nBEGIN:VCARD\r\nFN:Jake\r\nEND:VCARD\r\n";
-    delete mInputDevice;
-    mInputDevice = new QBuffer;
-    mInputDevice->open(QBuffer::ReadWrite);
-    mInputDevice->write(twoDocuments);
+    mInputDevice->close();
+    mInputDevice->setData(twoDocuments);
+    mInputDevice->open(QBuffer::ReadOnly);
     mInputDevice->seek(0);
-    mReader->setDevice(mInputDevice);
     QVERIFY(mReader->startReading());
     QVERIFY(mReader->waitForFinished());
     results = mReader->results();
     QCOMPARE(mReader->state(), QVersitReader::FinishedState);
     QCOMPARE(mReader->error(), QVersitReader::NoError);
     QCOMPARE(results.count(),2);
+
+    // Erroneous document (missing property name)
+    mInputDevice->close();
+    mInputDevice->setData(QByteArray(
+            "BEGIN:VCARD\r\nFN:Jenny\r\n;Jenny;;;\r\nEND:VCARD\r\n"
+            "BEGIN:VCARD\r\nFN:Jake\r\nEND:VCARD\r\n"));
+    mInputDevice->open(QBuffer::ReadOnly);
+    mInputDevice->seek(0);
+    QVERIFY(mReader->startReading());
+    QVERIFY(mReader->waitForFinished());
+    results = mReader->results();
+    QCOMPARE(mReader->state(), QVersitReader::FinishedState);
+    QCOMPARE(mReader->error(), QVersitReader::ParseError);
+    QCOMPARE(results.count(), 1);
 
     // Valid documents and a grouped document between them
     const QByteArray& validDocumentsAndGroupedDocument =
@@ -189,12 +201,10 @@ END:VCARD\r\n\
 BEGIN:VCARD\r\nFN:Jake\r\nEND:VCARD\r\n\
 BEGIN:VCARD\r\nFN:James\r\nEND:VCARD\r\n\
 BEGIN:VCARD\r\nFN:Jane\r\nEND:VCARD\r\n";
-    delete mInputDevice;
-    mInputDevice = new QBuffer;
+    mInputDevice->close();
+    mInputDevice->setData(validDocumentsAndGroupedDocument);
     mInputDevice->open(QBuffer::ReadWrite);
-    mInputDevice->write(validDocumentsAndGroupedDocument);
     mInputDevice->seek(0);
-    mReader->setDevice(mInputDevice);
     QVERIFY(mReader->startReading());
     QVERIFY(mReader->waitForFinished());
     results = mReader->results();
@@ -214,12 +224,10 @@ END:VCARD\r\n\
 BEGIN:VCARD\r\nFN:Jake\r\nEND:VCARD\r\n\
 BEGIN:VCARD\r\nFN:James\r\nEND:VCARD\r\n\
 BEGIN:VCARD\r\nFN:Jane\r\nEND:VCARD";
-    delete mInputDevice;
-    mInputDevice = new QBuffer;
+    mInputDevice->close();
+    mInputDevice->setData(validDocumentsAndGroupedDocument2);
     mInputDevice->open(QBuffer::ReadWrite);
-    mInputDevice->write(validDocumentsAndGroupedDocument2);
     mInputDevice->seek(0);
-    mReader->setDevice(mInputDevice);
     QVERIFY(mReader->startReading());
     QVERIFY(mReader->waitForFinished());
     results = mReader->results();
@@ -229,12 +237,10 @@ BEGIN:VCARD\r\nFN:Jane\r\nEND:VCARD";
     QCOMPARE(mReader->results().count(),4);
 
     // Asynchronous reading
-    delete mInputDevice;
-    mInputDevice = new QBuffer;
+    mInputDevice->close();
+    mInputDevice->setData(twoDocuments);
     mInputDevice->open(QBuffer::ReadWrite);
-    mInputDevice->write(twoDocuments);
     mInputDevice->seek(0);
-    mReader->setDevice(mInputDevice);
     mSignalCatcher->mReceived.clear();
     QVERIFY(mReader->startReading());
     QTRY_VERIFY(mSignalCatcher->mReceived.count() >= 2);
@@ -244,12 +250,10 @@ BEGIN:VCARD\r\nFN:Jane\r\nEND:VCARD";
     QCOMPARE(mReader->error(), QVersitReader::NoError);
 
     // Cancelling
-    delete mInputDevice;
-    mInputDevice = new QBuffer;
-    mInputDevice->open(QBuffer::ReadWrite);
-    mInputDevice->write(twoDocuments);
+    mInputDevice->close();
+    mInputDevice->setData(twoDocuments);
+    mInputDevice->open(QBuffer::ReadOnly);
     mInputDevice->seek(0);
-    mReader->setDevice(mInputDevice);
     mSignalCatcher->mReceived.clear();
     QVERIFY(mReader->startReading());
     mReader->cancel();
