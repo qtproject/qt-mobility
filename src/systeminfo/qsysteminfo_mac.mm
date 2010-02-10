@@ -74,8 +74,6 @@
 #include <ScreenSaver/ScreenSaverDefaults.h>
 
 #include <QTKit/QTKit.h>
-#include <CoreLocation/CLLocation.h>
-#include <CoreLocation/CLLocationManager.h>
 
 #include <IOKit/usb/IOUSBLib.h>
 #include <IOKit/pwr_mgt/IOPM.h>
@@ -99,6 +97,8 @@
 #include <QEventLoop>
 
 #ifdef MAC_SDK_10_6
+#include <CoreLocation/CLLocation.h>
+#include <CoreLocation/CLLocationManager.h>
 #include <CoreWLAN/CWInterface.h>
 #include <CoreWLAN/CWGlobals.h>
 #else
@@ -427,11 +427,13 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::LocationFeature:
         {
+#ifdef MAC_SDK_10_6
             CLLocationManager *locationManager = [[CLLocationManager alloc] init];
             if ([locationManager locationServicesEnabled]) {
                 featureSupported = true;
             }
             [locationManager release];
+#endif
         }
         break;
     case QSystemInfo::VideoOutFeature:
