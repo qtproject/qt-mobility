@@ -194,11 +194,7 @@ QGeoPositionInfo QGeoPositionInfoSourceMaemo::lastKnownPosition(bool fromSatelli
     speed = lastKnownPositionSpeed.value().toDouble();
     track = lastKnownPositionTrack.value().toDouble();
     climb = lastKnownPositionClimb.value().toDouble();
-    
-    if (time) {
-        posInfo.setDateTime(QDateTime::fromTime_t(time));
-    }
-    
+        
     if (longitude && latitude) {
         coordinate.setLongitude(longitude);
         coordinate.setLatitude(latitude);
@@ -219,11 +215,14 @@ QGeoPositionInfo QGeoPositionInfoSourceMaemo::lastKnownPosition(bool fromSatelli
     if (climb) {
         posInfo.setAttribute(QGeoPositionInfo::VerticalSpeed, climb);        
     }
-    
-    return posInfo;
-#else  
+
+    // Only positions with time (3D) are provided.
+    if (time) {
+        posInfo.setDateTime(QDateTime::fromTime_t(time));
+        return posInfo;
+    }    
+#endif // Q_WS_MAEMO_5
     return QGeoPositionInfo();
-#endif
 }
 
 
@@ -430,7 +429,6 @@ void QGeoPositionInfoSourceMaemo::locationChanged(LocationGPSDevice *device,
     QGeoCoordinate coordinate;
     QGeoPositionInfoSourceMaemo *object;
 
-
     if (!data || !device)
         return;
 
@@ -448,7 +446,6 @@ void QGeoPositionInfoSourceMaemo::locationChanged(LocationGPSDevice *device,
                                  device->fix->eph);
             posInfo.setAttribute(QGeoPositionInfo::VerticalAccuracy,
                                  device->fix->epv);
-
         }
 
         if (device->fix->fields & LOCATION_GPS_DEVICE_ALTITUDE_SET) {
@@ -472,7 +469,8 @@ void QGeoPositionInfoSourceMaemo::locationChanged(LocationGPSDevice *device,
 
     }
    
-    if(device->status == LOCATION_GPS_DEVICE_STATUS_FIX) {
+    // Only position updates with time (3D) are provided.
+    if (device->fix->mode == LOCATION_GPS_DEVICE_MODE_3D) {
         posInfo.setCoordinate(coordinate);        
         object->setLocation(posInfo);
     }
