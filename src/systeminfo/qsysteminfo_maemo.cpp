@@ -1320,17 +1320,7 @@ QString QSystemDeviceInfoPrivate::imei()
 
 QString QSystemDeviceInfoPrivate::imsi()
 {
-    QString retVal = "Not Available";
-    GConfItem locationValues("/system/nokia/location");
-    QStringList locationKeys = locationValues.listEntries();
-
-    QStringList result;
-    foreach (QString str, locationKeys) {
-        if (str.contains("sim_imsi"))
-            retVal = "Available";
-        break;
-    }
-    return retVal;
+    return GConfItem("/system/nokia/location/sim_imsi").value().toString();
 }
 
 QString QSystemDeviceInfoPrivate::manufacturer()
