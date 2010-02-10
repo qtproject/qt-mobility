@@ -77,12 +77,12 @@ private:
     void ScaleImageL();
     void EncodeImageL();
     void CreateContactFieldL();
-    TUid thumbnailFieldTypeL();
+    void initializeThumbnailFieldL();
 
 private:
     TCreatorState m_state;
     TSize m_thumbnailSize;
-    TUid m_thumbnailFieldType;
+    CContactItemField *m_thumbnailFieldFromTemplate;
     QList<CContactItemField *> *m_fieldList;
     CActiveSchedulerWait *m_activeSchedulerWait;
     TInt m_err;

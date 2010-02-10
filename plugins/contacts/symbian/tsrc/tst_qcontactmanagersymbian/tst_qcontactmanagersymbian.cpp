@@ -193,8 +193,9 @@ void tst_QContactManagerSymbian::avatarPixmap()
 
     // Set pixmap
     QContactAvatar avatar;
-    // TODO: the file must exist
-    QVERIFY(avatar.setPixmap(QPixmap(fileName))); 
+    QPixmap pixmap(fileName);
+    QVERIFY(!pixmap.isNull());
+    QVERIFY(avatar.setPixmap(pixmap)); 
     QVERIFY(testContact.saveDetail(&avatar));
     QVERIFY(m_cm->saveContact(&testContact));
 
@@ -202,7 +203,7 @@ void tst_QContactManagerSymbian::avatarPixmap()
     testContact = m_cm->contact(m_contactId.localId());
     avatar = testContact.detail(QContactAvatar::DefinitionName);
     QVERIFY(!avatar.isEmpty());
-    QPixmap pixmap = avatar.pixmap();
+    pixmap = avatar.pixmap();
     QVERIFY(!pixmap.isNull());
 }
 
@@ -321,6 +322,9 @@ void tst_QContactManagerSymbian::displayLabel()
         //qDebug() << Wrong display label;
         QCOMPARE(contact.displayLabel(), displayLabel);
     }
+
+    // Remove contact
+    QVERIFY(m_cm->removeContact(contact.localId()));
 }
 
 void tst_QContactManagerSymbian::invalidContactItems()

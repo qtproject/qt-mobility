@@ -69,8 +69,8 @@ CntThumbnailCreator::CntThumbnailCreator() :
     CActive(EPriorityStandard),
     m_state(EStateInitialized),
     m_thumbnailSize(KThumbnailSizeUninitialized),
-    m_err(KErrNone),
-    m_thumbnailFieldType(KNullUid)
+    m_thumbnailFieldFromTemplate(0),
+    m_err(KErrNone)
 {
     CActiveScheduler::Add(this);
 }
@@ -257,12 +257,8 @@ void CntThumbnailCreator::CreateContactFieldL()
 {
     __ASSERT_DEBUG(m_imageData, User::Panic(KPanicCategory, KPanicUnitialized));
 
-    CContactItemField *thumbnailField = CContactItemField::NewLC(
-        KStorageTypeStore, thumbnailFieldTypeL());
-    thumbnailField->SetMapping(KUidContactFieldVCardMapPHOTO);
-    if(m_thumbnailFieldType != KUidContactFieldVCardMapJPEG) {
-        thumbnailField->AddFieldTypeL(KUidContactFieldVCardMapJPEG);
-    }
+    initializeThumbnailFieldL();
+    CContactItemField *thumbnailField = CContactItemField::NewLC(*m_thumbnailFieldFromTemplate);
 
     thumbnailField->StoreStorage()->SetThingL(*m_imageData);
     QT_TRYCATCH_LEAVING(m_fieldList->append(thumbnailField));
@@ -274,35 +270,36 @@ void CntThumbnailCreator::CreateContactFieldL()
     SetActive();
 }
 
-/*
- * The expected field type of the thumbnail field depends on the S60 version.
- * This function can be used to check which of the two possible field types
- * exists in the system template.
- */
-TUid CntThumbnailCreator::thumbnailFieldTypeL()
+void CntThumbnailCreator::initializeThumbnailFieldL()
 {
-    // Assume the system template field for thumbnail is not changed run-time
-    // and fetch it only when SetThumbnailFieldTypeL is called for the first
-    // time (requires the CntThumbnailCreator instance to live longer than one
-    // thumbnail create operation to be effective, otherwise we would end up
-    // opening contact database and reading the system template every time a
-    // thumbnail is stored).
-    if(m_thumbnailFieldType == KNullUid) {
+    // Assume the golden template is not changed run-time and fetch it only
+    // when initializeThumbnailFieldL is called for the first time during the
+    // life-time of the CntThumbnailCreator object (requires the instance to
+    // live longer than one thumbnail create operation to be effective,
+    // otherwise we would end up opening contact database and reading the
+    // system template every time a thumbnail is stored for a contact).
+    if(!m_thumbnailFieldFromTemplate) {
         CContactDatabase *contactDatabase = CContactDatabase::OpenL();
         CleanupStack::PushL(contactDatabase);
-        CContactItem *systemTemplate = contactDatabase->OpenContactL(contactDatabase->TemplateId());
-        const CContactItemFieldSet& fields = systemTemplate->CardFields();
-        // Assumes that if KUidContactFieldVCardMapJPEG is not found in the
-        // system template, then KUidContactFieldPicture is to be used for
-        // thumbnails 
-        if(fields.Find(KUidContactFieldVCardMapJPEG) == KErrNotFound){
-            m_thumbnailFieldType = KUidContactFieldPicture;
-        } else {
-            m_thumbnailFieldType = KUidContactFieldVCardMapJPEG;
+        CContactItem *goldenTemplate = contactDatabase->ReadContactLC(KGoldenTemplateId);
+        const CContactItemFieldSet& cardFields = goldenTemplate->CardFields();
+
+        // Check if thumbnail field type is KUidContactFieldPictureValue
+        TInt pictureFieldIndex = cardFields.Find(KUidContactFieldPicture, KUidContactFieldVCardMapPHOTO);
+
+        // Check if thumbnail field type is KUidContactFieldVCardMapJPEG
+        if(pictureFieldIndex == KErrNotFound) {
+            pictureFieldIndex = cardFields.Find(KUidContactFieldVCardMapJPEG, KUidContactFieldVCardMapPHOTO);
         }
-        CleanupStack::PushL(systemTemplate);
-        CleanupStack::PopAndDestroy(systemTemplate);
+
+        if(pictureFieldIndex == KErrNotFound) {
+            // Either KUidContactFieldPictureValue or KUidContactFieldVCardMapJPEG
+            // thumbnail field types should be in the template
+            User::Leave(KErrNotFound);
+        }
+
+        m_thumbnailFieldFromTemplate = CContactItemField::NewL(cardFields[pictureFieldIndex]);
+        CleanupStack::PopAndDestroy(goldenTemplate);
         CleanupStack::PopAndDestroy(contactDatabase);
     }
-    return m_thumbnailFieldType;
 }
