@@ -54,14 +54,6 @@
 
 using namespace SopranoLive;
 
-namespace ContactContext {
-    typedef enum Location {
-        Unknown = 0,
-        Home,
-        Work
-    };
-}
-
 QTM_USE_NAMESPACE
 
 /**

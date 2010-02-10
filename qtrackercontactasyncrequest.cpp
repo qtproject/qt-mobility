@@ -107,6 +107,29 @@ void matchPhoneNumber(RDFVariable &variable, QContactDetailFilter &filter)
     variable.isMemberOf(RDFVariableList()<<homeContact);// TODO report bug doesnt work in tracker <<officeContact);
 }
 
+void matchOnlineAccount(RDFVariable &variable, QContactDetailFilter &filter)
+{
+    if ((filter.matchFlags() & QContactFilter::MatchExactly) == QContactFilter::MatchExactly)
+    {
+        if (filter.detailFieldName() == "Account" || filter.detailFieldName() == QContactOnlineAccount::FieldAccountUri)
+        {
+            variable.property<nco::imContactId> ().isMemberOf(QStringList() << filter.value().toString());
+        }
+        else if (filter.detailFieldName() == QContactOnlineAccount::FieldServiceProvider)
+        {
+            variable.optional().property<nco::fromIMAccount>().property<nco::imDisplayName> ().isMemberOf(QStringList() << filter.value().toString());
+        }
+        else
+            qWarning() << "QTrackerContactFetchRequest," << __FUNCTION__
+                    << "Unsupported detail filter by QContactOnlineAccount.";
+    }
+    else
+    {
+        qWarning() << "QTrackerContactFetchRequest," << __FUNCTION__
+                << "Unsupported match flag in detail filter by QContactOnlineAccount. Use QContactFilter::MatchExactly";
+    }
+}
+
 void matchName(RDFVariable &variable, QContactDetailFilter &filter)
 {
     if (filter.detailDefinitionName() != QContactName::DefinitionName) {
@@ -157,6 +180,10 @@ void QTrackerContactFetchRequest::applyFilterToContact(RDFVariable &variable,
              && QContactPhoneNumber::FieldNumber == filt.detailFieldName()) {
             matchPhoneNumber(variable, filt);
         }
+        else if(QContactOnlineAccount::DefinitionName == filt.detailDefinitionName())
+        {
+            matchOnlineAccount(variable, filt);
+        }
         else if (QContactName::DefinitionName == filt.detailDefinitionName()) {
             matchName(variable, filt);
         }
@@ -166,9 +193,6 @@ void QTrackerContactFetchRequest::applyFilterToContact(RDFVariable &variable,
                 RDFVariable rdfEmailAddress;
                 rdfEmailAddress = variable.property<nco::hasEmailAddress>();
                 rdfEmailAddress.property<nco::emailAddress>() = LiteralValue(filt.value().toString());
-            } else if (QContactOnlineAccount::DefinitionName == filt.detailDefinitionName()
-                       && filt.detailFieldName() == "Account") {
-                variable.property<nco::imContactId>().isMemberOf(QStringList()<<filt.value().toString());
             } else {
                 qWarning() << "QContactTrackerEngine: Unsupported QContactFilter::ContactDetail"
                     << filt.detailDefinitionName();
@@ -258,8 +282,9 @@ RDFSelect prepareIMContactsQuery(RDFVariable  &imcontact )
     queryidsimacccounts.addColumn("type", imcontact.optional().property<nco::fromIMAccount> ());
     queryidsimacccounts.addColumn("capabilities",
                 imcontact.optional().property<nco::imContactCapability>().filter("GROUP_CONCAT", LiteralValue(",")));
-
     queryidsimacccounts.addColumn("metacontact", imcontact.optional().property<nco::metacontact> ());
+    queryidsimacccounts.addColumn("serviceprovider", imcontact.optional().property<nco::fromIMAccount>().property<nco::imDisplayName>());
+
     return queryidsimacccounts;
 
 }
@@ -992,6 +1017,8 @@ QContactOnlineAccount QTrackerContactFetchRequest::getIMAccountFromIMQuery(LiveN
 
     // Custom value in QContactrOnlineAccount detail to store the account path to - to determine in My Profile to ignore the ring-account.
     account.setValue("Account", imAccountQuery->index(queryRow, IMAccount::ContactIMId).data().toString()); // IMId
+    // the same is supposed to be in FieldAccountUri field
+    account.setValue(QContactOnlineAccount::FieldAccountUri, imAccountQuery->index(queryRow, IMAccount::ContactIMId).data().toString()); // IMId
 
     account.setNickname(imAccountQuery->index(queryRow, IMAccount::ContactNickname).data().toString()); // nick
 
@@ -1025,6 +1052,7 @@ QContactOnlineAccount QTrackerContactFetchRequest::getIMContactFromIMQuery(LiveN
     account.setPresence(presenceConversion[presence]);
  
     account.setStatusMessage(imContactQuery->index(queryRow, IMContact::ContactMessage).data().toString()); // imStatusMessage
+    account.setServiceProvider(imContactQuery->index(queryRow, IMContact::ServiceProvider).data().toString()); // service name
 
     return account;
 }

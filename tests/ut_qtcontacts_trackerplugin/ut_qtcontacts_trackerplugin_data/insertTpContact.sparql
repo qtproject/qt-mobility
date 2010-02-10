@@ -10,7 +10,8 @@ INSERT
 { 
 <http://www.sopranolive.org/backends/tracker/generated_unique_id/105323876#$2> 
 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> 
-<http://www.semanticdesktop.org/ontologies/2007/03/22/nco#IMAccount>
+<http://www.semanticdesktop.org/ontologies/2007/03/22/nco#IMAccount>;
+nco:imDisplayName '$7'
 }
 "
 

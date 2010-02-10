@@ -91,7 +91,8 @@ namespace IMContact {
         ContactNickname,
         AccountType,
         Capabilities,
-        MetaContact
+        MetaContact,
+        ServiceProvider
     };
 };
 
