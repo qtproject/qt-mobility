@@ -71,6 +71,8 @@ QTM_BEGIN_NAMESPACE
 //until the overlay is re-initialized
 #define SOFTWARE_RENDERING_DURATION 150
 
+#ifdef  __ARM_NEON__
+
 /*
 * ARM NEON optimized implementation of UYVY -> RGB16 convertor
 */
@@ -217,6 +219,8 @@ static void uyvy422_to_rgb16_line_neon (uint8_t * dst, const uint8_t * src, int 
          "d24", "d25", "d26", "d27", "d28", "d29", "d30", "d31");
 }
 
+#endif
+
 class QGraphicsVideoItemPrivate
 {
 public:
@@ -326,6 +330,7 @@ void QGraphicsVideoItemPrivate::updateLastFrame()
 
     if (lastVideoFrame.map(QAbstractVideoBuffer::ReadOnly)) {
 
+#ifdef  __ARM_NEON__
         if (lastVideoFrame.pixelFormat() == QVideoFrame::Format_UYVY) {
             QImage lastImage(lastVideoFrame.size(), QImage::Format_RGB16);
 
@@ -343,7 +348,9 @@ void QGraphicsVideoItemPrivate::updateLastFrame()
             }
             lastFrame = QPixmap::fromImage(
                 lastImage.scaled(boundingRect.size().toSize(), Qt::IgnoreAspectRatio, Qt::FastTransformation));
-        } else {
+        } else
+#endif
+        {
             QImage::Format imgFormat = QVideoFrame::imageFormatFromPixelFormat(lastVideoFrame.pixelFormat());
 
             if (imgFormat != QImage::Format_Invalid) {
