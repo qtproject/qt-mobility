@@ -148,7 +148,9 @@ void QTrackerContactSaveRequest::saveContacts(const QList<QContact> &contacts)
             definitions.setValue("nextAvailableContactId", QString::number(++m_lastUsedId));
 
             ncoContact = service->liveNode(QUrl("contact:"+(QString::number(m_lastUsedId))));
-            QContactId id; id.setLocalId(m_lastUsedId);
+            QContactId id;
+            id.setLocalId(m_lastUsedId);
+            id.setManagerUri(engine->managerUri());
             contact.setId(id);
             ncoContact->setContactUID(QString::number(m_lastUsedId));
             ncoContact->setContentCreated(QDateTime::currentDateTime());
