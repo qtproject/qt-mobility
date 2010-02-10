@@ -947,89 +947,6 @@ int QSystemDisplayInfoPrivate::displayBrightness(int screen)
         return retVal;
     }
 
-
-/*    Q_UNUSED(screen);
-    if(halIsAvailable) {
-#if !defined(QT_NO_DBUS)
-        QHalInterface iface;
-        if (iface.isValid()) {
-            QStringList list = iface.findDeviceByCapability("laptop_panel");
-            if(!list.isEmpty()) {
-                foreach(QString lapDev, list) {
-                    QHalDeviceInterface ifaceDevice(lapDev);
-                    QHalDeviceLaptopPanelInterface lapIface(lapDev);
-                    float numLevels = ifaceDevice.getPropertyInt("laptop_panel.num_levels") - 1;
-                    float curLevel = lapIface.getBrightness();
-                    return curLevel / numLevels * 100;
-                }
-            }
-        }
-#endif
-    } else {
-        QString backlightPath = "/proc/acpi/video/";
-        QDir videoDir(backlightPath);
-        QStringList filters;
-        filters << "*";
-        QStringList brightnessList = videoDir.entryList(filters,
-                                                        QDir::Dirs
-                                                        | QDir::NoDotAndDotDot,
-                                                        QDir::Name);
-        foreach(QString brightnessFileName, brightnessList) {
-            float numLevels = 0.0;
-            float curLevel = 0.0;
-            QFile curBrightnessFile(backlightPath+brightnessFileName+"/LCD/brightness");
-            if(!curBrightnessFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                qWarning()<<"File not opened";
-            } else {
-                QString  strvalue;
-                strvalue = curBrightnessFile.readAll().trimmed();
-                if(strvalue.contains("levels")) {
-                    QStringList list = strvalue.split(" ");
-                    numLevels = list.at(2).toFloat();
-                }
-                if(strvalue.contains("current")) {
-                    QStringList list = strvalue.split(": ");
-                    curLevel = list.at(list.count()-1).toFloat();
-                }
-                curBrightnessFile.close();
-                return curLevel / numLevels * 100;
-            }
-        }
-    }
-#if 0
-    QString backlightPath = "/sys/devices/virtual/backlight/";
-    QDir videoDir(backlightPath);
-    QStringList filters;
-    filters << "*";
-    QStringList brightnessList = videoDir.entryList(filters,
-                                                     QDir::Dirs
-                                                     | QDir::NoDotAndDotDot,
-                                                     QDir::Name);
-    foreach(QString brightnessFileName, brightnessList) {
-        float numLevels = 0.0;
-        float curLevel = 0.0;
-        QFile curBrightnessFile(backlightPath+brightnessFileName+"/brightness");
-        if(!curBrightnessFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            qWarning()<<"File not opened";
-        } else {
-            QString strvalue;
-            strvalue = curBrightnessFile.readLine().trimmed();
-            curBrightnessFile.close();
-            curLevel = strvalue.toFloat();
-
-            QFile maxBrightnessFile(backlightPath+brightnessFileName+"/max_brightness");
-            if(!maxBrightnessFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                qWarning()<<"File not opened";
-            } else {
-                QString strvalue;
-                strvalue = maxBrightnessFile.readLine().trimmed();
-                maxBrightnessFile.close();
-                numLevels = strvalue.toFloat();
-            }
-            return curLevel / numLevels * 100;
-        }
-    }
-#endif */
     return -1;
 }
 
@@ -1039,7 +956,7 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
     QDesktopWidget wid;
     return wid.screen(screen)->x11Info().depth();
 #else
-        return QPixmap::defaultDepth();
+    return QPixmap::defaultDepth();
 #endif
 }
 
