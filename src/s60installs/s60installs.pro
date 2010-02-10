@@ -21,21 +21,27 @@ symbian: {
         " "
     qtmobilitydeployment.pkg_prerules += vendorinfo
 
-    EPOCROOT31 = $${EPOCROOT31}
-    EPOCROOT32 = $${EPOCROOT32}    
-    EPOCROOT50 = $${EPOCROOT50}
-
-    # default to EPOCROOT if EPOCROOTxy not defined
-    isEmpty(EPOCROOT31) {
-        EPOCROOT31 = $${EPOCROOT}
-    }
-    isEmpty(EPOCROOT32) {
-        EPOCROOT32 = $${EPOCROOT}
-    }
-    isEmpty(EPOCROOT50) {
-        EPOCROOT50 = $${EPOCROOT}
-    }
+    epoc31 = $$(EPOCROOT31)
+    epoc32 = $$(EPOCROOT32)    
+    epoc50 = $$(EPOCROOT50)
     
+    # default to EPOCROOT if EPOCROOTxy not defined
+    isEmpty(epoc31) {
+        EPOCROOT31 = $${EPOCROOT}
+    } else {
+    EPOCROOT31 = $$(EPOCROOT31)
+    }
+    isEmpty(epoc32) {
+        EPOCROOT32 = $${EPOCROOT}
+    }else {
+    EPOCROOT32 = $$(EPOCROOT32)
+    }
+    isEmpty(epoc50) {
+        EPOCROOT50 = $${EPOCROOT}
+    } else {
+    EPOCROOT50 = $$(EPOCROOT50)
+    }
+
     qtmobilitydeployment.sources = \
         $$(EPOCROOT50)epoc32/release/armv5/urel/QtMessaging.dll \
         $$(EPOCROOT50)epoc32/release/armv5/urel/QtServiceFramework.dll \
@@ -48,39 +54,40 @@ symbian: {
         $$(EPOCROOT50)epoc32/release/armv5/urel/QtVersit.dll \
         $$(EPOCROOT50)epoc32/release/armv5/urel/QtMedia.dll \
         $$(EPOCROOT50)epoc32/release/armv5/urel/m3u.dll
+    
 
     bearer = \
         "IF package(0x1028315F)" \
-        "   \"$$(EPOCROOT50)epoc32/release/armv5/urel/QtBearer.dll\" - \"!:\\sys\\bin\\QtBearer.dll\"" \
+        "   \"$$EPOCROOT50\epoc32/release/armv5/urel/QtBearer.dll\" - \"!:\\sys\\bin\\QtBearer.dll\"" \
         "ELSEIF package(0x102752AE)" \
-        "   \"$$(EPOCROOT50)epoc32/release/armv5/urel/QtBearer.dll\" - \"!:\\sys\\bin\\QtBearer.dll\"" \
+        "   \"$$EPOCROOT50\epoc32/release/armv5/urel/QtBearer.dll\" - \"!:\\sys\\bin\\QtBearer.dll\"" \
         "ELSEIF package(0x102032BE)" \
-        "   \"$$(EPOCROOT31)epoc32/release/armv5/urel/QtBearer.dll\" - \"!:\\sys\\bin\\QtBearer.dll\"" \
+        "   \"$$EPOCROOT31\epoc32/release/armv5/urel/QtBearer.dll\" - \"!:\\sys\\bin\\QtBearer.dll\"" \
         "ELSE" \
-        "   \"$$(EPOCROOT50)epoc32/release/armv5/urel/QtBearer.dll\" - \"!:\\sys\\bin\\QtBearer.dll\"" \
+        "   \"$$EPOCROOT50\epoc32/release/armv5/urel/QtBearer.dll\" - \"!:\\sys\\bin\\QtBearer.dll\"" \
         "ENDIF"
 
     contacts = \
         "IF package(0x1028315F)" \
-        "   \"$$(EPOCROOT50)epoc32/release/armv5/urel/mobapicontactspluginsymbian.dll\" - \"!:\\sys\\bin\\mobapicontactspluginsymbian.dll\"" \
+        "   \"$$EPOCROOT50\epoc32/release/armv5/urel/mobapicontactspluginsymbian.dll\" - \"!:\\sys\\bin\\mobapicontactspluginsymbian.dll\"" \
         "ELSEIF package(0x102752AE)" \
-        "   \"$$(EPOCROOT32)epoc32/release/armv5/urel/mobapicontactspluginsymbian.dll\" - \"!:\\sys\\bin\\mobapicontactspluginsymbian.dll\"" \
+        "   \"$$EPOCROOT32\epoc32/release/armv5/urel/mobapicontactspluginsymbian.dll\" - \"!:\\sys\\bin\\mobapicontactspluginsymbian.dll\"" \
         "ELSEIF package(0x102032BE)" \
-        "   \"$$(EPOCROOT31)epoc32/release/armv5/urel/mobapicontactspluginsymbian.dll\" - \"!:\\sys\\bin\\mobapicontactspluginsymbian.dll\"" \
+        "   \"$$EPOCROOT31\epoc32/release/armv5/urel/mobapicontactspluginsymbian.dll\" - \"!:\\sys\\bin\\mobapicontactspluginsymbian.dll\"" \
         "ELSE" \
-        "   \"$$(EPOCROOT50)epoc32/release/armv5/urel/mobapicontactspluginsymbian.dll\" - \"!:\\sys\\bin\\mobapicontactspluginsymbian.dll\"" \
+        "   \"$$EPOCROOT50\epoc32/release/armv5/urel/mobapicontactspluginsymbian.dll\" - \"!:\\sys\\bin\\mobapicontactspluginsymbian.dll\"" \
         "ENDIF" \
-        "\"$$(EPOCROOT50)epoc32/release/armv5/urel/mobapicontactspluginsymbiansim.dll\" - \"!:\\sys\\bin\\mobapicontactspluginsymbiansim.dll\""
+        "\"$$EPOCROOT50\epoc32/release/armv5/urel/mobapicontactspluginsymbiansim.dll\" - \"!:\\sys\\bin\\mobapicontactspluginsymbiansim.dll\""
         
     multimedia = \
         "IF package(0x1028315F)" \
-        "   \"$$(EPOCROOT50)epoc32/release/armv5/urel/QtMobilityMultimediaEngine.dll\" - \"!:\\sys\\bin\\QtMobilityMultimediaEngine.dll\"" \
+        "   \"$$EPOCROOT50\epoc32/release/armv5/urel/QtMobilityMultimediaEngine.dll\" - \"!:\\sys\\bin\\QtMobilityMultimediaEngine.dll\"" \
         "ELSEIF package(0x102752AE)" \
-        "   \"$$(EPOCROOT32)epoc32/release/armv5/urel/QtMobilityMultimediaEngine.dll\" - \"!:\\sys\\bin\\QtMobilityMultimediaEngine.dll\"" \
+        "   \"$$EPOCROOT32\epoc32/release/armv5/urel/QtMobilityMultimediaEngine.dll\" - \"!:\\sys\\bin\\QtMobilityMultimediaEngine.dll\"" \
         "ELSEIF package(0x102032BE)" \
-        "   \"$$(EPOCROOT31)epoc32/release/armv5/urel/QtMobilityMultimediaEngine.dll\" - \"!:\\sys\\bin\\QtMobilityMultimediaEngine.dll\"" \
+        "   \"$$EPOCROOT31\epoc32/release/armv5/urel/QtMobilityMultimediaEngine.dll\" - \"!:\\sys\\bin\\QtMobilityMultimediaEngine.dll\"" \
         "ELSE" \
-        "   \"$$(EPOCROOT50)epoc32/release/armv5/urel/QtMobilityMultimediaEngine.dll\" - \"!:\\sys\\bin\\QtMobilityMultimediaEngine.dll\"" \
+        "   \"$$EPOCROOT50\epoc32/release/armv5/urel/QtMobilityMultimediaEngine.dll\" - \"!:\\sys\\bin\\QtMobilityMultimediaEngine.dll\"" \
         "ENDIF"
 
     pluginstubs = \
