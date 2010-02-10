@@ -59,7 +59,8 @@ public:
 
     virtual bool isReadyForCapture() const = 0;
 
-    virtual void capture(const QString &fileName) = 0;
+    virtual void capture(const QString &fileName) = 0;    
+    virtual void cancelCapture() = 0;
 
 Q_SIGNALS:
     void readyForCaptureChanged(bool);
