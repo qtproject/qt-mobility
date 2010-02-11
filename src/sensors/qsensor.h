@@ -46,6 +46,7 @@
 #include <QObject>
 #include <QByteArray>
 #include <QMetaType>
+#include <QVariant>
 
 QTM_BEGIN_NAMESPACE
 
@@ -180,6 +181,12 @@ public:
 
     qtimestamp timestamp() const;
     void setTimestamp(qtimestamp timestamp);
+
+    // Access properties of sub-classes by numeric index
+    // For name-based access use QObject::property()
+    int valueCount() const;
+    // default impl is slow but sub-classes can make faster implementations
+    virtual QVariant value(int index) const;
 
 protected:
     explicit QSensorReading(QObject *parent, QSensorReadingPrivate *d);

@@ -44,6 +44,7 @@
 #include "qsensorbackend.h"
 #include "qsensormanager.h"
 #include <QDebug>
+#include <QMetaProperty>
 
 QTM_BEGIN_NAMESPACE
 
@@ -571,6 +572,83 @@ void QSensorReading::setTimestamp(qtimestamp timestamp)
 {
     d->timestamp = timestamp;
 }
+
+/*!
+    Returns the number of extra properties that the reading has.
+
+    Note that this does not count properties declared in QSensorReading.
+
+    As an example, this returns 3 for QAccelerometerReading because
+    there are 3 properties defined in that class.
+*/
+int QSensorReading::valueCount() const
+{
+    const QMetaObject *mo = metaObject();
+    return mo->propertyCount() - mo->propertyOffset();
+}
+
+/*!
+    Returns the value of the property at \a index.
+
+    Note that this function is slower than calling the data function directly.
+    Consider the following statement that provides the best performance.
+
+    \code
+    QAccelerometerReading *reading = ...;
+    qreal x = reading->x();
+    \endcode
+
+    The slowest way to access a property is via name. To do this you must call
+    QObject::property().
+
+    \code
+    qreal x = reading->property("x").value<qreal>();
+    \endcode
+
+    This is about 20 times slower than simply calling x(). There are 3 costs here.
+
+    \list
+    \o The cost of the string comparison.
+    \o The cost of using the meta-object system.
+    \o The cost of converting to/from QVariant.
+    \endlist
+
+    By looking up the property via numeric index, the string comparison cost is
+    removed.
+
+    \code
+    qreal x = reading->value(0).value<qreal>();
+    \endcode
+
+    While faster than name-based lookup this is still about 20 times slower than
+    simply calling x().
+
+    Reading classes can opt to re-implement this function and bypass the
+    meta-object system. If this is done this function will be about 3 times slower
+    than simply calling x().
+
+    \sa valueCount(), QObject::property()
+*/
+QVariant QSensorReading::value(int index) const
+{
+    // get them meta-object
+    const QMetaObject *mo = metaObject();
+
+    // determine the index of the property we want
+    index += mo->propertyOffset();
+
+    // get the meta-property
+    QMetaProperty property = mo->property(index);
+
+    // read the property
+    return property.read(this);
+}
+
+/*
+    \fn QSensorReading::value(int index) const
+
+    Returns the value of the property at \a index.
+*/
 
 /*!
     \fn QSensorReading::copyValuesFrom(QSensorReading *other)
