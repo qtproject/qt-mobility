@@ -82,6 +82,7 @@ struct MessageEvent
     QMessageStorePrivate::NotificationType notificationType;
     TMsvId messageId;
     QMessageManager::NotificationFilterIdSet matchingFilters;
+    bool unfiltered;
 };
 
 struct MessageQueryInfo
