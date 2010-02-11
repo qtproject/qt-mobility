@@ -79,10 +79,21 @@ private:
     LocationGPSDevice *satelliteDevice;
     static void satelliteError(LocationGPSDevice *device, gint code, gpointer data);
     static void infoChanged(LocationGPSDevice *device, gpointer data);
-    bool satInfoStopped;
+    void setUpdateInterval(int interval);    
+    int mapUpdateInterval(int msec);    
     int errorHandlerId;
     int signalHandlerId;
-
+    int tmpUpdateInterval;
+    int requestUpdateTimeout;
+    enum SatelliteState {
+        Undefined = 0,
+        Inited = 1,
+        Started = 2,
+        Stopped = 4,
+        RequestActive = 8,
+        RequestSingleShot = 16
+    };
+    int satelliteState;
 private Q_SLOTS:
     void satellitesInView(const QList<QGeoSatelliteInfo> &satellites);
     void satellitesInUse(const QList<QGeoSatelliteInfo> &satellites);    
