@@ -101,7 +101,7 @@ QSensor::QSensor(QObject *parent)
 QSensor::~QSensor()
 {
     stop();
-    foreach (QSensorFilter *filter, d->filters)
+    Q_FOREACH (QSensorFilter *filter, d->filters)
         filter->setSensor(0);
     delete d->backend;
     d->backend = 0;

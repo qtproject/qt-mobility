@@ -32,6 +32,7 @@ equals(STRICT,1) {
 
     contains(TEMPLATE,lib) {
         DEFINES += QT_NO_CAST_FROM_ASCII
+        CONFIG += no_keywords
     }
 }
 

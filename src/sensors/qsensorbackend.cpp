@@ -107,8 +107,7 @@ void QSensorBackend::newReadingAvailable()
 #endif
 
     if (d->signalEnabled)
-        emit m_sensor->readingChanged();
-
+        Q_EMIT m_sensor->readingChanged();
 }
 
 /*!
