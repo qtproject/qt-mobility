@@ -48,7 +48,7 @@ IMPLEMENT_READING(QRotationReading)
 
 /*!
     \class QRotationReading
-    \ingroup sensors
+    \ingroup sensors_reading
 
     \preliminary
     \brief The QRotationReading class represents one reading from the
@@ -151,7 +151,7 @@ void QRotationReading::setZ(qreal z)
 
 /*!
     \class QRotationFilter
-    \ingroup sensors_helpers
+    \ingroup sensors_filter
 
     \preliminary
     \brief The QRotationFilter class is a convenience wrapper around QSensorFilter.
@@ -172,7 +172,7 @@ const char *QRotationSensor::type("QRotationSensor");
 
 /*!
     \class QRotationSensor
-    \ingroup sensors_helpers
+    \ingroup sensors_type
 
     \preliminary
     \brief The QRotationSensor class is a convenience wrapper around QSensor.

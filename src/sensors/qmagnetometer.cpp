@@ -48,7 +48,7 @@ IMPLEMENT_READING(QMagnetometerReading)
 
 /*!
     \class QMagnetometerReading
-    \ingroup sensors
+    \ingroup sensors_reading
 
     \preliminary
     \brief The QMagnetometerReading class represents one reading from the
@@ -242,7 +242,7 @@ void QMagnetometerReading::setCalibrationLevel(QMagnetometerReading::Calibration
 
 /*!
     \class QMagnetometerFilter
-    \ingroup sensors_helpers
+    \ingroup sensors_filter
 
     \preliminary
     \brief The QMagnetometerFilter class is a convenience wrapper around QSensorFilter.
@@ -263,7 +263,7 @@ const char *QMagnetometer::type("QMagnetometer");
 
 /*!
     \class QMagnetometer
-    \ingroup sensors_helpers
+    \ingroup sensors_type
 
     \preliminary
     \brief The QMagnetometer class is a convenience wrapper around QSensor.

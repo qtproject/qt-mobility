@@ -48,7 +48,7 @@ IMPLEMENT_READING(QProximityReading)
 
 /*!
     \class QProximityReading
-    \ingroup sensors
+    \ingroup sensors_reading
 
     \preliminary
     \brief The QProximityReading class represents one reading from the
@@ -96,7 +96,7 @@ void QProximityReading::setProximity(QProximityReading::Proximity proximity)
 
 /*!
     \class QProximityFilter
-    \ingroup sensors_helpers
+    \ingroup sensors_filter
 
     \preliminary
     \brief The QProximityFilter class is a convenience wrapper around QSensorFilter.
@@ -117,7 +117,7 @@ const char *QProximitySensor::type("QProximitySensor");
 
 /*!
     \class QProximitySensor
-    \ingroup sensors_helpers
+    \ingroup sensors_type
 
     \preliminary
     \brief The QProximitySensor class is a convenience wrapper around QSensor.

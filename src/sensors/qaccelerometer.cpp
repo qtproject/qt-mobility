@@ -48,7 +48,7 @@ IMPLEMENT_READING(QAccelerometerReading)
 
 /*!
     \class QAccelerometerReading
-    \ingroup sensors
+    \ingroup sensors_reading
 
     \preliminary
     \brief The QAccelerometerReading class reports on linear acceleration
@@ -171,7 +171,7 @@ QVariant QAccelerometerReading::value(int index) const
 
 /*!
     \class QAccelerometerFilter
-    \ingroup sensors_helpers
+    \ingroup sensors_filter
 
     \preliminary
     \brief The QAccelerometerFilter class is a convenience wrapper around QSensorFilter.
@@ -192,7 +192,7 @@ const char *QAccelerometer::type("QAccelerometer");
 
 /*!
     \class QAccelerometer
-    \ingroup sensors_helpers
+    \ingroup sensors_type
 
     \preliminary
     \brief The QAccelerometer class is a convenience wrapper around QSensor.

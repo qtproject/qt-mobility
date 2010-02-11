@@ -46,7 +46,7 @@ IMPLEMENT_READING(GrueSensorReading)
 
 /*!
     \class GrueSensorReading
-    \ingroup sensors
+    \ingroup sensors_reading
 
     \preliminary
     \brief The GrueSensorReading class holds readings from the Grue sensor.
@@ -83,7 +83,7 @@ void GrueSensorReading::setChanceOfBeingEaten(qreal chanceOfBeingEaten)
 
 /*!
     \class GrueFilter
-    \ingroup sensors_helpers
+    \ingroup sensors_filter
 
     \preliminary
     \brief The GrueFilter class is a convenience wrapper around QSensorFilter.
@@ -104,7 +104,7 @@ const char *GrueSensor::type("GrueSensor");
 
 /*!
     \class GrueSensor
-    \ingroup sensors_helpers
+    \ingroup sensors_type
 
     \preliminary
     \brief The GrueSensor class is a convenience wrapper around QSensor.

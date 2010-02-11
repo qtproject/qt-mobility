@@ -48,7 +48,7 @@ IMPLEMENT_READING(QCompassReading)
 
 /*!
     \class QCompassReading
-    \ingroup sensors
+    \ingroup sensors_reading
 
     \preliminary
     \brief The QCompassReading class represents one reading from a
@@ -125,7 +125,7 @@ void QCompassReading::setCalibrationLevel(QCompassReading::CalibrationLevel cali
 
 /*!
     \class QCompassFilter
-    \ingroup sensors_helpers
+    \ingroup sensors_filter
 
     \preliminary
     \brief The QCompassFilter class is a convenience wrapper around QSensorFilter.
@@ -146,7 +146,7 @@ const char *QCompass::type("QCompass");
 
 /*!
     \class QCompass
-    \ingroup sensors_helpers
+    \ingroup sensors_type
 
     \preliminary
     \brief The QCompass class is a convenience wrapper around QSensor.

@@ -68,7 +68,7 @@ static int qtimestamp_id = qRegisterMetaType<qtimestamp>("qtimestamp");
 
 /*!
     \class QSensor
-    \ingroup sensors
+    \ingroup sensors_main
 
     \preliminary
     \brief The QSensor class represents a single hardware sensor.
@@ -455,7 +455,7 @@ void QSensor::removeFilter(QSensorFilter *filter)
 
 /*!
     \class QSensorFilter
-    \ingroup sensors
+    \ingroup sensors_main
 
     \preliminary
     \brief The QSensorFilter class provides an efficient
@@ -520,7 +520,7 @@ void QSensorFilter::setSensor(QSensor *sensor)
 
 /*!
     \class QSensorReading
-    \ingroup sensors
+    \ingroup sensors_main
 
     \preliminary
     \brief The QSensorReading class holds the readings from the sensor.
