@@ -1045,7 +1045,8 @@ QContactOnlineAccount QTrackerContactFetchRequest::getIMContactFromIMQuery(LiveN
     account.setNickname(imContactQuery->index(queryRow, IMContact::ContactNickname).data().toString()); // nick
 
     QString cap = imContactQuery->index(queryRow, IMContact::Capabilities).data().toString();
-    account.setValue("Capabilities", cap);
+    cap = cap.right(cap.length() - cap.lastIndexOf("im-capability"));
+    account.setValue(QContactOnlineAccount::FieldCapabilities, cap);
 
     QString presence = imContactQuery->index(queryRow, IMContact::ContactPresence).data().toString(); // imPresence iri
     presence = presence.right(presence.length() - presence.lastIndexOf("presence-status"));
