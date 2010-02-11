@@ -385,9 +385,10 @@ void QGeoPositionInfoSourceMaemo::requestUpdate(int timeout)
             return;
     
         if (!timeout) {
-            requestTimeout = LOCATION_INTERVAL_DEFAULT;
+            requestTimeout = LOCATION_INTERVAL_DEFAULT*100; // Map to msecs.
         } else if (timeout < MinimumUpdateInterval) {
-            locationState &= ~QGeoPositionInfoSourceMaemo::RequestActive;
+            locationState &= ~(QGeoPositionInfoSourceMaemo::RequestActive |
+                               QGeoPositionInfoSourceMaemo::RequestSingleShot);
             requestTimeout = 0;
             emit updateTimeout();
             return;
