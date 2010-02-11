@@ -70,7 +70,6 @@ public:
 
     void applySettings();
 
-
 public slots:
     void record();
     void pause();

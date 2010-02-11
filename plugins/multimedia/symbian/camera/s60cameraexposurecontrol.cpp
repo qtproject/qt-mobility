@@ -113,7 +113,6 @@ void S60CameraExposureControl::setExposureMode(QCamera::ExposureMode mode)
     QCamera::ExposureModes supportedModes = supportedExposureModes();
     if (supportedModes & mode) {
         m_exposureMode = mode;
-        //qDebug() << "Set exposure mode";
         m_session->setExposureMode(m_exposureMode);
     } 
 }

@@ -122,6 +122,11 @@ private slots:
     void setWBSunlight();
     void setWBCloudy();
     void setWBTungsten();
+    
+    void setSharpnessHard();
+    void setSharpnessNormal();
+    void setSharpnessSoft();
+
 
 private:
     Ui::CameraCapture *ui;

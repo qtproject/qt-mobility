@@ -51,6 +51,7 @@ S60CameraImageProcessingControl::S60CameraImageProcessingControl(QObject *parent
     :QImageProcessingControl(parent)
 {
     m_session = qobject_cast<S60CameraSession*>(parent);
+    m_advancedSettings = m_session->advancedSettings();
 }
 
 S60CameraImageProcessingControl::S60CameraImageProcessingControl(QObject *session, QObject *parent)
@@ -96,6 +97,7 @@ void S60CameraImageProcessingControl::setContrast(qreal value)
 {
     m_session->setContrast(value);
 }
+
 qreal S60CameraImageProcessingControl::contrast() const
 {
     return m_session->contrast();
@@ -103,40 +105,41 @@ qreal S60CameraImageProcessingControl::contrast() const
 
 void S60CameraImageProcessingControl::setSaturation(qreal value)
 {
-    Q_UNUSED(value);
+    m_advancedSettings->setSaturation(value);
 }
 
 qreal S60CameraImageProcessingControl::saturation() const
 {
-    return 0;
+    return m_advancedSettings->saturation();
 }
 
 void S60CameraImageProcessingControl::setDenoisingLevel(qreal value)
 {
-    Q_UNUSED(value);
+    Q_UNUSED(value); // not supported for S60
 }
 
 bool S60CameraImageProcessingControl::isDenoisingSupported() const
 {
-    return false;
+    return false; // not supported for S60
 }
 
 qreal S60CameraImageProcessingControl::denoisingLevel() const
 {
-    return 0;
+    return 0; // not supported for S60
 }
 
 void S60CameraImageProcessingControl::setSharpeningLevel(qreal value)
 {
-    Q_UNUSED(value);
+    m_advancedSettings->setSharpeningLevel(value);
 }
 
 bool S60CameraImageProcessingControl::isSharpeningSupported() const
 {
-    return false;
+    return m_advancedSettings->isSharpeningSupported();
 }
+
 qreal S60CameraImageProcessingControl::sharpeningLevel() const
 {
-    return 0;
+    return m_advancedSettings->sharpeningLevel();
 }
 

@@ -44,7 +44,7 @@
 #   include "qgeosatelliteinfosource_s60_p.h"
 #elif defined(Q_OS_WINCE)
 #   include "qgeosatelliteinfosource_wince_p.h"
-#elif defined(Q_WS_MAEMO_6)
+#elif (defined(Q_WS_MAEMO_6)) || (defined(Q_WS_MAEMO_5))
 #   include "qgeosatelliteinfosource_maemo_p.h"
 #endif
 
@@ -91,7 +91,7 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *p
     return ret;
 #elif defined(Q_OS_WINCE)
     return new QGeoSatelliteInfoSourceWinCE(parent);
-#elif defined(Q_WS_MAEMO_6)
+#elif (defined(Q_WS_MAEMO_6)) || (defined(Q_WS_MAEMO_5))
     QGeoSatelliteInfoSourceMaemo *source = new QGeoSatelliteInfoSourceMaemo(parent);
     int status = source->init();
 

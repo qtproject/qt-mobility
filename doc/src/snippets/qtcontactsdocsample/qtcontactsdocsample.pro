@@ -16,7 +16,7 @@ INCLUDEPATH += ../../../../src/global \
 DESTDIR = $$QT_MOBILITY_BUILD_TREE/bin/examples
 QMAKE_RPATHDIR+=$$OUTPUT_DIR/lib
 
-CONFIG += mobility
+CONFIG += mobility console
 MOBILITY = contacts
 
 SOURCES += qtcontactsdocsample.cpp

@@ -426,12 +426,6 @@
         <keyword ref="qcontactabstractrequest.html#State-enum">QContactAbstractRequest::InactiveState</keyword>
         <keyword ref="qcontactabstractrequest.html#State-enum">QContactAbstractRequest::ActiveState</keyword>
         <keyword ref="qcontactabstractrequest.html#State-enum">QContactAbstractRequest::FinishedState</keyword>
-        <keyword ref="qcontactabstractrequest.html#Status-enum">Status</keyword>
-        <keyword ref="qcontactabstractrequest.html#Status-enum">QContactAbstractRequest::Cancelling</keyword>
-        <keyword ref="qcontactabstractrequest.html#Status-enum">QContactAbstractRequest::Active</keyword>
-        <keyword ref="qcontactabstractrequest.html#Status-enum">QContactAbstractRequest::Cancelled</keyword>
-        <keyword ref="qcontactabstractrequest.html#Status-enum">QContactAbstractRequest::Finished</keyword>
-        <keyword ref="qcontactabstractrequest.html#Status-enum">QContactAbstractRequest::Inactive</keyword>
         <keyword ref="qcontactabstractrequest.html#cancel">cancel</keyword>
         <keyword ref="qcontactabstractrequest.html#error">error</keyword>
         <keyword ref="qcontactabstractrequest.html#isActive">isActive</keyword>
@@ -456,12 +450,6 @@
         <keyword ref="qcontactaction.html#State-enum">QContactAction::AutonomousState</keyword>
         <keyword ref="qcontactaction.html#State-enum">QContactAction::ActiveState</keyword>
         <keyword ref="qcontactaction.html#State-enum">QContactAction::FinishedState</keyword>
-        <keyword ref="qcontactaction.html#Status-enum">Status</keyword>
-        <keyword ref="qcontactaction.html#Status-enum">QContactAction::FinishedWithError</keyword>
-        <keyword ref="qcontactaction.html#Status-enum">QContactAction::Autonomous</keyword>
-        <keyword ref="qcontactaction.html#Status-enum">QContactAction::Active</keyword>
-        <keyword ref="qcontactaction.html#Status-enum">QContactAction::Finished</keyword>
-        <keyword ref="qcontactaction.html#Status-enum">QContactAction::Inactive</keyword>
         <keyword ref="qcontactaction.html#action">action</keyword>
         <keyword ref="qcontactaction.html#actionDescriptor">actionDescriptor</keyword>
         <keyword ref="qcontactaction.html#actionDescriptors">actionDescriptors</keyword>
@@ -670,7 +658,6 @@
         <keyword ref="qcontactdetaildefinitionfetchrequest.html#definitionNames">definitionNames</keyword>
         <keyword ref="qcontactdetaildefinitionfetchrequest.html#definitions">definitions</keyword>
         <keyword ref="qcontactdetaildefinitionfetchrequest.html#errorMap">errorMap</keyword>
-        <keyword ref="qcontactdetaildefinitionfetchrequest.html#progress">progress</keyword>
         <keyword ref="qcontactdetaildefinitionfetchrequest.html#setContactType">setContactType</keyword>
         <keyword ref="qcontactdetaildefinitionfetchrequest.html#setDefinitionNames">setDefinitionNames</keyword>
         <section ref="qcontactdetaildefinitionfetchrequest-members.html" title="List of all members"/>
@@ -680,7 +667,6 @@
         <keyword ref="qcontactdetaildefinitionremoverequest.html#contactType">contactType</keyword>
         <keyword ref="qcontactdetaildefinitionremoverequest.html#definitionNames">definitionNames</keyword>
         <keyword ref="qcontactdetaildefinitionremoverequest.html#errorMap">errorMap</keyword>
-        <keyword ref="qcontactdetaildefinitionremoverequest.html#progress">progress</keyword>
         <keyword ref="qcontactdetaildefinitionremoverequest.html#setDefinitionNames">setDefinitionNames</keyword>
         <section ref="qcontactdetaildefinitionremoverequest-members.html" title="List of all members"/>
     </section>
@@ -689,7 +675,6 @@
         <keyword ref="qcontactdetaildefinitionsaverequest.html#contactType">contactType</keyword>
         <keyword ref="qcontactdetaildefinitionsaverequest.html#definitions">definitions</keyword>
         <keyword ref="qcontactdetaildefinitionsaverequest.html#errorMap">errorMap</keyword>
-        <keyword ref="qcontactdetaildefinitionsaverequest.html#progress">progress</keyword>
         <keyword ref="qcontactdetaildefinitionsaverequest.html#setContactType">setContactType</keyword>
         <keyword ref="qcontactdetaildefinitionsaverequest.html#setDefinitions">setDefinitions</keyword>
         <section ref="qcontactdetaildefinitionsaverequest-members.html" title="List of all members"/>
@@ -769,7 +754,6 @@
         <keyword ref="qcontactfetchrequest.html#contacts">contacts</keyword>
         <keyword ref="qcontactfetchrequest.html#definitionRestrictions">definitionRestrictions</keyword>
         <keyword ref="qcontactfetchrequest.html#filter">filter</keyword>
-        <keyword ref="qcontactfetchrequest.html#progress">progress</keyword>
         <keyword ref="qcontactfetchrequest.html#setDefinitionRestrictions">setDefinitionRestrictions</keyword>
         <keyword ref="qcontactfetchrequest.html#setFilter">setFilter</keyword>
         <keyword ref="qcontactfetchrequest.html#setSorting">setSorting</keyword>
@@ -848,20 +832,6 @@
         <keyword ref="qcontactgeolocation.html#FieldTimestamp-var">FieldTimestamp</keyword>
         <section ref="qcontactgeolocation-members.html" title="List of all members"/>
     </section>
-    <section ref="qcontactgeolocation.html" title="QContactGeolocation Class Reference">
-        <keyword ref="qcontactgeolocation.html">QContactGeolocation</keyword>
-        <keyword ref="qcontactgeolocation.html#DefinitionName-var">DefinitionName</keyword>
-        <keyword ref="qcontactgeolocation.html#FieldAccuracy-var">FieldAccuracy</keyword>
-        <keyword ref="qcontactgeolocation.html#FieldAltitude-var">FieldAltitude</keyword>
-        <keyword ref="qcontactgeolocation.html#FieldAltitudeAccuracy-var">FieldAltitudeAccuracy</keyword>
-        <keyword ref="qcontactgeolocation.html#FieldHeading-var">FieldHeading</keyword>
-        <keyword ref="qcontactgeolocation.html#FieldLabel-var">FieldLabel</keyword>
-        <keyword ref="qcontactgeolocation.html#FieldLatitude-var">FieldLatitude</keyword>
-        <keyword ref="qcontactgeolocation.html#FieldLongitude-var">FieldLongitude</keyword>
-        <keyword ref="qcontactgeolocation.html#FieldSpeed-var">FieldSpeed</keyword>
-        <keyword ref="qcontactgeolocation.html#FieldTimestamp-var">FieldTimestamp</keyword>
-        <section ref="qcontactgeolocation-members.html" title="List of all members"/>
-    </section>
     <section ref="qcontactguid.html" title="QContactGuid Class Reference">
         <keyword ref="qcontactguid.html">QContactGuid</keyword>
         <keyword ref="qcontactguid.html#guid">guid</keyword>
@@ -906,7 +876,6 @@
         <keyword ref="qcontactlocalidfetchrequest.html">QContactLocalIdFetchRequest</keyword>
         <keyword ref="qcontactlocalidfetchrequest.html#filter">filter</keyword>
         <keyword ref="qcontactlocalidfetchrequest.html#ids">ids</keyword>
-        <keyword ref="qcontactlocalidfetchrequest.html#progress">progress</keyword>
         <keyword ref="qcontactlocalidfetchrequest.html#setFilter">setFilter</keyword>
         <keyword ref="qcontactlocalidfetchrequest.html#setSorting">setSorting</keyword>
         <keyword ref="qcontactlocalidfetchrequest.html#sorting">sorting</keyword>
@@ -1058,7 +1027,9 @@
     </section>
     <section ref="qcontactmanagerenginefactory.html" title="QContactManagerEngineFactory Class Reference">
         <keyword ref="qcontactmanagerenginefactory.html">QContactManagerEngineFactory</keyword>
+        <keyword ref="qcontactmanagerenginefactory.html#engine">engine</keyword>
         <keyword ref="qcontactmanagerenginefactory.html#managerName">managerName</keyword>
+        <keyword ref="qcontactmanagerenginefactory.html#supportedImplementationVersions">supportedImplementationVersions</keyword>
         <section ref="qcontactmanagerenginefactory-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactmemoryengine.html" title="QContactMemoryEngine Class Reference">
@@ -1249,7 +1220,6 @@
     <section ref="qcontactrelationshipfetchrequest.html" title="QContactRelationshipFetchRequest Class Reference">
         <keyword ref="qcontactrelationshipfetchrequest.html">QContactRelationshipFetchRequest</keyword>
         <keyword ref="qcontactrelationshipfetchrequest.html#first">first</keyword>
-        <keyword ref="qcontactrelationshipfetchrequest.html#progress">progress</keyword>
         <keyword ref="qcontactrelationshipfetchrequest.html#relationshipType">relationshipType</keyword>
         <keyword ref="qcontactrelationshipfetchrequest.html#relationships">relationships</keyword>
         <keyword ref="qcontactrelationshipfetchrequest.html#second">second</keyword>
@@ -1275,7 +1245,6 @@
     <section ref="qcontactrelationshipremoverequest.html" title="QContactRelationshipRemoveRequest Class Reference">
         <keyword ref="qcontactrelationshipremoverequest.html">QContactRelationshipRemoveRequest</keyword>
         <keyword ref="qcontactrelationshipremoverequest.html#errorMap">errorMap</keyword>
-        <keyword ref="qcontactrelationshipremoverequest.html#progress">progress</keyword>
         <keyword ref="qcontactrelationshipremoverequest.html#relationships">relationships</keyword>
         <keyword ref="qcontactrelationshipremoverequest.html#setRelationships">setRelationships</keyword>
         <section ref="qcontactrelationshipremoverequest-members.html" title="List of all members"/>
@@ -1283,7 +1252,6 @@
     <section ref="qcontactrelationshipsaverequest.html" title="QContactRelationshipSaveRequest Class Reference">
         <keyword ref="qcontactrelationshipsaverequest.html">QContactRelationshipSaveRequest</keyword>
         <keyword ref="qcontactrelationshipsaverequest.html#errorMap">errorMap</keyword>
-        <keyword ref="qcontactrelationshipsaverequest.html#progress">progress</keyword>
         <keyword ref="qcontactrelationshipsaverequest.html#relationships">relationships</keyword>
         <keyword ref="qcontactrelationshipsaverequest.html#setRelationships">setRelationships</keyword>
         <section ref="qcontactrelationshipsaverequest-members.html" title="List of all members"/>
@@ -1292,7 +1260,6 @@
         <keyword ref="qcontactremoverequest.html">QContactRemoveRequest</keyword>
         <keyword ref="qcontactremoverequest.html#contactIds">contactIds</keyword>
         <keyword ref="qcontactremoverequest.html#errorMap">errorMap</keyword>
-        <keyword ref="qcontactremoverequest.html#progress">progress</keyword>
         <keyword ref="qcontactremoverequest.html#setContactIds">setContactIds</keyword>
         <section ref="qcontactremoverequest-members.html" title="List of all members"/>
     </section>

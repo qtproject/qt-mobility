@@ -1,12 +1,14 @@
 INCLUDEPATH += $$PWD
 
-# depends on camerawrapper, available from forum nokia
-exists($${EPOCROOT}epoc32\include\cameraengine.h) {
-    DEFINES += QMEDIA_SYMBIAN_CAMERA
+#build camera service
+DEFINES += QMEDIA_SYMBIAN_CAMERA
 
     exists($${EPOCROOT}epoc32\include\ecamadvancedsettings.h) {
-        symbian:LIBS += -lecamadvsettings
-        DEFINES += USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER
+        MMP_RULES += \
+            "$${LITERAL_HASH}ifndef WINSCW" \
+            "LIBRARY ecamadvsettings.lib" \
+            "MACRO USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER" \
+            "$${LITERAL_HASH}endif"
         message("Using from s60 3.2 CCameraAdvancedSettings header")  
     }
     exists($${EPOCROOT}epoc32\include\ecamadvsettings.h) {
@@ -15,11 +17,24 @@ exists($${EPOCROOT}epoc32\include\cameraengine.h) {
         message("Using from s60 5.0 CCameraAdvancedSettings header")  
     }
 
-    symbian:LIBS += -lcamerawrapper \
-        -lfbscli \
+    #3.1 platform uses old style autofocusing
+    contains(S60_VERSION, 3.1) {
+    message ("Using s60 3.1 autofocusing")
+    MMP_RULES += \
+        "$${LITERAL_HASH}ifdef WINSCW" \
+        "LIBRARY camautofocus.lib" \
+        "$${LITERAL_HASH}else" \
+        "STATICLIBRARY camautofocus_s.lib" \
+        "$${LITERAL_HASH}endif // WINS" \
+        "MACRO S60_CAM_AUTOFOCUS_SUPPORT"
+    }
+
+    symbian:LIBS += -lfbscli \
         -lmediaclientvideo \
-        -lecam
-        
+        -lecam \
+        -lbafl \
+        -lPlatformEnv
+            
     HEADERS += $$PWD/s60camerafocuscontrol.h \
         $$PWD/s60cameraexposurecontrol.h \
         $$PWD/s60cameracontrol.h \
@@ -33,7 +48,9 @@ exists($${EPOCROOT}epoc32\include\cameraengine.h) {
         $$PWD/s60cameravideodevicecontrol.h \
         $$PWD/s60cameraimageencodercontrol.h \
         $$PWD/s60viewfinderwidget.h \
-        $$PWD/s60camerasettings.h	
+        $$PWD/s60camerasettings.h \
+        $$PWD/s60cameraengine.h	\
+        $$PWD/s60cameraengineobserver.h
     SOURCES += $$PWD/s60camerafocuscontrol.cpp \
         $$PWD/s60cameraexposurecontrol.cpp \
         $$PWD/s60cameracontrol.cpp \
@@ -47,9 +64,5 @@ exists($${EPOCROOT}epoc32\include\cameraengine.h) {
         $$PWD/s60cameravideodevicecontrol.cpp \
         $$PWD/s60cameraimageencodercontrol.cpp \
         $$PWD/s60viewfinderwidget.cpp \
-        $$PWD/s60camerasettings.cpp
-}
-else {
-     message("Symbian camera service disabled, it needs camerawrapper, available from forum.nokia.com")
-}
-
+        $$PWD/s60camerasettings.cpp \
+        $$PWD/s60cameraengine.cpp

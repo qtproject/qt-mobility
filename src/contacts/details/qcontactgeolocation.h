@@ -128,24 +128,24 @@ public:
     Q_DECLARE_LATIN1_LITERAL(FieldTimestamp, "Timestamp");
 #endif
 
-    void Q_DECL_DEPRECATED setLabel(const QString& label) {setValue(FieldLabel, label);}
-    QString Q_DECL_DEPRECATED label() const {return value(FieldLabel);}
-    void Q_DECL_DEPRECATED setLatitude(double latitude) {setValue(FieldLatitude, latitude);}
-    double Q_DECL_DEPRECATED latitude() const {return variantValue(FieldLatitude).toDouble();}
-    void Q_DECL_DEPRECATED setLongitude(double longitude) {setValue(FieldLongitude, longitude);}
-    double Q_DECL_DEPRECATED longitude() const {return variantValue(FieldLongitude).toDouble();}
-    void Q_DECL_DEPRECATED setAccuracy(double accuracy) {setValue(FieldAccuracy, accuracy);}
-    double Q_DECL_DEPRECATED accuracy() const {return variantValue(FieldAccuracy).toDouble();}
-    void Q_DECL_DEPRECATED setAltitude(double altitude) {setValue(FieldAltitude, altitude);}
-    double Q_DECL_DEPRECATED altitude() const {return variantValue(FieldAltitude).toDouble();}
-    void Q_DECL_DEPRECATED setAltitudeAccuracy(double altitudeAccuracy) {setValue(FieldAltitudeAccuracy, altitudeAccuracy);}
-    double Q_DECL_DEPRECATED altitudeAccuracy() const {return variantValue(FieldAltitudeAccuracy).toDouble();}
-    void Q_DECL_DEPRECATED setHeading(double heading) {setValue(FieldHeading, heading);}
-    double Q_DECL_DEPRECATED heading() const {return variantValue(FieldHeading).toDouble();}
-    void Q_DECL_DEPRECATED setSpeed(double speed) {setValue(FieldSpeed, speed);}
-    double Q_DECL_DEPRECATED speed() const {return variantValue(FieldSpeed).toDouble();}
-    void Q_DECL_DEPRECATED setTimestamp(const QDateTime& timestamp) {setValue(FieldTimestamp, timestamp);}
-    QDateTime Q_DECL_DEPRECATED timestamp() const {return variantValue(FieldTimestamp).toDateTime();}
+    void Q_DECL_DEPRECATED setLabel(const QString& label);
+    QString Q_DECL_DEPRECATED label() const;
+    void Q_DECL_DEPRECATED setLatitude(double latitude);
+    double Q_DECL_DEPRECATED latitude() const;
+    void Q_DECL_DEPRECATED setLongitude(double longitude);
+    double Q_DECL_DEPRECATED longitude() const;
+    void Q_DECL_DEPRECATED setAccuracy(double accuracy);
+    double Q_DECL_DEPRECATED accuracy() const;
+    void Q_DECL_DEPRECATED setAltitude(double altitude);
+    double Q_DECL_DEPRECATED altitude() const;
+    void Q_DECL_DEPRECATED setAltitudeAccuracy(double altitudeAccuracy);
+    double Q_DECL_DEPRECATED altitudeAccuracy() const;
+    void Q_DECL_DEPRECATED setHeading(double heading);
+    double Q_DECL_DEPRECATED heading() const;
+    void Q_DECL_DEPRECATED setSpeed(double speed);
+    double Q_DECL_DEPRECATED speed() const;
+    void Q_DECL_DEPRECATED setTimestamp(const QDateTime& timestamp);
+    QDateTime Q_DECL_DEPRECATED timestamp() const;
 };
 
 QTM_END_NAMESPACE

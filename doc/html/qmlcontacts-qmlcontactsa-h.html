@@ -60,6 +60,7 @@
     #include &lt;QObject&gt;
     #include &lt;qmobilityglobal.h&gt;
     #include &lt;QContactManager&gt;
+    #include &lt;QContactAbstractRequest&gt;
 
     #include &quot;qmlcontact.h&quot;
 
@@ -109,7 +110,7 @@
 
     private slots:
 
-        void contactProgress(QContactFetchRequest* request, bool appendOnly);
+        void contactProgress(QContactAbstractRequest::State newState);
 
     private:
         QContactManager *qc;

@@ -683,10 +683,6 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="second" fullname="QContactRelationshipFetchRequest::second" href="qcontactrelationshipfetchrequest.html#second" location="qcontactrelationshipfetchrequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QContactId" signature="second() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="relationships" fullname="QContactRelationshipFetchRequest::relationships" href="qcontactrelationshipfetchrequest.html#relationships" location="qcontactrelationshipfetchrequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContactRelationship&gt;" signature="relationships() const"/>
-            <function access="public" threadsafety="unspecified" status="deprecated" name="progress" fullname="QContactRelationshipFetchRequest::progress" href="qcontactrelationshipfetchrequest.html#progress" location="qcontactrelationshipfetchrequest.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="progress(QContactRelationshipFetchRequest * self, bool appendOnly)">
-                <parameter left="QContactRelationshipFetchRequest *" right="" name="self" default=""/>
-                <parameter left="bool" right="" name="appendOnly" default=""/>
-            </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QSensorFactory" href="qsensorfactory.html" location="qsensorfactory.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="instance" fullname="QSensorFactory::instance" href="qsensorfactory.html#instance" location="qsensorfactory.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QSensorFactory *" signature="instance()"/>
@@ -1020,10 +1016,6 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="sorting" fullname="QContactFetchRequest::sorting" href="qcontactfetchrequest.html#sorting" location="qcontactfetchrequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContactSortOrder&gt;" signature="sorting() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="definitionRestrictions" fullname="QContactFetchRequest::definitionRestrictions" href="qcontactfetchrequest.html#definitionRestrictions" location="qcontactfetchrequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="definitionRestrictions() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="contacts" fullname="QContactFetchRequest::contacts" href="qcontactfetchrequest.html#contacts" location="qcontactfetchrequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContact&gt;" signature="contacts() const"/>
-            <function access="public" threadsafety="unspecified" status="deprecated" name="progress" fullname="QContactFetchRequest::progress" href="qcontactfetchrequest.html#progress" location="qcontactfetchrequest.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="progress(QContactFetchRequest * self, bool appendOnly)">
-                <parameter left="QContactFetchRequest *" right="" name="self" default=""/>
-                <parameter left="bool" right="" name="appendOnly" default=""/>
-            </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QServiceManager" href="qservicemanager.html" location="qservicemanager.h" bases="QObject" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="Error" fullname="QServiceManager::Error" href="qservicemanager.html#Error-enum" location="qservicemanager.h">
@@ -1518,9 +1510,6 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="relationships" fullname="QContactRelationshipRemoveRequest::relationships" href="qcontactrelationshipremoverequest.html#relationships" location="qcontactrelationshipremoverequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContactRelationship&gt;" signature="relationships() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="errorMap" fullname="QContactRelationshipRemoveRequest::errorMap" href="qcontactrelationshipremoverequest.html#errorMap" location="qcontactrelationshipremoverequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMap&lt;int, QContactManager::Error&gt;" signature="errorMap() const"/>
-            <function access="public" threadsafety="unspecified" status="deprecated" name="progress" fullname="QContactRelationshipRemoveRequest::progress" href="qcontactrelationshipremoverequest.html#progress" location="qcontactrelationshipremoverequest.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="progress(QContactRelationshipRemoveRequest * self)">
-                <parameter left="QContactRelationshipRemoveRequest *" right="" name="self" default=""/>
-            </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QRadioTunerControl" href="qradiotunercontrol.html" location="qradiotunercontrol.h" bases="QMediaControl" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="~QRadioTunerControl" fullname="QRadioTunerControl::~QRadioTunerControl" href="qradiotunercontrol.html#dtor.QRadioTunerControl" location="qradiotunercontrol.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QRadioTunerControl()"/>
@@ -2065,9 +2054,6 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="definitionNames" fullname="QContactDetailDefinitionRemoveRequest::definitionNames" href="qcontactdetaildefinitionremoverequest.html#definitionNames" location="qcontactdetaildefinitionremoverequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="definitionNames() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="contactType" fullname="QContactDetailDefinitionRemoveRequest::contactType" href="qcontactdetaildefinitionremoverequest.html#contactType" location="qcontactdetaildefinitionremoverequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="contactType() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="errorMap" fullname="QContactDetailDefinitionRemoveRequest::errorMap" href="qcontactdetaildefinitionremoverequest.html#errorMap" location="qcontactdetaildefinitionremoverequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMap&lt;int, QContactManager::Error&gt;" signature="errorMap() const"/>
-            <function access="public" threadsafety="unspecified" status="deprecated" name="progress" fullname="QContactDetailDefinitionRemoveRequest::progress" href="qcontactdetaildefinitionremoverequest.html#progress" location="qcontactdetaildefinitionremoverequest.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="progress(QContactDetailDefinitionRemoveRequest * self)">
-                <parameter left="QContactDetailDefinitionRemoveRequest *" right="" name="self" default=""/>
-            </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QGeoSatelliteInfoSource" href="qgeosatelliteinfosource.html" location="qgeosatelliteinfosource.h" bases="QObject" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QGeoSatelliteInfoSource" fullname="QGeoSatelliteInfoSource::QGeoSatelliteInfoSource" href="qgeosatelliteinfosource.html#QGeoSatelliteInfoSource" location="qgeosatelliteinfosource.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGeoSatelliteInfoSource(QObject * parent)">
@@ -2297,9 +2283,6 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="contactIds" fullname="QContactRemoveRequest::contactIds" href="qcontactremoverequest.html#contactIds" location="qcontactremoverequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContactLocalId&gt;" signature="contactIds() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="errorMap" fullname="QContactRemoveRequest::errorMap" href="qcontactremoverequest.html#errorMap" location="qcontactremoverequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMap&lt;int, QContactManager::Error&gt;" signature="errorMap() const"/>
-            <function access="public" threadsafety="unspecified" status="deprecated" name="progress" fullname="QContactRemoveRequest::progress" href="qcontactremoverequest.html#progress" location="qcontactremoverequest.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="progress(QContactRemoveRequest * self)">
-                <parameter left="QContactRemoveRequest *" right="" name="self" default=""/>
-            </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactActionFilter" href="qcontactactionfilter.html" location="qcontactactionfilter.h" bases="QContactFilter" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QContactActionFilter" fullname="QContactActionFilter::QContactActionFilter" href="qcontactactionfilter.html#QContactActionFilter" location="qcontactactionfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactActionFilter()"/>
@@ -2524,10 +2507,10 @@
                 <value name="PreserveAspectFit" value="1"/>
                 <value name="PreserveAspectCrop" value="2"/>
             </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QGraphicsVideoItem" fullname="QGraphicsVideoItem::QGraphicsVideoItem" href="qgraphicsvideoitem.html#QGraphicsVideoItem" location="qgraphicsvideoitem.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGraphicsVideoItem(QGraphicsItem * parent)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QGraphicsVideoItem" fullname="QGraphicsVideoItem::QGraphicsVideoItem" href="qgraphicsvideoitem.html#QGraphicsVideoItem" location="qgraphicsvideoitem_maemo5.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGraphicsVideoItem(QGraphicsItem * parent)">
                 <parameter left="QGraphicsItem *" right="" name="parent" default="0"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QGraphicsVideoItem" fullname="QGraphicsVideoItem::~QGraphicsVideoItem" href="qgraphicsvideoitem.html#dtor.QGraphicsVideoItem" location="qgraphicsvideoitem.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGraphicsVideoItem()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QGraphicsVideoItem" fullname="QGraphicsVideoItem::~QGraphicsVideoItem" href="qgraphicsvideoitem.html#dtor.QGraphicsVideoItem" location="qgraphicsvideoitem_maemo5.cpp" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGraphicsVideoItem()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="mediaObject" fullname="QGraphicsVideoItem::mediaObject" href="qgraphicsvideoitem.html#mediaObject-prop" location="qgraphicsvideoitem_maemo5.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="mediaObject" type="QMediaObject *" signature="mediaObject() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setMediaObject" fullname="QGraphicsVideoItem::setMediaObject" href="qgraphicsvideoitem.html#mediaObject-prop" location="qgraphicsvideoitem_maemo5.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="mediaObject" type="void" signature="setMediaObject(QMediaObject * object)">
                 <parameter left="QMediaObject *" right="" name="object" default=""/>
@@ -2545,8 +2528,8 @@
                 <parameter left="const QSizeF &amp;" right="" name="size" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="nativeSize" fullname="QGraphicsVideoItem::nativeSize" href="qgraphicsvideoitem.html#nativeSize-prop" location="qgraphicsvideoitem_maemo5.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="nativeSize" type="QSizeF" signature="nativeSize() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="boundingRect" fullname="QGraphicsVideoItem::boundingRect" href="qgraphicsvideoitem.html#boundingRect" location="qgraphicsvideoitem.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QRectF" signature="boundingRect() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="paint" fullname="QGraphicsVideoItem::paint" href="qgraphicsvideoitem.html#paint" location="qgraphicsvideoitem.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="boundingRect" fullname="QGraphicsVideoItem::boundingRect" href="qgraphicsvideoitem.html#boundingRect" location="qgraphicsvideoitem_maemo5.cpp" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QRectF" signature="boundingRect() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="paint" fullname="QGraphicsVideoItem::paint" href="qgraphicsvideoitem.html#paint" location="qgraphicsvideoitem_maemo5.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)">
                 <parameter left="QPainter *" right="" name="painter" default=""/>
                 <parameter left="const QStyleOptionGraphicsItem *" right="" name="option" default=""/>
                 <parameter left="QWidget *" right="" name="widget" default="0"/>
@@ -2592,18 +2575,7 @@
                 <value name="FinishedState" value="3"/>
                 <value name="FinishedWithErrorState" value="4"/>
             </enum>
-            <enum access="public" threadsafety="unspecified" status="deprecated" name="Status" fullname="QContactAction::Status" href="qcontactaction.html#Status-enum" location="qcontactaction.h">
-                <value name="Inactive" value="InactiveState"/>
-                <value name="Autonomous" value="AutonomousState"/>
-                <value name="Active" value="ActiveState"/>
-                <value name="Finished" value="FinishedState"/>
-                <value name="FinishedWithError" value="FinishedWithErrorState"/>
-            </enum>
             <function access="public" threadsafety="unspecified" status="commendable" name="result" fullname="QContactAction::result" href="qcontactaction.html#result" location="qcontactaction.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QVariantMap" signature="result() const"/>
-            <function access="public" threadsafety="unspecified" status="deprecated" name="progress" fullname="QContactAction::progress" href="qcontactaction.html#progress-2" location="qcontactaction.h" virtual="non" meta="signal" const="false" static="false" overload="true" overload-number="2" type="void" signature="progress(QContactAction::Status status, const QVariantMap &amp; result)">
-                <parameter left="QContactAction::Status" right="" name="status" default=""/>
-                <parameter left="const QVariantMap &amp;" right="" name="result" default=""/>
-            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="progress" fullname="QContactAction::progress" href="qcontactaction.html#progress" location="qcontactaction.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="progress(QContactAction::State state, const QVariantMap &amp; result)">
                 <parameter left="QContactAction::State" right="" name="state" default=""/>
                 <parameter left="const QVariantMap &amp;" right="" name="result" default=""/>
@@ -2826,13 +2798,6 @@
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactAbstractRequest" href="qcontactabstractrequest.html" location="qcontactabstractrequest.h" bases="QObject" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QContactAbstractRequest" fullname="QContactAbstractRequest::QContactAbstractRequest" href="qcontactabstractrequest.html#QContactAbstractRequest" location="qcontactabstractrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactAbstractRequest()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QContactAbstractRequest" fullname="QContactAbstractRequest::~QContactAbstractRequest" href="qcontactabstractrequest.html#dtor.QContactAbstractRequest" location="qcontactabstractrequest.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QContactAbstractRequest()"/>
-            <enum access="public" threadsafety="unspecified" status="deprecated" name="Status" fullname="QContactAbstractRequest::Status" href="qcontactabstractrequest.html#Status-enum" location="qcontactabstractrequest.h">
-                <value name="Inactive" value="0"/>
-                <value name="Active" value="1"/>
-                <value name="Cancelled" value="2"/>
-                <value name="Finished" value="3"/>
-                <value name="Cancelling" value="4"/>
-            </enum>
             <enum access="public" threadsafety="unspecified" status="commendable" name="State" fullname="QContactAbstractRequest::State" href="qcontactabstractrequest.html#State-enum" location="qcontactabstractrequest.h">
                 <value name="InactiveState" value="0"/>
                 <value name="ActiveState" value="1"/>
@@ -4157,6 +4122,12 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QContactManagerEngineFactory" href="qcontactmanagerenginefactory.html" location="qcontactmanagerenginefactory.h" bases="" module="">
+            <function access="public" threadsafety="unspecified" status="commendable" name="supportedImplementationVersions" fullname="QContactManagerEngineFactory::supportedImplementationVersions" href="qcontactmanagerenginefactory.html#supportedImplementationVersions" location="qcontactmanagerenginefactory.cpp" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QList&lt;int&gt;" signature="supportedImplementationVersions() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QContactManagerEngineFactory" fullname="QContactManagerEngineFactory::~QContactManagerEngineFactory" href="qcontactmanagerenginefactory.html#dtor.QContactManagerEngineFactory" location="qcontactmanagerenginefactory.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QContactManagerEngineFactory()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="engine" fullname="QContactManagerEngineFactory::engine" href="qcontactmanagerenginefactory.html#engine" location="qcontactmanagerenginefactory.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="QContactManagerEngine *" signature="engine(const QMap&lt;QString, QString&gt; &amp; parameters, QContactManager::Error &amp; error)">
+                <parameter left="const QMap&lt;QString, QString&gt; &amp;" right="" name="parameters" default=""/>
+                <parameter left="QContactManager::Error &amp;" right="" name="error" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="managerName" fullname="QContactManagerEngineFactory::managerName" href="qcontactmanagerenginefactory.html#managerName" location="qcontactmanagerenginefactory.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QString" signature="managerName() const"/>
         </class>
         <namespace access="public" threadsafety="unspecified" status="commendable" name="QService" href="qservice.html" location="qservice.h" module="">
@@ -4819,10 +4790,6 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="contactType" fullname="QContactDetailDefinitionFetchRequest::contactType" href="qcontactdetaildefinitionfetchrequest.html#contactType" location="qcontactdetaildefinitionfetchrequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="contactType() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="definitions" fullname="QContactDetailDefinitionFetchRequest::definitions" href="qcontactdetaildefinitionfetchrequest.html#definitions" location="qcontactdetaildefinitionfetchrequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMap&lt;QString, QContactDetailDefinition&gt;" signature="definitions() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="errorMap" fullname="QContactDetailDefinitionFetchRequest::errorMap" href="qcontactdetaildefinitionfetchrequest.html#errorMap" location="qcontactdetaildefinitionfetchrequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMap&lt;int, QContactManager::Error&gt;" signature="errorMap() const"/>
-            <function access="public" threadsafety="unspecified" status="deprecated" name="progress" fullname="QContactDetailDefinitionFetchRequest::progress" href="qcontactdetaildefinitionfetchrequest.html#progress" location="qcontactdetaildefinitionfetchrequest.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="progress(QContactDetailDefinitionFetchRequest * self, bool appendOnly)">
-                <parameter left="QContactDetailDefinitionFetchRequest *" right="" name="self" default=""/>
-                <parameter left="bool" right="" name="appendOnly" default=""/>
-            </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QGeoPositionInfo" href="qgeopositioninfo.html" location="qgeopositioninfo.h" bases="" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="Attribute" fullname="QGeoPositionInfo::Attribute" href="qgeopositioninfo.html#Attribute-enum" location="qgeopositioninfo.h">
@@ -5039,10 +5006,6 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="filter" fullname="QContactLocalIdFetchRequest::filter" href="qcontactlocalidfetchrequest.html#filter" location="qcontactlocalidfetchrequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QContactFilter" signature="filter() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="sorting" fullname="QContactLocalIdFetchRequest::sorting" href="qcontactlocalidfetchrequest.html#sorting" location="qcontactlocalidfetchrequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContactSortOrder&gt;" signature="sorting() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="ids" fullname="QContactLocalIdFetchRequest::ids" href="qcontactlocalidfetchrequest.html#ids" location="qcontactlocalidfetchrequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContactLocalId&gt;" signature="ids() const"/>
-            <function access="public" threadsafety="unspecified" status="deprecated" name="progress" fullname="QContactLocalIdFetchRequest::progress" href="qcontactlocalidfetchrequest.html#progress" location="qcontactlocalidfetchrequest.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="progress(QContactLocalIdFetchRequest * self, bool appendOnly)">
-                <parameter left="QContactLocalIdFetchRequest *" right="" name="self" default=""/>
-                <parameter left="bool" right="" name="appendOnly" default=""/>
-            </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageContentContainerId" href="qmessagecontentcontainerid.html" location="qmessagecontentcontainerid.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageContentContainerId" fullname="QMessageContentContainerId::QMessageContentContainerId" href="qmessagecontentcontainerid.html#QMessageContentContainerId" location="qmessagecontentcontainerid_win.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMessageContentContainerId()"/>
@@ -6330,18 +6293,6 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="timestamp" fullname="QContactGeoLocation::timestamp" href="qcontactgeolocation.html#timestamp" location="qcontactgeolocation.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QDateTime" signature="timestamp() const"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="deprecated" name="QContactGeolocation" href="qcontactgeolocation.html" location="qcontactgeolocation.h" bases="QContactDetail" module="">
-            <variable access="public" threadsafety="unspecified" status="deprecated" name="DefinitionName" fullname="QContactGeolocation::DefinitionName" href="qcontactgeolocation.html#DefinitionName-var" location="qcontactgeolocation.h" type="const char *" static="false"/>
-            <variable access="public" threadsafety="unspecified" status="deprecated" name="FieldLabel" fullname="QContactGeolocation::FieldLabel" href="qcontactgeolocation.html#FieldLabel-var" location="qcontactgeolocation.h" type="const char *" static="false"/>
-            <variable access="public" threadsafety="unspecified" status="deprecated" name="FieldLatitude" fullname="QContactGeolocation::FieldLatitude" href="qcontactgeolocation.html#FieldLatitude-var" location="qcontactgeolocation.h" type="const char *" static="false"/>
-            <variable access="public" threadsafety="unspecified" status="deprecated" name="FieldLongitude" fullname="QContactGeolocation::FieldLongitude" href="qcontactgeolocation.html#FieldLongitude-var" location="qcontactgeolocation.h" type="const char *" static="false"/>
-            <variable access="public" threadsafety="unspecified" status="deprecated" name="FieldAccuracy" fullname="QContactGeolocation::FieldAccuracy" href="qcontactgeolocation.html#FieldAccuracy-var" location="qcontactgeolocation.h" type="const char *" static="false"/>
-            <variable access="public" threadsafety="unspecified" status="deprecated" name="FieldAltitude" fullname="QContactGeolocation::FieldAltitude" href="qcontactgeolocation.html#FieldAltitude-var" location="qcontactgeolocation.h" type="const char *" static="false"/>
-            <variable access="public" threadsafety="unspecified" status="deprecated" name="FieldAltitudeAccuracy" fullname="QContactGeolocation::FieldAltitudeAccuracy" href="qcontactgeolocation.html#FieldAltitudeAccuracy-var" location="qcontactgeolocation.h" type="const char *" static="false"/>
-            <variable access="public" threadsafety="unspecified" status="deprecated" name="FieldHeading" fullname="QContactGeolocation::FieldHeading" href="qcontactgeolocation.html#FieldHeading-var" location="qcontactgeolocation.h" type="const char *" static="false"/>
-            <variable access="public" threadsafety="unspecified" status="deprecated" name="FieldSpeed" fullname="QContactGeolocation::FieldSpeed" href="qcontactgeolocation.html#FieldSpeed-var" location="qcontactgeolocation.h" type="const char *" static="false"/>
-            <variable access="public" threadsafety="unspecified" status="deprecated" name="FieldTimestamp" fullname="QContactGeolocation::FieldTimestamp" href="qcontactgeolocation.html#FieldTimestamp-var" location="qcontactgeolocation.h" type="const char *" static="false"/>
-        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QServicePluginInterface" href="qserviceplugininterface.html" location="qserviceplugininterface.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="createInstance" fullname="QServicePluginInterface::createInstance" href="qserviceplugininterface.html#createInstance" location="qserviceplugininterface.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="QObject *" signature="createInstance(const QServiceInterfaceDescriptor &amp; descriptor, QServiceContext * context, QAbstractSecuritySession * securitySession)">
                 <parameter left="const QServiceInterfaceDescriptor &amp;" right="" name="descriptor" default=""/>
@@ -6579,9 +6530,6 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="contactType" fullname="QContactDetailDefinitionSaveRequest::contactType" href="qcontactdetaildefinitionsaverequest.html#contactType" location="qcontactdetaildefinitionsaverequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="contactType() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="definitions" fullname="QContactDetailDefinitionSaveRequest::definitions" href="qcontactdetaildefinitionsaverequest.html#definitions" location="qcontactdetaildefinitionsaverequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContactDetailDefinition&gt;" signature="definitions() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="errorMap" fullname="QContactDetailDefinitionSaveRequest::errorMap" href="qcontactdetaildefinitionsaverequest.html#errorMap" location="qcontactdetaildefinitionsaverequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMap&lt;int, QContactManager::Error&gt;" signature="errorMap() const"/>
-            <function access="public" threadsafety="unspecified" status="deprecated" name="progress" fullname="QContactDetailDefinitionSaveRequest::progress" href="qcontactdetaildefinitionsaverequest.html#progress" location="qcontactdetaildefinitionsaverequest.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="progress(QContactDetailDefinitionSaveRequest * self)">
-                <parameter left="QContactDetailDefinitionSaveRequest *" right="" name="self" default=""/>
-            </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMediaService" href="qmediaservice.html" location="qmediaservice.h" bases="QObject" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="~QMediaService" fullname="QMediaService::~QMediaService" href="qmediaservice.html#dtor.QMediaService" location="qmediaservice.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMediaService()"/>
@@ -6819,9 +6767,6 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="relationships" fullname="QContactRelationshipSaveRequest::relationships" href="qcontactrelationshipsaverequest.html#relationships" location="qcontactrelationshipsaverequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContactRelationship&gt;" signature="relationships() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="errorMap" fullname="QContactRelationshipSaveRequest::errorMap" href="qcontactrelationshipsaverequest.html#errorMap" location="qcontactrelationshipsaverequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMap&lt;int, QContactManager::Error&gt;" signature="errorMap() const"/>
-            <function access="public" threadsafety="unspecified" status="deprecated" name="progress" fullname="QContactRelationshipSaveRequest::progress" href="qcontactrelationshipsaverequest.html#progress" location="qcontactrelationshipsaverequest.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="progress(QContactRelationshipSaveRequest * self)">
-                <parameter left="QContactRelationshipSaveRequest *" right="" name="self" default=""/>
-            </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QGeoPositionInfoSource" href="qgeopositioninfosource.html" location="qgeopositioninfosource.h" bases="QObject" module="">
             <property access="public" threadsafety="unspecified" status="commendable" name="updateInterval" fullname="QGeoPositionInfoSource::updateInterval" href="qgeopositioninfosource.html#updateInterval-prop" location="qgeopositioninfosource.h" type="int">
@@ -7067,7 +7012,10 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setCustomLabel" fullname="QContactName::setCustomLabel" href="qcontactname.html#setCustomLabel" location="qcontactname.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setCustomLabel(const QString &amp; customLabel)">
                 <parameter left="const QString &amp;" right="" name="customLabel" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="match" fullname="QContactName::match" href="qcontactname.html#match" location="qcontactname.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QContactFilter" signature="match(const QString &amp; firstName, const QString &amp; lastName)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="match" fullname="QContactName::match" href="qcontactname.html#match" location="qcontactname.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QContactFilter" signature="match(const QString &amp; name)">
+                <parameter left="const QString &amp;" right="" name="name" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="match" fullname="QContactName::match" href="qcontactname.html#match-2" location="qcontactname.h" virtual="non" meta="plain" const="false" static="true" overload="true" overload-number="2" type="QContactFilter" signature="match(const QString &amp; firstName, const QString &amp; lastName)">
                 <parameter left="const QString &amp;" right="" name="firstName" default=""/>
                 <parameter left="const QString &amp;" right="" name="lastName" default=""/>
             </function>
@@ -7440,6 +7388,7 @@
             <contents name="the-qtmobility-namespace" title="The QtMobility Namespace" level="1"/>
             <contents name="platform-compatability" title="Platform Compatability" level="1"/>
             <contents name="feedback-and-bug-reports" title="Feedback and bug reports" level="1"/>
+            <contents name="acknowledgements" title="Acknowledgements" level="1"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QAudioEncoderControl_iid" href="qaudioencodercontrol.html#QAudioEncoderControl_iid" location="qaudioencodercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QAudioEncoderControl" type="" signature="QAudioEncoderControl_iid()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="Q_MEDIA_DECLARE_CONTROL" href="qmediacontrol.html#Q_MEDIA_DECLARE_CONTROL" location="" virtual="non" meta="macrowithparams" const="false" static="false" overload="false" relates="QMediaControl" type="" signature="Q_MEDIA_DECLARE_CONTROL( Class,  IId)">
@@ -7667,21 +7616,15 @@
             <contents name="service-framework-api" title="Service Framework API" level="3"/>
             <contents name="system-info-api" title="System Info API" level="3"/>
             <contents name="known-issues" title="Known Issues" level="1"/>
-            <contents name="issues-affecting-all-platforms" title="Issues Affecting All Platforms" level="2"/>
-            <contents name="symbian-s60-specific" title="Symbian/S60 Specific" level="2"/>
-            <contents name="bearer-management" title="Bearer Management" level="3"/>
-            <contents name="contacts-api" title="Contacts API" level="3"/>
-            <contents name="location-api" title="Location API" level="3"/>
-            <contents name="messaging-api" title="Messaging API" level="3"/>
-            <contents name="multimedia-api" title="Multimedia API" level="3"/>
-            <contents name="publish-and-subscribe-api" title="Publish and Subscribe API" level="3"/>
-            <contents name="service-framework-api" title="Service Framework API" level="3"/>
-            <contents name="system-info-api" title="System Info API" level="3"/>
-            <contents name="maemo-specific" title="Maemo Specific" level="2"/>
-            <contents name="windows-mobile-specific" title="Windows Mobile Specific" level="2"/>
-            <contents name="contacts-api" title="Contacts API" level="3"/>
-            <contents name="messaging-api" title="Messaging API" level="3"/>
-            <contents name="windows-specific" title="Windows Specific" level="2"/>
+            <contents name="non-api-specific-issues" title="Non-API specific issues" level="2"/>
+            <contents name="contacts-api" title="Contacts API" level="2"/>
+            <contents name="location-api" title="Location API" level="2"/>
+            <contents name="messaging-api" title="Messaging API" level="2"/>
+            <contents name="multimedia-api" title="Multimedia API" level="2"/>
+            <contents name="publish-and-subscribe-api" title="Publish and Subscribe API" level="2"/>
+            <contents name="sensors-api" title="Sensors API" level="2"/>
+            <contents name="system-info-api" title="System Info API" level="2"/>
+            <contents name="versit-api" title="Versit API" level="2"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoEncoderControl_iid" href="qvideoencodercontrol.html#QVideoEncoderControl_iid" location="qvideoencodercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoEncoderControl" type="" signature="QVideoEncoderControl_iid()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QMediaPlaylistControl_iid" href="qmediaplaylistcontrol.html#QMediaPlaylistControl_iid" location="qmediaplaylistcontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QMediaPlaylistControl" type="" signature="QMediaPlaylistControl_iid()"/>
@@ -7697,12 +7640,58 @@
             <page access="public" status="commendable" name="position" href="position.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
             <page access="public" status="commendable" name="volume" href="volume.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
             <page access="public" status="commendable" name="muted" href="muted.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="hasAudio" href="hasaudio.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
             <page access="public" status="commendable" name="hasVideo" href="hasvideo.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
             <page access="public" status="commendable" name="bufferProgress" href="bufferprogress.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
             <page access="public" status="commendable" name="seekable" href="seekable.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
             <page access="public" status="commendable" name="error" href="error.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
             <page access="public" status="commendable" name="errorString" href="errorstring.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
-            <page access="public" status="commendable" name="FillMode" href="fillmode.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="fillMode" href="fillmode.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="title" href="title.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="subTitle" href="subtitle.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="author" href="author.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="comment" href="comment.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="description" href="description.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="category" href="category.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="genre" href="genre.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="year" href="year.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="date" href="date.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="userRating" href="userrating.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="keywords" href="keywords.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="language" href="language.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="publisher" href="publisher.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="copyright" href="copyright.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="parentalRating" href="parentalrating.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="ratingOrganisation" href="ratingorganisation.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="size" href="size.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="mediaType" href="mediatype.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="audioBitRate" href="audiobitrate.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="audioCodec" href="audiocodec.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="averageLevel" href="averagelevel.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="channelCount" href="channelcount.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="peakValue" href="peakvalue.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="sampleRate" href="samplerate.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="albumTitle" href="albumtitle.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="albumArtist" href="albumartist.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="contributingArtist" href="contributingartist.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="composer" href="composer.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="conductor" href="conductor.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="lyrics" href="lyrics.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="mood" href="mood.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="trackNumber" href="tracknumber.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="trackCount" href="trackcount.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="coverArtUrlSmall" href="coverarturlsmall.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="coverArtUrlLarge" href="coverarturllarge.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="resolution" href="resolution.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="pixelAspectRatio" href="pixelaspectratio.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="videoFrameRate" href="videoframerate.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="videoBitRate" href="videobitrate.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="videoCodec" href="videocodec.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="posterUrl" href="posterurl.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="chapterNumber" href="chapternumber.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="director" href="director.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="leadPerformer" href="leadperformer.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
+            <page access="public" status="commendable" name="writer" href="writer.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoRendererControl_iid" href="qvideorenderercontrol.html#QVideoRendererControl_iid" location="qvideorenderercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoRendererControl" type="" signature="QVideoRendererControl_iid()"/>
         <page access="public" status="commendable" name="service-framework-on-symbian.html" href="service-framework-on-symbian.html" subtype="page" title="Qt Service Framework on Symbian" fulltitle="Qt Service Framework on Symbian" subtitle="" location="sfw_s60.qdoc">
@@ -7757,6 +7746,51 @@
             <page access="public" status="commendable" name="error" href="error.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
             <page access="public" status="commendable" name="errorString" href="errorstring.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
             <page access="public" status="commendable" name="onError(error," href="onerror-error.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="title" href="title.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="subTitle" href="subtitle.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="author" href="author.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="comment" href="comment.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="description" href="description.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="category" href="category.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="genre" href="genre.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="year" href="year.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="date" href="date.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="userRating" href="userrating.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="keywords" href="keywords.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="language" href="language.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="publisher" href="publisher.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="copyright" href="copyright.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="parentalRating" href="parentalrating.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="ratingOrganisation" href="ratingorganisation.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="size" href="size.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="mediaType" href="mediatype.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="audioBitRate" href="audiobitrate.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="audioCodec" href="audiocodec.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="averageLevel" href="averagelevel.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="channelCount" href="channelcount.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="peakValue" href="peakvalue.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="sampleRate" href="samplerate.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="albumTitle" href="albumtitle.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="albumArtist" href="albumartist.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="contributingArtist" href="contributingartist.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="composer" href="composer.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="conductor" href="conductor.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="lyrics" href="lyrics.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="mood" href="mood.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="trackNumber" href="tracknumber.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="trackCount" href="trackcount.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="coverArtUrlSmall" href="coverarturlsmall.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="coverArtUrlLarge" href="coverarturllarge.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="resolution" href="resolution.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="pixelAspectRatio" href="pixelaspectratio.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="videoFrameRate" href="videoframerate.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="videoBitRate" href="videobitrate.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="videoCodec" href="videocodec.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="posterUrl" href="posterurl.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="chapterNumber" href="chapternumber.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="director" href="director.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="leadPerformer" href="leadperformer.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
+            <page access="public" status="commendable" name="writer" href="writer.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
         </page>
         <page access="public" status="commendable" name="querymessages" href="querymessages.html" subtype="example" title="Query Messages Example" fulltitle="Query Messages Example" subtitle="" location="querymessages.qdoc">
             <page access="public" status="commendable" name="querymessages/main.cpp" href="querymessages-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="querymessages/main.cpp" location=""/>

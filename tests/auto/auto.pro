@@ -3,7 +3,7 @@ TEMPLATE = subdirs
 include($$QT_MOBILITY_BUILD_TREE/config.pri)
 
 contains(mobility_modules,serviceframework) {
-    SUBDIRS += databasemanager \                #service framework
+    SUBDIRS +=  \                #service framework
            servicemetadata \
            qserviceinterfacedescriptor \
            qservicefilter \
@@ -125,7 +125,7 @@ contains(mobility_modules,multimedia) {
 
     symbian: {
         #symbian spesific autotests
-        SUBDIRS += symbian 
+        #SUBDIRS += symbian 
         SUBDIRS -= \
                 qcamera \
                 qmediaplayer \

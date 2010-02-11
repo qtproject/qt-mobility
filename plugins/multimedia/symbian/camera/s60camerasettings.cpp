@@ -57,12 +57,16 @@ S60CameraSettings::S60CameraSettings(QObject *parent, CCameraEngine *engine)
 {
     m_cameraEngine = engine;
     queryAdvancedSettingsInfo();
+#if (defined(USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER) || defined(USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER))
+    TRAP_IGNORE(m_imageProcessingSettings = CCamera::CCameraImageProcessing::NewL(*m_cameraEngine->Camera()));
+#endif
 }
 
 S60CameraSettings::~S60CameraSettings()
 {
 #if (defined(USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER) || defined(USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER))
     m_advancedSettings = NULL;
+    m_imageProcessingSettings = NULL;
 #endif
 }
 
@@ -77,7 +81,7 @@ bool S60CameraSettings::queryAdvancedSettingsInfo()
 #if (defined(USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER) || defined(USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER))
     if (m_cameraEngine) {
         m_advancedSettings = NULL;
-        m_advancedSettings = m_cameraEngine->AdvancedSettings();
+        TRAP_IGNORE(m_advancedSettings = CCamera::CCameraAdvancedSettings::NewL(*m_cameraEngine->Camera()));
         if (m_advancedSettings)
             returnValue = true;
     }
@@ -100,6 +104,15 @@ void S60CameraSettings::setFocusMode(QCamera::FocusMode mode)
                 m_advancedSettings->SetFocusMode(CCamera::CCameraAdvancedSettings::EFocusModeAuto);
                 break;
         }
+    }
+#endif
+}
+
+void S60CameraSettings::cancelFocusing()
+{
+#if (defined(USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER) || defined(USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER))
+    if (m_advancedSettings) {
+        m_advancedSettings->SetAutoFocusType( CCamera::CCameraAdvancedSettings::EAutoFocusTypeOff ); 
     }
 #endif
 }
@@ -431,4 +444,73 @@ void S60CameraSettings::setShutterSpeed(TInt speed)
     }
 #endif
 }
+
+void S60CameraSettings::setSharpeningLevel(qreal value)
+{
+#if (defined(USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER) || defined(USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER))
+    if (m_imageProcessingSettings && isSharpeningSupported()) {
+        m_imageProcessingSettings->SetTransformationValue(KUidECamEventImageProcessingAdjustSharpness, value);
+    }
+#endif
+}
+
+bool S60CameraSettings::isSharpeningSupported() const
+{
+#if (defined(USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER) || defined(USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER))
+    if (m_imageProcessingSettings) {
+        RArray<TUid> suppTransforms;
+        m_imageProcessingSettings->GetSupportedTransformationsL(suppTransforms);
+        if (suppTransforms.Find(KUidECamEventImageProcessingAdjustSharpness)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+#else
+    return false;
+#endif    
+}
+
+qreal S60CameraSettings::sharpeningLevel() const
+{
+#if (defined(USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER) || defined(USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER))
+    if (m_imageProcessingSettings && isSharpeningSupported()) {
+        return m_imageProcessingSettings->TransformationValue(KUidECamEventImageProcessingAdjustSharpness);
+    } else {
+        return 0;
+    }
+#else
+    return 0;
+#endif
+}
+
+void S60CameraSettings::setSaturation(qreal value)
+{
+#if (defined(USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER) || defined(USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER))
+    if (m_imageProcessingSettings) {
+        RArray<TUid> suppTransforms;
+        m_imageProcessingSettings->GetSupportedTransformationsL(suppTransforms);
+        if (suppTransforms.Find(KUidECamEventtImageProcessingAdjustSaturation)) {
+            m_imageProcessingSettings->SetTransformationValue(KUidECamEventtImageProcessingAdjustSaturation, value);
+        }
+    }
+#endif
+}
+
+qreal S60CameraSettings::saturation() const
+{
+#if (defined(USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER) || defined(USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER))
+    if (m_imageProcessingSettings) {
+        RArray<TUid> suppTransforms;
+        m_imageProcessingSettings->GetSupportedTransformationsL(suppTransforms);
+        if (suppTransforms.Find(KUidECamEventtImageProcessingAdjustSaturation)) {
+            return m_imageProcessingSettings->TransformationValue(KUidECamEventtImageProcessingAdjustSaturation);
+        }
+    }
+    return 0;
+#else
+    return 0;
+#endif
+}
+
 

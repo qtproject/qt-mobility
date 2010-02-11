@@ -143,7 +143,7 @@ bool S60AudioCaptureSession::setOutputLocation(const QUrl& sink)
 
 qint64 S60AudioCaptureSession::position() const
 {
-    return m_position;
+    return m_recorderUtility->Duration().Int64() / 1000;;
 }
 
 int S60AudioCaptureSession::state() const
@@ -234,14 +234,20 @@ void S60AudioCaptureSession::MoscoStateChangeEventL(CBase* aObject,
                 if(aPreviousState == CMdaAudioClipUtility::ENotReady)
                 {
 					RArray<TUint> supportedSampleRates;
+					CleanupClosePushL(supportedSampleRates);
 					m_recorderUtility->GetSupportedSampleRatesL(supportedSampleRates);
-					
+
+					int frequency = m_format.frequency();
 					for (TInt i = 0; i < supportedSampleRates.Count(); i++ ) {
 						TUint supportedSampleRate = supportedSampleRates[i];
-						int frequency = m_format.frequency();
-						if (supportedSampleRate == frequency) 
+						if (supportedSampleRate == frequency) { 
 							m_recorderUtility->SetDestinationSampleRateL(m_format.frequency());
+							break;
+						}
+						
 					}
+
+					CleanupStack::PopAndDestroy(&supportedSampleRates);
 					
 					/*
 					RArray<TUint> supportedBitRates;
@@ -293,16 +299,29 @@ void S60AudioCaptureSession::MoscoStateChangeEventL(CBase* aObject,
 					}
 					
 					RArray<TFourCC> supportedDataTypes;
+					CleanupClosePushL(supportedDataTypes);
 					m_recorderUtility->GetSupportedDestinationDataTypesL(supportedDataTypes);
 
 					for (TInt k = 0; k < supportedDataTypes.Count(); k++ ) {
 						if (supportedDataTypes[k].FourCC() == fourCC.FourCC()) {
 							m_recorderUtility->SetDestinationDataTypeL(supportedDataTypes[k]);
+							break;
 						}
 					}
+					CleanupStack::PopAndDestroy(&supportedDataTypes);
 					
-					//set channels 
-					m_recorderUtility->SetDestinationNumberOfChannelsL(m_format.channels());
+					//set channels
+					RArray<TUint> supportedChannels;
+					CleanupClosePushL(supportedChannels);
+					m_recorderUtility->GetSupportedNumberOfChannelsL(supportedChannels);
+                    for (TInt l = 0; l < supportedChannels.Count(); l++ ) {
+                        if (supportedChannels[l] == m_format.channels()) {
+                            m_recorderUtility->SetDestinationNumberOfChannelsL(m_format.channels());
+                            break;
+                        }
+                    }
+					
+					CleanupStack::PopAndDestroy(&supportedChannels);
 
 					m_recorderUtility->SetGain(m_recorderUtility->MaxGain());
                     m_recorderUtility->RecordL();
@@ -328,6 +347,7 @@ void S60AudioCaptureSession::fetchAudioCodecsL()
 	pluginParameters->SetRequiredRecordFormatSupportL(*formatParameters);
 	 
 	RArray<TUid> ids;
+	CleanupClosePushL(ids);
 	User::LeaveIfError(ids.Append(KUidMediaTypeAudio));  
 
 	pluginParameters->SetMediaIdsL(ids, 
@@ -360,6 +380,6 @@ void S60AudioCaptureSession::fetchAudioCodecsL()
 		}
 	}
 	
-	CleanupStack::PopAndDestroy(3);//controllers, formatParameters, pluginParameters
+	CleanupStack::PopAndDestroy(4);//controllers, ids, formatParameters, pluginParameters
 }
 
