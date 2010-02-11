@@ -39,58 +39,62 @@
 **
 ****************************************************************************/
 
-#ifndef QACCELEROMETER_H
-#define QACCELEROMETER_H
+#include <QtCore>
+#include <QtTest>
+#include <qaccelerometer.h>
 
-#include "qsensor.h"
+QTM_USE_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
-
-class QAccelerometerReadingPrivate;
-
-class Q_SENSORS_EXPORT QAccelerometerReading : public QSensorReading
+class reading_perf : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(qreal x READ x)
-    Q_PROPERTY(qreal y READ y)
-    Q_PROPERTY(qreal z READ z)
-    DECLARE_READING(QAccelerometerReading)
-public:
-    qreal x() const;
-    void setX(qreal x);
-
-    qreal y() const;
-    void setY(qreal y);
-
-    qreal z() const;
-    void setZ(qreal z);
-
-    QVariant value(int index) const;
+private slots:
+    void reading_speed_direct();
+    void reading_speed_propname();
+    void reading_speed_propindex_slow();
+    void reading_speed_propindex_fast();
 };
 
-// begin generated code
-
-class Q_SENSORS_EXPORT QAccelerometerFilter : public QSensorFilter
+void reading_perf::reading_speed_direct()
 {
-public:
-    virtual bool filter(QAccelerometerReading *reading) = 0;
-private:
-    bool filter(QSensorReading *reading) { return filter(static_cast<QAccelerometerReading*>(reading)); }
-};
+    QAccelerometer sensor;
+    QVERIFY(sensor.connect());
+    QAccelerometerReading *reading = sensor.reading();
+    qreal x;
+    QBENCHMARK { x = reading->x(); }
+}
 
-class Q_SENSORS_EXPORT QAccelerometer : public QSensor
+void reading_perf::reading_speed_propname()
 {
-    Q_OBJECT
-public:
-    explicit QAccelerometer(QObject *parent = 0) : QSensor(parent)
-    { setType(QAccelerometer::type); }
-    virtual ~QAccelerometer() {}
-    QAccelerometerReading *reading() const { return static_cast<QAccelerometerReading*>(QSensor::reading()); }
-    static const char *type;
-};
-// end generated code
+    QSensor sensor;
+    sensor.setType("QAccelerometer");
+    QVERIFY(sensor.connect());
+    QSensorReading *reading = sensor.reading();
+    qreal x;
+    QBENCHMARK { x = reading->property("x").value<qreal>(); }
+}
 
-QTM_END_NAMESPACE
+void reading_perf::reading_speed_propindex_slow()
+{
+    QSensor sensor;
+    sensor.setType("QAccelerometer");
+    QVERIFY(sensor.connect());
+    QSensorReading *reading = sensor.reading();
+    qreal x;
+    QBENCHMARK { x = reading->QSensorReading::value(0).value<qreal>(); }
+}
 
-#endif
+void reading_perf::reading_speed_propindex_fast()
+{
+    QSensor sensor;
+    sensor.setType("QAccelerometer");
+    QVERIFY(sensor.connect());
+    QSensorReading *reading = sensor.reading();
+    qreal x;
+    QBENCHMARK { x = reading->value(0).value<qreal>(); }
+}
+
+QTEST_MAIN(reading_perf)
+
+#include "main.moc"
 
