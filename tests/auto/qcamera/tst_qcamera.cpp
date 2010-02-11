@@ -116,6 +116,10 @@ public:
                        QLatin1String("Could not capture in stopped state"));
     }
 
+    void cancelCapture()
+    {
+    }
+
     MockCameraControl *m_cameraControl;
 
 };
@@ -312,7 +316,9 @@ public:
         m_digitalZoom(1.0),
         m_macroFocusingEnabled(false),
         m_focusMode(QCamera::AutoFocus),
-        m_focusStatus(QCamera::FocusInitial)
+        m_focusStatus(QCamera::FocusInitial),
+        m_focusPointMode(QCamera::FocusPointAuto),
+        m_focusPoint(0.5, 0.5)
     {
     }
 
@@ -391,6 +397,34 @@ public:
         }
     }
 
+    QCamera::FocusPointMode focusPointMode() const
+    {
+        return m_focusPointMode;
+    }
+
+    void setFocusPointMode(QCamera::FocusPointMode mode)
+    {
+        if (mode & supportedFocusPointModes())
+            m_focusPointMode = mode;
+    }
+
+    QCamera::FocusPointModes supportedFocusPointModes() const
+    {
+        return QCamera::FocusPointAuto | QCamera::FocusPointCenter | QCamera::FocusPointCustom;
+    }
+
+    QPointF customFocusPoint() const
+    {
+        return m_focusPoint;
+    }
+
+    void setCustomFocusPoint(const QPointF &point)
+    {
+        m_focusPoint = point;
+    }
+
+    QList<QRectF> focusZones() const { return QList<QRectF>() << QRectF(0.45, 0.45, 0.1, 0.1); }
+
 public Q_SLOTS:
     void startFocusing()
     {
@@ -406,6 +440,8 @@ private:
     bool m_macroFocusingEnabled;
     QCamera::FocusMode m_focusMode;
     QCamera::FocusStatus m_focusStatus;
+    QCamera::FocusPointMode m_focusPointMode;
+    QPointF m_focusPoint;
 };
 
 class MockImageProcessingControl : public QImageProcessingControl
@@ -770,6 +806,16 @@ void tst_QCamera::testSimpleCameraFocus()
     QCOMPARE(camera.digitalZoom(), 1.0);
     QCOMPARE(errorSignal.count(), 1);
     QCOMPARE(camera.error(), QCamera::NotSupportedFeatureError);
+
+    QCOMPARE(camera.supportedFocusPointModes(), QCamera::FocusPointAuto);
+    QCOMPARE(camera.focusPointMode(), QCamera::FocusPointAuto);
+
+    camera.setFocusPointMode( QCamera::FocusPointCenter );
+    QCOMPARE(camera.focusPointMode(), QCamera::FocusPointAuto);
+
+    QCOMPARE(camera.customFocusPoint(), QPointF(0.5, 0.5));
+    camera.setCustomFocusPoint(QPointF(1.0, 1.0));
+    QCOMPARE(camera.customFocusPoint(), QPointF(0.5, 0.5));
 }
 
 void tst_QCamera::testSimpleCameraCapture()
@@ -974,6 +1020,20 @@ void tst_QCamera::testCameraFocus()
     camera.zoomTo(2000000.0, 1000000.0);
     QVERIFY(qFuzzyCompare(camera.opticalZoom(), camera.maximumOpticalZoom()));
     QVERIFY(qFuzzyCompare(camera.digitalZoom(), camera.maximumDigitalZoom()));
+
+    QCOMPARE(camera.supportedFocusPointModes(),
+             QCamera::FocusPointAuto | QCamera::FocusPointCenter | QCamera::FocusPointCustom);
+    QCOMPARE(camera.focusPointMode(), QCamera::FocusPointAuto);
+
+    camera.setFocusPointMode( QCamera::FocusPointCenter );
+    QCOMPARE(camera.focusPointMode(), QCamera::FocusPointCenter);
+
+    camera.setFocusPointMode( QCamera::FocusPointFaceDetection );
+    QCOMPARE(camera.focusPointMode(), QCamera::FocusPointCenter);
+
+    QCOMPARE(camera.customFocusPoint(), QPointF(0.5, 0.5));
+    camera.setCustomFocusPoint(QPointF(1.0, 1.0));
+    QCOMPARE(camera.customFocusPoint(), QPointF(1.0, 1.0));
 }
 
 void tst_QCamera::testImageSettings()
