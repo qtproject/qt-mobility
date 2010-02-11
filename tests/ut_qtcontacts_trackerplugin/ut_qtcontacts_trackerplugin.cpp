@@ -1400,7 +1400,7 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
         unsigned int contactid = qHash(QString("/org/freedesktop/fake/account/") + QString::number(999998+i) + "@ovi.com");
         idstoremove << contactid;
         insertContact(QString("telepathy://org/freedesktop/fake/account/") + QString::number(999998+i) + "@ovi.com",
-                contactid, QString::number(999998 + i)+ "@ovi.com", "nco:presence-status-available", QString::number(999998+i),"ovi.com");
+                contactid, QString::number(999998 + i)+ "@ovi.com", "nco:presence-status-available", QString("http://www.sopranolive.org/backends/tracker/generated_unique_id/105323876#%1").arg(999998+i),"ovi.com");
         QContact c = contact(contactid, QStringList()<<QContactOnlineAccount::DefinitionName);
         QVERIFY(c.localId() == contactid);
         QVERIFY(c.detail<QContactOnlineAccount>().serviceProvider() == "ovi.com");
@@ -1512,12 +1512,17 @@ void ut_qtcontacts_trackerplugin::testIMContactsFilterring()
         unsigned int contactid = qHash(QString("/org/freedesktop/fake/account/") + QString::number(999995+i) + "@ovi.com");
         idstoremove << contactid;
         insertContact(QString("telepathy://org/freedesktop/fake/account/") + QString::number(999995+i) + "@ovi.com",
-                contactid, QString::number(999995 + i)+ "@ovi.com", "nco:presence-status-available", QString("ovi%1").arg(i/2), QString("ovi%1.com").arg(i/2));
+                contactid, QString::number(999995 + i)+ "@ovi.com", "nco:presence-status-available",
+                QString("www.sopranolive.org/backends/tracker/generated_unique_id/105323876#ovi%1").arg(i/2), QString("ovi%1.com").arg(i/2));
         if(!i/2)
             idsToRetrieveThroughFilter << contactid;
     }
 
-    // now filter by service provider service0.com needs to return 2 contacts, 999995 & 999996
+
+    {
+    // now filter by service provider ovi0.com needs to return 2 contacts, 999995 & 999996
+    QList<QContactLocalId> ids(idsToRetrieveThroughFilter);
+
     QContactFetchRequest request;
     QContactDetailFilter filter;
     filter.setDetailDefinitionName(QContactOnlineAccount::DefinitionName, QContactOnlineAccount::FieldServiceProvider);
@@ -1549,9 +1554,53 @@ void ut_qtcontacts_trackerplugin::testIMContactsFilterring()
     foreach(const QContact &contact, request.contacts())
     {
         QVERIFY(contact.detail<QContactOnlineAccount>().serviceProvider() == "ovi0.com");
-        idsToRetrieveThroughFilter.removeOne(contact.localId());
+        ids.removeOne(contact.localId());
     }
-    QVERIFY(idsToRetrieveThroughFilter.isEmpty());
+    QVERIFY(ids.isEmpty());
+    }
+
+    // now account path filter
+    {
+    // now filter by account path 999995 & 999996
+    QList<QContactLocalId> ids(idsToRetrieveThroughFilter);
+
+    QContactFetchRequest request;
+    QContactDetailFilter filter;
+    filter.setDetailDefinitionName(QContactOnlineAccount::DefinitionName, "AccountPath");
+
+    Slots slot;
+    QObject::connect(&request, SIGNAL(progress(QContactFetchRequest*, bool)),
+            &slot, SLOT(progress(QContactFetchRequest*, bool )));
+    // see insertTpContact
+    filter.setValue(QString("www.sopranolive.org/backends/tracker/generated_unique_id/105323876#ovi0"));
+    filter.setMatchFlags(QContactFilter::MatchExactly);
+
+    request.setDefinitionRestrictions(QStringList()<<QContactOnlineAccount::DefinitionName);
+    request.setFilter(filter);
+
+    trackerEngine->startRequest(&request);
+
+    for(int i = 0; i < 100; i++)
+    {
+        usleep(100000);
+        QCoreApplication::processEvents();
+        if(request.isFinished() )
+            break;
+    }
+
+    // if it takes more, then something is wrong
+    QVERIFY(request.isFinished());
+    QVERIFY(!request.contacts().isEmpty());
+
+    QVERIFY(request.contacts().size() >= 2);
+    foreach(const QContact &contact, request.contacts())
+    {
+        QVERIFY(contact.detail<QContactOnlineAccount>().serviceProvider() == "ovi0.com");
+        ids.removeOne(contact.localId());
+    }
+    QVERIFY(ids.isEmpty());
+    }
+
 
     // remove them
     foreach(unsigned int id, idstoremove)

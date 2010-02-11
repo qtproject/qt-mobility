@@ -115,6 +115,11 @@ void matchOnlineAccount(RDFVariable &variable, QContactDetailFilter &filter)
         {
             variable.property<nco::imContactId> ().isMemberOf(QStringList() << filter.value().toString());
         }
+        else if (filter.detailFieldName() == FieldAccountPath)
+        {
+            // as it uses telepathy:account path
+            variable.property<nco::fromIMAccount>().equal(QUrl(QString("telepathy:")+filter.value().toString()));
+        }
         else if (filter.detailFieldName() == QContactOnlineAccount::FieldServiceProvider)
         {
             variable.property<nco::fromIMAccount>().property<nco::imDisplayName> ().isMemberOf(QStringList() << filter.value().toString());
@@ -1039,6 +1044,7 @@ QContactOnlineAccount QTrackerContactFetchRequest::getIMContactFromIMQuery(LiveN
     if (!imContactQuery->index(queryRow, IMContact::AccountType).data().toString().isEmpty()) {
         QString accountPathURI = imContactQuery->index(queryRow, IMContact::AccountType).data().toString();
         QStringList decoded = accountPathURI.split(":");
+        // taking out the prefix "telepathy:"
         qDebug() << __PRETTY_FUNCTION__ << decoded.value(1);
         account.setValue(FieldAccountPath, decoded.value(1));
     }

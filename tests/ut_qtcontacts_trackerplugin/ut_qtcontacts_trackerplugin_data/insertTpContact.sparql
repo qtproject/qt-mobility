@@ -9,7 +9,7 @@ echo "create nco:IMAccount"
 tracker-sparql -u -q "
 INSERT 
 { 
-<http://www.sopranolive.org/backends/tracker/generated_unique_id/105323876#$4> 
+<telepathy:$4> 
 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> 
 <http://www.semanticdesktop.org/ontologies/2007/03/22/nco#IMAccount>
 }
@@ -18,7 +18,7 @@ INSERT
 tracker-sparql -u -q "
 INSERT 
 { 
-<http://www.sopranolive.org/backends/tracker/generated_unique_id/105323876#$4> 
+<telepathy:$4> 
  nco:imDisplayName '$7' 
 }
 "
@@ -42,7 +42,7 @@ INSERT {
 	    nco:imContactNickname '$8$9';
 	    nco:imContactPresence $5;
 	    nco:imContactStatusMessage '$6';
-	    nco:fromIMAccount <http://www.sopranolive.org/backends/tracker/generated_unique_id/105323876#$4>;
+	    nco:fromIMAccount <telepathy:$4>;
 	    nco:imContactCapability <bogus>
 }
 "
