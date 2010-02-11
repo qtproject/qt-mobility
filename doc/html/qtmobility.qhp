@@ -602,7 +602,9 @@
                     <section ref="declarative.html" title="Declarative Example"/>
                     <section ref="fetchgooglemaps.html" title="Fetch Google Maps Example"/>
                     <section ref="filemanagerplugin.html" title="File Manager Plugin Example"/>
+                    <section ref="flickrdemo.html" title="Flickr Demo Example"/>
                     <section ref="keepintouch.html" title="Keep in Touch Example"/>
+                    <section ref="lightmaps.html" title="LightMap Example"/>
                     <section ref="logfilepositionsource.html" title="Log File Position Source Example"/>
                     <section ref="player.html" title="Media Player Example"/>
                     <section ref="player.html" title="Player Example"/>
@@ -621,6 +623,7 @@
                     <section ref="streamplayer.html" title="Stream Player Example"/>
                     <section ref="sysinfo.html" title="SysInfo Dialog Example"/>
                     <section ref="sysinfo.html" title="System Information Example"/>
+                    <section ref="weatherinfo.html" title="Weather Info Example"/>
                     <section ref="writemessage.html" title="Write Message Example"/>
                 </section>
                 <section ref="" title="Overviews">
@@ -686,6 +689,7 @@
             <keyword name="Declarative Example" id="Declarative Example" ref="declarative.html"/>
             <keyword name="Fetch Google Maps Example" id="Fetch Google Maps Example" ref="fetchgooglemaps.html"/>
             <keyword name="File Manager Plugin Example" id="File Manager Plugin Example" ref="filemanagerplugin.html"/>
+            <keyword name="Flickr Demo Example" id="Flickr Demo Example" ref="flickrdemo.html"/>
             <keyword name="Future Additional APIs" id="Future Additional APIs" ref="future.html"/>
             <keyword name="GNU General Public License (GPL)" id="GNU General Public License (GPL)" ref="gpl.html"/>
             <keyword name="GNU Lesser General Public License (LGPL)" id="GNU Lesser General Public License (LGPL)" ref="lgpl.html"/>
@@ -695,6 +699,7 @@
             <keyword name="Keep in Touch Example" id="Keep in Touch Example" ref="keepintouch.html"/>
             <keyword name="Licenses for Fonts Used in Qt for Embedded Linux" id="Licenses for Fonts Used in Qt for Embedded Linux" ref="licenses-fonts.html"/>
             <keyword name="Licensing Information" id="Licensing Information" ref="licensing.html"/>
+            <keyword name="LightMap Example" id="LightMap Example" ref="lightmaps.html"/>
             <keyword name="Location" id="Location" ref="location-overview.html"/>
             <keyword name="Location API" id="Location API" ref="location.html"/>
             <keyword name="Log File Position Source Example" id="Log File Position Source Example" ref="logfilepositionsource.html"/>
@@ -3671,6 +3676,7 @@
             <keyword name="Third-Party Licenses Used in Qt" id="Third-Party Licenses Used in Qt" ref="3rdparty.html"/>
             <keyword name="Trademarks" id="Trademarks" ref="trademarks.html"/>
             <keyword name="Versit API (technology preview)" id="Versit API (technology preview)" ref="versit.html"/>
+            <keyword name="Weather Info Example" id="Weather Info Example" ref="weatherinfo.html"/>
             <keyword name="Write Message Example" id="Write Message Example" ref="writemessage.html"/>
             <keyword name="qtimestamp" id="qtimestamp" ref="qsensor.html#qtimestamp-typedef"/>
         </keywords>
@@ -3699,6 +3705,7 @@
             <file>qsensorbackendfactory-members.html</file>
             <file>streamplayer-streamplayer-h.html</file>
             <file>qcontactname.html</file>
+            <file>flickrdemo-xqlistwidget-cpp.html</file>
             <file>qversitdefaultresourcehandler-members.html</file>
             <file>qaudioendpointselector.html</file>
             <file>qml-audio.html</file>
@@ -3707,7 +3714,9 @@
             <file>qcontactabstractrequest-members.html</file>
             <file>battery-charge-battery-publisher-battery-publisher-pro.html</file>
             <file>serviceactions-mainwindow-cpp.html</file>
+            <file>weatherinfo.html</file>
             <file>qproximitysensor-members.html</file>
+            <file>lightmaps.html</file>
             <file>qsystemnetworkinfo-members.html</file>
             <file>qsystemdisplayinfo.html</file>
             <file>keepintouch-main-cpp.html</file>
@@ -3720,13 +3729,14 @@
             <file>qcontactdetaildefinitionfetchrequest-members.html</file>
             <file>qabstractvaluespacelayer.html</file>
             <file>qversitproperty-members.html</file>
+            <file>weatherinfo-icons-weather-storm-svg.html</file>
             <file>qmediaserviceprovider-members.html</file>
             <file>fetchgooglemaps-mapwindow-h.html</file>
             <file>declarative-landlinedialer-landlinedialerplugin-h.html</file>
             <file>qradiotuner.html</file>
             <file>3rdparty.html</file>
-            <file>qmagnetometer-members.html</file>
             <file>creating-a-sensor-plugin.html</file>
+            <file>qmagnetometer-members.html</file>
             <file>qcontactphonenumber.html</file>
             <file>qmediaplayer-members.html</file>
             <file>samplephonebook-phonebook-h.html</file>
@@ -3751,6 +3761,7 @@
             <file>qcontactdetail.html</file>
             <file>qmessagefoldersortorder-members.html</file>
             <file>qmediastreamscontrol.html</file>
+            <file>lightmaps-lightmaps-pro.html</file>
             <file>qversitcontactimporter-members.html</file>
             <file>qvideodevicecontrol-members.html</file>
             <file>qversitcontactexporter.html</file>
@@ -3773,8 +3784,8 @@
             <file>qversitcontactimporterpropertyhandler.html</file>
             <file>qmessageaccountid-members.html</file>
             <file>qmessageaccount.html</file>
-            <file>qcontactsynctarget-members.html</file>
             <file>qimageprocessingcontrol.html</file>
+            <file>qcontactsynctarget-members.html</file>
             <file>qmediarecordercontrol.html</file>
             <file>servicebrowser-servicebrowser-pro.html</file>
             <file>qmediaimageviewer-members.html</file>
@@ -3787,6 +3798,7 @@
             <file>cameracapture-settings-cpp.html</file>
             <file>player-videowidget-cpp.html</file>
             <file>images/servicebrowser.png</file>
+            <file>weatherinfo-icons-weather-sunny-very-few-clouds-svg.html</file>
             <file>declarative-sfwexample-cpp.html</file>
             <file>battery-charge.html</file>
             <file>qmediaplaylistreader-members.html</file>
@@ -3818,10 +3830,12 @@
             <file>qorientationreading.html</file>
             <file>qmessage-members.html</file>
             <file>qcontactemailaddress-members.html</file>
+            <file>weatherinfo-icons-weather-showers-svg.html</file>
             <file>qcontactactionfactory-members.html</file>
             <file>qmediarecordercontrol-members.html</file>
             <file>qcontactorganization.html</file>
             <file>qvideoencodercontrol.html</file>
+            <file>flickrdemo-flickrdemo-cpp.html</file>
             <file>qcompass.html</file>
             <file>bluetoothtransferplugin-bluetoothtransfer-cpp.html</file>
             <file>qcontactanniversary.html</file>
@@ -3863,11 +3877,12 @@
             <file>querymessages.html</file>
             <file>service-framework-on-symbian.html</file>
             <file>qcontactchangelogfilter-members.html</file>
-            <file>qmediacontrol-members.html</file>
             <file>qmediacontent.html</file>
+            <file>qmediacontrol-members.html</file>
             <file>qmediaservicesupporteddevicesinterface.html</file>
             <file>qcontactmanagerenginefactory-members.html</file>
             <file>qcontactgeolocation.html</file>
+            <file>weatherinfo-icons-weather-overcast-svg.html</file>
             <file>annotated.html</file>
             <file>qnetworksession-members.html</file>
             <file>qtapsensor-members.html</file>
@@ -3883,7 +3898,10 @@
             <file>qcontactnote.html</file>
             <file>qcontactonlineaccount-members.html</file>
             <file>bearercloud-unknown-svg.html</file>
+            <file>weatherinfo-icons-weather-thundershower-svg.html</file>
+            <file>weatherinfo-icons-weather-icy-svg.html</file>
             <file>qsystemstorageinfo.html</file>
+            <file>flickrdemo-flickrdemo-h.html</file>
             <file>qvideorenderercontrol-members.html</file>
             <file>qmetadatacontrol.html</file>
             <file>qgraphicsvideoitem.html</file>
@@ -3892,8 +3910,8 @@
             <file>samplephonebook-contactlistpage-cpp.html</file>
             <file>filemanagerplugin-filemanagerplugin-pro.html</file>
             <file>qvideowidget-members.html</file>
-            <file>qimageencodercontrol-members.html</file>
             <file>qcompassreading-members.html</file>
+            <file>qimageencodercontrol-members.html</file>
             <file>servicebrowser-servicebrowser-cpp.html</file>
             <file>qcontacturl.html</file>
             <file>qproximityreading.html</file>
@@ -3914,6 +3932,7 @@
             <file>qmlcontacts-qmlcontactsa-h.html</file>
             <file>radio-radio-pro.html</file>
             <file>writemessage-messagesender-cpp.html</file>
+            <file>flickrdemo-connectivityhelper-cpp.html</file>
             <file>bearer-management.html</file>
             <file>fetchgooglemaps-main-cpp.html</file>
             <file>qcontactbirthday-members.html</file>
@@ -3940,6 +3959,7 @@
             <file>samplephonebook-filterpage-cpp.html</file>
             <file>qcontactfamily-members.html</file>
             <file>qcontactactiondescriptor-members.html</file>
+            <file>weatherinfo-icons-weather-fog-svg.html</file>
             <file>qversitresourcehandler.html</file>
             <file>qmediaplaylistioplugin-members.html</file>
             <file>bearermonitor.html</file>
@@ -3969,6 +3989,7 @@
             <file>images/keepintouch-example.png</file>
             <file>qcontactdetailfilter-members.html</file>
             <file>qmediaplaylistwriter-members.html</file>
+            <file>weatherinfo-weatherinfo-cpp.html</file>
             <file>cameracapture-main-cpp.html</file>
             <file>audiorecorder.html</file>
             <file>qcontactrelationshipfilter.html</file>
@@ -3981,11 +4002,13 @@
             <file>qservicecontext-members.html</file>
             <file>audiorecorder-main-cpp.html</file>
             <file>qcontactrelationshipremoverequest-members.html</file>
+            <file>weatherinfo-icons-weather-sunny-svg.html</file>
             <file>fetchgooglemaps-mapwindow-cpp.html</file>
             <file>qmessagefolderfilter.html</file>
             <file>images/bearercloud-example.png</file>
             <file>qcontactname-members.html</file>
             <file>qaudioendpointselector-members.html</file>
+            <file>weatherinfo-weatherinfo-pro.html</file>
             <file>systeminfo.html</file>
             <file>quickstart-main-cpp.html</file>
             <file>qcontactrelationshipfetchrequest.html</file>
@@ -3997,6 +4020,7 @@
             <file>qcontactunionfilter-members.html</file>
             <file>qmessagesortorder.html</file>
             <file>qambientlightfilter.html</file>
+            <file>flickrdemo-xqlistwidget-h.html</file>
             <file>qmediaplaylistcontrol-members.html</file>
             <file>qmessageid-members.html</file>
             <file>qcameraexposurecontrol-members.html</file>
@@ -4051,7 +4075,10 @@
             <file>qsysteminfo-members.html</file>
             <file>qcontactdetaildefinitionsaverequest.html</file>
             <file>qcompassreading.html</file>
+            <file>weatherinfo-icons-weather-snow-svg.html</file>
             <file>servicebrowser-main-cpp.html</file>
+            <file>images/lightmaps-oslo.png</file>
+            <file>images/weatherinfo-bris.png</file>
             <file>publish-subscribe-publish-subscribe-pro.html</file>
             <file>qmediaservice-members.html</file>
             <file>examples.html</file>
@@ -4063,8 +4090,8 @@
             <file>bluetoothtransferplugin.html</file>
             <file>licenses-fonts.html</file>
             <file>qsysteminfo.html</file>
-            <file>qmagnetometerreading-members.html</file>
             <file>audiorecorder-audiorecorder-cpp.html</file>
+            <file>qmagnetometerreading-members.html</file>
             <file>functions.html</file>
             <file>mobility.html</file>
             <file>declarative-demo-demo-pro.html</file>
@@ -4139,10 +4166,13 @@
             <file>qcontactemailaddress.html</file>
             <file>qcameraexposurecontrol.html</file>
             <file>qsystemdeviceinfo-members.html</file>
+            <file>weatherinfo-weatherinfo-qrc.html</file>
             <file>qcontactdetaildefinitionremoverequest-members.html</file>
+            <file>lightmaps-lightmaps-cpp.html</file>
             <file>qserviceplugininterface.html</file>
             <file>streamplayer-streamplayer-cpp.html</file>
             <file>qambientlightsensor-members.html</file>
+            <file>weatherinfo-icons-weather-few-clouds-svg.html</file>
             <file>qvideowidget.html</file>
             <file>publish-subscribe-publisherdialog-h.html</file>
             <file>bearercloud-cloud-cpp.html</file>
@@ -4154,8 +4184,8 @@
             <file>qmediatimerange.html</file>
             <file>servicebrowser.html</file>
             <file>samplephonebook-samplephonebook-pro.html</file>
-            <file>qcontacturl-members.html</file>
             <file>qcontactmanager-members.html</file>
+            <file>qcontacturl-members.html</file>
             <file>qversitwriter.html</file>
             <file>sysinfo-main-cpp.html</file>
             <file>installation.html</file>
@@ -4180,6 +4210,7 @@
             <file>qsensorbackendfactory.html</file>
             <file>qnetworkconfiguration-members.html</file>
             <file>qcontactgender-members.html</file>
+            <file>flickrdemo.html</file>
             <file>qaccelerometer.html</file>
             <file>player-playlistmodel-cpp.html</file>
             <file>qsensor-members.html</file>
@@ -4221,10 +4252,12 @@
             <file>qmlcontacts-qmlcontact-cpp.html</file>
             <file>qmessagecontentcontainer.html</file>
             <file>qambientlightsensor.html</file>
+            <file>images/flickr-demo.png</file>
             <file>qcontactsynctarget.html</file>
             <file>qradiotunercontrol-members.html</file>
             <file>qmediacontent-members.html</file>
             <file>qmediacontainercontrol.html</file>
+            <file>flickrdemo-flickrdemo-pro.html</file>
             <file>qmlcontacts-qmlcontacts-pro.html</file>
             <file>qrotationsensor-members.html</file>
             <file>audiorecorder-audiorecorder-pro.html</file>
@@ -4241,6 +4274,7 @@
             <file>qsensor.html</file>
             <file>publish-subscribe-subscriberdialog-cpp.html</file>
             <file>bearercloud-lan-svg.html</file>
+            <file>flickrdemo-connectivityhelper-h.html</file>
             <file>qmediaresource.html</file>
             <file>qmediaservicefeaturesinterface-members.html</file>
             <file>slideshow-slideshow-h.html</file>
@@ -4259,6 +4293,7 @@
             <file>qsystemstorageinfo-members.html</file>
             <file>declarative-voipdialer-voipdialer-cpp.html</file>
             <file>qproximitysensor.html</file>
+            <file>weatherinfo-icons-weather-sleet-svg.html</file>
             <file>qgeopositioninfo-members.html</file>
             <file>images/battery-subscriber.png</file>
             <file>qmessageservice.html</file>
@@ -4277,8 +4312,10 @@
             <file>images/battery-publisher.png</file>
             <file>qsensormanager.html</file>
             <file>serviceactions-attachmentlistwidget-cpp.html</file>
+            <file>weatherinfo-icons-weather-haze-svg.html</file>
             <file>qmlcontacts-qmlcontacts-qrc.html</file>
             <file>writemessage-writemessage-pro.html</file>
+            <file>flickrdemo-main-cpp.html</file>
             <file>sensors-api.html</file>
             <file>qmessagefolderid-members.html</file>
             <file>qabstractvaluespacelayer-members.html</file>
@@ -4293,12 +4330,15 @@
             <file>qcontactlocalidfilter-members.html</file>
             <file>qvideoencodersettings-members.html</file>
             <file>images/servicexmlgen.png</file>
+            <file>images/flickr-demo.png</file>
             <file>images/slideshow-img1.png</file>
             <file>images/servicebrowser-attributes.png</file>
             <file>images/sensors-overview.png</file>
-            <file>images/bearercloud-example.png</file>
             <file>images/sysinfo-devices.png</file>
+            <file>images/bearercloud-example.png</file>
+            <file>images/weatherinfo-bris.png</file>
             <file>images/writemessage-example.png</file>
+            <file>images/lightmaps-oslo.png</file>
             <file>images/publish-subscribe-publisher.png</file>
             <file>images/qtlogo.png</file>
             <file>images/codeless.png</file>
