@@ -1,4 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+/****************************************************************************
+**
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+-->
 <ui version="4.0">
  <class>Explorer</class>
  <widget class="QMainWindow" name="Explorer">
@@ -6,8 +48,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>530</width>
-    <height>462</height>
+    <width>665</width>
+    <height>547</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -20,10 +62,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1">
-    <property name="margin">
-     <number>6</number>
-    </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QLabel" name="label">
       <property name="text">
@@ -39,112 +78,157 @@
     </item>
     <item>
      <widget class="QSplitter" name="widget">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="QTreeWidget" name="m_sensors">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
+      <widget class="QGroupBox" name="groupBox">
+       <property name="title">
+        <string>Sensor</string>
        </property>
-       <property name="alternatingRowColors">
-        <bool>true</bool>
-       </property>
-       <property name="selectionBehavior">
-        <enum>QAbstractItemView::SelectRows</enum>
-       </property>
-       <property name="rootIsDecorated">
-        <bool>false</bool>
-       </property>
-       <property name="columnCount">
-        <number>1</number>
-       </property>
-       <attribute name="headerVisible">
-        <bool>true</bool>
-       </attribute>
-       <attribute name="headerVisible">
-        <bool>true</bool>
-       </attribute>
-       <column>
-        <property name="text">
-         <string>Sensor</string>
-        </property>
-       </column>
-       <item>
-        <property name="text">
-         <string>QAccelerometer</string>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="margin">
+         <number>3</number>
         </property>
         <item>
-         <property name="text">
-          <string>dummy.accelerometer</string>
-         </property>
+         <widget class="QTreeWidget" name="m_sensors">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="alternatingRowColors">
+           <bool>true</bool>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectRows</enum>
+          </property>
+          <property name="rootIsDecorated">
+           <bool>false</bool>
+          </property>
+          <property name="columnCount">
+           <number>1</number>
+          </property>
+          <attribute name="headerVisible">
+           <bool>false</bool>
+          </attribute>
+          <attribute name="headerVisible">
+           <bool>false</bool>
+          </attribute>
+          <column>
+           <property name="text">
+            <string>Sensor</string>
+           </property>
+          </column>
+          <item>
+           <property name="text">
+            <string>QAccelerometer</string>
+           </property>
+           <item>
+            <property name="text">
+             <string>dummy.accelerometer</string>
+            </property>
+           </item>
+          </item>
+         </widget>
         </item>
-       </item>
+       </layout>
       </widget>
-      <widget class="QTableWidget" name="m_reading">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
+      <widget class="QGroupBox" name="groupBox_2">
+       <property name="title">
+        <string>Properties</string>
        </property>
-       <property name="alternatingRowColors">
-        <bool>true</bool>
-       </property>
-       <property name="selectionMode">
-        <enum>QAbstractItemView::ExtendedSelection</enum>
-       </property>
-       <property name="columnCount">
-        <number>2</number>
-       </property>
-       <attribute name="verticalHeaderVisible">
-        <bool>false</bool>
-       </attribute>
-       <attribute name="verticalHeaderVisible">
-        <bool>false</bool>
-       </attribute>
-       <row>
-        <property name="text">
-         <string>1</string>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="margin">
+         <number>3</number>
         </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>2</string>
-        </property>
-       </row>
-       <column>
-        <property name="text">
-         <string>Property</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Type</string>
-        </property>
-       </column>
-       <item row="0" column="0">
-        <property name="text">
-         <string>x</string>
-        </property>
-       </item>
-       <item row="0" column="1">
-        <property name="text">
-         <string>qreal</string>
-        </property>
-       </item>
-       <item row="1" column="0">
-        <property name="text">
-         <string>changeOfBeingEaten</string>
-        </property>
-       </item>
-       <item row="1" column="1">
-        <property name="text">
-         <string>1</string>
-        </property>
-       </item>
+        <item>
+         <widget class="QTableWidget" name="m_reading">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="alternatingRowColors">
+           <bool>true</bool>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::ExtendedSelection</enum>
+          </property>
+          <property name="columnCount">
+           <number>3</number>
+          </property>
+          <attribute name="verticalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
+          <attribute name="verticalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
+          <row>
+           <property name="text">
+            <string notr="true">1</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string notr="true">2</string>
+           </property>
+          </row>
+          <column>
+           <property name="text">
+            <string>Index</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Name</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Type</string>
+           </property>
+          </column>
+          <item row="0" column="0">
+           <property name="text">
+            <string notr="true">0</string>
+           </property>
+          </item>
+          <item row="0" column="1">
+           <property name="text">
+            <string notr="true">x</string>
+           </property>
+          </item>
+          <item row="0" column="2">
+           <property name="text">
+            <string notr="true">qreal</string>
+           </property>
+          </item>
+          <item row="1" column="0">
+           <property name="text">
+            <string notr="true">0</string>
+           </property>
+          </item>
+          <item row="1" column="1">
+           <property name="text">
+            <string notr="true">changeOfBeingEaten</string>
+           </property>
+          </item>
+          <item row="1" column="2">
+           <property name="text">
+            <string notr="true">1</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>
