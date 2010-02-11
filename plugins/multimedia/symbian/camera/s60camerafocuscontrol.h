@@ -76,6 +76,14 @@ public:
 
     void zoomTo(qreal optical, qreal digital);
 
+    QCamera::FocusPointMode focusPointMode() const;
+    void setFocusPointMode(QCamera::FocusPointMode mode);
+    QCamera::FocusPointModes supportedFocusPointModes() const;
+    QPointF customFocusPoint() const;
+    void setCustomFocusPoint(const QPointF &point);
+
+    QList<QRectF> focusZones() const;
+
 public Q_SLOTS:
 
     void startFocusing();

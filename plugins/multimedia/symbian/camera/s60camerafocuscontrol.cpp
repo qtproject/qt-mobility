@@ -172,3 +172,32 @@ void S60CameraFocusControl::focusChanged(QCamera::FocusStatus status)
     emit focusStatusChanged(status);
 }
 
+QCamera::FocusPointMode S60CameraFocusControl::focusPointMode() const
+{
+    return QCamera::FocusPointAuto;
+}
+
+void S60CameraFocusControl::setFocusPointMode(QCamera::FocusPointMode mode)
+{
+    Q_UNUSED(mode);
+}
+
+QCamera::FocusPointModes S60CameraFocusControl::supportedFocusPointModes() const
+{
+    return QCamera::FocusPointAuto;
+}
+
+QPointF S60CameraFocusControl::customFocusPoint() const
+{
+    return QPointF(0.5, 0.5);
+}
+
+void S60CameraFocusControl::setCustomFocusPoint(const QPointF &point)
+{
+    Q_UNUSED(point);
+}
+
+QList<QRectF> S60CameraFocusControl::focusZones() const
+{
+    return QList<QRectF>();
+}

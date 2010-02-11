@@ -87,3 +87,6 @@ void S60CameraImageCaptureControl::capture(const QString &fileName)
         m_session->capture(fileName);
 }
 
+void S60CameraImageCaptureControl::cancelCapture()
+{
+}

@@ -60,6 +60,7 @@ public:
     
     bool isReadyForCapture() const;
     void capture(const QString &fileName);
+    void cancelCapture();
     
 private:
     S60CameraSession *m_session;
