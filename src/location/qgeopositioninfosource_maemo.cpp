@@ -45,6 +45,8 @@
 #ifdef Q_WS_MAEMO_5
 #include <QDateTime>
 #include "gconfitem.h" // Temporarily here.
+
+#define TO_SECS 1000
 #endif
 #if 0
 void dumpQByteArray(const QByteArray &msg)
@@ -67,6 +69,9 @@ QGeoPositionInfoSourceMaemo::QGeoPositionInfoSourceMaemo(QObject *parent): QGeoP
 #ifdef Q_WS_MAEMO_5
     time_interval_ = LOCATION_INTERVAL_DEFAULT;
     availableMethods = SatellitePositioningMethods;
+    requestTimeout = 0;
+    locationState = QGeoPositionInfoSourceMaemo::Undefined;
+    tmpUpdateInterval = 0;
 #else
     time_interval_ = 5000;
     availableMethods = AllPositioningMethods;    
@@ -123,6 +128,7 @@ int QGeoPositionInfoSourceMaemo::init()
             g_signal_connect(G_OBJECT(locationDevice), "disconnected",
                              G_CALLBACK(&deviceDisconnected), 
                              static_cast<void*>(this));
+        locationState = QGeoPositionInfoSourceMaemo::Inited;        
         return 0;
     } else {
         return -1;
@@ -236,7 +242,17 @@ void QGeoPositionInfoSourceMaemo::setUpdateInterval(int msec)
 {
     msec = (msec < MinimumUpdateInterval) ? MinimumUpdateInterval : msec;
 
-#ifdef Q_WS_MAEMO_5
+#ifdef Q_WS_MAEMO_5   
+    if(locationState & QGeoPositionInfoSourceMaemo::RequestActive) {
+        if(msec <= this->updateInterval()) {
+            locationState &= ~(QGeoPositionInfoSourceMaemo::RequestActive |
+                               QGeoPositionInfoSourceMaemo::RequestSingleShot);   
+            tmpUpdateInterval = 0;
+        } else {
+            tmpUpdateInterval = msec;
+            return;
+        }
+    } 
     time_interval_ = mapUpdateInterval(msec);
     QGeoPositionInfoSource::setUpdateInterval(time_interval_*100);    
     if(locationControl) {
@@ -276,7 +292,11 @@ int QGeoPositionInfoSourceMaemo::minimumUpdateInterval() const
 void QGeoPositionInfoSourceMaemo::startUpdates()
 {
 #ifdef Q_WS_MAEMO_5
-    if(locationControl) {
+    if(locationState & QGeoPositionInfoSourceMaemo::RequestSingleShot)
+        locationState &= ~QGeoPositionInfoSourceMaemo::RequestSingleShot;
+    
+    if ((locationState & QGeoPositionInfoSourceMaemo::Inited) &&
+        !(locationState & QGeoPositionInfoSourceMaemo::Started)) {        
         if(!errorHandlerId) {
             errorHandlerId =
                 g_signal_connect(G_OBJECT(locationControl), "error-verbose",
@@ -304,10 +324,11 @@ void QGeoPositionInfoSourceMaemo::startUpdates()
                                  G_CALLBACK(&deviceDisconnected), 
                                  static_cast<void*>(this));                        
         }
-        
+                
         location_gpsd_control_start(locationControl);
-    } else {
         
+        locationState |= QGeoPositionInfoSourceMaemo::Started;
+        locationState &= ~QGeoPositionInfoSourceMaemo::Stopped;        
     }
 #else
     if (registered_ == false)
@@ -322,7 +343,9 @@ void QGeoPositionInfoSourceMaemo::startUpdates()
 void QGeoPositionInfoSourceMaemo::stopUpdates()
 {
 #ifdef Q_WS_MAEMO_5
-    if(locationControl) {
+    if ((locationState & (QGeoPositionInfoSourceMaemo::Started |
+                          QGeoPositionInfoSourceMaemo::Inited)) &&
+        !(locationState & QGeoPositionInfoSourceMaemo::Stopped)) {
         if(errorHandlerId)
             g_signal_handler_disconnect(G_OBJECT(locationControl), 
                                         errorHandlerId);
@@ -339,7 +362,11 @@ void QGeoPositionInfoSourceMaemo::stopUpdates()
         posChangedId = 0;
         connectedId = 0;
         disconnectedId = 0;        
+
         location_gpsd_control_stop(locationControl);
+
+        locationState &= ~QGeoPositionInfoSourceMaemo::Started;
+        locationState |= QGeoPositionInfoSourceMaemo::Stopped;
     }
 #else
     if (registered_ == false)
@@ -352,7 +379,48 @@ void QGeoPositionInfoSourceMaemo::stopUpdates()
 
 void QGeoPositionInfoSourceMaemo::requestUpdate(int timeout)
 {
+#ifdef Q_WS_MAEMO_5
+    if (QGeoPositionInfoSourceMaemo::Inited) {
+        if (locationState & QGeoPositionInfoSourceMaemo::RequestActive)
+            return;
+    
+        if (!timeout) {
+            requestTimeout = LOCATION_INTERVAL_DEFAULT;
+        } else if (timeout < MinimumUpdateInterval) {
+            locationState &= ~QGeoPositionInfoSourceMaemo::RequestActive;
+            requestTimeout = 0;
+            emit updateTimeout();
+            return;
+        } else {
+            requestTimeout = timeout;
+        }
+    
+        if (!(locationState & QGeoPositionInfoSourceMaemo::Started)) {
+            tmpUpdateInterval = this->updateInterval();
+            this->setUpdateInterval(requestTimeout);
+            startUpdates();
+            locationState |= (QGeoPositionInfoSourceMaemo::RequestActive |
+                              QGeoPositionInfoSourceMaemo::RequestSingleShot);
+
+        } else if (locationState & QGeoPositionInfoSourceMaemo::Started) {
+            QGeoPositionInfo lastKnown = lastKnownPosition(true);
+            
+            if (lastKnown.dateTime().isValid()) {
+                QDateTime dt = QDateTime::currentDateTime();            
+                int timeFromFix = dt.secsTo(lastKnown.dateTime());
+                
+                if ((requestTimeout/TO_SECS) < 
+                    ((this->updateInterval()/TO_SECS) - timeFromFix)) {
+                    locationState |= (QGeoPositionInfoSourceMaemo::RequestActive);
+                    tmpUpdateInterval = this->updateInterval();                    
+                    this->setUpdateInterval(requestTimeout);
+                }
+            }
+        }
+    }
+#else    
     if (timeout) {}
+#endif
 }
 
 #ifdef Q_WS_MAEMO_5
@@ -466,9 +534,8 @@ void QGeoPositionInfoSourceMaemo::locationChanged(LocationGPSDevice *device,
             posInfo.setAttribute(QGeoPositionInfo::Direction,
                                  device->fix->track);            
         }
-
     }
-   
+       
     // Only position updates with time (3D) are provided.
     if (device->fix->mode == LOCATION_GPS_DEVICE_MODE_3D) {
         posInfo.setCoordinate(coordinate);        
@@ -481,6 +548,19 @@ void QGeoPositionInfoSourceMaemo::setLocation(const QGeoPositionInfo &update)
     lastSatUpdate = update;
     validLastSatUpdate = true;
     emit positionUpdated(update);
+    
+    if(locationState & QGeoPositionInfoSourceMaemo::RequestActive) {
+        locationState &= ~QGeoPositionInfoSourceMaemo::RequestActive;
+
+        if(locationState & QGeoPositionInfoSourceMaemo::RequestSingleShot) {
+            stopUpdates();
+            locationState &= ~QGeoPositionInfoSourceMaemo::RequestSingleShot;
+        }
+        
+        if (tmpUpdateInterval) {
+            setUpdateInterval(tmpUpdateInterval);
+        }        
+    }
 }
 
 int QGeoPositionInfoSourceMaemo::mapUpdateInterval(int msec) {

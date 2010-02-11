@@ -99,7 +99,18 @@ private:
     int errorHandlerId;
     int posChangedId;
     int connectedId;
-    int disconnectedId;    
+    int disconnectedId;
+    int tmpUpdateInterval;
+    int requestTimeout;
+    enum LocationState {
+        Undefined = 0,
+        Inited = 1,
+        Started = 2,
+        Stopped = 4,
+        RequestActive = 8,
+        RequestSingleShot = 16
+    };
+    int locationState;    
 #endif
     void dumpNMEA(const char *msg);
     DBusComm* dbusComm;
