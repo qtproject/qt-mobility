@@ -59,15 +59,16 @@ QVCard21Writer::~QVCard21Writer()
 }
 
 /*!
- * Encodes the \a property to text. 
+ * Encodes the \a property and writes it to the device.
  */
-QByteArray QVCard21Writer::encodeVersitProperty(const QVersitProperty& property, QTextCodec* codec)
+void QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
 {
-    QByteArray encodedProperty(encodeGroupsAndName(property, codec));
+    encodeGroupsAndName(property);
     QMultiHash<QString,QString> parameters = property.parameters();
     QVariant variant(property.variantValue());
 
-    QByteArray renderedValue;
+    QString renderedValue;
+    bool useUtf8 = false;
 
     if (variant.type() == QVariant::String) {
         QString valueString = variant.toString();
@@ -78,62 +79,56 @@ QByteArray QVCard21Writer::encodeVersitProperty(const QVersitProperty& property,
                 parameters.insert(QLatin1String("ENCODING"), QLatin1String("QUOTED-PRINTABLE"));
         }
 
-        // Encode with the correct charset and add the CHARSET parameter, if necessary
-        if (codec->canEncode(valueString)) {
-            renderedValue = codec->fromUnicode(valueString);
-        } else {
-            renderedValue = valueString.toUtf8();
+        // Add the CHARSET parameter, if necessary and encode in UTF-8 later
+        if (!mCodec->canEncode(valueString)) {
             parameters.insert(QLatin1String("CHARSET"), QLatin1String("UTF-8"));
+            useUtf8 = true;
         }
+        renderedValue = valueString;
     } else if (variant.type() == QVariant::ByteArray) {
         parameters.insert(QLatin1String("ENCODING"), QLatin1String("BASE64"));
-        renderedValue = codec->fromUnicode(QLatin1String(variant.toByteArray().toBase64().data()));
+        renderedValue = QLatin1String(variant.toByteArray().toBase64().data());
     }
 
     // Encode parameters
-    encodedProperty.append(encodeParameters(parameters, codec));
+    encodeParameters(parameters);
 
     // Encode value
-    encodedProperty.append(codec->fromUnicode(QLatin1String(":")));
+    writeString(QLatin1String(":"));
     if (variant.canConvert<QVersitDocument>()) {
-        encodedProperty.append(codec->fromUnicode(QLatin1String("\r\n")));
+        writeCrlf();
         QVersitDocument embeddedDocument = variant.value<QVersitDocument>();
-        encodedProperty.append(encodeVersitDocument(embeddedDocument, codec));
+        encodeVersitDocument(embeddedDocument);
     } else if (variant.type() == QVariant::String) {
-        encodedProperty += renderedValue;
+        writeString(renderedValue, useUtf8);
     } else if (variant.type() == QVariant::ByteArray) {
         // One extra folding before the value and
         // one extra line break after the value are needed in vCard 2.1
-        encodedProperty += codec->fromUnicode(QLatin1String("\r\n "))
-                           + renderedValue
-                           + codec->fromUnicode(QLatin1String("\r\n"));
+        writeCrlf();
+        writeString(QLatin1String(" "));
+        writeString(renderedValue, useUtf8);
+        writeCrlf();
     }
-    encodedProperty.append(codec->fromUnicode(QLatin1String("\r\n")));
-
-    return encodedProperty;
+    writeCrlf();
 }
 
 /*!
- * Encodes the \a parameters to text.
+ * Encodes the \a parameters and writes it to the device.
  */
-QByteArray QVCard21Writer::encodeParameters(
-    const QMultiHash<QString,QString>& parameters,
-    QTextCodec* codec) const
+void QVCard21Writer::encodeParameters(const QMultiHash<QString,QString>& parameters)
 {
-    QByteArray encodedParameters;
     QList<QString> names = parameters.uniqueKeys();
     foreach (QString name, names) {
         QStringList values = parameters.values(name);
         foreach (QString value, values) {
-            encodedParameters.append(codec->fromUnicode(QLatin1String(";")));
+            writeString(QLatin1String(";"));
             QString typeParameterName(QLatin1String("TYPE"));
             if (name.length() > 0 && name != typeParameterName) {
-                encodedParameters.append(codec->fromUnicode(name));
-                encodedParameters.append(codec->fromUnicode(QLatin1String("=")));
+                writeString(name);
+                writeString(QLatin1String("="));
             }
-            encodedParameters.append(codec->fromUnicode(value));
+            writeString(value);
         }
     }
-    return encodedParameters;
 }
 

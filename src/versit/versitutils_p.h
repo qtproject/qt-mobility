@@ -82,7 +82,6 @@ public:
 class Q_AUTOTEST_EXPORT VersitUtils
 {
 public:
-    static QByteArray fold(QByteArray& text, int maxChars);
     static void skipLeadingWhiteSpaces(VersitCursor& line, QTextCodec* codec);
     static bool quotedPrintableEncode(QString& text);
     static void decodeQuotedPrintable(QString& text);

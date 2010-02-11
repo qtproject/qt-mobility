@@ -53,39 +53,6 @@ QList<QByteArray>* VersitUtils::m_newlineList = 0;
 QByteArray VersitUtils::m_encodingMap[256];
 
 /*!
- * Folds \a text by making all lines \a maxChars long.
- */
-QByteArray VersitUtils::fold(QByteArray& text, int maxChars)
-{
-    char previous = 0;
-    int charsSinceLastLineBreak = 0;
-    for (int i=0; i<text.length(); i++) {
-         char current = text.at(i);
-         if (previous == '\r' && current == '\n') {
-             charsSinceLastLineBreak = 0;
-             previous = 0;
-         } else {
-             char next = 0;
-             if (i != text.length()-1)
-                 next = text.at(i+1);
-             if (charsSinceLastLineBreak == maxChars &&
-                 (current != '\r' && next != '\n')) {
-                 text.insert(i,"\r\n ");
-                 charsSinceLastLineBreak = 1; // space
-                 // Skip the added CRLF, for-loop increment i++ skips the space:
-                 i += 2;
-                 previous = 0;
-             } else {
-                 charsSinceLastLineBreak++;
-                 previous = current;
-             }
-         }
-    }
-
-    return text;
-}
-
-/*!
  * Advances the cursor \a line past any horizontal whitespace, using \a codec to determine what a
  * space is.
  */

@@ -256,68 +256,6 @@ void UT_VersitUtils::testExtractParts()
     QCOMPARE(codec->toUnicode(parts[1]),QString::fromAscii("part2"));
 }
 
-void UT_VersitUtils::testFold()
-{
-    int maxCharsForLine = 3;
-
-    // Empty string
-    QByteArray unfolded;
-    QByteArray folded;
-    QCOMPARE(
-        QString::fromAscii(VersitUtils::fold(unfolded,maxCharsForLine)),
-        QString::fromAscii(folded));
-
-    // String that needs one folding
-    unfolded = "12345";
-    folded = "123\r\n 45";
-    QCOMPARE(
-        QString::fromAscii(VersitUtils::fold(unfolded,maxCharsForLine)),
-        QString::fromAscii(folded));
-
-    // String that needs multiple foldings
-    unfolded = "1234567";
-    folded = "123\r\n 45\r\n 67";
-    QCOMPARE(
-        QString::fromAscii(VersitUtils::fold(unfolded,maxCharsForLine)),
-        QString::fromAscii(folded));
-
-    // String that has line breaks and needs foldings
-    unfolded = "12\r\n3456789";
-    folded = "12\r\n345\r\n 67\r\n 89";
-    QCOMPARE(
-        QString::fromAscii(VersitUtils::fold(unfolded,maxCharsForLine)),
-        QString::fromAscii(folded));
-
-    // Line break in the beginning of the string
-    unfolded = "\r\n12345";
-    folded = "\r\n123\r\n 45";
-    QCOMPARE(
-        QString::fromAscii(VersitUtils::fold(unfolded,maxCharsForLine)),
-        QString::fromAscii(folded));
-
-    // Input contains the amount of characters after which a folding
-    // would normally be added -> Folding not added
-    unfolded = "123";
-    folded = "123";
-    QCOMPARE(
-        QString::fromAscii(VersitUtils::fold(unfolded,maxCharsForLine)),
-        QString::fromAscii(folded));
-
-    // CR in the end of the string -> Folding not added
-    unfolded = "123\r";
-    folded = "123\r";
-    QCOMPARE(
-        QString::fromAscii(VersitUtils::fold(unfolded,maxCharsForLine)),
-        QString::fromAscii(folded));
-
-    // CRLF in the end of the string -> Folding not added
-    unfolded = "123\r\n";
-    folded = "123\r\n";
-    QCOMPARE(
-        QString::fromAscii(VersitUtils::fold(unfolded,maxCharsForLine)),
-        QString::fromAscii(folded));
-}
-
 void UT_VersitUtils::testQuotedPrintableEncode()
 {
     QByteArray encodedBytes;

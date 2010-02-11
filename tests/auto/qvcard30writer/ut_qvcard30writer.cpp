@@ -55,6 +55,7 @@ QTM_USE_NAMESPACE
 void UT_QVCard30Writer::init()
 {
     mWriter = new QVCard30Writer;
+    mWriter->setCodec(QTextCodec::codecForName("UTF-8"));
 }
 
 void UT_QVCard30Writer::cleanup()
@@ -64,39 +65,60 @@ void UT_QVCard30Writer::cleanup()
 
 void UT_QVCard30Writer::testEncodeVersitProperty()
 {
+    QByteArray encodedProperty;
+    QBuffer buffer(&encodedProperty);
+    mWriter->setDevice(&buffer);
+    buffer.open(QIODevice::WriteOnly);
+
     // No parameters
     QByteArray expectedResult = "FN:John Citizen\r\n";
     QVersitProperty property;
     property.setName(QString::fromAscii("FN"));
     property.setValue(QString::fromAscii("John Citizen"));
-    QByteArray encodedProperty = mWriter->encodeVersitProperty(property);
+    mWriter->encodeVersitProperty(property);
     QCOMPARE(encodedProperty, expectedResult);
     
     // With parameter(s)
+    mWriter->writeCrlf(); // so it doesn't start folding
+    buffer.close();
+    encodedProperty.clear();
+    buffer.open(QIODevice::WriteOnly);
     expectedResult = "TEL;TYPE=HOME:123\r\n";
     property.setName(QString::fromAscii("TEL"));
     property.setValue(QString::fromAscii("123"));
     property.insertParameter(QString::fromAscii("TYPE"),QString::fromAscii("HOME"));
-    encodedProperty = mWriter->encodeVersitProperty(property);
+    mWriter->encodeVersitProperty(property);
     QCOMPARE(encodedProperty, expectedResult);
     
     // Convert X-NICKNAME to NICKNAME
+    mWriter->writeCrlf(); // so it doesn't start folding
+    buffer.close();
+    encodedProperty.clear();
+    buffer.open(QIODevice::WriteOnly);
     expectedResult = "NICKNAME:Jack\r\n";
     property.setParameters(QMultiHash<QString,QString>());
     property.setName(QString::fromAscii("X-NICKNAME"));
     property.setValue(QString::fromAscii("Jack"));
-    encodedProperty = mWriter->encodeVersitProperty(property);
+    mWriter->encodeVersitProperty(property);
     QCOMPARE(encodedProperty, expectedResult);
 
     // Convert X-IMPP to IMPP
+    mWriter->writeCrlf(); // so it doesn't start folding
+    buffer.close();
+    encodedProperty.clear();
+    buffer.open(QIODevice::WriteOnly);
     expectedResult = "IMPP:msn:msn-address\r\n";
     property.setParameters(QMultiHash<QString,QString>());
     property.setName(QString::fromAscii("X-IMPP"));
     property.setValue(QString::fromAscii("msn:msn-address"));
-    encodedProperty = mWriter->encodeVersitProperty(property);
+    mWriter->encodeVersitProperty(property);
     QCOMPARE(encodedProperty, expectedResult);
 
     // AGENT property
+    mWriter->writeCrlf(); // so it doesn't start folding
+    buffer.close();
+    encodedProperty.clear();
+    buffer.open(QIODevice::WriteOnly);
     expectedResult = "AGENT:BEGIN:VCARD\\nVERSION:3.0\\nFN:Secret Agent\\nEND:VCARD\\n\r\n";
     property.setName(QString::fromAscii("AGENT"));
     property.setValue(QString());
@@ -106,10 +128,14 @@ void UT_QVCard30Writer::testEncodeVersitProperty()
     embeddedProperty.setValue(QString::fromAscii("Secret Agent"));
     document.addProperty(embeddedProperty);
     property.setValue(QVariant::fromValue(document));
-    encodedProperty = mWriter->encodeVersitProperty(property);
+    mWriter->encodeVersitProperty(property);
     QCOMPARE(encodedProperty, expectedResult);
 
     // Value is base64 encoded.
+    mWriter->writeCrlf(); // so it doesn't start folding
+    buffer.close();
+    encodedProperty.clear();
+    buffer.open(QIODevice::WriteOnly);
     QByteArray value("value");
     expectedResult = "Springfield.HOUSE.PHOTO;ENCODING=B:" + value.toBase64() + "\r\n";
     QStringList groups(QString::fromAscii("Springfield"));
@@ -118,60 +144,95 @@ void UT_QVCard30Writer::testEncodeVersitProperty()
     property.setParameters(QMultiHash<QString,QString>());
     property.setName(QString::fromAscii("PHOTO"));
     property.setValue(value);
-    encodedProperty = mWriter->encodeVersitProperty(property);
+    mWriter->encodeVersitProperty(property);
     QCOMPARE(encodedProperty, expectedResult);
 
     // Characters other than ASCII:
+    mWriter->writeCrlf(); // so it doesn't start folding
+    buffer.close();
+    encodedProperty.clear();
+    buffer.open(QIODevice::WriteOnly);
     expectedResult = "ORG:" + KATAKANA_NOKIA.toUtf8() + "\r\n";
     property = QVersitProperty();
     property.setName(QLatin1String("ORG"));
     property.setValue(KATAKANA_NOKIA);
-    QCOMPARE(mWriter->encodeVersitProperty(property), expectedResult);
+    mWriter->encodeVersitProperty(property);
+    QCOMPARE(encodedProperty, expectedResult);
 
     // No CHARSET and QUOTED-PRINTABLE parameters
+    mWriter->writeCrlf(); // so it doesn't start folding
+    buffer.close();
+    encodedProperty.clear();
+    buffer.open(QIODevice::WriteOnly);
     expectedResult = "EMAIL:john@" + KATAKANA_NOKIA.toUtf8() + ".com\r\n";
     property = QVersitProperty();
     property.setName(QLatin1String("EMAIL"));
     property.setValue(QString::fromAscii("john@%1.com").arg(KATAKANA_NOKIA));
-    QCOMPARE(mWriter->encodeVersitProperty(property), expectedResult);
+    mWriter->encodeVersitProperty(property);
+    QCOMPARE(encodedProperty, expectedResult);
 }
 
 void UT_QVCard30Writer::testEncodeParameters()
 {
+    QByteArray encodedParameters;
+    QBuffer buffer(&encodedParameters);
+    mWriter->setDevice(&buffer);
+    buffer.open(QIODevice::WriteOnly);
+
     QString typeParameterName(QString::fromAscii("TYPE"));
     QString encodingParameterName(QString::fromAscii("ENCODING"));
 
     // No parameters
     QMultiHash<QString,QString> parameters;
-    QCOMPARE(QString::fromAscii(mWriter->encodeParameters(parameters)),
-             QString());
+    mWriter->encodeParameters(parameters);
+    QCOMPARE(encodedParameters, QByteArray(""));
 
     // One TYPE parameter
     parameters.insert(typeParameterName,QString::fromAscii("HOME"));
-    QCOMPARE(QString::fromAscii(mWriter->encodeParameters(parameters)),
-             QString::fromAscii(";TYPE=HOME"));
+    mWriter->writeCrlf(); // so it doesn't start folding
+    buffer.close();
+    encodedParameters.clear();
+    buffer.open(QIODevice::WriteOnly);
+    mWriter->encodeParameters(parameters);
+    QCOMPARE(encodedParameters, QByteArray(";TYPE=HOME"));
 
     // Two TYPE parameters
     parameters.insert(typeParameterName,QString::fromAscii("VOICE"));
-    QCOMPARE(QString::fromAscii(mWriter->encodeParameters(parameters)),
-             QString::fromAscii(";TYPE=VOICE,HOME"));
+    mWriter->writeCrlf(); // so it doesn't start folding
+    buffer.close();
+    encodedParameters.clear();
+    buffer.open(QIODevice::WriteOnly);
+    mWriter->encodeParameters(parameters);
+    QCOMPARE(encodedParameters, QByteArray(";TYPE=VOICE,HOME"));
 
     // One ENCODING parameter
     parameters.clear();
     parameters.insert(encodingParameterName,QString::fromAscii("8BIT"));
-    QCOMPARE(QString::fromAscii(mWriter->encodeParameters(parameters)),
-             QString::fromAscii(";ENCODING=8BIT"));
+    mWriter->writeCrlf(); // so it doesn't start folding
+    buffer.close();
+    encodedParameters.clear();
+    buffer.open(QIODevice::WriteOnly);
+    mWriter->encodeParameters(parameters);
+    QCOMPARE(encodedParameters, QByteArray(";ENCODING=8BIT"));
 
     // Two parameters
     parameters.insert(QString::fromAscii("X-PARAM"),QString::fromAscii("VALUE"));
-    QCOMPARE(QString::fromAscii(mWriter->encodeParameters(parameters)),
-             QString::fromAscii(";X-PARAM=VALUE;ENCODING=8BIT"));
+    mWriter->writeCrlf(); // so it doesn't start folding
+    buffer.close();
+    encodedParameters.clear();
+    buffer.open(QIODevice::WriteOnly);
+    mWriter->encodeParameters(parameters);
+    QCOMPARE(encodedParameters, QByteArray(";X-PARAM=VALUE;ENCODING=8BIT"));
 
     // Parameter with characters that require backslash escaping
     parameters.clear();
     parameters.insert(QString::fromAscii("X-P;ARAM"),QString::fromAscii("VA,LUE"));
-    QCOMPARE(QString::fromAscii(mWriter->encodeParameters(parameters)),
-             QString::fromAscii(";X-P\\;ARAM=VA\\,LUE"));
+    mWriter->writeCrlf(); // so it doesn't start folding
+    buffer.close();
+    encodedParameters.clear();
+    buffer.open(QIODevice::WriteOnly);
+    mWriter->encodeParameters(parameters);
+    QCOMPARE(encodedParameters, QByteArray(";X-P\\;ARAM=VA\\,LUE"));
 }
 
 QTEST_MAIN(UT_QVCard30Writer)

@@ -59,7 +59,6 @@ private slots:
     void testParamValue();
     void testExtractPart();
     void testExtractParts();
-    void testFold();
     void testQuotedPrintableEncode();
     void testDecodeQuotedPrintable();
     void testBackSlashEscape();
