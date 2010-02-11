@@ -1368,11 +1368,11 @@ void ut_qtcontacts_trackerplugin::testQRelationshipAndMetacontacts()
     }
 }
 
-void ut_qtcontacts_trackerplugin::insertContact(const QString& URI, QContactLocalId uid, QString imId, QString imStatus )
+void ut_qtcontacts_trackerplugin::insertContact(const QString& URI, QContactLocalId uid, QString imId, QString imStatus, QString accountPath, QString protocol )
 {
     QProcess inserter;
     QStringList args;
-    args << URI << QString::number(uid) << imId << "SomeGuy" << imStatus << "In Helsinki" << "jabber" << "Some" << "Guy";
+    args << URI << QString::number(uid) << imId << accountPath << imStatus << "In Helsinki" << protocol << "Some" << "Guy";
     inserter.start( PATH_TO_SPARQL_TESTS+"/insertTpContact.sparql", args );
     inserter.waitForFinished();
 }
@@ -1400,9 +1400,10 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
         unsigned int contactid = qHash(QString("/org/freedesktop/fake/account/") + QString::number(999998+i) + "@ovi.com");
         idstoremove << contactid;
         insertContact(QString("telepathy://org/freedesktop/fake/account/") + QString::number(999998+i) + "@ovi.com",
-                contactid, QString::number(999998 + i)+ "@ovi.com", "nco:presence-status-available");
+                contactid, QString::number(999998 + i)+ "@ovi.com", "nco:presence-status-available", QString::number(999998+i),"ovi.com");
         QContact c = contact(contactid, QStringList()<<QContactOnlineAccount::DefinitionName);
         QVERIFY(c.localId() == contactid);
+        QVERIFY(c.detail<QContactOnlineAccount>().serviceProvider() == "ovi.com");
         QContact firstContact;
         QContactName name;
         name.setFirstName("FirstMetaWithIM"+QString::number(contactid));
@@ -1500,6 +1501,64 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
     {
         QVERIFY2(trackerEngine->removeContact(id, error), "Removing a contact failed");
     }
+}
+
+void ut_qtcontacts_trackerplugin::testIMContactsFilterring()
+{
+    QList<unsigned int> idstoremove;
+    QList<QContactLocalId> idsToRetrieveThroughFilter;
+    for( int i = 0; i < 3; i++ )
+    {
+        unsigned int contactid = qHash(QString("/org/freedesktop/fake/account/") + QString::number(999995+i) + "@ovi.com");
+        idstoremove << contactid;
+        insertContact(QString("telepathy://org/freedesktop/fake/account/") + QString::number(999995+i) + "@ovi.com",
+                contactid, QString::number(999995 + i)+ "@ovi.com", "nco:presence-status-available", QString("ovi%1").arg(i/2), QString("ovi%1.com").arg(i/2));
+        if(!i/2)
+            idsToRetrieveThroughFilter << contactid;
+    }
+
+    // now filter by service provider service0.com needs to return 2 contacts, 999995 & 999996
+    QContactFetchRequest request;
+    QContactDetailFilter filter;
+    filter.setDetailDefinitionName(QContactOnlineAccount::DefinitionName, QContactOnlineAccount::FieldServiceProvider);
+
+    Slots slot;
+    QObject::connect(&request, SIGNAL(progress(QContactFetchRequest*, bool)),
+            &slot, SLOT(progress(QContactFetchRequest*, bool )));
+    filter.setValue(QString("ovi0.com"));
+    filter.setMatchFlags(QContactFilter::MatchExactly);
+
+    request.setDefinitionRestrictions(QStringList()<<QContactOnlineAccount::DefinitionName);
+    request.setFilter(filter);
+
+    trackerEngine->startRequest(&request);
+
+    for(int i = 0; i < 100; i++)
+    {
+        usleep(100000);
+        QCoreApplication::processEvents();
+        if(request.isFinished() )
+            break;
+    }
+
+    // if it takes more, then something is wrong
+    QVERIFY(request.isFinished());
+    QVERIFY(!request.contacts().isEmpty());
+
+    QVERIFY(request.contacts().size() >= 2);
+    foreach(const QContact &contact, request.contacts())
+    {
+        QVERIFY(contact.detail<QContactOnlineAccount>().serviceProvider() == "ovi0.com");
+        idsToRetrieveThroughFilter.removeOne(contact.localId());
+    }
+    QVERIFY(idsToRetrieveThroughFilter.isEmpty());
+
+    // remove them
+    foreach(unsigned int id, idstoremove)
+    {
+        QVERIFY2(trackerEngine->removeContact(id, error), "Removing a contact failed");
+    }
+
 }
 
 void ut_qtcontacts_trackerplugin::testContactsWithoutMeContact() {

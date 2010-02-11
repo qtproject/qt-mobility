@@ -117,7 +117,7 @@ void matchOnlineAccount(RDFVariable &variable, QContactDetailFilter &filter)
         }
         else if (filter.detailFieldName() == QContactOnlineAccount::FieldServiceProvider)
         {
-            variable.optional().property<nco::fromIMAccount>().property<nco::imDisplayName> ().isMemberOf(QStringList() << filter.value().toString());
+            variable.property<nco::fromIMAccount>().property<nco::imDisplayName> ().isMemberOf(QStringList() << filter.value().toString());
         }
         else
             qWarning() << "QTrackerContactFetchRequest," << __FUNCTION__
@@ -1039,7 +1039,7 @@ QContactOnlineAccount QTrackerContactFetchRequest::getIMContactFromIMQuery(LiveN
     if (!imContactQuery->index(queryRow, IMContact::AccountType).data().toString().isEmpty()) {
         QString accountPathURI = imContactQuery->index(queryRow, IMContact::AccountType).data().toString();
         QStringList decoded = accountPathURI.split(":");
-        qDebug() << decoded.value(1);
+        qDebug() << __PRETTY_FUNCTION__ << decoded.value(1);
         account.setValue(FieldAccountPath, decoded.value(1));
     }
     account.setNickname(imContactQuery->index(queryRow, IMContact::ContactNickname).data().toString()); // nick
