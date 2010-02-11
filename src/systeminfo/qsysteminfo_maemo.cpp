@@ -1110,6 +1110,7 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QSystemDeviceInfoLinuxCommonP
     setConnection();
     flightMode = false;
  #if !defined(QT_NO_DBUS)
+    previousPowerState = QSystemDeviceInfo::UnknownPower;
     setupBluetooth();
     setupProfile();
 #endif
@@ -1202,10 +1203,12 @@ void QSystemDeviceInfoPrivate::halChanged(int,QVariantList map)
                 emit batteryStatusChanged(QSystemDeviceInfo::NoBatteryLevel);
             }
         }
-        if((map.at(i).toString() == "ac_adapter.present")
-        || (map.at(i).toString() == "battery.rechargeable.is_charging")) {
+        if((map.at(i).toString() == "maemo.charger.connection_status")
+        || (map.at(i).toString() == "maemo.rechargeable.charging_status")) {
             QSystemDeviceInfo::PowerState state = currentPowerState();
-            emit powerStateChanged(state);
+            if (previousPowerState != state)
+                emit powerStateChanged(state);
+            previousPowerState = state;
        }} //end map
 }
 #endif
@@ -1571,8 +1574,8 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
     return false;
 }
 
- QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
- {
+QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
+{
 #if !defined(QT_NO_DBUS)
         QHalInterface iface;
         QStringList list = iface.findDeviceByCapability("battery");
@@ -1580,48 +1583,18 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
             foreach(QString dev, list) {
                 QHalDeviceInterface ifaceDevice(dev);
                 if (iface.isValid()) {
-                    if (ifaceDevice.getPropertyBool("battery.rechargeable.is_charging")) {
+                    if (ifaceDevice.getPropertyString("maemo.charger.connection_status") == "connected") {
+                        if (ifaceDevice.getPropertyString("maemo.rechargeable.charging_status") == "full")
+                            return QSystemDeviceInfo::WallPower;
                         return QSystemDeviceInfo::WallPowerChargingBattery;
                     }
-                }
-            }
-        }
-
-        list = iface.findDeviceByCapability("ac_adapter");
-        if(!list.isEmpty()) {
-            foreach(QString dev, list) {
-                QHalDeviceInterface ifaceDevice(dev);
-                if (ifaceDevice.isValid()) {
-                    if(ifaceDevice.getPropertyBool("ac_adapter.present")) {
-                        return QSystemDeviceInfo::WallPower;
-                    } else {
-                        return QSystemDeviceInfo::BatteryPower;
-                    }
-                }
-            }
-        }
-
-#else
-        QFile statefile("/proc/acpi/battery/BAT0/state");
-        if (!statefile.open(QIODevice::ReadOnly)) {
-            //  qWarning() << "Could not open /proc/acpi/battery/BAT0/state";
-        } else {
-            QTextStream batstate(&statefile);
-            QString line = batstate.readLine();
-            while (!line.isNull()) {
-                if(line.contains("charging state")) {
-                    if(line.split(" ").at(1).trimmed() == "discharging") {
-                        return QSystemDeviceInfo::BatteryPower;
-                    }
-                    if(line.split(" ").at(1).trimmed() == "charging") {
-                        return QSystemDeviceInfo::WallPowerChargingBattery;
-                    }
+                    return QSystemDeviceInfo::BatteryPower;
                 }
             }
         }
 #endif
-        return QSystemDeviceInfo::WallPower;
- }
+    return QSystemDeviceInfo::UnknownPower;
+}
 
 #if !defined(QT_NO_DBUS)
  void QSystemDeviceInfoPrivate::setupBluetooth()

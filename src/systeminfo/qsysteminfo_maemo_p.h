@@ -224,6 +224,8 @@ private:
     bool silentProfile;
     bool vibratingAlertEnabled;
     int ringingAlertVolume;
+
+    QSystemDeviceInfo::PowerState previousPowerState;
 #endif
 };
 
