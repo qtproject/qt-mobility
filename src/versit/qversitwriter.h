@@ -63,17 +63,14 @@ public:
         UnspecifiedError,
         IOError,
         OutOfMemoryError,
-        NotReadyError,
-        ParseError,
-        InvalidCharsetError,
-        BadDeviceError
+        NotReadyError
     };
 
     enum State {
-        InactiveState = 0,   // operation not yet started
-        ActiveState,         // operation started, not yet finished
-        CanceledState,       // operation is finished due to cancelation
-        FinishedState        // operation successfully completed
+        InactiveState = 0,
+        ActiveState,
+        CanceledState,
+        FinishedState
     };
 
     QVersitWriter();

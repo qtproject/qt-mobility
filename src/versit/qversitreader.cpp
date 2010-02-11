@@ -76,8 +76,6 @@ QTM_USE_NAMESPACE
  * \value OutOfMemoryError The most recent operation failed due to running out of memory
  * \value NotReadyError The most recent operation failed because there is an operation in progress
  * \value ParseError The most recent operation failed because the input was malformed
- * \omitvalue InvalidCharsetError
- * \omitvalue BadDeviceError
  */
 
 /*!

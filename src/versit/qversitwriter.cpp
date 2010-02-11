@@ -73,11 +73,7 @@ QTM_USE_NAMESPACE
  * \value IOError The most recent operation failed because of a problem with the device
  * \value OutOfMemoryError The most recent operation failed due to running out of memory
  * \value NotReadyError The most recent operation failed because there is an operation in progress
- * \omitvalue ParseError
- * \omitvalue InvalidCharsetError
- * \omitvalue BadDeviceError
  */
-// XXX Remove ParseError, InvalidCharsetError and BadDeviceError
 
 /*!
  * \enum QVersitWriter::State
