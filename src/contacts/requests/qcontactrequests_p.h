@@ -83,6 +83,7 @@ public:
     }
 
     QList<QContact> m_contacts;
+    QMap<int, QContactManager::Error> m_errors;
 };
 
 class QContactFetchRequestPrivate : public QContactAbstractRequestPrivate
@@ -126,7 +127,10 @@ public:
         return QContactAbstractRequest::ContactRemoveRequest;
     }
 
-    QContactFilter m_filter;
+    QContactFilter m_filter;    // deprecated, to be removed
+
+    QList<QContactLocalId> m_contactIds;
+    QMap<int, QContactManager::Error> m_errors;
 };
 
 class QContactLocalIdFetchRequestPrivate : public QContactAbstractRequestPrivate
@@ -172,6 +176,7 @@ public:
     QString m_contactType;
     QStringList m_names;
     QMap<QString, QContactDetailDefinition> m_definitions;
+    QMap<int, QContactManager::Error> m_errors;
 };
 
 class QContactDetailDefinitionSaveRequestPrivate : public QContactAbstractRequestPrivate
@@ -193,6 +198,7 @@ public:
 
     QString m_contactType;
     QList<QContactDetailDefinition> m_definitions;
+    QMap<int, QContactManager::Error> m_errors;
 };
 
 class QContactDetailDefinitionRemoveRequestPrivate : public QContactAbstractRequestPrivate
@@ -214,6 +220,7 @@ public:
 
     QString m_contactType;
     QStringList m_names;
+    QMap<int, QContactManager::Error> m_errors;
 };
 
 class QContactRelationshipFetchRequestPrivate : public QContactAbstractRequestPrivate
@@ -221,7 +228,7 @@ class QContactRelationshipFetchRequestPrivate : public QContactAbstractRequestPr
 public:
     QContactRelationshipFetchRequestPrivate()
         : QContactAbstractRequestPrivate(),
-        m_role(QContactRelationshipFilter::Either)
+        m_role(QContactRelationshipFilter::Either) // deprecated
     {
     }
 
@@ -234,11 +241,16 @@ public:
         return QContactAbstractRequest::RelationshipFetchRequest;
     }
 
+    // selection criteria
     QContactId m_first;
+    QContactId m_second;
     QString m_relationshipType;
-    QContactId m_participantUri;
-    QContactRelationshipFilter::Role m_role;
+
+    // results
     QList<QContactRelationship> m_relationships;
+
+    QContactId m_participantUri; // deprecated
+    QContactRelationshipFilter::Role m_role; // deprecated
 };
 
 class QContactRelationshipSaveRequestPrivate : public QContactAbstractRequestPrivate
@@ -259,6 +271,7 @@ public:
     }
 
     QList<QContactRelationship> m_relationships;
+    QMap<int, QContactManager::Error> m_errors;
 };
 
 class QContactRelationshipRemoveRequestPrivate : public QContactAbstractRequestPrivate
@@ -278,9 +291,12 @@ public:
         return QContactAbstractRequest::RelationshipRemoveRequest;
     }
 
-    QContactId m_first;
-    QContactId m_second;
-    QString m_relationshipType;
+    QContactId m_first;         // deprecated, to be removed
+    QContactId m_second;        // deprecated, to be removed
+    QString m_relationshipType; // deprecated, to be removed
+
+    QList<QContactRelationship> m_relationships;
+    QMap<int, QContactManager::Error> m_errors;
 };
 
 QTM_END_NAMESPACE

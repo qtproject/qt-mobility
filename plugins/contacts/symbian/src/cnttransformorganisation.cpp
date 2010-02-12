@@ -186,8 +186,8 @@ void CntTransformOrganisation::detailDefinitions(QMap<QString, QContactDetailDef
 
     if(definitions.contains(QContactOrganization::DefinitionName)) {
         QContactDetailDefinition d = definitions.value(QContactOrganization::DefinitionName);
-        QMap<QString, QContactDetailDefinitionField> fields = d.fields();
-        QContactDetailDefinitionField f;
+        QMap<QString, QContactDetailFieldDefinition> fields = d.fields();
+        QContactDetailFieldDefinition f;
 
         // Not all fields are supported, replace:
         fields.clear();

@@ -42,49 +42,44 @@
 #ifndef S60VIDEOPLAYERSESSION_H
 #define S60VIDEOPLAYERSESSION_H
 
-#include <QObject>
-#include <QUrl>
-#include <QSize>
-#include <QMediaPlayer>
-#include "s60mediaplayercontrol.h"
-#include "s60videowidget.h"
-#include <VideoPlayer.h>
 #include "s60mediaplayersession.h"
+#include <videoplayer.h>
+#include <QtGui/qwidget.h>
 
 class S60VideoPlayerSession : public S60MediaPlayerSession, public MVideoPlayerUtilityObserver
 {
     Q_OBJECT
 
 public:
-    S60VideoPlayerSession(QObject *parent);
+    S60VideoPlayerSession(QMediaService *service);
     ~S60VideoPlayerSession();
-
-    qint64 duration() const;
-    qint64 position() const;
-
-    int volume() const;
-    bool isMuted() const;
-
-    void setVideoRenderer(QObject *renderer);
+    
+    //From S60MediaPlayerSession
     bool isVideoAvailable() const;
-
-    bool isSeekable() const;
-
-    qreal playbackRate() const;
-    void setPlaybackRate(qreal rate);
+    bool isAudioAvailable() const;
+    void setVideoRenderer(QObject *renderer);
     
-    void load(const QUrl &url);
-    void play();
-    void pause();
-    void stop();
-    void setPosition(qint64 pos);
-    void setVolume(int volume);
-    void setMuted(bool muted);
-
+protected:
+    //From S60MediaPlayerSession
+    void doLoadL(const TDesC &path);
+    void doLoadUrlL(const TDesC &path);
+    void doPlay();
+    void doStop();
+    void doPauseL();
+    void doSetVolumeL(int volume);
+    qint64 doGetPositionL() const;
+    void doSetPositionL(qint64 microSeconds);
+    void updateMetaDataEntriesL();
+    int doGetMediaLoadingProgressL() const;
+    int doGetDurationL() const;
+    
+private slots: 
+    void resetVideoDisplay();
+    
 private: 
-    void nativeHandles();
+    bool resetNativeHandles();
     
-private: // From MVideoPlayerUtilityObserver
+    // From MVideoPlayerUtilityObserver
     void MvpuoOpenComplete(TInt aError);
     void MvpuoPrepareComplete(TInt aError);
     void MvpuoFrameReady(CFbsBitmap &aFrame, TInt aError);
@@ -92,18 +87,19 @@ private: // From MVideoPlayerUtilityObserver
     void MvpuoEvent(const TMMFEvent &aEvent);
 
 private:
-    void setMediaStatus(QMediaPlayer::MediaStatus);
-
-    CVideoPlayerUtility* m_player;
-    S60VideoWidgetControl* m_videoWidgetControl;
-    QWidget *m_dummyWidget;
-    RWsSession* m_wsSession;
-    CWsScreenDevice* m_screenDevice;
-    RWindowBase* m_window;
-    TRect m_windowRect;
+    // Qwn
+    CVideoPlayerUtility *m_player;
     TRect m_clipRect;
+    TRect m_windowRect;
+    QVideoOutputControl::Output m_output;
+    WId m_windowId;
+
     
-    CCoeControl* control; 
+    //Reference
+    RWsSession *m_wsSession;
+    CWsScreenDevice *m_screenDevice;
+    RWindowBase *m_window;
+    QMediaService &m_service;
 };
 
 #endif

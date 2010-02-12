@@ -241,6 +241,11 @@ int PulseAudioPlayerControl::bufferStatus() const
     return 0;
 }
 
+bool PulseAudioPlayerControl::isAudioAvailable() const
+{
+    return m_status != QMediaPlayer::NoMedia && m_status != QMediaPlayer::LoadingMedia;
+}
+
 bool PulseAudioPlayerControl::isVideoAvailable() const
 {
     return false;
@@ -251,9 +256,9 @@ bool PulseAudioPlayerControl::isSeekable() const
     return false;
 }
 
-QPair<qint64,qint64> PulseAudioPlayerControl::seekRange() const
+QMediaTimeRange PulseAudioPlayerControl::availablePlaybackRanges() const
 {
-    return qMakePair(qint64(), qint64());
+    return QMediaTimeRange();
 }
 
 qreal PulseAudioPlayerControl::playbackRate() const
@@ -320,12 +325,23 @@ void PulseAudioPlayerControl::play()
         m_state == QMediaPlayer::PlayingState)
         return;
 
+#ifdef MAEMO_VOLUME
+    // Need to do this in code! (TODO)
+    QString cmd = QString("/usr/bin/pasr -r -s x-maemo|/usr/bin/tail -n3|/usr/bin/head -n1|/usr/bin/awk '{print $3}'|/bin/sed 's/\%//g'>/tmp/vol");
+    system(cmd.toLocal8Bit().constData());
+    QFile volFile("/tmp/vol");
+    volFile.open(QIODevice::ReadOnly);
+    QByteArray volNum = volFile.readLine();
+    cmd = QString("/usr/bin/pasr -u -s event -l %1 -c mono").arg((m_volume+QString(volNum.constData()).toInt())/2);
+    system(cmd.toLocal8Bit().constData());
+#endif
+
     daemon()->lock();
     pa_operation_unref(
             pa_context_play_sample(daemon()->context(),
                                    m_name.constData(),
                                    0,
-                                   PA_VOLUME_NORM,
+                                  -1,
                                    play_callback,
                                    this)
             );
@@ -391,7 +407,7 @@ void PulseAudioPlayerControl::decoderReady()
     }
 
     if (m_name.isNull())
-        m_name = QString("QtPulseSample-%1-%2").arg(::getpid()).arg(int(this)).toUtf8();
+        m_name = QString("QtPulseSample-%1-%2").arg(::getpid()).arg(reinterpret_cast<unsigned long>(this)).toUtf8();
 
     pa_sample_spec spec = audioFormatToSampleSpec(m_waveDecoder->audioFormat());
 
@@ -450,6 +466,7 @@ void PulseAudioPlayerControl::stream_write_callback(pa_stream *s, size_t length,
 
         self->m_status = QMediaPlayer::BufferedMedia;
         emit self->mediaStatusChanged(self->m_status);
+        emit self->audioAvailableChanged(true);
 
         self->m_waveDecoder->deleteLater();
         if (!self->m_media.isNull())

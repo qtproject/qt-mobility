@@ -43,7 +43,9 @@
 #define S60CAMERACONTROL_H
 
 #include <QtCore/qobject.h>
-#include "multimedia/experimental/qcameracontrol.h"
+#include "qcameracontrol.h"
+
+QTM_USE_NAMESPACE
 
 class S60CameraService;
 class S60CameraSession;
@@ -59,11 +61,15 @@ public:
     void start();
     void stop();
     QCamera::State state() const;
+    QCamera::CaptureMode captureMode() const;
+    void setCaptureMode(QCamera::CaptureMode);
+    QCamera::CaptureModes supportedCaptureModes() const;
     
     void setVideoOutput(QObject *output);
 
 private:
     S60CameraSession *m_session;
+    QCamera::CaptureMode m_captureMode;
 };
 
 #endif

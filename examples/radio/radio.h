@@ -46,9 +46,11 @@
 
 #include <qradiotuner.h>
 
+QT_BEGIN_NAMESPACE
 class QLabel;
 class QPushButton;
 class QSlider;
+QT_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 

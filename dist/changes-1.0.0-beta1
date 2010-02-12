@@ -1,0 +1,196 @@
+Qt Mobility 1.0.0-beta1 is a beta release. It contains a number of changes,
+including API improvements and bug fixes, since the Qt Mobility 1.0.0-tp2
+release. For more details, please refer to the online documentation included
+in this distribution. The documentation is also available online:
+
+  http://qt.nokia.com/doc/qtmobility-1.0
+
+Some of the changes listed in this file include issue tracking numbers
+corresponding to tasks in the Qt Bug Tracker or the Merge Request queue
+of the public source repository.
+
+Qt Bug Tracker: http://bugreports.qt.nokia.com
+Merge Request:  http://qt.gitorious.org
+
+
+****************************************************************************
+*                           General                                        *
+****************************************************************************
+
+New features
+------
+
+ - SomeClass, SomeOtherClass
+    * New classes for foo, bar and baz
+
+Optimizations
+------
+
+ - Optimized foo in QSomeClass
+    * See list of Important Behavior Changes below
+
+
+****************************************************************************
+*                   Important Behavior Changes                             *
+****************************************************************************
+
+ -
+
+
+****************************************************************************
+*                          Library                                         *
+****************************************************************************
+
+QtBearer
+------
+
+ - foo
+    * bar
+
+QtContacts
+------
+
+ - foo
+    * bar
+
+QtLocation
+------
+
+ - foo
+    * bar
+
+QtMessaging
+------
+
+ - foo
+    * bar
+
+QtMedia
+------
+
+ - Added Audio and Video QML elements.
+ - Renamed QtMedia::Frequency to QtMedia::SampleRate for consistency and
+   clarity.
+ - Renamed QtMedia::CoverArtUriSmall to QtMedia::CoverArtUrlSmall,
+   QtMedia::CoverArtUriLarge to CoverArtUrlLarge, and  QtMedia::PosterUri
+   to QtMedia::PosterUrl.
+ - QGraphicsVideoItem
+    * Added offset(), size(), nativeSize(), and aspectRatioMode()
+      properties.
+ - QGraphicsVideoItem, QMediaPlaylist, QVideoWidget
+    * Replaced QMediaObject* constructor parameter with setMediaObject()
+      function.
+ - QMediaContent
+    * Renamed canonicalUri() to canonicalUrl().
+    * Removed coverArtUriSmall(), coverArtUriLarge(), posterUri(),
+      thumbnailUriSmall(), and thumbnailUriLarge() properties.
+ - QMediaPlayer
+    * Added static supportedMimeTypes() method.
+    * Added isAudioAvailable() property.
+ - Added QMediaTimeRange and QMediaTimeInterval classes to represent time
+   periods in media items.
+ - QMediaPlayerControl
+    * Renamed seekRanges() to availablePlaybackRanges(). This method now
+      returns a QMediaTimeRange, which can contain multiple disjoint time
+      intervals representing buffered portions of media.
+ - QMediaResource
+    * Renamed uri() to url().
+    * Renamed channels() to channelCount().
+    * Renamed size() to dataSize().
+    * Removed duration() and sampleSize().
+
+QtPublishSubscribe
+------
+
+ - foo
+    * bar
+
+QtServiceFramework
+------
+
+ - QService namespace added
+    * Renamed QServiceManager::Scope to QService::Scope
+ - QServiceFilter
+    * Renamed customPropertyKeys() to customAttributes()
+    * Renamed setCustomProperty() to setCustomAttribute()
+    * Removed removeCustomProperty()
+    * Renamed clearCustomProperties() to clearCustomAttribute()
+    * Renamed CapabilityMatchRule::MatchAll to CapabilityMatchRule::MatchMinimum
+    * Renamed interfaceMajorVersion() to majorVersion()
+    * Renamed interfaceMinorVersion() to minorVersion()
+ - QServiceInterfaceDescriptor
+    * Renamed inSystemScope() to scope()
+    * Renamed PropertyKey to Attribute
+    * Renamed property() to attribute()
+    * Renamed customProperty() to customAttribute()
+    * Renamed customPropertyKeys() to customAttributes()
+ - QServiceManager
+    * Renamed getInterface() to loadLocalTypedInterface()
+
+
+ - error reporting for Service XML parsing imporved
+ - export macro name changed due to name clash
+ - multiple unit test fixes
+ - Symbian backend
+    * Maturity improvements in emulator environment
+    * DB handling server is terminated automatically when any client no
+      longer uses it
+    * Fixed how library existence is checked in Symbian
+    * databasemanager server UID added
+    * All emulator processes use common service framework database
+    * Multiple QServiceManager instance issue on emulator fixed
+
+QtSystemInfo
+------
+
+ - foo
+    * bar
+
+
+****************************************************************************
+*                      Platform Specific Changes                           *
+****************************************************************************
+
+Qt Mobility for Embedded Linux
+------
+
+ -
+
+Qt Mobility for Unix (X11 and Mac OS X)
+------
+
+ - 
+
+Qt Mobility for Linux/X11
+------
+
+ -
+
+Qt Mobility for Windows
+------
+ - Added Direct Show based media player service implementation.
+
+Qt Mobility for Mac OS X
+------
+
+ -
+
+Qt Mobility for Windows CE
+------
+
+ -
+
+Qt Mobility for Symbian
+------
+
+ - Installpath for Symbian headers changed
+    * Contacts and Versit installed to EPOCROOT/include/app
+    * All other API headers installed to EPOCROOT/include/mw
+
+****************************************************************************
+*                          Tools                                           *
+****************************************************************************
+
+ - ICheck added 
+    * Validation tool for meta object defined service framework interfaces
+

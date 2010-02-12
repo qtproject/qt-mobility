@@ -195,7 +195,7 @@ void QGstreamerCameraControl::updateSupportedResolutions(const QString &device)
             char formatStr[5];
             memcpy(formatStr, &format, 4);
             formatStr[4] = 0;
-            qDebug() << "trying format" << formatStr;
+            //qDebug() << "trying format" << formatStr;
         }
 
         for (int i=0;;i++) {

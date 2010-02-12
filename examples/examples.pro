@@ -21,10 +21,16 @@ contains(mobility_modules,bearer) {
 
 #Location examples
 contains(mobility_modules,location) {
-    SUBDIRS += logfilepositionsource
-    contains(QT_CONFIG, webkit) {
-        SUBDIRS += fetchgooglemaps
-    }
+    SUBDIRS += logfilepositionsource \
+		satellitedialog
+    contains(mobility_modules,bearer) {
+    	SUBDIRS += flickrdemo \
+		    weatherinfo \
+		    lightmaps
+        contains(QT_CONFIG, webkit) {
+            SUBDIRS += fetchgooglemaps
+        }
+    }		
 }
 
 #Contacts examples
@@ -49,7 +55,7 @@ contains(mobility_modules,systeminfo): SUBDIRS += sysinfo
 #Multimedia
 contains(mobility_modules,multimedia) {
     #disabled on Symbian due to missing backend
-    !symbian:SUBDIRS += \
+    SUBDIRS += \
         radio \
         player \
         cameracapture \
@@ -58,13 +64,30 @@ contains(mobility_modules,multimedia) {
         audiorecorder
 }
 
+contains (QT_CONFIG, declarative) {
+    SUBDIRS += \
+        declarativemusic \
+        declarativevideo
+}
+
 #Messaging examples
 contains(mobility_modules,messaging) {
     contains(qmf_enabled,yes)|wince*|win32|symbian|maemo6 {
-    !win32-g++:SUBDIRS += \
-        keepintouch\
-        querymessages\
-        writemessage\
-        serviceactions
+        !win32-g++ {
+            SUBDIRS += \
+                querymessages \
+                writemessage \
+                serviceactions
+
+            contains(mobility_modules,contacts) {
+                SUBDIRS += keepintouch
+            }
+        }
     }
 }
+
+# Sensors API examples
+contains(mobility_modules,sensors) {
+    SUBDIRS += sensors
+}
+

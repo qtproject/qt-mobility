@@ -40,12 +40,35 @@
 ****************************************************************************/
 
 #include <QApplication>
+#include <QStringList>
+#include <QMessageBox>
 
 #include "servicebrowser.h"
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+    QStringList arglist = app.arguments();
+    QString additionallibpath;
+    for(int i = 0; i < arglist.count(); i++){
+        if(arglist[i].toLower() == "-help" || arglist[i] == "-?"
+            || arglist[i].toLower() == "help" || arglist[i] == "?"){
+                QMessageBox msgBox;
+                msgBox.setText("Following arguments are possible:\t\t");
+                msgBox.setInformativeText("-path\tPath to additional service libraries.\ne.g.: -path C:/plugins/bin");
+                msgBox.setStandardButtons(QMessageBox::Ok);
+                msgBox.exec();
+                return 0;
+        }
+        if(arglist[i] == "-path" && i < (arglist.count() - 1)){
+            i++;
+            additionallibpath = arglist[i];
+        }
+    }
+    //add additional service library path
+    if(additionallibpath.count() > 0)
+        QCoreApplication::addLibraryPath(additionallibpath);
+
     ServiceBrowser browser;
     browser.show();
     return app.exec();

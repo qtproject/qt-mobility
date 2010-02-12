@@ -47,6 +47,8 @@
 #include <QtCore/qstringlist.h>
 #include <QtCore/qmap.h>
 
+QTM_USE_NAMESPACE
+
 class S60CameraSession;
 
 class S60VideoEncoder : public QVideoEncoderControl
@@ -56,25 +58,36 @@ public:
     S60VideoEncoder(QObject *parent = 0);
     S60VideoEncoder(QObject *session, QObject *parent = 0);
     virtual ~S60VideoEncoder();
-
-    QList<QSize> supportedResolutions() const;
-
-    QSize minimumResolution() const;
-    QSize maximumResolution() const;
-
-    qreal minimumFrameRate() const;
-    qreal maximumFrameRate() const;
-    QList< qreal >  supportedFrameRates() const;
-
+          
     QStringList supportedVideoCodecs() const;
     QString videoCodecDescription(const QString &codecName) const;
+    QString videoCodec() const;
+    void setVideoCodec(const QString &codecName);    
+    
+    int bitRate() const;
+    void setBitRate(int);
 
-    QVideoEncoderSettings videoSettings() const;
-    void setVideoSettings(const QVideoEncoderSettings &settings);
+    QtMedia::EncodingQuality quality() const;
+    void setQuality(QtMedia::EncodingQuality);
+
+    QList<qreal>  supportedFrameRates(const QVideoEncoderSettings &settings, bool *continuous = 0) const;
+    qreal minimumFrameRate() const;
+    qreal maximumFrameRate() const;
+    qreal frameRate() const;
+    void setFrameRate(qreal frameRate);    
+
+    QList<QSize> supportedResolutions(const QVideoEncoderSettings &settings, bool *continuous = 0) const;
+    QSize minimumResolution() const;
+    QSize maximumResolution() const;
+    QSize videoResolution() const;
+    void setResolution(const QSize resolution);    
 
     QStringList supportedEncodingOptions(const QString &codec) const;
     QVariant encodingOption(const QString &codec, const QString &name) const;
     void setEncodingOption(const QString &codec, const QString &name, const QVariant &value);
+    
+    QVideoEncoderSettings videoSettings() const;
+    void setVideoSettings(const QVideoEncoderSettings &settings);
 
 private:
     S60CameraSession* m_session;

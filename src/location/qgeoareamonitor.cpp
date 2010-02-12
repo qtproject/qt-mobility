@@ -41,12 +41,13 @@
 #include "qgeoareamonitor.h"
 
 #if defined(Q_OS_SYMBIAN) && defined(QT_LOCATION_S60_MONITORING)
-    #include "qgeoareamonitor_s60_p.h"
+#include "qgeoareamonitor_s60_p.h"
 #endif
 
 /*!
     \class QGeoAreaMonitor
-    \brief The QGeoAreaMonitor class enables the detection of proximity changes for a specified set of coordinates.
+    \brief The QGeoAreaMonitor class enables the detection of proximity
+    changes for a specified set of coordinates.
     \ingroup location
 
     A QGeoAreaMonitor emits signals when the current position is in
@@ -71,7 +72,7 @@
                 monitor->setRadius(100);
             }
 
-        public slots:
+        public Q_SLOTS:
             void areaEntered(const QGeoPositionInfo &update)
             {
                 qDebug() << "Now within 100 meters, current position is" << update.coordinate();
@@ -98,8 +99,8 @@ public:
     Creates a monitor with the given \a parent.
 */
 QGeoAreaMonitor::QGeoAreaMonitor(QObject *parent)
-    : QObject(parent),
-      d(new QGeoAreaMonitorPrivate)
+        : QObject(parent),
+        d(new QGeoAreaMonitorPrivate)
 {
     d->radius = qreal(0.0);
 }
@@ -109,6 +110,7 @@ QGeoAreaMonitor::QGeoAreaMonitor(QObject *parent)
 */
 QGeoAreaMonitor::~QGeoAreaMonitor()
 {
+    delete d;
 }
 
 /*!
@@ -170,7 +172,7 @@ QGeoAreaMonitor *QGeoAreaMonitor::createDefaultMonitor(QObject *parent)
 {
 #if defined(Q_OS_SYMBIAN) && defined(QT_LOCATION_S60_MONITORING)
     QGeoAreaMonitor *ret = NULL;
-    TRAPD(error,ret = QGeoAreaMonitorS60::NewL(parent));
+    TRAPD(error, ret = QGeoAreaMonitorS60::NewL(parent));
     return ret;
 #else
     Q_UNUSED(parent);
