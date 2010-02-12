@@ -105,6 +105,8 @@ public:
     void setMuted(bool muted);
 
     void processEOS();
+    void processStateChange();
+    void processVolumeChange();
 
 signals:
     void positionChanged(qint64 position);
