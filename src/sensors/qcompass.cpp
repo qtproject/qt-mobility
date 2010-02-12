@@ -55,9 +55,7 @@ IMPLEMENT_READING(QCompassReading)
            compass.
 
     The compass returns the azimuth of the device as degrees from
-    magnetic north in a clockwise direction based on the top of the device.
-    Note that the top of the device is a fixed point and may not represent the
-    orientation that the user is holding the device in.
+    magnetic north in a clockwise direction based on the top of the UI.
     There is also a value to indicate the calibration status of the device.
     If the device is not calibrated the azimuth may not be accurate.
 

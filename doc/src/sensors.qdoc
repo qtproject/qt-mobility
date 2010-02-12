@@ -61,6 +61,23 @@ Sensors API. You can find the sensor types available on a device using the
 
 For a list of built-in sensor types, see the \l{Sensor Classes} section below.
 
+\section1 Common Conventions
+
+Unless otherwise specified, sensors shall use the
+\l{http://en.wikipedia.org/wiki/Cartesian_coordinate_system}{Right Hand Cartesian coordinate system}.
+An example of how the axes are arranged on a phone is included below.
+
+\image axes.png
+
+In general, the data shall be oriented to the UI. In devices where the UI can be rotated,
+the sensor data shall be modified automatically to match the rotation of the UI.
+
+Some devices allow the screen to move to a different plane. An example of this is the N97,
+where the screen and the keyboard end up on different planes. In such cases the sensor data
+shall be modified to match the plane of the screen rather than the plan of the keyboard.
+
+\image screen.png
+
 \section1 Using a Sensor
 
 The life cycle of a sensor is typically:
