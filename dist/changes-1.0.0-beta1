@@ -1,4 +1,4 @@
-Qt Mobility 1.0.0-beta1 is a beta release. It contains a number of changes,
+tQ Mobility 1.0.0-beta1 is a beta release. It contains a number of changes,
 including API improvements and bug fixes, since the Qt Mobility 1.0.0-tp2
 release. For more details, please refer to the online documentation included
 in this distribution. The documentation is also available online:
@@ -412,14 +412,17 @@ Qt Mobility for Symbian
     * Symbian backend added for 3rd ed FP1, 3rd ed FP2 and 5th ed. Following services supported
       - AudioCapture
         * limited codec support
-      - Radio
+      - Radio support (needs sim-card when testing)
         * listen radio
         * search channels / frequency
         * change volume
       - Mediaplayer
         * play local files
-        * play stream
-        * retrieve metadata, writing metada not supported
+        * play local video
+        * play stream e.g. from youtube working
+        * retrieve metadata ( following tags supported: title, artist, comment, genre, ye   ar, copyright, album, composer, albumtrack, audiobitrate, videobitrate, duration, content type)
+	* read extended metadata supported
+        * writing metada to file not supported by S60
         * codec support depends on device model
         * AudioDeviceControl not implemented for mediaplayer, defaults to device default.
       - Camera
