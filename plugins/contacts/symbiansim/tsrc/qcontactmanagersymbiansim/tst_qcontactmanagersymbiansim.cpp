@@ -170,48 +170,114 @@ void tst_QContactManagerSymbianSim::addContact_data()
 {
     // A string list containing the detail fields in format <detail definition name>:<field name>:<value>
     // For example first name: Name:First:James
+    QTest::addColumn<QString>("expectedDisplayLabel");
     QTest::addColumn<QStringList>("details");
+    QString unnamedLabel("Unnamed");
+    QString es = QString();
 
-    // TODO: what name field to use for a sim contact name? first name is not very logical choice...
+    // TODO: what name field to use for a sim contact name?
     // Note: With the current implementation the value must not contain a ':' character
-    QTest::newRow("first name") << 
-        (QStringList() << "Name:FirstName:James");
+    QTest::newRow("custom label")
+        << "James"
+        << (QStringList() << "Name:CustomLabel:James");
 
-    QTest::newRow("first name and nick name") <<
-        (QStringList() << "Name:FirstName:James" << "Nickname:Nickname:Hunt the Shunt");
+    QTest::newRow("custom label 2")
+        << "James Hunt"
+        << (QStringList() << "Name:CustomLabel:James Hunt");
 
-    QTest::newRow("first name and phone number") <<
-        (QStringList() << "Name:FirstName:James" << "PhoneNumber:PhoneNumber:+44752222222");
+    QTest::newRow("custom label and nick name")
+        << "James Hunt"
+        << (QStringList() << "Name:CustomLabel:James Hunt" << "Nickname:Nickname:Hunt the Shunt");
 
-    QTest::newRow("first name and email") <<
-        (QStringList() << "Name:FirstName:James" << "EmailAddress:EmailAddress:james.hunt@mclaren.com");
+    QTest::newRow("phone number")
+        << unnamedLabel
+        << (QStringList() << "PhoneNumber:PhoneNumber:+44752222222");
+
+    QTest::newRow("custom label and phone number")
+        << "James Hunt"
+        << (QStringList() << "Name:CustomLabel:James Hunt" << "PhoneNumber:PhoneNumber:+44752222222");
+
+    QTest::newRow("custom label and multiple phone numbers")
+        << "James Hunt"
+        << (QStringList() << "Name:CustomLabel:James Hunt" << "PhoneNumber:PhoneNumber:+44752222222" << "PhoneNumber:PhoneNumber:+44751111111");
+
+    QTest::newRow("custom label and email")
+        << "James Hunt"
+        << (QStringList() << "Name:CustomLabel:James Hunt" << "EmailAddress:EmailAddress:james.hunt@mclaren.com");
+
+    QTest::newRow("non-supported field")
+        << es
+        << (QStringList() << "Name:IllegalNameDetailFieldName:James");
+
+    QTest::newRow("non-supported detail")
+        << es
+        << (QStringList() << "NotSupportedDetailDefinitionName:IllegalFieldName:FieldValue");
+
+    QTest::newRow("empty, non-supported detail")
+        << es
+        << (QStringList() << "NotSupportedDetailDefinitionName:IllegalFieldName:");
 }
 
 void tst_QContactManagerSymbianSim::addContact()
 {
-    QFETCH(QStringList, details);
-    QContact contact;
-
     // Parse details and add them to the contact
-    foreach(QString detail, details) {
+    QFETCH(QString, expectedDisplayLabel);
+    QFETCH(QStringList, details);    
+
+    QContact contact;
+    QList<QContactDetail> detailsUnderTest;
+
+    foreach (QString detail, details) {
         // the expected format is <detail definition name>:<field name>:<value>
         QStringList detailParts = detail.split(QChar(':'), QString::KeepEmptyParts, Qt::CaseSensitive);
         QVERIFY(detailParts.count() == 3);
-        QContactDetail contactDetail(detailParts[0]);
-        // use existing detail if available
-        if(!contact.detail(detailParts[0]).isEmpty()) {
-            contactDetail = contact.detail(detailParts[0]);
+
+        // Use existing detail if available
+        QContactDetail contactDetail = contact.detail(detailParts[0]);
+        if(contactDetail.isEmpty()) {
+            contactDetail = QContactDetail(detailParts[0]);
         }
-        contactDetail.setValue(detailParts[1], detailParts[2]);
+
+        // Set the field value only if not empty (do not add empty fields)  
+        if (!detailParts[2].isEmpty()) {
+            QVERIFY(contactDetail.setValue(detailParts[1], detailParts[2]));
+        }
+
+        detailsUnderTest.append(contactDetail);
         contact.saveDetail(&contactDetail);
     }
 
-    if(isContactSupported(contact))
+    if (isContactSupported(contact))
     {
+        // verify contact can be saved
         QVERIFY(m_cm->saveContact(&contact));
         QCOMPARE(m_cm->error(), QContactManager::NoError);
+
+        // verify contact id
+        QVERIFY(contact.id() != QContactId());
+
+        // verify display label
+        QCOMPARE(contact.displayLabel(), expectedDisplayLabel);
+
+        // verify that all the details were actually saved
+        foreach (QContactDetail detail, detailsUnderTest) {
+            QContactDetail savedDetail = contact.detail(detail.definitionName());
+            QCOMPARE(savedDetail, detail);
+        }
+
+        // TODO: verify that no extra details were added
+        //?QCOMPARE(contact.details().count(), detailsUnderTest.count() + 2);
+
+        // verify contact removal
+        QVERIFY(m_cm->removeContact(contact.localId()));
+        QCOMPARE(m_cm->error(), QContactManager::NoError);
     } else {
-        QSKIP("Manager does not support all the contact details", SkipSingle);
+        // verify that the contact cannot be saved
+        QVERIFY(!m_cm->saveContact(&contact));
+        // TODO: what is the expected error code? does it depend on the case?
+
+        // verify contact id is untouched 
+        QVERIFY(contact.id() == QContactId());
     }
 }
 
@@ -223,11 +289,28 @@ bool tst_QContactManagerSymbianSim::isContactSupported(QContact contact)
         return false;
         
     foreach(QContactDetail detail, contact.details()) {
-        if(detailDefinitions.contains(detail.definitionName())) {
-            // TODO: check the fields of the detail
-            // TODO: check the "writability" of the detail?
+        QString definitionName = detail.definitionName();
+
+        // TODO: should we save a contact that has empty, non-supported details?
+        // The current implementation is to ignore empty details here which
+        // means that the backend should also ignore the empty details, even
+        // if the detail in question is not supported.
+        if (detail.isEmpty()) {
+            continue;
+        }
+
+        // check if the detail is supported by the SIM
+        if (detailDefinitions.contains(detail.definitionName())) {
+            // check the fields of the detail
+            foreach (QString fieldKey, detail.variantValues().keys()) {
+                QContactDetailDefinition detaiDef = detailDefinitions.value(detail.definitionName());
+                if (!detaiDef.fields().contains(fieldKey)) {
+                    return false;
+                }
+            }
             // TODO: uniquenes of the detail? (for example, create a test case with multiple names)
         } else {
+            qDebug() << "Detail" << definitionName << "Not supported";
             return false;
         }
     }

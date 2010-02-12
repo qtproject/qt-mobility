@@ -96,19 +96,21 @@ public:
     QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
 
 private:
+    void getEtelStoreInfoL() const;
     QContact fetchContactL(const QContactLocalId &localId) const;
     QList<QContact> fetchContactsL() const;
     void saveContactL(QContact* contact) const;
     void transformError(TInt symbianError, QContactManager::Error& qtError) const;
     QList<QContact> decodeSimContactsL(TDes8& rawData) const;
     QContact encodeSimContactL(const QContact* contact, TDes8& rawData) const;
+    void updateDisplayLabel(QContact& contact) const;
 
 private:
     RTelServer m_etelServer;
     RMobilePhone m_etelPhone;
     RMobilePhoneBookStore m_etelStore;
     RMobilePhoneBookStore::TMobilePhoneBookInfoV5 m_etelStoreInfo;
-    RMobilePhoneBookStore::TMobilePhoneBookInfoV5Pckg m_etelInfoPckg;
+    RMobilePhoneBookStore::TMobilePhoneBookInfoV5Pckg m_etelStoreInfoPckg;
 
     QString m_managerUri;
 };
