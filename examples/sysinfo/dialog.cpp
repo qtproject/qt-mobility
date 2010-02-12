@@ -80,7 +80,7 @@ void Dialog::changeEvent(QEvent *e)
 
 void Dialog::tabChanged(int index)
 {
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_EXAMPLES_SMALL_SCREEN
     switch(index) {
     case 0:
         setupGeneral();
