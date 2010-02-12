@@ -55,7 +55,9 @@
 
 #include <dshow.h>
 
+QT_BEGIN_NAMESPACE
 class QAbstractVideoSurface;
+QT_END_NAMESPACE
 
 class DirectShowEventLoop;
 

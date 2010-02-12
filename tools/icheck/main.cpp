@@ -52,6 +52,8 @@
 
 using namespace std;
 
+QT_USE_NAMESPACE
+
 extern QStringList getQTIncludePath();
 
 int main(int argc, char *argv[])

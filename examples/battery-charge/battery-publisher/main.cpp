@@ -40,10 +40,11 @@
 ****************************************************************************/
 
 #include <QApplication>
-
 #include <qvaluespace.h>
-
 #include "batterypublisher.h"
+
+QT_USE_NAMESPACE
+QTM_USE_NAMESPACE
 
 int main(int argc, char *argv[])
 {

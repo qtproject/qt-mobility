@@ -48,7 +48,6 @@
 #include "qmobilityglobal.h"
 
 QTM_BEGIN_NAMESPACE
-
 class QSensorBackend;
 
 // Plugin interface
@@ -64,7 +63,11 @@ QTM_END_NAMESPACE
 
 #define QSensorPluginInterface_iid \
     "com.nokia.Qt.QSensorPluginInterface/1.0"
-Q_DECLARE_INTERFACE(QtMobility::QSensorPluginInterface, QSensorPluginInterface_iid)
+
+QT_BEGIN_NAMESPACE
+Q_DECLARE_INTERFACE(QtMobility::QSensorPluginInterface,
+                    QSensorPluginInterface_iid)
+QT_END_NAMESPACE
 
 #endif
 
