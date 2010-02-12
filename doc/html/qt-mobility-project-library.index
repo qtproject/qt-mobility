@@ -7594,7 +7594,8 @@
             <contents name="using-the-framework" title="Using the Framework" level="1"/>
             <contents name="verbose-lookup" title="Verbose Lookup" level="2"/>
             <contents name="default-lookup" title="Default Lookup" level="2"/>
-            <contents name="header-lookup" title="Header Lookup" level="3"/>
+            <contents name="qobject-based-services" title="QObject based services" level="3"/>
+            <contents name="typed-services" title="Typed services" level="3"/>
             <contents name="service-scope" title="Service Scope" level="1"/>
             <contents name="user-scope" title="User Scope" level="2"/>
             <contents name="system-scope" title="System Scope" level="2"/>
