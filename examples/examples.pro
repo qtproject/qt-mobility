@@ -6,7 +6,9 @@ TEMPLATE = subdirs
 contains(mobility_modules,serviceframework) {
     SUBDIRS += filemanagerplugin \
             bluetoothtransferplugin \
-            servicebrowser
+            notesmanagerplugin \
+            servicebrowser \
+            todotool
 }
 
 #BearerManagement examples
