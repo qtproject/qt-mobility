@@ -807,6 +807,7 @@ void QNetworkSessionPrivate::RunL()
                 ipConnectionNotifier->StopNotifications();
             }
             syncStateWithInterface();
+            emit quitPendingWaitsForOpened();
             break;
         case KErrCancel: // Connection attempt cancelled
         case KErrAlreadyExists: // Connection already exists
@@ -821,6 +822,7 @@ void QNetworkSessionPrivate::RunL()
                 ipConnectionNotifier->StopNotifications();
             }
             syncStateWithInterface();
+            emit quitPendingWaitsForOpened();
             break;
     }
 }
