@@ -45,11 +45,14 @@
 #include <qmobilityglobal.h>
 #include <QDialog>
 
-QTM_BEGIN_NAMESPACE
-class QValueSpacePublisher;
+QT_BEGIN_NAMESPACE
 namespace Ui {
     class BatteryPublisher;
 }
+QT_END_NAMESPACE
+
+QTM_BEGIN_NAMESPACE
+class QValueSpacePublisher;
 QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE

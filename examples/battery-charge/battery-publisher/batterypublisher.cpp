@@ -46,10 +46,8 @@
 
 #include <QTimer>
 
-QTM_USE_NAMESPACE
-
 BatteryPublisher::BatteryPublisher(QWidget *parent)
-:   QDialog(parent), ui(new QTM_NAMESPACE::Ui::BatteryPublisher), chargeTimer(0)
+:   QDialog(parent), ui(new Ui::BatteryPublisher), chargeTimer(0)
 {
     ui->setupUi(this);
 
