@@ -54,9 +54,9 @@ Dialog::Dialog() :
     connect(versionComboBox,SIGNAL(activated(int)), this,SLOT(getVersion(int)));
     connect(featureComboBox,SIGNAL(activated(int)), this,SLOT(getFeature(int)));
     updateDeviceLockedState();
-//    QTimer *timer = new QTimer(this);
-//    connect(timer, SIGNAL(timeout()), this, SLOT(updateDeviceLockedState()));
-//    timer->start(1000);
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(updateDeviceLockedState()));
+    timer->start(1000);
 }
 
 Dialog::~Dialog()
