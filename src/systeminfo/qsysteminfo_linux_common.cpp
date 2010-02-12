@@ -75,8 +75,8 @@ QString QSystemInfoLinuxCommonPrivate::currentLanguage() const
     QString lang;
     if(langCached.isEmpty()) {
         lang  = QLocale::system().name().left(2);
-        if(lang.isEmpty() || lang == "C") {
-            lang = "en";
+        if(lang.isEmpty() || lang == QLatin1String("C")) {
+            lang = QLatin1String("en");
         }
     } else {
         lang = langCached;
@@ -88,36 +88,36 @@ QString QSystemInfoLinuxCommonPrivate::version(QSystemInfo::Version type,
                                                const QString &parameter)
 {
     Q_UNUSED(parameter);
-    QString errorStr = "Not Available";
+    QString errorStr = QLatin1String("Not Available");
 
     switch(type) {
         case QSystemInfo::Os :
         {
 #if !defined(QT_NO_DBUS)
-            QHalDeviceInterface iface("/org/freedesktop/Hal/devices/computer");
+            QHalDeviceInterface iface(QLatin1String("/org/freedesktop/Hal/devices/computer"));
             QString str;
             if (iface.isValid()) {
-                str = iface.getPropertyString("system.kernel.version");
+                str = iface.getPropertyString(QLatin1String("system.kernel.version"));
                 if(!str.isEmpty()) {
                     return str;
                 }
             }
 #endif
-            QString versionPath = "/proc/version";
+            QString versionPath = QLatin1String("/proc/version");
             QFile versionFile(versionPath);
             if(!versionFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
                 qWarning() << "File not opened";
             } else {
                 QString  strvalue;
-                strvalue = versionFile.readAll().trimmed();
-                strvalue = strvalue.split(" ").at(2);
+                strvalue = QLatin1String(versionFile.readAll().trimmed());
+                strvalue = strvalue.split(QLatin1String(" ")).at(2);
                 versionFile.close();
                 return strvalue;
             }
             break;
         }
         case QSystemInfo::QtCore :
-            return qVersion();
+            return QLatin1String(qVersion());
             break;
         default:
             break;
@@ -132,10 +132,10 @@ QString QSystemInfoLinuxCommonPrivate::currentCountryCode() const
 
 bool QSystemInfoLinuxCommonPrivate::hasSysFeature(const QString &featureStr)
 {
-    QString sysPath = "/sys/class/";
+    QString sysPath = QLatin1String("/sys/class/");
     QDir sysDir(sysPath);
     QStringList filters;
-    filters << "*";
+    filters << QLatin1String("*");
     QStringList sysList = sysDir.entryList( filters ,QDir::Dirs, QDir::Name);
     foreach(QString dir, sysList) {
         QDir sysDir2(sysPath + dir);
