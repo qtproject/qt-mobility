@@ -97,7 +97,7 @@ unix: {
                  }
             
                 !isEmpty(SDK6) {
-                        LIBS += -framework CoreWLAN  -framework IOBluetooth
+                        LIBS += -framework CoreWLAN  -framework IOBluetooth -framework CoreLocation
                         DEFINES += MAC_SDK_10_6
                 }
            } else {
