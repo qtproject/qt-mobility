@@ -104,6 +104,8 @@ contains(build_unit_tests, yes):DEFINES+=QTM_BUILD_UNITTESTS
     QMAKE_RPATHDIR += $$OUTPUT_DIR/lib
 }
 
+contains(TEMPLATE,.*lib):DEFINES += QT_SHARED
+
 maemo6 {
     DEFINES+= Q_WS_MAEMO_6
 }
