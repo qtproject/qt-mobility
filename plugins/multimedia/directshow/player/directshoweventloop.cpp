@@ -139,11 +139,12 @@ void DirectShowEventLoop::processEvents()
         DirectShowPostedEvent *post = m_postsHead;
         m_postsHead = m_postsHead->next;
 
+        if (!m_postsHead)
+            m_postsTail = 0;
+
         locker.unlock();
         QCoreApplication::sendEvent(post->receiver, post->event);
         delete post;
         locker.relock();
     }
-
-    m_postsTail = 0;
 }
