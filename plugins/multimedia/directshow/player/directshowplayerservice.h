@@ -125,6 +125,7 @@ private:
     void doSeek(QMutexLocker *locker);
     void doPlay(QMutexLocker *locker);
     void doPause(QMutexLocker *locker);
+    void doStop(QMutexLocker *locker);
     void doReleaseAudioOutput(QMutexLocker *locker);
     void doReleaseVideoOutput(QMutexLocker *locker);
     void doReleaseGraph(QMutexLocker *locker);
@@ -162,7 +163,8 @@ private:
         Paused,
         DurationChange,
         StatusChange,
-        EndOfMedia
+        EndOfMedia,
+        PositionChange
     };
 
     enum GraphStatus
