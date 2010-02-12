@@ -63,7 +63,7 @@ class QSystemDisplayInfoPrivate;
 class Q_SYSINFO_EXPORT QSystemInfo : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString currentLanguage READ currentLanguage)
+    Q_PROPERTY(QString currentLanguage READ currentLanguage NOTIFY currentLanguageChanged)
     Q_PROPERTY(QStringList availableLanguages READ availableLanguages)
     Q_PROPERTY(QString currentCountryCode READ currentCountryCode)
     Q_ENUMS(Version)
@@ -116,10 +116,10 @@ class  Q_SYSINFO_EXPORT QSystemNetworkInfo : public QObject
     Q_ENUMS(NetworkMode)
     Q_PROPERTY(int cellId READ cellId)
     Q_PROPERTY(int locationAreaCode READ locationAreaCode)
-    Q_PROPERTY(QString currentMobileCountryCode READ currentMobileCountryCode)
-    Q_PROPERTY(QString currentMobileNetworkCode READ currentMobileNetworkCode)
-    Q_PROPERTY(QString homeMobileCountryCode READ homeMobileCountryCode)
-    Q_PROPERTY(QString homeMobileNetworkCode READ homeMobileNetworkCode)
+    Q_PROPERTY(QString currentMobileCountryCode READ currentMobileCountryCode NOTIFY currentMobileCountryCodeChanged)
+    Q_PROPERTY(QString currentMobileNetworkCode READ currentMobileNetworkCode NOTIFY currentMobileNetworkCodeChanged)
+    Q_PROPERTY(QString homeMobileCountryCode READ homeMobileCountryCode CONSTANT)
+    Q_PROPERTY(QString homeMobileNetworkCode READ homeMobileNetworkCode CONSTANT)
 
 
 public:
@@ -151,8 +151,8 @@ public:
     };
     Q_DECLARE_FLAGS(NetworkModes, NetworkMode)
 
-    QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
-    static int networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
+    Q_INVOKABLE QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
+    Q_INVOKABLE static int networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
     QString macAddress(QSystemNetworkInfo::NetworkMode mode);
 
     static int cellId();
@@ -162,7 +162,7 @@ public:
     static QString currentMobileNetworkCode();
     static QString homeMobileCountryCode();
     static QString homeMobileNetworkCode();
-    static QString networkName(QSystemNetworkInfo::NetworkMode mode);
+    Q_INVOKABLE static QString networkName(QSystemNetworkInfo::NetworkMode mode);
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
 
 
@@ -212,29 +212,29 @@ public:
         CdromDrive
 	};
 
-    qlonglong totalDiskSpace(const QString &driveVolume);
-    qlonglong availableDiskSpace(const QString &driveVolume);
+    Q_INVOKABLE qlonglong totalDiskSpace(const QString &driveVolume);
+    Q_INVOKABLE qlonglong availableDiskSpace(const QString &driveVolume);
     static QStringList logicalDrives();
 
-    QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
+    Q_INVOKABLE QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
 
 };
 
 class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(Profile currentProfile READ currentProfile)
-    Q_PROPERTY(PowerState currentPowerState READ currentPowerState)
-    Q_PROPERTY(SimStatus simStatus READ simStatus)
-    Q_PROPERTY(BatteryStatus batteryStatus READ batteryStatus)
+    Q_PROPERTY(Profile currentProfile READ currentProfile NOTIFY currentProfileChanged)
+    Q_PROPERTY(PowerState currentPowerState READ currentPowerState NOTIFY powerStateChanged)
+    Q_PROPERTY(SimStatus simStatus READ simStatus CONSTANT)
+    Q_PROPERTY(BatteryStatus batteryStatus READ batteryStatus NOTIFY batteryStatusChanged)
     Q_PROPERTY(InputMethodFlags inputMethodType READ inputMethodType)
 
-    Q_PROPERTY(QString imei READ imei)
-    Q_PROPERTY(QString imsi READ imsi)
-    Q_PROPERTY(QString manufacturer READ manufacturer)
-    Q_PROPERTY(QString model READ model)
-    Q_PROPERTY(QString productName READ productName)
-    Q_PROPERTY(int batteryLevel READ batteryLevel)
+    Q_PROPERTY(QString imei READ imei CONSTANT)
+    Q_PROPERTY(QString imsi READ imsi CONSTANT)
+    Q_PROPERTY(QString manufacturer READ manufacturer CONSTANT)
+    Q_PROPERTY(QString model READ model CONSTANT)
+    Q_PROPERTY(QString productName READ productName CONSTANT)
+    Q_PROPERTY(int batteryLevel READ batteryLevel NOTIFY batteryLevelChanged)
     Q_PROPERTY(bool isDeviceLocked READ isDeviceLocked)
 
 
@@ -334,7 +334,7 @@ public:
     ~QSystemScreenSaver();
 
     bool screenSaverInhibited();
-    bool setScreenSaverInhibit();
+    Q_INVOKABLE bool setScreenSaverInhibit();
 
 private:
     bool screenSaverIsInhibited;
