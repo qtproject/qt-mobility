@@ -170,57 +170,135 @@ void tst_QContactManagerSymbianSim::addContact_data()
 {
     // A string list containing the detail fields in format <detail definition name>:<field name>:<value>
     // For example first name: Name:First:James
+    QTest::addColumn<int>("expectedResult"); // 1 = pass, 0 = fail, -1 = depends on the SIM card
     QTest::addColumn<QString>("expectedDisplayLabel");
-    QTest::addColumn<QStringList>("details");
+    QTest::addColumn<QStringList>("details"); // format is <detail definition name>:<field name>:<value>
     QString unnamedLabel("Unnamed");
     QString es = QString();
 
     // TODO: what name field to use for a sim contact name?
     // Note: With the current implementation the value must not contain a ':' character
     QTest::newRow("custom label")
+        << 1 // expected to pass. Note: According to S60 Memory Copy UI specification only contacts with phone numbers should be saved onto a SIM card
         << "James"
-        << (QStringList() << "Name:CustomLabel:James");
+        << (QStringList()
+            << "Name:CustomLabel:James");
 
     QTest::newRow("custom label 2")
+        << 1 // expected to pass. Note: According to S60 Memory Copy UI specification only contacts with phone numbers should be saved onto a SIM card
         << "James Hunt"
-        << (QStringList() << "Name:CustomLabel:James Hunt");
+        << (QStringList()
+            << "Name:CustomLabel:James Hunt");
+
+    QTest::newRow("too long custom label")
+        << 1 // TODO: check that the label was cut to max length
+        << es
+        << (QStringList()
+            << "Name:CustomLabel:James Hunt the 12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890th");
 
     QTest::newRow("custom label and nick name")
+        << -1 // Depends on SIM card support (some cards support second name)
         << "James Hunt"
-        << (QStringList() << "Name:CustomLabel:James Hunt" << "Nickname:Nickname:Hunt the Shunt");
+        << (QStringList()
+            << "Name:CustomLabel:James Hunt"
+            << "Nickname:Nickname:Hunt the Shunt");
 
     QTest::newRow("phone number")
+        << 1
         << unnamedLabel
-        << (QStringList() << "PhoneNumber:PhoneNumber:+44752222222");
+        << (QStringList()
+            << "PhoneNumber:PhoneNumber:+44752222222");
 
     QTest::newRow("custom label and phone number")
+        << 1
         << "James Hunt"
-        << (QStringList() << "Name:CustomLabel:James Hunt" << "PhoneNumber:PhoneNumber:+44752222222");
+        << (QStringList()
+            << "Name:CustomLabel:James Hunt"
+            << "PhoneNumber:PhoneNumber:+44752222222");
+
+    QTest::newRow("custom label and funny (but legal) phone number")
+        << 1
+        << "James Hunt"
+        << (QStringList()
+            << "Name:CustomLabel:James Hunt"
+            << "PhoneNumber:PhoneNumber:+0123456789*#pw");
+
+    QTest::newRow("custom label and illegal phone number 1")
+        << 0 // illegal characters in the phone number, should fail
+        << "James Hunt"
+        << (QStringList()
+            << "Name:CustomLabel:James Hunt"
+            << "PhoneNumber:PhoneNumber:+44(75)2222222");
+
+    QTest::newRow("custom label and illegal phone number 2")
+        << 0 // illegal characters in the phone number, should fail
+        << "James Hunt"
+        << (QStringList()
+            << "Name:CustomLabel:James Hunt"
+            << "PhoneNumber:PhoneNumber:asdfqwer");
+
+    QTest::newRow("custom label and too long phone number")
+        << 0 // long enough phone number to fail on any SIM card
+        << "James Hunt"
+        << (QStringList()
+            << "Name:CustomLabel:James Hunt"
+            << "PhoneNumber:PhoneNumber:1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
 
     QTest::newRow("custom label and multiple phone numbers")
+        << -1 // some SIM cards support multiple phone numbers
         << "James Hunt"
-        << (QStringList() << "Name:CustomLabel:James Hunt" << "PhoneNumber:PhoneNumber:+44752222222" << "PhoneNumber:PhoneNumber:+44751111111");
+        << (QStringList()
+            << "Name:CustomLabel:James Hunt"
+            << "PhoneNumber:PhoneNumber:+44752222222"
+            << "PhoneNumber:PhoneNumber:+44751111111");
 
     QTest::newRow("custom label and email")
+        << -1 // some SIM cards support e-mail address
         << "James Hunt"
-        << (QStringList() << "Name:CustomLabel:James Hunt" << "EmailAddress:EmailAddress:james.hunt@mclaren.com");
+        << (QStringList()
+            << "Name:CustomLabel:James Hunt"
+            << "EmailAddress:EmailAddress:james.hunt@mclaren.com");
+
+    QTest::newRow("custom label and multiple emails")
+        << 0 // some SIM cards support multiple e-mail addresses, but not this many
+        << "James Hunt"
+        << (QStringList()
+            << "Name:CustomLabel:James Hunt"
+            << "EmailAddress:EmailAddress:james.hunt@march.com"
+            << "EmailAddress:EmailAddress:james.hunt@hesketh.com"
+            << "EmailAddress:EmailAddress:james.hunt@mclaren.com"
+            << "EmailAddress:EmailAddress:james.hunt@bbc.co.uk");
+
+    QTest::newRow("custom label and too long email")
+        << 0 // long enough e-mail to fail on any SIM card
+        << "James Hunt"
+        << (QStringList()
+            << "Name:CustomLabel:James Hunt"
+            << "EmailAddress:EmailAddress:james.hunt.the12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890th@mclaren.com");
 
     QTest::newRow("non-supported field")
+        << 0 // expected to fail
         << es
-        << (QStringList() << "Name:IllegalNameDetailFieldName:James");
+        << (QStringList()
+            << "Name:IllegalNameDetailFieldName:James");
 
     QTest::newRow("non-supported detail")
+        << 0 // expected to fail
         << es
-        << (QStringList() << "NotSupportedDetailDefinitionName:IllegalFieldName:FieldValue");
+        << (QStringList()
+            << "NotSupportedDetailDefinitionName:IllegalFieldName:FieldValue");
 
     QTest::newRow("empty, non-supported detail")
+        << 0 // expected to fail, since no valid details provided
         << es
-        << (QStringList() << "NotSupportedDetailDefinitionName:IllegalFieldName:");
+        << (QStringList()
+            << "NotSupportedDetailDefinitionName:IllegalFieldName:");
 }
 
 void tst_QContactManagerSymbianSim::addContact()
 {
     // Parse details and add them to the contact
+    QFETCH(int, expectedResult);
     QFETCH(QString, expectedDisplayLabel);
     QFETCH(QStringList, details);    
 
@@ -247,7 +325,17 @@ void tst_QContactManagerSymbianSim::addContact()
         contact.saveDetail(&contactDetail);
     }
 
-    if (isContactSupported(contact))
+    if (expectedResult == -1) {
+        // Unknown expected result, so we need to check what details the SIM
+        // card supports
+        if (isContactSupported(contact)) {
+            expectedResult = 1; 
+        } else {
+            expectedResult = 0;
+        }
+    }
+
+    if (expectedResult)
     {
         // verify contact can be saved
         QVERIFY(m_cm->saveContact(&contact));
