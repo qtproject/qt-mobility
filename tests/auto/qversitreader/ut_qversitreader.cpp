@@ -78,6 +78,8 @@ void UT_QVersitReader::init()
     qRegisterMetaType<QVersitReader::State>("QVersitReader::State");
     connect(mReader, SIGNAL(stateChanged(QVersitReader::State)),
             mSignalCatcher, SLOT(stateChanged(QVersitReader::State)));
+    connect(mReader, SIGNAL(resultsAvailable()),
+            mSignalCatcher, SLOT(resultsAvailable()));
 }
 
 void UT_QVersitReader::cleanup()
@@ -241,11 +243,13 @@ BEGIN:VCARD\r\nFN:Jane\r\nEND:VCARD";
     mInputDevice->setData(twoDocuments);
     mInputDevice->open(QBuffer::ReadWrite);
     mInputDevice->seek(0);
-    mSignalCatcher->mReceived.clear();
+    mSignalCatcher->mStateChanges.clear();
+    mSignalCatcher->mResultsCount = 0;
     QVERIFY(mReader->startReading());
-    QTRY_VERIFY(mSignalCatcher->mReceived.count() >= 2);
-    QCOMPARE(mSignalCatcher->mReceived.at(0), QVersitReader::ActiveState);
-    QCOMPARE(mSignalCatcher->mReceived.at(1), QVersitReader::FinishedState);
+    QTRY_VERIFY(mSignalCatcher->mStateChanges.count() >= 2);
+    QCOMPARE(mSignalCatcher->mStateChanges.at(0), QVersitReader::ActiveState);
+    QCOMPARE(mSignalCatcher->mStateChanges.at(1), QVersitReader::FinishedState);
+    QVERIFY(mSignalCatcher->mResultsCount >= 2);
     QCOMPARE(mReader->results().size(), 2);
     QCOMPARE(mReader->error(), QVersitReader::NoError);
 
@@ -254,13 +258,14 @@ BEGIN:VCARD\r\nFN:Jane\r\nEND:VCARD";
     mInputDevice->setData(twoDocuments);
     mInputDevice->open(QBuffer::ReadOnly);
     mInputDevice->seek(0);
-    mSignalCatcher->mReceived.clear();
+    mSignalCatcher->mStateChanges.clear();
+    mSignalCatcher->mResultsCount = 0;
     QVERIFY(mReader->startReading());
     mReader->cancel();
     mReader->waitForFinished();
-    QTRY_VERIFY(mSignalCatcher->mReceived.count() >= 2);
-    QCOMPARE(mSignalCatcher->mReceived.at(0), QVersitReader::ActiveState);
-    QVersitReader::State state(mSignalCatcher->mReceived.at(1));
+    QTRY_VERIFY(mSignalCatcher->mStateChanges.count() >= 2);
+    QCOMPARE(mSignalCatcher->mStateChanges.at(0), QVersitReader::ActiveState);
+    QVersitReader::State state(mSignalCatcher->mStateChanges.at(1));
     // It's possible that it finishes before it cancels.
     QVERIFY(state == QVersitReader::CanceledState
             || state == QVersitReader::FinishedState);

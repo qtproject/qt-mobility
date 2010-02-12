@@ -58,13 +58,19 @@ QTM_USE_NAMESPACE
 class SignalCatcher : public QObject
 {
 Q_OBJECT
+public:
+    SignalCatcher() : mResultsCount(0) {}
 public slots:
     void stateChanged(QVersitReader::State state) {
-        mReceived.append(state);
+        mStateChanges.append(state);
+    }
+    void resultsAvailable() {
+        mResultsCount += 1;
     }
 
 public:
-    QList<QVersitReader::State> mReceived;
+    QList<QVersitReader::State> mStateChanges;
+    int mResultsCount;
 };
 
 class UT_QVersitReader : public QObject                 
@@ -83,7 +89,7 @@ private slots: // Tests
     void testSetVersionFromProperty();
     void testParseNextVersitPropertyVCard21();
     void testParseNextVersitPropertyVCard30();
-    void testParseVersitDocument();     
+    void testParseVersitDocument();
 
 private: // Data
 

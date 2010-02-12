@@ -96,9 +96,16 @@ QTM_USE_NAMESPACE
 
 /*!
  * \fn QVersitReader::resultsAvailable(QList<QVersitDocument>& results)
+ * \deprecated
  * The signal is emitted by the reader as it reads from the device when it has made more Versit
  * documents available.
  * \a results is the complete list of documents read so far.
+ */
+
+/*!
+ * \fn QVersitReader::resultsAvailable()
+ * The signal is emitted by the reader as it reads from the device when it has made more Versit
+ * documents available.
  */
 
 /*! Constructs a new reader. */
@@ -108,6 +115,8 @@ QVersitReader::QVersitReader() : d(new QVersitReaderPrivate)
             this, SIGNAL(stateChanged(QVersitReader::State)),Qt::DirectConnection);
     connect(d, SIGNAL(resultsAvailable(QList<QVersitDocument>&)),
             this, SIGNAL(resultsAvailable(QList<QVersitDocument>&)), Qt::DirectConnection);
+    connect(d, SIGNAL(resultsAvailable(QList<QVersitDocument>&)),
+            this, SIGNAL(resultsAvailable()), Qt::DirectConnection);
 }
     
 /*! 
