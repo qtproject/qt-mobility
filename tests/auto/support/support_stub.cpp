@@ -41,13 +41,6 @@
 
 #include "support.h"
  
-#include <qmailaccount.h>
-#include <qmailaddress.h>
-#include <qmailnamespace.h>
-#include <qmailstore.h>
-
-#include <QFileInfo>
-
 // This function is private except to tst_QMailStore:
 class tst_QMailStore 
 {
