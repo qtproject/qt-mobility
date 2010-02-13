@@ -40,7 +40,11 @@
 ****************************************************************************/
 
 #include "support.h"
- 
+
+#include "qmessageaccountid.h"
+#include "qmessagefolderid.h"
+#include "qmessageid.h"
+
 // This function is private except to tst_QMailStore:
 class tst_QMailStore 
 {
@@ -56,16 +60,19 @@ void clearMessageStore()
 
 QMessageAccountId addAccount(const Parameters &params)
 {
+    Q_UNUSED(params);
     return QMessageAccountId();
 }
 
 QMessageFolderId addFolder(const Parameters &params)
 {
+    Q_UNUSED(params);
     return QMessageFolderId();
 }
 
 QMessageId addMessage(const Parameters &params)
 {
+    Q_UNUSED(params);
     return QMessageId();
 }
 

@@ -60,6 +60,10 @@ QMessageStorePrivate::QMessageStorePrivate()
 {
 }
 
+QMessageStorePrivate::~QMessageStorePrivate()
+{
+}
+
 void QMessageStorePrivate::initialize(QMessageStore *store)
 {
     q_ptr = store;
