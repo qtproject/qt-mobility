@@ -72,16 +72,14 @@ contains(mobility_modules,multimedia) {
 
 #Messaging examples
 contains(mobility_modules,messaging) {
-    contains(qmf_enabled,yes)|wince*|win32|symbian|maemo6 {
-        !win32-g++ {
-            SUBDIRS += \
-                querymessages \
-                writemessage \
-                serviceactions
+    !win32-g++ {
+        SUBDIRS += \
+            querymessages \
+            writemessage \
+            serviceactions
 
-            contains(mobility_modules,contacts) {
-                SUBDIRS += keepintouch
-            }
+        contains(mobility_modules,contacts) {
+            SUBDIRS += keepintouch
         }
     }
 }
