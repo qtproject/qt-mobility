@@ -91,9 +91,9 @@ QMessageStore* QMessageStore::instance()
     return d->q_ptr;
 }
 
-QMessageManager::Error QMessageManager::error() const
+QMessageManager::Error QMessageStore::error() const
 {
-    return NotYetImplemented;
+    return QMessageManager::NotYetImplemented;
 }
 
 QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
@@ -152,7 +152,7 @@ int QMessageStore::countAccounts(const QMessageAccountFilter& filter) const
     return 0; // stub
 }
 
-bool QMessageStore::removeMessage(const QMessageId& id, RemovalOption option)
+bool QMessageStore::removeMessage(const QMessageId& id, QMessageManager::RemovalOption option)
 {
     Q_UNUSED(id)
     Q_UNUSED(option)
