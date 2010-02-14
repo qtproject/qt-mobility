@@ -63,7 +63,7 @@ public:
     QTrackerContactIdFetchRequest(QContactAbstractRequest* req, QContactManagerEngine* parent);
 protected slots:
     //!\ reimp
-    void emitFinished();
+    void emitFinished(QContactManager::Error error = QContactManager::NoError);
 private:
     QContactLocalIdFetchRequest *idfetchrequest;
 };

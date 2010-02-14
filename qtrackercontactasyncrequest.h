@@ -44,10 +44,12 @@
 
 #include <QObject>
 
+#include <QContact>
+#include <QContactOnlineAccount>
+#include <QContactManager>
+
 #include <QtTracker/Tracker>
 #include <QtTracker/QLive>
-#include <qcontact.h>
-#include <qcontactonlineaccount.h>
 
 QTM_BEGIN_NAMESPACE
 class QContactAbstractRequest;
@@ -114,11 +116,11 @@ public slots:
 
 protected slots:
     virtual void run();
-    virtual void emitFinished();
+    virtual void emitFinished(QContactManager::Error error = QContactManager::NoError);
 
 protected:
-    void applyFilterToContact(SopranoLive::RDFVariable &variable, const QContactFilter &filter);
-    void applyDetailRangeFilterToContact(SopranoLive::RDFVariable &variable, const QContactFilter &filter);
+    QContactManager::Error applyFilterToContact(SopranoLive::RDFVariable &variable, const QContactFilter &filter);
+    QContactManager::Error applyDetailRangeFilterToContact(SopranoLive::RDFVariable &variable, const QContactFilter &filter);
 
     // contacts query
     SopranoLive::LiveNodes query;

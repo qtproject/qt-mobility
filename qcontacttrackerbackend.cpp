@@ -130,63 +130,57 @@ void QContactTrackerEngine::deref()
         delete this;
 }
 
-QList<QContactLocalId> QContactTrackerEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+QList<QContactLocalId> QContactTrackerEngine::contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
-
-    // TODO Implement sorting
-    QList<QContactLocalId> ids;
-    RDFVariable rdfContact = RDFVariable::fromType<nco::PersonContact>();
-    if (filter.type() == QContactFilter::ChangeLogFilter) {
-        const QContactChangeLogFilter& clFilter = static_cast<const QContactChangeLogFilter&>(filter);
-        // Removed since
-        if (clFilter.eventType() == QContactChangeLogFilter::EventRemoved) {
-            error = QContactManager::NotSupportedError;
-            return ids;
-        }
-        // Added since
-        if (clFilter.eventType() == QContactChangeLogFilter::EventAdded) {
-            rdfContact.property<nao::hasTag>().property<nao::prefLabel>() = LiteralValue("addressbook");
-            rdfContact.property<nie::contentCreated>() >= LiteralValue(clFilter.since().toString(Qt::ISODate));
-        }
-        // Changed since
-        else if (clFilter.eventType() == QContactChangeLogFilter::EventChanged) {
-            rdfContact.property<nao::hasTag>().property<nao::prefLabel>() = LiteralValue("addressbook");
-            rdfContact.property<nie::contentLastModified>() >= LiteralValue(clFilter.since().toString(Qt::ISODate));
-        }
-    }
-    RDFSelect query;
-    query.addColumn("contact_uri", rdfContact);
-    query.addColumn("contactId", rdfContact.property<nco::contactUID>());
-    foreach (QContactSortOrder sort, sortOrders) {
-        query.orderBy(contactDetail2Rdf(rdfContact, sort.detailDefinitionName(), sort.detailFieldName()),
-                      sort.direction() == Qt::AscendingOrder);
-    }
-    LiveNodes ncoContacts = ::tracker()->modelQuery(query);
-    for (int i = 0; i < ncoContacts->rowCount(); i++) {
-        ids.append(ncoContacts->index(i, 1).data().toUInt());
-    }
-
-    error = QContactManager::NoError;
-    return ids;
+    return contactIds(QContactFilter(), sortOrders, error);
 }
 
-QList<QContactLocalId> QContactTrackerEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+QList<QContactLocalId> QContactTrackerEngine::contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
-    Q_UNUSED(sortOrders)
+    QContactLocalIdFetchRequest request;
+    request.setFilter(filter);
+    request.setSorting(sortOrders);
 
-    QList<QContactLocalId> ids;
-    RDFVariable RDFContact = RDFVariable::fromType<nco::PersonContact>();
-    RDFSelect query;
-
-    query.addColumn("contact_uri", RDFContact);
-    query.addColumn("contactId", RDFContact.property<nco::contactUID>());
-    LiveNodes ncoContacts = ::tracker()->modelQuery(query);
-    for(int i=0; i<ncoContacts->rowCount(); i++) {
-        ids.append(ncoContacts->index(i, 1).data().toUInt());
+    QContactTrackerEngine engine(*this);
+    engine.startRequest(&request);
+    // 10 seconds should be enough
+    engine.waitForRequestFinished(&request, 10000);
+    if(!request.isFinished()) {
+        error = QContactManager::UnspecifiedError;
     }
+    else {
+        // leave the code for now while not all other code is fixed
+        error = request.error();
+    }
+    return request.ids();
+}
 
-    error = QContactManager::NoError;
-    return ids;
+QList<QContact> QContactTrackerEngine::contacts(const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error) const
+{
+    return contacts(QContactFilter(), sortOrders, definitionRestrictions, error);
+}
+
+QList<QContact> QContactTrackerEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error) const
+{
+    // the rest of the code is for internal usage, unit tests etc.
+    QContactFetchRequest request;
+    request.setDefinitionRestrictions(definitionRestrictions);
+    request.setFilter(filter);
+    request.setSorting(sortOrders);
+
+    QContactTrackerEngine engine(*this);
+    engine.startRequest(&request);
+    // 10 seconds should be enough
+    engine.waitForRequestFinished(&request, 10000);
+
+    if( !request.isFinished()) {
+        error = QContactManager::UnspecifiedError;
+    }
+    else {
+        // leave the code for now while not all other code is fixed
+        error = request.error();
+    }
+    return request.contacts();
 }
 
 QContact QContactTrackerEngine::contact(const QContactLocalId& contactId, QContactManager::Error& error ) const
@@ -225,16 +219,21 @@ QContact QContactTrackerEngine::contact_impl(const QContactLocalId& contactId, Q
     // 10 seconds should be enough
     engine.waitForRequestFinished(&request, 10000);
 
-    if( !request.isFinished() || request.contacts().size() == 0) {
+    if( !request.isFinished()) {
         error = QContactManager::UnspecifiedError;
+        return QContact();
+    }
+    else if(request.contacts().size() == 0)
+    {
+        error = QContactManager::DoesNotExistError;
+        return QContact();
     }
     else {
         // leave the code for now while not all other code is fixed
-        error = QContactManager::NoError;
+        error = request.error();
         return request.contacts()[0];
     }
 
-    return QContact();
 }
 
 bool QContactTrackerEngine::waitForRequestFinished(QContactAbstractRequest* req, int msecs)

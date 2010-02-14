@@ -167,7 +167,7 @@ void matchName(RDFVariable &variable, QContactDetailFilter &filter)
  * This method translates QContactFilter to tracker rdf filter. When query is made
  * after this method, it would return only contacts that fit the filter.
  */
-void QTrackerContactFetchRequest::applyFilterToContact(RDFVariable &variable,
+QContactManager::Error QTrackerContactFetchRequest::applyFilterToContact(RDFVariable &variable,
         const QContactFilter &filter)
 {
     if (filter.type() == QContactFilter::LocalIdFilter) {
@@ -176,6 +176,7 @@ void QTrackerContactFetchRequest::applyFilterToContact(RDFVariable &variable,
             variable.property<nco::contactUID>().isMemberOf(filt.ids());
         } else {
             qWarning() << Q_FUNC_INFO << "QContactLocalIdFilter idlist is empty";
+            return QContactManager::BadArgumentError;
         }
     } else if (filter.type() == QContactFilter::ContactDetailFilter) {
         // this one is tricky as we need to match in contacts or in affiliations
@@ -201,12 +202,13 @@ void QTrackerContactFetchRequest::applyFilterToContact(RDFVariable &variable,
             } else {
                 qWarning() << __PRETTY_FUNCTION__ << "QContactTrackerEngine: Unsupported QContactFilter::ContactDetail"
                     << filt.detailDefinitionName();
+                return QContactManager::NotSupportedError;
             }
         }
     }
     else if (filter.type() == QContactFilter::ContactDetailRangeFilter)
     {
-        applyDetailRangeFilterToContact(variable, filter);
+        return applyDetailRangeFilterToContact(variable, filter);
     }
     else if (filter.type() == QContactFilter::ChangeLogFilter) {
         const QContactChangeLogFilter& clFilter = static_cast<const QContactChangeLogFilter&>(filter);
@@ -215,9 +217,8 @@ void QTrackerContactFetchRequest::applyFilterToContact(RDFVariable &variable,
         variable.property<nao::hasTag>().property<nao::prefLabel>() = LiteralValue("addressbook");
 
         if (clFilter.eventType() == QContactChangeLogFilter::EventRemoved) { // Removed since
-            // did not find how to set errror to async request
-            // error = QContactManager::NotSupportedError;
             qWarning() << "QContactTrackerEngine: Unsupported QContactChangeLogFilter::Removed (contacts removed since)";
+            return QContactManager::NotSupportedError;
         } else if (clFilter.eventType() == QContactChangeLogFilter::EventAdded) { // Added since
             variable.property<nie::contentCreated>() >= LiteralValue(clFilter.since().toString(Qt::ISODate));
         } else if (clFilter.eventType() == QContactChangeLogFilter::EventChanged) { // Changed since
@@ -226,13 +227,20 @@ void QTrackerContactFetchRequest::applyFilterToContact(RDFVariable &variable,
     } else if (filter.type() == QContactFilter::UnionFilter) {
         const QContactUnionFilter unionFilter(filter);
         foreach (QContactFilter f, unionFilter.filters()) {
-            applyFilterToContact(variable, f);
+            QContactManager::Error error = applyFilterToContact(variable, f);
+            if (QContactManager::NoError != error)
+                return error;
         }
     }
+    else if(filter.type() == QContactFilter::InvalidFilter || filter.type() == QContactFilter::DefaultFilter)
+        return QContactManager::NoError;
+    else
+        return QContactManager::NotSupportedError;
+    return QContactManager::NoError;
 }
 
 //!\sa applyFilterToContact
-void QTrackerContactFetchRequest::applyDetailRangeFilterToContact(RDFVariable &variable, const QContactFilter &filter)
+QContactManager::Error QTrackerContactFetchRequest::applyDetailRangeFilterToContact(RDFVariable &variable, const QContactFilter &filter)
 {
     Q_ASSERT(filter.type() == QContactFilter::ContactDetailRangeFilter);
     if (filter.type() == QContactFilter::ContactDetailRangeFilter) {
@@ -249,10 +257,11 @@ void QTrackerContactFetchRequest::applyDetailRangeFilterToContact(RDFVariable &v
                 variable.property<nco::birthDate>() > LiteralValue(filt.minValue().toDate().toString(Qt::ISODate));
             else
                 variable.property<nco::birthDate>() >= LiteralValue(filt.minValue().toDate().toString(Qt::ISODate));
-            return;
+            return QContactManager::NoError;
         }
     }
     qWarning() << __PRETTY_FUNCTION__ << "Unsupported detail range filter";
+    return QContactManager::NotSupportedError;
 }
 
 
@@ -419,7 +428,12 @@ void QTrackerContactFetchRequest::run()
     QContactFetchRequest* r = qobject_cast<QContactFetchRequest*> (req);
 
     RDFVariable RDFContact = RDFVariable::fromType<nco::PersonContact>();
-    applyFilterToContact(RDFContact, r->filter());
+    QContactManager::Error error = applyFilterToContact(RDFContact, r->filter());
+    if (error != QContactManager::NoError)
+    {
+        emitFinished(error);
+        return;
+    }
     if (r->definitionRestrictions().contains(QContactPhoneNumber::DefinitionName)) {
         queryPhoneNumbersNodes.clear();
         queryPhoneNumbersNodesPending = 2;
@@ -672,13 +686,13 @@ void QTrackerContactFetchRequest::contactsReady()
     emitFinished();
 }
 
-void QTrackerContactFetchRequest::emitFinished()
+void QTrackerContactFetchRequest::emitFinished(QContactManager::Error error)
 {
     QContactFetchRequest *fetchRequest = qobject_cast<QContactFetchRequest *>(req);
     Q_ASSERT(fetchRequest);
     if(fetchRequest) {
         QContactManagerEngine::updateRequestState(fetchRequest, QContactAbstractRequest::FinishedState);
-        QContactManagerEngine::updateContactFetchRequest(fetchRequest, result, QContactManager::NoError);
+        QContactManagerEngine::updateContactFetchRequest(fetchRequest, result, error);
     }
 }
 

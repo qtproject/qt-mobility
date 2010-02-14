@@ -82,7 +82,7 @@ void ut_qtcontacts_trackerplugin::testContacts()
     trackerEngine->saveContact(&c1, error);
     trackerEngine->saveContact(&c2, error);
     QVERIFY2((error == QContactManager::NoError),"Saving contact");
-    QList<QContactLocalId> contacts = trackerEngine->contacts(queryFilter, sortOrders, error);
+    QList<QContactLocalId> contacts = trackerEngine->contactIds(queryFilter, sortOrders, error);
     QVERIFY2(contacts.contains(c1.localId()), "Previously added contact is not found");
     QVERIFY2(contacts.contains(c2.localId()), "Previously added contact is not found");
 }
@@ -888,7 +888,7 @@ void ut_qtcontacts_trackerplugin::testContactsRemovedSince()
     QContactChangeLogFilter filter(QContactChangeLogFilter::EventRemoved);
     filter.setSince(start);
     QList<QContactSortOrder> sorts;
-    QList<QContactLocalId> actuallyRemoved = trackerEngine->contacts(filter, sorts, error);
+    QList<QContactLocalId> actuallyRemoved = trackerEngine->contactIds(filter, sorts, error);
     QVERIFY(actuallyRemoved.isEmpty());
     QVERIFY(error == QContactManager::NotSupportedError);
 }
