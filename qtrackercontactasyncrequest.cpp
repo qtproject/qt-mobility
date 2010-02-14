@@ -199,11 +199,16 @@ void QTrackerContactFetchRequest::applyFilterToContact(RDFVariable &variable,
                 rdfEmailAddress = variable.property<nco::hasEmailAddress>();
                 rdfEmailAddress.property<nco::emailAddress>() = LiteralValue(filt.value().toString());
             } else {
-                qWarning() << "QContactTrackerEngine: Unsupported QContactFilter::ContactDetail"
+                qWarning() << __PRETTY_FUNCTION__ << "QContactTrackerEngine: Unsupported QContactFilter::ContactDetail"
                     << filt.detailDefinitionName();
             }
         }
-    } else if (filter.type() == QContactFilter::ChangeLogFilter) {
+    }
+    else if (filter.type() == QContactFilter::ContactDetailRangeFilter)
+    {
+        applyDetailRangeFilterToContact(variable, filter);
+    }
+    else if (filter.type() == QContactFilter::ChangeLogFilter) {
         const QContactChangeLogFilter& clFilter = static_cast<const QContactChangeLogFilter&>(filter);
         // do not return facebook and telepathy contacts here
         // it is a temp implementation for the what to offer to synchronization constraint
@@ -225,6 +230,31 @@ void QTrackerContactFetchRequest::applyFilterToContact(RDFVariable &variable,
         }
     }
 }
+
+//!\sa applyFilterToContact
+void QTrackerContactFetchRequest::applyDetailRangeFilterToContact(RDFVariable &variable, const QContactFilter &filter)
+{
+    Q_ASSERT(filter.type() == QContactFilter::ContactDetailRangeFilter);
+    if (filter.type() == QContactFilter::ContactDetailRangeFilter) {
+        QContactDetailRangeFilter filt = filter;
+        // birthday range
+        if (QContactBirthday::DefinitionName == filt.detailDefinitionName()
+                && QContactBirthday::FieldBirthday == filt.detailFieldName())
+        {
+            if (filt.rangeFlags() & QContactDetailRangeFilter::IncludeUpper)
+                variable.property<nco::birthDate>() <= LiteralValue(filt.maxValue().toDate().toString(Qt::ISODate));
+            else
+                variable.property<nco::birthDate>() < LiteralValue(filt.maxValue().toDate().toString(Qt::ISODate));
+            if (filt.rangeFlags() & QContactDetailRangeFilter::ExcludeLower)
+                variable.property<nco::birthDate>() > LiteralValue(filt.minValue().toDate().toString(Qt::ISODate));
+            else
+                variable.property<nco::birthDate>() >= LiteralValue(filt.minValue().toDate().toString(Qt::ISODate));
+            return;
+        }
+    }
+    qWarning() << __PRETTY_FUNCTION__ << "Unsupported detail range filter";
+}
+
 
 /*
  * To understand why all the following methods have for affiliation param, check nco ontology:

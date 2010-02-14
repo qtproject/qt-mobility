@@ -118,6 +118,7 @@ protected slots:
 
 protected:
     void applyFilterToContact(SopranoLive::RDFVariable &variable, const QContactFilter &filter);
+    void applyDetailRangeFilterToContact(SopranoLive::RDFVariable &variable, const QContactFilter &filter);
 
     // contacts query
     SopranoLive::LiveNodes query;
