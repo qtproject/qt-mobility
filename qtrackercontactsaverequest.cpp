@@ -310,20 +310,9 @@ void QTrackerContactSaveRequest::saveContactDetails( RDFServicePtr service,
                     Live<nie::DataObject> fdo = service->liveNode( avatar );
                     ncoContact->setPhoto(fdo);
                 }
-/*                else if (definition == QContactOnlineAccount::DefinitionName){
-                    // TODO parse URI, once it is defined
-                    QString account = det.value("Account");
-                    QString serviceName = det.value("ServiceName");
-                    // TODO refactor  - remove blocking call in next line
-                    Live<nco::IMAccount> liveIMAccount = ncoContact->firstHasIMAccount();
-                    if (0 == liveIMAccount)
-                    {
-                        liveIMAccount = ncoContact->addHasIMAccount();
-                    }
-                    liveIMAccount->setImID(account);
-                    liveIMAccount->setImAccountType(serviceName);
+                if(definition == QContactBirthday::DefinitionName) {
+                    ncoContact->setBirthDate(QDateTime(det.variantValue(QContactBirthday::FieldBirthday).toDate(), QTime(), Qt::UTC));
                 }
-*/
             } // end foreach detail
         }
     }

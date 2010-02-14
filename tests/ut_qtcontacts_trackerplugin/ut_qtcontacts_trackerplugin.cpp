@@ -1050,6 +1050,11 @@ void ut_qtcontacts_trackerplugin::testFilterContacts()
 
     phone.setNumber("4872444");
     c.saveDetail(&phone);
+
+    QContactBirthday birthday;
+    birthday.setDate(QDate(2010, 2, 14));
+    c.saveDetail(&birthday);
+
     trackerEngine->saveContact(&c, error);
 
     QStringList details;
@@ -1102,6 +1107,22 @@ void ut_qtcontacts_trackerplugin::testFilterContacts()
         QVERIFY(containsPhone);
     }
     QVERIFY(containsThisId);
+
+    // filter by birthday range
+    QContactDetailRangeFilter rangeFilter;
+    rangeFilter.setDetailDefinitionName(QContactBirthday::DefinitionName, QContactBirthday::FieldBirthday);
+    // include lower & exclude upper by default
+    rangeFilter.setRange(QDate(2010, 2, 14), QDate(2010, 2, 15));
+    QList<QContact> contacts = trackerEngine->contacts(rangeFilter, QList<QContactSortOrder>(), QStringList()<< QContactBirthday::DefinitionName, error);
+    QVERIFY(!contacts.isEmpty());
+    bool containsOurContact(false);
+    foreach(const QContact &cont, contacts)
+    {
+        QVERIFY(cont.detail<QContactBirthday>().date() == QDate(2010, 2, 14));
+        if( c.id() == cont.id() )
+            containsOurContact = true;
+    }
+    QVERIFY(containsOurContact);
 }
 
 void ut_qtcontacts_trackerplugin::testFilterContactsEndsWith()

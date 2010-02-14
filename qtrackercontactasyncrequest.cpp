@@ -249,14 +249,15 @@ QContactManager::Error QTrackerContactFetchRequest::applyDetailRangeFilterToCont
         if (QContactBirthday::DefinitionName == filt.detailDefinitionName()
                 && QContactBirthday::FieldBirthday == filt.detailFieldName())
         {
+            RDFVariable time = variable.property<nco::birthDate>();
             if (filt.rangeFlags() & QContactDetailRangeFilter::IncludeUpper)
-                variable.property<nco::birthDate>() <= LiteralValue(filt.maxValue().toDate().toString(Qt::ISODate));
+                time <= LiteralValue(filt.maxValue().toDateTime().toString(Qt::ISODate));
             else
-                variable.property<nco::birthDate>() < LiteralValue(filt.maxValue().toDate().toString(Qt::ISODate));
+                time < LiteralValue(filt.maxValue().toDateTime().toString(Qt::ISODate));
             if (filt.rangeFlags() & QContactDetailRangeFilter::ExcludeLower)
-                variable.property<nco::birthDate>() > LiteralValue(filt.minValue().toDate().toString(Qt::ISODate));
+                time > LiteralValue(filt.minValue().toDateTime().toString(Qt::ISODate));
             else
-                variable.property<nco::birthDate>() >= LiteralValue(filt.minValue().toDate().toString(Qt::ISODate));
+                time >= LiteralValue(filt.minValue().toDateTime().toString(Qt::ISODate));
             return QContactManager::NoError;
         }
     }
