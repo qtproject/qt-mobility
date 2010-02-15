@@ -44,7 +44,7 @@
 #include "qnmdbushelper_p.h"
 
 #if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
-#include <NetworkManager/NetworkManager.h>
+#include "qnetworkservicemanager_p.h" 
 
 #include <QDBusError>
 #include <QDBusInterface>
