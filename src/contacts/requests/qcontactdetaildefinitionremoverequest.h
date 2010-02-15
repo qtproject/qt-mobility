@@ -61,6 +61,7 @@ public:
     /* Selection */
     void Q_DECL_DEPRECATED setNames(const QStringList& names);  // deprecated
     QStringList Q_DECL_DEPRECATED names() const;                // deprecated
+    void Q_DECL_DEPRECATED setContactType(const QString& type); // deprecated
     void setDefinitionNames(const QString& contactType, const QStringList& names);
     QStringList definitionNames() const;               // replaces ^^
     QString contactType() const;
