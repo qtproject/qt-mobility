@@ -1,5 +1,4 @@
-include(../pathconfig.pri)
-include($$QT_MOBILITY_BUILD_TREE/config.pri)
+include(../staticconfig.pri)
         
 !contains(build_examples, yes):error(Please use the -examples configure switch to enable building of examples)
 

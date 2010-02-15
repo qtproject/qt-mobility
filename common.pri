@@ -11,8 +11,7 @@ CONFIG(debug, debug|release) {
     WAS_IN_DEBUG=release
 }
 
-include(pathconfig.pri)
-include($$QT_MOBILITY_BUILD_TREE/config.pri)
+include(staticconfig.pri)
 
 mac {
     contains(QT_CONFIG, qt_framework):contains(TEMPLATE, lib) {

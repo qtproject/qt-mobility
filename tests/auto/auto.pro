@@ -1,7 +1,6 @@
 TEMPLATE = subdirs
 
-include(../../pathconfig.pri)
-include($$QT_MOBILITY_BUILD_TREE/config.pri)
+include(../../staticconfig.pri)
 
 contains(mobility_modules,serviceframework) {
     SUBDIRS += databasemanager \                #service framework

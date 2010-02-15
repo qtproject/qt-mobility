@@ -10,4 +10,5 @@
 isEmpty(QT_MOBILITY_SOURCE_TREE):QT_MOBILITY_SOURCE_TREE = $$PWD 
 isEmpty(QT_MOBILITY_BUILD_TREE):QT_MOBILITY_BUILD_TREE = $$PWD 
 
-
+#now include the dynamic config
+include($$QT_MOBILITY_BUILD_TREE/config.pri)

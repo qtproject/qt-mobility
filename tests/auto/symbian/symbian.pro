@@ -5,8 +5,7 @@ symbian {
     # multimedia coulld also use MultimediaDD capability
 }
 
-include(../../../pathconfig.pri)
-include($$QT_MOBILITY_BUILD_TREE/config.pri)
+include(../../../staticconfig.pri)
 
 contains(mobility_modules,multimedia) {
 #Multimedia

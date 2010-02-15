@@ -12,7 +12,7 @@ symbian {
 }
 
 # config.pri specifies the configure options
-include(pathconfig.pri)
+include(staticconfig.pri)
 !include($$QT_MOBILITY_BUILD_TREE/config.pri) {
     error("Please run configure script");
     #also fails if .qmake.cache was not generated which may
