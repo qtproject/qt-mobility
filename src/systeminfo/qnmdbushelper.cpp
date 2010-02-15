@@ -55,6 +55,14 @@
 #include <QDebug>
 
 QTM_BEGIN_NAMESPACE
+QNmDBusHelper::QNmDBusHelper(QObject * parent)
+        : QObject(parent)
+{
+}
+
+QNmDBusHelper::~QNmDBusHelper()
+{
+}
 
 void QNmDBusHelper::deviceStateChanged(quint32 state)
  {
