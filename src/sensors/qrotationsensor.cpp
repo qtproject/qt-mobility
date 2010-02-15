@@ -54,6 +54,7 @@ IMPLEMENT_READING(QRotationReading)
     \brief The QRotationReading class represents one reading from the
            rotation sensor.
 
+    \section2 QRotationReading Units
     The rotation sensor returns the rotation of the device along the X, Y and Z
     axes. The scale of the values is radians. The axes are arranged as follows.
 
@@ -85,11 +86,11 @@ IMPLEMENT_READING(QRotationReading)
 /*!
     \property QRotationReading::x
     \brief the rotation on the X axis.
+
+    Measured as radians.
+    \sa {QRotationReading Units}
 */
 
-/*!
-    Returns the rotation on the X axis.
-*/
 qreal QRotationReading::x() const
 {
     return d->x;
@@ -106,11 +107,11 @@ void QRotationReading::setX(qreal x)
 /*!
     \property QRotationReading::y
     \brief the rotation on the Y axis.
+
+    Measured as radians.
+    \sa {QRotationReading Units}
 */
 
-/*!
-    Returns the rotation on the Y axis.
-*/
 qreal QRotationReading::y() const
 {
     return d->y;
@@ -127,11 +128,11 @@ void QRotationReading::setY(qreal y)
 /*!
     \property QRotationReading::z
     \brief the rotation on the Z axis.
+
+    Measured as radians.
+    \sa {QRotationReading Units}
 */
 
-/*!
-    Returns the rotation on the Z axis.
-*/
 qreal QRotationReading::z() const
 {
     return d->z;

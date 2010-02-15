@@ -54,6 +54,7 @@ IMPLEMENT_READING(QAmbientLightReading)
     \brief The QAmbientLightReading class represents one reading from the
            ambient light sensor.
 
+    \section2 QAmbientLightReading Units
     The ambient light sensor returns the intensity of the ambient light
     using the pre-defined values found in the QAmbientLightReading::LightLevel
     enum.
@@ -75,11 +76,11 @@ IMPLEMENT_READING(QAmbientLightReading)
 /*!
     \property QAmbientLightReading::lightLevel
     \brief the ambient light level.
+
+    The value represents the ambient light and comes from QAmbientLightReading::LightLevel.
+    \sa {QAmbientLightReading Units}
 */
 
-/*!
-    Returns the ambient light level.
-*/
 QAmbientLightReading::LightLevel QAmbientLightReading::lightLevel() const
 {
     return static_cast<LightLevel>(d->lightLevel);

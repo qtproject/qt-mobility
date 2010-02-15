@@ -54,6 +54,7 @@ IMPLEMENT_READING(QOrientationReading)
     \brief The QOrientationReading class represents one reading from the
            orientation sensor.
 
+    \section2 QOrientationReading Units
     The orientation sensor returns the orientation of the device using
     the pre-defined values found in the QOrientationReading::Orientation
     enum.
@@ -100,11 +101,11 @@ IMPLEMENT_READING(QOrientationReading)
 /*!
     \property QOrientationReading::orientation
     \brief the orientation of the device.
+
+    The unit is an enumeration describing the orientation of the screen.
+    \sa {QOrientationReading Units}
 */
 
-/*!
-    Returns the orientation of the device.
-*/
 QOrientationReading::Orientation QOrientationReading::orientation() const
 {
     return static_cast<QOrientationReading::Orientation>(d->orientation);

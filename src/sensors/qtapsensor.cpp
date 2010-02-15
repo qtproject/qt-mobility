@@ -54,6 +54,7 @@ IMPLEMENT_READING(QTapReading)
     \brief The QTapReading class represents one reading from the
            tap sensor.
 
+    \section2 QTapReading Units
     The tap sensor registers tap and double tap events in one of the six directions.
     There are 3 axes that originate from the phone. They are arranged as follows.
 \code
@@ -99,12 +100,9 @@ IMPLEMENT_READING(QTapReading)
     \property QTapReading::tapDirection
     \brief the direction of the tap.
 
-    \sa TapDirection
+    \sa {QTapReading Units}
 */
 
-/*!
-    Returns the tap direction.
-*/
 QTapReading::TapDirection QTapReading::tapDirection() const
 {
     return static_cast<QTapReading::TapDirection>(d->tapDirection);
@@ -121,11 +119,14 @@ void QTapReading::setTapDirection(QTapReading::TapDirection tapDirection)
 /*!
     \property QTapReading::doubleTap
     \brief a value indicating if there was a single or double tap.
+
+    \list
+    \o true - double tap
+    \o false - single tap
+    \endlist
+    \sa {QTapReading Units}
 */
 
-/*!
-    Returns true if the reading was a double tap.
-*/
 bool QTapReading::isDoubleTap() const
 {
     return d->doubleTap;

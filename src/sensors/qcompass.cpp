@@ -54,6 +54,7 @@ IMPLEMENT_READING(QCompassReading)
     \brief The QCompassReading class represents one reading from a
            compass.
 
+    \section2 QCompassReading Units
     The compass returns the azimuth of the device as degrees from
     magnetic north in a clockwise direction based on the top of the UI.
     There is also a value to indicate the calibration status of the device.
@@ -76,11 +77,12 @@ IMPLEMENT_READING(QCompassReading)
 /*!
     \property QCompassReading::azimuth
     \brief the azimuth of the device.
+
+    Measured in degrees from magnetic north in a clockwise direction based
+    the top of the UI.
+    \sa {QCompassReading Units}
 */
 
-/*!
-    Returns the azimuth of the device.
-*/
 qreal QCompassReading::azimuth() const
 {
     return d->azimuth;
@@ -99,11 +101,9 @@ void QCompassReading::setAzimuth(qreal azimuth)
     \brief the calibration level of the reading.
 
     The higher the calibration, the more accurate the measurement is.
+    \sa {QCompassReading Units}
 */
 
-/*!
-    Returns the calibration level of the reading.
-*/
 QCompassReading::CalibrationLevel QCompassReading::calibrationLevel() const
 {
     return static_cast<QCompassReading::CalibrationLevel>(d->calibrationLevel);

@@ -54,6 +54,7 @@ IMPLEMENT_READING(QProximityReading)
     \brief The QProximityReading class represents one reading from the
            proximity sensor.
 
+    \target QProximityReading_Units
     The proximity sensor returns an indication of how far the user is
     away from the device using the pre-defined values found in the
     QProximityReading::Proximity enum.
@@ -72,11 +73,11 @@ IMPLEMENT_READING(QProximityReading)
 /*!
     \property QProximityReading::proximity
     \brief the proximity of the user.
+
+    The value is an indication of if the user is close or not.
+    \sa QProximityReading_Units
 */
 
-/*!
-    Returns the proximity of the user.
-*/
 QProximityReading::Proximity QProximityReading::proximity() const
 {
     return static_cast<QProximityReading::Proximity>(d->proximity);

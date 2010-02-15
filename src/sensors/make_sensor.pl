@@ -175,16 +175,20 @@ IMPLEMENT_READING('.$reading.')
     \brief The '.$reading.' class holds readings from the [X] sensor.
 
     [Fill this out]
+
+    \section2 '.$reading.' Units
+
+    [Fill this out]
 */
 
 /*!
     \property '.$reading.'::myprop
     \brief [what does it hold?]
+
+    [What are the units?]
+    \sa {'.$reading.' Units}
 */
 
-/*!
-    Returns [what?]
-*/
 qreal '.$reading.'::myprop() const
 {
     return d->myprop;
