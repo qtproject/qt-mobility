@@ -80,6 +80,8 @@ QTM_BEGIN_NAMESPACE
 
 class QSystemNetworkInfo;
 
+class QLangLoopThread;
+
 class QSystemInfoPrivate : public QObject
 {
     Q_OBJECT
@@ -95,12 +97,17 @@ public:
 
     QString currentCountryCode() const;
     bool hasFeatureSupported(QSystemInfo::Feature feature);
+    void languageChanged(const QString &);
+    static QSystemInfoPrivate *instance() {return self;}
+
 Q_SIGNALS:
     void currentLanguageChanged(const QString &);
 
 private:
     QTimer *langTimer;
     QString langCached;
+    QLangLoopThread * langloopThread;
+    static QSystemInfoPrivate *self;
 
 private Q_SLOTS:
 
@@ -143,7 +150,7 @@ Q_SIGNALS:
    void networkNameChanged(QSystemNetworkInfo::NetworkMode, const QString &);
    void networkModeChanged(QSystemNetworkInfo::NetworkMode);
 
-public slots:
+public Q_SLOTS:
    void primaryInterface();
 
 private:
@@ -155,7 +162,7 @@ private:
     QString defaultInterface;
     QSystemNetworkInfo::NetworkMode modeForInterface(QString interfaceName);
 
-private slots:
+private Q_SLOTS:
     void rssiTimeout();
 };
 
@@ -254,7 +261,7 @@ private:
     bool isInhibited;
     QTimer *ssTimer;
 
-private slots:
+private Q_SLOTS:
     void activityTimeout();
 
 };
@@ -278,7 +285,26 @@ private:
     SCDynamicStoreRef storeSession;// = NULL;
     CFRunLoopSourceRef runloopSource;
 
-private slots:
+private Q_SLOTS:
+};
+
+class QLangLoopThread : public QThread
+{
+    Q_OBJECT
+
+public:
+    QLangLoopThread(QObject *parent = 0);
+    ~QLangLoopThread();
+    bool keepRunning;
+    void quit();
+
+protected:
+    void run();
+
+private:
+    QMutex mutex;
+
+private Q_SLOTS:
 };
 
 QTM_END_NAMESPACE
