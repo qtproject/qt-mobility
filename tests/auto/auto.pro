@@ -46,12 +46,12 @@ contains(mobility_modules,publishsubscribe) {
 	   qcrmlparser
 
     unix|win32 {
-        !symbian:!maemo6: SUBDIRS+= \
+        !symbian:!maemo6:!maemo5: SUBDIRS+= \
             qsystemreadwritelock \
             qsystemreadwritelock_oop
     }
 
-    unix:!symbian:!maemo6: {
+    unix:!symbian:!maemo6:!maemo5 {
         SUBDIRS+= \
                qpacket \
                qmallocpool \

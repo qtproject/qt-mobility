@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>465</width>
-    <height>311</height>
+    <width>400</width>
+    <height>320</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -36,44 +36,13 @@
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QPushButton" name="connectButton">
-       <property name="text">
-        <string>Connect</string>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
    <item>
-    <widget class="QTableWidget" name="values">
-     <attribute name="horizontalHeaderDefaultSectionSize">
-      <number>100</number>
-     </attribute>
-     <attribute name="horizontalHeaderStretchLastSection">
-      <bool>true</bool>
-     </attribute>
-     <attribute name="verticalHeaderVisible">
-      <bool>false</bool>
-     </attribute>
-     <attribute name="verticalHeaderVisible">
-      <bool>false</bool>
-     </attribute>
-     <column>
-      <property name="text">
-       <string>Path</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Value</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Type</string>
-      </property>
-     </column>
+    <widget class="QPushButton" name="connectButton">
+     <property name="text">
+      <string>Connect</string>
+     </property>
     </widget>
    </item>
    <item>
