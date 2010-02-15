@@ -59,7 +59,7 @@ QTM_BEGIN_NAMESPACE
 QNetworkManagerInterface::QNetworkManagerInterface(QObject *parent)
         : QDBusAbstractInterface((const QString &)NM_DBUS_SERVICE, (const QString &)NM_DBUS_PATH,(const char *)NM_DBUS_INTERFACE, QDBusConnection::systemBus(), parent)
 {
-    nmDBusHelper = new QNmDBusHelper;
+    nmDBusHelper = new QNmDBusHelper(this);
     connect(nmDBusHelper, SIGNAL(pathForPropertiesChanged(const QString &,QMap<QString,QVariant>)),
                     this,SIGNAL(propertiesChanged( const QString &, QMap<QString,QVariant>)));
     connect(nmDBusHelper,SIGNAL(pathForStateChanged(const QString &, quint32)),
@@ -170,7 +170,7 @@ bool QNetworkManagerInterfaceAccessPoint::setConnections()
         return false;
 
     bool allOk = false;
-    nmDBusHelper = new QNmDBusHelper;
+    nmDBusHelper = new QNmDBusHelper(this);
     connect(nmDBusHelper, SIGNAL(pathForPropertiesChanged(const QString &,QMap<QString,QVariant>)),
             this,SIGNAL(propertiesChanged( const QString &, QMap<QString,QVariant>)));
 
@@ -251,7 +251,7 @@ bool QNetworkManagerInterfaceDevice::setConnections()
         return false;
 
     bool allOk = false;
-    nmDBusHelper = new QNmDBusHelper;
+    nmDBusHelper = new QNmDBusHelper(this);
     connect(nmDBusHelper,SIGNAL(pathForStateChanged(const QString &, quint32)),
             this, SIGNAL(stateChanged(const QString&, quint32)));
     if(QDBusConnection::systemBus().connect(service(),
@@ -316,7 +316,7 @@ bool QNetworkManagerInterfaceDeviceWired::setConnections()
 
     bool allOk = false;
 
-    nmDBusHelper = new QNmDBusHelper;
+    nmDBusHelper = new QNmDBusHelper(this);
     connect(nmDBusHelper, SIGNAL(pathForPropertiesChanged(const QString &,QMap<QString,QVariant>)),
             this,SIGNAL(propertiesChanged( const QString &, QMap<QString,QVariant>)));
     if(QDBusConnection::systemBus().connect(service(),
@@ -363,7 +363,7 @@ bool QNetworkManagerInterfaceDeviceWireless::setConnections()
         return false;
 
     bool allOk = false;
-    nmDBusHelper = new QNmDBusHelper;
+    nmDBusHelper = new QNmDBusHelper(this);
     connect(nmDBusHelper, SIGNAL(pathForPropertiesChanged(const QString &,QMap<QString,QVariant>)),
             this,SIGNAL(propertiesChanged( const QString &, QMap<QString,QVariant>)));
 
@@ -500,7 +500,7 @@ bool QNetworkManagerSettingsConnection::setConnections()
         allOk = true;
     }
 
-    nmDBusHelper = new QNmDBusHelper;
+    nmDBusHelper = new QNmDBusHelper(this);
     connect(nmDBusHelper, SIGNAL(pathForSettingsRemoved(const QString &)),
             this,SIGNAL(removed( const QString &)));
 
@@ -688,7 +688,7 @@ bool QNetworkManagerConnectionActive::setConnections()
         return false;
 
     bool allOk = false;
-    nmDBusHelper = new QNmDBusHelper;
+    nmDBusHelper = new QNmDBusHelper(this);
     connect(nmDBusHelper, SIGNAL(pathForPropertiesChanged(const QString &,QMap<QString,QVariant>)),
             this,SIGNAL(propertiesChanged( const QString &, QMap<QString,QVariant>)));
     if(QDBusConnection::systemBus().connect(service(),
