@@ -95,6 +95,9 @@ QTM_USE_NAMESPACE
  * \sa QVersitContactImporter, QVersitContactExporter, QVersitResourceHandler
  */
 
+/*!
+ * Constructs a QVersitDefaultResourceHandler.
+ */
 QVersitDefaultResourceHandler::QVersitDefaultResourceHandler()
     : d(new QVersitDefaultResourceHandlerPrivate)
 {

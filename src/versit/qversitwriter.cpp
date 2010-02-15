@@ -60,7 +60,20 @@ QTM_USE_NAMESPACE
   which can be for example a file or a memory buffer.
   The writing can be done asynchronously and the waitForFinished()
   function can be used to implement a blocking write.
- 
+
+  The serialization of the document is done in accordance with the type of the QVersitDocument
+  being written.  The value of each QVersitProperty is encoded according to the type of object:
+  \list
+  \o \l{QString}{QStrings} are serialized verbatim, unless the default codec of the writer cannot
+  encode the string: in this case, UTF-8 is used to encode it (and the CHARSET parameter added to
+  the property, as per the vCard 2.1 specification).  If the document type is vCard 2.1,
+  quoted-printable encoding may also be performed.
+  \o \l{QByteArray}{QByteArrays} are assumed to be binary data and are serialized as base-64 encoded
+  values.
+  \o \l{QVersitDocument}{QVersitDocuments} are serialized as a nested document (eg. as per the
+  AGENT property in vCard).
+  \endlist
+
   \sa QVersitDocument, QVersitProperty
  */
 
