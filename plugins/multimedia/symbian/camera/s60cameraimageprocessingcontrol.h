@@ -43,7 +43,9 @@
 #define S60CAMERAIMAGEPROCESSINGCONTROL_H
 
 #include <QtCore/qobject.h>
-#include "multimedia/experimental/qimageprocessingcontrol.h"  
+#include "qimageprocessingcontrol.h"
+
+QTM_USE_NAMESPACE
 
 class S60CameraService;
 class S60CameraSession;

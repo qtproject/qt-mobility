@@ -32,14 +32,6 @@ symbian {
     DEFINES += XQSETTINGSMANAGER_NO_CENREPKEY_CREATION_DELETION
     include(xqsettingsmanager_symbian/settingsmanager.pri)
 
-    deploy.path = $$EPOCROOT
-    exportheaders.sources = $$PUBLIC_HEADERS
-    exportheaders.path = epoc32/include/mw
-
-    for(header, exportheaders.sources) {
-        BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
-    }
-
     DEPENDPATH += psmapperserver_symbian
     INCLUDEPATH += psmapperserver_symbian
 
@@ -67,22 +59,28 @@ unix:!symbian {
     } else {
         QT += network
 
-        HEADERS += gconflayer_linux_p.h
-        SOURCES += gconflayer_linux.cpp
-        CONFIG += link_pkgconfig
-        PKGCONFIG += glib-2.0 gconf-2.0
+        !mac { 
+            HEADERS += gconflayer_linux_p.h
+            SOURCES += gconflayer_linux.cpp
 
-        #As a workaround build GConfItem wrapper class with the project
-        HEADERS += gconfitem.h
-        SOURCES += gconfitem.cpp
+            #As a workaround build GConfItem wrapper class with the project
+            HEADERS += gconfitem.h
+            SOURCES += gconfitem.cpp
 
-        HEADERS += qsystemreadwritelock_p.h \
-                   qmallocpool_p.h \
-                   qpacketprotocol_p.h
-        SOURCES += sharedmemorylayer.cpp \
-                   qmallocpool.cpp \
-                   qsystemreadwritelock_unix.cpp \
-                   qpacketprotocol.cpp
+            CONFIG += link_pkgconfig
+            PKGCONFIG += glib-2.0 gconf-2.0
+        }
+
+        !maemo5 {
+            #do not use shared memory layer on Maemo5
+            HEADERS += qsystemreadwritelock_p.h \
+                       qmallocpool_p.h \
+                       qpacketprotocol_p.h
+            SOURCES += sharedmemorylayer.cpp \
+                       qmallocpool.cpp \
+                       qsystemreadwritelock_unix.cpp \
+                       qpacketprotocol.cpp
+        }
     }
 }
 
@@ -96,4 +94,5 @@ win32 {
     wince*:LIBS += -ltoolhelp
 }
 
+CONFIG += middleware
 include(../../features/deploy.pri)

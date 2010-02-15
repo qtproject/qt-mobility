@@ -74,7 +74,7 @@ public slots:
 private slots:
     void addClicked();
     void clearClicked();
-    void doneClicked();
+    void filterClicked();
 
 private:
     QLineEdit *m_valueCriteriaEdit;
@@ -84,9 +84,14 @@ private:
 
     QLabel *m_cumulativeExpressionLabel;
 
-    QPushButton *m_add;
-    QPushButton *m_clear;
-    QPushButton *m_done;
+#ifdef Q_OS_SYMBIAN
+    QAction *m_addBtn;
+    QAction *m_filterBtn;
+#else
+    QPushButton *m_addBtn;
+    QPushButton *m_filterBtn;
+#endif
+    QPushButton *m_clearBtn;
 
     QString m_cumulativeExpression;
     QContactFilter m_cumulativeFilter;

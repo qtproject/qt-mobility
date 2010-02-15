@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qstillimagecapture.cpp -->
+<head>
+  <title>Qt Mobility Project 1.0: QStillImageCapture Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QStillImageCapture"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QStillImageCapture Class Reference</h1>
+<p>The QStillImageCapture class is used for the recording of media content. <a href="#details">More...</a></p>
+<pre>    #include &lt;QStillImageCapture&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<p>Inherits <a href="qmediaobject.html">QMediaObject</a>.</p>
+<ul>
+<li><a href="qstillimagecapture-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-types"></a>
+<h2>Public Types</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qstillimagecapture.html#Error-enum">Error</a></b> { NoError, NotReadyError, ResourceError, NotSupportedFeatureError, FormatError }</td></tr>
+</table>
+<hr />
+<a name="properties"></a>
+<h2>Properties</h2>
+<ul>
+<li><div class="fn"><b><a href="qstillimagecapture.html#readyForCapture-prop">readyForCapture</a></b> : const bool</div></li>
+</ul>
+<ul>
+<li><div bar="2" class="fn"></div>3 properties inherited from <a href="qmediaobject.html#properties">QMediaObject</a></li>
+<li><div bar="2" class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qstillimagecapture.html#QStillImageCapture">QStillImageCapture</a></b> ( QMediaObject * <i>mediaObject</i>, QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qstillimagecapture.html#dtor.QStillImageCapture">~QStillImageCapture</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QImageEncoderSettings </td><td class="memItemRight" valign="bottom"><b><a href="qstillimagecapture.html#encodingSettings">encodingSettings</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">Error </td><td class="memItemRight" valign="bottom"><b><a href="qstillimagecapture.html#error">error</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qstillimagecapture.html#errorString">errorString</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qstillimagecapture.html#imageCodecDescription">imageCodecDescription</a></b> ( const QString &amp; <i>codec</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qstillimagecapture.html#readyForCapture-prop">isReadyForCapture</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qstillimagecapture.html#setEncodingSettings">setEncodingSettings</a></b> ( const QImageEncoderSettings &amp; <i>settings</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qstillimagecapture.html#supportedImageCodecs">supportedImageCodecs</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QSize&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qstillimagecapture.html#supportedResolutions">supportedResolutions</a></b> ( const QImageEncoderSettings &amp; <i>settings</i> = QImageEncoderSettings(), bool * <i>continuous</i> = 0 ) const</td></tr>
+</table>
+<hr />
+<a name="reimplemented-public-functions"></a>
+<h2>Reimplemented Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">virtual QtMedia::AvailabilityError </td><td class="memItemRight" valign="bottom"><b><a href="qstillimagecapture.html#availabilityError">availabilityError</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qstillimagecapture.html#isAvailable">isAvailable</a></b> () const</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>13 public functions inherited from <a href="qmediaobject.html#public-functions">QMediaObject</a></li>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+</ul>
+<hr />
+<a name="public-slots"></a>
+<h2>Public Slots</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qstillimagecapture.html#capture">capture</a></b> ( const QString &amp; <i>file</i> )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+</ul>
+<hr />
+<a name="signals"></a>
+<h2>Signals</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qstillimagecapture.html#error-2">error</a></b> ( QStillImageCapture::Error <i>error</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qstillimagecapture.html#imageCaptured">imageCaptured</a></b> ( const QString &amp; <i>fileName</i>, const QImage &amp; <i>preview</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qstillimagecapture.html#imageSaved">imageSaved</a></b> ( const QString &amp; <i>fileName</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qstillimagecapture.html#readyForCaptureChanged">readyForCaptureChanged</a></b> ( bool <i>ready</i> )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>5 signals inherited from <a href="qmediaobject.html#signals">QMediaObject</a></li>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>2 protected functions inherited from <a href="qmediaobject.html#protected-functions">QMediaObject</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QStillImageCapture class is used for the recording of media content.</p>
+<p>The QStillImageCapture class is a high level images recording class. It's not intended to be used alone but for accessing the media recording functions of other media objects, like <a href="qcamera.html">QCamera</a>.</p>
+<pre>    camera = new QCamera;
+    viewFinder = new QVideoWidget(camera);
+    viewFinder-&gt;show();
+
+    imageCapture = new QStillImageCapture(camera);
+
+    camera-&gt;start();
+
+    imageCapture-&gt;capture(fileName);</pre>
+<p>See also <a href="qcamera.html">QCamera</a>.</p>
+<hr />
+<h2>Member Type Documentation</h2>
+<a name="//apple_ref/cpp/tag/QStillImageCapture/Error"></a>
+<a name="//apple_ref/cpp/econst/QStillImageCapture/NoError"></a>
+<a name="//apple_ref/cpp/econst/QStillImageCapture/NotReadyError"></a>
+<a name="//apple_ref/cpp/econst/QStillImageCapture/ResourceError"></a>
+<a name="//apple_ref/cpp/econst/QStillImageCapture/NotSupportedFeatureError"></a>
+<a name="//apple_ref/cpp/econst/QStillImageCapture/FormatError"></a>
+<h3 class="fn"><a name="Error-enum"></a>enum QStillImageCapture::Error</h3>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QStillImageCapture::NoError</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">No Errors.</td></tr>
+<tr><td valign="top"><tt>QStillImageCapture::NotReadyError</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The service is not ready for capture yet.</td></tr>
+<tr><td valign="top"><tt>QStillImageCapture::ResourceError</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Device is not ready or not available.</td></tr>
+<tr><td valign="top"><tt>QStillImageCapture::NotSupportedFeatureError</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">Device does not support stillimages capture.</td></tr>
+<tr><td valign="top"><tt>QStillImageCapture::FormatError</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">Current format is not supported.</td></tr>
+</table></p>
+<hr />
+<h2>Property Documentation</h2>
+<a name="//apple_ref/cpp/instm/QStillImageCapture/isReadyForCapture"></a>
+<a name="//apple_ref/cpp/instm/QStillImageCapture/readyForCaptureChanged"></a>
+<h3 class="fn"><a name="readyForCapture-prop"></a>readyForCapture : const bool</h3>
+<p>Indicates the service is ready to capture an image immediately.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>isReadyForCapture</b> () const</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qstillimagecapture.html#readyForCaptureChanged">readyForCaptureChanged</a></b> ( bool <i>ready</i> )</td></tr>
+</table>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QStillImageCapture/QStillImageCapture"></a>
+<h3 class="fn"><a name="QStillImageCapture"></a>QStillImageCapture::QStillImageCapture ( <a href="qmediaobject.html">QMediaObject</a> * <i>mediaObject</i>, <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<p>Constructs a media recorder which records the media produced by <i>mediaObject</i>.</p>
+<p>The <i>parent</i> is passed to <a href="qmediaobject.html">QMediaObject</a>.</p>
+<a name="//apple_ref/cpp/instm/QStillImageCapture/~QStillImageCapture"></a>
+<h3 class="fn"><a name="dtor.QStillImageCapture"></a>QStillImageCapture::~QStillImageCapture ()</h3>
+<p>Destroys images capture object.</p>
+<a name="//apple_ref/cpp/instm/QStillImageCapture/availabilityError"></a>
+<h3 class="fn"><a name="availabilityError"></a><a href="qtmedia.html#AvailabilityError-enum">QtMedia::AvailabilityError</a> QStillImageCapture::availabilityError () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Reimplemented from <a href="qmediaobject.html#availabilityError">QMediaObject::availabilityError</a>().</p>
+<p>Returns the availability error code.</p>
+<a name="//apple_ref/cpp/instm/QStillImageCapture/capture"></a>
+<h3 class="fn"><a name="capture"></a>void QStillImageCapture::capture ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>file</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<p>Capture the image and save it to <i>file</i>. This operation is asynchronous in majority of cases, followed by signals <a href="qstillimagecapture.html#imageCaptured">QStillImageCapture::imageCaptured</a>(), <a href="qstillimagecapture.html#imageSaved">QStillImageCapture::imageSaved</a>() or <a href="qstillimagecapture.html#error">QStillImageCapture::error</a>()</p>
+<a name="//apple_ref/cpp/instm/QStillImageCapture/encodingSettings"></a>
+<h3 class="fn"><a name="encodingSettings"></a><a href="qimageencodersettings.html">QImageEncoderSettings</a> QStillImageCapture::encodingSettings () const</h3>
+<p>Returns the image encoder settings being used.</p>
+<p>See also <a href="qstillimagecapture.html#setEncodingSettings">setEncodingSettings</a>().</p>
+<a name="//apple_ref/cpp/instm/QStillImageCapture/error"></a>
+<h3 class="fn"><a name="error"></a><a href="qstillimagecapture.html#Error-enum">Error</a> QStillImageCapture::error () const</h3>
+<p>Returns the current error state.</p>
+<p>See also <a href="qstillimagecapture.html#errorString">errorString</a>().</p>
+<h3 class="fn"><a name="error-2"></a>void QStillImageCapture::error ( <a href="qstillimagecapture.html#Error-enum">QStillImageCapture::Error</a> <i>error</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signals that an <i>error</i> has occurred.</p>
+<a name="//apple_ref/cpp/instm/QStillImageCapture/errorString"></a>
+<h3 class="fn"><a name="errorString"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QStillImageCapture::errorString () const</h3>
+<p>Returns a string describing the current error state.</p>
+<p>See also <a href="qstillimagecapture.html#error">error</a>().</p>
+<a name="//apple_ref/cpp/instm/QStillImageCapture/imageCaptured"></a>
+<h3 class="fn"><a name="imageCaptured"></a>void QStillImageCapture::imageCaptured ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>fileName</i>, const <a href="http://qt.nokia.com/doc/4.6/qimage.html">QImage</a> &amp; <i>preview</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<a name="//apple_ref/cpp/instm/QStillImageCapture/imageCodecDescription"></a>
+<h3 class="fn"><a name="imageCodecDescription"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QStillImageCapture::imageCodecDescription ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>codec</i> ) const</h3>
+<p>Returns a description of an image <i>codec</i>.</p>
+<a name="//apple_ref/cpp/instm/QStillImageCapture/imageSaved"></a>
+<h3 class="fn"><a name="imageSaved"></a>void QStillImageCapture::imageSaved ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>fileName</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<a name="//apple_ref/cpp/instm/QStillImageCapture/isAvailable"></a>
+<h3 class="fn"><a name="isAvailable"></a>bool QStillImageCapture::isAvailable () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Reimplemented from <a href="qmediaobject.html#isAvailable">QMediaObject::isAvailable</a>().</p>
+<p>Returns true if the images capture service ready to use.</p>
+<a name="//apple_ref/cpp/instm/QStillImageCapture/readyForCaptureChanged"></a>
+<h3 class="fn"><a name="readyForCaptureChanged"></a>void QStillImageCapture::readyForCaptureChanged ( bool <i>ready</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signals that a camera's <i>ready</i> for capture state has changed.</p>
+<a name="//apple_ref/cpp/instm/QStillImageCapture/setEncodingSettings"></a>
+<h3 class="fn"><a name="setEncodingSettings"></a>void QStillImageCapture::setEncodingSettings ( const <a href="qimageencodersettings.html">QImageEncoderSettings</a> &amp; <i>settings</i> )</h3>
+<p>Sets the image encodeing <i>settings</i>.</p>
+<p>If some parameters are not specified, or null settings are passed, the encoder choose the default encoding parameters.</p>
+<p>See also <a href="qstillimagecapture.html#encodingSettings">encodingSettings</a>().</p>
+<a name="//apple_ref/cpp/instm/QStillImageCapture/supportedImageCodecs"></a>
+<h3 class="fn"><a name="supportedImageCodecs"></a><a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> QStillImageCapture::supportedImageCodecs () const</h3>
+<p>Returns a list of supported image codecs.</p>
+<a name="//apple_ref/cpp/instm/QStillImageCapture/supportedResolutions"></a>
+<h3 class="fn"><a name="supportedResolutions"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qsize.html">QSize</a>&gt; QStillImageCapture::supportedResolutions ( const <a href="qimageencodersettings.html">QImageEncoderSettings</a> &amp; <i>settings</i> = QImageEncoderSettings(), bool * <i>continuous</i> = 0 ) const</h3>
+<p>Returns a list of resolutions images can be encoded at.</p>
+<p>If non null image <i>settings</i> parameter is passed, the returned list is reduced to resolution supported with partial settings like image codec or quality applied.</p>
+<p>If the encoder supports arbitrary resolutions within the supported range, *<i>continuous</i> is set to true, otherwise *<i>continuous</i> is set to false.</p>
+<p>See also <a href="qimageencodersettings.html#resolution">QImageEncoderSettings::resolution</a>().</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+</tr></table></div></address></body>
+</html>

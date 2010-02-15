@@ -62,6 +62,7 @@
 #include <QApplication>
 #include <QMenuBar>
 #include <QTabWidget>
+#include <QScrollArea>
 
 namespace {
 
@@ -385,7 +386,10 @@ void AddressFinder::setupUi()
     connect(tabWidget,SIGNAL(currentChanged(int)),this,SLOT(tabChanged(int)));
 #else
     QWidget* centralWidget = new QWidget(this);
-    setCentralWidget(centralWidget);
+    QScrollArea* sa = new QScrollArea(this);
+    sa->setWidget(centralWidget);
+    sa->setWidgetResizable(true);
+    setCentralWidget(sa);
     QVBoxLayout* centralLayout = new QVBoxLayout(centralWidget);
 #endif
 

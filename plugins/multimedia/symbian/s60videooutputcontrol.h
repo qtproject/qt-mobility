@@ -42,8 +42,8 @@
 #ifndef S60VIDEOOUTPUTCONTROL_H
 #define S60VIDEOOUTPUTCONTROL_H
 
+#include <QtCore/qobject.h>
 #include <QVideoOutputControl>
-#include <QObject>
 
 QTM_USE_NAMESPACE
 

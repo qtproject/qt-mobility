@@ -62,6 +62,11 @@ S60CameraImageCaptureControl::S60CameraImageCaptureControl(QObject *session, QOb
             this, SIGNAL(imageCaptured(QString,QImage)));
     connect(m_session, SIGNAL(readyForCaptureChanged(bool)),
             this, SIGNAL(readyForCaptureChanged(bool)));
+    connect(m_session, SIGNAL(imageSaved(const QString&)),
+        this, SIGNAL(imageSaved(const QString&)));
+    connect(m_session, SIGNAL(error(int, const QString &)),
+        this, SIGNAL(error(int, const QString &)));
+    
 }
 
 
@@ -79,6 +84,6 @@ bool S60CameraImageCaptureControl::isReadyForCapture() const
 void S60CameraImageCaptureControl::capture(const QString &fileName)
 {
     if (m_session)
-        m_session->capture();
+        m_session->capture(fileName);
 }
 

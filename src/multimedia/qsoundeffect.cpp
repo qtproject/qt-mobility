@@ -44,13 +44,98 @@
 
 #include "qsoundeffect_p.h"
 
-#if defined(PULSEAUDIO)||defined(MAEMO5)
+#if defined(QT_MULTIMEDIA_PULSEAUDIO)
 #include "qsoundeffect_pulse_p.h"
+#elif(QT_MULTIMEDIA_QMEDIAPLAYER)
+#include "qsoundeffect_qmedia_p.h"
 #else
-#include "qsoundeffect_null_p.h"
+#include "qsoundeffect_qsound_p.h"
 #endif
 
 QML_DEFINE_TYPE(Qt,4,6,SoundEffect,QSoundEffect)
+
+/*!
+    \qmlclass QSoundEffect
+    \brief The SoundEffect element provides a way to play sound effects in qml.
+
+    The following example plays a wav file on mouse click.
+
+    \qml
+    SoundEffect {
+        id: playSound
+        source: "test.wav"
+    }
+    MouseRegion {
+        id: playArea
+        anchors.fill: parent
+        onPressed: {
+            playSound.play()
+        }
+    }
+    \endeml
+
+    \sa SoundEffect
+*/
+
+/*!
+    \qmlproperty QUrl SoundEffect::source
+
+    This property provides a way to control the sound to play.
+*/
+
+/*!
+    \qmlproperty int SoundEffect::loopCount
+
+    This property provides a way to control the number of times to repeat the sound on each play().
+*/
+
+/*!
+    \qmlproperty int SoundEffect::volume
+
+    This property provides a way to control the volume for playback.
+*/
+
+/*!
+    \qmlproperty bool SoundEffect::muted
+
+    This property provides a way to control muting.
+*/
+
+/*!
+    \qmlproperty int SoundEffect::duration
+
+    This property holds the duration in milliseconds of the current source audio.
+*/
+
+/*!
+    \qmlsignal SoundEffect::sourceChanged()
+
+    This handler is called when the source has changed.
+*/
+
+/*!
+    \qmlsignal SoundEffect::loopCountChanged()
+
+    This handler is called when the number of loops has changes.
+*/
+
+/*!
+    \qmlsignal SoundEffect::volumeChanged()
+
+    This handler is called when the volume has changed.
+*/
+
+/*!
+    \qmlsignal SoundEffect::mutedChanged()
+
+    This handler is called when the mute state has changed.
+*/
+
+/*!
+    \qmlsignal SoundEffect::durationChanged()
+
+    This handler is called when the duration has changed.
+*/
 
 QSoundEffect::QSoundEffect(QObject *parent) :
     QObject(parent),

@@ -46,9 +46,13 @@
 
 #include <QMediaService>
 
-QTM_USE_NAMESPACE
+#ifdef TUNERLIBUSED
+#include "s60radiotunercontrol_31.h"
+#else
+#include "s60radiotunercontrol_since32.h"
+#endif
 
-class S60RadioTunerControl;
+QTM_USE_NAMESPACE
 
 class S60RadioTunerService : public QMediaService
 {
@@ -60,7 +64,7 @@ public:
     QMediaControl *control(const char* name) const;
 
 private:
-    S60RadioTunerControl *m_control;
+    S60RadioTunerControl *m_playerControl;
 };
 
 #endif

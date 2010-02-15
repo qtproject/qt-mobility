@@ -1,3 +1,4 @@
+
 /****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
@@ -42,22 +43,16 @@
 #include "s60mediaplayercontrol.h"
 #include "s60mediaplayersession.h"
 
-#include <QMediaPlaylistNavigator>
-
 #include <QtCore/qdir.h>
-#include <QtCore/qsocketnotifier.h>
 #include <QtCore/qurl.h>
 #include <QtCore/qdebug.h>
 
 S60MediaPlayerControl::S60MediaPlayerControl(MS60MediaPlayerResolver& mediaPlayerResolver, QObject *parent)
     : QMediaPlayerControl(parent),
       m_mediaPlayerResolver(mediaPlayerResolver),
-      m_session(NULL)
+      m_session(NULL),
+      m_stream(NULL)
 {
-    m_controlSettings.m_vol = -1;
-    m_controlSettings.m_muted = false;
-    m_controlSettings.m_playbackRate = -1;
-    m_controlSettings.m_position = -1;
 }
 
 S60MediaPlayerControl::~S60MediaPlayerControl()
@@ -68,8 +63,7 @@ qint64 S60MediaPlayerControl::position() const
 {
     if (m_session)
         return m_session->position();
-    
-    return m_controlSettings.m_position;
+    return 0;
 }
 
 qint64 S60MediaPlayerControl::duration() const
@@ -83,7 +77,6 @@ QMediaPlayer::State S60MediaPlayerControl::state() const
 {
     if (m_session)
         return m_session->state();
-    // we dont have a session -> state is stopped
     return QMediaPlayer::StoppedState;
 }
 
@@ -103,31 +96,28 @@ int S60MediaPlayerControl::volume() const
 {
     if (m_session)
         return m_session->volume();
-    
-    return m_controlSettings.m_vol;
+    return m_mediaSettings.volume();
 }
 
 bool S60MediaPlayerControl::isMuted() const
 {
    if (m_session)
        return  m_session->isMuted();
-   
-   return m_controlSettings.m_muted;
+   return m_mediaSettings.isMuted();
 }
 
 bool S60MediaPlayerControl::isSeekable() const
 {
     if (m_session)
        return  m_session->isSeekable();
-    
-    return m_controlSettings.m_position;
+    return false;
 }
 
 QMediaTimeRange S60MediaPlayerControl::availablePlaybackRanges() const
 {
     QMediaTimeRange ranges;
 
-    if(m_session && q_check_ptr(m_session)->isSeekable())
+    if(m_session && m_session->isSeekable())
         ranges.addInterval(0, m_session->duration());
 
     return ranges;
@@ -135,22 +125,20 @@ QMediaTimeRange S60MediaPlayerControl::availablePlaybackRanges() const
 
 qreal S60MediaPlayerControl::playbackRate() const
 {
-    if (m_session)
-        return  m_session->playbackRate();
-    return -1;
+    //None of symbian players supports this.
+    return m_mediaSettings.playbackRate();
 }
 
 void S60MediaPlayerControl::setPlaybackRate(qreal rate)
 {
-    m_controlSettings.m_playbackRate = rate;
+    //None of symbian players supports this.
+    m_mediaSettings.setPlaybackRate(rate);
+    emit playbackRateChanged(playbackRate());
     
-    if (m_session)
-        m_session->setPlaybackRate(rate);
 }
 
 void S60MediaPlayerControl::setPosition(qint64 pos)
 {
-    m_controlSettings.m_position = pos;
     if (m_session)
         m_session->setPosition(pos);
 }
@@ -159,8 +147,6 @@ void S60MediaPlayerControl::play()
 {
     if (m_session)
         m_session->play();
-    else // to ensure that api know we can't play this
-        emit mediaStatusChanged(QMediaPlayer::InvalidMedia);
 }
 
 void S60MediaPlayerControl::pause()
@@ -177,16 +163,27 @@ void S60MediaPlayerControl::stop()
 
 void S60MediaPlayerControl::setVolume(int volume)
 {
-    m_controlSettings.m_vol = volume;
+    int boundVolume = qBound(0, volume, 100);
+    if (boundVolume == m_mediaSettings.volume())
+        return;
+    
+    m_mediaSettings.setVolume(boundVolume);
     if (m_session)
-        m_session->setVolume(volume);
+        m_session->setVolume(boundVolume);
+
+    emit volumeChanged(boundVolume);
 }
 
 void S60MediaPlayerControl::setMuted(bool muted)
 {
-    m_controlSettings.m_muted = muted;
+    if (m_mediaSettings.isMuted() == muted)
+        return;
+    
+    m_mediaSettings.setMuted(muted);
     if (m_session)
         m_session->setMuted(muted);
+    
+    emit mutedChanged(muted);
 }
 
 QMediaContent S60MediaPlayerControl::media() const
@@ -203,28 +200,34 @@ void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *str
 {
     Q_UNUSED(stream)
     // we don't want to set & load media again when it is already loaded    
-    if (m_session && (m_currentResource == source) && m_session->state() == QMediaPlayer::LoadedMedia) {
+    if (m_session && m_currentResource == source && m_session->state() == QMediaPlayer::LoadedMedia)
         return;
-    }
 
+    if (source.isNull())
+        return;
     
     // store to variable as session is created based on the content type.
     m_currentResource = source;
-    if (m_session) {
+    if (m_session)
         m_session->stop();
-    }
-    m_session = currentPlayerSession();
+    
+    S60MediaPlayerSession *newSession = m_mediaPlayerResolver.PlayerSession(); 
 
-    QUrl url;
-    if (!source.isNull() && m_session) {
-        url = source.canonicalUrl();
-        m_session->load(url);
+    m_session = newSession;
+    
+    if (m_session) {
+        QUrl url = source.canonicalUrl();
+        
+        if (m_session->mediaFileLocal())
+            m_session->load(url);	
+        else
+            m_session->loadUrl(url);
+            
         emit mediaChanged(m_currentResource);
-    }
-    else {
+    } else {
+        emit error(QMediaPlayer::FormatError, QString("Symbian: -5"));
         emit mediaStatusChanged(QMediaPlayer::InvalidMedia);
     }
-
 }
 
 void S60MediaPlayerControl::setVideoOutput(QObject *output)
@@ -234,6 +237,13 @@ void S60MediaPlayerControl::setVideoOutput(QObject *output)
     m_session->setVideoRenderer(output);
 }
 
+bool S60MediaPlayerControl::isAudioAvailable() const
+{
+    if (m_session)
+        return m_session->isAudioAvailable(); 
+    return false;
+}
+
 bool S60MediaPlayerControl::isVideoAvailable() const
 {
     if (m_session)
@@ -241,11 +251,7 @@ bool S60MediaPlayerControl::isVideoAvailable() const
     return false;
 }
 
-S60MediaPlayerSession* S60MediaPlayerControl::currentPlayerSession() 
+const S60MediaSettings& S60MediaPlayerControl::mediaControlSettings() const
 {
-    return m_mediaPlayerResolver.PlayerSession();   
-}
-const S60MediaControlSettings& S60MediaPlayerControl::mediaControlSettings() const
-{
-    return m_controlSettings;
+    return m_mediaSettings;
 }

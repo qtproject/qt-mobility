@@ -61,15 +61,16 @@ void UT_QVersitDocument::cleanup()
 
 void UT_QVersitDocument::testConstructor()
 {
-    QCOMPARE(QVersitDocument::VCard21, mVersitDocument->versitType());
+    QCOMPARE(QVersitDocument::InvalidType, mVersitDocument->type());
 }
 
-void UT_QVersitDocument::testVersitType()
+void UT_QVersitDocument::testType()
 {
-    QCOMPARE(QVersitDocument::VCard21, mVersitDocument->versitType());
+    mVersitDocument->setType(QVersitDocument::VCard21Type);
+    QCOMPARE(QVersitDocument::VCard21Type, mVersitDocument->type());
 
-    mVersitDocument->setVersitType(QVersitDocument::VCard30);
-    QCOMPARE(QVersitDocument::VCard30, mVersitDocument->versitType());
+    mVersitDocument->setType(QVersitDocument::VCard30Type);
+    QCOMPARE(QVersitDocument::VCard30Type, mVersitDocument->type());
 }
 
 void UT_QVersitDocument::testAddProperty()
@@ -80,7 +81,38 @@ void UT_QVersitDocument::testAddProperty()
     QCOMPARE(1, mVersitDocument->properties().count());
 }
 
-void UT_QVersitDocument::testRemoveProperties()
+void UT_QVersitDocument::testRemoveProperty()
+{
+    // Remove an empty property.
+    QCOMPARE(mVersitDocument->properties().count(), 0);
+    QVersitProperty property;
+    mVersitDocument->addProperty(property);
+    mVersitDocument->removeProperty(property);
+    QCOMPARE(mVersitDocument->properties().count(), 0);
+
+    // A full property.
+    property.setName(QLatin1String("TEL"));
+    property.setGroups(QStringList(QLatin1String("HOME")));
+    QMultiHash<QString, QString> params;
+    params.insert(QLatin1String("TYPE"), QLatin1String("HOME"));
+    property.setParameters(params);
+    property.setValue(QLatin1String("123"));
+    mVersitDocument->addProperty(property);
+    QCOMPARE(mVersitDocument->properties().count(), 1);
+    QVersitProperty property2;
+    property2.setName(QLatin1String("TEL"));
+    // Remove with a partial property fails.
+    mVersitDocument->removeProperty(property2);
+    QCOMPARE(mVersitDocument->properties().count(), 1);
+    property2.setGroups(QStringList(QLatin1String("HOME")));
+    property2.setParameters(params);
+    property2.setValue(QLatin1String("123"));
+    // Remove with a fully specified property succeeds.
+    mVersitDocument->removeProperty(property2);
+    QCOMPARE(mVersitDocument->properties().count(), 0);
+}
+
+void UT_QVersitDocument::testRemoveAllProperties()
 {
     QString name(QString::fromAscii("FN"));
 

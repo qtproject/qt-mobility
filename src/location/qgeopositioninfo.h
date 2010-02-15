@@ -59,8 +59,8 @@ class QGeoPositionInfoPrivate;
 class Q_LOCATION_EXPORT QGeoPositionInfo
 {
 public:
-    enum Property {
-        Heading,
+    enum Attribute {
+        Direction,
         GroundSpeed,
         VerticalSpeed,
         MagneticVariation,
@@ -76,7 +76,9 @@ public:
     QGeoPositionInfo &operator=(const QGeoPositionInfo &other);
 
     bool operator==(const QGeoPositionInfo &other) const;
-    inline bool operator!=(const QGeoPositionInfo &other) const { return !operator==(other); }
+    inline bool operator!=(const QGeoPositionInfo &other) const {
+        return !operator==(other);
+    }
 
     bool isValid() const;
 
@@ -86,11 +88,10 @@ public:
     void setCoordinate(const QGeoCoordinate &coordinate);
     QGeoCoordinate coordinate() const;
 
-    void setProperty(Property property, qreal value);
-    qreal property(Property property) const;
-    void removeProperty(Property property);
-
-    bool hasProperty(Property property) const;
+    void setAttribute(Attribute attribute, qreal value);
+    qreal attribute(Attribute attribute) const;
+    void removeAttribute(Attribute attribute);
+    bool hasAttribute(Attribute attribute) const;
 
 private:
 #ifndef QT_NO_DEBUG_STREAM
