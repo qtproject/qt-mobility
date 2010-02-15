@@ -395,15 +395,15 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 #if !defined(QT_NO_NETWORKMANAGER)
 void QSystemNetworkInfoPrivate::setupNmConnections()
 {
-    iface = new QNetworkManagerInterface();
-    QList<QDBusObjectPath> list = iface->getDevices();
-    foreach(QDBusObjectPath path, list) {
+    iface = new QNetworkManagerInterface(this);
+
+   foreach(QDBusObjectPath path, iface->getDevices()) {
         QNetworkManagerInterfaceDevice *devIface = new QNetworkManagerInterfaceDevice(path.path());
 
         switch(devIface->deviceType()) {
         case DEVICE_TYPE_802_3_ETHERNET:
             {
-                devWiredIface = new QNetworkManagerInterfaceDeviceWired(devIface->connectionInterface()->path());
+                devWiredIface = new QNetworkManagerInterfaceDeviceWired(devIface->path());
                 devWiredIface->setConnections();
                 connect(devWiredIface, SIGNAL(propertiesChanged(const QString &,QMap<QString,QVariant>)),
                         this,SLOT(nmPropertiesChanged( const QString &, QMap<QString,QVariant>)));
@@ -411,7 +411,7 @@ void QSystemNetworkInfoPrivate::setupNmConnections()
             break;
         case DEVICE_TYPE_802_11_WIRELESS:
             {
-                devWirelessIface = new QNetworkManagerInterfaceDeviceWireless(devIface->connectionInterface()->path());
+                devWirelessIface = new QNetworkManagerInterfaceDeviceWireless(devIface->path());
                 devWirelessIface->setConnections();
 
                 connect(devWirelessIface, SIGNAL(propertiesChanged(const QString &,QMap<QString,QVariant>)),
@@ -547,8 +547,10 @@ void QSystemNetworkInfoPrivate::updateActivePaths()
 {
     activePaths.clear();
     QScopedPointer<QNetworkManagerInterface> dbIface;
-    dbIface.reset(new QNetworkManagerInterface);
+    dbIface.reset(new QNetworkManagerInterface(this));
+
     QList <QDBusObjectPath> connections = dbIface->activeConnections();
+
     foreach(QDBusObjectPath activeconpath, connections) {
 
         QScopedPointer<QNetworkManagerConnectionActive> activeCon;
@@ -566,12 +568,10 @@ void QSystemNetworkInfoPrivate::nmPropertiesChanged( const QString & path, QMap<
     QMapIterator<QString, QVariant> i(map);
     while (i.hasNext()) {
         i.next();
-//        qWarning() << __FUNCTION__ <<  i.key();
 
         if( i.key() == QLatin1String("State")) {
             QNetworkManagerInterfaceDevice *devIface = new QNetworkManagerInterfaceDevice(path);
             quint32 nmState = i.value().toUInt();
-          //  qWarning() << "state" << nmState << path;
             quint32 nmDevType = devIface->deviceType();
             QSystemNetworkInfo::NetworkMode mode = deviceTypeToMode(nmDevType);
 
