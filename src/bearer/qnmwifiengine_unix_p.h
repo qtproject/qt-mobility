@@ -66,7 +66,6 @@
 #include <qnetworkconfigmanager_p.h>
 
 
-
 QTM_BEGIN_NAMESPACE
 
 class QNetworkConfigurationPrivate;
@@ -140,7 +139,6 @@ private:
 private slots:
     void updateDeviceInterfaceState(const QString &, quint32);
     void addDevice(QDBusObjectPath path);
-    void removeDevice(QDBusObjectPath path);
 
 Q_SIGNALS:
     void configurationChanged(const QNetworkConfiguration& config);
