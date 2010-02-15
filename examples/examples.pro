@@ -7,8 +7,8 @@ contains(mobility_modules,serviceframework) {
     SUBDIRS += filemanagerplugin \
             bluetoothtransferplugin \
             notesmanagerplugin \
-            servicebrowser \
-            todotool
+            servicebrowser
+#            todotool
 }
 
 #BearerManagement examples
