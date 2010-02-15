@@ -10,7 +10,7 @@ symbian: {
     # Beta 0.2.0
     # Final 1.0.0
 
-    VERSION = 0.2.0
+    VERSION = 1.0.0
 
     vendorinfo = \
         "; Localised Vendor name" \
