@@ -270,12 +270,11 @@ void QT7PlayerSession::setPosition(qint64 pos)
 
 void QT7PlayerSession::play()
 {
-    m_state = QMediaPlayer::PlayingState;
-
     float preferredRate = [[(QTMovie*)m_QTMovie attributeForKey:@"QTMoviePreferredRateAttribute"] floatValue];
     [(QTMovie*)m_QTMovie setRate:preferredRate*m_rate];
 
-    emit stateChanged(m_state);
+    if (m_state != QMediaPlayer::PlayingState)
+        emit stateChanged(m_state = QMediaPlayer::PlayingState);
 }
 
 void QT7PlayerSession::pause()
@@ -387,9 +386,9 @@ void QT7PlayerSession::setMedia(const QMediaContent &content, QIODevice *stream)
     } else {
         [(QTMovieObserver*)m_movieObserver setMovie:(QTMovie*)m_QTMovie];
 
-        if (m_videoOutput) {
-            m_videoOutput->setEnabled(true);
+        if (m_videoOutput) {            
             m_videoOutput->setMovie(m_QTMovie);
+            m_videoOutput->setEnabled(true);
         }
         processStateChange();
 
@@ -429,6 +428,17 @@ void QT7PlayerSession::processStateChange()
                          longValue];
     //qDebug() << "new State:" << state;
 
+#ifndef QUICKTIME_C_API_AVAILABLE
+    enum {
+      kMovieLoadStateError          = -1L,
+      kMovieLoadStateLoading        = 1000,
+      kMovieLoadStateLoaded         = 2000,
+      kMovieLoadStatePlayable       = 10000,
+      kMovieLoadStatePlaythroughOK  = 20000,
+      kMovieLoadStateComplete       = 100000
+    };
+#endif
+
     QMediaPlayer::MediaStatus newStatus = QMediaPlayer::NoMedia;
     bool isPlaying = (m_state != QMediaPlayer::StoppedState);
 
@@ -450,8 +460,7 @@ void QT7PlayerSession::processStateChange()
         case QMediaPlayer::BufferingMedia:
             //delayed playback start is necessary for network sources
             if (m_state == QMediaPlayer::PlayingState) {
-                float preferredRate = [[(QTMovie*)m_QTMovie attributeForKey:@"QTMoviePreferredRateAttribute"] floatValue];
-                [(QTMovie*)m_QTMovie setRate:preferredRate*m_rate];
+                QMetaObject::invokeMethod(this, "play", Qt::QueuedConnection);
             }
             //fall
         case QMediaPlayer::LoadedMedia:
@@ -480,7 +489,6 @@ void QT7PlayerSession::processVolumeChange()
     if (newVolume != m_volume) {
         emit volumeChanged(m_volume = newVolume);
     }
-
 }
 
 #include "moc_qt7playersession.cpp"
