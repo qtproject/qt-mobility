@@ -2,7 +2,7 @@
 HEADERS += \
     $$PWD/support.h
 
-symbian|wince*|maemo5|maemo6|win32 {
+symbian|wince*|maemo5|maemo6|win32|mac {
     symbian {
         SOURCES += $$PWD/support_symbian.cpp
     }
@@ -17,7 +17,7 @@ symbian|wince*|maemo5|maemo6|win32 {
         }
 
     }
-    maemo5|maemo6 {
+    maemo5|maemo6|mac {
          SOURCES += $$PWD/support_stub.cpp       
     }
 } else {
