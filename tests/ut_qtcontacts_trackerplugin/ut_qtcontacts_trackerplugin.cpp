@@ -49,6 +49,7 @@
 #include <QtTracker/ontologies/nco.h>
 #include <QtTracker/ontologies/nie.h>
 #include <qcontactfilters.h>
+#include <QContactChangeLogFilter>
 #include <qtcontacts.h>
 #include <trackerchangelistener.h>
 #include <qcontactrelationshipsaverequest.h>
@@ -741,6 +742,84 @@ void ut_qtcontacts_trackerplugin::testRemoveDetailDefinition()
     QVERIFY(false);
 }
 */
+
+void ut_qtcontacts_trackerplugin::testSyncContactManagerContactsAddedSince()
+{
+    QDateTime start;
+    QList<QContactLocalId> addedIds;
+    syncContactsAddedSinceHelper(start, addedIds);
+
+    QContactChangeLogFilter filter(QContactChangeLogFilter::EventAdded);
+    filter.setSince(start);
+
+    QList<QContactSortOrder> sortOrder;
+    
+    QList<QContact> contactIds = ContactManager::instance()->contacts( filter, sortOrder, QStringList() );
+    qDebug() << "addedIds" << addedIds.size();
+    qDebug() << "contactIds" << contactIds.size();
+    QEXPECT_FAIL("", "ContactManager is returning an empty list", Continue);
+    QVERIFY2( contactIds.size() == addedIds.size(), "Incorrect number of filtered contacts");
+}
+
+void ut_qtcontacts_trackerplugin::testSyncTrackerEngineContactsIdsAddedSince()
+{
+    QDateTime start;
+    QList<QContactLocalId> addedIds;
+    syncContactsAddedSinceHelper(start, addedIds);
+
+    QContactChangeLogFilter filter(QContactChangeLogFilter::EventAdded);
+    filter.setSince(start);
+
+    QList<QContactSortOrder> sortOrder;
+    QContactManager::Error error;
+
+    QList<QContactLocalId> contactIds = trackerEngine->contactIds( filter, sortOrder, error );
+    qDebug() << "addedIds" << addedIds;
+    qDebug() << "contactIds" << contactIds;
+    QVERIFY2( contactIds.size() == addedIds.size(), "Incorrect number of filtered contacts");
+}
+
+void ut_qtcontacts_trackerplugin::testSyncContactManagerContactIdsAddedSince()
+{
+    QDateTime start;
+    QList<QContactLocalId> addedIds;
+    syncContactsAddedSinceHelper(start, addedIds);
+    QContactChangeLogFilter filter(QContactChangeLogFilter::EventAdded);
+    filter.setSince(start);
+    QList<QContactSortOrder> sortOrder;
+
+
+    QList<QContactLocalId> contactIds = ContactManager::instance()->contactIds(filter, sortOrder);
+    qDebug() << "addedIds" << addedIds;
+    qDebug() << "contactIds" << contactIds;
+    QEXPECT_FAIL("", "ContactManager is returning an empty list", Continue);
+    QVERIFY2( contactIds.size() == addedIds.size(), "Incorrect number of filtered contacts");
+}
+
+
+void ut_qtcontacts_trackerplugin::syncContactsAddedSinceHelper(QDateTime& start, QList<QContactLocalId>& addedIds)
+{
+    for (int i = 0; i < 3; i++) {
+        QContact c;
+        QContactName name;
+        name.setFirstName("A"+QString::number(i));
+        QVERIFY2(c.saveDetail(&name), "Failed to save detail");
+        QVERIFY2(trackerEngine->saveContact(&c, error), "Failed to save contact");
+    }
+
+    QTest::qWait(1000);
+    start = QDateTime::currentDateTime();
+
+    for (int i = 0; i < 3; i++) {
+        QContact c;
+        QContactName name;
+        name.setFirstName("B"+QString::number(i));
+        QVERIFY2(c.saveDetail(&name), "Failed to save detail");
+        QVERIFY2(trackerEngine->saveContact(&c, error), "Failed to save contact");
+        addedIds.append(c.localId());
+    }
+}
+
 void ut_qtcontacts_trackerplugin::testContactsAddedSince()
 {
     QList<QContactLocalId> addedIds;
