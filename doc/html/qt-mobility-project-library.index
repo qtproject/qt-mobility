@@ -7220,6 +7220,7 @@
             <page access="public" status="commendable" name="sysinfo/dialog.cpp" href="sysinfo-dialog-cpp.html" subtype="file" title="" fulltitle="dialog.cpp Example File" subtitle="sysinfo/dialog.cpp" location=""/>
             <page access="public" status="commendable" name="sysinfo/dialog.h" href="sysinfo-dialog-h.html" subtype="file" title="" fulltitle="dialog.h Example File" subtitle="sysinfo/dialog.h" location=""/>
             <page access="public" status="commendable" name="sysinfo/main.cpp" href="sysinfo-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="sysinfo/main.cpp" location=""/>
+            <page access="public" status="commendable" name="sysinfo/examples.qrc" href="sysinfo-examples-qrc.html" subtype="file" title="" fulltitle="examples.qrc Example File" subtitle="sysinfo/examples.qrc" location=""/>
             <page access="public" status="commendable" name="sysinfo/sysinfo.pro" href="sysinfo-sysinfo-pro.html" subtype="file" title="" fulltitle="sysinfo.pro Example File" subtitle="sysinfo/sysinfo.pro" location=""/>
         </page>
         <page access="public" status="commendable" name="filemanagerplugin" href="filemanagerplugin.html" subtype="example" title="File Manager Plugin Example" fulltitle="File Manager Plugin Example" subtitle="" location="filemanagerplugin.qdoc">
