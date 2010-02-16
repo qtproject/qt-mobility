@@ -50,7 +50,10 @@
 #include <QtCore/qcoreevent.h>
 
 #include <QtMultimedia/qvideosurfaceformat.h>
+
+#if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
 #include <QtOpenGL/qgl.h>
+#endif
 
 QTM_BEGIN_NAMESPACE
 
@@ -386,6 +389,7 @@ void QGraphicsVideoItem::paint(
     if (d->surface && d->surface->isActive()) {
         d->surface->paint(painter, d->boundingRect, d->sourceRect);
         d->surface->setReady(true);
+#if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
     } else if (d->updatePaintDevice && (painter->paintEngine()->type() == QPaintEngine::OpenGL
             || painter->paintEngine()->type() == QPaintEngine::OpenGL2)) {
         d->updatePaintDevice = false;
@@ -396,6 +400,7 @@ void QGraphicsVideoItem::paint(
         } else {
             d->surface->setShaderType(QPainterVideoSurface::FragmentProgramShader);
         }
+#endif
     }
 }
 
