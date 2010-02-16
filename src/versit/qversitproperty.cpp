@@ -223,8 +223,7 @@ QVariant QVersitProperty::variantValue() const
 /*!
  * \fn T QVersitProperty::value() const
  * \overload
- * Returns the value of the property as a \tt T.  This function is actually const but because of a
- * problem with qdoc, it doesn't appear to be in the generated documentation.
+ * Returns the value of the property as a \tt T.
  */
 
 /*!
