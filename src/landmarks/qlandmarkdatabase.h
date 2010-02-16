@@ -42,48 +42,51 @@
 #ifndef QLANDMARKDATABASE_H
 #define QLANDMARKDATABASE_H
 
+#include "qmobilityglobal.h"
+#include "qlandmark.h"
+
 #include <QObject>
 
-class QLandmark;
+QT_BEGIN_HEADER
+
+QTM_BEGIN_NAMESPACE
 class QLandmarkCategory;
-class QSearchFilter;
+class QLandmarkFilter;
 class QLandmarkSortOrder;
 class QFile;
 class QLandmarkSearchResult;
 
-class QLandmarkDatabase: public QObject
+class Q_LANDMARKS_EXPORT QLandmarkDatabase: public QObject
 {
     Q_OBJECT
 public:
     enum Error {NoError, NonWritablePlatform};
-    enum SearchStatus {Active, Cancelled, Done};
-    enum FileFormat {LMX, GPX, CSV, KML, Auto};
+    enum FetchStatus {Active, Cancelled, Done};
+    enum FileFormat {Landmarks, GPX, CSV, Keyhole, Auto};
     static QLandmarkDatabase instance(const QString &name = QString());
-    virtual ~QLandmarkDatabase() {}
+    virtual ~QLandmarkDatabase();
 
-    bool addLandmark(const QLandmark &landmark);
-    bool updateLandmark(const QLandmark &oldLandmark, const QLandmark &newLandmark);
-    bool deleteLandmark(const QLandmark &landmark);
+    bool saveLandmark(const QLandmark &landmark);
+    bool removeLandmark(const QLandmark &landmark);
 
-    bool addCategory(const QLandmarkCategory &category);
-    bool updateCategory(const QLandmarkCategory &oldCategory);
-    bool deleteCategory(const QLandmarkCategory &category);
-    bool deleteCategory(const QString &);
-    QList<QLandmarkCategory> allCategories() const;
-    bool isCategoryModifiable(const QLandmarkCategory &category);
+    bool saveCategory(const QLandmarkCategory &category);
+    bool removeCategory(const QLandmarkCategory &category);
 
-    QList<QLandmark> search(QList<QSearchFilter> filters,
-                            QList<QLandmarkSortOrder> sortOrders) const;
-    QList<QLandmark> search(QSearchFilter filter,
-                            QLandmarkSortOrder sortOrder) const;
-    bool searchRequest(QList<QSearchFilter> filters,
-                       QList<QLandmarkSortOrder> sortOrders) const;
-    bool searchRequest(QSearchFilter filter, QLandmarkSortOrder) const;
-    SearchStatus searchStatus() const;
-    bool cancelSearchRequest();
+    QList<QLandmarkCategory> categories() const;
 
+    QList<QLandmark> landmarks(const QLandmarkFilter &filter,
+                                const QLandmarkSortOrder &sortOrder) const;
+
+    QList<QLandmark> fetchLandmarks(const QLandmarkFilter &filter,
+                                const QLandmarkSortOrder &sortOrder) const;
+
+    FetchStatus landmarkFetchStatus() const;
+    bool cancelLandmarkFetch() const;
+
+    //TODO: find a good way to have asynchronous and syncrhonous
+    //import and exports
     bool importDatabase(const QFile &file, FileFormat format);
-    bool exportDatabase(QFile &file, FileFormat format);
+    bool exportDatabase(const QFile &file, FileFormat format);
 
     Error error() const;
     QString errorString() const;
@@ -93,13 +96,21 @@ Q_SIGNALS:
     void landmarkUpdated(const QLandmark &landmark);
     void landmarkDeleted(const QLandmark &landmark);
 
-    void categoryAdded(const QString &category);
-    void categoryRenamed(const QString &oldCategory);
-    void categoryDeleted(const QString &category);
+    void categoryAdded(const QLandmarkCategory &category);
+    void categoryUpdated(const QLandmarkCategory &category);
+    void categoryDeleted(const QLandmarkCategory &category);
 
-    void searchResult(const QLandmarkSearchResult &result);
+    void importFinished(QList<QLandmark> &landmarks);
+    void exportFinished();
+
+    void landmarkFetchFinished(QList<QLandmark> landmarks);
+
 private:
     QLandmarkDatabase();
 };
+
+QTM_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif

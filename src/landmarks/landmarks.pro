@@ -15,13 +15,13 @@ DEPENDPATH += .
 PUBLIC_HEADERS += qlandmark.h \
                   qlandmarkdatabase.h \
                   qlandmarkmanager.h \
-                  qsearchfilter.h
+                  qlandmarkfilter.h
 
 PRIVATE_HEADERS += qlandmark_p.h
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
-SOURCES += qlandmark.cpp
+SOURCES += qlandmark.cpp qlandmarkdatabase.cpp qlandmarkfilter.cpp qlandmarkmanager.cpp
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

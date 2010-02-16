@@ -310,7 +310,7 @@ void QLandmark::setAttribute(const QString &attributeName, const QVariant &value
     d->attributes[attributeName] = value;
 }
 
-QStringList QLandmark::attributeList() const
+QStringList QLandmark::attributes() const
 {
     return d->attributes.keys();
 }

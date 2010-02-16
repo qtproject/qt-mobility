@@ -43,25 +43,35 @@
 #define QLANDMARKMANAGER_H
 
 #include <QString>
-#include <QUrl>
 
-class QLandmarkDatabaseManager
+class QStringList;
+class QUrl;
+
+QT_BEGIN_HEADER
+
+QTM_BEGIN_NAMESPACE
+
+class Q_LANDMARKS_EXPORT QLandmarkDatabaseManager
 {
 public:
     enum Error {NoError, DoesNotExist};
     QLandmarkDatabaseManager();
-    virtual ~QLandmarkDatabaseManager();
+    ~QLandmarkDatabaseManager();
     bool addDatabase(const QString &name, const QUrl &location);
-    bool deleteDatabase(const QString& name);
+    bool removeDatabase(const QString& name);
 
-    QStringList listDatabases() const;
-    QUrl databaseURL(const QString &name);
+    QStringList databases() const;
+    QUrl databaseURL(const QString &name) const;
 
-    QString defaultDatabase();
+    QString defaultDatabase() const;
     bool setDefaultDatabase(const QString &name);
 
     Error error() const;
     QString errorString() const;
 };
+
+QTM_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif

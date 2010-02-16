@@ -59,7 +59,7 @@ class Q_LANDMARKS_EXPORT QLandmarkCategory
 public:
     QLandmarkCategory();
     QLandmarkCategory(const QLandmarkCategory &other);
-    virtual ~QLandmarkCategory();
+    ~QLandmarkCategory();
 
     QLandmarkCategory& operator= (const QLandmarkCategory &other);
 
@@ -75,6 +75,12 @@ public:
     QString description() const;
     void setDescription(const QString &description);
 
+    bool isEditable();
+
+    QString identifier();
+
+    //TODO: see if generic attributes are needed
+    //for categories
 private:
     QLandmarkCategoryPrivate *d;
 };
@@ -84,7 +90,7 @@ class Q_LANDMARKS_EXPORT QLandmark
 public:
     QLandmark();
     QLandmark(const QLandmark &other);
-    virtual ~QLandmark();
+    ~QLandmark();
 
     QLandmark& operator= (const QLandmark &other);
 
@@ -113,7 +119,7 @@ public:
 
     QVariant attribute(const QString &attributeName) const;
     void setAttribute(const QString &attributeName, const QVariant &value);
-    QStringList attributeList() const;
+    QStringList attributes() const;
 
     QString street() const;
     void setStreet(const QString &street);
@@ -135,6 +141,9 @@ public:
 
     QString url() const;
     void setUrl(const QString &url);
+
+    QString identifier();
+
 private:
     QLandmarkPrivate *d;
 };
