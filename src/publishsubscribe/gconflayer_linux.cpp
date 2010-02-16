@@ -42,6 +42,7 @@
 #include "gconflayer_linux_p.h"
 #include <QVariant>
 #include <GConfItem>
+#include <QSignalMapper>
 
 #include <QDebug>
 
@@ -52,6 +53,8 @@ QVALUESPACE_AUTO_INSTALL_LAYER(GConfLayer);
 
 GConfLayer::GConfLayer()
 {
+    m_signalMapper = new QSignalMapper(this);
+    connect(m_signalMapper, SIGNAL(mapped(QString)), this, SLOT(notifyChanged(QString)));
 }
 
 GConfLayer::~GConfLayer()
@@ -214,13 +217,28 @@ void GConfLayer::setProperty(Handle handle, Properties properties)
     GConfHandle *sh = gConfHandle(handle);
     if (!sh)
         return;
-
-    if (properties & QAbstractValueSpaceLayer::Publish) {
-        qDebug() << "TODO: Start monitoring (child) items from" << sh->path;
-    } else {
-        qDebug() << "TODO: Stop monitoring (child) items from" << sh->path;
+    QString basePath = sh->path;
+    if (!basePath.endsWith(QLatin1Char('/'))) {
+        basePath += QLatin1Char('/');
     }
-
+    foreach (QString child, children(handle)) {
+        QString fullPath = basePath + child;
+        if (properties & QAbstractValueSpaceLayer::Publish) {
+            qDebug() << "Start Monitoring" << fullPath;
+            m_monitoringHandles[fullPath] = sh;
+            GConfItem *gconfItem = static_cast<GConfItem *> (m_signalMapper->mapping(fullPath));
+            if (!gconfItem) {
+                gconfItem = new GConfItem(fullPath, m_signalMapper);
+                connect(gconfItem, SIGNAL(valueChanged()), m_signalMapper, SLOT(map()));
+                m_signalMapper->setMapping(gconfItem, fullPath);
+            }
+        } else {
+            qDebug() << "Stop Monitoring" << fullPath;
+            GConfItem *gconfItem = static_cast<GConfItem *> (m_signalMapper->mapping(fullPath));
+            delete gconfItem;
+            m_monitoringHandles.remove(fullPath);
+        }
+    }
 }
 
 void GConfLayer::removeHandle(Handle handle)
@@ -362,6 +380,13 @@ bool GConfLayer::notifyInterest(Handle, bool)
 {
     //Not needed
     return false;
+}
+
+void GConfLayer::notifyChanged(QString path)
+{
+    if (m_monitoringHandles.contains(path)) {
+        emit handleChanged(Handle(m_monitoringHandles.value(path)));
+    }
 }
 
 #include "moc_gconflayer_linux_p.cpp"

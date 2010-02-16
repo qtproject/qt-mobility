@@ -50,6 +50,8 @@
 #include <QByteArray>
 #include <QMultiMap>
 
+class QSignalMapper;
+
 QTM_BEGIN_NAMESPACE
 
 class GConfLayer : public QAbstractValueSpaceLayer
@@ -95,6 +97,9 @@ protected:
 public:
     static GConfLayer *instance();
 
+private slots:
+    void notifyChanged(QString path);
+
 private:
     struct GConfHandle {
         GConfHandle(const QString &p)
@@ -121,8 +126,8 @@ private:
     }
 
 private:    //data
-    QHash<QByteArray, GConfHandle *> m_monitoringHandles;
-    QSet<QString> m_monitoringPaths;
+    QHash<QString, GConfHandle *> m_monitoringHandles;
+    QSignalMapper *m_signalMapper;
 };
 
 QTM_END_NAMESPACE
