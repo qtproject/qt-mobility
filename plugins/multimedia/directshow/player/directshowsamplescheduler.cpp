@@ -261,8 +261,17 @@ HRESULT DirectShowSampleScheduler::Receive(IMediaSample *pSample)
                     QCoreApplication::postEvent(this, new QEvent(QEvent::UpdateRequest));
             }
         } else if (m_tail == m_head) {
-            // If this is the first frame make is available.
+            // If this is the first frame make it available.
             QCoreApplication::postEvent(this, new QEvent(QEvent::UpdateRequest));
+
+            if (m_state == Paused) {
+                ::ResetEvent(m_timeoutEvent);
+
+                locker.unlock();
+                HANDLE handles[] = { m_flushEvent, m_timeoutEvent };
+                ::WaitForMultipleObjects(2, handles, FALSE, INFINITE);
+                locker.relock();
+            }
         }
 
         return S_OK;
@@ -299,9 +308,13 @@ void DirectShowSampleScheduler::run(REFERENCE_TIME startTime)
     for (DirectShowTimedSample *sample = m_head; sample; sample = sample->nextSample()) {
         sample->schedule(m_clock, m_startTime, m_timeoutEvent);
     }
-
+    
     if (!(m_state & Flushing))
         ::ResetEvent(m_flushEvent);
+    
+    if (!m_head)
+        ::SetEvent(m_timeoutEvent);
+
 }
 
 void DirectShowSampleScheduler::pause()
@@ -384,16 +397,14 @@ IMediaSample *DirectShowSampleScheduler::takeSample(bool *eos)
         IMediaSample *sample = m_head->sample();
         sample->AddRef();
 
-        if (m_state == Running) {
-            *eos =  m_head->isLast();
+        *eos =  m_head->isLast();
 
-            m_head = m_head->remove();
+        m_head = m_head->remove();
 
-            if (!m_head)
-                m_tail = 0;
+        if (!m_head)
+            m_tail = 0;
 
-            m_semaphore.release(1);
-        }
+        m_semaphore.release(1);
 
         return sample;
     } else {
