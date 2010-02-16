@@ -44,6 +44,13 @@
 
 #include <qtcontacts.h>
 
+#ifdef SYMBIANSIM_BACKEND_USE_ETEL_TESTSERVER
+#include <etelmm_etel_test_server.h>
+#else
+#include <etelmm.h>
+#endif
+#include <mmtsy_names.h>
+
 QTM_USE_NAMESPACE
 
 //TESTED_CLASS=
@@ -60,8 +67,8 @@ public:
     virtual ~tst_QContactManagerSymbianSim();
 
 public slots:
-    void init();
-    void cleanup();
+    void initTestCase();
+    void cleanupTestCase();
 
 private slots:
     /* Test cases that take no data */
@@ -78,27 +85,62 @@ private slots:
 
 private:
     bool isContactSupported(QContact contact);
+    void getEtelStoreInfoL(const TDesC &phonebook, TDes8 &infoPckg) const;
 
     QContactManager* m_cm;
-    /* data providers? */
+
+    RMobilePhoneBookStore::TMobilePhoneBookInfoV5 m_etelStoreInfo;
+    RMobilePhoneBookStore::TMobilePhoneBookInfoV5Pckg m_etelStoreInfoPckg;
 };
 
-tst_QContactManagerSymbianSim::tst_QContactManagerSymbianSim()
+tst_QContactManagerSymbianSim::tst_QContactManagerSymbianSim() :
+    m_etelStoreInfoPckg( m_etelStoreInfo )
 {
-	m_cm = QContactManager::fromUri("qtcontacts:symbiansim");
 }
 
 tst_QContactManagerSymbianSim::~tst_QContactManagerSymbianSim()
 {
-	delete m_cm;
 }
 
-void tst_QContactManagerSymbianSim::init()
+void tst_QContactManagerSymbianSim::initTestCase()
 {
+    m_cm = QContactManager::fromUri("qtcontacts:symbiansim");
+    QVERIFY(m_cm);
+    TRAPD(err, getEtelStoreInfoL(KETelIccAdnPhoneBook, m_etelStoreInfoPckg));
+    QCOMPARE(err, KErrNone);
 }
 
-void tst_QContactManagerSymbianSim::cleanup()
+void tst_QContactManagerSymbianSim::cleanupTestCase()
 {
+    delete m_cm;
+    m_cm = 0;
+}
+
+void tst_QContactManagerSymbianSim::getEtelStoreInfoL(const TDesC &phonebook, TDes8 &infoPckg) const
+{
+    RTelServer etelServer;
+    User::LeaveIfError(etelServer.Connect());
+    CleanupClosePushL(etelServer);
+    User::LeaveIfError(etelServer.LoadPhoneModule(KMmTsyModuleName));
+ 
+    RMobilePhone etelPhone;
+    RTelServer::TPhoneInfo info;
+    User::LeaveIfError(etelServer.GetPhoneInfo(0, info));
+    User::LeaveIfError(etelPhone.Open(etelServer, info.iName));
+    CleanupClosePushL(etelPhone);
+
+    //check what information can be saved to the Etel store
+    RMobilePhoneBookStore etelStore;
+    User::LeaveIfError(etelStore.Open(etelPhone, phonebook));
+    CleanupClosePushL(etelStore);
+    TRequestStatus requestStatus;
+    etelStore.GetInfo(requestStatus, infoPckg);
+    User::WaitForRequest(requestStatus);
+    User::LeaveIfError(requestStatus.Int());
+
+    CleanupStack::PopAndDestroy(&etelStore);
+    CleanupStack::PopAndDestroy(&etelPhone);
+    CleanupStack::PopAndDestroy(&etelServer);
 }
 
 void tst_QContactManagerSymbianSim::hasFeature()
@@ -175,26 +217,27 @@ void tst_QContactManagerSymbianSim::addContact_data()
     QTest::addColumn<QStringList>("details"); // format is <detail definition name>:<field name>:<value>
     QString unnamedLabel("Unnamed");
     QString es = QString();
+    QString tooLongText("James Hunt the 12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890th");
 
     // TODO: what name field to use for a sim contact name?
     // Note: With the current implementation the value must not contain a ':' character
     QTest::newRow("custom label")
-        << 1 // expected to pass. Note: According to S60 Memory Copy UI specification only contacts with phone numbers should be saved onto a SIM card
+        << 1 // expected to pass
         << "James"
         << (QStringList()
             << "Name:CustomLabel:James");
 
     QTest::newRow("custom label 2")
-        << 1 // expected to pass. Note: According to S60 Memory Copy UI specification only contacts with phone numbers should be saved onto a SIM card
+        << 1 // expected to pass
         << "James Hunt"
         << (QStringList()
             << "Name:CustomLabel:James Hunt");
 
     QTest::newRow("too long custom label")
-        << 1 // TODO: check that the label was cut to max length
-        << es
+        << 1 // expected to pass. Note: too long display label is truncated
+        << tooLongText
         << (QStringList()
-            << "Name:CustomLabel:James Hunt the 12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890th");
+            << (QString("Name:CustomLabel:").append(tooLongText)));
 
     QTest::newRow("custom label and nick name")
         << -1 // Depends on SIM card support (some cards support second name)
@@ -202,6 +245,13 @@ void tst_QContactManagerSymbianSim::addContact_data()
         << (QStringList()
             << "Name:CustomLabel:James Hunt"
             << "Nickname:Nickname:Hunt the Shunt");
+
+    QTest::newRow("custom label and too long nick name")
+        << -1 // Depends on SIM card support (some cards support second name)
+        << "James Hunt"
+        << (QStringList()
+            << "Name:CustomLabel:James Hunt"
+            << (QString("Nickname:Nickname:").append(tooLongText)));
 
     QTest::newRow("phone number")
         << 1
@@ -252,21 +302,29 @@ void tst_QContactManagerSymbianSim::addContact_data()
             << "PhoneNumber:PhoneNumber:+44752222222"
             << "PhoneNumber:PhoneNumber:+44751111111");
 
+    QTest::newRow("custom label and multiple phone numbers")
+        << 0 // Long enough additional phone number to fail on any SIM card
+        << "James Hunt"
+        << (QStringList()
+            << "Name:CustomLabel:James Hunt"
+            << "PhoneNumber:PhoneNumber:+44752222222"
+            << "PhoneNumber:PhoneNumber:1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
+
     QTest::newRow("custom label and email")
         << -1 // some SIM cards support e-mail address
         << "James Hunt"
         << (QStringList()
             << "Name:CustomLabel:James Hunt"
-            << "EmailAddress:EmailAddress:james.hunt@mclaren.com");
+            << "EmailAddress:EmailAddress:james@mclaren.com");
 
     QTest::newRow("custom label and multiple emails")
         << 0 // some SIM cards support multiple e-mail addresses, but not this many
         << "James Hunt"
         << (QStringList()
             << "Name:CustomLabel:James Hunt"
-            << "EmailAddress:EmailAddress:james.hunt@march.com"
-            << "EmailAddress:EmailAddress:james.hunt@hesketh.com"
-            << "EmailAddress:EmailAddress:james.hunt@mclaren.com"
+            << "EmailAddress:EmailAddress:james@march.com"
+            << "EmailAddress:EmailAddress:james@hesketh.com"
+            << "EmailAddress:EmailAddress:james@mclaren.com"
             << "EmailAddress:EmailAddress:james.hunt@bbc.co.uk");
 
     QTest::newRow("custom label and too long email")
@@ -297,7 +355,9 @@ void tst_QContactManagerSymbianSim::addContact_data()
 
 void tst_QContactManagerSymbianSim::addContact()
 {
-    // Parse details and add them to the contact
+    // Make debugging easier QString tescaseName = QTest::currentDataTag();
+
+    // 1. Parse details and add them to the contact
     QFETCH(int, expectedResult);
     QFETCH(QString, expectedDisplayLabel);
     QFETCH(QStringList, details);    
@@ -310,9 +370,10 @@ void tst_QContactManagerSymbianSim::addContact()
         QStringList detailParts = detail.split(QChar(':'), QString::KeepEmptyParts, Qt::CaseSensitive);
         QVERIFY(detailParts.count() == 3);
 
-        // Use existing detail if available
+        // Use existing detail if available and would not cause an overwrite of
+        // a field
         QContactDetail contactDetail = contact.detail(detailParts[0]);
-        if(contactDetail.isEmpty()) {
+        if(contactDetail.isEmpty() || contactDetail.values().key(detailParts[1]).isNull()) {
             contactDetail = QContactDetail(detailParts[0]);
         }
 
@@ -344,16 +405,37 @@ void tst_QContactManagerSymbianSim::addContact()
         // verify contact id
         QVERIFY(contact.id() != QContactId());
 
-        // verify display label
-        QCOMPARE(contact.displayLabel(), expectedDisplayLabel);
-
         // verify that all the details were actually saved
         foreach (QContactDetail detail, detailsUnderTest) {
             QContactDetail savedDetail = contact.detail(detail.definitionName());
-            QCOMPARE(savedDetail, detail);
+
+            // Allow truncating the custom label to the max text length
+            if (detail.definitionName() == QContactName::DefinitionName) {
+                QContactName nameDetail = static_cast<QContactName>(detail);
+                nameDetail.setCustomLabel(nameDetail.customLabel().left(m_etelStoreInfo.iMaxTextLength));
+                QCOMPARE(savedDetail, static_cast<QContactDetail>(nameDetail));
+            // Allow truncating the nick name to the max text length
+            } else if (detail.definitionName() == QContactNickname::DefinitionName) {
+                    QContactNickname nick = static_cast<QContactNickname>(detail);
+                    nick.setNickname(nick.nickname().left(m_etelStoreInfo.iMaxTextLength));
+                    QCOMPARE(savedDetail, static_cast<QContactDetail>(nick));
+            } else {
+                if (savedDetail != detail) {
+                    // FAIL! Make it easier to debug the output by
+                    // comparing the contact detail field contents
+                    foreach (QString key, detail.values().keys()) {
+                        QVariant value1 = savedDetail.value(key);
+                        QVariant value2 = detail.value(key);
+                        QCOMPARE(savedDetail.value(key), detail.value(key));
+                    }
+                }
+            }
         }
 
-        // TODO: verify that no extra details were added
+        // verify display label, allow truncating to the max text length
+        QCOMPARE(contact.displayLabel(), expectedDisplayLabel.left(m_etelStoreInfo.iMaxTextLength));
+
+        // TODO: verify that no extra details were added?
         //?QCOMPARE(contact.details().count(), detailsUnderTest.count() + 2);
 
         // verify contact removal

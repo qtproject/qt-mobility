@@ -851,7 +851,6 @@ QContact CntSymbianSimEngine::encodeSimContactL(const QContact* contact, TDes8& 
         PbkPrintToLog(_L("CntSymbianSimEngine::encodeSimContactL() - phone number length = %d"),
                 phoneNumberDetail.number().length());
         if (phoneNumberDetail.number().length() > m_etelStoreInfo.iMaxNumLength) {
-            // if number cannot fit, do no save a contact
             User::LeaveIfError(KErrTooBig);
         }
         TPtrC phoneNumberValue(reinterpret_cast<const TUint16*>(phoneNumberDetail.number().utf16()));
@@ -868,17 +867,18 @@ QContact CntSymbianSimEngine::encodeSimContactL(const QContact* contact, TDes8& 
         //one number is saved already
         for (int i = 1; i < phoneNumberDetails.count() && i-1 < m_etelStoreInfo.iMaxAdditionalNumbers; ++i) {
             QContactPhoneNumber phoneNumberDetail = static_cast<QContactPhoneNumber>(phoneNumberDetails.at(i));
-            if (phoneNumberDetail.number().length() <= m_etelStoreInfo.iMaxNumLengthAdditionalNumber) {
-                //mark the beginning of an additional number
-                User::LeaveIfError(pbBuffer->AddNewNumberTag());
-                //add number itself
-                TPtrC phoneNumberValue(reinterpret_cast<const TUint16*>(phoneNumberDetail.number().utf16()));
-                User::LeaveIfError(pbBuffer->PutTagAndValue(RMobilePhoneBookStore::ETagPBNumber, phoneNumberValue));
-
-                QContactPhoneNumber convertedPhoneNumberDetail;
-                convertedPhoneNumberDetail.setNumber(phoneNumberDetail.number());
-                convertedContact.saveDetail(&convertedPhoneNumberDetail);
+            if (phoneNumberDetail.number().length() > m_etelStoreInfo.iMaxNumLengthAdditionalNumber) {
+                User::Leave(KErrTooBig);
             }
+            //mark the beginning of an additional number
+            User::LeaveIfError(pbBuffer->AddNewNumberTag());
+            //add number itself
+            TPtrC phoneNumberValue(reinterpret_cast<const TUint16*>(phoneNumberDetail.number().utf16()));
+            User::LeaveIfError(pbBuffer->PutTagAndValue(RMobilePhoneBookStore::ETagPBNumber, phoneNumberValue));
+
+            QContactPhoneNumber convertedPhoneNumberDetail;
+            convertedPhoneNumberDetail.setNumber(phoneNumberDetail.number());
+            convertedContact.saveDetail(&convertedPhoneNumberDetail);
         }
     }
 
@@ -887,14 +887,15 @@ QContact CntSymbianSimEngine::encodeSimContactL(const QContact* contact, TDes8& 
         QList<QContactDetail> emailDetails = contact->details(QContactEmailAddress::DefinitionName);
         for (int i = 0; i < emailDetails.count() && i < m_etelStoreInfo.iMaxEmailAddr; ++i) {
         QContactEmailAddress emailDetail = static_cast<QContactEmailAddress>(emailDetails.at(i));
-            if (emailDetail.emailAddress().length() <= m_etelStoreInfo.iMaxTextLengthEmailAddr) {
-                TPtrC emailValue(reinterpret_cast<const TUint16*>(emailDetail.emailAddress().utf16()));
-                User::LeaveIfError(pbBuffer->PutTagAndValue(RMobilePhoneBookStore::ETagPBEmailAddress, emailValue));
+        TPtrC emailValue(reinterpret_cast<const TUint16*>(emailDetail.emailAddress().utf16()));
+        if (emailValue.Length() > m_etelStoreInfo.iMaxTextLengthEmailAddr) {
+            User::Leave(KErrTooBig);
+        }
+        User::LeaveIfError(pbBuffer->PutTagAndValue(RMobilePhoneBookStore::ETagPBEmailAddress, emailValue));
 
-                QContactEmailAddress convertedEmailDetail;
-                convertedEmailDetail.setEmailAddress(emailDetail.emailAddress());
-                convertedContact.saveDetail(&convertedEmailDetail);
-            }
+        QContactEmailAddress convertedEmailDetail;
+        convertedEmailDetail.setEmailAddress(emailDetail.emailAddress());
+        convertedContact.saveDetail(&convertedEmailDetail);
         }
     }
 

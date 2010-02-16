@@ -4,6 +4,8 @@ TARGET=tst_qcontactmanagersymbiansim
 QT += testlib
 CONFIG += qtestlib
 
+include(../../symbiansim_defines.pri)
+
 symbian: {
     INCLUDEPATH += .\inc
 	INCLUDEPATH += \
