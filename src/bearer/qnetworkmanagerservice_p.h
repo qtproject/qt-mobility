@@ -73,7 +73,7 @@
 /*
  * Types of NetworkManager devices
  */
-typedef enum NMDeviceType
+typedef enum 
 {
     DEVICE_TYPE_UNKNOWN = 0,
     DEVICE_TYPE_802_3_ETHERNET,
