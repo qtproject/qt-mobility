@@ -70,6 +70,7 @@
 #include <QMap>
 #include "qnmdbushelper_p.h"
 
+#ifndef NETWORK_MANAGER_H
 /*
  * Types of NetworkManager devices
  */
@@ -122,6 +123,7 @@ typedef enum
 
 #define NM_802_11_AP_FLAGS_NONE				0x00000000
 #define NM_802_11_AP_FLAGS_PRIVACY			0x00000001
+#endif
 
 QTM_BEGIN_NAMESPACE
 typedef QMap< QString, QMap<QString,QVariant> > QNmSettingsMap;
