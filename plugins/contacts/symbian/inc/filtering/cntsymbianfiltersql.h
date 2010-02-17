@@ -45,6 +45,7 @@
 #ifdef SYMBIAN_BACKEND_USE_SQLITE
 
 #include "cntabstractcontactfilter.h"
+#include "qcontactmanagerengine.h"
 
 class CContactDatabase;
 class CntFilterAbstract;
