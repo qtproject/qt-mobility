@@ -45,6 +45,7 @@
 #include "cntabstractcontactfilter.h"
 #include "cntsymbiansrvconnection.h"
 #include "qcontactdetailfilter.h"
+#include "cntdbinfo.h"
 
 #include <qmobilityglobal.h>
 
@@ -52,14 +53,13 @@ QTM_USE_NAMESPACE
 
 class CntFilterDetail : public CntAbstractContactFilter
 {
-    Q_OBJECT
-
 public:
     CntFilterDetail(CContactDatabase& contactDatabase, CntSymbianSrvConnection &cntServer,CntDbInfo& dbInfo);
     ~CntFilterDetail();
     QList<QContactLocalId> contacts(
             const QContactFilter &filter,
             const QList<QContactSortOrder> &sortOrders,
+            bool &filterSupported,
             QContactManager::Error &error);
     bool filterSupported(const QContactFilter& filter) ;
     

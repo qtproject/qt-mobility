@@ -45,6 +45,7 @@
 #include "cntabstractcontactfilter.h"
 #include "cntsymbiansrvconnection.h"
 #include "qcontactdetailfilter.h"
+#include "cntdbinfo.h"
 
 #include <qmobilityglobal.h>
 
@@ -52,27 +53,22 @@ QTM_USE_NAMESPACE
 
 class CntFilterUnion : public CntAbstractContactFilter
 {
-    Q_OBJECT
-
 public:
     CntFilterUnion(CContactDatabase& contactDatabase,CntSymbianSrvConnection &cntServer,CntDbInfo& dbInfo);
     virtual ~CntFilterUnion();
     QList<QContactLocalId> contacts(
             const QContactFilter &filter,
             const QList<QContactSortOrder> &sortOrders,
+            bool &filterSupported,
             QContactManager::Error &error) ;
     bool filterSupported(const QContactFilter& filter) ;
     
-    void getSqlQuery( const QContactUnionFilter& filter,
-                                  QString& tableName,
-                                  QString& sqlWhereClause ,
-                                  QContactManager::Error& error) const;
-    void createUnionQuery(QList<QString>& commAddrTableColList, 
-                          QList<QString>& contactTableColList,
-                          QString& sqlquery) const;
-    void createSelectQuery(const QContactFilter& detailFilter,
-                                 QString& sqlQuery,
-                                 QContactManager::Error& error);    
+    void createSelectQuery(const QContactFilter& filter,
+                                 QString& selectquery,
+                                 QContactManager::Error& error); 
+
+private:
+    void getSelectQueryforFilter(const QContactFilter& filter,QString& sqlSelectQuery,QContactManager::Error& error);
 
 protected:
     CntSymbianSrvConnection &m_srvConnection;

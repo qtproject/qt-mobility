@@ -62,9 +62,11 @@ CntFilterIntersection::~CntFilterIntersection()
 QList<QContactLocalId> CntFilterIntersection::contacts(
         const QContactFilter &filter,
         const QList<QContactSortOrder> &sortOrders,
+        bool &filterSupportedflag,
         QContactManager::Error &error) 
 {
-    
+    Q_UNUSED(sortOrders);
+    Q_UNUSED(filterSupportedflag);
     //Check if any invalid filter is passed 
     if(filterSupported(filter) == false)
         {
@@ -130,9 +132,11 @@ void CntFilterIntersection::getSelectQueryforFilter(const QContactFilter& filter
         case QContactFilter::DefaultFilter:
             break;
         case QContactFilter::ContactDetailFilter:
+            {
             CntFilterDetail dtlfltr(m_contactdatabase,m_srvConnection,m_dbInfo);
             dtlfltr.createSelectQuery(filter,sqlSelectQuery,error);
             break;
+            }
         case QContactFilter::IntersectionFilter:
             break;
         case QContactFilter::UnionFilter:

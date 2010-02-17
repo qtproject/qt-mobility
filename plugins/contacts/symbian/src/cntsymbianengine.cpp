@@ -84,7 +84,11 @@ CntSymbianEngine::CntSymbianEngine(const QMap<QString, QString>& parameters, QCo
     if(error == QContactManager::NoError) {
         m_managerUri = QContactManager::buildUri(CNT_SYMBIAN_MANAGER_NAME, parameters);
         m_transformContact = new CntTransformContact;
+#ifdef SYMBIAN_BACKEND_USE_SQLITE
+        m_contactFilter    = new CntSymbianFilter(*this, *m_dataBase->contactDatabase(), *m_transformContact);
+#else
         m_contactFilter    = new CntSymbianFilter(*m_dataBase->contactDatabase());
+#endif
         m_contactSorter    = new CntSymbianSorterDbms(*m_dataBase->contactDatabase(), *m_transformContact);
         m_relationship     = new CntRelationship(m_dataBase->contactDatabase(), m_managerUri);
         m_displayLabel     = new CntDisplayLabel();

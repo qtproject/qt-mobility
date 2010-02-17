@@ -61,22 +61,23 @@ CntFilterUnion::~CntFilterUnion()
 QList<QContactLocalId> CntFilterUnion::contacts(
         const QContactFilter &filter,
         const QList<QContactSortOrder> &sortOrders,
+        bool &filterSupportedflag,
         QContactManager::Error &error) 
 {
-    QList<QContactLocalId> idList;
+    Q_UNUSED(sortOrders);
+    Q_UNUSED(filterSupportedflag);
     //Check if any invalid filter is passed 
     if(!filterSupported(filter))
         {
         error =  QContactManager::NotSupportedError;
         return QList<QContactLocalId>();
         }
-    const QContactUnionFilter& unionfilter = static_cast<const QContactUnionFilter&>(filter);
-    QString tableName;
-    QString sqlQuery; 
-    this->getSqlQuery( unionfilter,tableName,sqlQuery,error) ;
-    //fetch the contacts
-        idList =  m_srvConnection.searchContacts(sqlQuery, error);
-        return idList;
+     QList<QContactLocalId> idList;
+     QString sqlQuery;
+     this->createSelectQuery( filter,sqlQuery,error) ;
+     //fetch the contacts
+     idList =  m_srvConnection.searchContacts(sqlQuery, error);
+     return idList;
 }
 
 
@@ -91,102 +92,61 @@ bool CntFilterUnion::filterSupported(const QContactFilter& filter)
      return result;
 }
 
-void CntFilterUnion::createSelectQuery(const QContactFilter& detailFilter,
-                              QString& sqlQuery,
+
+
+void CntFilterUnion::createSelectQuery(const QContactFilter& filter,
+                              QString& selectquery,
                               QContactManager::Error& error)
 
 {
-    
-    
-}
-
-void CntFilterUnion::getSqlQuery( const QContactUnionFilter& unionfilter,
-                                               QString& tableName,
-                                               QString& sqlquery ,
-                                               QContactManager::Error& error) const
-{
-    // get the individual filters of the union filter
-    
-    QList<QContactFilter> individualFilters = unionfilter.filters();
-    QList<QString> commAddrTableColList;
-    QList<QString> contactTableColList;
-    //currently only simple detail filter unions will be supported
-    for(int i=0; i< individualFilters.count();i++)
+    const QContactUnionFilter& unionfilter = static_cast<const QContactUnionFilter&>(filter);
+    if(!filterSupported(filter))
         {
-        if(individualFilters[i].type() ==  QContactFilter::ContactDetailFilter)
-            {
-            QString tablename;
-            QString whereclause;
-            CntFilterDetail filterdetail(m_contactdatabase,m_srvConnection,m_dbInfo);
-            filterdetail.getTableNameWhereClause(individualFilters[i],tablename,whereclause,error);
-            if(tablename == "contact")
-                {
-                contactTableColList.append(whereclause);
-                }
-            else if(tablename == "comm_addr")
-                {
-                commAddrTableColList.append(whereclause);
-                }
-            else
-                {
-                error =  QContactManager::NotSupportedError;
-                return ;
-                }
-            }
-        else
-            {
-            error =  QContactManager::NotSupportedError;
-            return ;
-            }
-    
+        error = QContactManager::NotSupportedError;
+        return;
         }
-    createUnionQuery(commAddrTableColList, contactTableColList,sqlquery);
+        QList<QContactFilter> individualFilters = unionfilter.filters();
+        //QString selectquery;
+        int fltrcnt =  individualFilters.count();          
+        if(fltrcnt)
+            getSelectQueryforFilter(individualFilters[0],selectquery,error);
 
-    
+        for(int i=1; i< fltrcnt ; i++)
+            {
         
+            QString query;
+            getSelectQueryforFilter(individualFilters[i],query,error);
+            if(error == QContactManager::NoError )
+                {
+                selectquery.append(" UNION ");
+                selectquery += query;
+                }
+            
+            }
+        
+            
 }
-
-
-void CntFilterUnion::createUnionQuery(QList<QString>& commAddrTableColList, QList<QString>& contactTableColList,QString& sqlquery) const
+void CntFilterUnion::getSelectQueryforFilter(const QContactFilter& filter,QString& sqlSelectQuery,QContactManager::Error& error)
     {
-    // Create the where clause for contactTableColList
-    QString sqlWhereClause;
-    //------------------------------------------------------------------------------------
-    int j=0;
-    if( contactTableColList.count() )
-        sqlWhereClause += contactTableColList[j];
-    for( j=1; j< contactTableColList.count() ;j++ )
+    switch(filter.type())
         {
-        sqlWhereClause += " OR ";    
-        sqlWhereClause += contactTableColList[j];
-        }
-
-    //Create the complete query for contact table
-    if(  contactTableColList.count())
-        {
-        //The where clause exists in both tables so create query involving both tables
-        sqlquery = "SELECT contact_id FROM contact WHERE  " + sqlWhereClause ;
+        case QContactFilter::DefaultFilter:
+            break;
+        case QContactFilter::ContactDetailFilter:
+            {
+            CntFilterDetail dtlfltr(m_contactdatabase,m_srvConnection,m_dbInfo);
+            dtlfltr.createSelectQuery(filter,sqlSelectQuery,error);
+            break;
+            }
+        case QContactFilter::IntersectionFilter:
+            break;
+        case QContactFilter::UnionFilter:
+            break;
+        default:
+            error = QContactManager::NotSupportedError;
+            break;
         }
     
-    if(contactTableColList.count() && commAddrTableColList.count())
-        sqlquery.append(" UNION ");
-    //------------------------------------------------------------------------------------
-    //Create complete query for comm_addr table
-    // Create the where clause for commAddrTableColList
-    sqlWhereClause = "";
-    int k=0;
-    if(commAddrTableColList.count())
-        sqlWhereClause += commAddrTableColList[k];
-    for( k=1; k< commAddrTableColList.count() ;k++ )
-        {
-        sqlWhereClause += " OR ";        
-        sqlWhereClause += commAddrTableColList[k];
-        }
-    if( commAddrTableColList.count())
-            {
-            //The where clause exists in both tables so create query involving both tables
-            sqlquery += "SELECT contact_id FROM comm_addr WHERE  " + sqlWhereClause ; 
-            }
-    //------------------------------------------------------------------------------------
     
     }
+    

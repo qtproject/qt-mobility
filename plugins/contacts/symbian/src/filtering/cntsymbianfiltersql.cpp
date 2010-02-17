@@ -44,54 +44,96 @@
 #include "cntsymbianfiltersql.h"
 #include "qcontactdetailfilter.h"
 #include "qcontactphonenumber.h"
+#include "cntsymbiansrvconnection.h"
+
+#include "cntfilterdetail.h"
+#include "cntfilterdefault.h"
+#include "cntfilterintersection.h"
+#include "cntfilterunion.h"
+#include "cntfilterrelationship.h"
+#include "cntfilterinvalid.h"
+#include "cntfilterdetailrange.h"
+#include "cntfilterchangelog.h"
+#include "cntfilteraction.h"
+#include "cntfilterlocalid.h"
 #include <QLatin1String>
 #include <e32cmn.h>
 #include <cntdb.h>
 
-CntSymbianFilter::CntSymbianFilter(CContactDatabase& contactDatabase):
-    m_contactDatabase(contactDatabase)
+
+CntSymbianFilter::CntSymbianFilter(QContactManagerEngine& /*manager*/, CContactDatabase& contactDatabase, const CntTransformContact &transformContact):
+    m_contactDatabase(contactDatabase),
+    m_transformContact(transformContact)
 {
-    m_sqlhelper = new CntSymbianFilterSqlHelper(contactDatabase);
+    m_srvConnection = new CntSymbianSrvConnection();
+    m_dbInfo = new CntDbInfo();
+    initializeFilters();
+      
 }
+
+void CntSymbianFilter::initializeFilters()
+    {
+    m_filterMap.insert(QContactFilter::ContactDetailFilter, new CntFilterDetail(m_contactDatabase,*m_srvConnection,*m_dbInfo));
+    m_filterMap.insert(QContactFilter::DefaultFilter, new CntFilterDefault(m_contactDatabase,*m_srvConnection,*m_dbInfo));
+    m_filterMap.insert(QContactFilter::IntersectionFilter, new CntFilterIntersection(m_contactDatabase,*m_srvConnection,*m_dbInfo));
+    m_filterMap.insert(QContactFilter::UnionFilter, new CntFilterUnion(m_contactDatabase,*m_srvConnection,*m_dbInfo));
+    m_filterMap.insert(QContactFilter::RelationshipFilter, new CntFilterRelationship(m_contactDatabase,*m_srvConnection,*m_dbInfo));
+    m_filterMap.insert(QContactFilter::InvalidFilter, new CntFilterInvalid(m_contactDatabase,*m_srvConnection,*m_dbInfo));
+    m_filterMap.insert(QContactFilter::ContactDetailRangeFilter, new CntFilterdetailrange(m_contactDatabase,*m_srvConnection,*m_dbInfo));
+    m_filterMap.insert(QContactFilter::ChangeLogFilter, new CntFilterChangeLog(m_contactDatabase,*m_srvConnection,*m_dbInfo));
+    m_filterMap.insert(QContactFilter::ActionFilter, new CntFilterAction(m_contactDatabase,*m_srvConnection,*m_dbInfo));
+    m_filterMap.insert(QContactFilter::LocalIdFilter, new CntFilterLocalId(m_contactDatabase,*m_srvConnection,*m_dbInfo));
+    
+    }
+
+
 
 CntSymbianFilter::~CntSymbianFilter()
 {
-    delete m_sqlhelper;
+    
+    
+    //delete the all filters from the map
+    QMap<QContactFilter::FilterType, CntAbstractContactFilter*>::iterator itr;
+
+    for (itr = m_filterMap.begin(); itr != m_filterMap.end(); ++itr)
+    {
+        CntAbstractContactFilter* value = itr.value();
+        delete value;
+        value = 0;
+    }
+    
+    delete m_srvConnection;
+    delete m_dbInfo;  
 }
 
 QList<QContactLocalId> CntSymbianFilter::contacts(
             const QContactFilter& filter,
             const QList<QContactSortOrder>& sortOrders,
-            bool &filterSupportedFlag,
-            QContactManager::Error& error)
+            bool &filterSupported,
+            QContactManager::Error& error) 
 {
-    QList<QContactLocalId> matches;
-    
-    matches = m_sqlhelper->searchContacts(filter, sortOrders, error);    
-    
-    // Tell the caller do slow filtering if the filter is not supported
-    filterSupportedFlag = filterSupported(filter);
+    QList<QContactLocalId> ids;
+    if(m_filterMap.contains(filter.type()))
+        {
 
-    return matches;
+        ids = ( m_filterMap.value(filter.type()))->contacts(filter,sortOrders,filterSupported,error);
+        return ids;   
+        
+        }
+    error = QContactManager::NotSupportedError;
+    return ids;
+    
 }
 
 bool CntSymbianFilter::filterSupported(const QContactFilter& filter)
 {
-    TBool result;
-
-    // Map filter support into a boolean value
-    FilterSupport support = filterSupportLevel(filter);
-    if (support == Supported || support == SupportedPreFilterOnly) {
-        result = true;
-    } else {
-        result = false;
+    bool result = false;
+    
+    if(m_filterMap.contains(filter.type()))
+    {
+        result = m_filterMap.value(filter.type())->filterSupported(filter);
     }
     return result;
-}
-
-CntAbstractContactFilter::FilterSupport CntSymbianFilter::filterSupportLevel(const QContactFilter& filter)
-{
-    return m_sqlhelper->filterSupportLevel(filter);
 }
 
 #endif
