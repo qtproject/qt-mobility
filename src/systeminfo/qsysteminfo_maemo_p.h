@@ -61,9 +61,6 @@
 #include "qsysteminfo_linux_common_p.h"
 #include "qsysteminfo.h"
 #include <qmobilityglobal.h>
-#if !defined(QT_NO_DBUS)
-#include <qhalservice_linux_p.h>
-#endif
 
 QT_BEGIN_HEADER
 
@@ -87,13 +84,6 @@ public:
     QString version(QSystemInfo::Version,  const QString &parameter = QString());
 
     bool hasFeatureSupported(QSystemInfo::Feature feature);
-
-//protected:
-//#if !defined(QT_NO_DBUS)
-//    bool hasHalDeviceFeature(const QString &param);
-//    bool hasHalUsbFeature(qint32 usbClass);
-//    QHalInterface halIface;
-//#endif
 };
 
 class QNetworkManagerInterface;
@@ -125,14 +115,6 @@ public:
 
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
 
-protected:
-//#if !defined(QT_NO_DBUS)
-////    QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
-//    int getBluetoothRssi();
-//    QString getBluetoothInfo(const QString &file);
-//    bool isDefaultInterface(const QString &device);
-//
-//#endif
 };
 
 class QSystemDisplayInfoPrivate : public QSystemDisplayInfoLinuxCommonPrivate
@@ -144,9 +126,7 @@ public:
     QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemDisplayInfoPrivate();
 
-
     int displayBrightness(int screen);
-    int colorDepth(int screen);
 };
 
 class QSystemStorageInfoPrivate : public QSystemStorageInfoLinuxCommonPrivate
@@ -157,15 +137,6 @@ public:
 
     QSystemStorageInfoPrivate(QSystemStorageInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemStorageInfoPrivate();
-
-    qint64 availableDiskSpace(const QString &driveVolume);
-    qint64 totalDiskSpace(const QString &driveVolume);
-    QStringList logicalDrives();
-    QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
-
-protected:
-    QMap<QString, QString> mountEntriesMap;
-    void mountEntries();
 
 };
 
@@ -180,31 +151,11 @@ public:
 
     QString imei();
     QString imsi();
-//    QString manufacturer();
-//    QString model();
-//    QString productName();
-
-  //  QSystemDeviceInfo::InputMethodFlags inputMethodType();
-
-   // int  batteryLevel() const;
-
     QSystemDeviceInfo::SimStatus simStatus();
     bool isDeviceLocked();
     QSystemDeviceInfo::Profile currentProfile();
 
-  //  QSystemDeviceInfo::PowerState currentPowerState();
-  //  void setConnection();
-
 protected:
-//#if !defined(QT_NO_DBUS)
-//    QHalInterface *halIface;
-//    QHalDeviceInterface *halIfaceDevice;
-//    void setupBluetooth();
-//
-//private Q_SLOTS:
-//    void halChanged(int,QVariantList);
-//    void bluezPropertyChanged(const QString&, QDBusVariant);
-//#endif
 };
 
 
@@ -225,7 +176,6 @@ protected:
     QString screenPath;
     QString settingsPath;
     bool screenSaverSecure;
-
     uint currentPid;
 
 };

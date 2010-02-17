@@ -339,6 +339,14 @@ int QSystemDisplayInfoPrivate::displayBrightness(int screen)
     return -1;
 }
 
+QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QSystemStorageInfoLinuxCommonPrivate *parent)
+        : QSystemStorageInfoLinuxCommonPrivate(parent)
+{
+}
+
+QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
+{
+}
 
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QSystemDeviceInfoLinuxCommonPrivate *parent)
         : QSystemDeviceInfoLinuxCommonPrivate(parent)

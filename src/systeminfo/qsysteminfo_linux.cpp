@@ -535,6 +535,7 @@ QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxComm
 QSystemDisplayInfoPrivate::~QSystemDisplayInfoPrivate()
 {
 }
+
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QSystemStorageInfoLinuxCommonPrivate *parent)
         : QSystemStorageInfoLinuxCommonPrivate(parent)
 {
