@@ -55,12 +55,35 @@
     ****************************************************************************/</span>
 
     #include &lt;QApplication&gt;
+    #include &lt;QStringList&gt;
+    #include &lt;QMessageBox&gt;
 
     #include &quot;servicebrowser.h&quot;
 
     int main(int argc, char *argv[])
     {
         QApplication app(argc, argv);
+        QStringList arglist = app.arguments();
+        QString additionallibpath;
+        for(int i = 0; i &lt; arglist.count(); i++){
+            if(arglist[i].toLower() == &quot;-help&quot; || arglist[i] == &quot;-?&quot;
+                || arglist[i].toLower() == &quot;help&quot; || arglist[i] == &quot;?&quot;){
+                    QMessageBox msgBox;
+                    msgBox.setText(&quot;Following arguments are possible:\t\t&quot;);
+                    msgBox.setInformativeText(&quot;-path\tPath to additional service libraries.\ne.g.: -path C:/plugins/bin&quot;);
+                    msgBox.setStandardButtons(QMessageBox::Ok);
+                    msgBox.exec();
+                    return 0;
+            }
+            if(arglist[i] == &quot;-path&quot; &amp;&amp; i &lt; (arglist.count() - 1)){
+                i++;
+                additionallibpath = arglist[i];
+            }
+        }
+        <span class="comment">//add additional service library path</span>
+        if(additionallibpath.count() &gt; 0)
+            QCoreApplication::addLibraryPath(additionallibpath);
+
         ServiceBrowser browser;
         browser.show();
         return app.exec();

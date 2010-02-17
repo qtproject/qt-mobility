@@ -55,6 +55,9 @@ QT_BEGIN_NAMESPACE
 namespace Ui {
     class SubscriberDialog;
 }
+
+class QTableWidget;
+class QListWidget;
 QT_END_NAMESPACE
 
 class SubscriberDialog : public QDialog
@@ -65,7 +68,7 @@ public:
     SubscriberDialog(QWidget *parent = 0);
     ~SubscriberDialog();
 
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_SMALL_SCREEN
 signals:
     void switchRequested();
 #endif
@@ -82,6 +85,9 @@ private slots:
 private:
     Ui::SubscriberDialog *ui;
     QValueSpaceSubscriber *subscriber;
+
+    QTableWidget *tableWidget;
+    QListWidget *listWidget;
 };
 
 #endif // SUBSCRIBERDIALOG_H

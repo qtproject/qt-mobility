@@ -46,7 +46,9 @@
 #include "directshowmediatype.h"
 #include "directshowmediatypelist.h"
 
+QT_BEGIN_NAMESPACE
 class QIODevice;
+QT_END_NAMESPACE
 
 class DirectShowIOSource
     : public DirectShowMediaTypeList
