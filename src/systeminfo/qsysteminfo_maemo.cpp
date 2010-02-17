@@ -78,7 +78,6 @@ QSystemInfoPrivate::~QSystemInfoPrivate()
 {
 }
 
-// 2 letter ISO 639-1
 QStringList QSystemInfoPrivate::availableLanguages() const
 {
     QStringList languages;
@@ -95,7 +94,6 @@ QStringList QSystemInfoPrivate::availableLanguages() const
     return languages;
 }
 
-// "major.minor.build" format.
 QString QSystemInfoPrivate::version(QSystemInfo::Version type,
                                     const QString &parameter)
 {
@@ -246,13 +244,11 @@ int QSystemNetworkInfoPrivate::locationAreaCode()
     return -1;
 }
 
-// Mobile Country Code
 QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
 {
     return QString();
 }
 
-// Mobile Network Code
 QString QSystemNetworkInfoPrivate::currentMobileNetworkCode()
 {
     return QString();
