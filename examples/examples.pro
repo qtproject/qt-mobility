@@ -6,7 +6,9 @@ TEMPLATE = subdirs
 contains(mobility_modules,serviceframework) {
     SUBDIRS += filemanagerplugin \
             bluetoothtransferplugin \
+            notesmanagerplugin \
             servicebrowser
+#            todotool
     
     contains(QT_CONFIG, declarative) {
         SUBDIRS += declarative
