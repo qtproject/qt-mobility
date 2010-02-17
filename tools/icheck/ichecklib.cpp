@@ -57,7 +57,7 @@ QT_USE_NAMESPACE
 QStringList getQTIncludePath()
 {
     QStringList ret;
-    QString qtpath = QLibraryInfo::location(QLibraryInfo::LibraryLocation::HeadersPath);
+    QString qtpath = QLibraryInfo::location(QLibraryInfo::HeadersPath);
 
     ret << qtpath;
     ret << qtpath + "/ActiveQt";
