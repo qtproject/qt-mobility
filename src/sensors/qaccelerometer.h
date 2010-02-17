@@ -64,8 +64,6 @@ public:
 
     qreal z() const;
     void setZ(qreal z);
-
-    QVariant value(int index) const;
 };
 
 // begin generated code
