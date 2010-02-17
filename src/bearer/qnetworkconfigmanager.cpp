@@ -43,6 +43,8 @@
 
 #ifdef Q_OS_SYMBIAN
 #include "qnetworkconfigmanager_s60_p.h"
+#elif Q_WS_MAEMO_6
+#include "qnetworkconfigmanager_maemo_p.h"
 #else
 #include "qnetworkconfigmanager_p.h"
 #endif
@@ -222,6 +224,11 @@ QNetworkConfiguration QNetworkConfigurationManager::defaultConfiguration() const
     be used to update each configuration's state. Note that such an update may require
     some time. It's completion is signalled by updateCompleted(). In the absence of a
     configuration update this function returns the best estimate at the time of the call.
+    Therefore, if WLAN configurations are of interest, it is recommended that
+    updateConfigurations() is called once after QNetworkConfigurationManager
+    instantiation (WLAN scans are too time consuming to perform in constructor).
+    After this the data is kept automatically up-to-date as the system reports
+    any changes.
 */
 QList<QNetworkConfiguration> QNetworkConfigurationManager::allConfigurations(QNetworkConfiguration::StateFlags filter) const
 {
