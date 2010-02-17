@@ -207,7 +207,6 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
     }
 }
 
-#define QVARIANT_ARG(arg) (arg.isValid?
 void ObjectEndPoint::methodCall(const QServicePackage& p)
 {
 
@@ -237,7 +236,7 @@ void ObjectEndPoint::methodCall(const QServicePackage& p)
         }
 
         bool result = false;
-        if (returnType == QMetaType::Void) {
+        if (returnType == QMetaType::Void && strcmp(method.typeName(), "QVariant")) {
             result = method.invoke(service,
                    QGenericArgument(typenames[0], param[0]),
                    QGenericArgument(typenames[1], param[1]),
@@ -268,6 +267,7 @@ void ObjectEndPoint::methodCall(const QServicePackage& p)
                    QGenericArgument(typenames[7], param[7]),
                    QGenericArgument(typenames[8], param[8]),
                    QGenericArgument(typenames[9], param[9]));
+
             QServicePackage response = p.createResponse();
 
             if (result) {

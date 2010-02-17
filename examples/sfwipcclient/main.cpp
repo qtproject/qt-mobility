@@ -20,8 +20,9 @@ public:
         if (!service)  {
             qWarning() << "Cannot find service. Error:" << manager.error();
             QTimer::singleShot(1000, this, SLOT(killProcess()));
+        } else {
+            checkServiceObject();
         }
-        checkServiceObject();
     }
 
 public slots:
@@ -77,15 +78,42 @@ public slots:
         QMetaObject::invokeMethod( service, "testSlotWithUnknownArg",
               Q_ARG(QServiceInterfaceDescriptor, desc));
 
+        //test known return type
         QString result;
         QString o("Invoking testFunctionWithReturnValue( int i = %1 ) returned '%2'");
         QMetaObject::invokeMethod(service, "testFunctionWithReturnValue",
-              Q_RETURN_ARG(QString, result), Q_ARG(int, 5));
-        o = o.arg(5).arg(result);
+              Q_RETURN_ARG(QString, result), Q_ARG(int, 4));
+        o = o.arg(4).arg(result);
         qDebug() << o;
 
         //test QVariant return types
+        QVariant varResult;
+        o = "Invoking testFunctionWithVariantReturnValue() returned '%1'";
+        QMetaObject::invokeMethod(service, "testFunctionWithVariantReturnValue",
+              Q_RETURN_ARG(QVariant, varResult));
+        o = o.arg(varResult.toInt()); //should return false
+        qDebug() << o;
 
+        //test custom return type
+        QServiceFilter f;
+        QMetaObject::invokeMethod(service, "testFunctionWithCustomReturnValue",
+              Q_RETURN_ARG(QServiceFilter, f));
+        o = "Invoking testFunctionWithCustomReturnValue return: %1: %2 - %3.%4";
+        o = o.arg(f.serviceName()).arg(f.interfaceName()).arg(f.majorVersion()).arg(f.minorVersion());
+        qDebug() << o;
+
+
+        //signal support
+        //we'll call a function which will trigger the signal on the server side
+        connect(service, SIGNAL(signalWithIntParam(int)), this, SLOT(slotSignalWithIntParam(int)));
+        QMetaObject::invokeMethod(service, "triggerSignalWithIntParam");
+
+
+    }
+
+    void slotSignalWithIntParam(int i)
+    {
+        qDebug() << "signalWithIntParam(int) received. value:" << i; 
         QTimer::singleShot(1000, this, SLOT(killService()));
     }
 

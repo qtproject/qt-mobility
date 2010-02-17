@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QTimer>
 #include <qservicetyperegister.h>
 #include <qservicecontrol.h>
 #include <instancemanager_p.h>
@@ -29,9 +30,39 @@ public:
         output = output.arg(input).arg(input*3);
         return output;
     }
+    
+    Q_INVOKABLE QVariant testFunctionWithVariantReturnValue()
+    {
+        qDebug() << "TestService::testFunctionWithVariantReturnValue()";
+        return QVariant('4');
+    }
+
+    Q_INVOKABLE QServiceFilter testFunctionWithCustomReturnValue()
+    {
+        qDebug() << "TestService::testFunctionWithCustomReturnValue()";
+        QServiceFilter f("com.nokia.qt.testservice", "6.7");
+        f.setServiceName("MyService");
+        return f;
+
+    }
+
 Q_SIGNALS:
-    void testSignal();
+    void signalWithIntParam(int);
 public slots:
+
+    Q_INVOKABLE void triggerSignalWithIntParam()
+    {
+        static int counter = 0;
+        counter++;
+        if ((counter % 2) == 1 ) {
+            QTimer::singleShot(2000, this, SLOT(triggerSignalWithIntParam()));
+        } else {
+            qDebug() << "Emitting TestService::signalWithIntParam(" << counter << ")";
+            emit signalWithIntParam( counter );
+        }
+    }
+
+
     void testSlot()
     {
         qDebug() << "TestService::testSlot() called";
@@ -76,12 +107,40 @@ public:
         output = output.arg(input).arg(input*3);
         return output;
     }
-Q_SIGNALS:
-    void testSignal();
 
+    Q_INVOKABLE QVariant testFunctionWithVariantReturnValue()
+    {
+        qDebug() << "TestService2::testFunctionWithVariantReturnValue()";
+        return  QVariant('4');
+    }
+
+    Q_INVOKABLE QServiceFilter testFunctionWithCustomReturnValue()
+    {
+        qDebug() << "TestService::testFunctionWithCustomReturnValue()";
+        QServiceFilter f("com.nokia.qt.testservice", "6.7");
+        f.setServiceName("MyService");
+        return f;
+
+    }
+
+Q_SIGNALS:
+    void signalWithIntParam(int);
 
 
 public slots:
+    void triggerSignalWithIntParam()
+    {
+        static int counter = 0;
+        counter++;
+        if ((counter % 2) == 1 ) {
+            QTimer::singleShot(2000, this, SLOT(triggerSignalWithIntParam()));
+        } else {
+            qDebug() << "Emitting TestService2::signalWithIntParam(" << counter << ")";
+            emit signalWithIntParam( counter );
+        }
+    }
+
+
     void testSlot() {
         qDebug() << "TestService2::testSlot() called";
     }
@@ -120,7 +179,7 @@ void registerExampleService()
     const QString path = QCoreApplication::applicationDirPath() + "/xmldata/ipcexampleservice.xml";
     bool r = m.addService(path);
     if (!r)
-        qWarning() << "Cannot register IPCExampleService";
+        qWarning() << "Cannot register IPCExampleService" << path;
 }
 
 Q_DECLARE_METATYPE(QMetaType::Type);

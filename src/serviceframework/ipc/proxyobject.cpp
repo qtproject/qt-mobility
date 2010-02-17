@@ -100,6 +100,8 @@ int QServiceProxy::qt_metacall(QMetaObject::Call c, int id, void **a)
         const int metaIndex = id + d->meta->methodOffset();
 
         QMetaMethod method = d->meta->method(metaIndex);
+        qDebug() << method.typeName();
+
         const int returnType = QMetaType::type(method.typeName());
 
         //process arguments
@@ -128,17 +130,26 @@ int QServiceProxy::qt_metacall(QMetaObject::Call c, int id, void **a)
             }
         }
 
-        if (returnType == QMetaType::Void) {
-            //assume we don't have parameter //TODO
+        //QVariant looks the same as Void type. we need to distinguish them
+        if (returnType == QMetaType::Void && strcmp(method.typeName(),"QVariant") ) {
             d->endPoint->invokeRemote(metaIndex, args, returnType);
         } else {
-            QVariant result = d->endPoint->invokeRemote(metaIndex, args, returnType);
+            //TODO: ugly but works
+            //add +1 if we have a variant return type to avoid triggering of void
+            //code path
+            //invokeRemote() parameter list needs review
+            QVariant result = d->endPoint->invokeRemote(metaIndex, args, 
+                    returnType==0 ? returnType+1: returnType);
 
-            QByteArray buffer;
-            QDataStream stream(&buffer, QIODevice::ReadWrite);
-            QMetaType::save(stream, returnType, result.constData());
-            stream.device()->seek(0);
-            QMetaType::load(stream, returnType, a[0]);
+            if (returnType != 0) {
+                QByteArray buffer;
+                QDataStream stream(&buffer, QIODevice::ReadWrite);
+                QMetaType::save(stream, returnType, result.constData());
+                stream.device()->seek(0);
+                QMetaType::load(stream, returnType, a[0]);
+            } else {
+                if (a[0]) *reinterpret_cast< QVariant*>(a[0]) = result;
+            }
         }
         
 
