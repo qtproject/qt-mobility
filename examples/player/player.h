@@ -91,6 +91,8 @@ private slots:
     void statusChanged(QMediaPlayer::MediaStatus status);
     void bufferingProgress(int progress);
 
+    void displayErrorMessage();
+
 #ifdef Q_OS_SYMBIAN
     void handleFullScreen(bool isFullscreen);
     void handleStateChange(QMediaPlayer::State state);
