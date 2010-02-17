@@ -75,13 +75,9 @@ class Q_SENSORS_EXPORT QSensor : public QObject
     friend class QSensorBackend;
 
     Q_OBJECT
-    Q_ENUMS(UpdatePolicy)
-    Q_FLAGS(UpdatePolicies)
     Q_PROPERTY(QByteArray sensorid READ identifier WRITE setIdentifier)
     Q_PROPERTY(QByteArray type READ type WRITE setType)
     Q_PROPERTY(bool connected READ isConnected)
-    Q_PROPERTY(UpdatePolicies supportedUpdatePolicies READ supportedUpdatePolicies)
-    Q_PROPERTY(UpdatePolicy updatePolicy READ updatePolicy WRITE setUpdatePolicy)
     Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval)
     Q_PROPERTY(QSensorReading* reading READ reading NOTIFY readingChanged)
     Q_PROPERTY(bool running READ isActive WRITE setActive)
@@ -104,35 +100,8 @@ public:
     bool isSignalEnabled() const;
     void setSignalEnabled(bool enabled);
 
-    enum UpdatePolicy {
-        Undefined         = 0x00, // If the sensor has no specific policy
-
-        // Used by irregularly updating sensors
-        OnChangeUpdates   = 0x01,
-
-        // Used by continuously updating sensors
-        OccasionalUpdates = 0x02,
-        InfrequentUpdates = 0x04,
-        FrequentUpdates   = 0x08,
-
-        // For more control
-        TimedUpdates      = 0x10, // Every x milliseconds (may not be supported by all sensors)
-        PolledUpdates     = 0x20  // As often as polled (may not be supported by all sensors)
-    };
-    Q_DECLARE_FLAGS(UpdatePolicies, UpdatePolicy)
-
-    // What policies does the sensor support
-    UpdatePolicies supportedUpdatePolicies() const;
-
-    // Set the desired update policy (default is defined by the sensor)
-    // Use documentation to determine the policies that the sensor
-    // supports.
-    void setUpdatePolicy(UpdatePolicy policy);
-    void setUpdateInterval(int interval);
-
-    // Retrieve the policy
-    UpdatePolicy updatePolicy() const;
     int updateInterval() const;
+    void setUpdateInterval(int interval);
 
     // Filters modify the reading
     void addFilter(QSensorFilter *filter);
@@ -167,8 +136,6 @@ private:
     QScopedPointer<QSensorPrivate> d;
     Q_DISABLE_COPY(QSensor)
 };
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(QSensor::UpdatePolicies)
 
 class Q_SENSORS_EXPORT QSensorFilter
 {

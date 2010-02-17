@@ -63,9 +63,7 @@ class QSensorPrivate
 {
 public:
     QSensorPrivate()
-        : supportedUpdatePolicies(QSensor::Undefined)
-        , updatePolicy(QSensor::Undefined)
-        , updateInterval(0)
+        : updateInterval(0)
         , backend(0)
         , signalEnabled(true)
         , active(false)
@@ -81,8 +79,6 @@ public:
     QByteArray type;
 
     // policy
-    QSensor::UpdatePolicies supportedUpdatePolicies;
-    QSensor::UpdatePolicy updatePolicy;
     int updateInterval;
 
     QSensorBackend *backend;

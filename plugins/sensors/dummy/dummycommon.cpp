@@ -53,11 +53,6 @@ dummycommon::dummycommon(QSensor *sensor)
     : QSensorBackend(sensor)
     , m_timerid(0)
 {
-    setSupportedUpdatePolicies(QSensor::OccasionalUpdates |
-            QSensor::InfrequentUpdates |
-            QSensor::FrequentUpdates |
-            QSensor::TimedUpdates |
-            QSensor::PolledUpdates);
 }
 
 void dummycommon::start()
@@ -66,25 +61,6 @@ void dummycommon::start()
         return;
 
     int interval = sensor()->updateInterval();
-
-    switch (m_sensor->updatePolicy()) {
-    case QSensor::OccasionalUpdates:
-        interval = 5000;
-        break;
-    case QSensor::InfrequentUpdates:
-        interval = 1000;
-        break;
-    case QSensor::Undefined: /* fall through */
-    case QSensor::FrequentUpdates:
-        interval = 100;
-        break;
-    case QSensor::TimedUpdates:
-        // already set
-        break;
-    default:
-        interval = 0;
-        break;
-    }
 
     if (interval)
         m_timerid = startTimer(interval);

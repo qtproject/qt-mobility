@@ -71,17 +71,6 @@ QSensorBackend::~QSensorBackend()
 }
 
 /*!
-    Set the supported \a policies for this sensor.
-    If this isn't called the sensor will not report
-    any supported policies to the user.
-*/
-void QSensorBackend::setSupportedUpdatePolicies(QSensor::UpdatePolicies policies)
-{
-    QSensorPrivate *d = m_sensor->d_func();
-    d->supportedUpdatePolicies = policies;
-}
-
-/*!
     Notify the QSensor class that a new reading is available.
 */
 void QSensorBackend::newReadingAvailable()
@@ -100,7 +89,7 @@ void QSensorBackend::newReadingAvailable()
     // Copy the values from the filter reading to the cached reading
     d->cache_reading->copyValuesFrom(d->filter_reading);
 
-    if (d->updatePolicy == QSensor::PolledUpdates)
+    if (d->updateInterval == 0)
         return; // We don't emit the signal if we're polling
 
     if (d->signalEnabled)

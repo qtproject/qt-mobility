@@ -234,76 +234,8 @@ void QSensor::setSignalEnabled(bool enabled)
 }
 
 /*!
-    \enum QSensor::UpdatePolicy
-
-    This enum is used to indicate to the sensor how often data will be collected.
-    Note that most sensors will only support one sensitivity. Setting an update
-    policy that the sensor does not support will result in undefined behaviour.
-    You can determine the policies the sensor supports with the
-    QSensor::supportedUpdatePolicies() method.
-
-    \value Undefined          The sensor has no specific update policy. Updates may
-                              arrive frequently or infrequently. Updates based on
-                              user interaction are likely to fit into this category.
-    \value OnChangeUpdates    Updates are delivered as they happen, usually based on
-                              user activity.
-    \value OccasionalUpdates  Updates are delivered occasionally, about one every
-                              5 seconds.
-    \value InfrequentUpdates  Updates are delivered infrequently, no more than once
-                              per second.
-    \value FrequentUpdates    Updates are delivered frequently, several per second.
-    \value TimedUpdates       Updates are delivered at a specific time interval.
-                              Note that not all sensors may be able to run with the
-                              exact timings requested and may operate slightly faster
-                              or slower.
-    \value PolledUpdates      Updates are retrieved when the currentReading()
-                              method is called.
-*/
-
-/*!
-    Change the update \a policy of the sensor. Note that not all
-    sensors support changing the update policy. If you set a
-    policy that the sensor does not support the behaviour is
-    undefined.
-
-    If you wish to use the TimedUpdates policy, please call
-    setUpdateInterval() with the desired interval.
-
-    \sa supportedUpdatePolicies()
-*/
-void QSensor::setUpdatePolicy(UpdatePolicy policy)
-{
-    if (policy == TimedUpdates)
-        return;
-
-    d->updatePolicy = policy;
-    d->updateInterval = 0;
-}
-
-void QSensor::setUpdateInterval(int interval)
-{
-    d->updatePolicy = TimedUpdates;
-    d->updateInterval = interval;
-}
-
-/*!
-    \property QSensor::updatePolicy
-    \brief the update policy of the sensor.
-*/
-
-/*!
-    Returns the update policy the sensor is using.
-*/
-QSensor::UpdatePolicy QSensor::updatePolicy() const
-{
-    return d->updatePolicy;
-}
-
-/*!
     \property QSensor::updateInterval
     \brief the update interval of the sensor.
-
-    This value is only useful if the QSensor::updatePolicy property is set to TimedUpdates.
 */
 
 int QSensor::updateInterval() const
@@ -311,21 +243,9 @@ int QSensor::updateInterval() const
     return d->updateInterval;
 }
 
-/*!
-    \property QSensor::supportedUpdatePolicies
-    \brief the supported policies of the sensor.
-*/
-
-/*!
-    Returns the update policies that the sensor supports.
-
-    Note that this will return QSensor::Undefined until a sensor backend is connected.
-
-    \sa isConnected()
-*/
-QSensor::UpdatePolicies QSensor::supportedUpdatePolicies() const
+void QSensor::setUpdateInterval(int interval)
 {
-    return d->supportedUpdatePolicies;
+    d->updateInterval = interval;
 }
 
 /*!
@@ -335,7 +255,7 @@ void QSensor::poll()
 {
     if (!connect())
         return;
-    if (d->updatePolicy == PolledUpdates)
+    if (d->updateInterval == 0)
         d->backend->poll();
 }
 

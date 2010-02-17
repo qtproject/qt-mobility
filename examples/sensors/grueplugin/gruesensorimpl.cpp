@@ -48,15 +48,14 @@ gruesensorimpl::gruesensorimpl(QSensor *sensor)
     : QSensorBackend(sensor)
 {
     lightSensor = new QAmbientLightSensor(this);
-    lightSensor->setUpdatePolicy(QSensor::OccasionalUpdates);
     lightSensor->addFilter(this);
 
-    setSupportedUpdatePolicies(QSensor::OnChangeUpdates | QSensor::OccasionalUpdates);
     setReading<GrueSensorReading>(&m_reading);
 }
 
 void gruesensorimpl::start()
 {
+    lightSensor->setUpdateInterval(sensor()->updateInterval());
     lightSensor->start();
 }
 
@@ -89,8 +88,7 @@ bool gruesensorimpl::filter(QAmbientLightReading *reading)
         break;
     }
 
-    if (sensor()->updatePolicy() == QSensor::OccasionalUpdates ||
-            chance != m_reading.chanceOfBeingEaten()) {
+    if (chance != m_reading.chanceOfBeingEaten()) {
         m_reading.setTimestamp(reading->timestamp());
         m_reading.setChanceOfBeingEaten(chance);
 

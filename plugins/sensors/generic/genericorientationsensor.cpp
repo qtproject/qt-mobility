@@ -48,15 +48,14 @@ genericorientationsensor::genericorientationsensor(QSensor *sensor)
     : QSensorBackend(sensor)
 {
     accelerometer = new QAccelerometer(this);
-    accelerometer->setUpdatePolicy(QSensor::FrequentUpdates);
     accelerometer->addFilter(this);
 
-    setSupportedUpdatePolicies(QSensor::OnChangeUpdates);
     setReading<QOrientationReading>(&m_reading);
 }
 
 void genericorientationsensor::start()
 {
+    accelerometer->setUpdateInterval(sensor()->updateInterval());
     accelerometer->start();
 }
 
