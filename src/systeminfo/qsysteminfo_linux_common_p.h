@@ -164,7 +164,7 @@ public:
     QSystemDisplayInfoLinuxCommonPrivate(QObject *parent = 0);
     virtual ~QSystemDisplayInfoLinuxCommonPrivate();
 
-    virtual int displayBrightness(int screen);
+    int displayBrightness(int screen);
     int colorDepth(int screen);
 };
 

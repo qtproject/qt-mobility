@@ -689,6 +689,133 @@ qint32 QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(QSystemNetwor
     return -1;
 }
 
+QNetworkInterface QSystemNetworkInfoLinuxCommonPrivate::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
+{
+#if !defined(QT_NO_DBUS)
+    switch(mode) {
+    case QSystemNetworkInfo::WlanMode:
+        {
+            QHalInterface iface;
+            if (iface.isValid()) {
+                QStringList list = iface.findDeviceByCapability("net.80211");
+                if(!list.isEmpty()) {
+                    foreach(QString netDev, list) {
+                        QString deviceName ;
+                        QHalDeviceInterface ifaceDevice(netDev);
+                        deviceName  = ifaceDevice.getPropertyString("net.interface");
+                        if(list.count() > 1) {
+                            QString baseFIle = "/sys/class/net/" + deviceName+"/operstate";
+                            QFile rx(baseFIle);
+                            if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                                QString operatingState;
+                                QTextStream in(&rx);
+                                in >> operatingState;
+                                rx.close();
+                                if(!operatingState.contains("unknown")
+                                    || !operatingState.contains("down")) {
+                                    if(isDefaultInterface(deviceName))
+                                        return QNetworkInterface::interfaceFromName(deviceName);
+                                }
+                            }
+                        } else {
+                            return QNetworkInterface::interfaceFromName(deviceName);
+                        }
+                    }
+                }
+            }
+        }
+        break;
+    case QSystemNetworkInfo::EthernetMode:
+        {
+            QHalInterface iface;
+            if (iface.isValid()) {
+                QStringList list = iface.findDeviceByCapability("net.80203");
+                if(!list.isEmpty()) {
+                    foreach(QString netDev, list) {
+                        QString deviceName ;
+                        QHalDeviceInterface ifaceDevice(netDev);
+                        deviceName  = ifaceDevice.getPropertyString("net.interface");
+                        if(list.count() > 1) {
+                            QString baseFIle = "/sys/class/net/" + deviceName+"/operstate";
+                            QFile rx(baseFIle);
+                            if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                                QString operatingState;
+                                QTextStream in(&rx);
+                                in >> operatingState;
+                                rx.close();
+                                if(!operatingState.contains("unknown")
+                                    || !operatingState.contains("down")) {
+                                    if(isDefaultInterface(deviceName))
+                                        return QNetworkInterface::interfaceFromName(deviceName);
+                                }
+                            }
+                        } else {
+                            return QNetworkInterface::interfaceFromName(deviceName);
+                        }
+                    }
+                }
+            }
+        }
+        break;
+        case QSystemNetworkInfo::BluetoothMode:
+        {
+        }
+        break;
+    default:
+        break;
+    };
+#else
+    QString result;
+    QString baseSysDir = "/sys/class/net/";
+    QDir eDir(baseSysDir);
+    QStringList dirs = eDir.entryList(QStringList() << "*", QDir::AllDirs | QDir::NoDotAndDotDot);
+    foreach(QString dir, dirs) {
+        QString devFile = baseSysDir + dir;
+        QFileInfo devfi(devFile + "/device");
+        if(!devfi.exists()) {
+            continue;
+        }
+        QString baseFIle = "/sys/class/net/" + devFile+"/operstate";
+        QFile rx(baseFIle);
+        if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            QString operatingState;
+            QTextStream in(&rx);
+            in >> operatingState;
+            rx.close();
+            if(operatingState.contains("unknown")) {
+                continue;
+            }
+        }
+        switch(mode) {
+        case QSystemNetworkInfo::WlanMode:
+            {
+                QFileInfo fi(devFile + "/wireless");
+                if(fi.exists()) {
+                    return QNetworkInterface::interfaceFromName(dir);
+                }
+            }
+            break;
+            case QSystemNetworkInfo::EthernetMode:
+                {
+                QFileInfo fi(devFile + "/wireless");
+                if(!fi.exists()) {
+                    return QNetworkInterface::interfaceFromName(dir);
+                }
+            }
+            break;
+            case QSystemNetworkInfo::BluetoothMode:
+            {
+
+            }
+            break;
+
+            default:
+            break;
+        };
+    }
+#endif
+    return QNetworkInterface();
+}
 
 #if !defined(QT_NO_DBUS)
 bool QSystemNetworkInfoLinuxCommonPrivate::isDefaultInterface(const QString &deviceName)
