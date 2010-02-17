@@ -88,12 +88,12 @@ public:
 
     bool hasFeatureSupported(QSystemInfo::Feature feature);
 
-protected:
-#if !defined(QT_NO_DBUS)
-    bool hasHalDeviceFeature(const QString &param);
-    bool hasHalUsbFeature(qint32 usbClass);
-    QHalInterface halIface;
-#endif
+//protected:
+//#if !defined(QT_NO_DBUS)
+//    bool hasHalDeviceFeature(const QString &param);
+//    bool hasHalUsbFeature(qint32 usbClass);
+//    QHalInterface halIface;
+//#endif
 };
 
 class QNetworkManagerInterface;
@@ -126,13 +126,13 @@ public:
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
 
 protected:
-#if !defined(QT_NO_DBUS)
-    QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
-    int getBluetoothRssi();
-    QString getBluetoothInfo(const QString &file);
-    bool isDefaultInterface(const QString &device);
-
-#endif
+//#if !defined(QT_NO_DBUS)
+////    QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
+//    int getBluetoothRssi();
+//    QString getBluetoothInfo(const QString &file);
+//    bool isDefaultInterface(const QString &device);
+//
+//#endif
 };
 
 class QSystemDisplayInfoPrivate : public QSystemDisplayInfoLinuxCommonPrivate
@@ -180,31 +180,31 @@ public:
 
     QString imei();
     QString imsi();
-    QString manufacturer();
-    QString model();
-    QString productName();
+//    QString manufacturer();
+//    QString model();
+//    QString productName();
 
-    QSystemDeviceInfo::InputMethodFlags inputMethodType();
+  //  QSystemDeviceInfo::InputMethodFlags inputMethodType();
 
-    int  batteryLevel() const;
+   // int  batteryLevel() const;
 
     QSystemDeviceInfo::SimStatus simStatus();
     bool isDeviceLocked();
     QSystemDeviceInfo::Profile currentProfile();
 
-    QSystemDeviceInfo::PowerState currentPowerState();
-    void setConnection();
+  //  QSystemDeviceInfo::PowerState currentPowerState();
+  //  void setConnection();
 
 protected:
-#if !defined(QT_NO_DBUS)
-    QHalInterface *halIface;
-    QHalDeviceInterface *halIfaceDevice;
-    void setupBluetooth();
-
-private Q_SLOTS:
-    void halChanged(int,QVariantList);
-    void bluezPropertyChanged(const QString&, QDBusVariant);
-#endif
+//#if !defined(QT_NO_DBUS)
+//    QHalInterface *halIface;
+//    QHalDeviceInterface *halIfaceDevice;
+//    void setupBluetooth();
+//
+//private Q_SLOTS:
+//    void halChanged(int,QVariantList);
+//    void bluezPropertyChanged(const QString&, QDBusVariant);
+//#endif
 };
 
 
