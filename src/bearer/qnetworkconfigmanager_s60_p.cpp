@@ -145,7 +145,14 @@ QNetworkConfigurationManagerPrivate::~QNetworkConfigurationManagerPrivate()
 #endif
     
     delete ipAccessPointsAvailabilityScanner;
+
+    // CCommsDatabase destructor uses cleanup stack. Since QNetworkConfigurationManager
+    // is a global static, but the time we are here, E32Main() has been exited already and
+    // the thread's default cleanup stack has been deleted. Without this line, a
+    // 'E32USER-CBase 69' -panic will occur.
+    CTrapCleanup* cleanup = CTrapCleanup::New();
     delete ipCommsDB;
+    delete cleanup;
 }
 
 
