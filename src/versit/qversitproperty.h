@@ -51,7 +51,9 @@
 #include <QByteArray>
 #include <QSharedDataPointer>
 
+QT_BEGIN_NAMESPACE
 class QVariant;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 class QVersitPropertyPrivate;

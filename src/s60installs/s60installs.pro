@@ -1,6 +1,7 @@
 TEMPLATE = subdirs
 
 symbian: {
+    include(../../staticconfig.pri)
     load(data_caging_paths)
 
     SUBDIRS =

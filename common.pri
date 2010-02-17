@@ -11,7 +11,7 @@ CONFIG(debug, debug|release) {
     WAS_IN_DEBUG=release
 }
 
-include($$QT_MOBILITY_BUILD_TREE/config.pri)
+include(staticconfig.pri)
 
 mac {
     contains(QT_CONFIG, qt_framework):contains(TEMPLATE, lib) {
@@ -103,6 +103,8 @@ contains(build_unit_tests, yes):DEFINES+=QTM_BUILD_UNITTESTS
     UI_DIR = $$OUTPUT_DIR/build/tests/$$SUBDIRPART/$$TARGET/ui
     QMAKE_RPATHDIR += $$OUTPUT_DIR/lib
 }
+
+contains(TEMPLATE,.*lib):DEFINES += QT_SHARED
 
 maemo6 {
     DEFINES+= Q_WS_MAEMO_6
