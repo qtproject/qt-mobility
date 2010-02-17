@@ -161,10 +161,9 @@ QContact QVersitContactImporterPrivate::importContact(
             success = createFamily(property, &contact);
         } else if (detailDefinitionName == QContactOnlineAccount::DefinitionName) {
             success = createOnlineAccount(property, &contact);
-        // TODO: check how to handle 'FN' item in vcard. If it's saved in
-        // display label field (which is read-only), contact saving will fail.
-        //} else if (detailDefinitionName == QContactDisplayLabel::DefinitionName) {
-        //    success = createLabel(property, &contact);
+        } else if (detailDefinitionName == QContactDisplayLabel::DefinitionName) {
+            // This actually sets the QContactName's customLabel field (not QContactDisplayLabel)
+            success = createLabel(property, &contact);
         } else {
             known = false;
         }
