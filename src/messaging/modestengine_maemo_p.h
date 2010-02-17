@@ -12,7 +12,7 @@
 ** You may use this file in accordance with the terms and conditions
 ** contained in the Technology Preview License Agreement accompanying
 ** this package.
-**file:///home/maminkki/sbox/qtm-messaging/src/messaging/qmtmengine_symbian_p.h
+**
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
@@ -42,11 +42,18 @@
 #ifndef MODESTENGINE_MAEMO_H
 #define MODESTENGINE_MAEMO_H
 
+#include <QMap>
+#include <QString>
+#include <QDBusArgument>
+
 #include "qmessagemanager.h"
 #include "gconf/gconf-client.h"
 #include "libosso.h"
 
 QTM_BEGIN_NAMESPACE
+
+typedef QMap< QString, QString > ModestStringMap;
+typedef QList< ModestStringMap > ModestStringMapList;
 
 class QMessageService;
 
@@ -83,5 +90,13 @@ private: //Data
 
 QTM_END_NAMESPACE
 
-#endif // MODESTENGINE_MAEMO_H
+// Marshall the MyStructure data into a D-Bus argument
+QDBusArgument &operator<<(QDBusArgument &argument, const QtMobility::ModestStringMap &map);
 
+// Retrieve the MyStructure data from the D-Bus argument
+const QDBusArgument &operator>>(const QDBusArgument &argument, QtMobility::ModestStringMap &map);
+
+Q_DECLARE_METATYPE (QtMobility::ModestStringMap);
+Q_DECLARE_METATYPE (QtMobility::ModestStringMapList);
+
+#endif // MODESTENGINE_MAEMO_H

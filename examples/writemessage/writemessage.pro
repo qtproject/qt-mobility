@@ -10,6 +10,8 @@ MOBILITY = messaging
 INCLUDEPATH += ../../src/messaging
 
 symbian|win32 {
+} maemo5|maemo6 {
+    QMAKE_CXXFLAGS+=-DUSE_TABBED_LAYOUT
 } else {
 # Temporarily link against local qtopiamail lib (should be part of the platform)
 LIBS += -L $$(QMF_LIBDIR) -lqtopiamail

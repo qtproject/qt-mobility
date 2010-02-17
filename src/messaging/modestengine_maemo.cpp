@@ -66,6 +66,10 @@ QTM_BEGIN_NAMESPACE
 #define MODESTENGINE_ACCOUNT_STORE_ACCOUNT     "store_account"
 #define MODESTENGINE_ACCOUNT_TRANSPORT_ACCOUNT "transport_account"
 
+// The modest engine has a new plugin, we need service names for it
+#define MODESTENGINE_QTM_PLUGIN_PATH           "/com/nokia/Qtm/Modest/Plugin"
+#define MODESTENGINE_QTM_PLUGIN_NAME           "com.nokia.Qtm.Modest.Plugin"
+
 Q_GLOBAL_STATIC(ModestEngine,modestEngine);
 
 ModestEngine::ModestEngine()
@@ -77,6 +81,9 @@ ModestEngine::ModestEngine()
     } else {
         updateEmailAccounts();
     }
+
+    qDBusRegisterMetaType< ModestStringMap >();
+    qDBusRegisterMetaType< ModestStringMapList >();
 }
 
 ModestEngine::~ModestEngine()
@@ -222,7 +229,120 @@ QMessageAccountId ModestEngine::defaultAccount(QMessage::Type type) const
 
 bool ModestEngine::sendEmail(QMessage &message)
 {
-    return composeEmail(message);
+    QDBusInterface qtmPlugin(
+            MODESTENGINE_QTM_PLUGIN_NAME,
+            MODESTENGINE_QTM_PLUGIN_PATH,
+            MODESTENGINE_QTM_PLUGIN_NAME,
+            QDBusConnection::sessionBus());
+    QMessageAddressList addresses;
+    QMessageAddress address;
+    QString value;
+    QMessageAccountId accountId;
+    QMessageAccount account;
+    ModestStringMap senderInfo;
+    ModestStringMap recipients;
+    ModestStringMap messageData;
+    ModestStringMapList attachments;
+    ModestStringMapList images;
+    uint priority = 0;
+    ModestStringMap headers;
+    QDBusMessage reply;
+
+    qDebug() << __PRETTY_FUNCTION__ << "Sending message";
+
+    // XXX: Room for convenience function here...
+    accountId = message.parentAccountId();
+    if (accountId.isValid() == false) {
+        qWarning () << "Account ID is invalid";
+        return false;
+    }
+
+    senderInfo["account-name"] = accountId.toString();
+
+    address = message.from();
+    value = address.recipient();
+
+    if (value.isEmpty() == false && value.isNull() == false) {
+        senderInfo["from"] = value;
+    }
+
+    qDebug() << "Digging \"to\" field";
+
+    addresses = message.to();
+    value.clear();
+    for (int i = 0; i < addresses.length(); i++) {
+        address = addresses[i];
+
+        if (value.isEmpty()) {
+            value = address.recipient();
+        } else {
+            value.append (",");
+            value.append (address.recipient());
+        }
+    }
+
+    if (value.isEmpty() == false && value.isNull() == false) {
+        recipients["to"] = value;
+    }
+
+    qDebug() << "Digging \"cc\" field";
+
+    addresses = message.cc();
+    value.clear();
+    for (int i = 0; i < addresses.length(); i++) {
+        address = addresses[i];
+
+        if (value.isEmpty()) {
+            value = address.recipient();
+        } else {
+            value.append (",");
+            value.append (address.recipient());
+        }
+    }
+
+    if (value.isEmpty() == false && value.isNull() == false) {
+        recipients["cc"] = value;
+    }
+
+    qDebug() << "Digging \"bcc\" field";
+
+    addresses = message.bcc();
+    value.clear();
+    for (int i = 0; i < addresses.length(); i++) {
+        address = addresses[i];
+
+        if (value.isEmpty()) {
+            value = address.recipient();
+        } else {
+            value.append (",");
+            value.append (address.recipient());
+        }
+    }
+
+    if (value.isEmpty() == false && value.isNull() == false) {
+        recipients["bcc"] = value;
+    }
+
+    qDebug() << "Sending D-BUS message";
+
+    reply = qtmPlugin.call (
+            "SendEmail",
+            QVariant::fromValue (senderInfo),
+            QVariant::fromValue (recipients),
+            QVariant::fromValue (messageData),
+            QVariant::fromValue (attachments),
+            QVariant::fromValue (images),
+            priority,
+            QVariant::fromValue (headers));
+
+    qDebug() << "Message sent";
+
+    if (reply.type() == QDBusMessage::ErrorMessage) {
+        qWarning() << "Failed to send: " << reply;
+        return false;
+    }
+
+    return true;
 }
 
 bool ModestEngine::composeEmail(const QMessage &message)
@@ -289,5 +409,40 @@ bool ModestEngine::countMessages(QMessageService& messageService, const QMessage
     return true;
 }
 
-
 QTM_END_NAMESPACE
+
+// Marshall the ModestStringMap data into a D-Bus argument
+QDBusArgument &operator<<(QDBusArgument &argument,
+                          const QtMobility::ModestStringMap &map)
+{
+    QtMobility::ModestStringMap::const_iterator iter;
+
+    argument.beginMap (QVariant::String, QVariant::String);
+    for (iter = map.constBegin(); iter != map.constEnd(); iter++) {
+        argument.beginMapEntry();
+        argument << iter.key() << iter.value();
+        argument.endMapEntry();
+    }
+    argument.endMap();
+
+    return argument;
+}
+
+// Retrieve the ModestStringMap data from the D-Bus argument
+const QDBusArgument &operator>>(const QDBusArgument &argument,
+                                QtMobility::ModestStringMap &map)
+{
+    map.clear();
+
+    argument.beginMap();
+    while (!argument.atEnd()) {
+        QString key, value;
+        argument.beginMapEntry();
+        argument >> key >> value;
+        argument.endMapEntry();
+        map[key] = value;
+    }
+    argument.endMap();
+
+    return argument;
+}
