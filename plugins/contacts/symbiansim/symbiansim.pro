@@ -26,14 +26,27 @@ symbian: {
     INCLUDEPATH += $$SOURCE_DIR/contacts/details
     INCLUDEPATH += $$SOURCE_DIR/contacts/filters
     INCLUDEPATH += $$SOURCE_DIR/contacts/requests
-
-    HEADERS += \
-        $$PUBLIC_HEADERS \
-        inc/cntsymbiansimengine.h
-      
-    SOURCES += \
-        src/cntsymbiansimengine.cpp
-
+    HEADERS += $$PUBLIC_HEADERS \
+        inc/cntsymbiansimengine.h \
+        inc/cntsimstore.h \
+        inc/cntsimstoreprivate.h \
+        inc/cntabstractsimrequest.h \
+        inc/cntsimcontactfetchrequest.h \
+        inc/cntsimcontactlocalidfetchrequest.h \
+        inc/cntsimcontactremoverequest.h \
+        inc/cntsimcontactsaverequest.h \
+        inc/cntsimdetaildefinitionfetchrequest.h
+        
+    SOURCES += src/cntsymbiansimengine.cpp \
+        src/cntsimstore.cpp \
+        src/cntsimstoreprivate.cpp \
+        src/cntabstractsimrequest.cpp \
+        src/cntsimcontactfetchrequest.cpp \
+        src/cntsimcontactlocalidfetchrequest.cpp \
+        src/cntsimcontactremoverequest.cpp \
+        src/cntsimcontactsaverequest.cpp \
+        src/cntsimdetaildefinitionfetchrequest.cpp
+        
     CONFIG += mobility
     MOBILITY = contacts
 

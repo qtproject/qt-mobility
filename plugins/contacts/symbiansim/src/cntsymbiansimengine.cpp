@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -43,11 +43,21 @@
 #include <qtcontacts.h>
 #include <mmtsy_names.h>
 
+#include "cntsimstore.h"
+#include "cntsimcontactfetchrequest.h"
+#include "cntsimcontactlocalidfetchrequest.h"
+#include "cntsimcontactsaverequest.h"
+#include "cntsimcontactremoverequest.h"
+#include "cntsimdetaildefinitionfetchrequest.h"
+
 #ifdef SYMBIANSIM_BACKEND_USE_ETEL_TESTSERVER
 #include <mpbutil_etel_test_server.h>
 #else
 #include <mpbutil.h>
 #endif
+
+#include <QEventLoop>
+#include <QTimer>
 
 const int KOneSimContactBufferSize = 512;
 const TInt KDataClientBuf  = 128;
@@ -70,7 +80,8 @@ namespace {
 }  // namespace
 
 CntSymbianSimEngine::CntSymbianSimEngine(const QMap<QString, QString>& parameters, QContactManager::Error& error) :
-    m_etelStoreInfoPckg( m_etelStoreInfo )
+    m_etelStoreInfoPckg( m_etelStoreInfo ),
+    m_simStore(0)
 {
     error = QContactManager::NoError;
 
@@ -94,6 +105,8 @@ CntSymbianSimEngine::CntSymbianSimEngine(const QMap<QString, QString>& parameter
     }
 
     m_managerUri = QContactManager::buildUri(CNT_SYMBIANSIM_MANAGER_NAME, parameters);
+    
+    m_simStore = new CntSimStore(this);
 
     RFs fs;
     fs.Connect();
@@ -108,6 +121,9 @@ CntSymbianSimEngine::~CntSymbianSimEngine()
     m_etelStore.Close();
     m_etelPhone.Close();
     m_etelServer.Close();
+    foreach (QContactAbstractRequest *req, m_asyncRequests.keys()) {
+        delete m_asyncRequests.take(req);
+    }
 }
 
 void CntSymbianSimEngine::deref()
@@ -176,12 +192,14 @@ QList<QContactLocalId> CntSymbianSimEngine::contactIds(const QList<QContactSortO
  * Reads a contact from the Etel store.
  *
  * \param contactId The Id of the contact to be retrieved.
+ * \param definitionRestrictions Definition restrictions.
  * \param error Qt error code.
  * \return A QContact for the requested QContactLocalId value or 0 if the read
  *  operation was unsuccessful (e.g. contact not found).
  */
-QContact CntSymbianSimEngine::contact(const QContactLocalId& contactId, QContactManager::Error& error) const
+QContact CntSymbianSimEngine::contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const
 {
+    Q_UNUSED(definitionRestrictions); // TODO
     QContact* contact = new QContact();
     TRAPD(err, QT_TRYCATCH_LEAVING(*contact = fetchContactL(contactId)));
     transformError(err, error);
@@ -254,7 +272,7 @@ QMap<QString, QContactDetailDefinition> CntSymbianSimEngine::detailDefinitions(c
 {
     if (!supportedContactTypes().contains(contactType)) {
         // Should never happen
-        error = QContactManager::InvalidContactTypeError;
+        error = QContactManager::NotSupportedError;
         return QMap<QString, QContactDetailDefinition>();
     }
 
@@ -396,6 +414,106 @@ QMap<QString, QContactDetailDefinition> CntSymbianSimEngine::detailDefinitions(c
     return retn;
 }
 
+void CntSymbianSimEngine::requestDestroyed(QContactAbstractRequest* req)
+{
+    if (m_asyncRequests.contains(req)) {
+        delete m_asyncRequests.take(req); 
+    }
+}
+
+bool CntSymbianSimEngine::startRequest(QContactAbstractRequest* req)
+{
+    // Check for existing request and start again
+    if (m_asyncRequests.contains(req)) {
+        return m_asyncRequests.value(req)->start();
+    }
+    
+    // Existing request not found. Create a new one.
+    CntAbstractSimRequest* simReq = 0;
+    switch (req->type()) 
+    {
+        case QContactAbstractRequest::ContactFetchRequest:
+        {
+            QContactFetchRequest* r = static_cast<QContactFetchRequest*>(req);
+            simReq = new CntSimContactFetchRequest(this, r);
+        }
+        break;
+
+        case QContactAbstractRequest::ContactLocalIdFetchRequest:
+        {
+            QContactLocalIdFetchRequest* r = static_cast<QContactLocalIdFetchRequest*>(req);
+            simReq = new CntSimContactLocalIdFetchRequest(this, r);
+        }
+        break;
+
+        case QContactAbstractRequest::ContactSaveRequest:
+        {
+            QContactSaveRequest* r = static_cast<QContactSaveRequest*>(req);
+            simReq = new CntSimContactSaveRequest(this, r);
+        }
+        break;
+
+        case QContactAbstractRequest::ContactRemoveRequest:
+        {
+            QContactRemoveRequest* r = static_cast<QContactRemoveRequest*>(req);
+            simReq = new CntSimContactRemoveRequest(this, r);
+        }
+        break;
+
+        case QContactAbstractRequest::DetailDefinitionFetchRequest:
+        {
+            QContactDetailDefinitionFetchRequest* r = static_cast<QContactDetailDefinitionFetchRequest*>(req);
+            simReq = new CntSimDetailDefinitionFetchRequest(this, r);
+        }
+        break;
+
+        case QContactAbstractRequest::DetailDefinitionSaveRequest:
+        case QContactAbstractRequest::DetailDefinitionRemoveRequest:
+        case QContactAbstractRequest::RelationshipFetchRequest:
+        case QContactAbstractRequest::RelationshipSaveRequest:
+        case QContactAbstractRequest::RelationshipRemoveRequest:
+        // fall through.
+        default: // unknown request type.
+        break;
+    }
+    
+    if (simReq) {
+        m_asyncRequests.insert(req, simReq);
+        return simReq->start();
+    }
+        
+    return false;
+}
+
+bool CntSymbianSimEngine::cancelRequest(QContactAbstractRequest* req)
+{
+    if (m_asyncRequests.contains(req))
+        return m_asyncRequests.value(req)->cancel();
+    return false;
+}
+
+bool CntSymbianSimEngine::waitForRequestFinished(QContactAbstractRequest* req, int msecs)
+{
+    if (!m_asyncRequests.contains(req)) 
+        return false;
+    
+    if (req->state() != QContactAbstractRequest::ActiveState)
+        return false;
+    
+    QEventLoop *loop = new QEventLoop(this);
+    QObject::connect(req, SIGNAL(resultsAvailable()), loop, SLOT(quit()));
+
+    // NOTE: zero means wait forever
+    if (msecs > 0)
+        QTimer::singleShot(msecs, loop, SLOT(quit()));
+
+    loop->exec();
+    loop->disconnect();
+    loop->deleteLater();
+
+    return (req->state() == QContactAbstractRequest::FinishedState);
+}
+
 /*!
  * Returns true if the given feature \a feature is supported by the manager,
  * for the specified type of contact \a contactType
@@ -404,6 +522,7 @@ bool CntSymbianSimEngine::hasFeature(QContactManager::ManagerFeature feature, co
 {
     Q_UNUSED(feature);
     Q_UNUSED(contactType);
+    // We don't support anything in the ManagerFeature
     return false;
 }
 
