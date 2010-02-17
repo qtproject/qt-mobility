@@ -69,14 +69,8 @@ An example of how the axes are arranged on a phone is included below.
 
 \image axes.png
 
-In general, the data shall be oriented to the UI. In devices where the UI can be rotated,
-the sensor data shall be modified automatically to match the rotation of the UI.
-
-Some devices allow the screen to move to a different plane. An example of this is the N97,
-where the screen and the keyboard end up on different planes. In such cases the sensor data
-shall be modified to match the plane of the screen rather than the plan of the keyboard.
-
-\image screen.png
+In general, sensor data is not reoriented to match the UI. Some specific sensors may reorient
+data to match the UI but these sensors will not this.
 
 \section1 Using a Sensor
 
