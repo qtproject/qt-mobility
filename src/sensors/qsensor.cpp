@@ -120,9 +120,6 @@ QSensor::~QSensor()
     Call the connect() method to force the sensor to connect to a backend immediately.
 */
 
-/*!
-    Returns true if the sensor is connected to a backend.
-*/
 bool QSensor::isConnected() const
 {
     return (d->backend != 0);
@@ -133,22 +130,16 @@ bool QSensor::isConnected() const
     \brief the backend identifier for the sensor.
 
     Note that the identifier is filled out automatically
-    when the sensor is connected to a backend.
+    when the sensor is connected to a backend. If you want
+    to connect a specific backend, you should call
+    setIdentifier() before connect().
 */
 
-/*!
-    Returns the backend identifier for the sensor.
-*/
 QByteArray QSensor::identifier() const
 {
     return d->identifier;
 }
 
-/*!
-    Sets the backend \a identifier to use.
-
-    This must be done before connect() is called.
-*/
 void QSensor::setIdentifier(const QByteArray &identifier)
 {
     Q_ASSERT(!d->backend);
@@ -158,22 +149,16 @@ void QSensor::setIdentifier(const QByteArray &identifier)
 /*!
     \property QSensor::type
     \brief the type of the sensor.
+
+    Note that setType() can only be used if you are using QSensor directly.
+    Sub-classes of QSensor call this automatically for you.
 */
 
-/*!
-    Returns the type of the sensor.
-*/
 QByteArray QSensor::type() const
 {
     return d->type;
 }
 
-/*!
-    Sets the \a type of the sensor.
-
-    Note that this can only be used if you are using QSensor directly.
-    Sub-classes of QSensor call this automatically for you.
-*/
 void QSensor::setType(const QByteArray &type)
 {
     Q_ASSERT(!d->backend);
@@ -212,18 +197,11 @@ bool QSensor::connect()
     to start on.
 */
 
-/*!
-    Returns true if the sensor is active (returning values).
-*/
 bool QSensor::isActive() const
 {
     return d->active;
 }
 
-/*!
-    Start the sensor \a running or stop it.
-    \sa start(), stop()
-*/
 void QSensor::setActive(bool running)
 {
     if (d->complete) {
@@ -302,14 +280,6 @@ void QSensor::setUpdatePolicy(UpdatePolicy policy)
     d->updateInterval = 0;
 }
 
-/*!
-    Change the update \a interval of the sensor. This
-    requires the sensor to spport the TimedUpdates policy.
-    Note that not all sensors support changing the update policy.
-    If you set a policy that the sensor does not support the behaviour
-    is undefined.
-    \sa supportedUpdatePolicies()
-*/
 void QSensor::setUpdateInterval(int interval)
 {
     d->updatePolicy = TimedUpdates;
@@ -336,10 +306,6 @@ QSensor::UpdatePolicy QSensor::updatePolicy() const
     This value is only useful if the QSensor::updatePolicy property is set to TimedUpdates.
 */
 
-/*!
-    Returns the update interval the sensor is using (only applicable when
-    using the TimedUpdates policy).
-*/
 int QSensor::updateInterval() const
 {
     return d->updateInterval;
@@ -408,9 +374,6 @@ void QSensor::stop()
     \sa isConnected()
 */
 
-/*!
-    Returns the reading class for this sensor.
-*/
 QSensorReading *QSensor::reading() const
 {
     return d->cache_reading;
