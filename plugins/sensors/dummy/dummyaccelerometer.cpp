@@ -56,8 +56,8 @@ void dummyaccelerometer::poll()
     m_reading.setTimestamp(getTimestamp());
     // Your average desktop computer doesn't move :)
     m_reading.setX(0);
-    m_reading.setY(0);
-    m_reading.setZ(9.8);
+    m_reading.setY(9.8); // facing the user, gravity goes here
+    m_reading.setZ(0);
 
     newReadingAvailable();
 }
