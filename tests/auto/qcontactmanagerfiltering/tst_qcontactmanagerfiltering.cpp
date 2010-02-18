@@ -1812,8 +1812,6 @@ void tst_QContactManagerFiltering::relationshipFiltering()
     h2i.setFirst(firstId);
     h2i.setSecond(secondId);
     h2i.setRelationshipType(relationshipType);
-    if (relationshipType == "UnknownRelationship")
-        qDebug() << "hi mum";
     // save and check error code
     bool succeeded = false;
     if((cm->hasFeature(QContactManager::Relationships)
