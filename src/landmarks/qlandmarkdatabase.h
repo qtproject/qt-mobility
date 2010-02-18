@@ -122,9 +122,9 @@ Q_SIGNALS:
     void landmarkUpdated(const QLandmarkId &landmark);
     void landmarkDeleted(const QLandmarkId &landmark);
 
-    void categoryAdded(const QLandmarkCategoryId &category);
-    void categoryUpdated(const QLandmarkCategoryId &category);
-    void categoryDeleted(const QLandmarkCategoryId &category);
+    void categoryAdded(const QLandmarkCategoryId &categoryId);
+    void categoryUpdated(const QLandmarkCategoryId &categoryId);
+    void categoryDeleted(const QLandmarkCategoryId &categoryId);
 
     void importFinished(QList<QLandmarkId> &landmarks);
     void exportFinished();
@@ -153,7 +153,7 @@ private:
 
 
 class QIODevice;
-class QLandmarkCodecPrivate
+class QLandmarkCodecPrivate;
 class QLandmarkCodec
 {
 public:
@@ -171,7 +171,6 @@ public:
     virtual bool encode(QList<QLandmarkId> landmarkIds =QList<QLandmarkId>());
 private:
     QLandmarkCodecPrivate *d;
-    
 };
 
 QTM_END_NAMESPACE
