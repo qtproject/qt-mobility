@@ -45,8 +45,33 @@
 
 #include <QList>
 #include <QHash>
+#include <QSharedData>
 
 QTM_BEGIN_NAMESPACE
+
+class QLandmarkCategoryIdPrivate : public QSharedData
+{
+public:
+    QLandmarkCategoryIdPrivate()
+        : QSharedData()
+    {
+    }
+
+    QLandmarkCategoryIdPrivate(const QLandmarkCategoryIdPrivate &other)
+        : QSharedData(other),
+        m_id(other.m_id),
+        m_databaseName(other.m_databaseName)
+    {
+    }
+
+    ~QLandmarkCategoryIdPrivate()
+    {
+    }
+
+    QString m_id;
+    QString m_databaseName;
+};
+
 
 class QLandmarkCategoryPrivate
 {
@@ -65,6 +90,29 @@ public:
     QString description;
 };
 
+class QLandmarkIdPrivate : public QSharedData
+{
+public:
+    QLandmarkIdPrivate()
+        : QSharedData()
+    {
+    }
+
+    QLandmarkIdPrivate(const QLandmarkIdPrivate &other)
+        : QSharedData(other),
+        m_id(other.m_id),
+        m_databaseName(other.m_databaseName)
+    {
+    }
+
+    ~QLandmarkIdPrivate()
+    {
+    }
+
+    QString m_id;
+    QString m_databaseName;
+};
+
 class QLandmarkPrivate
 {
 public:
@@ -79,7 +127,7 @@ public:
 
     QString name;
     QGeoCoordinate coordinate;
-    QList<QLandmarkCategory> categories;
+    QList<QLandmarkCategoryId> categories;
     QString description;
     QString icon;
     double radius;

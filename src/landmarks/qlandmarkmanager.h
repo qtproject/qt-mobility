@@ -45,11 +45,11 @@
 #include <QString>
 
 class QStringList;
-class QUrl;
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
+class QLandmarkDatabaseManagerPrivate;
 
 class Q_LANDMARKS_EXPORT QLandmarkDatabaseManager
 {
@@ -57,21 +57,24 @@ public:
     enum Error {NoError, DoesNotExist};
     QLandmarkDatabaseManager();
     ~QLandmarkDatabaseManager();
-    bool addDatabase(const QString &name, const QUrl &location);
+    bool addDatabase(const QString &name, const QString &uri);
     bool removeDatabase(const QString& name);
 
     QStringList databases() const;
-    QUrl databaseURL(const QString &name) const;
+    QString databaseUri(const QString &uri) const;
 
     QString defaultDatabase() const;
     bool setDefaultDatabase(const QString &name);
 
     Error error() const;
     QString errorString() const;
+private:
+    QLandmarkDatabaseManagerPrivate *d;
 };
 
 QTM_END_NAMESPACE
 
 QT_END_HEADER
+
 
 #endif

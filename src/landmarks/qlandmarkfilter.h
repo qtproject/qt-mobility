@@ -45,7 +45,6 @@
 #include "qmobilityglobal.h"
 
 #include <QObject>
-#include <QPair>
 #include "qlandmarkdatabase.h"
 
 QT_BEGIN_HEADER
@@ -55,6 +54,7 @@ QTM_BEGIN_NAMESPACE
 class QLandmark;
 class QGeoCoordinate;
 class QLandmarkCategory;
+class QLandmarkFilterPrivate;
 
 class Q_LANDMARKS_EXPORT QLandmarkFilter
 {
@@ -72,6 +72,8 @@ public:
     QLandmarkFilter operator~() const;
 protected:
     virtual QList<QLandmark> filter(QList<QLandmark> &landmarks) const;
+private:
+    QLandmarkFilterPrivate *d;
 };
 
 class Q_LANDMARKS_EXPORT QLandmarkNameFilter : public QLandmarkFilter

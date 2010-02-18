@@ -244,12 +244,12 @@ void QLandmark::setCoordinate(const QGeoCoordinate& coordinate)
     d->coordinate = coordinate;
 }
 
-QList<QLandmarkCategory> QLandmark::categories() const
+QList<QLandmarkCategoryId> QLandmark::categories() const
 {
     return d->categories;
 }
 
-void QLandmark::setCategories(const QList<QLandmarkCategory> &categories)
+void QLandmark::setCategories(const QList<QLandmarkCategoryId> &categories)
 {
     // remove duplicates
     d->categories.clear();
@@ -259,13 +259,13 @@ void QLandmark::setCategories(const QList<QLandmarkCategory> &categories)
     }
 }
 
-void QLandmark::addCategory(const QLandmarkCategory &category)
+void QLandmark::addCategory(const QLandmarkCategoryId &category)
 {
     if (!d->categories.contains(category))
         d->categories.append(category);
 }
 
-void QLandmark::removeCategory(const QLandmarkCategory &category)
+void QLandmark::removeCategory(const QLandmarkCategoryId &category)
 {
     d->categories.removeAll(category);
 }

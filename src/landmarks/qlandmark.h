@@ -46,6 +46,7 @@
 #include "qgeocoordinate.h"
 
 #include <QObject>
+#include <QSharedDataPointer>
 
 QT_BEGIN_HEADER
 
@@ -53,6 +54,31 @@ QTM_BEGIN_NAMESPACE
 
 class QLandmarkCategoryPrivate;
 class QLandmarkPrivate;
+class QLandmarkIdPrivate;
+class QLandmarkCategoryPrivate;
+class QLandmarkCategoryIdPrivate;
+
+class Q_LANDMARKS_EXPORT QLandmarkCategoryId
+{
+public:
+    QLandmarkCategoryId();
+    QLandmarkCategoryId(const QLandmarkCategoryId &other);
+    ~QLandmarkCategoryId();
+
+    bool isValid();
+    QString id();
+    void setId(const QString &id);
+
+    QString databaseName();
+    void setDatabaseName(const QString &databaseName);//maybe better to use database uri than name?
+
+    QLandmarkCategoryId &operator=(const QLandmarkCategoryId &other) const;
+    bool operator==(const QLandmarkCategoryId &other) const;
+    bool operator!=(const QLandmarkCategoryId &other) const;
+
+private:
+    QSharedDataPointer<QLandmarkCategoryIdPrivate> d;
+};
 
 class Q_LANDMARKS_EXPORT QLandmarkCategory
 {
@@ -75,14 +101,36 @@ public:
     QString description() const;
     void setDescription(const QString &description);
 
-    bool isEditable();
+    bool isReadOnly() const;
 
-    QString identifier();
+    QLandmarkCategoryId categoryId() const;
 
     //TODO: see if generic attributes are needed
-    //for categories
+    //for categories, doesn't appear
+    //to be a way to do this for S60 and maemo
 private:
     QLandmarkCategoryPrivate *d;
+};
+
+class Q_LANDMARKS_EXPORT QLandmarkId
+{
+public:
+    QLandmarkId();
+    QLandmarkId(const QLandmarkId &id);
+    ~QLandmarkId();
+
+    bool isValid();
+    void setId(const QString &id);
+    QString id();
+
+    QString databaseName();
+    void setDatabaseName(const QString &databaseName);
+
+    QLandmarkId &operator=(const QLandmarkId &other) const;
+    bool operator==(const QLandmarkId &other) const;
+    bool operator!=(const QLandmarkId &other) const;
+private:
+    QSharedDataPointer<QLandmarkIdPrivate> d;
 };
 
 class Q_LANDMARKS_EXPORT QLandmark
@@ -103,10 +151,10 @@ public:
     QGeoCoordinate coordinate() const;
     void setCoordinate(const QGeoCoordinate& coordinate);
 
-    QList<QLandmarkCategory> categories() const;
-    void setCategories(const QList<QLandmarkCategory> &categories);
-    void addCategory(const QLandmarkCategory &category);
-    void removeCategory(const QLandmarkCategory &category);
+    QList<QLandmarkCategoryId> categories() const;
+    void setCategories(const QList<QLandmarkCategoryId> &categories);
+    void addCategory(const QLandmarkCategoryId &category);
+    void removeCategory(const QLandmarkCategoryId &category);
 
     QString description() const;
     void setDescription(const QString &description);
@@ -142,8 +190,7 @@ public:
     QString url() const;
     void setUrl(const QString &url);
 
-    QString identifier();
-
+    QLandmarkId landmarkId();
 private:
     QLandmarkPrivate *d;
 };
