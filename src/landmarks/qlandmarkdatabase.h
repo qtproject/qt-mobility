@@ -73,46 +73,35 @@ public:
 
     bool saveCategory(QLandmarkCategory *category);
     bool removeCategory(const QLandmarkCategoryId &categoryId);
-    bool removeCategories(const QList<QLandmarkCategoryId> &categoryIds);
 
 //not needed??
 //    bool saveCategories(const QList<QLandmarkCategory *> categoriesIds);
 //    bool removeCategories(const QList<QLandmarkCategoryId> &categoryIds);
 
-    //It might be better to having a command object to 
-    //perform all these variations of requests...
     QLandmarkCategory category(const QLandmarkCategoryId &categoryId);
-    QList<QLandmarkCategory> categories() const;
+//    remove?? ppl can shoot themselves in the foot if there's a lot of categories
+//    QList<QLandmarkCategory> categories() const;
     QList<QLandmarkCategoryId> categoryIds() const;
 
-    QList<QLandmarkCategory> fetchCategories() const;
-    QList<QLandmarkCategoryId> fetchCategoryIds() const;
-    FetchStatus categoryFetchStatus() const;
-    bool cancelCategoryFetch() const;
-
     QLandmark landmark(const QLandmarkId &landmarkId);
-    QList<QLandmarkId> landmarks(const QLandmarkFilter &filter,
-                                const QLandmarkSortOrder &sortOrder) const;
-
-    QList<QLandmark> landmarkIds(const QLandmarkFilter &filter,
-                                const QLandmarkSortOrder &sortOrder) const;
-
-    void fetchLandmarks(const QLandmarkFilter &filter,
-                                const QLandmarkSortOrder &sortOrder) const;
-
-    void fetchLandmarkIds(const QLandmarkFilter &filter,
+//    remove?? 
+//    QList<QLandmark> landmarks(const QLandmarkFilter &filter,
+//                                const QLandmarkSortOrder &sortOrder) const;
+//
+    QList<QLandmarkId> landmarkIds(const QLandmarkFilter &filter,
                                 const QLandmarkSortOrder &sortOrder) const;
 
     FetchStatus landmarkFetchStatus() const;
     bool cancelLandmarkFetch() const;
 
     //TODO: find a better way to have asynchronous and syncrhonous
-    //import and exports besides, should a filename string be passed, qiodevice?
+    //import and exports besides this. should a filename string be passed, qiodevice?
+
     bool importDatabase(const QFile &file);
     bool exportDatabase(const QFile &file, QList<QLandmarkId> landmarkIds = QList<QLandmarkId>());
 
-    void importDatabaseAsynch(const QFile &file);
-    void exportDatabaseAsynch(const QFile &file, QList<QLandmarkId> landmarkIds = QList<QLandmarkId>());
+    void importDatabaseAsynchronous(const QFile &file);
+    void exportDatabaseAsynchronous(const QFile &file, QList<QLandmarkId> landmarkIds = QList<QLandmarkId>());
 
     Error error() const;
     QString errorString() const;
@@ -171,6 +160,100 @@ public:
     virtual bool encode(QList<QLandmarkId> landmarkIds =QList<QLandmarkId>());
 private:
     QLandmarkCodecPrivate *d;
+};
+
+class QLandmarkAbstractFetchRequestPrivate;
+class QLandmarkAbstractFetchRequest : public QObject
+{
+    Q_OBJECT
+public:
+    enum State{Inactive, Active, Canceling, Canceled, Finished};
+    QLandmarkAbstractFetchRequest();
+    virtual ~QLandmarkAbstractFetchRequest();
+
+    State state();
+    QLandmarkDatabase::Error error() const;
+    QString errorString();
+
+    QLandmarkFilter filter() const;//is this needed it's not like
+                                   //you can query values from the filter?
+    void setFilter(const QLandmarkFilter &filter);
+
+    QLandmarkSortOrder sorting();  //is this needed, it's no like
+                                   //you can query values from the filter?
+    void setSorting(const QLandmarkSortOrder &sorting);
+
+    QLandmarkDatabase * landmarkDatabase();
+    void setLandmarkDatabase(QLandmarkDatabase *database);
+
+public slots:
+    bool start();
+    bool cancel();
+    bool waitForFinished(int msecs = 0);
+
+signals:
+    void resultsAvailable();
+    void stateChanged(QLandmarkAbstractFetchRequest::State newState);
+
+private:
+    QLandmarkAbstractFetchRequestPrivate *d;
+};
+
+class QLandmarkIdFetchRequestPrivate;
+class QLandmarkIdFetchRequest : QLandmarkAbstractFetchRequest
+{
+public:
+    QLandmarkIdFetchRequest();
+    ~QLandmarkIdFetchRequest();
+
+    QList<QLandmarkId> landmarkIds();
+private:
+    QLandmarkIdFetchRequestPrivate *d;
+};
+
+class QLandmarkFetchRequestPrivate;
+class QLandmarkFetchRequest : QLandmarkAbstractFetchRequest
+{
+public:
+    QLandmarkFetchRequest();
+    ~QLandmarkFetchRequest();
+
+    QList<QLandmark> landmarks();
+private:
+    QLandmarkIdFetchRequestPrivate *d;
+};
+
+class QLandmarkCategoryFetchRequestPrivate;
+class QLandmarkCategoryFetchRequest : public QObject
+{
+    Q_OBJECT
+public:
+    enum State{Inactive, Active, Canceling, Canceled, Finished};
+    enum SortOrder{Ascending, Descending};
+    QLandmarkCategoryFetchRequest();
+    virtual ~QLandmarkCategoryFetchRequest();
+
+    State state();
+    QLandmarkDatabase::Error error() const;
+    QString errorString();
+
+    SortOrder sorting();
+    void setSorting(SortOrder sort);
+
+    QLandmarkDatabase * landmarkDatabase();
+    void setLandmarkDatabase(QLandmarkDatabase *database);
+
+public slots:
+    bool start();
+    bool cancel();
+    bool waitForFinished(int msecs = 0);
+
+signals:
+    void resultsAvailable();
+    void stateChanged(QLandmarkAbstractFetchRequest::State newState);
+
+private:
+    QLandmarkCategoryFetchRequestPrivate *d;
 };
 
 QTM_END_NAMESPACE

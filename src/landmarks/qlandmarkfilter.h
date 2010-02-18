@@ -71,7 +71,7 @@ public:
     QLandmarkFilter &operator|=(const QLandmarkFilter &other);
     QLandmarkFilter operator~() const;
 protected:
-    virtual QList<QLandmark> filter(QList<QLandmark> &landmarks) const;
+    virtual QList<QLandmarkId> filter(QList<QLandmarkId> &landmarkIds) const;
 private:
     QLandmarkFilterPrivate *d;
 };
@@ -83,7 +83,7 @@ public:
     virtual ~QLandmarkNameFilter();
 
 protected:
-    virtual QList<QLandmark> filter(const QList<QLandmark> &landmarks) const;
+    virtual QList<QLandmarkId> filter(const QList<QLandmarkId> &landmarkIds) const;
 };
 
 class Q_LANDMARKS_EXPORT QLandmarkProximityFilter : public QLandmarkFilter
@@ -93,7 +93,7 @@ public:
     virtual ~QLandmarkProximityFilter();
 
 protected:
-    virtual QList<QLandmark> filter(const QList<QLandmark> &landmarks) const;
+    virtual QList<QLandmarkId> filter(const QList<QLandmarkId> &landmarkIds) const;
 };
 
 class Q_LANDMARKS_EXPORT QLandmarkNearestFilter : public QLandmarkFilter
@@ -103,7 +103,7 @@ public:
     virtual ~QLandmarkNearestFilter();
 
 protected:
-     virtual QList<QLandmark> filter(const QList<QLandmark> &landmarks) const;
+     virtual QList<QLandmarkId> filter(const QList<QLandmarkId> &landmarkIds) const;
 };
 
 class Q_LANDMARKS_EXPORT QLandmarkCategoryFilter : public QLandmarkFilter
@@ -113,7 +113,7 @@ public:
     virtual ~QLandmarkCategoryFilter();
 
 protected:
-    virtual QList<QLandmark> filter(const QList<QLandmark> landmarks) const;
+    virtual QList<QLandmarkId> filter(const QList<QLandmarkId> landmarkIds) const;
 };
 
 class Q_LANDMARKS_EXPORT QLandmarkBoxFilter: public QLandmarkFilter
@@ -123,13 +123,13 @@ public:
     virtual ~QLandmarkBoxFilter();
 
 protected:
-   virtual QList<QLandmark> filter(const QList<QLandmark> &landmarks) const;
+   virtual QList<QLandmarkId> filter(const QList<QLandmarkId> &landmarkIds) const;
 };
 
 class Q_LANDMARKS_EXPORT QLandmarkSortOrder
 {
 protected:
-    virtual int compare(const QLandmark &l1, const QLandmark &l2) = 0;
+    virtual int compare(const QLandmark &l1, const QLandmark &l2);
 };
 
 class Q_LANDMARKS_EXPORT QLandmarkNameSort : public QLandmarkSortOrder

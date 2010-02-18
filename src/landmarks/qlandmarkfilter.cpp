@@ -97,9 +97,9 @@ QLandmarkNameFilter::~QLandmarkNameFilter()
     //TODO: implement
 }
 
-QList<QLandmark> QLandmarkNameFilter::filter(const QList<QLandmark> &landmarks) const
+QList<QLandmarkId> QLandmarkNameFilter::filter(const QList<QLandmarkId> &landmarkIds) const
 {
-    return QList<QLandmark>(); //TODO: implement
+    return QList<QLandmarkId>(); //TODO: implement
 }
 
 // ----- QLandmarkProximityFilter -----
@@ -114,9 +114,9 @@ QLandmarkProximityFilter::~QLandmarkProximityFilter()
     //TODO: implement
 }
 
-QList<QLandmark> QLandmarkProximityFilter::filter(const QList<QLandmark> &landmarks) const
+QList<QLandmarkId> QLandmarkProximityFilter::filter(const QList<QLandmarkId> &landmarkIds) const
 {
-    return QList<QLandmark>();  //TODO: implement
+    return QList<QLandmarkId>();  //TODO: implement
 }
 
 // ----- QLandmarkNearestFilter -----
@@ -131,9 +131,9 @@ QLandmarkNearestFilter::~QLandmarkNearestFilter()
     //TODO: implement
 }
 
-QList<QLandmark> QLandmarkNearestFilter::filter(const QList<QLandmark> &landmarks) const
+QList<QLandmarkId> QLandmarkNearestFilter::filter(const QList<QLandmarkId> &landmarkIds) const
 {
-    return QList<QLandmark>(); //TODO: implement
+    return QList<QLandmarkId>(); //TODO: implement
 }
 
 // ----- QLandmarkCategoryFilter -----
@@ -148,9 +148,9 @@ QLandmarkCategoryFilter::~QLandmarkCategoryFilter()
     //TODO: implement
 }
 
-QList<QLandmark> QLandmarkCategoryFilter::filter(const QList<QLandmark> landmarks) const
+QList<QLandmarkId> QLandmarkCategoryFilter::filter(const QList<QLandmarkId> landmarkIds) const
 {
-    return QList<QLandmark>();  //TODO: implement
+    return QList<QLandmarkId>();  //TODO: implement
 }
 
 QLandmarkBoxFilter::QLandmarkBoxFilter(const QGeoCoordinate &NW, const QGeoCoordinate &SE)
@@ -165,9 +165,9 @@ QLandmarkBoxFilter::~QLandmarkBoxFilter()
     //TODO: implement
 }
 
-QList<QLandmark> QLandmarkBoxFilter::filter(const QList<QLandmark> &landmarks) const
+QList<QLandmarkId> QLandmarkBoxFilter::filter(const QList<QLandmarkId> &landmarkIds) const
 {
-    return QList<QLandmark>(); //TODO: implement
+    return QList<QLandmarkId>(); //TODO: implement
 }
 
 // ----- QLandmarkNameSort -----
@@ -202,23 +202,6 @@ QLandmarkDistanceSort::~QLandmarkDistanceSort()
 int QLandmarkDistanceSort::compare(const QLandmark &l1, const QLandmark &l2)
 {
     return 0;  //TODO: implement
-}
-
-// ----- QLandmarkFetchSet -----
-
-QLandmarkFetchSet::~QLandmarkFetchSet()
-{
-    //TODO: implement
-}
-
-int QLandmarkFetchSet::newIndex() const
-{
-    return -1;  //TODO: implement
-}
-
-QLandmarkDatabase::FetchStatus QLandmarkFetchSet::fetchStatus()
-{
-    return QLandmarkDatabase::Active;  //TODO: implement
 }
 
 QTM_END_NAMESPACE
