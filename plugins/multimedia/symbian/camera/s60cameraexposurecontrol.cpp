@@ -102,6 +102,26 @@ bool S60CameraExposureControl::isFlashReady() const
     return m_advancedSettings->isFlashReady();
 }
 
+qreal S60CameraExposureControl::flashCompensation() const
+{
+    return 0;
+}
+
+void S60CameraExposureControl::setFlashCompensation(qreal ev)
+{
+    Q_UNUSED(ev);
+}
+
+qreal S60CameraExposureControl::flashPower() const
+{
+    return 0;
+}
+
+void S60CameraExposureControl::setFlashPower(qreal power)
+{
+    Q_UNUSED(power);
+}
+
 QCamera::ExposureMode S60CameraExposureControl::exposureMode() const
 {
     return m_session->exposureMode();

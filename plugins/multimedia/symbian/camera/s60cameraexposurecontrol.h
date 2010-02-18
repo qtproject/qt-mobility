@@ -64,6 +64,11 @@ public:
     QCamera::FlashModes supportedFlashModes() const;
     bool isFlashReady() const;
 
+    qreal flashCompensation() const;
+    void setFlashCompensation(qreal ev);
+    qreal flashPower() const;
+    void setFlashPower(qreal power);
+
     QCamera::ExposureMode exposureMode() const;
     void setExposureMode(QCamera::ExposureMode mode);
     QCamera::ExposureModes supportedExposureModes() const;

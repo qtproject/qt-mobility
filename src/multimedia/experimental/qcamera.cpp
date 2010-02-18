@@ -963,6 +963,7 @@ bool QCamera::isExposureLocked() const
                                 This mode allows better exposure of distant objects and/or motion blur effect.
     \value FlashSlowSyncRearCurtain 
                                 The similar mode to FlashSlowSyncFrontCurtain but flash is fired at the end of exposure.
+    \value FlashManual          Flash power is manualy set.
 */
 
 /*!

@@ -59,6 +59,13 @@ public:
     virtual QCamera::FlashMode flashMode() const = 0;
     virtual void setFlashMode(QCamera::FlashMode mode) = 0;
     virtual QCamera::FlashModes supportedFlashModes() const = 0;
+
+    virtual qreal flashCompensation() const = 0;
+    virtual void setFlashCompensation(qreal ev) = 0;
+
+    virtual qreal flashPower() const = 0;
+    virtual void setFlashPower(qreal power) = 0;
+
     virtual bool isFlashReady() const = 0;
 
     virtual QCamera::ExposureMode exposureMode() const = 0;
