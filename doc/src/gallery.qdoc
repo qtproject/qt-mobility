@@ -1,0 +1,213 @@
+
+/*!
+    \group gallery
+    \title Document Gallery
+
+    API to find and manage documents.
+*/
+
+/*!
+    \group gallery-requests
+    \title Document Gallery Requests
+
+    API for requesting information, and actions from a document gallery.
+*/
+
+/*!
+    \group gallery-filters
+    \title Document Gallery Filters
+
+    API for identifying documents within a gallery.
+*/
+
+/*!
+    \group gallery-galleries
+    \title Document Galleries.
+
+    API for document galleries.
+*/
+
+/*!
+    \page gallery.html
+
+    \title Document Gallery
+
+    \brief Provides an API for finding and managing documents.
+
+    \section1 Overview
+
+    \section2 Galleries
+
+    \annotatedlist gallery-galleries
+
+    \section2 Document Lists.
+
+    \l QGalleryDocumentList
+
+    \section2 Filters
+
+    \annotatedlist gallery-filters
+
+    \section2 Requests
+
+    \annotatedlist gallery-requests
+
+    \section1 Possible additions to Document Gallery API.
+
+    \section2 Galleries
+
+    \section3 QUPnPGallery
+
+    A gallery which connects to a UPnP media server.
+
+    \section3 QMediaGallery
+
+    Identical to QDocumentGallery in every way, except it only contains media
+    documents.
+
+    \section3 QUsbGallery
+
+    Gallery of documents on USB connected storage.
+
+    This is an alternative to including documents on connected storage devices
+    in the regular document gallery.
+
+    This probably also be called something else, and not apply to USB only.
+
+    \section2 Filters
+
+    \section3 QGallerySearchFilter
+
+    A filter for performing full text searches.
+
+    \code
+    class QGallerySearchFilter : public QGalleryFilter
+    {
+    public:
+        // Constructors, etc.
+
+        QString searchTerm() const;
+        void setSearchTerm(const QString &term);
+
+        QStringList searchTerms() const;
+        void setSearchTerms(const QStringList &terms);
+    };
+    \endcode
+
+    \section2 Requests
+
+    \section3 QGalleryCountRequest
+
+    This is equivalent to a QGalleryDocumentRequest with the maximumCount
+    property set to 0, which would return the total number of documents but no
+    actual documents.
+
+    This request makes sense if the the performance of the
+    QGalleryDocumentRequest will be improved by removing the totalDocumentCount
+    return value.  Inversely if the cost of requesting a sub-set of documents
+    and the total count separately is greater than a combined request then
+    removing totalDocumentCount() from QGalleryDocumentRequest wouldn't be
+    desirable.
+
+    \code
+    class QGalleryCountRequest : public QGalleryAbstractRequest
+    {
+    public:
+        // Constructors, etc.
+
+        QString contentType() const;
+        void setContentType(const QString &type);
+
+        QGalleryFilter filter() const;
+        void setFilter(const QGalleryFilter &filter);
+
+        // setFilter overloads.
+
+        // Results
+        int totalDocumentCount() const;
+
+    Q_SIGNALS:
+        void totalDocumentChanged();
+    };
+    \endcode
+
+    \section3 QGalleryImportRequest
+
+    Imports a document from a remote source into a gallery.  Unnecessary for
+    a gallery on the local file-system, but this could enable a remote gallery
+    to download a document directly.
+
+    \code
+    class QGalleryImportRequest : public QGalleryAbstractRequest
+    {
+    public:
+        // Constructors, etc.
+
+        // The url to import from.
+        QUrl sourceUrl() const;
+        void setSourceUrl(const QUrl &url);
+
+        // The id of a container document to import the document into.
+        void containerId() const;
+        void setContainerId(const QString &id);
+
+    // Results
+        QGalleryDocumentList *documents() const;
+
+    Q_SIGNALS:
+        void documentsChanged();
+    };
+    \endcode
+
+    \section3 QGalleryExportRequest
+
+    The same as an import request except the gallery would upload a document
+    it hosts.
+
+    \code
+    class QGalleryExportRequest : public QGalleryAbstractRequest
+    {
+    public:
+        // Constructors, etc.
+
+        // The url to export to.
+        QUrl destinationUrl() const;
+        void setDestinationUrl(const QUrl &url);
+
+        // The id of the document to export.
+        QString documentId() const;
+        void setDocumentId(const QString &id);
+    };
+    \endcode
+
+    \section3 QGalleryNewDocumentRequest
+
+    Creates a new document in a gallery.
+
+    This could be used by a remote gallery to provide a URL for an application
+    to upload a new document to.
+
+    \code
+    class QGalleryNewDocumentRequest : public QGalleryAbstractRequest
+    {
+    public:
+        // Constructors, etc.
+
+        QString fileName() const;
+        void setFileName(const QString &fileName);
+
+        QString mimeType() const;
+        void setMimeType(const QString &mimeType);
+
+        QString containerId() const;
+        void setContainerId(const QString &id);
+
+        // Results
+        QGalleryDocumentList *documents() const;
+
+    Q_SIGNALS:
+        void documentsChanged();
+    };
+    \endcode
+*/
+

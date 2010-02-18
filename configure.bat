@@ -56,7 +56,7 @@ set QT_MOBILITY_LIB=
 set BUILD_UNITTESTS=no
 set BUILD_EXAMPLES=no
 set BUILD_DOCS=yes
-set MOBILITY_MODULES=bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors
+set MOBILITY_MODULES=bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors gallery
 set MOBILITY_MODULES_UNPARSED=
 set VC_TEMPLATE_OPTION=
 set QT_PATH=
@@ -246,6 +246,8 @@ if %FIRST% == bearer (
     echo     Versit selected ^(implies Contacts^)
 ) else if %FIRST% == sensors (
     echo     Sensors selected
+) else if %FIRST% == gallery (
+    echo     Gallery selected
 ) else (
     echo     Unknown module %FIRST%
     goto errorTag
@@ -481,6 +483,8 @@ if %FIRST% == bearer (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts\details
 ) else if %FIRST% == sensors (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\sensors
+) else if %FIRST% == gallery (
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\gallery
 )
 
 if "%REMAINING%" == "" (

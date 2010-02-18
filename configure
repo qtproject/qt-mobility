@@ -63,7 +63,7 @@ QMAKE_CACHE="$shadowpath/.qmake.cache"
 LIB_PATH="lib"
 BIN_PATH="bin"
 MAC_SDK=
-MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors"
+MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors gallery"
 MOBILITY_MODULES_UNPARSED=
 
 usage() 
@@ -425,6 +425,9 @@ for module in $MOBILITY_MODULES; do
             ;;
         sensors)
             $relpath/bin/syncheaders $shadowpath/include $relpath/src/sensors
+            ;;
+        gallery)
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/gallery
             ;;
         *)
             echo "Cannot generate headers for $module"

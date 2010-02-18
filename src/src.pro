@@ -40,6 +40,8 @@ contains(mobility_modules,messaging) {
     }
 }
 
+contains(mobility_modules,gallery): SUBDIRS += gallery
+
 symbian {
     SUBDIRS += s60installs/s60installs.pro
 }
