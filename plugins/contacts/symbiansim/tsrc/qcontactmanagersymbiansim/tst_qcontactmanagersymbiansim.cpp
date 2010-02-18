@@ -195,8 +195,10 @@ void tst_QContactManagerSymbianSim::supportedContactTypes()
 void tst_QContactManagerSymbianSim::detailDefinitions()
 {
     QMap<QString, QContactDetailDefinition> detailDefinitions = m_cm->detailDefinitions();
-    // TODO: what are the allowed counts?
+    QCOMPARE(m_cm->error(), QContactManager::NoError);
+
     QVERIFY(detailDefinitions.count() >= 2);
+    QVERIFY(detailDefinitions.count() <= 7);
 
     // check that at least definitions for name and phone number exist
     QVERIFY(detailDefinitions.contains(QContactName::DefinitionName));
@@ -205,7 +207,11 @@ void tst_QContactManagerSymbianSim::detailDefinitions()
     QVERIFY(detailDefinitions.contains(QContactType::DefinitionName));
     QVERIFY(detailDefinitions.contains(QContactSyncTarget::DefinitionName));
 
-    // TODO: QContactGuid?
+    // Dynamic definitions (that depend on SIM card type)
+    if(detailDefinitions.count() == 7) {
+        QVERIFY(detailDefinitions.contains(QContactNickname::DefinitionName));
+        QVERIFY(detailDefinitions.contains(QContactEmailAddress::DefinitionName));
+    }
 }
 
 void tst_QContactManagerSymbianSim::addContact_data()
@@ -231,6 +237,13 @@ void tst_QContactManagerSymbianSim::addContact_data()
         << 1 // expected to pass
         << "James Hunt"
         << (QStringList()
+            << "Name:CustomLabel:James Hunt");
+
+    QTest::newRow("2 custom labels")
+        << 0 // expected to fail. Custom label is unique.
+        << "James Hunt"
+        << (QStringList()
+            << "Name:CustomLabel:James"
             << "Name:CustomLabel:James Hunt");
 
     QTest::newRow("too long custom label")
@@ -271,7 +284,7 @@ void tst_QContactManagerSymbianSim::addContact_data()
         << "James Hunt"
         << (QStringList()
             << "Name:CustomLabel:James Hunt"
-            << "PhoneNumber:PhoneNumber:+0123456789*#pw");
+            << "PhoneNumber:PhoneNumber:+0123456789*#p");
 
     QTest::newRow("custom label and illegal phone number 1")
         << 0 // illegal characters in the phone number, should fail
@@ -302,7 +315,7 @@ void tst_QContactManagerSymbianSim::addContact_data()
             << "PhoneNumber:PhoneNumber:+44752222222"
             << "PhoneNumber:PhoneNumber:+44751111111");
 
-    QTest::newRow("custom label and multiple phone numbers")
+    QTest::newRow("custom label and multiple phone numbers, one phone number too long")
         << 0 // Long enough additional phone number to fail on any SIM card
         << "James Hunt"
         << (QStringList()
@@ -353,9 +366,17 @@ void tst_QContactManagerSymbianSim::addContact_data()
             << "NotSupportedDetailDefinitionName:IllegalFieldName:");
 }
 
+/*
+ * Steps:
+ * 1. Parse contact details from test parameters
+ * 2. Determine the expected result
+ * 3a (if expected to pass) Save contact, verify result and remove contact
+ * 3b (if expected to fail) Check that saving a contact fails
+ */
 void tst_QContactManagerSymbianSim::addContact()
 {
-    // Make debugging easier QString tescaseName = QTest::currentDataTag();
+    // Make debugging easier by getting the test case name
+    QString tescaseName = QTest::currentDataTag();
 
     // 1. Parse details and add them to the contact
     QFETCH(int, expectedResult);
@@ -371,10 +392,11 @@ void tst_QContactManagerSymbianSim::addContact()
         QVERIFY(detailParts.count() == 3);
 
         // Use existing detail if available and would not cause an overwrite of
-        // a field
-        QContactDetail contactDetail = contact.detail(detailParts[0]);
-        if(contactDetail.isEmpty() || contactDetail.values().key(detailParts[1]).isNull()) {
-            contactDetail = QContactDetail(detailParts[0]);
+        // a field value
+        QContactDetail contactDetail = QContactDetail(detailParts[0]);
+        if (contact.details().contains(detailParts[0])
+            && contact.detail(detailParts[0]).variantValues().key(detailParts[1]).isNull()) {
+            contactDetail = contact.detail(detailParts[0]);
         }
 
         // Set the field value only if not empty (do not add empty fields)  
@@ -396,11 +418,17 @@ void tst_QContactManagerSymbianSim::addContact()
         }
     }
 
+    // Get the contact count for verification purposes
+    QList<QContactLocalId> idsBefore = m_cm->contactIds();
+    QCOMPARE(m_cm->error(), QContactManager::NoError);
+
     if (expectedResult)
     {
         // verify contact can be saved
         QVERIFY(m_cm->saveContact(&contact));
         QCOMPARE(m_cm->error(), QContactManager::NoError);
+        QList<QContactLocalId> idsAfterSave = m_cm->contactIds();
+        QCOMPARE(idsAfterSave.count(), idsBefore.count() + 1);
 
         // verify contact id
         QVERIFY(contact.id() != QContactId());
@@ -423,7 +451,7 @@ void tst_QContactManagerSymbianSim::addContact()
                 if (savedDetail != detail) {
                     // FAIL! Make it easier to debug the output by
                     // comparing the contact detail field contents
-                    foreach (QString key, detail.values().keys()) {
+                    foreach (QString key, detail.variantValues().keys()) {
                         QVariant value1 = savedDetail.value(key);
                         QVariant value2 = detail.value(key);
                         QCOMPARE(savedDetail.value(key), detail.value(key));
@@ -449,6 +477,9 @@ void tst_QContactManagerSymbianSim::addContact()
         // verify contact id is untouched 
         QVERIFY(contact.id() == QContactId());
     }
+
+    QList<QContactLocalId> idsAfterRemove = m_cm->contactIds();
+    QCOMPARE(idsAfterRemove.count(), idsBefore.count());
 }
 
 bool tst_QContactManagerSymbianSim::isContactSupported(QContact contact)
@@ -458,6 +489,8 @@ bool tst_QContactManagerSymbianSim::isContactSupported(QContact contact)
     if(!m_cm->supportedContactTypes().contains(contact.type()))
         return false;
         
+    QList<QString> uniqueDetails = QList<QString>();
+
     foreach(QContactDetail detail, contact.details()) {
         QString definitionName = detail.definitionName();
 
@@ -471,14 +504,25 @@ bool tst_QContactManagerSymbianSim::isContactSupported(QContact contact)
 
         // check if the detail is supported by the SIM
         if (detailDefinitions.contains(detail.definitionName())) {
+
+            QContactDetailDefinition detailDef = detailDefinitions.value(detail.definitionName());
+
+            // If the detail is unique check that there are no duplicates
+            if (detailDef.isUnique()) {
+                if (uniqueDetails.contains(detail.definitionName())) {
+                    return false;
+                } else {
+                    uniqueDetails.append(detail.definitionName());
+                }
+            }
+
             // check the fields of the detail
             foreach (QString fieldKey, detail.variantValues().keys()) {
-                QContactDetailDefinition detaiDef = detailDefinitions.value(detail.definitionName());
-                if (!detaiDef.fields().contains(fieldKey)) {
+                if (!detailDef.fields().contains(fieldKey)) {
                     return false;
                 }
             }
-            // TODO: uniquenes of the detail? (for example, create a test case with multiple names)
+
         } else {
             qDebug() << "Detail" << definitionName << "Not supported";
             return false;

@@ -100,6 +100,7 @@ private:
     QContact fetchContactL(const QContactLocalId &localId) const;
     QList<QContact> fetchContactsL() const;
     void saveContactL(QContact* contact) const;
+    void doSaveContactL(QContact* contact) const;
     void transformError(TInt symbianError, QContactManager::Error& qtError) const;
     QList<QContact> decodeSimContactsL(TDes8& rawData) const;
     QContact encodeSimContactL(const QContact* contact, TDes8& rawData) const;

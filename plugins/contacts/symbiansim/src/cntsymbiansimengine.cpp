@@ -224,7 +224,7 @@ bool CntSymbianSimEngine::saveContact(QContact* contact, QContactManager::Error&
         return false;
     }
 
-    TRAPD(err, QT_TRYCATCH_LEAVING(saveContactL(contact)));
+    TRAPD(err, saveContactL(contact));
     transformError(err, error);
     PbkPrintToLog(_L("CntSymbianSimEngine::saveContact() - err = %d"), err);
     return (err == KErrNone);
@@ -258,6 +258,12 @@ QMap<QString, QContactDetailDefinition> CntSymbianSimEngine::detailDefinitions(c
         return QMap<QString, QContactDetailDefinition>();
     }
 
+    TRAPD(err, getEtelStoreInfoL());
+    if(err != KErrNone) {
+        transformError(err, error);
+        return QMap<QString, QContactDetailDefinition>();
+    }
+
     // the map we will eventually return
     QMap<QString, QContactDetailDefinition> retn;
 
@@ -272,13 +278,11 @@ QMap<QString, QContactDetailDefinition> CntSymbianSimEngine::detailDefinitions(c
     fields.clear();
     f.setDataType(QVariant::String);
     subTypes.clear();
-    // TODO: groups supported by some USIM cards?
     subTypes << QString(QLatin1String(KSimSyncTarget));
     f.setAllowableValues(subTypes);
     fields.insert(QContactSyncTarget::FieldSyncTarget, f);
     d.setFields(fields);
     d.setUnique(true);
-    d.setAccessConstraint(QContactDetailDefinition::CreateOnly);
     retn.insert(d.name(), d);
 
     // type
@@ -286,13 +290,12 @@ QMap<QString, QContactDetailDefinition> CntSymbianSimEngine::detailDefinitions(c
     fields.clear();
     f.setDataType(QVariant::String);
     subTypes.clear();
-    // TODO: groups supported by some USIM cards?
+    // groups are not supported
     subTypes << QString(QLatin1String(QContactType::TypeContact));
     f.setAllowableValues(subTypes);
     fields.insert(QContactType::FieldType, f); // note: NO CONTEXT!!
     d.setFields(fields);
     d.setUnique(true);
-    d.setAccessConstraint(QContactDetailDefinition::CreateOnly);
     retn.insert(d.name(), d);
 
 /* TODO
@@ -319,20 +322,19 @@ QMap<QString, QContactDetailDefinition> CntSymbianSimEngine::detailDefinitions(c
     fields.insert(QContactDisplayLabel::FieldLabel, f);
     d.setFields(fields);
     d.setUnique(true);
-    d.setAccessConstraint(QContactDetailDefinition::ReadOnly);
     retn.insert(d.name(), d);
 
-    // email address
-    // TODO: email support needs to be checked run-time, because it is SIM specific
-    d.setName(QContactEmailAddress::DefinitionName);
-    fields.clear();
-    f.setDataType(QVariant::String);
-    f.setAllowableValues(QVariantList());
-    fields.insert(QContactEmailAddress::FieldEmailAddress, f);
-    d.setFields(fields);
-    d.setUnique(true);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
-    retn.insert(d.name(), d);
+    // email support needs to be checked run-time, because it is SIM specific
+    if (m_etelStoreInfo.iMaxEmailAddr > 0) {
+        d.setName(QContactEmailAddress::DefinitionName);
+        fields.clear();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QContactEmailAddress::FieldEmailAddress, f);
+        d.setFields(fields);
+        d.setUnique(true);
+        retn.insert(d.name(), d);
+    }
 
     // phone number
     d.setName(QContactPhoneNumber::DefinitionName);
@@ -360,39 +362,35 @@ QMap<QString, QContactDetailDefinition> CntSymbianSimEngine::detailDefinitions(c
     fields.insert(QContactPhoneNumber::FieldSubTypes, f);
 */
     d.setFields(fields);
-    // TODO: multiple numbers supported?
-    d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
+    if (m_etelStoreInfo.iMaxAdditionalNumbers > 0) {
+        // multiple numbers supported
+        d.setUnique(false);
+    } else {
+        // only one phone number allowed
+        d.setUnique(true);
+    }
     retn.insert(d.name(), d);
 
-    // nickname
-    // TODO: nickname support needs to be checked run-time, because it is SIM specific
-    d.setName(QContactNickname::DefinitionName);
-    fields.clear();
-    f.setDataType(QVariant::String);
-    f.setAllowableValues(QVariantList());
-    fields.insert(QContactNickname::FieldNickname, f);
-    d.setFields(fields);
-    d.setUnique(true);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
-    retn.insert(d.name(), d);
+    // nickname support needs to be checked run-time, because it is SIM specific
+    if (m_etelStoreInfo.iMaxSecondNames > 0) {
+        d.setName(QContactNickname::DefinitionName);
+        fields.clear();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QContactNickname::FieldNickname, f);
+        d.setFields(fields);
+        d.setUnique(true);
+        retn.insert(d.name(), d);
+    }
 
     // name
     d.setName(QContactName::DefinitionName);
     fields.clear();
     f.setDataType(QVariant::String);
     f.setAllowableValues(QVariantList());
-    /*
-    fields.insert(QContactName::FieldPrefix, f);
-    fields.insert(QContactName::FieldFirst, f);
-    fields.insert(QContactName::FieldMiddle, f);
-    fields.insert(QContactName::FieldLast, f);
-    fields.insert(QContactName::FieldSuffix, f);
-    */
     fields.insert(QContactName::FieldCustomLabel, f);
     d.setFields(fields);
     d.setUnique(true);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
     return retn;
@@ -510,6 +508,14 @@ QList<QContact> CntSymbianSimEngine::fetchContactsL() const
  */
 void CntSymbianSimEngine::saveContactL(QContact* contact) const
 {
+    QT_TRYCATCH_LEAVING(doSaveContactL(contact));
+}
+
+/*!
+ * Private leaving implementation for saveContact()
+ */
+void CntSymbianSimEngine::doSaveContactL(QContact* contact) const
+{
     PbkPrintToLog(_L("CntSymbianSimEngine::saveContactL() - IN"));
 
     User::LeaveIfNull(contact);
@@ -520,6 +526,7 @@ void CntSymbianSimEngine::saveContactL(QContact* contact) const
     RBuf8 buffer;
     buffer.CreateL(KOneSimContactBufferSize);
     CleanupClosePushL(buffer);
+
     QContact convertedContact = encodeSimContactL(contact, buffer);
 
     //write contact
