@@ -3,3 +3,6 @@
 core
 Makefile
 *.so
+*.pro.user*
+*~
+
