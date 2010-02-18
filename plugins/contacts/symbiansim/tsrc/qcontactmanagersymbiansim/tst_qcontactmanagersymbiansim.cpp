@@ -53,6 +53,15 @@
 
 QTM_USE_NAMESPACE
 
+
+#define QCOMPARE_WITH_RETURN_VALUE(actual, expected) \
+    if (!QTest::qCompare(actual, expected, #actual, #expected, __FILE__, __LINE__))\
+        return false;
+
+#define QVERIFY_WITH_RETURN_VALUE(statement) \
+    if (!QTest::qVerify((statement), #statement, "", __FILE__, __LINE__))\
+        return false;
+
 //TESTED_CLASS=
 //TESTED_FILES=
 
@@ -76,16 +85,17 @@ private slots:
     void supportedContactTypes();
     void detailDefinitions();
 
-    void addContact();
-    void updateContact();
-    void removeContact();
-
-    /* data */
+    /* Test cases that need data */
     void addContact_data();
+    void addContact();
+    void updateContactDetail_data();
+    void updateContactDetail();
 
 private:
-    bool isContactSupported(QContact contact);
     void getEtelStoreInfoL(const TDesC &phonebook, TDes8 &infoPckg) const;
+    void parseDetails(QContact &contact, QStringList details, QList<QContactDetail> &parsedDetails);
+    bool isContactSupported(QContact contact);
+    bool compareDetails(QContact contact, QList<QContactDetail> expectedDetails);
 
     QContactManager* m_cm;
 
@@ -370,44 +380,25 @@ void tst_QContactManagerSymbianSim::addContact_data()
  * Steps:
  * 1. Parse contact details from test parameters
  * 2. Determine the expected result
- * 3a (if expected to pass) Save contact, verify result and remove contact
- * 3b (if expected to fail) Check that saving a contact fails
+ * 3.1 (if expected to pass) Save contact, verify result and remove contact
+ * 3.2 (if expected to fail) Check that saving a contact fails
  */
 void tst_QContactManagerSymbianSim::addContact()
 {
     // Make debugging easier by getting the test case name
     QString tescaseName = QTest::currentDataTag();
 
-    // 1. Parse details and add them to the contact
     QFETCH(int, expectedResult);
     QFETCH(QString, expectedDisplayLabel);
     QFETCH(QStringList, details);    
 
     QContact contact;
-    QList<QContactDetail> detailsUnderTest;
+    QList<QContactDetail> expectedDetails;
 
-    foreach (QString detail, details) {
-        // the expected format is <detail definition name>:<field name>:<value>
-        QStringList detailParts = detail.split(QChar(':'), QString::KeepEmptyParts, Qt::CaseSensitive);
-        QVERIFY(detailParts.count() == 3);
+    // 1. Parse details and add them to the contact
+    parseDetails(contact, details, expectedDetails);
 
-        // Use existing detail if available and would not cause an overwrite of
-        // a field value
-        QContactDetail contactDetail = QContactDetail(detailParts[0]);
-        if (contact.details().contains(detailParts[0])
-            && contact.detail(detailParts[0]).variantValues().key(detailParts[1]).isNull()) {
-            contactDetail = contact.detail(detailParts[0]);
-        }
-
-        // Set the field value only if not empty (do not add empty fields)  
-        if (!detailParts[2].isEmpty()) {
-            QVERIFY(contactDetail.setValue(detailParts[1], detailParts[2]));
-        }
-
-        detailsUnderTest.append(contactDetail);
-        contact.saveDetail(&contactDetail);
-    }
-
+    // 2. Determine the expected result
     if (expectedResult == -1) {
         // Unknown expected result, so we need to check what details the SIM
         // card supports
@@ -422,6 +413,7 @@ void tst_QContactManagerSymbianSim::addContact()
     QList<QContactLocalId> idsBefore = m_cm->contactIds();
     QCOMPARE(m_cm->error(), QContactManager::NoError);
 
+    // 3.1 (if expected to pass) Save contact, verify result and remove contact
     if (expectedResult)
     {
         // verify contact can be saved
@@ -433,32 +425,8 @@ void tst_QContactManagerSymbianSim::addContact()
         // verify contact id
         QVERIFY(contact.id() != QContactId());
 
-        // verify that all the details were actually saved
-        foreach (QContactDetail detail, detailsUnderTest) {
-            QContactDetail savedDetail = contact.detail(detail.definitionName());
-
-            // Allow truncating the custom label to the max text length
-            if (detail.definitionName() == QContactName::DefinitionName) {
-                QContactName nameDetail = static_cast<QContactName>(detail);
-                nameDetail.setCustomLabel(nameDetail.customLabel().left(m_etelStoreInfo.iMaxTextLength));
-                QCOMPARE(savedDetail, static_cast<QContactDetail>(nameDetail));
-            // Allow truncating the nick name to the max text length
-            } else if (detail.definitionName() == QContactNickname::DefinitionName) {
-                    QContactNickname nick = static_cast<QContactNickname>(detail);
-                    nick.setNickname(nick.nickname().left(m_etelStoreInfo.iMaxTextLength));
-                    QCOMPARE(savedDetail, static_cast<QContactDetail>(nick));
-            } else {
-                if (savedDetail != detail) {
-                    // FAIL! Make it easier to debug the output by
-                    // comparing the contact detail field contents
-                    foreach (QString key, detail.variantValues().keys()) {
-                        QVariant value1 = savedDetail.value(key);
-                        QVariant value2 = detail.value(key);
-                        QCOMPARE(savedDetail.value(key), detail.value(key));
-                    }
-                }
-            }
-        }
+        // verify that the details were saved as expected
+        QVERIFY(compareDetails(contact, expectedDetails));
 
         // verify display label, allow truncating to the max text length
         QCOMPARE(contact.displayLabel(), expectedDisplayLabel.left(m_etelStoreInfo.iMaxTextLength));
@@ -469,6 +437,8 @@ void tst_QContactManagerSymbianSim::addContact()
         // verify contact removal
         QVERIFY(m_cm->removeContact(contact.localId()));
         QCOMPARE(m_cm->error(), QContactManager::NoError);
+
+    // 3.2 (if expected to fail) Check that saving a contact fails
     } else {
         // verify that the contact cannot be saved
         QVERIFY(!m_cm->saveContact(&contact));
@@ -482,6 +452,121 @@ void tst_QContactManagerSymbianSim::addContact()
     QCOMPARE(idsAfterRemove.count(), idsBefore.count());
 }
 
+void tst_QContactManagerSymbianSim::updateContactDetail_data()
+{
+    // The initial contact details,
+    // for example: <"Name:First:James">; <"PhoneNumber:PhoneNumber:1234567890">
+    QTest::addColumn<QStringList>("details1");
+    // The updated contact details,
+    // for example: <"Name:First:James">; <"PhoneNumber:PhoneNumber:0987654321">
+    QTest::addColumn<QStringList>("details2");
+
+    QString es = QString();
+
+    QTest::newRow("update custom label")
+        << (QStringList()
+            << "Name:CustomLabel:James")
+        << (QStringList()
+            << "Name:CustomLabel:James Hunt");
+
+    QTest::newRow("update phone number")
+        << (QStringList()
+            << "Name:CustomLabel:James"
+            << "PhoneNumber:PhoneNumber:+44751111111")
+        << (QStringList()
+            << "Name:CustomLabel:James"
+            << "PhoneNumber:PhoneNumber:+44752222222");
+
+    QTest::newRow("update e-mail")
+        << (QStringList()
+            << "Name:CustomLabel:James"
+            << "EmailAddress:EmailAddress:james@march.com")
+        << (QStringList()
+            << "Name:CustomLabel:James"
+            << "EmailAddress:EmailAddress:james@hesketh.com");
+
+    QTest::newRow("update nickname")
+        << (QStringList()
+            << "Name:CustomLabel:James"
+            << "Nickname:Nickname:James")
+        << (QStringList()
+            << "Name:CustomLabel:James"
+            << "Nickname:Nickname:Hunt the Shunt");
+}
+
+void tst_QContactManagerSymbianSim::updateContactDetail()
+{
+    QString tescaseName = QTest::currentDataTag();
+
+    QFETCH(QStringList, details1);
+    QFETCH(QStringList, details2);
+
+    // 1. Parse details
+    QContact contact;
+    QList<QContactDetail> parsedDetails;
+    parseDetails(contact, details1, parsedDetails);
+
+    // 2. Save contact and verify result
+    if (!isContactSupported(contact)) {
+        QSKIP("The contact cannot be saved onto the SIM card", SkipSingle);
+    }
+    QVERIFY(m_cm->saveContact(&contact));
+    QCOMPARE(m_cm->error(), QContactManager::NoError);
+    QVERIFY(compareDetails(contact, parsedDetails));
+
+    // 3. Update contact detail and verify result
+    foreach (QContactDetail detail, parsedDetails) {
+        QContactDetail savedDetail = contact.detail(detail.definitionName());
+        QVERIFY(contact.removeDetail(&savedDetail));
+    }
+    parseDetails(contact, details2, parsedDetails);
+    if (!isContactSupported(contact)) {
+        QVERIFY(m_cm->removeContact(contact.localId()));
+        QSKIP("The contact cannot be saved onto the SIM card", SkipSingle);
+    }
+    QVERIFY(m_cm->saveContact(&contact));
+    QCOMPARE(m_cm->error(), QContactManager::NoError);
+    QVERIFY(compareDetails(contact, parsedDetails));
+
+    // 4. Remove the contact
+    QVERIFY(m_cm->removeContact(contact.localId()));
+}
+
+/*!
+ * Private helper function for parsing test data (creates QContactDetails from
+ * string lists).
+ */
+void tst_QContactManagerSymbianSim::parseDetails(QContact &contact, QStringList details, QList<QContactDetail> &parsedDetails)
+{
+    parsedDetails.clear();
+    foreach (QString detail, details) {
+        // the expected format is <detail definition name>:<field name>:<value>
+        QStringList detailParts = detail.split(QChar(':'), QString::KeepEmptyParts, Qt::CaseSensitive);
+        QVERIFY(detailParts.count() == 3);
+    
+        // Use existing detail if available and would not cause an overwrite of
+        // a field value
+        QContactDetail contactDetail = QContactDetail(detailParts[0]);
+        if (contact.details().contains(detailParts[0])
+            && contact.detail(detailParts[0]).variantValues().key(detailParts[1]).isNull()) {
+            contactDetail = contact.detail(detailParts[0]);
+        }
+
+        // Set the field value only if not empty (do not add empty fields)  
+        if (!detailParts[2].isEmpty()) {
+            QVERIFY(contactDetail.setValue(detailParts[1], detailParts[2]));
+        }
+
+        QVERIFY(contact.saveDetail(&contactDetail));
+        parsedDetails.append(contactDetail);
+    }
+}
+
+/*!
+ * Private helper function for checking if the SIM backend supports the
+ * contact. This can be used in cases where it depends on the SIM card features
+ * if the contact details can be saved or not.
+ */
 bool tst_QContactManagerSymbianSim::isContactSupported(QContact contact)
 {
     QMap<QString, QContactDetailDefinition> detailDefinitions = m_cm->detailDefinitions();
@@ -532,14 +617,40 @@ bool tst_QContactManagerSymbianSim::isContactSupported(QContact contact)
     return true;
 }
 
-void tst_QContactManagerSymbianSim::updateContact()
+/*
+ * Private helper function for comparing QContact details to a well-known set
+ * of QContactDetails.
+ * \return true if all the expected contact details have a match in the \contact.
+ */
+bool tst_QContactManagerSymbianSim::compareDetails(QContact contact, QList<QContactDetail> expectedDetails)
 {
-    // TODO
-}
+    foreach (QContactDetail expectedDetail, expectedDetails) {
+        QContactDetail actualDetail = contact.detail(expectedDetail.definitionName());
+        QVERIFY_WITH_RETURN_VALUE(!actualDetail.isEmpty());
 
-void tst_QContactManagerSymbianSim::removeContact()
-{
-    // TODO
+        // Allow truncating the custom label to the max text length
+        if (expectedDetail.definitionName() == QContactName::DefinitionName) {
+            QContactName nameDetail = static_cast<QContactName>(expectedDetail);
+            nameDetail.setCustomLabel(nameDetail.customLabel().left(m_etelStoreInfo.iMaxTextLength));
+            QCOMPARE_WITH_RETURN_VALUE(actualDetail, static_cast<QContactDetail>(nameDetail));
+        // Allow truncating the nick name to the max text length
+        } else if (expectedDetail.definitionName() == QContactNickname::DefinitionName) {
+                QContactNickname nick = static_cast<QContactNickname>(expectedDetail);
+                nick.setNickname(nick.nickname().left(m_etelStoreInfo.iMaxTextLength));
+                QCOMPARE_WITH_RETURN_VALUE(actualDetail, static_cast<QContactDetail>(nick));
+        } else {
+            if (actualDetail != expectedDetail) {
+                // FAIL! Make it easier to debug the output by
+                // comparing the contact detail field contents
+                foreach (QString key, expectedDetail.variantValues().keys()) {
+                    QVariant value1 = actualDetail.value(key);
+                    QVariant value2 = expectedDetail.value(key);
+                    QCOMPARE_WITH_RETURN_VALUE(actualDetail.value(key), expectedDetail.value(key));
+                }
+            }
+        }
+    }
+    return true;
 }
 
 QTEST_MAIN(tst_QContactManagerSymbianSim)
