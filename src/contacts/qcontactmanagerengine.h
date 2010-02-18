@@ -166,7 +166,7 @@ public:
     /* Reports the built-in definitions from the schema */
     static QMap<QString, QMap<QString, QContactDetailDefinition> > schemaDefinitions();
 
-signals:
+Q_SIGNALS:
     void dataChanged();
     void contactsAdded(const QList<QContactLocalId>& contactIds);
     void contactsChanged(const QList<QContactLocalId>& contactIds);

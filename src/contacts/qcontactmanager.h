@@ -179,7 +179,7 @@ public:
     /* return a list of available backends for which a QContactManager can be constructed. */
     static QStringList availableManagers();
 
-signals:
+Q_SIGNALS:
     void dataChanged();
     void contactsAdded(const QList<QContactLocalId>& contactIds);
     void contactsChanged(const QList<QContactLocalId>& contactIds);

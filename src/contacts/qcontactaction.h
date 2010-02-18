@@ -104,7 +104,7 @@ public:
     /* Returns the most recently received result, or an invalid QVariantMap if no results received */
     virtual QVariantMap result() const = 0;
 
-signals:
+Q_SIGNALS:
     void progress(QContactAction::Status status, const QVariantMap& result); // deprecated by the following signal
     void progress(QContactAction::State state, const QVariantMap& result);   // replaces the above
 };

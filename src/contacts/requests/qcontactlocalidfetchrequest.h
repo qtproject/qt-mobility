@@ -70,7 +70,7 @@ public:
     /* Results */
     QList<QContactLocalId> ids() const;
 
-signals:
+Q_SIGNALS:
     void progress(QContactLocalIdFetchRequest* self, bool appendOnly); // deprecated
 
 private:

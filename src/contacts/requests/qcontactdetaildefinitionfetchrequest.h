@@ -72,7 +72,7 @@ public:
     QMap<QString, QContactDetailDefinition> definitions() const;
     QMap<int, QContactManager::Error> errorMap() const;
 
-signals:
+Q_SIGNALS:
     void progress(QContactDetailDefinitionFetchRequest* self, bool appendOnly); // DEPRECATED
 
 private:

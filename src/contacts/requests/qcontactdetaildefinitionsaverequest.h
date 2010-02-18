@@ -69,7 +69,7 @@ public:
     QList<QContactDetailDefinition> definitions() const;
     QMap<int, QContactManager::Error> errorMap() const;
 
-signals:
+Q_SIGNALS:
     void progress(QContactDetailDefinitionSaveRequest* self); // deprecated
 
 private:

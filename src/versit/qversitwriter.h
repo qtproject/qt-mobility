@@ -97,7 +97,7 @@ public:
     bool Q_DECL_DEPRECATED startWriting();
     bool Q_DECL_DEPRECATED writeAll();
 
-signals:
+Q_SIGNALS:
     void stateChanged(QVersitWriter::State state);
 
 private: // data

@@ -75,7 +75,7 @@ public:
     QMap<int, QContactManager::Error> errorMap() const;
 
 
-signals:
+Q_SIGNALS:
     void progress(QContactRelationshipRemoveRequest* self); // deprecated
 
 private:
