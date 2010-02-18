@@ -154,17 +154,6 @@ protected:
 
 };
 
-class Q_LANDMARKS_EXPORT QLandmarkFetchSet: public QList<QLandmark>
-{
-public:
-    int newIndex() const;
-    QLandmarkDatabase::FetchStatus fetchStatus();
-
-    virtual ~QLandmarkFetchSet();
-private:
-    QLandmarkFetchSet();
-};
-
 QTM_END_NAMESPACE
 
 QT_END_HEADER
