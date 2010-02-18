@@ -146,12 +146,37 @@ bool GConfLayer::value(Handle handle, const QString &subPath, QVariant *data)
 
     qDebug() << "Read value from" << fullPath;
     GConfItem gconfItem(fullPath);
-    *data = gconfItem.value();
-    qDebug() << "*data = " << *data;
+    QVariant readValue = gconfItem.value();
+    qDebug() << "gconfItem.value()" << readValue;
+    switch (readValue.type()) {
+    case QVariant::Invalid:
+    case QVariant::Bool:
+    case QVariant::Int:
+    case QVariant::Double:
+    case QVariant::StringList:
+    case QVariant::List:
+        *data = readValue;
+        break;
+    case QVariant::String:
+    {
+        QString readString = readValue.toString();
+        QDataStream readStream(QByteArray::fromBase64(readString.toAscii()));
+        QVariant serializedValue;
+        readStream >> serializedValue;
+        if (serializedValue.isValid()) {
+            *data = serializedValue;
+        } else {
+            *data = readValue;
+        }
+        break;
+    }
+    default:
+        break;
+    }
 
     if (createdHandle)
         removeHandle(handle);
-
+    qDebug() << "*data" << *data;
     return data->isValid();
 }
 
@@ -293,13 +318,31 @@ bool GConfLayer::setValue(QValueSpacePublisher */*creator*/,
 
     fullPath.append(value);
 
-
     qDebug() << "Write value" << data << "to" << fullPath;
     GConfItem gconfItem(fullPath);
-    gconfItem.set(data);
+    switch (data.type()) {
+    case QVariant::Invalid:
+    case QVariant::Bool:
+    case QVariant::Int:
+    case QVariant::Double:
+    case QVariant::String:
+    case QVariant::StringList:
+    case QVariant::List:
+        qDebug() << "gconfItem.set()" << data;
+        gconfItem.set(data);
+        break;
+    default:
+        QByteArray byteArray;
+        QDataStream writeStream(&byteArray, QIODevice::WriteOnly);
+        writeStream << data;
+        QString serializedValue(byteArray.toBase64());
+        qDebug() << "gconfItem.set()" << serializedValue;
+        gconfItem.set(serializedValue);
+    }
 
     if (createdHandle)
         removeHandle(Handle(sh));
+
     return true;    //TODO: How to check whether set was ok?
 }
 
