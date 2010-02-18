@@ -57,12 +57,12 @@ class Q_SENSORS_EXPORT QOrientationReading : public QSensorReading
 public:
     enum Orientation {
         Undefined = 0,
-        BottomUp,
-        BottomDown,
+        TopUp,
+        TopDown,
         LeftUp,
         RightUp,
+        FaceUp,
         FaceDown,
-        FaceUp
     };
 
     Orientation orientation() const;
