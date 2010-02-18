@@ -157,6 +157,8 @@ void QTrackerContactSaveRequest::saveContacts(const QList<QContact> &contacts)
         }  else {
             isModified = true;
             ncoContact = service->liveNode(QUrl("contact:"+QString::number(contact.localId())));
+            /// @note Following needed in case we save new contact with given localId
+            ncoContact->setContactUID(QString::number(contact.localId()));
             ncoContact->setContentLastModified(QDateTime::currentDateTime());
         }
         pendingContactIds.insert(contact.localId());
