@@ -39,52 +39,71 @@
 **
 ****************************************************************************/
 #include "qmessageaccount.h"
+#include "qmessageaccount_p.h"
+#include "qmessagemanager.h"
 
 QTM_BEGIN_NAMESPACE
 
+QMessageAccount QMessageAccountPrivate::from(const QMessageAccountId &id, const QString &name, const QMessageAddress &address, const QMessage::TypeFlags &types)
+{
+    QMessageAccount result;
+    result.d_ptr->_id = id;
+    result.d_ptr->_name = name;
+    result.d_ptr->_address = address;
+    result.d_ptr->_types = types;
+    return result;
+}
+
 QMessageAccount::QMessageAccount()
+ : d_ptr(new QMessageAccountPrivate(this))
 {
 }
 
 QMessageAccount::QMessageAccount(const QMessageAccountId &id)
+ : d_ptr(new QMessageAccountPrivate(this))
 {
-    Q_UNUSED(id)
+    *this = QMessageManager().account(id);
 }
 
 QMessageAccount::QMessageAccount(const QMessageAccount &other)
+ : d_ptr(new QMessageAccountPrivate(this))
 {
-    Q_UNUSED(other)
+    this->operator=(other);
 }
 
 QMessageAccount& QMessageAccount::operator=(const QMessageAccount& other)
 {
-    Q_UNUSED(other)
-    return *this; // stub
+    if (&other != this) {
+        *d_ptr = *other.d_ptr;
+    }
+
+    return *this;
 }
 
 QMessageAccount::~QMessageAccount()
 {
+    delete d_ptr;
+    d_ptr = 0;
 }
 
 QMessageAccountId QMessageAccount::id() const
 {
-    return QMessageAccountId();  // stub
+    return d_ptr->_id;
 }
 
 QString QMessageAccount::name() const
 {
-    return QString(); // stub
+    return d_ptr->_name;
 }
 
 QMessage::TypeFlags QMessageAccount::messageTypes() const
 {
-    return QMessage::NoType; // stub
+    return d_ptr->_types;
 }
 
 QMessageAccountId QMessageAccount::defaultAccount(QMessage::Type type)
 {
-    Q_UNUSED(type)
-    return QMessageAccountId(); // stub
+    //TODO:
 }
 
 QTM_END_NAMESPACE
