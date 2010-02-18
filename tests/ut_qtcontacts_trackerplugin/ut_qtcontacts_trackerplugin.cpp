@@ -757,7 +757,6 @@ void ut_qtcontacts_trackerplugin::testSyncContactManagerContactsAddedSince()
     QList<QContact> contactIds = ContactManager::instance()->contacts( filter, sortOrder, QStringList() );
     qDebug() << "addedIds" << addedIds.size();
     qDebug() << "contactIds" << contactIds.size();
-    QEXPECT_FAIL("", "ContactManager is returning an empty list", Continue);
     QVERIFY2( contactIds.size() == addedIds.size(), "Incorrect number of filtered contacts");
 }
 
@@ -792,7 +791,6 @@ void ut_qtcontacts_trackerplugin::testSyncContactManagerContactIdsAddedSince()
     QList<QContactLocalId> contactIds = ContactManager::instance()->contactIds(filter, sortOrder);
     qDebug() << "addedIds" << addedIds;
     qDebug() << "contactIds" << contactIds;
-    QEXPECT_FAIL("", "ContactManager is returning an empty list", Continue);
     QVERIFY2( contactIds.size() == addedIds.size(), "Incorrect number of filtered contacts");
 }
 
