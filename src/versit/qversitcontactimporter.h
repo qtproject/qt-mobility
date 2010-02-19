@@ -85,14 +85,6 @@ public:
     void setResourceHandler(QVersitResourceHandler* handler);
     QVersitResourceHandler* resourceHandler() const;
 
-    // Deprecated
-    void Q_DECL_DEPRECATED setImagePath(const QString& path);
-    QString Q_DECL_DEPRECATED imagePath() const;
-    void Q_DECL_DEPRECATED setAudioClipPath(const QString& path);
-    QString Q_DECL_DEPRECATED audioClipPath() const;
-    QContact Q_DECL_DEPRECATED importContact(const QVersitDocument& versitDocument);
-    QList<QVersitProperty> Q_DECL_DEPRECATED unknownVersitProperties();
-
 private:
     QVersitContactImporterPrivate* d;
 };

@@ -222,32 +222,4 @@ QVersitWriter::Error QVersitWriter::error() const
     return d->error();
 }
 
-
-/*! \internal */
-void QVersitWriter::setVersitDocument(const QVersitDocument& versitDocument)
-{
-    QList<QVersitDocument> documents;
-    documents.append(versitDocument);
-    d->mInput = documents;
-}
-
-/*! \internal */
-QVersitDocument QVersitWriter::versitDocument() const
-{
-    return QVersitDocument();
-}
-
-/*! \internal */
-bool QVersitWriter::startWriting()
-{
-    return startWriting(d->mInput);
-}
-
-/*! \internal */
-bool QVersitWriter::writeAll()
-{
-    startWriting(d->mInput);
-    return waitForFinished();
-}
-
 #include "moc_qversitwriter.cpp"

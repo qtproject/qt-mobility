@@ -82,12 +82,6 @@ public:
     void setResourceHandler(QVersitResourceHandler* handler);
     QVersitResourceHandler* resourceHandler() const;
 
-    // Deprecated:
-    QVersitDocument Q_DECL_DEPRECATED exportContact(
-        const QContact& contact,
-        QVersitDocument::VersitType versitType=QVersitDocument::VCard30Type);
-    QList<QContactDetail> Q_DECL_DEPRECATED unknownContactDetails();
-
 private:
     QVersitContactExporterPrivate* d;    
 };

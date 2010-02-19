@@ -91,11 +91,6 @@ public:
     bool isEmpty() const;
     void clear();
 
-    // Deprecated:
-    void Q_DECL_DEPRECATED addParameter(const QString& name, const QString& value);
-    void Q_DECL_DEPRECATED setEmbeddedDocument(const QVersitDocument& document);
-    QVersitDocument Q_DECL_DEPRECATED embeddedDocument() const;
-
 private:
     
     QSharedDataPointer<QVersitPropertyPrivate> d;
