@@ -121,7 +121,7 @@ public:
     QSystemNetworkInfoLinuxCommonPrivate(QObject *parent = 0);
     virtual ~QSystemNetworkInfoLinuxCommonPrivate();
 
-    QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
+    virtual QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
     qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
     int cellId() {return 0;}
     int locationAreaCode() {return 0;}
@@ -152,6 +152,8 @@ protected:
     bool isDefaultInterface(const QString &device);
     QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
 #endif
+private Q_SLOTS:
+    void getPrimaryMode();
 
 };
 

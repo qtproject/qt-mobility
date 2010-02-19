@@ -194,26 +194,35 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
+    qWarning() << __PRETTY_FUNCTION__ << mode;
+
     switch(mode) {
     case QSystemNetworkInfo::GsmMode:
+    case QSystemNetworkInfo::CdmaMode:
+    case QSystemNetworkInfo::WcdmaMode:
         {
-#if 0
-#if !defined(QT_NO_DBUS)
-            QDBusInterface connectionInterface("com.nokia.phone.net",
-                                               "/com/nokia/phone/net",
-                                               "com.nokia.SystemInfo",
-                                                QDBusConnection::systemBus());
-            if(!connectionInterface.isValid()) {
-                qWarning() << "interfacenot valid";
-            }
-            QDBusReply< QByteArray > reply = connectionInterface.call("GetConfigValue", "/device/sw-release-ver");
-            return reply.value();
-#endif
-#endif
+            qWarning() << __FUNCTION__<< "GSM" << mode;
+//#if 0
+//#if !defined(QT_NO_DBUS)
+//            QDBusInterface connectionInterface("com.nokia.phone.net",
+//                                               "/com/nokia/phone/net",
+//                                               "com.nokia.SystemInfo",
+//                                                QDBusConnection::systemBus());
+//            if(!connectionInterface.isValid()) {
+//                qWarning() << "interfacenot valid";
+//            }
+//            QDBusReply< QByteArray > reply = connectionInterface.call("GetConfigValue", "/device/sw-release-ver");
+//            return reply.value();
+//#endif
+//#endif
         }
         break;
-    default:
-        return QSystemNetworkInfoLinuxCommonPrivate::networkStatus(mode);
+    case QSystemNetworkInfo::EthernetMode:
+    case QSystemNetworkInfo::WlanMode:
+    case QSystemNetworkInfo::BluetoothMode:
+        {
+            return QSystemNetworkInfoLinuxCommonPrivate::networkStatus(mode);
+        }
         break;
     };
     return QSystemNetworkInfo::UndefinedStatus;
@@ -226,8 +235,10 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
     case QSystemNetworkInfo::CdmaMode:
     case QSystemNetworkInfo::WcdmaMode:
         break;
+    case QSystemNetworkInfo::EthernetMode:
+    case QSystemNetworkInfo::WlanMode:
+    case QSystemNetworkInfo::BluetoothMode:
         return QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(mode);
-    default:
         break;
     };
 

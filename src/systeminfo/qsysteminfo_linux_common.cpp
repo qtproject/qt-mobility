@@ -396,10 +396,57 @@ bool QSystemInfoLinuxCommonPrivate::hasSysFeature(const QString &featureStr)
 
 QSystemNetworkInfoLinuxCommonPrivate::QSystemNetworkInfoLinuxCommonPrivate(QObject *parent) : QObject(parent)
 {
+    QTimer::singleShot(200, this,SLOT(getPrimaryMode()));
 }
 
 QSystemNetworkInfoLinuxCommonPrivate::~QSystemNetworkInfoLinuxCommonPrivate()
 {
+}
+
+void QSystemNetworkInfoLinuxCommonPrivate::getPrimaryMode()
+{
+    // try to see if there are any default route
+//    bool anyDefaultRoute = false;
+
+    QFileInfo fi("/proc/net/route");
+    if(fi.exists()) {
+        QFile rx(fi.absoluteFilePath());
+        if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            QString result;
+            QTextStream out(&rx);
+            do {
+                result = out.readLine().simplified();
+                if(!result.isEmpty()) {
+                    QStringList tokens = result.split(" ");
+
+                    if(tokens.at(2).toLocal8Bit() != "Gateway"
+                       && tokens.at(2).toLocal8Bit() != "00000000") {
+
+                        qWarning() <<"found default!" << tokens.at(0);
+           //             emit networkModeChanged(tokens.at(0)));
+                    }
+                }
+            } while (!result.isNull());
+        }
+    }
+    //    QMapIterator<QString, QString> i(activePaths);
+//    QString devicepath;
+//    while (i.hasNext()) {
+//        i.next();
+//        QScopedPointer<QNetworkManagerConnectionActive> activeCon;
+//        activeCon.reset(new QNetworkManagerConnectionActive(i.key()));
+//
+//        if(activeCon->defaultRoute()) {
+//            anyDefaultRoute = activeCon->defaultRoute();
+//            QNetworkManagerInterfaceDevice *devIface = new QNetworkManagerInterfaceDevice(i.value());
+//            emit networkModeChanged(deviceTypeToMode(devIface->deviceType()));
+//        }
+//        devicepath = i.value();
+//    }
+//
+//    if(!anyDefaultRoute) {
+//        emit networkModeChanged(QSystemNetworkInfo::UnknownMode);
+//    }
 }
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
@@ -407,6 +454,8 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::networkS
     switch(mode) {
     case QSystemNetworkInfo::WlanMode:
         {
+            qWarning() << __PRETTY_FUNCTION__ << "WLAN";
+
             QString baseSysDir = "/sys/class/net/";
             QDir wDir(baseSysDir);
             QStringList dirs = wDir.entryList(QStringList() << "*", QDir::AllDirs | QDir::NoDotAndDotDot);
@@ -430,21 +479,22 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::networkS
         break;
     case QSystemNetworkInfo::EthernetMode:
         {
+            qWarning() << __PRETTY_FUNCTION__ << "Ethernet";
             QString baseSysDir = "/sys/class/net/";
             QDir eDir(baseSysDir);
-            QStringList dirs = eDir.entryList(QStringList() << "eth*", QDir::AllDirs | QDir::NoDotAndDotDot);
-            foreach(QString dir, dirs) {
-                QString devFile = baseSysDir + dir;
-                QFileInfo fi("/proc/net/route");
-                if(fi.exists()) {
-                    QFile rx(fi.absoluteFilePath());
-                    if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                        QString result = rx.readAll();
-                        if(result.contains(dir)) {
-                            return QSystemNetworkInfo::Connected;
-                        } else {
-                            return QSystemNetworkInfo::NoNetworkAvailable;
-                        }
+            QString dir = QSystemNetworkInfoLinuxCommonPrivate::interfaceForMode(mode).name();
+
+            QString devFile = baseSysDir + dir;
+            qWarning() << devFile;
+            QFileInfo fi("/proc/net/route");
+            if(fi.exists()) {
+                QFile rx(fi.absoluteFilePath());
+                if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                    QString result = rx.readAll();
+                    if(result.contains(dir)) {
+                        return QSystemNetworkInfo::Connected;
+                    } else {
+                        return QSystemNetworkInfo::NoNetworkAvailable;
                     }
                 }
             }

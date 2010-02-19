@@ -23,9 +23,11 @@ win32 {
 }
 
 unix: {
-    linux-*: {
+    !maemo*:linux-*: {
         FORMS += dialog.ui
-    }
+    } maemo* {
+    FORMS    += dialog_s60.ui
+   }
     
     mac: {
         FORMS += dialog.ui

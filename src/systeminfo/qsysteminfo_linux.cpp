@@ -156,7 +156,7 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QSystemNetworkInfoLinuxComm
 #if !defined(QT_NO_NETWORKMANAGER)
     setupNmConnections();
     updateActivePaths();
-    QTimer::singleShot(200, this,SLOT(getPrimaryMode()));
+//    QTimer::singleShot(200, this,SLOT(getPrimaryMode()));
 #endif
 }
 
@@ -221,30 +221,30 @@ bool QSystemNetworkInfoPrivate::isDefaultConnectionPath(const QString &path)
     return isDefault;
 }
 
-void QSystemNetworkInfoPrivate::getPrimaryMode()
-{
-    // try to see if there are any default route
-    bool anyDefaultRoute = false;
-
-    QMapIterator<QString, QString> i(activePaths);
-    QString devicepath;
-    while (i.hasNext()) {
-        i.next();
-        QScopedPointer<QNetworkManagerConnectionActive> activeCon;
-        activeCon.reset(new QNetworkManagerConnectionActive(i.key()));
-
-        if(activeCon->defaultRoute()) {
-            anyDefaultRoute = activeCon->defaultRoute();
-            QNetworkManagerInterfaceDevice *devIface = new QNetworkManagerInterfaceDevice(i.value());
-            emit networkModeChanged(deviceTypeToMode(devIface->deviceType()));
-        }
-        devicepath = i.value();
-    }
-
-    if(!anyDefaultRoute) {
-        emit networkModeChanged(QSystemNetworkInfo::UnknownMode);
-    }
-}
+//void QSystemNetworkInfoPrivate::getPrimaryMode()
+//{
+//    // try to see if there are any default route
+//    bool anyDefaultRoute = false;
+//
+//    QMapIterator<QString, QString> i(activePaths);
+//    QString devicepath;
+//    while (i.hasNext()) {
+//        i.next();
+//        QScopedPointer<QNetworkManagerConnectionActive> activeCon;
+//        activeCon.reset(new QNetworkManagerConnectionActive(i.key()));
+//
+//        if(activeCon->defaultRoute()) {
+//            anyDefaultRoute = activeCon->defaultRoute();
+//            QNetworkManagerInterfaceDevice *devIface = new QNetworkManagerInterfaceDevice(i.value());
+//            emit networkModeChanged(deviceTypeToMode(devIface->deviceType()));
+//        }
+//        devicepath = i.value();
+//    }
+//
+//    if(!anyDefaultRoute) {
+//        emit networkModeChanged(QSystemNetworkInfo::UnknownMode);
+//    }
+//}
 
 
 QString QSystemNetworkInfoPrivate::getNmNetName(QSystemNetworkInfo::NetworkMode mode)

@@ -477,7 +477,9 @@ QSystemNetworkInfo::~QSystemNetworkInfo()
 /*!
     Returns the status of the network \a mode.
 */
-QSystemNetworkInfo::NetworkStatus QSystemNetworkInfo::networkStatus(QSystemNetworkInfo::NetworkMode mode) {
+QSystemNetworkInfo::NetworkStatus QSystemNetworkInfo::networkStatus(QSystemNetworkInfo::NetworkMode mode)
+{
+    qWarning() << __FUNCTION__;
     return netInfoPrivate()->networkStatus(mode);
 }
 

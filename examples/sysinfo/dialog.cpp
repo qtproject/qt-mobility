@@ -80,7 +80,7 @@ void Dialog::changeEvent(QEvent *e)
 
 void Dialog::tabChanged(int index)
 {
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5)
     switch(index) {
     case 0:
         setupGeneral();
