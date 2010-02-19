@@ -387,7 +387,7 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard21()
 
     property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
     QCOMPARE(property.name(),QString::fromAscii("EMAIL"));
-    // The base64 parameter should be stripped by the reader.
+    // The encoding and charset parameters should be stripped by the reader.
     QCOMPARE(property.parameters().count(), 0);
     QCOMPARE(property.value(),QString::fromAscii("john.citizen@example.com"));
 
