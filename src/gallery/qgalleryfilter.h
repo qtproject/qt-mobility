@@ -47,15 +47,16 @@
 #include <QtCore/qvariant.h>
 #include <QtCore/qvector.h>
 
-class QGalleryContainerIdFilter;
+class QGalleryContainerFilter;
 class QGalleryContainerUrlFilter;
-class QGalleryIntersectionFilter;
-class QGalleryDocumentIdFilter;
+class QGalleryDocumentFilter;
 class QGalleryDocumentUrlFilter;
+class QGalleryIntersectionFilter;
 class QGalleryMetaDataFilter;
-class QGalleryMetaDataLimitFilter;
 class QGalleryMetaDataRangeFilter;
 class QGalleryUnionFilter;
+
+class QGalleryFilterPrivate;
 
 class QGalleryFilter
 {
@@ -81,7 +82,7 @@ public:
         LessThanMaximum          = 0x04,
         EqualsMaximum            = 0x08,
         LessThanEqualsMaximum    = EqualsMaximum | LessThanMaximum,
-        InclusiveRange           = EqualsMinimum | GreaterThanMinimum | LessThanMaximum | EqualsMaximum,
+        InclusiveRange           = GreaterThanEqualsMinimum | LessThanEqualsMaximum,
         ExclusiveRange           = GreaterThanMinimum | LessThanMaximum
     };
 
@@ -89,16 +90,19 @@ public:
 
     QGalleryFilter();
     QGalleryFilter(const QGalleryFilter &filter);
+    QGalleryFilter(const QGalleryDocumentFilter &filter);
+    QGalleryFilter(const QGalleryDocumentUrlFilter &filter);
+    QGalleryFilter(const QGalleryContainerFilter &filter);
+    QGalleryFilter(const QGalleryContainerUrlFilter &filter);
+    QGalleryFilter(const QGalleryIntersectionFilter &filter);
+    QGalleryFilter(const QGalleryUnionFilter &filter);
+    QGalleryFilter(const QGalleryMetaDataFilter &filter);
+    QGalleryFilter(const QGalleryMetaDataRangeFilter &filter);
     ~QGalleryFilter();
 
     QGalleryFilter &operator =(const QGalleryFilter &filter);
 
-    bool operator ==(const QGalleryFilter &filter) const;
-    bool operator !=(const QGalleryFilter &filter) const;
-
     Type type() const;
-
-    bool isEmpty() const;
 
     QGalleryDocumentFilter toDocumentFilter() const;
     QGalleryDocumentUrlFilter toDocumentUrlFilter() const;
@@ -108,27 +112,47 @@ public:
     QGalleryUnionFilter toUnionFilter() const;
     QGalleryMetaDataFilter toMetaDataFilter() const;
     QGalleryMetaDataRangeFilter toMetaDataRangeFilter() const;
+
+private:
+    QSharedDataPointer<QGalleryFilterPrivate> d;
+
+    friend bool operator ==(const QGalleryFilter &filter1, const QGalleryFilter &filter2);
+    friend bool operator !=(const QGalleryFilter &filter1, const QGalleryFilter &filter2);
 };
 
-class QGalleryDocumentFilter : public QGalleryFilter
+bool operator ==(const QGalleryFilter &filter1, const QGalleryFilter &filter2);
+bool operator !=(const QGalleryFilter &filter1, const QGalleryFilter &filter2);
+
+class QGalleryDocumentFilterPrivate;
+
+class QGalleryDocumentFilter
 {
 public:
     QGalleryDocumentFilter();
     explicit QGalleryDocumentFilter(const QString &id);
     explicit QGalleryDocumentFilter(const QStringList &ids);
-    QGalleryDocumentFilter(const QGalleryDocumentIdFilter &filter);
+    QGalleryDocumentFilter(const QGalleryDocumentFilter &filter);
     ~QGalleryDocumentFilter();
 
-    QGalleryDocumentFilter &operator =(const QGalleryDocumentIdFilter &filter);
+    QGalleryDocumentFilter &operator =(const QGalleryDocumentFilter &filter);
 
     QString documentId() const;
     void setDocumentId(const QString &id);
 
     QStringList documentIds() const;
     void setDocumentIds(const QStringList &ids);
+
+private:
+    explicit QGalleryDocumentFilter(QGalleryFilterPrivate *d);
+
+    QSharedDataPointer<QGalleryDocumentFilterPrivate> d;
+
+    friend class QGalleryFilter;
 };
 
-class QGalleryDocumentUrlFilter : public QGalleryFilter
+class QGalleryDocumentUrlFilterPrivate;
+
+class QGalleryDocumentUrlFilter
 {
 public:
     QGalleryDocumentUrlFilter();
@@ -144,23 +168,41 @@ public:
 
     QList<QUrl> documentUrls() const;
     void setDocumentUrls(const QList<QUrl> &urls);
+
+private:
+    explicit QGalleryDocumentUrlFilter(QGalleryFilterPrivate *d);
+
+    QSharedDataPointer<QGalleryDocumentUrlFilterPrivate> d;
+
+    friend class QGalleryFilter;
 };
 
-class QGalleryContainerFilter : public QGalleryFilter
+class QGalleryContainerFilterPrivate;
+
+class QGalleryContainerFilter
 {
 public:
     QGalleryContainerFilter();
     explicit QGalleryContainerFilter(const QString &id);
-    QGalleryContainerFilter(const QGalleryDocumentIdFilter &filter);
+    QGalleryContainerFilter(const QGalleryContainerFilter &filter);
     ~QGalleryContainerFilter();
 
     QGalleryContainerFilter &operator =(const QGalleryContainerFilter &filter);
 
     QString containerId() const;
     void setContainerId(const QString &id);
+
+private:
+    explicit QGalleryContainerFilter(QGalleryFilterPrivate *d);
+
+    QSharedDataPointer<QGalleryContainerFilterPrivate> d;
+
+    friend class QGalleryFilter;
 };
 
-class QGalleryContainerUrlFilter : public QGalleryFilter
+class QGalleryContainerUrlFilterPrivate;
+
+class QGalleryContainerUrlFilter
 {
 public:
     QGalleryContainerUrlFilter();
@@ -172,9 +214,18 @@ public:
 
     QUrl containerUrl() const;
     void setContainerUrl(const QUrl &url);
+
+private:
+    explicit QGalleryContainerUrlFilter(QGalleryFilterPrivate *d);
+
+    QSharedDataPointer<QGalleryContainerUrlFilterPrivate> d;
+
+    friend class QGalleryFilter;
 };
 
-class QGalleryIntersectionFilter : public QGalleryFilter
+class QGalleryIntersectionFilterPrivate;
+
+class QGalleryIntersectionFilter
 {
 public:
     QGalleryIntersectionFilter();
@@ -184,6 +235,7 @@ public:
     QGalleryIntersectionFilter &operator =(const QGalleryIntersectionFilter &filter);
 
     int filterCount() const;
+    bool isEmpty() const;
 
     QList<QGalleryFilter> filters() const;
 
@@ -203,9 +255,18 @@ public:
 
     void removeAt(int index);
     void clear();
+
+private:
+    explicit QGalleryIntersectionFilter(QGalleryFilterPrivate *d);
+
+    QSharedDataPointer<QGalleryIntersectionFilterPrivate> d;
+
+    friend class QGalleryFilter;
 };
 
-class QGalleryUnionFilter : public QGalleryFilter
+class QGalleryUnionFilterPrivate;
+
+class QGalleryUnionFilter
 {
 public:
     QGalleryUnionFilter();
@@ -215,6 +276,7 @@ public:
     QGalleryUnionFilter &operator =(const QGalleryUnionFilter &filter);
 
     int filterCount() const;
+    bool isEmpty() const;
 
     QList<QGalleryFilter> filters() const;
 
@@ -231,9 +293,18 @@ public:
 
     void removeAt(int index);
     void clear();
+
+private:
+    explicit QGalleryUnionFilter(QGalleryFilterPrivate *d);
+
+    QSharedDataPointer<QGalleryUnionFilterPrivate> d;
+
+    friend class QGalleryFilter;
 };
 
-class QGalleryMetaDataFilter : public QGalleryFilter
+class QGalleryMetaDataFilterPrivate;
+
+class QGalleryMetaDataFilter
 {
 public:
     QGalleryMetaDataFilter();
@@ -254,9 +325,18 @@ public:
 
     Qt::MatchFlags matchFlags() const;
     void setMatchFlags(Qt::MatchFlags flags);
+
+private:
+    explicit QGalleryMetaDataFilter(QGalleryFilterPrivate *d);
+
+    QSharedDataPointer<QGalleryMetaDataFilterPrivate> d;
+
+    friend class QGalleryFilter;
 };
 
-class QGalleryMetaDataRangeFilter : public QGalleryFilter
+class QGalleryMetaDataRangeFilterPrivate;
+
+class QGalleryMetaDataRangeFilter
 {
 public:
     QGalleryMetaDataRangeFilter();
@@ -279,9 +359,15 @@ public:
     void setLessThanEquals(const QVariant &value);
     void setGreaterThan(const QVariant &value);
     void setGreaterThanEquals(const QVariant &value);
+
+private:
+    explicit QGalleryMetaDataRangeFilter(QGalleryFilterPrivate *d);
+
+    QSharedDataPointer<QGalleryMetaDataRangeFilterPrivate> d;
+
+    friend class QGalleryFilter;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGalleryFilter::RangeFlags)
-Q_DECLARE_OPERATORS_FOR_FLAGS(QGalleryFilter::LimitFlags)
 
 #endif

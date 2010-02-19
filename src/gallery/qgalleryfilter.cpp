@@ -41,6 +41,302 @@
 
 #include "qgalleryfilter.h"
 
+#include <QtCore/qstringlist.h>
+#include <QtCore/qurl.h>
+
+class QGalleryFilterPrivate : public QSharedData
+{
+public:
+    QGalleryFilterPrivate(QGalleryFilter::Type type)
+        : type(type)
+    {
+    }
+
+    QGalleryFilterPrivate(const QGalleryFilterPrivate &other)
+        : QSharedData(other)
+        , type(other.type)
+    {
+    }
+
+    virtual ~QGalleryFilterPrivate() {}
+
+    virtual QGalleryFilterPrivate *clone() const = 0;
+    virtual bool isEqual(const QGalleryFilterPrivate &other) const = 0;
+
+    const QGalleryFilter::Type type;
+};
+
+template <> QGalleryFilterPrivate *QSharedDataPointer<QGalleryFilterPrivate>::clone()
+{
+    return d->clone();
+}
+
+class QGalleryInvalidFilterPrivate : public QGalleryFilterPrivate
+{
+public:
+    QGalleryInvalidFilterPrivate() : QGalleryFilterPrivate(QGalleryFilter::Invalid) {}
+
+    QGalleryFilterPrivate *clone() const { return new QGalleryInvalidFilterPrivate; }
+    bool isEqual(const QGalleryFilterPrivate &other) const { return type == other.type; }
+};
+
+class QGalleryDocumentFilterPrivate : public QGalleryFilterPrivate
+{
+public:
+    QGalleryDocumentFilterPrivate()
+        : QGalleryFilterPrivate(QGalleryFilter::Document)
+    {
+    }
+
+    QGalleryDocumentFilterPrivate(const QGalleryDocumentFilterPrivate &other)
+        : QGalleryFilterPrivate(other)
+        , documentIds(other.documentIds)
+    {
+    }
+
+    QGalleryFilterPrivate *clone() const
+    {
+        return new QGalleryDocumentFilterPrivate(*this);
+    }
+
+    bool isEqual(const QGalleryFilterPrivate &other) const
+    {
+        return other.type == type && static_cast<const QGalleryDocumentFilterPrivate &>
+                (other).documentIds == documentIds;
+    }
+
+    QStringList documentIds;
+};
+
+class QGalleryDocumentUrlFilterPrivate : public QGalleryFilterPrivate
+{
+public:
+    QGalleryDocumentUrlFilterPrivate()
+        : QGalleryFilterPrivate(QGalleryFilter::DocumentUrl)
+    {
+    }
+
+    QGalleryDocumentUrlFilterPrivate(const QGalleryDocumentUrlFilterPrivate &other)
+        : QGalleryFilterPrivate(other)
+        , documentUrls(other.documentUrls)
+    {
+    }
+
+    QGalleryFilterPrivate *clone() const
+    {
+        return new QGalleryDocumentUrlFilterPrivate(*this);
+    }
+
+    bool isEqual(const QGalleryFilterPrivate &other) const
+    {
+        return other.type == type && static_cast<const QGalleryDocumentUrlFilterPrivate &>
+                (other).documentUrls == documentUrls;
+    }
+
+    QList<QUrl> documentUrls;
+};
+
+class QGalleryContainerFilterPrivate : public QGalleryFilterPrivate
+{
+public:
+    QGalleryContainerFilterPrivate()
+        : QGalleryFilterPrivate(QGalleryFilter::Container)
+    {
+    }
+
+    QGalleryContainerFilterPrivate(const QGalleryContainerFilterPrivate &other)
+        : QGalleryFilterPrivate(other)
+        , containerId(other.containerId)
+    {
+    }
+
+    QGalleryFilterPrivate *clone() const
+    {
+        return new QGalleryContainerFilterPrivate(*this);
+    }
+
+    bool isEqual(const QGalleryFilterPrivate &other) const
+    {
+        return other.type == type && static_cast<const QGalleryContainerFilterPrivate &>
+                (other).containerId == containerId;
+    }
+
+    QString containerId;
+};
+
+class QGalleryContainerUrlFilterPrivate : public QGalleryFilterPrivate
+{
+public:
+    QGalleryContainerUrlFilterPrivate()
+        : QGalleryFilterPrivate(QGalleryFilter::ContainerUrl)
+    {
+    }
+
+    QGalleryContainerUrlFilterPrivate(const QGalleryContainerUrlFilterPrivate &other)
+        : QGalleryFilterPrivate(other)
+        , containerUrl(other.containerUrl)
+    {
+    }
+
+    QGalleryFilterPrivate *clone() const
+    {
+        return new QGalleryContainerUrlFilterPrivate(*this);
+    }
+
+    bool isEqual(const QGalleryFilterPrivate &other) const
+    {
+        return other.type == type && static_cast<const QGalleryContainerUrlFilterPrivate &>
+                (other).containerUrl == containerUrl;
+    }
+
+    QUrl containerUrl;
+};
+
+class QGalleryIntersectionFilterPrivate : public QGalleryFilterPrivate
+{
+public:
+    QGalleryIntersectionFilterPrivate()
+        : QGalleryFilterPrivate(QGalleryFilter::Intersection)
+    {
+    }
+
+    QGalleryIntersectionFilterPrivate(const QGalleryIntersectionFilterPrivate &other)
+        : QGalleryFilterPrivate(other)
+        , filters(other.filters)
+    {
+    }
+
+    QGalleryFilterPrivate *clone() const
+    {
+        return new QGalleryIntersectionFilterPrivate(*this);
+    }
+
+    bool isEqual(const QGalleryFilterPrivate &other) const
+    {
+        return other.type == type && static_cast<const QGalleryIntersectionFilterPrivate &>
+                (other).filters == filters;
+    }
+
+    QList<QGalleryFilter> filters;
+};
+
+class QGalleryUnionFilterPrivate : public QGalleryFilterPrivate
+{
+public:
+    QGalleryUnionFilterPrivate() : QGalleryFilterPrivate(QGalleryFilter::Union) {}
+
+    QGalleryUnionFilterPrivate(const QGalleryUnionFilterPrivate &other)
+        : QGalleryFilterPrivate(other)
+        , filters(other.filters)
+    {
+    }
+
+    QGalleryFilterPrivate *clone() const
+    {
+        return new QGalleryUnionFilterPrivate(*this);
+    }
+
+    bool isEqual(const QGalleryFilterPrivate &other) const
+    {
+        return other.type == type && static_cast<const QGalleryUnionFilterPrivate &>
+                (other).filters == filters;
+    }
+
+    QList<QGalleryFilter> filters;
+};
+
+class QGalleryMetaDataFilterPrivate : public QGalleryFilterPrivate
+{
+public:
+    QGalleryMetaDataFilterPrivate()
+        : QGalleryFilterPrivate(QGalleryFilter::MetaData)
+        , flags(0)
+    {
+    }
+
+    QGalleryMetaDataFilterPrivate(const QGalleryMetaDataFilterPrivate &other)
+        : QGalleryFilterPrivate(other)
+        , flags(other.flags)
+        , field(other.field)
+        , value(other.value)
+    {
+    }
+
+    QGalleryFilterPrivate *clone() const
+    {
+        return new QGalleryMetaDataFilterPrivate(*this);
+    }
+
+    bool isEqual(const QGalleryFilterPrivate &other) const
+    {
+        if (other.type == type) {
+            const QGalleryMetaDataFilterPrivate &o
+                    = static_cast<const QGalleryMetaDataFilterPrivate &>(other);
+
+            return o.flags == flags
+                    && o.field == field
+                    && o.value == value;
+        } else {
+            return false;
+        }
+    }
+
+    Qt::MatchFlags flags;
+    QString field;
+    QVariant value;
+};
+
+class QGalleryMetaDataRangeFilterPrivate : public QGalleryFilterPrivate
+{
+public:
+    QGalleryMetaDataRangeFilterPrivate()
+        : QGalleryFilterPrivate(QGalleryFilter::MetaDataRange)
+        , flags(0)
+    {
+    }
+
+    QGalleryMetaDataRangeFilterPrivate(const QGalleryMetaDataRangeFilterPrivate &other)
+        : QGalleryFilterPrivate(other)
+        , flags(other.flags)
+        , field(other.field)
+        , minimum(other.minimum)
+        , maximum(other.maximum)
+    {
+    }
+
+    QGalleryFilterPrivate *clone() const
+    {
+        return new QGalleryMetaDataRangeFilterPrivate(*this);
+    }
+
+    bool isEqual(const QGalleryFilterPrivate &other) const
+    {
+        if (other.type == type) {
+            const QGalleryMetaDataRangeFilterPrivate &o
+                    = static_cast<const QGalleryMetaDataRangeFilterPrivate &>(other);
+
+            return o.flags == flags
+                    && o.field == field
+                    && o.minimum == minimum
+                    && o.maximum == maximum;
+        } else {
+            return false;
+        }
+    }
+
+    void setRange(const QVariant &min, const QVariant &max, QGalleryFilter::RangeFlags f)
+    {
+        minimum = min;
+        maximum = max;
+        flags = f;
+    }
+
+    QGalleryFilter::RangeFlags flags;
+    QString field;
+    QVariant minimum;
+    QVariant maximum;
+};
+
 /*!
     \class QGalleryFilter
 
@@ -87,6 +383,7 @@
 */
 
 QGalleryFilter::QGalleryFilter()
+    : d(new QGalleryInvalidFilterPrivate)
 {
 }
 
@@ -95,8 +392,81 @@ QGalleryFilter::QGalleryFilter()
 */
 
 QGalleryFilter::QGalleryFilter(const QGalleryFilter &filter)
+    : d(filter.d)
 {
+}
 
+/*!
+    Constructs a copy of a gallery document \a filter.
+*/
+
+
+QGalleryFilter::QGalleryFilter(const QGalleryDocumentFilter &filter)
+    : d(const_cast<QGalleryDocumentFilterPrivate *>(filter.d.constData()))
+{
+}
+
+/*!
+    Constructs a copy of a gallery document URL \a filter.
+*/
+
+QGalleryFilter::QGalleryFilter(const QGalleryDocumentUrlFilter &filter)
+    : d(const_cast<QGalleryDocumentUrlFilterPrivate *>(filter.d.constData()))
+{
+}
+
+/*!
+    Constructs a copy of a gallery container \a filter.
+*/
+
+QGalleryFilter::QGalleryFilter(const QGalleryContainerFilter &filter)
+    : d(const_cast<QGalleryContainerFilterPrivate *>(filter.d.constData()))
+{
+}
+
+/*!
+    Constructs a copy of a gallery container URL \a filter.
+*/
+
+QGalleryFilter::QGalleryFilter(const QGalleryContainerUrlFilter &filter)
+    : d(const_cast<QGalleryContainerUrlFilterPrivate *>(filter.d.constData()))
+{
+}
+
+/*!
+    Constructs a copy of a gallery intersection \a filter.
+*/
+
+QGalleryFilter::QGalleryFilter(const QGalleryIntersectionFilter &filter)
+    : d(const_cast<QGalleryIntersectionFilterPrivate *>(filter.d.constData()))
+{
+}
+
+/*!
+    Constructs a copy of a gallery union \a filter.
+*/
+
+QGalleryFilter::QGalleryFilter(const QGalleryUnionFilter &filter)
+    : d(const_cast<QGalleryUnionFilterPrivate *>(filter.d.constData()))
+{
+}
+
+/*!
+    Constructs a copy of a gallery meta-data \a filter.
+*/
+
+QGalleryFilter::QGalleryFilter(const QGalleryMetaDataFilter &filter)
+    : d(const_cast<QGalleryMetaDataFilterPrivate *>(filter.d.constData()))
+{
+}
+
+/*!
+    Constructs a copy of a gallery meta-data range \a filter.
+*/
+
+QGalleryFilter::QGalleryFilter(const QGalleryMetaDataRangeFilter &filter)
+    : d(const_cast<QGalleryMetaDataRangeFilterPrivate *>(filter.d.constData()))
+{
 }
 
 /*!
@@ -105,7 +475,6 @@ QGalleryFilter::QGalleryFilter(const QGalleryFilter &filter)
 
 QGalleryFilter::~QGalleryFilter()
 {
-
 }
 
 /*!
@@ -114,29 +483,9 @@ QGalleryFilter::~QGalleryFilter()
 
 QGalleryFilter &QGalleryFilter::operator =(const QGalleryFilter &filter)
 {
+    d = filter.d;
 
-}
-
-/*!
-    Compares \a filter to another filter.
-
-    Returns true if the filters are identical, and false otherwise.
-*/
-
-bool QGalleryFilter::operator ==(const QGalleryFilter &filter) const
-{
-
-}
-
-/*!
-    Compares \a filter to another filter.
-
-    Returns true if the filters are not identical, and false otherwise.
-*/
-
-bool QGalleryFilter::operator !=(const QGalleryFilter &filter) const
-{
-
+    return *this;
 }
 
 /*!
@@ -145,18 +494,7 @@ bool QGalleryFilter::operator !=(const QGalleryFilter &filter) const
 
 QGalleryFilter::Type QGalleryFilter::type() const
 {
-
-}
-
-/*!
-    Identifies if a filter has any criteria set.
-
-    Returns true if the filter is empty, and false otherwise.
-*/
-
-bool QGalleryFilter::isEmpty() const
-{
-
+    return d->type;
 }
 
 /*!
@@ -168,7 +506,9 @@ bool QGalleryFilter::isEmpty() const
 
 QGalleryDocumentFilter QGalleryFilter::toDocumentFilter() const
 {
-
+    return d->type == Document
+            ? QGalleryDocumentFilter(const_cast<QGalleryFilterPrivate *>(d.constData()))
+            : QGalleryDocumentFilter();
 }
 
 /*!
@@ -180,7 +520,9 @@ QGalleryDocumentFilter QGalleryFilter::toDocumentFilter() const
 
 QGalleryDocumentUrlFilter QGalleryFilter::toDocumentUrlFilter() const
 {
-
+    return d->type == DocumentUrl
+            ? QGalleryDocumentUrlFilter(const_cast<QGalleryFilterPrivate *>(d.constData()))
+            : QGalleryDocumentUrlFilter();
 }
 
 /*!
@@ -192,7 +534,9 @@ QGalleryDocumentUrlFilter QGalleryFilter::toDocumentUrlFilter() const
 
 QGalleryContainerFilter QGalleryFilter::toContainerFilter() const
 {
-
+    return d->type == Container
+            ? QGalleryContainerFilter(const_cast<QGalleryFilterPrivate *>(d.constData()))
+            : QGalleryContainerFilter();
 }
 
 /*!
@@ -204,7 +548,9 @@ QGalleryContainerFilter QGalleryFilter::toContainerFilter() const
 
 QGalleryContainerUrlFilter QGalleryFilter::toContainerUrlFilter() const
 {
-
+    return d->type == ContainerUrl
+            ? QGalleryContainerUrlFilter(const_cast<QGalleryFilterPrivate *>(d.constData()))
+            : QGalleryContainerUrlFilter();
 }
 
 /*!
@@ -216,7 +562,9 @@ QGalleryContainerUrlFilter QGalleryFilter::toContainerUrlFilter() const
 
 QGalleryIntersectionFilter QGalleryFilter::toIntersectionFilter() const
 {
-
+    return d->type == Intersection
+            ? QGalleryIntersectionFilter(const_cast<QGalleryFilterPrivate *>(d.constData()))
+            : QGalleryIntersectionFilter();
 }
 
 /*!
@@ -228,7 +576,9 @@ QGalleryIntersectionFilter QGalleryFilter::toIntersectionFilter() const
 
 QGalleryUnionFilter QGalleryFilter::toUnionFilter() const
 {
-
+    return d->type == Union
+            ? QGalleryUnionFilter(const_cast<QGalleryFilterPrivate *>(d.constData()))
+            : QGalleryUnionFilter();
 }
 
 /*!
@@ -240,7 +590,9 @@ QGalleryUnionFilter QGalleryFilter::toUnionFilter() const
 
 QGalleryMetaDataFilter QGalleryFilter::toMetaDataFilter() const
 {
-
+    return d && d->type == MetaData
+            ? QGalleryMetaDataFilter(const_cast<QGalleryFilterPrivate *>(d.constData()))
+            : QGalleryMetaDataFilter();
 }
 
 /*!
@@ -252,7 +604,31 @@ QGalleryMetaDataFilter QGalleryFilter::toMetaDataFilter() const
 
 QGalleryMetaDataRangeFilter QGalleryFilter::toMetaDataRangeFilter() const
 {
+    return d && d->type == MetaDataRange
+            ? QGalleryMetaDataRangeFilter(const_cast<QGalleryFilterPrivate *>(d.constData()))
+            : QGalleryMetaDataRangeFilter();
+}
 
+/*!
+    Compares \a filter1 to filter2.
+
+    Returns true if the filters are identical, and false otherwise.
+*/
+
+bool operator ==(const QGalleryFilter &filter1, const QGalleryFilter &filter2)
+{
+    return filter1.d == filter2.d || filter1.d->isEqual(*filter2.d);
+}
+
+/*!
+    Compares \a filter1 to filter2.
+
+    Returns true if the filters are not identical, and false otherwise.
+*/
+
+bool operator !=(const QGalleryFilter &filter1, const QGalleryFilter &filter2)
+{
+    return filter1.d != filter2.d && !filter1.d->isEqual(*filter2.d);
 }
 
 /*!
@@ -270,8 +646,8 @@ QGalleryMetaDataRangeFilter QGalleryFilter::toMetaDataRangeFilter() const
 */
 
 QGalleryDocumentFilter::QGalleryDocumentFilter()
+    : d(new QGalleryDocumentFilterPrivate)
 {
-
 }
 
 /*!
@@ -279,8 +655,9 @@ QGalleryDocumentFilter::QGalleryDocumentFilter()
 */
 
 QGalleryDocumentFilter::QGalleryDocumentFilter(const QString &id)
+    : d(new QGalleryDocumentFilterPrivate)
 {
-
+    d->documentIds.append(id);
 }
 
 /*!
@@ -288,17 +665,27 @@ QGalleryDocumentFilter::QGalleryDocumentFilter(const QString &id)
 */
 
 QGalleryDocumentFilter::QGalleryDocumentFilter(const QStringList &ids)
+    : d(new QGalleryDocumentFilterPrivate)
 {
-
+    d->documentIds = ids;
 }
 
 /*!
     Constructs a copy of a document \a filter.
 */
 
-QGalleryDocumentFilter::QGalleryDocumentFilter(const QGalleryDocumentIdFilter &filter)
+QGalleryDocumentFilter::QGalleryDocumentFilter(const QGalleryDocumentFilter &filter)
+    : d(filter.d)
 {
+}
 
+/*!
+    \internal
+*/
+
+QGalleryDocumentFilter::QGalleryDocumentFilter(QGalleryFilterPrivate *d)
+    : d(static_cast<QGalleryDocumentFilterPrivate *>(d))
+{
 }
 
 /*!
@@ -307,16 +694,17 @@ QGalleryDocumentFilter::QGalleryDocumentFilter(const QGalleryDocumentIdFilter &f
 
 QGalleryDocumentFilter::~QGalleryDocumentFilter()
 {
-
 }
 
 /*!
     Assigns the value of \a filter to another document filter.
 */
 
-QGalleryDocumentFilter &QGalleryDocumentFilter::operator =(const QGalleryDocumentIdFilter &filter)
+QGalleryDocumentFilter &QGalleryDocumentFilter::operator =(const QGalleryDocumentFilter &filter)
 {
+    d = filter.d;
 
+    return *this;
 }
 
 /*!
@@ -327,7 +715,9 @@ QGalleryDocumentFilter &QGalleryDocumentFilter::operator =(const QGalleryDocumen
 
 QString QGalleryDocumentFilter::documentId() const
 {
-
+    return d->documentIds.count() == 1
+            ? d->documentIds.first()
+            : QString();
 }
 
 /*!
@@ -338,7 +728,10 @@ QString QGalleryDocumentFilter::documentId() const
 
 void QGalleryDocumentFilter::setDocumentId(const QString &id)
 {
+    d->documentIds.clear();
 
+    if (!id.isNull())
+        d->documentIds.append(id);
 }
 
 /*!
@@ -347,7 +740,7 @@ void QGalleryDocumentFilter::setDocumentId(const QString &id)
 
 QStringList QGalleryDocumentFilter::documentIds() const
 {
-
+    return d->documentIds;
 }
 
 /*!
@@ -358,7 +751,7 @@ QStringList QGalleryDocumentFilter::documentIds() const
 
 void QGalleryDocumentFilter::setDocumentIds(const QStringList &ids)
 {
-
+    d->documentIds = ids;
 }
 
 /*!
@@ -375,8 +768,8 @@ void QGalleryDocumentFilter::setDocumentIds(const QStringList &ids)
     Constructs an empty document URL filter.
 */
 QGalleryDocumentUrlFilter::QGalleryDocumentUrlFilter()
+    : d(new QGalleryDocumentUrlFilterPrivate)
 {
-
 }
 
 /*!
@@ -384,8 +777,9 @@ QGalleryDocumentUrlFilter::QGalleryDocumentUrlFilter()
 */
 
 QGalleryDocumentUrlFilter::QGalleryDocumentUrlFilter(const QUrl &url)
+    : d(new QGalleryDocumentUrlFilterPrivate)
 {
-
+    d->documentUrls.append(url);
 }
 
 /*!
@@ -393,8 +787,9 @@ QGalleryDocumentUrlFilter::QGalleryDocumentUrlFilter(const QUrl &url)
 */
 
 QGalleryDocumentUrlFilter::QGalleryDocumentUrlFilter(const QList<QUrl> &urls)
+    : d(new QGalleryDocumentUrlFilterPrivate)
 {
-
+    d->documentUrls = urls;
 }
 
 /*!
@@ -402,8 +797,17 @@ QGalleryDocumentUrlFilter::QGalleryDocumentUrlFilter(const QList<QUrl> &urls)
 */
 
 QGalleryDocumentUrlFilter::QGalleryDocumentUrlFilter(const QGalleryDocumentUrlFilter &filter)
+    : d(filter.d)
 {
+}
 
+/*!
+    \internal
+*/
+
+QGalleryDocumentUrlFilter::QGalleryDocumentUrlFilter(QGalleryFilterPrivate *d)
+    : d(static_cast<QGalleryDocumentUrlFilterPrivate *>(d))
+{
 }
 
 /*!
@@ -412,7 +816,6 @@ QGalleryDocumentUrlFilter::QGalleryDocumentUrlFilter(const QGalleryDocumentUrlFi
 
 QGalleryDocumentUrlFilter::~QGalleryDocumentUrlFilter()
 {
-
 }
 
 /*!
@@ -422,7 +825,9 @@ QGalleryDocumentUrlFilter::~QGalleryDocumentUrlFilter()
 QGalleryDocumentUrlFilter &QGalleryDocumentUrlFilter::operator =(
         const QGalleryDocumentUrlFilter &filter)
 {
+    d = filter.d;
 
+    return *this;
 }
 
 /*!
@@ -433,7 +838,9 @@ QGalleryDocumentUrlFilter &QGalleryDocumentUrlFilter::operator =(
 
 QUrl QGalleryDocumentUrlFilter::documentUrl() const
 {
-
+    return d->documentUrls.count() == 1
+            ? d->documentUrls.first()
+            : QUrl();
 }
 
 /*!
@@ -444,7 +851,10 @@ QUrl QGalleryDocumentUrlFilter::documentUrl() const
 
 void QGalleryDocumentUrlFilter::setDocumentUrl(const QUrl &url)
 {
+    d->documentUrls.clear();
 
+    if (!url.isEmpty())
+        d->documentUrls.append(url);
 }
 
 /*!
@@ -453,7 +863,7 @@ void QGalleryDocumentUrlFilter::setDocumentUrl(const QUrl &url)
 
 QList<QUrl> QGalleryDocumentUrlFilter::documentUrls() const
 {
-
+    return d->documentUrls;
 }
 
 /*!
@@ -464,7 +874,7 @@ QList<QUrl> QGalleryDocumentUrlFilter::documentUrls() const
 
 void QGalleryDocumentUrlFilter::setDocumentUrls(const QList<QUrl> &urls)
 {
-
+    d->documentUrls = urls;
 }
 
 /*!
@@ -481,6 +891,7 @@ void QGalleryDocumentUrlFilter::setDocumentUrls(const QList<QUrl> &urls)
     Constructs an empty container filter.
 */
 QGalleryContainerFilter::QGalleryContainerFilter()
+    : d(new QGalleryContainerFilterPrivate)
 {
 
 }
@@ -491,17 +902,27 @@ QGalleryContainerFilter::QGalleryContainerFilter()
 */
 
 QGalleryContainerFilter::QGalleryContainerFilter(const QString &id)
+    : d(new QGalleryContainerFilterPrivate)
 {
-
+    d->containerId = id;
 }
 
 /*!
     Constructs a copy of a container \a filter.
 */
 
-QGalleryContainerFilter::QGalleryContainerFilter(const QGalleryDocumentIdFilter &filter)
+QGalleryContainerFilter::QGalleryContainerFilter(const QGalleryContainerFilter &filter)
+    : d(filter.d)
 {
+}
 
+/*!
+    \internal
+*/
+
+QGalleryContainerFilter::QGalleryContainerFilter(QGalleryFilterPrivate *d)
+    : d(static_cast<QGalleryContainerFilterPrivate *>(d))
+{
 }
 
 /*!
@@ -510,7 +931,6 @@ QGalleryContainerFilter::QGalleryContainerFilter(const QGalleryDocumentIdFilter 
 
 QGalleryContainerFilter::~QGalleryContainerFilter()
 {
-
 }
 
 /*!
@@ -519,7 +939,9 @@ QGalleryContainerFilter::~QGalleryContainerFilter()
 
 QGalleryContainerFilter &QGalleryContainerFilter::operator =(const QGalleryContainerFilter &filter)
 {
+    d = filter.d;
 
+    return *this;
 }
 
 /*!
@@ -528,7 +950,7 @@ QGalleryContainerFilter &QGalleryContainerFilter::operator =(const QGalleryConta
 
 QString QGalleryContainerFilter::containerId() const
 {
-
+    return d->containerId;
 }
 
 /*!
@@ -538,7 +960,7 @@ QString QGalleryContainerFilter::containerId() const
 
 void QGalleryContainerFilter::setContainerId(const QString &id)
 {
-
+    d->containerId = id;
 }
 
 /*!
@@ -556,8 +978,8 @@ void QGalleryContainerFilter::setContainerId(const QString &id)
 */
 
 QGalleryContainerUrlFilter::QGalleryContainerUrlFilter()
+    : d(new QGalleryContainerUrlFilterPrivate)
 {
-
 }
 
 /*!
@@ -566,8 +988,9 @@ QGalleryContainerUrlFilter::QGalleryContainerUrlFilter()
 */
 
 QGalleryContainerUrlFilter::QGalleryContainerUrlFilter(const QUrl &url)
+    : d(new QGalleryContainerUrlFilterPrivate)
 {
-
+    d->containerUrl = url;
 }
 
 /*!
@@ -575,8 +998,17 @@ QGalleryContainerUrlFilter::QGalleryContainerUrlFilter(const QUrl &url)
 */
 
 QGalleryContainerUrlFilter::QGalleryContainerUrlFilter(const QGalleryContainerUrlFilter &filter)
+    : d(filter.d)
 {
+}
 
+/*!
+    \internal
+*/
+
+QGalleryContainerUrlFilter::QGalleryContainerUrlFilter(QGalleryFilterPrivate *d)
+    : d(static_cast<QGalleryContainerUrlFilterPrivate *>(d))
+{
 }
 
 /*!
@@ -585,7 +1017,6 @@ QGalleryContainerUrlFilter::QGalleryContainerUrlFilter(const QGalleryContainerUr
 
 QGalleryContainerUrlFilter::~QGalleryContainerUrlFilter()
 {
-
 }
 
 /*!
@@ -595,7 +1026,9 @@ QGalleryContainerUrlFilter::~QGalleryContainerUrlFilter()
 QGalleryContainerUrlFilter &QGalleryContainerUrlFilter::operator =(
         const QGalleryContainerUrlFilter &filter)
 {
+    d = filter.d;
 
+    return *this;
 }
 
 /*!
@@ -604,7 +1037,7 @@ QGalleryContainerUrlFilter &QGalleryContainerUrlFilter::operator =(
 
 QUrl QGalleryContainerUrlFilter::containerUrl() const
 {
-
+    return d->containerUrl;
 }
 
 /*!
@@ -614,7 +1047,7 @@ QUrl QGalleryContainerUrlFilter::containerUrl() const
 
 void QGalleryContainerUrlFilter::setContainerUrl(const QUrl &url)
 {
-
+    d->containerUrl = url;
 }
 
 /*!
@@ -632,8 +1065,8 @@ void QGalleryContainerUrlFilter::setContainerUrl(const QUrl &url)
 */
 
 QGalleryIntersectionFilter::QGalleryIntersectionFilter()
+    : d(new QGalleryIntersectionFilterPrivate)
 {
-
 }
 
 /*!
@@ -641,8 +1074,17 @@ QGalleryIntersectionFilter::QGalleryIntersectionFilter()
 */
 
 QGalleryIntersectionFilter::QGalleryIntersectionFilter(const QGalleryIntersectionFilter &filter)
+    : d(filter.d)
 {
+}
 
+/*!
+    \internal
+*/
+
+QGalleryIntersectionFilter::QGalleryIntersectionFilter(QGalleryFilterPrivate *d)
+    : d(static_cast<QGalleryIntersectionFilterPrivate *>(d))
+{
 }
 
 /*!
@@ -651,7 +1093,6 @@ QGalleryIntersectionFilter::QGalleryIntersectionFilter(const QGalleryIntersectio
 
 QGalleryIntersectionFilter::~QGalleryIntersectionFilter()
 {
-
 }
 
 /*!
@@ -661,7 +1102,9 @@ QGalleryIntersectionFilter::~QGalleryIntersectionFilter()
 QGalleryIntersectionFilter &QGalleryIntersectionFilter::operator =(
         const QGalleryIntersectionFilter &filter)
 {
+    d = filter.d;
 
+    return *this;
 }
 
 /*!
@@ -670,7 +1113,17 @@ QGalleryIntersectionFilter &QGalleryIntersectionFilter::operator =(
 
 int QGalleryIntersectionFilter::filterCount() const
 {
+    return d->filters.count();
+}
 
+/*!
+    Returns true if an intersection does not contain any filters, and returns
+    false otherwise.
+*/
+
+bool QGalleryIntersectionFilter::isEmpty() const
+{
+    return d->filters.isEmpty();
 }
 
 /*!
@@ -679,7 +1132,7 @@ int QGalleryIntersectionFilter::filterCount() const
 
 QList<QGalleryFilter> QGalleryIntersectionFilter::filters() const
 {
-
+    return d->filters;
 }
 
 /*!
@@ -688,7 +1141,7 @@ QList<QGalleryFilter> QGalleryIntersectionFilter::filters() const
 
 void QGalleryIntersectionFilter::append(const QGalleryUnionFilter &filter)
 {
-
+    d->filters.append(filter);
 }
 
 /*!
@@ -697,7 +1150,7 @@ void QGalleryIntersectionFilter::append(const QGalleryUnionFilter &filter)
 
 void QGalleryIntersectionFilter::append(const QGalleryMetaDataFilter &filter)
 {
-
+    d->filters.append(filter);
 }
 
 /*!
@@ -706,7 +1159,7 @@ void QGalleryIntersectionFilter::append(const QGalleryMetaDataFilter &filter)
 
 void QGalleryIntersectionFilter::append(const QGalleryMetaDataRangeFilter &filter)
 {
-
+    d->filters.append(filter);
 }
 
 /*!
@@ -715,7 +1168,7 @@ void QGalleryIntersectionFilter::append(const QGalleryMetaDataRangeFilter &filte
 
 void QGalleryIntersectionFilter::append(const QGalleryIntersectionFilter &filter)
 {
-
+    d->filters += filter.d->filters;
 }
 
 /*!
@@ -724,7 +1177,7 @@ void QGalleryIntersectionFilter::append(const QGalleryIntersectionFilter &filter
 
 void QGalleryIntersectionFilter::insert(int index, const QGalleryUnionFilter &filter)
 {
-
+    d->filters.insert(index, filter);
 }
 
 /*!
@@ -733,7 +1186,7 @@ void QGalleryIntersectionFilter::insert(int index, const QGalleryUnionFilter &fi
 
 void QGalleryIntersectionFilter::insert(int index, const QGalleryMetaDataFilter &filter)
 {
-
+    d->filters.insert(index, filter);
 }
 
 /*!
@@ -742,7 +1195,7 @@ void QGalleryIntersectionFilter::insert(int index, const QGalleryMetaDataFilter 
 
 void QGalleryIntersectionFilter::insert(int index, const QGalleryMetaDataRangeFilter &filter)
 {
-
+    d->filters.insert(index, filter);
 }
 
 /*!
@@ -752,7 +1205,10 @@ void QGalleryIntersectionFilter::insert(int index, const QGalleryMetaDataRangeFi
 
 void QGalleryIntersectionFilter::insert(int index, const QGalleryIntersectionFilter &filter)
 {
+    QList<QGalleryFilter> start = d->filters.mid(0, index);
+    QList<QGalleryFilter> end = d->filters.mid(index);
 
+    d->filters = start + filter.d->filters + end;
 }
 
 /*!
@@ -761,7 +1217,7 @@ void QGalleryIntersectionFilter::insert(int index, const QGalleryIntersectionFil
 
 void QGalleryIntersectionFilter::replace(int index, const QGalleryUnionFilter &filter)
 {
-
+    d->filters.replace(index, filter);
 }
 
 /*!
@@ -771,8 +1227,7 @@ void QGalleryIntersectionFilter::replace(int index, const QGalleryUnionFilter &f
 
 void QGalleryIntersectionFilter::replace(int index, const QGalleryMetaDataFilter &filter)
 {
-
-
+    d->filters.replace(index, filter);
 }
 
 /*!
@@ -782,7 +1237,7 @@ void QGalleryIntersectionFilter::replace(int index, const QGalleryMetaDataFilter
 
 void QGalleryIntersectionFilter::replace(int index, const QGalleryMetaDataRangeFilter &filter)
 {
-
+    d->filters.replace(index, filter);
 }
 
 /*!
@@ -791,7 +1246,7 @@ void QGalleryIntersectionFilter::replace(int index, const QGalleryMetaDataRangeF
 
 void QGalleryIntersectionFilter::removeAt(int index)
 {
-
+    d->filters.removeAt(index);
 }
 
 /*!
@@ -800,7 +1255,7 @@ void QGalleryIntersectionFilter::removeAt(int index)
 
 void QGalleryIntersectionFilter::clear()
 {
-
+    d->filters.clear();
 }
 
 /*!
@@ -818,8 +1273,8 @@ void QGalleryIntersectionFilter::clear()
 */
 
 QGalleryUnionFilter::QGalleryUnionFilter()
+    : d(new QGalleryUnionFilterPrivate)
 {
-
 }
 
 /*!
@@ -827,8 +1282,17 @@ QGalleryUnionFilter::QGalleryUnionFilter()
 */
 
 QGalleryUnionFilter::QGalleryUnionFilter(const QGalleryUnionFilter &filter)
+    : d(filter.d)
 {
+}
 
+/*!
+    \internal
+*/
+
+QGalleryUnionFilter::QGalleryUnionFilter(QGalleryFilterPrivate *d)
+    : d(static_cast<QGalleryUnionFilterPrivate *>(d))
+{
 }
 
 /*!
@@ -837,7 +1301,6 @@ QGalleryUnionFilter::QGalleryUnionFilter(const QGalleryUnionFilter &filter)
 
 QGalleryUnionFilter::~QGalleryUnionFilter()
 {
-
 }
 
 /*!
@@ -846,7 +1309,9 @@ QGalleryUnionFilter::~QGalleryUnionFilter()
 
 QGalleryUnionFilter &QGalleryUnionFilter::operator =(const QGalleryUnionFilter &filter)
 {
+    d = filter.d;
 
+    return *this;
 }
 
 /*!
@@ -855,7 +1320,16 @@ QGalleryUnionFilter &QGalleryUnionFilter::operator =(const QGalleryUnionFilter &
 
 int QGalleryUnionFilter::filterCount() const
 {
+    return d->filters.count();
+}
 
+/*!
+    Returns true if a union contains no filters, and false otherwise.
+*/
+
+bool QGalleryUnionFilter::isEmpty() const
+{
+    return d->filters.isEmpty();
 }
 
 /*!
@@ -864,7 +1338,7 @@ int QGalleryUnionFilter::filterCount() const
 
 QList<QGalleryFilter> QGalleryUnionFilter::filters() const
 {
-
+    return d->filters;
 }
 
 /*!
@@ -873,7 +1347,7 @@ QList<QGalleryFilter> QGalleryUnionFilter::filters() const
 
 void QGalleryUnionFilter::append(const QGalleryMetaDataFilter &filter)
 {
-
+    d->filters.append(filter);
 }
 
 /*!
@@ -882,7 +1356,7 @@ void QGalleryUnionFilter::append(const QGalleryMetaDataFilter &filter)
 
 void QGalleryUnionFilter::append(const QGalleryMetaDataRangeFilter &filter)
 {
-
+    d->filters.append(filter);
 }
 
 /*!
@@ -891,7 +1365,7 @@ void QGalleryUnionFilter::append(const QGalleryMetaDataRangeFilter &filter)
 
 void QGalleryUnionFilter::append(const QGalleryUnionFilter &filter)
 {
-
+    d->filters += filter.d->filters;
 }
 
 /*!
@@ -900,7 +1374,7 @@ void QGalleryUnionFilter::append(const QGalleryUnionFilter &filter)
 
 void QGalleryUnionFilter::insert(int index, const QGalleryMetaDataFilter &filter)
 {
-
+    d->filters.insert(index, filter);
 }
 
 /*!
@@ -909,7 +1383,7 @@ void QGalleryUnionFilter::insert(int index, const QGalleryMetaDataFilter &filter
 
 void QGalleryUnionFilter::insert(int index, const QGalleryMetaDataRangeFilter &filter)
 {
-
+    d->filters.insert(index, filter);
 }
 
 /*!
@@ -918,7 +1392,10 @@ void QGalleryUnionFilter::insert(int index, const QGalleryMetaDataRangeFilter &f
 
 void QGalleryUnionFilter::insert(int index, const QGalleryUnionFilter &filter)
 {
+    QList<QGalleryFilter> start = d->filters.mid(0, index);
+    QList<QGalleryFilter> end = d->filters.mid(index);
 
+    d->filters = start + filter.d->filters + end;
 }
 
 /*!
@@ -927,7 +1404,7 @@ void QGalleryUnionFilter::insert(int index, const QGalleryUnionFilter &filter)
 
 void QGalleryUnionFilter::replace(int index, const QGalleryMetaDataFilter &filter)
 {
-
+    d->filters.replace(index, filter);
 }
 
 /*!
@@ -936,7 +1413,7 @@ void QGalleryUnionFilter::replace(int index, const QGalleryMetaDataFilter &filte
 
 void QGalleryUnionFilter::replace(int index, const QGalleryMetaDataRangeFilter &filter)
 {
-
+    d->filters.replace(index, filter);
 }
 
 /*!
@@ -945,7 +1422,7 @@ void QGalleryUnionFilter::replace(int index, const QGalleryMetaDataRangeFilter &
 
 void QGalleryUnionFilter::removeAt(int index)
 {
-
+    d->filters.removeAt(index);
 }
 
 /*!
@@ -954,7 +1431,7 @@ void QGalleryUnionFilter::removeAt(int index)
 
 void QGalleryUnionFilter::clear()
 {
-
+    d->filters.clear();
 }
 
 /*!
@@ -972,8 +1449,8 @@ void QGalleryUnionFilter::clear()
 */
 
 QGalleryMetaDataFilter::QGalleryMetaDataFilter()
+    : d(new QGalleryMetaDataFilterPrivate)
 {
-
 }
 
 /*!
@@ -985,8 +1462,11 @@ QGalleryMetaDataFilter::QGalleryMetaDataFilter()
 
 QGalleryMetaDataFilter::QGalleryMetaDataFilter(
         const QString &field, const QVariant &value, Qt::MatchFlags flags)
+            : d(new QGalleryMetaDataFilterPrivate)
 {
-
+    d->field = field;
+    d->value = value;
+    d->flags = flags;
 }
 
 /*!
@@ -994,8 +1474,17 @@ QGalleryMetaDataFilter::QGalleryMetaDataFilter(
 */
 
 QGalleryMetaDataFilter::QGalleryMetaDataFilter(const QGalleryMetaDataFilter &filter)
+    : d(filter.d)
 {
+}
 
+/*!
+    \internal
+*/
+
+QGalleryMetaDataFilter::QGalleryMetaDataFilter(QGalleryFilterPrivate *d)
+    : d(static_cast<QGalleryMetaDataFilterPrivate *>(d))
+{
 }
 
 /*!
@@ -1004,7 +1493,6 @@ QGalleryMetaDataFilter::QGalleryMetaDataFilter(const QGalleryMetaDataFilter &fil
 
 QGalleryMetaDataFilter::~QGalleryMetaDataFilter()
 {
-
 }
 
 /*!
@@ -1013,7 +1501,9 @@ QGalleryMetaDataFilter::~QGalleryMetaDataFilter()
 
 QGalleryMetaDataFilter &QGalleryMetaDataFilter::operator =(const QGalleryMetaDataFilter &filter)
 {
+    d = filter.d;
 
+    return *this;
 }
 
 /*!
@@ -1022,7 +1512,7 @@ QGalleryMetaDataFilter &QGalleryMetaDataFilter::operator =(const QGalleryMetaDat
 
 QString QGalleryMetaDataFilter::fieldName() const
 {
-
+    return d->field;
 }
 
 /*!
@@ -1031,7 +1521,7 @@ QString QGalleryMetaDataFilter::fieldName() const
 
 void QGalleryMetaDataFilter::setFieldName(const QString &name)
 {
-
+    d->field = name;
 }
 
 /*!
@@ -1041,7 +1531,7 @@ void QGalleryMetaDataFilter::setFieldName(const QString &name)
 
 QVariant QGalleryMetaDataFilter::value() const
 {
-
+    return d->value;
 }
 
 /*!
@@ -1051,7 +1541,7 @@ QVariant QGalleryMetaDataFilter::value() const
 
 void QGalleryMetaDataFilter::setValue(const QVariant &value)
 {
-
+    d->value = value;
 }
 
 /*!
@@ -1060,7 +1550,7 @@ void QGalleryMetaDataFilter::setValue(const QVariant &value)
 
 Qt::MatchFlags QGalleryMetaDataFilter::matchFlags() const
 {
-
+    return d->flags;
 }
 
 /*!
@@ -1069,7 +1559,7 @@ Qt::MatchFlags QGalleryMetaDataFilter::matchFlags() const
 
 void QGalleryMetaDataFilter::setMatchFlags(Qt::MatchFlags flags)
 {
-
+    d->flags = flags;
 }
 
 /*!
@@ -1087,6 +1577,7 @@ void QGalleryMetaDataFilter::setMatchFlags(Qt::MatchFlags flags)
 */
 
 QGalleryMetaDataRangeFilter::QGalleryMetaDataRangeFilter()
+    : d(new QGalleryMetaDataRangeFilterPrivate)
 {
 
 }
@@ -1096,8 +1587,17 @@ QGalleryMetaDataRangeFilter::QGalleryMetaDataRangeFilter()
 */
 
 QGalleryMetaDataRangeFilter::QGalleryMetaDataRangeFilter(const QGalleryMetaDataRangeFilter &filter)
+    : d(filter.d)
 {
+}
 
+/*!
+    \internal
+*/
+
+QGalleryMetaDataRangeFilter::QGalleryMetaDataRangeFilter(QGalleryFilterPrivate *d)
+    : d(static_cast<QGalleryMetaDataRangeFilterPrivate *>(d))
+{
 }
 
 /*!
@@ -1106,7 +1606,6 @@ QGalleryMetaDataRangeFilter::QGalleryMetaDataRangeFilter(const QGalleryMetaDataR
 
 QGalleryMetaDataRangeFilter::~QGalleryMetaDataRangeFilter()
 {
-
 }
 
 /*!
@@ -1116,7 +1615,9 @@ QGalleryMetaDataRangeFilter::~QGalleryMetaDataRangeFilter()
 QGalleryMetaDataRangeFilter &QGalleryMetaDataRangeFilter::operator =(
         const QGalleryMetaDataRangeFilter &filter)
 {
+    d = filter.d;
 
+    return *this;
 }
 
 /*!
@@ -1125,7 +1626,7 @@ QGalleryMetaDataRangeFilter &QGalleryMetaDataRangeFilter::operator =(
 
 QString QGalleryMetaDataRangeFilter::fieldName() const
 {
-
+    return d->field;
 }
 
 /*!
@@ -1134,7 +1635,7 @@ QString QGalleryMetaDataRangeFilter::fieldName() const
 
 void QGalleryMetaDataRangeFilter::setFieldName(const QString &name)
 {
-
+    d->field = name;
 }
 
 /*!
@@ -1143,7 +1644,7 @@ void QGalleryMetaDataRangeFilter::setFieldName(const QString &name)
 
 QVariant QGalleryMetaDataRangeFilter::minimumValue() const
 {
-
+    return d->minimum;
 }
 
 /*!
@@ -1152,7 +1653,7 @@ QVariant QGalleryMetaDataRangeFilter::minimumValue() const
 
 QVariant QGalleryMetaDataRangeFilter::maximumValue() const
 {
-
+    return d->maximum;
 }
 
 /*!
@@ -1161,7 +1662,7 @@ QVariant QGalleryMetaDataRangeFilter::maximumValue() const
 
 QGalleryFilter::RangeFlags QGalleryMetaDataRangeFilter::rangeFlags() const
 {
-
+    return d->flags;
 }
 
 /*!
@@ -1172,7 +1673,7 @@ QGalleryFilter::RangeFlags QGalleryMetaDataRangeFilter::rangeFlags() const
 void QGalleryMetaDataRangeFilter::setInclusiveRange(
         const QVariant &minimum, const QVariant &maximum)
 {
-
+    d->setRange(minimum, maximum, QGalleryFilter::InclusiveRange);
 }
 
 /*!
@@ -1183,7 +1684,7 @@ void QGalleryMetaDataRangeFilter::setInclusiveRange(
 void QGalleryMetaDataRangeFilter::setExclusiveRange(
         const QVariant &minimum, const QVariant &maximum)
 {
-
+    d->setRange(minimum, maximum, QGalleryFilter::ExclusiveRange);
 }
 
 /*!
@@ -1192,7 +1693,7 @@ void QGalleryMetaDataRangeFilter::setExclusiveRange(
 
 void QGalleryMetaDataRangeFilter::setLessThan(const QVariant &value)
 {
-
+    d->setRange(QVariant(), value, QGalleryFilter::LessThanMaximum);
 }
 
 /*!
@@ -1201,7 +1702,7 @@ void QGalleryMetaDataRangeFilter::setLessThan(const QVariant &value)
 
 void QGalleryMetaDataRangeFilter::setLessThanEquals(const QVariant &value)
 {
-
+    d->setRange(QVariant(), value, QGalleryFilter::LessThanEqualsMaximum);
 }
 
 /*!
@@ -1210,7 +1711,7 @@ void QGalleryMetaDataRangeFilter::setLessThanEquals(const QVariant &value)
 
 void QGalleryMetaDataRangeFilter::setGreaterThan(const QVariant &value)
 {
-
+    d->setRange(value, QVariant(), QGalleryFilter::GreaterThanMinimum);
 }
 
 /*!
@@ -1220,5 +1721,5 @@ void QGalleryMetaDataRangeFilter::setGreaterThan(const QVariant &value)
 
 void QGalleryMetaDataRangeFilter::setGreaterThanEquals(const QVariant &value)
 {
-
+    d->setRange(value, QVariant(), QGalleryFilter::GreaterThanEqualsMinimum);
 }
