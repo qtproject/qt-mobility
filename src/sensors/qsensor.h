@@ -175,7 +175,7 @@ class Q_SENSORS_EXPORT QSensorReading : public QObject
     friend class QSensorBackend;
 
     Q_OBJECT
-    Q_PROPERTY(qtimestamp timestamp READ timestamp)
+    Q_PROPERTY(QtMobility::qtimestamp timestamp READ timestamp)
 public:
     virtual ~QSensorReading();
 
@@ -248,7 +248,7 @@ private:
 
 QTM_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QTM_NAMESPACE::qtimestamp)
+Q_DECLARE_METATYPE(QtMobility::qtimestamp)
 
 #endif
 
