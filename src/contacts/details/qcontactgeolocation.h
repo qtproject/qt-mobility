@@ -100,54 +100,6 @@ public:
     QDateTime timestamp() const {return variantValue(FieldTimestamp).toDateTime();}
 };
 
-// deprecated! spelling changed to GeoLocation -- see above.
-class Q_CONTACTS_EXPORT QContactGeolocation : public QContactDetail
-{
-public:
-#ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldLabel;
-    const char* FieldLatitude;
-    const char* FieldLongitude;
-    const char* FieldAccuracy;
-    const char* FieldAltitude;
-    const char* FieldAltitudeAccuracy;
-    const char* FieldHeading;
-    const char* FieldSpeed;
-    const char* FieldTimestamp;
-#else
-    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactGeolocation, "GeoLocation") // change defn name to point to the new class defn name.
-    Q_DECLARE_LATIN1_LITERAL(FieldLabel, "Label");
-    Q_DECLARE_LATIN1_LITERAL(FieldLatitude, "Latitude");
-    Q_DECLARE_LATIN1_LITERAL(FieldLongitude, "Longitude");
-    Q_DECLARE_LATIN1_LITERAL(FieldAccuracy, "Accuracy");
-    Q_DECLARE_LATIN1_LITERAL(FieldAltitude, "Altitude");
-    Q_DECLARE_LATIN1_LITERAL(FieldAltitudeAccuracy, "AltitudeAccuracy");
-    Q_DECLARE_LATIN1_LITERAL(FieldHeading, "Heading");
-    Q_DECLARE_LATIN1_LITERAL(FieldSpeed, "Speed");
-    Q_DECLARE_LATIN1_LITERAL(FieldTimestamp, "Timestamp");
-#endif
-
-    void Q_DECL_DEPRECATED setLabel(const QString& label);
-    QString Q_DECL_DEPRECATED label() const;
-    void Q_DECL_DEPRECATED setLatitude(double latitude);
-    double Q_DECL_DEPRECATED latitude() const;
-    void Q_DECL_DEPRECATED setLongitude(double longitude);
-    double Q_DECL_DEPRECATED longitude() const;
-    void Q_DECL_DEPRECATED setAccuracy(double accuracy);
-    double Q_DECL_DEPRECATED accuracy() const;
-    void Q_DECL_DEPRECATED setAltitude(double altitude);
-    double Q_DECL_DEPRECATED altitude() const;
-    void Q_DECL_DEPRECATED setAltitudeAccuracy(double altitudeAccuracy);
-    double Q_DECL_DEPRECATED altitudeAccuracy() const;
-    void Q_DECL_DEPRECATED setHeading(double heading);
-    double Q_DECL_DEPRECATED heading() const;
-    void Q_DECL_DEPRECATED setSpeed(double speed);
-    double Q_DECL_DEPRECATED speed() const;
-    void Q_DECL_DEPRECATED setTimestamp(const QDateTime& timestamp);
-    QDateTime Q_DECL_DEPRECATED timestamp() const;
-};
-
 QTM_END_NAMESPACE
 
 #endif

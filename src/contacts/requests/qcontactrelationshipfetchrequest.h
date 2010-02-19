@@ -81,9 +81,6 @@ public:
     /* Results */
     QList<QContactRelationship> relationships() const;
 
-Q_SIGNALS:
-    void progress(QContactRelationshipFetchRequest* self, bool appendOnly); // deprecated
-
 private:
     Q_DISABLE_COPY(QContactRelationshipFetchRequest)
     friend class QContactManagerEngine;

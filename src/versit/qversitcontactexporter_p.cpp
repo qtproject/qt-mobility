@@ -154,7 +154,7 @@ void QVersitContactExporterPrivate::exportContact(
             addProperty = encodeRev(property, detail);
         } else if (detail.definitionName() == QContactBirthday::DefinitionName) {
             encodeBirthDay(property, detail);
-        } else if (detail.definitionName() == QContactGeolocation::DefinitionName) {
+        } else if (detail.definitionName() == QContactGeoLocation::DefinitionName) {
             encodeGeoLocation(property, detail);
         } else if (detail.definitionName() == QContactNote::DefinitionName) {
             encodeNote(property, detail);

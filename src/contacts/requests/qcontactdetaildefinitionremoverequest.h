@@ -59,18 +59,12 @@ public:
     ~QContactDetailDefinitionRemoveRequest();
 
     /* Selection */
-    void Q_DECL_DEPRECATED setNames(const QStringList& names);  // deprecated
-    QStringList Q_DECL_DEPRECATED names() const;                // deprecated
-    void Q_DECL_DEPRECATED setContactType(const QString& type); // deprecated
     void setDefinitionNames(const QString& contactType, const QStringList& names);
-    QStringList definitionNames() const;               // replaces ^^
+    QStringList definitionNames() const;
     QString contactType() const;
 
     /* Results */
     QMap<int, QContactManager::Error> errorMap() const;
-
-Q_SIGNALS:
-    void progress(QContactDetailDefinitionRemoveRequest* self);  // deprecated
 
 private:
     Q_DISABLE_COPY(QContactDetailDefinitionRemoveRequest)

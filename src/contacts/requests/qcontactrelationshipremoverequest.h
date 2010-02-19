@@ -74,10 +74,6 @@ public:
     /* Results */
     QMap<int, QContactManager::Error> errorMap() const;
 
-
-Q_SIGNALS:
-    void progress(QContactRelationshipRemoveRequest* self); // deprecated
-
 private:
     Q_DISABLE_COPY(QContactRelationshipRemoveRequest)
     friend class QContactManagerEngine;

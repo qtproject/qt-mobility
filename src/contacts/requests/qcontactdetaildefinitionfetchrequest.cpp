@@ -79,26 +79,6 @@ QContactDetailDefinitionFetchRequest::~QContactDetailDefinitionFetchRequest()
 {
 }
 
-/*!
-  \internal
-  Sets the names of the detail definitions to retrieve to \a names
- */
-void QContactDetailDefinitionFetchRequest::setNames(const QStringList& names)
-{
-    Q_D(QContactDetailDefinitionFetchRequest);
-    d->m_names = names;
-}
-
-/*!
-  \internal
-  Returns the list of names of the detail definitions that will be retrieved
- */
-QStringList QContactDetailDefinitionFetchRequest::names() const
-{
-    Q_D(const QContactDetailDefinitionFetchRequest);
-    return d->m_names;
-}
-
 /*! Sets the names of the detail definitions to retrieve to \a names */
 void QContactDetailDefinitionFetchRequest::setDefinitionNames(const QStringList& names)
 {

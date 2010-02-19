@@ -79,38 +79,6 @@ QContactDetailDefinitionRemoveRequest::~QContactDetailDefinitionRemoveRequest()
 }
 
 /*!
-  \internal
-  Sets the names of the detail definitions to remove from the manager to be \a names
- */
-void QContactDetailDefinitionRemoveRequest::setNames(const QStringList& names)
-{
-    Q_D(QContactDetailDefinitionRemoveRequest);
-    d->m_names = names;
-}
-
-/*!
-  \internal
-  Returns the list of names of the detail definitions that will be removed from the manager
- */
-QStringList QContactDetailDefinitionRemoveRequest::names() const
-{
-    Q_D(const QContactDetailDefinitionRemoveRequest);
-    return d->m_names;
-}
-
-/*!
-  \internal
-  Sets the type of detail defintions to remove to \a contactType,
-
-  Do not use this.  Use \l setDefinitionNames() instead.
-*/
-void QContactDetailDefinitionRemoveRequest::setContactType(const QString& contactType)
-{
-    Q_D(QContactDetailDefinitionRemoveRequest);
-    d->m_contactType = contactType;
-}
-
-/*!
   Sets the type of contact for which detail definitions should be removed to \a contactType, and the names of the detail definitions to remove from the manager to \a names.
   Managers may store different definitions which are valid for different contact types, and so attempting to remove definitions with certain names may fail if no such
   definitions exist for contacts of the given contact type, or if \a contactType is empty.
