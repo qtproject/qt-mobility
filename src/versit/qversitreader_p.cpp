@@ -96,11 +96,15 @@ VersitCursor LineReader::readLine()
     // Otherwise, keep reading more data until either a CRLF is found, or there's no more to read.
     while (!mDevice->atEnd()) {
         QByteArray temp = mDevice->read(mChunkSize);
-        mBuffer.data.append(temp);
-        if (tryReadLine(mBuffer, false)) {
-            mBuffer.dropOldData();
-            mOdometer += mBuffer.selection - mBuffer.position;
-            return mBuffer;
+        if (!temp.isEmpty()) {
+            mBuffer.data.append(temp);
+            if (tryReadLine(mBuffer, false)) {
+                mBuffer.dropOldData();
+                mOdometer += mBuffer.selection - mBuffer.position;
+                return mBuffer;
+            }
+        } else {
+            mDevice->waitForReadyRead(500);
         }
     }
 
