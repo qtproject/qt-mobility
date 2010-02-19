@@ -70,7 +70,7 @@ An example of how the axes are arranged on a phone is included below.
 \image axes.png
 
 In general, sensor data is not reoriented to match the UI. Some specific sensors may reorient
-data to match the UI but these sensors will not this.
+data to match the UI but most sensors will not do this.
 
 \section1 Using a Sensor
 
