@@ -31,6 +31,7 @@
 <p><table class="propsummary" width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td width="45%" valign="top"><ul>
 <li><div class="fn"><b><a href="qgallerydocumentrequest.html#containerId-prop">containerId</a></b> : QString</div></li>
+<li><div class="fn"><b><a href="qgallerydocumentrequest.html#containerUrl-prop">containerUrl</a></b> : QUrl</div></li>
 <li><div class="fn"><b><a href="qgallerydocumentrequest.html#documentId-prop">documentId</a></b> : QString</div></li>
 <li><div class="fn"><b><a href="qgallerydocumentrequest.html#documentIds-prop">documentIds</a></b> : QStringList</div></li>
 <li><div class="fn"><b><a href="qgallerydocumentrequest.html#documentType-prop">documentType</a></b> : QString</div></li>
@@ -60,6 +61,7 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentrequest.html#QGalleryDocumentRequest-2">QGalleryDocumentRequest</a></b> ( QAbstractGallery * <i>gallery</i>, QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentrequest.html#dtor.QGalleryDocumentRequest">~QGalleryDocumentRequest</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentrequest.html#containerId-prop">containerId</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QUrl </td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentrequest.html#containerUrl-prop">containerUrl</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentrequest.html#documentId-prop">documentId</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentrequest.html#documentIds-prop">documentIds</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentrequest.html#documentType-prop">documentType</a></b> () const</td></tr>
@@ -71,6 +73,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentrequest.html#live-prop">isLive</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentrequest.html#maximumCount-prop">maximumCount</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentrequest.html#containerId-prop">setContainerId</a></b> ( const QString &amp; <i>id</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentrequest.html#containerUrl-prop">setContainerUrl</a></b> ( const QUrl &amp; <i>url</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentrequest.html#documentId-prop">setDocumentId</a></b> ( const QString &amp; <i>id</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentrequest.html#documentIds-prop">setDocumentIds</a></b> ( const QStringList &amp; <i>id</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentrequest.html#documentType-prop">setDocumentType</a></b> ( const QString &amp; <i>type</i> )</td></tr>
@@ -95,9 +98,8 @@
 <h2>Signals</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentrequest.html#containerIdChanged">containerIdChanged</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentrequest.html#documentIdChanged">documentIdChanged</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentrequest.html#containerUrlChanged">containerUrlChanged</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentrequest.html#documentIdsChanged">documentIdsChanged</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentrequest.html#documentUrlChanged">documentUrlChanged</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentrequest.html#documentUrlsChanged">documentUrlsChanged</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentrequest.html#documentsChanged">documentsChanged</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentrequest.html#filterChanged">filterChanged</a></b> ()</td></tr>
@@ -154,9 +156,20 @@
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>containerId</b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setContainerId</b> ( const QString &amp; <i>id</i> )</td></tr>
 </table>
+<a name="//apple_ref/cpp/instm/QGalleryDocumentRequest/containerUrl"></a>
+<a name="//apple_ref/cpp/instm/QGalleryDocumentRequest/setContainerUrl"></a>
+<h3 class="fn"><a name="containerUrl-prop"></a>containerUrl : <a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a></h3>
+<p>This property holds the URL of container document a document request should return the contents of.</p>
+<p>This is equivalent to setting a <a href="qgallerydocumentrequest.html#filter-prop">filter</a> of type <a href="qgallerycontainerurlfilter.html">QGalleryContainerUrlFilter</a>.</p>
+<p>If the current <a href="qgallerydocumentrequest.html#filter-prop">filter</a> is not of type <a href="qgallerycontainerurlfilter.html">QGalleryContainerUrlFilter</a> this will be null.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QUrl </td><td class="memItemRight" valign="bottom"><b>containerUrl</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setContainerUrl</b> ( const QUrl &amp; <i>url</i> )</td></tr>
+</table>
 <a name="//apple_ref/cpp/instm/QGalleryDocumentRequest/documentId"></a>
 <a name="//apple_ref/cpp/instm/QGalleryDocumentRequest/setDocumentId"></a>
-<a name="//apple_ref/cpp/instm/QGalleryDocumentRequest/documentIdChanged"></a>
+<a name="//apple_ref/cpp/instm/QGalleryDocumentRequest/documentIdsChanged"></a>
 <h3 class="fn"><a name="documentId-prop"></a>documentId : <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a></h3>
 <p>This property holds the ID of a document a document request should return.</p>
 <p>This is equivalent to setting a <a href="qgallerydocumentrequest.html#filter-prop">filter</a> of type <a href="qgallerydocumentfilter.html">QGalleryDocumentFilter</a>.</p>
@@ -168,7 +181,7 @@
 </table>
 <p><b>Notifier signal:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentrequest.html#documentIdChanged">documentIdChanged</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentrequest.html#documentIdsChanged">documentIdsChanged</a></b> ()</td></tr>
 </table>
 <a name="//apple_ref/cpp/instm/QGalleryDocumentRequest/documentIds"></a>
 <a name="//apple_ref/cpp/instm/QGalleryDocumentRequest/setDocumentIds"></a>
@@ -198,7 +211,7 @@
 </table>
 <a name="//apple_ref/cpp/instm/QGalleryDocumentRequest/documentUrl"></a>
 <a name="//apple_ref/cpp/instm/QGalleryDocumentRequest/setDocumentUrl"></a>
-<a name="//apple_ref/cpp/instm/QGalleryDocumentRequest/documentUrlChanged"></a>
+<a name="//apple_ref/cpp/instm/QGalleryDocumentRequest/documentUrlsChanged"></a>
 <h3 class="fn"><a name="documentUrl-prop"></a>documentUrl : <a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a></h3>
 <p>This property holds the URL of an document a document request should return.</p>
 <p>This is equivalent to setting a <a href="qgallerydocumentrequest.html#filter-prop">filter</a> of type <a href="qgallerydocumenturlfilter.html">QGalleryDocumentUrlFilter</a>.</p>
@@ -210,7 +223,7 @@
 </table>
 <p><b>Notifier signal:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentrequest.html#documentUrlChanged">documentUrlChanged</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentrequest.html#documentUrlsChanged">documentUrlsChanged</a></b> ()</td></tr>
 </table>
 <a name="//apple_ref/cpp/instm/QGalleryDocumentRequest/documentUrls"></a>
 <a name="//apple_ref/cpp/instm/QGalleryDocumentRequest/setDocumentUrls"></a>
@@ -332,18 +345,15 @@
 <a name="//apple_ref/cpp/instm/QGalleryDocumentRequest/containerIdChanged"></a>
 <h3 class="fn"><a name="containerIdChanged"></a>void QGalleryDocumentRequest::containerIdChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that the <a href="qgallerydocumentrequest.html#containerId-prop">containerId</a> property has changed.</p>
-<a name="//apple_ref/cpp/instm/QGalleryDocumentRequest/documentIdChanged"></a>
-<h3 class="fn"><a name="documentIdChanged"></a>void QGalleryDocumentRequest::documentIdChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signals the <a href="qgallerydocumentrequest.html#documentId-prop">documentId</a> propery has changed.</p>
+<a name="//apple_ref/cpp/instm/QGalleryDocumentRequest/containerUrlChanged"></a>
+<h3 class="fn"><a name="containerUrlChanged"></a>void QGalleryDocumentRequest::containerUrlChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signals that the <a href="qgallerydocumentrequest.html#containerUrl-prop">containerUrl</a> property has changed.</p>
 <a name="//apple_ref/cpp/instm/QGalleryDocumentRequest/documentIdsChanged"></a>
 <h3 class="fn"><a name="documentIdsChanged"></a>void QGalleryDocumentRequest::documentIdsChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signals that the <a href="qgallerydocumentrequest.html#documentIds-prop">documentIds</a> property has changed.</p>
-<a name="//apple_ref/cpp/instm/QGalleryDocumentRequest/documentUrlChanged"></a>
-<h3 class="fn"><a name="documentUrlChanged"></a>void QGalleryDocumentRequest::documentUrlChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signals that the <a href="qgallerydocumentrequest.html#documentUrl-prop">documentUrl</a> property has changed.</p>
+<p>Signals that the <a href="qgallerydocumentrequest.html#documentId-prop">documentId</a> and <a href="qgallerydocumentrequest.html#documentIds-prop">documentIds</a> properties have changed.</p>
 <a name="//apple_ref/cpp/instm/QGalleryDocumentRequest/documentUrlsChanged"></a>
 <h3 class="fn"><a name="documentUrlsChanged"></a>void QGalleryDocumentRequest::documentUrlsChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signals that the <a href="qgallerydocumentrequest.html#documentUrls-prop">documentUrls</a> property has changed.</p>
+<p>Signals that the <a href="qgallerydocumentrequest.html#documentUrl-prop">documentUrl</a> and <a href="qgallerydocumentrequest.html#documentUrls-prop">documentUrls</a> properties have changed.</p>
 <a name="//apple_ref/cpp/instm/QGalleryDocumentRequest/documentsChanged"></a>
 <h3 class="fn"><a name="documentsChanged"></a>void QGalleryDocumentRequest::documentsChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that the <a href="qgallerydocumentrequest.html#documents-prop">documents</a> property has changed.</p>

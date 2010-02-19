@@ -15,8 +15,7 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGalleryDocumentFilter Class Reference</h1>
 <p>The QGalleryDocumentFilter class provides a gallery filter which matches documents with specific IDs. <a href="#details">More...</a></p>
-<pre>    #include &lt;QGalleryDocumentFilter&gt;</pre><p>Inherits <a href="qgalleryfilter.html">QGalleryFilter</a>.</p>
-<ul>
+<pre>    #include &lt;QGalleryDocumentFilter&gt;</pre><ul>
 <li><a href="qgallerydocumentfilter-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
@@ -26,17 +25,14 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentfilter.html#QGalleryDocumentFilter">QGalleryDocumentFilter</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentfilter.html#QGalleryDocumentFilter-2">QGalleryDocumentFilter</a></b> ( const QString &amp; <i>id</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentfilter.html#QGalleryDocumentFilter-3">QGalleryDocumentFilter</a></b> ( const QStringList &amp; <i>ids</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentfilter.html#QGalleryDocumentFilter-4">QGalleryDocumentFilter</a></b> ( const QGalleryDocumentIdFilter &amp; <i>filter</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentfilter.html#QGalleryDocumentFilter-4">QGalleryDocumentFilter</a></b> ( const QGalleryDocumentFilter &amp; <i>filter</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentfilter.html#dtor.QGalleryDocumentFilter">~QGalleryDocumentFilter</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentfilter.html#documentId">documentId</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentfilter.html#documentIds">documentIds</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentfilter.html#setDocumentId">setDocumentId</a></b> ( const QString &amp; <i>id</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentfilter.html#setDocumentIds">setDocumentIds</a></b> ( const QStringList &amp; <i>ids</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QGalleryDocumentFilter &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentfilter.html#operator-eq">operator=</a></b> ( const QGalleryDocumentIdFilter &amp; <i>filter</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGalleryDocumentFilter &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qgallerydocumentfilter.html#operator-eq">operator=</a></b> ( const QGalleryDocumentFilter &amp; <i>filter</i> )</td></tr>
 </table>
-<ul>
-<li><div bar="2" class="fn"></div>13 public functions inherited from <a href="qgalleryfilter.html#public-functions">QGalleryFilter</a></li>
-</ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
@@ -50,7 +46,7 @@
 <p>Constructs a document filter which matches a single <i>id</i>.</p>
 <h3 class="fn"><a name="QGalleryDocumentFilter-3"></a>QGalleryDocumentFilter::QGalleryDocumentFilter ( const <a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> &amp; <i>ids</i> )</h3>
 <p>Constructs a document filter which matches a list of <i>ids</i>.</p>
-<h3 class="fn"><a name="QGalleryDocumentFilter-4"></a>QGalleryDocumentFilter::QGalleryDocumentFilter ( const QGalleryDocumentIdFilter &amp; <i>filter</i> )</h3>
+<h3 class="fn"><a name="QGalleryDocumentFilter-4"></a>QGalleryDocumentFilter::QGalleryDocumentFilter ( const QGalleryDocumentFilter &amp; <i>filter</i> )</h3>
 <p>Constructs a copy of a document <i>filter</i>.</p>
 <a name="//apple_ref/cpp/instm/QGalleryDocumentFilter/~QGalleryDocumentFilter"></a>
 <h3 class="fn"><a name="dtor.QGalleryDocumentFilter"></a>QGalleryDocumentFilter::~QGalleryDocumentFilter ()</h3>
@@ -75,7 +71,7 @@
 <p>Setting this will overwrite the value of <a href="qgallerydocumentfilter.html#documentId">documentId</a>().</p>
 <p>See also <a href="qgallerydocumentfilter.html#documentIds">documentIds</a>().</p>
 <a name="//apple_ref/cpp/instm/QGalleryDocumentFilter/operator="></a>
-<h3 class="fn"><a name="operator-eq"></a>QGalleryDocumentFilter &amp; QGalleryDocumentFilter::operator= ( const QGalleryDocumentIdFilter &amp; <i>filter</i> )</h3>
+<h3 class="fn"><a name="operator-eq"></a>QGalleryDocumentFilter &amp; QGalleryDocumentFilter::operator= ( const QGalleryDocumentFilter &amp; <i>filter</i> )</h3>
 <p>Assigns the value of <i>filter</i> to another document filter.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

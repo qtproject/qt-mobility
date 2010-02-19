@@ -15,8 +15,7 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGalleryUnionFilter Class Reference</h1>
 <p>The QGalleryUnionFilter class provides a filter which matches the union of two or more meta-data filters. <a href="#details">More...</a></p>
-<pre>    #include &lt;QGalleryUnionFilter&gt;</pre><p>Inherits <a href="qgalleryfilter.html">QGalleryFilter</a>.</p>
-<ul>
+<pre>    #include &lt;QGalleryUnionFilter&gt;</pre><ul>
 <li><a href="qgalleryunionfilter-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
@@ -35,14 +34,12 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryunionfilter.html#insert">insert</a></b> ( int <i>index</i>, const QGalleryMetaDataFilter &amp; <i>filter</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryunionfilter.html#insert-2">insert</a></b> ( int <i>index</i>, const QGalleryMetaDataRangeFilter &amp; <i>filter</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryunionfilter.html#insert-3">insert</a></b> ( int <i>index</i>, const QGalleryUnionFilter &amp; <i>filter</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryunionfilter.html#isEmpty">isEmpty</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryunionfilter.html#removeAt">removeAt</a></b> ( int <i>index</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryunionfilter.html#replace">replace</a></b> ( int <i>index</i>, const QGalleryMetaDataFilter &amp; <i>filter</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryunionfilter.html#replace-2">replace</a></b> ( int <i>index</i>, const QGalleryMetaDataRangeFilter &amp; <i>filter</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QGalleryUnionFilter &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryunionfilter.html#operator-eq">operator=</a></b> ( const QGalleryUnionFilter &amp; <i>filter</i> )</td></tr>
 </table>
-<ul>
-<li><div bar="2" class="fn"></div>13 public functions inherited from <a href="qgalleryfilter.html#public-functions">QGalleryFilter</a></li>
-</ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
@@ -80,6 +77,9 @@
 <p>Inserts a meta-data range <i>filter</i> into a union at <i>index</i>.</p>
 <h3 class="fn"><a name="insert-3"></a>void QGalleryUnionFilter::insert ( int <i>index</i>, const QGalleryUnionFilter &amp; <i>filter</i> )</h3>
 <p>Inserts the contents of a union <i>filter</i> into a union at <i>index</i>.</p>
+<a name="//apple_ref/cpp/instm/QGalleryUnionFilter/isEmpty"></a>
+<h3 class="fn"><a name="isEmpty"></a>bool QGalleryUnionFilter::isEmpty () const</h3>
+<p>Returns true if a union contains no filters, and false otherwise.</p>
 <a name="//apple_ref/cpp/instm/QGalleryUnionFilter/removeAt"></a>
 <h3 class="fn"><a name="removeAt"></a>void QGalleryUnionFilter::removeAt ( int <i>index</i> )</h3>
 <p>Removes the filter at <i>index</i> from a union.</p>

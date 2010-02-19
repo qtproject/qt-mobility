@@ -15,8 +15,7 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGalleryFilter Class Reference</h1>
 <p>The QGalleryFilter class provides filtering criteria for gallery requests. <a href="#details">More...</a></p>
-<pre>    #include &lt;QGalleryFilter&gt;</pre><p>Inherited by <a href="qgallerycontainerfilter.html">QGalleryContainerFilter</a>, <a href="qgallerycontainerurlfilter.html">QGalleryContainerUrlFilter</a>, <a href="qgallerydocumentfilter.html">QGalleryDocumentFilter</a>, <a href="qgallerydocumenturlfilter.html">QGalleryDocumentUrlFilter</a>, <a href="qgalleryintersectionfilter.html">QGalleryIntersectionFilter</a>, <a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a>, <a href="qgallerymetadatarangefilter.html">QGalleryMetaDataRangeFilter</a>, and <a href="qgalleryunionfilter.html">QGalleryUnionFilter</a>.</p>
-<ul>
+<pre>    #include &lt;QGalleryFilter&gt;</pre><ul>
 <li><a href="qgalleryfilter-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
@@ -33,8 +32,15 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#QGalleryFilter">QGalleryFilter</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#QGalleryFilter-2">QGalleryFilter</a></b> ( const QGalleryFilter &amp; <i>filter</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#QGalleryFilter-3">QGalleryFilter</a></b> ( const QGalleryDocumentFilter &amp; <i>filter</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#QGalleryFilter-4">QGalleryFilter</a></b> ( const QGalleryDocumentUrlFilter &amp; <i>filter</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#QGalleryFilter-5">QGalleryFilter</a></b> ( const QGalleryContainerFilter &amp; <i>filter</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#QGalleryFilter-6">QGalleryFilter</a></b> ( const QGalleryContainerUrlFilter &amp; <i>filter</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#QGalleryFilter-7">QGalleryFilter</a></b> ( const QGalleryIntersectionFilter &amp; <i>filter</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#QGalleryFilter-8">QGalleryFilter</a></b> ( const QGalleryUnionFilter &amp; <i>filter</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#QGalleryFilter-9">QGalleryFilter</a></b> ( const QGalleryMetaDataFilter &amp; <i>filter</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#QGalleryFilter-10">QGalleryFilter</a></b> ( const QGalleryMetaDataRangeFilter &amp; <i>filter</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#dtor.QGalleryFilter">~QGalleryFilter</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#isEmpty">isEmpty</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QGalleryContainerFilter </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#toContainerFilter">toContainerFilter</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QGalleryContainerUrlFilter </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#toContainerUrlFilter">toContainerUrlFilter</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QGalleryDocumentFilter </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#toDocumentFilter">toDocumentFilter</a></b> () const</td></tr>
@@ -44,9 +50,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">QGalleryMetaDataRangeFilter </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#toMetaDataRangeFilter">toMetaDataRangeFilter</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QGalleryUnionFilter </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#toUnionFilter">toUnionFilter</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">Type </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#type">type</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#operator-not-eq">operator!=</a></b> ( const QGalleryFilter &amp; <i>filter</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QGalleryFilter &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#operator-eq">operator=</a></b> ( const QGalleryFilter &amp; <i>filter</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#operator-eq-eq">operator==</a></b> ( const QGalleryFilter &amp; <i>filter</i> ) const</td></tr>
 </table>
 <a name="details"></a>
 <hr />
@@ -74,7 +78,7 @@
 <tr><td valign="top"><tt>QGalleryFilter::LessThanMaximum</tt></td><td align="center" valign="top"><tt>0x04</tt></td></tr>
 <tr><td valign="top"><tt>QGalleryFilter::EqualsMaximum</tt></td><td align="center" valign="top"><tt>0x08</tt></td></tr>
 <tr><td valign="top"><tt>QGalleryFilter::LessThanEqualsMaximum</tt></td><td align="center" valign="top"><tt>EqualsMaximum | LessThanMaximum</tt></td></tr>
-<tr><td valign="top"><tt>QGalleryFilter::InclusiveRange</tt></td><td align="center" valign="top"><tt>EqualsMinimum | GreaterThanMinimum | LessThanMaximum | EqualsMaximum</tt></td></tr>
+<tr><td valign="top"><tt>QGalleryFilter::InclusiveRange</tt></td><td align="center" valign="top"><tt>GreaterThanEqualsMinimum | LessThanEqualsMaximum</tt></td></tr>
 <tr><td valign="top"><tt>QGalleryFilter::ExclusiveRange</tt></td><td align="center" valign="top"><tt>GreaterThanMinimum | LessThanMaximum</tt></td></tr>
 </table></p>
 <p>The RangeFlags type is a typedef for <a href="qflags.html">QFlags</a>&lt;RangeFlag&gt;. It stores an OR combination of RangeFlag values.</p>
@@ -109,13 +113,25 @@
 <p>Constructs a gallery filter of type <a href="qgalleryfilter.html#Type-enum">Invalid</a>.</p>
 <h3 class="fn"><a name="QGalleryFilter-2"></a>QGalleryFilter::QGalleryFilter ( const QGalleryFilter &amp; <i>filter</i> )</h3>
 <p>Constructs a copy of a gallery <i>filter</i>.</p>
+<h3 class="fn"><a name="QGalleryFilter-3"></a>QGalleryFilter::QGalleryFilter ( const <a href="qgallerydocumentfilter.html">QGalleryDocumentFilter</a> &amp; <i>filter</i> )</h3>
+<p>Constructs a copy of a gallery document <i>filter</i>.</p>
+<h3 class="fn"><a name="QGalleryFilter-4"></a>QGalleryFilter::QGalleryFilter ( const <a href="qgallerydocumenturlfilter.html">QGalleryDocumentUrlFilter</a> &amp; <i>filter</i> )</h3>
+<p>Constructs a copy of a gallery document URL <i>filter</i>.</p>
+<h3 class="fn"><a name="QGalleryFilter-5"></a>QGalleryFilter::QGalleryFilter ( const <a href="qgallerycontainerfilter.html">QGalleryContainerFilter</a> &amp; <i>filter</i> )</h3>
+<p>Constructs a copy of a gallery container <i>filter</i>.</p>
+<h3 class="fn"><a name="QGalleryFilter-6"></a>QGalleryFilter::QGalleryFilter ( const <a href="qgallerycontainerurlfilter.html">QGalleryContainerUrlFilter</a> &amp; <i>filter</i> )</h3>
+<p>Constructs a copy of a gallery container URL <i>filter</i>.</p>
+<h3 class="fn"><a name="QGalleryFilter-7"></a>QGalleryFilter::QGalleryFilter ( const <a href="qgalleryintersectionfilter.html">QGalleryIntersectionFilter</a> &amp; <i>filter</i> )</h3>
+<p>Constructs a copy of a gallery intersection <i>filter</i>.</p>
+<h3 class="fn"><a name="QGalleryFilter-8"></a>QGalleryFilter::QGalleryFilter ( const <a href="qgalleryunionfilter.html">QGalleryUnionFilter</a> &amp; <i>filter</i> )</h3>
+<p>Constructs a copy of a gallery union <i>filter</i>.</p>
+<h3 class="fn"><a name="QGalleryFilter-9"></a>QGalleryFilter::QGalleryFilter ( const <a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> &amp; <i>filter</i> )</h3>
+<p>Constructs a copy of a gallery meta-data <i>filter</i>.</p>
+<h3 class="fn"><a name="QGalleryFilter-10"></a>QGalleryFilter::QGalleryFilter ( const <a href="qgallerymetadatarangefilter.html">QGalleryMetaDataRangeFilter</a> &amp; <i>filter</i> )</h3>
+<p>Constructs a copy of a gallery meta-data range <i>filter</i>.</p>
 <a name="//apple_ref/cpp/instm/QGalleryFilter/~QGalleryFilter"></a>
 <h3 class="fn"><a name="dtor.QGalleryFilter"></a>QGalleryFilter::~QGalleryFilter ()</h3>
 <p>Destroys a gallery filter.</p>
-<a name="//apple_ref/cpp/instm/QGalleryFilter/isEmpty"></a>
-<h3 class="fn"><a name="isEmpty"></a>bool QGalleryFilter::isEmpty () const</h3>
-<p>Identifies if a filter has any criteria set.</p>
-<p>Returns true if the filter is empty, and false otherwise.</p>
 <a name="//apple_ref/cpp/instm/QGalleryFilter/toContainerFilter"></a>
 <h3 class="fn"><a name="toContainerFilter"></a><a href="qgallerycontainerfilter.html">QGalleryContainerFilter</a> QGalleryFilter::toContainerFilter () const</h3>
 <p>Casts a filter to a container filter. The filter must be of type Container or this will return an Invalid filter.</p>
@@ -151,17 +167,9 @@
 <a name="//apple_ref/cpp/instm/QGalleryFilter/type"></a>
 <h3 class="fn"><a name="type"></a><a href="qgalleryfilter.html#Type-enum">Type</a> QGalleryFilter::type () const</h3>
 <p>Returns the type of a filter.</p>
-<a name="//apple_ref/cpp/instm/QGalleryFilter/operator!="></a>
-<h3 class="fn"><a name="operator-not-eq"></a>bool QGalleryFilter::operator!= ( const QGalleryFilter &amp; <i>filter</i> ) const</h3>
-<p>Compares <i>filter</i> to another filter.</p>
-<p>Returns true if the filters are not identical, and false otherwise.</p>
 <a name="//apple_ref/cpp/instm/QGalleryFilter/operator="></a>
 <h3 class="fn"><a name="operator-eq"></a>QGalleryFilter &amp; QGalleryFilter::operator= ( const QGalleryFilter &amp; <i>filter</i> )</h3>
 <p>Assigns the value of <i>filter</i> to another filter.</p>
-<a name="//apple_ref/cpp/instm/QGalleryFilter/operator=="></a>
-<h3 class="fn"><a name="operator-eq-eq"></a>bool QGalleryFilter::operator== ( const QGalleryFilter &amp; <i>filter</i> ) const</h3>
-<p>Compares <i>filter</i> to another filter.</p>
-<p>Returns true if the filters are identical, and false otherwise.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

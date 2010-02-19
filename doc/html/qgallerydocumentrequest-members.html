@@ -34,8 +34,10 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#connectNotify">connectNotify</a></b> ( const char * )</div></li>
 <li><div class="fn"><b><a href="qgallerydocumentrequest.html#containerId-prop">containerId</a></b> () const : QString</div></li>
 <li><div class="fn"><b><a href="qgallerydocumentrequest.html#containerIdChanged">containerIdChanged</a></b> ()</div></li>
+<li><div class="fn"><b><a href="qgallerydocumentrequest.html#containerUrl-prop">containerUrl</a></b> () const : QUrl</div></li>
+<li><div class="fn"><b><a href="qgallerydocumentrequest.html#containerUrlChanged">containerUrlChanged</a></b> ()</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#customEvent">customEvent</a></b> ( QEvent * )</div></li>
-<li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#d_ptr-var">d_ptr</a></b> : </div></li>
+<li><div class="fn"><b><a href="qgalleryabstractrequest.html#d_ptr-var">d_ptr</a></b> : QGalleryAbstractRequestPrivate *</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#deleteLater">deleteLater</a></b> ()</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#destroyed">destroyed</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#disconnect">disconnect</a></b> ( const QObject *, const char *, const QObject *, const char * )</div></li>
@@ -43,12 +45,10 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#disconnect-3">disconnect</a></b> ( const QObject *, const char * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#disconnectNotify">disconnectNotify</a></b> ( const char * )</div></li>
 <li><div class="fn"><b><a href="qgallerydocumentrequest.html#documentId-prop">documentId</a></b> () const : QString</div></li>
-<li><div class="fn"><b><a href="qgallerydocumentrequest.html#documentIdChanged">documentIdChanged</a></b> ()</div></li>
 <li><div class="fn"><b><a href="qgallerydocumentrequest.html#documentIds-prop">documentIds</a></b> () const : QStringList</div></li>
 <li><div class="fn"><b><a href="qgallerydocumentrequest.html#documentIdsChanged">documentIdsChanged</a></b> ()</div></li>
 <li><div class="fn"><b><a href="qgallerydocumentrequest.html#documentType-prop">documentType</a></b> () const : QString</div></li>
 <li><div class="fn"><b><a href="qgallerydocumentrequest.html#documentUrl-prop">documentUrl</a></b> () const : QUrl</div></li>
-<li><div class="fn"><b><a href="qgallerydocumentrequest.html#documentUrlChanged">documentUrlChanged</a></b> ()</div></li>
 <li><div class="fn"><b><a href="qgallerydocumentrequest.html#documentUrls-prop">documentUrls</a></b> () const : QList&lt;QUrl&gt;</div></li>
 <li><div class="fn"><b><a href="qgallerydocumentrequest.html#documentUrlsChanged">documentUrlsChanged</a></b> ()</div></li>
 <li><div class="fn"><b><a href="qgallerydocumentrequest.html#documents-prop">documents</a></b> () const : QGalleryDocumentList *</div></li>
@@ -68,8 +68,8 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#findChildren-2">findChildren</a></b> ( const QRegExp &amp; ) const</div></li>
 <li><div class="fn"><b><a href="qgalleryabstractrequest.html#finished">finished</a></b> ( int )</div></li>
 <li><div class="fn"><b><a href="qgalleryabstractrequest.html#gallery-prop">gallery</a></b> () const : QAbstractGallery *</div></li>
-</ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#inherits">inherits</a></b> ( const char * ) const</div></li>
+</ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#installEventFilter">installEventFilter</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="qgallerydocumentrequest.html#live-prop">isLive</a></b> () const : bool</div></li>
 <li><div class="fn"><b><a href="qgalleryabstractrequest.html#supported-prop">isSupported</a></b> () const : bool</div></li>
@@ -87,6 +87,7 @@
 <li><div class="fn"><b><a href="qgalleryabstractrequest.html#resultChanged">resultChanged</a></b> ()</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#sender">sender</a></b> () const</div></li>
 <li><div class="fn"><b><a href="qgallerydocumentrequest.html#containerId-prop">setContainerId</a></b> ( const QString &amp; )</div></li>
+<li><div class="fn"><b><a href="qgallerydocumentrequest.html#containerUrl-prop">setContainerUrl</a></b> ( const QUrl &amp; )</div></li>
 <li><div class="fn"><b><a href="qgallerydocumentrequest.html#documentId-prop">setDocumentId</a></b> ( const QString &amp; )</div></li>
 <li><div class="fn"><b><a href="qgallerydocumentrequest.html#documentIds-prop">setDocumentIds</a></b> ( const QStringList &amp; )</div></li>
 <li><div class="fn"><b><a href="qgallerydocumentrequest.html#documentType-prop">setDocumentType</a></b> ( const QString &amp; )</div></li>
