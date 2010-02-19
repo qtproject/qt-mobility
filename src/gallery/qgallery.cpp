@@ -41,6 +41,8 @@
 
 #include "qgallery.h"
 
+#include <QtCore/qstringlist.h>
+
 /*!
     \class QAbstractGallery
 
@@ -58,6 +60,7 @@
 */
 
 QAbstractGallery::QAbstractGallery(QObject *parent )
+    : QObject(parent)
 {
 
 }
@@ -125,6 +128,7 @@ QAbstractGallery::~QAbstractGallery()
 */
 
 QDocumentGallery::QDocumentGallery(QObject *parent)
+    : QAbstractGallery(parent)
 {
 
 }
@@ -144,7 +148,7 @@ QDocumentGallery::~QDocumentGallery()
 
 bool QDocumentGallery::isRequestSupported(QGalleryAbstractRequest::Type type) const
 {
-
+    return false;
 }
 
 /*!
@@ -153,7 +157,7 @@ bool QDocumentGallery::isRequestSupported(QGalleryAbstractRequest::Type type) co
 
 QString QDocumentGallery::rootDocumentId() const
 {
-
+    return QString();
 }
 
 /*!
@@ -162,7 +166,7 @@ QString QDocumentGallery::rootDocumentId() const
 
 QStringList QDocumentGallery::supportedDocumentTypes() const
 {
-
+    return QStringList();
 }
 
 /*!
@@ -171,5 +175,5 @@ QStringList QDocumentGallery::supportedDocumentTypes() const
 
 QGalleryAbstractResponse *QDocumentGallery::createResponse(QGalleryAbstractRequest *request)
 {
-
+    return 0;
 }

@@ -66,6 +66,8 @@ Q_SIGNALS:
 
 protected:
     virtual QGalleryAbstractResponse *createResponse(QGalleryAbstractRequest *request) = 0;
+
+    friend class QGalleryAbstractRequest;
 };
 
 class QDocumentGallery : public QAbstractGallery
