@@ -236,6 +236,7 @@ bool ModestEngine::sendEmail(QMessage &message)
             QDBusConnection::sessionBus());
     QMessageAddressList addresses;
     QMessageAddress address;
+    QMessageContentContainerId bodyId;
     QString value;
     QMessageAccountId accountId;
     QMessageAccount account;
@@ -257,7 +258,8 @@ bool ModestEngine::sendEmail(QMessage &message)
         return false;
     }
 
-    senderInfo["account-name"] = accountId.toString();
+//     senderInfo["account-name"] = accountId.toString();
+    senderInfo["account-name"] = "GMail_MikaN75ID";
 
     address = message.from();
     value = address.recipient();
@@ -322,6 +324,42 @@ bool ModestEngine::sendEmail(QMessage &message)
     if (value.isEmpty() == false && value.isNull() == false) {
         recipients["bcc"] = value;
     }
+
+    qDebug() << "Digging \"subject\" field";
+
+    value = message.subject();
+
+    if (value.isEmpty() == false && value.isNull() == false) {
+        messageData["subject"] = value;
+    }
+
+    qDebug() << "Digging body content";
+
+    value = message.contentType();
+    qDebug() << value;
+
+    if (value == "text") {
+        QString key, data;
+        bool hasContent = false;
+
+        value = message.contentSubType();
+        qDebug() << value;
+
+        if ((hasContent = message.isContentAvailable()) == true) {
+            data = message.textContent();
+        }
+
+        if (value == "plain") {
+            key = "plain-body";
+        } else if (value == "html") {
+            key = "html-body";
+        }
+
+        if (key.isEmpty() == false && key.isNull() == false && hasContent) {
+            messageData[key] = data;
+        }
+    }
+
 
     qDebug() << "Sending D-BUS message";
 
