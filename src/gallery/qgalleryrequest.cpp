@@ -41,6 +41,34 @@
 
 #include "qgalleryrequest.h"
 
+#include "qgallery.h"
+
+#include <QtCore/qstringlist.h>
+
+class QGalleryAbstractRequestPrivate
+{
+public:
+    QGalleryAbstractRequestPrivate(QAbstractGallery *gallery, QGalleryAbstractRequest::Type type)
+        : gallery(gallery)
+        , response(0)
+        , type(type)
+        , state(QGalleryAbstractRequest::Inactive)
+        , result(QGalleryAbstractRequest::NoResult)
+    {
+    }
+
+    virtual ~QGalleryAbstractRequestPrivate()
+    {
+        delete response;
+    }
+
+    QAbstractGallery *gallery;
+    QGalleryAbstractResponse *response;
+    QGalleryAbstractRequest::Type type;
+    QGalleryAbstractRequest::State state;
+    int result;
+};
+
 /*!
     \class QGalleryAbstractRequest
 
@@ -97,8 +125,9 @@
 */
 
 QGalleryAbstractRequest::QGalleryAbstractRequest(Type type, QObject *parent)
+    : QObject(parent)
+    , d_ptr(new QGalleryAbstractRequestPrivate(0, type))
 {
-
 }
 
 /*!
@@ -109,8 +138,21 @@ QGalleryAbstractRequest::QGalleryAbstractRequest(Type type, QObject *parent)
 
 QGalleryAbstractRequest::QGalleryAbstractRequest(
         QAbstractGallery *gallery, Type type, QObject *parent)
+    : QObject(parent)
+    , d_ptr(new QGalleryAbstractRequestPrivate(gallery, type))
 {
 
+}
+
+/*!
+    \internal
+*/
+
+QGalleryAbstractRequest::QGalleryAbstractRequest(
+        QGalleryAbstractRequestPrivate &dd, QObject *parent)
+    : QObject(parent)
+    , d_ptr(&(dd))
+{
 }
 
 /*!
@@ -119,7 +161,7 @@ QGalleryAbstractRequest::QGalleryAbstractRequest(
 
 QGalleryAbstractRequest::~QGalleryAbstractRequest()
 {
-
+    delete d_ptr;
 }
 
 /*!
@@ -130,12 +172,14 @@ QGalleryAbstractRequest::~QGalleryAbstractRequest()
 
 QAbstractGallery *QGalleryAbstractRequest::gallery() const
 {
-
+    return d_ptr->gallery;
 }
 
 void QGalleryAbstractRequest::setGallery(QAbstractGallery *gallery)
 {
+    d_ptr->gallery = gallery;
 
+    clear();
 }
 
 /*!
@@ -146,7 +190,7 @@ void QGalleryAbstractRequest::setGallery(QAbstractGallery *gallery)
 
 bool QGalleryAbstractRequest::isSupported() const
 {
-
+    return d_ptr->gallery && d_ptr->gallery->isRequestSupported(d_ptr->type);
 }
 
 /*!
@@ -161,7 +205,7 @@ bool QGalleryAbstractRequest::isSupported() const
 */
 QGalleryAbstractRequest::Type QGalleryAbstractRequest::type() const
 {
-
+    return d_ptr->type;
 }
 
 /*!
@@ -172,7 +216,7 @@ QGalleryAbstractRequest::Type QGalleryAbstractRequest::type() const
 
 QGalleryAbstractRequest::State QGalleryAbstractRequest::state() const
 {
-
+    return d_ptr->state;
 }
 
 /*!
@@ -189,9 +233,9 @@ QGalleryAbstractRequest::State QGalleryAbstractRequest::state() const
     This will be a value of \l Result, or a request specific error value.
 */
 
-int QGalleryAbstractRequest::result()
+int QGalleryAbstractRequest::result() const
 {
-
+    return d_ptr->result;
 }
 
 /*!
@@ -208,7 +252,9 @@ int QGalleryAbstractRequest::result()
 */
 bool QGalleryAbstractRequest::waitForFinished(int msecs)
 {
-
+    return d_ptr->response
+            ? d_ptr->response->waitForFinished(msecs)
+            : true;
 }
 
 /*!
@@ -220,7 +266,46 @@ bool QGalleryAbstractRequest::waitForFinished(int msecs)
 
 void QGalleryAbstractRequest::execute()
 {
+    if (!d_ptr->gallery) {
+        d_ptr->result = NoGallery;
 
+        emit resultChanged();
+    } else {
+        QGalleryAbstractResponse *oldResponse = d_ptr->response;
+
+        bool wasUnfinished = d_ptr->result == NoResult;
+        bool wasInactive = d_ptr->state == Inactive;
+
+        d_ptr->response = d_ptr->gallery->createResponse(this);
+
+        if (d_ptr->response) {
+            d_ptr->result = d_ptr->response->result();
+
+            if (d_ptr->result == NoResult)
+                d_ptr->state = Active;
+            else if (d_ptr->response->isIdle())
+                d_ptr->state = Idle;
+            else
+                d_ptr->state = Inactive;
+
+            // Connections.
+
+            setResponse(d_ptr->response);
+        } else if (oldResponse) {
+            d_ptr->result = NotSupported;
+            d_ptr->result = Inactive;
+
+            setResponse(0);
+        }
+
+        delete oldResponse;
+
+        if (wasUnfinished && d_ptr->result != NoResult)
+            emit resultChanged();
+
+        if (wasInactive && d_ptr->state != Inactive)
+            emit stateChanged(d_ptr->state);
+    }
 }
 
 /*!
@@ -230,7 +315,23 @@ void QGalleryAbstractRequest::execute()
 
 void QGalleryAbstractRequest::cancel()
 {
+    switch (d_ptr->state) {
+    case Active:
+        if (d_ptr->response) {
+            d_ptr->state = Cancelling;
+            d_ptr->response->cancel();
 
+            if (d_ptr->state == Cancelling)
+                emit stateChanged(d_ptr->state);
+        }
+        break;
+    case Idle:
+        if (d_ptr->response)
+            d_ptr->response->cancel();
+        break;
+    default:
+        break;
+    }
 }
 
 /*!
@@ -241,7 +342,25 @@ void QGalleryAbstractRequest::cancel()
 
 void QGalleryAbstractRequest::clear()
 {
+    if (d_ptr->response) {
+        bool wasFinished = d_ptr->result != NoResult;
+        bool wasActive = d_ptr->state != Inactive;
 
+        QGalleryAbstractResponse *oldResponse = d_ptr->response;
+
+        d_ptr->result = NoResult;
+        d_ptr->state = Inactive;
+
+        setResponse(0);
+
+        delete oldResponse;
+
+        if (wasFinished && d_ptr->result == NoResult)
+            emit resultChanged();
+
+        if (wasActive && d_ptr->state == Inactive)
+            emit stateChanged(d_ptr->state);
+    }
 }
 
 /*!
@@ -274,6 +393,23 @@ void QGalleryAbstractRequest::clear()
     Sets the \a response to an executed request.
 */
 
+class QGalleryAbstractResponsePrivate
+{
+public:
+    QGalleryAbstractResponsePrivate()
+        : result(QGalleryAbstractRequest::NoResult)
+        , documentCount(0)
+        , idle(false)
+    {
+    }
+
+    virtual ~QGalleryAbstractResponsePrivate() {}
+
+    int result;
+    int documentCount;
+    bool idle;
+};
+
 /*!
     \class QGalleryAbstractResponse
 
@@ -289,9 +425,10 @@ void QGalleryAbstractRequest::clear()
     The \a parent is passed to QObject.
 */
 
-QGalleryAbstractResponse::QGalleryAbstractResponse(QObject *parent = 0)
+QGalleryAbstractResponse::QGalleryAbstractResponse(QObject *parent)
+    : QGalleryDocumentList(parent)
+    , d_ptr(new QGalleryAbstractResponsePrivate)
 {
-
 }
 
 /*!
@@ -300,7 +437,7 @@ QGalleryAbstractResponse::QGalleryAbstractResponse(QObject *parent = 0)
 
 QGalleryAbstractResponse::~QGalleryAbstractResponse()
 {
-
+    delete d_ptr;
 }
 
 /*!
@@ -311,7 +448,7 @@ QGalleryAbstractResponse::~QGalleryAbstractResponse()
 */
 bool QGalleryAbstractResponse::isIdle() const
 {
-
+    return d_ptr->idle;
 }
 
 /*!
@@ -320,44 +457,67 @@ bool QGalleryAbstractResponse::isIdle() const
 
 int QGalleryAbstractResponse::result() const
 {
-
+    return d_ptr->result;
 }
 
 /*!
-    Returns the total number of documents related to a gallery response.
+    Returns the number of documents affected by a gallery response.
 */
 
-int QGalleryAbstractResponse::totalDocumentCount() const
+int QGalleryAbstractResponse::documentCount() const
 {
-
+    return d_ptr->documentCount;
 }
 
 /*!
-    Updates the total \a count of documents related to a gallery response.
+    Updates the \a count of documents affected by a gallery response.
 */
 
-void QGalleryAbstractResponse::updateTotalDocumentCount(int count)
+void QGalleryAbstractResponse::updateDocumentCount(int count)
 {
+    if (d_ptr->documentCount != count) {
+        d_ptr->documentCount = count;
 
+        emit documentCountChanged();
+    }
 }
 
 /*!
-    Signals that the total number of documents related to a gallery response
+    \fn QGalleryAbstractResponse::waitForFinished(int msecs)
+
+    Waits for \a msecs for the a response to finish.
+
+    Returns true if the response has finished on return, and returns false if
+    the wait time expires or the request is inactive or idle.
+*/
+
+/*!
+    \fn QGalleryAbstractResponse::documentCountChanged()
+
+    Signals that the number of documents related to a gallery response
     has changed.
 */
 
-void QGalleryAbstractResponse::totalDocumentCountChanged()
-{
-
-}
-
 /*!
     Cancels an active or idle gallery response.
+
+    The default implementation finishes the an active response with the
+    \l QGalleryAbstractRequest::Cancelled result.  If the reponse is idle the
+    \l finished() signal will be re-emitted with idle
 */
 
 void QGalleryAbstractResponse::cancel()
 {
+    if (d_ptr->result == QGalleryAbstractRequest::NoResult) {
+        d_ptr->result = QGalleryAbstractRequest::Cancelled;
+        d_ptr->idle = false;
 
+        emit finished(d_ptr->result, d_ptr->idle);
+    } else if (d_ptr->idle) {
+        d_ptr->idle = false;
+
+        emit finished(d_ptr->result, d_ptr->idle);
+    }
 }
 
 /*!
@@ -369,7 +529,12 @@ void QGalleryAbstractResponse::cancel()
 
 void QGalleryAbstractResponse::finish(int result, bool idle)
 {
+    if (d_ptr->result != result || d_ptr->idle != idle) {
+        d_ptr->result = result;
+        d_ptr->idle = idle;
 
+        emit finished(d_ptr->result, d_ptr->idle);
+    }
 }
 
 /*!
@@ -380,6 +545,28 @@ void QGalleryAbstractResponse::finish(int result, bool idle)
     If \a idle is true the documents returned by a response will be monitored
     for changes and updated as appropriate.
 */
+
+class QGalleryDocumentRequestPrivate : public QGalleryAbstractRequestPrivate
+{
+public:
+    QGalleryDocumentRequestPrivate(QAbstractGallery *gallery)
+        : QGalleryAbstractRequestPrivate(gallery, QGalleryAbstractRequest::Document)
+        , startIndex(0)
+        , maximumCount(-1)
+        , totalCount(0)
+        , live(false)
+    {
+    }
+
+    int startIndex;
+    int maximumCount;
+    int totalCount;
+    bool live;
+    QStringList fields;
+    QStringList sortFields;
+    QString documentType;
+    QGalleryFilter filter;
+};
 
 /*!
     \class QGalleryDocumentRequest
@@ -406,8 +593,8 @@ void QGalleryAbstractResponse::finish(int result, bool idle)
 */
 
 QGalleryDocumentRequest::QGalleryDocumentRequest(QObject *parent)
+    : QGalleryAbstractRequest(*new QGalleryDocumentRequestPrivate(0), parent)
 {
-
 }
 
 /*!
@@ -417,8 +604,8 @@ QGalleryDocumentRequest::QGalleryDocumentRequest(QObject *parent)
 */
 
 QGalleryDocumentRequest::QGalleryDocumentRequest(QAbstractGallery *gallery, QObject *parent)
+    : QGalleryAbstractRequest(*new QGalleryDocumentRequestPrivate(gallery), parent)
 {
-
 }
 
 /*!
@@ -427,7 +614,6 @@ QGalleryDocumentRequest::QGalleryDocumentRequest(QAbstractGallery *gallery, QObj
 
 QGalleryDocumentRequest::~QGalleryDocumentRequest()
 {
-
 }
 
 /*!
@@ -438,12 +624,12 @@ QGalleryDocumentRequest::~QGalleryDocumentRequest()
 
 QStringList QGalleryDocumentRequest::fields() const
 {
-
+    return d_func()->fields;
 }
 
 void QGalleryDocumentRequest::setFields(const QStringList &fields)
 {
-
+    d_func()->fields = fields;
 }
 
 /*!
@@ -458,12 +644,12 @@ void QGalleryDocumentRequest::setFields(const QStringList &fields)
 
 QStringList QGalleryDocumentRequest::sortFields() const
 {
-
+    return d_func()->sortFields;
 }
 
 void QGalleryDocumentRequest::setSortFields(const QStringList &fields)
 {
-
+    d_func()->sortFields = fields;
 }
 
 /*!
@@ -478,12 +664,12 @@ void QGalleryDocumentRequest::setSortFields(const QStringList &fields)
 
 bool QGalleryDocumentRequest::isLive() const
 {
-
+    return d_func()->live;
 }
 
 void QGalleryDocumentRequest::setLive(bool live)
 {
-
+    d_func()->live = live;
 }
 
 /*!
@@ -496,12 +682,12 @@ void QGalleryDocumentRequest::setLive(bool live)
 
 int QGalleryDocumentRequest::startIndex() const
 {
-
+    return d_func()->startIndex;
 }
 
 void QGalleryDocumentRequest::setStartIndex(int index)
 {
-
+    d_func()->startIndex = index;
 }
 
 /*!
@@ -516,12 +702,12 @@ void QGalleryDocumentRequest::setStartIndex(int index)
 
 int QGalleryDocumentRequest::maximumCount() const
 {
-
+    return d_func()->maximumCount;
 }
 
 void QGalleryDocumentRequest::setMaximumCount(int count)
 {
-
+    d_func()->maximumCount = count;
 }
 
 /*!
@@ -535,12 +721,12 @@ void QGalleryDocumentRequest::setMaximumCount(int count)
 
 QString QGalleryDocumentRequest::documentType() const
 {
-
+    return d_func()->documentType;
 }
 
-void QGalleryDocumentRequest::setContentType(const QString &type)
+void QGalleryDocumentRequest::setDocumentType(const QString &type)
 {
-
+    d_func()->documentType = type;
 }
 
 /*!
@@ -554,12 +740,56 @@ void QGalleryDocumentRequest::setContentType(const QString &type)
 
 QGalleryFilter QGalleryDocumentRequest::filter() const
 {
-
+    return d_func()->filter;
 }
 
 void QGalleryDocumentRequest::setFilter(const QGalleryFilter &filter)
 {
+    Q_D(QGalleryDocumentRequest);
 
+    QGalleryFilter::Type oldType = d->filter.type();
+
+    d->filter = filter;
+
+    emit filterChanged();
+
+    switch (oldType) {
+    case QGalleryFilter::Document:
+        emit documentIdsChanged();
+        break;
+    case QGalleryFilter::DocumentUrl:
+        emit documentUrlsChanged();
+        break;
+    case QGalleryFilter::Container:
+        emit containerIdChanged();
+        break;
+    case QGalleryFilter::ContainerUrl:
+        emit containerUrlChanged();
+        break;
+    default:
+        break;
+    }
+
+    QGalleryFilter::Type newType = d->filter.type();
+
+    if (oldType != newType) {
+        switch (newType) {
+        case QGalleryFilter::Document:
+            emit documentIdsChanged();
+            break;
+        case QGalleryFilter::DocumentUrl:
+            emit documentUrlsChanged();
+            break;
+        case QGalleryFilter::Container:
+            emit containerIdChanged();
+            break;
+        case QGalleryFilter::ContainerUrl:
+            emit containerUrlChanged();
+            break;
+        default:
+            break;
+        }
+    }
 }
 
 /*!
@@ -581,19 +811,13 @@ void QGalleryDocumentRequest::setFilter(const QGalleryFilter &filter)
 
 QString QGalleryDocumentRequest::documentId() const
 {
-
+    return d_func()->filter.toDocumentFilter().documentId();
 }
 
 void QGalleryDocumentRequest::setDocumentId(const QString &id)
 {
-
+    setFilter(QGalleryDocumentFilter(id));
 }
-
-/*!
-    \fn QGalleryDocumentRequest::documentIdChanged()
-
-    Signals the documentId propery has changed.
-*/
 
 /*!
     \property QGalleryDocumentRequest::documentIds
@@ -608,18 +832,18 @@ void QGalleryDocumentRequest::setDocumentId(const QString &id)
 
 QStringList QGalleryDocumentRequest::documentIds() const
 {
-
+    return d_func()->filter.toDocumentFilter().documentIds();
 }
 
-void QGalleryDocumentRequest::setDocumentIds(const QStringList &id)
+void QGalleryDocumentRequest::setDocumentIds(const QStringList &ids)
 {
-
+    setFilter(QGalleryDocumentFilter(ids));
 }
 
 /*!
     \fn QGalleryDocumentRequest::documentIdsChanged()
 
-    Signals that the \l documentIds property has changed.
+    Signals that the documentId and \l documentIds properties have changed.
 */
 
 /*!
@@ -635,19 +859,13 @@ void QGalleryDocumentRequest::setDocumentIds(const QStringList &id)
 
 QUrl QGalleryDocumentRequest::documentUrl() const
 {
-
+    return d_func()->filter.toDocumentUrlFilter().documentUrl();
 }
 
 void QGalleryDocumentRequest::setDocumentUrl(const QUrl &url)
 {
-
+    setFilter(QGalleryDocumentUrlFilter(url));
 }
-
-/*!
-    \fn QGalleryDocumentRequest::documentUrlChanged()
-
-    Signals that the \l documentUrl property has changed.
-*/
 
 /*!
     \property QGalleryDocumentRequest::documentUrls
@@ -662,18 +880,19 @@ void QGalleryDocumentRequest::setDocumentUrl(const QUrl &url)
 
 QList<QUrl> QGalleryDocumentRequest::documentUrls() const
 {
-
+    return d_func()->filter.toDocumentUrlFilter().documentUrls();
 }
 
 void QGalleryDocumentRequest::setDocumentUrls(const QList<QUrl> &urls)
 {
-
+    setFilter(QGalleryDocumentUrlFilter(urls));
 }
 
 /*!
     \fn QGalleryDocumentRequest::documentUrlsChanged()
 
-    Signals that the \l documentUrls property has changed.
+    Signals that the \l documentUrl and \l documentUrls properties have
+    changed.
 */
 
 /*!
@@ -690,18 +909,47 @@ void QGalleryDocumentRequest::setDocumentUrls(const QList<QUrl> &urls)
 
 QString QGalleryDocumentRequest::containerId() const
 {
-
+    return d_func()->filter.toContainerFilter().containerId();
 }
 
 void QGalleryDocumentRequest::setContainerId(const QString &id)
 {
-
+    setFilter(QGalleryContainerFilter(id));
 }
 
 /*!
     \fn QGalleryDocumentRequest::containerIdChanged()
 
     Signals that the \l containerId property has changed.
+*/
+
+/*!
+    \property QGalleryDocumentRequest::containerUrl
+
+    \brief The URL of container document a document request should return the
+    contents of.
+
+    This is equivalent to setting a \l filter of type
+    QGalleryContainerUrlFilter.
+
+    If the current \l filter is not of type QGalleryContainerUrlFilter this
+    will be null.
+*/
+
+QUrl QGalleryDocumentRequest::containerUrl() const
+{
+    return d_func()->filter.toContainerUrlFilter().containerUrl();
+}
+
+void QGalleryDocumentRequest::setContainerUrl(const QUrl &url)
+{
+    setFilter(QGalleryContainerUrlFilter(url));
+}
+
+/*!
+    \fn QGalleryDocumentRequest::containerUrlChanged()
+
+    Signals that the \l containerUrl property has changed.
 */
 
 /*!
@@ -712,7 +960,7 @@ void QGalleryDocumentRequest::setContainerId(const QString &id)
 
 QGalleryDocumentList *QGalleryDocumentRequest::documents() const
 {
-
+    return d_func()->response;
 }
 
 /*!
@@ -729,7 +977,7 @@ QGalleryDocumentList *QGalleryDocumentRequest::documents() const
 
 int QGalleryDocumentRequest::totalDocumentCount() const
 {
-
+    return d_func()->totalCount;
 }
 
 /*!
@@ -744,8 +992,30 @@ int QGalleryDocumentRequest::totalDocumentCount() const
 
 void QGalleryDocumentRequest::setResponse(QGalleryAbstractResponse *response)
 {
+    Q_D(QGalleryDocumentRequest);
 
+    int oldCount = d->totalCount;
+
+    d->totalCount = response ? response->documentCount() : 0;
+
+    emit documentsChanged();
+
+    if (oldCount != d->totalCount)
+        emit totalDocumentCountChanged();
 }
+
+class QGalleryInsertRequestPrivate : public QGalleryAbstractRequestPrivate
+{
+public:
+    QGalleryInsertRequestPrivate(QAbstractGallery *gallery)
+        : QGalleryAbstractRequestPrivate(gallery, QGalleryAbstractRequest::Insert)
+    {
+    }
+
+    QStringList fields;
+    QStringList sortFields;
+    QList<QUrl> documentUrls;
+};
 
 /*!
     \class QGalleryInsertRequest
@@ -764,8 +1034,8 @@ void QGalleryDocumentRequest::setResponse(QGalleryAbstractResponse *response)
 */
 
 QGalleryInsertRequest::QGalleryInsertRequest(QObject *parent)
+    : QGalleryAbstractRequest(*new QGalleryInsertRequestPrivate(0), parent)
 {
-
 }
 
 /*!
@@ -775,8 +1045,8 @@ QGalleryInsertRequest::QGalleryInsertRequest(QObject *parent)
 */
 
 QGalleryInsertRequest::QGalleryInsertRequest(QAbstractGallery *gallery, QObject *parent)
+    : QGalleryAbstractRequest(*new QGalleryInsertRequestPrivate(gallery), parent)
 {
-
 }
 
 /*!
@@ -796,12 +1066,12 @@ QGalleryInsertRequest::~QGalleryInsertRequest()
 
 QStringList QGalleryInsertRequest::fields() const
 {
-
+    return d_func()->fields;
 }
 
 void QGalleryInsertRequest::setFields(const QStringList &fields)
 {
-
+    d_func()->fields = fields;
 }
 
 /*!
@@ -816,12 +1086,12 @@ void QGalleryInsertRequest::setFields(const QStringList &fields)
 
 QStringList QGalleryInsertRequest::sortFields() const
 {
-
+    return d_func()->sortFields;
 }
 
 void QGalleryInsertRequest::setSortFields(const QStringList &fields)
 {
-
+    d_func()->sortFields = fields;
 }
 
 /*!
@@ -835,19 +1105,24 @@ void QGalleryInsertRequest::setSortFields(const QStringList &fields)
 
 QUrl QGalleryInsertRequest::documentUrl() const
 {
+    Q_D(const QGalleryInsertRequest);
 
+    return d->documentUrls.count() == 1
+            ? d->documentUrls.first()
+            : QUrl();
 }
 
 void QGalleryInsertRequest::setDocumentUrl(const QUrl &url)
 {
+    Q_D(QGalleryInsertRequest);
 
+    d->documentUrls.clear();
+
+    if (!url.isEmpty())
+        d->documentUrls.append(url);
+
+    emit documentUrlsChanged();
 }
-
-/*!
-    \fn QGalleryInsertRequest::documentUrlChanged()
-
-    Signals the \l documentUrl property has changed.
-*/
 
 /*!
     \property QGalleryInsertRequest::documentUrls
@@ -859,18 +1134,20 @@ void QGalleryInsertRequest::setDocumentUrl(const QUrl &url)
 
 QList<QUrl> QGalleryInsertRequest::documentUrls() const
 {
-
+    return d_func()->documentUrls;
 }
 
 void QGalleryInsertRequest::setDocumentUrls(const QList<QUrl> &urls)
 {
+    d_func()->documentUrls = urls;
 
+    emit documentUrlsChanged();
 }
 
 /*!
     \fn QGalleryInsertRequest::documentUrlsChanged()
 
-    Signals the \l documentUrls property has changed.
+    Signals the \l documentUrl and \l documentUrls properties have changed.
 */
 
 /*!
@@ -881,7 +1158,7 @@ void QGalleryInsertRequest::setDocumentUrls(const QList<QUrl> &urls)
 
 QGalleryDocumentList *QGalleryInsertRequest::documents() const
 {
-
+    return d_func()->response;
 }
 
 /*!
@@ -896,8 +1173,21 @@ QGalleryDocumentList *QGalleryInsertRequest::documents() const
 
 void QGalleryInsertRequest::setResponse(QGalleryAbstractResponse *response)
 {
+    Q_UNUSED(response);
 
+    emit documentsChanged();
 }
+
+class QGalleryRemoveRequestPrivate : public QGalleryAbstractRequestPrivate
+{
+public:
+    QGalleryRemoveRequestPrivate(QAbstractGallery *gallery)
+        : QGalleryAbstractRequestPrivate(gallery, QGalleryAbstractRequest::Remove)
+    {
+    }
+
+    QStringList documentIds;
+};
 
 /*!
     \class QGalleryRemoveRequest
@@ -916,6 +1206,7 @@ void QGalleryInsertRequest::setResponse(QGalleryAbstractResponse *response)
 */
 
 QGalleryRemoveRequest::QGalleryRemoveRequest(QObject *parent)
+    : QGalleryAbstractRequest(*new QGalleryRemoveRequestPrivate(0), parent)
 {
 
 }
@@ -927,8 +1218,8 @@ QGalleryRemoveRequest::QGalleryRemoveRequest(QObject *parent)
 */
 
 QGalleryRemoveRequest::QGalleryRemoveRequest(QAbstractGallery *gallery, QObject *parent)
+    : QGalleryAbstractRequest(*new QGalleryRemoveRequestPrivate(gallery), parent)
 {
-
 }
 
 /*!
@@ -937,7 +1228,6 @@ QGalleryRemoveRequest::QGalleryRemoveRequest(QAbstractGallery *gallery, QObject 
 
 QGalleryRemoveRequest::~QGalleryRemoveRequest()
 {
-
 }
 
 /*!
@@ -951,11 +1241,23 @@ QGalleryRemoveRequest::~QGalleryRemoveRequest()
 
 QString QGalleryRemoveRequest::documentId() const
 {
+    Q_D(const QGalleryRemoveRequest);
 
+    return d->documentIds.count() == 1
+            ? d->documentIds.first()
+            : QString();
 }
+
 void QGalleryRemoveRequest::setDocumentId(const QString &id)
 {
+    Q_D(QGalleryRemoveRequest);
 
+    d->documentIds.clear();
+
+    if (!id.isNull())
+        d->documentIds.append(id);
+
+    emit documentIdsChanged();
 }
 
 /*!
@@ -974,18 +1276,20 @@ void QGalleryRemoveRequest::setDocumentId(const QString &id)
 
 QStringList QGalleryRemoveRequest::documentIds() const
 {
-
+    return d_func()->documentIds;
 }
 
-void QGalleryRemoveRequest::setDocumentIds(const QStringList &id)
+void QGalleryRemoveRequest::setDocumentIds(const QStringList &ids)
 {
+    d_func()->documentIds = ids;
 
+    emit documentIdsChanged();
 }
 
 /*!
     \fn QGalleryRemoveRequest::documentIdsChanged()
 
-    Signals that the documentIds property has changed.
+    Signals that the documentId and documentIds properties have changed.
 */
 
 /*!
@@ -994,8 +1298,22 @@ void QGalleryRemoveRequest::setDocumentIds(const QStringList &id)
 
 void QGalleryRemoveRequest::setResponse(QGalleryAbstractResponse *response)
 {
-
+    Q_UNUSED(response);
 }
+
+class QGalleryCopyRequestPrivate : public QGalleryAbstractRequestPrivate
+{
+public:
+    QGalleryCopyRequestPrivate(QAbstractGallery *gallery)
+        : QGalleryAbstractRequestPrivate(gallery, QGalleryAbstractRequest::Copy)
+    {
+    }
+
+    QStringList fields;
+    QStringList sortFields;
+    QStringList documentIds;
+    QString destinationId;
+};
 
 /*!
     \class QGalleryCopyRequest
@@ -1014,8 +1332,8 @@ void QGalleryRemoveRequest::setResponse(QGalleryAbstractResponse *response)
 */
 
 QGalleryCopyRequest::QGalleryCopyRequest(QObject *parent)
+    : QGalleryAbstractRequest(*new QGalleryCopyRequestPrivate(0), parent)
 {
-
 }
 
 /*!
@@ -1025,8 +1343,8 @@ QGalleryCopyRequest::QGalleryCopyRequest(QObject *parent)
 */
 
 QGalleryCopyRequest::QGalleryCopyRequest(QAbstractGallery *gallery, QObject *parent)
+    : QGalleryAbstractRequest(*new QGalleryCopyRequestPrivate(gallery), parent)
 {
-
 }
 
 /*!
@@ -1035,7 +1353,6 @@ QGalleryCopyRequest::QGalleryCopyRequest(QAbstractGallery *gallery, QObject *par
 
 QGalleryCopyRequest::~QGalleryCopyRequest()
 {
-
 }
 
 /*!
@@ -1046,12 +1363,12 @@ QGalleryCopyRequest::~QGalleryCopyRequest()
 
 QStringList QGalleryCopyRequest::fields() const
 {
-
+    return d_func()->fields;
 }
 
 void QGalleryCopyRequest::setFields(const QStringList &fields)
 {
-
+    d_func()->fields = fields;
 }
 
 /*!
@@ -1066,12 +1383,12 @@ void QGalleryCopyRequest::setFields(const QStringList &fields)
 
 QStringList QGalleryCopyRequest::sortFields() const
 {
-
+    return d_func()->sortFields;
 }
 
 void QGalleryCopyRequest::setSortFields(const QStringList &fields)
 {
-
+    d_func()->sortFields = fields;
 }
 
 /*!
@@ -1085,23 +1402,28 @@ void QGalleryCopyRequest::setSortFields(const QStringList &fields)
 
 QString QGalleryCopyRequest::documentId() const
 {
+    Q_D(const QGalleryCopyRequest);
 
+    return d->documentIds.count() == 1
+            ? d->documentIds.first()
+            : QString();
 }
 
 void QGalleryCopyRequest::setDocumentId(const QString &id)
 {
+    Q_D(QGalleryCopyRequest);
 
+    d->documentIds.clear();
+
+    if (!id.isNull())
+        d->documentIds.append(id);
+
+    emit documentIdsChanged();
 }
-
-/*!
-    \fn QGalleryCopyRequest::documentIdChanged()
-
-    Signals the documentId property has changed.
-*/
 
 QStringList QGalleryCopyRequest::documentIds() const
 {
-
+    return d_func()->documentIds;
 }
 
 /*!
@@ -1112,15 +1434,17 @@ QStringList QGalleryCopyRequest::documentIds() const
     If the list only contains one ID this is equivalent to \l documentId.
 */
 
-void QGalleryCopyRequest::setDocumentIds(const QStringList &id)
+void QGalleryCopyRequest::setDocumentIds(const QStringList &ids)
 {
+    d_func()->documentIds = ids;
 
+    emit documentIdsChanged();
 }
 
 /*!
     \fn QGalleryCopyRequest::documentIdsChanged()
 
-    Signals the documentIds property has changed.
+    Signals the \l documentId and \l documentIds properties have changed.
 */
 
 /*!
@@ -1131,12 +1455,12 @@ void QGalleryCopyRequest::setDocumentIds(const QStringList &id)
 
 QString QGalleryCopyRequest::destinationId() const
 {
-
+    return d_func()->destinationId;
 }
 
 void QGalleryCopyRequest::setDestinationId(const QString &id)
 {
-
+    d_func()->destinationId = id;
 }
 
 /*!
@@ -1147,7 +1471,7 @@ void QGalleryCopyRequest::setDestinationId(const QString &id)
 
 QGalleryDocumentList *QGalleryCopyRequest::documents() const
 {
-
+    return d_func()->response;
 }
 
 /*!
@@ -1162,8 +1486,24 @@ QGalleryDocumentList *QGalleryCopyRequest::documents() const
 
 void QGalleryCopyRequest::setResponse(QGalleryAbstractResponse *response)
 {
+    Q_UNUSED(response);
 
+    emit documentsChanged();
 }
+
+class QGalleryMoveRequestPrivate : public QGalleryAbstractRequestPrivate
+{
+public:
+    QGalleryMoveRequestPrivate(QAbstractGallery *gallery)
+        : QGalleryAbstractRequestPrivate(gallery, QGalleryAbstractRequest::Move)
+    {
+    }
+
+    QStringList fields;
+    QStringList sortFields;
+    QStringList documentIds;
+    QString destinationId;
+};
 
 /*!
     \class QGalleryMoveRequest
@@ -1182,8 +1522,8 @@ void QGalleryCopyRequest::setResponse(QGalleryAbstractResponse *response)
 */
 
 QGalleryMoveRequest::QGalleryMoveRequest(QObject *parent)
+    : QGalleryAbstractRequest(*new QGalleryMoveRequestPrivate(0), parent)
 {
-
 }
 
 /*!
@@ -1193,8 +1533,8 @@ QGalleryMoveRequest::QGalleryMoveRequest(QObject *parent)
 */
 
 QGalleryMoveRequest::QGalleryMoveRequest(QAbstractGallery *gallery, QObject *parent)
+    : QGalleryAbstractRequest(*new QGalleryMoveRequestPrivate(gallery), parent)
 {
-
 }
 
 /*!
@@ -1212,12 +1552,12 @@ QGalleryMoveRequest::~QGalleryMoveRequest()
 
 QStringList QGalleryMoveRequest::fields() const
 {
-
+    return d_func()->fields;
 }
 
 void QGalleryMoveRequest::setFields(const QStringList &fields)
 {
-
+    d_func()->fields = fields;
 }
 
 /*!
@@ -1232,12 +1572,12 @@ void QGalleryMoveRequest::setFields(const QStringList &fields)
 
 QStringList QGalleryMoveRequest::sortFields() const
 {
-
+    return d_func()->sortFields;
 }
 
 void QGalleryMoveRequest::setSortFields(const QStringList &fields)
 {
-
+    d_func()->sortFields = fields;
 }
 
 /*!
@@ -1251,19 +1591,24 @@ void QGalleryMoveRequest::setSortFields(const QStringList &fields)
 
 QString QGalleryMoveRequest::documentId() const
 {
+    Q_D(const QGalleryMoveRequest);
 
+    return d->documentIds.count() == 1
+            ? d->documentIds.first()
+            : QString();
 }
 
 void QGalleryMoveRequest::setDocumentId(const QString &id)
 {
+    Q_D(QGalleryMoveRequest);
 
+    d->documentIds.clear();
+
+    if (!id.isNull())
+        d->documentIds.append(id);
+
+    emit documentIdsChanged();
 }
-
-/*!
-    \fn QGalleryMoveRequest::documentIdChanged()
-
-    Signals the \l documentId property has changed.
-*/
 
 /*!
     \property QGalleryMoveRequest::documentIds
@@ -1275,18 +1620,20 @@ void QGalleryMoveRequest::setDocumentId(const QString &id)
 
 QStringList QGalleryMoveRequest::documentIds() const
 {
-
+    return d_func()->documentIds;
 }
 
-void QGalleryMoveRequest::setDocumentIds(const QStringList &id)
+void QGalleryMoveRequest::setDocumentIds(const QStringList &ids)
 {
+    d_func()->documentIds = ids;
 
+    emit documentIdsChanged();
 }
 
 /*!
     \fn QGalleryMoveRequest::documentIdsChanged()
 
-    Signals the \l documentIds property has changed.
+    Signals the \l documentId and \l documentIds properties have changed.
 */
 
 /*!
@@ -1297,12 +1644,12 @@ void QGalleryMoveRequest::setDocumentIds(const QStringList &id)
 
 QString QGalleryMoveRequest::destinationId() const
 {
-
+    return d_func()->destinationId;
 }
 
 void QGalleryMoveRequest::setDestinationId(const QString &id)
 {
-
+    d_func()->destinationId = id;
 }
 
 /*!
@@ -1313,7 +1660,7 @@ void QGalleryMoveRequest::setDestinationId(const QString &id)
 
 QGalleryDocumentList *QGalleryMoveRequest::documents() const
 {
-
+    return d_func()->response;
 }
 
 /*!
@@ -1328,5 +1675,7 @@ QGalleryDocumentList *QGalleryMoveRequest::documents() const
 
 void QGalleryMoveRequest::setResponse(QGalleryAbstractResponse *response)
 {
+    Q_UNUSED(response);
 
+    emit documentsChanged();
 }
