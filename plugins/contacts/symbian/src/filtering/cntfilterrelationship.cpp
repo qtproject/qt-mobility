@@ -63,9 +63,11 @@ CntFilterRelationship::~CntFilterRelationship()
 QList<QContactLocalId> CntFilterRelationship::contacts(
         const QContactFilter &filter,
         const QList<QContactSortOrder> &sortOrders,
+        bool &filterSupportedflag,
         QContactManager::Error &error)  
 {
-    
+    Q_UNUSED(sortOrders);
+    Q_UNUSED(filterSupportedflag);
     //Check if any invalid filter is passed 
     if(!filterSupported(filter) )
         {
@@ -103,12 +105,15 @@ bool CntFilterRelationship::filterSupported(const QContactFilter& filter)
     return result;
 }
 
-void CntFilterRelationship::createSelectQuery(const QContactFilter& detailFilter,
+void CntFilterRelationship::createSelectQuery(const QContactFilter& filter,
                               QString& sqlQuery,
                               QContactManager::Error& error)
 
 {
-    
+    //Notthing done as of now
+    Q_UNUSED(filter);
+    Q_UNUSED(sqlQuery);
+    Q_UNUSED(error);
     
 }
 
@@ -118,7 +123,7 @@ void CntFilterRelationship::getSqlquery( const QContactRelationshipFilter& relat
                                                QContactManager::Error& error) const
 {
 
-
+    Q_UNUSED(error);
 QContactId  id_to_search = relationfilter.otherParticipantId();
 
 if(relationfilter.role() == QContactRelationshipFilter::First )

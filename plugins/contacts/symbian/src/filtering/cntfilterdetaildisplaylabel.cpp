@@ -142,6 +142,7 @@ QString CntFilterDetailDisplayLabel::createSelectQuery(const QContactFilter& fil
                                   const QList<QContactSortOrder>& sortOrders,
                                   QContactManager::Error& error) const
 {
+    Q_UNUSED(sortOrders);
     QString result;
     //Commented currently since this will be checked in contacts call intially
     //if(filterSupported(filter))

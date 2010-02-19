@@ -66,16 +66,14 @@ public:
         IOError,
         OutOfMemoryError,
         NotReadyError,
-        ParseError,
-        InvalidCharsetError,
-        BadDeviceError
+        ParseError
     };
 
     enum State {
-        InactiveState = 0,   // operation not yet started
-        ActiveState,         // operation started, not yet finished
-        CanceledState,       // operation is finished due to cancelation
-        FinishedState        // operation successfully completed
+        InactiveState = 0,
+        ActiveState,
+        CanceledState,
+        FinishedState
     };
 
     QVersitReader();
@@ -103,9 +101,10 @@ public:
     bool Q_DECL_DEPRECATED readAll();
     QList<QVersitDocument> Q_DECL_DEPRECATED result() const;
 
-signals:
+Q_SIGNALS:
     void stateChanged(QVersitReader::State state);
     void resultsAvailable(QList<QVersitDocument>& results);
+    void resultsAvailable();
     
 private: // data
     QVersitReaderPrivate* d;   

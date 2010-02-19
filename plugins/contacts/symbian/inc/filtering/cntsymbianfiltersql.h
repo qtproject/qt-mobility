@@ -45,29 +45,40 @@
 #ifdef SYMBIAN_BACKEND_USE_SQLITE
 
 #include "cntabstractcontactfilter.h"
-#include "cntsymbianfiltersqlhelper.h"
+#include "qcontactmanagerengine.h"
 
 class CContactDatabase;
+class CntFilterAbstract;
+class CntTransformContact;
+class CntSymbianSrvConnection;
+class CntDbInfo;
 QTM_USE_NAMESPACE
 class CntSymbianFilter : public CntAbstractContactFilter
 {
 public:
-    CntSymbianFilter(CContactDatabase& contactDatabase);
+    CntSymbianFilter(QContactManagerEngine& manager, CContactDatabase& contactDatabase, const CntTransformContact &transformContact);
     ~CntSymbianFilter();
 
     /* from CntAbstractContactFilter */
     QList<QContactLocalId> contacts(
             const QContactFilter& filter,
             const QList<QContactSortOrder>& sortOrders,
-            bool &filterSupportedFlag,
-            QContactManager::Error& error);
-    bool filterSupported(const QContactFilter& filter);
-
+            bool &filterSupportedflag,
+            QContactManager::Error& error) ;
+    
+    void initializeFilters();
+  
+    bool filterSupported(const QContactFilter& filter) ;
+protected:
+    void createSelectQuery(const QContactFilter& /*detailFilter*/,
+                                  QString& /*sqlQuery*/,
+                                  QContactManager::Error& /*error*/){};
 private:
-    FilterSupport filterSupportLevel(const QContactFilter& filter);
-
     CContactDatabase& m_contactDatabase;
-    CntSymbianFilterSqlHelper* m_sqlhelper;
+    CntDbInfo* m_dbInfo;
+    const CntTransformContact &m_transformContact;
+    CntSymbianSrvConnection* m_srvConnection;
+    QMap<QContactFilter::FilterType, CntAbstractContactFilter*> m_filterMap; 
 
 };
 

@@ -162,6 +162,7 @@ QContact QVersitContactImporterPrivate::importContact(
         } else if (detailDefinitionName == QContactOnlineAccount::DefinitionName) {
             success = createOnlineAccount(property, &contact);
         } else if (detailDefinitionName == QContactDisplayLabel::DefinitionName) {
+            // This actually sets the QContactName's customLabel field (not QContactDisplayLabel)
             success = createLabel(property, &contact);
         } else {
             known = false;
@@ -174,6 +175,7 @@ QContact QVersitContactImporterPrivate::importContact(
             createNameValueDetail(property, &contact);
     }
 
+    contact.setType(QContactType::TypeContact);
     return contact;
 }
 

@@ -81,7 +81,7 @@ public:
     /* Results */
     QList<QContactRelationship> relationships() const;
 
-signals:
+Q_SIGNALS:
     void progress(QContactRelationshipFetchRequest* self, bool appendOnly); // deprecated
 
 private:

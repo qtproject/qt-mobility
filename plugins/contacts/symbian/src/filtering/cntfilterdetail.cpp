@@ -72,9 +72,11 @@ CntFilterDetail::~CntFilterDetail()
 QList<QContactLocalId> CntFilterDetail::contacts(
         const QContactFilter &filter,
         const QList<QContactSortOrder> &sortOrders,
+        bool &filterSupportedflag,
         QContactManager::Error &error)  
 {
-    
+    Q_UNUSED(sortOrders);
+    Q_UNUSED(filterSupportedflag);
     //Check if any invalid filter is passed 
     if(!filterSupported(filter) )
         {

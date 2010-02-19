@@ -76,8 +76,6 @@ QTM_USE_NAMESPACE
  * \value OutOfMemoryError The most recent operation failed due to running out of memory
  * \value NotReadyError The most recent operation failed because there is an operation in progress
  * \value ParseError The most recent operation failed because the input was malformed
- * \omitvalue InvalidCharsetError
- * \omitvalue BadDeviceError
  */
 
 /*!
@@ -98,9 +96,16 @@ QTM_USE_NAMESPACE
 
 /*!
  * \fn QVersitReader::resultsAvailable(QList<QVersitDocument>& results)
+ * \deprecated
  * The signal is emitted by the reader as it reads from the device when it has made more Versit
  * documents available.
  * \a results is the complete list of documents read so far.
+ */
+
+/*!
+ * \fn QVersitReader::resultsAvailable()
+ * The signal is emitted by the reader as it reads from the device when it has made more Versit
+ * documents available.
  */
 
 /*! Constructs a new reader. */
@@ -110,6 +115,8 @@ QVersitReader::QVersitReader() : d(new QVersitReaderPrivate)
             this, SIGNAL(stateChanged(QVersitReader::State)),Qt::DirectConnection);
     connect(d, SIGNAL(resultsAvailable(QList<QVersitDocument>&)),
             this, SIGNAL(resultsAvailable(QList<QVersitDocument>&)), Qt::DirectConnection);
+    connect(d, SIGNAL(resultsAvailable(QList<QVersitDocument>&)),
+            this, SIGNAL(resultsAvailable()), Qt::DirectConnection);
 }
     
 /*! 

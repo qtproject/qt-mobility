@@ -91,6 +91,9 @@ private slots:
 //    void testDetailDefinition();
 //    void testSaveDetailDefinition();
 //    void testRemoveDetailDefinition();
+    void testSyncContactManagerContactsAddedSince();
+    void testSyncTrackerEngineContactsIdsAddedSince();
+    void testSyncContactManagerContactIdsAddedSince();
     void testContactsAddedSince();
     void testContactsModifiedSince();
     void testContactsRemovedSince();
@@ -105,10 +108,13 @@ private slots:
     void testFilterTwoNameFields();
     void testTrackerUriToUniqueId();
     void testIMContactsAndMetacontactMasterPresence();
+    void testIMContactsFilterring();
     void testContactsWithoutMeContact();
 
 private:
-    void insertContact(const QString& URI, QContactLocalId uid, QString imId, QString imStatus );
+    void syncContactsAddedSinceHelper(QDateTime& start, QList<QContactLocalId>& addedIds);
+
+    void insertContact(const QString& URI, QContactLocalId uid, QString imId, QString imStatus, QString accountPath, QString protocol = "jabber");
     void updateIMContactStatus(const QString& uri, QString imStatus);
     QContact contact(QContactLocalId uid, QStringList detailsToLoad = QStringList());
     QList<QContact> contacts(QList<QContactLocalId> uids, QStringList detailsToLoad = QStringList());

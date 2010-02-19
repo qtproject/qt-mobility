@@ -59,8 +59,13 @@ CntFilterInvalid::~CntFilterInvalid()
 QList<QContactLocalId> CntFilterInvalid::contacts(
         const QContactFilter &filter,
         const QList<QContactSortOrder> &sortOrders,
+        bool &filterSupportedflag,
         QContactManager::Error &error)  
 {
+    Q_UNUSED(filter);
+    Q_UNUSED(sortOrders);
+    Q_UNUSED(filterSupportedflag);
+    Q_UNUSED(error);
     //In case of invalid filter, we return empty list
     return QList<QContactLocalId>();
        
@@ -83,6 +88,9 @@ void CntFilterInvalid::createSelectQuery(const QContactFilter& filter,
                               QContactManager::Error& error)
 
 {
+    Q_UNUSED(filter);
+    Q_UNUSED(sqlQuery);
+    Q_UNUSED(error);
     //Not implementation needed in this case
     
 }

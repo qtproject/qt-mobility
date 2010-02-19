@@ -50,6 +50,7 @@
 QTM_BEGIN_NAMESPACE
 
 class QVersitReaderPrivate;
+class LineReader;
 
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
@@ -58,13 +59,19 @@ QTM_USE_NAMESPACE
 class SignalCatcher : public QObject
 {
 Q_OBJECT
+public:
+    SignalCatcher() : mResultsCount(0) {}
 public slots:
     void stateChanged(QVersitReader::State state) {
-        mReceived.append(state);
+        mStateChanges.append(state);
+    }
+    void resultsAvailable() {
+        mResultsCount += 1;
     }
 
 public:
-    QList<QVersitReader::State> mReceived;
+    QList<QVersitReader::State> mStateChanges;
+    int mResultsCount;
 };
 
 class UT_QVersitReader : public QObject                 
@@ -83,13 +90,25 @@ private slots: // Tests
     void testSetVersionFromProperty();
     void testParseNextVersitPropertyVCard21();
     void testParseNextVersitPropertyVCard30();
-    void testParseVersitDocument();     
+    void testParseVersitDocument();
+    void testParseVersitDocument_data();
+    void testDecodeQuotedPrintable();
+    void testParamName();
+    void testParamValue();
+    void testExtractPart();
+    void testExtractParts();
+    void testExtractPropertyGroupsAndName();
+    void testExtractVCard21PropertyParams();
+    void testExtractVCard30PropertyParams();
+    void testExtractParams();
 
+    void testReadLine();
+    void testReadLine_data();
 private: // Data
-
     QVersitReader* mReader;
     QVersitReaderPrivate* mReaderPrivate;
     QBuffer* mInputDevice;
+    QTextCodec* mAsciiCodec;
     SignalCatcher* mSignalCatcher;
 };
 

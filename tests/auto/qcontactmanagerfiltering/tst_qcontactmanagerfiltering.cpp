@@ -255,8 +255,11 @@ void tst_QContactManagerFiltering::detailStringFiltering_data()
     QString prefixname = QContactName::FieldPrefix;
     QString suffixname = QContactName::FieldSuffix;
     QString nickname = QContactNickname::DefinitionName;
+    QString nicknameField = QContactNickname::FieldNickname;
     QString emailaddr = QContactEmailAddress::DefinitionName;
     QString emailfield = QContactEmailAddress::FieldEmailAddress;
+    QString phonenumber = QContactPhoneNumber::DefinitionName;
+    QString number = QContactPhoneNumber::FieldNumber;
 
     for (int i = 0; i < managers.size(); i++) {
         QContactManager *manager = managers.at(i);
@@ -297,16 +300,32 @@ void tst_QContactManagerFiltering::detailStringFiltering_data()
         newMRow("Name == Aaron, fixed, case sensitive", manager) << manager << name << firstname << QVariant("Aaron") << (int)(Qt::MatchFixedString | Qt::MatchCaseSensitive) << "a";
         newMRow("Name == aaron, fixed, case sensitive", manager) << manager << name << firstname << QVariant("aaron") << (int)(Qt::MatchFixedString | Qt::MatchCaseSensitive) << es;
 
-        // middle name, prefix, suffix, nickname
+        // middle name
         newMRow("MName == Arne", manager) << manager << name << middlename << QVariant("Arne") << (int)(Qt::MatchContains) << "a";
+		
+		// prefix
         newMRow("Prefix == Sir", manager) << manager << name << prefixname << QVariant("Sir") << (int)(Qt::MatchContains) << "a";
+		
+		// prefix
         newMRow("Suffix == Dr.", manager) << manager << name << suffixname << QVariant("Dr.") << (int)(Qt::MatchContains) << "a";
-        newMRow("Nickname == Sir Aaron", manager) << manager << nickname << es << QVariant("Sir Aaron") << (int)(Qt::MatchContains) << "a";
+		
+		// nickname
+        newMRow("Nickname detail exists", manager) << manager << nickname << es << QVariant() << 0 << "ab";
+        newMRow("Nickname == Aaron, contains", manager) << manager << nickname << nicknameField << QVariant("Aaron") << (int)(Qt::MatchContains) << "a";
 
         // email
         newMRow("Email == Aaron@Aaronson.com", manager) << manager << emailaddr << emailfield << QVariant("Aaron@Aaronson.com") << 0 << "a";
         newMRow("Email == Aaron@Aaronsen.com", manager) << manager << emailaddr << emailfield << QVariant("Aaron@Aaronsen.com") << 0 << es;
-
+        
+        // phone number
+        newMRow("Phone number detail exists", manager) << manager << phonenumber << es << QVariant("") << 0 << "ab";
+        newMRow("Phone number = 555-1212", manager) << manager << phonenumber << number << QVariant("555-1212") << (int) QContactFilter::MatchExactly << "a";
+        newMRow("Phone number = 34, contains", manager) << manager << phonenumber << number << QVariant("34") << (int) QContactFilter::MatchContains << "b";
+        newMRow("Phone number = 555, starts with", manager) << manager << phonenumber << number << QVariant("555") <<  (int) QContactFilter::MatchStartsWith << "ab";
+        newMRow("Phone number = 1212, ends with", manager) << manager << phonenumber << number << QVariant("1212") << (int) QContactFilter::MatchEndsWith << "a";
+        newMRow("Phone number = 555-1212, match phone number", manager) << manager << phonenumber << number << QVariant("555-1212") << (int) QContactFilter::MatchPhoneNumber << "a";
+        newMRow("Phone number = 555, keypad collation", manager) << manager << phonenumber << number << QVariant("555") << (int) QContactFilter::MatchKeypadCollation << "ab";
+        
         /* Converting other types to strings */
         QPair<QString, QString> defAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Integer");
         if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
@@ -1793,8 +1812,6 @@ void tst_QContactManagerFiltering::relationshipFiltering()
     h2i.setFirst(firstId);
     h2i.setSecond(secondId);
     h2i.setRelationshipType(relationshipType);
-    if (relationshipType == "UnknownRelationship")
-        qDebug() << "hi mum";
     // save and check error code
     bool succeeded = false;
     if((cm->hasFeature(QContactManager::Relationships)
@@ -2726,6 +2743,7 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
     name = QContactName();
     name.setFirstName("Bob");
     name.setLastName("Aaronsen");
+    nick.setNickname("Sir Bob");
     number.setNumber("555-3456");
     string.setValue(definitionDetails.value("String").second, "Bob Aaronsen");
     integer.setValue(definitionDetails.value("Integer").second, 20);
@@ -2738,6 +2756,7 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
     charr.setValue(definitionDetails.value("Char").second, QVariant(QChar('b')));
 
     b.saveDetail(&name);
+    b.saveDetail(&nick);
     b.saveDetail(&number);
     if (!definitionDetails.value("String").first.isEmpty() && !definitionDetails.value("String").second.isEmpty())
         b.saveDetail(&string);

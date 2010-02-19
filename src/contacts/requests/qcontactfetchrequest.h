@@ -73,7 +73,7 @@ public:
     /* Results */
     QList<QContact> contacts() const;
 
-signals:
+Q_SIGNALS:
     void progress(QContactFetchRequest* self, bool appendOnly); // deprecated
 
 private:

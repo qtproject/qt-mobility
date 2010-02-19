@@ -60,9 +60,11 @@ CntFilterdetailrange::~CntFilterdetailrange()
 QList<QContactLocalId> CntFilterdetailrange::contacts(
         const QContactFilter &filter,
         const QList<QContactSortOrder> &sortOrders,
+        bool &filterSupportedflag,
         QContactManager::Error &error)  
 {
-   
+    Q_UNUSED(sortOrders);
+    Q_UNUSED(filterSupportedflag);
     //Check if any invalid filter is passed 
     if(!filterSupported(filter))
             {
@@ -86,7 +88,7 @@ QList<QContactLocalId> CntFilterdetailrange::contacts(
 }
 
 
-bool CntFilterdetailrange::filterSupported(const QContactFilter& filter) 
+bool CntFilterdetailrange::filterSupported(const QContactFilter& /*filter*/) 
 {
     bool result = false;
     //Not yet supported  

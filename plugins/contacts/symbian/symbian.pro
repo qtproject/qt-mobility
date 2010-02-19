@@ -50,14 +50,25 @@ symbian: {
         inc/transform/cnttransformanniversarysimple.h \
         inc/transform/cnttransformgeolocation.h \
         inc/transform/cnttransformnote.h \
-        inc/transform/cnttransformfamily.h \  
-        inc/transform/cnttransformempty.h \ 
-        inc/filtering/cntabstractcontactsorter.h \ 
+        inc/transform/cnttransformfamily.h \
+        inc/transform/cnttransformempty.h \
+        inc/filtering/cntfilterrelationship.h \
+        inc/filtering/cntfilterdetaildisplaylabel.h \
+        inc/filtering/cntfilterdetail.h \
+        inc/filtering/cntdbinfo.h \
+        inc/filtering/cntfilterdefault.h \
+        inc/filtering/cntfilterintersection.h \
+        inc/filtering/cntfilterunion.h \
+        inc/filtering/cntfilterinvalid.h \
+        inc/filtering/cntfilteraction.h \
+        inc/filtering/cntfilterlocalid.h \
+				inc/filtering/cntfilterchangelog.h \
+				inc/filtering/cntfilterdetailrange.h \
+        inc/filtering/cntabstractcontactsorter.h \
         inc/filtering/cntabstractcontactfilter.h \
         inc/filtering/cntsymbianfilterdbms.h \
         inc/filtering/cntsymbianfiltersql.h \
         inc/filtering/cntsymbiansorterdbms.h \
-        inc/filtering/cntsymbianfiltersqlhelper.h \
         inc/filtering/cntsymbiansrvconnection.h \
         inc/filtering/cntdisplaylabelsqlfilter.h \
         inc/filtering/cntsqlsearch.h
@@ -85,10 +96,21 @@ symbian: {
         src/transform/cnttransformnote.cpp \
         src/transform/cnttransformfamily.cpp \  
         src/transform/cnttransformempty.cpp \
+        src/filtering/cntfilterrelationship.cpp \
+        src/filtering/cntfilterdetaildisplaylabel.cpp \
+        src/filtering/cntfilterdetail.cpp \
+        src/filtering/cntdbinfo.cpp \
+        src/filtering/cntfilterdefault.cpp \
+        src/filtering/cntfilterintersection.cpp \
+        src/filtering/cntfilterunion.cpp \
+        src/filtering/cntfilterinvalid.cpp \
+        src/filtering/cntfilteraction.cpp \
+        src/filtering/cntfilterlocalid.cpp \
+				src/filtering/cntfilterchangelog.cpp \
+				src/filtering/cntfilterdetailrange.cpp \
         src/filtering/cntsymbianfilterdbms.cpp \
         src/filtering/cntsymbianfiltersql.cpp \
         src/filtering/cntsymbiansorterdbms.cpp \
-        src/filtering/cntsymbianfiltersqlhelper.cpp \
         src/filtering/cntsymbiansrvconnection.cpp \
         src/filtering/cntdisplaylabelsqlfilter.cpp \
         src/filtering/cntsqlsearch.cpp \

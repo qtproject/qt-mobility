@@ -102,7 +102,7 @@ public:
     QContactManager* manager() const;
     void setManager(QContactManager* manager);
 
-public slots:
+public Q_SLOTS:
     /* Verbs */
     bool start();
     bool cancel();
@@ -115,7 +115,7 @@ public slots:
     bool Q_DECL_DEPRECATED waitForProgress(int msecs = 0); // deprecated, removed entirely week 1
 #endif
 
-signals:
+Q_SIGNALS:
     void stateChanged(QContactAbstractRequest::State newState);
     void resultsAvailable();
 

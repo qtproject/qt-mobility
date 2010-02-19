@@ -44,18 +44,17 @@
 
 #include "cntabstractcontactfilter.h"
 #include "cntsymbiansrvconnection.h"
-#include "qcontactdetailfilter.h"
+#include "cntdbinfo.h"
 
 class CntFilterDefault : public CntAbstractContactFilter
 {
-    Q_OBJECT
-
 public:
     CntFilterDefault(CContactDatabase& contactDatabase,CntSymbianSrvConnection &cntServer,CntDbInfo& dbInfo);
     ~CntFilterDefault();
     QList<QContactLocalId> contacts(
             const QContactFilter &filter,
             const QList<QContactSortOrder> &sortOrders,
+            bool &filterSupported,
             QContactManager::Error &error);
     bool filterSupported(const QContactFilter& filter);
 

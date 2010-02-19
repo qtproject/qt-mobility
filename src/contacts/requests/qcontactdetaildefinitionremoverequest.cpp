@@ -98,6 +98,17 @@ QStringList QContactDetailDefinitionRemoveRequest::names() const
     return d->m_names;
 }
 
+/*!
+  \internal
+  Sets the type of detail defintions to remove to \a contactType,
+
+  Do not use this.  Use \l setDefinitionNames() instead.
+*/
+void QContactDetailDefinitionRemoveRequest::setContactType(const QString& contactType)
+{
+    Q_D(QContactDetailDefinitionRemoveRequest);
+    d->m_contactType = contactType;
+}
 
 /*!
   Sets the type of contact for which detail definitions should be removed to \a contactType, and the names of the detail definitions to remove from the manager to \a names.

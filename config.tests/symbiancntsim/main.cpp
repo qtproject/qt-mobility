@@ -39,42 +39,12 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTSAVEREQUEST_H
-#define QCONTACTSAVEREQUEST_H
+#include <etelmm.h>
 
-#include "qtcontactsglobal.h"
-#include "qcontactabstractrequest.h"
-#include "qcontact.h"
-
-#include <QList>
-
-QTM_BEGIN_NAMESPACE
-
-class QContactSaveRequestPrivate;
-class Q_CONTACTS_EXPORT QContactSaveRequest : public QContactAbstractRequest
+int main(int argc, char** argv)
 {
-    Q_OBJECT
+    RMobilePhone s;
 
-public:
-    QContactSaveRequest();
-    ~QContactSaveRequest();
+    return 0;
+}
 
-    /* Selection */
-    void setContacts(const QList<QContact>& contacts);
-
-    /* Results */
-    QList<QContact> contacts() const;
-    QMap<int, QContactManager::Error> errorMap() const;
-
-Q_SIGNALS:
-    void progress(QContactSaveRequest* self); // deprecated
-
-private:
-    Q_DISABLE_COPY(QContactSaveRequest)
-    friend class QContactManagerEngine;
-    Q_DECLARE_PRIVATE_D(d_ptr, QContactSaveRequest)
-};
-
-QTM_END_NAMESPACE
-
-#endif

@@ -70,7 +70,7 @@ namespace {
 }  // namespace
 
 CntSymbianSimEngine::CntSymbianSimEngine(const QMap<QString, QString>& parameters, QContactManager::Error& error) :
-    m_etelInfoPckg( m_etelStoreInfo )
+    m_etelStoreInfoPckg( m_etelStoreInfo )
 {
     error = QContactManager::NoError;
 
@@ -193,13 +193,13 @@ QString CntSymbianSimEngine::synthesizedDisplayLabel(const QContact& contact, QC
 {
     Q_UNUSED(error);
 
-    // TODO: localize unnamed
-    QString label("Unnamed");
     QContactName name = contact.detail(QContactName::DefinitionName);
-    if(!name.firstName().isEmpty()) {
-        label = name.firstName();
+    if(!name.customLabel().isEmpty()) {
+        return name.customLabel();
+    } else {
+        // TODO: localize unnamed
+        return QString("Unnamed");
     }
-    return label;
 }
 
 /*!
@@ -212,7 +212,19 @@ QString CntSymbianSimEngine::synthesizedDisplayLabel(const QContact& contact, QC
  */
 bool CntSymbianSimEngine::saveContact(QContact* contact, QContactManager::Error& error)
 {
-    TRAPD(err, QT_TRYCATCH_LEAVING(saveContactL(contact)));
+    if (!contact) {
+        error = QContactManager::BadArgumentError;
+        return false;
+    }
+
+    // TODO: Remove empty details    
+
+    // Check that the contact suits the scheme
+    if (!validateContact(*contact, error)) {
+        return false;
+    }
+
+    TRAPD(err, saveContactL(contact));
     transformError(err, error);
     PbkPrintToLog(_L("CntSymbianSimEngine::saveContact() - err = %d"), err);
     return (err == KErrNone);
@@ -246,6 +258,12 @@ QMap<QString, QContactDetailDefinition> CntSymbianSimEngine::detailDefinitions(c
         return QMap<QString, QContactDetailDefinition>();
     }
 
+    TRAPD(err, getEtelStoreInfoL());
+    if(err != KErrNone) {
+        transformError(err, error);
+        return QMap<QString, QContactDetailDefinition>();
+    }
+
     // the map we will eventually return
     QMap<QString, QContactDetailDefinition> retn;
 
@@ -260,13 +278,11 @@ QMap<QString, QContactDetailDefinition> CntSymbianSimEngine::detailDefinitions(c
     fields.clear();
     f.setDataType(QVariant::String);
     subTypes.clear();
-    // TODO: groups supported by some USIM cards?
     subTypes << QString(QLatin1String(KSimSyncTarget));
     f.setAllowableValues(subTypes);
     fields.insert(QContactSyncTarget::FieldSyncTarget, f);
     d.setFields(fields);
     d.setUnique(true);
-    d.setAccessConstraint(QContactDetailDefinition::CreateOnly);
     retn.insert(d.name(), d);
 
     // type
@@ -274,13 +290,12 @@ QMap<QString, QContactDetailDefinition> CntSymbianSimEngine::detailDefinitions(c
     fields.clear();
     f.setDataType(QVariant::String);
     subTypes.clear();
-    // TODO: groups supported by some USIM cards?
+    // groups are not supported
     subTypes << QString(QLatin1String(QContactType::TypeContact));
     f.setAllowableValues(subTypes);
     fields.insert(QContactType::FieldType, f); // note: NO CONTEXT!!
     d.setFields(fields);
     d.setUnique(true);
-    d.setAccessConstraint(QContactDetailDefinition::CreateOnly);
     retn.insert(d.name(), d);
 
 /* TODO
@@ -307,20 +322,19 @@ QMap<QString, QContactDetailDefinition> CntSymbianSimEngine::detailDefinitions(c
     fields.insert(QContactDisplayLabel::FieldLabel, f);
     d.setFields(fields);
     d.setUnique(true);
-    d.setAccessConstraint(QContactDetailDefinition::ReadOnly);
     retn.insert(d.name(), d);
 
-    // email address
-    // TODO: email support needs to be checked run-time, because it is SIM specific
-    d.setName(QContactEmailAddress::DefinitionName);
-    fields.clear();
-    f.setDataType(QVariant::String);
-    f.setAllowableValues(QVariantList());
-    fields.insert(QContactEmailAddress::FieldEmailAddress, f);
-    d.setFields(fields);
-    d.setUnique(true);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
-    retn.insert(d.name(), d);
+    // email support needs to be checked run-time, because it is SIM specific
+    if (m_etelStoreInfo.iMaxEmailAddr > 0) {
+        d.setName(QContactEmailAddress::DefinitionName);
+        fields.clear();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QContactEmailAddress::FieldEmailAddress, f);
+        d.setFields(fields);
+        d.setUnique(true);
+        retn.insert(d.name(), d);
+    }
 
     // phone number
     d.setName(QContactPhoneNumber::DefinitionName);
@@ -348,39 +362,35 @@ QMap<QString, QContactDetailDefinition> CntSymbianSimEngine::detailDefinitions(c
     fields.insert(QContactPhoneNumber::FieldSubTypes, f);
 */
     d.setFields(fields);
-    // TODO: multiple numbers supported?
-    d.setUnique(false);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
+    if (m_etelStoreInfo.iMaxAdditionalNumbers > 0) {
+        // multiple numbers supported
+        d.setUnique(false);
+    } else {
+        // only one phone number allowed
+        d.setUnique(true);
+    }
     retn.insert(d.name(), d);
 
-    // nickname
-    // TODO: nickname support needs to be checked run-time, because it is SIM specific
-    d.setName(QContactNickname::DefinitionName);
-    fields.clear();
-    f.setDataType(QVariant::String);
-    f.setAllowableValues(QVariantList());
-    fields.insert(QContactNickname::FieldNickname, f);
-    d.setFields(fields);
-    d.setUnique(true);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
-    retn.insert(d.name(), d);
+    // nickname support needs to be checked run-time, because it is SIM specific
+    if (m_etelStoreInfo.iMaxSecondNames > 0) {
+        d.setName(QContactNickname::DefinitionName);
+        fields.clear();
+        f.setDataType(QVariant::String);
+        f.setAllowableValues(QVariantList());
+        fields.insert(QContactNickname::FieldNickname, f);
+        d.setFields(fields);
+        d.setUnique(true);
+        retn.insert(d.name(), d);
+    }
 
     // name
     d.setName(QContactName::DefinitionName);
     fields.clear();
     f.setDataType(QVariant::String);
     f.setAllowableValues(QVariantList());
-    /*
-    fields.insert(QContactName::FieldPrefix, f);
-    fields.insert(QContactName::FieldFirst, f);
-    fields.insert(QContactName::FieldMiddle, f);
-    fields.insert(QContactName::FieldLast, f);
-    fields.insert(QContactName::FieldSuffix, f);
-    */
     fields.insert(QContactName::FieldCustomLabel, f);
     d.setFields(fields);
     d.setUnique(true);
-    d.setAccessConstraint(QContactDetailDefinition::NoConstraint);
     retn.insert(d.name(), d);
 
     return retn;
@@ -404,6 +414,27 @@ QStringList CntSymbianSimEngine::supportedContactTypes() const
 {
     // TODO: groups supported by some USIM cards?
     return QStringList() << QContactType::TypeContact;
+}
+
+void CntSymbianSimEngine::getEtelStoreInfoL() const
+{
+    TRequestStatus requestStatus;
+
+    //check what information can be saved to the Etel store
+    m_etelStore.GetInfo(requestStatus, (TDes8&)m_etelStoreInfoPckg);
+    User::WaitForRequest(requestStatus);
+    PbkPrintToLog(_L("CntSymbianSimEngine::getEtelStoreInfoL() - GetInfo err = %d"),
+        requestStatus.Int());
+    User::LeaveIfError(requestStatus.Int());
+
+    PbkPrintToLog(_L("CntSymbianSimEngine::getEtelStoreInfoL() - TotalEntries = %d"),
+            m_etelStoreInfo.iTotalEntries);
+    PbkPrintToLog(_L("CntSymbianSimEngine::getEtelStoreInfoL() - UsedEntries = %d"),
+            m_etelStoreInfo.iUsedEntries);
+    PbkPrintToLog(_L("CntSymbianSimEngine::getEtelStoreInfoL() - MaxNumLength = %d"),
+            m_etelStoreInfo.iMaxNumLength);
+    PbkPrintToLog(_L("CntSymbianSimEngine::getEtelStoreInfoL() - MaxTextLength = %d"),
+            m_etelStoreInfo.iMaxTextLength);
 }
 
 /*!
@@ -444,30 +475,18 @@ QList<QContact> CntSymbianSimEngine::fetchContactsL() const
 {
     PbkPrintToLog(_L("CntSymbianSimEngine::fetchContactsL() - IN"));
 
-    TRequestStatus requestStatus;
-
-    //check number of storage slots in the store
-    m_etelStore.GetInfo(requestStatus, (TDes8&)m_etelInfoPckg);
-    User::WaitForRequest(requestStatus);
-    if (requestStatus.Int() != KErrNone) {
-        PbkPrintToLog(_L("CntSymbianSimEngine::fetchContactsL() - getInfo error = %d"),
-                requestStatus.Int());
-        User::Leave(requestStatus.Int());
-    }
-
-    PbkPrintToLog(_L("CntSymbianSimEngine::fetchContactsL() - totalEntries = %d"),
-            m_etelStoreInfo.iTotalEntries);
-    PbkPrintToLog(_L("CntSymbianSimEngine::fetchContactsL() - usedEntries = %d"),
-            m_etelStoreInfo.iUsedEntries);
+    getEtelStoreInfoL();
 
     QList<QContact> contacts;
-    if(m_etelStoreInfo.iUsedEntries > 0) {
+    if (m_etelStoreInfo.iUsedEntries > 0) {
         //read the contacts from the Etel store
         RBuf8 buffer;
         buffer.CreateL(KOneSimContactBufferSize*m_etelStoreInfo.iUsedEntries);
         CleanupClosePushL(buffer);
+
         //contacts are fetched starting from index 1, all slots should be checked
         //since slots may be not filled in a sequence.
+        TRequestStatus requestStatus;
         m_etelStore.Read(requestStatus, 1, m_etelStoreInfo.iTotalEntries, buffer);
         User::WaitForRequest(requestStatus);
         if (requestStatus.Int() != KErrNone) {
@@ -489,32 +508,25 @@ QList<QContact> CntSymbianSimEngine::fetchContactsL() const
  */
 void CntSymbianSimEngine::saveContactL(QContact* contact) const
 {
+    QT_TRYCATCH_LEAVING(doSaveContactL(contact));
+}
+
+/*!
+ * Private leaving implementation for saveContact()
+ */
+void CntSymbianSimEngine::doSaveContactL(QContact* contact) const
+{
     PbkPrintToLog(_L("CntSymbianSimEngine::saveContactL() - IN"));
 
-    TRequestStatus requestStatus;
+    User::LeaveIfNull(contact);
 
-    //check what information can be saved to the Etel store
-    m_etelStore.GetInfo(requestStatus, (TDes8&)m_etelInfoPckg);
-    User::WaitForRequest(requestStatus);
-    if (requestStatus.Int() != KErrNone) {
-        PbkPrintToLog(_L("CntSymbianSimEngine::saveContactL() - getInfo error = %d"),
-                requestStatus.Int());
-        User::Leave(requestStatus.Int());
-    }
-
-    PbkPrintToLog(_L("CntSymbianSimEngine::saveContactL() - totalEntries = %d"),
-            m_etelStoreInfo.iTotalEntries);
-    PbkPrintToLog(_L("CntSymbianSimEngine::saveContactL() - usedEntries = %d"),
-            m_etelStoreInfo.iUsedEntries);
-    PbkPrintToLog(_L("CntSymbianSimEngine::saveContactL() - MaxNumLength = %d"),
-            m_etelStoreInfo.iMaxNumLength);
-    PbkPrintToLog(_L("CntSymbianSimEngine::saveContactL() - MaxTextLength = %d"),
-            m_etelStoreInfo.iMaxTextLength);
+    getEtelStoreInfoL();
 
     //encode contact
     RBuf8 buffer;
     buffer.CreateL(KOneSimContactBufferSize);
     CleanupClosePushL(buffer);
+
     QContact convertedContact = encodeSimContactL(contact, buffer);
 
     //write contact
@@ -522,6 +534,7 @@ void CntSymbianSimEngine::saveContactL(QContact* contact) const
     if (contact->localId() > 0) {
         index = contact->localId();
     }
+    TRequestStatus requestStatus;
     m_etelStore.Write(requestStatus, buffer, index);
     User::WaitForRequest(requestStatus);
     if (requestStatus.Int() != KErrNone) {
@@ -551,8 +564,12 @@ void CntSymbianSimEngine::saveContactL(QContact* contact) const
         contactId->setManagerUri(m_managerUri);
         contact->setId(*contactId);
     }
+
+    updateDisplayLabel(*contact);
+
     PbkPrintToLog(_L("CntSymbianSimEngine::saveContactL() - OUT"));
 }
+
 
 /*! Transform a Symbian contact error id to QContactManager::Error.
  *
@@ -695,7 +712,7 @@ QList<QContact> CntSymbianSimEngine::decodeSimContactsL(TDes8& rawData) const
                         // Contact name otherwise
                         QContactName name;
                         QString nameString = QString::fromUtf16(bufPtr.Ptr(), bufPtr.Length());
-                        name.setFirstName(nameString);
+                        name.setCustomLabel(nameString);
                         currentContact.saveDetail(&name);
                         QContactManager::Error error(QContactManager::NoError);
                         currentContact = setContactDisplayLabel(synthesizedDisplayLabel(currentContact, error), currentContact);
@@ -792,23 +809,19 @@ QContact CntSymbianSimEngine::encodeSimContactL(const QContact* contact, TDes8& 
     //add new enty tag
     User::LeaveIfError(pbBuffer->AddNewEntryTag());
 
-    //add first and last name
+    //add name
     QString name;
     QList<QContactDetail> nameDetails = contact->details(QContactName::DefinitionName);
     if (nameDetails.count() == 0) {
-        name.append("(unnamed)");
+        // TODO: should we leave name empty?
+        name.append("Unnamed");
     }
     else {
         QContactName nameDetail = static_cast<QContactName>(nameDetails.at(0));
-        name.append(nameDetail.firstName());
-        if (nameDetail.lastName().length() > 0) {
-            if (nameDetail.firstName().length() > 0) {
-                name.append(" "); //separator
-            }
-            name.append(nameDetail.lastName());
-        }
-        if (name.length() == 0) {
-            name.append("(unnamed)");
+        name.append(nameDetail.customLabel());
+        if (name.isNull()) {
+            // TODO: should we leave name empty?
+            name.append("Unnamed)");
         }
     }
     name = name.left(m_etelStoreInfo.iMaxTextLength); //trim to the max possible length
@@ -816,7 +829,7 @@ QContact CntSymbianSimEngine::encodeSimContactL(const QContact* contact, TDes8& 
     User::LeaveIfError(pbBuffer->PutTagAndValue(RMobilePhoneBookStore::ETagPBText, nameValue));
 
     QContactName convertedNameDetail;
-    convertedNameDetail.setFirstName(name);
+    convertedNameDetail.setCustomLabel(name);
     convertedContact.saveDetail(&convertedNameDetail);
 
     //add nickname
@@ -845,7 +858,6 @@ QContact CntSymbianSimEngine::encodeSimContactL(const QContact* contact, TDes8& 
         PbkPrintToLog(_L("CntSymbianSimEngine::encodeSimContactL() - phone number length = %d"),
                 phoneNumberDetail.number().length());
         if (phoneNumberDetail.number().length() > m_etelStoreInfo.iMaxNumLength) {
-            // if number cannot fit, do no save a contact
             User::LeaveIfError(KErrTooBig);
         }
         TPtrC phoneNumberValue(reinterpret_cast<const TUint16*>(phoneNumberDetail.number().utf16()));
@@ -862,17 +874,18 @@ QContact CntSymbianSimEngine::encodeSimContactL(const QContact* contact, TDes8& 
         //one number is saved already
         for (int i = 1; i < phoneNumberDetails.count() && i-1 < m_etelStoreInfo.iMaxAdditionalNumbers; ++i) {
             QContactPhoneNumber phoneNumberDetail = static_cast<QContactPhoneNumber>(phoneNumberDetails.at(i));
-            if (phoneNumberDetail.number().length() <= m_etelStoreInfo.iMaxNumLengthAdditionalNumber) {
-                //mark the beginning of an additional number
-                User::LeaveIfError(pbBuffer->AddNewNumberTag());
-                //add number itself
-                TPtrC phoneNumberValue(reinterpret_cast<const TUint16*>(phoneNumberDetail.number().utf16()));
-                User::LeaveIfError(pbBuffer->PutTagAndValue(RMobilePhoneBookStore::ETagPBNumber, phoneNumberValue));
-
-                QContactPhoneNumber convertedPhoneNumberDetail;
-                convertedPhoneNumberDetail.setNumber(phoneNumberDetail.number());
-                convertedContact.saveDetail(&convertedPhoneNumberDetail);
+            if (phoneNumberDetail.number().length() > m_etelStoreInfo.iMaxNumLengthAdditionalNumber) {
+                User::Leave(KErrTooBig);
             }
+            //mark the beginning of an additional number
+            User::LeaveIfError(pbBuffer->AddNewNumberTag());
+            //add number itself
+            TPtrC phoneNumberValue(reinterpret_cast<const TUint16*>(phoneNumberDetail.number().utf16()));
+            User::LeaveIfError(pbBuffer->PutTagAndValue(RMobilePhoneBookStore::ETagPBNumber, phoneNumberValue));
+
+            QContactPhoneNumber convertedPhoneNumberDetail;
+            convertedPhoneNumberDetail.setNumber(phoneNumberDetail.number());
+            convertedContact.saveDetail(&convertedPhoneNumberDetail);
         }
     }
 
@@ -881,14 +894,15 @@ QContact CntSymbianSimEngine::encodeSimContactL(const QContact* contact, TDes8& 
         QList<QContactDetail> emailDetails = contact->details(QContactEmailAddress::DefinitionName);
         for (int i = 0; i < emailDetails.count() && i < m_etelStoreInfo.iMaxEmailAddr; ++i) {
         QContactEmailAddress emailDetail = static_cast<QContactEmailAddress>(emailDetails.at(i));
-            if (emailDetail.emailAddress().length() <= m_etelStoreInfo.iMaxTextLengthEmailAddr) {
-                TPtrC emailValue(reinterpret_cast<const TUint16*>(emailDetail.emailAddress().utf16()));
-                User::LeaveIfError(pbBuffer->PutTagAndValue(RMobilePhoneBookStore::ETagPBEmailAddress, emailValue));
+        TPtrC emailValue(reinterpret_cast<const TUint16*>(emailDetail.emailAddress().utf16()));
+        if (emailValue.Length() > m_etelStoreInfo.iMaxTextLengthEmailAddr) {
+            User::Leave(KErrTooBig);
+        }
+        User::LeaveIfError(pbBuffer->PutTagAndValue(RMobilePhoneBookStore::ETagPBEmailAddress, emailValue));
 
-                QContactEmailAddress convertedEmailDetail;
-                convertedEmailDetail.setEmailAddress(emailDetail.emailAddress());
-                convertedContact.saveDetail(&convertedEmailDetail);
-            }
+        QContactEmailAddress convertedEmailDetail;
+        convertedEmailDetail.setEmailAddress(emailDetail.emailAddress());
+        convertedContact.saveDetail(&convertedEmailDetail);
         }
     }
 
@@ -896,6 +910,15 @@ QContact CntSymbianSimEngine::encodeSimContactL(const QContact* contact, TDes8& 
     PbkPrintToLog(_L("CntSymbianSimEngine::encodeSimContactL() - OUT"));
     return convertedContact;
 
+}
+
+void CntSymbianSimEngine::updateDisplayLabel(QContact& contact) const
+{
+    QContactManager::Error error(QContactManager::NoError);
+    QString label = synthesizedDisplayLabel(contact, error);
+    if(error == QContactManager::NoError) {
+        contact = setContactDisplayLabel(label, contact);
+    }
 }
 
 QContactManagerEngine* CntSymbianSimFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error& error)

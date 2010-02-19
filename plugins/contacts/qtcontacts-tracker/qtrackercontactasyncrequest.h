@@ -44,6 +44,10 @@
 
 #include <QObject>
 
+#include <QContact>
+#include <QContactOnlineAccount>
+#include <QContactManager>
+
 #include <QtTracker/Tracker>
 #include <QtTracker/QLive>
 
@@ -93,7 +97,8 @@ namespace IMContact {
         ContactNickname,
         AccountType,
         Capabilities,
-        MetaContact
+        MetaContact,
+        ServiceProvider
     };
 };
 
@@ -115,10 +120,11 @@ public slots:
 
 protected slots:
     virtual void run();
-    virtual void emitFinished();
+    virtual void emitFinished(QContactManager::Error error = QContactManager::NoError);
 
 protected:
-    void applyFilterToContact(SopranoLive::RDFVariable &variable, const QContactFilter &filter);
+    QContactManager::Error applyFilterToContact(SopranoLive::RDFVariable &variable, const QContactFilter &filter);
+    QContactManager::Error applyDetailRangeFilterToContact(SopranoLive::RDFVariable &variable, const QContactFilter &filter);
 
     // contacts query
     SopranoLive::LiveNodes query;
