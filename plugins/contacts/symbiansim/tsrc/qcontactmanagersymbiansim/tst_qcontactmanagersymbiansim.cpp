@@ -377,6 +377,7 @@ void tst_QContactManagerSymbianSim::addContact_data()
 }
 
 /*
+ * Tests if different contacts can be saved to SIM card.
  * Steps:
  * 1. Parse contact details from test parameters
  * 2. Determine the expected result
@@ -456,10 +457,10 @@ void tst_QContactManagerSymbianSim::updateContactDetail_data()
 {
     // The initial contact details,
     // for example: <"Name:First:James">; <"PhoneNumber:PhoneNumber:1234567890">
-    QTest::addColumn<QStringList>("details1");
+    QTest::addColumn<QStringList>("initialDetails");
     // The updated contact details,
     // for example: <"Name:First:James">; <"PhoneNumber:PhoneNumber:0987654321">
-    QTest::addColumn<QStringList>("details2");
+    QTest::addColumn<QStringList>("updatedDetails");
 
     QString es = QString();
 
@@ -469,7 +470,14 @@ void tst_QContactManagerSymbianSim::updateContactDetail_data()
         << (QStringList()
             << "Name:CustomLabel:James Hunt");
 
-    QTest::newRow("update phone number")
+    QTest::newRow("add phone number detail")
+        << (QStringList()
+            << "Name:CustomLabel:James")
+        << (QStringList()
+            << "Name:CustomLabel:James"
+            << "PhoneNumber:PhoneNumber:+44752222222");
+
+    QTest::newRow("update phone number detail")
         << (QStringList()
             << "Name:CustomLabel:James"
             << "PhoneNumber:PhoneNumber:+44751111111")
@@ -477,7 +485,21 @@ void tst_QContactManagerSymbianSim::updateContactDetail_data()
             << "Name:CustomLabel:James"
             << "PhoneNumber:PhoneNumber:+44752222222");
 
-    QTest::newRow("update e-mail")
+    QTest::newRow("remove phone number detail")
+        << (QStringList()
+            << "Name:CustomLabel:James"
+            << "PhoneNumber:PhoneNumber:+44751111111")
+        << (QStringList()
+            << "Name:CustomLabel:James");
+
+    QTest::newRow("add e-mail detail")
+        << (QStringList()
+            << "Name:CustomLabel:James")
+        << (QStringList()
+            << "Name:CustomLabel:James"
+            << "EmailAddress:EmailAddress:james@hesketh.com");
+
+    QTest::newRow("update e-mail detail")
         << (QStringList()
             << "Name:CustomLabel:James"
             << "EmailAddress:EmailAddress:james@march.com")
@@ -485,26 +507,55 @@ void tst_QContactManagerSymbianSim::updateContactDetail_data()
             << "Name:CustomLabel:James"
             << "EmailAddress:EmailAddress:james@hesketh.com");
 
-    QTest::newRow("update nickname")
+    QTest::newRow("remove e-mail detail")
+        << (QStringList()
+            << "Name:CustomLabel:James"
+            << "EmailAddress:EmailAddress:james@march.com")
+        << (QStringList()
+            << "Name:CustomLabel:James");
+
+    QTest::newRow("add nickname detail")
+        << (QStringList()
+            << "Name:CustomLabel:James")
+        << (QStringList()
+            << "Name:CustomLabel:James"
+            << "Nickname:Nickname:Hunt the Shunt");
+
+    QTest::newRow("update nickname detail")
         << (QStringList()
             << "Name:CustomLabel:James"
             << "Nickname:Nickname:James")
         << (QStringList()
             << "Name:CustomLabel:James"
             << "Nickname:Nickname:Hunt the Shunt");
+
+    QTest::newRow("remove nickname detail")
+        << (QStringList()
+            << "Name:CustomLabel:James"
+            << "Nickname:Nickname:James")
+        << (QStringList()
+            << "Name:CustomLabel:James");
 }
 
+/*
+ * Tests if SIM contacts can be changed. I.e. add, update and remove contact
+ * details. Steps:
+ * 1. Parse details from test data
+ * 2. Add a contact with initial details
+ * 3. Modify the contact (save with updated details)
+ * 4. Remove the contact
+ */
 void tst_QContactManagerSymbianSim::updateContactDetail()
 {
     QString tescaseName = QTest::currentDataTag();
 
-    QFETCH(QStringList, details1);
-    QFETCH(QStringList, details2);
+    QFETCH(QStringList, initialDetails);
+    QFETCH(QStringList, updatedDetails);
 
     // 1. Parse details
     QContact contact;
     QList<QContactDetail> parsedDetails;
-    parseDetails(contact, details1, parsedDetails);
+    parseDetails(contact, initialDetails, parsedDetails);
 
     // 2. Save contact and verify result
     if (!isContactSupported(contact)) {
@@ -519,7 +570,7 @@ void tst_QContactManagerSymbianSim::updateContactDetail()
         QContactDetail savedDetail = contact.detail(detail.definitionName());
         QVERIFY(contact.removeDetail(&savedDetail));
     }
-    parseDetails(contact, details2, parsedDetails);
+    parseDetails(contact, updatedDetails, parsedDetails);
     if (!isContactSupported(contact)) {
         QVERIFY(m_cm->removeContact(contact.localId()));
         QSKIP("The contact cannot be saved onto the SIM card", SkipSingle);
