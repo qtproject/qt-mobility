@@ -79,6 +79,7 @@ public:
     QByteArray type;
 
     // policy
+    qrangelist availableDataRates;
     int updateInterval;
 
     QSensorBackend *backend;

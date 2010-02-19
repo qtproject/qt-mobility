@@ -64,9 +64,13 @@ public:
     QSensorBackend *createBackend(QSensor *sensor)
     {
         if (sensor->identifier() == n900accelerometer::id) {
+#ifdef BUILD_ALL_PLUGINS
+            return new n900accelerometer(sensor);
+#else
             if (QFile::exists(QLatin1String(n900accelerometer::filename)))
                 return new n900accelerometer(sensor);
             qDebug() << "can't make" << sensor->identifier() << "because" << n900accelerometer::filename << "doesn't exist";
+#endif
         }
 
         if (sensor->identifier() == n900lightsensor::id) {

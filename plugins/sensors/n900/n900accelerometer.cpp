@@ -42,6 +42,9 @@
 #include "n900accelerometer.h"
 #include <QDebug>
 #include <time.h>
+#ifdef BUILD_ALL_PLUGINS
+#include <QFile>
+#endif
 
 const char *n900accelerometer::id("n900.accelerometer");
 const char *n900accelerometer::filename("/sys/class/i2c-adapter/i2c-3/3-001d/coord");
@@ -50,10 +53,15 @@ n900accelerometer::n900accelerometer(QSensor *sensor)
     : n900filebasedsensor(sensor)
 {
     setReading<QAccelerometerReading>(&m_reading);
+    setDataRates(qrangelist() << qrange(100,100) << qrange(400,400));
 }
 
 void n900accelerometer::poll()
 {
+#ifdef BUILD_ALL_PLUGINS
+    if (!QFile::exists(QLatin1String(n900accelerometer::filename)))
+        return;
+#endif
     // Note that this is a rather inefficient way to generate this data.
     // Ideally the kernel would scale the hardware's values to m/s^2 for us
     // and give us a timestamp along with that data.

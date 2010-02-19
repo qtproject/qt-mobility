@@ -58,6 +58,8 @@ public:
     virtual void stop() = 0;
     virtual void poll() = 0;
 
+    void setDataRates(const qrangelist &availableDataRates);
+
     template <typename T>
     T *setReading(T *reading)
     {

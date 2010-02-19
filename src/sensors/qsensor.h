@@ -47,6 +47,7 @@
 #include <QByteArray>
 #include <QMetaType>
 #include <QVariant>
+#include <QPair>
 
 QTM_BEGIN_NAMESPACE
 
@@ -70,6 +71,9 @@ private:
 };
 #endif
 
+typedef QPair<int,int> qrange;
+typedef QList<qrange> qrangelist;
+
 class Q_SENSORS_EXPORT QSensor : public QObject
 {
     friend class QSensorBackend;
@@ -78,6 +82,7 @@ class Q_SENSORS_EXPORT QSensor : public QObject
     Q_PROPERTY(QByteArray sensorid READ identifier WRITE setIdentifier)
     Q_PROPERTY(QByteArray type READ type WRITE setType)
     Q_PROPERTY(bool connected READ isConnected)
+    Q_PROPERTY(QtMobility::qrangelist availableDataRates READ availableDataRates)
     Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval)
     Q_PROPERTY(QSensorReading* reading READ reading NOTIFY readingChanged)
     Q_PROPERTY(bool running READ isActive WRITE setActive)
@@ -100,6 +105,7 @@ public:
     bool isSignalEnabled() const;
     void setSignalEnabled(bool enabled);
 
+    qrangelist availableDataRates() const;
     int updateInterval() const;
     void setUpdateInterval(int interval);
 
@@ -227,6 +233,8 @@ private:
 QTM_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QtMobility::qtimestamp)
+Q_DECLARE_METATYPE(QtMobility::qrange)
+Q_DECLARE_METATYPE(QtMobility::qrangelist)
 
 #endif
 

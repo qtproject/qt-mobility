@@ -63,6 +63,8 @@ QTM_BEGIN_NAMESPACE
 
 // A bit of a hack to call qRegisterMetaType when the library is loaded.
 static int qtimestamp_id = qRegisterMetaType<QtMobility::qtimestamp>("QtMobility::qtimestamp");
+static int qrange_id = qRegisterMetaType<QtMobility::qrange>("QtMobility::qrange");
+static int qlist_qrange_id = qRegisterMetaType<QtMobility::qrangelist>("QtMobility::qrangelist");
 
 // =====================================================================
 
@@ -234,8 +236,34 @@ void QSensor::setSignalEnabled(bool enabled)
 }
 
 /*!
+    \property QSensor::availableDataRates
+    \brief the data rates that the sensor supports.
+
+    This is a list of the data rates that the sensor supports.
+    Entries in the list can represent discrete rates or a
+    continuous range of rates.
+    A discrete rate is noted by having both values the same.
+
+    See the sensor_explorer example for an example of how to interpret and use
+    this information.
+
+    \sa updateInterval
+*/
+
+qrangelist QSensor::availableDataRates() const
+{
+    return d->availableDataRates;
+}
+
+/*!
     \property QSensor::updateInterval
-    \brief the update interval of the sensor.
+    \brief the update interval of the sensor (measured in milliseconds).
+
+    Note that some sensors can only operate at particular rates.
+    The system will attempt to run the sensor at an appropriate rate
+    while delivering updates as often as requested.
+
+    \sa availableDataRates
 */
 
 int QSensor::updateInterval() const

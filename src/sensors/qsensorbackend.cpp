@@ -130,6 +130,12 @@ QSensorReading *QSensorBackend::reading() const
 }
 
 /*!
+    \fn QSensorBackend::sensor() const
+
+    Returns the sensor attached to this backend.
+*/
+
+/*!
     \fn QSensorBackend::setReading(T *reading)
 
     This function is called to initialize the \a reading
@@ -205,10 +211,16 @@ void QSensorBackend::setReadings(QSensorReading *device, QSensorReading *filter,
 }
 
 /*!
-    \fn QSensorBackend::sensor() const
+    Inform the sensor of the supported data rates that the sensor supports (\a availableDataRates).
 
-    Returns the sensor attached to this backend.
+    Note that this function should be called from the constructor so that the information
+    is available immediately.
 */
+void QSensorBackend::setDataRates(const qrangelist &availableDataRates)
+{
+    QSensorPrivate *d = m_sensor->d_func();
+    d->availableDataRates = availableDataRates;
+}
 
 #include "moc_qsensorbackend.cpp"
 QTM_END_NAMESPACE
