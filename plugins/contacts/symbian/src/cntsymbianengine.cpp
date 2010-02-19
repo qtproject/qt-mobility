@@ -249,17 +249,20 @@ QContact CntSymbianEngine::contact(const QContactLocalId& contactId, const QStri
     QContact* contact = new QContact();
     TRAPD(err, *contact = fetchContactL(contactId, definitionRestrictions));
     CntSymbianTransformError::transformError(err, error);
-    //check relationship only if there are no definition restrictions, otherwise
-    //skip this time expensive operation. 
-    if(error == QContactManager::NoError && definitionRestrictions.isEmpty()) {
+
+    if(error == QContactManager::NoError) { 
         updateDisplayLabel(*contact);
-        QContactManager::Error relationshipError;
-        QList<QContactRelationship> relationships = this->relationships(QString(), contact->id(), QContactRelationshipFilter::Either, relationshipError);
-        if (relationshipError != QContactManager::NoError &&
-            relationshipError != QContactManager::DoesNotExistError) { // means that no relationships found
-            error = relationshipError;
+        //check relationship only if there are no definition restrictions, otherwise
+        //skip this time expensive operation.       
+        if( definitionRestrictions.isEmpty()) {
+            QContactManager::Error relationshipError;
+            QList<QContactRelationship> relationships = this->relationships(QString(), contact->id(), QContactRelationshipFilter::Either, relationshipError);
+            if (relationshipError != QContactManager::NoError &&
+                relationshipError != QContactManager::DoesNotExistError) { // means that no relationships found
+                error = relationshipError;
+            }
+            QContactManagerEngine::setContactRelationships(contact, relationships);
         }
-        QContactManagerEngine::setContactRelationships(contact, relationships);
     }
     return *QScopedPointer<QContact>(contact);
 }
