@@ -56,7 +56,6 @@
 
 QGalleryResource::QGalleryResource()
 {
-
 }
 
 /*!
@@ -64,8 +63,9 @@ QGalleryResource::QGalleryResource()
 */
 
 QGalleryResource::QGalleryResource(const QUrl &url, QMap<int, QVariant> attributes)
+    : m_url(url)
+    , m_attributes(attributes)
 {
-
 }
 
 /*!
@@ -73,8 +73,9 @@ QGalleryResource::QGalleryResource(const QUrl &url, QMap<int, QVariant> attribut
 */
 
 QGalleryResource::QGalleryResource(const QGalleryResource &resource)
+    : m_url(resource.m_url)
+    , m_attributes(resource.m_attributes)
 {
-
 }
 
 /*!
@@ -83,7 +84,6 @@ QGalleryResource::QGalleryResource(const QGalleryResource &resource)
 
 QGalleryResource::~QGalleryResource()
 {
-
 }
 
 /*!
@@ -92,7 +92,8 @@ QGalleryResource::~QGalleryResource()
 
 QGalleryResource &QGalleryResource::operator =(const QGalleryResource &resource)
 {
-
+    m_url = resource.m_url;
+    m_attributes = resource.m_attributes;
 }
 
 /*!
@@ -103,7 +104,7 @@ QGalleryResource &QGalleryResource::operator =(const QGalleryResource &resource)
 
 bool QGalleryResource::operator ==(const QGalleryResource &resource) const
 {
-
+    return m_url == resource.m_url && m_attributes == resource.m_attributes;
 }
 
 /*!
@@ -114,7 +115,7 @@ bool QGalleryResource::operator ==(const QGalleryResource &resource) const
 
 bool QGalleryResource::operator !=(const QGalleryResource &resource) const
 {
-
+    return m_url != resource.m_url || m_attributes != resource.m_attributes;
 }
 
 /*!
@@ -123,7 +124,7 @@ bool QGalleryResource::operator !=(const QGalleryResource &resource) const
 
 QUrl QGalleryResource::url() const
 {
-
+    return m_url;
 }
 
 /*!
@@ -132,7 +133,7 @@ QUrl QGalleryResource::url() const
 
 QMap<int, QVariant> QGalleryResource::attributes() const
 {
-
+    return m_attributes;
 }
 
 /*!
@@ -141,7 +142,7 @@ QMap<int, QVariant> QGalleryResource::attributes() const
 
 QVariant QGalleryResource::attribute(int key) const
 {
-
+    return m_attributes.value(key);
 }
 
 /*!
@@ -170,6 +171,7 @@ QVariant QGalleryResource::attribute(int key) const
     The \a parent is passed to QObject.
 */
 QGalleryDocumentList::QGalleryDocumentList(QObject *parent)
+    : QObject(parent)
 {
 }
 

@@ -44,14 +44,14 @@
 
 #include <QtCore/qmap.h>
 #include <QtCore/qobject.h>
-
-class QUrl;
+#include <QtCore/qurl.h>
+#include <QtCore/qvariant.h>
 
 class QGalleryResource
 {
 public:
     QGalleryResource();
-    QGalleryResource(const QUrl &url, QMap<int, QVariant> attributes = QMap<int, QVariant>());
+    QGalleryResource(const QUrl &url, QMap<int, QVariant> attributes);
     QGalleryResource(const QGalleryResource &resource);
     ~QGalleryResource();
 
@@ -64,6 +64,10 @@ public:
     QMap<int, QVariant> attributes() const;
 
     QVariant attribute(int key) const;
+
+private:
+    QUrl m_url;
+    QMap<int, QVariant> m_attributes;
 };
 
 class QGalleryDocumentList : public QObject
