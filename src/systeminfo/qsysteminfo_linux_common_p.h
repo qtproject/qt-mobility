@@ -137,6 +137,9 @@ public:
 
     virtual QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
 
+public Q_SLOTS:
+    void getPrimaryMode();
+
 Q_SIGNALS:
    void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
    void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int);
@@ -152,8 +155,6 @@ protected:
     bool isDefaultInterface(const QString &device);
     QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
 #endif
-private Q_SLOTS:
-    void getPrimaryMode();
 
 };
 
