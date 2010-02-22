@@ -138,6 +138,8 @@ const VersitContactDetailMapping versitContactDetailMappings[] = {
                       QContactGender::FieldGender.str},
     {"X-IMPP",        QContactOnlineAccount::DefinitionName.str,
                       QContactOnlineAccount::SubTypeImpp.str},
+    {"X-JABBER",      QContactOnlineAccount::DefinitionName.str,
+                      QContactOnlineAccount::SubTypeImpp.str},
     {"X-NICKNAME",    QContactNickname::DefinitionName.str,
                       QContactNickname::FieldNickname.str},
     {"X-SIP",         QContactOnlineAccount::DefinitionName.str,

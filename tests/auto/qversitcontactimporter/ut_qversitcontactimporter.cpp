@@ -1173,6 +1173,23 @@ void UT_QVersitContactImporter::testOnlineAccount()
     subTypes = onlineAccount.subTypes();
     QCOMPARE(subTypes.count(),1);
     QVERIFY(subTypes.first() == QContactOnlineAccount::SubTypeImpp);
+
+    // X-JABBER
+    document = QVersitDocument();
+    property = QVersitProperty();
+    property.setName(QString::fromAscii("X-JABBER"));
+    property.setValue(accountUri);
+    document.addProperty(property);
+    documentList.clear();
+    documentList.append(document);
+    contact = mImporter->importContacts(documentList).first();
+    onlineAccount =
+         static_cast<QContactOnlineAccount>(
+             contact.detail(QContactOnlineAccount::DefinitionName));
+    QCOMPARE(onlineAccount.accountUri(),accountUri);
+    subTypes = onlineAccount.subTypes();
+    QCOMPARE(subTypes.count(),1);
+    QVERIFY(subTypes.first() == QContactOnlineAccount::SubTypeImpp);
 }
 
 void UT_QVersitContactImporter::testFamily()

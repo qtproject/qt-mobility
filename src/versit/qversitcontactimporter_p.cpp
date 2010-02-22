@@ -404,7 +404,8 @@ bool QVersitContactImporterPrivate::createOnlineAccount(
         onlineAccount.setSubTypes(subTypes);
     }
     else if (property.name() == QLatin1String("X-IMPP") ||
-             property.name() == QLatin1String("IMPP")) {
+             property.name() == QLatin1String("IMPP") ||
+             property.name() == QLatin1String("X-JABBER")) {
         onlineAccount.setSubTypes(QContactOnlineAccount::SubTypeImpp);
     }
     else {
