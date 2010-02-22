@@ -976,22 +976,22 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     d.setUnique(false);
     retn.insert(d.name(), d);
 
-    // geolocation
-    d.setName(QContactGeolocation::DefinitionName);
+    // GeoLocation
+    d.setName(QContactGeoLocation::DefinitionName);
     fields.clear();
     f.setDataType(QVariant::String);
     f.setAllowableValues(QVariantList());
-    fields.insert(QContactGeolocation::FieldLabel, f);
+    fields.insert(QContactGeoLocation::FieldLabel, f);
     f.setDataType(QVariant::Double);
-    fields.insert(QContactGeolocation::FieldLatitude, f);
-    fields.insert(QContactGeolocation::FieldLongitude, f);
-    fields.insert(QContactGeolocation::FieldAccuracy, f);
-    fields.insert(QContactGeolocation::FieldAltitude, f);
-    fields.insert(QContactGeolocation::FieldAltitudeAccuracy, f);
-    fields.insert(QContactGeolocation::FieldSpeed, f);
-    fields.insert(QContactGeolocation::FieldHeading, f);
+    fields.insert(QContactGeoLocation::FieldLatitude, f);
+    fields.insert(QContactGeoLocation::FieldLongitude, f);
+    fields.insert(QContactGeoLocation::FieldAccuracy, f);
+    fields.insert(QContactGeoLocation::FieldAltitude, f);
+    fields.insert(QContactGeoLocation::FieldAltitudeAccuracy, f);
+    fields.insert(QContactGeoLocation::FieldSpeed, f);
+    fields.insert(QContactGeoLocation::FieldHeading, f);
     f.setDataType(QVariant::DateTime);
-    fields.insert(QContactGeolocation::FieldTimestamp, f);
+    fields.insert(QContactGeoLocation::FieldTimestamp, f);
     f.setDataType(QVariant::StringList);
     f.setAllowableValues(contexts);
     fields.insert(QContactDetail::FieldContext, f);

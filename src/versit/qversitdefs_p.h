@@ -94,7 +94,7 @@ const VersitContactDetailMapping versitContactDetailMappings[] = {
                       QContactBirthday::FieldBirthday.str},
     {"FN",            QContactDisplayLabel::DefinitionName.str,
                       ""},
-    {"GEO",           QContactGeolocation::DefinitionName.str,
+    {"GEO",           QContactGeoLocation::DefinitionName.str,
                       ""},
     {"EMAIL",         QContactEmailAddress::DefinitionName.str,
                       QContactEmailAddress::FieldEmailAddress.str},

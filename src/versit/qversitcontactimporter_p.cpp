@@ -143,7 +143,7 @@ QContact QVersitContactImporterPrivate::importContact(
             success = createName(property, &contact);
         } else if (detailDefinitionName == QContactBirthday::DefinitionName) {
             success = createBirthday(property, &contact);
-        } else if (detailDefinitionName == QContactGeolocation::DefinitionName){
+        } else if (detailDefinitionName == QContactGeoLocation::DefinitionName){
             success = createGeoLocation(property, &contact);
         } else if (detailDefinitionName == QContactOrganization::DefinitionName) {
             success = createOrganization(property, &contact);
@@ -431,7 +431,7 @@ bool QVersitContactImporterPrivate::createAvatar(
 }
 
 /*!
- * Creates a QContactGeolocation from \a property
+ * Creates a QContactGeoLocation from \a property
  */
 bool QVersitContactImporterPrivate::createGeoLocation(
     const QVersitProperty& property, QContact* contact) const
