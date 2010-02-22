@@ -137,8 +137,8 @@ public:
 
     virtual QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
 
-public Q_SLOTS:
-    void getPrimaryMode();
+//public Q_SLOTS:
+//    void getPrimaryMode();
 
 Q_SIGNALS:
    void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);

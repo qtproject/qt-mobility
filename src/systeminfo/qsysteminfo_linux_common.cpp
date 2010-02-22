@@ -396,58 +396,58 @@ bool QSystemInfoLinuxCommonPrivate::hasSysFeature(const QString &featureStr)
 
 QSystemNetworkInfoLinuxCommonPrivate::QSystemNetworkInfoLinuxCommonPrivate(QObject *parent) : QObject(parent)
 {
-    QTimer::singleShot(200, this,SLOT(getPrimaryMode()));
+   // QTimer::singleShot(200, this,SLOT(getPrimaryMode()));
 }
 
 QSystemNetworkInfoLinuxCommonPrivate::~QSystemNetworkInfoLinuxCommonPrivate()
 {
 }
 
-void QSystemNetworkInfoLinuxCommonPrivate::getPrimaryMode()
-{
-    // try to see if there are any default route
-//    bool anyDefaultRoute = false;
-
-    QFileInfo fi("/proc/net/route");
-    if(fi.exists()) {
-        QFile rx(fi.absoluteFilePath());
-        if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            QString result;
-            QTextStream out(&rx);
-            do {
-                result = out.readLine().simplified();
-                if(!result.isEmpty()) {
-                    QStringList tokens = result.split(" ");
-
-                    if(tokens.at(2).toLocal8Bit() != "Gateway"
-                       && tokens.at(2).toLocal8Bit() != "00000000") {
-
-                        qWarning() <<"found default!" << tokens.at(0);
-           //             emit networkModeChanged(tokens.at(0)));
-                    }
-                }
-            } while (!result.isNull());
-        }
-    }
-    //    QMapIterator<QString, QString> i(activePaths);
-//    QString devicepath;
-//    while (i.hasNext()) {
-//        i.next();
-//        QScopedPointer<QNetworkManagerConnectionActive> activeCon;
-//        activeCon.reset(new QNetworkManagerConnectionActive(i.key()));
+//void QSystemNetworkInfoLinuxCommonPrivate::getPrimaryMode()
+//{
+//    // try to see if there are any default route
+////    bool anyDefaultRoute = false;
 //
-//        if(activeCon->defaultRoute()) {
-//            anyDefaultRoute = activeCon->defaultRoute();
-//            QNetworkManagerInterfaceDevice *devIface = new QNetworkManagerInterfaceDevice(i.value());
-//            emit networkModeChanged(deviceTypeToMode(devIface->deviceType()));
+//    QFileInfo fi("/proc/net/route");
+//    if(fi.exists()) {
+//        QFile rx(fi.absoluteFilePath());
+//        if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
+//            QString result;
+//            QTextStream out(&rx);
+//            do {
+//                result = out.readLine().simplified();
+//                if(!result.isEmpty()) {
+//                    QStringList tokens = result.split(" ");
+//
+//                    if(tokens.at(2).toLocal8Bit() != "Gateway"
+//                       && tokens.at(2).toLocal8Bit() != "00000000") {
+//
+//                        qWarning() <<"found default!" << tokens.at(0);
+//           //             emit networkModeChanged(tokens.at(0)));
+//                    }
+//                }
+//            } while (!result.isNull());
 //        }
-//        devicepath = i.value();
 //    }
-//
-//    if(!anyDefaultRoute) {
-//        emit networkModeChanged(QSystemNetworkInfo::UnknownMode);
-//    }
-}
+//    //    QMapIterator<QString, QString> i(activePaths);
+////    QString devicepath;
+////    while (i.hasNext()) {
+////        i.next();
+////        QScopedPointer<QNetworkManagerConnectionActive> activeCon;
+////        activeCon.reset(new QNetworkManagerConnectionActive(i.key()));
+////
+////        if(activeCon->defaultRoute()) {
+////            anyDefaultRoute = activeCon->defaultRoute();
+////            QNetworkManagerInterfaceDevice *devIface = new QNetworkManagerInterfaceDevice(i.value());
+////            emit networkModeChanged(deviceTypeToMode(devIface->deviceType()));
+////        }
+////        devicepath = i.value();
+////    }
+////
+////    if(!anyDefaultRoute) {
+////        emit networkModeChanged(QSystemNetworkInfo::UnknownMode);
+////    }
+//}
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
