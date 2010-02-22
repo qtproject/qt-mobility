@@ -47,6 +47,7 @@
 
 class QGalleryAbstractRequestPrivate
 {
+    Q_DECLARE_PUBLIC(QGalleryAbstractRequest)
 public:
     QGalleryAbstractRequestPrivate(QAbstractGallery *gallery, QGalleryAbstractRequest::Type type)
         : gallery(gallery)
@@ -62,12 +63,62 @@ public:
         delete response;
     }
 
+    void _q_finished();
+    void _q_galleryDestroyed();
+
+    QGalleryAbstractRequest *q_ptr;
     QAbstractGallery *gallery;
     QGalleryAbstractResponse *response;
     QGalleryAbstractRequest::Type type;
     QGalleryAbstractRequest::State state;
     int result;
 };
+
+void QGalleryAbstractRequestPrivate::_q_finished()
+{
+    Q_Q(QGalleryAbstractRequest);
+
+    if (result == QGalleryAbstractRequest::NoResult) {
+        result = response->result();
+
+        if (result == QGalleryAbstractRequest::NoResult)
+            return;
+
+        state = response->isIdle()
+                ? QGalleryAbstractRequest::Idle
+                : QGalleryAbstractRequest::Inactive;
+
+        switch (result) {
+        case QGalleryAbstractRequest::Succeeded:
+            emit q->succeeded();
+            break;
+        case QGalleryAbstractRequest::Cancelled:
+            emit q->cancelled();
+            break;
+        default:
+            emit q->failed(result);
+            break;
+        }
+        emit q->finished(result);
+        emit q->resultChanged();
+        emit q->stateChanged(state);
+    } else if (state == QGalleryAbstractRequest::Idle && !response->isIdle()) {
+        state = QGalleryAbstractRequest::Inactive;
+
+        emit q->stateChanged(state);
+    }
+}
+
+void QGalleryAbstractRequestPrivate::_q_galleryDestroyed()
+{
+    Q_Q(QGalleryAbstractRequest);
+
+    gallery = 0;
+
+    q->clear();
+
+    emit q->supportedChanged();
+}
 
 /*!
     \class QGalleryAbstractRequest
@@ -128,6 +179,7 @@ QGalleryAbstractRequest::QGalleryAbstractRequest(Type type, QObject *parent)
     : QObject(parent)
     , d_ptr(new QGalleryAbstractRequestPrivate(0, type))
 {
+    d_ptr->q_ptr = this;
 }
 
 /*!
@@ -141,7 +193,7 @@ QGalleryAbstractRequest::QGalleryAbstractRequest(
     : QObject(parent)
     , d_ptr(new QGalleryAbstractRequestPrivate(gallery, type))
 {
-
+    d_ptr->q_ptr = this;
 }
 
 /*!
@@ -153,6 +205,7 @@ QGalleryAbstractRequest::QGalleryAbstractRequest(
     : QObject(parent)
     , d_ptr(&(dd))
 {
+    d_ptr->q_ptr = this;
 }
 
 /*!
@@ -177,9 +230,19 @@ QAbstractGallery *QGalleryAbstractRequest::gallery() const
 
 void QGalleryAbstractRequest::setGallery(QAbstractGallery *gallery)
 {
-    d_ptr->gallery = gallery;
+    if (d_ptr->gallery != gallery) {
+        if (d_ptr->gallery)
+            disconnect(d_ptr->gallery, SIGNAL(destroyed()), this, SLOT(_q_galleryDestroyed()));
 
-    clear();
+        d_ptr->gallery = gallery;
+
+        if (d_ptr->gallery)
+            connect(d_ptr->gallery, SIGNAL(destroyed()), this, SLOT(_q_galleryDestroyed()));
+
+        clear();
+
+        emit supportedChanged();
+    }
 }
 
 /*!
@@ -252,7 +315,7 @@ int QGalleryAbstractRequest::result() const
 */
 bool QGalleryAbstractRequest::waitForFinished(int msecs)
 {
-    return d_ptr->response
+    return d_ptr->response && d_ptr->state == Active
             ? d_ptr->response->waitForFinished(msecs)
             : true;
 }
@@ -269,12 +332,13 @@ void QGalleryAbstractRequest::execute()
     if (!d_ptr->gallery) {
         d_ptr->result = NoGallery;
 
+        emit failed(d_ptr->result);
+        emit finished(d_ptr->result);
         emit resultChanged();
     } else {
         QGalleryAbstractResponse *oldResponse = d_ptr->response;
-
-        bool wasUnfinished = d_ptr->result == NoResult;
-        bool wasInactive = d_ptr->state == Inactive;
+        int oldResult = d_ptr->result;
+        State oldState = d_ptr->state;
 
         d_ptr->response = d_ptr->gallery->createResponse(this);
 
@@ -288,22 +352,37 @@ void QGalleryAbstractRequest::execute()
             else
                 d_ptr->state = Inactive;
 
-            // Connections.
+            connect(d_ptr->response, SIGNAL(finished()), this, SLOT(_q_finished()));
 
             setResponse(d_ptr->response);
-        } else if (oldResponse) {
+        } else {
             d_ptr->result = NotSupported;
-            d_ptr->result = Inactive;
+            d_ptr->state = Inactive;
 
-            setResponse(0);
+            if (oldResponse)
+                setResponse(0);
         }
 
         delete oldResponse;
 
-        if (wasUnfinished && d_ptr->result != NoResult)
+        switch (d_ptr->result) {
+        case QGalleryAbstractRequest::NoResult:
+        case QGalleryAbstractRequest::Cancelled:
+            break;
+        case QGalleryAbstractRequest::Succeeded:
+            emit succeeded();
+            emit finished(d_ptr->result);
+            break;
+        default:
+            emit failed(d_ptr->result);
+            emit finished(d_ptr->result);
+            break;
+        }
+
+        if (d_ptr->result != oldResult)
             emit resultChanged();
 
-        if (wasInactive && d_ptr->state != Inactive)
+        if (d_ptr->state != oldState)
             emit stateChanged(d_ptr->state);
     }
 }
@@ -348,6 +427,7 @@ void QGalleryAbstractRequest::clear()
 
         QGalleryAbstractResponse *oldResponse = d_ptr->response;
 
+        d_ptr->response = 0;
         d_ptr->result = NoResult;
         d_ptr->state = Inactive;
 
@@ -512,11 +592,11 @@ void QGalleryAbstractResponse::cancel()
         d_ptr->result = QGalleryAbstractRequest::Cancelled;
         d_ptr->idle = false;
 
-        emit finished(d_ptr->result, d_ptr->idle);
+        emit finished();
     } else if (d_ptr->idle) {
         d_ptr->idle = false;
 
-        emit finished(d_ptr->result, d_ptr->idle);
+        emit finished();
     }
 }
 
@@ -529,11 +609,12 @@ void QGalleryAbstractResponse::cancel()
 
 void QGalleryAbstractResponse::finish(int result, bool idle)
 {
-    if (d_ptr->result != result || d_ptr->idle != idle) {
+    if (d_ptr->result == QGalleryAbstractRequest::NoResult
+            && result != QGalleryAbstractRequest::NoResult) {
         d_ptr->result = result;
         d_ptr->idle = idle;
 
-        emit finished(d_ptr->result, d_ptr->idle);
+        emit finished();
     }
 }
 
@@ -548,6 +629,7 @@ void QGalleryAbstractResponse::finish(int result, bool idle)
 
 class QGalleryDocumentRequestPrivate : public QGalleryAbstractRequestPrivate
 {
+    Q_DECLARE_PUBLIC(QGalleryDocumentRequest)
 public:
     QGalleryDocumentRequestPrivate(QAbstractGallery *gallery)
         : QGalleryAbstractRequestPrivate(gallery, QGalleryAbstractRequest::Document)
@@ -558,6 +640,8 @@ public:
     {
     }
 
+    void _q_documentCountChanged();
+
     int startIndex;
     int maximumCount;
     int totalCount;
@@ -567,6 +651,17 @@ public:
     QString documentType;
     QGalleryFilter filter;
 };
+
+void QGalleryDocumentRequestPrivate::_q_documentCountChanged()
+{
+    const int count = response->documentCount();
+
+    if (totalCount != count) {
+        totalCount = count;
+
+        emit q_func()->totalDocumentCountChanged();
+    }
+}
 
 /*!
     \class QGalleryDocumentRequest
@@ -1679,3 +1774,5 @@ void QGalleryMoveRequest::setResponse(QGalleryAbstractResponse *response)
 
     emit documentsChanged();
 }
+
+#include "moc_qgalleryrequest.cpp"

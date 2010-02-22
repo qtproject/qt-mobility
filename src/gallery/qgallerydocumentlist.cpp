@@ -94,6 +94,8 @@ QGalleryResource &QGalleryResource::operator =(const QGalleryResource &resource)
 {
     m_url = resource.m_url;
     m_attributes = resource.m_attributes;
+
+    return *this;
 }
 
 /*!

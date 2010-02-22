@@ -42,12 +42,12 @@
 #ifndef QGALLERY_H
 #define QGALLERY_H
 
-#include "qgalleryrequest.h"
+#include <qgalleryrequest.h>
 
 class QGalleryAbstractResponse;
 class QGalleryAbstractRequest;
 
-class QAbstractGallery : public QObject
+class Q_GALLERY_EXPORT QAbstractGallery : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString rootDocumentId READ rootDocumentId NOTIFY rootDocumentIdChanged);
@@ -70,7 +70,7 @@ protected:
     friend class QGalleryAbstractRequest;
 };
 
-class QDocumentGallery : public QAbstractGallery
+class Q_GALLERY_EXPORT QDocumentGallery : public QAbstractGallery
 {
     QDocumentGallery(QObject *parent = 0);
     ~QDocumentGallery();

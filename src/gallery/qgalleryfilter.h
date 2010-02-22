@@ -42,6 +42,8 @@
 #ifndef QGALLERYFILTER_H
 #define QGALLERYFILTER_H
 
+#include <qmobilityglobal.h>
+
 #include <QtCore/qset.h>
 #include <QtCore/qshareddata.h>
 #include <QtCore/qvariant.h>
@@ -58,7 +60,7 @@ class QGalleryUnionFilter;
 
 class QGalleryFilterPrivate;
 
-class QGalleryFilter
+class Q_GALLERY_EXPORT QGalleryFilter
 {
 public:
     enum Type
@@ -125,7 +127,7 @@ bool operator !=(const QGalleryFilter &filter1, const QGalleryFilter &filter2);
 
 class QGalleryDocumentFilterPrivate;
 
-class QGalleryDocumentFilter
+class Q_GALLERY_EXPORT QGalleryDocumentFilter
 {
 public:
     QGalleryDocumentFilter();
@@ -152,7 +154,7 @@ private:
 
 class QGalleryDocumentUrlFilterPrivate;
 
-class QGalleryDocumentUrlFilter
+class Q_GALLERY_EXPORT QGalleryDocumentUrlFilter
 {
 public:
     QGalleryDocumentUrlFilter();
@@ -179,7 +181,7 @@ private:
 
 class QGalleryContainerFilterPrivate;
 
-class QGalleryContainerFilter
+class Q_GALLERY_EXPORT QGalleryContainerFilter
 {
 public:
     QGalleryContainerFilter();
@@ -202,7 +204,7 @@ private:
 
 class QGalleryContainerUrlFilterPrivate;
 
-class QGalleryContainerUrlFilter
+class Q_GALLERY_EXPORT QGalleryContainerUrlFilter
 {
 public:
     QGalleryContainerUrlFilter();
@@ -225,7 +227,7 @@ private:
 
 class QGalleryIntersectionFilterPrivate;
 
-class QGalleryIntersectionFilter
+class Q_GALLERY_EXPORT QGalleryIntersectionFilter
 {
 public:
     QGalleryIntersectionFilter();
@@ -266,7 +268,7 @@ private:
 
 class QGalleryUnionFilterPrivate;
 
-class QGalleryUnionFilter
+class Q_GALLERY_EXPORT QGalleryUnionFilter
 {
 public:
     QGalleryUnionFilter();
@@ -304,7 +306,7 @@ private:
 
 class QGalleryMetaDataFilterPrivate;
 
-class QGalleryMetaDataFilter
+class Q_GALLERY_EXPORT QGalleryMetaDataFilter
 {
 public:
     QGalleryMetaDataFilter();
@@ -336,7 +338,7 @@ private:
 
 class QGalleryMetaDataRangeFilterPrivate;
 
-class QGalleryMetaDataRangeFilter
+class Q_GALLERY_EXPORT QGalleryMetaDataRangeFilter
 {
 public:
     QGalleryMetaDataRangeFilter();

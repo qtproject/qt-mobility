@@ -55,9 +55,10 @@ class QUrl;
 
 class QGalleryAbstractRequestPrivate;
 
-class QGalleryAbstractRequest : public QObject
+class Q_GALLERY_EXPORT QGalleryAbstractRequest : public QObject
 {
     Q_OBJECT
+    Q_DECLARE_PRIVATE(QGalleryAbstractRequest)
     Q_PROPERTY(QAbstractGallery* gallery READ gallery WRITE setGallery)
     Q_PROPERTY(bool supported READ isSupported NOTIFY supportedChanged)
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
@@ -128,11 +129,15 @@ protected:
     explicit QGalleryAbstractRequest(QGalleryAbstractRequestPrivate &dd, QObject *parent);
 
     QGalleryAbstractRequestPrivate *d_ptr;
+
+private:
+    Q_PRIVATE_SLOT(d_ptr, void _q_finished())
+    Q_PRIVATE_SLOT(d_ptr, void _q_galleryDestroyed())
 };
 
 class QGalleryAbstractResponsePrivate;
 
-class QGalleryAbstractResponse : public QGalleryDocumentList
+class Q_GALLERY_EXPORT QGalleryAbstractResponse : public QGalleryDocumentList
 {
     Q_OBJECT
 public:
@@ -149,7 +154,7 @@ public:
     virtual bool waitForFinished(int msecs) = 0;
 
 Q_SIGNALS:
-    void finished(int result, bool idle);
+    void finished();
     void documentCountChanged();
 
 protected:
@@ -161,7 +166,7 @@ protected:
 
 class QGalleryDocumentRequestPrivate;
 
-class QGalleryDocumentRequest : public QGalleryAbstractRequest
+class Q_GALLERY_EXPORT QGalleryDocumentRequest : public QGalleryAbstractRequest
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QGalleryDocumentRequest)
@@ -245,11 +250,14 @@ Q_SIGNALS:
 
 protected:
     void setResponse(QGalleryAbstractResponse *response);
+
+private:
+    Q_PRIVATE_SLOT(d_func(), void _q_documentCountChanged())
 };
 
 class QGalleryInsertRequestPrivate;
 
-class QGalleryInsertRequest : public QGalleryAbstractRequest
+class Q_GALLERY_EXPORT QGalleryInsertRequest : public QGalleryAbstractRequest
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QGalleryInsertRequest)
@@ -287,7 +295,7 @@ protected:
 
 class QGalleryRemoveRequestPrivate;
 
-class QGalleryRemoveRequest : public QGalleryAbstractRequest
+class Q_GALLERY_EXPORT QGalleryRemoveRequest : public QGalleryAbstractRequest
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QGalleryRemoveRequest)
@@ -313,7 +321,7 @@ protected:
 
 class QGalleryCopyRequestPrivate;
 
-class QGalleryCopyRequest : public QGalleryAbstractRequest
+class Q_GALLERY_EXPORT QGalleryCopyRequest : public QGalleryAbstractRequest
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QGalleryCopyRequest)
@@ -355,7 +363,7 @@ protected:
 
 class QGalleryMoveRequestPrivate;
 
-class QGalleryMoveRequest : public QGalleryAbstractRequest
+class Q_GALLERY_EXPORT QGalleryMoveRequest : public QGalleryAbstractRequest
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QGalleryMoveRequest)

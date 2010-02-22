@@ -91,7 +91,7 @@ usage()
     echo "-examples ......... Build example applications"
     echo "-no-docs .......... Do not build documentation (build by default)"
     echo "-modules <list> ... Restrict list of modules to build (default all supported)"
-    echo "                    Choose from: bearer contacts location publishsubscribe"
+    echo "                    Choose from: bearer contacts gallery location publishsubscribe"
     echo "                    messaging multimedia systeminfo serviceframework versit"
     echo "                    Modules should be separated by a space and surrounded"
     echo "                    by double quotation. If a"
@@ -166,7 +166,7 @@ while [ "$#" -gt 0 ]; do
             MOBILITY_MODULES=
             for m in $MOBILITY_MODULES_UNPARSED; do
                 case "$m" in
-                    bearer|contacts|location|messaging|multimedia|publishsubscribe|serviceframework|systeminfo|versit|sensors)
+                    bearer|contacts|location|messaging|multimedia|publishsubscribe|serviceframework|systeminfo|versit|sensors|gallery)
                         MOBILITY_MODULES="$MOBILITY_MODULES $m";
                         ;;
                     *)

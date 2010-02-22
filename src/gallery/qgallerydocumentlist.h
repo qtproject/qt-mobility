@@ -42,12 +42,14 @@
 #ifndef QGALLERYDOCUMENTLIST_H
 #define QGALLERYDOCUMENTLIST_H
 
+#include <qmobilityglobal.h>
+
 #include <QtCore/qmap.h>
 #include <QtCore/qobject.h>
 #include <QtCore/qurl.h>
 #include <QtCore/qvariant.h>
 
-class QGalleryResource
+class Q_GALLERY_EXPORT QGalleryResource
 {
 public:
     QGalleryResource();
@@ -70,7 +72,7 @@ private:
     QMap<int, QVariant> m_attributes;
 };
 
-class QGalleryDocumentList : public QObject
+class Q_GALLERY_EXPORT QGalleryDocumentList : public QObject
 {
     Q_OBJECT
 public:

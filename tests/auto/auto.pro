@@ -143,3 +143,10 @@ contains(mobility_modules,messaging) {
         qmessageservice
     }
 }
+
+#Document Gallery
+contains(mobility_modules,gallery) {
+    SUBDIRS += \
+        qgalleryabstractrequest \
+        qgalleryabstractresponse
+}

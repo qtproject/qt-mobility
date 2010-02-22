@@ -118,7 +118,7 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo -examples ......... Build example applications
     echo -no-docs .......... Do not build documentation (build by default)
     echo -modules ^<list^> ... Build only the specified modules (default all)
-    echo                     Choose from: bearer contacts location publishsubscribe
+    echo                     Choose from: bearer contacts gallery location publishsubscribe
     echo                     messaging multimedia systeminfo serviceframework versit
     echo                     Modules should be separated by a space and surrounded
     echo                     by double quotation. If a
