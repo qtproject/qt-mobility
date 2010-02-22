@@ -358,7 +358,7 @@ QList<QContactLocalId> QContactManager::contacts(const QContactFilter &filter, c
 }
 
 /*!
-  Return the list of added contact ids, sorted according to the given list of \a sortOrders
+  Return the list of contact ids, sorted according to the given list of \a sortOrders
  */
 QList<QContactLocalId> QContactManager::contactIds(const QList<QContactSortOrder>& sortOrders) const
 {
@@ -367,7 +367,9 @@ QList<QContactLocalId> QContactManager::contactIds(const QList<QContactSortOrder
 
 /*!
   Returns a list of contact ids that match the given \a filter, sorted according to the given list of \a sortOrders.
-  Depending on the backend, this filtering operation may involve retrieving all the contacts.
+
+  Depending on the manager implementation, this filtering operation might be slow and involve retrieving all the
+  contacts and testing them against the supplied filter - see the \l isFilterSupported() function.
  */
 QList<QContactLocalId> QContactManager::contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders) const
 {
@@ -376,9 +378,11 @@ QList<QContactLocalId> QContactManager::contactIds(const QContactFilter& filter,
 
 /*!
   Returns the list of contacts stored in the manager sorted according to the given list of \a sortOrders.
-  If the given list of detail definition names \a definitionRestrictions is empty, each contact returned will include
-  all of the details which are stored in it, otherwise only those details which are of a definition whose name is included
-  in the \a definitionRestrictions list will be included.
+
+  The \a definitionRestrictions parameter describes the details that are of
+  interest, as a performance hint.  If the list is empty, all existing details for the matching
+  contacts will be returned.  Otherwise, the returned contacts may only contain details of the
+  supplied definition names, although the manager is free to return extra details.
  */
 QList<QContact> QContactManager::contacts(const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions) const
 {
@@ -386,11 +390,15 @@ QList<QContact> QContactManager::contacts(const QList<QContactSortOrder>& sortOr
 }
 
 /*!
-  Returns a list of contacs that match the given \a filter, sorted according to the given list of \a sortOrders.
-  Depending on the backend, this filtering operation may involve retrieving all the contacts.
-  If the given list of detail definition names \a definitionRestrictions is empty, each contact returned will include
-  all of the details which are stored in it, otherwise only those details which are of a definition whose name is included
-  in the \a definitionRestrictions list will be included.
+  Returns a list of contacts that match the given \a filter, sorted according to the given list of \a sortOrders.
+
+  Depending on the manager implementation, this filtering operation might be slow and involve retrieving all the
+  contacts and testing them against the supplied filter - see the \l isFilterSupported() function.
+
+  The \a definitionRestrictions parameter describes the details that are of
+  interest, as a performance hint.  If the list is empty, all existing details for the matching
+  contacts will be returned.  Otherwise, the returned contacts may only contain details of the
+  supplied definition names, although the manager is free to return extra details.
  */
 QList<QContact> QContactManager::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions) const
 {
@@ -399,12 +407,14 @@ QList<QContact> QContactManager::contacts(const QContactFilter& filter, const QL
 
 /*!
   Returns the contact in the database identified by \a contactId.
-  If the list of detail definition names \a definitionRestrictions given is non-empty,
-  the contact returned will contain at least those details which are of a definition whose name is
-  contained in the \a definitionRestrictions list.
-  Note that the returned contact may also contain other details, but this function guarantees that
-  all details whose definition name is included in the given list of definition names \a definitionRestrictions
-  will be included in the returned contact.
+
+  If the contact does not exist, an empty, default constructed QContact will be returned,
+  and the error returned by \l error() will be \c QContactManager::DoesNotExistError.
+
+  The \a definitionRestrictions parameter describes the details that are of
+  interest, as a performance hint.  If the list is empty, all existing details for the requested
+  contact will be returned.  Otherwise, the returned contact may only contain details of the
+  supplied definition names, although the manager is free to return extra details.
  */
 QContact QContactManager::contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions) const
 {
