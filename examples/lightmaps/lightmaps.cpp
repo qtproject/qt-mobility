@@ -74,10 +74,12 @@ QTM_USE_NAMESPACE
 // Hint: see above to find why I picked this one :)
 #define MAX_MAGNIFIER 229
 
+QT_BEGIN_NAMESPACE
 uint qHash(const QPoint& p)
 {
     return p.x() * 17 ^ p.y();
 }
+QT_END_NAMESPACE
 
 // tile size in pixels
 const int tdim = 256;

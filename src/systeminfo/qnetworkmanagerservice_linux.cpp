@@ -52,57 +52,11 @@
 #include <QtDBus/QDBusPendingCall>
 
 #include "qnetworkmanagerservice_linux_p.h"
-
-//Q_DECLARE_METATYPE(QList<uint>)
+#include "qnmdbushelper_p.h"
 
 QTM_BEGIN_NAMESPACE
 
 static QDBusConnection dbusConnection = QDBusConnection::systemBus();
-//static QDBusInterface iface(NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, dbusConnection);
-void QNmDBusHelper::deviceStateChanged(quint32 state)
- {
-    QDBusMessage msg = this->message();
-    if(state == NM_DEVICE_STATE_ACTIVATED
-       || state == NM_DEVICE_STATE_DISCONNECTED
-       || state == NM_DEVICE_STATE_UNAVAILABLE
-       || state == NM_DEVICE_STATE_FAILED) {
-        emit pathForStateChanged(msg.path(), state);
-    }
- }
-
-void QNmDBusHelper::slotAccessPointAdded(QDBusObjectPath path)
-{
-    if(path.path().length() > 2) {
-        QDBusMessage msg = this->message();
-        emit pathForAccessPointAdded(msg.path(), path);
-    }
-}
-
-void QNmDBusHelper::slotAccessPointRemoved(QDBusObjectPath path)
-{
-    if(path.path().length() > 2) {
-        QDBusMessage msg = this->message();
-        emit pathForAccessPointRemoved(msg.path(), path);
-    }
-}
-
-void QNmDBusHelper::slotPropertiesChanged(QMap<QString,QVariant> map)
-{
-    QDBusMessage msg = this->message();
-    QMapIterator<QString, QVariant> i(map);
-
-    while (i.hasNext()) {
-        i.next();
-        emit  pathForPropertiesChanged( msg.path(), map);
-    }
-}
-
-void QNmDBusHelper::slotSettingsRemoved()
-{
-    QDBusMessage msg = this->message();
-    emit pathForSettingsRemoved(msg.path());
-}
-
 
 class QNetworkManagerInterfacePrivate
 {
@@ -125,7 +79,7 @@ QNetworkManagerInterface::QNetworkManagerInterface(QObject *parent)
         return;
     }
     d->valid = true;
-    nmDBusHelper = new QNmDBusHelper;
+    nmDBusHelper = new QNmDBusHelper(this);
     connect(nmDBusHelper, SIGNAL(pathForPropertiesChanged(const QString &,QMap<QString,QVariant>)),
                     this,SIGNAL(propertiesChanged( const QString &, QMap<QString,QVariant>)));
     connect(nmDBusHelper,SIGNAL(pathForStateChanged(const QString &, quint32)),
@@ -227,7 +181,6 @@ quint32 QNetworkManagerInterface::state()
     return d->connectionInterface->property("State").toUInt();
 }
 
-/////////////
 class QNetworkManagerInterfaceAccessPointPrivate
 {
 public:
@@ -256,7 +209,6 @@ QNetworkManagerInterfaceAccessPoint::QNetworkManagerInterfaceAccessPoint(const Q
 
 QNetworkManagerInterfaceAccessPoint::~QNetworkManagerInterfaceAccessPoint()
 {
-    qWarning() << __FUNCTION__;
     delete d->connectionInterface;
     delete d;
 }
@@ -272,7 +224,7 @@ bool QNetworkManagerInterfaceAccessPoint::setConnections()
         return false;
 
     bool allOk = false;
-    nmDBusHelper = new QNmDBusHelper;
+    nmDBusHelper = new QNmDBusHelper(this);
     connect(nmDBusHelper, SIGNAL(pathForPropertiesChanged(const QString &,QMap<QString,QVariant>)),
             this,SIGNAL(propertiesChanged( const QString &, QMap<QString,QVariant>)));
 
@@ -337,7 +289,6 @@ quint32 QNetworkManagerInterfaceAccessPoint::strength() const
     return d->connectionInterface->property("Strength").toUInt();
 }
 
-/////////////
 class QNetworkManagerInterfaceDevicePrivate
 {
 public:
@@ -380,7 +331,7 @@ bool QNetworkManagerInterfaceDevice::setConnections()
         return false;
 
     bool allOk = false;
-    nmDBusHelper = new QNmDBusHelper;
+    nmDBusHelper = new QNmDBusHelper(this);
     connect(nmDBusHelper,SIGNAL(pathForStateChanged(const QString &, quint32)),
             this, SIGNAL(stateChanged(const QString&, quint32)));
     if(dbusConnection.connect(QLatin1String(NM_DBUS_SERVICE),
@@ -429,7 +380,6 @@ QDBusObjectPath QNetworkManagerInterfaceDevice::ip4config() const
     return prop.value<QDBusObjectPath>();
 }
 
-/////////////
 class QNetworkManagerInterfaceDeviceWiredPrivate
 {
 public:
@@ -473,7 +423,7 @@ bool QNetworkManagerInterfaceDeviceWired::setConnections()
 
     bool allOk = false;
 
-    nmDBusHelper = new QNmDBusHelper;
+    nmDBusHelper = new QNmDBusHelper(this);
     connect(nmDBusHelper, SIGNAL(pathForPropertiesChanged(const QString &,QMap<QString,QVariant>)),
             this,SIGNAL(propertiesChanged( const QString &, QMap<QString,QVariant>)));
     if(dbusConnection.connect(QLatin1String(NM_DBUS_SERVICE),
@@ -506,7 +456,6 @@ bool QNetworkManagerInterfaceDeviceWired::carrier() const
     return d->connectionInterface->property("Carrier").toBool();
 }
 
-/////////////
 class QNetworkManagerInterfaceDeviceWirelessPrivate
 {
 public:
@@ -548,7 +497,7 @@ bool QNetworkManagerInterfaceDeviceWireless::setConnections()
         return false;
 
     bool allOk = false;
-    nmDBusHelper = new QNmDBusHelper;
+    nmDBusHelper = new QNmDBusHelper(this);
     connect(nmDBusHelper, SIGNAL(pathForPropertiesChanged(const QString &,QMap<QString,QVariant>)),
             this,SIGNAL(propertiesChanged( const QString &, QMap<QString,QVariant>)));
 
@@ -623,7 +572,6 @@ quint32 QNetworkManagerInterfaceDeviceWireless::wirelessCapabilities() const
     return d->connectionInterface->property("WirelelessCapabilities").toUInt();
 }
 
-/////////////
 class QNetworkManagerSettingsPrivate
 {
 public:
@@ -635,7 +583,6 @@ public:
 QNetworkManagerSettings::QNetworkManagerSettings(const QString &settingsService, QObject *parent)
         : QObject(parent)
 {
-//    qWarning() << __PRETTY_FUNCTION__;
     d = new QNetworkManagerSettingsPrivate();
     d->path = settingsService;
     d->connectionInterface = new QDBusInterface(settingsService,
@@ -686,7 +633,6 @@ QDBusInterface *QNetworkManagerSettings::connectionInterface() const
 }
 
 
-/////////////
 class QNetworkManagerSettingsConnectionPrivate
 {
 public:
@@ -740,7 +686,7 @@ bool QNetworkManagerSettingsConnection::setConnections()
         allOk = true;
     }
 
-    nmDBusHelper = new QNmDBusHelper;
+    nmDBusHelper = new QNmDBusHelper(this);
     connect(nmDBusHelper, SIGNAL(pathForSettingsRemoved(const QString &)),
             this,SIGNAL(removed( const QString &)));
 
@@ -752,10 +698,6 @@ bool QNetworkManagerSettingsConnection::setConnections()
 
     return allOk;
 }
-//QNetworkManagerSettingsConnection::update(QNmSettingsMap map)
-//{
-//    d->connectionInterface->call("Update", QVariant::fromValue(map));
-//}
 
 QDBusInterface *QNetworkManagerSettingsConnection::connectionInterface() const
 {
@@ -913,7 +855,6 @@ QStringList  QNetworkManagerSettingsConnection::getSeenBssids()
  return QStringList();
 }
 
-/////////////
 class QNetworkManagerConnectionActivePrivate
 {
 public:
@@ -955,7 +896,7 @@ bool QNetworkManagerConnectionActive::setConnections()
         return false;
 
     bool allOk = false;
-    nmDBusHelper = new QNmDBusHelper;
+    nmDBusHelper = new QNmDBusHelper(this);
     connect(nmDBusHelper, SIGNAL(pathForPropertiesChanged(const QString &,QMap<QString,QVariant>)),
             this,SIGNAL(propertiesChanged( const QString &, QMap<QString,QVariant>)));
     if(dbusConnection.connect(QLatin1String(NM_DBUS_SERVICE),
@@ -1007,8 +948,6 @@ bool QNetworkManagerConnectionActive::defaultRoute() const
     return d->connectionInterface->property("Default").toBool();
 }
 
-
-////
 class QNetworkManagerIp4ConfigPrivate
 {
 public:

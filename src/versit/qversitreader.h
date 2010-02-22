@@ -47,8 +47,10 @@
 
 #include <QObject>
 
+QT_BEGIN_NAMESPACE
 class QIODevice;
 class QTextCodec;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 

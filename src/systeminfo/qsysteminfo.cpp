@@ -362,7 +362,7 @@ Q_GLOBAL_STATIC(QSystemNetworkInfoPrivate, netInfoPrivate)
 Q_GLOBAL_STATIC(QSystemDisplayInfoPrivate, displayInfoPrivate)
 Q_GLOBAL_STATIC(QSystemStorageInfoPrivate, storageInfoPrivate)
 Q_GLOBAL_STATIC(QSystemDeviceInfoPrivate, deviceInfoPrivate)
-
+Q_GLOBAL_STATIC(QSystemScreenSaverPrivate, screenSaverPrivate)
 
  /*!
 \fn QSystemInfo::QSystemInfo(QObject *parent)
@@ -476,7 +476,9 @@ QSystemNetworkInfo::~QSystemNetworkInfo()
 /*!
     Returns the status of the network \a mode.
 */
-QSystemNetworkInfo::NetworkStatus QSystemNetworkInfo::networkStatus(QSystemNetworkInfo::NetworkMode mode) {
+QSystemNetworkInfo::NetworkStatus QSystemNetworkInfo::networkStatus(QSystemNetworkInfo::NetworkMode mode)
+{
+    qWarning() << __FUNCTION__;
     return netInfoPrivate()->networkStatus(mode);
 }
 
@@ -861,9 +863,8 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfo::currentPowerState()
  */
 
 QSystemScreenSaver::QSystemScreenSaver(QObject *parent)
-    : QObject(parent)
+    : QObject(parent), d(screenSaverPrivate())
 {
-    d = new QSystemScreenSaverPrivate(parent);
     screenSaverIsInhibited = screenSaverInhibited();
 }
 
