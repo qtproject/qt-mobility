@@ -641,6 +641,8 @@ void UT_QVersitContactImporter::testEmail()
     const QStringList contexts = email.contexts();
     QCOMPARE(contexts.count(),1);
     QVERIFY(contexts.contains(QContactDetail::ContextWork)); 
+
+    QCOMPARE(mPropertyHandler->mUnknownProperties.size(), 0);
 }
 
 void UT_QVersitContactImporter::testUrl()

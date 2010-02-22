@@ -154,7 +154,6 @@ void QVersitContactImporterPrivate::importProperty(
         mDetailMappings.value(property.name());
     QString detailDefinitionName = detailDefinition.first;
     bool success = false;
-    bool known = true;
     if (detailDefinitionName == QContactAddress::DefinitionName) {
         success = createAddress(property, contact);
     } else if (detailDefinitionName == QContactName::DefinitionName) {
@@ -183,14 +182,12 @@ void QVersitContactImporterPrivate::importProperty(
         // This actually sets the QContactName's customLabel field (not QContactDisplayLabel)
         success = createLabel(property, contact);
     } else {
-        known = false;
+        // Look up mDetailMappings for a simple mapping from property to detail.
+        success = createNameValueDetail(property, contact);
     }
 
     if (mPropertyHandler)
-        success = mPropertyHandler->postProcessProperty(
-                document, property, success, contactIndex, contact) || success;
-    if (!known && !success)
-        createNameValueDetail(property, contact);
+        mPropertyHandler->postProcessProperty(document, property, success, contactIndex, contact);
 }
 /*!
  * Creates a QContactName from \a property
