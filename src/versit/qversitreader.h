@@ -57,8 +57,8 @@ class QVersitReaderPrivate;
 // reads a QVersitDocument from i/o device
 class Q_VERSIT_EXPORT QVersitReader : public QObject
 {
-    Q_OBJECT  
-    
+    Q_OBJECT
+
 public:
     enum Error {
         NoError = 0,
@@ -105,9 +105,9 @@ Q_SIGNALS:
     void stateChanged(QVersitReader::State state);
     void resultsAvailable(QList<QVersitDocument>& results);
     void resultsAvailable();
-    
+
 private: // data
-    QVersitReaderPrivate* d;   
+    QVersitReaderPrivate* d;
 };
 
 QTM_END_NAMESPACE

@@ -485,7 +485,7 @@ bool QVersitReaderPrivate::setVersionFromProperty(QVersitDocument& document, con
         } else {
             valid = false;
         }
-    } 
+    }
     return valid;
 }
 

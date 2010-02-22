@@ -140,7 +140,7 @@ void QVersitDocumentWriter::encodeGroupsAndName(const QVersitProperty& property)
 /*!
   Writes \a string to the device.
   If \a useUtf8 is true, uses the UTF-8 codec instead of the one set in setCodec().
-  
+
   This function tracks how many characters have been written to the line and folds (wraps) the line
   according to RFC2425.
   */

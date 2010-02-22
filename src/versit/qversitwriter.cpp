@@ -51,10 +51,10 @@ QTM_USE_NAMESPACE
 
 /*!
   \class QVersitWriter
-  \preliminary 
+  \preliminary
   \brief The QVersitWriter class writes Versit documents such as vCards to a device.
   \ingroup versit
- 
+
   QVersitWriter converts a QVersitDocument into its textual representation.
   QVersitWriter supports writing to an abstract I/O device
   which can be for example a file or a memory buffer.
@@ -111,8 +111,8 @@ QVersitWriter::QVersitWriter() : d(new QVersitWriterPrivate)
             this, SIGNAL(stateChanged(QVersitWriter::State)), Qt::DirectConnection);
 }
 
-/*! 
- * Frees the memory used by the writer. 
+/*!
+ * Frees the memory used by the writer.
  * Waits until a pending asynchronous writing has been completed.
  */
 QVersitWriter::~QVersitWriter()

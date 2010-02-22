@@ -52,13 +52,13 @@ QTM_USE_NAMESPACE
   \preliminary
   \brief The QVersitDocument class is a container for a list of versit properties.
   \ingroup versit
- 
+
   For example a vCard can be presented as a QVersitDocument that consists of a number of properties
   such as a name (N), a telephone number (TEL) and an email address (EMAIL) to name a few.
   Each of these properties is stored as an instance of a QVersitProperty in a QVersitDocument.
- 
+
   QVersitDocument supports implicit sharing.
- 
+
   \sa QVersitProperty
  */
 
@@ -82,7 +82,7 @@ QVersitDocument& QVersitDocument::operator=(const QVersitDocument& other)
 {
     if (this != &other)
         d = other.d;
-    return *this;    
+    return *this;
 }
 
 /*! Returns true if this is equal to \a other; false otherwise. */

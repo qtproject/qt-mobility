@@ -228,19 +228,19 @@ bool QVersitContactImporterPrivate::createAddress(
     const QVersitProperty& property, QContact* contact) const
 {
     QContactAddress address;
-    
+
     QStringList addressParts = property.value().split(QLatin1Char(';'));
     address.setPostOfficeBox(takeFirst(addressParts));
     // There is no setter for the Extended Address in QContactAddress:
     if (!addressParts.isEmpty())
-        addressParts.removeFirst(); 
+        addressParts.removeFirst();
     address.setStreet(takeFirst(addressParts));
     address.setLocality(takeFirst(addressParts));
     address.setRegion(takeFirst(addressParts));
     address.setPostcode(takeFirst(addressParts));
     address.setCountry(takeFirst(addressParts));
     address.setSubTypes(extractSubTypes(property));
-    
+
     saveDetailWithContext(contact, &address, extractContexts(property));
     return true;
 }
@@ -384,7 +384,7 @@ bool QVersitContactImporterPrivate::createNicknames(
  */
 bool QVersitContactImporterPrivate::createOnlineAccount(
     const QVersitProperty& property, QContact* contact) const
-{    
+{
     QContactOnlineAccount onlineAccount;
     onlineAccount.setAccountUri(property.value());
     if (property.name() == QLatin1String("X-SIP")) {
@@ -504,11 +504,11 @@ bool QVersitContactImporterPrivate::createLabel(
  */
 QStringList QVersitContactImporterPrivate::extractContexts(
     const QVersitProperty& property) const
-{   
-    QStringList types = 
+{
+    QStringList types =
         property.parameters().values(QLatin1String("TYPE"));
     QStringList contexts;
-    foreach (QString type, types) {   
+    foreach (QString type, types) {
         QString value = mContextMappings.value(type);
         if (value.length() > 0)
             contexts.append(value);
@@ -522,7 +522,7 @@ QStringList QVersitContactImporterPrivate::extractContexts(
 QStringList QVersitContactImporterPrivate::extractSubTypes(
     const QVersitProperty& property) const
 {
-    QStringList types = 
+    QStringList types =
         property.parameters().values(QLatin1String("TYPE"));
     QStringList subTypes;
     foreach (QString type, types) {

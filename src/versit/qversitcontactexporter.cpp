@@ -55,7 +55,7 @@ QTM_USE_NAMESPACE
   \brief The QVersitContactExporterDetailHandler class is an interface for clients wishing to
   implement custom export behaviour for certain contact details.
   \ingroup versit
- 
+
   \sa QVersitContactExporter
  */
 

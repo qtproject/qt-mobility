@@ -62,7 +62,7 @@ public:
     QVersitProperty();
     QVersitProperty(const QVersitProperty& other);
     ~QVersitProperty();
-    
+
     QVersitProperty& operator=(const QVersitProperty& other);
     bool operator==(const QVersitProperty& other) const;
     bool operator!=(const QVersitProperty& other) const;
@@ -97,7 +97,7 @@ public:
     QVersitDocument Q_DECL_DEPRECATED embeddedDocument() const;
 
 private:
-    
+
     QSharedDataPointer<QVersitPropertyPrivate> d;
 };
 

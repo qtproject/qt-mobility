@@ -81,7 +81,7 @@ public:
 
     void setPropertyHandler(QVersitContactImporterPropertyHandler* handler);
     QVersitContactImporterPropertyHandler* propertyHandler() const;
-    
+
     void setResourceHandler(QVersitResourceHandler* handler);
     QVersitResourceHandler* resourceHandler() const;
 

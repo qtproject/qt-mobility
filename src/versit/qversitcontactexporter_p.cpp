@@ -196,12 +196,12 @@ void QVersitContactExporterPrivate::exportContact(
 }
 
 /*!
- * Encode Contact Name Field Information into the Versit Document 
+ * Encode Contact Name Field Information into the Versit Document
  */
 void QVersitContactExporterPrivate::encodeName(
-    QVersitProperty& property, 
+    QVersitProperty& property,
     const QContactDetail& detail)
-{   
+{
     QContactName contactName = static_cast<QContactName>(detail);
     property.setValue(QString::fromAscii("%1;%2;%3;%4;%5").arg(
             escape(contactName.lastName()),
@@ -224,7 +224,7 @@ void QVersitContactExporterPrivate::encodePhoneNumber(
 }
 
 /*!
- * Encode Email Field Information into the Versit Document 
+ * Encode Email Field Information into the Versit Document
  */
 void QVersitContactExporterPrivate::encodeEmail(
     QVersitProperty& property,
@@ -236,7 +236,7 @@ void QVersitContactExporterPrivate::encodeEmail(
 }
 
 /*!
- * Encode Address Field Information into the Versit Document 
+ * Encode Address Field Information into the Versit Document
  */
 void QVersitContactExporterPrivate::encodeAddress(
     QVersitProperty& property,

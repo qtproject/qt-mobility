@@ -65,7 +65,7 @@ public:
     QVersitDocument& operator=(const QVersitDocument& other);
     bool operator==(const QVersitDocument& other) const;
     bool operator!=(const QVersitDocument& other) const;
-    
+
     /*! Versit document type */
     enum VersitType {
         InvalidType,
@@ -94,7 +94,7 @@ public:
     VersitType Q_DECL_DEPRECATED versitType() const;
 
 private:
-    
+
     QSharedDataPointer<QVersitDocumentPrivate> d;
 };
 

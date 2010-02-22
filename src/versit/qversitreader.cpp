@@ -55,7 +55,7 @@ QTM_USE_NAMESPACE
   \preliminary
   \brief The QVersitReader class reads Versit documents such as vCards from a device.
   \ingroup versit
- 
+
   QVersitReader concatenation of Versit documents such as vCards
   from a text stream and returns a list of QVersitDocument instances.
   QVersitReader supports reading from an abstract I/O device
@@ -63,7 +63,7 @@ QTM_USE_NAMESPACE
   The reading can be done asynchronously, and the
   waitForFinished() function can be used to make a blocking
   read.
- 
+
   \sa QVersitDocument
  */
 
@@ -118,9 +118,9 @@ QVersitReader::QVersitReader() : d(new QVersitReaderPrivate)
     connect(d, SIGNAL(resultsAvailable(QList<QVersitDocument>&)),
             this, SIGNAL(resultsAvailable()), Qt::DirectConnection);
 }
-    
-/*! 
- * Frees the memory used by the reader. 
+
+/*!
+ * Frees the memory used by the reader.
  * Waits until a pending asynchronous reading has been completed.
  */
 QVersitReader::~QVersitReader()

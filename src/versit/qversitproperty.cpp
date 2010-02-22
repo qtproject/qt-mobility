@@ -50,14 +50,14 @@ QTM_USE_NAMESPACE
 
 /*!
   \class QVersitProperty
-  \preliminary 
+  \preliminary
   \brief The QVersitProperty class stores the name, value, groups and parameters of a Versit property.
   \ingroup versit
 
   For example a vCard can be presented as a QVersitDocument that consists of a number of properties
   such as a name (N), a telephone number (TEL) and an email address (EMAIL) to name a few.
   Each of these properties is stored as an instance of a QVersitProperty in a QVersitDocument.
- 
+
   QVersitProperty supports implicit sharing.
   The property name and parameters of a QVersitProperty are converted to upper-case when they are
   stored to a QVersitProperty.
@@ -67,7 +67,7 @@ QTM_USE_NAMESPACE
   nested documents.  The \l QVersitReader will parse Versit properties and assign the correct type
   of object to the property value.  The \l QVersitWriter will serialise objects of these types
   correctly into the (text-based) Versit format.
- 
+
   \sa QVersitDocument
  */
 
@@ -92,7 +92,7 @@ QVersitProperty& QVersitProperty::operator=(const QVersitProperty& other)
 {
     if (this != &other)
         d = other.d;
-    return *this;    
+    return *this;
 }
 
 /*! Returns true if this is equal to \a other; false otherwise. */

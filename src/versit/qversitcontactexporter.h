@@ -89,7 +89,7 @@ public:
     QList<QContactDetail> Q_DECL_DEPRECATED unknownContactDetails();
 
 private:
-    QVersitContactExporterPrivate* d;    
+    QVersitContactExporterPrivate* d;
 };
 
 QTM_END_NAMESPACE

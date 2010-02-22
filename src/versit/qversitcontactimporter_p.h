@@ -76,7 +76,7 @@ public:
 
     QContact importContact(const QVersitDocument& versitDocument, int contactIndex);
     QList<QVersitProperty> unconvertedVersitProperties();
-    
+
 private:
     bool createName(const QVersitProperty& property, QContact* contact) const;
     bool createPhone(const QVersitProperty& property, QContact* contact) const;
@@ -102,7 +102,7 @@ private:
     bool saveDataFromProperty(const QVersitProperty& property, QString* location, QByteArray* data) const;
     void saveDetailWithContext(
             QContact* contact, QContactDetail* detail, const QStringList& contexts) const;
-    
+
 public: // Data
     QVersitContactImporterPropertyHandler* mPropertyHandler;
     QVersitDefaultResourceHandler* mDefaultResourceHandler;

@@ -52,9 +52,9 @@ QTM_USE_NAMESPACE
   \preliminary
   \brief The QVersitContactImporterPropertyHandler class is an interface for clients wishing to
   implement custom import behaviour for versit properties
- 
+
   \ingroup versit
- 
+
   \sa QVersitContactImporter
  */
 
@@ -120,7 +120,7 @@ QTM_USE_NAMESPACE
  */
 
 /*! Constructs a new importer */
-QVersitContactImporter::QVersitContactImporter() 
+QVersitContactImporter::QVersitContactImporter()
     : d(new QVersitContactImporterPrivate)
 {
 }
