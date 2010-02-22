@@ -91,6 +91,7 @@ private slots: // Tests
     void testFamily();
     void testSound();
     void testLabel();
+    void testPref();
     void testPropertyHandler();
 
 private: // Utilities
@@ -104,7 +105,6 @@ private: // Utilities
 
 private:
     QVersitContactImporter* mImporter;
-    QVersitContactImporterPrivate* mImporterPrivate;
     MyQVersitContactImporterPropertyHandler* mPropertyHandler;
     MyQVersitResourceHandler* mResourceHandler;
 };

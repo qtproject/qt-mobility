@@ -78,6 +78,8 @@ public:
     QList<QVersitProperty> unconvertedVersitProperties();
 
 private:
+    void importProperty(const QVersitDocument& document, const QVersitProperty& property,
+                        int contactIndex, QContact* contact) const;
     bool createName(const QVersitProperty& property, QContact* contact) const;
     bool createPhone(const QVersitProperty& property, QContact* contact) const;
     bool createAddress(const QVersitProperty& property, QContact* contact) const;

@@ -166,7 +166,6 @@ QTM_USE_NAMESPACE
 void UT_QVersitContactImporter::init()
 {
     mImporter = new QVersitContactImporter();
-    mImporterPrivate = new QVersitContactImporterPrivate();
     mResourceHandler = new MyQVersitResourceHandler();
     mImporter->setResourceHandler(mResourceHandler);
     mPropertyHandler = new MyQVersitContactImporterPropertyHandler();
@@ -182,7 +181,6 @@ void UT_QVersitContactImporter::cleanup()
     mImporter->setResourceHandler(0);
     delete mResourceHandler;
     delete mImporter;
-    delete mImporterPrivate;
 }
 
 void UT_QVersitContactImporter::testName()
@@ -1260,6 +1258,41 @@ void UT_QVersitContactImporter::testSound()
     QVERIFY(!avatar.hasValue(QContactAvatar::FieldAvatarPixmap));
     QByteArray content = mResourceHandler->mObjects.value(avatar.avatar());
     QCOMPARE(content, val);
+}
+
+void UT_QVersitContactImporter::testPref()
+{
+    QVersitDocument document;
+    QVersitProperty property1;
+    property1.setName(QLatin1String("TEL"));
+    property1.setValue(QLatin1String("1"));
+    document.addProperty(property1);
+    QVersitProperty property2;
+    property2.setName(QLatin1String("TEL"));
+    property2.setValue(QLatin1String("2"));
+    property2.insertParameter(QLatin1String("TYPE"), QLatin1String("PREF"));
+    document.addProperty(property2);
+    QVersitProperty property3;
+    property3.setName(QLatin1String("TEL"));
+    property3.setValue(QLatin1String("3"));
+    property3.insertParameter(QLatin1String("TYPE"), QLatin1String("PREF"));
+    document.addProperty(property3);
+    QVersitProperty property4;
+    property4.setName(QLatin1String("TEL"));
+    property4.setValue(QLatin1String("4"));
+    document.addProperty(property4);
+
+    // Test that pref details comes first.
+    QList<QVersitDocument> documents;
+    documents.append(document);
+    QContact contact = mImporter->importContacts(documents).first();
+    QContactPhoneNumber firstNumber = contact.detail<QContactPhoneNumber>();
+    QCOMPARE(firstNumber.number(), QLatin1String("2"));
+    QList<QContactPhoneNumber> numbers = contact.details<QContactPhoneNumber>();
+    QCOMPARE(numbers.at(0).number(), QLatin1String("2"));
+    QCOMPARE(numbers.at(1).number(), QLatin1String("3"));
+    QCOMPARE(numbers.at(2).number(), QLatin1String("1"));
+    QCOMPARE(numbers.at(3).number(), QLatin1String("4"));
 }
 
 void UT_QVersitContactImporter::testPropertyHandler()

@@ -127,58 +127,71 @@ QContact QVersitContactImporterPrivate::importContact(
 {
     QContact contact;
     const QList<QVersitProperty> properties = document.properties();
-    foreach (QVersitProperty property, properties) {
-        if (mPropertyHandler
-            && mPropertyHandler->preProcessProperty(document, property, contactIndex, &contact))
-            continue;
-
-        QPair<QString,QString> detailDefinition =
-            mDetailMappings.value(property.name());
-        QString detailDefinitionName = detailDefinition.first;
-        bool success = false;
-        bool known = true;
-        if (detailDefinitionName == QContactAddress::DefinitionName) {
-            success = createAddress(property, &contact);
-        } else if (detailDefinitionName == QContactName::DefinitionName) {
-            success = createName(property, &contact);
-        } else if (detailDefinitionName == QContactBirthday::DefinitionName) {
-            success = createBirthday(property, &contact);
-        } else if (detailDefinitionName == QContactGeoLocation::DefinitionName){
-            success = createGeoLocation(property, &contact);
-        } else if (detailDefinitionName == QContactOrganization::DefinitionName) {
-            success = createOrganization(property, &contact);
-        } else if (detailDefinitionName == QContactNickname::DefinitionName) {
-            success = createNicknames(property, &contact);
-        } else if (detailDefinitionName == QContactAvatar::DefinitionName) {
-            success = createAvatar(property,detailDefinition.second, &contact);
-        } else if (detailDefinitionName == QContactTimestamp::DefinitionName) {
-            success = createTimeStamp(property, &contact);
-        } else if (detailDefinitionName == QContactPhoneNumber::DefinitionName) {
-            success = createPhone(property, &contact);
-        } else if (detailDefinitionName == QContactAnniversary::DefinitionName) {
-            success = createAnniversary(property, &contact);
-        } else if (detailDefinitionName == QContactFamily::DefinitionName) {
-            success = createFamily(property, &contact);
-        } else if (detailDefinitionName == QContactOnlineAccount::DefinitionName) {
-            success = createOnlineAccount(property, &contact);
-        } else if (detailDefinitionName == QContactDisplayLabel::DefinitionName) {
-            // This actually sets the QContactName's customLabel field (not QContactDisplayLabel)
-            success = createLabel(property, &contact);
-        } else {
-            known = false;
-        }
-
-        if (mPropertyHandler)
-            success = mPropertyHandler->postProcessProperty(
-                    document, property, success, contactIndex, &contact) || success;
-        if (!known && !success)
-            createNameValueDetail(property, &contact);
+    // First, do the properties with PREF set so they appear first in the contact details
+    foreach (const QVersitProperty& property, properties) {
+        if (property.parameters().contains(QLatin1String("TYPE"), QLatin1String("PREF")))
+            importProperty(document, property, contactIndex, &contact);
+    }
+    // ... then, do the rest of the properties.
+    foreach (const QVersitProperty& property, properties) {
+        if (!property.parameters().contains(QLatin1String("TYPE"), QLatin1String("PREF")))
+            importProperty(document, property, contactIndex, &contact);
     }
 
     contact.setType(QContactType::TypeContact);
     return contact;
 }
 
+void QVersitContactImporterPrivate::importProperty(
+        const QVersitDocument& document, const QVersitProperty& property, int contactIndex,
+        QContact* contact) const
+{
+    if (mPropertyHandler
+        && mPropertyHandler->preProcessProperty(document, property, contactIndex, contact))
+        return;
+
+    QPair<QString,QString> detailDefinition =
+        mDetailMappings.value(property.name());
+    QString detailDefinitionName = detailDefinition.first;
+    bool success = false;
+    bool known = true;
+    if (detailDefinitionName == QContactAddress::DefinitionName) {
+        success = createAddress(property, contact);
+    } else if (detailDefinitionName == QContactName::DefinitionName) {
+        success = createName(property, contact);
+    } else if (detailDefinitionName == QContactBirthday::DefinitionName) {
+        success = createBirthday(property, contact);
+    } else if (detailDefinitionName == QContactGeoLocation::DefinitionName){
+        success = createGeoLocation(property, contact);
+    } else if (detailDefinitionName == QContactOrganization::DefinitionName) {
+        success = createOrganization(property, contact);
+    } else if (detailDefinitionName == QContactNickname::DefinitionName) {
+        success = createNicknames(property, contact);
+    } else if (detailDefinitionName == QContactAvatar::DefinitionName) {
+        success = createAvatar(property,detailDefinition.second, contact);
+    } else if (detailDefinitionName == QContactTimestamp::DefinitionName) {
+        success = createTimeStamp(property, contact);
+    } else if (detailDefinitionName == QContactPhoneNumber::DefinitionName) {
+        success = createPhone(property, contact);
+    } else if (detailDefinitionName == QContactAnniversary::DefinitionName) {
+        success = createAnniversary(property, contact);
+    } else if (detailDefinitionName == QContactFamily::DefinitionName) {
+        success = createFamily(property, contact);
+    } else if (detailDefinitionName == QContactOnlineAccount::DefinitionName) {
+        success = createOnlineAccount(property, contact);
+    } else if (detailDefinitionName == QContactDisplayLabel::DefinitionName) {
+        // This actually sets the QContactName's customLabel field (not QContactDisplayLabel)
+        success = createLabel(property, contact);
+    } else {
+        known = false;
+    }
+
+    if (mPropertyHandler)
+        success = mPropertyHandler->postProcessProperty(
+                document, property, success, contactIndex, contact) || success;
+    if (!known && !success)
+        createNameValueDetail(property, contact);
+}
 /*!
  * Creates a QContactName from \a property
  */
