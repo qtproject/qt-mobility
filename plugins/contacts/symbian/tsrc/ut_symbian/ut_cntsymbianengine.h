@@ -60,6 +60,7 @@ private slots:
     void retrieveContact();
     void retrieveContacts();
     void updateContact();
+    void updateContactByUid();
     void removeContact();
     void removeContacts();
     void addOwnCard();

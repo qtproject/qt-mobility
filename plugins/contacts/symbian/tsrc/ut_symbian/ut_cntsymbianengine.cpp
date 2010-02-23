@@ -48,6 +48,7 @@
 #include <qcontactdetailfilter.h>
 #include <qcontactorganization.h>
 #include <qcontactemailaddress.h>
+#include <qcontactguid.h>
 
 #include <QtTest/QtTest>
 
@@ -517,6 +518,41 @@ void TestSymbianEngine::updateContact()
     QVERIFY(d.details().count() > details_before);
     QString str = d.detail(QContactPhoneNumber::DefinitionName).definitionName();
     QVERIFY(str == QContactPhoneNumber::DefinitionName);
+}
+
+void TestSymbianEngine::updateContactByUid()
+{
+    QContactManager::Error err;
+    QContact c;
+
+    QVERIFY(m_engine->saveContact(&c, err));
+    QVERIFY(err == QContactManager::NoError);
+    QContactLocalId initialId = c.localId();
+    
+    QContactGuid guidDetail = static_cast<QContactGuid>(c.details(QContactGuid::DefinitionName).at(0));
+    QString uid = guidDetail.guid();
+    
+    //clear id
+    QScopedPointer<QContactId> contactId(new QContactId());
+    contactId->setLocalId(0);
+    contactId->setManagerUri(QString());
+    c.setId(*contactId);
+    
+    // update the contact   
+    QContactName aliceName;
+    aliceName.setFirstName("Alice");
+    c.saveDetail(&aliceName);
+    QContactPhoneNumber number;
+    number.setContexts("Home");
+    number.setSubTypes("Mobile");
+    number.setNumber("12345678");
+    c.saveDetail(&number);
+
+    //verify that the same contact was updated
+    QVERIFY(m_engine->saveContact(&c, err));
+    QContactLocalId id = c.localId();
+    QVERIFY(err == QContactManager::NoError);
+    QVERIFY(initialId == id);
 }
 
 void TestSymbianEngine::removeContact()

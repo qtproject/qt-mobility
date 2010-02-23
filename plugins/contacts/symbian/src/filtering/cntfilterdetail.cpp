@@ -145,7 +145,17 @@ void CntFilterDetail::createSelectQuery(const QContactFilter& filter,
            else if(detailFilter.value().toString() == QContactType::TypeGroup)
                sqlQuery = "SELECT contact_id FROM contact WHERE (type_flags>>24)=3";
        }
-       
+       else if(detailFilter.detailDefinitionName() == QContactGuid::DefinitionName)
+       {
+           if(detailFilter.detailFieldName() == QContactGuid::FieldGuid)
+           {
+               QStringList fullGuidValue = detailFilter.value().toString().split("-");
+               if (fullGuidValue.count() == 3) {
+                   QString localGuidValue = fullGuidValue.at(1);
+                   sqlQuery = "SELECT contact_id FROM contact WHERE guid_string = '" + localGuidValue + "'";
+                }
+            }
+       }
        //everything else
        else
        {   
