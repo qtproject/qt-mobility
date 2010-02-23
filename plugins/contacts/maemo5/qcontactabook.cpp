@@ -80,7 +80,7 @@ void QContactABook::initAddressBook(){
   FATAL_IF_ERROR(gError)
   
   // Wait until is ready
-  osso_abook_waitable_run ((OssoABookWaitable *) roster,
+  osso_abook_waitable_run((OssoABookWaitable *) roster,
 			   g_main_context_default(),
 			   &gError);
   FATAL_IF_ERROR(gError)
@@ -89,39 +89,78 @@ void QContactABook::initAddressBook(){
     FATAL_IF_ERROR(gError)
   
   m_abookAgregator = reinterpret_cast<OssoABookAggregator*>(roster);
+  
+  initLocalIdHash();
+  
+  //TODO Set up signals for added/changed eContact
+  
+#if 0
+  //TEST List of supported fields
+  EBook *book = NULL;
+  GList *l;
+  book = osso_abook_roster_get_book(roster);
+  e_book_get_supported_fields (book, &l, NULL);
+  while (l) {
+    qDebug() << "SUPPORTED FIELD" << (const char*)l->data;
+    l = l->next;  
+  }
+  g_list_free(l);
+#endif
 }
 
-QList<QContactLocalId> QContactABook::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
-{
-   Q_UNUSED(sortOrders);
-   
-   QList<QContactLocalId> ids;
+/*! Fill LocalId Hash associating an internal QContactLocalId to any
+ *  master contact ID.
+ *  NOTE: master contact IDs are string like "1" or "osso-abook-tmc1".
+ */
+void QContactABook::initLocalIdHash()
+{  
    GList *contactList = NULL;
    GList *node;
    
    contactList = osso_abook_aggregator_list_master_contacts(m_abookAgregator);
 
    if (!contactList) {
-     error = QContactManager::DoesNotExistError; //FIXME change error type
-     return QList<QContactLocalId>();
+     qWarning() << "There are no Master contacts. LocalId hash is empty.";
+     return;
    }
    
    for (node = contactList; node != NULL; node = g_list_next (node)) {
      EContact *contact = E_CONTACT(node->data);
      const char* data = CONST_CHAR(e_contact_get_const(contact, E_CONTACT_UID));
-     QByteArray localId(data);
+     QByteArray localId = QByteArray::fromRawData(data, sizeof(data));
      m_localIds << localId;
-     ids.append(m_localIds[localId]);
      QCM5_DEBUG << "eContactID " << localId << "has been stored in m_localIDs with key" << m_localIds[localId];
      
-     // Useful for debugging
+     // Useful for debugging.
      //e_vcard_dump_structure((EVCard*)contact);
    }
    
    g_list_free(contactList);
-   
-   error = QContactManager::NoError;
-   return ids;
+}
+
+QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+{
+  Q_UNUSED(sortOrders)
+  QList<QContactLocalId> rtn;
+  
+  EBookQuery* query = convert(filter);
+  
+  GList* l = osso_abook_aggregator_find_contacts(m_abookAgregator, query);
+  e_book_query_unref(query);
+  
+  while (l){
+    EContact *contact = E_CONTACT(l->data);
+    const char* data = CONST_CHAR(e_contact_get_const(contact, E_CONTACT_UID));
+    QByteArray localId(data);
+    m_localIds << localId;
+    rtn.append(m_localIds[localId]);
+    QCM5_DEBUG << "eContactID " << localId << "has been stored in m_localIDs with key" << m_localIds[localId];
+    l = l->next;
+  }
+  g_list_free(l);
+  
+  error = QContactManager::NoError;
+  return rtn;
 }
 
 QContact* QContactABook::contact(const QContactLocalId& contactId, QContactManager::Error& error) const
@@ -153,8 +192,160 @@ QContact* QContactABook::contact(const QContactLocalId& contactId, QContactManag
   return contact;
 }
 
-QContact* QContactABook::convert(EContact *eContact) const{
+EBookQuery* QContactABook::convert(const QContactFilter& filter) const
+{
+  EBookQuery* query = NULL;
   
+  switch(filter.type()){
+      case QContactFilter::DefaultFilter:
+	{
+	  QCM5_DEBUG << "QContactFilter::DefaultFilter";
+	  query = e_book_query_any_field_contains(""); //Match all contacts
+	}
+	break;
+      case QContactFilter::LocalIdFilter:
+        {
+	  QCM5_DEBUG << "LocalIdFilter";
+	  const QContactLocalIdFilter f(filter);
+	  QList<QContactLocalId> ids = f.ids();
+	  if (ids.isEmpty())
+	    return NULL;
+	  
+	  query= NULL;
+	  foreach(const QContactLocalId id, ids){
+	    EBookQuery* q = NULL;
+	    
+	    // Looking for the eContact local id inside the localId hash
+	    const char* eContactId = m_localIds[id];
+	    if (!eContactId[0])
+	      return NULL;
+	    
+	    q = e_book_query_field_test(E_CONTACT_UID, E_BOOK_QUERY_IS, eContactId);
+	    if (!q)
+	      continue;
+	    
+	    if (query)
+	      query = e_book_query_orv(query, q, NULL);
+	    else
+	      query = q;
+	  }
+        }
+        break;
+      case QContactFilter::ContactDetailFilter:
+	{
+	  QCM5_DEBUG << "ContactDetailFilter";
+	  
+	  const QContactDetailFilter f(filter);
+	  QString queryStr;
+	  
+	  if (!f.value().isValid())
+	    return NULL;
+	  
+	  switch (f.matchFlags()){
+	    case QContactFilter::MatchContains: queryStr = "contains"; break;
+	    case QContactFilter::MatchFixedString:
+	    case QContactFilter::MatchCaseSensitive:
+	    case QContactFilter::MatchExactly: queryStr = "is"; break;
+	    case QContactFilter::MatchStartsWith: queryStr = "beginswith"; break;
+	    case QContactFilter::MatchEndsWith: queryStr = "endswith"; break;
+	    default:
+	      queryStr = "contains";
+	      qWarning() << "Match flag not supported"; 
+	  }
+	  
+	  static QHash<QString,QString> hash;
+	  if (hash.isEmpty()){
+	    hash[QContactAddress::DefinitionName] = "address";
+	    hash[QContactBirthday::DefinitionName] = "birth-date";
+	    hash[QContactDisplayLabel::DefinitionName] = "full-name"; //hack
+	    hash[QContactEmailAddress::DefinitionName] = "email";
+	    hash[QContactName::DefinitionName] = "full-name";
+	    hash[QContactNickname::DefinitionName] = "nickname";
+	    hash[QContactNote::DefinitionName] = "note";
+	    hash[QContactOrganization::DefinitionName] = "title";
+	    hash[QContactPhoneNumber::DefinitionName] = "phone";
+	    hash[QContactUrl::DefinitionName] = "homepage-url";
+	  }
+	  
+	  QString eDetail = hash[f.detailDefinitionName()];
+	  if (eDetail.isEmpty()){
+	    qWarning() << "Unable to found an ebook detail for " << f.detailDefinitionName();
+	    return NULL;
+	  }
+	  queryStr = queryStr + " \"" + eDetail + "\" \"" + f.value().toString() + "\"";
+	  query = e_book_query_from_string(qPrintable(queryStr));
+	}
+        break;
+      case QContactFilter::ContactDetailRangeFilter:
+	{
+	  //Current version of ebook doesn't support LT/LE/GT/GL Query tests
+	  qWarning() << "ContactDetailRangeFilter is not supported";
+	  return NULL;
+	}
+        break;
+      case QContactFilter::ChangeLogFilter:
+	QCM5_DEBUG << "ChangeLogFilter"; //TODO 
+	break;
+      case QContactFilter::ActionFilter:
+	QCM5_DEBUG << "ActionFilter"; //TODO
+	break;
+      case QContactFilter::RelationshipFilter:
+	QCM5_DEBUG << "RelationshipFilter"; //TODO
+	break;
+      case QContactFilter::IntersectionFilter:
+	{
+	  QCM5_DEBUG << "IntersectionFilter";
+	  const QContactIntersectionFilter f(filter);
+          const QList<QContactFilter>  fs= f.filters();
+	  QContactFilter i;
+	  foreach(i, fs){
+	    EBookQuery* q = convert(i);
+	    if (!q){
+	      qWarning() << "Query is null";
+	      continue;
+	    }
+	    if (query)
+	      query = e_book_query_andv(query, q, NULL);
+	    else
+	      query = q;
+	  } 
+	}
+	break;
+      case QContactFilter::UnionFilter:
+        {
+	  QCM5_DEBUG << "UnionFilter";
+	  const QContactUnionFilter f(filter);
+          const QList<QContactFilter>  fs= f.filters();
+	  QContactFilter i;
+	  foreach(i, fs){
+	    EBookQuery* q = convert(i);
+	    if (!q){
+	      qWarning() << "Query is null";
+	      continue;
+	    }
+	    if (query)
+	      query = e_book_query_orv(query, q, NULL);
+	    else
+	      query = q;
+	  }
+        }
+	break;
+      case QContactFilter::InvalidFilter:
+	QCM5_DEBUG << "InvalidFilter";
+	query = e_book_query_from_string("(is \"id\" \"-1\")");
+	break;
+  }
+ 
+  //Debugging
+  const char *queryString = e_book_query_to_string(query);
+  QCM5_DEBUG << "QUERY" << queryString;
+  FREE(queryString);
+  
+  return query;
+} 
+
+QContact* QContactABook::convert(EContact *eContact) const
+{  
 /*  
   QContactFamily
   QContactGeolocation
@@ -227,6 +418,9 @@ QContact* QContactABook::convert(EContact *eContact) const{
   /* TimeStamp */
   detailList << createTimestampDetail(eContact);
 
+  /* Url */
+  detailList << createUrlDetail(eContact);
+  
   bool ok;
   QContactDetail* detail;
  
@@ -238,7 +432,7 @@ QContact* QContactABook::convert(EContact *eContact) const{
     
     ok = contact->saveDetail(detail);
     if (!ok){
-      qWarning() << "Detail can't be saved into QContact" << detail->values();
+      qWarning() << "Detail can't be saved into QContact" << detail->values(); //WARNING values is deprecated
       delete detail;
       continue;
     }
@@ -247,20 +441,6 @@ QContact* QContactABook::convert(EContact *eContact) const{
   
   return contact;
 }
-
-#if 0
-const QMap<QContactABook::contextType, QString>* QContactABook::supportedContextType()
-{
-  static QMap<QContactABook::contextType, QString> supportedTypes;
-  if (supportedTypes.isEmpty()){
-    supportedTypes[QContactABook::Home] = "Home";
-    supportedTypes[QContactABook::Work] = "Work";
-    supportedTypes[QContactABook::Other] = "Other";
-  }
-  
-  return &supportedTypes;
-}
-#endif
 
 bool QContactABook::setDetailValues(const QVariantMap& data, QContactDetail* detail) const
 {
@@ -351,7 +531,6 @@ QList<QContactAddress*> QContactABook::createAddressDetail(EContact *eContact) c
 	address->setContexts(QContactDetail::ContextWork);
     }
     
-    
     // Set Address Values
     GList *v = e_vcard_attribute_get_values(attr);
     int i = 0;
@@ -363,10 +542,10 @@ QList<QContactAddress*> QContactABook::createAddressDetail(EContact *eContact) c
     g_list_free(v);
     
     
-    //
     setDetailValues(map, address);
     
     rtnList << address;
+    
     attrList = attrList->next;
   }
   
@@ -374,25 +553,6 @@ QList<QContactAddress*> QContactABook::createAddressDetail(EContact *eContact) c
   
   return rtnList;
 }
-
-#if 0
-// DisplayLabel can't be saved.
-QContactDisplayLabel* QContactABook::createDisplayLabelDetail(EContact *eContact) const
-{
-  QContactDisplayLabel *rtn = new QContactDisplayLabel();
-  QVariantMap map;
-  const char* data = CONST_CHAR(e_contact_get_const(eContact, E_CONTACT_FILE_AS));
-  if (!data)
-    data = CONST_CHAR(e_contact_get_const(eContact, E_CONTACT_FULL_NAME));
-  if (!data) //Telepathy contacts
-    data = CONST_CHAR(e_contact_get_const(eContact, E_CONTACT_NICKNAME));
-  
-  QCM5_DEBUG << "DisplayLabel " << data;
-  map[QContactDisplayLabel::FieldLabel] = QString(data);
-  setDetailValues(map, rtn);
-  return rtn;
-}
-#endif
 
 QContactName* QContactABook::createNameDetail(EContact *eContact) const
 {
@@ -483,20 +643,20 @@ QContactAvatar* QContactABook::createAvatarDetail(EContact *eContact) const
   if (!aContact)
     return rtn;
   
-  GdkPixbuf* pixBuff = osso_abook_contact_get_avatar_pixbuf(aContact, NULL, NULL); //FIXME Memory leak
-  if (!GDK_IS_PIXBUF(pixBuff)){
-    free(pixBuff);
+  //GdkPixbuf* pixbuf = osso_abook_contact_get_avatar_pixbuf(aContact, NULL, NULL);
+  GdkPixbuf* pixbuf = osso_abook_avatar_get_image_rounded(OSSO_ABOOK_AVATAR(aContact), 64, 64, true, 4, NULL);
+  if (!GDK_IS_PIXBUF(pixbuf)){
+    FREE(pixbuf);
     return rtn;
   }
   
-  const uchar* bdata = (const uchar*)gdk_pixbuf_get_pixels(pixBuff);
-  QSize bsize(gdk_pixbuf_get_width(pixBuff), gdk_pixbuf_get_height(pixBuff));
+  const uchar* bdata = (const uchar*)gdk_pixbuf_get_pixels(pixbuf);
+  QSize bsize(gdk_pixbuf_get_width(pixbuf), gdk_pixbuf_get_height(pixbuf));
       
   //Convert GdkPixbuf to QPixmap
   QImage converted(bdata, bsize.width(), bsize.height(), QImage::Format_ARGB32_Premultiplied);
-     
   map[QContactAvatar::FieldAvatarPixmap] = QPixmap::fromImage(converted);
-  
+  g_object_unref(pixbuf);
   setDetailValues(map, rtn);
   
   return rtn;
@@ -742,12 +902,24 @@ QList<QContactPhoneNumber*> QContactABook::createPhoneDetail(EContact *eContact)
   return rtnList;
 }
 
-QContactTimestamp* QContactABook::createTimestampDetail(EContact *eContact) const {
+QContactTimestamp* QContactABook::createTimestampDetail(EContact *eContact) const
+{
    QContactTimestamp* rtn = new QContactTimestamp;
    QVariantMap map;
    const char* rev = CONST_CHAR(e_contact_get(eContact, E_CONTACT_REV));
    map[QContactTimestamp::FieldModificationTimestamp] = QDateTime::fromString(rev, Qt::ISODate);
    FREE(rev);
+   setDetailValues(map, rtn);
+   return rtn;
+}
+
+QContactUrl* QContactABook::createUrlDetail(EContact *eContact) const
+{
+   QContactUrl* rtn = new QContactUrl;
+   QVariantMap map;
+   const char* url = CONST_CHAR(e_contact_get(eContact, E_CONTACT_HOMEPAGE_URL));
+   map[QContactUrl::FieldUrl] = url;
+   FREE(url);
    setDetailValues(map, rtn);
    return rtn;
 }

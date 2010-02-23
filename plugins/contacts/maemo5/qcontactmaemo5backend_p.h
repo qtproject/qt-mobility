@@ -110,8 +110,10 @@ class QContactMaemo5Engine : public QContactManagerEngine
     //bool setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& error);
     //QContactLocalId selfContactId(QContactManager::Error& error) const;
 
+    /* Filtering */
+    QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+
     /* Contacts - Accessors and Mutators */
-    QList<QContactLocalId> contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     QContact contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
 
     //QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QContactManager::Error& error);

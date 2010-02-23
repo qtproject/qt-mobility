@@ -94,12 +94,20 @@ extern "C" {
 	McProfile*          osso_abook_contact_get_profile      (OssoABookContact *contact);
 	
 	//TEST
+	GList*              osso_abook_aggregator_find_contacts (OssoABookAggregator *aggregator,
+                                                                 EBookQuery *query);
 	const char*         osso_abook_contact_get_display_name (OssoABookContact *contact);
 	GdkPixbuf*          osso_abook_contact_get_avatar_pixbuf
                                                                 (OssoABookContact *contact,
                                                                  const char *username,
                                                                  const char *vcard_field);
 	McAccount*          osso_abook_contact_get_account      (OssoABookContact *contact);
+	GdkPixbuf*          osso_abook_avatar_get_image_rounded (OssoABookAvatar *avatar,
+                                                                 int width,
+                                                                 int height,
+                                                                 gboolean crop,
+                                                                 int radius,
+                                                                 const guint8 border_color[4]);
 }
 
 QTM_USE_NAMESPACE
@@ -120,7 +128,7 @@ public:
   bool remove(const QContactLocalId localId){ return (m_localIds.remove(localId) == 1) ? true : false;};
   bool remove(const QByteArray& eContactId){ const QContactLocalId hashKey= m_localIds.key(eContactId, 0); return remove(hashKey); };
   
-private:;
+private:
   uint key; //LocalID
   QHash<QContactLocalId, QByteArray> m_localIds; //[int/QContactLocalId Maemo5LocalId, QByteArray eContactID]
 };
@@ -133,16 +141,22 @@ public:
   QContactABook(QObject* parent = 0);
   virtual ~QContactABook();
   
-  QList<QContactLocalId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+  QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+  //QList<QContactLocalId> contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
   QContact* contact(const QContactLocalId& contactId, QContactManager::Error& error) const;
   
   //static const QMap<contextType, QString>* supportedContextType();
 
 private:
   void initAddressBook();
+  void initLocalIdHash();
+  
   bool setDetailValues(const QVariantMap& data, QContactDetail* detail) const;
   
-  /* eContact/abookContact to QContact methods*/
+  /* Searching */
+  EBookQuery* convert(const QContactFilter& filter) const;
+  
+  /* eContact/abookContact to QContact methods */
   QContact* convert(EContact *eContact) const;
 
   QContactId createContactId(EContact *eContact) const;
@@ -160,6 +174,7 @@ private:
   QContactOrganization* createOrganizationDetail(EContact *eContact) const;
   QList<QContactPhoneNumber*> createPhoneDetail(EContact *eContact) const; 
   QContactTimestamp* createTimestampDetail(EContact *eContact) const; 
+  QContactUrl* createUrlDetail(EContact *eContact) const; 
   
   /* Internal Vars */
   OssoABookAggregator *m_abookAgregator;

@@ -86,6 +86,7 @@ QContactMaemo5Engine& QContactMaemo5Engine::operator=(const QContactMaemo5Engine
 /*! \reimp */
 void QContactMaemo5Engine::deref()
 {
+    QCM5_DEBUG << __PRETTY_FUNCTION__;
     if (!d->m_refCount.deref())
         delete this;
 }
@@ -113,10 +114,12 @@ QString QContactMaemo5Engine::synthesizedDisplayLabel(const QContact& contact, Q
   return label;
 }
 
-QList<QContactLocalId> QContactMaemo5Engine::contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+QList<QContactLocalId> QContactMaemo5Engine::contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
   Q_CHECK_PTR(d->m_abook);
-  return d->m_abook->contacts(sortOrders, error);
+  
+  //return QContactManagerEngine::contactIds(filter, sortOrders, error);
+  return d->m_abook->contactIds(filter, sortOrders, error);
 }
 
 QContact QContactMaemo5Engine::contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const
