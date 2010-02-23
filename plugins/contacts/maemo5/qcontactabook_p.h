@@ -144,8 +144,7 @@ public:
   QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
   //QList<QContactLocalId> contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
   QContact* contact(const QContactLocalId& contactId, QContactManager::Error& error) const;
-  
-  //static const QMap<contextType, QString>* supportedContextType();
+  bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
 
 private:
   void initAddressBook();
@@ -174,7 +173,7 @@ private:
   QContactOrganization* createOrganizationDetail(EContact *eContact) const;
   QList<QContactPhoneNumber*> createPhoneDetail(EContact *eContact) const; 
   QContactTimestamp* createTimestampDetail(EContact *eContact) const; 
-  QContactUrl* createUrlDetail(EContact *eContact) const; 
+  QContactUrl* createUrlDetail(EContact *eContact) const;
   
   /* Internal Vars */
   OssoABookAggregator *m_abookAgregator;

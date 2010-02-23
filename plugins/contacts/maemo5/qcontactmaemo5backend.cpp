@@ -136,6 +136,29 @@ QContact QContactMaemo5Engine::contact(const QContactLocalId& contactId, const Q
   
   return rtn;
 }
+#if 0
+QList<QContactManager::Error> QContactMaemo5Engine::removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error)
+{
+  bool ok = true;
+  
+  if (contactIds->isEmpty())
+    return false;
+  
+  QContactLocalId id;
+  foreach(id, contactIds){
+      if (!removeContact(id, error))
+	ok = false;
+  }
+  
+  return ok;
+}
+#endif
+
+bool QContactMaemo5Engine::removeContact(const QContactLocalId& contactId, QContactManager::Error& error)
+{
+  Q_CHECK_PTR(d->m_abook);
+  return d->m_abook->removeContact(contactId, error);
+}
 
 QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(const QString& contactType, QContactManager::Error& error) const
 {

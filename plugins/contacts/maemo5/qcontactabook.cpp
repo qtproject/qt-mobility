@@ -52,7 +52,12 @@
                             g_error_free(x); \
                             qFatal(qPrintable(message)); \
                           }
-
+#define WARNING_IF_ERROR(x) if(x) { \
+                            QString message(x->message); \
+                            g_error_free(x); \
+                            qWarning(qPrintable(message)); \
+                          }
+                          
 #define A_CONTACT(x) reinterpret_cast<OssoABookContact*>(x)
 #define A_ROSTER(x) reinterpret_cast<OssoABookRoster*>(x)
 #define CONST_CHAR(x) static_cast<const char*>(x)
@@ -190,6 +195,24 @@ QContact* QContactABook::contact(const QContactLocalId& contactId, QContactManag
   contact = convert(eContact);
   error = QContactManager::NoError;
   return contact;
+}
+
+bool QContactABook::removeContact(const QContactLocalId& contactId, QContactManager::Error& error)
+{
+  Q_UNUSED(error);
+  
+  bool ok = false;
+  OssoABookRoster* roster = reinterpret_cast<OssoABookRoster*>(m_abookAgregator);
+  EBook *book = osso_abook_roster_get_book(roster);
+  const char *id = m_localIds[contactId];
+  GError *gError = NULL;
+  
+  QCM5_DEBUG << "Deleting contact id:" << id;
+  
+  ok = e_book_remove_contact(book, id, &gError);
+  WARNING_IF_ERROR(gError);
+  
+  return ok;
 }
 
 EBookQuery* QContactABook::convert(const QContactFilter& filter) const
