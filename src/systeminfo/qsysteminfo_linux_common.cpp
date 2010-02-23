@@ -1627,7 +1627,6 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
 #if !defined(QT_NO_DBUS)
  void QSystemDeviceInfoLinuxCommonPrivate::setupBluetooth()
  {
-     qWarning() << __FUNCTION__;
      QDBusConnection dbusConnection = QDBusConnection::systemBus();
      QDBusInterface *connectionInterface;
      connectionInterface = new QDBusInterface("org.bluez",
@@ -1658,8 +1657,10 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
 
  void QSystemDeviceInfoLinuxCommonPrivate::bluezPropertyChanged(const QString &str, QDBusVariant v)
   {
-      qWarning() << str << v.variant().toBool();
-      emit bluetoothStateChanged(v.variant().toBool());
+     if(str == "Powered") {
+          emit bluetoothStateChanged(v.variant().toBool());
+      }
+      // Pairable Name Class Discoverable
   }
  #endif
 
