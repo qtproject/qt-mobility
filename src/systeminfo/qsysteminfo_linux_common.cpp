@@ -70,6 +70,11 @@
 #include <X11/Xlib.h>
 
 #endif
+#include <bluetooth/bluetooth.h>
+#include <bluetooth/bnep.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <unistd.h>
 
 //we cannot include iwlib.h as the platform may not have it installed
 //there we have to go via the kernel's wireless.h
@@ -501,9 +506,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::networkS
         break;
         case QSystemNetworkInfo::BluetoothMode:
         {
-#if !defined(QT_NO_NETWORKMANAGER)
             return getBluetoothNetStatus();
-#endif
        }
         break;
     default:
@@ -650,32 +653,36 @@ QString QSystemNetworkInfoLinuxCommonPrivate::macAddress(QSystemNetworkInfo::Net
     return QString();
 }
 
-#if !defined(QT_NO_DBUS)
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::getBluetoothNetStatus()
 {
-    QDBusConnection dbusConnection = QDBusConnection::systemBus();
-    QDBusInterface *connectionInterface;
-    connectionInterface = new QDBusInterface("org.bluez",
-                                             "/org/bluez/network",
-                                             "org.bluez.network.Manager",
-                                             dbusConnection);
-    if (connectionInterface->isValid()) {
+    int ctl = socket(PF_BLUETOOTH,SOCK_RAW,BTPROTO_BNEP);
+    if (ctl < 0) {
+        qWarning() << "Cannot open bnep socket";
+        return QSystemNetworkInfo::UndefinedStatus;
+    }
 
-        QDBusReply<  QStringList > reply = connectionInterface->call("ListConnections");
-        if (reply.isValid()) {
-            if(reply.value().count() > 0) {
-                return QSystemNetworkInfo::Connected;
-            } else {
-                return QSystemNetworkInfo::NoNetworkAvailable;
-            }
+    struct bnep_conninfo info[36];
+    struct bnep_connlist_req req;
 
-        } else {
-            qWarning() << "NOT" << reply.error();
+    req.ci = info;
+    req.cnum = 36;
+
+    if (ioctl(ctl,BNEPGETCONNLIST,&req) < 0) {
+        qWarning() << "Cannot get bnep connection list.";
+        return QSystemNetworkInfo::UndefinedStatus;
+    }
+
+    qWarning() << req.cnum;
+    for (uint j = 0; j< req.cnum; j++) {
+        qWarning() << info[j].state;
+        if(info[j].state == BT_CONNECTED) {
+            return QSystemNetworkInfo::Connected;
         }
-       }
-       return QSystemNetworkInfo::UndefinedStatus;
+    }
+    close(ctl);
+
+    return QSystemNetworkInfo::UndefinedStatus;
 }
-#endif
 
 qint32 QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
@@ -1615,6 +1622,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
 #if !defined(QT_NO_DBUS)
  void QSystemDeviceInfoLinuxCommonPrivate::setupBluetooth()
  {
+     qWarning() << __FUNCTION__;
      QDBusConnection dbusConnection = QDBusConnection::systemBus();
      QDBusInterface *connectionInterface;
      connectionInterface = new QDBusInterface("org.bluez",

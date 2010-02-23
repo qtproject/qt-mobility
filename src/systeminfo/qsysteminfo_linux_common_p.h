@@ -154,8 +154,8 @@ protected:
     int getBluetoothRssi();
     QString getBluetoothInfo(const QString &file);
     bool isDefaultInterface(const QString &device);
-    QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
 #endif
+    QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
 
 };
 
