@@ -1028,7 +1028,8 @@ int QSystemDisplayInfoLinuxCommonPrivate::displayBrightness(int screen)
     return -1;
 }
 
-QSystemStorageInfoLinuxCommonPrivate::QSystemStorageInfoLinuxCommonPrivate(QObject *parent) : QObject(parent)
+QSystemStorageInfoLinuxCommonPrivate::QSystemStorageInfoLinuxCommonPrivate(QObject *parent)
+    : QObject(parent)
 {
     halIsAvailable = halAvailable();
 }
@@ -1473,19 +1474,23 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoLinuxCommonPrivate::inputMe
             QString strvalue;
             strvalue = file.readLine();
             file.close();
-            if(strvalue.contains("keyboard")) {
+            if(strvalue.contains("keyboard",Qt::CaseInsensitive)) {
                 if( (methods & QSystemDeviceInfo::Keyboard) != QSystemDeviceInfo::Keyboard) {
                     methods = (methods | QSystemDeviceInfo::Keyboard);
                 }
-            } else if(strvalue.contains("Mouse")) {
+            } else if(strvalue.contains("Mouse",Qt::CaseInsensitive)) {
                 if( (methods & QSystemDeviceInfo::Mouse) != QSystemDeviceInfo::Mouse) {
                     methods = (methods | QSystemDeviceInfo::Mouse);
                 }
-            } else if(strvalue.contains("Button")) {
+            } else if(strvalue.contains("Button",Qt::CaseInsensitive)) {
                 if( (methods & QSystemDeviceInfo::Keys) != QSystemDeviceInfo::Keys) {
                     methods = (methods | QSystemDeviceInfo::Keys);
                 }
-            } else if(strvalue.contains("TouchScreen")) {
+            } else if(strvalue.contains("keypad",Qt::CaseInsensitive)) {
+                if( (methods & QSystemDeviceInfo::KeyPad) != QSystemDeviceInfo::KeyPad) {
+                    methods = (methods | QSystemDeviceInfo::Keys);
+                }
+            } else if(strvalue.contains("TouchScreen",Qt::CaseInsensitive)) {
                 if( (methods & QSystemDeviceInfo::SingleTouch) != QSystemDeviceInfo::SingleTouch) {
                     methods = (methods | QSystemDeviceInfo::SingleTouch);
                 }

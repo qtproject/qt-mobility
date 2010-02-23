@@ -368,15 +368,14 @@ int QSystemDisplayInfoPrivate::displayBrightness(int screen)
     return -1;
 }
 
-// int QSystemDisplayInfoPrivate::colorDepth(int screen)
-// {
-// #ifdef Q_WS_X11
-//     QDesktopWidget wid;
-//     return wid.screen(screen)->x11Info().depth();
-// #else
-//     return QPixmap::defaultDepth();
-// #endif
-// }
+QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QSystemStorageInfoLinuxCommonPrivate *parent)
+        : QSystemStorageInfoLinuxCommonPrivate(parent)
+{
+}
+
+QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
+{
+}
 
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QSystemDeviceInfoLinuxCommonPrivate *parent)
         : QSystemDeviceInfoLinuxCommonPrivate(parent)
@@ -393,68 +392,6 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QSystemDeviceInfoLinuxCommonP
 QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
 {
 }
-
-// void QSystemDeviceInfoPrivate::setConnection()
-// {
-//     if(halIsAvailable) {
-// #if !defined(QT_NO_DBUS)
-//         QHalInterface iface;
-
-//         QStringList list = iface.findDeviceByCapability("battery");
-//         if(!list.isEmpty()) {
-//             foreach(QString dev, list) {
-//                 halIfaceDevice = new QHalDeviceInterface(dev);
-//                 if (halIfaceDevice->isValid()) {
-//                     QString batType = halIfaceDevice->getPropertyString("battery.type");
-//                     if(batType == "primary" || batType == "pda") {
-//                         if(halIfaceDevice->setConnections() ) {
-//                             if(!connect(halIfaceDevice,SIGNAL(propertyModified(int, QVariantList)),
-//                                         this,SLOT(halChanged(int,QVariantList)))) {
-//                                 qWarning() << "connection malfunction";
-//                             }
-//                         }
-//                         break;
-//                     }
-//                 }
-//             }
-//         }
-
-//         list = iface.findDeviceByCapability("ac_adapter");
-//         if(!list.isEmpty()) {
-//             foreach(QString dev, list) {
-//                 halIfaceDevice = new QHalDeviceInterface(dev);
-//                 if (halIfaceDevice->isValid()) {
-//                     if(halIfaceDevice->setConnections() ) {
-//                         if(!connect(halIfaceDevice,SIGNAL(propertyModified(int, QVariantList)),
-//                                     this,SLOT(halChanged(int,QVariantList)))) {
-//                             qWarning() << "connection malfunction";
-//                         }
-//                     }
-//                     break;
-//                 }
-//             }
-//         }
-
-//         list = iface.findDeviceByCapability("battery");
-//         if(!list.isEmpty()) {
-//             foreach(QString dev, list) {
-//                 halIfaceDevice = new QHalDeviceInterface(dev);
-//                 if (halIfaceDevice->isValid()) {
-//                     if(halIfaceDevice->setConnections()) {
-//                         if(!connect(halIfaceDevice,SIGNAL(propertyModified(int, QVariantList)),
-//                                     this,SLOT(halChanged(int,QVariantList)))) {
-//                             qWarning() << "connection malfunction";
-//                         }
-//                     }
-//                     break;
-//                 }
-//             }
-//         }
-
-// #endif
-//     }
-// }
-
 
 #if !defined(QT_NO_DBUS)
 void QSystemDeviceInfoPrivate::halChanged(int,QVariantList map)
