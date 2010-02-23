@@ -52,6 +52,7 @@
 #include <QFile>
 #include <QThread>
 #include <QTimer>
+#include <math.h>
 
 #include <QDebug>
 
@@ -773,7 +774,7 @@ void tst_QValueSpaceSubscriber::value()
     QCOMPARE(base.value("home/user/int", 5).toInt(), 3);
     QCOMPARE(base.value("home/user/QByteArray", QByteArray("invalid")).toByteArray(),
              QByteArray("testByteArray"));
-    QCOMPARE(base.value("home/user/double", 4.0).toDouble(), double(4.56));
+    QVERIFY(fabs(base.value("home/user/double", 4.0).toDouble() - double(4.56)) < 0.01);
     //QCOMPARE(base.value("home/user/float", 4.0).toDouble(), (double)4.56);
 
     QValueSpaceSubscriber base1(layer->id(), QString("/home"));
@@ -783,7 +784,7 @@ void tst_QValueSpaceSubscriber::value()
     QCOMPARE(base1.value("user/int", 5).toInt(), 3);
     QCOMPARE(base1.value("user/QByteArray", QByteArray("invalid")).toByteArray(),
              QByteArray("testByteArray"));
-    QCOMPARE(base1.value("user/double", 4.0).toDouble(), double(4.56));
+    QVERIFY(fabs(base.value("home/user/double", 4.0).toDouble() - double(4.56)) < 0.01);
     //QCOMPARE(base1.value("user/float", 4.0).toDouble(), double(4.56));
 
     QValueSpaceSubscriber base2(layer->id(), QString("/home/user"));
@@ -793,7 +794,7 @@ void tst_QValueSpaceSubscriber::value()
     QCOMPARE(base2.value("int", 5).toInt(), 3);
     QCOMPARE(base2.value("QByteArray", QByteArray("invalid")).toByteArray(),
              QByteArray("testByteArray"));
-    QCOMPARE(base2.value("double", 4.0).toDouble(), double(4.56));
+    QVERIFY(fabs(base.value("home/user/double", 4.0).toDouble() - double(4.56)) < 0.01);
     //QCOMPARE(base2.value("float", 4.0).toDouble(), 4.56);
 }
 
