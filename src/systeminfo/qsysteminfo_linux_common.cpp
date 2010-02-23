@@ -251,10 +251,10 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
          break;
      case QSystemInfo::VibFeature :
  #if !defined(QT_NO_DBUS)
-         featureSupported = hasHalDeviceFeature("vibrator"); //might not always be true
-         if(featureSupported)
-             return featureSupported;
- #endif
+         if(hasHalDeviceFeature("vibrator") || hasHalDeviceFeature("vib")) {
+             return true;
+     }
+#endif
          break;
      case QSystemInfo::WlanFeature :
          {
