@@ -36,3 +36,7 @@ maemo6 {
 maemo5 {
     DEFINES+= Q_WS_MAEMO_5
 }
+maemo* {
+    LIBS += -L/opt/qt4-maemo5/lib
+    QMAKE_LFLAGS += -Wl,-rpath,/opt/qt4-maemo5/lib
+}
