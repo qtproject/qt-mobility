@@ -53,7 +53,11 @@ n900accelerometer::n900accelerometer(QSensor *sensor)
     : n900filebasedsensor(sensor)
 {
     setReading<QAccelerometerReading>(&m_reading);
+    // Details derived from the kernel driver
     setDataRates(qrangelist() << qrange(100,100) << qrange(400,400));
+    setOutputRange(0, -22.418, 22.418, 0.17651);
+    setOutputRange(1, -98.672, 89.672, 0.70608);
+    setDescription("lis302dl");
 }
 
 void n900accelerometer::poll()

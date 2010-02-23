@@ -59,11 +59,21 @@ QTM_BEGIN_NAMESPACE
 
 typedef QList<QSensorFilter*> QFilterList;
 
+struct measurementdetails
+{
+    qreal measurementMinimum;
+    qreal measurementMaximum;
+    qreal measurementAccuracy;
+};
+
 class QSensorPrivate
 {
 public:
     QSensorPrivate()
-        : updateInterval(0)
+        : identifier()
+        , type()
+        , outputRange(-1)
+        , updateInterval(0)
         , backend(0)
         , signalEnabled(true)
         , active(false)
@@ -76,6 +86,11 @@ public:
     // meta-data
     QByteArray identifier;
     QByteArray type;
+
+    QString description;
+
+    QList<measurementdetails> measurementDetails;
+    int outputRange;
 
     // policy
     qrangelist availableDataRates;

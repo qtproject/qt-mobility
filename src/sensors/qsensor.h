@@ -87,6 +87,11 @@ class Q_SENSORS_EXPORT QSensor : public QObject
     Q_PROPERTY(QSensorReading* reading READ reading NOTIFY readingChanged)
     Q_PROPERTY(bool busy READ isBusy)
     Q_PROPERTY(bool active READ isActive)
+    Q_PROPERTY(qreal measurementMinimum READ measurementMinimum)
+    Q_PROPERTY(qreal measurementMaximum READ measurementMaximum)
+    Q_PROPERTY(qreal measurementAccuracy READ measurementAccuracy)
+    Q_PROPERTY(int outputRange READ outputRangeCount WRITE setOutputRange)
+    Q_PROPERTY(QString description READ description)
 public:
     explicit QSensor(QObject *parent = 0);
     virtual ~QSensor();
@@ -109,6 +114,15 @@ public:
     qrangelist availableDataRates() const;
     int updateInterval() const;
     void setUpdateInterval(int interval);
+
+    qreal measurementMinimum() const;
+    qreal measurementMaximum() const;
+    qreal measurementAccuracy() const;
+
+    int outputRangeCount() const;
+    void setOutputRange(int index);
+
+    QString description() const;
 
     // Filters modify the reading
     void addFilter(QSensorFilter *filter);

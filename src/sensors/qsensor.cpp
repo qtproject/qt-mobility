@@ -399,6 +399,68 @@ void QSensor::removeFilter(QSensorFilter *filter)
     This signal is emitted when the reading has changed.
 */
 
+/*!
+    \property QSensor::measurementMinimum
+    \brief the foo
+
+    foo
+*/
+
+qreal QSensor::measurementMinimum() const
+{
+    Q_ASSERT(d->outputRange != -1);
+    return d->measurementDetails[d->outputRange].measurementMinimum;
+}
+
+/*!
+    \property QSensor::measurementMaximum
+    \brief the foo
+
+    foo
+*/
+
+qreal QSensor::measurementMaximum() const
+{
+    Q_ASSERT(d->outputRange != -1);
+    return d->measurementDetails[d->outputRange].measurementMaximum;
+}
+
+/*!
+    \property QSensor::measurementAccuracy
+    \brief the foo
+
+    foo
+*/
+
+qreal QSensor::measurementAccuracy() const
+{
+    Q_ASSERT(d->outputRange != -1);
+    return d->measurementDetails[d->outputRange].measurementAccuracy;
+}
+
+/*!
+    \property QSensor::outputRange
+    \brief the foo
+
+    foo
+*/
+
+int QSensor::outputRangeCount() const
+{
+    return d->measurementDetails.count();
+}
+
+void QSensor::setOutputRange(int index)
+{
+    Q_ASSERT(index >= 0 && index < outputRangeCount());
+    d->outputRange = index;
+}
+
+QString QSensor::description() const
+{
+    return d->description;
+}
+
 // =====================================================================
 
 /*!
