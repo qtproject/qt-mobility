@@ -50,6 +50,7 @@
 
 QTM_BEGIN_NAMESPACE
 
+class ObjectEndPointPrivate;
 class ObjectEndPoint : public QObject
 {
     Q_OBJECT
@@ -78,11 +79,9 @@ public Q_SLOTS:
 private:
     void waitForResponse(const QUuid& requestId);
 
-    Type endPointType;
     QServiceIpcEndPoint* dispatch;
     QPointer<QObject> service;
-    QUuid serviceInstanceId;
-    QServiceTypeIdent typeIdent;
+    ObjectEndPointPrivate* d;
 };
 
 QTM_END_NAMESPACE

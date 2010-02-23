@@ -43,6 +43,7 @@
 #include "instancemanager_p.h"
 #include "qmetaobjectbuilder_p.h"
 #include "proxyobject_p.h"
+#include "qsignalintercepter_p.h"
 #include <QTimer>
 #include <QEventLoop>
 
@@ -61,12 +62,92 @@ public:
 typedef QHash<QUuid, Response*> Replies;
 Q_GLOBAL_STATIC(Replies, openRequests);
 
+class ServiceSignalIntercepter : public QSignalIntercepter
+{
+    //Do not put Q_OBJECT here
+public:
+    ServiceSignalIntercepter(QObject* sender, const QByteArray& signal,
+            ObjectEndPoint* parent)
+        : QSignalIntercepter(sender, signal, parent), endPoint(parent)
+    {
+        
+    }
+
+    void setMetaIndex(int index)
+    {
+        metaIndex = index;
+    }
+
+protected:
+    void activated( const QList<QVariant>& args )
+    {
+        qDebug() << signal() << "emitted.";
+        endPoint->invokeRemote(metaIndex, args, QMetaType::Void);
+    }
+private:
+    ObjectEndPoint* endPoint;
+    int metaIndex;
+
+};
+
+class ObjectEndPointPrivate
+{
+public:
+    ObjectEndPointPrivate()
+    {
+    }
+
+    ~ObjectEndPointPrivate()
+    {
+    }
+
+    //service side
+    void setupSignalIntercepters(QObject * service)
+    {
+        //create a signal intercepter for each signal
+        //offered by service 
+        //exclude QObject signals
+        const QMetaObject* mo = service->metaObject();
+        while (mo && strcmp(mo->className(), "QObject"))
+        {
+            for (int i = mo->methodOffset(); i < mo->methodCount(); ++i) {
+                const QMetaMethod method = mo->method(i);
+                if (method.methodType() == QMetaMethod::Signal) {
+                    QByteArray signal = method.signature();
+                    //add '2' for signal - see QSIGNAL_CODE
+                    qDebug() << "creating interceptor";
+                    ServiceSignalIntercepter* intercept = 
+                        new ServiceSignalIntercepter(service, "2"+signal, parent );
+                    intercept->setMetaIndex(i);
+                }
+            }
+            mo = mo->superClass();
+        }
+    }
+
+    //used on client and service side
+    ObjectEndPoint::Type endPointType;
+    ObjectEndPoint* parent;
+
+    //used on service side
+    QServiceTypeIdent typeIdent;
+    QUuid serviceInstanceId;
+};
+
+//TODO list:
+/*
+    - Why do we need typeIdent and serviceInstanceId on service side. The instance id should be sufficient.
+
+*/
 
 ObjectEndPoint::ObjectEndPoint(Type type, QServiceIpcEndPoint* comm, QObject* parent)
-    : QObject(parent), endPointType(type), dispatch(comm), service(0), 
-      serviceInstanceId(QUuid()), typeIdent(QServiceTypeIdent())
+    : QObject(parent), dispatch(comm), service(0)
 {
     Q_ASSERT(dispatch);
+    d = new ObjectEndPointPrivate;
+    d->parent = this;
+    d->endPointType = type;
+
     dispatch->setParent(this);
     connect(dispatch, SIGNAL(readyRead()), this, SLOT(newPackageReady()));
     connect(dispatch, SIGNAL(disconnected()), this, SLOT(disconnected()));
@@ -80,9 +161,11 @@ ObjectEndPoint::ObjectEndPoint(Type type, QServiceIpcEndPoint* comm, QObject* pa
 
 ObjectEndPoint::~ObjectEndPoint()
 {
-    if (endPointType == Service) {
-        InstanceManager::instance()->removeObjectInstance(typeIdent, serviceInstanceId);
+    if (d->endPointType == Service) {
+        InstanceManager::instance()->removeObjectInstance(d->typeIdent, d->serviceInstanceId);
     }
+
+    delete d;
 }
 
 void ObjectEndPoint::disconnected()
@@ -142,6 +225,7 @@ void ObjectEndPoint::newPackageReady()
                 break;
             case QServicePackage::SignalEmission:
             case QServicePackage::MethodCall:
+                qDebug() << "methodCall";
                 methodCall(p);
                 break;
             default:
@@ -191,15 +275,16 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
         builder.serialize(stream);
 
         //instanciate service object from type register
-        service = m->createObjectInstance(p.d->typeId, serviceInstanceId);
+        service = m->createObjectInstance(p.d->typeId, d->serviceInstanceId);
         if (!service) {
             qWarning() << "Cannot instanciate service object";
             dispatch->writePackage(response);
             return;
         }
+        d->setupSignalIntercepters(service);
 
         //send meta object 
-        typeIdent = p.d->typeId;
+        d->typeIdent = p.d->typeId;
         response.d->typeId = p.d->typeId;
         response.d->responseType = QServicePackage::Success;
         response.d->payload = QVariant(data);
@@ -209,7 +294,6 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
 
 void ObjectEndPoint::methodCall(const QServicePackage& p)
 {
-
     if (p.d->responseType == QServicePackage::NotAResponse ) {
         qDebug() << p;
         QByteArray data = p.d->payload.toByteArray();
@@ -220,7 +304,16 @@ void ObjectEndPoint::methodCall(const QServicePackage& p)
         stream >> args;
 
         QMetaMethod method = service->metaObject()->method(metaIndex);
+        const bool isSignal = (method.methodType() == QMetaMethod::Signal);
         const int returnType = QMetaType::type(method.typeName());
+        qDebug() << "IsSignal:" << isSignal << returnType;
+
+        if (isSignal) {
+            //TODO arguments still missing
+            //does this work in either direction?
+            QMetaObject::activate(service, service->metaObject(), metaIndex, 0);
+            return;
+        }
 
         const char* typenames[] = {0,0,0,0,0,0,0,0,0,0};
         const void* param[] = {0,0,0,0,0,0,0,0,0,0};

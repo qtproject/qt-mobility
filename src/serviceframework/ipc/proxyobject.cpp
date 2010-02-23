@@ -100,7 +100,6 @@ int QServiceProxy::qt_metacall(QMetaObject::Call c, int id, void **a)
         const int metaIndex = id + d->meta->methodOffset();
 
         QMetaMethod method = d->meta->method(metaIndex);
-        qDebug() << method.typeName();
 
         const int returnType = QMetaType::type(method.typeName());
 

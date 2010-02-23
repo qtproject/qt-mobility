@@ -42,6 +42,7 @@
 #include <qmetaobject.h>
 #include <qmetatype.h>
 #include <qobjectdefs.h>
+#include <qdebug.h>
 
 /*!
     \class QSignalIntercepter

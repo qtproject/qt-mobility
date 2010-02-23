@@ -52,14 +52,13 @@ public slots:
 
     Q_INVOKABLE void triggerSignalWithIntParam()
     {
-        static int counter = 0;
-        counter++;
-        if ((counter % 2) == 1 ) {
-            QTimer::singleShot(2000, this, SLOT(triggerSignalWithIntParam()));
-        } else {
-            qDebug() << "Emitting TestService::signalWithIntParam(" << counter << ")";
-            emit signalWithIntParam( counter );
-        }
+        QTimer::singleShot(2000, this, SLOT(triggerSignalWithIntParamExecute()));
+    }
+
+    void triggerSignalWithIntParamExecute()
+    {
+        qDebug() << "Emitting TestService::signalWithIntParam()";
+        emit signalWithIntParam( 5 );
     }
 
 
@@ -128,18 +127,19 @@ Q_SIGNALS:
 
 
 public slots:
+    
     void triggerSignalWithIntParam()
     {
-        static int counter = 0;
-        counter++;
-        if ((counter % 2) == 1 ) {
-            QTimer::singleShot(2000, this, SLOT(triggerSignalWithIntParam()));
-        } else {
-            qDebug() << "Emitting TestService2::signalWithIntParam(" << counter << ")";
-            emit signalWithIntParam( counter );
-        }
+        //qDebug() << "AAAAAAAAAAAAAAAAAAAAAAAAASSSSSSSSSSSSs";
+        //emit signalWithIntParam( 5 );
+        QTimer::singleShot(2000, this, SLOT(triggerSignalWithIntParamExecute()));
     }
 
+    void triggerSignalWithIntParamExecute()
+    {
+        qDebug() << "Emitting TestService2::signalWithIntParam()";
+        emit signalWithIntParam( 5 );
+    }
 
     void testSlot() {
         qDebug() << "TestService2::testSlot() called";
@@ -164,6 +164,9 @@ public slots:
     {
         qDebug() << "TestService2::testSlotWithUnknownArg(const QServiceInterfaceDescriptor& d)";
     }
+Q_SIGNALS:
+    //void signalWithIntParam1(int);
+    //void signalWithIntParam4(int);
 };
 
 void unregisterExampleService()
