@@ -63,6 +63,10 @@ const int KOneSimContactBufferSize = 512;
 const TInt KDataClientBuf  = 128;
 const TInt KEtsiTonPosition = 0x70;
 Q_DEFINE_LATIN1_LITERAL(KSimSyncTarget, "SIM");
+Q_DEFINE_LATIN1_LITERAL(KParameterKeySimStoreName, "store");
+Q_DEFINE_LATIN1_LITERAL(KParameterValueSimStoreNameAdn, "ADN");
+Q_DEFINE_LATIN1_LITERAL(KParameterValueSimStoreNameSdn, "SDN");
+Q_DEFINE_LATIN1_LITERAL(KParameterValueSimStoreNameFdn, "FDN");
 
 #include <flogger.h>
 #include <f32file.h>
@@ -84,36 +88,66 @@ CntSymbianSimEngine::CntSymbianSimEngine(const QMap<QString, QString>& parameter
     m_simStore(0)
 {
     error = QContactManager::NoError;
-
-    int err = m_etelServer.Connect();
-    if (err == KErrNone) {
-        err = m_etelServer.LoadPhoneModule(KMmTsyModuleName);
-    }
-    if (err == KErrNone) {
-        RTelServer::TPhoneInfo info;
-        err = m_etelServer.GetPhoneInfo(0, info);
-        if (err == KErrNone) {
-            err = m_etelPhone.Open(m_etelServer, info.iName);
-        }
-    }
-    if (err == KErrNone) {
-        // open Etel store - TODO: check from parameters what Etel store to use
-        err = m_etelStore.Open(m_etelPhone, KETelIccAdnPhoneBook);
-        }
-    if (err != KErrNone) {
-        error = QContactManager::UnspecifiedError;
-    }
-
-    m_managerUri = QContactManager::buildUri(CNT_SYMBIANSIM_MANAGER_NAME, parameters);
-    
+    TRAPD(err, initializeL(parameters));
+    transformError(err, error);
     m_simStore = new CntSimStore(this);
+}
 
-    RFs fs;
-    fs.Connect();
-    fs.MkDir(_L("C:\\Logs\\"));
-    fs.MkDir(_L("C:\\Logs\\Sim\\"));
-    fs.Close();
-    PbkPrintToLog(_L("CntSymbianSimEngine::CntSymbianSimEngine, err = %d"), err);
+void CntSymbianSimEngine::initializeL(const QMap<QString, QString> &parameters)
+{
+    TBuf<RMobilePhoneBookStore::KMaxPBIDSize> storeName;
+    convertStoreNameL(parameters, storeName);
+
+    // Open etel server
+    User::LeaveIfError(m_etelServer.Connect());
+    User::LeaveIfError(m_etelServer.LoadPhoneModule(KMmTsyModuleName));
+
+    // Open etel phone
+    RTelServer::TPhoneInfo info;
+    User::LeaveIfError(m_etelServer.GetPhoneInfo(0, info));
+    User::LeaveIfError(m_etelPhone.Open(m_etelServer, info.iName));
+
+    // open Etel store - TODO: check from parameters what Etel store to use
+    User::LeaveIfError(m_etelStore.Open(m_etelPhone, storeName));
+
+    m_managerUri = QContactManager::buildUri(managerName(), parameters);
+
+    if(storeName.Match(KETelIccSdnPhoneBook) != KErrNotFound) {
+        // In case of SDN store we need to check if any SDN contacts exist to
+        // determine if the store is supported or not
+        QContactManager::Error error(QContactManager::NoError);
+        if(contactIds(QList<QContactSortOrder>(), error).count() == 0) {
+            User::Leave(KErrNotSupported);
+        }
+    }
+}
+
+void CntSymbianSimEngine::convertStoreNameL(const QMap<QString, QString> &parameters, TDes &storeName)
+{
+    if(storeName.MaxLength() < RMobilePhoneBookStore::KMaxPBIDSize) {
+        User::Leave(KErrArgument);
+    }
+
+    // Parse parameters; the only allowed parameter key is "store"
+    if (parameters.count() == 0) {
+        // Default to ADN store
+        storeName.Copy(KETelIccAdnPhoneBook);
+    } else if(parameters.count() == 1) {
+        if (parameters.contains(KParameterKeySimStoreName)) {
+            if (parameters.value(KParameterKeySimStoreName) == KParameterValueSimStoreNameFdn) {
+                storeName.Copy(KETelIccFdnPhoneBook);
+            } else if (parameters.value(KParameterKeySimStoreName) == KParameterValueSimStoreNameAdn) {
+                storeName.Copy(KETelIccAdnPhoneBook);
+            } else if (parameters.value(KParameterKeySimStoreName) == KParameterValueSimStoreNameSdn) {
+                storeName.Copy(KETelIccSdnPhoneBook);
+            }
+        }
+    }
+
+    // Check that we got a valid store name
+    if(storeName.Length() == 0) {
+        User::Leave(KErrArgument);
+    }
 }
 
 CntSymbianSimEngine::~CntSymbianSimEngine()
@@ -361,24 +395,6 @@ QMap<QString, QContactDetailDefinition> CntSymbianSimEngine::detailDefinitions(c
     f.setAllowableValues(QVariantList());
     fields.insert(QContactPhoneNumber::FieldNumber, f);
     // TODO: subtypes supported in case a sim contact can have multiple phone numbers?
-/*
-    f.setDataType(QVariant::StringList); // can implement multiple subtypes
-    subTypes.clear();
-    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeAssistant));
-    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeBulletinBoardSystem));
-    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeCar));
-    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeDtmfMenu));
-    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeFacsimile));
-    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeLandline));
-    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeMessagingCapable));
-    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeMobile));
-    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeModem));
-    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypePager));
-    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeVideo));
-    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeVoice));
-    f.setAllowableValues(subTypes);
-    fields.insert(QContactPhoneNumber::FieldSubTypes, f);
-*/
     d.setFields(fields);
     if (m_etelStoreInfo.iMaxAdditionalNumbers > 0) {
         // multiple numbers supported
@@ -661,7 +677,7 @@ void CntSymbianSimEngine::doSaveContactL(QContact* contact) const
                     requestStatus.Int());
         User::Leave(requestStatus.Int());
     }
-    CleanupStack::PopAndDestroy(); //buffer
+    CleanupStack::PopAndDestroy(&buffer);
 
     PbkPrintToLog(_L("CntSymbianSimEngine::saveContactL() - index = %d"), index);
 
@@ -974,10 +990,21 @@ QContact CntSymbianSimEngine::encodeSimContactL(const QContact* contact, TDes8& 
         PbkPrintToLog(_L("CntSymbianSimEngine::encodeSimContactL() - add phone number"));
         QContactPhoneNumber phoneNumberDetail = static_cast<QContactPhoneNumber>(phoneNumberDetails.at(0));
         QString number = phoneNumberDetail.number();
+        foreach (const QChar character, number) {
+            if(!character.isDigit()) {
+                if(character != QChar('+')
+                    && character != QChar('*')
+                    && character != QChar('#')
+                    && character != QChar('p')
+                    && character != QChar('w')) {
+                    User::Leave(KErrArgument);
+                }
+            }
+        }
         PbkPrintToLog(_L("CntSymbianSimEngine::encodeSimContactL() - phone number length = %d"),
                 phoneNumberDetail.number().length());
         if (phoneNumberDetail.number().length() > m_etelStoreInfo.iMaxNumLength) {
-            User::LeaveIfError(KErrTooBig);
+            User::Leave(KErrTooBig);
         }
         TPtrC phoneNumberValue(reinterpret_cast<const TUint16*>(phoneNumberDetail.number().utf16()));
         PbkPrintToLog(_L("CntSymbianSimEngine::encodeSimContactL() - number = %S"), &phoneNumberValue);
@@ -1028,7 +1055,6 @@ QContact CntSymbianSimEngine::encodeSimContactL(const QContact* contact, TDes8& 
     CleanupStack::PopAndDestroy(pbBuffer);
     PbkPrintToLog(_L("CntSymbianSimEngine::encodeSimContactL() - OUT"));
     return convertedContact;
-
 }
 
 void CntSymbianSimEngine::updateDisplayLabel(QContact& contact) const
@@ -1042,7 +1068,12 @@ void CntSymbianSimEngine::updateDisplayLabel(QContact& contact) const
 
 QContactManagerEngine* CntSymbianSimFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
 {
-    return new CntSymbianSimEngine(parameters, error);
+    CntSymbianSimEngine *engine = new CntSymbianSimEngine(parameters, error);
+    if(error != QContactManager::NoError) {
+        delete engine;
+        return 0;
+    }
+    return engine;
 }
 
 QString CntSymbianSimFactory::managerName() const

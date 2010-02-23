@@ -53,14 +53,6 @@
 
 QTM_USE_NAMESPACE
 
-#define QCOMPARE_WITH_RETURN_VALUE(actual, expected) \
-    if (!QTest::qCompare(actual, expected, #actual, #expected, __FILE__, __LINE__))\
-        return false;
-
-#define QVERIFY_WITH_RETURN_VALUE(statement) \
-    if (!QTest::qVerify((statement), #statement, "", __FILE__, __LINE__))\
-        return false;
-
 #ifndef QTRY_COMPARE
 #define QTRY_COMPARE(__expr, __expected) \
     do { \
@@ -75,7 +67,6 @@ QTM_USE_NAMESPACE
         QCOMPARE(__expr, __expected); \
     } while(0)
 #endif
-
 
 //TESTED_CLASS=
 //TESTED_FILES=
@@ -97,28 +88,38 @@ public slots:
     void cleanupTestCase();
 
 private slots:
-    /* Test cases that take no data */
-    void hasFeature();
-    void supportedContactTypes();
-    void detailDefinitions();
-
     /* Test cases that need data */
+    void initManager_data();
+    void initManager();
+    void hasFeature_data();
+    void hasFeature();
+    void supportedContactTypes_data();
+    void supportedContactTypes();
+    void detailDefinitions_data();
+    void detailDefinitions();
     void addContact_data();
     void addContact();
+    void fetchContacts_data();
+    void fetchContacts();
     void updateContactDetail_data();
     void updateContactDetail();
+
+    /* Test cases that take no data */
+
+    /* async cases */
     void fetchContactReq();
     void localIdFetchReq();
     void saveContactReq();
     void removeContactReq();
     void detailDefinitionFetchReq();
     void notSupportedRequests();
-    
+
 private:
+    void initManager(QString simStore);
     void getEtelStoreInfoL(const TDesC &phonebook, TDes8 &infoPckg) const;
-    void parseDetails(QContact &contact, QStringList details, QList<QContactDetail> &parsedDetails);
     bool isContactSupported(QContact contact);
-    bool compareDetails(QContact contact, QList<QContactDetail> expectedDetails);
+    void parseDetails(QContact &contact, QStringList details, QList<QContactDetail> &parsedDetails);
+    void compareDetails(QContact contact, QList<QContactDetail> expectedDetails);
     QContact createContact(QString name, QString number);
     QContact saveContact(QString name, QString number);
 
@@ -129,7 +130,8 @@ private:
 };
 
 tst_QContactManagerSymbianSim::tst_QContactManagerSymbianSim() :
-    m_etelStoreInfoPckg( m_etelStoreInfo )
+    m_cm(0),
+    m_etelStoreInfoPckg(m_etelStoreInfo)
 {
 	qRegisterMetaType<QContactAbstractRequest::State>("QContactAbstractRequest::State");
 }
@@ -152,8 +154,7 @@ void tst_QContactManagerSymbianSim::cleanup()
 
 void tst_QContactManagerSymbianSim::initTestCase()
 {
-    m_cm = QContactManager::fromUri("qtcontacts:symbiansim");
-    QVERIFY(m_cm);
+    // Currently we only need the ADN store info
     TRAPD(err, getEtelStoreInfoL(KETelIccAdnPhoneBook, m_etelStoreInfoPckg));
     QCOMPARE(err, KErrNone);
 }
@@ -164,84 +165,170 @@ void tst_QContactManagerSymbianSim::cleanupTestCase()
     m_cm = 0;
 }
 
-void tst_QContactManagerSymbianSim::getEtelStoreInfoL(const TDesC &phonebook, TDes8 &infoPckg) const
+void tst_QContactManagerSymbianSim::initManager_data()
 {
-    RTelServer etelServer;
-    User::LeaveIfError(etelServer.Connect());
-    CleanupClosePushL(etelServer);
-    User::LeaveIfError(etelServer.LoadPhoneModule(KMmTsyModuleName));
- 
-    RMobilePhone etelPhone;
-    RTelServer::TPhoneInfo info;
-    User::LeaveIfError(etelServer.GetPhoneInfo(0, info));
-    User::LeaveIfError(etelPhone.Open(etelServer, info.iName));
-    CleanupClosePushL(etelPhone);
+    QTest::addColumn<QString>("simStore"); // empty (defaults to ADN), "ADN", "SDN" or "FDN"
 
-    //check what information can be saved to the Etel store
-    RMobilePhoneBookStore etelStore;
-    User::LeaveIfError(etelStore.Open(etelPhone, phonebook));
-    CleanupClosePushL(etelStore);
-    TRequestStatus requestStatus;
-    etelStore.GetInfo(requestStatus, infoPckg);
-    User::WaitForRequest(requestStatus);
-    User::LeaveIfError(requestStatus.Int());
+    QString es = QString();
 
-    CleanupStack::PopAndDestroy(&etelStore);
-    CleanupStack::PopAndDestroy(&etelPhone);
-    CleanupStack::PopAndDestroy(&etelServer);
+    QTest::newRow("Empty store string (defaults to ADN store)") << es;
+    QTest::newRow("Initialize SDN store") << "SDN";
+    QTest::newRow("Initialize FDN store") << "FDN";
+    QTest::newRow("Initialize ADN store") << "ADN";
+}
+
+void tst_QContactManagerSymbianSim::initManager()
+{
+    delete m_cm;
+    m_cm = 0;
+
+    QString uri("qtcontacts:symbiansim");
+
+    // Set the sim store if available (simbackend defaults to ADN if not available)
+    QFETCH(QString, simStore);
+    if(!simStore.isEmpty()) {
+        uri.append(":store=");
+        uri.append(simStore);
+    }
+
+    m_cm = QContactManager::fromUri(uri);
+    QVERIFY(m_cm);
+
+    // NotSupportedError is allowed (the sim card may not support FDN and SDN stores)
+    if(m_cm->error() == QContactManager::NotSupportedError) {
+        QSKIP("The store not supported by the SIM card", SkipSingle);
+    } else {
+        QCOMPARE(m_cm->error(), QContactManager::NoError);
+    }
+}
+
+void tst_QContactManagerSymbianSim::initManager(QString simStore)
+{
+    delete m_cm;
+    m_cm = 0;
+
+    QString uri("qtcontacts:symbiansim");
+
+    // Set the sim store if available (simbackend defaults to ADN if not available)
+    if(!simStore.isEmpty()) {
+        uri.append(":store=");
+        uri.append(simStore);
+    }
+
+    m_cm = QContactManager::fromUri(uri);
+}
+
+void tst_QContactManagerSymbianSim::hasFeature_data()
+{
+    QTest::addColumn<QString>("simStore");      // empty (defaults to ADN), "ADN", "SDN" or "FDN"
+    QTest::addColumn<int>("managerFeature");              // one of QContactManager::ManagerFeature
+    QTest::addColumn<bool>("expectedResult");   // true = has feature, false = does not have feature
+    QString es = QString();
+
+    QTest::newRow("ADN store (default)") << es << (int) QContactManager::Groups << false;
+    QTest::newRow("ADN store (default)") << es << (int) QContactManager::ActionPreferences << false;
+    QTest::newRow("ADN store (default)") << es << (int) QContactManager::MutableDefinitions << false;
+    QTest::newRow("ADN store (default)") << es << (int) QContactManager::Relationships << false;
+    QTest::newRow("ADN store (default)") << es << (int) QContactManager::ArbitraryRelationshipTypes << false;
+    QTest::newRow("ADN store (default)") << es << (int) QContactManager::RelationshipOrdering << false;
+    // TODO: self contact may be supported on ADN? (so called "own number store")
+    QTest::newRow("ADN store (default)") << es << (int) QContactManager::SelfContact << false;
+    QTest::newRow("ADN store (default)") << es << (int) QContactManager::Anonymous << false;
+    QTest::newRow("ADN store (default)") << es << (int) QContactManager::ChangeLogs << false;
+
+    QTest::newRow("ADN store") << "ADN" << (int) QContactManager::Groups << false;
+    QTest::newRow("ADN store") << "ADN" << (int) QContactManager::ActionPreferences << false;
+    QTest::newRow("ADN store") << "ADN" << (int) QContactManager::MutableDefinitions << false;
+    QTest::newRow("ADN store") << "ADN" << (int) QContactManager::Relationships << false;
+    QTest::newRow("ADN store") << "ADN" << (int) QContactManager::ArbitraryRelationshipTypes << false;
+    QTest::newRow("ADN store") << "ADN" << (int) QContactManager::RelationshipOrdering << false;
+    // TODO: self contact may be supported on ADN? (so called "own number store")
+    QTest::newRow("ADN store") << "ADN" << (int) QContactManager::SelfContact << false;
+    QTest::newRow("ADN store") << "ADN" << (int) QContactManager::Anonymous << false;
+    QTest::newRow("ADN store") << "ADN" << (int) QContactManager::ChangeLogs << false;
+
+    QTest::newRow("SDN store") << "SDN" << (int) QContactManager::Groups << false;
+    QTest::newRow("SDN store") << "SDN" << (int) QContactManager::ActionPreferences << false;
+    QTest::newRow("SDN store") << "SDN" << (int) QContactManager::MutableDefinitions << false;
+    QTest::newRow("SDN store") << "SDN" << (int) QContactManager::Relationships << false;
+    QTest::newRow("SDN store") << "SDN" << (int) QContactManager::ArbitraryRelationshipTypes << false;
+    QTest::newRow("SDN store") << "SDN" << (int) QContactManager::RelationshipOrdering << false;
+    QTest::newRow("SDN store") << "SDN" << (int) QContactManager::SelfContact << false;
+    QTest::newRow("SDN store") << "SDN" << (int) QContactManager::Anonymous << false;
+    QTest::newRow("SDN store") << "SDN" << (int) QContactManager::ChangeLogs << false;
+
+    QTest::newRow("FDN store") << "FDN" << (int) QContactManager::Groups << false;
+    QTest::newRow("FDN store") << "FDN" << (int) QContactManager::ActionPreferences << false;
+    QTest::newRow("FDN store") << "FDN" << (int) QContactManager::MutableDefinitions << false;
+    QTest::newRow("FDN store") << "FDN" << (int) QContactManager::Relationships << false;
+    QTest::newRow("FDN store") << "FDN" << (int) QContactManager::ArbitraryRelationshipTypes << false;
+    QTest::newRow("FDN store") << "FDN" << (int) QContactManager::RelationshipOrdering << false;
+    QTest::newRow("FDN store") << "FDN" << (int) QContactManager::SelfContact << false;
+    QTest::newRow("FDN store") << "FDN" << (int) QContactManager::Anonymous << false;
+    QTest::newRow("FDN store") << "FDN" << (int) QContactManager::ChangeLogs << false;
 }
 
 void tst_QContactManagerSymbianSim::hasFeature()
 {
-    // TODO: Groups may be supported by some SIM cards?
-    QVERIFY(!m_cm->hasFeature(QContactManager::Groups));
-    QVERIFY(!m_cm->hasFeature(QContactManager::Groups, QContactType::TypeContact));
-    QVERIFY(!m_cm->hasFeature(QContactManager::Groups, QContactType::TypeGroup));
+    // initialize
+    QFETCH(QString, simStore);
+    initManager(simStore);
+    QVERIFY(m_cm);
+    if(m_cm->error() == QContactManager::NotSupportedError) {
+        QSKIP("The store not supported by the SIM card", SkipSingle);
+    }
+    QFETCH(bool, expectedResult);
+    QFETCH(int, managerFeature);
 
-    QVERIFY(!m_cm->hasFeature(QContactManager::ActionPreferences));
-    QVERIFY(!m_cm->hasFeature(QContactManager::ActionPreferences, QContactType::TypeContact));
-    QVERIFY(!m_cm->hasFeature(QContactManager::ActionPreferences, QContactType::TypeGroup));
+    // verify
+    QCOMPARE(m_cm->hasFeature((QContactManager::ManagerFeature) managerFeature), expectedResult);
+    QCOMPARE(m_cm->hasFeature((QContactManager::ManagerFeature) managerFeature, QContactType::TypeContact), expectedResult);
+    QCOMPARE(m_cm->hasFeature((QContactManager::ManagerFeature) managerFeature, QContactType::TypeGroup), expectedResult);
+}
 
-    QVERIFY(!m_cm->hasFeature(QContactManager::MutableDefinitions));
-    QVERIFY(!m_cm->hasFeature(QContactManager::MutableDefinitions, QContactType::TypeContact));
-    QVERIFY(!m_cm->hasFeature(QContactManager::MutableDefinitions, QContactType::TypeGroup));
-
-    QVERIFY(!m_cm->hasFeature(QContactManager::Relationships));
-    QVERIFY(!m_cm->hasFeature(QContactManager::Relationships, QContactType::TypeContact));
-    QVERIFY(!m_cm->hasFeature(QContactManager::Relationships, QContactType::TypeGroup));
-
-    QVERIFY(!m_cm->hasFeature(QContactManager::ArbitraryRelationshipTypes));
-    QVERIFY(!m_cm->hasFeature(QContactManager::ArbitraryRelationshipTypes, QContactType::TypeContact));
-    QVERIFY(!m_cm->hasFeature(QContactManager::ArbitraryRelationshipTypes, QContactType::TypeGroup));
-
-    QVERIFY(!m_cm->hasFeature(QContactManager::RelationshipOrdering));
-    QVERIFY(!m_cm->hasFeature(QContactManager::RelationshipOrdering, QContactType::TypeContact));
-    QVERIFY(!m_cm->hasFeature(QContactManager::RelationshipOrdering, QContactType::TypeGroup));
-
-    // TODO: self contact may be supported? (so called "own number store")
-    QVERIFY(!m_cm->hasFeature(QContactManager::SelfContact));
-    QVERIFY(!m_cm->hasFeature(QContactManager::SelfContact, QContactType::TypeContact));
-    QVERIFY(!m_cm->hasFeature(QContactManager::SelfContact, QContactType::TypeGroup));
-
-    QVERIFY(!m_cm->hasFeature(QContactManager::Anonymous));
-    QVERIFY(!m_cm->hasFeature(QContactManager::Anonymous, QContactType::TypeContact));
-    QVERIFY(!m_cm->hasFeature(QContactManager::Anonymous, QContactType::TypeGroup));
-
-    QVERIFY(!m_cm->hasFeature(QContactManager::ChangeLogs));
-    QVERIFY(!m_cm->hasFeature(QContactManager::ChangeLogs, QContactType::TypeContact));
-    QVERIFY(!m_cm->hasFeature(QContactManager::ChangeLogs, QContactType::TypeGroup));
+void tst_QContactManagerSymbianSim::supportedContactTypes_data()
+{
+    QTest::addColumn<QString>("simStore");
+    QTest::newRow("custom label") << "ADN";
+    QTest::newRow("custom label") << "SDN";
+    QTest::newRow("custom label") << "FDN";
 }
 
 void tst_QContactManagerSymbianSim::supportedContactTypes()
 {
+    QFETCH(QString, simStore);
+    initManager(simStore);
+    QVERIFY(m_cm);
+    if(m_cm->error() == QContactManager::NotSupportedError) {
+        QSKIP("The store not supported by the SIM card", SkipSingle);
+    }
+
     QStringList types = m_cm->supportedContactTypes();
+    QCOMPARE(m_cm->error(), QContactManager::NoError);
     QVERIFY(types.count() > 0);
-    // Assuming that contact type of TypeContact is always supported
+    // Contacts should always be supported
     QVERIFY(types.contains(QContactType::TypeContact));
+    // Groups should not be supported
+    QVERIFY(!types.contains(QContactType::TypeGroup));
+}
+
+void tst_QContactManagerSymbianSim::detailDefinitions_data()
+{
+    QTest::addColumn<QString>("simStore");
+    QTest::newRow("custom label") << "ADN";
+    QTest::newRow("custom label") << "SDN";
+    QTest::newRow("custom label") << "FDN";
 }
 
 void tst_QContactManagerSymbianSim::detailDefinitions()
 {
+    QFETCH(QString, simStore);
+    initManager(simStore);
+    QVERIFY(m_cm);
+    if(m_cm->error() == QContactManager::NotSupportedError) {
+        QSKIP("The store not supported by the SIM card", SkipSingle);
+    }
+
     QMap<QString, QContactDetailDefinition> detailDefinitions = m_cm->detailDefinitions();
     QCOMPARE(m_cm->error(), QContactManager::NoError);
 
@@ -264,8 +351,7 @@ void tst_QContactManagerSymbianSim::detailDefinitions()
 
 void tst_QContactManagerSymbianSim::addContact_data()
 {
-    // A string list containing the detail fields in format <detail definition name>:<field name>:<value>
-    // For example first name: Name:First:James
+    QTest::addColumn<QString>("simStore"); // empty (defaults to ADN), "ADN", "SDN" or "FDN"
     QTest::addColumn<int>("expectedResult"); // 1 = pass, 0 = fail, -1 = depends on the SIM card
     QTest::addColumn<QString>("expectedDisplayLabel");
     QTest::addColumn<QStringList>("details"); // format is <detail definition name>:<field name>:<value>
@@ -275,87 +361,123 @@ void tst_QContactManagerSymbianSim::addContact_data()
 
     // TODO: what name field to use for a sim contact name?
     // Note: With the current implementation the value must not contain a ':' character
-    QTest::newRow("custom label")
+    QTest::newRow("ADN custom label")
+        << QString("ADN")
         << 1 // expected to pass
         << "James"
         << (QStringList()
             << "Name:CustomLabel:James");
 
-    QTest::newRow("custom label 2")
+    QTest::newRow("ADN (explicitly defined store) custom label")
+        << QString("ADN")
+        << 1 // expected to pass
+        << "James"
+        << (QStringList()
+            << "Name:CustomLabel:James");
+
+    QTest::newRow("ADN custom label 2")
+        << QString("ADN")
         << 1 // expected to pass
         << "James Hunt"
         << (QStringList()
             << "Name:CustomLabel:James Hunt");
 
-    QTest::newRow("2 custom labels")
+    QTest::newRow("ADN 2 custom labels")
+        << QString("ADN")
         << 0 // expected to fail. Custom label is unique.
         << "James Hunt"
         << (QStringList()
             << "Name:CustomLabel:James"
             << "Name:CustomLabel:James Hunt");
 
-    QTest::newRow("too long custom label")
+    QTest::newRow("ADN too long custom label")
+        << QString("ADN")
         << 1 // expected to pass. Note: too long display label is truncated
         << tooLongText
         << (QStringList()
             << (QString("Name:CustomLabel:").append(tooLongText)));
 
-    QTest::newRow("custom label and nick name")
+    QTest::newRow("ADN custom label and nick name")
+        << QString("ADN")
         << -1 // Depends on SIM card support (some cards support second name)
         << "James Hunt"
         << (QStringList()
             << "Name:CustomLabel:James Hunt"
             << "Nickname:Nickname:Hunt the Shunt");
 
-    QTest::newRow("custom label and too long nick name")
+    QTest::newRow("ADN custom label and too long nick name")
+        << QString("ADN")
         << -1 // Depends on SIM card support (some cards support second name)
         << "James Hunt"
         << (QStringList()
             << "Name:CustomLabel:James Hunt"
             << (QString("Nickname:Nickname:").append(tooLongText)));
 
-    QTest::newRow("phone number")
+    QTest::newRow("ADN phone number")
+        << QString("ADN")
         << 1
         << unnamedLabel
         << (QStringList()
             << "PhoneNumber:PhoneNumber:+44752222222");
 
-    QTest::newRow("custom label and phone number")
+    QTest::newRow("ADN custom label and phone number")
+        << QString("ADN")
         << 1
         << "James Hunt"
         << (QStringList()
             << "Name:CustomLabel:James Hunt"
             << "PhoneNumber:PhoneNumber:+44752222222");
 
-    QTest::newRow("custom label and funny (but legal) phone number")
+    QTest::newRow("ADN custom label and funny (but legal) phone number")
+        << QString("ADN")
         << 1
         << "James Hunt"
         << (QStringList()
             << "Name:CustomLabel:James Hunt"
             << "PhoneNumber:PhoneNumber:+0123456789*#p");
 
-    QTest::newRow("custom label and illegal phone number 1")
+    QTest::newRow("ADN custom label and illegal phone number 1")
+        << QString("ADN")
         << 0 // illegal characters in the phone number, should fail
         << "James Hunt"
         << (QStringList()
             << "Name:CustomLabel:James Hunt"
             << "PhoneNumber:PhoneNumber:+44(75)2222222");
 
-    QTest::newRow("custom label and illegal phone number 2")
+    QTest::newRow("ADN custom label and illegal phone number 2")
+        << QString("ADN")
         << 0 // illegal characters in the phone number, should fail
         << "James Hunt"
         << (QStringList()
             << "Name:CustomLabel:James Hunt"
             << "PhoneNumber:PhoneNumber:asdfqwer");
 
-    QTest::newRow("custom label and too long phone number")
+    QTest::newRow("ADN custom label and illegal phone number 3")
+        << QString("ADN")
+        << 0 // illegal characters in the phone number, should fail
+        << "James Hunt"
+        << (QStringList()
+            << "Name:CustomLabel:James Hunt"
+            << "PhoneNumber:PhoneNumber:1234567a");
+
+    QTest::newRow("ADN custom label and illegal phone number 4")
+        << QString("ADN")
+        << 0 // illegal characters in the phone number, should fail
+        << "James Hunt"
+        << (QStringList()
+            << "Name:CustomLabel:James Hunt"
+            << "PhoneNumber:PhoneNumber:&1234567");
+
+    QTest::newRow("ADN custom label and too long phone number")
+        << QString("ADN")
         << 0 // long enough phone number to fail on any SIM card
         << "James Hunt"
         << (QStringList()
             << "Name:CustomLabel:James Hunt"
             << "PhoneNumber:PhoneNumber:1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
 
-    QTest::newRow("custom label and multiple phone numbers")
+    QTest::newRow("ADN custom label and multiple phone numbers")
+        << QString("ADN")
         << -1 // some SIM cards support multiple phone numbers
         << "James Hunt"
         << (QStringList()
@@ -363,7 +485,8 @@ void tst_QContactManagerSymbianSim::addContact_data()
             << "PhoneNumber:PhoneNumber:+44752222222"
             << "PhoneNumber:PhoneNumber:+44751111111");
 
-    QTest::newRow("custom label and multiple phone numbers, one phone number too long")
+    QTest::newRow("ADN custom label and multiple phone numbers, one phone number too long")
+        << QString("ADN")
         << 0 // Long enough additional phone number to fail on any SIM card
         << "James Hunt"
         << (QStringList()
@@ -371,14 +494,16 @@ void tst_QContactManagerSymbianSim::addContact_data()
             << "PhoneNumber:PhoneNumber:+44752222222"
             << "PhoneNumber:PhoneNumber:1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
 
-    QTest::newRow("custom label and email")
+    QTest::newRow("ADN custom label and email")
+        << QString("ADN")
         << -1 // some SIM cards support e-mail address
         << "James Hunt"
         << (QStringList()
             << "Name:CustomLabel:James Hunt"
             << "EmailAddress:EmailAddress:james@mclaren.com");
 
-    QTest::newRow("custom label and multiple emails")
+    QTest::newRow("ADN custom label and multiple emails")
+        << QString("ADN")
         << 0 // some SIM cards support multiple e-mail addresses, but not this many
         << "James Hunt"
         << (QStringList()
@@ -388,30 +513,43 @@ void tst_QContactManagerSymbianSim::addContact_data()
             << "EmailAddress:EmailAddress:james@mclaren.com"
             << "EmailAddress:EmailAddress:james.hunt@bbc.co.uk");
 
-    QTest::newRow("custom label and too long email")
+    QTest::newRow("ADN custom label and too long email")
+        << QString("ADN")
         << 0 // long enough e-mail to fail on any SIM card
         << "James Hunt"
         << (QStringList()
             << "Name:CustomLabel:James Hunt"
             << "EmailAddress:EmailAddress:james.hunt.the12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890th@mclaren.com");
 
-    QTest::newRow("non-supported field")
+    QTest::newRow("ADN non-supported field")
+        << QString("ADN")
         << 0 // expected to fail
         << es
         << (QStringList()
             << "Name:IllegalNameDetailFieldName:James");
 
-    QTest::newRow("non-supported detail")
+    QTest::newRow("ADN non-supported detail")
+        << QString("ADN")
         << 0 // expected to fail
         << es
         << (QStringList()
             << "NotSupportedDetailDefinitionName:IllegalFieldName:FieldValue");
 
-    QTest::newRow("empty, non-supported detail")
+    QTest::newRow("ADN empty, non-supported detail")
+        << QString("ADN")
         << 0 // expected to fail, since no valid details provided
         << es
         << (QStringList()
             << "NotSupportedDetailDefinitionName:IllegalFieldName:");
+
+    QTest::newRow("SDN custom label")
+        << "SDN"
+        << 0 // It is not possible to save an SDN contact
+        << "James"
+        << (QStringList()
+            << "Name:CustomLabel:James");
+
+    // TODO: Test saving FDN contacts?
 }
 
 /*
@@ -427,9 +565,16 @@ void tst_QContactManagerSymbianSim::addContact()
     // Make debugging easier by getting the test case name
     QString tescaseName = QTest::currentDataTag();
 
+    // init
+    QFETCH(QString, simStore);
+    initManager(simStore);
+    QVERIFY(m_cm);
+    if(m_cm->error() == QContactManager::NotSupportedError) {
+        QSKIP("The store not supported by the SIM card", SkipSingle);
+    }
     QFETCH(int, expectedResult);
     QFETCH(QString, expectedDisplayLabel);
-    QFETCH(QStringList, details);    
+    QFETCH(QStringList, details);
 
     QContact contact;
     QList<QContactDetail> expectedDetails;
@@ -465,7 +610,7 @@ void tst_QContactManagerSymbianSim::addContact()
         QVERIFY(contact.id() != QContactId());
 
         // verify that the details were saved as expected
-        QVERIFY(compareDetails(contact, expectedDetails));
+        compareDetails(contact, expectedDetails);
 
         // verify display label, allow truncating to the max text length
         QCOMPARE(contact.displayLabel(), expectedDisplayLabel.left(m_etelStoreInfo.iMaxTextLength));
@@ -491,8 +636,90 @@ void tst_QContactManagerSymbianSim::addContact()
     QCOMPARE(idsAfterRemove.count(), idsBefore.count());
 }
 
+void tst_QContactManagerSymbianSim::fetchContacts_data()
+{
+    QTest::addColumn<QString>("simStore");
+    QTest::addColumn<int>("contactCount");
+
+    QTest::newRow("ADN")
+        << QString("ADN")
+        << int(10);
+
+    QTest::newRow("SDN")
+        << QString("SDN")
+        << int(0); // You cannot save a contact to SDN
+
+    // TODO: How to save to FDN? A dialog for PIN2 should be shown...
+    QTest::newRow("FDN")
+        << QString("FDN")
+        << int(1);
+}
+
+/*
+ * Tests if QContactManager::contacts and ::contactIds work.
+ */
+void tst_QContactManagerSymbianSim::fetchContacts()
+{
+    // init
+    QFETCH(QString, simStore);
+    initManager(simStore);
+    QVERIFY(m_cm);
+    if(m_cm->error() == QContactManager::NotSupportedError) {
+        QSKIP("The store not supported by the SIM card", SkipSingle);
+    }
+    QFETCH(int, contactCount);
+
+    const int existingContactCount = m_cm->contactIds().count();
+
+    QList<QContactLocalId> addedContacts = QList<QContactLocalId> ();
+
+    // 1. Add contacts (optionally)
+    for(int i(0); i < contactCount; i++) {
+        QContactName name;
+        name.setCustomLabel(QString("James").append(QString::number(i + 1)));
+        QContactPhoneNumber number;
+        number.setNumber(QString("1234567890").append(QString::number(i + 1)));
+
+        QContact contact;
+        QVERIFY(contact.saveDetail(&name));
+        QVERIFY(contact.saveDetail(&number));
+
+        QVERIFY(m_cm->saveContact(&contact));
+        QCOMPARE(m_cm->error(), QContactManager::NoError);
+        QVERIFY(contact.id() != QContactId());
+        addedContacts.append(contact.localId());
+    }
+
+    // 2. Fetch contacts
+    QList<QContact> contacts= m_cm->contacts(QList<QContactSortOrder>(), QStringList());
+    QCOMPARE(m_cm->error(), QContactManager::NoError);
+    QList<QContactLocalId> contactIds = m_cm->contactIds();
+    QCOMPARE(m_cm->error(), QContactManager::NoError);
+
+    // 3. Verify result
+    QVERIFY(contacts.count() > 0);
+    QCOMPARE(contacts.count(), existingContactCount + contactCount);
+    foreach (QContact contact, contacts) {
+        QVERIFY(contact.id() != QContactId());
+    }
+
+    QVERIFY(contactIds.count() > 0);
+    QCOMPARE(contactIds.count(), existingContactCount + contactCount);
+    foreach (QContactLocalId id, addedContacts) {
+        QVERIFY(id != QContactLocalId());
+    }
+
+    // 4. Remove contacts
+    foreach (QContactLocalId id, addedContacts) {
+        QVERIFY(m_cm->removeContact(id));
+        QCOMPARE(m_cm->error(), QContactManager::NoError);
+    }
+
+}
+
 void tst_QContactManagerSymbianSim::updateContactDetail_data()
 {
+    QTest::addColumn<QString>("simStore");
     // The initial contact details,
     // for example: <"Name:First:James">; <"PhoneNumber:PhoneNumber:1234567890">
     QTest::addColumn<QStringList>("initialDetails");
@@ -500,15 +727,15 @@ void tst_QContactManagerSymbianSim::updateContactDetail_data()
     // for example: <"Name:First:James">; <"PhoneNumber:PhoneNumber:0987654321">
     QTest::addColumn<QStringList>("updatedDetails");
 
-    QString es = QString();
-
     QTest::newRow("update custom label")
+        << QString("ADN")
         << (QStringList()
             << "Name:CustomLabel:James")
         << (QStringList()
             << "Name:CustomLabel:James Hunt");
 
     QTest::newRow("add phone number detail")
+        << QString("ADN")
         << (QStringList()
             << "Name:CustomLabel:James")
         << (QStringList()
@@ -516,6 +743,7 @@ void tst_QContactManagerSymbianSim::updateContactDetail_data()
             << "PhoneNumber:PhoneNumber:+44752222222");
 
     QTest::newRow("update phone number detail")
+        << QString("ADN")
         << (QStringList()
             << "Name:CustomLabel:James"
             << "PhoneNumber:PhoneNumber:+44751111111")
@@ -524,6 +752,7 @@ void tst_QContactManagerSymbianSim::updateContactDetail_data()
             << "PhoneNumber:PhoneNumber:+44752222222");
 
     QTest::newRow("remove phone number detail")
+        << QString("ADN")
         << (QStringList()
             << "Name:CustomLabel:James"
             << "PhoneNumber:PhoneNumber:+44751111111")
@@ -531,6 +760,7 @@ void tst_QContactManagerSymbianSim::updateContactDetail_data()
             << "Name:CustomLabel:James");
 
     QTest::newRow("add e-mail detail")
+        << QString("ADN")
         << (QStringList()
             << "Name:CustomLabel:James")
         << (QStringList()
@@ -538,6 +768,7 @@ void tst_QContactManagerSymbianSim::updateContactDetail_data()
             << "EmailAddress:EmailAddress:james@hesketh.com");
 
     QTest::newRow("update e-mail detail")
+        << QString("ADN")
         << (QStringList()
             << "Name:CustomLabel:James"
             << "EmailAddress:EmailAddress:james@march.com")
@@ -546,6 +777,7 @@ void tst_QContactManagerSymbianSim::updateContactDetail_data()
             << "EmailAddress:EmailAddress:james@hesketh.com");
 
     QTest::newRow("remove e-mail detail")
+        << QString("ADN")
         << (QStringList()
             << "Name:CustomLabel:James"
             << "EmailAddress:EmailAddress:james@march.com")
@@ -553,6 +785,7 @@ void tst_QContactManagerSymbianSim::updateContactDetail_data()
             << "Name:CustomLabel:James");
 
     QTest::newRow("add nickname detail")
+        << QString("ADN")
         << (QStringList()
             << "Name:CustomLabel:James")
         << (QStringList()
@@ -560,6 +793,7 @@ void tst_QContactManagerSymbianSim::updateContactDetail_data()
             << "Nickname:Nickname:Hunt the Shunt");
 
     QTest::newRow("update nickname detail")
+        << QString("ADN")
         << (QStringList()
             << "Name:CustomLabel:James"
             << "Nickname:Nickname:James")
@@ -568,6 +802,7 @@ void tst_QContactManagerSymbianSim::updateContactDetail_data()
             << "Nickname:Nickname:Hunt the Shunt");
 
     QTest::newRow("remove nickname detail")
+        << QString("ADN")
         << (QStringList()
             << "Name:CustomLabel:James"
             << "Nickname:Nickname:James")
@@ -587,6 +822,13 @@ void tst_QContactManagerSymbianSim::updateContactDetail()
 {
     QString tescaseName = QTest::currentDataTag();
 
+    // init
+    QFETCH(QString, simStore);
+    initManager(simStore);
+    QVERIFY(m_cm);
+    if(m_cm->error() == QContactManager::NotSupportedError) {
+        QSKIP("The store not supported by the SIM card", SkipSingle);
+    }
     QFETCH(QStringList, initialDetails);
     QFETCH(QStringList, updatedDetails);
 
@@ -601,7 +843,7 @@ void tst_QContactManagerSymbianSim::updateContactDetail()
     }
     QVERIFY(m_cm->saveContact(&contact));
     QCOMPARE(m_cm->error(), QContactManager::NoError);
-    QVERIFY(compareDetails(contact, parsedDetails));
+    compareDetails(contact, parsedDetails);
 
     // 3. Update contact detail and verify result
     foreach (QContactDetail detail, parsedDetails) {
@@ -615,40 +857,40 @@ void tst_QContactManagerSymbianSim::updateContactDetail()
     }
     QVERIFY(m_cm->saveContact(&contact));
     QCOMPARE(m_cm->error(), QContactManager::NoError);
-    QVERIFY(compareDetails(contact, parsedDetails));
+    compareDetails(contact, parsedDetails);
 
     // 4. Remove the contact
     QVERIFY(m_cm->removeContact(contact.localId()));
 }
 
 /*!
- * Private helper function for parsing test data (creates QContactDetails from
- * string lists).
+ * Private helper function for checking the data format that the store supports
  */
-void tst_QContactManagerSymbianSim::parseDetails(QContact &contact, QStringList details, QList<QContactDetail> &parsedDetails)
+void tst_QContactManagerSymbianSim::getEtelStoreInfoL(const TDesC &phonebook, TDes8 &infoPckg) const
 {
-    parsedDetails.clear();
-    foreach (QString detail, details) {
-        // the expected format is <detail definition name>:<field name>:<value>
-        QStringList detailParts = detail.split(QChar(':'), QString::KeepEmptyParts, Qt::CaseSensitive);
-        QVERIFY(detailParts.count() == 3);
-    
-        // Use existing detail if available and would not cause an overwrite of
-        // a field value
-        QContactDetail contactDetail = QContactDetail(detailParts[0]);
-        if (contact.details().contains(detailParts[0])
-            && contact.detail(detailParts[0]).variantValues().key(detailParts[1]).isNull()) {
-            contactDetail = contact.detail(detailParts[0]);
-        }
+    RTelServer etelServer;
+    User::LeaveIfError(etelServer.Connect());
+    CleanupClosePushL(etelServer);
+    User::LeaveIfError(etelServer.LoadPhoneModule(KMmTsyModuleName));
+ 
+    RMobilePhone etelPhone;
+    RTelServer::TPhoneInfo info;
+    User::LeaveIfError(etelServer.GetPhoneInfo(0, info));
+    User::LeaveIfError(etelPhone.Open(etelServer, info.iName));
+    CleanupClosePushL(etelPhone);
 
-        // Set the field value only if not empty (do not add empty fields)  
-        if (!detailParts[2].isEmpty()) {
-            QVERIFY(contactDetail.setValue(detailParts[1], detailParts[2]));
-        }
+    //check what information can be saved to the Etel store
+    RMobilePhoneBookStore etelStore;
+    User::LeaveIfError(etelStore.Open(etelPhone, phonebook));
+    CleanupClosePushL(etelStore);
+    TRequestStatus requestStatus;
+    etelStore.GetInfo(requestStatus, infoPckg);
+    User::WaitForRequest(requestStatus);
+    User::LeaveIfError(requestStatus.Int());
 
-        QVERIFY(contact.saveDetail(&contactDetail));
-        parsedDetails.append(contactDetail);
-    }
+    CleanupStack::PopAndDestroy(&etelStore);
+    CleanupStack::PopAndDestroy(&etelPhone);
+    CleanupStack::PopAndDestroy(&etelServer);
 }
 
 /*!
@@ -706,40 +948,69 @@ bool tst_QContactManagerSymbianSim::isContactSupported(QContact contact)
     return true;
 }
 
+/*!
+ * Private helper function for parsing test data (creates QContactDetails from
+ * string lists).
+ */
+void tst_QContactManagerSymbianSim::parseDetails(QContact &contact, QStringList details, QList<QContactDetail> &parsedDetails)
+{
+    parsedDetails.clear();
+    foreach (QString detail, details) {
+        // the expected format is <detail definition name>:<field name>:<value>
+        QStringList detailParts = detail.split(QChar(':'), QString::KeepEmptyParts, Qt::CaseSensitive);
+        QVERIFY(detailParts.count() == 3);
+    
+        // Use existing detail if available and would not cause an overwrite of
+        // a field value
+        QContactDetail contactDetail = QContactDetail(detailParts[0]);
+        if (contact.details().contains(detailParts[0])
+            && contact.detail(detailParts[0]).variantValues().key(detailParts[1]).isNull()) {
+            contactDetail = contact.detail(detailParts[0]);
+        }
+
+        // Set the field value only if not empty (do not add empty fields)  
+        if (!detailParts[2].isEmpty()) {
+            QVERIFY(contactDetail.setValue(detailParts[1], detailParts[2]));
+        }
+
+        QVERIFY(contact.saveDetail(&contactDetail));
+        parsedDetails.append(contactDetail);
+    }
+}
+
 /*
  * Private helper function for comparing QContact details to a well-known set
  * of QContactDetails.
  * \return true if all the expected contact details have a match in the \contact.
  */
-bool tst_QContactManagerSymbianSim::compareDetails(QContact contact, QList<QContactDetail> expectedDetails)
+void tst_QContactManagerSymbianSim::compareDetails(QContact contact, QList<QContactDetail> expectedDetails)
 {
     foreach (QContactDetail expectedDetail, expectedDetails) {
         QContactDetail actualDetail = contact.detail(expectedDetail.definitionName());
-        QVERIFY_WITH_RETURN_VALUE(!actualDetail.isEmpty());
+        QVERIFY(!actualDetail.isEmpty());
 
         // Allow truncating the custom label to the max text length
         if (expectedDetail.definitionName() == QContactName::DefinitionName) {
             QContactName nameDetail = static_cast<QContactName>(expectedDetail);
             nameDetail.setCustomLabel(nameDetail.customLabel().left(m_etelStoreInfo.iMaxTextLength));
-            QCOMPARE_WITH_RETURN_VALUE(actualDetail, static_cast<QContactDetail>(nameDetail));
+            expectedDetail = static_cast<QContactDetail>(nameDetail);
         // Allow truncating the nick name to the max text length
         } else if (expectedDetail.definitionName() == QContactNickname::DefinitionName) {
                 QContactNickname nick = static_cast<QContactNickname>(expectedDetail);
                 nick.setNickname(nick.nickname().left(m_etelStoreInfo.iMaxTextLength));
-                QCOMPARE_WITH_RETURN_VALUE(actualDetail, static_cast<QContactDetail>(nick));
-        } else {
-            if (actualDetail != expectedDetail) {
-                // FAIL! Make it easier to debug the output by
-                // comparing the contact detail field contents
-                foreach (QString key, expectedDetail.variantValues().keys()) {
-                    QVariant value1 = actualDetail.value(key);
-                    QVariant value2 = expectedDetail.value(key);
-                    QCOMPARE_WITH_RETURN_VALUE(actualDetail.value(key), expectedDetail.value(key));
-                }
+                expectedDetail = static_cast<QContactDetail>(nick);
+        }
+
+        if(!contact.details().contains(expectedDetail)) {
+            // FAIL! Make it easier to debug the output by
+            // comparing the contact detail field contents
+            foreach (QString key, expectedDetail.variantValues().keys()) {
+                QVariant value1 = actualDetail.value(key);
+                QVariant value2 = expectedDetail.value(key);
+                QCOMPARE(actualDetail.value(key), expectedDetail.value(key));
             }
         }
     }
-    return true;
 }
 
 QContact tst_QContactManagerSymbianSim::createContact(QString name, QString number)

@@ -382,6 +382,9 @@ void tst_QContactManager::addManagers()
     managers.removeAll("testdummy");
     managers.removeAll("teststaticdummy");
     managers.removeAll("maliciousplugin");
+#if defined(Q_OS_SYMBIAN)
+    managers.removeAll("symbiansim");
+#endif
 
     foreach(QString mgr, managers) {
         QMap<QString, QString> params;

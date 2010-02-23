@@ -117,6 +117,8 @@ public:
     CntSimStore *simStore() { return m_simStore; }  
 
 private:
+    void initializeL(const QMap<QString, QString> &parameters);
+    void convertStoreNameL(const QMap<QString, QString> &parameters, TDes &symbianStoreName);
     void getEtelStoreInfoL() const;
     QContact fetchContactL(const QContactLocalId &localId) const;
     QList<QContact> fetchContactsL() const;
