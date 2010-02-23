@@ -64,10 +64,9 @@ public:
 private:
 
 protected:
+    CContactDatabase& m_contactdatabase;
     CntSymbianSrvConnection &m_srvConnection;
     CntDbInfo& m_dbInfo;
-    CContactDatabase& m_contactdatabase;
 };
-
 
 #endif /* CNTFILTERDETAILRANGE_H_ */

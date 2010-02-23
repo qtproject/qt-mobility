@@ -71,9 +71,9 @@ private:
     void getSelectQueryforFilter(const QContactFilter& filter,QString& sqlSelectQuery,QContactManager::Error& error);
 
 protected:
+    CContactDatabase& m_contactdatabase;
     CntSymbianSrvConnection &m_srvConnection;
     CntDbInfo& m_dbInfo;
-    CContactDatabase& m_contactdatabase;
 };
 
 #endif // CNTFILTERUNION_H

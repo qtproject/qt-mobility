@@ -72,9 +72,9 @@ public:
                                   QString& sqlQuery,
                                   QContactManager::Error& error);
 protected:
+    CContactDatabase& m_contactdatabase;
     CntSymbianSrvConnection &m_srvConnection;
     CntDbInfo& m_dbInfo;
-    CContactDatabase& m_contactdatabase;
 };
 
 #endif //CNTFILTERRELATIONSHIP_H_

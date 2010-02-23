@@ -86,9 +86,9 @@ private:
             const TInt matchLength);
     void getMatchLengthL(TInt& matchLength);
 protected:
+    CContactDatabase& m_contactdatabase;
     CntSymbianSrvConnection &m_srvConnection;
     CntDbInfo& m_dbInfo;
-    CContactDatabase& m_contactdatabase;
 };
 
 #endif
