@@ -24,8 +24,13 @@ SOURCES = main.cpp \
           publisherdialog.cpp \
           subscriberdialog.cpp
 
-FORMS = publisherdialog.ui \
-        subscriberdialog.ui
+maemo* {
+    FORMS = publisherdialog_hor.ui \
+            subscriberdialog_hor.ui
+} else {
+    FORMS = publisherdialog.ui \
+            subscriberdialog.ui
+}
 
 include(../examples.pri)
 

@@ -40,7 +40,11 @@
 ****************************************************************************/
 
 #include "publisherdialog.h"
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+#include "ui_publisherdialog_hor.h"
+#else
 #include "ui_publisherdialog.h"
+#endif
 
 #include <qvaluespacepublisher.h>
 
