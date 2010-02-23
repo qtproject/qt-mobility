@@ -70,7 +70,6 @@ public:
         , device_reading(0)
         , filter_reading(0)
         , cache_reading(0)
-        , complete(true)
     {
     }
 
@@ -86,11 +85,10 @@ public:
     QFilterList filters;
     bool signalEnabled;
     bool active;
+    bool busy;
     QSensorReading *device_reading;
     QSensorReading *filter_reading;
     QSensorReading *cache_reading;
-
-    bool complete;
 };
 
 class QSensorReadingPrivate

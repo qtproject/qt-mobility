@@ -192,26 +192,42 @@ bool QSensor::connect()
 }
 
 /*!
-    \property QSensor::running
-    \brief controls the running state of the sensor.
+    \property QSensor::busy
+    \brief a value to indicate if the sensor is busy.
 
-    This is provided for QML, set running: true to cause the sensor
-    to start on.
+    Some sensors may be on the system but unavailable for use.
+    This function will return true if the sensor is busy. You
+    will not be able to start() the sensor.
+
+    Note that this function does not return true if you
+    are using the sensor, only if another process is using
+    the sensor.
+
+    \sa busyChanged()
+*/
+
+bool QSensor::isBusy() const
+{
+    return d->busy;
+}
+
+/*!
+    \fn QSensor::busyChanged
+
+    This signal is emitted when the busy state changes. This can
+    be used to grab a sensor when it becomes available.
+*/
+
+/*!
+    \property QSensor::active
+    \brief a value to indicate if the sensor is active.
+
+    This is true if the sensor is active (returning values). This is false otherwise.
 */
 
 bool QSensor::isActive() const
 {
     return d->active;
-}
-
-void QSensor::setActive(bool running)
-{
-    if (d->complete) {
-        if (running)
-            start();
-        else
-            stop();
-    }
 }
 
 /*!
@@ -289,19 +305,32 @@ void QSensor::poll()
 
 /*!
     Start retrieving values from the sensor.
+    Returns true if the sensor was started, false otherwise.
+
+    Note that the sensor may fail to start for several reasons.
+
+    \sa QSensor::busy
 */
-void QSensor::start()
+bool QSensor::start()
 {
     if (d->active)
-        return;
+        return true;
     if (!connect())
-        return;
+        return false;
+    // Set these flags to their defaults
     d->active = true;
+    d->busy = false;
+    // Backend will update the flags appropriately
     d->backend->start();
+    return d->active;
 }
 
 /*!
     Stop retrieving values from the sensor.
+
+    This releases the sensor so that other processes can use it.
+
+    \sa QSensor::busy
 */
 void QSensor::stop()
 {

@@ -73,11 +73,11 @@ public:
     QSensor *sensor() const { return m_sensor; }
 
     void newReadingAvailable();
+    void setStatus(bool active, bool busy);
 
 private:
     void setReadings(QSensorReading *device, QSensorReading *filter, QSensorReading *cache);
 
-protected:
     QSensor *m_sensor;
     Q_DISABLE_COPY(QSensorBackend)
 };

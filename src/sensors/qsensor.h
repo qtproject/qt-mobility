@@ -85,7 +85,8 @@ class Q_SENSORS_EXPORT QSensor : public QObject
     Q_PROPERTY(QtMobility::qrangelist availableDataRates READ availableDataRates)
     Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval)
     Q_PROPERTY(QSensorReading* reading READ reading NOTIFY readingChanged)
-    Q_PROPERTY(bool running READ isActive WRITE setActive)
+    Q_PROPERTY(bool busy READ isBusy)
+    Q_PROPERTY(bool active READ isActive)
 public:
     explicit QSensor(QObject *parent = 0);
     virtual ~QSensor();
@@ -99,8 +100,8 @@ public:
     Q_INVOKABLE bool connect();
     bool isConnected() const;
 
+    bool isBusy() const;
     bool isActive() const;
-    void setActive(bool running);
 
     bool isSignalEnabled() const;
     void setSignalEnabled(bool enabled);
@@ -126,12 +127,13 @@ public:
 
 public Q_SLOTS:
     // Start receiving values from the sensor
-    void start();
+    bool start();
 
     // Stop receiving values from the sensor
     void stop();
 
 Q_SIGNALS:
+    void busyChanged();
     void readingChanged();
 
 protected:

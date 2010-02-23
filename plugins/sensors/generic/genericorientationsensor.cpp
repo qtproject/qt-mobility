@@ -59,6 +59,7 @@ void genericorientationsensor::start()
 {
     accelerometer->setUpdateInterval(sensor()->updateInterval());
     accelerometer->start();
+    setStatus(accelerometer->isActive(), accelerometer->isBusy());
 }
 
 void genericorientationsensor::stop()

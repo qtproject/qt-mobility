@@ -222,6 +222,18 @@ void QSensorBackend::setDataRates(const qrangelist &availableDataRates)
     d->availableDataRates = availableDataRates;
 }
 
+/*!
+    Inform the sensor of the status of the sensor.
+    This should be called from the start() method
+    if the sensor was unable to start or was busy.
+*/
+void QSensorBackend::setStatus(bool active, bool busy)
+{
+    QSensorPrivate *d = m_sensor->d_func();
+    d->active = active;
+    d->busy = busy;
+}
+
 #include "moc_qsensorbackend.cpp"
 QTM_END_NAMESPACE
 
