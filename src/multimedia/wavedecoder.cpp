@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "wavedecoder.h"
+#include "wavedecoder_p.h"
 
 #include <QtCore/qtimer.h>
 #include <QtCore/qendian.h>

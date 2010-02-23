@@ -112,7 +112,7 @@ contains(QT_CONFIG, declarative) {
         qmlgraphicsvideo_p.h \
         qmlmediabase_p.h \
         qsoundeffect_p.h \
-        wavedecoder.h
+        wavedecoder_p.h
 
     SOURCES += \
         qmetadatacontrolmetaobject.cpp \

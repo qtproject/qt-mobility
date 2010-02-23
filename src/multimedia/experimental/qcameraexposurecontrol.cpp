@@ -128,6 +128,45 @@ QCameraExposureControl::~QCameraExposureControl()
 
 
 /*!
+  \fn qreal QCameraExposureControl::::flashCompensation() const
+
+  Returns the flash exposure compensation in EV.
+
+  \sa setFlashCompensation()
+*/
+
+/*!
+  \fn QCameraExposureControl::setFlashCompensation(qreal ev)
+
+  Sets the flash exposure compensation to \a ev
+
+  \sa flashCompensation()
+*/
+
+
+/*!
+  \fn qreal QCameraExposureControl::flashPower() const
+
+  Returns the flash power in \l{QCamera::FlashManual}{manual flash mode}.
+
+  \sa setFlashPower()
+*/
+
+
+/*!
+  \fn QCameraExposureControl::setFlashPower(qreal power)
+
+  Sets the flash \a power.
+
+  Accepted power range is [0..1.0],
+  with 0 value means no flash and 1.0 corresponds to full flash power.
+
+  This value is only used in the \l{QCamera::FlashManual}{manual flash mode}.
+
+  \sa flashPower()
+*/
+
+/*!
   \fn bool QCameraExposureControl::isFlashReady() const
 
   Returns true if flash is charged.
@@ -166,7 +205,7 @@ QCameraExposureControl::~QCameraExposureControl()
 /*!
   \fn void QCameraExposureControl::setExposureCompensation(qreal ev)
 
-  Set the exposure compensation to \a ev
+  Sets the exposure compensation to \a ev
 */
 
 

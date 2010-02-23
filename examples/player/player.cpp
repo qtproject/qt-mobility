@@ -73,6 +73,7 @@ Player::Player(QWidget *parent)
     connect(player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
             this, SLOT(statusChanged(QMediaPlayer::MediaStatus)));
     connect(player, SIGNAL(bufferStatusChanged(int)), this, SLOT(bufferingProgress(int)));
+    connect(player, SIGNAL(error(QMediaPlayer::Error)), this, SLOT(displayErrorMessage()));
 
     videoWidget = new VideoWidget;
     videoWidget->setMediaObject(player);
@@ -343,6 +344,12 @@ void Player::setStatusInfo(const QString &info)
     else
         setWindowTitle(trackInfo);
 }
+
+void Player::displayErrorMessage()
+{
+    setStatusInfo(player->errorString());
+}
+
 #ifdef Q_OS_SYMBIAN
 #else
 void Player::showColorDialog()

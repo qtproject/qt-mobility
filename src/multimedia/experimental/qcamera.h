@@ -103,7 +103,8 @@ public:
         FlashFill = 0x10,
         FlashTorch = 0x20,
         FlashSlowSyncFrontCurtain = 0x40,
-        FlashSlowSyncRearCurtain = 0x80
+        FlashSlowSyncRearCurtain = 0x80,
+        FlashManual = 0x100
     };
     Q_DECLARE_FLAGS(FlashModes, FlashMode)
 

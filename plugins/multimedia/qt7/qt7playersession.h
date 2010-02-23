@@ -93,6 +93,8 @@ public:
     bool isSeekable() const;
 
     qreal playbackRate() const;
+
+public slots:
     void setPlaybackRate(qreal rate);
 
     void setPosition(qint64 pos);

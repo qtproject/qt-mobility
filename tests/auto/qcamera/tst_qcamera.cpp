@@ -160,6 +160,13 @@ public:
         return QCamera::FlashAuto | QCamera::FlashOff | QCamera::FlashOn;
     }
 
+    qreal flashCompensation() const { return 0; }
+    void setFlashCompensation(qreal) {}
+
+    qreal flashPower() const { return 0; }
+    void setFlashPower(qreal) {}
+
+
     bool isFlashReady() const
     {
         return true;
