@@ -3669,11 +3669,17 @@
     <section ref="filemanagerplugin.html" title="File Manager Plugin Example">
         <keyword ref="filemanagerplugin.html">File Manager Plugin Example</keyword>
     </section>
+    <section ref="flickrdemo.html" title="Flickr Demo Example">
+        <keyword ref="flickrdemo.html">Flickr Demo Example</keyword>
+    </section>
     <section ref="incomingcalls.html" title="Incoming Call Simulator">
         <keyword ref="incomingcalls.html">Incoming Call Simulator</keyword>
     </section>
     <section ref="keepintouch.html" title="Keep in Touch Example">
         <keyword ref="keepintouch.html">Keep in Touch Example</keyword>
+    </section>
+    <section ref="lightmaps.html" title="LightMap Example">
+        <keyword ref="lightmaps.html">LightMap Example</keyword>
     </section>
     <section ref="logfilepositionsource.html" title="Log File Position Source Example">
         <keyword ref="logfilepositionsource.html">Log File Position Source Example</keyword>
@@ -3728,6 +3734,9 @@
     </section>
     <section ref="sysinfo.html" title="System Information Example">
         <keyword ref="sysinfo.html">System Information Example</keyword>
+    </section>
+    <section ref="weatherinfo.html" title="Weather Info Example">
+        <keyword ref="weatherinfo.html">Weather Info Example</keyword>
     </section>
     <section ref="writemessage.html" title="Write Message Example">
         <keyword ref="writemessage.html">Write Message Example</keyword>

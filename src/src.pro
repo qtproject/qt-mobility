@@ -35,9 +35,7 @@ versit.target=sub-versit
 versit.depends=contacts
 
 contains(mobility_modules,messaging) {
-    contains(qmf_enabled, yes)|wince*|win32|symbian|maemo6 {
-        !win32-g++:SUBDIRS += messaging
-    }
+    !win32-g++:SUBDIRS += messaging
 }
 
 symbian {
