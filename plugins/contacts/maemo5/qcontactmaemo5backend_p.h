@@ -117,7 +117,7 @@ class QContactMaemo5Engine : public QContactManagerEngine
     QContact contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
 
     //QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QContactManager::Error& error);
-    //bool saveContact(QContact* contact, QContactManager::Error& error);
+    bool saveContact(QContact* contact, QContactManager::Error& error);
     //QList<QContactManager::Error> removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error);
     bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
     

@@ -247,6 +247,13 @@ bool QContactABook::removeContact(const QContactLocalId& contactId, QContactMana
   return ok;
 }
 
+bool QContactABook::saveContact(QContact* contact, QContactManager::Error& error)
+{
+  Q_UNUSED(error);
+  qDebug() << "SAVE";
+  return false;
+}
+
 EBookQuery* QContactABook::convert(const QContactFilter& filter) const
 {
   EBookQuery* query = NULL;
@@ -456,7 +463,7 @@ QContact* QContactABook::convert(EContact *eContact) const
   
   /* Online Account */
   
-  QList<QContactOnlineAccount*> onlineAccountList;// = createOnlineAccountDetail(eContact);
+  QList<QContactOnlineAccount*> onlineAccountList = createOnlineAccountDetail(eContact);
   QContactOnlineAccount* onlineAccount;
   foreach(onlineAccount, onlineAccountList)
     detailList << onlineAccount;
@@ -812,11 +819,12 @@ QList<QContactOnlineAccount*> QContactABook::createOnlineAccountDetail(EContact 
       //map[QContactOnlineAccount::FieldSubTypes] =
       
       setDetailValues(map, rtn);
-      rtnList << rtn;
+      
     }
+    rtnList << rtn;
     g_list_free (contacts);
   }
-
+  
   /* Users can add Online account details manually. Eg: IRC username.
    * evcardToSkip stringlist contains evCard attributes that have been already processed.
    */
@@ -896,7 +904,7 @@ QList<QContactOnlineAccount*> QContactABook::createOnlineAccountDetail(EContact 
       //DON'T FREE ANYTHING!! e_vcard_attribute_free(attr);
     }
   }
-  
+
   return rtnList;
 }
 
@@ -977,4 +985,9 @@ QContactUrl* QContactABook::createUrlDetail(EContact *eContact) const
    FREE(url);
    setDetailValues(map, rtn);
    return rtn;
+}
+
+OssoABookContact* QContactABook::convert(QContact *contact) const
+{
+
 }

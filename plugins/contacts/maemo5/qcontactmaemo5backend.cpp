@@ -136,6 +136,13 @@ QContact QContactMaemo5Engine::contact(const QContactLocalId& contactId, const Q
   
   return rtn;
 }
+
+bool QContactMaemo5Engine::saveContact(QContact* contact, QContactManager::Error& error)
+{
+  Q_CHECK_PTR(d->m_abook);
+  return d->m_abook->saveContact(contact, error);
+}
+
 #if 0
 QList<QContactManager::Error> QContactMaemo5Engine::removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error)
 {

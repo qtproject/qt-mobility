@@ -145,6 +145,7 @@ public:
   //QList<QContactLocalId> contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
   QContact* contact(const QContactLocalId& contactId, QContactManager::Error& error) const;
   bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
+  bool saveContact(QContact* contact, QContactManager::Error& error);
 
 private:
   void initAddressBook();
@@ -155,7 +156,7 @@ private:
   /* Searching */
   EBookQuery* convert(const QContactFilter& filter) const;
   
-  /* eContact/abookContact to QContact methods */
+  /* Reading - eContact/abookContact to QContact methods */
   QContact* convert(EContact *eContact) const;
 
   QContactId createContactId(EContact *eContact) const;
@@ -174,6 +175,9 @@ private:
   QList<QContactPhoneNumber*> createPhoneDetail(EContact *eContact) const; 
   QContactTimestamp* createTimestampDetail(EContact *eContact) const; 
   QContactUrl* createUrlDetail(EContact *eContact) const;
+  
+  /* Saving - QContact to abookContact */
+  OssoABookContact* convert(QContact *contact) const;
   
   /* Internal Vars */
   OssoABookAggregator *m_abookAgregator;
