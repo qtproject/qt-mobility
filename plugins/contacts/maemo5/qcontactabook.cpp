@@ -145,13 +145,50 @@ void QContactABook::initLocalIdHash()
 
 QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
-  Q_UNUSED(sortOrders)
   QList<QContactLocalId> rtn;
   
   EBookQuery* query = convert(filter);
   
   GList* l = osso_abook_aggregator_find_contacts(m_abookAgregator, query);
   e_book_query_unref(query);
+  
+  /* Sorting */
+  switch (sortOrders.count()){
+    case 0:
+      QCM5_DEBUG << "No sorting"; break;
+#if 0 
+    //TODO Native sorting needs a creation of copare function for each couple of detailDefinitionName/detailFieldName
+    case 1: {
+      QContactSortOrder so = sortOrders[0];
+      QCM5_DEBUG << "Native sorting" << so.detailDefinitionName() << so.detailFieldName();
+      //l = g_list_sort(l, osso_abook_contact_uid_compare);
+    } break;
+#endif 
+    default: // > 1
+      QCM5_DEBUG << "Multi filtering"; break;
+      
+      // Fill Ids
+      QList<QContactLocalId> Ids;
+      {
+        QContactFilter f;
+        QList<QContactSortOrder> so;
+        QContactManager::Error e;
+        Ids = contactIds(f, so, e);
+      }
+      
+      // Fill Contact List
+      QList<QContact> contacts;
+      foreach(QContactLocalId id, Ids){
+	QContact *c;
+	QContactManager::Error e;
+	c = contact(id, e);
+	if (e == QContactManager::NoError)
+	  contacts << *c;
+      }
+      
+      // Non native sorting
+      return QContactManagerEngine::sortContacts(contacts, sortOrders);
+  }
   
   while (l){
     EContact *contact = E_CONTACT(l->data);
