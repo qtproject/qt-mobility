@@ -399,9 +399,9 @@ void tst_QContactManager::setContactName(QContactDetailDefinition nameDef, QCont
     // 1. custom label, 2. first name, 3. last name
     if(nameDef.fields().contains(QContactName::FieldCustomLabel)) {
         contactName.setCustomLabel(name);
-    } else if(nameDef.fields().contains(QContactName::FieldFirst)) {
+    } else if(nameDef.fields().contains(QContactName::FieldFirstName)) {
         contactName.setFirstName(name);
-    } else if(nameDef.fields().contains(QContactName::FieldLast)) {
+    } else if(nameDef.fields().contains(QContactName::FieldLastName)) {
         contactName.setLastName(name);
     } else {
         // Assume that at least one of the above name fields is supported by the backend
@@ -604,10 +604,10 @@ void tst_QContactManager::doDumpSchema()
                     qDebug() << QString("%2::%1 (Unique) {").arg(def.name()).arg(type).toAscii().constData();
                 else
                     qDebug() << QString("%2::%1 {").arg(def.name()).arg(type).toAscii().constData();
-                QMap<QString, QContactDetailDefinitionField> fields = def.fields();
+                QMap<QString, QContactDetailFieldDefinition> fields = def.fields();
 
                 foreach(QString fname, fields.keys()) {
-                    QContactDetailDefinitionField field = fields.value(fname);
+                    QContactDetailFieldDefinition field = fields.value(fname);
 
                     if (field.allowableValues().count() > 0) {
                         // Make some pretty output
@@ -1891,7 +1891,7 @@ void tst_QContactManager::detailDefinitions()
     }
 
     foreach(QContactDetailDefinition def, defs.values()) {
-        QMap<QString, QContactDetailDefinitionField> fields = def.fields();
+        QMap<QString, QContactDetailFieldDefinition> fields = def.fields();
 
         // Again some sanity checking
         if (fields.keys().count() != fields.uniqueKeys().count()) {
@@ -1907,7 +1907,7 @@ void tst_QContactManager::detailDefinitions()
             QVERIFY(fields.keys().count() == fields.uniqueKeys().count());
         }
 
-        foreach(QContactDetailDefinitionField field, def.fields().values()) {
+        foreach(QContactDetailFieldDefinition field, def.fields().values()) {
             // Sanity check the allowed values
             if (field.allowableValues().count() > 0) {
                 if (field.dataType() == QVariant::StringList) {

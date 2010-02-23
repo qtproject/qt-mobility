@@ -71,10 +71,6 @@ public:
         InvalidType,
         VCard21Type,   // vCard version 2.1
         VCard30Type    // vCard version 3.0 (RFC 2426)
-        // Deprecated:
-        ,
-        VCard21 = VCard21Type,
-        VCard30 = VCard30Type
     };
 
     // metadata about the versit document itself.
@@ -88,10 +84,6 @@ public:
 
     bool isEmpty() const;
     void clear();
-
-    // Deprecated:
-    void Q_DECL_DEPRECATED setVersitType(VersitType type);
-    VersitType Q_DECL_DEPRECATED versitType() const;
 
 private:
 

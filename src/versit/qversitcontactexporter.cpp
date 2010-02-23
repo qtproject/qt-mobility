@@ -179,18 +179,3 @@ QVersitResourceHandler* QVersitContactExporter::resourceHandler() const
 {
     return d->mResourceHandler;
 }
-
-/*! \internal */
-QVersitDocument QVersitContactExporter::exportContact(const QContact& contact,
-                                                      QVersitDocument::VersitType versitType)
-{
-    QList<QContact> list;
-    list.append(contact);
-    return exportContacts(list, versitType).first();
-}
-
-/*! \internal */
-QList<QContactDetail> QVersitContactExporter::unknownContactDetails()
-{
-    return QList<QContactDetail>();
-}

@@ -92,14 +92,6 @@ public:
     void setSuffix(const QString& suffix) {setValue(FieldSuffix, suffix);}
     void setCustomLabel(const QString& customLabel) {setValue(FieldCustomLabel, customLabel);}
 
-    // deprecated functions, will be removed after transition period according to process.
-    QString Q_DECL_DEPRECATED first() const;
-    QString Q_DECL_DEPRECATED middle() const;
-    QString Q_DECL_DEPRECATED last() const;
-    void Q_DECL_DEPRECATED setFirst(const QString& first);
-    void Q_DECL_DEPRECATED setMiddle(const QString& middle);
-    void Q_DECL_DEPRECATED setLast(const QString& last);
-
     // Convenience filter
     static QContactFilter match(const QString& name);
     static QContactFilter match(const QString& firstName, const QString& lastName);

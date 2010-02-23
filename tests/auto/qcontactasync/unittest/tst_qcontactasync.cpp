@@ -1314,8 +1314,8 @@ void tst_QContactAsync::definitionSave()
     int originalCount = cm->detailDefinitions().keys().size();
     QContactDetailDefinition testDef;
     testDef.setName("TestDefinitionId");
-    QMap<QString, QContactDetailDefinitionField> fields;
-    QContactDetailDefinitionField f;
+    QMap<QString, QContactDetailFieldDefinition> fields;
+    QContactDetailFieldDefinition f;
     f.setDataType(QVariant::String);
     fields.insert("TestDefinitionField", f);
     testDef.setFields(fields);
@@ -1513,7 +1513,7 @@ void tst_QContactAsync::relationshipFetch()
     QContactId aId;
     foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
-        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldFirst) == QString("Aaron")) {
+        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldFirstName) == QString("Aaron")) {
             aId = curr.id();
             break;
         }
@@ -1539,7 +1539,7 @@ void tst_QContactAsync::relationshipFetch()
     QContactId bId;
     foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
-        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldFirst) == QString("Bob")) {
+        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldFirstName) == QString("Bob")) {
             bId = curr.id();
             break;
         }
@@ -1567,7 +1567,7 @@ void tst_QContactAsync::relationshipFetch()
     QContactId cId;
     foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
-        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldFirst) == QString("Borris")) {
+        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldFirstName) == QString("Borris")) {
             cId = curr.id();
             break;
         }
@@ -1669,15 +1669,15 @@ void tst_QContactAsync::relationshipRemove()
     QContactId aId, bId, cId;
     foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
-        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldFirst) == QString("Aaron")) {
+        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldFirstName) == QString("Aaron")) {
             aId = curr.id();
             continue;
         }
-        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldFirst) == QString("Bob")) {
+        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldFirstName) == QString("Bob")) {
             bId = curr.id();
             continue;
         }
-        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldFirst) == QString("Borris")) {
+        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldFirstName) == QString("Borris")) {
             cId = curr.id();
             continue;
         }
@@ -1817,11 +1817,11 @@ void tst_QContactAsync::relationshipSave()
     QContactId cId, aId, bId;
     foreach (const QContactLocalId& currId, contacts) {
         QContact curr = cm->contact(currId);
-        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldFirst) == QString("Borris")) {
+        if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldFirstName) == QString("Borris")) {
             cId = curr.id();
-        } else if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldFirst) == QString("Bob")) {
+        } else if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldFirstName) == QString("Bob")) {
             bId = curr.id();
-        } else if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldFirst) == QString("Aaron")) {
+        } else if (curr.detail(QContactName::DefinitionName).value(QContactName::FieldFirstName) == QString("Aaron")) {
             aId = curr.id();
         }
     }
@@ -2233,7 +2233,7 @@ QContactManager* tst_QContactAsync::prepareModel(const QString& managerUri)
     QContactRelationship crb;
     crb.setFirst(c.id());
     crb.setSecond(b.id());
-    crb.setRelationshipType(QContactRelationship::Is);
+    crb.setRelationshipType(QContactRelationship::IsSameAs);
     cm->saveRelationship(&crb);
 
     return cm;

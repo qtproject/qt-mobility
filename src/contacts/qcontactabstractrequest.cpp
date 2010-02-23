@@ -199,15 +199,6 @@ QContactAbstractRequest::RequestType QContactAbstractRequest::type() const
 }
 
 /*!
-  \internal
-  Returns the current status of the request.
- */
-QContactAbstractRequest::Status QContactAbstractRequest::status() const
-{
-    return static_cast<QContactAbstractRequest::Status>(d_ptr->m_state);
-}
-
-/*!
   Returns the current state of the request.
  */
 QContactAbstractRequest::State QContactAbstractRequest::state() const
@@ -265,28 +256,6 @@ bool QContactAbstractRequest::waitForFinished(int msecs)
         switch (d_ptr->m_state) {
         case QContactAbstractRequest::ActiveState:
             return engine->waitForRequestFinished(this, msecs);
-        case QContactAbstractRequest::CanceledState:
-        case QContactAbstractRequest::FinishedState:
-            return true;
-        default:
-            return false;
-        }
-    }
-
-    return false; // unable to wait for operation; not in progress or no engine.
-}
-
-/*! \internal
-    Blocks until the manager engine signals that more partial results are available for the request, or until \a msecs milliseconds has elapsed.
-    If \a msecs is zero, this function will block indefinitely.
-    Returns true if the request was cancelled or more partial results were made available within the given period, otherwise false. */
-bool QContactAbstractRequest::waitForProgress(int msecs)
-{
-    QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
-    if (engine) {
-        switch (d_ptr->m_state) {
-        case QContactAbstractRequest::ActiveState:
-            return engine->waitForRequestProgress(this, msecs);
         case QContactAbstractRequest::CanceledState:
         case QContactAbstractRequest::FinishedState:
             return true;

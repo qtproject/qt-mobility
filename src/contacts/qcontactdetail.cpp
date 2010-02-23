@@ -322,15 +322,6 @@ bool QContactDetail::removeValue(const QString& key)
 }
 
 /*!
-  \internal
-  Returns the values stored in this detail
- */
-QVariantMap QContactDetail::values() const
-{
-    return d.constData()->m_values;
-}
-
-/*!
   Returns the values stored in this detail as a map from value key to value
  */
 QVariantMap QContactDetail::variantValues() const

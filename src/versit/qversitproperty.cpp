@@ -269,22 +269,3 @@ void QVersitProperty::clear()
     d->mValue.clear();
     d->mParameters.clear();
 }
-
-/*! \internal */
-void QVersitProperty::addParameter(const QString& name, const QString& value)
-{
-    Q_UNUSED(name)
-    Q_UNUSED(value)
-}
-
-/*! \internal */
-void QVersitProperty::setEmbeddedDocument(const QVersitDocument& document)
-{
-    setValue(QVariant::fromValue(document));
-}
-
-/*! \internal */
-QVersitDocument QVersitProperty::embeddedDocument() const
-{
-    return value<QVersitDocument>();
-}

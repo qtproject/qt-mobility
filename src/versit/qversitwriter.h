@@ -91,12 +91,6 @@ public:
     State state() const;
     Error error() const;
 
-    // Deprecated
-    void Q_DECL_DEPRECATED setVersitDocument(const QVersitDocument& versitDocument);
-    QVersitDocument Q_DECL_DEPRECATED versitDocument() const;
-    bool Q_DECL_DEPRECATED startWriting();
-    bool Q_DECL_DEPRECATED writeAll();
-
 Q_SIGNALS:
     void stateChanged(QVersitWriter::State state);
 

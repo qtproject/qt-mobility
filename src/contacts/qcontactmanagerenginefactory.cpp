@@ -101,16 +101,4 @@ QList<int> QContactManagerEngineFactory::supportedImplementationVersions() const
     return QList<int>();
 }
 
-/*!
-  \internal
-
-  Returns the version of the Qt Mobility Contacts API which is implemented by engines instantiated by this factory.
-  This function is deprecated and will be removed after the transition period has elapsed.
- */
-int QContactManagerEngineFactory::version() const
-{
-    return -1;
-    //return QContactManager::version();
-}
-
 QTM_END_NAMESPACE

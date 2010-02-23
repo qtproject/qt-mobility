@@ -25,7 +25,6 @@ PUBLIC_HEADERS += \
     qcontactchangeset.h \
     qcontactdetail.h \
     qcontactdetaildefinition.h \
-    qcontactdetaildefinitionfield.h \
     qcontactdetailfielddefinition.h \
     qcontactfilter.h \
     qcontactid.h \

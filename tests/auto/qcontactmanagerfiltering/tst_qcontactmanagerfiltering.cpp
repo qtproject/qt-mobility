@@ -249,9 +249,9 @@ void tst_QContactManagerFiltering::detailStringFiltering_data()
     QString es; // empty string
 
     QString name = QContactName::DefinitionName;
-    QString firstname = QContactName::FieldFirst;
-    QString lastname = QContactName::FieldLast;
-    QString middlename = QContactName::FieldMiddle;
+    QString firstname = QContactName::FieldFirstName;
+    QString lastname = QContactName::FieldLastName;
+    QString middlename = QContactName::FieldMiddleName;
     QString prefixname = QContactName::FieldPrefix;
     QString suffixname = QContactName::FieldSuffix;
     QString nickname = QContactNickname::DefinitionName;
@@ -390,8 +390,8 @@ void tst_QContactManagerFiltering::detailVariantFiltering_data()
         newMRow("no def name", manager) << manager << es << "value" << false << ev << es;
 
         /* Strings (name) */
-        newMRow("first name presence", manager) << manager << "Name" << QString(QLatin1String(QContactName::FieldFirst)) << false << ev << "abcdefg";
-        newMRow("first name == Aaron", manager) << manager << "Name" << QString(QLatin1String(QContactName::FieldFirst)) << true << QVariant("Aaron") << "a";
+        newMRow("first name presence", manager) << manager << "Name" << QString(QLatin1String(QContactName::FieldFirstName)) << false << ev << "abcdefg";
+        newMRow("first name == Aaron", manager) << manager << "Name" << QString(QLatin1String(QContactName::FieldFirstName)) << true << QVariant("Aaron") << "a";
 
         /*
          * Doubles
@@ -654,8 +654,8 @@ void tst_QContactManagerFiltering::rangeFiltering_data()
     QString es; // empty string
 
     QString namedef = QContactName::DefinitionName;
-    QString firstname = QContactName::FieldFirst;
-    QString lastname = QContactName::FieldLast;
+    QString firstname = QContactName::FieldFirstName;
+    QString lastname = QContactName::FieldLastName;
 
     QString phonedef = QContactPhoneNumber::DefinitionName;
     QString phonenum = QContactPhoneNumber::FieldNumber;
@@ -1878,8 +1878,8 @@ void tst_QContactManagerFiltering::sorting_data()
     QTest::addColumn<int>("blankpolicyi");
     QTest::addColumn<QString>("expected");
 
-    QString firstname = QContactName::FieldFirst;
-    QString lastname = QContactName::FieldLast;
+    QString firstname = QContactName::FieldFirstName;
+    QString lastname = QContactName::FieldLastName;
     QString namedef = QContactName::DefinitionName;
     QString urldef = QContactUrl::DefinitionName;
     QString urlfield = QContactUrl::FieldUrl;
@@ -1937,7 +1937,7 @@ void tst_QContactManagerFiltering::sorting()
     // so we need to handle the case where e, f & g come back in any order [with first name]
 
     // so we just make sure that e,f,g appear once in the output, and remove f,g from both strings
-    if (defname == QContactName::DefinitionName && fieldname == QContactName::FieldFirst) {
+    if (defname == QContactName::DefinitionName && fieldname == QContactName::FieldFirstName) {
         QVERIFY(output.count('e') == 1);
         QVERIFY(output.count('f') == 1);
         QVERIFY(output.count('g') == 1);
@@ -1957,7 +1957,7 @@ void tst_QContactManagerFiltering::sorting()
 
     output = convertIds(contacts, ids);
 
-    if (defname == QContactName::DefinitionName && fieldname == QContactName::FieldFirst) {
+    if (defname == QContactName::DefinitionName && fieldname == QContactName::FieldFirstName) {
         QVERIFY(output.count('e') == 1);
         QVERIFY(output.count('f') == 1);
         QVERIFY(output.count('g') == 1);
@@ -1988,8 +1988,8 @@ void tst_QContactManagerFiltering::multiSorting_data()
 
     QString es;
 
-    QString firstname = QContactName::FieldFirst;
-    QString lastname = QContactName::FieldLast;
+    QString firstname = QContactName::FieldFirstName;
+    QString lastname = QContactName::FieldLastName;
     QString namedef = QContactName::DefinitionName;
     QString phonedef = QContactPhoneNumber::DefinitionName;
     QString numberfield = QContactPhoneNumber::FieldNumber;
@@ -3067,7 +3067,7 @@ public:
         Q_UNUSED(contact);
         Q_UNUSED(detail);
         // Well, do something
-        emit progress(QContactAction::Finished, QVariantMap());
+        emit progress(QContactAction::FinishedState, QVariantMap());
     }
 
     QVariantMap result() const
@@ -3107,7 +3107,7 @@ public:
         Q_UNUSED(contact);
         Q_UNUSED(detail);
         // Well, do something
-        emit progress(QContactAction::Finished, QVariantMap());
+        emit progress(QContactAction::FinishedState, QVariantMap());
     }
 
     QVariantMap result() const
@@ -3148,7 +3148,7 @@ public:
         Q_UNUSED(contact);
         Q_UNUSED(detail);
         // Well, do something
-        emit progress(QContactAction::Finished, QVariantMap());
+        emit progress(QContactAction::FinishedState, QVariantMap());
     }
 
     QVariantMap result() const
@@ -3204,7 +3204,7 @@ public:
         Q_UNUSED(contact);
         Q_UNUSED(detail);
         // Well, do something
-        emit progress(QContactAction::Finished, QVariantMap());
+        emit progress(QContactAction::FinishedState, QVariantMap());
     }
 
     QVariantMap result() const
@@ -3249,7 +3249,7 @@ public:
         Q_UNUSED(contact);
         Q_UNUSED(detail);
         // Well, do something
-        emit progress(QContactAction::Finished, QVariantMap());
+        emit progress(QContactAction::FinishedState, QVariantMap());
     }
 
     QVariantMap result() const
@@ -3285,7 +3285,7 @@ public:
     }
     void invokeAction(const QContact&, const QContactDetail&)
     {
-        emit progress(QContactAction::Finished, QVariantMap());
+        emit progress(QContactAction::FinishedState, QVariantMap());
     }
 
     QVariantMap result() const

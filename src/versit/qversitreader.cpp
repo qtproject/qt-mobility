@@ -241,17 +241,4 @@ QVersitReader::Error QVersitReader::error() const
     return d->error();
 }
 
-/*! \internal */
-bool QVersitReader::readAll()
-{
-    startReading();
-    return waitForFinished();
-}
-
-/*! \internal */
-QList<QVersitDocument> QVersitReader::result() const
-{
-    return results();
-}
-
 #include "moc_qversitreader.cpp"

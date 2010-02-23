@@ -200,7 +200,7 @@ bool QVersitContactImporterPrivate::createName(
     if (!detail.isEmpty()) {
         // If multiple name properties exist,
         // discard all except the first occurence
-        if (!detail.value(QContactName::FieldFirst).isEmpty())
+        if (!detail.value(QContactName::FieldFirstName).isEmpty())
             return false;
         else
             name = QContactName(static_cast<QContactName>(detail));

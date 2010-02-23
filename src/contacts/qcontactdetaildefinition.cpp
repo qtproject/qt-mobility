@@ -171,17 +171,6 @@ void QContactDetailDefinition::removeField(const QString& key)
 }
 
 /*!
-  \internal
-  Returns a reference to the map of keys to fields which are present in details of this definition.
-
-  You can make changes to the returned map.
- */
-QMap<QString, QContactDetailFieldDefinition>& QContactDetailDefinition::fields()
-{
-    return d->m_fields;
-}
-
-/*!
   Returns the access constraint that is applied to details of this definition
 
   \obsolete

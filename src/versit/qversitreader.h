@@ -97,10 +97,6 @@ public:
     State state() const;
     Error error() const;
 
-    // Deprecated
-    bool Q_DECL_DEPRECATED readAll();
-    QList<QVersitDocument> Q_DECL_DEPRECATED result() const;
-
 Q_SIGNALS:
     void stateChanged(QVersitReader::State state);
     void resultsAvailable(QList<QVersitDocument>& results);

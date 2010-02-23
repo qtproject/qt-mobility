@@ -73,9 +73,6 @@ public:
     /* Results */
     QList<QContact> contacts() const;
 
-Q_SIGNALS:
-    void progress(QContactFetchRequest* self, bool appendOnly); // deprecated
-
 private:
     Q_DISABLE_COPY(QContactFetchRequest)
     friend class QContactManagerEngine;

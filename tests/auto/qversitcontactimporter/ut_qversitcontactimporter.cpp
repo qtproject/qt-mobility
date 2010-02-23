@@ -1024,7 +1024,7 @@ void UT_QVersitContactImporter::testGeo()
     documentList.clear();
     documentList.append(document);
     contact = mImporter->importContacts(documentList).first();
-    geo = (QContactGeolocation)contact.detail(QContactGeolocation::DefinitionName);
+    geo = (QContactGeoLocation)contact.detail(QContactGeoLocation::DefinitionName);
     str.setNum(geo.longitude(),'.',2);
     QCOMPARE(str,val[0]);
     str.setNum(geo.latitude(),'.',2);
