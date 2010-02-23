@@ -1600,18 +1600,18 @@ void TestCntTransformContactData::validateCntTransformGeolocationL(TPtrC16 field
     QVERIFY(transformGeolocation != 0);
     QVERIFY(transformGeolocation->supportsField(KUidContactFieldGEO.iUid));
     QVERIFY(!(transformGeolocation->supportsField(0))); //Test for Wrong value
-    QVERIFY(transformGeolocation->supportsDetail(QContactGeolocation::DefinitionName));
+    QVERIFY(transformGeolocation->supportsDetail(QContactGeoLocation::DefinitionName));
     QVERIFY(!(transformGeolocation->supportsDetail("WrongValue")));
 
-    validateGetIdForField(*transformGeolocation, QContactGeolocation::FieldLabel,0);
-    validateGetIdForField(*transformGeolocation, QContactGeolocation::FieldLatitude,0);
-    validateGetIdForField(*transformGeolocation, QContactGeolocation::FieldLongitude,0);
-    validateGetIdForField(*transformGeolocation, QContactGeolocation::FieldAccuracy,0);
-    validateGetIdForField(*transformGeolocation, QContactGeolocation::FieldAltitude,0);
-    validateGetIdForField(*transformGeolocation, QContactGeolocation::FieldAltitudeAccuracy,0);
-    validateGetIdForField(*transformGeolocation, QContactGeolocation::FieldHeading,0);
-    validateGetIdForField(*transformGeolocation, QContactGeolocation::FieldSpeed,0);
-    validateGetIdForField(*transformGeolocation, QContactGeolocation::FieldTimestamp,0);
+    validateGetIdForField(*transformGeolocation, QContactGeoLocation::FieldLabel,0);
+    validateGetIdForField(*transformGeolocation, QContactGeoLocation::FieldLatitude,0);
+    validateGetIdForField(*transformGeolocation, QContactGeoLocation::FieldLongitude,0);
+    validateGetIdForField(*transformGeolocation, QContactGeoLocation::FieldAccuracy,0);
+    validateGetIdForField(*transformGeolocation, QContactGeoLocation::FieldAltitude,0);
+    validateGetIdForField(*transformGeolocation, QContactGeoLocation::FieldAltitudeAccuracy,0);
+    validateGetIdForField(*transformGeolocation, QContactGeoLocation::FieldHeading,0);
+    validateGetIdForField(*transformGeolocation, QContactGeoLocation::FieldSpeed,0);
+    validateGetIdForField(*transformGeolocation, QContactGeoLocation::FieldTimestamp,0);
     validateGetIdForField(*transformGeolocation, "WrongValue", 0);
     QVERIFY( !(transformGeolocation->supportsSubType("WrongValue")));
 
@@ -1622,7 +1622,7 @@ void TestCntTransformContactData::validateCntTransformGeolocationL(TPtrC16 field
 
     validateContextsL(transformGeolocation);
 
-    QContactGeolocation geolocation;
+    QContactGeoLocation geolocation;
     geolocation.setLatitude(latitudeDetail);
     geolocation.setLongitude(longitudeDetail);
     QList<CContactItemField *> fields = transformGeolocation->transformDetailL(geolocation);
@@ -1640,7 +1640,7 @@ void TestCntTransformContactData::validateCntTransformGeolocationL(TPtrC16 field
     newField->TextStorage()->SetTextL(field);
     QContact contact;
     QContactDetail* contactDetail = transformGeolocation->transformItemField(*newField, contact);
-    const QContactGeolocation* geolocationInfo(static_cast<const QContactGeolocation*>(contactDetail));
+    const QContactGeoLocation* geolocationInfo(static_cast<const QContactGeoLocation*>(contactDetail));
     if (latitudeDetail >= 0.0 ) {
         QCOMPARE(geolocationInfo->latitude(), latitudeDetail);
     }

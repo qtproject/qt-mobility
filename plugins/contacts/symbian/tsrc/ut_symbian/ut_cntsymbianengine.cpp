@@ -666,7 +666,7 @@ void TestSymbianEngine::filterSupport()
     df.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldSubTypes);
     QVERIFY(m_engine->isFilterSupported(df));
     QContactFilter f;
-    QVERIFY(m_engine->filterSupported(f));
+    QVERIFY(m_engine->isFilterSupported(f));
 }
 
 void TestSymbianEngine::featureSupport()
