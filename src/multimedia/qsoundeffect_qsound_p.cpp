@@ -61,7 +61,7 @@
 #include "qmediaplayer.h"
 #include "qsoundeffect_p.h"
 
-#include "wavedecoder.h"
+#include "wavedecoder_p.h"
 
 #include "qsoundeffect_qsound_p.h"
 
