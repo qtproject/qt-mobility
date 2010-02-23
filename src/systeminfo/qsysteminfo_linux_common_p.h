@@ -232,7 +232,7 @@ protected:
     void setupBluetooth();
 
 private Q_SLOTS:
-    void halChanged(int,QVariantList);
+    virtual void halChanged(int,QVariantList);
     void bluezPropertyChanged(const QString&, QDBusVariant);
 #endif
 };
