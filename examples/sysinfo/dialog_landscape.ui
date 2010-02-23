@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>553</width>
-    <height>180</height>
+    <height>227</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -861,6 +861,11 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <item>
+          <property name="text">
+           <string/>
+          </property>
+         </item>
          <item>
           <property name="text">
            <string>Gsm</string>
