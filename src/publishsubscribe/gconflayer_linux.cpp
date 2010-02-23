@@ -361,47 +361,29 @@ bool GConfLayer::removeValue(QValueSpacePublisher */*creator*/,
     Handle handle,
     const QString &subPath)
 {
-    GConfHandle *sh = gConfHandle(handle);
-    if (!sh)
-        return false;
+    QString fullPath;
 
-    QString path(subPath);
-    while (path.endsWith(QLatin1Char('/')))
-        path.chop(1);
-
-    int index = path.lastIndexOf(QLatin1Char('/'), -1);
-
-    bool createdHandle = false;
-
-    QString value;
-    if (index == -1) {
-        value = path;
+    if (handle == InvalidHandle) {
+        fullPath = subPath;
     } else {
-        // want a value that is in a sub path under handle
-        value = path.mid(index + 1);
-        path.truncate(index);
+        GConfHandle *sh = gConfHandle(handle);
+        if (!sh)
+            return false;
 
-        if (path.isEmpty())
-            path.append(QLatin1Char('/'));
-
-        sh = gConfHandle(item(Handle(sh), path));
-        createdHandle = true;
+        if (subPath == QLatin1String("/"))
+            fullPath = sh->path;
+        else if (sh->path.endsWith(QLatin1Char('/')) && subPath.startsWith(QLatin1Char('/')))
+            fullPath = sh->path + subPath.mid(1);
+        else if (!sh->path.endsWith(QLatin1Char('/')) && !subPath.startsWith(QLatin1Char('/')))
+            fullPath = sh->path + QLatin1Char('/') + subPath;
+        else
+            fullPath = sh->path + subPath;
     }
 
-    QString fullPath(sh->path);
-    if (fullPath != QLatin1String("/"))
-        fullPath.append(QLatin1Char('/'));
-
-    fullPath.append(value);
-
-    qDebug() << "TODO: Remove value from" << fullPath;
+    qDebug() << "Remove value from" << fullPath;
     GConfItem gconfItem(fullPath);
     gconfItem.unset();
-
-    if (createdHandle)
-        removeHandle(Handle(sh));
-
-    return true;    //TODO: How to check whether unset was ok?
+    return true;
 }
 
 void GConfLayer::addWatch(QValueSpacePublisher *, Handle)
