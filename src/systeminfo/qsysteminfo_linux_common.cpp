@@ -1487,7 +1487,7 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoLinuxCommonPrivate::inputMe
                     methods = (methods | QSystemDeviceInfo::Keys);
                 }
             } else if(strvalue.contains("keypad",Qt::CaseInsensitive)) {
-                if( (methods & QSystemDeviceInfo::KeyPad) != QSystemDeviceInfo::KeyPad) {
+                if( (methods & QSystemDeviceInfo::Keypad) != QSystemDeviceInfo::Keypad) {
                     methods = (methods | QSystemDeviceInfo::Keys);
                 }
             } else if(strvalue.contains("TouchScreen",Qt::CaseInsensitive)) {
