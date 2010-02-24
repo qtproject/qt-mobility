@@ -22,7 +22,10 @@ unix {
         MOBILITY_DOCUMENTATION=\
             @( cd "$$PWD/src";\
             for file in *.dia; do\
-                dia -e "images/\$$(echo "\$$file" | sed 's/dia\$$/png/')" "\$$file";\
+                destfile="images/\$$(echo "\$$file" | sed 's/dia\$$/png/')";\
+                if [ "\$$file" -nt "\$$destfile" ]; then\
+                    dia -e "\$$destfile" "\$$file";\
+                fi;\
             done ) || true\
             $$LINE_SEP $$MOBILITY_DOCUMENTATION
     }
