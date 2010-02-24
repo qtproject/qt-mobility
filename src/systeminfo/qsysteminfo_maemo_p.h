@@ -128,6 +128,17 @@ public:
 
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
 
+private:
+    // The index of wanted argument in the QDBusMessage which is received as a
+    // reply to the sent get_registration_status message via interface Phone.Net
+    //
+    enum {                // In the received QDBusMessage..
+        STATUS_INDEX = 0, // the original type of status argument is byte
+        LAC_INDEX,        // the original type of lac argument is uint16
+        CELLID_INDEX,     // the original type of cellId argument is uint32
+        MNC_INDEX,        // the original type of mnc argument is uint32
+        MCC_INDEX         // the original type of mcc argument is uint32
+    };
 };
 
 class QSystemDisplayInfoPrivate : public QSystemDisplayInfoLinuxCommonPrivate

@@ -265,21 +265,91 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
 
 int QSystemNetworkInfoPrivate::cellId()
 {
+#if !defined(QT_NO_DBUS)
+    QDBusInterface connectionInterface("com.nokia.phone.net",
+                                       "/com/nokia/phone/net",
+                                       "Phone.Net",
+                                       QDBusConnection::systemBus());
+    if (!connectionInterface.isValid()) {
+        qWarning() << "interface not valid";
+        return -1;
+    }
+    QDBusMessage reply = connectionInterface.call(QLatin1String("get_registration_status"));
+
+    if (reply.type() == QDBusMessage::ReplyMessage) {
+        QList<QVariant> argList = reply.arguments();
+        return argList.at(CELLID_INDEX).value<uint>();
+    }
+#endif
+    qWarning() << reply.errorMessage();
     return -1;
 }
 
 int QSystemNetworkInfoPrivate::locationAreaCode()
 {
+#if !defined(QT_NO_DBUS)
+    QDBusInterface connectionInterface("com.nokia.phone.net",
+                                       "/com/nokia/phone/net",
+                                       "Phone.Net",
+                                       QDBusConnection::systemBus());
+    if (!connectionInterface.isValid()) {
+        qWarning() << "interface not valid";
+        return -1;
+    }
+    QDBusMessage reply = connectionInterface.call(QLatin1String("get_registration_status"));
+
+    if (reply.type() == QDBusMessage::ReplyMessage) {
+        QList<QVariant> argList = reply.arguments();
+        return argList.at(LAC_INDEX).value<uint>();
+    }
+#endif
+    qWarning() << reply.errorMessage();
     return -1;
 }
 
 QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
 {
+#if !defined(QT_NO_DBUS)
+    QDBusInterface connectionInterface("com.nokia.phone.net",
+                                       "/com/nokia/phone/net",
+                                       "Phone.Net",
+                                       QDBusConnection::systemBus());
+    if (!connectionInterface.isValid()) {
+        qWarning() << "interface not valid";
+        return QString();
+    }
+    QDBusMessage reply = connectionInterface.call(QLatin1String("get_registration_status"));
+
+    if (reply.type() == QDBusMessage::ReplyMessage) {
+        QList<QVariant> argList = reply.arguments();
+        QString currentMobileCountryCode;
+        return currentMobileCountryCode.setNum(argList.at(MCC_INDEX).value<uint>());
+    }
+#endif
+    qWarning() << reply.errorMessage();
     return QString();
 }
 
 QString QSystemNetworkInfoPrivate::currentMobileNetworkCode()
 {
+#if !defined(QT_NO_DBUS)
+    QDBusInterface connectionInterface("com.nokia.phone.net",
+                                       "/com/nokia/phone/net",
+                                       "Phone.Net",
+                                       QDBusConnection::systemBus());
+    if (!connectionInterface.isValid()) {
+        qWarning() << "interface not valid";
+        return QString();
+    }
+    QDBusMessage reply = connectionInterface.call(QLatin1String("get_registration_status"));
+
+    if (reply.type() == QDBusMessage::ReplyMessage) {
+        QList<QVariant> argList = reply.arguments();
+        QString currentMobileNetworkCode;
+        return currentMobileNetworkCode.setNum(argList.at(MNC_INDEX).value<uint>());
+    }
+#endif
+    qWarning() << reply.errorMessage();
     return QString();
 }
 
