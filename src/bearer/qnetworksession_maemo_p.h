@@ -58,6 +58,7 @@
 #include <qnetworksession.h>
 #include <QNetworkInterface>
 #include <QDateTime>
+#include <QTimer>
 
 #ifdef Q_WS_MAEMO_6
 #include <icd/dbus_api.h>
@@ -78,6 +79,8 @@ public:
 #endif
         currentState(QNetworkSession::Invalid)
     {
+        m_stopTimer.setSingleShot(true);
+        connect(&m_stopTimer, SIGNAL(timeout()), this, SLOT(finishStopBySendingClosedSignal()));
     }
 
     ~QNetworkSessionPrivate()
@@ -121,8 +124,9 @@ Q_SIGNALS:
 private Q_SLOTS:
     void do_open();
     void networkConfigurationsChanged();
-    void configurationChanged(const QNetworkConfiguration &config);
+    void iapStateChanged(const QString& iapid, uint icd_connection_state);
     void updateProxies(QNetworkSession::State newState);
+    void finishStopBySendingClosedSignal();
 
 private:
     QNetworkConfigurationManager manager;
@@ -145,7 +149,6 @@ private:
 
     QNetworkConfiguration& copyConfig(QNetworkConfiguration &fromConfig, QNetworkConfiguration &toConfig, bool deepCopy = true);
     void clearConfiguration(QNetworkConfiguration &config);
-    void cleanupAnyConfiguration();
 
     QNetworkSession::State state;
     bool isOpen;
@@ -161,13 +164,15 @@ private:
     QString currentNetworkInterface;
     friend class IcdListener;
     void updateState(QNetworkSession::State);
-    void updateIdentifier(QString &newId);
+    void updateIdentifier(const QString &newId);
     quint64 getStatistics(bool sent) const;
     void cleanupSession(void);
 
     void updateProxyInformation();
     void clearProxyInformation();
     QNetworkSession::State currentState;
+
+    QTimer m_stopTimer;
 };
 
 QTM_END_NAMESPACE

@@ -55,6 +55,8 @@
 
 #include <QHash>
 #include <QStringList>
+#include <QDBusInterface>
+#include <maemo_icd.h>
 
 #include "qnetworkconfigmanager.h"
 #include "qnetworkconfiguration_maemo_p.h"
@@ -69,10 +71,11 @@ class QNetworkConfigurationManagerPrivate : public QObject
     Q_OBJECT
 public:
     QNetworkConfigurationManagerPrivate()
-    :   QObject(0), capFlags(0), firstUpdate(true), onlineConfigurations(0)
+    :   QObject(0), capFlags(0), firstUpdate(true), onlineConfigurations(0), m_scanGoingOn(false)
     {
         registerPlatformCapabilities();
         updateConfigurations();
+        init();
     }
 
     virtual ~QNetworkConfigurationManagerPrivate() 
@@ -103,10 +106,14 @@ public:
 
     QNetworkConfiguration defaultConfiguration();
 
+    void init();
+
     QNetworkConfigurationManager::Capabilities capFlags;
     void registerPlatformCapabilities();
 
     void performAsyncConfigurationUpdate();
+    void doUpdateConfigurations(QList<Maemo::IcdScanResult> scanned = QList<Maemo::IcdScanResult>());
+    void startListeningStateSignalsForAllConnections();
 
     //this table contains an up to date list of all configs at any time.
     //it must be updated if configurations change, are added/removed or
@@ -123,11 +130,25 @@ public:
     void configurationChanged(QNetworkConfigurationPrivate *ptr);
     uint32_t getNetworkAttrs(bool is_iap_id, QString& iap_id,
 			     QString& iap_type, QString security_method);
-    void configChanged(QNetworkConfigurationPrivate *ptr, bool added);
+
+    QDBusInterface *m_dbusInterface;
+    QTimer m_scanTimer;
+    bool m_gettingInitialConnectionState;
+    bool m_scanGoingOn;
+    QStringList m_typesToBeScanned;
+    QList<Maemo::IcdScanResult> m_scanResult;
+    QString m_onlineIapId;
+
     friend class QNetworkSessionPrivate;
 
 public slots:
     void updateConfigurations();
+
+private slots:
+    void cancelAsyncConfigurationUpdate();
+    void finishAsyncConfigurationUpdate();
+    void asyncUpdateConfigurationsSlot(QDBusMessage msg);
+    void connectionStateSignalsSlot(QDBusMessage msg);
 
 Q_SIGNALS:
     void configurationAdded(const QNetworkConfiguration& config);
@@ -135,6 +156,8 @@ Q_SIGNALS:
     void configurationUpdateComplete();
     void configurationChanged(const QNetworkConfiguration& config);
     void onlineStateChanged(bool isOnline);
+
+    void iapStateChanged(const QString& iapid, uint icd_connection_state);
 };
 
 QTM_END_NAMESPACE
