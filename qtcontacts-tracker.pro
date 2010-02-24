@@ -27,7 +27,7 @@ INCLUDEPATH += /usr/include
 LIBS += -lqttracker
 
 # QT += contacts
-INCLUDEPATH += /usr/include/qt4/QtContacts
+INCLUDEPATH += /usr/include/qt4/QtMobility
 
 target.path = /usr/lib/qt4/plugins/contacts
 INSTALLS += target
