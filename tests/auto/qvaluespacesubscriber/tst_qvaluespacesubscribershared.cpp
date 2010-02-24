@@ -829,7 +829,11 @@ void tst_QValueSpaceSubscriber::ipcTests()
 
     QProcess process;
     process.setProcessChannelMode(QProcess::ForwardedChannels);
+#ifdef Q_OS_UNIX
+    process.start("./vsiTestLackey", QStringList() << "-ipcTests" << layer->id().toString());
+#else
     process.start("vsiTestLackey", QStringList() << "-ipcTests" << layer->id().toString());
+#endif
     QVERIFY(process.waitForStarted());
 
     //lackey sets value to 100 as part of its startup
@@ -901,7 +905,11 @@ void tst_QValueSpaceSubscriber::ipcRemoveKey()
 
     QProcess process;
     process.setProcessChannelMode(QProcess::ForwardedChannels);
+#ifdef Q_OS_UNIX
+    process.start("./vsiTestLackey", QStringList() << "-ipcRemoveKey" << layer->id().toString());
+#else
     process.start("vsiTestLackey", QStringList() << "-ipcRemoveKey" << layer->id().toString());
+#endif
     QVERIFY(process.waitForStarted());
 
     // Wait for lackey to create "value".
@@ -1042,8 +1050,13 @@ void tst_QValueSpaceSubscriber::ipcInterestNotification()
 
     QProcess process;
     process.setProcessChannelMode(QProcess::ForwardedChannels);
+#ifdef Q_OS_UNIX
+    process.start("./vsiTestLackey", QStringList()
+        << "-ipcInterestNotification" << layer->id().toString());
+#else
     process.start("vsiTestLackey", QStringList()
         << "-ipcInterestNotification" << layer->id().toString());
+#endif
     QVERIFY(process.waitForStarted());
 
     // Lackey will receive interestChanged from server and set the attribute.
