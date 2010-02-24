@@ -77,10 +77,14 @@ maemo6 {
     QT += dbus
     CONFIG += link_pkgconfig
 
+    INCLUDEPATH += /usr/include/libmodest-dbus-client-1.0/ \
+                   /usr/include/camel-lite/
+
     PUBLIC_HEADERS -= qmessagecontentcontainer_p.h
     PRIVATE_HEADERS -= qmessagecontentcontainer_p.h
 
     HEADERS += qmessagecontentcontainer_maemo_p.h \
+               qmessageservice_maemo_p.h \
                modestengine_maemo_p.h \
                maemohelpers_p.h
 

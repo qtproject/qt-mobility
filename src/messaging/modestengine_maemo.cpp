@@ -44,15 +44,53 @@
 #include "qmessageaccount_p.h"
 #include "qmessageaccountfilter.h"
 #include "qmessageaccountfilter_p.h"
+#include "qmessagefolder_p.h"
 #include "qmessageservice.h"
+#include "qmessageservice_maemo_p.h"
 #include "qmessagecontentcontainer_maemo_p.h"
-#include <libmodest-dbus-client/libmodest-dbus-client.h>
-#include <libmodest-dbus-client/libmodest-dbus-api.h>
+#include <libmodest-dbus-client.h>
+#include <libmodest-dbus-api.h>
 #include <QUrl>
-#include <QtDBus/QtDBus>
+#include <QtDBus>
 #include <dbus/dbus.h>
 
 #include <QDebug>
+
+// Marshall the ModestStringMap data into a D-Bus argument
+QDBusArgument &operator<<(QDBusArgument &argument,
+                          const QtMobility::ModestStringMap &map)
+{
+    QtMobility::ModestStringMap::const_iterator iter;
+
+    argument.beginMap (QVariant::String, QVariant::String);
+    for (iter = map.constBegin(); iter != map.constEnd(); iter++) {
+        argument.beginMapEntry();
+        argument << iter.key() << iter.value();
+        argument.endMapEntry();
+    }
+    argument.endMap();
+
+    return argument;
+}
+
+// Retrieve the ModestStringMap data from the D-Bus argument
+const QDBusArgument &operator>>(const QDBusArgument &argument,
+                                QtMobility::ModestStringMap &map)
+{
+    map.clear();
+
+    argument.beginMap();
+    while (!argument.atEnd()) {
+        QString key, value;
+        argument.beginMapEntry();
+        argument >> key >> value;
+        argument.endMapEntry();
+        map[key] = value;
+    }
+    argument.endMap();
+
+    return argument;
+}
 
 QTM_BEGIN_NAMESPACE
 
@@ -66,6 +104,10 @@ QTM_BEGIN_NAMESPACE
 #define MODESTENGINE_ACCOUNT_EMAIL             "email"
 #define MODESTENGINE_ACCOUNT_STORE_ACCOUNT     "store_account"
 #define MODESTENGINE_ACCOUNT_TRANSPORT_ACCOUNT "transport_account"
+#define MODESTENGINE_ACCOUNT_PROTOCOL          "proto"
+#define MODESTENGINE_ACCOUNT_USERNAME          "username"
+#define MODESTENGINE_ACCOUNT_HOSTNAME          "hostname"
+#define MODESTENGINE_ACCOUNT_PORT              "port"
 
 // The modest engine has a new plugin, we need service names for it
 #define MODESTENGINE_QTM_PLUGIN_PATH           "/com/nokia/Qtm/Modest/Plugin"
@@ -82,6 +124,13 @@ ModestEngine::ModestEngine()
     } else {
         updateEmailAccounts();
     }
+
+    // Setup DBus Interface for Modest
+    m_ModestDBusInterface = new QDBusInterface(MODEST_DBUS_SERVICE,
+                                               MODEST_DBUS_OBJECT,
+                                               MODEST_DBUS_IFACE,
+                                               QDBusConnection::sessionBus(),
+                                               this);
 
     qDBusRegisterMetaType< ModestStringMap >();
     qDBusRegisterMetaType< ModestStringMapList >();
@@ -113,11 +162,13 @@ void ModestEngine::updateEmailAccounts() const
 #endif
         g_error_free(error);
     } else {
-        gchar *default_account = gconf_client_get_string(m_gconfclient, MODESTENGINE_DEFAULT_ACCOUNT, &error);
+        gchar *default_account_id = gconf_client_get_string(m_gconfclient, MODESTENGINE_DEFAULT_ACCOUNT, &error);
         if (error) {
             qWarning("qtmessaging: failed to get '%s': %s", MODESTENGINE_DEFAULT_ACCOUNT, error->message);
             g_error_free(error);
         }
+
+        const size_t prefix_len = strlen(MODESTENGINE_ACCOUNT_NAMESPACE) + 1;
 
         GSList *iter = accounts;
         while (iter) {
@@ -126,61 +177,83 @@ void ModestEngine::updateEmailAccounts() const
                 continue;
             }
 
-            const gchar* account_name_key = (const gchar*)iter->data;
+            const gchar* account_key = (const gchar*)iter->data;
+            // account_key = /apps/modest/server_accounts/<account id>
+            // => take account id from account_key & unescape account id
+            gchar* unescaped_account_id = gconf_unescape_key(account_key+prefix_len, strlen(account_key)-prefix_len);
 
             gboolean account_ok = FALSE;
             // Check if account is enabled
-            if (account_name_key) {
-                gchar* key = g_strconcat(account_name_key, "/", MODESTENGINE_ACCOUNT_ENABLED, NULL);
+            if (account_key) {
+                gchar* key = g_strconcat(account_key, "/", MODESTENGINE_ACCOUNT_ENABLED, NULL);
                 account_ok = gconf_client_get_bool(m_gconfclient, key, NULL);
                 g_free(key);
             }
+
             // Check if account store is defined
             if (account_ok) {
-                gchar* key = g_strconcat(account_name_key, "/", MODESTENGINE_ACCOUNT_STORE_ACCOUNT, NULL);
+                gchar* key = g_strconcat(account_key, "/", MODESTENGINE_ACCOUNT_STORE_ACCOUNT, NULL);
                 gchar* server_account_name = gconf_client_get_string(m_gconfclient, key, NULL);
                 if (server_account_name) {
-                    gchar* key = g_strconcat(MODESTENGINE_SERVER_ACCOUNT_NAMESPACE, "/", server_account_name, NULL);
-                    if (!gconf_client_dir_exists(m_gconfclient, key, NULL)) {
+                    gchar* escaped_server_account_name = gconf_escape_key(server_account_name, strlen(server_account_name));
+                    g_free(server_account_name);
+                    gchar* store_account_key = g_strconcat(MODESTENGINE_SERVER_ACCOUNT_NAMESPACE, "/", escaped_server_account_name, NULL);
+                    if (!gconf_client_dir_exists(m_gconfclient, store_account_key, NULL)) {
                         account_ok = FALSE;
                     }
-                    g_free(server_account_name);
+                    g_free(store_account_key);
+                    g_free(escaped_server_account_name);
                 }
                 g_free(key);
             }
+
             // Check if account transport is defined
             if (account_ok) {
-                gchar* key = g_strconcat(account_name_key, "/", MODESTENGINE_ACCOUNT_TRANSPORT_ACCOUNT, NULL);
+                gchar* key = g_strconcat(account_key, "/", MODESTENGINE_ACCOUNT_TRANSPORT_ACCOUNT, NULL);
                 gchar* server_account_name = gconf_client_get_string(m_gconfclient, key, NULL);
                 if (server_account_name) {
-                    gchar* key = g_strconcat(MODESTENGINE_SERVER_ACCOUNT_NAMESPACE, "/", server_account_name, NULL);
-                    if (!gconf_client_dir_exists(m_gconfclient, key, NULL)) {
+                    gchar* escaped_server_account_name = gconf_escape_key(server_account_name, strlen(server_account_name));
+                    g_free(server_account_name);
+                    gchar* transport_account_key = g_strconcat(MODESTENGINE_SERVER_ACCOUNT_NAMESPACE, "/", escaped_server_account_name, NULL);
+                    if (!gconf_client_dir_exists(m_gconfclient, transport_account_key, NULL)) {
                         account_ok = FALSE;
                     }
-                    g_free(server_account_name);
+                    g_free(transport_account_key);
+                    g_free(escaped_server_account_name);
                 }
                 g_free(key);
             }
 
             if (account_ok) {
-                QString accountId = QString::fromUtf8(account_name_key);
-                gchar* name_key = g_strconcat(account_name_key, "/", MODESTENGINE_ACCOUNT_DISPLAY_NAME, NULL);
-                QString accountName = QString::fromUtf8(gconf_client_get_string(m_gconfclient, name_key, NULL));
+                gchar* escaped_account_id = gconf_escape_key(unescaped_account_id, strlen(unescaped_account_id));
+                QString accountId = QString::fromUtf8(escaped_account_id);
+                g_free(escaped_account_id);
+
+                gchar* name_key = g_strconcat(account_key, "/", MODESTENGINE_ACCOUNT_DISPLAY_NAME, NULL);
+                gchar* account_name = gconf_client_get_string(m_gconfclient, name_key, NULL);
+                QString accountName = QString::fromUtf8(account_name);
+                g_free(account_name);
                 g_free(name_key);
-                gchar* email_key = g_strconcat(account_name_key, "/", MODESTENGINE_ACCOUNT_EMAIL, NULL);
-                QString accountAddress = QString::fromUtf8(gconf_client_get_string(m_gconfclient, email_key, NULL));
+
+                gchar* email_key = g_strconcat(account_key, "/", MODESTENGINE_ACCOUNT_EMAIL, NULL);
+                gchar* email = gconf_client_get_string(m_gconfclient, email_key, NULL);
+                QString accountAddress = QString::fromUtf8(email);
+                g_free(email);
                 g_free(email_key);
+
                 QMessageAccount account = QMessageAccountPrivate::from(QMessageAccountId(accountId),
                                                                        accountName,
                                                                        QMessageAddress(QMessageAddress::Email, accountAddress),
                                                                        QMessage::Email);
                 iAccounts.insert(accountId, account);
 
-                if (strncmp(account_name_key, default_account, strlen(default_account))) {
+                // Check if newly added account is default account
+                if (!strncmp(default_account_id, unescaped_account_id, strlen(default_account_id))) {
                     iDefaultEmailAccountId = accountId;
                 }
             }
 
+            g_free(unescaped_account_id);
             g_free(iter->data);
             iter->data = NULL;
             iter = g_slist_next(iter);
@@ -188,7 +261,7 @@ void ModestEngine::updateEmailAccounts() const
         // strings were freed in while loop
         // => it's enough to just free accounts list
         g_slist_free(accounts);
-        g_free(default_account);
+        g_free(default_account_id);
     }
 }
 
@@ -222,10 +295,234 @@ QMessageAccount ModestEngine::account(const QMessageAccountId &id) const
     return iAccounts[id.toString()];
 }
 
-QMessageAccountId ModestEngine::defaultAccount(QMessage::Type type) const
+QMessageAccountId ModestEngine::defaultAccount() const
 {
     updateEmailAccounts();
     return iDefaultEmailAccountId;
+}
+
+QFileInfoList ModestEngine::localFolders() const
+{
+    QDir dir(localRootFolder());
+    dir.setFilter(QDir::AllDirs | QDir::NoDotAndDotDot);
+    QFileInfoList fileInfoList = dir.entryInfoList();
+    appendLocalSubFolders(fileInfoList, 0);
+    return fileInfoList;
+}
+
+void ModestEngine::appendLocalSubFolders(QFileInfoList& fileInfoList, int startIndex) const
+{
+    int endIndex = fileInfoList.count();
+    for (int i=startIndex; i < endIndex; i++) {
+        QDir dir(fileInfoList[i].absoluteFilePath());
+        if (dir.exists()) {
+            dir.setFilter(QDir::AllDirs | QDir::NoDotAndDotDot);
+            QFileInfoList dirs = dir.entryInfoList();
+            for (int j = 0; j < dirs.count(); j++) {
+                QString fileName = dirs[j].fileName();
+                if (fileName != "cur" && fileName != "new" && fileName != "tmp") {
+                    fileInfoList.append(dirs[j]);
+                }
+            }
+        }
+    }
+    if (fileInfoList.count() > endIndex) {
+        appendLocalSubFolders(fileInfoList, endIndex);
+    }
+}
+
+void ModestEngine::appendIMAPSubFolders(QFileInfoList& fileInfoList, int startIndex) const
+{
+    int endIndex = fileInfoList.count();
+    for (int i=startIndex; i < endIndex; i++) {
+        QDir dir(fileInfoList[i].absoluteFilePath()+QString("/subfolders"));
+        if (dir.exists()) {
+            dir.setFilter(QDir::AllDirs | QDir::NoDotAndDotDot);
+            fileInfoList.append(dir.entryInfoList());
+        }
+    }
+    if (fileInfoList.count() > endIndex) {
+        appendIMAPSubFolders(fileInfoList, endIndex);
+    }
+}
+
+QString ModestEngine::localRootFolder() const
+{
+    return QDir::home().absolutePath()+QString("/.modest/local_folders");
+}
+
+QString ModestEngine::accountRootFolder(QMessageAccountId& accountId) const
+{
+    QMessageAccount account = this->account(accountId);
+
+    QString userName;
+    QString hostName;
+    QString port;
+    QString protocol;
+
+    gchar* store_account_key = g_strconcat(MODESTENGINE_ACCOUNT_NAMESPACE, "/", account.id().toString().toUtf8().data(), "/", MODESTENGINE_ACCOUNT_STORE_ACCOUNT, NULL);
+    gchar* store_account_name = gconf_client_get_string(m_gconfclient, store_account_key, NULL);
+    g_free(store_account_key);
+    gchar* escaped_store_account_name = gconf_escape_key(store_account_name, strlen(store_account_name));
+    g_free(store_account_name);
+
+    gchar* username_key = g_strconcat(MODESTENGINE_SERVER_ACCOUNT_NAMESPACE, "/", escaped_store_account_name, "/", MODESTENGINE_ACCOUNT_USERNAME, NULL);
+    gchar* account_username = gconf_client_get_string(m_gconfclient, username_key, NULL);
+    userName = QString::fromUtf8(account_username);
+    g_free(account_username);
+    g_free(username_key);
+
+    gchar* hostname_key = g_strconcat(MODESTENGINE_SERVER_ACCOUNT_NAMESPACE, "/", escaped_store_account_name, "/", MODESTENGINE_ACCOUNT_HOSTNAME, NULL);
+    gchar* account_hostname = gconf_client_get_string(m_gconfclient, hostname_key, NULL);
+    hostName = QString::fromUtf8(account_hostname);
+    g_free(account_hostname);
+    g_free(hostname_key);
+
+    gchar* port_key = g_strconcat(MODESTENGINE_SERVER_ACCOUNT_NAMESPACE, "/", escaped_store_account_name, "/", MODESTENGINE_ACCOUNT_PORT, NULL);
+    gint account_port = gconf_client_get_int(m_gconfclient, port_key, NULL);
+    port = QString::number(account_port);
+    g_free(port_key);
+
+    gchar* protocol_key = g_strconcat(MODESTENGINE_SERVER_ACCOUNT_NAMESPACE, "/", escaped_store_account_name, "/", MODESTENGINE_ACCOUNT_PROTOCOL, NULL);
+    gchar* account_protocol = gconf_client_get_string(m_gconfclient, protocol_key, NULL);
+    protocol = QString::fromUtf8(account_protocol);
+    g_free(account_protocol);
+    g_free(protocol_key);
+
+    g_free(escaped_store_account_name);
+
+    if (protocol == "pop") {
+        return QDir::home().absolutePath()+"/.modest/cache/mail/"+protocol+"/"+userName+"__"+hostName+"_"+port;
+    } else if (protocol == "imap") {
+        return QDir::home().absolutePath()+"/.modest/cache/mail/"+protocol+"/"+userName+"__"+hostName+"_"+port+"/folders";
+    }
+    return QString();
+}
+
+QFileInfoList ModestEngine::accountFolders(QMessageAccountId& accountId) const
+{
+    QFileInfoList fileInfoList;
+
+    EmailProtocol protocol = accountEmailProtocol(accountId);
+
+    if (protocol == ModestEngine::EmailProtocolPop3) {
+        QFileInfo fileInfo = QFileInfo(accountRootFolder(accountId)+"/Inbox");
+        fileInfoList.append(fileInfo);
+    } else if (protocol == ModestEngine::EmailProtocolIMAP) {
+        QDir dir(accountRootFolder(accountId));
+        dir.setFilter(QDir::AllDirs | QDir::NoDotAndDotDot);
+        fileInfoList = dir.entryInfoList();
+        appendIMAPSubFolders(fileInfoList, 0);
+    }
+
+    return fileInfoList;
+}
+
+ModestEngine::EmailProtocol ModestEngine::accountEmailProtocol(QMessageAccountId& accountId) const
+{
+    EmailProtocol protocol = EmailProtocolUnknown;
+    QMessageAccount account = this->account(accountId);
+
+    gchar* store_account_key = g_strconcat(MODESTENGINE_ACCOUNT_NAMESPACE, "/", account.id().toString().toUtf8().data(), "/", MODESTENGINE_ACCOUNT_STORE_ACCOUNT, NULL);
+    gchar* store_account_name = gconf_client_get_string(m_gconfclient, store_account_key, NULL);
+    g_free(store_account_key);
+    gchar* escaped_store_account_name = gconf_escape_key(store_account_name, strlen(store_account_name));
+    g_free(store_account_name);
+
+    gchar* protocol_key = g_strconcat(MODESTENGINE_SERVER_ACCOUNT_NAMESPACE, "/", escaped_store_account_name, "/", MODESTENGINE_ACCOUNT_PROTOCOL, NULL);
+    gchar* account_protocol = gconf_client_get_string(m_gconfclient, protocol_key, NULL);
+    if (QString("pop") == account_protocol) {
+        protocol = EmailProtocolPop3;
+    } else if (QString("imap") == account_protocol) {
+        protocol = EmailProtocolIMAP;
+    }
+    g_free(account_protocol);
+    g_free(protocol_key);
+
+    g_free(escaped_store_account_name);
+
+    return protocol;
+}
+
+QMessageFolderIdList ModestEngine::queryFolders(const QMessageFolderFilter &filter, const QMessageFolderSortOrder &sortOrder,
+                                                uint limit, uint offset, bool &isFiltered, bool &isSorted) const
+{
+    QMessageFolderIdList folderIds;
+
+    //QDBusMessage msg = m_ModestDBusInterface->call(MODEST_DBUS_METHOD_GET_FOLDERS);
+
+    QFileInfoList localFolders = this->localFolders();
+    QString localRootFolder = this->localRootFolder();
+
+    foreach (QMessageAccount value, iAccounts) {
+        QMessageAccountId accountId = value.id();
+        QString rootFolder = accountRootFolder(accountId);
+qWarning() << "rootfolder : " << rootFolder;
+        EmailProtocol protocol = accountEmailProtocol(accountId);
+        QFileInfoList folders = this->accountFolders(accountId);
+
+        for (int i=0; i < folders.count(); i++) {
+            QString filePath = folders[i].absoluteFilePath();
+            QString protocolStr;
+            if (protocol == ModestEngine::EmailProtocolPop3) {
+                protocolStr = "P_";
+            } else if (protocol == ModestEngine::EmailProtocolIMAP) {
+                protocolStr = "I_";
+            }
+            QString id = "MO_"+protocolStr+accountId.toString()+"&"+filePath.right(filePath.size()-rootFolder.size()-1);
+            folderIds.append(QMessageFolderId(id));
+qWarning() << "id : " << id;
+        }
+
+        for (int i=0; i < localFolders.count(); i++) {
+            QString filePath = localFolders[i].absoluteFilePath();
+            QString id = "MO_L_"+accountId.toString()+"&"+filePath.right(filePath.size()-localRootFolder.size()-1);
+            folderIds.append(QMessageFolderId(id));
+qWarning() << "id : " << id;
+        }
+    }
+
+    MessagingHelper::filterFolders(folderIds, filter);
+    isFiltered = true;
+    isSorted = false;
+    return folderIds;
+}
+
+int ModestEngine::countFolders(const QMessageFolderFilter &filter) const
+{
+    bool isFiltered, isSorted;
+    return queryFolders(filter, QMessageFolderSortOrder(), 0, 0, isFiltered, isSorted).count();
+}
+
+QMessageFolder ModestEngine::folder(const QMessageFolderId &id) const
+{
+    // Take 'MO_' & account type string ("P_") away from the beginning of the id string
+    QString idString = id.toString().remove(0,5);
+    int endOfAccountId = idString.indexOf('&');
+    QString accountId = idString.left(endOfAccountId);
+    QString folder = idString.right(idString.length()-idString.lastIndexOf('&')-1);
+    QMessageFolderId parentId;
+    QString name;
+    if (folder.lastIndexOf('/') == -1) {
+        name = folder;
+        QChar protocolChar = id.toString().at(3);
+        if (protocolChar == 'P') {
+            if (name == "cache") {
+                name = "Inbox";
+            }
+        }
+    } else {
+        name = folder.right(folder.length()-folder.lastIndexOf('/')-1);
+        QString folderIdString = id.toString();
+        QChar protocolChar = folderIdString.at(3);
+        if (protocolChar == 'I') {
+            parentId = folderIdString.left(folderIdString.lastIndexOf("/subfolders/"));
+        } else if (protocolChar == 'L') {
+            parentId = folderIdString.left(folderIdString.lastIndexOf('/'));
+        }
+    }
+    //TODO: path handling
+    return QMessageFolderPrivate::from(id, QMessageAccountId(accountId), parentId, name, name);
 }
 
 bool ModestEngine::sendEmail(QMessage &message)
@@ -486,55 +783,28 @@ bool ModestEngine::composeEmail(const QMessage &message)
     return true;
 }
 
-bool ModestEngine::queryMessages(QMessageService& messageService, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
+QMessage ModestEngine::message(const QMessageId &id) const
 {
-    return true;
+    return QMessage();
 }
 
-bool ModestEngine::queryMessages(QMessageService& messageService, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
+bool ModestEngine::queryMessages(QMessageService& messageService, const QMessageFilter &filter, const QString &body,
+                                 QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder,
+                                 uint limit, uint offset) const
 {
-    return true;
+    return false;
+}
+
+bool ModestEngine::queryMessages(QMessageService& messageService, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
+{
+    return false;
 }
 
 bool ModestEngine::countMessages(QMessageService& messageService, const QMessageFilter &filter)
 {
-    return true;
+    return false;
 }
+
+#include "moc_modestengine_maemo_p.cpp"
 
 QTM_END_NAMESPACE
-
-// Marshall the ModestStringMap data into a D-Bus argument
-QDBusArgument &operator<<(QDBusArgument &argument,
-                          const QtMobility::ModestStringMap &map)
-{
-    QtMobility::ModestStringMap::const_iterator iter;
-
-    argument.beginMap (QVariant::String, QVariant::String);
-    for (iter = map.constBegin(); iter != map.constEnd(); iter++) {
-        argument.beginMapEntry();
-        argument << iter.key() << iter.value();
-        argument.endMapEntry();
-    }
-    argument.endMap();
-
-    return argument;
-}
-
-// Retrieve the ModestStringMap data from the D-Bus argument
-const QDBusArgument &operator>>(const QDBusArgument &argument,
-                                QtMobility::ModestStringMap &map)
-{
-    map.clear();
-
-    argument.beginMap();
-    while (!argument.atEnd()) {
-        QString key, value;
-        argument.beginMapEntry();
-        argument >> key >> value;
-        argument.endMapEntry();
-        map[key] = value;
-    }
-    argument.endMap();
-
-    return argument;
-}

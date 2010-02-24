@@ -39,30 +39,17 @@
 **
 ****************************************************************************/
 #include "qmessageservice.h"
+#include "qmessageservice_maemo_p.h"
 #include "modestengine_maemo_p.h"
 #include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
-class QMessageServicePrivate : public QObject
-{
-public:
-    QMessageServicePrivate(QMessageService* parent);
-    ~QMessageServicePrivate();
-
-    void setFinished(bool successful);
-
-public:
-    QMessageService* q_ptr;
-    QMessageService::State _state;
-    bool _active;
-    QMessageManager::Error _error;
-};
-
 QMessageServicePrivate::QMessageServicePrivate(QMessageService* parent)
  : q_ptr(parent),
    _state(QMessageService::InactiveState),
-   _active(false)
+   _error(QMessageManager::NoError),
+   _active(false), _actionId(-1)
 {
 }
 
@@ -70,10 +57,9 @@ QMessageServicePrivate::~QMessageServicePrivate()
 {
 }
 
-QMessageService::QMessageService(QObject *parent)
- : QObject(parent),
-   d_ptr(new QMessageServicePrivate(this))
+QMessageServicePrivate* QMessageServicePrivate::implementation(const QMessageService &service)
 {
+    return service.d_ptr;
 }
 
 void QMessageServicePrivate::setFinished(bool successful)
@@ -86,6 +72,35 @@ void QMessageServicePrivate::setFinished(bool successful)
     _state = QMessageService::FinishedState;
     emit q_ptr->stateChanged(_state);
     _active = false;
+}
+
+void QMessageServicePrivate::stateChanged(QMessageService::State state)
+{
+    _state = state;
+    emit q_ptr->stateChanged(_state);
+}
+
+void QMessageServicePrivate::messagesFound(const QMessageIdList &ids)
+{
+    emit q_ptr->messagesFound(ids);
+}
+
+void QMessageServicePrivate::messagesCounted(int count)
+{
+    emit q_ptr->messagesCounted(count);
+}
+
+void QMessageServicePrivate::progressChanged(uint value, uint total)
+{
+    emit q_ptr->progressChanged(value, total);
+}
+
+
+
+QMessageService::QMessageService(QObject *parent)
+ : QObject(parent),
+   d_ptr(new QMessageServicePrivate(this))
+{
 }
 
 QMessageService::~QMessageService()

@@ -47,8 +47,13 @@
 #include <QDBusArgument>
 
 #include "qmessagemanager.h"
+#include "qmessagefilter_p.h"
 #include "gconf/gconf-client.h"
 #include "libosso.h"
+#include <QDBusPendingCallWatcher>
+#include <QFileInfoList>
+
+class QDBusInterface;
 
 QTM_BEGIN_NAMESPACE
 
@@ -57,9 +62,18 @@ typedef QList< ModestStringMap > ModestStringMapList;
 
 class QMessageService;
 
-class ModestEngine
+class ModestEngine : public QObject
 {
+    Q_OBJECT
+
 public:
+    enum EmailProtocol
+    {
+        EmailProtocolUnknown = -1,
+        EmailProtocolPop3 = 1,
+        EmailProtocolIMAP,
+    };
+
     static ModestEngine* instance();
 
     ModestEngine();
@@ -69,8 +83,14 @@ public:
                                         uint limit, uint offset, bool &isFiltered, bool &isSorted) const;
     int countAccounts(const QMessageAccountFilter &filter) const;
     QMessageAccount account(const QMessageAccountId &id) const;
-    QMessageAccountId defaultAccount(QMessage::Type type) const;
+    QMessageAccountId defaultAccount() const;
 
+    QMessageFolderIdList queryFolders(const QMessageFolderFilter &filter, const QMessageFolderSortOrder &sortOrder,
+                                      uint limit, uint offset, bool &isFiltered, bool &isSorted) const;
+    int countFolders(const QMessageFolderFilter &filter) const;
+    QMessageFolder folder(const QMessageFolderId &id) const;
+
+    QMessage message(const QMessageId &id) const;
     bool queryMessages(QMessageService& messageService, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
     bool queryMessages(QMessageService& messageService, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
     bool countMessages(QMessageService& messageService, const QMessageFilter &filter);
@@ -79,10 +99,19 @@ public:
     bool composeEmail(const QMessage &message);
 
 private:
+    QFileInfoList localFolders() const;
+    void appendLocalSubFolders(QFileInfoList& fileInfoList, int startIndex) const;
+    void appendIMAPSubFolders(QFileInfoList& fileInfoList, int startIndex) const;
+    QFileInfoList accountFolders(QMessageAccountId& accountId) const;
+    QString localRootFolder() const;
+    QString accountRootFolder(QMessageAccountId& accountId) const;
+    EmailProtocol accountEmailProtocol(QMessageAccountId& accountId) const;
+
     void updateEmailAccounts() const;
 
 private: //Data
-    GConfClient* m_gconfclient;
+    GConfClient *m_gconfclient;
+    QDBusInterface *m_ModestDBusInterface;
 
     mutable QHash<QString, QMessageAccount> iAccounts;
     mutable QMessageAccountId iDefaultEmailAccountId;
@@ -100,3 +129,4 @@ Q_DECLARE_METATYPE (QtMobility::ModestStringMap);
 Q_DECLARE_METATYPE (QtMobility::ModestStringMapList);
 
 #endif // MODESTENGINE_MAEMO_H
+

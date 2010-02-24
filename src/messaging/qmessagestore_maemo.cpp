@@ -124,11 +124,20 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
 
 QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &filter, const QMessageFolderSortOrder &sortOrder, uint limit, uint offset) const
 {
-    Q_UNUSED(filter)
-    Q_UNUSED(sortOrder)
-    Q_UNUSED(limit)
-    Q_UNUSED(offset)
-    return QMessageFolderIdList(); // stub
+    QMessageFolderIdList folderIds;
+
+    bool isFiltered = false;
+    bool isSorted = false;
+    folderIds = ModestEngine::instance()->queryFolders(filter, sortOrder, limit, offset, isFiltered, isSorted);
+    if (!isFiltered) {
+        MessagingHelper::filterFolders(folderIds, filter);
+    }
+    if (!isSorted) {
+        MessagingHelper::orderFolders(folderIds, sortOrder);
+    }
+    MessagingHelper::applyOffsetAndLimitToFolderIdList(folderIds, limit, offset);
+
+    return folderIds;
 }
 
 QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder, uint limit, uint offset) const
@@ -157,8 +166,11 @@ int QMessageStore::countMessages(const QMessageFilter& filter) const
 
 int QMessageStore::countFolders(const QMessageFolderFilter& filter) const
 {
-    Q_UNUSED(filter)
-    return 0; // stub
+    int count = 0;
+
+    count += ModestEngine::instance()->countFolders(filter);
+
+    return count;
 }
 
 int QMessageStore::countAccounts(const QMessageAccountFilter& filter) const
@@ -204,8 +216,7 @@ QMessage QMessageStore::message(const QMessageId& id) const
 
 QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
 {
-    Q_UNUSED(id)
-    return QMessageFolder(); // stub
+    return ModestEngine::instance()->folder(id);
 }
 
 QMessageAccount QMessageStore::account(const QMessageAccountId& id) const

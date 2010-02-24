@@ -103,8 +103,10 @@ bool MessagingHelper::accountLessThan(const QMessageAccountId accountId1, const 
 
 void MessagingHelper::orderAccounts(QMessageAccountIdList& accountIds, const QMessageAccountSortOrder &sortOrder)
 {
-    messagingHelper()->m_AccountSortOrder = (QMessageAccountSortOrder*)&sortOrder;
-    qSort(accountIds.begin(), accountIds.end(), MessagingHelper::accountLessThan);
+    if (!sortOrder.isEmpty()) {
+        messagingHelper()->m_AccountSortOrder = (QMessageAccountSortOrder*)&sortOrder;
+        qSort(accountIds.begin(), accountIds.end(), MessagingHelper::accountLessThan);
+    }
 }
 
 void MessagingHelper::applyOffsetAndLimitToAccountIdList(QMessageAccountIdList& accountIds, int limit, int offset)
@@ -163,8 +165,10 @@ bool MessagingHelper::folderLessThan(const QMessageFolderId folderId1, const QMe
 
 void MessagingHelper::orderFolders(QMessageFolderIdList& folderIds,  const QMessageFolderSortOrder &sortOrder)
 {
-    messagingHelper()->m_FolderSortOrder = (QMessageFolderSortOrder*)&sortOrder;
-    qSort(folderIds.begin(), folderIds.end(), MessagingHelper::folderLessThan);
+    if (!sortOrder.isEmpty()) {
+        messagingHelper()->m_FolderSortOrder = (QMessageFolderSortOrder*)&sortOrder;
+        qSort(folderIds.begin(), folderIds.end(), MessagingHelper::folderLessThan);
+    }
 }
 
 void MessagingHelper::applyOffsetAndLimitToFolderIdList(QMessageFolderIdList& folderIds, int limit, int offset)
@@ -223,8 +227,10 @@ bool MessagingHelper::messageLessThan(const QMessageId messageId1, const QMessag
 
 void MessagingHelper::orderMessages(QMessageIdList& messageIds,  const QMessageSortOrder &sortOrder)
 {
-    messagingHelper()->m_MessageSortOrder = (QMessageSortOrder*)&sortOrder;
-    qSort(messageIds.begin(), messageIds.end(), MessagingHelper::messageLessThan);
+    if (!sortOrder.isEmpty()) {
+        messagingHelper()->m_MessageSortOrder = (QMessageSortOrder*)&sortOrder;
+        qSort(messageIds.begin(), messageIds.end(), MessagingHelper::messageLessThan);
+    }
 }
 
 void MessagingHelper::applyOffsetAndLimitToMessageIdList(QMessageIdList& messageIds, int limit, int offset)
