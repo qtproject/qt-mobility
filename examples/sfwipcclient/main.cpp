@@ -25,6 +25,9 @@ public:
         }
     }
 
+Q_SIGNALS:
+    void clientsignal();
+
 public slots:
     void checkServiceObject()
     {
@@ -103,18 +106,39 @@ public slots:
         qDebug() << o;
 
 
-        //signal support
+        //signal support from service to client
         //we'll call a function which will trigger the signal on the server side
         connect(service, SIGNAL(signalWithIntParam(int)), this, SLOT(slotSignalWithIntParam(int)));
         QMetaObject::invokeMethod(service, "triggerSignalWithIntParam");
-
 
     }
 
     void slotSignalWithIntParam(int i)
     {
-        qDebug() << "signalWithIntParam(int) received. value:" << i; 
-        QTimer::singleShot(1000, this, SLOT(killService()));
+        qDebug() << "signalWithIntParam(int) received. value:" << i;
+        
+        //test signal with QVariant type
+        connect(service, SIGNAL(signalWithVariousParam(QVariant,QString,QServiceFilter)), this, SLOT(slotSignalWithVariousParam(QVariant,QString,QServiceFilter)));
+        QMetaObject::invokeMethod(service, "triggerSignalWithVariousParam");
+    }
+
+    void slotSignalWithVariousParam(const QVariant& v, const QString& s, const QServiceFilter& f)
+    {
+        QString o = "%1: %2 - %3.%4";
+        o = o.arg(f.serviceName()).arg(f.interfaceName()).arg(f.majorVersion()).arg(f.minorVersion());
+        qDebug() << "signalWithVariousParam(QVariant,QString,QServiceFilter) received. values:" << v << s << o;
+
+        //signal support from client to service
+        connect(this, SIGNAL(clientsignal()), service, SLOT(testSlot()));
+        QTimer::singleShot(2000, this, SLOT(triggerClientSignal()));
+    }
+
+    void triggerClientSignal()
+    {
+        qDebug() << "Triggering signal on client side";
+        emit clientsignal();
+
+        QTimer::singleShot(5000, this, SLOT(killService()));
     }
 
     void killService()

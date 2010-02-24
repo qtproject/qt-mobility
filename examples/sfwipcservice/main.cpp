@@ -48,11 +48,17 @@ public:
 
 Q_SIGNALS:
     void signalWithIntParam(int);
+    void signalWithVariousParam(QVariant,QString,QServiceFilter);
 public slots:
 
     Q_INVOKABLE void triggerSignalWithIntParam()
     {
         QTimer::singleShot(2000, this, SLOT(triggerSignalWithIntParamExecute()));
+    }
+    
+    void triggerSignalWithVariousParam()
+    {
+        QTimer::singleShot(2000, this, SLOT(triggerSignalWithVariousParamExecute()));
     }
 
     void triggerSignalWithIntParamExecute()
@@ -61,7 +67,13 @@ public slots:
         emit signalWithIntParam( 5 );
     }
 
-
+    void triggerSignalWithVariousParamExecute()
+    {
+        QServiceFilter f("com.nokia.qt.testservice", "6.7");
+        f.setServiceName("MyService");
+        qDebug() << "Emitting TestService2::signalWithVariousParam()";
+        emit signalWithVariousParam( QVariant(), QString("string-value"), f );
+    }
     void testSlot()
     {
         qDebug() << "TestService::testSlot() called";
@@ -124,21 +136,32 @@ public:
 
 Q_SIGNALS:
     void signalWithIntParam(int);
-
+    void signalWithVariousParam(QVariant,QString,QServiceFilter);
 
 public slots:
     
     void triggerSignalWithIntParam()
     {
-        //qDebug() << "AAAAAAAAAAAAAAAAAAAAAAAAASSSSSSSSSSSSs";
-        //emit signalWithIntParam( 5 );
         QTimer::singleShot(2000, this, SLOT(triggerSignalWithIntParamExecute()));
+    }
+
+    void triggerSignalWithVariousParam()
+    {
+        QTimer::singleShot(2000, this, SLOT(triggerSignalWithVariousParamExecute()));
     }
 
     void triggerSignalWithIntParamExecute()
     {
         qDebug() << "Emitting TestService2::signalWithIntParam()";
         emit signalWithIntParam( 5 );
+    }
+    
+    void triggerSignalWithVariousParamExecute()
+    {
+        QServiceFilter f("com.nokia.qt.testservice", "6.7");
+        f.setServiceName("MyService");
+        qDebug() << "Emitting TestService2::signalWithVariousParam()";
+        emit signalWithVariousParam( QVariant(), QString("string-value"), f );
     }
 
     void testSlot() {

@@ -46,6 +46,7 @@
 #include "qsignalintercepter_p.h"
 #include <QTimer>
 #include <QEventLoop>
+#include <QVarLengthArray>
 
 QTM_BEGIN_NAMESPACE
 
@@ -123,6 +124,27 @@ public:
             }
             mo = mo->superClass();
         }
+    }
+
+    /*!
+        Activate slots connected to given signal. Unfortunately we can only do this 
+        using the signal index relative to the meta object defining the signal.
+    */
+    int triggerConnectedSlots(QObject* service, const QMetaObject* meta, int id, void **args)
+    {
+        const QMetaObject* parentMeta = meta->superClass();
+        if (parentMeta)
+            id = triggerConnectedSlots(service, parentMeta, id, args);
+
+        if (id < 0)
+            return id;
+
+        const int methodsThisType = meta->methodCount() - meta->methodOffset();
+        if (id >= 0 && id < methodsThisType)
+            QMetaObject::activate(service, meta, id, args);
+
+        id -= methodsThisType;
+        return id;
     }
 
     //used on client and service side
@@ -225,7 +247,6 @@ void ObjectEndPoint::newPackageReady()
                 break;
             case QServicePackage::SignalEmission:
             case QServicePackage::MethodCall:
-                qDebug() << "methodCall";
                 methodCall(p);
                 break;
             default:
@@ -306,12 +327,26 @@ void ObjectEndPoint::methodCall(const QServicePackage& p)
         QMetaMethod method = service->metaObject()->method(metaIndex);
         const bool isSignal = (method.methodType() == QMetaMethod::Signal);
         const int returnType = QMetaType::type(method.typeName());
-        qDebug() << "IsSignal:" << isSignal << returnType;
 
         if (isSignal) {
-            //TODO arguments still missing
-            //does this work in either direction?
-            QMetaObject::activate(service, service->metaObject(), metaIndex, 0);
+            // Construct the raw argument list.
+            /*  we ignore a possible return type of the signal. The value is 
+                not deterministic and it can actually create memory leaks 
+                in moc generated code.
+            */
+
+            const int numArgs = args.size();
+            QVarLengthArray<void *, 32> a( numArgs+1 );
+            a[0] = 0;
+            for ( int arg = 0; arg < numArgs; ++arg ) {
+                if (args[arg].isValid() ) {
+                    a[arg+1] = (void *)( args[arg].data() );
+                } else {
+                    a[arg+1] = (void *)&( args[arg] );
+                }
+            }
+
+            d->triggerConnectedSlots(service, service->metaObject(), metaIndex, a.data());
             return;
         }
 
