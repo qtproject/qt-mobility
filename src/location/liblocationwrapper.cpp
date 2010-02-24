@@ -393,44 +393,6 @@ QGeoPositionInfo LiblocationWrapper::lastKnownPosition(bool fromSatellitePositio
     return QGeoPositionInfo();
 }
 
-void LiblocationWrapper::deviceDisconnected(LocationGPSDevice *device,
-                                            gpointer data)
-{
-    Q_UNUSED(device)
-
-    if (!data)
-        return;
-
-    LiblocationWrapper *object = (LiblocationWrapper *)data;
-    object->setOnline(false);
-}
-
-void LiblocationWrapper::deviceConnected(LocationGPSDevice *device,
-                                         gpointer data)
-{
-    Q_UNUSED(device)
-
-    if (!data)
-        return;
-
-    LiblocationWrapper *object = (LiblocationWrapper *)data;
-    object->setOnline(true);
-}
-
-void LiblocationWrapper::setOnline(bool status)
-{
-    emit online(status);
-}
-
-bool LiblocationWrapper::isOnline() const
-{
-    if (!locationDevice) {
-        return false;
-    } else {
-        return locationDevice->online == 1;
-    }
-}
-
 void LiblocationWrapper::satellitesInView(const QList<QGeoSatelliteInfo> &satellites)
 {
     emit satellitesInViewUpdated(satellites);
@@ -478,16 +440,8 @@ void LiblocationWrapper::stop() {
         if (posChangedId)
             g_signal_handler_disconnect(G_OBJECT(locationDevice), 
                                         posChangedId);
-        if (connectedId)
-            g_signal_handler_disconnect(G_OBJECT(locationDevice), 
-                                        connectedId);
-        if (disconnectedId)
-            g_signal_handler_disconnect(G_OBJECT(locationDevice), 
-                                        disconnectedId);
         errorHandlerId = 0;
         posChangedId = 0;
-        connectedId = 0;
-        disconnectedId = 0;
 
         location_gpsd_control_stop(locationControl);
 

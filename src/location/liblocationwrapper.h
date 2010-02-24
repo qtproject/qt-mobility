@@ -44,6 +44,7 @@
 
 // INCLUDES
 #include <QDebug>
+#include <QTimer>
 
 #include "qgeocoordinate.h"
 #include "qgeopositioninfo.h"
@@ -69,14 +70,11 @@ public:
     static LiblocationWrapper *instance();
     ~LiblocationWrapper();
 
-    Q_PROPERTY(bool online READ isOnline)
-
     int setUpdateInterval(int interval);
     void start();
     void stop();
     QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const;
     bool requestUpdate(int timeout);
-    bool isOnline() const;
     bool inited();
 
 private:
@@ -84,15 +82,12 @@ private:
     LocationGPSDevice *locationDevice;
 
     static void locationError(LocationGPSDevice *device, gint code, gpointer data);
-    static void deviceDisconnected(LocationGPSDevice *device, gpointer data);
-    static void deviceConnected(LocationGPSDevice *device, gpointer data);
     static void locationChanged(LocationGPSDevice *device, gpointer data);
 
     int mapUpdateInterval(int msec);
     int errorHandlerId;
     int posChangedId;
-    int connectedId;
-    int disconnectedId;
+    QTimer *timer;
     int llCurrentInterval;
     int origUpdateInterval;
 
@@ -112,13 +107,11 @@ private:
     int locationState;
 
 signals:
-    void online(bool status);    
     void positionUpdated(const QGeoPositionInfo &update);
     void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &satellites);
     void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &satellites);
         
 private slots:
-    void setOnline(bool status);    
     void setLocation(const QGeoPositionInfo &update);
     void satellitesInView(const QList<QGeoSatelliteInfo> &satellites);
     void satellitesInUse(const QList<QGeoSatelliteInfo> &satellites);    
