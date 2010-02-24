@@ -49,9 +49,9 @@ QTM_USE_NAMESPACE
 
 /*!
  * \class QVersitContactImporterPropertyHandler
- *
- * \brief The QVersitContactImporterPropertyHandler class is an interface for clients wishing to implement
- * custom import behaviour for certain versit properties
+ * \preliminary
+ * \brief The QVersitContactImporterPropertyHandler class is an interface for clients wishing to
+ * implement custom import behaviour for versit properties
  *
  * \ingroup versit
  *
@@ -59,33 +59,47 @@ QTM_USE_NAMESPACE
  */
 
 /*!
- * \fn virtual bool preProcessProperty(const QVersitProperty& property, QContact* contact) = 0;
+ * \fn virtual bool preProcessProperty(const QVersitDocument& document, const QVersitProperty& property, int contactIndex, QContact* contact) = 0;
  * Process \a property and update \a contact with the corresponding QContactDetail(s).
+ * \a document provides the context within which the property was found.
+ * \a contactIndex specifies the position that \a contact will take in the list returned by
+ * \l QVersitContactImporter::importContacts().
  *
- * Returns true on success, false on failure.
+ * Returns true if the property has been handled and requires no furthur processing, false
+ * otherwise.
  *
  * This function is called on every QVersitProperty encountered during an import.  Supply this
  * function and return true to implement custom import behaviour.
  */
 
 /*!
- * \fn virtual bool postProcessProperty(const QVersitProperty& property, bool alreadyProcessed, QContact* contact) = 0;
+ * \fn virtual bool postProcessProperty(const QVersitDocument& document, const QVersitProperty& property, bool alreadyProcessed, int contactIndex, QContact* contact) = 0;
  * Process \a property and update \a contact with the corresponding QContactDetail(s).
+ * \a document provides the context within which the property was found.
+ * \a contactIndex specifies the position that \a contact will take in the list returned by
+ * \l QVersitContactImporter::importContacts().
  *
- * Returns true on success, false on failure.
+ * Returns true if the property has been handled, false otherwise.
  *
  * This function is called on every QVersitProperty encountered during an import which is not
  * handled by either \l preProcessProperty() or by QVersitContactImporter.  Supply this
- * function and return true to implement support for QVersitProperties not supported by
+ * function and return true to implement support for QVersitProperty(s) not supported by
  * QVersitContactImporter.
  */
 
 /*!
  * \class QVersitContactImporter
- *
+ * \preliminary
  * \brief The QVersitContactImporter class creates QContacts from QVersitDocuments.
  *
  * \ingroup versit
+ *
+ * A \l QVersitResourceHandler is associated with the importer to supply the behaviour for saving
+ * files to persistent storage.  By default, this is set to a \l QVersitDefaultResourceHandler,
+ * which does not save files to persistent storage.  Note that although avatars found in vCards
+ * are not saved to disk by default, the importer does set the pixmap of the contact detail to the
+ * image.  If a full-sized avatar image needs to be persisted, a custom QVersitResourceHandler
+ * should be supplied which implements this.
  *
  * By associating a QVersitContactImporterPropertyHandler with the importer using
  * setPropertyHandler(), the client can pass in a handler to override the processing of properties
@@ -95,11 +109,12 @@ QTM_USE_NAMESPACE
  *
  * class MyPropertyHandler : public QVersitContactImporterPropertyHandler {
  * public:
- *    bool preProcessProperty(const QVersitProperty& property, QContact* contact) {
+ *    bool preProcessProperty(const QVersitDocument& document, const QVersitProperty& property,
+ *                            int contactIndex, QContact* contact) {
  *        return false;
  *    }
- *    bool postProcessProperty(const QVersitProperty& property, bool alreadyProcessed,
- *            QContact* contact) {
+ *    bool postProcessProperty(const QVersitDocument& document, const QVersitProperty& property,
+ *                             bool alreadyProcessed, int contactIndex, QContact* contact) {
  *        if (!alreadyProcessed)
  *            mUnknownProperties.append(property);
  *        return false;
@@ -115,14 +130,18 @@ QTM_USE_NAMESPACE
  *        QFile file(*location);
  *        file.open(QIODevice::WriteOnly);
  *        file.write(contents);
+ *        return true;
  *    }
- *    bool loadResource(const QString& location, QByteArray* contents, QString* mimeType) {}
+ *    bool loadResource(const QString& location, QByteArray* contents, QString* mimeType)
+ *    {
+ *        return false;
+ *    }
  * }
  *
  * MyPropertyHandler propertyHandler;
- * importer.setPropertyHandler(propertyHandler);
+ * importer.setPropertyHandler(&propertyHandler);
  * MyResourceHandler resourceHandler;
- * importer.setResourceHandler(resourceHandler);
+ * importer.setResourceHandler(&resourceHandler);
  *
  * QVersitDocument document;
  *
@@ -160,7 +179,7 @@ QVersitContactImporter::~QVersitContactImporter()
 }
 
 /*!
- * Creates a QContact from \a versitDocument.
+ * Converts \a documents into a corresponding list of QContacts.
  */
 QList<QContact> QVersitContactImporter::importContacts(const QList<QVersitDocument>& documents)
 {
@@ -175,11 +194,11 @@ QList<QContact> QVersitContactImporter::importContacts(const QList<QVersitDocume
 }
 
 /*!
- * Sets \a importer to be the handler for processing QVersitProperties
+ * Sets \a handler to be the handler for processing QVersitProperties
  */
-void QVersitContactImporter::setPropertyHandler(QVersitContactImporterPropertyHandler* importer)
+void QVersitContactImporter::setPropertyHandler(QVersitContactImporterPropertyHandler* handler)
 {
-    d->mPropertyHandler = importer;
+    d->mPropertyHandler = handler;
 }
 
 /*!
@@ -191,15 +210,15 @@ QVersitContactImporterPropertyHandler* QVersitContactImporter::propertyHandler()
 }
 
 /*!
- * Sets \a saver to be the handler to save files with.
+ * Sets \a handler to be the handler to save files with.
  */
-void QVersitContactImporter::setResourceHandler(QVersitResourceHandler* saver)
+void QVersitContactImporter::setResourceHandler(QVersitResourceHandler* handler)
 {
-    d->mResourceHandler = saver;
+    d->mResourceHandler = handler;
 }
 
 /*!
- * Returns the file saver.
+ * Returns the associated resource handler.
  */
 QVersitResourceHandler* QVersitContactImporter::resourceHandler() const
 {

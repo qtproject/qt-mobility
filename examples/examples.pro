@@ -1,4 +1,4 @@
-include($$QT_MOBILITY_BUILD_TREE/config.pri)
+include(../staticconfig.pri)
 
 TEMPLATE = subdirs
 
@@ -6,15 +6,18 @@ TEMPLATE = subdirs
 contains(mobility_modules,serviceframework) {
     SUBDIRS += filemanagerplugin \
             bluetoothtransferplugin \
+            notesmanagerplugin \
             servicebrowser
+#            todotool
+    
+    contains(QT_CONFIG, declarative) {
+        SUBDIRS += declarative
+    }
 }
 
 #BearerManagement examples
 contains(mobility_modules,bearer) {
     SUBDIRS += bearermonitor bearercloud
-    contains(QT_CONFIG, declarative) {
-        SUBDIRS += declarative
-    }
 }
 
 #Location examples
@@ -53,34 +56,38 @@ contains(mobility_modules,systeminfo): SUBDIRS += sysinfo
 #Multimedia
 contains(mobility_modules,multimedia) {
     #disabled on Symbian due to missing backend
-    !symbian:SUBDIRS += \
+    SUBDIRS += \
         radio \
         player \
         cameracapture \
         slideshow \
         streamplayer \
         audiorecorder
+
+    contains (QT_CONFIG, declarative) {
+        SUBDIRS += \
+            declarativemusic \
+            declarativevideo
+    }
 }
+
 
 #Messaging examples
 contains(mobility_modules,messaging) {
-    contains(qmf_enabled,yes)|wince*|win32|symbian|maemo6 {
-        !win32-g++ {
-            SUBDIRS += \
-                querymessages \
-                writemessage \
-                serviceactions
+    !win32-g++ {
+        SUBDIRS += \
+            querymessages \
+            writemessage \
+            serviceactions
 
-            contains(mobility_modules,contacts) {
-                SUBDIRS += keepintouch
-            }
+        contains(mobility_modules,contacts) {
+            SUBDIRS += keepintouch
         }
     }
 }
 
 # Sensors API examples
 contains(mobility_modules,sensors) {
-    # Disabling due to strange linker errors
     SUBDIRS += sensors
 }
 

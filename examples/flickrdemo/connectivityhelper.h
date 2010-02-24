@@ -48,7 +48,9 @@
 #include <qmobilityglobal.h>
 #include <qnetworksession.h>
 
+QT_BEGIN_NAMESPACE
 class QWidget;
+QT_END_NAMESPACE
 
 // Use the QtMobility namespace
 QTM_USE_NAMESPACE

@@ -241,6 +241,11 @@ int PulseAudioPlayerControl::bufferStatus() const
     return 0;
 }
 
+bool PulseAudioPlayerControl::isAudioAvailable() const
+{
+    return m_status != QMediaPlayer::NoMedia && m_status != QMediaPlayer::LoadingMedia;
+}
+
 bool PulseAudioPlayerControl::isVideoAvailable() const
 {
     return false;
@@ -402,7 +407,7 @@ void PulseAudioPlayerControl::decoderReady()
     }
 
     if (m_name.isNull())
-        m_name = QString("QtPulseSample-%1-%2").arg(::getpid()).arg(int(this)).toUtf8();
+        m_name = QString("QtPulseSample-%1-%2").arg(::getpid()).arg(reinterpret_cast<unsigned long>(this)).toUtf8();
 
     pa_sample_spec spec = audioFormatToSampleSpec(m_waveDecoder->audioFormat());
 
@@ -461,6 +466,7 @@ void PulseAudioPlayerControl::stream_write_callback(pa_stream *s, size_t length,
 
         self->m_status = QMediaPlayer::BufferedMedia;
         emit self->mediaStatusChanged(self->m_status);
+        emit self->audioAvailableChanged(true);
 
         self->m_waveDecoder->deleteLater();
         if (!self->m_media.isNull())

@@ -15,7 +15,8 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QVersitProperty Class Reference</h1>
 <p>The QVersitProperty class stores the name, value and parameters of a versit property. <a href="#details">More...</a></p>
-<pre>    #include &lt;QVersitProperty&gt;</pre><ul>
+<pre>    #include &lt;QVersitProperty&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<ul>
 <li><a href="qversitproperty-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
@@ -48,8 +49,9 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QVersitProperty class stores the name, value and parameters of a versit property.</p>
-<p>For example a vCard can be presented as a <a href="qversitdocument.html">QVersitDocument</a> that consists of 0..n properties such as a name (N), a telephone number (TEL) and an email address (EMAIL) to name a few. Each of these properties is stored as an instance of a QVersitProperty in a <a href="qversitdocument.html">QVersitDocument</a>.</p>
-<p>QVersitProperty supports implicit sharing. The property name and parameters of a QVersitProperty are converted to upper-case when they are stored to a QVersitProperty. The value of a QVersitProperty is raw data and it is case-sensitive.</p>
+<p>For example a vCard can be presented as a <a href="qversitdocument.html">QVersitDocument</a> that consists of a number of properties such as a name (N), a telephone number (TEL) and an email address (EMAIL) to name a few. Each of these properties is stored as an instance of a QVersitProperty in a <a href="qversitdocument.html">QVersitDocument</a>.</p>
+<p>QVersitProperty supports implicit sharing. The property name and parameters of a QVersitProperty are converted to upper-case when they are stored to a QVersitProperty.</p>
+<p>The value of a QVersitProperty is stored as a <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> and should always be one of three types: <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> for textual values, <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> for binary data (eg. images), or <a href="qversitdocument.html">QVersitDocument</a> for nested documents. The <a href="qversitreader.html">QVersitReader</a> will parse Versit properties and assign the correct type of object to the property value. The <a href="qversitwriter.html">QVersitWriter</a> will serialise objects of these types correctly into the (text-based) Versit format.</p>
 <p>See also <a href="qversitdocument.html">QVersitDocument</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
@@ -66,7 +68,7 @@
 <p>Clears the contents of this property.</p>
 <a name="//apple_ref/cpp/instm/QVersitProperty/groups"></a>
 <h3 class="fn"><a name="groups"></a><a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> QVersitProperty::groups () const</h3>
-<p>Gets the groups part of the property.</p>
+<p>Gets the groups of the property.</p>
 <p>See also <a href="qversitproperty.html#setGroups">setGroups</a>().</p>
 <a name="//apple_ref/cpp/instm/QVersitProperty/insertParameter"></a>
 <h3 class="fn"><a name="insertParameter"></a>void QVersitProperty::insertParameter ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>name</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>value</i> )</h3>
@@ -104,11 +106,11 @@
 <p>See also <a href="qversitproperty.html#parameters">parameters</a>().</p>
 <a name="//apple_ref/cpp/instm/QVersitProperty/setValue"></a>
 <h3 class="fn"><a name="setValue"></a>void QVersitProperty::setValue ( const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>value</i> )</h3>
-<p>Sets the <i>value</i> of the property.</p>
+<p>Sets the property value to <i>value</i>.</p>
 <p>See also <a href="qversitproperty.html#value">value</a>().</p>
 <a name="//apple_ref/cpp/instm/QVersitProperty/value"></a>
 <h3 class="fn"><a name="value"></a>T QVersitProperty::value () const</h3>
-<p>Returns the value of the property as a string if possible, otherwise return an empty string.</p>
+<p>Returns the value of the property as a string if possible, otherwise return an empty string. If the property is stored as a <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a>, it is decoded using the charset specified in the property's parameters.</p>
 <p>See also <a href="qversitproperty.html#setValue">setValue</a>() and <a href="http://qt.nokia.com/doc/4.6/qvariant.html#toString">QVariant::toString</a>().</p>
 <h3 class="fn"><a name="value-2"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QVersitProperty::value () const</h3>
 <a name="//apple_ref/cpp/instm/QVersitProperty/variantValue"></a>
@@ -116,13 +118,13 @@
 <p>Returns the value of the property.</p>
 <a name="//apple_ref/cpp/instm/QVersitProperty/operator!="></a>
 <h3 class="fn"><a name="operator-not-eq"></a>bool QVersitProperty::operator!= ( const QVersitProperty &amp; <i>other</i> ) const</h3>
-<p>Returns true if this is not equal to other; false if it is equal.</p>
+<p>Returns true if this is not equal to other; false otherwise.</p>
 <a name="//apple_ref/cpp/instm/QVersitProperty/operator="></a>
 <h3 class="fn"><a name="operator-eq"></a>QVersitProperty &amp; QVersitProperty::operator= ( const QVersitProperty &amp; <i>other</i> )</h3>
 <p>Assigns this property to <i>other</i></p>
 <a name="//apple_ref/cpp/instm/QVersitProperty/operator=="></a>
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QVersitProperty::operator== ( const QVersitProperty &amp; <i>other</i> ) const</h3>
-<p>Returns true if this is equal to other; false if it is not equal.</p>
+<p>Returns true if this is equal to other; false otherwise.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

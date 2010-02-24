@@ -470,9 +470,6 @@
                     <section ref="qsensorbackendfactory.html" title="QSensorBackendFactory Class Reference">
                         <section ref="qsensorbackendfactory-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qsensorfactory.html" title="QSensorFactory Class Reference">
-                        <section ref="qsensorfactory-members.html" title="List of all members"/>
-                    </section>
                     <section ref="qsensorfilter.html" title="QSensorFilter Class Reference">
                         <section ref="qsensorfilter-members.html" title="List of all members"/>
                     </section>
@@ -655,14 +652,15 @@
                     <section ref="service-frameworks.html" title="Qt Service Framework"/>
                     <section ref="service-framework-on-symbian.html" title="Qt Service Framework on Symbian"/>
                     <section ref="qtmobility-known-issues.html" title="Release Notes of the QtMobility Project"/>
-                    <section ref="sensors-api.html" title="Sensors API"/>
+                    <section ref="sensors-api.html" title="Sensors API (technology preview)"/>
+                    <section ref="sensors-backend.html" title="Sensors Backend"/>
                     <section ref="servicefw.html" title="Service Frameworks Classes"/>
                     <section ref="systeminfo.html" title="System Information"/>
                     <section ref="systeminfo.html" title="System Information Classes"/>
                     <section ref="preview.html" title="Technology Preview"/>
                     <section ref="3rdparty.html" title="Third-Party Licenses Used in Qt"/>
                     <section ref="trademarks.html" title="Trademarks"/>
-                    <section ref="versit.html" title="Versit API"/>
+                    <section ref="versit.html" title="Versit API (technology preview)"/>
                 </section>
             </section>
         </toc>
@@ -747,6 +745,7 @@
             <keyword name="setX" id="QAccelerometerReading::setX" ref="qaccelerometerreading.html#setX"/>
             <keyword name="setY" id="QAccelerometerReading::setY" ref="qaccelerometerreading.html#setY"/>
             <keyword name="setZ" id="QAccelerometerReading::setZ" ref="qaccelerometerreading.html#setZ"/>
+            <keyword name="value" id="QAccelerometerReading::value" ref="qaccelerometerreading.html#value"/>
             <keyword name="x" id="QAccelerometerReading::x" ref="qaccelerometerreading.html#x-prop"/>
             <keyword name="y" id="QAccelerometerReading::y" ref="qaccelerometerreading.html#y-prop"/>
             <keyword name="z" id="QAccelerometerReading::z" ref="qaccelerometerreading.html#z-prop"/>
@@ -896,6 +895,8 @@
             <keyword name="captureMode" id="QCamera::captureMode" ref="qcamera.html#captureMode-prop"/>
             <keyword name="captureModeChanged" id="QCamera::captureModeChanged" ref="qcamera.html#captureModeChanged"/>
             <keyword name="deviceDescription" id="QCamera::deviceDescription" ref="qcamera.html#deviceDescription"/>
+            <keyword name="digitalZoom" id="QCamera::digitalZoom" ref="qcamera.html#digitalZoom"/>
+            <keyword name="digitalZoomChanged" id="QCamera::digitalZoomChanged" ref="qcamera.html#digitalZoomChanged"/>
             <keyword name="error" id="QCamera::error" ref="qcamera.html#error"/>
             <keyword name="errorString" id="QCamera::errorString" ref="qcamera.html#errorString"/>
             <keyword name="exposureCompensation" id="QCamera::exposureCompensation" ref="qcamera.html#exposureCompensation"/>
@@ -920,6 +921,8 @@
             <keyword name="maximumDigitalZoom" id="QCamera::maximumDigitalZoom" ref="qcamera.html#maximumDigitalZoom"/>
             <keyword name="maximumOpticalZoom" id="QCamera::maximumOpticalZoom" ref="qcamera.html#maximumOpticalZoom"/>
             <keyword name="meteringMode" id="QCamera::meteringMode" ref="qcamera.html#meteringMode"/>
+            <keyword name="opticalZoom" id="QCamera::opticalZoom" ref="qcamera.html#opticalZoom"/>
+            <keyword name="opticalZoomChanged" id="QCamera::opticalZoomChanged" ref="qcamera.html#opticalZoomChanged"/>
             <keyword name="setAutoAperture" id="QCamera::setAutoAperture" ref="qcamera.html#setAutoAperture"/>
             <keyword name="setAutoIsoSensitivity" id="QCamera::setAutoIsoSensitivity" ref="qcamera.html#setAutoIsoSensitivity"/>
             <keyword name="setAutoShutterSpeed" id="QCamera::setAutoShutterSpeed" ref="qcamera.html#setAutoShutterSpeed"/>
@@ -954,8 +957,6 @@
             <keyword name="unlockExposure" id="QCamera::unlockExposure" ref="qcamera.html#unlockExposure"/>
             <keyword name="whiteBalanceMode" id="QCamera::whiteBalanceMode" ref="qcamera.html#whiteBalanceMode"/>
             <keyword name="zoomTo" id="QCamera::zoomTo" ref="qcamera.html#zoomTo"/>
-            <keyword name="zoomValue" id="QCamera::zoomValue" ref="qcamera.html#zoomValue"/>
-            <keyword name="zoomValueChanged" id="QCamera::zoomValueChanged" ref="qcamera.html#zoomValueChanged"/>
             <keyword name="~QCamera" id="QCamera::~QCamera" ref="qcamera.html#dtor.QCamera"/>
             <keyword name="QCameraControl" id="QCameraControl" ref="qcameracontrol.html"/>
             <keyword name="captureMode" id="QCameraControl::captureMode" ref="qcameracontrol.html#captureMode"/>
@@ -1007,7 +1008,8 @@
             <keyword name="QCameraExposureControl_iid" id="QCameraExposureControl_iid" ref="qcameraexposurecontrol.html#QCameraExposureControl_iid"/>
             <keyword name="QCameraFocusControl" id="QCameraFocusControl" ref="qcamerafocuscontrol.html"/>
             <keyword name="cancelFocusing" id="QCameraFocusControl::cancelFocusing" ref="qcamerafocuscontrol.html#cancelFocusing"/>
-            <keyword name="focusLocked" id="QCameraFocusControl::focusLocked" ref="qcamerafocuscontrol.html#focusLocked"/>
+            <keyword name="digitalZoom" id="QCameraFocusControl::digitalZoom" ref="qcamerafocuscontrol.html#digitalZoom"/>
+            <keyword name="digitalZoomChanged" id="QCameraFocusControl::digitalZoomChanged" ref="qcamerafocuscontrol.html#digitalZoomChanged"/>
             <keyword name="focusMode" id="QCameraFocusControl::focusMode" ref="qcamerafocuscontrol.html#focusMode"/>
             <keyword name="focusStatus" id="QCameraFocusControl::focusStatus" ref="qcamerafocuscontrol.html#focusStatus"/>
             <keyword name="focusStatusChanged" id="QCameraFocusControl::focusStatusChanged" ref="qcamerafocuscontrol.html#focusStatusChanged"/>
@@ -1015,13 +1017,13 @@
             <keyword name="macroFocusingEnabled" id="QCameraFocusControl::macroFocusingEnabled" ref="qcamerafocuscontrol.html#macroFocusingEnabled"/>
             <keyword name="maximumDigitalZoom" id="QCameraFocusControl::maximumDigitalZoom" ref="qcamerafocuscontrol.html#maximumDigitalZoom"/>
             <keyword name="maximumOpticalZoom" id="QCameraFocusControl::maximumOpticalZoom" ref="qcamerafocuscontrol.html#maximumOpticalZoom"/>
+            <keyword name="opticalZoom" id="QCameraFocusControl::opticalZoom" ref="qcamerafocuscontrol.html#opticalZoom"/>
+            <keyword name="opticalZoomChanged" id="QCameraFocusControl::opticalZoomChanged" ref="qcamerafocuscontrol.html#opticalZoomChanged"/>
             <keyword name="setFocusMode" id="QCameraFocusControl::setFocusMode" ref="qcamerafocuscontrol.html#setFocusMode"/>
             <keyword name="setMacroFocusingEnabled" id="QCameraFocusControl::setMacroFocusingEnabled" ref="qcamerafocuscontrol.html#setMacroFocusingEnabled"/>
             <keyword name="startFocusing" id="QCameraFocusControl::startFocusing" ref="qcamerafocuscontrol.html#startFocusing"/>
             <keyword name="supportedFocusModes" id="QCameraFocusControl::supportedFocusModes" ref="qcamerafocuscontrol.html#supportedFocusModes"/>
             <keyword name="zoomTo" id="QCameraFocusControl::zoomTo" ref="qcamerafocuscontrol.html#zoomTo"/>
-            <keyword name="zoomValue" id="QCameraFocusControl::zoomValue" ref="qcamerafocuscontrol.html#zoomValue"/>
-            <keyword name="zoomValueChanged" id="QCameraFocusControl::zoomValueChanged" ref="qcamerafocuscontrol.html#zoomValueChanged"/>
             <keyword name="~QCameraFocusControl" id="QCameraFocusControl::~QCameraFocusControl" ref="qcamerafocuscontrol.html#dtor.QCameraFocusControl"/>
             <keyword name="QCameraFocusControl_iid" id="QCameraFocusControl_iid" ref="qcamerafocuscontrol.html#QCameraFocusControl_iid"/>
             <keyword name="QCompass" id="QCompass" ref="qcompass.html"/>
@@ -1851,10 +1853,22 @@
             <keyword name="startUpdates" id="QGeoSatelliteInfoSource::startUpdates" ref="qgeosatelliteinfosource.html#startUpdates"/>
             <keyword name="stopUpdates" id="QGeoSatelliteInfoSource::stopUpdates" ref="qgeosatelliteinfosource.html#stopUpdates"/>
             <keyword name="QGraphicsVideoItem" id="QGraphicsVideoItem" ref="qgraphicsvideoitem.html"/>
+            <keyword name="QGraphicsVideoItem::FillMode" id="QGraphicsVideoItem::FillMode" ref="qgraphicsvideoitem.html#FillMode-enum"/>
+            <keyword name="QGraphicsVideoItem::Stretch" id="QGraphicsVideoItem::Stretch" ref="qgraphicsvideoitem.html#FillMode-enum"/>
+            <keyword name="QGraphicsVideoItem::PreserveAspectFit" id="QGraphicsVideoItem::PreserveAspectFit" ref="qgraphicsvideoitem.html#FillMode-enum"/>
+            <keyword name="QGraphicsVideoItem::PreserveAspectCrop" id="QGraphicsVideoItem::PreserveAspectCrop" ref="qgraphicsvideoitem.html#FillMode-enum"/>
+            <keyword name="aspectRatioMode" id="QGraphicsVideoItem::aspectRatioMode" ref="qgraphicsvideoitem.html#aspectRatioMode-prop"/>
             <keyword name="boundingRect" id="QGraphicsVideoItem::boundingRect" ref="qgraphicsvideoitem.html#boundingRect"/>
             <keyword name="mediaObject" id="QGraphicsVideoItem::mediaObject" ref="qgraphicsvideoitem.html#mediaObject-prop"/>
+            <keyword name="nativeSize" id="QGraphicsVideoItem::nativeSize" ref="qgraphicsvideoitem.html#nativeSize-prop"/>
+            <keyword name="nativeSizeChanged" id="QGraphicsVideoItem::nativeSizeChanged" ref="qgraphicsvideoitem.html#nativeSizeChanged"/>
+            <keyword name="offset" id="QGraphicsVideoItem::offset" ref="qgraphicsvideoitem.html#offset-prop"/>
             <keyword name="paint" id="QGraphicsVideoItem::paint" ref="qgraphicsvideoitem.html#paint"/>
+            <keyword name="setAspectRatioMode" id="QGraphicsVideoItem::setAspectRatioMode" ref="qgraphicsvideoitem.html#aspectRatioMode-prop"/>
             <keyword name="setMediaObject" id="QGraphicsVideoItem::setMediaObject" ref="qgraphicsvideoitem.html#mediaObject-prop"/>
+            <keyword name="setOffset" id="QGraphicsVideoItem::setOffset" ref="qgraphicsvideoitem.html#offset-prop"/>
+            <keyword name="setSize" id="QGraphicsVideoItem::setSize" ref="qgraphicsvideoitem.html#size-prop"/>
+            <keyword name="size" id="QGraphicsVideoItem::size" ref="qgraphicsvideoitem.html#size-prop"/>
             <keyword name="~QGraphicsVideoItem" id="QGraphicsVideoItem::~QGraphicsVideoItem" ref="qgraphicsvideoitem.html#dtor.QGraphicsVideoItem"/>
             <keyword name="QImageCaptureControl" id="QImageCaptureControl" ref="qimagecapturecontrol.html"/>
             <keyword name="capture" id="QImageCaptureControl::capture" ref="qimagecapturecontrol.html#capture"/>
@@ -1903,6 +1917,9 @@
             <keyword name="whiteBalanceMode" id="QImageProcessingControl::whiteBalanceMode" ref="qimageprocessingcontrol.html#whiteBalanceMode"/>
             <keyword name="~QImageProcessingControl" id="QImageProcessingControl::~QImageProcessingControl" ref="qimageprocessingcontrol.html#dtor.QImageProcessingControl"/>
             <keyword name="QImageProcessingControl_iid" id="QImageProcessingControl_iid" ref="qimageprocessingcontrol.html#QImageProcessingControl_iid"/>
+            <keyword name="QML Audio Element Reference" id="QML.Audio" ref="qml-audio.html"/>
+            <keyword name="QML QSoundEffect Element Reference" id="QML.QSoundEffect" ref="qml-qsoundeffect.html"/>
+            <keyword name="QML Video Element Reference" id="QML.Video" ref="qml-video.html"/>
             <keyword name="QMagnetometer" id="QMagnetometer" ref="qmagnetometer.html"/>
             <keyword name="reading" id="QMagnetometer::reading" ref="qmagnetometer.html#reading"/>
             <keyword name="~QMagnetometer" id="QMagnetometer::~QMagnetometer" ref="qmagnetometer.html#dtor.QMagnetometer"/>
@@ -2020,6 +2037,8 @@
             <keyword name="QMediaPlayer::StoppedState" id="QMediaPlayer::StoppedState" ref="qmediaplayer.html#State-enum"/>
             <keyword name="QMediaPlayer::PlayingState" id="QMediaPlayer::PlayingState" ref="qmediaplayer.html#State-enum"/>
             <keyword name="QMediaPlayer::PausedState" id="QMediaPlayer::PausedState" ref="qmediaplayer.html#State-enum"/>
+            <keyword name="audioAvailable" id="QMediaPlayer::audioAvailable" ref="qmediaplayer.html#audioAvailable-prop"/>
+            <keyword name="audioAvailableChanged" id="QMediaPlayer::audioAvailableChanged" ref="qmediaplayer.html#audioAvailableChanged"/>
             <keyword name="bufferStatus" id="QMediaPlayer::bufferStatus" ref="qmediaplayer.html#bufferStatus-prop"/>
             <keyword name="bufferStatusChanged" id="QMediaPlayer::bufferStatusChanged" ref="qmediaplayer.html#bufferStatusChanged"/>
             <keyword name="duration" id="QMediaPlayer::duration" ref="qmediaplayer.html#duration-prop"/>
@@ -2027,6 +2046,7 @@
             <keyword name="error" id="QMediaPlayer::error" ref="qmediaplayer.html#error"/>
             <keyword name="errorString" id="QMediaPlayer::errorString" ref="qmediaplayer.html#error-prop"/>
             <keyword name="hasSupport" id="QMediaPlayer::hasSupport" ref="qmediaplayer.html#hasSupport"/>
+            <keyword name="isAudioAvailable" id="QMediaPlayer::isAudioAvailable" ref="qmediaplayer.html#audioAvailable-prop"/>
             <keyword name="isMuted" id="QMediaPlayer::isMuted" ref="qmediaplayer.html#muted-prop"/>
             <keyword name="isSeekable" id="QMediaPlayer::isSeekable" ref="qmediaplayer.html#seekable-prop"/>
             <keyword name="isVideoAvailable" id="QMediaPlayer::isVideoAvailable" ref="qmediaplayer.html#videoAvailable-prop"/>
@@ -2060,6 +2080,7 @@
             <keyword name="volumeChanged" id="QMediaPlayer::volumeChanged" ref="qmediaplayer.html#volumeChanged"/>
             <keyword name="~QMediaPlayer" id="QMediaPlayer::~QMediaPlayer" ref="qmediaplayer.html#dtor.QMediaPlayer"/>
             <keyword name="QMediaPlayerControl" id="QMediaPlayerControl" ref="qmediaplayercontrol.html"/>
+            <keyword name="audioAvailableChanged" id="QMediaPlayerControl::audioAvailableChanged" ref="qmediaplayercontrol.html#audioAvailableChanged"/>
             <keyword name="availablePlaybackRanges" id="QMediaPlayerControl::availablePlaybackRanges" ref="qmediaplayercontrol.html#availablePlaybackRanges"/>
             <keyword name="availablePlaybackRangesChanged" id="QMediaPlayerControl::availablePlaybackRangesChanged" ref="qmediaplayercontrol.html#availablePlaybackRangesChanged"/>
             <keyword name="bufferStatus" id="QMediaPlayerControl::bufferStatus" ref="qmediaplayercontrol.html#bufferStatus"/>
@@ -2067,6 +2088,7 @@
             <keyword name="duration" id="QMediaPlayerControl::duration" ref="qmediaplayercontrol.html#duration"/>
             <keyword name="durationChanged" id="QMediaPlayerControl::durationChanged" ref="qmediaplayercontrol.html#durationChanged"/>
             <keyword name="error" id="QMediaPlayerControl::error" ref="qmediaplayercontrol.html#error"/>
+            <keyword name="isAudioAvailable" id="QMediaPlayerControl::isAudioAvailable" ref="qmediaplayercontrol.html#isAudioAvailable"/>
             <keyword name="isMuted" id="QMediaPlayerControl::isMuted" ref="qmediaplayercontrol.html#isMuted"/>
             <keyword name="isSeekable" id="QMediaPlayerControl::isSeekable" ref="qmediaplayercontrol.html#isSeekable"/>
             <keyword name="isVideoAvailable" id="QMediaPlayerControl::isVideoAvailable" ref="qmediaplayercontrol.html#isVideoAvailable"/>
@@ -2935,16 +2957,20 @@
             <keyword name="QSensor::PolledUpdates" id="QSensor::PolledUpdates" ref="qsensor.html#UpdatePolicy-enum"/>
             <keyword name="addFilter" id="QSensor::addFilter" ref="qsensor.html#addFilter"/>
             <keyword name="connect" id="QSensor::connect" ref="qsensor.html#connect"/>
+            <keyword name="connected" id="QSensor::connected" ref="qsensor.html#connected-prop"/>
+            <keyword name="defaultSensorForType" id="QSensor::defaultSensorForType" ref="qsensor.html#defaultSensorForType"/>
             <keyword name="identifier" id="QSensor::identifier" ref="qsensor.html#sensorid-prop"/>
             <keyword name="isActive" id="QSensor::isActive" ref="qsensor.html#running-prop"/>
-            <keyword name="isAvailable" id="QSensor::isAvailable" ref="qsensor.html#isAvailable-prop"/>
+            <keyword name="isConnected" id="QSensor::isConnected" ref="qsensor.html#connected-prop"/>
             <keyword name="isSignalEnabled" id="QSensor::isSignalEnabled" ref="qsensor.html#isSignalEnabled"/>
             <keyword name="poll" id="QSensor::poll" ref="qsensor.html#poll"/>
             <keyword name="reading" id="QSensor::reading" ref="qsensor.html#reading-prop"/>
             <keyword name="readingChanged" id="QSensor::readingChanged" ref="qsensor.html#readingChanged"/>
             <keyword name="removeFilter" id="QSensor::removeFilter" ref="qsensor.html#removeFilter"/>
             <keyword name="running" id="QSensor::running" ref="qsensor.html#running-prop"/>
+            <keyword name="sensorTypes" id="QSensor::sensorTypes" ref="qsensor.html#sensorTypes"/>
             <keyword name="sensorid" id="QSensor::sensorid" ref="qsensor.html#sensorid-prop"/>
+            <keyword name="sensorsForType" id="QSensor::sensorsForType" ref="qsensor.html#sensorsForType"/>
             <keyword name="setActive" id="QSensor::setActive" ref="qsensor.html#running-prop"/>
             <keyword name="setIdentifier" id="QSensor::setIdentifier" ref="qsensor.html#sensorid-prop"/>
             <keyword name="setSignalEnabled" id="QSensor::setSignalEnabled" ref="qsensor.html#setSignalEnabled"/>
@@ -2968,25 +2994,19 @@
             <keyword name="stop" id="QSensorBackend::stop" ref="qsensorbackend.html#stop"/>
             <keyword name="QSensorBackendFactory" id="QSensorBackendFactory" ref="qsensorbackendfactory.html"/>
             <keyword name="createBackend" id="QSensorBackendFactory::createBackend" ref="qsensorbackendfactory.html#createBackend"/>
-            <keyword name="QSensorFactory" id="QSensorFactory" ref="qsensorfactory.html"/>
-            <keyword name="createSensor" id="QSensorFactory::createSensor" ref="qsensorfactory.html#createSensor"/>
-            <keyword name="defaultSensorForType" id="QSensorFactory::defaultSensorForType" ref="qsensorfactory.html#defaultSensorForType"/>
-            <keyword name="instance" id="QSensorFactory::instance" ref="qsensorfactory.html#instance"/>
-            <keyword name="sensorList" id="QSensorFactory::sensorList" ref="qsensorfactory.html#sensorList"/>
-            <keyword name="sensorTypes" id="QSensorFactory::sensorTypes" ref="qsensorfactory.html#sensorTypes"/>
-            <keyword name="sensorsForType" id="QSensorFactory::sensorsForType" ref="qsensorfactory.html#sensorsForType"/>
             <keyword name="QSensorFilter" id="QSensorFilter" ref="qsensorfilter.html"/>
             <keyword name="filter" id="QSensorFilter::filter" ref="qsensorfilter.html#filter"/>
             <keyword name="~QSensorFilter" id="QSensorFilter::~QSensorFilter" ref="qsensorfilter.html#dtor.QSensorFilter"/>
             <keyword name="QSensorManager" id="QSensorManager" ref="qsensormanager.html"/>
             <keyword name="createBackend" id="QSensorManager::createBackend" ref="qsensormanager.html#createBackend"/>
-            <keyword name="defaultSensorForType" id="QSensorManager::defaultSensorForType" ref="qsensormanager.html#defaultSensorForType"/>
             <keyword name="registerBackend" id="QSensorManager::registerBackend" ref="qsensormanager.html#registerBackend"/>
             <keyword name="QSensorPluginInterface" id="QSensorPluginInterface" ref="qsensorplugininterface.html"/>
             <keyword name="registerSensors" id="QSensorPluginInterface::registerSensors" ref="qsensorplugininterface.html#registerSensors"/>
             <keyword name="QSensorReading" id="QSensorReading" ref="qsensorreading.html"/>
             <keyword name="setTimestamp" id="QSensorReading::setTimestamp" ref="qsensorreading.html#setTimestamp"/>
             <keyword name="timestamp" id="QSensorReading::timestamp" ref="qsensorreading.html#timestamp-prop"/>
+            <keyword name="value" id="QSensorReading::value" ref="qsensorreading.html#value"/>
+            <keyword name="valueCount" id="QSensorReading::valueCount" ref="qsensorreading.html#valueCount"/>
             <keyword name="QService" id="QService" ref="qservice.html"/>
             <keyword name="QService::Scope" id="QService::Scope" ref="qservice.html#Scope-enum"/>
             <keyword name="QService::UserScope" id="QService::UserScope" ref="qservice.html#Scope-enum"/>
@@ -3658,7 +3678,8 @@
             <keyword name="Recorder Example" id="Recorder Example" ref="recorder.html"/>
             <keyword name="Release Notes of the QtMobility Project" id="Release Notes of the QtMobility Project" ref="qtmobility-known-issues.html"/>
             <keyword name="Sample Phonebook Example" id="Sample Phonebook Example" ref="samplephonebook.html"/>
-            <keyword name="Sensors API" id="Sensors API" ref="sensors-api.html"/>
+            <keyword name="Sensors API (technology preview)" id="Sensors API (technology preview)" ref="sensors-api.html"/>
+            <keyword name="Sensors Backend" id="Sensors Backend" ref="sensors-backend.html"/>
             <keyword name="Service Actions Example" id="Service Actions Example" ref="serviceactions.html"/>
             <keyword name="Service Browser Example" id="Service Browser Example" ref="servicebrowser.html"/>
             <keyword name="Service Framework using QML Example" id="Service Framework using QML Example" ref="declarative.html"/>
@@ -3672,7 +3693,7 @@
             <keyword name="Technology Preview" id="Technology Preview" ref="preview.html"/>
             <keyword name="Third-Party Licenses Used in Qt" id="Third-Party Licenses Used in Qt" ref="3rdparty.html"/>
             <keyword name="Trademarks" id="Trademarks" ref="trademarks.html"/>
-            <keyword name="Versit API" id="Versit API" ref="versit.html"/>
+            <keyword name="Versit API (technology preview)" id="Versit API (technology preview)" ref="versit.html"/>
             <keyword name="Write Message Example" id="Write Message Example" ref="writemessage.html"/>
             <keyword name="qtimestamp" id="qtimestamp" ref="qsensor.html#qtimestamp-typedef"/>
         </keywords>
@@ -3705,6 +3726,7 @@
             <file>streamplayer-streamplayer-h.html</file>
             <file>qcontactname.html</file>
             <file>qaudioendpointselector.html</file>
+            <file>qml-audio.html</file>
             <file>filemanagerplugin-filemanagerplugin-h.html</file>
             <file>messaging.html</file>
             <file>qcontactabstractrequest-members.html</file>
@@ -3742,6 +3764,7 @@
             <file>qcontactactionfilter-members.html</file>
             <file>logfilepositionsource-logfilepositionsource-pro.html</file>
             <file>hierarchy.html</file>
+            <file>sysinfo-examples-qrc.html</file>
             <file>qproximityreading-members.html</file>
             <file>qmessageaddress.html</file>
             <file>qcontactdetailrangefilter.html</file>
@@ -3787,7 +3810,6 @@
             <file>radio-radio-h.html</file>
             <file>qversitcontactimporter.html</file>
             <file>bearercloud-cloud-h.html</file>
-            <file>qsensorfactory.html</file>
             <file>qimageprocessingcontrol-members.html</file>
             <file>cameracapture-settings-cpp.html</file>
             <file>player-videowidget-cpp.html</file>
@@ -3818,8 +3840,8 @@
             <file>samplephonebook-contacteditor-h.html</file>
             <file>location-overview.html</file>
             <file>qcontactinvalidfilter.html</file>
-            <file>qmediaplayercontrol-members.html</file>
             <file>qmessagemanager.html</file>
+            <file>qmediaplayercontrol-members.html</file>
             <file>qorientationreading.html</file>
             <file>qmessage-members.html</file>
             <file>qcontactemailaddress-members.html</file>
@@ -3837,6 +3859,7 @@
             <file>samplephonebook.html</file>
             <file>qmediaplaylistcontrol.html</file>
             <file>lgpl.html</file>
+            <file>sensors-backend.html</file>
             <file>writemessage.html</file>
             <file>qcontactdetaildefinitionfetchrequest.html</file>
             <file>qmessageaccountsortorder-members.html</file>
@@ -3897,6 +3920,7 @@
             <file>preview.html</file>
             <file>samplephonebook-contactlistpage-cpp.html</file>
             <file>filemanagerplugin-filemanagerplugin-pro.html</file>
+            <file>images/axes.png</file>
             <file>qvideowidget-members.html</file>
             <file>qimageencodercontrol-members.html</file>
             <file>qcompassreading-members.html</file>
@@ -3953,7 +3977,6 @@
             <file>qgeocoordinate.html</file>
             <file>qcontactnote-members.html</file>
             <file>qcontactactionfactory.html</file>
-            <file>qsensorfactory-members.html</file>
             <file>qcontactdetaildefinition-members.html</file>
             <file>qcontactlocalidfetchrequest-members.html</file>
             <file>qmessageid.html</file>
@@ -3995,6 +4018,7 @@
             <file>qcontactrelationshipfetchrequest.html</file>
             <file>qmediaobject.html</file>
             <file>filemanagerplugin-filemanagertransfer-cpp.html</file>
+            <file>player-mediakeysobserver-h.html</file>
             <file>qgeoareamonitor-members.html</file>
             <file>qmediatimerange-members.html</file>
             <file>qcontactunionfilter-members.html</file>
@@ -4027,6 +4051,7 @@
             <file>battery-charge-battery-subscriber-battery-subscriber-pro.html</file>
             <file>qmediaplaylistreader.html</file>
             <file>classes.html</file>
+            <file>qml-qsoundeffect.html</file>
             <file>qcontactmanager.html</file>
             <file>querymessages-querymessages-pro.html</file>
             <file>qcontactavatar.html</file>
@@ -4132,6 +4157,7 @@
             <file>qvaluespacesubscriber-members.html</file>
             <file>player.html</file>
             <file>qversitproperty.html</file>
+            <file>qml-video.html</file>
             <file>qtapfilter.html</file>
             <file>qcontactmemoryengine.html</file>
             <file>incomingcalls-qcontactlistmodel-p-h.html</file>
@@ -4232,6 +4258,7 @@
             <file>multimedia.html</file>
             <file>qcontactinvalidfilter-members.html</file>
             <file>qmagnetometerfilter-members.html</file>
+            <file>player-mediakeysobserver-cpp.html</file>
             <file>qcameracontrol.html</file>
             <file>qmediaserviceprovider.html</file>
             <file>qcontactabstractrequest.html</file>
@@ -4311,6 +4338,7 @@
             <file>images/DialerServiceUML.png</file>
             <file>images/DialerServiceGUI.png</file>
             <file>images/qserviceinterfacedescriptor.png</file>
+            <file>images/axes.png</file>
         </files>
     </filterSection>
 </QtHelpProject>

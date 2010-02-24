@@ -54,9 +54,9 @@
 #include "s60cameraimagecapturecontrol.h"
 #include "S60mediacontrol.h"
 #include "S60camerasession.h"
-#include "S60videowidget.h"
+#include "S60viewfinderwidget.h"
 #include "S60videooutputcontrol.h"
-#include "S60mediaformatcontrol.h"
+#include "S60mediacontainercontrol.h"
 #include "s60videoencoder.h"
 
 S60CameraService::S60CameraService(QObject *parent)
@@ -73,16 +73,15 @@ S60CameraService::S60CameraService(QObject *parent)
     m_imageCaptureControl = new S60CameraImageCaptureControl(m_session, this);
 
     m_media = new S60MediaControl(m_session, this);
-    m_mediaFormat = new S60MediaFormatControl(m_session, this);
+    m_mediaFormat = new S60MediaContainerControl(m_session, this);
     m_videoEncoder = new S60VideoEncoder(m_session, this);
-    m_videoWidget = new S60VideoWidgetControl(this);
+    m_viewFinderWidget = new S60ViewFinderWidgetControl(this);
     m_videoOutput = new S60VideoOutputControl(this);
     connect(m_videoOutput, SIGNAL(outputChanged(QVideoOutputControl::Output)),
             this, SLOT(videoOutputChanged(QVideoOutputControl::Output)));
     
     m_videoOutput->setAvailableOutputs(QList<QVideoOutputControl::Output>() 
             << QVideoOutputControl::WidgetOutput);
-
 }
 
 S60CameraService::~S60CameraService()
@@ -100,7 +99,7 @@ QMediaControl *S60CameraService::control(const char *name) const
     if(qstrcmp(name,QVideoEncoderControl_iid) == 0)
         return m_videoEncoder;
 
-    if(qstrcmp(name,QMediaFormatControl_iid) == 0)
+    if(qstrcmp(name,QMediaContainerControl_iid) == 0)
         return m_mediaFormat;
 
     if(qstrcmp(name,QVideoOutputControl_iid) == 0)
@@ -110,7 +109,7 @@ QMediaControl *S60CameraService::control(const char *name) const
         return m_exposureControl;
     
     if (qstrcmp(name, QVideoWidgetControl_iid) == 0)
-        return m_videoWidget;
+        return m_viewFinderWidget;
     
     if(qstrcmp(name,QCameraFocusControl_iid) == 0)
         return m_focusControl;
@@ -136,7 +135,10 @@ QString S60CameraService::deviceDescription(const int index)
 {
     return S60CameraSession::description(index);
 }
-
+QString S60CameraService::deviceName(const int index)
+{
+    return S60CameraSession::name(index);
+}
 
 void S60CameraService::videoOutputChanged(QVideoOutputControl::Output output)
 {
@@ -145,7 +147,7 @@ void S60CameraService::videoOutputChanged(QVideoOutputControl::Output output)
         m_control->setVideoOutput(0);
         break;
     case QVideoOutputControl::WidgetOutput:
-        m_control->setVideoOutput(m_videoWidget);
+        m_control->setVideoOutput(m_viewFinderWidget);
         break;
     default:
         qWarning("Invalid video output selection");

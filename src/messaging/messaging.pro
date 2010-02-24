@@ -71,24 +71,24 @@ SOURCES += qmessageid.cpp \
            qmessageservice.cpp
 
 
-symbian|win32|maemo6 {
-maemo6 {
-SOURCES += qmessageid_maemo.cpp \
-           qmessagecontentcontainerid_maemo.cpp \
-           qmessagefolderid_maemo.cpp \
-           qmessageaccountid_maemo.cpp \
-           qmessagecontentcontainer_maemo.cpp \
-           qmessage_maemo.cpp \
-           qmessagefolder_maemo.cpp \
-           qmessageaccount_maemo.cpp \
-           qmessageaccountfilter_maemo.cpp \
-           qmessageaccountsortorder_maemo.cpp \
-           qmessagefolderfilter_maemo.cpp \
-           qmessagefoldersortorder_maemo.cpp \
-           qmessagefilter_maemo.cpp \
-           qmessagesortorder_maemo.cpp \
-           qmessagestore_maemo.cpp \
-           qmessageservice_maemo.cpp 
+symbian|win32|maemo6|maemo5|mac {
+maemo6|maemo5|mac {
+SOURCES += qmessageid_stub.cpp \
+           qmessagecontentcontainerid_stub.cpp \
+           qmessagefolderid_stub.cpp \
+           qmessageaccountid_stub.cpp \
+           qmessagecontentcontainer_stub.cpp \
+           qmessage_stub.cpp \
+           qmessagefolder_stub.cpp \
+           qmessageaccount_stub.cpp \
+           qmessageaccountfilter_stub.cpp \
+           qmessageaccountsortorder_stub.cpp \
+           qmessagefolderfilter_stub.cpp \
+           qmessagefoldersortorder_stub.cpp \
+           qmessagefilter_stub.cpp \
+           qmessagesortorder_stub.cpp \
+           qmessagestore_stub.cpp \
+           qmessageservice_stub.cpp 
 }
 symbian {
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE

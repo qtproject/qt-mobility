@@ -88,6 +88,8 @@ public:
     QGstreamerCaptureSession(CaptureMode captureMode, QObject *parent);
     ~QGstreamerCaptureSession();
 
+    CaptureMode captureMode() const { return m_captureMode; }
+
     QUrl outputLocation() const;
     bool setOutputLocation(const QUrl& sink);
 

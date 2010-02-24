@@ -57,7 +57,7 @@ QTM_USE_NAMESPACE
 QVersitReaderPrivate::QVersitReaderPrivate()
     : mIoDevice(0),
     mDocumentNestingLevel(0),
-    mDefaultCodec(QTextCodec::codecForName("ISO 8859-1")),
+    mDefaultCodec(QTextCodec::codecForName("UTF-8")),
     mState(QVersitReader::InactiveState),
     mError(QVersitReader::NoError),
     mIsCanceling(false)

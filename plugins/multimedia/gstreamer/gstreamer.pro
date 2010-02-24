@@ -55,14 +55,17 @@ contains(QT_CONFIG, multimedia) {
         qgstreamervideorenderer.cpp \
         qgstvideobuffer.cpp \
         qvideosurfacegstsink.cpp \
-        qx11videosurface.cpp
+        qx11videosurface.cpp \
+        qgstxvimagebuffer.cpp
 
     HEADERS += \
         qgstreamervideooverlay.h \
         qgstreamervideorenderer.h \
         qgstvideobuffer.h \
         qvideosurfacegstsink.h \
-        qx11videosurface.h
+        qx11videosurface.h \
+        qgstxvimagebuffer.h
+
 
     LIBS += -lXv
 }

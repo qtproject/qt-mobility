@@ -15,7 +15,8 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QVersitWriter Class Reference</h1>
 <p>The QVersitWriter class provides an interface for writing a versit document such as a vCard to a text stream. <a href="#details">More...</a></p>
-<pre>    #include &lt;QVersitWriter&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
+<pre>    #include &lt;QVersitWriter&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
 <ul>
 <li><a href="qversitwriter-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -122,12 +123,13 @@
 <p>See also <a href="qversitwriter.html#device">device</a>().</p>
 <a name="//apple_ref/cpp/instm/QVersitWriter/startWriting"></a>
 <h3 class="fn"><a name="startWriting"></a>bool QVersitWriter::startWriting ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qversitdocument.html">QVersitDocument</a>&gt; &amp; <i>input</i> )</h3>
-<p>Starts writing <i>input</i> to <a href="qversitwriter.html#device">device</a>() asynchronously. Returns false if the output device has not been set or opened or if there is another asynchronous write operation already pending. Signal <a href="qversitwriter.html#stateChanged">stateChanged</a>() is emitted with parameter <a href="qversitwriter.html#State-enum">FinishedState</a> is emitted when the writing has finished.</p>
+<p>Starts writing <i>input</i> to <a href="qversitwriter.html#device">device</a>() asynchronously. Returns false if the output device has not been set or opened or if there is another asynchronous write operation already pending. Signal <a href="qversitwriter.html#stateChanged">stateChanged</a>() is emitted with parameter <a href="qversitwriter.html#State-enum">FinishedState</a> when the writing has finished.</p>
 <a name="//apple_ref/cpp/instm/QVersitWriter/state"></a>
 <h3 class="fn"><a name="state"></a><a href="qversitwriter.html#State-enum">State</a> QVersitWriter::state () const</h3>
 <p>Returns the state of the writer.</p>
 <a name="//apple_ref/cpp/instm/QVersitWriter/stateChanged"></a>
 <h3 class="fn"><a name="stateChanged"></a>void QVersitWriter::stateChanged ( <a href="qversitwriter.html#State-enum">QVersitWriter::State</a> <i>state</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>The signal is emitted by the writer when its state has changed (eg. when it has finished writing to the device). <i>state</i> is the new state of the writer.</p>
 <a name="//apple_ref/cpp/instm/QVersitWriter/waitForFinished"></a>
 <h3 class="fn"><a name="waitForFinished"></a>bool QVersitWriter::waitForFinished ( int <i>msec</i> = -1 )</h3>
 <p>If the state is <a href="qversitwriter.html#State-enum">ActiveState</a>, blocks until the writer has finished writing or <i>msec</i> milliseconds has elapsed, returning true if it successfully finishes or is cancelled by the user. If the state is <a href="qversitwriter.html#State-enum">FinishedState</a>, returns true immediately. Otherwise, returns false immediately.</p>

@@ -67,9 +67,9 @@ QHalInterface::QHalInterface(QObject *parent)
         : QObject(parent)
 {
     d = new QHalInterfacePrivate();
-    d->connectionInterface = new QDBusInterface(HAL_DBUS_SERVICE,
-                                                HAL_DBUS_MANAGER_PATH,
-                                                HAL_DBUS_MANAGER_INTERFACE,
+    d->connectionInterface = new QDBusInterface(QLatin1String(HAL_DBUS_SERVICE),
+                                                QLatin1String(HAL_DBUS_MANAGER_PATH),
+                                                QLatin1String(HAL_DBUS_MANAGER_INTERFACE),
                                                 dbusConnection);
     if (!d->connectionInterface->isValid()) {
         qDebug() << "Could not find Hal";
@@ -98,7 +98,7 @@ QDBusInterface *QHalInterface::connectionInterface()  const
 
 QStringList QHalInterface::findDeviceByCapability(const QString &cap)
 {
-    QDBusReply<  QStringList > reply = d->connectionInterface->call("FindDeviceByCapability", cap);
+    QDBusReply<  QStringList > reply = d->connectionInterface->call(QLatin1String("FindDeviceByCapability"), cap);
     if (!reply.isValid()) {
 //        qDebug() << reply.error().message();
     } else {
@@ -110,7 +110,7 @@ QStringList QHalInterface::findDeviceByCapability(const QString &cap)
 
 QStringList QHalInterface::getAllDevices()
 {
-    QDBusReply<  QStringList > reply = d->connectionInterface->call("GetAllDevices");
+    QDBusReply<  QStringList > reply = d->connectionInterface->call(QLatin1String("GetAllDevices"));
     if (!reply.isValid()) {
 //        qDebug() << reply.error().message();
     } else {
@@ -122,7 +122,7 @@ QStringList QHalInterface::getAllDevices()
 
 bool QHalInterface::deviceExists(const QString &path)
 {
-    QDBusReply< bool > reply = d->connectionInterface->call("DeviceExists", path);
+    QDBusReply< bool > reply = d->connectionInterface->call(QLatin1String("DeviceExists"), path);
     if (!reply.isValid()) {
         return reply.value();
     }
@@ -145,9 +145,9 @@ QHalDeviceInterface::QHalDeviceInterface(const QString &devicePathName, QObject 
 
     d = new QHalDeviceInterfacePrivate();
     d->path = devicePathName;
-    d->connectionInterface = new QDBusInterface(HAL_DBUS_SERVICE,
+    d->connectionInterface = new QDBusInterface(QLatin1String(HAL_DBUS_SERVICE),
                                                 d->path,
-                                                HAL_DEVICE_INTERFACE,
+                                                QLatin1String(HAL_DEVICE_INTERFACE),
                                                 dbusConnection);
     if (!d->connectionInterface->isValid()) {
         d->valid = false;
@@ -175,10 +175,10 @@ bool QHalDeviceInterface::setConnections()
         return false;
     bool allOk = false;
 
-    if (dbusConnection.connect(HAL_DBUS_SERVICE,
+    if (dbusConnection.connect(QLatin1String(HAL_DBUS_SERVICE),
                                d->path,
-                               HAL_DEVICE_INTERFACE,
-                               "PropertyModified",
+                               QLatin1String(HAL_DEVICE_INTERFACE),
+                               QLatin1String("PropertyModified"),
                                this,SIGNAL(propertyModified( int, QVariantList)))) {
         allOk = true;
     }
@@ -187,7 +187,7 @@ bool QHalDeviceInterface::setConnections()
 
 bool QHalDeviceInterface::getPropertyBool(const QString &prop)
 {
-    QDBusReply< bool > reply = d->connectionInterface->call("GetPropertyBoolean", prop);
+    QDBusReply< bool > reply = d->connectionInterface->call(QLatin1String("GetPropertyBoolean"), prop);
     if ( reply.isValid() ) {
         return reply.value();
     } else {
@@ -198,7 +198,7 @@ bool QHalDeviceInterface::getPropertyBool(const QString &prop)
 
 QString QHalDeviceInterface::getPropertyString(const QString &prop)
 {
-    QDBusReply< QString > reply = d->connectionInterface->call("GetPropertyString", prop);
+    QDBusReply< QString > reply = d->connectionInterface->call(QLatin1String("GetPropertyString"), prop);
     if ( reply.isValid() ) {
         return reply.value();
     } else {
@@ -209,7 +209,7 @@ QString QHalDeviceInterface::getPropertyString(const QString &prop)
 
 QStringList QHalDeviceInterface::getPropertyStringList(const QString &prop)
 {
-    QDBusReply< QStringList > reply = d->connectionInterface->call("GetPropertyStringList", prop);
+    QDBusReply< QStringList > reply = d->connectionInterface->call(QLatin1String("GetPropertyStringList"), prop);
     if ( reply.isValid() ) {
         return reply.value();
     } else {
@@ -220,7 +220,7 @@ QStringList QHalDeviceInterface::getPropertyStringList(const QString &prop)
 
 qint32 QHalDeviceInterface::getPropertyInt(const QString &prop)
 {
-    QDBusReply< qint32 > reply = d->connectionInterface->call("GetPropertyInteger", prop);
+    QDBusReply< qint32 > reply = d->connectionInterface->call(QLatin1String("GetPropertyInteger"), prop);
     if ( reply.isValid() ) {
         return reply.value();
     } else {
@@ -232,7 +232,7 @@ qint32 QHalDeviceInterface::getPropertyInt(const QString &prop)
 
 bool QHalDeviceInterface::queryCapability(const QString &cap)
 {
-    QDBusReply< bool > reply = d->connectionInterface->call("QueryCapability", cap);
+    QDBusReply< bool > reply = d->connectionInterface->call(QLatin1String("QueryCapability"), cap);
     if ( reply.isValid() ) {
         return reply.value();
     } else {
@@ -245,7 +245,7 @@ bool QHalDeviceInterface::queryCapability(const QString &cap)
 
 bool QHalDeviceInterface::propertyExists(const QString &prop)
 {
-    QDBusReply< bool > reply = d->connectionInterface->call("PropertyExists", prop);
+    QDBusReply< bool > reply = d->connectionInterface->call(QLatin1String("PropertyExists"), prop);
     if ( reply.isValid() ) {
         return reply.value();
     } else {
@@ -270,9 +270,9 @@ QHalDeviceLaptopPanelInterface::QHalDeviceLaptopPanelInterface(const QString &de
 {
     d = new QHalDeviceLaptopPanelInterfacePrivate();
     d->path = devicePathName;
-    d->connectionInterface = new QDBusInterface(HAL_DBUS_SERVICE,
+    d->connectionInterface = new QDBusInterface(QLatin1String(HAL_DBUS_SERVICE),
                                                 d->path,
-                                                HAL_DEVICES_LAPTOPPANEL_INTERFACE,
+                                                QLatin1String(HAL_DEVICES_LAPTOPPANEL_INTERFACE),
                                                 dbusConnection);
     if (!d->connectionInterface->isValid()) {
         d->valid = false;
@@ -296,7 +296,7 @@ bool QHalDeviceLaptopPanelInterface::isValid()
 
 quint32 QHalDeviceLaptopPanelInterface::getBrightness()
 {
-    QDBusReply< qint32 > reply = d->connectionInterface->call("GetBrightness");
+    QDBusReply< qint32 > reply = d->connectionInterface->call(QLatin1String("GetBrightness"));
     if ( reply.isValid() ) {
 //        qDebug() << __FUNCTION__ << reply.value();
         return reply.value();
@@ -306,7 +306,7 @@ quint32 QHalDeviceLaptopPanelInterface::getBrightness()
 
 void QHalDeviceLaptopPanelInterface::setBrightness(quint32 brightness)
 {
-    QDBusReply< qint32 > reply = d->connectionInterface->call("SetBrightness", brightness);
+    QDBusReply< qint32 > reply = d->connectionInterface->call(QLatin1String("SetBrightness"), brightness);
     if ( reply.isValid() ) {
 //        qDebug() << __FUNCTION__ << reply.value();
     }
@@ -326,9 +326,9 @@ QHalDeviceKillSwitchInterface::QHalDeviceKillSwitchInterface(const QString &devi
 {
     d = new QHalDeviceKillSwitchInterfacePrivate();
     d->path = devicePathName;
-    d->connectionInterface = new QDBusInterface(HAL_DBUS_SERVICE,
+    d->connectionInterface = new QDBusInterface(QLatin1String(HAL_DBUS_SERVICE),
                                                 d->path,
-                                                HAL_DEVICE_KILLSWITCH_INTERFACE,
+                                                QLatin1String(HAL_DEVICE_KILLSWITCH_INTERFACE),
                                                 dbusConnection);
     if (!d->connectionInterface->isValid()) {
         d->valid = false;
@@ -352,7 +352,7 @@ bool QHalDeviceKillSwitchInterface::isValid()
 
 quint32 QHalDeviceKillSwitchInterface::getPower()
 {
-    QDBusReply< qint32 > reply = d->connectionInterface->call("GetPower");
+    QDBusReply< qint32 > reply = d->connectionInterface->call(QLatin1String("GetPower"));
     if ( reply.isValid() ) {
         qDebug() << __FUNCTION__ << reply.value();
         return reply.value();
