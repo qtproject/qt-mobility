@@ -124,7 +124,11 @@ public:
     QList<QContactManager::Error> Q_DECL_DEPRECATED saveContacts(QList<QContact>* contacts);       // deprecated batch API - save
     QList<QContactManager::Error> Q_DECL_DEPRECATED removeContacts(QList<QContactLocalId>* contactIds);  // deprecated batch API - remove
     bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap); // batch API - save.
-    bool removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap); // batch API - remove.
+    bool Q_DECL_DEPRECATED removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap); // batch API - remove. deprecated also.
+    bool removeContacts(QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap); // batch API - remove.
+
+    /* Return a pruned or modified contact which is valid and can be saved in the manager */
+    QContact conformingContact(const QContact& original);
 
     /* Synthesize the display label of a contact */
     QString synthesizedDisplayLabel(const QContact& contact) const; // replaces the above

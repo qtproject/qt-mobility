@@ -500,6 +500,8 @@ bool QContactManager::saveContacts(QList<QContact>* contacts, QMap<int, QContact
 }
 
 /*!
+  \internal
+
   Remove every contact whose id is contained in the list of contacts ids
   \a contactIds.  Returns true if all contacts were removed successfully,
   otherwise false.
@@ -522,7 +524,43 @@ bool QContactManager::saveContacts(QList<QContact>* contacts, QMap<int, QContact
  */
 bool QContactManager::removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap)
 {
+    // DEPRECATED to be removed once transition period has elapsed.
+    QList<QContactLocalId> constList;
+    for (int i = 0; i < contactIds->size(); i++)
+        constList.append(contactIds->at(i));
+
+    return d->m_engine->removeContacts(constList, errorMap, d->m_error);
+}
+
+/*!
+  Remove every contact whose id is contained in the list of contacts ids
+  \a contactIds.  Returns true if all contacts were removed successfully,
+  otherwise false.
+
+  Any contact that was removed successfully will have the relationships
+  in which it was involved removed also.
+
+  The manager might populate \a errorMap (the map of indices of the \a contactIds list to
+  the error which occurred when saving the contact at that index) for every
+  index for which the contact could not be removed, if it is able.
+  The \l QContactManager::error() function will
+  only return \c QContactManager::NoError if all contacts were removed
+  successfully.
+
+  \sa QContactManager::removeContact()
+ */
+bool QContactManager::removeContacts(QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap)
+{
     return d->m_engine->removeContacts(contactIds, errorMap, d->m_error);
+}
+
+/*!
+  Returns a pruned or modified version of the \a original contact which is valid and can be saved in the manager.
+  The returned contact might have entire details removed or arbitrarily changed.
+ */
+QContact QContactManager::conformingContact(const QContact& original)
+{
+    return d->m_engine->conformingContact(original, d->m_error);
 }
 
 /*!
