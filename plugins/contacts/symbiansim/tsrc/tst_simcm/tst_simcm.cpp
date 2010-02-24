@@ -53,33 +53,18 @@
 
 QTM_USE_NAMESPACE
 
-#ifndef QTRY_COMPARE
-#define QTRY_COMPARE(__expr, __expected) \
-    do { \
-        const int __step = 50; \
-        const int __timeout = 5000; \
-        if ((__expr) != (__expected)) { \
-            QTest::qWait(0); \
-        } \
-        for (int __i = 0; __i < __timeout && ((__expr) != (__expected)); __i+=__step) { \
-            QTest::qWait(__step); \
-        } \
-        QCOMPARE(__expr, __expected); \
-    } while(0)
-#endif
-
 //TESTED_CLASS=
 //TESTED_FILES=
 
 /*!
 */
-class tst_QContactManagerSymbianSim : public QObject
+class tst_SimCM : public QObject
 {
 Q_OBJECT
 
 public:
-    tst_QContactManagerSymbianSim();
-    virtual ~tst_QContactManagerSymbianSim();
+    tst_SimCM();
+    virtual ~tst_SimCM();
 
 public slots:
     void init();
@@ -106,14 +91,6 @@ private slots:
 
     /* Test cases that take no data */
 
-    /* async cases */
-    void fetchContactReq();
-    void localIdFetchReq();
-    void saveContactReq();
-    void removeContactReq();
-    void detailDefinitionFetchReq();
-    void notSupportedRequests();
-
 private:
     void initManager(QString simStore);
     void getEtelStoreInfoL(const TDesC &phonebook, TDes8 &infoPckg) const;
@@ -121,7 +98,6 @@ private:
     void parseDetails(QContact &contact, QStringList details, QList<QContactDetail> &parsedDetails);
     void compareDetails(QContact contact, QList<QContactDetail> expectedDetails);
     QContact createContact(QString name, QString number);
-    QContact saveContact(QString name, QString number);
 
 private:
     QContactManager* m_cm;
@@ -129,43 +105,46 @@ private:
     RMobilePhoneBookStore::TMobilePhoneBookInfoV5Pckg m_etelStoreInfoPckg;
 };
 
-tst_QContactManagerSymbianSim::tst_QContactManagerSymbianSim() :
+tst_SimCM::tst_SimCM() :
     m_cm(0),
     m_etelStoreInfoPckg(m_etelStoreInfo)
 {
-	qRegisterMetaType<QContactAbstractRequest::State>("QContactAbstractRequest::State");
 }
 
-tst_QContactManagerSymbianSim::~tst_QContactManagerSymbianSim()
+tst_SimCM::~tst_SimCM()
 {
 }
 
-void tst_QContactManagerSymbianSim::init()
-{
-    
-}
-
-void tst_QContactManagerSymbianSim::cleanup()
+void tst_SimCM::init()
 {
     // remove all contacts
     QList<QContactLocalId> ids = m_cm->contactIds();
     m_cm->removeContacts(&ids, 0);   
 }
 
-void tst_QContactManagerSymbianSim::initTestCase()
+void tst_SimCM::cleanup()
 {
-    // Currently we only need the ADN store info
+    // remove all contacts
+    QList<QContactLocalId> ids = m_cm->contactIds();
+    m_cm->removeContacts(&ids, 0);   
+}
+
+void tst_SimCM::initTestCase()
+{
+    initManager(QString());
+
+    // TODO: how about other stores?
     TRAPD(err, getEtelStoreInfoL(KETelIccAdnPhoneBook, m_etelStoreInfoPckg));
     QCOMPARE(err, KErrNone);
 }
 
-void tst_QContactManagerSymbianSim::cleanupTestCase()
+void tst_SimCM::cleanupTestCase()
 {
     delete m_cm;
     m_cm = 0;
 }
 
-void tst_QContactManagerSymbianSim::initManager_data()
+void tst_SimCM::initManager_data()
 {
     QTest::addColumn<QString>("simStore"); // empty (defaults to ADN), "ADN", "SDN" or "FDN"
 
@@ -177,7 +156,7 @@ void tst_QContactManagerSymbianSim::initManager_data()
     QTest::newRow("Initialize ADN store") << "ADN";
 }
 
-void tst_QContactManagerSymbianSim::initManager()
+void tst_SimCM::initManager()
 {
     delete m_cm;
     m_cm = 0;
@@ -202,7 +181,7 @@ void tst_QContactManagerSymbianSim::initManager()
     }
 }
 
-void tst_QContactManagerSymbianSim::initManager(QString simStore)
+void tst_SimCM::initManager(QString simStore)
 {
     delete m_cm;
     m_cm = 0;
@@ -218,7 +197,7 @@ void tst_QContactManagerSymbianSim::initManager(QString simStore)
     m_cm = QContactManager::fromUri(uri);
 }
 
-void tst_QContactManagerSymbianSim::hasFeature_data()
+void tst_SimCM::hasFeature_data()
 {
     QTest::addColumn<QString>("simStore");      // empty (defaults to ADN), "ADN", "SDN" or "FDN"
     QTest::addColumn<int>("managerFeature");              // one of QContactManager::ManagerFeature
@@ -268,7 +247,7 @@ void tst_QContactManagerSymbianSim::hasFeature_data()
     QTest::newRow("FDN store") << "FDN" << (int) QContactManager::ChangeLogs << false;
 }
 
-void tst_QContactManagerSymbianSim::hasFeature()
+void tst_SimCM::hasFeature()
 {
     // initialize
     QFETCH(QString, simStore);
@@ -286,7 +265,7 @@ void tst_QContactManagerSymbianSim::hasFeature()
     QCOMPARE(m_cm->hasFeature((QContactManager::ManagerFeature) managerFeature, QContactType::TypeGroup), expectedResult);
 }
 
-void tst_QContactManagerSymbianSim::supportedContactTypes_data()
+void tst_SimCM::supportedContactTypes_data()
 {
     QTest::addColumn<QString>("simStore");
     QTest::newRow("custom label") << "ADN";
@@ -294,7 +273,7 @@ void tst_QContactManagerSymbianSim::supportedContactTypes_data()
     QTest::newRow("custom label") << "FDN";
 }
 
-void tst_QContactManagerSymbianSim::supportedContactTypes()
+void tst_SimCM::supportedContactTypes()
 {
     QFETCH(QString, simStore);
     initManager(simStore);
@@ -312,7 +291,7 @@ void tst_QContactManagerSymbianSim::supportedContactTypes()
     QVERIFY(!types.contains(QContactType::TypeGroup));
 }
 
-void tst_QContactManagerSymbianSim::detailDefinitions_data()
+void tst_SimCM::detailDefinitions_data()
 {
     QTest::addColumn<QString>("simStore");
     QTest::newRow("custom label") << "ADN";
@@ -320,7 +299,7 @@ void tst_QContactManagerSymbianSim::detailDefinitions_data()
     QTest::newRow("custom label") << "FDN";
 }
 
-void tst_QContactManagerSymbianSim::detailDefinitions()
+void tst_SimCM::detailDefinitions()
 {
     QFETCH(QString, simStore);
     initManager(simStore);
@@ -349,7 +328,7 @@ void tst_QContactManagerSymbianSim::detailDefinitions()
     }
 }
 
-void tst_QContactManagerSymbianSim::addContact_data()
+void tst_SimCM::addContact_data()
 {
     QTest::addColumn<QString>("simStore"); // empty (defaults to ADN), "ADN", "SDN" or "FDN"
     QTest::addColumn<int>("expectedResult"); // 1 = pass, 0 = fail, -1 = depends on the SIM card
@@ -560,7 +539,7 @@ void tst_QContactManagerSymbianSim::addContact_data()
  * 3.1 (if expected to pass) Save contact, verify result and remove contact
  * 3.2 (if expected to fail) Check that saving a contact fails
  */
-void tst_QContactManagerSymbianSim::addContact()
+void tst_SimCM::addContact()
 {
     // Make debugging easier by getting the test case name
     QString tescaseName = QTest::currentDataTag();
@@ -636,7 +615,7 @@ void tst_QContactManagerSymbianSim::addContact()
     QCOMPARE(idsAfterRemove.count(), idsBefore.count());
 }
 
-void tst_QContactManagerSymbianSim::fetchContacts_data()
+void tst_SimCM::fetchContacts_data()
 {
     QTest::addColumn<QString>("simStore");
     QTest::addColumn<int>("contactCount");
@@ -658,7 +637,7 @@ void tst_QContactManagerSymbianSim::fetchContacts_data()
 /*
  * Tests if QContactManager::contacts and ::contactIds work.
  */
-void tst_QContactManagerSymbianSim::fetchContacts()
+void tst_SimCM::fetchContacts()
 {
     // init
     QFETCH(QString, simStore);
@@ -675,14 +654,9 @@ void tst_QContactManagerSymbianSim::fetchContacts()
 
     // 1. Add contacts (optionally)
     for(int i(0); i < contactCount; i++) {
-        QContactName name;
-        name.setCustomLabel(QString("James").append(QString::number(i + 1)));
-        QContactPhoneNumber number;
-        number.setNumber(QString("1234567890").append(QString::number(i + 1)));
-
-        QContact contact;
-        QVERIFY(contact.saveDetail(&name));
-        QVERIFY(contact.saveDetail(&number));
+        QContact contact = createContact(
+            QString("James").append(QString::number(i + 1)),
+            QString("1234567890").append(QString::number(i + 1)));
 
         QVERIFY(m_cm->saveContact(&contact));
         QCOMPARE(m_cm->error(), QContactManager::NoError);
@@ -717,7 +691,7 @@ void tst_QContactManagerSymbianSim::fetchContacts()
 
 }
 
-void tst_QContactManagerSymbianSim::updateContactDetail_data()
+void tst_SimCM::updateContactDetail_data()
 {
     QTest::addColumn<QString>("simStore");
     // The initial contact details,
@@ -818,7 +792,7 @@ void tst_QContactManagerSymbianSim::updateContactDetail_data()
  * 3. Modify the contact (save with updated details)
  * 4. Remove the contact
  */
-void tst_QContactManagerSymbianSim::updateContactDetail()
+void tst_SimCM::updateContactDetail()
 {
     QString tescaseName = QTest::currentDataTag();
 
@@ -866,7 +840,7 @@ void tst_QContactManagerSymbianSim::updateContactDetail()
 /*!
  * Private helper function for checking the data format that the store supports
  */
-void tst_QContactManagerSymbianSim::getEtelStoreInfoL(const TDesC &phonebook, TDes8 &infoPckg) const
+void tst_SimCM::getEtelStoreInfoL(const TDesC &phonebook, TDes8 &infoPckg) const
 {
     RTelServer etelServer;
     User::LeaveIfError(etelServer.Connect());
@@ -898,7 +872,7 @@ void tst_QContactManagerSymbianSim::getEtelStoreInfoL(const TDesC &phonebook, TD
  * contact. This can be used in cases where it depends on the SIM card features
  * if the contact details can be saved or not.
  */
-bool tst_QContactManagerSymbianSim::isContactSupported(QContact contact)
+bool tst_SimCM::isContactSupported(QContact contact)
 {
     QMap<QString, QContactDetailDefinition> detailDefinitions = m_cm->detailDefinitions();
 
@@ -952,7 +926,7 @@ bool tst_QContactManagerSymbianSim::isContactSupported(QContact contact)
  * Private helper function for parsing test data (creates QContactDetails from
  * string lists).
  */
-void tst_QContactManagerSymbianSim::parseDetails(QContact &contact, QStringList details, QList<QContactDetail> &parsedDetails)
+void tst_SimCM::parseDetails(QContact &contact, QStringList details, QList<QContactDetail> &parsedDetails)
 {
     parsedDetails.clear();
     foreach (QString detail, details) {
@@ -983,7 +957,7 @@ void tst_QContactManagerSymbianSim::parseDetails(QContact &contact, QStringList 
  * of QContactDetails.
  * \return true if all the expected contact details have a match in the \contact.
  */
-void tst_QContactManagerSymbianSim::compareDetails(QContact contact, QList<QContactDetail> expectedDetails)
+void tst_SimCM::compareDetails(QContact contact, QList<QContactDetail> expectedDetails)
 {
     foreach (QContactDetail expectedDetail, expectedDetails) {
         QContactDetail actualDetail = contact.detail(expectedDetail.definitionName());
@@ -1013,7 +987,7 @@ void tst_QContactManagerSymbianSim::compareDetails(QContact contact, QList<QCont
     }
 }
 
-QContact tst_QContactManagerSymbianSim::createContact(QString name, QString number)
+QContact tst_SimCM::createContact(QString name, QString number)
 {
     QContact c;
     
@@ -1028,369 +1002,5 @@ QContact tst_QContactManagerSymbianSim::createContact(QString name, QString numb
     return c;
 }
 
-QContact tst_QContactManagerSymbianSim::saveContact(QString name, QString number)
-{
-    QContact c;
-    
-    QContactName n;
-    n.setCustomLabel(name);
-    c.saveDetail(&n);
-    
-    QContactPhoneNumber nb;
-    nb.setNumber(number);
-    c.saveDetail(&nb);
-    
-    if (!m_cm->saveContact(&c)) {
-        qWarning("*FATAL* could not save contact!");
-    }
-    
-    return c;
-}
-
-void tst_QContactManagerSymbianSim::fetchContactReq()
-{
-    QContactFetchRequest req;
-    req.setManager(m_cm);
-    
-    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QContactAbstractRequest::State)));
-    QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
-
-    // Save some contacts
-    QContact c1 = saveContact("a", "1234567");
-    QContact c2 = saveContact("b", "7654321");
-    QContact c3 = saveContact("c", "1111111");
-    
-    // Fetch the contacts
-    QVERIFY(req.start());
-    QVERIFY(req.state() == QContactAbstractRequest::ActiveState);
-    QVERIFY(stateSpy.count() == 1);    
-    QVERIFY(req.waitForFinished(0));
-    QVERIFY(req.state() == QContactAbstractRequest::FinishedState);
-    QVERIFY(req.error() == QContactManager::NoError);
-    QVERIFY(stateSpy.count() == 2);
-    QVERIFY(resultSpy.count() == 1);
-    QVERIFY(req.contacts().count() == 3);
-
-    // Test cancelling
-    stateSpy.clear();
-    resultSpy.clear();
-    QVERIFY(!req.cancel());
-    QVERIFY(req.state() == QContactAbstractRequest::FinishedState);    
-    QVERIFY(req.start());
-    QVERIFY(req.state() == QContactAbstractRequest::ActiveState);
-    QVERIFY(stateSpy.count() == 1);
-    QVERIFY(req.cancel());
-    QVERIFY(!req.cancel());
-    QVERIFY(stateSpy.count() == 2);
-    QVERIFY(resultSpy.count() == 0);
-    QVERIFY(req.state() == QContactAbstractRequest::CanceledState);
-   
-    // Remove all contacts
-    QList<QContactLocalId> ids = m_cm->contactIds();
-    m_cm->removeContacts(&ids, 0);    
-    
-    // Test fetching nothing
-    stateSpy.clear();
-    resultSpy.clear();
-    QVERIFY(req.start());
-    QVERIFY(!req.start());
-    QVERIFY(req.state() == QContactAbstractRequest::ActiveState);
-    QVERIFY(stateSpy.count() == 1);
-    QTRY_COMPARE(resultSpy.count(), 1);
-    QVERIFY(req.state() == QContactAbstractRequest::FinishedState);
-    QVERIFY(req.error() == QContactManager::DoesNotExistError);
-    QVERIFY(stateSpy.count() == 2);
-    QVERIFY(req.contacts().count() == 0);
-}
-
-void tst_QContactManagerSymbianSim::localIdFetchReq()
-{
-    QContactLocalIdFetchRequest req;
-    req.setManager(m_cm);
-    
-    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QContactAbstractRequest::State)));
-    QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
-
-    // Save some contacts
-    QContact c1 = saveContact("a", "1234567");
-    QContact c2 = saveContact("b", "7654321");
-    QContact c3 = saveContact("c", "1111111");
-    
-    // Fetch the contacts
-    QVERIFY(req.start());
-    QVERIFY(req.state() == QContactAbstractRequest::ActiveState);
-    QVERIFY(stateSpy.count() == 1);
-    QVERIFY(req.waitForFinished(0));
-    QVERIFY(req.state() == QContactAbstractRequest::FinishedState);
-    QVERIFY(req.error() == QContactManager::NoError);
-    QVERIFY(stateSpy.count() == 2);
-    QVERIFY(resultSpy.count() == 1);
-    QVERIFY(req.ids().count() == 3);
-    QVERIFY(req.ids().contains(c1.localId()));
-    QVERIFY(req.ids().contains(c2.localId()));
-    QVERIFY(req.ids().contains(c3.localId()));
-    
-    // Test cancelling
-    stateSpy.clear();
-    resultSpy.clear();
-    QVERIFY(!req.cancel());
-    QVERIFY(req.state() == QContactAbstractRequest::FinishedState);    
-    QVERIFY(req.start());
-    QVERIFY(!req.start());
-    QVERIFY(req.state() == QContactAbstractRequest::ActiveState);
-    QVERIFY(stateSpy.count() == 1);
-    QVERIFY(req.cancel());
-    QVERIFY(!req.cancel());
-    QVERIFY(stateSpy.count() == 2);
-    QVERIFY(resultSpy.count() == 0);
-    QVERIFY(req.state() == QContactAbstractRequest::CanceledState);    
-    
-    // Remove all contacts
-    QList<QContactLocalId> ids = m_cm->contactIds();
-    m_cm->removeContacts(&ids, 0);    
-    
-    // Start again
-    stateSpy.clear();
-    resultSpy.clear();
-    QVERIFY(req.start());
-    QVERIFY(req.state() == QContactAbstractRequest::ActiveState);
-    QVERIFY(stateSpy.count() == 1);
-    QTRY_COMPARE(resultSpy.count(), 1);
-    QVERIFY(req.state() == QContactAbstractRequest::FinishedState);
-    QVERIFY(req.error() == QContactManager::DoesNotExistError);
-    QVERIFY(stateSpy.count() == 2);
-    QVERIFY(req.ids().count() == 0);    
-}
-
-void tst_QContactManagerSymbianSim::saveContactReq()
-{
-    QContactSaveRequest req;
-    req.setManager(m_cm);
-    
-    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QContactAbstractRequest::State)));
-    QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
-
-    // Create some contacts
-    QContact c1 = createContact("Keeppu", "47474747");
-    QContact c2 = createContact("Rilli", "74747474");
-    
-    // Test cancel
-    QList<QContact> contacts;
-    contacts << c1 << c2;
-    req.setContacts(contacts);    
-    QVERIFY(!req.cancel());
-    QVERIFY(req.start());
-    QVERIFY(!req.start());
-    QVERIFY(req.state() == QContactAbstractRequest::ActiveState);
-    QVERIFY(stateSpy.count() == 1);
-    QVERIFY(req.cancel());
-    QVERIFY(!req.cancel());
-    QVERIFY(req.state() == QContactAbstractRequest::CanceledState);
-    QVERIFY(stateSpy.count() == 2);
-    QVERIFY(resultSpy.count() == 0);
-    QVERIFY(m_cm->contactIds().count() == 0);
-    
-    // Test save
-    stateSpy.clear();
-    req.setContacts(contacts); 
-    QVERIFY(req.start());
-    QVERIFY(req.state() == QContactAbstractRequest::ActiveState);
-    QVERIFY(stateSpy.count() == 1);
-    QTRY_COMPARE(resultSpy.count(), 1);
-    QVERIFY(req.state() == QContactAbstractRequest::FinishedState);
-    QVERIFY(req.error() == QContactManager::NoError);
-    QVERIFY(req.errorMap().count() == 0);
-    QVERIFY(stateSpy.count() == 2);
-    QVERIFY(resultSpy.count() == 1);
-    QVERIFY(req.contacts().count() == 2);
-    QContact c = req.contacts().at(0);
-    QVERIFY(c.id().managerUri() == m_cm->managerUri());
-    QVERIFY(c.localId() != QContactLocalId(0));
-    QVERIFY(c.detail<QContactName>().firstName() == c1.detail<QContactName>().firstName());
-    QVERIFY(c.detail<QContactPhoneNumber>().number() == c1.detail<QContactPhoneNumber>().number());
-    QVERIFY(m_cm->contactIds().count() == 2);
-    
-    // Test saving again
-    c1 = req.contacts().at(0);
-    c2 = req.contacts().at(1);
-
-    QContactName name = c1.detail<QContactName>();
-    name.setCustomLabel("Keeputin");
-    c1.saveDetail(&name);
-    QContactPhoneNumber number = c1.detail<QContactPhoneNumber>();
-    c1.removeDetail(&number);
-    
-    contacts.clear();
-    contacts << c1 << c2;
-    req.setContacts(contacts);
-    
-    stateSpy.clear();
-    resultSpy.clear();
-    QVERIFY(req.start());
-    QVERIFY(req.state() == QContactAbstractRequest::ActiveState);
-    QVERIFY(stateSpy.count() == 1);
-    QVERIFY(req.waitForFinished(0));
-    QVERIFY(req.state() == QContactAbstractRequest::FinishedState);
-    QVERIFY(req.error() == QContactManager::NoError);
-    QVERIFY(req.errorMap().count() == 0);
-    QVERIFY(stateSpy.count() == 2);
-    QVERIFY(resultSpy.count() == 1);
-    QVERIFY(req.contacts().count() == 2);
-    QVERIFY(req.contacts().at(0).localId() == c1.localId());
-    QVERIFY(req.contacts().at(1).localId() == c2.localId());
-    c = req.contacts().at(0);
-    QVERIFY(c.details(QContactPhoneNumber::DefinitionName).count() == 0);
-    QVERIFY(c.detail<QContactName>().customLabel() == c1.detail<QContactName>().customLabel());
-    QVERIFY(m_cm->contactIds().count() == 2);
-    c = m_cm->contact(c1.localId(), QStringList());
-    QVERIFY(c.details(QContactPhoneNumber::DefinitionName).count() == 0);
-    QVERIFY(c.detail<QContactName>().customLabel() == c1.detail<QContactName>().customLabel());
-}
-
-void tst_QContactManagerSymbianSim::removeContactReq()
-{
-    QContactRemoveRequest req;
-    req.setManager(m_cm);
-    
-    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QContactAbstractRequest::State)));
-    QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
-    
-    // Save some contacts
-    QContact c1 = saveContact("a", "1234567");
-    QContact c2 = saveContact("b", "7654321");
-
-    // Remove the contacts
-    QList<QContactLocalId> ids;
-    ids << c1.localId() << c2.localId();
-    req.setContactIds(ids);
-    QVERIFY(req.start());
-    QVERIFY(req.state() == QContactAbstractRequest::ActiveState);
-    QVERIFY(stateSpy.count() == 1);
-    QVERIFY(req.waitForFinished(0));
-    QVERIFY(req.state() == QContactAbstractRequest::FinishedState);
-    QVERIFY(req.error() == QContactManager::NoError);
-    QVERIFY(req.errorMap().count() == 0);
-    QVERIFY(stateSpy.count() == 2);
-    QVERIFY(resultSpy.count() == 1);
-    QVERIFY(m_cm->contactIds().count() == 0);
-    
-    // Test cancel
-    stateSpy.clear();
-    resultSpy.clear();
-    QVERIFY(!req.cancel());
-    QVERIFY(req.start());
-    QVERIFY(!req.start());
-    QVERIFY(req.state() == QContactAbstractRequest::ActiveState);
-    QVERIFY(stateSpy.count() == 1);
-    QVERIFY(req.cancel());
-    QVERIFY(!req.cancel());
-    QVERIFY(req.state() == QContactAbstractRequest::CanceledState);
-    QVERIFY(stateSpy.count() == 2);
-    QVERIFY(resultSpy.count() == 0);
-    
-    // Remove same ones again
-    stateSpy.clear();
-    resultSpy.clear();
-    QVERIFY(req.start());
-    QVERIFY(req.state() == QContactAbstractRequest::ActiveState);
-    QVERIFY(stateSpy.count() == 1);
-    QTRY_COMPARE(resultSpy.count(), 1);
-    QVERIFY(req.state() == QContactAbstractRequest::FinishedState);
-#ifndef __WINS__
-    QWARN("This test fails in hardware!");
-    QWARN("In hardware removing SIM contacts which do not exist the etel server will return KErrNone instead of KErrNotFound");
-#endif
-    QVERIFY(req.error() == QContactManager::DoesNotExistError);
-    QVERIFY(req.errorMap().count() == 2);
-    QVERIFY(req.errorMap().value(0) == QContactManager::DoesNotExistError);
-    QVERIFY(req.errorMap().value(1) == QContactManager::DoesNotExistError);
-}
-
-void tst_QContactManagerSymbianSim::detailDefinitionFetchReq()
-{
-    QContactDetailDefinitionFetchRequest req;
-    req.setManager(m_cm);
-    
-    QSignalSpy stateSpy(&req, SIGNAL(stateChanged(QContactAbstractRequest::State)));
-    QSignalSpy resultSpy(&req, SIGNAL(resultsAvailable()));
-
-    // Fetch all
-    req.setContactType(QContactType::TypeContact);
-    QVERIFY(req.start());
-    QVERIFY(req.state() == QContactAbstractRequest::ActiveState);
-    QVERIFY(stateSpy.count() == 1);
-    QVERIFY(req.waitForFinished(0));
-    QVERIFY(req.state() == QContactAbstractRequest::FinishedState);
-    QVERIFY(req.error() == QContactManager::NoError);
-    QVERIFY(stateSpy.count() == 2);
-    QVERIFY(resultSpy.count() == 1);
-    QVERIFY(req.definitions().count());
-    QVERIFY(req.definitions() == m_cm->detailDefinitions(req.contactType()));
-    
-    // Test cancel
-    stateSpy.clear();
-    resultSpy.clear();
-    QVERIFY(!req.cancel());
-    QVERIFY(req.start());
-    QVERIFY(!req.start());
-    QVERIFY(req.state() == QContactAbstractRequest::ActiveState);
-    QVERIFY(stateSpy.count() == 1);
-    QVERIFY(req.cancel());
-    QVERIFY(!req.cancel());
-    QVERIFY(req.state() == QContactAbstractRequest::CanceledState);
-    QVERIFY(stateSpy.count() == 2);
-    QVERIFY(resultSpy.count() == 0);
-
-    // Fetch some defs
-    stateSpy.clear();
-    resultSpy.clear();
-    req.setDefinitionNames(QStringList() << QContactPhoneNumber::DefinitionName << QContactNote::DefinitionName);
-    QVERIFY(req.start());
-    QVERIFY(req.state() == QContactAbstractRequest::ActiveState);
-    QVERIFY(stateSpy.count() == 1);
-    QTRY_COMPARE(resultSpy.count(), 1);
-    QVERIFY(req.state() == QContactAbstractRequest::FinishedState);
-    QVERIFY(req.error() == QContactManager::DoesNotExistError);
-    QVERIFY(req.errorMap().value(1) == QContactManager::DoesNotExistError);
-    QVERIFY(stateSpy.count() == 2);
-    QVERIFY(resultSpy.count() == 1);
-    QVERIFY(req.definitions().count() == 1);
-    QVERIFY(req.definitions().contains(QContactPhoneNumber::DefinitionName));
-    
-    // Fetch non-existing type
-    stateSpy.clear();
-    resultSpy.clear();
-    req.setContactType(QContactType::TypeGroup);
-    req.setDefinitionNames(QStringList());
-    QVERIFY(req.start());
-    QVERIFY(req.state() == QContactAbstractRequest::ActiveState);
-    QVERIFY(stateSpy.count() == 1);
-    QVERIFY(req.waitForFinished(0));
-    QVERIFY(req.state() == QContactAbstractRequest::FinishedState);
-    QVERIFY(req.error() == QContactManager::NotSupportedError);
-    QVERIFY(stateSpy.count() == 2);
-    QVERIFY(resultSpy.count() == 1);
-}
-
-void tst_QContactManagerSymbianSim::notSupportedRequests()
-{
-    QVERIFY(!m_cm->hasFeature(QContactManager::Relationships));
-    QContactRelationshipFetchRequest rfreq;
-    rfreq.setManager(m_cm);
-    QVERIFY(!rfreq.start());
-    QContactRelationshipRemoveRequest rrreq;
-    rrreq.setManager(m_cm);
-    QVERIFY(!rrreq.start());
-    
-    QVERIFY(!m_cm->hasFeature(QContactManager::MutableDefinitions));
-    QContactDetailDefinitionRemoveRequest ddrreq;
-    ddrreq.setManager(m_cm);
-    QVERIFY(!ddrreq.start());
-    QContactDetailDefinitionSaveRequest ddsreq;
-    ddsreq.setManager(m_cm);
-    QVERIFY(!ddsreq.start());
-}
-
-
-QTEST_MAIN(tst_QContactManagerSymbianSim)
-#include "tst_qcontactmanagersymbiansim.moc"
+QTEST_MAIN(tst_SimCM)
+#include "tst_simcm.moc"

@@ -1,5 +1,5 @@
 TEMPLATE=app
-TARGET=tst_qcontactmanagersymbiansim
+TARGET=tst_simcm
 
 QT += testlib
 CONFIG += qtestlib
@@ -15,7 +15,7 @@ symbian: {
 	        ../../../../../src/contacts/filters \
 	        ../../../../../src/contacts/requests
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
-    SOURCES  += tst_qcontactmanagersymbiansim.cpp
+    SOURCES  += tst_simcm.cpp
     TARGET.CAPABILITY = ALL -TCB
     LIBS += -lqtcontacts
 }
