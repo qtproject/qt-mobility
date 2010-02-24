@@ -8,6 +8,7 @@ SOURCES += main.cpp\
         dialog.cpp
 
 HEADERS  += dialog.h
+RESOURCES = examples.qrc
 
 INCLUDEPATH += ../../src/systeminfo
 

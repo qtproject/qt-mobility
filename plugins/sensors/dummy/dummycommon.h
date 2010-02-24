@@ -59,5 +59,7 @@ private:
     int m_timerid;
 };
 
+qtimestamp getTimestamp();
+
 #endif
 

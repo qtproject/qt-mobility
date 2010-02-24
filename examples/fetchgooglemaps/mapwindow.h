@@ -46,7 +46,10 @@
 #include <QMainWindow>
 
 class QWebView;
+
+QT_BEGIN_NAMESPACE
 class QLabel;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 class QGeoPositionInfo;

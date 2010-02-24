@@ -1,20 +1,19 @@
-/**************************************************************************
+/****************************************************************************
 **
-** This file is part of Qt Creator
-**
-** Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
-**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** Commercial Usage
+** This file is part of the Qt Mobility Components.
 **
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Commercial License Agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and Nokia.
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
 **
 ** GNU Lesser General Public License Usage
-**
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
 ** Foundation and appearing in the file LICENSE.LGPL included in the
@@ -22,10 +21,23 @@
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** If you are unsure which license is appropriate for your use, please
-** contact the sales department at http://qt.nokia.com/contact.
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-**************************************************************************/
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
 
 #include "ResolveExpression.h"
 #include "LookupContext.h"
@@ -473,7 +485,7 @@ bool ResolveExpression::visit(CallAST *ast)
                 }
             }
 
-        } else if (Function *funTy = ty->asFunctionType()) {            
+        } else if (Function *funTy = ty->asFunctionType()) {
             if (maybeValidPrototype(funTy, actualArgumentCount))
                 addResult(funTy->returnType().simplified(), lastVisibleSymbol);
 
@@ -597,7 +609,7 @@ ResolveExpression::resolveBaseExpression(const QList<LookupItem> &baseResults, i
             const Name *arrowAccessOp = control()->operatorNameId(OperatorNameId::ArrowOp);
             const QList<Symbol *> candidates = resolveClass(namedTy->name(), result, _context);
 
-            foreach (Symbol *classObject, candidates) {                
+            foreach (Symbol *classObject, candidates) {
                 const QList<LookupItem> overloads = resolveMember(arrowAccessOp, classObject->asClass(),
                                                               namedTy->name());
 
@@ -715,16 +727,16 @@ ResolveExpression::resolveMember(const Name *memberName, Class *klass,
     foreach (Symbol *candidate, candidates) {
         FullySpecifiedType ty = candidate->type();
         const Name *unqualifiedNameId = className;
-        
+
         if (const QualifiedNameId *q = className->asQualifiedNameId())
             unqualifiedNameId = q->unqualifiedNameId();
-        
+
         if (const TemplateNameId *templId = unqualifiedNameId->asTemplateNameId()) {
             GenTemplateInstance::Substitution subst;
-            
+
             for (unsigned i = 0; i < templId->templateArgumentCount(); ++i) {
                 FullySpecifiedType templArgTy = templId->templateArgumentAt(i);
-                
+
                 if (i < klass->templateParameterCount()) {
                     const Name *templArgName = klass->templateParameterAt(i)->name();
                     if (templArgName && templArgName->identifier()) {
@@ -733,11 +745,11 @@ ResolveExpression::resolveMember(const Name *memberName, Class *klass,
                     }
                 }
             }
-            
+
             GenTemplateInstance inst(_context, subst);
             ty = inst(candidate);
         }
-        
+
         results.append(LookupItem(ty, candidate));
     }
 

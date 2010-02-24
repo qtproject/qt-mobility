@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = weatherinfo
+TARGET = weatherinfo_with_location
 
 HEADERS = ../satellitedialog/satellitedialog.h \
             ../flickrdemo/connectivityhelper.h

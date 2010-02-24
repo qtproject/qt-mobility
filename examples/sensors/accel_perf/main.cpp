@@ -78,8 +78,7 @@ void accel_perf::accel_speed_raw()
 {
     QAccelerometer sensor;
     //sensor.setIdentifier("dummy.accelerometer"); // We want the dummy accelerometer
-    sensor.connect();
-    QVERIFY(sensor.isAvailable());
+    QVERIFY(sensor.connect());
     sensor.setUpdatePolicy(QSensor::PolledUpdates);
     sensor.start();
     QBENCHMARK { sensor.poll(); }
@@ -89,8 +88,7 @@ void accel_perf::accel_speed_raw_nosignal()
 {
     QAccelerometer sensor;
     //sensor.setIdentifier("dummy.accelerometer"); // We want the dummy accelerometer
-    sensor.connect();
-    QVERIFY(sensor.isAvailable());
+    QVERIFY(sensor.connect());
     sensor.setUpdatePolicy(QSensor::PolledUpdates);
     sensor.setSignalEnabled(false);
     sensor.start();
@@ -101,8 +99,7 @@ void accel_perf::accel_speed_raw_signal()
 {
     QAccelerometer sensor;
     //sensor.setIdentifier("dummy.accelerometer"); // We want the dummy accelerometer
-    sensor.connect();
-    QVERIFY(sensor.isAvailable());
+    QVERIFY(sensor.connect());
     sensor.setUpdatePolicy(QSensor::PolledUpdates);
     receiver r;
     connect(&sensor, SIGNAL(readingChanged()), &r, SLOT(sensorChanged()));
@@ -114,8 +111,7 @@ void accel_perf::accel_speed_filter()
 {
     QAccelerometer sensor;
     //sensor.setIdentifier("dummy.accelerometer"); // We want the dummy accelerometer
-    sensor.connect();
-    QVERIFY(sensor.isAvailable());
+    QVERIFY(sensor.connect());
     sensor.setUpdatePolicy(QSensor::PolledUpdates);
     receiver r;
     sensor.addFilter(&r);
@@ -127,8 +123,7 @@ void accel_perf::accel_speed_filter_nosignal()
 {
     QAccelerometer sensor;
     //sensor.setIdentifier("dummy.accelerometer"); // We want the dummy accelerometer
-    sensor.connect();
-    QVERIFY(sensor.isAvailable());
+    QVERIFY(sensor.connect());
     sensor.setUpdatePolicy(QSensor::PolledUpdates);
     sensor.setSignalEnabled(false);
     receiver r;
@@ -141,8 +136,7 @@ void accel_perf::accel_speed_filter_signal()
 {
     QAccelerometer sensor;
     //sensor.setIdentifier("dummy.accelerometer"); // We want the dummy accelerometer
-    sensor.connect();
-    QVERIFY(sensor.isAvailable());
+    QVERIFY(sensor.connect());
     sensor.setUpdatePolicy(QSensor::PolledUpdates);
     receiver r;
     sensor.addFilter(&r);

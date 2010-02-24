@@ -47,16 +47,16 @@
 
 QTM_USE_NAMESPACE
 
-QML_DECLARE_TYPE(QOrientationSensor);
-QML_DEFINE_TYPE(Qt, 4, 6, OrientationSensor, QOrientationSensor);
+QML_DECLARE_TYPE(QOrientationSensor)
+QML_DEFINE_TYPE(Qt, 4, 6, OrientationSensor, QOrientationSensor)
 
-QML_DECLARE_TYPE(QSensorReading);
-QML_DEFINE_NOCREATE_TYPE(QSensorReading);
+QML_DECLARE_TYPE(QSensorReading)
+QML_DEFINE_NOCREATE_TYPE(QSensorReading)
 
-QML_DECLARE_TYPE(QOrientationReading);
+QML_DECLARE_TYPE(QOrientationReading)
 //### while we don't want to explicitly create this type in QML, we need to define it so
 //    we can specify enum values like OrientationReading.LeftUp
-QML_DEFINE_TYPE(Qt, 4, 6, OrientationReading, QOrientationReading);
+QML_DEFINE_TYPE(Qt, 4, 6, OrientationReading, QOrientationReading)
 
 class MainWidget : public QWidget
 {

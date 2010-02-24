@@ -1,0 +1,155 @@
+Qt Mobility 1.0.0 is a final minor release. It contains a number of API
+improvements and bug fixes since Qt Mobility 1.0.0-beta1. For
+more details, please refer to the online documentation included in this
+distribution. The documentation is also available online:
+
+  http://qt.nokia.com/doc/qtmobility-1.0
+
+Some of the changes listed in this file include issue tracking numbers
+corresponding to tasks in the Qt Bug Tracker or the Merge Request queue
+of the public source repository.
+
+Qt Bug Tracker: http://bugreports.qt.nokia.com
+Merge Request:  http://qt.gitorious.org
+
+
+****************************************************************************
+*                           General                                        *
+****************************************************************************
+
+New features
+------
+
+ - SomeClass, SomeOtherClass
+    * New classes for foo, bar and baz
+
+Optimizations
+------
+
+ - Optimized foo in QSomeClass
+    * See list of Important Behavior Changes below
+
+
+****************************************************************************
+*                   Important Behavior Changes                             *
+****************************************************************************
+
+ -
+
+
+****************************************************************************
+*                          Library                                         *
+****************************************************************************
+
+QtBearer
+------
+
+ - foo
+    * bar
+
+QtContacts
+------
+
+ - foo
+    * bar
+
+QtLocation
+------
+
+ - foo
+    * bar
+
+QtMessaging
+------
+
+ - Symbian specific fixes
+    * Notifications which are related to internal folders (0x100001
+      and 0x100002) are ignored.
+    * Notifications about messages which are "created and then
+      immediately removed" (before message can be read to QMessage) are
+      removed from notifications queue and are not ever tried to
+      deliver.
+    * Improved message filtering functionality in case when whole
+      message should be used for filtering but whole message can not
+      be read yet from message store.
+    * Notifications which can be delivered immediately will be
+      delivered without putting notifications into queue.
+    * The following filter now works:
+      registerNotificationFilter(
+          QMessageFilter::byStandardFolder(QMessage::InboxFolder) &
+          QMessageFilter::byType(QMessage::Mms))
+
+QtMedia
+------
+
+ - foo
+    * bar
+
+QtPublishSubscribe
+------
+
+ - foo
+    * bar
+
+QtServiceFramework
+------
+
+ - foo
+    * bar
+
+QtSystemInfo
+------
+
+ - foo
+    * bar
+
+Qt Mobility Plugins
+------
+
+ - foo
+    * bar
+
+
+****************************************************************************
+*                      Platform Specific Changes                           *
+****************************************************************************
+
+Qt Mobility for Embedded Linux
+------
+
+ -
+
+Qt Mobility for Unix (X11 and Mac OS X)
+------
+
+ - 
+
+Qt Mobility for Linux/X11
+------
+
+ -
+
+Qt Mobility for Windows
+------
+
+ -
+
+Qt Mobility for Mac OS X
+------
+
+ -
+
+
+
+Qt Mobility for Windows CE
+------
+
+ -
+
+
+****************************************************************************
+*                          Tools                                           *
+****************************************************************************
+
+ - tool
+    * foo

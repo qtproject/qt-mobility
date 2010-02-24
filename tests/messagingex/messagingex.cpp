@@ -50,7 +50,7 @@ MessagingEx::MessagingEx(QWidget* parent)
     connect(&m_manager, SIGNAL(messageAdded(const QMessageId&, const QMessageManager::NotificationFilterIdSet&)), this, SLOT(messageReceived(const QMessageId&)));
     connect(&m_manager, SIGNAL(messageRemoved(const QMessageId&, const QMessageManager::NotificationFilterIdSet&)), this, SLOT(messageRemoved(const QMessageId&)));
     connect(&m_manager, SIGNAL(messageUpdated(const QMessageId&, const QMessageManager::NotificationFilterIdSet&)), this, SLOT(messageUpdated(const QMessageId&)));
-    m_manager.registerNotificationFilter(QMessageFilter::byStandardFolder(QMessage::InboxFolder));    
+    m_manager.registerNotificationFilter(QMessageFilter::byStandardFolder(QMessage::InboxFolder));
     connect(&m_service, SIGNAL(messagesFound(const QMessageIdList&)), this, SLOT(messagesFound(const QMessageIdList&)));
     m_accountList = m_manager.queryAccounts(QMessageAccountFilter(), QMessageAccountSortOrder(), 10 , 0);
     for(int i = 0; i < m_accountList.count(); ++i){
@@ -341,28 +341,43 @@ void MessagingEx::on_sendMmsButton_clicked()
 
 void MessagingEx::messageReceived(const QMessageId& aId)
 {
-    QMessageBox msgBox;
-    msgBox.setStandardButtons(QMessageBox::Close);
-    msgBox.setText(tr("Message added : ")+aId.toString());
-    msgBox.exec();
-    m_service.show(aId);
+    bool canShow = true;
+    if (m_manager.message(aId).type() == QMessage::NoType) {
+        // Message can not be read/shown
+        // Wait message availability for 5 seconds at maximum
+        canShow = false;
+        int tries = 0;
+        QEventLoop* loop = new QEventLoop(this);
+        while (tries < 50) {
+            // => Wait for 0.1 seconds and try to read message again
+            QTimer::singleShot(100, loop, SLOT(quit()));
+            loop->exec();
+            if (m_manager.message(aId).type() != QMessage::NoType) {
+                // Message can be read/shown
+                canShow = true;
+                break;
+            } else {
+                // Message can not be read/shown
+                // => Continue waiting
+                tries++;
+            }
+        }
+        loop->disconnect();
+        loop->deleteLater();
+    }
+
+    if (canShow) {
+        m_service.show(aId);
+    }
 }
 
 void MessagingEx::messageRemoved(const QMessageId& aId)
 {
     Q_UNUSED(aId);
-    QMessageBox msgBox;
-    msgBox.setStandardButtons(QMessageBox::Close);
-    msgBox.setText(tr("Message removed : ")+aId.toString());
-    msgBox.exec();
 }
 
 void MessagingEx::messageUpdated(const QMessageId& aId)
 {
-    QMessageBox msgBox;
-    msgBox.setStandardButtons(QMessageBox::Close);
-    msgBox.setText(tr("Message updated : ")+aId.toString());
-    msgBox.exec();
     Q_UNUSED(aId);
 }
 
