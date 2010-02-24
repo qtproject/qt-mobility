@@ -171,7 +171,7 @@ QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, c
     foreach(QContactLocalId id, Ids){
       QContact *c;
       QContactManager::Error e;
-      c = contact(id, e);
+      c = getQContact(id, e);
       if (e == QContactManager::NoError)
 	contacts << *c;
     }
@@ -200,33 +200,19 @@ QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, c
   return rtn;
 }
 
-QContact* QContactABook::contact(const QContactLocalId& contactId, QContactManager::Error& error) const
+QContact* QContactABook::getQContact(const QContactLocalId& contactId, QContactManager::Error& error) const
 {
-  QContact *contact;
-  EContact *eContact = NULL; 
-  GList* contacts = NULL;
-  EBookQuery* query;
-  
-  query = e_book_query_field_test(E_CONTACT_UID, E_BOOK_QUERY_IS, m_localIds[contactId]);
-  contacts = osso_abook_aggregator_find_contacts(m_abookAgregator, query);
-  e_book_query_unref(query);
-  
-  QCM5_DEBUG << "Getting eContact with id " << m_localIds[contactId] << "local contactId is" << contactId;
- 
-  eContact = E_CONTACT(contacts->data);
-
-  if (g_list_length(contacts) != 1) {
-    qWarning("List is empty or several contacts have the same UID");
+  QContact *rtn;
+  OssoABookContact* aContact = getAContact(contactId);
+  if (!aContact) {
+    qWarning() << "Unable to get a valid AContact";
     error = QContactManager::DoesNotExistError;
     return new QContact;
   }
   
-  g_list_free(contacts);
-
-  // Convert eContact to QContact
-  contact = convert(eContact);
-  error = QContactManager::NoError;
-  return contact;
+  //Convert aContact => qContact
+  rtn = convert(E_CONTACT(aContact));
+  return rtn;
 }
 
 bool QContactABook::removeContact(const QContactLocalId& contactId, QContactManager::Error& error)
@@ -236,13 +222,20 @@ bool QContactABook::removeContact(const QContactLocalId& contactId, QContactMana
   bool ok = false;
   OssoABookRoster* roster = reinterpret_cast<OssoABookRoster*>(m_abookAgregator);
   EBook *book = osso_abook_roster_get_book(roster);
+  OssoABookContact* aContact = getAContact(contactId);
+  
+  // Delete the contact itself with all its roster contacts and photo.
+  //NOTE This perform an async operation. If aContact exists, ok var will most probably be true.
+  ok = osso_abook_contact_delete(aContact, book, NULL);
+  
+#if 0
+  // This code works syncronously but doesn't remove any photo nor roster contacts
   const char *id = m_localIds[contactId];
-  GError *gError = NULL;
-  
   QCM5_DEBUG << "Deleting contact id:" << id;
-  
+  GError *gError = NULL;
   ok = e_book_remove_contact(book, id, &gError);
   WARNING_IF_ERROR(gError);
+#endif  
   
   return ok;
 }
@@ -251,6 +244,7 @@ bool QContactABook::saveContact(QContact* contact, QContactManager::Error& error
 {
   Q_UNUSED(error);
   qDebug() << "SAVE";
+  
   return false;
 }
 
@@ -421,9 +415,6 @@ QContact* QContactABook::convert(EContact *eContact) const
   /* Id */
   contact->setId(createContactId(eContact));
   
-  /* DisplayLabel */
-  //detailList <<  createDisplayLabelDetail(eContact);
-  
   /* Address */
   QList<QContactAddress*> addressList = createAddressDetail(eContact);
   QContactAddress* address;
@@ -526,6 +517,29 @@ bool QContactABook::setDetailValues(const QVariantMap& data, QContactDetail* det
   if (detail->isEmpty())
     return false;
   return true;
+}
+
+OssoABookContact* QContactABook::getAContact(const QContactLocalId& contactId) const
+{
+  OssoABookContact* rtn = NULL;
+  GList* contacts = NULL;
+  EBookQuery* query;
+  
+  query = e_book_query_field_test(E_CONTACT_UID, E_BOOK_QUERY_IS, m_localIds[contactId]);
+  contacts = osso_abook_aggregator_find_contacts(m_abookAgregator, query);
+  e_book_query_unref(query);
+  
+  QCM5_DEBUG << "Getting aContact with id " << m_localIds[contactId] << "local contactId is" << contactId;
+  
+   if (g_list_length(contacts) != 1) {
+    qWarning("List is empty or several contacts have the same UID or contactId belongs to a roster contact.");
+    return NULL;
+  }
+  
+  rtn = A_CONTACT(contacts->data);
+  g_list_free(contacts);
+  
+  return rtn;
 }
 
 QContactId QContactABook::createContactId(EContact *eContact) const
@@ -989,5 +1003,5 @@ QContactUrl* QContactABook::createUrlDetail(EContact *eContact) const
 
 OssoABookContact* QContactABook::convert(QContact *contact) const
 {
-
+  Q_UNUSED(contact);
 }

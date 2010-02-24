@@ -127,7 +127,7 @@ QContact QContactMaemo5Engine::contact(const QContactLocalId& contactId, const Q
   Q_UNUSED(definitionRestrictions); //TODO
   Q_CHECK_PTR(d->m_abook);
   
-  QContact *contact = d->m_abook->contact(contactId, error);
+  QContact *contact = d->m_abook->getQContact(contactId, error);
   
   QString displayLabel = synthesizedDisplayLabel(*contact, error);
   

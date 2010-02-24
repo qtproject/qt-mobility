@@ -56,6 +56,7 @@
 #include <libmcclient/mc-account.h>
 
 extern "C" {
+        typedef void GtkWindow;
 	struct _OssoABookContact {
 		EContact parent;
 	};
@@ -92,16 +93,12 @@ extern "C" {
 	GList*              osso_abook_contact_get_roster_contacts
                                                                 (OssoABookContact *master_contact);
 	McProfile*          osso_abook_contact_get_profile      (OssoABookContact *contact);
-	
-	//TEST
+	gboolean            osso_abook_contact_delete           (OssoABookContact *contact,
+                                                                 EBook *book,
+                                                                 GtkWindow *window);
 	GList*              osso_abook_aggregator_find_contacts (OssoABookAggregator *aggregator,
                                                                  EBookQuery *query);
 	const char*         osso_abook_contact_get_display_name (OssoABookContact *contact);
-	GdkPixbuf*          osso_abook_contact_get_avatar_pixbuf
-                                                                (OssoABookContact *contact,
-                                                                 const char *username,
-                                                                 const char *vcard_field);
-	McAccount*          osso_abook_contact_get_account      (OssoABookContact *contact);
 	GdkPixbuf*          osso_abook_avatar_get_image_rounded (OssoABookAvatar *avatar,
                                                                  int width,
                                                                  int height,
@@ -143,7 +140,7 @@ public:
   
   QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
   //QList<QContactLocalId> contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-  QContact* contact(const QContactLocalId& contactId, QContactManager::Error& error) const;
+  QContact* getQContact(const QContactLocalId& contactId, QContactManager::Error& error) const;
   bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
   bool saveContact(QContact* contact, QContactManager::Error& error);
 
@@ -152,6 +149,8 @@ private:
   void initLocalIdHash();
   
   bool setDetailValues(const QVariantMap& data, QContactDetail* detail) const;
+  
+  OssoABookContact* getAContact(const QContactLocalId& contactId) const;
   
   /* Searching */
   EBookQuery* convert(const QContactFilter& filter) const;
