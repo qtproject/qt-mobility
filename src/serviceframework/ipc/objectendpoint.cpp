@@ -82,7 +82,7 @@ public:
 protected:
     void activated( const QList<QVariant>& args )
     {
-        qDebug() << signal() << "emitted.";
+        //qDebug() << signal() << "emitted.";
         endPoint->invokeRemote(metaIndex, args, QMetaType::Void);
     }
 private:
@@ -116,7 +116,6 @@ public:
                 if (method.methodType() == QMetaMethod::Signal) {
                     QByteArray signal = method.signature();
                     //add '2' for signal - see QSIGNAL_CODE
-                    qDebug() << "creating interceptor";
                     ServiceSignalIntercepter* intercept = 
                         new ServiceSignalIntercepter(service, "2"+signal, parent );
                     intercept->setMetaIndex(i);
@@ -159,6 +158,7 @@ public:
 //TODO list:
 /*
     - Why do we need typeIdent and serviceInstanceId on service side. The instance id should be sufficient.
+    - Consider merging invokeRemoteProperty() and invokeRemote()
 
 */
 
@@ -245,9 +245,12 @@ void ObjectEndPoint::newPackageReady()
             case QServicePackage::ObjectCreation:
                 objectRequest(p);
                 break;
-            case QServicePackage::SignalEmission:
             case QServicePackage::MethodCall:
                 methodCall(p);
+                break;
+            case QServicePackage::PropertyCall:
+                qDebug() << "Property calls not implemented";
+                //propertyCall(p);
                 break;
             default:
                 qWarning() << "Unknown package type received.";
@@ -255,10 +258,27 @@ void ObjectEndPoint::newPackageReady()
     }
 }
 
+void ObjectEndPoint::propertyCall(const QServicePackage& /*p*/)
+{
+    /*if(p.d->responseType == QServicePackage::NotAResponse) {
+        QByteArray data = p.d->payload.toByteArray();
+        QDataStream stream(&data, QIODevice::ReadOnly);
+        int metaIndex = -1;
+        QVariantList args;
+        stream >> metaIndex;
+        stream >> args;
+
+        QMetaMethod method = service->metaObject()->method(metaIndex);
+        const bool isSignal = (method.methodType() == QMetaMethod::Signal);
+        const int returnType = QMetaType::type(method.typeName());
+    } else {
+    }*/
+}
+
 void ObjectEndPoint::objectRequest(const QServicePackage& p)
 {
     if (p.d->responseType != QServicePackage::NotAResponse ) {
-        qDebug() << p;
+        //qDebug() << p;
         Response* response = openRequests()->value(p.d->messageId);
         if (p.d->responseType == QServicePackage::Failed) {
             response->result = 0;
@@ -277,7 +297,7 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
         QTimer::singleShot(0, this, SIGNAL(pendingRequestFinished()));
 
     } else {
-        qDebug() << p;
+        //qDebug() << p;
         QServicePackage response = p.createResponse();
         InstanceManager* m = InstanceManager::instance();
 
@@ -316,7 +336,7 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
 void ObjectEndPoint::methodCall(const QServicePackage& p)
 {
     if (p.d->responseType == QServicePackage::NotAResponse ) {
-        qDebug() << p;
+        //qDebug() << p;
         QByteArray data = p.d->payload.toByteArray();
         QDataStream stream(&data, QIODevice::ReadOnly);
         int metaIndex = -1;
@@ -410,7 +430,7 @@ void ObjectEndPoint::methodCall(const QServicePackage& p)
         if (!result)
             qWarning( "%s::%s cannot be called.", service->metaObject()->className(), method.signature());
     } else {
-        qDebug() << p;
+        //qDebug() << p;
         Response* response = openRequests()->value(p.d->messageId);
         if (p.d->responseType == QServicePackage::Failed) {
             response->result = 0;
@@ -429,8 +449,60 @@ void ObjectEndPoint::methodCall(const QServicePackage& p)
 
 /*!
     Will block if return value expected
+    Handles property calls
 */
-QVariant ObjectEndPoint::invokeRemote(int metaIndex, QVariantList args, int returnType)
+QVariant ObjectEndPoint::invokeRemoteProperty(int metaIndex, const QVariant& arg, int /*returnType*/, QMetaObject::Call c )
+{
+    QServicePackage p;
+    p.d = new QServicePackagePrivate();
+    p.d->packageType = QServicePackage::PropertyCall;
+    p.d->messageId = QUuid::createUuid();
+
+    QByteArray data;
+    QDataStream stream(&data, QIODevice::WriteOnly|QIODevice::Append);
+    stream << metaIndex << arg;
+    p.d->payload = data;
+
+    if (c == QMetaObject::ReadProperty) {
+        //create response and block for answer
+        Response* response = new Response();
+        openRequests()->insert(p.d->messageId, response);
+        
+        dispatch->writePackage(p);
+        waitForResponse(p.d->messageId);
+   
+        QVariant result;
+        QVariant* resultPointer; 
+        if (response->isFinished) {
+            if (response->result == 0) {
+                qWarning() << "Request for remote service failed";
+            } else {
+                resultPointer = reinterpret_cast<QVariant* >(response->result);
+                result = (*resultPointer);
+            }
+        } else {
+            qDebug() << "response passed but not finished";
+        }
+         
+        openRequests()->take(p.d->messageId);
+        delete resultPointer;
+        delete response;
+
+        return result;
+
+
+    } else {
+        dispatch->writePackage(p);
+    }
+
+    return QVariant();
+}
+
+/*!
+    Will block if return value expected
+    Handles signal/slots
+*/
+QVariant ObjectEndPoint::invokeRemote(int metaIndex, const QVariantList& args, int returnType)
 {
     QServicePackage p;
     p.d = new QServicePackagePrivate();

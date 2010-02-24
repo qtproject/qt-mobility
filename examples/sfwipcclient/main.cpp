@@ -48,8 +48,17 @@ public slots:
                 type = "method"; break;
             }
             qDebug() << "    " << i << "." << method.signature() << type;
-
         }
+        qDebug() << "Properties:" << mo->propertyCount()- mo->propertyOffset() << "(" << mo->propertyCount() << ")";
+        for(int i=0; i< mo->propertyCount(); i++) {
+            QMetaProperty property = mo->property(i);
+            QString info = "Readable: %1 Resettable: %2 Writeable: %3 Designable: %4 Scriptable: %5 User: %6 Stored: %7 Constant: %8 Final: %9 HasNotify: %10";
+            info = info.arg(property.isReadable()).arg(property.isResettable()).arg(property.isWritable());
+            info = info.arg(property.isDesignable()).arg(property.isScriptable()).arg(property.isUser());
+            info = info.arg(property.isStored()).arg(property.isConstant()).arg(property.isFinal()).arg(property.hasNotifySignal());
+            qDebug() << "    " << i << "." << property.name() << "Type:" << property.typeName() << info;
+        }
+
 
         QTimer::singleShot(1000, this, SLOT(useService()));
     }
@@ -137,6 +146,10 @@ public slots:
     {
         qDebug() << "Triggering signal on client side";
         emit clientsignal();
+
+        qDebug() << "^^^^^^^^^^^^^^^^^^^^^^";
+        qDebug() << "Property value:" << service->property("value");
+        service->setProperty("value", "new value");
 
         QTimer::singleShot(5000, this, SLOT(killService()));
     }

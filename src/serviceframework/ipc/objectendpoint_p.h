@@ -66,8 +66,11 @@ public:
 
     void objectRequest(const QServicePackage& p);
     void methodCall(const QServicePackage& p);
+    void propertyCall(const QServicePackage& p);
 
-    QVariant invokeRemote(int metaIndex, QVariantList args, int returnType);
+    QVariant invokeRemote(int metaIndex, const QVariantList& args, int returnType);
+    QVariant invokeRemoteProperty(int metaIndex, const QVariant& arg, int returnType, QMetaObject::Call c);
+
 
 Q_SIGNALS:
     void pendingRequestFinished();

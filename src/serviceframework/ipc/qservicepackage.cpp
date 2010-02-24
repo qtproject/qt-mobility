@@ -148,14 +148,14 @@ QDebug operator<<(QDebug dbg, const QServicePackage& p)
     if (p.isValid()) {
         QString type;
         switch(p.d->packageType) {
-            case QServicePackage::SignalEmission:
-                type = QString("SignalEmission");
-                break;
             case QServicePackage::ObjectCreation:
                 type = QString("ObjectCreation");
                 break;
             case QServicePackage::MethodCall:
                 type = QString("MethodCall");
+                break;
+            case QServicePackage::PropertyCall:
+                type = QString("PropertyCall");
                 break;
             default:
                 break;

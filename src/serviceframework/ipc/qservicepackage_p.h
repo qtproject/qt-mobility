@@ -66,9 +66,9 @@ public:
     ~QServicePackage();
 
     enum Type {
-        SignalEmission = 0,
-        ObjectCreation,
-        MethodCall
+        ObjectCreation = 0,
+        MethodCall,
+        PropertyCall
     };
 
     enum ResponseType {

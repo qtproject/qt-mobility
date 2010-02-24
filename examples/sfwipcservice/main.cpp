@@ -16,12 +16,35 @@ class TestService : public QObject
 {
     Q_OBJECT
     Q_SERVICE(TestService, "com.nokia.qt.interface", "3.4")
+    Q_PROPERTY(QString value READ value WRITE setValue RESET resetValue NOTIFY valueChanged SCRIPTABLE true DESIGNABLE true STORED true); 
 public:
 
     TestService(QObject* parent = 0) 
         : QObject(parent)
     {
     }
+
+    QString value()
+    {
+        qDebug() << "Reading property";
+        return m_value;
+    }
+
+    void setValue(const QString& value)
+    {
+        qDebug() << "Writing property";
+        m_value = value;
+        emit valueChanged(m_value);
+    }
+
+    void resetValue()
+    {
+        qDebug() << "Resetting value";
+        m_value = "<empty>";
+        emit valueChanged(m_value);
+    }
+
+
 
     Q_INVOKABLE QString testFunctionWithReturnValue(int input)
     {
@@ -49,6 +72,7 @@ public:
 Q_SIGNALS:
     void signalWithIntParam(int);
     void signalWithVariousParam(QVariant,QString,QServiceFilter);
+    void valueChanged(QString);
 public slots:
 
     Q_INVOKABLE void triggerSignalWithIntParam()
@@ -98,13 +122,39 @@ public slots:
     {
         qDebug() << "TestService::testSlotWithUnknownArg(const QServiceInterfaceDescriptor& d)";
     }
+private:
+    QString m_value;
 
 };
 class TestService2 : public QObject 
 {
     Q_OBJECT
     Q_SERVICE(TestService2, "com.nokia.qt.interface", "3.5")
+
+    Q_PROPERTY(QString value READ value WRITE setValue RESET resetValue NOTIFY valueChanged SCRIPTABLE true DESIGNABLE true STORED true); 
 public:
+
+    QString value()
+    {
+        qDebug() << "Reading property";
+        return m_value;
+    }
+
+    void setValue(const QString& value)
+    {
+        qDebug() << "Writing property";
+        m_value = value;
+        emit valueChanged(m_value);
+    }
+
+    void resetValue()
+    {
+        qDebug() << "Resetting value";
+        m_value = "<empty>";
+        emit valueChanged(m_value);
+    }
+
+
 
     /*Q_INVOKABLE*/ TestService2(QObject* parent = 0) 
         : QObject(parent)
@@ -137,6 +187,7 @@ public:
 Q_SIGNALS:
     void signalWithIntParam(int);
     void signalWithVariousParam(QVariant,QString,QServiceFilter);
+    void valueChanged(QString);
 
 public slots:
     
@@ -187,9 +238,8 @@ public slots:
     {
         qDebug() << "TestService2::testSlotWithUnknownArg(const QServiceInterfaceDescriptor& d)";
     }
-Q_SIGNALS:
-    //void signalWithIntParam1(int);
-    //void signalWithIntParam4(int);
+private:
+    QString m_value;
 };
 
 void unregisterExampleService()

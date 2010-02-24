@@ -150,9 +150,49 @@ int QServiceProxy::qt_metacall(QMetaObject::Call c, int id, void **a)
                 if (a[0]) *reinterpret_cast< QVariant*>(a[0]) = result;
             }
         }
-        
-
         id-=mcount;
+    } else if ( c == QMetaObject::ReadProperty 
+            || c == QMetaObject::WriteProperty
+            || c == QMetaObject::ResetProperty ) {
+        const int pCount = d->meta->propertyCount() - d->meta->propertyOffset();
+        const int metaIndex = id + d->meta->propertyOffset();
+
+        QMetaProperty property = d->meta->property(metaIndex);
+        if (property.isValid()) {
+            int pType = property.type();
+            if (pType == QVariant::UserType)
+                pType = QMetaType::type(property.typeName());
+
+            QVariant arg;
+            if ( c == QMetaObject::WriteProperty ) {
+                if (pType == QVariant::Invalid && QByteArray(property.typeName()) == "QVariant")
+                    arg =  *reinterpret_cast<const QVariant(*)>(a[0]);
+                else if (pType == 0) {
+                    qWarning("%s: property %s has unkown type", property.name(), property.typeName());
+                    return id;
+                } else {
+                    arg = QVariant(pType, a[0]);
+                }
+            }
+
+            QVariant result;
+            if (QMetaObject::ReadProperty)
+                QVariant result = d->endPoint->invokeRemoteProperty(metaIndex, arg, pType, c);
+            else 
+                d->endPoint->invokeRemoteProperty(metaIndex, arg, pType, c);
+
+            if (pType != 0) {
+                QByteArray buffer;
+                QDataStream stream(&buffer, QIODevice::ReadWrite);
+                QMetaType::save(stream, pType, result.constData());
+                stream.device()->seek(0);
+                QMetaType::load(stream, pType, a[0]);
+            } else {
+                if (a[0]) *reinterpret_cast< QVariant*>(a[0]) = result;
+            }
+
+        } 
+        id-=pCount;
     } else {
         //TODO
         qWarning() << "MetaCall type" << c << "not yet handled";
