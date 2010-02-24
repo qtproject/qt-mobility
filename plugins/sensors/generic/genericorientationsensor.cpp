@@ -72,7 +72,7 @@ void genericorientationsensor::poll()
 
 bool genericorientationsensor::filter(QAccelerometerReading *reading)
 {
-    QOrientationReading::Orientation o = QOrientationReading::Undefined;
+    QOrientationReading::Orientation o = m_reading.orientation();
 
     if (reading->x() < -7.35) {
         o = QOrientationReading::LeftUp;

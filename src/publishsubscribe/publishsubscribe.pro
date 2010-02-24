@@ -59,13 +59,28 @@ unix:!symbian {
     } else {
         QT += network
 
-        HEADERS += qsystemreadwritelock_p.h \
-           	   qmallocpool_p.h \
-		   qpacketprotocol_p.h
-        SOURCES += sharedmemorylayer.cpp \
-           	   qmallocpool.cpp \
-                   qsystemreadwritelock_unix.cpp \
-		   qpacketprotocol.cpp
+        !mac { 
+            HEADERS += gconflayer_linux_p.h
+            SOURCES += gconflayer_linux.cpp
+
+            #As a workaround build GConfItem wrapper class with the project
+            HEADERS += gconfitem.h
+            SOURCES += gconfitem.cpp
+
+            CONFIG += link_pkgconfig
+            PKGCONFIG += glib-2.0 gconf-2.0
+        }
+
+        !maemo5 {
+            #do not use shared memory layer on Maemo5
+            HEADERS += qsystemreadwritelock_p.h \
+                       qmallocpool_p.h \
+                       qpacketprotocol_p.h
+            SOURCES += sharedmemorylayer.cpp \
+                       qmallocpool.cpp \
+                       qsystemreadwritelock_unix.cpp \
+                       qpacketprotocol.cpp
+        }
     }
 }
 

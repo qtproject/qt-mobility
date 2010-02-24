@@ -1,10 +1,4 @@
-######################################################################
-#
-# Mobility API project - plugins
-#
-######################################################################
-
-include($$QT_MOBILITY_BUILD_TREE/config.pri)
+include(../staticconfig.pri)
 
 TEMPLATE = subdirs
 

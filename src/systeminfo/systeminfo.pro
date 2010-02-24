@@ -54,8 +54,8 @@ unix: {
             SOURCES += qhalservice_linux.cpp
             HEADERS += qhalservice_linux_p.h
                 contains(networkmanager_enabled, yes): {
-                    SOURCES += qnetworkmanagerservice_linux.cpp
-                    HEADERS += qnetworkmanagerservice_linux_p.h
+                    SOURCES += qnetworkmanagerservice_linux.cpp qnmdbushelper.cpp
+                    HEADERS += qnetworkmanagerservice_linux_p.h qnmdbushelper_p.h
                 } else {
                 DEFINES += QT_NO_NETWORKMANAGER
                 }
@@ -85,7 +85,7 @@ unix: {
         HEADERS += qsysteminfo_mac_p.h
         LIBS += -framework SystemConfiguration -framework CoreFoundation \
          -framework IOKit -framework ApplicationServices -framework Foundation \
-         -framework CoreServices
+         -framework CoreServices -framework ScreenSaver -framework QTKit
 
             contains(corewlan_enabled, yes) {
                      isEmpty(QMAKE_MAC_SDK) {
@@ -97,9 +97,11 @@ unix: {
                  }
             
                 !isEmpty(SDK6) {
-                        LIBS += -framework CoreWLAN  -framework IOBluetooth
+                        LIBS += -framework CoreWLAN  -framework IOBluetooth -framework CoreLocation
                         DEFINES += MAC_SDK_10_6
                 }
+           } else {
+               CONFIG += no_keywords
            }
     
     TEMPLATE = lib

@@ -102,6 +102,8 @@ CMTMEngine::CMTMEngine()
  : CActive(EPriorityStandard)
 {
     iFsSession.Connect();
+    CActiveScheduler::Add(this);
+    iTimer.CreateLocal();
 
     TRAPD(err, 
         ipMsvSession = CMsvSession::OpenSyncL(*this);
@@ -182,7 +184,9 @@ CMTMEngine::~CMTMEngine()
         CleanupStack::PopAndDestroy(pFileMan);
         );
     Q_UNUSED(error)
-    
+
+    Cancel();
+    iTimer.Close();
     iFsSession.Close();
 }
 
@@ -2519,11 +2523,9 @@ void CMTMEngine::sendSMSL(QMessage &message)
         User::Leave(KErrNotReady);
     }
     
-    bool messageCreated = false;
     if (!message.id().isValid()) {
         QMessagePrivate::setStandardFolder(message, QMessage::DraftsFolder);
         storeSMSL(message);
-        messageCreated = true;
     }
     
     long int messageId = message.id().toString().toLong();
@@ -3222,7 +3224,7 @@ void CMTMEngine::updateEmailL(QMessage &message)
     CMsvStore* store = entry->EditStoreL();
     CleanupStack::PushL(store);
     CImHeader* emailEntry = CImHeader::NewLC();
-    TRAPD(err, emailEntry->RestoreL(*store));
+    TRAP_IGNORE(emailEntry->RestoreL(*store));
     mime->StoreL(*store);
     emailEntry->SetSubjectL(TPtrC(reinterpret_cast<const TUint16*>(message.subject().utf16())));
     
@@ -4403,6 +4405,11 @@ void CMTMEngine::unregisterNotificationFilter(QMessageManager::NotificationFilte
 
 void CMTMEngine::notification(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFolderId, TMsvId aMessageId)
 {
+    if (aFolderId == 0x100001 || aFolderId == 0x100002) { // MMS Notifications Folder
+        // Ignore MMS Notifications <=> Wait until actual MMS message has been received
+        return;
+    }
+
     QMessageManager::NotificationFilterIdSet matchingFilters;
 
     // Copy the filter map to protect against modification during traversal
@@ -4410,6 +4417,7 @@ void CMTMEngine::notification(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFo
     QMap<int, QMessageFilter>::const_iterator it = filters.begin(), end = filters.end();
     QMessage message;
     bool messageRetrieved = false;
+    bool unableToReadAndFilterMessage = false;
     for ( ; it != end; ++it) {
         const QMessageFilter &filter(it.value());
 
@@ -4443,7 +4451,13 @@ void CMTMEngine::notification(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFo
                 }       
             } else if (!messageRetrieved) {
                 message = this->message(QMessageId(QString::number(aMessageId)));
-                messageRetrieved = true;
+                if (message.type() == QMessage::NoType) {
+                    unableToReadAndFilterMessage = true;
+                    matchingFilters.clear();
+                    break;
+                } else {
+                    messageRetrieved = true;
+                }
             }
             if (privateMessageFilter->filter(message)) {
                 matchingFilters.insert(it.key());
@@ -4451,25 +4465,67 @@ void CMTMEngine::notification(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFo
         }
     }
 
+    QMessageStorePrivate::NotificationType notificationType = QMessageStorePrivate::Removed;
+    if (aEvent == EMsvEntriesCreated) {
+        notificationType = QMessageStorePrivate::Added; 
+    } else if (aEvent == EMsvEntriesChanged || aEvent == EMsvEntriesMoved) {
+        notificationType = QMessageStorePrivate::Updated; 
+    } if (aEvent == EMsvEntriesDeleted) {
+        notificationType = QMessageStorePrivate::Removed; 
+    }
+
     if (matchingFilters.count() > 0) {
-        MessageEvent event;
-        if (aEvent == EMsvEntriesCreated) {
-            event.notificationType = QMessageStorePrivate::Added; 
-            //ipMessageStorePrivate->messageNotification(QMessageStorePrivate::Added, QMessageId(QString::number(aMessageId)), matchingFilters);
-        } else if (aEvent == EMsvEntriesChanged || aEvent == EMsvEntriesMoved) {
-            event.notificationType = QMessageStorePrivate::Updated; 
-            //ipMessageStorePrivate->messageNotification(QMessageStorePrivate::Updated, QMessageId(QString::number(aMessageId)), matchingFilters);
-        } if (aEvent == EMsvEntriesDeleted) {
-            event.notificationType = QMessageStorePrivate::Removed; 
-            //ipMessageStorePrivate->messageNotification(QMessageStorePrivate::Removed, QMessageId(QString::number(aMessageId)), matchingFilters);
+        // Check if there are already pending events for
+        // currently handled MessageId
+        bool pendingEventsForCurrentlyHandledMessageId = false;
+        for (int i=0; i < iUndeliveredMessageEvents.count(); i++) {
+            if (iUndeliveredMessageEvents[i].messageId == aMessageId) {
+                pendingEventsForCurrentlyHandledMessageId = true;
+                break;
+            }
         }
-        event.messageId = aMessageId;
-        event.matchingFilters = matchingFilters;
-        if (iUndeliveredMessageEvents.count() == 0) {
-            iDeliveryTriesCounter = 0;
+        if (pendingEventsForCurrentlyHandledMessageId) {
+            // There are pending notification events for this messageId.
+            // => Add new notification event to notification event queue to
+            //    make sure that all events will be delivered in correct order.
+            MessageEvent event;
+            event.messageId = aMessageId;
+            event.notificationType = notificationType;
+            event.matchingFilters = matchingFilters;
+            event.unfiltered = false;
+            if (iUndeliveredMessageEvents.count() == 0) {
+                iDeliveryTriesCounter = 0;
+            }
+            iUndeliveredMessageEvents.append(event);
+            tryToDeliverMessageNotifications();
+        } else {
+            // No pending notification events for this messageId.
+            // => Deliver notification immediately
+            ipMessageStorePrivate->messageNotification(notificationType,
+                                                       QMessageId(QString::number(aMessageId)),
+                                                       matchingFilters);
         }
-        iUndeliveredMessageEvents.append(event);
-        tryToDeliverMessageNotifications();
+    } else if (unableToReadAndFilterMessage) {
+        if (notificationType != QMessageStorePrivate::Removed) {
+            MessageEvent event;
+            event.messageId = aMessageId;
+            event.notificationType = notificationType;
+            event.unfiltered = true;
+            if (iUndeliveredMessageEvents.count() == 0) {
+                iDeliveryTriesCounter = 0;
+            }
+            iUndeliveredMessageEvents.append(event);
+            tryToDeliverMessageNotifications();
+        } else {
+            // Message was removed before reading was possible
+            // => All avents related to removed messageId can be ignored
+            // => Remove all related events from undelivered message events queue
+            for (int i=iUndeliveredMessageEvents.count()-1; i >= 0; i--) {
+                if (iUndeliveredMessageEvents[i].messageId == aMessageId) {
+                    iUndeliveredMessageEvents.removeAt(i);
+                }
+            }
+        }
     }
 }
 
@@ -4480,24 +4536,42 @@ void CMTMEngine::tryToDeliverMessageNotifications()
         while (count--) {
             // Try to deliver the oldest message event notification first
             MessageEvent event = iUndeliveredMessageEvents[0];
-            TInt error = KErrNone;
-            if (event.notificationType != QMessageStorePrivate::Removed) {
-                TRAP(error, 
-                    // Check if new message entry is ready to be read
-                    CMsvEntry* pReceivedEntry = ipMsvSession->GetEntryL(event.messageId);
-                    delete pReceivedEntry;
-                    );
+            bool eventHandlingPossible = true;
+            if (event.notificationType != QMessageStorePrivate::Removed && event.unfiltered) {
+                QMessage message = this->message(QMessageId(QString::number(event.messageId)));
+                if (message.type() == QMessage::NoType) {
+                    eventHandlingPossible = false;
+                } else {
+                    event.matchingFilters.clear();
+                    // Copy the filter map to protect against modification during traversal
+                    QMap<int, QMessageFilter> filters(_filters);
+                    QMap<int, QMessageFilter>::const_iterator it = filters.begin(), end = filters.end();
+                    for ( ; it != end; ++it) {
+                        const QMessageFilter &filter(it.value());
+                        if (filter.isEmpty()) {
+                            // Empty filter matches to all messages
+                            event.matchingFilters.insert(it.key());
+                        } else {
+                            QMessageFilterPrivate* privateMessageFilter = QMessageFilterPrivate::implementation(filter);
+                            if (privateMessageFilter->filter(message)) {
+                                event.matchingFilters.insert(it.key());
+                            }
+                        }
+                    }
+                }
             }
     
-            if (error == KErrNone) {
+            if (eventHandlingPossible) {
                 // New message entry was ready to be read
                 // Remove message event from queue
                 iUndeliveredMessageEvents.removeFirst();
                 iDeliveryTriesCounter = 0;
-                // Deliver message event notification
-                ipMessageStorePrivate->messageNotification(event.notificationType,
-                                                           QMessageId(QString::number(event.messageId)),
-                                                           event.matchingFilters);
+                if (event.matchingFilters.count() > 0) { 
+                    // Deliver message event notification
+                    ipMessageStorePrivate->messageNotification(event.notificationType,
+                                                               QMessageId(QString::number(event.messageId)),
+                                                               event.matchingFilters);
+                }
             } else {
                 // New message entry was NOT ready to be read
                 iDeliveryTriesCounter++;

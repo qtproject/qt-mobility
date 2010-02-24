@@ -49,8 +49,10 @@
 #include <QtCore/qbasictimer.h>
 #include <QtDeclarative/qmlgraphicsitem.h>
 
-class QTimerEvent;
+QT_BEGIN_NAMESPACE
 class QVideoSurfaceFormat;
+class QTimerEvent;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 

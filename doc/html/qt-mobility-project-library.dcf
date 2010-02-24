@@ -55,6 +55,7 @@
         <keyword ref="qaccelerometerreading.html#setX">setX</keyword>
         <keyword ref="qaccelerometerreading.html#setY">setY</keyword>
         <keyword ref="qaccelerometerreading.html#setZ">setZ</keyword>
+        <keyword ref="qaccelerometerreading.html#value">value</keyword>
         <section ref="qaccelerometerreading-members.html" title="List of all members"/>
     </section>
     <section ref="qambientlightfilter.html" title="QAmbientLightFilter Class Reference">
@@ -2731,7 +2732,8 @@
         <keyword ref="qsensor.html#UpdatePolicy-enum">QSensor::FrequentUpdates</keyword>
         <keyword ref="qsensor.html#UpdatePolicy-enum">QSensor::InfrequentUpdates</keyword>
         <keyword ref="qsensor.html#UpdatePolicy-enum">QSensor::PolledUpdates</keyword>
-        <keyword ref="qsensor.html#isAvailable-prop">isAvailable</keyword>
+        <keyword ref="qsensor.html#connected-prop">connected</keyword>
+        <keyword ref="qsensor.html#connected-prop">isConnected</keyword>
         <keyword ref="qsensor.html#reading-prop">reading</keyword>
         <keyword ref="qsensor.html#running-prop">running</keyword>
         <keyword ref="qsensor.html#running-prop">isActive</keyword>
@@ -2798,6 +2800,8 @@
         <keyword ref="qsensorreading.html">QSensorReading</keyword>
         <keyword ref="qsensorreading.html#timestamp-prop">timestamp</keyword>
         <keyword ref="qsensorreading.html#setTimestamp">setTimestamp</keyword>
+        <keyword ref="qsensorreading.html#value">value</keyword>
+        <keyword ref="qsensorreading.html#valueCount">valueCount</keyword>
         <keyword ref="qsensorreading.html#DECLARE_READING">DECLARE_READING</keyword>
         <keyword ref="qsensorreading.html#IMPLEMENT_READING">IMPLEMENT_READING</keyword>
         <section ref="qsensorreading-members.html" title="List of all members"/>
@@ -3610,6 +3614,9 @@
     <section ref="sensors-api.html" title="Sensors API (technology preview)">
         <keyword ref="sensors-api.html">Sensors API (technology preview)</keyword>
     </section>
+    <section ref="sensors-backend.html" title="Sensors Backend">
+        <keyword ref="sensors-backend.html">Sensors Backend</keyword>
+    </section>
     <section ref="servicefw.html" title="Service Frameworks Classes">
         <keyword ref="servicefw.html">Service Frameworks Classes</keyword>
     </section>
@@ -3669,11 +3676,17 @@
     <section ref="filemanagerplugin.html" title="File Manager Plugin Example">
         <keyword ref="filemanagerplugin.html">File Manager Plugin Example</keyword>
     </section>
+    <section ref="flickrdemo.html" title="Flickr Demo Example">
+        <keyword ref="flickrdemo.html">Flickr Demo Example</keyword>
+    </section>
     <section ref="incomingcalls.html" title="Incoming Call Simulator">
         <keyword ref="incomingcalls.html">Incoming Call Simulator</keyword>
     </section>
     <section ref="keepintouch.html" title="Keep in Touch Example">
         <keyword ref="keepintouch.html">Keep in Touch Example</keyword>
+    </section>
+    <section ref="lightmaps.html" title="LightMap Example">
+        <keyword ref="lightmaps.html">LightMap Example</keyword>
     </section>
     <section ref="logfilepositionsource.html" title="Log File Position Source Example">
         <keyword ref="logfilepositionsource.html">Log File Position Source Example</keyword>
@@ -3728,6 +3741,9 @@
     </section>
     <section ref="sysinfo.html" title="System Information Example">
         <keyword ref="sysinfo.html">System Information Example</keyword>
+    </section>
+    <section ref="weatherinfo.html" title="Weather Info Example">
+        <keyword ref="weatherinfo.html">Weather Info Example</keyword>
     </section>
     <section ref="writemessage.html" title="Write Message Example">
         <keyword ref="writemessage.html">Write Message Example</keyword>

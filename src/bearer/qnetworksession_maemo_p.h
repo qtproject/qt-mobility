@@ -72,10 +72,11 @@ public:
     QNetworkSessionPrivate() : 
         tx_data(0), rx_data(0), m_activeTime(0), isOpen(false),
 #ifdef Q_WS_MAEMO_6
-        connectFlags(ICD_CONNECTION_FLAG_USER_EVENT)
+        connectFlags(ICD_CONNECTION_FLAG_USER_EVENT),
 #else
-        connectFlags(0)
+        connectFlags(0),
 #endif
+        currentState(QNetworkSession::Invalid)
     {
     }
 
@@ -121,6 +122,7 @@ private Q_SLOTS:
     void do_open();
     void networkConfigurationsChanged();
     void configurationChanged(const QNetworkConfiguration &config);
+    void updateProxies(QNetworkSession::State newState);
 
 private:
     QNetworkConfigurationManager manager;
@@ -162,6 +164,10 @@ private:
     void updateIdentifier(QString &newId);
     quint64 getStatistics(bool sent) const;
     void cleanupSession(void);
+
+    void updateProxyInformation();
+    void clearProxyInformation();
+    QNetworkSession::State currentState;
 };
 
 QTM_END_NAMESPACE
