@@ -262,8 +262,7 @@ bool ModestEngine::sendEmail(QMessage &message)
         return false;
     }
 
-//     senderInfo["account-name"] = accountId.toString();
-    senderInfo["account-name"] = "GMail_MikaN75ID";
+    senderInfo["account-name"] = accountId.toString();
 
     address = message.from();
     value = address.recipient();
