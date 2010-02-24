@@ -1293,19 +1293,15 @@ bool QContactManagerEngine::saveContacts(QList<QContact>* contacts, QMap<int, QC
   \a contactIds.  Returns true if all contacts were removed successfully,
   otherwise false.
 
+  Any contact that was removed successfully will have the relationships
+  in which it was involved removed also.
+
   The manager might populate \a errorMap (the map of indices of the \a contactIds list to
   the error which occurred when saving the contact at that index) for every
   index for which the contact could not be removed, if it is able.
   The \l QContactManager::error() function will
   only return \c QContactManager::NoError if all contacts were removed
   successfully.
-
-  For each contact that was removed succesfully, the corresponding
-  id in the \a contactIds list will be retained but set to zero.  The id of contacts
-  that were not successfully removed will be left alone.
-
-  Any contact that was removed successfully will have the relationships
-  in which it was involved removed also.
 
   Any errors encountered during this operation should be stored to
   \a error.
@@ -1314,13 +1310,8 @@ bool QContactManagerEngine::saveContacts(QList<QContact>* contacts, QMap<int, QC
  */
 bool QContactManagerEngine::removeContacts(QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error)
 {
-    if(errorMap) {
+    if (errorMap) {
         errorMap->clear();
-    }
-
-    if (!contactIds) {
-        error = QContactManager::BadArgumentError;
-        return false;
     }
 
     QContactManager::Error functionError = QContactManager::NoError;
@@ -1342,12 +1333,13 @@ bool QContactManagerEngine::removeContacts(QList<QContactLocalId>& contactIds, Q
   Returns a pruned or modified version of the \a original contact which is valid and can be saved in the manager.
   The returned contact might have entire details removed or arbitrarily changed.
  */
-QContact QContactManager::conformingContact(const QContact& original)
+QContact QContactManagerEngine::conformingContact(const QContact& original, QContactManager::Error& error)
 {
     QContact conforming;
     QContactManager::Error tempError;
+    QList<QString> uniqueDefinitionIds;
     QList<QContactDetail> allDetails = original.details();
-    QMap<QString, QContactDetailDefinition> defs = detailDefinitions(original.type());
+    QMap<QString, QContactDetailDefinition> defs = detailDefinitions(original.type(), tempError);
     for (int j = 0; j < allDetails.size(); j++) {
         // check that the detail conforms to the definition in this manager.
         // if so, then add it to the conforming contact to be returned.  if not, prune it.
@@ -1413,6 +1405,10 @@ QContact QContactManager::conformingContact(const QContact& original)
         }
     }
 
+    if (!conforming.isEmpty())
+        error = QContactManager::NoError;
+    else
+        error = QContactManager::DoesNotExistError;
     return conforming;
 }
 

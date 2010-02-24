@@ -588,7 +588,10 @@ QList<QContactManager::Error> QContactManager::removeContacts(QList<QContactLoca
         QMap<int, QContactManager::Error> errorMap;
         QList<QContactManager::Error> errorList;
         int size = idList->size();
-        d->m_engine->removeContacts(idList, &errorMap, d->m_error);
+        QList<QContactLocalId> constList;
+        for (int i = 0; i < size; i++)
+            constList.append(idList->at(i));
+        d->m_engine->removeContacts(constList, &errorMap, d->m_error);
 
         for (int j=0; j < size; j++) {
             if (errorMap.contains(j))
