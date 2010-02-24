@@ -3,12 +3,12 @@ message("qtcontacts-tracker.pri")
 message(" ^ including")
 DEFINES += QTCONTACTS_TRACKER_PRI
 
+CONFIG += mobility
+MOBILITY += contacts
 
-INCLUDEPATH += /usr/include/qt4/QtMobility
 INCLUDEPATH += $$PWD
 
 LIBS += -lqttracker
-LIBS += -lQtContacts
 
 HEADERS += $$PWD/qcontacttrackerbackend_p.h \
            $$PWD/qtrackercontactasyncrequest.h \
@@ -17,9 +17,7 @@ HEADERS += $$PWD/qcontacttrackerbackend_p.h \
            $$PWD/qtrackercontactsaverequest.h \
            $$PWD/qtrackerrelationshipfetchrequest.h \
            $$PWD/qtrackerrelationshipsaverequest.h \
-           $$PWD/qtrackercontactidfetchrequest.h 
-
-           
+           $$PWD/qtrackercontactidfetchrequest.h
 
 SOURCES += $$PWD/qcontacttrackerbackend.cpp \
            $$PWD/qtrackercontactasyncrequest.cpp \
@@ -28,6 +26,5 @@ SOURCES += $$PWD/qcontacttrackerbackend.cpp \
            $$PWD/qtrackercontactsaverequest.cpp \
            $$PWD/qtrackerrelationshipfetchrequest.cpp \
            $$PWD/qtrackerrelationshipsaverequest.cpp \
-           $$PWD/qtrackercontactidfetchrequest.cpp 
-           
+           $$PWD/qtrackercontactidfetchrequest.cpp
 }

@@ -4,19 +4,17 @@ test.depends = all
 QMAKE_EXTRA_TARGETS += test
 QCONTACTS_TRACKER_BACKENDDIR = ../../
 
-CONFIG += test
+CONFIG += test mobility
+MOBILITY += contacts
 QT += testlib
 
 LIBS += -lqttracker
-LIBS += -lQtContacts
 
 MOC_DIR = .moc
 OBJECTS_DIR = .obj
 
 # CONFIG += contacts
-INCLUDEPATH += /usr/include/qt4/QtContacts \
-               /usr/include \
-               $$QCONTACTS_TRACKER_BACKENDDIR
+INCLUDEPATH += $$QCONTACTS_TRACKER_BACKENDDIR
 
 ## Include source files under test.
 HEADERS += $$QCONTACTS_TRACKER_BACKENDDIR/qcontacttrackerbackend_p.h \
@@ -26,8 +24,7 @@ HEADERS += $$QCONTACTS_TRACKER_BACKENDDIR/qcontacttrackerbackend_p.h \
            $$QCONTACTS_TRACKER_BACKENDDIR/qtrackercontactsaverequest.h \
            $$QCONTACTS_TRACKER_BACKENDDIR/qtrackerrelationshipfetchrequest.h \
            $$QCONTACTS_TRACKER_BACKENDDIR/qtrackerrelationshipsaverequest.h \
-           $$QCONTACTS_TRACKER_BACKENDDIR/qtrackercontactidfetchrequest.h 
- 
+           $$QCONTACTS_TRACKER_BACKENDDIR/qtrackercontactidfetchrequest.h
 
 SOURCES += $$QCONTACTS_TRACKER_BACKENDDIR/qcontacttrackerbackend.cpp \
            $$QCONTACTS_TRACKER_BACKENDDIR/qtrackercontactasyncrequest.cpp \
@@ -36,8 +33,7 @@ SOURCES += $$QCONTACTS_TRACKER_BACKENDDIR/qcontacttrackerbackend.cpp \
            $$QCONTACTS_TRACKER_BACKENDDIR/qtrackercontactsaverequest.cpp \
            $$QCONTACTS_TRACKER_BACKENDDIR/qtrackerrelationshipfetchrequest.cpp \
            $$QCONTACTS_TRACKER_BACKENDDIR/qtrackerrelationshipsaverequest.cpp \
-           $$QCONTACTS_TRACKER_BACKENDDIR/qtrackercontactidfetchrequest.cpp 
- 
+           $$QCONTACTS_TRACKER_BACKENDDIR/qtrackercontactidfetchrequest.cpp
 
 ## Include unit test files
 HEADERS += ut_qtcontacts_trackerplugin.h \
