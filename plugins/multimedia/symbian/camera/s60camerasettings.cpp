@@ -471,7 +471,7 @@ bool S60CameraSettings::isSharpeningSupported() const
 #endif    
 }
 
-qreal S60CameraSettings::sharpeningLevel() const
+int S60CameraSettings::sharpeningLevel() const
 {
 #if (defined(USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER) || defined(USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER))
     if (m_imageProcessingSettings && isSharpeningSupported()) {
@@ -484,20 +484,20 @@ qreal S60CameraSettings::sharpeningLevel() const
 #endif
 }
 
-void S60CameraSettings::setSaturation(qreal value)
+void S60CameraSettings::setSaturation(int value)
 {
 #if (defined(USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER) || defined(USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER))
     if (m_imageProcessingSettings) {
         RArray<TUid> suppTransforms;
         m_imageProcessingSettings->GetSupportedTransformationsL(suppTransforms);
         if (suppTransforms.Find(KUidECamEventtImageProcessingAdjustSaturation)) {
-            m_imageProcessingSettings->SetTransformationValue(KUidECamEventtImageProcessingAdjustSaturation, value);
+            m_imageProcessingSettings->SetTransformationValue(KUidECamEventtImageProcessingAdjustSaturation, value == -1 ? 0 : value*2-100);
         }
     }
 #endif
 }
 
-qreal S60CameraSettings::saturation() const
+int S60CameraSettings::saturation() const
 {
 #if (defined(USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER) || defined(USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER))
     if (m_imageProcessingSettings) {

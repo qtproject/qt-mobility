@@ -65,19 +65,19 @@ public:
     int manualWhiteBalance() const;
     void setManualWhiteBalance(int colorTemperature);
 
-    qreal contrast() const;
-    void setContrast(qreal value);
+    int contrast() const;
+    void setContrast(int value);
 
-    qreal saturation() const;
-    void setSaturation(qreal value);
+    int saturation() const;
+    void setSaturation(int value);
 
     bool isSharpeningSupported() const;
-    qreal sharpeningLevel() const;
-    void setSharpeningLevel(qreal value);
+    int sharpeningLevel() const;
+    void setSharpeningLevel(int value);
 
     bool isDenoisingSupported() const;
-    qreal denoisingLevel() const;
-    void setDenoisingLevel(qreal value);
+    int denoisingLevel() const;
+    void setDenoisingLevel(int value);
     
 private:
     S60CameraSession *m_session;

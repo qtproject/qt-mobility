@@ -207,8 +207,8 @@ public:
     QCamera::FlashMode flashMode();
     
     //cameraimageprocessingcontrol
-    qreal contrast() const;
-    void setContrast(qreal value);
+    int contrast() const;
+    void setContrast(int value);
     QCamera::WhiteBalanceMode whiteBalanceMode();
     void setWhiteBalanceMode(QCamera::WhiteBalanceMode mode);
     QCamera::WhiteBalanceModes supportedWhiteBalanceModes();

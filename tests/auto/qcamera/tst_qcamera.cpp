@@ -457,10 +457,10 @@ public:
     MockImageProcessingControl(QObject *parent = 0)
         : QImageProcessingControl(parent)
         , m_supportedWhiteBalance(QCamera::WhiteBalanceAuto)
-        , m_contrast(0.0)
-        , m_saturation(0.0)
-        , m_sharpeningLevel(0.0)
-        , m_denoisingLevel(0.0)
+        , m_contrast(0)
+        , m_saturation(0)
+        , m_sharpeningLevel(-1)
+        , m_denoisingLevel(-1)
         , m_sharpeningSupported(false)
         , m_denoisingSupported(true)
     {
@@ -477,31 +477,31 @@ public:
     int manualWhiteBalance() const { return m_manualWhiteBalance; }
     void setManualWhiteBalance(int colorTemperature) { m_manualWhiteBalance = colorTemperature; }
 
-    qreal contrast() const { return m_contrast; }
-    void setContrast(qreal value) { m_contrast = value; }
+    int contrast() const { return m_contrast; }
+    void setContrast(int value) { m_contrast = value; }
 
-    qreal saturation() const { return m_saturation; }
-    void setSaturation(qreal value) { m_saturation = value; }
+    int saturation() const { return m_saturation; }
+    void setSaturation(int value) { m_saturation = value; }
 
     bool isSharpeningSupported() const { return m_sharpeningSupported; }
     void setSharpendingSupported(bool supported) { m_sharpeningSupported = supported; }
 
-    qreal sharpeningLevel() const { return m_sharpeningLevel; }
-    void setSharpeningLevel(qreal value) { m_sharpeningLevel = value; }
+    int sharpeningLevel() const { return m_sharpeningLevel; }
+    void setSharpeningLevel(int value) { m_sharpeningLevel = value; }
 
     bool isDenoisingSupported() const { return m_denoisingSupported; }
     void setDenoisingSupported(bool supported) { m_denoisingSupported = supported; }
-    qreal denoisingLevel() const { return m_denoisingLevel; }
-    void setDenoisingLevel(qreal value) { m_denoisingLevel = value; }
+    int denoisingLevel() const { return m_denoisingLevel; }
+    void setDenoisingLevel(int value) { m_denoisingLevel = value; }
 
 private:
     QCamera::WhiteBalanceMode m_whiteBalanceMode;
     QCamera::WhiteBalanceModes m_supportedWhiteBalance;
     int m_manualWhiteBalance;
-    qreal m_contrast;
-    qreal m_saturation;
-    qreal m_sharpeningLevel;
-    qreal m_denoisingLevel;
+    int m_contrast;
+    int m_saturation;
+    int m_sharpeningLevel;
+    int m_denoisingLevel;
     bool m_sharpeningSupported;
     bool m_denoisingSupported;
 };

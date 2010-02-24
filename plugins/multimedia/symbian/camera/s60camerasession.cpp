@@ -1253,7 +1253,7 @@ void S60CameraSession::setExposureModeL(QCamera::ExposureMode mode)
     }
 }
 
-qreal S60CameraSession::contrast() const
+int S60CameraSession::contrast() const
 {
     if (m_cameraEngine) {
         CCamera* camera = m_cameraEngine->Camera();
@@ -1263,7 +1263,7 @@ qreal S60CameraSession::contrast() const
     }
 }
 
-void S60CameraSession::setContrast(qreal value)
+void S60CameraSession::setContrast(int value)
 {
     if (m_cameraEngine) {
         CCamera* camera = m_cameraEngine->Camera();

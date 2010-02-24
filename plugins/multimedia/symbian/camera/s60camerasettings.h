@@ -84,12 +84,12 @@ public:
     void setShutterSpeed(TInt speed);
     QList<qreal> supportedShutterSpeeds(bool *continuous);
     
-    void setSharpeningLevel(qreal value);
+    void setSharpeningLevel(int value);
     bool isSharpeningSupported() const;
-    qreal sharpeningLevel() const;
+    int sharpeningLevel() const;
     
-    void setSaturation(qreal value);
-    qreal saturation() const;
+    void setSaturation(int value);
+    int saturation() const;
     
 Q_SIGNALS:
     void exposureLocked();

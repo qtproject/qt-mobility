@@ -93,27 +93,27 @@ void S60CameraImageProcessingControl::setManualWhiteBalance(int colorTemperature
     Q_UNUSED(colorTemperature)
 }
 
-void S60CameraImageProcessingControl::setContrast(qreal value)
+void S60CameraImageProcessingControl::setContrast(int value)
 {
     m_session->setContrast(value);
 }
 
-qreal S60CameraImageProcessingControl::contrast() const
+int S60CameraImageProcessingControl::contrast() const
 {
     return m_session->contrast();
 }
 
-void S60CameraImageProcessingControl::setSaturation(qreal value)
+void S60CameraImageProcessingControl::setSaturation(int value)
 {
     m_advancedSettings->setSaturation(value);
 }
 
-qreal S60CameraImageProcessingControl::saturation() const
+int S60CameraImageProcessingControl::saturation() const
 {
     return m_advancedSettings->saturation();
 }
 
-void S60CameraImageProcessingControl::setDenoisingLevel(qreal value)
+void S60CameraImageProcessingControl::setDenoisingLevel(int value)
 {
     Q_UNUSED(value); // not supported for S60
 }
@@ -123,12 +123,12 @@ bool S60CameraImageProcessingControl::isDenoisingSupported() const
     return false; // not supported for S60
 }
 
-qreal S60CameraImageProcessingControl::denoisingLevel() const
+int S60CameraImageProcessingControl::denoisingLevel() const
 {
     return 0; // not supported for S60
 }
 
-void S60CameraImageProcessingControl::setSharpeningLevel(qreal value)
+void S60CameraImageProcessingControl::setSharpeningLevel(int value)
 {
     m_advancedSettings->setSharpeningLevel(value);
 }
@@ -138,7 +138,7 @@ bool S60CameraImageProcessingControl::isSharpeningSupported() const
     return m_advancedSettings->isSharpeningSupported();
 }
 
-qreal S60CameraImageProcessingControl::sharpeningLevel() const
+int S60CameraImageProcessingControl::sharpeningLevel() const
 {
     return m_advancedSettings->sharpeningLevel();
 }
