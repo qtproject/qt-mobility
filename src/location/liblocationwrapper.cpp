@@ -66,9 +66,8 @@ LiblocationWrapper::~LiblocationWrapper()
 
 bool LiblocationWrapper::inited()
 {
-    if (!(locationState & LiblocationWrapper::Inited))
-    {
-        llCurrentInterval = LOCATION_INTERVAL_DEFAULT;    
+    if (!(locationState & LiblocationWrapper::Inited)) {
+        llCurrentInterval = LOCATION_INTERVAL_DEFAULT;
         g_type_init();
 
         locationControl = location_gpsd_control_get_default();
@@ -106,23 +105,23 @@ void LiblocationWrapper::locationError(LocationGPSDevice *device,
     QString locationError;
 
     switch (errorCode) {
-        case LOCATION_ERROR_USER_REJECTED_DIALOG:
-            locationError = "User didn't enable requested methods";
-            break;
-        case LOCATION_ERROR_USER_REJECTED_SETTINGS:
-            locationError = "User changed settings, which disabled location.";
-            break;
-        case LOCATION_ERROR_BT_GPS_NOT_AVAILABLE:
-            locationError = "Problems with BT GPS";
-            break;
-        case LOCATION_ERROR_METHOD_NOT_ALLOWED_IN_OFFLINE_MODE:
-            locationError = "Requested method is not allowed in offline mode";
-            break;
-        case LOCATION_ERROR_SYSTEM:
-            locationError = "System error.";
-            break;
-        default:
-            locationError = "Unknown error.";
+    case LOCATION_ERROR_USER_REJECTED_DIALOG:
+        locationError = "User didn't enable requested methods";
+        break;
+    case LOCATION_ERROR_USER_REJECTED_SETTINGS:
+        locationError = "User changed settings, which disabled location.";
+        break;
+    case LOCATION_ERROR_BT_GPS_NOT_AVAILABLE:
+        locationError = "Problems with BT GPS";
+        break;
+    case LOCATION_ERROR_METHOD_NOT_ALLOWED_IN_OFFLINE_MODE:
+        locationError = "Requested method is not allowed in offline mode";
+        break;
+    case LOCATION_ERROR_SYSTEM:
+        locationError = "System error.";
+        break;
+    default:
+        locationError = "Unknown error.";
     }
 
     qDebug() << "Location error:" << locationError;
@@ -395,7 +394,7 @@ QGeoPositionInfo LiblocationWrapper::lastKnownPosition(bool fromSatellitePositio
 }
 
 void LiblocationWrapper::deviceDisconnected(LocationGPSDevice *device,
-                                                     gpointer data)
+                                            gpointer data)
 {
     Q_UNUSED(device)
 
@@ -407,7 +406,7 @@ void LiblocationWrapper::deviceDisconnected(LocationGPSDevice *device,
 }
 
 void LiblocationWrapper::deviceConnected(LocationGPSDevice *device,
-                                                  gpointer data)
+                                         gpointer data)
 {
     Q_UNUSED(device)
 
@@ -447,7 +446,7 @@ void LiblocationWrapper::start() {
         locationState &= ~LiblocationWrapper::RequestSingleShot;
     
     if ((locationState & LiblocationWrapper::Inited) &&
-        !(locationState & LiblocationWrapper::Started)) {        
+        !(locationState & LiblocationWrapper::Started)) {
         if (!errorHandlerId) {
             errorHandlerId =
                 g_signal_connect(G_OBJECT(locationControl), "error-verbose",
@@ -465,7 +464,7 @@ void LiblocationWrapper::start() {
         location_gpsd_control_start(locationControl);
         
         locationState |= LiblocationWrapper::Started;
-        locationState &= ~LiblocationWrapper::Stopped;        
+        locationState &= ~LiblocationWrapper::Stopped;
     }
 }
 
@@ -488,7 +487,7 @@ void LiblocationWrapper::stop() {
         errorHandlerId = 0;
         posChangedId = 0;
         connectedId = 0;
-        disconnectedId = 0;        
+        disconnectedId = 0;
 
         location_gpsd_control_stop(locationControl);
 
