@@ -48,15 +48,22 @@ QTM_BEGIN_NAMESPACE
   \class QContactFetchRequest
   \brief The QContactFetchRequest class allows a client to asynchronously
     request contacts from a contacts store manager.
-   \ingroup contacts-requests
+
+
+  For a QContactFetchRequest, the resultsAvailable() signal will be emitted when the resultant
+  contacts (which may be retrieved by calling contacts()), are updated, as well as if
+  the overall operation error (which may be retrieved by calling error()) is updated.
+
+  \ingroup contacts-requests
  */
 
 /*!
- * \fn QContactFetchRequest::progress(QContactFetchRequest* self, bool appendOnly)
- * This signal is emitted when some progress has been made on the request, causing either a change of
- * status or an update of results, or both.  It identifies which request the signal originated from
- * by including a pointer to \a self, and contains an \a appendOnly flag which signifies whether or not the total
- * ordering of the results have been maintained since the last progress signal was emitted.
+  \fn QContactFetchRequest::progress(QContactFetchRequest* self, bool appendOnly)
+  \deprecated
+  This signal is emitted when some progress has been made on the request, causing either a change of
+  status or an update of results, or both.  It identifies which request the signal originated from
+  by including a pointer to \a self, and contains an \a appendOnly flag which signifies whether or not the total
+  ordering of the results have been maintained since the last progress signal was emitted.
  */
 
 /*! Constructs a new contact fetch request */

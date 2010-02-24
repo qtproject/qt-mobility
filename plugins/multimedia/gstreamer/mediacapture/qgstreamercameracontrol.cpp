@@ -66,7 +66,7 @@ static bool operator<(const QSize &s1, const QSize s2)
 QT_END_NAMESPACE
 
 QGstreamerCameraControl::QGstreamerCameraControl(QGstreamerCaptureSession *session)
-    :QCameraControl(session), m_session(session), m_state(QCamera::StoppedState)
+    :QCameraControl(session), m_captureMode(QCamera::CaptureStillImage), m_session(session), m_state(QCamera::StoppedState)
 {
     connect(m_session, SIGNAL(stateChanged(QGstreamerCaptureSession::State)),
             this, SLOT(updateState()));
@@ -195,7 +195,7 @@ void QGstreamerCameraControl::updateSupportedResolutions(const QString &device)
             char formatStr[5];
             memcpy(formatStr, &format, 4);
             formatStr[4] = 0;
-            qDebug() << "trying format" << formatStr;
+            //qDebug() << "trying format" << formatStr;
         }
 
         for (int i=0;;i++) {

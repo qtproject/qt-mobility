@@ -138,7 +138,7 @@ void CntTransformAnniversarySimple::detailDefinitions(QMap<QString, QContactDeta
 
     if(definitions.contains(QContactAnniversary::DefinitionName)) {
         QContactDetailDefinition d = definitions.value(QContactAnniversary::DefinitionName);
-        QMap<QString, QContactDetailDefinitionField> fields = d.fields();
+        QMap<QString, QContactDetailFieldDefinition> fields = d.fields();
 
         // Following fields not supported in symbian (pre-10.1) back-end, remove
         fields.remove(QContactAnniversary::FieldCalendarId);

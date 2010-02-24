@@ -1,9 +1,7 @@
-# config.pri specifies the configure options
 
 #This is a temporary workaround for internal Symbian builds
 #QT_MAJOR_VERSION et al are not set
-symbian:
-{
+symbian {
     isEmpty(QT_MAJOR_VERSION)  {
          exists($${EPOCROOT}epoc32/data/z/system/install/Series60v5.2.sis) {
            QT_MAJOR_VERSION=4;
@@ -13,9 +11,14 @@ symbian:
     }
 }
 
+# config.pri specifies the configure options
+include(staticconfig.pri)
 !include($$QT_MOBILITY_BUILD_TREE/config.pri) {
     error("Please run configure script");
+    #also fails if .qmake.cache was not generated which may
+    #happen if we are trying to shadow build w/o running configure
 }
+
 
 #don't build QtMobility if chosen config mismatches Qt's config
 win32:!contains(CONFIG_WIN32,build_all) {

@@ -69,6 +69,7 @@ private slots:
     void contexts();
     void values();
     void preferredActions();
+    void traits();
 };
 
 tst_QContactDetail::tst_QContactDetail()
@@ -109,7 +110,7 @@ void tst_QContactDetail::classHierarchy()
     QVERIFY(p1.definitionName() == QContactPhoneNumber::DefinitionName);
 
     QContactName m1;
-    m1.setFirst("Bob");
+    m1.setFirstName("Bob");
     QVERIFY(!m1.isEmpty());
     QVERIFY(m1.definitionName() == QContactName::DefinitionName);
 
@@ -153,10 +154,12 @@ void tst_QContactDetail::classHierarchy()
     QCOMPARE(p2.number(), p1.number());
     QCOMPARE(p2.number(), QString("123456"));
 
-    p2.setNumber("5678");
+    p2.setNumber("5678"); // NOTE: implicitly shared, this has caused a detach so p1 != 2
     QVERIFY(p1 != p2);
     QVERIFY(p1 == f2);
     QVERIFY(p2 != f2);
+    QCOMPARE(p2.number(), QString("5678"));
+    QCOMPARE(p1.number(), QString("123456"));
 
     /* Bad assignment */
     p2 = m1; // assign a name to a phone number
@@ -175,11 +178,12 @@ void tst_QContactDetail::classHierarchy()
     QVERIFY(m2.isEmpty());
 
     /* Check contexts are considered for equality */
-    p2 = p1;
+    p2 = QContactPhoneNumber(); // new id / detach
+    p2.setNumber(p1.number());
     p2.setContexts(QContactDetail::ContextHome);
     QVERIFY(p1 != p2);
     p2.removeValue(QContactDetail::FieldContext); // note, context is a value.
-    QVERIFY(p1 == p2);
+    QVERIFY(p1 == p2); // different ids but same values should be equal
 
     /* Copy ctor from valid type */
     QContactDetail f3(p2);
@@ -200,6 +204,7 @@ void tst_QContactDetail::classHierarchy()
     QVERIFY(p4.isEmpty());
 
     /* Try a reference */
+    p1.setNumber("123456");
     QContactDetail& ref = p1;
     QVERIFY(p1.number() == "123456");
     QVERIFY(p1.value(QContactPhoneNumber::FieldNumber) == "123456");
@@ -558,6 +563,17 @@ void tst_QContactDetail::preferredActions()
     QVERIFY(det.preferredActions() == prefs);
 }
 
+void tst_QContactDetail::traits()
+{
+    // QContactDetail has a vtable and a dpointer, so we can't really make claims about the size
+    // QCOMPARE(sizeof(QContactDetail), sizeof(void *));
+    QTypeInfo<QTM_PREPEND_NAMESPACE(QContactDetail)> ti;
+    QVERIFY(ti.isComplex);
+    QVERIFY(!ti.isStatic);
+    QVERIFY(ti.isLarge); // virtual table + d pointer
+    QVERIFY(!ti.isPointer);
+    QVERIFY(!ti.isDummy);
+}
 
 QTEST_MAIN(tst_QContactDetail)
 #include "tst_qcontactdetail.moc"

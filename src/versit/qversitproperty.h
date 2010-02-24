@@ -51,8 +51,11 @@
 #include <QByteArray>
 #include <QSharedDataPointer>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
+class QVariant;
+QT_END_NAMESPACE
 
+QTM_BEGIN_NAMESPACE
 class QVersitPropertyPrivate;
 
 class Q_VERSIT_EXPORT QVersitProperty
@@ -63,6 +66,8 @@ public:
     ~QVersitProperty();
     
     QVersitProperty& operator=(const QVersitProperty& other);
+    bool operator==(const QVersitProperty& other) const;
+    bool operator!=(const QVersitProperty& other) const;
 
     void setGroups(const QStringList& groups);
     QStringList groups() const;
@@ -70,16 +75,42 @@ public:
     void setName(const QString& name);
     QString name() const;
 
-    void addParameter(const QString& name, const QString& value);
+    void insertParameter(const QString& name, const QString& value);
     void removeParameter(const QString& name, const QString& value);
+    void removeParameters(const QString& name);
+
     void setParameters(const QMultiHash<QString,QString>& parameters);
     QMultiHash<QString,QString> parameters() const;
-    
-    void setValue(const QByteArray& value);
-    QByteArray value() const;
 
-    void setEmbeddedDocument(const QVersitDocument& document);
-    QVersitDocument embeddedDocument() const;
+    void setValue(const QVariant& value);
+    QVariant variantValue() const;
+    template <typename T> T value() const
+    {
+        return variantValue().value<T>();
+    }
+    QString value() const;
+
+    bool isEmpty() const;
+    void clear();
+
+    // Deprecated:
+    void Q_DECL_DEPRECATED addParameter(const QString& name, const QString& value)
+    {
+        qWarning("QVersitProperty::addParameter(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  insertParameter() should be used instead.");
+        Q_UNUSED(name)
+        Q_UNUSED(value)
+    }
+
+    void Q_DECL_DEPRECATED setEmbeddedDocument(const QVersitDocument& document)
+    {
+        qWarning("QVersitProperty::setEmbeddedDocument(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  setValue(QVariant::fromValue(document)) should be used instead.");
+        setValue(QVariant::fromValue(document));
+    }
+    QVersitDocument Q_DECL_DEPRECATED embeddedDocument() const
+    {
+        qWarning("QVersitProperty::embeddedDocument(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  value<QVersitDocument>() should be used instead.");
+        return value<QVersitDocument>();
+    }
 
 private:
     

@@ -46,6 +46,11 @@
 
 #include <QList>
 #include <QSharedDataPointer>
+#include <QVariant>
+
+QT_BEGIN_NAMESPACE
+class QTextCodec;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 
@@ -60,20 +65,43 @@ public:
     ~QVersitDocument();
 
     QVersitDocument& operator=(const QVersitDocument& other);
+    bool operator==(const QVersitDocument& other) const;
+    bool operator!=(const QVersitDocument& other) const;
     
     /*! Versit document type */
     enum VersitType {
-        VCard21,   // vCard version 2.1
-        VCard30    // vCard version 3.0 (RFC 2426)
+        InvalidType,
+        VCard21Type,   // vCard version 2.1
+        VCard30Type    // vCard version 3.0 (RFC 2426)
+        // Deprecated:
+        ,
+        VCard21 = VCard21Type,
+        VCard30 = VCard30Type
     };
 
     // metadata about the versit document itself.
-    void setVersitType(VersitType type);
-    VersitType versitType() const;
+    void setType(VersitType type);
+    VersitType type() const;
 
     void addProperty(const QVersitProperty& property);
-    QList<QVersitProperty> properties() const;
+    void removeProperty(const QVersitProperty& property);
     void removeProperties(const QString& name);
+    QList<QVersitProperty> properties() const;
+
+    bool isEmpty() const;
+    void clear();
+
+    // Deprecated:
+    void Q_DECL_DEPRECATED setVersitType(VersitType type)
+    {
+        qWarning("QVersitDocument::setVersitType(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  setType() should be used instead.");
+        setType(type);
+    }
+    VersitType Q_DECL_DEPRECATED versitType() const
+    {
+        qWarning("QVersitDocument::versitType(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  type() should be used instead.");
+        return type();
+    }
 
 private:
     
@@ -81,5 +109,7 @@ private:
 };
 
 QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QVersitDocument))
 
 #endif // QVERSITDOCUMENT_H

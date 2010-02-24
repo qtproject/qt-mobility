@@ -82,6 +82,7 @@ struct MessageEvent
     QMessageStorePrivate::NotificationType notificationType;
     TMsvId messageId;
     QMessageManager::NotificationFilterIdSet matchingFilters;
+    bool unfiltered;
 };
 
 struct MessageQueryInfo
@@ -161,6 +162,7 @@ public:
     void filterAndOrderMessagesReady(bool success, int operationId, QMessageIdList ids, int numberOfHandledFilters,
                                      bool resultSetOrdered);
 
+    inline RFs& FsSession() const { return((RFs&)iFsSession); }
 private:
     void updateEmailAccountsL() const;
     bool switchToMTMRootEntry(MTMType aMTMType);
@@ -250,6 +252,7 @@ private: //from MMsvSessionObserver:
                              TAny* aArg2, TAny* aArg3);
 
 private:
+    RFs iFsSession;
     QMessageStorePrivate* ipMessageStorePrivate;
     
     bool iSessionReady;

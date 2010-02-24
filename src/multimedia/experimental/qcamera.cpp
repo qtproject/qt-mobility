@@ -70,7 +70,8 @@ QTM_BEGIN_NAMESPACE
         viewFinder = new QVideoWidget(camera);
         viewFinder->show();
 
-        recorder = QMediaRecorder(camera);
+        recorder = new QMediaRecorder(camera);
+        imageCapture = new QStillImageCapture(camera);
 
         camera->start();
     \endcode
@@ -99,7 +100,8 @@ public:
     QString errorString;
 
     void _q_error(int error, const QString &errorString);
-    void unsetError() { error = QCamera::NoError; errorString.clear(); };
+    void _q_updateFocusStatus(QCamera::FocusStatus);
+    void unsetError() { error = QCamera::NoError; errorString.clear(); }
 };
 
 void QCameraPrivate::_q_error(int error, const QString &errorString)
@@ -110,6 +112,18 @@ void QCameraPrivate::_q_error(int error, const QString &errorString)
     this->errorString = errorString;
 
     emit q->error(this->error);
+}
+
+void QCameraPrivate::_q_updateFocusStatus(QCamera::FocusStatus status)
+{
+    Q_Q(QCamera);
+
+    emit q->focusStatusChanged(status);
+
+    if (status == QCamera::FocusReached)
+        emit q->focusReached();
+    else if (status == QCamera::FocusUnableToReach)
+        emit q->focusUnableToReach();
 }
 
 void QCameraPrivate::initControls()
@@ -125,6 +139,8 @@ void QCameraPrivate::initControls()
 
         if (control) {
             q->connect(control, SIGNAL(stateChanged(QCamera::State)), q, SIGNAL(stateChanged(QCamera::State)));
+            q->connect(control, SIGNAL(captureModeChanged(QCamera::CaptureMode)),
+                       q, SIGNAL(captureModeChanged(QCamera::CaptureMode)));
             q->connect(control, SIGNAL(error(int,QString)), q, SLOT(_q_error(int,QString)));
         }
 
@@ -156,19 +172,10 @@ void QCameraPrivate::initControls()
 
     if (focusControl) {
         q->connect(focusControl, SIGNAL(focusStatusChanged(QCamera::FocusStatus)),
-                q, SIGNAL(focusStatusChanged(QCamera::FocusStatus)));
-        q->connect(focusControl, SIGNAL(zoomValueChanged(qreal)), q, SIGNAL(zoomValueChanged(qreal)));
-        q->connect(focusControl, SIGNAL(focusLocked()), q, SIGNAL(focusLocked()));
-    }
-
-    if (captureControl) {
-        q->connect(captureControl, SIGNAL(imageCaptured(QString,QImage)),
-                q, SIGNAL(imageCaptured(QString,QImage)));
-        q->connect(captureControl, SIGNAL(imageSaved(QString)),
-                        q, SIGNAL(imageSaved(QString)));
-        q->connect(captureControl, SIGNAL(readyForCaptureChanged(bool)),
-                q, SIGNAL(readyForCaptureChanged(bool)));
-    }
+                q, SLOT(_q_updateFocusStatus(QCamera::FocusStatus)));
+        q->connect(focusControl, SIGNAL(opticalZoomChanged(qreal)), q, SIGNAL(opticalZoomChanged(qreal)));
+        q->connect(focusControl, SIGNAL(digitalZoomChanged(qreal)), q, SIGNAL(digitalZoomChanged(qreal)));
+    }   
 }
 
 /*!
@@ -263,6 +270,35 @@ QString QCamera::errorString() const
     return d_func()->errorString;
 }
 
+
+/*!
+    Returns the supported capture modes.
+*/
+QCamera::CaptureModes QCamera::supportedCaptureModes() const
+{
+    return d_func()->control ? d_func()->control->supportedCaptureModes() : QCamera::CaptureDisabled;
+}
+
+/*!
+  \property QCamera::captureMode
+
+  Returns the type of media (video or still images),
+  the camera is configured to capture.
+*/
+
+QCamera::CaptureMode QCamera::captureMode() const
+{
+    return d_func()->control ? d_func()->control->captureMode() : QCamera::CaptureDisabled;
+}
+
+void QCamera::setCaptureMode(QCamera::CaptureMode mode)
+{
+    Q_D(QCamera);
+    if (d->control)
+        d->control->setCaptureMode(mode);
+}
+
+
 /*!
     Starts the camera.
 
@@ -334,31 +370,41 @@ void QCamera::unlockExposure()
 }
 
 /*!
-    Lock the focus.
+    Starts single or continuous autofocus.
+
+    Does nothing in hyperfocal or infinity focus modes.
+
+    If supported by camera, startFocusing() turns on the manual focusing notifications,
+    otherwise it does nothing in manual mode.
 */
 
-void QCamera::lockFocus()
+void QCamera::startFocusing()
 {
     Q_D(QCamera);
 
     d->unsetError();
 
     if(d->focusControl)
-        d->focusControl->lockFocus();
+        d->focusControl->startFocusing();
     else
         d->_q_error(NotSupportedFeatureError, tr("Focus locking is not supported"));
 }
 
 /*!
-    Unlock the focus.
+  Cancels the single autofocus request or stops continuous focusing.
+
+  Does nothing in hyperfocal or infinity focus modes.
+
+  If supported by camera, startFocusing() turns off the manual focusing notifications,
+  otherwise it does nothing in manual mode.
 */
 
-void QCamera::unlockFocus()
+void QCamera::cancelFocusing()
 {
     Q_D(QCamera);
 
     if(d->focusControl)
-        d->focusControl->unlockFocus();
+        d->focusControl->cancelFocusing();
 }
 
 /*!
@@ -458,7 +504,7 @@ QCamera::FocusModes QCamera::supportedFocusModes() const
 
 QCamera::FocusStatus QCamera::focusStatus() const
 {
-    return d_func()->focusControl ? d_func()->focusControl->focusStatus() : QCamera::FocusDisabled;
+    return d_func()->focusControl ? d_func()->focusControl->focusStatus() : QCamera::FocusInitial;
 }
 
 /*!
@@ -783,22 +829,37 @@ qreal QCamera::maximumDigitalZoom() const
 }
 
 /*!
-    Returns the current zoom.
+    Returns the current optical zoom value.
+
+    \sa QCamera::opticalZoomChanged(qreal), QCamera::digitalZoom()
 */
 
-qreal QCamera::zoomValue() const
+qreal QCamera::opticalZoom() const
 {
-    return d_func()->focusControl ? d_func()->focusControl->zoomValue() : 1.0;
+    return d_func()->focusControl ? d_func()->focusControl->opticalZoom() : 1.0;
 }
 
 /*!
-    Set the zoom to \a value.
-*/
+    Returns the current digital zoom value.
 
-void QCamera::zoomTo(qreal value)
+    \sa QCamera::digitalZoomChanged(qreal), QCamera::opticalZoom()
+*/
+qreal QCamera::digitalZoom() const
+{
+    return d_func()->focusControl ? d_func()->focusControl->digitalZoom() : 1.0;
+}
+
+
+/*!
+    Set the camera \a optical and \a digital zoom values.
+*/
+void QCamera::zoomTo(qreal optical, qreal digital)
 {
     if (d_func()->focusControl)
-        d_func()->focusControl->zoomTo(qBound<qreal>(1.0,value,maximumOpticalZoom()*maximumDigitalZoom()));
+        d_func()->focusControl->zoomTo(optical, digital);
+    else
+        d_func()->_q_error(NotSupportedFeatureError, tr("The camera doesn't support zooming."));
+
 }
 
 /*!
@@ -809,53 +870,6 @@ bool QCamera::isExposureLocked() const
 {
     return d_func()->exposureControl ? d_func()->exposureControl->isExposureLocked() : true;
 }
-
-/*!
-    Return true if focus locked.
-*/
-
-bool QCamera::isFocusLocked() const
-{
-    return d_func()->focusControl ? d_func()->focusControl->isFocusLocked() : true;
-}
-
-/*!
-  \property QCamera::readyForCapture
-   Indicates the camera is ready to capture an image immediately.
-*/
-
-bool QCamera::isReadyForCapture() const
-{
-    return d_func()->captureControl ? d_func()->captureControl->isReadyForCapture() : false;
-}
-
-/*!
-    \fn QCamera::readyForCaptureChanged(bool ready)
-
-    Signals that a camera's \a ready for capture state has changed.
-*/
-
-/*!
-    Capture the image and save it to \a file.
-    This operation is asynchronous in majority of cases,
-    followed by signal QCamera::imageCaptured() or error()
-*/
-void QCamera::capture(const QString &file)
-{
-    Q_D(QCamera);
-
-    d->unsetError();
-
-    if (d->captureControl) {
-        d->captureControl->capture(file);
-    } else {
-        d->error = NotSupportedFeatureError;
-        d->errorString = tr("Device does not support images capture.");
-
-        emit error(d->error);
-    }
-}
-
 
 /*!
     \enum QCamera::State
@@ -891,11 +905,29 @@ void QCamera::capture(const QString &file)
 /*!
     \enum QCamera::FocusStatus
 
-    \value FocusDisabled        Manual focus mode used or auto focus is not available.
+    \value FocusIntial          The initial focus state.
     \value FocusRequested       Focus request is in progress.
+    \value FocusCanceled        The focus request was canceled.
     \value FocusReached         Focus has been reached.
     \value FocusLost            Focus has been lost.
     \value FocusUnableToReach   Unable to achieve focus.
+
+    When the QCamera::InfinityFocus or QCamera::HyperfocalFocus mode
+    is requested, the focus status changes to QCamera::FocusRequested
+    until the requested state is reached
+    and stays in the QCamera::FocusReached status after.
+
+    In manual focusing mode the focus stays in the QCamera::FocusReached status,
+    or, when supported by camera, QCamera::FocusLost and QCamera::FocusReached values
+    could be used for manual focus notifications.
+
+    In autofocus mode, on focus request the status changes to QCamera::FocusRequested,
+    and then depending on request results the focus status
+    changes to QCamera::FocusReached, QCamera::FocusUnableToReach or QCamera::FocusCanceled.
+
+    In countinous autofocus mode, the status changes to QCamera::FocusRequested,
+    and since the focus is reached is stays in QCamera::FocusReached and QCamera::FocusLost states
+    until continous focusing is canceled with cancelAutofocus() or setFocusMode().
 */
 
 /*!
@@ -961,12 +993,6 @@ void QCamera::capture(const QString &file)
     \fn void QCamera::exposureLocked()
 
     Signal emitted when exposure locked.
-*/
-
-/*!
-    \fn void QCamera::focusLocked()
-
-    Signal emitted when focus is locked.
 */
 
 /*!
@@ -1038,6 +1064,19 @@ void QCamera::capture(const QString &file)
 */
 
 
+/*!
+    \fn void QCamera::focusReached()
+
+    Signals the focus was reached.
+    This signal is emited after focusStatus changes to QCamera::FocusReached state.
+*/
+
+/*!
+    \fn void QCamera::focusUnableToReach()
+
+    Signals the focus was unable to reach.
+    This signal is emited after focusStatus changes to QCamera::FocusUnableToReach state.
+*/
+
 #include "moc_qcamera.cpp"
 QTM_END_NAMESPACE
-

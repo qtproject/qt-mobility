@@ -42,49 +42,66 @@
 #ifndef S60AUDIOPLAYERSESSION_H
 #define S60AUDIOPLAYERSESSION_H
 
-#include <QObject>
-#include <QUrl>
-#include <QSize>
-#include <QMediaPlayer>
 #include "s60mediaplayersession.h"
-#include <MdaAudioSamplePlayer.h>  
 
-class QTimer;
+#ifdef S60_DRM_SUPPORTED
+#include <drmaudiosampleplayer.h>
+typedef CDrmPlayerUtility CAudioPlayer;
+typedef MDrmAudioPlayerCallback MAudioPlayerObserver;
+#else
+#include <mdaaudiosampleplayer.h>  
+typedef CMdaAudioPlayerUtility CAudioPlayer;
+typedef MMdaAudioPlayerCallback MAudioPlayerObserver;
+#endif
 
-class S60AudioPlayerSession : public S60MediaPlayerSession, public MMdaAudioPlayerCallback
+class S60AudioPlayerSession : public S60MediaPlayerSession, public CBase, public MAudioPlayerObserver
+#ifdef S60_DRM_SUPPORTED
+      , public MAudioLoadingObserver
+#endif
 {
     Q_OBJECT
 
 public:
     S60AudioPlayerSession(QObject *parent);
     ~S60AudioPlayerSession();
-
-    qint64 duration() const;
-    qint64 position() const;
-
-    bool isVideoAvailable() const;
-    void setPlaybackRate(qreal rate);
-
-    void play();
-    void pause();
-    void stop();
-    void setPosition(qint64 pos);
-    void setVolume(int volume);
-    void setMuted(bool muted);
-    void load(const QUrl &url);
     
-private: // From MMdaAudioPlayerCallback
+    //From S60MediaPlayerSession
+    bool isVideoAvailable() const;
+    bool isAudioAvailable() const;
+    
+protected:
+    //From S60MediaPlayerSession
+    void doLoadL(const TDesC &path);
+    void doLoadUrlL(const TDesC &path){Q_UNUSED(path)/*empty implementation*/}
+    void doPlay();
+    void doStop();
+    void doPauseL();
+    void doSetVolumeL(int volume);
+    qint64 doGetPositionL() const;
+    void doSetPositionL(qint64 microSeconds);
+    void updateMetaDataEntriesL();
+    int doGetMediaLoadingProgressL() const { /*empty implementation*/ return 0; }
+    int doGetDurationL() const;
+    
+private:
+#ifdef S60_DRM_SUPPORTED    
+    // From MMdaAudioPlayerCallback
+    void MdapcInitComplete(TInt aError, const TTimeIntervalMicroSeconds& aDuration);
+    void MdapcPlayComplete(TInt aError);
+#else
+    // From MDrmAudioPlayerCallback
     void MapcInitComplete(TInt aError, const TTimeIntervalMicroSeconds& aDuration);
     void MapcPlayComplete(TInt aError);
-
-private: 
-    void getNativeHandles();
-
-private:
-    void setMediaStatus(QMediaPlayer::MediaStatus);
+#endif
+    
+#if defined(S60_DRM_SUPPORTED) &&  defined(__S60_50__) 
+    // From MAudioLoadingObserver
+    void MaloLoadingStarted() {};
+    void MaloLoadingComplete() {};
+#endif
     
 private:
-    CMdaAudioPlayerUtility *m_player;
+    CAudioPlayer *m_player;
 };
 
 #endif

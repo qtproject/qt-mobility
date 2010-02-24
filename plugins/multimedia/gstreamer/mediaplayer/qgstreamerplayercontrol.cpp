@@ -80,6 +80,8 @@ QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerSession *sessio
             this, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)));
     connect(m_session,SIGNAL(bufferingProgressChanged(int)),
             this, SIGNAL(bufferStatusChanged(int)));
+    connect(m_session, SIGNAL(audioAvailableChanged(bool)),
+            this, SIGNAL(audioAvailableChanged(bool)));
     connect(m_session, SIGNAL(videoAvailableChanged(bool)),
             this, SIGNAL(videoAvailableChanged(bool)));
     connect(m_session, SIGNAL(seekableChanged(bool)),
@@ -136,11 +138,14 @@ bool QGstreamerPlayerControl::isSeekable() const
     return m_session->isSeekable();
 }
 
-QPair<qint64, qint64> QGstreamerPlayerControl::seekRange() const
+QMediaTimeRange QGstreamerPlayerControl::availablePlaybackRanges() const
 {
-    return m_session->isSeekable()
-            ? qMakePair<qint64, qint64>(0, m_session->duration())
-            : qMakePair<qint64, qint64>(0, 0);
+    QMediaTimeRange ranges;
+
+    if(m_session->isSeekable())
+        ranges.addInterval(0, m_session->duration());
+
+    return ranges;
 }
 
 qreal QGstreamerPlayerControl::playbackRate() const
@@ -231,6 +236,11 @@ void QGstreamerPlayerControl::setMedia(const QMediaContent &content, QIODevice *
 void QGstreamerPlayerControl::setVideoOutput(QObject *output)
 {
     m_session->setVideoRenderer(output);
+}
+
+bool QGstreamerPlayerControl::isAudioAvailable() const
+{
+    return m_session->isAudioAvailable();
 }
 
 bool QGstreamerPlayerControl::isVideoAvailable() const

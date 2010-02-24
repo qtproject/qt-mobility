@@ -60,9 +60,14 @@ public:
     virtual void stop() = 0;
     virtual QCamera::State state() const = 0;
 
+    virtual QCamera::CaptureMode captureMode() const = 0;
+    virtual void setCaptureMode(QCamera::CaptureMode) = 0;
+    virtual QCamera::CaptureModes supportedCaptureModes() const = 0;
+
 Q_SIGNALS:
     void stateChanged(QCamera::State);
     void error(int error, const QString &errorString);
+    void captureModeChanged(QCamera::CaptureMode);
 
 protected:
     QCameraControl(QObject* parent = 0);

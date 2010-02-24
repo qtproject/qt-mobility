@@ -84,7 +84,7 @@ void TestSymbianEngine::removeAllContacts()
         // Empty cnt database
         QContactManager::Error err;
         QList<QContactSortOrder> sortOrders;
-        QList<QContactLocalId> cnts_ids = m_engine->contacts(sortOrders, err);
+        QList<QContactLocalId> cnts_ids = m_engine->contactIds(sortOrders, err);
         QVERIFY(err == QContactManager::NoError);
 
         for(int i=0; i<cnts_ids.count(); i++) {
@@ -139,13 +139,13 @@ void TestSymbianEngine::saveContact()
     QList<QContactSortOrder> sortOrders;
     QContactId empty;
 
-    int init_count = m_engine->contacts(sortOrders, err).count();
+    int init_count = m_engine->contactIds(sortOrders, err).count();
     QVERIFY(err == QContactManager::NoError);
 
     // Save a "NULL" contact
     QVERIFY(!m_engine->saveContact(NULL, err));
     QVERIFY(err == QContactManager::BadArgumentError);
-    int current_count = m_engine->contacts(sortOrders, err).count();
+    int current_count = m_engine->contactIds(sortOrders, err).count();
     QVERIFY(err == QContactManager::NoError);
     QVERIFY(init_count == current_count);
 
@@ -159,7 +159,7 @@ void TestSymbianEngine::saveContact()
     invaId.setId(cId);
     QVERIFY(!m_engine->saveContact(&invaId, err));   // Update non existent contact
     QVERIFY(err == QContactManager::DoesNotExistError);
-    current_count = m_engine->contacts(sortOrders, err).count();
+    current_count = m_engine->contactIds(sortOrders, err).count();
     QVERIFY(err == QContactManager::NoError);
     QVERIFY(init_count == current_count);
 
@@ -171,7 +171,7 @@ void TestSymbianEngine::saveContact()
     QVERIFY(err == QContactManager::InvalidDetailError);
     QVERIFY(alice.id() == empty);
     QVERIFY(alice.localId() == 0);
-    current_count = m_engine->contacts(sortOrders, err).count();
+    current_count = m_engine->contactIds(sortOrders, err).count();
     QVERIFY(err == QContactManager::NoError);
     QVERIFY(init_count == current_count);
 
@@ -183,7 +183,7 @@ void TestSymbianEngine::saveContact()
     QVERIFY(alice.localId() != 0);
     QString uri = QString(QLatin1String(CNT_SYMBIAN_MANAGER_NAME));
     QVERIFY(alice.id().managerUri().contains(uri, Qt::CaseInsensitive));
-    current_count = m_engine->contacts(sortOrders, err).count();
+    current_count = m_engine->contactIds(sortOrders, err).count();
     QVERIFY(err == QContactManager::NoError);
     QVERIFY(init_count + 1 == current_count);
     
@@ -203,46 +203,46 @@ void TestSymbianEngine::saveContact()
 void TestSymbianEngine::saveContactWithPreferredDetails()
 {
     QContactManager::Error err;
-    
+
     //save a contact with preferred details
     QContact c;
     c.setType(QContactType::TypeContact);
-    
+
     QContactPhoneNumber number1;
     number1.setNumber("123");
     number1.setSubTypes(QContactPhoneNumber::SubTypeMobile);
     c.saveDetail(&number1);
     c.setPreferredDetail("call", number1);
-    
+
     QContactPhoneNumber number2;
     number2.setNumber("456");
     number2.setSubTypes(QContactPhoneNumber::SubTypeMobile);
     c.saveDetail(&number2);
     c.setPreferredDetail("videocall", number2);
-    
+
     QContactPhoneNumber number3;
     number3.setNumber("789");
     number3.setSubTypes(QContactPhoneNumber::SubTypeMobile);
     c.saveDetail(&number3);
     c.setPreferredDetail("message", number3);
-    
+
     QContactEmailAddress email;
     email.setEmailAddress("dummyemail");
     c.saveDetail(&email);
     c.setPreferredDetail("email", email);
-    
+
     QVERIFY(m_engine->saveContact(&c, err));
     QVERIFY(err == QContactManager::NoError);
-    
+
     //fetch the saved contact and check preferred details
-    QContact fetched = m_engine->contact(c.localId(), err);
+    QContact fetched = m_engine->contact(c.localId(), QStringList(), err);
     QVERIFY(err == QContactManager::NoError);
-    
+
     QContactDetail callDetail1 = fetched.preferredDetail("call");
     QVERIFY(callDetail1.definitionName() == QContactPhoneNumber::DefinitionName);
     QContactPhoneNumber fetchedNumber1 = static_cast<QContactPhoneNumber>(callDetail1);
     QVERIFY(fetchedNumber1.number() == "123");
-    
+
     QContactDetail callDetail2 = fetched.preferredDetail("videocall");
     QVERIFY(callDetail2.definitionName() == QContactPhoneNumber::DefinitionName);
     QContactPhoneNumber fetchedNumber2 = static_cast<QContactPhoneNumber>(callDetail2);
@@ -257,7 +257,7 @@ void TestSymbianEngine::saveContactWithPreferredDetails()
     QVERIFY(emailDetail.definitionName() == QContactEmailAddress::DefinitionName);
     QContactEmailAddress fetchedEmail = static_cast<QContactEmailAddress>(emailDetail);
     QVERIFY(fetchedEmail.emailAddress() == "dummyemail");
-    
+
     //save a contact with one preferred details for several actions
     QContact c2;
     c2.setType(QContactType::TypeContact);
@@ -265,19 +265,19 @@ void TestSymbianEngine::saveContactWithPreferredDetails()
     c2.setPreferredDetail("call", number1);
     c2.setPreferredDetail("videocall", number1);
     c2.setPreferredDetail("message", number1);
-    
+
     QVERIFY(m_engine->saveContact(&c2, err));
     QVERIFY(err == QContactManager::NoError);
-     
+
     //fetch the saved contact and check preferred details
-    QContact fetched2 = m_engine->contact(c2.localId(), err);
+    QContact fetched2 = m_engine->contact(c2.localId(), QStringList(), err);
     QVERIFY(err == QContactManager::NoError);
-     
+
     QContactDetail callDetail4 = fetched2.preferredDetail("call");
     QVERIFY(callDetail4.definitionName() == QContactPhoneNumber::DefinitionName);
     QContactPhoneNumber fetchedNumber4 = static_cast<QContactPhoneNumber>(callDetail4);
     QVERIFY(fetchedNumber4.number() == "123");
-     
+
     QContactDetail callDetail5 = fetched2.preferredDetail("videocall");
     QVERIFY(callDetail5.definitionName() == QContactPhoneNumber::DefinitionName);
     QContactPhoneNumber fetchedNumber5 = static_cast<QContactPhoneNumber>(callDetail5);
@@ -297,14 +297,15 @@ void TestSymbianEngine::saveContacts()
     QContactId empty;
     int count = 5;
 
-    int init_count = m_engine->contacts(sortOrders, err).count();
+    int init_count = m_engine->contactIds(sortOrders, err).count();
     QVERIFY(err == QContactManager::NoError);
 
     // NULL
-    QList<QContactManager::Error> errors = m_engine->saveContacts(NULL, err);
-    QVERIFY(errors.count() == 0);
+    QMap<int, QContactManager::Error> errorMap;
+    QVERIFY(!m_engine->saveContacts(NULL, &errorMap, err));
+    QVERIFY(errorMap.count() == 0);
     QVERIFY(err == QContactManager::BadArgumentError);
-    int current_count = m_engine->contacts(sortOrders, err).count();
+    int current_count = m_engine->contactIds(sortOrders, err).count();
     QVERIFY(err == QContactManager::NoError);
     QVERIFY(init_count == current_count);
 
@@ -314,16 +315,16 @@ void TestSymbianEngine::saveContacts()
         alice.setType("Jargon");
         contacts.append(alice);
     }
-    errors = m_engine->saveContacts(&contacts, err);
+    QVERIFY(!m_engine->saveContacts(&contacts, &errorMap, err));
     QVERIFY(err == QContactManager::InvalidDetailError);
-    foreach(QContactManager::Error err, errors) {
+    foreach(QContactManager::Error err, errorMap) {
         QVERIFY(err == QContactManager::InvalidDetailError);
     }
     foreach(QContact c, contacts) {
         QVERIFY(c.id() == empty);
         QVERIFY(c.localId() == 0);
     }
-    current_count = m_engine->contacts(sortOrders, err).count();
+    current_count = m_engine->contactIds(sortOrders, err).count();
     QVERIFY(err == QContactManager::NoError);
     QVERIFY(init_count == current_count);
     contacts.clear();
@@ -334,9 +335,9 @@ void TestSymbianEngine::saveContacts()
         alice.setType(QContactType::TypeContact);
         contacts.append(alice);
     }
-    errors = m_engine->saveContacts(&contacts, err);
+    QVERIFY(m_engine->saveContacts(&contacts, &errorMap, err));
     QVERIFY(err == QContactManager::NoError);
-    foreach(QContactManager::Error err, errors) {
+    foreach(QContactManager::Error err, errorMap) {
         QVERIFY(err == QContactManager::NoError);
     }
     QString uri = QString(QLatin1String(CNT_SYMBIAN_MANAGER_NAME));
@@ -345,13 +346,13 @@ void TestSymbianEngine::saveContacts()
         QVERIFY(c.localId() != 0);
         QVERIFY(c.id().managerUri().contains(uri, Qt::CaseInsensitive));
     }
-    current_count = m_engine->contacts(sortOrders, err).count();
+    current_count = m_engine->contactIds(sortOrders, err).count();
     QVERIFY(err == QContactManager::NoError);
     QVERIFY(init_count + count == current_count);
     contacts.clear();
 
     // Save with one invalid contact in list
-    init_count = m_engine->contacts(sortOrders, err).count();
+    init_count = m_engine->contactIds(sortOrders, err).count();
     for(int i=0; i<count; i++) {
         QContact alice;
         alice.setType(QContactType::TypeContact);
@@ -361,13 +362,10 @@ void TestSymbianEngine::saveContacts()
     invalid.setType("Jasdfasd");
     contacts.insert(3, invalid);
 
-    errors = m_engine->saveContacts(&contacts, err);
+    QVERIFY(!m_engine->saveContacts(&contacts, &errorMap, err));
     QVERIFY(err == QContactManager::InvalidDetailError);
-    for(int i=0; i<errors.count(); i++) {
-        if (i == 3)
-            QVERIFY(errors[i] == QContactManager::InvalidDetailError);
-        else
-            QVERIFY(errors[i] == QContactManager::NoError);
+    foreach(QContactManager::Error err, errorMap) {
+        QVERIFY(err == QContactManager::InvalidDetailError);
     }
 
     for(int i=0; i<contacts.count(); i++) {
@@ -381,7 +379,7 @@ void TestSymbianEngine::saveContacts()
             QVERIFY(c.id().managerUri().contains(uri, Qt::CaseInsensitive));
         }
     }
-    current_count = m_engine->contacts(sortOrders, err).count();
+    current_count = m_engine->contactIds(sortOrders, err).count();
     QVERIFY(err == QContactManager::NoError);
     QVERIFY(init_count + count == current_count);
     contacts.clear();
@@ -397,14 +395,14 @@ void TestSymbianEngine::retrieveContact()
     QVERIFY(err == QContactManager::NoError);
 
     // Retrieve "non contact"
-    QContact c = m_engine->contact(0, err);
+    QContact c = m_engine->contact(0, QStringList(), err);
     QVERIFY(&c != NULL);
     QVERIFY(c.localId() == 0);
     QVERIFY(err == QContactManager::DoesNotExistError);
 
     // Retrieve valid existing contact
     QContactLocalId aid = alice.localId();
-    c = m_engine->contact(aid, err);
+    c = m_engine->contact(aid, QStringList(), err);
     QVERIFY(&c != NULL);
     QVERIFY(c.localId() == aid);
     QVERIFY(err == QContactManager::NoError);
@@ -420,7 +418,7 @@ void TestSymbianEngine::retrieveContacts()
     QContact c;
     c.setType(QContactType::TypeContact);
     QContactName cn;
-    cn.setFirst("aaa");
+    cn.setFirstName("aaa");
     QVERIFY(c.saveDetail(&cn));
 
     QContactPhoneNumber number;
@@ -434,7 +432,7 @@ void TestSymbianEngine::retrieveContacts()
     QContact d;
     d.setType(QContactType::TypeContact);
     QContactName dn;
-    dn.setFirst("bbb");
+    dn.setFirstName("bbb");
     QVERIFY(d.saveDetail(&dn));
     QVERIFY(m_engine->saveContact(&d, err));
     QVERIFY(err == QContactManager::NoError);
@@ -448,7 +446,7 @@ void TestSymbianEngine::retrieveContacts()
     QVERIFY(err == QContactManager::NoError);
 
     // Retrieve all contacts
-    cnt_ids = m_engine->contacts(f, s, err);
+    cnt_ids = m_engine->contactIds(f, s, err);
     QVERIFY(err == QContactManager::NoError);
 
     QContactDetailFilter mobileFilter;
@@ -456,14 +454,14 @@ void TestSymbianEngine::retrieveContacts()
     mobileFilter.setValue(QLatin1String(QContactPhoneNumber::SubTypeMobile));
 
     // Retrieve contacts with mobile number
-    cnt_ids = m_engine->contacts(mobileFilter, s, err);
+    cnt_ids = m_engine->contactIds(mobileFilter, s, err);
     QVERIFY(err == QContactManager::NoError);
 
     QContactDetailFilter invalidFilter;
     mobileFilter.setDetailDefinitionName("asfdasdf", "asdfasdf");
 
     // Retrieve contacts with invalid filter
-    cnt_ids = m_engine->contacts(invalidFilter, s, err);
+    cnt_ids = m_engine->contactIds(invalidFilter, s, err);
     QVERIFY(err == QContactManager::NoError);
 
     // Retrieve sorted contacts
@@ -475,7 +473,7 @@ void TestSymbianEngine::retrieveContacts()
     sortOrder.setCaseSensitivity(Qt::CaseInsensitive);
     s1.append(sortOrder);
 
-    cnt_ids = m_engine->contacts(s1, err);
+    cnt_ids = m_engine->contactIds(s1, err);
     QVERIFY(err == QContactManager::NoError);
 
     // Retrieve with invalid sort order
@@ -483,7 +481,7 @@ void TestSymbianEngine::retrieveContacts()
     QList<QContactSortOrder> s2;
     sortOrder1.setDetailDefinitionName("asdfasdf", "asdfasd");
 
-    cnt_ids = m_engine->contacts(s2, err);
+    cnt_ids = m_engine->contactIds(s2, err);
     QVERIFY(err == QContactManager::NoError);
 }
 
@@ -498,7 +496,7 @@ void TestSymbianEngine::updateContact()
     int details_before = c.details().count();
 
     QContactName aliceName;
-    aliceName.setFirst("Alice");
+    aliceName.setFirstName("Alice");
     c.saveDetail(&aliceName);
 
     QContactPhoneNumber number;
@@ -513,7 +511,7 @@ void TestSymbianEngine::updateContact()
     QVERIFY(err == QContactManager::NoError);
 
     // Verify that contact has been updated
-    QContact d = m_engine->contact(id, err);
+    QContact d = m_engine->contact(id, QStringList(), err);
     QVERIFY(err == QContactManager::NoError);
     QVERIFY(d.localId() == id);
     QVERIFY(d.details().count() > details_before);
@@ -536,7 +534,7 @@ void TestSymbianEngine::removeContact()
     QVERIFY(err == QContactManager::NoError);
 
     // Verify that contact has been removed
-    QContact f = m_engine->contact(id, err);
+    QContact f = m_engine->contact(id, QStringList(), err);
     QVERIFY(f.localId() == 0);
     QVERIFY(err == QContactManager::DoesNotExistError);
 
@@ -552,13 +550,14 @@ void TestSymbianEngine::removeContacts()
     int count = 5;
 
     // Remove non existent contacts
-    QList<QContactManager::Error> errors = m_engine->removeContacts(&contacts, err);
+    QMap<int, QContactManager::Error> errorMap;
+    QVERIFY(m_engine->removeContacts(&contacts, &errorMap, err));
     QVERIFY(err == QContactManager::NoError);
-    QVERIFY(errors.count() == 0);
+    QVERIFY(errorMap.count() == 0);
 
     // NULL argument
-    errors = m_engine->removeContacts(NULL, err);
-    QVERIFY(errors.count() == 0);
+    QVERIFY(!m_engine->removeContacts(NULL, &errorMap, err));
+    QVERIFY(errorMap.count() == 0);
     QVERIFY(err == QContactManager::BadArgumentError);
 
     // Remove existing contacts
@@ -569,15 +568,15 @@ void TestSymbianEngine::removeContacts()
         QVERIFY(err == QContactManager::NoError);
         contacts.append(c.localId());
     }
-    errors = m_engine->removeContacts(&contacts, err);
+    QVERIFY(m_engine->removeContacts(&contacts, &errorMap, err));
     QVERIFY(err == QContactManager::NoError);
-    foreach(QContactManager::Error e, errors) {
+    foreach(QContactManager::Error e, errorMap) {
         QVERIFY(e == QContactManager::NoError);
     }
 
     // Verify that contacts have been removed
     for(int i=0; i<contacts.count(); i++) {
-        QContact f = m_engine->contact(contacts[i], err);
+        QContact f = m_engine->contact(contacts[i], QStringList(), err);
         QVERIFY(f.localId() == 0);
         QVERIFY(err == QContactManager::DoesNotExistError);
     }
@@ -593,17 +592,14 @@ void TestSymbianEngine::removeContacts()
     }
     contacts.insert(3, 0);
 
-    errors = m_engine->removeContacts(&contacts, err);
+    QVERIFY(!m_engine->removeContacts(&contacts, &errorMap, err));
     QVERIFY(err == QContactManager::DoesNotExistError);
-    for(int i=0; i<errors.count(); i++) {
-        if (i == 3)
-            QVERIFY(errors[i] == QContactManager::DoesNotExistError);
-        else
-            QVERIFY(errors[i] == QContactManager::NoError);
+    foreach(QContactManager::Error e, errorMap) {
+        QVERIFY(e == QContactManager::DoesNotExistError);
     }
 
     for(int i=0; i<contacts.count(); i++) {
-        QContact f = m_engine->contact(contacts[i], err);
+        QContact f = m_engine->contact(contacts[i], QStringList(), err);
         QVERIFY(f.localId() == 0);
         QVERIFY(err == QContactManager::DoesNotExistError);
     }
@@ -616,7 +612,7 @@ void TestSymbianEngine::addOwnCard()
     // Create a new contact own card
     QContact own;
     QContactName ownName;
-    ownName.setFirst("Own");
+    ownName.setFirstName("Own");
     own.saveDetail(&ownName);
     QVERIFY(m_engine->saveContact(&own, err));
     QVERIFY(err == QContactManager::NoError);
@@ -644,7 +640,7 @@ void TestSymbianEngine::retrieveOwnCard()
     // Create a new contact own card
     QContact own;
     QContactName ownName;
-    ownName.setFirst("Own");
+    ownName.setFirstName("Own");
     own.saveDetail(&ownName);
     QVERIFY(m_engine->saveContact(&own, err));
     QVERIFY(err == QContactManager::NoError);
@@ -668,7 +664,7 @@ void TestSymbianEngine::filterSupport()
     // Filter feature support
     QContactDetailFilter df;
     df.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldSubTypes);
-    QVERIFY(m_engine->filterSupported(df));
+    QVERIFY(m_engine->isFilterSupported(df));
     /*  To move to filter test cases
     QContactActionFilter af;
     QVERIFY(!m_engine->filterSupported(af));
@@ -778,7 +774,7 @@ void TestSymbianEngine::retrieveGroup()
     filter.setDetailDefinitionName(QContactType::DefinitionName, QContactType::FieldType);
     filter.setValue(QString(QLatin1String(QContactType::TypeGroup)));
     
-    QList<QContactLocalId> grp_ids = m_engine->contacts(filter, s, err);
+    QList<QContactLocalId> grp_ids = m_engine->contactIds(filter, s, err);
     QVERIFY(err == QContactManager::NoError);
     QVERIFY(err == QContactManager::NoError);
 
@@ -787,7 +783,7 @@ void TestSymbianEngine::retrieveGroup()
     QVERIFY(m_engine->saveContact(&g, err));
     QVERIFY(err == QContactManager::NoError);
 
-    QList<QContactLocalId> grp_ids1 = m_engine->contacts(filter, s, err);
+    QList<QContactLocalId> grp_ids1 = m_engine->contactIds(filter, s, err);
     QVERIFY(err == QContactManager::NoError);
     QVERIFY(grp_ids.count() + 1 == grp_ids1.count());
 
@@ -901,23 +897,23 @@ void TestSymbianEngine::synthesizeDisplaylable()
     QContactManager::Error err = QContactManager::NoError;
 
     QContact empty;
-    QString label = m_engine->synthesizeDisplayLabel(empty, err);
+    QString label = m_engine->synthesizedDisplayLabel(empty, err);
     QVERIFY(err == QContactManager::NoError);
     QVERIFY(label == QString("Unnamed"));
 
     QContact first;
     QContactName fn;
-    fn.setFirst("Alice");
+    fn.setFirstName("Alice");
     first.saveDetail(&fn);
-    label = m_engine->synthesizeDisplayLabel(first, err);
+    label = m_engine->synthesizedDisplayLabel(first, err);
     QVERIFY(err == QContactManager::NoError);
     QVERIFY(label == QString("Alice"));
 
     QContact last;
     QContactName ln;
-    ln.setLast("Jones");
+    ln.setLastName("Jones");
     last.saveDetail(&ln);
-    label = m_engine->synthesizeDisplayLabel(last, err);
+    label = m_engine->synthesizedDisplayLabel(last, err);
     QVERIFY(err == QContactManager::NoError);
     QVERIFY(label == QString("Jones"));
 
@@ -928,13 +924,13 @@ void TestSymbianEngine::synthesizeDisplaylable()
     org.setTitle("Assistant Manager");
     org.setLocation("Nokia Cyber Park");
     orgContact.saveDetail(&org);
-    label = m_engine->synthesizeDisplayLabel(orgContact, err);
+    label = m_engine->synthesizedDisplayLabel(orgContact, err);
     QVERIFY(err == QContactManager::NoError);
     QVERIFY(label == QString("Nokia"));
 
     QContact jargon;
     jargon.setType("jargon");
-    label = m_engine->synthesizeDisplayLabel(jargon, err);
+    label = m_engine->synthesizedDisplayLabel(jargon, err);
     QVERIFY(err == QContactManager::InvalidContactTypeError);
     QVERIFY(label.isEmpty());
 
@@ -943,7 +939,7 @@ void TestSymbianEngine::synthesizeDisplaylable()
     QContactName gn;
     gn.setCustomLabel("grouplable");
     group.saveDetail(&gn);
-    label = m_engine->synthesizeDisplayLabel(group, err);
+    label = m_engine->synthesizedDisplayLabel(group, err);
     QVERIFY(err == QContactManager::NoError);
     QVERIFY(label == QString("grouplable"));
 }

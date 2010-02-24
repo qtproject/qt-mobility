@@ -45,6 +45,8 @@
 #include <QtCore/qobject.h>
 #include "qimageencodercontrol.h"
 
+QTM_USE_NAMESPACE
+
 class S60CameraSession;
 
 class S60CameraImageEncoderControl : public QImageEncoderControl
@@ -55,22 +57,26 @@ public:
     S60CameraImageEncoderControl(QObject *session, QObject *parent = 0);
     ~S60CameraImageEncoderControl();
 
-    QSize resolution() const;
-    QSize minimumResolution() const;
-    QSize maximumResolution() const;
-    QList<QSize> supportedResolutions() const;
-    void setResolution(const QSize &size);
-
     QStringList supportedImageCodecs() const;
-    QString imageCodec() const;
-    bool setImageCodec(const QString &codecName);
-
     QString imageCodecDescription(const QString &codecName) const;
 
-    QtMedia::EncodingQuality quality() const = 0;
-    void setQuality(QtMedia::EncodingQuality);
+    QList<QSize> supportedResolutions(const QImageEncoderSettings &settings,
+                                              bool *continuous = 0) const;
+
+    QImageEncoderSettings imageSettings() const = 0;
+    void setImageSettings(const QImageEncoderSettings &settings);
+
+private:
+//    QSize resolution() const;
+//    QSize minimumResolution() const;
+//    QSize maximumResolution() const;
+//    //QList<QSize> supportedResolutions() const;
+//    void setResolution(const QSize &size);
+
+
 private:
     S60CameraSession *m_session;
+    QImageEncoderSettings m_imageEncoderSettings;
 };
 
 #endif

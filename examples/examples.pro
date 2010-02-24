@@ -1,4 +1,4 @@
-include($$QT_MOBILITY_BUILD_TREE/config.pri)
+include(../staticconfig.pri)
 
 TEMPLATE = subdirs
 
@@ -6,24 +6,33 @@ TEMPLATE = subdirs
 contains(mobility_modules,serviceframework) {
     SUBDIRS += filemanagerplugin \
             bluetoothtransferplugin \
+            notesmanagerplugin \
             servicebrowser \
             sfwipcservice \
             sfwipcclient
-}
-
-#BearerManagement examples
-contains(mobility_modules,bearer) {
-    SUBDIRS += bearermonitor bearercloud
+#            todotool
+    
     contains(QT_CONFIG, declarative) {
         SUBDIRS += declarative
     }
 }
 
+#BearerManagement examples
+contains(mobility_modules,bearer) {
+    SUBDIRS += bearermonitor bearercloud
+}
+
 #Location examples
 contains(mobility_modules,location) {
-    SUBDIRS += logfilepositionsource
-    contains(QT_CONFIG, webkit) {
-        SUBDIRS += fetchgooglemaps
+    SUBDIRS += logfilepositionsource \
+		satellitedialog
+    contains(mobility_modules,bearer) {
+    	SUBDIRS += flickrdemo \
+		    weatherinfo \
+		    lightmaps
+        contains(QT_CONFIG, webkit) {
+            SUBDIRS += fetchgooglemaps
+        }
     }
 }
 
@@ -49,22 +58,40 @@ contains(mobility_modules,systeminfo): SUBDIRS += sysinfo
 #Multimedia
 contains(mobility_modules,multimedia) {
     #disabled on Symbian due to missing backend
-    !symbian:SUBDIRS += \
+    SUBDIRS += \
         radio \
         player \
         cameracapture \
         slideshow \
         streamplayer \
         audiorecorder
+
+    contains (QT_CONFIG, declarative) {
+        SUBDIRS += \
+            declarativemusic \
+            declarativevideo
+    }
 }
+
 
 #Messaging examples
 contains(mobility_modules,messaging) {
     contains(qmf_enabled,yes)|wince*|win32|symbian|maemo6 {
-    !win32-g++:SUBDIRS += \
-        keepintouch\
-        querymessages\
-        writemessage\
-        serviceactions
+        !win32-g++ {
+            SUBDIRS += \
+                querymessages \
+                writemessage \
+                serviceactions
+
+            contains(mobility_modules,contacts) {
+                SUBDIRS += keepintouch
+            }
+        }
     }
 }
+
+# Sensors API examples
+contains(mobility_modules,sensors) {
+    SUBDIRS += sensors
+}
+

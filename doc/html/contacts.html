@@ -74,8 +74,8 @@
 
         <span class="comment">/* Set the contact's name */</span>
         QContactName aliceName;
-        aliceName.setFirst(&quot;Alice&quot;);
-        aliceName.setLast(&quot;Jones&quot;);
+        aliceName.setFirstName(&quot;Alice&quot;);
+        aliceName.setLastName(&quot;Jones&quot;);
         aliceName.setCustomLabel(&quot;Ally Jones&quot;);
         alice.saveDetail(&amp;aliceName);
 
@@ -95,7 +95,9 @@
         alice.saveDetail(&amp;number2);
 
         <span class="comment">/* Save the contact */</span>
-        cm-&gt;saveContact(&amp;alice);
+        cm-&gt;saveContact(&amp;alice) ? qDebug() &lt;&lt; &quot;Successfully saved&quot; &lt;&lt; aliceName.customLabel()
+                                : qDebug() &lt;&lt; &quot;Failed to save&quot; &lt;&lt; aliceName.customLabel();
+        qDebug() &lt;&lt; &quot;The backend has synthesized a display label for the contact:&quot; &lt;&lt; alice.displayLabel();
     }</pre>
 <a name="filtering-by-detail-definition-and-value"></a>
 <h5>Filtering by detail definition and value</h5>
@@ -107,7 +109,7 @@
         phoneFilter.setValue(incomingCallNbr);
         phoneFilter.setMatchFlags(QContactFilter::MatchExactly);
 
-        QList&lt;QContactLocalId&gt; matchingContacts = cm-&gt;contacts(phoneFilter);
+        QList&lt;QContactLocalId&gt; matchingContacts = cm-&gt;contactIds(phoneFilter);
         if (matchingContacts.size() == 0) {
             qDebug() &lt;&lt; &quot;Incoming call from unknown contact (&quot; &lt;&lt; incomingCallNbr &lt;&lt; &quot;)&quot;;
         } else {
@@ -122,7 +124,7 @@
 <p>The client retrieves the phone numbers of a contact, and displays the first one</p>
 <pre>    void viewSpecificDetail(QContactManager* cm)
     {
-        QList&lt;QContactLocalId&gt; contactIds = cm-&gt;contacts();
+        QList&lt;QContactLocalId&gt; contactIds = cm-&gt;contactIds();
         QContact a = cm-&gt;contact(contactIds.first());
         qDebug() &lt;&lt; &quot;The first phone number of&quot; &lt;&lt; a.displayLabel()
                  &lt;&lt; &quot;is&quot; &lt;&lt; a.detail(QContactPhoneNumber::DefinitionName).value(QContactPhoneNumber::FieldNumber);
@@ -132,7 +134,7 @@
 <p>The client retrieves all of the details of a contact, and displays them</p>
 <pre>    void viewDetails(QContactManager* cm)
     {
-        QList&lt;QContactLocalId&gt; contactIds = cm-&gt;contacts();
+        QList&lt;QContactLocalId&gt; contactIds = cm-&gt;contactIds();
         QContact a = cm-&gt;contact(contactIds.first());
         qDebug() &lt;&lt; &quot;Viewing the details of&quot; &lt;&lt; a.displayLabel();
 
@@ -148,6 +150,76 @@
             }
             qDebug();
         }
+    }</pre>
+<p>It is important to note that details are implicitly shared objects with particular semantics surrounding saving, removal and modification. The following example demonstrates these semantics</p>
+<pre>    void detailSharing(QContactManager* cm)
+    {
+        QList&lt;QContactLocalId&gt; contactIds = cm-&gt;contactIds();
+        QContact a = cm-&gt;contact(contactIds.first());
+        qDebug() &lt;&lt; &quot;Demonstrating detail sharing semantics with&quot; &lt;&lt; a.displayLabel();
+
+        <span class="comment">/* Create a new phone number detail. */</span>
+        QContactPhoneNumber newNumber;
+        newNumber.setNumber(&quot;123123123&quot;);
+        qDebug() &lt;&lt; &quot;\tThe new phone number is&quot; &lt;&lt; newNumber.number();
+
+        <span class="comment">/*
+         * Create a copy of that detail.  These will be implicitly shared;
+         * changes to nnCopy will not affect newNumber, and vice versa.
+         * However, attempting to save them will cause overwrite to occur.
+         * Removal is done purely via key() checking, also.
+         */</span>
+        QContactPhoneNumber nnCopy(newNumber);
+        nnCopy.setNumber(&quot;456456456&quot;);
+        qDebug() &lt;&lt; &quot;\tThat number is still&quot; &lt;&lt; newNumber.number() &lt;&lt; &quot;, the copy is&quot; &lt;&lt; nnCopy.number();
+
+        <span class="comment">/* Save the detail in the contact, then remove via the copy, then resave. */</span>
+        a.saveDetail(&amp;newNumber);
+        a.removeDetail(&amp;nnCopy);  <span class="comment">// identical to a.removeDetail(&amp;newNumber);</span>
+        a.saveDetail(&amp;newNumber); <span class="comment">// since newNumber.key() == nnCopy.key();</span>
+
+        <span class="comment">/* Saving will cause overwrite */</span>
+        qDebug() &lt;&lt; &quot;\tPrior to saving nnCopy,&quot; &lt;&lt; a.displayLabel() &lt;&lt; &quot;has&quot; &lt;&lt; a.details().count() &lt;&lt; &quot;details.&quot;;
+        a.saveDetail(&amp;nnCopy);
+        qDebug() &lt;&lt; &quot;\tAfter saving nnCopy,&quot; &lt;&lt; a.displayLabel() &lt;&lt; &quot;still has&quot; &lt;&lt; a.details().count() &lt;&lt; &quot;details.&quot;;
+
+        <span class="comment">/* In order to save nnCopy as a new detail, we must reset its key */</span>
+        nnCopy.resetKey();
+        qDebug() &lt;&lt; &quot;\tThe copy key is now&quot; &lt;&lt; nnCopy.key() &lt;&lt; &quot;, whereas the original key is&quot; &lt;&lt; newNumber.key();
+        qDebug() &lt;&lt; &quot;\tPrior to saving (key reset) nnCopy,&quot; &lt;&lt; a.displayLabel() &lt;&lt; &quot;has&quot; &lt;&lt; a.details().count() &lt;&lt; &quot;details.&quot;;
+        a.saveDetail(&amp;nnCopy);
+        qDebug() &lt;&lt; &quot;\tAfter saving (key reset) nnCopy,&quot; &lt;&lt; a.displayLabel() &lt;&lt; &quot;still has&quot; &lt;&lt; a.details().count() &lt;&lt; &quot;details.&quot;;
+        a.removeDetail(&amp;nnCopy);
+
+        <span class="comment">/*
+         * Note that changes made to details are not
+         * propagated automatically to the contact.
+         * To persist changes to a detail, you must call saveDetail().
+         */</span>
+        QList&lt;QContactPhoneNumber&gt; allNumbers = a.details&lt;QContactPhoneNumber&gt;();
+        foreach (const QContactPhoneNumber&amp; savedPhn, allNumbers) {
+            if (savedPhn.key() != newNumber.key()) {
+                continue;
+            }
+
+            <span class="comment">/*
+             * This phone number is the saved copy of the newNumber detail.
+             * It is detached from the newNumber detail, so changes to newNumber
+             * shouldn't affect savedPhn until saveDetail() is called again.
+             */</span>
+            qDebug() &lt;&lt; &quot;\tCurrently, the (stack) newNumber is&quot; &lt;&lt; newNumber.number()
+                     &lt;&lt; &quot;, and the saved newNumber is&quot; &lt;&lt; savedPhn.number();
+            newNumber.setNumber(&quot;678678678&quot;);
+            qDebug() &lt;&lt; &quot;\tNow, the (stack) newNumber is&quot; &lt;&lt; newNumber.number()
+                     &lt;&lt; &quot;, but the saved newNumber is&quot; &lt;&lt; savedPhn.number();
+        }
+
+        <span class="comment">/*
+         * Removal of the detail depends only on the key of the detail; the fact
+         * that the values differ is not taken into account by the remove operation.
+         */</span>
+        a.removeDetail(&amp;newNumber) ? qDebug() &lt;&lt; &quot;\tSucceeded in removing the temporary detail.&quot;
+                                   : qDebug() &lt;&lt; &quot;\tFailed to remove the temporary detail.\n&quot;;
     }</pre>
 <a name="installing-a-plugin-that-modifies-the-definition-of-one-type-of-detail"></a>
 <h5>Installing a plugin that modifies the definition of one type of detail</h5>
@@ -178,7 +250,7 @@
 <p>The client retrieves a contact, modifies one of its details, adds a new detail, and then saves the contact back to the manager. Note that it uses the newly added field of the email address definition!</p>
 <pre>    void editView(QContactManager* cm)
     {
-        QList&lt;QContactLocalId&gt; contactIds = cm-&gt;contacts();
+        QList&lt;QContactLocalId&gt; contactIds = cm-&gt;contactIds();
         QContact a = cm-&gt;contact(contactIds.first());
         qDebug() &lt;&lt; &quot;Modifying the details of&quot; &lt;&lt; a.displayLabel();
 
@@ -212,10 +284,12 @@
     {
         <span class="comment">// retrieve any contact whose first name is &quot;Alice&quot;</span>
         QContactDetailFilter dfil;
-        dfil.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
+        dfil.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirstName);
         dfil.setValue(&quot;Alice&quot;);
         dfil.setMatchFlags(QContactFilter::MatchExactly);
 
+        <span class="comment">// m_fetchRequest was created with m_fetchRequest = new QContactFetchRequest() in the ctor.</span>
+        m_fetchRequest-&gt;setManager(this-&gt;m_manager); <span class="comment">// m_manager is a QContactManager*.</span>
         m_fetchRequest-&gt;setFilter(dfil);
         connect(m_fetchRequest, SIGNAL(progress(QContactFetchRequest*,bool)), this, SLOT(printContacts(QContactFetchRequest*,bool)));
         if (!m_fetchRequest-&gt;start()) {
@@ -242,7 +316,8 @@
         }
 
         <span class="comment">// once we've finished retrieving results, stop processing events.</span>
-        if (request-&gt;status() == QContactAbstractRequest::Finished || request-&gt;status() == QContactAbstractRequest::Cancelled) {
+        if (request-&gt;state() == QContactAbstractRequest::FinishedState || request-&gt;state() == QContactAbstractRequest::CanceledState) {
+            qDebug() &lt;&lt; &quot;Finished displaying asynchronously retrieved contacts!&quot;;
             QCoreApplication::exit(0);
         }
     }</pre>
@@ -259,7 +334,7 @@
 <pre>    void loadManager()
     {
         QContactManager* cm = new QContactManager(&quot;KABC&quot;);
-        QList&lt;QContactLocalId&gt; contactIds = cm-&gt;contacts();
+        QList&lt;QContactLocalId&gt; contactIds = cm-&gt;contactIds();
         if (!contactIds.isEmpty()) {
             QContact a = cm-&gt;contact(contactIds.first());
             qDebug() &lt;&lt; &quot;This manager contains&quot; &lt;&lt; a.displayLabel();
@@ -325,7 +400,7 @@
 <tr valign="top" class="even"><th><a href="qcontactemailaddress.html">QContactEmailAddress</a></th><td>Contains the email address of a contact</td></tr>
 <tr valign="top" class="odd"><th><a href="qcontactfamily.html">QContactFamily</a></th><td>Contains the names of the family members of a contact</td></tr>
 <tr valign="top" class="even"><th><a href="qcontactgender.html">QContactGender</a></th><td>Contains the gender of a contact</td></tr>
-<tr valign="top" class="odd"><th><a href="qcontactgeolocation.html">QContactGeolocation</a></th><td>Contains the global location coordinate associated with a contact</td></tr>
+<tr valign="top" class="odd"><th><a href="qcontactgeolocation.html">QContactGeoLocation</a></th><td>Contains the global location coordinate associated with a contact</td></tr>
 <tr valign="top" class="even"><th><a href="qcontactguid.html">QContactGuid</a></th><td>Contains the globally unique Id of a contact</td></tr>
 <tr valign="top" class="odd"><th><a href="qcontactname.html">QContactName</a></th><td>Contains the name of a contact</td></tr>
 <tr valign="top" class="even"><th><a href="qcontactnickname.html">QContactNickname</a></th><td>Contains a nickname of a contact</td></tr>
@@ -381,7 +456,7 @@
 <p>Different backends have different capabilities and offer different functionality. In order to allow clients to query the provided functionality at runtime, every backend must be capable of reporting their functionality and implementation version. They are reported to clients through various functions provided by the <a href="qcontactmanager.html">QContactManager</a> class.</p>
 <a name="synchronization-and-serialization"></a>
 <h4>Synchronization and Serialization</h4>
-<p>The contacts API is used by another Qt Mobility module: the <a href="versit.html">Versit</a>* module. It allows serialization of a <a href="qcontact.html">QContact</a> into a vCard document, and vice versa.</p>
+<p>The contacts API is used by another Qt Mobility module: the <a href="qtmobility-known-issues.html#versit-api">Versit</a>* module. It allows serialization of a <a href="qcontact.html">QContact</a> into a vCard document, and vice versa.</p>
 <p>[*] Versit <sup>&reg;</sup> is a trademark of the Internet Mail Consortium.</p>
 <a name="examples"></a>
 <h4>Examples</h4>

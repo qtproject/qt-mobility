@@ -43,7 +43,10 @@
 #define S60CAMERAFOCUSCONTROL_H
 
 #include <QtCore/qobject.h>
-#include "multimedia/experimental/qcamerafocuscontrol.h"
+#include "qcamerafocuscontrol.h"
+#include "s60camerasettings.h"
+
+QTM_USE_NAMESPACE
 
 class S60CameraService;
 class S60CameraSession;
@@ -67,19 +70,33 @@ public:
 
     qreal maximumOpticalZoom() const;
     qreal maximumDigitalZoom() const;
-    qreal zoomValue() const;
-    void zoomTo(qreal value);
+    
+    qreal opticalZoom() const;
+    qreal digitalZoom() const;
 
-    bool isFocusLocked() const;
+    void zoomTo(qreal optical, qreal digital);
 
 public Q_SLOTS:
 
-    void lockFocus();
-    void unlockFocus();
-
+    void startFocusing();
+    void cancelFocusing();
+    void focusChanged(QCamera::FocusStatus status);
+   
 private:
     S60CameraSession *m_session;
     S60CameraService *m_service;
+    
+    S60CameraSettings *m_advancedSettings;
+    
+    bool m_focusLocked;
+    qreal m_digitalZoomValue;
+    qreal m_opticalZoomValue;
+    bool m_macroFocusingEnabled;
+    QCamera::FocusMode m_focusMode;
+    QCamera::FocusStatus m_focusStatus;
+    qreal m_maxZoom;
+    qreal m_maxDigitalZoom;
+    QCamera::Error m_error;
 };
 
 #endif

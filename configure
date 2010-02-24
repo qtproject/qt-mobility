@@ -63,7 +63,7 @@ QMAKE_CACHE="$shadowpath/.qmake.cache"
 LIB_PATH="lib"
 BIN_PATH="bin"
 MAC_SDK=
-MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework"
+MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors"
 MOBILITY_MODULES_UNPARSED=
 
 usage() 
@@ -166,7 +166,7 @@ while [ "$#" -gt 0 ]; do
             MOBILITY_MODULES=
             for m in $MOBILITY_MODULES_UNPARSED; do
                 case "$m" in
-                    bearer|contacts|location|messaging|multimedia|publishsubscribe|serviceframework|systeminfo|versit)
+                    bearer|contacts|location|messaging|multimedia|publishsubscribe|serviceframework|systeminfo|versit|sensors)
                         MOBILITY_MODULES="$MOBILITY_MODULES $m";
                         ;;
                     *)
@@ -378,13 +378,13 @@ compileTest "CoreWLAN (MacOS 10.6)" corewlan
 # It's a lot easier to make qmake do the dependency checking...
 echo "mobility_modules = $MOBILITY_MODULES" >> "$CONFIG_IN"
 echo "contains(mobility_modules,versit): mobility_modules *= contacts" >> "$CONFIG_IN"
+echo "maemo6:contains(mobility_modules,messaging): mobility_modules -= messaging" >> "$CONFIG_IN"
 
 # Ideally we'd skip generating headers for modules that are not enabled
 echo "Generating Mobility Headers..."
 #remove old headers
 rm -rf $shadowpath/include
 mkdir $shadowpath/include
-$relpath/bin/syncheaders $shadowpath/include $relpath/src/global
 for module in $MOBILITY_MODULES; do
     case "$module" in 
         bearer)
@@ -404,6 +404,9 @@ for module in $MOBILITY_MODULES; do
             ;;
         contacts)
             $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts/details
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts/requests
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts/filters
             ;;
         multimedia)
             $relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia
@@ -416,6 +419,12 @@ for module in $MOBILITY_MODULES; do
             #versit implies contacts
             $relpath/bin/syncheaders $shadowpath/include $relpath/src/versit
             $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts/details
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts/requests
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts/filters
+            ;;
+        sensors)
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/sensors
             ;;
         *)
             echo "Cannot generate headers for $module"

@@ -91,7 +91,7 @@ void LogFilePositionSource::requestUpdate(int /*timeout*/)
     if (logFile->canReadLine())
         readNextPosition();
     else
-        emit requestTimeout();
+        emit updateTimeout();
 }
 
 void LogFilePositionSource::readNextPosition()

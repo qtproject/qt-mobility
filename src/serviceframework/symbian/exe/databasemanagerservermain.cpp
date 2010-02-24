@@ -53,8 +53,6 @@ int main(int argc, char **argv)
 {
     QCoreApplication app(argc, argv);
     
-    qDebug("Attempting to create CDatabaseManagerServer");
-    
     CDatabaseManagerServer* server = new CDatabaseManagerServer;
     TInt err = server->Start(KDatabaseManagerServerName);
     if (err != KErrNone)

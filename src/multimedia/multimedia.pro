@@ -61,7 +61,8 @@ PUBLIC_HEADERS += \
     qaudioendpointselector.h \
     qvideodevicecontrol.h \
     qgraphicsvideoitem.h \
-    qvideorenderercontrol.h
+    qvideorenderercontrol.h \
+    qmediatimerange.h
 
 SOURCES += qmediacontrol.cpp \
     qmediaobject.cpp \
@@ -98,14 +99,52 @@ SOURCES += qmediacontrol.cpp \
     qaudioendpointselector.cpp \
     qvideodevicecontrol.cpp \
     qmediapluginloader.cpp \
-    qgraphicsvideoitem.cpp \
     qpaintervideosurface.cpp \
-    qvideorenderercontrol.cpp
+    qvideorenderercontrol.cpp \
+    qmediatimerange.cpp
 
 contains(QT_CONFIG, declarative) {
-   QT += declarative
-   PRIVATE_HEADERS += qmlsound_p.h
-   SOURCES += qmlsound.cpp
+    QT += declarative
+
+    PRIVATE_HEADERS += \
+        qmetadatacontrolmetaobject_p.h \
+        qmlaudio_p.h \
+        qmlgraphicsvideo_p.h \
+        qmlmediabase_p.h \
+        qsoundeffect_p.h \
+        wavedecoder.h
+
+    SOURCES += \
+        qmetadatacontrolmetaobject.cpp \
+        qmlaudio.cpp \
+        qmlgraphicsvideo.cpp \
+        qmlmediabase.cpp \
+        qsoundeffect.cpp \
+        wavedecoder.cpp
+
+   maemo5: DEFINES += QT_MULTIMEDIA_MAEMO5
+   system(pkg-config --exists \'libpulse >= 0.9.10\') {
+       DEFINES += QT_MULTIMEDIA_PULSEAUDIO
+       PRIVATE_HEADERS += qsoundeffect_pulse_p.h
+       SOURCES += qsoundeffect_pulse_p.cpp
+       LIBS_PRIVATE += -lpulse
+   } else:x11 {
+       DEFINES += QT_MULTIMEDIA_QMEDIAPLAYER
+       PRIVATE_HEADERS += qsoundeffect_qmedia_p.h
+       SOURCES += qsoundeffect_qmedia_p.cpp
+   } else {
+       PRIVATE_HEADERS += qsoundeffect_qsound_p.h
+       SOURCES += qsoundeffect_qsound_p.cpp
+   }
+}
+
+maemo5 {
+    HEADERS += qxvideosurface_maemo5_p.h
+    SOURCES += qxvideosurface_maemo5.cpp
+    SOURCES += qgraphicsvideoitem_maemo5.cpp
+    LIBS += -lXv
+} else {
+    SOURCES += qgraphicsvideoitem.cpp
 }
 
 include (experimental/experimental.pri)
@@ -119,14 +158,7 @@ symbian {
     TARGET.UID3=0x2002AC77
     MMP_RULES += EXPORTUNFROZEN
     TARGET.CAPABILITY = ALL -TCB
-
-    deploy.path = $${EPOCROOT}
-    exportheaders.sources = $$PUBLIC_HEADERS
-    exportheaders.path = epoc32/include/mw
-    
-    for(header, exportheaders.sources) {
-        BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
-    }
 }
 
+CONFIG += middleware
 include(../../features/deploy.pri)

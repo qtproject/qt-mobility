@@ -69,7 +69,7 @@ private :
     QMLBackendTriggerChangeAO();
     ~QMLBackendTriggerChangeAO();
     inline bool isValid() {
-        return subsessionCreated && (iTriggerMonitorInfo!=NULL);
+        return subsessionCreated && (iTriggerMonitorInfo != NULL);
     }
     void ConstructL(RLbtServer& albtServ);
 
