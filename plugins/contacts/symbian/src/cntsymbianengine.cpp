@@ -158,6 +158,9 @@ QList<QContactLocalId> CntSymbianEngine::contactIds(
     {
         bool filterSupported(true);
         result = m_contactFilter->contacts(filter, sortOrders, filterSupported, error);
+        
+        //slow sorting until it's supported in SQL requests
+        result = slowSort(result, sortOrders, error);
             
 #ifdef SYMBIAN_BACKEND_USE_SQLITE
     
