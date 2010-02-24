@@ -311,11 +311,17 @@ void QGstreamerPlayerSession::setVolume(int volume)
 
 void QGstreamerPlayerSession::setMuted(bool muted)
 {
-    m_muted = muted;
+    if (m_muted != muted) {
+        m_muted = muted;
 
-    g_object_set(G_OBJECT(m_playbin), "volume", (m_muted ? 0 : m_volume/100.0), NULL);
+#ifdef USE_PLAYBIN2
+        g_object_set(G_OBJECT(m_playbin), "mute", m_muted, NULL);
+#else
+        g_object_set(G_OBJECT(m_playbin), "volume", (m_muted ? 0 : m_volume/100.0), NULL);
+#endif
 
-    emit mutedStateChanged(m_muted);
+        emit mutedStateChanged(m_muted);
+    }
 }
 
 static void addTagToMap(const GstTagList *list,
@@ -422,6 +428,13 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
         if (newPos/1000 != m_lastPosition) {
             m_lastPosition = newPos/1000;
             emit positionChanged(newPos);
+        }
+
+        double volume = 1.0;
+        g_object_get(G_OBJECT(m_playbin), "volume", &volume, NULL);
+        if (m_volume != int(volume*100)) {
+            m_volume = int(volume*100);
+            emit volumeChanged(m_volume);
         }
 
     } else {
