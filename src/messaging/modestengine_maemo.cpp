@@ -45,6 +45,7 @@
 #include "qmessageaccountfilter.h"
 #include "qmessageaccountfilter_p.h"
 #include "qmessageservice.h"
+#include "qmessagecontentcontainer_maemo_p.h"
 #include <libmodest-dbus-client/libmodest-dbus-client.h>
 #include <libmodest-dbus-client/libmodest-dbus-api.h>
 #include <QUrl>
@@ -230,13 +231,15 @@ QMessageAccountId ModestEngine::defaultAccount(QMessage::Type type) const
 bool ModestEngine::sendEmail(QMessage &message)
 {
     QDBusInterface qtmPlugin(
-            MODESTENGINE_QTM_PLUGIN_NAME,
-            MODESTENGINE_QTM_PLUGIN_PATH,
-            MODESTENGINE_QTM_PLUGIN_NAME,
-            QDBusConnection::sessionBus());
+        MODESTENGINE_QTM_PLUGIN_NAME,
+        MODESTENGINE_QTM_PLUGIN_PATH,
+        MODESTENGINE_QTM_PLUGIN_NAME,
+        QDBusConnection::sessionBus());
     QMessageAddressList addresses;
     QMessageAddress address;
+    QMessageContentContainerIdList attachmentIds;
     QMessageContentContainerId bodyId;
+    QMessageContentContainer body;
     QString value;
     QMessageAccountId accountId;
     QMessageAccount account;
@@ -248,6 +251,7 @@ bool ModestEngine::sendEmail(QMessage &message)
     uint priority = 0;
     ModestStringMap headers;
     QDBusMessage reply;
+    QMessage::StatusFlags messageStatus;
 
     qDebug() << __PRETTY_FUNCTION__ << "Sending message";
 
@@ -335,18 +339,25 @@ bool ModestEngine::sendEmail(QMessage &message)
 
     qDebug() << "Digging body content";
 
-    value = message.contentType();
+    bodyId = message.bodyId();
+    if (bodyId.isValid()) {
+        body = message.find (bodyId);
+    } else {
+        body = message;
+    }
+
+    value = body.contentType();
     qDebug() << value;
 
     if (value == "text") {
         QString key, data;
         bool hasContent = false;
 
-        value = message.contentSubType();
+        value = body.contentSubType();
         qDebug() << value;
 
-        if ((hasContent = message.isContentAvailable()) == true) {
-            data = message.textContent();
+        if ((hasContent = body.isContentAvailable()) == true) {
+            data = body.textContent();
         }
 
         if (value == "plain") {
@@ -360,6 +371,50 @@ bool ModestEngine::sendEmail(QMessage &message)
         }
     }
 
+    messageStatus = message.status();
+
+    if (messageStatus & QMessage::HasAttachments) {
+        attachmentIds = message.attachmentIds();
+
+        foreach (QMessageContentContainerId identifier, attachmentIds) {
+            ModestStringMap attachmentData;
+            QMessageContentContainer attachmentCont;
+
+            if (identifier.isValid() == false) continue;
+
+            attachmentCont = message.find (identifier);
+
+            if (attachmentCont.isContentAvailable () == false) continue;
+
+            attachmentData.clear();
+
+            value = attachmentCont.contentType();
+
+            if (value.isEmpty() == false) {
+                value.append("/");
+                value.append (attachmentCont.contentSubType());
+                attachmentData["mime-type"] = value;
+
+                qDebug() << "mime-type: " << value;
+            }
+
+            value = QMessageContentContainerPrivate::attachmentFilename (
+                attachmentCont);
+
+            if (value.isEmpty() == false) {
+                attachmentData["filename"] = value;
+                qDebug() << "filename: " << value;
+            }
+
+            qDebug() << "Charset: " << attachmentCont.contentCharset();
+            qDebug() << "Headers: " << attachmentCont.headerFields();
+
+            if (attachmentData.isEmpty() == false) {
+                attachmentData["content-id"] = identifier.toString();
+                attachments.append (attachmentData);
+            }
+        }
+    }
 
     qDebug() << "Sending D-BUS message";
 
