@@ -475,12 +475,12 @@
             return;
         }
 
-        if (!m_downloadPictureList) {
+        if (!m_downloadPictureList &amp;&amp; m_file) {
             m_file-&gt;close();
         }
 
         if (error) {
-            if (!m_downloadPictureList) {
+            if (!m_downloadPictureList &amp;&amp; m_file) {
                 m_file-&gt;remove();
             }
             QMessageBox::information(this,
@@ -508,11 +508,12 @@
         dialog.showMaximized();
     #endif
         if (!dialog.exec()) {
-            if (m_file-&gt;exists()) {
+            if (m_file &amp;&amp; m_file-&gt;exists()) {
                 m_file-&gt;remove();
             }
         }
-        delete m_file;
+        if(m_file)
+            delete m_file;
         m_file = 0;
     }
 

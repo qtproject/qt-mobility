@@ -67,7 +67,7 @@
 <p>Change notifications are transmitted to clients in the form of &quot;something has changed&quot; messages. Nodes within the shared memory region are versioned, which allows clients to quickly determine exactly what has changed without the need for a bulkier change notification protocol.</p>
 <a name="symbian-settings-layer"></a>
 <h4>Symbian Settings Layer</h4>
-<p>Publish and Subscribe API can be used to access Symbian OS' Properties (RProperty) as well as Central Repository files (CRepository). The underlying system limits the features and available data types but at least reading, writing and monitoring Symbian aware data types work in both RProperty and CRepository.</p>
+<p>Publish and Subscribe API can be used to access Symbian OS' Properties (RProperty) as well as Central Repository files (CRepository).</p>
 <a name="declaring-value-space-paths"></a>
 <h5>Declaring Value Space Paths</h5>
 <p>Since Publish and Subscribe API is based on Value Space that is accessed via textual path we need to somehow specify how particular paths are turned into RPropery or CRepository key definitions. Here the QCRML files come for help.</p>
@@ -87,7 +87,7 @@
 <p>The <tt>qcrmlgen</tt> tool located in the <tt>tools</tt> directory can be used to create QCRML files.</p>
 <a name="location-of-qcrml-files"></a>
 <h5>Location of QCRML Files</h5>
-<p>All the QCRML files need to be located in <tt>c:\resource\qt\crml</tt> directory in Symbian file system.</p>
+<p>All the QCRML files need to be located in <tt>\resource\qt\crml</tt> directory (in any available drive) in Symbian file system.</p>
 <p>In <tt>.pro</tt> files this means that the files need to be deployed with the SIS package.</p>
 <p>Example <tt>.pro</tt> file section:</p>
 <pre>    symbian {
@@ -97,8 +97,7 @@
     }</pre>
 <a name="limitations"></a>
 <h5>Limitations</h5>
-<p>Symbian OS Properties are limited to data of type <tt>int</tt> and <tt>QByteArray</tt>. <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> is also possible to be passed via Value Space but it is recognized as <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> in the receiving end. Use <a href="http://qt.nokia.com/doc/4.6/qvariant.html#toString">QVariant::toString</a>() to explicitly convert it back into a <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> in cases where you know that the data was originally a <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>. The maximum size for <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> is 65535 bytes.</p>
-<p>In addition to the types supported by Symbian OS Properties, Central Repository also supports qreal.</p>
+<p>The underlying Symbian APIs limit the data types that can be stored natively in available backing stores. In practice this is not a problem since the unsupported data types are automatically serialized in <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> and stored as 8-bit byte form by SymbianSettingslayer. The serialization/deserialization is transparent operation to the API user but may cause interoperatibility issues with native Symbian codes that access the same data directly. The maximum size of the bytearray is 65535 for RPropery backing store.</p>
 <a name="examples"></a>
 <h3>Examples</h3>
 <a name="publish-and-subscribe"></a>
