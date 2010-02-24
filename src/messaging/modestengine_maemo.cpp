@@ -48,11 +48,10 @@
 #include "qmessageservice.h"
 #include "qmessageservice_maemo_p.h"
 #include "qmessagecontentcontainer_maemo_p.h"
-#include <libmodest-dbus-client.h>
-#include <libmodest-dbus-api.h>
 #include <QUrl>
 #include <QtDBus>
 #include <dbus/dbus.h>
+#include <libmodest-dbus-client/libmodest-dbus-api.h>
 
 #include <QDebug>
 
