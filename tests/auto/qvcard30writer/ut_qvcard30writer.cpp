@@ -77,7 +77,7 @@ void UT_QVCard30Writer::testEncodeVersitProperty()
     property.setValue(QString::fromAscii("John Citizen"));
     mWriter->encodeVersitProperty(property);
     QCOMPARE(encodedProperty, expectedResult);
-    
+
     // With parameter(s)
     mWriter->writeCrlf(); // so it doesn't start folding
     buffer.close();
@@ -89,7 +89,7 @@ void UT_QVCard30Writer::testEncodeVersitProperty()
     property.insertParameter(QString::fromAscii("TYPE"),QString::fromAscii("HOME"));
     mWriter->encodeVersitProperty(property);
     QCOMPARE(encodedProperty, expectedResult);
-    
+
     // Convert X-NICKNAME to NICKNAME
     mWriter->writeCrlf(); // so it doesn't start folding
     buffer.close();

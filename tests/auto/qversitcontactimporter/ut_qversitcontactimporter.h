@@ -64,11 +64,11 @@ class UT_QVersitContactImporter : public QObject
 private slots: // Tests
     void init();
     void cleanup();
-    
+
     void testName();
     void testNameWithFormatted();
     void testAddress();
-    void testTel();    
+    void testTel();
     void testEmail();
     void testUrl();
     void testUid();
@@ -95,7 +95,7 @@ private slots: // Tests
     void testPropertyHandler();
 
 private: // Utilities
-    
+
     QVersitDocument createDocumentWithProperty(const QVersitProperty& property);
 
     QVersitDocument createDocumentWithNameAndPhoto(

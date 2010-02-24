@@ -90,7 +90,7 @@ void UT_QVCard21Writer::testEncodeVersitProperty()
     property.insertParameter(QString::fromAscii("TYPE"),QString::fromAscii("HOME"));
     mWriter->encodeVersitProperty(property);
     QCOMPARE(encodedProperty, expectedResult);
-    
+
     // With parameter(s). Special characters in the value.
     // -> The value needs to be Quoted-Printable encoded.
     mWriter->writeCrlf(); // so it doesn't start folding
@@ -102,13 +102,13 @@ void UT_QVCard21Writer::testEncodeVersitProperty()
     property.setValue(QString::fromAscii("john.citizen@example.com"));
     mWriter->encodeVersitProperty(property);
     QCOMPARE(encodedProperty, expectedResult);
-    
+
     // AGENT property with parameter
     mWriter->writeCrlf(); // so it doesn't start folding
     buffer.close();
     encodedProperty.clear();
     buffer.open(QIODevice::WriteOnly);
-    expectedResult = 
+    expectedResult =
 "AGENT;X-PARAMETER=VALUE:\r\n\
 BEGIN:VCARD\r\n\
 VERSION:2.1\r\n\

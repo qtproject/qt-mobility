@@ -84,7 +84,7 @@ void UT_QVersitReader::init()
 }
 
 void UT_QVersitReader::cleanup()
-{   
+{
     delete mReaderPrivate;
     delete mReader;
     delete mInputDevice;
@@ -94,8 +94,8 @@ void UT_QVersitReader::cleanup()
 void UT_QVersitReader::testDevice()
 {
     // No device
-    QVERIFY(mReader->device() == NULL);    
-    
+    QVERIFY(mReader->device() == NULL);
+
     // Device has been set
     mReader->setDevice(mInputDevice);
     QVERIFY(mReader->device() == mInputDevice);
@@ -123,7 +123,7 @@ void UT_QVersitReader::testReading()
     // No I/O device set
     QVERIFY(!mReader->startReading());
     QCOMPARE(mReader->error(), QVersitReader::IOError);
-    
+
     // Device set, no data
     mReader->setDevice(mInputDevice);
     mInputDevice->open(QBuffer::ReadOnly);
@@ -135,7 +135,7 @@ void UT_QVersitReader::testReading()
     QCOMPARE(results.count(),0);
 
     // Device set, one document
-    const QByteArray& oneDocument = 
+    const QByteArray& oneDocument =
         "BEGIN:VCARD\r\nVERSION:2.1\r\nFN:John\r\nEND:VCARD\r\n";
     mInputDevice->close();
     mInputDevice->setData(oneDocument);
@@ -285,13 +285,13 @@ void UT_QVersitReader::testSetVersionFromProperty()
     QVersitProperty property;
     property.setName(QString::fromAscii("N"));
     QVERIFY(mReaderPrivate->setVersionFromProperty(document,property));
-    
+
     // VERSION property with 2.1
     property.setName(QString::fromAscii("VERSION"));
     property.setValue(QString::fromAscii("2.1"));
     QVERIFY(mReaderPrivate->setVersionFromProperty(document,property));
     QVERIFY(document.type() == QVersitDocument::VCard21Type);
-    
+
     // VERSION property with 3.0
     property.setValue(QString::fromAscii("3.0"));
     QVERIFY(mReaderPrivate->setVersionFromProperty(document,property));
@@ -300,13 +300,13 @@ void UT_QVersitReader::testSetVersionFromProperty()
     // VERSION property with a not supported value
     property.setValue(QString::fromAscii("4.0"));
     QVERIFY(!mReaderPrivate->setVersionFromProperty(document,property));
-    
+
     // VERSION property with BASE64 encoded supported value
     property.setValue(QString::fromAscii(QByteArray("2.1").toBase64()));
     property.insertParameter(QString::fromAscii("ENCODING"),QString::fromAscii("BASE64"));
     QVERIFY(mReaderPrivate->setVersionFromProperty(document,property));
     QVERIFY(document.type() == QVersitDocument::VCard21Type);
-    
+
     // VERSION property with BASE64 encoded not supported value
     property.setValue(QString::fromAscii(QByteArray("4.0").toBase64()));
     QVERIFY(!mReaderPrivate->setVersionFromProperty(document,property));
@@ -346,7 +346,7 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard21()
     QVersitProperty property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
     QCOMPARE(property.name(),QString::fromAscii("BEGIN"));
     QCOMPARE(property.value(),QString::fromAscii("vcard"));
-    
+
     property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
     QCOMPARE(property.name(),QString::fromAscii("VERSION"));
     QCOMPARE(property.value(),QString::fromAscii("2.1"));
@@ -362,7 +362,7 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard21()
     property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
     QCOMPARE(property.name(),QString::fromAscii("NOTE"));
     QCOMPARE(property.value(),QString::fromUtf8(KATAKANA_NOKIA));
-    
+
     property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
     QCOMPARE(property.name(),QString::fromAscii("PHOTO"));
     // Linear whitespaces (SPACEs and TABs) removed from the value and base64 decoded:
@@ -396,15 +396,15 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard21()
     QCOMPARE(property.value(),QString());
     QVERIFY(property.variantValue().userType() == qMetaTypeId<QVersitDocument>());
     QCOMPARE(property.value<QVersitDocument>().properties().count(), 1);
-    
+
     property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
     QCOMPARE(property.name(),QString::fromAscii("END"));
     QCOMPARE(property.value(),QString::fromAscii("VCARD"));
-    
+
     property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
     QCOMPARE(property.name(),QString());
     QCOMPARE(property.value(),QString());
-    
+
     // Simulate a situation where the document nesting level is exceeded
     // In practice this would mean a big number of nested AGENT properties
     mReaderPrivate->mDocumentNestingLevel = 20;
@@ -567,7 +567,7 @@ void UT_QVersitReader::testParseVersitDocument_data()
                     "END:VCARD\r\n")
             << true
             << 3;
-    
+
     QTest::newRow("No BEGIN found")
             << QByteArray(
                     "VCARD\r\n"
@@ -576,14 +576,14 @@ void UT_QVersitReader::testParseVersitDocument_data()
                     "END:VCARD\r\n")
             << false
             << 0;
-    
+
     QTest::newRow("Wrong card type")
             << QByteArray(
                     "BEGIN:VCAL\r\n"
                     "END:VCAL\r\n")
             << false
             << 0;
-    
+
     QTest::newRow("Wrong version")
             << QByteArray(
                     "BEGIN:VCARD\r\n"

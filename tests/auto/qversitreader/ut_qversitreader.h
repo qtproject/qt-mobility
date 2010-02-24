@@ -74,7 +74,7 @@ public:
     int mResultsCount;
 };
 
-class UT_QVersitReader : public QObject                 
+class UT_QVersitReader : public QObject
 {
      Q_OBJECT
 
