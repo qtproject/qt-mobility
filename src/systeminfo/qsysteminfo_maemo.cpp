@@ -355,11 +355,47 @@ QString QSystemNetworkInfoPrivate::currentMobileNetworkCode()
 
 QString QSystemNetworkInfoPrivate::homeMobileCountryCode()
 {
-    return QString();
+    QString imsi = GConfItem("/system/nokia/location/sim_imsi").value().toString();
+    if (imsi.length() >= 3) {
+        return imsi.left(3);
+    }
+        return QString();
 }
 
 QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
 {
+#if !defined(QT_NO_DBUS)
+    QDBusInterface connectionInterface("com.nokia.phone.SIM",
+                                       "/com/nokia/phone/SIM",
+                                       "Phone.Sim",
+                                       QDBusConnection::systemBus());
+    if (!connectionInterface.isValid()) {
+        qWarning() << "interface not valid";
+        return QString();
+    }
+    QDBusReply<QByteArray> reply = connectionInterface.call(QLatin1String("read_hplmn"));
+
+    // The MNC and MCC are split into Hex numbers in the received byte array.
+    // The MNC can be 2 or 3 digits long. If it is 2 digits long, it ends with 0xF.
+    // The order of the Hex numbers in the reply is:
+    // mcc2 mcc1 mnc3 mcc3 mnc2 mnc1
+
+    QString homeMobileNetworkCode;
+    if (reply.isValid()) {
+        QString temp = reply.value().toHex();
+        QString mnc1 = temp.right(1);
+        temp.chop(1);
+        QString mnc2 = temp.right(1);
+        temp.chop(2);
+        QString mnc3 = temp.right(1);
+        if (mnc3 != "f") {
+            homeMobileNetworkCode.prepend(mnc3);
+        }
+        homeMobileNetworkCode.prepend(mnc2);
+        homeMobileNetworkCode.prepend(mnc1);
+        return homeMobileNetworkCode;
+    }
+#endif
     return QString();
 }
 
