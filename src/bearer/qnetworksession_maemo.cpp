@@ -673,7 +673,6 @@ void QNetworkSessionPrivate::do_open()
 	    qDebug() << "connect to"<< iap << "failed, result is empty";
 #endif
 	    updateState(QNetworkSession::Disconnected);
-	    emit quitPendingWaitsForOpened();
 	    emit q->error(QNetworkSession::InvalidConfigurationError);
 	    if (publicConfig.type() == QNetworkConfiguration::UserChoice)
                 copyConfig(publicConfig, activeConfig);
@@ -688,7 +687,6 @@ void QNetworkSessionPrivate::do_open()
 	if ((publicConfig.type() != QNetworkConfiguration::UserChoice) &&
 	    (connected_iap != config.identifier())) {
 	    updateState(QNetworkSession::Disconnected);
-	    emit quitPendingWaitsForOpened();
 	    emit q->error(QNetworkSession::InvalidConfigurationError);
 	    return;
 	}
@@ -790,7 +788,6 @@ void QNetworkSessionPrivate::do_open()
 	updateState(QNetworkSession::Disconnected);
 	if (publicConfig.type() == QNetworkConfiguration::UserChoice)
             copyConfig(publicConfig, activeConfig);
-	emit quitPendingWaitsForOpened();
 	emit q->error(QNetworkSession::UnknownSessionError);
     }
 }
