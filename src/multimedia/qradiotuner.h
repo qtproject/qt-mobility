@@ -71,7 +71,7 @@ class Q_MEDIA_EXPORT QRadioTuner : public QMediaObject
 
 public:
     enum State { ActiveState, StoppedState };
-    enum Band { AM, FM, SW, LW };
+    enum Band { AM, FM, SW, LW, FM2 };
     enum Error { NoError, ResourceError, OpenError, OutOfRangeError };
     enum StereoMode { ForceStereo, ForceMono, Auto };
 
