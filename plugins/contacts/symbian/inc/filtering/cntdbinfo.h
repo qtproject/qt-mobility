@@ -66,7 +66,8 @@ public:
     void getDbTableAndColumnName( const quint32 fieldId ,
                                       QString& tableName,
                                       QString& columnName ) const;
-     
+    bool SupportsUid(int uid);
+
 private:
     QHash<int,QString> contactsTableIdColumNameMapping;
     QHash<int,int> commAddrTableIdColumNameMapping;

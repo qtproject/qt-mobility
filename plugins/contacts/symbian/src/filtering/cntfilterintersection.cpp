@@ -41,6 +41,8 @@
 
 #include "cntfilterintersection.h"
 #include "cntfilterdetail.h"
+#include "cntfilterunion.h"
+#include "cntfilterdefault.h"
 #include "cntfilterrelationship.h"
 #include "cnttransformcontact.h"
 #include "qcontactintersectionfilter.h"
@@ -77,8 +79,11 @@ QList<QContactLocalId> CntFilterIntersection::contacts(
    QString sqlQuery;
     this->createSelectQuery( filter,sqlQuery,error) ;
     //fetch the contacts
+    if(error == QContactManager::NoError )
+        {
         idList =  m_srvConnection.searchContacts(sqlQuery, error);
-        return idList;
+        }
+    return idList;
 }
 
 
@@ -128,24 +133,48 @@ void CntFilterIntersection::createSelectQuery(const QContactFilter& filter,
 void CntFilterIntersection::getSelectQueryforFilter(const QContactFilter& filter,QString& sqlSelectQuery,QContactManager::Error& error)
     {
     switch(filter.type())
-        {
-        case QContactFilter::DefaultFilter:
-            break;
-        case QContactFilter::ContactDetailFilter:
             {
-            CntFilterDetail dtlfltr(m_contactdatabase,m_srvConnection,m_dbInfo);
-            dtlfltr.createSelectQuery(filter,sqlSelectQuery,error);
-            break;
+            case QContactFilter::DefaultFilter:
+                {
+                CntFilterDefault defaultfltr(m_contactdatabase,m_srvConnection,m_dbInfo);
+                defaultfltr.createSelectQuery(filter,sqlSelectQuery,error);
+                break;
+                }
+            case QContactFilter::ContactDetailFilter:
+                {
+                QContactDetailFilter detailfilter(filter);
+                if(detailfilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName ) 
+                    {
+                    error=QContactManager::NotSupportedError;
+                    }
+                else
+                    {
+                    CntFilterDetail dtlfltr(m_contactdatabase,m_srvConnection,m_dbInfo);
+                    dtlfltr.createSelectQuery(filter,sqlSelectQuery,error);
+                    }
+                break;
+                }
+            case QContactFilter::IntersectionFilter:
+                {
+                sqlSelectQuery += "SELECT DISTINCT contact_id FROM (";
+                CntFilterIntersection intersectionfltr(m_contactdatabase,m_srvConnection,m_dbInfo);
+                intersectionfltr.createSelectQuery(filter,sqlSelectQuery,error);
+                sqlSelectQuery += ")";
+                break;
+                }
+            case QContactFilter::UnionFilter:
+                {
+                sqlSelectQuery += "SELECT DISTINCT contact_id FROM (";
+                CntFilterUnion unionfltr(m_contactdatabase,m_srvConnection,m_dbInfo);
+                unionfltr.createSelectQuery(filter,sqlSelectQuery,error);
+                sqlSelectQuery += ")";
+                break;
+                }
+            default:
+                {
+                error = QContactManager::NotSupportedError;
+                break;
+                }
             }
-        case QContactFilter::IntersectionFilter:
-            break;
-        case QContactFilter::UnionFilter:
-            break;
-        default:
-            error = QContactManager::NotSupportedError;
-            break;
-        }
-    
-    
     }
     

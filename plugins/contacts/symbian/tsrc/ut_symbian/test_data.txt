@@ -24,42 +24,44 @@
 // Susan Daniel  +044035022423 dan.susa@nokia.com
 //-----------------------------------------------------------------------
 //Name - Match exactly
-[ContactDetailFilter1: Name, First, Stefann, 0, 1, 0]
-[ContactDetailFilter2: Name, Last, Daniel, 0, 1, 0]
+[ContactDetailFilter1: Name, First, Stefann,MatchExactly, 1, 0]
+[ContactDetailFilter2: Name, Last, Daniel,MatchExactly, 1, 0]
          //Name - MatchContains
-[ContactDetailFilter3: Name, First, nn, 1, 3, 0]
-[ContactDetailFilter4: Name, Last, n, 1, 4, 0]
+[ContactDetailFilter3: Name, First, nn,MatchContains, 3, 0]
+[ContactDetailFilter4: Name, Last, n,MatchContains, 4, 0]
          //Name - MatchStartsWith
-[ContactDetailFilter5: Name, First, Jo, 2, 2, 0]
-[ContactDetailFilter6: Name, Last, Len, 2, 1, 0]
+[ContactDetailFilter5: Name, First, Jo,MatchStartsWith, 2, 0]
+[ContactDetailFilter6: Name, Last, Len,MatchStartsWith, 1, 0]
          //Name - MatchEndsWith
-[ContactDetailFilter7: Name, First, nn, 3, 3, 0]
-[ContactDetailFilter8: Name, Last, ack, 3, 1, 0]
+[ContactDetailFilter7: Name, First, nn,MatchEndsWith, 3, 0]
+[ContactDetailFilter8: Name, Last, ack,MatchEndsWith, 1, 0]
          //Name - No results search
-[ContactDetailFilter7: Name, First, King, 3, 0, 0]
-[ContactDetailFilter8: Name, Last, Queen, 3, 0, 0]
+[ContactDetailFilter7: Name, First, King,MatchEndsWith, 0, 0]
+[ContactDetailFilter8: Name, Last, Queen,MatchEndsWith, 0, 0]
 //-----------------------------------------------------------------------
 //Email - Match exactly
-[ContactDetailFilter9: EmailAddress, EmailAddress, ste.Fed@nokia.com, 0, 1, 0]
+[ContactDetailFilter9: EmailAddress, EmailAddress, ste.Fed@nokia.com,MatchExactly, 1, 0]
 //Email - MatchContains
-[ContactDetailFilter10: EmailAddress, EmailAddress, nokia, 1, 5, 0]
+[ContactDetailFilter10: EmailAddress, EmailAddress, nokia,MatchContains, 5, 0]
 //Email - MatchStartsWith
-[ContactDetailFilter11: EmailAddress, EmailAddress, Joronn, 2, 1, 0]
+[ContactDetailFilter11: EmailAddress, EmailAddress, Joronn,MatchStartsWith, 1, 0]
 //Email - MatchEndsWith
-[ContactDetailFilter12: EmailAddress, EmailAddress, com, 3, 5, 0]
+[ContactDetailFilter12: EmailAddress, EmailAddress, com,MatchEndsWith, 5, 0]
 //Email - No results search
-[ContactDetailFilter13: EmailAddress, EmailAddress, andrewf, 3, 0, 0]
+[ContactDetailFilter13: EmailAddress, EmailAddress, andrewf,MatchEndsWith, 0, 0]
 //-----------------------------------------------------------------------
 //Phonenumber - Match exactly
-[ContactDetailFilter14: PhoneNumber, PhoneNumber, +026434234423, 0, 1, 0]
+[ContactDetailFilter14: PhoneNumber, PhoneNumber, +026434234423,MatchExactly, 1, 0]
 //Phonenumber - MatchContains
-[ContactDetailFilter15: PhoneNumber, PhoneNumber, 225214, 1, 0, 0]
+[ContactDetailFilter15: PhoneNumber, PhoneNumber, 225214,MatchContains, 0, 0]
 //Phonenumber - MatchStartsWith
-[ContactDetailFilter16: PhoneNumber, PhoneNumber, +358, 2, 0, 0]
+[ContactDetailFilter16: PhoneNumber, PhoneNumber, +358,MatchStartsWith, 0, 0]
 //Phonenumber - MatchEndsWith
-[ContactDetailFilter17: PhoneNumber, PhoneNumber, 035022423, 3, 2, 0]
+[ContactDetailFilter17: PhoneNumber, PhoneNumber, 035022423,MatchEndsWith, 2, 0]
 //Phonenumber - No results search
-[ContactDetailFilter18: PhoneNumber, PhoneNumber, 52252361425342322, 3, 0, 0]
+[ContactDetailFilter18: PhoneNumber, PhoneNumber, 52252361425342322,MatchEndsWith, 0, 0]
+
+
 //-----------------------------------------------------------------------
 // [ActionFilter: ActionName, Value, Vendor, 20]
 

@@ -79,6 +79,8 @@ private:
                              QString& fieldToUpdate ,
                              QContactManager::Error& error) const;
     QList<QContactLocalId> HandlePhonenumberDetailFilter(const QContactFilter& filter);
+    QList<QContactLocalId>  HandlePredictiveSearchFilter(const QContactFilter& filter,
+                                                         QContactManager::Error& error);
 
     TInt CntFilterDetail::searchPhoneNumbers(
             CContactIdArray*& idArray,

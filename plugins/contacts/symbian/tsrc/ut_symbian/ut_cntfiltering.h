@@ -42,8 +42,8 @@
 #include <QHash>
 #include <qcontactfilter.h>
 #include <qcontactmanager.h>
+#include "cntsymbianengine.h"
 
-class CntSymbianFilterSqlHelper;
 
 QTM_USE_NAMESPACE
 QTM_BEGIN_NAMESPACE
@@ -67,7 +67,8 @@ private:
     void parseFilters();
     void addFilter(QVector<QString> param);
     void createContacts();
-    QContactFilter::MatchFlags flag(int f);
+    QContactFilter::MatchFlags getMatchFlag(QString& inputflag);
+
     void createContact_1();
     void createContact_2();
     void createContact_3();
@@ -88,7 +89,11 @@ private slots:  // Test cases
     void testZeroSearch();
     
 private:
+    void  testIntersectionFilter_1();
+    void  testIntersectionFilter_2();
+    void  testUnionFilter_1();
+    void  testUnionFilter_2();
+private:
     QContactManager                             *mCntMng;
-    CntSymbianFilterSqlHelper                   *mSqlFilter;
     QHash<QContactFilter::FilterType, TFilter>  *mFilters;
 };

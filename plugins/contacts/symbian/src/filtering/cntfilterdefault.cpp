@@ -77,7 +77,7 @@ QList<QContactLocalId> CntFilterDefault::contacts(
     createSelectQuery( filter,sqlQuery,error);
     
     //fetch the contacts
-    if(error != QContactManager::NotSupportedError)
+    if(error == QContactManager::NoError)
     {
         idList =  m_srvConnection.searchContacts(sqlQuery, error);
     }

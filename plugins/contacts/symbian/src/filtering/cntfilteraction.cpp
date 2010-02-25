@@ -87,7 +87,7 @@ QList<QContactLocalId> CntFilterAction::contacts(
 }
 
 
-bool CntFilterAction::filterSupported(const QContactFilter& filter) 
+bool CntFilterAction::filterSupported(const QContactFilter& /*filter*/) 
 {
     bool result = false;
     //Not yet supported  

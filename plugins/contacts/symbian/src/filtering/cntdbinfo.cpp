@@ -63,6 +63,16 @@ CntDbInfo::~CntDbInfo()
     commAddrTableIdColumNameMapping.clear();
 }
 
+bool CntDbInfo::SupportsUid(int uid)
+    {
+    if(contactsTableIdColumNameMapping.contains(uid) )
+        return true;
+    else if (commAddrTableIdColumNameMapping.contains(uid))
+        return true;
+    else
+        return false;
+    
+    }
 /*!
  * Converts filed id to column name of the database table.
  * QContactManager::contacts function.

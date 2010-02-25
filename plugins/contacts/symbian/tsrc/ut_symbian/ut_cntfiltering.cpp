@@ -53,7 +53,6 @@ void TestFiltering::initTestCase()
     CContactDatabase *m_database = 0;
         TRAPD(error, m_database = CContactDatabase::OpenL());
         QVERIFY(error == KErrNone);
-    mSqlFilter = new CntSymbianFilterSqlHelper(*m_database);
     mFilters = new QHash<QContactFilter::FilterType, TFilter>;
 
     // Remove all contacts from the database
@@ -68,7 +67,6 @@ void TestFiltering::initTestCase()
 void TestFiltering::cleanupTestCase()
 {
     delete mCntMng;
-    delete mSqlFilter;
     delete mFilters;
 
 }
@@ -182,7 +180,7 @@ void TestFiltering::addFilter(QVector<QString> param)
         QContactDetailFilter df;
 
         df.setDetailDefinitionName(param[1], param[2]);
-        QContactFilter::MatchFlags fl = static_cast<QContactFilter::MatchFlags>(param[4].toInt());
+        QContactFilter::MatchFlags fl = getMatchFlag(param[4]);
         df.setMatchFlags(fl);
         df.setValue(param[3]);
 
@@ -360,21 +358,22 @@ void TestFiltering::createContact_5()
 
 
 }
-QContactFilter::MatchFlags TestFiltering::flag(int f)
-{
-    switch(f) {
-        case 0:
-            return QContactFilter::MatchExactly;
-        case 1:
-            return QContactFilter::MatchContains;
-        case 2:
-            return QContactFilter::MatchStartsWith;
-        case 3:
-            return QContactFilter::MatchCaseSensitive;
-        default:
-             return QContactFilter::MatchFixedString;
+
+QContactFilter::MatchFlags TestFiltering::getMatchFlag(QString& inputflag)
+    {
+
+    if(inputflag.compare("MatchExactly") == 0)
+        return QContactFilter::MatchExactly ;
+    else if (inputflag.compare("MatchStartsWith") == 0)
+        return QContactFilter::MatchStartsWith ;
+    else if (inputflag.compare("MatchEndsWith") == 0)
+	        return QContactFilter::MatchEndsWith ;
+    else if (inputflag.compare("MatchContains") == 0)
+		return QContactFilter::MatchContains;
+    else 
+        return QContactFilter::MatchPhoneNumber ;
+    
     }
-}
 
 void TestFiltering::testInvalidFilter()
 {
@@ -384,9 +383,10 @@ void TestFiltering::testInvalidFilter()
 
     QList<QContactSortOrder> sortOrder;
     
-    cnt_ids = mSqlFilter->searchContacts(filter, sortOrder, error);
+    cnt_ids = mCntMng->contactIds(filter, sortOrder);
+    error = mCntMng->error();
 
-    QVERIFY(error == QContactManager::NotSupportedError);
+    QVERIFY(error == QContactManager::NoError);
 }
 
 void TestFiltering::testContactDetailFilter()
@@ -400,14 +400,14 @@ void TestFiltering::testContactDetailFilter()
     for(int i=0; i< cnt; i++) {
         qDebug() << fs[i].name;
         const QContactDetailFilter cdf(fs[i].filter);
-        cnt_ids = mSqlFilter->searchContacts(cdf, sortOrder, error);
-        //QVERIFY(error == fs[i].error);
-        int err = fs[i].error;
+        cnt_ids = mCntMng->contactIds(cdf, sortOrder);
+        error = mCntMng->error();
+        //QVERIFY(error == QContactManager::NoError);
+        
         // check counts 
-   
-        //QVERIFY(cnt_ids.count() == fs[i].result);
         int seachedcontactcount = cnt_ids.count();
-        int expectedCount =fs[i].result;        
+        int expectedCount =fs[i].result;  
+        QVERIFY(expectedCount == seachedcontactcount);
         // Verify contacts
         QString value = cdf.value().toString();
         QString field = cdf.detailFieldName();
@@ -431,7 +431,8 @@ void TestFiltering::testContactDetailRangeFilter()
     QContactManager::Error error;
     QList<QContactSortOrder> sortOrder;
     
-    cnt_ids = mSqlFilter->searchContacts(filter, sortOrder, error);
+    cnt_ids = mCntMng->contactIds(filter, sortOrder);
+    error = mCntMng->error();
 
     QVERIFY(error == QContactManager::NotSupportedError);
 }
@@ -443,7 +444,8 @@ void TestFiltering::testChangeLogFilter()
     QContactManager::Error error;
     QList<QContactSortOrder> sortOrder;
     
-    cnt_ids = mSqlFilter->searchContacts(filter, sortOrder, error);
+    cnt_ids = mCntMng->contactIds(filter, sortOrder);
+    error = mCntMng->error();
 
     QVERIFY(error == QContactManager::NotSupportedError);
 }
@@ -455,7 +457,8 @@ void TestFiltering::testActionFilter()
     QContactManager::Error error;
     QList<QContactSortOrder> sortOrder;
     
-    cnt_ids = mSqlFilter->searchContacts(filter, sortOrder, error);
+    cnt_ids = mCntMng->contactIds(filter, sortOrder);
+    error = mCntMng->error();
 
     QVERIFY(error == QContactManager::NotSupportedError);
 }
@@ -467,33 +470,224 @@ void TestFiltering::testRelationshipFilter()
     QContactManager::Error error;
     QList<QContactSortOrder> sortOrder;
     
-    cnt_ids = mSqlFilter->searchContacts(filter, sortOrder, error);
+    cnt_ids = mCntMng->contactIds(filter, sortOrder);
+    error = mCntMng->error();
 
-    QVERIFY(error == QContactManager::NotSupportedError);
+    QVERIFY(error == QContactManager::NoError);
 }
 
 void TestFiltering::testIntersectionFilter()
 {
+    testIntersectionFilter_1();
+    testIntersectionFilter_2();
+}
+
+void TestFiltering::testIntersectionFilter_1()
+{
+    //Create first filter
+    QContactDetailFilter f1;
+    f1.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
+    f1.setValue("John");
+    f1.setMatchFlags(QContactFilter::MatchStartsWith);
+    //Create second filter
+    QContactDetailFilter f2;
+    f2.setDetailDefinitionName(QContactEmailAddress::DefinitionName, QContactEmailAddress::FieldEmailAddress);
+    f2.setValue("Len.Jo@nok");
+    f2.setMatchFlags(QContactFilter::MatchStartsWith);
+    
+    //Create an intersection filter with the above created filters 
     QList<QContactLocalId> cnt_ids;
     QContactIntersectionFilter filter;
-    QContactManager::Error error;
+    filter.append(f1);
+    filter.append(f2);
     QList<QContactSortOrder> sortOrder;
+    QContactManager::Error error;
 
-    cnt_ids = mSqlFilter->searchContacts(filter, sortOrder, error);
+    //Search for contacts 
+    cnt_ids = mCntMng->contactIds(filter, sortOrder);
+    error = mCntMng->error();
 
-    QVERIFY(error == QContactManager::NotSupportedError);
+    // Now check the results 
+    int seachedcontactcount = cnt_ids.count();
+    int expectedCount = 1; 
+    QVERIFY(seachedcontactcount == expectedCount);
+    QVERIFY(error == QContactManager::NoError);
+    
+    for(int j=0; j<seachedcontactcount; j++) 
+    {
+        QContact sc = mCntMng->contact(cnt_ids[j]);
+        //Get the first name
+        QContactName name = sc.detail(QContactName::DefinitionName);
+        QString firstname = name.firstName();
+        QVERIFY(firstname.contains("John"));        
+        //get the Email address
+        QContactEmailAddress eaddr = sc.detail(QContactEmailAddress::DefinitionName);
+        QString email = eaddr.emailAddress();
+        // Not testing equal to due to MatchFlags definitions
+        // in the filter.
+        QVERIFY(email.contains("Len.Jo@nok"));     
+    }
+}
+
+void TestFiltering::testIntersectionFilter_2()
+{
+    //Create first filter
+    QContactDetailFilter f1;
+    f1.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
+    f1.setValue("John");
+    f1.setMatchFlags(QContactFilter::MatchStartsWith);
+    //Create second filter
+    QContactDetailFilter f2;
+    f2.setDetailDefinitionName(QContactEmailAddress::DefinitionName, QContactEmailAddress::FieldEmailAddress);
+    f2.setValue("Len.Jo@nok");
+    f2.setMatchFlags(QContactFilter::MatchStartsWith);
+    
+    //Create third filter
+    QContactDetailFilter f3;
+    f3.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
+    f3.setValue("Mic");
+    f3.setMatchFlags(QContactFilter::MatchStartsWith);
+    //Create fourth filter
+    QContactDetailFilter f4;
+    f4.setDetailDefinitionName(QContactEmailAddress::DefinitionName, QContactEmailAddress::FieldEmailAddress);
+    f4.setValue("ste.Fed@nok");
+    f4.setMatchFlags(QContactFilter::MatchStartsWith);
+    
+    //Create first union filter
+    QContactUnionFilter ufilter1;
+    ufilter1.append(f1);
+    ufilter1.append(f3);
+    
+    //Create second union filter
+    QContactUnionFilter ufilter2;
+    ufilter2.append(f2);
+    ufilter2.append(f4);
+    
+    //Create an intersection filter with the above union filters 
+    QList<QContactLocalId> cnt_ids;
+    QContactIntersectionFilter filter;
+    filter.append(ufilter1);
+    filter.append(ufilter2);
+    QList<QContactSortOrder> sortOrder;
+    QContactManager::Error error;
+
+    //Search for contacts 
+    cnt_ids = mCntMng->contactIds(filter, sortOrder);
+    error = mCntMng->error();
+    
+    // Now check the results 
+    int seachedcontactcount = cnt_ids.count();
+    int expectedCount = 1; 
+    QVERIFY(seachedcontactcount == expectedCount);
+    QVERIFY(error == QContactManager::NoError);
+    
+    for(int j=0; j<seachedcontactcount; j++) 
+    {
+        QContact sc = mCntMng->contact(cnt_ids[j]);
+        //Get the first name
+        QContactName name = sc.detail(QContactName::DefinitionName);
+        QString firstname = name.firstName();
+        QVERIFY(firstname.contains("John"));
+    }
 }
 
 void TestFiltering::testUnionFilter()
+    {
+    testUnionFilter_1();
+    testUnionFilter_2();
+    }
+
+void TestFiltering::testUnionFilter_1()
 {
+    //Create first filter
+    QContactDetailFilter f1;
+    f1.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
+    f1.setValue("Mic");
+    f1.setMatchFlags(QContactFilter::MatchStartsWith);
+    //Create second filter
+    QContactDetailFilter f2;
+    f2.setDetailDefinitionName(QContactEmailAddress::DefinitionName, QContactEmailAddress::FieldEmailAddress);
+    f2.setValue("Len.Jo@nok");
+    f2.setMatchFlags(QContactFilter::MatchStartsWith);
+    
+    //Create an union filter with the above created filters 
     QList<QContactLocalId> cnt_ids;
     QContactUnionFilter filter;
-    QContactManager::Error error;
+    filter.append(f1);
+    filter.append(f2);
     QList<QContactSortOrder> sortOrder;
+    QContactManager::Error error;
 
-    cnt_ids = mSqlFilter->searchContacts(filter, sortOrder, error);
+    //Search for contacts 
+    cnt_ids = mCntMng->contactIds(filter, sortOrder);
+    error = mCntMng->error();
+    
+    // Now check the results 
+    int seachedcontactcount = cnt_ids.count();
+    int expectedCount = 2; 
+    QVERIFY(seachedcontactcount == expectedCount);
+    QVERIFY(error == QContactManager::NoError);
+        
+    for(int j=0; j<seachedcontactcount; j++) 
+    {
+        QContact sc = mCntMng->contact(cnt_ids[j]);
+        //Get the first name
+        QContactName name = sc.detail(QContactName::DefinitionName);
+        QString firstname = name.firstName();
+        //get the Email address
+        QContactEmailAddress eaddr = sc.detail(QContactEmailAddress::DefinitionName);
+        QString email = eaddr.emailAddress();
+        // Not testing equal to due to MatchFlags definitions
+        // in the filter.
+        QVERIFY(firstname.contains("Mic") || (email.contains("Len.Jo@nok")));     
+    }
+}
 
-    QVERIFY(error == QContactManager::NotSupportedError);
+
+void TestFiltering::testUnionFilter_2()
+{
+    //Create first filter
+    QContactDetailFilter f1;
+    f1.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
+    f1.setValue("n");
+    f1.setMatchFlags(QContactFilter::MatchContains);
+    //Create second filter
+    QContactDetailFilter f2;
+    f2.setDetailDefinitionName(QContactEmailAddress::DefinitionName, QContactEmailAddress::FieldEmailAddress);
+    f2.setValue("@nok");
+    f2.setMatchFlags(QContactFilter::MatchContains);
+    
+    //Create an union filter with the above created filters 
+    QList<QContactLocalId> cnt_ids;
+    QContactUnionFilter filter;
+    filter.append(f1);
+    filter.append(f2);
+    QList<QContactSortOrder> sortOrder;
+    QContactManager::Error error;
+
+    //Search for contacts 
+    cnt_ids = mCntMng->contactIds(filter, sortOrder);
+    error = mCntMng->error();
+    
+    // Now check the results 
+    int seachedcontactcount = cnt_ids.count();
+    int expectedCount = 5; 
+    QVERIFY(seachedcontactcount == expectedCount);
+    QVERIFY(error == QContactManager::NoError);
+        
+    for(int j=0; j<seachedcontactcount; j++) 
+    {
+        QContact sc = mCntMng->contact(cnt_ids[j]);
+        //Get the first name
+        QContactName name = sc.detail(QContactName::DefinitionName);
+        QString firstname = name.firstName();
+        //get the Email address
+        QContactEmailAddress eaddr = sc.detail(QContactEmailAddress::DefinitionName);
+        QString email = eaddr.emailAddress();
+        // Not testing equal to due to MatchFlags definitions
+        // in the filter.
+        QVERIFY(firstname.contains("n") || (email.contains("@nok")));     
+    }
 }
 
 void TestFiltering::testLocalIdFilter()
@@ -503,7 +697,8 @@ void TestFiltering::testLocalIdFilter()
     QContactManager::Error error;
     QList<QContactSortOrder> sortOrder;
 
-    cnt_ids = mSqlFilter->searchContacts(filter, sortOrder, error);
+    cnt_ids = mCntMng->contactIds(filter, sortOrder);
+    error = mCntMng->error();
 
     QVERIFY(error == QContactManager::NotSupportedError);
 }
@@ -515,9 +710,10 @@ void TestFiltering::testDefaultFilter()
     QContactManager::Error error;
     QList<QContactSortOrder> sortOrder;
 
-    cnt_ids = mSqlFilter->searchContacts(filter, sortOrder,error);
+    cnt_ids = mCntMng->contactIds(filter, sortOrder);
+    error = mCntMng->error();
 
-    QVERIFY(error == QContactManager::NotSupportedError);
+    QVERIFY(error == QContactManager::NoError);
 }
 
 void TestFiltering::testDefaultFilterWithPredictiveSearch()
@@ -534,7 +730,8 @@ void TestFiltering::testDefaultFilterWithPredictiveSearch()
     df.setDetailDefinitionName(QContactName::DefinitionName);
     df.setMatchFlags( QContactFilter::MatchKeypadCollation );
     df.setValue( pattern );
-    cnt_ids = mSqlFilter->searchContacts(df, sortOrder, error);
+    cnt_ids = mCntMng->contactIds(df, sortOrder);
+    error = mCntMng->error();
 
     for( int i=0;i<cnt_ids.count();i++ ) {
             QContactLocalId cid = cnt_ids.at( i );    
@@ -559,7 +756,8 @@ void TestFiltering::testZeroSearch()
     df.setDetailDefinitionName(QContactName::DefinitionName);
     df.setMatchFlags( QContactFilter::MatchKeypadCollation );
     df.setValue( pattern );
-    cnt_ids = mSqlFilter->searchContacts(df, sortOrder, error);
+    cnt_ids = mCntMng->contactIds(df, sortOrder);
+    error = mCntMng->error();
 
     for( int i=0;i<cnt_ids.count();i++ ) {
             QString firstName("Micheal");

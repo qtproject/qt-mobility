@@ -44,6 +44,7 @@
 #include "cntfilterdetail.h"
 #include "cnttransformcontact.h"
 #include "cntfilterdetaildisplaylabel.h" //todo rename class to follow naming pattern CntFilterDetailDisplayLabel
+#include "cntsqlsearch.h"
 
 // Telephony Configuration API
 // Keys under this category are used in defining telephony configuration.
@@ -93,6 +94,12 @@ QList<QContactLocalId> CntFilterDetail::contacts(
     
         idList = HandlePhonenumberDetailFilter(filter);
     }
+    else if (detailFilter.matchFlags() == QContactFilter::MatchKeypadCollation) 
+    {
+        //predictive search filter
+        idList = HandlePredictiveSearchFilter(filter,error);
+    }
+            
     // handle other cases
     else 
     {
@@ -268,17 +275,33 @@ void CntFilterDetail::getTableNameWhereClause( const QContactDetailFilter& detai
         sqlWhereClause +=  fieldToUpdate;
     }
 
-    //Check for predictive search.
-    // Some hard coding as of now..Needs to be changed later
-    if(  detailfilter.matchFlags() == QContactFilter::MatchKeypadCollation ){
-              //convert string to numeric format
-                QString pattern = detailfilter.value().toString();
-                tableName = "predictivesearch";
-                sqlWhereClause = " (first_name_as_number LIKE '% " 
-                          + pattern  + "%') OR (last_name_as_number LIKE '% " + pattern + "%') ORDER BY first_name_as_number ASC;";
-    }
+   
 }
 
+QList<QContactLocalId>  CntFilterDetail::HandlePredictiveSearchFilter(const QContactFilter& filter,QContactManager::Error& error)
+    {
+    
+    QString sqlQuery;
+    
+    if(filter.type() == QContactFilter::ContactDetailFilter){
+       const QContactDetailFilter detailFilter(filter);
+       if(  detailFilter.matchFlags() == QContactFilter::MatchKeypadCollation ){
+       CntSqlSearch sqlSearch;
+          //convert string to numeric format
+            QString pattern = detailFilter.value().toString();
+            sqlQuery = sqlSearch.CreatePredictiveSearch(pattern);
+            return  m_srvConnection.searchContacts(sqlQuery, error);  
+           }
+       else
+           {
+           return QList<QContactLocalId>();
+           }
+        }
+    else
+        {
+        return QList<QContactLocalId>();
+        }
+    }
 
 QList<QContactLocalId> CntFilterDetail::HandlePhonenumberDetailFilter(const QContactFilter& filter)
     {
