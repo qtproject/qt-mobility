@@ -64,28 +64,28 @@ public:
     QSensorBackend *createBackend(QSensor *sensor)
     {
         if (sensor->identifier() == n900accelerometer::id) {
-            if (QFile::exists(ACCELEROMETER_FILE))
+            if (QFile::exists(QLatin1String(n900accelerometer::filename)))
                 return new n900accelerometer(sensor);
-            qDebug() << "can't make" << sensor->identifier() << "because " ACCELEROMETER_FILE " doesn't exist";
+            qDebug() << "can't make" << sensor->identifier() << "because" << n900accelerometer::filename << "doesn't exist";
         }
 
         if (sensor->identifier() == n900lightsensor::id) {
-            if (QFile::exists(LIGHTSENSOR_FILE))
+            if (QFile::exists(QLatin1String(n900lightsensor::filename)))
                 return new n900lightsensor(sensor);
-            qDebug() << "can't make" << sensor->identifier() << "because " LIGHTSENSOR_FILE " doesn't exist";
+            qDebug() << "can't make" << sensor->identifier() << "because" << n900lightsensor::filename << "doesn't exist";
         }
 
         if (sensor->identifier() == n900proximitysensor::id) {
-            if (QFile::exists(PROXIMITY_FILE))
+            if (QFile::exists(QLatin1String(n900proximitysensor::filename)))
                 return new n900proximitysensor(sensor);
-            qDebug() << "can't make" << sensor->identifier() << "because " PROXIMITY_FILE " doesn't exist";
+            qDebug() << "can't make" << sensor->identifier() << "because" << n900proximitysensor::filename << "doesn't exist";
         }
 
         return 0;
     }
 };
 
-Q_EXPORT_PLUGIN2(libsensors_n900, n900SensorPlugin);
+Q_EXPORT_PLUGIN2(libsensors_n900, n900SensorPlugin)
 
 #include "main.moc"
 

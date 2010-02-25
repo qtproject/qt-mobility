@@ -48,12 +48,13 @@ IMPLEMENT_READING(QOrientationReading)
 
 /*!
     \class QOrientationReading
-    \ingroup sensors
+    \ingroup sensors_reading
 
     \preliminary
     \brief The QOrientationReading class represents one reading from the
            orientation sensor.
 
+    \section2 QOrientationReading Units
     The orientation sensor returns the orientation of the device using
     the pre-defined values found in the QOrientationReading::Orientation
     enum.
@@ -100,11 +101,11 @@ IMPLEMENT_READING(QOrientationReading)
 /*!
     \property QOrientationReading::orientation
     \brief the orientation of the device.
+
+    The unit is an enumeration describing the orientation of the screen.
+    \sa {QOrientationReading Units}
 */
 
-/*!
-    Returns the orientation of the device.
-*/
 QOrientationReading::Orientation QOrientationReading::orientation() const
 {
     return static_cast<QOrientationReading::Orientation>(d->orientation);
@@ -124,7 +125,7 @@ void QOrientationReading::setOrientation(QOrientationReading::Orientation orient
 
 /*!
     \class QOrientationFilter
-    \ingroup sensors_helpers
+    \ingroup sensors_filter
 
     \preliminary
     \brief The QOrientationFilter class is a convenience wrapper around QSensorFilter.
@@ -145,7 +146,7 @@ const char *QOrientationSensor::type("QOrientationSensor");
 
 /*!
     \class QOrientationSensor
-    \ingroup sensors_helpers
+    \ingroup sensors_type
 
     \preliminary
     \brief The QOrientationSensor class is a convenience wrapper around QSensor.
