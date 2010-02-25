@@ -112,6 +112,11 @@ QTM_BEGIN_NAMESPACE
 #define MODESTENGINE_QTM_PLUGIN_PATH           "/com/nokia/Qtm/Modest/Plugin"
 #define MODESTENGINE_QTM_PLUGIN_NAME           "com.nokia.Qtm.Modest.Plugin"
 
+// Specific priority settings to translate to modest priorities
+#define MODESTENGINE_HIGH_PRIORITY             2
+#define MODESTENGINE_NORMAL_PRIORITY           0
+#define MODESTENGINE_LOW_PRIORITY              1
+
 Q_GLOBAL_STATIC(ModestEngine,modestEngine);
 
 ModestEngine::ModestEngine()
@@ -709,6 +714,21 @@ bool ModestEngine::sendEmail(QMessage &message)
                 attachments.append (attachmentData);
             }
         }
+    }
+
+    switch (message.priority()) {
+    case QMessage::HighPriority:
+        priority = MODESTENGINE_HIGH_PRIORITY;
+        break;
+
+    default:
+    case QMessage::NormalPriority:
+        priority = MODESTENGINE_NORMAL_PRIORITY;
+        break;
+
+    case QMessage::LowPriority:
+        priority = MODESTENGINE_LOW_PRIORITY;
+        break;
     }
 
     qDebug() << "Sending D-BUS message";
