@@ -474,7 +474,6 @@ void QNetworkSessionPrivate::updateStateFromActiveConfig()
         state = QNetworkSession::NotAvailable;
     } else if ((activeConfig.state() & QNetworkConfiguration::Undefined) == QNetworkConfiguration::Undefined) {
         state = QNetworkSession::NotAvailable;
-	clearConfiguration(activeConfig);
     }
 
     bool oldActive = isOpen;

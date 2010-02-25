@@ -347,42 +347,81 @@ uint32_t QNetworkConfigurationManagerPrivate::getNetworkAttrs(bool is_iap_id,
 
 void QNetworkConfigurationManagerPrivate::addConfiguration(QString& iap_id)
 {
+    // Note: When new IAP is created, this function gets called multiple times
+    //       in a row.
+    //       For example: Empty type & name for WLAN was stored into newly
+    //                    created IAP data in gconf when this function gets
+    //                    called for the first time.
+    //                    WLAN type & name are updated into IAP data in gconf
+    //                    as soon as WLAN connection is up and running.
+    //                    => And this function gets called again.
+
     if (!accessPointConfigurations.contains(iap_id)) {
 	Maemo::IAPConf saved_iap(iap_id);
-	QString iap_type = saved_iap.value("type").toString();
-	if (!iap_type.isEmpty()) {
-	    QNetworkConfigurationPrivate* cpPriv = new QNetworkConfigurationPrivate();
-	    cpPriv->name = saved_iap.value("name").toString();
-	    if (cpPriv->name.isEmpty())
-		cpPriv->name = iap_id;
-	    cpPriv->isValid = true;
-	    cpPriv->id = iap_id;
-	    cpPriv->iap_type = iap_type;
-	    cpPriv->network_attrs = getNetworkAttrs(true, iap_id, iap_type, QString());
-	    cpPriv->service_id = saved_iap.value("service_id").toString();
-	    cpPriv->service_type = saved_iap.value("service_type").toString();
-	    if (iap_type.startsWith("WLAN")) {
-		QByteArray ssid = saved_iap.value("wlan_ssid").toByteArray();
-		if (ssid.isEmpty()) {
-		    qWarning() << "Cannot get ssid for" << iap_id;
-		}
-	    }
-	    cpPriv->type = QNetworkConfiguration::InternetAccessPoint;
-	    cpPriv->state = QNetworkConfiguration::Defined;
+        QString iap_type = saved_iap.value("type").toString();
+        QString iap_name = saved_iap.value("name").toString();
+        QByteArray ssid = saved_iap.value("wlan_ssid").toByteArray();
+        if (!iap_type.isEmpty() && !iap_name.isEmpty()) {
+            // Check if new IAP is actually Undefined WLAN configuration
+            // Note: SSID is used as an iap id for Undefined WLAN configurations
+            //       => configuration must be searched using SSID
+            if (!ssid.isEmpty() && accessPointConfigurations.contains(ssid)) {
+                QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr = accessPointConfigurations.take(ssid);
+                if (ptr.data()) {
+                    QString iap_type = saved_iap.value("type").toString();
+                    ptr->id = iap_id;
+                    ptr->iap_type = iap_type;
+                    ptr->network_attrs = getNetworkAttrs(true, iap_id, iap_type, QString());
+                    ptr->network_id = ssid;
+                    ptr->service_id = saved_iap.value("service_id").toString();
+                    ptr->service_type = saved_iap.value("service_type").toString();
+                    if (m_onlineIapId == iap_id) {
+                        ptr->state = QNetworkConfiguration::Active;
+                    } else {
+                        ptr->state = QNetworkConfiguration::Defined;
+                    }
+                    accessPointConfigurations.insert(iap_id, ptr);
+                    configurationChanged(ptr.data());
+                }
+            } else {
+                QNetworkConfigurationPrivate* cpPriv = new QNetworkConfigurationPrivate();
+                cpPriv->name = saved_iap.value("name").toString();
+                if (cpPriv->name.isEmpty())
+                    cpPriv->name = iap_id;
+                cpPriv->isValid = true;
+                cpPriv->id = iap_id;
+                cpPriv->iap_type = iap_type;
+                cpPriv->network_attrs = getNetworkAttrs(true, iap_id, iap_type, QString());
+                cpPriv->service_id = saved_iap.value("service_id").toString();
+                cpPriv->service_type = saved_iap.value("service_type").toString();
+                if (iap_type.startsWith("WLAN")) {
+                    QByteArray ssid = saved_iap.value("wlan_ssid").toByteArray();
+                    if (ssid.isEmpty()) {
+                        qWarning() << "Cannot get ssid for" << iap_id;
+                    }
+                    cpPriv->network_id = ssid;
+                }
+                cpPriv->type = QNetworkConfiguration::InternetAccessPoint;
+                if (m_onlineIapId == iap_id) {
+                    cpPriv->state = QNetworkConfiguration::Active;
+                } else {
+                    cpPriv->state = QNetworkConfiguration::Defined;
+                }
+                cpPriv->manager = this;
 
-	    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr(cpPriv);
-	    accessPointConfigurations.insert(iap_id, ptr);
+                QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr(cpPriv);
+                accessPointConfigurations.insert(iap_id, ptr);
 
 #ifdef BEARER_MANAGEMENT_DEBUG
-	    qDebug("IAP: %s, name: %s, added to known list", iap_id.toAscii().data(), cpPriv->name.toAscii().data());
+                qDebug("IAP: %s, name: %s, added to known list", iap_id.toAscii().data(), cpPriv->name.toAscii().data());
 #endif
-
-	    QNetworkConfiguration item;
-	    item.d = ptr;
-	    emit configurationAdded(item);
-	} else {
-	    qWarning("IAP %s does not have \"type\" field defined, skipping this IAP.", iap_id.toAscii().data());
-	}
+                QNetworkConfiguration item;
+                item.d = ptr;
+                emit configurationAdded(item);
+            }
+        } else {
+            qWarning("IAP %s does not have \"type\" or \"name\" fields defined, skipping this IAP.", iap_id.toAscii().data());
+        }
     } else {
 #ifdef BEARER_MANAGEMENT_DEBUG
 	qDebug() << "IAP" << iap_id << "already in db.";
@@ -390,7 +429,7 @@ void QNetworkConfigurationManagerPrivate::addConfiguration(QString& iap_id)
 
 	/* Check if the data in db changed and update configuration accordingly
 	 */
-	QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr = accessPointConfigurations.take(iap_id);
+        QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr = accessPointConfigurations.value(iap_id);
 	if (ptr.data()) {
 	    Maemo::IAPConf changed_iap(iap_id);
 	    QString iap_type = changed_iap.value("type").toString();
@@ -415,18 +454,22 @@ void QNetworkConfigurationManagerPrivate::addConfiguration(QString& iap_id)
 			qWarning() << "Cannot get ssid for" << iap_id;
 		    }
 		    if (ptr->network_id != ssid) {
-			ptr->network_id = ssid;
-			update_needed = true;
+                        ptr->network_id = ssid;
+                        update_needed = true;
 		    }
 		}
 	    }
-	    accessPointConfigurations.insert(iap_id, ptr);
 	    if (update_needed) {
-		ptr->type = QNetworkConfiguration::InternetAccessPoint;
-                /*if (ptr->state != QNetworkConfiguration::Defined) {
+                ptr->type = QNetworkConfiguration::InternetAccessPoint;
+                if (m_onlineIapId == iap_id) {
+                    if (ptr->state < QNetworkConfiguration::Active) {
+                        ptr->state = QNetworkConfiguration::Active;
+                        configurationChanged(ptr.data());
+                    }
+                } else if (ptr->state < QNetworkConfiguration::Defined) {
 		    ptr->state = QNetworkConfiguration::Defined;
                     configurationChanged(ptr.data());
-                }*/
+                }
 	    }
 	} else {
 	    qWarning("Cannot find IAP %s from current configuration although it should be there.", iap_id.toAscii().data());
@@ -455,7 +498,7 @@ void QNetworkConfigurationManagerPrivate::doUpdateConfigurations(QList<Maemo::Ic
 
 	Maemo::IAPConf saved_ap(iap_id);
 	bool is_temporary = saved_ap.value("temporary").toBool();
-	if (is_temporary) {
+    if (is_temporary) {
 #ifdef BEARER_MANAGEMENT_DEBUG
 	    qDebug() << "IAP" << iap_id << "is temporary, skipping it.";
 #endif
@@ -718,6 +761,13 @@ void QNetworkConfigurationManagerPrivate::connectionStateSignalsSlot(QDBusMessag
                 }
                 m_onlineIapId = iapid;
             }
+        } else {
+            // This gets called when new WLAN IAP is created using Connection dialog
+            // At this point Undefined WLAN configuration has SSID as iap id
+            // => Because of that configuration can not be found from
+            //    accessPointConfigurations using correct iap id
+            emit onlineStateChanged(true);
+            m_onlineIapId = iapid;
         }
         break;
         }
