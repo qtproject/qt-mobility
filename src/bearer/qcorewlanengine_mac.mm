@@ -313,53 +313,54 @@ QList<QNetworkConfigurationPrivate *> QCoreWlanEngine::scanForSsids(const QStrin
     NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
 
     CWInterface *currentInterface = [CWInterface interfaceWithName:qstringToNSString(interfaceName)];
-    NSError *err = nil;
-    NSDictionary *parametersDict = nil;
-    NSArray* apArray = [currentInterface scanForNetworksWithParameters:parametersDict error:&err];
+    if([currentInterface power]) {
+        NSError *err = nil;
+        NSDictionary *parametersDict = nil;
+        NSArray* apArray = [currentInterface scanForNetworksWithParameters:parametersDict error:&err];
 
-    CWNetwork *apNetwork;
-    if(!err) {
-        for(uint row=0; row < [apArray count]; row++ ) {
-            NSAutoreleasePool *looppool = [[NSAutoreleasePool alloc] init];
+        CWNetwork *apNetwork;
+        if(!err) {
+            for(uint row=0; row < [apArray count]; row++ ) {
+                NSAutoreleasePool *looppool = [[NSAutoreleasePool alloc] init];
 
-            apNetwork = [apArray objectAtIndex:row];
-            QNetworkConfigurationPrivate* cpPriv = new QNetworkConfigurationPrivate();
-            QString networkSsid = nsstringToQString([apNetwork ssid]);
-            cpPriv->name = networkSsid;
-            cpPriv->isValid = true;
-            cpPriv->id = networkSsid;
-            cpPriv->internet = true;
-            cpPriv->bearer = QLatin1String("WLAN");
-            cpPriv->type = QNetworkConfiguration::InternetAccessPoint;
-            cpPriv->serviceInterface = QNetworkInterface::interfaceFromName(interfaceName);
+                apNetwork = [apArray objectAtIndex:row];
+                QNetworkConfigurationPrivate* cpPriv = new QNetworkConfigurationPrivate();
+                QString networkSsid = nsstringToQString([apNetwork ssid]);
+                cpPriv->name = networkSsid;
+                cpPriv->isValid = true;
+                cpPriv->id = networkSsid;
+                cpPriv->internet = true;
+                cpPriv->bearer = QLatin1String("WLAN");
+                cpPriv->type = QNetworkConfiguration::InternetAccessPoint;
+                cpPriv->serviceInterface = QNetworkInterface::interfaceFromName(interfaceName);
 
-            if( [currentInterface.interfaceState intValue] == kCWInterfaceStateRunning) {
-                QString interfaceSsidString = nsstringToQString( [currentInterface ssid]);
-                if( cpPriv->name == interfaceSsidString) {
-                    cpPriv->state |=  QNetworkConfiguration::Active;
-                }
-            } else {
-                if(isKnownSsid(cpPriv->serviceInterface.name(), networkSsid)) {
-                    cpPriv->state =  QNetworkConfiguration::Discovered;
+                if( [currentInterface.interfaceState intValue] == kCWInterfaceStateRunning) {
+                    QString interfaceSsidString = nsstringToQString( [currentInterface ssid]);
+                    if( cpPriv->name == interfaceSsidString) {
+                        cpPriv->state |=  QNetworkConfiguration::Active;
+                    }
                 } else {
-                    cpPriv->state =  QNetworkConfiguration::Defined;
+                    if(isKnownSsid(cpPriv->serviceInterface.name(), networkSsid)) {
+                        cpPriv->state =  QNetworkConfiguration::Discovered;
+                    } else {
+                        cpPriv->state =  QNetworkConfiguration::Defined;
+                    }
                 }
+                if(!cpPriv->state) {
+                    cpPriv->state = QNetworkConfiguration::Undefined;
+                }
+                if([[apNetwork securityMode ] intValue]== kCWSecurityModeOpen)
+                    cpPriv->purpose = QNetworkConfiguration::PublicPurpose;
+                else
+                    cpPriv->purpose = QNetworkConfiguration::PrivatePurpose;
+                foundConfigs.append(cpPriv);
+                [looppool release];
             }
-            if(!cpPriv->state) {
-                cpPriv->state = QNetworkConfiguration::Undefined;
-            }
-            if([[apNetwork securityMode ] intValue]== kCWSecurityModeOpen)
-                cpPriv->purpose = QNetworkConfiguration::PublicPurpose;
-            else
-                cpPriv->purpose = QNetworkConfiguration::PrivatePurpose;
-            foundConfigs.append(cpPriv);
-            [looppool release];
+        } else {
+            qWarning() << "ERROR scanning for ssids" << nsstringToQString([err localizedDescription])
+                    <<nsstringToQString([err domain]);
         }
-    } else {
-        qWarning() << "ERROR scanning for ssids" << nsstringToQString([err localizedDescription])
-                <<nsstringToQString([err domain]);
     }
-
     [autoreleasepool drain];
 #else
     Q_UNUSED(interfaceName);
