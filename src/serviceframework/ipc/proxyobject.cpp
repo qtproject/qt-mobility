@@ -176,23 +176,32 @@ int QServiceProxy::qt_metacall(QMetaObject::Call c, int id, void **a)
             }
 
             QVariant result;
-            if (QMetaObject::ReadProperty)
-                QVariant result = d->endPoint->invokeRemoteProperty(metaIndex, arg, pType, c);
-            else 
-                d->endPoint->invokeRemoteProperty(metaIndex, arg, pType, c);
-
-            if (pType != 0) {
-                QByteArray buffer;
-                QDataStream stream(&buffer, QIODevice::ReadWrite);
-                QMetaType::save(stream, pType, result.constData());
-                stream.device()->seek(0);
-                QMetaType::load(stream, pType, a[0]);
+            if (c == QMetaObject::ReadProperty) {
+                result = d->endPoint->invokeRemoteProperty(metaIndex, arg, pType, c);
+                //wrap result for client
+                if (pType != 0) {
+                    QByteArray buffer;
+                    QDataStream stream(&buffer, QIODevice::ReadWrite);
+                    QMetaType::save(stream, pType, result.constData());
+                    stream.device()->seek(0);
+                    QMetaType::load(stream, pType, a[0]);
+                } else {
+                    if (a[0]) *reinterpret_cast< QVariant*>(a[0]) = result;
+                }
             } else {
-                if (a[0]) *reinterpret_cast< QVariant*>(a[0]) = result;
+                d->endPoint->invokeRemoteProperty(metaIndex, arg, pType, c);
             }
 
         } 
         id-=pCount;
+    } else if ( c == QMetaObject::QueryPropertyDesignable
+            || c == QMetaObject::QueryPropertyScriptable
+            || c == QMetaObject::QueryPropertyStored
+            || c == QMetaObject::QueryPropertyEditable
+            || c == QMetaObject::QueryPropertyUser ) 
+    {
+        //Nothing to do?
+        //These values are part of the transferred meta object already
     } else {
         //TODO
         qWarning() << "MetaCall type" << c << "not yet handled";

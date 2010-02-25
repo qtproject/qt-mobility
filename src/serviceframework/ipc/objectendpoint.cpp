@@ -159,6 +159,10 @@ public:
 /*
     - Why do we need typeIdent and serviceInstanceId on service side. The instance id should be sufficient.
     - Consider merging invokeRemoteProperty() and invokeRemote()
+    - QMetaEnum support
+    - QMetaClassInfo support
+    - Enum property type
+    - flag property type
 
 */
 
@@ -249,8 +253,7 @@ void ObjectEndPoint::newPackageReady()
                 methodCall(p);
                 break;
             case QServicePackage::PropertyCall:
-                qDebug() << "Property calls not implemented";
-                //propertyCall(p);
+                propertyCall(p);
                 break;
             default:
                 qWarning() << "Unknown package type received.";
@@ -258,21 +261,62 @@ void ObjectEndPoint::newPackageReady()
     }
 }
 
-void ObjectEndPoint::propertyCall(const QServicePackage& /*p*/)
+void ObjectEndPoint::propertyCall(const QServicePackage& p)
 {
-    /*if(p.d->responseType == QServicePackage::NotAResponse) {
+    if(p.d->responseType == QServicePackage::NotAResponse) {
         QByteArray data = p.d->payload.toByteArray();
         QDataStream stream(&data, QIODevice::ReadOnly);
         int metaIndex = -1;
-        QVariantList args;
+        QVariant arg;
+        int callType;
         stream >> metaIndex;
-        stream >> args;
+        stream >> arg;
+        stream >> callType;
+        const QMetaObject::Call c = (QMetaObject::Call) callType;
 
-        QMetaMethod method = service->metaObject()->method(metaIndex);
-        const bool isSignal = (method.methodType() == QMetaMethod::Signal);
-        const int returnType = QMetaType::type(method.typeName());
+        QVariant result;
+        QMetaProperty property = service->metaObject()->property(metaIndex);
+        if (property.isValid()) {
+            switch(c) {
+                case QMetaObject::ReadProperty:
+                    result = property.read(service);
+                    break;
+                case QMetaObject::WriteProperty:
+                    property.write(service, arg);
+                    break;
+                case QMetaObject::ResetProperty:
+                    property.reset(service);
+                    break;
+                default:
+                    break;
+
+            }
+        } 
+
+        if (c == QMetaObject::ReadProperty) {
+            QServicePackage response = p.createResponse();
+            if (property.isValid()) {
+                response.d->responseType = QServicePackage::Success;
+                response.d->payload = result;
+            } else {
+                response.d->responseType = QServicePackage::Failed;
+            }
+            dispatch->writePackage(response);
+        }
     } else {
-    }*/
+        Response* response = openRequests()->value(p.d->messageId);
+        response->isFinished = true;
+        if (p.d->responseType == QServicePackage::Failed) {
+            response->result = 0;
+            QTimer::singleShot(0, this, SIGNAL(pendingRequestFinished()));
+            qWarning() << "Service method call failed";
+            return;
+        }
+        QVariant* variant = new QVariant(p.d->payload);
+        response->result = reinterpret_cast<void *>(variant);
+
+        QTimer::singleShot(0, this, SIGNAL(pendingRequestFinished()));
+    }
 }
 
 void ObjectEndPoint::objectRequest(const QServicePackage& p)
@@ -432,16 +476,14 @@ void ObjectEndPoint::methodCall(const QServicePackage& p)
     } else {
         //qDebug() << p;
         Response* response = openRequests()->value(p.d->messageId);
+        response->isFinished = true;
         if (p.d->responseType == QServicePackage::Failed) {
             response->result = 0;
-            response->isFinished = true;
             QTimer::singleShot(0, this, SIGNAL(pendingRequestFinished()));
-            qWarning() << "Service method call failed";
             return;
         }
         QVariant* variant = new QVariant(p.d->payload);
         response->result = reinterpret_cast<void *>(variant);
-        response->isFinished = true;
 
         QTimer::singleShot(0, this, SIGNAL(pendingRequestFinished()));
     }
@@ -460,7 +502,7 @@ QVariant ObjectEndPoint::invokeRemoteProperty(int metaIndex, const QVariant& arg
 
     QByteArray data;
     QDataStream stream(&data, QIODevice::WriteOnly|QIODevice::Append);
-    stream << metaIndex << arg;
+    stream << metaIndex << arg << c;
     p.d->payload = data;
 
     if (c == QMetaObject::ReadProperty) {
@@ -475,7 +517,7 @@ QVariant ObjectEndPoint::invokeRemoteProperty(int metaIndex, const QVariant& arg
         QVariant* resultPointer; 
         if (response->isFinished) {
             if (response->result == 0) {
-                qWarning() << "Request for remote service failed";
+                qWarning() << "Service property call failed";
             } else {
                 resultPointer = reinterpret_cast<QVariant* >(response->result);
                 result = (*resultPointer);
@@ -489,8 +531,6 @@ QVariant ObjectEndPoint::invokeRemoteProperty(int metaIndex, const QVariant& arg
         delete response;
 
         return result;
-
-
     } else {
         dispatch->writePackage(p);
     }
@@ -528,7 +568,7 @@ QVariant ObjectEndPoint::invokeRemote(int metaIndex, const QVariantList& args, i
         QVariant* resultPointer; 
         if (response->isFinished) {
             if (response->result == 0) {
-                qWarning() << "Request for remote service failed";
+                qWarning() << "Remote function call failed";
             } else {
                 resultPointer = reinterpret_cast<QVariant* >(response->result);
                 result = (*resultPointer);

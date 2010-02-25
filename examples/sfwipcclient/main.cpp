@@ -52,10 +52,12 @@ public slots:
         qDebug() << "Properties:" << mo->propertyCount()- mo->propertyOffset() << "(" << mo->propertyCount() << ")";
         for(int i=0; i< mo->propertyCount(); i++) {
             QMetaProperty property = mo->property(i);
-            QString info = "Readable: %1 Resettable: %2 Writeable: %3 Designable: %4 Scriptable: %5 User: %6 Stored: %7 Constant: %8 Final: %9 HasNotify: %10";
+            QString info = "Readable: %1 Resettable: %2 Writeable: %3 Designable: %4 Scriptable: %5 User: %6 Stored: %7 Constant: %8 Final: %9 HasNotify: %10 EnumType: %11 FlagType: %12";
             info = info.arg(property.isReadable()).arg(property.isResettable()).arg(property.isWritable());
             info = info.arg(property.isDesignable()).arg(property.isScriptable()).arg(property.isUser());
-            info = info.arg(property.isStored()).arg(property.isConstant()).arg(property.isFinal()).arg(property.hasNotifySignal());
+            info = info.arg(property.isStored()).arg(property.isConstant()).arg(property.isFinal());
+            info = info.arg(property.hasNotifySignal()).arg(property.isEnumType()).arg(property.isFlagType());
+
             qDebug() << "    " << i << "." << property.name() << "Type:" << property.typeName() << info;
         }
 
@@ -147,11 +149,27 @@ public slots:
         qDebug() << "Triggering signal on client side";
         emit clientsignal();
 
-        qDebug() << "^^^^^^^^^^^^^^^^^^^^^^";
-        qDebug() << "Property value:" << service->property("value");
-        service->setProperty("value", "new value");
+        const int pIndex = service->metaObject()->indexOfProperty("value");
+        const QMetaProperty prop = service->metaObject()->property(pIndex);
+        if (prop.isValid()) {
+            if ( prop.hasNotifySignal())
+                QMetaObject::connect(service, prop.notifySignalIndex(), this, metaObject()->indexOfMethod("propertyChanged()"));
+            qDebug() << "Property value:" << service->property("value");
+            qDebug() << "Changing property to: " << "QWERTY";
+            service->setProperty("value", "QWERTY");
+            qDebug() << "New property value:" << service->property("value");
+            qDebug() << "Resetting property";
+            prop.reset(service);
+            qDebug() << "New property value:" << service->property("value");
+            qDebug() << "Property designable:" << prop.isDesignable();
+        }
 
         QTimer::singleShot(5000, this, SLOT(killService()));
+    }
+
+    void propertyChanged()
+    {
+        qDebug() << "Property change detected";
     }
 
     void killService()

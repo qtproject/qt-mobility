@@ -39,7 +39,7 @@ public:
 
     void resetValue()
     {
-        qDebug() << "Resetting value";
+        qDebug() << "Resetting property";
         m_value = "<empty>";
         emit valueChanged(m_value);
     }
@@ -144,14 +144,14 @@ public:
     {
         qDebug() << "Writing property";
         m_value = value;
-        emit valueChanged(m_value);
+        emit valueChanged();
     }
 
     void resetValue()
     {
         qDebug() << "Resetting value";
         m_value = "<empty>";
-        emit valueChanged(m_value);
+        emit valueChanged();
     }
 
 
@@ -187,7 +187,7 @@ public:
 Q_SIGNALS:
     void signalWithIntParam(int);
     void signalWithVariousParam(QVariant,QString,QServiceFilter);
-    void valueChanged(QString);
+    void valueChanged();
 
 public slots:
     
@@ -271,7 +271,7 @@ int main(int argc, char** argv)
     QServiceTypeRegister::registerType<TestService>(QServiceTypeRegister::SharedInstance);
     QServiceTypeRegister::registerType<TestService2>(QServiceTypeRegister::UniqueInstance);
 
-    InstanceManager* in = InstanceManager::instance();
+    /*InstanceManager* in = InstanceManager::instance();
     QList<QServiceTypeIdent> idents = in->allIdents();
     foreach(QServiceTypeIdent i, idents) {
         QUuid uid;
@@ -279,7 +279,7 @@ int main(int argc, char** argv)
         qWarning() << i.first << i.second << testService << uid;
         testService = in->createObjectInstance( i, uid );
         qWarning() << i.first << i.second << testService << uid;
-    }
+    }*/
 
 
     QServiceControl* control = new QServiceControl();
