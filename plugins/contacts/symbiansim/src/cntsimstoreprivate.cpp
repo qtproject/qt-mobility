@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "cntsimstoreprivate.h"
+#include "cntsymbiansimtransformerror.h"
 #include <qcontactsynctarget.h>
 #include "cntsimstore.h"
 
@@ -108,7 +109,7 @@ QContactManager::Error CntSimStorePrivate::write(const QContact &contact)
     TRAPD(err, m_convertedContact = m_engine.encodeSimContactL(&contact, m_buffer));
     if (err != KErrNone) {
         QContactManager::Error qtError;
-        m_engine.transformError(err, qtError);
+        CntSymbianSimTransformError::transformError(err, qtError);
         return qtError;
     }
 
@@ -124,6 +125,10 @@ QContactManager::Error CntSimStorePrivate::remove(int index)
 {
     if (IsActive())
         return QContactManager::LockedError;
+    
+    // NOTE:
+    // If index points to an empty slot and running in hardware the 
+    // delete operation will not return any error.
     
     mobilePhoneBookStore().Delete(iStatus, index);
     SetActive();
@@ -203,7 +208,7 @@ void CntSimStorePrivate::RunL()
 TInt CntSimStorePrivate::RunError(TInt aError)
 {
     QContactManager::Error qtError = QContactManager::NoError;
-    m_engine.transformError(aError, qtError);
+    CntSymbianSimTransformError::transformError(aError, qtError);
         
     if (m_state == GetInfoState) {
         RMobilePhoneBookStore::TMobilePhoneBookInfoV5 emptyInfo;

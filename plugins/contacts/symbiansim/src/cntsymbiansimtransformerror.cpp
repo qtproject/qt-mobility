@@ -39,32 +39,62 @@
 **
 ****************************************************************************/
 
-#ifndef CNTABSTRACTSIMREQUEST_H_
-#define CNTABSTRACTSIMREQUEST_H_
+#include "cntsymbiansimtransformerror.h"
 
-#include <QObject>
-
-class CntSymbianSimEngine;
-class CntSimStore;
-class QTimer;
-
-class CntAbstractSimRequest : public QObject
+/*! Transform a Symbian contact error id to QContactManager::Error.
+ *
+ * \param symbianError Symbian error.
+ * \param QtError Qt error.
+*/
+void CntSymbianSimTransformError::transformError(TInt symbianError, QContactManager::Error& qtError)
 {
-Q_OBJECT
-public:
-    CntAbstractSimRequest(CntSymbianSimEngine *engine);
-    virtual ~CntAbstractSimRequest() {}
-    virtual bool start() = 0;
-    virtual bool cancel() = 0;
-    
-protected:
-    void singleShotTimer(int msec, QObject *receiver, const char *member);
-    void cancelTimer();
-    CntSymbianSimEngine *engine();
-    CntSimStore *simStore();
-    
-private:
-    QTimer *m_timer;
-};
-
-#endif // CNTABSTRACTSIMREQUEST_H_
+    switch(symbianError)
+    {
+        case KErrNone:
+        {
+            qtError = QContactManager::NoError;
+            break;
+        }
+        case KErrNotFound:
+        {
+            qtError = QContactManager::DoesNotExistError;
+            break;
+        }
+        case KErrAlreadyExists:
+        {
+            qtError = QContactManager::AlreadyExistsError;
+            break;
+        }
+        case KErrLocked:
+        {
+            qtError = QContactManager::LockedError;
+            break;
+        }
+        case KErrAccessDenied:
+        case KErrPermissionDenied:
+        {
+            qtError = QContactManager::PermissionsError;
+            break;
+        }
+        case KErrNoMemory:
+        {
+            qtError = QContactManager::OutOfMemoryError;
+            break;
+        }
+        case KErrNotSupported:
+        {
+            qtError = QContactManager::NotSupportedError;
+            break;
+        }
+        case KErrArgument:
+        {
+            qtError = QContactManager::BadArgumentError;
+            break;
+        }
+        default:
+        {
+            qtError = QContactManager::UnspecifiedError;
+            break;
+        }
+    }
+}

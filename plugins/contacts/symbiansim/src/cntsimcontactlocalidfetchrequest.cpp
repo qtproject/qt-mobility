@@ -84,6 +84,9 @@ bool CntSimContactLocalIdFetchRequest::cancel()
 
 void CntSimContactLocalIdFetchRequest::getInfoComplete(RMobilePhoneBookStore::TMobilePhoneBookInfoV5 info, QContactManager::Error error)
 {
+    if (!m_req->isActive())
+        return;
+    
     if (error == QContactManager::NoError) {
         //contacts are fetched starting from index 1, all slots should be checked
         //since slots may be not filled in a sequence.
@@ -98,6 +101,14 @@ void CntSimContactLocalIdFetchRequest::getInfoComplete(RMobilePhoneBookStore::TM
 
 void CntSimContactLocalIdFetchRequest::readComplete(QList<QContact> contacts, QContactManager::Error error)    
 {
+    if (!m_req->isActive())
+        return;
+    
+    // Sim store gives an error if there is no contacts. No need to pass
+    // this error to the client.
+    if (contacts.count() == 0 && error == QContactManager::DoesNotExistError)
+        error = QContactManager::NoError;    
+
     // Filter & sort results
     QList<QContact> filteredAndSorted;
     for (int i=0; i<contacts.count(); i++) {
@@ -110,6 +121,8 @@ void CntSimContactLocalIdFetchRequest::readComplete(QList<QContact> contacts, QC
     for (int i=0; i<filteredAndSorted.count(); i++) {
         filteredAndSortedIds << filteredAndSorted.at(i).localId();
     }
+    
+
     
     // Complete the request
     QContactManagerEngine::updateRequestState(m_req, QContactAbstractRequest::FinishedState);    

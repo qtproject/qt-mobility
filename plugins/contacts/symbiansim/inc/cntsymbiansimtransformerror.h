@@ -38,33 +38,17 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef CNTSYMBIANSIMTRANSFORMERROR_H
+#define CNTSYMBIANSIMTRANSFORMERROR_H
 
-#ifndef CNTABSTRACTSIMREQUEST_H_
-#define CNTABSTRACTSIMREQUEST_H_
+#include <e32err.h>
+#include <qcontactmanager.h>
 
-#include <QObject>
-
-class CntSymbianSimEngine;
-class CntSimStore;
-class QTimer;
-
-class CntAbstractSimRequest : public QObject
+QTM_USE_NAMESPACE
+class CntSymbianSimTransformError
 {
-Q_OBJECT
 public:
-    CntAbstractSimRequest(CntSymbianSimEngine *engine);
-    virtual ~CntAbstractSimRequest() {}
-    virtual bool start() = 0;
-    virtual bool cancel() = 0;
-    
-protected:
-    void singleShotTimer(int msec, QObject *receiver, const char *member);
-    void cancelTimer();
-    CntSymbianSimEngine *engine();
-    CntSimStore *simStore();
-    
-private:
-    QTimer *m_timer;
+    static void transformError(TInt symbianError, QContactManager::Error& qtError);
 };
 
-#endif // CNTABSTRACTSIMREQUEST_H_
+#endif // CNTSYMBIANSIMTRANSFORMERROR_H

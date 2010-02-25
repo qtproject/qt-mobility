@@ -68,26 +68,45 @@ QTM_USE_NAMESPACE
 class CntSimStore;
 class CntAbstractSimRequest;
 
+class CntSymbianSimEngineData : public QSharedData
+{
+public:
+    CntSymbianSimEngineData();
+    ~CntSymbianSimEngineData();
+    
+    RTelServer m_etelServer;
+    RMobilePhone m_etelPhone;
+    RMobilePhoneBookStore m_etelStore;
+    RMobilePhoneBookStore::TMobilePhoneBookInfoV5 m_etelStoreInfo;
+    RMobilePhoneBookStore::TMobilePhoneBookInfoV5Pckg m_etelStoreInfoPckg;
+
+    QString m_managerUri;
+    CntSimStore *m_simStore;
+    QMap<QContactAbstractRequest *, CntAbstractSimRequest *> m_asyncRequests;    
+};
+
 class CntSymbianSimEngine : public QContactManagerEngine
 {
     Q_OBJECT
 
 public:
     CntSymbianSimEngine(const QMap<QString, QString>& parameters, QContactManager::Error& error);
+    CntSymbianSimEngine(const CntSymbianSimEngine &other);
     ~CntSymbianSimEngine();
     void deref();
     QString managerName() const;
 
     /* Contacts - Accessors and Mutators */
-    QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     QList<QContactLocalId> contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-    // TODO:
-    //QList<QContact> contacts(const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
-    //QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
+    QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    QList<QContact> contacts(const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
+    QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
     QContact contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
    
     bool saveContact(QContact* contact, QContactManager::Error& error);
+    bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error);
     bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
+    bool removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error);
 
     /* Definitions - Accessors and Mutators */
     QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error& error) const;
@@ -110,31 +129,19 @@ public:
 
 public:
     void updateDisplayLabel(QContact& contact) const;
-    void transformError(TInt symbianError, QContactManager::Error& qtError) const;
     QList<QContact> decodeSimContactsL(TDes8& rawData) const;
     QContact encodeSimContactL(const QContact* contact, TDes8& rawData) const;
-    RMobilePhoneBookStore &store() { return m_etelStore; }
-    CntSimStore *simStore() { return m_simStore; }  
+    RMobilePhoneBookStore &store() { return d->m_etelStore; }
+    CntSimStore *simStore() { return d->m_simStore; }  
 
 private:
     void initializeL(const QMap<QString, QString> &parameters);
     void convertStoreNameL(const QMap<QString, QString> &parameters, TDes &symbianStoreName);
     void getEtelStoreInfoL() const;
-    QContact fetchContactL(const QContactLocalId &localId) const;
-    QList<QContact> fetchContactsL() const;
-    void saveContactL(QContact* contact) const;
-    void doSaveContactL(QContact* contact) const;
+    bool executeRequest(QContactAbstractRequest *req, QContactManager::Error& qtError) const;
 
 private:
-    RTelServer m_etelServer;
-    RMobilePhone m_etelPhone;
-    RMobilePhoneBookStore m_etelStore;
-    RMobilePhoneBookStore::TMobilePhoneBookInfoV5 m_etelStoreInfo;
-    RMobilePhoneBookStore::TMobilePhoneBookInfoV5Pckg m_etelStoreInfoPckg;
-
-    QString m_managerUri;
-    CntSimStore *m_simStore;
-    QMap<QContactAbstractRequest *, CntAbstractSimRequest *> m_asyncRequests;
+    QExplicitlySharedDataPointer<CntSymbianSimEngineData> d;
 };
 
 class Q_DECL_EXPORT CntSymbianSimFactory : public QObject, public QContactManagerEngineFactory

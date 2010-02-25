@@ -88,13 +88,13 @@ public slots:
     void cleanupTestCase();
 
 private slots:
-    /* Test cases that take no data */
     void fetchContactReq();
     void localIdFetchReq();
     void saveContactReq();
     void removeContactReq();
     void detailDefinitionFetchReq();
     void notSupportedRequests();
+    void multipleRequests();
 
 private:
     void initManager(QString simStore);
@@ -131,13 +131,29 @@ void tst_SimCMAsync::cleanup()
 
 void tst_SimCMAsync::initTestCase()
 {
-    // TODO: ?
+    initManager(QString());
 }
 
 void tst_SimCMAsync::cleanupTestCase()
 {
     delete m_cm;
     m_cm = 0;
+}
+
+void tst_SimCMAsync::initManager(QString simStore)
+{
+    delete m_cm;
+    m_cm = 0;
+
+    QString uri("qtcontacts:symbiansim");
+
+    // Set the sim store if available (simbackend defaults to ADN if not available)
+    if(!simStore.isEmpty()) {
+        uri.append(":store=");
+        uri.append(simStore);
+    }
+
+    m_cm = QContactManager::fromUri(uri);
 }
 
 QContact tst_SimCMAsync::createContact(QString name, QString number)
@@ -225,7 +241,7 @@ void tst_SimCMAsync::fetchContactReq()
     QVERIFY(stateSpy.count() == 1);
     QTRY_COMPARE(resultSpy.count(), 1);
     QVERIFY(req.state() == QContactAbstractRequest::FinishedState);
-    QVERIFY(req.error() == QContactManager::DoesNotExistError);
+    QVERIFY(req.error() == QContactManager::NoError);
     QVERIFY(stateSpy.count() == 2);
     QVERIFY(req.contacts().count() == 0);
 }
@@ -284,7 +300,7 @@ void tst_SimCMAsync::localIdFetchReq()
     QVERIFY(stateSpy.count() == 1);
     QTRY_COMPARE(resultSpy.count(), 1);
     QVERIFY(req.state() == QContactAbstractRequest::FinishedState);
-    QVERIFY(req.error() == QContactManager::DoesNotExistError);
+    QVERIFY(req.error() == QContactManager::NoError);
     QVERIFY(stateSpy.count() == 2);
     QVERIFY(req.ids().count() == 0);    
 }
@@ -516,6 +532,35 @@ void tst_SimCMAsync::notSupportedRequests()
     QContactDetailDefinitionSaveRequest ddsreq;
     ddsreq.setManager(m_cm);
     QVERIFY(!ddsreq.start());
+}
+
+void tst_SimCMAsync::multipleRequests()
+{
+    // Save some contacts
+    QContact c1 = saveContact("a", "1234567");
+    QContact c2 = saveContact("b", "7654321");
+    
+    QContactLocalIdFetchRequest req1;
+    req1.setManager(m_cm);
+
+    QContactFetchRequest req2;
+    req2.setManager(m_cm);
+    
+    QVERIFY(req1.start());
+    QVERIFY(!req2.start());
+    QVERIFY(req1.isActive());
+    QVERIFY(!req2.isActive());
+    QVERIFY(!req2.waitForFinished(0));
+    QVERIFY(req1.waitForFinished(0));
+    QVERIFY(req1.error() == QContactManager::NoError);
+        
+    QVERIFY(req2.start());
+    QVERIFY(!req1.start());
+    QVERIFY(req2.isActive());
+    QVERIFY(!req1.isActive());
+    QVERIFY(req1.waitForFinished(0)); // already at finished state so will return true
+    QVERIFY(req2.waitForFinished(0));
+    QVERIFY(req2.error() == QContactManager::NoError);
 }
 
 
