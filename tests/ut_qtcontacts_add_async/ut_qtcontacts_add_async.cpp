@@ -77,7 +77,7 @@ QContact ut_qtcontacts_add::getExistingContact()
     //TODO: How can we AND on both the first and last name?
     QContactDetailFilter nameFilter;
     nameFilter.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
-    nameFilter.setValue(TESTNAME_FIRST);
+    nameFilter.setValue(QLatin1String(TESTNAME_FIRST));
     nameFilter.setMatchFlags(QContactFilter::MatchExactly);
 
     //TODO: The extra empty parameters are necessary until the deprecated contacts() overloads are removed.
@@ -169,8 +169,8 @@ void ut_qtcontacts_add::onTimeoutAddContact()
 
     // Offer a UI to edit a prefilled contact.
     QContactName name;
-    name.setFirstName(TESTNAME_FIRST);
-    name.setLastName(TESTNAME_LAST);
+    name.setFirstName(QLatin1String(TESTNAME_FIRST));
+    name.setLastName(QLatin1String(TESTNAME_LAST));
     //TODO: Find and use an async API that tells us when it has finished.
     contact.saveDetail(&name);
     //const bool saved = contact.saveDetail(&name);
@@ -201,8 +201,8 @@ void ut_qtcontacts_add::onContactFoundThenCheck()
 
     //Check that the correct details were saved:
     const QContactName name = contact.detail<QContactName>();
-    QVERIFY(name.firstName() == TESTNAME_FIRST);
-    QVERIFY(name.lastName() == TESTNAME_LAST);
+    QVERIFY(name.firstName() == QLatin1String(TESTNAME_FIRST));
+    QVERIFY(name.lastName() == QLatin1String(TESTNAME_LAST));
 
     //Try to restore original conditions:
     getExistingContact(&ut_qtcontacts_add::onContactFoundThenRemoveAndStop);
