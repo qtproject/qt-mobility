@@ -318,6 +318,7 @@ bool CntSymbianSimEngine::saveContacts(QList<QContact>* contacts, QMap<int, QCon
     executeRequest(&req, error);
     if (errorMap)
         *errorMap = req.errorMap();
+    *contacts = req.contacts();
     return (error == QContactManager::NoError );    
 }
 
