@@ -119,12 +119,17 @@ QVersitContactExporterPrivate::~QVersitContactExporterPrivate()
 /*!
  * Export QT Contact into Versit Document.
  */
-void QVersitContactExporterPrivate::exportContact(
+bool QVersitContactExporterPrivate::exportContact(
     const QContact& contact,
-    QVersitDocument& document)
+    QVersitDocument& document,
+    QVersitContactExporter::Error* error)
 {
     mVersitType = document.type();
     QList<QContactDetail> allDetails = contact.details();
+    if (allDetails.isEmpty()) {
+        *error = QVersitContactExporter::EmptyContactError;
+        return false;
+    }
     for (int i = 0; i < allDetails.size(); i++) {
         QContactDetail detail = allDetails.at(i);
 
@@ -187,12 +192,34 @@ void QVersitContactExporterPrivate::exportContact(
             unknown = true;
         }
 
-        if (addProperty)
+        if (addProperty) {
             document.addProperty(property);
+        }
 
         if (mDetailHandler)
             mDetailHandler->postProcessDetail(contact, detail, !unknown, &document);
     }
+
+    // Search through the document for FN or N properties.  This will find it even if it was added
+    // by a detail handler.
+    if (!documentContainsName(document)) {
+        *error = QVersitContactExporter::NoNameError;
+        return false;
+    }
+    return true;
+}
+
+/*!
+ * Returns true if and only if \a document has a "FN" or "N" property.
+ */
+bool QVersitContactExporterPrivate::documentContainsName(const QVersitDocument &document)
+{
+    foreach (const QVersitProperty& property, document.properties()) {
+        const QString& name = property.name();
+        if (name == QLatin1String("FN") || name == QLatin1String("N"))
+            return true;
+    }
+    return false;
 }
 
 /*!

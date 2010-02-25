@@ -93,6 +93,7 @@ private slots: // Tests
     void testLabel();
     void testPref();
     void testPropertyHandler();
+    void testInvalidDocument();
 
 private: // Utilities
 

@@ -60,19 +60,20 @@ class QVersitProperty;
 class Q_VERSIT_EXPORT QVersitDocument
 {
 public:
-    QVersitDocument();
-    QVersitDocument(const QVersitDocument& other);
-    ~QVersitDocument();
-
-    QVersitDocument& operator=(const QVersitDocument& other);
-    bool operator==(const QVersitDocument& other) const;
-    bool operator!=(const QVersitDocument& other) const;
-
     enum VersitType {
         InvalidType,
         VCard21Type,   // vCard version 2.1
         VCard30Type    // vCard version 3.0 (RFC 2426)
     };
+
+    QVersitDocument();
+    QVersitDocument(const QVersitDocument& other);
+    QVersitDocument(VersitType type);
+    ~QVersitDocument();
+
+    QVersitDocument& operator=(const QVersitDocument& other);
+    bool operator==(const QVersitDocument& other) const;
+    bool operator!=(const QVersitDocument& other) const;
 
     // metadata about the versit document itself.
     void setType(VersitType type);

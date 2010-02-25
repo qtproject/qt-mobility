@@ -46,6 +46,7 @@
 
 #include <QStringList>
 #include <QTextCodec>
+#include <QBuffer>
 
 QTM_USE_NAMESPACE
 
@@ -107,6 +108,29 @@ QTM_USE_NAMESPACE
 /*! Constructs a new writer. */
 QVersitWriter::QVersitWriter() : d(new QVersitWriterPrivate)
 {
+    init();
+}
+
+/*! Constructs a new writer that writes to \a outputDevice. */
+QVersitWriter::QVersitWriter(QIODevice *outputDevice) : d(new QVersitWriterPrivate)
+{
+    init();
+    d->mIoDevice = outputDevice;
+}
+
+/*! Constructs a new writer that appends to \a outputBytes. */
+QVersitWriter::QVersitWriter(QByteArray *outputBytes) : d(new QVersitWriterPrivate)
+{
+    init();
+    d->mOutputBytes.reset(new QBuffer);
+    d->mOutputBytes->setBuffer(outputBytes);
+    d->mOutputBytes->open(QIODevice::WriteOnly);
+    d->mIoDevice = d->mOutputBytes.data();
+}
+
+/*! Common constructor code. */
+void QVersitWriter::init()
+{
     connect(d, SIGNAL(stateChanged(QVersitWriter::State)),
             this, SIGNAL(stateChanged(QVersitWriter::State)), Qt::DirectConnection);
 }
@@ -127,15 +151,19 @@ QVersitWriter::~QVersitWriter()
  */
 void QVersitWriter::setDevice(QIODevice* device)
 {
+    d->mOutputBytes.reset(0);
     d->mIoDevice = device;
 }
 
 /*!
- * Returns the device used for writing.
+ * Returns the device used for writing, or 0 if no device has been set.
  */
 QIODevice* QVersitWriter::device() const
 {
-    return d->mIoDevice;
+    if (d->mOutputBytes.isNull())
+        return d->mIoDevice;
+    else
+        return 0;
 }
 
 /*!

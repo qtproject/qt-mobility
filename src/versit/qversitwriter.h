@@ -57,6 +57,9 @@ class Q_VERSIT_EXPORT QVersitWriter : public QObject
 {
     Q_OBJECT
 
+private:
+    void init();
+
 public:
     enum Error {
         NoError = 0,
@@ -74,10 +77,12 @@ public:
     };
 
     QVersitWriter();
+    QVersitWriter(QIODevice* outputDevice);
+    QVersitWriter(QByteArray* outputBytes);
     ~QVersitWriter();
 
     // output device
-    void setDevice(QIODevice* device);
+    void setDevice(QIODevice* outputDevice);
     QIODevice* device() const;
 
     void setDefaultCodec(QTextCodec* codec);

@@ -66,9 +66,12 @@
 #include <QIODevice>
 #include <QList>
 #include <QPointer>
+#include <QScopedPointer>
 #include <QByteArray>
 #include <QMutex>
 #include <QWaitCondition>
+
+class QBuffer;
 
 QTM_BEGIN_NAMESPACE
 
@@ -202,6 +205,7 @@ public: // New functions
 
 public: // Data
     QPointer<QIODevice> mIoDevice;
+    QScopedPointer<QBuffer> mInputBytes; // Holds the data set by setData()
     QList<QVersitDocument> mVersitDocuments;
     int mDocumentNestingLevel; // Depth in parsing nested Versit documents
     QTextCodec* mDefaultCodec;

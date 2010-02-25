@@ -75,6 +75,13 @@ QVersitDocument::QVersitDocument() : d(new QVersitDocumentPrivate())
 {
 }
 
+/*! Constructs a new empty document with the type set to \a type */
+QVersitDocument::QVersitDocument(VersitType type) : d(new QVersitDocumentPrivate())
+{
+    d->mVersitType = type;
+}
+
+
 /*! Constructs a document that is a copy of \a other */
 QVersitDocument::QVersitDocument(const QVersitDocument& other) : d(other.d)
 {

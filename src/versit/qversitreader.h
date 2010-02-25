@@ -61,6 +61,9 @@ class Q_VERSIT_EXPORT QVersitReader : public QObject
 {
     Q_OBJECT
 
+private:
+    void init();
+
 public:
     enum Error {
         NoError = 0,
@@ -79,11 +82,14 @@ public:
     };
 
     QVersitReader();
+    QVersitReader(QIODevice* inputDevice);
+    QVersitReader(const QByteArray& inputData);
     ~QVersitReader();
 
     // input:
-    void setDevice(QIODevice* device);
+    void setDevice(QIODevice* inputDevice);
     QIODevice* device() const;
+    void setData(const QByteArray& inputData);
 
     void setDefaultCodec(QTextCodec* codec);
     QTextCodec* defaultCodec() const;

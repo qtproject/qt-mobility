@@ -70,9 +70,11 @@ public:
     QVersitContactExporterPrivate();
     ~QVersitContactExporterPrivate();
 
-    void exportContact(const QContact& contact, QVersitDocument& versitDocument);
+    bool exportContact(const QContact& contact, QVersitDocument& versitDocument,
+                       QVersitContactExporter::Error* error);
 
 protected:
+    static bool documentContainsName(const QVersitDocument& document);
     void encodeName(QVersitProperty& property, const QContactDetail& detail);
     void encodePhoneNumber(QVersitProperty& property, const QContactDetail& detail);
     void encodeEmail(QVersitProperty& property, const QContactDetail& detail);
@@ -104,6 +106,8 @@ protected:
     QString escape(const QString& value);
 
 public: // Data
+    QList<QVersitDocument> mDocuments;
+    QMap<int, QVersitContactExporter::Error> mErrors;
     QVersitContactExporterDetailHandler* mDetailHandler;
     QVersitDefaultResourceHandler* mDefaultResourceHandler;
     QVersitResourceHandler* mResourceHandler;

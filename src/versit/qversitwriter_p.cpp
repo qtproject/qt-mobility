@@ -50,6 +50,7 @@
 #include <QMutexLocker>
 #include <QScopedPointer>
 #include <QTextCodec>
+#include <QBuffer>
 
 QTM_USE_NAMESPACE
 
