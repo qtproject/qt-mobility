@@ -231,10 +231,10 @@ void ut_qtcontacts_fetch::addContact()
     Q_ASSERT(manager);
 
 
-    //manager->saveContact(&contact);
+    manager->saveContact(&contact);
     //TODO: Saving a copy of the QContact causes QContactFetchRequest to not find the saved contact afterwards.
-    QContact copy(contact);
-    manager->saveContact(&copy);
+    //QContact copy(contact);
+    //manager->saveContact(&copy);
 
     //Check that it was really saved:
     //qDebug() << "debug: checking that the contact was saved.";
