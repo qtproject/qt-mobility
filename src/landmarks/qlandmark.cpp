@@ -496,11 +496,10 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
     \class QLandmark
     \ingroup landmarks
 
-    \brief The QLandmark class describes a point of interest
+    \brief The QLandmark class describes location or point of interest
 
-    A QLandmark represents a location or point of interest. It consists
-    of a number of set properties such as name and coordinates as well
-    as a set of generic attributes.
+    It consists of a number of set properties such as name and coordinates
+    as well as a set of generic attributes.
 
     Each QLandmark may be associated with zero or more categories.
     Categories are manipulated by using QLandmarkCategoryId objects via
