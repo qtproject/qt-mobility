@@ -69,26 +69,6 @@ QContactManager* ut_qtcontacts_add::getContactManager()
     return &manager;
 }
 
-QContact ut_qtcontacts_add::getExistingContact()
-{
-    QContactManager* manager = getContactManager();
-    Q_ASSERT(manager);
-
-    //TODO: How can we AND on both the first and last name?
-    QContactDetailFilter nameFilter;
-    nameFilter.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
-    nameFilter.setValue(QLatin1String(TESTNAME_FIRST));
-    nameFilter.setMatchFlags(QContactFilter::MatchExactly);
-
-    //TODO: The extra empty parameters are necessary until the deprecated contacts() overloads are removed.
-    QList<QContact> matchingContacts = manager->contacts(nameFilter,  QList<QContactSortOrder>(), QStringList());
-    if (!matchingContacts.isEmpty()) {
-        return matchingContacts.at(0);
-    }
-
-    return QContact();
-}
-
 void ut_qtcontacts_add::onContactFetchRequestProgress()
 {
     //qDebug() << "onContactFetchRequestProgress";
@@ -125,6 +105,9 @@ void ut_qtcontacts_add::getExistingContact(FinishedCallbackFunc finishedCallback
     if (contactFetchRequest.isActive())
         contactFetchRequest.cancel();
 
+    // Initialize the result.
+    contact = QContact();
+
     //TODO: How can we AND on both the first and last name?
     getExistingContactFinishedCallback = finishedCallback; //Call this when the contact has been retrieved.
     connect(&contactFetchRequest, SIGNAL(resultsAvailable()),
@@ -132,6 +115,8 @@ void ut_qtcontacts_add::getExistingContact(FinishedCallbackFunc finishedCallback
 
     QContactDetailFilter nameFilter;
     nameFilter.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
+    nameFilter.setValue(QLatin1String(TESTNAME_FIRST));
+    nameFilter.setMatchFlags(QContactFilter::MatchExactly);
     contactFetchRequest.setManager(manager);
     contactFetchRequest.setFilter(nameFilter);
 
@@ -183,7 +168,7 @@ void ut_qtcontacts_add::onTimeoutAddContact()
 
 
     manager->saveContact(&contact);
-    //TODO: Saving a copy of the QContact causes QContactFetchRequest to not find the saved contact afterwards.
+    //This works too:
     //QContact copy(contact);
     //manager->saveContact(&copy);
 

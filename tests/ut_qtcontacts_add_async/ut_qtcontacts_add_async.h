@@ -49,9 +49,6 @@ private:
 
     QContactManager* getContactManager();
 
-    // Get the contact ID for the test contact if it exists already.
-    QContact getExistingContact();
-
     typedef void (ut_qtcontacts_add::*FinishedCallbackFunc)(void);
 
     // Get the contact ID for the test contact if it exists already.
