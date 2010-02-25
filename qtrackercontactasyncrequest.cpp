@@ -312,31 +312,34 @@ RDFSelect prepareEmailAddressesQuery(RDFVariable &rdfcontact1, bool forAffiliati
     return queryidsnumbers;
 }
 
-RDFSelect prepareIMContactsQuery(RDFVariable  &imcontact )
+
+RDFSelect prepareIMAddressesQuery(RDFVariable  &contact)
 {
     // columns
+    ::tracker()->setVerbosity(4);
     RDFSelect queryidsimacccounts;
-    imcontact = queryidsimacccounts.newColumn<nco::IMContact>("contact");
-    queryidsimacccounts.groupBy(imcontact);
-    queryidsimacccounts.addColumn("contactId", imcontact.property<nco::contactUID> ());
-
-    queryidsimacccounts.addColumn("IMId", imcontact.property<nco::imContactId> ());
-    queryidsimacccounts.addColumn("status", imcontact.optional().property<nco::imContactPresence> ());
-    queryidsimacccounts.addColumn("message", imcontact.optional().property<nco::imContactStatusMessage> ());
-    queryidsimacccounts.addColumn("nick", imcontact.optional().property<nco::imContactNickname> ());
-    queryidsimacccounts.addColumn("type", imcontact.optional().property<nco::fromIMAccount> ());
+    RDFVariable imaddress;
+    imaddress = queryidsimacccounts.newColumn<nco::IMAddress>("address");
+    queryidsimacccounts.groupBy(contact);
+    queryidsimacccounts.addColumn("contactId", contact.property<nco::contactUID> ());
+    queryidsimacccounts.addColumn("IMId", imaddress.property<nco::imID> ());
+    queryidsimacccounts.addColumn("status", imaddress.optional().property<nco::imPresence> ());
+    queryidsimacccounts.addColumn("message", imaddress.optional().property<nco::imContactStatusMessage> ());
+    queryidsimacccounts.addColumn("nick", imaddress.optional().property<nco::imNickname> ());
+    queryidsimacccounts.addColumn("type", imaddress); // here we need account path
     queryidsimacccounts.addColumn("capabilities",
-                imcontact.optional().property<nco::imContactCapability>().filter("GROUP_CONCAT", LiteralValue(",")));
-    queryidsimacccounts.addColumn("serviceprovider", imcontact.optional().property<nco::fromIMAccount>().property<nco::imDisplayName>());
+              imaddress.optional().property<nco::imCapability>().filter("GROUP_CONCAT", LiteralValue(",")));
+    // TODO link to account
+    //    queryidsimacccounts.addColumn("serviceprovider", imcontact.optional().property<nco::fromIMAccount>().property<nco::imDisplayName>());
 
     return queryidsimacccounts;
 
 }
 
-RDFSelect prepareIMAccountsQuery(RDFVariable &rdfPersonContact)
+RDFSelect prepareIMAccountsQuery()
 {
     RDFVariable imAccount;
-    imAccount = rdfPersonContact.property<nco::hasIMAccount> ();
+    imAccount = RDFVariable::fromType<nco::IMAccount>();
     RDFSelect queryidsimaccounts;
 
     queryidsimaccounts.addColumn("protocol", imAccount.property<nco::imID> ());
@@ -470,30 +473,15 @@ void QTrackerContactFetchRequest::run()
         queryIMAccountNodesPending = 1;
 
         RDFSelect queryidsimaccounts;
-        RDFVariable rdfIMContact;
-        rdfIMContact = rdfIMContact.fromType<nco::IMContact> ();
-
         if(isMeContact(r->filter())) {
-            RDFVariable rdfPersonContact;
-            rdfPersonContact = rdfPersonContact.fromType<nco::PersonContact> ();
-            // Prepare a query to get all IMAccounts from all  accounts.
-            // nco:PersonContact -- nco:hasIMAccount -- nco:IMAccount
-            queryidsimaccounts = prepareIMAccountsQuery(rdfPersonContact);
+            // Prepare a query to get all IMAccounts
+            queryidsimaccounts = prepareIMAccountsQuery();
         } else {
-            // Prepare a query to get all IMContacts from all accounts.
-            queryidsimaccounts = prepareIMContactsQuery(rdfIMContact);
+            RDFVariable rdfIMContact;
+            rdfIMContact = rdfIMContact.fromType<nco::PersonContact> ();
+            applyFilterToContact(rdfIMContact, r->filter());
+            queryidsimaccounts = prepareIMAddressesQuery(rdfIMContact);
         }
-
-        if( r->filter().type() != QContactFilter::DefaultFilter )
-        {
-            // need to get all IMContacts with the same contact id (1)
-            // (1)rdfcontact1 represent the contacts that fits to the filter
-            RDFVariable rdfcontact1;
-            applyFilterToContact(rdfcontact1, r->filter());
-            // only those with im contacts that match rdfcontact1 (same id)
-            rdfIMContact.isMemberOf(RDFVariableList()<<rdfcontact1);
-        }
-
         queryIMAccountNodes = ::tracker()->modelQuery(queryidsimaccounts);
         QObject::connect(queryIMAccountNodes.model(),
                 SIGNAL(modelUpdated()), SLOT(iMAcountsReady()));
@@ -912,7 +900,7 @@ void QTrackerContactFetchRequest::processQueryEmailAddresses( SopranoLive::LiveN
 
 /*!
  * \brief Processes one query record-row during read from tracker to QContactOnlineAccount.
- * Order or columns in query is fixed to order defined in \sa prepareIMContactsQuery()
+ * Order or columns in query is fixed to order defined in \sa prepareIMAddressesQuery()
  */
 QContactOnlineAccount QTrackerContactFetchRequest::getOnlineAccountFromIMQuery(LiveNodes imAccountQuery, int queryRow)
 {
@@ -927,7 +915,7 @@ QContactOnlineAccount QTrackerContactFetchRequest::getOnlineAccountFromIMQuery(L
 }
 
 /*!
- * \brief processes IMQuery results. \sa prepareIMContactsQuery, contactsReady
+ * \brief processes IMQuery results. \sa prepareIMAddressesQuery, contactsReady
  */
 void QTrackerContactFetchRequest::processQueryIMContacts(SopranoLive::LiveNodes queryIMContacts)
 {
