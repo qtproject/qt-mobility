@@ -55,103 +55,170 @@ class QLandmark;
 class QGeoCoordinate;
 class QLandmarkCategory;
 class QLandmarkFilterPrivate;
+class QLandmarkAbstractCustomFilter;
 
+class QLandmarkFilterPrivate;
 class Q_LANDMARKS_EXPORT QLandmarkFilter
 {
 public:
+    enum FilterType{InvalidFilter, LandmarkNameFilter, LandmarkProximityFilter,
+                    LandmarkNearestFilter, LandmarkCategoryFilter, LandmarkBoxFilter,
+                    LandmarkCustomFilter =500};
     QLandmarkFilter();
-    virtual ~QLandmarkFilter();
-    void setMaxMatches(int maxMatches);
+    ~QLandmarkFilter();
+
+    FilterType type() const;
+
     int maxMatches() const;
+    void setMaxMatches(int maxMatches);
 
-    QLandmarkFilter operator&(const QLandmarkFilter &other);
-    QLandmarkFilter operator|(const QLandmarkFilter &other);
-
-    QLandmarkFilter &operator&=(const QLandmarkFilter &other);
-    QLandmarkFilter &operator|=(const QLandmarkFilter &other);
-    QLandmarkFilter operator~() const;
-protected:
-    virtual QList<QLandmarkId> filter(QList<QLandmarkId> &landmarkIds) const;
+    bool operator!=(const QLandmarkFilter &other) const;
+    bool operator==(const QLandmarkFilter &other) const;
+    QLandmarkFilter &operator=(const QLandmarkFilter &other);
 private:
     QLandmarkFilterPrivate *d;
 };
 
+
+class QLandmarkNameFilterPrivate;
 class Q_LANDMARKS_EXPORT QLandmarkNameFilter : public QLandmarkFilter
 {
 public:
     QLandmarkNameFilter(const QString &name);
     virtual ~QLandmarkNameFilter();
 
-protected:
-    virtual QList<QLandmarkId> filter(const QList<QLandmarkId> &landmarkIds) const;
+    QString name();
+    void setName(const QString &name);
+private:
+    QLandmarkNameFilterPrivate *d;
 };
 
+class QLandmarkProximityFilterPrivate;
 class Q_LANDMARKS_EXPORT QLandmarkProximityFilter : public QLandmarkFilter
 {
 public:
     QLandmarkProximityFilter(const QGeoCoordinate &coordinate, double range);
     virtual ~QLandmarkProximityFilter();
 
-protected:
-    virtual QList<QLandmarkId> filter(const QList<QLandmarkId> &landmarkIds) const;
+    QGeoCoordinate coordinate();
+    void setCoordinate(const QGeoCoordinate &coordinate);
+
+    double radius();
+    void setRadius(double radius);
+private:
+    QLandmarkProximityFilterPrivate *d;
 };
 
+class QLandmarkNearestFilterPrivate;
 class Q_LANDMARKS_EXPORT QLandmarkNearestFilter : public QLandmarkFilter
 {
 public:
     QLandmarkNearestFilter(const QGeoCoordinate &coordinate);
     virtual ~QLandmarkNearestFilter();
 
-protected:
-     virtual QList<QLandmarkId> filter(const QList<QLandmarkId> &landmarkIds) const;
+    QGeoCoordinate coordinate() const;
+    void setCoordinate(const QGeoCoordinate &coordinate);
+
+private:
+    QLandmarkNearestFilter *d;
 };
 
+class QLandmarkCategoryFilterPrivate;
 class Q_LANDMARKS_EXPORT QLandmarkCategoryFilter : public QLandmarkFilter
 {
 public:
-    QLandmarkCategoryFilter(const QLandmarkCategory &category);
+    QLandmarkCategoryFilter(const QLandmarkCategoryId &categoryId);
     virtual ~QLandmarkCategoryFilter();
 
-protected:
-    virtual QList<QLandmarkId> filter(const QList<QLandmarkId> landmarkIds) const;
+    QLandmarkCategoryId category() const;
+    void setCategoryId(const QLandmarkCategoryId &categoryId);
+
+private:
+    QLandmarkCategoryFilterPrivate *d;
 };
 
+class QLandmarkBoxFilterPrivate;
 class Q_LANDMARKS_EXPORT QLandmarkBoxFilter: public QLandmarkFilter
 {
 public:
     QLandmarkBoxFilter(const QGeoCoordinate &NW, const QGeoCoordinate &SE);
     virtual ~QLandmarkBoxFilter();
 
-protected:
-   virtual QList<QLandmarkId> filter(const QList<QLandmarkId> &landmarkIds) const;
+    QGeoCoordinate northWestCoordinate();
+    void setNorthWestCoordinate(const QGeoCoordinate &NW);
+
+    QGeoCoordinate southEastCoordinate();
+    void setSouthEastCoordinate(const QGeoCoordinate &SE);
+private:
+    QLandmarkBoxFilterPrivate *d;
 };
 
+class QLandmarkCustomFilterPrivate;
+class Q_LANDMARKS_EXPORT QLandmarkCustomFilter : public QLandmarkFilter
+{
+public:
+    virtual ~QLandmarkCustomFilter();
+
+protected:
+    QLandmarkCustomFilter();
+    virtual bool isMatch(const QLandmarkId &landmark);
+private:
+    QLandmarkCustomFilterPrivate *d;
+};
+
+class QLandmarkSortOrderPrivate;
 class Q_LANDMARKS_EXPORT QLandmarkSortOrder
 {
+    enum SortType{LandmarkNameFilter, LandmarkDistanceFilter, LandmarkCustomFilter=500};
+public:
+
+    SortType type() const;
+    Qt::SortOrder direction() const;
+    void setDirection(Qt::SortOrder direction);
+    virtual int compare(const QLandmark &l1, const QLandmark &l2) const= 0;
+    virtual QList<QLandmarkId> sort(const QList<QLandmarkId> &landmarkIds) const= 0;
 protected:
-    virtual int compare(const QLandmark &l1, const QLandmark &l2);
+    QLandmarkSortOrder();
+private:
+    QLandmarkSortOrderPrivate *d;
 };
 
+class QLandmarkNameSortPrivate;
 class Q_LANDMARKS_EXPORT QLandmarkNameSort : public QLandmarkSortOrder
 {
 public:
-    enum Type {Ascending, Descending};
-    QLandmarkNameSort(Type orderType);
+    QLandmarkNameSort(Qt::SortOrder direction);
     virtual ~QLandmarkNameSort();
-protected:
-    virtual int compare(const QLandmark &l1, const QLandmark &l2);
+
+    virtual int compare(const QLandmark &l1, const QLandmark &l2) const;
+    virtual QList<QLandmarkId> sort(const QList<QLandmarkId> &landmarkIds) const;
+private:
+    QLandmarkNameSortPrivate *d;
 };
 
+class QLandmarkDistanceSortPrivate;
 class Q_LANDMARKS_EXPORT QLandmarkDistanceSort : public QLandmarkSortOrder
 {
 public:
+    QLandmarkDistanceSort(QGeoCoordinate coordinate, Qt::SortOrder direction);
     virtual ~QLandmarkDistanceSort();
-    enum Type {NearestFirst, FurthestFirst};
-    QLandmarkDistanceSort(Type orderType);
 
+    QGeoCoordinate coordinate() const;
+    void setCoordinate(const QGeoCoordinate &coordinate);
+    virtual int compare(const QLandmark &l1, const QLandmark &l2) const;
+    virtual QList<QLandmarkId> sort(const QList<QLandmarkId> &landmarkIds) const;
+private:
+    QLandmarkDistanceSortPrivate *d;
+};
+
+class QLandmarkCustomSortPrivate;
+class Q_LANDMARKS_EXPORT QLandmarkCustomSort : public QLandmarkSortOrder
+{
+    virtual ~QLandmarkCustomSort();
 protected:
-    virtual int compare(const QLandmark &l1, const QLandmark &l2);
-
+    QLandmarkCustomSort();
+private:
+    QLandmarkCustomSortPrivate *d;
 };
 
 QTM_END_NAMESPACE

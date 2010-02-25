@@ -14,14 +14,13 @@ DEPENDPATH += .
 
 PUBLIC_HEADERS += qlandmark.h \
                   qlandmarkdatabase.h \
-                  qlandmarkmanager.h \
                   qlandmarkfilter.h
 
 PRIVATE_HEADERS += qlandmark_p.h
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
-SOURCES += qlandmark.cpp qlandmarkdatabase.cpp qlandmarkfilter.cpp qlandmarkmanager.cpp
+SOURCES += qlandmark.cpp qlandmarkdatabase.cpp qlandmarkfilter.cpp
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB
@@ -41,5 +40,5 @@ symbian {
     QtLandmarksDeployment.path = /sys/bin
     DEPLOYMENT += QtLandmarksDeployment
 }
-
+CONFIG += middleware
 include(../../features/deploy.pri)

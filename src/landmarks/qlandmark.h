@@ -58,6 +58,7 @@ class QLandmarkIdPrivate;
 class QLandmarkCategoryPrivate;
 class QLandmarkCategoryIdPrivate;
 
+
 class Q_LANDMARKS_EXPORT QLandmarkCategoryId
 {
 public:
@@ -65,14 +66,14 @@ public:
     QLandmarkCategoryId(const QLandmarkCategoryId &other);
     ~QLandmarkCategoryId();
 
-    bool isValid();
-    QString id();
+    bool isValid() const;
+    QString id() const;
     void setId(const QString &id);
 
-    QString databaseName();
-    void setDatabaseName(const QString &databaseName);//maybe better to use database uri than name?
+    QString managerUri() const;
+    void setManagerUri(const QString &uri);
 
-    QLandmarkCategoryId &operator=(const QLandmarkCategoryId &other) const;
+    QLandmarkCategoryId &operator=(const QLandmarkCategoryId &other);
     bool operator==(const QLandmarkCategoryId &other) const;
     bool operator!=(const QLandmarkCategoryId &other) const;
 
@@ -105,9 +106,10 @@ public:
 
     QLandmarkCategoryId categoryId() const;
 
-    //TODO: see if generic attributes are needed
-    //for categories, doesn't appear
-    //to be a way to do this for S60 and maemo
+    QVariant attribute(const QString &attributeName) const;
+    void setAttribute(const QString &attributeName, const QVariant &value);
+    QStringList attributes() const;
+
 private:
     QLandmarkCategoryPrivate *d;
 };
@@ -116,17 +118,17 @@ class Q_LANDMARKS_EXPORT QLandmarkId
 {
 public:
     QLandmarkId();
-    QLandmarkId(const QLandmarkId &id);
+    QLandmarkId(const QLandmarkId &other);
     ~QLandmarkId();
 
-    bool isValid();
+    bool isValid() const;
     void setId(const QString &id);
     QString id();
 
-    QString databaseName();
-    void setDatabaseName(const QString &databaseName);
+    QString managerUri() const;
+    void setManagerUri(const QString &managerUri);
 
-    QLandmarkId &operator=(const QLandmarkId &other) const;
+    QLandmarkId &operator=(const QLandmarkId &other);
     bool operator==(const QLandmarkId &other) const;
     bool operator!=(const QLandmarkId &other) const;
 private:
@@ -152,9 +154,9 @@ public:
     void setCoordinate(const QGeoCoordinate& coordinate);
 
     QList<QLandmarkCategoryId> categories() const;
-    void setCategories(const QList<QLandmarkCategoryId> &categories);
-    void addCategory(const QLandmarkCategoryId &category);
-    void removeCategory(const QLandmarkCategoryId &category);
+    void setCategories(const QList<QLandmarkCategoryId> &categoryIds);
+    void addCategory(const QLandmarkCategoryId &categoryId);
+    void removeCategory(const QLandmarkCategoryId &categoryId);
 
     QString description() const;
     void setDescription(const QString &description);
@@ -183,6 +185,9 @@ public:
 
     QString postcode() const;
     void setPostcode(const QString &postCode);
+
+    QString postOfficeBox() const;
+    void setPostOfficeBox(const QString &postOfficeBox);
 
     QString phone() const;
     void setPhone(const QString &phone);
