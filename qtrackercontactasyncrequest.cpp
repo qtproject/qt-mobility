@@ -315,20 +315,22 @@ RDFSelect prepareEmailAddressesQuery(RDFVariable &rdfcontact1, bool forAffiliati
 RDFSelect prepareIMContactsQuery(RDFVariable  &imcontact )
 {
     // columns
+    ::tracker()->setVerbosity(4);
     RDFSelect queryidsimacccounts;
-    imcontact = queryidsimacccounts.newColumn<nco::IMContact>("contact");
+    RDFVariable imaddress;
+    imaddress = queryidsimacccounts.newColumn<nco::IMAddress>("address");
     queryidsimacccounts.groupBy(imcontact);
     queryidsimacccounts.addColumn("contactId", imcontact.property<nco::contactUID> ());
 
-    queryidsimacccounts.addColumn("IMId", imcontact.property<nco::imContactId> ());
-    queryidsimacccounts.addColumn("status", imcontact.optional().property<nco::imContactPresence> ());
-    queryidsimacccounts.addColumn("message", imcontact.optional().property<nco::imContactStatusMessage> ());
-    queryidsimacccounts.addColumn("nick", imcontact.optional().property<nco::imContactNickname> ());
-    queryidsimacccounts.addColumn("type", imcontact.optional().property<nco::fromIMAccount> ());
-    queryidsimacccounts.addColumn("capabilities",
-                imcontact.optional().property<nco::imContactCapability>().filter("GROUP_CONCAT", LiteralValue(",")));
-    queryidsimacccounts.addColumn("metacontact", imcontact.optional().property<nco::metacontact> ());
-    queryidsimacccounts.addColumn("serviceprovider", imcontact.optional().property<nco::fromIMAccount>().property<nco::imDisplayName>());
+    queryidsimacccounts.addColumn("IMId", imaddress.property<nco::imID> ());
+    queryidsimacccounts.addColumn("status", imaddress.optional().property<nco::imPresence> ());
+    queryidsimacccounts.addColumn("message", imaddress.optional().property<nco::imContactStatusMessage> ());
+    queryidsimacccounts.addColumn("nick", imaddress.optional().property<nco::imNickname> ());
+    queryidsimacccounts.addColumn("type", imcontact.property<nco::hasIMAddress> ());
+//   queryidsimacccounts.addColumn("capabilities",
+//              imaddress.optional().property<nco::imCapability>().filter("GROUP_CONCAT", LiteralValue(",")));
+//    queryidsimacccounts.addColumn("metacontact", imcontact.optional().property<nco::metacontact> ());
+//    queryidsimacccounts.addColumn("serviceprovider", imcontact.optional().property<nco::fromIMAccount>().property<nco::imDisplayName>());
 
     return queryidsimacccounts;
 
@@ -472,7 +474,7 @@ void QTrackerContactFetchRequest::run()
 
         RDFSelect queryidsimaccounts;
         RDFVariable rdfIMContact;
-        rdfIMContact = rdfIMContact.fromType<nco::IMContact> ();
+        rdfIMContact = rdfIMContact.fromType<nco::Contact> ();
 
         if(isMeContact(r->filter())) {
             RDFVariable rdfPersonContact;
