@@ -88,6 +88,8 @@ private slots:
     void fetchContacts();
     void updateContactDetail_data();
     void updateContactDetail();
+    void batchOperations_data();
+    void batchOperations();
 
     /* Test cases that take no data */
 
@@ -835,6 +837,99 @@ void tst_SimCM::updateContactDetail()
 
     // 4. Remove the contact
     QVERIFY(m_cm->removeContact(contact.localId()));
+}
+
+void tst_SimCM::batchOperations_data()
+{
+    QTest::addColumn<QString>("simStore");
+    QTest::addColumn<int>("contactCount");
+    QTest::addColumn<bool>("expectedResult");
+
+    QTest::newRow("ADN")
+        << QString("ADN")
+        << 10
+        << true;
+
+    QTest::newRow("SDN")
+        << QString("SDN")
+        << 10
+        << false; // You cannot save contacts to SDN
+
+    // TODO: How to save to FDN? A dialog for PIN2 should be shown...
+    QTest::newRow("FDN")
+        << QString("FDN")
+        << 10
+        << true;
+}
+
+/*
+ * Tests batch operations saveContacts and removeContacts.
+ * 1. Add contacts
+ * 2. Update contacts
+ * 3. Remove contacts
+ */
+void tst_SimCM::batchOperations()
+{
+    // init
+    QFETCH(QString, simStore);
+    initManager(simStore);
+    QVERIFY(m_cm);
+    if(m_cm->error() == QContactManager::NotSupportedError) {
+        QSKIP("The store not supported by the SIM card", SkipSingle);
+    }
+    QFETCH(int, contactCount);
+    QFETCH(bool, expectedResult);
+
+    QMap<int, QContactManager::Error> errorMap;
+    QList<QContact> contacts;
+    for(int i(0); i < contactCount; i++) {
+        QContact contact = createContact(
+            QString("James").append(QString::number(i + 1)),
+            QString("1234567890").append(QString::number(i + 1)));
+        contacts.append(contact);
+    }
+
+    // 1. Add contacts
+    if (expectedResult) {
+        QVERIFY(m_cm->saveContacts(&contacts, &errorMap));
+        QCOMPARE(m_cm->error(), QContactManager::NoError);
+        QCOMPARE(errorMap.count(), 0);
+        foreach (QContact contact, contacts) {
+            QVERIFY(contact.id() != QContactId());
+        }
+    } else {
+        QVERIFY(!m_cm->saveContacts(&contacts, &errorMap));
+        QVERIFY(m_cm->error() != QContactManager::NoError);
+        QCOMPARE(errorMap.count(), 10);
+        foreach (QContact contact, contacts) {
+            QCOMPARE(contact.id(), QContactId());
+        }
+    }
+
+    // 2. Update contacts (updates name of each contact)
+    if(expectedResult) {
+        foreach (QContact contact, contacts) {
+            int index = contacts.indexOf(contact);
+            QContactName name = contact.detail(QContactName::DefinitionName);
+            name.setCustomLabel(name.customLabel() + QString("u"));
+            contact.saveDetail(&name);
+            contacts.replace(index, contact);
+        }
+        QVERIFY(m_cm->saveContacts(&contacts, &errorMap));
+        QCOMPARE(m_cm->error(), QContactManager::NoError);
+        QCOMPARE(errorMap.count(), 0);
+    }
+
+    // 3. Remove contacts
+    if(expectedResult) {
+        QList<QContactLocalId> contactIds;
+        foreach (QContact contact, contacts) {
+            contactIds.append(contact.localId());
+        }
+        QVERIFY(m_cm->removeContacts(&contactIds, &errorMap));
+        QCOMPARE(m_cm->error(), QContactManager::NoError);
+        QCOMPARE(errorMap.count(), 0);
+    }
 }
 
 /*!
