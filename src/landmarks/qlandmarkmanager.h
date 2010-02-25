@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QLANDMARKDATABASE_H
-#define QLANDMARKDATABASE_H
+#ifndef QLANDMARKMANAGER_H
+#define QLANDMARKMANAGER_H
 
 #include "qmobilityglobal.h"
 #include "qlandmark.h"
@@ -159,9 +159,8 @@ public:
     QLandmarkManager::Error error() const;
     QString errorString();
 
-
-    QLandmarkManager * landmarkDatabase();
-    void setLandmarkDatabase(QLandmarkManager *database);
+    QLandmarkManager * landmarkManager();
+    void setLandmarkManager(QLandmarkManager *database);
 
 public slots:
     bool start();

@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qlandmarkdatabase.h"
+#include "qlandmarkmanager.h"
 
 #include <QStringList>
 #include <QString>
@@ -380,4 +380,4 @@ bool QLandmarkManager::setDefaultManager(const QString &name)
 
 
 
-#include "moc_qlandmarkdatabase.cpp"
+#include "moc_qlandmarkmanager.cpp"

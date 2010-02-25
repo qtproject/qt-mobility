@@ -45,7 +45,7 @@
 #include "qmobilityglobal.h"
 
 #include <QObject>
-#include "qlandmarkdatabase.h"
+#include "qlandmarkmanager.h"
 
 QT_BEGIN_HEADER
 
