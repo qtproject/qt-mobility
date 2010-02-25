@@ -105,7 +105,10 @@ QTM_BEGIN_NAMESPACE
   Constructs a new, invalid asynchronous request
  */
 
-/*! Constructs a new request from the given request data \a otherd */
+/*!
+  \internal
+  Constructs a new request from the given request data \a otherd
+*/
 QContactAbstractRequest::QContactAbstractRequest(QContactAbstractRequestPrivate* otherd)
     : d_ptr(otherd)
 {
