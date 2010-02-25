@@ -14,7 +14,7 @@ MOC_DIR = .moc
 OBJECTS_DIR = .obj
 
 # CONFIG += contacts
-INCLUDEPATH += /usr/include/qt4/QtContacts \
+INCLUDEPATH += /usr/include/qt4/QtMobility \
                /usr/include \
                $$QCONTACTS_TRACKER_BACKENDDIR
 
