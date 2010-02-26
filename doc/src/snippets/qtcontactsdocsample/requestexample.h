@@ -55,6 +55,7 @@
 //
 
 #include <QObject>
+#include "qmobilityglobal.h"
 #include "qcontactfetchrequest.h"
 
 QTM_USE_NAMESPACE
@@ -85,7 +86,8 @@ public:
 
 private slots:
     void performRequest();
-    void printContacts(QContactFetchRequest* request, bool appendOnly);
+    void printContacts();
+    void stateChanged(QContactAbstractRequest::State state);
 
 private:
     int m_previousLastIndex;

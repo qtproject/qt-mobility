@@ -28,7 +28,8 @@ PUBLIC_HEADERS +=  \
     qversitresourcehandler.h
 
 # Private Headers
-PRIVATE_HEADERS += qversitresourcehandler.h \
+PRIVATE_HEADERS += \
+    qversitdefaultresourcehandler_p.h \
     qversitdocument_p.h \
     qversitdocumentwriter_p.h \
     qversitproperty_p.h \
@@ -64,6 +65,7 @@ HEADERS += \
     $$PRIVATE_HEADERS
 
 symbian { 
+    TARGET.UID3 = 0x2002BFBF
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL \
         -TCB
