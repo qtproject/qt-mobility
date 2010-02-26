@@ -15,3 +15,8 @@ SUBDIRS += generic
     SUBDIRS += dummy
 }
 
+BUILD_ALL_PLUGINS=$$(BUILD_ALL_PLUGINS)
+equals(BUILD_ALL_PLUGINS,1) {
+    SUBDIRS *= n900 dummy
+}
+

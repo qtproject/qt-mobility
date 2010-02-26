@@ -49,6 +49,7 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QAmbientLightReading" href="qambientlightreading.html" location="qambientlightsensor.h" bases="QSensorReading" module="">
+            <contents name="qambientlightreading-units" title="QAmbientLightReading Units" level="2"/>
             <property access="public" threadsafety="unspecified" status="commendable" name="lightLevel" fullname="QAmbientLightReading::lightLevel" href="qambientlightreading.html#lightLevel-prop" location="qambientlightsensor.h" type="LightLevel">
                 <getter name="lightLevel"/>
             </property>
@@ -60,7 +61,7 @@
                 <value name="Bright" value="4"/>
                 <value name="Sunny" value="5"/>
             </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="lightLevel" fullname="QAmbientLightReading::lightLevel" href="qambientlightreading.html#lightLevel-prop" location="qambientlightsensor.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="lightLevel" type="LightLevel" signature="lightLevel() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="lightLevel" fullname="QAmbientLightReading::lightLevel" href="qambientlightreading.html#lightLevel-prop" location="qambientlightsensor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="lightLevel" type="LightLevel" signature="lightLevel() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setLightLevel" fullname="QAmbientLightReading::setLightLevel" href="qambientlightreading.html#setLightLevel" location="qambientlightsensor.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setLightLevel(LightLevel lightLevel)">
                 <parameter left="LightLevel" right="" name="lightLevel" default=""/>
             </function>
@@ -109,6 +110,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="resourceHandler" fullname="QVersitContactExporter::resourceHandler" href="qversitcontactexporter.html#resourceHandler" location="qversitcontactexporter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVersitResourceHandler *" signature="resourceHandler() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QOrientationReading" href="qorientationreading.html" location="qorientationsensor.h" bases="QSensorReading" module="">
+            <contents name="qorientationreading-units" title="QOrientationReading Units" level="2"/>
             <property access="public" threadsafety="unspecified" status="commendable" name="orientation" fullname="QOrientationReading::orientation" href="qorientationreading.html#orientation-prop" location="qorientationsensor.h" type="Orientation">
                 <getter name="orientation"/>
             </property>
@@ -121,7 +123,7 @@
                 <value name="FaceDown" value="5"/>
                 <value name="FaceUp" value="6"/>
             </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="orientation" fullname="QOrientationReading::orientation" href="qorientationreading.html#orientation-prop" location="qorientationsensor.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="orientation" type="Orientation" signature="orientation() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="orientation" fullname="QOrientationReading::orientation" href="qorientationreading.html#orientation-prop" location="qorientationsensor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="orientation" type="Orientation" signature="orientation() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setOrientation" fullname="QOrientationReading::setOrientation" href="qorientationreading.html#setOrientation" location="qorientationsensor.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setOrientation(Orientation orientation)">
                 <parameter left="Orientation" right="" name="orientation" default=""/>
             </function>
@@ -1109,6 +1111,7 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QTapReading" href="qtapreading.html" location="qtapsensor.h" bases="QSensorReading" module="">
+            <contents name="qtapreading-units" title="QTapReading Units" level="2"/>
             <property access="public" threadsafety="unspecified" status="commendable" name="tapDirection" fullname="QTapReading::tapDirection" href="qtapreading.html#tapDirection-prop" location="qtapsensor.h" type="TapDirection">
                 <getter name="tapDirection"/>
             </property>
@@ -1127,11 +1130,11 @@
                 <value name="Y_Neg" value="0x0202"/>
                 <value name="Z_Neg" value="0x0404"/>
             </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="tapDirection" fullname="QTapReading::tapDirection" href="qtapreading.html#tapDirection-prop" location="qtapsensor.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="tapDirection" type="TapDirection" signature="tapDirection() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="tapDirection" fullname="QTapReading::tapDirection" href="qtapreading.html#tapDirection-prop" location="qtapsensor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="tapDirection" type="TapDirection" signature="tapDirection() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setTapDirection" fullname="QTapReading::setTapDirection" href="qtapreading.html#setTapDirection" location="qtapsensor.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setTapDirection(TapDirection tapDirection)">
                 <parameter left="TapDirection" right="" name="tapDirection" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isDoubleTap" fullname="QTapReading::isDoubleTap" href="qtapreading.html#doubleTap-prop" location="qtapsensor.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="doubleTap" type="bool" signature="isDoubleTap() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isDoubleTap" fullname="QTapReading::isDoubleTap" href="qtapreading.html#doubleTap-prop" location="qtapsensor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="doubleTap" type="bool" signature="isDoubleTap() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setDoubleTap" fullname="QTapReading::setDoubleTap" href="qtapreading.html#setDoubleTap" location="qtapsensor.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDoubleTap(bool doubleTap)">
                 <parameter left="bool" right="" name="doubleTap" default=""/>
             </function>
@@ -1220,6 +1223,7 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QRotationReading" href="qrotationreading.html" location="qrotationsensor.h" bases="QSensorReading" module="">
+            <contents name="qrotationreading-units" title="QRotationReading Units" level="2"/>
             <property access="public" threadsafety="unspecified" status="commendable" name="x" fullname="QRotationReading::x" href="qrotationreading.html#x-prop" location="qrotationsensor.h" type="qreal">
                 <getter name="x"/>
             </property>
@@ -1229,15 +1233,15 @@
             <property access="public" threadsafety="unspecified" status="commendable" name="z" fullname="QRotationReading::z" href="qrotationreading.html#z-prop" location="qrotationsensor.h" type="qreal">
                 <getter name="z"/>
             </property>
-            <function access="public" threadsafety="unspecified" status="commendable" name="x" fullname="QRotationReading::x" href="qrotationreading.html#x-prop" location="qrotationsensor.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="x" type="qreal" signature="x() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="x" fullname="QRotationReading::x" href="qrotationreading.html#x-prop" location="qrotationsensor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="x" type="qreal" signature="x() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setX" fullname="QRotationReading::setX" href="qrotationreading.html#setX" location="qrotationsensor.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setX(qreal x)">
                 <parameter left="qreal" right="" name="x" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="y" fullname="QRotationReading::y" href="qrotationreading.html#y-prop" location="qrotationsensor.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="y" type="qreal" signature="y() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="y" fullname="QRotationReading::y" href="qrotationreading.html#y-prop" location="qrotationsensor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="y" type="qreal" signature="y() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setY" fullname="QRotationReading::setY" href="qrotationreading.html#setY" location="qrotationsensor.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setY(qreal y)">
                 <parameter left="qreal" right="" name="y" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="z" fullname="QRotationReading::z" href="qrotationreading.html#z-prop" location="qrotationsensor.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="z" type="qreal" signature="z() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="z" fullname="QRotationReading::z" href="qrotationreading.html#z-prop" location="qrotationsensor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="z" type="qreal" signature="z() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setZ" fullname="QRotationReading::setZ" href="qrotationreading.html#setZ" location="qrotationsensor.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setZ(qreal z)">
                 <parameter left="qreal" right="" name="z" default=""/>
             </function>
@@ -3600,6 +3604,7 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QProximityReading" href="qproximityreading.html" location="qproximitysensor.h" bases="QSensorReading" module="">
+            <target name="qproximityreading-units"/>
             <property access="public" threadsafety="unspecified" status="commendable" name="proximity" fullname="QProximityReading::proximity" href="qproximityreading.html#proximity-prop" location="qproximitysensor.h" type="Proximity">
                 <getter name="proximity"/>
             </property>
@@ -3608,7 +3613,7 @@
                 <value name="Close" value="1"/>
                 <value name="NotClose" value="2"/>
             </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="proximity" fullname="QProximityReading::proximity" href="qproximityreading.html#proximity-prop" location="qproximitysensor.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="proximity" type="Proximity" signature="proximity() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="proximity" fullname="QProximityReading::proximity" href="qproximityreading.html#proximity-prop" location="qproximitysensor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="proximity" type="Proximity" signature="proximity() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setProximity" fullname="QProximityReading::setProximity" href="qproximityreading.html#setProximity" location="qproximitysensor.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setProximity(Proximity proximity)">
                 <parameter left="Proximity" right="" name="proximity" default=""/>
             </function>
@@ -5197,6 +5202,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="subTypes" fullname="QContactAddress::subTypes" href="qcontactaddress.html#subTypes" location="qcontactaddress.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="subTypes() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QCompassReading" href="qcompassreading.html" location="qcompass.h" bases="QSensorReading" module="">
+            <contents name="qcompassreading-units" title="QCompassReading Units" level="2"/>
             <property access="public" threadsafety="unspecified" status="commendable" name="azimuth" fullname="QCompassReading::azimuth" href="qcompassreading.html#azimuth-prop" location="qcompass.h" type="qreal">
                 <getter name="azimuth"/>
             </property>
@@ -5209,11 +5215,11 @@
                 <value name="Middle" value="2"/>
                 <value name="High" value="3"/>
             </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="azimuth" fullname="QCompassReading::azimuth" href="qcompassreading.html#azimuth-prop" location="qcompass.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="azimuth" type="qreal" signature="azimuth() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="azimuth" fullname="QCompassReading::azimuth" href="qcompassreading.html#azimuth-prop" location="qcompass.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="azimuth" type="qreal" signature="azimuth() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setAzimuth" fullname="QCompassReading::setAzimuth" href="qcompassreading.html#setAzimuth" location="qcompass.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setAzimuth(qreal azimuth)">
                 <parameter left="qreal" right="" name="azimuth" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="calibrationLevel" fullname="QCompassReading::calibrationLevel" href="qcompassreading.html#calibrationLevel-prop" location="qcompass.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="calibrationLevel" type="CalibrationLevel" signature="calibrationLevel() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="calibrationLevel" fullname="QCompassReading::calibrationLevel" href="qcompassreading.html#calibrationLevel-prop" location="qcompass.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="calibrationLevel" type="CalibrationLevel" signature="calibrationLevel() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setCalibrationLevel" fullname="QCompassReading::setCalibrationLevel" href="qcompassreading.html#setCalibrationLevel" location="qcompass.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setCalibrationLevel(CalibrationLevel calibrationLevel)">
                 <parameter left="CalibrationLevel" right="" name="calibrationLevel" default=""/>
             </function>
@@ -5481,6 +5487,7 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QAccelerometerReading" href="qaccelerometerreading.html" location="qaccelerometer.h" bases="QSensorReading" module="">
+            <contents name="qaccelerometerreading-units" title="QAccelerometerReading Units" level="2"/>
             <property access="public" threadsafety="unspecified" status="commendable" name="x" fullname="QAccelerometerReading::x" href="qaccelerometerreading.html#x-prop" location="qaccelerometer.h" type="qreal">
                 <getter name="x"/>
             </property>
@@ -5490,17 +5497,20 @@
             <property access="public" threadsafety="unspecified" status="commendable" name="z" fullname="QAccelerometerReading::z" href="qaccelerometerreading.html#z-prop" location="qaccelerometer.h" type="qreal">
                 <getter name="z"/>
             </property>
-            <function access="public" threadsafety="unspecified" status="commendable" name="x" fullname="QAccelerometerReading::x" href="qaccelerometerreading.html#x-prop" location="qaccelerometer.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="x" type="qreal" signature="x() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="x" fullname="QAccelerometerReading::x" href="qaccelerometerreading.html#x-prop" location="qaccelerometer.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="x" type="qreal" signature="x() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setX" fullname="QAccelerometerReading::setX" href="qaccelerometerreading.html#setX" location="qaccelerometer.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setX(qreal x)">
                 <parameter left="qreal" right="" name="x" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="y" fullname="QAccelerometerReading::y" href="qaccelerometerreading.html#y-prop" location="qaccelerometer.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="y" type="qreal" signature="y() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="y" fullname="QAccelerometerReading::y" href="qaccelerometerreading.html#y-prop" location="qaccelerometer.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="y" type="qreal" signature="y() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setY" fullname="QAccelerometerReading::setY" href="qaccelerometerreading.html#setY" location="qaccelerometer.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setY(qreal y)">
                 <parameter left="qreal" right="" name="y" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="z" fullname="QAccelerometerReading::z" href="qaccelerometerreading.html#z-prop" location="qaccelerometer.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="z" type="qreal" signature="z() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="z" fullname="QAccelerometerReading::z" href="qaccelerometerreading.html#z-prop" location="qaccelerometer.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="z" type="qreal" signature="z() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setZ" fullname="QAccelerometerReading::setZ" href="qaccelerometerreading.html#setZ" location="qaccelerometer.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setZ(qreal z)">
                 <parameter left="qreal" right="" name="z" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="value" fullname="QAccelerometerReading::value" href="qaccelerometerreading.html#value" location="qaccelerometer.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="value(int index) const">
+                <parameter left="int" right="" name="index" default=""/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QAccelerometerFilter" href="qaccelerometerfilter.html" location="qaccelerometer.h" bases="QSensorFilter" module="">
@@ -5517,6 +5527,7 @@
             <variable access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QAccelerometer::type" href="qaccelerometer.html#type-var" location="qaccelerometer.h" type="const char *" static="true"/>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMagnetometerReading" href="qmagnetometerreading.html" location="qmagnetometer.h" bases="QSensorReading" module="">
+            <contents name="qmagnetometerreading-units" title="QMagnetometerReading Units" level="2"/>
             <property access="public" threadsafety="unspecified" status="commendable" name="x" fullname="QMagnetometerReading::x" href="qmagnetometerreading.html#x-prop" location="qmagnetometer.h" type="qreal">
                 <getter name="x"/>
             </property>
@@ -5544,31 +5555,31 @@
                 <value name="Middle" value="2"/>
                 <value name="High" value="3"/>
             </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="x" fullname="QMagnetometerReading::x" href="qmagnetometerreading.html#x-prop" location="qmagnetometer.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="x" type="qreal" signature="x() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="x" fullname="QMagnetometerReading::x" href="qmagnetometerreading.html#x-prop" location="qmagnetometer.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="x" type="qreal" signature="x() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setX" fullname="QMagnetometerReading::setX" href="qmagnetometerreading.html#setX" location="qmagnetometer.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setX(qreal x)">
                 <parameter left="qreal" right="" name="x" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="y" fullname="QMagnetometerReading::y" href="qmagnetometerreading.html#y-prop" location="qmagnetometer.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="y" type="qreal" signature="y() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="y" fullname="QMagnetometerReading::y" href="qmagnetometerreading.html#y-prop" location="qmagnetometer.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="y" type="qreal" signature="y() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setY" fullname="QMagnetometerReading::setY" href="qmagnetometerreading.html#setY" location="qmagnetometer.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setY(qreal y)">
                 <parameter left="qreal" right="" name="y" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="z" fullname="QMagnetometerReading::z" href="qmagnetometerreading.html#z-prop" location="qmagnetometer.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="z" type="qreal" signature="z() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="z" fullname="QMagnetometerReading::z" href="qmagnetometerreading.html#z-prop" location="qmagnetometer.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="z" type="qreal" signature="z() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setZ" fullname="QMagnetometerReading::setZ" href="qmagnetometerreading.html#setZ" location="qmagnetometer.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setZ(qreal z)">
                 <parameter left="qreal" right="" name="z" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="calibrated_x" fullname="QMagnetometerReading::calibrated_x" href="qmagnetometerreading.html#calibrated_x-prop" location="qmagnetometer.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="calibrated_x" type="qreal" signature="calibrated_x() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="calibrated_x" fullname="QMagnetometerReading::calibrated_x" href="qmagnetometerreading.html#calibrated_x-prop" location="qmagnetometer.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="calibrated_x" type="qreal" signature="calibrated_x() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setCalibrated_x" fullname="QMagnetometerReading::setCalibrated_x" href="qmagnetometerreading.html#setCalibrated_x" location="qmagnetometer.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setCalibrated_x(qreal calibrated_x)">
                 <parameter left="qreal" right="" name="calibrated_x" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="calibrated_y" fullname="QMagnetometerReading::calibrated_y" href="qmagnetometerreading.html#calibrated_y-prop" location="qmagnetometer.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="calibrated_y" type="qreal" signature="calibrated_y() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="calibrated_y" fullname="QMagnetometerReading::calibrated_y" href="qmagnetometerreading.html#calibrated_y-prop" location="qmagnetometer.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="calibrated_y" type="qreal" signature="calibrated_y() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setCalibrated_y" fullname="QMagnetometerReading::setCalibrated_y" href="qmagnetometerreading.html#setCalibrated_y" location="qmagnetometer.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setCalibrated_y(qreal calibrated_y)">
                 <parameter left="qreal" right="" name="calibrated_y" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="calibrated_z" fullname="QMagnetometerReading::calibrated_z" href="qmagnetometerreading.html#calibrated_z-prop" location="qmagnetometer.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="calibrated_z" type="qreal" signature="calibrated_z() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="calibrated_z" fullname="QMagnetometerReading::calibrated_z" href="qmagnetometerreading.html#calibrated_z-prop" location="qmagnetometer.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="calibrated_z" type="qreal" signature="calibrated_z() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setCalibrated_z" fullname="QMagnetometerReading::setCalibrated_z" href="qmagnetometerreading.html#setCalibrated_z" location="qmagnetometer.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setCalibrated_z(qreal calibrated_z)">
                 <parameter left="qreal" right="" name="calibrated_z" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="calibrationLevel" fullname="QMagnetometerReading::calibrationLevel" href="qmagnetometerreading.html#calibrationLevel-prop" location="qmagnetometer.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="calibrationLevel" type="CalibrationLevel" signature="calibrationLevel() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="calibrationLevel" fullname="QMagnetometerReading::calibrationLevel" href="qmagnetometerreading.html#calibrationLevel-prop" location="qmagnetometer.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="calibrationLevel" type="CalibrationLevel" signature="calibrationLevel() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setCalibrationLevel" fullname="QMagnetometerReading::setCalibrationLevel" href="qmagnetometerreading.html#setCalibrationLevel" location="qmagnetometer.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setCalibrationLevel(CalibrationLevel calibrationLevel)">
                 <parameter left="CalibrationLevel" right="" name="calibrationLevel" default=""/>
             </function>
@@ -6032,8 +6043,8 @@
                 <getter name="type"/>
                 <setter name="setType"/>
             </property>
-            <property access="public" threadsafety="unspecified" status="commendable" name="isAvailable" fullname="QSensor::isAvailable" href="qsensor.html#isAvailable-prop" location="qsensor.h" type="bool">
-                <getter name="isAvailable"/>
+            <property access="public" threadsafety="unspecified" status="commendable" name="connected" fullname="QSensor::connected" href="qsensor.html#connected-prop" location="qsensor.h" type="bool">
+                <getter name="isConnected"/>
             </property>
             <property access="public" threadsafety="unspecified" status="commendable" name="supportedUpdatePolicies" fullname="QSensor::supportedUpdatePolicies" href="qsensor.html#supportedUpdatePolicies-prop" location="qsensor.h" type="UpdatePolicies">
                 <getter name="supportedUpdatePolicies"/>
@@ -6057,18 +6068,18 @@
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QSensor" fullname="QSensor::~QSensor" href="qsensor.html#dtor.QSensor" location="qsensor.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QSensor()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="identifier" fullname="QSensor::identifier" href="qsensor.html#sensorid-prop" location="qsensor.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="sensorid" type="QByteArray" signature="identifier() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setIdentifier" fullname="QSensor::setIdentifier" href="qsensor.html#sensorid-prop" location="qsensor.h" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="sensorid" type="void" signature="setIdentifier(const QByteArray &amp; identifier)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="identifier" fullname="QSensor::identifier" href="qsensor.html#sensorid-prop" location="qsensor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="sensorid" type="QByteArray" signature="identifier() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setIdentifier" fullname="QSensor::setIdentifier" href="qsensor.html#sensorid-prop" location="qsensor.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="sensorid" type="void" signature="setIdentifier(const QByteArray &amp; identifier)">
                 <parameter left="const QByteArray &amp;" right="" name="identifier" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QSensor::type" href="qsensor.html#type-prop" location="qsensor.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="type" type="QByteArray" signature="type() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setType" fullname="QSensor::setType" href="qsensor.html#type-prop" location="qsensor.h" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="type" type="void" signature="setType(const QByteArray &amp; type)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QSensor::type" href="qsensor.html#type-prop" location="qsensor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="type" type="QByteArray" signature="type() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setType" fullname="QSensor::setType" href="qsensor.html#type-prop" location="qsensor.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="type" type="void" signature="setType(const QByteArray &amp; type)">
                 <parameter left="const QByteArray &amp;" right="" name="type" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="connect" fullname="QSensor::connect" href="qsensor.html#connect" location="qsensor.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="connect()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isAvailable" fullname="QSensor::isAvailable" href="qsensor.html#isAvailable-prop" location="qsensor.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="isAvailable" type="bool" signature="isAvailable() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isActive" fullname="QSensor::isActive" href="qsensor.html#running-prop" location="qsensor.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="running" type="bool" signature="isActive() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setActive" fullname="QSensor::setActive" href="qsensor.html#running-prop" location="qsensor.h" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="running" type="void" signature="setActive(bool running)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="connect" fullname="QSensor::connect" href="qsensor.html#connect" location="qsensor.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="connect()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isConnected" fullname="QSensor::isConnected" href="qsensor.html#connected-prop" location="qsensor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="connected" type="bool" signature="isConnected() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isActive" fullname="QSensor::isActive" href="qsensor.html#running-prop" location="qsensor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="running" type="bool" signature="isActive() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setActive" fullname="QSensor::setActive" href="qsensor.html#running-prop" location="qsensor.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="running" type="void" signature="setActive(bool running)">
                 <parameter left="bool" right="" name="running" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="isSignalEnabled" fullname="QSensor::isSignalEnabled" href="qsensor.html#isSignalEnabled" location="qsensor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isSignalEnabled() const"/>
@@ -6089,11 +6100,11 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setUpdatePolicy" fullname="QSensor::setUpdatePolicy" href="qsensor.html#updatePolicy-prop" location="qsensor.h" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="updatePolicy" type="void" signature="setUpdatePolicy(UpdatePolicy policy)">
                 <parameter left="UpdatePolicy" right="" name="policy" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setUpdateInterval" fullname="QSensor::setUpdateInterval" href="qsensor.html#updateInterval-prop" location="qsensor.h" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="updateInterval" type="void" signature="setUpdateInterval(int interval)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="setUpdateInterval" fullname="QSensor::setUpdateInterval" href="qsensor.html#updateInterval-prop" location="qsensor.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="updateInterval" type="void" signature="setUpdateInterval(int interval)">
                 <parameter left="int" right="" name="interval" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="updatePolicy" fullname="QSensor::updatePolicy" href="qsensor.html#updatePolicy-prop" location="qsensor.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="updatePolicy" type="UpdatePolicy" signature="updatePolicy() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="updateInterval" fullname="QSensor::updateInterval" href="qsensor.html#updateInterval-prop" location="qsensor.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="updateInterval" type="int" signature="updateInterval() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="updateInterval" fullname="QSensor::updateInterval" href="qsensor.html#updateInterval-prop" location="qsensor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="updateInterval" type="int" signature="updateInterval() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="addFilter" fullname="QSensor::addFilter" href="qsensor.html#addFilter" location="qsensor.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="addFilter(QSensorFilter * filter)">
                 <parameter left="QSensorFilter *" right="" name="filter" default=""/>
             </function>
@@ -6101,7 +6112,7 @@
                 <parameter left="QSensorFilter *" right="" name="filter" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="poll" fullname="QSensor::poll" href="qsensor.html#poll" location="qsensor.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="poll()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="reading" fullname="QSensor::reading" href="qsensor.html#reading-prop" location="qsensor.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="reading" type="QSensorReading *" signature="reading() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="reading" fullname="QSensor::reading" href="qsensor.html#reading-prop" location="qsensor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="reading" type="QSensorReading *" signature="reading() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="sensorTypes" fullname="QSensor::sensorTypes" href="qsensor.html#sensorTypes" location="qsensor.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QList&lt;QByteArray&gt;" signature="sensorTypes()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="sensorsForType" fullname="QSensor::sensorsForType" href="qsensor.html#sensorsForType" location="qsensor.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QList&lt;QByteArray&gt;" signature="sensorsForType(const QByteArray &amp; type)">
                 <parameter left="const QByteArray &amp;" right="" name="type" default=""/>
@@ -6121,12 +6132,16 @@
             <variable access="protected" threadsafety="unspecified" status="commendable" name="m_sensor" fullname="QSensorFilter::m_sensor" href="qsensorfilter.html#m_sensor-var" location="qsensor.h" type="QSensor *" static="false"/>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QSensorReading" href="qsensorreading.html" location="qsensor.h" bases="QObject" module="">
-            <property access="public" threadsafety="unspecified" status="commendable" name="timestamp" fullname="QSensorReading::timestamp" href="qsensorreading.html#timestamp-prop" location="qsensor.h" type="qtimestamp">
+            <property access="public" threadsafety="unspecified" status="commendable" name="timestamp" fullname="QSensorReading::timestamp" href="qsensorreading.html#timestamp-prop" location="qsensor.h" type="QtMobility::qtimestamp">
                 <getter name="timestamp"/>
             </property>
             <function access="public" threadsafety="unspecified" status="commendable" name="timestamp" fullname="QSensorReading::timestamp" href="qsensorreading.html#timestamp-prop" location="qsensor.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="timestamp" type="qtimestamp" signature="timestamp() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setTimestamp" fullname="QSensorReading::setTimestamp" href="qsensorreading.html#setTimestamp" location="qsensor.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setTimestamp(qtimestamp timestamp)">
                 <parameter left="qtimestamp" right="" name="timestamp" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="valueCount" fullname="QSensorReading::valueCount" href="qsensorreading.html#valueCount" location="qsensor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="valueCount() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="value" fullname="QSensorReading::value" href="qsensorreading.html#value" location="qsensor.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="value(int index) const">
+                <parameter left="int" right="" name="index" default=""/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactAnniversary" href="qcontactanniversary.html" location="qcontactanniversary.h" bases="QContactDetail" module="">
@@ -7795,11 +7810,19 @@
             <parameter left="" right="" name="pluginname" default=""/>
         </function>
         <page access="public" status="commendable" name="sensors-api.html" href="sensors-api.html" subtype="page" title="Sensors API (technology preview)" fulltitle="Sensors API (technology preview)" subtitle="" location="sensors.qdoc">
-            <contents name="overview" title="Overview" level="1"/>
-            <contents name="client-api" title="Client API" level="1"/>
-            <contents name="backend-api" title="Backend API" level="1"/>
+            <contents name="sensor-types" title="Sensor Types" level="1"/>
+            <contents name="common-conventions" title="Common Conventions" level="1"/>
+            <contents name="using-a-sensor" title="Using a Sensor" level="1"/>
+            <contents name="accessing-sensor-data-in-a-generic-fashion" title="Accessing sensor data in a generic fashion" level="1"/>
+            <contents name="front-end-back-end" title="Front end, back end" level="1"/>
             <contents name="main-classes" title="Main Classes" level="1"/>
-            <contents name="helper-classes" title="Helper Classes" level="1"/>
+            <contents name="reading-classes" title="Reading Classes" level="1"/>
+            <contents name="sensor-classes" title="Sensor Classes" level="1"/>
+            <contents name="filter-classes" title="Filter Classes" level="1"/>
+        </page>
+        <page access="public" status="commendable" name="sensors-backend.html" href="sensors-backend.html" subtype="page" title="Sensors Backend" fulltitle="Sensors Backend" subtitle="" location="sensors.qdoc">
+            <contents name="overview" title="Overview" level="1"/>
+            <contents name="backend-api" title="Backend API" level="1"/>
             <contents name="backend-classes" title="Backend Classes" level="1"/>
         </page>
         <page access="public" status="commendable" name="creating-a-sensor-plugin.html" href="creating-a-sensor-plugin.html" subtype="page" title="Creating a sensor plugin" fulltitle="Creating a sensor plugin" subtitle="" location="sensors.qdoc">
