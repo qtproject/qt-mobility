@@ -101,7 +101,7 @@ QString contactDisplayName(const QMessageAddress &address)
     }
 
     QContactManager manager;
-    foreach (const QContactLocalId &contactId, manager.contacts(filter)) {
+    foreach (const QContactLocalId &contactId, manager.contactIds(filter)) {
         // Any match is acceptable
         const QContact &contact(manager.contact(contactId));
         return contact.displayLabel();
