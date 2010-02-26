@@ -109,6 +109,11 @@ private:
 
     void updateEmailAccounts() const;
 
+private slots:
+
+    // Async D-BUS call ended
+    void sendEmailCallEnded(QDBusPendingCallWatcher *watcher);
+
 private: //Data
     GConfClient *m_gconfclient;
     QDBusInterface *m_ModestDBusInterface;

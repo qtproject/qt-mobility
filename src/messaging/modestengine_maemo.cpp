@@ -551,7 +551,6 @@ bool ModestEngine::sendEmail(QMessage &message)
     ModestStringMapList images;
     uint priority = 0;
     ModestStringMap headers;
-    QDBusMessage reply;
     QMessage::StatusFlags messageStatus;
 
     qDebug() << __PRETTY_FUNCTION__ << "Sending message";
@@ -733,7 +732,7 @@ bool ModestEngine::sendEmail(QMessage &message)
 
     qDebug() << "Sending D-BUS message";
 
-    reply = qtmPlugin.call (
+    QDBusPendingCall call = qtmPlugin.asyncCall (
             "SendEmail",
             QVariant::fromValue (senderInfo),
             QVariant::fromValue (recipients),
@@ -745,10 +744,15 @@ bool ModestEngine::sendEmail(QMessage &message)
 
     qDebug() << "Message sent";
 
-    if (reply.type() == QDBusMessage::ErrorMessage) {
-        qWarning() << "Failed to send: " << reply;
+    if (call.isError()) {
+        qWarning() << "Call failed! " << call.error();
         return false;
     }
+
+    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher (call, this);
+
+    connect (watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
+             this, SLOT(sendEmailCallEnded(QDBusPendingCallWatcher*)));
 
     return true;
 }
@@ -822,6 +826,18 @@ bool ModestEngine::queryMessages(QMessageService& messageService, const QMessage
 bool ModestEngine::countMessages(QMessageService& messageService, const QMessageFilter &filter)
 {
     return false;
+}
+
+void
+ModestEngine::sendEmailCallEnded(QDBusPendingCallWatcher *watcher)
+{
+    if (watcher->isError ()) {
+        // TODO: Emit a failure
+        qWarning() << "Failed to send email via modest: " << watcher->error();
+    } else {
+        // TODO: Emit a success (or put to outbox)
+        qDebug() << "Message should be outboxed now...";
+    }
 }
 
 #include "moc_modestengine_maemo_p.cpp"
