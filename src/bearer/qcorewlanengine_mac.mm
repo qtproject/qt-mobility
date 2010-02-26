@@ -251,10 +251,8 @@ void QCoreWlanEngine::connectToId(const QString &id)
                             bool result = [wifiInterface associateToNetwork: apNetwork parameters:[NSDictionary dictionaryWithDictionary:params] error:&err];
 
                             if(!result) {
-                                qWarning() <<"ERROR"<< nsstringToQString([err localizedDescription ]);
                                 emit connectionError(id, ConnectError);
                             } else {
-                                [apNetwork release];
                                 [autoreleasepool release];
                                 return;
                             }
