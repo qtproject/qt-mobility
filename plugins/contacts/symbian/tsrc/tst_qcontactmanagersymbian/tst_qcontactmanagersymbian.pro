@@ -12,7 +12,8 @@ symbian: {
     
     SOURCES  += tst_qcontactmanagersymbian.cpp
     TARGET.CAPABILITY = ALL -TCB
-    LIBS += -lqtcontacts
+    LIBS += -lqtcontacts \
+    		-lcntmodel
 
     BLD_INF_RULES.prj_exports += \
         "avatar_sharks_xs.jpg $${EPOCROOT}epoc32\winscw\c\data\images\avatar_sharks_xs.jpg"

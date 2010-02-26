@@ -70,9 +70,6 @@ public:
     /* Results */
     QList<QContactLocalId> ids() const;
 
-signals:
-    void progress(QContactLocalIdFetchRequest* self, bool appendOnly); // deprecated
-
 private:
     Q_DISABLE_COPY(QContactLocalIdFetchRequest)
     friend class QContactManagerEngine;

@@ -70,6 +70,11 @@
 #include <X11/Xlib.h>
 
 #endif
+#include <bluetooth/bluetooth.h>
+#include <bluetooth/bnep.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <unistd.h>
 
 //we cannot include iwlib.h as the platform may not have it installed
 //there we have to go via the kernel's wireless.h
@@ -121,7 +126,6 @@ QSystemInfoLinuxCommonPrivate::QSystemInfoLinuxCommonPrivate(QObject *parent) : 
 {
     halIsAvailable = halAvailable();
     langCached = currentLanguage();
-    startLanguagePolling();
 }
 
 QSystemInfoLinuxCommonPrivate::~QSystemInfoLinuxCommonPrivate()
@@ -247,10 +251,10 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
          break;
      case QSystemInfo::VibFeature :
  #if !defined(QT_NO_DBUS)
-         featureSupported = hasHalDeviceFeature("vibrator"); //might not always be true
-         if(featureSupported)
-             return featureSupported;
- #endif
+         if(hasHalDeviceFeature("vibrator") || hasHalDeviceFeature("vib")) {
+             return true;
+     }
+#endif
          break;
      case QSystemInfo::WlanFeature :
          {
@@ -396,17 +400,66 @@ bool QSystemInfoLinuxCommonPrivate::hasSysFeature(const QString &featureStr)
 
 QSystemNetworkInfoLinuxCommonPrivate::QSystemNetworkInfoLinuxCommonPrivate(QObject *parent) : QObject(parent)
 {
+   // QTimer::singleShot(200, this,SLOT(getPrimaryMode()));
 }
 
 QSystemNetworkInfoLinuxCommonPrivate::~QSystemNetworkInfoLinuxCommonPrivate()
 {
 }
 
+//void QSystemNetworkInfoLinuxCommonPrivate::getPrimaryMode()
+//{
+//    // try to see if there are any default route
+////    bool anyDefaultRoute = false;
+//
+//    QFileInfo fi("/proc/net/route");
+//    if(fi.exists()) {
+//        QFile rx(fi.absoluteFilePath());
+//        if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
+//            QString result;
+//            QTextStream out(&rx);
+//            do {
+//                result = out.readLine().simplified();
+//                if(!result.isEmpty()) {
+//                    QStringList tokens = result.split(" ");
+//
+//                    if(tokens.at(2).toLocal8Bit() != "Gateway"
+//                       && tokens.at(2).toLocal8Bit() != "00000000") {
+//
+//                        qWarning() <<"found default!" << tokens.at(0);
+//           //             emit networkModeChanged(tokens.at(0)));
+//                    }
+//                }
+//            } while (!result.isNull());
+//        }
+//    }
+//    //    QMapIterator<QString, QString> i(activePaths);
+////    QString devicepath;
+////    while (i.hasNext()) {
+////        i.next();
+////        QScopedPointer<QNetworkManagerConnectionActive> activeCon;
+////        activeCon.reset(new QNetworkManagerConnectionActive(i.key()));
+////
+////        if(activeCon->defaultRoute()) {
+////            anyDefaultRoute = activeCon->defaultRoute();
+////            QNetworkManagerInterfaceDevice *devIface = new QNetworkManagerInterfaceDevice(i.value());
+////            emit networkModeChanged(deviceTypeToMode(devIface->deviceType()));
+////        }
+////        devicepath = i.value();
+////    }
+////
+////    if(!anyDefaultRoute) {
+////        emit networkModeChanged(QSystemNetworkInfo::UnknownMode);
+////    }
+//}
+
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
     switch(mode) {
     case QSystemNetworkInfo::WlanMode:
         {
+            qWarning() << __PRETTY_FUNCTION__ << "WLAN";
+
             QString baseSysDir = "/sys/class/net/";
             QDir wDir(baseSysDir);
             QStringList dirs = wDir.entryList(QStringList() << "*", QDir::AllDirs | QDir::NoDotAndDotDot);
@@ -430,21 +483,22 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::networkS
         break;
     case QSystemNetworkInfo::EthernetMode:
         {
+            qWarning() << __PRETTY_FUNCTION__ << "Ethernet";
             QString baseSysDir = "/sys/class/net/";
             QDir eDir(baseSysDir);
-            QStringList dirs = eDir.entryList(QStringList() << "eth*", QDir::AllDirs | QDir::NoDotAndDotDot);
-            foreach(QString dir, dirs) {
-                QString devFile = baseSysDir + dir;
-                QFileInfo fi("/proc/net/route");
-                if(fi.exists()) {
-                    QFile rx(fi.absoluteFilePath());
-                    if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                        QString result = rx.readAll();
-                        if(result.contains(dir)) {
-                            return QSystemNetworkInfo::Connected;
-                        } else {
-                            return QSystemNetworkInfo::NoNetworkAvailable;
-                        }
+            QString dir = QSystemNetworkInfoLinuxCommonPrivate::interfaceForMode(mode).name();
+
+            QString devFile = baseSysDir + dir;
+            qWarning() << devFile;
+            QFileInfo fi("/proc/net/route");
+            if(fi.exists()) {
+                QFile rx(fi.absoluteFilePath());
+                if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                    QString result = rx.readAll();
+                    if(result.contains(dir)) {
+                        return QSystemNetworkInfo::Connected;
+                    } else {
+                        return QSystemNetworkInfo::NoNetworkAvailable;
                     }
                 }
             }
@@ -452,9 +506,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::networkS
         break;
         case QSystemNetworkInfo::BluetoothMode:
         {
-#if !defined(QT_NO_NETWORKMANAGER)
             return getBluetoothNetStatus();
-#endif
        }
         break;
     default:
@@ -601,32 +653,36 @@ QString QSystemNetworkInfoLinuxCommonPrivate::macAddress(QSystemNetworkInfo::Net
     return QString();
 }
 
-#if !defined(QT_NO_DBUS)
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::getBluetoothNetStatus()
 {
-    QDBusConnection dbusConnection = QDBusConnection::systemBus();
-    QDBusInterface *connectionInterface;
-    connectionInterface = new QDBusInterface("org.bluez",
-                                             "/org/bluez/network",
-                                             "org.bluez.network.Manager",
-                                             dbusConnection);
-    if (connectionInterface->isValid()) {
+    int ctl = socket(PF_BLUETOOTH,SOCK_RAW,BTPROTO_BNEP);
+    if (ctl < 0) {
+        qWarning() << "Cannot open bnep socket";
+        return QSystemNetworkInfo::UndefinedStatus;
+    }
 
-        QDBusReply<  QStringList > reply = connectionInterface->call("ListConnections");
-        if (reply.isValid()) {
-            if(reply.value().count() > 0) {
-                return QSystemNetworkInfo::Connected;
-            } else {
-                return QSystemNetworkInfo::NoNetworkAvailable;
-            }
+    struct bnep_conninfo info[36];
+    struct bnep_connlist_req req;
 
-        } else {
-            qWarning() << "NOT" << reply.error();
+    req.ci = info;
+    req.cnum = 36;
+
+    if (ioctl(ctl,BNEPGETCONNLIST,&req) < 0) {
+        qWarning() << "Cannot get bnep connection list.";
+        return QSystemNetworkInfo::UndefinedStatus;
+    }
+
+    qWarning() << req.cnum;
+    for (uint j = 0; j< req.cnum; j++) {
+        qWarning() << info[j].state;
+        if(info[j].state == BT_CONNECTED) {
+            return QSystemNetworkInfo::Connected;
         }
-       }
-       return QSystemNetworkInfo::UndefinedStatus;
+    }
+    close(ctl);
+
+    return QSystemNetworkInfo::UndefinedStatus;
 }
-#endif
 
 qint32 QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
@@ -972,7 +1028,8 @@ int QSystemDisplayInfoLinuxCommonPrivate::displayBrightness(int screen)
     return -1;
 }
 
-QSystemStorageInfoLinuxCommonPrivate::QSystemStorageInfoLinuxCommonPrivate(QObject *parent) : QObject(parent)
+QSystemStorageInfoLinuxCommonPrivate::QSystemStorageInfoLinuxCommonPrivate(QObject *parent)
+    : QObject(parent)
 {
     halIsAvailable = halAvailable();
 }
@@ -1417,19 +1474,23 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoLinuxCommonPrivate::inputMe
             QString strvalue;
             strvalue = file.readLine();
             file.close();
-            if(strvalue.contains("keyboard")) {
+            if(strvalue.contains("keyboard",Qt::CaseInsensitive)) {
                 if( (methods & QSystemDeviceInfo::Keyboard) != QSystemDeviceInfo::Keyboard) {
                     methods = (methods | QSystemDeviceInfo::Keyboard);
                 }
-            } else if(strvalue.contains("Mouse")) {
+            } else if(strvalue.contains("Mouse",Qt::CaseInsensitive)) {
                 if( (methods & QSystemDeviceInfo::Mouse) != QSystemDeviceInfo::Mouse) {
                     methods = (methods | QSystemDeviceInfo::Mouse);
                 }
-            } else if(strvalue.contains("Button")) {
+            } else if(strvalue.contains("Button",Qt::CaseInsensitive)) {
                 if( (methods & QSystemDeviceInfo::Keys) != QSystemDeviceInfo::Keys) {
+                    methods = (methods | QSystemDeviceInfo::Keypad);
+                }
+            } else if(strvalue.contains("keypad",Qt::CaseInsensitive)) {
+                if( (methods & QSystemDeviceInfo::Keypad) != QSystemDeviceInfo::Keypad) {
                     methods = (methods | QSystemDeviceInfo::Keys);
                 }
-            } else if(strvalue.contains("TouchScreen")) {
+            } else if(strvalue.contains("TouchScreen",Qt::CaseInsensitive)) {
                 if( (methods & QSystemDeviceInfo::SingleTouch) != QSystemDeviceInfo::SingleTouch) {
                     methods = (methods | QSystemDeviceInfo::SingleTouch);
                 }
@@ -1596,8 +1657,10 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
 
  void QSystemDeviceInfoLinuxCommonPrivate::bluezPropertyChanged(const QString &str, QDBusVariant v)
   {
-      qWarning() << str << v.variant().toBool();
-      emit bluetoothStateChanged(v.variant().toBool());
+     if(str == "Powered") {
+          emit bluetoothStateChanged(v.variant().toBool());
+      }
+      // Pairable Name Class Discoverable
   }
  #endif
 

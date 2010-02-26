@@ -59,8 +59,8 @@ class QVersitReaderPrivate;
 // reads a QVersitDocument from i/o device
 class Q_VERSIT_EXPORT QVersitReader : public QObject
 {
-    Q_OBJECT  
-    
+    Q_OBJECT
+
 public:
     enum Error {
         NoError = 0,
@@ -68,16 +68,14 @@ public:
         IOError,
         OutOfMemoryError,
         NotReadyError,
-        ParseError,
-        InvalidCharsetError,
-        BadDeviceError
+        ParseError
     };
 
     enum State {
-        InactiveState = 0,   // operation not yet started
-        ActiveState,         // operation started, not yet finished
-        CanceledState,       // operation is finished due to cancelation
-        FinishedState        // operation successfully completed
+        InactiveState = 0,
+        ActiveState,
+        CanceledState,
+        FinishedState
     };
 
     QVersitReader();
@@ -101,25 +99,13 @@ public:
     State state() const;
     Error error() const;
 
-    // Deprecated
-    bool Q_DECL_DEPRECATED readAll()
-    {
-        qWarning("QVersitDocument::readAll(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  startReading() and waitForFinished() should be used instead.");
-        startReading();
-        return waitForFinished();
-    }
-    QList<QVersitDocument> Q_DECL_DEPRECATED result() const
-    {
-        qWarning("QVersitDocument::result(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  results() should be used instead.");
-        return results();
-    }
-
-signals:
+Q_SIGNALS:
     void stateChanged(QVersitReader::State state);
     void resultsAvailable(QList<QVersitDocument>& results);
-    
+    void resultsAvailable();
+
 private: // data
-    QVersitReaderPrivate* d;   
+    QVersitReaderPrivate* d;
 };
 
 QTM_END_NAMESPACE

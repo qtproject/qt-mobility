@@ -36,8 +36,10 @@ contains(mobility_modules,location) {
 
 #Contacts examples
 contains(mobility_modules,contacts) {
-    SUBDIRS += samplephonebook \
-            incomingcalls
+    SUBDIRS += samplephonebook
+    contains(QT_CONFIG, declarative) {
+        SUBDIRS += qmlcontacts
+    }
 }
 
 #Publish and Subscribe examples
@@ -75,6 +77,8 @@ contains(mobility_modules,multimedia) {
 #Messaging examples
 contains(mobility_modules,messaging) {
     !win32-g++ {
+    contains(qmf_enabled, yes) {
+
         SUBDIRS += \
             querymessages \
             writemessage \
@@ -83,6 +87,7 @@ contains(mobility_modules,messaging) {
         contains(mobility_modules,contacts) {
             SUBDIRS += keepintouch
         }
+      }
     }
 }
 

@@ -63,6 +63,7 @@ private slots: // Tests
     void testEncodeVersitProperty();
     void testEncodeParameters();
     void testEncodeGroupsAndName();
+    void testQuotedPrintableEncode();
 
 private: // Data
     QVCard21Writer* mWriter;

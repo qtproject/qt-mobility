@@ -81,9 +81,9 @@ void QTrackerContactsLive::saveName() {
 
     if(!name.isEmpty()) {
         liveContact_->setNameHonorificPrefix(name.prefix());
-        liveContact_->setNameGiven(name.first());
-        liveContact_->setNameAdditional(name.middle());
-        liveContact_->setNameFamily(name.last());
+        liveContact_->setNameGiven(name.firstName());
+        liveContact_->setNameAdditional(name.middleName());
+        liveContact_->setNameFamily(name.lastName());
     }
 
     if(!nickname.isEmpty()) {
