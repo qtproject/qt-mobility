@@ -38,6 +38,12 @@ contains(mobility_modules,messaging) {
     !win32-g++:SUBDIRS += messaging
 }
 
+contains(mobility_modules,landmarks): SUBDIRS += landmarks
+
+landmarks.subdir=landmarks
+landmarks.target=sub-landmarks
+landmarks.depends=location
+
 symbian {
     SUBDIRS += s60installs/s60installs.pro
 }

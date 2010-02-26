@@ -38,6 +38,10 @@ contains(mobility_modules,location) {
     }
 }
 
+contains(mobility_modules,landmarks) {
+    SUBDIRS += qlandmark \                      #Landmark
+            qlandmarkcategory
+}
 
 contains(mobility_modules,publishsubscribe) {
     SUBDIRS += qvaluespace \                           #Publish and Subscribe

@@ -63,7 +63,7 @@ QMAKE_CACHE="$shadowpath/.qmake.cache"
 LIB_PATH="lib"
 BIN_PATH="bin"
 MAC_SDK=
-MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors"
+MOBILITY_MODULES="bearer location landmarks contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors"
 MOBILITY_MODULES_UNPARSED=
 
 usage() 
@@ -91,7 +91,7 @@ usage()
     echo "-examples ......... Build example applications"
     echo "-no-docs .......... Do not build documentation (build by default)"
     echo "-modules <list> ... Restrict list of modules to build (default all supported)"
-    echo "                    Choose from: bearer contacts location publishsubscribe"
+    echo "                    Choose from: bearer contacts landmarks location publishsubscribe"
     echo "                    messaging multimedia systeminfo serviceframework versit"
     echo "                    sensors"
     echo "                    Modules should be separated by a space and surrounded"
@@ -167,7 +167,7 @@ while [ "$#" -gt 0 ]; do
             MOBILITY_MODULES=
             for m in $MOBILITY_MODULES_UNPARSED; do
                 case "$m" in
-                    bearer|contacts|location|messaging|multimedia|publishsubscribe|serviceframework|systeminfo|versit|sensors)
+                    bearer|contacts|landmarks|location|messaging|multimedia|publishsubscribe|serviceframework|systeminfo|versit|sensors)
                         MOBILITY_MODULES="$MOBILITY_MODULES $m";
                         ;;
                     *)
@@ -392,6 +392,9 @@ for module in $MOBILITY_MODULES; do
             ;;
         publishsubscribe)
             $relpath/bin/syncheaders $shadowpath/include $relpath/src/publishsubscribe
+            ;;
+        landmarks)
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/landmarks
             ;;
         location)
             $relpath/bin/syncheaders $shadowpath/include $relpath/src/location

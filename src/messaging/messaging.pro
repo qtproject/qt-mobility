@@ -210,6 +210,8 @@ else {
 
 }
 } else {
+    contains(qmf_enabled, yes) {
+
 DEFINES += USE_QMF_IMPLEMENTATION
 
 # QMF headers must be located at $QMF_INCLUDEDIR
@@ -240,7 +242,7 @@ SOURCES += qmessageid_qmf.cpp \
            qmessageservice_qmf.cpp \
            qmfhelpers.cpp
 }
-
+}
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
 CONFIG += middleware

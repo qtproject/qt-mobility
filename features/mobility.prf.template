@@ -7,7 +7,7 @@
         INCLUDEPATH+=$$APP_LAYER_SYSTEMINCLUDE
     }
 
-    contains(MOBILITY,bearer|location|publishsubscribe|systeminfo|multimedia|messaging|serviceframework) {
+    contains(MOBILITY,bearer|location|landmarks|publishsubscribe|systeminfo|multimedia|messaging|serviceframework) {
         INCLUDEPATH+=$$MW_LAYER_SYSTEMINCLUDE
     }
 }
@@ -24,6 +24,10 @@ contains(MOBILITY, publishsubscribe) {
 
 contains(MOBILITY, location) {
     qtAddLibrary(QtLocation)
+}
+
+contains(MOBILITY, landmarks) {
+    qtAddLibrary(QtLandmarks)
 }
 
 contains(MOBILITY, serviceframework) {
