@@ -179,8 +179,10 @@ QContact CntSymbianSimEngine::contact(const QContactLocalId& contactId, const QS
     req.setFilter(filter);
     req.setDefinitionRestrictions(definitionRestrictions);
     executeRequest(&req, error);
-    if (req.contacts().count() == 0)
+    if (req.contacts().count() == 0) {
+        error = QContactManager::DoesNotExistError;
         return QContact();
+    }
     return req.contacts().at(0); 
 }
 
