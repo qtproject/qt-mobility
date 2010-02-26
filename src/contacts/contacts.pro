@@ -74,7 +74,7 @@ HEADERS += \
     $$PUBLIC_HEADERS \
     $$PRIVATE_HEADERS
 
-maemo {
+maemo6 {
     isEmpty(CONTACTS_DEFAULT_ENGINE): CONTACTS_DEFAULT_ENGINE=tracker
 }
 
