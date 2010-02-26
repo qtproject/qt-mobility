@@ -15,7 +15,6 @@ headerdirs = ../../src/bearer \
              ../../src/multimedia \
              ../../src/messaging \
              ../../src/versit \
-             ../../src/landmarks \
              ../../src/sensors \
              .
 
@@ -28,7 +27,6 @@ sourcedirs = ../../src/bearer \
              ../../src/multimedia \
              ../../src/messaging \
              ../../src/versit \
-             ../../src/landmarks \
              ../../src/sensors \
              .
 
