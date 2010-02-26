@@ -43,6 +43,7 @@
 #include "cntsymbiansimengine.h"
 #include "cntsimstore.h"
 #include <qcontactfetchrequest.h>
+#include <qcontactlocalidfilter.h>
 
 CntSimContactFetchRequest::CntSimContactFetchRequest(CntSymbianSimEngine *engine, QContactFetchRequest *req)
     :CntAbstractSimRequest(engine),
@@ -59,10 +60,28 @@ CntSimContactFetchRequest::~CntSimContactFetchRequest()
 
 bool CntSimContactFetchRequest::start()
 {
-    // Contacts are fetched starting from index 1, all slots are read
-    // since slots may be not filled in a sequence.    
-    int numSlots = simStore()->storeInfo().iTotalEntries;
-    QContactManager::Error error = simStore()->read(1, numSlots);
+    QContactManager::Error error = QContactManager::NoError;
+    
+    // Get filter
+    QContactLocalIdFilter lidFilter;
+    if (m_req->filter().type() == QContactFilter::LocalIdFilter) {
+        lidFilter = static_cast<QContactLocalIdFilter>(m_req->filter());
+    }        
+    
+    if (lidFilter.ids().count() == 1) {
+        // Optimization for performance. Fetch a single contact from store.
+        // This is mainly for CntSymbianSimEngine::contact().
+        int index = lidFilter.ids().at(0);
+        error = simStore()->read(index, 1);
+    } 
+    else {
+        // Fetch all contacts and filter the results.
+        // Contacts are fetched starting from index 1, all slots are read
+        // since slots may be not filled in a sequence.
+        int numSlots = simStore()->storeInfo().iTotalEntries;
+        error = simStore()->read(1, numSlots);
+    }
+        
     if (error == QContactManager::NoError)
         QContactManagerEngine::updateRequestState(m_req, QContactAbstractRequest::ActiveState);
     return (error == QContactManager::NoError); 
