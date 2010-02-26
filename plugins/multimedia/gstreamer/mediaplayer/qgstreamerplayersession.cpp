@@ -452,9 +452,6 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
 
         if (GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_playbin)) {
             switch (GST_MESSAGE_TYPE(gm))  {
-            case GST_MESSAGE_DURATION:
-                break;
-
             case GST_MESSAGE_STATE_CHANGED:
                 {
                     GstState    oldState;
@@ -531,12 +528,12 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
                 break;
 
             case GST_MESSAGE_EOS:
+                m_mediaStatus = QMediaPlayer::EndOfMedia;
+
                 if (m_state != QMediaPlayer::StoppedState)
                     emit stateChanged(m_state = QMediaPlayer::StoppedState);
 
-                setMediaStatus(QMediaPlayer::EndOfMedia);
-
-                emit playbackFinished();
+                emit mediaStatusChanged(m_mediaStatus);
                 break;
 
             case GST_MESSAGE_TAG:
@@ -568,8 +565,32 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
             case GST_MESSAGE_STRUCTURE_CHANGE:
             case GST_MESSAGE_APPLICATION:
             case GST_MESSAGE_ELEMENT:
+                break;
             case GST_MESSAGE_SEGMENT_START:
+                {
+                    const GstStructure *structure = gst_message_get_structure(gm);
+                    qint64 position = g_value_get_int64(gst_structure_get_value(structure, "position"));
+                    position /= 1000000;
+                    m_lastPosition = position;
+                    emit positionChanged(position);
+                }
+                break;
             case GST_MESSAGE_SEGMENT_DONE:
+                break;
+            case GST_MESSAGE_DURATION:
+                {
+                    GstFormat   format = GST_FORMAT_TIME;
+                    gint64      duration = 0;
+
+                    if (gst_element_query_duration(m_playbin, &format, &duration)) {
+                        int newDuration = duration / 1000000;
+                        if (m_duration != newDuration) {
+                            m_duration = newDuration;
+                            emit durationChanged(m_duration);
+                        }
+                    }
+                }
+                break;
             case GST_MESSAGE_LATENCY:
 #if (GST_VERSION_MAJOR >= 0) &&  (GST_VERSION_MINOR >= 10) && (GST_VERSION_MICRO >= 13)
             case GST_MESSAGE_ASYNC_START:
