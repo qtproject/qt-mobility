@@ -97,7 +97,8 @@ int QLandmarkFilter::maxMatches() const
 }
 
 /*!
-    Set the maximum number of matches this filter will make.
+    Set the maximum number of matches this filter will make
+    to \a maxMatches.
 */
 void QLandmarkFilter::setMaxMatches(int maxMatches)
 {

@@ -240,7 +240,7 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds( const QLandmarkFilter &filter,
     returns false.  It may be possible that only a subset of
     landmarks are imported.
 */
-bool QLandmarkManager::importLandmarks(::QIODevice *device, Format format)
+bool QLandmarkManager::importLandmarks(QIODevice *device, Format format)
 {
     return false;//TODO: implement
 }
@@ -255,7 +255,7 @@ bool QLandmarkManager::importLandmarks(::QIODevice *device, Format format)
     otherwise returns false.  It may be possible that only a subset
     of landmarks are exported.
 */
-bool QLandmarkManager::exportLandmarks(::QIODevice *device, Format format, QList<QLandmarkId> landmarkIds)
+bool QLandmarkManager::exportLandmarks(QIODevice *device, Format format, QList<QLandmarkId> landmarkIds)
 {
     return false; //TODO: implement
 }
@@ -323,6 +323,8 @@ QString QLandmarkManager::defaultManager()
 /*!
     Sets the default manager to be the one identified
     by \a name.
+
+    Returns true if a default was set, otherwise returnse false.
 */
 bool QLandmarkManager::setDefaultManager(const QString &name)
 {
@@ -376,8 +378,5 @@ bool QLandmarkManager::setDefaultManager(const QString &name)
     This signal is emitted when a landmark has been removed from the
     database.  \a categoryId is the identifier of the removed landmark.
 */
-
-
-
 
 #include "moc_qlandmarkmanager.cpp"

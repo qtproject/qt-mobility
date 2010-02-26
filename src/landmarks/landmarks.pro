@@ -14,13 +14,33 @@ DEPENDPATH += .
 
 PUBLIC_HEADERS += qlandmark.h \
                   qlandmarkmanager.h \
-                  qlandmarkfilter.h
+                  qlandmarkfilter.h \
+                  qlandmarkabstractrequest.h \
+                  qlandmarkidfetchrequest.h \
+                  qlandmarksaverequest.h \
+                  qlandmarkremoverequest.h \
+                  qlandmarkimportrequest.h \
+                  qlandmarkexportrequest.h \
+                  qlandmarkcategoryidfetchrequest.h \
+                  qlandmarkcategorysaverequest.h \
+                  qlandmarkcategoryremoverequest.h
 
 PRIVATE_HEADERS += qlandmark_p.h
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
-SOURCES += qlandmark.cpp qlandmarkmanager.cpp qlandmarkfilter.cpp
+SOURCES += qlandmark.cpp \
+           qlandmarkmanager.cpp \
+           qlandmarkfilter.cpp \
+           qlandmarkabstractrequest.cpp \
+           qlandmarkidfetchrequest.cpp \
+           qlandmarksaverequest.cpp \
+           qlandmarkremoverequest.cpp \
+           qlandmarkimportrequest.cpp \
+           qlandmarkexportrequest.cpp \
+           qlandmarkcategoryidfetchrequest.cpp \
+           qlandmarkcategorysaverequest.cpp \
+           qlandmarkcategoryremoverequest.cpp
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB
