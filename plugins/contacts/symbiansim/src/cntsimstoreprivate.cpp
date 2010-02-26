@@ -232,7 +232,7 @@ void CntSimStorePrivate::RunL()
 {
     User::LeaveIfError(iStatus.Int());
     
-    // NOTE: emit might be synchronous so do not touch member variables after it
+    // NOTE: It is assumed that emitting signals is queued
     
     switch (m_state)
     {
@@ -252,7 +252,7 @@ void CntSimStorePrivate::RunL()
         
         case WriteState:
         {
-            //save id, if new contact
+            // save id
             QContactId contactId;
             contactId.setLocalId(m_writeIndex);
             contactId.setManagerUri(m_managerUri);
@@ -286,6 +286,8 @@ TInt CntSimStorePrivate::RunError(TInt aError)
 {
     QContactManager::Error qtError = QContactManager::NoError;
     CntSymbianSimTransformError::transformError(aError, qtError);
+    
+    // NOTE: It is assumed that emitting signals is queued
         
     if (m_state == GetInfoState) {
         RMobilePhoneBookStore::TMobilePhoneBookInfoV5 emptyInfo;

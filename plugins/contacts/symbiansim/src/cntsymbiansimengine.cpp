@@ -534,12 +534,31 @@ void CntSymbianSimEngine::updateDisplayLabel(QContact& contact) const
     }
 }
 
+/*!
+ * Executes an asynchronous request so that it will appear synchronous. This is
+ * used internally in all synchronous functions. This way we only need to 
+ * implement the matching asynchronous request.
+ * 
+ * \param req Request to be run.
+ * \param qtError Qt error code.
+ * \return true if succesfull, false if unsuccesfull.
+ */
 bool CntSymbianSimEngine::executeRequest(QContactAbstractRequest *req, QContactManager::Error& qtError) const
 {
+    // TODO:
+    // Remove this code when threads-branch is merged to master. Then this code
+    // should not be needed because the default implementation at QContactManager
+    // is using the asynchronous requests in a similar manner to implement
+    // the synchronous functions.
+    
+    // Create a copy engine to workaround this functions const qualifier
     CntSymbianSimEngine engine(*this);
+    
+    // Mimic the way how async requests are normally run
     if (engine.startRequest(req))
         engine.waitForRequestFinished(req, 0); // should we have a timeout?
     engine.requestDestroyed(req);
+    
     qtError = req->error();
     return (qtError == QContactManager::NoError);
 }
