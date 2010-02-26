@@ -29,6 +29,7 @@ bin/vsexplorer*
 bin/examples/*
 bin/sysinfo*
 bin/qcrmlgen*
+bin/icheck*
 install/*
 lib/*
 *.app

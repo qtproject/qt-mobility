@@ -399,7 +399,6 @@
 <li>createMemoryEngine: <a href="qcontactmemoryengine.html#createMemoryEngine">QContactMemoryEngine</a></li>
 <li>createReader: <a href="qmediaplaylistioplugin.html#createReader-2">QMediaPlaylistIOPlugin</a></li>
 <li>createResponseMessage: <a href="qmessage.html#createResponseMessage">QMessage</a></li>
-<li>createSensor: <a href="qsensorfactory.html#createSensor">QSensorFactory</a></li>
 <li>createWriter: <a href="qmediaplaylistioplugin.html#createWriter">QMediaPlaylistIOPlugin</a></li>
 <li>created: <a href="qcontacttimestamp.html#created">QContactTimestamp</a></li>
 <li>currentCountryCode: <a href="qsysteminfo.html#currentCountryCode-prop">QSystemInfo</a></li>
@@ -432,7 +431,7 @@
 <li>defaultConfiguration: <a href="qnetworkconfigurationmanager.html#defaultConfiguration">QNetworkConfigurationManager</a></li>
 <li>defaultDevice: <a href="qvideodevicecontrol.html#defaultDevice">QVideoDeviceControl</a></li>
 <li>defaultEndpoint: <a href="qaudioendpointselector.html#defaultEndpoint">QAudioEndpointSelector</a></li>
-<li>defaultSensorForType: <a href="qsensorfactory.html#defaultSensorForType">QSensorFactory</a> <a href="qsensormanager.html#defaultSensorForType">QSensorManager</a></li>
+<li>defaultSensorForType: <a href="qsensor.html#defaultSensorForType">QSensor</a></li>
 <li>defaultServiceProvider: <a href="qmediaserviceprovider.html#defaultServiceProvider">QMediaServiceProvider</a></li>
 <li>definitionName: <a href="qcontactdetail.html#definitionName">QContactDetail</a></li>
 <li>definitionNames: <a href="qcontactdetaildefinitionfetchrequest.html#definitionNames">QContactDetailDefinitionFetchRequest</a> <a href="qcontactdetaildefinitionremoverequest.html#definitionNames">QContactDetailDefinitionRemoveRequest</a></li>
@@ -562,7 +561,7 @@
 <li>insertMedia: <a href="qmediaplaylist.html#insertMedia-2">QMediaPlaylist</a> <a href="qmediaplaylistprovider.html#insertMedia-2">QMediaPlaylistProvider</a></li>
 <li>insertParameter: <a href="qversitproperty.html#insertParameter">QVersitProperty</a></li>
 <li>installService: <a href="qserviceplugininterface.html#installService">QServicePluginInterface</a></li>
-<li>instance: <a href="qcontactactionfactory.html#instance">QContactActionFactory</a> <a href="qsensorfactory.html#instance">QSensorFactory</a></li>
+<li>instance: <a href="qcontactactionfactory.html#instance">QContactActionFactory</a></li>
 <li>interestChanged: <a href="qvaluespacepublisher.html#interestChanged">QValueSpacePublisher</a></li>
 <li>interface: <a href="qnetworksession.html#interface">QNetworkSession</a></li>
 <li>interfaceDefault: <a href="qservicemanager.html#interfaceDefault">QServiceManager</a></li>
@@ -573,10 +572,10 @@
 <li>isActive: <a href="qcontactabstractrequest.html#isActive">QContactAbstractRequest</a> <a href="qmediastreamscontrol.html#isActive">QMediaStreamsControl</a> <a href="qsensor.html#running-prop">QSensor</a></li>
 <li>isAllowed: <a href="qabstractsecuritysession.html#isAllowed">QAbstractSecuritySession</a></li>
 <li>isAudioAvailable: <a href="qmediaplayer.html#audioAvailable-prop">QMediaPlayer</a> <a href="qmediaplayercontrol.html#isAudioAvailable">QMediaPlayerControl</a></li>
-<li>isAvailable: <a href="qaudiocapturesource.html#isAvailable">QAudioCaptureSource</a> <a href="qcamera.html#isAvailable">QCamera</a> <a href="qmediaobject.html#isAvailable">QMediaObject</a> <a href="qmediarecorder.html#isAvailable">QMediaRecorder</a> <a href="qradiotuner.html#isAvailable">QRadioTuner</a> <a href="qradiotunercontrol.html#isAvailable">QRadioTunerControl</a> <a href="qsensor.html#isAvailable-prop">QSensor</a> <a href="qstillimagecapture.html#isAvailable">QStillImageCapture</a></li>
+<li>isAvailable: <a href="qaudiocapturesource.html#isAvailable">QAudioCaptureSource</a> <a href="qcamera.html#isAvailable">QCamera</a> <a href="qmediaobject.html#isAvailable">QMediaObject</a> <a href="qmediarecorder.html#isAvailable">QMediaRecorder</a> <a href="qradiotuner.html#isAvailable">QRadioTuner</a> <a href="qradiotunercontrol.html#isAvailable">QRadioTunerControl</a> <a href="qstillimagecapture.html#isAvailable">QStillImageCapture</a></li>
 <li>isBandSupported: <a href="qradiotuner.html#isBandSupported">QRadioTuner</a> <a href="qradiotunercontrol.html#isBandSupported">QRadioTunerControl</a></li>
 <li>isCanceled: <a href="qcontactabstractrequest.html#isCanceled">QContactAbstractRequest</a></li>
-<li>isConnected: <a href="qvaluespacepublisher.html#isConnected">QValueSpacePublisher</a> <a href="qvaluespacesubscriber.html#isConnected">QValueSpaceSubscriber</a></li>
+<li>isConnected: <a href="qsensor.html#connected-prop">QSensor</a> <a href="qvaluespacepublisher.html#isConnected">QValueSpacePublisher</a> <a href="qvaluespacesubscriber.html#isConnected">QValueSpaceSubscriber</a></li>
 <li>isContentAvailable: <a href="qmessagecontentcontainer.html#isContentAvailable">QMessageContentContainer</a></li>
 <li>isContinuous: <a href="qmediatimerange.html#isContinuous">QMediaTimeRange</a></li>
 <li>isDenoisingSupported: <a href="qimageprocessingcontrol.html#isDenoisingSupported">QImageProcessingControl</a></li>
@@ -1019,9 +1018,8 @@
 <li>selfContactId: <a href="qcontactmanager.html#selfContactId">QContactManager</a> <a href="qcontactmanagerengine.html#selfContactId">QContactManagerEngine</a> <a href="qcontactmemoryengine.html#selfContactId">QContactMemoryEngine</a></li>
 <li>selfContactIdChanged: <a href="qcontactmanager.html#selfContactIdChanged">QContactManager</a> <a href="qcontactmanagerengine.html#selfContactIdChanged">QContactManagerEngine</a></li>
 <li>send: <a href="qmessageservice.html#send">QMessageService</a></li>
-<li>sensorList: <a href="qsensorfactory.html#sensorList">QSensorFactory</a></li>
-<li>sensorTypes: <a href="qsensorfactory.html#sensorTypes">QSensorFactory</a></li>
-<li>sensorsForType: <a href="qsensorfactory.html#sensorsForType">QSensorFactory</a></li>
+<li>sensorTypes: <a href="qsensor.html#sensorTypes">QSensor</a></li>
+<li>sensorsForType: <a href="qsensor.html#sensorsForType">QSensor</a></li>
 <li>service: <a href="qmediaobject.html#service">QMediaObject</a></li>
 <li>serviceAdded: <a href="qservicemanager.html#serviceAdded">QServiceManager</a></li>
 <li>serviceName: <a href="qservicefilter.html#serviceName">QServiceFilter</a> <a href="qserviceinterfacedescriptor.html#serviceName">QServiceInterfaceDescriptor</a></li>
@@ -1372,7 +1370,8 @@
 <li>validateActionFilter:<a name="v"></a> <a href="qcontactmanagerengine.html#validateActionFilter">QContactManagerEngine</a></li>
 <li>validateContact: <a href="qcontactmanagerengine.html#validateContact">QContactManagerEngine</a></li>
 <li>validateDefinition: <a href="qcontactmanagerengine.html#validateDefinition">QContactManagerEngine</a></li>
-<li>value: <a href="qabstractvaluespacelayer.html#value-2">QAbstractValueSpaceLayer</a> <a href="qcontactactionfilter.html#value">QContactActionFilter</a> <a href="qcontactdetail.html#value">QContactDetail</a> <a href="qcontactdetailfilter.html#value">QContactDetailFilter</a> <a href="qvaluespacesubscriber.html#value">QValueSpaceSubscriber</a> <a href="qversitproperty.html#value-2">QVersitProperty</a></li>
+<li>value: <a href="qabstractvaluespacelayer.html#value-2">QAbstractValueSpaceLayer</a> <a href="qaccelerometerreading.html#value">QAccelerometerReading</a> <a href="qcontactactionfilter.html#value">QContactActionFilter</a> <a href="qcontactdetail.html#value">QContactDetail</a> <a href="qcontactdetailfilter.html#value">QContactDetailFilter</a> <a href="qsensorreading.html#value">QSensorReading</a> <a href="qvaluespacesubscriber.html#value">QValueSpaceSubscriber</a> <a href="qversitproperty.html#value-2">QVersitProperty</a></li>
+<li>valueCount: <a href="qsensorreading.html#valueCount">QSensorReading</a></li>
 <li>values: <a href="qcontactdetail.html#values">QContactDetail</a></li>
 <li>variantValue: <a href="qcontactdetail.html#variantValue">QContactDetail</a> <a href="qversitproperty.html#variantValue">QVersitProperty</a></li>
 <li>variantValues: <a href="qcontactdetail.html#variantValues">QContactDetail</a></li>

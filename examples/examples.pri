@@ -1,4 +1,4 @@
-include($$QT_MOBILITY_BUILD_TREE/config.pri)
+include(../staticconfig.pri)
         
 !contains(build_examples, yes):error(Please use the -examples configure switch to enable building of examples)
 
@@ -32,7 +32,14 @@ INCLUDEPATH+= $$QT_MOBILITY_SOURCE_TREE/src/global
 
 maemo6 {
     DEFINES+= Q_WS_MAEMO_6
+    DEFINES+= QTM_EXAMPLES_SMALL_SCREEN
+    DEFINES+= QTM_EXAMPLES_PREFER_LANDSCAPE
 }
 maemo5 {
     DEFINES+= Q_WS_MAEMO_5
+    DEFINES+= QTM_EXAMPLES_SMALL_SCREEN
+    DEFINES+= QTM_EXAMPLES_PREFER_LANDSCAPE
+}
+symbian {
+    DEFINES+= QTM_EXAMPLES_SMALL_SCREEN
 }

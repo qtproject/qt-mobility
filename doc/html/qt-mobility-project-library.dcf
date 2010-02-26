@@ -55,6 +55,7 @@
         <keyword ref="qaccelerometerreading.html#setX">setX</keyword>
         <keyword ref="qaccelerometerreading.html#setY">setY</keyword>
         <keyword ref="qaccelerometerreading.html#setZ">setZ</keyword>
+        <keyword ref="qaccelerometerreading.html#value">value</keyword>
         <section ref="qaccelerometerreading-members.html" title="List of all members"/>
     </section>
     <section ref="qambientlightfilter.html" title="QAmbientLightFilter Class Reference">
@@ -2731,7 +2732,8 @@
         <keyword ref="qsensor.html#UpdatePolicy-enum">QSensor::FrequentUpdates</keyword>
         <keyword ref="qsensor.html#UpdatePolicy-enum">QSensor::InfrequentUpdates</keyword>
         <keyword ref="qsensor.html#UpdatePolicy-enum">QSensor::PolledUpdates</keyword>
-        <keyword ref="qsensor.html#isAvailable-prop">isAvailable</keyword>
+        <keyword ref="qsensor.html#connected-prop">connected</keyword>
+        <keyword ref="qsensor.html#connected-prop">isConnected</keyword>
         <keyword ref="qsensor.html#reading-prop">reading</keyword>
         <keyword ref="qsensor.html#running-prop">running</keyword>
         <keyword ref="qsensor.html#running-prop">isActive</keyword>
@@ -2748,10 +2750,13 @@
         <keyword ref="qsensor.html#updatePolicy-prop">setUpdatePolicy</keyword>
         <keyword ref="qsensor.html#addFilter">addFilter</keyword>
         <keyword ref="qsensor.html#connect">connect</keyword>
+        <keyword ref="qsensor.html#defaultSensorForType">defaultSensorForType</keyword>
         <keyword ref="qsensor.html#isSignalEnabled">isSignalEnabled</keyword>
         <keyword ref="qsensor.html#poll">poll</keyword>
         <keyword ref="qsensor.html#readingChanged">readingChanged</keyword>
         <keyword ref="qsensor.html#removeFilter">removeFilter</keyword>
+        <keyword ref="qsensor.html#sensorTypes">sensorTypes</keyword>
+        <keyword ref="qsensor.html#sensorsForType">sensorsForType</keyword>
         <keyword ref="qsensor.html#setSignalEnabled">setSignalEnabled</keyword>
         <keyword ref="qsensor.html#start">start</keyword>
         <keyword ref="qsensor.html#stop">stop</keyword>
@@ -2774,16 +2779,6 @@
         <keyword ref="qsensorbackendfactory.html#createBackend">createBackend</keyword>
         <section ref="qsensorbackendfactory-members.html" title="List of all members"/>
     </section>
-    <section ref="qsensorfactory.html" title="QSensorFactory Class Reference">
-        <keyword ref="qsensorfactory.html">QSensorFactory</keyword>
-        <keyword ref="qsensorfactory.html#createSensor">createSensor</keyword>
-        <keyword ref="qsensorfactory.html#defaultSensorForType">defaultSensorForType</keyword>
-        <keyword ref="qsensorfactory.html#instance">instance</keyword>
-        <keyword ref="qsensorfactory.html#sensorList">sensorList</keyword>
-        <keyword ref="qsensorfactory.html#sensorTypes">sensorTypes</keyword>
-        <keyword ref="qsensorfactory.html#sensorsForType">sensorsForType</keyword>
-        <section ref="qsensorfactory-members.html" title="List of all members"/>
-    </section>
     <section ref="qsensorfilter.html" title="QSensorFilter Class Reference">
         <keyword ref="qsensorfilter.html">QSensorFilter</keyword>
         <keyword ref="qsensorfilter.html#filter">filter</keyword>
@@ -2792,7 +2787,6 @@
     <section ref="qsensormanager.html" title="QSensorManager Class Reference">
         <keyword ref="qsensormanager.html">QSensorManager</keyword>
         <keyword ref="qsensormanager.html#createBackend">createBackend</keyword>
-        <keyword ref="qsensormanager.html#defaultSensorForType">defaultSensorForType</keyword>
         <keyword ref="qsensormanager.html#registerBackend">registerBackend</keyword>
         <keyword ref="qsensormanager.html#REGISTER_STATIC_PLUGIN">REGISTER_STATIC_PLUGIN</keyword>
         <section ref="qsensormanager-members.html" title="List of all members"/>
@@ -2806,6 +2800,8 @@
         <keyword ref="qsensorreading.html">QSensorReading</keyword>
         <keyword ref="qsensorreading.html#timestamp-prop">timestamp</keyword>
         <keyword ref="qsensorreading.html#setTimestamp">setTimestamp</keyword>
+        <keyword ref="qsensorreading.html#value">value</keyword>
+        <keyword ref="qsensorreading.html#valueCount">valueCount</keyword>
         <keyword ref="qsensorreading.html#DECLARE_READING">DECLARE_READING</keyword>
         <keyword ref="qsensorreading.html#IMPLEMENT_READING">IMPLEMENT_READING</keyword>
         <section ref="qsensorreading-members.html" title="List of all members"/>
@@ -3522,15 +3518,6 @@
     </section>
 </section>
 <section ref="overviews.html" title="Overviews">
-    <section ref="sensors-backend.html" title="">
-        <keyword ref="sensors-backend.html"></keyword>
-    </section>
-    <section ref="sensors-helpers.html" title="">
-        <keyword ref="sensors-helpers.html"></keyword>
-    </section>
-    <section ref="sensors.html" title="">
-        <keyword ref="sensors.html"></keyword>
-    </section>
     <section ref="functions.html" title="All Functions">
         <keyword ref="functions.html">All Functions</keyword>
     </section>
@@ -3624,8 +3611,11 @@
     <section ref="qtmobility-known-issues.html" title="Release Notes of the QtMobility Project">
         <keyword ref="qtmobility-known-issues.html">Release Notes of the QtMobility Project</keyword>
     </section>
-    <section ref="sensors-api.html" title="Sensors API">
-        <keyword ref="sensors-api.html">Sensors API</keyword>
+    <section ref="sensors-api.html" title="Sensors API (technology preview)">
+        <keyword ref="sensors-api.html">Sensors API (technology preview)</keyword>
+    </section>
+    <section ref="sensors-backend.html" title="Sensors Backend">
+        <keyword ref="sensors-backend.html">Sensors Backend</keyword>
     </section>
     <section ref="servicefw.html" title="Service Frameworks Classes">
         <keyword ref="servicefw.html">Service Frameworks Classes</keyword>
@@ -3645,8 +3635,8 @@
     <section ref="trademarks.html" title="Trademarks">
         <keyword ref="trademarks.html">Trademarks</keyword>
     </section>
-    <section ref="versit.html" title="Versit API">
-        <keyword ref="versit.html">Versit API</keyword>
+    <section ref="versit.html" title="Versit API (technology preview)">
+        <keyword ref="versit.html">Versit API (technology preview)</keyword>
     </section>
 </section>
 <section ref="examples.html" title="Tutorial &amp; Examples">
@@ -3686,11 +3676,17 @@
     <section ref="filemanagerplugin.html" title="File Manager Plugin Example">
         <keyword ref="filemanagerplugin.html">File Manager Plugin Example</keyword>
     </section>
+    <section ref="flickrdemo.html" title="Flickr Demo Example">
+        <keyword ref="flickrdemo.html">Flickr Demo Example</keyword>
+    </section>
     <section ref="incomingcalls.html" title="Incoming Call Simulator">
         <keyword ref="incomingcalls.html">Incoming Call Simulator</keyword>
     </section>
     <section ref="keepintouch.html" title="Keep in Touch Example">
         <keyword ref="keepintouch.html">Keep in Touch Example</keyword>
+    </section>
+    <section ref="lightmaps.html" title="LightMap Example">
+        <keyword ref="lightmaps.html">LightMap Example</keyword>
     </section>
     <section ref="logfilepositionsource.html" title="Log File Position Source Example">
         <keyword ref="logfilepositionsource.html">Log File Position Source Example</keyword>
@@ -3745,6 +3741,9 @@
     </section>
     <section ref="sysinfo.html" title="System Information Example">
         <keyword ref="sysinfo.html">System Information Example</keyword>
+    </section>
+    <section ref="weatherinfo.html" title="Weather Info Example">
+        <keyword ref="weatherinfo.html">Weather Info Example</keyword>
     </section>
     <section ref="writemessage.html" title="Write Message Example">
         <keyword ref="writemessage.html">Write Message Example</keyword>

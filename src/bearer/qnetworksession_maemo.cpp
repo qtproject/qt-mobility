@@ -47,6 +47,7 @@
 
 #include <maemo_icd.h>
 #include <iapconf.h>
+#include <proxyconf.h>
 
 #include <sys/types.h>
 #include <ifaddrs.h>
@@ -296,6 +297,8 @@ void IcdListener::cleanupSession(QNetworkSessionPrivate *ptr)
 void QNetworkSessionPrivate::cleanupSession(void)
 {
     icdListener()->cleanupSession(this);
+
+    QObject::disconnect(q, SIGNAL(stateChanged(QNetworkSession::State)), this, SLOT(updateProxies(QNetworkSession::State)));
 }
 
 
@@ -453,6 +456,8 @@ void QNetworkSessionPrivate::syncStateWithInterface()
 	    return;
 	}
     }
+
+    QObject::connect(q, SIGNAL(stateChanged(QNetworkSession::State)), this, SLOT(updateProxies(QNetworkSession::State)));
 
     state = QNetworkSession::Invalid;
     lastError = QNetworkSession::UnknownSessionError;
@@ -1157,6 +1162,32 @@ QNetworkSession::SessionError QNetworkSessionPrivate::error() const
 {
     return QNetworkSession::UnknownSessionError;
 }
+
+
+void QNetworkSessionPrivate::updateProxies(QNetworkSession::State newState)
+{
+    if ((newState == QNetworkSession::Connected) &&
+	(newState != currentState))
+	updateProxyInformation();
+    else if ((newState == QNetworkSession::Disconnected) &&
+	    (currentState == QNetworkSession::Closing))
+	clearProxyInformation();
+
+    currentState = newState;
+}
+
+
+void QNetworkSessionPrivate::updateProxyInformation()
+{
+    Maemo::ProxyConf::update();
+}
+
+
+void QNetworkSessionPrivate::clearProxyInformation()
+{
+    Maemo::ProxyConf::clear();
+}
+
 
 #include "qnetworksession_maemo.moc"
 #include "moc_qnetworksession_maemo_p.cpp"

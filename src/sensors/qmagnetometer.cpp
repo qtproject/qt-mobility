@@ -48,12 +48,13 @@ IMPLEMENT_READING(QMagnetometerReading)
 
 /*!
     \class QMagnetometerReading
-    \ingroup sensors
+    \ingroup sensors_reading
 
     \preliminary
     \brief The QMagnetometerReading class represents one reading from the
            magnetometer.
 
+    \section2 QMagnetometerReading Units
     The magnetometer returns magnetic flux density values along 3 axes.
     The scale of the values is teslas. The axes are arranged as follows.
 
@@ -90,11 +91,11 @@ IMPLEMENT_READING(QMagnetometerReading)
 /*!
     \property QMagnetometerReading::x
     \brief the raw flux density on the X axis.
+
+    Measured as telsas.
+    \sa {QMagnetometerReading Units}
 */
 
-/*!
-    Returns the raw flux density on the X axis.
-*/
 qreal QMagnetometerReading::x() const
 {
     return d->x;
@@ -111,11 +112,11 @@ void QMagnetometerReading::setX(qreal x)
 /*!
     \property QMagnetometerReading::y
     \brief the raw flux density on the Y axis.
+
+    Measured as telsas.
+    \sa {QMagnetometerReading Units}
 */
 
-/*!
-    Returns the raw flux density on the Y axis.
-*/
 qreal QMagnetometerReading::y() const
 {
     return d->y;
@@ -132,11 +133,11 @@ void QMagnetometerReading::setY(qreal y)
 /*!
     \property QMagnetometerReading::z
     \brief the raw flux density on the Z axis.
+
+    Measured as telsas.
+    \sa {QMagnetometerReading Units}
 */
 
-/*!
-    Returns the raw flux density on the Y axis.
-*/
 qreal QMagnetometerReading::z() const
 {
     return d->z;
@@ -153,11 +154,11 @@ void QMagnetometerReading::setZ(qreal z)
 /*!
     \property QMagnetometerReading::calibrated_x
     \brief the calibrated flux density on the X axis.
+
+    Measured as telsas.
+    \sa {QMagnetometerReading Units}
 */
 
-/*!
-    Returns the calibrated flux density on the X axis.
-*/
 qreal QMagnetometerReading::calibrated_x() const
 {
     return d->calibrated_x;
@@ -174,11 +175,11 @@ void QMagnetometerReading::setCalibrated_x(qreal calibrated_x)
 /*!
     \property QMagnetometerReading::calibrated_y
     \brief the calibrated flux density on the Y axis.
+
+    Measured as telsas.
+    \sa {QMagnetometerReading Units}
 */
 
-/*!
-    Returns the calibrated flux density on the Y axis.
-*/
 qreal QMagnetometerReading::calibrated_y() const
 {
     return d->calibrated_y;
@@ -195,11 +196,11 @@ void QMagnetometerReading::setCalibrated_y(qreal calibrated_y)
 /*!
     \property QMagnetometerReading::calibrated_z
     \brief the calibrated flux density on the Z axis.
+
+    Measured as telsas.
+    \sa {QMagnetometerReading Units}
 */
 
-/*!
-    Returns the calibrated flux density on the Z axis.
-*/
 qreal QMagnetometerReading::calibrated_z() const
 {
     return d->calibrated_z;
@@ -218,11 +219,9 @@ void QMagnetometerReading::setCalibrated_z(qreal calibrated_z)
     \brief the calibration level of the reading.
 
     The higher the calibration, the more accurate the measurement is.
+    \sa {QMagnetometerReading Units}
 */
 
-/*!
-    Returns the calibration level of the reading.
-*/
 QMagnetometerReading::CalibrationLevel QMagnetometerReading::calibrationLevel() const
 {
     return static_cast<QMagnetometerReading::CalibrationLevel>(d->calibrationLevel);
@@ -242,7 +241,7 @@ void QMagnetometerReading::setCalibrationLevel(QMagnetometerReading::Calibration
 
 /*!
     \class QMagnetometerFilter
-    \ingroup sensors_helpers
+    \ingroup sensors_filter
 
     \preliminary
     \brief The QMagnetometerFilter class is a convenience wrapper around QSensorFilter.
@@ -263,7 +262,7 @@ const char *QMagnetometer::type("QMagnetometer");
 
 /*!
     \class QMagnetometer
-    \ingroup sensors_helpers
+    \ingroup sensors_type
 
     \preliminary
     \brief The QMagnetometer class is a convenience wrapper around QSensor.

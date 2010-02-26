@@ -100,14 +100,11 @@ void QSensorBackend::newReadingAvailable()
     // Copy the values from the filter reading to the cached reading
     d->cache_reading->copyValuesFrom(d->filter_reading);
 
-#if 0
     if (d->updatePolicy == QSensor::PolledUpdates)
         return; // We don't emit the signal if we're polling
-#endif
 
     if (d->signalEnabled)
-        emit m_sensor->readingChanged();
-
+        Q_EMIT m_sensor->readingChanged();
 }
 
 /*!

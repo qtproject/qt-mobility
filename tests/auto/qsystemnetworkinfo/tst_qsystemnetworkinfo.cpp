@@ -153,31 +153,50 @@ void  tst_QSystemNetworkInfo::tst_locationAreaCode()
 void  tst_QSystemNetworkInfo::tst_currentMobileCountryCode()
 {
     QSystemNetworkInfo ni;
-    QVERIFY(!ni.currentMobileCountryCode().isEmpty()
-            || ni.currentMobileCountryCode().isNull());
+    if(QSystemNetworkInfo::Connected == ni.networkStatus(QSystemNetworkInfo::GsmMode)
+        || QSystemNetworkInfo::Connected == ni.networkStatus(QSystemNetworkInfo::CdmaMode)
+        || QSystemNetworkInfo::Connected == ni.networkStatus(QSystemNetworkInfo::WcdmaMode)) {
+        QVERIFY(!ni.currentMobileCountryCode().isEmpty());
+    } else {
+        QVERIFY(ni.currentMobileCountryCode().isEmpty());
+    }
 }
 
 void  tst_QSystemNetworkInfo::tst_currentMobileNetworkCode()
 {
     QSystemNetworkInfo ni;
-
-    QVERIFY(!ni.currentMobileNetworkCode().isEmpty()
-            || ni.currentMobileNetworkCode().isNull());
+    if(QSystemNetworkInfo::Connected == ni.networkStatus(QSystemNetworkInfo::GsmMode)
+        || QSystemNetworkInfo::Connected == ni.networkStatus(QSystemNetworkInfo::CdmaMode)
+        || QSystemNetworkInfo::Connected == ni.networkStatus(QSystemNetworkInfo::WcdmaMode)) {
+        QVERIFY(!ni.currentMobileNetworkCode().isEmpty());
+    } else {
+        QVERIFY(ni.currentMobileNetworkCode().isEmpty());
+    }
 }
 
 
 void  tst_QSystemNetworkInfo::tst_homeMobileCountryCode()
 {
     QSystemNetworkInfo ni;
-    QVERIFY(!ni.homeMobileCountryCode().isEmpty()
-            || ni.homeMobileCountryCode().isNull());
+    if(QSystemNetworkInfo::Connected == ni.networkStatus(QSystemNetworkInfo::GsmMode)
+        || QSystemNetworkInfo::Connected == ni.networkStatus(QSystemNetworkInfo::CdmaMode)
+        || QSystemNetworkInfo::Connected == ni.networkStatus(QSystemNetworkInfo::WcdmaMode)) {
+        QVERIFY(!ni.homeMobileCountryCode().isEmpty());
+    } else {
+        QVERIFY(ni.homeMobileCountryCode().isEmpty());
+    }
 }
 
 void  tst_QSystemNetworkInfo::tst_homeMobileNetworkCode()
 {
     QSystemNetworkInfo ni;
-    QVERIFY(!ni.homeMobileNetworkCode().isEmpty()
-            || ni.homeMobileNetworkCode().isEmpty());
+    if(QSystemNetworkInfo::Connected == ni.networkStatus(QSystemNetworkInfo::GsmMode)
+        || QSystemNetworkInfo::Connected == ni.networkStatus(QSystemNetworkInfo::CdmaMode)
+        || QSystemNetworkInfo::Connected == ni.networkStatus(QSystemNetworkInfo::WcdmaMode)) {
+        QVERIFY(!ni.homeMobileNetworkCode().isEmpty());
+    } else {
+        QVERIFY(ni.homeMobileNetworkCode().isEmpty());
+    }
 }
 
 void  tst_QSystemNetworkInfo::tst_networkName()

@@ -44,11 +44,16 @@
 
 #include <QWidget>
 #include <qsysteminfo.h>
+
+#ifdef QTM_EXAMPLES_PREFER_LANDSCAPE
+#include "ui_dialog_landscape.h"
+#else //QTM_EXAMPLES_PREFER_LANDSCAPE
 #ifdef Q_OS_SYMBIAN
 #include "ui_dialog_s60.h"
-#else
+#else //Q_OS_SYMBIAN
 #include "ui_dialog.h"
-#endif
+#endif //Q_OS_SYMBIAN
+#endif //QTM_EXAMPLES_PREFER_LANDSCAPE
 QTM_USE_NAMESPACE
 
 class Dialog : public QWidget, public Ui_Dialog
@@ -85,12 +90,15 @@ private slots:
     void updateBatteryStatus(int);
     void updatePowerState(QSystemDeviceInfo::PowerState);
     void displayBatteryStatus(QSystemDeviceInfo::BatteryStatus);
-    void updateProfile(QSystemDeviceInfo::Profile);
+    void updateProfile(QSystemDeviceInfo::Profile profile);
+    void updateSimStatus();
+    void updateProfile();
 
      void displayNetworkStatus(QSystemNetworkInfo::NetworkStatus);
      void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
      void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int);
      void networkNameChanged(QSystemNetworkInfo::NetworkMode,const QString &);
+     void networkModeChanged(QSystemNetworkInfo::NetworkMode);
 
 };
 

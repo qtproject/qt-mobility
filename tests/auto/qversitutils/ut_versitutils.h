@@ -45,7 +45,9 @@
 #include <QObject>
 #include <qmobilityglobal.h>
 
+QT_BEGIN_NAMESPACE
 class QTextCodec;
+QT_END_NAMESPACE
 
 class UT_VersitUtils : public QObject
 {
