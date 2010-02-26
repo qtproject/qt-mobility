@@ -2,7 +2,6 @@
 # Contacts Mobility API Tracker storage plugin
 # #####################################################################
 
-# include version number for the plugin
 TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(qtcontacts_tracker)
@@ -12,22 +11,36 @@ LIBS += -lqttracker
 CONFIG += mobility
 MOBILITY = contacts
 
+# include version number for the plugin
 include(version.pri)
-include(qtcontacts-tracker.pri)
+include(../../../common.pri)
 
-LIBS += -L/usr/lib 
+### old include path: INCLUDEPATH += /usr/include/qt4/QtMobility
+INCLUDEPATH += $$SOURCE_DIR/src/contacts
+INCLUDEPATH += $$SOURCE_DIR/src/contacts/details
+INCLUDEPATH += $$SOURCE_DIR/src/contacts/filters
+INCLUDEPATH += $$SOURCE_DIR/src/contacts/requests
 
-MOC_DIR = .moc/
-OBJECTS_DIR = .obj/
+INCLUDEPATH += .
 
-DEPENDPATH += .
-INCLUDEPATH += . 
-INCLUDEPATH += /usr/include 
+HEADERS += qcontacttrackerbackend_p.h \
+           qtrackercontactasyncrequest.h \
+           trackerchangelistener.h \
+           qtrackercontactslive.h \
+           qtrackercontactsaverequest.h \
+           qtrackerrelationshipfetchrequest.h \
+           qtrackerrelationshipsaverequest.h \
+           qtrackercontactidfetchrequest.h
 
-LIBS += -lqttracker
+SOURCES += qcontacttrackerbackend.cpp \
+           qtrackercontactasyncrequest.cpp \
+           trackerchangelistener.cpp \
+           qtrackercontactslive.cpp \
+           qtrackercontactsaverequest.cpp \
+           qtrackerrelationshipfetchrequest.cpp \
+           qtrackerrelationshipsaverequest.cpp \
+           qtrackercontactidfetchrequest.cpp
 
-# QT += contacts
-INCLUDEPATH += /usr/include/qt4/QtMobility
-
-target.path = /usr/lib/qt4/plugins/contacts
-INSTALLS += target
+### old target path: target.path = /usr/lib/qt4/plugins/contacts
+target.path=$$QT_MOBILITY_PREFIX/plugins/contacts
+INSTALLS+=target
