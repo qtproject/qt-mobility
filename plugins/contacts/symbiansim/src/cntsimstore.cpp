@@ -42,7 +42,7 @@
 #include "cntsimstore.h"
 #include "cntsimstoreprivate.h"
 
-CntSimStore::CntSimStore(CntSymbianSimEngine* engine)
+CntSimStore::CntSimStore(CntSymbianSimEngine* engine, QString storeName)
     :QObject((QObject *)engine)
 {
     // We need to register these meta types for signals because connect() with 
@@ -52,12 +52,22 @@ CntSimStore::CntSimStore(CntSymbianSimEngine* engine)
     qRegisterMetaType<QContactManager::Error>("QContactManager::Error");
     qRegisterMetaType<RMobilePhoneBookStore::TMobilePhoneBookInfoV5>("RMobilePhoneBookStore::TMobilePhoneBookInfoV5");
     
-    d_ptr = new CntSimStorePrivate(*engine, *this);
+    QT_TRAP_THROWING(d_ptr = CntSimStorePrivate::NewL(*engine, *this, storeName));
 }
 
 CntSimStore::~CntSimStore()
 {
     delete d_ptr;
+}
+
+QString CntSimStore::storeName()
+{
+    return d_ptr->storeName();
+}
+
+RMobilePhoneBookStore::TMobilePhoneBookInfoV5 CntSimStore::storeInfo()
+{
+    return d_ptr->storeInfo();
 }
 
 QContactManager::Error CntSimStore::getInfo()
@@ -89,6 +99,3 @@ bool CntSimStore::isBusy()
 {
     return d_ptr->IsActive();
 }
-
-    
-    
