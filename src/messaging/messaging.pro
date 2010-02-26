@@ -15,11 +15,7 @@ PUBLIC_HEADERS += \
            qmessagefolderid.h \
            qmessageaccountid.h \
            qmessagecontentcontainer.h \ 
-           qmessagecontentcontainer_p.h \
-           addresshelper_p.h \
 	   qmessageaddress.h \
-           qmessageaddress_p.h \
-           qmessage_p.h \ 
            qmessage.h \
            qmessagefolder.h \
            qmessageaccount.h \
@@ -30,9 +26,12 @@ PUBLIC_HEADERS += \
            qmessagefilter.h \
            qmessagemanager.h \
            qmessagesortorder.h \
-           qmessageservice.h
+           qmessageservice.h \
+           qmessagedatacomparator.h \
+           qmessageglobal.h
 
 PRIVATE_HEADERS += \
+           addresshelper_p.h \
            qmessageid_p.h \
            qmessagecontentcontainerid_p.h \
            qmessagefolderid_p.h \
@@ -72,24 +71,24 @@ SOURCES += qmessageid.cpp \
            qmessageservice.cpp
 
 
-symbian|win32|maemo6 {
-maemo6 {
-SOURCES += qmessageid_maemo.cpp \
-           qmessagecontentcontainerid_maemo.cpp \
-           qmessagefolderid_maemo.cpp \
-           qmessageaccountid_maemo.cpp \
-           qmessagecontentcontainer_maemo.cpp \
-           qmessage_maemo.cpp \
-           qmessagefolder_maemo.cpp \
-           qmessageaccount_maemo.cpp \
-           qmessageaccountfilter_maemo.cpp \
-           qmessageaccountsortorder_maemo.cpp \
-           qmessagefolderfilter_maemo.cpp \
-           qmessagefoldersortorder_maemo.cpp \
-           qmessagefilter_maemo.cpp \
-           qmessagesortorder_maemo.cpp \
-           qmessagestore_maemo.cpp \
-           qmessageservice_maemo.cpp 
+symbian|win32|maemo6|maemo5|mac {
+maemo6|maemo5|mac {
+SOURCES += qmessageid_stub.cpp \
+           qmessagecontentcontainerid_stub.cpp \
+           qmessagefolderid_stub.cpp \
+           qmessageaccountid_stub.cpp \
+           qmessagecontentcontainer_stub.cpp \
+           qmessage_stub.cpp \
+           qmessagefolder_stub.cpp \
+           qmessageaccount_stub.cpp \
+           qmessageaccountfilter_stub.cpp \
+           qmessageaccountsortorder_stub.cpp \
+           qmessagefolderfilter_stub.cpp \
+           qmessagefoldersortorder_stub.cpp \
+           qmessagefilter_stub.cpp \
+           qmessagesortorder_stub.cpp \
+           qmessagestore_stub.cpp \
+           qmessageservice_stub.cpp 
 }
 symbian {
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
@@ -142,13 +141,6 @@ symbian {
     TARGET.CAPABILITY = ALL -TCB
     TARGET.UID3 = 0x2002AC82
 
-    deploy.path = $${EPOCROOT}
-    exportheaders.sources = $$PUBLIC_HEADERS
-    exportheaders.path = epoc32/include/mw
-    for(header, exportheaders.sources) {
-        BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
-    }
-            
     QtMessaging.sources = QtMessaging.dll
     QtMessaging.path = /sys/bin
     DEPLOYMENT += QtMessaging
@@ -218,6 +210,8 @@ else {
 
 }
 } else {
+    contains(qmf_enabled, yes) {
+
 DEFINES += USE_QMF_IMPLEMENTATION
 
 # QMF headers must be located at $QMF_INCLUDEDIR
@@ -248,7 +242,8 @@ SOURCES += qmessageid_qmf.cpp \
            qmessageservice_qmf.cpp \
            qmfhelpers.cpp
 }
-
+}
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
+CONFIG += middleware
 include(../../features/deploy.pri)

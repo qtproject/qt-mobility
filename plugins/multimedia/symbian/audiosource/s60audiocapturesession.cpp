@@ -53,24 +53,22 @@
 
 #include <QDir>
 
+#include <mmf\common\mmfcontrollerpluginresolver.h>
+#include <mmf\common\mmfcontroller.h>
+
+#include <private/qcore_symbian_p.h>
+
+#include <BADESCA.H>
+
 S60AudioCaptureSession::S60AudioCaptureSession(QObject *parent):
     QObject(parent), m_recorderUtility(NULL)
 {
     TRAPD(err, m_recorderUtility = CMdaAudioRecorderUtility::NewL(*this));
     qWarning() << err;
     
-    //TODO:
-    /*
-    m_position = 0;
-    m_state = QMediaRecorder::StoppedState;
-
-    m_format.setFrequency(8000);
-    m_format.setChannels(1);
-    m_format.setSampleSize(8);
-    m_format.setSampleType(QAudioFormat::UnSignedInt);
-    //m_format.setCodec(QString("audio/pcm"));
-    wavFile = false;
-    */
+    TRAP(err, fetchAudioCodecsL());
+    qWarning() << err;
+    
 }
 
 S60AudioCaptureSession::~S60AudioCaptureSession()
@@ -88,83 +86,48 @@ QAudioFormat S60AudioCaptureSession::format() const
 
 bool S60AudioCaptureSession::isFormatSupported(const QAudioFormat &format) const
 {
-    //TODO:
-    /*
-    if(m_recorderUtility) {
-        return m_recorderUtility->isFormatSupported(format);
-    }
-    */
+
     return false;
 }
 
 bool S60AudioCaptureSession::setFormat(const QAudioFormat &format)
 {
-    //TODO:
-    /*
-    if(m_recorderUtility) {
-        if(m_recorderUtility->isFormatSupported(format)) {
-            m_format = format;
-            if(m_audioInput) delete m_audioInput;
-            m_audioInput = 0;
-            QList<QAudioDeviceInfo> devices = QAudioDeviceInfo::deviceList(QAudio::AudioInput);
-            for(int i=0; i < devices.size(); i++) {
-                if(qstrcmp(m_recorderUtility->deviceName().toLocal8Bit().constData(),
-                            devices.at(i).deviceName().toLocal8Bit().constData()) == 0) {
-                    m_audioInput = new QAudioInput(devices.at(i), m_format);
-                    connect(m_audioInput, SIGNAL(stateChanged(QAudio::State)), this, SLOT(stateChanged(QAudio::State)));
-                    connect(m_audioInput, SIGNAL(notify()), this, SLOT(notify()));
-                    break;
-                }
-            }
-        }
-    }
-    */
+	if (m_recorderUtility) {
+		m_format = format;
+	}
+
     return false;
 }
 
 QStringList S60AudioCaptureSession::supportedAudioCodecs() const
 {
-    QStringList list;
-    //TODO:
-    /*
-    if(m_recorderUtility) {
-        list = m_recorderUtility->supportedCodecs();
-    }
-    */
-    return list;
+	return m_controllerIdMap.keys();
 }
+
 
 QString S60AudioCaptureSession::codecDescription(const QString &codecName)
 {
-    //TODO:
-    /*
-    if(m_recorderUtility) {
-        if(qstrcmp(codecName.toLocal8Bit().constData(), "audio/pcm") == 0)
-            return QString(tr("Pulse Code Modulation"));
-    }
-    */
-    return QString();
+    return m_controllerIdMap[codecName].destinationFormatDescription;
 }
+
 
 bool S60AudioCaptureSession::setAudioCodec(const QString &codecName)
 {
-    //TODO:
-    /*
+
     if(m_recorderUtility) {
-        QStringList codecs = m_recorderUtility->supportedCodecs();
+        QStringList codecs = supportedAudioCodecs();
         if(codecs.contains(codecName)) {
             m_format.setCodec(codecName);
             return true;
         }
     }
-    */
+
     return false;
 }
 
 QString S60AudioCaptureSession::audioCodec() const
 {
-    //TODO:
-    return QString(); //m_format.codec();
+    return m_format.codec();
 }
 
 QUrl S60AudioCaptureSession::outputLocation() const
@@ -192,45 +155,12 @@ void S60AudioCaptureSession::record()
 {    
     QString filename = QDir::toNativeSeparators(m_sink.toString());
     TPtrC16 sink(reinterpret_cast<const TUint16*>(filename.utf16()));    
-    TRAPD(err, m_recorderUtility->OpenFileL(sink));
+
+    TUid controllerUid(TUid::Uid(m_controllerIdMap[m_format.codec()].controllerUid));
+    TUid formatUid(TUid::Uid(m_controllerIdMap[m_format.codec()].destinationFormatUid));
+    
+    TRAPD(err, m_recorderUtility->OpenFileL(sink, controllerUid, KNullUid, formatUid));
     qWarning() << err;
-
-    //TODO:
-    /*
-    if(!m_audioInput) {
-        setFormat(m_format);
-    }
-
-    if(m_audioInput) {
-        if(m_state == QMediaRecorder::StoppedState) {
-            if(file.open(QIODevice::WriteOnly)) {
-                //TODO: write wav header id wavFile true
-
-                memset(&header,0,sizeof(CombinedHeader));
-                memcpy(header.riff.descriptor.id,"RIFF",4);
-                header.riff.descriptor.size = 0xFFFFFFFF; // This should be updated on stop() TODO! filesize-8
-                memcpy(header.riff.type,"WAVE",4);
-                memcpy(header.wave.descriptor.id,"fmt ",4);
-                header.wave.descriptor.size = 16;
-                header.wave.audioFormat = 1; // for PCM data
-                header.wave.numChannels = m_format.channels();
-                header.wave.sampleRate = m_format.frequency();
-                header.wave.byteRate = m_format.frequency()*m_format.channels()*m_format.sampleSize()/8;
-                header.wave.blockAlign = m_format.channels()*m_format.sampleSize()/8;
-                header.wave.bitsPerSample = m_format.sampleSize();
-                memcpy(header.data.descriptor.id,"data",4);
-                header.data.descriptor.size = 0xFFFFFFFF; // This should be updated on stop() TODO! samples*channels*sampleSize/8
-                file.write((char*)&header,sizeof(CombinedHeader));
-
-                m_audioInput->start(qobject_cast<QIODevice*>(&file));
-            } else {
-                qWarning()<<"can't open source, failed";
-                m_state = QMediaRecorder::StoppedState;
-                emit stateChanged(m_state);
-            }
-        }
-    }
-    */
 
     m_state = QMediaRecorder::RecordingState;
 }
@@ -248,43 +178,10 @@ void S60AudioCaptureSession::pause()
 
 void S60AudioCaptureSession::stop()
 {
-    if (m_recorderUtility)
-    {
+    if (m_recorderUtility) {
         m_recorderUtility->Stop();
         m_recorderUtility->Close();
-    }
-    
-    //TODO:
-    /*
-    if(m_audioInput) {
-        m_audioInput->stop();
-        file.close();
-        
-        QFile tmpFile("record.tmp");
-        tmpFile.open(QIODevice::WriteOnly);
-
-        qint32 fileSize = file.size()-8;
-        if(file.open(QIODevice::ReadOnly)) {
-            file.read((char*)&header,sizeof(CombinedHeader));
-            header.riff.descriptor.size = fileSize; // filesize-8
-            header.data.descriptor.size = fileSize*m_format.channels()*m_format.sampleSize()/8; // samples*channels*sampleSize/8
-            tmpFile.write((char*)&header,sizeof(CombinedHeader));
-            char buf[4096];
-            while(!file.atEnd()) {
-                int l = file.read(buf,4096);
-                if(l > 0)
-                    tmpFile.write(buf,l);
-            }
-            tmpFile.close();
-            file.close();
-            file.remove();
-            tmpFile.rename(file.fileName());
-        }
-
-        m_position = 0;
-    }
-    */
-    
+    }    
     m_state = QMediaRecorder::StoppedState;
 }
 
@@ -336,7 +233,78 @@ void S60AudioCaptureSession::MoscoStateChangeEventL(CBase* aObject,
             {
                 if(aPreviousState == CMdaAudioClipUtility::ENotReady)
                 {
-                    m_recorderUtility->SetGain(m_recorderUtility->MaxGain());
+					RArray<TUint> supportedSampleRates;
+					m_recorderUtility->GetSupportedSampleRatesL(supportedSampleRates);
+					
+					for (TInt i = 0; i < supportedSampleRates.Count(); i++ ) {
+						TUint supportedSampleRate = supportedSampleRates[i];
+						int frequency = m_format.frequency();
+						if (supportedSampleRate == frequency) 
+							m_recorderUtility->SetDestinationSampleRateL(m_format.frequency());
+					}
+					
+					/*
+					RArray<TUint> supportedBitRates;
+					TRAPD(ignore, m_recorderUtility->GetSupportedBitRatesL(supportedBitRates));
+					
+					for (TInt j = 0; j < supportedBitRates.Count(); j++ ) {
+						qWarning() << QString("Supported bit rate: ") + QString().number(supportedBitRates[j]);
+						
+					}
+					*/
+					
+					TFourCC fourCC;
+					
+					if (m_format.sampleSize() == 8) {
+						switch (m_format.sampleType()) {
+							case QAudioFormat::SignedInt: {
+								fourCC.Set(KMMFFourCCCodePCM8);
+								break;
+							}
+							case QAudioFormat::UnSignedInt: {
+								fourCC.Set(KMMFFourCCCodePCMU8);
+								break;
+							}
+							case QAudioFormat::Float: 
+							case QAudioFormat::Unknown:
+							default: {
+								fourCC.Set(KMMFFourCCCodePCM8);
+								break;
+							}
+						}
+					} else if (m_format.sampleSize() == 16) {
+						// 16 bit here
+						switch (m_format.sampleType()) {
+							case QAudioFormat::SignedInt: {
+								fourCC.Set(m_format.byteOrder()==QAudioFormat::BigEndian?
+									KMMFFourCCCodePCM16B:KMMFFourCCCodePCM16);
+								break;
+							}
+							case QAudioFormat::UnSignedInt: {
+								fourCC.Set(m_format.byteOrder()==QAudioFormat::BigEndian?
+									KMMFFourCCCodePCMU16B:KMMFFourCCCodePCMU16);
+								break;
+							}
+							default: {
+								fourCC.Set(KMMFFourCCCodePCM16);
+								break;
+							}
+						}
+					}
+					
+					RArray<TFourCC> supportedDataTypes;
+					m_recorderUtility->GetSupportedDestinationDataTypesL(supportedDataTypes);
+
+					for (TInt k = 0; k < supportedDataTypes.Count(); k++ ) {
+						if (supportedDataTypes[k].FourCC() == fourCC.FourCC()) {
+							m_recorderUtility->SetDestinationDataTypeL(supportedDataTypes[k]);
+						}
+					}
+					
+					//set channels 
+					m_recorderUtility->SetDestinationNumberOfChannelsL(m_format.channels());
+
+					m_recorderUtility->SetGain(m_recorderUtility->MaxGain());
                     m_recorderUtility->RecordL();
                 }
                 break;
@@ -350,4 +318,48 @@ void S60AudioCaptureSession::MoscoStateChangeEventL(CBase* aObject,
 }
 
 
+void S60AudioCaptureSession::fetchAudioCodecsL()
+{
+    CMMFControllerPluginSelectionParameters* pluginParameters = 
+    	CMMFControllerPluginSelectionParameters::NewLC();
+	CMMFFormatSelectionParameters* formatParameters = 
+		CMMFFormatSelectionParameters::NewLC();
+	 
+	pluginParameters->SetRequiredRecordFormatSupportL(*formatParameters);
+	 
+	RArray<TUid> ids;
+	User::LeaveIfError(ids.Append(KUidMediaTypeAudio));  
+
+	pluginParameters->SetMediaIdsL(ids, 
+		CMMFPluginSelectionParameters::EAllowOnlySuppliedMediaIds);
+	 
+	RMMFControllerImplInfoArray controllers; 
+	CleanupResetAndDestroyPushL(controllers);
+	 
+	//Get all audio/video play and record controllers/formats that are supported
+	pluginParameters->ListImplementationsL(controllers);
+	 
+	for (TInt index=0; index<controllers.Count(); index++) {
+		const RMMFFormatImplInfoArray& recordFormats = 
+			controllers[index]->RecordFormats();
+		for (TInt j=0; j<recordFormats.Count(); j++) {
+			const CDesC8Array& mimeTypes = recordFormats[j]->SupportedMimeTypes();
+			TInt count = mimeTypes.Count();
+			if (count > 0) {
+				TPtrC8 mimeType = mimeTypes[0];
+				QString type = QString::fromUtf8((char *)mimeType.Ptr(), mimeType.Length()); 
+                // Currently only support for audio/wav due to quality issues.
+                if (type == "audio/wav") {
+                    ItemData data;
+                    data.controllerUid = controllers[index]->Uid().iUid;
+                    data.destinationFormatUid = recordFormats[j]->Uid().iUid;
+                    data.destinationFormatDescription = qt_TDesC2QString(recordFormats[j]->DisplayName());
+                    m_controllerIdMap[type] = data;
+                }
+			}
+		}
+	}
+	
+	CleanupStack::PopAndDestroy(3);//controllers, formatParameters, pluginParameters
+}
 

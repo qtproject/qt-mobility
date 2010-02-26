@@ -67,6 +67,7 @@ public:
 
 private slots:
     void deviceChanged(int idx);
+    void containerChanged(int idx);
     void codecChanged(int idx);
     void qualityChanged(int idx);
     void selectOutputFile();
@@ -79,6 +80,7 @@ private:
     QMediaRecorder* capture;
 
     QComboBox*     deviceBox;
+    QComboBox*     containersBox;
     QComboBox*     codecsBox;
     QComboBox*     qualityBox;
     QLabel*        recTime;

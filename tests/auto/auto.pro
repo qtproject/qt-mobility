@@ -1,6 +1,6 @@
 TEMPLATE = subdirs
 
-include($$QT_MOBILITY_BUILD_TREE/config.pri)
+include(../../staticconfig.pri)
 
 contains(mobility_modules,serviceframework) {
     SUBDIRS += databasemanager \                #service framework
@@ -9,7 +9,8 @@ contains(mobility_modules,serviceframework) {
            qservicefilter \
            qservicemanager \
            qabstractsecuritysession \
-           qservicecontext
+           qservicecontext \
+           icheck
 
 # servicedatabase is not compiled into the serviceframework library on symbian,
 # special handling is needed
@@ -49,12 +50,12 @@ contains(mobility_modules,publishsubscribe) {
 	   qcrmlparser
 
     unix|win32 {
-        !symbian:!maemo6: SUBDIRS+= \
+        !symbian:!maemo6:!maemo5: SUBDIRS+= \
             qsystemreadwritelock \
             qsystemreadwritelock_oop
     }
 
-    unix:!symbian:!maemo6: {
+    unix:!symbian:!maemo6:!maemo5 {
         SUBDIRS+= \
                qpacket \
                qmallocpool \
@@ -90,6 +91,7 @@ contains(mobility_modules,versit) {
     SUBDIRS += \
             qvcard21writer \
             qvcard30writer \
+            qversit \
             qversitcontactexporter \
             qversitcontactimporter \
             qversitdocument \
@@ -115,14 +117,25 @@ contains(mobility_modules,multimedia) {
         qmediaserviceprovider \
         qmediacontent \
         qradiotuner \
-        qvideowidget
+        qvideowidget \
+        qmediatimerange
 
     contains(QT_CONFIG, multimedia) {
         SUBDIRS += \
                 qgraphicsvideoitem \
                 qpaintervideosurface
 
-}
+    }
+
+    symbian: {
+        #symbian spesific autotests
+        SUBDIRS += symbian 
+        SUBDIRS -= \
+                qcamera \
+                qmediaplayer \
+                qradiotuner \
+                qmediaobject
+    }
 }
 #Messaging
 contains(mobility_modules,messaging) {

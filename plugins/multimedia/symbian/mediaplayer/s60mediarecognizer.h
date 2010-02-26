@@ -42,7 +42,7 @@
 #ifndef S60MEDIARECOGNIZER_H_
 #define S60MEDIARECOGNIZER_H_
 
-#include <QObject>
+#include <QtCore/qobject.h>
 
 class CMPMediaRecognizer;
 class QUrl;
@@ -55,18 +55,17 @@ public:
     enum MediaType {
         Audio,
         Video,
+        Url,
         NotSupported = -1
     };
         
     S60MediaRecognizer(QObject *parent = 0);
     ~S60MediaRecognizer();
-    bool checkUrl(const QUrl& url);
-    MediaType IdentifyMediaType(const QUrl& url);
+    bool checkUrl(const QUrl &url);
+    MediaType IdentifyMediaType(const QUrl &url);
 
 private:
     CMPMediaRecognizer *m_recognizer;
-    int m_error; 
-
 };
 
 #endif /* S60MEDIARECOGNIZER_H_ */

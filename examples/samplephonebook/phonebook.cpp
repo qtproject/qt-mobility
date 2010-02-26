@@ -47,20 +47,22 @@
 #include <QtGui>
 
 PhoneBook::PhoneBook(QWidget *parent)
-        : QWidget(parent)
+        : QMainWindow(parent)
 {
-    m_editorPage = new ContactEditor(this);
+    QWidget *centralWidget = new QWidget(this);
+   
+    m_editorPage = new ContactEditor(centralWidget);
     connect(m_editorPage, SIGNAL(showListPage()), this, SLOT(activateList()));
 
-    m_filterPage = new FilterPage(this);
+    m_filterPage = new FilterPage(centralWidget);
     connect(m_filterPage, SIGNAL(showListPage(QContactFilter)), this, SLOT(activateList(QContactFilter)));
 
-    m_listPage = new ContactListPage(this);
+    m_listPage = new ContactListPage(centralWidget);
     connect(m_listPage, SIGNAL(showEditorPage(QContactLocalId)), this, SLOT(activateEditor(QContactLocalId)));
     connect(m_listPage, SIGNAL(showFilterPage(QContactFilter)), this, SLOT(activateFind()));
     connect(m_listPage, SIGNAL(managerChanged(QContactManager*)), this, SLOT(managerChanged(QContactManager*)));
 
-    m_stackedWidget = new QStackedWidget(this);
+    m_stackedWidget = new QStackedWidget(centralWidget);
     m_stackedWidget->addWidget(m_listPage);
     m_stackedWidget->addWidget(m_editorPage);
     m_stackedWidget->addWidget(m_filterPage);
@@ -68,8 +70,9 @@ PhoneBook::PhoneBook(QWidget *parent)
 
     QVBoxLayout *centralLayout = new QVBoxLayout;
     centralLayout->addWidget(m_stackedWidget);
-
-    setLayout(centralLayout);
+    centralWidget->setLayout(centralLayout);
+    
+    setCentralWidget(centralWidget);
 }
 
 PhoneBook::~PhoneBook()

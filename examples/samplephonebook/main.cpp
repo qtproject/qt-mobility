@@ -47,7 +47,10 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     PhoneBook *phoneBook = new PhoneBook;
+#ifdef Q_OS_SYMBIAN
+    phoneBook->showMaximized();
+#else
     phoneBook->show();
-
+#endif
     return app.exec();
 }

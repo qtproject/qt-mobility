@@ -29,6 +29,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual QtMedia::SupportEstimate </td><td class="memItemRight" valign="bottom"><b><a href="qmediaserviceprovider.html#hasSupport">hasSupport</a></b> ( const QByteArray &amp; <i>serviceType</i>, const QString &amp; <i>mimeType</i>, const QStringList &amp; <i>codecs</i>, int <i>flags</i> = 0 ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaserviceprovider.html#releaseService">releaseService</a></b> ( QMediaService * <i>service</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QMediaService * </td><td class="memItemRight" valign="bottom"><b><a href="qmediaserviceprovider.html#requestService">requestService</a></b> ( const QByteArray &amp; <i>type</i>, const QMediaServiceProviderHint &amp; <i>hint</i> = QMediaServiceProviderHint() ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qmediaserviceprovider.html#supportedMimeTypes">supportedMimeTypes</a></b> ( const QByteArray &amp; <i>serviceType</i>, int <i>flags</i> = 0 ) const</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
@@ -77,6 +78,10 @@
 <p>Requests an instance of a <i>type</i> service which best matches the given <i>hint</i>.</p>
 <p>Returns a pointer to the requested service, or a null pointer if there is no suitable service.</p>
 <p>The returned service must be released with releaseService when it is finished with.</p>
+<a name="//apple_ref/cpp/instm/QMediaServiceProvider/supportedMimeTypes"></a>
+<h3 class="fn"><a name="supportedMimeTypes"></a><a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> QMediaServiceProvider::supportedMimeTypes ( const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>serviceType</i>, int <i>flags</i> = 0 ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Returns a list of MIME types supported by the service provider for the specified <i>serviceType</i>.</p>
+<p>The resultant list is restricted to MIME types which can be supported given the constraints in <i>flags</i>.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

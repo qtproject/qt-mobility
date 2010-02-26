@@ -69,8 +69,18 @@
         audiosource = new QAudioCaptureSource;
         capture = new QMediaRecorder(audiosource);
 
+        QAudioEncoderSettings audioSettings;
+        audioSettings.setQuality(QtMedia::LowQuality);
+        audioSettings.setEncodingMode(QtMedia::ConstantQualityEncoding);
+        audioSettings.setCodec(capture-&gt;supportedAudioCodecs().first());
+        capture-&gt;setEncodingSettings(audioSettings,QVideoEncoderSettings(),capture-&gt;supportedContainers().first());
+
         <span class="comment">// set a default file</span>
+    #ifdef Q_OS_SYMBIAN
+        capture-&gt;setOutputLocation(QUrl(&quot;c:\\data\\test.wav&quot;));
+    #else
         capture-&gt;setOutputLocation(QUrl(&quot;test.raw&quot;));
+    #endif
 
         QWidget *window = new QWidget;
         QGridLayout* layout = new QGridLayout;
@@ -80,8 +90,13 @@
         deviceBox = new QComboBox(this);
         deviceBox-&gt;setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 
+        QLabel* containerLabel = new QLabel;
+        containerLabel-&gt;setText(&quot;Container&quot;);
+        containersBox = new QComboBox(this);
+        containersBox-&gt;setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+
         QLabel* codecLabel = new QLabel;
-        codecLabel-&gt;setText(&quot;Codecs&quot;);
+        codecLabel-&gt;setText(&quot;Codec&quot;);
         codecsBox = new QComboBox(this);
         codecsBox-&gt;setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 
@@ -90,12 +105,17 @@
         qualityBox = new QComboBox(this);
         qualityBox-&gt;setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 
-        for(int i = 0; i &lt; audiosource-&gt;deviceCount(); i++)
-            deviceBox-&gt;addItem(audiosource-&gt;name(i));
+        QList&lt;QString&gt; inputs = audiosource-&gt;audioInputs();
+        for(int i = 0; i &lt; inputs.size(); i++)
+            deviceBox-&gt;addItem(inputs.at(i));
 
         QStringList codecs = capture-&gt;supportedAudioCodecs();
         for(int i = 0; i &lt; codecs.count(); i++)
             codecsBox-&gt;addItem(codecs.at(i));
+
+        QStringList containers = capture-&gt;supportedContainers();
+        for(int i = 0; i &lt; containers.count(); i++)
+            containersBox-&gt;addItem(containers.at(i));
 
         qualityBox-&gt;addItem(&quot;Low&quot;);
         qualityBox-&gt;addItem(&quot;Medium&quot;);
@@ -108,13 +128,17 @@
         connect(deviceBox,SIGNAL(activated(int)),SLOT(deviceChanged(int)));
         layout-&gt;addWidget(deviceBox,0,1,1,3,Qt::AlignLeft);
 
-        layout-&gt;addWidget(codecLabel,1,0,Qt::AlignHCenter);
-        connect(codecsBox,SIGNAL(activated(int)),SLOT(codecChanged(int)));
-        layout-&gt;addWidget(codecsBox,1,1,Qt::AlignLeft);
+        layout-&gt;addWidget(containerLabel,1,0,Qt::AlignHCenter);
+        connect(containersBox,SIGNAL(activated(int)),SLOT(containerChanged(int)));
+        layout-&gt;addWidget(containersBox,1,1,Qt::AlignLeft);
 
-        layout-&gt;addWidget(qualityLabel,1,2,Qt::AlignHCenter);
+        layout-&gt;addWidget(codecLabel,1,2,Qt::AlignHCenter);
+        connect(codecsBox,SIGNAL(activated(int)),SLOT(codecChanged(int)));
+        layout-&gt;addWidget(codecsBox,1,3,Qt::AlignLeft);
+
+        layout-&gt;addWidget(qualityLabel,2,0,Qt::AlignHCenter);
         connect(qualityBox,SIGNAL(activated(int)),SLOT(qualityChanged(int)));
-        layout-&gt;addWidget(qualityBox,1,3,Qt::AlignLeft);
+        layout-&gt;addWidget(qualityBox,2,1,Qt::AlignLeft);
 
         fileButton = new QPushButton(this);
         fileButton-&gt;setText(tr(&quot;Output File&quot;));
@@ -124,7 +148,7 @@
         button = new QPushButton(this);
         button-&gt;setText(tr(&quot;Record&quot;));
         connect(button,SIGNAL(clicked()),SLOT(toggleRecord()));
-        layout-&gt;addWidget(button,3,3,Qt::AlignHCenter);
+        layout-&gt;addWidget(button,3,1,Qt::AlignHCenter);
 
         recTime = new QLabel;
         recTime-&gt;setText(&quot;0 sec&quot;);
@@ -153,40 +177,38 @@
 
     void AudioRecorder::stateChanged(QMediaRecorder::State state)
     {
-        qWarning()&lt;&lt;&quot;stateChanged() &quot;&lt;&lt;state;
+        Q_UNUSED(state)
     }
 
     void AudioRecorder::deviceChanged(int idx)
     {
-        for(int i = 0; i &lt; audiosource-&gt;deviceCount(); i++) {
-            if(deviceBox-&gt;itemText(idx).compare(audiosource-&gt;name(i)) == 0)
-                audiosource-&gt;setSelectedDevice(i);
-        }
+        audiosource-&gt;setAudioInput(deviceBox-&gt;itemText(idx));
+    }
+
+    void AudioRecorder::containerChanged(int idx)
+    {
+        QAudioEncoderSettings settings = capture-&gt;audioSettings();
+        capture-&gt;setEncodingSettings(capture-&gt;audioSettings(), QVideoEncoderSettings(), containersBox-&gt;itemText(idx));
     }
 
     void AudioRecorder::codecChanged(int idx)
     {
-        Q_UNUSED(idx);
-        <span class="comment">//capture-&gt;setAudioCodec(codecsBox-&gt;itemText(idx));</span>
+        QAudioEncoderSettings settings = capture-&gt;audioSettings();
+        settings.setCodec(codecsBox-&gt;itemText(idx));
+        capture-&gt;setEncodingSettings(settings);
     }
 
     void AudioRecorder::qualityChanged(int idx)
     {
-        Q_UNUSED(idx);
-        <span class="comment">/*
-        if(capture-&gt;audioCodec().compare(&quot;audio/pcm&quot;) == 0) {
-            if(qualityBox-&gt;itemText(idx).compare(&quot;Low&quot;) == 0) {
-                // 8000Hz mono is 8kbps
-                capture-&gt;setAudioBitrate(8);
-            } else if(qualityBox-&gt;itemText(idx).compare(&quot;Medium&quot;) == 0) {
-                // 22050Hz mono is 44.1kbps
-                capture-&gt;setAudioBitrate(44);
-            } else if(qualityBox-&gt;itemText(idx).compare(&quot;High&quot;) == 0) {
-                // 44100Hz mono is 88.2kbps
-                capture-&gt;setAudioBitrate(88);
-            }
+        QAudioEncoderSettings settings = capture-&gt;audioSettings();
+        if(qualityBox-&gt;itemText(idx).compare(&quot;Low&quot;) == 0) {
+            settings.setQuality(QtMedia::LowQuality);
+        } else if(qualityBox-&gt;itemText(idx).compare(&quot;Medium&quot;) == 0) {
+            settings.setQuality(QtMedia::NormalQuality);
+        } else if(qualityBox-&gt;itemText(idx).compare(&quot;High&quot;) == 0) {
+            settings.setQuality(QtMedia::HighQuality);
         }
-        */</span>
+        capture-&gt;setEncodingSettings(settings);
     }
 
     void AudioRecorder::toggleRecord()

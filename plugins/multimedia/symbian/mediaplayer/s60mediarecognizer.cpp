@@ -43,60 +43,57 @@
 #include <MPMediaRecognizer.h>
 #include <e32def.h>
 #include <e32cmn.h>
-#include <QUrl>
-#include <QDir>
+#include <QtCore/qurl.h>
+#include <QtCore/qdir.h>
+#include <QtCore/qdebug.h>
 
 S60MediaRecognizer::S60MediaRecognizer(QObject *parent) : QObject(parent)
 {
-    m_recognizer = NULL;
-    TRAP(m_error, m_recognizer = CMPMediaRecognizer::NewL());
+	TRAP_IGNORE(m_recognizer = CMPMediaRecognizer::NewL());
 }
 
 S60MediaRecognizer::~S60MediaRecognizer()
 {
-    delete m_recognizer;
-    m_recognizer = NULL;
-}
-/*
- * Checks if Url is valid or not.
- */
-bool S60MediaRecognizer::checkUrl(const QUrl& url)
-{
-   TBool validUrl = false;
-   if (m_recognizer) {
-       TPtrC myDesc (static_cast<const TUint16*>(url.toString().utf16()), url.toString().length());
-       validUrl = m_recognizer->ValidUrl(myDesc);
-   }
-   
-   return validUrl;
+	delete m_recognizer;
+	m_recognizer = NULL;
 }
 
-S60MediaRecognizer::MediaType S60MediaRecognizer::IdentifyMediaType(const QUrl& url)
+bool S60MediaRecognizer::checkUrl(const QUrl &url)
 {
-   CMPMediaRecognizer::TMPMediaType type;
-   QString filePath = QDir::toNativeSeparators(url.toLocalFile());
-   TPtrC16 urlPtr(reinterpret_cast<const TUint16*>(filePath.utf16()));
-   MediaType mediaType = NotSupported;
-   TRAP(m_error, type = m_recognizer->IdentifyMediaTypeL(urlPtr, EFalse));
-   
-   if (!m_error) {
-       switch (type) {
-       case CMPMediaRecognizer::ELocalAudioFile:
-           mediaType = Audio;
-           break;
-       case CMPMediaRecognizer::ELocalVideoFile:
-           mediaType = Video;
-           break;
-       case CMPMediaRecognizer::ELocalAudioPlaylist:
-       case CMPMediaRecognizer::EUrl:
-// TODO: Must be considered when streams will be implemented
-       case CMPMediaRecognizer::ELocalRamFile:
-       case CMPMediaRecognizer::ELocalSdpFile:
-//     case CMPMediaRecognizer::EProgressiveDownload:
-       case CMPMediaRecognizer::EUnidentified:
-       default:
-           break;
-       }
-   }
-   return mediaType; 
+	TBool isValidUrl = false;
+	TPtrC validUrlPtr (static_cast<const TUint16*>(url.toString().utf16()), url.toString().length());
+	isValidUrl = m_recognizer->ValidUrl(validUrlPtr);  
+	return isValidUrl;
+}
+
+S60MediaRecognizer::MediaType S60MediaRecognizer::IdentifyMediaType(const QUrl &url)
+{    
+	CMPMediaRecognizer::TMPMediaType type = CMPMediaRecognizer::EUnidentified;
+	QString filePath = QDir::toNativeSeparators(url.toLocalFile());
+	if (filePath.isNull()) {
+		filePath = url.toString();		
+	}
+	TPtrC16 urlPtr(reinterpret_cast<const TUint16*>(filePath.utf16()));
+
+	TRAP_IGNORE(type = m_recognizer->IdentifyMediaTypeL(urlPtr, ETrue);)
+	m_recognizer->FreeFilehandle();
+	
+	switch (type) {
+	   case CMPMediaRecognizer::ELocalAudioFile:
+		   return Audio;
+	   case CMPMediaRecognizer::ELocalVideoFile:
+		   return Video;
+	   case CMPMediaRecognizer::EUrl:
+		   return Url;
+	   case CMPMediaRecognizer::ELocalAudioPlaylist:
+	   // TODO: Must be considered when streams will be implemented
+	   case CMPMediaRecognizer::ELocalRamFile:
+	   case CMPMediaRecognizer::ELocalSdpFile:
+	   // case CMPMediaRecognizer::EProgressiveDownload:
+	   case CMPMediaRecognizer::EUnidentified:
+	   default:
+		   break;
+	}
+
+	return NotSupported; 
 }

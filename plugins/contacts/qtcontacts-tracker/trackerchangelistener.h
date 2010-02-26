@@ -107,9 +107,6 @@ private slots:
     void subjectsAdded(const QStringList &subjects);
     void subjectsRemoved(const QStringList &subjects);
     void subjectsChanged(const QStringList &subjects);
-    void imAccountChanged(const QStringList &subjects);
-    // receives
-    void imQueryReady(AsyncQuery*);
 private:
     QHash<AsyncQuery*, QSharedPointer<AsyncQuery> > pendingQueries;
 };

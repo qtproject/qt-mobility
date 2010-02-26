@@ -115,6 +115,11 @@ QVariantMap QContactSendEmailAction::metadata() const
     return QVariantMap();
 }
 
+QVariantMap QContactSendEmailAction::metaData() const
+{
+    return QVariantMap();
+}
+
 QContactFilter QContactSendEmailAction::contactFilter(const QVariant& value) const
 {
     QContactDetailFilter retn;

@@ -2,7 +2,7 @@
 HEADERS += \
     $$PWD/support.h
 
-symbian|win32 {
+symbian|wince*|maemo5|maemo6|win32|mac {
     symbian {
         SOURCES += $$PWD/support_symbian.cpp
     }
@@ -13,9 +13,12 @@ symbian|win32 {
             LIBS += cemapi.lib
         }
         else {
-            LIBS += mapi32.lib 
+            LIBS += mapi32.lib Advapi32.lib
         }
 
+    }
+    maemo5|maemo6|mac {
+         SOURCES += $$PWD/support_stub.cpp       
     }
 } else {
     # QMF headers must be located at $QMF_INCLUDEDIR

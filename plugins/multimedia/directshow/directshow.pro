@@ -17,4 +17,17 @@ DEPENDPATH += .
 HEADERS += dsserviceplugin.h
 SOURCES += dsserviceplugin.cpp
 
-include(camera/camera.pri)
+TMP_INCLUDE = $$quote($$(INCLUDE))
+TMP_SEARCHPATHS = $$split(TMP_INCLUDE, ";") $$QMAKE_INCDIR
+TMP_REQUIRED_HEADERS =
+for(p, TMP_SEARCHPATHS) {
+    exists($${p}/qedit.h): TMP_REQUIRED_HEADERS *= qedit.h
+}
+contains(TMP_REQUIRED_HEADERS, qedit.h) {
+    include(camera/camera.pri)
+}
+include (player/player.pri)
+
+target.path=$$QT_MOBILITY_PREFIX/plugins/mediaservice
+INSTALLS+=target
+

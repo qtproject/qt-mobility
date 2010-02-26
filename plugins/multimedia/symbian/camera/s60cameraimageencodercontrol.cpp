@@ -53,7 +53,6 @@ S60CameraImageEncoderControl::S60CameraImageEncoderControl(QObject *parent)
 S60CameraImageEncoderControl::S60CameraImageEncoderControl(QObject *session, QObject *parent)
    :QImageEncoderControl(parent)
 {
-    // use cast if we want to change session class later on..
     m_session = qobject_cast<S60CameraSession*>(session);
 }
 
@@ -61,38 +60,16 @@ S60CameraImageEncoderControl::~S60CameraImageEncoderControl()
 {
 }
 
-QSize S60CameraImageEncoderControl::resolution() const
+QList<QSize> S60CameraImageEncoderControl::supportedResolutions(
+        const QImageEncoderSettings &settings, bool *continuous) const
 {
-    QSize resolution;
-    if (m_session)
-        resolution = m_session->captureSize();
-    return resolution;
-}
-QSize S60CameraImageEncoderControl::minimumResolution() const
-{
-    QSize resolution;
-    if (m_session)
-        resolution = m_session->minimumCaptureSize();
-    return resolution;
-}
-QSize S60CameraImageEncoderControl::maximumResolution() const
-{
-    QSize resolution;
-    if (m_session)
-        resolution = m_session->maximumCaptureSize();
-    return resolution;
-}
-QList<QSize> S60CameraImageEncoderControl::supportedResolutions() const
-{
+    // we support arbitary resolutions. they are converted to nearest real resolution
+    *continuous = true;
+
     QList<QSize> resolutions;
     if (m_session)
-        resolutions = m_session->supportedCaptureSizes();
+        resolutions = m_session->supportedCaptureSizesForCodec(settings.codec());
     return resolutions;
-}
-void S60CameraImageEncoderControl::setResolution(const QSize &size)
-{
-    if (m_session)
-        m_session->setCaptureSize(size);
 }
 QStringList S60CameraImageEncoderControl::supportedImageCodecs() const
 {
@@ -100,20 +77,6 @@ QStringList S60CameraImageEncoderControl::supportedImageCodecs() const
     if (m_session)
         codecs = m_session->supportedImageCaptureCodecs();
     return codecs;
-}
-QString S60CameraImageEncoderControl::imageCodec() const
-{
-    QString codec;
-    if (m_session)
-        codec = m_session->imageCaptureCodec();
-    return codec;
-}
-bool S60CameraImageEncoderControl::setImageCodec(const QString &codecName)
-{
-    bool success = false;
-    if (m_session)
-        success = m_session->setImageCaptureCodec(codecName);
-    return success;
 }
 
 QString S60CameraImageEncoderControl::imageCodecDescription(const QString &codecName) const
@@ -124,17 +87,58 @@ QString S60CameraImageEncoderControl::imageCodecDescription(const QString &codec
     return codecDesc;
 }
 
-QtMedia::EncodingQuality S60CameraImageEncoderControl::quality() const
+QImageEncoderSettings S60CameraImageEncoderControl::imageSettings() const
 {
-    //TODO:  what is the quality if no session is available?
-    int quality = KErrNotFound;
-    if (m_session)
-        quality = m_session->captureQuality();
-    return (QtMedia::EncodingQuality) quality;
+    return m_imageEncoderSettings;
 }
-void S60CameraImageEncoderControl::setQuality(QtMedia::EncodingQuality quality)
+void S60CameraImageEncoderControl::setImageSettings(const QImageEncoderSettings &settings)
 {
-    //TODO:
-    if (m_session)
-        m_session->setCaptureQuality(quality);
+    m_imageEncoderSettings = settings;
+    if (m_session && !settings.isNull()) {
+        // set codec first as optiomal capturesize is decided based on chosen codec 
+        m_session->setImageCaptureCodec(m_imageEncoderSettings.codec());
+        m_session->setCaptureSize(m_imageEncoderSettings.resolution());
+        m_session->setCaptureQuality(m_imageEncoderSettings.quality());
+        //update setting 
+        m_session->updateImageCaptureCodecs();
+    }
 }
+
+//QSize S60CameraImageEncoderControl::resolution() const
+//{
+//    QSize resolution;
+//    if (m_session)
+//        resolution = m_session->captureSize();
+//    return resolution;
+//}
+//QSize S60CameraImageEncoderControl::minimumResolution() const
+//{
+//    QSize resolution;
+//    if (m_session)
+//        resolution = m_session->minimumCaptureSize();
+//    return resolution;
+//}
+//QSize S60CameraImageEncoderControl::maximumResolution() const
+//{
+//    QSize resolution;
+//    if (m_session)
+//        resolution = m_session->maximumCaptureSize();
+//    return resolution;
+//}
+//
+//QtMedia::EncodingQuality S60CameraImageEncoderControl::quality() const
+//{
+//    //TODO:  what is the quality if no session is available?
+//    int quality = KErrNotFound;
+//    if (m_session)
+//        quality = m_session->captureQuality();
+//    return (QtMedia::EncodingQuality) quality;
+//}
+//
+//QString S60CameraImageEncoderControl::imageCodec() const
+//{
+//    QString codec;
+//    if (m_session)
+//        codec = m_session->imageCaptureCodec();
+//    return codec;
+//}

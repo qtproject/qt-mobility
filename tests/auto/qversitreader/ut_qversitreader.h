@@ -45,27 +45,37 @@
 #include <QObject>
 #include <QBuffer>
 #include <qmobilityglobal.h>
+#include "qversitreader.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QVersitReader;
 class QVersitReaderPrivate;
 
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
 
+// Poor man's QSignalSpy because I couldn't get QSignalSpy to work with the user type QVR::State.
+class SignalCatcher : public QObject
+{
+Q_OBJECT
+public slots:
+    void stateChanged(QVersitReader::State state) {
+        mReceived.append(state);
+    }
+
+public:
+    QList<QVersitReader::State> mReceived;
+};
+
 class UT_QVersitReader : public QObject                 
 {
      Q_OBJECT
-
-public slots:
-    void readingDone();
 
 private slots: // Tests
 
     void init();
     void cleanup();
-    
+
     void testDevice();
     void testReading();
     void testResult();
@@ -79,8 +89,7 @@ private: // Data
     QVersitReader* mReader;
     QVersitReaderPrivate* mReaderPrivate;
     QBuffer* mInputDevice;
-    int mExpectedDocumentCount;
-    bool mReadingDoneCalled;
+    SignalCatcher* mSignalCatcher;
 };
 
 #endif // UT_VERSITREADER_H

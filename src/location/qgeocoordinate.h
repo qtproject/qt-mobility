@@ -65,8 +65,8 @@ public:
     };
 
     enum CoordinateFormat {
-        DecimalDegrees,
-        DecimalDegreesWithHemisphere,
+        Degrees,
+        DegreesWithHemisphere,
         DegreesMinutes,
         DegreesMinutesWithHemisphere,
         DegreesMinutesSeconds,
@@ -82,7 +82,9 @@ public:
     QGeoCoordinate &operator=(const QGeoCoordinate &other);
 
     bool operator==(const QGeoCoordinate &other) const;
-    inline bool operator!=(const QGeoCoordinate &other) const { return !operator==(other); }
+    inline bool operator!=(const QGeoCoordinate &other) const {
+        return !operator==(other);
+    }
 
     bool isValid() const;
     CoordinateType type() const;

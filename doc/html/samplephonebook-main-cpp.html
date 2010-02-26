@@ -62,8 +62,11 @@
         QApplication app(argc, argv);
 
         PhoneBook *phoneBook = new PhoneBook;
+    #ifdef Q_OS_SYMBIAN
+        phoneBook-&gt;showMaximized();
+    #else
         phoneBook-&gt;show();
-
+    #endif
         return app.exec();
     }</pre>
 <p /><address><hr /><div align="center">

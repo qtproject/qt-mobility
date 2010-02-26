@@ -10,7 +10,9 @@ SOURCES = logfilepositionsource.cpp \
 CONFIG += console
 
 include(../examples.pri)
-qtAddLibrary(QtLocation)
+
+CONFIG += mobility
+MOBILITY = location
 
 symbian|wince*: {
     symbian: {

@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef MAPWINDOW_H
 #define MAPWINDOW_H
 
@@ -45,11 +46,15 @@
 #include <QMainWindow>
 
 class QWebView;
+
+QT_BEGIN_NAMESPACE
 class QLabel;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 class QGeoPositionInfo;
-class QNmeaPositionInfoSource;
+class QGeoPositionInfoSource;
+class QNetworkSession;
 QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
@@ -59,20 +64,26 @@ class MapWindow : public QMainWindow
     Q_OBJECT
 public:
     MapWindow(QWidget *parent = 0, Qt::WFlags flags = 0);
+    ~MapWindow();
     void start();
 
 private slots:
+    void delayedInit();
+    void waitForFix();
     void positionUpdated(const QGeoPositionInfo &info);
     void loadStarted();
     void loadFinished(bool ok);
 
 private:
-    QNmeaPositionInfoSource *source;
     QWebView *webView;
     QLabel *posLabel;
     QLabel *headingAndSpeedLabel;
     QLabel *dateTimeLabel;
     bool loading;
+    QNetworkSession *session;
+    bool usingLogFile;
+    QGeoPositionInfoSource *location;
+    bool waitingForFix;
 };
 
 #endif

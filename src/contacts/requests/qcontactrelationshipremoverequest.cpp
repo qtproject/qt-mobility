@@ -51,14 +51,19 @@ QTM_BEGIN_NAMESPACE
   to asynchronously request that certain relationships be removed from
   a contacts store.
 
+  For a QContactRelationshipRemoveRequest, the resultsUpdated() signal will be emitted when
+  the individual item errors (which may be retrieved by calling errorMap()) are updated, or if the overall
+  operation error (which may be retrieved by calling error()) is updated.
+
   \ingroup contacts-requests
  */
 
 /*!
- * \fn QContactRelationshipRemoveRequest::progress(QContactRelationshipRemoveRequest* self)
- * This signal is emitted when some progress has been made on the request, causing either a change of
- * status or an update of results, or both.  It identifies which request the signal originated from
- * by including a pointer to \a self.
+  \fn QContactRelationshipRemoveRequest::progress(QContactRelationshipRemoveRequest* self)
+  \deprecated
+  This signal is emitted when some progress has been made on the request, causing either a change of
+  status or an update of results, or both.  It identifies which request the signal originated from
+  by including a pointer to \a self.
  */
 
 /*! Constructs a new relationship remove request */
@@ -78,6 +83,7 @@ QContactRelationshipRemoveRequest::~QContactRelationshipRemoveRequest()
 void QContactRelationshipRemoveRequest::setFirst(const QContactId& firstId)
 {
     Q_D(QContactRelationshipRemoveRequest);
+    qWarning("QContactRelationshipRemoveRequest::setFirst() This function was deprecated in week 4 and will be removed once the transition period has elapsed.  Use setRelationships() instead!");
     d->m_first = firstId;
 }
 
@@ -85,6 +91,7 @@ void QContactRelationshipRemoveRequest::setFirst(const QContactId& firstId)
 QContactId QContactRelationshipRemoveRequest::first() const
 {
     Q_D(const QContactRelationshipRemoveRequest);
+    qWarning("QContactRelationshipRemoveRequest::first() This function was deprecated in week 4 and will be removed once the transition period has elapsed.  Use relationships() instead!");
     return d->m_first;
 }
 
@@ -94,6 +101,7 @@ QContactId QContactRelationshipRemoveRequest::first() const
 void QContactRelationshipRemoveRequest::setRelationshipType(const QString& relationshipType)
 {
     Q_D(QContactRelationshipRemoveRequest);
+    qWarning("QContactRelationshipRemoveRequest::setRelationshipType() This function was deprecated in week 4 and will be removed once the transition period has elapsed.  Use setRelationships() instead!");
     d->m_relationshipType = relationshipType;
 }
 
@@ -101,6 +109,7 @@ void QContactRelationshipRemoveRequest::setRelationshipType(const QString& relat
 QString QContactRelationshipRemoveRequest::relationshipType() const
 {
     Q_D(const QContactRelationshipRemoveRequest);
+    qWarning("QContactRelationshipRemoveRequest::relationshipType() This function was deprecated in week 4 and will be removed once the transition period has elapsed.  Use setRelationships() instead!");
     return d->m_relationshipType;
 }
 
@@ -110,6 +119,7 @@ QString QContactRelationshipRemoveRequest::relationshipType() const
 void QContactRelationshipRemoveRequest::setSecond(const QContactId& secondId)
 {
     Q_D(QContactRelationshipRemoveRequest);
+    qWarning("QContactRelationshipRemoveRequest::setSecond() This function was deprecated in week 4 and will be removed once the transition period has elapsed.  Use setRelationships() instead!");
     d->m_second = secondId;
 }
 
@@ -117,7 +127,29 @@ void QContactRelationshipRemoveRequest::setSecond(const QContactId& secondId)
 QContactId QContactRelationshipRemoveRequest::second() const
 {
     Q_D(const QContactRelationshipRemoveRequest);
+    qWarning("QContactRelationshipRemoveRequest::second() This function was deprecated in week 4 and will be removed once the transition period has elapsed.  Use setRelationships() instead!");
     return d->m_second;
+}
+
+/*! Sets the list of relationships which will be removed to \a relationships */
+void QContactRelationshipRemoveRequest::setRelationships(const QList<QContactRelationship>& relationships)
+{
+    Q_D(QContactRelationshipRemoveRequest);
+    d->m_relationships = relationships;
+}
+
+/*! Returns the list of relationships which will be removed */
+QList<QContactRelationship> QContactRelationshipRemoveRequest::relationships() const
+{
+    Q_D(const QContactRelationshipRemoveRequest);
+    return d->m_relationships;
+}
+
+/*! Returns the map of input contact list indices to errors which occurred */
+QMap<int, QContactManager::Error> QContactRelationshipRemoveRequest::errorMap() const
+{
+    Q_D(const QContactRelationshipRemoveRequest);
+    return d->m_errors;
 }
 
 #include "moc_qcontactrelationshipremoverequest.cpp"

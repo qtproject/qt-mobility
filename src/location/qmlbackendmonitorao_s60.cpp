@@ -146,7 +146,7 @@ void QMLBackendMonitorAO::ConstructL(RLbtServer &aLbtServ)
 }
 
 QMLBackendMonitorAO::QMLBackendMonitorAO()
-        :CActive(EPriorityStandard), // Standard priority
+        : CActive(EPriorityStandard), // Standard priority
         subsessionCreated(FALSE)
 {
     CActiveScheduler::Add(this);
