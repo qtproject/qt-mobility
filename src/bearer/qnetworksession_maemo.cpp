@@ -92,10 +92,8 @@ void QNetworkSessionPrivate::cleanupSession(void)
 
 void QNetworkSessionPrivate::updateState(QNetworkSession::State newState)
 {
-    if( newState != state) {
-        state = newState;
-
-	if (state == QNetworkSession::Disconnected) {
+    if (newState != state) {
+        if (newState == QNetworkSession::Disconnected) {
             if (isOpen) {
                 // The Session was aborted by the user or system
                 lastError = QNetworkSession::SessionAbortedError;
@@ -112,8 +110,16 @@ void QNetworkSessionPrivate::updateState(QNetworkSession::State newState)
             if (publicConfig.type() == QNetworkConfiguration::UserChoice) {
                 copyConfig(publicConfig, activeConfig);
                 activeConfig.d->state = QNetworkConfiguration::Defined;
+            } else {
+                if (!activeConfig.isValid()) {
+                    // Active configuration (IAP) was removed from system
+                    // => Connection was disconnected and configuration became
+                    //    invalid
+                    // => Also Session state must be changed to invalid
+                    newState = QNetworkSession::Invalid;
+                }
             }
-	} else if (state == QNetworkSession::Connected) {
+        } else if (newState == QNetworkSession::Connected) {
             if (opened) {
                 isOpen = true;
             }
@@ -124,7 +130,10 @@ void QNetworkSessionPrivate::updateState(QNetworkSession::State newState)
 	    publicConfig.d->state = QNetworkConfiguration::Active;
 	}
 
-	emit q->stateChanged(newState);
+        if (newState != state) {
+            state = newState;
+            emit q->stateChanged(newState);
+        }
     }
 }
 
@@ -559,6 +568,11 @@ void QNetworkSessionPrivate::open()
 {
     if (m_stopTimer.isActive()) {
         m_stopTimer.stop();
+    }
+    if (!publicConfig.isValid()) {
+        lastError = QNetworkSession::InvalidConfigurationError;
+        emit q->error(lastError);
+        return;
     }
     if (serviceConfig.isValid()) {
         lastError = QNetworkSession::OperationNotSupportedError;
