@@ -49,7 +49,7 @@ QTM_USE_NAMESPACE
 
 /*!
     \class QLandmarkCategoryId
-    \ingroup landmarks
+    \ingroup location
 
     \brief The QLandmarkCategoryId class provides a unique identifier for
     a category.
@@ -185,7 +185,7 @@ bool QLandmarkCategoryPrivate::operator== (const QLandmarkCategoryPrivate &other
     \brief The QLandmarkCategory class designates a grouping of
     landmarks of similar type.
 
-    \ingroup landmarks
+    \ingroup location
 
     Landmarks of similar type may be grouped together into categories,
     e.g. restaurants, accommodation etc.  A QLandmarkCategory object
@@ -331,7 +331,7 @@ QStringList QLandmarkCategory::attributes() const
 // ---- QLandmarkId ----
 /*!
     \class QLandmarkId
-    \ingroup landmarks
+    \ingroup location
 
     \brief The QLandmarkId class provides a unique identifier for a
     landmark.
@@ -494,7 +494,7 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
 
 /*!
     \class QLandmark
-    \ingroup landmarks
+    \ingroup location
 
     \brief The QLandmark class describes location or point of interest
 

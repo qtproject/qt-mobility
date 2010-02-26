@@ -52,7 +52,7 @@ QTM_BEGIN_NAMESPACE
     as resultant category identifiers are found (these are retrievable via the callings ids()),
      as well as if an overall operation error occurred(which may be retrieved by calling error()).
 
-    \ingroup landmarks
+    \ingroup location
 */
 
 /*!

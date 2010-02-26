@@ -55,7 +55,7 @@ QTM_BEGIN_NAMESPACE
     retrieved by calling error()), or when individual items have been
     saved (which may be retrieved by calling landmarks()).
 
-    \ingroup landmarks
+    \ingroup location
 */
 
 /*!

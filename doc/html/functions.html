@@ -222,8 +222,10 @@
 <li>activeEndpointChanged: <a href="qaudioendpointselector.html#activeEndpointChanged">QAudioEndpointSelector</a></li>
 <li>activeStreamsChanged: <a href="qmediastreamscontrol.html#activeStreamsChanged">QMediaStreamsControl</a></li>
 <li>activeTime: <a href="qnetworksession.html#activeTime">QNetworkSession</a></li>
+<li>addCategory: <a href="qlandmark.html#addCategory">QLandmark</a></li>
 <li>addFilter: <a href="qsensor.html#addFilter">QSensor</a></li>
 <li>addInterval: <a href="qmediatimerange.html#addInterval">QMediaTimeRange</a></li>
+<li>addManager: <a href="qlandmarkmanager.html#addManager">QLandmarkManager</a></li>
 <li>addMedia: <a href="qmediaplaylist.html#addMedia-2">QMediaPlaylist</a> <a href="qmediaplaylistprovider.html#addMedia-2">QMediaPlaylistProvider</a></li>
 <li>addMessage: <a href="qmessagemanager.html#addMessage">QMessageManager</a></li>
 <li>addProperty: <a href="qversitdocument.html#addProperty">QVersitDocument</a></li>
@@ -251,7 +253,8 @@
 <li>assistantName: <a href="qcontactorganization.html#assistantName">QContactOrganization</a></li>
 <li>atEnd: <a href="qmediaplaylistreader.html#atEnd">QMediaPlaylistReader</a></li>
 <li>attachmentIds: <a href="qmessage.html#attachmentIds">QMessage</a></li>
-<li>attribute: <a href="qgeopositioninfo.html#attribute">QGeoPositionInfo</a> <a href="qgeosatelliteinfo.html#attribute">QGeoSatelliteInfo</a> <a href="qserviceinterfacedescriptor.html#attribute">QServiceInterfaceDescriptor</a></li>
+<li>attribute: <a href="qgeopositioninfo.html#attribute">QGeoPositionInfo</a> <a href="qgeosatelliteinfo.html#attribute">QGeoSatelliteInfo</a> <a href="qlandmark.html#attribute">QLandmark</a> <a href="qlandmarkcategory.html#attribute">QLandmarkCategory</a> <a href="qserviceinterfacedescriptor.html#attribute">QServiceInterfaceDescriptor</a></li>
+<li>attributes: <a href="qlandmark.html#attributes">QLandmark</a> <a href="qlandmarkcategory.html#attributes">QLandmarkCategory</a></li>
 <li>audioAvailableChanged: <a href="qmediaplayer.html#audioAvailableChanged">QMediaPlayer</a> <a href="qmediaplayercontrol.html#audioAvailableChanged">QMediaPlayerControl</a></li>
 <li>audioBitRate: <a href="qmediaresource.html#audioBitRate">QMediaResource</a></li>
 <li>audioCodec: <a href="qmediaresource.html#audioCodec">QMediaResource</a></li>
@@ -269,7 +272,7 @@
 <li>availableEndpointsChanged: <a href="qaudioendpointselector.html#availableEndpointsChanged">QAudioEndpointSelector</a></li>
 <li>availableExtendedMetaData: <a href="qmediaobject.html#availableExtendedMetaData">QMediaObject</a> <a href="qmetadatacontrol.html#availableExtendedMetaData">QMetaDataControl</a></li>
 <li>availableLanguages: <a href="qsysteminfo.html#availableLanguages-prop">QSystemInfo</a></li>
-<li>availableManagers: <a href="qcontactmanager.html#availableManagers">QContactManager</a></li>
+<li>availableManagers: <a href="qcontactmanager.html#availableManagers">QContactManager</a> <a href="qlandmarkmanager.html#availableManagers">QLandmarkManager</a></li>
 <li>availableMetaData: <a href="qmediaobject.html#availableMetaData">QMediaObject</a> <a href="qmetadatacontrol.html#availableMetaData">QMetaDataControl</a></li>
 <li>availableOutputs: <a href="qvideooutputcontrol.html#availableOutputs">QVideoOutputControl</a></li>
 <li>availableOutputsChanged: <a href="qvideooutputcontrol.html#availableOutputsChanged">QVideoOutputControl</a></li>
@@ -323,7 +326,7 @@
 <li>calibrationLevel: <a href="qcompassreading.html#calibrationLevel-prop">QCompassReading</a> <a href="qmagnetometerreading.html#calibrationLevel-prop">QMagnetometerReading</a></li>
 <li>canRead: <a href="qmediaplaylistioplugin.html#canRead-2">QMediaPlaylistIOPlugin</a></li>
 <li>canWrite: <a href="qmediaplaylistioplugin.html#canWrite">QMediaPlaylistIOPlugin</a></li>
-<li>cancel: <a href="qcontactabstractrequest.html#cancel">QContactAbstractRequest</a> <a href="qmessageservice.html#cancel">QMessageService</a> <a href="qversitreader.html#cancel">QVersitReader</a> <a href="qversitwriter.html#cancel">QVersitWriter</a></li>
+<li>cancel: <a href="qcontactabstractrequest.html#cancel">QContactAbstractRequest</a> <a href="qlandmarkabstractrequest.html#cancel">QLandmarkAbstractRequest</a> <a href="qmessageservice.html#cancel">QMessageService</a> <a href="qversitreader.html#cancel">QVersitReader</a> <a href="qversitwriter.html#cancel">QVersitWriter</a></li>
 <li>cancelFocusing: <a href="qcamera.html#cancelFocusing">QCamera</a> <a href="qcamerafocuscontrol.html#cancelFocusing">QCameraFocusControl</a></li>
 <li>cancelRequest: <a href="qcontactmanagerengine.html#cancelRequest">QContactManagerEngine</a> <a href="qcontactmemoryengine.html#cancelRequest">QContactMemoryEngine</a></li>
 <li>cancelSearch: <a href="qradiotuner.html#cancelSearch">QRadioTuner</a> <a href="qradiotunercontrol.html#cancelSearch">QRadioTunerControl</a></li>
@@ -335,6 +338,13 @@
 <li>captureMode: <a href="qcamera.html#captureMode-prop">QCamera</a> <a href="qcameracontrol.html#captureMode">QCameraControl</a></li>
 <li>captureModeChanged: <a href="qcamera.html#captureModeChanged">QCamera</a> <a href="qcameracontrol.html#captureModeChanged">QCameraControl</a></li>
 <li>caseSensitivity: <a href="qcontactsortorder.html#caseSensitivity">QContactSortOrder</a></li>
+<li>categories: <a href="qlandmark.html#categories">QLandmark</a> <a href="qlandmarkcategorysaverequest.html#categories">QLandmarkCategorySaveRequest</a></li>
+<li>category: <a href="qlandmarkcategoryfilter.html#category">QLandmarkCategoryFilter</a> <a href="qlandmarkmanager.html#category">QLandmarkManager</a></li>
+<li>categoryAdded: <a href="qlandmarkmanager.html#categoryAdded">QLandmarkManager</a></li>
+<li>categoryId: <a href="qlandmarkcategory.html#categoryId">QLandmarkCategory</a></li>
+<li>categoryIds: <a href="qlandmarkcategoryremoverequest.html#categoryIds">QLandmarkCategoryRemoveRequest</a> <a href="qlandmarkmanager.html#categoryIds">QLandmarkManager</a></li>
+<li>categoryRemoved: <a href="qlandmarkmanager.html#categoryRemoved">QLandmarkManager</a></li>
+<li>categoryUpdated: <a href="qlandmarkmanager.html#categoryUpdated">QLandmarkManager</a></li>
 <li>cc: <a href="qmessage.html#cc">QMessage</a></li>
 <li>cd: <a href="qvaluespacesubscriber.html#cd">QValueSpaceSubscriber</a></li>
 <li>cdUp: <a href="qvaluespacesubscriber.html#cdUp">QValueSpaceSubscriber</a></li>
@@ -355,6 +365,7 @@
 <li>codecDescription: <a href="qaudioencodercontrol.html#codecDescription">QAudioEncoderControl</a></li>
 <li>codecs: <a href="qmediaserviceproviderhint.html#codecs">QMediaServiceProviderHint</a></li>
 <li>colorDepth: <a href="qsystemdisplayinfo.html#colorDepth">QSystemDisplayInfo</a></li>
+<li>compare: <a href="qlandmarkdistancesort.html#compare">QLandmarkDistanceSort</a> <a href="qlandmarknamesort.html#compare">QLandmarkNameSort</a> <a href="qlandmarksortorder.html#compare">QLandmarkSortOrder</a></li>
 <li>compareContact: <a href="qcontactmanagerengine.html#compareContact">QContactManagerEngine</a></li>
 <li>compareVariant: <a href="qcontactmanagerengine.html#compareVariant">QContactManagerEngine</a></li>
 <li>compose: <a href="qmessageservice.html#compose">QMessageService</a></li>
@@ -386,11 +397,11 @@
 <li>contrast: <a href="qimageprocessingcontrol.html#contrast">QImageProcessingControl</a> <a href="qvideowidget.html#contrast-prop">QVideoWidget</a> <a href="qvideowidgetcontrol.html#contrast">QVideoWidgetControl</a> <a href="qvideowindowcontrol.html#contrast">QVideoWindowControl</a></li>
 <li>contrastChanged: <a href="qvideowidget.html#contrastChanged">QVideoWidget</a> <a href="qvideowidgetcontrol.html#contrastChanged">QVideoWidgetControl</a> <a href="qvideowindowcontrol.html#contrastChanged">QVideoWindowControl</a></li>
 <li>control: <a href="qmediaservice.html#control-2">QMediaService</a></li>
-<li>coordinate: <a href="qgeopositioninfo.html#coordinate">QGeoPositionInfo</a></li>
+<li>coordinate: <a href="qgeopositioninfo.html#coordinate">QGeoPositionInfo</a> <a href="qlandmark.html#coordinate">QLandmark</a> <a href="qlandmarkdistancesort.html#coordinate">QLandmarkDistanceSort</a> <a href="qlandmarknearestfilter.html#coordinate">QLandmarkNearestFilter</a> <a href="qlandmarkproximityfilter.html#coordinate">QLandmarkProximityFilter</a></li>
 <li>countAccounts: <a href="qmessagemanager.html#countAccounts">QMessageManager</a></li>
 <li>countFolders: <a href="qmessagemanager.html#countFolders">QMessageManager</a></li>
 <li>countMessages: <a href="qmessagemanager.html#countMessages">QMessageManager</a> <a href="qmessageservice.html#countMessages">QMessageService</a></li>
-<li>country: <a href="qcontactaddress.html#country">QContactAddress</a></li>
+<li>country: <a href="qcontactaddress.html#country">QContactAddress</a> <a href="qlandmark.html#country">QLandmark</a></li>
 <li>create: <a href="qmediaserviceproviderplugin.html#create">QMediaServiceProviderPlugin</a></li>
 <li>createBackend: <a href="qsensorbackendfactory.html#createBackend">QSensorBackendFactory</a> <a href="qsensormanager.html#createBackend">QSensorManager</a></li>
 <li>createDefaultMonitor: <a href="qgeoareamonitor.html#createDefaultMonitor">QGeoAreaMonitor</a></li>
@@ -431,6 +442,7 @@
 <li>defaultConfiguration: <a href="qnetworkconfigurationmanager.html#defaultConfiguration">QNetworkConfigurationManager</a></li>
 <li>defaultDevice: <a href="qvideodevicecontrol.html#defaultDevice">QVideoDeviceControl</a></li>
 <li>defaultEndpoint: <a href="qaudioendpointselector.html#defaultEndpoint">QAudioEndpointSelector</a></li>
+<li>defaultManager: <a href="qlandmarkmanager.html#defaultManager">QLandmarkManager</a></li>
 <li>defaultSensorForType: <a href="qsensor.html#defaultSensorForType">QSensor</a></li>
 <li>defaultServiceProvider: <a href="qmediaserviceprovider.html#defaultServiceProvider">QMediaServiceProvider</a></li>
 <li>definitionName: <a href="qcontactdetail.html#definitionName">QContactDetail</a></li>
@@ -440,6 +452,7 @@
 <li>denoisingLevel: <a href="qimageprocessingcontrol.html#denoisingLevel">QImageProcessingControl</a></li>
 <li>department: <a href="qcontactorganization.html#department">QContactOrganization</a></li>
 <li>deref: <a href="qcontactinvalidengine.html#deref">QContactInvalidEngine</a> <a href="qcontactmanagerengine.html#deref">QContactManagerEngine</a> <a href="qcontactmemoryengine.html#deref">QContactMemoryEngine</a></li>
+<li>description: <a href="qlandmark.html#description">QLandmark</a> <a href="qlandmarkcategory.html#description">QLandmarkCategory</a></li>
 <li>detail: <a href="qcontact.html#detail-2">QContact</a></li>
 <li>detailDefinition: <a href="qcontactmanager.html#detailDefinition">QContactManager</a> <a href="qcontactmanagerengine.html#detailDefinition">QContactManagerEngine</a></li>
 <li>detailDefinitionName: <a href="qcontactdetailfilter.html#detailDefinitionName">QContactDetailFilter</a> <a href="qcontactdetailrangefilter.html#detailDefinitionName">QContactDetailRangeFilter</a> <a href="qcontactsortorder.html#detailDefinitionName">QContactSortOrder</a></li>
@@ -450,7 +463,7 @@
 <li>detailWithAction: <a href="qcontact.html#detailWithAction">QContact</a></li>
 <li>details: <a href="qcontact.html#details-4">QContact</a></li>
 <li>detailsWithAction: <a href="qcontact.html#detailsWithAction">QContact</a></li>
-<li>device: <a href="qmediaserviceproviderhint.html#device">QMediaServiceProviderHint</a> <a href="qnmeapositioninfosource.html#device">QNmeaPositionInfoSource</a> <a href="qversitreader.html#device">QVersitReader</a> <a href="qversitwriter.html#device">QVersitWriter</a></li>
+<li>device: <a href="qlandmarkexportrequest.html#device">QLandmarkExportRequest</a> <a href="qlandmarkimportrequest.html#device">QLandmarkImportRequest</a> <a href="qmediaserviceproviderhint.html#device">QMediaServiceProviderHint</a> <a href="qnmeapositioninfosource.html#device">QNmeaPositionInfoSource</a> <a href="qversitreader.html#device">QVersitReader</a> <a href="qversitwriter.html#device">QVersitWriter</a></li>
 <li>deviceCount: <a href="qvideodevicecontrol.html#deviceCount">QVideoDeviceControl</a></li>
 <li>deviceDescription: <a href="qcamera.html#deviceDescription">QCamera</a> <a href="qmediaserviceprovider.html#deviceDescription">QMediaServiceProvider</a> <a href="qmediaservicesupporteddevicesinterface.html#deviceDescription">QMediaServiceSupportedDevicesInterface</a> <a href="qvideodevicecontrol.html#deviceDescription">QVideoDeviceControl</a></li>
 <li>deviceIcon: <a href="qvideodevicecontrol.html#deviceIcon">QVideoDeviceControl</a></li>
@@ -459,7 +472,7 @@
 <li>devicesChanged: <a href="qvideodevicecontrol.html#devicesChanged">QVideoDeviceControl</a></li>
 <li>digitalZoom: <a href="qcamera.html#digitalZoom">QCamera</a> <a href="qcamerafocuscontrol.html#digitalZoom">QCameraFocusControl</a></li>
 <li>digitalZoomChanged: <a href="qcamera.html#digitalZoomChanged">QCamera</a> <a href="qcamerafocuscontrol.html#digitalZoomChanged">QCameraFocusControl</a></li>
-<li>direction: <a href="qcontactsortorder.html#direction">QContactSortOrder</a></li>
+<li>direction: <a href="qcontactsortorder.html#direction">QContactSortOrder</a> <a href="qlandmarksortorder.html#direction">QLandmarkSortOrder</a></li>
 <li>displayBrightness: <a href="qsystemdisplayinfo.html#displayBrightness">QSystemDisplayInfo</a></li>
 <li>displayLabel: <a href="qcontact.html#displayLabel">QContact</a></li>
 <li>displayRect: <a href="qvideowindowcontrol.html#displayRect">QVideoWindowControl</a></li>
@@ -482,12 +495,13 @@
 <li>end: <a href="qmediatimeinterval.html#end">QMediaTimeInterval</a></li>
 <li>endl: <a href="http://qt.nokia.com/doc/4.6/qtextstream.html#endl">global</a></li>
 <li>endpointDescription: <a href="qaudioendpointselector.html#endpointDescription">QAudioEndpointSelector</a></li>
-<li>error: <a href="qcamera.html#error-2">QCamera</a> <a href="qcameracontrol.html#error">QCameraControl</a> <a href="qcontactabstractrequest.html#error">QContactAbstractRequest</a> <a href="qcontactmanager.html#error">QContactManager</a> <a href="qimagecapturecontrol.html#error">QImageCaptureControl</a> <a href="qmediaplayer.html#error-2">QMediaPlayer</a> <a href="qmediaplayercontrol.html#error">QMediaPlayerControl</a> <a href="qmediaplaylist.html#error">QMediaPlaylist</a> <a href="qmediarecorder.html#error-2">QMediaRecorder</a> <a href="qmediarecordercontrol.html#error">QMediaRecorderControl</a> <a href="qmessagemanager.html#error">QMessageManager</a> <a href="qmessageservice.html#error">QMessageService</a> <a href="qnetworksession.html#error-2">QNetworkSession</a> <a href="qradiotuner.html#error-2">QRadioTuner</a> <a href="qradiotunercontrol.html#error-2">QRadioTunerControl</a> <a href="qservicemanager.html#error">QServiceManager</a> <a href="qstillimagecapture.html#error-2">QStillImageCapture</a> <a href="qversitreader.html#error">QVersitReader</a> <a href="qversitwriter.html#error">QVersitWriter</a></li>
-<li>errorMap: <a href="qcontactdetaildefinitionfetchrequest.html#errorMap">QContactDetailDefinitionFetchRequest</a> <a href="qcontactdetaildefinitionremoverequest.html#errorMap">QContactDetailDefinitionRemoveRequest</a> <a href="qcontactdetaildefinitionsaverequest.html#errorMap">QContactDetailDefinitionSaveRequest</a> <a href="qcontactrelationshipremoverequest.html#errorMap">QContactRelationshipRemoveRequest</a> <a href="qcontactrelationshipsaverequest.html#errorMap">QContactRelationshipSaveRequest</a> <a href="qcontactremoverequest.html#errorMap">QContactRemoveRequest</a> <a href="qcontactsaverequest.html#errorMap">QContactSaveRequest</a></li>
-<li>errorString: <a href="qcamera.html#errorString">QCamera</a> <a href="qmediaplayer.html#error-prop">QMediaPlayer</a> <a href="qmediaplaylist.html#errorString">QMediaPlaylist</a> <a href="qmediarecorder.html#errorString">QMediaRecorder</a> <a href="qnetworksession.html#errorString">QNetworkSession</a> <a href="qradiotuner.html#errorString">QRadioTuner</a> <a href="qradiotunercontrol.html#errorString">QRadioTunerControl</a> <a href="qstillimagecapture.html#errorString">QStillImageCapture</a></li>
+<li>error: <a href="qcamera.html#error-2">QCamera</a> <a href="qcameracontrol.html#error">QCameraControl</a> <a href="qcontactabstractrequest.html#error">QContactAbstractRequest</a> <a href="qcontactmanager.html#error">QContactManager</a> <a href="qimagecapturecontrol.html#error">QImageCaptureControl</a> <a href="qlandmarkabstractrequest.html#error">QLandmarkAbstractRequest</a> <a href="qlandmarkmanager.html#error">QLandmarkManager</a> <a href="qmediaplayer.html#error-2">QMediaPlayer</a> <a href="qmediaplayercontrol.html#error">QMediaPlayerControl</a> <a href="qmediaplaylist.html#error">QMediaPlaylist</a> <a href="qmediarecorder.html#error-2">QMediaRecorder</a> <a href="qmediarecordercontrol.html#error">QMediaRecorderControl</a> <a href="qmessagemanager.html#error">QMessageManager</a> <a href="qmessageservice.html#error">QMessageService</a> <a href="qnetworksession.html#error-2">QNetworkSession</a> <a href="qradiotuner.html#error-2">QRadioTuner</a> <a href="qradiotunercontrol.html#error-2">QRadioTunerControl</a> <a href="qservicemanager.html#error">QServiceManager</a> <a href="qstillimagecapture.html#error-2">QStillImageCapture</a> <a href="qversitreader.html#error">QVersitReader</a> <a href="qversitwriter.html#error">QVersitWriter</a></li>
+<li>errorMap: <a href="qcontactdetaildefinitionfetchrequest.html#errorMap">QContactDetailDefinitionFetchRequest</a> <a href="qcontactdetaildefinitionremoverequest.html#errorMap">QContactDetailDefinitionRemoveRequest</a> <a href="qcontactdetaildefinitionsaverequest.html#errorMap">QContactDetailDefinitionSaveRequest</a> <a href="qcontactrelationshipremoverequest.html#errorMap">QContactRelationshipRemoveRequest</a> <a href="qcontactrelationshipsaverequest.html#errorMap">QContactRelationshipSaveRequest</a> <a href="qcontactremoverequest.html#errorMap">QContactRemoveRequest</a> <a href="qcontactsaverequest.html#errorMap">QContactSaveRequest</a> <a href="qlandmarkcategoryremoverequest.html#errorMap">QLandmarkCategoryRemoveRequest</a> <a href="qlandmarkcategorysaverequest.html#errorMap">QLandmarkCategorySaveRequest</a> <a href="qlandmarkremoverequest.html#errorMap">QLandmarkRemoveRequest</a> <a href="qlandmarksaverequest.html#errorMap">QLandmarkSaveRequest</a></li>
+<li>errorString: <a href="qcamera.html#errorString">QCamera</a> <a href="qlandmarkabstractrequest.html#errorString">QLandmarkAbstractRequest</a> <a href="qlandmarkmanager.html#errorString">QLandmarkManager</a> <a href="qmediaplayer.html#error-prop">QMediaPlayer</a> <a href="qmediaplaylist.html#errorString">QMediaPlaylist</a> <a href="qmediarecorder.html#errorString">QMediaRecorder</a> <a href="qnetworksession.html#errorString">QNetworkSession</a> <a href="qradiotuner.html#errorString">QRadioTuner</a> <a href="qradiotunercontrol.html#errorString">QRadioTunerControl</a> <a href="qstillimagecapture.html#errorString">QStillImageCapture</a></li>
 <li>event: <a href="qcontactanniversary.html#event">QContactAnniversary</a></li>
 <li>eventType: <a href="qcontactchangelogfilter.html#eventType">QContactChangeLogFilter</a></li>
 <li>exportContacts: <a href="qversitcontactexporter.html#exportContacts">QVersitContactExporter</a></li>
+<li>exportLandmarks: <a href="qlandmarkmanager.html#exportLandmarks">QLandmarkManager</a></li>
 <li>exportUpdates: <a href="qmessageservice.html#exportUpdates">QMessageService</a></li>
 <li>exposureCompensation: <a href="qcamera.html#exposureCompensation">QCamera</a> <a href="qcameraexposurecontrol.html#exposureCompensation">QCameraExposureControl</a></li>
 <li>exposureLocked: <a href="qcamera.html#exposureLocked">QCamera</a> <a href="qcameraexposurecontrol.html#exposureLocked">QCameraExposureControl</a></li>
@@ -495,7 +509,7 @@
 <li>extendedMetaData: <a href="qmediaobject.html#extendedMetaData">QMediaObject</a> <a href="qmetadatacontrol.html#extendedMetaData">QMetaDataControl</a></li>
 <li>features:<a name="f"></a> <a href="qmediaserviceproviderhint.html#features">QMediaServiceProviderHint</a></li>
 <li>fields: <a href="qcontactdetaildefinition.html#fields">QContactDetailDefinition</a></li>
-<li>filter: <a href="qaccelerometerfilter.html#filter">QAccelerometerFilter</a> <a href="qambientlightfilter.html#filter">QAmbientLightFilter</a> <a href="qcompassfilter.html#filter">QCompassFilter</a> <a href="qcontactfetchrequest.html#filter">QContactFetchRequest</a> <a href="qcontactlocalidfetchrequest.html#filter">QContactLocalIdFetchRequest</a> <a href="qmagnetometerfilter.html#filter">QMagnetometerFilter</a> <a href="qorientationfilter.html#filter">QOrientationFilter</a> <a href="qproximityfilter.html#filter">QProximityFilter</a> <a href="qrotationfilter.html#filter">QRotationFilter</a> <a href="qsensorfilter.html#filter">QSensorFilter</a> <a href="qtapfilter.html#filter">QTapFilter</a></li>
+<li>filter: <a href="qaccelerometerfilter.html#filter">QAccelerometerFilter</a> <a href="qambientlightfilter.html#filter">QAmbientLightFilter</a> <a href="qcompassfilter.html#filter">QCompassFilter</a> <a href="qcontactfetchrequest.html#filter">QContactFetchRequest</a> <a href="qcontactlocalidfetchrequest.html#filter">QContactLocalIdFetchRequest</a> <a href="qlandmarkidfetchrequest.html#filter">QLandmarkIdFetchRequest</a> <a href="qmagnetometerfilter.html#filter">QMagnetometerFilter</a> <a href="qorientationfilter.html#filter">QOrientationFilter</a> <a href="qproximityfilter.html#filter">QProximityFilter</a> <a href="qrotationfilter.html#filter">QRotationFilter</a> <a href="qsensorfilter.html#filter">QSensorFilter</a> <a href="qtapfilter.html#filter">QTapFilter</a></li>
 <li>filterSupported: <a href="qcontactmemoryengine.html#filterSupported">QContactMemoryEngine</a></li>
 <li>filters: <a href="qcontactintersectionfilter.html#filters">QContactIntersectionFilter</a> <a href="qcontactunionfilter.html#filters">QContactUnionFilter</a></li>
 <li>find: <a href="qmessagecontentcontainer.html#find">QMessageContentContainer</a></li>
@@ -517,6 +531,7 @@
 <li>forcesign: <a href="http://qt.nokia.com/doc/4.6/qtextstream.html#forcesign">global</a></li>
 <li>foreach: <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#foreach">global</a></li>
 <li>forever: <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#forever">global</a></li>
+<li>format: <a href="qlandmarkexportrequest.html#format">QLandmarkExportRequest</a> <a href="qlandmarkimportrequest.html#format">QLandmarkImportRequest</a></li>
 <li>frameRate: <a href="qvideoencodersettings.html#frameRate">QVideoEncoderSettings</a></li>
 <li>frequency: <a href="qradiotuner.html#frequency-prop">QRadioTuner</a> <a href="qradiotunercontrol.html#frequency">QRadioTunerControl</a></li>
 <li>frequencyChanged: <a href="qradiotuner.html#frequencyChanged">QRadioTuner</a> <a href="qradiotunercontrol.html#frequencyChanged">QRadioTunerControl</a></li>
@@ -544,9 +559,10 @@
 <li>homeMobileNetworkCode: <a href="qsystemnetworkinfo.html#homeMobileNetworkCode-prop">QSystemNetworkInfo</a></li>
 <li>hue: <a href="qvideowidget.html#hue-prop">QVideoWidget</a> <a href="qvideowidgetcontrol.html#hue">QVideoWidgetControl</a> <a href="qvideowindowcontrol.html#hue">QVideoWindowControl</a></li>
 <li>hueChanged: <a href="qvideowidget.html#hueChanged">QVideoWidget</a> <a href="qvideowidgetcontrol.html#hueChanged">QVideoWidgetControl</a> <a href="qvideowindowcontrol.html#hueChanged">QVideoWindowControl</a></li>
-<li>id:<a name="i"></a> <a href="qabstractvaluespacelayer.html#id">QAbstractValueSpaceLayer</a> <a href="qcontact.html#id">QContact</a> <a href="qmessage.html#id">QMessage</a> <a href="qmessageaccount.html#id">QMessageAccount</a> <a href="qmessagefolder.html#id">QMessageFolder</a></li>
+<li>icon:<a name="i"></a> <a href="qlandmark.html#icon">QLandmark</a> <a href="qlandmarkcategory.html#icon">QLandmarkCategory</a></li>
+<li>id: <a href="qabstractvaluespacelayer.html#id">QAbstractValueSpaceLayer</a> <a href="qcontact.html#id">QContact</a> <a href="qlandmarkcategoryid.html#id">QLandmarkCategoryId</a> <a href="qlandmarkid.html#id">QLandmarkId</a> <a href="qmessage.html#id">QMessage</a> <a href="qmessageaccount.html#id">QMessageAccount</a> <a href="qmessagefolder.html#id">QMessageFolder</a></li>
 <li>identifier: <a href="qnetworkconfiguration.html#identifier">QNetworkConfiguration</a> <a href="qsensor.html#sensorid-prop">QSensor</a></li>
-<li>ids: <a href="qcontactlocalidfetchrequest.html#ids">QContactLocalIdFetchRequest</a> <a href="qcontactlocalidfilter.html#ids">QContactLocalIdFilter</a></li>
+<li>ids: <a href="qcontactlocalidfetchrequest.html#ids">QContactLocalIdFetchRequest</a> <a href="qcontactlocalidfilter.html#ids">QContactLocalIdFilter</a> <a href="qlandmarkcategoryidfetchrequest.html#ids">QLandmarkCategoryIdFetchRequest</a> <a href="qlandmarkidfetchrequest.html#ids">QLandmarkIdFetchRequest</a> <a href="qlandmarkimportrequest.html#ids">QLandmarkImportRequest</a></li>
 <li>ignore: <a href="qnetworksession.html#ignore">QNetworkSession</a></li>
 <li>imageCaptured: <a href="qimagecapturecontrol.html#imageCaptured">QImageCaptureControl</a> <a href="qstillimagecapture.html#imageCaptured">QStillImageCapture</a></li>
 <li>imageCodecDescription: <a href="qimageencodercontrol.html#imageCodecDescription">QImageEncoderControl</a> <a href="qstillimagecapture.html#imageCodecDescription">QStillImageCapture</a></li>
@@ -555,6 +571,7 @@
 <li>imei: <a href="qsystemdeviceinfo.html#imei-prop">QSystemDeviceInfo</a></li>
 <li>implementationVersion: <a href="qcontactactiondescriptor.html#implementationVersion">QContactActionDescriptor</a> <a href="qcontactactionfilter.html#implementationVersion">QContactActionFilter</a> <a href="qcontactmemoryengine.html#implementationVersion">QContactMemoryEngine</a></li>
 <li>importContacts: <a href="qversitcontactimporter.html#importContacts">QVersitContactImporter</a></li>
+<li>importLandmarks: <a href="qlandmarkmanager.html#importLandmarks">QLandmarkManager</a></li>
 <li>imsi: <a href="qsystemdeviceinfo.html#imsi-prop">QSystemDeviceInfo</a></li>
 <li>inputMethodType: <a href="qsystemdeviceinfo.html#inputMethodType-prop">QSystemDeviceInfo</a></li>
 <li>insertField: <a href="qcontactdetaildefinition.html#insertField">QContactDetailDefinition</a></li>
@@ -569,12 +586,13 @@
 <li>interfaceName: <a href="qservicefilter.html#interfaceName">QServiceFilter</a> <a href="qserviceinterfacedescriptor.html#interfaceName">QServiceInterfaceDescriptor</a></li>
 <li>intervals: <a href="qmediatimerange.html#intervals">QMediaTimeRange</a></li>
 <li>invokeAction: <a href="qcontactaction.html#invokeAction">QContactAction</a></li>
-<li>isActive: <a href="qcontactabstractrequest.html#isActive">QContactAbstractRequest</a> <a href="qmediastreamscontrol.html#isActive">QMediaStreamsControl</a> <a href="qsensor.html#running-prop">QSensor</a></li>
+<li>isActive: <a href="qcontactabstractrequest.html#isActive">QContactAbstractRequest</a> <a href="qlandmarkabstractrequest.html#isActive">QLandmarkAbstractRequest</a> <a href="qmediastreamscontrol.html#isActive">QMediaStreamsControl</a> <a href="qsensor.html#running-prop">QSensor</a></li>
 <li>isAllowed: <a href="qabstractsecuritysession.html#isAllowed">QAbstractSecuritySession</a></li>
 <li>isAudioAvailable: <a href="qmediaplayer.html#audioAvailable-prop">QMediaPlayer</a> <a href="qmediaplayercontrol.html#isAudioAvailable">QMediaPlayerControl</a></li>
 <li>isAvailable: <a href="qaudiocapturesource.html#isAvailable">QAudioCaptureSource</a> <a href="qcamera.html#isAvailable">QCamera</a> <a href="qmediaobject.html#isAvailable">QMediaObject</a> <a href="qmediarecorder.html#isAvailable">QMediaRecorder</a> <a href="qradiotuner.html#isAvailable">QRadioTuner</a> <a href="qradiotunercontrol.html#isAvailable">QRadioTunerControl</a> <a href="qstillimagecapture.html#isAvailable">QStillImageCapture</a></li>
 <li>isBandSupported: <a href="qradiotuner.html#isBandSupported">QRadioTuner</a> <a href="qradiotunercontrol.html#isBandSupported">QRadioTunerControl</a></li>
 <li>isCanceled: <a href="qcontactabstractrequest.html#isCanceled">QContactAbstractRequest</a></li>
+<li>isCancelled: <a href="qlandmarkabstractrequest.html#isCancelled">QLandmarkAbstractRequest</a></li>
 <li>isConnected: <a href="qsensor.html#connected-prop">QSensor</a> <a href="qvaluespacepublisher.html#isConnected">QValueSpacePublisher</a> <a href="qvaluespacesubscriber.html#isConnected">QValueSpaceSubscriber</a></li>
 <li>isContentAvailable: <a href="qmessagecontentcontainer.html#isContentAvailable">QMessageContentContainer</a></li>
 <li>isContinuous: <a href="qmediatimerange.html#isContinuous">QMediaTimeRange</a></li>
@@ -584,11 +602,12 @@
 <li>isEmpty: <a href="qcontact.html#isEmpty">QContact</a> <a href="qcontactactiondescriptor.html#isEmpty">QContactActionDescriptor</a> <a href="qcontactdetail.html#isEmpty">QContactDetail</a> <a href="qcontactdetaildefinition.html#isEmpty">QContactDetailDefinition</a> <a href="qmediaplaylist.html#isEmpty">QMediaPlaylist</a> <a href="qmediatimerange.html#isEmpty">QMediaTimeRange</a> <a href="qmessageaccountfilter.html#isEmpty">QMessageAccountFilter</a> <a href="qmessageaccountsortorder.html#isEmpty">QMessageAccountSortOrder</a> <a href="qmessagefilter.html#isEmpty">QMessageFilter</a> <a href="qmessagefolderfilter.html#isEmpty">QMessageFolderFilter</a> <a href="qmessagefoldersortorder.html#isEmpty">QMessageFolderSortOrder</a> <a href="qmessagesortorder.html#isEmpty">QMessageSortOrder</a> <a href="qversitdocument.html#isEmpty">QVersitDocument</a> <a href="qversitproperty.html#isEmpty">QVersitProperty</a></li>
 <li>isExposureLocked: <a href="qcamera.html#isExposureLocked">QCamera</a> <a href="qcameraexposurecontrol.html#isExposureLocked">QCameraExposureControl</a></li>
 <li>isFilterSupported: <a href="qcontactmanager.html#isFilterSupported">QContactManager</a> <a href="qcontactmanagerengine.html#isFilterSupported">QContactManagerEngine</a></li>
-<li>isFinished: <a href="qcontactabstractrequest.html#isFinished">QContactAbstractRequest</a></li>
+<li>isFinished: <a href="qcontactabstractrequest.html#isFinished">QContactAbstractRequest</a> <a href="qlandmarkabstractrequest.html#isFinished">QLandmarkAbstractRequest</a></li>
 <li>isFlashReady: <a href="qcamera.html#isFlashReady">QCamera</a> <a href="qcameraexposurecontrol.html#isFlashReady">QCameraExposureControl</a></li>
 <li>isFullScreen: <a href="qvideowidget.html#fullScreen-prop">QVideoWidget</a> <a href="qvideowidgetcontrol.html#isFullScreen">QVideoWidgetControl</a> <a href="qvideowindowcontrol.html#isFullScreen">QVideoWindowControl</a></li>
-<li>isInactive: <a href="qcontactabstractrequest.html#isInactive">QContactAbstractRequest</a></li>
+<li>isInactive: <a href="qcontactabstractrequest.html#isInactive">QContactAbstractRequest</a> <a href="qlandmarkabstractrequest.html#isInactive">QLandmarkAbstractRequest</a></li>
 <li>isMacroFocusingSupported: <a href="qcamera.html#isMacroFocusingSupported">QCamera</a> <a href="qcamerafocuscontrol.html#isMacroFocusingSupported">QCameraFocusControl</a></li>
+<li>isMatch: <a href="qlandmarkcustomfilter.html#isMatch">QLandmarkCustomFilter</a></li>
 <li>isMetaDataAvailable: <a href="qmediaobject.html#metaDataAvailable-prop">QMediaObject</a> <a href="qmetadatacontrol.html#isMetaDataAvailable">QMetaDataControl</a></li>
 <li>isMetaDataWritable: <a href="qmediaobject.html#metaDataWritable-prop">QMediaObject</a></li>
 <li>isModified: <a href="qmessage.html#isModified">QMessage</a></li>
@@ -598,7 +617,7 @@
 <li>isOnline: <a href="qnetworkconfigurationmanager.html#isOnline">QNetworkConfigurationManager</a></li>
 <li>isOpen: <a href="qnetworksession.html#isOpen">QNetworkSession</a></li>
 <li>isPreferredDetail: <a href="qcontact.html#isPreferredDetail">QContact</a></li>
-<li>isReadOnly: <a href="qmediaplaylist.html#isReadOnly">QMediaPlaylist</a> <a href="qmediaplaylistprovider.html#isReadOnly">QMediaPlaylistProvider</a></li>
+<li>isReadOnly: <a href="qlandmarkcategory.html#isReadOnly">QLandmarkCategory</a> <a href="qmediaplaylist.html#isReadOnly">QMediaPlaylist</a> <a href="qmediaplaylistprovider.html#isReadOnly">QMediaPlaylistProvider</a></li>
 <li>isReadyForCapture: <a href="qimagecapturecontrol.html#isReadyForCapture">QImageCaptureControl</a> <a href="qstillimagecapture.html#readyForCapture-prop">QStillImageCapture</a></li>
 <li>isRoamingAvailable: <a href="qnetworkconfiguration.html#isRoamingAvailable">QNetworkConfiguration</a></li>
 <li>isSearching: <a href="qradiotuner.html#searching-prop">QRadioTuner</a> <a href="qradiotunercontrol.html#isSearching">QRadioTunerControl</a></li>
@@ -608,7 +627,7 @@
 <li>isStereo: <a href="qradiotuner.html#stereo-prop">QRadioTuner</a> <a href="qradiotunercontrol.html#isStereo">QRadioTunerControl</a></li>
 <li>isSupported: <a href="qmessageaccountfilter.html#isSupported">QMessageAccountFilter</a> <a href="qmessageaccountsortorder.html#isSupported">QMessageAccountSortOrder</a> <a href="qmessagefilter.html#isSupported">QMessageFilter</a> <a href="qmessagefolderfilter.html#isSupported">QMessageFolderFilter</a> <a href="qmessagefoldersortorder.html#isSupported">QMessageFolderSortOrder</a> <a href="qmessagesortorder.html#isSupported">QMessageSortOrder</a></li>
 <li>isUnique: <a href="qcontactdetaildefinition.html#isUnique">QContactDetailDefinition</a></li>
-<li>isValid: <a href="qcontactsortorder.html#isValid">QContactSortOrder</a> <a href="qgeocoordinate.html#isValid">QGeoCoordinate</a> <a href="qgeopositioninfo.html#isValid">QGeoPositionInfo</a> <a href="qmessageaccountid.html#isValid">QMessageAccountId</a> <a href="qmessagecontentcontainerid.html#isValid">QMessageContentContainerId</a> <a href="qmessagefolderid.html#isValid">QMessageFolderId</a> <a href="qmessageid.html#isValid">QMessageId</a> <a href="qnetworkconfiguration.html#isValid">QNetworkConfiguration</a> <a href="qserviceinterfacedescriptor.html#isValid">QServiceInterfaceDescriptor</a></li>
+<li>isValid: <a href="qcontactsortorder.html#isValid">QContactSortOrder</a> <a href="qgeocoordinate.html#isValid">QGeoCoordinate</a> <a href="qgeopositioninfo.html#isValid">QGeoPositionInfo</a> <a href="qlandmarkcategoryid.html#isValid">QLandmarkCategoryId</a> <a href="qlandmarkid.html#isValid">QLandmarkId</a> <a href="qmessageaccountid.html#isValid">QMessageAccountId</a> <a href="qmessagecontentcontainerid.html#isValid">QMessageContentContainerId</a> <a href="qmessagefolderid.html#isValid">QMessageFolderId</a> <a href="qmessageid.html#isValid">QMessageId</a> <a href="qnetworkconfiguration.html#isValid">QNetworkConfiguration</a> <a href="qserviceinterfacedescriptor.html#isValid">QServiceInterfaceDescriptor</a></li>
 <li>isVideoAvailable: <a href="qmediaplayer.html#videoAvailable-prop">QMediaPlayer</a> <a href="qmediaplayercontrol.html#isVideoAvailable">QMediaPlayerControl</a></li>
 <li>isWritable: <a href="qmetadatacontrol.html#isWritable">QMetaDataControl</a></li>
 <li>isoSensitivity: <a href="qcamera.html#isoSensitivity-prop">QCamera</a> <a href="qcameraexposurecontrol.html#isoSensitivity">QCameraExposureControl</a></li>
@@ -619,6 +638,13 @@
 <li>key:<a name="k"></a> <a href="qcontactdetail.html#key">QContactDetail</a></li>
 <li>keys: <a href="qmediaplaylistioplugin.html#keys">QMediaPlaylistIOPlugin</a> <a href="qmediaserviceproviderplugin.html#keys">QMediaServiceProviderPlugin</a></li>
 <li>label:<a name="l"></a> <a href="qcontactdisplaylabel.html#label">QContactDisplayLabel</a> <a href="qcontactgeolocation.html#label">QContactGeoLocation</a></li>
+<li>landmark: <a href="qlandmarkmanager.html#landmark">QLandmarkManager</a></li>
+<li>landmarkAdded: <a href="qlandmarkmanager.html#landmarkAdded">QLandmarkManager</a></li>
+<li>landmarkId: <a href="qlandmark.html#landmarkId">QLandmark</a></li>
+<li>landmarkIds: <a href="qlandmarkexportrequest.html#landmarkIds">QLandmarkExportRequest</a> <a href="qlandmarkmanager.html#landmarkIds">QLandmarkManager</a> <a href="qlandmarkremoverequest.html#landmarkIds">QLandmarkRemoveRequest</a></li>
+<li>landmarkRemoved: <a href="qlandmarkmanager.html#landmarkRemoved">QLandmarkManager</a></li>
+<li>landmarkUpdated: <a href="qlandmarkmanager.html#landmarkUpdated">QLandmarkManager</a></li>
+<li>landmarks: <a href="qlandmarksaverequest.html#landmarks">QLandmarkSaveRequest</a></li>
 <li>language: <a href="qmediaresource.html#language">QMediaResource</a></li>
 <li>lastKnownPosition: <a href="qgeopositioninfosource.html#lastKnownPosition">QGeoPositionInfoSource</a> <a href="qnmeapositioninfosource.html#lastKnownPosition">QNmeaPositionInfoSource</a></li>
 <li>lastModified: <a href="qcontacttimestamp.html#lastModified">QContactTimestamp</a></li>
@@ -636,7 +662,7 @@
 <li>loadResource: <a href="qversitresourcehandler.html#loadResource">QVersitResourceHandler</a></li>
 <li>loaded: <a href="qmediaplaylist.html#loaded">QMediaPlaylist</a> <a href="qmediaplaylistprovider.html#loaded">QMediaPlaylistProvider</a></li>
 <li>localId: <a href="qcontact.html#localId">QContact</a> <a href="qcontactid.html#localId">QContactId</a></li>
-<li>locality: <a href="qcontactaddress.html#locality">QContactAddress</a></li>
+<li>locality: <a href="qcontactaddress.html#locality">QContactAddress</a> <a href="qlandmark.html#locality">QLandmark</a></li>
 <li>location: <a href="qcontactorganization.html#location">QContactOrganization</a></li>
 <li>locationAreaCode: <a href="qsystemnetworkinfo.html#locationAreaCode-prop">QSystemNetworkInfo</a></li>
 <li>lockExposure: <a href="qcamera.html#lockExposure">QCamera</a> <a href="qcameraexposurecontrol.html#lockExposure">QCameraExposureControl</a></li>
@@ -648,15 +674,16 @@
 <li>macAddress:<a name="m"></a> <a href="qsystemnetworkinfo.html#macAddress">QSystemNetworkInfo</a></li>
 <li>macroFocusingEnabled: <a href="qcamera.html#macroFocusingEnabled">QCamera</a> <a href="qcamerafocuscontrol.html#macroFocusingEnabled">QCameraFocusControl</a></li>
 <li>majorVersion: <a href="qservicefilter.html#majorVersion">QServiceFilter</a> <a href="qserviceinterfacedescriptor.html#majorVersion">QServiceInterfaceDescriptor</a></li>
-<li>manager: <a href="qcontactabstractrequest.html#manager">QContactAbstractRequest</a></li>
+<li>manager: <a href="qcontactabstractrequest.html#manager">QContactAbstractRequest</a> <a href="qlandmarkabstractrequest.html#manager">QLandmarkAbstractRequest</a></li>
 <li>managerName: <a href="qcontactinvalidengine.html#managerName">QContactInvalidEngine</a> <a href="qcontactmanager.html#managerName">QContactManager</a> <a href="qcontactmanagerengine.html#managerName">QContactManagerEngine</a> <a href="qcontactmanagerenginefactory.html#managerName">QContactManagerEngineFactory</a> <a href="qcontactmemoryengine.html#managerName">QContactMemoryEngine</a></li>
 <li>managerParameters: <a href="qcontactmanager.html#managerParameters">QContactManager</a> <a href="qcontactmanagerengine.html#managerParameters">QContactManagerEngine</a> <a href="qcontactmemoryengine.html#managerParameters">QContactMemoryEngine</a></li>
-<li>managerUri: <a href="qcontactid.html#managerUri">QContactId</a> <a href="qcontactmanager.html#managerUri">QContactManager</a> <a href="qcontactmanagerengine.html#managerUri">QContactManagerEngine</a></li>
+<li>managerUri: <a href="qcontactid.html#managerUri">QContactId</a> <a href="qcontactmanager.html#managerUri">QContactManager</a> <a href="qcontactmanagerengine.html#managerUri">QContactManagerEngine</a> <a href="qlandmarkcategoryid.html#managerUri">QLandmarkCategoryId</a> <a href="qlandmarkid.html#managerUri">QLandmarkId</a></li>
 <li>managerVersion: <a href="qcontactmanager.html#managerVersion">QContactManager</a> <a href="qcontactmanagerengine.html#managerVersion">QContactManagerEngine</a></li>
 <li>manualWhiteBalance: <a href="qcamera.html#manualWhiteBalance">QCamera</a> <a href="qimageprocessingcontrol.html#manualWhiteBalance">QImageProcessingControl</a></li>
 <li>manufacturer: <a href="qsystemdeviceinfo.html#manufacturer-prop">QSystemDeviceInfo</a></li>
 <li>match: <a href="qcontactdisplaylabel.html#match">QContactDisplayLabel</a> <a href="qcontactemailaddress.html#match">QContactEmailAddress</a> <a href="qcontactname.html#match">QContactName</a> <a href="qcontactphonenumber.html#match">QContactPhoneNumber</a></li>
 <li>matchFlags: <a href="qcontactdetailfilter.html#matchFlags">QContactDetailFilter</a> <a href="qcontactdetailrangefilter.html#matchFlags">QContactDetailRangeFilter</a> <a href="qmessageaccountfilter.html#matchFlags">QMessageAccountFilter</a> <a href="qmessagefilter.html#matchFlags">QMessageFilter</a> <a href="qmessagefolderfilter.html#matchFlags">QMessageFolderFilter</a></li>
+<li>maxMatches: <a href="qlandmarkfilter.html#maxMatches">QLandmarkFilter</a></li>
 <li>maxValue: <a href="qcontactdetailrangefilter.html#maxValue">QContactDetailRangeFilter</a></li>
 <li>maximumDigitalZoom: <a href="qcamera.html#maximumDigitalZoom">QCamera</a> <a href="qcamerafocuscontrol.html#maximumDigitalZoom">QCameraFocusControl</a></li>
 <li>maximumOpticalZoom: <a href="qcamera.html#maximumOpticalZoom">QCamera</a> <a href="qcamerafocuscontrol.html#maximumOpticalZoom">QCameraFocusControl</a></li>
@@ -692,7 +719,7 @@
 <li>model: <a href="qsystemdeviceinfo.html#model-prop">QSystemDeviceInfo</a></li>
 <li>moveEvent: <a href="qvideowidget.html#moveEvent">QVideoWidget</a></li>
 <li>mutedChanged: <a href="qmediaplayer.html#mutedChanged">QMediaPlayer</a> <a href="qmediaplayercontrol.html#mutedChanged">QMediaPlayerControl</a> <a href="qradiotuner.html#mutedChanged">QRadioTuner</a> <a href="qradiotunercontrol.html#mutedChanged">QRadioTunerControl</a></li>
-<li>name:<a name="n"></a> <a href="qabstractvaluespacelayer.html#name">QAbstractValueSpaceLayer</a> <a href="qcontactactionfactory.html#name">QContactActionFactory</a> <a href="qcontactdetaildefinition.html#name">QContactDetailDefinition</a> <a href="qcontactorganization.html#name">QContactOrganization</a> <a href="qmessageaccount.html#name">QMessageAccount</a> <a href="qmessagefolder.html#name">QMessageFolder</a> <a href="qnetworkconfiguration.html#name">QNetworkConfiguration</a> <a href="qversitproperty.html#name">QVersitProperty</a></li>
+<li>name:<a name="n"></a> <a href="qabstractvaluespacelayer.html#name">QAbstractValueSpaceLayer</a> <a href="qcontactactionfactory.html#name">QContactActionFactory</a> <a href="qcontactdetaildefinition.html#name">QContactDetailDefinition</a> <a href="qcontactorganization.html#name">QContactOrganization</a> <a href="qlandmark.html#name">QLandmark</a> <a href="qlandmarkcategory.html#name">QLandmarkCategory</a> <a href="qlandmarknamefilter.html#name">QLandmarkNameFilter</a> <a href="qmessageaccount.html#name">QMessageAccount</a> <a href="qmessagefolder.html#name">QMessageFolder</a> <a href="qnetworkconfiguration.html#name">QNetworkConfiguration</a> <a href="qversitproperty.html#name">QVersitProperty</a></li>
 <li>nativeSize: <a href="qgraphicsvideoitem.html#nativeSize-prop">QGraphicsVideoItem</a> <a href="qvideowindowcontrol.html#nativeSize">QVideoWindowControl</a></li>
 <li>nativeSizeChanged: <a href="qgraphicsvideoitem.html#nativeSizeChanged">QGraphicsVideoItem</a> <a href="qvideowindowcontrol.html#nativeSizeChanged">QVideoWindowControl</a></li>
 <li>networkModeChanged: <a href="qsystemnetworkinfo.html#networkModeChanged">QSystemNetworkInfo</a></li>
@@ -711,6 +738,7 @@
 <li>noforcepoint: <a href="http://qt.nokia.com/doc/4.6/qtextstream.html#noforcepoint">global</a></li>
 <li>noforcesign: <a href="http://qt.nokia.com/doc/4.6/qtextstream.html#noforcesign">global</a></li>
 <li>normalized: <a href="qmediatimeinterval.html#normalized">QMediaTimeInterval</a></li>
+<li>northWestCoordinate: <a href="qlandmarkboxfilter.html#northWestCoordinate">QLandmarkBoxFilter</a></li>
 <li>noshowbase: <a href="http://qt.nokia.com/doc/4.6/qtextstream.html#noshowbase">global</a></li>
 <li>note: <a href="qcontactnote.html#note">QContactNote</a></li>
 <li>notify: <a href="qservicecontext.html#notify">QServiceContext</a></li>
@@ -725,7 +753,7 @@
 <li>open: <a href="qnetworksession.html#open">QNetworkSession</a></li>
 <li>opened: <a href="qnetworksession.html#opened">QNetworkSession</a></li>
 <li>operator QList&lt;QContactSortOrder&gt;: <a href="qcontactsortorder.html#operator-QList-ltQContactSortOrder-gt">QContactSortOrder</a></li>
-<li>operator!=: <a href="qmediatimerange.html#operator-not-eq-37">global</a> <a href="qaudioencodersettings.html#operator-not-eq">QAudioEncoderSettings</a> <a href="qcontact.html#operator-not-eq">QContact</a> <a href="qcontactactiondescriptor.html#operator-not-eq">QContactActionDescriptor</a> <a href="qcontactdetail.html#operator-not-eq">QContactDetail</a> <a href="qcontactdetaildefinition.html#operator-not-eq">QContactDetailDefinition</a> <a href="qcontactdetailfielddefinition.html#operator-not-eq">QContactDetailFieldDefinition</a> <a href="qcontactfilter.html#operator-not-eq">QContactFilter</a> <a href="qcontactid.html#operator-not-eq">QContactId</a> <a href="qcontactrelationship.html#operator-not-eq">QContactRelationship</a> <a href="qcontactsortorder.html#operator-not-eq">QContactSortOrder</a> <a href="qgeocoordinate.html#operator-not-eq">QGeoCoordinate</a> <a href="qgeopositioninfo.html#operator-not-eq">QGeoPositionInfo</a> <a href="qgeosatelliteinfo.html#operator-not-eq">QGeoSatelliteInfo</a> <a href="qimageencodersettings.html#operator-not-eq">QImageEncoderSettings</a> <a href="qmediacontent.html#operator-not-eq">QMediaContent</a> <a href="qmediaresource.html#operator-not-eq">QMediaResource</a> <a href="qmediaserviceproviderhint.html#operator-not-eq">QMediaServiceProviderHint</a> <a href="qnetworkconfiguration.html#operator-not-eq">QNetworkConfiguration</a> <a href="qserviceinterfacedescriptor.html#operator-not-eq">QServiceInterfaceDescriptor</a> <a href="qversitdocument.html#operator-not-eq">QVersitDocument</a> <a href="qversitproperty.html#operator-not-eq">QVersitProperty</a> <a href="qvideoencodersettings.html#operator-not-eq">QVideoEncoderSettings</a></li>
+<li>operator!=: <a href="qmediatimerange.html#operator-not-eq-37">global</a> <a href="qaudioencodersettings.html#operator-not-eq">QAudioEncoderSettings</a> <a href="qcontact.html#operator-not-eq">QContact</a> <a href="qcontactactiondescriptor.html#operator-not-eq">QContactActionDescriptor</a> <a href="qcontactdetail.html#operator-not-eq">QContactDetail</a> <a href="qcontactdetaildefinition.html#operator-not-eq">QContactDetailDefinition</a> <a href="qcontactdetailfielddefinition.html#operator-not-eq">QContactDetailFieldDefinition</a> <a href="qcontactfilter.html#operator-not-eq">QContactFilter</a> <a href="qcontactid.html#operator-not-eq">QContactId</a> <a href="qcontactrelationship.html#operator-not-eq">QContactRelationship</a> <a href="qcontactsortorder.html#operator-not-eq">QContactSortOrder</a> <a href="qgeocoordinate.html#operator-not-eq">QGeoCoordinate</a> <a href="qgeopositioninfo.html#operator-not-eq">QGeoPositionInfo</a> <a href="qgeosatelliteinfo.html#operator-not-eq">QGeoSatelliteInfo</a> <a href="qimageencodersettings.html#operator-not-eq">QImageEncoderSettings</a> <a href="qlandmarkcategoryid.html#operator-not-eq">QLandmarkCategoryId</a> <a href="qlandmarkfilter.html#operator-not-eq">QLandmarkFilter</a> <a href="qlandmarkid.html#operator-not-eq">QLandmarkId</a> <a href="qmediacontent.html#operator-not-eq">QMediaContent</a> <a href="qmediaresource.html#operator-not-eq">QMediaResource</a> <a href="qmediaserviceproviderhint.html#operator-not-eq">QMediaServiceProviderHint</a> <a href="qnetworkconfiguration.html#operator-not-eq">QNetworkConfiguration</a> <a href="qserviceinterfacedescriptor.html#operator-not-eq">QServiceInterfaceDescriptor</a> <a href="qversitdocument.html#operator-not-eq">QVersitDocument</a> <a href="qversitproperty.html#operator-not-eq">QVersitProperty</a> <a href="qvideoencodersettings.html#operator-not-eq">QVideoEncoderSettings</a></li>
 <li>operator&amp;: <a href="">global</a> <a href="qmessageaccountfilter.html#operator-and">QMessageAccountFilter</a> <a href="qmessagefilter.html#operator-and">QMessageFilter</a> <a href="qmessagefolderfilter.html#operator-and">QMessageFolderFilter</a></li>
 <li>operator&amp;=: <a href="qmessageaccountfilter.html#operator-and-eq">QMessageAccountFilter</a> <a href="qmessagefilter.html#operator-and-eq">QMessageFilter</a> <a href="qmessagefolderfilter.html#operator-and-eq">QMessageFolderFilter</a></li>
 <li>operator*: <a href="http://qt.nokia.com/doc/4.6/qpointf.html#operator*-56">global</a></li>
@@ -737,8 +765,8 @@
 <li>operator&lt;: <a href="http://qt.nokia.com/doc/4.6/qchar.html#operator<-15">global</a> <a href="qmessageaccountid.html#operator-lt">QMessageAccountId</a> <a href="qmessagefolderid.html#operator-lt">QMessageFolderId</a> <a href="qmessageid.html#operator-lt">QMessageId</a></li>
 <li>operator&lt;&lt;: <a href="qserviceinterfacedescriptor.html#operator-lt-lt-81">global</a> <a href="qcontactintersectionfilter.html#operator-lt-lt">QContactIntersectionFilter</a> <a href="qcontactunionfilter.html#operator-lt-lt">QContactUnionFilter</a></li>
 <li>operator&lt;=: <a href="http://qt.nokia.com/doc/4.6/qchar.html#operator<=-12">global</a></li>
-<li>operator=: <a href="qaudioencodersettings.html#operator-eq">QAudioEncoderSettings</a> <a href="qcontact.html#operator-eq">QContact</a> <a href="qcontactactiondescriptor.html#operator-eq">QContactActionDescriptor</a> <a href="qcontactchangeset.html#operator-eq">QContactChangeSet</a> <a href="qcontactdetail.html#operator-eq">QContactDetail</a> <a href="qcontactdetaildefinition.html#operator-eq">QContactDetailDefinition</a> <a href="qcontactdetailfielddefinition.html#operator-eq">QContactDetailFieldDefinition</a> <a href="qcontactfilter.html#operator-eq">QContactFilter</a> <a href="qcontactid.html#operator-eq">QContactId</a> <a href="qcontactrelationship.html#operator-eq">QContactRelationship</a> <a href="qcontactsortorder.html#operator-eq">QContactSortOrder</a> <a href="qgeocoordinate.html#operator-eq">QGeoCoordinate</a> <a href="qgeopositioninfo.html#operator-eq">QGeoPositionInfo</a> <a href="qgeosatelliteinfo.html#operator-eq">QGeoSatelliteInfo</a> <a href="qimageencodersettings.html#operator-eq">QImageEncoderSettings</a> <a href="qmediacontent.html#operator-eq">QMediaContent</a> <a href="qmediaresource.html#operator-eq">QMediaResource</a> <a href="qmediaserviceproviderhint.html#operator-eq">QMediaServiceProviderHint</a> <a href="qmediatimerange.html#operator-eq-2">QMediaTimeRange</a> <a href="qnetworkconfiguration.html#operator-eq">QNetworkConfiguration</a> <a href="qservicefilter.html#operator-eq">QServiceFilter</a> <a href="qserviceinterfacedescriptor.html#operator-eq">QServiceInterfaceDescriptor</a> <a href="qversitdocument.html#operator-eq">QVersitDocument</a> <a href="qversitproperty.html#operator-eq">QVersitProperty</a> <a href="qvideoencodersettings.html#operator-eq">QVideoEncoderSettings</a></li>
-<li>operator==: <a href="qmediatimerange.html#operator-eq-eq-43">global</a> <a href="qaudioencodersettings.html#operator-eq-eq">QAudioEncoderSettings</a> <a href="qcontact.html#operator-eq-eq">QContact</a> <a href="qcontactactiondescriptor.html#operator-eq-eq">QContactActionDescriptor</a> <a href="qcontactdetail.html#operator-eq-eq">QContactDetail</a> <a href="qcontactdetaildefinition.html#operator-eq-eq">QContactDetailDefinition</a> <a href="qcontactdetailfielddefinition.html#operator-eq-eq">QContactDetailFieldDefinition</a> <a href="qcontactfilter.html#operator-eq-eq">QContactFilter</a> <a href="qcontactid.html#operator-eq-eq">QContactId</a> <a href="qcontactrelationship.html#operator-eq-eq">QContactRelationship</a> <a href="qcontactsortorder.html#operator-eq-eq">QContactSortOrder</a> <a href="qgeocoordinate.html#operator-eq-eq">QGeoCoordinate</a> <a href="qgeopositioninfo.html#operator-eq-eq">QGeoPositionInfo</a> <a href="qgeosatelliteinfo.html#operator-eq-eq">QGeoSatelliteInfo</a> <a href="qimageencodersettings.html#operator-eq-eq">QImageEncoderSettings</a> <a href="qmediacontent.html#operator-eq-eq">QMediaContent</a> <a href="qmediaresource.html#operator-eq-eq">QMediaResource</a> <a href="qmediaserviceproviderhint.html#operator-eq-eq">QMediaServiceProviderHint</a> <a href="qnetworkconfiguration.html#operator-eq-eq">QNetworkConfiguration</a> <a href="qserviceinterfacedescriptor.html#operator-eq-eq">QServiceInterfaceDescriptor</a> <a href="qversitdocument.html#operator-eq-eq">QVersitDocument</a> <a href="qversitproperty.html#operator-eq-eq">QVersitProperty</a> <a href="qvideoencodersettings.html#operator-eq-eq">QVideoEncoderSettings</a></li>
+<li>operator=: <a href="qaudioencodersettings.html#operator-eq">QAudioEncoderSettings</a> <a href="qcontact.html#operator-eq">QContact</a> <a href="qcontactactiondescriptor.html#operator-eq">QContactActionDescriptor</a> <a href="qcontactchangeset.html#operator-eq">QContactChangeSet</a> <a href="qcontactdetail.html#operator-eq">QContactDetail</a> <a href="qcontactdetaildefinition.html#operator-eq">QContactDetailDefinition</a> <a href="qcontactdetailfielddefinition.html#operator-eq">QContactDetailFieldDefinition</a> <a href="qcontactfilter.html#operator-eq">QContactFilter</a> <a href="qcontactid.html#operator-eq">QContactId</a> <a href="qcontactrelationship.html#operator-eq">QContactRelationship</a> <a href="qcontactsortorder.html#operator-eq">QContactSortOrder</a> <a href="qgeocoordinate.html#operator-eq">QGeoCoordinate</a> <a href="qgeopositioninfo.html#operator-eq">QGeoPositionInfo</a> <a href="qgeosatelliteinfo.html#operator-eq">QGeoSatelliteInfo</a> <a href="qimageencodersettings.html#operator-eq">QImageEncoderSettings</a> <a href="qlandmark.html#operator-eq">QLandmark</a> <a href="qlandmarkcategory.html#operator-eq">QLandmarkCategory</a> <a href="qlandmarkcategoryid.html#operator-eq">QLandmarkCategoryId</a> <a href="qlandmarkfilter.html#operator-eq">QLandmarkFilter</a> <a href="qlandmarkid.html#operator-eq">QLandmarkId</a> <a href="qmediacontent.html#operator-eq">QMediaContent</a> <a href="qmediaresource.html#operator-eq">QMediaResource</a> <a href="qmediaserviceproviderhint.html#operator-eq">QMediaServiceProviderHint</a> <a href="qmediatimerange.html#operator-eq-2">QMediaTimeRange</a> <a href="qnetworkconfiguration.html#operator-eq">QNetworkConfiguration</a> <a href="qservicefilter.html#operator-eq">QServiceFilter</a> <a href="qserviceinterfacedescriptor.html#operator-eq">QServiceInterfaceDescriptor</a> <a href="qversitdocument.html#operator-eq">QVersitDocument</a> <a href="qversitproperty.html#operator-eq">QVersitProperty</a> <a href="qvideoencodersettings.html#operator-eq">QVideoEncoderSettings</a></li>
+<li>operator==: <a href="qmediatimerange.html#operator-eq-eq-43">global</a> <a href="qaudioencodersettings.html#operator-eq-eq">QAudioEncoderSettings</a> <a href="qcontact.html#operator-eq-eq">QContact</a> <a href="qcontactactiondescriptor.html#operator-eq-eq">QContactActionDescriptor</a> <a href="qcontactdetail.html#operator-eq-eq">QContactDetail</a> <a href="qcontactdetaildefinition.html#operator-eq-eq">QContactDetailDefinition</a> <a href="qcontactdetailfielddefinition.html#operator-eq-eq">QContactDetailFieldDefinition</a> <a href="qcontactfilter.html#operator-eq-eq">QContactFilter</a> <a href="qcontactid.html#operator-eq-eq">QContactId</a> <a href="qcontactrelationship.html#operator-eq-eq">QContactRelationship</a> <a href="qcontactsortorder.html#operator-eq-eq">QContactSortOrder</a> <a href="qgeocoordinate.html#operator-eq-eq">QGeoCoordinate</a> <a href="qgeopositioninfo.html#operator-eq-eq">QGeoPositionInfo</a> <a href="qgeosatelliteinfo.html#operator-eq-eq">QGeoSatelliteInfo</a> <a href="qimageencodersettings.html#operator-eq-eq">QImageEncoderSettings</a> <a href="qlandmark.html#operator-eq-eq">QLandmark</a> <a href="qlandmarkcategory.html#operator-eq-eq">QLandmarkCategory</a> <a href="qlandmarkcategoryid.html#operator-eq-eq">QLandmarkCategoryId</a> <a href="qlandmarkfilter.html#operator-eq-eq">QLandmarkFilter</a> <a href="qlandmarkid.html#operator-eq-eq">QLandmarkId</a> <a href="qmediacontent.html#operator-eq-eq">QMediaContent</a> <a href="qmediaresource.html#operator-eq-eq">QMediaResource</a> <a href="qmediaserviceproviderhint.html#operator-eq-eq">QMediaServiceProviderHint</a> <a href="qnetworkconfiguration.html#operator-eq-eq">QNetworkConfiguration</a> <a href="qserviceinterfacedescriptor.html#operator-eq-eq">QServiceInterfaceDescriptor</a> <a href="qversitdocument.html#operator-eq-eq">QVersitDocument</a> <a href="qversitproperty.html#operator-eq-eq">QVersitProperty</a> <a href="qvideoencodersettings.html#operator-eq-eq">QVideoEncoderSettings</a></li>
 <li>operator&gt;: <a href="http://qt.nokia.com/doc/4.6/qchar.html#operator>-12">global</a></li>
 <li>operator&gt;=: <a href="http://qt.nokia.com/doc/4.6/qchar.html#operator>=-12">global</a></li>
 <li>operator&gt;&gt;: <a href="qserviceinterfacedescriptor.html#operator-gt-gt-75">global</a></li>
@@ -763,6 +791,7 @@
 <li>parseUri: <a href="qcontactmanager.html#parseUri">QContactManager</a></li>
 <li>path: <a href="qmessagefolder.html#path">QMessageFolder</a> <a href="qvaluespacepublisher.html#path">QValueSpacePublisher</a> <a href="qvaluespacesubscriber.html#path-prop">QValueSpaceSubscriber</a></li>
 <li>pause: <a href="qmediaimageviewer.html#pause">QMediaImageViewer</a> <a href="qmediaplayer.html#pause">QMediaPlayer</a> <a href="qmediaplayercontrol.html#pause">QMediaPlayerControl</a> <a href="qmediarecorder.html#pause">QMediaRecorder</a> <a href="qmediarecordercontrol.html#pause">QMediaRecorderControl</a></li>
+<li>phone: <a href="qlandmark.html#phone">QLandmark</a></li>
 <li>pixmap: <a href="qcontactavatar.html#pixmap">QContactAvatar</a></li>
 <li>play: <a href="qmediaimageviewer.html#play">QMediaImageViewer</a> <a href="qmediaplayer.html#play">QMediaPlayer</a> <a href="qmediaplayercontrol.html#play">QMediaPlayerControl</a></li>
 <li>playbackMode: <a href="qmediaplaylist.html#playbackMode-prop">QMediaPlaylist</a> <a href="qmediaplaylistcontrol.html#playbackMode">QMediaPlaylistControl</a> <a href="qmediaplaylistnavigator.html#playbackMode-prop">QMediaPlaylistNavigator</a></li>
@@ -776,10 +805,10 @@
 <li>position: <a href="qmediaplayer.html#position-prop">QMediaPlayer</a> <a href="qmediaplayercontrol.html#position">QMediaPlayerControl</a></li>
 <li>positionChanged: <a href="qmediaplayer.html#positionChanged">QMediaPlayer</a> <a href="qmediaplayercontrol.html#positionChanged">QMediaPlayerControl</a></li>
 <li>positionUpdated: <a href="qgeopositioninfosource.html#positionUpdated">QGeoPositionInfoSource</a></li>
-<li>postOfficeBox: <a href="qcontactaddress.html#postOfficeBox">QContactAddress</a></li>
+<li>postOfficeBox: <a href="qcontactaddress.html#postOfficeBox">QContactAddress</a> <a href="qlandmark.html#postOfficeBox">QLandmark</a></li>
 <li>postProcessDetail: <a href="qversitcontactexporterdetailhandler.html#postProcessDetail">QVersitContactExporterDetailHandler</a></li>
 <li>postProcessProperty: <a href="qversitcontactimporterpropertyhandler.html#postProcessProperty">QVersitContactImporterPropertyHandler</a></li>
-<li>postcode: <a href="qcontactaddress.html#postcode">QContactAddress</a></li>
+<li>postcode: <a href="qcontactaddress.html#postcode">QContactAddress</a> <a href="qlandmark.html#postcode">QLandmark</a></li>
 <li>powerStateChanged: <a href="qsystemdeviceinfo.html#powerStateChanged">QSystemDeviceInfo</a></li>
 <li>preProcessDetail: <a href="qversitcontactexporterdetailhandler.html#preProcessDetail">QVersitContactExporterDetailHandler</a></li>
 <li>preProcessProperty: <a href="qversitcontactimporterpropertyhandler.html#preProcessProperty">QVersitContactImporterPropertyHandler</a></li>
@@ -920,7 +949,7 @@
 <li>queryMessages: <a href="qmessagemanager.html#queryMessages-4">QMessageManager</a> <a href="qmessageservice.html#queryMessages-2">QMessageService</a></li>
 <li>qvariant_cast: <a href="http://qt.nokia.com/doc/4.6/qvariant.html#qvariant_cast">global</a></li>
 <li>qvsnprintf: <a href="http://qt.nokia.com/doc/4.6/qbytearray.html#qvsnprintf">global</a></li>
-<li>radius:<a name="r"></a> <a href="qgeoareamonitor.html#radius-prop">QGeoAreaMonitor</a></li>
+<li>radius:<a name="r"></a> <a href="qgeoareamonitor.html#radius-prop">QGeoAreaMonitor</a> <a href="qlandmark.html#radius">QLandmark</a> <a href="qlandmarkproximityfilter.html#radius">QLandmarkProximityFilter</a></li>
 <li>rangeFlags: <a href="qcontactdetailrangefilter.html#rangeFlags">QContactDetailRangeFilter</a></li>
 <li>readItem: <a href="qmediaplaylistreader.html#readItem">QMediaPlaylistReader</a></li>
 <li>reading: <a href="qaccelerometer.html#reading">QAccelerometer</a> <a href="qambientlightsensor.html#reading">QAmbientLightSensor</a> <a href="qcompass.html#reading">QCompass</a> <a href="qmagnetometer.html#reading">QMagnetometer</a> <a href="qorientationsensor.html#reading">QOrientationSensor</a> <a href="qproximitysensor.html#reading">QProximitySensor</a> <a href="qrotationsensor.html#reading">QRotationSensor</a> <a href="qsensor.html#reading-prop">QSensor</a> <a href="qsensorbackend.html#reading">QSensorBackend</a> <a href="qtapsensor.html#reading">QTapSensor</a></li>
@@ -929,7 +958,7 @@
 <li>receivedDate: <a href="qmessage.html#receivedDate">QMessage</a></li>
 <li>recipient: <a href="qmessageaddress.html#recipient">QMessageAddress</a></li>
 <li>record: <a href="qmediarecorder.html#record">QMediaRecorder</a> <a href="qmediarecordercontrol.html#record">QMediaRecorderControl</a></li>
-<li>region: <a href="qcontactaddress.html#region">QContactAddress</a></li>
+<li>region: <a href="qcontactaddress.html#region">QContactAddress</a> <a href="qlandmark.html#region">QLandmark</a></li>
 <li>registerBackend: <a href="qsensormanager.html#registerBackend">QSensorManager</a></li>
 <li>registerNotificationFilter: <a href="qmessagemanager.html#registerNotificationFilter">QMessageManager</a></li>
 <li>registerSensors: <a href="qsensorplugininterface.html#registerSensors">QSensorPluginInterface</a></li>
@@ -946,6 +975,7 @@
 <li>releaseService: <a href="qmediaserviceprovider.html#releaseService">QMediaServiceProvider</a></li>
 <li>remove: <a href="qcontactintersectionfilter.html#remove">QContactIntersectionFilter</a> <a href="qcontactunionfilter.html#remove">QContactUnionFilter</a></li>
 <li>removeAttribute: <a href="qgeopositioninfo.html#removeAttribute">QGeoPositionInfo</a> <a href="qgeosatelliteinfo.html#removeAttribute">QGeoSatelliteInfo</a></li>
+<li>removeCategory: <a href="qlandmark.html#removeCategory">QLandmark</a> <a href="qlandmarkmanager.html#removeCategory">QLandmarkManager</a></li>
 <li>removeContact: <a href="qcontactmanager.html#removeContact">QContactManager</a> <a href="qcontactmanagerengine.html#removeContact">QContactManagerEngine</a> <a href="qcontactmemoryengine.html#removeContact">QContactMemoryEngine</a></li>
 <li>removeContacts: <a href="qcontactmanager.html#removeContacts">QContactManager</a> <a href="qcontactmanagerengine.html#removeContacts">QContactManagerEngine</a> <a href="qcontactmemoryengine.html#removeContacts">QContactMemoryEngine</a></li>
 <li>removeDetail: <a href="qcontact.html#removeDetail">QContact</a></li>
@@ -954,6 +984,9 @@
 <li>removeFilter: <a href="qsensor.html#removeFilter">QSensor</a></li>
 <li>removeHandle: <a href="qabstractvaluespacelayer.html#removeHandle">QAbstractValueSpaceLayer</a></li>
 <li>removeInterval: <a href="qmediatimerange.html#removeInterval">QMediaTimeRange</a></li>
+<li>removeLandmark: <a href="qlandmarkmanager.html#removeLandmark">QLandmarkManager</a></li>
+<li>removeLandmarks: <a href="qlandmarkmanager.html#removeLandmarks">QLandmarkManager</a></li>
+<li>removeManager: <a href="qlandmarkmanager.html#removeManager">QLandmarkManager</a></li>
 <li>removeMedia: <a href="qmediaplaylist.html#removeMedia-2">QMediaPlaylist</a> <a href="qmediaplaylistprovider.html#removeMedia-2">QMediaPlaylistProvider</a></li>
 <li>removeMessage: <a href="qmessagemanager.html#removeMessage">QMessageManager</a></li>
 <li>removeMessages: <a href="qmessagemanager.html#removeMessages">QMessageManager</a></li>
@@ -985,7 +1018,7 @@
 <li>resources: <a href="qmediacontent.html#resources">QMediaContent</a></li>
 <li>result: <a href="qcontactaction.html#result">QContactAction</a></li>
 <li>results: <a href="qversitreader.html#results">QVersitReader</a></li>
-<li>resultsAvailable: <a href="qcontactabstractrequest.html#resultsAvailable">QContactAbstractRequest</a> <a href="qversitreader.html#resultsAvailable">QVersitReader</a></li>
+<li>resultsAvailable: <a href="qcontactabstractrequest.html#resultsAvailable">QContactAbstractRequest</a> <a href="qlandmarkabstractrequest.html#resultsAvailable">QLandmarkAbstractRequest</a> <a href="qversitreader.html#resultsAvailable">QVersitReader</a></li>
 <li>retrieve: <a href="qmessageservice.html#retrieve">QMessageService</a></li>
 <li>retrieveBody: <a href="qmessageservice.html#retrieveBody">QMessageService</a></li>
 <li>retrieveHeader: <a href="qmessageservice.html#retrieveHeader">QMessageService</a></li>
@@ -997,10 +1030,13 @@
 <li>saturation: <a href="qimageprocessingcontrol.html#saturation">QImageProcessingControl</a> <a href="qvideowidget.html#saturation-prop">QVideoWidget</a> <a href="qvideowidgetcontrol.html#saturation">QVideoWidgetControl</a> <a href="qvideowindowcontrol.html#saturation">QVideoWindowControl</a></li>
 <li>saturationChanged: <a href="qvideowidget.html#saturationChanged">QVideoWidget</a> <a href="qvideowidgetcontrol.html#saturationChanged">QVideoWidgetControl</a> <a href="qvideowindowcontrol.html#saturationChanged">QVideoWindowControl</a></li>
 <li>save: <a href="qmediaplaylist.html#save-2">QMediaPlaylist</a> <a href="qmediaplaylistprovider.html#save-2">QMediaPlaylistProvider</a></li>
+<li>saveCategory: <a href="qlandmarkmanager.html#saveCategory">QLandmarkManager</a></li>
 <li>saveContact: <a href="qcontactmanager.html#saveContact">QContactManager</a> <a href="qcontactmanagerengine.html#saveContact">QContactManagerEngine</a> <a href="qcontactmemoryengine.html#saveContact">QContactMemoryEngine</a></li>
 <li>saveContacts: <a href="qcontactmanager.html#saveContacts">QContactManager</a> <a href="qcontactmanagerengine.html#saveContacts">QContactManagerEngine</a> <a href="qcontactmemoryengine.html#saveContacts">QContactMemoryEngine</a></li>
 <li>saveDetail: <a href="qcontact.html#saveDetail">QContact</a></li>
 <li>saveDetailDefinition: <a href="qcontactmanager.html#saveDetailDefinition">QContactManager</a> <a href="qcontactmanagerengine.html#saveDetailDefinition">QContactManagerEngine</a> <a href="qcontactmemoryengine.html#saveDetailDefinition">QContactMemoryEngine</a></li>
+<li>saveLandmark: <a href="qlandmarkmanager.html#saveLandmark">QLandmarkManager</a></li>
+<li>saveLandmarks: <a href="qlandmarkmanager.html#saveLandmarks">QLandmarkManager</a></li>
 <li>saveRelationship: <a href="qcontactmanager.html#saveRelationship">QContactManager</a> <a href="qcontactmanagerengine.html#saveRelationship">QContactManagerEngine</a> <a href="qcontactmemoryengine.html#saveRelationship">QContactMemoryEngine</a></li>
 <li>saveRelationships: <a href="qcontactmanager.html#saveRelationships">QContactManager</a> <a href="qcontactmanagerengine.html#saveRelationships">QContactManagerEngine</a> <a href="qcontactmemoryengine.html#saveRelationships">QContactMemoryEngine</a></li>
 <li>saveResource: <a href="qversitresourcehandler.html#saveResource">QVersitResourceHandler</a></li>
@@ -1036,7 +1072,7 @@
 <li>setAltitudeAccuracy: <a href="qcontactgeolocation.html#setAltitudeAccuracy">QContactGeoLocation</a></li>
 <li>setAspectRatioMode: <a href="qgraphicsvideoitem.html#aspectRatioMode-prop">QGraphicsVideoItem</a> <a href="qvideowidget.html#aspectRatioMode-prop">QVideoWidget</a> <a href="qvideowidgetcontrol.html#setAspectRatioMode">QVideoWidgetControl</a> <a href="qvideowindowcontrol.html#setAspectRatioMode">QVideoWindowControl</a></li>
 <li>setAssistantName: <a href="qcontactorganization.html#setAssistantName">QContactOrganization</a></li>
-<li>setAttribute: <a href="qgeopositioninfo.html#setAttribute">QGeoPositionInfo</a> <a href="qgeosatelliteinfo.html#setAttribute">QGeoSatelliteInfo</a></li>
+<li>setAttribute: <a href="qgeopositioninfo.html#setAttribute">QGeoPositionInfo</a> <a href="qgeosatelliteinfo.html#setAttribute">QGeoSatelliteInfo</a> <a href="qlandmark.html#setAttribute">QLandmark</a> <a href="qlandmarkcategory.html#setAttribute">QLandmarkCategory</a></li>
 <li>setAudioBitRate: <a href="qmediaresource.html#setAudioBitRate">QMediaResource</a></li>
 <li>setAudioCodec: <a href="qmediaresource.html#setAudioCodec">QMediaResource</a></li>
 <li>setAudioInput: <a href="qaudiocapturesource.html#setAudioInput">QAudioCaptureSource</a></li>
@@ -1060,6 +1096,9 @@
 <li>setCapabilities: <a href="qcontactonlineaccount.html#setCapabilities">QContactOnlineAccount</a> <a href="qservicefilter.html#setCapabilities">QServiceFilter</a></li>
 <li>setCaptureMode: <a href="qcamera.html#captureMode-prop">QCamera</a> <a href="qcameracontrol.html#setCaptureMode">QCameraControl</a></li>
 <li>setCaseSensitivity: <a href="qcontactsortorder.html#setCaseSensitivity">QContactSortOrder</a></li>
+<li>setCategories: <a href="qlandmark.html#setCategories">QLandmark</a> <a href="qlandmarkcategorysaverequest.html#setCategories">QLandmarkCategorySaveRequest</a></li>
+<li>setCategoryId: <a href="qlandmarkcategoryfilter.html#setCategoryId">QLandmarkCategoryFilter</a></li>
+<li>setCategoryIds: <a href="qlandmarkcategoryremoverequest.html#setCategoryIds">QLandmarkCategoryRemoveRequest</a></li>
 <li>setCc: <a href="qmessage.html#setCc">QMessage</a></li>
 <li>setCenter: <a href="qgeoareamonitor.html#center-prop">QGeoAreaMonitor</a></li>
 <li>setChannelCount: <a href="qaudioencodersettings.html#setChannelCount">QAudioEncoderSettings</a> <a href="qmediaresource.html#setChannelCount">QMediaResource</a></li>
@@ -1075,8 +1114,8 @@
 <li>setContainerMimeType: <a href="qmediacontainercontrol.html#setContainerMimeType">QMediaContainerControl</a></li>
 <li>setContexts: <a href="qcontactdetail.html#setContexts-2">QContactDetail</a></li>
 <li>setContrast: <a href="qimageprocessingcontrol.html#setContrast">QImageProcessingControl</a> <a href="qvideowidget.html#contrast-prop">QVideoWidget</a> <a href="qvideowidgetcontrol.html#setContrast">QVideoWidgetControl</a> <a href="qvideowindowcontrol.html#setContrast">QVideoWindowControl</a></li>
-<li>setCoordinate: <a href="qgeopositioninfo.html#setCoordinate">QGeoPositionInfo</a></li>
-<li>setCountry: <a href="qcontactaddress.html#setCountry">QContactAddress</a></li>
+<li>setCoordinate: <a href="qgeopositioninfo.html#setCoordinate">QGeoPositionInfo</a> <a href="qlandmark.html#setCoordinate">QLandmark</a> <a href="qlandmarkdistancesort.html#setCoordinate">QLandmarkDistanceSort</a> <a href="qlandmarknearestfilter.html#setCoordinate">QLandmarkNearestFilter</a> <a href="qlandmarkproximityfilter.html#setCoordinate">QLandmarkProximityFilter</a></li>
+<li>setCountry: <a href="qcontactaddress.html#setCountry">QContactAddress</a> <a href="qlandmark.html#setCountry">QLandmark</a></li>
 <li>setCreated: <a href="qcontacttimestamp.html#setCreated">QContactTimestamp</a></li>
 <li>setCurrentIndex: <a href="qmediaplaylist.html#currentIndex-prop">QMediaPlaylist</a> <a href="qmediaplaylistcontrol.html#setCurrentIndex">QMediaPlaylistControl</a></li>
 <li>setCustomAttribute: <a href="qservicefilter.html#setCustomAttribute">QServiceFilter</a></li>
@@ -1087,17 +1126,19 @@
 <li>setDate: <a href="qcontactbirthday.html#setDate">QContactBirthday</a> <a href="qmessage.html#setDate">QMessage</a></li>
 <li>setDateTime: <a href="qgeopositioninfo.html#setDateTime">QGeoPositionInfo</a></li>
 <li>setDefaultCodec: <a href="qversitreader.html#setDefaultCodec">QVersitReader</a> <a href="qversitwriter.html#setDefaultCodec">QVersitWriter</a></li>
+<li>setDefaultManager: <a href="qlandmarkmanager.html#setDefaultManager">QLandmarkManager</a></li>
 <li>setDefinitionNames: <a href="qcontactdetaildefinitionfetchrequest.html#setDefinitionNames">QContactDetailDefinitionFetchRequest</a> <a href="qcontactdetaildefinitionremoverequest.html#setDefinitionNames">QContactDetailDefinitionRemoveRequest</a></li>
 <li>setDefinitionRestrictions: <a href="qcontactfetchrequest.html#setDefinitionRestrictions">QContactFetchRequest</a></li>
 <li>setDefinitions: <a href="qcontactdetaildefinitionsaverequest.html#setDefinitions">QContactDetailDefinitionSaveRequest</a></li>
 <li>setDenoisingLevel: <a href="qimageprocessingcontrol.html#setDenoisingLevel">QImageProcessingControl</a></li>
 <li>setDepartment: <a href="qcontactorganization.html#setDepartment">QContactOrganization</a></li>
+<li>setDescription: <a href="qlandmark.html#setDescription">QLandmark</a> <a href="qlandmarkcategory.html#setDescription">QLandmarkCategory</a></li>
 <li>setDetailAccessConstraints: <a href="qcontactmanagerengine.html#setDetailAccessConstraints">QContactManagerEngine</a></li>
 <li>setDetailDefinitionName: <a href="qcontactdetailfilter.html#setDetailDefinitionName">QContactDetailFilter</a> <a href="qcontactdetailrangefilter.html#setDetailDefinitionName">QContactDetailRangeFilter</a> <a href="qcontactsortorder.html#setDetailDefinitionName">QContactSortOrder</a></li>
 <li>setDetailHandler: <a href="qversitcontactexporter.html#setDetailHandler">QVersitContactExporter</a></li>
 <li>setDetailUri: <a href="qcontactdetail.html#setDetailUri">QContactDetail</a></li>
-<li>setDevice: <a href="qnmeapositioninfosource.html#setDevice">QNmeaPositionInfoSource</a> <a href="qversitreader.html#setDevice">QVersitReader</a> <a href="qversitwriter.html#setDevice">QVersitWriter</a></li>
-<li>setDirection: <a href="qcontactsortorder.html#setDirection">QContactSortOrder</a></li>
+<li>setDevice: <a href="qlandmarkexportrequest.html#setDevice">QLandmarkExportRequest</a> <a href="qlandmarkimportrequest.html#setDevice">QLandmarkImportRequest</a> <a href="qnmeapositioninfosource.html#setDevice">QNmeaPositionInfoSource</a> <a href="qversitreader.html#setDevice">QVersitReader</a> <a href="qversitwriter.html#setDevice">QVersitWriter</a></li>
+<li>setDirection: <a href="qcontactsortorder.html#setDirection">QContactSortOrder</a> <a href="qlandmarksortorder.html#setDirection">QLandmarkSortOrder</a></li>
 <li>setDisplayRect: <a href="qvideowindowcontrol.html#setDisplayRect">QVideoWindowControl</a></li>
 <li>setDoubleTap: <a href="qtapreading.html#setDoubleTap">QTapReading</a></li>
 <li>setEmailAddress: <a href="qcontactemailaddress.html#setEmailAddress">QContactEmailAddress</a></li>
@@ -1110,12 +1151,13 @@
 <li>setExposureMode: <a href="qcamera.html#setExposureMode">QCamera</a> <a href="qcameraexposurecontrol.html#setExposureMode">QCameraExposureControl</a></li>
 <li>setExtendedMetaData: <a href="qmediaobject.html#setExtendedMetaData">QMediaObject</a> <a href="qmetadatacontrol.html#setExtendedMetaData">QMetaDataControl</a></li>
 <li>setFields: <a href="qcontactdetaildefinition.html#setFields">QContactDetailDefinition</a></li>
-<li>setFilter: <a href="qcontactfetchrequest.html#setFilter">QContactFetchRequest</a> <a href="qcontactlocalidfetchrequest.html#setFilter">QContactLocalIdFetchRequest</a></li>
+<li>setFilter: <a href="qcontactfetchrequest.html#setFilter">QContactFetchRequest</a> <a href="qcontactlocalidfetchrequest.html#setFilter">QContactLocalIdFetchRequest</a> <a href="qlandmarkidfetchrequest.html#setFilter">QLandmarkIdFetchRequest</a></li>
 <li>setFilters: <a href="qcontactintersectionfilter.html#setFilters">QContactIntersectionFilter</a> <a href="qcontactunionfilter.html#setFilters">QContactUnionFilter</a></li>
 <li>setFirst: <a href="qcontactrelationship.html#setFirst">QContactRelationship</a> <a href="qcontactrelationshipfetchrequest.html#setFirst">QContactRelationshipFetchRequest</a></li>
 <li>setFirstName: <a href="qcontactname.html#setFirstName">QContactName</a></li>
 <li>setFlashMode: <a href="qcamera.html#setFlashMode">QCamera</a> <a href="qcameraexposurecontrol.html#setFlashMode">QCameraExposureControl</a></li>
 <li>setFocusMode: <a href="qcamera.html#setFocusMode">QCamera</a> <a href="qcamerafocuscontrol.html#setFocusMode">QCameraFocusControl</a></li>
+<li>setFormat: <a href="qlandmarkexportrequest.html#setFormat">QLandmarkExportRequest</a> <a href="qlandmarkimportrequest.html#setFormat">QLandmarkImportRequest</a></li>
 <li>setFrameRate: <a href="qvideoencodersettings.html#setFrameRate">QVideoEncoderSettings</a></li>
 <li>setFrequency: <a href="qradiotuner.html#frequency-prop">QRadioTuner</a> <a href="qradiotunercontrol.html#setFrequency">QRadioTunerControl</a></li>
 <li>setFrom: <a href="qmessage.html#setFrom">QMessage</a></li>
@@ -1125,7 +1167,8 @@
 <li>setGuid: <a href="qcontactguid.html#setGuid">QContactGuid</a></li>
 <li>setHeading: <a href="qcontactgeolocation.html#setHeading">QContactGeoLocation</a></li>
 <li>setHue: <a href="qvideowidget.html#hue-prop">QVideoWidget</a> <a href="qvideowidgetcontrol.html#setHue">QVideoWidgetControl</a> <a href="qvideowindowcontrol.html#setHue">QVideoWindowControl</a></li>
-<li>setId: <a href="qcontact.html#setId">QContact</a></li>
+<li>setIcon: <a href="qlandmark.html#setIcon">QLandmark</a> <a href="qlandmarkcategory.html#setIcon">QLandmarkCategory</a></li>
+<li>setId: <a href="qcontact.html#setId">QContact</a> <a href="qlandmarkcategoryid.html#setId">QLandmarkCategoryId</a> <a href="qlandmarkid.html#setId">QLandmarkId</a></li>
 <li>setIdentifier: <a href="qsensor.html#sensorid-prop">QSensor</a></li>
 <li>setIds: <a href="qcontactlocalidfilter.html#setIds">QContactLocalIdFilter</a></li>
 <li>setImageSettings: <a href="qimageencodercontrol.html#setImageSettings">QImageEncoderControl</a></li>
@@ -1133,6 +1176,8 @@
 <li>setInterface: <a href="qservicefilter.html#setInterface">QServiceFilter</a></li>
 <li>setInterfaceDefault: <a href="qservicemanager.html#setInterfaceDefault-2">QServiceManager</a></li>
 <li>setLabel: <a href="qcontactgeolocation.html#setLabel">QContactGeoLocation</a></li>
+<li>setLandmarkIds: <a href="qlandmarkexportrequest.html#setLandmarkIds">QLandmarkExportRequest</a> <a href="qlandmarkremoverequest.html#setLandmarkIds">QLandmarkRemoveRequest</a></li>
+<li>setLandmarks: <a href="qlandmarksaverequest.html#setLandmarks">QLandmarkSaveRequest</a></li>
 <li>setLanguage: <a href="qmediaresource.html#setLanguage">QMediaResource</a></li>
 <li>setLastModified: <a href="qcontacttimestamp.html#setLastModified">QContactTimestamp</a></li>
 <li>setLastName: <a href="qcontactname.html#setLastName">QContactName</a></li>
@@ -1140,26 +1185,28 @@
 <li>setLightLevel: <a href="qambientlightreading.html#setLightLevel">QAmbientLightReading</a></li>
 <li>setLinkedDetailUris: <a href="qcontactdetail.html#setLinkedDetailUris-2">QContactDetail</a></li>
 <li>setLocalId: <a href="qcontactid.html#setLocalId">QContactId</a></li>
-<li>setLocality: <a href="qcontactaddress.html#setLocality">QContactAddress</a></li>
+<li>setLocality: <a href="qcontactaddress.html#setLocality">QContactAddress</a> <a href="qlandmark.html#setLocality">QLandmark</a></li>
 <li>setLocation: <a href="qcontactorganization.html#setLocation">QContactOrganization</a></li>
 <li>setLogo: <a href="qcontactorganization.html#setLogo">QContactOrganization</a></li>
 <li>setLongitude: <a href="qcontactgeolocation.html#setLongitude">QContactGeoLocation</a> <a href="qgeocoordinate.html#setLongitude">QGeoCoordinate</a></li>
 <li>setMacroFocusingEnabled: <a href="qcamera.html#setMacroFocusingEnabled">QCamera</a> <a href="qcamerafocuscontrol.html#setMacroFocusingEnabled">QCameraFocusControl</a></li>
-<li>setManager: <a href="qcontactabstractrequest.html#setManager">QContactAbstractRequest</a></li>
-<li>setManagerUri: <a href="qcontactid.html#setManagerUri">QContactId</a></li>
+<li>setManager: <a href="qcontactabstractrequest.html#setManager">QContactAbstractRequest</a> <a href="qlandmarkabstractrequest.html#setManager">QLandmarkAbstractRequest</a></li>
+<li>setManagerUri: <a href="qcontactid.html#setManagerUri">QContactId</a> <a href="qlandmarkcategoryid.html#setManagerUri">QLandmarkCategoryId</a> <a href="qlandmarkid.html#setManagerUri">QLandmarkId</a></li>
 <li>setManualAperture: <a href="qcamera.html#aperture-prop">QCamera</a> <a href="qcameraexposurecontrol.html#setManualAperture">QCameraExposureControl</a></li>
 <li>setManualIsoSensitivity: <a href="qcamera.html#isoSensitivity-prop">QCamera</a> <a href="qcameraexposurecontrol.html#setManualIsoSensitivity">QCameraExposureControl</a></li>
 <li>setManualShutterSpeed: <a href="qcamera.html#shutterSpeed-prop">QCamera</a> <a href="qcameraexposurecontrol.html#setManualShutterSpeed">QCameraExposureControl</a></li>
 <li>setManualWhiteBalance: <a href="qcamera.html#setManualWhiteBalance">QCamera</a> <a href="qimageprocessingcontrol.html#setManualWhiteBalance">QImageProcessingControl</a></li>
 <li>setMatchFlags: <a href="qcontactdetailfilter.html#setMatchFlags">QContactDetailFilter</a> <a href="qcontactdetailrangefilter.html#setMatchFlags">QContactDetailRangeFilter</a> <a href="qmessageaccountfilter.html#setMatchFlags">QMessageAccountFilter</a> <a href="qmessagefilter.html#setMatchFlags">QMessageFilter</a> <a href="qmessagefolderfilter.html#setMatchFlags">QMessageFolderFilter</a></li>
+<li>setMaxMatches: <a href="qlandmarkfilter.html#setMaxMatches">QLandmarkFilter</a></li>
 <li>setMedia: <a href="qmediaimageviewer.html#media-prop">QMediaImageViewer</a> <a href="qmediaplayer.html#media-prop">QMediaPlayer</a> <a href="qmediaplayercontrol.html#setMedia">QMediaPlayerControl</a></li>
 <li>setMediaObject: <a href="qgraphicsvideoitem.html#mediaObject-prop">QGraphicsVideoItem</a> <a href="qmediaplaylist.html#setMediaObject">QMediaPlaylist</a> <a href="qvideowidget.html#mediaObject-prop">QVideoWidget</a></li>
 <li>setMetaData: <a href="qmediaobject.html#setMetaData">QMediaObject</a> <a href="qmetadatacontrol.html#setMetaData">QMetaDataControl</a></li>
 <li>setMeteringMode: <a href="qcamera.html#setMeteringMode">QCamera</a> <a href="qcameraexposurecontrol.html#setMeteringMode">QCameraExposureControl</a></li>
 <li>setMiddleName: <a href="qcontactname.html#setMiddleName">QContactName</a></li>
 <li>setMuted: <a href="qmediaplayer.html#muted-prop">QMediaPlayer</a> <a href="qmediaplayercontrol.html#setMuted">QMediaPlayerControl</a> <a href="qradiotuner.html#muted-prop">QRadioTuner</a> <a href="qradiotunercontrol.html#setMuted">QRadioTunerControl</a></li>
-<li>setName: <a href="qcontactdetaildefinition.html#setName">QContactDetailDefinition</a> <a href="qcontactorganization.html#setName">QContactOrganization</a> <a href="qversitproperty.html#setName">QVersitProperty</a></li>
+<li>setName: <a href="qcontactdetaildefinition.html#setName">QContactDetailDefinition</a> <a href="qcontactorganization.html#setName">QContactOrganization</a> <a href="qlandmark.html#setName">QLandmark</a> <a href="qlandmarkcategory.html#setName">QLandmarkCategory</a> <a href="qlandmarknamefilter.html#setName">QLandmarkNameFilter</a> <a href="qversitproperty.html#setName">QVersitProperty</a></li>
 <li>setNickname: <a href="qcontactnickname.html#setNickname">QContactNickname</a> <a href="qcontactonlineaccount.html#setNickname">QContactOnlineAccount</a></li>
+<li>setNorthWestCoordinate: <a href="qlandmarkboxfilter.html#setNorthWestCoordinate">QLandmarkBoxFilter</a></li>
 <li>setNote: <a href="qcontactnote.html#setNote">QContactNote</a></li>
 <li>setNotifyInterval: <a href="qmediaobject.html#notifyInterval-prop">QMediaObject</a></li>
 <li>setNumber: <a href="qcontactphonenumber.html#setNumber">QContactPhoneNumber</a></li>
@@ -1171,14 +1218,15 @@
 <li>setParameters: <a href="qversitproperty.html#setParameters">QVersitProperty</a></li>
 <li>setParentAccountId: <a href="qmessage.html#setParentAccountId">QMessage</a></li>
 <li>setPath: <a href="qvaluespacesubscriber.html#path-prop">QValueSpaceSubscriber</a></li>
+<li>setPhone: <a href="qlandmark.html#setPhone">QLandmark</a></li>
 <li>setPixmap: <a href="qcontactavatar.html#setPixmap">QContactAvatar</a></li>
 <li>setPlaybackMode: <a href="qmediaplaylist.html#playbackMode-prop">QMediaPlaylist</a> <a href="qmediaplaylistcontrol.html#setPlaybackMode">QMediaPlaylistControl</a> <a href="qmediaplaylistnavigator.html#playbackMode-prop">QMediaPlaylistNavigator</a></li>
 <li>setPlaybackRate: <a href="qmediaplayer.html#playbackRate-prop">QMediaPlayer</a> <a href="qmediaplayercontrol.html#setPlaybackRate">QMediaPlayerControl</a></li>
 <li>setPlaylist: <a href="qmediaplaylistnavigator.html#setPlaylist">QMediaPlaylistNavigator</a></li>
 <li>setPlaylistProvider: <a href="qmediaplaylistcontrol.html#setPlaylistProvider">QMediaPlaylistControl</a></li>
 <li>setPosition: <a href="qmediaplayer.html#position-prop">QMediaPlayer</a> <a href="qmediaplayercontrol.html#setPosition">QMediaPlayerControl</a></li>
-<li>setPostOfficeBox: <a href="qcontactaddress.html#setPostOfficeBox">QContactAddress</a></li>
-<li>setPostcode: <a href="qcontactaddress.html#setPostcode">QContactAddress</a></li>
+<li>setPostOfficeBox: <a href="qcontactaddress.html#setPostOfficeBox">QContactAddress</a> <a href="qlandmark.html#setPostOfficeBox">QLandmark</a></li>
+<li>setPostcode: <a href="qcontactaddress.html#setPostcode">QContactAddress</a> <a href="qlandmark.html#setPostcode">QLandmark</a></li>
 <li>setPreferredActions: <a href="qcontactdetail.html#setPreferredActions">QContactDetail</a></li>
 <li>setPreferredCharsets: <a href="qmessage.html#setPreferredCharsets">QMessage</a></li>
 <li>setPreferredDetail: <a href="qcontact.html#setPreferredDetail">QContact</a></li>
@@ -1191,12 +1239,12 @@
 <li>setPropertyHandler: <a href="qversitcontactimporter.html#setPropertyHandler">QVersitContactImporter</a></li>
 <li>setProximity: <a href="qproximityreading.html#setProximity">QProximityReading</a></li>
 <li>setQuality: <a href="qaudioencodersettings.html#setQuality">QAudioEncoderSettings</a> <a href="qimageencodersettings.html#setQuality">QImageEncoderSettings</a> <a href="qvideoencodersettings.html#setQuality">QVideoEncoderSettings</a></li>
-<li>setRadius: <a href="qgeoareamonitor.html#radius-prop">QGeoAreaMonitor</a></li>
+<li>setRadius: <a href="qgeoareamonitor.html#radius-prop">QGeoAreaMonitor</a> <a href="qlandmark.html#setRadius">QLandmark</a> <a href="qlandmarkproximityfilter.html#setRadius">QLandmarkProximityFilter</a></li>
 <li>setRange: <a href="qcontactdetailrangefilter.html#setRange">QContactDetailRangeFilter</a></li>
 <li>setReading: <a href="qsensorbackend.html#setReading">QSensorBackend</a></li>
 <li>setReceivedDate: <a href="qmessage.html#setReceivedDate">QMessage</a></li>
 <li>setRecipient: <a href="qmessageaddress.html#setRecipient">QMessageAddress</a></li>
-<li>setRegion: <a href="qcontactaddress.html#setRegion">QContactAddress</a></li>
+<li>setRegion: <a href="qcontactaddress.html#setRegion">QContactAddress</a> <a href="qlandmark.html#setRegion">QLandmark</a></li>
 <li>setRelatedContactId: <a href="qcontactrelationshipfilter.html#setRelatedContactId">QContactRelationshipFilter</a></li>
 <li>setRelatedContactRole: <a href="qcontactrelationshipfilter.html#setRelatedContactRole">QContactRelationshipFilter</a></li>
 <li>setRelationshipOrder: <a href="qcontact.html#setRelationshipOrder">QContact</a></li>
@@ -1219,13 +1267,14 @@
 <li>setSignalStrength: <a href="qgeosatelliteinfo.html#setSignalStrength">QGeoSatelliteInfo</a></li>
 <li>setSince: <a href="qcontactchangelogfilter.html#setSince">QContactChangeLogFilter</a></li>
 <li>setSize: <a href="qgraphicsvideoitem.html#size-prop">QGraphicsVideoItem</a></li>
-<li>setSorting: <a href="qcontactfetchrequest.html#setSorting">QContactFetchRequest</a> <a href="qcontactlocalidfetchrequest.html#setSorting">QContactLocalIdFetchRequest</a></li>
+<li>setSorting: <a href="qcontactfetchrequest.html#setSorting">QContactFetchRequest</a> <a href="qcontactlocalidfetchrequest.html#setSorting">QContactLocalIdFetchRequest</a> <a href="qlandmarkidfetchrequest.html#setSorting">QLandmarkIdFetchRequest</a></li>
+<li>setSouthEastCoordinate: <a href="qlandmarkboxfilter.html#setSouthEastCoordinate">QLandmarkBoxFilter</a></li>
 <li>setSpeed: <a href="qcontactgeolocation.html#setSpeed">QContactGeoLocation</a></li>
 <li>setSpouse: <a href="qcontactfamily.html#setSpouse">QContactFamily</a></li>
 <li>setStatus: <a href="qmessage.html#setStatus-2">QMessage</a></li>
 <li>setStatusMessage: <a href="qcontactonlineaccount.html#setStatusMessage">QContactOnlineAccount</a></li>
 <li>setStereoMode: <a href="qradiotuner.html#stereoMode-prop">QRadioTuner</a> <a href="qradiotunercontrol.html#setStereoMode">QRadioTunerControl</a></li>
-<li>setStreet: <a href="qcontactaddress.html#setStreet">QContactAddress</a></li>
+<li>setStreet: <a href="qcontactaddress.html#setStreet">QContactAddress</a> <a href="qlandmark.html#setStreet">QLandmark</a></li>
 <li>setSubType: <a href="qcontactanniversary.html#setSubType">QContactAnniversary</a> <a href="qcontactavatar.html#setSubType">QContactAvatar</a> <a href="qcontacturl.html#setSubType">QContactUrl</a></li>
 <li>setSubTypes: <a href="qcontactaddress.html#setSubTypes-2">QContactAddress</a> <a href="qcontactonlineaccount.html#setSubTypes-2">QContactOnlineAccount</a> <a href="qcontactphonenumber.html#setSubTypes-2">QContactPhoneNumber</a></li>
 <li>setSubject: <a href="qmessage.html#setSubject">QMessage</a></li>
@@ -1242,7 +1291,7 @@
 <li>setUnique: <a href="qcontactdetaildefinition.html#setUnique">QContactDetailDefinition</a></li>
 <li>setUpdateInterval: <a href="qgeopositioninfosource.html#updateInterval-prop">QGeoPositionInfoSource</a> <a href="qnmeapositioninfosource.html#setUpdateInterval">QNmeaPositionInfoSource</a> <a href="qsensor.html#updateInterval-prop">QSensor</a></li>
 <li>setUpdatePolicy: <a href="qsensor.html#updatePolicy-prop">QSensor</a></li>
-<li>setUrl: <a href="qcontacturl.html#setUrl">QContactUrl</a></li>
+<li>setUrl: <a href="qcontacturl.html#setUrl">QContactUrl</a> <a href="qlandmark.html#setUrl">QLandmark</a></li>
 <li>setValue: <a href="qabstractvaluespacelayer.html#setValue">QAbstractValueSpaceLayer</a> <a href="qcontactactionfilter.html#setValue">QContactActionFilter</a> <a href="qcontactdetail.html#setValue">QContactDetail</a> <a href="qcontactdetailfilter.html#setValue">QContactDetailFilter</a> <a href="qvaluespacepublisher.html#setValue">QValueSpacePublisher</a> <a href="qversitproperty.html#setValue">QVersitProperty</a></li>
 <li>setVendor: <a href="qcontactactionfilter.html#setVendor">QContactActionFilter</a></li>
 <li>setVendorName: <a href="qcontactactiondescriptor.html#setVendorName">QContactActionDescriptor</a></li>
@@ -1268,20 +1317,22 @@
 <li>since: <a href="qcontactchangelogfilter.html#since">QContactChangeLogFilter</a></li>
 <li>size: <a href="qgraphicsvideoitem.html#size-prop">QGraphicsVideoItem</a> <a href="qmessage.html#size">QMessage</a> <a href="qmessagecontentcontainer.html#size">QMessageContentContainer</a></li>
 <li>sizeHint: <a href="qvideowidget.html#sizeHint">QVideoWidget</a></li>
+<li>sort: <a href="qlandmarkdistancesort.html#sort">QLandmarkDistanceSort</a> <a href="qlandmarknamesort.html#sort">QLandmarkNameSort</a> <a href="qlandmarksortorder.html#sort">QLandmarkSortOrder</a></li>
 <li>sortContacts: <a href="qcontactmanagerengine.html#sortContacts">QContactManagerEngine</a></li>
-<li>sorting: <a href="qcontactfetchrequest.html#sorting">QContactFetchRequest</a> <a href="qcontactlocalidfetchrequest.html#sorting">QContactLocalIdFetchRequest</a></li>
+<li>sorting: <a href="qcontactfetchrequest.html#sorting">QContactFetchRequest</a> <a href="qcontactlocalidfetchrequest.html#sorting">QContactLocalIdFetchRequest</a> <a href="qlandmarkidfetchrequest.html#sorting">QLandmarkIdFetchRequest</a></li>
+<li>southEastCoordinate: <a href="qlandmarkboxfilter.html#southEastCoordinate">QLandmarkBoxFilter</a></li>
 <li>speed: <a href="qcontactgeolocation.html#speed">QContactGeoLocation</a></li>
 <li>spouse: <a href="qcontactfamily.html#spouse">QContactFamily</a></li>
 <li>standardFolder: <a href="qmessage.html#standardFolder">QMessage</a></li>
-<li>start: <a href="qcamera.html#start">QCamera</a> <a href="qcameracontrol.html#start">QCameraControl</a> <a href="qcontactabstractrequest.html#start">QContactAbstractRequest</a> <a href="qmediatimeinterval.html#start">QMediaTimeInterval</a> <a href="qradiotuner.html#start">QRadioTuner</a> <a href="qradiotunercontrol.html#start">QRadioTunerControl</a> <a href="qsensor.html#start">QSensor</a> <a href="qsensorbackend.html#start">QSensorBackend</a></li>
+<li>start: <a href="qcamera.html#start">QCamera</a> <a href="qcameracontrol.html#start">QCameraControl</a> <a href="qcontactabstractrequest.html#start">QContactAbstractRequest</a> <a href="qlandmarkabstractrequest.html#start">QLandmarkAbstractRequest</a> <a href="qmediatimeinterval.html#start">QMediaTimeInterval</a> <a href="qradiotuner.html#start">QRadioTuner</a> <a href="qradiotunercontrol.html#start">QRadioTunerControl</a> <a href="qsensor.html#start">QSensor</a> <a href="qsensorbackend.html#start">QSensorBackend</a></li>
 <li>startFocusing: <a href="qcamera.html#startFocusing">QCamera</a> <a href="qcamerafocuscontrol.html#startFocusing">QCameraFocusControl</a></li>
 <li>startReading: <a href="qversitreader.html#startReading">QVersitReader</a></li>
 <li>startRequest: <a href="qcontactmanagerengine.html#startRequest">QContactManagerEngine</a> <a href="qcontactmemoryengine.html#startRequest">QContactMemoryEngine</a></li>
 <li>startUpdates: <a href="qgeopositioninfosource.html#startUpdates">QGeoPositionInfoSource</a> <a href="qgeosatelliteinfosource.html#startUpdates">QGeoSatelliteInfoSource</a> <a href="qnmeapositioninfosource.html#startUpdates">QNmeaPositionInfoSource</a></li>
 <li>startWriting: <a href="qversitwriter.html#startWriting">QVersitWriter</a></li>
 <li>startup: <a href="qabstractvaluespacelayer.html#startup">QAbstractValueSpaceLayer</a></li>
-<li>state: <a href="qcamera.html#state-prop">QCamera</a> <a href="qcameracontrol.html#state">QCameraControl</a> <a href="qcontactabstractrequest.html#state">QContactAbstractRequest</a> <a href="qmediaimageviewer.html#state-prop">QMediaImageViewer</a> <a href="qmediaplayer.html#state-prop">QMediaPlayer</a> <a href="qmediaplayercontrol.html#state">QMediaPlayerControl</a> <a href="qmediarecorder.html#state">QMediaRecorder</a> <a href="qmediarecordercontrol.html#state">QMediaRecorderControl</a> <a href="qmessageservice.html#state">QMessageService</a> <a href="qnetworkconfiguration.html#state">QNetworkConfiguration</a> <a href="qnetworksession.html#state">QNetworkSession</a> <a href="qradiotuner.html#state-prop">QRadioTuner</a> <a href="qradiotunercontrol.html#state">QRadioTunerControl</a> <a href="qversitreader.html#state">QVersitReader</a> <a href="qversitwriter.html#state">QVersitWriter</a></li>
-<li>stateChanged: <a href="qcamera.html#stateChanged">QCamera</a> <a href="qcameracontrol.html#stateChanged">QCameraControl</a> <a href="qcontactabstractrequest.html#stateChanged">QContactAbstractRequest</a> <a href="qmediaimageviewer.html#stateChanged">QMediaImageViewer</a> <a href="qmediaplayer.html#stateChanged">QMediaPlayer</a> <a href="qmediaplayercontrol.html#stateChanged">QMediaPlayerControl</a> <a href="qmediarecorder.html#stateChanged">QMediaRecorder</a> <a href="qmediarecordercontrol.html#stateChanged">QMediaRecorderControl</a> <a href="qmessageservice.html#stateChanged">QMessageService</a> <a href="qnetworksession.html#stateChanged">QNetworkSession</a> <a href="qradiotuner.html#stateChanged">QRadioTuner</a> <a href="qradiotunercontrol.html#stateChanged">QRadioTunerControl</a> <a href="qversitwriter.html#stateChanged">QVersitWriter</a></li>
+<li>state: <a href="qcamera.html#state-prop">QCamera</a> <a href="qcameracontrol.html#state">QCameraControl</a> <a href="qcontactabstractrequest.html#state">QContactAbstractRequest</a> <a href="qlandmarkabstractrequest.html#state">QLandmarkAbstractRequest</a> <a href="qmediaimageviewer.html#state-prop">QMediaImageViewer</a> <a href="qmediaplayer.html#state-prop">QMediaPlayer</a> <a href="qmediaplayercontrol.html#state">QMediaPlayerControl</a> <a href="qmediarecorder.html#state">QMediaRecorder</a> <a href="qmediarecordercontrol.html#state">QMediaRecorderControl</a> <a href="qmessageservice.html#state">QMessageService</a> <a href="qnetworkconfiguration.html#state">QNetworkConfiguration</a> <a href="qnetworksession.html#state">QNetworkSession</a> <a href="qradiotuner.html#state-prop">QRadioTuner</a> <a href="qradiotunercontrol.html#state">QRadioTunerControl</a> <a href="qversitreader.html#state">QVersitReader</a> <a href="qversitwriter.html#state">QVersitWriter</a></li>
+<li>stateChanged: <a href="qcamera.html#stateChanged">QCamera</a> <a href="qcameracontrol.html#stateChanged">QCameraControl</a> <a href="qcontactabstractrequest.html#stateChanged">QContactAbstractRequest</a> <a href="qlandmarkabstractrequest.html#stateChanged">QLandmarkAbstractRequest</a> <a href="qmediaimageviewer.html#stateChanged">QMediaImageViewer</a> <a href="qmediaplayer.html#stateChanged">QMediaPlayer</a> <a href="qmediaplayercontrol.html#stateChanged">QMediaPlayerControl</a> <a href="qmediarecorder.html#stateChanged">QMediaRecorder</a> <a href="qmediarecordercontrol.html#stateChanged">QMediaRecorderControl</a> <a href="qmessageservice.html#stateChanged">QMessageService</a> <a href="qnetworksession.html#stateChanged">QNetworkSession</a> <a href="qradiotuner.html#stateChanged">QRadioTuner</a> <a href="qradiotunercontrol.html#stateChanged">QRadioTunerControl</a> <a href="qversitwriter.html#stateChanged">QVersitWriter</a></li>
 <li>status: <a href="qmessage.html#status">QMessage</a></li>
 <li>statusMessage: <a href="qcontactonlineaccount.html#statusMessage">QContactOnlineAccount</a></li>
 <li>stereoMode: <a href="qradiotuner.html#stereoMode-prop">QRadioTuner</a> <a href="qradiotunercontrol.html#stereoMode">QRadioTunerControl</a></li>
@@ -1291,7 +1342,7 @@
 <li>streamCount: <a href="qmediastreamscontrol.html#streamCount">QMediaStreamsControl</a></li>
 <li>streamType: <a href="qmediastreamscontrol.html#streamType">QMediaStreamsControl</a></li>
 <li>streamsChanged: <a href="qmediastreamscontrol.html#streamsChanged">QMediaStreamsControl</a></li>
-<li>street: <a href="qcontactaddress.html#street">QContactAddress</a></li>
+<li>street: <a href="qcontactaddress.html#street">QContactAddress</a> <a href="qlandmark.html#street">QLandmark</a></li>
 <li>subPaths: <a href="qvaluespacesubscriber.html#subPaths">QValueSpaceSubscriber</a></li>
 <li>subType: <a href="qcontactanniversary.html#subType">QContactAnniversary</a> <a href="qcontactavatar.html#subType">QContactAvatar</a> <a href="qcontacturl.html#subType">QContactUrl</a></li>
 <li>subTypes: <a href="qcontactaddress.html#subTypes">QContactAddress</a> <a href="qcontactonlineaccount.html#subTypes">QContactOnlineAccount</a> <a href="qcontactphonenumber.html#subTypes">QContactPhoneNumber</a></li>
@@ -1341,7 +1392,7 @@
 <li>toString: <a href="qgeocoordinate.html#toString">QGeoCoordinate</a> <a href="qmessageaccountid.html#toString">QMessageAccountId</a> <a href="qmessagecontentcontainerid.html#toString">QMessageContentContainerId</a> <a href="qmessagefolderid.html#toString">QMessageFolderId</a> <a href="qmessageid.html#toString">QMessageId</a></li>
 <li>totalDiskSpace: <a href="qsystemstorageinfo.html#totalDiskSpace">QSystemStorageInfo</a></li>
 <li>translated: <a href="qmediatimeinterval.html#translated">QMediaTimeInterval</a></li>
-<li>type: <a href="qcontact.html#type">QContact</a> <a href="qcontactabstractrequest.html#type">QContactAbstractRequest</a> <a href="qcontactfilter.html#type">QContactFilter</a> <a href="qcontacttype.html#type">QContactType</a> <a href="qgeocoordinate.html#type">QGeoCoordinate</a> <a href="qmediaserviceproviderhint.html#type">QMediaServiceProviderHint</a> <a href="qmessage.html#type">QMessage</a> <a href="qmessageaddress.html#type">QMessageAddress</a> <a href="qnetworkconfiguration.html#type">QNetworkConfiguration</a> <a href="qsensor.html#type-prop">QSensor</a> <a href="qversitdocument.html#type">QVersitDocument</a></li>
+<li>type: <a href="qcontact.html#type">QContact</a> <a href="qcontactabstractrequest.html#type">QContactAbstractRequest</a> <a href="qcontactfilter.html#type">QContactFilter</a> <a href="qcontacttype.html#type">QContactType</a> <a href="qgeocoordinate.html#type">QGeoCoordinate</a> <a href="qlandmarkabstractrequest.html#type">QLandmarkAbstractRequest</a> <a href="qlandmarkfilter.html#type">QLandmarkFilter</a> <a href="qlandmarksortorder.html#type">QLandmarkSortOrder</a> <a href="qmediaserviceproviderhint.html#type">QMediaServiceProviderHint</a> <a href="qmessage.html#type">QMessage</a> <a href="qmessageaddress.html#type">QMessageAddress</a> <a href="qnetworkconfiguration.html#type">QNetworkConfiguration</a> <a href="qsensor.html#type-prop">QSensor</a> <a href="qversitdocument.html#type">QVersitDocument</a></li>
 <li>typeForDrive: <a href="qsystemstorageinfo.html#typeForDrive">QSystemStorageInfo</a></li>
 <li>uninstallService:<a name="u"></a> <a href="qserviceplugininterface.html#uninstallService">QServicePluginInterface</a></li>
 <li>unlockExposure: <a href="qcamera.html#unlockExposure">QCamera</a> <a href="qcameraexposurecontrol.html#unlockExposure">QCameraExposureControl</a></li>
@@ -1366,7 +1417,7 @@
 <li>updateTimeout: <a href="qgeopositioninfosource.html#updateTimeout">QGeoPositionInfoSource</a></li>
 <li>uppercasebase: <a href="http://qt.nokia.com/doc/4.6/qtextstream.html#uppercasebase">global</a></li>
 <li>uppercasedigits: <a href="http://qt.nokia.com/doc/4.6/qtextstream.html#uppercasedigits">global</a></li>
-<li>url: <a href="qcontacturl.html#url">QContactUrl</a> <a href="qmediaresource.html#url">QMediaResource</a></li>
+<li>url: <a href="qcontacturl.html#url">QContactUrl</a> <a href="qlandmark.html#url">QLandmark</a> <a href="qmediaresource.html#url">QMediaResource</a></li>
 <li>validateActionFilter:<a name="v"></a> <a href="qcontactmanagerengine.html#validateActionFilter">QContactManagerEngine</a></li>
 <li>validateContact: <a href="qcontactmanagerengine.html#validateContact">QContactManagerEngine</a></li>
 <li>validateDefinition: <a href="qcontactmanagerengine.html#validateDefinition">QContactManagerEngine</a></li>
@@ -1386,7 +1437,7 @@
 <li>videoWidget: <a href="qvideowidgetcontrol.html#videoWidget">QVideoWidgetControl</a></li>
 <li>volume: <a href="qmediaplayer.html#volume-prop">QMediaPlayer</a> <a href="qmediaplayercontrol.html#volume">QMediaPlayerControl</a> <a href="qradiotuner.html#volume-prop">QRadioTuner</a> <a href="qradiotunercontrol.html#volume">QRadioTunerControl</a></li>
 <li>volumeChanged: <a href="qmediaplayer.html#volumeChanged">QMediaPlayer</a> <a href="qmediaplayercontrol.html#volumeChanged">QMediaPlayerControl</a> <a href="qradiotuner.html#volumeChanged">QRadioTuner</a> <a href="qradiotunercontrol.html#volumeChanged">QRadioTunerControl</a></li>
-<li>waitForFinished:<a name="w"></a> <a href="qcontactabstractrequest.html#waitForFinished">QContactAbstractRequest</a> <a href="qversitreader.html#waitForFinished">QVersitReader</a> <a href="qversitwriter.html#waitForFinished">QVersitWriter</a></li>
+<li>waitForFinished:<a name="w"></a> <a href="qcontactabstractrequest.html#waitForFinished">QContactAbstractRequest</a> <a href="qlandmarkabstractrequest.html#waitForFinished">QLandmarkAbstractRequest</a> <a href="qversitreader.html#waitForFinished">QVersitReader</a> <a href="qversitwriter.html#waitForFinished">QVersitWriter</a></li>
 <li>waitForOpened: <a href="qnetworksession.html#waitForOpened">QNetworkSession</a></li>
 <li>waitForRequestFinished: <a href="qcontactmanagerengine.html#waitForRequestFinished">QContactManagerEngine</a> <a href="qcontactmemoryengine.html#waitForRequestFinished">QContactMemoryEngine</a></li>
 <li>waitForRequestProgress: <a href="qcontactmemoryengine.html#waitForRequestProgress">QContactMemoryEngine</a></li>

@@ -332,10 +332,8 @@
             <span class="comment">// Is there default access point, use it</span>
             QNetworkConfiguration cfg1 = manager.defaultConfiguration();
             if (!cfg1.isValid() || (!canStartIAP &amp;&amp; cfg1.state() != QNetworkConfiguration::Active)) {
-                m_networkSetupError = QString(tr(&quot;Avaliable Access Points not found.&quot;));
-                m_normalMap = 0;
-                m_largeMap = 0;
-                QTimer::singleShot(0, this, SLOT(delayedInit()));
+                m_networkSetupError = QString(tr(&quot;This example requires networking, and no avaliable networks or access points could be found.&quot;));
+                QTimer::singleShot(0, this, SLOT(networkSetupError()));
                 return;
             }
 
@@ -383,9 +381,14 @@
 
     private slots:
 
+        void networkSetupError() {
+            QMessageBox::critical(this, tr(&quot;LightMaps&quot;),
+                                     m_networkSetupError);
+            QTimer::singleShot(0, qApp, SLOT(quit()));
+        }
+
         void networkSessionOpened() {
             m_location = QGeoPositionInfoSource::createDefaultSource(this);
-            m_location-&gt;setUpdateInterval(10000);
 
             if (!m_location) {
                 QNmeaPositionInfoSource *nmeaLocation = new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode, this);
@@ -395,6 +398,8 @@
                 m_location = nmeaLocation;
                 m_usingLogFile = true;
             }
+
+            m_location-&gt;setUpdateInterval(10000);
 
             connect(m_location,
                     SIGNAL(positionUpdated(QGeoPositionInfo)),
@@ -407,11 +412,6 @@
             } else {
                 waitForFix();
                 m_location-&gt;stopUpdates();
-            }
-
-            if (!m_networkSetupError.isEmpty()) {
-                QMessageBox::information(this, tr(&quot;LightMaps&quot;),
-                                         m_networkSetupError);
             }
 
             m_normalMap = new SlippyMap(m_session, m_location, this);

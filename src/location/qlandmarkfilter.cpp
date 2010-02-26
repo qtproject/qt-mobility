@@ -47,6 +47,7 @@ QTM_BEGIN_NAMESPACE
     \class QLandmarkFilter
     \brief The QLandmarkFilter class is used to select landmarks made available
     through QLandmarkManager.
+    \ingroup location
 
     This class is used as a parameter to various functions offered by
     QLandmarkManager, to allow selection of landmarks which have certain
@@ -167,6 +168,7 @@ void QLandmarkNameFilter::setName(const QString &name)
     \class QLandmarkProximityFilter
     \brief The QLandmarkProximityFilter class is used to search for landmarks based on proximity
     around a given coordinate.
+    \ingroup location
 
     This filter will make matches for landmarks which are found within a given radius
     around a central coordinate.
@@ -221,6 +223,7 @@ void QLandmarkProximityFilter::setRadius(double radius)
     \class QLandmarkNearestFilter
     \brief The QLandmarkNearestFilter class is used to search for the landmark nearest
     to a given coordinate.
+    \ingroup location
 */
 
 /*!
@@ -258,6 +261,7 @@ void QLandmarkNearestFilter::setCoordinate(const QGeoCoordinate &coordinate)
     \class QLandmarkCategoryFilter
     \brief The QLandmarkCategoryFilter class is used to search for landmarks that
     belong to a certain category.
+    \ingroup location
 */
 
 /*!
@@ -295,6 +299,7 @@ void QLandmarkCategoryFilter::setCategoryId(const QLandmarkCategoryId &categoryI
 /*!
     \class QLandmarkBoxFilter
     \brief The QLandmarkBoxFilter class is used to search for landmarks within a given bounding box.
+    \ingroup location
 */
 
 /*!
@@ -350,6 +355,7 @@ void QLandmarkBoxFilter::setSouthEastCoordinate(const QGeoCoordinate &SE)
     \class QLandmarkCustomFilter
     \brief The QLandmarkCustomFilter class provides the interface by which
     all custom filters should inherit.
+    \ingroup location
 
     All custom landmark filters should inherit off the QLandmarkCustomFilter
     and must implement the filter() function.
@@ -383,6 +389,7 @@ bool QLandmarkCustomFilter::isMatch(const QLandmarkId &landmarkId)
     \class QLandmarkSortOrder
     \brief The QLandmarkSortOrder class defines how a list of landmarks
     should be ordered according to same criteria.
+    \ingroup location
 */
 
 /*!
@@ -430,6 +437,7 @@ void QLandmarkSortOrder::setDirection(Qt::SortOrder direction)
 /*!
     \class QLandmarkNameSort
     \brief The QLandmarkNameSort class is used to sort landmarks by name.
+    \ingroup location
 */
 
 /*!
@@ -467,6 +475,7 @@ QList<QLandmarkId> QLandmarkNameSort::sort(const QList<QLandmarkId> &landmarkIds
     \class QLandmarkDistanceSort
     \brief The QLandmarkDistanceSort class is used to sort landmarks by distance
     from a central coordinate.
+    \ingroup location
 */
 // ----- QLandmarkDistanceSort -----
 
