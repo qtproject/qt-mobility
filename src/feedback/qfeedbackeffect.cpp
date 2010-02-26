@@ -40,13 +40,11 @@
 ****************************************************************************/
 
 #include "qfeedbackeffect.h"
-
-#include <QtGui/QGraphicsView>
-#include <QtGui/QGraphicsItem>
+#include "qfeedbackeffect_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-QFeedbackEffect::QFeedbackEffect()
+QFeedbackEffect::QFeedbackEffect(QFeedbackEffectPrivate &dd) : d_ptr(&dd)
 {
 }
 
@@ -54,171 +52,54 @@ QFeedbackEffect::~QFeedbackEffect()
 {
 }
 
-void QFeedbackEffect::setWindow(const QWidget *w)
+void QFeedbackEffect::setDuration(int msecs)
 {
-    m_win = w;
+    d_func()->duration = msecs;
 }
 
-const QWidget *QFeedbackEffect::window() const
+int QFeedbackEffect::duration() const
 {
-    return m_win;
+    return d_func()->duration;
 }
 
-//the default timeout is 250 (like for the animations
-QContinuousEffect::QContinuousEffect() : m_timeout(250), m_intensity(1), m_effect(ContinuousNone)
+void QFeedbackEffect::setIntensity(qreal intensity)
 {
+    d_func()->intensity = intensity;
 }
 
-QContinuousEffect::~QContinuousEffect()
+qreal QFeedbackEffect::intensity() const
 {
+    return d_func()->intensity;
 }
 
-EffectType QContinuousEffect::effectType() const
-{
-    return ContinuousFeedback;
-}
-
-void QContinuousEffect::setTimeout(int msecs)
-{
-    m_timeout = msecs;
-}
-
-int QContinuousEffect::timeout() const
-{
-    return m_timeout;
-}
-
-//the intensity. Value should be between 0 and 1
-void QContinuousEffect::setIntensity(qreal intensity)
-{
-    m_intensity = intensity;
-}
-
-qreal QContinuousEffect::intensity() const
-{
-    return m_intensity;
-}
-
-void QContinuousEffect::setContinuousEffect(ContinuousEffect effect)
-{
-    m_effect = effect;
-}
-
-ContinuousEffect QContinuousEffect::continuousEffect() const
-{
-    return m_effect;
-}
-
-QInstantEffect::QInstantEffect(InstantEffect effect) : m_effect(effect)
+QVibraEffect::~QVibraEffect()
 {
 }
 
-QInstantEffect::~QInstantEffect()
+void QTouchEffect::setContinuousEffect(ContinuousEffect effect)
 {
+    d_func()->continuousEffect = effect;
 }
 
-EffectType QInstantEffect::effectType() const
+ContinuousEffect QTouchEffect::continuousEffect() const
 {
-    return InstantFeedback;
+    return d_func()->continuousEffect;
 }
 
-void QInstantEffect::setInstantEffect(InstantEffect effect)
+void QTouchEffect::setWidget(QWidget *w)
 {
-    m_effect = effect;
+    d_func()->widget = w;
 }
 
-InstantEffect QInstantEffect::instantEffect() const
+QWidget *QTouchEffect::widget() const
 {
-    return m_effect;
-}
-
-
-QHitAreaEffect::QHitAreaEffect() : m_hitAreaType(HitAreaMouseButtonPress)
-{
-}
-
-QHitAreaEffect::~QHitAreaEffect()
-{
-}
-
-void QHitAreaEffect::setRect(const QRect &rect)
-{
-    m_rect = rect;
-}
-
-void QHitAreaEffect::setRect(const QWidget* widget)
-{
-    // null rectangle
-    m_rect = QRect();
-
-    if (!widget)
-        return;
-
-    QWidget *tlw = widget->window();
-    QPoint topLeft = widget->mapTo(tlw, QPoint(0, 0));
-    m_rect = QRect(topLeft, widget->size());
-
-    //TODO: Shouldn't we call setWindow here?
-}
-
-void QHitAreaEffect::setRect(const QGraphicsItem* graphicsItem, const QGraphicsView* graphicsView)
-{
-    // null rectangle
-    m_rect = QRect();
-
-    if (!graphicsItem || !graphicsView || graphicsItem->scene() != graphicsView->scene())
-        return;
-
-    // from scene to graphics view coordinates
-    m_rect = graphicsView->mapFromScene(
-            graphicsItem->mapToScene(graphicsItem->boundingRect()).boundingRect()
-            ).boundingRect();
-
-    // from graphics view to window coordinates
-    QPoint topLeft = graphicsView->mapTo(graphicsView->window(), m_rect.topLeft());
-    m_rect = QRect(topLeft, m_rect.size());
-
-    //TODO: Shouldn't we call setWindow here?
-}
-
-void QHitAreaEffect::setHitAreaType(HitAreaType hitAreaType)
-{
-    m_hitAreaType = hitAreaType;
-}
-
-HitAreaType QHitAreaEffect::hitAreaType() const
-{
-    return m_hitAreaType;
-}
-
-QRect QHitAreaEffect::rect() const
-{
-    return m_rect;
+    return d_func()->widget;
 }
 
 
-QTacticonEffect::QTacticonEffect() : m_effect(TacticonNone)
+
+QTouchEffect::~QTouchEffect()
 {
 }
-
-QTacticonEffect::~QTacticonEffect()
-{
-}
-
-EffectType QTacticonEffect::effectType() const
-{
-    return TacticonFeedback;
-}
-
-void QTacticonEffect::setTacticonEffect(TacticonEffect effect)
-{
-    m_effect = effect;
-}
-
-TacticonEffect QTacticonEffect::tacticonEffect() const
-{
-    return m_effect;
-}
-
 
 QTM_END_NAMESPACE

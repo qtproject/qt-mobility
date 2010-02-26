@@ -12,18 +12,16 @@ include(../../common.pri)
 INCLUDEPATH += .
 
 # Input
-PUBLIC_HEADERS += qfeedbackcontroller.h \
-    qfeedbackeffect.h
+PUBLIC_HEADERS += qfeedbackeffect.h qfeedbackeffect_p.h
 
 # Private Headers
 PRIVATE_HEADERS += 
-SOURCES += qfeedbackcontroller.cpp \
-    qfeedbackeffect.cpp
+SOURCES += qfeedbackeffect.cpp
 HEADERS += $$PUBLIC_HEADERS \
     $$PRIVATE_HEADERS
 symbian { 
-    SOURCES += qfeedbackcontroller_symbian.cpp
-    LIBS += -ltouchfeedback -ltacticon
+    SOURCES += qfeedbackeffect_symbian.cpp
+    LIBS += -ltouchfeedback -lhwrmvibraclient
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL \
         -TCB
@@ -41,5 +39,5 @@ symbian {
     
     # export headers into EPOCROOT
     for(header, exportheaders.sources):BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
-} else:SOURCES += qfeedbackcontroller_stub.cpp
+} else:SOURCES += qfeedbackeffect_stub.cpp
 include(../../features/deploy.pri)

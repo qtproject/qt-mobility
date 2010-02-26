@@ -42,23 +42,22 @@
 #ifndef QFEEDBACKEFFECT_H
 #define QFEEDBACKEFFECT_H
 
-#include <QtCore/QPoint>
-#include <QtCore/QRect>
 #include <qmobilityglobal.h>
-
-class QWidget;
-class QGraphicsView;
-class QGraphicsItem;
-
+#include <QtCore/qscopedpointer.h>
 
 QTM_BEGIN_NAMESPACE
 
+//TODO: should those classes be QObject subclasses or even QAbstractAnimation subclasses?
+
+//continous
 enum ContinuousEffect {
     ContinuousNone, ContinuousSmooth, ContinuousSlider, ContinuousPopup,
     ContinuousInput, ContinuousPinch, NumberOfContinuousFeedbacks, NoContinuousOverride,
     ContinuousUser = 1000, ContinuousMaxUser = 65535
 };
 
+
+//instant
 enum InstantEffect {
   InstantNone, InstantBasic, InstantSensitive, InstantBasicButton,
   InstantSensitiveButton, InstantBasicKeypad, InstantSensitiveKeypad, InstantBasicSlider,
@@ -67,124 +66,82 @@ enum InstantEffect {
   InstantCheckbox, InstantMultipleCheckbox, InstantEditor, InstantTextSelection,
   InstantBlankSelection, InstantLineSelection, InstantEmptyLineSelection, InstantPopUp,
   InstantPopupOpen, InstantPopupClose, InstantFlick, InstantStopFlick,
-  InstantMultitouchActivate, InstantRotateStep, InstantNumberOfInstantFeedbacks,
+  InstantMultiInstantActivate, InstantRotateStep, InstantNumberOfInstantFeedbacks,
   InstantNoOverride, InstantUser = 65535, InstantMaxUser = 262140
 };
 
-enum HitAreaType {
-    HitAreaMouseButtonPress,
-    HitAreaMouseButtonRelease
-};
-
-enum TacticonEffect {
-  TacticonNone, TacticonPositive, TacticonNeutral, TacticonNegative
-};
-
-enum EffectType {
-    ContinuousFeedback, InstantFeedback, TacticonFeedback
-};
+QT_FORWARD_DECLARE_CLASS(QWidget)
+class QFeedbackEffectPrivate;
+class QVibraEffectPrivate;
+class QTouchEffectPrivate;
 
 class Q_FEEDBACK_EXPORT QFeedbackEffect
 {
 public:
-    QFeedbackEffect();
     virtual ~QFeedbackEffect();
 
-
-    virtual EffectType effectType() const = 0;
-
-    void setWindow(const QWidget *w);
-    const QWidget *window() const;
-
-private:
-    const QWidget *m_win;
-};
-
-//
-// feedback used when the program need to decide dynamically the duration
-// and intensity
-//
-class Q_FEEDBACK_EXPORT QContinuousEffect : public QFeedbackEffect
-{
-public:
-    QContinuousEffect();
-    ~QContinuousEffect();
-
-    EffectType effectType() const;
-
-    void setTimeout(int msecs);
-    int timeout() const;
+    void setDuration(int msecs);
+    int duration() const;
 
     void setIntensity(qreal intensity);
     qreal intensity() const;
 
-    void setContinuousEffect(ContinuousEffect effect);
+    virtual void play() = 0;
+
+protected:
+    QFeedbackEffect(QFeedbackEffectPrivate &dd);
+    QScopedPointer<QFeedbackEffectPrivate> d_ptr;
+
+private:
+    Q_DECLARE_PRIVATE(QFeedbackEffect)
+};
+
+
+//
+// feedback used when the program need to decide dynamically the duration
+// and intensity this one is using the Continuous motor
+//
+class Q_FEEDBACK_EXPORT QVibraEffect : public QFeedbackEffect
+{
+public:
+    QVibraEffect();
+    ~QVibraEffect();
+
+    void play();
+
+private:
+    Q_DISABLE_COPY(QVibraEffect)
+    Q_DECLARE_PRIVATE(QVibraEffect)
+
+};
+
+
+
+//
+// feedback used when the program need to decide dynamically the duration
+// and intensity this one is using the Continuous touch feedback
+//
+class Q_FEEDBACK_EXPORT QTouchEffect : public QFeedbackEffect
+{
+public:
+    QTouchEffect();
+    ~QTouchEffect();
+
+    void play();
+
+    void setContinuousEffect(ContinuousEffect);
     ContinuousEffect continuousEffect() const;
 
+    static void play(InstantEffect effect);
+
+    void setWidget(QWidget *);
+    QWidget *widget() const;
+
 private:
-    int m_timeout;
-    qreal m_intensity;
-    ContinuousEffect m_effect;
+    Q_DISABLE_COPY(QTouchEffect)
+    Q_DECLARE_PRIVATE(QTouchEffect)
+
 };
-
-//
-// instantaneous feedback. You can also register it for a rectangle on a widget/item
-// TODO: find a better name
-//
-class Q_FEEDBACK_EXPORT QInstantEffect : public QFeedbackEffect
-{
-public:
-    QInstantEffect(InstantEffect effect = InstantNone);
-    ~QInstantEffect();
-
-    EffectType effectType() const;
-
-    void setInstantEffect(InstantEffect effect);
-    InstantEffect instantEffect() const;
-private:
-    InstantEffect m_effect;
-};
-
-
-//that is the one you can register
-class Q_FEEDBACK_EXPORT QHitAreaEffect : public QInstantEffect
-{
-public:
-    QHitAreaEffect();
-    ~QHitAreaEffect();
-
-    void setHitAreaType(HitAreaType hitAreaType);
-    HitAreaType hitAreaType() const;
-
-    void setRect(const QRect &rect);
-    void setRect(const QWidget* widget);
-    void setRect(const QGraphicsItem* graphicsItem, const QGraphicsView* graphicsView);
-    QRect rect() const;
-private:
-    QRect m_rect;
-    HitAreaType m_hitAreaType;
-};
-
-
-
-//
-// tacticon effects...
-//
-class Q_FEEDBACK_EXPORT QTacticonEffect : public QFeedbackEffect
-{
-public:
-    QTacticonEffect();
-    ~QTacticonEffect();
-
-    EffectType effectType() const;
-
-    void setTacticonEffect(TacticonEffect effect);
-    TacticonEffect tacticonEffect() const;
-private:
-    TacticonEffect m_effect;
-};
-
-
 
 QTM_END_NAMESPACE
 

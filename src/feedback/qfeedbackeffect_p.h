@@ -39,19 +39,49 @@
 **
 ****************************************************************************/
 
-#include "qfeedbackcontroller.h"
+#ifndef QFEEDBACKEFFECT_P_H
+#define QFEEDBACKEFFECT_P_H
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists for the convenience
+// of QAbstractItemModel*.  This header file may change from version
+// to version without notice, or even be removed.
+//
+// We mean it.
+//
+//
 
 QTM_BEGIN_NAMESPACE
 
-Q_GLOBAL_STATIC(QFeedbackController, feedbackController);
-
-
-QFeedbackController* QFeedbackController::instance()
+struct QFeedbackEffectPrivate
 {
-    return feedbackController();
-}
+    QFeedbackEffectPrivate() : duration(250), intensity(1)
+    {
+    }
 
+    virtual ~QFeedbackEffectPrivate()
+    {
+    }
 
-#include "moc_qfeedbackcontroller.cpp"
+    int duration;
+    qreal intensity;
+};
+
+struct QTouchEffectPrivate : public QFeedbackEffectPrivate
+{
+    QTouchEffectPrivate() : continuousEffect(ContinuousNone), widget(0)
+    {
+    }
+
+    ContinuousEffect continuousEffect;
+    QWidget *widget;
+
+};
 
 QTM_END_NAMESPACE
+
+
+#endif
