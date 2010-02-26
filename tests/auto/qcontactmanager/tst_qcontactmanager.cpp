@@ -576,6 +576,20 @@ void tst_QContactManager::ctors()
     QCOMPARE(em4->managerParameters(), tst_QContactManager_QStringMap());
     QCOMPARE(em5->managerParameters(), tst_QContactManager_QStringMap());
     QCOMPARE(em3.managerParameters(), em6->managerParameters()); // memory engine discards the given params, replaces with id.
+
+
+    // Finally test the platform specific engines are actually the defaults
+#if defined(Q_OS_SYMBIAN)
+    QCOMPARE(defaultStore, QString("symbian"));
+#elif defined(Q_WS_MAEMO_6)
+    QCOMPARE(defaultStore, QString("tracker"));
+#elif defined(Q_WS_MAEMO_5)
+    QCOMPARE(defaultStore, QString("maemo5"));
+#elif defined(Q_OS_WINCE)
+    QCOMPARE(defaultStore, QString("wince"));
+#else
+    QCOMPARE(defaultStore, QString("memory"));
+#endif
 }
 
 void tst_QContactManager::doDump()
