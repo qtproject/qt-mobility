@@ -7,20 +7,15 @@ CONFIG += plugin
 TARGET = $$qtLibraryTarget(qtcontacts_tracker)
 PLUGIN_TYPE=contacts
 
+LIBS += -L/usr/lib
 LIBS += -lqttracker
 CONFIG += mobility
 MOBILITY = contacts
 
 # include version number for the plugin
 include(version.pri)
-include(../../../common.pri)
 
-### old include path: INCLUDEPATH += /usr/include/qt4/QtMobility
-INCLUDEPATH += $$SOURCE_DIR/src/contacts
-INCLUDEPATH += $$SOURCE_DIR/src/contacts/details
-INCLUDEPATH += $$SOURCE_DIR/src/contacts/filters
-INCLUDEPATH += $$SOURCE_DIR/src/contacts/requests
-
+INCLUDEPATH += /usr/include/qt4/QtMobility
 INCLUDEPATH += .
 
 HEADERS += qcontacttrackerbackend_p.h \
@@ -41,6 +36,5 @@ SOURCES += qcontacttrackerbackend.cpp \
            qtrackerrelationshipsaverequest.cpp \
            qtrackercontactidfetchrequest.cpp
 
-### old target path: target.path = /usr/lib/qt4/plugins/contacts
-target.path=$$QT_MOBILITY_PREFIX/plugins/contacts
+target.path = /usr/lib/qt4/plugins/contacts
 INSTALLS+=target
