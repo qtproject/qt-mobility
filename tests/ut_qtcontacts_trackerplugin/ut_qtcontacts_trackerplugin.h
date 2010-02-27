@@ -101,7 +101,7 @@ private slots:
 //    void testGroupsModifiedSince();
 //    void testGroupsRemovedSince();
     void testNcoTypes();
-    void testQRelationshipAndMetacontacts();
+    void testQRelationshipAndMergingContacts();
     void testAsyncReadContacts();
     void testFilterContacts();
     void testFilterContactsEndsWith();

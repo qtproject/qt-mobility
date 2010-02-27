@@ -1423,7 +1423,7 @@ void ut_qtcontacts_trackerplugin::testTrackerUriToUniqueId()
     QCOMPARE( (int)id, 1234567 );
 }
 
-void ut_qtcontacts_trackerplugin::testQRelationshipAndMetacontacts()
+void ut_qtcontacts_trackerplugin::testQRelationshipAndMergingContacts()
 {
     QContact firstContact;
     QContactName name;
@@ -1454,18 +1454,15 @@ void ut_qtcontacts_trackerplugin::testQRelationshipAndMetacontacts()
         QVERIFY(QContactManager::NoError == req.error());
     }
 
-    QContactRelationshipFetchRequest req1;
-    req1.setFirst(firstContact.id());
-    QVERIFY(trackerEngine->startRequest(&req1));
-    trackerEngine->waitForRequestFinished(&req1, 10000);
-    // if it takes more, then something is wrong
-    QVERIFY(req1.isFinished());
-    QVERIFY(QContactManager::NoError == req1.error());
-    QVERIFY(2 == req1.relationships().size());
-    foreach(QContactRelationship r, req1.relationships())
+    // once they are merged - that's it - no contacts or relationship track exists
+    foreach( QContactLocalId mergedId, secondIds)
     {
-        QVERIFY(secondIds.removeOne(r.second().localId()));
+        QContact second = contact(mergedId, QStringList()<<QContactName::DefinitionName);
+        QVERIFY(second.localId() == 0); // as not existing
     }
+    QVERIFY(contact(firstContact.localId(), QStringList()<<QContactName::DefinitionName).localId() != 0);
+    // TODO check that values from secondids are merged to firstcontact
+
 }
 
 void ut_qtcontacts_trackerplugin::insertContact(const QString& URI, QContactLocalId uid, QString imId, QString imStatus, QString accountPath, QString protocol )
