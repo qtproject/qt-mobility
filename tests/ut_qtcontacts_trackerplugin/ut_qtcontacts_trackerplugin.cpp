@@ -1490,12 +1490,12 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
         qWarning()<<Q_FUNC_INFO<<"is disabled - test scripts are not installed";
         return;
     }
-    QList<unsigned int> idstoremove;
+    QList<unsigned int> idstomerge;
     QContactLocalId masterContactId; // using one master contact later for additional testing
     for( int i = 0; i < 2; i++ )
     {
         unsigned int contactid = qHash(QString("/org/freedesktop/fake/account/") + QString::number(999998+i) + "@ovi.com");
-        idstoremove << contactid;
+        idstomerge << contactid;
         insertContact(QString("telepathy://org/freedesktop/fake/account/") + QString::number(999998+i) + "@ovi.com",
                 contactid, QString::number(999998 + i)+ "@ovi.com", "nco:presence-status-available", QString("http://www.sopranolive.org/backends/tracker/generated_unique_id/105323876#%1").arg(999998+i),"ovi.com");
         QContact c = contact(contactid, QStringList()<<QContactOnlineAccount::DefinitionName);
@@ -1511,7 +1511,6 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
         QContactRelationship rel;
         rel.setRelationshipType(QContactRelationship::Is);
         rel.setFirst(firstContact.id());
-        idstoremove << firstContact.localId();
         masterContactId = firstContact.localId();
         rel.setSecond(c.id());
         QContactRelationshipSaveRequest req;
@@ -1522,9 +1521,7 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
         QVERIFY(QContactManager::NoError == req.error());
     }
 
-    // expected behavior - for now - is that master contact contains details from
-    // IMContacts - that way we don't have to use QContactRelationships to fetch
-    // all contacts in master contact in order to calculate master presence
+    // expected behavior - is that master contact contains all details aggregated
     {
         QList<QContact> cons = contacts(QList<QContactLocalId> ()
                 << masterContactId << qHash(QString("/org/freedesktop/fake/account/") + QString::number(999999) + "@ovi.com"), QStringList()
@@ -1539,14 +1536,12 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
                         || det.accountUri() == "999999@ovi.com")
                 {
                     QVERIFY(det.presence() == QContactOnlineAccount::PresenceAvailable);
-                    // keeping the reference to tp contact
-                    QVERIFY(det.value("QContactLocalId") == QString::number(qHash(QString("/org/freedesktop/fake/account/") + QString::number(999999) + "@ovi.com")));
                     containDetail = true;
                 }
             }
         QVERIFY(containDetail);
     }
-    //now update presence to IM contact and check it in metacontact (TODO and if signal is emitted)
+    //now update presence to IM Address and check it in contact (TODO and if signal is emitted)
     updateIMContactStatus(QString("telepathy://org/freedesktop/fake/account/") + QString::number(999999) + "@ovi.com", "nco:presence-status-offline");
     {
         QList<QContact> cons = contacts(QList<QContactLocalId> ()
@@ -1562,15 +1557,13 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
                         || det.accountUri() == "999999@ovi.com")
                 {
                     QVERIFY(det.presence() == QContactOnlineAccount::PresenceOffline);
-                    // keeping the reference to tp contact
-                    QVERIFY(det.value("QContactLocalId") == QString::number(qHash(QString("/org/freedesktop/fake/account/") + QString::number(999999) + "@ovi.com")));
                     containDetail = true;
                 }
             }
         QVERIFY(containDetail);
     }
 
-    // TODO load only one contact should load also content from other in the same metacontacts
+    // load contact should load also all merged content from other contacts (that dont exis anymore)
     {
         QList<QContact> cons = contacts(QList<QContactLocalId> ()
                 << masterContactId, QStringList()
@@ -1585,8 +1578,6 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
                         || det.accountUri() == "999999@ovi.com")
                 {
                     QVERIFY(det.presence() == QContactOnlineAccount::PresenceOffline);
-                    // keeping the reference to tp contact
-                    QVERIFY(det.value("QContactLocalId") == QString::number(qHash(QString("/org/freedesktop/fake/account/") + QString::number(999999) + "@ovi.com")));
                     containDetail = true;
                 }
             }
@@ -1594,9 +1585,11 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
     }
 
     // remove them
-    foreach(unsigned int id, idstoremove)
+    QVERIFY2(trackerEngine->removeContact(masterContactId, error), "Removing a contact failed");
+
+    foreach(unsigned int id, idstomerge)
     {
-        QVERIFY2(trackerEngine->removeContact(id, error), "Removing a contact failed");
+        QVERIFY2(!trackerEngine->removeContact(id, error), "Merged contact doesn't exist and removing it shoudl fail");
     }
 }
 
