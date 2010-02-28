@@ -507,12 +507,12 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
     Each QLandmark may be associated with zero or more categories.
     A category  defines a type of landmark such as  restaurants or
     cinemas.  To set the category that a landmark belongs to, use
-    the setCategory() or addCategory() functions.  A landmark may
-    be removed by using the removeCategory() function.
+    the setCategories() or addCategory() functions.  A landmark may
+    be removed from a category by using the removeCategory() function.
 
-    Each QLandmark is an in memory representation of a landmark
-    and does not reflect the actual landmark state in persistent
-    storage until the appropriate synchronization method is called
+    Each QLandmark is an in memory representation of a landmark;
+    it does not reflect the actual landmark state in persistent
+    storage, until the appropriate synchronization method is called
     on the QLandmarkManager(i.e. saveLandmark(), removeLandmark()).
 */
 
