@@ -496,14 +496,24 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
     \class QLandmark
     \ingroup location
 
-    \brief The QLandmark class describes location or point of interest
+    \brief The QLandmark class represents a location or point of interest.
 
-    It consists of a number of set properties such as name and coordinates
-    as well as a set of generic attributes.
+
+    Each landmark consists of a number of properties such as name,
+    coordinates, icon etc.  Landmarks may also be assigned a set of
+    generic attributes which may be accessed and modified by using the attribute()
+    and setAttribute() functions.
 
     Each QLandmark may be associated with zero or more categories.
-    Categories are manipulated by using QLandmarkCategoryId objects via
-    the setCategories(), addCategory() and removeCategory() functions.
+    A category  defines a type of landmark such as  restaurants or
+    cinemas.  To set the category that a landmark belongs to, use
+    the setCategory() or addCategory() functions.  A landmark may
+    be removed by using the removeCategory() function.
+
+    Each QLandmark is an in memory representation of a landmark
+    and does not reflect the actual landmark state in persistent
+    storage until the appropriate synchronization method is called
+    on the QLandmarkManager(i.e. saveLandmark(), removeLandmark()).
 */
 
 /*!
