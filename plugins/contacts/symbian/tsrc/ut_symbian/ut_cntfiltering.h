@@ -42,6 +42,7 @@
 #include <QHash>
 #include <qcontactfilter.h>
 #include <qcontactmanager.h>
+#include <cntdb.h>
 #include "cntsymbianengine.h"
 
 
@@ -86,7 +87,8 @@ private slots:  // Test cases
     void testLocalIdFilter();
     void testDefaultFilter();
     void testZeroSearch();
-    
+    void testFilterSupported();
+    void testCreateSelectQuery();
 private:
     void  testIntersectionFilter_1();
     void  testIntersectionFilter_2();
@@ -97,4 +99,5 @@ private:
 private:
     QContactManager                             *mCntMng;
     QHash<QContactFilter::FilterType, TFilter>  *mFilters;
+    CContactDatabase *m_database;
 };

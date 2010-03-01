@@ -40,17 +40,29 @@
 ****************************************************************************/
 
 #include "ut_cntfiltering.h"
-#include "cntsymbianfiltersqlhelper.h"
-
+#include "cntdbinfo.h"
+#include "cntsymbiansrvconnection.h"
 #include <qtcontacts.h>
 #include <QContactDetailFilter.h>
 #include <QtTest/QtTest>
+
+
+#include "cntfilterdetail.h"
+#include "cntfilterdefault.h"
+#include "cntfilterunion.h"
+#include "cntfilterintersection.h"
+#include "cntfilteraction.h"
+#include "cntfilterlocalid.h"
+#include "cntfilterinvalid.h"
+#include "cntfilterchangelog.h"
+#include "cntfilterrelationship.h"
+
 
 void TestFiltering::initTestCase()
 {
     mCntMng = new QContactManager("symbian");
     //open symbian database
-    CContactDatabase *m_database = 0;
+    m_database = 0;
         TRAPD(error, m_database = CContactDatabase::OpenL());
         QVERIFY(error == KErrNone);
     mFilters = new QHash<QContactFilter::FilterType, TFilter>;
@@ -380,6 +392,12 @@ QContactFilter::MatchFlags TestFiltering::getMatchFlag(QString& inputflag)
 	        return QContactFilter::MatchEndsWith ;
     else if (inputflag.compare("MatchContains") == 0)
 		return QContactFilter::MatchContains;
+    else if (inputflag.compare("MatchFixedString") == 0)
+		return QContactFilter::MatchFixedString;
+    else if (inputflag.compare("MatchCaseSensitive") == 0)
+            return QContactFilter::MatchCaseSensitive;
+    else if (inputflag.compare("MatchKeypadCollation") == 0)
+               return QContactFilter::MatchKeypadCollation;
     else 
         return QContactFilter::MatchPhoneNumber ;
     
@@ -442,7 +460,7 @@ void TestFiltering::testContactDetailFilter_1()
 
 void TestFiltering::testContactDetailFilter_2()
 {
-    // Test Contact Sip fields
+    // Test Contact Sip field support
     QList<QContactLocalId> cnt_ids;
     QContactManager::Error error;
     QList<QContactSortOrder> sortOrder;
@@ -468,6 +486,31 @@ void TestFiltering::testContactDetailFilter_2()
     seachedcontactcount = cnt_ids.count();
     expectedCount =1;  
     QVERIFY(expectedCount == seachedcontactcount);
+    
+    // Test Not supported fields
+    QContactDetailFilter cdf3;
+    cdf3.setDetailDefinitionName(QContactNickname::DefinitionName, QContactNickname::FieldNickname);
+    cdf3.setValue("aba");
+    cdf3.setMatchFlags(QContactFilter::MatchFixedString);
+    cnt_ids = mCntMng->contactIds(cdf3, sortOrder);
+    error = mCntMng->error();
+    // check counts 
+    seachedcontactcount = cnt_ids.count();
+    expectedCount =0;  
+    QVERIFY(expectedCount == seachedcontactcount);
+    QVERIFY(error == QContactManager::NotSupportedError);
+    
+    QContactDetailFilter cdf4;
+    cdf4.setDetailDefinitionName(QContactNickname::DefinitionName, QContactNickname::FieldNickname);
+    cdf4.setValue("aba");
+    cdf4.setMatchFlags(QContactFilter::MatchExactly);
+    cnt_ids = mCntMng->contactIds(cdf4, sortOrder);
+    error = mCntMng->error();
+    // check counts 
+    seachedcontactcount = cnt_ids.count();
+    expectedCount =0;  
+    QVERIFY(expectedCount == seachedcontactcount);
+    QVERIFY(error == QContactManager::NotSupportedError);
 }   
 
 void TestFiltering::testContactDetailRangeFilter()
@@ -817,6 +860,99 @@ void TestFiltering::testZeroSearch()
             } 
 }
 
+
+void TestFiltering::testFilterSupported()
+    {
+    QContactDetailFilter f1;
+    f1.setDetailDefinitionName(QContactNickname::DefinitionName, QContactNickname::FieldNickname);
+    f1.setValue("Mic");
+    f1.setMatchFlags(QContactFilter::MatchStartsWith);
+    CntSymbianSrvConnection srvConnection;
+    CntDbInfo dbInfo;
+      
+    CntFilterDefault filterDefault(*m_database,srvConnection,dbInfo);
+    bool flag = filterDefault.filterSupported(f1);
+    QVERIFY(flag ==false);
+        
+    CntFilterChangeLog filterChangeLog(*m_database,srvConnection,dbInfo);
+    flag = filterChangeLog.filterSupported(f1);
+    QVERIFY(flag ==false);   
+    
+    CntFilterRelationship filterRlationship(*m_database,srvConnection,dbInfo);
+    flag = filterRlationship.filterSupported(f1);
+    QVERIFY(flag ==false);   
+       
+
+    CntFilterLocalId filterLocalId(*m_database,srvConnection,dbInfo);
+    flag = filterLocalId.filterSupported(f1);
+    QVERIFY(flag ==false);   
+        
+    CntFilterInvalid filterInvalid(*m_database,srvConnection,dbInfo);
+    flag = filterInvalid.filterSupported(f1);
+    QVERIFY(flag ==false);   
+            
+    CntFilterAction filterAction(*m_database,srvConnection,dbInfo);
+    flag = filterAction.filterSupported(f1);
+    QVERIFY(flag ==false);   
+               
+    CntFilterUnion filterUnion(*m_database,srvConnection,dbInfo);
+    flag = filterUnion.filterSupported(f1);
+    QVERIFY(flag ==false);   
+               
+    CntFilterIntersection filterIntersection(*m_database,srvConnection,dbInfo);
+    flag = filterIntersection.filterSupported(f1);
+    QVERIFY(flag ==false);   
+    
+    }
+
+void TestFiltering::testCreateSelectQuery()
+    {
+    QContactDetailFilter f1;
+    f1.setDetailDefinitionName(QContactNickname::DefinitionName, QContactNickname::FieldNickname);
+    f1.setValue("Mic");
+    f1.setMatchFlags(QContactFilter::MatchStartsWith);
+    CntSymbianSrvConnection srvConnection;
+    CntDbInfo dbInfo;
+    QString sqlquery;
+    QContactManager::Error error;
+    CntFilterDetail filterDtl(*m_database,srvConnection,dbInfo);
+    filterDtl.createSelectQuery(f1,sqlquery,error);
+    QVERIFY(error == QContactManager::NotSupportedError);
+    
+    CntFilterDefault filterDefault(*m_database,srvConnection,dbInfo);
+    filterDefault.createSelectQuery(f1,sqlquery,error);
+    QVERIFY(error == QContactManager::NotSupportedError);
+        
+    CntFilterChangeLog filterChangeLog(*m_database,srvConnection,dbInfo);
+    filterChangeLog.createSelectQuery(f1,sqlquery,error);
+    QVERIFY(error == QContactManager::NotSupportedError);
+    
+    CntFilterRelationship filterRlationship(*m_database,srvConnection,dbInfo);
+    filterRlationship.createSelectQuery(f1,sqlquery,error);
+    QVERIFY(error == QContactManager::NotSupportedError); 
+       
+
+    CntFilterLocalId filterLocalId(*m_database,srvConnection,dbInfo);
+    filterLocalId.createSelectQuery(f1,sqlquery,error);
+    QVERIFY(error == QContactManager::NotSupportedError);
+        
+    CntFilterInvalid filterInvalid(*m_database,srvConnection,dbInfo);
+    filterInvalid.createSelectQuery(f1,sqlquery,error);
+    QVERIFY(error == QContactManager::NotSupportedError);
+            
+    CntFilterAction filterAction(*m_database,srvConnection,dbInfo);
+    filterAction.createSelectQuery(f1,sqlquery,error);
+    QVERIFY(error == QContactManager::NotSupportedError);
+               
+    CntFilterUnion filterUnion(*m_database,srvConnection,dbInfo);
+    filterUnion.filterSupported(f1);
+    QVERIFY(error == QContactManager::NotSupportedError);
+               
+    CntFilterIntersection filterIntersection(*m_database,srvConnection,dbInfo);
+    filterIntersection.createSelectQuery(f1,sqlquery,error);
+    QVERIFY(error == QContactManager::NotSupportedError);
+    
+    }
 //QTEST_MAIN(TestFiltering);
 /*int main(int argc, char *argv[]) 
 {
