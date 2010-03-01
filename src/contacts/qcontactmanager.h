@@ -153,8 +153,8 @@ public:
 
     /* Functionality reporting */
     enum ManagerFeature {
-        //Groups = 0,
-        ActionPreferences = 0,    // per-contact action preferences
+        Groups = 0,               // backend supports QContactType::TypeGroup type contacts (convenience for clients... should be deprecated)
+        ActionPreferences,        // per-contact action preferences
         DetailActionPreferences,  // per-detail per-contact action preferences
         MutableDefinitions,
         Relationships,
