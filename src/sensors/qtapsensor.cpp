@@ -199,6 +199,28 @@ const char *QTapSensor::type("QTapSensor");
     \sa QSensor::reading()
 */
 
+/*!
+    \property QTapSensor::returnTapEvents
+    \brief a value indicating if tap events should be reported.
+
+    Set to true to have the sensor report on tap events.
+    Set to false to have the sensor suppress tap events.
+
+    Note that you must access this property via QObject::property() and QObject::setProperty().
+    The property must be set before calling start().
+*/
+
+/*!
+    \property QTapSensor::returnDoubleTapEvents
+    \brief a value indicating if double tap events should be reported.
+
+    Set to true to have the sensor report on double tap events.
+    Set to false to have the sensor suppress double tap events.
+
+    Note that you must access this property via QObject::property() and QObject::setProperty().
+    The property must be set before calling start().
+*/
+
 #include "moc_qtapsensor.cpp"
 QTM_END_NAMESPACE
 

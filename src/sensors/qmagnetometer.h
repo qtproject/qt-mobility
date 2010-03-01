@@ -104,6 +104,10 @@ private:
 class Q_SENSORS_EXPORT QMagnetometer : public QSensor
 {
     Q_OBJECT
+#ifdef Q_QDOC
+    Q_PROPERTY(bool returnRawValues)
+    Q_PROPERTY(bool returnCalibratedValues)
+#endif
 public:
     explicit QMagnetometer(QObject *parent = 0) : QSensor(parent)
     { setType(QMagnetometer::type); }

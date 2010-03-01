@@ -294,6 +294,28 @@ const char *QMagnetometer::type("QMagnetometer");
     \sa QSensor::reading()
 */
 
+/*!
+    \property QMagnetometer::returnRawValues
+    \brief a value indicating if raw magnetometer values should be returned.
+
+    Set to true to return raw magnetometer values.
+    Set to false to suppress raw magnetometer values.
+
+    Note that you must access this property via QObject::property() and QObject::setProperty().
+    The property must be set before calling start().
+*/
+
+/*!
+    \property QMagnetometer::returnCalibratedValues
+    \brief a value indicating if calibrated magnetometer values should be returned.
+
+    Set to true to return raw magnetometer values.
+    Set to false to suppress raw magnetometer values.
+
+    Note that you must access this property via QObject::property() and QObject::setProperty().
+    The property must be set before calling start().
+*/
+
 #include "moc_qmagnetometer.cpp"
 QTM_END_NAMESPACE
 

@@ -87,6 +87,10 @@ private:
 class Q_SENSORS_EXPORT QTapSensor : public QSensor
 {
     Q_OBJECT
+#ifdef Q_QDOC
+    Q_PROPERTY(bool returnTapEvents)
+    Q_PROPERTY(bool returnDoubleTapEvents)
+#endif
 public:
     explicit QTapSensor(QObject *parent = 0) : QSensor(parent)
     { setType(QTapSensor::type); }
