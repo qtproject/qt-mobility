@@ -77,6 +77,7 @@ QLandmarkExportRequest::~QLandmarkExportRequest()
 */
 QIODevice *QLandmarkExportRequest::device() const
 {
+    return 0;
 }
 
 /*!
@@ -91,6 +92,7 @@ void QLandmarkExportRequest::setDevice(QIODevice *device)
 */
 QLandmarkManager::Format QLandmarkExportRequest::format() const
 {
+    return QLandmarkManager::Custom;
 }
 
 /*!
@@ -105,6 +107,7 @@ void QLandmarkExportRequest::setFormat(QLandmarkManager::Format format)
 */
 QList<QLandmarkId> QLandmarkExportRequest::landmarkIds() const
 {
+    return QList<QLandmarkId>();
 }
 
 /*!

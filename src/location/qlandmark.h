@@ -59,7 +59,7 @@ class QLandmarkCategoryPrivate;
 class QLandmarkCategoryIdPrivate;
 
 
-class Q_LANDMARKS_EXPORT QLandmarkCategoryId
+class Q_LOCATION_EXPORT QLandmarkCategoryId
 {
 public:
     QLandmarkCategoryId();
@@ -81,7 +81,7 @@ private:
     QSharedDataPointer<QLandmarkCategoryIdPrivate> d;
 };
 
-class Q_LANDMARKS_EXPORT QLandmarkCategory
+class Q_LOCATION_EXPORT QLandmarkCategory
 {
 public:
     QLandmarkCategory();
@@ -114,7 +114,7 @@ private:
     QLandmarkCategoryPrivate *d;
 };
 
-class Q_LANDMARKS_EXPORT QLandmarkId
+class Q_LOCATION_EXPORT QLandmarkId
 {
 public:
     QLandmarkId();
@@ -135,7 +135,7 @@ private:
     QSharedDataPointer<QLandmarkIdPrivate> d;
 };
 
-class Q_LANDMARKS_EXPORT QLandmark
+class Q_LOCATION_EXPORT QLandmark
 {
 public:
     QLandmark();

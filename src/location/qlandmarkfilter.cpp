@@ -88,6 +88,7 @@ QLandmarkFilter::~QLandmarkFilter()
 */
 QLandmarkFilter::FilterType QLandmarkFilter::type() const
 {
+    return QLandmarkFilter::InvalidFilter;
 }
 
 /*!
@@ -95,6 +96,7 @@ QLandmarkFilter::FilterType QLandmarkFilter::type() const
 */
 int QLandmarkFilter::maxMatches() const
 {
+    return 0;
 }
 
 /*!
@@ -112,6 +114,7 @@ void QLandmarkFilter::setMaxMatches(int maxMatches)
 */
 bool QLandmarkFilter::operator!=(const QLandmarkFilter &other) const
 {
+    return true;
 }
 
 /*!
@@ -119,6 +122,7 @@ bool QLandmarkFilter::operator!=(const QLandmarkFilter &other) const
 */
 bool QLandmarkFilter::operator==(const QLandmarkFilter &other) const
 {
+    return false;
 }
 
 /*!
@@ -126,6 +130,7 @@ bool QLandmarkFilter::operator==(const QLandmarkFilter &other) const
 */
 QLandmarkFilter &QLandmarkFilter::operator=(const QLandmarkFilter &other)
 {
+    return *this;
 }
 
 /*!
@@ -154,6 +159,7 @@ QLandmarkNameFilter::~QLandmarkNameFilter()
 */
 QString QLandmarkNameFilter::name()
 {
+    return QString();
 }
 
 /*!
@@ -196,6 +202,7 @@ QLandmarkProximityFilter::~QLandmarkProximityFilter()
 */
 QGeoCoordinate QLandmarkProximityFilter::coordinate()
 {
+    return QGeoCoordinate();
 }
 
 /*!
@@ -210,6 +217,7 @@ void QLandmarkProximityFilter::setCoordinate(const QGeoCoordinate &coordinate)
 */
 double QLandmarkProximityFilter::radius()
 {
+    return 0.0;
 }
 
 /*!
@@ -248,6 +256,7 @@ QLandmarkNearestFilter::~QLandmarkNearestFilter()
 */
 QGeoCoordinate QLandmarkNearestFilter::coordinate() const
 {
+    return QGeoCoordinate();
 }
 
 /*!
@@ -286,6 +295,7 @@ QLandmarkCategoryFilter::~QLandmarkCategoryFilter()
 */
 QLandmarkCategoryId QLandmarkCategoryFilter::category() const
 {
+    return QLandmarkCategoryId();
 }
 
 /*!
@@ -325,6 +335,7 @@ QLandmarkBoxFilter::~QLandmarkBoxFilter()
 */
 QGeoCoordinate QLandmarkBoxFilter::northWestCoordinate()
 {
+    return QGeoCoordinate();
 }
 
 /*!
@@ -341,6 +352,7 @@ void QLandmarkBoxFilter::setNorthWestCoordinate(const QGeoCoordinate &NW)
 */
 QGeoCoordinate QLandmarkBoxFilter::southEastCoordinate()
 {
+    return QGeoCoordinate();
 }
 
 /*!
@@ -382,6 +394,7 @@ QLandmarkCustomFilter::~QLandmarkCustomFilter()
 */
 bool QLandmarkCustomFilter::isMatch(const QLandmarkId &landmarkId)
 {
+    return false;
 }
 
 
@@ -405,6 +418,7 @@ QLandmarkSortOrder::QLandmarkSortOrder()
 */
 QLandmarkSortOrder::SortType QLandmarkSortOrder::type() const
 {
+    return QLandmarkSortOrder::LandmarkCustomFilter;
 }
 
 /*!
@@ -412,6 +426,7 @@ QLandmarkSortOrder::SortType QLandmarkSortOrder::type() const
 */
 Qt::SortOrder QLandmarkSortOrder::direction() const
 {
+    return Qt::AscendingOrder;
 }
 
 /*!
@@ -469,6 +484,7 @@ int QLandmarkNameSort::compare(const QLandmark &l1, const QLandmark &l2) const
 */
 QList<QLandmarkId> QLandmarkNameSort::sort(const QList<QLandmarkId> &landmarkIds) const
 {
+    return QList<QLandmarkId>();
 }
 
 /*!
@@ -502,6 +518,7 @@ QLandmarkDistanceSort::~QLandmarkDistanceSort()
 */
 QGeoCoordinate QLandmarkDistanceSort::coordinate() const
 {
+    return QGeoCoordinate();
 }
 
 /*!
@@ -524,6 +541,7 @@ int QLandmarkDistanceSort::compare(const QLandmark &l1, const QLandmark &l2) con
 
 QList<QLandmarkId> QLandmarkDistanceSort::sort(const QList<QLandmarkId> &landmarkIds) const
 {
+    return QList<QLandmarkId>();
 }
 
 /*!

@@ -79,6 +79,7 @@ QLandmarkSaveRequest::~QLandmarkSaveRequest()
 */
 QList<QLandmark> QLandmarkSaveRequest::landmarks() const
 {
+    return QList<QLandmark>();
 }
 
 /*!
@@ -93,6 +94,7 @@ void QLandmarkSaveRequest::setLandmarks(const QList<QLandmark> &landmarks)
 */
 QMap<int, QLandmarkManager::Error> QLandmarkSaveRequest::errorMap() const
 {
+    return QMap<int, QLandmarkManager::Error>();
 }
 
 #include "moc_qlandmarksaverequest.cpp"

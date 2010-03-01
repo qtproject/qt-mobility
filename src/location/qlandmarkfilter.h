@@ -58,7 +58,7 @@ class QLandmarkFilterPrivate;
 class QLandmarkAbstractCustomFilter;
 
 class QLandmarkFilterPrivate;
-class Q_LANDMARKS_EXPORT QLandmarkFilter
+class Q_LOCATION_EXPORT QLandmarkFilter
 {
 public:
     enum FilterType{InvalidFilter, LandmarkNameFilter, LandmarkProximityFilter,
@@ -81,7 +81,7 @@ private:
 
 
 class QLandmarkNameFilterPrivate;
-class Q_LANDMARKS_EXPORT QLandmarkNameFilter : public QLandmarkFilter
+class Q_LOCATION_EXPORT QLandmarkNameFilter : public QLandmarkFilter
 {
 public:
     QLandmarkNameFilter(const QString &name);
@@ -94,7 +94,7 @@ private:
 };
 
 class QLandmarkProximityFilterPrivate;
-class Q_LANDMARKS_EXPORT QLandmarkProximityFilter : public QLandmarkFilter
+class Q_LOCATION_EXPORT QLandmarkProximityFilter : public QLandmarkFilter
 {
 public:
     QLandmarkProximityFilter(const QGeoCoordinate &coordinate, double range);
@@ -110,7 +110,7 @@ private:
 };
 
 class QLandmarkNearestFilterPrivate;
-class Q_LANDMARKS_EXPORT QLandmarkNearestFilter : public QLandmarkFilter
+class Q_LOCATION_EXPORT QLandmarkNearestFilter : public QLandmarkFilter
 {
 public:
     QLandmarkNearestFilter(const QGeoCoordinate &coordinate);
@@ -124,7 +124,7 @@ private:
 };
 
 class QLandmarkCategoryFilterPrivate;
-class Q_LANDMARKS_EXPORT QLandmarkCategoryFilter : public QLandmarkFilter
+class Q_LOCATION_EXPORT QLandmarkCategoryFilter : public QLandmarkFilter
 {
 public:
     QLandmarkCategoryFilter(const QLandmarkCategoryId &categoryId);
@@ -138,7 +138,7 @@ private:
 };
 
 class QLandmarkBoxFilterPrivate;
-class Q_LANDMARKS_EXPORT QLandmarkBoxFilter: public QLandmarkFilter
+class Q_LOCATION_EXPORT QLandmarkBoxFilter: public QLandmarkFilter
 {
 public:
     QLandmarkBoxFilter(const QGeoCoordinate &NW, const QGeoCoordinate &SE);
@@ -154,7 +154,7 @@ private:
 };
 
 class QLandmarkCustomFilterPrivate;
-class Q_LANDMARKS_EXPORT QLandmarkCustomFilter : public QLandmarkFilter
+class Q_LOCATION_EXPORT QLandmarkCustomFilter : public QLandmarkFilter
 {
 public:
     virtual ~QLandmarkCustomFilter();
@@ -167,7 +167,7 @@ private:
 };
 
 class QLandmarkSortOrderPrivate;
-class Q_LANDMARKS_EXPORT QLandmarkSortOrder
+class Q_LOCATION_EXPORT QLandmarkSortOrder
 {
     enum SortType{LandmarkNameFilter, LandmarkDistanceFilter, LandmarkCustomFilter=500};
 public:
@@ -184,7 +184,7 @@ private:
 };
 
 class QLandmarkNameSortPrivate;
-class Q_LANDMARKS_EXPORT QLandmarkNameSort : public QLandmarkSortOrder
+class Q_LOCATION_EXPORT QLandmarkNameSort : public QLandmarkSortOrder
 {
 public:
     QLandmarkNameSort(Qt::SortOrder direction);
@@ -197,7 +197,7 @@ private:
 };
 
 class QLandmarkDistanceSortPrivate;
-class Q_LANDMARKS_EXPORT QLandmarkDistanceSort : public QLandmarkSortOrder
+class Q_LOCATION_EXPORT QLandmarkDistanceSort : public QLandmarkSortOrder
 {
 public:
     QLandmarkDistanceSort(QGeoCoordinate coordinate, Qt::SortOrder direction);
@@ -212,7 +212,7 @@ private:
 };
 
 class QLandmarkCustomSortPrivate;
-class Q_LANDMARKS_EXPORT QLandmarkCustomSort : public QLandmarkSortOrder
+class Q_LOCATION_EXPORT QLandmarkCustomSort : public QLandmarkSortOrder
 {
     virtual ~QLandmarkCustomSort();
 protected:

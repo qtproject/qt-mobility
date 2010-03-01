@@ -57,8 +57,8 @@ public:
     QLandmarkFilter &filter() const;
     void setFilter(const QLandmarkFilter &filter);
 
-    QList<QLandmarkSortOrder> sorting() const;
-    void setSorting(QList<QLandmarkSortOrder> &sorting);
+    QList<QLandmarkSortOrder*> sorting() const;
+    void setSorting(QList<QLandmarkSortOrder*> &sorting);
 
     QList<QLandmarkId> ids() const;
 private:

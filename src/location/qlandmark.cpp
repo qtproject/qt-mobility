@@ -87,6 +87,7 @@ QLandmarkCategoryId::~QLandmarkCategoryId()
 */
 bool QLandmarkCategoryId::isValid() const
 {
+    return false;
 }
 
 /*!
@@ -94,6 +95,7 @@ bool QLandmarkCategoryId::isValid() const
 */
 QString QLandmarkCategoryId::id() const
 {
+    return QString();
 }
 
 /*!
@@ -109,6 +111,7 @@ void QLandmarkCategoryId::setId(const QString &id)
 */
 QString QLandmarkCategoryId::managerUri() const
 {
+    return QString();
 }
 
 /*!
@@ -125,6 +128,7 @@ void QLandmarkCategoryId::setManagerUri(const QString &uri)
 */
 QLandmarkCategoryId &QLandmarkCategoryId::operator=(const QLandmarkCategoryId &other)
 {
+    return *this;
 }
 
 /*!
@@ -136,6 +140,7 @@ QLandmarkCategoryId &QLandmarkCategoryId::operator=(const QLandmarkCategoryId &o
 */
 bool QLandmarkCategoryId::operator==(const QLandmarkCategoryId &other) const
 {
+    return false;
 }
 
 /*!
@@ -147,6 +152,7 @@ bool QLandmarkCategoryId::operator==(const QLandmarkCategoryId &other) const
 */
 bool QLandmarkCategoryId::operator!=(const QLandmarkCategoryId &other) const
 {
+    return true;
 }
 
 // ----- QLandmarkCategoryPrivate -----
@@ -295,6 +301,7 @@ void QLandmarkCategory::setDescription(const QString &description)
 */
 bool QLandmarkCategory::isReadOnly() const
 {
+    return true;
 }
 
 /*!
@@ -302,6 +309,7 @@ bool QLandmarkCategory::isReadOnly() const
 */
 QLandmarkCategoryId QLandmarkCategory::categoryId() const
 {
+    return QLandmarkCategoryId();
 }
 
 /*!
@@ -368,6 +376,7 @@ QLandmarkId::~QLandmarkId()
 */
 bool QLandmarkId::isValid() const
 {
+    return false;
 }
 
 /*!
@@ -375,6 +384,7 @@ bool QLandmarkId::isValid() const
 */
 QString QLandmarkId::id()
 {
+    return QString();
 }
 
 /*!
@@ -390,6 +400,7 @@ void QLandmarkId::setId(const QString &id)
 */
 QString QLandmarkId::managerUri() const
 {
+    return QString();
 }
 
 /*!
@@ -406,6 +417,7 @@ void QLandmarkId::setManagerUri(const QString &uri)
 */
 QLandmarkId &QLandmarkId::operator=(const QLandmarkId &other)
 {
+    return *this;
 }
 
 /*!
@@ -417,6 +429,7 @@ QLandmarkId &QLandmarkId::operator=(const QLandmarkId &other)
 */
 bool QLandmarkId::operator==(const QLandmarkId &other) const
 {
+    return false;
 }
 
 /*!
@@ -428,6 +441,7 @@ bool QLandmarkId::operator==(const QLandmarkId &other) const
 */
 bool QLandmarkId::operator!=(const QLandmarkId &other) const
 {
+    return true;
 }
 
 // ----- QLandmarkPrivate -----
@@ -793,6 +807,7 @@ void QLandmark::setPostcode(const QString &postcode)
 */
 QString QLandmark::postOfficeBox() const
 {
+    return QString();
 }
 
 /*!
@@ -838,4 +853,5 @@ void QLandmark::setUrl(const QString &url)
 */
 QLandmarkId QLandmark::landmarkId()
 {
+    return QLandmarkId();
 }

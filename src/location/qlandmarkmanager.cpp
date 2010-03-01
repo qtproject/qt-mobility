@@ -132,6 +132,7 @@ bool QLandmarkManager::saveLandmark(QLandmark *landmark)
 bool QLandmarkManager::saveLandmarks(QList<QLandmark *> landmarks,
                                      QMap<int, QLandmarkManager::Error> *errorMap )
 {
+    return false;
 }
 
 /*!
@@ -162,6 +163,7 @@ bool QLandmarkManager::removeLandmark(const QLandmarkId &landmarkId)
 bool QLandmarkManager::removeLandmarks(const QList<QLandmarkId> &landmarkIds,
                                 QMap<int, QLandmarkManager::Error> *errorMap)
 {
+    return false;
 }
 
 
@@ -207,6 +209,7 @@ bool QLandmarkManager::removeCategory(const QLandmarkCategoryId &categoryId)
 */
 QLandmarkCategory QLandmarkManager::category(const QLandmarkCategoryId &categoryId)
 {
+    return QLandmarkCategory();
 }
 
 /*!
@@ -214,6 +217,7 @@ QLandmarkCategory QLandmarkManager::category(const QLandmarkCategoryId &category
 */
 QList<QLandmarkCategoryId> QLandmarkManager::categoryIds() const
 {
+    return QList<QLandmarkCategoryId>();
 }
 
 /*!
@@ -221,6 +225,7 @@ QList<QLandmarkCategoryId> QLandmarkManager::categoryIds() const
 */
 QLandmark QLandmarkManager::landmark(const QLandmarkId &landmarkId)
 {
+    return QLandmark();
 }
 
 /*!
@@ -311,6 +316,7 @@ bool QLandmarkManager::addManager(const QString &name, const QString &uri)
 */
 bool QLandmarkManager::removeManager(const QString &name)
 {
+    return false;
 }
 
 /*!

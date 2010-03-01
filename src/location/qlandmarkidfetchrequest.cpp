@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qlandmarkidfetchrequest.h"
+#include "qlandmarkfilter.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -76,6 +77,7 @@ QLandmarkIdFetchRequest::~QLandmarkIdFetchRequest()
 */
 QLandmarkFilter &QLandmarkIdFetchRequest::filter() const
 {
+    return QLandmarkFilter();
 }
 
 /*!
@@ -88,8 +90,9 @@ void QLandmarkIdFetchRequest::setFilter(const QLandmarkFilter &filter)
 /*!
     Returns the sort ordering which is used to sort the result.
 */
-QList<QLandmarkSortOrder> QLandmarkIdFetchRequest::sorting() const
+QList<QLandmarkSortOrder*> QLandmarkIdFetchRequest::sorting() const
 {
+    return QList<QLandmarkSortOrder*>();
 }
 
 /*!
@@ -97,7 +100,7 @@ QList<QLandmarkSortOrder> QLandmarkIdFetchRequest::sorting() const
     function will only have an effect on the results if invoked
     prior to calling \c start()
 */
-void QLandmarkIdFetchRequest::setSorting(QList<QLandmarkSortOrder> &sorting)
+void QLandmarkIdFetchRequest::setSorting(QList<QLandmarkSortOrder*> &sorting)
 {
 }
 
@@ -107,6 +110,7 @@ void QLandmarkIdFetchRequest::setSorting(QList<QLandmarkSortOrder> &sorting)
 */
 QList<QLandmarkId> QLandmarkIdFetchRequest::ids() const
 {
+    return QList<QLandmarkId>();
 }
 
 #include "moc_qlandmarkidfetchrequest.cpp"

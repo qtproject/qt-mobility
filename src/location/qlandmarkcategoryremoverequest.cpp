@@ -76,6 +76,7 @@ QLandmarkCategoryRemoveRequest::~QLandmarkCategoryRemoveRequest()
 */
 QList<QLandmarkCategoryId> QLandmarkCategoryRemoveRequest::categoryIds() const
 {
+    return QList<QLandmarkCategoryId>();
 }
 
 /*!
@@ -91,6 +92,7 @@ void QLandmarkCategoryRemoveRequest::setCategoryIds(const QList<QLandmarkCategor
 */
 QMap<int, QLandmarkManager::Error> QLandmarkCategoryRemoveRequest::errorMap() const
 {
+    return QMap<int, QLandmarkManager::Error>();
 }
 
 #include "moc_qlandmarkcategoryremoverequest.cpp"

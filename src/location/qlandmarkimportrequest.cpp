@@ -75,6 +75,7 @@ QLandmarkImportRequest::~QLandmarkImportRequest()
 */
 QIODevice *QLandmarkImportRequest::device() const
 {
+    return 0;
 }
 
 /*!
@@ -90,6 +91,7 @@ void QLandmarkImportRequest::setDevice(QIODevice *device)
 */
 QLandmarkManager::Format QLandmarkImportRequest::format() const
 {
+    return QLandmarkManager::Custom;
 }
 
 /*!
@@ -104,6 +106,7 @@ void QLandmarkImportRequest::setFormat(QLandmarkManager::Format format)
 */
 QList<QLandmarkId> QLandmarkImportRequest::ids() const
 {
+    return QList<QLandmarkId>();
 }
 
 #include "moc_qlandmarkimportrequest.cpp"

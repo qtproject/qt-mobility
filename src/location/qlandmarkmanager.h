@@ -60,7 +60,7 @@ class QLandmarkSearchResult;
 class QLandmarkManagerPrivate;
 
 
-class Q_LANDMARKS_EXPORT QLandmarkManager: public QObject
+class Q_LOCATION_EXPORT QLandmarkManager: public QObject
 {
     Q_OBJECT
 public:

@@ -79,6 +79,7 @@ QLandmarkCategorySaveRequest::~QLandmarkCategorySaveRequest()
 */
 QList<QLandmarkCategory> QLandmarkCategorySaveRequest::categories() const
 {
+    return QList<QLandmarkCategory>();
 }
 
 /*!
@@ -94,6 +95,7 @@ void QLandmarkCategorySaveRequest::setCategories(const QList<QLandmarkCategory> 
 */
 QMap<int, QLandmarkManager::Error> QLandmarkCategorySaveRequest::errorMap() const
 {
+    return QMap<int, QLandmarkManager::Error>();
 }
 
 #include "moc_qlandmarkcategorysaverequest.cpp"

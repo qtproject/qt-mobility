@@ -47,7 +47,7 @@
 QTM_BEGIN_NAMESPACE
 
 class QLandmarkRemoveRequestPrivate;
-class Q_LANDMARKS_EXPORT QLandmarkRemoveRequest : public QLandmarkAbstractRequest
+class Q_LOCATION_EXPORT QLandmarkRemoveRequest : public QLandmarkAbstractRequest
 {
     Q_OBJECT
 public:

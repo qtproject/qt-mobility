@@ -102,6 +102,7 @@ QLandmarkAbstractRequest::~QLandmarkAbstractRequest()
 */
 QLandmarkAbstractRequest::RequestType QLandmarkAbstractRequest::type() const
 {
+    return QLandmarkAbstractRequest::InvalidRequest;
 }
 
 /*!
@@ -109,6 +110,7 @@ QLandmarkAbstractRequest::RequestType QLandmarkAbstractRequest::type() const
 */
 QLandmarkAbstractRequest::State QLandmarkAbstractRequest::state()
 {
+    return QLandmarkAbstractRequest::InactiveState;
 }
 
 /*!
@@ -118,6 +120,7 @@ QLandmarkAbstractRequest::State QLandmarkAbstractRequest::state()
 */
 bool QLandmarkAbstractRequest::isInactive() const
 {
+    return true;
 }
 
 /*!
@@ -127,6 +130,7 @@ bool QLandmarkAbstractRequest::isInactive() const
 */
 bool QLandmarkAbstractRequest::isActive() const
 {
+    return false;
 }
 
 /*!
@@ -136,6 +140,7 @@ bool QLandmarkAbstractRequest::isActive() const
 */
 bool QLandmarkAbstractRequest::isFinished() const
 {
+    return false;
 }
 
 /*!
@@ -145,6 +150,7 @@ bool QLandmarkAbstractRequest::isFinished() const
 */
 bool QLandmarkAbstractRequest::isCanceled() const
 {
+    return false;
 }
 
 /*!
@@ -153,6 +159,7 @@ bool QLandmarkAbstractRequest::isCanceled() const
 */
 QLandmarkManager::Error QLandmarkAbstractRequest::error() const
 {
+    return QLandmarkManager::NoError;
 }
 
 /*!
@@ -162,6 +169,7 @@ QLandmarkManager::Error QLandmarkAbstractRequest::error() const
 */
 QString QLandmarkAbstractRequest::errorString() const
 {
+    return QString();
 }
 
 /*!
@@ -170,6 +178,7 @@ QString QLandmarkAbstractRequest::errorString() const
 */
 QLandmarkManager *QLandmarkAbstractRequest::manager() const
 {
+    return 0;
 }
 
 /*!
@@ -187,6 +196,7 @@ void QLandmarkAbstractRequest::setManager(QLandmarkManager *manager)
 */
 bool QLandmarkAbstractRequest::start()
 {
+    return false;
 }
 
 /*!
@@ -197,6 +207,7 @@ bool QLandmarkAbstractRequest::start()
 */
 bool QLandmarkAbstractRequest::cancel()
 {
+    return false;
 }
 
 /*!
@@ -208,6 +219,7 @@ bool QLandmarkAbstractRequest::cancel()
 */
 bool QLandmarkAbstractRequest::waitForFinished(int msecs)
 {
+    return false;
 }
 
 /*!

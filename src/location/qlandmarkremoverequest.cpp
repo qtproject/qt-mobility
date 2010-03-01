@@ -76,6 +76,7 @@ QLandmarkRemoveRequest::~QLandmarkRemoveRequest()
 */
 QList<QLandmarkId> QLandmarkRemoveRequest::landmarkIds() const
 {
+    return QList<QLandmarkId>();
 }
 
 /*!
@@ -91,6 +92,7 @@ void QLandmarkRemoveRequest::setLandmarkIds(const QList<QLandmarkId> &landmarkId
 */
 QMap<int, QLandmarkManager::Error> QLandmarkRemoveRequest::errorMap() const
 {
+    return QMap<int, QLandmarkManager::Error>();
 }
 
 #include "moc_qlandmarkremoverequest.cpp"

@@ -75,6 +75,7 @@ QLandmarkCategoryIdFetchRequest::~QLandmarkCategoryIdFetchRequest()
 */
 QList<QLandmarkCategoryId> QLandmarkCategoryIdFetchRequest::ids() const
 {
+    return QList<QLandmarkCategoryId>();
 }
 
 #include "moc_qlandmarkcategoryidfetchrequest.cpp"

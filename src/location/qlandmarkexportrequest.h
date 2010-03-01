@@ -47,7 +47,7 @@ class QIODevice;
 QTM_BEGIN_NAMESPACE
 
 class QLandmarkExportRequestPrivate;
-class Q_LANDMARKS_EXPORT QLandmarkExportRequest : public QLandmarkAbstractRequest
+class Q_LOCATION_EXPORT QLandmarkExportRequest : public QLandmarkAbstractRequest
 {
     Q_OBJECT
 public:
