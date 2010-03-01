@@ -45,21 +45,19 @@
 #include "n900filebasedsensor.h"
 #include <qaccelerometer.h>
 
-#define ACCELEROMETER_FILE "/sys/class/i2c-adapter/i2c-3/3-001d/coord"
-
 QTM_USE_NAMESPACE
 
 class n900accelerometer : public n900filebasedsensor
 {
 public:
     static const char *id;
+    static const char *filename;
 
     n900accelerometer(QSensor *sensor);
 
     void poll();
 
 private:
-    const char *m_filename;
     QAccelerometerReading m_reading;
 };
 

@@ -63,7 +63,7 @@ public:
     bool saveResource(const QByteArray& contents, const QVersitProperty& property,
                       QString* location)
     {
-        Q_UNUSED(property);
+        Q_UNUSED(property)
         *location = QString::number(mIndex++);
         mObjects.insert(*location, contents);
         return true;
@@ -88,7 +88,7 @@ QTM_USE_NAMESPACE
 #define TESTDATA_DIR "./"
 #endif
 
-Q_DECLARE_METATYPE(QList<QContact>);
+Q_DECLARE_METATYPE(QList<QContact>)
 
 void UT_QVersit::testImportFiles()
 {
@@ -123,8 +123,8 @@ void UT_QVersit::testImportFiles()
                 QContactDetail parsedDetail = parsed.detail(name);
                 if (parsedDetail != expectedDetail) {
                     qDebug() << "Detail: " << name.toAscii();
-                    qDebug() << "Actual:" << parsedDetail.values();
-                    qDebug() << "Expected:" << expectedDetail.values();
+                    qDebug() << "Actual:" << parsedDetail.variantValues();
+                    qDebug() << "Expected:" << expectedDetail.variantValues();
                     QCOMPARE(parsedDetail, expectedDetail);
                 }
             }
@@ -136,7 +136,7 @@ void UT_QVersit::testImportFiles()
         QTest::newRow(filename) \
         << QString::fromAscii(TESTDATA_DIR "testdata/") + QString::fromAscii(filename) \
         << QByteArray(charset) \
-        << (contact);
+        << (contact)
 
 void UT_QVersit::testImportFiles_data()
 {

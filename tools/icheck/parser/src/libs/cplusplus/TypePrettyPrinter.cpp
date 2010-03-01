@@ -83,9 +83,9 @@ static QString fullyQualifiedName(Symbol *symbol, const Overview *overview)
 }
 
 TypePrettyPrinter::TypePrettyPrinter(const Overview *overview)
-    : _overview(overview),
-      _name(0)
-{ }
+    : _overview(overview)
+{      _name = "";
+}
 
 TypePrettyPrinter::~TypePrettyPrinter()
 { }

@@ -45,18 +45,17 @@
 #include <time.h>
 
 const char *n900proximitysensor::id("n900.proximity");
+const char *n900proximitysensor::filename("/sys/bus/platform/devices/proximity/state");
 
 n900proximitysensor::n900proximitysensor(QSensor *sensor)
     : n900filebasedsensor(sensor)
-    , m_filename(PROXIMITY_FILE)
 {
     setReading<QProximityReading>(&m_reading);
 }
 
 void n900proximitysensor::poll()
 {
-    m_reading.setTimestamp(clock());
-    FILE *fd = fopen(m_filename, "r");
+    FILE *fd = fopen(filename, "r");
     if (!fd) return;
     char buffer[20];
     int rs = fscanf(fd, "%s", buffer);
@@ -70,6 +69,7 @@ void n900proximitysensor::poll()
         proximity = QProximityReading::NotClose;
     }
 
+    m_reading.setTimestamp(clock());
     m_reading.setProximity(proximity);
 
     newReadingAvailable();

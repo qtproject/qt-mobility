@@ -116,6 +116,11 @@ public:
     QString homeMobileCountryCode();
     QString homeMobileNetworkCode();
 
+public Q_SLOTS:
+#if !defined(QT_NO_NETWORKMANAGER)
+        void getPrimaryMode();
+#endif
+
 private:
 #if !defined(QT_NO_NETWORKMANAGER)
     QNetworkManagerInterface *iface;
@@ -137,10 +142,9 @@ private:
     QString getSysNetName(QSystemNetworkInfo::NetworkMode mode);
 
 private Q_SLOTS:
+#if !defined(QT_NO_NETWORKMANAGER)
     void nmPropertiesChanged( const QString &, QMap<QString,QVariant>);
     void nmAPPropertiesChanged( const QString &, QMap<QString,QVariant>);
-#if !defined(QT_NO_NETWORKMANAGER)
-    void getPrimaryMode();
 #endif
 };
 

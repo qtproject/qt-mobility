@@ -91,7 +91,10 @@
 <p>We explicitly call our <tt>itemChanged()</tt> slot to populate the table with the initial values.</p>
 <pre>    void SubscriberDialog::changeSubscriberPath()
     {
-        ui-&gt;values-&gt;clearContents();
+        if (listWidget)
+            listWidget-&gt;clear();
+        else if (tableWidget)
+            tableWidget-&gt;clearContents();
 
         if (!subscriber)
             subscriber = new QValueSpaceSubscriber(ui-&gt;basePath-&gt;text(), this);
@@ -105,23 +108,37 @@
 <p>In response to the <tt>contentsChanged()</tt> signal we update all the values in the table.</p>
 <pre>    void SubscriberDialog::subscriberChanged()
     {
-        ui-&gt;values-&gt;clearContents();
-
         QStringList subPaths = subscriber-&gt;subPaths();
-        ui-&gt;values-&gt;setRowCount(subPaths.count());
+
+        if (listWidget) {
+            listWidget-&gt;clear();
+        } else if (tableWidget) {
+            tableWidget-&gt;clearContents();
+            tableWidget-&gt;setRowCount(subPaths.count());
+        }
 
         for (int i = 0; i &lt; subPaths.count(); ++i) {
             QVariant v = subscriber-&gt;value(subPaths.at(i));
 
-            QTableWidgetItem *pathItem = new QTableWidgetItem(subPaths.at(i));
-            pathItem-&gt;setFlags(pathItem-&gt;flags() &amp; ~Qt::ItemIsEditable);
-            QTableWidgetItem *valueItem = new QTableWidgetItem(v.toString());
-            valueItem-&gt;setFlags(valueItem-&gt;flags() &amp; ~Qt::ItemIsEditable);
-            QTableWidgetItem *typeItem = new QTableWidgetItem(v.typeName());
-            typeItem-&gt;setFlags(typeItem-&gt;flags() &amp; ~Qt::ItemIsEditable);
-            ui-&gt;values-&gt;setItem(i, 0, pathItem);
-            ui-&gt;values-&gt;setItem(i, 1, valueItem);
-            ui-&gt;values-&gt;setItem(i, 2, typeItem);
+            if (listWidget) {
+                const QString itemTemplate(&quot;%1 (%2)\n%3&quot;);
+
+                QListWidgetItem *item =
+                    new QListWidgetItem(itemTemplate.arg(subPaths.at(i), v.typeName(), v.toString()));
+                item-&gt;setFlags(item-&gt;flags() &amp; ~Qt::ItemIsEditable);
+                listWidget-&gt;addItem(item);
+            } else if (tableWidget) {
+                QTableWidgetItem *pathItem = new QTableWidgetItem(subPaths.at(i));
+                pathItem-&gt;setFlags(pathItem-&gt;flags() &amp; ~Qt::ItemIsEditable);
+                QTableWidgetItem *valueItem = new QTableWidgetItem(v.toString());
+                valueItem-&gt;setFlags(valueItem-&gt;flags() &amp; ~Qt::ItemIsEditable);
+                QTableWidgetItem *typeItem = new QTableWidgetItem(v.typeName());
+                typeItem-&gt;setFlags(typeItem-&gt;flags() &amp; ~Qt::ItemIsEditable);
+
+                tableWidget-&gt;setItem(i, 0, pathItem);
+                tableWidget-&gt;setItem(i, 1, valueItem);
+                tableWidget-&gt;setItem(i, 2, typeItem);
+            }
         }
     }</pre>
 <p /><address><hr /><div align="center">

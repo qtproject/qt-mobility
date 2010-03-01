@@ -304,7 +304,9 @@ QList<QContactDetail> QContact::details(const QString& definitionName, const QSt
  * accessConstraint set to QContactDetail::Irremovable | QContactDetail::ReadOnly,
  * and the function will return false.
  *
- * Returns true if the detail was saved successfully, otherwise returns false
+ * Returns true if the detail was saved successfully, otherwise returns false.
+ *
+ * Note that the caller retains ownership of the detail.
  */
 bool QContact::saveDetail(QContactDetail* detail)
 {
@@ -355,7 +357,9 @@ bool QContact::saveDetail(QContactDetail* detail)
  * If the detail's access constraint includes \c QContactDetail::Irremovable,
  * this function will return false.
  *
- * Returns true if the detail was removed successfully, false if an error occurred
+ * Returns true if the detail was removed successfully, false if an error occurred.
+ *
+ * Note that the caller retains ownership of the detail.
  */
 bool QContact::removeDetail(QContactDetail* detail)
 {
