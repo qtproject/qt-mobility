@@ -132,7 +132,7 @@ QSensorReading *QSensorBackend::reading() const
 /*!
     \fn QSensorBackend::sensor() const
 
-    Returns the sensor attached to this backend.
+    Returns the sensor front end associated with this backend.
 */
 
 /*!
@@ -211,32 +211,105 @@ void QSensorBackend::setReadings(QSensorReading *device, QSensorReading *filter,
 }
 
 /*!
-    Inform the sensor of the supported data rates that the sensor supports (\a availableDataRates).
+    Add a data rate (consisting of \a min and \a max values) for the sensor.
+
+    Note that this function should be called from the constructor so that the information
+    is available immediately.
+
+    \sa QSensor::availableDataRates
+*/
+void QSensorBackend::addDataRate(qreal min, qreal max)
+{
+    QSensorPrivate *d = m_sensor->d_func();
+    d->availableDataRates << qrange(min, max);
+}
+
+/*!
+    Set the data rates for the sensor based on \a otherSensor.
+
+    This is designed for sensors that are based on other sensors.
+
+    \code
+    setDataRates(otherSensor);
+    \endcode
+
+    Note that this function should be called from the constructor so that the information
+    is available immediately.
+
+    \sa QSensor::availableDataRates, addDataRate()
+*/
+void QSensorBackend::setDataRates(const QSensor *otherSensor)
+{
+    Q_ASSERT(otherSensor);
+    QSensorPrivate *d = m_sensor->d_func();
+    d->availableDataRates = otherSensor->availableDataRates();
+}
+
+/*!
+    Add an output range (consisting of \a min, \a max values and \a accuracy) for the sensor.
+
+    Note that this function should be called from the constructor so that the information
+    is available immediately.
+
+    \sa QSensor::measurementMinimum, QSensor::measurementMaximum, QSensor::measurementAccuracy,
+        QSensor::outputRange
+*/
+void QSensorBackend::addOutputRange(qreal min, qreal max, qreal accuracy)
+{
+    QSensorPrivate *d = m_sensor->d_func();
+
+    measurementdetails m;
+    m.measurementMinimum = min;
+    m.measurementMaximum = max;
+    m.measurementAccuracy = accuracy;
+
+    d->measurementDetails << m;
+
+    // When adding the first range, set outputRage to it
+    if (d->outputRange == -1) {
+        d->outputRange = 0;
+    }
+}
+
+/*!
+    Set the \a description for the sensor.
 
     Note that this function should be called from the constructor so that the information
     is available immediately.
 */
-void QSensorBackend::setDataRates(const qrangelist &availableDataRates)
+void QSensorBackend::setDescription(const QString &description)
 {
     QSensorPrivate *d = m_sensor->d_func();
-    d->availableDataRates = availableDataRates;
+    d->description = description;
 }
 
 /*!
-    Inform the sensor of the status of the sensor.
-    This should be called from the start() method
-    if the sensor was unable to start or was busy.
+    Inform the front end that the sensor has stopped.
+    This can be due to start() failing or for some
+    unexpected reason (eg. hardware failure).
+    \sa sensorError()
 */
-void QSensorBackend::setStatus(bool active, bool busy)
+void QSensorBackend::sensorStopped()
 {
     QSensorPrivate *d = m_sensor->d_func();
-    d->active = active;
-    d->busy = busy;
+    d->active = false;
+}
+
+/*!
+    Inform the front end that the sensor is busy.
+    This implicitly calls sensorStopped() and
+    is typically called from start().
+*/
+void QSensorBackend::sensorBusy()
+{
+    QSensorPrivate *d = m_sensor->d_func();
+    d->active = false;
+    d->busy = true;
 }
 
 /*!
     Inform the front end that a sensor error occurred.
-    Note that this only reports an error code. It does
+    Note that this only reports an \a error code. It does
     not stop the sensor.
     \sa sensorStopped()
 */

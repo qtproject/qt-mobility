@@ -52,14 +52,17 @@ genericorientationsensor::genericorientationsensor(QSensor *sensor)
     accelerometer->connect();
 
     setReading<QOrientationReading>(&m_reading);
-    setDataRates(accelerometer->availableDataRates());
+    setDataRates(accelerometer);
 }
 
 void genericorientationsensor::start()
 {
     accelerometer->setUpdateInterval(sensor()->updateInterval());
     accelerometer->start();
-    setStatus(accelerometer->isActive(), accelerometer->isBusy());
+    if (!accelerometer->isActive())
+        sensorStopped();
+    if (accelerometer->isBusy())
+        sensorBusy();
 }
 
 void genericorientationsensor::stop()

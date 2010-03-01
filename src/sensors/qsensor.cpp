@@ -212,7 +212,7 @@ bool QSensor::isBusy() const
 }
 
 /*!
-    \fn QSensor::busyChanged
+    \fn QSensor::busyChanged()
 
     This signal is emitted when the busy state changes. This can
     be used to grab a sensor when it becomes available.
@@ -455,6 +455,13 @@ void QSensor::setOutputRange(int index)
     Q_ASSERT(index >= 0 && index < outputRangeCount());
     d->outputRange = index;
 }
+
+/*!
+    \property QSensor::description
+    \brief the foo
+
+    foo
+*/
 
 QString QSensor::description() const
 {

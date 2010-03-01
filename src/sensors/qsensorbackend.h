@@ -58,7 +58,11 @@ public:
     virtual void stop() = 0;
     virtual void poll() = 0;
 
-    void setDataRates(const qrangelist &availableDataRates);
+    // used by the backend to set metadata properties
+    void addDataRate(qreal min, qreal max);
+    void setDataRates(const QSensor *otherSensor);
+    void addOutputRange(qreal min, qreal max, qreal accuracy);
+    void setDescription(const QString &description);
 
     template <typename T>
     T *setReading(T *reading)
@@ -74,7 +78,8 @@ public:
 
     // used by the backend to inform us of events
     void newReadingAvailable();
-    void setStatus(bool active, bool busy);
+    void sensorStopped();
+    void sensorBusy();
     void sensorError(int error);
 
 private:

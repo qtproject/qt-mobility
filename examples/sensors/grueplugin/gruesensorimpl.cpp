@@ -52,7 +52,9 @@ gruesensorimpl::gruesensorimpl(QSensor *sensor)
     lightSensor->connect();
 
     setReading<GrueSensorReading>(&m_reading);
-    setDataRates(lightSensor->availableDataRates());
+    setDataRates(lightSensor);
+    addOutputRange(0, 1, 0.1);
+    setDescription(QLatin1String("Grue Sensor"));
 }
 
 void gruesensorimpl::start()
