@@ -47,17 +47,18 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QLandmarkCategoryIdFetchRequest
     \brief The QLandmarkCategoryIdFetchRequest class allows a client to asynchronously
-    request a list of landmark identifiers from a landmark manager.
+    request a list of category identifiers from a landmark manager.
 
     For a QLandmarkCategoryIdFetchRequest, the resultsAvailable() signal will be emitted
     as resultant category identifiers are found (these are retrievable via the callings ids()),
-     as well as if an overall operation error occurred(which may be retrieved by calling error()).
+     as well as if an overall operation error occurred(which may be retrieved by calling
+     QLandmarkAbstractRequest::error()).
 
     \ingroup location
 */
 
 /*!
-    Creates a a new category identifier fetch request object.
+    Creates a new category identifier fetch request object.
 */
 QLandmarkCategoryIdFetchRequest::QLandmarkCategoryIdFetchRequest()
 {

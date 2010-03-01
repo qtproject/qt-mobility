@@ -145,7 +145,7 @@ public:
 
 protected:
     QLandmarkCustomFilter();
-    virtual bool isMatch(const QLandmarkId &landmark);
+    virtual bool isMatch(const QLandmarkId &landmark)=0;
 private:
     QLandmarkCustomFilterPrivate *d;
 };
@@ -153,8 +153,9 @@ private:
 class QLandmarkSortOrderPrivate;
 class Q_LOCATION_EXPORT QLandmarkSortOrder
 {
-    enum SortType{LandmarkNameFilter, LandmarkDistanceFilter, LandmarkCustomFilter=500};
+
 public:
+    enum SortType{LandmarkNameFilter, LandmarkDistanceFilter, LandmarkCustomFilter=500};
 
     SortType type() const;
     Qt::SortOrder direction() const;
@@ -201,6 +202,7 @@ class Q_LOCATION_EXPORT QLandmarkCustomSort : public QLandmarkSortOrder
     virtual ~QLandmarkCustomSort();
 protected:
     QLandmarkCustomSort();
+
 private:
     QLandmarkCustomSortPrivate *d;
 };

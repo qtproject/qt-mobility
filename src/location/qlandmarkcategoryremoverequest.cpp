@@ -53,13 +53,13 @@ QTM_BEGIN_NAMESPACE
     For a QLandmarkCategoryRemoveRequest, the resultsAvailable() signal will be emitted
     when either an individual items error out (individaul errors may be retrieved
     by calling errorMap()) or an  overall operation error occurs(which may be
-    retrieved by calling error()).
+    retrieved by calling QLandmarkAbstractRequest::error()).
 
     \ingroup location
 */
 
 /*!
-    Constructs a category remove request
+    Constructs a category remove request.
 */
 QLandmarkCategoryRemoveRequest::QLandmarkCategoryRemoveRequest()
 {

@@ -59,7 +59,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs a landmark export request
+    Constructs a landmark export request.
 */
 QLandmarkExportRequest::QLandmarkExportRequest()
 {

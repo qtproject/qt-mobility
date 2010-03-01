@@ -75,6 +75,9 @@ QTM_USE_NAMESPACE
 
 /*!
     Constructs an empty category.
+
+    A new category will return an invalid QLandmarkCategoryId when
+    categoryId() is called.
 */
 QLandmarkCategory::QLandmarkCategory()
 {
@@ -171,6 +174,9 @@ bool QLandmarkCategory::isReadOnly() const
 
 /*!
     Returns the identifier of the category.
+
+    Saving a new category using a QLandmarkManager will assign
+    the category a valid identifier.
 */
 QLandmarkCategoryId QLandmarkCategory::categoryId() const
 {

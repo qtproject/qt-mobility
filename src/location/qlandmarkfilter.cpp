@@ -270,7 +270,6 @@ void QLandmarkNearestFilter::setCoordinate(const QGeoCoordinate &coordinate)
 {
 }
 
-
 /*!
     \class QLandmarkCategoryFilter
     \brief The QLandmarkCategoryFilter class is used to search for landmarks that
@@ -313,12 +312,12 @@ void QLandmarkCategoryFilter::setCategoryId(const QLandmarkCategoryId &categoryI
 
 /*!
     \class QLandmarkCustomFilter
-    \brief The QLandmarkCustomFilter class provides the interface by which
+    \brief The QLandmarkCustomFilter class provides the interface which
     all custom filters should inherit.
     \ingroup location
 
     All custom landmark filters should inherit off the QLandmarkCustomFilter
-    and must implement the filter() function.
+    and must implement the isMatch() function.
 */
 
 /*!
@@ -329,7 +328,7 @@ QLandmarkCustomFilter::QLandmarkCustomFilter()
 }
 
 /*!
-    Destroys the filter
+    Destroys the filter.
 */
 QLandmarkCustomFilter::~QLandmarkCustomFilter()
 {
@@ -349,8 +348,17 @@ bool QLandmarkCustomFilter::isMatch(const QLandmarkId &landmarkId)
 /*!
     \class QLandmarkSortOrder
     \brief The QLandmarkSortOrder class defines how a list of landmarks
-    should be ordered according to same criteria.
+    should be ordered according to some criteria.
     \ingroup location
+*/
+
+/*!
+    \enum QLandmarkSortOrder::SortType
+    Defines the type of sort order.
+    \value LandmarkNameFilter   Sorts landmarks by name.
+    \value LandmarkDistanceFilter   Sorts landmarks by distance from a particular
+           coordinate.
+    \value LandmarkCustomFilter Is a custom sorting filter.
 */
 
 /*!
@@ -470,7 +478,7 @@ QGeoCoordinate QLandmarkDistanceSort::coordinate() const
 }
 
 /*!
-    Sets the central \a coordinate of the sort order
+    Sets the central \a coordinate of the sort order.
 */
 void QLandmarkDistanceSort::setCoordinate(const QGeoCoordinate &coordinate)
 {
@@ -494,7 +502,7 @@ QList<QLandmarkId> QLandmarkDistanceSort::sort(const QList<QLandmarkId> &landmar
 
 /*!
     \class QLandmarkCustomSort
-    \brief The QLandmarkCustomSort class is the interface by which all
+    \brief The QLandmarkCustomSort class is the interface which all
     custom sort orders should inherit.
 
     All custom sort orders should inherit this class and implement the
@@ -514,4 +522,5 @@ QLandmarkCustomSort::QLandmarkCustomSort()
 QLandmarkCustomSort::~QLandmarkCustomSort()
 {
 }
+
 QTM_END_NAMESPACE

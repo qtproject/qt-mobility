@@ -89,7 +89,7 @@ bool QLandmarkCategoryId::isValid() const
 }
 
 /*!
-    Returns the id of the category identifier
+    Returns the id of the category identifier.
 */
 QString QLandmarkCategoryId::id() const
 {

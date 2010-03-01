@@ -273,6 +273,9 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
 
 /*!
     Constructs an empty landmark.
+
+    A new QLandmark will return an invalid QLandmarkId when
+    categoryId() is called.
 */
 QLandmark::QLandmark()
 {
@@ -591,6 +594,9 @@ void QLandmark::setUrl(const QString &url)
 
 /*!
     Returns the identifier of the landmark.
+
+    Saving a new landmark using a QLandmarkManager will assign
+    the landmark a valid identifier.
 */
 QLandmarkId QLandmark::landmarkId()
 {
