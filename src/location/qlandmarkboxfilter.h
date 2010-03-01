@@ -49,7 +49,7 @@ QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
 class QLandmarkBoxFilterPrivate;
-class Q_LANDMARKS_EXPORT QLandmarkBoxFilter : public QLandmarkFilter
+class Q_LOCATION_EXPORT QLandmarkBoxFilter : public QLandmarkFilter
 {
 public:
     QLandmarkBoxFilter(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight);
