@@ -319,11 +319,10 @@ RDFSelect prepareEmailAddressesQuery(RDFVariable &rdfcontact1, bool forAffiliati
  */
 RDFSelect prepareIMAddressesQuery(RDFVariable  &contact)
 {
-
     ::tracker()->setVerbosity(4);
     RDFSelect queryidsimacccounts;
     // this establishes query graph relationship: imaddress that we want is a property in contact
-    RDFVariable imaddress = contact.property<nco::hasImAddress>;
+    RDFVariable imaddress = contact.property<nco::hasIMAddress>();
 
     // in the query, we need to get imaccount where this imaddress resides.
     // i.e. from which local account we have established connection to imaddress
@@ -342,9 +341,7 @@ RDFSelect prepareIMAddressesQuery(RDFVariable  &contact)
     queryidsimacccounts.addColumn("capabilities",
               imaddress.optional().property<nco::imCapability>().filter("GROUP_CONCAT", LiteralValue(",")));
     queryidsimacccounts.addColumn("serviceprovider", imaccount.property<nco::imDisplayName>());
-
     return queryidsimacccounts;
-
 }
 
 RDFSelect prepareIMAccountsQuery()
