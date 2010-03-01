@@ -73,6 +73,7 @@ QLandmarkBoxFilter::~QLandmarkBoxFilter()
 */
 QGeoCoordinate QLandmarkBoxFilter::topLeftCoordinate()
 {
+    return QGeoCoordinate();
 }
 
 /*!
@@ -89,6 +90,7 @@ void QLandmarkBoxFilter::setTopLeftCoordinate(const QGeoCoordinate &topLeft)
 */
 QGeoCoordinate QLandmarkBoxFilter::bottomRightCoordinate()
 {
+    return QGeoCoordinate();
 }
 
 /*!
