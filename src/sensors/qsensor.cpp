@@ -411,9 +411,13 @@ void QSensor::removeFilter(QSensorFilter *filter)
 
 /*!
     \property QSensor::measurementMinimum
-    \brief the foo
+    \brief the minimum value that the sensor will return.
 
-    foo
+    The units are defined by the sensor.
+
+    Note that the sensor may have multiple output ranges.
+
+    \sa QSensor::outputRange
 */
 
 qreal QSensor::measurementMinimum() const
@@ -425,9 +429,13 @@ qreal QSensor::measurementMinimum() const
 
 /*!
     \property QSensor::measurementMaximum
-    \brief the foo
+    \brief the maximum value that the sensor will return.
 
-    foo
+    The units are defined by the sensor.
+
+    Note that the sensor may have multiple output ranges.
+
+    \sa QSensor::outputRange
 */
 
 qreal QSensor::measurementMaximum() const
@@ -439,9 +447,13 @@ qreal QSensor::measurementMaximum() const
 
 /*!
     \property QSensor::measurementAccuracy
-    \brief the foo
+    \brief the accuracy of the sensor.
 
-    foo
+    The units are defined by the sensor.
+
+    Note that the sensor may have multiple output ranges.
+
+    \sa QSensor::outputRange
 */
 
 qreal QSensor::measurementAccuracy() const
@@ -453,9 +465,9 @@ qreal QSensor::measurementAccuracy() const
 
 /*!
     \property QSensor::outputRangeCount
-    \brief the foo
+    \brief the number of output ranges that the sensor has.
 
-    foo
+    \sa QSensor::outputRange
 */
 
 int QSensor::outputRangeCount() const
@@ -465,9 +477,13 @@ int QSensor::outputRangeCount() const
 
 /*!
     \property QSensor::outputRange
-    \brief the foo
+    \brief the output range in use by the sensor.
 
-    foo
+    A sensor may have more than one output range. Typically this is done
+    to give a greater measurement range at the cost of lowering accuracy.
+
+    \sa QSensor::outputRangeCount, QSensor::measurementMinimum, QSensor::measurementMaximum,
+        QSensor::measurementAccuracy
 */
 
 int QSensor::outputRange() const
@@ -486,9 +502,7 @@ void QSensor::setOutputRange(int index)
 
 /*!
     \property QSensor::description
-    \brief the foo
-
-    foo
+    \brief a descriptive string for the sensor.
 */
 
 QString QSensor::description() const
