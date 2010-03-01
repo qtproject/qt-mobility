@@ -313,24 +313,35 @@ RDFSelect prepareEmailAddressesQuery(RDFVariable &rdfcontact1, bool forAffiliati
 }
 
 
+/*!
+ * \a contact here describes rdf graph - when making query, depending on filters applied
+ * to \a contact, query results to any set of contacts
+ */
 RDFSelect prepareIMAddressesQuery(RDFVariable  &contact)
 {
-    // columns
+
     ::tracker()->setVerbosity(4);
     RDFSelect queryidsimacccounts;
-    RDFVariable imaddress;
-    imaddress = queryidsimacccounts.newColumn<nco::IMAddress>("address");
-    queryidsimacccounts.groupBy(contact);
+    // this establishes query graph relationship: imaddress that we want is a property in contact
+    RDFVariable imaddress = contact.property<nco::hasImAddress>;
+
+    // in the query, we need to get imaccount where this imaddress resides.
+    // i.e. from which local account we have established connection to imaddress
+    RDFVariable imaccount = RDFVariable::fromType<nco::IMAccount>();
+    // define link between imaccount to imaddress.
+    imaccount.property<nco::hasIMContact>() = imaddress;
+
+    queryidsimacccounts.addColumn("imaddress", imaddress);
+    queryidsimacccounts.groupBy(contact); // this is probably bogus, as contact is not in query result set. use id instead
     queryidsimacccounts.addColumn("contactId", contact.property<nco::contactUID> ());
     queryidsimacccounts.addColumn("IMId", imaddress.property<nco::imID> ());
     queryidsimacccounts.addColumn("status", imaddress.optional().property<nco::imPresence> ());
     queryidsimacccounts.addColumn("message", imaddress.optional().property<nco::imContactStatusMessage> ());
     queryidsimacccounts.addColumn("nick", imaddress.optional().property<nco::imNickname> ());
-    queryidsimacccounts.addColumn("type", imaddress); // here we need account path
+    queryidsimacccounts.addColumn("type", imaccount); // account path
     queryidsimacccounts.addColumn("capabilities",
               imaddress.optional().property<nco::imCapability>().filter("GROUP_CONCAT", LiteralValue(",")));
-    // TODO link to account
-    //    queryidsimacccounts.addColumn("serviceprovider", imcontact.optional().property<nco::fromIMAccount>().property<nco::imDisplayName>());
+    queryidsimacccounts.addColumn("serviceprovider", imaccount.property<nco::imDisplayName>());
 
     return queryidsimacccounts;
 
