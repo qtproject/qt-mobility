@@ -1494,8 +1494,8 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
     {
         unsigned int contactid = qHash(QString("/org/freedesktop/fake/account/") + QString::number(999998+i) + "@ovi.com");
         idstomerge << contactid;
-        insertContact(QString("telepathy://org/freedesktop/fake/account/") + QString::number(999998+i) + "@ovi.com",
-                contactid, QString::number(999998 + i)+ "@ovi.com", "nco:presence-status-available", QString("http://www.sopranolive.org/backends/tracker/generated_unique_id/105323876#%1").arg(999998+i),"ovi.com");
+        insertContact(QString("telepathy:///org/freedesktop/fake/account/") + QString::number(999998+i) + "@ovi.com",
+                contactid, QString::number(999998 + i)+ "@ovi.com", "nco:presence-status-available", QString("/org/freedesktop/fake/account/%1").arg(999998+i),"ovi.com");
         QContact c = contact(contactid, QStringList()<<QContactOnlineAccount::DefinitionName);
         QVERIFY(c.localId() == contactid);
         QVERIFY(c.detail<QContactOnlineAccount>().serviceProvider() == "ovi.com");
@@ -1540,7 +1540,7 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
         QVERIFY(containDetail);
     }
     //now update presence to IM Address and check it in contact (TODO and if signal is emitted)
-    updateIMContactStatus(QString("telepathy://org/freedesktop/fake/account/") + QString::number(999999) + "@ovi.com", "nco:presence-status-offline");
+    updateIMContactStatus(QString("telepathy:///org/freedesktop/fake/account/") + QString::number(999999) + "@ovi.com", "nco:presence-status-offline");
     {
         QList<QContact> cons = contacts(QList<QContactLocalId> ()
                 << masterContactId << qHash(QString("/org/freedesktop/fake/account/") + QString::number(999999) + "@ovi.com"), QStringList()
@@ -1599,13 +1599,12 @@ void ut_qtcontacts_trackerplugin::testIMContactsFilterring()
     {
         unsigned int contactid = qHash(QString("/org/freedesktop/fake/account/") + QString::number(999995+i) + "@ovi.com");
         idstoremove << contactid;
-        insertContact(QString("telepathy://org/freedesktop/fake/account/") + QString::number(999995+i) + "@ovi.com",
+        insertContact(QString("telepathy:///org/freedesktop/fake/account/") + QString::number(999995+i) + "@ovi.com",
                 contactid, QString::number(999995 + i)+ "@ovi.com", "nco:presence-status-available",
-                QString("www.sopranolive.org/backends/tracker/generated_unique_id/105323876#ovi%1").arg(i/2), QString("ovi%1.com").arg(i/2));
+                QString("/org/freedesktop/fake/account/%1").arg(i/2), QString("ovi%1.com").arg(i/2));
         if(!i/2)
             idsToRetrieveThroughFilter << contactid;
     }
-
 
     {
     // now filter by service provider ovi0.com needs to return 2 contacts, 999995 & 999996
@@ -1641,6 +1640,7 @@ void ut_qtcontacts_trackerplugin::testIMContactsFilterring()
     QVERIFY(request.contacts().size() >= 2);
     foreach(const QContact &contact, request.contacts())
     {
+        //qDebug() << contact.localId()<< "acc"<<contact.detail<QContactOnlineAccount>().serviceProvider();
         QVERIFY(contact.detail<QContactOnlineAccount>().serviceProvider() == "ovi0.com");
         ids.removeOne(contact.localId());
     }

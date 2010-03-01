@@ -114,7 +114,7 @@ private slots:
 private:
     void syncContactsAddedSinceHelper(QDateTime& start, QList<QContactLocalId>& addedIds);
 
-    void insertContact(const QString& URI, QContactLocalId uid, QString imId, QString imStatus, QString accountPath, QString protocol = "jabber");
+    void insertContact(const QString& contactURI, QContactLocalId uid, QString imId, QString imStatus, QString accountPath, QString protocol = "jabber");
     void updateIMContactStatus(const QString& uri, QString imStatus);
     QContact contact(QContactLocalId uid, QStringList detailsToLoad = QStringList());
     QList<QContact> contacts(QList<QContactLocalId> uids, QStringList detailsToLoad = QStringList());
