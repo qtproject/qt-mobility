@@ -56,7 +56,19 @@ class QSensorReading;
 class QSensorReadingPrivate;
 class QSensorFilter;
 
+#ifdef Q_QDOC
 typedef quint64 qtimestamp;
+#else
+class qtimestamp
+{
+public:
+    qtimestamp() : value() {}
+    qtimestamp(quint64 timestamp) : value(timestamp) {}
+    operator quint64() const { return value; }
+private:
+    quint64 value;
+};
+#endif
 
 class Q_SENSORS_EXPORT QSensor : public QObject
 {
