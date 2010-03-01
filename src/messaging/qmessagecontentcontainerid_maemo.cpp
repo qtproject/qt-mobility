@@ -38,30 +38,69 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QMESSAGEACCOUNTSORTORDERPRIVATE_H
-#define QMESSAGEACCOUNTSORTORDERPRIVATE_H
-#include "qmessageaccountsortorder.h"
-#include "qstring.h"
-#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-#include <qmessageaccount.h>
-#endif
+#include "qmessagecontentcontainerid.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QMessageAccountSortOrderPrivate
+class QMessageContentContainerIdPrivate
 {
 public:
-    QMessageAccountSortOrderPrivate(QMessageAccountSortOrder *sortOrder);
+    enum {
+        Invalid = -1,
+        Body = 0
+    };
 
-    bool _empty;
-    Qt::SortOrder _order;
-    QMessageAccountSortOrder *q_ptr;
-    static Qt::SortOrder order(const QMessageAccountSortOrder &sortOrder) { return sortOrder.d_ptr->_order; }
-    
-#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    static bool lessThan(const QMessageAccountSortOrder &sortOrder, const QMessageAccount &account1, const QMessageAccount &account2);
-#endif    
+    int _number;
+
+    QMessageContentContainerIdPrivate() : _number(Invalid) {}
 };
 
+QMessageContentContainerId::QMessageContentContainerId()
+: d_ptr(new QMessageContentContainerIdPrivate)
+{
+}
+
+QMessageContentContainerId::QMessageContentContainerId(const QMessageContentContainerId& other)
+: d_ptr(new QMessageContentContainerIdPrivate)
+{
+        this->operator=(other);
+}
+
+QMessageContentContainerId::QMessageContentContainerId(const QString& id)
+: d_ptr(new QMessageContentContainerIdPrivate)
+{
+        if (!id.isEmpty()) {
+                d_ptr->_number = id.toUInt();
+        }
+}
+
+QMessageContentContainerId::~QMessageContentContainerId()
+{
+        delete d_ptr;
+}
+
+bool QMessageContentContainerId::operator==(const QMessageContentContainerId& other) const
+{
+        return (d_ptr->_number == other.d_ptr->_number);
+}
+
+QMessageContentContainerId& QMessageContentContainerId::operator=(const QMessageContentContainerId& other)
+{
+        if (&other != this) {
+                d_ptr->_number = other.d_ptr->_number;
+        }
+
+        return *this;
+}
+
+QString QMessageContentContainerId::toString() const
+{
+        return QString::number(d_ptr->_number);
+}
+
+bool QMessageContentContainerId::isValid() const
+{
+        return (d_ptr->_number != QMessageContentContainerIdPrivate::Invalid);
+}
+
 QTM_END_NAMESPACE
-#endif

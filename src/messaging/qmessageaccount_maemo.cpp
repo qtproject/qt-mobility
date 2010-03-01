@@ -38,30 +38,72 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QMESSAGEACCOUNTSORTORDERPRIVATE_H
-#define QMESSAGEACCOUNTSORTORDERPRIVATE_H
-#include "qmessageaccountsortorder.h"
-#include "qstring.h"
-#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-#include <qmessageaccount.h>
-#endif
+#include "qmessageaccount.h"
+#include "qmessageaccount_p.h"
+#include "qmessagemanager.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QMessageAccountSortOrderPrivate
+QMessageAccount QMessageAccountPrivate::from(const QMessageAccountId &id, const QString &name, const QMessageAddress &address, const QMessage::TypeFlags &types)
 {
-public:
-    QMessageAccountSortOrderPrivate(QMessageAccountSortOrder *sortOrder);
+    QMessageAccount result;
+    result.d_ptr->_id = id;
+    result.d_ptr->_name = name;
+    result.d_ptr->_address = address;
+    result.d_ptr->_types = types;
+    return result;
+}
 
-    bool _empty;
-    Qt::SortOrder _order;
-    QMessageAccountSortOrder *q_ptr;
-    static Qt::SortOrder order(const QMessageAccountSortOrder &sortOrder) { return sortOrder.d_ptr->_order; }
-    
-#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    static bool lessThan(const QMessageAccountSortOrder &sortOrder, const QMessageAccount &account1, const QMessageAccount &account2);
-#endif    
-};
+QMessageAccount::QMessageAccount()
+ : d_ptr(new QMessageAccountPrivate(this))
+{
+}
+
+QMessageAccount::QMessageAccount(const QMessageAccountId &id)
+ : d_ptr(new QMessageAccountPrivate(this))
+{
+    *this = QMessageManager().account(id);
+}
+
+QMessageAccount::QMessageAccount(const QMessageAccount &other)
+ : d_ptr(new QMessageAccountPrivate(this))
+{
+    this->operator=(other);
+}
+
+QMessageAccount& QMessageAccount::operator=(const QMessageAccount& other)
+{
+    if (&other != this) {
+        *d_ptr = *other.d_ptr;
+    }
+
+    return *this;
+}
+
+QMessageAccount::~QMessageAccount()
+{
+    delete d_ptr;
+    d_ptr = 0;
+}
+
+QMessageAccountId QMessageAccount::id() const
+{
+    return d_ptr->_id;
+}
+
+QString QMessageAccount::name() const
+{
+    return d_ptr->_name;
+}
+
+QMessage::TypeFlags QMessageAccount::messageTypes() const
+{
+    return d_ptr->_types;
+}
+
+QMessageAccountId QMessageAccount::defaultAccount(QMessage::Type type)
+{
+    //TODO:
+}
 
 QTM_END_NAMESPACE
-#endif

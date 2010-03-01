@@ -38,30 +38,77 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QMESSAGEACCOUNTSORTORDERPRIVATE_H
-#define QMESSAGEACCOUNTSORTORDERPRIVATE_H
-#include "qmessageaccountsortorder.h"
-#include "qstring.h"
-#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-#include <qmessageaccount.h>
-#endif
+#include "qmessagefolder.h"
+#include "qmessagefolder_p.h"
+#include "qmessagemanager.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QMessageAccountSortOrderPrivate
+QMessageFolder QMessageFolderPrivate::from(const QMessageFolderId &id, const QMessageAccountId &accountId, const QMessageFolderId &parentId, const QString &name, const QString &path)
 {
-public:
-    QMessageAccountSortOrderPrivate(QMessageAccountSortOrder *sortOrder);
+    QMessageFolder result;
+    result.d_ptr->_id = id;
+    result.d_ptr->_parentAccountId = accountId;
+    result.d_ptr->_parentFolderId = parentId;
+    result.d_ptr->_name = name;
+    result.d_ptr->_path = path;
+    return result;
+}
 
-    bool _empty;
-    Qt::SortOrder _order;
-    QMessageAccountSortOrder *q_ptr;
-    static Qt::SortOrder order(const QMessageAccountSortOrder &sortOrder) { return sortOrder.d_ptr->_order; }
-    
-#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    static bool lessThan(const QMessageAccountSortOrder &sortOrder, const QMessageAccount &account1, const QMessageAccount &account2);
-#endif    
-};
+QMessageFolder::QMessageFolder()
+    :d_ptr(new QMessageFolderPrivate(this))
+{
+}
+
+QMessageFolder::QMessageFolder(const QMessageFolderId &id)
+    :d_ptr(new QMessageFolderPrivate(this))
+{
+    *this = QMessageManager().folder(id);
+}
+
+QMessageFolder::QMessageFolder(const QMessageFolder &other)
+    :d_ptr(new QMessageFolderPrivate(this))
+{
+    this->operator=(other);
+}
+
+QMessageFolder& QMessageFolder::operator=(const QMessageFolder& other)
+{
+    if (&other != this)
+        *d_ptr = *other.d_ptr;
+
+    return *this;
+}
+
+QMessageFolder::~QMessageFolder()
+{
+    delete d_ptr;
+    d_ptr = 0;
+}
+
+QMessageFolderId QMessageFolder::id() const
+{
+    return d_ptr->_id;
+}
+
+QMessageAccountId QMessageFolder::parentAccountId() const
+{
+    return d_ptr->_parentAccountId;
+}
+
+QMessageFolderId QMessageFolder::parentFolderId() const
+{
+    return d_ptr->_parentFolderId;
+}
+
+QString QMessageFolder::name() const
+{
+    return d_ptr->_name;
+}
+
+QString QMessageFolder::path() const
+{
+    return d_ptr->_path;
+}
 
 QTM_END_NAMESPACE
-#endif
