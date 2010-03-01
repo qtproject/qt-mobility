@@ -234,6 +234,19 @@ void QSensorBackend::setStatus(bool active, bool busy)
     d->busy = busy;
 }
 
+/*!
+    Inform the front end that a sensor error occurred.
+    Note that this only reports an error code. It does
+    not stop the sensor.
+    \sa sensorStopped()
+*/
+void QSensorBackend::sensorError(int error)
+{
+    QSensorPrivate *d = m_sensor->d_func();
+    d->error = error;
+    Q_EMIT m_sensor->sensorError(error);
+}
+
 #include "moc_qsensorbackend.cpp"
 QTM_END_NAMESPACE
 

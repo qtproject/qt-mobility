@@ -461,6 +461,24 @@ QString QSensor::description() const
     return d->description;
 }
 
+/*!
+    \property QSensor::error
+    \brief the last error code set on the sensor.
+*/
+
+int QSensor::error() const
+{
+    return d->error;
+}
+
+/*!
+    \fn QSensor::sensorError(int error)
+
+    This signal is emitted when an \a error code is set on the sensor.
+    Note that not all errors are fatal. You should call isActive() to
+    determine if the sensor is still working.
+*/
+
 // =====================================================================
 
 /*!

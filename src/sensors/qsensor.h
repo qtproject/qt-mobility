@@ -92,6 +92,7 @@ class Q_SENSORS_EXPORT QSensor : public QObject
     Q_PROPERTY(qreal measurementAccuracy READ measurementAccuracy)
     Q_PROPERTY(int outputRange READ outputRangeCount WRITE setOutputRange)
     Q_PROPERTY(QString description READ description)
+    Q_PROPERTY(int error READ error)
 public:
     explicit QSensor(QObject *parent = 0);
     virtual ~QSensor();
@@ -123,6 +124,7 @@ public:
     void setOutputRange(int index);
 
     QString description() const;
+    int error() const;
 
     // Filters modify the reading
     void addFilter(QSensorFilter *filter);
@@ -149,6 +151,7 @@ public Q_SLOTS:
 Q_SIGNALS:
     void busyChanged();
     void readingChanged();
+    void sensorError(int error);
 
 protected:
     // called by the back end

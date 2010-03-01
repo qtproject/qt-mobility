@@ -80,6 +80,7 @@ public:
         , device_reading(0)
         , filter_reading(0)
         , cache_reading(0)
+        , error(0)
     {
     }
 
@@ -104,6 +105,8 @@ public:
     QSensorReading *device_reading;
     QSensorReading *filter_reading;
     QSensorReading *cache_reading;
+
+    int error;
 };
 
 class QSensorReadingPrivate

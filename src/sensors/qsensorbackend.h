@@ -72,8 +72,10 @@ public:
     QSensorReading *reading() const;
     QSensor *sensor() const { return m_sensor; }
 
+    // used by the backend to inform us of events
     void newReadingAvailable();
     void setStatus(bool active, bool busy);
+    void sensorError(int error);
 
 private:
     void setReadings(QSensorReading *device, QSensorReading *filter, QSensorReading *cache);
