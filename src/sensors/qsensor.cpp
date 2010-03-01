@@ -439,7 +439,7 @@ qreal QSensor::measurementAccuracy() const
 }
 
 /*!
-    \property QSensor::outputRange
+    \property QSensor::outputRangeCount
     \brief the foo
 
     foo
@@ -448,6 +448,18 @@ qreal QSensor::measurementAccuracy() const
 int QSensor::outputRangeCount() const
 {
     return d->measurementDetails.count();
+}
+
+/*!
+    \property QSensor::outputRange
+    \brief the foo
+
+    foo
+*/
+
+int QSensor::outputRange() const
+{
+    return d->outputRange;
 }
 
 void QSensor::setOutputRange(int index)

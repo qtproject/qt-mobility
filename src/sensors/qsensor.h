@@ -90,7 +90,8 @@ class Q_SENSORS_EXPORT QSensor : public QObject
     Q_PROPERTY(qreal measurementMinimum READ measurementMinimum)
     Q_PROPERTY(qreal measurementMaximum READ measurementMaximum)
     Q_PROPERTY(qreal measurementAccuracy READ measurementAccuracy)
-    Q_PROPERTY(int outputRange READ outputRangeCount WRITE setOutputRange)
+    Q_PROPERTY(int outputRangeCount READ outputRangeCount)
+    Q_PROPERTY(int outputRange READ outputRange WRITE setOutputRange)
     Q_PROPERTY(QString description READ description)
     Q_PROPERTY(int error READ error)
 public:
@@ -121,6 +122,7 @@ public:
     qreal measurementAccuracy() const;
 
     int outputRangeCount() const;
+    int outputRange() const;
     void setOutputRange(int index);
 
     QString description() const;
