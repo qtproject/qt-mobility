@@ -85,7 +85,6 @@ private slots:  // Test cases
     void testUnionFilter();
     void testLocalIdFilter();
     void testDefaultFilter();
-    void testDefaultFilterWithPredictiveSearch();
     void testZeroSearch();
     
 private:
@@ -93,6 +92,8 @@ private:
     void  testIntersectionFilter_2();
     void  testUnionFilter_1();
     void  testUnionFilter_2();
+    void  testContactDetailFilter_1();
+    void  testContactDetailFilter_2();
 private:
     QContactManager                             *mCntMng;
     QHash<QContactFilter::FilterType, TFilter>  *mFilters;
