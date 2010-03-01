@@ -389,6 +389,10 @@ QSensorReading *QSensor::reading() const
 */
 void QSensor::addFilter(QSensorFilter *filter)
 {
+    if (!filter) {
+        qWarning() << "addFilter: passed a null filter!";
+        return;
+    }
     d->filters << filter;
 }
 
@@ -399,6 +403,10 @@ void QSensor::addFilter(QSensorFilter *filter)
 */
 void QSensor::removeFilter(QSensorFilter *filter)
 {
+    if (!filter) {
+        qWarning() << "removeFilter: passed a null filter!";
+        return;
+    }
     d->filters.removeOne(filter);
     filter->setSensor(0);
 }
