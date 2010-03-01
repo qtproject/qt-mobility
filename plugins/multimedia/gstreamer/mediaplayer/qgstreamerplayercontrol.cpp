@@ -193,7 +193,8 @@ void QGstreamerPlayerControl::stop()
             m_session->pause();
         }
         emit positionChanged(0);
-        emit stateChanged(m_state = QMediaPlayer::StoppedState);
+        if (m_state != QMediaPlayer::StoppedState)
+            emit stateChanged(m_state = QMediaPlayer::StoppedState);
     }
 }
 
@@ -285,6 +286,8 @@ void QGstreamerPlayerControl::updateState(QMediaPlayer::State state)
 
     switch (state) {
     case QMediaPlayer::StoppedState:
+        if (m_state != QMediaPlayer::StoppedState)
+            emit stateChanged(m_state = QMediaPlayer::StoppedState);
         break;
 
     case QMediaPlayer::PausedState:
