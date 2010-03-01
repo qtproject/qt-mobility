@@ -78,7 +78,7 @@ public:
     bool isInactive()const;
     bool isActive() const;
     bool isFinished() const;
-    bool isCancelled() const;
+    bool isCanceled() const;
 
     QLandmarkManager::Error error() const;
     QString errorString() const;

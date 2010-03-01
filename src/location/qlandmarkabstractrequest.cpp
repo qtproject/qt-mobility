@@ -58,7 +58,8 @@ QTM_USE_NAMESPACE
     \value  InvalidRequest An invalid request
     \value  LandmarkIdFetchRequest A request to fetch a list of landmark
             identifiers.
-    \value  CategoryIdFetchRequest A request to fetch a list of catgories
+    \value  CategoryIdFetchRequest A request to fetch a list of catgory
+            identifiers.
     \value  LandmarkSaveRequest A request to save a list of landmarks.
     \value  LandmarkRemoveRequest A request to remove a list of landmarks.
     \value  CategorySaveRequest A request to save a list of categories.
@@ -68,10 +69,11 @@ QTM_USE_NAMESPACE
 /*!
     \enum QLandmarkAbstractRequest::State
     Defines the possible states of asynchronous requests.
-    \value InactiveState Operation not yet started
-    \value ActiveState Operation started, not yet finished
-    \value CanceledState Operation is finished due to cancellation
-    \value FinishedState Operation successfully completed
+    \value  InactiveState Operation not yet started.
+    \value  ActiveState Operation started, not yet finished.
+    \value  CanceledState Operation is finished due to cancelation.
+    \value  FinishedState Operation completed.  (Can be mean either successful or
+            unsuccessful completion).
 */
 
 /*!
@@ -111,7 +113,7 @@ QLandmarkAbstractRequest::State QLandmarkAbstractRequest::state()
 
 /*!
     Returns true if the request is in the \c QLandmarkAbstractRequest::Inactive state;
-    otherwise, returns false
+    otherwise, returns false.
     \sa state()
 */
 bool QLandmarkAbstractRequest::isInactive() const
@@ -120,7 +122,7 @@ bool QLandmarkAbstractRequest::isInactive() const
 
 /*!
     Returns true if the request is in the \c QLandmarkAbstractRequest::Active state;
-    otherwise, returns false
+    otherwise, returns false.
     \sa state()
 */
 bool QLandmarkAbstractRequest::isActive() const
@@ -129,7 +131,7 @@ bool QLandmarkAbstractRequest::isActive() const
 
 /*!
     Returns true if the request is in the \c QLandmarkAbstractRequest::Finished state;
-    otherwise, returns false
+    otherwise, returns false.
     \sa state()
 */
 bool QLandmarkAbstractRequest::isFinished() const
@@ -137,24 +139,26 @@ bool QLandmarkAbstractRequest::isFinished() const
 }
 
 /*!
-    Returns true if the request is in the \c QLandmarkAbstractRequest::Cancelled state;
-    otherwise, returns false
+    Returns true if the request is in the \c QLandmarkAbstractRequest::Canceled state;
+    otherwise, returns false.
     \sa state()
 */
-bool QLandmarkAbstractRequest::isCancelled() const
+bool QLandmarkAbstractRequest::isCanceled() const
 {
 }
 
 /*!
-    Returns the error of the most recent asynchronous operation
+    Returns the error of the most recent asynchronous operation.
+    \sa errorString().
 */
 QLandmarkManager::Error QLandmarkAbstractRequest::error() const
 {
 }
 
 /*!
-    Returns a human readable string of the most recent
-    asynchronous operation.
+    Returns a human readable string of the last error
+    that occurred.
+    \sa error()
 */
 QString QLandmarkAbstractRequest::errorString() const
 {
@@ -179,6 +183,7 @@ void QLandmarkAbstractRequest::setManager(QLandmarkManager *manager)
     Attempts to start the request.
 
     Returns true if the request was started, otherwise false.
+    \sa cancel()
 */
 bool QLandmarkAbstractRequest::start()
 {
@@ -187,7 +192,8 @@ bool QLandmarkAbstractRequest::start()
 /*!
     Attempts to cancel the request.
 
-    Returns true if the request was cancelled, otherwise false.
+    Returns true if the request was canceled, otherwise false.
+    \sa start()
 */
 bool QLandmarkAbstractRequest::cancel()
 {
@@ -195,9 +201,9 @@ bool QLandmarkAbstractRequest::cancel()
 
 /*!
     Blocks until the request has been completed or until \a msecs milliseconds
-    has elapsed.
+    has elapsed.  If \a msecs is zero, this function will block indefinitely.
 
-    Returns true if the request was cancelled or completed successfully
+    Returns true if the request was canceled or completed
     within the given period, otherwise returns false.
 */
 bool QLandmarkAbstractRequest::waitForFinished(int msecs)

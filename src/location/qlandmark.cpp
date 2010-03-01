@@ -584,14 +584,11 @@ QGeoCoordinate QLandmark::coordinate() const
 
 /*!
     Sets the \a coordinate of the landmark.
-
-    The coordinates should be specified in the WGS84 datum.
 */
 void QLandmark::setCoordinate(const QGeoCoordinate& coordinate)
 {
     d->coordinate = coordinate;
 }
-
 
 /*!
     Returns a of list identifiers of categories that this landmark
@@ -628,8 +625,7 @@ void QLandmark::addCategory(const QLandmarkCategoryId &categoryId)
 }
 
 /*!
-    Removes a category that this landmark will no longer
-    be associated with via its \a categoryId.
+    Removes a category from a landmark, by using its \a categoryId.
 */
 void QLandmark::removeCategory(const QLandmarkCategoryId &categoryId)
 {
@@ -672,7 +668,8 @@ void QLandmark::setIcon(const QString &filePath)
     Returns the coverage radius of the landmark.
 
     The coverage radius is relevant for large landmarks
-    such as cities.
+    such as cities.  Note that landmark searches over a given area
+    do not factor in the coverage radius.
 */
 double QLandmark::radius() const
 {
@@ -837,7 +834,7 @@ void QLandmark::setUrl(const QString &url)
 }
 
 /*!
-    Returns the landmark identifier for the landmark.
+    Returns the identifier of the landmark.
 */
 QLandmarkId QLandmark::landmarkId()
 {
