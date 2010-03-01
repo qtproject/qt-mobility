@@ -153,8 +153,9 @@ public:
 
     /* Functionality reporting */
     enum ManagerFeature {
-        Groups = 0,
-        ActionPreferences,
+        //Groups = 0,
+        ActionPreferences = 0,    // per-contact action preferences
+        DetailActionPreferences,  // per-detail per-contact action preferences
         MutableDefinitions,
         Relationships,
         ArbitraryRelationshipTypes,

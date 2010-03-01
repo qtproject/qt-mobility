@@ -232,13 +232,25 @@ bool QContactDetail::operator==(const QContactDetail& other) const
     return true;
 }
 
-/*! Sets the preferred actions for this detail to be the given list of \a preferredActions */
+/*!
+ * \internal
+ * Sets the preferred actions for this detail to be the given list of \a preferredActions.
+ * This functionality may not be supported on all backends; please check for the
+ * \c QContactManager::DetailActionPreferences feature in the backend.
+ * This function is deprecated and will be removed after the transition period has elapsed.
+ */
 void QContactDetail::setPreferredActions(const QList<QContactActionDescriptor>& preferredActions)
 {
     d->m_preferredActions = preferredActions;
 }
 
-/*! Returns the list of preferred actions for this detail */
+/*!
+ * \internal
+ * Returns the list of preferred actions for this detail.
+ * This functionality may not be supported on all backends; please check for the
+ * \c QContactManager::DetailActionPreferences feature in the backend.
+ * This function is deprecated and will be removed after the transition period has elapsed.
+ */
 QList<QContactActionDescriptor> QContactDetail::preferredActions() const
 {
     return d->m_preferredActions;
