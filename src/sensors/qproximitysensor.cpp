@@ -93,8 +93,6 @@ void QProximityReading::setProximity(QProximityReading::Proximity proximity)
 
 // =====================================================================
 
-// begin generated code
-
 /*!
     \class QProximityFilter
     \ingroup sensors_filter
@@ -151,7 +149,6 @@ const char *QProximitySensor::type("QProximitySensor");
 
     \sa QSensor::reading()
 */
-// end generated code
 
 #include "moc_qproximitysensor.cpp"
 QTM_END_NAMESPACE

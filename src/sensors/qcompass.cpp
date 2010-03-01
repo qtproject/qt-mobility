@@ -119,8 +119,6 @@ void QCompassReading::setCalibrationLevel(QCompassReading::CalibrationLevel cali
 
 // =====================================================================
 
-// begin generated code
-
 /*!
     \class QCompassFilter
     \ingroup sensors_filter
@@ -177,7 +175,6 @@ const char *QCompass::type("QCompass");
 
     \sa QSensor::reading()
 */
-// end generated code
 
 #include "moc_qcompass.cpp"
 QTM_END_NAMESPACE

@@ -142,8 +142,6 @@ void QTapReading::setDoubleTap(bool doubleTap)
 
 // =====================================================================
 
-// begin generated code
-
 /*!
     \class QTapFilter
     \ingroup sensors_filter
@@ -200,7 +198,6 @@ const char *QTapSensor::type("QTapSensor");
 
     \sa QSensor::reading()
 */
-// end generated code
 
 #include "moc_qtapsensor.cpp"
 QTM_END_NAMESPACE

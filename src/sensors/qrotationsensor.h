@@ -66,8 +66,6 @@ public:
     void setZ(qreal z);
 };
 
-// begin generated code
-
 class Q_SENSORS_EXPORT QRotationFilter : public QSensorFilter
 {
 public:
@@ -86,7 +84,6 @@ public:
     QRotationReading *reading() const { return static_cast<QRotationReading*>(QSensor::reading()); }
     static const char *type;
 };
-// end generated code
 
 QTM_END_NAMESPACE
 

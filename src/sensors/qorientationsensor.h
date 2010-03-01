@@ -69,8 +69,6 @@ public:
     void setOrientation(Orientation orientation);
 };
 
-// begin generated code
-
 class Q_SENSORS_EXPORT QOrientationFilter : public QSensorFilter
 {
 public:
@@ -89,7 +87,6 @@ public:
     QOrientationReading *reading() const { return static_cast<QOrientationReading*>(QSensor::reading()); }
     static const char *type;
 };
-// end generated code
 
 QTM_END_NAMESPACE
 

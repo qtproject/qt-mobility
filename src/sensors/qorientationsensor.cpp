@@ -121,8 +121,6 @@ void QOrientationReading::setOrientation(QOrientationReading::Orientation orient
 
 // =====================================================================
 
-// begin generated code
-
 /*!
     \class QOrientationFilter
     \ingroup sensors_filter
@@ -179,7 +177,6 @@ const char *QOrientationSensor::type("QOrientationSensor");
 
     \sa QSensor::reading()
 */
-// end generated code
 
 #include "moc_qorientationsensor.cpp"
 QTM_END_NAMESPACE

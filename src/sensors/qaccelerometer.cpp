@@ -149,8 +149,6 @@ void QAccelerometerReading::setZ(qreal z)
 
 // =====================================================================
 
-// begin generated code
-
 /*!
     \class QAccelerometerFilter
     \ingroup sensors_filter
@@ -207,7 +205,6 @@ const char *QAccelerometer::type("QAccelerometer");
 
     \sa QSensor::reading()
 */
-// end generated code
 
 #include "moc_qaccelerometer.cpp"
 QTM_END_NAMESPACE

@@ -93,8 +93,6 @@ public:
     void setCalibrationLevel(CalibrationLevel calibrationLevel);
 };
 
-// begin generated code
-
 class Q_SENSORS_EXPORT QMagnetometerFilter : public QSensorFilter
 {
 public:
@@ -113,7 +111,6 @@ public:
     QMagnetometerReading *reading() const { return static_cast<QMagnetometerReading*>(QSensor::reading()); }
     static const char *type;
 };
-// end generated code
 
 QTM_END_NAMESPACE
 

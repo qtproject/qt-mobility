@@ -237,8 +237,6 @@ void QMagnetometerReading::setCalibrationLevel(QMagnetometerReading::Calibration
 
 // =====================================================================
 
-// begin generated code
-
 /*!
     \class QMagnetometerFilter
     \ingroup sensors_filter
@@ -295,7 +293,6 @@ const char *QMagnetometer::type("QMagnetometer");
 
     \sa QSensor::reading()
 */
-// end generated code
 
 #include "moc_qmagnetometer.cpp"
 QTM_END_NAMESPACE

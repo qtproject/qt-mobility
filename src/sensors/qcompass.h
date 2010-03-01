@@ -70,8 +70,6 @@ public:
     void setCalibrationLevel(CalibrationLevel calibrationLevel);
 };
 
-// begin generated code
-
 class Q_SENSORS_EXPORT QCompassFilter : public QSensorFilter
 {
 public:
@@ -90,7 +88,6 @@ public:
     QCompassReading *reading() const { return static_cast<QCompassReading*>(QSensor::reading()); }
     static const char *type;
 };
-// end generated code
 
 QTM_END_NAMESPACE
 

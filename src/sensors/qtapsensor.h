@@ -76,8 +76,6 @@ public:
     void setDoubleTap(bool doubleTap);
 };
 
-// begin generated code
-
 class Q_SENSORS_EXPORT QTapFilter : public QSensorFilter
 {
 public:
@@ -96,7 +94,6 @@ public:
     QTapReading *reading() const { return static_cast<QTapReading*>(QSensor::reading()); }
     static const char *type;
 };
-// end generated code
 
 QTM_END_NAMESPACE
 

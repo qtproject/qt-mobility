@@ -65,8 +65,6 @@ public:
     void setProximity(Proximity proximity);
 };
 
-// begin generated code
-
 class Q_SENSORS_EXPORT QProximityFilter : public QSensorFilter
 {
 public:
@@ -85,7 +83,6 @@ public:
     QProximityReading *reading() const { return static_cast<QProximityReading*>(QSensor::reading()); }
     static const char *type;
 };
-// end generated code
 
 QTM_END_NAMESPACE
 

@@ -148,8 +148,6 @@ void QRotationReading::setZ(qreal z)
 
 // =====================================================================
 
-// begin generated code
-
 /*!
     \class QRotationFilter
     \ingroup sensors_filter
@@ -206,7 +204,6 @@ const char *QRotationSensor::type("QRotationSensor");
 
     \sa QSensor::reading()
 */
-// end generated code
 
 #include "moc_qrotationsensor.cpp"
 QTM_END_NAMESPACE
