@@ -137,22 +137,6 @@ private:
     QLandmarkCategoryFilterPrivate *d;
 };
 
-class QLandmarkBoxFilterPrivate;
-class Q_LOCATION_EXPORT QLandmarkBoxFilter: public QLandmarkFilter
-{
-public:
-    QLandmarkBoxFilter(const QGeoCoordinate &NW, const QGeoCoordinate &SE);
-    virtual ~QLandmarkBoxFilter();
-
-    QGeoCoordinate northWestCoordinate();
-    void setNorthWestCoordinate(const QGeoCoordinate &NW);
-
-    QGeoCoordinate southEastCoordinate();
-    void setSouthEastCoordinate(const QGeoCoordinate &SE);
-private:
-    QLandmarkBoxFilterPrivate *d;
-};
-
 class QLandmarkCustomFilterPrivate;
 class Q_LOCATION_EXPORT QLandmarkCustomFilter : public QLandmarkFilter
 {

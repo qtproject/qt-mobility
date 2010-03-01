@@ -27,7 +27,8 @@ PUBLIC_HEADERS += qgeocoordinate.h \
                   qlandmarkexportrequest.h \
                   qlandmarkcategoryidfetchrequest.h \
                   qlandmarkcategorysaverequest.h \
-                  qlandmarkcategoryremoverequest.h
+                  qlandmarkcategoryremoverequest.h \
+                  qlandmarkboxfilter.h
 
 
 
@@ -35,7 +36,7 @@ PRIVATE_HEADERS += qlocationutils_p.h \
                    qnmeapositioninfosource_p.h \
                    qlandmark_p.h
 
-symbian { 
+symbian {
     PRIVATE_HEADERS += qgeopositioninfosource_s60_p.h \
                        qmlbackendao_s60_p.h \
                        qgeosatelliteinfosource_s60_p.h \
@@ -66,7 +67,7 @@ symbian {
     }
 }
 
-wince* { 
+wince* {
     PRIVATE_HEADERS += qgeopositioninfosource_wince_p.h \
                        qgeosatelliteinfosource_wince_p.h \
                        qgeoinfothread_wince_p.h
@@ -120,10 +121,11 @@ SOURCES += qlocationutils.cpp \
            qlandmarkexportrequest.cpp \
            qlandmarkcategoryidfetchrequest.cpp \
            qlandmarkcategorysaverequest.cpp \
-           qlandmarkcategoryremoverequest.cpp
+           qlandmarkcategoryremoverequest.cpp \
+           qlandmarkboxfilter.cpp
 
 
-symbian { 
+symbian {
     TARGET.CAPABILITY = ALL -TCB
     TARGET.UID3 = 0x2002AC83
 
