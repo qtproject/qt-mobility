@@ -67,6 +67,7 @@ QGstreamerCaptureSession::QGstreamerCaptureSession(QGstreamerCaptureSession::Cap
     :QObject(parent),
      m_state(StoppedState),
      m_pendingState(StoppedState),
+     m_waitingForEos(false),
      m_pipelineMode(EmptyPipeline),
      m_captureMode(captureMode),
      m_audioInputFactory(0),
@@ -692,7 +693,7 @@ void QGstreamerCaptureSession::waitForStopped()
 
 void QGstreamerCaptureSession::setState(QGstreamerCaptureSession::State newState)
 {
-    if (newState == m_pendingState)
+    if (newState == m_pendingState && !m_waitingForEos)
         return;
 
     m_pendingState = newState;
@@ -713,6 +714,20 @@ void QGstreamerCaptureSession::setState(QGstreamerCaptureSession::State newState
     }
 
     if (newMode != m_pipelineMode) {
+        if (m_pipelineMode == PreviewAndRecordingPipeline) {
+            if (!m_waitingForEos) {
+                m_waitingForEos = true;
+                //qDebug() << "Waiting for EOS";
+                //with live sources it's necessary to send EOS even to pipeline
+                //before going to STOPPED state
+                gst_element_send_event(m_pipeline, gst_event_new_eos());
+                return;
+            } else {
+                m_waitingForEos = false;
+                //qDebug() << "EOS received";
+            }
+        }
+
         //select suitable default codecs/containers, if necessary
         m_recorderControl->applySettings();
 
@@ -852,6 +867,11 @@ void QGstreamerCaptureSession::busMessage(const QGstreamerMessage &message)
         if (GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_pipeline)) {
             switch (GST_MESSAGE_TYPE(gm))  {
             case GST_MESSAGE_DURATION:
+                break;
+
+            case GST_MESSAGE_EOS:
+                if (m_waitingForEos)
+                    setState(m_pendingState);
                 break;
 
             case GST_MESSAGE_STATE_CHANGED:
