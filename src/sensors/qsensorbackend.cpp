@@ -215,6 +215,12 @@ void QSensorBackend::setReadings(QSensorReading *device, QSensorReading *filter,
     d->cache_reading = cache;
 }
 
+/*!
+    \fn QSensorBackend::sensor() const
+
+    Returns the sensor attached to this backend.
+*/
+
 #include "moc_qsensorbackend.cpp"
 QTM_END_NAMESPACE
 
