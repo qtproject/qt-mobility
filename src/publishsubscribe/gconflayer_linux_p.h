@@ -125,8 +125,10 @@ private:
         return 0;
     }
 
+    QStringList recursiveChildren(QString fullPath) const;
+
 private:    //data
-    QHash<QString, GConfHandle *> m_monitoringHandles;
+    QMultiMap<QString, GConfHandle *> m_monitoringHandles;
     QSignalMapper *m_signalMapper;
 };
 

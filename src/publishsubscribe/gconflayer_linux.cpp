@@ -144,10 +144,8 @@ bool GConfLayer::value(Handle handle, const QString &subPath, QVariant *data)
 
     fullPath.append(value);
 
-    qDebug() << "Read value from" << fullPath;
     GConfItem gconfItem(fullPath);
     QVariant readValue = gconfItem.value();
-    qDebug() << "gconfItem.value()" << readValue;
     switch (readValue.type()) {
     case QVariant::Invalid:
     case QVariant::Bool:
@@ -176,7 +174,6 @@ bool GConfLayer::value(Handle handle, const QString &subPath, QVariant *data)
 
     if (createdHandle)
         removeHandle(handle);
-    qDebug() << "*data" << *data;
     return data->isValid();
 }
 
@@ -186,14 +183,12 @@ QSet<QString> GConfLayer::children(Handle handle)
     if (!sh)
         return QSet<QString>();
 
-    qDebug() << "Get children from" << sh->path;
     GConfItem gconfItem(sh->path);
 
     QSet<QString> ret;
     foreach (QString child, gconfItem.listEntries() + gconfItem.listDirs()) {
         int index = child.lastIndexOf(QLatin1Char('/'), -1);
         ret += child.mid(index + 1);
-        qDebug() << "found" << child.mid(index + 1);
     }
 
     return ret;
@@ -246,24 +241,33 @@ void GConfLayer::setProperty(Handle handle, Properties properties)
     if (!basePath.endsWith(QLatin1Char('/'))) {
         basePath += QLatin1Char('/');
     }
-    foreach (QString child, children(handle)) {
-        QString fullPath = basePath + child;
-        if (properties & QAbstractValueSpaceLayer::Publish) {
-            qDebug() << "Start Monitoring" << fullPath;
-            m_monitoringHandles[fullPath] = sh;
-            GConfItem *gconfItem = static_cast<GConfItem *> (m_signalMapper->mapping(fullPath));
+
+    if (properties & QAbstractValueSpaceLayer::Publish) {
+        if (!m_monitoringHandles.contains(basePath, sh)) {
+            if (!m_monitoringHandles.contains(sh->path, sh))
+                m_monitoringHandles.insert(sh->path, sh);
+        }
+        foreach (QString childPath, recursiveChildren(sh->path)) {
+            GConfItem *gconfItem = static_cast<GConfItem *> (m_signalMapper->mapping(childPath));
             if (!gconfItem) {
-                gconfItem = new GConfItem(fullPath, m_signalMapper);
+                gconfItem = new GConfItem(childPath, m_signalMapper);
                 connect(gconfItem, SIGNAL(valueChanged()), m_signalMapper, SLOT(map()));
-                m_signalMapper->setMapping(gconfItem, fullPath);
+                m_signalMapper->setMapping(gconfItem, childPath);
             }
-        } else {
-            qDebug() << "Stop Monitoring" << fullPath;
-            GConfItem *gconfItem = static_cast<GConfItem *> (m_signalMapper->mapping(fullPath));
-            delete gconfItem;
-            m_monitoringHandles.remove(fullPath);
         }
     }
+}
+
+
+QStringList GConfLayer::recursiveChildren(QString fullPath) const
+{
+    QStringList childPaths;
+    GConfItem gconfItem(fullPath);
+    childPaths += gconfItem.listEntries();
+    foreach (QString child, gconfItem.listDirs()) {
+        childPaths += recursiveChildren(child);
+    }
+    return childPaths;
 }
 
 void GConfLayer::removeHandle(Handle handle)
@@ -275,6 +279,7 @@ void GConfLayer::removeHandle(Handle handle)
     if (--sh->refCount)
         return;
 
+    m_monitoringHandles.remove(sh->path, sh);
     m_handles.remove(sh->path);
 
     delete sh;
@@ -318,7 +323,19 @@ bool GConfLayer::setValue(QValueSpacePublisher */*creator*/,
 
     fullPath.append(value);
 
-    qDebug() << "Write value" << data << "to" << fullPath;
+    bool startMonitoring = false;
+    foreach (QString monitoredPath, m_monitoringHandles.keys()) {
+        if (fullPath.startsWith(monitoredPath)) {
+            if (!m_monitoringHandles.contains(monitoredPath, sh)) {
+                if (!createdHandle) {
+                    if (!m_monitoringHandles.contains(monitoredPath, sh))
+                        m_monitoringHandles.insert(monitoredPath, sh);
+                }
+                startMonitoring = true;
+            }
+        }
+    }
+
     GConfItem gconfItem(fullPath);
     switch (data.type()) {
     case QVariant::Invalid:
@@ -328,7 +345,6 @@ bool GConfLayer::setValue(QValueSpacePublisher */*creator*/,
     case QVariant::String:
     case QVariant::StringList:
     case QVariant::List:
-        qDebug() << "gconfItem.set()" << data;
         gconfItem.set(data);
         break;
     default:
@@ -336,14 +352,24 @@ bool GConfLayer::setValue(QValueSpacePublisher */*creator*/,
         QDataStream writeStream(&byteArray, QIODevice::WriteOnly);
         writeStream << data;
         QString serializedValue(byteArray.toBase64());
-        qDebug() << "gconfItem.set()" << serializedValue;
         gconfItem.set(serializedValue);
     }
 
     if (createdHandle)
         removeHandle(Handle(sh));
 
-    return true;    //TODO: How to check whether set was ok?
+    if (startMonitoring) {
+        GConfItem *item = static_cast<GConfItem *> (m_signalMapper->mapping(fullPath));
+        if (!item) {
+            item = new GConfItem(fullPath, m_signalMapper);
+            connect(item, SIGNAL(valueChanged()), m_signalMapper, SLOT(map()));
+            m_signalMapper->setMapping(item, fullPath);            
+        }
+
+        notifyChanged(fullPath);
+    }
+
+    return true;
 }
 
 void GConfLayer::sync()
@@ -363,13 +389,13 @@ bool GConfLayer::removeValue(QValueSpacePublisher */*creator*/,
 {
     QString fullPath;
 
+    GConfHandle *sh = gConfHandle(handle);
+    if (!sh)
+        return false;
+
     if (handle == InvalidHandle) {
         fullPath = subPath;
     } else {
-        GConfHandle *sh = gConfHandle(handle);
-        if (!sh)
-            return false;
-
         if (subPath == QLatin1String("/"))
             fullPath = sh->path;
         else if (sh->path.endsWith(QLatin1Char('/')) && subPath.startsWith(QLatin1Char('/')))
@@ -380,9 +406,14 @@ bool GConfLayer::removeValue(QValueSpacePublisher */*creator*/,
             fullPath = sh->path + subPath;
     }
 
-    qDebug() << "Remove value from" << fullPath;
     GConfItem gconfItem(fullPath);
     gconfItem.unset();
+
+    GConfItem *item = static_cast<GConfItem *> (m_signalMapper->mapping(fullPath));
+    delete item;
+
+    notifyChanged(fullPath);
+
     return true;
 }
 
@@ -409,8 +440,10 @@ bool GConfLayer::notifyInterest(Handle, bool)
 
 void GConfLayer::notifyChanged(QString path)
 {
-    if (m_monitoringHandles.contains(path)) {
-        emit handleChanged(Handle(m_monitoringHandles.value(path)));
+    foreach (GConfHandle *handle, m_monitoringHandles.values()) {
+        if (path.startsWith(handle->path)) {
+            emit handleChanged(Handle(handle));
+        }
     }
 }
 
