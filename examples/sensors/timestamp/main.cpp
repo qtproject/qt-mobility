@@ -43,23 +43,19 @@
 #include <QtTest>
 
 
-namespace theNameSpace {
-    typedef quint64 qtimestamp;
-}
+typedef quint64 qtimestamp;
 
-Q_DECLARE_METATYPE(theNameSpace::qtimestamp)
+Q_DECLARE_METATYPE(qtimestamp)
 
-using namespace theNameSpace;
 
-//static int qtimestamp_id = qRegisterMetaType<qtimestamp>("qtimestamp");
-static int theNameSpace_qtimestamp_id = qRegisterMetaType<qtimestamp>("theNameSpace::qtimestamp");
+static int qtimestamp_id = qRegisterMetaType<qtimestamp>("qtimestamp");
 
 
 
 class propertyholder : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(theNameSpace::qtimestamp timestamp READ timestamp)
+    Q_PROPERTY(qtimestamp timestamp READ timestamp)
 public:
     qtimestamp timestamp() const
     {
@@ -85,7 +81,7 @@ void timestamp::qvariant()
     v = t;
 
     qDebug() << "qMetaTypeId" << qMetaTypeId<qtimestamp>();
-    qDebug() << "QMetaType::type" << QMetaType::type("theNameSpace::qtimestamp");
+    qDebug() << "QMetaType::type" << QMetaType::type("qtimestamp");
     qDebug() << "QVariant::type" << v.type();
     qDebug() << "QVariant::userType" << v.userType();
     qDebug() << "QVariant::typeName" << v.typeName();
@@ -103,7 +99,7 @@ void timestamp::property()
     v = o->property("timestamp");
 
     qDebug() << "qMetaTypeId" << qMetaTypeId<qtimestamp>();
-    qDebug() << "QMetaType::type" << QMetaType::type("theNameSpace::qtimestamp");
+    qDebug() << "QMetaType::type" << QMetaType::type("qtimestamp");
     qDebug() << "QVariant::type" << v.type();
     qDebug() << "QVariant::userType" << v.userType();
     qDebug() << "QVariant::typeName" << v.typeName();
