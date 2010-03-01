@@ -165,7 +165,11 @@ QContactFilter::QContactFilter(QContactFilterPrivate *d)
 
 }
 
-/*! Intersects the \a left and \a right filters */
+/*!
+ \relates QContactFilter
+ Returns a filter which is the intersection of the \a left and \a right filters
+ \sa QContactIntersectionFilter
+ */
 const QContactFilter operator&(const QContactFilter& left, const QContactFilter& right)
 {
     // XXX TODO: empty intersection/union operations are not well defined yet.
@@ -189,7 +193,11 @@ const QContactFilter operator&(const QContactFilter& left, const QContactFilter&
     return nif;
 }
 
-/*! Unions the \a left and \a right filters */
+/*!
+ \relates QContactFilter
+ Returns a filter which is the union of the \a left and \a right filters
+ \sa QContactUnionFilter
+ */
 const QContactFilter operator|(const QContactFilter& left, const QContactFilter& right)
 {
     if (left.type() == QContactFilter::UnionFilter) {
