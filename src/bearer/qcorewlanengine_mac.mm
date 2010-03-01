@@ -105,12 +105,14 @@ static QString qGetInterfaceType(const QString &interfaceString)
     return networkInterfaces.value(interfaceString, QLatin1String("Unknown"));
 }
 
-void networkChangeCallback(SCDynamicStoreRef/* store*/, CFArrayRef changedKeys, void */*info*/)
+void networkChangeCallback(SCDynamicStoreRef/* store*/, CFArrayRef changedKeys, void *info)
 {
     for ( long i = 0; i < CFArrayGetCount(changedKeys); i++) {
+
         CFStringRef changed = (CFStringRef)CFArrayGetValueAtIndex(changedKeys, i);
         if( cfstringRefToQstring(changed).contains("/Network/Global/IPv4")) {
-            QTM_NAMESPACE::QCoreWlanEngine::instance()->requestUpdate();
+            QCoreWlanEngine* wlanEngine = static_cast<QCoreWlanEngine*>(info);
+            wlanEngine->requestUpdate();
         }
     }
     return;
@@ -305,7 +307,6 @@ void QCoreWlanEngine::disconnectFromId(const QString &id)
 
 void QCoreWlanEngine::requestUpdate()
 {
-    qWarning() << __FUNCTION__;
     getAllScInterfaces();
     emit configurationsChanged();
 }
@@ -365,10 +366,10 @@ QList<QNetworkConfigurationPrivate *> QCoreWlanEngine::scanForSsids(const QStrin
                 foundConfigs.append(cpPriv);
                 [looppool release];
             }
-        } else {
+        } /*else {
             qWarning() << "ERROR scanning for ssids" << nsstringToQString([err localizedDescription])
                     <<nsstringToQString([err domain]);
-        }
+        }*/
     }
     [autoreleasepool drain];
 #else
@@ -450,7 +451,7 @@ void QCoreWlanEngine::startNetworkChangeLoop()
 {
     storeSession = NULL;
 
-    SCDynamicStoreContext dynStoreContext = { 0, (void *)storeSession, NULL, NULL, NULL };
+    SCDynamicStoreContext dynStoreContext = { 0, this/*(void *)storeSession*/, NULL, NULL, NULL };
     storeSession = SCDynamicStoreCreate(NULL,
                                  CFSTR("networkChangeCallback"),
                                  networkChangeCallback,
