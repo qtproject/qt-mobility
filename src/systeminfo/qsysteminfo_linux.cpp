@@ -47,7 +47,6 @@
 #include <QTextStream>
 #include <QLocale>
 #include <QLibraryInfo>
-#include <QtGui>
 #include <QDebug>
 #include <QTimer>
 #include <QDir>
