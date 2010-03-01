@@ -159,7 +159,7 @@ public:
         MutableDefinitions,
         Relationships,
         ArbitraryRelationshipTypes,
-        RelationshipOrdering,
+        RelationshipOrdering,     // deprecated along with setRelationshipOrder() etc in QContact.
         DetailOrdering,
         SelfContact,
         Anonymous,
