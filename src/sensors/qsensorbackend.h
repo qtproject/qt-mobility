@@ -68,9 +68,11 @@ public:
         setReadings(reading, new T(this), new T(this));
         return reading;
     }
-    void newReadingAvailable();
 
     QSensorReading *reading() const;
+    QSensor *sensor() const { return m_sensor; }
+
+    void newReadingAvailable();
 
 private:
     void setReadings(QSensorReading *device, QSensorReading *filter, QSensorReading *cache);

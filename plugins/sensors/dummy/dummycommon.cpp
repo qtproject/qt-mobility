@@ -65,7 +65,7 @@ void dummycommon::start()
     if (m_timerid)
         return;
 
-    int interval = m_sensor->updateInterval();
+    int interval = sensor()->updateInterval();
 
     switch (m_sensor->updatePolicy()) {
     case QSensor::OccasionalUpdates:

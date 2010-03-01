@@ -89,7 +89,7 @@ bool gruesensorimpl::filter(QAmbientLightReading *reading)
         break;
     }
 
-    if (QSensorBackend::m_sensor->updatePolicy() == QSensor::OccasionalUpdates ||
+    if (sensor()->updatePolicy() == QSensor::OccasionalUpdates ||
             chance != m_reading.chanceOfBeingEaten()) {
         m_reading.setTimestamp(reading->timestamp());
         m_reading.setChanceOfBeingEaten(chance);
