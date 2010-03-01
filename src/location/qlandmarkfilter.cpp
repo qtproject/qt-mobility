@@ -41,6 +41,10 @@
 
 #include "qlandmarkfilter.h"
 
+//TODO: move this when category filter is moved.
+#include "qlandmarkcategoryid.h"
+
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -265,6 +269,7 @@ QGeoCoordinate QLandmarkNearestFilter::coordinate() const
 void QLandmarkNearestFilter::setCoordinate(const QGeoCoordinate &coordinate)
 {
 }
+
 
 /*!
     \class QLandmarkCategoryFilter

@@ -39,57 +39,54 @@
 **
 ****************************************************************************/
 
-#include "qlandmarkcategoryidfetchrequest.h"
-#include "qlandmarkcategoryid.h"
+#ifndef QLANDMARKCATEGORY_H
+#define QLANDMARKCATEGORY_H
+
+#include "qmobilityglobal.h"
+class QVariant;
+class QStringList;
+
+QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
+class QLandmarkCategoryId;
 
-/*!
-    \class QLandmarkCategoryIdFetchRequest
-    \brief The QLandmarkCategoryIdFetchRequest class allows a client to asynchronously
-    request a list of landmark identifiers from a landmark manager.
-
-    For a QLandmarkCategoryIdFetchRequest, the resultsAvailable() signal will be emitted
-    as resultant category identifiers are found (these are retrievable via the callings ids()),
-     as well as if an overall operation error occurred(which may be retrieved by calling error()).
-
-    \ingroup location
-*/
-
-/*!
-    Creates a a new category identifier fetch request object.
-*/
-QLandmarkCategoryIdFetchRequest::QLandmarkCategoryIdFetchRequest()
+class QLandmarkCategoryPrivate;
+class Q_LOCATION_EXPORT QLandmarkCategory
 {
-}
+public:
+    QLandmarkCategory();
+    QLandmarkCategory(const QLandmarkCategory &other);
+    ~QLandmarkCategory();
 
-/*!
-    Destroys the request object.
-*/
-QLandmarkCategoryIdFetchRequest::~QLandmarkCategoryIdFetchRequest()
-{
-}
+    QLandmarkCategory& operator= (const QLandmarkCategory &other);
 
-/*!
-    Returns the list of category identifiers that have been found during the
-    request.
-*/
-QList<QLandmarkCategoryId> QLandmarkCategoryIdFetchRequest::ids() const
-{
-    return QList<QLandmarkCategoryId>();
-}
+    bool operator== (const QLandmarkCategory &other) const;
+    // consider inline != in terms of ==?
 
-#include "moc_qlandmarkcategoryidfetchrequest.cpp"
+    QString name() const;
+    void setName(const QString &name);
+
+    QString icon() const;
+    void setIcon(const QString &fileName);
+
+    QString description() const;
+    void setDescription(const QString &description);
+
+    bool isReadOnly() const;
+
+    QLandmarkCategoryId categoryId() const;
+
+    QVariant attribute(const QString &attributeName) const;
+    void setAttribute(const QString &attributeName, const QVariant &value);
+    QStringList attributes() const;
+
+private:
+    QLandmarkCategoryPrivate *d;
+};
 
 QTM_END_NAMESPACE
 
+QT_END_HEADER
 
-
-
-
-
-
-
-
-
-
+#endif

@@ -39,57 +39,41 @@
 **
 ****************************************************************************/
 
-#include "qlandmarkcategoryidfetchrequest.h"
-#include "qlandmarkcategoryid.h"
+#ifndef QLANDMARKCATEGORY_P_H
+#define QLANDMARKCATEGORY_P_H
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+#include <QString>
 
 QTM_BEGIN_NAMESPACE
 
-/*!
-    \class QLandmarkCategoryIdFetchRequest
-    \brief The QLandmarkCategoryIdFetchRequest class allows a client to asynchronously
-    request a list of landmark identifiers from a landmark manager.
-
-    For a QLandmarkCategoryIdFetchRequest, the resultsAvailable() signal will be emitted
-    as resultant category identifiers are found (these are retrievable via the callings ids()),
-     as well as if an overall operation error occurred(which may be retrieved by calling error()).
-
-    \ingroup location
-*/
-
-/*!
-    Creates a a new category identifier fetch request object.
-*/
-QLandmarkCategoryIdFetchRequest::QLandmarkCategoryIdFetchRequest()
+class QLandmarkCategoryPrivate
 {
-}
+public:
+    QLandmarkCategoryPrivate();
+    QLandmarkCategoryPrivate(const QLandmarkCategoryPrivate &other);
+    ~QLandmarkCategoryPrivate();
 
-/*!
-    Destroys the request object.
-*/
-QLandmarkCategoryIdFetchRequest::~QLandmarkCategoryIdFetchRequest()
-{
-}
+    QLandmarkCategoryPrivate& operator= (const QLandmarkCategoryPrivate &other);
 
-/*!
-    Returns the list of category identifiers that have been found during the
-    request.
-*/
-QList<QLandmarkCategoryId> QLandmarkCategoryIdFetchRequest::ids() const
-{
-    return QList<QLandmarkCategoryId>();
-}
+    bool operator== (const QLandmarkCategoryPrivate &other) const;
+    // consider inline != in terms of ==?
 
-#include "moc_qlandmarkcategoryidfetchrequest.cpp"
+    QString name;
+    QString icon;
+    QString description;
+};
+
 
 QTM_END_NAMESPACE
 
-
-
-
-
-
-
-
-
-
-
+#endif

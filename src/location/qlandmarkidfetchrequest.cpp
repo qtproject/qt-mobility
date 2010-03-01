@@ -77,7 +77,7 @@ QLandmarkIdFetchRequest::~QLandmarkIdFetchRequest()
 */
 QLandmarkFilter &QLandmarkIdFetchRequest::filter() const
 {
-    return QLandmarkFilter();
+    return *(new QLandmarkFilter());
 }
 
 /*!

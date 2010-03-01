@@ -39,57 +39,41 @@
 **
 ****************************************************************************/
 
-#include "qlandmarkcategoryidfetchrequest.h"
-#include "qlandmarkcategoryid.h"
+#ifndef QLANDMARKCATEGORYID_H
+#define QLANDMARKCATEGORYID_H
+
+#include "qmobilityglobal.h"
+#include <QSharedDataPointer>
+
+QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-/*!
-    \class QLandmarkCategoryIdFetchRequest
-    \brief The QLandmarkCategoryIdFetchRequest class allows a client to asynchronously
-    request a list of landmark identifiers from a landmark manager.
-
-    For a QLandmarkCategoryIdFetchRequest, the resultsAvailable() signal will be emitted
-    as resultant category identifiers are found (these are retrievable via the callings ids()),
-     as well as if an overall operation error occurred(which may be retrieved by calling error()).
-
-    \ingroup location
-*/
-
-/*!
-    Creates a a new category identifier fetch request object.
-*/
-QLandmarkCategoryIdFetchRequest::QLandmarkCategoryIdFetchRequest()
+class QLandmarkCategoryIdPrivate;
+class Q_LOCATION_EXPORT QLandmarkCategoryId
 {
-}
+public:
+    QLandmarkCategoryId();
+    QLandmarkCategoryId(const QLandmarkCategoryId &other);
+    ~QLandmarkCategoryId();
 
-/*!
-    Destroys the request object.
-*/
-QLandmarkCategoryIdFetchRequest::~QLandmarkCategoryIdFetchRequest()
-{
-}
+    bool isValid() const;
+    QString id() const;
+    void setId(const QString &id);
 
-/*!
-    Returns the list of category identifiers that have been found during the
-    request.
-*/
-QList<QLandmarkCategoryId> QLandmarkCategoryIdFetchRequest::ids() const
-{
-    return QList<QLandmarkCategoryId>();
-}
+    QString managerUri() const;
+    void setManagerUri(const QString &uri);
 
-#include "moc_qlandmarkcategoryidfetchrequest.cpp"
+    QLandmarkCategoryId &operator=(const QLandmarkCategoryId &other);
+    bool operator==(const QLandmarkCategoryId &other) const;
+    bool operator!=(const QLandmarkCategoryId &other) const;
+
+private:
+    QSharedDataPointer<QLandmarkCategoryIdPrivate> d;
+};
 
 QTM_END_NAMESPACE
 
+QT_END_HEADER
 
-
-
-
-
-
-
-
-
-
+#endif

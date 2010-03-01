@@ -39,57 +39,49 @@
 **
 ****************************************************************************/
 
-#include "qlandmarkcategoryidfetchrequest.h"
-#include "qlandmarkcategoryid.h"
+#ifndef QLANDMARKCATEGORYID_P_H
+#define QLANDMARKCATEGORYID_P_H
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include "qmobilityglobal.h"
+#include <QSharedData>
+#include <QString>
 
 QTM_BEGIN_NAMESPACE
 
-/*!
-    \class QLandmarkCategoryIdFetchRequest
-    \brief The QLandmarkCategoryIdFetchRequest class allows a client to asynchronously
-    request a list of landmark identifiers from a landmark manager.
-
-    For a QLandmarkCategoryIdFetchRequest, the resultsAvailable() signal will be emitted
-    as resultant category identifiers are found (these are retrievable via the callings ids()),
-     as well as if an overall operation error occurred(which may be retrieved by calling error()).
-
-    \ingroup location
-*/
-
-/*!
-    Creates a a new category identifier fetch request object.
-*/
-QLandmarkCategoryIdFetchRequest::QLandmarkCategoryIdFetchRequest()
+class QLandmarkCategoryIdPrivate : public QSharedData
 {
-}
+public:
+    QLandmarkCategoryIdPrivate()
+        : QSharedData()
+    {
+    }
 
-/*!
-    Destroys the request object.
-*/
-QLandmarkCategoryIdFetchRequest::~QLandmarkCategoryIdFetchRequest()
-{
-}
+    QLandmarkCategoryIdPrivate(const QLandmarkCategoryIdPrivate &other)
+        : QSharedData(other),
+        m_id(other.m_id),
+        m_databaseName(other.m_databaseName)
+    {
+    }
 
-/*!
-    Returns the list of category identifiers that have been found during the
-    request.
-*/
-QList<QLandmarkCategoryId> QLandmarkCategoryIdFetchRequest::ids() const
-{
-    return QList<QLandmarkCategoryId>();
-}
+    ~QLandmarkCategoryIdPrivate()
+    {
+    }
 
-#include "moc_qlandmarkcategoryidfetchrequest.cpp"
+    QString m_id;
+    QString m_databaseName;
+};
 
 QTM_END_NAMESPACE
 
-
-
-
-
-
-
-
-
-
-
+#endif

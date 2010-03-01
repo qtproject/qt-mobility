@@ -28,9 +28,11 @@ PUBLIC_HEADERS += qgeocoordinate.h \
                   qlandmarkcategoryidfetchrequest.h \
                   qlandmarkcategorysaverequest.h \
                   qlandmarkcategoryremoverequest.h \
-                  qlandmarkboxfilter.h
-
-
+                  qlandmarkboxfilter.h \
+                  qlandmarkcategoryid.h \
+                  qlandmarkcategoryid_p.h \
+                  qlandmarkcategory_p.h \
+                  qlandmarkcategory.h
 
 PRIVATE_HEADERS += qlocationutils_p.h \
                    qnmeapositioninfosource_p.h \
@@ -122,8 +124,9 @@ SOURCES += qlocationutils.cpp \
            qlandmarkcategoryidfetchrequest.cpp \
            qlandmarkcategorysaverequest.cpp \
            qlandmarkcategoryremoverequest.cpp \
-           qlandmarkboxfilter.cpp
-
+           qlandmarkboxfilter.cpp \
+           qlandmarkcategoryid.cpp \
+           qlandmarkcategory.cpp
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

@@ -52,67 +52,10 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QLandmarkCategoryPrivate;
 class QLandmarkPrivate;
 class QLandmarkIdPrivate;
-class QLandmarkCategoryPrivate;
-class QLandmarkCategoryIdPrivate;
 
-
-class Q_LOCATION_EXPORT QLandmarkCategoryId
-{
-public:
-    QLandmarkCategoryId();
-    QLandmarkCategoryId(const QLandmarkCategoryId &other);
-    ~QLandmarkCategoryId();
-
-    bool isValid() const;
-    QString id() const;
-    void setId(const QString &id);
-
-    QString managerUri() const;
-    void setManagerUri(const QString &uri);
-
-    QLandmarkCategoryId &operator=(const QLandmarkCategoryId &other);
-    bool operator==(const QLandmarkCategoryId &other) const;
-    bool operator!=(const QLandmarkCategoryId &other) const;
-
-private:
-    QSharedDataPointer<QLandmarkCategoryIdPrivate> d;
-};
-
-class Q_LOCATION_EXPORT QLandmarkCategory
-{
-public:
-    QLandmarkCategory();
-    QLandmarkCategory(const QLandmarkCategory &other);
-    ~QLandmarkCategory();
-
-    QLandmarkCategory& operator= (const QLandmarkCategory &other);
-
-    bool operator== (const QLandmarkCategory &other) const;
-    // consider inline != in terms of ==?
-
-    QString name() const;
-    void setName(const QString &name);
-
-    QString icon() const;
-    void setIcon(const QString &fileName);
-
-    QString description() const;
-    void setDescription(const QString &description);
-
-    bool isReadOnly() const;
-
-    QLandmarkCategoryId categoryId() const;
-
-    QVariant attribute(const QString &attributeName) const;
-    void setAttribute(const QString &attributeName, const QVariant &value);
-    QStringList attributes() const;
-
-private:
-    QLandmarkCategoryPrivate *d;
-};
+class QLandmarkCategoryId;
 
 class Q_LOCATION_EXPORT QLandmarkId
 {

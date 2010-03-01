@@ -41,6 +41,7 @@
 
 #include "qlandmarkcategorysaverequest.h"
 
+#include "qlandmarkcategory.h"
 
 QTM_BEGIN_NAMESPACE
 

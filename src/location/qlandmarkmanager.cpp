@@ -44,6 +44,8 @@
 #include <QStringList>
 #include <QString>
 #include <QIODevice>
+#include "qlandmarkcategoryid.h"
+#include "qlandmarkcategory.h"
 
 
 QTM_USE_NAMESPACE

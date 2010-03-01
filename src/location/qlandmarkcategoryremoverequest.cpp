@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qlandmarkcategoryremoverequest.h"
+#include "qlandmarkcategoryid.h"
 
 
 QTM_BEGIN_NAMESPACE
