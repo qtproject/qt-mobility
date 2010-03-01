@@ -102,11 +102,6 @@ void CntSimContactFetchRequest::readComplete(QList<QContact> contacts, QContactM
     if (!m_req->isActive())
         return;
     
-    // Sim store gives an error if there is no contacts. No need to pass
-    // this error to the client.
-    if (contacts.count() == 0 && error == QContactManager::DoesNotExistError)
-        error = QContactManager::NoError;      
-    
     // Filter & sort results
     QList<QContact> filteredAndSorted;
     for (int i=0; i<contacts.count(); i++) {

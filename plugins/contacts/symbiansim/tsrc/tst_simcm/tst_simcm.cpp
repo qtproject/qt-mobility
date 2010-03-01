@@ -592,7 +592,7 @@ void tst_SimCM::addContact()
 
     // Get the contact count for verification purposes
     QList<QContactLocalId> idsBefore = m_cm->contactIds();
-    QCOMPARE(m_cm->error(), QContactManager::NoError);
+    QVERIFY(m_cm->error() == QContactManager::NoError || m_cm->error() == QContactManager::DoesNotExistError);
 
     // 3.1 (if expected to pass) Save contact, verify result and remove contact
     if (expectedResult)
