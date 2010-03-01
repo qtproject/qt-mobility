@@ -2053,7 +2053,7 @@
             <keyword name="error" id="QLandmarkAbstractRequest::error" ref="qlandmarkabstractrequest.html#error"/>
             <keyword name="errorString" id="QLandmarkAbstractRequest::errorString" ref="qlandmarkabstractrequest.html#errorString"/>
             <keyword name="isActive" id="QLandmarkAbstractRequest::isActive" ref="qlandmarkabstractrequest.html#isActive"/>
-            <keyword name="isCancelled" id="QLandmarkAbstractRequest::isCancelled" ref="qlandmarkabstractrequest.html#isCancelled"/>
+            <keyword name="isCanceled" id="QLandmarkAbstractRequest::isCanceled" ref="qlandmarkabstractrequest.html#isCanceled"/>
             <keyword name="isFinished" id="QLandmarkAbstractRequest::isFinished" ref="qlandmarkabstractrequest.html#isFinished"/>
             <keyword name="isInactive" id="QLandmarkAbstractRequest::isInactive" ref="qlandmarkabstractrequest.html#isInactive"/>
             <keyword name="manager" id="QLandmarkAbstractRequest::manager" ref="qlandmarkabstractrequest.html#manager"/>
@@ -2066,10 +2066,10 @@
             <keyword name="waitForFinished" id="QLandmarkAbstractRequest::waitForFinished" ref="qlandmarkabstractrequest.html#waitForFinished"/>
             <keyword name="~QLandmarkAbstractRequest" id="QLandmarkAbstractRequest::~QLandmarkAbstractRequest" ref="qlandmarkabstractrequest.html#dtor.QLandmarkAbstractRequest"/>
             <keyword name="QLandmarkBoxFilter" id="QLandmarkBoxFilter" ref="qlandmarkboxfilter.html"/>
-            <keyword name="northWestCoordinate" id="QLandmarkBoxFilter::northWestCoordinate" ref="qlandmarkboxfilter.html#northWestCoordinate"/>
-            <keyword name="setNorthWestCoordinate" id="QLandmarkBoxFilter::setNorthWestCoordinate" ref="qlandmarkboxfilter.html#setNorthWestCoordinate"/>
-            <keyword name="setSouthEastCoordinate" id="QLandmarkBoxFilter::setSouthEastCoordinate" ref="qlandmarkboxfilter.html#setSouthEastCoordinate"/>
-            <keyword name="southEastCoordinate" id="QLandmarkBoxFilter::southEastCoordinate" ref="qlandmarkboxfilter.html#southEastCoordinate"/>
+            <keyword name="bottomRightCoordinate" id="QLandmarkBoxFilter::bottomRightCoordinate" ref="qlandmarkboxfilter.html#bottomRightCoordinate"/>
+            <keyword name="setBottomRightCoordinate" id="QLandmarkBoxFilter::setBottomRightCoordinate" ref="qlandmarkboxfilter.html#setBottomRightCoordinate"/>
+            <keyword name="setTopLeftCoordinate" id="QLandmarkBoxFilter::setTopLeftCoordinate" ref="qlandmarkboxfilter.html#setTopLeftCoordinate"/>
+            <keyword name="topLeftCoordinate" id="QLandmarkBoxFilter::topLeftCoordinate" ref="qlandmarkboxfilter.html#topLeftCoordinate"/>
             <keyword name="~QLandmarkBoxFilter" id="QLandmarkBoxFilter::~QLandmarkBoxFilter" ref="qlandmarkboxfilter.html#dtor.QLandmarkBoxFilter"/>
             <keyword name="QLandmarkCategory" id="QLandmarkCategory" ref="qlandmarkcategory.html"/>
             <keyword name="attribute" id="QLandmarkCategory::attribute" ref="qlandmarkcategory.html#attribute"/>

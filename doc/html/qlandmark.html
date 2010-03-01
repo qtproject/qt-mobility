@@ -14,7 +14,7 @@
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QLandmark Class Reference</h1>
-<p>The QLandmark class describes location or point of interest <a href="#details">More...</a></p>
+<p>The QLandmark class represents a location or point of interest. <a href="#details">More...</a></p>
 <pre>    #include &lt;QLandmark&gt;</pre><ul>
 <li><a href="qlandmark-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -65,9 +65,10 @@
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
-<p>The QLandmark class describes location or point of interest</p>
-<p>It consists of a number of set properties such as name and coordinates as well as a set of generic attributes.</p>
-<p>Each QLandmark may be associated with zero or more categories. Categories are manipulated by using <a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a> objects via the <a href="qlandmark.html#setCategories">setCategories</a>(), <a href="qlandmark.html#addCategory">addCategory</a>() and <a href="qlandmark.html#removeCategory">removeCategory</a>() functions.</p>
+<p>The QLandmark class represents a location or point of interest.</p>
+<p>Each landmark consists of a number of properties such as name, coordinates, icon etc. Landmarks may also be assigned a set of generic attributes which may be accessed and modified by using the <a href="qlandmark.html#attribute">attribute</a>() and <a href="qlandmark.html#setAttribute">setAttribute</a>() functions.</p>
+<p>Each QLandmark may be associated with zero or more categories. A category defines a type of landmark such as restaurants or cinemas. To set the category that a landmark belongs to, use the <a href="qlandmark.html#setCategories">setCategories</a>() or <a href="qlandmark.html#addCategory">addCategory</a>() functions. A landmark may be removed from a category by using the <a href="qlandmark.html#removeCategory">removeCategory</a>() function.</p>
+<p>Each QLandmark is an in memory representation of a landmark; it does not reflect the actual landmark state in persistent storage, until the appropriate synchronization method is called on the <a href="qlandmarkmanager.html">QLandmarkManager</a>(i.e&#x2e; saveLandmark(), removeLandmark()).</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QLandmark/QLandmark"></a>
@@ -110,7 +111,7 @@
 <p>See also <a href="qlandmark.html#setIcon">setIcon</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmark/landmarkId"></a>
 <h3 class="fn"><a name="landmarkId"></a><a href="qlandmarkid.html">QLandmarkId</a> QLandmark::landmarkId ()</h3>
-<p>Returns the landmark identifier for the landmark.</p>
+<p>Returns the identifier of the landmark.</p>
 <a name="//apple_ref/cpp/instm/QLandmark/locality"></a>
 <h3 class="fn"><a name="locality"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QLandmark::locality () const</h3>
 <p>Returns the locality of the landmark.</p>
@@ -134,7 +135,7 @@
 <a name="//apple_ref/cpp/instm/QLandmark/radius"></a>
 <h3 class="fn"><a name="radius"></a>double QLandmark::radius () const</h3>
 <p>Returns the coverage radius of the landmark.</p>
-<p>The coverage radius is relevant for large landmarks such as cities.</p>
+<p>The coverage radius is relevant for large landmarks such as cities. Note that landmark searches over a given area do not factor in the coverage radius.</p>
 <p>See also <a href="qlandmark.html#setRadius">setRadius</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmark/region"></a>
 <h3 class="fn"><a name="region"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QLandmark::region () const</h3>
@@ -142,7 +143,7 @@
 <p>See also <a href="qlandmark.html#setRegion">setRegion</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmark/removeCategory"></a>
 <h3 class="fn"><a name="removeCategory"></a>void QLandmark::removeCategory ( const <a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a> &amp; <i>categoryId</i> )</h3>
-<p>Removes a category that this landmark will no longer be associated with via its <i>categoryId</i>.</p>
+<p>Removes a category from a landmark, by using its <i>categoryId</i>.</p>
 <a name="//apple_ref/cpp/instm/QLandmark/setAttribute"></a>
 <h3 class="fn"><a name="setAttribute"></a>void QLandmark::setAttribute ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>attributeName</i>, const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>value</i> )</h3>
 <p>Sets the <i>value</i> of the attribute corresponding to <i>attributeName</i>.</p>
@@ -154,7 +155,6 @@
 <a name="//apple_ref/cpp/instm/QLandmark/setCoordinate"></a>
 <h3 class="fn"><a name="setCoordinate"></a>void QLandmark::setCoordinate ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i> )</h3>
 <p>Sets the <i>coordinate</i> of the landmark.</p>
-<p>The coordinates should be specified in the WGS84 datum.</p>
 <p>See also <a href="qlandmark.html#coordinate">coordinate</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmark/setCountry"></a>
 <h3 class="fn"><a name="setCountry"></a>void QLandmark::setCountry ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>country</i> )</h3>

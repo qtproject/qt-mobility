@@ -36,7 +36,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">QLandmarkManager::Error </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkabstractrequest.html#error">error</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkabstractrequest.html#errorString">errorString</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkabstractrequest.html#isActive">isActive</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkabstractrequest.html#isCancelled">isCancelled</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkabstractrequest.html#isCanceled">isCanceled</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkabstractrequest.html#isFinished">isFinished</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkabstractrequest.html#isInactive">isInactive</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QLandmarkManager * </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkabstractrequest.html#manager">manager</a></b> () const</td></tr>
@@ -97,7 +97,7 @@
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QLandmarkAbstractRequest::InvalidRequest</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">An invalid request</td></tr>
 <tr><td valign="top"><tt>QLandmarkAbstractRequest::LandmarkIdFetchRequest</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">A request to fetch a list of landmark identifiers.</td></tr>
-<tr><td valign="top"><tt>QLandmarkAbstractRequest::CategoryIdFetchRequest</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">A request to fetch a list of catgories</td></tr>
+<tr><td valign="top"><tt>QLandmarkAbstractRequest::CategoryIdFetchRequest</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">A request to fetch a list of catgory identifiers.</td></tr>
 <tr><td valign="top"><tt>QLandmarkAbstractRequest::LandmarkSaveRequest</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">A request to save a list of landmarks.</td></tr>
 <tr><td valign="top"><tt>QLandmarkAbstractRequest::LandmarkRemoveRequest</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">A request to remove a list of landmarks.</td></tr>
 <tr><td valign="top"><tt>QLandmarkAbstractRequest::CategorySaveRequest</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">A request to save a list of categories.</td></tr>
@@ -112,10 +112,10 @@
 <p>Defines the possible states of asynchronous requests.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QLandmarkAbstractRequest::InactiveState</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">Operation not yet started</td></tr>
-<tr><td valign="top"><tt>QLandmarkAbstractRequest::ActiveState</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Operation started, not yet finished</td></tr>
-<tr><td valign="top"><tt>QLandmarkAbstractRequest::CanceledState</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Operation is finished due to cancellation</td></tr>
-<tr><td valign="top"><tt>QLandmarkAbstractRequest::FinishedState</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">Operation successfully completed</td></tr>
+<tr><td valign="top"><tt>QLandmarkAbstractRequest::InactiveState</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">Operation not yet started.</td></tr>
+<tr><td valign="top"><tt>QLandmarkAbstractRequest::ActiveState</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Operation started, not yet finished.</td></tr>
+<tr><td valign="top"><tt>QLandmarkAbstractRequest::CanceledState</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Operation is finished due to cancelation.</td></tr>
+<tr><td valign="top"><tt>QLandmarkAbstractRequest::FinishedState</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">Operation completed. (Can be mean either successful or unsuccessful completion).</td></tr>
 </table></p>
 <hr />
 <h2>Member Function Documentation</h2>
@@ -128,28 +128,31 @@
 <a name="//apple_ref/cpp/instm/QLandmarkAbstractRequest/cancel"></a>
 <h3 class="fn"><a name="cancel"></a>bool QLandmarkAbstractRequest::cancel ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Attempts to cancel the request.</p>
-<p>Returns true if the request was cancelled, otherwise false.</p>
+<p>Returns true if the request was canceled, otherwise false.</p>
+<p>See also <a href="qlandmarkabstractrequest.html#start">start</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkAbstractRequest/error"></a>
 <h3 class="fn"><a name="error"></a><a href="qlandmarkmanager.html#Error-enum">QLandmarkManager::Error</a> QLandmarkAbstractRequest::error () const</h3>
-<p>Returns the error of the most recent asynchronous operation</p>
+<p>Returns the error of the most recent asynchronous operation.</p>
+<p>See also <a href="qlandmarkabstractrequest.html#errorString">errorString</a>() and <a href="http://qt.nokia.com/doc/4.6/examples-overview.html">.</a>.</p>
 <a name="//apple_ref/cpp/instm/QLandmarkAbstractRequest/errorString"></a>
 <h3 class="fn"><a name="errorString"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QLandmarkAbstractRequest::errorString () const</h3>
-<p>Returns a human readable string of the most recent asynchronous operation.</p>
+<p>Returns a human readable string of the last error that occurred.</p>
+<p>See also <a href="qlandmarkabstractrequest.html#error">error</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkAbstractRequest/isActive"></a>
 <h3 class="fn"><a name="isActive"></a>bool QLandmarkAbstractRequest::isActive () const</h3>
-<p>Returns true if the request is in the <tt>QLandmarkAbstractRequest::Active</tt> state; otherwise, returns false</p>
+<p>Returns true if the request is in the <tt>QLandmarkAbstractRequest::Active</tt> state; otherwise, returns false.</p>
 <p>See also <a href="qlandmarkabstractrequest.html#state">state</a>().</p>
-<a name="//apple_ref/cpp/instm/QLandmarkAbstractRequest/isCancelled"></a>
-<h3 class="fn"><a name="isCancelled"></a>bool QLandmarkAbstractRequest::isCancelled () const</h3>
-<p>Returns true if the request is in the <tt>QLandmarkAbstractRequest::Cancelled</tt> state; otherwise, returns false</p>
+<a name="//apple_ref/cpp/instm/QLandmarkAbstractRequest/isCanceled"></a>
+<h3 class="fn"><a name="isCanceled"></a>bool QLandmarkAbstractRequest::isCanceled () const</h3>
+<p>Returns true if the request is in the <tt>QLandmarkAbstractRequest::Canceled</tt> state; otherwise, returns false.</p>
 <p>See also <a href="qlandmarkabstractrequest.html#state">state</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkAbstractRequest/isFinished"></a>
 <h3 class="fn"><a name="isFinished"></a>bool QLandmarkAbstractRequest::isFinished () const</h3>
-<p>Returns true if the request is in the <tt>QLandmarkAbstractRequest::Finished</tt> state; otherwise, returns false</p>
+<p>Returns true if the request is in the <tt>QLandmarkAbstractRequest::Finished</tt> state; otherwise, returns false.</p>
 <p>See also <a href="qlandmarkabstractrequest.html#state">state</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkAbstractRequest/isInactive"></a>
 <h3 class="fn"><a name="isInactive"></a>bool QLandmarkAbstractRequest::isInactive () const</h3>
-<p>Returns true if the request is in the <tt>QLandmarkAbstractRequest::Inactive</tt> state; otherwise, returns false</p>
+<p>Returns true if the request is in the <tt>QLandmarkAbstractRequest::Inactive</tt> state; otherwise, returns false.</p>
 <p>See also <a href="qlandmarkabstractrequest.html#state">state</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkAbstractRequest/manager"></a>
 <h3 class="fn"><a name="manager"></a><a href="qlandmarkmanager.html">QLandmarkManager</a> * QLandmarkAbstractRequest::manager () const</h3>
@@ -167,6 +170,7 @@
 <h3 class="fn"><a name="start"></a>bool QLandmarkAbstractRequest::start ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Attempts to start the request.</p>
 <p>Returns true if the request was started, otherwise false.</p>
+<p>See also <a href="qlandmarkabstractrequest.html#cancel">cancel</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkAbstractRequest/state"></a>
 <h3 class="fn"><a name="state"></a><a href="qlandmarkabstractrequest.html#State-enum">State</a> QLandmarkAbstractRequest::state ()</h3>
 <p>Returns the state of the request</p>
@@ -178,8 +182,8 @@
 <p>Returns the type of this asynchronous request.</p>
 <a name="//apple_ref/cpp/instm/QLandmarkAbstractRequest/waitForFinished"></a>
 <h3 class="fn"><a name="waitForFinished"></a>bool QLandmarkAbstractRequest::waitForFinished ( int <i>msecs</i> = 0 )&nbsp;&nbsp;<tt> [slot]</tt></h3>
-<p>Blocks until the request has been completed or until <i>msecs</i> milliseconds has elapsed.</p>
-<p>Returns true if the request was cancelled or completed successfully within the given period, otherwise returns false.</p>
+<p>Blocks until the request has been completed or until <i>msecs</i> milliseconds has elapsed. If <i>msecs</i> is zero, this function will block indefinitely.</p>
+<p>Returns true if the request was canceled or completed within the given period, otherwise returns false.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

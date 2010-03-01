@@ -1620,7 +1620,7 @@
         <keyword ref="qlandmarkabstractrequest.html#error">error</keyword>
         <keyword ref="qlandmarkabstractrequest.html#errorString">errorString</keyword>
         <keyword ref="qlandmarkabstractrequest.html#isActive">isActive</keyword>
-        <keyword ref="qlandmarkabstractrequest.html#isCancelled">isCancelled</keyword>
+        <keyword ref="qlandmarkabstractrequest.html#isCanceled">isCanceled</keyword>
         <keyword ref="qlandmarkabstractrequest.html#isFinished">isFinished</keyword>
         <keyword ref="qlandmarkabstractrequest.html#isInactive">isInactive</keyword>
         <keyword ref="qlandmarkabstractrequest.html#manager">manager</keyword>
@@ -1635,10 +1635,10 @@
     </section>
     <section ref="qlandmarkboxfilter.html" title="QLandmarkBoxFilter Class Reference">
         <keyword ref="qlandmarkboxfilter.html">QLandmarkBoxFilter</keyword>
-        <keyword ref="qlandmarkboxfilter.html#northWestCoordinate">northWestCoordinate</keyword>
-        <keyword ref="qlandmarkboxfilter.html#setNorthWestCoordinate">setNorthWestCoordinate</keyword>
-        <keyword ref="qlandmarkboxfilter.html#setSouthEastCoordinate">setSouthEastCoordinate</keyword>
-        <keyword ref="qlandmarkboxfilter.html#southEastCoordinate">southEastCoordinate</keyword>
+        <keyword ref="qlandmarkboxfilter.html#bottomRightCoordinate">bottomRightCoordinate</keyword>
+        <keyword ref="qlandmarkboxfilter.html#setBottomRightCoordinate">setBottomRightCoordinate</keyword>
+        <keyword ref="qlandmarkboxfilter.html#setTopLeftCoordinate">setTopLeftCoordinate</keyword>
+        <keyword ref="qlandmarkboxfilter.html#topLeftCoordinate">topLeftCoordinate</keyword>
         <section ref="qlandmarkboxfilter-members.html" title="List of all members"/>
     </section>
     <section ref="qlandmarkcategory.html" title="QLandmarkCategory Class Reference">
