@@ -44,21 +44,32 @@
 
 #include "n900filebasedsensor.h"
 #include <qaccelerometer.h>
+#include <QSocketNotifier>
+#include <stdio.h>
 
 QTM_USE_NAMESPACE
 
 class n900accelerometer : public n900filebasedsensor
 {
+    Q_OBJECT
 public:
     static const char *id;
     static const char *filename;
+    static const char *range;
+    static const char *rate;
 
     n900accelerometer(QSensor *sensor);
 
+    void start();
+    void stop();
+
+public Q_SLOTS:
     void poll();
 
 private:
     QAccelerometerReading m_reading;
+    FILE *m_fd;
+    QSocketNotifier *m_notifier;
 };
 
 #endif

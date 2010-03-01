@@ -47,6 +47,10 @@ n900filebasedsensor::n900filebasedsensor(QSensor *sensor)
 {
 }
 
+n900filebasedsensor::~n900filebasedsensor()
+{
+}
+
 void n900filebasedsensor::start()
 {
     if (m_timerid)
