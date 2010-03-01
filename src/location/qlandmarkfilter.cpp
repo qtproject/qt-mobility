@@ -297,61 +297,6 @@ void QLandmarkCategoryFilter::setCategoryId(const QLandmarkCategoryId &categoryI
 }
 
 /*!
-    \class QLandmarkBoxFilter
-    \brief The QLandmarkBoxFilter class is used to search for landmarks within a given bounding box.
-    \ingroup location
-*/
-
-/*!
-    Creates a filter that will search for landmarks within a bounding
-    box defined by the \a NW and \a SE coordinates.
-*/
-QLandmarkBoxFilter::QLandmarkBoxFilter(const QGeoCoordinate &NW, const QGeoCoordinate &SE)
-{
-    //TODO: implement
-}
-
-/*!
-    Destroys the filter.
-*/
-QLandmarkBoxFilter::~QLandmarkBoxFilter()
-{
-    //TODO: implement
-}
-
-/*!
-    Returns the north-west coordinate of the bounding box this filter uses
-    to make select landmarks.
-*/
-QGeoCoordinate QLandmarkBoxFilter::northWestCoordinate()
-{
-}
-
-/*!
-    Sets the \a NW coordinate of the bounding box this filter uses to
-    select landmarks.
-*/
-void QLandmarkBoxFilter::setNorthWestCoordinate(const QGeoCoordinate &NW)
-{
-}
-
-/*!
-    Returns the south-east coordinate of the bounding box this filter uses
-    to make select landmarks.
-*/
-QGeoCoordinate QLandmarkBoxFilter::southEastCoordinate()
-{
-}
-
-/*!
-    Sets the \a SE coordinate of the bounding box this filter uses to
-    select landmarks.
-*/
-void QLandmarkBoxFilter::setSouthEastCoordinate(const QGeoCoordinate &SE)
-{
-}
-
-/*!
     \class QLandmarkCustomFilter
     \brief The QLandmarkCustomFilter class provides the interface by which
     all custom filters should inherit.
