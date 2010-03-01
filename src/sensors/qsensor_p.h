@@ -77,6 +77,7 @@ public:
         , backend(0)
         , signalEnabled(true)
         , active(false)
+        , busy(false)
         , device_reading(0)
         , filter_reading(0)
         , cache_reading(0)

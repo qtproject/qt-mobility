@@ -41,6 +41,7 @@
 
 #include "qsensorbackend.h"
 #include "qsensor_p.h"
+#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
@@ -240,7 +241,10 @@ void QSensorBackend::addDataRate(qreal min, qreal max)
 */
 void QSensorBackend::setDataRates(const QSensor *otherSensor)
 {
-    Q_ASSERT(otherSensor);
+    if (!otherSensor) {
+        qWarning() << "ERROR: Cannot call QSensorBackend::setDataRates with 0";
+        return;
+    }
     QSensorPrivate *d = m_sensor->d_func();
     d->availableDataRates = otherSensor->availableDataRates();
 }

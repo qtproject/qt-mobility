@@ -144,7 +144,10 @@ QByteArray QSensor::identifier() const
 
 void QSensor::setIdentifier(const QByteArray &identifier)
 {
-    Q_ASSERT(!d->backend);
+    if (d->backend) {
+        qWarning() << "ERROR: Cannot call QSensor::setIdentifier while connected!";
+        return;
+    }
     d->identifier = identifier;
 }
 
@@ -163,8 +166,15 @@ QByteArray QSensor::type() const
 
 void QSensor::setType(const QByteArray &type)
 {
-    Q_ASSERT(!d->backend);
-    Q_ASSERT(QLatin1String(metaObject()->className()) == QLatin1String("QSensor") || QLatin1String(metaObject()->className()) == QLatin1String(type));
+    if (d->backend) {
+        qWarning() << "ERROR: Cannot call QSensor::setType while connected!";
+        return;
+    }
+    if (QLatin1String(metaObject()->className()) != QLatin1String("QSensor") &&
+            QLatin1String(metaObject()->className()) != QLatin1String(type)) {
+        qWarning() << "ERROR: Cannot call " << metaObject()->className() << "::setType!";
+        return;
+    }
     d->type = type;
 }
 
@@ -183,7 +193,7 @@ bool QSensor::connect()
         return true;
 
     if (d->type.isEmpty()) {
-        qWarning() << "QSensor::connect - Cannot call this method unless the type is set.";
+        qWarning() << "ERROR: Cannot call QSensor::connect unless the type is set.";
         return false;
     }
 
@@ -408,7 +418,8 @@ void QSensor::removeFilter(QSensorFilter *filter)
 
 qreal QSensor::measurementMinimum() const
 {
-    Q_ASSERT(d->outputRange != -1);
+    if (d->outputRange == -1)
+        return 0;
     return d->measurementDetails[d->outputRange].measurementMinimum;
 }
 
@@ -421,7 +432,8 @@ qreal QSensor::measurementMinimum() const
 
 qreal QSensor::measurementMaximum() const
 {
-    Q_ASSERT(d->outputRange != -1);
+    if (d->outputRange == -1)
+        return 0;
     return d->measurementDetails[d->outputRange].measurementMaximum;
 }
 
@@ -434,7 +446,8 @@ qreal QSensor::measurementMaximum() const
 
 qreal QSensor::measurementAccuracy() const
 {
-    Q_ASSERT(d->outputRange != -1);
+    if (d->outputRange == -1)
+        return 0;
     return d->measurementDetails[d->outputRange].measurementAccuracy;
 }
 
@@ -464,7 +477,10 @@ int QSensor::outputRange() const
 
 void QSensor::setOutputRange(int index)
 {
-    Q_ASSERT(index >= 0 && index < outputRangeCount());
+    if (index < 0 || index >= outputRangeCount()) {
+        qWarning() << "ERROR: Output range" << index << "is not valid";
+        return;
+    }
     d->outputRange = index;
 }
 
