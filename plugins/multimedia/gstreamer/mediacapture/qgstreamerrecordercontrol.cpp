@@ -139,7 +139,7 @@ void QGstreamerRecorderControl::applySettings()
     QGstreamerMediaContainerControl *mediaContainerControl = m_session->mediaContainerControl();
 
     bool needAudio = m_session->captureMode() & QGstreamerCaptureSession::Audio;
-    bool needVideo = m_session->captureMode() & QGstreamerCaptureSession::Audio;
+    bool needVideo = m_session->captureMode() & QGstreamerCaptureSession::Video;
 
     QStringList containerCandidates;
     if (mediaContainerControl->containerMimeType().isEmpty())
