@@ -107,22 +107,34 @@ void matchPhoneNumber(RDFVariable &variable, QContactDetailFilter &filter)
     variable.isMemberOf(RDFVariableList()<<homeContact);// TODO report bug doesnt work in tracker <<officeContact);
 }
 
+/*!
+ * To define RDFquery graph for this one is tricky:
+ * need to find IMAccount -> hasIMContact -> IMAddress - the same IMAddress as contact \a variable
+ * has as PersonContact -> hasIMAddress -> IMAddress
+ */
 void matchOnlineAccount(RDFVariable &variable, QContactDetailFilter &filter)
 {
     if ((filter.matchFlags() & QContactFilter::MatchExactly) == QContactFilter::MatchExactly)
     {
+        // \a variable PersonContact -> hasIMAddress -> imaddress
+        RDFVariable imaddress = variable.property<nco::hasIMAddress>();
         if (filter.detailFieldName() == "Account" || filter.detailFieldName() == QContactOnlineAccount::FieldAccountUri)
         {
-            variable.property<nco::imContactId> ().isMemberOf(QStringList() << filter.value().toString());
+            imaddress.property<nco::imId> ().isMemberOf(QStringList() << filter.value().toString());
         }
         else if (filter.detailFieldName() == FieldAccountPath)
         {
-            // as it uses telepathy:account path
-            variable.property<nco::fromIMAccount>().equal(QUrl(QString("telepathy:")+filter.value().toString()));
+            // need to find IMAccount -> hasIMContact -> imaddress
+            RDFVariable imaccount;
+            imaccount.property<nco::hasIMContact>() = imaddress;
+            imaccount.equal(QUrl(QString("telepathy://")+filter.value().toString()));
         }
         else if (filter.detailFieldName() == QContactOnlineAccount::FieldServiceProvider)
         {
-            variable.property<nco::fromIMAccount>().property<nco::imDisplayName> ().isMemberOf(QStringList() << filter.value().toString());
+            // need to find IMAccount -> hasIMContact -> imaddress
+            RDFVariable imaccount;
+            imaccount.property<nco::hasIMContact>() = imaddress;
+            imaddress.property<nco::imDisplayName> ().isMemberOf(QStringList() << filter.value().toString());
         }
         else
             qWarning() << "QTrackerContactFetchRequest," << __FUNCTION__
@@ -319,7 +331,6 @@ RDFSelect prepareEmailAddressesQuery(RDFVariable &rdfcontact1, bool forAffiliati
  */
 RDFSelect prepareIMAddressesQuery(RDFVariable  &contact)
 {
-    ::tracker()->setVerbosity(4);
     RDFSelect queryidsimacccounts;
     // this establishes query graph relationship: imaddress that we want is a property in contact
     RDFVariable imaddress = contact.property<nco::hasIMAddress>();
@@ -331,7 +342,6 @@ RDFSelect prepareIMAddressesQuery(RDFVariable  &contact)
     imaccount.property<nco::hasIMContact>() = imaddress;
 
     queryidsimacccounts.addColumn("imaddress", imaddress);
-    queryidsimacccounts.groupBy(contact); // this is probably bogus, as contact is not in query result set. use id instead
     queryidsimacccounts.addColumn("contactId", contact.property<nco::contactUID> ());
     queryidsimacccounts.addColumn("IMId", imaddress.property<nco::imID> ());
     queryidsimacccounts.addColumn("status", imaddress.optional().property<nco::imPresence> ());
@@ -985,8 +995,8 @@ QContactOnlineAccount QTrackerContactFetchRequest::getIMContactFromIMQuery(LiveN
     account.setValue("Account", imContactQuery->index(queryRow, IMContact::ContactIMId).data().toString()); // IMId
     if (!imContactQuery->index(queryRow, IMContact::AccountType).data().toString().isEmpty()) {
         QString accountPathURI = imContactQuery->index(queryRow, IMContact::AccountType).data().toString();
-        QStringList decoded = accountPathURI.split(":");
-        // taking out the prefix "telepathy:"
+        QStringList decoded = accountPathURI.split("://");
+        // taking out the prefix "telepathy://"
         qDebug() << __PRETTY_FUNCTION__ << decoded.value(1);
         account.setValue(FieldAccountPath, decoded.value(1));
     }
