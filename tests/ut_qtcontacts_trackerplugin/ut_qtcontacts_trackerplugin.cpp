@@ -337,8 +337,8 @@ void ut_qtcontacts_trackerplugin::testPhoneNumberContext()
         request.setDefinitionRestrictions(details);
 
         Slots slot;
-        QObject::connect(&request, SIGNAL(progress(QContactFetchRequest*, bool)),
-                &slot, SLOT(progress(QContactFetchRequest*, bool )));
+        QObject::connect(&request, SIGNAL(resultsAvailable()),
+                &slot, SLOT(resultsAvailable()));
 
         trackerEngine->startRequest(&request);
 
@@ -401,8 +401,8 @@ void ut_qtcontacts_trackerplugin::testWritingOnlyWorkMobile()
     request.setDefinitionRestrictions(details);
 
     Slots slot;
-    QObject::connect(&request, SIGNAL(progress(QContactFetchRequest*, bool)),
-            &slot, SLOT(progress(QContactFetchRequest*, bool )));
+    QObject::connect(&request, SIGNAL(resultsAvailable()),
+            &slot, SLOT(resultsAvailable()));
 
     trackerEngine->startRequest(&request);
 
@@ -869,8 +869,8 @@ void ut_qtcontacts_trackerplugin::testContactsAddedSince()
     request.setDefinitionRestrictions(details);
 
     Slots slot;
-    QObject::connect(&request, SIGNAL(progress(QContactFetchRequest*, bool)),
-            &slot, SLOT(progress(QContactFetchRequest*, bool )));
+    QObject::connect(&request, SIGNAL(resultsAvailable()),
+            &slot, SLOT(resultsAvailable()));
 
     // start. clients should, instead of following use
     // request.setManager(trackermanagerinstance);
@@ -890,8 +890,8 @@ void ut_qtcontacts_trackerplugin::testContactsAddedSince()
     idreq.setFilter(filter);
 
     Slots slot2;
-    QObject::connect(&idreq, SIGNAL(progress(QContactLocalIdFetchRequest*, bool)),
-            &slot2, SLOT(progress(QContactLocalIdFetchRequest*, bool )));
+    QObject::connect(&idreq, SIGNAL(resultsAvailable()),
+            &slot2, SLOT(idResultsAvailable()));
     trackerEngine->startRequest(&idreq);
     trackerEngine->waitForRequestFinished(&idreq, 10000);
     QVERIFY(idreq.isFinished());
@@ -1067,14 +1067,14 @@ void ut_qtcontacts_trackerplugin::testAsyncReadContacts()
     request.setSorting(sorting);
     request.setFilter(filter);
 
-    QObject::connect(&request, SIGNAL(progress(QContactFetchRequest*, bool)),
-            &slot, SLOT(progress(QContactFetchRequest*, bool )));
+    QObject::connect(&request, SIGNAL(resultsAvailable()),
+            &slot, SLOT(resultsAvailable()));
 
     // this one only ids
     QContactLocalIdFetchRequest request1;
     request1.setFilter(filter);
-    QObject::connect(&request1, SIGNAL(progress(QContactLocalIdFetchRequest*, bool)),
-            &slot, SLOT(progress(QContactLocalIdFetchRequest*, bool )));
+    QObject::connect(&request1, SIGNAL(resultsAvailable()),
+            &slot, SLOT(idResultsAvailable()));
 
     // the purpose is to compare if all contacts are loaded, and
     // if optional fields are defined properly in request
@@ -1148,8 +1148,8 @@ void ut_qtcontacts_trackerplugin::testFilterContacts()
     filter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
 
     Slots slot;
-    QObject::connect(&request, SIGNAL(progress(QContactFetchRequest*, bool)),
-            &slot, SLOT(progress(QContactFetchRequest*, bool )));
+    QObject::connect(&request, SIGNAL(resultsAvailable()),
+            &slot, SLOT(resultsAvailable()));
     filter.setValue(QString("4872444"));
     filter.setMatchFlags(QContactFilter::MatchEndsWith);
 
@@ -1232,8 +1232,8 @@ void ut_qtcontacts_trackerplugin::testFilterContactsEndsWith()
     filter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
 
     Slots slot;
-    QObject::connect(&request, SIGNAL(progress(QContactFetchRequest*, bool)),
-            &slot, SLOT(progress(QContactFetchRequest*, bool )));
+    QObject::connect(&request, SIGNAL(resultsAvailable()),
+            &slot, SLOT(resultsAvailable()));
 
     {
         // test matching of 7 last digits
@@ -1620,8 +1620,8 @@ void ut_qtcontacts_trackerplugin::testIMContactsFilterring()
     filter.setDetailDefinitionName(QContactOnlineAccount::DefinitionName, QContactOnlineAccount::FieldServiceProvider);
 
     Slots slot;
-    QObject::connect(&request, SIGNAL(progress(QContactFetchRequest*, bool)),
-            &slot, SLOT(progress(QContactFetchRequest*, bool )));
+    QObject::connect(&request, SIGNAL(resultsAvailable()),
+            &slot, SLOT(resultsAvailable()));
     filter.setValue(QString("ovi0.com"));
     filter.setMatchFlags(QContactFilter::MatchExactly);
 
@@ -1662,8 +1662,8 @@ void ut_qtcontacts_trackerplugin::testIMContactsFilterring()
     filter.setDetailDefinitionName(QContactOnlineAccount::DefinitionName, "AccountPath");
 
     Slots slot;
-    QObject::connect(&request, SIGNAL(progress(QContactFetchRequest*, bool)),
-            &slot, SLOT(progress(QContactFetchRequest*, bool )));
+    QObject::connect(&request, SIGNAL(resultsAvailable()),
+            &slot, SLOT(resultsAvailable()));
     // see insertTpContact
     filter.setValue(QString("/org/freedesktop/fake/account/0"));
     filter.setMatchFlags(QContactFilter::MatchExactly);
@@ -1763,18 +1763,15 @@ QList<QContact> ut_qtcontacts_trackerplugin::contacts(QList<QContactLocalId> ids
     return request.contacts();
 }
 
-void Slots::progress(QContactLocalIdFetchRequest* self, bool appendOnly)
+void Slots::idResultsAvailable()
 {
-    Q_UNUSED(appendOnly)
-    if( self->state() == QContactAbstractRequest::FinishedState )
-    {
-        ids << self->ids();
-    }
+    QContactLocalIdFetchRequest* self = qobject_cast<QContactLocalIdFetchRequest*>(sender());
+    ids << self->ids();
 }
 
-void Slots::progress(QContactFetchRequest* self, bool appendOnly)
+void Slots::resultsAvailable()
 {
-    Q_UNUSED(appendOnly)
+    QContactFetchRequest* self = qobject_cast<QContactFetchRequest*>(sender());
     contacts = self->contacts();
     QList<QContactLocalId> idsFromAllContactReq;
     foreach( QContact contact, contacts)

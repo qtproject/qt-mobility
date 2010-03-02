@@ -137,8 +137,8 @@ public:
     QList<QContactLocalId> ids;
     QList<QContact> contacts;
 public slots:
-    void progress(QContactLocalIdFetchRequest* self, bool appendOnly);
-    void progress(QContactFetchRequest* self, bool appendOnly);
+    void idResultsAvailable();
+    void resultsAvailable();
 
 };
 #endif

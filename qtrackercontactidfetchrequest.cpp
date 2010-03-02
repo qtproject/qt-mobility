@@ -74,7 +74,7 @@ void QTrackerContactIdFetchRequest::emitFinished(QContactManager::Error error)
     foreach(const QContact &c, result) {
         results << c.localId();
     }
-    QContactManagerEngine::updateContactLocalIdFetchRequest(idfetchrequest, results, error);
     QContactManagerEngine::updateRequestState(idfetchrequest, QContactAbstractRequest::FinishedState);
+    QContactManagerEngine::updateContactLocalIdFetchRequest(idfetchrequest, results, error);
 }
 
