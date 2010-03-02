@@ -39,30 +39,36 @@
 **
 ****************************************************************************/
 
-#ifndef QLANDMARKBOXFILTER_H
-#define QLANDMARKBOXFILTER_H
+#ifndef QLANDMARKSORTORDER_H
+#define QLANDMARKSORTORDER_H
 
-#include "qlandmarkfilter.h"
+#include "qmobilityglobal.h"
+#include "qnamespace.h"
+
+#include <QList>
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
-class QGeoCoordinate;
+class QLandmarkId;
+class QLandmark;
 
-class QLandmarkBoxFilterPrivate;
-class Q_LOCATION_EXPORT QLandmarkBoxFilter : public QLandmarkFilter
+class QLandmarkSortOrderPrivate;
+class Q_LOCATION_EXPORT QLandmarkSortOrder
 {
+
 public:
-    QLandmarkBoxFilter(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight);
-    virtual ~QLandmarkBoxFilter();
+    enum SortType{LandmarkNameSort, LandmarkDistanceSort, LandmarkCustomSort=500};
 
-    QGeoCoordinate topLeftCoordinate();
-    void setTopLeftCoordinate(const QGeoCoordinate &topLeft);
-
-    QGeoCoordinate bottomRightCoordinate();
-    void setBottomRightCoordinate(const QGeoCoordinate &bottomRight);
+    SortType type() const;
+    Qt::SortOrder direction() const;
+    void setDirection(Qt::SortOrder direction);
+    virtual int compare(const QLandmark &l1, const QLandmark &l2) const;
+    virtual QList<QLandmarkId> sort(const QList<QLandmarkId> &landmarkIds) const;
+protected:
+    QLandmarkSortOrder();
 private:
-    QLandmarkBoxFilterPrivate *d;
+    QLandmarkSortOrderPrivate *d;
 };
 
 QTM_END_NAMESPACE

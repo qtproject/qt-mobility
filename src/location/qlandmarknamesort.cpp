@@ -39,34 +39,47 @@
 **
 ****************************************************************************/
 
-#ifndef QLANDMARKBOXFILTER_H
-#define QLANDMARKBOXFILTER_H
-
-#include "qlandmarkfilter.h"
-
-QT_BEGIN_HEADER
+#include "qlandmarknamesort.h"
+#include "qlandmarkid.h"
 
 QTM_BEGIN_NAMESPACE
-class QGeoCoordinate;
 
-class QLandmarkBoxFilterPrivate;
-class Q_LOCATION_EXPORT QLandmarkBoxFilter : public QLandmarkFilter
+/*!
+    \class QLandmarkNameSort
+    \brief The QLandmarkNameSort class is used to sort landmarks by name.
+    \ingroup location
+*/
+
+/*!
+    Creates a sort order that sorts by name in the given \a direction.
+*/
+QLandmarkNameSort::QLandmarkNameSort(Qt::SortOrder direction)
 {
-public:
-    QLandmarkBoxFilter(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight);
-    virtual ~QLandmarkBoxFilter();
+    //TODO: implement
+}
 
-    QGeoCoordinate topLeftCoordinate();
-    void setTopLeftCoordinate(const QGeoCoordinate &topLeft);
+/*!
+    Destroys the sort order.
+*/
+QLandmarkNameSort::~QLandmarkNameSort()
+{
+    //TODO: implement
+}
 
-    QGeoCoordinate bottomRightCoordinate();
-    void setBottomRightCoordinate(const QGeoCoordinate &bottomRight);
-private:
-    QLandmarkBoxFilterPrivate *d;
-};
+/*!
+  \reimp
+*/
+int QLandmarkNameSort::compare(const QLandmark &l1, const QLandmark &l2) const
+{
+    return 0; //TODO: implement
+}
+
+/*!
+    \reimp
+*/
+QList<QLandmarkId> QLandmarkNameSort::sort(const QList<QLandmarkId> &landmarkIds) const
+{
+    return QList<QLandmarkId>();
+}
 
 QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif

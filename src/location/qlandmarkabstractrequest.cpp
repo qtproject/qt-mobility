@@ -155,7 +155,7 @@ bool QLandmarkAbstractRequest::isCanceled() const
 
 /*!
     Returns the error of the most recent asynchronous operation.
-    \sa errorString().
+    \sa errorString()
 */
 QLandmarkManager::Error QLandmarkAbstractRequest::error() const
 {

@@ -39,34 +39,45 @@
 **
 ****************************************************************************/
 
-#ifndef QLANDMARKBOXFILTER_H
-#define QLANDMARKBOXFILTER_H
-
-#include "qlandmarkfilter.h"
-
-QT_BEGIN_HEADER
+#include "qlandmarknamefilter.h"
+#include <QString>
 
 QTM_BEGIN_NAMESPACE
-class QGeoCoordinate;
 
-class QLandmarkBoxFilterPrivate;
-class Q_LOCATION_EXPORT QLandmarkBoxFilter : public QLandmarkFilter
+/*!
+    \class QLandmarkNameFilter
+    \brief The QLandmarkNameFilter class is used to search for landmarks by name.
+*/
+
+/*!
+    Creates a filter that selects landmarks by \a name.
+*/
+QLandmarkNameFilter::QLandmarkNameFilter(const QString &name)
 {
-public:
-    QLandmarkBoxFilter(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight);
-    virtual ~QLandmarkBoxFilter();
+    //TODO: implement
+}
 
-    QGeoCoordinate topLeftCoordinate();
-    void setTopLeftCoordinate(const QGeoCoordinate &topLeft);
+/*!
+    Destroys the filter.
+*/
+QLandmarkNameFilter::~QLandmarkNameFilter()
+{
+    //TODO: implement
+}
 
-    QGeoCoordinate bottomRightCoordinate();
-    void setBottomRightCoordinate(const QGeoCoordinate &bottomRight);
-private:
-    QLandmarkBoxFilterPrivate *d;
-};
+/*!
+    Returns the name that the filter will use to determine matches.
+*/
+QString QLandmarkNameFilter::name()
+{
+    return QString();
+}
+
+/*!
+    Sets the \a name that the filter will use to determine matches.
+*/
+void QLandmarkNameFilter::setName(const QString &name)
+{
+}
 
 QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif

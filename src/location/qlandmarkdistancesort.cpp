@@ -39,34 +39,66 @@
 **
 ****************************************************************************/
 
-#ifndef QLANDMARKBOXFILTER_H
-#define QLANDMARKBOXFILTER_H
-
-#include "qlandmarkfilter.h"
-
-QT_BEGIN_HEADER
+#include "qlandmarkdistancesort.h"
+#include "qgeocoordinate.h"
+#include "qlandmarkid.h"
 
 QTM_BEGIN_NAMESPACE
-class QGeoCoordinate;
 
-class QLandmarkBoxFilterPrivate;
-class Q_LOCATION_EXPORT QLandmarkBoxFilter : public QLandmarkFilter
+/*!
+    \class QLandmarkDistanceSort
+    \brief The QLandmarkDistanceSort class is used to sort landmarks by distance
+    from a given coordinate.
+    \ingroup location
+*/
+
+/*!
+    Creates a sort order that sorts landmarks by distance from a given \a coordinate.
+    If the \a direction is Qt::Ascending, it means that landmarks are listed in
+    increasing order of distance.
+*/
+QLandmarkDistanceSort::QLandmarkDistanceSort(QGeoCoordinate coordinate, Qt::SortOrder direction)
 {
-public:
-    QLandmarkBoxFilter(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight);
-    virtual ~QLandmarkBoxFilter();
+    //TODO: implement
+}
 
-    QGeoCoordinate topLeftCoordinate();
-    void setTopLeftCoordinate(const QGeoCoordinate &topLeft);
+/*!
+    Destroys the sort order.
+*/
+QLandmarkDistanceSort::~QLandmarkDistanceSort()
+{
+    //TODO: implement
+}
 
-    QGeoCoordinate bottomRightCoordinate();
-    void setBottomRightCoordinate(const QGeoCoordinate &bottomRight);
-private:
-    QLandmarkBoxFilterPrivate *d;
-};
+/*!
+    Returns the coordinate to sort distances from.
+*/
+QGeoCoordinate QLandmarkDistanceSort::coordinate() const
+{
+    return QGeoCoordinate();
+}
+
+/*!
+    Sets the \a coordinate to sort distances from.
+*/
+void QLandmarkDistanceSort::setCoordinate(const QGeoCoordinate &coordinate)
+{
+}
+
+/*!
+    \reimp
+*/
+int QLandmarkDistanceSort::compare(const QLandmark &l1, const QLandmark &l2) const
+{
+    return 0;  //TODO: implement
+}
+
+/*!
+    \reimp
+*/
+QList<QLandmarkId> QLandmarkDistanceSort::sort(const QList<QLandmarkId> &landmarkIds) const
+{
+    return QList<QLandmarkId>();
+}
 
 QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif

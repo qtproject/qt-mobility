@@ -39,34 +39,48 @@
 **
 ****************************************************************************/
 
-#ifndef QLANDMARKBOXFILTER_H
-#define QLANDMARKBOXFILTER_H
-
-#include "qlandmarkfilter.h"
-
-QT_BEGIN_HEADER
+#include "qlandmarknearestfilter.h"
+#include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
-class QGeoCoordinate;
 
-class QLandmarkBoxFilterPrivate;
-class Q_LOCATION_EXPORT QLandmarkBoxFilter : public QLandmarkFilter
+/*!
+    \class QLandmarkNearestFilter
+    \brief The QLandmarkNearestFilter class is used to search for the landmark nearest
+    to a given coordinate.
+    \ingroup location
+*/
+
+/*!
+    Creates a filter that will match the landmark nearest to a given central
+    \a coordinate.
+*/
+QLandmarkNearestFilter::QLandmarkNearestFilter(const QGeoCoordinate &coordinate)
 {
-public:
-    QLandmarkBoxFilter(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight);
-    virtual ~QLandmarkBoxFilter();
+    //TODO: implement
+}
 
-    QGeoCoordinate topLeftCoordinate();
-    void setTopLeftCoordinate(const QGeoCoordinate &topLeft);
+/*!
+    Destroys the filter.
+*/
+QLandmarkNearestFilter::~QLandmarkNearestFilter()
+{
+    //TODO: implement
+}
 
-    QGeoCoordinate bottomRightCoordinate();
-    void setBottomRightCoordinate(const QGeoCoordinate &bottomRight);
-private:
-    QLandmarkBoxFilterPrivate *d;
-};
+/*!
+    Returns the central coordinate of the filter.
+*/
+QGeoCoordinate QLandmarkNearestFilter::coordinate() const
+{
+    return QGeoCoordinate();
+}
+
+/*!
+    Sets the central \a coordinate of the filter.
+*/
+void QLandmarkNearestFilter::setCoordinate(const QGeoCoordinate &coordinate)
+{
+}
 
 QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif

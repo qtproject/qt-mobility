@@ -39,34 +39,43 @@
 **
 ****************************************************************************/
 
-#ifndef QLANDMARKBOXFILTER_H
-#define QLANDMARKBOXFILTER_H
-
-#include "qlandmarkfilter.h"
-
-QT_BEGIN_HEADER
+#include "qlandmarkcustomfilter.h"
+#include "qlandmarkid.h"
 
 QTM_BEGIN_NAMESPACE
-class QGeoCoordinate;
 
-class QLandmarkBoxFilterPrivate;
-class Q_LOCATION_EXPORT QLandmarkBoxFilter : public QLandmarkFilter
+/*!
+    \class QLandmarkCustomFilter
+    \brief The QLandmarkCustomFilter class provides the interface which
+    all custom filters should inherit.
+    \ingroup location
+
+    All custom landmark filters should inherit off the QLandmarkCustomFilter
+    and must implement the isMatch() function.
+*/
+
+/*!
+    Creates a custom landmark filter.
+*/
+QLandmarkCustomFilter::QLandmarkCustomFilter()
 {
-public:
-    QLandmarkBoxFilter(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight);
-    virtual ~QLandmarkBoxFilter();
+}
 
-    QGeoCoordinate topLeftCoordinate();
-    void setTopLeftCoordinate(const QGeoCoordinate &topLeft);
+/*!
+    Destroys the filter.
+*/
+QLandmarkCustomFilter::~QLandmarkCustomFilter()
+{
+}
 
-    QGeoCoordinate bottomRightCoordinate();
-    void setBottomRightCoordinate(const QGeoCoordinate &bottomRight);
-private:
-    QLandmarkBoxFilterPrivate *d;
-};
+/*!
+    Returns true if the landmark identified by \a landmarkId
+    should be matched by the filter.  All custom landmark filters
+    need to implement this function.
+*/
+bool QLandmarkCustomFilter::isMatch(const QLandmarkId &landmarkId)
+{
+    return false;
+}
 
 QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif

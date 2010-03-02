@@ -39,30 +39,29 @@
 **
 ****************************************************************************/
 
-#ifndef QLANDMARKBOXFILTER_H
-#define QLANDMARKBOXFILTER_H
+#ifndef QLANDMARKNEARESTFILTER_H
+#define QLANDMARKNEARESTFILTER_H
 
 #include "qlandmarkfilter.h"
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
+
 class QGeoCoordinate;
 
-class QLandmarkBoxFilterPrivate;
-class Q_LOCATION_EXPORT QLandmarkBoxFilter : public QLandmarkFilter
+class QLandmarkNearestFilterPrivate;
+class Q_LOCATION_EXPORT QLandmarkNearestFilter : public QLandmarkFilter
 {
 public:
-    QLandmarkBoxFilter(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight);
-    virtual ~QLandmarkBoxFilter();
+    QLandmarkNearestFilter(const QGeoCoordinate &coordinate);
+    virtual ~QLandmarkNearestFilter();
 
-    QGeoCoordinate topLeftCoordinate();
-    void setTopLeftCoordinate(const QGeoCoordinate &topLeft);
+    QGeoCoordinate coordinate() const;
+    void setCoordinate(const QGeoCoordinate &coordinate);
 
-    QGeoCoordinate bottomRightCoordinate();
-    void setBottomRightCoordinate(const QGeoCoordinate &bottomRight);
 private:
-    QLandmarkBoxFilterPrivate *d;
+    QLandmarkNearestFilter *d;
 };
 
 QTM_END_NAMESPACE

@@ -39,34 +39,31 @@
 **
 ****************************************************************************/
 
-#ifndef QLANDMARKBOXFILTER_H
-#define QLANDMARKBOXFILTER_H
-
-#include "qlandmarkfilter.h"
-
-QT_BEGIN_HEADER
+#include "qlandmarkcustomsort.h"
 
 QTM_BEGIN_NAMESPACE
-class QGeoCoordinate;
 
-class QLandmarkBoxFilterPrivate;
-class Q_LOCATION_EXPORT QLandmarkBoxFilter : public QLandmarkFilter
+/*!
+    \class QLandmarkCustomSort
+    \brief The QLandmarkCustomSort class is the interface which all
+    custom sort orders should inherit.
+
+    All custom sort orders should inherit this class and implement the
+    compare() and sort() functions.
+*/
+
+/*!
+    Constructs a custom landmark sort order.
+*/
+QLandmarkCustomSort::QLandmarkCustomSort()
 {
-public:
-    QLandmarkBoxFilter(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight);
-    virtual ~QLandmarkBoxFilter();
+}
 
-    QGeoCoordinate topLeftCoordinate();
-    void setTopLeftCoordinate(const QGeoCoordinate &topLeft);
-
-    QGeoCoordinate bottomRightCoordinate();
-    void setBottomRightCoordinate(const QGeoCoordinate &bottomRight);
-private:
-    QLandmarkBoxFilterPrivate *d;
-};
+/*!
+    Destroys the sort order.
+*/
+QLandmarkCustomSort::~QLandmarkCustomSort()
+{
+}
 
 QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif

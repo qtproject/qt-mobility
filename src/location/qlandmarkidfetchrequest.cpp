@@ -41,6 +41,7 @@
 
 #include "qlandmarkidfetchrequest.h"
 #include "qlandmarkfilter.h"
+#include "qlandmarksortorder.h"
 
 QTM_BEGIN_NAMESPACE
 

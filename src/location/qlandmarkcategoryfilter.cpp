@@ -39,34 +39,49 @@
 **
 ****************************************************************************/
 
-#ifndef QLANDMARKBOXFILTER_H
-#define QLANDMARKBOXFILTER_H
-
-#include "qlandmarkfilter.h"
-
-QT_BEGIN_HEADER
+#include "qlandmarkcategoryfilter.h"
+#include "qlandmarkcategoryid.h"
 
 QTM_BEGIN_NAMESPACE
-class QGeoCoordinate;
 
-class QLandmarkBoxFilterPrivate;
-class Q_LOCATION_EXPORT QLandmarkBoxFilter : public QLandmarkFilter
+/*!
+    \class QLandmarkCategoryFilter
+    \brief The QLandmarkCategoryFilter class is used to search for landmarks that
+    belong to a certain category.
+    \ingroup location
+*/
+
+/*!
+    Creates a filter that searches for landmarks that belong to the category
+    identified by \a categoryId.
+*/
+QLandmarkCategoryFilter::QLandmarkCategoryFilter(const QLandmarkCategoryId &categoryId)
 {
-public:
-    QLandmarkBoxFilter(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight);
-    virtual ~QLandmarkBoxFilter();
+    //TODO: implement
+}
 
-    QGeoCoordinate topLeftCoordinate();
-    void setTopLeftCoordinate(const QGeoCoordinate &topLeft);
+/*!
+    Destroys the filter.
+*/
+QLandmarkCategoryFilter::~QLandmarkCategoryFilter()
+{
+    //TODO: implement
+}
 
-    QGeoCoordinate bottomRightCoordinate();
-    void setBottomRightCoordinate(const QGeoCoordinate &bottomRight);
-private:
-    QLandmarkBoxFilterPrivate *d;
-};
+/*!
+    Returns the category identifier that this filter matches by.
+*/
+QLandmarkCategoryId QLandmarkCategoryFilter::category() const
+{
+    return QLandmarkCategoryId();
+}
+
+/*!
+    Sets the category identifier that this filter matches by
+    to \a categoryId.
+*/
+void QLandmarkCategoryFilter::setCategoryId(const QLandmarkCategoryId &categoryId)
+{
+}
 
 QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif

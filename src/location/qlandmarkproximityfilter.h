@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QLANDMARKBOXFILTER_H
-#define QLANDMARKBOXFILTER_H
+#ifndef QLANDMARKPROXIMITY_H
+#define QLANDMARKPROXIMITY_H
 
 #include "qlandmarkfilter.h"
 
@@ -49,20 +49,20 @@ QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 class QGeoCoordinate;
 
-class QLandmarkBoxFilterPrivate;
-class Q_LOCATION_EXPORT QLandmarkBoxFilter : public QLandmarkFilter
+class QLandmarkProximityFilterPrivate;
+class Q_LOCATION_EXPORT QLandmarkProximityFilter : public QLandmarkFilter
 {
 public:
-    QLandmarkBoxFilter(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight);
-    virtual ~QLandmarkBoxFilter();
+    QLandmarkProximityFilter(const QGeoCoordinate &coordinate, double radius);
+    virtual ~QLandmarkProximityFilter();
 
-    QGeoCoordinate topLeftCoordinate();
-    void setTopLeftCoordinate(const QGeoCoordinate &topLeft);
+    QGeoCoordinate coordinate();
+    void setCoordinate(const QGeoCoordinate &coordinate);
 
-    QGeoCoordinate bottomRightCoordinate();
-    void setBottomRightCoordinate(const QGeoCoordinate &bottomRight);
+    double radius();
+    void setRadius(double radius);
 private:
-    QLandmarkBoxFilterPrivate *d;
+    QLandmarkProximityFilterPrivate *d;
 };
 
 QTM_END_NAMESPACE

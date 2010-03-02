@@ -39,34 +39,66 @@
 **
 ****************************************************************************/
 
-#ifndef QLANDMARKBOXFILTER_H
-#define QLANDMARKBOXFILTER_H
-
-#include "qlandmarkfilter.h"
-
-QT_BEGIN_HEADER
+#include "qlandmarkproximityfilter.h"
+#include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
-class QGeoCoordinate;
 
-class QLandmarkBoxFilterPrivate;
-class Q_LOCATION_EXPORT QLandmarkBoxFilter : public QLandmarkFilter
+/*!
+    \class QLandmarkProximityFilter
+    \brief The QLandmarkProximityFilter class is used to search for landmarks based on proximity
+    around a given coordinate.
+    \ingroup location
+
+    This filter will make matches for landmarks which are found within a given radius
+    around a central coordinate.
+*/
+
+/*!
+    Creates a filter that will select landmarks within a given \a radius around
+    a central \a coordinate.
+*/
+QLandmarkProximityFilter::QLandmarkProximityFilter(const QGeoCoordinate &coordinate, double radius)
 {
-public:
-    QLandmarkBoxFilter(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight);
-    virtual ~QLandmarkBoxFilter();
+    //TODO: implement
+}
 
-    QGeoCoordinate topLeftCoordinate();
-    void setTopLeftCoordinate(const QGeoCoordinate &topLeft);
+/*!
+    Destroys the filter.
+*/
+QLandmarkProximityFilter::~QLandmarkProximityFilter()
+{
+    //TODO: implement
+}
 
-    QGeoCoordinate bottomRightCoordinate();
-    void setBottomRightCoordinate(const QGeoCoordinate &bottomRight);
-private:
-    QLandmarkBoxFilterPrivate *d;
-};
+/*!
+    Returns the central coordinate of the filter.
+*/
+QGeoCoordinate QLandmarkProximityFilter::coordinate()
+{
+    return QGeoCoordinate();
+}
+
+/*!
+    Sets the central \a coordinate of the filter.
+*/
+void QLandmarkProximityFilter::setCoordinate(const QGeoCoordinate &coordinate)
+{
+}
+
+/*!
+    Returns the radius of the filter.
+*/
+double QLandmarkProximityFilter::radius()
+{
+    return 0.0;
+}
+
+/*!
+    Sets the \a radius of the filter.
+*/
+void QLandmarkProximityFilter::setRadius(double radius)
+{
+}
 
 QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif
