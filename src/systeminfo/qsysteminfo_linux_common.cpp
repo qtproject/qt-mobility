@@ -400,66 +400,16 @@ bool QSystemInfoLinuxCommonPrivate::hasSysFeature(const QString &featureStr)
 
 QSystemNetworkInfoLinuxCommonPrivate::QSystemNetworkInfoLinuxCommonPrivate(QObject *parent) : QObject(parent)
 {
-   // QTimer::singleShot(200, this,SLOT(getPrimaryMode()));
 }
 
 QSystemNetworkInfoLinuxCommonPrivate::~QSystemNetworkInfoLinuxCommonPrivate()
 {
 }
-
-//void QSystemNetworkInfoLinuxCommonPrivate::getPrimaryMode()
-//{
-//    // try to see if there are any default route
-////    bool anyDefaultRoute = false;
-//
-//    QFileInfo fi("/proc/net/route");
-//    if(fi.exists()) {
-//        QFile rx(fi.absoluteFilePath());
-//        if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
-//            QString result;
-//            QTextStream out(&rx);
-//            do {
-//                result = out.readLine().simplified();
-//                if(!result.isEmpty()) {
-//                    QStringList tokens = result.split(" ");
-//
-//                    if(tokens.at(2).toLocal8Bit() != "Gateway"
-//                       && tokens.at(2).toLocal8Bit() != "00000000") {
-//
-//                        qWarning() <<"found default!" << tokens.at(0);
-//           //             emit networkModeChanged(tokens.at(0)));
-//                    }
-//                }
-//            } while (!result.isNull());
-//        }
-//    }
-//    //    QMapIterator<QString, QString> i(activePaths);
-////    QString devicepath;
-////    while (i.hasNext()) {
-////        i.next();
-////        QScopedPointer<QNetworkManagerConnectionActive> activeCon;
-////        activeCon.reset(new QNetworkManagerConnectionActive(i.key()));
-////
-////        if(activeCon->defaultRoute()) {
-////            anyDefaultRoute = activeCon->defaultRoute();
-////            QNetworkManagerInterfaceDevice *devIface = new QNetworkManagerInterfaceDevice(i.value());
-////            emit networkModeChanged(deviceTypeToMode(devIface->deviceType()));
-////        }
-////        devicepath = i.value();
-////    }
-////
-////    if(!anyDefaultRoute) {
-////        emit networkModeChanged(QSystemNetworkInfo::UnknownMode);
-////    }
-//}
-
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
     switch(mode) {
     case QSystemNetworkInfo::WlanMode:
         {
-            qWarning() << __PRETTY_FUNCTION__ << "WLAN";
-
             QString baseSysDir = "/sys/class/net/";
             QDir wDir(baseSysDir);
             QStringList dirs = wDir.entryList(QStringList() << "*", QDir::AllDirs | QDir::NoDotAndDotDot);
@@ -483,13 +433,11 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::networkS
         break;
     case QSystemNetworkInfo::EthernetMode:
         {
-            qWarning() << __PRETTY_FUNCTION__ << "Ethernet";
             QString baseSysDir = "/sys/class/net/";
             QDir eDir(baseSysDir);
             QString dir = QSystemNetworkInfoLinuxCommonPrivate::interfaceForMode(mode).name();
 
             QString devFile = baseSysDir + dir;
-            qWarning() << devFile;
             QFileInfo fi("/proc/net/route");
             if(fi.exists()) {
                 QFile rx(fi.absoluteFilePath());
@@ -523,7 +471,6 @@ QString QSystemNetworkInfoLinuxCommonPrivate::networkName(QSystemNetworkInfo::Ne
     case QSystemNetworkInfo::WlanMode:
         {
             if(networkStatus(mode) != QSystemNetworkInfo::Connected) {
-                qWarning() << "not connected";
                 return netname;
             }
 
@@ -536,7 +483,6 @@ QString QSystemNetworkInfoLinuxCommonPrivate::networkName(QSystemNetworkInfo::Ne
                 QFileInfo fi(devFile + "/wireless");
                 if(fi.exists()) {
                     wlanInterface = dir;
-                    qWarning() << "interface is" << wlanInterface;
                 }
             }
             int sock = socket(PF_INET, SOCK_DGRAM, 0);
@@ -672,9 +618,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::getBluet
         return QSystemNetworkInfo::UndefinedStatus;
     }
 
-    qWarning() << req.cnum;
     for (uint j = 0; j< req.cnum; j++) {
-        qWarning() << info[j].state;
         if(info[j].state == BT_CONNECTED) {
             return QSystemNetworkInfo::Connected;
         }
@@ -1263,7 +1207,6 @@ void QSystemDeviceInfoLinuxCommonPrivate::setConnection()
 void QSystemDeviceInfoLinuxCommonPrivate::halChanged(int,QVariantList map)
 {
     for(int i=0; i < map.count(); i++) {
-//       qWarning() << __FUNCTION__ << map.at(i).toString();
        if(map.at(i).toString() == "battery.charge_level.percentage") {
             int level = batteryLevel();
             emit batteryLevelChanged(level);

@@ -155,7 +155,6 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QSystemNetworkInfoLinuxComm
 #if !defined(QT_NO_NETWORKMANAGER)
     setupNmConnections();
     updateActivePaths();
-    QTimer::singleShot(200, this,SLOT(getPrimaryMode()));
 #endif
 }
 
@@ -220,29 +219,9 @@ bool QSystemNetworkInfoPrivate::isDefaultConnectionPath(const QString &path)
     return isDefault;
 }
 
-void QSystemNetworkInfoPrivate::getPrimaryMode()
+void QSystemNetworkInfoPrivate::primaryModeChanged()
 {
-    // try to see if there are any default route
-    bool anyDefaultRoute = false;
-
-    QMapIterator<QString, QString> i(activePaths);
-    QString devicepath;
-    while (i.hasNext()) {
-        i.next();
-        QScopedPointer<QNetworkManagerConnectionActive> activeCon;
-        activeCon.reset(new QNetworkManagerConnectionActive(i.key(), this));
-
-        if(activeCon->defaultRoute()) {
-            anyDefaultRoute = activeCon->defaultRoute();
-            QNetworkManagerInterfaceDevice *devIface = new QNetworkManagerInterfaceDevice(i.value(), this);
-            emit networkModeChanged(deviceTypeToMode(devIface->deviceType()));
-        }
-        devicepath = i.value();
-    }
-
-    if(!anyDefaultRoute) {
-        emit networkModeChanged(QSystemNetworkInfo::UnknownMode);
-    }
+    emit networkModeChanged(currentMode());
 }
 
 
@@ -304,7 +283,6 @@ QString QSystemNetworkInfoPrivate::getNetworkNameForConnectionPath(const QString
             QScopedPointer<QNetworkManagerSettingsConnection> settingsConIface;
             settingsConIface.reset(new QNetworkManagerSettingsConnection(activeCon->serviceName(),activeCon->connection().path(), this));
             if(settingsConIface->isValid()) {
-                qWarning() << settingsConIface->getId();
                 return settingsConIface->getId();
             } else {
                 //qWarning() << "not valid";
@@ -400,7 +378,7 @@ void QSystemNetworkInfoPrivate::nmPropertiesChanged( const QString & path, QMap<
         }
         if( i.key() == QLatin1String("Ip4Config")) {
             // || i.key() == "Ip46Config") {
-            getPrimaryMode();
+            primaryModeChanged();
         }
     }
 }
@@ -526,8 +504,31 @@ QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
     return QString();
 }
 
-QSystemNetworkInfo::NetworkMode QSystemDisplayInfoPrivate::currentMode()
+QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 {
+    QSystemNetworkInfo::NetworkMode mode;
+
+    bool anyDefaultRoute = false;
+
+    QMapIterator<QString, QString> i(activePaths);
+    QString devicepath;
+    while (i.hasNext()) {
+        i.next();
+        QScopedPointer<QNetworkManagerConnectionActive> activeCon;
+        activeCon.reset(new QNetworkManagerConnectionActive(i.key(), this));
+
+        if(activeCon->defaultRoute()) {
+            anyDefaultRoute = activeCon->defaultRoute();
+            QNetworkManagerInterfaceDevice *devIface = new QNetworkManagerInterfaceDevice(i.value(), this);
+            return deviceTypeToMode(devIface->deviceType());
+        }
+        devicepath = i.value();
+    }
+
+    if(!anyDefaultRoute) {
+       mode = QSystemNetworkInfo::UnknownMode;
+    }
+
     return QSystemNetworkInfo::UnknownMode;
 }
 
@@ -623,7 +624,7 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
                                                                  QLatin1String("QSystemScreenSaver"));
              if(reply.isValid()) {
                  currentPid = reply.value();
-                 qWarning() << "Inhibit" << currentPid;
+              //   qWarning() << "Inhibit" << currentPid;
                  return reply.isValid();
              } else {
                  qWarning() << reply.error();
