@@ -362,7 +362,6 @@ Q_GLOBAL_STATIC(QSystemNetworkInfoPrivate, netInfoPrivate)
 Q_GLOBAL_STATIC(QSystemDisplayInfoPrivate, displayInfoPrivate)
 Q_GLOBAL_STATIC(QSystemStorageInfoPrivate, storageInfoPrivate)
 Q_GLOBAL_STATIC(QSystemDeviceInfoPrivate, deviceInfoPrivate)
-Q_GLOBAL_STATIC(QSystemScreenSaverPrivate, screenSaverPrivate)
 
  /*!
 \fn QSystemInfo::QSystemInfo(QObject *parent)
@@ -863,8 +862,9 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfo::currentPowerState()
  */
 
 QSystemScreenSaver::QSystemScreenSaver(QObject *parent)
-    : QObject(parent), d(screenSaverPrivate())
+    : QObject(parent)
 {
+    d = new QSystemScreenSaverPrivate(parent);
     screenSaverIsInhibited = screenSaverInhibited();
 }
 
