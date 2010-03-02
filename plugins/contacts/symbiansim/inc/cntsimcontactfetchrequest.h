@@ -68,7 +68,6 @@ public:
     bool cancel();
     
 public Q_SLOTS:
-    void getInfoComplete(RMobilePhoneBookStore::TMobilePhoneBookInfoV5 info, QContactManager::Error error);
     void readComplete(QList<QContact> contacts, QContactManager::Error error);
 
 private:

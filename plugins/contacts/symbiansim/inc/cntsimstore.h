@@ -60,9 +60,12 @@ class CntSimStore : public QObject
 {
 Q_OBJECT
 public:
-    CntSimStore(CntSymbianSimEngine* engine);
+    CntSimStore(CntSymbianSimEngine* engine, QString storeName);
     ~CntSimStore();
-
+    
+    QString storeName();
+    RMobilePhoneBookStore::TMobilePhoneBookInfoV5 storeInfo();
+    
     QContactManager::Error getInfo();
     QContactManager::Error read(int index, int numSlots);
     QContactManager::Error write(const QContact &contact);
