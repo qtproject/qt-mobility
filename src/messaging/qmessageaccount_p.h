@@ -64,7 +64,7 @@ public:
 #endif    
     QMessage::TypeFlags _types;
 
-#if defined(Q_OS_WIN)
+#if defined(Q_OS_WIN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     static QMessageAccount from(const QMessageAccountId &id, const QString &name, const QMessageAddress &address, const QMessage::TypeFlags &types);
 #endif
 #if defined(Q_OS_SYMBIAN)

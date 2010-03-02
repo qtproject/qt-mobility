@@ -1,38 +1,38 @@
 import Qt 4.6
 
-//Layout of the MainPage
-//----------------------------------------------  ____ MainPage
+//Layout of the mainPage
+//----------------------------------------------  ____ mainPage
 //| ------------------- ---------------------- | /
-//| | ServiceList     | | DialScreen         | |/
+//| | serviceList     | | dialScreen         | |/
 //| |                 | |                    | |
 //| |                 | |                    | |
 //| |                 | |                    | |
 //| ------------------- |                    | |
 //| ------------------- |                    | |
-//| | ServiceDetails  | |                    | |
+//| | serviceDetails  | |                    | |
 //| ------------------- |                    | |
 //|                     |                    | |
 //|                     |                    | |
 //|                     |                    | |
 //|                     |                    | |
 //| ------------------- |                    | |
-//| | Status          | |                    | |
+//| | status          | |                    | |
 //| ------------------- ---------------------- |
 //----------------------------------------------
 
 Rectangle {
-    id: MainPage
+    id: mainPage
     width: 500
     height: 250
     color: "white"
 
     ServiceList {
-        id: ServiceList
+        id: serviceList
         height: childrenRect.height + 10
         width: childrenRect.width
         anchors.top: parent.top
         anchors.left: parent.left
-        anchors.right: DialScreen.left
+        anchors.right: dialScreen.left
         anchors.topMargin: 5
         anchors.leftMargin: 5
         anchors.rightMargin: 5
@@ -58,22 +58,24 @@ Rectangle {
     Script {
         function ServiceSelected()
         {
-            ServiceDetails.text = "Selected dial service:" + "\n   " + ServiceList.dialService.serviceName + "\n   (" + ServiceList.dialService.version + ")";
+            serviceDetails.text = "Selected dial service:" + "\n   " + 
+                                   serviceList.dialService.serviceName + 
+                                   "\n   (" + serviceList.dialService.version + ")";
         }
     }
     
     Text {
-        id: ServiceDetails
+        id: serviceDetails
         text: "Selected dial service:"
         anchors.topMargin: 5
         anchors.leftMargin: 5
         anchors.rightMargin: 5;
         anchors.left: parent.left
-        anchors.top: ServiceList.bottom
+        anchors.top: serviceList.bottom
     }
     
     Text {
-        id: Status
+        id: status
         anchors.top: parent.bottom
         anchors.left: parent.left
         anchors.topMargin: -40
@@ -81,18 +83,18 @@ Rectangle {
     }
     
     Timer {
-        id: ClearStatusTimer
+        id: clearStatusTimer
         interval: 2000
         running: false
         repeat: false
         onTriggered: {
-            Status.text = ""
+            status.text = ""
         }
     }
 
     //! [0]
     DialScreen {
-        id: DialScreen
+        id: dialScreen
         property bool activeCall : false
         property var currentDialer: 0;
         anchors.topMargin: 5
@@ -102,10 +104,10 @@ Rectangle {
         anchors.top: parent.top
         onDial: {
             if (activeCall == false) {
-                if (ServiceList.dialService != 0) {
-                    var o = ServiceList.dialService.serviceObject();
-                    Status.text = "Dialing " + numberToDial +"...";
-                    DialScreen.currentDialer = o;
+                if (serviceList.dialService != 0) {
+                    var o = serviceList.dialService.serviceObject();
+                    status.text = "Dialing " + numberToDial +"...";
+                    dialScreen.currentDialer = o;
                     o.dialNumber(numberToDial);
                     activeCall = true;
                 }
@@ -113,10 +115,10 @@ Rectangle {
         }
         onHangup: {
             if (activeCall) {
-                if (DialScreen.currentDialer != 0) {
-                    DialScreen.currentDialer.hangup();
+                if (dialScreen.currentDialer != 0) {
+                    dialScreen.currentDialer.hangup();
                 }
-                Status.text = "Hang up";
+                status.text = "Hang up";
             }
         }
     }
@@ -124,22 +126,22 @@ Rectangle {
 
     //! [1]
     Connection {
-        sender: DialScreen.currentDialer
+        sender: dialScreen
         signal: "stateChanged()"
         script: { 
-            if (DialScreen.currentDialer.state == 1) {
-                Status.text += "\nRinging";
+            if (dialScreen.currentDialer.state == 1) {
+                status.text += "\nRinging";
             } 
-            else if (DialScreen.currentDialer.state == 2) {
-                Status.text += "\nConnected";
+            else if (dialScreen.currentDialer.state == 2) {
+                status.text += "\nConnected";
             } 
-            else if (DialScreen.currentDialer.state == 0) {
-                Status.text += "\nConnection terminated";
-                DialScreen.activeCall = false;
-                ClearStatusTimer.running = true;
+            else if (dialScreen.currentDialer.state == 0) {
+                status.text += "\nConnection terminated";
+                dialScreen.activeCall = false;
+                clearStatusTimer.running = true;
             } 
-            else if (DialScreen.currentDialer.state == 3) {
-                Status.text += "\nPhone already engaged";
+            else if (dialScreen.currentDialer.state == 3) {
+                status.text += "\nPhone already engaged";
             }
         }
     }
