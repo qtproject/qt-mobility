@@ -44,10 +44,11 @@
 #include "qabstractsecuritysession.h"
 #ifdef Q_OS_SYMBIAN
     #include "databasemanager_s60_p.h"
+    #include "qservicecontrol_s60_p.h"
 #else
     #include "databasemanager_p.h"
+    #include "qservicecontrol_p.h"
 #endif
-#include "qservicecontrol_p.h"
 
 #include <QObject>
 #include <QPluginLoader>

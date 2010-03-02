@@ -39,35 +39,31 @@
 **
 ****************************************************************************/
 
+#ifndef QSERVICECONTROL_S60_P_H
+#define QSERVICECONTROL_S60_P_H
+
+#define QT_SFW_SYMBIAN_IPC_DEBUG
+
 #include "qservicecontrol.h"
-#ifdef Q_OS_SYMBIAN
-#include "qservicecontrol_s60_p.h"
-#else
-#include "qservicecontrol_p.h"
+#include "qservicetyperegister.h"
+
+#ifdef QT_SFW_SYMBIAN_IPC_DEBUG
+#include <QDebug>
 #endif
 
 QTM_BEGIN_NAMESPACE
 
-
-/*!
-    QServiceControl
-*/
-QServiceControl::QServiceControl(QObject* parent)
-    : QObject(parent)
+class ObjectEndPoint;
+class QServiceControlPrivate: public QObject
 {
-    d = new QServiceControlPrivate(this);
-}
+    Q_OBJECT
 
-QServiceControl::~QServiceControl()
-{
-}
-
-void QServiceControl::publishServices( const QString& ident)
-{
-    d->publishServices(ident);
-}
-
-
-#include "moc_qservicecontrol.cpp"
+public:
+    QServiceControlPrivate(QObject* parent);
+    void publishServices(const QString& ident );
+    static QObject* proxyForService(const QServiceTypeIdent& typeId, const QString& location);
+};
 
 QTM_END_NAMESPACE
+
+#endif // QSERVICECONTROL_S60_P_H

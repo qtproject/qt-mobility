@@ -1,5 +1,14 @@
 INCLUDEPATH += ipc
 
+symbian {
+    PRIVATE_HEADERS += ipc/qservicecontrol_s60_p.h
+    SOURCES += ipc/qservicecontrol_s60.cpp
+
+} else {
+    PRIVATE_HEADERS += ipc/qservicecontrol_p.h
+    SOURCES += ipc/qservicecontrol_p.cpp
+}
+
 PRIVATE_HEADERS += \
         ipc/qslotinvoker_p.h \
         ipc/qsignalintercepter_p.h \
@@ -7,12 +16,10 @@ PRIVATE_HEADERS += \
         ipc/instancemanager_p.h \
         ipc/qservicetyperegister.h \
         ipc/qservicecontrol.h \
-        ipc/qservicecontrol_p.h \
         ipc/qservicepackage_p.h \
         ipc/objectendpoint_p.h \
         ipc/ipcendpoint_p.h \
         ipc/proxyobject_p.h
-
 
 SOURCES += \
         ipc/qslotinvoker.cpp \
@@ -22,9 +29,9 @@ SOURCES += \
         ipc/instancemanager.cpp \
         ipc/qservicecontrol.cpp \
         ipc/qservicepackage.cpp \
-        ipc/qservicecontrol_p.cpp \
         ipc/objectendpoint.cpp \
         ipc/ipcendpoint.cpp \
         ipc/proxyobject.cpp
 
 !symbian:QT+=network #for QLocalServer
+

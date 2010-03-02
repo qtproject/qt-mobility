@@ -39,35 +39,57 @@
 **
 ****************************************************************************/
 
-#include "qservicecontrol.h"
-#ifdef Q_OS_SYMBIAN
 #include "qservicecontrol_s60_p.h"
-#else
-#include "qservicecontrol_p.h"
-#endif
+#include "ipcendpoint_p.h"
+#include "objectendpoint_p.h"
+
+/* IPC based on Symbian Client-Server framework
+ * This module implements the Symbian specific IPC mechanisms and related control.
+ * IPC is based on Symbian Client-Server architecture.
+ */
 
 QTM_BEGIN_NAMESPACE
 
+class SymbianClientServerEndPoint: public QServiceIpcEndPoint
+{
+    Q_OBJECT
+public:
+    SymbianClientServerEndPoint(QObject* parent = 0)
+        : QServiceIpcEndPoint(parent)
+    {
+#ifdef QT_SFW_SYMBIAN_IPC_DEBUG
+    qDebug() << "Symbian IPC endpoint created.";
+#endif
+    }
 
-/*!
-    QServiceControl
-*/
-QServiceControl::QServiceControl(QObject* parent)
+    ~SymbianClientServerEndPoint()
+    {
+#ifdef QT_SFW_SYMBIAN_IPC_DEBUG
+    qDebug() << "Symbian IPC endpoint destroyed.";
+#endif
+    }
+};
+
+
+QServiceControlPrivate::QServiceControlPrivate(QObject *parent)
     : QObject(parent)
 {
-    d = new QServiceControlPrivate(this);
 }
 
-QServiceControl::~QServiceControl()
+void QServiceControlPrivate::publishServices(const QString &ident)
 {
+#ifdef QT_SFW_SYMBIAN_IPC_DEBUG
+    qDebug() << "QSCP::publishServices for ident: " << ident;
+#endif
 }
 
-void QServiceControl::publishServices( const QString& ident)
+QObject* QServiceControlPrivate::proxyForService(const QServiceTypeIdent &typeId, const QString &location)
 {
-    d->publishServices(ident);
+#ifdef QT_SFW_SYMBIAN_IPC_DEBUG
+    qDebug() << "QSCP::proxyForService for location: " << location;
+#endif
 }
 
-
-#include "moc_qservicecontrol.cpp"
-
+#include "moc_qservicecontrol_s60_p.cpp"
+// #include "qservicecontrol_p.moc"
 QTM_END_NAMESPACE

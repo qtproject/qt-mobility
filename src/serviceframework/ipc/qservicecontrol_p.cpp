@@ -43,20 +43,14 @@
 #include "ipcendpoint_p.h"
 #include "objectendpoint_p.h"
 
-#ifdef Q_OS_SYMBIAN
-#else
 #include <QLocalServer>
 #include <QLocalSocket>
 #include <QDataStream>
 #include <QTimer>
-#endif
 
 QTM_BEGIN_NAMESPACE
 
-//IPC is based on QLocalSocket
-
-#ifdef Q_OS_SYMBIAN
-#else
+//IPC based on QLocalSocket
 
 class LocalSocketEndPoint : public QServiceIpcEndPoint
 {
@@ -108,8 +102,6 @@ private:
     QLocalSocket* socket;
 };
 
-#endif
-
 QServiceControlPrivate::QServiceControlPrivate(QObject* parent)
     : QObject(parent)
 {
@@ -123,9 +115,6 @@ void QServiceControlPrivate::publishServices( const QString& ident)
 
 void QServiceControlPrivate::processIncoming()
 {
-#ifdef Q_OS_SYMBIAN
-#else
-    //for now we have QLocalSocket only
     qDebug() << "Processing incoming connect";
     if (localServer->hasPendingConnections()) {
         QLocalSocket* s = localServer->nextPendingConnection();
@@ -133,7 +122,6 @@ void QServiceControlPrivate::processIncoming()
         LocalSocketEndPoint* ipcEndPoint = new LocalSocketEndPoint(s);
         ObjectEndPoint* endpoint = new ObjectEndPoint(ObjectEndPoint::Service, ipcEndPoint, this);
     }
-#endif
 }
 
 /*!
@@ -141,11 +129,8 @@ void QServiceControlPrivate::processIncoming()
 */
 bool QServiceControlPrivate::createServiceEndPoint(const QString& ident)
 {
-    //for now we have QLocalSocket only
     //other IPC mechanisms such as dbus may have to publish the
     //meta object definition for all registered service types
-#ifdef Q_OS_SYMBIAN
-#else
     QLocalServer::removeServer(ident);
     qDebug() << "Start listening for incoming connections";
     localServer = new QLocalServer(this);
@@ -158,7 +143,6 @@ bool QServiceControlPrivate::createServiceEndPoint(const QString& ident)
         QTimer::singleShot(0, this, SLOT(processIncoming()));
 
     return true;
-#endif
 }
 
 /*!
@@ -166,8 +150,6 @@ bool QServiceControlPrivate::createServiceEndPoint(const QString& ident)
 */
 QObject* QServiceControlPrivate::proxyForService(const QServiceTypeIdent& typeIdent, const QString& location)
 {
-#ifdef Q_OS_SYMBIAN
-#else
     QLocalSocket* socket = new QLocalSocket();
     //location format:  protocol:address
     socket->connectToServer(location.section(':', 1, 1));
@@ -181,7 +163,6 @@ QObject* QServiceControlPrivate::proxyForService(const QServiceTypeIdent& typeId
     QObject *proxy = endPoint->constructProxy(typeIdent);
     QObject::connect(proxy, SIGNAL(destroyed()), endPoint, SLOT(deleteLater()));
     return proxy;
-#endif
     return 0;
 }
 

@@ -45,9 +45,7 @@
 #include "qservicecontrol.h"
 #include "instancemanager_p.h"
 #include "qserviceinterfacedescriptor.h"
-#ifndef Q_OS_SYMBIAN
 #include <QLocalServer>
-#endif
 
 QTM_BEGIN_NAMESPACE
 
@@ -63,17 +61,13 @@ public slots:
     void processIncoming(); 
 private:
     bool createServiceEndPoint(const QString& ident);
-#ifdef Q_OS_SYMBIAN
-#else
+
     QLocalServer* localServer;
-#endif
     QList<ObjectEndPoint*> pendingConnections;
 
 public:
     static QObject* proxyForService(const QServiceTypeIdent& typeId, const QString& location);
 };
-
-
 
 QTM_END_NAMESPACE
 
