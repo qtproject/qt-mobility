@@ -52,6 +52,7 @@ n900proximitysensor::n900proximitysensor(QSensor *sensor)
     : n900filebasedsensor(sensor)
 {
     setReading<QProximityReading>(&m_reading);
+    addOutputRange(0, 0.01, 0.01);
 }
 
 void n900proximitysensor::start()
@@ -75,16 +76,17 @@ void n900proximitysensor::poll()
     fclose(fd);
     if (rs != 1) return;
 
-    QProximityReading::Proximity proximity = QProximityReading::Undefined;
+    qreal distance;
     if (strcmp(buffer, "closed") == 0) {
-        proximity = QProximityReading::Close;
+        distance = 0;
     } else {
-        proximity = QProximityReading::NotClose;
+        distance = 0.01;
     }
 
-    m_reading.setTimestamp(clock());
-    m_reading.setProximity(proximity);
-
-    newReadingAvailable();
+    if (distance != m_reading.distance()) {
+        m_reading.setTimestamp(clock());
+        m_reading.setDistance(distance);
+        newReadingAvailable();
+    }
 }
 

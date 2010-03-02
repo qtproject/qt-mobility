@@ -51,18 +51,11 @@ class QProximityReadingPrivate;
 class Q_SENSORS_EXPORT QProximityReading : public QSensorReading
 {
     Q_OBJECT
-    Q_ENUMS(Proximity)
-    Q_PROPERTY(Proximity proximity READ proximity)
+    Q_PROPERTY(qreal distance READ distance)
     DECLARE_READING(QProximityReading)
 public:
-    enum Proximity {
-        Undefined = 0,
-        Close,
-        NotClose
-    };
-
-    Proximity proximity() const;
-    void setProximity(Proximity proximity);
+    qreal distance() const;
+    void setDistance(qreal distance);
 };
 
 class Q_SENSORS_EXPORT QProximityFilter : public QSensorFilter
