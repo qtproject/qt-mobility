@@ -159,10 +159,7 @@ public:
 /*
     - Why do we need typeIdent and serviceInstanceId on service side. The instance id should be sufficient.
     - Consider merging invokeRemoteProperty() and invokeRemote()
-    - QMetaEnum support
     - QMetaClassInfo support
-    - Enum property type
-    - flag property type
 
 */
 

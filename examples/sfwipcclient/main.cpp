@@ -33,6 +33,7 @@ public slots:
     {
         const QMetaObject* mo = service->metaObject();
         qDebug() << "ServiceObject class: " << mo->className() << mo->superClass() << mo->superClass()->className();
+        qDebug() << "------------------- Meta Methods -----------";
         qDebug() << "Methods:" << mo->methodCount()- mo->methodOffset() << "(" << mo->methodCount() << ")";
         for (int i=0; i< mo->methodCount(); i++) {
             QMetaMethod method = mo->method(i);
@@ -49,6 +50,7 @@ public slots:
             }
             qDebug() << "    " << i << "." << method.signature() << type;
         }
+        qDebug() << "------------------- Meta Properties --------";
         qDebug() << "Properties:" << mo->propertyCount()- mo->propertyOffset() << "(" << mo->propertyCount() << ")";
         for(int i=0; i< mo->propertyCount(); i++) {
             QMetaProperty property = mo->property(i);
@@ -60,6 +62,24 @@ public slots:
 
             qDebug() << "    " << i << "." << property.name() << "Type:" << property.typeName() << info;
         }
+
+        qDebug() << "------------------- Meta Enumerators --------";
+        qDebug() << "Enums:" << mo->enumeratorCount()- mo->enumeratorOffset() << "(" << mo->enumeratorCount() << ")";
+        for(int i=0; i< mo->enumeratorCount(); i++) {
+            QMetaEnum e = mo->enumerator(i);
+            qDebug() << "    " << i << "." << e.name() << "Scope:" << e.scope() << "KeyCount: " << e.keyCount();
+            for(int j = 0; j<e.keyCount(); j++)
+                qDebug() << "         " << e.key(j) << " - " << e.value(j);
+        }
+
+        qDebug() << "------------------- Meta class info ---------";
+        qDebug() << "ClassInfos:" << mo->classInfoCount()- mo->classInfoOffset() << "(" << mo->classInfoCount() << ")";
+        for(int i=0; i< mo->classInfoCount(); i++) {
+            QMetaClassInfo info = mo->classInfo(i);
+            qDebug() << "    " << i << "." << info.name() << "Value:" << info.value();
+        }
+
+        qDebug() << "------------------- Testing remote calls ---------";
 
 
         QTimer::singleShot(1000, this, SLOT(useService()));
@@ -149,11 +169,12 @@ public slots:
         qDebug() << "Triggering signal on client side";
         emit clientsignal();
 
-        const int pIndex = service->metaObject()->indexOfProperty("value");
-        const QMetaProperty prop = service->metaObject()->property(pIndex);
+        int pIndex = service->metaObject()->indexOfProperty("value");
+        QMetaProperty prop = service->metaObject()->property(pIndex);
         if (prop.isValid()) {
             if ( prop.hasNotifySignal())
                 QMetaObject::connect(service, prop.notifySignalIndex(), this, metaObject()->indexOfMethod("propertyChanged()"));
+            qDebug() << "--------------------------------------------";
             qDebug() << "Property value:" << service->property("value");
             qDebug() << "Changing property to: " << "QWERTY";
             service->setProperty("value", "QWERTY");
@@ -161,10 +182,35 @@ public slots:
             qDebug() << "Resetting property";
             prop.reset(service);
             qDebug() << "New property value:" << service->property("value");
-            qDebug() << "Property designable:" << prop.isDesignable();
         }
 
-        QTimer::singleShot(5000, this, SLOT(killService()));
+        pIndex = service->metaObject()->indexOfProperty("priority");
+        prop = service->metaObject()->property(pIndex);
+        if (prop.isValid()) {
+            if ( prop.hasNotifySignal())
+                QMetaObject::connect(service, prop.notifySignalIndex(), this, metaObject()->indexOfMethod("propertyChanged()"));
+            qDebug() << "--------------------------------------------";
+            qDebug() << "Property value:" << service->property("priority");
+            qDebug() << "Changing property to: " << "Low";
+            service->setProperty("priority", "Low");
+            qDebug() << "New property value:" << service->property("priority");
+        }
+
+        pIndex = service->metaObject()->indexOfProperty("serviceFlags");
+        prop = service->metaObject()->property(pIndex);
+        if (prop.isValid()) {
+            if ( prop.hasNotifySignal())
+                QMetaObject::connect(service, prop.notifySignalIndex(), this, metaObject()->indexOfMethod("propertyChanged()"));
+            qDebug() << "--------------------------------------------";
+            qDebug() << "Property value:" << service->property("serviceFlags");
+            qDebug() << "Changing property to: " << "101";
+            service->setProperty("serviceFlags", "FirstBit|ThirdBit");
+            qDebug() << "New property value:" << service->property("serviceFlags");
+        }
+
+
+
+        QTimer::singleShot(1000, this, SLOT(killService()));
     }
 
     void propertyChanged()

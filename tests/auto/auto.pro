@@ -11,11 +11,13 @@ contains(mobility_modules,serviceframework) {
            qabstractsecuritysession \
            qservicecontext \
            qmetaobjectbuilder \
-           icheck
+           icheck \
+           qservicemanager_ipc
 
 # servicedatabase is not compiled into the serviceframework library on symbian,
 # special handling is needed
     !symbian:SUBDIRS+=servicedatabase
+    
 }
 
 contains(mobility_modules,bearer) {
