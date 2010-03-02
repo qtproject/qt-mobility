@@ -52,28 +52,6 @@
 
 QTM_USE_NAMESPACE
 
-// ----- QLandmarkCategoryPrivate -----
-
-QLandmarkCategoryPrivate::QLandmarkCategoryPrivate() {}
-
-QLandmarkCategoryPrivate::QLandmarkCategoryPrivate(const QLandmarkCategoryPrivate &other)
-{
-    name = other.name;
-    icon = other.icon;
-    description = other.description;
-}
-
-QLandmarkCategoryPrivate::~QLandmarkCategoryPrivate() {}
-
-QLandmarkCategoryPrivate& QLandmarkCategoryPrivate::operator= (const QLandmarkCategoryPrivate & other)
-{
-    name = other.name;
-    icon = other.icon;
-    description = other.description;
-
-    return *this;
-}
-
 bool QLandmarkCategoryPrivate::operator== (const QLandmarkCategoryPrivate &other) const
 {
     return ((name == other.name)
