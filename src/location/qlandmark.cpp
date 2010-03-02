@@ -42,7 +42,10 @@
 #include "qlandmark.h"
 #include "qlandmark_p.h"
 
+#include "qlandmarkcategory_p.h"
 #include "qlandmarkcategoryid.h"
+#include "qlandmarkid.h"
+#include "qlandmarkid_p.h"
 
 #include <QVariant>
 #include <QStringList>

@@ -43,7 +43,8 @@
 #define QLANDMARKMANAGER_H
 
 #include "qmobilityglobal.h"
-#include "qlandmark.h"
+#include "qlandmarkid.h"
+
 
 #include <QObject>
 #include <QMap>
@@ -58,7 +59,8 @@ class QLandmarkFilter;
 class QLandmarkSortOrder;
 class QLandmarkSearchResult;
 class QLandmarkManagerPrivate;
-
+class QLandmarkCategoryId;
+class QLandmark;
 
 class Q_LOCATION_EXPORT QLandmarkManager: public QObject
 {

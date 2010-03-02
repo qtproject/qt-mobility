@@ -46,6 +46,7 @@
 #include <QIODevice>
 #include "qlandmarkcategoryid.h"
 #include "qlandmarkcategory.h"
+#include "qlandmark.h"
 
 
 QTM_USE_NAMESPACE

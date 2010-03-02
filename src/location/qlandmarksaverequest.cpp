@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qlandmarksaverequest.h"
+#include "qlandmark.h"
 
 
 QTM_BEGIN_NAMESPACE

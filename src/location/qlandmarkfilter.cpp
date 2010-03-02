@@ -43,6 +43,8 @@
 
 //TODO: move this when category filter is moved.
 #include "qlandmarkcategoryid.h"
+#include "qlandmarkid.h"
+#include "qgeocoordinate.h"
 
 
 QTM_BEGIN_NAMESPACE
@@ -386,7 +388,7 @@ QLandmarkSortOrder::QLandmarkSortOrder()
 */
 QLandmarkSortOrder::SortType QLandmarkSortOrder::type() const
 {
-    return QLandmarkSortOrder::LandmarkCustomFilter;
+    return QLandmarkSortOrder::LandmarkCustomSort;
 }
 
 /*!

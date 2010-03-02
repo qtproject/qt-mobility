@@ -48,36 +48,16 @@
 #include <QObject>
 #include <QSharedDataPointer>
 
+class QVariant;
+class QStringList;
+
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QLandmarkPrivate;
-class QLandmarkIdPrivate;
-
+class QLandmarkId;
 class QLandmarkCategoryId;
-
-class Q_LOCATION_EXPORT QLandmarkId
-{
-public:
-    QLandmarkId();
-    QLandmarkId(const QLandmarkId &other);
-    ~QLandmarkId();
-
-    bool isValid() const;
-    void setId(const QString &id);
-    QString id();
-
-    QString managerUri() const;
-    void setManagerUri(const QString &managerUri);
-
-    QLandmarkId &operator=(const QLandmarkId &other);
-    bool operator==(const QLandmarkId &other) const;
-    bool operator!=(const QLandmarkId &other) const;
-private:
-    QSharedDataPointer<QLandmarkIdPrivate> d;
-};
-
+class QLandmarkPrivate;
 class Q_LOCATION_EXPORT QLandmark
 {
 public:

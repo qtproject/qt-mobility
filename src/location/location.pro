@@ -17,6 +17,9 @@ PUBLIC_HEADERS += qgeocoordinate.h \
                   qgeoareamonitor.h \
                   qnmeapositioninfosource.h \
                   qlandmark.h \
+                  qlandmark_p.h \
+                  qlandmarkid.h \
+                  qlandmarkid_p.h \
                   qlandmarkmanager.h \
                   qlandmarkfilter.h \
                   qlandmarkabstractrequest.h \
