@@ -1497,9 +1497,9 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
     QContactLocalId masterContactId; // using one master contact later for additional testing
     for( int i = 0; i < 2; i++ )
     {
-        unsigned int contactid = qHash(QString("/org/freedesktop/fake/account/") + QString::number(999998+i) + "@ovi.com");
+        unsigned int contactid = 999998+i;
         idstomerge << contactid;
-        insertContact(QString("telepathy:/org/freedesktop/fake/account/") + QString::number(999998+i) + "@ovi.com",
+        insertContact(QString("contact:") + QString::number(999998+i),
                 contactid, QString::number(999998 + i)+ "@ovi.com", "nco:presence-status-available", QString("/org/freedesktop/fake/account/%1").arg(999998+i),"ovi.com");
         QContact c = contact(contactid, QStringList()<<QContactOnlineAccount::DefinitionName);
         QVERIFY(c.localId() == contactid);
@@ -1527,7 +1527,7 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
     // expected behavior - is that master contact contains all details aggregated
     {
         QList<QContact> cons = contacts(QList<QContactLocalId> ()
-                << masterContactId << qHash(QString("/org/freedesktop/fake/account/") + QString::number(999999) + "@ovi.com"), QStringList()
+                << masterContactId << 999999, QStringList()
                 << QContactOnlineAccount::DefinitionName);
         QVERIFY(cons.size() == 1);
         QVERIFY(cons[0].id().localId() == masterContactId);
@@ -1545,10 +1545,10 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
         QVERIFY(containDetail);
     }
     //now update presence to IM Address and check it in contact (TODO and if signal is emitted)
-    updateIMContactStatus(QString("telepathy:/org/freedesktop/fake/account/") + QString::number(999999) + "@ovi.com", "nco:presence-status-offline");
+    updateIMContactStatus("telepathy:/org/freedesktop/fake/account/999999/999999@ovi.com", "nco:presence-status-offline");
     {
         QList<QContact> cons = contacts(QList<QContactLocalId> ()
-                << masterContactId << qHash(QString("/org/freedesktop/fake/account/") + QString::number(999999) + "@ovi.com"), QStringList()
+                << masterContactId << 999999, QStringList()
                 << QContactOnlineAccount::DefinitionName);
         QVERIFY(cons.size() == 1);
         QVERIFY(cons[0].id().localId() == masterContactId);
