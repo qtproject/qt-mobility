@@ -87,21 +87,11 @@ void n900accelerometer::start()
         fprintf(fd, "100\n");
     fclose(fd);
 
-    m_fd = fopen(filename, "r");
-    if (!m_fd) goto error;
-    m_notifier = new QSocketNotifier(fileno(m_fd), QSocketNotifier::Read, this);
-    connect(m_notifier, SIGNAL(activated(int)), this, SLOT(poll()));
-    //n900filebasedsensor::start();
+    n900filebasedsensor::start();
     return;
 
 error:
     sensorStopped();
-}
-
-void n900accelerometer::stop()
-{
-    delete m_notifier;
-    fclose(m_fd);
 }
 
 void n900accelerometer::poll()
@@ -109,19 +99,12 @@ void n900accelerometer::poll()
     // Note that this is a rather inefficient way to generate this data.
     // Ideally the kernel would scale the hardware's values to m/s^2 for us
     // and give us a timestamp along with that data.
-    delete m_notifier;
 
+    FILE *fd = fopen(filename, "r");
+    if (!fd) return;
     int x, y, z;
-    int rs = fscanf(m_fd, "%i %i %i", &x, &y, &z);
-    fclose(m_fd);
-    m_fd = fopen(filename, "r");
-    if (!m_fd) {
-        qWarning() << "Couldn't open file!";
-        sensorStopped();
-        return;
-    }
-    m_notifier = new QSocketNotifier(fileno(m_fd), QSocketNotifier::Read, this);
-    connect(m_notifier, SIGNAL(activated(int)), this, SLOT(poll()));
+    int rs = fscanf(fd, "%i %i %i", &x, &y, &z);
+    fclose(fd);
     if (rs != 3) return;
 
     // Convert from milli-Gs to meters per second per second
@@ -136,6 +119,5 @@ void n900accelerometer::poll()
     m_reading.setZ(az);
 
     newReadingAvailable();
-    //m_notifier->setEnabled(true);
 }
 
