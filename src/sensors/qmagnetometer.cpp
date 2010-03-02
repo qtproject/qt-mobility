@@ -309,8 +309,8 @@ const char *QMagnetometer::type("QMagnetometer");
     \property QMagnetometer::returnCalibratedValues
     \brief a value indicating if calibrated magnetometer values should be returned.
 
-    Set to true to return raw magnetometer values.
-    Set to false to suppress raw magnetometer values.
+    Set to true to return calibrated magnetometer values.
+    Set to false to suppress calibrated magnetometer values.
 
     Note that you must access this property via QObject::property() and QObject::setProperty().
     The property must be set before calling start().
