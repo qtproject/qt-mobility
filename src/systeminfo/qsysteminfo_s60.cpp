@@ -576,6 +576,11 @@ void QSystemNetworkInfoPrivate::cellNetworkStatusChanged()
     emit networkStatusChanged(mode, networkStatus(mode));
 }
 
+QSystemNetworkInfo::NetworkMode QSystemDisplayInfoPrivate::currentMode()
+{
+    return QSystemNetworkInfo::UnknownMode;
+}
+
 //////// QSystemDisplayInfo
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
     : QObject(parent)

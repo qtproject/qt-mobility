@@ -1272,6 +1272,10 @@ bool QSystemNetworkInfoPrivate::isDefaultMode(QSystemNetworkInfo::NetworkMode mo
     return isDefaultGateway;
 }
 
+QSystemNetworkInfo::NetworkMode QSystemDisplayInfoPrivate::currentMode()
+{
+    return QSystemNetworkInfo::UnknownMode;
+}
 
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
         : QObject(parent)

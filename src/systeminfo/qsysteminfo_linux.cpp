@@ -527,6 +527,11 @@ QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
     return QString();
 }
 
+QSystemNetworkInfo::NetworkMode QSystemDisplayInfoPrivate::currentMode()
+{
+    return QSystemNetworkInfo::UnknownMode;
+}
+
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent)
         : QSystemDisplayInfoLinuxCommonPrivate(parent)
 {

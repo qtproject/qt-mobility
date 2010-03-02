@@ -133,6 +133,8 @@ private:
     QString getNmNetName(QSystemNetworkInfo::NetworkMode mode);
 
     inline QSystemNetworkInfo::NetworkMode deviceTypeToMode(quint32 type);
+    QSystemNetworkInfo::NetworkMode currentMode();
+
 #endif
     QString getSysNetName(QSystemNetworkInfo::NetworkMode mode);
 
