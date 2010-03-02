@@ -125,8 +125,7 @@ void QTrackerRelationshipSaveRequest::mergeContacts(const Live<nco::PersonContac
    QList<LiveNode> mergedNodes = preferedContact->getHasIMAddresss();
    mergedNodes += inferiorContact->getHasIMAddresss();
    preferedContact->setHasIMAddresss( mergedNodes );
-   RDFVariable rdfInferior = inferiorContact->iri();
-   ::tracker()->removeResources(rdfInferior);
+   inferiorContact->remove();
 }
 
 void QTrackerRelationshipSaveRequest::commitFinished()
