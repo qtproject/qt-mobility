@@ -57,6 +57,9 @@ public:
     QIODevice *device() const;
     void setDevice(QIODevice *device);
 
+    QString fileName() const;
+    void setFileName(const QString &fileName);
+
     QLandmarkManager::Format format() const;
     void setFormat(QLandmarkManager::Format format);
 

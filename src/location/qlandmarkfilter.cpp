@@ -49,30 +49,38 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QLandmarkFilter
-    \brief The QLandmarkFilter class is used to select landmarks made available
-    through QLandmarkManager.
+    \brief The QLandmarkFilter class is used to select landmarks.
     \ingroup location
 
-    This class is used as a parameter to various functions offered by
-    QLandmarkManager, to allow selection of landmarks which have certain
-    details or properties.
+    This class is used as a parameter to search for landmarks using
+    QLandmarkManager::landmarkIds() or a QLandmarkIdFetchRequest.  It allows
+    selection of landmarks which meet certain criteria.
+
+
+    The QLandmarkFilter is primarily intended to serve as the base class
+    for all filter types.  However it also has the type of a QLandmark::DefaultFilter,
+    and may thus be used as a filter to match all landmarks.
+
+    If the existing collection of filter types is not sufficient then
+    custom filter should be created by inheriting from QLandmarkCustomFilter.
 */
 
 /*!
     \enum QLandmarkFilter::FilterType
     Describes the type of the filter
-    \value InvalidFilter, An invalid filter which matches nothing
+    \value LandmarkInvalidFilter, An invalid filter which matches nothing
     \value LandmarkNameFilter A filter which matches landmarks based on name
     \value LandmarkProximityFilter A filter which matches landmarks within a certain range of a given
            coordinate.
     \value LandmarkNearestFilter A filter which matches a landmark closest to a given coordinate.
     \value LandmarkCategoryFilter A filter which matches landmarks that belong to a given category
     \value LandmarkBoxFilter A filter which matches landmarks within a given bounding box.
+    \value LandmarkDefaultFilter A filter which matches all landmarks.
     \value LandmarkCustomFilter A filter which matches landmarks based on a custom made algorithm.
 */
 
 /*!
-    Constructs an empty filter
+    Constructs an default landmark filter.
 */
 QLandmarkFilter::QLandmarkFilter()
 {
@@ -80,7 +88,7 @@ QLandmarkFilter::QLandmarkFilter()
 }
 
 /*!
-    Destroys the filter
+    Destroys the filter.
 */
 QLandmarkFilter::~QLandmarkFilter()
 {
@@ -88,17 +96,17 @@ QLandmarkFilter::~QLandmarkFilter()
 }
 
 /*!
-    Returns the type of the filter
+    Returns the type of the filter.
 */
 QLandmarkFilter::FilterType QLandmarkFilter::type() const
 {
-    return QLandmarkFilter::InvalidFilter;
+    return QLandmarkFilter::LandmarkInvalidFilter;
 }
 
 /*!
     Returns the maximum number of matches this filter will make.
 */
-int QLandmarkFilter::maxMatches() const
+int QLandmarkFilter::maximumMatches() const
 {
     return 0;
 }
@@ -107,7 +115,7 @@ int QLandmarkFilter::maxMatches() const
     Set the maximum number of matches this filter will make
     to \a maxMatches.
 */
-void QLandmarkFilter::setMaxMatches(int maxMatches)
+void QLandmarkFilter::setMaximumMatches(int maxMatches)
 {
     //TODO: implement
 }
@@ -122,7 +130,7 @@ bool QLandmarkFilter::operator!=(const QLandmarkFilter &other) const
 }
 
 /*!
-    Returns true if the filter has the same type and criteria as \a other
+    Returns true if the filter has the same type and criteria as \a other.
 */
 bool QLandmarkFilter::operator==(const QLandmarkFilter &other) const
 {
@@ -130,7 +138,7 @@ bool QLandmarkFilter::operator==(const QLandmarkFilter &other) const
 }
 
 /*!
-    Assigns \a other to this filter and returns a reference to this filter
+    Assigns \a other to this filter and returns a reference to this filter.
 */
 QLandmarkFilter &QLandmarkFilter::operator=(const QLandmarkFilter &other)
 {
@@ -151,7 +159,7 @@ QLandmarkNameFilter::QLandmarkNameFilter(const QString &name)
 }
 
 /*!
-    Destroys the filter
+    Destroys the filter.
 */
 QLandmarkNameFilter::~QLandmarkNameFilter()
 {
@@ -172,7 +180,6 @@ QString QLandmarkNameFilter::name()
 void QLandmarkNameFilter::setName(const QString &name)
 {
 }
-
 
 /*!
     \class QLandmarkProximityFilter
@@ -350,15 +357,20 @@ bool QLandmarkCustomFilter::isMatch(const QLandmarkId &landmarkId)
     \brief The QLandmarkSortOrder class defines how a list of landmarks
     should be ordered according to some criteria.
     \ingroup location
+
+    A QLandmarkSortOrder serves as a base class for various
+    sort orders.  If none of the pre-existing sort orders
+    is sufficient then custom filter should be created by
+    inheriting from QLandmarkCustomSort.
 */
 
 /*!
     \enum QLandmarkSortOrder::SortType
     Defines the type of sort order.
-    \value LandmarkNameFilter   Sorts landmarks by name.
-    \value LandmarkDistanceFilter   Sorts landmarks by distance from a particular
+    \value LandmarkNameSort   Sorts landmarks by name.
+    \value LandmarkDistanceSort   Sorts landmarks by distance from a particular
            coordinate.
-    \value LandmarkCustomFilter Is a custom sorting filter.
+    \value LandmarkCustomSort Is a custom sort order.
 */
 
 /*!
@@ -446,13 +458,13 @@ QList<QLandmarkId> QLandmarkNameSort::sort(const QList<QLandmarkId> &landmarkIds
 /*!
     \class QLandmarkDistanceSort
     \brief The QLandmarkDistanceSort class is used to sort landmarks by distance
-    from a central coordinate.
+    from a given coordinate.
     \ingroup location
 */
 // ----- QLandmarkDistanceSort -----
 
 /*!
-    Creates a sort order that sorts landmarks by distance from a central \a coordinate.
+    Creates a sort order that sorts landmarks by distance from a given \a coordinate.
     If the \a direction is Qt::Ascending, it means that landmarks are listed in
     increasing order of distance.
 */
@@ -470,7 +482,7 @@ QLandmarkDistanceSort::~QLandmarkDistanceSort()
 }
 
 /*!
-    Returns the central coordinate of the sort order
+    Returns the coordinate to sort distances from.
 */
 QGeoCoordinate QLandmarkDistanceSort::coordinate() const
 {
@@ -478,11 +490,12 @@ QGeoCoordinate QLandmarkDistanceSort::coordinate() const
 }
 
 /*!
-    Sets the central \a coordinate of the sort order.
+    Sets the \a coordinate to sort distances from.
 */
 void QLandmarkDistanceSort::setCoordinate(const QGeoCoordinate &coordinate)
 {
 }
+
 /*!
     \reimp
 */
@@ -494,7 +507,6 @@ int QLandmarkDistanceSort::compare(const QLandmark &l1, const QLandmark &l2) con
 /*!
     \reimp
 */
-
 QList<QLandmarkId> QLandmarkDistanceSort::sort(const QList<QLandmarkId> &landmarkIds) const
 {
     return QList<QLandmarkId>();

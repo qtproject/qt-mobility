@@ -85,6 +85,28 @@ void QLandmarkImportRequest::setDevice(QIODevice *device)
 {
 }
 
+/*!
+    If the currently assigned device is a QFile, or if setFileName() has
+    been called, this function returns the name of the file to be
+    read from.  In all other cases, it returns an empty string.
+
+    \sa setFileName(), setDevice()
+*/
+QString QLandmarkImportRequest::fileName() const
+{
+    return QString();
+}
+
+/*!
+    Sets the name of the file to be read from to \a fileName.  Internally,
+    QLandmarkExportRequest will create a QFile and open it in
+    QIODevice::WriteOnly mode, and use this file to export to.
+
+    \sa fileName(), setDevice()
+*/
+void QLandmarkImportRequest::setFileName(const QString &fileName)
+{
+}
 
 /*!
     Returns the expected data format for the import operation.

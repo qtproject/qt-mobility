@@ -61,16 +61,17 @@ class QLandmarkFilterPrivate;
 class Q_LOCATION_EXPORT QLandmarkFilter
 {
 public:
-    enum FilterType{InvalidFilter, LandmarkNameFilter, LandmarkProximityFilter,
-                    LandmarkNearestFilter, LandmarkCategoryFilter, LandmarkBoxFilter,
-                    LandmarkCustomFilter =500};
+    enum FilterType{LandmarkInvalidFilter, LandmarkDefaultFilter,
+                    LandmarkNameFilter, LandmarkProximityFilter,
+                    LandmarkNearestFilter, LandmarkCategoryFilter,
+                    LandmarkBoxFilter,LandmarkCustomFilter =500};
     QLandmarkFilter();
     ~QLandmarkFilter();
 
     FilterType type() const;
 
-    int maxMatches() const;
-    void setMaxMatches(int maxMatches);
+    int maximumMatches() const;
+    void setMaximumMatches(int maxMatches);
 
     bool operator!=(const QLandmarkFilter &other) const;
     bool operator==(const QLandmarkFilter &other) const;
@@ -155,13 +156,13 @@ class Q_LOCATION_EXPORT QLandmarkSortOrder
 {
 
 public:
-    enum SortType{LandmarkNameFilter, LandmarkDistanceFilter, LandmarkCustomFilter=500};
+    enum SortType{LandmarkNameSort, LandmarkDistanceSort, LandmarkCustomSort=500};
 
     SortType type() const;
     Qt::SortOrder direction() const;
     void setDirection(Qt::SortOrder direction);
-    virtual int compare(const QLandmark &l1, const QLandmark &l2) const= 0;
-    virtual QList<QLandmarkId> sort(const QList<QLandmarkId> &landmarkIds) const= 0;
+    virtual int compare(const QLandmark &l1, const QLandmark &l2) const;
+    virtual QList<QLandmarkId> sort(const QList<QLandmarkId> &landmarkIds) const;
 protected:
     QLandmarkSortOrder();
 private:

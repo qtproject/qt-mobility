@@ -232,10 +232,10 @@ QLandmark QLandmarkManager::landmark(const QLandmarkId &landmarkId)
 
 /*!
     Returns a list of landmark ids that match the given \a filter, sorted
-    according to the given \a sortOrder.
+    according to the given \a sortOrders.
 */
 QList<QLandmarkId> QLandmarkManager::landmarkIds( const QLandmarkFilter &filter,
-                            const QLandmarkSortOrder &sortOrder) const
+                            const QList<QLandmarkSortOrder> &sortOrders) const
 {
     return QList<QLandmarkId>(); //TODO: implement
 }
@@ -254,6 +254,19 @@ bool QLandmarkManager::importLandmarks(QIODevice *device, Format format)
 }
 
 /*!
+    Convenience function that will read landmarks from \a fileName in
+    the expected \a format.  Internally a QFile is opened with
+    QIODevice::ReadOnly permissions.
+
+    Returns true if all landmarks could be imported, otherwise
+    returns false.  It may be possible that only a subset of landmarks
+    are imported.
+*/
+bool QLandmarkManager::importLandmarks(const QString &fileName, Format format)
+{
+}
+
+/*!
     Writes landmarks to the given \a device.  The landmarks will be written
     according to the specified \a format.  If  \a landmarkIds is empty, then
     all landmarks will be exported, otherwise only those landmarks that
@@ -266,6 +279,20 @@ bool QLandmarkManager::importLandmarks(QIODevice *device, Format format)
 bool QLandmarkManager::exportLandmarks(QIODevice *device, Format format, QList<QLandmarkId> landmarkIds)
 {
     return false; //TODO: implement
+}
+
+/*!
+    Convenience function that will write landmarks to \a fileName in the expected
+    \a format. Internally a QFile is opened with QIODevice::WriteOnly permissions.
+    If \a landmarkIds is empty, then all landmarks will be exported, otherwise
+    only those landmarks that match \a landmarkIds will be exported.
+
+    Returns true if all specified landmarks were successfully exported,
+    otherwise returns false.  It may be possible that only a subset
+    of landmarks are exported.
+*/
+bool QLandmarkManager::exportLandmarks(const QString &fileName, Format format, QList<QLandmarkId> landmarkIds)
+{
 }
 
 /*!
