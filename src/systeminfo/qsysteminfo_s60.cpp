@@ -67,7 +67,6 @@
 
 QTM_BEGIN_NAMESPACE
 
-//////// QSystemInfo
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
     : QObject(parent)
 {
@@ -301,7 +300,6 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     return isFeatureSupported;
 }
 
-//////// QSystemNetworkInfo
 QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
     : QObject(parent)
 {
@@ -516,52 +514,28 @@ void QSystemNetworkInfoPrivate::networkCodeChanged()
 
 void QSystemNetworkInfoPrivate::networkNameChanged()
 {
-    QSystemNetworkInfo::NetworkMode mode = QSystemNetworkInfo::UnknownMode;
-    CTelephony::TNetworkMode networkMode = DeviceInfo::instance()->cellNetworkInfo()->networkMode();
-    switch (networkMode) {
-        case CTelephony::ENetworkModeGsm: mode = QSystemNetworkInfo::GsmMode; break;
-        case CTelephony::ENetworkModeCdma95:
-        case CTelephony::ENetworkModeCdma2000: mode = QSystemNetworkInfo::CdmaMode; break;
-        case CTelephony::ENetworkModeWcdma: mode = QSystemNetworkInfo::WcdmaMode; break;
-        default:
-            break;
-    }
-    emit networkNameChanged(mode, DeviceInfo::instance()->cellNetworkInfo()->networkName());
+    emit networkNameChanged(currentMode(), DeviceInfo::instance()->cellNetworkInfo()->networkName());
 }
 
 void QSystemNetworkInfoPrivate::networkModeChanged()
 {
-    QSystemNetworkInfo::NetworkMode newMode = QSystemNetworkInfo::UnknownMode;
-    CTelephony::TNetworkMode networkMode = DeviceInfo::instance()->cellNetworkInfo()->networkMode();
-    switch (networkMode) {
-        case CTelephony::ENetworkModeGsm: newMode = QSystemNetworkInfo::GsmMode; break;
-        case CTelephony::ENetworkModeCdma95:
-        case CTelephony::ENetworkModeCdma2000: newMode = QSystemNetworkInfo::CdmaMode; break;
-        case CTelephony::ENetworkModeWcdma: newMode = QSystemNetworkInfo::WcdmaMode; break;
-        default:
-            break;
-    }
-    emit networkModeChanged(newMode);
+    emit networkModeChanged(currentMode());
 }
 
 void QSystemNetworkInfoPrivate::cellNetworkSignalStrengthChanged()
 {
-    QSystemNetworkInfo::NetworkMode mode = QSystemNetworkInfo::UnknownMode;
-    CTelephony::TNetworkMode networkMode = DeviceInfo::instance()->cellNetworkInfo()->networkMode();
-    switch (networkMode) {
-        case CTelephony::ENetworkModeGsm: mode = QSystemNetworkInfo::GsmMode; break;
-        case CTelephony::ENetworkModeCdma95:
-        case CTelephony::ENetworkModeCdma2000: mode = QSystemNetworkInfo::CdmaMode; break;
-        case CTelephony::ENetworkModeWcdma: mode = QSystemNetworkInfo::WcdmaMode; break;
-        default:
-            break;
-    }
-    emit networkSignalStrengthChanged(mode,
+    emit networkSignalStrengthChanged(currentMode(),
         DeviceInfo::instance()->cellSignalStrenghtInfo()->cellNetworkSignalStrength());
 }
 
 void QSystemNetworkInfoPrivate::cellNetworkStatusChanged()
 {
+    QSystemNetworkInfo::NetworkMode mode = currentMode();
+    emit networkStatusChanged(mode, networkStatus(mode));
+}
+
+QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
+{
     QSystemNetworkInfo::NetworkMode mode = QSystemNetworkInfo::UnknownMode;
     CTelephony::TNetworkMode networkMode = DeviceInfo::instance()->cellNetworkInfo()->networkMode();
     switch (networkMode) {
@@ -572,16 +546,9 @@ void QSystemNetworkInfoPrivate::cellNetworkStatusChanged()
         default:
             break;
     }
-
-    emit networkStatusChanged(mode, networkStatus(mode));
+    return mode;
 }
 
-QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
-{
-    return QSystemNetworkInfo::UnknownMode;
-}
-
-//////// QSystemDisplayInfo
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
     : QObject(parent)
 {
@@ -642,7 +609,6 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
     return depth;
 }
 
-//////// QSystemStorageInfo
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
     : QObject(parent)
 {
@@ -747,8 +713,6 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
     return QSystemStorageInfo::NoDrive;
 };
 
-
-//////// QSystemDeviceInfo
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
     : QObject(parent), m_profileEngine(NULL), m_proEngNotifyHandler(NULL),
     m_bluetoothRepository(NULL), m_bluetoothNotifyHandler(NULL)
@@ -1008,7 +972,6 @@ void QSystemDeviceInfoPrivate::powerStateChanged()
 
 DeviceInfo *DeviceInfo::m_instance = NULL;
 
-//////// QSystemScreenSaver
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
     : QObject(parent), m_screenSaverInhibited(false)
 {
