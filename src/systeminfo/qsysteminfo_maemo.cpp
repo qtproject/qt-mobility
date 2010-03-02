@@ -345,7 +345,7 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
     return QNetworkInterface();
 }
 
-QSystemNetworkInfo::NetworkMode QSystemDisplayInfoPrivate::currentMode()
+QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 {
     return QSystemNetworkInfo::UnknownMode;
 }

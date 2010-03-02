@@ -1272,8 +1272,22 @@ bool QSystemNetworkInfoPrivate::isDefaultMode(QSystemNetworkInfo::NetworkMode mo
     return isDefaultGateway;
 }
 
-QSystemNetworkInfo::NetworkMode QSystemDisplayInfoPrivate::currentMode()
+QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 {
+    QList <QSystemNetworkInfo::NetworkMode> modeList;
+    modeList << QSystemNetworkInfo::GsmMode
+            << QSystemNetworkInfo::CdmaMode
+            << QSystemNetworkInfo::WcdmaMode
+            << QSystemNetworkInfo::WlanMode
+            << QSystemNetworkInfo::EthernetMode
+            << QSystemNetworkInfo::BluetoothMode
+            << QSystemNetworkInfo::WimaxMode;
+
+    for (int i = 0; i < modeList.size(); ++i) {
+        if ( isDefaultMode(modeList.at(i)))
+            return modeList.at(i);
+    }
+
     return QSystemNetworkInfo::UnknownMode;
 }
 

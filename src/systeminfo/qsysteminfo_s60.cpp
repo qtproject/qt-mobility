@@ -106,7 +106,7 @@ QStringList QSystemInfoPrivate::availableLanguages() const
 QString QSystemInfoPrivate::TLanguageToISO639_1(TLanguage language) const
 {
     switch (language) {
-        case ELangAmerican: 
+        case ELangAmerican:
         case ELangCanadianEnglish:
         case ELangInternationalEnglish:
         case ELangSouthAfricanEnglish:
@@ -331,7 +331,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
             if (networkMode == CTelephony::ENetworkModeGsm && mode != QSystemNetworkInfo::GsmMode)
                 return QSystemNetworkInfo::NoNetworkAvailable;
 
-            if ((networkMode == CTelephony::ENetworkModeCdma95 || networkMode == CTelephony::ENetworkModeCdma2000) && 
+            if ((networkMode == CTelephony::ENetworkModeCdma95 || networkMode == CTelephony::ENetworkModeCdma2000) &&
                 mode != QSystemNetworkInfo::CdmaMode)
                 return QSystemNetworkInfo::NoNetworkAvailable;
 
@@ -372,7 +372,7 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
             if (networkMode == CTelephony::ENetworkModeGsm && mode != QSystemNetworkInfo::GsmMode)
                 return -1;
 
-            if ((networkMode == CTelephony::ENetworkModeCdma95 || networkMode == CTelephony::ENetworkModeCdma2000) && 
+            if ((networkMode == CTelephony::ENetworkModeCdma95 || networkMode == CTelephony::ENetworkModeCdma2000) &&
                 mode != QSystemNetworkInfo::CdmaMode)
                 return -1;
 
@@ -438,7 +438,7 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
             if (networkMode == CTelephony::ENetworkModeGsm && mode != QSystemNetworkInfo::GsmMode)
                 return QString();
 
-            if ((networkMode == CTelephony::ENetworkModeCdma95 || networkMode == CTelephony::ENetworkModeCdma2000) && 
+            if ((networkMode == CTelephony::ENetworkModeCdma95 || networkMode == CTelephony::ENetworkModeCdma2000) &&
                 mode != QSystemNetworkInfo::CdmaMode)
                 return QString();
 
@@ -481,7 +481,7 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
         {
             TBuf<20> bluetoothAddr;
             TPckgBuf<TBTDevAddr> bluetoothAddrPckg;
-            if (RProperty::Get(KUidSystemCategory, 
+            if (RProperty::Get(KUidSystemCategory,
                 KPropertyKeyBluetoothGetLocalDeviceAddress, bluetoothAddrPckg) == KErrNone) {
                 bluetoothAddrPckg().GetReadable(bluetoothAddr, KNullDesC, _L(":"), KNullDesC);
                 address = QString::fromUtf16(bluetoothAddr.Ptr(), bluetoothAddr.Length());
@@ -576,7 +576,7 @@ void QSystemNetworkInfoPrivate::cellNetworkStatusChanged()
     emit networkStatusChanged(mode, networkStatus(mode));
 }
 
-QSystemNetworkInfo::NetworkMode QSystemDisplayInfoPrivate::currentMode()
+QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 {
     return QSystemNetworkInfo::UnknownMode;
 }
@@ -638,7 +638,7 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
         }
         CleanupStack::PopAndDestroy(2, &ws);
     )
-    
+
     return depth;
 }
 
@@ -737,7 +737,7 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
     } else if (driveInfo.iType == EMediaCdRom) {
         return QSystemStorageInfo::CdromDrive;
     }
-    
+
     if (driveInfo.iDriveAtt & KDriveAttInternal) {
         return QSystemStorageInfo::InternalDrive;
     } else if (driveInfo.iDriveAtt & KDriveAttRemovable) {
@@ -984,10 +984,10 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
 void QSystemDeviceInfoPrivate::batteryLevelChanged()
 {
     emit batteryLevelChanged(batteryLevel());
-    
+
     int batteryLevel = DeviceInfo::instance()->batteryInfo()->batteryLevel();
     QSystemDeviceInfo::BatteryStatus status(batteryStatus());
-    
+
     if(batteryLevel < 4 && status != QSystemDeviceInfo::BatteryCritical) {
         emit batteryStatusChanged(QSystemDeviceInfo::BatteryCritical);
     } else if (batteryLevel < 11 && status != QSystemDeviceInfo::BatteryVeryLow) {
