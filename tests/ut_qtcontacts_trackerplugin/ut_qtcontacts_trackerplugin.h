@@ -139,7 +139,6 @@ public:
 public slots:
     void progress(QContactLocalIdFetchRequest* self, bool appendOnly);
     void progress(QContactFetchRequest* self, bool appendOnly);
-private:
-    QString requestStatusToString(QContactAbstractRequest::Status status);
+
 };
 #endif

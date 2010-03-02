@@ -1783,22 +1783,4 @@ void Slots::progress(QContactFetchRequest* self, bool appendOnly)
     }
 }
 
-QString Slots::requestStatusToString(QContactAbstractRequest::Status status)
-{
-    switch (status) {
-        case QContactAbstractRequest::Inactive:
-            return "Inactive";
-        case QContactAbstractRequest::Active:
-            return "Active";
-        case QContactAbstractRequest::Cancelling:
-            return "Cancelling";
-        case QContactAbstractRequest::Cancelled:
-            return "Cancelled";
-        case QContactAbstractRequest::Finished:
-            return "Finished";
-        default:
-            return QString::number((int)status);
-    }
-}
-
 QTEST_MAIN(ut_qtcontacts_trackerplugin)
