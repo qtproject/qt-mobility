@@ -96,7 +96,8 @@ Q_SIGNALS:
 private:
     QTimer *langTimer;
     QString langCached;
-private Q_SLOTS:
+
+protected Q_SLOTS:
     void startLanguagePolling();
 
 protected:
@@ -138,8 +139,8 @@ public:
     virtual QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
     virtual QSystemNetworkInfo::NetworkMode currentMode();
 
-public Q_SLOTS:
-    void getPrimaryMode();
+//public Q_SLOTS:
+//    void getPrimaryMode();
 
 Q_SIGNALS:
    void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
@@ -154,8 +155,8 @@ protected:
     int getBluetoothRssi();
     QString getBluetoothInfo(const QString &file);
     bool isDefaultInterface(const QString &device);
-    QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
 #endif
+    QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
 
 };
 
@@ -232,7 +233,7 @@ protected:
     void setupBluetooth();
 
 private Q_SLOTS:
-    void halChanged(int,QVariantList);
+    virtual void halChanged(int,QVariantList);
     void bluezPropertyChanged(const QString&, QDBusVariant);
 #endif
 };

@@ -72,6 +72,7 @@ const ConversionLookup presenceConversion(ConversionLookup()
             <<QPair<QString, QString>("presence-status-busy", QContactOnlineAccount::PresenceBusy)
             <<QPair<QString, QString>("presence-status-unknown", QContactOnlineAccount::PresenceUnknown)
             <<QPair<QString, QString>("presence-status-hidden", QContactOnlineAccount::PresenceHidden)
+            <<QPair<QString, QString>("presence-status-dnd", QContactOnlineAccount::PresenceBusy)
 );
 
 void matchPhoneNumber(RDFVariable &variable, QContactDetailFilter &filter)
@@ -106,6 +107,34 @@ void matchPhoneNumber(RDFVariable &variable, QContactDetailFilter &filter)
     variable.isMemberOf(RDFVariableList()<<homeContact);// TODO report bug doesnt work in tracker <<officeContact);
 }
 
+void matchOnlineAccount(RDFVariable &variable, QContactDetailFilter &filter)
+{
+    if ((filter.matchFlags() & QContactFilter::MatchExactly) == QContactFilter::MatchExactly)
+    {
+        if (filter.detailFieldName() == "Account" || filter.detailFieldName() == QContactOnlineAccount::FieldAccountUri)
+        {
+            variable.property<nco::imContactId> ().isMemberOf(QStringList() << filter.value().toString());
+        }
+        else if (filter.detailFieldName() == FieldAccountPath)
+        {
+            // as it uses telepathy:account path
+            variable.property<nco::fromIMAccount>().equal(QUrl(QString("telepathy:")+filter.value().toString()));
+        }
+        else if (filter.detailFieldName() == QContactOnlineAccount::FieldServiceProvider)
+        {
+            variable.property<nco::fromIMAccount>().property<nco::imDisplayName> ().isMemberOf(QStringList() << filter.value().toString());
+        }
+        else
+            qWarning() << "QTrackerContactFetchRequest," << __FUNCTION__
+                    << "Unsupported detail filter by QContactOnlineAccount.";
+    }
+    else
+    {
+        qWarning() << "QTrackerContactFetchRequest," << __FUNCTION__
+                << "Unsupported match flag in detail filter by QContactOnlineAccount. Use QContactFilter::MatchExactly";
+    }
+}
+
 void matchName(RDFVariable &variable, QContactDetailFilter &filter)
 {
     if (filter.detailDefinitionName() != QContactName::DefinitionName) {
@@ -138,7 +167,7 @@ void matchName(RDFVariable &variable, QContactDetailFilter &filter)
  * This method translates QContactFilter to tracker rdf filter. When query is made
  * after this method, it would return only contacts that fit the filter.
  */
-void QTrackerContactFetchRequest::applyFilterToContact(RDFVariable &variable,
+QContactManager::Error QTrackerContactFetchRequest::applyFilterToContact(RDFVariable &variable,
         const QContactFilter &filter)
 {
     if (filter.type() == QContactFilter::LocalIdFilter) {
@@ -147,6 +176,7 @@ void QTrackerContactFetchRequest::applyFilterToContact(RDFVariable &variable,
             variable.property<nco::contactUID>().isMemberOf(filt.ids());
         } else {
             qWarning() << Q_FUNC_INFO << "QContactLocalIdFilter idlist is empty";
+            return QContactManager::BadArgumentError;
         }
     } else if (filter.type() == QContactFilter::ContactDetailFilter) {
         // this one is tricky as we need to match in contacts or in affiliations
@@ -155,6 +185,10 @@ void QTrackerContactFetchRequest::applyFilterToContact(RDFVariable &variable,
         if ( QContactPhoneNumber::DefinitionName == filt.detailDefinitionName()
              && QContactPhoneNumber::FieldNumber == filt.detailFieldName()) {
             matchPhoneNumber(variable, filt);
+        }
+        else if(QContactOnlineAccount::DefinitionName == filt.detailDefinitionName())
+        {
+            matchOnlineAccount(variable, filt);
         }
         else if (QContactName::DefinitionName == filt.detailDefinitionName()) {
             matchName(variable, filt);
@@ -165,26 +199,26 @@ void QTrackerContactFetchRequest::applyFilterToContact(RDFVariable &variable,
                 RDFVariable rdfEmailAddress;
                 rdfEmailAddress = variable.property<nco::hasEmailAddress>();
                 rdfEmailAddress.property<nco::emailAddress>() = LiteralValue(filt.value().toString());
-            } else if (QContactOnlineAccount::DefinitionName == filt.detailDefinitionName()
-                       && filt.detailFieldName() == "Account") {
-                qDebug() << Q_FUNC_INFO;
-                RDFVariable imaccount = variable.property<nco::hasIMAccount>();
-                imaccount.property<nco::imID>().isMemberOf(QStringList()<<filt.value().toString());
             } else {
-                qWarning() << "QContactTrackerEngine: Unsupported QContactFilter::ContactDetail"
+                qWarning() << __PRETTY_FUNCTION__ << "QContactTrackerEngine: Unsupported QContactFilter::ContactDetail"
                     << filt.detailDefinitionName();
+                return QContactManager::NotSupportedError;
             }
         }
-    } else if (filter.type() == QContactFilter::ChangeLogFilter) {
+    }
+    else if (filter.type() == QContactFilter::ContactDetailRangeFilter)
+    {
+        return applyDetailRangeFilterToContact(variable, filter);
+    }
+    else if (filter.type() == QContactFilter::ChangeLogFilter) {
         const QContactChangeLogFilter& clFilter = static_cast<const QContactChangeLogFilter&>(filter);
         // do not return facebook and telepathy contacts here
         // it is a temp implementation for the what to offer to synchronization constraint
         variable.property<nao::hasTag>().property<nao::prefLabel>() = LiteralValue("addressbook");
 
         if (clFilter.eventType() == QContactChangeLogFilter::EventRemoved) { // Removed since
-            // did not find how to set errror to async request
-            // error = QContactManager::NotSupportedError;
             qWarning() << "QContactTrackerEngine: Unsupported QContactChangeLogFilter::Removed (contacts removed since)";
+            return QContactManager::NotSupportedError;
         } else if (clFilter.eventType() == QContactChangeLogFilter::EventAdded) { // Added since
             variable.property<nie::contentCreated>() >= LiteralValue(clFilter.since().toString(Qt::ISODate));
         } else if (clFilter.eventType() == QContactChangeLogFilter::EventChanged) { // Changed since
@@ -193,10 +227,44 @@ void QTrackerContactFetchRequest::applyFilterToContact(RDFVariable &variable,
     } else if (filter.type() == QContactFilter::UnionFilter) {
         const QContactUnionFilter unionFilter(filter);
         foreach (QContactFilter f, unionFilter.filters()) {
-            applyFilterToContact(variable, f);
+            QContactManager::Error error = applyFilterToContact(variable, f);
+            if (QContactManager::NoError != error)
+                return error;
         }
     }
+    else if(filter.type() == QContactFilter::InvalidFilter || filter.type() == QContactFilter::DefaultFilter)
+        return QContactManager::NoError;
+    else
+        return QContactManager::NotSupportedError;
+    return QContactManager::NoError;
 }
+
+//!\sa applyFilterToContact
+QContactManager::Error QTrackerContactFetchRequest::applyDetailRangeFilterToContact(RDFVariable &variable, const QContactFilter &filter)
+{
+    Q_ASSERT(filter.type() == QContactFilter::ContactDetailRangeFilter);
+    if (filter.type() == QContactFilter::ContactDetailRangeFilter) {
+        QContactDetailRangeFilter filt = filter;
+        // birthday range
+        if (QContactBirthday::DefinitionName == filt.detailDefinitionName()
+                && QContactBirthday::FieldBirthday == filt.detailFieldName())
+        {
+            RDFVariable time = variable.property<nco::birthDate>();
+            if (filt.rangeFlags() & QContactDetailRangeFilter::IncludeUpper)
+                time <= LiteralValue(filt.maxValue().toDateTime().toString(Qt::ISODate));
+            else
+                time < LiteralValue(filt.maxValue().toDateTime().toString(Qt::ISODate));
+            if (filt.rangeFlags() & QContactDetailRangeFilter::ExcludeLower)
+                time > LiteralValue(filt.minValue().toDateTime().toString(Qt::ISODate));
+            else
+                time >= LiteralValue(filt.minValue().toDateTime().toString(Qt::ISODate));
+            return QContactManager::NoError;
+        }
+    }
+    qWarning() << __PRETTY_FUNCTION__ << "Unsupported detail range filter";
+    return QContactManager::NotSupportedError;
+}
+
 
 /*
  * To understand why all the following methods have for affiliation param, check nco ontology:
@@ -244,18 +312,39 @@ RDFSelect prepareEmailAddressesQuery(RDFVariable &rdfcontact1, bool forAffiliati
     return queryidsnumbers;
 }
 
-RDFSelect prepareIMContactsQuery(RDFVariable &imcontact)
+RDFSelect prepareIMContactsQuery(RDFVariable  &imcontact )
 {
     // columns
-    RDFSelect queryidsimaccounts;
-    queryidsimaccounts.addColumn("contactId", imcontact.property<nco::contactUID> ());
+    RDFSelect queryidsimacccounts;
+    imcontact = queryidsimacccounts.newColumn<nco::IMContact>("contact");
+    queryidsimacccounts.groupBy(imcontact);
+    queryidsimacccounts.addColumn("contactId", imcontact.property<nco::contactUID> ());
 
-    queryidsimaccounts.addColumn("IMId", imcontact.property<nco::imContactId> ());
-    queryidsimaccounts.addColumn("status", imcontact.optional().property<nco::imContactPresence> ());
-    queryidsimaccounts.addColumn("message", imcontact.optional().property<nco::imContactStatusMessage> ());
-    queryidsimaccounts.addColumn("nick", imcontact.optional().property<nco::imContactNickname> ());
-    queryidsimaccounts.addColumn("type", imcontact.optional().property<nco::fromIMAccount> ());
-    queryidsimaccounts.addColumn("metacontact", imcontact.optional().property<nco::metacontact>());
+    queryidsimacccounts.addColumn("IMId", imcontact.property<nco::imContactId> ());
+    queryidsimacccounts.addColumn("status", imcontact.optional().property<nco::imContactPresence> ());
+    queryidsimacccounts.addColumn("message", imcontact.optional().property<nco::imContactStatusMessage> ());
+    queryidsimacccounts.addColumn("nick", imcontact.optional().property<nco::imContactNickname> ());
+    queryidsimacccounts.addColumn("type", imcontact.optional().property<nco::fromIMAccount> ());
+    queryidsimacccounts.addColumn("capabilities",
+                imcontact.optional().property<nco::imContactCapability>().filter("GROUP_CONCAT", LiteralValue(",")));
+    queryidsimacccounts.addColumn("metacontact", imcontact.optional().property<nco::metacontact> ());
+    queryidsimacccounts.addColumn("serviceprovider", imcontact.optional().property<nco::fromIMAccount>().property<nco::imDisplayName>());
+
+    return queryidsimacccounts;
+
+}
+
+RDFSelect prepareIMAccountsQuery(RDFVariable &rdfPersonContact)
+{
+    RDFVariable imAccount;
+    imAccount = rdfPersonContact.property<nco::hasIMAccount> ();
+    RDFSelect queryidsimaccounts;
+
+    queryidsimaccounts.addColumn("protocol", imAccount.property<nco::imID> ());
+    queryidsimaccounts.addColumn("presence",imAccount.optional().property<nco::imPresence> ());
+    queryidsimaccounts.addColumn("message", imAccount.optional().property<nco::imStatusMessage> ());
+    queryidsimaccounts.addColumn("nick", imAccount.optional().property<nco::imNickname> ());
+    queryidsimaccounts.addColumn("displayname", imAccount.optional().property<nco::imDisplayName> ());
 
     return queryidsimaccounts;
 }
@@ -329,9 +418,7 @@ QTrackerContactFetchRequest::QTrackerContactFetchRequest(QContactAbstractRequest
 {
     Q_ASSERT(parent);
     Q_ASSERT(request);
-    QList<QContactManager::Error> dummy;
-    QContactManagerEngine::updateRequestStatus(req, QContactManager::NoError, dummy,
-                                QContactAbstractRequest::Active);
+    QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::ActiveState);
 
     QTimer::singleShot(0, this, SLOT(run()));
 }
@@ -342,7 +429,12 @@ void QTrackerContactFetchRequest::run()
     QContactFetchRequest* r = qobject_cast<QContactFetchRequest*> (req);
 
     RDFVariable RDFContact = RDFVariable::fromType<nco::PersonContact>();
-    applyFilterToContact(RDFContact, r->filter());
+    QContactManager::Error error = applyFilterToContact(RDFContact, r->filter());
+    if (error != QContactManager::NoError)
+    {
+        emitFinished(error);
+        return;
+    }
     if (r->definitionRestrictions().contains(QContactPhoneNumber::DefinitionName)) {
         queryPhoneNumbersNodes.clear();
         queryPhoneNumbersNodesPending = 2;
@@ -378,10 +470,20 @@ void QTrackerContactFetchRequest::run()
     if ( r->definitionRestrictions().contains( QContactOnlineAccount::DefinitionName) ) {
         queryIMAccountNodesPending = 1;
 
-        RDFVariable contact4;
-        contact4 = contact4.fromType<nco::IMContact> ();
-        // prepare query to get all im contacts
-        RDFSelect queryidsimacccounts = prepareIMContactsQuery(contact4);
+        RDFSelect queryidsimaccounts;
+        RDFVariable rdfIMContact;
+        rdfIMContact = rdfIMContact.fromType<nco::IMContact> ();
+
+        if(isMeContact(r->filter())) {
+            RDFVariable rdfPersonContact;
+            rdfPersonContact = rdfPersonContact.fromType<nco::PersonContact> ();
+            // Prepare a query to get all IMAccounts from all  accounts.
+            // nco:PersonContact -- nco:hasIMAccount -- nco:IMAccount
+            queryidsimaccounts = prepareIMAccountsQuery(rdfPersonContact);
+        } else {
+            // Prepare a query to get all IMContacts from all accounts.
+            queryidsimaccounts = prepareIMContactsQuery(rdfIMContact);
+        }
 
         if( r->filter().type() != QContactFilter::DefaultFilter )
         {
@@ -398,10 +500,10 @@ void QTrackerContactFetchRequest::run()
             rdfcontact3.property<nco::metacontact> () = rdfcontact1.optional().property<nco::metacontact> ();
 
             // aggregated criteria - only those with im contacts that match rdfcontact1 (same id) or rdfcontact3 (same metacontact)
-            contact4.isMemberOf(RDFVariableList()<<rdfcontact1<<rdfcontact3);
+            rdfIMContact.isMemberOf(RDFVariableList()<<rdfcontact1<<rdfcontact3);
         }
 
-        queryIMAccountNodes = ::tracker()->modelQuery(queryidsimacccounts);
+        queryIMAccountNodes = ::tracker()->modelQuery(queryidsimaccounts);
         QObject::connect(queryIMAccountNodes.model(),
                 SIGNAL(modelUpdated()), SLOT(iMAcountsReady()));
     }
@@ -500,9 +602,7 @@ void QTrackerContactFetchRequest::contactsReady()
     Q_ASSERT( request ); // signal is supposed to be used only for contact fetch
     // fastest way to get this working. refactor
     if (!request) {
-        QList<QContactManager::Error> dummy;
-        QContactManagerEngine::updateRequestStatus(req, QContactManager::UnspecifiedError, dummy,
-                                    QContactAbstractRequest::Finished);
+        QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::FinishedState);
         return;
     }
 
@@ -581,17 +681,20 @@ void QTrackerContactFetchRequest::contactsReady()
         QContactDisplayLabel dl = cont.detail(QContactDisplayLabel::DefinitionName);
         if (dl.label().isEmpty()) {
             QContactManager::Error synthError;
-            result[i] = engine->setContactDisplayLabel(engine->synthesizeDisplayLabel(cont, synthError), cont);
+            result[i] = engine->setContactDisplayLabel(engine->synthesizedDisplayLabel(cont, synthError), cont);
         }
     }
     emitFinished();
 }
 
-void QTrackerContactFetchRequest::emitFinished()
+void QTrackerContactFetchRequest::emitFinished(QContactManager::Error error)
 {
-    QContactManagerEngine::updateRequest(req, result, QContactManager::NoError,
-                              QList<QContactManager::Error> (),
-                              QContactAbstractRequest::Finished, true);
+    QContactFetchRequest *fetchRequest = qobject_cast<QContactFetchRequest *>(req);
+    Q_ASSERT(fetchRequest);
+    if(fetchRequest) {
+        QContactManagerEngine::updateRequestState(fetchRequest, QContactAbstractRequest::FinishedState);
+        QContactManagerEngine::updateContactFetchRequest(fetchRequest, result, error);
+    }
 }
 
 /*!
@@ -639,9 +742,9 @@ void QTrackerContactFetchRequest::readFromQueryRowToContact(QContact &contact, i
     int column = 2; // 0 - for QContactLocalId, 1 for metacontact
     QContactName name = contact.detail(QContactName::DefinitionName);
     name.setPrefix(query->index(i, column++).data().toString());
-    name.setFirst(query->index(i, column++).data().toString());
-    name.setMiddle(query->index(i, column++).data().toString());
-    name.setLast(query->index(i, column++).data().toString());
+    name.setFirstName(query->index(i, column++).data().toString());
+    name.setMiddleName(query->index(i, column++).data().toString());
+    name.setLastName(query->index(i, column++).data().toString());
     contact.saveDetail(&name);
 
     QContactAvatar avatar = contact.detail(QContactAvatar::DefinitionName);
@@ -895,20 +998,12 @@ void QTrackerContactFetchRequest::processQueryEmailAddresses( SopranoLive::LiveN
 QContactOnlineAccount QTrackerContactFetchRequest::getOnlineAccountFromIMQuery(LiveNodes imAccountQuery, int queryRow)
 {
     QContactOnlineAccount account;
-    account.setValue("Account", imAccountQuery->index(queryRow, ContactIMId).data().toString()); // IMId
-    if (!imAccountQuery->index(queryRow, AccountType).data().toString().isEmpty()) {
-        QString accountPathURI = imAccountQuery->index(queryRow, AccountType).data().toString();
-        QStringList decoded = accountPathURI.split(":");
-        qDebug() << decoded.value(1); 
-        account.setValue(FieldAccountPath, decoded.value(1)); // getImAccountType?
+    QContactFetchRequest* r = qobject_cast<QContactFetchRequest*> (req);
+    if(isMeContact(r->filter())) {
+        account = getIMAccountFromIMQuery(imAccountQuery, queryRow);
+    } else {
+        account = getIMContactFromIMQuery(imAccountQuery, queryRow);
     }
-    account.setNickname(imAccountQuery->index(queryRow, ContactNickname).data().toString()); // nick
-
-    QString presence = imAccountQuery->index(queryRow, ContactStatus).data().toString(); // imPresence iri
-    presence = presence.right(presence.length() - presence.lastIndexOf("presence-status"));
-    account.setPresence(presenceConversion[presence]);
-    account.setStatusMessage(imAccountQuery->index(queryRow, ContactMessage).data().toString()); // imStatusMessage
-
     return account;
 }
 
@@ -923,7 +1018,7 @@ void QTrackerContactFetchRequest::processQueryIMContacts(SopranoLive::LiveNodes 
     Q_ASSERT_X(queryIMAccountNodesPending == 0, Q_FUNC_INFO, "IMAccount query was supposed to be ready and it is not." );
     for (int i = 0; i < queryIMContacts->rowCount(); i++) {
         QContactOnlineAccount account = getOnlineAccountFromIMQuery(queryIMContacts, i);
-        QContactLocalId contactid = queryIMContacts->index(i, ContactId).data().toUInt();
+        QContactLocalId contactid = queryIMContacts->index(i, IMContact::ContactId).data().toUInt();
 
         QHash<quint32, int>::const_iterator it = id2ContactLookup.find(contactid);
         if (it != id2ContactLookup.end() && it.key() == contactid && it.value() >= 0 && it.value() < result.size())
@@ -942,8 +1037,74 @@ void QTrackerContactFetchRequest::processQueryIMContacts(SopranoLive::LiveNodes 
 
             contact.setId(id);
             contact.saveDetail(&account);
-            QString metacontact = queryIMContacts->index(i, MetaContact).data().toString(); // \sa prepareIMContactsQuery()
+            QString metacontact = queryIMContacts->index(i, IMContact::MetaContact).data().toString(); // \sa prepareIMContactsQuery()
             addContactToResultSet(contact, metacontact);
         }
     }
+}
+
+bool  QTrackerContactFetchRequest::isMeContact(const QContactFilter &filter) {
+    if (filter.type() == QContactFilter::LocalIdFilter) {
+         QContactManagerEngine *engine = dynamic_cast<QContactManagerEngine*>(parent());
+         if(!engine) {
+             qWarning() << __PRETTY_FUNCTION__ << ": Could not get QContactManager. Cannot retrieve IMAccounts for me-contact.";
+             return false;
+         }
+
+        QContactManager::Error e;
+        QContactLocalId selfId = engine->selfContactId(e);
+        QContactLocalIdFilter filt = filter;
+        if (filt.ids().contains(selfId)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+QContactOnlineAccount QTrackerContactFetchRequest::getIMAccountFromIMQuery(LiveNodes imAccountQuery, int queryRow) {
+    QContactOnlineAccount account;
+
+    // Custom value in QContactrOnlineAccount detail to store the account path to - to determine in My Profile to ignore the ring-account.
+    account.setValue("Account", imAccountQuery->index(queryRow, IMAccount::ContactIMId).data().toString()); // IMId
+    // the same is supposed to be in FieldAccountUri field
+    account.setValue(QContactOnlineAccount::FieldAccountUri, imAccountQuery->index(queryRow, IMAccount::ContactIMId).data().toString()); // IMId
+
+    account.setNickname(imAccountQuery->index(queryRow, IMAccount::ContactNickname).data().toString()); // nick
+
+    QString presence = imAccountQuery->index(queryRow, IMAccount::ContactPresence).data().toString(); // imPresence iri
+    presence = presence.right(presence.length() - presence.lastIndexOf("presence-status"));
+    account.setPresence(presenceConversion[presence]);
+    qDebug() << "Presence converted: " << account.presence() << "raw presence: " << presence;
+
+    account.setStatusMessage(imAccountQuery->index(queryRow, IMAccount::ContactMessage).data().toString()); // imStatusMessage
+
+    return account;
+}
+
+QContactOnlineAccount QTrackerContactFetchRequest::getIMContactFromIMQuery(LiveNodes imContactQuery, int queryRow) {
+    QContactOnlineAccount account;
+
+    account.setValue("Account", imContactQuery->index(queryRow, IMContact::ContactIMId).data().toString()); // IMId
+    if (!imContactQuery->index(queryRow, IMContact::AccountType).data().toString().isEmpty()) {
+        QString accountPathURI = imContactQuery->index(queryRow, IMContact::AccountType).data().toString();
+        QStringList decoded = accountPathURI.split(":");
+        // taking out the prefix "telepathy:"
+        qDebug() << __PRETTY_FUNCTION__ << decoded.value(1);
+        account.setValue(FieldAccountPath, decoded.value(1));
+    }
+    account.setNickname(imContactQuery->index(queryRow, IMContact::ContactNickname).data().toString()); // nick
+
+    QString cap = imContactQuery->index(queryRow, IMContact::Capabilities).data().toString();
+    cap = cap.right(cap.length() - cap.lastIndexOf("im-capability"));
+    account.setValue(QContactOnlineAccount::FieldCapabilities, cap);
+
+    QString presence = imContactQuery->index(queryRow, IMContact::ContactPresence).data().toString(); // imPresence iri
+    presence = presence.right(presence.length() - presence.lastIndexOf("presence-status"));
+    account.setPresence(presenceConversion[presence]);
+ 
+    account.setStatusMessage(imContactQuery->index(queryRow, IMContact::ContactMessage).data().toString()); // imStatusMessage
+    account.setServiceProvider(imContactQuery->index(queryRow, IMContact::ServiceProvider).data().toString()); // service name
+
+    return account;
 }
