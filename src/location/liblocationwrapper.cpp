@@ -41,10 +41,6 @@
 
 #include "liblocationwrapper.h"
 
-#define LL_INTERVAL_TO_MSECS 100
-#define MIN_UPDATE_INTERVAL  (LOCATION_INTERVAL_1S * LL_INTERVAL_TO_MSECS)
-#define TO_SECS              1000
-
 using namespace std;
 
 QTM_BEGIN_NAMESPACE
@@ -66,8 +62,8 @@ LiblocationWrapper::~LiblocationWrapper()
 
 bool LiblocationWrapper::inited()
 {
+    int retval = false;
     if (!(locationState & LiblocationWrapper::Inited)) {
-        llCurrentInterval = LOCATION_INTERVAL_DEFAULT;
         g_type_init();
 
         locationControl = location_gpsd_control_get_default();
@@ -75,7 +71,7 @@ bool LiblocationWrapper::inited()
         if (locationControl) {
             g_object_set(G_OBJECT(locationControl),
                          "preferred-method", LOCATION_METHOD_USER_SELECTED,
-                         "preferred-interval", llCurrentInterval,
+                         "preferred-interval", LOCATION_INTERVAL_1S,
                          NULL);
             locationDevice = 
                     (LocationGPSDevice*)g_object_new(LOCATION_TYPE_GPS_DEVICE, 
@@ -91,10 +87,13 @@ bool LiblocationWrapper::inited()
                                      G_CALLBACK(&locationChanged), 
                                      static_cast<void*>(this));
                 locationState = LiblocationWrapper::Inited;
+                retval = true;
             }
         }
+    } else {
+        retval = true;
     }
-    return true;
+    return retval;
 }
 
 void LiblocationWrapper::locationError(LocationGPSDevice *device,
@@ -127,94 +126,19 @@ void LiblocationWrapper::locationError(LocationGPSDevice *device,
     qDebug() << "Location error:" << locationError;
 }
 
-int LiblocationWrapper::setUpdateInterval(int wantedInterval)
-{
-    if (!LiblocationWrapper::Inited)
-        return 0;
-    
-    wantedInterval = (wantedInterval < MIN_UPDATE_INTERVAL) ? 
-                        MIN_UPDATE_INTERVAL : wantedInterval;
-
-    if (locationState & LiblocationWrapper::RequestActive) {
-        if(wantedInterval <= (llCurrentInterval * LL_INTERVAL_TO_MSECS)) {
-            locationState &= ~(LiblocationWrapper::RequestActive |
-                               LiblocationWrapper::RequestSingleShot);   
-            origUpdateInterval = 0;
-        } else {
-            // Set user requested interval to wanted value after request is
-            // complete (if greater than request timeout).
-            origUpdateInterval = wantedInterval;
-            return (mapUpdateInterval(wantedInterval) * LL_INTERVAL_TO_MSECS);
-        }
-    } 
-    
-    llCurrentInterval = mapUpdateInterval(wantedInterval);
-    
-    g_object_set(G_OBJECT(locationControl),
-                 "preferred-method", LOCATION_METHOD_USER_SELECTED,
-                 "preferred-interval", llCurrentInterval,
-                 NULL) ;      
-    
-    return (llCurrentInterval*LL_INTERVAL_TO_MSECS);
-}
-
-bool LiblocationWrapper::requestUpdate(int timeout)
-{
-    int requestTimeout = 0;
-
-    if (locationState & LiblocationWrapper::Inited) {
-        if (locationState & LiblocationWrapper::RequestActive)
-            return true;
-    
-        if (!timeout) {
-            requestTimeout = (LOCATION_INTERVAL_DEFAULT * LL_INTERVAL_TO_MSECS);
-        } else if (timeout < MIN_UPDATE_INTERVAL) {
-            locationState &= ~(LiblocationWrapper::RequestActive |
-                               LiblocationWrapper::RequestSingleShot);
-            return false;
-        } else {
-            requestTimeout = timeout;
-        }
-    
-        if (!(locationState & LiblocationWrapper::Started)) {
-            origUpdateInterval = (llCurrentInterval * LL_INTERVAL_TO_MSECS);
-            setUpdateInterval(requestTimeout);
-            start();
-            locationState |= (LiblocationWrapper::RequestActive |
-                              LiblocationWrapper::RequestSingleShot);
-
-        } else if (locationState & LiblocationWrapper::Started) {
-            QGeoPositionInfo lastKnown = lastKnownPosition(true);
-
-            if (lastKnown.dateTime().isValid()) {
-                QDateTime dt = QDateTime::currentDateTime();
-                int timeFromFix = dt.secsTo(lastKnown.dateTime());
-                
-                if ((requestTimeout/TO_SECS) <
-                    ((llCurrentInterval/10) - timeFromFix)) {
-                    locationState |= LiblocationWrapper::RequestActive;
-                    origUpdateInterval = 
-                            (llCurrentInterval * LL_INTERVAL_TO_MSECS);                    
-                    setUpdateInterval(requestTimeout);
-                }
-            }
-        }
-    }
-    return true;
-}
-
 void LiblocationWrapper::locationChanged(LocationGPSDevice *device,
                                                  gpointer data)
 {
     QGeoPositionInfo posInfo;
     QGeoCoordinate coordinate;
     QGeoSatelliteInfo satInfo;
-    
+    int satellitesInUseCount = 0;
     LiblocationWrapper *object;
-
-    if (!data || !device)
+    
+    if (!data || !device) {
         return;
-
+    }
+    
     object = (LiblocationWrapper *)data;
 
     if (device) {
@@ -255,7 +179,7 @@ void LiblocationWrapper::locationChanged(LocationGPSDevice *device,
         if (device->satellites_in_view) {
             QList<QGeoSatelliteInfo> satsInView;
             QList<QGeoSatelliteInfo> satsInUse;
-            int i;
+            unsigned int i;
             for (i=0;i<device->satellites->len;i++) {
                 LocationGPSDeviceSatellite *satData =
                     (LocationGPSDeviceSatellite *)g_ptr_array_index(device->satellites,
@@ -268,64 +192,49 @@ void LiblocationWrapper::locationChanged(LocationGPSDevice *device,
                                      satData->azimuth);
     
                 satsInView.append(satInfo);
-                if (satData->in_use)
+                if (satData->in_use) {
+                    satellitesInUseCount++;
                     satsInUse.append(satInfo);
+                }
             }
             
             if (!satsInView.isEmpty())
-                object->satellitesInView(satsInView);
+                object->satellitesInViewUpdated(satsInView);
             
             if (!satsInUse.isEmpty())
-                object->satellitesInUse(satsInUse);
+                object->satellitesInUseUpdated(satsInUse);
         }        
     }
        
+    posInfo.setCoordinate(coordinate);
+
     // Only position updates with time (3D) are provided.
-    if (device->fix->mode == LOCATION_GPS_DEVICE_MODE_3D) {
-        posInfo.setCoordinate(coordinate);        
-        object->setLocation(posInfo);
+    if ((device->fix->mode == LOCATION_GPS_DEVICE_MODE_3D) ||
+        ((satellitesInUseCount >= 3) && 
+         (device->fix->fields & LOCATION_GPS_DEVICE_TIME_SET))){
+        object->setLocation(posInfo, true);
+    } else {
+        object->setLocation(posInfo, false);
     }
 }
 
-void LiblocationWrapper::setLocation(const QGeoPositionInfo &update)
-{    
-    lastSatUpdate = update;
-    validLastSatUpdate = true;
-    emit positionUpdated(update);
-    
-    if (locationState & LiblocationWrapper::RequestActive) {
-        locationState &= ~LiblocationWrapper::RequestActive;
-
-        if(locationState & LiblocationWrapper::RequestSingleShot) {
-            stop();
-            locationState &= ~LiblocationWrapper::RequestSingleShot;
-        }
-        
-        if (origUpdateInterval) {
-            setUpdateInterval(origUpdateInterval);
-        }        
-    }
-}
-
-int LiblocationWrapper::mapUpdateInterval(int msec) {     
-    if (msec < 1500)
-        return LOCATION_INTERVAL_1S;
-    else if ((msec >= 1500) && (msec < 3500))
-        return LOCATION_INTERVAL_2S;
-    else if ((msec >= 3500) && (msec < 7500))
-        return LOCATION_INTERVAL_5S;
-    else if ((msec >= 7500) && (msec < 15000))
-        return LOCATION_INTERVAL_10S;
-    else if ((msec >= 15000) && (msec < 25000))
-        return LOCATION_INTERVAL_20S;
-    else if ((msec >= 25000) && (msec < 45000))
-        return LOCATION_INTERVAL_30S;
-    else if ((msec >= 45000) && (msec < 90000))
-        return LOCATION_INTERVAL_60S;
-    else if (msec >= 90000)
-        return LOCATION_INTERVAL_120S;
+void LiblocationWrapper::setLocation(const QGeoPositionInfo &update, 
+                                     bool location3D)
+{
+    if(!location3D)
+        validLastSatUpdate = false;
     else
-        return LOCATION_INTERVAL_DEFAULT;
+        validLastSatUpdate = true;
+    lastSatUpdate = update;
+}
+
+QGeoPositionInfo LiblocationWrapper::position() {
+    return lastSatUpdate;
+}
+
+bool LiblocationWrapper::fixIsValid()
+{
+    return validLastSatUpdate;
 }
 
 QGeoPositionInfo LiblocationWrapper::lastKnownPosition(bool fromSatellitePositioningMethodsOnly) const
@@ -393,20 +302,27 @@ QGeoPositionInfo LiblocationWrapper::lastKnownPosition(bool fromSatellitePositio
     return QGeoPositionInfo();
 }
 
-void LiblocationWrapper::satellitesInView(const QList<QGeoSatelliteInfo> &satellites)
+void LiblocationWrapper::satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &satellites)
 {
-    emit satellitesInViewUpdated(satellites);
+    satsInView = satellites;
 }
 
-void LiblocationWrapper::satellitesInUse(const QList<QGeoSatelliteInfo> &satellites)
+void LiblocationWrapper::satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &satellites)
 {
-    emit satellitesInUseUpdated(satellites);
+    satsInUse = satellites;
+}
+
+QList<QGeoSatelliteInfo> LiblocationWrapper::satellitesInView()
+{
+    return satsInView;
+}
+
+QList<QGeoSatelliteInfo> LiblocationWrapper::satellitesInUse()
+{
+    return satsInUse;
 }
 
 void LiblocationWrapper::start() {
-    if (locationState & LiblocationWrapper::RequestSingleShot)
-        locationState &= ~LiblocationWrapper::RequestSingleShot;
-    
     if ((locationState & LiblocationWrapper::Inited) &&
         !(locationState & LiblocationWrapper::Started)) {
         if (!errorHandlerId) {

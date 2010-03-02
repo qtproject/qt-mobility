@@ -42,7 +42,11 @@
 #ifndef QGEOPOSITIONINFOSOURCEMAEMO5_H
 #define QGEOPOSITIONINFOSOURCEMAEMO5_H
 
+#include <QTimer>
 #include "qgeopositioninfosource.h"
+
+#define MINIMUM_UPDATE_INTERVAL 1000
+#define DEFAULT_UPDATE_INTERVAL 5000
 
 QTM_BEGIN_NAMESPACE
 
@@ -67,18 +71,33 @@ public:
 private:
     PositioningMethods availableMethods;
     bool positionInited;
+    QTimer *updateTimer;
+    QTimer *requestTimer;
+    int timerInterval;
 
+    enum PositionInfoState {
+        Undefined = 0,
+        Started = 1,
+        Stopped = 2,
+        RequestActive = 4,
+        RequestSingleShot = 8
+    };
+    int positionInfoState;
+    
 signals:
     void positionUpdated(const QGeoPositionInfo &update);
-
+    
 public slots:
     void startUpdates();
     void stopUpdates();
-    void requestUpdate(int timeout = 5000);
-    void newPositionUpdate(const QGeoPositionInfo &update);
+    void requestUpdate(int timeout = DEFAULT_UPDATE_INTERVAL);
+    void newPositionUpdate();
+
+private slots:
+    void requestTimeoutElapsed();
 
 private:
-    Q_DISABLE_COPY(QGeoPositionInfoSourceMaemo)    
+    Q_DISABLE_COPY(QGeoPositionInfoSourceMaemo)
 };
 
 QTM_END_NAMESPACE

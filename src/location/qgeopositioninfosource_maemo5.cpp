@@ -46,31 +46,29 @@ using namespace std;
 
 QTM_BEGIN_NAMESPACE
 
-#define MINIMUM_UPDATE_INTERVAL 1000
-
 QGeoPositionInfoSourceMaemo::QGeoPositionInfoSourceMaemo(QObject *parent) 
     : QGeoPositionInfoSource(parent)
 {
     // default values
     availableMethods = SatellitePositioningMethods;
-    positionInited = false;
+    timerInterval = DEFAULT_UPDATE_INTERVAL;
+    updateTimer = new QTimer(this);
+    updateTimer->setSingleShot(true);
+    connect(updateTimer, SIGNAL(timeout()), this, SLOT(newPositionUpdate()));
+
+    requestTimer = new QTimer(this);
+    requestTimer->setSingleShot(true);
+    connect(requestTimer, SIGNAL(timeout()), this, SLOT(requestTimeoutElapsed()));
+
+    positionInfoState = QGeoPositionInfoSourceMaemo::Undefined;
 }
 
 int QGeoPositionInfoSourceMaemo::init()
 {
-    if (positionInited)
-        return 0;
-    
     if (LiblocationWrapper::instance()->inited()) {
-
-        QObject::connect(LiblocationWrapper::instance(), 
-                         SIGNAL(positionUpdated(const QGeoPositionInfo &)),
-                         this, 
-                         SLOT(newPositionUpdate(const QGeoPositionInfo &)));
-        positionInited = true;
+        positionInfoState |= QGeoPositionInfoSourceMaemo::Stopped;
         return 0;
-    }
-    else {
+    } else {
         return -1;
     }
 }
@@ -87,9 +85,15 @@ QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSourceMaemo::supporte
 
 void QGeoPositionInfoSourceMaemo::setUpdateInterval(int msec)
 {
-    msec = (msec < MINIMUM_UPDATE_INTERVAL) ? MINIMUM_UPDATE_INTERVAL : msec;
-
-    QGeoPositionInfoSource::setUpdateInterval(LiblocationWrapper::instance()->setUpdateInterval(msec));    
+    if (!msec) {
+        msec = MINIMUM_UPDATE_INTERVAL;
+        timerInterval = msec;
+        QGeoPositionInfoSource::setUpdateInterval(0);
+    } else {    
+        msec = (msec < MINIMUM_UPDATE_INTERVAL) ? MINIMUM_UPDATE_INTERVAL : msec;
+        timerInterval = msec;
+        QGeoPositionInfoSource::setUpdateInterval(timerInterval);
+    }
 }
 
 void QGeoPositionInfoSourceMaemo::setPreferredPositioningMethods(PositioningMethods sources)
@@ -106,27 +110,93 @@ int QGeoPositionInfoSourceMaemo::minimumUpdateInterval() const
 // public slots:
 void QGeoPositionInfoSourceMaemo::startUpdates()
 {
-    if (positionInited)
-        LiblocationWrapper::instance()->start();
+    LiblocationWrapper::instance()->start();
+    positionInfoState |= QGeoPositionInfoSourceMaemo::Started;
+    positionInfoState &= ~(QGeoPositionInfoSourceMaemo::Stopped |
+                           QGeoPositionInfoSourceMaemo::RequestSingleShot);
+
+    if (!updateTimer->isActive())
+        updateTimer->start(timerInterval);
 }
 
 void QGeoPositionInfoSourceMaemo::stopUpdates()
 {
-    if (positionInited)
-        LiblocationWrapper::instance()->stop();
+    if (updateTimer->isActive())
+        updateTimer->stop();
+    LiblocationWrapper::instance()->stop();
+    positionInfoState &= ~(QGeoPositionInfoSourceMaemo::Started |
+                           QGeoPositionInfoSourceMaemo::RequestActive |
+                           QGeoPositionInfoSourceMaemo::RequestSingleShot);
+    positionInfoState |= QGeoPositionInfoSourceMaemo::Stopped;
 }
 
 void QGeoPositionInfoSourceMaemo::requestUpdate(int timeout)
 {
-    if (positionInited)
-        if (!LiblocationWrapper::instance()->requestUpdate(timeout))
-            emit updateTimeout();
+    int timeoutRequest = 0;
+
+    if (!timeout) {
+        timeoutRequest = MINIMUM_UPDATE_INTERVAL;
+    } else if (timeout < MINIMUM_UPDATE_INTERVAL) {
+        if (positionInfoState & (QGeoPositionInfoSourceMaemo::RequestActive |
+                                QGeoPositionInfoSourceMaemo::RequestSingleShot))
+            return;
+        else
+            positionInfoState &= ~(QGeoPositionInfoSourceMaemo::RequestActive |
+                                   QGeoPositionInfoSourceMaemo::RequestSingleShot);
+        emit updateTimeout();
+        return;
+    } else {
+        timeoutRequest = timeout;
+    }
+
+    if (updateTimer->isActive())
+         updateTimer->stop();
+
+    if (requestTimer->isActive())
+        requestTimer->stop();
+
+    LiblocationWrapper::instance()->start();
+    updateTimer->start(MINIMUM_UPDATE_INTERVAL);
+    requestTimer->start(timeoutRequest);
+
+    positionInfoState |= QGeoPositionInfoSourceMaemo::RequestActive;
+
+    if (positionInfoState & QGeoPositionInfoSourceMaemo::Stopped)
+       positionInfoState |= QGeoPositionInfoSourceMaemo::RequestSingleShot;
 }
 
-void QGeoPositionInfoSourceMaemo::newPositionUpdate(const QGeoPositionInfo &update)
+void QGeoPositionInfoSourceMaemo::newPositionUpdate()
 {
-    emit positionUpdated(update);
+    if (LiblocationWrapper::instance()->fixIsValid())
+        emit positionUpdated(LiblocationWrapper::instance()->position());
+
+    if (positionInfoState & QGeoPositionInfoSourceMaemo::RequestActive) {
+        positionInfoState &= ~QGeoPositionInfoSourceMaemo::RequestActive;
+
+        if (requestTimer->isActive())
+            requestTimer->stop();
+
+        if (positionInfoState & QGeoPositionInfoSourceMaemo::RequestSingleShot) {
+            positionInfoState &= ~QGeoPositionInfoSourceMaemo::RequestSingleShot;
+            return;
+        }
+    }
+    updateTimer->start(timerInterval);
 }
+
+void QGeoPositionInfoSourceMaemo::requestTimeoutElapsed()
+{
+    emit updateTimeout();
+    if (updateTimer->isActive())
+        updateTimer->stop();
+    
+    if (!(positionInfoState & QGeoPositionInfoSourceMaemo::RequestSingleShot))
+        updateTimer->start(timerInterval);
+        
+    positionInfoState &= ~(QGeoPositionInfoSourceMaemo::RequestActive |
+                            QGeoPositionInfoSourceMaemo::RequestSingleShot);
+}
+
 
 #include "moc_qgeopositioninfosource_maemo5_p.cpp"
 QTM_END_NAMESPACE

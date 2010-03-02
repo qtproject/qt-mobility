@@ -44,7 +44,6 @@
 
 // INCLUDES
 #include <QDebug>
-#include <QTimer>
 
 #include "qgeocoordinate.h"
 #include "qgeopositioninfo.h"
@@ -70,12 +69,14 @@ public:
     static LiblocationWrapper *instance();
     ~LiblocationWrapper();
 
-    int setUpdateInterval(int interval);
     void start();
     void stop();
     QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const;
-    bool requestUpdate(int timeout);
     bool inited();
+    QGeoPositionInfo position();
+    bool fixIsValid();
+    QList<QGeoSatelliteInfo> satellitesInView();
+    QList<QGeoSatelliteInfo> satellitesInUse();
 
 private:
     LocationGPSDControl *locationControl;
@@ -84,17 +85,19 @@ private:
     static void locationError(LocationGPSDevice *device, gint code, gpointer data);
     static void locationChanged(LocationGPSDevice *device, gpointer data);
 
-    int mapUpdateInterval(int msec);
     int errorHandlerId;
     int posChangedId;
-    QTimer *timer;
-    int llCurrentInterval;
     int origUpdateInterval;
-
+    
     QGeoPositionInfo lastUpdate;
     QGeoPositionInfo lastSatUpdate;
     bool validLastUpdate;
     bool validLastSatUpdate;
+
+    void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &satellites);
+    void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &satellites);
+    QList<QGeoSatelliteInfo> satsInView;
+    QList<QGeoSatelliteInfo> satsInUse;
 
     enum LocationState {
         Undefined = 0,
@@ -106,15 +109,8 @@ private:
     };
     int locationState;
 
-signals:
-    void positionUpdated(const QGeoPositionInfo &update);
-    void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &satellites);
-    void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &satellites);
-        
 private slots:
-    void setLocation(const QGeoPositionInfo &update);
-    void satellitesInView(const QList<QGeoSatelliteInfo> &satellites);
-    void satellitesInUse(const QList<QGeoSatelliteInfo> &satellites);    
+    void setLocation(const QGeoPositionInfo &update, bool location3D);
 };
 
 QTM_END_NAMESPACE

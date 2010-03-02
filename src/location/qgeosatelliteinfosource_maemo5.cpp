@@ -45,31 +45,30 @@
 QTM_BEGIN_NAMESPACE
 
 #define MINIMUM_UPDATE_INTERVAL 1000
-
+#define DEFAULT_UPDATE_INTERVAL 5000
+        
 QGeoSatelliteInfoSourceMaemo::QGeoSatelliteInfoSourceMaemo(QObject *parent) 
     : QGeoSatelliteInfoSource(parent)
 {
     client_id_ = -1;
-    satelliteInited = false;
+    timerInterval = DEFAULT_UPDATE_INTERVAL;
+    updateTimer = new QTimer(this);
+    updateTimer->setSingleShot(true);
+    connect(updateTimer, SIGNAL(timeout()), this, SLOT(satelliteStatus()));
+
+    requestTimer = new QTimer(this);
+    requestTimer->setSingleShot(true);
+    connect(requestTimer, SIGNAL(timeout()), this, SLOT(requestTimeoutElapsed()));
+
+    satelliteInfoState = QGeoSatelliteInfoSourceMaemo::Undefined;
 }
 
 int QGeoSatelliteInfoSourceMaemo::init()
 {
-    if (satelliteInited)
+    if(LiblocationWrapper::instance()->inited()) {
+        satelliteInfoState |= QGeoSatelliteInfoSourceMaemo::Stopped;
         return 0;
-    if (LiblocationWrapper::instance()->inited()) {
-        QObject::connect(LiblocationWrapper::instance(), 
-                         SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)),
-                         this, 
-                         SLOT(satellitesInView(const QList<QGeoSatelliteInfo> &)));
-        QObject::connect(LiblocationWrapper::instance(), 
-                         SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)),
-                         this, 
-                         SLOT(satellitesInUse(const QList<QGeoSatelliteInfo> &)));
-        satelliteInited = true;
-        return 0;
-    }
-    else {
+    } else {
         return -1;
     }
 }
@@ -78,36 +77,103 @@ void QGeoSatelliteInfoSourceMaemo::setUpdateInterval(int msec)
 {
     msec = (msec < MINIMUM_UPDATE_INTERVAL) ? MINIMUM_UPDATE_INTERVAL : msec;
 
-    setUpdateInterval(LiblocationWrapper::instance()->setUpdateInterval(msec));
+    timerInterval = msec;
 }
 
 void QGeoSatelliteInfoSourceMaemo::startUpdates()
 {
-    if (satelliteInited)
-        LiblocationWrapper::instance()->start();
+    LiblocationWrapper::instance()->start();
+    satelliteInfoState |= QGeoSatelliteInfoSourceMaemo::Started;
+    satelliteInfoState &= ~(QGeoSatelliteInfoSourceMaemo::Stopped |
+                            QGeoSatelliteInfoSourceMaemo::RequestSingleShot);
+    if(!updateTimer->isActive())
+        updateTimer->start(timerInterval);
 }
 
 void QGeoSatelliteInfoSourceMaemo::stopUpdates()
 {
-    if (satelliteInited)
-        LiblocationWrapper::instance()->stop();
+    if(updateTimer->isActive())
+        updateTimer->stop();
+    LiblocationWrapper::instance()->stop();
+    satelliteInfoState &= ~(QGeoSatelliteInfoSourceMaemo::Started |
+                            QGeoSatelliteInfoSourceMaemo::RequestActive |
+                            QGeoSatelliteInfoSourceMaemo::RequestSingleShot);
+    satelliteInfoState |= QGeoSatelliteInfoSourceMaemo::Stopped;
 }
 
 void QGeoSatelliteInfoSourceMaemo::requestUpdate(int timeout)
 {
-    if (satelliteInited)
-        if (!LiblocationWrapper::instance()->requestUpdate(timeout))
-            emit requestTimeout();
+    int timeoutRequest = 0;
+    
+    if(!timeout) {
+        timeoutRequest = MINIMUM_UPDATE_INTERVAL;
+    } else if (timeout < MINIMUM_UPDATE_INTERVAL) {
+        if(satelliteInfoState & (QGeoSatelliteInfoSourceMaemo::RequestActive |
+                                  QGeoSatelliteInfoSourceMaemo::RequestSingleShot))
+            return;
+        else 
+            satelliteInfoState &= ~(QGeoSatelliteInfoSourceMaemo::RequestActive |
+                                    QGeoSatelliteInfoSourceMaemo::RequestSingleShot);
+        emit requestTimeout();
+        return;
+    } else {
+        timeoutRequest = timeout;
+    }
+
+    if(updateTimer->isActive())
+        updateTimer->stop();
+
+    if(requestTimer->isActive())
+        requestTimer->stop();
+
+    LiblocationWrapper::instance()->start();
+    updateTimer->start(MINIMUM_UPDATE_INTERVAL);
+    requestTimer->start(timeoutRequest);
+    
+    satelliteInfoState |= QGeoSatelliteInfoSourceMaemo::RequestActive;
+    
+    if (satelliteInfoState & QGeoSatelliteInfoSourceMaemo::Stopped)
+       satelliteInfoState |= QGeoSatelliteInfoSourceMaemo::RequestSingleShot;
 }
 
-void QGeoSatelliteInfoSourceMaemo::satellitesInView(const QList<QGeoSatelliteInfo> &satellites)
+void QGeoSatelliteInfoSourceMaemo::satelliteStatus()
 {
-    emit satellitesInViewUpdated(satellites);
+    QList<QGeoSatelliteInfo> satellitesInView = 
+            LiblocationWrapper::instance()->satellitesInView();
+    QList<QGeoSatelliteInfo> satellitesInUse = 
+            LiblocationWrapper::instance()->satellitesInUse();
+
+    if(satellitesInView.length()) {
+        // If there are satellites in view, also in use can be emitted.
+        emit satellitesInViewUpdated(satellitesInView);
+        emit satellitesInUseUpdated(satellitesInUse);
+     }
+
+    if(satelliteInfoState & QGeoSatelliteInfoSourceMaemo::RequestActive) {
+        satelliteInfoState &= ~QGeoSatelliteInfoSourceMaemo::RequestActive;
+    
+        if(requestTimer->isActive())
+            requestTimer->stop();
+        
+        if(satelliteInfoState & QGeoSatelliteInfoSourceMaemo::RequestSingleShot) {
+            satelliteInfoState &= ~QGeoSatelliteInfoSourceMaemo::RequestSingleShot;
+            return;
+        }
+    }
+    updateTimer->start(timerInterval);
 }
 
-void QGeoSatelliteInfoSourceMaemo::satellitesInUse(const QList<QGeoSatelliteInfo> &satellites)
+void QGeoSatelliteInfoSourceMaemo::requestTimeoutElapsed()
 {
-    emit satellitesInUseUpdated(satellites);
+    emit requestTimeout();
+    if(updateTimer->isActive())
+        updateTimer->stop();
+    
+    if(!(satelliteInfoState & QGeoSatelliteInfoSourceMaemo::RequestSingleShot))
+        updateTimer->start(timerInterval);
+        
+    satelliteInfoState &= ~(QGeoSatelliteInfoSourceMaemo::RequestActive |
+                            QGeoSatelliteInfoSourceMaemo::RequestSingleShot);
 }
 
 #include "moc_qgeosatelliteinfosource_maemo5_p.cpp"

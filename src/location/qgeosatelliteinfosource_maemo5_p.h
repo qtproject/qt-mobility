@@ -42,6 +42,7 @@
 #ifndef QGEOSATELLITEINFOSOURCE_MAEMO5_H
 #define QGEOSATELLITEINFOSOURCE_MAEMO5_H
 
+#include <QTimer>
 #include "qgeosatelliteinfosource.h"
 #include "qgeosatelliteinfo.h"
 
@@ -61,21 +62,32 @@ public:
 private:
     int client_id_;
     void setUpdateInterval(int interval);
-    bool satelliteInited;
+    QTimer *updateTimer;
+    QTimer *requestTimer;
+    int timerInterval;
 
-private Q_SLOTS:
-    void satellitesInView(const QList<QGeoSatelliteInfo> &satellites);
-    void satellitesInUse(const QList<QGeoSatelliteInfo> &satellites);    
-    
+    enum SatelliteInfoState {
+        Undefined = 0,
+        Started = 1,
+        Stopped = 2,
+        RequestActive = 4,
+        RequestSingleShot = 8
+    };
+    int satelliteInfoState;
+
 public slots:
     virtual void startUpdates();
     void stopUpdates();
     void requestUpdate(int timeout = 5000);
-
+    void satelliteStatus();
+    
 signals:
     void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &satellites);
     void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &satellites);
     void requestTimeout();
+
+private slots:
+    void requestTimeoutElapsed();
 
 private:
     Q_DISABLE_COPY(QGeoSatelliteInfoSourceMaemo)
