@@ -45,7 +45,9 @@
 #include "qservicecontrol.h"
 #include "instancemanager_p.h"
 #include "qserviceinterfacedescriptor.h"
+#ifndef Q_OS_SYMBIAN
 #include <QLocalServer>
+#endif
 
 QTM_BEGIN_NAMESPACE
 

@@ -9,6 +9,8 @@ DEFINES += QT_BUILD_SFW_LIB QT_MAKEDLL
 #include ipc extension
 include(ipc/ipc.pri)
 
+INCLUDEPATH += .
+
 PUBLIC_HEADERS += \
             qservice.h \
             qservicemanager.h \
