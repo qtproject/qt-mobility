@@ -445,11 +445,11 @@ void S60CameraSettings::setShutterSpeed(TInt speed)
 #endif
 }
 
-void S60CameraSettings::setSharpeningLevel(qreal value)
+void S60CameraSettings::setSharpeningLevel(int value)
 {
 #if (defined(USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER) || defined(USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER))
     if (m_imageProcessingSettings && isSharpeningSupported()) {
-        m_imageProcessingSettings->SetTransformationValue(KUidECamEventImageProcessingAdjustSharpness, value);
+        m_imageProcessingSettings->SetTransformationValue(KUidECamEventImageProcessingAdjustSharpness, (TInt)value);
     }
 #endif
 }
