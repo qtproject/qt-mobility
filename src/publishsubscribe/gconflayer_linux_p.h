@@ -49,6 +49,7 @@
 #include <QSet>
 #include <QByteArray>
 #include <QMultiMap>
+#include <QMutex>
 
 class QSignalMapper;
 
@@ -127,9 +128,15 @@ private:
 
     QStringList recursiveChildren(QString fullPath) const;
 
+    bool getValue(Handle handle, const QString &subPath, QVariant *data);
+    Handle getItem(Handle parent, const QString &subPath);
+    void doRemoveHandle(Handle handle);
+    void doNotifyChanged(QString path);
+
 private:    //data
     QMultiMap<QString, GConfHandle *> m_monitoringHandles;
     QSignalMapper *m_signalMapper;
+    QMutex m_mutex;
 };
 
 QTM_END_NAMESPACE
