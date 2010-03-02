@@ -58,20 +58,19 @@ QTM_BEGIN_NAMESPACE
 class QGeoAreaMonitorMaemo : public QGeoAreaMonitor
 {
     Q_OBJECT
-    
+
 public :
     QGeoAreaMonitorMaemo(QObject *parent = 0);
+    ~QGeoAreaMonitorMaemo();
     void setCenter(const QGeoCoordinate &coordinate);
     void setRadius(qreal radius);
-    
+
 private slots:
-    void connectNotify(const char* signal);
-    void disconnectNotify(const char* signal);    
-    void positionUpdated(QGeoPositionInfo &info);
+    void positionUpdated(const QGeoPositionInfo &info);
 
 private:
     bool insideArea;
-    QGeoPositionInfoSource *location;    
+    QGeoPositionInfoSource *location;
 };
 
 QTM_END_NAMESPACE
