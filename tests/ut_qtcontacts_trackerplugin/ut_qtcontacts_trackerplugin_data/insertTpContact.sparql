@@ -8,7 +8,7 @@ fi
 echo "create nco:IMAddress"
 tracker-sparql --update --query "
 INSERT {
-		<telepathy://$4/$3> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> nco:IMAddress;
+		<telepathy:$4/$3> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> nco:IMAddress;
 	    nco:imID '$3';
 	    nco:imNickname '$8$9';
 	    nco:imPresence $5;
@@ -25,7 +25,7 @@ INSERT
 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> 
 <http://www.semanticdesktop.org/ontologies/2007/03/22/nco#IMAccount>;
 nco:imDisplayName '$7'; 
-nco:hasIMContact <telepathy://$4/$3>
+nco:hasIMContact <telepathy:$4/$3>
 }
 "
 
@@ -35,7 +35,7 @@ INSERT
 {
         <$1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> nco:PersonContact;
 	    nco:contactUID '$2';
-	    nco:hasIMAddress <telepathy://$4/$3>;
+	    nco:hasIMAddress <telepathy:$4/$3>;
 	    nco:nameGiven '$8';
         nco:nameFamily '$9'
 }

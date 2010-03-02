@@ -127,7 +127,7 @@ void matchOnlineAccount(RDFVariable &variable, QContactDetailFilter &filter)
             // need to find IMAccount -> hasIMContact -> imaddress
             RDFVariable imaccount;
             imaccount.property<nco::hasIMContact>() = imaddress;
-            imaccount.equal(QUrl(QString("telepathy://")+filter.value().toString()));
+            imaccount.equal(QUrl(QString("telepathy:")+filter.value().toString()));
         }
         else if (filter.detailFieldName() == QContactOnlineAccount::FieldServiceProvider)
         {
@@ -343,6 +343,7 @@ RDFSelect prepareIMAddressesQuery(RDFVariable  &contact)
 
     queryidsimacccounts.addColumn("imaddress", imaddress);
     queryidsimacccounts.addColumn("contactId", contact.property<nco::contactUID> ());
+    queryidsimacccounts.groupBy(imaddress);
     queryidsimacccounts.addColumn("IMId", imaddress.property<nco::imID> ());
     queryidsimacccounts.addColumn("status", imaddress.optional().property<nco::imPresence> ());
     queryidsimacccounts.addColumn("message", imaddress.optional().property<nco::imContactStatusMessage> ());
@@ -657,7 +658,6 @@ void QTrackerContactFetchRequest::contactsReady()
 
     // 4) process emails: queryPhoneNumbersNodes
     if (request->definitionRestrictions().contains(QContactEmailAddress::DefinitionName)) {
-        qDebug() << "processQueryEmailAddresses";
         Q_ASSERT(queryEmailAddressNodes.size() == 2);
         for (int cnt = 0; cnt < queryEmailAddressNodes.size(); cnt++) {
             processQueryEmailAddresses(queryEmailAddressNodes[cnt], cnt);
@@ -946,7 +946,6 @@ void QTrackerContactFetchRequest::processQueryIMContacts(SopranoLive::LiveNodes 
         if (it != id2ContactLookup.end() && it.key() == contactid && it.value() >= 0 && it.value() < result.size())
         {
             result[it.value()].saveDetail(&account);
-            qDebug() << __PRETTY_FUNCTION__ << account.serviceProvider() << result[it.value()].detail<QContactOnlineAccount>().serviceProvider();
         }
     }
 }
@@ -996,9 +995,8 @@ QContactOnlineAccount QTrackerContactFetchRequest::getIMContactFromIMQuery(LiveN
     account.setValue("Account", imContactQuery->index(queryRow, IMContact::ContactIMId).data().toString()); // IMId
     if (!imContactQuery->index(queryRow, IMContact::AccountType).data().toString().isEmpty()) {
         QString accountPathURI = imContactQuery->index(queryRow, IMContact::AccountType).data().toString();
-        QStringList decoded = accountPathURI.split("://");
-        // taking out the prefix "telepathy://"
-        qDebug() << __PRETTY_FUNCTION__ << accountPathURI << "decoded"<< decoded.value(1);
+        QStringList decoded = accountPathURI.split(":");
+        // taking out the prefix "telepathy:"
         account.setValue(FieldAccountPath, decoded.value(1));
     }
     account.setNickname(imContactQuery->index(queryRow, IMContact::ContactNickname).data().toString()); // nick

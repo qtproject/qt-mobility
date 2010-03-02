@@ -745,6 +745,8 @@ void ut_qtcontacts_trackerplugin::testRemoveDetailDefinition()
 
 void ut_qtcontacts_trackerplugin::testSyncContactManagerContactsAddedSince()
 {
+    // FIXME move this code out: not supposed to compile in and load the same code as dll plugin
+
     QDateTime start;
     QList<QContactLocalId> addedIds;
     syncContactsAddedSinceHelper(start, addedIds);
@@ -1494,7 +1496,7 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
     {
         unsigned int contactid = qHash(QString("/org/freedesktop/fake/account/") + QString::number(999998+i) + "@ovi.com");
         idstomerge << contactid;
-        insertContact(QString("telepathy:///org/freedesktop/fake/account/") + QString::number(999998+i) + "@ovi.com",
+        insertContact(QString("telepathy:/org/freedesktop/fake/account/") + QString::number(999998+i) + "@ovi.com",
                 contactid, QString::number(999998 + i)+ "@ovi.com", "nco:presence-status-available", QString("/org/freedesktop/fake/account/%1").arg(999998+i),"ovi.com");
         QContact c = contact(contactid, QStringList()<<QContactOnlineAccount::DefinitionName);
         QVERIFY(c.localId() == contactid);
@@ -1540,7 +1542,7 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
         QVERIFY(containDetail);
     }
     //now update presence to IM Address and check it in contact (TODO and if signal is emitted)
-    updateIMContactStatus(QString("telepathy:///org/freedesktop/fake/account/") + QString::number(999999) + "@ovi.com", "nco:presence-status-offline");
+    updateIMContactStatus(QString("telepathy:/org/freedesktop/fake/account/") + QString::number(999999) + "@ovi.com", "nco:presence-status-offline");
     {
         QList<QContact> cons = contacts(QList<QContactLocalId> ()
                 << masterContactId << qHash(QString("/org/freedesktop/fake/account/") + QString::number(999999) + "@ovi.com"), QStringList()
@@ -1599,7 +1601,7 @@ void ut_qtcontacts_trackerplugin::testIMContactsFilterring()
     {
         unsigned int contactid = qHash(QString("/org/freedesktop/fake/account/") + QString::number(999995+i) + "@ovi.com");
         idstoremove << contactid;
-        insertContact(QString("telepathy:///org/freedesktop/fake/account/") + QString::number(999995+i) + "@ovi.com",
+        insertContact(QString("telepathy:/org/freedesktop/fake/account/") + QString::number(999995+i) + "@ovi.com",
                 contactid, QString::number(999995 + i)+ "@ovi.com", "nco:presence-status-available",
                 QString("/org/freedesktop/fake/account/%1").arg(i/2), QString("ovi%1.com").arg(i/2));
         if(!i/2)
@@ -1660,7 +1662,7 @@ void ut_qtcontacts_trackerplugin::testIMContactsFilterring()
     QObject::connect(&request, SIGNAL(progress(QContactFetchRequest*, bool)),
             &slot, SLOT(progress(QContactFetchRequest*, bool )));
     // see insertTpContact
-    filter.setValue(QString("www.sopranolive.org/backends/tracker/generated_unique_id/105323876#ovi0"));
+    filter.setValue(QString("/org/freedesktop/fake/account/0"));
     filter.setMatchFlags(QContactFilter::MatchExactly);
 
     request.setDefinitionRestrictions(QStringList()<<QContactOnlineAccount::DefinitionName);
