@@ -71,6 +71,7 @@ CntSymbianSimEngine *CntAbstractSimRequest::engine()
 {
     return static_cast<CntSymbianSimEngine*>(parent());
 }
+
 CntSimStore *CntAbstractSimRequest::simStore()
 {
     return engine()->simStore();

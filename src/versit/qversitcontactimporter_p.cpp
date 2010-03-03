@@ -430,11 +430,13 @@ bool QVersitContactImporterPrivate::createAvatar(
     QContactAvatar avatar;
     if (!location.isEmpty())
         avatar.setAvatar(location);
-    if (subType == QContactAvatar::SubTypeImage && !data.isEmpty()) {
-        QPixmap pixmap;
-        if (pixmap.loadFromData(data))
-            avatar.setPixmap(pixmap);
-    }
+    // Creating a pixmap in a non-GUI thread crashes on S60.
+    // XXX reenable this when the QtContacts stores QImages.
+//    if (subType == QContactAvatar::SubTypeImage && !data.isEmpty()) {
+//        QPixmap pixmap;
+//        if (pixmap.loadFromData(data))
+//            avatar.setPixmap(pixmap);
+//    }
     avatar.setSubType(subType);
 
     saveDetailWithContext(contact, &avatar, extractContexts(property));

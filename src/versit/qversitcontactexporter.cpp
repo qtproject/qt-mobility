@@ -150,6 +150,9 @@ QList<QVersitDocument> QVersitContactExporter::exportContacts(
 
 /*!
  * Sets \a handler to be the handler for processing QContactDetails, or 0 to have no handler.
+ *
+ * Does not take ownership of the handler.  The client should ensure the handler remains valid for
+ * the lifetime of the exporter.
  */
 void QVersitContactExporter::setDetailHandler(QVersitContactExporterDetailHandler* handler)
 {
@@ -166,6 +169,9 @@ QVersitContactExporterDetailHandler* QVersitContactExporter::detailHandler() con
 
 /*!
  * Sets \a handler to be the handler to load files with, or 0 to have no handler.
+ *
+ * Does not take ownership of the handler.  The client should ensure the handler remains valid for
+ * the lifetime of the exporter.
  */
 void QVersitContactExporter::setResourceHandler(QVersitResourceHandler* handler)
 {

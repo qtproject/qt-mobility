@@ -241,7 +241,7 @@ void tst_SimCMAsync::fetchContactReq()
     QVERIFY(stateSpy.count() == 1);
     QTRY_COMPARE(resultSpy.count(), 1);
     QVERIFY(req.state() == QContactAbstractRequest::FinishedState);
-    QVERIFY(req.error() == QContactManager::NoError);
+    QVERIFY(req.error() == QContactManager::DoesNotExistError);
     QVERIFY(stateSpy.count() == 2);
     QVERIFY(req.contacts().count() == 0);
 }
@@ -300,7 +300,7 @@ void tst_SimCMAsync::localIdFetchReq()
     QVERIFY(stateSpy.count() == 1);
     QTRY_COMPARE(resultSpy.count(), 1);
     QVERIFY(req.state() == QContactAbstractRequest::FinishedState);
-    QVERIFY(req.error() == QContactManager::NoError);
+    QVERIFY(req.error() == QContactManager::DoesNotExistError);
     QVERIFY(stateSpy.count() == 2);
     QVERIFY(req.ids().count() == 0);    
 }

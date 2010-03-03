@@ -237,8 +237,10 @@ QList<TUid> CntTransformOnlineAccount::supportedSortingFieldTypes(QString detail
  */
 bool CntTransformOnlineAccount::supportsSubType(const QString& subType) const
 {
-    Q_UNUSED(subType);
-    return false;
+    if(QContactOnlineAccount::FieldSubTypes  == subType)
+        return true;
+    else
+        return false;
 }
 
 /*!
