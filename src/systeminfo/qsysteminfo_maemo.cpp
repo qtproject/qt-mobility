@@ -203,6 +203,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QSystemNetworkInfoLinuxCommonPrivate *parent)
         : QSystemNetworkInfoLinuxCommonPrivate(parent)
 {
+    setupNetworkInfo();
 }
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
@@ -265,92 +266,22 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
 
 int QSystemNetworkInfoPrivate::cellId()
 {
-#if !defined(QT_NO_DBUS)
-    QDBusInterface connectionInterface("com.nokia.phone.net",
-                                       "/com/nokia/phone/net",
-                                       "Phone.Net",
-                                       QDBusConnection::systemBus());
-    if (!connectionInterface.isValid()) {
-        qWarning() << "interface not valid";
-        return -1;
-    }
-    QDBusMessage reply = connectionInterface.call(QLatin1String("get_registration_status"));
-
-    if (reply.type() == QDBusMessage::ReplyMessage) {
-        QList<QVariant> argList = reply.arguments();
-        return argList.at(CELLID_INDEX).value<uint>();
-    }
-#endif
-    qWarning() << reply.errorMessage();
-    return -1;
+    return currentCellId;
 }
 
 int QSystemNetworkInfoPrivate::locationAreaCode()
 {
-#if !defined(QT_NO_DBUS)
-    QDBusInterface connectionInterface("com.nokia.phone.net",
-                                       "/com/nokia/phone/net",
-                                       "Phone.Net",
-                                       QDBusConnection::systemBus());
-    if (!connectionInterface.isValid()) {
-        qWarning() << "interface not valid";
-        return -1;
-    }
-    QDBusMessage reply = connectionInterface.call(QLatin1String("get_registration_status"));
-
-    if (reply.type() == QDBusMessage::ReplyMessage) {
-        QList<QVariant> argList = reply.arguments();
-        return argList.at(LAC_INDEX).value<uint>();
-    }
-#endif
-    qWarning() << reply.errorMessage();
-    return -1;
+    return currentLac;
 }
 
 QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
 {
-#if !defined(QT_NO_DBUS)
-    QDBusInterface connectionInterface("com.nokia.phone.net",
-                                       "/com/nokia/phone/net",
-                                       "Phone.Net",
-                                       QDBusConnection::systemBus());
-    if (!connectionInterface.isValid()) {
-        qWarning() << "interface not valid";
-        return QString();
-    }
-    QDBusMessage reply = connectionInterface.call(QLatin1String("get_registration_status"));
-
-    if (reply.type() == QDBusMessage::ReplyMessage) {
-        QList<QVariant> argList = reply.arguments();
-        QString currentMobileCountryCode;
-        return currentMobileCountryCode.setNum(argList.at(MCC_INDEX).value<uint>());
-    }
-#endif
-    qWarning() << reply.errorMessage();
-    return QString();
+    return currentMCC;
 }
 
 QString QSystemNetworkInfoPrivate::currentMobileNetworkCode()
 {
-#if !defined(QT_NO_DBUS)
-    QDBusInterface connectionInterface("com.nokia.phone.net",
-                                       "/com/nokia/phone/net",
-                                       "Phone.Net",
-                                       QDBusConnection::systemBus());
-    if (!connectionInterface.isValid()) {
-        qWarning() << "interface not valid";
-        return QString();
-    }
-    QDBusMessage reply = connectionInterface.call(QLatin1String("get_registration_status"));
-
-    if (reply.type() == QDBusMessage::ReplyMessage) {
-        QList<QVariant> argList = reply.arguments();
-        QString currentMobileNetworkCode;
-        return currentMobileNetworkCode.setNum(argList.at(MNC_INDEX).value<uint>());
-    }
-#endif
-    qWarning() << reply.errorMessage();
-    return QString();
+    return currentMNC;
 }
 
 QString QSystemNetworkInfoPrivate::homeMobileCountryCode()
@@ -449,6 +380,68 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
     };
 #endif
     return QNetworkInterface();
+}
+
+void QSystemNetworkInfoPrivate::setupNetworkInfo()
+{
+    currentLac = -1;
+    currentCellId = -1;
+    currentMCC = "";
+    currentMNC = "";
+
+#if !defined(QT_NO_DBUS)
+    QDBusConnection systemDbusConnection = QDBusConnection::systemBus();
+
+    QDBusInterface connectionInterface("com.nokia.phone.net",
+                                       "/com/nokia/phone/net",
+                                       "Phone.Net",
+                                       systemDbusConnection);
+    if (!connectionInterface.isValid()) {
+        qWarning() << "setupNetworkInfo(): interface not valid";
+    }
+    QDBusMessage reply = connectionInterface.call(QLatin1String("get_registration_status"));
+    if (reply.type() == QDBusMessage::ReplyMessage) {
+        QList<QVariant> argList = reply.arguments();
+        currentLac = argList.at(LAC_INDEX).value<ushort>();
+        currentCellId = argList.at(CELLID_INDEX).value<uint>();
+        currentMCC.setNum(argList.at(MCC_INDEX).value<uint>());
+        currentMNC.setNum(argList.at(MNC_INDEX).value<uint>());
+    } else {
+        qWarning() << reply.errorMessage();
+    }
+    if (!systemDbusConnection.connect("com.nokia.phone.net",
+                       "/com/nokia/phone/net",
+                       "Phone.Net",
+                       "registration_status_change",
+                       this, SLOT(registrationStatusChanged(uchar,ushort,uint,uint,uint,uchar,uchar)))) {
+        qWarning() << "unable to connect to registration_status_change";
+    }
+#endif
+}
+
+void QSystemNetworkInfoPrivate::registrationStatusChanged(uchar, ushort var2, uint var3, uint var4, uint var5, uchar, uchar)
+{
+    int newLac = var2;
+    int newCellId = var3;
+    QString newMobileCountryCode;
+    QString newMobileNetworkCode;
+    newMobileCountryCode.setNum(var4);
+    newMobileNetworkCode.setNum(var5);
+
+    if (currentLac != newLac) {
+        currentLac = newLac;
+    }
+    if (currentCellId != newCellId) {
+        currentCellId = newCellId;
+    }
+    if (currentMCC != newMobileCountryCode) {
+        currentMCC = newMobileCountryCode;
+        emit currentMobileCountryCodeChanged(currentMCC);
+    }
+    if (currentMNC != newMobileNetworkCode) {
+        currentMNC = newMobileNetworkCode;
+        emit currentMobileNetworkCodeChanged(currentMNC);
+    }
 }
 
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent)
