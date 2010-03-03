@@ -44,12 +44,13 @@
 
 #include <QObject>
 
-#include <QContact>
-#include <QContactOnlineAccount>
-#include <QContactManager>
-
 #include <QtTracker/Tracker>
 #include <QtTracker/QLive>
+
+#include <qmobilityglobal.h>
+#include <qcontact.h>
+#include <qcontactonlineaccount.h>
+#include <qcontactmanager.h>
 
 QTM_BEGIN_NAMESPACE
 class QContactAbstractRequest;
