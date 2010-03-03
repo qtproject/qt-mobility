@@ -104,8 +104,11 @@ QList<QContactLocalId> CntFilterDetail::contacts(
     else 
     {
         createSelectQuery(filter,sqlQuery,error);
-        //fetch the contacts
-        idList =  m_srvConnection.searchContacts(sqlQuery, error);
+        if(error == QContactManager::NoError)
+            {
+            //fetch the contacts
+            idList =  m_srvConnection.searchContacts(sqlQuery, error);
+            }
     }
     
     return idList;

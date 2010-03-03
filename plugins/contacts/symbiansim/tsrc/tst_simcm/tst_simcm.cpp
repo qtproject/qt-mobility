@@ -53,6 +53,21 @@
 
 QTM_USE_NAMESPACE
 
+#ifndef QTRY_COMPARE
+#define QTRY_COMPARE(__expr, __expected) \
+    do { \
+        const int __step = 50; \
+        const int __timeout = 5000; \
+        if ((__expr) != (__expected)) { \
+            QTest::qWait(0); \
+        } \
+        for (int __i = 0; __i < __timeout && ((__expr) != (__expected)); __i+=__step) { \
+            QTest::qWait(__step); \
+        } \
+        QCOMPARE(__expr, __expected); \
+    } while(0)
+#endif
+
 //TESTED_CLASS=
 //TESTED_FILES=
 
@@ -92,6 +107,7 @@ private slots:
     void batchOperations();
 
     /* Test cases that take no data */
+    void signalEmission();
 
 private:
     void initManager(QString simStore);
@@ -576,7 +592,7 @@ void tst_SimCM::addContact()
 
     // Get the contact count for verification purposes
     QList<QContactLocalId> idsBefore = m_cm->contactIds();
-    QCOMPARE(m_cm->error(), QContactManager::NoError);
+    QVERIFY(m_cm->error() == QContactManager::NoError || m_cm->error() == QContactManager::DoesNotExistError);
 
     // 3.1 (if expected to pass) Save contact, verify result and remove contact
     if (expectedResult)
@@ -930,6 +946,59 @@ void tst_SimCM::batchOperations()
         QCOMPARE(m_cm->error(), QContactManager::NoError);
         QCOMPARE(errorMap.count(), 0);
     }
+}
+
+/*
+ * Test if signals contactsAdded, contactsChanged and contactsRemoved are
+ * emitted correctly.
+ */
+void tst_SimCM::signalEmission()
+{
+    initManager("ADN");
+    qRegisterMetaType<QContactLocalId>("QContactLocalId");
+    qRegisterMetaType<QList<QContactLocalId> >("QList<QContactLocalId>");
+    QSignalSpy spyAdded(m_cm, SIGNAL(contactsAdded(QList<QContactLocalId>)));
+    QSignalSpy spyChanged(m_cm, SIGNAL(contactsChanged(QList<QContactLocalId>)));
+    QSignalSpy spyRemoved(m_cm, SIGNAL(contactsRemoved(QList<QContactLocalId>)));
+
+    QContact contact = createContact("James Hunt", "+44751111111");
+
+    // 1. one contact added
+    QVERIFY(m_cm->saveContact(&contact));
+    QTRY_COMPARE(spyAdded.count(), 1);
+
+    // 2. one contact changed
+    QVERIFY(m_cm->saveContact(&contact));
+    QTRY_COMPARE(spyChanged.count(), 1);
+
+    // 3. one contact removed
+    QVERIFY(m_cm->removeContact(contact.localId()));
+    QTRY_COMPARE(spyRemoved.count(), 1);
+
+    // 4. contacts added
+    int batchOpCount(10);
+    QList<QContact> contacts;
+    for(int i(0); i < batchOpCount; i++) {
+        QContact contact = createContact(
+            QString("James").append(QString::number(i + 1)),
+            QString("1234567890").append(QString::number(i + 1)));
+        contacts.append(contact);
+    }
+    QMap<int, QContactManager::Error> errorMap;
+    QVERIFY(m_cm->saveContacts(&contacts, &errorMap));
+    QTRY_COMPARE(spyAdded.count(), batchOpCount);
+
+    // 5. contacts changed
+    QVERIFY(m_cm->saveContacts(&contacts, &errorMap));
+    QTRY_COMPARE(spyChanged.count(), batchOpCount);
+
+    // 6. contacts removed
+    QList<QContactLocalId> contactIds;
+    foreach(QContact contact, contacts) {
+        contactIds.append(contact.localId());
+    }
+    QVERIFY(m_cm->removeContacts(&contactIds, &errorMap));
+    QTRY_COMPARE(spyRemoved.count(), batchOpCount);
 }
 
 /*!

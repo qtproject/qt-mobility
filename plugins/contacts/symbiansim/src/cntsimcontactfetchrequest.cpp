@@ -43,14 +43,12 @@
 #include "cntsymbiansimengine.h"
 #include "cntsimstore.h"
 #include <qcontactfetchrequest.h>
+#include <qcontactlocalidfilter.h>
 
 CntSimContactFetchRequest::CntSimContactFetchRequest(CntSymbianSimEngine *engine, QContactFetchRequest *req)
     :CntAbstractSimRequest(engine),
      m_req(req)
 {
-    connect( simStore(), SIGNAL(getInfoComplete(RMobilePhoneBookStore::TMobilePhoneBookInfoV5, QContactManager::Error)),
-        this, SLOT(getInfoComplete(RMobilePhoneBookStore::TMobilePhoneBookInfoV5, QContactManager::Error)), Qt::QueuedConnection );
-    
     connect( simStore(), SIGNAL(readComplete(QList<QContact>, QContactManager::Error)),
         this, SLOT(readComplete(QList<QContact>, QContactManager::Error)), Qt::QueuedConnection );
 }
@@ -62,14 +60,31 @@ CntSimContactFetchRequest::~CntSimContactFetchRequest()
 
 bool CntSimContactFetchRequest::start()
 {
-    QContactManager::Error error = simStore()->getInfo();
-    if (error) {
-        QContactManagerEngine::updateRequestState(m_req, QContactAbstractRequest::FinishedState);    
-        QContactManagerEngine::updateContactFetchRequest(m_req, QList<QContact>(), error);
-        return false;
+    QContactManager::Error error = QContactManager::NoError;
+    
+    // Get filter
+    QContactLocalIdFilter lidFilter;
+    if (m_req->filter().type() == QContactFilter::LocalIdFilter) {
+        lidFilter = static_cast<QContactLocalIdFilter>(m_req->filter());
+    }        
+    
+    if (lidFilter.ids().count() == 1) {
+        // Optimization for performance. Fetch a single contact from store.
+        // This is mainly for CntSymbianSimEngine::contact().
+        int index = lidFilter.ids().at(0);
+        error = simStore()->read(index, 1);
+    } 
+    else {
+        // Fetch all contacts and filter the results.
+        // Contacts are fetched starting from index 1, all slots are read
+        // since slots may be not filled in a sequence.
+        int numSlots = simStore()->storeInfo().iTotalEntries;
+        error = simStore()->read(1, numSlots);
     }
-    QContactManagerEngine::updateRequestState(m_req, QContactAbstractRequest::ActiveState);
-    return true; 
+        
+    if (error == QContactManager::NoError)
+        QContactManagerEngine::updateRequestState(m_req, QContactAbstractRequest::ActiveState);
+    return (error == QContactManager::NoError); 
 }
 
 bool CntSimContactFetchRequest::cancel()
@@ -82,32 +97,10 @@ bool CntSimContactFetchRequest::cancel()
     return false;
 }
 
-void CntSimContactFetchRequest::getInfoComplete(RMobilePhoneBookStore::TMobilePhoneBookInfoV5 info, QContactManager::Error error)
-{
-    if (!m_req->isActive())
-        return;
-    
-    if (error == QContactManager::NoError) {
-        //contacts are fetched starting from index 1, all slots should be checked
-        //since slots may be not filled in a sequence.
-        error = simStore()->read(1, info.iTotalEntries);
-    }
-
-    if (error) {
-        QContactManagerEngine::updateRequestState(m_req, QContactAbstractRequest::FinishedState);    
-        QContactManagerEngine::updateContactFetchRequest(m_req, QList<QContact>(), error);
-    }
-}
-
 void CntSimContactFetchRequest::readComplete(QList<QContact> contacts, QContactManager::Error error)    
 {
     if (!m_req->isActive())
         return;
-    
-    // Sim store gives an error if there is no contacts. No need to pass
-    // this error to the client.
-    if (contacts.count() == 0 && error == QContactManager::DoesNotExistError)
-        error = QContactManager::NoError;      
     
     // Filter & sort results
     QList<QContact> filteredAndSorted;
