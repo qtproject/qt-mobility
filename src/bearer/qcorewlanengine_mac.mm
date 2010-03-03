@@ -63,12 +63,52 @@
 #include <SystemConfiguration/SCNetworkConfiguration.h>
 QMap <QString, QString> networkInterfaces;
 
+#ifdef MAC_SDK_10_6
+@interface QNSListener : NSObject
+{
+    NSNotificationCenter *center;
+    CWInterface * currentInterface;
+}
+- (void)notificationHandler:(NSNotification *)notification;
+- (void)remove;
+@end
+
+@implementation QNSListener
+- (id) init
+{
+    [super init];
+    center = [NSNotificationCenter defaultCenter];
+    currentInterface = [CWInterface interface];
+    [center addObserver:self selector:@selector(notificationHandler:) name:kCWLinkDidChangeNotification object:nil];
+    [center addObserver:self selector:@selector(notificationHandler:) name:kCWPowerDidChangeNotification object:nil];
+
+    return self;
+}
+
+-(void)dealloc
+{
+   [center release];
+   [currentInterface release];
+   [super dealloc];
+}
+
+-(void)remove
+{
+    [center removeObserver:self];
+}
+
+- (void)notificationHandler:(NSNotification *)notification
+{
+    QTM_NAMESPACE::QCoreWlanEngine::instance()->requestUpdate();
+}
+@end
+#endif
+
 QTM_BEGIN_NAMESPACE
 
 Q_GLOBAL_STATIC(QCoreWlanEngine, coreWlanEngine)
 
 inline QString cfstringRefToQstring(CFStringRef cfStringRef) {
-//    return QString([cfStringRef UTF8String]);
     QString retVal;
     CFIndex maxLength = 2 * CFStringGetLength(cfStringRef) + 1/*zero term*/; // max UTF8
     char *cstring = new char[maxLength];
@@ -121,8 +161,14 @@ void networkChangeCallback(SCDynamicStoreRef/* store*/, CFArrayRef changedKeys, 
 QCoreWlanEngine::QCoreWlanEngine(QObject *parent)
 :   QNetworkSessionEngine(parent)
 {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     getAllScInterfaces();
     startNetworkChangeLoop();
+#ifdef MAC_SDK_10_6
+    QNSListener *listener;
+    listener = [[QNSListener alloc] init];
+#endif
+    requestUpdate();
 }
 
 QCoreWlanEngine::~QCoreWlanEngine()
@@ -228,13 +274,13 @@ void QCoreWlanEngine::connectToId(const QString &id)
         NSEnumerator *enumerator = [remNets objectEnumerator];
         CWWirelessProfile *wProfile;
         NSUInteger index=0;
-        CWNetwork *apNetwork;
+
         NSDictionary *parametersDict;
         NSArray* apArray;
 
- CW8021XProfile *user8021XProfile;
- NSError *err;
- NSMutableDictionary *params;
+        CW8021XProfile *user8021XProfile;
+        NSError *err;
+        NSMutableDictionary *params;
 
         while ((wProfile = [enumerator nextObject])) { //CWWirelessProfile
 
@@ -257,7 +303,7 @@ void QCoreWlanEngine::connectToId(const QString &id)
                 if(!err) {
 
                     for(uint row=0; row < [apArray count]; row++ ) {
-                        apNetwork = [apArray objectAtIndex:row];
+                        CWNetwork *apNetwork = [apArray objectAtIndex:row];
                         if([[apNetwork ssid] compare:[wProfile ssid]] == NSOrderedSame) {
 
                             bool result = [wifiInterface associateToNetwork: apNetwork parameters:[NSDictionary dictionaryWithDictionary:params] error:&err];
@@ -274,7 +320,6 @@ void QCoreWlanEngine::connectToId(const QString &id)
             }
             index++;
         }
-        [apNetwork release];
 
         emit connectionError(id, InterfaceLookupError);
 #endif
@@ -349,7 +394,8 @@ QList<QNetworkConfigurationPrivate *> QCoreWlanEngine::scanForSsids(const QStrin
                     if( cpPriv->name == interfaceSsidString) {
                         cpPriv->state |=  QNetworkConfiguration::Active;
                     }
-                } else {
+                }
+                if(!cpPriv->state) {
                     if(isKnownSsid(cpPriv->serviceInterface.name(), networkSsid)) {
                         cpPriv->state =  QNetworkConfiguration::Discovered;
                     } else {
@@ -366,10 +412,7 @@ QList<QNetworkConfigurationPrivate *> QCoreWlanEngine::scanForSsids(const QStrin
                 foundConfigs.append(cpPriv);
                 [looppool release];
             }
-        } /*else {
-            qWarning() << "ERROR scanning for ssids" << nsstringToQString([err localizedDescription])
-                    <<nsstringToQString([err domain]);
-        }*/
+        }
     }
     [autoreleasepool drain];
 #else
@@ -500,8 +543,6 @@ void QCoreWlanEngine::startNetworkChangeLoop()
     CFRunLoopAddSource(CFRunLoopGetCurrent(), runloopSource, kCFRunLoopDefaultMode);
     return;
 }
-
-
 
 
 #include "moc_qcorewlanengine_mac_p.cpp"
