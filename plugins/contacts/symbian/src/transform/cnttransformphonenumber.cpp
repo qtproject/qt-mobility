@@ -127,7 +127,14 @@ QList<CContactItemField *> CntTransformPhoneNumber::transformDetailL(const QCont
 	        newField->AddFieldTypeL(KUidContactFieldPhoneNumber);
 	        newField->SetMapping(KUidContactFieldVCardMapAssistantTel);
 	    }
-
+        
+	    // video calls
+        else if (subTypes.contains(QContactPhoneNumber::SubTypeVideo))
+        {
+            newField->AddFieldTypeL(KUidContactFieldPhoneNumber);
+            newField->SetMapping(KUidContactFieldVCardMapTEL);
+            newField->AddFieldTypeL(KUidContactFieldVCardMapVIDEO);
+        }
 	    else
 	    {
 	        User::LeaveIfError(KErrNotSupported);
@@ -172,6 +179,9 @@ QContactDetail *CntTransformPhoneNumber::transformItemField(const CContactItemFi
         }
         else if (field.ContentType().Mapping() == KUidContactFieldVCardMapAssistantTel) {
             phoneNumber->setSubTypes(QContactPhoneNumber::SubTypeAssistant);
+        }
+        else if (field.ContentType().ContainsFieldType(KUidContactFieldVCardMapVIDEO)) {
+            phoneNumber->setSubTypes(QContactPhoneNumber::SubTypeVideo);
         }
 	}
     else if (field.ContentType().ContainsFieldType(KUidContactFieldFax)) {
