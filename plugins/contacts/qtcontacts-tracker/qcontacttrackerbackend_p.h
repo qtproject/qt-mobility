@@ -58,9 +58,8 @@
 #include <QtTracker/ontologies/nco.h>
 #include <QtTracker/QLive>
 
-#include <qmobilityglobal.h>
-#include "qtcontacts.h"
-#include <qcontactmanagerenginefactory.h>
+#include <QContactManagerEngine>
+#include <QContactManagerEngineFactory>
 
 using namespace SopranoLive;
 #include "qtrackercontactasyncrequest.h"
