@@ -43,12 +43,15 @@
 #define QTRACKERCONTACTSAVEREQUEST_H_
 
 #include <QObject>
-#include <qtrackercontactasyncrequest.h>
 #include <QPair>
 #include <QList>
 #include <QSet>
 #include <QtTracker/QLive>
 #include <QtTracker/ontologies/nco.h>
+
+#include <qtrackercontactasyncrequest.h>
+
+#include <qmobilityglobal.h>
 #include <qtcontacts.h>
 
 QTM_BEGIN_NAMESPACE
