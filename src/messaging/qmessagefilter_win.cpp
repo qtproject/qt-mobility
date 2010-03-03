@@ -1754,7 +1754,7 @@ QMessageFilter QMessageFilter::byType(QMessage::Type type, QMessageDataComparato
 
 QMessageFilter QMessageFilter::byType(QMessage::TypeFlags aType, QMessageDataComparator::InclusionComparator cmp)
 {
-    QMessage::TypeFlags type(aType & (QMessage::Sms | QMessage::Email)); // strip Mms, Xmpp
+    QMessage::TypeFlags type(aType & (QMessage::Sms | QMessage::Email)); // strip Mms, InstantMessage
     if (type == QMessage::Sms) {
         if (cmp == QMessageDataComparator::Includes) {
             return QMessageFilter::byParentAccountId(QMessageAccount::defaultAccount(QMessage::Sms), QMessageDataComparator::Equal);
@@ -1774,7 +1774,7 @@ QMessageFilter QMessageFilter::byType(QMessage::TypeFlags aType, QMessageDataCom
             return QMessageFilter(); // inclusion, match all
         return ~QMessageFilter(); // exclusion, match none
     }
-    // Mms/Xmpp only
+    // Mms/InstantMessage only
     if (cmp == QMessageDataComparator::Includes)
         return ~QMessageFilter(); // mms only inclusion, match none
     return QMessageFilter(); // mms only exclusion, match all

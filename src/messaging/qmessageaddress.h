@@ -57,7 +57,7 @@ public:
         System = 1,
         Phone,
         Email,
-        Xmpp
+        InstantMessage
         // Extensible
     };
 

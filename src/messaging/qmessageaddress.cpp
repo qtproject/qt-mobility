@@ -60,10 +60,10 @@ QTM_BEGIN_NAMESPACE
 
     This enum type is used to describe the type of a message address.
     
-    \value System   A system address.
-    \value Phone    A telephony address.
-    \value Email    An Email, Internet Message Format address.
-    \value Xmpp     An XMPP, Extensible Messaging and Presence Protocol address.
+    \value System             A system address.
+    \value Phone              A telephony address.
+    \value Email              An Email, Internet Message Format address.
+    \value InstantMessage     An Instant Messaging address.
     
     \sa type(), setType()
 */

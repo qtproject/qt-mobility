@@ -223,7 +223,7 @@ QList<QMessageFilter> QMessageSortOrderPrivate::normalize(const QList<QMessageFi
                     result.append(QMessageFilter::byType(QMessage::Mms) & filter);
                     result.append(QMessageFilter::byType(QMessage::Sms) & filter);
                     result.append(QMessageFilter::byType(QMessage::Email) & filter);
-                    result.append(QMessageFilter::byType(QMessage::Xmpp) & filter);
+                    result.append(QMessageFilter::byType(QMessage::InstantMessage) & filter);
                 }
             } break;
             case Read:
