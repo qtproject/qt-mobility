@@ -152,21 +152,24 @@ QList<QContactLocalId> CntSymbianEngine::contactIds(
                     result += r.second().localId();
                 }
             }
+            
+            //slow sorting until it's supported in SQL requests
+            result = slowSort(result, sortOrders, error);
         }
     }
     else
     {
         bool filterSupported(true);
         result = m_contactFilter->contacts(filter, sortOrders, filterSupported, error);
-        
-        //slow sorting until it's supported in SQL requests
-        result = slowSort(result, sortOrders, error);
             
 #ifdef SYMBIAN_BACKEND_USE_SQLITE
     
         // Remove possible false positives
         if(!filterSupported && error == QContactManager::NotSupportedError)
             result = slowFilter(filter, result, error);
+        
+        //slow sorting until it's supported in SQL requests
+        result = slowSort(result, sortOrders, error);
 
 #else
         // Remove possible false positives
