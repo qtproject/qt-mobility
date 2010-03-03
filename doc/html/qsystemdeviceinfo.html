@@ -64,8 +64,13 @@
 <tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::BatteryStatus </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#batteryStatus-prop">batteryStatus</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::PowerState </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#currentPowerState-prop">currentPowerState</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::Profile </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#currentProfile-prop">currentProfile</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#imei-prop">imei</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#imsi-prop">imsi</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::InputMethodFlags </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#inputMethodType-prop">inputMethodType</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#isDeviceLocked-prop">isDeviceLocked</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#manufacturer-prop">manufacturer</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#model-prop">model</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#productName-prop">productName</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::SimStatus </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#simStatus-prop">simStatus</a></b> ()</td></tr>
 </table>
 <ul>
@@ -84,23 +89,11 @@
 <ul>
 <li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
 </ul>
-<hr />
-<a name="static-public-members"></a>
-<h2>Static Public Members</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#imei-prop">imei</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#imsi-prop">imsi</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#manufacturer-prop">manufacturer</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#model-prop">model</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#productName-prop">productName</a></b> ()</td></tr>
-</table>
-<ul>
-<li><div bar="2" class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
-</ul>
 <h3>Additional Inherited Members</h3>
 <ul>
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
 <li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
@@ -249,7 +242,7 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#currentProfileChanged">currentProfileChanged</a></b> ( QSystemDeviceInfo::Profile <i>profile</i> )</td></tr>
 </table>
-<a name="//apple_ref/cpp/clm/QSystemDeviceInfo/imei"></a>
+<a name="//apple_ref/cpp/instm/QSystemDeviceInfo/imei"></a>
 <h3 class="fn"><a name="imei-prop"></a>imei : const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a></h3>
 <p>This property holds the IMEI.</p>
 <p>Returns the International Mobile Equipment Identity (IMEI), or a null <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> in the case of none.</p>
@@ -257,7 +250,7 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>imei</b> ()</td></tr>
 </table>
-<a name="//apple_ref/cpp/clm/QSystemDeviceInfo/imsi"></a>
+<a name="//apple_ref/cpp/instm/QSystemDeviceInfo/imsi"></a>
 <h3 class="fn"><a name="imsi-prop"></a>imsi : const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a></h3>
 <p>This property holds the IMSI.</p>
 <p>Returns the International Mobile Subscriber Identity (IMSI), or a null <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> in the case of none.</p>
@@ -281,7 +274,7 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>isDeviceLocked</b> ()</td></tr>
 </table>
-<a name="//apple_ref/cpp/clm/QSystemDeviceInfo/manufacturer"></a>
+<a name="//apple_ref/cpp/instm/QSystemDeviceInfo/manufacturer"></a>
 <h3 class="fn"><a name="manufacturer-prop"></a>manufacturer : const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a></h3>
 <p>This property holds the manufacture's name.</p>
 <p>Returns the name of the manufacturer of this device. In the case of desktops, the name of the vendor of the motherboard.</p>
@@ -289,7 +282,7 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>manufacturer</b> ()</td></tr>
 </table>
-<a name="//apple_ref/cpp/clm/QSystemDeviceInfo/model"></a>
+<a name="//apple_ref/cpp/instm/QSystemDeviceInfo/model"></a>
 <h3 class="fn"><a name="model-prop"></a>model : const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a></h3>
 <p>This property holds the model name.</p>
 <p>Returns the model information of the device. In the case of desktops where no model information is present, the CPU architect, such as i686, and machine type, such as Server, Desktop or Laptop.</p>
@@ -297,7 +290,7 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>model</b> ()</td></tr>
 </table>
-<a name="//apple_ref/cpp/clm/QSystemDeviceInfo/productName"></a>
+<a name="//apple_ref/cpp/instm/QSystemDeviceInfo/productName"></a>
 <h3 class="fn"><a name="productName-prop"></a>productName : const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a></h3>
 <p>This property holds the product name.</p>
 <p>Returns the product name of the device. In the case where no product information is available,</p>
