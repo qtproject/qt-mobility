@@ -109,7 +109,6 @@ QServiceControlPrivate::QServiceControlPrivate(QObject* parent)
 
 void QServiceControlPrivate::publishServices( const QString& ident)
 {
-    //for now we just have LocalSocket
     createServiceEndPoint(ident) ;
 }
 
@@ -163,7 +162,6 @@ QObject* QServiceControlPrivate::proxyForService(const QServiceTypeIdent& typeId
     QObject *proxy = endPoint->constructProxy(typeIdent);
     QObject::connect(proxy, SIGNAL(destroyed()), endPoint, SLOT(deleteLater()));
     return proxy;
-    return 0;
 }
 
 #include "moc_qservicecontrol_p.cpp"

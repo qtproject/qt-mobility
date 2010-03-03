@@ -98,7 +98,9 @@ static QString qservicemanager_resolveLibraryPath(const QString &libNameOrPath)
 */
 static bool qservicemanager_isIpcBasedService(const QString& location)
 {
-    if (location.startsWith("localsocket:"))
+    // Shall be generalized later on (TODO)
+    if (location.startsWith("localsocket:") ||
+        location.startsWith("symbianclientserver:"))
         return true;
     return false;
 }

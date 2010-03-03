@@ -43,7 +43,6 @@
 #include <QCoreApplication>
 #include <QFile>
 #include <QTextStream>
-#include <QDebug>
 #include "databasemanagerserver.h"
 #include "clientservercommon.h"
 

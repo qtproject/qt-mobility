@@ -305,11 +305,12 @@ private:
 
 bool tst_QServiceManager_IPC::requiresLackey()
 {
-#ifdef Q_OS_SYMBIAN
-    return false; //service is started when requested
-#else
+// Temporarily commented out for initial development on Symbian
+//#ifdef Q_OS_SYMBIAN
+    //return false; //service is started when requested
+//#else
     return true;
-#endif
+//#endif
 }
 
 void tst_QServiceManager_IPC::initTestCase()

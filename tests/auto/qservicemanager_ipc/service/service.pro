@@ -21,7 +21,7 @@ symbian {
 
 wince*|symbian*: {
     addFiles.sources = testdata/*
-    addFiles.path = testdata
+    addFiles.path = xmldata
     DEPLOYMENT += addFiles
 }
 wince* {

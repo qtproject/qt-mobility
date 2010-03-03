@@ -57,16 +57,12 @@ public:
     SymbianClientServerEndPoint(QObject* parent = 0)
         : QServiceIpcEndPoint(parent)
     {
-#ifdef QT_SFW_SYMBIAN_IPC_DEBUG
     qDebug() << "Symbian IPC endpoint created.";
-#endif
     }
 
     ~SymbianClientServerEndPoint()
     {
-#ifdef QT_SFW_SYMBIAN_IPC_DEBUG
     qDebug() << "Symbian IPC endpoint destroyed.";
-#endif
     }
 };
 
@@ -88,7 +84,35 @@ QObject* QServiceControlPrivate::proxyForService(const QServiceTypeIdent &typeId
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
     qDebug() << "QSCP::proxyForService for location: " << location;
 #endif
+    // location format: protocol:address
+    RServiceSession *session = new RServiceSession(location.section(':', 1, 1));
+    // zzz
 }
+
+
+
+RServiceSession::RServiceSession(QString address)
+{
+#ifdef QT_SFW_SYMBIAN_IPC_DEBUG
+    qDebug() << "RServiceSession() for address: " << address;
+#endif
+}
+
+void RServiceSession::Close()
+{
+    qDebug() << "RServiceSession close()";
+}
+
+TInt RServiceSession::Connect()
+{
+    qDebug() << "RServiceSession connect()";
+}
+
+TVersion RServiceSession::Version() const
+{
+    qDebug() << "RServiceSession Version()";
+}
+
 
 #include "moc_qservicecontrol_s60_p.cpp"
 // #include "qservicecontrol_p.moc"

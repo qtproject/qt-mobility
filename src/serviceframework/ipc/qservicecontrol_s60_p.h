@@ -46,6 +46,7 @@
 
 #include "qservicecontrol.h"
 #include "qservicetyperegister.h"
+#include <e32base.h>
 
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
 #include <QDebug>
@@ -53,7 +54,34 @@
 
 QTM_BEGIN_NAMESPACE
 
+// Forward declarations
 class ObjectEndPoint;
+// Type definitions
+typedef TPckgBuf<TInt> TError; 
+
+// Internal class handling the actual communication with the service provider.
+// Communication is based on standard Symbian client-server architecture.
+class RServiceSession : public RSessionBase
+{
+
+public: 
+    RServiceSession(QString address);
+    TInt Connect(); 
+    void Close();
+    TVersion Version() const;
+
+ public:
+    TPckgBuf<TInt> iState(); // TPckgBuf type can be used directly as IPC parameter
+
+private:
+    TInt StartServer();
+
+private: 
+    TIpcArgs iArgs;
+    TError iError;
+};
+
+
 class QServiceControlPrivate: public QObject
 {
     Q_OBJECT
