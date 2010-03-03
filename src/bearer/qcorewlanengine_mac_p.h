@@ -56,6 +56,8 @@
 #include "qnetworksessionengine_p.h"
 #include <QMap>
 #include <QTimer>
+#include <SystemConfiguration/SystemConfiguration.h>
+
 QTM_BEGIN_NAMESPACE
 
 class QNetworkConfigurationPrivate;
@@ -90,6 +92,11 @@ private:
 
     bool isKnownSsid(const QString &interfaceName, const QString &ssid);
     QList<QNetworkConfigurationPrivate *> foundConfigurations;
+
+    SCDynamicStoreRef storeSession;
+    CFRunLoopSourceRef runloopSource;
+
+    void startNetworkChangeLoop();
 
 };
 

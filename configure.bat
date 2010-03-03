@@ -432,12 +432,14 @@ echo Start of compile tests
 REM compile tests go here.
 call :compileTest LBT lbt
 call :compileTest SNAP snap
+call :compileTest SymbianContactSIM symbiancntsim
 echo End of compile tests
 echo.
 echo.
 
 REM we could skip generating headers if a module is not enabled
 if not exist "%BUILD_PATH%\features" mkdir %BUILD_PATH%\features
+copy %SOURCE_PATH%\features\strict_flags.prf %BUILD_PATH%\features
 echo Generating Mobility Headers...
 rd /s /q %BUILD_PATH%\include
 mkdir %BUILD_PATH%\include

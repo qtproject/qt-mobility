@@ -248,12 +248,12 @@ void tst_QContactManager::dumpContactDifferences(const QContact& ca, const QCont
     bDetails = b.details();
     foreach(QContactDetail d, aDetails) {
         if (d.definitionName() != QContactDisplayLabel::DefinitionName && d.definitionName() != QContactType::DefinitionName)
-            qDebug() << "A contact had extra detail:" << d.definitionName() << d.values();
+            qDebug() << "A contact had extra detail:" << d.definitionName() << d.variantValues();
     }
     // and same for B
     foreach(QContactDetail d, bDetails) {
         if (d.definitionName() != QContactDisplayLabel::DefinitionName && d.definitionName() != QContactType::DefinitionName)
-            qDebug() << "B contact had extra detail:" << d.definitionName() << d.values();
+            qDebug() << "B contact had extra detail:" << d.definitionName() << d.variantValues();
     }
 
     // now test specifically the display label and the type
@@ -314,7 +314,7 @@ void tst_QContactManager::dumpContact(const QContact& contact)
     QList<QContactDetail> details = contact.details();
     foreach(QContactDetail d, details) {
         qDebug() << "  " << d.definitionName() << ":";
-        qDebug() << "    Vals:" << d.values();
+        qDebug() << "    Vals:" << d.variantValues();
     }
 }
 
@@ -382,6 +382,9 @@ void tst_QContactManager::addManagers()
     managers.removeAll("testdummy");
     managers.removeAll("teststaticdummy");
     managers.removeAll("maliciousplugin");
+#if defined(Q_OS_SYMBIAN)
+    managers.removeAll("symbiansim");
+#endif
 
     foreach(QString mgr, managers) {
         QMap<QString, QString> params;
@@ -399,9 +402,9 @@ void tst_QContactManager::setContactName(QContactDetailDefinition nameDef, QCont
     // 1. custom label, 2. first name, 3. last name
     if(nameDef.fields().contains(QContactName::FieldCustomLabel)) {
         contactName.setCustomLabel(name);
-    } else if(nameDef.fields().contains(QContactName::FieldFirst)) {
+    } else if(nameDef.fields().contains(QContactName::FieldFirstName)) {
         contactName.setFirstName(name);
-    } else if(nameDef.fields().contains(QContactName::FieldLast)) {
+    } else if(nameDef.fields().contains(QContactName::FieldLastName)) {
         contactName.setLastName(name);
     } else {
         // Assume that at least one of the above name fields is supported by the backend
@@ -573,6 +576,20 @@ void tst_QContactManager::ctors()
     QCOMPARE(em4->managerParameters(), tst_QContactManager_QStringMap());
     QCOMPARE(em5->managerParameters(), tst_QContactManager_QStringMap());
     QCOMPARE(em3.managerParameters(), em6->managerParameters()); // memory engine discards the given params, replaces with id.
+
+
+    // Finally test the platform specific engines are actually the defaults
+#if defined(Q_OS_SYMBIAN)
+    QCOMPARE(defaultStore, QString("symbian"));
+#elif defined(Q_WS_MAEMO_6)
+    QCOMPARE(defaultStore, QString("tracker"));
+#elif defined(Q_WS_MAEMO_5)
+    QCOMPARE(defaultStore, QString("maemo5"));
+#elif defined(Q_OS_WINCE)
+    QCOMPARE(defaultStore, QString("wince"));
+#else
+    QCOMPARE(defaultStore, QString("memory"));
+#endif
 }
 
 void tst_QContactManager::doDump()
@@ -586,7 +603,7 @@ void tst_QContactManager::doDump()
     }
 }
 
-Q_DECLARE_METATYPE(QVariant);
+Q_DECLARE_METATYPE(QVariant)
 
 void tst_QContactManager::doDumpSchema()
 {
@@ -604,10 +621,10 @@ void tst_QContactManager::doDumpSchema()
                     qDebug() << QString("%2::%1 (Unique) {").arg(def.name()).arg(type).toAscii().constData();
                 else
                     qDebug() << QString("%2::%1 {").arg(def.name()).arg(type).toAscii().constData();
-                QMap<QString, QContactDetailDefinitionField> fields = def.fields();
+                QMap<QString, QContactDetailFieldDefinition> fields = def.fields();
 
                 foreach(QString fname, fields.keys()) {
-                    QContactDetailDefinitionField field = fields.value(fname);
+                    QContactDetailFieldDefinition field = fields.value(fname);
 
                     if (field.allowableValues().count() > 0) {
                         // Make some pretty output
@@ -896,10 +913,10 @@ void tst_QContactManager::batch()
     QScopedPointer<QContactManager> cm(QContactManager::fromUri(uri));
 
     /* First test null pointer operations */
-    QVERIFY(cm->saveContacts(0).count() == 0);
+    QVERIFY(!cm->saveContacts(0, 0));
     QVERIFY(cm->error() == QContactManager::BadArgumentError);
 
-    QVERIFY(cm->removeContacts(0).count() == 0);
+    QVERIFY(!cm->removeContacts(0, 0));
     QVERIFY(cm->error() == QContactManager::BadArgumentError);
 
     /* Now add 3 contacts, all valid */
@@ -921,15 +938,12 @@ void tst_QContactManager::batch()
     QList<QContact> contacts;
     contacts << a << b << c;
 
-    QList<QContactManager::Error> errors;
-
-    errors = cm->saveContacts(&contacts);
-
+    QMap<int, QContactManager::Error> errorMap;
+    // Add one dummy error to test if the errors are reset
+    errorMap.insert(0, QContactManager::NoError);
+    QVERIFY(cm->saveContacts(&contacts, &errorMap));
     QVERIFY(cm->error() == QContactManager::NoError);
-    QVERIFY(errors.count() == 3);
-    QVERIFY(errors.at(0) == QContactManager::NoError);
-    QVERIFY(errors.at(1) == QContactManager::NoError);
-    QVERIFY(errors.at(2) == QContactManager::NoError);
+    QVERIFY(errorMap.count() == 0);
 
     /* Make sure our contacts got updated too */
     QVERIFY(contacts.count() == 3);
@@ -959,12 +973,9 @@ void tst_QContactManager::batch()
     number.setNumber("34567");
     QVERIFY(contacts[2].saveDetail(&number));
 
-    errors = cm->saveContacts(&contacts);
+    QVERIFY(cm->saveContacts(&contacts, &errorMap));
     QVERIFY(cm->error() == QContactManager::NoError);
-    QVERIFY(errors.count() == 3);
-    QVERIFY(errors.at(0) == QContactManager::NoError);
-    QVERIFY(errors.at(1) == QContactManager::NoError);
-    QVERIFY(errors.at(2) == QContactManager::NoError);
+    QVERIFY(errorMap.count() == 0);
 
     /* Retrieve them and check them again */
     a = cm->contact(contacts.at(0).id().localId());
@@ -986,12 +997,9 @@ void tst_QContactManager::batch()
     QList<QContactLocalId> ids;
     QContactLocalId removedIdForLater = b.id().localId();
     ids << a.id().localId() << b.id().localId() << c.id().localId();
-    errors = cm->removeContacts(&ids);
-    QVERIFY(errors.count() == 3);
+    QVERIFY(cm->removeContacts(&ids, &errorMap));
+    QVERIFY(errorMap.count() == 0);
     QVERIFY(cm->error() == QContactManager::NoError);
-    QVERIFY(errors.at(0) == QContactManager::NoError);
-    QVERIFY(errors.at(1) == QContactManager::NoError);
-    QVERIFY(errors.at(2) == QContactManager::NoError);
 
     /* Make sure all the ids are now 0 */
     QVERIFY(ids.count() == 3);
@@ -1013,12 +1021,12 @@ void tst_QContactManager::batch()
     /* Now try removing with all invalid ids (e.g. the ones we just removed) */
     ids.clear();
     ids << a.id().localId() << b.id().localId() << c.id().localId();
-    errors = cm->removeContacts(&ids);
+    QVERIFY(!cm->removeContacts(&ids, &errorMap));
     QVERIFY(cm->error() == QContactManager::DoesNotExistError);
-    QVERIFY(errors.count() == 3);
-    QVERIFY(errors.at(0) == QContactManager::DoesNotExistError);
-    QVERIFY(errors.at(1) == QContactManager::DoesNotExistError);
-    QVERIFY(errors.at(2) == QContactManager::DoesNotExistError);
+    QVERIFY(errorMap.count() == 3);
+    QVERIFY(errorMap.values().at(0) == QContactManager::DoesNotExistError);
+    QVERIFY(errorMap.values().at(1) == QContactManager::DoesNotExistError);
+    QVERIFY(errorMap.values().at(2) == QContactManager::DoesNotExistError);
 
     /* Try adding some new ones again, this time one with an error */
     contacts.clear();
@@ -1032,36 +1040,39 @@ void tst_QContactManager::batch()
     b.saveDetail(&bad);
 
     contacts << a << b << c;
-    errors = cm->saveContacts(&contacts);
+    QVERIFY(!cm->saveContacts(&contacts, &errorMap));
     /* We can't really say what the error will be.. maybe bad argument, maybe invalid detail */
     QVERIFY(cm->error() != QContactManager::NoError);
 
-    QVERIFY(errors.count() == 3);
     /* It's permissible to fail all the adds, or to add the successful ones */
-    if (errors.at(0) == QContactManager::NoError) {
-        QVERIFY(contacts.at(0).id() != QContactId());
-    } else {
+    QVERIFY(errorMap.count() > 0);
+    QVERIFY(errorMap.count() <= 3);
+
+    // A might have gone through
+    if (errorMap.keys().contains(0)) {
+        QVERIFY(errorMap.value(0) != QContactManager::NoError);
         QVERIFY(contacts.at(0).id() == QContactId());
+    } else {
+        QVERIFY(contacts.at(0).id() != QContactId());
     }
-    /* B should definitely have failed */
-    QVERIFY(errors.at(1) == QContactManager::InvalidDetailError);
+
+    // B should have failed
+    QVERIFY(errorMap.value(1) == QContactManager::InvalidDetailError);
     QVERIFY(contacts.at(1).id() == QContactId());
 
-    /* C might have gone through */
-    if (errors.at(2) == QContactManager::NoError) {
-        QVERIFY(contacts.at(2).id() != QContactId());
-    } else {
+    // C might have gone through
+    if (errorMap.keys().contains(2)) {
+        QVERIFY(errorMap.value(2) != QContactManager::NoError);
         QVERIFY(contacts.at(2).id() == QContactId());
+    } else {
+        QVERIFY(contacts.at(2).id() != QContactId());
     }
 
     /* Fix up B and re save it */
     QVERIFY(contacts[1].removeDetail(&bad));
-    errors = cm->saveContacts(&contacts);
-    QVERIFY(errors.count() == 3);
+    QVERIFY(cm->saveContacts(&contacts, &errorMap));
+    QVERIFY(errorMap.count() == 0);
     QVERIFY(cm->error() == QContactManager::NoError);
-    QVERIFY(errors.at(0) == QContactManager::NoError);
-    QVERIFY(errors.at(1) == QContactManager::NoError);
-    QVERIFY(errors.at(2) == QContactManager::NoError);
 
     /* Now delete 3 items, but with one bad argument */
     ids.clear();
@@ -1069,26 +1080,31 @@ void tst_QContactManager::batch()
     ids << removedIdForLater;
     ids << contacts.at(2).id().localId();
 
-    errors = cm->removeContacts(&ids);
-    QVERIFY(errors.count() == 3);
+    QVERIFY(!cm->removeContacts(&ids, &errorMap));
     QVERIFY(cm->error() != QContactManager::NoError);
 
     /* Again, the backend has the choice of either removing the successful ones, or not */
-    if (errors.at(0) == QContactManager::NoError) {
-        QVERIFY(ids.at(0) == 0);
+    QVERIFY(errorMap.count() > 0);
+    QVERIFY(errorMap.count() <= 3);
+
+    // A might have gone through
+    if (errorMap.keys().contains(0)) {
+        QVERIFY(errorMap.value(0) != QContactManager::NoError);
+        QVERIFY(contacts.at(0).id() == QContactId());
     } else {
-        QVERIFY(ids.at(0) != 0);
+        QVERIFY(contacts.at(0).id() != QContactId());
     }
 
     /* B should definitely have failed */
-    QVERIFY(errors.at(1) == QContactManager::DoesNotExistError);
+    QVERIFY(errorMap.value(1) == QContactManager::DoesNotExistError);
     QVERIFY(ids.at(1) == removedIdForLater);
 
-    /* C might have gone through */
-    if (errors.at(2) == QContactManager::NoError) {
-        QVERIFY(ids.at(2) == 0);
+    // A might have gone through
+    if (errorMap.keys().contains(2)) {
+        QVERIFY(errorMap.value(2) != QContactManager::NoError);
+        QVERIFY(contacts.at(2).id() == QContactId());
     } else {
-        QVERIFY(ids.at(2) != 0);
+        QVERIFY(contacts.at(2).id() != QContactId());
     }
 }
 
@@ -1128,7 +1144,10 @@ void tst_QContactManager::invalidManager()
     QVERIFY(manager.removeContact(foo.id().localId()) == false);
     QVERIFY(manager.error() == QContactManager::NotSupportedError);
 
-    QVERIFY(manager.saveContacts(0) == QList<QContactManager::Error>());
+    QMap<int, QContactManager::Error> errorMap;
+    errorMap.insert(0, QContactManager::NoError);
+    QVERIFY(!manager.saveContacts(0, &errorMap));
+    QVERIFY(errorMap.count() == 0);
     QVERIFY(manager.error() == QContactManager::BadArgumentError);
 
     /* filters */
@@ -1149,15 +1168,21 @@ void tst_QContactManager::invalidManager()
 
     QList<QContact> list;
     list << foo;
-    QVERIFY(manager.saveContacts(&list) == (QList<QContactManager::Error>() << QContactManager::NotSupportedError));
+
+    QVERIFY(!manager.saveContacts(&list, &errorMap));
+    QVERIFY(errorMap.count() == 1);
+    QVERIFY(errorMap.value(0) == QContactManager::NotSupportedError);
     QVERIFY(manager.error() == QContactManager::NotSupportedError);
 
-    QVERIFY(manager.removeContacts(0) == QList<QContactManager::Error>());
+    QVERIFY(!manager.removeContacts(0, &errorMap));
+    QVERIFY(errorMap.count() == 0);
     QVERIFY(manager.error() == QContactManager::BadArgumentError);
 
     QList<QContactLocalId> idlist;
     idlist << foo.id().localId();
-    QVERIFY(manager.removeContacts(&idlist) == (QList<QContactManager::Error>() << QContactManager::NotSupportedError));
+    QVERIFY(!manager.removeContacts(&idlist, &errorMap));
+    QVERIFY(errorMap.count() == 1);
+    QVERIFY(errorMap.value(0) == QContactManager::NotSupportedError);
     QVERIFY(manager.error() == QContactManager::NotSupportedError);
 
     /* Detail definitions */
@@ -1764,7 +1789,8 @@ void tst_QContactManager::signalEmission()
     c2.setId(QContactId());
     c3.setId(QContactId());
     batchAdd << c << c2 << c3;
-    m1->saveContacts(&batchAdd);
+    QMap<int, QContactManager::Error> errorMap;
+    QVERIFY(m1->saveContacts(&batchAdd, &errorMap));
 
     QVERIFY(batchAdd.count() == 3);
     c = batchAdd.at(0);
@@ -1792,14 +1818,14 @@ void tst_QContactManager::signalEmission()
 
     batchAdd.clear();
     batchAdd << c << c2 << c3;
-    m1->saveContacts(&batchAdd);
+    QVERIFY(m1->saveContacts(&batchAdd, &errorMap));
 
     sigids.clear();
     QTRY_WAIT( while(spyCM.size() > 0) {sigids += spyCM.takeFirst().at(0).value<QList<QContactLocalId> >(); }, sigids.contains(c.localId()) && sigids.contains(c2.localId()) && sigids.contains(c3.localId()));
 
     /* Batch removes */
     batchRemove << c.id().localId() << c2.id().localId() << c3.id().localId();
-    m1->removeContacts(&batchRemove);
+    QVERIFY(m1->removeContacts(&batchRemove, &errorMap));
 
     sigids.clear();
     QTRY_WAIT( while(spyCR.size() > 0) {sigids += spyCR.takeFirst().at(0).value<QList<QContactLocalId> >(); }, sigids.contains(c.localId()) && sigids.contains(c2.localId()) && sigids.contains(c3.localId()));
@@ -1845,7 +1871,7 @@ void tst_QContactManager::errorStayingPut()
     QVERIFY(m2.error() == QContactManager::NoError);
 
     /* Cause an error on the other ones and check the first is not affected */
-    m2.saveContacts(0);
+    m2.saveContacts(0, 0);
     QVERIFY(m1.error() == QContactManager::DoesNotExistError);
     QVERIFY(m2.error() == QContactManager::BadArgumentError);
 
@@ -1882,7 +1908,7 @@ void tst_QContactManager::detailDefinitions()
     }
 
     foreach(QContactDetailDefinition def, defs.values()) {
-        QMap<QString, QContactDetailDefinitionField> fields = def.fields();
+        QMap<QString, QContactDetailFieldDefinition> fields = def.fields();
 
         // Again some sanity checking
         if (fields.keys().count() != fields.uniqueKeys().count()) {
@@ -1898,7 +1924,7 @@ void tst_QContactManager::detailDefinitions()
             QVERIFY(fields.keys().count() == fields.uniqueKeys().count());
         }
 
-        foreach(QContactDetailDefinitionField field, def.fields().values()) {
+        foreach(QContactDetailFieldDefinition field, def.fields().values()) {
             // Sanity check the allowed values
             if (field.allowableValues().count() > 0) {
                 if (field.dataType() == QVariant::StringList) {

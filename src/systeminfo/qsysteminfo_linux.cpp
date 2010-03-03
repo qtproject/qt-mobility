@@ -170,12 +170,12 @@ void QSystemNetworkInfoPrivate::setupNmConnections()
     iface = new QNetworkManagerInterface(this);
 
    foreach(QDBusObjectPath path, iface->getDevices()) {
-        QNetworkManagerInterfaceDevice *devIface = new QNetworkManagerInterfaceDevice(path.path());
+        QNetworkManagerInterfaceDevice *devIface = new QNetworkManagerInterfaceDevice(path.path(), this);
 
         switch(devIface->deviceType()) {
         case DEVICE_TYPE_802_3_ETHERNET:
             {
-                devWiredIface = new QNetworkManagerInterfaceDeviceWired(devIface->path());
+                devWiredIface = new QNetworkManagerInterfaceDeviceWired(devIface->connectionInterface()->path(), this);
                 devWiredIface->setConnections();
                 connect(devWiredIface, SIGNAL(propertiesChanged(const QString &,QMap<QString,QVariant>)),
                         this,SLOT(nmPropertiesChanged( const QString &, QMap<QString,QVariant>)));
@@ -183,14 +183,14 @@ void QSystemNetworkInfoPrivate::setupNmConnections()
             break;
         case DEVICE_TYPE_802_11_WIRELESS:
             {
-                devWirelessIface = new QNetworkManagerInterfaceDeviceWireless(devIface->path());
+                devWirelessIface = new QNetworkManagerInterfaceDeviceWireless(devIface->connectionInterface()->path(), this);
                 devWirelessIface->setConnections();
 
                 connect(devWirelessIface, SIGNAL(propertiesChanged(const QString &,QMap<QString,QVariant>)),
                         this,SLOT(nmPropertiesChanged( const QString &, QMap<QString,QVariant>)));
 
                 if(devWirelessIface->activeAccessPoint().path().length() > 2) {
-                    accessPointIface = new QNetworkManagerInterfaceAccessPoint(devWirelessIface->activeAccessPoint().path());
+                    accessPointIface = new QNetworkManagerInterfaceAccessPoint(devWirelessIface->activeAccessPoint().path(), this);
                     accessPointIface->setConnections();
                     connect(accessPointIface, SIGNAL(propertiesChanged(const QString &,QMap<QString,QVariant>)),
                             this,SLOT(nmAPPropertiesChanged( const QString &, QMap<QString,QVariant>)));
@@ -213,7 +213,7 @@ bool QSystemNetworkInfoPrivate::isDefaultConnectionPath(const QString &path)
     while (i.hasNext()) {
         i.next();
         QScopedPointer<QNetworkManagerConnectionActive> activeCon;
-        activeCon.reset(new QNetworkManagerConnectionActive(i.key()));
+        activeCon.reset(new QNetworkManagerConnectionActive(i.key(), this));
         if(i.value() == path) {
             isDefault = activeCon->defaultRoute();
         }
@@ -231,11 +231,11 @@ void QSystemNetworkInfoPrivate::getPrimaryMode()
     while (i.hasNext()) {
         i.next();
         QScopedPointer<QNetworkManagerConnectionActive> activeCon;
-        activeCon.reset(new QNetworkManagerConnectionActive(i.key()));
+        activeCon.reset(new QNetworkManagerConnectionActive(i.key(), this));
 
         if(activeCon->defaultRoute()) {
             anyDefaultRoute = activeCon->defaultRoute();
-            QNetworkManagerInterfaceDevice *devIface = new QNetworkManagerInterfaceDevice(i.value());
+            QNetworkManagerInterfaceDevice *devIface = new QNetworkManagerInterfaceDevice(i.value(), this);
             emit networkModeChanged(deviceTypeToMode(devIface->deviceType()));
         }
         devicepath = i.value();
@@ -265,10 +265,10 @@ QString QSystemNetworkInfoPrivate::getNmNetName(QSystemNetworkInfo::NetworkMode 
                && devIface->deviceType() == DEVICE_TYPE_802_11_WIRELESS) {
 
                 QNetworkManagerInterfaceDeviceWireless *devWirelessIfaceL;
-                devWirelessIfaceL = new QNetworkManagerInterfaceDeviceWireless(devPath);
+                devWirelessIfaceL = new QNetworkManagerInterfaceDeviceWireless(devPath, this);
                 if(devWirelessIfaceL->activeAccessPoint().path().length() > 2) {
                     QNetworkManagerInterfaceAccessPoint *accessPointIfaceL;
-                    accessPointIfaceL = new QNetworkManagerInterfaceAccessPoint(devWirelessIfaceL->activeAccessPoint().path());
+                    accessPointIfaceL = new QNetworkManagerInterfaceAccessPoint(devWirelessIfaceL->activeAccessPoint().path(), this);
                     QString ssid =  accessPointIfaceL->ssid();
 
                     if(ssid.isEmpty()) {
@@ -303,7 +303,7 @@ QString QSystemNetworkInfoPrivate::getNetworkNameForConnectionPath(const QString
         activeCon.reset(new QNetworkManagerConnectionActive(i.key()));
         if(i.value() == path) {
             QScopedPointer<QNetworkManagerSettingsConnection> settingsConIface;
-            settingsConIface.reset(new QNetworkManagerSettingsConnection(activeCon->serviceName(),activeCon->connection().path()));
+            settingsConIface.reset(new QNetworkManagerSettingsConnection(activeCon->serviceName(),activeCon->connection().path(), this));
             if(settingsConIface->isValid()) {
                 qWarning() << settingsConIface->getId();
                 return settingsConIface->getId();
@@ -326,7 +326,7 @@ void QSystemNetworkInfoPrivate::updateActivePaths()
     foreach(QDBusObjectPath activeconpath, connections) {
 
         QScopedPointer<QNetworkManagerConnectionActive> activeCon;
-        activeCon.reset(new QNetworkManagerConnectionActive(activeconpath.path()));
+        activeCon.reset(new QNetworkManagerConnectionActive(activeconpath.path(), this));
 
         QList<QDBusObjectPath> devices = activeCon->devices();
         foreach(QDBusObjectPath device, devices) {
@@ -342,7 +342,7 @@ void QSystemNetworkInfoPrivate::nmPropertiesChanged( const QString & path, QMap<
         i.next();
 
         if( i.key() == QLatin1String("State")) {
-            QNetworkManagerInterfaceDevice *devIface = new QNetworkManagerInterfaceDevice(path);
+            QNetworkManagerInterfaceDevice *devIface = new QNetworkManagerInterfaceDevice(path, this);
             quint32 nmState = i.value().toUInt();
             quint32 nmDevType = devIface->deviceType();
             QSystemNetworkInfo::NetworkMode mode = deviceTypeToMode(nmDevType);
@@ -367,10 +367,10 @@ void QSystemNetworkInfoPrivate::nmPropertiesChanged( const QString & path, QMap<
 
                 if(nmDevType == DEVICE_TYPE_802_11_WIRELESS){
                     QNetworkManagerInterfaceDeviceWireless *devWirelessIfaceL;
-                    devWirelessIfaceL = new QNetworkManagerInterfaceDeviceWireless(path);
+                    devWirelessIfaceL = new QNetworkManagerInterfaceDeviceWireless(path, this);
                     if(devWirelessIfaceL->activeAccessPoint().path().length() > 2) {
                         QNetworkManagerInterfaceAccessPoint *accessPointIfaceL;
-                        accessPointIfaceL = new QNetworkManagerInterfaceAccessPoint(devWirelessIfaceL->activeAccessPoint().path());
+                        accessPointIfaceL = new QNetworkManagerInterfaceAccessPoint(devWirelessIfaceL->activeAccessPoint().path(), this);
                         QString ssid = accessPointIfaceL->ssid();
                         emit networkNameChanged(QSystemNetworkInfo::WlanMode, ssid);
                         emit networkSignalStrengthChanged(QSystemNetworkInfo::WlanMode, accessPointIfaceL->strength());
@@ -379,7 +379,7 @@ void QSystemNetworkInfoPrivate::nmPropertiesChanged( const QString & path, QMap<
             }
         }
         if( i.key() == QLatin1String("ActiveAccessPoint")) {
-            accessPointIface = new QNetworkManagerInterfaceAccessPoint(path);
+            accessPointIface = new QNetworkManagerInterfaceAccessPoint(path, this);
 
             accessPointIface->setConnections();
             if(!connect(accessPointIface, SIGNAL(propertiesChanged(const QString &,QMap<QString,QVariant>)),

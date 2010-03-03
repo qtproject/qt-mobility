@@ -55,7 +55,6 @@ public:
     Q_INVOKABLE int callWithInt(int number) { return number; }
 };
 
-
 class TestService : public QObject,
                     public ISimpleTypeTest,
                     public IComplexTypeTest

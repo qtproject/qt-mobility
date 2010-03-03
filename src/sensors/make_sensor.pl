@@ -209,10 +209,14 @@ IMPLEMENT_READING('.$reading.')
 
 /*!
     \class '.$reading.'
-    \ingroup sensors
+    \ingroup sensors_reading
 
     \preliminary
     \brief The '.$reading.' class holds readings from the [X] sensor.
+
+    [Fill this out]
+
+    \section2 '.$reading.' Units
 
     [Fill this out]
 */
@@ -220,11 +224,11 @@ IMPLEMENT_READING('.$reading.')
 /*!
     \property '.$reading.'::myprop
     \brief [what does it hold?]
+
+    [What are the units?]
+    \sa {'.$reading.' Units}
 */
 
-/*!
-    Returns [what?]
-*/
 qreal '.$reading.'::myprop() const
 {
     return d->myprop;
@@ -266,7 +270,7 @@ if (-e $source) {
                 print OUT '
 /*!
     \class '.$filter.'
-    \ingroup sensors_helpers
+    \ingroup sensors_filter
 
     \preliminary
     \brief The '.$filter.' class is a convenience wrapper around QSensorFilter.
@@ -287,7 +291,7 @@ const char *'.$sensor.'::type("'.$sensor.'");
 
 /*!
     \class '.$sensor.'
-    \ingroup sensors_helpers
+    \ingroup sensors_type
 
     \preliminary
     \brief The '.$sensor.' class is a convenience wrapper around QSensor.

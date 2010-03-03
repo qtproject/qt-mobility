@@ -51,6 +51,7 @@ QTM_BEGIN_NAMESPACE
 class QVersitContactExporter;
 class QVersitContactExporterPrivate;
 class MyQVersitResourceHandler;
+class MyQVersitContactExporterDetailHandler;
 
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
@@ -86,14 +87,15 @@ private slots:
     void testEncodeFamily();
     void testEncodeAvatar();
     void testEncodeDisplayLabel();
+    void testDefaultResourceHandler();
 
     // Test Utility Function
     QContactDetail searchDetail(QList<QContactDetail> details, QString search);
 
 private: // Data
     QVersitContactExporter* mExporter;
-    QVersitContactExporterPrivate* mExporterPrivate;
-    MyQVersitResourceHandler* mResourceLoader;
+    MyQVersitResourceHandler* mResourceHandler;
+    MyQVersitContactExporterDetailHandler* mDetailHandler;
 };
 
 #endif // UT_QVERSITCONTACTEXPORTER_H

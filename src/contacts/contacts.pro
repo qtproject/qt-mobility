@@ -25,7 +25,6 @@ PUBLIC_HEADERS += \
     qcontactchangeset.h \
     qcontactdetail.h \
     qcontactdetaildefinition.h \
-    qcontactdetaildefinitionfield.h \
     qcontactdetailfielddefinition.h \
     qcontactfilter.h \
     qcontactid.h \
@@ -99,7 +98,7 @@ symbian {
     DEPLOYMENT += CONTACTS_DEPLOYMENT
 }
 
-!isEmpty(CONTACTS_DEFAULT_ENGINE): DEFINES += Q_CONTACTS_DEFAULT_ENGINE=CONTACTS_DEFAULT_ENGINE
+!isEmpty(CONTACTS_DEFAULT_ENGINE): DEFINES += Q_CONTACTS_DEFAULT_ENGINE=$$CONTACTS_DEFAULT_ENGINE
 
 CONFIG += app
 include(../../features/deploy.pri)
