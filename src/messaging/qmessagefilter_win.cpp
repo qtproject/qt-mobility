@@ -534,14 +534,14 @@ bool QMessageFilterPrivate::matchesMessageSimple(const QMessageFilter &filter, c
             if (filter.d_ptr->_field == QMessageFilterPrivate::Recipients) {
                 QMessageAddressList addresses(message.to() + message.cc() + message.bcc());
                 foreach(QMessageAddress address, addresses) {
-                    tmp = address.recipient();
+                    tmp = address.addressee();
                     if (!caseSensitive) {
                         tmp = tmp.toLower();
                     }
                     messageStrings.append(tmp);
                 }
             } else if (filter.d_ptr->_field == QMessageFilterPrivate::Sender) {
-                tmp = message.from().recipient();
+                tmp = message.from().addressee();
                 if (!caseSensitive) {
                     tmp = tmp.toLower();
                 }

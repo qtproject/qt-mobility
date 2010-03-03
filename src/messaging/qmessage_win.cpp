@@ -525,7 +525,7 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
             // Forward the text content inline
             QStringList addresses;
             foreach (const QMessageAddress &address, to()) {
-                addresses.append(address.recipient());
+                addresses.append(address.addressee());
             }
 
             QString existingText(textContent());
@@ -533,7 +533,7 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
             QString prefix(QString("\r\n----- %1 -----\r\n\r\n").arg(qApp->translate("QMessage", "Forwarded Message")));
             prefix.append(QString("%1: %2\r\n").arg(qApp->translate("QMessage", "Subject")).arg(subject()));
             prefix.append(QString("%1: %2\r\n").arg(qApp->translate("QMessage", "Date")).arg(date().toString()));
-            prefix.append(QString("%1: %2\r\n").arg(qApp->translate("QMessage", "From")).arg(from().recipient()));
+            prefix.append(QString("%1: %2\r\n").arg(qApp->translate("QMessage", "From")).arg(from().addressee()));
             prefix.append(QString("%1: %2\r\n").arg(qApp->translate("QMessage", "To")).arg(addresses.join(",")));
 
             QString postfix("\r\n\r\n-----------------------------\r\n");

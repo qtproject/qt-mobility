@@ -437,11 +437,11 @@ namespace {
         entry.rgPropVals[0].Value.l = type;
 
 #ifdef _WIN32_WCE
-        QString addressStr = addr.recipient();
+        QString addressStr = addr.addressee();
 #else
         QString addressStr("[%1:%2]");
         addressStr = addressStr.arg(addr.type() == QMessageAddress::Phone ? "SMS" : "SMTP");
-        addressStr = addressStr.arg(addr.recipient());
+        addressStr = addressStr.arg(addr.addressee());
 #endif
 
         // TODO: Escape illegal characters, as per: http://msdn.microsoft.com/en-us/library/cc842281.aspx
@@ -1001,7 +1001,7 @@ namespace {
             qWarning() << "Unable to set subject in message.";
             *error = QMessageManager::FrameworkFault;
         } else {
-            QString emailAddress = source.from().recipient();
+            QString emailAddress = source.from().addressee();
             if (!setMapiProperty(message, PR_SENDER_EMAIL_ADDRESS, emailAddress)) {
                 qWarning() << "Unable to set sender address in message.";
                 *error = QMessageManager::FrameworkFault;

@@ -232,10 +232,10 @@ bool ModestEngine::composeEmail(const QMessage &message)
     if (!list.empty()){
         for (int i = 0; i < list.size(); ++i) {
             if (i == 0) {
-                mailString += list.at(i).recipient();
+                mailString += list.at(i).addressee();
             } else {
                 mailString += QString("%2C%20");
-                mailString += list.at(i).recipient();
+                mailString += list.at(i).addressee();
             }
         }
     }

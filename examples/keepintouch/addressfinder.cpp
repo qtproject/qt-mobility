@@ -78,7 +78,7 @@ QString simpleAddress(const QString &recipient)
 
 QString simpleAddress(const QMessageAddress &address)
 {
-    return simpleAddress(address.recipient());
+    return simpleAddress(address.addressee());
 }
 
 //! [contact-lookup]
@@ -108,7 +108,7 @@ QString contactDisplayName(const QMessageAddress &address)
     }
 
     // We couldn't match anything, so return the original address
-    return address.recipient();
+    return address.addressee();
 }
 //! [contact-lookup]
 

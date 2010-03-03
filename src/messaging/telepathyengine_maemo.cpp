@@ -39,7 +39,7 @@ bool TelepathyEngine::sendMessage(QMessage &message)
     QMessageAccountId account=message.parentAccountId();
     if(!cm.isEmpty()) {
         foreach(QMessageAddress to,toList) {
-             tpSession->sendMessageToAddress(cm,to.recipient(),message.textContent());
+             tpSession->sendMessageToAddress(cm,to.addressee(),message.textContent());
         };
     }
     else

@@ -62,7 +62,7 @@ public:
     };
 
     QMessageAddress();
-    QMessageAddress(Type type, const QString &recipient);
+    QMessageAddress(Type type, const QString &addressee);
     QMessageAddress(const QMessageAddress &other);
 
     virtual ~QMessageAddress();
@@ -75,8 +75,8 @@ public:
     Type type() const;
     void setType(Type type);
 
-    QString recipient() const;
-    void setRecipient(const QString &recipient);
+    QString addressee() const;
+    void setAddressee(const QString &addressee);
 
     static void parseEmailAddress(const QString& emailAddress, QString *name, QString *address, QString *suffix = 0, bool *startDelimeterFound = 0, bool *endDelimeterFound = 0);
 

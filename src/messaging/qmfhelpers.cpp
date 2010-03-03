@@ -399,7 +399,7 @@ QMailAddress convert(const QMessageAddress &address)
         suffix = " (TYPE=XMPP)";
     }
 
-    return QMailAddress(address.recipient() + suffix);
+    return QMailAddress(address.addressee() + suffix);
 }
 
 QMessageAddressList convert(const QList<QMailAddress> &list)
