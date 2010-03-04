@@ -52,7 +52,7 @@ QTM_BEGIN_NAMESPACE
 /*!
   \class QContact
  
-  \brief The QContact class provides an addressbook contact.
+  \brief The QContact class represents an addressbook contact.
 
   \ingroup contacts-main
  
