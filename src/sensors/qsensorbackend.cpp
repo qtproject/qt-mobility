@@ -291,7 +291,11 @@ void QSensorBackend::setDescription(const QString &description)
     Inform the front end that the sensor has stopped.
     This can be due to start() failing or for some
     unexpected reason (eg. hardware failure).
-    \sa sensorError()
+
+    Note that the front end must call QSensor::isActive() to see if
+    the sensor has stopped. If the sensor has stopped due to an error
+    the sensorError() function should be called to notify the class
+    of the error condition.
 */
 void QSensorBackend::sensorStopped()
 {
@@ -303,6 +307,11 @@ void QSensorBackend::sensorStopped()
     Inform the front end that the sensor is busy.
     This implicitly calls sensorStopped() and
     is typically called from start().
+
+    Note that the front end must call QSensor::isBusy() to see if
+    the sensor is busy. If the sensor has stopped due to an error
+    the sensorError() function should be called to notify the class
+    of the error condition.
 */
 void QSensorBackend::sensorBusy()
 {
@@ -315,6 +324,7 @@ void QSensorBackend::sensorBusy()
     Inform the front end that a sensor error occurred.
     Note that this only reports an \a error code. It does
     not stop the sensor.
+
     \sa sensorStopped()
 */
 void QSensorBackend::sensorError(int error)
