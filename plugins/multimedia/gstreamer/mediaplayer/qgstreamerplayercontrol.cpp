@@ -59,7 +59,7 @@ QGstreamerPlayerControl::QGstreamerPlayerControl(QGstreamerPlayerSession *sessio
     , m_session(session)
     , m_state(QMediaPlayer::StoppedState)
     , m_mediaStatus(QMediaPlayer::NoMedia)
-    , m_bufferProgress(0)
+    , m_bufferProgress(-1)
     , m_stream(0)
     , m_fifoNotifier(0)
     , m_fifoCanWrite(false)
@@ -125,7 +125,10 @@ QMediaPlayer::MediaStatus QGstreamerPlayerControl::mediaStatus() const
 
 int QGstreamerPlayerControl::bufferStatus() const
 {
-    return m_bufferProgress;
+    if (m_bufferProgress == -1) {
+        return m_session->state() == QMediaPlayer::StoppedState ? 0 : 100;
+    } else
+        return m_bufferProgress;
 }
 
 int QGstreamerPlayerControl::volume() const
@@ -147,7 +150,7 @@ QMediaTimeRange QGstreamerPlayerControl::availablePlaybackRanges() const
 {
     QMediaTimeRange ranges;
 
-    if(m_session->isSeekable())
+    if (m_session->isSeekable())
         ranges.addInterval(0, m_session->duration());
 
     return ranges;
@@ -189,6 +192,7 @@ void QGstreamerPlayerControl::stop()
     if (m_state != QMediaPlayer::StoppedState) {
         m_session->pause();
         if (!m_session->seek(0)) {
+            m_bufferProgress = -1;
             m_session->stop();
             m_session->pause();
         }
@@ -220,9 +224,14 @@ const QIODevice *QGstreamerPlayerControl::mediaStream() const
 
 void QGstreamerPlayerControl::setMedia(const QMediaContent &content, QIODevice *stream)
 {
-    if (m_state != QMediaPlayer::StoppedState)
-        emit stateChanged(m_state = QMediaPlayer::StoppedState);
+    QMediaPlayer::State oldState = m_state;
+    m_state = QMediaPlayer::StoppedState;    
     m_session->stop();
+
+    if (m_bufferProgress != -1) {
+        m_bufferProgress = -1;
+        emit bufferStatusChanged(0);
+    }
 
     if (m_stream) {
         closeFifo();
@@ -263,6 +272,8 @@ void QGstreamerPlayerControl::setMedia(const QMediaContent &content, QIODevice *
     }
 
     emit mediaChanged(m_currentResource);
+    if (m_state != oldState)
+        emit stateChanged(m_state);
 }
 
 void QGstreamerPlayerControl::setVideoOutput(QObject *output)
@@ -290,13 +301,14 @@ void QGstreamerPlayerControl::updateState(QMediaPlayer::State state)
             emit stateChanged(m_state = QMediaPlayer::StoppedState);
         break;
 
-    case QMediaPlayer::PausedState:
     case QMediaPlayer::PlayingState:
+    case QMediaPlayer::PausedState:
         if (m_state == QMediaPlayer::StoppedState)
             m_mediaStatus = QMediaPlayer::LoadedMedia;
-        else
-            m_mediaStatus = QMediaPlayer::BufferedMedia;
-        setBufferProgress(100);
+        else {            
+            if (m_bufferProgress == -1)
+                m_mediaStatus = QMediaPlayer::BufferedMedia;
+        }
         break;
     }
 
@@ -315,20 +327,24 @@ void QGstreamerPlayerControl::processEOS()
 
 void QGstreamerPlayerControl::setBufferProgress(int progress)
 {
-    if (m_bufferProgress == progress)
+    if (m_bufferProgress == progress || m_mediaStatus == QMediaPlayer::NoMedia)
         return;
 
     QMediaPlayer::MediaStatus oldStatus = m_mediaStatus;
 
     m_bufferProgress = progress;
 
-    if (progress == 100) {
-        if (m_state == QMediaPlayer::StoppedState)
-            m_mediaStatus = QMediaPlayer::LoadedMedia;
-        else
-            m_mediaStatus = QMediaPlayer::BufferedMedia;
+    if (m_state == QMediaPlayer::StoppedState) {
+        m_mediaStatus = QMediaPlayer::LoadedMedia;
     } else {
-        m_mediaStatus = QMediaPlayer::BufferingMedia;
+        if (m_bufferProgress < 100) {
+            m_mediaStatus = QMediaPlayer::StalledMedia;
+            m_session->pause();
+        } else {
+            m_mediaStatus = QMediaPlayer::BufferedMedia;
+            if (m_state == QMediaPlayer::PlayingState)
+                m_session->play();
+        }
     }
 
     if (m_mediaStatus != oldStatus)
