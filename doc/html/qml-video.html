@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qmlgraphicsvideo.cpp -->
 <head>
   <title>Qt Mobility Project 1.0: QML Video Element Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -69,12 +69,12 @@
 <li>PreserveAspectCrop - the video is scaled uniformly to fill, cropping if necessary</li>
 </ul>
 </div></div><br />
-<div class="qmlitem"><div class="qmlproto"><table width="100%" class="qmlname"><tr><td><a name="bufferProgress-prop"></a>bufferProgress : <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a></td></tr></table></div><div class="qmldoc"><p>This property holds how much of the data buffer is currently filled, from 0.0 (empty) to 1.0 (full).</p>
+<div class="qmlitem"><div class="qmlproto"><table width="100%" class="qmlname"><tr><td><a name="bufferProgress-prop"></a><span class="qmlreadonly">read-only</span>bufferProgress : <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a></td></tr></table></div><div class="qmldoc"><p>This property holds how much of the data buffer is currently filled, from 0.0 (empty) to 1.0 (full).</p>
 </div></div><br />
-<div class="qmlitem"><div class="qmlproto"><table width="100%" class="qmlname"><tr><td><a name="duration-prop"></a>duration : int</td></tr></table></div><div class="qmldoc"><p>This property holds the duration of the video in milliseconds.</p>
+<div class="qmlitem"><div class="qmlproto"><table width="100%" class="qmlname"><tr><td><a name="duration-prop"></a><span class="qmlreadonly">read-only</span>duration : int</td></tr></table></div><div class="qmldoc"><p>This property holds the duration of the video in milliseconds.</p>
 <p>If the video doesn't have a fixed duration (a live stream for example) this will be 0.</p>
 </div></div><br />
-<div class="qmlitem"><div class="qmlproto"><table width="100%" class="qmlname"><tr><td><a name="error-prop"></a>error : enum</td></tr></table></div><div class="qmldoc"><p>This property holds the error state of the video. It can be one of:</p>
+<div class="qmlitem"><div class="qmlproto"><table width="100%" class="qmlname"><tr><td><a name="error-prop"></a><span class="qmlreadonly">read-only</span>error : enum</td></tr></table></div><div class="qmldoc"><p>This property holds the error state of the video. It can be one of:</p>
 <ul>
 <li>NoError - there is no current error.</li>
 <li>ResourceError - the video cannot be played due to a problem allocating resources.</li>
@@ -84,7 +84,7 @@
 <li>ServiceMissing - the video cannot be played because the media service could not be instantiated.</li>
 </ul>
 </div></div><br />
-<div class="qmlitem"><div class="qmlproto"><table width="100%" class="qmlname"><tr><td><a name="errorString-prop"></a>errorString : string</td></tr></table></div><div class="qmldoc"><p>This property holds a string describing the current error condition in more detail.</p>
+<div class="qmlitem"><div class="qmlproto"><table width="100%" class="qmlname"><tr><td><a name="errorString-prop"></a><span class="qmlreadonly">read-only</span>errorString : string</td></tr></table></div><div class="qmldoc"><p>This property holds a string describing the current error condition in more detail.</p>
 </div></div><br />
 <div class="qmlitem"><div class="qmlproto"><table width="100%" class="qmlname"><tr><td><a name="hasVideo-prop"></a><span class="qmlreadonly">read-only</span>hasVideo : bool</td></tr></table></div><div class="qmldoc"><p>This property holds whether the source contains video.</p>
 </div></div><br />
@@ -96,11 +96,11 @@
 </div></div><br />
 <div class="qmlitem"><div class="qmlproto"><table width="100%" class="qmlname"><tr><td><a name="position-prop"></a>position : int</td></tr></table></div><div class="qmldoc"><p>This property holds the current playback position in milliseconds.</p>
 </div></div><br />
-<div class="qmlitem"><div class="qmlproto"><table width="100%" class="qmlname"><tr><td><a name="seekable-prop"></a>seekable : bool</td></tr></table></div><div class="qmldoc"><p>This property holds whether position of the video can be changed.</p>
+<div class="qmlitem"><div class="qmlproto"><table width="100%" class="qmlname"><tr><td><a name="seekable-prop"></a><span class="qmlreadonly">read-only</span>seekable : bool</td></tr></table></div><div class="qmldoc"><p>This property holds whether position of the video can be changed.</p>
 </div></div><br />
 <div class="qmlitem"><div class="qmlproto"><table width="100%" class="qmlname"><tr><td><a name="source-prop"></a>source : url</td></tr></table></div><div class="qmldoc"><p>This property holds the source URL of the video.</p>
 </div></div><br />
-<div class="qmlitem"><div class="qmlproto"><table width="100%" class="qmlname"><tr><td><a name="status-prop"></a>status : enum</td></tr></table></div><div class="qmldoc"><p>This property holds the status of video loading. It can be one of:</p>
+<div class="qmlitem"><div class="qmlproto"><table width="100%" class="qmlname"><tr><td><a name="status-prop"></a><span class="qmlreadonly">read-only</span>status : enum</td></tr></table></div><div class="qmldoc"><p>This property holds the status of video loading. It can be one of:</p>
 <ul>
 <li>NoMedia - no video has been set.</li>
 <li>Loading - the video is currently being loaded.</li>

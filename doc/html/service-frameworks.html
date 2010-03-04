@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- sf.qdoc -->
 <head>
   <title>Qt Mobility Project 1.0: Qt Service Framework</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -83,7 +83,7 @@
 <p>The above invocation of the file storage object's deleteFile() function is done via the service's <a href="http://qt.nokia.com/doc/4.6/qmetaobject.html">QMetaObject</a>. The client does not require any knowledge of the objects actual type and therefore does not have to link against a service specific library.</p>
 <a name="typed-services"></a>
 <h5>Typed services</h5>
-<p>So far all lookup mechanism returned a <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> pointer. This pointer can be utilised by introspecting the object, using Qt's meta object system. However in some use cases it may be more convenient to directly interact with the service object by including the service header and/or linking against the service provider. The main advantage is compile time checking.</p>
+<p>So far all lookup mechanism returned a <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> pointer. This pointer can be utilised by introspecting the object, using Qt's meta object system. However in some use cases it may be more convenient to directly interact with the service object by including the service header and/or linking against the service provider. The main advantage is compile time checking. Its disdvantage is that client and service must share the implementation of the service object via a library they link against or via a common header file. Note that such sharing breaks the fundamental ServiceFramework principle of separating clients from service as changes of the service type may require changes to both, services and clients.</p>
 <p>The subsequent code snippet demonstrates how this may look like:</p>
 <pre>    #include &lt;filestorage.h&gt;
     ...

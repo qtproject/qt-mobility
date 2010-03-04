@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qmagnetometer.cpp -->
 <head>
   <title>Qt Mobility Project 1.0: QMagnetometerReading Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QMagnetometerReading"></a>
@@ -66,7 +66,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qmagnetometerreading.html#z-prop">z</a></b> () const</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>2 public functions inherited from <a href="qsensorreading.html#public-functions">QSensorReading</a></li>
+<li><div bar="2" class="fn"></div>4 public functions inherited from <a href="qsensorreading.html#public-functions">QSensorReading</a></li>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
@@ -82,6 +82,8 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QMagnetometerReading class represents one reading from the magnetometer.</p>
+<a name="qmagnetometerreading-units"></a>
+<h3>QMagnetometerReading Units</h3>
 <p>The magnetometer returns magnetic flux density values along 3 axes. The scale of the values is teslas. The axes are arranged as follows.</p>
 <pre>             +z
               |
@@ -120,24 +122,30 @@
 <a name="//apple_ref/cpp/instm/QMagnetometerReading/calibrated_x"></a>
 <h3 class="fn"><a name="calibrated_x-prop"></a>calibrated_x : const <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a></h3>
 <p>This property holds the calibrated flux density on the X axis.</p>
+<p>Measured as telsas.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b>calibrated_x</b> () const</td></tr>
 </table>
+<p>See also <a href="qmagnetometerreading.html#qmagnetometerreading-units">QMagnetometerReading Units</a>.</p>
 <a name="//apple_ref/cpp/instm/QMagnetometerReading/calibrated_y"></a>
 <h3 class="fn"><a name="calibrated_y-prop"></a>calibrated_y : const <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a></h3>
 <p>This property holds the calibrated flux density on the Y axis.</p>
+<p>Measured as telsas.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b>calibrated_y</b> () const</td></tr>
 </table>
+<p>See also <a href="qmagnetometerreading.html#qmagnetometerreading-units">QMagnetometerReading Units</a>.</p>
 <a name="//apple_ref/cpp/instm/QMagnetometerReading/calibrated_z"></a>
 <h3 class="fn"><a name="calibrated_z-prop"></a>calibrated_z : const <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a></h3>
 <p>This property holds the calibrated flux density on the Z axis.</p>
+<p>Measured as telsas.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b>calibrated_z</b> () const</td></tr>
 </table>
+<p>See also <a href="qmagnetometerreading.html#qmagnetometerreading-units">QMagnetometerReading Units</a>.</p>
 <a name="//apple_ref/cpp/instm/QMagnetometerReading/calibrationLevel"></a>
 <h3 class="fn"><a name="calibrationLevel-prop"></a>calibrationLevel : const <a href="qmagnetometerreading.html#CalibrationLevel-enum">CalibrationLevel</a></h3>
 <p>This property holds the calibration level of the reading.</p>
@@ -146,27 +154,34 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">CalibrationLevel </td><td class="memItemRight" valign="bottom"><b>calibrationLevel</b> () const</td></tr>
 </table>
+<p>See also <a href="qmagnetometerreading.html#qmagnetometerreading-units">QMagnetometerReading Units</a>.</p>
 <a name="//apple_ref/cpp/instm/QMagnetometerReading/x"></a>
 <h3 class="fn"><a name="x-prop"></a>x : const <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a></h3>
 <p>This property holds the raw flux density on the X axis.</p>
+<p>Measured as telsas.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b>x</b> () const</td></tr>
 </table>
+<p>See also <a href="qmagnetometerreading.html#qmagnetometerreading-units">QMagnetometerReading Units</a>.</p>
 <a name="//apple_ref/cpp/instm/QMagnetometerReading/y"></a>
 <h3 class="fn"><a name="y-prop"></a>y : const <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a></h3>
 <p>This property holds the raw flux density on the Y axis.</p>
+<p>Measured as telsas.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b>y</b> () const</td></tr>
 </table>
+<p>See also <a href="qmagnetometerreading.html#qmagnetometerreading-units">QMagnetometerReading Units</a>.</p>
 <a name="//apple_ref/cpp/instm/QMagnetometerReading/z"></a>
 <h3 class="fn"><a name="z-prop"></a>z : const <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a></h3>
 <p>This property holds the raw flux density on the Z axis.</p>
+<p>Measured as telsas.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b>z</b> () const</td></tr>
 </table>
+<p>See also <a href="qmagnetometerreading.html#qmagnetometerreading-units">QMagnetometerReading Units</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QMagnetometerReading/setCalibrated_x"></a>

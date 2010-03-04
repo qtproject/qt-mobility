@@ -93,6 +93,7 @@ usage()
     echo "-modules <list> ... Restrict list of modules to build (default all supported)"
     echo "                    Choose from: bearer contacts gallery location publishsubscribe"
     echo "                    messaging multimedia systeminfo serviceframework versit"
+    echo "                    sensors"
     echo "                    Modules should be separated by a space and surrounded"
     echo "                    by double quotation. If a"
     echo "                    selected module depends on other modules dependencies"
@@ -378,7 +379,6 @@ compileTest "CoreWLAN (MacOS 10.6)" corewlan
 # It's a lot easier to make qmake do the dependency checking...
 echo "mobility_modules = $MOBILITY_MODULES" >> "$CONFIG_IN"
 echo "contains(mobility_modules,versit): mobility_modules *= contacts" >> "$CONFIG_IN"
-echo "maemo6:contains(mobility_modules,messaging): mobility_modules -= messaging" >> "$CONFIG_IN"
 
 # Ideally we'd skip generating headers for modules that are not enabled
 echo "Generating Mobility Headers..."
@@ -437,6 +437,7 @@ done
 
 mv "$CONFIG_IN" config.pri
 mkdir -p "$shadowpath/features"
+cp -f "$relpath/features/strict_flags.prf" "$shadowpath/features"
 
 echo "Running qmake..."
 if qmake -recursive "$relpath/qtmobility.pro"; then

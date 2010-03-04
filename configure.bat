@@ -118,8 +118,9 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo -examples ......... Build example applications
     echo -no-docs .......... Do not build documentation (build by default)
     echo -modules ^<list^> ... Build only the specified modules (default all)
-    echo                     Choose from: bearer contacts gallery location publishsubscribe
-    echo                     messaging multimedia systeminfo serviceframework versit
+    echo                     Choose from: bearer contacts gallery location
+    echo                     publishsubscribe messaging multimedia systeminfo
+    echo                     serviceframework versit
     echo                     Modules should be separated by a space and surrounded
     echo                     by double quotation. If a
     echo                     selected module depends on other modules dependencies
@@ -434,12 +435,14 @@ echo Start of compile tests
 REM compile tests go here.
 call :compileTest LBT lbt
 call :compileTest SNAP snap
+call :compileTest SymbianContactSIM symbiancntsim
 echo End of compile tests
 echo.
 echo.
 
 REM we could skip generating headers if a module is not enabled
 if not exist "%BUILD_PATH%\features" mkdir %BUILD_PATH%\features
+copy %SOURCE_PATH%\features\strict_flags.prf %BUILD_PATH%\features
 echo Generating Mobility Headers...
 rd /s /q %BUILD_PATH%\include
 mkdir %BUILD_PATH%\include
@@ -484,7 +487,7 @@ if %FIRST% == bearer (
 ) else if %FIRST% == sensors (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\sensors
 ) else if %FIRST% == gallery (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\gallery
+    perl -S $SOURCE_PATH%\bin\syncheader %BUID_PATH%\include %SOURCE_PATH%\src\gallery
 )
 
 if "%REMAINING%" == "" (

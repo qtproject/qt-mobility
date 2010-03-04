@@ -45,21 +45,19 @@
 #include "n900filebasedsensor.h"
 #include <qproximitysensor.h>
 
-#define PROXIMITY_FILE "/sys/bus/platform/devices/proximity/state"
-
 QTM_USE_NAMESPACE
 
 class n900proximitysensor : public n900filebasedsensor
 {
 public:
     static const char *id;
+    static const char *filename;
 
     n900proximitysensor(QSensor *sensor);
 
     void poll();
 
 private:
-    const char *m_filename;
     QProximityReading m_reading;
 };
 

@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   <title>Qt Mobility Project 1.0: main.cpp Example File (declarative/main.cpp)</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -103,27 +103,19 @@
             return 1;
 
         QmlView canvas;
-        canvas.setUrl(url);
+        canvas.setSource(url);
         //! [1]
 
         //! [2]
         <span class="comment">//...</span>
         //! [2]
 
-        //! [4]
-        QmlContext* ctxt = canvas.rootContext();
-        ServiceRegister registration;
-        ctxt-&gt;addDefaultObject(&amp;registration);
-        ctxt-&gt;setContextProperty(&quot;services&quot;, QVariant::fromValue&lt;QList&lt;ServiceWrapper*&gt;*&gt;(registration.registeredservices()));
-        //! [4]
-
         //! [3]
         canvas.execute();
         canvas.show();
         //! [3]
 
-        return app.exec();
-    }</pre>
+        return app.exec();}</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

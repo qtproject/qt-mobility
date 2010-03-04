@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   <title>Qt Mobility Project 1.0: slideshow.cpp Example File (slideshow/slideshow.cpp)</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -136,9 +136,9 @@
 
         if (!path.isEmpty()) {
     #ifndef Q_OS_WIN
-            playlist-&gt;load(QUrl(QLatin1String(&quot;file:<span class="comment">//&quot;) + path));</span>
+            playlist-&gt;load(QUrl(QLatin1String(&quot;file://&quot;) + path));
     #else
-            playlist-&gt;load(QUrl(QLatin1String(&quot;file:<span class="comment">///&quot;) + path));</span>
+            playlist-&gt;load(QUrl(QLatin1String(&quot;file:/<span class="comment">//&quot;) + path));</span>
     #endif
         }
     }
@@ -155,9 +155,9 @@
             foreach (const QString &amp;fileName, dir.entryList(QDir::Files)) {
                 QString absolutePath = dir.absoluteFilePath(fileName);
     #ifndef Q_OS_WIN
-                playlist-&gt;addMedia(QUrl(QLatin1String(&quot;file:<span class="comment">//&quot;) + absolutePath));</span>
+                playlist-&gt;addMedia(QUrl(QLatin1String(&quot;file://&quot;) + absolutePath));
     #else
-                playlist-&gt;addMedia(QUrl(QLatin1String(&quot;file:<span class="comment">///&quot;) + absolutePath));</span>
+                playlist-&gt;addMedia(QUrl(QLatin1String(&quot;file:/<span class="comment">//&quot;) + absolutePath));</span>
     #endif
             }
         }

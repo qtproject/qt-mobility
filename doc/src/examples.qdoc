@@ -57,7 +57,7 @@
 
     \list
     \o \l{samplephonebook}{Sample Phonebook}
-    \o \l{incomingcalls}{Incoming Call Simulator}
+    \o \l{qmlcontacts}{QML-based Sample Phonebook}
     \endlist
 
     \section2 Location
