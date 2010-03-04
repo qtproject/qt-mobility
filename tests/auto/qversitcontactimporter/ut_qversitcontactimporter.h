@@ -90,6 +90,7 @@ private slots: // Tests
     void testOnlineAccount();
     void testFamily();
     void testSound();
+    void testTag();
     void testLabel();
     void testPref();
     void testPropertyHandler();

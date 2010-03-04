@@ -1071,6 +1071,39 @@ void UT_QVersitContactExporter::testEncodeNickName()
     QCOMPARE(property.value(), QString::fromAscii("Homie,Jay"));
 }
 
+void UT_QVersitContactExporter::testEncodeTag()
+{
+    QContact contact;
+
+    // Add an extra detail
+    QContactGender gender;
+    gender.setGender(QContactGender::GenderMale);
+    contact.saveDetail(&gender);
+
+    // One tag given
+    QContactTag firstTag;
+    firstTag.setTag(QLatin1String("red"));
+    contact.saveDetail(&firstTag);
+    QVersitDocument document = mExporter->exportContacts(QList<QContact>() << contact).first();
+    QCOMPARE(document.properties().count(), 2);
+    QVersitProperty property = document.properties().at(1);
+    QCOMPARE(property.name(), QLatin1String("CATEGORIES"));
+    QCOMPARE(property.value(), QLatin1String("red"));
+
+    // Two tags given, should be collated into a single property
+    contact.clearDetails();
+    contact.saveDetail(&firstTag);
+    contact.saveDetail(&gender);
+    QContactTag secondTag;
+    secondTag.setTag(QLatin1String("green"));
+    contact.saveDetail(&secondTag);
+    document = mExporter->exportContacts(QList<QContact>() << contact).first();
+    QCOMPARE(document.properties().count(), 2);
+    property = document.properties().at(1);
+    QCOMPARE(property.name(), QString::fromAscii("CATEGORIES"));
+    QCOMPARE(property.value(), QString::fromAscii("red,green"));
+}
+
 void UT_QVersitContactExporter::testEncodeAnniversary()
 {
     QContact contact;

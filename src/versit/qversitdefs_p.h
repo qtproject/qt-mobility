@@ -75,6 +75,7 @@
 #include <qcontactonlineaccount.h>
 #include <qcontactfamily.h>
 #include <qcontactdisplaylabel.h>
+#include <qcontacttag.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -92,6 +93,8 @@ const VersitContactDetailMapping versitContactDetailMappings[] = {
                       ""},
     {"BDAY",          QContactBirthday::DefinitionName.str,
                       QContactBirthday::FieldBirthday.str},
+    {"CATEGORIES",    QContactTag::DefinitionName.str,
+                      QContactTag::FieldTag.str},
     {"FN",            QContactDisplayLabel::DefinitionName.str,
                       ""},
     {"GEO",           QContactGeoLocation::DefinitionName.str,

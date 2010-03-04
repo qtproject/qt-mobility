@@ -82,6 +82,7 @@ private slots:
     void testIsValidRemoteUrl();
     void testEncodeGender();
     void testEncodeNickName();
+    void testEncodeTag();
     void testEncodeAnniversary();
     void testEncodeOnlineAccount();
     void testEncodeFamily();

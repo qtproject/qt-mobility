@@ -86,6 +86,7 @@ protected:
     void encodeOrganization(QVersitDocument& document, const QContactDetail& detail);
     void encodeGender(QVersitProperty& property, const QContactDetail& detail);
     void encodeNickname(QVersitDocument& document, const QContactDetail& detail);
+    void encodeTag(QVersitDocument& document, const QContactDetail& detail);
     void encodeAnniversary(QVersitProperty& property, const QContactDetail& detail);
     bool encodeOnlineAccount(QVersitProperty& property, const QContactDetail& detail);
     bool encodeFamily(QVersitDocument& document, const QContactDetail& detail);

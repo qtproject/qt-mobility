@@ -170,6 +170,9 @@ void QVersitContactExporterPrivate::exportContact(
         } else if (detail.definitionName() == QContactNickname::DefinitionName) {
             encodeNickname(document, detail);
             addProperty = false;
+        } else if (detail.definitionName() == QContactTag::DefinitionName) {
+            encodeTag(document, detail);
+            addProperty = false;
         } else if (detail.definitionName() == QContactGender::DefinitionName) {
             encodeGender(property, detail);
         } else if (detail.definitionName() == QContactOnlineAccount::DefinitionName) {
@@ -465,6 +468,35 @@ void QVersitContactExporterPrivate::encodeNickname(
     property.setValue(value);
     // Replace the current property
     document.removeProperties(QLatin1String("X-NICKNAME"));
+    document.addProperty(property);
+}
+
+/*!
+ * Encodes a contact tag into the Versit Document
+ */
+void QVersitContactExporterPrivate::encodeTag(
+    QVersitDocument& document,
+    const QContactDetail& detail)
+{
+    QContactTag tagDetail = static_cast<QContactTag>(detail);
+    QVersitProperty property;
+    property.setName(QLatin1String("CATEGORIES"));
+    bool found = false;
+    foreach (QVersitProperty currentProperty, document.properties()) {
+        if (currentProperty.name() == QLatin1String("CATEGORIES")) {
+            property = currentProperty;
+            found = true;
+            break;
+        }
+    }
+    QString value(property.value());
+    if (found)
+        value += QLatin1Char(',');
+    QString tag = escape(tagDetail.tag());
+    value.append(tag);
+    property.setValue(value);
+    // Replace the current property
+    document.removeProperties(QLatin1String("CATEGORIES"));
     document.addProperty(property);
 }
 

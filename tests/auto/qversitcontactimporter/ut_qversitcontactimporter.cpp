@@ -1209,6 +1209,31 @@ void UT_QVersitContactImporter::testSound()
     QCOMPARE(content, val);
 }
 
+void UT_QVersitContactImporter::testTag()
+{
+    // one value
+    QVersitDocument document;
+    QVersitProperty tagProperty;
+    tagProperty.setName(QLatin1String("CATEGORIES"));
+    tagProperty.setValue(QLatin1String("red"));
+    document.addProperty(tagProperty);
+    QContact contact = mImporter->importContacts(QList<QVersitDocument>() << document).first();
+    QContactTag tagDetail = contact.detail<QContactTag>();
+    QCOMPARE(tagDetail.tag(), QLatin1String("red"));
+
+    // comma separated values should generate multiple nickname fields
+    document.clear();
+    tagProperty.setName(QLatin1String("CATEGORIES"));
+    tagProperty.setValue(QLatin1String("red,green,blue"));
+    document.addProperty(tagProperty);
+    contact = mImporter->importContacts(QList<QVersitDocument>() << document).first();
+    QList<QContactTag> tagDetails = contact.details<QContactTag>();
+    QCOMPARE(tagDetails.count(), 3);
+    QCOMPARE(tagDetails.at(0).tag(), QLatin1String("red"));
+    QCOMPARE(tagDetails.at(1).tag(), QLatin1String("green"));
+    QCOMPARE(tagDetails.at(2).tag(), QLatin1String("blue"));
+}
+
 void UT_QVersitContactImporter::testPref()
 {
     QVersitDocument document;
