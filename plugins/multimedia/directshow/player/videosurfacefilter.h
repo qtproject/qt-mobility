@@ -42,6 +42,7 @@
 #ifndef VIDEOSURFACEFILTER_H
 #define VIDEOSURFACEFILTER_H
 
+#include "directshowglobal.h"
 #include "directshowmediatypelist.h"
 #include "directshowsamplescheduler.h"
 #include "directshowmediatype.h"
@@ -52,8 +53,6 @@
 #include <QtCore/qsemaphore.h>
 #include <QtCore/qstring.h>
 #include <QtCore/qwaitcondition.h>
-
-#include <dshow.h>
 
 class QAbstractVideoSurface;
 

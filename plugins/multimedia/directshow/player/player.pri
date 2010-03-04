@@ -2,8 +2,6 @@ INCLUDEPATH += $$PWD
 
 DEFINES += QMEDIA_DIRECTSHOW_PLAYER
 
-win32-g++: DEFINES += QT_NO_WMSDK
-
 HEADERS += \
         $$PWD\directshowaudioendpointcontrol.h \
         $$PWD\directshoweventloop.h \
