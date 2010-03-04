@@ -93,7 +93,7 @@ class Q_SENSORS_EXPORT QSensor : public QObject
     Q_PROPERTY(int outputRangeCount READ outputRangeCount)
     Q_PROPERTY(int outputRange READ outputRange WRITE setOutputRange)
     Q_PROPERTY(QString description READ description)
-    Q_PROPERTY(int error READ error)
+    Q_PROPERTY(int error READ error NOTIFY sensorError)
 public:
     explicit QSensor(QObject *parent = 0);
     virtual ~QSensor();
