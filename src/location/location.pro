@@ -124,6 +124,7 @@ SOURCES += qlocationutils.cpp \
            qgeopositioninfosource.cpp \
            qgeoareamonitor.cpp \
            qnmeapositioninfosource.cpp \
+           qlandmarkid.cpp \
            qlandmark.cpp \
            qlandmarkmanager.cpp \
            qlandmarkfilter.cpp \

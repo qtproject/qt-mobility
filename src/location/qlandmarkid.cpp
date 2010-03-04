@@ -39,17 +39,17 @@
 **
 ****************************************************************************/
 
-#include "qlandmarkcategoryid.h"
-#include "qlandmarkcategoryid_p.h"
+#include "qlandmarkid.h"
+#include "qlandmarkid_p.h"
 #include <QString>
 
 QTM_USE_NAMESPACE
 
 /*!
-    \class QLandmarkCategoryId
+    \class QLandmarkId
     \ingroup location
 
-    \brief The QLandmarkCategoryId class provides a unique identifier for
+    \brief The QLandmarkId class provides a unique identifier for
     a category.
 
     It consists of a manager URI which identifies the manager which contains
@@ -60,14 +60,14 @@ QTM_USE_NAMESPACE
 
     Creates an invalid identifier, id() and managerUri() will return null strings
 */
-QLandmarkCategoryId::QLandmarkCategoryId()
+QLandmarkId::QLandmarkId()
 {
 }
 
 /*!
     Constructs a copy of \a other.
 */
-QLandmarkCategoryId::QLandmarkCategoryId(const QLandmarkCategoryId &other)
+QLandmarkId::QLandmarkId(const QLandmarkId &other)
     :d(other.d)
 {
 }
@@ -75,7 +75,7 @@ QLandmarkCategoryId::QLandmarkCategoryId(const QLandmarkCategoryId &other)
 /*!
     Destroys the identifier.
 */
-QLandmarkCategoryId::~QLandmarkCategoryId()
+QLandmarkId::~QLandmarkId()
 {
 }
 
@@ -83,7 +83,7 @@ QLandmarkCategoryId::~QLandmarkCategoryId()
     Returns true if the identifier is valid, meaning that both
     a manager URI and id have been set
 */
-bool QLandmarkCategoryId::isValid() const
+bool QLandmarkId::isValid() const
 {
     return (!d->m_databaseName.isEmpty() && !d->m_id.isEmpty());
 }
@@ -91,7 +91,7 @@ bool QLandmarkCategoryId::isValid() const
 /*!
     Returns the id of the category identifier.
 */
-QString QLandmarkCategoryId::id() const
+QString QLandmarkId::id() const
 {
     return d->m_id;
 }
@@ -99,7 +99,7 @@ QString QLandmarkCategoryId::id() const
 /*!
     Sets the \a id of the category identifier
 */
-void QLandmarkCategoryId::setId(const QString &id)
+void QLandmarkId::setId(const QString &id)
 {
     d->m_id = id;
 }
@@ -108,7 +108,7 @@ void QLandmarkCategoryId::setId(const QString &id)
     Returns the URI of the manager which this category identifer
     belongs to.
 */
-QString QLandmarkCategoryId::managerUri() const
+QString QLandmarkId::managerUri() const
 {
     return d->m_databaseName;
 }
@@ -117,7 +117,7 @@ QString QLandmarkCategoryId::managerUri() const
     Sets the manager \a uri which this category identifier
     belongs to.
 */
-void QLandmarkCategoryId::setManagerUri(const QString &uri)
+void QLandmarkId::setManagerUri(const QString &uri)
 {
     d->m_databaseName = uri;
 }
@@ -126,7 +126,7 @@ void QLandmarkCategoryId::setManagerUri(const QString &uri)
     Assigns \a other to this category identifier and returns a reference
     to this category identifier.
 */
-QLandmarkCategoryId &QLandmarkCategoryId::operator=(const QLandmarkCategoryId &other)
+QLandmarkId &QLandmarkId::operator=(const QLandmarkId &other)
 {
     d = other.d;
     return *this;
@@ -136,10 +136,10 @@ QLandmarkCategoryId &QLandmarkCategoryId::operator=(const QLandmarkCategoryId &o
     Returns true if this category identifer is equal to \a other, otherwise
     returns false.
 
-    Two QLandmarkCategoryIds are considered equal if both have the same
+    Two QLandmarkIds are considered equal if both have the same
     manager URI and id.
 */
-bool QLandmarkCategoryId::operator==(const QLandmarkCategoryId &other) const
+bool QLandmarkId::operator==(const QLandmarkId &other) const
 {
     return ((d->m_id == other.d->m_id)
             && (d->m_databaseName == other.d->m_databaseName));
@@ -150,9 +150,11 @@ bool QLandmarkCategoryId::operator==(const QLandmarkCategoryId &other) const
     otherwise returns false.
 
     If either the manager URIs or ids differ, then the
-    QLandmarkCategoryIds are not considered equal.
+    QLandmarkIds are not considered equal.
 */
-bool QLandmarkCategoryId::operator!=(const QLandmarkCategoryId &other) const
+bool QLandmarkId::operator!=(const QLandmarkId &other) const
 {
     return !this->operator ==(other);
 }
+
+

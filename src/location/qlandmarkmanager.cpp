@@ -265,6 +265,7 @@ bool QLandmarkManager::importLandmarks(QIODevice *device, Format format)
 */
 bool QLandmarkManager::importLandmarks(const QString &fileName, Format format)
 {
+    return false; //TODO: implement
 }
 
 /*!
@@ -294,6 +295,7 @@ bool QLandmarkManager::exportLandmarks(QIODevice *device, Format format, QList<Q
 */
 bool QLandmarkManager::exportLandmarks(const QString &fileName, Format format, QList<QLandmarkId> landmarkIds)
 {
+    return false; // TODO: implement
 }
 
 /*!

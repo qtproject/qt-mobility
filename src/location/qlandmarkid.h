@@ -59,7 +59,7 @@ public:
 
     bool isValid() const;
     void setId(const QString &id);
-    QString id();
+    QString id() const;
 
     QString managerUri() const;
     void setManagerUri(const QString &managerUri);

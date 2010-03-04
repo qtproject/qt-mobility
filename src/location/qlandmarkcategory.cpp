@@ -70,6 +70,13 @@ QLandmarkCategoryPrivate& QLandmarkCategoryPrivate::operator= (const QLandmarkCa
     return *this;
 }
 
+bool QLandmarkCategoryPrivate::operator == (const QLandmarkCategoryPrivate &other) const
+{
+    return ((name == other.name)
+                    && (icon == other.icon)
+                    && (description == other.description));
+}
+
 /*!
     \class QLandmarkCategory
 
