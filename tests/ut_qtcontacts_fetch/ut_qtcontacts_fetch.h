@@ -88,6 +88,7 @@ private:
 
     QString mFirstName;
     QString mLastName;
+    QString mWebPage;
 };
 
 #endif /* UT_CONTACTSGUI_H_ */

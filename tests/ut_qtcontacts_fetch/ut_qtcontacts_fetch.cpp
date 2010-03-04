@@ -44,6 +44,7 @@
 #include <QContactManager>
 #include <QContactName>
 #include <QContactFetchRequest>
+#include <QContactUrl>
 
 #define CHECK_CURRENT_TEST_FAILED                                               \
 do {                                                                            \
@@ -60,6 +61,7 @@ ut_qtcontacts_fetch::ut_qtcontacts_fetch()
 
     mFirstName = "ut_qtcontacts_fetch_firstname_" + uuid;
     mLastName = "ut_qtcontacts_fetch_lastname_" + uuid;
+    mWebPage = "ut_qtcontacts_fetch_url_" + uuid;
 
     mNameFilter.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
     mNameFilter.setMatchFlags(QContactFilter::MatchExactly);
@@ -125,11 +127,13 @@ void ut_qtcontacts_fetch::waitForRequest(QContactAbstractRequest &request, int m
 void ut_qtcontacts_fetch::setupTestContact(QContact &contact)
 {
     QContactName name;
-
     name.setFirstName(mFirstName);
     name.setLastName(mLastName);
-
     QVERIFY(contact.saveDetail(&name));
+
+    QContactUrl url;
+    url.setUrl(mWebPage);
+    QVERIFY(contact.saveDetail(&url));
 }
 
 void ut_qtcontacts_fetch::checkDatabaseEmpty()
@@ -218,8 +222,12 @@ void ut_qtcontacts_fetch::ut_testFetchSavedContact()
     setupTestContact(savedContact);
     CHECK_CURRENT_TEST_FAILED;
 
+    foreach(const QContactDetail &d, savedContact.details())
+        qDebug() << d.definitionName() << d.variantValues();
+
     saveContact(savedContact);
     CHECK_CURRENT_TEST_FAILED;
+    mLocalIds.clear();
 
     // fetch the saved contact
     QContactFetchRequest request;
@@ -238,12 +246,22 @@ void ut_qtcontacts_fetch::ut_testFetchSavedContact()
     const QContact &fetchedContact(request.contacts().at(0));
     QVERIFY(0 != fetchedContact.localId());
 
+    foreach(const QContactDetail &d, fetchedContact.details())
+        qDebug() << d.definitionName() << d.variantValues();
+
+    QList<QContactDetail> details;
+
     // check that the fetched contact has the expected properties
-    QList<QContactDetail> details(fetchedContact.details(QContactName::DefinitionName));
+    details = fetchedContact.details(QContactName::DefinitionName);
 
     QCOMPARE(details.count(), 1);
     QCOMPARE(details[0].value(QContactName::FieldFirstName), mFirstName);
     QCOMPARE(details[0].value(QContactName::FieldLastName), mLastName);
+
+    details = fetchedContact.details(QContactUrl::DefinitionName);
+
+    QCOMPARE(details.count(), 1);
+    QCOMPARE(details[0].value(QContactUrl::FieldUrl), mWebPage);
 }
 
 QTEST_MAIN(ut_qtcontacts_fetch)
