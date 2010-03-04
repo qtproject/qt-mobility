@@ -133,6 +133,7 @@ protected:
 
 private Q_SLOTS:
     void registrationStatusChanged(uchar,ushort,uint,uint,uint,uchar,uchar);
+    void cellNetworkSignalStrengthChanged(uchar,uchar);
 
 private:
     // The index of wanted argument in the QDBusMessage which is received as a
@@ -145,10 +146,12 @@ private:
         MNC_INDEX,        // the original type of mnc argument is uint32
         MCC_INDEX         // the original type of mcc argument is uint32
     };
+    int currentCellNetworkStatus;
     int currentCellId;
     int currentLac;
     QString currentMCC;
     QString currentMNC;
+    int cellSignalStrength;
 };
 
 class QSystemDisplayInfoPrivate : public QSystemDisplayInfoLinuxCommonPrivate

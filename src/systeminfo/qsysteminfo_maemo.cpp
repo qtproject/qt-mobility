@@ -221,19 +221,16 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
     case QSystemNetworkInfo::WcdmaMode:
         {
             qWarning() << __FUNCTION__<< "GSM" << mode;
-//#if 0
-//#if !defined(QT_NO_DBUS)
-//            QDBusInterface connectionInterface("com.nokia.phone.net",
-//                                               "/com/nokia/phone/net",
-//                                               "com.nokia.SystemInfo",
-//                                                QDBusConnection::systemBus());
-//            if(!connectionInterface.isValid()) {
-//                qWarning() << "interfacenot valid";
-//            }
-//            QDBusReply< QByteArray > reply = connectionInterface.call("GetConfigValue", "/device/sw-release-ver");
-//            return reply.value();
-//#endif
-//#endif
+            switch(currentCellNetworkStatus) {
+                case 0: return QSystemNetworkInfo::HomeNetwork;
+                case 1: return QSystemNetworkInfo::Roaming;
+                case 2: return QSystemNetworkInfo::Roaming;
+                case 3: return QSystemNetworkInfo::NoNetworkAvailable;
+                case 4: return QSystemNetworkInfo::Searching;
+                case 5: return QSystemNetworkInfo::NoNetworkAvailable;
+                default:
+                    break;
+            };
         }
         break;
     case QSystemNetworkInfo::EthernetMode:
@@ -247,13 +244,15 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
     return QSystemNetworkInfo::UndefinedStatus;
 }
 
-int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
-{
+qint32 QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
+{ 
     switch(mode) {
     case QSystemNetworkInfo::GsmMode:
     case QSystemNetworkInfo::CdmaMode:
     case QSystemNetworkInfo::WcdmaMode:
-        break;
+    {
+            return cellSignalStrength;
+    }
     case QSystemNetworkInfo::EthernetMode:
     case QSystemNetworkInfo::WlanMode:
     case QSystemNetworkInfo::BluetoothMode:
@@ -384,10 +383,12 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
 
 void QSystemNetworkInfoPrivate::setupNetworkInfo()
 {
+    currentCellNetworkStatus = QSystemNetworkInfo::UndefinedStatus;
     currentLac = -1;
     currentCellId = -1;
     currentMCC = "";
     currentMNC = "";
+    cellSignalStrength = 0;
 
 #if !defined(QT_NO_DBUS)
     QDBusConnection systemDbusConnection = QDBusConnection::systemBus();
@@ -398,10 +399,12 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
                                        systemDbusConnection);
     if (!connectionInterface.isValid()) {
         qWarning() << "setupNetworkInfo(): interface not valid";
+        return;
     }
     QDBusMessage reply = connectionInterface.call(QLatin1String("get_registration_status"));
     if (reply.type() == QDBusMessage::ReplyMessage) {
         QList<QVariant> argList = reply.arguments();
+        currentCellNetworkStatus = argList.at(STATUS_INDEX).toInt();
         currentLac = argList.at(LAC_INDEX).value<ushort>();
         currentCellId = argList.at(CELLID_INDEX).value<uint>();
         currentMCC.setNum(argList.at(MCC_INDEX).value<uint>());
@@ -416,6 +419,22 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
                        this, SLOT(registrationStatusChanged(uchar,ushort,uint,uint,uint,uchar,uchar)))) {
         qWarning() << "unable to connect to registration_status_change";
     }
+    reply = connectionInterface.call(QLatin1String("get_signal_strength"));
+    if (reply.type() == QDBusMessage::ReplyMessage) {
+        QList<QVariant> argList = reply.arguments();
+        cellSignalStrength = argList.at(0).toInt();
+    } else {
+        qWarning() << reply.errorMessage();
+    }
+
+    if (!systemDbusConnection.connect("com.nokia.phone.net",
+                       "/com/nokia/phone/net",
+                       "Phone.Net",
+                       "signal_strength_change",
+                       this, SLOT(cellNetworkSignalStrengthChanged(uchar,uchar)))) {
+        qWarning() << "unable to connect to signal_strength_change";
+    }
+
 #endif
 }
 
@@ -443,6 +462,38 @@ void QSystemNetworkInfoPrivate::registrationStatusChanged(uchar, ushort var2, ui
         emit currentMobileNetworkCodeChanged(currentMNC);
     }
 }
+
+void QSystemNetworkInfoPrivate::cellNetworkSignalStrengthChanged(uchar var1, uchar var2)
+{
+    QSystemNetworkInfo::NetworkMode mode = QSystemNetworkInfo::UnknownMode;
+    QDBusInterface connectionInterface("com.nokia.phone.net",
+                                       "/com/nokia/phone/net",
+                                       "Phone.Net",
+                                       QDBusConnection::systemBus());
+    if (!connectionInterface.isValid()) {
+        qWarning() << "cellNetworkSignalStrengthChanged(): interface not valid";
+        return;
+    }
+    int radioAccessTechnology;
+    QDBusMessage reply = connectionInterface.call(QLatin1String("get_radio_access_technology"));
+    if (reply.type() == QDBusMessage::ReplyMessage) {
+        QList<QVariant> argList = reply.arguments();
+        radioAccessTechnology = argList.at(0).toInt();
+    } else {
+        qWarning() << reply.errorMessage();
+        return;
+    }
+    cellSignalStrength = var1;
+
+    if (radioAccessTechnology == 1)
+        mode = QSystemNetworkInfo::GsmMode;
+    if (radioAccessTechnology == 2)
+        mode = QSystemNetworkInfo::WcdmaMode;
+
+    if (mode != QSystemNetworkInfo::UnknownMode)
+        emit networkSignalStrengthChanged(mode, cellSignalStrength);
+}
+
 
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent)
         : QSystemDisplayInfoLinuxCommonPrivate(parent)
