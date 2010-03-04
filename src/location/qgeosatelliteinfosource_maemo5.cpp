@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "qgeosatelliteinfosource_maemo5_p.h"
-#include "liblocationwrapper.h"
+#include "liblocationwrapper_p.h"
 
 QTM_BEGIN_NAMESPACE
 

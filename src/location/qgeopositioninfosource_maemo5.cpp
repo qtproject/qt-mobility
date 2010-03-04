@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "qgeopositioninfosource_maemo5_p.h"
-#include "liblocationwrapper.h"
+#include "liblocationwrapper_p.h"
 
 using namespace std;
 
