@@ -8,7 +8,10 @@ INCLUDEPATH+= .
 !static:DEFINES += QT_MAKEDLL
 DEFINES += QT_BUILD_GALLERY_LIB
 
-HEADERS = \
+PRIVATE_HEADERS = \
+        qabstractgallery_p.h
+
+PUBLIC_HEADERS = \
         qgallery.h \
         qgallerydocumentlist.h \
         qgalleryfilter.h \
@@ -20,6 +23,11 @@ SOURCES = \
         qgalleryfilter.cpp \
         qgalleryrequest.cpp
 
+
+DEFINES += QT_DOCUMENT_GALLERY_NULL
+
+HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
+
 symbian {
     load(data_caging_paths)
     QtMediaDeployment.sources = QtGallery.dll
@@ -30,3 +38,5 @@ symbian {
     TARGET.CAPABILITY = ALL -TCB
 }
 
+CONFIG += middleware
+include(../../features/deploy.pri)

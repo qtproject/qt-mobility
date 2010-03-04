@@ -39,59 +39,46 @@
 **
 ****************************************************************************/
 
-#ifndef QGALLERY_H
-#define QGALLERY_H
+#ifndef DOCUMENTLISTMODEL_H
+#define DOCUMENTLISTMODEL_H
 
-#include <qgalleryrequest.h>
+#include <qgallerydocumentlist.h>
 
-class QGalleryAbstractResponse;
-class QGalleryAbstractRequest;
+#include <QtCore/qabstractitemmodel.h>
+#include <QtCore/qvector.h>
 
-class QAbstractGalleryPrivate;
-
-class Q_GALLERY_EXPORT QAbstractGallery : public QObject
+class DocumentListModel : public QAbstractItemModel
 {
     Q_OBJECT
-    Q_PROPERTY(QString rootDocumentId READ rootDocumentId NOTIFY rootDocumentIdChanged);
-    Q_PROPERTY(QStringList supportedDocumentTypes READ supportedDocumentTypes NOTIFY supportedDocumentTypesChanged)
 public:
-    QAbstractGallery(QObject *parent = 0);
-    ~QAbstractGallery();
+    DocumentListModel(QObject *parent = 0);
+    ~DocumentListModel();
 
-    virtual bool isRequestSupported(QGalleryAbstractRequest::Type type) const = 0;
-    virtual QString rootDocumentId() const = 0;
-    virtual QStringList supportedDocumentTypes() const = 0;
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+    QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
+    QModelIndex parent(const QModelIndex &index) const;
 
-Q_SIGNALS:
-    void rootDocumentIdChanged();
-    void supportedDocumentTypesChanged();
+    int rowCount(const QModelIndex &parent = QModelIndex()) const;
 
-protected:
-    virtual QGalleryAbstractResponse *createResponse(QGalleryAbstractRequest *request) = 0;
+    int columnCount(const QModelIndex &parent = QModelIndex()) const;
+    void setColumnCount(int count);
 
-    QAbstractGallery(QAbstractGalleryPrivate &dd, QObject *parent);
+    QGalleryDocumentList *list() const { return m_list; }
+    void setList(QGalleryDocumentList *list);
 
-    QAbstractGalleryPrivate *d_ptr;
+    QString columnField(int column) const;
+    void setColumnField(int column, const QString &field);
 
-    friend class QGalleryAbstractRequest;
-};
+private Q_SLOTS:
+    void documentsRemoved(int index, int count);
+    void documentsInserted(int index, int count);
+    void documentsMoved(int from, int to, int count);
+    void documentsChanged(int index, int count, const QList<int> &keys);
 
-class QDocumentGalleryPrivate;
-
-class Q_GALLERY_EXPORT QDocumentGallery : public QAbstractGallery
-{
-    Q_OBJECT
-    Q_DECLARE_PRIVATE(QDocumentGallery)
-public:
-    QDocumentGallery(QObject *parent = 0);
-    ~QDocumentGallery();
-
-    bool isRequestSupported(QGalleryAbstractRequest::Type type) const;
-    QString rootDocumentId() const;
-    QStringList supportedDocumentTypes() const;
-
-protected:
-    QGalleryAbstractResponse *createResponse(QGalleryAbstractRequest *request);
+private:
+    QGalleryDocumentList *m_list;
+    QVector<int> m_keys;
+    QVector<QString> m_fields;
 };
 
 #endif

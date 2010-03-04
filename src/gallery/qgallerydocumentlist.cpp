@@ -59,6 +59,15 @@ QGalleryResource::QGalleryResource()
 }
 
 /*!
+    Constructs a resource from a \a url.
+*/
+
+QGalleryResource::QGalleryResource(const QUrl &url)
+    : m_url(url)
+{
+}
+
+/*!
     Constructs a resource from a \a url and a set of \a attributes.
 */
 

@@ -53,6 +53,7 @@ class Q_GALLERY_EXPORT QGalleryResource
 {
 public:
     QGalleryResource();
+    QGalleryResource(const QUrl &url);
     QGalleryResource(const QUrl &url, QMap<int, QVariant> attributes);
     QGalleryResource(const QGalleryResource &resource);
     ~QGalleryResource();

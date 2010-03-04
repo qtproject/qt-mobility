@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qgallery.h"
+#include "qabstractgallery_p.h"
 
 #include <QtCore/qstringlist.h>
 
@@ -61,8 +62,20 @@
 
 QAbstractGallery::QAbstractGallery(QObject *parent )
     : QObject(parent)
+    , d_ptr(0)
 {
 
+}
+
+/*!
+    \internal
+*/
+
+QAbstractGallery::QAbstractGallery(QAbstractGalleryPrivate &dd, QObject *parent)
+    : QObject(parent)
+    , d_ptr(&dd)
+{
+    d_ptr->q_ptr = this;
 }
 
 /*!
@@ -71,7 +84,7 @@ QAbstractGallery::QAbstractGallery(QObject *parent )
 
 QAbstractGallery::~QAbstractGallery()
 {
-
+    delete d_ptr;
 }
 
 /*!
@@ -111,6 +124,8 @@ QAbstractGallery::~QAbstractGallery()
 
     Creates a response to a gallery \a request.
 */
+
+#ifdef QT_DOCUMENT_GALLERY_NULL
 
 /*!
     \class QDocumentGallery
@@ -177,3 +192,5 @@ QGalleryAbstractResponse *QDocumentGallery::createResponse(QGalleryAbstractReque
 {
     return 0;
 }
+
+#endif

@@ -39,59 +39,36 @@
 **
 ****************************************************************************/
 
-#ifndef QGALLERY_H
-#define QGALLERY_H
+#ifndef VIEWER_H
+#define VIEWER_H
 
-#include <qgalleryrequest.h>
+#include "documentlistmodel.h"
 
-class QGalleryAbstractResponse;
-class QGalleryAbstractRequest;
+#include <qgallery.h>
 
-class QAbstractGalleryPrivate;
+#include <QtGui/qwidget.h>
 
-class Q_GALLERY_EXPORT QAbstractGallery : public QObject
+class QLineEdit;
+class QSpinBox;
+
+class Viewer : public QWidget
 {
     Q_OBJECT
-    Q_PROPERTY(QString rootDocumentId READ rootDocumentId NOTIFY rootDocumentIdChanged);
-    Q_PROPERTY(QStringList supportedDocumentTypes READ supportedDocumentTypes NOTIFY supportedDocumentTypesChanged)
 public:
-    QAbstractGallery(QObject *parent = 0);
-    ~QAbstractGallery();
+    Viewer(QWidget *parent = 0);
+    ~Viewer();
 
-    virtual bool isRequestSupported(QGalleryAbstractRequest::Type type) const = 0;
-    virtual QString rootDocumentId() const = 0;
-    virtual QStringList supportedDocumentTypes() const = 0;
+private Q_SLOTS:
+    void execute();
+    void documentsChanged();
 
-Q_SIGNALS:
-    void rootDocumentIdChanged();
-    void supportedDocumentTypesChanged();
-
-protected:
-    virtual QGalleryAbstractResponse *createResponse(QGalleryAbstractRequest *request) = 0;
-
-    QAbstractGallery(QAbstractGalleryPrivate &dd, QObject *parent);
-
-    QAbstractGalleryPrivate *d_ptr;
-
-    friend class QGalleryAbstractRequest;
-};
-
-class QDocumentGalleryPrivate;
-
-class Q_GALLERY_EXPORT QDocumentGallery : public QAbstractGallery
-{
-    Q_OBJECT
-    Q_DECLARE_PRIVATE(QDocumentGallery)
-public:
-    QDocumentGallery(QObject *parent = 0);
-    ~QDocumentGallery();
-
-    bool isRequestSupported(QGalleryAbstractRequest::Type type) const;
-    QString rootDocumentId() const;
-    QStringList supportedDocumentTypes() const;
-
-protected:
-    QGalleryAbstractResponse *createResponse(QGalleryAbstractRequest *request);
+private:
+    QDocumentGallery m_gallery;
+    QGalleryDocumentRequest m_request;
+    DocumentListModel m_model;
+    QLineEdit *m_typeInput;
+    QSpinBox *m_offsetInput;
+    QSpinBox *m_limitInput;
 };
 
 #endif
