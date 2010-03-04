@@ -29,6 +29,8 @@ MMP_RULES += \
     "MACRO S60_CAM_AUTOFOCUS_SUPPORT"
 }
 
+exists($${EPOCROOT}epoc32/include/platform/mmf/common/mmfvideoenums.h):DEFINES+=POST_S60_50_PLATFORM_VIDEOENUMS
+
 symbian:LIBS += -lfbscli \
         -lmediaclientvideo \
         -lecam \
