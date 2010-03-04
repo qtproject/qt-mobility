@@ -54,6 +54,11 @@
 
 QTM_BEGIN_NAMESPACE
 
+// Need to migrate to clientservercommon.h
+const TUint KServerMajorVersionNumber = 1;
+const TUint KServerMinorVersionNumber = 0;
+const TUint KServerBuildVersionNumber = 0;
+
 // Forward declarations
 class ObjectEndPoint;
 // Type definitions
@@ -79,7 +84,44 @@ private:
 private: 
     TIpcArgs iArgs;
     TError iError;
+    QString iServerAddress;
 };
+
+// needed for creating server thread.
+const TUint KDefaultHeapSize = 0x10000;
+
+class CServiceProviderServer : public CServer2
+    {
+    public:
+        CServiceProviderServer();
+        CSession2* NewSessionL(const TVersion& aVersion, const RMessage2& aMessage) const;
+
+    public:
+
+        void IncreaseSessions();
+        void DecreaseSessions();
+
+    private:
+        int iSessionCount;
+    };
+
+class CServiceProviderServerSession : public CSession2
+    {
+    public:
+        static CServiceProviderServerSession* NewL(CServiceProviderServer& aServer);
+        static CServiceProviderServerSession* NewLC(CServiceProviderServer& aServer);
+        virtual ~CServiceProviderServerSession();
+        void ServiceL(const RMessage2& aMessage);
+
+    private:
+        CServiceProviderServerSession(CServiceProviderServer& aServer);
+        void ConstructL(); 
+
+    private:
+        CServiceProviderServer& iServer;
+        QByteArray* iByteArray;
+        RMessage2 iMsg;
+    };
 
 
 class QServiceControlPrivate: public QObject

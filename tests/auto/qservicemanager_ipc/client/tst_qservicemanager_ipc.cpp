@@ -306,11 +306,11 @@ private:
 bool tst_QServiceManager_IPC::requiresLackey()
 {
 // Temporarily commented out for initial development on Symbian
-//#ifdef Q_OS_SYMBIAN
-    //return false; //service is started when requested
-//#else
+#ifdef Q_OS_SYMBIAN
+    return false; //service is started when requested
+#else
     return true;
-//#endif
+#endif
 }
 
 void tst_QServiceManager_IPC::initTestCase()
@@ -369,6 +369,7 @@ void tst_QServiceManager_IPC::cleanup()
 
 void tst_QServiceManager_IPC::verifyTransmittedServiceObject()
 {
+    QVERIFY(service != 0);
     const QMetaObject* mo = service->metaObject();
     QCOMPARE(mo->className(), "UniqueTestService");
     QVERIFY(mo->superClass());

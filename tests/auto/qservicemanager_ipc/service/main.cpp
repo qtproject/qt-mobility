@@ -291,9 +291,11 @@ void registerExampleService()
 
 Q_DECLARE_METATYPE(QMetaType::Type);
 
+
 int main(int argc, char** argv)
 {
     QCoreApplication app(argc, argv);
+    
     qRegisterMetaType<QServiceFilter>();
     qRegisterMetaTypeStreamOperators<QServiceFilter>("QServiceFilter");
 
@@ -306,10 +308,15 @@ int main(int argc, char** argv)
     //this only works
     QServiceControl* control = new QServiceControl();
     control->publishServices("qt_sfw_example_ipc_unittest");
+#ifdef Q_OS_SYMBIAN
+    qDebug("OTR Calling RProcess::rendezvous TODO if needed and correct place");
+    RProcess::Rendezvous(KErrNone); 
+#endif
     int res =  app.exec();
     delete control;
     unregisterExampleService();
     return res;
 }
+
 
 #include "main.moc"
