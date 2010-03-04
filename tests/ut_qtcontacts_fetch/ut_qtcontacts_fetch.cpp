@@ -44,6 +44,8 @@
 #include <QContactManager>
 #include <QContactName>
 #include <QContactFetchRequest>
+#include <QContactRemoveRequest>
+#include <QContactSaveRequest>
 #include <QContactUrl>
 
 #define CHECK_CURRENT_TEST_FAILED                                               \
@@ -92,17 +94,32 @@ void ut_qtcontacts_fetch::cleanup()
 {
     if (mContactManager) {
         if (not mLocalIds.isEmpty()) {
-            QMap<int, QContactManager::Error> errors;
+#if 0 // FIXME: qtcontacts-tracker doesn't implement QContactRemoveRequest yet
+            QContactRemoveRequest request;
+            request.setManager(mContactManager);
+            request.setContactIds(mLocalIds);
 
-            if (not mContactManager->removeContacts(&mLocalIds, &errors)) {
-                QFAIL(qPrintable(QString("removing contacts failed: %1").
-                                 arg(mContactManager->error())));
-            }
+            if (not request.start())
+                qDebug() << "error code" << request.error();
+            //QVERIFY(request.start());
+
+            waitForRequest(request);
+            CHECK_CURRENT_TEST_FAILED;
+
+            QVERIFY(request.isFinished());
+            QCOMPARE(request.error(), QContactManager::NoError);
+#else
+            QMap<int, QContactManager::Error> errors;
+            bool success = mContactManager->removeContacts(&mLocalIds, &errors);
+            QCOMPARE(mContactManager->error(), QContactManager::NoError);
+            QVERIFY(errors.isEmpty());
+            QVERIFY(success);
+#endif
 
             mLocalIds.clear();
         }
 
-        delete mContactManager;
+        mContactManager->deleteLater();
         mContactManager = 0;
     }
 }
@@ -110,7 +127,7 @@ void ut_qtcontacts_fetch::cleanup()
 void ut_qtcontacts_fetch::waitForRequest(QContactAbstractRequest &request, int ms)
 {
     // check pre-conditions
-    QVERIFY2(request.isActive(), "request must be active");
+    QCOMPARE((int) request.state(), (int) QContactAbstractRequest::ActiveState);
 
     // wait for the request to do its work (or get canceled)
     QTime timer;
@@ -140,10 +157,9 @@ void ut_qtcontacts_fetch::checkDatabaseEmpty()
 {
     // try to fetch our testing contact
     QContactFetchRequest request;
-
     request.setManager(mContactManager);
     request.setFilter(mNameFilter);
-    request.start();
+    QVERIFY(request.start());
 
     // wait for the request to finish
     waitForRequest(request);
@@ -157,14 +173,26 @@ void ut_qtcontacts_fetch::checkDatabaseEmpty()
 void ut_qtcontacts_fetch::saveContact(QContact &contact)
 {
     // add the contact to database
-    bool contactSaved = mContactManager->saveContact(&contact);
-    QCOMPARE(mContactManager->error(), QContactManager::NoError);
-    QVERIFY(contactSaved);
+    QContactSaveRequest request;
+    request.setManager(mContactManager);
+    request.setContacts(QList<QContact>() << contact);
+    QVERIFY(request.start());
 
-    // check local Id
+    waitForRequest(request);
+    CHECK_CURRENT_TEST_FAILED;
+
+    // verify the contact got saved
+    QVERIFY(request.isFinished());
+    QCOMPARE(request.error(), QContactManager::NoError);
+    QCOMPARE(request.contacts().count(), 1);
+
+    // copy back the saved contact
+    contact = request.contacts().at(0);
+
+    // verify the contact got a local id
     QVERIFY(contact.localId());
 
-    // remember the local Id so that we can remove the contact from database later
+    // remember the local id so that we can remove the contact from database later
     mLocalIds.append(contact.localId());
 }
 
@@ -231,10 +259,9 @@ void ut_qtcontacts_fetch::ut_testFetchSavedContact()
 
     // fetch the saved contact
     QContactFetchRequest request;
-
     request.setManager(mContactManager);
     request.setFilter(mNameFilter);
-    request.start();
+    QVERIFY(request.start());
 
     waitForRequest(request);
     CHECK_CURRENT_TEST_FAILED;
