@@ -1,6 +1,7 @@
+
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,32 +40,33 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTDETAILS_H
-#define QCONTACTDETAILS_H
+#ifndef QCONTACTTAG_H
+#define QCONTACTTAG_H
 
-// this file includes all of the leaf detail classes
-// provided by the Qt Contacts API.
+#include <QString>
 
-#include "qcontactaddress.h"
-#include "qcontactanniversary.h"
-#include "qcontactavatar.h"
-#include "qcontactbirthday.h"
-#include "qcontactdisplaylabel.h"
-#include "qcontactemailaddress.h"
-#include "qcontactfamily.h"
-#include "qcontactgender.h"
-#include "qcontactgeolocation.h"
-#include "qcontactguid.h"
-#include "qcontactname.h"
-#include "qcontactnickname.h"
-#include "qcontactnote.h"
-#include "qcontactonlineaccount.h"
-#include "qcontactorganization.h"
-#include "qcontactphonenumber.h"
-#include "qcontactsynctarget.h"
-#include "qcontacttag.h"
-#include "qcontacttimestamp.h"
-#include "qcontacttype.h"
-#include "qcontacturl.h"
+#include "qtcontactsglobal.h"
+#include "qcontactdetail.h"
+#include "qcontact.h"
+
+QTM_BEGIN_NAMESPACE
+
+/* Leaf class */
+class Q_CONTACTS_EXPORT QContactTag : public QContactDetail
+{
+public:
+#ifdef Q_QDOC
+    const char* DefinitionName;
+    const char* FieldTag;
+#else
+    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactTag, "Tag")
+    Q_DECLARE_LATIN1_LITERAL(FieldTag, "Tag");
+#endif
+
+    void setTag(const QString& tag) {setValue(FieldTag, tag);}
+    QString tag() const {return value(FieldTag);}
+};
+
+QTM_END_NAMESPACE
 
 #endif

@@ -164,6 +164,13 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
+   \class QContactTag
+   \brief The QContactTag class contains a tag associated with a
+   contact.
+   \ingroup contacts-details
+ */
+
+/*!
    \class QContactTimestamp
    \brief The QContactTimestamp class contains the creation and
    last-modified timestamp associated with the contact.
@@ -297,6 +304,12 @@ Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::DefinitionName, "GeoLocation");
    given context.
  */
 Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::DefinitionName, "OnlineAccount");
+
+/*!
+   \variable QContactTag::DefinitionName
+   The constant string which identifies the definition of details which are tags..
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactTag::DefinitionName, "Tag");
 
 /*!
    \variable QContactOnlineAccount::FieldNickname
@@ -765,6 +778,14 @@ Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldHeading, "Heading");
    the QContactGeoLocation type.
  */
 Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldSpeed, "Speed");
+
+/*!
+   \variable QContactTag::FieldTag
+
+   The constant key for which the tag value is stored in details
+   of the QContactTag type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactTag::FieldTag, "Tag");
 
 /*!
    \variable QContactGeoLocation::FieldTimestamp
@@ -1645,6 +1666,16 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
 /*!
    \fn QContactNote::note() const
    Returns a string for a note associated with a contact.
+ */
+
+/*!
+   \fn QContactTag::setTag(const QString& tag)
+   Sets the tag associated with a contact which is stored in this detail to \a tag.
+ */
+
+/*!
+   \fn QContactTag::tag() const
+   Returns the tag associated with a contact which is stored in this detail.
  */
 
 /*!

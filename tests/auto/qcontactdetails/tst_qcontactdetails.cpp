@@ -82,6 +82,7 @@ private slots:
     void organization();
     void phoneNumber();
     void syncTarget();
+    void tag();
     void timestamp();
     void type();
     void url();
@@ -843,6 +844,39 @@ void tst_QContactDetails::syncTarget()
     QCOMPARE(c.details(QContactSyncTarget::DefinitionName).count(), 0);
     QVERIFY(c.removeDetail(&s2) == false);
     QCOMPARE(c.details(QContactSyncTarget::DefinitionName).count(), 0);
+}
+
+void tst_QContactDetails::tag()
+{
+    QContact c;
+    QContactTag t1, t2;
+
+    // test property set
+    t1.setTag("red");
+    QCOMPARE(t1.tag(), QString("red"));
+    QCOMPARE(t1.value(QContactTag::FieldTag), QString("red"));
+
+    // test property add
+    QVERIFY(c.saveDetail(&t1));
+    QCOMPARE(c.details(QContactTag::DefinitionName).count(), 1);
+    QCOMPARE(QContactTag(c.details(QContactTag::DefinitionName).value(0)).tag(), t1.tag());
+    QVERIFY(c.saveDetail(&t2));
+    QCOMPARE(c.details(QContactTag::DefinitionName).count(), 2);
+
+    // test property update
+    t1.setValue("label","label1");
+    t1.setTag("green");
+    QVERIFY(c.saveDetail(&t1));
+    QCOMPARE(c.details(QContactTag::DefinitionName).value(0).value("label"), QString("label1"));
+    QCOMPARE(c.details(QContactTag::DefinitionName).value(0).value(QContactTag::FieldTag), QString("green"));
+
+    // test property remove
+    QVERIFY(c.removeDetail(&t1));
+    QCOMPARE(c.details(QContactTag::DefinitionName).count(), 1);
+    QVERIFY(c.removeDetail(&t2));
+    QCOMPARE(c.details(QContactTag::DefinitionName).count(), 0);
+    QVERIFY(c.removeDetail(&t2) == false);
+    QCOMPARE(c.details(QContactTag::DefinitionName).count(), 0);
 }
 
 void tst_QContactDetails::timestamp()
