@@ -96,16 +96,20 @@ void QLandmarkSortOrder::setDirection(Qt::SortOrder direction)
 }
 
 /*!
-    \fn int QLandmarkSortOrder::compare(const QLandmark &l1, const QLandmark &l2) const
-
     Compares \a l1 and \a l2 and returns an integer less than, equal to, or greater than
     zero if \a l1 is less than, equal to, or greater than \a l2.
 */
+int QLandmarkSortOrder::compare(const QLandmark &l1, const QLandmark &l2) const
+{
+    return 0;
+}
 
 /*!
-    \fn QList<QLandmarkId> QLandmarkSortOrder::sort(const QList<QLandmarkId> &landmarkIds) const
-
     Returns a sorted list of \a landmarkIds.
 */
+QList<QLandmarkId> QLandmarkSortOrder::sort(const QList<QLandmarkId> &landmarkIds) const
+{
+    return QList<QLandmarkId>();
+}
 
 QTM_END_NAMESPACE
