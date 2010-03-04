@@ -42,10 +42,6 @@
 #include <BADESCA.H>
 #include <BAUTILS.H>
 
-#ifdef POST_S60_50_PLATFORM_VIDEOENUMS
-#include <platform/mmf/common/mmfvideoenums.h>
-#endif
-
 #include <QtCore/qdebug.h>
 #include <QtCore/qstring.h>
 #include "s60camerasession.h"
