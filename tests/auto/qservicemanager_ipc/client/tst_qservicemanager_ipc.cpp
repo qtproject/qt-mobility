@@ -291,6 +291,12 @@ private slots:
     void verifyMethods_data();
     void verifyProperties();
     void verifyProperties_data();
+    void verifyClassInfo();
+    void verifyClassInfo_data();
+    void verifyEnumerator();
+    void verifyEnumerator_data();
+
+    void testInvokableFunctions();
 private:
     QObject* service;
     QServiceManager* manager;
@@ -305,6 +311,7 @@ private:
 
 bool tst_QServiceManager_IPC::requiresLackey()
 {
+    //return false;
 // Temporarily commented out for initial development on Symbian
 #ifdef Q_OS_SYMBIAN
     return false; //service is started when requested
@@ -325,6 +332,8 @@ void tst_QServiceManager_IPC::initTestCase()
     //start lackey that represents the service
     if (requiresLackey()) {
         lackey = new QProcess(this);
+        if (verbose)
+            lackey->setProcessChannelMode(QProcess::ForwardedChannels);
         lackey->start("./qservicemanager_ipc_service");
         qDebug() << lackey->error() << lackey->errorString();
         QVERIFY(lackey->waitForStarted());
@@ -476,8 +485,8 @@ void tst_QServiceManager_IPC::verifyMethods_data()
         << QByteArray("testSlotWithUnknownArg(QServiceInterfaceDescriptor)") <<  (int)( QMetaMethod::Slot) << QByteArray("");
     QTest::newRow("testFunctionWithReturnValue(int)") 
         << QByteArray("testFunctionWithReturnValue(int)") <<  (int)( QMetaMethod::Method) << QByteArray("QString");
-    QTest::newRow("testFunctionWithVariantReturnValue()") 
-        << QByteArray("testFunctionWithVariantReturnValue()") <<  (int)( QMetaMethod::Method) << QByteArray("QVariant");
+    QTest::newRow("testFunctionWithVariantReturnValue(QVariant)") 
+        << QByteArray("testFunctionWithVariantReturnValue(QVariant)") <<  (int)( QMetaMethod::Method) << QByteArray("QVariant");
     QTest::newRow("testFunctionWithCustomReturnValue()") 
         << QByteArray("testFunctionWithCustomReturnValue()") <<  (int)( QMetaMethod::Method) << QByteArray("QServiceFilter");
 }
@@ -498,25 +507,32 @@ void tst_QServiceManager_IPC::verifyMethods()
 
 }
 
+Q_DECLARE_METATYPE(QVariant)
+
 void tst_QServiceManager_IPC::verifyProperties_data()
 {
     QTest::addColumn<QByteArray>("signature");
     QTest::addColumn<QString>("typeName");
     QTest::addColumn<qint16>("flags");
+    QTest::addColumn<QVariant>("defaultValue");
+    QTest::addColumn<QVariant>("writeValue");
+    QTest::addColumn<QVariant>("expectedReturnValue");
 
-    /*
-        bit order:
-            0 isWritable - 1 isUser - 2 isStored - 3 isScriptable 
-            4 isResettable - 5 isReadable - 6 isFlagType - 7 isFinal
-            8 isEnumType - 9 isDesignable - 10 isConstant - 11 hasNotifySgnal
-
-            for more details see verifyProperties()
-    */
+    //
+    //    bit order:
+    //        0 isWritable - 1 isUser - 2 isStored - 3 isScriptable 
+    //        4 isResettable - 5 isReadable - 6 isFlagType - 7 isFinal
+    //        8 isEnumType - 9 isDesignable - 10 isConstant - 11 hasNotifySgnal
+    //
+    //        for more details see verifyProperties()
+    //
 
     QTest::newRow("value property") << QByteArray("value")
-            << QString("QString") << qint16(0x0A3D);
-
-    
+            << QString("QString") << qint16(0x0A3D) << QVariant(QString("FFF")) << QVariant(QString("GGG")) << QVariant(QString("GGG"));
+    QTest::newRow("priority property") << QByteArray("priority")
+            << QString("Priority") << qint16(0x0B2D) << QVariant((int)0) << QVariant("Low") << QVariant((int)1) ;
+    QTest::newRow("serviceFlags property") << QByteArray("serviceFlags")
+            << QString("ServiceFlag") << qint16(0x036D) << QVariant((int)4) << QVariant("FirstBit|ThirdBit") << QVariant((int)5);
 }
 
 void tst_QServiceManager_IPC::verifyProperties()
@@ -525,6 +541,9 @@ void tst_QServiceManager_IPC::verifyProperties()
     QFETCH(QByteArray, signature);
     QFETCH(QString, typeName);
     QFETCH(qint16, flags);
+    QFETCH(QVariant, defaultValue);
+    QFETCH(QVariant, writeValue);
+    QFETCH(QVariant, expectedReturnValue);
 
     const QMetaObject* meta = service->metaObject();
     const int index = meta->indexOfProperty(signature.constData());
@@ -546,8 +565,127 @@ void tst_QServiceManager_IPC::verifyProperties()
     QVERIFY( property.isConstant() == (bool) (flags & 0x0400) );
     QVERIFY( property.hasNotifySignal() == (bool) (flags & 0x0800) );
 
+    if (property.isReadable()) {
+        QCOMPARE(defaultValue, service->property(signature));
+        if (property.isWritable()) {
+            service->setProperty(signature, writeValue);
+            QCOMPARE(expectedReturnValue, service->property(signature));
+            if (property.isResettable()) {
+                property.reset(service);
+                QCOMPARE(defaultValue, service->property(signature));
+            }
+            service->setProperty(signature, defaultValue);
+            QCOMPARE(defaultValue, service->property(signature));
+        }
+    }
     
+}
+
+void tst_QServiceManager_IPC::verifyClassInfo_data()
+{
+    QTest::addColumn<QString>("classInfoKey");
+    QTest::addColumn<QString>("classInfoValue");
+
+    QTest::newRow("UniqueTestService") << QString("UniqueTestService") << QString("First test");
+    QTest::newRow("Key") << QString("Key") << QString("Value");
 
 }
+void tst_QServiceManager_IPC::verifyClassInfo()
+{
+    QFETCH(QString, classInfoKey);
+    QFETCH(QString, classInfoValue);
+
+    const QMetaObject* meta = service->metaObject();
+    const int index = meta->indexOfClassInfo(classInfoKey.toAscii().constData());
+
+    QMetaClassInfo info = meta->classInfo(index);
+    QCOMPARE(classInfoKey, QString(info.name()));
+    QCOMPARE(classInfoValue, QString(info.value()));
+
+}
+
+Q_DECLARE_METATYPE(QList<int> )
+void tst_QServiceManager_IPC::verifyEnumerator_data()
+{
+    QTest::addColumn<QString>("enumName");
+    QTest::addColumn<QString>("enumScope");
+    QTest::addColumn<int>("enumKeyCount");
+    QTest::addColumn<bool>("enumIsFlag");
+    QTest::addColumn<QStringList>("enumKeyNames");
+    QTest::addColumn<QList<int> >("enumKeyValues");
+
+
+    QStringList keynames;
+    keynames << "FirstBit" << "SecondBit" << "ThirdBit";
+    QList<int> values;
+    values << 1 << 2 << 4;
+    QTest::newRow("ServiceFlag") << QString("ServiceFlag") << QString("UniqueTestService")
+        << 3 << true << keynames << values;
+    QTest::newRow("ServiceFlags") << QString("ServiceFlags") << QString("UniqueTestService")
+        << 3 << true << keynames << values;
+
+    keynames.clear();
+    values.clear();
+
+    keynames << "High"  << "Low" << "VeryLow" << "ExtremelyLow";
+    values << 0 << 1 << 2 << 3 ;
+
+    QTest::newRow("Priority") << QString("Priority") << QString("UniqueTestService")
+        << 4 << false << keynames << values;
+}
+
+void tst_QServiceManager_IPC::verifyEnumerator()
+{
+    QFETCH(QString, enumName);
+    QFETCH(QString, enumScope);
+    QFETCH(int, enumKeyCount);
+    QFETCH(bool, enumIsFlag);
+    QFETCH(QStringList, enumKeyNames);
+    QFETCH(QList<int>, enumKeyValues);
+
+    const QMetaObject* meta = service->metaObject();
+    const int index = meta->indexOfEnumerator(enumName.toAscii().constData());
+    QMetaEnum metaEnum = meta->enumerator(index);
+
+    QVERIFY(metaEnum.isValid());
+    QCOMPARE(enumScope, QString(metaEnum.scope()));
+    QCOMPARE(enumKeyCount, metaEnum.keyCount());
+    QCOMPARE(enumIsFlag, metaEnum.isFlag());
+    QCOMPARE(enumKeyNames.count(), enumKeyValues.count());
+
+    for (int i=0; i<enumKeyNames.count(); i++) {
+        QCOMPARE(enumKeyNames.at(i), QString(metaEnum.valueToKey(enumKeyValues.at(i))));
+        QCOMPARE(enumKeyValues.at(i), metaEnum.keyToValue(enumKeyNames.at(i).toAscii().constData()));
+    }
+}
+
+void tst_QServiceManager_IPC::testInvokableFunctions()
+{
+    QString result;
+
+    QString pattern("%1 x 3 = %2");
+    QString temp;
+    for (int i = -10; i<10; i++) {
+        result.clear(); temp.clear();
+        QVERIFY(result.isEmpty());
+        QVERIFY(temp.isEmpty());
+        
+        QMetaObject::invokeMethod(service, "testFunctionWithReturnValue", 
+            Q_RETURN_ARG(QString, result), Q_ARG(int, i));
+        temp = pattern.arg(i).arg(i*3);
+        QCOMPARE(temp, result);
+    }
+
+    QList<QVariant> variants;
+    variants << QVariant() << QVariant(6) << QVariant(QString("testString"));
+    for(int i = 0; i<variants.count(); i++) {
+        QVariant varResult;
+        QMetaObject::invokeMethod(service, "testFunctionWithVariantReturnValue",
+              Q_RETURN_ARG(QVariant, varResult), Q_ARG(QVariant, variants.at(i)));
+        
+        QCOMPARE(variants.at(i), varResult);
+    }
+}
+
 QTEST_MAIN(tst_QServiceManager_IPC);
 #include "tst_qservicemanager_ipc.moc"

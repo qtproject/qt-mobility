@@ -10,6 +10,7 @@
 QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QServiceFilter);
+Q_DECLARE_METATYPE(QVariant)
 
 class SharedTestService : public QObject 
 {
@@ -152,7 +153,7 @@ public:
     }
 
 
-    enum Priority { High, Low, VeryLow };
+    enum Priority { High, Low, VeryLow, ExtremelyLow };
     void setPriority(Priority p) {
         m_priority = p;
         emit priorityChanged();
@@ -178,7 +179,7 @@ public:
     void resetValue()
     {
         qDebug() << "Resetting value";
-        m_value = "<empty>";
+        m_value = "FFF";
         emit valueChanged();
     }
 
@@ -187,6 +188,7 @@ public:
     /*Q_INVOKABLE*/ UniqueTestService(QObject* parent = 0) 
         : QObject(parent), m_priority(UniqueTestService::High), m_flags(ThirdBit)
     {
+        resetValue();
     }
 
     Q_INVOKABLE QString testFunctionWithReturnValue(int input)
@@ -197,10 +199,10 @@ public:
         return output;
     }
 
-    Q_INVOKABLE QVariant testFunctionWithVariantReturnValue()
+    Q_INVOKABLE QVariant testFunctionWithVariantReturnValue(const QVariant& input)
     {
         qDebug() << "UniqueTestService::testFunctionWithVariantReturnValue()";
-        return  QVariant('4');
+        return  input;
     }
 
     Q_INVOKABLE QServiceFilter testFunctionWithCustomReturnValue()
@@ -298,6 +300,8 @@ int main(int argc, char** argv)
     
     qRegisterMetaType<QServiceFilter>();
     qRegisterMetaTypeStreamOperators<QServiceFilter>("QServiceFilter");
+    qRegisterMetaType<QVariant>();
+    qRegisterMetaTypeStreamOperators<QVariant>("QVariant");
 
     registerExampleService();
 
