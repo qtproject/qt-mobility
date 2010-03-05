@@ -47,6 +47,14 @@
 #include <QMetaMethod>
 #include <QtTest/QtTest>
 
+#define QTRY_VERIFY(a)                       \
+    for (int _i = 0; _i < 5000; _i += 100) {    \
+        if (a) break;                  \
+        QTest::qWait(100);                      \
+    }                                           \
+    QVERIFY(a)
+
+
 QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QServiceFilter)
@@ -297,6 +305,7 @@ private slots:
     void verifyEnumerator_data();
 
     void testInvokableFunctions();
+    void testSignalling();
 private:
     QObject* service;
     QServiceManager* manager;
@@ -338,7 +347,7 @@ void tst_QServiceManager_IPC::initTestCase()
         qDebug() << lackey->error() << lackey->errorString();
         QVERIFY(lackey->waitForStarted());
         //Give the lackey some time to come up;
-        QTest::qWait(500);
+        QTest::qWait(700);
     }
 
     //test that the service is installed
@@ -685,7 +694,24 @@ void tst_QServiceManager_IPC::testInvokableFunctions()
         
         QCOMPARE(variants.at(i), varResult);
     }
+
+    //test custom return type
+    QServiceFilter f;
+    QMetaObject::invokeMethod(service, "testFunctionWithCustomReturnValue",
+          Q_RETURN_ARG(QServiceFilter, f));
+    QCOMPARE(f.serviceName(), QString("MyService"));
+    QCOMPARE(f.interfaceName(), QString("com.nokia.qt.ipcunittest"));
+    QCOMPARE(f.majorVersion(), 6);
+    QCOMPARE(f.minorVersion(), 7);
 }
 
+void tst_QServiceManager_IPC::testSignalling()
+{
+    QSignalSpy spy(service, SIGNAL(signalWithIntParam(int)));
+    QMetaObject::invokeMethod(service, "triggerSignalWithIntParam");
+    QTRY_VERIFY(spy.count() == 1);
+    QCOMPARE(spy.at(0).at(0).toInt(), 5);
+
+}
 QTEST_MAIN(tst_QServiceManager_IPC);
 #include "tst_qservicemanager_ipc.moc"
