@@ -141,9 +141,11 @@ public:
     QList<QContactRelationship> relationships(const QContactId& participantId, QContactRelationshipFilter::Role role = QContactRelationshipFilter::Either) const;
     QList<QContactRelationship> relationships(const QString& relationshipType = QString(), const QContactId& participantId = QContactId(), QContactRelationshipFilter::Role role = QContactRelationshipFilter::Either) const;
     bool saveRelationship(QContactRelationship* relationship);
-    QList<QContactManager::Error> saveRelationships(QList<QContactRelationship>* relationships);
+    QList<QContactManager::Error> Q_DECL_DEPRECATED saveRelationships(QList<QContactRelationship>* relationships); // deprecated
+    bool saveRelationships(QList<QContactRelationship>* relationships, QMap<int, QContactManager::Error>* errorMap); // replaces the above
     bool removeRelationship(const QContactRelationship& relationship);
-    QList<QContactManager::Error> removeRelationships(const QList<QContactRelationship>& relationships);
+    QList<QContactManager::Error> Q_DECL_DEPRECATED removeRelationships(const QList<QContactRelationship>& relationships); // deprecated
+    bool removeRelationships(const QList<QContactRelationship>& relationships, QMap<int, QContactManager::Error>* errorMap); // replaces the above
 
     /* Definitions - Accessors and Mutators */
     QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType = QContactType::TypeContact) const;

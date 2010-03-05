@@ -381,14 +381,11 @@ QList<QContactRelationship> QContactManagerEngine::relationships(const QString& 
   to \c QContactManager::NoError.  Note that relationships cannot be updated directly using this function; in order
   to update a relationship, you must remove the old relationship, make the required modifications, and then save it.
 
-  The given relationship is invalid if it is circular (one of the destination contacts is also the source contact), or
-  if it references a non-existent local contact (either source or destination).  If the given \a relationship is invalid,
+  The given relationship is invalid if it is circular (the first contact is the second contact), or
+  if it references a non-existent local contact (either first or second).  If the given \a relationship is invalid,
   the function will return \c false and the \a error will be set to \c QContactManager::InvalidRelationshipError.
   If the given \a relationship could not be saved in the database (due to backend limitations)
   the function will return \c false and \a error will be set to \c QContactManager::NotSupportedError.
-
-  If any destination contact manager URI is not set in the \a relationship, these will be
-  automatically set to the URI of this manager, before the relationship is saved.
  */
 bool QContactManagerEngine::saveRelationship(QContactRelationship* relationship, QContactManager::Error& error)
 {
@@ -398,7 +395,11 @@ bool QContactManagerEngine::saveRelationship(QContactRelationship* relationship,
 }
 
 /*!
+  \obsolete
   Saves the given \a relationships in the database and returns a list of error codes.  Any error which occurs will be saved in \a error.
+
+  This function is deprecated and will be removed after the transition period has elapsed.
+  Use the saveRelationships() function which takes an errorMap argument instead.
  */
 QList<QContactManager::Error> QContactManagerEngine::saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error)
 {
@@ -408,12 +409,26 @@ QList<QContactManager::Error> QContactManagerEngine::saveRelationships(QList<QCo
 }
 
 /*!
+  Saves the given \a relationships in the database and returns true if the operation was successful.
+  For any relationship which was unable to be saved, an entry into the \a errorMap will be created,
+  with the key being the index into the input relationships list, and the value being the error which
+  occurred for that index.
+
+  The overall operation error will be saved in \a error.
+ */
+bool QContactManagerEngine::saveRelationships(QList<QContactRelationship>* relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error)
+{
+    Q_UNUSED(relationships);
+    Q_UNUSED(errorMap);
+    error = QContactManager::NotSupportedError;
+    return false;
+}
+
+/*!
   Removes the given \a relationship from the manager.  If the relationship exists in the manager, the relationship
   will be removed, the \a error will be set to \c QContactManager::NoError and this function will return true.  If no such
   relationship exists in the manager, the \a error will be set to \c QContactManager::DoesNotExistError and this function
   will return false.
-
-  The priority of the relationship is ignored when determining existence of the relationship.
  */
 bool QContactManagerEngine::removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error)
 {
@@ -423,13 +438,33 @@ bool QContactManagerEngine::removeRelationship(const QContactRelationship& relat
 }
 
 /*!
+  \obsolete
   Removes the given \a relationships from the database and returns a list of error codes.  Any error which occurs will be saved in \a error.
+
+  This function is deprecated and will be removed after the transition period has elapsed.
+  Use the removeRelationships() function which takes an errorMap argument instead.
  */
 QList<QContactManager::Error> QContactManagerEngine::removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error)
 {
     Q_UNUSED(relationships);
     error = QContactManager::DoesNotExistError;
     return QList<QContactManager::Error>();
+}
+
+/*!
+  Removes the given \a relationships from the database and returns true if the operation was successful.
+  For any relationship which was unable to be removed, an entry into the \a errorMap will be created,
+  with the key being the index into the input relationships list, and the value being the error which
+  occurred for that index.
+
+  The overall operation error will be saved in \a error.
+ */
+bool QContactManagerEngine::removeRelationships(const QList<QContactRelationship>& relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error)
+{
+    Q_UNUSED(relationships);
+    Q_UNUSED(errorMap);
+    error = QContactManager::NotSupportedError;
+    return false;
 }
 
 /*!
