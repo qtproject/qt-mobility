@@ -233,7 +233,7 @@ bool QContactDetail::operator==(const QContactDetail& other) const
 }
 
 /*!
- * \internal
+ * \obsolete
  * Sets the preferred actions for this detail to be the given list of \a preferredActions.
  * This functionality may not be supported on all backends; please check for the
  * \c QContactManager::DetailActionPreferences feature in the backend.
@@ -245,7 +245,7 @@ void QContactDetail::setPreferredActions(const QList<QContactActionDescriptor>& 
 }
 
 /*!
- * \internal
+ * \obsolete
  * Returns the list of preferred actions for this detail.
  * This functionality may not be supported on all backends; please check for the
  * \c QContactManager::DetailActionPreferences feature in the backend.

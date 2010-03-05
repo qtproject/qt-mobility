@@ -1363,7 +1363,7 @@ bool QContactManagerEngine::saveContacts(QList<QContact>* contacts, QMap<int, QC
 
   \sa QContactManager::removeContact()
  */
-bool QContactManagerEngine::removeContacts(QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error)
+bool QContactManagerEngine::removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error)
 {
     if (errorMap) {
         errorMap->clear();

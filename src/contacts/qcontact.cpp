@@ -556,7 +556,7 @@ QList<QContactId> QContact::relatedContacts(const QString& relationshipType, QCo
 }
 
 /*!
- * \internal
+ * \obsolete
  * Sets the order of importance of the relationships for this contact by saving a \a reordered list of relationships which involve the contact.
  * The list must include all of the relationships in which the contact is involved, and must not include any relationships which do
  * not involve the contact.  In order for the ordering preference to be persisted, the contact must be saved in its manager.
@@ -576,7 +576,7 @@ void QContact::setRelationshipOrder(const QList<QContactRelationship>& reordered
 }
 
 /*!
- * \internal
+ * \obsolete
  * Returns the ordered list of relationships in which the contact is involved.  By default, this list is equal to the cached
  * list of relationships which is available by calling relationships().
  *

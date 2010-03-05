@@ -70,7 +70,7 @@ QContactRelationshipRemoveRequest::~QContactRelationshipRemoveRequest()
 }
 
 /*!
-  \internal
+  \obsolete
    Sets the first contact criterion of the remove request to \a firstId.
    If \a firstId is the default-constructed id, or the first contact is not set,
    the request will remove relationships involving any first contact.
@@ -84,7 +84,7 @@ void QContactRelationshipRemoveRequest::setFirst(const QContactId& firstId)
 }
 
 /*!
-  \internal
+  \obsolete
   Returns the first contact criterion of the remove request.
   This function is obsolete; retrieve the lists of relationships that will be removed by calling relationships() instead.
  */
@@ -95,7 +95,7 @@ QContactId QContactRelationshipRemoveRequest::first() const
 }
 
 /*!
-  \internal
+  \obsolete
    Sets the relationship type criterion of the remove request to \a relationshipType.
    If \a relationshipType is empty, or the relationship type is not set,
    the request will remove relationships of any type.
@@ -109,7 +109,7 @@ void QContactRelationshipRemoveRequest::setRelationshipType(const QString& relat
 }
 
 /*!
-  \internal
+  \obsolete
   Returns the relationship type criterion of the fetch request.
   This function is obsolete; retrieve the lists of relationships that will be removed by calling relationships() instead.
  */
@@ -120,7 +120,7 @@ QString QContactRelationshipRemoveRequest::relationshipType() const
 }
 
 /*!
-  \internal
+  \obsolete
   Sets the second contact criterion of the remove request to \a secondId.
   If \a secondId is the default-constructed id, or the second contact is not set,
   the request will remove relationships involving any second contact.
@@ -134,7 +134,7 @@ void QContactRelationshipRemoveRequest::setSecond(const QContactId& secondId)
 }
 
 /*!
-  \internal
+  \obsolete
   Returns the second contact criterion of the remove request.
   This function is obsolete; retrieve the lists of relationships that will be removed by calling relationships() instead.
  */

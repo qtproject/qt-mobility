@@ -441,7 +441,7 @@ bool QContactManager::removeContact(const QContactLocalId& contactId)
 }
 
 /*!
-  \internal
+  \obsolete
   Adds the list of contacts given by \a contactList to the database.
   Returns a list of the error codes corresponding to the contacts in
   the \a contactList.  The \l QContactManager::error() function will
@@ -500,7 +500,7 @@ bool QContactManager::saveContacts(QList<QContact>* contacts, QMap<int, QContact
 }
 
 /*!
-  \internal
+  \obsolete
 
   Remove every contact whose id is contained in the list of contacts ids
   \a contactIds.  Returns true if all contacts were removed successfully,
@@ -525,11 +525,12 @@ bool QContactManager::saveContacts(QList<QContact>* contacts, QMap<int, QContact
 bool QContactManager::removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap)
 {
     // DEPRECATED to be removed once transition period has elapsed.
-    QList<QContactLocalId> constList;
-    for (int i = 0; i < contactIds->size(); i++)
-        constList.append(contactIds->at(i));
+    if (!contactIds) {
+        d->m_error = QContactManager::BadArgumentError;
+        return false;
+    }
 
-    return d->m_engine->removeContacts(constList, errorMap, d->m_error);
+    return d->m_engine->removeContacts(*contactIds, errorMap, d->m_error);
 }
 
 /*!
@@ -549,7 +550,7 @@ bool QContactManager::removeContacts(QList<QContactLocalId>* contactIds, QMap<in
 
   \sa QContactManager::removeContact()
  */
-bool QContactManager::removeContacts(QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap)
+bool QContactManager::removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap)
 {
     return d->m_engine->removeContacts(contactIds, errorMap, d->m_error);
 }
@@ -564,7 +565,7 @@ QContact QContactManager::conformingContact(const QContact& original)
 }
 
 /*!
-  \internal
+  \obsolete
   Remove the list of contacts identified in \a idList.
   Returns a list of the error codes corresponding to the contact ids in
   the \a idList.  The \l QContactManager::error() function will
@@ -588,10 +589,7 @@ QList<QContactManager::Error> QContactManager::removeContacts(QList<QContactLoca
         QMap<int, QContactManager::Error> errorMap;
         QList<QContactManager::Error> errorList;
         int size = idList->size();
-        QList<QContactLocalId> constList;
-        for (int i = 0; i < size; i++)
-            constList.append(idList->at(i));
-        d->m_engine->removeContacts(constList, &errorMap, d->m_error);
+        d->m_engine->removeContacts(*idList, &errorMap, d->m_error);
 
         for (int j=0; j < size; j++) {
             if (errorMap.contains(j))

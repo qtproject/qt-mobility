@@ -86,7 +86,7 @@ public:
     virtual bool saveContact(QContact* contact, QContactManager::Error& error);
     virtual bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error);
     virtual bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
-    virtual bool removeContacts(QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error);
+    virtual bool removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error);
 
     /* Return a pruned or modified contact which is valid and can be saved in the backend */
     virtual QContact conformingContact(const QContact& original, QContactManager::Error& error);

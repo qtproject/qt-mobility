@@ -179,7 +179,7 @@ QContactRelationship::Role QContactRelationshipFilter::relatedContactRole() cons
 }
 
 /*!
-  \internal
+  \obsolete
   Sets the role in the relationship that a contact must be in order to match this filter to \a roleInRelationship
 
   This function has been deprecated - you should pass the opposite value (e.g. First instead of Second, Second
@@ -203,7 +203,7 @@ void QContactRelationshipFilter::setRole(QContactRelationshipFilter::Role roleIn
 }
 
 /*!
-  \internal
+  \obsolete
   Sets the contact id of the other participant which must be present in the relationship with the contact
   in order for the contact to match the filter to be \a id
  */
@@ -214,7 +214,7 @@ void QContactRelationshipFilter::setOtherParticipantId(const QContactId& id)
 }
 
 /*!
-  \internal
+  \obsolete
   Returns the role that a contact must have in a relationship in order to match the filter
  */
 QContactRelationshipFilter::Role QContactRelationshipFilter::role() const
@@ -232,7 +232,7 @@ QContactRelationshipFilter::Role QContactRelationshipFilter::role() const
 }
 
 /*!
-  \internal
+  \obsolete
   Returns the id of another contact with whom a contact must have a relationship in order to match the filter
  */
 QContactId QContactRelationshipFilter::otherParticipantId() const
