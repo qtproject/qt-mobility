@@ -556,8 +556,11 @@ bool QContactManager::removeContacts(const QList<QContactLocalId>& contactIds, Q
 }
 
 /*!
+  \preliminary
   Returns a pruned or modified version of the \a original contact which is valid and can be saved in the manager.
   The returned contact might have entire details removed or arbitrarily changed.
+
+  This function is preliminary and the signature and behaviour are subject to change!
  */
 QContact QContactManager::conformingContact(const QContact& original)
 {

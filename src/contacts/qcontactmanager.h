@@ -128,7 +128,7 @@ public:
     bool removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap); // batch API - remove.
 
     /* Return a pruned or modified contact which is valid and can be saved in the manager */
-    QContact conformingContact(const QContact& original);
+    QContact Q_DECL_DEPRECATED conformingContact(const QContact& original); // NOT deprecated, but very preliminary, under development.
 
     /* Synthesize the display label of a contact */
     QString synthesizedDisplayLabel(const QContact& contact) const; // replaces the above
