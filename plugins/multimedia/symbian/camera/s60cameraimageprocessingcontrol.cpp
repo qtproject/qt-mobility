@@ -143,3 +143,15 @@ int S60CameraImageProcessingControl::sharpeningLevel() const
     return m_advancedSettings->sharpeningLevel();
 }
 
+bool S60CameraImageProcessingControl::isWhiteBalanceLocked() const
+{
+    return false;
+}
+
+void S60CameraImageProcessingControl::lockWhiteBalance()
+{
+}
+
+void S60CameraImageProcessingControl::unlockWhiteBalance()
+{
+}
