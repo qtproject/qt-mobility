@@ -44,10 +44,10 @@
 #include <time.h>
 
 const char *n900accelerometer::id("n900.accelerometer");
+const char *n900accelerometer::filename("/sys/class/i2c-adapter/i2c-3/3-001d/coord");
 
 n900accelerometer::n900accelerometer(QSensor *sensor)
     : n900filebasedsensor(sensor)
-    , m_filename(ACCELEROMETER_FILE)
 {
     setReading<QAccelerometerReading>(&m_reading);
 }
@@ -58,8 +58,7 @@ void n900accelerometer::poll()
     // Ideally the kernel would scale the hardware's values to m/s^2 for us
     // and give us a timestamp along with that data.
 
-    m_reading.setTimestamp(clock());
-    FILE *fd = fopen(m_filename, "r");
+    FILE *fd = fopen(filename, "r");
     if (!fd) return;
     int x, y, z;
     int rs = fscanf(fd, "%i %i %i", &x, &y, &z);
@@ -72,6 +71,7 @@ void n900accelerometer::poll()
     qreal ay = y * -0.00980665;
     qreal az = z * -0.00980665;
 
+    m_reading.setTimestamp(clock());
     m_reading.setX(ax);
     m_reading.setY(ay);
     m_reading.setZ(az);

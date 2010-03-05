@@ -175,8 +175,8 @@ QString ContactEditor::nameField()
     QContactDetailDefinition nameDef = defs.value(QContactName::DefinitionName);
     if (nameDef.fields().keys().contains(QContactName::FieldCustomLabel)) {
         return QString(QLatin1String(QContactName::FieldCustomLabel));
-    } else if (nameDef.fields().keys().contains(QContactName::FieldFirst)) {
-        return QString(QLatin1String(QContactName::FieldFirst));
+    } else if (nameDef.fields().keys().contains(QContactName::FieldFirstName)) {
+        return QString(QLatin1String(QContactName::FieldFirstName));
     } else {
         return QString();
     }

@@ -71,7 +71,7 @@ public:
 #endif
 
 #endif
-#if defined(Q_OS_SYMBIAN)
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     QString _id;
 #endif    
 };
