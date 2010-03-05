@@ -115,6 +115,31 @@ bool QContactId::operator!=(const QContactId& other) const
     return !(*this == other);
 }
 
+/*! Returns true if this id is less than the \a other id.
+    This id will be considered less than the \a other id if the
+    manager URI of this id is alphabetically less than the manager
+    URI of the \a other id.  If both ids have the same manager URI,
+    this id will be considered less than the \a other id if the
+    local id of this id is less than the local id of the \a other id.
+
+    The invalid, empty id consists of an empty manager URI and the
+    invalid, zero local id, and hence will be less than any non-invalid
+    id.
+
+    This operator is provided primarily to allow use of a QContactId
+    as a key in a QMap.
+ */
+bool QContactId::operator<(const QContactId& other) const
+{
+    if (this->managerUri() > other.managerUri())
+        return false;
+
+    if (this->managerUri() < other.managerUri())
+        return true;
+
+    return this->localId() < other.localId();
+}
+
 /*!
  * Returns the URI of the manager which contains the contact identified by this id
  */
