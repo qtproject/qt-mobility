@@ -42,8 +42,6 @@
 #include "gconflayer_linux_p.h"
 #include <QVariant>
 
-#include <QDebug>
-
 QTM_BEGIN_NAMESPACE
 
 Q_GLOBAL_STATIC(GConfLayer, gConfLayer);

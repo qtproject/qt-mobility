@@ -46,10 +46,8 @@
 #include "qvaluespacepublisher.h"
 
 #include <QSet>
-#include <GConfItem>
+#include "gconfitem_p.h"
 #include <QMutex>
-
-class QSignalMapper;
 
 QTM_BEGIN_NAMESPACE
 
