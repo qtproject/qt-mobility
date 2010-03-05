@@ -121,7 +121,7 @@ int QServiceProxy::qt_metacall(QMetaObject::Call c, int id, void **a)
             if (t == "QVariant") {  //ignore whether QVariant is declared as metatype
                 args << *reinterpret_cast<const QVariant(*)>(a[i+1]);
             } else if ( variantType == 0 ){
-                qWarning("%s: argument %s has unknown type",
+                qWarning("%s: argument %s has unknown type. Use qRegisterMetaType to register it.",
                         method.signature(), t.data());
                 return id;
             } else {

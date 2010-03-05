@@ -82,7 +82,7 @@ public:
 protected:
     void activated( const QList<QVariant>& args )
     {
-        //qDebug() << signal() << "emitted.";
+        //qDebug() << signal() << "emitted." << args;
         endPoint->invokeRemote(metaIndex, args, QMetaType::Void);
     }
 private:
@@ -395,16 +395,16 @@ void ObjectEndPoint::methodCall(const QServicePackage& p)
                 not deterministic and it can actually create memory leaks 
                 in moc generated code.
             */
-
             const int numArgs = args.size();
             QVarLengthArray<void *, 32> a( numArgs+1 );
             a[0] = 0;
+
+            const QList<QByteArray> pTypes = method.parameterTypes();
             for ( int arg = 0; arg < numArgs; ++arg ) {
-                if (args[arg].isValid() ) {
-                    a[arg+1] = (void *)( args[arg].data() );
-                } else {
+                if (pTypes.at(arg) == "QVariant")
                     a[arg+1] = (void *)&( args[arg] );
-                }
+                else
+                    a[arg+1] = (void *)( args[arg].data() );
             }
 
             d->triggerConnectedSlots(service, service->metaObject(), metaIndex, a.data());
