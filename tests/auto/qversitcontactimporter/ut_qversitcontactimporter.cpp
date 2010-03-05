@@ -847,6 +847,7 @@ void UT_QVersitContactImporter::testAvatarStored()
     QPixmap pixmap(avatar.pixmap());
     QPixmap expectedPixmap;
     expectedPixmap.loadFromData(gif);
+    QEXPECT_FAIL("", "Pixmap creation disabled.  Will switch to QImage later.", Abort);
     QCOMPARE(pixmap, expectedPixmap);
 
     // Without the resource handler, the pixmap should still be set.

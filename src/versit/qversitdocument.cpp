@@ -62,6 +62,14 @@ QTM_USE_NAMESPACE
   \sa QVersitProperty
  */
 
+/*!
+  \enum QVersitDocument::VersitType
+  This enum describes a versit document type and version.
+  \value InvalidType No type specified or a document with an invalid type was parsed
+  \value VCard21Type vCard version 2.1
+  \value VCard30Type vCard version 3.0
+ */
+
 /*! Constructs a new empty document */
 QVersitDocument::QVersitDocument() : d(new QVersitDocumentPrivate())
 {
