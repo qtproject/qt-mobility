@@ -78,6 +78,13 @@ public:
     bool isDenoisingSupported() const;
     int denoisingLevel() const;
     void setDenoisingLevel(int value);
+
+    bool isWhiteBalanceLocked() const;
+
+public Q_SLOTS:
+    void lockWhiteBalance();
+    void unlockWhiteBalance();
+
     
 private:
     S60CameraSession *m_session;

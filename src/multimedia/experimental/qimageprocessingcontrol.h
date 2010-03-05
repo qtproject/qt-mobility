@@ -76,6 +76,15 @@ public:
     virtual int denoisingLevel() const = 0;
     virtual void setDenoisingLevel(int value) = 0;
 
+    virtual bool isWhiteBalanceLocked() const = 0;
+
+public Q_SLOTS:
+    virtual void lockWhiteBalance() = 0;
+    virtual void unlockWhiteBalance() = 0;
+
+Q_SIGNALS:
+    void whiteBalanceLocked();
+
 protected:
     QImageProcessingControl(QObject* parent = 0);
 };

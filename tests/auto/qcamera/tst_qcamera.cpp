@@ -453,6 +453,7 @@ private:
 
 class MockImageProcessingControl : public QImageProcessingControl
 {
+    Q_OBJECT
 public:
     MockImageProcessingControl(QObject *parent = 0)
         : QImageProcessingControl(parent)
@@ -463,6 +464,7 @@ public:
         , m_denoisingLevel(-1)
         , m_sharpeningSupported(false)
         , m_denoisingSupported(true)
+        , m_whiteBalanceLocked(false)
     {
     }
 
@@ -494,6 +496,12 @@ public:
     int denoisingLevel() const { return m_denoisingLevel; }
     void setDenoisingLevel(int value) { m_denoisingLevel = value; }
 
+    bool isWhiteBalanceLocked() const { return m_whiteBalanceLocked; }
+
+public Q_SLOTS:
+    void lockWhiteBalance() { m_whiteBalanceLocked = true; emit whiteBalanceLocked(); }
+    void unlockWhiteBalance() { m_whiteBalanceLocked = false; }
+
 private:
     QCamera::WhiteBalanceMode m_whiteBalanceMode;
     QCamera::WhiteBalanceModes m_supportedWhiteBalance;
@@ -504,6 +512,7 @@ private:
     int m_denoisingLevel;
     bool m_sharpeningSupported;
     bool m_denoisingSupported;
+    bool m_whiteBalanceLocked;
 };
 
 class MockImageEncoderControl : public QImageEncoderControl

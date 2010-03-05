@@ -40,11 +40,7 @@
 ****************************************************************************/
 
 #include "S60mediarecognizer.h"
-#if !defined(USE_CMEDIARECOGNIZER)
 #include <MPMediaRecognizer.h>
-#else
-#include <CMediaRecognizer.h>
-#endif
 #include <e32def.h>
 #include <e32cmn.h>
 #include <QtCore/qurl.h>
@@ -53,9 +49,8 @@
 
 S60MediaRecognizer::S60MediaRecognizer(QObject *parent) : QObject(parent)
 {
-	TRAP_IGNORE(m_recognizer = MediaRecognizer::NewL());
+	TRAP_IGNORE(m_recognizer = CMPMediaRecognizer::NewL());
 }
-
 
 S60MediaRecognizer::~S60MediaRecognizer()
 {
@@ -67,46 +62,38 @@ bool S60MediaRecognizer::checkUrl(const QUrl &url)
 {
 	TBool isValidUrl = false;
 	TPtrC validUrlPtr (static_cast<const TUint16*>(url.toString().utf16()), url.toString().length());
-#if !defined(USE_CMEDIARECOGNIZER)
-	isValidUrl = m_recognizer->ValidUrl(validUrlPtr);
-#else
-    isValidUrl = m_recogizer->IsValidUrlPrefix(validUrlPtr);
-#endif
+	isValidUrl = m_recognizer->ValidUrl(validUrlPtr);  
 	return isValidUrl;
 }
 
 S60MediaRecognizer::MediaType S60MediaRecognizer::IdentifyMediaType(const QUrl &url)
-{
-#if !defined(USE_CMEDIARECOGNIZER)
-	MediaRecognizer::TMPMediaType type = MediaRecognizer::EUnidentified;
-#else
-	MediaRecognizer::TMediaType type = MediaRecognizer::EUnidentified;
-#endif
+{    
+	CMPMediaRecognizer::TMPMediaType type = CMPMediaRecognizer::EUnidentified;
 	QString filePath = QDir::toNativeSeparators(url.toLocalFile());
 	if (filePath.isNull()) {
-		filePath = url.toString();
+		filePath = url.toString();		
 	}
 	TPtrC16 urlPtr(reinterpret_cast<const TUint16*>(filePath.utf16()));
 
 	TRAP_IGNORE(type = m_recognizer->IdentifyMediaTypeL(urlPtr, ETrue);)
 	m_recognizer->FreeFilehandle();
-
+	
 	switch (type) {
-	   case MediaRecognizer::LocalAudioFile:
+	   case CMPMediaRecognizer::ELocalAudioFile:
 		   return Audio;
-	   case MediaRecognizer::ELocalVideoFile:
+	   case CMPMediaRecognizer::ELocalVideoFile:
 		   return Video;
-	   case MediaRecognizer::EUrl:
+	   case CMPMediaRecognizer::EUrl:
 		   return Url;
-	   case MediaRecognizer::ELocalAudioPlaylist:
+	   case CMPMediaRecognizer::ELocalAudioPlaylist:
 	   // TODO: Must be considered when streams will be implemented
-	   case MediaRecognizer::ELocalRamFile:
-	   case MediaRecognizer::ELocalSdpFile:
+	   case CMPMediaRecognizer::ELocalRamFile:
+	   case CMPMediaRecognizer::ELocalSdpFile:
 	   // case CMPMediaRecognizer::EProgressiveDownload:
-	   case MediaRecognizer::EUnidentified:
+	   case CMPMediaRecognizer::EUnidentified:
 	   default:
 		   break;
 	}
 
-    return NotSupported;
+	return NotSupported; 
 }

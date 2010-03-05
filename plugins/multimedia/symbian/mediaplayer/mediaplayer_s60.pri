@@ -43,21 +43,13 @@ SOURCES += \
     $$PWD/s60audioplayersession.cpp \
     $$PWD/s60videowidget.cpp
 
-# S60 3.1/3.2 and 5.0 SDK's use older API CMPMediaRecognizer from MPEngine.lib
-contains(S60_VERSION, 3.1)|contains(QT_VERSION, 3.2)|contains(S60_VERSION, 5.0) {
-    contains(S60_VERSION, 3.1) {
-        MMP_RULES += "$${LITERAL_HASH}ifndef WINSCW" \
-        "LIBRARY    MPEngine.lib" \
-        "MACRO    HAS_MEDIA_PLAYER" \
-        "$${LITERAL_HASH}endif"
-    } else {
-        LIBS += -lMPEngine
-        DEFINES += HAS_MEDIA_PLAYER
-    }
-} else {    
-    # Use CMediaRecognizer 
-    LIBS += -lplaybackhelper 
-    DEFINES += USE__CMEDIARECOGNIZER
+contains(S60_VERSION, 3.1) {
+    MMP_RULES += "$${LITERAL_HASH}ifndef WINSCW" \
+    "LIBRARY    MPEngine.lib" \
+    "MACRO    HAS_MEDIA_PLAYER" \
+    "$${LITERAL_HASH}endif"
+} else {
+    LIBS += -lMPEngine
     DEFINES += HAS_MEDIA_PLAYER
 }
 

@@ -44,20 +44,13 @@
 
 #include <QtCore/qobject.h>
 
-#if !defined(USE_CMEADIARECOGNIZER)
 class CMPMediaRecognizer;
-typedef CMPMediaRecognizer MediaRecognizer;
-#else
-class CMediaRecognizer;
-typedef CMediaRecognizer MediaRecognizer;
-#endif
 class QUrl;
-
 
 class S60MediaRecognizer : public QObject
 {
     Q_OBJECT
-
+    
 public:
     enum MediaType {
         Audio,
@@ -65,14 +58,14 @@ public:
         Url,
         NotSupported = -1
     };
-
+        
     S60MediaRecognizer(QObject *parent = 0);
     ~S60MediaRecognizer();
     bool checkUrl(const QUrl &url);
     MediaType IdentifyMediaType(const QUrl &url);
 
 private:
-    MediaRecognizer *m_recognizer;
+    CMPMediaRecognizer *m_recognizer;
 };
 
 #endif /* S60MEDIARECOGNIZER_H_ */

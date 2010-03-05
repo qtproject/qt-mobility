@@ -255,6 +255,7 @@ public:
     void zoomTo(qreal opticalZoom, qreal digitalZoom);
 
     bool isExposureLocked() const;
+    bool isWhiteBalanceLocked() const;
 
     Error error() const;
     QString errorString() const;
@@ -267,6 +268,9 @@ public Q_SLOTS:
 
     void lockExposure();
     void unlockExposure();
+
+    void lockWhiteBalance();
+    void unlockWhiteBalance();
 
     void startFocusing();
     void cancelFocusing();
@@ -284,6 +288,7 @@ Q_SIGNALS:
     void isoSensitivityChanged(int);
 
     void exposureLocked();
+    void whiteBalanceLocked();
 
     void focusReached();
     void focusUnableToReach();

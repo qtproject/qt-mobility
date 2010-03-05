@@ -175,7 +175,13 @@ void QCameraPrivate::initControls()
                 q, SLOT(_q_updateFocusStatus(QCamera::FocusStatus)));
         q->connect(focusControl, SIGNAL(opticalZoomChanged(qreal)), q, SIGNAL(opticalZoomChanged(qreal)));
         q->connect(focusControl, SIGNAL(digitalZoomChanged(qreal)), q, SIGNAL(digitalZoomChanged(qreal)));
-    }   
+    }
+
+    if (imageControl) {
+        q->connect(imageControl, SIGNAL(whiteBalanceLocked()),
+                   q, SIGNAL(whiteBalanceLocked()));
+    }
+
 }
 
 /*!
@@ -367,6 +373,36 @@ void QCamera::unlockExposure()
 
     if(d->exposureControl)
         d->exposureControl->unlockExposure();    
+}
+
+/*!
+    Lock the white balance.
+*/
+
+void QCamera::lockWhiteBalance()
+{
+    Q_D(QCamera);
+
+    d->unsetError();
+
+    if(d->imageControl)
+        d->imageControl->lockWhiteBalance();
+    else
+        d->_q_error(NotSupportedFeatureError, tr("White balance locking is not supported"));
+}
+
+/*!
+    Unlock the white balance.
+*/
+
+void QCamera::unlockWhiteBalance()
+{
+    Q_D(QCamera);
+
+    d->unsetError();
+
+    if(d->imageControl)
+        d->imageControl->unlockWhiteBalance();
 }
 
 /*!
@@ -932,12 +968,21 @@ void QCamera::zoomTo(qreal optical, qreal digital)
 }
 
 /*!
-    Return true if exposure locked.
+    Returns true if exposure is locked.
 */
 
 bool QCamera::isExposureLocked() const
 {
     return d_func()->exposureControl ? d_func()->exposureControl->isExposureLocked() : true;
+}
+
+/*!
+    Returns true if white balance is locked.
+*/
+
+bool QCamera::isWhiteBalanceLocked() const
+{
+    return d_func()->imageControl ? d_func()->imageControl->isWhiteBalanceLocked() : false;
 }
 
 /*!

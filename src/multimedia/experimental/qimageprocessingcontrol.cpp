@@ -184,6 +184,33 @@ QImageProcessingControl::~QImageProcessingControl()
     Returns the sharpening level.
 */
 
+/*!
+    \fn QImageProcessingControl::isWhiteBalanceLocked()
+
+    Returns true if the white balance is locked.
+*/
+
+/*!
+    \fn QImageProcessingControl::lockWhiteBalance()
+
+    Locks the white balance.
+
+    With white balance locked all the images are taken with the same white
+    balance, calculated when the balance is being locked.
+*/
+
+/*!
+    \fn QImageProcessingControl::unlockWhiteBalance()
+
+    Unlocks the white balance.
+*/
+
+/*!
+    \fn QImageProcessingControl::whiteBalanceLocked()
+
+    Signals the white balance is locked.
+*/
+
 #include "moc_qimageprocessingcontrol.cpp"
 QTM_END_NAMESPACE
 
