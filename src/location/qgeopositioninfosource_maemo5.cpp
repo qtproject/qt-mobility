@@ -167,21 +167,25 @@ void QGeoPositionInfoSourceMaemo::requestUpdate(int timeout)
 
 void QGeoPositionInfoSourceMaemo::newPositionUpdate()
 {
-    if (LiblocationWrapper::instance()->fixIsValid())
+    if (LiblocationWrapper::instance()->fixIsValid()) {
         emit positionUpdated(LiblocationWrapper::instance()->position());
 
-    if (positionInfoState & QGeoPositionInfoSourceMaemo::RequestActive) {
-        positionInfoState &= ~QGeoPositionInfoSourceMaemo::RequestActive;
+       if (positionInfoState & QGeoPositionInfoSourceMaemo::RequestActive) {
+           positionInfoState &= ~QGeoPositionInfoSourceMaemo::RequestActive;
 
-        if (requestTimer->isActive())
-            requestTimer->stop();
+           if (requestTimer->isActive())
+               requestTimer->stop();
 
-        if (positionInfoState & QGeoPositionInfoSourceMaemo::RequestSingleShot) {
-            positionInfoState &= ~QGeoPositionInfoSourceMaemo::RequestSingleShot;
-            return;
-        }
+           if (positionInfoState & QGeoPositionInfoSourceMaemo::RequestSingleShot) {
+               positionInfoState &= ~QGeoPositionInfoSourceMaemo::RequestSingleShot;
+               return;
+           }
+       }
     }
-    updateTimer->start(timerInterval);
+    if(positionInfoState & QGeoPositionInfoSourceMaemo::RequestActive)
+        updateTimer->start(MINIMUM_UPDATE_INTERVAL);
+    else
+        updateTimer->start(timerInterval);
 }
 
 void QGeoPositionInfoSourceMaemo::requestTimeoutElapsed()
