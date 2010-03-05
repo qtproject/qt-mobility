@@ -38,44 +38,41 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QLANDMARK_P_H
-#define QLANDMARK_P_H
 
-#include "qlandmark.h"
+#ifndef QLANDMARKCATEGORY_P_H
+#define QLANDMARKCATEGORY_P_H
 
-#include <QList>
-#include <QHash>
-#include <QSharedData>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+#include <QString>
 
 QTM_BEGIN_NAMESPACE
 
-class QLandmarkPrivate
+class QLandmarkCategoryPrivate
 {
 public:
-    QLandmarkPrivate();
-    QLandmarkPrivate(const QLandmarkPrivate &other);
-    ~QLandmarkPrivate();
+    QLandmarkCategoryPrivate();
+    QLandmarkCategoryPrivate(const QLandmarkCategoryPrivate &other);
+    ~QLandmarkCategoryPrivate();
 
-    QLandmarkPrivate& operator= (const QLandmarkPrivate &other);
+    QLandmarkCategoryPrivate& operator= (const QLandmarkCategoryPrivate &other);
 
-    bool operator== (const QLandmarkPrivate &other) const;
+    bool operator== (const QLandmarkCategoryPrivate &other) const;
     // consider inline != in terms of ==?
 
     QString name;
-    QGeoCoordinate coordinate;
-    QList<QLandmarkCategoryId> categories;
-    QString description;
     QString icon;
-    double radius;
-    QHash<QString, QVariant> attributes;
-    QString street;
-    QString locality;
-    QString region;
-    QString country;
-    QString postcode;
-    QString phone;
-    QString url;
+    QString description;
 };
+
 
 QTM_END_NAMESPACE
 

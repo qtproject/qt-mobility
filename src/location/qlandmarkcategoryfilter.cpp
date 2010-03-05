@@ -38,45 +38,50 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QLANDMARK_P_H
-#define QLANDMARK_P_H
 
-#include "qlandmark.h"
-
-#include <QList>
-#include <QHash>
-#include <QSharedData>
+#include "qlandmarkcategoryfilter.h"
+#include "qlandmarkcategoryid.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QLandmarkPrivate
+/*!
+    \class QLandmarkCategoryFilter
+    \brief The QLandmarkCategoryFilter class is used to search for landmarks that
+    belong to a certain category.
+    \ingroup location
+*/
+
+/*!
+    Creates a filter that searches for landmarks that belong to the category
+    identified by \a categoryId.
+*/
+QLandmarkCategoryFilter::QLandmarkCategoryFilter(const QLandmarkCategoryId &categoryId)
 {
-public:
-    QLandmarkPrivate();
-    QLandmarkPrivate(const QLandmarkPrivate &other);
-    ~QLandmarkPrivate();
+    //TODO: implement
+}
 
-    QLandmarkPrivate& operator= (const QLandmarkPrivate &other);
+/*!
+    Destroys the filter.
+*/
+QLandmarkCategoryFilter::~QLandmarkCategoryFilter()
+{
+    //TODO: implement
+}
 
-    bool operator== (const QLandmarkPrivate &other) const;
-    // consider inline != in terms of ==?
+/*!
+    Returns the category identifier that this filter matches by.
+*/
+QLandmarkCategoryId QLandmarkCategoryFilter::category() const
+{
+    return QLandmarkCategoryId();
+}
 
-    QString name;
-    QGeoCoordinate coordinate;
-    QList<QLandmarkCategoryId> categories;
-    QString description;
-    QString icon;
-    double radius;
-    QHash<QString, QVariant> attributes;
-    QString street;
-    QString locality;
-    QString region;
-    QString country;
-    QString postcode;
-    QString phone;
-    QString url;
-};
+/*!
+    Sets the category identifier that this filter matches by
+    to \a categoryId.
+*/
+void QLandmarkCategoryFilter::setCategoryId(const QLandmarkCategoryId &categoryId)
+{
+}
 
 QTM_END_NAMESPACE
-
-#endif

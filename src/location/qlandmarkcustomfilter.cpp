@@ -38,45 +38,44 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QLANDMARK_P_H
-#define QLANDMARK_P_H
 
-#include "qlandmark.h"
-
-#include <QList>
-#include <QHash>
-#include <QSharedData>
+#include "qlandmarkcustomfilter.h"
+#include "qlandmarkid.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QLandmarkPrivate
+/*!
+    \class QLandmarkCustomFilter
+    \brief The QLandmarkCustomFilter class provides the interface which
+    all custom filters should inherit.
+    \ingroup location
+
+    All custom landmark filters should inherit off the QLandmarkCustomFilter
+    and must implement the isMatch() function.
+*/
+
+/*!
+    Creates a custom landmark filter.
+*/
+QLandmarkCustomFilter::QLandmarkCustomFilter()
 {
-public:
-    QLandmarkPrivate();
-    QLandmarkPrivate(const QLandmarkPrivate &other);
-    ~QLandmarkPrivate();
+}
 
-    QLandmarkPrivate& operator= (const QLandmarkPrivate &other);
+/*!
+    Destroys the filter.
+*/
+QLandmarkCustomFilter::~QLandmarkCustomFilter()
+{
+}
 
-    bool operator== (const QLandmarkPrivate &other) const;
-    // consider inline != in terms of ==?
-
-    QString name;
-    QGeoCoordinate coordinate;
-    QList<QLandmarkCategoryId> categories;
-    QString description;
-    QString icon;
-    double radius;
-    QHash<QString, QVariant> attributes;
-    QString street;
-    QString locality;
-    QString region;
-    QString country;
-    QString postcode;
-    QString phone;
-    QString url;
-};
+/*!
+    Returns true if the landmark identified by \a landmarkId
+    should be matched by the filter.  All custom landmark filters
+    need to implement this function.
+*/
+bool QLandmarkCustomFilter::isMatch(const QLandmarkId &landmarkId)
+{
+    return false;
+}
 
 QTM_END_NAMESPACE
-
-#endif

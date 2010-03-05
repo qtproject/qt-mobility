@@ -38,45 +38,42 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QLANDMARK_P_H
-#define QLANDMARK_P_H
 
-#include "qlandmark.h"
+#ifndef QLANDMARKCATEGORYID_H
+#define QLANDMARKCATEGORYID_H
 
-#include <QList>
-#include <QHash>
-#include <QSharedData>
+#include "qmobilityglobal.h"
+#include <QSharedDataPointer>
+
+QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QLandmarkPrivate
+class QLandmarkCategoryIdPrivate;
+class Q_LOCATION_EXPORT QLandmarkCategoryId
 {
 public:
-    QLandmarkPrivate();
-    QLandmarkPrivate(const QLandmarkPrivate &other);
-    ~QLandmarkPrivate();
+    QLandmarkCategoryId();
+    QLandmarkCategoryId(const QLandmarkCategoryId &other);
+    ~QLandmarkCategoryId();
 
-    QLandmarkPrivate& operator= (const QLandmarkPrivate &other);
+    bool isValid() const;
+    QString id() const;
+    void setId(const QString &id);
 
-    bool operator== (const QLandmarkPrivate &other) const;
-    // consider inline != in terms of ==?
+    QString managerUri() const;
+    void setManagerUri(const QString &uri);
 
-    QString name;
-    QGeoCoordinate coordinate;
-    QList<QLandmarkCategoryId> categories;
-    QString description;
-    QString icon;
-    double radius;
-    QHash<QString, QVariant> attributes;
-    QString street;
-    QString locality;
-    QString region;
-    QString country;
-    QString postcode;
-    QString phone;
-    QString url;
+    QLandmarkCategoryId &operator=(const QLandmarkCategoryId &other);
+    bool operator==(const QLandmarkCategoryId &other) const;
+    bool operator!=(const QLandmarkCategoryId &other) const;
+
+private:
+    QSharedDataPointer<QLandmarkCategoryIdPrivate> d;
 };
 
 QTM_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif

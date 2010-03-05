@@ -38,45 +38,46 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QLANDMARK_P_H
-#define QLANDMARK_P_H
 
-#include "qlandmark.h"
-
-#include <QList>
-#include <QHash>
-#include <QSharedData>
+#include "qlandmarknamefilter.h"
+#include <QString>
 
 QTM_BEGIN_NAMESPACE
 
-class QLandmarkPrivate
+/*!
+    \class QLandmarkNameFilter
+    \brief The QLandmarkNameFilter class is used to search for landmarks by name.
+*/
+
+/*!
+    Creates a filter that selects landmarks by \a name.
+*/
+QLandmarkNameFilter::QLandmarkNameFilter(const QString &name)
 {
-public:
-    QLandmarkPrivate();
-    QLandmarkPrivate(const QLandmarkPrivate &other);
-    ~QLandmarkPrivate();
+    //TODO: implement
+}
 
-    QLandmarkPrivate& operator= (const QLandmarkPrivate &other);
+/*!
+    Destroys the filter.
+*/
+QLandmarkNameFilter::~QLandmarkNameFilter()
+{
+    //TODO: implement
+}
 
-    bool operator== (const QLandmarkPrivate &other) const;
-    // consider inline != in terms of ==?
+/*!
+    Returns the name that the filter will use to determine matches.
+*/
+QString QLandmarkNameFilter::name()
+{
+    return QString();
+}
 
-    QString name;
-    QGeoCoordinate coordinate;
-    QList<QLandmarkCategoryId> categories;
-    QString description;
-    QString icon;
-    double radius;
-    QHash<QString, QVariant> attributes;
-    QString street;
-    QString locality;
-    QString region;
-    QString country;
-    QString postcode;
-    QString phone;
-    QString url;
-};
+/*!
+    Sets the \a name that the filter will use to determine matches.
+*/
+void QLandmarkNameFilter::setName(const QString &name)
+{
+}
 
 QTM_END_NAMESPACE
-
-#endif

@@ -38,45 +38,49 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QLANDMARK_P_H
-#define QLANDMARK_P_H
 
-#include "qlandmark.h"
-
-#include <QList>
-#include <QHash>
-#include <QSharedData>
+#include "qlandmarknearestfilter.h"
+#include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QLandmarkPrivate
+/*!
+    \class QLandmarkNearestFilter
+    \brief The QLandmarkNearestFilter class is used to search for the landmark nearest
+    to a given coordinate.
+    \ingroup location
+*/
+
+/*!
+    Creates a filter that will match the landmark nearest to a given central
+    \a coordinate.
+*/
+QLandmarkNearestFilter::QLandmarkNearestFilter(const QGeoCoordinate &coordinate)
 {
-public:
-    QLandmarkPrivate();
-    QLandmarkPrivate(const QLandmarkPrivate &other);
-    ~QLandmarkPrivate();
+    //TODO: implement
+}
 
-    QLandmarkPrivate& operator= (const QLandmarkPrivate &other);
+/*!
+    Destroys the filter.
+*/
+QLandmarkNearestFilter::~QLandmarkNearestFilter()
+{
+    //TODO: implement
+}
 
-    bool operator== (const QLandmarkPrivate &other) const;
-    // consider inline != in terms of ==?
+/*!
+    Returns the central coordinate of the filter.
+*/
+QGeoCoordinate QLandmarkNearestFilter::coordinate() const
+{
+    return QGeoCoordinate();
+}
 
-    QString name;
-    QGeoCoordinate coordinate;
-    QList<QLandmarkCategoryId> categories;
-    QString description;
-    QString icon;
-    double radius;
-    QHash<QString, QVariant> attributes;
-    QString street;
-    QString locality;
-    QString region;
-    QString country;
-    QString postcode;
-    QString phone;
-    QString url;
-};
+/*!
+    Sets the central \a coordinate of the filter.
+*/
+void QLandmarkNearestFilter::setCoordinate(const QGeoCoordinate &coordinate)
+{
+}
 
 QTM_END_NAMESPACE
-
-#endif

@@ -38,45 +38,55 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QLANDMARK_P_H
-#define QLANDMARK_P_H
 
-#include "qlandmark.h"
+#ifndef QLANDMARKCATEGORY_H
+#define QLANDMARKCATEGORY_H
 
-#include <QList>
-#include <QHash>
-#include <QSharedData>
+#include "qmobilityglobal.h"
+class QVariant;
+class QStringList;
+
+QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
+class QLandmarkCategoryId;
 
-class QLandmarkPrivate
+class QLandmarkCategoryPrivate;
+class Q_LOCATION_EXPORT QLandmarkCategory
 {
 public:
-    QLandmarkPrivate();
-    QLandmarkPrivate(const QLandmarkPrivate &other);
-    ~QLandmarkPrivate();
+    QLandmarkCategory();
+    QLandmarkCategory(const QLandmarkCategory &other);
+    ~QLandmarkCategory();
 
-    QLandmarkPrivate& operator= (const QLandmarkPrivate &other);
+    QLandmarkCategory& operator= (const QLandmarkCategory &other);
 
-    bool operator== (const QLandmarkPrivate &other) const;
+    bool operator== (const QLandmarkCategory &other) const;
     // consider inline != in terms of ==?
 
-    QString name;
-    QGeoCoordinate coordinate;
-    QList<QLandmarkCategoryId> categories;
-    QString description;
-    QString icon;
-    double radius;
-    QHash<QString, QVariant> attributes;
-    QString street;
-    QString locality;
-    QString region;
-    QString country;
-    QString postcode;
-    QString phone;
-    QString url;
+    QString name() const;
+    void setName(const QString &name);
+
+    QString icon() const;
+    void setIcon(const QString &fileName);
+
+    QString description() const;
+    void setDescription(const QString &description);
+
+    bool isReadOnly() const;
+
+    QLandmarkCategoryId categoryId() const;
+
+    QVariant attribute(const QString &attributeName) const;
+    void setAttribute(const QString &attributeName, const QVariant &value);
+    QStringList attributes() const;
+
+private:
+    QLandmarkCategoryPrivate *d;
 };
 
 QTM_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif

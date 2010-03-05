@@ -17,6 +17,9 @@ PUBLIC_HEADERS += qgeocoordinate.h \
                   qgeoareamonitor.h \
                   qnmeapositioninfosource.h \
                   qlandmark.h \
+                  qlandmark_p.h \
+                  qlandmarkid.h \
+                  qlandmarkid_p.h \
                   qlandmarkmanager.h \
                   qlandmarkfilter.h \
                   qlandmarkabstractrequest.h \
@@ -28,9 +31,20 @@ PUBLIC_HEADERS += qgeocoordinate.h \
                   qlandmarkcategoryidfetchrequest.h \
                   qlandmarkcategorysaverequest.h \
                   qlandmarkcategoryremoverequest.h \
-                  qlandmarkboxfilter.h
-
-
+                  qlandmarkboxfilter.h \
+                  qlandmarkcategoryid.h \
+                  qlandmarkcategoryid_p.h \
+                  qlandmarkcategory_p.h \
+                  qlandmarkcategory.h \
+                  qlandmarknamefilter.h \
+                  qlandmarkproximityfilter.h \
+                  qlandmarknearestfilter.h \
+                  qlandmarkcategoryfilter.h \
+                  qlandmarkcustomfilter.h \
+                  qlandmarksortorder.h \
+                  qlandmarknamesort.h \
+                  qlandmarkdistancesort.h \
+                  qlandmarkcustomsort.h
 
 PRIVATE_HEADERS += qlocationutils_p.h \
                    qnmeapositioninfosource_p.h \
@@ -110,6 +124,7 @@ SOURCES += qlocationutils.cpp \
            qgeopositioninfosource.cpp \
            qgeoareamonitor.cpp \
            qnmeapositioninfosource.cpp \
+           qlandmarkid.cpp \
            qlandmark.cpp \
            qlandmarkmanager.cpp \
            qlandmarkfilter.cpp \
@@ -122,8 +137,18 @@ SOURCES += qlocationutils.cpp \
            qlandmarkcategoryidfetchrequest.cpp \
            qlandmarkcategorysaverequest.cpp \
            qlandmarkcategoryremoverequest.cpp \
-           qlandmarkboxfilter.cpp
-
+           qlandmarkboxfilter.cpp \
+           qlandmarkcategoryid.cpp \
+           qlandmarkcategory.cpp \
+           qlandmarknamefilter.cpp \
+           qlandmarkproximityfilter.cpp \
+           qlandmarknearestfilter.cpp \
+           qlandmarkcategoryfilter.cpp \
+           qlandmarkcustomfilter.cpp \
+           qlandmarksortorder.cpp \
+           qlandmarknamesort.cpp \
+           qlandmarkdistancesort.cpp \
+           qlandmarkcustomsort.cpp
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

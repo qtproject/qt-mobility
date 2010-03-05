@@ -38,45 +38,32 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QLANDMARK_P_H
-#define QLANDMARK_P_H
 
-#include "qlandmark.h"
-
-#include <QList>
-#include <QHash>
-#include <QSharedData>
+#include "qlandmarkcustomsort.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QLandmarkPrivate
+/*!
+    \class QLandmarkCustomSort
+    \brief The QLandmarkCustomSort class is the interface which all
+    custom sort orders should inherit.
+
+    All custom sort orders should inherit this class and implement the
+    compare() and sort() functions.
+*/
+
+/*!
+    Constructs a custom landmark sort order.
+*/
+QLandmarkCustomSort::QLandmarkCustomSort()
 {
-public:
-    QLandmarkPrivate();
-    QLandmarkPrivate(const QLandmarkPrivate &other);
-    ~QLandmarkPrivate();
+}
 
-    QLandmarkPrivate& operator= (const QLandmarkPrivate &other);
-
-    bool operator== (const QLandmarkPrivate &other) const;
-    // consider inline != in terms of ==?
-
-    QString name;
-    QGeoCoordinate coordinate;
-    QList<QLandmarkCategoryId> categories;
-    QString description;
-    QString icon;
-    double radius;
-    QHash<QString, QVariant> attributes;
-    QString street;
-    QString locality;
-    QString region;
-    QString country;
-    QString postcode;
-    QString phone;
-    QString url;
-};
+/*!
+    Destroys the sort order.
+*/
+QLandmarkCustomSort::~QLandmarkCustomSort()
+{
+}
 
 QTM_END_NAMESPACE
-
-#endif

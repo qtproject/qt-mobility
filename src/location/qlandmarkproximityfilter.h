@@ -38,45 +38,35 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QLANDMARK_P_H
-#define QLANDMARK_P_H
 
-#include "qlandmark.h"
+#ifndef QLANDMARKPROXIMITY_H
+#define QLANDMARKPROXIMITY_H
 
-#include <QList>
-#include <QHash>
-#include <QSharedData>
+#include "qlandmarkfilter.h"
+
+QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
+class QGeoCoordinate;
 
-class QLandmarkPrivate
+class QLandmarkProximityFilterPrivate;
+class Q_LOCATION_EXPORT QLandmarkProximityFilter : public QLandmarkFilter
 {
 public:
-    QLandmarkPrivate();
-    QLandmarkPrivate(const QLandmarkPrivate &other);
-    ~QLandmarkPrivate();
+    QLandmarkProximityFilter(const QGeoCoordinate &coordinate, double radius);
+    virtual ~QLandmarkProximityFilter();
 
-    QLandmarkPrivate& operator= (const QLandmarkPrivate &other);
+    QGeoCoordinate coordinate();
+    void setCoordinate(const QGeoCoordinate &coordinate);
 
-    bool operator== (const QLandmarkPrivate &other) const;
-    // consider inline != in terms of ==?
-
-    QString name;
-    QGeoCoordinate coordinate;
-    QList<QLandmarkCategoryId> categories;
-    QString description;
-    QString icon;
-    double radius;
-    QHash<QString, QVariant> attributes;
-    QString street;
-    QString locality;
-    QString region;
-    QString country;
-    QString postcode;
-    QString phone;
-    QString url;
+    double radius();
+    void setRadius(double radius);
+private:
+    QLandmarkProximityFilterPrivate *d;
 };
 
 QTM_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif

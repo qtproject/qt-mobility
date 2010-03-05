@@ -38,45 +38,67 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QLANDMARK_P_H
-#define QLANDMARK_P_H
 
-#include "qlandmark.h"
-
-#include <QList>
-#include <QHash>
-#include <QSharedData>
+#include "qlandmarkproximityfilter.h"
+#include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QLandmarkPrivate
+/*!
+    \class QLandmarkProximityFilter
+    \brief The QLandmarkProximityFilter class is used to search for landmarks based on proximity
+    around a given coordinate.
+    \ingroup location
+
+    This filter will make matches for landmarks which are found within a given radius
+    around a central coordinate.
+*/
+
+/*!
+    Creates a filter that will select landmarks within a given \a radius around
+    a central \a coordinate.
+*/
+QLandmarkProximityFilter::QLandmarkProximityFilter(const QGeoCoordinate &coordinate, double radius)
 {
-public:
-    QLandmarkPrivate();
-    QLandmarkPrivate(const QLandmarkPrivate &other);
-    ~QLandmarkPrivate();
+    //TODO: implement
+}
 
-    QLandmarkPrivate& operator= (const QLandmarkPrivate &other);
+/*!
+    Destroys the filter.
+*/
+QLandmarkProximityFilter::~QLandmarkProximityFilter()
+{
+    //TODO: implement
+}
 
-    bool operator== (const QLandmarkPrivate &other) const;
-    // consider inline != in terms of ==?
+/*!
+    Returns the central coordinate of the filter.
+*/
+QGeoCoordinate QLandmarkProximityFilter::coordinate()
+{
+    return QGeoCoordinate();
+}
 
-    QString name;
-    QGeoCoordinate coordinate;
-    QList<QLandmarkCategoryId> categories;
-    QString description;
-    QString icon;
-    double radius;
-    QHash<QString, QVariant> attributes;
-    QString street;
-    QString locality;
-    QString region;
-    QString country;
-    QString postcode;
-    QString phone;
-    QString url;
-};
+/*!
+    Sets the central \a coordinate of the filter.
+*/
+void QLandmarkProximityFilter::setCoordinate(const QGeoCoordinate &coordinate)
+{
+}
+
+/*!
+    Returns the radius of the filter.
+*/
+double QLandmarkProximityFilter::radius()
+{
+    return 0.0;
+}
+
+/*!
+    Sets the \a radius of the filter.
+*/
+void QLandmarkProximityFilter::setRadius(double radius)
+{
+}
 
 QTM_END_NAMESPACE
-
-#endif

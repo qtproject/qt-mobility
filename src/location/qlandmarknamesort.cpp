@@ -38,45 +38,48 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QLANDMARK_P_H
-#define QLANDMARK_P_H
 
-#include "qlandmark.h"
-
-#include <QList>
-#include <QHash>
-#include <QSharedData>
+#include "qlandmarknamesort.h"
+#include "qlandmarkid.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QLandmarkPrivate
+/*!
+    \class QLandmarkNameSort
+    \brief The QLandmarkNameSort class is used to sort landmarks by name.
+    \ingroup location
+*/
+
+/*!
+    Creates a sort order that sorts by name in the given \a direction.
+*/
+QLandmarkNameSort::QLandmarkNameSort(Qt::SortOrder direction)
 {
-public:
-    QLandmarkPrivate();
-    QLandmarkPrivate(const QLandmarkPrivate &other);
-    ~QLandmarkPrivate();
+    //TODO: implement
+}
 
-    QLandmarkPrivate& operator= (const QLandmarkPrivate &other);
+/*!
+    Destroys the sort order.
+*/
+QLandmarkNameSort::~QLandmarkNameSort()
+{
+    //TODO: implement
+}
 
-    bool operator== (const QLandmarkPrivate &other) const;
-    // consider inline != in terms of ==?
+/*!
+  \reimp
+*/
+int QLandmarkNameSort::compare(const QLandmark &l1, const QLandmark &l2) const
+{
+    return 0; //TODO: implement
+}
 
-    QString name;
-    QGeoCoordinate coordinate;
-    QList<QLandmarkCategoryId> categories;
-    QString description;
-    QString icon;
-    double radius;
-    QHash<QString, QVariant> attributes;
-    QString street;
-    QString locality;
-    QString region;
-    QString country;
-    QString postcode;
-    QString phone;
-    QString url;
-};
+/*!
+    \reimp
+*/
+QList<QLandmarkId> QLandmarkNameSort::sort(const QList<QLandmarkId> &landmarkIds) const
+{
+    return QList<QLandmarkId>();
+}
 
 QTM_END_NAMESPACE
-
-#endif

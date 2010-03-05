@@ -38,45 +38,67 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QLANDMARK_P_H
-#define QLANDMARK_P_H
 
-#include "qlandmark.h"
-
-#include <QList>
-#include <QHash>
-#include <QSharedData>
+#include "qlandmarkdistancesort.h"
+#include "qgeocoordinate.h"
+#include "qlandmarkid.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QLandmarkPrivate
+/*!
+    \class QLandmarkDistanceSort
+    \brief The QLandmarkDistanceSort class is used to sort landmarks by distance
+    from a given coordinate.
+    \ingroup location
+*/
+
+/*!
+    Creates a sort order that sorts landmarks by distance from a given \a coordinate.
+    If the \a direction is Qt::Ascending, it means that landmarks are listed in
+    increasing order of distance.
+*/
+QLandmarkDistanceSort::QLandmarkDistanceSort(QGeoCoordinate coordinate, Qt::SortOrder direction)
 {
-public:
-    QLandmarkPrivate();
-    QLandmarkPrivate(const QLandmarkPrivate &other);
-    ~QLandmarkPrivate();
+    //TODO: implement
+}
 
-    QLandmarkPrivate& operator= (const QLandmarkPrivate &other);
+/*!
+    Destroys the sort order.
+*/
+QLandmarkDistanceSort::~QLandmarkDistanceSort()
+{
+    //TODO: implement
+}
 
-    bool operator== (const QLandmarkPrivate &other) const;
-    // consider inline != in terms of ==?
+/*!
+    Returns the coordinate to sort distances from.
+*/
+QGeoCoordinate QLandmarkDistanceSort::coordinate() const
+{
+    return QGeoCoordinate();
+}
 
-    QString name;
-    QGeoCoordinate coordinate;
-    QList<QLandmarkCategoryId> categories;
-    QString description;
-    QString icon;
-    double radius;
-    QHash<QString, QVariant> attributes;
-    QString street;
-    QString locality;
-    QString region;
-    QString country;
-    QString postcode;
-    QString phone;
-    QString url;
-};
+/*!
+    Sets the \a coordinate to sort distances from.
+*/
+void QLandmarkDistanceSort::setCoordinate(const QGeoCoordinate &coordinate)
+{
+}
+
+/*!
+    \reimp
+*/
+int QLandmarkDistanceSort::compare(const QLandmark &l1, const QLandmark &l2) const
+{
+    return 0;  //TODO: implement
+}
+
+/*!
+    \reimp
+*/
+QList<QLandmarkId> QLandmarkDistanceSort::sort(const QList<QLandmarkId> &landmarkIds) const
+{
+    return QList<QLandmarkId>();
+}
 
 QTM_END_NAMESPACE
-
-#endif

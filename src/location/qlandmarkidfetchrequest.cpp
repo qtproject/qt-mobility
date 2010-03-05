@@ -41,6 +41,7 @@
 
 #include "qlandmarkidfetchrequest.h"
 #include "qlandmarkfilter.h"
+#include "qlandmarksortorder.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -55,7 +56,6 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup location
 */
-
 
 /*!
     Creates a new landmark id fetch request object.
@@ -73,15 +73,19 @@ QLandmarkIdFetchRequest::~QLandmarkIdFetchRequest()
 
 /*!
     Returns the filter which will be used to select the landmarks whose identifiers
-    will be returned
+    will be returned.
+
+    By default, the filter's type will be a LandmarkFilter::DefaultFilter
+    and thus match all landmarks.
 */
 QLandmarkFilter &QLandmarkIdFetchRequest::filter() const
 {
-    return QLandmarkFilter();
+    return *(new QLandmarkFilter());
 }
 
 /*!
     Sets the \a filter which will be used to select landmark identifiers.
+
 */
 void QLandmarkIdFetchRequest::setFilter(const QLandmarkFilter &filter)
 {
@@ -90,9 +94,9 @@ void QLandmarkIdFetchRequest::setFilter(const QLandmarkFilter &filter)
 /*!
     Returns the sort ordering which is used to sort the result.
 */
-QList<QLandmarkSortOrder*> QLandmarkIdFetchRequest::sorting() const
+QList<QLandmarkSortOrder> QLandmarkIdFetchRequest::sorting() const
 {
-    return QList<QLandmarkSortOrder*>();
+    return QList<QLandmarkSortOrder>();
 }
 
 /*!
@@ -100,7 +104,7 @@ QList<QLandmarkSortOrder*> QLandmarkIdFetchRequest::sorting() const
     function will only have an effect on the results if invoked
     prior to calling \c start()
 */
-void QLandmarkIdFetchRequest::setSorting(QList<QLandmarkSortOrder*> &sorting)
+void QLandmarkIdFetchRequest::setSorting(QList<QLandmarkSortOrder> &sorting)
 {
 }
 

@@ -59,7 +59,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs a landmark export request
+    Constructs a landmark export request.
 */
 QLandmarkExportRequest::QLandmarkExportRequest()
 {
@@ -88,6 +88,29 @@ void QLandmarkExportRequest::setDevice(QIODevice *device)
 }
 
 /*!
+    If the currently assigned device is a QFile, or if setFileName() has
+    been called, this function returns the name of the file to be
+    written to.  In all other cases, it returns an empty string.
+
+    \sa setFileName(), setDevice()
+*/
+QString QLandmarkExportRequest::fileName() const
+{
+    return QString();
+}
+
+/*!
+    Sets the name of the file to be written to \a fileName.  Internally,
+    QLandmarkExportRequest will create a QFile and open it in
+    QIODevice::WriteOnly mode, and use this file to export to.
+
+    \sa fileName(), setDevice()
+*/
+void QLandmarkExportRequest::setFileName(const QString &fileName)
+{
+}
+
+/*!
     Returns the data format for the export operation.
 */
 QLandmarkManager::Format QLandmarkExportRequest::format() const
@@ -112,7 +135,7 @@ QList<QLandmarkId> QLandmarkExportRequest::landmarkIds() const
 
 /*!
     Sets the landmarks to be exported by specifying a list of
-    \a landmarkIds
+    \a landmarkIds.
 */
 void QLandmarkExportRequest::setLandmarkIds(QList<QLandmarkId> &landmarkIds)
 {

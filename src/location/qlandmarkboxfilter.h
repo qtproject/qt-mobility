@@ -47,6 +47,7 @@
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
+class QGeoCoordinate;
 
 class QLandmarkBoxFilterPrivate;
 class Q_LOCATION_EXPORT QLandmarkBoxFilter : public QLandmarkFilter
@@ -68,4 +69,4 @@ QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif QLANDMARKBOXFILTER_H
+#endif

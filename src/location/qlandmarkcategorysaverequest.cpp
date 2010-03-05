@@ -41,6 +41,7 @@
 
 #include "qlandmarkcategorysaverequest.h"
 
+#include "qlandmarkcategory.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -51,7 +52,7 @@ QTM_BEGIN_NAMESPACE
 
     For a QLandmarkCategorySaveRequest, the resultsAvailable() signal will be emitted
     when either an individual items error out (individaul errors may be retrieved
-    by calling errorMap), an  overall operation error occurs(which may be
+    by calling errorMap()), an  overall operation error occurs(which may be
     retrieved by calling error()), or when individual items have been
     saved (which may be retrieved by calling categories()).
 
@@ -59,7 +60,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs a category save request
+    Constructs a category save request.
 */
 QLandmarkCategorySaveRequest::QLandmarkCategorySaveRequest()
 {

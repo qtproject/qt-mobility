@@ -38,45 +38,32 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QLANDMARK_P_H
-#define QLANDMARK_P_H
 
-#include "qlandmark.h"
+#ifndef QLANDMARKCUSTOMFILTER_H
+#define QLANDMARKCUSTOMFILTER_H
 
-#include <QList>
-#include <QHash>
-#include <QSharedData>
+#include "qlandmarkfilter.h"
+
+QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
+class QLandmarkId;
 
-class QLandmarkPrivate
+class QLandmarkCustomFilterPrivate;
+class Q_LOCATION_EXPORT QLandmarkCustomFilter : public QLandmarkFilter
 {
 public:
-    QLandmarkPrivate();
-    QLandmarkPrivate(const QLandmarkPrivate &other);
-    ~QLandmarkPrivate();
+    virtual ~QLandmarkCustomFilter();
 
-    QLandmarkPrivate& operator= (const QLandmarkPrivate &other);
-
-    bool operator== (const QLandmarkPrivate &other) const;
-    // consider inline != in terms of ==?
-
-    QString name;
-    QGeoCoordinate coordinate;
-    QList<QLandmarkCategoryId> categories;
-    QString description;
-    QString icon;
-    double radius;
-    QHash<QString, QVariant> attributes;
-    QString street;
-    QString locality;
-    QString region;
-    QString country;
-    QString postcode;
-    QString phone;
-    QString url;
+protected:
+    QLandmarkCustomFilter();
+    virtual bool isMatch(const QLandmarkId &landmark)=0;
+private:
+    QLandmarkCustomFilterPrivate *d;
 };
 
 QTM_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif

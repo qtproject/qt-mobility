@@ -39,67 +39,77 @@
 **
 ****************************************************************************/
 
-#include "qlandmarkboxfilter.h"
-#include "qgeocoordinate.h"
+#include "qlandmarksortorder.h"
+#include "qlandmarkid.h"
 
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \class QLandmarkBoxFilter
-    \brief The QLandmarkBoxFilter class is used to search for landmarks within a given bounding box.
+    \class QLandmarkSortOrder
+    \brief The QLandmarkSortOrder class defines how a list of landmarks
+    should be ordered according to some criteria.
     \ingroup location
+
+    A QLandmarkSortOrder serves as a base class for various
+    sort orders.  If none of the pre-existing sort orders
+    is sufficient then custom filter should be created by
+    inheriting from QLandmarkCustomSort.
 */
 
 /*!
-    Creates a filter that will search for landmarks within a bounding
-    box defined by the \a topLeft and \a bottomRight coordinates.
+    \enum QLandmarkSortOrder::SortType
+    Defines the type of sort order.
+    \value LandmarkNameSort   Sorts landmarks by name.
+    \value LandmarkDistanceSort   Sorts landmarks by distance from a particular
+           coordinate.
+    \value LandmarkCustomSort Is a custom sort order.
 */
-QLandmarkBoxFilter::QLandmarkBoxFilter(const QGeoCoordinate &topLeft,
-                                       const QGeoCoordinate &bottomRight)
-{
-    //TODO: implement
-}
 
 /*!
-    Destroys the filter.
+    Constructs a landmark sort order.
 */
-QLandmarkBoxFilter::~QLandmarkBoxFilter()
-{
-    //TODO: implement
-}
-
-/*!
-    Returns the top-left corner of the bounding box this filter uses
-    to select landmarks.
-*/
-QGeoCoordinate QLandmarkBoxFilter::topLeftCoordinate()
-{
-    return QGeoCoordinate();
-}
-
-/*!
-    Sets the \a topLeft corner of the bounding box this filter uses to
-    select landmarks.
-*/
-void QLandmarkBoxFilter::setTopLeftCoordinate(const QGeoCoordinate &topLeft)
+QLandmarkSortOrder::QLandmarkSortOrder()
 {
 }
 
 /*!
-    Returns the bottom-right coordinate of the bounding box this filter uses
-    to select landmarks.
+    Returns the type of sort.
 */
-QGeoCoordinate QLandmarkBoxFilter::bottomRightCoordinate()
+QLandmarkSortOrder::SortType QLandmarkSortOrder::type() const
 {
-    return QGeoCoordinate();
+    return QLandmarkSortOrder::LandmarkCustomSort;
 }
 
 /*!
-    Sets the \a bottomRight coordinate of the bounding box this filter uses to
-    select landmarks.
+    Returns the direction of the sort order.
 */
-void QLandmarkBoxFilter::setBottomRightCoordinate(const QGeoCoordinate &bottomRight)
+Qt::SortOrder QLandmarkSortOrder::direction() const
 {
+    return Qt::AscendingOrder;
+}
+
+/*!
+    Sets the \a direction of the sort order.
+*/
+void QLandmarkSortOrder::setDirection(Qt::SortOrder direction)
+{
+}
+
+/*!
+    Compares \a l1 and \a l2 and returns an integer less than, equal to, or greater than
+    zero if \a l1 is less than, equal to, or greater than \a l2.
+*/
+int QLandmarkSortOrder::compare(const QLandmark &l1, const QLandmark &l2) const
+{
+    return 0;
+}
+
+/*!
+    Returns a sorted list of \a landmarkIds.
+*/
+QList<QLandmarkId> QLandmarkSortOrder::sort(const QList<QLandmarkId> &landmarkIds) const
+{
+    return QList<QLandmarkId>();
 }
 
 QTM_END_NAMESPACE

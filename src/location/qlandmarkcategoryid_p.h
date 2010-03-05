@@ -38,43 +38,48 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QLANDMARK_P_H
-#define QLANDMARK_P_H
 
-#include "qlandmark.h"
+#ifndef QLANDMARKCATEGORYID_P_H
+#define QLANDMARKCATEGORYID_P_H
 
-#include <QList>
-#include <QHash>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include "qmobilityglobal.h"
 #include <QSharedData>
+#include <QString>
 
 QTM_BEGIN_NAMESPACE
 
-class QLandmarkPrivate
+class QLandmarkCategoryIdPrivate : public QSharedData
 {
 public:
-    QLandmarkPrivate();
-    QLandmarkPrivate(const QLandmarkPrivate &other);
-    ~QLandmarkPrivate();
+    QLandmarkCategoryIdPrivate()
+        : QSharedData()
+    {
+    }
 
-    QLandmarkPrivate& operator= (const QLandmarkPrivate &other);
+    QLandmarkCategoryIdPrivate(const QLandmarkCategoryIdPrivate &other)
+        : QSharedData(other),
+        m_id(other.m_id),
+        m_databaseName(other.m_databaseName)
+    {
+    }
 
-    bool operator== (const QLandmarkPrivate &other) const;
-    // consider inline != in terms of ==?
+    ~QLandmarkCategoryIdPrivate()
+    {
+    }
 
-    QString name;
-    QGeoCoordinate coordinate;
-    QList<QLandmarkCategoryId> categories;
-    QString description;
-    QString icon;
-    double radius;
-    QHash<QString, QVariant> attributes;
-    QString street;
-    QString locality;
-    QString region;
-    QString country;
-    QString postcode;
-    QString phone;
-    QString url;
+    QString m_id;
+    QString m_databaseName;
 };
 
 QTM_END_NAMESPACE

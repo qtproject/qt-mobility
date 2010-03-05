@@ -48,93 +48,16 @@
 #include <QObject>
 #include <QSharedDataPointer>
 
+class QVariant;
+class QStringList;
+
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QLandmarkCategoryPrivate;
+class QLandmarkId;
+class QLandmarkCategoryId;
 class QLandmarkPrivate;
-class QLandmarkIdPrivate;
-class QLandmarkCategoryPrivate;
-class QLandmarkCategoryIdPrivate;
-
-
-class Q_LOCATION_EXPORT QLandmarkCategoryId
-{
-public:
-    QLandmarkCategoryId();
-    QLandmarkCategoryId(const QLandmarkCategoryId &other);
-    ~QLandmarkCategoryId();
-
-    bool isValid() const;
-    QString id() const;
-    void setId(const QString &id);
-
-    QString managerUri() const;
-    void setManagerUri(const QString &uri);
-
-    QLandmarkCategoryId &operator=(const QLandmarkCategoryId &other);
-    bool operator==(const QLandmarkCategoryId &other) const;
-    bool operator!=(const QLandmarkCategoryId &other) const;
-
-private:
-    QSharedDataPointer<QLandmarkCategoryIdPrivate> d;
-};
-
-class Q_LOCATION_EXPORT QLandmarkCategory
-{
-public:
-    QLandmarkCategory();
-    QLandmarkCategory(const QLandmarkCategory &other);
-    ~QLandmarkCategory();
-
-    QLandmarkCategory& operator= (const QLandmarkCategory &other);
-
-    bool operator== (const QLandmarkCategory &other) const;
-    // consider inline != in terms of ==?
-
-    QString name() const;
-    void setName(const QString &name);
-
-    QString icon() const;
-    void setIcon(const QString &fileName);
-
-    QString description() const;
-    void setDescription(const QString &description);
-
-    bool isReadOnly() const;
-
-    QLandmarkCategoryId categoryId() const;
-
-    QVariant attribute(const QString &attributeName) const;
-    void setAttribute(const QString &attributeName, const QVariant &value);
-    QStringList attributes() const;
-
-private:
-    QLandmarkCategoryPrivate *d;
-};
-
-class Q_LOCATION_EXPORT QLandmarkId
-{
-public:
-    QLandmarkId();
-    QLandmarkId(const QLandmarkId &other);
-    ~QLandmarkId();
-
-    bool isValid() const;
-    void setId(const QString &id);
-    QString id();
-
-    QString managerUri() const;
-    void setManagerUri(const QString &managerUri);
-
-    QLandmarkId &operator=(const QLandmarkId &other);
-    bool operator==(const QLandmarkId &other) const;
-    bool operator!=(const QLandmarkId &other) const;
-private:
-    QSharedDataPointer<QLandmarkIdPrivate> d;
-};
-
 class Q_LOCATION_EXPORT QLandmark
 {
 public:
