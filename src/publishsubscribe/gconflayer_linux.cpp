@@ -51,7 +51,7 @@ QVALUESPACE_AUTO_INSTALL_LAYER(GConfLayer);
 
 GConfLayer::GConfLayer()
 {
-    GConfItem *gconfItem = new GConfItem("/", this);
+    GConfItem *gconfItem = new GConfItem("/", true, this);
     connect(gconfItem, SIGNAL(subtreeChanged(const QString &, const QVariant &)), this, SLOT(notifyChanged(const QString &, const QVariant &)));
 }
 
@@ -347,8 +347,6 @@ bool GConfLayer::setValue(QValueSpacePublisher */*creator*/,
     if (createdHandle)
         doRemoveHandle(Handle(sh));
 
-    notifyChanged(fullPath, QVariant());
-
     return true;
 }
 
@@ -391,8 +389,6 @@ bool GConfLayer::removeValue(QValueSpacePublisher */*creator*/,
     GConfItem gconfItem(fullPath);
     gconfItem.unset();
 
-    notifyChanged(fullPath, QVariant());
-
     return true;
 }
 
@@ -421,9 +417,7 @@ void GConfLayer::notifyChanged(const QString &key, const QVariant & /*value*/)
 {
     foreach (GConfHandle *handle, m_monitoringHandles.values()) {
         if (key.startsWith(handle->path)) {
-            QMetaObject::invokeMethod(this, "handleChanged",
-                Qt::QueuedConnection,
-                Q_ARG(quintptr, Handle(handle)));
+            emit handleChanged(Handle(handle));
         }
     }
 }

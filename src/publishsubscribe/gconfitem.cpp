@@ -36,6 +36,7 @@
 struct GConfItemPrivate {
     QString key;
     QVariant value;
+    bool monitor;
     guint notify_id;
 
     static void notify_trampoline(GConfClient*, guint, GConfEntry *, gpointer);
@@ -303,7 +304,6 @@ QList<QString> GConfItem::listDirs() const
     QList<QString> children;
 
     withClient(client) {
-        gconf_client_clear_cache(client);
         QByteArray k = convertKey(priv->key);
         GSList *dirs = gconf_client_all_dirs(client, k.data(), NULL);
         for (GSList *d = dirs; d; d = d->next) {
@@ -321,7 +321,6 @@ QList<QString> GConfItem::listEntries() const
     QList<QString> children;
 
     withClient(client) {
-        gconf_client_clear_cache(client);
         QByteArray k = convertKey(priv->key);
         GSList *entries = gconf_client_all_entries(client, k.data(), NULL);
         for (GSList *e = entries; e; e = e->next) {
@@ -334,18 +333,21 @@ QList<QString> GConfItem::listEntries() const
     return children;
 }
 
-GConfItem::GConfItem(const QString &key, QObject *parent)
+GConfItem::GConfItem(const QString &key, bool monitor, QObject *parent)
     : QObject (parent)
 {
     priv = new GConfItemPrivate;
     priv->key = key;
+    priv->monitor = monitor;
     withClient(client) {
         update_value (false, "", QVariant());
-        QByteArray k = convertKey(priv->key);
-        gconf_client_add_dir (client, k.data(), GCONF_CLIENT_PRELOAD_ONELEVEL, NULL);
-        priv->notify_id = gconf_client_notify_add (client, k.data(),
-                                                   GConfItemPrivate::notify_trampoline, this,
-                                                   NULL, NULL);
+        if (priv->monitor) {
+            QByteArray k = convertKey(priv->key);
+            gconf_client_add_dir (client, k.data(), GCONF_CLIENT_PRELOAD_ONELEVEL, NULL);
+            priv->notify_id = gconf_client_notify_add (client, k.data(),
+                                                       GConfItemPrivate::notify_trampoline, this,
+                                                       NULL, NULL);
+        }
     }
 }
 
@@ -353,8 +355,10 @@ GConfItem::~GConfItem()
 {
     withClient(client) {
         QByteArray k = convertKey(priv->key);
-        gconf_client_notify_remove (client, priv->notify_id);
-        gconf_client_remove_dir (client, k.data(), NULL);
+        if (priv->monitor) {
+            gconf_client_notify_remove (client, priv->notify_id);
+            gconf_client_remove_dir (client, k.data(), NULL);
+        }
     }
     delete priv;
 }
