@@ -61,6 +61,7 @@ public:
 
     bool operator==(const QContactId& other) const;
     bool operator!=(const QContactId& other) const;
+    bool operator<(const QContactId& other) const;
 
     QString managerUri() const;
     QContactLocalId localId() const;
