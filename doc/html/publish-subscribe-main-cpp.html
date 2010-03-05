@@ -85,10 +85,8 @@
         if (createDefault || createPublisher) {
             publisher = new PublisherDialog;
             QObject::connect(publisher, SIGNAL(rejected()), &amp;app, SLOT(quit()));
-    #ifndef Q_OS_SYMBIAN
+    #ifndef QTM_SMALL_SCREEN
             publisher-&gt;show();
-    #else
-            publisher-&gt;showMaximized();
     #endif
         }
 
@@ -96,14 +94,14 @@
         if (createDefault || createSubscriber) {
             subscriber = new SubscriberDialog;
             QObject::connect(subscriber, SIGNAL(rejected()), &amp;app, SLOT(quit()));
-    #ifndef Q_OS_SYMBIAN
+    #ifndef QTM_SMALL_SCREEN
             subscriber-&gt;show();
     #else
             subscriber-&gt;showMaximized();
     #endif
         }
 
-    #ifdef Q_OS_SYMBIAN
+    #ifdef QTM_SMALL_SCREEN
         QObject::connect(publisher, SIGNAL(switchRequested()), subscriber, SLOT(showMaximized()));
         QObject::connect(publisher, SIGNAL(switchRequested()), subscriber, SLOT(repaint()));
         QObject::connect(publisher, SIGNAL(switchRequested()), publisher, SLOT(hide()));

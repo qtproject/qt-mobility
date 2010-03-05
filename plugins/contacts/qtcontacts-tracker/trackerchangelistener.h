@@ -108,6 +108,11 @@ private slots:
     void subjectsRemoved(const QStringList &subjects);
     void subjectsChanged(const QStringList &subjects);
 private:
+    SopranoLive::BackEnds::Tracker::ClassUpdateSignaler *signaler_contact;
+    SopranoLive::BackEnds::Tracker::ClassUpdateSignaler *signaler_imaccount;
+
+    void connectSignals(SopranoLive::BackEnds::Tracker::ClassUpdateSignaler *signaler);
+
     QHash<AsyncQuery*, QSharedPointer<AsyncQuery> > pendingQueries;
 };
 

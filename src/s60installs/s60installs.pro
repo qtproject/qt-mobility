@@ -3,6 +3,7 @@ TEMPLATE = subdirs
 symbian: {
     include(../../staticconfig.pri)
     load(data_caging_paths)
+    include($$QT_MOBILITY_BUILD_TREE/config.pri)
 
     SUBDIRS =
     TARGET = "QtMobility"
@@ -95,12 +96,21 @@ symbian: {
         "\"$$QT_MOBILITY_BUILD_TREE/plugins/contacts/symbian/qmakepluginstubs/mobapicontactspluginsymbian.qtplugin\"  - \"!:\\resource\\qt\\plugins\\contacts\\mobapicontactspluginsymbian.qtplugin\"" \
         "\"$$QT_MOBILITY_BUILD_TREE/plugins/contacts/symbiansim/qmakepluginstubs/mobapicontactspluginsymbiansim.qtplugin\"  - \"!:\\resource\\qt\\plugins\\contacts\\mobapicontactspluginsymbiansim.qtplugin\"" \
         "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/qmakepluginstubs/QtMobilityMultimediaEngine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\QtMobilityMultimediaEngine.qtplugin\"" \
-        "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/m3u/qmakepluginstubs/m3u.qtplugin\"     - \"!:\\resource\\qt\\plugins\\playlistformats\\m3u.qtplugin\""        
+        "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/m3u/qmakepluginstubs/m3u.qtplugin\"     - \"!:\\resource\\qt\\plugins\\playlistformats\\m3u.qtplugin\""
+
+    symbiancntsim = \
+        "\"$${EPOCROOT50}epoc32/release/armv5/urel/mobapicontactspluginsymbiansim.dll\" - \"!:\\sys\\bin\\mobapicontactspluginsymbiansim.dll\"" \
+        "\"$$QT_MOBILITY_BUILD_TREE/plugins/contacts/symbiansim/qmakepluginstubs/mobapicontactspluginsymbiansim.qtplugin\"  - \"!:\\resource\\qt\\plugins\\contacts\\mobapicontactspluginsymbiansim.qtplugin\""
+
 
     qtmobilitydeployment.pkg_postrules += bearer
     qtmobilitydeployment.pkg_postrules += contacts
     qtmobilitydeployment.pkg_postrules += multimedia
     qtmobilitydeployment.pkg_postrules += pluginstubs
+
+    contains(symbiancntsim_enabled, yes) {
+        qtmobilitydeployment.pkg_postrules += symbiancntsim
+    }
     
     qtmobilitydeployment.path = /sys/bin
     

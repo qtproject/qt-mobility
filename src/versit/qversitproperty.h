@@ -64,7 +64,7 @@ public:
     QVersitProperty();
     QVersitProperty(const QVersitProperty& other);
     ~QVersitProperty();
-    
+
     QVersitProperty& operator=(const QVersitProperty& other);
     bool operator==(const QVersitProperty& other) const;
     bool operator!=(const QVersitProperty& other) const;
@@ -93,27 +93,8 @@ public:
     bool isEmpty() const;
     void clear();
 
-    // Deprecated:
-    void Q_DECL_DEPRECATED addParameter(const QString& name, const QString& value)
-    {
-        qWarning("QVersitProperty::addParameter(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  insertParameter() should be used instead.");
-        Q_UNUSED(name)
-        Q_UNUSED(value)
-    }
-
-    void Q_DECL_DEPRECATED setEmbeddedDocument(const QVersitDocument& document)
-    {
-        qWarning("QVersitProperty::setEmbeddedDocument(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  setValue(QVariant::fromValue(document)) should be used instead.");
-        setValue(QVariant::fromValue(document));
-    }
-    QVersitDocument Q_DECL_DEPRECATED embeddedDocument() const
-    {
-        qWarning("QVersitProperty::embeddedDocument(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  value<QVersitDocument>() should be used instead.");
-        return value<QVersitDocument>();
-    }
-
 private:
-    
+
     QSharedDataPointer<QVersitPropertyPrivate> d;
 };
 
