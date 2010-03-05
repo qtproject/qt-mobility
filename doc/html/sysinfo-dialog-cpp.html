@@ -68,6 +68,7 @@
         connect(tabWidget,SIGNAL(currentChanged(int)),this,SLOT(tabChanged(int)));
         connect(versionComboBox,SIGNAL(activated(int)), this,SLOT(getVersion(int)));
         connect(featureComboBox,SIGNAL(activated(int)), this,SLOT(getFeature(int)));
+        updateDeviceLockedState();
         QTimer *timer = new QTimer(this);
         connect(timer, SIGNAL(timeout()), this, SLOT(updateDeviceLockedState()));
         timer-&gt;start(1000);
@@ -94,7 +95,7 @@
 
     void Dialog::tabChanged(int index)
     {
-    #ifdef Q_OS_SYMBIAN
+    #ifdef QTM_EXAMPLES_SMALL_SCREEN
         switch(index) {
         case 0:
             setupGeneral();
@@ -185,12 +186,11 @@
         modelLabel-&gt;setText(di-&gt;model());
         productLabel-&gt;setText(di-&gt;productName());
 
-        deviceLockCheckBox-&gt;setChecked(di-&gt;isDeviceLocked());
+        deviceLockPushButton-&gt;setChecked(di-&gt;isDeviceLocked());
 
-    #if !defined(QT_NO_DBUS)
-        simComboBox-&gt;setCurrentIndex(di-&gt;simStatus());
-    #endif
-        profileComboBox-&gt;setCurrentIndex(di-&gt;currentProfile());
+        updateSimStatus();
+        updateProfile();
+
         connect(di, SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)),
             this, SLOT(updateProfile(QSystemDeviceInfo::Profile)));
 
@@ -231,12 +231,12 @@
     void Dialog::updateDeviceLockedState()
     {
         if (di)
-            deviceLockCheckBox-&gt;setChecked(di-&gt;isDeviceLocked());
+            deviceLockPushButton-&gt;setChecked(di-&gt;isDeviceLocked());
     }
 
-    void Dialog::updateProfile(QSystemDeviceInfo::Profile profile)
+    void Dialog::updateProfile(QSystemDeviceInfo::Profile <span class="comment">/*profile*/</span>)
     {
-        profileComboBox-&gt;setCurrentIndex(profile);
+       updateProfile();
     }
 
     void Dialog::setupDisplay()
@@ -298,6 +298,9 @@
         connect(ni,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)),
                 this,SLOT(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)));
 
+        connect(ni,SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)),
+                this,SLOT(networkModeChanged(QSystemNetworkInfo::NetworkMode)));
+
         cellIdLabel-&gt;setText(QString::number(ni-&gt;cellId()));
         locationAreaCodeLabel-&gt;setText(QString::number(ni-&gt;locationAreaCode()));
         currentMMCLabel-&gt;setText(ni-&gt;currentMobileCountryCode());
@@ -309,7 +312,7 @@
     void Dialog::netStatusComboActivated(int index)
     {
         QString status;
-        int reIndex = index +1;
+        int reIndex = index;
 
         displayNetworkStatus(ni-&gt;networkStatus((QSystemNetworkInfo::NetworkMode)reIndex));
 
@@ -330,12 +333,15 @@
         QSystemInfo::Version version;
         switch(index) {
         case 0:
-            version = QSystemInfo::Os;
+            versionLineEdit-&gt;setText(&quot;&quot;);
             break;
         case 1:
-            version = QSystemInfo::QtCore;
+            version = QSystemInfo::Os;
             break;
         case 2:
+            version = QSystemInfo::QtCore;
+            break;
+        case 3:
             version = QSystemInfo::Firmware;
             break;
         };
@@ -349,80 +355,51 @@
         QSystemInfo::Feature feature;
         switch(index) {
         case 0:
-            feature = QSystemInfo::BluetoothFeature;
+            return;
             break;
         case 1:
-            feature = QSystemInfo::CameraFeature;
+            feature = QSystemInfo::BluetoothFeature;
             break;
         case 2:
-            feature = QSystemInfo::FmradioFeature;
+            feature = QSystemInfo::CameraFeature;
             break;
         case 3:
-            feature = QSystemInfo::IrFeature;
+            feature = QSystemInfo::FmradioFeature;
             break;
         case 4:
-            feature = QSystemInfo::LedFeature;
+            feature = QSystemInfo::IrFeature;
             break;
         case 5:
-            feature = QSystemInfo::MemcardFeature;
+            feature = QSystemInfo::LedFeature;
             break;
         case 6:
-            feature = QSystemInfo::UsbFeature;
+            feature = QSystemInfo::MemcardFeature;
             break;
         case 7:
-            feature = QSystemInfo::VibFeature;
+            feature = QSystemInfo::UsbFeature;
             break;
         case 8:
-            feature = QSystemInfo::WlanFeature;
+            feature = QSystemInfo::VibFeature;
             break;
         case 9:
-            feature = QSystemInfo::SimFeature;
+            feature = QSystemInfo::WlanFeature;
             break;
         case 10:
-            feature = QSystemInfo::LocationFeature;
+            feature = QSystemInfo::SimFeature;
             break;
         case 11:
-            feature = QSystemInfo::VideoOutFeature;
+            feature = QSystemInfo::LocationFeature;
             break;
         case 12:
+            feature = QSystemInfo::VideoOutFeature;
+            break;
+        case 13:
             feature = QSystemInfo::HapticsFeature;
             break;
         };
         QSystemInfo si;
         featuresLineEdit-&gt;setText((si.hasFeatureSupported(feature) ? &quot;true&quot;:&quot;false&quot; ));
     }
-
-<span class="comment">    //void Dialog::doVolumes(int /*index*/)</span>
-<span class="comment">    //{</span>
-<span class="comment">    //    QSystemStorageInfo mi;</span>
-<span class="comment">    //    QString vol = volumesComboBox-&gt;currentText();</span>
-<span class="comment">    //    int index2 = diskComboBox-&gt;currentIndex();</span>
-<span class="comment">    //    switch(index2) {</span>
-<span class="comment">    //    case 0:</span>
-<span class="comment">    //        //total</span>
-<span class="comment">    //        diskSpaceLineEdit-&gt;setText( QString::number(mi.totalDiskSpace(vol)));</span>
-<span class="comment">    //        break;</span>
-<span class="comment">    //        case 1:</span>
-<span class="comment">    //        //available</span>
-<span class="comment">    //        diskSpaceLineEdit-&gt;setText( QString::number(mi.availableDiskSpace(vol)));</span>
-<span class="comment">    //        break;</span>
-<span class="comment">    //        case 2:</span>
-<span class="comment">    //        //type</span>
-<span class="comment">    //        QSystemStorageInfo::VolumeType volType;</span>
-<span class="comment">    //        volType = mi.getVolumeType(vol);</span>
-<span class="comment">    //        if(volType == QSystemStorageInfo::Internal) {</span>
-<span class="comment">    //                diskSpaceLineEdit-&gt;setText( &quot;Internal&quot;);</span>
-<span class="comment">    //        } else</span>
-<span class="comment">    //        if(volType == QSystemStorageInfo::Removable) {</span>
-<span class="comment">    //                diskSpaceLineEdit-&gt;setText( &quot;Removable&quot;);</span>
-<span class="comment">    //        }</span>
-<span class="comment">    //        if(volType == QSystemStorageInfo::Cdrom) {</span>
-<span class="comment">    //                diskSpaceLineEdit-&gt;setText( &quot;Cdrom&quot;);</span>
-<span class="comment">    //        }</span>
-<span class="comment">    //        break;</span>
-<span class="comment">    //    };</span>
-<span class="comment">    //</span>
-<span class="comment">    //}</span>
 
     void Dialog::setupSaver()
     {
@@ -472,7 +449,14 @@
             }
             break;
         case QSystemDeviceInfo::WallPowerChargingBattery:
-            radioButton_4-&gt;setChecked(true);
+            {
+                radioButton_4-&gt;setChecked(true);
+            }
+            break;
+        case QSystemDeviceInfo::NoBatteryLevel:
+            {
+                radioButton-&gt;setChecked(true);
+            }
             break;
         };
     }
@@ -506,6 +490,11 @@
                 {
                     msg = &quot;Battery is Normal (greater than 40%)&quot;;
                     QMessageBox::information(this,&quot;QSystemInfo&quot;,msg);
+                }
+                break;
+            case QSystemDeviceInfo::NoBatteryLevel:
+                {
+
                 }
                 break;
             };
@@ -615,6 +604,32 @@
 
     }
 
+    void Dialog::networkModeChanged(QSystemNetworkInfo::NetworkMode mode)
+    {
+        if(mode == QSystemNetworkInfo::WlanMode) {
+            primaryModeLabel-&gt;setText(&quot;Wlan&quot;);
+        }
+
+        if(mode == QSystemNetworkInfo::EthernetMode) {
+            primaryModeLabel-&gt;setText(&quot;Ethernet&quot;);
+        }
+
+        if(mode == QSystemNetworkInfo::GsmMode) {
+            primaryModeLabel-&gt;setText(&quot;Gsm&quot;);
+        }
+
+        if(mode == QSystemNetworkInfo::CdmaMode) {
+            primaryModeLabel-&gt;setText(&quot;Cdma&quot;);
+        }
+
+        if(mode == QSystemNetworkInfo::WcdmaMode) {
+            primaryModeLabel-&gt;setText(&quot;Wcdma&quot;);
+        }
+        if(mode == QSystemNetworkInfo::UnknownMode) {
+            primaryModeLabel-&gt;setText(&quot;None&quot;);
+        }
+    }
+
     void Dialog::displayNetworkStatus(QSystemNetworkInfo::NetworkStatus status)
     {
         QString stat;
@@ -648,6 +663,88 @@
             break;
         };
         cellNetworkStatusLabel-&gt;setText(stat);
+    }
+
+    void Dialog::updateProfile()
+    {
+        if(di) {
+            QString profilestring;
+            switch(di-&gt;currentProfile()) {
+                case QSystemDeviceInfo::UnknownProfile:
+                {
+                    profilestring = &quot;Unknown&quot;;
+                }
+                break;
+                case QSystemDeviceInfo::SilentProfile:
+                {
+                    profilestring = &quot;Silent&quot;;
+                }
+                break;
+                case QSystemDeviceInfo::NormalProfile:
+                {
+                    profilestring = &quot;Normal&quot;;
+                }
+                break;
+                case QSystemDeviceInfo::LoudProfile:
+                {
+                    profilestring = &quot;Loud&quot;;
+                }
+                break;
+                case QSystemDeviceInfo::VibProfile:
+                {
+                    profilestring = &quot;Vibrate&quot;;
+                }
+                break;
+                case QSystemDeviceInfo::OfflineProfile:
+                {
+                    profilestring = &quot;Offline&quot;;
+                }
+                break;
+                case QSystemDeviceInfo::PowersaveProfile:
+                {
+                    profilestring = &quot;Powersave&quot;;
+                }
+                break;
+                case QSystemDeviceInfo::CustomProfile:
+                    {
+                        profilestring = &quot;custom&quot;;
+                    }
+                    break;
+            };
+            profileLabel-&gt;setText(profilestring);
+        }
+    }
+
+    void Dialog::updateSimStatus()
+    {
+        if(di) {
+            QString simstring;
+            switch(di-&gt;simStatus()) {
+            case QSystemDeviceInfo::SimLocked:
+                {
+                    simstring = &quot;Sim Locked&quot;;
+                }
+                break;
+            case QSystemDeviceInfo::SimNotAvailable:
+                {
+                    simstring = &quot;Sim not available&quot;;
+                }
+                break;
+            case QSystemDeviceInfo::SingleSimAvailable:
+                {
+                    simstring = &quot;Single Sim Available&quot;;
+
+                }
+                break;
+            case QSystemDeviceInfo::DualSimAvailable:
+                {
+                    simstring = &quot;Dual Sim available&quot;;
+                }
+                break;
+
+            };
+            simStatusLabel-&gt;setText(simstring);
+        }
     }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

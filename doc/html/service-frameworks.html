@@ -20,7 +20,8 @@
 <li><a href="#using-the-framework">Using the Framework</a></li>
 <ul><li><a href="#verbose-lookup">Verbose Lookup</a></li>
 <li><a href="#default-lookup">Default Lookup</a></li>
-<ul><li><a href="#header-lookup">Header Lookup</a></li>
+<ul><li><a href="#qobject-based-services">QObject based services</a></li>
+<li><a href="#typed-services">Typed services</a></li>
 </ul>
 </ul>
 <li><a href="#service-scope">Service Scope</a></li>
@@ -50,14 +51,14 @@
 <p>Future versions of this framework may also enable access to out-of-process service provider.</p>
 <a name="using-the-framework"></a>
 <h3>Using the Framework</h3>
-<p>This section assumes that the user wants to access the <i>FileManager</i> service which offers an implementation for the <i>com.nokia.qt.examples.FileStorage</i> interface The service framework enables multiple ways of accessing those implementations.</p>
+<p>This section assumes that the user wants to access the <i>FileStorage</i> service which offers an implementation for the <i>com.nokia.qt.examples.FileStorage</i> interface The service framework enables multiple ways of accessing those implementations.</p>
 <p><a href="qservicemanager.html">QServiceManager</a> is the main class to lookup and instantiate services. Services can be found by constraining the search via service meta data or by using the default lookup mechanism.</p>
 <a name="verbose-lookup"></a>
 <h4>Verbose Lookup</h4>
 <p>The client code has precise knowledge of the service and its interfaces.</p>
 <pre>    QServiceManager manager;
     QServiceFilter filter(&quot;com.nokia.qt.examples.FileStorage&quot;);
-    filter.setServiceName(&quot;FileManager&quot;);
+    filter.setServiceName(&quot;FileStorage&quot;);
 
 <span class="comment">    // find services complying with filter</span>
     QList&lt;QServiceInterfaceDescriptor&gt; foundServices;
@@ -69,21 +70,29 @@
     fileStorage = manager.loadInterface(foundServices.at(0));</pre>
 <a name="default-lookup"></a>
 <h4>Default Lookup</h4>
-<p>The client code has knowledge of the interface and doesn't really care about the service that implements the interface. In such cases the default service lookup can be utilized to create a service object instance. If the same service provides multiple versions of the same interface the latest version is returned. Therefore subsequent versions of the same interface must always be binary compatible to previous versions.</p>
+<p>It is assumed that the client has knowledge of the interface but does not really care about the specific type or version of the service implementing the interface. In such cases the default service lookup can be utilized to create a service object instance. If the same service provides multiple versions of the same interface the latest version is returned. Therefore subsequent versions of the same interface must always be binary compatible to previous versions.</p>
 <pre>    QServiceManager manager;
-    QObject *storage;
-    storage = manager.loadInterface(&quot;com.nokia.qt.examples.FileStorage&quot;);</pre>
-<a name="header-lookup"></a>
-<h5>Header Lookup</h5>
-<p>So far all lookup mechanism returned a <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> pointer. This pointer can be utilised by introspecting the object using Qt's meta object system. Therefore the client does not have to have any knowledge of the object header or symbols. However in some use cases it may be more convenient to directly interact with the service object by including the service header and/or linking against the service provider.</p>
+    manager.setInterfaceDefault(&quot;FileStorageService&quot;, &quot;com.nokia.qt.examples.FileStorage&quot;);</pre>
+<p>The above call to <a href="qservicemanager.html#setInterfaceDefault">QServiceManager::setInterfaceDefault</a>() registers the <i>FileStorageService</i> as default implementation. Whenever a client asks for an implementation of <i>com.nokia.qt.examples.FileStorage</i> the <i>FileStorageService</i> service will be loaded. The current scope of the service manager object determines whether the default assignment is valid for all users or whether it is valid for the current user only. The system default is used if the user scope has not been defined. This enables users to customize their personal preferences. By default the first service installing a so far unknown interface becomes the system wide default selection.</p>
+<a name="qobject-based-services"></a>
+<h5>QObject based services</h5>
+<p>This is the most common way of interacting with services.</p>
+<pre>    storage = manager.loadInterface(&quot;com.nokia.qt.examples.FileStorage&quot;);
+    if (storage)
+        QMetaObject::invokeMethod(storage, &quot;deleteFile&quot;, Q_ARG(QString, &quot;/tmp/readme.txt&quot;));</pre>
+<p>The above invocation of the file storage object's deleteFile() function is done via the service's <a href="http://qt.nokia.com/doc/4.6/qmetaobject.html">QMetaObject</a>. The client does not require any knowledge of the objects actual type and therefore does not have to link against a service specific library.</p>
+<a name="typed-services"></a>
+<h5>Typed services</h5>
+<p>So far all lookup mechanism returned a <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> pointer. This pointer can be utilised by introspecting the object, using Qt's meta object system. However in some use cases it may be more convenient to directly interact with the service object by including the service header and/or linking against the service provider. The main advantage is compile time checking. Its disdvantage is that client and service must share the implementation of the service object via a library they link against or via a common header file. Note that such sharing breaks the fundamental ServiceFramework principle of separating clients from service as changes of the service type may require changes to both, services and clients.</p>
 <p>The subsequent code snippet demonstrates how this may look like:</p>
 <pre>    #include &lt;filestorage.h&gt;
     ...
     QServiceManager manager;
     FileStorage *storage = 0;
     ...
-    manager.setInterfaceDefault(&quot;FileManager&quot;, &quot;com.nokia.qt.examples.FileStorage&quot;);
-    storage = manager.getInterface&lt;FileStorage&gt;(&quot;com.nokia.qt.examples.FileStorage&quot;);</pre>
+    storage = manager.loadLocalTypedInterface&lt;FileStorage&gt;(&quot;com.nokia.qt.examples.FileStorage&quot;);
+    if (storage)
+        storage-&gt;deleteFile(&quot;/tmp/readme.txt&quot;);</pre>
 <a name="service-scope"></a>
 <h3>Service Scope</h3>
 <p>The <a href="qservicemanager.html">QServiceManager</a> operates in either <a href="qservice.html#Scope-enum">User scope</a> or <a href="qservice.html#Scope-enum">System scope</a>. By default, it operates in user scope. The choice of scope affects whether registered services are available system-wide or only to the current user, and whether service and interface lookups are limited to system-wide service or whether the current user's together with system service configurations are considered.</p>
@@ -103,15 +112,15 @@
 <a name="xml-format"></a>
 <h4>XML Format</h4>
 <p>Services are installed via an XML file which describes the meta data and location of the service. The xml file can be described via the following DTD:</p>
-<pre>        &lt;!ELEMENT service ( name, filepath, description?, interface+ ) &gt;
-        &lt;!ELEMENT description ( #CDATA ) &gt;
-        &lt;!ELEMENT filepath ( #PCDATA ) &gt;
-        &lt;!ELEMENT interface ( name, version, description?, capabilities?, customproperty* ) &gt;
-        &lt;!ELEMENT capabilities ( #PCDATA ) &gt;
-        &lt;!ELEMENT name ( #PCDATA ) &gt;
-        &lt;!ELEMENT version ( #PCDATA ) &gt;
-        &lt;!ELEMENT customproperty ( #CDATA ) &gt;
-        &lt;!ATTLIST customproperty key NMTOKEN #REQUIRED &gt;</pre>
+<pre>    &lt;!ELEMENT service ( name, filepath, description?, interface+ ) &gt;
+    &lt;!ELEMENT description ( #CDATA ) &gt;
+    &lt;!ELEMENT filepath ( #PCDATA ) &gt;
+    &lt;!ELEMENT interface ( name, version, description?, capabilities?, customproperty* ) &gt;
+    &lt;!ELEMENT capabilities ( #PCDATA ) &gt;
+    &lt;!ELEMENT name ( #PCDATA ) &gt;
+    &lt;!ELEMENT version ( #PCDATA ) &gt;
+    &lt;!ELEMENT customproperty ( #CDATA ) &gt;
+    &lt;!ATTLIST customproperty key NMTOKEN #REQUIRED &gt;</pre>
 <p>The elements and attributes have the following meanings:</p>
 <p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
 <thead><tr valign="top" class="qt-style"><th>Element</th><th>SubElement</th><th>Description</th></tr></thead>
@@ -128,32 +137,32 @@
 <tr valign="top" class="even"><td>&quot;</td><td>customproperty</td><td>An implementation specific key value pair which can be used for filtering or as description.</td></tr>
 </table></p>
 <p>An example for a valid XML service description could be the following <i>TestService</i>:</p>
-<pre>        &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-        &lt;service&gt;
-            &lt;name&gt;TestService&lt;/name&gt;
-            &lt;filepath&gt;testserviceplugin&lt;/filepath&gt;
-            &lt;description&gt;Test service description&lt;/description&gt;
-            &lt;interface&gt;
-                &lt;name&gt;com.nokia.qt.ILocation&lt;/name&gt;
-                &lt;version&gt;1.4&lt;/version&gt;
-                &lt;capabilities&gt;&lt;/capabilities&gt;
-                &lt;description&gt;Interface that provides location support&lt;/description&gt;
-            &lt;/interface&gt;
-            &lt;interface&gt;
-                &lt;name&gt;com.nokia.qt.ILocation&lt;/name&gt;
-                &lt;version&gt;1.5&lt;/version&gt;
-                &lt;capabilities&gt;&lt;/capabilities&gt;
-                &lt;description&gt;Interface that provides location support&lt;/description&gt;
-            &lt;/interface&gt;
-            &lt;interface&gt;
-                &lt;name&gt;com.nokia.qt.ISysInfo&lt;/name&gt;
-                &lt;capabilities&gt;ReadUserData&lt;/capabilities&gt;
-                &lt;version&gt;2.3&lt;/version&gt;
-                &lt;description&gt;Interface that provides system information support&lt;/description&gt;
-                &lt;customproperty key=&quot;key1&quot;&gt;value1&lt;/customproperty&gt;
-                &lt;customproperty key=&quot;key2&quot;&gt;value2&lt;/customproperty&gt;
-            &lt;/interface&gt;
-        &lt;/service&gt;</pre>
+<pre>    &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+    &lt;service&gt;
+        &lt;name&gt;TestService&lt;/name&gt;
+        &lt;filepath&gt;testserviceplugin&lt;/filepath&gt;
+        &lt;description&gt;Test service description&lt;/description&gt;
+        &lt;interface&gt;
+            &lt;name&gt;com.nokia.qt.ILocation&lt;/name&gt;
+            &lt;version&gt;1.4&lt;/version&gt;
+            &lt;capabilities&gt;&lt;/capabilities&gt;
+            &lt;description&gt;Interface that provides location support&lt;/description&gt;
+        &lt;/interface&gt;
+        &lt;interface&gt;
+            &lt;name&gt;com.nokia.qt.ILocation&lt;/name&gt;
+            &lt;version&gt;1.5&lt;/version&gt;
+            &lt;capabilities&gt;&lt;/capabilities&gt;
+            &lt;description&gt;Interface that provides location support&lt;/description&gt;
+        &lt;/interface&gt;
+        &lt;interface&gt;
+            &lt;name&gt;com.nokia.qt.ISysInfo&lt;/name&gt;
+            &lt;capabilities&gt;ReadUserData&lt;/capabilities&gt;
+            &lt;version&gt;2.3&lt;/version&gt;
+            &lt;description&gt;Interface that provides system information support&lt;/description&gt;
+            &lt;customproperty key=&quot;key1&quot;&gt;value1&lt;/customproperty&gt;
+            &lt;customproperty key=&quot;key2&quot;&gt;value2&lt;/customproperty&gt;
+        &lt;/interface&gt;
+    &lt;/service&gt;</pre>
 <a name="tools-for-xml-generation"></a>
 <h3>Tools for XML Generation</h3>
 <p>The framework includes a GUI tool under <tt>tools/servicexmlgen</tt> for generating and inspecting service XML files. This makes it easy to enter service metadata and interface details and generate the appropriate XML to describe the service. It can also be used to load and inspect existing service XML files.</p>
@@ -166,18 +175,18 @@
 <h3>Identifying Services</h3>
 <p>Each implementation is identified by a service name, an interface name and its version. This information is encapsulated by <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> which can be used to request references to service objects.</p>
 <p><a href="qservicefilter.html">QServiceFilter</a> simplifies the lookup of already installed services. Developers specifies the criteria used during the meta data lookup. The subsequent example demonstrates the interaction between <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> and <a href="qservicefilter.html">QServiceFilter</a> by creating references to all services that implement the interface <i>com.nokia.qt.ILocation</i>:</p>
-<pre>        QServiceManager mgr;
-        QServiceFilter filter;
-        filter.setInterfaceName(&quot;com.nokia.qt.ILocation&quot;);
-        QList&lt;QServiceInterfaceDescriptor&gt; list = mgr.findInterfaces(filter);
-        for(int i = 0; i &lt; list.size(); i++) {
-            QObject *serviceObject;
-            serviceObject = mgr.loadInterface(list[i]);
+<pre>    QServiceManager mgr;
+    QServiceFilter filter;
+    filter.setInterfaceName(&quot;com.nokia.qt.ILocation&quot;);
+    QList&lt;QServiceInterfaceDescriptor&gt; list = mgr.findInterfaces(filter);
+    for(int i = 0; i &lt; list.size(); i++) {
+        QObject *serviceObject;
+        serviceObject = mgr.loadInterface(list[i]);
 
-            <span class="comment">// returned object owned by client</span>
-            if (serviceObject)
-                serviceObject-&gt;setParent(this);
-        }</pre>
+        <span class="comment">// returned object owned by client</span>
+        if (serviceObject)
+            serviceObject-&gt;setParent(this);
+    }</pre>
 <a name="upgrading-services"></a>
 <h4>Upgrading Services</h4>
 <p>There are two ways in which to upgrade a service. The first is an incremental approach whereby <a href="qservicemanager.html#addService">QServiceManager::addService</a>() is used to register an XML descriptor whose service name already exists but defines new interface implementations. For example an already existing service, &quot;ovi&quot; may define version 1.0 of interface,&quot;IDownload&quot;. <a href="qservicemanager.html#addService">QServiceManager::addService</a>() is then called with an XML descriptor that declares itself as belonging the &quot;ovi&quot; service, but implements version 1.1 of the interface &quot;IDownload&quot;. Both implementation versions will be available for use.</p>

@@ -43,29 +43,6 @@
 #include <QDebug>
 #include <QtGlobal>
 
-#ifdef Q_OS_WINCE
-#include <windows.h>
-// WINCE has <time.h> but using clock() gives a link error because
-// the function isn't actually implemented.
-//
-// This implementation is based on code found here:
-// http://social.msdn.microsoft.com/Forums/en/vssmartdevicesnative/thread/74870c6c-76c5-454c-8533-812cfca585f8
-static long clock()
-{
-    HANDLE currentThread = GetCurrentThread();
-    FILETIME creationTime, exitTime, kernalTime, userTime;
-    GetThreadTimes(currentThread, &creationTime, &exitTime, &kernalTime, &userTime);
-
-    ULARGE_INTEGER uli;
-    uli.LowPart = userTime.dwLowDateTime;
-    uli.HighPart = userTime.dwHighDateTime;
-    ULONGLONG systemTimeInMS = uli.QuadPart/10000;
-    return (long)systemTimeInMS;
-}
-#else
-#include <time.h>
-#endif
-
 const char *dummyaccelerometer::id("dummy.accelerometer");
 
 dummyaccelerometer::dummyaccelerometer(QSensor *sensor)
@@ -76,11 +53,11 @@ dummyaccelerometer::dummyaccelerometer(QSensor *sensor)
 
 void dummyaccelerometer::poll()
 {
-    m_reading.setTimestamp(clock());
+    m_reading.setTimestamp(getTimestamp());
     // Your average desktop computer doesn't move :)
     m_reading.setX(0);
-    m_reading.setY(0);
-    m_reading.setZ(9.8);
+    m_reading.setY(9.8); // facing the user, gravity goes here
+    m_reading.setZ(0);
 
     newReadingAvailable();
 }

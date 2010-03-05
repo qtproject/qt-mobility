@@ -42,44 +42,65 @@
 
 QTM_BEGIN_NAMESPACE
 
+class QMessageContentContainerIdPrivate
+{
+public:
+    enum {
+        Invalid = -1,
+        Body = 0
+    };
+
+    int _number;
+
+    QMessageContentContainerIdPrivate() : _number(Invalid) {}
+};
+
 QMessageContentContainerId::QMessageContentContainerId()
+: d_ptr(new QMessageContentContainerIdPrivate)
 {
 }
 
 QMessageContentContainerId::QMessageContentContainerId(const QMessageContentContainerId& other)
+: d_ptr(new QMessageContentContainerIdPrivate)
 {
-    Q_UNUSED(other)
+        this->operator=(other);
 }
 
 QMessageContentContainerId::QMessageContentContainerId(const QString& id)
+: d_ptr(new QMessageContentContainerIdPrivate)
 {
-    Q_UNUSED(id)
+        if (!id.isEmpty()) {
+                d_ptr->_number = id.toUInt();
+        }
 }
 
 QMessageContentContainerId::~QMessageContentContainerId()
 {
+        delete d_ptr;
 }
 
 bool QMessageContentContainerId::operator==(const QMessageContentContainerId& other) const
 {
-    Q_UNUSED(other)
-    return false; // stub
+        return (d_ptr->_number == other.d_ptr->_number);
 }
 
 QMessageContentContainerId& QMessageContentContainerId::operator=(const QMessageContentContainerId& other)
 {
-    Q_UNUSED(other)
-    return *this; // stub
+        if (&other != this) {
+                d_ptr->_number = other.d_ptr->_number;
+        }
+
+        return *this;
 }
 
 QString QMessageContentContainerId::toString() const
 {
-    return QString::null; // stub
+        return QString::number(d_ptr->_number);
 }
 
 bool QMessageContentContainerId::isValid() const
 {
-    return false; // stub
+        return (d_ptr->_number != QMessageContentContainerIdPrivate::Invalid);
 }
 
 QTM_END_NAMESPACE

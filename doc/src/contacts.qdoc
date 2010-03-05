@@ -326,7 +326,7 @@ reported to clients through various functions provided by the \l{QContactManager
 
 \section2 Synchronization and Serialization
 
-The contacts API is used by another Qt Mobility module: the \l {Versit API} {Versit}* module.  It allows
+The contacts API is used by another Qt Mobility module: the \l {Versit API (technology preview)} {Versit}* module.  It allows
 serialization of a QContact into a vCard document, and vice versa.
 
 [*] Versit \reg is a trademark of the Internet Mail Consortium.
@@ -335,7 +335,7 @@ serialization of a QContact into a vCard document, and vice versa.
 
 \list
     \o \l{samplephonebook}{Sample Phonebook}
-    \o \l{incomingcalls}{Incoming Call Simulator}
+    \o \l{qmlcontacts}{QML-based Sample Phonebook}
 \endlist
 
 */

@@ -1022,7 +1022,7 @@ void MessageViewWidget::loadMessage()
         else
             bodyText = QString("<p align=\"center\"><a href=\"%1\">Download</a></p>").arg(downloadLinkURL());
         m_messageBrowser->setHtml(htmlTemplate\
-                                 .arg(message.from().recipient())\
+                                 .arg(message.from().addressee())\
                                  .arg(message.subject())\
                                  .arg(message.receivedDate().toString())\
                                  .arg(bodyText));

@@ -61,14 +61,14 @@
 
 #include "qsoundeffect_p.h"
 
-
-QTM_USE_NAMESPACE
-
+QT_BEGIN_NAMESPACE
 class QTimer;
 class QSound;
 class QFile;
-class WaveDecoder;
+QT_END_NAMESPACE
 
+QTM_USE_NAMESPACE
+class WaveDecoder;
 class QSoundEffectPrivate : public QObject
 {
     Q_OBJECT
