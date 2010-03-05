@@ -46,55 +46,10 @@ QTM_BEGIN_NAMESPACE
 QGeoSatelliteInfoSourceMaemo::QGeoSatelliteInfoSourceMaemo(QObject *parent) : QGeoSatelliteInfoSource(parent)
 {
     client_id_ = -1;
-#ifdef Q_WS_MAEMO_5
-    errorHandlerId = 0;
-    signalHandlerId = 0;
-#endif    
 }
-
-#ifdef Q_WS_MAEMO_5
-QGeoSatelliteInfoSourceMaemo::~QGeoSatelliteInfoSourceMaemo()
-{
-    if(satelliteDevice)
-        g_object_unref(satelliteDevice);
-    if(satelliteControl)
-        g_object_unref(satelliteControl);
-}
-#endif
 
 int QGeoSatelliteInfoSourceMaemo::init()
 {
-#ifdef Q_WS_MAEMO_5
-    g_type_init();
-    satelliteControl = location_gpsd_control_get_default();
-    if(satelliteControl) {
-        g_object_set(G_OBJECT(satelliteControl),
-                     "preferred-method", LOCATION_METHOD_USER_SELECTED,
-                     "preferred-interval", LOCATION_INTERVAL_5S,
-                     NULL);
-    } else {
-        return -1;
-    }
-    
-    satelliteDevice =
-            (LocationGPSDevice*)g_object_new(LOCATION_TYPE_GPS_DEVICE,
-                                             NULL);
-
-    if(satelliteDevice) {
-        errorHandlerId =
-            g_signal_connect(G_OBJECT(satelliteControl), "error-verbose",
-                             G_CALLBACK(&satelliteError), 
-                             static_cast<void*>(this));
-        signalHandlerId =
-            g_signal_connect(G_OBJECT(satelliteDevice), "changed",
-                             G_CALLBACK(&infoChanged), 
-                             static_cast<void*>(this));
-        return 0;
-    } else {
-        return -1;
-    }
-
-#else
     int status;
 
     dbusComm = new DBusComm();
@@ -104,8 +59,6 @@ int QGeoSatelliteInfoSourceMaemo::init()
                      this, SLOT(npeMessages(const QByteArray &)));
 
     return status;
-#endif // Q_WS_MAEMO_5
-    return 0;
 }
 
 // This method receives messages from DBus.
@@ -120,23 +73,6 @@ void QGeoSatelliteInfoSourceMaemo::dbusMessages(const QByteArray &msg)
 
 void QGeoSatelliteInfoSourceMaemo::startUpdates()
 {
-#ifdef Q_WS_MAEMO_5
-    if(satelliteControl) {
-        if(!errorHandlerId) {
-            errorHandlerId =
-                g_signal_connect(G_OBJECT(satelliteControl), "error-verbose",
-                                 G_CALLBACK(&satelliteError), 
-                                 static_cast<void*>(this));            
-        }
-        if(!signalHandlerId) {
-            signalHandlerId =
-                g_signal_connect(G_OBJECT(satelliteDevice), "changed",
-                                 G_CALLBACK(&infoChanged), 
-                                 static_cast<void*>(this));            
-        }
-        location_gpsd_control_start(satelliteControl);
-    }
-#else
 #if 0
     int len = npe.NewStartTrackingMsg(&msg, client_id_, NpeIf::MethodAll,
                                       NpeIf::OptionNone , 1);
@@ -161,26 +97,14 @@ void QGeoSatelliteInfoSourceMaemo::startUpdates()
     emit satellitesInViewUpdated(list);
     emit satellitesInUseUpdated(list);
 #endif
-#endif // Q_WS_MAEMO_5
+
 
 }
 
 
 void QGeoSatelliteInfoSourceMaemo::stopUpdates()
 {
-#ifdef Q_WS_MAEMO_5
-    if(satelliteControl) {
-        if(errorHandlerId)
-            g_signal_handler_disconnect(G_OBJECT(satelliteControl), 
-                                        errorHandlerId);
-        if(signalHandlerId)
-            g_signal_handler_disconnect(G_OBJECT(satelliteDevice), 
-                                        signalHandlerId); 
-        errorHandlerId = 0;
-        signalHandlerId = 0;
-        location_gpsd_control_stop(satelliteControl);
-    }
-#endif
+
 
 }
 
@@ -190,84 +114,6 @@ void QGeoSatelliteInfoSourceMaemo::requestUpdate(int timeout)
     a = timeout + 1;
 
 }
-
-#ifdef Q_WS_MAEMO_5
-void QGeoSatelliteInfoSourceMaemo::satelliteError(LocationGPSDevice *device,
-                                                gint errorCode, gpointer data)
-{
-    QString locationError;
-
-    switch (errorCode) {
-        case LOCATION_ERROR_USER_REJECTED_DIALOG:
-            locationError = "User didn't enable requested methods";
-            break;
-        case LOCATION_ERROR_USER_REJECTED_SETTINGS:
-            locationError = "User changed settings, which disabled location.";
-            break;
-        case LOCATION_ERROR_BT_GPS_NOT_AVAILABLE:
-            locationError = "Problems with BT GPS";
-            break;
-        case LOCATION_ERROR_METHOD_NOT_ALLOWED_IN_OFFLINE_MODE:
-            locationError = "Requested method is not allowed in offline mode";
-            break;
-        case LOCATION_ERROR_SYSTEM:
-            locationError = "System error.";
-            break;
-        default:
-            locationError = "Unknown error.";
-    }
-
-    qDebug() << "Location error:" << locationError;
-}
-
-void QGeoSatelliteInfoSourceMaemo::infoChanged(LocationGPSDevice *device,
-                                               gpointer data)
-{
-    QGeoSatelliteInfo satInfo;
-    QGeoSatelliteInfoSourceMaemo *object;
-
-    if (!data || !device)
-        return;
-     
-    object = (QGeoSatelliteInfoSourceMaemo *)data;
-
-    if (device && device->satellites_in_view) {
-        QList<QGeoSatelliteInfo> satsInView;
-        QList<QGeoSatelliteInfo> satsInUse;
-        int i;
-        for(i=0;i<device->satellites->len;i++) {
-            LocationGPSDeviceSatellite *satData =
-                    (LocationGPSDeviceSatellite *)g_ptr_array_index(device->satellites,
-                                                                    i);
-            satInfo.setSignalStrength(satData->signal_strength);
-            satInfo.setPrnNumber(satData->prn);
-            satInfo.setAttribute(QGeoSatelliteInfo::Elevation, satData->elevation);
-            satInfo.setAttribute(QGeoSatelliteInfo::Azimuth, satData->azimuth);
-
-            satsInView.append(satInfo);
-            if(satData->in_use)
-                satsInUse.append(satInfo);
-        }
-        
-        if(!satsInView.isEmpty())
-            object->satellitesInView(satsInView);
-        
-        if(!satsInUse.isEmpty())
-            object->satellitesInUse(satsInUse);
-    }    
-}
-
-void QGeoSatelliteInfoSourceMaemo::satellitesInView(const QList<QGeoSatelliteInfo> &satellites)
-{
-    emit satellitesInViewUpdated(satellites);
-}
-
-void QGeoSatelliteInfoSourceMaemo::satellitesInUse(const QList<QGeoSatelliteInfo> &satellites)
-{
-    emit satellitesInUseUpdated(satellites);
-}
-
-#endif // Q_WS_MAEMO_5
 
 #if 0
 void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &satellites);

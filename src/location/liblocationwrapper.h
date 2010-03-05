@@ -39,43 +39,79 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOSATELLITEINFOSOURCE_MAEMO_H
-#define QGEOSATELLITEINFOSOURCE_MAEMO_H
+#ifndef LIBLOCATIONWRAPPER_H
+#define LIBLOCATINWRAPPER_H
 
-#include "qgeosatelliteinfosource.h"
+// INCLUDES
+#include <QDebug>
+
+#include "qgeocoordinate.h"
+#include "qgeopositioninfo.h"
 #include "qgeosatelliteinfo.h"
-#include "dbuscomm_maemo_p.h"
+
+#include "gconfitem.h"
+
+extern "C" {
+   #include <glib.h>
+   #include <location/location-gpsd-control.h>
+   #include <location/location-gps-device.h>
+   #include <location/location-misc.h>
+   #include <location/location-distance-utils.h>
+}
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoSatelliteInfoSourceMaemo : public QGeoSatelliteInfoSource
+class LiblocationWrapper : public QObject
 {
     Q_OBJECT
+
 public:
-    explicit QGeoSatelliteInfoSourceMaemo(QObject *parent = 0);
-    int init();
+    static LiblocationWrapper *instance();
+    ~LiblocationWrapper();
+
+    void start();
+    void stop();
+    QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const;
+    bool inited();
+    QGeoPositionInfo position();
+    bool fixIsValid();
+    QList<QGeoSatelliteInfo> satellitesInView();
+    QList<QGeoSatelliteInfo> satellitesInUse();
 
 private:
-    DBusComm* dbusComm;
-    int client_id_;
-    void dbusMessages(const QByteArray &msg);
+    LocationGPSDControl *locationControl;
+    LocationGPSDevice *locationDevice;
 
-public slots:
-    virtual void startUpdates();
-    void stopUpdates();
+    static void locationError(LocationGPSDevice *device, gint code, gpointer data);
+    static void locationChanged(LocationGPSDevice *device, gpointer data);
 
-    void requestUpdate(int timeout = 5000);
+    int errorHandlerId;
+    int posChangedId;
+    int origUpdateInterval;
+    
+    QGeoPositionInfo lastUpdate;
+    QGeoPositionInfo lastSatUpdate;
+    bool validLastUpdate;
+    bool validLastSatUpdate;
 
-signals:
     void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &satellites);
     void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &satellites);
-    void requestTimeout();
+    QList<QGeoSatelliteInfo> satsInView;
+    QList<QGeoSatelliteInfo> satsInUse;
 
-private:
-    Q_DISABLE_COPY(QGeoSatelliteInfoSourceMaemo)
+    enum LocationState {
+        Undefined = 0,
+        Inited = 1,
+        Started = 2,
+        Stopped = 4,
+        RequestActive = 8,
+        RequestSingleShot = 16
+    };
+    int locationState;
+
+private slots:
+    void setLocation(const QGeoPositionInfo &update, bool location3D);
 };
 
 QTM_END_NAMESPACE
-
-#endif
-
+#endif // LIBLOCATIONWRAPPER_H

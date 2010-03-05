@@ -44,8 +44,10 @@
 #   include "qgeosatelliteinfosource_s60_p.h"
 #elif defined(Q_OS_WINCE)
 #   include "qgeosatelliteinfosource_wince_p.h"
-#elif (defined(Q_WS_MAEMO_6)) || (defined(Q_WS_MAEMO_5))
+#elif defined(Q_WS_MAEMO_6)
 #   include "qgeosatelliteinfosource_maemo_p.h"
+#elif defined(Q_WS_MAEMO_5)
+#   include "qgeosatelliteinfosource_maemo5_p.h"
 #endif
 
 QTM_BEGIN_NAMESPACE

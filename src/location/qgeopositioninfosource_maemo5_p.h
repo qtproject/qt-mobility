@@ -39,43 +39,67 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOSATELLITEINFOSOURCE_MAEMO_H
-#define QGEOSATELLITEINFOSOURCE_MAEMO_H
+#ifndef QGEOPOSITIONINFOSOURCEMAEMO5_H
+#define QGEOPOSITIONINFOSOURCEMAEMO5_H
 
-#include "qgeosatelliteinfosource.h"
-#include "qgeosatelliteinfo.h"
-#include "dbuscomm_maemo_p.h"
+#include <QTimer>
+#include "qgeopositioninfosource.h"
+
+#define MINIMUM_UPDATE_INTERVAL 1000
+#define DEFAULT_UPDATE_INTERVAL 5000
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoSatelliteInfoSourceMaemo : public QGeoSatelliteInfoSource
+class LiblocationWrapper;
+
+class QGeoPositionInfoSourceMaemo : public QGeoPositionInfoSource
 {
     Q_OBJECT
+
 public:
-    explicit QGeoSatelliteInfoSourceMaemo(QObject *parent = 0);
+
+    QGeoPositionInfoSourceMaemo(QObject *parent = 0);
+
     int init();
 
+    virtual void setUpdateInterval(int interval);
+    virtual void setPreferredPositioningMethods(PositioningMethods sources);
+    virtual QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const;
+    virtual PositioningMethods supportedPositioningMethods() const;
+    virtual int minimumUpdateInterval() const;
+
 private:
-    DBusComm* dbusComm;
-    int client_id_;
-    void dbusMessages(const QByteArray &msg);
+    PositioningMethods availableMethods;
+    bool positionInited;
+    QTimer *updateTimer;
+    QTimer *requestTimer;
+    int timerInterval;
 
-public slots:
-    virtual void startUpdates();
-    void stopUpdates();
-
-    void requestUpdate(int timeout = 5000);
-
+    enum PositionInfoState {
+        Undefined = 0,
+        Started = 1,
+        Stopped = 2,
+        RequestActive = 4,
+        RequestSingleShot = 8
+    };
+    int positionInfoState;
+    
 signals:
-    void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &satellites);
-    void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &satellites);
-    void requestTimeout();
+    void positionUpdated(const QGeoPositionInfo &update);
+    
+public slots:
+    void startUpdates();
+    void stopUpdates();
+    void requestUpdate(int timeout = DEFAULT_UPDATE_INTERVAL);
+    void newPositionUpdate();
+
+private slots:
+    void requestTimeoutElapsed();
 
 private:
-    Q_DISABLE_COPY(QGeoSatelliteInfoSourceMaemo)
+    Q_DISABLE_COPY(QGeoPositionInfoSourceMaemo)
 };
 
 QTM_END_NAMESPACE
 
-#endif
-
+#endif // QGEOPOSITIONINFOSOURCEMAEMO5_H

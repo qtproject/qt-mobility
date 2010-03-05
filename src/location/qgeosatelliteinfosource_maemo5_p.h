@@ -39,37 +39,55 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOSATELLITEINFOSOURCE_MAEMO_H
-#define QGEOSATELLITEINFOSOURCE_MAEMO_H
+#ifndef QGEOSATELLITEINFOSOURCE_MAEMO5_H
+#define QGEOSATELLITEINFOSOURCE_MAEMO5_H
 
+#include <QTimer>
 #include "qgeosatelliteinfosource.h"
 #include "qgeosatelliteinfo.h"
-#include "dbuscomm_maemo_p.h"
 
 QTM_BEGIN_NAMESPACE
+
+class LiblocationWrapper;
 
 class QGeoSatelliteInfoSourceMaemo : public QGeoSatelliteInfoSource
 {
     Q_OBJECT
+    
 public:
     explicit QGeoSatelliteInfoSourceMaemo(QObject *parent = 0);
+
     int init();
 
 private:
-    DBusComm* dbusComm;
     int client_id_;
-    void dbusMessages(const QByteArray &msg);
+    void setUpdateInterval(int interval);
+    QTimer *updateTimer;
+    QTimer *requestTimer;
+    int timerInterval;
+
+    enum SatelliteInfoState {
+        Undefined = 0,
+        Started = 1,
+        Stopped = 2,
+        RequestActive = 4,
+        RequestSingleShot = 8
+    };
+    int satelliteInfoState;
 
 public slots:
     virtual void startUpdates();
     void stopUpdates();
-
     void requestUpdate(int timeout = 5000);
-
+    void satelliteStatus();
+    
 signals:
     void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &satellites);
     void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &satellites);
     void requestTimeout();
+
+private slots:
+    void requestTimeoutElapsed();
 
 private:
     Q_DISABLE_COPY(QGeoSatelliteInfoSourceMaemo)
@@ -77,5 +95,5 @@ private:
 
 QTM_END_NAMESPACE
 
-#endif
+#endif // QGEOSATELLITEINFOSOURCE_MAEMO5_H
 

@@ -39,43 +39,39 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOSATELLITEINFOSOURCE_MAEMO_H
-#define QGEOSATELLITEINFOSOURCE_MAEMO_H
+#ifndef QGEOAREAMONITORMAEMO_H
+#define QGEOAREAMONITORMAEMO_H
 
-#include "qgeosatelliteinfosource.h"
-#include "qgeosatelliteinfo.h"
-#include "dbuscomm_maemo_p.h"
+#include "qgeoareamonitor.h"
+#include "qgeopositioninfosource.h"
+
+extern "C" {
+    #include <location/location-distance-utils.h>
+}
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoSatelliteInfoSourceMaemo : public QGeoSatelliteInfoSource
+/**
+ *  QGeoAreaMonitorMaemo
+ *
+ */
+class QGeoAreaMonitorMaemo : public QGeoAreaMonitor
 {
     Q_OBJECT
-public:
-    explicit QGeoSatelliteInfoSourceMaemo(QObject *parent = 0);
-    int init();
+
+public :
+    QGeoAreaMonitorMaemo(QObject *parent = 0);
+    ~QGeoAreaMonitorMaemo();
+    void setCenter(const QGeoCoordinate &coordinate);
+    void setRadius(qreal radius);
+
+private slots:
+    void positionUpdated(const QGeoPositionInfo &info);
 
 private:
-    DBusComm* dbusComm;
-    int client_id_;
-    void dbusMessages(const QByteArray &msg);
-
-public slots:
-    virtual void startUpdates();
-    void stopUpdates();
-
-    void requestUpdate(int timeout = 5000);
-
-signals:
-    void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &satellites);
-    void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &satellites);
-    void requestTimeout();
-
-private:
-    Q_DISABLE_COPY(QGeoSatelliteInfoSourceMaemo)
+    bool insideArea;
+    QGeoPositionInfoSource *location;
 };
 
 QTM_END_NAMESPACE
-
-#endif
-
+#endif // QGEOAREAMONITORMAEMO_H
