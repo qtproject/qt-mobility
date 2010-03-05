@@ -4,6 +4,8 @@ TARGET = xarecordservice
 
 PLUGIN_SUBDIR = mediaservice
 
+include (../../../../../common.pri)
+
 # Symbian specific definition
 # ---------------------------
 symbian {
