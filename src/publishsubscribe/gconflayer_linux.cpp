@@ -41,8 +41,6 @@
 
 #include "gconflayer_linux_p.h"
 #include <QVariant>
-#include <GConfItem>
-#include <QSignalMapper>
 
 #include <QDebug>
 
@@ -53,8 +51,8 @@ QVALUESPACE_AUTO_INSTALL_LAYER(GConfLayer);
 
 GConfLayer::GConfLayer()
 {
-    m_signalMapper = new QSignalMapper(this);
-    connect(m_signalMapper, SIGNAL(mapped(QString)), this, SLOT(notifyChanged(QString)));
+    GConfItem *gconfItem = new GConfItem("/", this);
+    connect(gconfItem, SIGNAL(subtreeChanged(const QString &, const QVariant &)), this, SLOT(notifyChanged(const QString &, const QVariant &)));
 }
 
 GConfLayer::~GConfLayer()
@@ -260,33 +258,10 @@ void GConfLayer::setProperty(Handle handle, Properties properties)
     }
 
     if (properties & QAbstractValueSpaceLayer::Publish) {
-        if (!m_monitoringHandles.contains(basePath, sh)) {
-            if (!m_monitoringHandles.contains(sh->path, sh))
-                m_monitoringHandles.insert(sh->path, sh);
-        }
-        foreach (QString childPath, recursiveChildren(sh->path)) {
-            GConfItem *gconfItem = static_cast<GConfItem *> (m_signalMapper->mapping(childPath));
-            if (!gconfItem) {
-                gconfItem = new GConfItem(childPath);
-                gconfItem->moveToThread(m_signalMapper->thread());
-                gconfItem->setParent(m_signalMapper);
-                connect(gconfItem, SIGNAL(valueChanged()), m_signalMapper, SLOT(map()));
-                m_signalMapper->setMapping(gconfItem, childPath);
-            }
-        }
+        m_monitoringHandles.insert(sh);
+    } else {
+        m_monitoringHandles.remove(sh);
     }
-}
-
-
-QStringList GConfLayer::recursiveChildren(QString fullPath) const
-{
-    QStringList childPaths;
-    GConfItem gconfItem(fullPath);
-    childPaths += gconfItem.listEntries();
-    foreach (QString child, gconfItem.listDirs()) {
-        childPaths += recursiveChildren(child);
-    }
-    return childPaths;
 }
 
 void GConfLayer::removeHandle(Handle handle)
@@ -304,7 +279,7 @@ void GConfLayer::doRemoveHandle(Handle handle)
     if (--sh->refCount)
         return;
 
-    m_monitoringHandles.remove(sh->path, sh);
+    m_monitoringHandles.remove(sh);
     m_handles.remove(sh->path);
 
     delete sh;
@@ -372,6 +347,8 @@ bool GConfLayer::setValue(QValueSpacePublisher */*creator*/,
     if (createdHandle)
         doRemoveHandle(Handle(sh));
 
+    notifyChanged(fullPath, QVariant());
+
     return true;
 }
 
@@ -414,6 +391,8 @@ bool GConfLayer::removeValue(QValueSpacePublisher */*creator*/,
     GConfItem gconfItem(fullPath);
     gconfItem.unset();
 
+    notifyChanged(fullPath, QVariant());
+
     return true;
 }
 
@@ -438,15 +417,10 @@ bool GConfLayer::notifyInterest(Handle, bool)
     return false;
 }
 
-void GConfLayer::notifyChanged(QString path)
-{
-    doNotifyChanged(path);
-}
-
-void GConfLayer::doNotifyChanged(QString path)
+void GConfLayer::notifyChanged(const QString &key, const QVariant & /*value*/)
 {
     foreach (GConfHandle *handle, m_monitoringHandles.values()) {
-        if (path.startsWith(handle->path)) {
+        if (key.startsWith(handle->path)) {
             QMetaObject::invokeMethod(this, "handleChanged",
                 Qt::QueuedConnection,
                 Q_ARG(quintptr, Handle(handle)));

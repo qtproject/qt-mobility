@@ -63,7 +63,7 @@
 
 #define ERROR_SETVALUE_NOT_SUPPORTED 1
 
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN)// || defined (Q_OS_LINUX)
     #define QTRY_COMPARE(a,e)                       \
         for (int _i = 0; _i < 100; _i++) {          \
             if ((a) == (e)) break;                  \
@@ -723,6 +723,14 @@ void tst_QValueSpaceSubscriber::contentsChanged()
         spy = new QSignalSpy(&subscriber, SIGNAL(contentsChanged()));
         subscriber.property("value");
     }
+
+    #ifdef Q_OS_LINUX
+        //Wait for possible asynchronously emitted signals
+        QEventLoop loop;
+        QTimer::singleShot(100, &loop, SLOT(quit()));
+        loop.exec();
+        spy->clear();
+    #endif
 
     QCOMPARE(spy->count(), 0);
 

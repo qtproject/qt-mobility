@@ -303,6 +303,7 @@ QList<QString> GConfItem::listDirs() const
     QList<QString> children;
 
     withClient(client) {
+        gconf_client_clear_cache(client);
         QByteArray k = convertKey(priv->key);
         GSList *dirs = gconf_client_all_dirs(client, k.data(), NULL);
         for (GSList *d = dirs; d; d = d->next) {
@@ -320,6 +321,7 @@ QList<QString> GConfItem::listEntries() const
     QList<QString> children;
 
     withClient(client) {
+        gconf_client_clear_cache(client);
         QByteArray k = convertKey(priv->key);
         GSList *entries = gconf_client_all_entries(client, k.data(), NULL);
         for (GSList *e = entries; e; e = e->next) {

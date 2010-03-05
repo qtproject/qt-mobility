@@ -45,10 +45,8 @@
 #include "qvaluespace_p.h"
 #include "qvaluespacepublisher.h"
 
-#include <QHash>
 #include <QSet>
-#include <QByteArray>
-#include <QMultiMap>
+#include <GConfItem>
 #include <QMutex>
 
 class QSignalMapper;
@@ -99,7 +97,7 @@ public:
     static GConfLayer *instance();
 
 private slots:
-    void notifyChanged(QString path);
+    void notifyChanged(const QString &key, const QVariant &value);
 
 private:
     struct GConfHandle {
@@ -126,16 +124,14 @@ private:
         return 0;
     }
 
-    QStringList recursiveChildren(QString fullPath) const;
-
+    //private methods not locking a mutex
     bool getValue(Handle handle, const QString &subPath, QVariant *data);
     Handle getItem(Handle parent, const QString &subPath);
     void doRemoveHandle(Handle handle);
-    void doNotifyChanged(QString path);
 
 private:    //data
-    QMultiMap<QString, GConfHandle *> m_monitoringHandles;
-    QSignalMapper *m_signalMapper;
+    QSet<GConfHandle *> m_monitoringHandles;
+    QMap<QString, GConfItem *> m_monitoringItems;
     QMutex m_mutex;
 };
 
