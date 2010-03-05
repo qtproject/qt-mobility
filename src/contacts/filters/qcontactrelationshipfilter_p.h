@@ -56,6 +56,7 @@
 #include "qcontactfilter_p.h"
 #include "qcontactfilter.h"
 #include "qcontactid.h"
+#include "qcontactrelationship.h"
 
 #include "qcontactrelationshipfilter.h"
 
@@ -70,7 +71,7 @@ class QContactRelationshipFilterPrivate : public QContactFilterPrivate
 public:
     QContactRelationshipFilterPrivate()
         : QContactFilterPrivate(),
-        m_relatedContactRole(QContactRelationshipFilter::Either)
+        m_relatedContactRole(QContactRelationship::Either)
     {
     }
 
@@ -98,7 +99,7 @@ public:
 
     QString m_relationshipType;
     QContactId m_relatedContactId;
-    QContactRelationshipFilter::Role m_relatedContactRole;
+    QContactRelationship::Role m_relatedContactRole;
 };
 
 QTM_END_NAMESPACE

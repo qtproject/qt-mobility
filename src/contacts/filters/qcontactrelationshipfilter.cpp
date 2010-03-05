@@ -80,8 +80,9 @@ QTM_BEGIN_NAMESPACE
 Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactRelationshipFilter)
 
 /*!
+  \obsolete
   \enum QContactRelationshipFilter::Role
-  Describes the roles that a contact may take in a relationship
+  Describes the roles that a contact may take in a relationship.  DEPRECATED: use QContactRelationship::Role instead!
   \value First The contact is the first contact in the relationship
   \value Second The contact is the second contact in the relationship
   \value Either The contact is either the first or second contact in the relationship
@@ -137,9 +138,32 @@ QContactId QContactRelationshipFilter::relatedContactId() const
 }
 
 /*!
-  Sets the role in the relationship with the tested contact that the related contact must play in order for the tested contact to match this filter to be \a relatedContactRole
+  \obsolete
+  Sets the role in the relationship with the tested contact that the related contact must play in order for the tested contact to match this filter to be \a relatedContactRole.
+  This function is deprecated and will be removed after the transition period has elapsed.  Use setRelatedContactRole(QContactRelationship::Role role) instead!
  */
 void QContactRelationshipFilter::setRelatedContactRole(QContactRelationshipFilter::Role relatedContactRole)
+{
+    Q_D(QContactRelationshipFilter);
+    d->m_relatedContactRole = static_cast<QContactRelationship::Role>(relatedContactRole);
+}
+
+///*!
+//  \obsolete
+//  Returns the role in the relationship with the tested contact that the related contact must play in order for the tested contact to match this filter.
+//  This function is deprecated and will be removed after the transition period has elapsed.  Use relatedContactRole() which returns a QContactRelationship::Role instead!
+//  Note: since signature is the same, this function cannot be deprecated properly.  This causes a source break!
+// */
+//QContactRelationshipFilter::Role QContactRelationshipFilter::relatedContactRole() const
+//{
+//    Q_D(const QContactRelationshipFilter);
+//    return d->m_relatedContactRole;
+//}
+
+/*!
+  Sets the role in the relationship with the tested contact that the related contact must play in order for the tested contact to match this filter to be \a relatedContactRole
+ */
+void QContactRelationshipFilter::setRelatedContactRole(QContactRelationship::Role relatedContactRole)
 {
     Q_D(QContactRelationshipFilter);
     d->m_relatedContactRole = relatedContactRole;
@@ -148,7 +172,7 @@ void QContactRelationshipFilter::setRelatedContactRole(QContactRelationshipFilte
 /*!
   Returns the role in the relationship with the tested contact that the related contact must play in order for the tested contact to match this filter
  */
-QContactRelationshipFilter::Role QContactRelationshipFilter::relatedContactRole() const
+QContactRelationship::Role QContactRelationshipFilter::relatedContactRole() const
 {
     Q_D(const QContactRelationshipFilter);
     return d->m_relatedContactRole;
@@ -167,13 +191,13 @@ void QContactRelationshipFilter::setRole(QContactRelationshipFilter::Role roleIn
     Q_D(QContactRelationshipFilter);
     switch(roleInRelationship) {
         case QContactRelationshipFilter::Either:
-            d->m_relatedContactRole = QContactRelationshipFilter::Either;
+            d->m_relatedContactRole = QContactRelationship::Either;
             break;
         case QContactRelationshipFilter::First:
-            d->m_relatedContactRole = QContactRelationshipFilter::Second;
+            d->m_relatedContactRole = QContactRelationship::Second;
             break;
         case QContactRelationshipFilter::Second:
-            d->m_relatedContactRole = QContactRelationshipFilter::First;
+            d->m_relatedContactRole = QContactRelationship::First;
             break;
     }
 }

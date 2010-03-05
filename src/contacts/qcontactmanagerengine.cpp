@@ -359,13 +359,33 @@ QContactLocalId QContactManagerEngine::selfContactId(QContactManager::Error& err
 }
 
 /*!
+  \obsolete
+  Returns a list of relationships of the given \a relationshipType in which the contact identified by the given \a participantId participates in the given \a role.
+  If \a participantId is the default-constructed id, \a role is ignored and all relationships of the given \a relationshipType are returned.
+  If \a relationshipType is empty, relationships of any type are returned.
+  If no relationships of the given \a relationshipType in which the contact identified by the given \a participantId is involved in the given \a role exists,
+  \a error is set to QContactManager::DoesNotExistError.
+
+  This function is deprecated and will be removed after the transition period has elapsed.
+  Use the relationships() function which takes a QContactRelationship::Role argument instead!
+ */
+QList<QContactRelationship> QContactManagerEngine::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const
+{
+    Q_UNUSED(relationshipType);
+    Q_UNUSED(participantId);
+    Q_UNUSED(role);
+    error = QContactManager::NotSupportedError;
+    return QList<QContactRelationship>();
+}
+
+/*!
   Returns a list of relationships of the given \a relationshipType in which the contact identified by the given \a participantId participates in the given \a role.
   If \a participantId is the default-constructed id, \a role is ignored and all relationships of the given \a relationshipType are returned.
   If \a relationshipType is empty, relationships of any type are returned.
   If no relationships of the given \a relationshipType in which the contact identified by the given \a participantId is involved in the given \a role exists,
   \a error is set to QContactManager::DoesNotExistError.
  */
-QList<QContactRelationship> QContactManagerEngine::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const
+QList<QContactRelationship> QContactManagerEngine::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationship::Role role, QContactManager::Error& error) const
 {
     Q_UNUSED(relationshipType);
     Q_UNUSED(participantId);
@@ -1717,17 +1737,17 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                 // now check to see if we have a match.
                 foreach (const QContactRelationship& rel, allRelationships) {
                     // perform the matching.
-                    if (rf.relatedContactRole() == QContactRelationshipFilter::Second) { // this is the role of the related contact; ie, to match, contact.id() must be the first in the relationship.
+                    if (rf.relatedContactRole() == QContactRelationship::Second) { // this is the role of the related contact; ie, to match, contact.id() must be the first in the relationship.
                         if ((rf.relationshipType().isEmpty() || rel.relationshipType() == rf.relationshipType())
                                 && CONTACT_IDS_MATCH(rel.first(), contact.id()) && CONTACT_IDS_MATCH(relatedContactId, rel.second())) {
                             return true;
                         }
-                    } else if (rf.relatedContactRole() == QContactRelationshipFilter::First) { // this is the role of the related contact; ie, to match, contact.id() must be the second in the relationship.
+                    } else if (rf.relatedContactRole() == QContactRelationship::First) { // this is the role of the related contact; ie, to match, contact.id() must be the second in the relationship.
                         if ((rf.relationshipType().isEmpty() || rel.relationshipType() == rf.relationshipType())
                                 && CONTACT_IDS_MATCH(rel.second(), contact.id()) && CONTACT_IDS_MATCH(relatedContactId, rel.first())) {
                             return true;
                         }
-                    } else { // QContactRelationshipFilter::Either
+                    } else { // QContactRelationship::Either
                         if ((rf.relationshipType().isEmpty() || rel.relationshipType() == rf.relationshipType())
                                 && ((CONTACT_IDS_MATCH(relatedContactId, rel.first()) && !CONTACT_IDS_MATCH(contactUri, relatedContactId)) || (CONTACT_IDS_MATCH(relatedContactId, rel.second()) && !CONTACT_IDS_MATCH(contactUri, relatedContactId)))) {
                             return true;

@@ -100,7 +100,8 @@ public:
     virtual QContactLocalId selfContactId(QContactManager::Error& error) const;
 
     /* Relationships between contacts */
-    virtual QList<QContactRelationship> relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const;
+    virtual QList<QContactRelationship> Q_DECL_DEPRECATED relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const;
+    virtual QList<QContactRelationship> relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationship::Role role, QContactManager::Error& error) const;
     virtual bool saveRelationship(QContactRelationship* relationship, QContactManager::Error& error);
     virtual QList<QContactManager::Error> Q_DECL_DEPRECATED saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error); // deprecated
     virtual bool saveRelationships(QList<QContactRelationship>* relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error); // replaces the above

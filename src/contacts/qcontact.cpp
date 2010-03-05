@@ -470,10 +470,13 @@ QList<QContactRelationship> QContact::relationships(const QString& relationshipT
 }
 
 /*!
- * \preliminary
- * Returns a list of ids of contacts which are related to this contact in a relationship of the
- * given \a relationshipType, where those other contacts participate in the relationship in the
- * given \a role
+  \obsolete
+  Returns a list of ids of contacts which are related to this contact in a relationship of the
+  given \a relationshipType, where those other contacts participate in the relationship in the
+  given \a role.
+
+  This function is deprecated and will be removed after the transition period has elapsed.
+  Use the relatedContacts() function which takes a QContactRelationship::Role argument instead!
  */
 QList<QContactId> QContact::relatedContacts(const QString& relationshipType, QContactRelationshipFilter::Role role) const
 {
@@ -509,6 +512,47 @@ QList<QContactId> QContact::relatedContacts(const QString& relationshipType, QCo
     }
 
     return removeDuplicates;
+}
+
+/*!
+  Returns a list of ids of contacts which are related to this contact in a relationship of the
+  given \a relationshipType, where those other contacts participate in the relationship in the
+  given \a role.
+ */
+QList<QContactId> QContact::relatedContacts(const QString& relationshipType, QContactRelationship::Role role) const
+{
+    QList<QContactId> retn;
+    for (int i = 0; i < d->m_relationshipsCache.size(); i++) {
+        QContactRelationship curr = d->m_relationshipsCache.at(i);
+        if (relationshipType.isEmpty() || curr.relationshipType() == relationshipType) {
+            // check that the other contacts fill the given role
+            if (role == QContactRelationship::First) {
+                if (curr.first() != d->m_id) {
+                    if (!retn.contains(curr.first())) {
+                        retn.append(curr.first());
+                    }
+                }
+            } else if (role == QContactRelationship::Second) {
+                if (curr.first() == d->m_id) {
+                    if (!retn.contains(curr.second())) {
+                        retn.append(curr.second());
+                    }
+                }
+            } else { // role == Either.
+                if (curr.first() == d->m_id) {
+                    if (!retn.contains(curr.second())) {
+                        retn.append(curr.second());
+                    }
+                } else {
+                    if (!retn.contains(curr.first())) {
+                        retn.append(curr.first());
+                    }
+                }
+            }
+        }
+    }
+
+    return retn;
 }
 
 /*!

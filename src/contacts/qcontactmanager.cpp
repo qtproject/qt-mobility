@@ -643,10 +643,37 @@ QContactLocalId QContactManager::selfContactId() const
 }
 
 /*!
+  \obsolete
+  Returns a list of relationships in which the contact identified by the given \a participantId participates in the given \a role.
+  If \a participantId is the default-constructed id, \a role is ignored and all relationships are returned.
+
+  This function is deprecated and will be removed after the transition period has elapsed.
+  Use the relationships() function which takes a QContactRelationship::Role argument instead!
+ */
+QList<QContactRelationship> QContactManager::relationships(const QContactId& participantId, QContactRelationshipFilter::Role role) const
+{
+    return d->m_engine->relationships(QString(), participantId, static_cast<QContactRelationship::Role>(role), d->m_error);
+}
+
+/*!
+  \obsolete
+  Returns a list of relationships of the given \a relationshipType in which the contact identified by the given \a participantId participates in the given \a role.
+  If \a participantId is the default-constructed id, \a role is ignored and all relationships of the given \a relationshipType are returned.
+  If \a relationshipType is empty, relationships of any type are returned.
+
+  This function is deprecated and will be removed after the transition period has elapsed.
+  Use the relationships() function which takes a QContactRelationship::Role argument instead!
+ */
+QList<QContactRelationship> QContactManager::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role) const
+{
+    return d->m_engine->relationships(relationshipType, participantId, static_cast<QContactRelationship::Role>(role), d->m_error);
+}
+
+/*!
   Returns a list of relationships in which the contact identified by the given \a participantId participates in the given \a role.
   If \a participantId is the default-constructed id, \a role is ignored and all relationships are returned.
  */
-QList<QContactRelationship> QContactManager::relationships(const QContactId& participantId, QContactRelationshipFilter::Role role) const
+QList<QContactRelationship> QContactManager::relationships(const QContactId& participantId, QContactRelationship::Role role) const
 {
     return d->m_engine->relationships(QString(), participantId, role, d->m_error);
 }
@@ -656,7 +683,7 @@ QList<QContactRelationship> QContactManager::relationships(const QContactId& par
   If \a participantId is the default-constructed id, \a role is ignored and all relationships of the given \a relationshipType are returned.
   If \a relationshipType is empty, relationships of any type are returned.
  */
-QList<QContactRelationship> QContactManager::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role) const
+QList<QContactRelationship> QContactManager::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationship::Role role) const
 {
     return d->m_engine->relationships(relationshipType, participantId, role, d->m_error);
 }
