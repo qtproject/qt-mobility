@@ -47,36 +47,36 @@
 #include <QSqlDatabase>
 #include <QSqlQuery>
 
-typedef struct
-{
-    int index;
-    QString message;
-    QDateTime alert;
-} Note;
+#include "note.h"
 
 class NotesManager : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QDateTime alarm READ getAlarm WRITE setAlarm  NOTIFY soundAlarm)
-    Q_PROPERTY(QString message READ getMessage WRITE setMessage)
+    Q_PROPERTY(QDateTime alarmTime READ getAlarmTime WRITE setAlarmTime NOTIFY soundAlarm)
+    Q_PROPERTY(QString alarmMessage READ getAlarmMessage WRITE setAlarmMessage)
+    Q_PROPERTY(QDeclarativeListProperty<Note> noteSet READ noteSet)
 
 public:
     NotesManager(QObject *parent = 0);
-    Q_INVOKABLE QList<Note> getNotes(const QString& search=QString()) const;
+    Q_INVOKABLE QList<Note*> getNotes(const QString& search=QString());
+    QDeclarativeListProperty<Note> noteSet();
 
 public slots:
     void addNote(const QString &note, const QDateTime &alarm);
     void removeNote(int id);
+    void setSearch(const QString &search);
 
 private:
-    QDateTime m_alarm;
-    QString m_message;
+    QDateTime m_alarmTime;
+    QString m_alarmMessage;
+    QList<Note *> m_notes;
+    QString m_search;
 
-    QDateTime getAlarm() const;
-    void setAlarm(const QDateTime &alarm);
+    QDateTime getAlarmTime() const;
+    void setAlarmTime(const QDateTime &alarm);
     
-    QString getMessage() const;
-    void setMessage(const QString &message);
+    QString getAlarmMessage() const;
+    void setAlarmMessage(const QString &message);
 
     void nextAlarm();
 
@@ -86,6 +86,8 @@ private slots:
 signals:
     void soundAlarm(const QDateTime &alarm);
 };
+
+QML_DECLARE_TYPE(NotesManager);
 
 #endif
 

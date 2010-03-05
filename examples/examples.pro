@@ -5,13 +5,14 @@ TEMPLATE = subdirs
 #ServiceFramework examples
 contains(mobility_modules,serviceframework) {
     SUBDIRS += filemanagerplugin \
-            bluetoothtransferplugin \
-            notesmanagerplugin \
-            servicebrowser
-#            todotool
+               bluetoothtransferplugin \
+               notesmanagerplugin \
+               servicebrowser \
+               servicenotesmanager/sfw-notes
     
     contains(QT_CONFIG, declarative) {
-        SUBDIRS += declarative
+        SUBDIRS += servicenotesmanager/declarative-sfw-notes 
+                  #declarative-sfw-dialer
     }
 }
 

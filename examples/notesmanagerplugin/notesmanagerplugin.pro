@@ -1,7 +1,8 @@
 TEMPLATE = lib
 CONFIG += plugin
 INCLUDEPATH += ../../src/serviceframework
-HEADERS += notesmanagerplugin.h \
+HEADERS += note.h \
+           notesmanagerplugin.h \
            notesmanager.h
 SOURCES += notesmanagerplugin.cpp \
            notesmanager.cpp

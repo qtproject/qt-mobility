@@ -49,6 +49,8 @@
 NotesManager::NotesManager(QObject *parent)
     : QObject(parent)
 {
+    m_search = "";
+    
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName("todoDB");
     db.open();
@@ -67,8 +69,8 @@ void NotesManager::nextAlarm()
 {
     QSqlQuery alarmQuery("SELECT * FROM todolist WHERE date > DATETIME('now', 'localtime') ORDER BY date");
     if (alarmQuery.next()) { 
-        setAlarm(QDateTime::fromString(alarmQuery.value(2).toString(), "yyyy-MM-dd HH:mm:ss"));
-        setMessage(alarmQuery.value(1).toString());
+        setAlarmTime(QDateTime::fromString(alarmQuery.value(2).toString(), "yyyy-MM-dd HH:mm:ss"));
+        setAlarmMessage(alarmQuery.value(1).toString());
     }
 }
 
@@ -77,31 +79,30 @@ void NotesManager::checkAlarm()
     QString currStr = QDateTime::currentDateTime().toString(Qt::ISODate);
     QDateTime curr = QDateTime::fromString(currStr, Qt::ISODate);
 
-    //qDebug() << "CHECKING..." << getAlarm() << " against now " << curr;
-    if (getAlarm() == curr)
-        emit soundAlarm(getAlarm());
+    if (getAlarmTime() == curr)
+        emit soundAlarm(getAlarmTime());
 
     nextAlarm();
 }
 
-QDateTime NotesManager::getAlarm() const
+QDateTime NotesManager::getAlarmTime() const
 {
-    return m_alarm;
+    return m_alarmTime;
 }
 
-void NotesManager::setAlarm(const QDateTime& alarm)
+void NotesManager::setAlarmTime(const QDateTime& alarm)
 {
-    m_alarm = alarm;
+    m_alarmTime = alarm;
 }
 
-QString NotesManager::getMessage() const
+QString NotesManager::getAlarmMessage() const
 {
-    return m_message;
+    return m_alarmMessage;
 }
 
-void NotesManager::setMessage(const QString& message)
+void NotesManager::setAlarmMessage(const QString& message)
 {
-    m_message = message;
+    m_alarmMessage = message;
 }
 
 void NotesManager::addNote(const QString& note, const QDateTime& alarm)
@@ -115,9 +116,14 @@ void NotesManager::removeNote(int id)
     QSqlQuery query("DELETE FROM todolist WHERE id='" + QString::number(id) + "'");
 }
 
-QList<Note> NotesManager::getNotes(const QString& search) const
+void NotesManager::setSearch(const QString& search)
 {
-    QList<Note> list;
+    m_search = search;
+}
+
+QList<Note*> NotesManager::getNotes(const QString& search)
+{
+    QList<Note*> list;
 
     QString queryString = "SELECT * FROM todolist";
     if (search != "") queryString += " WHERE notes LIKE '%" + search + "%'"; 
@@ -125,14 +131,19 @@ QList<Note> NotesManager::getNotes(const QString& search) const
 
     QSqlQuery query(queryString);
     while (query.next()) {
-        Note entry;
-        entry.index = query.value(0).toInt();
-        entry.message = query.value(1).toString();
-        entry.alert = QDateTime::fromString(query.value(2).toString(), "yyyy-MM-dd HH:mm:ss");
+        Note *entry = new Note(this);
+        entry->setIndex(query.value(0).toInt());
+        entry->setMessage(query.value(1).toString());
+        entry->setAlarm(QDateTime::fromString(query.value(2).toString(), "yyyy-MM-dd HH:mm:ss"));
 
         list << entry;
     }
-
+    
     return list;
 }
 
+QDeclarativeListProperty<Note> NotesManager::noteSet()
+{
+    m_notes = getNotes(m_search);
+    return QDeclarativeListProperty<Note>(this, m_notes);
+}
