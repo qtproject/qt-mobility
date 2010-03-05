@@ -73,7 +73,7 @@ public:
         : identifier()
         , type()
         , outputRange(-1)
-        , updateInterval(0)
+        , updateInterval(-1)
         , backend(0)
         , signalEnabled(true)
         , active(false)

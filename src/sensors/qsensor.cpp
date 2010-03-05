@@ -285,6 +285,14 @@ qrangelist QSensor::availableDataRates() const
     \property QSensor::updateInterval
     \brief the update interval of the sensor (measured in milliseconds).
 
+    The default value is -1. Note that this causes undefined behaviour.
+
+    If the value is set to 0 the sensor will not poll for updates and you
+    will need to call poll() manually.
+
+    This should be set before calling start() because the sensor may not
+    notice changes to this value while it is running.
+
     Note that some sensors can only operate at particular rates.
     The system will attempt to run the sensor at an appropriate rate
     while delivering updates as often as requested.
@@ -304,6 +312,12 @@ void QSensor::setUpdateInterval(int interval)
 
 /*!
     Poll the sensor.
+
+    This only works if the QSensor::updateInterval is set to 0.
+
+    Note that this may not be very efficient depending on the sensor.
+    Calling this will block the event loop until the backend has checked
+    for a new value.
 */
 void QSensor::poll()
 {

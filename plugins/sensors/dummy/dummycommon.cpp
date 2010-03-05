@@ -61,6 +61,8 @@ void dummycommon::start()
         return;
 
     int interval = sensor()->updateInterval();
+    if (interval < 0)
+        interval = 1000;
 
     if (interval)
         m_timerid = startTimer(interval);
