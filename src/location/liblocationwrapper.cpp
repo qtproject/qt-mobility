@@ -212,13 +212,6 @@ void LiblocationWrapper::locationChanged(LocationGPSDevice *device,
     if ((device->fix->mode == LOCATION_GPS_DEVICE_MODE_3D) ||
         ((satellitesInUseCount >= 3) && 
          (device->fix->fields & LOCATION_GPS_DEVICE_TIME_SET))){
-             QFile file;
-
-             file.open(stderr, QIODevice::WriteOnly);
-             QTextStream log(&file);
-             log <<"Speed = " << device->fix->speed << " +- " << device->fix->eps << "\n";
-             file.close();        
-
         object->setLocation(posInfo, true);
     } else {
         object->setLocation(posInfo, false);
