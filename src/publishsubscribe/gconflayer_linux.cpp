@@ -144,7 +144,7 @@ bool GConfLayer::getValue(Handle handle, const QString &subPath, QVariant *data)
         return false;
 
     QString fullPath(sh->path);
-    if (fullPath != QLatin1String("/"))
+    if (fullPath != QLatin1String("/") && !value.isEmpty())
         fullPath.append(QLatin1Char('/'));
 
     fullPath.append(value);
