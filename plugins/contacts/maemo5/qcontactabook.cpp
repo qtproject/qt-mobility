@@ -485,7 +485,7 @@ QContact* QContactABook::convert(EContact *eContact) const
     
     ok = contact->saveDetail(detail);
     if (!ok){
-      qWarning() << "Detail can't be saved into QContact" << detail->values(); //WARNING values is deprecated
+      qWarning() << "Detail can't be saved into QContact";
       delete detail;
       continue;
     }
