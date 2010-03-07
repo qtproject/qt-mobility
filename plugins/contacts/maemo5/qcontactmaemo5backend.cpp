@@ -188,9 +188,8 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     // Remove unsupported definitions
     defns = QContactManagerEngine::schemaDefinitions();
     defns[contactType].remove(QContactAnniversary::DefinitionName);
-    defns[contactType].remove(QContactGeolocation::DefinitionName);
+    defns[contactType].remove(QContactGeoLocation::DefinitionName);
     defns[contactType].remove(QContactSyncTarget::DefinitionName);
-    defns[contactType].remove(QContactGeolocation::DefinitionName);
     // QContactTimestamp is Read ONLY
     
     //TODO Remove unsupported fields

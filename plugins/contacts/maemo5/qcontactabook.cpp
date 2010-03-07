@@ -1224,7 +1224,7 @@ void QContactABook::setAddressDetail(const OssoABookContact* aContact, const QCo
     adrAttrValues << "";
 
   // Fill adrAttrValues
-  QVariantMap vm = detail.values();
+  QVariantMap vm = detail.variantValues();
   QMapIterator<QString, QVariant> i(vm);
   while (i.hasNext()) {
     i.next();
@@ -1298,7 +1298,7 @@ void QContactABook::setEmailDetail(const OssoABookContact* aContact, const QCont
               paramValues;
   QString paramName = "TYPE";
   
-  foreach(QVariant v, detail.values())
+  foreach(QVariant v, detail.variantValues())
     attrValues << v.toString();
   
   foreach(QString c, detail.contexts())
@@ -1391,7 +1391,7 @@ void QContactABook::setPhoneDetail(const OssoABookContact* aContact, const QCont
               paramValues;
   QString paramName = "TYPE";
   
-  foreach(QVariant v, detail.values())
+  foreach(QVariant v, detail.variantValues())
     attrValues << v.toString();
   
   foreach(QString c, detail.contexts())
