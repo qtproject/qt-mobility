@@ -109,7 +109,7 @@ QString QContactMaemo5Engine::synthesizedDisplayLabel(const QContact& contact, Q
   }
   
   if (label.isEmpty())
-    label = "Unamed";
+    label = "No name";
   
   return label;
 }
@@ -140,6 +140,18 @@ QContact QContactMaemo5Engine::contact(const QContactLocalId& contactId, const Q
 bool QContactMaemo5Engine::saveContact(QContact* contact, QContactManager::Error& error)
 {
   Q_CHECK_PTR(d->m_abook);
+  
+  if (!contact) {
+    error = QContactManager::BadArgumentError;
+    return false;
+  }
+  
+  // ensure that the contact's details conform to their definitions
+  if (!validateContact(*contact, error)) {
+    QCM5_DEBUG << "Validate Contact failed";
+    error = QContactManager::InvalidDetailError;
+    return false;
+  }
   return d->m_abook->saveContact(contact, error);
 }
 
@@ -169,9 +181,45 @@ bool QContactMaemo5Engine::removeContact(const QContactLocalId& contactId, QCont
 
 QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(const QString& contactType, QContactManager::Error& error) const
 {
-    //TODO
-    error = QContactManager::NoError;
-    QMap<QString, QMap<QString, QContactDetailDefinition> > defns = QContactManagerEngine::schemaDefinitions();
+    QMap<QString, QMap<QString, QContactDetailDefinition> > defns;
+    QMap<QString, QContactDetailFieldDefinition> fields;
     
+    
+    // Remove unsupported definitions
+    defns = QContactManagerEngine::schemaDefinitions();
+    defns[contactType].remove(QContactAnniversary::DefinitionName);
+    defns[contactType].remove(QContactGeolocation::DefinitionName);
+    defns[contactType].remove(QContactSyncTarget::DefinitionName);
+    defns[contactType].remove(QContactGeolocation::DefinitionName);
+    // QContactTimestamp is Read ONLY
+    
+    //TODO Remove unsupported fields
+    
+    fields = defns[contactType][QContactAddress::DefinitionName].fields();
+    //fields.remove(QContactAddress::FieldSubTypes);
+    QContactDetailFieldDefinition dfd;
+    dfd.setDataType(QVariant::String);
+    fields.insert("Estension", dfd);
+    defns[contactType][QContactAddress::DefinitionName].setFields(fields);
+    
+    //"Estension");
+    
+    //fields = defns[contactType][QContactAnniversary::DefinitionName].fields()
+    //fields.remove(QContactAnniversary::FieldCalendarId);
+    
+    fields = defns[contactType][QContactOrganization::DefinitionName].fields();
+    fields.remove(QContactOrganization::FieldAssistantName);
+    fields.remove(QContactOrganization::FieldDepartment);
+    fields.remove(QContactOrganization::FieldLocation);
+    fields.remove(QContactOrganization::FieldLogo);
+    fields.remove(QContactOrganization::FieldName);
+    fields.remove(QContactOrganization::FieldRole);
+    defns[contactType][QContactOrganization::DefinitionName].setFields(fields);
+    
+    fields = defns[contactType][QContactUrl::DefinitionName].fields();
+    fields.remove(QContactUrl::FieldSubType);
+    defns[contactType][QContactUrl::DefinitionName].setFields(fields);
+    
+    error = QContactManager::NoError;
     return defns[contactType];
 }

@@ -43,6 +43,7 @@
 #define QCONTACTABOOK_P_H
 
 #include <QObject>
+#include <QMutex>
 
 #include "qtcontacts.h"
 
@@ -105,6 +106,21 @@ extern "C" {
                                                                  gboolean crop,
                                                                  int radius,
                                                                  const guint8 border_color[4]);
+	OssoABookContact*   osso_abook_contact_new              (void);
+	//TEST
+	guint               osso_abook_contact_async_add        (OssoABookContact *contact,
+                                                                 EBook *book,
+                                                                 EBookIdCallback callback,
+                                                                 gpointer user_data);
+	guint               osso_abook_contact_async_commit     (OssoABookContact *contact,
+                                                                 EBook *book,
+                                                                 EBookCallback callback,
+                                                                 gpointer user_data);
+	gboolean            osso_abook_contact_add_value        (EContact *contact,
+                                                                 const char *attr_name,
+                                                                 GCompareFunc value_check,
+                                                                 const char *value);
+	
 }
 
 QTM_USE_NAMESPACE
@@ -113,7 +129,7 @@ QTM_USE_NAMESPACE
 class QContactIDsHash{
 public:
   QContactIDsHash(): key(1){};
-  
+  ~QContactIDsHash(){ };
   /* Append */
   QContactIDsHash& operator<< (const QByteArray& eContactId){ m_localIds[key] = eContactId; key++; return (*this); };
   
@@ -144,6 +160,12 @@ public:
   bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
   bool saveContact(QContact* contact, QContactManager::Error& error);
 
+Q_SIGNALS:
+  void savingJobDone();
+
+public:
+  void savingJobFinished(){ emit savingJobDone(); };
+  
 private:
   void initAddressBook();
   void initLocalIdHash();
@@ -176,11 +198,24 @@ private:
   QContactUrl* createUrlDetail(EContact *eContact) const;
   
   /* Saving - QContact to abookContact */
-  OssoABookContact* convert(QContact *contact) const;
+  OssoABookContact* convert(const QContact *contact) const;
+  void setAddressDetail(const OssoABookContact* aContact, const QContactAddress& detail) const;
+  void setAvatarDetail(const OssoABookContact* aContact, const QContactAvatar& detail) const;
+  void setBirthdayDetail(const OssoABookContact* aContact, const QContactBirthday& detail) const;
+  void setEmailDetail(const OssoABookContact* aContact, const QContactEmailAddress& detail) const;
+  void setGenderDetail(const OssoABookContact* aContact, const QContactGender& detail) const;
+  void setNameDetail(const OssoABookContact* aContact, const QContactName& detail) const;
+  void setNicknameDetail(const OssoABookContact* aContact, const QContactNickname& detail) const;
+  void setNoteDetail(const OssoABookContact* aContact, const QContactNote& detail) const;
+  void setOnlineAccountDetail(const OssoABookContact* aContact, const QContactOnlineAccount& detail) const;
+  void setOrganizationDetail(const OssoABookContact* aContact, const QContactOrganization& detail) const;
+  void setPhoneDetail(const OssoABookContact* aContact, const QContactPhoneNumber& detail) const;
+  void setUrlDetail(const OssoABookContact* aContact, const QContactUrl& detail) const;
   
   /* Internal Vars */
   OssoABookAggregator *m_abookAgregator;
   mutable QContactIDsHash m_localIds; //Converts QLocalId <=> eContactId
+  QMutex m_saveContactMutex;
 };
 
 #endif

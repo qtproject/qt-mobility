@@ -41,6 +41,8 @@
 
 #include "qcontactabook_p.h"
 
+#include <QEventLoop>
+
 #include <libebook/e-book-util.h>
 
 #include "qcontactmaemo5debug_p.h"
@@ -133,11 +135,11 @@ void QContactABook::initLocalIdHash()
      EContact *contact = E_CONTACT(node->data);
      const char* data = CONST_CHAR(e_contact_get_const(contact, E_CONTACT_UID));
      QByteArray localId = QByteArray::fromRawData(data, sizeof(data));
-     m_localIds << localId;
+     m_localIds << localId; //FIXME MemLeak
      QCM5_DEBUG << "eContactID " << localId << "has been stored in m_localIDs with key" << m_localIds[localId];
      
      // Useful for debugging.
-     //e_vcard_dump_structure((EVCard*)contact);
+     e_vcard_dump_structure((EVCard*)contact);
    }
    
    g_list_free(contactList);
@@ -240,12 +242,74 @@ bool QContactABook::removeContact(const QContactLocalId& contactId, QContactMana
   return ok;
 }
 
+struct cbSharedData{
+   QContactABook* that;
+   bool *result;
+};
+
+static void commitContactCB(EBook* book, EBookStatus  status, gpointer user_data)
+{
+  Q_UNUSED(book)
+  cbSharedData *sd = static_cast<cbSharedData*>(user_data);
+  
+  *sd->result = (status == E_BOOK_ERROR_OK) ? true : false;  
+  sd->that->savingJobFinished();
+}
+
+static void addContactCB(EBook* book, EBookStatus  status, const char  *uid, gpointer user_data)
+{
+  Q_UNUSED(uid);
+  
+  //osso_abook_contact_set_roster(OssoABookContact *contact, OssoABookRoster *roster)
+  commitContactCB(book, status, user_data);
+}
+
 bool QContactABook::saveContact(QContact* contact, QContactManager::Error& error)
 {
-  Q_UNUSED(error);
-  qDebug() << "SAVE";
+  QMutexLocker locker(&m_saveContactMutex);
   
-  return false;
+  if (!contact) {
+    error = QContactManager::BadArgumentError;
+    return false;
+  }
+
+  bool ok = false;
+  
+  OssoABookContact *aContact = NULL;
+  const char *uid;
+  EBook *book;
+  {
+    OssoABookRoster* roster = reinterpret_cast<OssoABookRoster*>(m_abookAgregator);
+    book = osso_abook_roster_get_book(roster);
+  }
+  
+  // Conver QContact to AContact
+  aContact = convert(contact);
+  if (!aContact){
+    error = QContactManager::UnspecifiedError;
+    return false;
+  }  
+
+  // ASync => Sync
+  QEventLoop loop;
+  connect(this, SIGNAL(savingJobDone()), &loop, SLOT(quit()));
+
+  // Prepare shared data
+  cbSharedData sd;
+  sd.that = this;
+  sd.result = &ok;
+  
+  // Add/Commit the contact
+  uid = CONST_CHAR(e_contact_get_const(E_CONTACT (aContact), E_CONTACT_UID)); 
+  if (uid) {
+    osso_abook_contact_async_commit(aContact, book, commitContactCB, &sd);
+  } else {
+    osso_abook_contact_async_add(aContact, book, addContactCB, &sd);
+  }
+  
+  loop.exec(QEventLoop::AllEvents|QEventLoop::WaitForMoreEvents);
+  
+  return ok;
 }
 
 EBookQuery* QContactABook::convert(const QContactFilter& filter) const
@@ -401,14 +465,7 @@ EBookQuery* QContactABook::convert(const QContactFilter& filter) const
 } 
 
 QContact* QContactABook::convert(EContact *eContact) const
-{  
-/*  
-  QContactFamily
-  QContactGeolocation
-  QContactSyncTarget
-  QContactTimestamp
-*/
-
+{
   QContact *contact = new QContact();
   QList<QContactDetail*> detailList;
   
@@ -420,8 +477,6 @@ QContact* QContactABook::convert(EContact *eContact) const
   QContactAddress* address;
   foreach(address, addressList)
     detailList << address;
-  
-  /* Anniversary -NOT SUPPORTED IN MAEMO5- */
   
   /* Avatar */
   detailList << createAvatarDetail(eContact);
@@ -435,12 +490,8 @@ QContact* QContactABook::convert(EContact *eContact) const
   foreach(email, emailList)
     detailList << email;
   
-  /* Family -NOT SUPPORTED IN MAEMO5- */
-  
   /* Gender */
   detailList << createGenderDetail(eContact);
-  
-  /* Geo -NOT SUPPORTED IN MAEMO5- */
  
   /* Global UID*/
   detailList << createGuidDetail(eContact);
@@ -453,7 +504,6 @@ QContact* QContactABook::convert(EContact *eContact) const
   detailList << createNoteDetail(eContact);
   
   /* Online Account */
-  
   QList<QContactOnlineAccount*> onlineAccountList = createOnlineAccountDetail(eContact);
   QContactOnlineAccount* onlineAccount;
   foreach(onlineAccount, onlineAccountList)
@@ -608,7 +658,14 @@ QList<QContactAddress*> QContactABook::createAddressDetail(EContact *eContact) c
     }
     
     // Set Address Values
-    GList *v = e_vcard_attribute_get_values(attr);
+    GList *v = NULL;
+    v =e_vcard_attribute_get_values(attr);
+    if (!v)
+      qFatal("ADR attribute data is corrupted"); 
+    if (g_list_length(v) != 7){
+      g_list_free(v);
+      qCritical() << "ADR attribute data is corrupted"; 
+    }
     int i = 0;
     while (v){
       map[addressFields[i]] = QString::fromLatin1(CONST_CHAR(v->data));
@@ -668,7 +725,7 @@ QList<QContactEmailAddress*> QContactABook::createEmailDetail(EContact *eContact
 {
   QList<QContactEmailAddress*> rtnList;
   
-  GList* attrList = osso_abook_contact_get_attributes(eContact, EVC_EMAIL);
+  GList* attrList = osso_abook_contact_get_attributes(eContact, EVC_EMAIL); //FIXME MemLeak
   while(attrList){
     QContactEmailAddress *email = new QContactEmailAddress;
     QVariantMap map;
@@ -756,9 +813,17 @@ QContactGender* QContactABook::createGenderDetail(EContact *eContact) const
 {
   QContactGender* rtn = new QContactGender;
   QVariantMap map;
-  const char* gender = CONST_CHAR(osso_abook_contact_get_value(eContact, "X-GENDER"));
+  const char* g = CONST_CHAR(osso_abook_contact_get_value(eContact, "X-GENDER"));
+  QString gender = QString::fromLatin1(g);
+  if (gender == "male")
+    gender = "Male";
+  else if (gender == "female")
+    gender = "Female";
+  else if (gender == "unspecified")
+    gender = "Unspecified";
+  
   map[QContactGender::FieldGender] = gender;
-  FREE(gender);
+  FREE(g);
   setDetailValues(map, rtn);
   return rtn;
 }  
@@ -1001,7 +1066,350 @@ QContactUrl* QContactABook::createUrlDetail(EContact *eContact) const
    return rtn;
 }
 
-OssoABookContact* QContactABook::convert(QContact *contact) const
+static void addAttributeToAContact(const OssoABookContact* contact,
+                                   const QString& attrName, const QStringList& attrValues, 
+				   const QString& paramName = QString(), const QStringList& paramValues = QStringList(),
+				   bool overwrite = true)
 {
-  Q_UNUSED(contact);
+  EVCard *vcard = E_VCARD (contact);
+  EVCardAttribute *attr = NULL;
+  EVCardAttributeParam* param = NULL;
+  
+  QCM5_DEBUG << "Adding attribute" << attrName << "AttrValues:" << attrValues
+             << "ParamName:" << paramName << "ParamValues:" << paramValues;
+  
+  if (overwrite)
+  {
+    GList *attributeList = e_vcard_get_attributes(vcard);
+
+    for (GList *node = attributeList; node != NULL; node = g_list_next (node)) {
+      EVCardAttribute* eAttr = (EVCardAttribute*)node->data;
+      
+      // Skip attribute if current one != attrName
+      QString eAttrName = QString::fromLatin1(e_vcard_attribute_get_name(eAttr));
+      if (eAttrName != attrName)
+	continue;
+      
+      // Select the current EVCard Attribute if it contains the same parameters of
+      // attribute we want to modify/add
+      int matchedParams = 0;
+      GList* p = NULL;
+      p = e_vcard_attribute_get_param(eAttr, qPrintable(paramName));
+
+      while (p){
+	foreach(QString paramV, paramValues){
+	  QString value = CONST_CHAR(p->data);
+	  if (paramV != value)
+	    ++matchedParams;
+        }
+        p = p->next;
+      }
+      g_list_free(p);
+      if (matchedParams == paramValues.count()) {
+	attr = eAttr;
+	break;
+      }    
+    }
+  }
+  
+  if (attr) {
+    // Clean attribute values
+    e_vcard_attribute_remove_values(attr);
+  } else {
+    // Create Attribute with right parameters
+    attr = e_vcard_attribute_new(NULL, qPrintable(attrName));
+    if (!paramName.isEmpty()){
+      param = e_vcard_attribute_param_new(qPrintable(paramName));
+      
+      foreach(QString paramV, paramValues)
+        e_vcard_attribute_param_add_value(param, qPrintable(paramV));
+
+      e_vcard_attribute_add_param(attr, param);
+    }
+    // Save the attribute to the VCard
+    e_vcard_add_attribute(vcard, attr);
+  }
+  
+  // Add values to the attribute
+  foreach(QString attrV, attrValues) {
+    e_vcard_attribute_add_value(attr, qPrintable(attrV));
+  }
+  
+  // Debugging
+  {
+    const char* dbgStr = e_vcard_to_string(vcard, EVC_FORMAT_VCARD_30);
+    QCM5_DEBUG << "Modified VCard" << dbgStr;
+    FREE(dbgStr);
+  }
+}
+
+OssoABookContact* QContactABook::convert(const QContact *contact) const
+{
+  Q_CHECK_PTR(contact);
+  
+  OssoABookContact* rtn;
+  
+  // Get aContact if it exists or create a new one if it doesn't
+  QContactLocalId id = contact->localId();
+  QCM5_DEBUG << "Converting QContact id:" << id << " to aContact";
+  if (id){
+    rtn = getAContact(id);
+  } else {
+    rtn = osso_abook_contact_new();
+  }
+  
+  QList<QContactDetail> allDetails = contact->details();
+  foreach(const QContactDetail &detail, allDetails){
+    QString definitionName = detail.definitionName();
+    
+    QCM5_DEBUG << "Saving" << definitionName;
+    
+    //QContactDisplayLabel::DefinitionName
+    if (definitionName == QContactAddress::DefinitionName){
+      setAddressDetail(rtn, detail);
+    } else
+    if (definitionName == QContactAvatar::DefinitionName){
+      setAvatarDetail(rtn, detail);
+    } else
+    if (definitionName == QContactBirthday::DefinitionName){
+      setBirthdayDetail(rtn, detail);
+    } else
+    if (definitionName == QContactEmailAddress::DefinitionName){
+      setEmailDetail(rtn, detail);
+    } else
+    if (definitionName == QContactGender::DefinitionName){
+      setGenderDetail(rtn, detail);
+    } else
+    if (definitionName == QContactName::DefinitionName){
+      setNameDetail(rtn, detail);
+    } else
+    if (definitionName == QContactNickname::DefinitionName){
+      setNicknameDetail(rtn, detail);
+    } else
+    if (definitionName == QContactNote::DefinitionName){
+      setNoteDetail(rtn, detail);
+    } else
+    if (definitionName == QContactOnlineAccount::DefinitionName){
+      setOnlineAccountDetail(rtn, detail);
+    } else
+    if (definitionName == QContactOrganization::DefinitionName){
+      setOrganizationDetail(rtn, detail);
+    } else
+    if (definitionName == QContactPhoneNumber::DefinitionName){
+      setPhoneDetail(rtn, detail);
+    } else
+    if (definitionName == QContactUrl::DefinitionName){
+      setUrlDetail(rtn, detail);
+    }
+  }  
+  
+  return rtn;
+}
+
+void QContactABook::setAddressDetail(const OssoABookContact* aContact, const QContactAddress& detail) const
+{
+  Q_CHECK_PTR(aContact);
+  
+  QStringList adrAttrValues, 
+              lblAttrValues,
+              paramValues;
+  QString paramName = "TYPE";
+  
+  // Get parameters
+  foreach(QString c, detail.contexts())
+    paramValues << c;
+  
+  // Initialize adrAttrValues;
+  for (int i=0; i < 7; ++i)
+    adrAttrValues << "";
+
+  // Fill adrAttrValues
+  QVariantMap vm = detail.values();
+  QMapIterator<QString, QVariant> i(vm);
+  while (i.hasNext()) {
+    i.next();
+    int index = -1;
+    QString key = i.key();
+      
+    if (key == QContactAddress::FieldPostOfficeBox) index = 0;
+    else if (key == "Estension") index = 1;
+    else if (key == QContactAddress::FieldStreet) index = 2;
+    else if (key == QContactAddress::FieldLocality) index = 3;
+    else if (key == QContactAddress::FieldRegion) index = 4;
+    else if (key == QContactAddress::FieldPostcode) index = 5;
+    else if (key == QContactAddress::FieldCountry) index = 6;  
+    else if (key == QContactDetail::FieldContext) continue;
+    else {
+      qWarning() << "Address contains an invalid field:" << key;
+      return;
+    }
+    
+    adrAttrValues[index] = i.value().toString();
+  }
+
+  // Fill lblAttrValues
+  QStringList labelValues;
+  labelValues << adrAttrValues[1] 
+              << adrAttrValues[2]
+              << "PO Box " + adrAttrValues[0] //TODO Translation...
+              << adrAttrValues[3]
+              << adrAttrValues[4]
+              << adrAttrValues[5]
+              << adrAttrValues[6];
+  lblAttrValues << labelValues.join(", ");
+  
+  // Skip if adrAttrValues contains only empty strings
+  bool noValues = true;
+  foreach(QString s, adrAttrValues){
+    if (!s.isEmpty()){
+      noValues = false;
+      break;
+    }
+  } 
+  if (noValues)
+    return;
+  
+  // Saving LABEL and ADR attributes into the VCard
+  addAttributeToAContact(aContact, EVC_ADR, adrAttrValues, paramName, paramValues);
+  addAttributeToAContact(aContact, EVC_LABEL, lblAttrValues, paramName, paramValues);
+}
+
+//TODO 
+void QContactABook::setAvatarDetail(const OssoABookContact* aContact, const QContactAvatar& detail) const
+{
+  Q_CHECK_PTR(aContact);
+  Q_UNUSED(detail);
+}
+
+void QContactABook::setBirthdayDetail(const OssoABookContact* aContact, const QContactBirthday& detail) const
+{
+  Q_CHECK_PTR(aContact);
+  
+  QStringList attrValues;
+  attrValues << detail.value(QContactBirthday::FieldBirthday);
+  
+  addAttributeToAContact(aContact, EVC_BDAY, attrValues);
+}
+
+void QContactABook::setEmailDetail(const OssoABookContact* aContact, const QContactEmailAddress& detail) const
+{
+  Q_CHECK_PTR(aContact);
+  QStringList attrValues,
+              paramValues;
+  QString paramName = "TYPE";
+  
+  foreach(QVariant v, detail.values())
+    attrValues << v.toString();
+  
+  foreach(QString c, detail.contexts())
+    paramValues << c;
+  
+  addAttributeToAContact(aContact, EVC_EMAIL, attrValues, paramName, paramValues);
+}
+
+void QContactABook::setGenderDetail(const OssoABookContact* aContact, const QContactGender& detail) const
+{
+  Q_CHECK_PTR(aContact);
+  
+  QStringList attrValues;
+  attrValues << detail.value(QContactGender::FieldGender).toLower();
+  
+  addAttributeToAContact(aContact, "X-GENDER", attrValues);
+}
+
+void QContactABook::setNameDetail(const OssoABookContact* aContact, const QContactName& detail) const
+{
+  Q_CHECK_PTR(aContact);
+  
+  QStringList attrValues;
+  // Save First and Last name in the N vcard attribute
+  {  
+    QStringList supportedDetailValues;
+    supportedDetailValues << QContactName::FieldFirst << QContactName::FieldLast;
+  
+    foreach(QString key, supportedDetailValues){
+      attrValues << detail.value(key);
+    }
+  
+    //REMOVE ME - We don't want to support custom label
+    if (attrValues[0].isEmpty()){
+      qWarning() << "QContactName::FieldFirst is empty";
+      attrValues[0] = detail.customLabel();
+    }
+  
+    addAttributeToAContact(aContact, EVC_N, attrValues);
+  }
+  
+  // Save Fist + Last name in the FN card attribute
+  {
+    attrValues << attrValues.join(" ");
+    addAttributeToAContact(aContact, EVC_FN, attrValues);
+  }
+}
+
+void QContactABook::setNicknameDetail(const OssoABookContact* aContact, const QContactNickname& detail) const
+{
+  Q_CHECK_PTR(aContact);
+  
+  QStringList attrValues;
+  attrValues << detail.value(QContactNickname::FieldNickname);
+  
+  addAttributeToAContact(aContact, EVC_NICKNAME, attrValues);
+}
+
+void QContactABook::setNoteDetail(const OssoABookContact* aContact, const QContactNote& detail) const
+{
+  Q_CHECK_PTR(aContact);
+  
+  QStringList attrValues;
+  attrValues << detail.value(QContactNote::FieldNote);
+  
+  addAttributeToAContact(aContact, EVC_NOTE, attrValues);
+}
+
+//TODO
+void QContactABook::setOnlineAccountDetail(const OssoABookContact* aContact, const QContactOnlineAccount& detail) const
+{
+  Q_CHECK_PTR(aContact);
+  Q_UNUSED(detail)
+}
+
+void QContactABook::setOrganizationDetail(const OssoABookContact* aContact, const QContactOrganization& detail) const
+{
+  Q_CHECK_PTR(aContact);
+  
+  QStringList attrValues;
+  attrValues << detail.value(QContactOrganization::FieldTitle);
+  
+  addAttributeToAContact(aContact, EVC_ORG, attrValues);
+}
+
+void QContactABook::setPhoneDetail(const OssoABookContact* aContact, const QContactPhoneNumber& detail) const
+{
+  Q_CHECK_PTR(aContact);
+  QStringList attrValues,
+              paramValues;
+  QString paramName = "TYPE";
+  
+  foreach(QVariant v, detail.values())
+    attrValues << v.toString();
+  
+  foreach(QString c, detail.contexts())
+    paramValues << c;
+  
+  // Avoid unsupported type
+  if (paramValues.isEmpty())
+    paramValues << "VOICE";
+  
+  addAttributeToAContact(aContact, EVC_TEL, attrValues, paramName, paramValues);
+}
+
+void QContactABook::setUrlDetail(const OssoABookContact* aContact, const QContactUrl& detail) const
+{
+  Q_CHECK_PTR(aContact);
+  
+  QStringList attrValues;
+  attrValues << detail.value(QContactUrl::FieldUrl);
+  
+  addAttributeToAContact(aContact, EVC_URL, attrValues);
 }
