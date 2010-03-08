@@ -20,7 +20,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QReverseGeocodingRequest
+class Q_LOCATION_EXPORT QReverseGeocodingRequest
 {
     friend class QGeoNetworkManager;
 

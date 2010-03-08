@@ -58,7 +58,7 @@ class QMapMarker;
 * maps are then used to determine which map objects need to be shown in the current
 * view port.
 */
-class QMapView : public QGraphicsWidget
+class Q_LOCATION_EXPORT QMapView : public QGraphicsWidget
 {
     Q_OBJECT
 

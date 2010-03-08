@@ -22,7 +22,7 @@ QTM_BEGIN_NAMESPACE
 /*!
 * This class represents a geocoding request.
 */
-class QGeocodingRequest
+class Q_LOCATION_EXPORT QGeocodingRequest
 {
     friend class QGeoNetworkManager;
 

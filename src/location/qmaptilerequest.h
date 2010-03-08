@@ -24,7 +24,7 @@ QTM_BEGIN_NAMESPACE
 * This class represents a request for a specific map tile. By definition, a map is
 * divided into 2^currZoomLevel columns and 2^currZoomLevel rows of tiles.
 */
-class QMapTileRequest
+class Q_LOCATION_EXPORT QMapTileRequest
 {
 public:
     QMapTileRequest(const MapVersion& mapVersion,

@@ -25,7 +25,7 @@ QTM_BEGIN_NAMESPACE
 * geocoding reply and as contained in \ref QGeoLocation.
 * @see QGeocodingReply
 */
-class QAddress
+class Q_LOCATION_EXPORT QAddress
 {
     friend class QGeocodingXmlHandler;
 

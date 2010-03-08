@@ -27,7 +27,7 @@ QTM_BEGIN_NAMESPACE
 * This is the base class representing a route request from a given source to
 * a given destination.
 */
-class QRouteRequest
+class Q_LOCATION_EXPORT QRouteRequest
 {
     friend class QGeoNetworkManager;
 

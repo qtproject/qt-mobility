@@ -88,7 +88,7 @@ QTM_BEGIN_NAMESPACE
 * adhere to the interface defined here and could then be easily
 * swapped into place for QGeoNetworkManager.
 */
-class QGeoEngine : public QObject
+class Q_LOCATION_EXPORT QGeoEngine : public QObject
 {
     Q_OBJECT
 

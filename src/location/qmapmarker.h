@@ -25,7 +25,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QMapMarker : public QMapObject
+class Q_LOCATION_EXPORT QMapMarker : public QMapObject
 {
     friend class QMapView;
 

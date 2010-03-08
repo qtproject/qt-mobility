@@ -26,7 +26,7 @@ QTM_BEGIN_NAMESPACE
 /*!
 * This class represents a routing response.
 */
-class QRouteReply : public QGeoReply
+class Q_LOCATION_EXPORT QRouteReply : public QGeoReply
 {
     Q_OBJECT
 

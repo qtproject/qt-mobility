@@ -37,7 +37,7 @@ QTM_BEGIN_NAMESPACE
 * communication, and it handles all mapping between
 * raw network requests/replies and geo requests/replies.
 */
-class QGeoNetworkManager : public QGeoEngine
+class Q_LOCATION_EXPORT QGeoNetworkManager : public QGeoEngine
 {
     Q_OBJECT
 

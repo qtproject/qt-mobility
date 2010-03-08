@@ -28,7 +28,7 @@ QTM_BEGIN_NAMESPACE
 * <i>QPointF</i>, the longitude represents the x coordinate, and the latitude represents
 * the y coordinate.
 */
-class QGeoCoordinateMaps
+class Q_LOCATION_EXPORT QGeoCoordinateMaps
 {
 public:
     /*!

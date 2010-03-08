@@ -26,7 +26,7 @@ QTM_BEGIN_NAMESPACE
 * This class represents a route as contained in a \ref QRouteReply.
 * A CRoute contains a collection of \ref CManeuver objects.
 */
-class QRoute
+class Q_LOCATION_EXPORT QRoute
 {
     friend class QRouteXmlHandler;
 
