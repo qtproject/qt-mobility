@@ -1112,10 +1112,26 @@ static void addAttributeToAContact(const OssoABookContact* contact,
     }
   }
   
+  // Check if attrValues contains something
+  bool noValues = true;
+  foreach(QString s, attrValues){
+    if (!s.isEmpty()){
+      noValues = false;
+      break;
+    }
+  }
+  
   if (attr) {
-    // Clean attribute values
-    e_vcard_attribute_remove_values(attr);
+    if (noValues){
+      e_vcard_remove_attribute(vcard, attr);
+      return;
+    } else {
+      e_vcard_attribute_remove_values(attr);
+    }
   } else {
+    if (noValues)
+      return;
+    
     // Create Attribute with right parameters
     attr = e_vcard_attribute_new(NULL, qPrintable(attrName));
     if (!paramName.isEmpty()){
@@ -1297,12 +1313,19 @@ void QContactABook::setEmailDetail(const OssoABookContact* aContact, const QCont
   QStringList attrValues,
               paramValues;
   QString paramName = "TYPE";
-  
-  foreach(QVariant v, detail.variantValues())
-    attrValues << v.toString();
-  
-  foreach(QString c, detail.contexts())
-    paramValues << c;
+
+  QVariantMap vm = detail.variantValues();
+  QMapIterator<QString, QVariant> i(vm);
+  while (i.hasNext()) {
+    i.next();
+    int index = -1;
+    QString key = i.key();
+      
+    if (key == QContactDetail::FieldContext)
+      paramValues << i.value().toString();
+    else
+      attrValues << i.value().toString();
+  }
   
   addAttributeToAContact(aContact, EVC_EMAIL, attrValues, paramName, paramValues);
 }
@@ -1390,12 +1413,20 @@ void QContactABook::setPhoneDetail(const OssoABookContact* aContact, const QCont
   QStringList attrValues,
               paramValues;
   QString paramName = "TYPE";
-  
-  foreach(QVariant v, detail.variantValues())
-    attrValues << v.toString();
-  
-  foreach(QString c, detail.contexts())
-    paramValues << c;
+
+  QVariantMap vm = detail.variantValues();
+  QMapIterator<QString, QVariant> i(vm);
+  while (i.hasNext()) {
+    i.next();
+    int index = -1;
+    QString key = i.key();
+    
+    if (key == QContactDetail::FieldContext ||
+        key == QContactPhoneNumber::FieldSubTypes)
+      paramValues << i.value().toString().toUpper();
+    else
+      attrValues << i.value().toString();
+  }
   
   // Avoid unsupported type
   if (paramValues.isEmpty())
