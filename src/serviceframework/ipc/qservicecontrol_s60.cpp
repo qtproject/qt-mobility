@@ -42,6 +42,7 @@
 #include "qservicecontrol_s60_p.h"
 #include "ipcendpoint_p.h"
 #include "objectendpoint_p.h"
+#include <QTimer>
 
 /* IPC based on Symbian Client-Server framework
  * This module implements the Symbian specific IPC mechanisms and related control.
@@ -50,29 +51,95 @@
 
 QTM_BEGIN_NAMESPACE
 
-class SymbianClientServerEndPoint: public QServiceIpcEndPoint
+#ifdef QT_SFW_SYMBIAN_IPC_DEBUG
+void printServicePackage(const QServicePackage& package)
+{
+    qDebug() << "QServicePackage packageType  : " << package.d->packageType;
+    qDebug() << "QServicePackage QUuid        : " << package.d->messageId;
+    qDebug() << "QServicePackage responseType : " << package.d->responseType;
+}
+#endif
+
+
+class SymbianClientEndPoint: public QServiceIpcEndPoint
 {
     Q_OBJECT
 public:
-    SymbianClientServerEndPoint(RServiceSession* session, QObject* parent = 0)
+    SymbianClientEndPoint(RServiceSession* session, QObject* parent = 0)
         : QServiceIpcEndPoint(parent), session(session)
     {
-    qDebug() << "Symbian IPC endpoint created.";
+        Q_ASSERT(session);
+        qDebug() << "Symbian IPC endpoint created.";
+        // TODO does not exist / work / may be useless.
+        // connect(session, SIGNAL(ReadyRead()), this, SLOT(readIncoming()));
+        // connect(session, SIGNAL(Disconnected()), this, SIGNAL(disconnected()));
     }
 
-    ~SymbianClientServerEndPoint()
+    ~SymbianClientEndPoint()
     {
-    qDebug() << "Symbian IPC endpoint destroyed.";
+    qDebug() << "Symbian IPC client endpoint destroyed.";
+    }
+
+    void PackageReceived(QServicePackage package)
+    {
+        qDebug() << "GTR SymbianClientEndPoint: package received. Enqueueing and emiting ReadyRead()";
+        incoming.enqueue(package);
+        emit readyRead();
     }
 
 protected:
     void flushPackage(const QServicePackage& package)
     {
-    qDebug() << "OTR flushPackage TODO";
+#ifdef QT_SFW_SYMBIAN_IPC_DEBUG
+        qDebug() << "SymbianClientEndPoint::flushPackage() for package: ";
+        printServicePackage(package);
+#endif
+        session->SendServicePackage(package);
     }
 
 private:
     RServiceSession *session;
+};
+
+
+class SymbianServerEndPoint: public QServiceIpcEndPoint
+{
+    Q_OBJECT
+public:
+    SymbianServerEndPoint(CServiceProviderServerSession* session, QObject* parent = 0)
+        : QServiceIpcEndPoint(parent), session(session)
+    {
+        qDebug() << "Symbian IPC server endpoint created.";
+        Q_ASSERT(session);
+        // CBase derived classes cannot inherit from QObject,
+        // hence manual ownershipping instead of Qt hierarchy.
+        session->SetParent(this);
+    }
+
+    ~SymbianServerEndPoint()
+    {
+        qDebug() << "Symbian IPC server endpoint destroyed.";
+    }
+
+    void packageReceived(QServicePackage package)
+    {
+        qDebug() << "GTR SymbianServerEndPoint::packageReceived, putting to queue and emiting readyread.";
+        incoming.enqueue(package);
+        emit readyRead();
+    }
+
+protected:
+    void flushPackage(const QServicePackage& package)
+    {
+#ifdef QT_SFW_SYMBIAN_IPC_DEBUG
+        qDebug() << "SymbianServerEndPoint::flushPackage() for package: ";
+        printServicePackage(package);
+#endif
+        session->SendServicePackage(package);
+    }
+
+private:
+    CServiceProviderServerSession *session;
 };
 
 QServiceControlPrivate::QServiceControlPrivate(QObject *parent)
@@ -87,7 +154,7 @@ void QServiceControlPrivate::publishServices(const QString &ident)
 #endif
     qDebug("OTR TODO change publishServices to to return value ");
     // Create service side of the Symbian Client-Server architecture.
-    CServiceProviderServer *server = new CServiceProviderServer;
+    CServiceProviderServer *server = new CServiceProviderServer(this);
     TPtrC serviceIdent(reinterpret_cast<const TUint16*>(ident.utf16()));
     TInt err = server->Start(serviceIdent);
     if (err != KErrNone) {
@@ -95,6 +162,14 @@ void QServiceControlPrivate::publishServices(const QString &ident)
     } else {
         qDebug("GTR QServiceControlPrivate::server providing service started successfully");
     }
+}
+
+void QServiceControlPrivate::processIncoming(CServiceProviderServerSession* newSession)
+{
+    qDebug("GTR Processing incoming session creation.");
+    // Create service provider-side endpoints.
+    SymbianServerEndPoint* ipcEndPoint = new SymbianServerEndPoint(newSession);
+    ObjectEndPoint* endPoint = new ObjectEndPoint(ObjectEndPoint::Service, ipcEndPoint, this);
 }
 
 QObject* QServiceControlPrivate::proxyForService(const QServiceTypeIdent &typeId, const QString &location)
@@ -119,8 +194,13 @@ QObject* QServiceControlPrivate::proxyForService(const QServiceTypeIdent &typeId
         err = session->Connect();
         i++;
     }
-    qDebug("OTR TODO (proxyForService) all following properly:");
-    SymbianClientServerEndPoint* ipcEndPoint = new SymbianClientServerEndPoint(session);
+
+    // Create IPC endpoint. In practice binds the communication session and abstracting
+    // class presenting the IPC endoint.
+    SymbianClientEndPoint* ipcEndPoint = new SymbianClientEndPoint(session);
+    // Create an active message solicitor, which listens messages from server
+    ServiceMessageListener* messageListener = new ServiceMessageListener(session, ipcEndPoint);
+    // Create object endpoint, which handles the metaobject protocol.
     ObjectEndPoint* endPoint = new ObjectEndPoint(ObjectEndPoint::Client, ipcEndPoint);
     QObject *proxy = endPoint->constructProxy(typeId);
     QObject::connect(proxy, SIGNAL(destroyed()), endPoint, SLOT(deleteLater()));
@@ -157,6 +237,27 @@ TVersion RServiceSession::Version() const
 {
     qDebug() << "RServiceSession Version()";
     return TVersion(KServerMajorVersionNumber, KServerMinorVersionNumber, KServerBuildVersionNumber);
+}
+
+void RServiceSession::SendServicePackage(const QServicePackage& aPackage)
+{
+    // Serialize the package into byte array, wrap it in descriptor,
+    // and send to service provider.
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_6);
+    out << aPackage;
+    qDebug() << "Size of package sent from client to server: " << block.count();
+    TPtrC8 ptr8((TUint8*)(block.constData()), block.size());
+    TIpcArgs args(&ptr8, &iError);
+    SendReceive(EServicePackage, args);
+    qDebug() << "OTR TODO SendPackage error handling, error code received: " << iError();
+}
+
+bool RServiceSession::MessageAvailable()
+{
+    qDebug("RServiceSession::MessageAvailable OTR TODO");
+    return false;
 }
 
 // StartServer() checks if the service is already published by someone (i.e. can be found
@@ -212,22 +313,42 @@ TInt RServiceSession::StartServer()
     return ret;
 }
 
-CServiceProviderServer::CServiceProviderServer()
-    : CServer2(EPriorityNormal), iSessionCount(0)
+void RServiceSession::ListenForPackages(TRequestStatus& aStatus)
+{
+    qDebug("GTR RServiceSession::ListenForPackages()");
+    iArgs.Set(0, &iMessageFromServer);
+    iArgs.Set(1, &iState); // TODO Not sure if needed
+    iArgs.Set(2, &iError); // TODO Not sure if needed
+    // TODO needs to be enough room for response, currently is not
+    // and also the possibility for error codes needs to be analyzed -
+    // is there need for communicating errors here.
+    SendReceive(EPackageRequest, iArgs, aStatus);
+}
+
+void RServiceSession::CancelListenForPackages()
+{
+    qDebug("RServiceSession::ListenForPackages");
+    SendReceive(EPackageRequestCancel, TIpcArgs(NULL));
+}
+
+CServiceProviderServer::CServiceProviderServer(QServiceControlPrivate* aOwner)
+    : CServer2(EPriorityNormal), iSessionCount(0), iOwner(aOwner)
 {
     qDebug("CServiceProviderServer constructor");
+    Q_ASSERT(aOwner);
 }
 
 CSession2* CServiceProviderServer::NewSessionL(const TVersion &aVersion, const RMessage2 &aMessage) const
 {
     qDebug("CServiceProviderServer::NewSessionL()");
     if (!User::QueryVersionSupported(TVersion(KServerMajorVersionNumber,
-            KServerMinorVersionNumber, KServerBuildVersionNumber), aVersion))
-        {
-        qDebug("RTR NewSessionL() Version not supported");
+                                              KServerMinorVersionNumber, KServerBuildVersionNumber), aVersion))
+    {
         User::Leave(KErrNotSupported);
-        }
-    return CServiceProviderServerSession::NewL(*const_cast<CServiceProviderServer*>(this));
+    }
+    CServiceProviderServerSession* session = CServiceProviderServerSession::NewL(*const_cast<CServiceProviderServer*>(this));
+    iOwner->processIncoming(session);
+    return session;
 }
 
 void CServiceProviderServer::IncreaseSessions()
@@ -240,7 +361,7 @@ void CServiceProviderServer::IncreaseSessions()
 
 void CServiceProviderServer::DecreaseSessions()
 {
-    iSessionCount++;
+    iSessionCount--;
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
     qDebug() << "CServiceProviderServer decremented session count to: " << iSessionCount;
 #endif
@@ -277,7 +398,7 @@ void CServiceProviderServerSession::ConstructL()
 CServiceProviderServerSession::~CServiceProviderServerSession()
 {
     qDebug("CServiceProviderServerSession destructor");
-    iServer.IncreaseSessions();
+    iServer.DecreaseSessions();
     delete iByteArray;
 }
 
@@ -286,8 +407,154 @@ void CServiceProviderServerSession::ServiceL(const RMessage2 &aMessage)
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
     qDebug() << "CServiceProviderServerSession::ServiceL for message: " << aMessage.Function();
 #endif
-    qDebug("OTR TODO, now just completing message in ServiceL without handling it.");
-    aMessage.Complete(KErrNone);
+    // TODO leaving needs to be analyzed if OK
+    switch (aMessage.Function()) 
+    {
+    case EServicePackage:
+        User::LeaveIfError(HandleServicePackageL(aMessage));
+        aMessage.Complete(KErrNone);
+        break;
+    case EPackageRequest:
+        //User::LeaveIfError(HandlePackageRequestL(aMessage));
+        // Message is completed only when we have signals to transfer.
+        HandlePackageRequestL(aMessage);
+        break;
+    case EPackageRequestCancel:
+        //User::LeaveIfError(HandlePackageRequestCancelL(aMessage));
+        HandlePackageRequestCancelL(aMessage);
+        // TODO
+        break;
+    }
+}
+
+TInt CServiceProviderServerSession::HandleServicePackageL(const RMessage2& aMessage)
+{
+    TInt ret = KErrNone;
+    // Reproduce the serialized data.
+    HBufC8* servicePackageBuf8 = HBufC8::New(aMessage.GetDesLength(0));
+    if (!servicePackageBuf8) {
+        return KErrNoMemory;
+    }
+
+    TPtr8 ptrToBuf(servicePackageBuf8->Des());
+    TRAP(ret, aMessage.ReadL(0, ptrToBuf));
+    if (ret != KErrNone) {
+        qDebug("OTR TODO HandleServicePackageL. Message read failed.");
+        //iDb->lastError().setError(DBError::UnknownError);
+        //aMessage.Write(1, LastErrorCode());
+        delete servicePackageBuf8;
+        return ret;
+    }
+
+    QByteArray byteArray((const char*)ptrToBuf.Ptr(), ptrToBuf.Length());
+    QDataStream in(byteArray);
+    QServicePackage results;
+    in >> results;
+
+#ifdef QT_SFW_SYMBIAN_IPC_DEBUG
+    qDebug() << "CServiceProviderServerSession Reproduced service package: ";
+    printServicePackage(results);
+#endif
+    iOwner->packageReceived(results);
+    return ret;
+}
+
+void CServiceProviderServerSession::SetParent(SymbianServerEndPoint *aOwner)
+{
+    iOwner = aOwner;
+}
+
+void CServiceProviderServerSession::HandlePackageRequestL(const RMessage2& aMessage)
+{
+    qDebug("HandlePackageRequestL(). Setting pending true and storing message.");
+    iMsg = aMessage;
+    iPendingPackageRequest = ETrue;
+}
+
+void CServiceProviderServerSession::HandlePackageRequestCancelL(const RMessage2& /*aMessage*/)
+{
+    qDebug("HandlePackageRequestCancelL");
+    if (iPendingPackageRequest) {
+        iMsg.Complete(KErrCancel);
+        iPendingPackageRequest = EFalse;
+    }
+}
+
+void CServiceProviderServerSession::SendServicePackage(const QServicePackage& aPackage)
+{
+    qDebug("CServiceProviderServerSession:: SendServicePackage for package: ");
+    printServicePackage(aPackage);
+    if (iPendingPackageRequest) {
+        // Serialize the package
+        QByteArray block;
+        QDataStream out(&block, QIODevice::WriteOnly);
+        out.setVersion(QDataStream::Qt_4_6);
+        out << aPackage;
+        qDebug() << "Size of package sent from server to client: " << block.count();
+        TPtrC8 ptr8((TUint8*)(block.constData()), block.size());
+
+        TPckgBuf<TInt> state(0);
+        iMsg.Write(0, ptr8);
+        // iMsg.Write(1, state); // TODO not sure if needed
+        // iMsg.Write(2, ); // TODO not sure if needed
+        iMsg.Complete(EPackageRequestComplete);
+        iPendingPackageRequest = EFalse;
+    } else {
+        qWarning("RTR SendServicePackage: service package from server to client dropped - no pending receive request.");
+    }
+}
+
+ServiceMessageListener::ServiceMessageListener(RServiceSession* aSession, SymbianClientEndPoint* aOwner)
+    : CActive(EPriorityNormal),
+    iClientSession(aSession),
+    iOwnerEndPoint(aOwner)
+{
+    Q_ASSERT(iClientSession);
+    Q_ASSERT(iOwnerEndPoint);
+    qDebug("ServiceMessageListener constructor");
+    CActiveScheduler::Add(this);
+    StartListening();
+}
+
+ServiceMessageListener::~ServiceMessageListener()
+{
+    qDebug("ServiceMessageListener destructor");
+    Cancel();
+}
+
+void ServiceMessageListener::StartListening()
+{
+    qDebug("ServiceMessageListener::StartListening");
+    iClientSession->ListenForPackages(iStatus);
+    SetActive();
+}
+
+void ServiceMessageListener::DoCancel()
+{
+    qDebug("ServiceMessageListener::DoCancel");
+    iClientSession->CancelListenForPackages();
+}
+
+void ServiceMessageListener::RunL()
+{
+    qDebug() << "ServiceMessageListener::RunL for iStatus.Int(should be 4): " << iStatus.Int();
+    if (iStatus.Int() == EPackageRequestComplete) {
+        // Client side has received a service package from server. Pass it onwards and
+        // issue new pending request.
+        qDebug() << "RunL length of the package received client side is: " << iClientSession->iMessageFromServer.Length();
+        QByteArray byteArray((const char*)iClientSession->iMessageFromServer.Ptr(),
+                             iClientSession->iMessageFromServer.Length());
+        QDataStream in(byteArray);
+        QServicePackage results;
+        in >> results;
+
+#ifdef QT_SFW_SYMBIAN_IPC_DEBUG
+        qDebug() << "ServiceMessageListener Reproduced service package: ";
+        printServicePackage(results);
+#endif
+        iOwnerEndPoint->PackageReceived(results);
+        StartListening();
+    }
 }
 
 #include "moc_qservicecontrol_s60_p.cpp"
