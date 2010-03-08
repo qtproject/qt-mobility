@@ -366,6 +366,13 @@ void LiblocationWrapper::stop() {
     }
 }
 
+bool     LiblocationWrapper::isActive() {
+    if(locationState & LiblocationWrapper::Started)
+        return true;
+    else
+        return false;
+}
+
 #include "moc_liblocationwrapper_p.cpp"
 QTM_END_NAMESPACE
 

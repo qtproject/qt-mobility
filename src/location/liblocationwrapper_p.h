@@ -76,6 +76,7 @@ public:
     bool inited();
     QGeoPositionInfo position();
     bool fixIsValid();
+    bool isActive();
     QList<QGeoSatelliteInfo> satellitesInView();
     QList<QGeoSatelliteInfo> satellitesInUse();
 
