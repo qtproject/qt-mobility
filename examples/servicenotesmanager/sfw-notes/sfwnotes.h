@@ -46,13 +46,12 @@
 #include <QObject>
 #include <QDateTime>
 #include <qmobilityglobal.h>
-#ifdef Q_OS_SYMBIAN
-#include "ui_sfwnotes.h"
-#else
-#include "ui_sfwnotes.h"
-#endif
 
-#include "note.h"
+//#ifdef Q_OS_SYMBIAN
+//#include "ui_sfwnotes.h"
+//#else
+#include "ui_sfwnotes.h"
+//#endif
 
 QTM_BEGIN_NAMESPACE
 class QServiceManager;
@@ -83,9 +82,9 @@ private:
     void unregisterExampleServices();
 
     QServiceManager *serviceManager;
-    QObject *notesObject;
+    QObject *notesManager;
 
-    QList<Note*> ret;
+    QList<QObject*> ret;
 
     QString searchWord;
     int currentNote;

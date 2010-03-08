@@ -69,7 +69,7 @@ ToDoTool::~ToDoTool()
 
 void ToDoTool::soundAlarm(const QDateTime& alarm)
 {
-    QString message = notesObject->property("alarmMessage").toString();
+    QString message = notesManager->property("alarmMessage").toString();
 
     QMessageBox msgBox;
     msgBox.setWindowTitle("Alert");
@@ -85,17 +85,17 @@ void ToDoTool::init()
     filter.setServiceName("NotesManagerService");
     QList<QServiceInterfaceDescriptor> list = serviceManager->findInterfaces(filter);
 
-    notesObject = mgr.loadInterface(list[0]);
+    notesManager = mgr.loadInterface(list[0]);
 
-    if (notesObject)
-        notesObject->setParent(this);
+    if (notesManager)
+        notesManager->setParent(this);
 
     {
         currentNote = 1;
         searchWord = "";    
         refreshList();
 
-        QObject::connect(notesObject, SIGNAL(soundAlarm(QDateTime)), 
+        QObject::connect(notesManager, SIGNAL(soundAlarm(QDateTime)), 
                          this, SLOT(soundAlarm(QDateTime)));
     }
 }
@@ -117,8 +117,8 @@ void ToDoTool::unregisterExampleServices()
 
 void ToDoTool::refreshList()
 {
-        QMetaObject::invokeMethod(notesObject, "getNotes", 
-                                  Q_RETURN_ARG(QList<Note*>, ret),
+        QMetaObject::invokeMethod(notesManager, "getNotes", 
+                                  Q_RETURN_ARG(QList<QObject*>, ret),
                                   Q_ARG(QString, searchWord)); 
 
         totalNotes = ret.size();
@@ -138,8 +138,13 @@ void ToDoTool::refreshNotes()
         noteLabel->setText("Click + to add a note");
     }
     else {
-        dateLabel->setText(ret[currentNote-1]->alarm().toString("yyyy-MM-dd HH:mm"));
-        noteLabel->setText(ret[currentNote-1]->message());
+        QDateTime alarm;
+        QMetaObject::invokeMethod(ret[currentNote-1], "alarm", Q_RETURN_ARG(QDateTime, alarm));
+        dateLabel->setText(alarm.toString("yyyy-MM-dd HH:mm"));
+
+        QString note;
+        QMetaObject::invokeMethod(ret[currentNote-1], "message", Q_RETURN_ARG(QString, note));
+        noteLabel->setText(note);
     }
 }
 
@@ -178,12 +183,12 @@ void ToDoTool::on_addButton_clicked()
 
             if (date.size() == 3 && time.size() == 2) {
                 QDateTime alarm = QDateTime::fromString(note.at(1)+" "+note.at(2),"yyyy-MM-dd HH:mm");
-                QMetaObject::invokeMethod(notesObject, "addNote",
+                QMetaObject::invokeMethod(notesManager, "addNote",
                                           Q_ARG(QString, note.at(0)),
                                           Q_ARG(QDateTime, alarm));
             }
         } else {
-                QMetaObject::invokeMethod(notesObject, "addNote",
+                QMetaObject::invokeMethod(notesManager, "addNote",
                                           Q_ARG(QString, note.at(0)),
                                           Q_ARG(QDateTime, QDateTime::currentDateTime()));
         }
@@ -200,9 +205,10 @@ void ToDoTool::on_deleteButton_clicked()
         msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
         
         if (msgBox.exec() == QMessageBox::Ok) {
-            int index = ret[currentNote-1]->index();
+            int index;
+            QMetaObject::invokeMethod(ret[currentNote-1], "index", Q_RETURN_ARG(int, index));
 
-            QMetaObject::invokeMethod(notesObject, "removeNote", Q_ARG(int, index));
+            QMetaObject::invokeMethod(notesManager, "removeNote", Q_ARG(int, index));
             if (currentNote > 1)
                 currentNote--;
 

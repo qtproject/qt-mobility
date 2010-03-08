@@ -47,6 +47,12 @@
 #include <QSqlDatabase>
 #include <QSqlQuery>
 
+
+#ifdef DECLARATIVE     
+#include <QtDeclarative/qdeclarativelist.h>
+#include <QtDeclarative/qdeclarative.h>
+#endif
+
 #include "note.h"
 
 class NotesManager : public QObject
@@ -54,12 +60,16 @@ class NotesManager : public QObject
     Q_OBJECT
     Q_PROPERTY(QDateTime alarmTime READ getAlarmTime WRITE setAlarmTime NOTIFY soundAlarm)
     Q_PROPERTY(QString alarmMessage READ getAlarmMessage WRITE setAlarmMessage)
-    Q_PROPERTY(QDeclarativeListProperty<Note> noteSet READ noteSet)
+#ifdef DECLARATIVE     
+    Q_PROPERTY(QDeclarativeListProperty<QObject> noteSet READ noteSet)
+#endif
 
 public:
     NotesManager(QObject *parent = 0);
-    Q_INVOKABLE QList<Note*> getNotes(const QString& search=QString());
-    QDeclarativeListProperty<Note> noteSet();
+    Q_INVOKABLE QList<QObject*> getNotes(const QString& search=QString());
+#ifdef DECLARATIVE     
+    QDeclarativeListProperty<QObject> noteSet();
+#endif
 
 public slots:
     void addNote(const QString &note, const QDateTime &alarm);
@@ -69,7 +79,7 @@ public slots:
 private:
     QDateTime m_alarmTime;
     QString m_alarmMessage;
-    QList<Note *> m_notes;
+    QList<QObject *> m_notes;
     QString m_search;
 
     QDateTime getAlarmTime() const;
@@ -86,8 +96,6 @@ private slots:
 signals:
     void soundAlarm(const QDateTime &alarm);
 };
-
-QML_DECLARE_TYPE(NotesManager);
 
 #endif
 

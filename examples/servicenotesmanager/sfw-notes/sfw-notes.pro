@@ -7,8 +7,7 @@ include(../../examples.pri)
 QT += gui
 
 # Input 
-HEADERS += note.h \
-           sfwnotes.h
+HEADERS += sfwnotes.h
 SOURCES += sfwnotes.cpp \
            main.cpp
 
@@ -32,10 +31,10 @@ unix: {
 }
 
 symbian {
-    addFiles.sources = ../../notesmanagerplugin/notesmanagerservice.xml
-    addFiles.path = xmldata
-    DEPLOYMENT += addFiles
+    #addFiles.sources = ../../notesmanagerplugin/notesmanagerservice.xml
+    #addFiles.path = xmldata
+    #DEPLOYMENT += addFiles
 
-    TARGET.CAPABILITY = ALL -TCB
-    FORMS += sfwnotes.ui #change to sfwnotes_small.ui
+    #TARGET.CAPABILITY = ALL -TCB
+    #FORMS += sfwnotes.ui #change to sfwnotes_small.ui
 }

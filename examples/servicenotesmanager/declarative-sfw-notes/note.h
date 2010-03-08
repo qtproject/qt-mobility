@@ -71,7 +71,7 @@ private:
     QDateTime m_alarm;
 };
 
-QML_DECLARE_TYPE(Note)
+//QML_DECLARE_TYPE(Note)
 
 class NoteSet : public QObject
 {
@@ -89,7 +89,7 @@ private:
     QList<Note*> m_noteset;
 };
 
-QML_DECLARE_TYPE(NoteSet)
+//QML_DECLARE_TYPE(NoteSet)
 
 #endif
 

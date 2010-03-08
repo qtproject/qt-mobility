@@ -42,7 +42,6 @@
 
 #include <QObject>
 #include <QDateTime>
-#include <QtDeclarative/qdeclarative.h>
 
 class Note : public QObject
 {
@@ -70,8 +69,6 @@ private:
     QString m_message;
     QDateTime m_alarm;
 };
-
-QML_DECLARE_TYPE(Note)
 
 #endif
 

@@ -8,11 +8,11 @@ contains(mobility_modules,serviceframework) {
                bluetoothtransferplugin \
                notesmanagerplugin \
                servicebrowser \
-               #servicenotesmanager/sfw-notes
+               servicenotesmanager/sfw-notes
     
     contains(QT_CONFIG, declarative) {
-        SUBDIRS += servicenotesmanager/declarative-sfw-notes 
-                  #declarative-sfw-dialer
+        SUBDIRS += servicenotesmanager/declarative-sfw-notes \
+                   declarative-sfw-dialer
     }
 }
 

@@ -10,6 +10,8 @@ QT += sql
 TARGET = serviceframework_notesmanagerplugin
 DESTDIR = .
 
+contains(QT_CONFIG, declarative):DEFINES += DECLARATIVE
+
 include(../examples.pri)
 CONFIG += mobility
 MOBILITY = serviceframework

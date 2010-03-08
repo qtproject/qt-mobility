@@ -50,7 +50,7 @@ NotesManager::NotesManager(QObject *parent)
     : QObject(parent)
 {
     m_search = "";
-    
+
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName("todoDB");
     db.open();
@@ -121,12 +121,13 @@ void NotesManager::setSearch(const QString& search)
     m_search = search;
 }
 
-QList<Note*> NotesManager::getNotes(const QString& search)
+QList<QObject*> NotesManager::getNotes(const QString& search)
 {
-    QList<Note*> list;
+    m_notes.clear();
+    setSearch(search);
 
     QString queryString = "SELECT * FROM todolist";
-    if (search != "") queryString += " WHERE notes LIKE '%" + search + "%'"; 
+    if (m_search != "") queryString += " WHERE notes LIKE '%" + m_search + "%'"; 
     queryString += " ORDER BY date";
 
     QSqlQuery query(queryString);
@@ -136,14 +137,17 @@ QList<Note*> NotesManager::getNotes(const QString& search)
         entry->setMessage(query.value(1).toString());
         entry->setAlarm(QDateTime::fromString(query.value(2).toString(), "yyyy-MM-dd HH:mm:ss"));
 
-        list << entry;
+        m_notes << entry;
     }
-    
-    return list;
+   
+    return m_notes;
 }
 
-QDeclarativeListProperty<Note> NotesManager::noteSet()
+
+#ifdef DECLARATIVE
+QDeclarativeListProperty<QObject> NotesManager::noteSet()
 {
     m_notes = getNotes(m_search);
-    return QDeclarativeListProperty<Note>(this, m_notes);
+    return QDeclarativeListProperty<QObject>(this, m_notes);
 }
+#endif

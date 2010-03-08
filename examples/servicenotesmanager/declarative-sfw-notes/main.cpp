@@ -53,7 +53,7 @@
 int main(int argc, char* argv[])
 {
     QML_REGISTER_TYPE(QtSFW,1,0,Service, ServiceWrapper);
-    QML_REGISTER_NOCREATE_TYPE(Note);
+    //QML_REGISTER_NOCREATE_TYPE(Note);
 
     QApplication app(argc, argv);
 

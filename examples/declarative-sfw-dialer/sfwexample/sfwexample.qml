@@ -125,8 +125,8 @@ Rectangle {
     //! [0]
 
     //! [1]
-    Connection {
-        sender: dialScreen
+    Connections {
+        target: dialScreen
         signal: "stateChanged()"
         script: { 
             if (dialScreen.currentDialer.state == 1) {
