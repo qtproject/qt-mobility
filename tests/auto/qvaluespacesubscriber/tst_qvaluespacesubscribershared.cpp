@@ -526,43 +526,23 @@ void tst_QValueSpaceSubscriber::testPathChanges()
                   << "double" << "float" << "QChar";
 
     QCOMPARE(subscriber.path(), QLatin1String("/"));
-    #if defined( Q_OS_SYMBIAN) || defined (Q_OS_LINUX)
-        QVERIFY(subscriber.subPaths().toSet().contains(rootPaths.toSet()));
-    #else
-        QCOMPARE(subscriber.subPaths().toSet(), rootPaths.toSet());
-    #endif
+    QVERIFY(subscriber.subPaths().toSet().contains(rootPaths.toSet()));
 
     subscriber.cd("home");
     QCOMPARE(subscriber.path(), QLatin1String("/home"));
-    #if defined(Q_OS_SYMBIAN) || defined(Q_OS_LINUX)
-        QVERIFY(subscriber.subPaths().toSet().contains(homePaths.toSet()));
-    #else
-        QCOMPARE(subscriber.subPaths().toSet(), homePaths.toSet());
-    #endif
+    QVERIFY(subscriber.subPaths().toSet().contains(homePaths.toSet()));
 
     subscriber.cd("user");
     QCOMPARE(subscriber.path(), QLatin1String("/home/user"));
-    #if defined(Q_OS_SYMBIAN) || defined(Q_OS_LINUX)
-        QVERIFY(subscriber.subPaths().toSet().contains(homeUserPaths.toSet()));
-    #else
-        QCOMPARE(subscriber.subPaths().toSet(), homeUserPaths.toSet());
-    #endif
+    QVERIFY(subscriber.subPaths().toSet().contains(homeUserPaths.toSet()));
 
     subscriber.cdUp();
     QCOMPARE(subscriber.path(), QLatin1String("/home"));
-    #if defined(Q_OS_SYMBIAN) || defined(Q_OS_LINUX)
-        QVERIFY(subscriber.subPaths().toSet().contains(homePaths.toSet()));
-    #else
-        QCOMPARE(subscriber.subPaths().toSet(), homePaths.toSet());
-    #endif
+    QVERIFY(subscriber.subPaths().toSet().contains(homePaths.toSet()));
 
     subscriber.cd("/home/user");
     QCOMPARE(subscriber.path(), QLatin1String("/home/user"));
-    #ifdef Q_OS_SYMBIAN
-        QVERIFY(subscriber.subPaths().toSet().contains(homeUserPaths.toSet()));
-    #else
-        QCOMPARE(subscriber.subPaths().toSet(), homeUserPaths.toSet());
-    #endif
+    QVERIFY(subscriber.subPaths().toSet().contains(homeUserPaths.toSet()));
 }
 
 void tst_QValueSpaceSubscriber::contentsChanged_data()
