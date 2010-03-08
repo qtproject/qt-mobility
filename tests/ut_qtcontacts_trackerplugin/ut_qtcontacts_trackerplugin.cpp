@@ -1486,6 +1486,38 @@ void ut_qtcontacts_trackerplugin::updateIMContactStatus(const QString& uri, QStr
     inserter.waitForFinished();
 }
 
+void ut_qtcontacts_trackerplugin::testMergeTwoOnlineContacts()
+{
+    QList<QContact> contacts;
+    for( int i = 0; i < 3; i++ )
+    {
+        unsigned int contactid = 555+i;
+        insertContact(QString("contact:") + QString::number(contactid),
+            contactid, QString::number(contactid)+ "@ovi.com", "nco:presence-status-available", QString("/org/freedesktop/fake/account/%1").arg(contactid),"ovi.com");
+        QContact c = contact(contactid, QStringList()<<QContactOnlineAccount::DefinitionName);
+        contacts << c;
+    }
+    QContactRelationship rel;
+    rel.setFirst(contacts.at(0).id());
+    rel.setSecond(contacts.at(1).id());
+    QContactRelationship rel2;
+    rel2.setFirst(contacts.at(0).id());
+    rel2.setSecond(contacts.at(2).id());
+    
+    QContactRelationshipSaveRequest req;
+    //TODO adding rel2 to the following causes segfault
+    req.setRelationships(QList<QContactRelationship>()<<rel);
+    QVERIFY(trackerEngine->startRequest(&req));
+    trackerEngine->waitForRequestFinished(&req, 1000);
+    QVERIFY(req.isFinished());
+    QVERIFY(QContactManager::NoError == req.error());
+    
+    QList<QContactOnlineAccount> onlineAccounts = contacts.at(0).details<QContactOnlineAccount>();
+    qDebug() << onlineAccounts.size();
+    QEXPECT_FAIL("", "Do net yet support merging multiple im contacts", Continue);
+    QVERIFY(onlineAccounts.size() == 2);
+}
+
 void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
 {
     if( !QFileInfo(PATH_TO_SPARQL_TESTS).exists() )
