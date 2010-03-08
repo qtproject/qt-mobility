@@ -205,7 +205,12 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     
     //fields = defns[contactType][QContactAnniversary::DefinitionName].fields()
     //fields.remove(QContactAnniversary::FieldCalendarId);
-    
+
+    fields = defns[contactType][QContactOnlineAccount::DefinitionName].fields();
+    fields.remove(QContactOnlineAccount::FieldAccountUri);
+    fields.remove(QContactOnlineAccount::FieldSubTypes);
+    defns[contactType][QContactOnlineAccount::DefinitionName].setFields(fields);
+      
     fields = defns[contactType][QContactOrganization::DefinitionName].fields();
     fields.remove(QContactOrganization::FieldAssistantName);
     fields.remove(QContactOrganization::FieldDepartment);
