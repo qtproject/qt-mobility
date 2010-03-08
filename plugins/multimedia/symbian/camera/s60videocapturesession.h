@@ -198,11 +198,11 @@ private:
     QUrl m_sink;
     QList<QSize> m_resolutions;
     mutable TCameraInfo m_info; // information about camera
-    CVideoRecorderUtility *m_videoRecorder;
-    QHash<QString, VideoControllerData> m_videoControllerMap;
+    CVideoRecorderUtility *m_videoRecorder;    
     QVideoEncoderSettings m_videoSettings;
     TVideoCaptureState m_captureState;
     QString m_container;
+    QHash<QString, VideoControllerData> m_videoControllerMap;
     QHash<QString, QList<TSupportedFrameRatePictureSize> > m_codecList;
 };
 

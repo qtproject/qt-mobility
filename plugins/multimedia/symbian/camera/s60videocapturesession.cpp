@@ -67,41 +67,8 @@ const int KSymbianImageQualityCoefficient = 25;
 _LIT8(KCameraTemp,"test data");
 #endif
 
-_LIT(KVideoDummyMpg, "c:\\data\\temp");
-
 _LIT8(KMimeTypeH263, "video/H263-2000");
-// Baseline Profile
-_LIT8(KMimeTypeH263BaselineProfile, "video/H263-2000; profile=0");
-// Profile 3; Version 2 Interactive and Streaming Wireless Profile
-_LIT8(KMimeTypeH263Profile3, "video/H263-2000; profile=3");
-// MPEG-4 profile & level ID added after ; e.g. "video/mp4v-es; profile-level-id=8"
-_LIT8(KMimeTypeMPEG4V, "video/mp4v-es");
-_LIT8(KMimeTypeMPEG4VSP, "video/mp4v-es; profile-level-id=");
-_LIT8(KMimeTypeMPEG4VSPL0, "video/mp4v-es; profile-level-id=8");
-_LIT8(KMimeTypeMPEG4VSPL0B, "video/mp4v-es; profile-level-id=9");
-_LIT8(KMimeTypeMPEG4VSPL1, "video/mp4v-es; profile-level-id=1");
-_LIT8(KMimeTypeMPEG4VSPL2, "video/mp4v-es; profile-level-id=2");
-_LIT8(KMimeTypeMPEG4VSPL3, "video/mp4v-es; profile-level-id=3");  // MPEG-4 Visual Simple Profile Level 3
-_LIT8(KMimeTypeMPEG4VSPL4, "video/mp4v-es; profile-level-id=4");  // MPEG-4 Visual Simple Profile Level 4    
-
-/*
-_LIT8(KMimeTypeMPEG4V, "video/H264"); 
-_LIT8(KMimeTypeMPEG4V, "video/H264; profile-level-id=42800A"); 
-_LIT8(KMimeTypeMPEG4V, "video/H264; profile-level-id=42900B");
-_LIT8(KMimeTypeMPEG4V, "video/H264; profile-level-id=42800B");
-_LIT8(KMimeTypeMPEG4V, "video/H264; profile-level-id=42800C");
-_LIT8(KMimeTypeMPEG4V, "video/H264; profile-level-id=42800D");
-_LIT8(KMimeTypeMPEG4V, "video/H264; profile-level-id=428014");
-_LIT8(KMimeTypeMPEG4V, "video/H264; profile-level-id=428015");
-_LIT8(KMimeTypeMPEG4V, "video/H264; profile-level-id=428016");
-_LIT8(KMimeTypeMPEG4V, "video/H264; profile-level-id=42801E");
-_LIT8(KMimeTypeMPEG4V, "video/H264; profile-level-id=42801F");
-_LIT8(KMimeTypeMPEG4V, "video/H264; profile-level-id=428020");
-_LIT8(KMimeTypeMPEG4V, "video/H264; profile-level-id=428028");
-*/
-const uint KMaxBitrateMP4 = 8000000;
-const uint KMaxBitrateH264 = 10000000;
-const uint KMaxBitrateH263 = 8000000;
+_LIT8(KMimeTypeMPEG4VSPL4, "video/mp4v-es; profile-level-id=4");   
 
 S60VideoCaptureSession::S60VideoCaptureSession(QObject *parent)
     : QObject(parent)
@@ -173,16 +140,14 @@ QList<QSize> S60VideoCaptureSession::supportedVideoResolutions()
         
         foreach (QString codecName, formatMap().keys()) {
             int codecIndex = formatMap().value(codecName);
-            CCamera::TFormat format = static_cast<CCamera::TFormat>( codecIndex );
-            CCamera *camera = m_cameraEngine->Camera();
-    
+            CCamera::TFormat format = static_cast<CCamera::TFormat>( codecIndex );   
             TUint32 videoFormatsSupported = m_info.iVideoFrameFormatsSupported;
     
             if (videoFormatsSupported&format) {
                 CCamera *camera = m_cameraEngine->Camera();
                 for (int i=0; i < m_info.iNumVideoFrameSizesSupported; i++) {
                     TSize size;
-                    camera->EnumerateVideoFrameSizes(size,i, format );
+                    camera->EnumerateVideoFrameSizes(size,i, format);
                     QSize qSize(size.iWidth, size.iHeight);
                     if (!list.contains(qSize))
                         list << QSize(size.iWidth, size.iHeight);
@@ -200,9 +165,9 @@ QList<QSize> S60VideoCaptureSession::supportedVideoResolutions()
 
 QList<QSize> S60VideoCaptureSession::supportedVideoResolutions(const QVideoEncoderSettings &settings)
 {
-    //qDebug() << "S60VideoCaptureSession::supportedVideoResolutions(const QVideoEncoderSettings &settings) START";    
+    //qDebug() << "S60VideoCaptureSession::supportedVideoResolutions(const QVideoEncoderSettings &settings) START";     
     QList<QSize> supportedFrameSizes;    
-    
+
     if (settings.codec().isEmpty())        
         return supportedFrameSizes;   
     if (!m_codecList.keys().contains(settings.codec()))
@@ -213,20 +178,20 @@ QList<QSize> S60VideoCaptureSession::supportedVideoResolutions(const QVideoEncod
     if (settings.frameRate() == 0.0) {
         foreach(TSupportedFrameRatePictureSize size, list) {            
             supportedFrameSizes << size.frameSize;
-        }                    
+        }          
     }else {
         foreach(TSupportedFrameRatePictureSize size, list) {            
             if (qFuzzyCompare(size.frameRate,settings.frameRate()))
                 supportedFrameSizes << size.frameSize;
         }
     } 
-    
+#ifdef S60_DEVVIDEO_RECORDING_SUPPORTED      
     QList<QSize> cameraSupportedFrameSizes = supportedVideoResolutions();
     foreach(QSize frameSize, supportedFrameSizes) {
         if (!cameraSupportedFrameSizes.contains(frameSize))
             supportedFrameSizes.removeAll(frameSize);
-    }        
-    
+    }                
+#endif // S60_DEVVIDEO_RECORDING_SUPPORTED    
     #ifdef Q_CC_NOKIAX86
     supportedFrameSizes << QSize(50, 50);
     supportedFrameSizes << QSize(100, 100);
@@ -266,17 +231,15 @@ QList<qreal> S60VideoCaptureSession::supportedVideoFrameRates()
         
         foreach (QString codecName, formatMap().keys()) {
             int codecIndex = formatMap().value(codecName);
-            CCamera::TFormat format = static_cast<CCamera::TFormat>( codecIndex );
-            CCamera *camera = m_cameraEngine->Camera();
-    
+            CCamera::TFormat format = static_cast<CCamera::TFormat>( codecIndex );    
             TUint32 videoFormatsSupported = m_info.iVideoFrameFormatsSupported;
     
             if (videoFormatsSupported&format) {
                 CCamera *camera = m_cameraEngine->Camera();
                 for (int i=0; i < m_info.iNumVideoFrameRatesSupported; i++) {
                     TReal32 rate;
-                    TInt maxSizeIndex;
-                    camera->EnumerateVideoFrameRates(rate, i,format, maxSizeIndex);
+                    TInt maxSizeIndex=0;
+                    camera->EnumerateVideoFrameRates(rate, i,format, maxSizeIndex);                    
                     if (!list.contains(rate)) {
                         if (rate > 0.0)
                             list << rate;
@@ -287,7 +250,7 @@ QList<qreal> S60VideoCaptureSession::supportedVideoFrameRates()
     }
     #ifdef Q_CC_NOKIAX86
     list << 30.0 << 25.0 << 15.0 << 10.0 << 5.0;
-    #endif
+    #endif    
     return list;
 }
 
@@ -303,7 +266,7 @@ QList<qreal> S60VideoCaptureSession::supportedVideoFrameRates(const QVideoEncode
         return supportedFrameRates;
         
     QList<TSupportedFrameRatePictureSize> list = m_codecList[settings.codec()];    
-    
+
     if (settings.resolution().isEmpty()) {
         foreach(TSupportedFrameRatePictureSize size, list)            
             supportedFrameRates << size.frameRate;        
@@ -313,12 +276,13 @@ QList<qreal> S60VideoCaptureSession::supportedVideoFrameRates(const QVideoEncode
                 supportedFrameRates << size.frameRate;     
         }
     } 
+#ifdef S60_DEVVIDEO_RECORDING_SUPPORTED        
     QList<qreal> cameraSupportedFrameRates = supportedVideoFrameRates();
     foreach(qreal frameRate, supportedFrameRates) {
         if (!cameraSupportedFrameRates.contains(frameRate))
             supportedFrameRates.removeAll(frameRate);
-    }        
-    
+    }           
+#endif // S60_DEVVIDEO_RECORDING_SUPPORTED       
     #ifdef Q_CC_NOKIAX86
     supportedFrameRates << 30.0 << 25.0 << 15.0 << 10.0 << 5.0;
     #endif
@@ -412,13 +376,11 @@ void S60VideoCaptureSession::startRecording()
         TUid formatUid(TUid::Uid(m_videoControllerMap[m_container].formatUid));        
         
         TPtrC16 str(reinterpret_cast<const TUint16*>(m_videoSettings.codec().utf16()));
-        qDebug()<< "S60VideoCaptureSession::startRecording START, m_captureState ="<<m_videoSettings.codec();
-        HBufC8* codec;
+        HBufC8* codec(NULL);
         TRAPD(error, codec = CnvUtfConverter::ConvertFromUnicodeToUtf8L(str));
         setError(error);
-        CleanupStack::PushL(codec);                
-        TRAPD(err, m_videoRecorder->OpenFileL(sink, cameraHandle, controllerUid, formatUid, KMimeTypeH263BaselineProfile, KMMFFourCCCodeAAC));
-        //TRAPD(err, m_videoRecorder->OpenFileL(sink, cameraHandle, controllerUid, formatUid, *codec, KMMFFourCCCodeAAC));        
+        CleanupStack::PushL(codec);        
+        TRAPD(err, m_videoRecorder->OpenFileL(sink, cameraHandle, controllerUid, formatUid, *codec, KMMFFourCCCodeAAC));        
         setError(err);
         CleanupStack::PopAndDestroy(codec);
         m_captureState = EInitialized;
@@ -435,13 +397,11 @@ void S60VideoCaptureSession::pauseRecording()
 {
  //qDebug()<< "S60VideoCaptureSession::pauseRecording";
     if (m_captureState == ERecording) {
-  //  qDebug()<< "S60VideoCaptureSession::pauseRecording - if (m_captureState == ERecording)";
         TRAPD(err, m_videoRecorder->PauseL());
         setError(err);
         m_captureState = EPaused;
         emit stateChanged(m_captureState);
-    } else if (m_captureState == EPaused) {
-  //  qDebug()<< "S60VideoCaptureSession::pauseRecording - else if (m_captureState == EPaused)";
+    } else if (m_captureState == EPaused) {  
         TRAPD(err, m_videoRecorder->Record());
         setError(err);
         m_captureState = ERecording;
@@ -666,8 +626,7 @@ void S60VideoCaptureSession::initializeVideoCaptureSettings()
     qreal minRate = 30.0;
     foreach (qreal rate, rates)
         minRate = qMin(minRate, rate);
-    //m_videoSettings.setFrameRate(minRate);
-    m_videoSettings.setFrameRate(30.0);
+    m_videoSettings.setFrameRate(minRate);    
     
     QSize minResolution(176, 144);
     m_videoSettings.setResolution(minResolution);
@@ -680,7 +639,7 @@ void S60VideoCaptureSession::initializeVideoCaptureSettings()
 
 void S60VideoCaptureSession::MvruoOpenComplete(TInt aError)
 {
-    qDebug() << "S60VideoCaptureSession::MvruoOpenComplete, error: " << aError;
+    //qDebug() << "S60VideoCaptureSession::MvruoOpenComplete, error: " << aError;
     if(aError==KErrNone) {        
         commitVideoEncoderSettings();            
         m_videoRecorder->Prepare();
@@ -763,8 +722,7 @@ void S60VideoCaptureSession::doPopulateVideoCodecsDataL()
     for (int i = 0; i < encs.Count(); i++ ) {
         //qDebug()<<"************************************************";
         //qDebug()<<"Get info for encoder 0x%08x"<<encs[i].iUid; 
-        CVideoEncoderInfo *einfo = mDvr->VideoEncoderInfoLC(encs[i]);            
-        //output formats    
+        CVideoEncoderInfo *einfo = mDvr->VideoEncoderInfoLC(encs[i]);         
         const RPointerArray<CCompressedVideoFormat> &vformts=einfo->SupportedOutputFormats();        
         for(int x=0; x<vformts.Count(); x++) {  
             duplicate = false;
@@ -778,7 +736,7 @@ void S60VideoCaptureSession::doPopulateVideoCodecsDataL()
             }             
             if (duplicate)  
                 continue;
-            //max picture rate, fps, bitrate        
+                    
             const RArray<TPictureRateAndSize> &rsz=einfo->MaxPictureRates();
             TSupportedFrameRatePictureSize data;            
             for(int j=0; j<rsz.Count(); j++) {                
@@ -793,7 +751,48 @@ void S60VideoCaptureSession::doPopulateVideoCodecsDataL()
     }
     CleanupStack::PopAndDestroy(&encs);
     CleanupStack::PopAndDestroy(mDvr);
-#endif  // S60_DEVVIDEO_RECORDING_SUPPORTED   
+#else // S60_DEVVIDEO_RECORDING_SUPPORTED
+    m_codecList.clear();
+    
+    QList<qreal> frameRates = supportedVideoFrameRates();
+    QList<QSize> frameSizes = supportedVideoResolutions();  
+     
+    qreal low, high = 0;
+    bool more = false;
+    if (frameRates.count() > 1) {    
+        more = true;
+        if (frameRates[0] == 15.0) {
+            low = frameRates[0];
+        }
+        else {
+            high = frameRates[0];
+            low = frameRates[1];
+        }
+    }
+    else {
+        low = frameRates[0];
+    }
+    QList<TSupportedFrameRatePictureSize> list;
+    TSupportedFrameRatePictureSize data;
+    
+    foreach(QSize size, frameSizes) {        
+            data.frameSize = size;
+            if ((size == QSize(640, 480)) && more) {
+                data.frameRate = high;                
+            }else {
+                data.frameRate = low;                
+            }
+            list << data;
+        }    
+    m_codecList[QString::fromUtf8((char *)KMimeTypeMPEG4VSPL4().Ptr(),KMimeTypeMPEG4VSPL4().Length())] = list;
+    QMutableListIterator<TSupportedFrameRatePictureSize> i(list); 
+    while (i.hasNext()) {
+        TSupportedFrameRatePictureSize val = i.next();
+        if (val.frameSize.width() > 176)             
+            i.remove();        
+    }      
+    m_codecList[QString::fromUtf8((char *)KMimeTypeH263().Ptr(),KMimeTypeH263().Length())] = list;   
+#endif  // S60_DEVVIDEO_RECORDING_SUPPORTED    
 }
 
 QStringList S60VideoCaptureSession::supportedVideoContainers()

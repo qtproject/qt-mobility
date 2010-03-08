@@ -113,8 +113,7 @@ QCamera::CaptureMode S60CameraControl::captureMode() const
 }
 
 void S60CameraControl::setCaptureMode(QCamera::CaptureMode mode)
-{
-    //TODO: set capture mode for session
+{    
     if (m_captureMode != mode) {
         m_captureMode = mode;        
         emit captureModeChanged(mode);
