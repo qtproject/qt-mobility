@@ -862,7 +862,11 @@ int QSystemNetworkInfoPrivate::locationAreaCode()
 
 QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
 {
-    return "";
+    CWInterface *primary = [CWInterface interface ];
+    if([primary power])
+        return  nsstringToQString( [primary countryCode]);
+    else
+        return "";
 }
 
 QString QSystemNetworkInfoPrivate::currentMobileNetworkCode()
