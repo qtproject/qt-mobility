@@ -120,6 +120,7 @@ class  Q_SYSINFO_EXPORT QSystemNetworkInfo : public QObject
     Q_PROPERTY(QString currentMobileNetworkCode READ currentMobileNetworkCode NOTIFY currentMobileNetworkCodeChanged)
     Q_PROPERTY(QString homeMobileCountryCode READ homeMobileCountryCode CONSTANT)
     Q_PROPERTY(QString homeMobileNetworkCode READ homeMobileNetworkCode CONSTANT)
+    Q_PROPERTY(QSystemNetworkInfo::NetworkMode currentMode READ currentMode)
 
 
 public:
@@ -154,6 +155,7 @@ public:
     Q_INVOKABLE QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
     Q_INVOKABLE static int networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
     QString macAddress(QSystemNetworkInfo::NetworkMode mode);
+    QSystemNetworkInfo::NetworkMode currentMode();
 
     int cellId();
     int locationAreaCode();
