@@ -325,8 +325,6 @@ void tst_QValueSpace::availableLayers()
 
 #ifdef Q_WS_MAEMO_5
     QVERIFY(layers.contains(QVALUESPACE_GCONF_LAYER));
-#else
-    QVERIFY(!layers.contains(QVALUESPACE_GCONF_LAYER));
 #endif
 
 #ifdef Q_WS_MAEMO_6
