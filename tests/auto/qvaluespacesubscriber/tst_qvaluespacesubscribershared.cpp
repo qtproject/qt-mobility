@@ -459,11 +459,7 @@ void tst_QValueSpaceSubscriber::testConstructor()
     QValueSpaceSubscriber *subscriber = qvariant_cast<QValueSpaceSubscriber*>(testItem);
     QCOMPARE(subscriber->parent(), (QObject*)this);
     QCOMPARE(subscriber->value(), value);
-    #if defined( Q_OS_SYMBIAN) || defined (Q_OS_LINUX)
-        QVERIFY(subscriber->subPaths().toSet().contains(subPaths.toSet()));
-    #else
-        QCOMPARE(subscriber->subPaths().toSet(), subPaths.toSet());
-    #endif
+    QVERIFY(subscriber->subPaths().toSet().contains(subPaths.toSet()));
     QCOMPARE(subscriber->path(), path);
     QCOMPARE(subscriber->value(relItemPath, 100).toInt(), expectedValue);
 }
