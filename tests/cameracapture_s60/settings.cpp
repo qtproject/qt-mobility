@@ -80,13 +80,13 @@ Settings::Settings(QMediaRecorder *mediaRecorder, QWidget *parent) :
     ui->videoQualitySlider->setRange(0, int(QtMedia::VeryHighQuality));
 
 
-    ui->videoResolutionBox->addItem(tr("Default"));
+    //ui->videoResolutionBox->addItem(tr("Default"));
     QList<QSize> supportedResolutions = mediaRecorder->supportedResolutions();
     foreach(const QSize &resolution, supportedResolutions) {
         ui->videoResolutionBox->addItem(QString("%1x%2").arg(resolution.width()).arg(resolution.height()),
                                         QVariant(resolution));
     }
-    ui->videoFramerateBox->addItem(tr("Default"));
+    //ui->videoFramerateBox->addItem(tr("Default"));
     QList<qreal> supportedFrameRates = mediaRecorder->supportedFrameRates();
     qreal rate;
     foreach(rate, supportedFrameRates) {
@@ -194,7 +194,7 @@ void Settings::selectComboBoxItem(QComboBox *box, const QVariant &value)
 
 void Settings::updateResolutions()
 {
-    QVideoEncoderSettings settings = mediaRecorder->videoSettings();
+    QVideoEncoderSettings settings; 
     settings.setCodec(boxValue(ui->videoCodecBox).toString());
 
     QList<QSize> supportedResolutions = mediaRecorder->supportedResolutions(settings);
@@ -207,7 +207,7 @@ void Settings::updateResolutions()
 
 void Settings::updateFramerates()
 {
-    QVideoEncoderSettings settings = mediaRecorder->videoSettings();
+    QVideoEncoderSettings settings;
     settings.setCodec(boxValue(ui->videoCodecBox).toString());
     settings.setResolution(boxValue(ui->videoResolutionBox).toSize());
 
