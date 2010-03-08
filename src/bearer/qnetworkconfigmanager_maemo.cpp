@@ -490,10 +490,10 @@ void QNetworkConfigurationManagerPrivate::doUpdateConfigurations(QList<Maemo::Ic
     /* Contains all known WLAN network ids (like ssid) from storage */
     QMultiHash<QByteArray, SSIDInfo* > notDiscoveredWLANConfigs;
 
-    QList<QString> all_iaps;
+    const QList<QString> all_iaps;
     Maemo::IAPConf::getAll(all_iaps);
 
-    foreach (QString iap_id, all_iaps) {
+    foreach (const QString iap_id, all_iaps) {
 	QByteArray ssid;
 
 	Maemo::IAPConf saved_ap(iap_id);

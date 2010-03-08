@@ -48,16 +48,15 @@ IMPLEMENT_READING(QCompassReading)
 
 /*!
     \class QCompassReading
-    \ingroup sensors
+    \ingroup sensors_reading
 
     \preliminary
     \brief The QCompassReading class represents one reading from a
            compass.
 
+    \section2 QCompassReading Units
     The compass returns the azimuth of the device as degrees from
-    magnetic north in a clockwise direction based on the top of the device.
-    Note that the top of the device is a fixed point and may not represent the
-    orientation that the user is holding the device in.
+    magnetic north in a clockwise direction based on the top of the UI.
     There is also a value to indicate the calibration status of the device.
     If the device is not calibrated the azimuth may not be accurate.
 
@@ -78,11 +77,12 @@ IMPLEMENT_READING(QCompassReading)
 /*!
     \property QCompassReading::azimuth
     \brief the azimuth of the device.
+
+    Measured in degrees from magnetic north in a clockwise direction based
+    the top of the UI.
+    \sa {QCompassReading Units}
 */
 
-/*!
-    Returns the azimuth of the device.
-*/
 qreal QCompassReading::azimuth() const
 {
     return d->azimuth;
@@ -101,11 +101,9 @@ void QCompassReading::setAzimuth(qreal azimuth)
     \brief the calibration level of the reading.
 
     The higher the calibration, the more accurate the measurement is.
+    \sa {QCompassReading Units}
 */
 
-/*!
-    Returns the calibration level of the reading.
-*/
 QCompassReading::CalibrationLevel QCompassReading::calibrationLevel() const
 {
     return static_cast<QCompassReading::CalibrationLevel>(d->calibrationLevel);
@@ -125,7 +123,7 @@ void QCompassReading::setCalibrationLevel(QCompassReading::CalibrationLevel cali
 
 /*!
     \class QCompassFilter
-    \ingroup sensors_helpers
+    \ingroup sensors_filter
 
     \preliminary
     \brief The QCompassFilter class is a convenience wrapper around QSensorFilter.
@@ -146,7 +144,7 @@ const char *QCompass::type("QCompass");
 
 /*!
     \class QCompass
-    \ingroup sensors_helpers
+    \ingroup sensors_type
 
     \preliminary
     \brief The QCompass class is a convenience wrapper around QSensor.

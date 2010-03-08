@@ -54,6 +54,14 @@ Rectangle {
                 content.state = "Portrait";
             else if (reading.orientation == OrientationReading.BottomDown)
                 content.state = "";
+            else if (reading.orientation == OrientationReading.RightUp)
+                content.state = "ReversePortrait";
+            else if (reading.orientation == OrientationReading.BottomUp)
+                content.state = "ReverseLandscape";
+            else if (reading.orientation == OrientationReading.FaceUp)
+                content.state = "FaceUp";
+            else if (reading.orientation == OrientationReading.FaceDown)
+                content.state = "FaceDown";
         }
     }
     Component.onCompleted: orientation.start()
@@ -63,16 +71,36 @@ Rectangle {
         transformOrigin: Item.Center
         anchors.centerIn: parent
         Text {
+            id: text
             text: "hello world"
             color: "white"
             font.pointSize: 24
             anchors.centerIn: parent
         }
 
-        states: State {
-            name: "Portrait"
-            PropertyChanges { target: content; rotation: -90 }
-        }
+        states: [
+            State {
+                name: "Portrait"
+                PropertyChanges { target: content; rotation: -90 }
+            },
+            State {
+                name: "ReversePortrait"
+                PropertyChanges { target: content; rotation: 90 }
+            },
+            State {
+                name: "ReverseLandscape"
+                PropertyChanges { target: content; rotation: 180 }
+            },
+            State {
+                name: "FaceUp"
+                PropertyChanges { target: text; text: "hello roof" }
+            },
+            State {
+                name: "FaceDown"
+                PropertyChanges { target: text; text: "hello ground" }
+            }
+        ]
+
         transitions: Transition {
             NumberAnimation { matchProperties: "rotation"; easing: "InOutQuad"; duration: 400 }
         }

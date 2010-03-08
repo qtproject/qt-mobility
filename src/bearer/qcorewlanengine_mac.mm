@@ -63,12 +63,52 @@
 #include <SystemConfiguration/SCNetworkConfiguration.h>
 QMap <QString, QString> networkInterfaces;
 
+#ifdef MAC_SDK_10_6
+@interface QNSListener : NSObject
+{
+    NSNotificationCenter *center;
+    CWInterface * currentInterface;
+}
+- (void)notificationHandler:(NSNotification *)notification;
+- (void)remove;
+@end
+
+@implementation QNSListener
+- (id) init
+{
+    [super init];
+    center = [NSNotificationCenter defaultCenter];
+    currentInterface = [CWInterface interface];
+    [center addObserver:self selector:@selector(notificationHandler:) name:kCWLinkDidChangeNotification object:nil];
+    [center addObserver:self selector:@selector(notificationHandler:) name:kCWPowerDidChangeNotification object:nil];
+
+    return self;
+}
+
+-(void)dealloc
+{
+   [center release];
+   [currentInterface release];
+   [super dealloc];
+}
+
+-(void)remove
+{
+    [center removeObserver:self];
+}
+
+- (void)notificationHandler:(NSNotification *)notification
+{
+    QTM_NAMESPACE::QCoreWlanEngine::instance()->requestUpdate();
+}
+@end
+#endif
+
 QTM_BEGIN_NAMESPACE
 
 Q_GLOBAL_STATIC(QCoreWlanEngine, coreWlanEngine)
 
 inline QString cfstringRefToQstring(CFStringRef cfStringRef) {
-//    return QString([cfStringRef UTF8String]);
     QString retVal;
     CFIndex maxLength = 2 * CFStringGetLength(cfStringRef) + 1/*zero term*/; // max UTF8
     char *cstring = new char[maxLength];
@@ -105,12 +145,30 @@ static QString qGetInterfaceType(const QString &interfaceString)
     return networkInterfaces.value(interfaceString, QLatin1String("Unknown"));
 }
 
+void networkChangeCallback(SCDynamicStoreRef/* store*/, CFArrayRef changedKeys, void *info)
+{
+    for ( long i = 0; i < CFArrayGetCount(changedKeys); i++) {
+
+        CFStringRef changed = (CFStringRef)CFArrayGetValueAtIndex(changedKeys, i);
+        if( cfstringRefToQstring(changed).contains("/Network/Global/IPv4")) {
+            QCoreWlanEngine* wlanEngine = static_cast<QCoreWlanEngine*>(info);
+            wlanEngine->requestUpdate();
+        }
+    }
+    return;
+}
+
 QCoreWlanEngine::QCoreWlanEngine(QObject *parent)
 :   QNetworkSessionEngine(parent)
 {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     getAllScInterfaces();
-    connect(&pollTimer, SIGNAL(timeout()), this, SIGNAL(configurationsChanged()));
-    pollTimer.setInterval(10000);
+    startNetworkChangeLoop();
+#ifdef MAC_SDK_10_6
+    QNSListener *listener;
+    listener = [[QNSListener alloc] init];
+#endif
+    requestUpdate();
 }
 
 QCoreWlanEngine::~QCoreWlanEngine()
@@ -216,13 +274,13 @@ void QCoreWlanEngine::connectToId(const QString &id)
         NSEnumerator *enumerator = [remNets objectEnumerator];
         CWWirelessProfile *wProfile;
         NSUInteger index=0;
-        CWNetwork *apNetwork;
+
         NSDictionary *parametersDict;
         NSArray* apArray;
 
- CW8021XProfile *user8021XProfile;
- NSError *err;
- NSMutableDictionary *params;
+        CW8021XProfile *user8021XProfile;
+        NSError *err;
+        NSMutableDictionary *params;
 
         while ((wProfile = [enumerator nextObject])) { //CWWirelessProfile
 
@@ -245,16 +303,14 @@ void QCoreWlanEngine::connectToId(const QString &id)
                 if(!err) {
 
                     for(uint row=0; row < [apArray count]; row++ ) {
-                        apNetwork = [apArray objectAtIndex:row];
+                        CWNetwork *apNetwork = [apArray objectAtIndex:row];
                         if([[apNetwork ssid] compare:[wProfile ssid]] == NSOrderedSame) {
 
                             bool result = [wifiInterface associateToNetwork: apNetwork parameters:[NSDictionary dictionaryWithDictionary:params] error:&err];
 
                             if(!result) {
-                                qWarning() <<"ERROR"<< nsstringToQString([err localizedDescription ]);
                                 emit connectionError(id, ConnectError);
                             } else {
-                                [apNetwork release];
                                 [autoreleasepool release];
                                 return;
                             }
@@ -264,7 +320,6 @@ void QCoreWlanEngine::connectToId(const QString &id)
             }
             index++;
         }
-        [apNetwork release];
 
         emit connectionError(id, InterfaceLookupError);
 #endif
@@ -339,7 +394,8 @@ QList<QNetworkConfigurationPrivate *> QCoreWlanEngine::scanForSsids(const QStrin
                     if( cpPriv->name == interfaceSsidString) {
                         cpPriv->state |=  QNetworkConfiguration::Active;
                     }
-                } else {
+                }
+                if(!cpPriv->state) {
                     if(isKnownSsid(cpPriv->serviceInterface.name(), networkSsid)) {
                         cpPriv->state =  QNetworkConfiguration::Discovered;
                     } else {
@@ -356,9 +412,6 @@ QList<QNetworkConfigurationPrivate *> QCoreWlanEngine::scanForSsids(const QStrin
                 foundConfigs.append(cpPriv);
                 [looppool release];
             }
-        } else {
-            qWarning() << "ERROR scanning for ssids" << nsstringToQString([err localizedDescription])
-                    <<nsstringToQString([err domain]);
         }
     }
     [autoreleasepool drain];
@@ -436,6 +489,61 @@ bool QCoreWlanEngine::getAllScInterfaces()
     [autoreleasepool drain];
     return true;
 }
+
+void QCoreWlanEngine::startNetworkChangeLoop()
+{
+    storeSession = NULL;
+
+    SCDynamicStoreContext dynStoreContext = { 0, this/*(void *)storeSession*/, NULL, NULL, NULL };
+    storeSession = SCDynamicStoreCreate(NULL,
+                                 CFSTR("networkChangeCallback"),
+                                 networkChangeCallback,
+                                 &dynStoreContext);
+    if (!storeSession ) {
+        qWarning() << "could not open dynamic store: error:" << SCErrorString(SCError());
+        return;
+    }
+
+    CFMutableArrayRef notificationKeys;
+    notificationKeys = CFArrayCreateMutable(NULL, 0, &kCFTypeArrayCallBacks);
+    CFMutableArrayRef patternsArray;
+    patternsArray = CFArrayCreateMutable(NULL, 0, &kCFTypeArrayCallBacks);
+
+    CFStringRef storeKey;
+    storeKey = SCDynamicStoreKeyCreateNetworkGlobalEntity(NULL,
+                                                     kSCDynamicStoreDomainState,
+                                                     kSCEntNetIPv4);
+    CFArrayAppendValue(notificationKeys, storeKey);
+    CFRelease(storeKey);
+
+    storeKey = SCDynamicStoreKeyCreateNetworkServiceEntity(NULL,
+                                                      kSCDynamicStoreDomainState,
+                                                      kSCCompAnyRegex,
+                                                      kSCEntNetIPv4);
+    CFArrayAppendValue(patternsArray, storeKey);
+    CFRelease(storeKey);
+
+    if (!SCDynamicStoreSetNotificationKeys(storeSession , notificationKeys, patternsArray)) {
+        qWarning() << "register notification error:"<< SCErrorString(SCError());
+        CFRelease(storeSession );
+        CFRelease(notificationKeys);
+        CFRelease(patternsArray);
+        return;
+    }
+    CFRelease(notificationKeys);
+    CFRelease(patternsArray);
+
+    runloopSource = SCDynamicStoreCreateRunLoopSource(NULL, storeSession , 0);
+    if (!runloopSource) {
+        qWarning() << "runloop source error:"<< SCErrorString(SCError());
+        CFRelease(storeSession );
+        return;
+    }
+
+    CFRunLoopAddSource(CFRunLoopGetCurrent(), runloopSource, kCFRunLoopDefaultMode);
+    return;
+}
+
 
 #include "moc_qcorewlanengine_mac_p.cpp"
 
