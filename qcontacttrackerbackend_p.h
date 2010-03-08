@@ -138,7 +138,8 @@ public:
     bool waitForRequestFinished(QContactAbstractRequest* req, int msecs);
 
     /* Capabilities reporting */
-    bool hasFeature(QContactManager::ManagerFeature feature) const;
+    bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const;
+
     bool filterSupported(const QContactFilter& filter) const;
     QList<QVariant::Type> supportedDataTypes() const;
 
