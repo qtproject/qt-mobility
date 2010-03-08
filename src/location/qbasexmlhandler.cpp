@@ -13,8 +13,7 @@
 
 #include "qbasexmlhandler.h"
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
 
 QBaseXmlHandler::QBaseXmlHandler() : currBox(NULL)
 {
@@ -114,4 +113,4 @@ bool QBaseXmlHandler::endElement(const QString& , const QString& , const QString
     return true;
 }
 
-}
+QTM_END_NAMESPACE

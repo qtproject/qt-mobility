@@ -22,8 +22,8 @@
 
 #include "qmapview.h"
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
+
 /*!
 * This is the abstract base class of all internal map objects. Map objects store all information
 * that is needed to generate concrete Qt:QGraphicsItem objects when they become covered by the
@@ -90,6 +90,6 @@ protected:
     quint16 z; //!< The z index, used for layering.
 };
 
-}
+QTM_END_NAMESPACE
 
 #endif

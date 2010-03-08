@@ -14,12 +14,14 @@
 #ifndef QLOCATION_BASEXMLHANDLER_H
 #define QLOCATION_BASEXMLHANDLER_H
 
+#include "qmobilityglobal.h"
+
 #include <QXmlDefaultHandler>
 #include <QList>
 #include <QRectF>
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
+
 /*!
 * This is the base class for all classes that handle the parsing of
 * a raw Qt::QNetworkReply to populate \ref QGeoReply, \ref QRouteReply and \ref QMapTileReply objects.
@@ -69,6 +71,6 @@ protected:
     QRectF* currBox; //!< A pointer to the current box for which data is being parsed.
 };
 
-}
+QTM_END_NAMESPACE
 
 #endif

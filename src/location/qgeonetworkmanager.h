@@ -28,8 +28,8 @@
 
 #define MAPTILE_MAX_ZOOMLEVEL 18
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
+
 /*!
 * This class extends \ref QGeoEngine.
 * It handles all communication with the REST servers.
@@ -273,6 +273,6 @@ private:
     QHash<QString, MapScheme> mapSchemes;
 };
 
-}
+QTM_END_NAMESPACE
 
 #endif

@@ -25,8 +25,7 @@
 #include "qmappolygon.h"
 #include "qgeocoordinatemaps.h"
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
 
 /******************************************************************************
 * QMapObject
@@ -533,4 +532,5 @@ bool QMapPolygon::intersects(const QRectF& rect) const
     return path.intersects(rect);
 }
 
-}
+QTM_END_NAMESPACE
+

@@ -18,8 +18,8 @@
 
 #include "qmaptile.h"
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
+
 /*!
 * This class represents a request for a specific map tile. By definition, a map is
 * divided into 2^currZoomLevel columns and 2^currZoomLevel rows of tiles.
@@ -145,6 +145,6 @@ private:
     MapFormat frmt;
 };
 
-}
+QTM_END_NAMESPACE
 
 #endif

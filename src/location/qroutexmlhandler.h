@@ -19,8 +19,8 @@
 #include "qroute.h"
 #include "qmaneuver.h"
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
+
 /*!
 * This class parses a returned raw Qt::QNetworkReply to populate a
 * corresponding \ref QRouteReply.
@@ -83,6 +83,6 @@ private:
     QManeuver currManeuver; //!< The current maneuver for which XML data is being parsed.
 };
 
-}
+QTM_END_NAMESPACE
 
 #endif

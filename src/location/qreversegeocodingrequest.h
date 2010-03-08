@@ -18,8 +18,7 @@
 
 #include "qgeocoordinatemaps.h"
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
 
 class QReverseGeocodingRequest
 {
@@ -72,6 +71,6 @@ private:
     QGeoCoordinateMaps coord;
 };
 
-}
+QTM_END_NAMESPACE
 
 #endif

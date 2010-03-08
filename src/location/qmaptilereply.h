@@ -22,8 +22,8 @@
 #include "qmaptilerequest.h"
 #include "qgeoreply.h"
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
+
 /*!
 * This class contains the requested map tile.
 */
@@ -60,6 +60,6 @@ private:
     QMapTileRequest req;
 };
 
-}
+QTM_END_NAMESPACE
 
 #endif

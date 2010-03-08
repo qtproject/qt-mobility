@@ -21,8 +21,8 @@
 #include "qmaptilereply.h"
 #include "qmaptilerequest.h"
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
+
 /*!
 * This class handles the caching of downloaded map tiles.
 * If no explicit base directory is provided, the cache will
@@ -168,6 +168,6 @@ private:
     quint64 lowWm; //!< Low watermark in bytes.
 };
 
-}
+QTM_END_NAMESPACE
 
 #endif

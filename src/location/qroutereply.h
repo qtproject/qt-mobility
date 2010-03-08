@@ -21,8 +21,8 @@
 #include "qroute.h"
 #include "qgeoreply.h"
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
+
 /*!
 * This class represents a routing response.
 */
@@ -89,5 +89,6 @@ private:
     QList<QRoute> rt;
 };
 
-}
+QTM_END_NAMESPACE
+
 #endif

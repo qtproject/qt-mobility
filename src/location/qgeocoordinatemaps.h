@@ -14,10 +14,12 @@
 #ifndef QLOCATION_GEOCOORDINATE_H
 #define QLOCATION_GEOCOORDINATE_H
 
+#include "qmobilityglobal.h"
+
 #include <QPointF>
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
+
 /*!
 * This class represents a geo coordinate. Longitude and latitude are expressed
 * as real values of degrees, with e.g. (13.377, 52.5161) representing Berlin,
@@ -136,6 +138,6 @@ private:
     int amNull;
 };
 
-}
+QTM_END_NAMESPACE
 
 #endif

@@ -21,8 +21,8 @@
 #include "qmapobject.h"
 #include "qgeocoordinatemaps.h"
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
+
 /*!
 * Internal representation of a polygon that has been added to the map.
 */
@@ -72,6 +72,6 @@ private:
     QPainterPath path;
 };
 
-}
+QTM_END_NAMESPACE
 
 #endif

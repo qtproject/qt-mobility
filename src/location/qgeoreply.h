@@ -14,11 +14,12 @@
 #ifndef QLOCATION_LOCATIONREPLY_H
 #define QLOCATION_LOCATIONREPLY_H
 
+#include "qmobilityglobal.h"
+
 #include <QNetworkReply>
 #include <QObject>
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
 
 /*!
 * This is the base class of all classes that represent replies
@@ -69,6 +70,6 @@ protected:
 
 };
 
-}
+QTM_END_NAMESPACE
 
 #endif

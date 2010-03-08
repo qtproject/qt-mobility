@@ -16,8 +16,7 @@
 #define GEOCODING_CODE_OK     "OK"
 #define GEOCODING_CODE_FAILED "FAILED"
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
 
 QGeocodingXmlHandler::QGeocodingXmlHandler(QGeocodingReply* codingReply) :
         reply(codingReply)
@@ -442,4 +441,5 @@ bool QGeocodingXmlHandler::endElement(const QString& namespaceURI, const QString
     return true;
 }
 
-}
+QTM_END_NAMESPACE
+

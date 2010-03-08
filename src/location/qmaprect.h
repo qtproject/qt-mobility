@@ -21,8 +21,8 @@
 #include "qmapobject.h"
 #include "qgeocoordinatemaps.h"
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
+
 /*!
 * Internal representation of a rectangle that has been added to the map.
 */
@@ -81,6 +81,6 @@ private:
     QRectF rect;
 };
 
-}
+QTM_END_NAMESPACE
 
 #endif

@@ -19,8 +19,8 @@
 
 #include "qgeocoordinatemaps.h"
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
+
 /*!
 * This class represents a maneuver as part of a route reply
 * \see QRouteReply
@@ -155,6 +155,6 @@ private:
     QList<QGeoCoordinateMaps> mPoints; //!< maneuver points
 };
 
-}
+QTM_END_NAMESPACE
 
 #endif

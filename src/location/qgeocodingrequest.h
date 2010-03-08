@@ -14,10 +14,10 @@
 #ifndef QLOCATION_GEOCODINGREQUEST_H
 #define QLOCATION_GEOCODINGREQUEST_H
 
+#include "qmobilityglobal.h"
 #include <QString>
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
 
 /*!
 * This class represents a geocoding request.
@@ -138,6 +138,6 @@ private:
     QString num;
 };
 
-}
+QTM_END_NAMESPACE
 
 #endif

@@ -20,8 +20,7 @@
 #include "qalternativeaddress.h"
 #include "qgeocoordinatemaps.h"
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
 
 /*!
 * This class represent a geo location as returned by
@@ -85,6 +84,6 @@ private:
     QAlternativeAddress altern;
 };
 
-}
+QTM_END_NAMESPACE
 
 #endif

@@ -21,8 +21,8 @@
 #include "qaddress.h"
 #include "qgeoreply.h"
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
+
 /*!
 * This class represents a geododing reply in response to a
 * previous (reverse) geocoding request.
@@ -81,6 +81,7 @@ private:
     QList<QGeoLocation> plcs;
 };
 
-}
+
+QTM_END_NAMESPACE
 
 #endif

@@ -14,8 +14,7 @@
 #include "qmaptilerequest.h"
 #include "qmaptilereply.h"
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
 
 QMapTileRequest::QMapTileRequest(const MapVersion& mapVersion,
                                  const MapScheme& mapScheme,
@@ -79,4 +78,4 @@ QMapTileReply::QMapTileReply(const QMapTileRequest& request)
 {
 }
 
-}
+QTM_END_NAMESPACE

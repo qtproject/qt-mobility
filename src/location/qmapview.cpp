@@ -36,8 +36,8 @@
 #define DEFAULT_ROUTE_DETAIL_LEVEL 20
 #define MAX_Z_LAYER 65535
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
+
 //TODO: there sometimes seems to be an infinite-loop issue with QList::clear() when map objects have been added and the zoom level is changed
 //TODO: map object selection
 
@@ -723,4 +723,7 @@ void QMapView::TileIterator::next()
         hNext = false;
 }
 
-}
+#include "moc_qmapview.cpp"
+
+QTM_END_NAMESPACE
+

@@ -28,8 +28,8 @@
 #include "qgeoengine.h"
 #include "qroute.h"
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
+
 class QMapRoute;
 class QMapRect;
 class QMapLine;
@@ -586,6 +586,6 @@ protected:
     bool panActive;
 };
 
-}
+QTM_END_NAMESPACE
 
 #endif

@@ -194,13 +194,18 @@ SOURCES += qlocationutils.cpp \
 # maps source files
 SOURCES += qbasexmlhandler.cpp \
            qgeocoding.cpp \
+           qgeocodingreply.cpp \
            qgeocodingxmlhandler.cpp \
            qgeocoordinatemaps.cpp \
+           qgeoengine.cpp \
            qgeonetworkmanager.cpp \
+           qgeoreply.cpp \
            qmapobjects.cpp \
            qmaptilerequest.cpp \
            qmaptilecache.cpp \
+           qmaptilereply.cpp \
            qmapview.cpp \
+           qroutereply.cpp \
            qroutexmlhandler.cpp \
            qrouting.cpp
 

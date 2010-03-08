@@ -17,8 +17,7 @@
 #define ROUTE_CODE_FAILED "FAILED"
 #define ROUTE_CODE_FAILED_WITH_ALTERNATIVE "FAILED WITH ALTERNATIVE"
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
 
 QRouteXmlHandler::QRouteXmlHandler(QRouteReply* routeReply) :
         reply(routeReply)
@@ -249,4 +248,5 @@ bool QRouteXmlHandler::endElement(const QString& namespaceURI, const QString& lo
     return true;
 }
 
-}
+QTM_END_NAMESPACE
+

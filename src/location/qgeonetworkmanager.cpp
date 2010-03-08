@@ -28,8 +28,7 @@
 #include "qgeocodingreply.h"
 #include "qgeocodingxmlhandler.h"
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
 
 static const int DEGREE_DECIMALS = 10;
 
@@ -399,4 +398,7 @@ void QGeoEngine::getMercatorTileIndex(const QGeoCoordinateMaps& coordinate, quin
     *row = (quint32)(y * p);
 }
 
-}
+#include "moc_qgeonetworkmanager.cpp"
+
+QTM_END_NAMESPACE
+

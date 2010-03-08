@@ -14,13 +14,15 @@
 #ifndef QLOCATION_BASE_H
 #define QLOCATION_BASE_H
 
+#include "qmobilityglobal.h"
+
 #include <QString>
 #include <QSize>
 #include <QPointF>
 #include <QPixmap>
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
+
 /*!
 * This struct represents a map version.
 */
@@ -152,6 +154,6 @@ struct MapScheme {
     QString id; //!< The id of this map scheme.
 };
 
-}
+QTM_END_NAMESPACE
 
 #endif

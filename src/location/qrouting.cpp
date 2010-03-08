@@ -14,8 +14,7 @@
 #include "qrouterequest.h"
 #include "qroutereply.h"
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
 
 //---------------------------------------------------------------------
 //QRouteRequest
@@ -278,4 +277,5 @@ QManeuver& QManeuver::operator=(const QManeuver& maneuver)
     return *this;
 }
 
-}
+QTM_END_NAMESPACE
+

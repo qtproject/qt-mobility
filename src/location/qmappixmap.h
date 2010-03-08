@@ -20,8 +20,7 @@
 #include "qmapobject.h"
 #include "qgeocoordinatemaps.h"
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
 
 /*!
 * Internal representation of a pixmap that has been added to the map.
@@ -58,6 +57,6 @@ private:
     QPointF mapTopLeft; //!< The top left coordinate, for internal use only
 };
 
-}
+QTM_END_NAMESPACE
 
 #endif

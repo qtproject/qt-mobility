@@ -21,8 +21,7 @@
 #define SET_LONGITUDE 0x01
 #define SET_LATITUDE  0x02
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
 
 QGeoCoordinateMaps::QGeoCoordinateMaps()
 {
@@ -181,5 +180,5 @@ bool QGeoCoordinateMaps::isNull() const
             );
 }
 
-}
+QTM_END_NAMESPACE
 

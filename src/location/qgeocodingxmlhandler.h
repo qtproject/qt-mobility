@@ -17,8 +17,8 @@
 #include "qbasexmlhandler.h"
 #include "qgeocodingreply.h"
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
+
 /*!
 * This class parses a returned raw Qt::QNetworkReply to populate a
 * corresponding \ref QGeocodingReply.
@@ -87,6 +87,6 @@ private:
     QGeoLocation* currPlace; //!< The current geo location for which XML data is being parsed.
 };
 
-}
+QTM_END_NAMESPACE
 
 #endif

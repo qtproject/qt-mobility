@@ -14,8 +14,7 @@
 #include "qreversegeocodingrequest.h"
 #include "qgeocodingreply.h"
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
 
 //------------------------------------------------------------------------------
 //QGeocodingRequest
@@ -170,4 +169,5 @@ bool QAddress::isEmpty() const
            sPostCode.isEmpty();
 }
 
-}
+QTM_END_NAMESPACE
+

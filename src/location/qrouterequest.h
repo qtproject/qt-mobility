@@ -21,8 +21,8 @@
 
 #include "qgeocoordinatemaps.h"
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
+
 /*!
 * This is the base class representing a route request from a given source to
 * a given destination.
@@ -219,5 +219,6 @@ private:
     QList<QGeoCoordinateMaps> stpOvers;
 };
 
-}
+QTM_END_NAMESPACE
+
 #endif

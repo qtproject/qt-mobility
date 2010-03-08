@@ -23,8 +23,8 @@
 #define DEFAULT_HIGHWATERMARK 500000000 //in bytes
 #define DEFAULT_LOWWATERMARK 400000000 //in bytes
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
+
 //TODO: thoroughly check whether LRU correctly works
 
 QMapTileCache::QMapTileCache()
@@ -231,4 +231,4 @@ void QMapTileCache::cleanup(bool force)
     }
 }
 
-}
+QTM_END_NAMESPACE

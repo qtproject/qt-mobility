@@ -21,8 +21,7 @@
 #include "qmapobject.h"
 #include "qgeocoordinatemaps.h"
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
 
 /*!
 * Internal representation of a line that has been added to the map.
@@ -73,6 +72,6 @@ private:
     QLineF line;
 };
 
-}
+QTM_END_NAMESPACE
 
 #endif

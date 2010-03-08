@@ -14,11 +14,12 @@
 #ifndef QLOCATION_ALTERNATIVEADDRESS_H
 #define QLOCATION_ALTERNATIVEADDRESS_H
 
+#include "qmobilityglobal.h"
+
 #include <QString>
 #include <QList>
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
 
 /*!
 * This class holds alternatives to an address as returned by a
@@ -111,6 +112,6 @@ private:
     QList<AltValue> lPostCode;
 };
 
-}
+QTM_END_NAMESPACE
 
 #endif

@@ -28,8 +28,8 @@
 #include "qmaptilereply.h"
 #include "qmaptile.h"
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
+
 /*! \mainpage
 * \section sec_brief_overview Brief Overview
 * The qlocation package provides wrapper classes for (reverse) geocoding requests/replies
@@ -232,6 +232,6 @@ public:
     static void getMercatorTileIndex(const QGeoCoordinateMaps& coordinate, quint16 zoomLevel, quint32* col, quint32* row);
 };
 
-}
+QTM_END_NAMESPACE
 
 #endif

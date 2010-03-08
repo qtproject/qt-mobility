@@ -23,8 +23,8 @@
 #include "qroute.h"
 #include "qmapobject.h"
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
+
 /*!
 * Internal representation of a route that has been added to the map.
 * It keeps track of all individual \ref QRouteSegment<i></i>s.
@@ -75,5 +75,7 @@ private:
     quint16 z; //!< The z index, used for layering.
 };
 
-}
+
+QTM_END_NAMESPACE
+
 #endif

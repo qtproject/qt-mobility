@@ -14,10 +14,11 @@
 #ifndef QLOCATION_ADDRESS_H
 #define QLOCATION_ADDRESS_H
 
+#include "qmobilityglobal.h"
+
 #include <QString>
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
 
 /*!
 * This class represents an address as returned by a
@@ -116,6 +117,6 @@ private:
     QString sPostCode; //!< post code field
 };
 
-}
+QTM_END_NAMESPACE
 
 #endif

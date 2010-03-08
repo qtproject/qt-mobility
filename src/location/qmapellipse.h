@@ -21,8 +21,8 @@
 #include "qmapobject.h"
 #include "qgeocoordinatemaps.h"
 
-namespace QLocation
-{
+QTM_BEGIN_NAMESPACE
+
 /*!
 * Internal representation of an ellipse that has been added to the map.
 */
@@ -76,6 +76,6 @@ private:
     QBrush b; //!< The brush used for drawing the ellipse.
 };
 
-}
+QTM_END_NAMESPACE
 
 #endif
