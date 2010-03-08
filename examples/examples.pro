@@ -7,8 +7,9 @@ contains(mobility_modules,serviceframework) {
     SUBDIRS += filemanagerplugin \
                bluetoothtransferplugin \
                notesmanagerplugin \
-               servicebrowser \
-               servicenotesmanager/sfw-notes
+               servicebrowser
+
+    !symbian:SUBDIRS+= servicenotesmanager/sfw-notes
     
     contains(QT_CONFIG, declarative) {
         SUBDIRS += servicenotesmanager/declarative-sfw-notes \
