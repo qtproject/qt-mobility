@@ -44,6 +44,7 @@
 #include <QContactManager>
 #include <QContactName>
 #include <QContactDetailFilter>
+#include <QContactPhoneNumber>
 #include <QtTest/QtTest>
 #include <QDebug>
 
@@ -236,6 +237,26 @@ void ut_qtcontacts_add::onContactFoundThenRemoveAndStop()
     waiting = false;
 }
 
+void ut_qtcontacts_add::checkSubTypes()
+{
+    QContact contact;
 
+    QContactManager* manager = getContactManager();
+
+    QContactPhoneNumber phone;
+
+    phone.setSubTypes(QContactPhoneNumber::SubTypeMobile);
+    phone.setContexts(QContactPhoneNumber::ContextHome);
+    phone.setNumber("12345");
+
+    contact.saveDetail(&phone);
+    manager->saveContact(&contact);
+
+    phone.setSubTypes(QContactPhoneNumber::SubTypeFacsimile);
+
+    contact.saveDetail(&phone);
+    manager->saveContact(&contact);
+
+}
 
 QTEST_MAIN(ut_qtcontacts_add)

@@ -355,6 +355,7 @@ void QTrackerContactSaveRequest::deletePhoneNumbers(RDFServicePtr service, const
  */
 void QTrackerContactSaveRequest::savePhoneNumbers(RDFServicePtr service, RDFVariable &var, const QList<QContactDetail> &details )
 {
+    service->setVerbosity(4); 
     RDFUpdate up;
     RDFVariable varForInsert = var.deepCopy();
     foreach(const QContactDetail& det, details)
@@ -370,7 +371,7 @@ void QTrackerContactSaveRequest::savePhoneNumbers(RDFServicePtr service, RDFVari
         // using RFC 3966 canonical URI form
         QUrl newPhone = QString("tel:%1").arg(value);
         Live<nco::PhoneNumber> ncoPhone = service->liveNode(newPhone);
-        ncoPhone->removePhoneNumber(QString("tel:%1").arg(value));
+        ncoPhone->remove();
 
         QStringList subtypes = det.value<QStringList>(QContactPhoneNumber::FieldSubTypes);
 
