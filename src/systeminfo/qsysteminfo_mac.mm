@@ -296,8 +296,8 @@ QSystemInfoPrivate::~QSystemInfoPrivate()
 QString QSystemInfoPrivate::currentLanguage() const
 {
  QString lang = QLocale::system().name().left(2);
-    if(lang.isEmpty() || lang == "C") {
-        lang = "en";
+    if(lang.isEmpty() || lang == QLatin1String("C")) {
+        lang = QLatin1String("en");
     }
     return lang;
 }
@@ -329,7 +329,7 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &p
     Q_UNUSED(parameter);
     QString errorStr = "Not Available";
     bool useDate = false;
-    if(parameter == "versionDate") {
+    if(parameter == QLatin1String("versionDate")) {
         useDate = true;
     }
     switch(type) {
@@ -598,8 +598,9 @@ void QRunLoopThread::startNetworkChangeLoop()
 
 
 QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
-        : QObject(parent), signalStrengthCache(0), defaultInterface(0)
+        : QObject(parent), signalStrengthCache(0)
 {
+     defaultInterface = "";
     qRegisterMetaType<QSystemNetworkInfo::NetworkMode>("QSystemNetworkInfo::NetworkMode");
     qRegisterMetaType<QSystemNetworkInfo::NetworkStatus>("QSystemNetworkInfo::NetworkStatus");
 #ifdef MAC_SDK_10_6
@@ -921,7 +922,7 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
         IOBluetoothHostController* controller = [IOBluetoothHostController defaultController];
         if (controller != NULL) {
             addy = [controller addressAsString];
-            mac = [addy UTF8String];
+            mac = QLatin1String([addy UTF8String]);
             mac.replace("-",":");
         }
         return mac;
@@ -965,15 +966,15 @@ void QSystemNetworkInfoPrivate::networkChanged(const QString &notification, cons
     qWarning() << __FUNCTION__ << notification;
    // runloopThread->stopLoop();
 
-    if(notification == "SSID_CHANGED_NOTIFICATION") {
+    if(notification == QLatin1String("SSID_CHANGED_NOTIFICATION")) {
         Q_EMIT networkNameChanged(QSystemNetworkInfo::WlanMode, networkName(QSystemNetworkInfo::WlanMode));
     }
 
-    if(notification == "BSSID_CHANGED_NOTIFICATION") {
+    if(notification == QLatin1String("BSSID_CHANGED_NOTIFICATION")) {
         QSystemNetworkInfo::NetworkStatus status =  networkStatus(QSystemNetworkInfo::WlanMode);
         Q_EMIT networkStatusChanged( QSystemNetworkInfo::WlanMode, status);
     }
-    if(notification == "POWER_CHANGED_NOTIFICATION") {
+    if(notification == QLatin1String("POWER_CHANGED_NOTIFICATION")) {
 #ifdef MAC_SDK_10_6
         CWInterface *wifiInterface = [CWInterface interfaceWithName:  qstringToNSString(interfaceName)];
         if([wifiInterface power]) {
@@ -1116,7 +1117,7 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
             osstatusResult = FSGetVolumeParms(actualVolume, &volumeParmeters, sizeof(volumeParmeters));
 
             QString devId = QString((char *)volumeParmeters.vMDeviceID);
-            devId = devId.prepend("/dev/");
+            devId = devId.prepend(QLatin1String("/dev/"));
             if(mountEntriesHash.value(devId) == driveVolume) {
                 if (volumeParmeters.vMServerAdr == 0) { //local drive
                     io_service_t ioService;
@@ -1285,7 +1286,7 @@ QString QSystemDeviceInfoPrivate::model()
     QString model;
       size_t sz = sizeof(modelBuffer);
       if (0 == sysctlbyname("hw.model", modelBuffer, &sz, NULL, 0)) {
-          model = modelBuffer;
+          model = QLatin1String(modelBuffer);
       }
     return  model;
 }

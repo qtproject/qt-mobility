@@ -82,7 +82,7 @@ public:
 protected:
     void activated( const QList<QVariant>& args )
     {
-        //qDebug() << signal() << "emitted.";
+        //qDebug() << signal() << "emitted." << args;
         endPoint->invokeRemote(metaIndex, args, QMetaType::Void);
     }
 private:
@@ -395,16 +395,16 @@ void ObjectEndPoint::methodCall(const QServicePackage& p)
                 not deterministic and it can actually create memory leaks 
                 in moc generated code.
             */
-
             const int numArgs = args.size();
             QVarLengthArray<void *, 32> a( numArgs+1 );
             a[0] = 0;
+
+            const QList<QByteArray> pTypes = method.parameterTypes();
             for ( int arg = 0; arg < numArgs; ++arg ) {
-                if (args[arg].isValid() ) {
-                    a[arg+1] = (void *)( args[arg].data() );
-                } else {
+                if (pTypes.at(arg) == "QVariant")
                     a[arg+1] = (void *)&( args[arg] );
-                }
+                else
+                    a[arg+1] = (void *)( args[arg].data() );
             }
 
             d->triggerConnectedSlots(service, service->metaObject(), metaIndex, a.data());
@@ -424,6 +424,7 @@ void ObjectEndPoint::methodCall(const QServicePackage& p)
             param[i] = args[i].constData();
         }
 
+
         bool result = false;
         if (returnType == QMetaType::Void && strcmp(method.typeName(), "QVariant")) {
             result = method.invoke(service,
@@ -438,9 +439,10 @@ void ObjectEndPoint::methodCall(const QServicePackage& p)
                    QGenericArgument(typenames[8], param[8]),
                    QGenericArgument(typenames[9], param[9]));
         } else {
-            QVariant returnValue;
             //result buffer
-            if (returnType != QVariant::Invalid) {
+            QVariant returnValue;
+            //ignore whether QVariant is a declared meta type or not
+            if (returnType != QVariant::Invalid && strcmp(method.typeName(), "QVariant")) {
                 returnValue = QVariant(returnType, (const void*) 0);
             }
 

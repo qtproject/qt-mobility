@@ -55,7 +55,7 @@ QTM_USE_NAMESPACE
 class UT_QVCard30Writer : public QObject
 {
      Q_OBJECT
-    
+
 private slots: // Tests
 
     void init();

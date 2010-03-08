@@ -118,10 +118,10 @@ int QServiceProxy::qt_metacall(QMetaObject::Call c, int id, void **a)
             if (variantType == QVariant::UserType)
                 variantType = QMetaType::type(t);
 
-            if (variantType == QVariant::Invalid && t == "QVariant") {
+            if (t == "QVariant") {  //ignore whether QVariant is declared as metatype
                 args << *reinterpret_cast<const QVariant(*)>(a[i+1]);
             } else if ( variantType == 0 ){
-                qWarning("%s: argument %s has unknown type",
+                qWarning("%s: argument %s has unknown type. Use qRegisterMetaType to register it.",
                         method.signature(), t.data());
                 return id;
             } else {
@@ -139,8 +139,7 @@ int QServiceProxy::qt_metacall(QMetaObject::Call c, int id, void **a)
             //invokeRemote() parameter list needs review
             QVariant result = d->endPoint->invokeRemote(metaIndex, args, 
                     returnType==0 ? returnType+1: returnType);
-
-            if (returnType != 0) {
+            if (returnType != 0 && strcmp(method.typeName(),"QVariant")) {
                 QByteArray buffer;
                 QDataStream stream(&buffer, QIODevice::ReadWrite);
                 QMetaType::save(stream, returnType, result.constData());

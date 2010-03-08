@@ -10,6 +10,7 @@
 QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QServiceFilter);
+Q_DECLARE_METATYPE(QVariant)
 
 class SharedTestService : public QObject 
 {
@@ -152,7 +153,7 @@ public:
     }
 
 
-    enum Priority { High, Low, VeryLow };
+    enum Priority { High, Low, VeryLow, ExtremelyLow };
     void setPriority(Priority p) {
         m_priority = p;
         emit priorityChanged();
@@ -178,7 +179,7 @@ public:
     void resetValue()
     {
         qDebug() << "Resetting value";
-        m_value = "<empty>";
+        m_value = "FFF";
         emit valueChanged();
     }
 
@@ -187,6 +188,7 @@ public:
     /*Q_INVOKABLE*/ UniqueTestService(QObject* parent = 0) 
         : QObject(parent), m_priority(UniqueTestService::High), m_flags(ThirdBit)
     {
+        resetValue();
     }
 
     Q_INVOKABLE QString testFunctionWithReturnValue(int input)
@@ -197,10 +199,10 @@ public:
         return output;
     }
 
-    Q_INVOKABLE QVariant testFunctionWithVariantReturnValue()
+    Q_INVOKABLE QVariant testFunctionWithVariantReturnValue(const QVariant& input)
     {
         qDebug() << "UniqueTestService::testFunctionWithVariantReturnValue()";
-        return  QVariant('4');
+        return  input;
     }
 
     Q_INVOKABLE QServiceFilter testFunctionWithCustomReturnValue()
@@ -212,9 +214,19 @@ public:
 
     }
 
+    Q_INVOKABLE uint slotConfirmation() const
+    {
+        return m_hash;
+    }
+
+    Q_INVOKABLE void setConfirmationHash(uint hash)
+    {
+        m_hash=hash;
+    }
+
 Q_SIGNALS:
     void signalWithIntParam(int);
-    void signalWithVariousParam(QVariant,QString,QServiceFilter);
+    void signalWithVariousParam(QVariant,QString,QServiceFilter,QVariant);
     void valueChanged();
     void priorityChanged();
 
@@ -241,18 +253,20 @@ public slots:
         QServiceFilter f("com.nokia.qt.ipcunittest", "6.7");
         f.setServiceName("MyService");
         qDebug() << "Emitting UniqueTestService::signalWithVariousParam()";
-        emit signalWithVariousParam( QVariant(), QString("string-value"), f );
+        emit signalWithVariousParam( QVariant(), QString("string-value"), f, QVariant(5) );
     }
 
     void testSlot() {
-        qDebug() << "UniqueTestService::testSlot() called";
+        m_hash = qHash(QString("testSlot()"));
+        qDebug() << "UniqueTestService::testSlot() called" << m_hash;
     }
     
     void testSlotWithArgs(const QByteArray& d, int a, const QVariant& variant)
     {
-        QString output("%1, %2, %3");
-        output = output.arg(d.constData()).arg(a).arg(variant.toString());
+        QString output("%1, %2, %3, %4");
+        output = output.arg(d.constData()).arg(a).arg(variant.toString()).arg(variant.isValid());
         qDebug() << "UniqueTestService::testSlotWithArgs(" << output << ") called";
+        m_hash = qHash(output);
     }
 
     void testSlotWithCustomArg(const QServiceFilter& f)
@@ -260,17 +274,20 @@ public slots:
         QString output("%1: %2 - %3.%4");
         output = output.arg(f.serviceName()).arg(f.interfaceName())
                 .arg(f.majorVersion()).arg(f.minorVersion());
-        qDebug() << "UniqueTestService::testSlotWithCustomArg(" << output << ") called";
+        m_hash = qHash(output);
+        qDebug() << "UniqueTestService::testSlotWithCustomArg(" << output << ") called" << m_hash;
     }
     
     void testSlotWithUnknownArg(const QServiceInterfaceDescriptor& )
     {
         qDebug() << "UniqueTestService::testSlotWithUnknownArg(const QServiceInterfaceDescriptor& d)";
+        m_hash = 1;
     }
 private:
     QString m_value;
     Priority m_priority;
     ServiceFlags m_flags;
+    uint m_hash;
 };
 
 void unregisterExampleService()
@@ -298,6 +315,8 @@ int main(int argc, char** argv)
     
     qRegisterMetaType<QServiceFilter>();
     qRegisterMetaTypeStreamOperators<QServiceFilter>("QServiceFilter");
+    qRegisterMetaType<QVariant>();
+    qRegisterMetaTypeStreamOperators<QVariant>("QVariant");
 
     registerExampleService();
 

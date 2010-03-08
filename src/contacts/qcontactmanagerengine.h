@@ -74,18 +74,9 @@ public:
     virtual QString managerName() const;                       // e.g. "Symbian"
     virtual QMap<QString, QString> managerParameters() const;  // e.g. "filename=private.db"
     QString managerUri() const;
-    virtual int Q_DECL_DEPRECATED implementationVersion() const; // deprecated
     virtual int managerVersion() const; // replaces the above
 
     /* Filtering */
-    virtual QList<QContactLocalId> Q_DECL_DEPRECATED contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-
-    /* Contacts - Accessors and Mutators */
-    virtual QList<QContactLocalId> Q_DECL_DEPRECATED contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-    virtual QContact Q_DECL_DEPRECATED contact(const QContactLocalId& contactId, QContactManager::Error& error) const;
-    virtual QList<QContactManager::Error> Q_DECL_DEPRECATED saveContacts(QList<QContact>* contacts, QContactManager::Error& error);  // deprecated - removed week 3
-    virtual QList<QContactManager::Error> Q_DECL_DEPRECATED removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error); // deprecated - removed week 3
-
     virtual QList<QContactLocalId> contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     virtual QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     virtual QList<QContact> contacts(const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
@@ -98,7 +89,6 @@ public:
     virtual bool removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error);
 
     /* Synthesize the display label of a contact */
-    virtual QString Q_DECL_DEPRECATED synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const; // deprecated
     virtual QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const; // replaces the above
     QContact setContactDisplayLabel(const QString& displayLabel, const QContact& contact) const;
 
@@ -127,18 +117,9 @@ public:
     virtual void requestDestroyed(QContactAbstractRequest* req);
     virtual bool startRequest(QContactAbstractRequest* req);
     virtual bool cancelRequest(QContactAbstractRequest* req);
-    virtual bool Q_DECL_DEPRECATED waitForRequestProgress(QContactAbstractRequest* req, int msecs);
     virtual bool waitForRequestFinished(QContactAbstractRequest* req, int msecs);
 
-    // the following helper functions are all deprecated and will be removed in week 3.
-    static void Q_DECL_DEPRECATED updateRequestStatus(QContactAbstractRequest* req, QContactManager::Error error, QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly = false);
-    static void Q_DECL_DEPRECATED updateRequest(QContactAbstractRequest* req, const QList<QContactLocalId>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly = false);
-    static void Q_DECL_DEPRECATED updateRequest(QContactAbstractRequest* req, const QList<QContact>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly = false);
-    static void Q_DECL_DEPRECATED updateRequest(QContactAbstractRequest* req, const QList<QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status);
-    static void Q_DECL_DEPRECATED updateRequest(QContactAbstractRequest* req, const QMap<QString, QContactDetailDefinition>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly = false);
-    static void Q_DECL_DEPRECATED updateRequest(QContactAbstractRequest* req, const QList<QContactRelationship>& result, QContactManager::Error error, const QList<QContactManager::Error>& errors, QContactAbstractRequest::Status status, bool appendOnly = false);
-
-    // they are replaced by the following functions:
+    // Async update functions
     static void updateRequestState(QContactAbstractRequest* req, QContactAbstractRequest::State state);
     static void updateContactLocalIdFetchRequest(QContactLocalIdFetchRequest* req, const QList<QContactLocalId>& result, QContactManager::Error error);
     static void updateContactFetchRequest(QContactFetchRequest* req, const QList<QContact>& result, QContactManager::Error error);
@@ -155,18 +136,14 @@ public:
     /* Capabilities reporting */
     virtual bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const;
     virtual QStringList supportedRelationshipTypes(const QString& contactType) const;
-    virtual bool Q_DECL_DEPRECATED filterSupported(const QContactFilter& filter) const; // deprecated
     virtual bool isFilterSupported(const QContactFilter& filter) const; // replaces the above
     virtual QList<QVariant::Type> supportedDataTypes() const;
     virtual QStringList supportedContactTypes() const;
  
-    /* Versions */ 
-    static Q_DECL_DEPRECATED int version(); // deprecated, remove in wk1, no replacement.
-
     /* Reports the built-in definitions from the schema */
     static QMap<QString, QMap<QString, QContactDetailDefinition> > schemaDefinitions();
 
-signals:
+Q_SIGNALS:
     void dataChanged();
     void contactsAdded(const QList<QContactLocalId>& contactIds);
     void contactsChanged(const QList<QContactLocalId>& contactIds);
@@ -186,7 +163,7 @@ public:
     static void setContactRelationships(QContact* contact, const QList<QContactRelationship>& relationships);
 
 protected:
-    void setDetailAccessConstraints(QContactDetail* detail, QContactDetail::AccessConstraints) const;
+    void setDetailAccessConstraints(QContactDetail* detail, QContactDetail::AccessConstraints constraints) const;
 
 private:
     /* QContactChangeSet is a utility class used to emit the appropriate signals */

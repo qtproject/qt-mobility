@@ -150,5 +150,37 @@ void UT_QVersitDocument::testRemoveAllProperties()
     QCOMPARE(1, mVersitDocument->properties().count());
 }
 
+void UT_QVersitDocument::testEquality()
+{
+    QVersitDocument document1;
+    QVersitDocument document2;
+    QVERIFY(document1.isEmpty());
+    QVERIFY(document1 == document2);
+    QVERIFY(!(document1 != document2));
+    QVersitProperty property;
+    property.setName(QLatin1String("FN"));
+    property.setValue(QLatin1String("John Citizen"));
+    document2.addProperty(property);
+    QVERIFY(!(document1 == document2));
+    QVERIFY(document1 != document2);
+    QVERIFY(!document2.isEmpty());
+
+    document1.addProperty(property);
+    QVERIFY(document1 == document2);
+    QVERIFY(!(document1 != document2));
+
+    document2.clear();
+    QVERIFY(document2.isEmpty());
+
+    document1.clear();
+    QVERIFY(document1 == document2);
+    QVERIFY(!(document1 != document2));
+
+    document2.setType(QVersitDocument::VCard21Type);
+    QVERIFY(!(document1 == document2));
+    QVERIFY(document1 != document2);
+    QVERIFY(!document2.isEmpty());
+}
+
 QTEST_MAIN(UT_QVersitDocument)
 

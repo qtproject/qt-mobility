@@ -316,7 +316,7 @@ QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitions(c
 
     // Remove the details we don't support
     defns[contactType].remove(QContactSyncTarget::DefinitionName);
-    defns[contactType].remove(QContactGeolocation::DefinitionName);
+    defns[contactType].remove(QContactGeoLocation::DefinitionName);
     defns[contactType].remove(QContactTimestamp::DefinitionName);
     defns[contactType].remove(QContactGuid::DefinitionName);
     defns[contactType].remove(QContactGender::DefinitionName); // ? Surprising
@@ -327,7 +327,7 @@ QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitions(c
     fields.remove(QContactAnniversary::FieldEvent);
     fields.remove(QContactAnniversary::FieldSubType);
     defns[contactType][QContactAnniversary::DefinitionName].setFields(fields);
-    
+
     // No logo for organisation
     fields = defns[contactType][QContactOrganization::DefinitionName].fields();
     fields.remove(QContactOrganization::FieldLogo);
