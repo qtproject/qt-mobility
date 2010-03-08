@@ -455,8 +455,12 @@ QMap<QString, QContactDetailDefinition> QContactTrackerEngine::detailDefinitions
 /*!
  * \reimp
  */
-bool QContactTrackerEngine::hasFeature(QContactManager::ManagerFeature feature) const
+bool QContactTrackerEngine::hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const
 {
+    if (!supportedContactTypes().contains(contactType)) {
+        return false;
+    }
+
     switch (feature) {
         case QContactManager::Groups:
         case QContactManager::ActionPreferences:
