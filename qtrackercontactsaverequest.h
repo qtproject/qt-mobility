@@ -84,6 +84,7 @@ private:
     void deletePhoneNumbers(SopranoLive::RDFServicePtr service, const SopranoLive::RDFVariable& rdfContactIn);
     void addTag(SopranoLive::RDFServicePtr service, SopranoLive::RDFVariable &var, const QString &tag);
     void createTagIfItDoesntExistAlready(SopranoLive::RDFServicePtr service, const QString &tag);
+    void findAndDelete(const QContact& contact);
 
 private:
     /*holding the data about status of async operation*/

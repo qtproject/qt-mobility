@@ -83,6 +83,11 @@ QTrackerContactSaveRequest::QTrackerContactSaveRequest(QContactAbstractRequest* 
     }
 }
 
+void QTrackerContactSaveRequest::findAndDelete(const QContact& contact)
+{
+    QStringList detailDefinitionsToSave = detailsDefinitionsInContact(contact);
+}
+
 void QTrackerContactSaveRequest::onTrackerSignal(const QList<QContactLocalId> &ids)
 {
     computeProgress(ids);
@@ -162,6 +167,7 @@ void QTrackerContactSaveRequest::saveContacts(const QList<QContact> &contacts)
             ncoContact->setContentLastModified(QDateTime::currentDateTime());
         }
         pendingContactIds.insert(contact.localId());
+        findAndDelete(contact);
 
         // if there are work related details, need to be saved to Affiliation.
         if( QTrackerContactSaveRequest::contactHasWorkRelatedDetails(contact)) {
@@ -364,6 +370,7 @@ void QTrackerContactSaveRequest::savePhoneNumbers(RDFServicePtr service, RDFVari
         // using RFC 3966 canonical URI form
         QUrl newPhone = QString("tel:%1").arg(value);
         Live<nco::PhoneNumber> ncoPhone = service->liveNode(newPhone);
+        ncoPhone->removePhoneNumber(QString("tel:%1").arg(value));
 
         QStringList subtypes = det.value<QStringList>(QContactPhoneNumber::FieldSubTypes);
 
