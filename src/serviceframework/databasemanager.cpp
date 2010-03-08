@@ -511,7 +511,7 @@ QServiceInterfaceDescriptor DatabaseManager::interfaceDefault(const QString &int
                 m_userDb->removeExternalDefaultServiceInterface(interfaceID);
 
                 QList<QServiceInterfaceDescriptor> descriptors;
-                descriptors = getInterfaces(interfaceName, UserScope);
+                descriptors = getInterfaces(QServiceFilter(interfaceName), UserScope);
 
                 //make the latest interface implementation the new
                 //default if there is one
@@ -751,7 +751,7 @@ bool DatabaseManager::openDb(DbScope scope)
             if (m_userDb->lastError().code() == DBError::NotFound) {
                 m_userDb->removeExternalDefaultServiceInterface(defaultInfo.second);
                 QList<QServiceInterfaceDescriptor> descriptors;
-                descriptors = getInterfaces(defaultInfo.first, UserScope);
+                descriptors = getInterfaces(QServiceFilter(defaultInfo.first), UserScope);
 
                 if (descriptors.count() > 0 ) {
                     descriptor = latestDescriptor(descriptors);
