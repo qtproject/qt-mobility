@@ -193,8 +193,8 @@ public:
     CaptureMode captureMode() const;
     CaptureModes supportedCaptureModes() const;
 
-    FlashMode flashMode() const;
-    void setFlashMode(FlashMode mode);
+    FlashModes flashMode() const;
+    void setFlashMode(FlashModes mode);
     FlashModes supportedFlashModes() const;
     bool isFlashReady() const;
 

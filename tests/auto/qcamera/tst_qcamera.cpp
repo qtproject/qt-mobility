@@ -143,12 +143,12 @@ public:
 
     ~MockCameraExposureControl() {}
 
-    QCamera::FlashMode flashMode() const
+    QCamera::FlashModes flashMode() const
     {
         return m_flashMode;
     }
 
-    void setFlashMode(QCamera::FlashMode mode)
+    void setFlashMode(QCamera::FlashModes mode)
     {
         if (supportedFlashModes() & mode) {
             m_flashMode = mode;
@@ -310,7 +310,7 @@ private:
     QCamera::MeteringMode m_meteringMode;
     qreal m_exposureCompensation;
     QCamera::ExposureMode m_exposureMode;
-    QCamera::FlashMode m_flashMode;
+    QCamera::FlashModes m_flashMode;
 };
 
 class MockCameraFocusControl : public QCameraFocusControl

@@ -473,16 +473,20 @@ QCamera::State QCamera::state() const
     Returns the flash mode being used.
 */
 
-QCamera::FlashMode QCamera::flashMode() const
+QCamera::FlashModes QCamera::flashMode() const
 {
     return d_func()->exposureControl ? d_func()->exposureControl->flashMode() : QCamera::FlashOff;
 }
 
 /*!
-    Set the flash mode to \a mode
+    Set the flash mode to \a mode.
+
+    Usually the single QCamera::FlashMode flag is used,
+    but some non conflicting flags combination are also allowed,
+    like QCamera::FlashManual | QCamera::FlashSlowSyncRearCurtain.
 */
 
-void QCamera::setFlashMode(QCamera::FlashMode mode)
+void QCamera::setFlashMode(QCamera::FlashModes mode)
 {
     if (d_func()->exposureControl)
         d_func()->exposureControl->setFlashMode(mode);

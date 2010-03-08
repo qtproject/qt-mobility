@@ -199,12 +199,12 @@ public:
     int digitalZoomFactor();
 
     //cameraexposurecontrol
-    void setFlashMode(QCamera::FlashMode mode);
+    void setFlashMode(QCamera::FlashModes mode);
     void setExposureMode(QCamera::ExposureMode mode);
     QCamera::ExposureMode exposureMode();
     QCamera::ExposureModes supportedExposureModes();
     QCamera::FlashModes supportedFlashModes();
-    QCamera::FlashMode flashMode();
+    QCamera::FlashModes flashMode();
     
     //cameraimageprocessingcontrol
     int contrast() const;
@@ -241,7 +241,7 @@ private:
     void updateVideoCaptureCodecsL();
     void initializeVideoCaptureSettings();
     
-    void setFlashModeL(QCamera::FlashMode mode);
+    void setFlashModeL(QCamera::FlashModes mode);
     void setExposureModeL(QCamera::ExposureMode mode);
     void saveImageL(TDesC8* aData);
 

@@ -1064,13 +1064,13 @@ int S60CameraSession::maxDigitalZoom()
     }
 }
 
-void S60CameraSession::setFlashMode(QCamera::FlashMode mode)
+void S60CameraSession::setFlashMode(QCamera::FlashModes mode)
 {
     TRAPD(err, setFlashModeL(mode));
     setError(err);
 }
 
-void S60CameraSession::setFlashModeL(QCamera::FlashMode mode)
+void S60CameraSession::setFlashModeL(QCamera::FlashModes mode)
 {
     if (m_cameraEngine) {
         CCamera *camera = m_cameraEngine->Camera();
@@ -1097,7 +1097,7 @@ void S60CameraSession::setFlashModeL(QCamera::FlashMode mode)
     }
 }
 
-QCamera::FlashMode S60CameraSession::flashMode()
+QCamera::FlashModes S60CameraSession::flashMode()
 {
     if (m_cameraEngine) {
         CCamera *camera = m_cameraEngine->Camera();

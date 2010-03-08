@@ -78,12 +78,12 @@ S60CameraExposureControl::~S60CameraExposureControl()
 }
 
 
-QCamera::FlashMode S60CameraExposureControl::flashMode() const
+QCamera::FlashModes S60CameraExposureControl::flashMode() const
 {
     return m_session->flashMode();
 }
 
-void S60CameraExposureControl::setFlashMode(QCamera::FlashMode mode)
+void S60CameraExposureControl::setFlashMode(QCamera::FlashModes mode)
 {
     QCamera::FlashModes supportedModes = supportedFlashModes();
     if (supportedModes & mode) {

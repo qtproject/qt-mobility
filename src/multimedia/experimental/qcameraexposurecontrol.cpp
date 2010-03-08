@@ -107,16 +107,20 @@ QCameraExposureControl::~QCameraExposureControl()
 
 
 /*!
-  \fn QCamera::FlashMode QCameraExposureControl::flashMode() const
+  \fn QCamera::FlashModes QCameraExposureControl::flashMode() const
 
   Returns the current flash mode.
 */
 
 
 /*!
-  \fn void QCameraExposureControl::setFlashMode(QCamera::FlashMode mode)
+  \fn void QCameraExposureControl::setFlashMode(QCamera::FlashModes mode)
 
   Set the current flash \a mode.
+
+  Usually the single QCamera::FlashMode flag is used,
+  but some non conflicting flags combination are also allowed,
+  like QCamera::FlashManual | QCamera::FlashSlowSyncRearCurtain.
 */
 
 

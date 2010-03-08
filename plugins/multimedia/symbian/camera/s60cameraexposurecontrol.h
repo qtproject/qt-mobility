@@ -59,8 +59,8 @@ public:
     S60CameraExposureControl(QObject *session, QObject *parent = 0);
     ~S60CameraExposureControl();
 
-    QCamera::FlashMode flashMode() const;
-    void setFlashMode(QCamera::FlashMode mode);
+    QCamera::FlashModes flashMode() const;
+    void setFlashMode(QCamera::FlashModes mode);
     QCamera::FlashModes supportedFlashModes() const;
     bool isFlashReady() const;
 
@@ -108,7 +108,7 @@ private:
     
     S60CameraSettings *m_advancedSettings;
     
-    QCamera::FlashMode m_flashMode;
+    QCamera::FlashModes m_flashMode;
     QCamera::ExposureMode m_exposureMode;
     QCamera::MeteringMode m_meteringMode;
     qreal m_ev;
