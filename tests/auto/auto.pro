@@ -122,12 +122,10 @@ contains(mobility_modules,multimedia) {
     symbian: {
         #symbian spesific autotests
         SUBDIRS += symbian 
+        #disable these temporary
         SUBDIRS -= \
-                qcamera_s60 \
-                qmediaplayer_s60 \
-                qradiotuner_s60 \
-                qmediaobject_s60 \
-                qmediarecorder_s60
+                qmediapluginloader \
+                qpaintervideosurface
     }
 }
 #Messaging
