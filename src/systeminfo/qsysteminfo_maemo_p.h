@@ -132,8 +132,10 @@ protected:
     void setupNetworkInfo();
 
 private Q_SLOTS:
-    void registrationStatusChanged(uchar,ushort,uint,uint,uint,uchar,uchar);
     void cellNetworkSignalStrengthChanged(uchar,uchar);
+    void networkModeChanged(int);
+    void operatorNameChanged(uchar,QString,QString,uint,uint);
+    void registrationStatusChanged(uchar,ushort,uint,uint,uint,uchar,uchar);
 
 private:
     // The index of wanted argument in the QDBusMessage which is received as a
@@ -146,12 +148,15 @@ private:
         MNC_INDEX,        // the original type of mnc argument is uint32
         MCC_INDEX         // the original type of mcc argument is uint32
     };
-    int currentCellNetworkStatus;
+
+    int cellSignalStrength;
     int currentCellId;
+    int currentCellNetworkStatus;
     int currentLac;
     QString currentMCC;
     QString currentMNC;
-    int cellSignalStrength;
+    QString currentOperatorName;
+    int radioAccessTechnology;
 };
 
 class QSystemDisplayInfoPrivate : public QSystemDisplayInfoLinuxCommonPrivate

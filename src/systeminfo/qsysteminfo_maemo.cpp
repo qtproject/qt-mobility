@@ -338,6 +338,7 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
     case QSystemNetworkInfo::CdmaMode:
     case QSystemNetworkInfo::GsmMode:
     case QSystemNetworkInfo::WcdmaMode:
+
     case QSystemNetworkInfo::WimaxMode:
         break;
         break;
@@ -358,7 +359,7 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
     case QSystemNetworkInfo::WimaxMode:
         break;
     default:
-        return QSystemNetworkInfoLinuxCommonPrivate::networkName(mode);
+        return QSystemNetworkInfoLinuxCommonPrivate::macAddress(mode);
         break;
     };
     return QString();
@@ -389,6 +390,8 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
     currentMCC = "";
     currentMNC = "";
     cellSignalStrength = 0;
+    currentOperatorName = "";
+    int radioAccessTechnology = 0;
 
 #if !defined(QT_NO_DBUS)
     QDBusConnection systemDbusConnection = QDBusConnection::systemBus();
@@ -426,7 +429,6 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
     } else {
         qWarning() << reply.errorMessage();
     }
-
     if (!systemDbusConnection.connect("com.nokia.phone.net",
                        "/com/nokia/phone/net",
                        "Phone.Net",
@@ -434,8 +436,82 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
                        this, SLOT(cellNetworkSignalStrengthChanged(uchar,uchar)))) {
         qWarning() << "unable to connect to signal_strength_change";
     }
-
+    /*
+    reply = connectionInterface.call(QLatin1String("get_operator_name"));
+    if (reply.type() == QDBusMessage::ReplyMessage) {
+        QList<QVariant> argList = reply.arguments();
+        currentOperatorName = argList.at(3).toString();
+    } else {
+        qWarning() << reply.errorMessage();
+    }
+    if (!systemDbusConnection.connect("com.nokia.phone.net",
+                       "/com/nokia/phone/net",
+                       "Phone.Net",
+                       "operator_name_change",
+                       this, SLOT(operatorNameChanged(uchar,string,string,uint,uint)))) {
+        qWarning() << "unable to connect to operator_name_change";
+    }
+    */
+    reply = connectionInterface.call(QLatin1String("get_radio_access_technology"));
+    if (reply.type() == QDBusMessage::ReplyMessage) {
+        QList<QVariant> argList = reply.arguments();
+        radioAccessTechnology = argList.at(0).toInt();
+    } else {
+        qWarning() << reply.errorMessage();
+    }
+    if (!systemDbusConnection.connect("com.nokia.phone.net",
+                       "/com/nokia/phone/net",
+                       "Phone.Net",
+                       "radio_access_technology_change",
+                       this, SLOT(networkModeChanged(int)))) {
+        qWarning() << "unable to connect to radio_access_technology_change";
+    }
 #endif
+}
+
+void QSystemNetworkInfoPrivate::cellNetworkSignalStrengthChanged(uchar var1, uchar var2)
+{
+    QSystemNetworkInfo::NetworkMode mode = QSystemNetworkInfo::UnknownMode;
+    QDBusInterface connectionInterface("com.nokia.phone.net",
+                                       "/com/nokia/phone/net",
+                                       "Phone.Net",
+                                       QDBusConnection::systemBus());
+    if (!connectionInterface.isValid()) {
+        qWarning() << "cellNetworkSignalStrengthChanged(): interface not valid";
+        return;
+    }
+    cellSignalStrength = var1;
+
+    if (radioAccessTechnology == 1)
+        mode = QSystemNetworkInfo::GsmMode;
+    if (radioAccessTechnology == 2)
+        mode = QSystemNetworkInfo::WcdmaMode;
+
+    if (mode != QSystemNetworkInfo::UnknownMode)
+        emit networkSignalStrengthChanged(mode, cellSignalStrength);
+}
+
+void QSystemNetworkInfoPrivate::networkModeChanged(int newRadioAccessTechnology)
+{
+    QSystemNetworkInfo::NetworkMode newMode = QSystemNetworkInfo::UnknownMode;
+    radioAccessTechnology = newRadioAccessTechnology;
+
+    if (radioAccessTechnology == 1)
+        newMode = QSystemNetworkInfo::GsmMode;
+    if (radioAccessTechnology == 2)
+        newMode = QSystemNetworkInfo::WcdmaMode;
+
+    if (newMode != QSystemNetworkInfo::UnknownMode)
+        emit networkModeChanged(newMode);
+}
+
+void QSystemNetworkInfoPrivate::operatorNameChanged(uchar, QString name, QString, uint, uint)
+{
+    currentOperatorName = name;
+    if (radioAccessTechnology == 1)
+        emit networkNameChanged(QSystemNetworkInfo::GsmMode, currentOperatorName);
+    if (radioAccessTechnology == 2)
+        emit networkNameChanged(QSystemNetworkInfo::WcdmaMode, currentOperatorName);
 }
 
 void QSystemNetworkInfoPrivate::registrationStatusChanged(uchar, ushort var2, uint var3, uint var4, uint var5, uchar, uchar)
@@ -462,38 +538,6 @@ void QSystemNetworkInfoPrivate::registrationStatusChanged(uchar, ushort var2, ui
         emit currentMobileNetworkCodeChanged(currentMNC);
     }
 }
-
-void QSystemNetworkInfoPrivate::cellNetworkSignalStrengthChanged(uchar var1, uchar var2)
-{
-    QSystemNetworkInfo::NetworkMode mode = QSystemNetworkInfo::UnknownMode;
-    QDBusInterface connectionInterface("com.nokia.phone.net",
-                                       "/com/nokia/phone/net",
-                                       "Phone.Net",
-                                       QDBusConnection::systemBus());
-    if (!connectionInterface.isValid()) {
-        qWarning() << "cellNetworkSignalStrengthChanged(): interface not valid";
-        return;
-    }
-    int radioAccessTechnology;
-    QDBusMessage reply = connectionInterface.call(QLatin1String("get_radio_access_technology"));
-    if (reply.type() == QDBusMessage::ReplyMessage) {
-        QList<QVariant> argList = reply.arguments();
-        radioAccessTechnology = argList.at(0).toInt();
-    } else {
-        qWarning() << reply.errorMessage();
-        return;
-    }
-    cellSignalStrength = var1;
-
-    if (radioAccessTechnology == 1)
-        mode = QSystemNetworkInfo::GsmMode;
-    if (radioAccessTechnology == 2)
-        mode = QSystemNetworkInfo::WcdmaMode;
-
-    if (mode != QSystemNetworkInfo::UnknownMode)
-        emit networkSignalStrengthChanged(mode, cellSignalStrength);
-}
-
 
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent)
         : QSystemDisplayInfoLinuxCommonPrivate(parent)
