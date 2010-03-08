@@ -100,10 +100,12 @@
 <a name="//apple_ref/cpp/instm/QVersitContactImporter/setPropertyHandler"></a>
 <h3 class="fn"><a name="setPropertyHandler"></a>void QVersitContactImporter::setPropertyHandler ( <a href="qversitcontactimporterpropertyhandler.html">QVersitContactImporterPropertyHandler</a> * <i>handler</i> )</h3>
 <p>Sets <i>handler</i> to be the handler for processing QVersitProperties, or 0 to have no handler.</p>
+<p>Does not take ownership of the handler. The client should ensure the handler remains valid for the lifetime of the exporter.</p>
 <p>See also <a href="qversitcontactimporter.html#propertyHandler">propertyHandler</a>().</p>
 <a name="//apple_ref/cpp/instm/QVersitContactImporter/setResourceHandler"></a>
 <h3 class="fn"><a name="setResourceHandler"></a>void QVersitContactImporter::setResourceHandler ( <a href="qversitresourcehandler.html">QVersitResourceHandler</a> * <i>handler</i> )</h3>
 <p>Sets <i>handler</i> to be the handler to save files with, or 0 to have no handler.</p>
+<p>Does not take ownership of the handler. The client should ensure the handler remains valid for the lifetime of the exporter.</p>
 <p>See also <a href="qversitcontactimporter.html#resourceHandler">resourceHandler</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
