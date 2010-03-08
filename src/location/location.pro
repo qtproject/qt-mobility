@@ -1,6 +1,6 @@
 TEMPLATE = lib
 TARGET = QtLocation
-QT = core
+QT = core gui xml network
 
 include(../../common.pri)
 
@@ -123,6 +123,38 @@ maemo5 {
     pkgconfig.files = QtLocation.pc
 }
 
+# maps header files - sort into public and private later
+HEADERS += qaddress.h \
+           qalternativeaddress.h \
+           qbasexmlhandler.h \
+           qgeocodingreply.h \
+           qgeocodingrequest.h \
+           qgeocodingxmlhandler.h \
+           qgeocoordinatemaps.h \
+           qgeoengine.h \
+           qgeolocation.h \
+           qgeonetworkmanager.h \
+           qgeoreply.h \
+           qmaneuver.h \
+           qmapellipse.h \
+           qmapline.h \
+           qmapmarker.h \
+           qmapobject.h \
+           qmappixmap.h \
+           qmappolygon.h \
+           qmaprect.h \
+           qmaproute.h \
+           qmaptile.h \
+           qmaptilecache.h \
+           qmaptilereply.h \
+           qmaptilerequest.h \
+           qmapview.h \
+           qreversegeocodingrequest.h \
+           qroute.h \
+           qroutereply.h \
+           qrouterequest.h \
+           qroutexmlhandler.h
+
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
 SOURCES += qlocationutils.cpp \
@@ -158,6 +190,19 @@ SOURCES += qlocationutils.cpp \
            qlandmarknamesort.cpp \
            qlandmarkdistancesort.cpp \
            qlandmarkcustomsort.cpp
+
+# maps source files
+SOURCES += qbasexmlhandler.cpp \
+           qgeocoding.cpp \
+           qgeocodingxmlhandler.cpp \
+           qgeocoordinatemaps.cpp \
+           qgeonetworkmanager.cpp \
+           qmapobjects.cpp \
+           qmaptilerequest.cpp \
+           qmaptilecache.cpp \
+           qmapview.cpp \
+           qroutexmlhandler.cpp \
+           qrouting.cpp
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB
