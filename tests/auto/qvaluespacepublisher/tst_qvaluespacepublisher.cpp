@@ -556,6 +556,15 @@ void tst_QValueSpacePublisher::threads_data()
                 << layer->id() << uint(1) << uint(10) << true;
             QTest::newRow("2 threads, 10 items, sequential")
                 << layer->id() << uint(2) << uint(10) << true;
+        } else if (layer->id() == QVALUESPACE_GCONF_LAYER) {
+            QTest::newRow("1 thread, 10 items")
+                << layer->id() << uint(1) << uint(10) << false;
+            QTest::newRow("2 threads, 10 items")
+                << layer->id() << uint(2) << uint(10) << false;
+            QTest::newRow("1 thread, 10 items, sequential")
+                << layer->id() << uint(1) << uint(10) << true;
+            QTest::newRow("2 threads, 10 items, sequential")
+                << layer->id() << uint(2) << uint(10) << true;
         } else {
             // Assume no limits on all other layers.
             QTest::newRow("1 thread, 10 items, sequential")
