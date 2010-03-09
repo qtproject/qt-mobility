@@ -397,12 +397,18 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::MemcardFeature:
         {
-
+// IOSCSIPeripheralDeviceType0E
+            if(hasIOServiceMatching("IOUSBMassStorageClass")) {
+                featureSupported = true;
+            }
         }
         break;
     case QSystemInfo::UsbFeature:
         {
-            if(hasIOServiceMatching(kIOUSBDeviceClassName)) {
+            if(hasIOServiceMatching("AppleUSBOHCI")) {
+                featureSupported = true;
+            }
+            if(hasIOServiceMatching("AppleUSBEHCI")) {
                 featureSupported = true;
             }
         }
