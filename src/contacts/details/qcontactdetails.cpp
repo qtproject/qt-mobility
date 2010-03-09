@@ -228,13 +228,13 @@ Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::DefinitionName, "PhoneNumber");
 
 /*!
    \variable QContactSyncTarget::DefinitionName
-   The constant string which identifies the definition of details which are synchronisation target stores.
+   The constant string which identifies the definition of details which are synchronization target stores.
  */
 Q_DEFINE_LATIN1_LITERAL(QContactSyncTarget::DefinitionName, "SyncTarget");
 
 /*!
    \variable QContactTimestamp::DefinitionName
-   The constant string which identifies the definition of details which are contact synchronisation timestamps.
+   The constant string which identifies the definition of details which are contact synchronization timestamps.
  */
 Q_DEFINE_LATIN1_LITERAL(QContactTimestamp::DefinitionName, "Timestamp");
 
@@ -459,7 +459,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactGuid::FieldGuid, "Guid");
    \variable QContactSyncTarget::FieldSyncTarget
 
    The constant key for which the value of the target store for
-   synchronisation is stored in details of the QContactSyncTarget type.
+   synchronization is stored in details of the QContactSyncTarget type.
  */
 Q_DEFINE_LATIN1_LITERAL(QContactSyncTarget::FieldSyncTarget, "SyncTarget");
 
@@ -1190,14 +1190,14 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
    \fn QContactSyncTarget::syncTarget() const
 
    Returns the identifier of the backend store to which the contact
-   containing this detail should be synchronised.
+   containing this detail should be synchronized.
  */
 
 /*!
    \fn QContactSyncTarget::setSyncTarget(const QString& syncTarget)
 
    Sets the identifier of the backend store to which the contact
-   containing this detail should be synchronised to \a syncTarget.
+   containing this detail should be synchronized to \a syncTarget.
  */
 
 /*!
@@ -1232,12 +1232,12 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
 
 /*!
    \fn QContactAnniversary::originalDate() const
-   Returns the original date of occurrance of the event stored in this detail.
+   Returns the original date of occurrence of the event stored in this detail.
  */
 
 /*!
    \fn QContactAnniversary::setOriginalDate(const QDate& date)
-   Sets the original date of occurrance of the event stored in this detail to \a date.
+   Sets the original date of occurrence of the event stored in this detail to \a date.
  */
 
 /*!

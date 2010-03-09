@@ -274,7 +274,7 @@ void QContactManagerData::loadFactories()
             QStringList directories;
             directories << QString("plugins/contacts") << QString("contacts") << QString("../plugins/contacts");
             foreach (const QString& dirName, directories) {
-                QString testDirPath = pluginsDir.path() + "/" + dirName;
+                QString testDirPath = pluginsDir.path() + '/' + dirName;
                 testDirPath = QDir::cleanPath(testDirPath);
                 // Use native Symbian code to check for directory existence, because checking
                 // for files from under non-existent protected dir like E:/private/<uid> using

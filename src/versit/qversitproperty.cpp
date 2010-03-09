@@ -116,7 +116,7 @@ bool QVersitProperty::operator!=(const QVersitProperty& other) const
 void QVersitProperty::setGroups(const QStringList& groups)
 {
     d->mGroups.clear();
-    foreach (QString group, groups) {
+    foreach (const QString& group, groups) {
         d->mGroups.append(group);
     }
 }

@@ -76,7 +76,7 @@ QList<CContactItemField *> CntTransformAvatarSimple::transformDetailL(const QCon
 
     //copy filename and replace slash with a backslash
     TFileName filename;
-    for(TInt i(0); i < fieldText.Length(); i++) {
+    for(TInt i(0); i < fieldText.Length(); ++i) {
         if(i >= filename.MaxLength())
             User::Leave(KErrTooBig);
         if(fieldText[i] == '/') {

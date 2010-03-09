@@ -220,7 +220,7 @@ void CntSymbianFilterSqlHelper::appendSortOrderQuery(QString& sqlQuery, const QL
           
             else
             {
-                sqlQuery += ",";
+                sqlQuery += ',';
             }
             
             //use the display label if the name is null, ignore case

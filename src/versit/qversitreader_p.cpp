@@ -678,7 +678,7 @@ QMultiHash<QString,QString> QVersitReaderPrivate::extractVCard30PropertyParams(
         QString values = paramValue(param, codec);
         QList<QString> valueList = values.split(QLatin1Char(','), QString::SkipEmptyParts);
         QString buffer; // for any part ending in a backslash, join it to the next.
-        foreach (QString value, valueList) {
+        foreach (const QString& value, valueList) {
             if (value.endsWith(QLatin1Char('\\')) && !value.endsWith(QLatin1String("\\\\"))) {
                 value.chop(1);
                 buffer.append(value);

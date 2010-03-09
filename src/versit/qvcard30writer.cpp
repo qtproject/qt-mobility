@@ -107,7 +107,7 @@ void QVCard30Writer::encodeVersitProperty(const QVersitProperty& property)
 void QVCard30Writer::encodeParameters(const QMultiHash<QString,QString>& parameters)
 {
     QList<QString> names = parameters.uniqueKeys();
-    foreach (QString nameString, names) {
+    foreach (const QString& nameString, names) {
         writeString(QLatin1String(";"));
         QStringList values = parameters.values(nameString);
         VersitUtils::backSlashEscape(nameString);
