@@ -56,9 +56,7 @@
 #include <windows.h>
 #endif
 
-#ifdef Q_OS_LINUX
 #include <QProcess>
-#endif
 
 #define QTRY_COMPARE(a,e)                       \
     for (int _i = 0; _i < 5000; _i += 100) {    \
@@ -135,13 +133,14 @@ void tst_QValueSpacePublisher::initTestCase()
     QFile::remove("/tmp/qt-0/valuespace_shmlayer");
 #endif
 
-#ifdef Q_OS_LINUX
-    QProcess::execute("gconftool-2 -u /value");
-    QProcess::execute("gconftool-2 -u /testConstructor/value");
-    QProcess::execute("gconftool-2 -u /testConstructor/subpath/value");
-#endif
-
     QValueSpace::initValueSpaceServer();
+
+    if (QValueSpace::availableLayers().contains(QVALUESPACE_GCONF_LAYER)) {
+        QCOMPARE(QProcess::execute("gconftool-2 -u /value"), 0);
+        QCOMPARE(QProcess::execute("gconftool-2 -u /testConstructor/value"), 0);
+        QCOMPARE(QProcess::execute("gconftool-2 -u /testConstructor/subpath/value"), 0);
+    }
+
 }
 
 void tst_QValueSpacePublisher::cleanupTestCase()
@@ -591,10 +590,9 @@ void tst_QValueSpacePublisher::threads()
     QFETCH(unsigned int, count);
     QFETCH(bool, sequential);
 
-#ifdef Q_OS_LINUX
-    QProcess::execute("gconftool-2 --recursive-unset /threads");
-#endif
-
+    if (QValueSpace::availableLayers().contains(QVALUESPACE_GCONF_LAYER)) {
+        QCOMPARE(QProcess::execute("gconftool-2 --recursive-unset /threads"), 0);
+    }
     QStringList expectedPaths;
     for (unsigned int i = 0; i < threads; ++i)
         expectedPaths.append(QString("thread%1").arg(i));
