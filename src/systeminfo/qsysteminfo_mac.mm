@@ -868,11 +868,12 @@ int QSystemNetworkInfoPrivate::locationAreaCode()
 
 QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
 {
+#if defined(MAC_SDK_10_6)
     CWInterface *primary = [CWInterface interface ];
     if([primary power])
         return  nsstringToQString( [primary countryCode]);
-    else
-        return "";
+#endif
+    return "";
 }
 
 QString QSystemNetworkInfoPrivate::currentMobileNetworkCode()
