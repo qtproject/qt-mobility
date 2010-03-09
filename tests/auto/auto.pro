@@ -118,12 +118,6 @@ contains(mobility_modules,multimedia) {
         qvideowidget \
         qmediatimerange
 
-    contains(QT_CONFIG, declarative) {
-        SUBDIRS += \
-            qmlaudio \
-            qmlgraphicsvideo
-    }
-
     symbian: {
         #symbian spesific autotests
         SUBDIRS += symbian 

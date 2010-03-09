@@ -62,12 +62,6 @@ contains(mobility_modules,multimedia) {
         audiorecorder
 }
 
-contains (QT_CONFIG, declarative) {
-    SUBDIRS += \
-        declarativemusic \
-        declarativevideo
-}
-
 #Messaging examples
 contains(mobility_modules,messaging) {
     contains(qmf_enabled,yes)|wince*|win32|symbian|maemo6 {
