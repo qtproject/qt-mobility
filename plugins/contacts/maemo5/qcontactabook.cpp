@@ -66,6 +66,11 @@
 
 #define FREE(x) free((void*)x)
 
+struct cbSharedData{
+  QContactIDsHash* hash;
+  QContactABook *that;
+};
+
 /* QContactABook */
 QContactABook::QContactABook(QObject* parent) :QObject(parent)
 {
@@ -76,6 +81,70 @@ QContactABook::QContactABook(QObject* parent) :QObject(parent)
 QContactABook::~QContactABook()
 {
   g_object_unref(m_abookAgregator);
+  delete cbSD;
+}
+
+static void contactsAddedCB(OssoABookRoster *roster, OssoABookContact **contacts, gpointer data)
+{
+  QCM5_DEBUG << "CONTACT ADDED";
+  Q_UNUSED(roster)
+  
+  cbSharedData* d = static_cast<cbSharedData*>(data);
+  OssoABookContact **p;
+  QList<QContactLocalId> contactIds;
+  
+  for (p = contacts; *p; ++p) {
+    if (osso_abook_contact_is_roster_contact(*p))
+      continue;
+    
+    // Add a new localID to the local ID hash
+    const char* uid = CONST_CHAR(e_contact_get_const(E_CONTACT(*p), E_CONTACT_UID));
+    QContactLocalId id = d->hash->append(uid);
+    FREE(uid);
+    if (id)
+      contactIds << id;
+  }
+  d->that->_contactsAdded(contactIds);
+}
+
+static void contactsChangedCB(OssoABookRoster *roster, OssoABookContact **contacts, gpointer data)
+{
+  QCM5_DEBUG << "CONTACT CHANGED";
+  Q_UNUSED(roster)
+  
+  cbSharedData* d = static_cast<cbSharedData*>(data);
+  OssoABookContact **p;
+  QList<QContactLocalId> contactIds;
+  
+  for (p = contacts; *p; ++p) {
+    if (osso_abook_contact_is_roster_contact(*p))
+      continue;
+    
+    const char* uid = CONST_CHAR(e_contact_get_const(E_CONTACT(*p), E_CONTACT_UID));
+    QContactLocalId id = d->hash->find(uid);
+    FREE(uid);
+    if (id)
+      contactIds << id;
+  }
+  d->that->_contactsChanged(contactIds);
+}
+
+static void contactsRemovedCB(OssoABookRoster *roster, const char **ids, gpointer data)
+{
+  QCM5_DEBUG << "CONTACT REMOVED";
+  Q_UNUSED(roster)
+  
+  cbSharedData* d = static_cast<cbSharedData*>(data);
+  const char **p;
+  QList<QContactLocalId> contactIds;
+  
+  for (p = ids; *p; ++p) {
+    QContactLocalId id = d->hash->take(*p);
+    if (id)
+      contactIds << id;
+  }
+  
+  d->that->_contactsRemoved(contactIds);
 }
 
 void QContactABook::initAddressBook(){
@@ -99,7 +168,16 @@ void QContactABook::initAddressBook(){
   
   initLocalIdHash();
   
+  cbSD = new cbSharedData;
+  cbSD->hash = &m_localIds;
+
   //TODO Set up signals for added/changed eContact
+  g_signal_connect(roster, "contacts-added",
+                   G_CALLBACK (contactsAddedCB), cbSD);
+  g_signal_connect(roster, "contacts-changed",
+                   G_CALLBACK (contactsChangedCB), cbSD);
+  g_signal_connect(roster, "contacts-removed",
+                   G_CALLBACK (contactsRemovedCB), cbSD);
   
 #if 0
   //TEST List of supported fields
@@ -242,7 +320,7 @@ bool QContactABook::removeContact(const QContactLocalId& contactId, QContactMana
   return ok;
 }
 
-struct cbSharedData{
+struct svSharedData{
    QContactABook* that;
    bool *result;
 };
@@ -250,7 +328,7 @@ struct cbSharedData{
 static void commitContactCB(EBook* book, EBookStatus  status, gpointer user_data)
 {
   Q_UNUSED(book)
-  cbSharedData *sd = static_cast<cbSharedData*>(user_data);
+  svSharedData *sd = static_cast<svSharedData*>(user_data);
   
   *sd->result = (status == E_BOOK_ERROR_OK) ? true : false;  
   sd->that->savingJobFinished();
@@ -295,7 +373,7 @@ bool QContactABook::saveContact(QContact* contact, QContactManager::Error& error
   connect(this, SIGNAL(savingJobDone()), &loop, SLOT(quit()));
 
   // Prepare shared data
-  cbSharedData sd;
+  svSharedData sd;
   sd.that = this;
   sd.result = &ok;
   
@@ -605,16 +683,6 @@ QContactId QContactABook::createContactId(EContact *eContact) const
       qWarning("Unable to get valid localId for the specified eContaact UID");
     rtn.setLocalId(localId);
   }
-#if 0  //Book uri looks empty all the time
-  /* Set URI */
-  {
-    const char* data = CONST_CHAR(e_contact_get_const(eContact, E_CONTACT_BOOK_URI));
-    if (data)
-      rtn->setManagerUri(data);
-    else
-      qWarning("eContact E_CONTACT_BOOK_URI is an empty string");
-  }
-#endif
   return rtn;
 }
 

@@ -129,22 +129,34 @@ QTM_USE_NAMESPACE
 class QContactIDsHash{
 public:
   QContactIDsHash(): key(1){};
-  ~QContactIDsHash(){ };
+  
   /* Append */
   QContactIDsHash& operator<< (const QByteArray& eContactId){ m_localIds[key] = eContactId; key++; return (*this); };
-  
+  const QContactLocalId append(const QByteArray& eContactId){ int id = key;
+                                                              m_localIds[id] = eContactId;
+							      key++;
+							      return id;};
   /* Find */
   const char* operator[] (const QContactLocalId localId) { return m_localIds.value(localId).constData(); };
+  const char* find(const QContactLocalId localId) { return m_localIds.value(localId).constData(); };
   const QContactLocalId operator[] (const QByteArray& eContactId) { return m_localIds.key(eContactId, 0); };
-
+  const QContactLocalId find(const QByteArray& eContactId) { return m_localIds.key(eContactId, 0); };
+  
   /* Remove */ //TEST Remove functions not used nor tested yet
   bool remove(const QContactLocalId localId){ return (m_localIds.remove(localId) == 1) ? true : false;};
-  bool remove(const QByteArray& eContactId){ const QContactLocalId hashKey= m_localIds.key(eContactId, 0); return remove(hashKey); };
+  bool remove(const QByteArray& eContactId){ const QContactLocalId hashKey = m_localIds.key(eContactId, 0); return remove(hashKey); };
   
+  /* Take */
+  const QContactLocalId take(const QByteArray& eContactId){ const QContactLocalId hashKey = m_localIds.key(eContactId, 0);
+                                                            remove(hashKey);
+                                                            return hashKey; };
 private:
   uint key; //LocalID
   QHash<QContactLocalId, QByteArray> m_localIds; //[int/QContactLocalId Maemo5LocalId, QByteArray eContactID]
 };
+
+//Contains Data shared with contact changes/added/removed callbacks
+struct cbSharedData;
 
 class QContactABook : public QObject
 {
@@ -152,7 +164,7 @@ class QContactABook : public QObject
   
 public:  
   QContactABook(QObject* parent = 0);
-  virtual ~QContactABook();
+  ~QContactABook();
   
   QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
   //QList<QContactLocalId> contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
@@ -164,6 +176,10 @@ Q_SIGNALS:
   void savingJobDone();
 
 public:
+  // Members used by callbacks
+  void _contactsAdded(const QList<QContactLocalId> & contactIds ){ /*TODO*/ };
+  void _contactsRemoved(const QList<QContactLocalId> & contactIds ){ /*TODO*/ };
+  void _contactsChanged(const QList<QContactLocalId> & contactIds ){ /*TODO*/ };
   void savingJobFinished(){ emit savingJobDone(); };
   
 private:
@@ -216,6 +232,7 @@ private:
   OssoABookAggregator *m_abookAgregator;
   mutable QContactIDsHash m_localIds; //Converts QLocalId <=> eContactId
   QMutex m_saveContactMutex;
+  cbSharedData *cbSD;
 };
 
 #endif
