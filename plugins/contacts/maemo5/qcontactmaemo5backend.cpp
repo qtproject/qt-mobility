@@ -181,19 +181,10 @@ bool QContactMaemo5Engine::removeContact(const QContactLocalId& contactId, QCont
 
 QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(const QString& contactType, QContactManager::Error& error) const
 {
-    QMap<QString, QMap<QString, QContactDetailDefinition> > defns;
+    QMap<QString, QMap<QString, QContactDetailDefinition> > defns = QContactManagerEngine::schemaDefinitions();
     QMap<QString, QContactDetailFieldDefinition> fields;
     
-    
-    // Remove unsupported definitions
-    defns = QContactManagerEngine::schemaDefinitions();
-    defns[contactType].remove(QContactAnniversary::DefinitionName);
-    defns[contactType].remove(QContactGeoLocation::DefinitionName);
-    defns[contactType].remove(QContactSyncTarget::DefinitionName);
-    // QContactTimestamp is Read ONLY
-    
-    //TODO Remove unsupported fields
-    
+    // QContactAddress
     fields = defns[contactType][QContactAddress::DefinitionName].fields();
     //fields.remove(QContactAddress::FieldSubTypes);
     QContactDetailFieldDefinition dfd;
@@ -201,16 +192,29 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     fields.insert("Estension", dfd);
     defns[contactType][QContactAddress::DefinitionName].setFields(fields);
     
-    //"Estension");
+    // QContactAnniversary
+    defns[contactType].remove(QContactAnniversary::DefinitionName);
     
-    //fields = defns[contactType][QContactAnniversary::DefinitionName].fields()
-    //fields.remove(QContactAnniversary::FieldCalendarId);
-
+    // QContactAvatar
+    // QContactBirthday
+    // QContactDisplayLabel
+    // QContactEmailAddress
+    // QContactFamily
+    // QContactGender
+    // QContactGeoLocation
+    defns[contactType].remove(QContactGeoLocation::DefinitionName);
+    
+    // QContactGuid
+    // QContactName
+    // QContactNickname
+    // QContactNote
+    // QContactOnlineAccount
     fields = defns[contactType][QContactOnlineAccount::DefinitionName].fields();
     fields.remove(QContactOnlineAccount::FieldAccountUri);
     fields.remove(QContactOnlineAccount::FieldSubTypes);
     defns[contactType][QContactOnlineAccount::DefinitionName].setFields(fields);
-      
+    
+    // QContactOrganization
     fields = defns[contactType][QContactOrganization::DefinitionName].fields();
     fields.remove(QContactOrganization::FieldAssistantName);
     fields.remove(QContactOrganization::FieldDepartment);
@@ -220,10 +224,17 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     fields.remove(QContactOrganization::FieldRole);
     defns[contactType][QContactOrganization::DefinitionName].setFields(fields);
     
+    // QContactPhoneNumber
+    // QContactSyncTarget
+    defns[contactType].remove(QContactSyncTarget::DefinitionName);
+    
+    // QContactTimestamp
+    // QContactType
+    // QContactUrl
     fields = defns[contactType][QContactUrl::DefinitionName].fields();
     fields.remove(QContactUrl::FieldSubType);
     defns[contactType][QContactUrl::DefinitionName].setFields(fields);
-    
+  
     error = QContactManager::NoError;
     return defns[contactType];
 }
