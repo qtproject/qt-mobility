@@ -213,21 +213,24 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
-    qWarning() << __PRETTY_FUNCTION__ << mode;
-
     switch(mode) {
     case QSystemNetworkInfo::GsmMode:
     case QSystemNetworkInfo::CdmaMode:
     case QSystemNetworkInfo::WcdmaMode:
-        {
-            qWarning() << __FUNCTION__<< "GSM" << mode;
+        {    
             switch(currentCellNetworkStatus) {
-                case 0: return QSystemNetworkInfo::HomeNetwork;
-                case 1: return QSystemNetworkInfo::Roaming;
-                case 2: return QSystemNetworkInfo::Roaming;
-                case 3: return QSystemNetworkInfo::NoNetworkAvailable;
-                case 4: return QSystemNetworkInfo::Searching;
-                case 5: return QSystemNetworkInfo::NoNetworkAvailable;
+                case 0: return QSystemNetworkInfo::HomeNetwork; // CS is registered to home network
+                case 1: return QSystemNetworkInfo::Roaming; // CS is registered to some other network than home network
+                case 2: return QSystemNetworkInfo::Roaming; // CS is registered to non-home system in a non-home area
+                case 3: return QSystemNetworkInfo::NoNetworkAvailable; // CS is not in service
+                case 4: return QSystemNetworkInfo::Searching; // CS is not in service, but is currently searching for service
+                case 5: return QSystemNetworkInfo::NoNetworkAvailable; // CS is not in service and it is not currently searching for service
+                case 6: return QSystemNetworkInfo::NoNetworkAvailable; // CS is not in service due to missing SIM or missing subscription
+                case 8: return QSystemNetworkInfo::NoNetworkAvailable; // CS is in power off state
+                case 9: return QSystemNetworkInfo::NoNetworkAvailable; // CS is in No Service Power Save State (currently not listening to any cell)
+                case 10: return QSystemNetworkInfo::NoNetworkAvailable; // CS is in No Service Power Save State (CS is entered to this state
+                                                                        // because there is no network coverage)
+                case 11: return QSystemNetworkInfo::Denied; // CS is not in service due to missing subscription
                 default:
                     break;
             };

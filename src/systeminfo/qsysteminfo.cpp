@@ -477,7 +477,6 @@ QSystemNetworkInfo::~QSystemNetworkInfo()
 */
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfo::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
-    qWarning() << __FUNCTION__;
     return netInfoPrivate()->networkStatus(mode);
 }
 
@@ -873,7 +872,6 @@ QSystemScreenSaver::QSystemScreenSaver(QObject *parent)
  */
 QSystemScreenSaver::~QSystemScreenSaver()
 {
-    qWarning() << Q_FUNC_INFO;
     delete d;
 }
 
