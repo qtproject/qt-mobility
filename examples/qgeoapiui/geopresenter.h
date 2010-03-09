@@ -46,7 +46,7 @@
 #include <QRectF>
 #include <QString>
 
-#include "QGeoCoordinateMaps.h"
+#include "qgeocoordinatemaps.h"
 
 QTM_USE_NAMESPACE
 
