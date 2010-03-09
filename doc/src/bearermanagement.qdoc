@@ -164,26 +164,21 @@ a quick way how an application can quickly create a new network session
 without (or only minimal) user interaction:
 
 \code
+    // Set Internet Access Point
     QNetworkConfigurationManager manager;
-    const bool canStartIAP = (manager.capabilities() & QNetworkConfigurationManager::BearerManagement);
+    const bool canStartIAP = (manager.capabilities()
+                              & QNetworkConfigurationManager::CanStartAndStopInterfaces);
+    // Is there default access point, use it
     QNetworkConfiguration cfg = manager.defaultConfiguration();
-    if (!cfg.isValid() || !canStartIAP)
+    if (!cfg.isValid() || (!canStartIAP && cfg.state() != QNetworkConfiguration::Active)) {
+        QMessageBox::information(this, tr("Network"), tr(
+                                     "No Access Point found."));
         return;
-    switch(cfg.type()) {
-        case QNetworkConfiguration::InternetAccessPoint:
-            // no user interaction -> system starts IAP immediately
-            break;
-        case QNetworkConfiguration::ServiceNetwork:
-            // no user interaction -> system determines best IAP in group and starts it
-            break;
-        case QNetworkConfiguration::UserChoice:
-            // automatic IAP resolution by system or by asking user as 
-            // part of QNetworkSession::open() call
-            break;
     }
-    QNetworkSession* session = new QNetworkSession(cfg);
-    session->open();
 
+    session = new QNetworkSession(cfg, this);
+    session->open();
+    session->waitForOpened(-1);
 \endcode
 
 To accommodate the "Ask user" use case the default configuration can be of

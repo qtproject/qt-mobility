@@ -54,9 +54,9 @@ Dialog::Dialog() :
     connect(versionComboBox,SIGNAL(activated(int)), this,SLOT(getVersion(int)));
     connect(featureComboBox,SIGNAL(activated(int)), this,SLOT(getFeature(int)));
     updateDeviceLockedState();
-//    QTimer *timer = new QTimer(this);
-//    connect(timer, SIGNAL(timeout()), this, SLOT(updateDeviceLockedState()));
-//    timer->start(1000);
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(updateDeviceLockedState()));
+    timer->start(1000);
 }
 
 Dialog::~Dialog()
@@ -80,7 +80,7 @@ void Dialog::changeEvent(QEvent *e)
 
 void Dialog::tabChanged(int index)
 {
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_EXAMPLES_SMALL_SCREEN
     switch(index) {
     case 0:
         setupGeneral();
@@ -294,6 +294,9 @@ void Dialog::setupNetwork()
 
     homeMMCLabel->setText(ni->homeMobileCountryCode());
     homeMNCLabel->setText(ni->homeMobileNetworkCode());
+
+    networkModeChanged(ni->currentMode());
+
 }
 void Dialog::netStatusComboActivated(int index)
 {

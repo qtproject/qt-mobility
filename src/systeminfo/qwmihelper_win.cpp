@@ -150,7 +150,7 @@ QVariant WMIHelper::getWMIData(const QString &wmiNamespace, const QString &class
             break;
         }
 
-        foreach(QString property, classProperty) {
+        foreach(const QString property, classProperty) {
             VARIANT msVariant;
             CIMTYPE variantType;
             hr = wbemCLassObject->Get(property.utf16(), 0, &msVariant, &variantType, 0);

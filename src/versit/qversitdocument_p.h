@@ -68,9 +68,9 @@ class QVersitDocumentPrivate : public QSharedData
 {
 public:
     QVersitDocumentPrivate();
-    
+
     QVersitDocumentPrivate(const QVersitDocumentPrivate& other);
-    
+
     ~QVersitDocumentPrivate()
     {
     }

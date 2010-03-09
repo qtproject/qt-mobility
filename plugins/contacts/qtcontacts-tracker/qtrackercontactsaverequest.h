@@ -69,7 +69,7 @@ public:
     virtual ~QTrackerContactSaveRequest();
 
 private Q_SLOTS:
-    void onTrackerContactsAdded(const QList<QContactLocalId> &addedIds);
+    void onTrackerSignal(const QList<QContactLocalId> &ids);
 
 private:
     /* worker methods*/
@@ -88,12 +88,14 @@ private:
 private:
     /*holding the data about status of async operation*/
     QList<QContact> contactsFinished;
-    QList<QContactManager::Error> errorsOfContactsFinished;
+    //QList<QContactManager::Error> errorsOfContactsFinished;
+    QMap<int, QContactManager::Error> errorsOfContactsFinished;
+    int errorCount;
 
     /* extracted utilities */
     static QStringList detailsDefinitionsInContact(const QContact &c);
     static bool contactHasWorkRelatedDetails(const QContact &c);
-    QSet<QContactLocalId> pendingAddList;
+    QSet<QContactLocalId> pendingContactIds;
 
 };
 
