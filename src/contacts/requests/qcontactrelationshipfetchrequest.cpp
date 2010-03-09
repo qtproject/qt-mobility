@@ -59,19 +59,6 @@ QTM_BEGIN_NAMESPACE
   \ingroup contacts-requests
  */
 
-/*!
-
-  \fn QContactRelationshipFetchRequest::progress(QContactRelationshipFetchRequest* self, bool appendOnly)
-  \deprecated
-
-  This signal is emitted when some progress has been made on the
-  request, causing either a change of status or an update of results,
-  or both.  It identifies which request the signal originated from by
-  including a pointer to \a self, and contains an \a appendOnly flag
-  which signifies whether or not the total ordering of the results
-  have been maintained since the last progress signal was emitted.
- */
-
 /*! Constructs a new relationship fetch request
  */
 QContactRelationshipFetchRequest::QContactRelationshipFetchRequest()
@@ -140,7 +127,7 @@ QContactId QContactRelationshipFetchRequest::second() const
 }
 
 /*!
-  \deprecated
+  \internal
   Sets the participant criterion of the fetch request to \a
   participantUri.  If the \a participantUri references a contact in
   the manager from which the relationships are being fetched and the
@@ -164,30 +151,27 @@ QContactId QContactRelationshipFetchRequest::second() const
 void QContactRelationshipFetchRequest::setParticipant(const QContactId& participantUri, QContactRelationshipFilter::Role role)
 {
     Q_D(QContactRelationshipFetchRequest);
-    qWarning("QContactRelationshipFetchRequest::setParticipant() This function is deprecated and will be removed once the transition period has elapsed.  Use setSecond() instead!");
     d->m_participantUri = participantUri;
     d->m_role = role;
 }
 
 /*!
-  \deprecated
+  \internal
   Returns the participant criterion of the fetch request
  */
 QContactId QContactRelationshipFetchRequest::participant() const
 {
     Q_D(const QContactRelationshipFetchRequest);
-    qWarning("QContactRelationshipFetchRequest::participant() This function is deprecated and will be removed once the transition period has elapsed.  Use second() instead!");
     return d->m_participantUri;
 }
 
 /*!
-  \deprecated
+  \internal
   Returns the role of the participant criterion of the fetch request
  */
 QContactRelationshipFilter::Role QContactRelationshipFetchRequest::participantRole() const
 {
     Q_D(const QContactRelationshipFetchRequest);
-    qWarning("QContactRelationshipFetchRequest::participantRole() This function is deprecated and will be removed once the transition period has elapsed.  Use setSecond() instead!");
     return d->m_role;
 }
 

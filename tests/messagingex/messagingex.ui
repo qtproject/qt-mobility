@@ -1,106 +1,107 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>MessagingExMainWindow</class>
- <widget class="QMainWindow" name="MessagingExMainWindow" >
-  <property name="windowModality" >
+ <widget class="QMainWindow" name="MessagingExMainWindow">
+  <property name="windowModality">
    <enum>Qt::WindowModal</enum>
   </property>
-  <property name="geometry" >
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>278</width>
-    <height>390</height>
+    <width>321</width>
+    <height>488</height>
    </rect>
   </property>
-  <property name="minimumSize" >
+  <property name="minimumSize">
    <size>
     <width>278</width>
     <height>390</height>
    </size>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Messaging Example</string>
   </property>
-  <widget class="QWidget" name="centralwidget" >
-   <layout class="QGridLayout" name="gridLayout_4" >
-    <item row="0" column="0" >
-     <widget class="QStackedWidget" name="stackedWidget" >
-      <property name="currentIndex" >
-       <number>1</number>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout_4">
+    <item row="0" column="0">
+     <widget class="QStackedWidget" name="stackedWidget">
+      <property name="currentIndex">
+       <number>0</number>
       </property>
-      <widget class="QWidget" name="page" >
-       <layout class="QGridLayout" name="gridLayout" >
-        <item row="0" column="0" >
-         <widget class="QLabel" name="phoneNumberLabel" >
-          <property name="text" >
+      <widget class="QWidget" name="page">
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="phoneNumberLabel">
+          <property name="text">
            <string>Phone Number:</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="0" >
-         <widget class="QLineEdit" name="phoneNumberEdit" />
+        <item row="1" column="0">
+         <widget class="QLineEdit" name="phoneNumberEdit"/>
         </item>
-        <item row="2" column="0" >
-         <widget class="QLabel" name="textMessageLabel" >
-          <property name="text" >
+        <item row="2" column="0">
+         <widget class="QLabel" name="textMessageLabel">
+          <property name="text">
            <string>Text Message:</string>
           </property>
          </widget>
         </item>
-        <item row="3" column="0" >
-         <widget class="QTextEdit" name="smsMessageEdit" />
+        <item row="3" column="0">
+         <widget class="QTextEdit" name="smsMessageEdit"/>
         </item>
-        <item row="4" column="0" >
-         <widget class="QPushButton" name="sendSmsButton" >
-          <property name="text" >
+        <item row="4" column="0">
+         <widget class="QPushButton" name="sendSmsButton">
+          <property name="text">
            <string>Send SMS</string>
           </property>
          </widget>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="page_2" >
-       <layout class="QVBoxLayout" name="verticalLayout_3" >
+      <widget class="QWidget" name="page_2">
+       <layout class="QVBoxLayout" name="verticalLayout">
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_3" >
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
           <item>
-           <widget class="QLabel" name="label_3" >
-            <property name="text" >
+           <widget class="QLabel" name="label_3">
+            <property name="text">
              <string>Account:</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="accountComboBox" />
+           <widget class="QComboBox" name="accountComboBox"/>
           </item>
          </layout>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout" >
+         <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
-           <widget class="QLabel" name="label" >
-            <property name="text" >
+           <widget class="QLabel" name="label">
+            <property name="text">
              <string>To:</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="emailAddressEdit" />
+           <widget class="QLineEdit" name="emailAddressEdit"/>
           </item>
          </layout>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_2" >
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
-           <widget class="QLabel" name="label_2" >
-            <property name="text" >
+           <widget class="QLabel" name="label_2">
+            <property name="text">
              <string>Subject:</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="subjectEdit" >
-            <property name="enabled" >
+           <widget class="QLineEdit" name="subjectEdit">
+            <property name="enabled">
              <bool>true</bool>
             </property>
            </widget>
@@ -108,114 +109,122 @@
          </layout>
         </item>
         <item>
-         <widget class="QTextEdit" name="emailMessageEdit" />
+         <widget class="QTextEdit" name="emailMessageEdit"/>
         </item>
         <item>
-         <widget class="QPushButton" name="addEmailAttachmentButton" >
-          <property name="enabled" >
-           <bool>true</bool>
-          </property>
-          <property name="text" >
-           <string>Add Attachment</string>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" name="horizontalLayout_7">
+          <item>
+           <widget class="QPushButton" name="addEmailAttachmentButton">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="text">
+             <string>Add Attachment</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="removeAttachmentButton">
+            <property name="text">
+             <string>Remove Attachment</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
-         <widget class="QPushButton" name="removeAttachmentButton" >
-          <property name="text" >
-           <string>Remove Attachment</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="emailAttachmentLabel" >
-          <property name="text" >
+         <widget class="QLabel" name="emailAttachmentLabel">
+          <property name="text">
            <string/>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="sendEmailButton" >
-          <property name="enabled" >
-           <bool>true</bool>
-          </property>
-          <property name="text" >
-           <string>Send Message</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="addMessageButton" >
-          <property name="text" >
-           <string>Store message</string>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <item>
+           <widget class="QPushButton" name="addMessageButton">
+            <property name="text">
+             <string>Store message</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="sendEmailButton">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="text">
+             <string>Send Message</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="page_3" >
-       <layout class="QVBoxLayout" name="verticalLayout_6" >
+      <widget class="QWidget" name="page_3">
+       <layout class="QVBoxLayout" name="verticalLayout_6">
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_5" >
+         <layout class="QVBoxLayout" name="verticalLayout_5">
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_4" >
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
             <item>
-             <widget class="QLabel" name="label_4" >
-              <property name="text" >
+             <widget class="QLabel" name="label_4">
+              <property name="text">
                <string>Phone number:</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="mmsPhoneNumberEdit" />
+             <widget class="QLineEdit" name="mmsPhoneNumberEdit"/>
             </item>
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_5" >
+           <layout class="QHBoxLayout" name="horizontalLayout_5">
             <item>
-             <widget class="QLabel" name="label_5" >
-              <property name="text" >
+             <widget class="QLabel" name="label_5">
+              <property name="text">
                <string>Subject:</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="mmsSubjectEdit" />
+             <widget class="QLineEdit" name="mmsSubjectEdit"/>
             </item>
            </layout>
           </item>
          </layout>
         </item>
         <item>
-         <widget class="QTextEdit" name="mmsBodyEdit" />
+         <widget class="QTextEdit" name="mmsBodyEdit"/>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_4" >
+         <layout class="QVBoxLayout" name="verticalLayout_4">
           <item>
-           <widget class="QPushButton" name="appendAttachment" >
-            <property name="text" >
+           <widget class="QPushButton" name="appendAttachment">
+            <property name="text">
              <string>Append Attachment</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="removeAttachmentButton_2" >
-            <property name="text" >
+           <widget class="QPushButton" name="removeAttachmentButton_2">
+            <property name="text">
              <string>Remove Attachment</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="attachmentLabel" >
-            <property name="text" >
+           <widget class="QLabel" name="attachmentLabel">
+            <property name="text">
              <string/>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="sendMmsButton" >
-            <property name="text" >
+           <widget class="QPushButton" name="sendMmsButton">
+            <property name="text">
              <string>Send MMS</string>
             </property>
            </widget>
@@ -224,141 +233,141 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="page_4" >
-       <layout class="QFormLayout" name="formLayout_8" >
-        <item row="0" column="0" >
-         <widget class="QLabel" name="label_27" >
-          <property name="font" >
+      <widget class="QWidget" name="page_4">
+       <layout class="QFormLayout" name="formLayout_8">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_27">
+          <property name="font">
            <font>
             <pointsize>12</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>Filter by priority:</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="0" >
-         <widget class="QComboBox" name="priorityAccountComboBox" />
+        <item row="1" column="0">
+         <widget class="QComboBox" name="priorityAccountComboBox"/>
         </item>
-        <item row="2" column="0" >
-         <widget class="QLabel" name="label_10" >
-          <property name="text" >
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_10">
+          <property name="text">
            <string>By Priority:</string>
           </property>
          </widget>
         </item>
-        <item row="3" column="0" >
-         <widget class="QComboBox" name="priorityComboBox" >
+        <item row="3" column="0">
+         <widget class="QComboBox" name="priorityComboBox">
           <item>
-           <property name="text" >
+           <property name="text">
             <string>No priority filtering</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>High Priority, equal</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Normal Priority, equal</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Low Priority, equal</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>High Priority, not equal</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Normal Priority, not equal</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Low Priority, not equal</string>
            </property>
           </item>
          </widget>
         </item>
-        <item row="4" column="0" >
-         <widget class="QPushButton" name="typeButton" >
-          <property name="text" >
+        <item row="4" column="0">
+         <widget class="QPushButton" name="typeButton">
+          <property name="text">
            <string>make query</string>
           </property>
          </widget>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="page_5" >
-       <layout class="QFormLayout" name="formLayout_9" >
-        <item row="0" column="0" >
-         <widget class="QLabel" name="label_26" >
-          <property name="font" >
+      <widget class="QWidget" name="page_5">
+       <layout class="QFormLayout" name="formLayout_9">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_26">
+          <property name="font">
            <font>
             <pointsize>12</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>Filter by sender:</string>
           </property>
          </widget>
         </item>
-        <item row="3" column="0" >
-         <widget class="QLineEdit" name="senderEdit" />
+        <item row="3" column="0">
+         <widget class="QLineEdit" name="senderEdit"/>
         </item>
-        <item row="1" column="0" >
-         <widget class="QComboBox" name="senderAccountComboBox" >
+        <item row="1" column="0">
+         <widget class="QComboBox" name="senderAccountComboBox">
           <item>
-           <property name="text" >
+           <property name="text">
             <string>select account</string>
            </property>
           </item>
          </widget>
         </item>
-        <item row="2" column="0" >
-         <widget class="QLabel" name="label_6" >
-          <property name="text" >
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_6">
+          <property name="text">
            <string>Sender:</string>
           </property>
          </widget>
         </item>
-        <item row="6" column="0" >
-         <widget class="QPushButton" name="senderButton" >
-          <property name="text" >
+        <item row="6" column="0">
+         <widget class="QPushButton" name="senderButton">
+          <property name="text">
            <string>make query</string>
           </property>
          </widget>
         </item>
-        <item row="4" column="0" >
-         <widget class="QComboBox" name="sendercomboBox" >
+        <item row="4" column="0">
+         <widget class="QComboBox" name="sendercomboBox">
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Equal</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>NotEqual</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Includes</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Excludes</string>
            </property>
           </item>
@@ -366,57 +375,57 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="page_6" >
-       <layout class="QFormLayout" name="formLayout_6" >
-        <item row="0" column="0" >
-         <widget class="QLabel" name="label_25" >
-          <property name="font" >
+      <widget class="QWidget" name="page_6">
+       <layout class="QFormLayout" name="formLayout_6">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_25">
+          <property name="font">
            <font>
             <pointsize>12</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>Filter by recipient:</string>
           </property>
          </widget>
         </item>
-        <item row="2" column="0" >
-         <widget class="QLabel" name="label_11" >
-          <property name="text" >
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_11">
+          <property name="text">
            <string>Recipient:</string>
           </property>
          </widget>
         </item>
-        <item row="3" column="0" >
-         <widget class="QLineEdit" name="recipientEdit" />
+        <item row="3" column="0">
+         <widget class="QLineEdit" name="recipientEdit"/>
         </item>
-        <item row="4" column="0" >
-         <widget class="QComboBox" name="recipientcomboBox" >
+        <item row="4" column="0">
+         <widget class="QComboBox" name="recipientcomboBox">
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Includes</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Excludes</string>
            </property>
           </item>
          </widget>
         </item>
-        <item row="5" column="0" >
-         <widget class="QPushButton" name="recipientButton" >
-          <property name="text" >
+        <item row="5" column="0">
+         <widget class="QPushButton" name="recipientButton">
+          <property name="text">
            <string>make query</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="0" >
-         <widget class="QComboBox" name="recipientAccountComboBox" >
+        <item row="1" column="0">
+         <widget class="QComboBox" name="recipientAccountComboBox">
           <item>
-           <property name="text" >
+           <property name="text">
             <string>select account</string>
            </property>
           </item>
@@ -424,263 +433,263 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="page_7" >
-       <layout class="QFormLayout" name="formLayout_5" >
-        <item row="0" column="0" >
-         <widget class="QLabel" name="label_24" >
-          <property name="font" >
+      <widget class="QWidget" name="page_7">
+       <layout class="QFormLayout" name="formLayout_5">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_24">
+          <property name="font">
            <font>
             <pointsize>12</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>Filter by subject:</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="0" >
-         <widget class="QComboBox" name="subjectAccountComboBox" >
+        <item row="1" column="0">
+         <widget class="QComboBox" name="subjectAccountComboBox">
           <item>
-           <property name="text" >
+           <property name="text">
             <string>select account</string>
            </property>
           </item>
          </widget>
         </item>
-        <item row="2" column="0" >
-         <widget class="QLabel" name="label_13" >
-          <property name="text" >
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_13">
+          <property name="text">
            <string>Subject:</string>
           </property>
          </widget>
         </item>
-        <item row="3" column="0" >
-         <widget class="QLineEdit" name="subjectEdit_2" />
+        <item row="3" column="0">
+         <widget class="QLineEdit" name="subjectEdit_2"/>
         </item>
-        <item row="4" column="0" >
-         <widget class="QComboBox" name="subjectcomboBox" >
+        <item row="4" column="0">
+         <widget class="QComboBox" name="subjectcomboBox">
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Equal</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>NotEqual</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Includes</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Excludes</string>
            </property>
           </item>
          </widget>
         </item>
-        <item row="5" column="0" >
-         <widget class="QPushButton" name="subjectButton" >
-          <property name="text" >
+        <item row="5" column="0">
+         <widget class="QPushButton" name="subjectButton">
+          <property name="text">
            <string>make query</string>
           </property>
          </widget>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="page_8" >
-       <layout class="QFormLayout" name="formLayout_4" >
-        <item row="0" column="0" >
-         <widget class="QLabel" name="label_16" >
-          <property name="font" >
+      <widget class="QWidget" name="page_8">
+       <layout class="QFormLayout" name="formLayout_4">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_16">
+          <property name="font">
            <font>
             <pointsize>12</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>Filter by status:</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="0" >
-         <widget class="QComboBox" name="statusAccountComboBox" >
+        <item row="1" column="0">
+         <widget class="QComboBox" name="statusAccountComboBox">
           <item>
-           <property name="text" >
+           <property name="text">
             <string>select account</string>
            </property>
           </item>
          </widget>
         </item>
-        <item row="2" column="0" >
-         <widget class="QLabel" name="label_15" >
-          <property name="text" >
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_15">
+          <property name="text">
            <string>Status:</string>
           </property>
          </widget>
         </item>
-        <item row="3" column="0" >
-         <widget class="QComboBox" name="statuscomboBox" >
+        <item row="3" column="0">
+         <widget class="QComboBox" name="statuscomboBox">
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Read, equal</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Read, not equal</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Read, includes</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Read, excludes</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>HasAttachment, equal</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>HasAttachment, not equal</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>HasAttachment, includes</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>HasAttachment, exludes</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Incoming, equal</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Incoming, not equal</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Incoming, includes</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Incoming, excludes</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Removed, equal</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Removed, not equal</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Removed, includes</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Removed, excludes</string>
            </property>
           </item>
          </widget>
         </item>
-        <item row="4" column="0" >
-         <widget class="QPushButton" name="statusButton" >
-          <property name="text" >
+        <item row="4" column="0">
+         <widget class="QPushButton" name="statusButton">
+          <property name="text">
            <string>make query</string>
           </property>
          </widget>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="page_9" >
-       <layout class="QFormLayout" name="formLayout_3" >
-        <item row="0" column="0" >
-         <widget class="QLabel" name="label_23" >
-          <property name="font" >
+      <widget class="QWidget" name="page_9">
+       <layout class="QFormLayout" name="formLayout_3">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_23">
+          <property name="font">
            <font>
             <pointsize>12</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>Filter by timestamp:</string>
           </property>
          </widget>
         </item>
-        <item row="2" column="0" >
-         <widget class="QComboBox" name="timestampcomboBox" >
+        <item row="2" column="0">
+         <widget class="QComboBox" name="timestampcomboBox">
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Equal</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>NotEqual</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Less than</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Less than equal</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Greater than</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Greater than equal</string>
            </property>
           </item>
          </widget>
         </item>
-        <item row="3" column="0" >
-         <widget class="QDateTimeEdit" name="timestampdateTimeEdit" />
+        <item row="3" column="0">
+         <widget class="QDateTimeEdit" name="timestampdateTimeEdit"/>
         </item>
-        <item row="4" column="0" >
-         <widget class="QPushButton" name="timestampButton" >
-          <property name="text" >
+        <item row="4" column="0">
+         <widget class="QPushButton" name="timestampButton">
+          <property name="text">
            <string>make query</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="0" >
-         <widget class="QComboBox" name="timestampAccountComboBox" >
+        <item row="1" column="0">
+         <widget class="QComboBox" name="timestampAccountComboBox">
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Select account</string>
            </property>
           </item>
@@ -688,170 +697,170 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="page_10" >
-       <layout class="QFormLayout" name="formLayout_2" >
-        <item row="0" column="0" >
-         <widget class="QLabel" name="label_19" >
-          <property name="font" >
+      <widget class="QWidget" name="page_10">
+       <layout class="QFormLayout" name="formLayout_2">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_19">
+          <property name="font">
            <font>
             <pointsize>12</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>By receptiontime:</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="0" >
-         <widget class="QComboBox" name="timeAccountComboBox" >
+        <item row="1" column="0">
+         <widget class="QComboBox" name="timeAccountComboBox">
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Select account</string>
            </property>
           </item>
          </widget>
         </item>
-        <item row="2" column="0" >
-         <widget class="QComboBox" name="receptioncomboBox" >
+        <item row="2" column="0">
+         <widget class="QComboBox" name="receptioncomboBox">
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Equal</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Not equal</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Less than</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Less than equal</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Greater than</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Greater than equal</string>
            </property>
           </item>
          </widget>
         </item>
-        <item row="3" column="0" >
-         <widget class="QDateTimeEdit" name="receptiondateTimeEdit" />
+        <item row="3" column="0">
+         <widget class="QDateTimeEdit" name="receptiondateTimeEdit"/>
         </item>
-        <item row="4" column="0" >
-         <widget class="QPushButton" name="receptionButton" >
-          <property name="text" >
+        <item row="4" column="0">
+         <widget class="QPushButton" name="receptionButton">
+          <property name="text">
            <string>make query</string>
           </property>
          </widget>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="page_11" >
-       <layout class="QFormLayout" name="formLayout" >
-        <item row="0" column="0" >
-         <widget class="QLabel" name="label_21" >
-          <property name="font" >
+      <widget class="QWidget" name="page_11">
+       <layout class="QFormLayout" name="formLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_21">
+          <property name="font">
            <font>
             <pointsize>12</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>Filter by folder:</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="0" >
-         <widget class="QComboBox" name="folderAccountComboBox" >
+        <item row="1" column="0">
+         <widget class="QComboBox" name="folderAccountComboBox">
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Select account</string>
            </property>
           </item>
          </widget>
         </item>
-        <item row="2" column="0" >
-         <widget class="QComboBox" name="foldercomboBox" >
-          <property name="font" >
+        <item row="2" column="0">
+         <widget class="QComboBox" name="foldercomboBox">
+          <property name="font">
            <font>
             <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Inbox folder, equal</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Inbox folder, not equal</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Outbox folder, equal</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Outbox folder, not equal</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Drafts folder, equal</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Drafts folder, not equal</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Sent folder, equal</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Sent folder, not equal</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Trash folder, equal</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Trahs folder, not equal</string>
            </property>
           </item>
          </widget>
         </item>
-        <item row="3" column="0" >
-         <widget class="QPushButton" name="folderButton" >
-          <property name="palette" >
+        <item row="3" column="0">
+         <widget class="QPushButton" name="folderButton">
+          <property name="palette">
            <palette>
             <active>
-             <colorrole role="LinkVisited" >
-              <brush brushstyle="SolidPattern" >
-               <color alpha="255" >
+             <colorrole role="LinkVisited">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
                 <red>51</red>
                 <green>129</green>
                 <blue>255</blue>
@@ -860,9 +869,9 @@
              </colorrole>
             </active>
             <inactive>
-             <colorrole role="LinkVisited" >
-              <brush brushstyle="SolidPattern" >
-               <color alpha="255" >
+             <colorrole role="LinkVisited">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
                 <red>51</red>
                 <green>129</green>
                 <blue>255</blue>
@@ -871,9 +880,9 @@
              </colorrole>
             </inactive>
             <disabled>
-             <colorrole role="LinkVisited" >
-              <brush brushstyle="SolidPattern" >
-               <color alpha="255" >
+             <colorrole role="LinkVisited">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
                 <red>51</red>
                 <green>129</green>
                 <blue>255</blue>
@@ -883,93 +892,93 @@
             </disabled>
            </palette>
           </property>
-          <property name="font" >
+          <property name="font">
            <font>
             <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
-          <property name="focusPolicy" >
+          <property name="focusPolicy">
            <enum>Qt::StrongFocus</enum>
           </property>
-          <property name="contextMenuPolicy" >
+          <property name="contextMenuPolicy">
            <enum>Qt::DefaultContextMenu</enum>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>make query</string>
           </property>
          </widget>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="page_12" >
-       <layout class="QFormLayout" name="formLayout_7" >
-        <item row="0" column="0" >
-         <widget class="QLabel" name="label_29" >
-          <property name="font" >
+      <widget class="QWidget" name="page_12">
+       <layout class="QFormLayout" name="formLayout_7">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_29">
+          <property name="font">
            <font>
             <pointsize>12</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>By account:</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="0" >
-         <widget class="QLabel" name="label_28" >
-          <property name="text" >
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_28">
+          <property name="text">
            <string>Account:</string>
           </property>
          </widget>
         </item>
-        <item row="2" column="0" >
-         <widget class="QComboBox" name="accountComboBox_2" />
+        <item row="2" column="0">
+         <widget class="QComboBox" name="accountComboBox_2"/>
         </item>
-        <item row="3" column="0" >
-         <widget class="QComboBox" name="folderComboBox" />
+        <item row="3" column="0">
+         <widget class="QComboBox" name="folderComboBox"/>
         </item>
-        <item row="4" column="0" >
-         <widget class="QLabel" name="label_20" >
-          <property name="text" >
+        <item row="4" column="0">
+         <widget class="QLabel" name="label_20">
+          <property name="text">
            <string>Default account:</string>
           </property>
          </widget>
         </item>
-        <item row="5" column="0" >
-         <widget class="QComboBox" name="defaultAccountBox" >
+        <item row="5" column="0">
+         <widget class="QComboBox" name="defaultAccountBox">
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Inbox</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Outbox</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Drafts</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Sent</string>
            </property>
           </item>
           <item>
-           <property name="text" >
+           <property name="text">
             <string>Trash</string>
            </property>
           </item>
          </widget>
         </item>
-        <item row="6" column="0" >
-         <widget class="QPushButton" name="findMessagesButton" >
-          <property name="text" >
+        <item row="6" column="0">
+         <widget class="QPushButton" name="findMessagesButton">
+          <property name="text">
            <string>make query</string>
           </property>
          </widget>
@@ -983,10 +992,10 @@
        <zorder>label_28</zorder>
        <zorder>label_29</zorder>
       </widget>
-      <widget class="QWidget" name="page_13" >
-       <layout class="QVBoxLayout" name="verticalLayout_9" >
+      <widget class="QWidget" name="page_13">
+       <layout class="QVBoxLayout" name="verticalLayout_9">
         <item>
-         <widget class="QListView" name="messageListView" />
+         <widget class="QListView" name="messageListView"/>
         </item>
        </layout>
       </widget>

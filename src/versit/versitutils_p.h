@@ -57,6 +57,7 @@
 #include "qmobilityglobal.h"
 
 #include <QByteArray>
+#include <QByteArrayMatcher>
 #include <QPair>
 #include <QString>
 #include <QStringList>
@@ -64,58 +65,17 @@
 
 QTM_BEGIN_NAMESPACE
 
-
-class Q_AUTOTEST_EXPORT VersitCursor
-{
-public:
-    VersitCursor() : position(-1), selection(-1) {}
-    explicit VersitCursor(const QByteArray& d) :data(d), position(0), selection(0) {}
-    QByteArray data;
-    int position;
-    int selection;
-
-    void setData(const QByteArray& d) {data = d; position = selection = 0;}
-    void setPosition(int pos) {position = pos; selection = qMax(pos, selection);}
-    void setSelection(int pos) {selection = qMax(pos, position);}
-};
-
 class Q_AUTOTEST_EXPORT VersitUtils
 {
 public:
-    static QByteArray fold(QByteArray& text, int maxChars);
-    static void skipLeadingWhiteSpaces(VersitCursor& line, QTextCodec* codec);
-    static bool quotedPrintableEncode(QString& text);
-    static void decodeQuotedPrintable(QString& text);
-    static bool backSlashEscape(QString& text);
+    static void backSlashEscape(QString& text);
     static void removeBackSlashEscaping(QString& text);
 
-    static bool getNextLine(VersitCursor& line, QTextCodec* codec);
-
-    /* These functions operate on a cursor describing a single line */
-    static QPair<QStringList,QString> extractPropertyGroupsAndName(VersitCursor& line,
-                                                                   QTextCodec* codec);
-    static QByteArray extractPropertyValue(VersitCursor& line);
-    static QMultiHash<QString,QString> extractVCard21PropertyParams(VersitCursor& line,
-                                                                    QTextCodec* codec);
-    static QMultiHash<QString,QString> extractVCard30PropertyParams(VersitCursor& line,
-                                                                    QTextCodec* codec);
-
-    // "Private" functions
-    static QList<QByteArray> extractParams(VersitCursor& line, QTextCodec *codec);
-    static QList<QByteArray> extractParts(const QByteArray& text, const QByteArray& separator,
-                                          QTextCodec *codec);
-    static QByteArray extractPart(
-        const QByteArray& text,
-        int startPosition, 
-        int length=-1);
-    static QString paramName(const QByteArray& parameter, QTextCodec* codec);
-    static QString paramValue(const QByteArray& parameter, QTextCodec* codec);
-    static bool containsAt(const QByteArray& text, const QByteArray& ba, int index);
     static QByteArray encode(const QByteArray& ba, QTextCodec* codec);
     static QByteArray encode(char ch, QTextCodec* codec);
-    static bool shouldBeQuotedPrintableEncoded(QChar chr);
-    static QList<QByteArray>* newlineList(QTextCodec* codec);
+    static QList<QByteArrayMatcher>* newlineList(QTextCodec* codec);
     static void changeCodec(QTextCodec* codec);
+
 private:
     // These are caches for performance:
     // The previous codec that encode(char, QTextCodec) was called with
@@ -123,7 +83,7 @@ private:
     // The QByteArray corresponding to each char from 0-255, encoded with m_previousCodec
     static QByteArray m_encodingMap[256];
     // List of different newline delimeters, encoded with m_previousCodec
-    static QList<QByteArray>* m_newlineList;
+    static QList<QByteArrayMatcher>* m_newlineList;
 };
 
 QTM_END_NAMESPACE

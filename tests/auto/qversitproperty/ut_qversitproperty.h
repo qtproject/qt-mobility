@@ -57,7 +57,7 @@ class UT_QVersitProperty : public QObject
     Q_OBJECT
 
 private slots:
-    
+
     void init();
     void cleanup();
 
@@ -68,6 +68,7 @@ private slots: //test methods
     void testParameters();
     void testValue();
     void testEmbeddedDocument();
+    void testEquality();
 
 private:
     QVersitProperty* mVersitProperty;

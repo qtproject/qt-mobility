@@ -75,53 +75,47 @@ QContactAction::~QContactAction()
  */
 
 /*!
- * \fn QContactAction::~QContactAction()
- * Clears any memory in use by this instance of the action implementation
+  \fn QContactAction::~QContactAction()
+  Clears any memory in use by this instance of the action implementation
  */
 
 /*!
- * \fn QContactAction::actionDescriptor() const
- * Returns the descriptor which uniquely identifies this action implementation.  A descriptor
- * consists of an action name, a vendor name and an implementation version.
- * The name of the action identifies the action provided; different implementations of an action
- * with the same name must provide the same functionality, but may differ in implementation semantics.
- * Hence, the action name includes the major version of the interface definition implemented.
- * The vendor name is the identification string of the vendor which has provided this implementation.
- * The implementation version is the (minor) version of the implementation, and is vendor-specific.
- *
- * \sa QContactActionDescriptor
+  \fn QContactAction::actionDescriptor() const
+  Returns the descriptor which uniquely identifies this action implementation.  A descriptor
+  consists of an action name, a vendor name and an implementation version.
+  The name of the action identifies the action provided; different implementations of an action
+  with the same name must provide the same functionality, but may differ in implementation semantics.
+  Hence, the action name includes the major version of the interface definition implemented.
+  The vendor name is the identification string of the vendor which has provided this implementation.
+  The implementation version is the (minor) version of the implementation, and is vendor-specific.
+
+  \sa QContactActionDescriptor
  */
 
 /*!
- * \fn QContactAction::metadata() const
- * \deprecated
- * Returns the metadata associated with this action, such as icons, labels or sound cues
+  \fn QContactAction::metaData() const
+  Returns the meta-data associated with this action, such as icons, labels or sound cues
  */
 
 /*!
- * \fn QContactAction::metaData() const
- * Returns the meta-data associated with this action, such as icons, labels or sound cues
+  \fn QContactAction::contactFilter(const QVariant& value) const
+  Returns a filter which may be used to filter contacts by the availability of this action implementation for them.
+  If \a value is valid, only contacts which have a detail with the given value and for which the action is available are returned
  */
 
 /*!
- * \fn QContactAction::contactFilter(const QVariant& value) const
- * Returns a filter which may be used to filter contacts by the availability of this action implementation for them.
- * If \a value is valid, only contacts which have a detail with the given value and for which the action is available are returned
+  \fn QContactAction::supportsDetail(const QContactDetail& detail) const
+  Returns true if the provided \a detail contains the fields required for this action to be
+  performed on it; otherwise, returns false
  */
 
 /*!
- * \fn QContactAction::supportsDetail(const QContactDetail& detail) const
- * Returns true if the provided \a detail contains the fields required for this action to be
- * performed on it; otherwise, returns false
- */
+  \fn QContactAction::supportedDetails(const QContact& contact) const
+  Returns a list of the details saved in the given \a contact which contain the fields required
+  for this action to be performed on them.
 
-/*!
- * \fn QContactAction::supportedDetails(const QContact& contact) const
- * Returns a list of the details saved in the given \a contact which contain the fields required
- * for this action to be performed on them.
- *
- * The default implementation of this function simply tests all the details in the contact
- * using \l supportsDetail()
+  The default implementation of this function simply tests all the details in the contact
+  using \l supportsDetail()
  */
 QList<QContactDetail> QContactAction::supportedDetails(const QContact& contact) const
 {
@@ -135,70 +129,46 @@ QList<QContactDetail> QContactAction::supportedDetails(const QContact& contact) 
 }
 
 /*!
- * \fn QContactAction::invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail())
- * Initiates the implemented action on the specified \a detail of the given \a contact, or on the first
- * eligible detail saved in the contact if the given \a detail is empty.
- * At some point after invocation, one or more \l progress() signals will be emitted by the action instance.
- * The results of the action (if any) may be retrieved by calling \l result().
- *
- * \sa result(), progress()
+  \fn QContactAction::invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail())
+  Initiates the implemented action on the specified \a detail of the given \a contact, or on the first
+  eligible detail saved in the contact if the given \a detail is empty.
+  At some point after invocation, one or more \l progress() signals will be emitted by the action instance.
+  The results of the action (if any) may be retrieved by calling \l result().
+
+  \sa result(), progress()
  */
 
 /*!
- * \fn QContactAction::result() const
- * Returns the result of the action, if any exists.  Calling this function prior to receiving the \l progress()
- * signal will not return a meaningful result.
+  \fn QContactAction::result() const
+  Returns the result of the action, if any exists.  Calling this function prior to receiving the \l progress()
+  signal will not return a meaningful result.
  */
 
 /*!
- * \enum QContactAction::Status
- * \deprecated This enum has been deprecated and will be replaced by the State enum.
- * Describes the current status of the asynchronous action operation
- * \value Inactive The operation has not yet been initiated
- * \value Autonomous The operation was initiated but no further information is or will be available
- * \value Active The operation was initiated and is not yet finished
- * \value Finished The operation successfully completed
- * \value FinishedWithError The operation has finished, but an error occurred
+  \enum QContactAction::State
+  Describes the current status of the asynchronous action operation
+  \value InactiveState The operation has not yet been initiated
+  \value AutonomousState The operation was initiated but no further information is or will be available
+  \value ActiveState The operation was initiated and is not yet finished
+  \value FinishedState The operation successfully completed
+  \value FinishedWithErrorState The operation has finished, but an error occurred
  */
 
 /*!
- * \enum QContactAction::State
- * Describes the current status of the asynchronous action operation
- * \value InactiveState The operation has not yet been initiated
- * \value AutonomousState The operation was initiated but no further information is or will be available
- * \value ActiveState The operation was initiated and is not yet finished
- * \value FinishedState The operation successfully completed
- * \value FinishedWithErrorState The operation has finished, but an error occurred
+  \fn QContactAction::progress(QContactAction::State state, const QVariantMap& result)
+  This signal is emitted by an action instance whose functionality has been initiated with \l invokeAction().
+  It provides clients with the current \a state of the action, and any \a result associated with the action.
+  This signal must be emitted at least once by every action instance after \l invokeAction() is called.
+
+  If the action implementation is incapable of reporting the status of the operation (for example, the
+  action is implemented via a one-way IPC call) it should emit the progress signal with \a state
+  set to \c QContactAction::AutonomousState.
  */
 
 /*!
- * \fn QContactAction::progress(QContactAction::Status status, const QVariantMap& result)
- * \deprecated This function was deprecated in week 1 and will be replaced by the progress signal which includes a State after the transition period has elapsed.
- * This signal is emitted by an action instance whose functionality has been initiated with \l invokeAction().
- * It provides clients with the current \a status of the action, and any \a result associated with the action.
- * This signal must be emitted at least once by every action instance after \l invokeAction() is called.
- *
- * If the action implementation is incapable of reporting the status of the operation (for example, the
- * action is implemented via a one-way IPC call) it should emit the progress signal with \a status
- * set to \c QContactAction::Autonomous.
- */
-
-
-/*!
- * \fn QContactAction::progress(QContactAction::State state, const QVariantMap& result)
- * This signal is emitted by an action instance whose functionality has been initiated with \l invokeAction().
- * It provides clients with the current \a state of the action, and any \a result associated with the action.
- * This signal must be emitted at least once by every action instance after \l invokeAction() is called.
- *
- * If the action implementation is incapable of reporting the status of the operation (for example, the
- * action is implemented via a one-way IPC call) it should emit the progress signal with \a state
- * set to \c QContactAction::AutonomousState.
- */
-
-/*!
- * Returns a list of identifiers of the available actions which are provided by the given \a vendor and of the given \a implementationVersion.
- * If \a vendor is empty, actions from all vendors and of any implementation version are returned; if \a implementationVersion is empty,
- * any actions from the given \a vendor (regardless of implementation version) are returned.
+  Returns a list of identifiers of the available actions which are provided by the given \a vendor and of the given \a implementationVersion.
+  If \a vendor is empty, actions from all vendors and of any implementation version are returned; if \a implementationVersion is empty,
+  any actions from the given \a vendor (regardless of implementation version) are returned.
  */
 QStringList QContactAction::availableActions(const QString& vendor, int implementationVersion)
 {
@@ -215,11 +185,11 @@ QStringList QContactAction::availableActions(const QString& vendor, int implemen
 }
 
 /*!
- * Returns a list of QContactActionDescriptor instances which identified implementations of the given \a actionName which are provided by the
- * given \a vendorName and are of the given \a implementationVersion.  If \a actionName is empty, descriptors for
- * implementations of all actions are returned; if \a vendorName is empty, descriptors for implementations provided by any vendor and
- * of any implementation version are returned; if \a implementationVersion is empty, descriptors for any implementations provided by the
- * given \a vendorName of the given \a actionName are returned.
+  Returns a list of QContactActionDescriptor instances which identified implementations of the given \a actionName which are provided by the
+  given \a vendorName and are of the given \a implementationVersion.  If \a actionName is empty, descriptors for
+  implementations of all actions are returned; if \a vendorName is empty, descriptors for implementations provided by any vendor and
+  of any implementation version are returned; if \a implementationVersion is empty, descriptors for any implementations provided by the
+  given \a vendorName of the given \a actionName are returned.
  */
 QList<QContactActionDescriptor> QContactAction::actionDescriptors(const QString& actionName, const QString& vendorName, int implementationVersion)
 {
@@ -228,8 +198,8 @@ QList<QContactActionDescriptor> QContactAction::actionDescriptors(const QString&
 }
 
 /*!
- * Returns a pointer to a new instance of the action implementation identified by the given \a descriptor.
- * The caller takes ownership of the action implementation and must delete it to avoid leaking memory.
+  Returns a pointer to a new instance of the action implementation identified by the given \a descriptor.
+  The caller takes ownership of the action implementation and must delete it to avoid leaking memory.
  */
 QContactAction* QContactAction::action(const QContactActionDescriptor& descriptor)
 {
