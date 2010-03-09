@@ -442,13 +442,13 @@ void CntSymbianFilterSqlHelper::updateSqlQueryForDetailFilter(const QContactFilt
     getSqlDbTableAndColumnNameforDetailFilter(detailFilter,isSubType,tableName,columnName);
 
     //return if tableName is empty
-    if(tableName == "" ){
+    if(tableName.isEmpty()){
         error = QContactManager::NotSupportedError;
         return;
     }
 
     //check columnName
-    if(columnName == "") {
+    if(columnName.isEmpty()) {
         error = QContactManager::NotSupportedError;
         return;
     }
@@ -568,7 +568,7 @@ void CntSymbianFilterSqlHelper::getSqlDbTableAndColumnNameforDetailFilter(
          tableName = "contact";
      }
 
-    if( ("" == columnName)  || ("" == tableName)){
+    if( (columnName.isEmpty())  || (tableName.isEmpty())){
         //Search comm Addr table
         if (commAddrTableIdColumNameMapping.contains(fieldId)){
                 // communication address table has slightly differnt format, so we make the column name as

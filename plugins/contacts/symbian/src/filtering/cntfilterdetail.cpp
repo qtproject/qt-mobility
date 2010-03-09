@@ -255,13 +255,13 @@ void CntFilterDetail::getTableNameWhereClause( const QContactDetailFilter& detai
     m_dbInfo.getDbTableAndColumnName(fieldId,tableName,columnName);
 
     //return if tableName is empty
-    if(tableName == "" ){
+    if(tableName.isEmpty()){
         error = QContactManager::NotSupportedError;
         return;
     }
 
     //check columnName
-    if(columnName == "") {
+    if(columnName.isEmpty()) {
         error = QContactManager::NotSupportedError;
         return;
     }

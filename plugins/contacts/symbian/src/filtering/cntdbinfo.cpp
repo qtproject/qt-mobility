@@ -100,7 +100,7 @@ void CntDbInfo::getDbTableAndColumnName( const quint32 fieldId ,
          tableName = "contact";
      }
 
-    if( ("" == columnName)  || ("" == tableName)){
+    if( (columnName.isEmpty())  || (tableName.isEmpty())){
         //Search comm Addr table
         if (commAddrTableIdColumNameMapping.contains(fieldId)){
                 // communication address table has slightly differnt format, so we make the column name as
