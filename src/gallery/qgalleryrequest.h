@@ -185,7 +185,6 @@ class Q_GALLERY_EXPORT QGalleryDocumentRequest : public QGalleryAbstractRequest
     Q_PROPERTY(QString containerId READ containerId WRITE setContainerId)
     Q_PROPERTY(QUrl containerUrl READ containerUrl WRITE setContainerUrl)
     Q_PROPERTY(QGalleryDocumentList* documents READ documents NOTIFY documentsChanged)
-    Q_PROPERTY(int totalDocumentCount READ totalDocumentCount NOTIFY totalDocumentCountChanged)
     Q_ENUMS(Error)
 public:
     enum Error
@@ -238,8 +237,6 @@ public:
 
     QGalleryDocumentList *documents() const;
 
-    int totalDocumentCount() const;
-
 Q_SIGNALS:
     void filterChanged();
     void documentIdsChanged();
@@ -247,13 +244,9 @@ Q_SIGNALS:
     void containerIdChanged();
     void containerUrlChanged();
     void documentsChanged();
-    void totalDocumentCountChanged();
 
 protected:
     void setResponse(QGalleryAbstractResponse *response);
-
-private:
-    Q_PRIVATE_SLOT(d_func(), void _q_documentCountChanged())
 };
 
 class QGalleryInsertRequestPrivate;

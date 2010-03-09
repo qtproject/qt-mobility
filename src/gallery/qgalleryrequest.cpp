@@ -640,8 +640,6 @@ public:
     {
     }
 
-    void _q_documentCountChanged();
-
     int startIndex;
     int maximumCount;
     int totalCount;
@@ -651,17 +649,6 @@ public:
     QString documentType;
     QGalleryFilter filter;
 };
-
-void QGalleryDocumentRequestPrivate::_q_documentCountChanged()
-{
-    const int count = response->documentCount();
-
-    if (totalCount != count) {
-        totalCount = count;
-
-        emit q_func()->totalDocumentCountChanged();
-    }
-}
 
 /*!
     \class QGalleryDocumentRequest
@@ -1065,38 +1052,14 @@ QGalleryDocumentList *QGalleryDocumentRequest::documents() const
 */
 
 /*!
-    \property QGalleryDocumentRequest::totalDocumentCount
-
-    \brief The total number of documents matching \l filter.
-*/
-
-int QGalleryDocumentRequest::totalDocumentCount() const
-{
-    return d_func()->totalCount;
-}
-
-/*!
-    \fn QGalleryDocumentRequest::totalDocumentCountChanged();
-
-    Signals that the totalDocumentCount property has changed.
-*/
-
-/*!
     \reimp
 */
 
 void QGalleryDocumentRequest::setResponse(QGalleryAbstractResponse *response)
 {
-    Q_D(QGalleryDocumentRequest);
-
-    int oldCount = d->totalCount;
-
-    d->totalCount = response ? response->documentCount() : 0;
+    Q_UNUSED(response);
 
     emit documentsChanged();
-
-    if (oldCount != d->totalCount)
-        emit totalDocumentCountChanged();
 }
 
 class QGalleryInsertRequestPrivate : public QGalleryAbstractRequestPrivate

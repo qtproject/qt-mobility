@@ -230,12 +230,6 @@ QGalleryDocumentList::~QGalleryDocumentList()
 */
 
 /*!
-    \fn QGalleryDocumentList::parentId(int index) const
-
-    Returns the id of the parent of the document at \a index.
-*/
-
-/*!
     \fn QGalleryDocumentList::resources(int index) const
 
     Returns a list of resources for the document at \a index.

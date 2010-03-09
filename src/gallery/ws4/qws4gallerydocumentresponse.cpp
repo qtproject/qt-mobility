@@ -160,11 +160,6 @@ QString QWS4GalleryDocumentResponse::type(int index) const
     return m_rows.at(index)->type;
 }
 
-QString QWS4GalleryDocumentResponse::parentId(int index) const
-{
-    return QString();
-}
-
 QList<QGalleryResource> QWS4GalleryDocumentResponse::resources(int index) const
 {
     return QList<QGalleryResource>() << QGalleryResource(QUrl(m_rows.at(index)->url));

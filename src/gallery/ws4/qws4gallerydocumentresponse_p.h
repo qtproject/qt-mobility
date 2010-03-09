@@ -94,7 +94,6 @@ public:
     QString id(int index) const;
     QUrl url(int index) const;
     QString type(int index) const;
-    QString parentId(int index) const;
     QList<QGalleryResource> resources(int index) const;
 
     QVariant metaData(int index, int key) const;
