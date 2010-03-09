@@ -61,6 +61,7 @@ public:
     // used by the backend to set metadata properties
     void addDataRate(qreal min, qreal max);
     void setDataRates(const QSensor *otherSensor);
+    void enablePolling();
     void addOutputRange(qreal min, qreal max, qreal accuracy);
     void setDescription(const QString &description);
 

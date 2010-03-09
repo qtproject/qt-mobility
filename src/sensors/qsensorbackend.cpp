@@ -250,6 +250,20 @@ void QSensorBackend::setDataRates(const QSensor *otherSensor)
 }
 
 /*!
+    Notify the front end that the backend supports polling.
+
+    Note that this function should be called from the constructor so that the information
+    is available immediately.
+
+    \sa QSensor::supportsPolling
+*/
+void QSensorBackend::enablePolling()
+{
+    QSensorPrivate *d = m_sensor->d_func();
+    d->supportsPolling = true;
+}
+
+/*!
     Add an output range (consisting of \a min, \a max values and \a accuracy) for the sensor.
 
     Note that this function should be called from the constructor so that the information

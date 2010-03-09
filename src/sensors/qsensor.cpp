@@ -282,6 +282,19 @@ qrangelist QSensor::availableDataRates() const
 }
 
 /*!
+    \property QSensor::supportsPolling
+    \brief a value indicating if the sensor supports polling.
+
+    If true, the poll() function can be used.
+    If false, the poll() function cannot be used.
+*/
+
+bool QSensor::supportsPolling() const
+{
+    return d->supportsPolling;
+}
+
+/*!
     \property QSensor::updateInterval
     \brief the update interval of the sensor (measured in milliseconds).
 
@@ -313,15 +326,19 @@ void QSensor::setUpdateInterval(int interval)
 /*!
     Poll the sensor.
 
-    This only works if the QSensor::updateInterval is set to 0.
+    This only works if the sensor supports polling and if QSensor::updateInterval is set to 0.
 
-    Note that this may not be very efficient depending on the sensor.
-    Calling this will block the event loop until the backend has checked
-    for a new value.
+    The sensor must be active before it can be polled.
+
+    \sa QSensor::supportsPolling
 */
 void QSensor::poll()
 {
     if (!connect())
+        return;
+    if (!d->supportsPolling)
+        return;
+    if (!d->active)
         return;
     if (d->updateInterval == 0)
         d->backend->poll();

@@ -213,7 +213,8 @@ void Explorer::loadSensorProperties()
             //name == "type" ||
             name == "reading" ||
             name == "connected" ||
-            name == "running") {
+            name == "running" ||
+            name == "supportsPolling") {
             ++offset;
             continue;
         }
@@ -240,6 +241,8 @@ void Explorer::loadSensorProperties()
 
     // We don't add all properties
     ui.sensorprops->setRowCount(rows - offset);
+
+    ui.poll->setEnabled(m_sensor->supportsPolling());
 
     ignoreItemChanged = false;
 }

@@ -83,6 +83,7 @@ class Q_SENSORS_EXPORT QSensor : public QObject
     Q_PROPERTY(QByteArray type READ type WRITE setType)
     Q_PROPERTY(bool connected READ isConnected)
     Q_PROPERTY(QtMobility::qrangelist availableDataRates READ availableDataRates)
+    Q_PROPERTY(bool supportsPolling READ supportsPolling)
     Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval)
     Q_PROPERTY(QSensorReading* reading READ reading NOTIFY readingChanged)
     Q_PROPERTY(bool busy READ isBusy)
@@ -114,6 +115,7 @@ public:
     void setSignalEnabled(bool enabled);
 
     qrangelist availableDataRates() const;
+    bool supportsPolling() const;
     int updateInterval() const;
     void setUpdateInterval(int interval);
 
