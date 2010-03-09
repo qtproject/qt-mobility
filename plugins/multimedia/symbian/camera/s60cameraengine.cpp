@@ -314,6 +314,7 @@ void CCameraEngine::ImageReady(CFbsBitmap* aBitmap, HBufC8* aData, TInt aError)
 {
     if (aBitmap) {
         iImageBitmap->Duplicate(aBitmap->Handle());
+        delete aBitmap; // delete original
     }
     else {
         iImageData = aData;
