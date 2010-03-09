@@ -355,7 +355,6 @@ void QTrackerContactSaveRequest::deletePhoneNumbers(RDFServicePtr service, const
  */
 void QTrackerContactSaveRequest::savePhoneNumbers(RDFServicePtr service, RDFVariable &var, const QList<QContactDetail> &details )
 {
-    service->setVerbosity(4); 
     RDFUpdate up;
     RDFVariable varForInsert = var.deepCopy();
     foreach(const QContactDetail& det, details)
