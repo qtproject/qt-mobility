@@ -49,122 +49,29 @@
 
 QTM_BEGIN_NAMESPACE
 
-/*!
-* This class represents a maneuver as part of a route reply
-* \see QRouteReply
-*/
-class QManeuver
+class Q_LOCATION_EXPORT QManeuver
 {
     friend class QRouteXmlHandler;
 
 public:
-    /*!
-    * Default constructor.
-    */
-    QManeuver() : dur(0), dist(0), traffDir(0), icn(0) {}
-    /*!
-    * Copy constructor.
-    * @param maneuver The maneuver to be copied.
-    */
+    QManeuver();
     QManeuver(const QManeuver& maneuver);
-    /*!
-    * Assignment operator.
-    * @param maneuver The maneuver to be assigned from.
-    * @return A reference to this maneuver.
-    */
     QManeuver& operator=(const QManeuver& maneuver);
 
-    /*!
-    * @return A textual representation of the maneuver that has to be performed to follow the route.
-    */
-    QString description() const {
-        return descr;
-    }
-    /*!
-    * @return A string constant that describes the essential action
-    *         that has to be taken on this maneuver.
-    */
-    QString action() const {
-        return act;
-    }
-    /*!
-    * @return The distance that is covered by this single maneuver in meters.
-    */
-    quint32 distance() const {
-        return dist;
-    }
-    /*!
-    * @return The estimated duration that performing the whole maneuver will take
-    *         in the xsd:duration format.
-    */
-    qint32 duration() const {
-        return dur;
-    }
-    /*!
-    * @return The turn to be taken in this maneuver.
-    */
-    QString turn() const {
-        return trn;
-    }
-    /*!
-    * @return The name of the street involved.
-    */
-    QString streetName() const {
-        return stName;
-    }
-    /*!
-    * @return The name of the route.
-    */
-    QString routeName() const {
-        return rtName;
-    }
-    /*!
-    * @return The name of the next street.
-    */
-    QString nextStreetName() const {
-        return nxtStreetName;
-    }
-    /*!
-    * @return A sign post
-    */
-    QString signPost() const {
-        return sgnPost;
-    }
-    /*!
-    * @return A value representing the traffic direction.
-    */
-    qint64  trafficDirection() const {
-        return traffDir;
-    }
-    /*!
-    * @return A value representing an icon.
-    */
-    qint64  icon() const {
-        return icn;
-    }
+    QString description() const;
+    QString action() const;
+    quint32 distance() const;
+    qint32 duration() const;
+    QString turn() const;
+    QString streetName() const;
+    QString routeName() const;
+    QString nextStreetName() const;
+    QString signPost() const;
+    qint64  trafficDirection() const;
+    qint64  icon() const;
 
-    /*!
-    * Returns the geographical coordinates that define
-    * this part of the route in form of a 2D-polyline.
-    * The geo coordinates in the way points are less detailed then
-    * those in the <i>maneuver points</i>, and primarily designed for displaying on screen.
-    * \see maneuverPoints()
-    * @return A list of way points.
-    */
-    const QList<QGeoCoordinateMaps> wayPoints() const {
-        return wPoints;
-    }
-    /*!
-    * Returns the geographical coordinates that define
-    * this part of the route in form of a 2D-polyline.
-    * Maneuver points describe the actual maneuver to take with a much higher detail
-    * than the <i>ways points</i> do.
-    * \see wayPoints()
-    * @return A list of maneuver points.
-    */
-    const QList<QGeoCoordinateMaps> maneuverPoints() const {
-        return mPoints;
-    }
+    const QList<QGeoCoordinateMaps> wayPoints() const;
+    const QList<QGeoCoordinateMaps> maneuverPoints() const;
 
 private:
     QString descr; //!< description

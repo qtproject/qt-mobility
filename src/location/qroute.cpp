@@ -1,3 +1,4 @@
+
 /****************************************************************************
 **
 ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
@@ -39,52 +40,89 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_ROUTEXMLHANDLER_H
-#define QLOCATION_ROUTEXMLHANDLER_H
-
-#include "qbasexmlhandler.h"
-#include "qroutereply.h"
 #include "qroute.h"
-#include "qmaneuver.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QRouteXmlHandler : public QBaseXmlHandler
+/*!
+    \class QRoute
+    \brief The QRoute class is a representation of a route.
+    \ingroup location
+
+    This class represents a route as contained in a QRouteReply.
+    A QRoute contains a collection of QManeuver objects.
+*/
+
+/*!
+    The default constructor.
+*/
+QRoute::QRoute() {}
+
+
+/*!
+    The copy constructor.
+*/
+QRoute::QRoute(const QRoute& route)
+        : dist(route.dist), tod(route.tod), toa(route.toa), box(route.box), man(route.man)
 {
-public:
-    QRouteXmlHandler(QRouteReply* routeReply);
+}
 
-    virtual bool startElement(const QString& namespaceURI, const QString& localName, const QString& qName, const QXmlAttributes& atts);
-    virtual bool endElement(const QString& namespaceURI, const QString& localName, const QString& qName);
-    virtual bool characters(const QString& ch);
+/*!
+    The assignment operator.
+*/
+QRoute& QRoute::operator=(const QRoute & route)
+{
+    dist = route.dist;
+    tod = route.tod;
+    toa = route.toa;
+    box = route.box;
+    man = route.man;
 
-private:
-    Q_DISABLE_COPY(QRouteXmlHandler)
+    return *this;
+}
 
-    virtual bool startBoundingBox();
+/*!
+    Returns the departure time of this route.
+*/
+QDateTime QRoute::departure() const
+{
+    return tod;
+}
 
-    void parseRouteReply(const QXmlAttributes& atts);
-    void parseRoute(const QXmlAttributes& atts);
-    void parseManeuver(const QXmlAttributes& atts);
-    bool parseGeoPoints(const QString& strPoints, QList<QGeoCoordinateMaps>& points);
+/*!
+    Returns the arrival time of this route.
+*/
+QDateTime QRoute::arrival() const
+{
+    return toa;
+}
 
-private:
-    //! Internal parsing states.
-    enum RouteParseState {
-        Route = QBaseXmlHandler::Last,
-        BoundingBox,
-        BoundingBox_Lat,
-        BoundingBox_Long,
-        Maneuver,
-        WayPoints,
-        ManeuverPoints
-    };
+/*!
+    Returns the distance covered by this route in meters.
+*/
+quint32 QRoute::distance() const
+{
+    return dist;
+}
 
-    QRouteReply* reply; //!< Pointer to the QRouteReply object being populated.
-    QRoute currRoute; //!< The current route for which XML data is being parsed.
-    QManeuver currManeuver; //!< The current maneuver for which XML data is being parsed.
-};
+/*!
+    Returns the bounding box that completely encloses the route.
+
+    The x coordinates of the corner points represent longitudes
+    and the y coordinates represent latitudes.
+*/
+const QRectF& QRoute::boundingBox() const
+{
+    return box;
+}
+
+/*!
+    Returns the list of all maneuvers comprising the route.
+*/
+QList<QManeuver> QRoute::maneuvers() const
+{
+    return man;
+}
 
 QTM_END_NAMESPACE
 
-#endif

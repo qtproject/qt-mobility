@@ -50,24 +50,11 @@
 
 QTM_BEGIN_NAMESPACE
 
-/*!
-* This is the base class for all classes that handle the parsing of
-* a raw Qt::QNetworkReply to populate \ref QGeoReply, \ref QRouteReply and \ref QMapTileReply objects.
-*/
 class QBaseXmlHandler : public QXmlDefaultHandler
 {
 public:
-    /*!
-    * Reimplemented from Qt::QXmlDefaultHandler::startElement().
-    */
     virtual bool startElement(const QString& namespaceURI, const QString& localName, const QString& qName, const QXmlAttributes& atts);
-    /*!
-    * Reimplemented from Qt::QXmlDefaultHandler::endElement().
-    */
     virtual bool endElement(const QString& namespaceURI, const QString& localName, const QString& qName);
-    /*!
-    * Reimplemented from Qt::QXmlDefaultHandler::characters().
-    */
     virtual bool characters(const QString& ch);
 
 private:
@@ -85,18 +72,12 @@ protected:
         Last
     };
 
-    /*!
-    * Constructor.
-    */
     QBaseXmlHandler();
-    /*!
-    * Starts the parsing of bounding box XML data.
-    */
     virtual bool startBoundingBox() = 0;
 
 protected:
-    QList<quint16> parseStates; //!< The current sequence of parse states.
-    QRectF* currBox; //!< A pointer to the current box for which data is being parsed.
+    QList<quint16> parseStates;
+    QRectF* currBox;
 };
 
 QTM_END_NAMESPACE

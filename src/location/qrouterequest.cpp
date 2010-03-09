@@ -1,3 +1,4 @@
+
 /****************************************************************************
 **
 ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
@@ -40,13 +41,61 @@
 ****************************************************************************/
 
 #include "qrouterequest.h"
-#include "qroutereply.h"
 
 QTM_BEGIN_NAMESPACE
 
-//---------------------------------------------------------------------
-//QRouteRequest
+/*!
+    \class QRouteRequest
+    \brief The QRouteRequest class represents a request for a route between two points.
+    \ingroup location
 
+    This is the base class representing a route request from a given source to a given destination.
+*/
+
+/*!
+    \enum QRouteRequest::RouteType
+
+    \value Fastest
+        fastest route (default)
+    \value Shortest
+        shortest route
+    \value Economic
+        economic route
+*/
+
+/*!
+    \enum QRouteRequest::RouteMode
+
+    \value Car
+        car route (default)
+    \value Pedestrian
+        pedestrian route
+    \value PublicTransport
+        public transport route
+*/
+
+/*!
+    \enum QRouteRequest::RouteAvoid
+
+    Values that specify which components the route will not contain.
+
+    \value Highways
+        avoid highways
+    \value Tollroads
+        avoid tollroads
+    \value Ferries
+        avoid ferries
+    \value Tunnels
+        avoid tunnels
+    \value Dirtroads
+        avoid dirt roads
+    \value RailFerries
+        avoid rail ferries
+*/
+
+/*!
+    The default constructor.
+*/
 QRouteRequest::QRouteRequest()
 {
     vers = "1.0";
@@ -57,116 +106,206 @@ QRouteRequest::QRouteRequest()
     rMode = Car;
 }
 
+/*!
+    Returns the service version.
+
+    Currently the only supported version is 1.0.
+*/
 QString QRouteRequest::version() const
 {
     return vers;
 }
 
+/*!
+    Sets the source geo coordinate for this request to \a source.
+*/
 void QRouteRequest::setSource(const QGeoCoordinateMaps& source)
 {
     src = source;
 }
 
+/*!
+    Returns the source geo coordinate for this request.
+*/
 QGeoCoordinateMaps QRouteRequest::source() const
 {
     return src;
 }
 
+/*!
+    Sets the destination geo coordinate for this request to \a destination.
+*/
 void QRouteRequest::setDestination(const QGeoCoordinateMaps& destination)
 {
     dst = destination;
 }
 
+/*!
+    Returns the destination geo coordinate for this request.
+*/
 QGeoCoordinateMaps QRouteRequest::destination() const
 {
     return dst;
 }
 
+/*!
+    Sets the maximum number of response results.
+
+    If set to 0 all possible results will be returned.
+*/
 void QRouteRequest::setTotalResults(quint32 totalResults)
 {
     nTotal = totalResults;
 }
 
+/*!
+    Returns the maximum number of response results.
+*/
 quint32 QRouteRequest::totalResults() const
 {
     return nTotal;
 }
 
+/*!
+    Sets the maximum number of alternative routes the server will try to generate.
+
+    If set to 0 the result will contain no alternative routes (only one result is returned if any).
+*/
 void QRouteRequest::setAlternatives(quint16 nAlternatives)
 {
     this->nAlternatives = nAlternatives;
 }
 
+/*!
+    Returns the maximum number of alternatives to be returned.
+*/
 quint16 QRouteRequest::alternatives() const
 {
     return nAlternatives;
 }
 
+/*!
+    Sets he RFC 3066 language code of the response to \a code.
+
+    The language code should look like en-US or de-DE.
+*/
 void QRouteRequest::setLanguage(const QString& code)
 {
     languageCode = code;
 }
 
+/*!
+    Returns the RFC 3066 language code of the response.
+*/
 QString QRouteRequest::language() const
 {
     return languageCode;
 }
 
+/*!
+    Sets the planned time of departure to \a tod.
+*/
 void QRouteRequest::setDeparture(const QDateTime& tod)
 {
     this->tod = tod;
 }
 
+/*!
+    Returns the planned time of departure.
+*/
 QDateTime QRouteRequest::departure() const
 {
     return tod;
 }
 
+/*!
+    Sets the planned time of arrival to \a toa.
+*/
 void QRouteRequest::setArrival(const QDateTime& toa)
 {
     this->toa = toa;
 }
 
+/*!
+    Returns the planned time of departure.
+*/
 QDateTime QRouteRequest::arrival() const
 {
     return toa;
 }
 
+/*!
+    Sets the type of the route the server will calculate to \a type.
+
+    \sa RouteType
+*/
 void QRouteRequest::setType(RouteType type)
 {
     this->rType = type;
 }
 
+/*!
+    Returns the route type.
+*/
 QRouteRequest::RouteType QRouteRequest::type() const
 {
     return rType;
 }
 
+/*!
+    Sets the movement mode of the route to \a mode.
+
+    \sa RouteMode
+*/
 void QRouteRequest::setMode(RouteMode mode)
 {
     this->rMode = mode;
 }
 
+/*!
+    Returns the route mode.
+*/
 QRouteRequest::RouteMode QRouteRequest::mode() const
 {
     return rMode;
 }
 
+/*!
+    Specifies which route components should not be part of the calculated route to \a avoid.
+
+    The components are avoided on a best effort basis.
+
+    \sa RouteAvoid
+*/
 void QRouteRequest::setAvoid(QList<RouteAvoid> avoid)
 {
     rAvoid = avoid;
 }
 
+/*!
+    Returns a list containing all routes components to be avoided.
+*/
 QList<QRouteRequest::RouteAvoid> QRouteRequest::avoid() const
 {
     return rAvoid;
 }
 
+/*!
+    Adds the stop over \a stopOver to the requested route.
+
+    The server calculates a route that contains these waypoints (in the given order)
+    as part of the route. These waypoints must be between the destination and the source.
+*/
 void QRouteRequest::addStopOver(const QGeoCoordinateMaps& stopOver)
 {
     stpOvers += stopOver;
 }
 
+/*!
+    Removes the stop over \a stopOver from the requested route.
+
+    \sa addStopOver()
+*/
 void QRouteRequest::removeStopOver(const QGeoCoordinateMaps& stopOver)
 {
     int i = 0;
@@ -179,6 +318,9 @@ void QRouteRequest::removeStopOver(const QGeoCoordinateMaps& stopOver)
     }
 }
 
+/*!
+    Returns all added stop overs.
+*/
 const QList<QGeoCoordinateMaps>& QRouteRequest::stopOvers() const
 {
     return stpOvers;
@@ -231,78 +373,6 @@ QString QRouteRequest::avoidToString() const
         return s.left(s.length() - 1);
 
     return "";
-}
-
-//---------------------------------------------------------------------
-//QRouteReply
-/*
-QRouteReply::~QRouteReply()
-{
-    for (int i = 0; i < rt.length(); i++)
-    {
-        QRoute* route = rt[i];
-        rt.pop_front();
-
-        delete route;
-    }
-}
-*/
-
-//---------------------------------------------------------------------
-//QRoute
-
-QRoute::QRoute(const QRoute& route)
-        : dist(route.dist), tod(route.tod), toa(route.toa), box(route.box), man(route.man)
-{
-}
-
-QRoute& QRoute::operator=(const QRoute& route)
-{
-    dist = route.dist;
-    tod = route.tod;
-    toa = route.toa;
-    box = route.box;
-    man = route.man;
-
-    return *this;
-}
-
-//---------------------------------------------------------------------
-//QManeuver
-QManeuver::QManeuver(const QManeuver& maneuver)
-        : wPoints(maneuver.wPoints), mPoints(maneuver.mPoints)
-{
-    descr = maneuver.descr;
-    act = maneuver.act;
-    dist = maneuver.dist;
-    dur = maneuver.dur;
-    trn = maneuver.trn;
-    stName = maneuver.stName;
-    rtName = maneuver.rtName;
-    nxtStreetName = maneuver.nxtStreetName;
-    sgnPost = maneuver.sgnPost;
-    traffDir = maneuver.traffDir;
-    icn = maneuver.icn;
-}
-
-QManeuver& QManeuver::operator=(const QManeuver& maneuver)
-{
-    wPoints = maneuver.wPoints;
-    mPoints = maneuver.mPoints;
-
-    descr = maneuver.descr;
-    act = maneuver.act;
-    dist = maneuver.dist;
-    dur = maneuver.dur;
-    trn = maneuver.trn;
-    stName = maneuver.stName;
-    rtName = maneuver.rtName;
-    nxtStreetName = maneuver.nxtStreetName;
-    sgnPost = maneuver.sgnPost;
-    traffDir = maneuver.traffDir;
-    icn = maneuver.icn;
-
-    return *this;
 }
 
 QTM_END_NAMESPACE

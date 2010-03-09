@@ -43,6 +43,56 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \class QGeocodingReply
+    \brief The QGeocodingReply class represents a response to a QReverseGeocodingRequest.
+    \ingroup location
+    
+    This class represents a geododing reply in response to a
+    previous (reverse) geocoding request.
+
+    \sa QGeocodingRequest
+    \sa QReverseGeocodingRequest
+*/
+
+/*!
+    \enum QGeocodingReply::ResultCode
+    
+    Possible result codes as reported by the geo engine.
+
+    \value OK Request succeeded.
+    \value Failed RequestFailed.
+*/
+
+QGeocodingReply::QGeocodingReply() 
+{
+}
+
+/*!
+    Returns the result code as reported by the geo engine.
+*/
+QGeocodingReply::ResultCode QGeocodingReply::resultCode() const {
+    return code;
+}
+/*!
+    Returns a textual description of the result.
+*/
+QString QGeocodingReply::resultDescription() const {
+    return descr;
+}
+/*!
+    Returns the number of places found.
+*/
+quint32 QGeocodingReply::count() const {
+    return plcs.length();
+}
+/*!
+    Returns a list of all places found.
+*/
+QList<QGeoLocation> QGeocodingReply::places() const {
+    return plcs;
+}
+
 #include "moc_qgeocodingreply.cpp"
 
 QTM_END_NAMESPACE

@@ -43,10 +43,44 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \class QBaseXmlHandler
+    \brief The QBaseXmlHandler class is the base class for parsing map and naviagation data.
+    \ingroup location
+
+    This is the base class for all classes that handle the parsing of
+    a raw QNetworkReply to populate QGeoReply, QRouteReply and 
+    QMapTileReply objects.
+*/
+
+
+
+/*!
+    \fn QBaseXmlHandler::startBoundingBox
+    \brief Starts the parsing of bounding box XML data.
+*/
+
+/*!
+    \variable QBaseXmlHandler::parseStates
+    \brief The current sequence of parse states.
+*/
+
+/*!
+    \variable QBaseXmlHandler::currBox
+    \brief A pointer to the current box for which data is being parsed.
+*/
+
+
+/*!
+    Constructor.
+*/
 QBaseXmlHandler::QBaseXmlHandler() : currBox(NULL)
 {
 }
 
+/*!
+    \reimp
+*/
 bool QBaseXmlHandler::startElement(const QString& /*namespaceURI*/,
                                    const QString& /*localName*/,
                                    const QString& qName,
@@ -87,6 +121,9 @@ bool QBaseXmlHandler::startElement(const QString& /*namespaceURI*/,
     return true;
 }
 
+/*!
+    \reimp
+*/
 bool QBaseXmlHandler::characters(const QString& ch)
 {
     if (parseStates.count() == 0)
@@ -112,6 +149,9 @@ bool QBaseXmlHandler::characters(const QString& ch)
     return true;
 }
 
+/*!
+    \reimp
+*/
 bool QBaseXmlHandler::endElement(const QString& , const QString& , const QString& qName)
 {
     if (parseStates.count() == 0)

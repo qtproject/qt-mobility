@@ -53,42 +53,15 @@ class Q_LOCATION_EXPORT QReverseGeocodingRequest
     friend class QGeoNetworkManager;
 
 public:
-    /*!
-    * Default constructor.
-    */
     QReverseGeocodingRequest();
-    /*!
-    * Constructs a request for the given geo coordinate.
-    * @param coordinate The geocoordinate for which geo information
-    * is requested.
-    */
     QReverseGeocodingRequest(const QGeoCoordinateMaps& coordinate);
 
-    /*!
-    * @return The service version; currently the only supported version is 1.0.
-    */
     QString version() const;
 
-    /*!
-    * @return The MARC language code.
-    */
     QString language() const;
-    /*!
-    * Sets the language code.
-    * @param language The MARC language code.
-    */
     void setLanguage(const QString& language);
 
-    /*!
-    * @return The geo coordinate for which geo information
-    * is requested.
-    */
     QGeoCoordinateMaps coordinate() const;
-    /*!
-    * Sets the geo coordinate for which geo information
-    * is requested.
-    * @param coordinate The geo coordinate.
-    */
     void setCoordinate(const QGeoCoordinateMaps& coordinate);
 
 private:

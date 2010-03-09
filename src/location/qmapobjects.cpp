@@ -345,7 +345,7 @@ bool QMapLine::intersects(const QRectF& rect) const
 
 /*!
     \class QMapMarker
-    \brief Internal representation of a map marker.
+    \brief The QMapMarker class is an internal representation of a map marker.
     \ingroup location
 
     This class is used by QMapView internally to represent a map marker.

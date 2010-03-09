@@ -47,6 +47,17 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \class QRouteXmlHandler
+    \brief The QRouteXmlHandler class parses XML to produce a QRouteReply.
+    \ingroup location
+
+    This class parses a returned raw QNetworkReply to populate a corresponding QRouteReply.
+*/
+
+/*!
+    Constructs a QRouteXmlHandler which will populate the fields of \a routeReply.
+*/
 QRouteXmlHandler::QRouteXmlHandler(QRouteReply* routeReply) :
         reply(routeReply)
 {
@@ -98,6 +109,16 @@ bool QRouteXmlHandler::startElement(const QString& namespaceURI,
     return true;
 }
 
+/*!
+    Parses the string \a strPoints into the list of geo coordinates \a geoPoints.
+
+    The string \a strPoints will contain a list of coordinates separated by spaces,
+    with the latitude and longitudes separated by commas.
+
+    For example, "37.593874,55.627041 37.594056,55.627352 37.595215,55.628854" is such a string.
+
+    Returns a boolean indicating whether or not the parsing succeeded.
+*/
 bool QRouteXmlHandler::parseGeoPoints(const QString& strPoints, QList<QGeoCoordinateMaps>& geoPoints)
 {
     QStringList rawPoints = strPoints.split(' ');
@@ -117,6 +138,9 @@ bool QRouteXmlHandler::parseGeoPoints(const QString& strPoints, QList<QGeoCoordi
     return true;
 }
 
+/*!
+    Parses a route reply from the XML attributes \a atts.
+*/
 void QRouteXmlHandler::parseRouteReply(const QXmlAttributes& atts)
 {
     QString code = atts.value("resultCode");
@@ -143,6 +167,9 @@ void QRouteXmlHandler::parseRouteReply(const QXmlAttributes& atts)
     }
 }
 
+/*!
+    Parses a route from the XML attributes \a atts.
+*/
 void QRouteXmlHandler::parseRoute(const QXmlAttributes& atts)
 {
     currRoute = QRoute(); //empty route
@@ -166,6 +193,9 @@ void QRouteXmlHandler::parseRoute(const QXmlAttributes& atts)
     }
 }
 
+/*!
+    Parses a maneuver from the XML attributes \a atts.
+*/
 void QRouteXmlHandler::parseManeuver(const QXmlAttributes& atts)
 {
     currManeuver = QManeuver(); //empty maneuver;

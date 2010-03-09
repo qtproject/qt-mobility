@@ -43,6 +43,57 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \class QGeoReply
+    \brief The QGeoReply class is the base class for all maps and navigation replies.
+    \ingroup location
+
+    This is the base class of all classes that represent replies
+    to (reverse) geocoding, route, and map tile requests.
+*/  
+
+/*!
+    \typedef QGeoReply::ErrorCode
+
+    Error codes that might occur
+*/
+
+/*!
+    Default constructor.
+*/
+QGeoReply::QGeoReply() : fin(false) {}
+
+
+
+/*!
+    Returns true if the reply finished and returns false if the reply has not finished yet.
+*/
+bool QGeoReply::isFinished() const {
+    return fin;
+}
+
+/*!
+    \fn void QGeoReply::finished()
+    
+
+    This signal is emitted when the reply is finished. This signal will be
+    emitted after its corresponding QGeoEngine::finished() signal.
+*/
+
+/*!
+    \fn void QGeoReply::error(ErrorCode code)
+
+    This signal is emitted when an error occured. This signal will be
+    emitted after its corresponding QGeoEngine::error() signal.
+    \note When QGeoNetworkManager is used, the error code will be identical to QNetworkReply::NetworkError.
+*/
+
+/*!
+    \variable QGeoReply::fin
+    \brief finished flag;
+*/
+
+
 #include "moc_qgeoreply.cpp"
 
 QTM_END_NAMESPACE

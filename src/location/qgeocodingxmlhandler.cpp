@@ -40,12 +40,24 @@
 ****************************************************************************/
 
 #include "qgeocodingxmlhandler.h"
+#include "qgeolocation.h"
 
 #define GEOCODING_CODE_OK     "OK"
 #define GEOCODING_CODE_FAILED "FAILED"
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \class QGeocodingXmlHandler
+    \brief The QGeocodingXmlHandler class parses XML to produce a QGeocodingReply.
+    \ingroup location
+
+    This class parses a returned raw QNetworkReply to populate a corresponding QGeocodingReply.
+*/
+
+/*!
+    Constructs a QGeocodingXmlHandler which will populate the fields of \a codingReply.
+*/
 QGeocodingXmlHandler::QGeocodingXmlHandler(QGeocodingReply* codingReply) :
         reply(codingReply)
 {
@@ -284,6 +296,9 @@ bool QGeocodingXmlHandler::startElement(const QString& namespaceURI,
     return true;
 }
 
+/*!
+    Parses a geocoding reply from the XML attributes \a atts.
+*/
 void QGeocodingXmlHandler::parseCodingReply(const QXmlAttributes& atts)
 {
     QString code = atts.value("resultCode");
@@ -302,6 +317,9 @@ void QGeocodingXmlHandler::parseCodingReply(const QXmlAttributes& atts)
     }
 }
 
+/*!
+    Parses a geolocation from the XML attributes \a atts.
+*/
 void QGeocodingXmlHandler::parsePlace(const QXmlAttributes& atts)
 {
     currPlace = new QGeoLocation();

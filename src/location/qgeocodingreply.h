@@ -51,13 +51,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-/*!
-* This class represents a geododing reply in response to a
-* previous (reverse) geocoding request.
-* @see QGeocodingRequest
-* @see QReverseGeocodingRequest
-*/
-class QGeocodingReply : public QGeoReply
+class Q_LOCATION_EXPORT QGeocodingReply : public QGeoReply
 {
     Q_OBJECT
 
@@ -65,43 +59,21 @@ class QGeocodingReply : public QGeoReply
     friend class QGeocodingXmlHandler;
 
 public:
-
-    //! Possible result codes as reported by the geo engine.
     enum ResultCode {
-        OK = 0, //!< request succeeded
-        Failed //!< request failed
+        OK = 0,
+        Failed
     };
 
 public:
-    /*!
-    * @return The result code as reported by the geo engine.
-    */
-    ResultCode resultCode() const {
-        return code;
-    }
-    /*!
-    * @return A textual description of the result.
-    */
-    QString resultDescription() const {
-        return descr;
-    }
-    /*!
-    * @return The number of places found.
-    */
-    quint32 count() const {
-        return plcs.length();
-    }
-    /*!
-    * @return A list of all places found.
-    */
-    QList<QGeoLocation> places() const {
-        return plcs;
-    }
+    ResultCode resultCode() const;
+    QString resultDescription() const;
+    quint32 count() const;
+    QList<QGeoLocation> places() const;
 
 private:
     Q_DISABLE_COPY(QGeocodingReply)
 
-    QGeocodingReply() {}
+    QGeocodingReply();
 
 private:
     ResultCode code;

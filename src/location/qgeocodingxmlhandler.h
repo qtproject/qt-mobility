@@ -47,18 +47,9 @@
 
 QTM_BEGIN_NAMESPACE
 
-/*!
-* This class parses a returned raw Qt::QNetworkReply to populate a
-* corresponding \ref QGeocodingReply.
-*/
-
 class QGeocodingXmlHandler : public QBaseXmlHandler
 {
 public:
-    /*!
-    * Cosntructor.
-    * @param codingReply The QGeocodingReply to populate.
-    */
     QGeocodingXmlHandler(QGeocodingReply* codingReply);
 
     virtual bool startElement(const QString& namespaceURI, const QString& localName, const QString& qName, const QXmlAttributes& atts);
@@ -68,15 +59,7 @@ public:
 private:
     Q_DISABLE_COPY(QGeocodingXmlHandler)
 
-    /*!
-    * Parses a geo coding reply.
-    * @param atts The XML attributes to parse.
-    */
     void parseCodingReply(const QXmlAttributes& atts);
-    /*!
-    * Parses a geo location.
-    * @param atts The XML attributes to parse.
-    */
     void parsePlace(const QXmlAttributes& atts);
     virtual bool startBoundingBox();
 

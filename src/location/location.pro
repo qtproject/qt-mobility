@@ -192,22 +192,28 @@ SOURCES += qlocationutils.cpp \
            qlandmarkcustomsort.cpp
 
 # maps source files
-SOURCES += qbasexmlhandler.cpp \
-           qgeocoding.cpp \
+SOURCES += qaddress.cpp \
+            qalternativeaddress.cpp \
+            qbasexmlhandler.cpp \
            qgeocodingreply.cpp \
+           qgeocodingrequest.cpp \
            qgeocodingxmlhandler.cpp \
            qgeocoordinatemaps.cpp \
            qgeoengine.cpp \
+           qgeolocation.cpp \
            qgeonetworkmanager.cpp \
            qgeoreply.cpp \
+           qmaneuver.cpp \
            qmapobjects.cpp \
            qmaptilerequest.cpp \
            qmaptilecache.cpp \
            qmaptilereply.cpp \
            qmapview.cpp \
+           qreversegeocodingrequest.cpp \
+           qroute.cpp \
            qroutereply.cpp \
+           qrouterequest.cpp \
            qroutexmlhandler.cpp \
-           qrouting.cpp
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

@@ -44,6 +44,66 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \class QRouteReply
+    \brief The QRouteReply class represents a response to a request for routing information.
+    \ingroup location
+
+    This class represents a routing response.
+*/
+
+/*!
+    \enum QRouteReply::ResultCode
+
+    Possible result codes as returned by the geo engine
+
+    \value OK
+        request succeeded
+    \value Failed
+        request failed
+    \value FailedWithAlternative
+        request failed, but a close alternative was found
+*/
+
+QRouteReply::QRouteReply() : rCode(Failed) {}
+
+/*!
+    Returns the result code as reported by the geo engine.
+*/
+QRouteReply::ResultCode QRouteReply::resultCode() const {
+    return rCode;
+}
+
+/*!
+    Returns a textual description of the result.
+*/
+QString QRouteReply::resultDescription() const {
+    return descr;
+}
+
+/*!
+    Returns the RFC 3066 language code of the reply.
+*/
+QString QRouteReply::language() const {
+    return lang;
+}
+
+/*!
+    Returns the number of routes contained in this reply.
+*/
+int QRouteReply::count() const {
+    return rt.size();
+}
+
+/*!
+    Returns a list containing all found routes.
+
+    \sa QRoute
+*/
+const QList<QRoute>& QRouteReply::routes() const {
+    return rt;
+}
+
 #include "moc_qroutereply.cpp"
 
 QTM_END_NAMESPACE

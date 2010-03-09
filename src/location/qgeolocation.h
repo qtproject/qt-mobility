@@ -50,58 +50,19 @@
 
 QTM_BEGIN_NAMESPACE
 
-/*!
-* This class represent a geo location as returned by
-* \ref QGeocodingReply::places().
-*/
-class QGeoLocation
+class Q_LOCATION_EXPORT QGeoLocation
 {
     friend class QGeocodingXmlHandler;
 
 public:
-    /*!
-    * Default constructor.
-    */
-    QGeoLocation() {}
+    QGeoLocation();
 
-    /*!
-    * @return The bounding box that completely encloses the location.
-    *         The x coordinates of the corner points represent longitudes,
-              the y coordinates represent latitudes.
-    */
-    QRectF boundingBox() const {
-        return box;
-    }
-    /*!
-    * @return The geo coordinate of this location.
-    */
-    QGeoCoordinateMaps position() const {
-        return pos;
-    }
-    /*!
-    * @return Description of the location.
-    */
-    QString title() const {
-        return ttl;
-    }
-    /*!
-    * @return The MARC language used in the description of this location.
-    */
-    QString language() const {
-        return lang;
-    }
-    /*!
-    * @return The address found.
-    */
-    QAddress address() const {
-        return addr;
-    }
-    /*!
-    * @return Alternatives to the address found.
-    */
-    QAlternativeAddress alternatives() const {
-        return altern;
-    }
+    QRectF boundingBox() const;
+    QGeoCoordinateMaps position() const;
+    QString title() const;
+    QString language() const;
+    QAddress address() const;
+    QAlternativeAddress alternatives() const;
 
 private:
     QRectF          box;

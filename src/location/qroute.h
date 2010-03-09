@@ -50,55 +50,20 @@
 
 QTM_BEGIN_NAMESPACE
 
-/*!
-* This class represents a route as contained in a \ref QRouteReply.
-* A CRoute contains a collection of \ref CManeuver objects.
-*/
 class Q_LOCATION_EXPORT QRoute
 {
     friend class QRouteXmlHandler;
 
 public:
-    //! The default constructor.
-    QRoute() {};
-    //! The copy constructor.
+    QRoute();
     QRoute(const QRoute& route);
-    //! The assignment operator.
     QRoute& operator=(const QRoute& route);
 
-    /*!
-    * @return The departure time of this route.
-    */
-    QDateTime departure() const {
-        return tod;
-    }
-    /*!
-    * @return The arrival time of this route.
-    */
-    QDateTime arrival() const {
-        return toa;
-    }
-    /*!
-    * @return The distance covered by this route in meters.
-    */
-    quint32 distance() const {
-        return dist;
-    }
-
-    /*!
-    * @return The bounding box that completely encloses the route.
-    *         The x coordinates of the corner points represent longitudes,
-              the y coordinates represent latitudes.
-    */
-    const QRectF& boundingBox() const {
-        return box;
-    }
-    /*!
-    * @return The list of all maneuvers comprising the route.
-    */
-    QList<QManeuver> maneuvers() const {
-        return man;
-    }
+    QDateTime departure() const;
+    QDateTime arrival() const;
+    quint32 distance() const;
+    const QRectF& boundingBox() const;
+    QList<QManeuver> maneuvers() const;
 
 protected:
     quint32 dist;

@@ -39,52 +39,69 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_ROUTEXMLHANDLER_H
-#define QLOCATION_ROUTEXMLHANDLER_H
+#include "qgeolocation.h"
 
-#include "qbasexmlhandler.h"
-#include "qroutereply.h"
-#include "qroute.h"
-#include "qmaneuver.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QRouteXmlHandler : public QBaseXmlHandler
+/*!
+    \class QGeoLocation
+    \brief The QGeoLocation class represents a geolocation.
+    \ingroup location
+
+    This class represent a geo location as returned by QGeocodingReply::places().
+*/
+
+/*!
+    Default constructor.
+*/
+QGeoLocation::QGeoLocation() {}
+
+/*!
+    Returns the bounding box that completely encloses the location.
+
+    The x coordinates of the corner points represent longitudes,
+    the y coordinates represent latitudes.
+*/
+QRectF QGeoLocation::boundingBox() const
 {
-public:
-    QRouteXmlHandler(QRouteReply* routeReply);
-
-    virtual bool startElement(const QString& namespaceURI, const QString& localName, const QString& qName, const QXmlAttributes& atts);
-    virtual bool endElement(const QString& namespaceURI, const QString& localName, const QString& qName);
-    virtual bool characters(const QString& ch);
-
-private:
-    Q_DISABLE_COPY(QRouteXmlHandler)
-
-    virtual bool startBoundingBox();
-
-    void parseRouteReply(const QXmlAttributes& atts);
-    void parseRoute(const QXmlAttributes& atts);
-    void parseManeuver(const QXmlAttributes& atts);
-    bool parseGeoPoints(const QString& strPoints, QList<QGeoCoordinateMaps>& points);
-
-private:
-    //! Internal parsing states.
-    enum RouteParseState {
-        Route = QBaseXmlHandler::Last,
-        BoundingBox,
-        BoundingBox_Lat,
-        BoundingBox_Long,
-        Maneuver,
-        WayPoints,
-        ManeuverPoints
-    };
-
-    QRouteReply* reply; //!< Pointer to the QRouteReply object being populated.
-    QRoute currRoute; //!< The current route for which XML data is being parsed.
-    QManeuver currManeuver; //!< The current maneuver for which XML data is being parsed.
-};
+    return box;
+}
+/*!
+    Returns the geocoordinate of this location.
+*/
+QGeoCoordinateMaps QGeoLocation::position() const
+{
+    return pos;
+}
+/*!
+    Returns a description of the location.
+*/
+QString QGeoLocation::title() const
+{
+    return ttl;
+}
+/*!
+    Returns the MARC language used in the description of this location.
+*/
+QString QGeoLocation::language() const
+{
+    return lang;
+}
+/*!
+    Returns the address found.
+*/
+QAddress QGeoLocation::address() const
+{
+    return addr;
+}
+/*!
+    Returns alternatives to the address found.
+*/
+QAlternativeAddress QGeoLocation::alternatives() const
+{
+    return altern;
+}
 
 QTM_END_NAMESPACE
 
-#endif

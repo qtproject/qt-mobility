@@ -52,6 +52,23 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \class QGeoCoordinateMaps
+    \brief The QGeoCoordinateMaps class represents a geocoordinate.
+    \ingroup location
+
+    Longitude and latitude are expressed as real values of degrees, 
+    with e.g. (13.377, 52.5161) representing Berlin, (-74.0071, 40.7145) 
+    representing New York, (-43.1951, -22.9767) representing Rio de Janeiro, 
+    and (145.103, -37.868) representing Melbourne. 
+    
+    In terms of a QPointF, the longitude represents the x coordinate, 
+    and the latitude represents the y coordinate.
+*/
+
+/*!
+    Default constructor.
+*/
 QGeoCoordinateMaps::QGeoCoordinateMaps()
 {
     lng = 0;
@@ -59,6 +76,11 @@ QGeoCoordinateMaps::QGeoCoordinateMaps()
     amNull = 0;
 }
 
+/*!
+    Constructs a QGeoCoordinateMaps instance from \a coordinate. 
+    
+    The longitude comes from coordinate.x() and the latitude comes from coordinate.y().
+*/
 QGeoCoordinateMaps::QGeoCoordinateMaps(const QPointF& coordinate)
 {
     amNull = 0;
@@ -66,6 +88,9 @@ QGeoCoordinateMaps::QGeoCoordinateMaps(const QPointF& coordinate)
     setLatitude(coordinate.y());
 }
 
+/*!
+    Constructs a QGeoCoordinateMaps instance from \a latitude and \a longitude.
+*/
 QGeoCoordinateMaps::QGeoCoordinateMaps(qreal longitude, qreal latitude)
 {
     amNull = 0;
@@ -73,6 +98,9 @@ QGeoCoordinateMaps::QGeoCoordinateMaps(qreal longitude, qreal latitude)
     setLatitude(latitude);
 }
 
+/*!
+    Constructors a QGeoCoordinateMaps from \a coordinate.
+*/
 QGeoCoordinateMaps::QGeoCoordinateMaps(const QGeoCoordinateMaps& coordinate)
 {
     lng = coordinate.lng;
@@ -80,6 +108,9 @@ QGeoCoordinateMaps::QGeoCoordinateMaps(const QGeoCoordinateMaps& coordinate)
     amNull = coordinate.amNull;
 }
 
+/*!
+    Assigns the value of \a coordinate to this QGeoCoordinateMaps
+*/
 QGeoCoordinateMaps& QGeoCoordinateMaps::operator=(const QGeoCoordinateMaps& coordinate)
 {
     lng = coordinate.lng;
@@ -88,16 +119,42 @@ QGeoCoordinateMaps& QGeoCoordinateMaps::operator=(const QGeoCoordinateMaps& coor
     return *this;
 }
 
+/*!
+    Returns whether this QGeoCoordinateMaps is equal to \a coordinate
+
+    Two QGeoCoordinateMaps are deemed equal if both their latitudes and longitudes are identical.
+*/
 bool QGeoCoordinateMaps::operator==(const QGeoCoordinateMaps& coordinate) const
 {
     return lng == coordinate.lng && lat == coordinate.lat;
 }
 
+/*!
+    Returns whether this QGeoCoordinateMaps is unequal to \a coordinate
+    \sa QGeoCoordinateMaps::operator==()
+*/
 bool QGeoCoordinateMaps::operator!=(const QGeoCoordinateMaps& coordinate) const
 {
     return !(lng == coordinate.lng && lat == coordinate.lat);
 }
 
+
+/*!
+    Returns the latitude of this geocoordinate.
+*/
+qreal QGeoCoordinateMaps::latitude() const {
+    return lat;
+}
+/*!
+    Same as latitude().
+*/
+qreal QGeoCoordinateMaps::y() const {
+    return lat;
+}
+
+/*!
+    Sets the latitude of this geocoordinate to \a latitude.
+*/
 void QGeoCoordinateMaps::setLatitude(qreal latitude)
 {
     amNull |= SET_LATITUDE;
@@ -109,11 +166,30 @@ void QGeoCoordinateMaps::setLatitude(qreal latitude)
         lat = -90;
 }
 
+/*!
+    Same as \l {QGeoCoordinateMaps::setLatitude()} {setLatitude(y)}.
+*/
 void QGeoCoordinateMaps::setY(qreal y)
 {
     setLatitude(y);
 }
 
+/*!
+    Returns the longitude of this geocoordinate.
+*/
+qreal QGeoCoordinateMaps::longitude() const {
+    return lng;
+}
+/*!
+    Same as longitude().
+*/
+qreal QGeoCoordinateMaps::x() const {
+    return lng;
+}
+
+/*!
+    Sets the longitude of this geocoordinate to \a longitude.
+*/
 void QGeoCoordinateMaps::setLongitude(qreal longitude)
 {
     //In C++, the result of modulo with negative operands
@@ -139,11 +215,17 @@ void QGeoCoordinateMaps::setLongitude(qreal longitude)
     }
 }
 
+/*!
+    Same as \l {QGeoCoordinateMaps::setLongitude()} {setLongitude(x)}.
+*/
 void QGeoCoordinateMaps::setX(qreal x)
 {
     setLongitude(x);
 }
 
+/*!
+    Returns a point corresponding to the normailzed Mercator projection of this coordinate.
+*/
 QPointF QGeoCoordinateMaps::toMercator() const
 {
     return QPointF(lng / 360.0f + 0.5f,
@@ -151,6 +233,9 @@ QPointF QGeoCoordinateMaps::toMercator() const
 
 }
 
+/*!
+    Returns a geocoordinate corresponding to the normalized Mercator coordinate \a mercatorCoord.
+*/
 QGeoCoordinateMaps QGeoCoordinateMaps::fromMercator(const QPointF& mercatorCoord)
 {
     qreal y = mercatorCoord.y();
@@ -202,6 +287,12 @@ qreal QGeoCoordinateMaps::modulorize(qreal value, qreal max)
         return rmod(max - rmod(-1 * value, max), max);
 }
 
+/*!
+    Returns whether this geocoordinate is null. 
+    
+    A geocoordinate is considered null until both 
+    the latitude and longitude have been set.
+*/
 bool QGeoCoordinateMaps::isNull() const
 {
     return !((amNull & SET_LONGITUDE) &&
