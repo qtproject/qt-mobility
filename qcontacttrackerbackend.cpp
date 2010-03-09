@@ -389,14 +389,7 @@ QMap<QString, QContactDetailDefinition> QContactTrackerEngine::detailDefinitions
     if (d->m_definitions.isEmpty()) {
         // none in the list?  get the schema definitions, and modify them to match our capabilities.
         d->m_definitions = QContactManagerEngine::schemaDefinitions().value(QContactType::TypeContact);
-        {
-            qDebug() << "the definitions";
-            QList<QString> defs = d->m_definitions.keys();
-            foreach(QString def,  defs)
-            {
-                qDebug() << def;
-            }
-        }
+
         // modification: name is unique
         QContactDetailDefinition nameDef = d->m_definitions.value(QContactName::DefinitionName);
         nameDef.setUnique(true);
@@ -426,6 +419,7 @@ QMap<QString, QContactDetailDefinition> QContactTrackerEngine::detailDefinitions
             fields.insert(QContactUrl::FieldSubType, f);
             newUrlDef.setFields(fields);
             newUrlDef.setUnique(true);
+            newUrlDef.setName(QContactUrl::DefinitionName);
             d->m_definitions.insert(QContactUrl::DefinitionName, newUrlDef);
         }
 
@@ -442,10 +436,9 @@ QMap<QString, QContactDetailDefinition> QContactTrackerEngine::detailDefinitions
             fields.insert("Account", f);
             fields.insert("AccountPath", f);
             newAccountDefinition.setFields(fields);
+            newAccountDefinition.setName(QContactOnlineAccount::DefinitionName);
             d->m_definitions.insert(QContactOnlineAccount::DefinitionName, newAccountDefinition);
         }
-
-
     }
 
     error = QContactManager::NoError;

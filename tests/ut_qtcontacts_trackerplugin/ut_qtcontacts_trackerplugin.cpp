@@ -1772,6 +1772,17 @@ void ut_qtcontacts_trackerplugin::testContactsWithoutMeContact() {
 
 }
 
+void ut_qtcontacts_trackerplugin::testDefinitionNames()
+{
+    QContactManager *cm(ContactManager::instance());
+    QMap<QString, QContactDetailDefinition> defs(cm->detailDefinitions());
+
+    foreach(QString key, defs.keys()) {
+        QCOMPARE(defs[key].name(), key);
+    }
+}
+
+
 /***************************     Helper functions for unit tests   ***************'*/
 
 QContact ut_qtcontacts_trackerplugin::contact(QContactLocalId id, QStringList details)

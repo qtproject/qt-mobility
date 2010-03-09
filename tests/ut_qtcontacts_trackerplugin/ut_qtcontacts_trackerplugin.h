@@ -111,6 +111,7 @@ private slots:
     void testIMContactsAndMetacontactMasterPresence();
     void testIMContactsFilterring();
     void testContactsWithoutMeContact();
+    void testDefinitionNames();
 
 private:
     void syncContactsAddedSinceHelper(QDateTime& start, QList<QContactLocalId>& addedIds);
