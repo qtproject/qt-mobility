@@ -42,6 +42,7 @@
 #include "qservicemanager.h"
 #include "qserviceplugininterface.h"
 #include "qabstractsecuritysession.h"
+#include "qserviceinterfacedescriptor_p.h"
 #ifdef Q_OS_SYMBIAN
     #include "databasemanager_s60_p.h"
 #else
@@ -59,8 +60,11 @@ QTM_BEGIN_NAMESPACE
 
 static QString qservicemanager_resolveLibraryPath(const QString &libNameOrPath)
 {
+    qDebug() << "Here we are\n";
     if (QFile::exists(libNameOrPath))
         return libNameOrPath;
+
+    qDebug() << "Here we are not\n";
 
     // try to find plug-in via QLibrary
     const QStringList paths = QCoreApplication::libraryPaths();
@@ -403,6 +407,16 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     //service instance is around
     QServicePluginInterface *pluginIFace = qobject_cast<QServicePluginInterface *>(loader->instance());
     if (pluginIFace) {
+
+        //check initialization first as the service may be a pre-registered one
+        QString serviceInitialized = descriptor.customAttribute(SERVICE_INITIALIZED_ATTR);
+        if (!serviceInitialized.isEmpty() && (serviceInitialized == QLatin1String("NO"))) {
+            pluginIFace->installService();
+            DatabaseManager::DbScope scope = d->scope == QService::UserScope ?
+                    DatabaseManager::UserOnlyScope : DatabaseManager::SystemScope;
+            d->dbManager->serviceInitialized(descriptor.serviceName(), scope);
+        }
+
         QObject *obj = pluginIFace->createInstance(descriptor, context, session);
         if (obj) {
             QServicePluginCleanup *cleanup = new QServicePluginCleanup(loader);
@@ -525,6 +539,9 @@ bool QServiceManager::addService(QIODevice *device)
             DatabaseManager::UserOnlyScope : DatabaseManager::SystemScope;
     ServiceMetaDataResults results = parser.parseResults();
     bool result = d->dbManager->registerService(results, scope);
+
+#ifndef QT_SFW_SERVICEDATABASE_GENERATE
+    // service initialization to be done when service functionality is requested first time
     if (result) {
         QPluginLoader *loader = new QPluginLoader(qservicemanager_resolveLibraryPath(data.location));
         QServicePluginInterface *pluginIFace = qobject_cast<QServicePluginInterface *>(loader->instance());
@@ -540,6 +557,8 @@ bool QServiceManager::addService(QIODevice *device)
     } else {
         d->setError();
     }
+#endif
+
     return result;
 }
 
@@ -569,8 +588,10 @@ bool QServiceManager::removeService(const QString& serviceName)
         return false;
     }
 
+#ifndef QT_SFW_SERVICEDATABASE_GENERATE
     // Call QServicePluginInterface::uninstallService() on all plugins that
     // match this service
+    // excluded when database is pre-generated
 
     QSet<QString> pluginPathsSet;
     QList<QServiceInterfaceDescriptor> descriptors = findInterfaces(serviceName);
@@ -588,6 +609,7 @@ bool QServiceManager::removeService(const QString& serviceName)
         loader->unload();
         delete loader;
     }
+#endif
 
     if (!d->dbManager->unregisterService(serviceName, d->scope == QService::UserScope ?
             DatabaseManager::UserOnlyScope : DatabaseManager::SystemScope)) {

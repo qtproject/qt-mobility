@@ -388,6 +388,16 @@ bool RDatabaseManagerSession::UnregisterService(const QString& aServiceName)
     return (iError() == DBError::NoError);
     }
 
+bool RDatabaseManagerSession::ServiceInitialized(const QString& aServiceName)
+    {
+    TPtrC serviceNamePtr(reinterpret_cast<const TUint16*>(aServiceName.utf16()));
+    TIpcArgs args(&serviceNamePtr, &iError);
+    SendReceive(EServiceInitializedRequest, args);
+    
+    return (iError() == DBError::NoError);
+    }
+    
+
 QList<QServiceInterfaceDescriptor> RDatabaseManagerSession::Interfaces(const QServiceFilter& aFilter)
     {
     QByteArray filterByteArray;

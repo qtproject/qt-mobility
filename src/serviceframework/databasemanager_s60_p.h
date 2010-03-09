@@ -84,6 +84,7 @@ class RDatabaseManagerSession : public RSessionBase
 
         bool RegisterService(ServiceMetaDataResults& aService);
         bool UnregisterService(const QString& aServiceName);
+        bool ServiceInitialized(const QString& aServiceName);
 
         QList<QServiceInterfaceDescriptor> Interfaces(const QServiceFilter& aFilter);
         QStringList ServiceNames(const QString& aInterfaceName);

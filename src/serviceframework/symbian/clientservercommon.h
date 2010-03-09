@@ -55,6 +55,7 @@ enum TDBServerRqst
 {
     ERegisterServiceRequest,
     EUnregisterServiceRequest,
+    EServiceInitializedRequest,
     EGetInterfacesRequest,
     EGetServiceNamesRequest,
     EGetServiceNamesSizeRequest,
