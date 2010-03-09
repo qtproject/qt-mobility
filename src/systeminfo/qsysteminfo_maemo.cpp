@@ -338,9 +338,9 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
     case QSystemNetworkInfo::CdmaMode:
     case QSystemNetworkInfo::GsmMode:
     case QSystemNetworkInfo::WcdmaMode:
-
-    case QSystemNetworkInfo::WimaxMode:
+        return currentOperatorName;
         break;
+    case QSystemNetworkInfo::WimaxMode:
         break;
     default:
         return QSystemNetworkInfoLinuxCommonPrivate::networkName(mode);
@@ -436,11 +436,14 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
                        this, SLOT(cellNetworkSignalStrengthChanged(uchar,uchar)))) {
         qWarning() << "unable to connect to signal_strength_change";
     }
-    /*
-    reply = connectionInterface.call(QLatin1String("get_operator_name"));
+    uchar type = 0;
+    QList<QVariant> argumentList;
+    argumentList << qVariantFromValue(type) << qVariantFromValue(currentMNC.toUInt()) << qVariantFromValue(currentMCC.toUInt());
+    reply = connectionInterface.callWithArgumentList(QDBus::Block, QLatin1String("get_operator_name"), argumentList);
+
     if (reply.type() == QDBusMessage::ReplyMessage) {
         QList<QVariant> argList = reply.arguments();
-        currentOperatorName = argList.at(3).toString();
+        currentOperatorName = argList.at(0).toString();
     } else {
         qWarning() << reply.errorMessage();
     }
@@ -448,10 +451,10 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
                        "/com/nokia/phone/net",
                        "Phone.Net",
                        "operator_name_change",
-                       this, SLOT(operatorNameChanged(uchar,string,string,uint,uint)))) {
+                       this, SLOT(operatorNameChanged(uchar,QString,QString,uint,uint)))) {
         qWarning() << "unable to connect to operator_name_change";
     }
-    */
+
     reply = connectionInterface.call(QLatin1String("get_radio_access_technology"));
     if (reply.type() == QDBusMessage::ReplyMessage) {
         QList<QVariant> argList = reply.arguments();
@@ -472,14 +475,6 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
 void QSystemNetworkInfoPrivate::cellNetworkSignalStrengthChanged(uchar var1, uchar var2)
 {
     QSystemNetworkInfo::NetworkMode mode = QSystemNetworkInfo::UnknownMode;
-    QDBusInterface connectionInterface("com.nokia.phone.net",
-                                       "/com/nokia/phone/net",
-                                       "Phone.Net",
-                                       QDBusConnection::systemBus());
-    if (!connectionInterface.isValid()) {
-        qWarning() << "cellNetworkSignalStrengthChanged(): interface not valid";
-        return;
-    }
     cellSignalStrength = var1;
 
     if (radioAccessTechnology == 1)
