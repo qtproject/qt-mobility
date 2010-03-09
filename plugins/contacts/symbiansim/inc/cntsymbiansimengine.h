@@ -54,13 +54,6 @@
 //
 #include "qcontactmanagerengine.h"
 #include "qcontactmanagerenginefactory.h"
-
-#ifdef SYMBIANSIM_BACKEND_USE_ETEL_TESTSERVER
-#include <etelmm_etel_test_server.h>
-#else
-#include <etelmm.h>
-#endif
-
 #include <flogger.h>
 #include <f32file.h>
 
