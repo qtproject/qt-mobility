@@ -78,7 +78,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="reading" fullname="QAmbientLightSensor::reading" href="qambientlightsensor.html#reading" location="qambientlightsensor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QAmbientLightReading *" signature="reading() const"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QAmbientLightSensor::type" href="qambientlightsensor.html#type-var" location="qambientlightsensor.h" type="const char *" static="true"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QVersitContactExporterDetailHandler" href="qversitcontactexporterdetailhandler.html" location="qversitcontactexporter.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="preliminary" name="QVersitContactExporterDetailHandler" href="qversitcontactexporterdetailhandler.html" location="qversitcontactexporter.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="~QVersitContactExporterDetailHandler" fullname="QVersitContactExporterDetailHandler::~QVersitContactExporterDetailHandler" href="qversitcontactexporterdetailhandler.html#dtor.QVersitContactExporterDetailHandler" location="qversitcontactexporter.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QVersitContactExporterDetailHandler()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="preProcessDetail" fullname="QVersitContactExporterDetailHandler::preProcessDetail" href="qversitcontactexporterdetailhandler.html#preProcessDetail" location="qversitcontactexporter.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="preProcessDetail(const QContact &amp; contact, const QContactDetail &amp; detail, QVersitDocument * document)">
                 <parameter left="const QContact &amp;" right="" name="contact" default=""/>
@@ -92,7 +92,7 @@
                 <parameter left="QVersitDocument *" right="" name="document" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QVersitContactExporter" href="qversitcontactexporter.html" location="qversitcontactexporter.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="preliminary" name="QVersitContactExporter" href="qversitcontactexporter.html" location="qversitcontactexporter.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QVersitContactExporter" fullname="QVersitContactExporter::QVersitContactExporter" href="qversitcontactexporter.html#QVersitContactExporter" location="qversitcontactexporter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QVersitContactExporter()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QVersitContactExporter" fullname="QVersitContactExporter::~QVersitContactExporter" href="qversitcontactexporter.html#dtor.QVersitContactExporter" location="qversitcontactexporter.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QVersitContactExporter()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="exportContacts" fullname="QVersitContactExporter::exportContacts" href="qversitcontactexporter.html#exportContacts" location="qversitcontactexporter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QList&lt;QVersitDocument&gt;" signature="exportContacts(const QList&lt;QContact&gt; &amp; contacts, QVersitDocument::VersitType versitType)">
@@ -226,7 +226,7 @@
             </enum>
             <typedef access="public" threadsafety="unspecified" status="commendable" name="LayerOptions" fullname="QValueSpace::LayerOptions" href="qvaluespace.html#LayerOptions-typedef" location="qvaluespace.h" enum="QValueSpace::LayerOption"/>
         </namespace>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QVersitContactImporterPropertyHandler" href="qversitcontactimporterpropertyhandler.html" location="qversitcontactimporter.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="preliminary" name="QVersitContactImporterPropertyHandler" href="qversitcontactimporterpropertyhandler.html" location="qversitcontactimporter.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="~QVersitContactImporterPropertyHandler" fullname="QVersitContactImporterPropertyHandler::~QVersitContactImporterPropertyHandler" href="qversitcontactimporterpropertyhandler.html#dtor.QVersitContactImporterPropertyHandler" location="qversitcontactimporter.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QVersitContactImporterPropertyHandler()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="preProcessProperty" fullname="QVersitContactImporterPropertyHandler::preProcessProperty" href="qversitcontactimporterpropertyhandler.html#preProcessProperty" location="qversitcontactimporter.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="preProcessProperty(const QVersitDocument &amp; document, const QVersitProperty &amp; property, int contactIndex, QContact * contact)">
                 <parameter left="const QVersitDocument &amp;" right="" name="document" default=""/>
@@ -242,7 +242,7 @@
                 <parameter left="QContact *" right="" name="contact" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QVersitContactImporter" href="qversitcontactimporter.html" location="qversitcontactimporter.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="preliminary" name="QVersitContactImporter" href="qversitcontactimporter.html" location="qversitcontactimporter.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QVersitContactImporter" fullname="QVersitContactImporter::QVersitContactImporter" href="qversitcontactimporter.html#QVersitContactImporter" location="qversitcontactimporter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QVersitContactImporter()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QVersitContactImporter" fullname="QVersitContactImporter::~QVersitContactImporter" href="qversitcontactimporter.html#dtor.QVersitContactImporter" location="qversitcontactimporter.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QVersitContactImporter()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="importContacts" fullname="QVersitContactImporter::importContacts" href="qversitcontactimporter.html#importContacts" location="qversitcontactimporter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QList&lt;QContact&gt;" signature="importContacts(const QList&lt;QVersitDocument&gt; &amp; documents)">
@@ -560,6 +560,7 @@
             </enum>
             <enum access="public" threadsafety="unspecified" status="commendable" name="Flag" fullname="QMediaPlayer::Flag" href="qmediaplayer.html#Flag-enum" location="qmediaplayer.h" typedef="QMediaPlayer::Flags">
                 <value name="LowLatency" value="0x01"/>
+                <value name="StreamPlayback" value="0x02"/>
             </enum>
             <typedef access="public" threadsafety="unspecified" status="commendable" name="Flags" fullname="QMediaPlayer::Flags" href="qmediaplayer.html#Flags-typedef" location="qmediaplayer.h" enum="QMediaPlayer::Flag"/>
             <enum access="public" threadsafety="unspecified" status="commendable" name="Error" fullname="QMediaPlayer::Error" href="qmediaplayer.html#Error-enum" location="qmediaplayer.h">
@@ -687,20 +688,6 @@
                 <parameter left="bool" right="" name="appendOnly" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QSensorFactory" href="qsensorfactory.html" location="qsensorfactory.h" bases="" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="instance" fullname="QSensorFactory::instance" href="qsensorfactory.html#instance" location="qsensorfactory.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QSensorFactory *" signature="instance()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="defaultSensorForType" fullname="QSensorFactory::defaultSensorForType" href="qsensorfactory.html#defaultSensorForType" location="qsensorfactory.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QByteArray" signature="defaultSensorForType(const QByteArray &amp; type) const">
-                <parameter left="const QByteArray &amp;" right="" name="type" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="sensorsForType" fullname="QSensorFactory::sensorsForType" href="qsensorfactory.html#sensorsForType" location="qsensorfactory.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QByteArray&gt;" signature="sensorsForType(const QByteArray &amp; type) const">
-                <parameter left="const QByteArray &amp;" right="" name="type" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="sensorList" fullname="QSensorFactory::sensorList" href="qsensorfactory.html#sensorList" location="qsensorfactory.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QByteArray&gt;" signature="sensorList() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="sensorTypes" fullname="QSensorFactory::sensorTypes" href="qsensorfactory.html#sensorTypes" location="qsensorfactory.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QByteArray&gt;" signature="sensorTypes() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="createSensor" fullname="QSensorFactory::createSensor" href="qsensorfactory.html#createSensor" location="qsensorfactory.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QSensor *" signature="createSensor(const QByteArray &amp; identifier) const">
-                <parameter left="const QByteArray &amp;" right="" name="identifier" default=""/>
-            </function>
-        </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QImageProcessingControl" href="qimageprocessingcontrol.html" location="qimageprocessingcontrol.h" bases="QMediaControl" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="~QImageProcessingControl" fullname="QImageProcessingControl::~QImageProcessingControl" href="qimageprocessingcontrol.html#dtor.QImageProcessingControl" location="qimageprocessingcontrol.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QImageProcessingControl()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="whiteBalanceMode" fullname="QImageProcessingControl::whiteBalanceMode" href="qimageprocessingcontrol.html#whiteBalanceMode" location="qimageprocessingcontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QCamera::WhiteBalanceMode" signature="whiteBalanceMode() const"/>
@@ -712,24 +699,28 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setManualWhiteBalance" fullname="QImageProcessingControl::setManualWhiteBalance" href="qimageprocessingcontrol.html#setManualWhiteBalance" location="qimageprocessingcontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setManualWhiteBalance(int colorTemperature)">
                 <parameter left="int" right="" name="colorTemperature" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="contrast" fullname="QImageProcessingControl::contrast" href="qimageprocessingcontrol.html#contrast" location="qimageprocessingcontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="qreal" signature="contrast() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setContrast" fullname="QImageProcessingControl::setContrast" href="qimageprocessingcontrol.html#setContrast" location="qimageprocessingcontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setContrast(qreal value)">
-                <parameter left="qreal" right="" name="value" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="contrast" fullname="QImageProcessingControl::contrast" href="qimageprocessingcontrol.html#contrast" location="qimageprocessingcontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="int" signature="contrast() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setContrast" fullname="QImageProcessingControl::setContrast" href="qimageprocessingcontrol.html#setContrast" location="qimageprocessingcontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setContrast(int value)">
+                <parameter left="int" right="" name="value" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="saturation" fullname="QImageProcessingControl::saturation" href="qimageprocessingcontrol.html#saturation" location="qimageprocessingcontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="qreal" signature="saturation() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setSaturation" fullname="QImageProcessingControl::setSaturation" href="qimageprocessingcontrol.html#setSaturation" location="qimageprocessingcontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setSaturation(qreal value)">
-                <parameter left="qreal" right="" name="value" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="saturation" fullname="QImageProcessingControl::saturation" href="qimageprocessingcontrol.html#saturation" location="qimageprocessingcontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="int" signature="saturation() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setSaturation" fullname="QImageProcessingControl::setSaturation" href="qimageprocessingcontrol.html#setSaturation" location="qimageprocessingcontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setSaturation(int value)">
+                <parameter left="int" right="" name="value" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="isSharpeningSupported" fullname="QImageProcessingControl::isSharpeningSupported" href="qimageprocessingcontrol.html#isSharpeningSupported" location="qimageprocessingcontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="bool" signature="isSharpeningSupported() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="sharpeningLevel" fullname="QImageProcessingControl::sharpeningLevel" href="qimageprocessingcontrol.html#sharpeningLevel" location="qimageprocessingcontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="qreal" signature="sharpeningLevel() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setSharpeningLevel" fullname="QImageProcessingControl::setSharpeningLevel" href="qimageprocessingcontrol.html#setSharpeningLevel" location="qimageprocessingcontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setSharpeningLevel(qreal level)">
-                <parameter left="qreal" right="" name="level" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="sharpeningLevel" fullname="QImageProcessingControl::sharpeningLevel" href="qimageprocessingcontrol.html#sharpeningLevel" location="qimageprocessingcontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="int" signature="sharpeningLevel() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setSharpeningLevel" fullname="QImageProcessingControl::setSharpeningLevel" href="qimageprocessingcontrol.html#setSharpeningLevel" location="qimageprocessingcontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setSharpeningLevel(int level)">
+                <parameter left="int" right="" name="level" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="isDenoisingSupported" fullname="QImageProcessingControl::isDenoisingSupported" href="qimageprocessingcontrol.html#isDenoisingSupported" location="qimageprocessingcontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="bool" signature="isDenoisingSupported() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="denoisingLevel" fullname="QImageProcessingControl::denoisingLevel" href="qimageprocessingcontrol.html#denoisingLevel" location="qimageprocessingcontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="qreal" signature="denoisingLevel() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setDenoisingLevel" fullname="QImageProcessingControl::setDenoisingLevel" href="qimageprocessingcontrol.html#setDenoisingLevel" location="qimageprocessingcontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setDenoisingLevel(qreal level)">
-                <parameter left="qreal" right="" name="level" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="denoisingLevel" fullname="QImageProcessingControl::denoisingLevel" href="qimageprocessingcontrol.html#denoisingLevel" location="qimageprocessingcontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="int" signature="denoisingLevel() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setDenoisingLevel" fullname="QImageProcessingControl::setDenoisingLevel" href="qimageprocessingcontrol.html#setDenoisingLevel" location="qimageprocessingcontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setDenoisingLevel(int level)">
+                <parameter left="int" right="" name="level" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isWhiteBalanceLocked" fullname="QImageProcessingControl::isWhiteBalanceLocked" href="qimageprocessingcontrol.html#isWhiteBalanceLocked" location="qimageprocessingcontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="bool" signature="isWhiteBalanceLocked() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="lockWhiteBalance" fullname="QImageProcessingControl::lockWhiteBalance" href="qimageprocessingcontrol.html#lockWhiteBalance" location="qimageprocessingcontrol.h" virtual="pure" meta="slot" const="false" static="false" overload="false" type="void" signature="lockWhiteBalance()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="unlockWhiteBalance" fullname="QImageProcessingControl::unlockWhiteBalance" href="qimageprocessingcontrol.html#unlockWhiteBalance" location="qimageprocessingcontrol.h" virtual="pure" meta="slot" const="false" static="false" overload="false" type="void" signature="unlockWhiteBalance()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="whiteBalanceLocked" fullname="QImageProcessingControl::whiteBalanceLocked" href="qimageprocessingcontrol.html#whiteBalanceLocked" location="qimageprocessingcontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="whiteBalanceLocked()"/>
             <function access="protected" threadsafety="unspecified" status="commendable" name="QImageProcessingControl" fullname="QImageProcessingControl::QImageProcessingControl" href="qimageprocessingcontrol.html#QImageProcessingControl" location="qimageprocessingcontrol.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QImageProcessingControl(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
@@ -1409,7 +1400,11 @@
                 <parameter left="const QUrl &amp;" right="" name="url" default=""/>
                 <parameter left="const QString &amp;" right="" name="mimeType" default="QString()"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QMediaResource" fullname="QMediaResource::QMediaResource" href="qmediaresource.html#QMediaResource-3" location="qmediaresource.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="3" type="" signature="QMediaResource(const QMediaResource &amp; other)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QMediaResource" fullname="QMediaResource::QMediaResource" href="qmediaresource.html#QMediaResource-3" location="qmediaresource.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="3" type="" signature="QMediaResource(const QNetworkRequest &amp; request, const QString &amp; mimeType)">
+                <parameter left="const QNetworkRequest &amp;" right="" name="request" default=""/>
+                <parameter left="const QString &amp;" right="" name="mimeType" default="QString()"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QMediaResource" fullname="QMediaResource::QMediaResource" href="qmediaresource.html#QMediaResource-4" location="qmediaresource.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="4" type="" signature="QMediaResource(const QMediaResource &amp; other)">
                 <parameter left="const QMediaResource &amp;" right="" name="other" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QMediaResource::operator=" href="qmediaresource.html#operator=" location="qmediaresource.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QMediaResource &amp;" signature="operator=(const QMediaResource &amp; other)">
@@ -1424,6 +1419,7 @@
                 <parameter left="const QMediaResource &amp;" right="" name="other" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="url" fullname="QMediaResource::url" href="qmediaresource.html#url" location="qmediaresource.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QUrl" signature="url() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="request" fullname="QMediaResource::request" href="qmediaresource.html#request" location="qmediaresource.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QNetworkRequest" signature="request() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="mimeType" fullname="QMediaResource::mimeType" href="qmediaresource.html#mimeType" location="qmediaresource.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="mimeType() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="language" fullname="QMediaResource::language" href="qmediaresource.html#language" location="qmediaresource.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="language() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setLanguage" fullname="QMediaResource::setLanguage" href="qmediaresource.html#setLanguage" location="qmediaresource.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setLanguage(const QString &amp; language)">
@@ -1467,7 +1463,7 @@
             </function>
         </class>
         <typedef access="public" threadsafety="unspecified" status="commendable" name="QMediaResourceList" href="#QMediaResourceList-typedef" location="qmediaresource.h"/>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QVersitReader" href="qversitreader.html" location="qversitreader.h" bases="QObject" module="">
+        <class access="public" threadsafety="unspecified" status="preliminary" name="QVersitReader" href="qversitreader.html" location="qversitreader.h" bases="QObject" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="Error" fullname="QVersitReader::Error" href="qversitreader.html#Error-enum" location="qversitreader.h">
                 <value name="NoError" value="0"/>
                 <value name="UnspecifiedError" value="1"/>
@@ -1747,9 +1743,6 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="createBackend" fullname="QSensorManager::createBackend" href="qsensormanager.html#createBackend" location="qsensormanager.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QSensorBackend *" signature="createBackend(QSensor * sensor)">
                 <parameter left="QSensor *" right="" name="sensor" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="defaultSensorForType" fullname="QSensorManager::defaultSensorForType" href="qsensormanager.html#defaultSensorForType" location="qsensormanager.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QByteArray" signature="defaultSensorForType(const QByteArray &amp; type)">
-                <parameter left="const QByteArray &amp;" right="" name="type" default=""/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QSensorBackendFactory" href="qsensorbackendfactory.html" location="qsensormanager.h" bases="" module="">
@@ -2085,7 +2078,7 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="requestTimeout" fullname="QGeoSatelliteInfoSource::requestTimeout" href="qgeosatelliteinfosource.html#requestTimeout" location="qgeosatelliteinfosource.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="requestTimeout()"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QVersitWriter" href="qversitwriter.html" location="qversitwriter.h" bases="QObject" module="">
+        <class access="public" threadsafety="unspecified" status="preliminary" name="QVersitWriter" href="qversitwriter.html" location="qversitwriter.h" bases="QObject" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="Error" fullname="QVersitWriter::Error" href="qversitwriter.html#Error-enum" location="qversitwriter.h">
                 <value name="NoError" value="0"/>
                 <value name="UnspecifiedError" value="1"/>
@@ -2267,6 +2260,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="capture" fullname="QImageCaptureControl::capture" href="qimagecapturecontrol.html#capture" location="qimagecapturecontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="capture(const QString &amp; fileName)">
                 <parameter left="const QString &amp;" right="" name="fileName" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="cancelCapture" fullname="QImageCaptureControl::cancelCapture" href="qimagecapturecontrol.html#cancelCapture" location="qimagecapturecontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="cancelCapture()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="readyForCaptureChanged" fullname="QImageCaptureControl::readyForCaptureChanged" href="qimagecapturecontrol.html#readyForCaptureChanged" location="qimagecapturecontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="readyForCaptureChanged(bool ready)">
                 <parameter left="bool" right="" name="ready" default=""/>
             </function>
@@ -2448,7 +2442,7 @@
                 <parameter left="const QString &amp;" right="" name="actionName" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QVersitProperty" href="qversitproperty.html" location="qversitproperty.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="preliminary" name="QVersitProperty" href="qversitproperty.html" location="qversitproperty.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QVersitProperty" fullname="QVersitProperty::QVersitProperty" href="qversitproperty.html#QVersitProperty" location="qversitproperty.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QVersitProperty()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QVersitProperty" fullname="QVersitProperty::QVersitProperty" href="qversitproperty.html#QVersitProperty-2" location="qversitproperty.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QVersitProperty(const QVersitProperty &amp; other)">
                 <parameter left="const QVersitProperty &amp;" right="" name="other" default=""/>
@@ -2515,15 +2509,10 @@
             <property access="public" threadsafety="unspecified" status="commendable" name="nativeSize" fullname="QGraphicsVideoItem::nativeSize" href="qgraphicsvideoitem.html#nativeSize-prop" location="qgraphicsvideoitem.h" type="QSizeF">
                 <getter name="nativeSize"/>
             </property>
-            <enum access="public" threadsafety="unspecified" status="commendable" name="FillMode" fullname="QGraphicsVideoItem::FillMode" href="qgraphicsvideoitem.html#FillMode-enum" location="qgraphicsvideoitem.h">
-                <value name="Stretch" value="0"/>
-                <value name="PreserveAspectFit" value="1"/>
-                <value name="PreserveAspectCrop" value="2"/>
-            </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QGraphicsVideoItem" fullname="QGraphicsVideoItem::QGraphicsVideoItem" href="qgraphicsvideoitem.html#QGraphicsVideoItem" location="qgraphicsvideoitem.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGraphicsVideoItem(QGraphicsItem * parent)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QGraphicsVideoItem" fullname="QGraphicsVideoItem::QGraphicsVideoItem" href="qgraphicsvideoitem.html#QGraphicsVideoItem" location="qgraphicsvideoitem_maemo5.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGraphicsVideoItem(QGraphicsItem * parent)">
                 <parameter left="QGraphicsItem *" right="" name="parent" default="0"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QGraphicsVideoItem" fullname="QGraphicsVideoItem::~QGraphicsVideoItem" href="qgraphicsvideoitem.html#dtor.QGraphicsVideoItem" location="qgraphicsvideoitem.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGraphicsVideoItem()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QGraphicsVideoItem" fullname="QGraphicsVideoItem::~QGraphicsVideoItem" href="qgraphicsvideoitem.html#dtor.QGraphicsVideoItem" location="qgraphicsvideoitem_maemo5.cpp" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGraphicsVideoItem()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="mediaObject" fullname="QGraphicsVideoItem::mediaObject" href="qgraphicsvideoitem.html#mediaObject-prop" location="qgraphicsvideoitem_maemo5.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="mediaObject" type="QMediaObject *" signature="mediaObject() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setMediaObject" fullname="QGraphicsVideoItem::setMediaObject" href="qgraphicsvideoitem.html#mediaObject-prop" location="qgraphicsvideoitem_maemo5.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="mediaObject" type="void" signature="setMediaObject(QMediaObject * object)">
                 <parameter left="QMediaObject *" right="" name="object" default=""/>
@@ -2541,14 +2530,17 @@
                 <parameter left="const QSizeF &amp;" right="" name="size" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="nativeSize" fullname="QGraphicsVideoItem::nativeSize" href="qgraphicsvideoitem.html#nativeSize-prop" location="qgraphicsvideoitem_maemo5.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="nativeSize" type="QSizeF" signature="nativeSize() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="boundingRect" fullname="QGraphicsVideoItem::boundingRect" href="qgraphicsvideoitem.html#boundingRect" location="qgraphicsvideoitem.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QRectF" signature="boundingRect() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="paint" fullname="QGraphicsVideoItem::paint" href="qgraphicsvideoitem.html#paint" location="qgraphicsvideoitem.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="boundingRect" fullname="QGraphicsVideoItem::boundingRect" href="qgraphicsvideoitem.html#boundingRect" location="qgraphicsvideoitem_maemo5.cpp" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QRectF" signature="boundingRect() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="paint" fullname="QGraphicsVideoItem::paint" href="qgraphicsvideoitem.html#paint" location="qgraphicsvideoitem_maemo5.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)">
                 <parameter left="QPainter *" right="" name="painter" default=""/>
                 <parameter left="const QStyleOptionGraphicsItem *" right="" name="option" default=""/>
                 <parameter left="QWidget *" right="" name="widget" default="0"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="nativeSizeChanged" fullname="QGraphicsVideoItem::nativeSizeChanged" href="qgraphicsvideoitem.html#nativeSizeChanged" location="qgraphicsvideoitem.h" virtual="non" meta="signal" const="true" static="false" overload="false" type="void" signature="nativeSizeChanged(const QSizeF &amp; size) const">
+            <function access="public" threadsafety="unspecified" status="commendable" name="nativeSizeChanged" fullname="QGraphicsVideoItem::nativeSizeChanged" href="qgraphicsvideoitem.html#nativeSizeChanged" location="qgraphicsvideoitem.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="nativeSizeChanged(const QSizeF &amp; size)">
                 <parameter left="const QSizeF &amp;" right="" name="size" default=""/>
+            </function>
+            <function access="protected" threadsafety="unspecified" status="commendable" name="timerEvent" fullname="QGraphicsVideoItem::timerEvent" href="qgraphicsvideoitem.html#timerEvent" location="qgraphicsvideoitem_maemo5.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="timerEvent(QTimerEvent * event)">
+                <parameter left="QTimerEvent *" right="" name="event" default=""/>
             </function>
             <variable access="protected" threadsafety="unspecified" status="commendable" name="d_ptr" fullname="QGraphicsVideoItem::d_ptr" href="qgraphicsvideoitem.html#d_ptr-var" location="qgraphicsvideoitem.h" type="QGraphicsVideoItemPrivate *" static="false"/>
         </class>
@@ -2607,11 +2599,19 @@
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QCameraExposureControl" href="qcameraexposurecontrol.html" location="qcameraexposurecontrol.h" bases="QMediaControl" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="~QCameraExposureControl" fullname="QCameraExposureControl::~QCameraExposureControl" href="qcameraexposurecontrol.html#dtor.QCameraExposureControl" location="qcameraexposurecontrol.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QCameraExposureControl()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="flashMode" fullname="QCameraExposureControl::flashMode" href="qcameraexposurecontrol.html#flashMode" location="qcameraexposurecontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QCamera::FlashMode" signature="flashMode() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setFlashMode" fullname="QCameraExposureControl::setFlashMode" href="qcameraexposurecontrol.html#setFlashMode" location="qcameraexposurecontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setFlashMode(QCamera::FlashMode mode)">
-                <parameter left="QCamera::FlashMode" right="" name="mode" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="flashMode" fullname="QCameraExposureControl::flashMode" href="qcameraexposurecontrol.html#flashMode" location="qcameraexposurecontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QCamera::FlashModes" signature="flashMode() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setFlashMode" fullname="QCameraExposureControl::setFlashMode" href="qcameraexposurecontrol.html#setFlashMode" location="qcameraexposurecontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setFlashMode(QFlags&lt;QCamera::FlashMode&gt; mode)">
+                <parameter left="QFlags&lt;QCamera::FlashMode&gt;" right="" name="mode" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="supportedFlashModes" fullname="QCameraExposureControl::supportedFlashModes" href="qcameraexposurecontrol.html#supportedFlashModes" location="qcameraexposurecontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QCamera::FlashModes" signature="supportedFlashModes() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="flashCompensation" fullname="QCameraExposureControl::flashCompensation" href="qcameraexposurecontrol.html#flashCompensation" location="qcameraexposurecontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="qreal" signature="flashCompensation() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setFlashCompensation" fullname="QCameraExposureControl::setFlashCompensation" href="qcameraexposurecontrol.html#setFlashCompensation" location="qcameraexposurecontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setFlashCompensation(qreal ev)">
+                <parameter left="qreal" right="" name="ev" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="flashPower" fullname="QCameraExposureControl::flashPower" href="qcameraexposurecontrol.html#flashPower" location="qcameraexposurecontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="qreal" signature="flashPower() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setFlashPower" fullname="QCameraExposureControl::setFlashPower" href="qcameraexposurecontrol.html#setFlashPower" location="qcameraexposurecontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setFlashPower(qreal power)">
+                <parameter left="qreal" right="" name="power" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="isFlashReady" fullname="QCameraExposureControl::isFlashReady" href="qcameraexposurecontrol.html#isFlashReady" location="qcameraexposurecontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="bool" signature="isFlashReady() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="exposureMode" fullname="QCameraExposureControl::exposureMode" href="qcameraexposurecontrol.html#exposureMode" location="qcameraexposurecontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QCamera::ExposureMode" signature="exposureMode() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setExposureMode" fullname="QCameraExposureControl::setExposureMode" href="qcameraexposurecontrol.html#setExposureMode" location="qcameraexposurecontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setExposureMode(QCamera::ExposureMode mode)">
@@ -2737,6 +2737,7 @@
             <enum access="public" threadsafety="unspecified" status="commendable" name="Feature" fullname="QMediaServiceProviderHint::Feature" href="qmediaserviceproviderhint.html#Feature-enum" location="qmediaserviceprovider.h" typedef="QMediaServiceProviderHint::Features">
                 <value name="LowLatencyPlayback" value="0x01"/>
                 <value name="RecordingSupport" value="0x02"/>
+                <value name="StreamPlayback" value="0x04"/>
             </enum>
             <typedef access="public" threadsafety="unspecified" status="commendable" name="Features" fullname="QMediaServiceProviderHint::Features" href="qmediaserviceproviderhint.html#Features-typedef" location="qmediaserviceprovider.h" enum="QMediaServiceProviderHint::Feature"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QMediaServiceProviderHint" fullname="QMediaServiceProviderHint::QMediaServiceProviderHint" href="qmediaserviceproviderhint.html#QMediaServiceProviderHint" location="qmediaserviceprovider.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMediaServiceProviderHint()"/>
@@ -4188,6 +4189,17 @@
                 <getter name="captureMode"/>
                 <setter name="setCaptureMode"/>
             </property>
+            <property access="public" threadsafety="unspecified" status="commendable" name="focusPointMode" fullname="QCamera::focusPointMode" href="qcamera.html#focusPointMode-prop" location="qcamera.h" type="FocusPointMode">
+                <getter name="focusPointMode"/>
+                <setter name="setFocusPointMode"/>
+            </property>
+            <property access="public" threadsafety="unspecified" status="commendable" name="customFocusPoint" fullname="QCamera::customFocusPoint" href="qcamera.html#customFocusPoint-prop" location="qcamera.h" type="QPointF">
+                <getter name="customFocusPoint"/>
+                <setter name="setCustomFocusPoint"/>
+            </property>
+            <property access="public" threadsafety="unspecified" status="commendable" name="focusZones" fullname="QCamera::focusZones" href="qcamera.html#focusZones-prop" location="qcamera.h" type="QList&lt;QRectF&gt;">
+                <getter name="focusZones"/>
+            </property>
             <property access="public" threadsafety="unspecified" status="commendable" name="aperture" fullname="QCamera::aperture" href="qcamera.html#aperture-prop" location="qcamera.h" type="qreal">
                 <getter name="aperture"/>
                 <setter name="setManualAperture"/>
@@ -4225,6 +4237,10 @@
                 <value name="FlashAuto" value="0x4"/>
                 <value name="FlashRedEyeReduction" value="0x8"/>
                 <value name="FlashFill" value="0x10"/>
+                <value name="FlashTorch" value="0x20"/>
+                <value name="FlashSlowSyncFrontCurtain" value="0x40"/>
+                <value name="FlashSlowSyncRearCurtain" value="0x80"/>
+                <value name="FlashManual" value="0x100"/>
             </enum>
             <typedef access="public" threadsafety="unspecified" status="commendable" name="FlashModes" fullname="QCamera::FlashModes" href="qcamera.html#FlashModes-typedef" location="qcamera.h" enum="QCamera::FlashMode"/>
             <enum access="public" threadsafety="unspecified" status="commendable" name="FocusMode" fullname="QCamera::FocusMode" href="qcamera.html#FocusMode-enum" location="qcamera.h" typedef="QCamera::FocusModes">
@@ -4235,6 +4251,13 @@
                 <value name="ContinuousFocus" value="0x10"/>
             </enum>
             <typedef access="public" threadsafety="unspecified" status="commendable" name="FocusModes" fullname="QCamera::FocusModes" href="qcamera.html#FocusModes-typedef" location="qcamera.h" enum="QCamera::FocusMode"/>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="FocusPointMode" fullname="QCamera::FocusPointMode" href="qcamera.html#FocusPointMode-enum" location="qcamera.h" typedef="QCamera::FocusPointModes">
+                <value name="FocusPointAuto" value="0x01"/>
+                <value name="FocusPointCenter" value="0x02"/>
+                <value name="FocusPointFaceDetection" value="0x04"/>
+                <value name="FocusPointCustom" value="0x08"/>
+            </enum>
+            <typedef access="public" threadsafety="unspecified" status="commendable" name="FocusPointModes" fullname="QCamera::FocusPointModes" href="qcamera.html#FocusPointModes-typedef" location="qcamera.h" enum="QCamera::FocusPointMode"/>
             <enum access="public" threadsafety="unspecified" status="commendable" name="FocusStatus" fullname="QCamera::FocusStatus" href="qcamera.html#FocusStatus-enum" location="qcamera.h">
                 <value name="FocusInitial" value="0"/>
                 <value name="FocusRequested" value="1"/>
@@ -4302,9 +4325,9 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="state" fullname="QCamera::state" href="qcamera.html#state-prop" location="qcamera.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="state" type="State" signature="state() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="captureMode" fullname="QCamera::captureMode" href="qcamera.html#captureMode-prop" location="qcamera.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="captureMode" type="CaptureMode" signature="captureMode() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="supportedCaptureModes" fullname="QCamera::supportedCaptureModes" href="qcamera.html#supportedCaptureModes" location="qcamera.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="CaptureModes" signature="supportedCaptureModes() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="flashMode" fullname="QCamera::flashMode" href="qcamera.html#flashMode" location="qcamera.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="FlashMode" signature="flashMode() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setFlashMode" fullname="QCamera::setFlashMode" href="qcamera.html#setFlashMode" location="qcamera.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setFlashMode(FlashMode mode)">
-                <parameter left="FlashMode" right="" name="mode" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="flashMode" fullname="QCamera::flashMode" href="qcamera.html#flashMode" location="qcamera.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="FlashModes" signature="flashMode() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setFlashMode" fullname="QCamera::setFlashMode" href="qcamera.html#setFlashMode" location="qcamera.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setFlashMode(QFlags&lt;QCamera::FlashMode&gt; mode)">
+                <parameter left="QFlags&lt;QCamera::FlashMode&gt;" right="" name="mode" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="supportedFlashModes" fullname="QCamera::supportedFlashModes" href="qcamera.html#supportedFlashModes" location="qcamera.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="FlashModes" signature="supportedFlashModes() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="isFlashReady" fullname="QCamera::isFlashReady" href="qcamera.html#isFlashReady" location="qcamera.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isFlashReady() const"/>
@@ -4319,6 +4342,16 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setMacroFocusingEnabled" fullname="QCamera::setMacroFocusingEnabled" href="qcamera.html#setMacroFocusingEnabled" location="qcamera.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setMacroFocusingEnabled(bool enabled)">
                 <parameter left="bool" right="" name="enabled" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="focusPointMode" fullname="QCamera::focusPointMode" href="qcamera.html#focusPointMode-prop" location="qcamera.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="focusPointMode" type="FocusPointMode" signature="focusPointMode() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setFocusPointMode" fullname="QCamera::setFocusPointMode" href="qcamera.html#focusPointMode-prop" location="qcamera.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="focusPointMode" type="void" signature="setFocusPointMode(FocusPointMode mode)">
+                <parameter left="FocusPointMode" right="" name="mode" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="supportedFocusPointModes" fullname="QCamera::supportedFocusPointModes" href="qcamera.html#supportedFocusPointModes" location="qcamera.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="FocusPointModes" signature="supportedFocusPointModes() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="customFocusPoint" fullname="QCamera::customFocusPoint" href="qcamera.html#customFocusPoint-prop" location="qcamera.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="customFocusPoint" type="QPointF" signature="customFocusPoint() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setCustomFocusPoint" fullname="QCamera::setCustomFocusPoint" href="qcamera.html#customFocusPoint-prop" location="qcamera.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="customFocusPoint" type="void" signature="setCustomFocusPoint(const QPointF &amp; point)">
+                <parameter left="const QPointF &amp;" right="" name="point" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="focusZones" fullname="QCamera::focusZones" href="qcamera.html#focusZones-prop" location="qcamera.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="focusZones" type="QList&lt;QRectF&gt;" signature="focusZones() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="exposureMode" fullname="QCamera::exposureMode" href="qcamera.html#exposureMode" location="qcamera.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="ExposureMode" signature="exposureMode() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setExposureMode" fullname="QCamera::setExposureMode" href="qcamera.html#setExposureMode" location="qcamera.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setExposureMode(ExposureMode mode)">
                 <parameter left="ExposureMode" right="" name="mode" default=""/>
@@ -4375,6 +4408,7 @@
                 <parameter left="qreal" right="" name="digital" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="isExposureLocked" fullname="QCamera::isExposureLocked" href="qcamera.html#isExposureLocked" location="qcamera.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isExposureLocked() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isWhiteBalanceLocked" fullname="QCamera::isWhiteBalanceLocked" href="qcamera.html#isWhiteBalanceLocked" location="qcamera.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isWhiteBalanceLocked() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QCamera::error" href="qcamera.html#error" location="qcamera.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="Error" signature="error() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="errorString" fullname="QCamera::errorString" href="qcamera.html#errorString" location="qcamera.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="errorString() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="start" fullname="QCamera::start" href="qcamera.html#start" location="qcamera.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="start()"/>
@@ -4384,6 +4418,8 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="lockExposure" fullname="QCamera::lockExposure" href="qcamera.html#lockExposure" location="qcamera.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="lockExposure()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="unlockExposure" fullname="QCamera::unlockExposure" href="qcamera.html#unlockExposure" location="qcamera.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="unlockExposure()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="lockWhiteBalance" fullname="QCamera::lockWhiteBalance" href="qcamera.html#lockWhiteBalance" location="qcamera.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="lockWhiteBalance()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="unlockWhiteBalance" fullname="QCamera::unlockWhiteBalance" href="qcamera.html#unlockWhiteBalance" location="qcamera.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="unlockWhiteBalance()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="startFocusing" fullname="QCamera::startFocusing" href="qcamera.html#startFocusing" location="qcamera.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="startFocusing()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="cancelFocusing" fullname="QCamera::cancelFocusing" href="qcamera.html#cancelFocusing" location="qcamera.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="cancelFocusing()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="captureModeChanged" fullname="QCamera::captureModeChanged" href="qcamera.html#captureModeChanged" location="qcamera.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="captureModeChanged(QCamera::CaptureMode )">
@@ -4412,8 +4448,12 @@
                 <parameter left="int" right="" name="value" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="exposureLocked" fullname="QCamera::exposureLocked" href="qcamera.html#exposureLocked" location="qcamera.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="exposureLocked()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="whiteBalanceLocked" fullname="QCamera::whiteBalanceLocked" href="qcamera.html#whiteBalanceLocked" location="qcamera.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="whiteBalanceLocked()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="focusReached" fullname="QCamera::focusReached" href="qcamera.html#focusReached" location="qcamera.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="focusReached()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="focusUnableToReach" fullname="QCamera::focusUnableToReach" href="qcamera.html#focusUnableToReach" location="qcamera.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="focusUnableToReach()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="focusZonesChanged" fullname="QCamera::focusZonesChanged" href="qcamera.html#focusZonesChanged" location="qcamera.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="focusZonesChanged(const QList&lt;QRectF&gt; &amp; )">
+                <parameter left="const QList&lt;QRectF&gt; &amp;" right="" name="" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="stateChanged" fullname="QCamera::stateChanged" href="qcamera.html#stateChanged" location="qcamera.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="stateChanged(QCamera::State state)">
                 <parameter left="QCamera::State" right="" name="state" default=""/>
             </function>
@@ -4455,8 +4495,9 @@
                 <parameter left="const QImageEncoderSettings &amp;" right="" name="settings" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="capture" fullname="QStillImageCapture::capture" href="qstillimagecapture.html#capture" location="qstillimagecapture.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="capture(const QString &amp; file)">
-                <parameter left="const QString &amp;" right="" name="file" default=""/>
+                <parameter left="const QString &amp;" right="" name="file" default="QString()"/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="cancelCapture" fullname="QStillImageCapture::cancelCapture" href="qstillimagecapture.html#cancelCapture" location="qstillimagecapture.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="cancelCapture()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QStillImageCapture::error" href="qstillimagecapture.html#error-2" location="qstillimagecapture.h" virtual="non" meta="signal" const="false" static="false" overload="true" overload-number="2" type="void" signature="error(QStillImageCapture::Error error)">
                 <parameter left="QStillImageCapture::Error" right="" name="error" default=""/>
             </function>
@@ -4744,7 +4785,7 @@
                 <parameter left="const QStringList &amp;" right="" name="capabilities" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QVersitResourceHandler" href="qversitresourcehandler.html" location="qversitresourcehandler.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="preliminary" name="QVersitResourceHandler" href="qversitresourcehandler.html" location="qversitresourcehandler.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="~QVersitResourceHandler" fullname="QVersitResourceHandler::~QVersitResourceHandler" href="qversitresourcehandler.html#dtor.QVersitResourceHandler" location="qversitresourcehandler.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QVersitResourceHandler()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="loadResource" fullname="QVersitResourceHandler::loadResource" href="qversitresourcehandler.html#loadResource" location="qversitresourcehandler.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="loadResource(const QString &amp; location, QByteArray * contents, QString * mimeType)">
                 <parameter left="const QString &amp;" right="" name="location" default=""/>
@@ -4799,6 +4840,16 @@
                 <parameter left="qreal" right="" name="opticalZoom" default=""/>
                 <parameter left="qreal" right="" name="digitalZoom" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="focusPointMode" fullname="QCameraFocusControl::focusPointMode" href="qcamerafocuscontrol.html#focusPointMode" location="qcamerafocuscontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QCamera::FocusPointMode" signature="focusPointMode() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setFocusPointMode" fullname="QCameraFocusControl::setFocusPointMode" href="qcamerafocuscontrol.html#setFocusPointMode" location="qcamerafocuscontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setFocusPointMode(QCamera::FocusPointMode mode)">
+                <parameter left="QCamera::FocusPointMode" right="" name="mode" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="supportedFocusPointModes" fullname="QCameraFocusControl::supportedFocusPointModes" href="qcamerafocuscontrol.html#supportedFocusPointModes" location="qcamerafocuscontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QCamera::FocusPointModes" signature="supportedFocusPointModes() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="customFocusPoint" fullname="QCameraFocusControl::customFocusPoint" href="qcamerafocuscontrol.html#customFocusPoint" location="qcamerafocuscontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QPointF" signature="customFocusPoint() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setCustomFocusPoint" fullname="QCameraFocusControl::setCustomFocusPoint" href="qcamerafocuscontrol.html#setCustomFocusPoint" location="qcamerafocuscontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setCustomFocusPoint(const QPointF &amp; point)">
+                <parameter left="const QPointF &amp;" right="" name="point" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="focusZones" fullname="QCameraFocusControl::focusZones" href="qcamerafocuscontrol.html#focusZones" location="qcamerafocuscontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QList&lt;QRectF&gt;" signature="focusZones() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="startFocusing" fullname="QCameraFocusControl::startFocusing" href="qcamerafocuscontrol.html#startFocusing" location="qcamerafocuscontrol.h" virtual="pure" meta="slot" const="false" static="false" overload="false" type="void" signature="startFocusing()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="cancelFocusing" fullname="QCameraFocusControl::cancelFocusing" href="qcamerafocuscontrol.html#cancelFocusing" location="qcamerafocuscontrol.h" virtual="pure" meta="slot" const="false" static="false" overload="false" type="void" signature="cancelFocusing()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="opticalZoomChanged" fullname="QCameraFocusControl::opticalZoomChanged" href="qcamerafocuscontrol.html#opticalZoomChanged" location="qcamerafocuscontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="opticalZoomChanged(qreal zoom)">
@@ -4809,6 +4860,9 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="focusStatusChanged" fullname="QCameraFocusControl::focusStatusChanged" href="qcamerafocuscontrol.html#focusStatusChanged" location="qcamerafocuscontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="focusStatusChanged(QCamera::FocusStatus status)">
                 <parameter left="QCamera::FocusStatus" right="" name="status" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="focusZonesChanged" fullname="QCameraFocusControl::focusZonesChanged" href="qcamerafocuscontrol.html#focusZonesChanged" location="qcamerafocuscontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="focusZonesChanged(const QList&lt;QRectF&gt; &amp; )">
+                <parameter left="const QList&lt;QRectF&gt; &amp;" right="" name="" default=""/>
             </function>
             <function access="protected" threadsafety="unspecified" status="commendable" name="QCameraFocusControl" fullname="QCameraFocusControl::QCameraFocusControl" href="qcamerafocuscontrol.html#QCameraFocusControl" location="qcamerafocuscontrol.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QCameraFocusControl(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
@@ -5342,6 +5396,7 @@
                 <value name="FM" value="1"/>
                 <value name="SW" value="2"/>
                 <value name="LW" value="3"/>
+                <value name="FM2" value="4"/>
             </enum>
             <enum access="public" threadsafety="unspecified" status="commendable" name="Error" fullname="QRadioTuner::Error" href="qradiotuner.html#Error-enum" location="qradiotuner.h">
                 <value name="NoError" value="0"/>
@@ -5608,13 +5663,16 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="QMediaContent" fullname="QMediaContent::QMediaContent" href="qmediacontent.html#QMediaContent-2" location="qmediacontent.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QMediaContent(const QUrl &amp; url)">
                 <parameter left="const QUrl &amp;" right="" name="url" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QMediaContent" fullname="QMediaContent::QMediaContent" href="qmediacontent.html#QMediaContent-3" location="qmediacontent.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="3" type="" signature="QMediaContent(const QMediaResource &amp; resource)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QMediaContent" fullname="QMediaContent::QMediaContent" href="qmediacontent.html#QMediaContent-3" location="qmediacontent.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="3" type="" signature="QMediaContent(const QNetworkRequest &amp; request)">
+                <parameter left="const QNetworkRequest &amp;" right="" name="request" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QMediaContent" fullname="QMediaContent::QMediaContent" href="qmediacontent.html#QMediaContent-4" location="qmediacontent.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="4" type="" signature="QMediaContent(const QMediaResource &amp; resource)">
                 <parameter left="const QMediaResource &amp;" right="" name="resource" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QMediaContent" fullname="QMediaContent::QMediaContent" href="qmediacontent.html#QMediaContent-4" location="qmediacontent.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="4" type="" signature="QMediaContent(const QMediaResourceList &amp; resources)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QMediaContent" fullname="QMediaContent::QMediaContent" href="qmediacontent.html#QMediaContent-5" location="qmediacontent.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="5" type="" signature="QMediaContent(const QMediaResourceList &amp; resources)">
                 <parameter left="const QMediaResourceList &amp;" right="" name="resources" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QMediaContent" fullname="QMediaContent::QMediaContent" href="qmediacontent.html#QMediaContent-5" location="qmediacontent.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="5" type="" signature="QMediaContent(const QMediaContent &amp; other)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QMediaContent" fullname="QMediaContent::QMediaContent" href="qmediacontent.html#QMediaContent-6" location="qmediacontent.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="6" type="" signature="QMediaContent(const QMediaContent &amp; other)">
                 <parameter left="const QMediaContent &amp;" right="" name="other" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QMediaContent" fullname="QMediaContent::~QMediaContent" href="qmediacontent.html#dtor.QMediaContent" location="qmediacontent.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMediaContent()"/>
@@ -6119,6 +6177,13 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="poll" fullname="QSensor::poll" href="qsensor.html#poll" location="qsensor.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="poll()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="reading" fullname="QSensor::reading" href="qsensor.html#reading-prop" location="qsensor.h" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="reading" type="QSensorReading *" signature="reading() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="sensorTypes" fullname="QSensor::sensorTypes" href="qsensor.html#sensorTypes" location="qsensor.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QList&lt;QByteArray&gt;" signature="sensorTypes()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="sensorsForType" fullname="QSensor::sensorsForType" href="qsensor.html#sensorsForType" location="qsensor.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QList&lt;QByteArray&gt;" signature="sensorsForType(const QByteArray &amp; type)">
+                <parameter left="const QByteArray &amp;" right="" name="type" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="defaultSensorForType" fullname="QSensor::defaultSensorForType" href="qsensor.html#defaultSensorForType" location="qsensor.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QByteArray" signature="defaultSensorForType(const QByteArray &amp; type)">
+                <parameter left="const QByteArray &amp;" right="" name="type" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="start" fullname="QSensor::start" href="qsensor.html#start" location="qsensor.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="start()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="stop" fullname="QSensor::stop" href="qsensor.html#stop" location="qsensor.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="stop()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="readingChanged" fullname="QSensor::readingChanged" href="qsensor.html#readingChanged" location="qsensor.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="readingChanged()"/>
@@ -6788,7 +6853,7 @@
             </function>
             <variable access="protected" threadsafety="unspecified" status="commendable" name="d_ptr" fullname="QVideoWidget::d_ptr" href="qvideowidget.html#d_ptr-var" location="qvideowidget.h" type="QVideoWidgetPrivate *" static="false"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QVersitDocument" href="qversitdocument.html" location="qversitdocument.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="preliminary" name="QVersitDocument" href="qversitdocument.html" location="qversitdocument.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QVersitDocument" fullname="QVersitDocument::QVersitDocument" href="qversitdocument.html#QVersitDocument" location="qversitdocument.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QVersitDocument()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QVersitDocument" fullname="QVersitDocument::QVersitDocument" href="qversitdocument.html#QVersitDocument-2" location="qversitdocument.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QVersitDocument(const QVersitDocument &amp; other)">
                 <parameter left="const QVersitDocument &amp;" right="" name="other" default=""/>
@@ -7220,12 +7285,6 @@
             <page access="public" status="commendable" name="slideshow/main.cpp" href="slideshow-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="slideshow/main.cpp" location=""/>
             <page access="public" status="commendable" name="slideshow/slideshow.pro" href="slideshow-slideshow-pro.html" subtype="file" title="" fulltitle="slideshow.pro Example File" subtitle="slideshow/slideshow.pro" location=""/>
         </page>
-        <page access="public" status="commendable" name="streamplayer" href="streamplayer.html" subtype="example" title="Stream Player Example" fulltitle="Stream Player Example" subtitle="" location="undocumented.qdoc">
-            <page access="public" status="commendable" name="streamplayer/streamplayer.cpp" href="streamplayer-streamplayer-cpp.html" subtype="file" title="" fulltitle="streamplayer.cpp Example File" subtitle="streamplayer/streamplayer.cpp" location=""/>
-            <page access="public" status="commendable" name="streamplayer/streamplayer.h" href="streamplayer-streamplayer-h.html" subtype="file" title="" fulltitle="streamplayer.h Example File" subtitle="streamplayer/streamplayer.h" location=""/>
-            <page access="public" status="commendable" name="streamplayer/main.cpp" href="streamplayer-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="streamplayer/main.cpp" location=""/>
-            <page access="public" status="commendable" name="streamplayer/streamplayer.pro" href="streamplayer-streamplayer-pro.html" subtype="file" title="" fulltitle="streamplayer.pro Example File" subtitle="streamplayer/streamplayer.pro" location=""/>
-        </page>
         <page access="public" status="commendable" name="sysinfo" href="sysinfo.html" subtype="example" title="System Information Example" fulltitle="System Information Example" subtitle="" location="undocumented.qdoc">
             <page access="public" status="commendable" name="sysinfo/dialog.cpp" href="sysinfo-dialog-cpp.html" subtype="file" title="" fulltitle="dialog.cpp Example File" subtitle="sysinfo/dialog.cpp" location=""/>
             <page access="public" status="commendable" name="sysinfo/dialog.h" href="sysinfo-dialog-h.html" subtype="file" title="" fulltitle="dialog.h Example File" subtitle="sysinfo/dialog.h" location=""/>
@@ -7383,7 +7442,7 @@
             <contents name="example-creating-a-custom-location-data-source" title="Example: Creating a custom location data source" level="1"/>
             <contents name="classes" title="Classes" level="1"/>
         </page>
-        <page access="public" status="commendable" name="versit.html" href="versit.html" subtype="page" title="Versit API" fulltitle="Versit API" subtitle="" location="versit.qdoc">
+        <page access="public" status="commendable" name="versit.html" href="versit.html" subtype="page" title="Versit API (technology preview)" fulltitle="Versit API (technology preview)" subtitle="" location="versit.qdoc">
             <contents name="overview" title="Overview" level="1"/>
             <contents name="usage" title="Usage" level="1"/>
             <contents name="classes" title="Classes" level="1"/>
@@ -7457,6 +7516,7 @@
             <contents name="future-additions-and-considerations" title="Future Additions and Considerations" level="1"/>
             <contents name="platform-compatability" title="Platform Compatability" level="1"/>
             <contents name="feedback-and-bug-reports" title="Feedback and bug reports" level="1"/>
+            <contents name="acknowledgements" title="Acknowledgements" level="1"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QAudioEncoderControl_iid" href="qaudioencodercontrol.html#QAudioEncoderControl_iid" location="qaudioencodercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QAudioEncoderControl" type="" signature="QAudioEncoderControl_iid()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="Q_MEDIA_DECLARE_CONTROL" href="qmediacontrol.html#Q_MEDIA_DECLARE_CONTROL" location="" virtual="non" meta="macrowithparams" const="false" static="false" overload="false" relates="QMediaControl" type="" signature="Q_MEDIA_DECLARE_CONTROL( Class,  IId)">
@@ -7496,7 +7556,6 @@
             <contents name="field-access-constraints" title="Field Access Constraints" level="2"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QImageProcessingControl_iid" href="qimageprocessingcontrol.html#QImageProcessingControl_iid" location="qimageprocessingcontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QImageProcessingControl" type="" signature="QImageProcessingControl_iid()"/>
-        <page access="public" status="commendable" name="QSoundEffect" href="qml-qsoundeffect.html" title="QML QSoundEffect Element Reference" fulltitle="QML QSoundEffect Element Reference" subtitle="" location="qsoundeffect.cpp"/>
         <page access="public" status="commendable" name="publ-subs.html" href="publ-subs.html" subtype="page" title="Publish and Subscribe" fulltitle="Publish and Subscribe" subtitle="" location="publ-subs.qdoc">
             <contents name="overview" title="Overview" level="1"/>
             <contents name="detailed-layer-descriptions" title="Detailed Layer Descriptions" level="1"/>
@@ -7686,22 +7745,6 @@
         <page access="public" status="commendable" name="opensourceedition.html" href="opensourceedition.html" subtype="page" title="Open Source Versions of Qt" fulltitle="Open Source Versions of Qt" subtitle="" location="opensourceedition.qdoc"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QCameraFocusControl_iid" href="qcamerafocuscontrol.html#QCameraFocusControl_iid" location="qcamerafocuscontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QCameraFocusControl" type="" signature="QCameraFocusControl_iid()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QMetaDataControl_iid" href="qmetadatacontrol.html#QMetaDataControl_iid" location="qmetadatacontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QMetaDataControl" type="" signature="QMetaDataControl_iid()"/>
-        <page access="public" status="commendable" name="Video" href="qml-video.html" title="QML Video Element Reference" fulltitle="QML Video Element Reference" subtitle="" location="qmlgraphicsvideo.cpp">
-            <page access="public" status="commendable" name="source" href="source.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
-            <page access="public" status="commendable" name="playing" href="playing.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
-            <page access="public" status="commendable" name="paused" href="paused.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
-            <page access="public" status="commendable" name="status" href="status.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
-            <page access="public" status="commendable" name="duration" href="duration.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
-            <page access="public" status="commendable" name="position" href="position.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
-            <page access="public" status="commendable" name="volume" href="volume.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
-            <page access="public" status="commendable" name="muted" href="muted.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
-            <page access="public" status="commendable" name="hasVideo" href="hasvideo.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
-            <page access="public" status="commendable" name="bufferProgress" href="bufferprogress.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
-            <page access="public" status="commendable" name="seekable" href="seekable.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
-            <page access="public" status="commendable" name="error" href="error.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
-            <page access="public" status="commendable" name="errorString" href="errorstring.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
-            <page access="public" status="commendable" name="FillMode" href="fillmode.html" title="" fulltitle="" subtitle="" location="qmlgraphicsvideo.cpp"/>
-        </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoRendererControl_iid" href="qvideorenderercontrol.html#QVideoRendererControl_iid" location="qvideorenderercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoRendererControl" type="" signature="QVideoRendererControl_iid()"/>
         <page access="public" status="commendable" name="service-framework-on-symbian.html" href="service-framework-on-symbian.html" subtype="page" title="Qt Service Framework on Symbian" fulltitle="Qt Service Framework on Symbian" subtitle="" location="sfw_s60.qdoc">
             <contents name="how-to-register-and-unregister-service-plugins-in-s60" title="How to register and unregister service plugins in S60?" level="1"/>
@@ -7740,20 +7783,6 @@
             <page access="public" status="commendable" name="player/main.cpp" href="player-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="player/main.cpp" location=""/>
             <page access="public" status="commendable" name="player/player.pro" href="player-player-pro.html" subtype="file" title="" fulltitle="player.pro Example File" subtitle="player/player.pro" location=""/>
         </page>
-        <page access="public" status="commendable" name="Audio" href="qml-audio.html" title="QML Audio Element Reference" fulltitle="QML Audio Element Reference" subtitle="" location="qmlaudio.cpp">
-            <page access="public" status="commendable" name="source" href="source.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
-            <page access="public" status="commendable" name="playing" href="playing.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
-            <page access="public" status="commendable" name="paused" href="paused.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
-            <page access="public" status="commendable" name="status" href="status.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
-            <page access="public" status="commendable" name="duration" href="duration.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
-            <page access="public" status="commendable" name="position" href="position.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
-            <page access="public" status="commendable" name="volume" href="volume.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
-            <page access="public" status="commendable" name="muted" href="muted.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
-            <page access="public" status="commendable" name="bufferProgress" href="bufferprogress.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
-            <page access="public" status="commendable" name="seekable" href="seekable.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
-            <page access="public" status="commendable" name="error" href="error.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
-            <page access="public" status="commendable" name="errorString" href="errorstring.html" title="" fulltitle="" subtitle="" location="qmlaudio.cpp"/>
-        </page>
         <page access="public" status="commendable" name="querymessages" href="querymessages.html" subtype="example" title="Query Messages Example" fulltitle="Query Messages Example" subtitle="" location="querymessages.qdoc">
             <page access="public" status="commendable" name="querymessages/main.cpp" href="querymessages-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="querymessages/main.cpp" location=""/>
             <page access="public" status="commendable" name="querymessages/querymessages.pro" href="querymessages-querymessages-pro.html" subtype="file" title="" fulltitle="querymessages.pro Example File" subtitle="querymessages/querymessages.pro" location=""/>
@@ -7761,10 +7790,7 @@
         <function access="public" threadsafety="unspecified" status="commendable" name="REGISTER_STATIC_PLUGIN" href="qsensormanager.html#REGISTER_STATIC_PLUGIN" location="" virtual="non" meta="macrowithparams" const="false" static="false" overload="false" relates="QSensorManager" type="" signature="REGISTER_STATIC_PLUGIN( pluginname)">
             <parameter left="" right="" name="pluginname" default=""/>
         </function>
-        <page access="public" status="commendable" name="sensors" href="sensors.html" subtype="group" title="" fulltitle="" subtitle="" location="sensors.qdoc"/>
-        <page access="public" status="commendable" name="sensors_helpers" href="sensors-helpers.html" subtype="group" title="" fulltitle="" subtitle="" location="sensors.qdoc"/>
-        <page access="public" status="commendable" name="sensors_backend" href="sensors-backend.html" subtype="group" title="" fulltitle="" subtitle="" location="sensors.qdoc"/>
-        <page access="public" status="commendable" name="sensors-api.html" href="sensors-api.html" subtype="page" title="Sensors API" fulltitle="Sensors API" subtitle="" location="sensors.qdoc">
+        <page access="public" status="commendable" name="sensors-api.html" href="sensors-api.html" subtype="page" title="Sensors API (technology preview)" fulltitle="Sensors API (technology preview)" subtitle="" location="sensors.qdoc">
             <contents name="overview" title="Overview" level="1"/>
             <contents name="client-api" title="Client API" level="1"/>
             <contents name="backend-api" title="Backend API" level="1"/>

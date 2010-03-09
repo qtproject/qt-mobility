@@ -169,10 +169,14 @@
         <keyword ref="qcamera.html#FlashMode-enum">FlashMode</keyword>
         <keyword ref="qcamera.html#FlashMode-enum">FlashModes</keyword>
         <keyword ref="qcamera.html#FlashMode-enum">QCamera::FlashAuto</keyword>
+        <keyword ref="qcamera.html#FlashMode-enum">QCamera::FlashManual</keyword>
         <keyword ref="qcamera.html#FlashMode-enum">QCamera::FlashFill</keyword>
         <keyword ref="qcamera.html#FlashMode-enum">QCamera::FlashOff</keyword>
+        <keyword ref="qcamera.html#FlashMode-enum">QCamera::FlashSlowSyncRearCurtain</keyword>
         <keyword ref="qcamera.html#FlashMode-enum">QCamera::FlashOn</keyword>
+        <keyword ref="qcamera.html#FlashMode-enum">QCamera::FlashSlowSyncFrontCurtain</keyword>
         <keyword ref="qcamera.html#FlashMode-enum">QCamera::FlashRedEyeReduction</keyword>
+        <keyword ref="qcamera.html#FlashMode-enum">QCamera::FlashTorch</keyword>
         <keyword ref="qcamera.html#FocusMode-enum">FocusMode</keyword>
         <keyword ref="qcamera.html#FocusMode-enum">FocusModes</keyword>
         <keyword ref="qcamera.html#FocusMode-enum">QCamera::AutoFocus</keyword>
@@ -180,6 +184,12 @@
         <keyword ref="qcamera.html#FocusMode-enum">QCamera::ContinuousFocus</keyword>
         <keyword ref="qcamera.html#FocusMode-enum">QCamera::HyperfocalFocus</keyword>
         <keyword ref="qcamera.html#FocusMode-enum">QCamera::ManualFocus</keyword>
+        <keyword ref="qcamera.html#FocusPointMode-enum">FocusPointMode</keyword>
+        <keyword ref="qcamera.html#FocusPointMode-enum">FocusPointModes</keyword>
+        <keyword ref="qcamera.html#FocusPointMode-enum">QCamera::FocusPointCustom</keyword>
+        <keyword ref="qcamera.html#FocusPointMode-enum">QCamera::FocusPointFaceDetection</keyword>
+        <keyword ref="qcamera.html#FocusPointMode-enum">QCamera::FocusPointCenter</keyword>
+        <keyword ref="qcamera.html#FocusPointMode-enum">QCamera::FocusPointAuto</keyword>
         <keyword ref="qcamera.html#FocusStatus-enum">FocusStatus</keyword>
         <keyword ref="qcamera.html#FocusStatus-enum">QCamera::FocusReached</keyword>
         <keyword ref="qcamera.html#FocusStatus-enum">QCamera::FocusIntial</keyword>
@@ -212,6 +222,11 @@
         <keyword ref="qcamera.html#aperture-prop">setManualAperture</keyword>
         <keyword ref="qcamera.html#captureMode-prop">captureMode</keyword>
         <keyword ref="qcamera.html#captureMode-prop">setCaptureMode</keyword>
+        <keyword ref="qcamera.html#customFocusPoint-prop">customFocusPoint</keyword>
+        <keyword ref="qcamera.html#customFocusPoint-prop">setCustomFocusPoint</keyword>
+        <keyword ref="qcamera.html#focusPointMode-prop">focusPointMode</keyword>
+        <keyword ref="qcamera.html#focusPointMode-prop">setFocusPointMode</keyword>
+        <keyword ref="qcamera.html#focusZones-prop">focusZones</keyword>
         <keyword ref="qcamera.html#isoSensitivity-prop">isoSensitivity</keyword>
         <keyword ref="qcamera.html#isoSensitivity-prop">setManualIsoSensitivity</keyword>
         <keyword ref="qcamera.html#shutterSpeed-prop">shutterSpeed</keyword>
@@ -238,12 +253,15 @@
         <keyword ref="qcamera.html#focusStatus">focusStatus</keyword>
         <keyword ref="qcamera.html#focusStatusChanged">focusStatusChanged</keyword>
         <keyword ref="qcamera.html#focusUnableToReach">focusUnableToReach</keyword>
+        <keyword ref="qcamera.html#focusZonesChanged">focusZonesChanged</keyword>
         <keyword ref="qcamera.html#isAvailable">isAvailable</keyword>
         <keyword ref="qcamera.html#isExposureLocked">isExposureLocked</keyword>
         <keyword ref="qcamera.html#isFlashReady">isFlashReady</keyword>
         <keyword ref="qcamera.html#isMacroFocusingSupported">isMacroFocusingSupported</keyword>
+        <keyword ref="qcamera.html#isWhiteBalanceLocked">isWhiteBalanceLocked</keyword>
         <keyword ref="qcamera.html#isoSensitivityChanged">isoSensitivityChanged</keyword>
         <keyword ref="qcamera.html#lockExposure">lockExposure</keyword>
+        <keyword ref="qcamera.html#lockWhiteBalance">lockWhiteBalance</keyword>
         <keyword ref="qcamera.html#macroFocusingEnabled">macroFocusingEnabled</keyword>
         <keyword ref="qcamera.html#manualWhiteBalance">manualWhiteBalance</keyword>
         <keyword ref="qcamera.html#maximumDigitalZoom">maximumDigitalZoom</keyword>
@@ -272,11 +290,14 @@
         <keyword ref="qcamera.html#supportedExposureModes">supportedExposureModes</keyword>
         <keyword ref="qcamera.html#supportedFlashModes">supportedFlashModes</keyword>
         <keyword ref="qcamera.html#supportedFocusModes">supportedFocusModes</keyword>
+        <keyword ref="qcamera.html#supportedFocusPointModes">supportedFocusPointModes</keyword>
         <keyword ref="qcamera.html#supportedIsoSensitivities">supportedIsoSensitivities</keyword>
         <keyword ref="qcamera.html#supportedMeteringModes">supportedMeteringModes</keyword>
         <keyword ref="qcamera.html#supportedShutterSpeeds">supportedShutterSpeeds</keyword>
         <keyword ref="qcamera.html#supportedWhiteBalanceModes">supportedWhiteBalanceModes</keyword>
         <keyword ref="qcamera.html#unlockExposure">unlockExposure</keyword>
+        <keyword ref="qcamera.html#unlockWhiteBalance">unlockWhiteBalance</keyword>
+        <keyword ref="qcamera.html#whiteBalanceLocked">whiteBalanceLocked</keyword>
         <keyword ref="qcamera.html#whiteBalanceMode">whiteBalanceMode</keyword>
         <keyword ref="qcamera.html#zoomTo">zoomTo</keyword>
         <section ref="qcamera-members.html" title="List of all members"/>
@@ -303,7 +324,9 @@
         <keyword ref="qcameraexposurecontrol.html#exposureCompensation">exposureCompensation</keyword>
         <keyword ref="qcameraexposurecontrol.html#exposureLocked">exposureLocked</keyword>
         <keyword ref="qcameraexposurecontrol.html#exposureMode">exposureMode</keyword>
+        <keyword ref="qcameraexposurecontrol.html#flashCompensation">flashCompensation</keyword>
         <keyword ref="qcameraexposurecontrol.html#flashMode">flashMode</keyword>
+        <keyword ref="qcameraexposurecontrol.html#flashPower">flashPower</keyword>
         <keyword ref="qcameraexposurecontrol.html#flashReady">flashReady</keyword>
         <keyword ref="qcameraexposurecontrol.html#isExposureLocked">isExposureLocked</keyword>
         <keyword ref="qcameraexposurecontrol.html#isFlashReady">isFlashReady</keyword>
@@ -316,7 +339,9 @@
         <keyword ref="qcameraexposurecontrol.html#setAutoShutterSpeed">setAutoShutterSpeed</keyword>
         <keyword ref="qcameraexposurecontrol.html#setExposureCompensation">setExposureCompensation</keyword>
         <keyword ref="qcameraexposurecontrol.html#setExposureMode">setExposureMode</keyword>
+        <keyword ref="qcameraexposurecontrol.html#setFlashCompensation">setFlashCompensation</keyword>
         <keyword ref="qcameraexposurecontrol.html#setFlashMode">setFlashMode</keyword>
+        <keyword ref="qcameraexposurecontrol.html#setFlashPower">setFlashPower</keyword>
         <keyword ref="qcameraexposurecontrol.html#setManualAperture">setManualAperture</keyword>
         <keyword ref="qcameraexposurecontrol.html#setManualIsoSensitivity">setManualIsoSensitivity</keyword>
         <keyword ref="qcameraexposurecontrol.html#setManualShutterSpeed">setManualShutterSpeed</keyword>
@@ -336,21 +361,28 @@
     <section ref="qcamerafocuscontrol.html" title="QCameraFocusControl Class Reference">
         <keyword ref="qcamerafocuscontrol.html">QCameraFocusControl</keyword>
         <keyword ref="qcamerafocuscontrol.html#cancelFocusing">cancelFocusing</keyword>
+        <keyword ref="qcamerafocuscontrol.html#customFocusPoint">customFocusPoint</keyword>
         <keyword ref="qcamerafocuscontrol.html#digitalZoom">digitalZoom</keyword>
         <keyword ref="qcamerafocuscontrol.html#digitalZoomChanged">digitalZoomChanged</keyword>
         <keyword ref="qcamerafocuscontrol.html#focusMode">focusMode</keyword>
+        <keyword ref="qcamerafocuscontrol.html#focusPointMode">focusPointMode</keyword>
         <keyword ref="qcamerafocuscontrol.html#focusStatus">focusStatus</keyword>
         <keyword ref="qcamerafocuscontrol.html#focusStatusChanged">focusStatusChanged</keyword>
+        <keyword ref="qcamerafocuscontrol.html#focusZones">focusZones</keyword>
+        <keyword ref="qcamerafocuscontrol.html#focusZonesChanged">focusZonesChanged</keyword>
         <keyword ref="qcamerafocuscontrol.html#isMacroFocusingSupported">isMacroFocusingSupported</keyword>
         <keyword ref="qcamerafocuscontrol.html#macroFocusingEnabled">macroFocusingEnabled</keyword>
         <keyword ref="qcamerafocuscontrol.html#maximumDigitalZoom">maximumDigitalZoom</keyword>
         <keyword ref="qcamerafocuscontrol.html#maximumOpticalZoom">maximumOpticalZoom</keyword>
         <keyword ref="qcamerafocuscontrol.html#opticalZoom">opticalZoom</keyword>
         <keyword ref="qcamerafocuscontrol.html#opticalZoomChanged">opticalZoomChanged</keyword>
+        <keyword ref="qcamerafocuscontrol.html#setCustomFocusPoint">setCustomFocusPoint</keyword>
         <keyword ref="qcamerafocuscontrol.html#setFocusMode">setFocusMode</keyword>
+        <keyword ref="qcamerafocuscontrol.html#setFocusPointMode">setFocusPointMode</keyword>
         <keyword ref="qcamerafocuscontrol.html#setMacroFocusingEnabled">setMacroFocusingEnabled</keyword>
         <keyword ref="qcamerafocuscontrol.html#startFocusing">startFocusing</keyword>
         <keyword ref="qcamerafocuscontrol.html#supportedFocusModes">supportedFocusModes</keyword>
+        <keyword ref="qcamerafocuscontrol.html#supportedFocusPointModes">supportedFocusPointModes</keyword>
         <keyword ref="qcamerafocuscontrol.html#zoomTo">zoomTo</keyword>
         <keyword ref="qcamerafocuscontrol.html#QCameraFocusControl_iid">QCameraFocusControl_iid</keyword>
         <section ref="qcamerafocuscontrol-members.html" title="List of all members"/>
@@ -1487,10 +1519,6 @@
     </section>
     <section ref="qgraphicsvideoitem.html" title="QGraphicsVideoItem Class Reference">
         <keyword ref="qgraphicsvideoitem.html">QGraphicsVideoItem</keyword>
-        <keyword ref="qgraphicsvideoitem.html#FillMode-enum">FillMode</keyword>
-        <keyword ref="qgraphicsvideoitem.html#FillMode-enum">QGraphicsVideoItem::PreserveAspectFit</keyword>
-        <keyword ref="qgraphicsvideoitem.html#FillMode-enum">QGraphicsVideoItem::Stretch</keyword>
-        <keyword ref="qgraphicsvideoitem.html#FillMode-enum">QGraphicsVideoItem::PreserveAspectCrop</keyword>
         <keyword ref="qgraphicsvideoitem.html#aspectRatioMode-prop">aspectRatioMode</keyword>
         <keyword ref="qgraphicsvideoitem.html#aspectRatioMode-prop">setAspectRatioMode</keyword>
         <keyword ref="qgraphicsvideoitem.html#mediaObject-prop">mediaObject</keyword>
@@ -1503,10 +1531,12 @@
         <keyword ref="qgraphicsvideoitem.html#boundingRect">boundingRect</keyword>
         <keyword ref="qgraphicsvideoitem.html#nativeSizeChanged">nativeSizeChanged</keyword>
         <keyword ref="qgraphicsvideoitem.html#paint">paint</keyword>
+        <keyword ref="qgraphicsvideoitem.html#timerEvent">timerEvent</keyword>
         <section ref="qgraphicsvideoitem-members.html" title="List of all members"/>
     </section>
     <section ref="qimagecapturecontrol.html" title="QImageCaptureControl Class Reference">
         <keyword ref="qimagecapturecontrol.html">QImageCaptureControl</keyword>
+        <keyword ref="qimagecapturecontrol.html#cancelCapture">cancelCapture</keyword>
         <keyword ref="qimagecapturecontrol.html#capture">capture</keyword>
         <keyword ref="qimagecapturecontrol.html#error">error</keyword>
         <keyword ref="qimagecapturecontrol.html#imageCaptured">imageCaptured</keyword>
@@ -1546,6 +1576,8 @@
         <keyword ref="qimageprocessingcontrol.html#denoisingLevel">denoisingLevel</keyword>
         <keyword ref="qimageprocessingcontrol.html#isDenoisingSupported">isDenoisingSupported</keyword>
         <keyword ref="qimageprocessingcontrol.html#isSharpeningSupported">isSharpeningSupported</keyword>
+        <keyword ref="qimageprocessingcontrol.html#isWhiteBalanceLocked">isWhiteBalanceLocked</keyword>
+        <keyword ref="qimageprocessingcontrol.html#lockWhiteBalance">lockWhiteBalance</keyword>
         <keyword ref="qimageprocessingcontrol.html#manualWhiteBalance">manualWhiteBalance</keyword>
         <keyword ref="qimageprocessingcontrol.html#saturation">saturation</keyword>
         <keyword ref="qimageprocessingcontrol.html#setContrast">setContrast</keyword>
@@ -1556,6 +1588,8 @@
         <keyword ref="qimageprocessingcontrol.html#setWhiteBalanceMode">setWhiteBalanceMode</keyword>
         <keyword ref="qimageprocessingcontrol.html#sharpeningLevel">sharpeningLevel</keyword>
         <keyword ref="qimageprocessingcontrol.html#supportedWhiteBalanceModes">supportedWhiteBalanceModes</keyword>
+        <keyword ref="qimageprocessingcontrol.html#unlockWhiteBalance">unlockWhiteBalance</keyword>
+        <keyword ref="qimageprocessingcontrol.html#whiteBalanceLocked">whiteBalanceLocked</keyword>
         <keyword ref="qimageprocessingcontrol.html#whiteBalanceMode">whiteBalanceMode</keyword>
         <keyword ref="qimageprocessingcontrol.html#QImageProcessingControl_iid">QImageProcessingControl_iid</keyword>
         <section ref="qimageprocessingcontrol-members.html" title="List of all members"/>
@@ -1683,6 +1717,7 @@
         <keyword ref="qmediaplayer.html#Flag-enum">Flag</keyword>
         <keyword ref="qmediaplayer.html#Flag-enum">Flags</keyword>
         <keyword ref="qmediaplayer.html#Flag-enum">QMediaPlayer::LowLatency</keyword>
+        <keyword ref="qmediaplayer.html#Flag-enum">QMediaPlayer::StreamPlayback</keyword>
         <keyword ref="qmediaplayer.html#MediaStatus-enum">MediaStatus</keyword>
         <keyword ref="qmediaplayer.html#MediaStatus-enum">QMediaPlayer::UnknownMediaStatus</keyword>
         <keyword ref="qmediaplayer.html#MediaStatus-enum">QMediaPlayer::StalledMedia</keyword>
@@ -1979,6 +2014,7 @@
         <keyword ref="qmediaresource.html#isNull">isNull</keyword>
         <keyword ref="qmediaresource.html#language">language</keyword>
         <keyword ref="qmediaresource.html#mimeType">mimeType</keyword>
+        <keyword ref="qmediaresource.html#request">request</keyword>
         <keyword ref="qmediaresource.html#resolution">resolution</keyword>
         <keyword ref="qmediaresource.html#sampleRate">sampleRate</keyword>
         <keyword ref="qmediaresource.html#setAudioBitRate">setAudioBitRate</keyword>
@@ -2025,6 +2061,7 @@
         <keyword ref="qmediaserviceproviderhint.html#Feature-enum">Features</keyword>
         <keyword ref="qmediaserviceproviderhint.html#Feature-enum">QMediaServiceProviderHint::LowLatencyPlayback</keyword>
         <keyword ref="qmediaserviceproviderhint.html#Feature-enum">QMediaServiceProviderHint::RecordingSupport</keyword>
+        <keyword ref="qmediaserviceproviderhint.html#Feature-enum">QMediaServiceProviderHint::StreamPlayback</keyword>
         <keyword ref="qmediaserviceproviderhint.html#Type-enum">Type</keyword>
         <keyword ref="qmediaserviceproviderhint.html#Type-enum">QMediaServiceProviderHint::ContentType</keyword>
         <keyword ref="qmediaserviceproviderhint.html#Type-enum">QMediaServiceProviderHint::Null</keyword>
@@ -2608,6 +2645,7 @@
         <keyword ref="qradiotuner.html#Band-enum">Band</keyword>
         <keyword ref="qradiotuner.html#Band-enum">QRadioTuner::SW</keyword>
         <keyword ref="qradiotuner.html#Band-enum">QRadioTuner::FM</keyword>
+        <keyword ref="qradiotuner.html#Band-enum">QRadioTuner::FM2</keyword>
         <keyword ref="qradiotuner.html#Band-enum">QRadioTuner::LW</keyword>
         <keyword ref="qradiotuner.html#Band-enum">QRadioTuner::AM</keyword>
         <keyword ref="qradiotuner.html#Error-enum">Error</keyword>
@@ -2748,10 +2786,13 @@
         <keyword ref="qsensor.html#updatePolicy-prop">setUpdatePolicy</keyword>
         <keyword ref="qsensor.html#addFilter">addFilter</keyword>
         <keyword ref="qsensor.html#connect">connect</keyword>
+        <keyword ref="qsensor.html#defaultSensorForType">defaultSensorForType</keyword>
         <keyword ref="qsensor.html#isSignalEnabled">isSignalEnabled</keyword>
         <keyword ref="qsensor.html#poll">poll</keyword>
         <keyword ref="qsensor.html#readingChanged">readingChanged</keyword>
         <keyword ref="qsensor.html#removeFilter">removeFilter</keyword>
+        <keyword ref="qsensor.html#sensorTypes">sensorTypes</keyword>
+        <keyword ref="qsensor.html#sensorsForType">sensorsForType</keyword>
         <keyword ref="qsensor.html#setSignalEnabled">setSignalEnabled</keyword>
         <keyword ref="qsensor.html#start">start</keyword>
         <keyword ref="qsensor.html#stop">stop</keyword>
@@ -2774,16 +2815,6 @@
         <keyword ref="qsensorbackendfactory.html#createBackend">createBackend</keyword>
         <section ref="qsensorbackendfactory-members.html" title="List of all members"/>
     </section>
-    <section ref="qsensorfactory.html" title="QSensorFactory Class Reference">
-        <keyword ref="qsensorfactory.html">QSensorFactory</keyword>
-        <keyword ref="qsensorfactory.html#createSensor">createSensor</keyword>
-        <keyword ref="qsensorfactory.html#defaultSensorForType">defaultSensorForType</keyword>
-        <keyword ref="qsensorfactory.html#instance">instance</keyword>
-        <keyword ref="qsensorfactory.html#sensorList">sensorList</keyword>
-        <keyword ref="qsensorfactory.html#sensorTypes">sensorTypes</keyword>
-        <keyword ref="qsensorfactory.html#sensorsForType">sensorsForType</keyword>
-        <section ref="qsensorfactory-members.html" title="List of all members"/>
-    </section>
     <section ref="qsensorfilter.html" title="QSensorFilter Class Reference">
         <keyword ref="qsensorfilter.html">QSensorFilter</keyword>
         <keyword ref="qsensorfilter.html#filter">filter</keyword>
@@ -2792,7 +2823,6 @@
     <section ref="qsensormanager.html" title="QSensorManager Class Reference">
         <keyword ref="qsensormanager.html">QSensorManager</keyword>
         <keyword ref="qsensormanager.html#createBackend">createBackend</keyword>
-        <keyword ref="qsensormanager.html#defaultSensorForType">defaultSensorForType</keyword>
         <keyword ref="qsensormanager.html#registerBackend">registerBackend</keyword>
         <keyword ref="qsensormanager.html#REGISTER_STATIC_PLUGIN">REGISTER_STATIC_PLUGIN</keyword>
         <section ref="qsensormanager-members.html" title="List of all members"/>
@@ -2921,6 +2951,7 @@
         <keyword ref="qstillimagecapture.html#readyForCapture-prop">readyForCapture</keyword>
         <keyword ref="qstillimagecapture.html#readyForCapture-prop">isReadyForCapture</keyword>
         <keyword ref="qstillimagecapture.html#availabilityError">availabilityError</keyword>
+        <keyword ref="qstillimagecapture.html#cancelCapture">cancelCapture</keyword>
         <keyword ref="qstillimagecapture.html#capture">capture</keyword>
         <keyword ref="qstillimagecapture.html#encodingSettings">encodingSettings</keyword>
         <keyword ref="qstillimagecapture.html#error">error</keyword>
@@ -3522,15 +3553,6 @@
     </section>
 </section>
 <section ref="overviews.html" title="Overviews">
-    <section ref="sensors-backend.html" title="">
-        <keyword ref="sensors-backend.html"></keyword>
-    </section>
-    <section ref="sensors-helpers.html" title="">
-        <keyword ref="sensors-helpers.html"></keyword>
-    </section>
-    <section ref="sensors.html" title="">
-        <keyword ref="sensors.html"></keyword>
-    </section>
     <section ref="functions.html" title="All Functions">
         <keyword ref="functions.html">All Functions</keyword>
     </section>
@@ -3624,8 +3646,8 @@
     <section ref="qtmobility-known-issues.html" title="Release Notes of the QtMobility Project">
         <keyword ref="qtmobility-known-issues.html">Release Notes of the QtMobility Project</keyword>
     </section>
-    <section ref="sensors-api.html" title="Sensors API">
-        <keyword ref="sensors-api.html">Sensors API</keyword>
+    <section ref="sensors-api.html" title="Sensors API (technology preview)">
+        <keyword ref="sensors-api.html">Sensors API (technology preview)</keyword>
     </section>
     <section ref="servicefw.html" title="Service Frameworks Classes">
         <keyword ref="servicefw.html">Service Frameworks Classes</keyword>
@@ -3645,8 +3667,8 @@
     <section ref="trademarks.html" title="Trademarks">
         <keyword ref="trademarks.html">Trademarks</keyword>
     </section>
-    <section ref="versit.html" title="Versit API">
-        <keyword ref="versit.html">Versit API</keyword>
+    <section ref="versit.html" title="Versit API (technology preview)">
+        <keyword ref="versit.html">Versit API (technology preview)</keyword>
     </section>
 </section>
 <section ref="examples.html" title="Tutorial &amp; Examples">
@@ -3739,9 +3761,6 @@
     </section>
     <section ref="slideshow.html" title="Slideshow Example">
         <keyword ref="slideshow.html">Slideshow Example</keyword>
-    </section>
-    <section ref="streamplayer.html" title="Stream Player Example">
-        <keyword ref="streamplayer.html">Stream Player Example</keyword>
     </section>
     <section ref="sysinfo.html" title="System Information Example">
         <keyword ref="sysinfo.html">System Information Example</keyword>
