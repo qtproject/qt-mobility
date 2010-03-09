@@ -82,6 +82,7 @@ public:
         Cancelled,
         NoGallery,
         NotSupported,
+        ConnectionError,
         RequestError = 100
     };
 

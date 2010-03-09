@@ -487,7 +487,7 @@ if %FIRST% == bearer (
 ) else if %FIRST% == sensors (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\sensors
 ) else if %FIRST% == gallery (
-    perl -S $SOURCE_PATH%\bin\syncheader %BUID_PATH%\include %SOURCE_PATH%\src\gallery
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\gallery
 )
 
 if "%REMAINING%" == "" (

@@ -54,14 +54,15 @@ Viewer::Viewer(QWidget *parent)
     , m_limitInput(0)
 {
     m_request.setGallery(&m_gallery);
-    m_request.setFields(QStringList() << QLatin1String("nie:title"));
+    m_request.setFields(QStringList() << QLatin1String("System.Title") << QLatin1String("System.FileName"));
     connect(&m_request, SIGNAL(documentsChanged()), this, SLOT(documentsChanged()));
 
-    m_model.setColumnCount(1);
-    m_model.setColumnField(0, QLatin1String("nie:title"));
+    m_model.setColumnCount(2);
+    m_model.setColumnField(0, QLatin1String("System.Title"));
+    m_model.setColumnField(1, QLatin1String("System.FileName"));
 
     m_typeInput = new QLineEdit;
-    m_typeInput->setText(QLatin1String("nie:InformationElement"));
+    m_typeInput->setText(QLatin1String("music"));
 
     m_offsetInput = new QSpinBox;
     m_offsetInput->setRange(0, 1000);

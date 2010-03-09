@@ -9,7 +9,8 @@ INCLUDEPATH+= .
 DEFINES += QT_BUILD_GALLERY_LIB
 
 PRIVATE_HEADERS = \
-        qabstractgallery_p.h
+        qabstractgallery_p.h \
+        qgalleryerrorresponse_p.h
 
 PUBLIC_HEADERS = \
         qgallery.h \
@@ -20,13 +21,17 @@ PUBLIC_HEADERS = \
 SOURCES = \
         qgallery.cpp \
         qgallerydocumentlist.cpp \
+        qgalleryerrorresponse.cpp \
         qgalleryfilter.cpp \
         qgalleryrequest.cpp
 
-
-DEFINES += QT_DOCUMENT_GALLERY_NULL
-
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
+
+win32 {
+    include (ws4/ws4.pri)
+} else {
+    DEFINES += QT_DOCUMENT_GALLERY_NULL
+}
 
 symbian {
     load(data_caging_paths)
