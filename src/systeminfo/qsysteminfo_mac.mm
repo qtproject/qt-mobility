@@ -862,7 +862,11 @@ int QSystemNetworkInfoPrivate::locationAreaCode()
 
 QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
 {
-    return "";
+    CWInterface *primary = [CWInterface interface ];
+    if([primary power])
+        return  nsstringToQString( [primary countryCode]);
+    else
+        return "";
 }
 
 QString QSystemNetworkInfoPrivate::currentMobileNetworkCode()
@@ -963,9 +967,6 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
 
 void QSystemNetworkInfoPrivate::networkChanged(const QString &notification, const QString interfaceName)
 {
-    qWarning() << __FUNCTION__ << notification;
-   // runloopThread->stopLoop();
-
     if(notification == QLatin1String("SSID_CHANGED_NOTIFICATION")) {
         Q_EMIT networkNameChanged(QSystemNetworkInfo::WlanMode, networkName(QSystemNetworkInfo::WlanMode));
     }
@@ -990,8 +991,13 @@ void QSystemNetworkInfoPrivate::networkChanged(const QString &notification, cons
         }
 #endif
     }
- //   runloopThread->start();
 }
+
+QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
+{
+    return modeForInterface(getDefaultInterface());
+}
+
 
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
         : QObject(parent)
