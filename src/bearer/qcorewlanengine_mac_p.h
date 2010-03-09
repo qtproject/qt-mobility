@@ -90,14 +90,16 @@ private:
     QTimer pollTimer;
     QList<QNetworkConfigurationPrivate *> scanForSsids(const QString &interfaceName);
 
-    bool isKnownSsid(const QString &interfaceName, const QString &ssid);
+    bool isKnownSsid(const QString &ssid);
     QList<QNetworkConfigurationPrivate *> foundConfigurations;
 
     SCDynamicStoreRef storeSession;
     CFRunLoopSourceRef runloopSource;
+protected:
+   QMap<QString, QString> userProfiles;
 
     void startNetworkChangeLoop();
-
+    void getUserConfigurations();
 };
 
 QTM_END_NAMESPACE
