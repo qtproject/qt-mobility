@@ -39,11 +39,11 @@
 **
 ****************************************************************************/
 
-#include <QtTest/QtTest>
-#include <QDebug>
-
 #include <qmediapluginloader_p.h>
 #include <qmediaserviceproviderplugin.h>
+
+#include <QtTest/QtTest>
+#include <QDebug>
 
 QTM_USE_NAMESPACE
 
