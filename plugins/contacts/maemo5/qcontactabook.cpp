@@ -1004,12 +1004,11 @@ QList<QContactPhoneNumber*> QContactABook::createPhoneDetail(EContact *eContact)
   
   GList *l = osso_abook_contact_get_attributes(eContact, EVC_TEL);
   
-  int index = 0;
-  while (l) {
+  for (GList *node = g_list_last(l); node != NULL; node = g_list_previous(node)) {
     QContactPhoneNumber* phoneNumber = new QContactPhoneNumber;
     QVariantMap map;
     
-    EVCardAttribute *attr = static_cast<EVCardAttribute*>(l->data);
+    EVCardAttribute *attr = static_cast<EVCardAttribute*>(node->data);
     GList* p = e_vcard_attribute_get_param(attr, EVC_TYPE);
     
     //Set Contexts and SubTypes
@@ -1036,11 +1035,8 @@ QList<QContactPhoneNumber*> QContactABook::createPhoneDetail(EContact *eContact)
     QString phoneNumberStr(normalized);
     FREE(normalized);
     map[QContactPhoneNumber::FieldNumber] = phoneNumberStr;
-    map[QContactDetail::FieldDetailUri] = QString::number(index);
+    map[QContactDetail::FieldDetailUri] = QString::number(g_list_position(l, node));
     setDetailValues(map, phoneNumber);
-    
-    ++index;
-    l = l->next;
     
     rtnList << phoneNumber;
   }
@@ -1089,7 +1085,7 @@ static void addAttributeToAContact(const OssoABookContact* contact,
   {
     GList *attributeList = osso_abook_contact_get_attributes(E_CONTACT(contact), qPrintable(attrName));
     
-    for (GList *node = attributeList; node != NULL; node = g_list_next(node)) {
+    for (GList *node = g_list_last(attributeList); node != NULL; node = g_list_previous(node)) {
       EVCardAttribute* eAttr = (EVCardAttribute*)node->data;
       
       if (index != g_list_position(attributeList, node))
