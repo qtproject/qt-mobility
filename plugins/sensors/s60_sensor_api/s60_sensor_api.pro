@@ -1,7 +1,7 @@
 INCLUDEPATH+=../../../src/sensors
 
 include(../../../common.pri)
-include(symbian_sensor_api.pri)
+include(s60_sensor_api.pri)
 include(version.pri)
 
 TEMPLATE = lib
