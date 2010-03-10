@@ -50,6 +50,7 @@
 
 // FORWARD DECLARATIONS
 class MCameraEngineObserver;
+class MAdvancedSettingsObserver;
 
 NONSHARABLE_CLASS( CCameraEngine ) : public CBase,
                                      public MCameraObserver,
@@ -79,7 +80,12 @@ protected:
     CCameraEngine();
 
 public:
-
+    
+    void SetAdvancedObserver(MAdvancedSettingsObserver* aAdvancedSettingsObserver);
+    /**
+     * External Image capture callback observer.
+     */
+    void SetImageCaptureObserver(MCameraEngineObserver* aImageCaptureObserver);
     /**
      * Static function that returns the number of cameras on the device.
      */
@@ -194,8 +200,6 @@ public:
      * SupportedFocusRanges().
      */
     void SetFocusRange( TInt aFocusRange );
-
-
 
     /**
      * Returns a pointer to CCamera object used by the engine.
@@ -312,6 +316,8 @@ private:  // Data
     TInt                              iCameraHandle;
     TInt                              iPriority;
     MCameraEngineObserver*            iObserver;
+    MCameraEngineObserver*            iImageCaptureObserver;
+    MAdvancedSettingsObserver*        iAdvancedSettingsObserver;
     TBool                             iCameraReserved;
     TCameraEngineState                iEngineState;
     TCameraInfo                       iCameraInfo;

@@ -1,4 +1,4 @@
-TARGET = tst_qmediaplaylist
+TARGET = tst_qmediaplaylist_s60
 INCLUDEPATH += ../../../../include \
     ../../../../src/multimedia
 CONFIG += testcase
@@ -9,7 +9,7 @@ HEADERS += \
     $$SOURCE_DIR/plugins/multimedia/m3u/qm3uhandler.h
 
 SOURCES += \
-    tst_qmediaplaylist.cpp \
+    tst_qmediaplaylist_s60.cpp \
     $$QT_MOBILITY_SOURCE_TREE/plugins/multimedia/m3u/qm3uhandler.cpp
 
 INCLUDEPATH += $$QT_MOBILITY_SOURCE_TREE/plugins/multimedia/m3u

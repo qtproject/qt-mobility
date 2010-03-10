@@ -622,5 +622,5 @@ void tst_QMediaPlaylist::setMediaObject()
 }
 
 QTEST_MAIN(tst_QMediaPlaylist)
-#include "tst_qmediaplaylist.moc"
+#include "tst_qmediaplaylist_s60.moc"
 

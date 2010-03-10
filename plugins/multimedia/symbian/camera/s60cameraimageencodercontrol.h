@@ -47,7 +47,7 @@
 
 QTM_USE_NAMESPACE
 
-class S60CameraSession;
+class S60ImageCaptureSession;
 
 class S60CameraImageEncoderControl : public QImageEncoderControl
 {
@@ -67,7 +67,7 @@ public:
     void setImageSettings(const QImageEncoderSettings &settings);
 
 private:
-    S60CameraSession *m_session;
+    S60ImageCaptureSession *m_session;
     QImageEncoderSettings m_imageEncoderSettings;
 };
 

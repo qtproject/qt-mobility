@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "s60cameraimageencodercontrol.h"
-#include "s60camerasession.h"
+#include "s60imagecapturesession.h"
 
 #include <QtCore/qdebug.h>
 #include <QtCore/qstring.h>
@@ -53,7 +53,7 @@ S60CameraImageEncoderControl::S60CameraImageEncoderControl(QObject *parent)
 S60CameraImageEncoderControl::S60CameraImageEncoderControl(QObject *session, QObject *parent)
    :QImageEncoderControl(parent)
 {
-    m_session = qobject_cast<S60CameraSession*>(session);
+    m_session = qobject_cast<S60ImageCaptureSession*>(session);
 }
 
 S60CameraImageEncoderControl::~S60CameraImageEncoderControl()

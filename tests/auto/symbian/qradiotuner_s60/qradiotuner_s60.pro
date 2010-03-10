@@ -1,9 +1,9 @@
-TARGET = tst_qradiotuner
+TARGET = tst_qradiotuner_s60
 INCLUDEPATH += ../../../../src/multimedia
 
 CONFIG += testcase
 
-SOURCES += tst_qradiotuner.cpp
+SOURCES += tst_qradiotuner_s60.cpp
 
 include (../../../../common.pri)
 

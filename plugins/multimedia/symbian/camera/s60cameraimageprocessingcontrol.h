@@ -49,7 +49,7 @@
 QTM_USE_NAMESPACE
 
 class S60CameraService;
-class S60CameraSession;
+class S60ImageCaptureSession;
 
 class S60CameraImageProcessingControl : public QImageProcessingControl
 {
@@ -78,16 +78,15 @@ public:
     bool isDenoisingSupported() const;
     int denoisingLevel() const;
     void setDenoisingLevel(int value);
-
     bool isWhiteBalanceLocked() const;
 
 public Q_SLOTS:
-    void lockWhiteBalance();
+    void resetAdvancedSetting();
     void unlockWhiteBalance();
+    void lockWhiteBalance();
 
-    
 private:
-    S60CameraSession *m_session;
+    S60ImageCaptureSession *m_session;
     S60CameraService *m_service;
     S60CameraSettings *m_advancedSettings;
 };

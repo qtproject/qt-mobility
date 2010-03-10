@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef S60CAMERASESSION_H
-#define S60CAMERASESSION_H
+#ifndef S60IMAGECAPTURESESSION_H
+#define S60IMAGECAPTURESESSION_H
 
 #include <QtCore/qobject.h>
 #include <QTime>
@@ -57,29 +57,12 @@
 #include <s60cameraengine.h>
 #include <s60cameraengineobserver.h>
 
-#include <VideoRecorder.h>
-
 QTM_USE_NAMESPACE
-
-class MVFProcessor
-
-{
-public:
-      virtual void ViewFinderFrameReady(const QImage& image) = 0;
-};
-
-struct VideoControllerData
-{
-    int controllerUid;
-    int formatUid;
-    QString formatDescription;
-};
 
 class S60CameraService;
 
-class S60CameraSession : public QObject,
-    public MCameraEngineObserver,
-    public MVideoRecorderUtilityObserver
+class S60ImageCaptureSession : public QObject,
+    public MCameraEngineObserver    
 {
     Q_OBJECT
 public:
@@ -100,64 +83,28 @@ public:
         KErrECamNotOptimalFocus = -12104 // The optimum focus is lost  
     };
     
-    enum TVideoCaptureState
-    {
-        ENotInitialized = 0,
-        EInitialized,
-        EOpenCompelete,
-        ERecording,
-        EPaused,
-        ERecordComplete
-    };    
-
-    S60CameraSession(QObject *parent = 0);
-    ~S60CameraSession();
+    S60ImageCaptureSession(QObject *parent = 0);
+    ~S60ImageCaptureSession();
     
     CCamera::TFormat defaultCodec();
     void setError(TInt aError);
     QCamera::Error fromSymbianErrorToMultimediaError(int aError);
-
+    
     bool deviceReady();
+    void setCameraHandle(CCameraEngine* camerahandle);
+    void setCurrentDevice(TInt deviceindex);
     
     S60CameraSettings* advancedSettings();
+    void deleteAdvancedSettings();
     
-
-    qreal framerate();
-    void setFrameRate(qreal rate);
-
-    QList<QVideoFrame::PixelFormat> supportedPixelFormats();
+/*    QList<QVideoFrame::PixelFormat> supportedPixelFormats();
     QVideoFrame::PixelFormat pixelFormat() const;
-    void setPixelFormat(QVideoFrame::PixelFormat fmt);
-    QList<QSize> supportedVideoResolutions();
-    QList<qreal> supportedVideoFrameRates();
+    void setPixelFormat(QVideoFrame::PixelFormat fmt);*/    
 
-
-    // media control
-    bool setOutputLocation(const QUrl &sink);
-    QUrl outputLocation() const;
-    qint64 position();
-    int videoCaptureState() const;        
-    
     //added based on s60 camera needs
-    void releaseImageBuffer();
-    void startCamera();
-    void stopCamera();
-    void capture(const QString &fileName);
-    int state() const;
-    
-    // for mediacontrol
-    void startRecording();
-    void pauseRecording();
-    void stopRecording();
-
-    //videodevicecontrol
-    static int deviceCount();
-    static QString name(const int index);
-    static QString description(const int index);
-    int defaultDevice() const;
-    int selectedDevice() const;
-    void setSelectedDevice(int index);
-
+    void releaseImageBuffer();    
+    void capture(const QString &fileName);     
+   
     //imageencodercontrol
     QSize captureSize() const;
     QSize minimumCaptureSize();
@@ -170,24 +117,8 @@ public:
     QString imageCaptureCodecDescription(const QString &codecName);
     QtMedia::EncodingQuality captureQuality() const;
     void setCaptureQuality(QtMedia::EncodingQuality);
-
-    void setVideoRenderer(QObject *renderer);
     void updateImageCaptureCodecs();
 
-    QStringList supportedVideoCaptureCodecs();
-    QString videoCaptureCodec();
-    void setVideoCaptureCodec(const QString &codecName);
-    bool isSupportedVideoCaptureCodec(const QString &codecName);
-    int bitrate();
-    void setBitrate(const int &bitrate);
-    QSize videoResolution();
-    void setVideoResolution(const QSize &resolution);
-    QString videoCaptureCodecDescription(const QString &codecName);    
-    void saveVideoEncoderSettings(QVideoEncoderSettings &videoSettings);
-    void getCurrentVideoEncoderSettings(QVideoEncoderSettings &videoSettings);    
-    QtMedia::EncodingQuality videoCaptureQuality() const;    
-    void setVideoCaptureQuality(QtMedia::EncodingQuality quality);    
-    
     //camerafocuscontrol
     void startFocus();
     void cancelFocus();
@@ -199,12 +130,12 @@ public:
     int digitalZoomFactor();
 
     //cameraexposurecontrol
-    void setFlashMode(QCamera::FlashModes mode);
+    void setFlashMode(QCamera::FlashMode mode);
     void setExposureMode(QCamera::ExposureMode mode);
     QCamera::ExposureMode exposureMode();
     QCamera::ExposureModes supportedExposureModes();
     QCamera::FlashModes supportedFlashModes();
-    QCamera::FlashModes flashMode();
+    QCamera::FlashMode flashMode();
     
     //cameraimageprocessingcontrol
     int contrast() const;
@@ -226,26 +157,14 @@ private:
     QMap<QString, int> formatMap();
     QMap<QString, int> formatDescMap();
     
-    void setWhiteBalanceModeL(QCamera::WhiteBalanceMode mode);
-    void commitVideoEncoderSettings();
-    void setVideoFrameRateFixed(bool fixed);
-    void resetCamera();
-
-    //from  MVideoRecorderUtilityObserver
-    void MvruoOpenComplete(TInt aError);
-    void MvruoPrepareComplete(TInt aError);
-    void MvruoRecordComplete(TInt aError);
-    void MvruoEvent(const TMMFEvent& aEvent);
-
-    void updateVideoCaptureCodecs();
-    void updateVideoCaptureCodecsL();
-    void initializeVideoCaptureSettings();
-    
-    void setFlashModeL(QCamera::FlashModes mode);
+    void setWhiteBalanceModeL(QCamera::WhiteBalanceMode mode);    
+    void resetSession();
+    void setFlashModeL(QCamera::FlashMode mode);
     void setExposureModeL(QCamera::ExposureMode mode);
-    void saveImageL(TDesC8* aData);
-
-Q_SIGNALS:
+    void saveImageL(TDesC8* aData, TFileName aPath);
+    TFileName imagePath();
+    
+Q_SIGNALS:    
     void stateChanged(QCamera::State);
     // for capture control
     void error(int error, const QString &errorString);
@@ -255,34 +174,23 @@ Q_SIGNALS:
     //for focuscontrol
     void focusStatusChanged(QCamera::FocusStatus);
     void opticalZoomChanged(qreal opticalZoom);
-    void digitalZoomChanged(qreal digitalZoom);        
+    void digitalZoomChanged(qreal digitalZoom);   
+    void advancedSettingCreated();
 
 private:
     CCameraEngine *m_cameraEngine;
     S60CameraSettings *m_advancedSettings;
-    MVFProcessor *m_VFProcessor;
-    int m_imageQuality;
-    int m_videoQuality;
+    int m_imageQuality;    
     QSize m_captureSize;
-    QCamera::State m_state;
-    QVideoFrame::PixelFormat m_pixelF;
+    //QCamera::State m_state;    
     TInt m_deviceIndex; //index indication chosen camera device
+//    QVideoFrame::PixelFormat m_pixelF;
     mutable int m_error;
-    CCamera::TFormat m_currentcodec;
-    QTime m_timeStamp;
-    QUrl m_sink;
-    QList<QSize> m_resolutions;
-    QList<uint> m_formats;
-    QSize m_VFWidgetSize;
-    TSize m_VFSize;
+    CCamera::TFormat m_currentcodec; 
+    //QList<QSize> m_resolutions;
+    QList<uint> m_formats;    
     QString m_stillCaptureFileName;
-    mutable TCameraInfo m_info; // information about camera
-    CVideoRecorderUtility* m_videoUtility;
-    QHash<QString, VideoControllerData> m_videoControllerMap;
-    QString m_videoCodec;
-    QVideoEncoderSettings m_videoSettings;    
-    TVideoCaptureState m_captureState;
-
+    mutable TCameraInfo m_info; // information about camera                
 };
 
 #endif

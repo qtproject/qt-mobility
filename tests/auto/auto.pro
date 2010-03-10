@@ -43,7 +43,7 @@ contains(mobility_modules,publishsubscribe) {
     SUBDIRS += qvaluespace \                           #Publish and Subscribe
            qvaluespacepublisher \
            qvaluespacesubscriber \
-	   qcrmlparser
+           qcrmlparser
 
     unix|win32 {
         !symbian:!maemo6: SUBDIRS+= \
@@ -122,10 +122,11 @@ contains(mobility_modules,multimedia) {
         #symbian spesific autotests
         SUBDIRS += symbian 
         SUBDIRS -= \
-                qcamera \
-                qmediaplayer \
-                qradiotuner \
-                qmediaobject
+                qcamera_s60 \
+                qmediaplayer_s60 \
+                qradiotuner_s60 \
+                qmediaobject_s60 \
+                qmediarecorder_s60
     }
 }
 #Messaging

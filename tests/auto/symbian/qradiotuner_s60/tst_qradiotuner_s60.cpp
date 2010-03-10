@@ -197,4 +197,4 @@ void tst_QRadioTuner::testStereo()
 
 QTEST_MAIN(tst_QRadioTuner)
 
-#include "tst_qradiotuner.moc"
+#include "tst_qradiotuner_s60.moc"

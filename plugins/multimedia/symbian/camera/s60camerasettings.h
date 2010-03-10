@@ -50,11 +50,11 @@
 
 QTM_USE_NAMESPACE
 
-class S60CameraSettings : public QObject,
-    public MCameraObserver2
-
+class S60CameraSettings : public QObject, public MAdvancedSettingsObserver
 {
+
     Q_OBJECT
+ 
 public:
     S60CameraSettings(QObject *parent = 0, CCameraEngine *engine = 0);
     ~S60CameraSettings();
@@ -98,16 +98,12 @@ Q_SIGNALS:
     void apertureRangeChanged();
     void shutterSpeedChanged(qreal speed);
     void isoSensitivityChanged(int iso);
+    void focusStatusChanged(QCamera::FocusStatus);
+    void error(QCamera::Error);    
     
-    void error(QCamera::Error);
-    
-    
-protected: // from MCameraObserver2
-    void HandleEvent(const TECAMEvent& aEvent);
-    void ViewFinderReady(MCameraBuffer& aCameraBuffer,TInt aError);
-    void ImageBufferReady(MCameraBuffer& aCameraBuffer,TInt aError); 
-    void VideoBufferReady(MCameraBuffer& aCameraBuffer,TInt aError);
-    
+protected: // from MAdvancedSettingsObserver
+    void HandleAdvancedEvent(const TECAMEvent& aEvent);
+
 private:    
     bool queryAdvancedSettingsInfo();
 

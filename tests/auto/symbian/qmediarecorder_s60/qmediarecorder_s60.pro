@@ -1,16 +1,16 @@
-TARGET = tst_qcamera
+TARGET = tst_qmediarecorder_s60
 INCLUDEPATH += ../../../../src/multimedia \
     ../../../../include
 CONFIG += testcase
 
-SOURCES += tst_qcamera.cpp
+SOURCES += tst_qmediarecorder_s60.cpp
 
 include (../../../../common.pri)
 
 CONFIG += mobility
 MOBILITY = multimedia
 
-
+#UserEnvironment WriteDeviceData ReadDeviceData MultimediaDD 
 symbian {
-        TARGET.CAPABILITY = UserEnvironment WriteDeviceData
+        TARGET.CAPABILITY = ALL -TCB
 }

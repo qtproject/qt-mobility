@@ -474,4 +474,4 @@ QString tst_QMediaObject::metaDataKeyAsString(QtMedia::MetaData key) const
 
 QTEST_MAIN(tst_QMediaObject)
 
-#include "tst_qmediaobject.moc"
+#include "tst_qmediaobject_s60.moc"
