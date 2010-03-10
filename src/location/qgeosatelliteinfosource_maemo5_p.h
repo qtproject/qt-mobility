@@ -39,50 +39,61 @@
 **
 ****************************************************************************/
 
-#include <QApplication>
-#include <QMainWindow>
-#include <QMessageBox>
+#ifndef QGEOSATELLITEINFOSOURCE_MAEMO5_H
+#define QGEOSATELLITEINFOSOURCE_MAEMO5_H
+
 #include <QTimer>
-#include <qgeopositioninfosource.h>
-#include <qgeosatelliteinfosource.h>
+#include "qgeosatelliteinfosource.h"
+#include "qgeosatelliteinfo.h"
 
-#include "satellitedialog.h"
+QTM_BEGIN_NAMESPACE
 
-int main(int argc, char* argv[])
+class LiblocationWrapper;
+
+class QGeoSatelliteInfoSourceMaemo : public QGeoSatelliteInfoSource
 {
-    QApplication app(argc, argv);
+    Q_OBJECT
+    
+public:
+    explicit QGeoSatelliteInfoSourceMaemo(QObject *parent = 0);
 
-    SatelliteDialog *dialog = new SatelliteDialog(0,
-            30,
-            SatelliteDialog::ExitOnCancel,
-            SatelliteDialog::OrderByPrnNumber,
-            SatelliteDialog::ScaleToMaxPossible);
+    int init();
 
-    QGeoPositionInfoSource *posSource = QGeoPositionInfoSource::createDefaultSource(0);
-    QGeoSatelliteInfoSource *satSource = QGeoSatelliteInfoSource::createDefaultSource(0);
+private:
+    int client_id_;
+    void setUpdateInterval(int interval);
+    QTimer *updateTimer;
+    QTimer *requestTimer;
+    int timerInterval;
 
-    if ((posSource == 0) || (satSource == 0)) {
-        QMessageBox::critical(0, "SatelliteDialog", "This examples requires a valid location source and no valid location sources are available on this platform.");
-        return -1;
-    }
+    enum SatelliteInfoState {
+        Undefined = 0,
+        Started = 1,
+        Stopped = 2,
+        RequestActive = 4,
+        RequestSingleShot = 8
+    };
+    int satelliteInfoState;
 
-    posSource->setUpdateInterval(5000);
+public slots:
+    virtual void startUpdates();
+    void stopUpdates();
+    void requestUpdate(int timeout = 5000);
+    void satelliteStatus();
+    
+signals:
+    void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &satellites);
+    void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &satellites);
+    void requestTimeout();
 
-    dialog->connectSources(posSource, satSource);
+private slots:
+    void requestTimeoutElapsed();
 
-    posSource->startUpdates();
-    satSource->startUpdates();
+private:
+    Q_DISABLE_COPY(QGeoSatelliteInfoSourceMaemo)
+};
 
-    QTimer::singleShot(1, dialog, SLOT(show()));
+QTM_END_NAMESPACE
 
-    int result = app.exec();
+#endif // QGEOSATELLITEINFOSOURCE_MAEMO5_H
 
-    posSource->stopUpdates();
-    satSource->stopUpdates();
-
-    delete posSource;
-    delete satSource;
-    delete dialog;
-
-    return result;
-}

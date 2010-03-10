@@ -39,55 +39,67 @@
 **
 ****************************************************************************/
 
-#ifndef MAPWINDOW_H
-#define MAPWINDOW_H
+#ifndef QGEOPOSITIONINFOSOURCEMAEMO5_H
+#define QGEOPOSITIONINFOSOURCEMAEMO5_H
 
-#include <qmobilityglobal.h>
-#include <QMainWindow>
+#include <QTimer>
+#include "qgeopositioninfosource.h"
 
-class QWebView;
-
-QT_BEGIN_NAMESPACE
-class QLabel;
-QT_END_NAMESPACE
+#define MINIMUM_UPDATE_INTERVAL 1000
+#define DEFAULT_UPDATE_INTERVAL 5000
 
 QTM_BEGIN_NAMESPACE
-class QGeoPositionInfo;
-class QGeoPositionInfoSource;
-#ifndef Q_WS_MAEMO_5
-class QNetworkSession;
-#endif
-QTM_END_NAMESPACE
 
-QTM_USE_NAMESPACE
+class LiblocationWrapper;
 
-class MapWindow : public QMainWindow
+class QGeoPositionInfoSourceMaemo : public QGeoPositionInfoSource
 {
     Q_OBJECT
-public:
-    MapWindow(QWidget *parent = 0, Qt::WFlags flags = 0);
-    ~MapWindow();
-    void start();
 
-private slots:
-    void delayedInit();
-    void waitForFix();
-    void positionUpdated(const QGeoPositionInfo &info);
-    void loadStarted();
-    void loadFinished(bool ok);
+public:
+
+    QGeoPositionInfoSourceMaemo(QObject *parent = 0);
+
+    int init();
+
+    virtual void setUpdateInterval(int interval);
+    virtual void setPreferredPositioningMethods(PositioningMethods sources);
+    virtual QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const;
+    virtual PositioningMethods supportedPositioningMethods() const;
+    virtual int minimumUpdateInterval() const;
 
 private:
-    QWebView *webView;
-    QLabel *posLabel;
-    QLabel *headingAndSpeedLabel;
-    QLabel *dateTimeLabel;
-    bool loading;
-#ifndef Q_WS_MAEMO_5
-    QNetworkSession *session;
-#endif
-    bool usingLogFile;
-    QGeoPositionInfoSource *location;
-    bool waitingForFix;
+    PositioningMethods availableMethods;
+    bool positionInited;
+    QTimer *updateTimer;
+    QTimer *requestTimer;
+    int timerInterval;
+
+    enum PositionInfoState {
+        Undefined = 0,
+        Started = 1,
+        Stopped = 2,
+        RequestActive = 4,
+        RequestSingleShot = 8
+    };
+    int positionInfoState;
+    
+signals:
+    void positionUpdated(const QGeoPositionInfo &update);
+    
+public slots:
+    void startUpdates();
+    void stopUpdates();
+    void requestUpdate(int timeout = DEFAULT_UPDATE_INTERVAL);
+    void newPositionUpdate();
+
+private slots:
+    void requestTimeoutElapsed();
+
+private:
+    Q_DISABLE_COPY(QGeoPositionInfoSourceMaemo)
 };
 
-#endif
+QTM_END_NAMESPACE
+
+#endif // QGEOPOSITIONINFOSOURCEMAEMO5_H

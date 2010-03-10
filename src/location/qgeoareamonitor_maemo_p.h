@@ -39,50 +39,39 @@
 **
 ****************************************************************************/
 
-#include <QApplication>
-#include <QMainWindow>
-#include <QMessageBox>
-#include <QTimer>
-#include <qgeopositioninfosource.h>
-#include <qgeosatelliteinfosource.h>
+#ifndef QGEOAREAMONITORMAEMO_H
+#define QGEOAREAMONITORMAEMO_H
 
-#include "satellitedialog.h"
+#include "qgeoareamonitor.h"
+#include "qgeopositioninfosource.h"
 
-int main(int argc, char* argv[])
-{
-    QApplication app(argc, argv);
-
-    SatelliteDialog *dialog = new SatelliteDialog(0,
-            30,
-            SatelliteDialog::ExitOnCancel,
-            SatelliteDialog::OrderByPrnNumber,
-            SatelliteDialog::ScaleToMaxPossible);
-
-    QGeoPositionInfoSource *posSource = QGeoPositionInfoSource::createDefaultSource(0);
-    QGeoSatelliteInfoSource *satSource = QGeoSatelliteInfoSource::createDefaultSource(0);
-
-    if ((posSource == 0) || (satSource == 0)) {
-        QMessageBox::critical(0, "SatelliteDialog", "This examples requires a valid location source and no valid location sources are available on this platform.");
-        return -1;
-    }
-
-    posSource->setUpdateInterval(5000);
-
-    dialog->connectSources(posSource, satSource);
-
-    posSource->startUpdates();
-    satSource->startUpdates();
-
-    QTimer::singleShot(1, dialog, SLOT(show()));
-
-    int result = app.exec();
-
-    posSource->stopUpdates();
-    satSource->stopUpdates();
-
-    delete posSource;
-    delete satSource;
-    delete dialog;
-
-    return result;
+extern "C" {
+    #include <location/location-distance-utils.h>
 }
+
+QTM_BEGIN_NAMESPACE
+
+/**
+ *  QGeoAreaMonitorMaemo
+ *
+ */
+class QGeoAreaMonitorMaemo : public QGeoAreaMonitor
+{
+    Q_OBJECT
+
+public :
+    QGeoAreaMonitorMaemo(QObject *parent = 0);
+    ~QGeoAreaMonitorMaemo();
+    void setCenter(const QGeoCoordinate &coordinate);
+    void setRadius(qreal radius);
+
+private slots:
+    void positionUpdated(const QGeoPositionInfo &info);
+
+private:
+    bool insideArea;
+    QGeoPositionInfoSource *location;
+};
+
+QTM_END_NAMESPACE
+#endif // QGEOAREAMONITORMAEMO_H
