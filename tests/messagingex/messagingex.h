@@ -48,10 +48,10 @@
 #include "ui_accountdialog.h"
 #include "ui_mmsreceiveddialog.h"
 
-#include "QMessageService.h"
-#include "QMessageManager.h"
-#include "QMessage.h"
-#include "QMessageAccount.h"
+#include "qmessageservice.h"
+#include "qmessagemanager.h"
+#include "qmessage.h"
+#include "qmessageaccount.h"
 
 QTM_USE_NAMESPACE
 
