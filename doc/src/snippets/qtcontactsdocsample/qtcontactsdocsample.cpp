@@ -346,7 +346,7 @@ void RequestExample::performRequest()
 void RequestExample::printContacts()
 {
     QList<QContact> results = m_fetchRequest->contacts();
-    for (m_previousLastIndex = 0; m_previousLastIndex < results.size(); m_previousLastIndex++) {
+    for (m_previousLastIndex = 0; m_previousLastIndex < results.size(); ++m_previousLastIndex) {
         qDebug() << "Found an Alice:" << results.at(m_previousLastIndex).displayLabel();
     }
 }

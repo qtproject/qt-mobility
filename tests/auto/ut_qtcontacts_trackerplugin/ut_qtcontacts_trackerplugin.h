@@ -101,7 +101,7 @@ private slots:
 //    void testGroupsModifiedSince();
 //    void testGroupsRemovedSince();
     void testNcoTypes();
-    void testQRelationshipAndMetacontacts();
+    void testQRelationshipAndMergingContacts();
     void testAsyncReadContacts();
     void testFilterContacts();
     void testFilterContactsEndsWith();
@@ -114,7 +114,7 @@ private slots:
 private:
     void syncContactsAddedSinceHelper(QDateTime& start, QList<QContactLocalId>& addedIds);
 
-    void insertContact(const QString& URI, QContactLocalId uid, QString imId, QString imStatus, QString accountPath, QString protocol = "jabber");
+    void insertContact(const QString& contactURI, QContactLocalId uid, QString imId, QString imStatus, QString accountPath, QString protocol = "jabber");
     void updateIMContactStatus(const QString& uri, QString imStatus);
     QContact contact(QContactLocalId uid, QStringList detailsToLoad = QStringList());
     QList<QContact> contacts(QList<QContactLocalId> uids, QStringList detailsToLoad = QStringList());
@@ -137,9 +137,8 @@ public:
     QList<QContactLocalId> ids;
     QList<QContact> contacts;
 public slots:
-    void progress(QContactLocalIdFetchRequest* self, bool appendOnly);
-    void progress(QContactFetchRequest* self, bool appendOnly);
-private:
-    QString requestStatusToString(QContactAbstractRequest::Status status);
+    void idResultsAvailable();
+    void resultsAvailable();
+
 };
 #endif

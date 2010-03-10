@@ -372,7 +372,7 @@ void QVersitContactExporterPrivate::encodeOrganization(
         QStringList departments(organization.department());
         if (departments.count() == 0)
             value += QLatin1Char(';');
-        foreach (QString department, departments) {
+        foreach (const QString& department, departments) {
             value += QLatin1Char(';');
             value += escape(department);
         }
@@ -450,7 +450,7 @@ void QVersitContactExporterPrivate::encodeNickname(
     QVersitProperty property;
     property.setName(QLatin1String("X-NICKNAME"));
     bool found = false;
-    foreach (QVersitProperty currentProperty, document.properties()) {
+    foreach (const QVersitProperty& currentProperty, document.properties()) {
         if (currentProperty.name() == QLatin1String("X-NICKNAME")) {
             property = currentProperty;
             found = true;

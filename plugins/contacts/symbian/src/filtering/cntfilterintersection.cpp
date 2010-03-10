@@ -159,7 +159,7 @@ void CntFilterIntersection::getSelectQueryforFilter(const QContactFilter& filter
                 sqlSelectQuery += "SELECT DISTINCT contact_id FROM (";
                 CntFilterIntersection intersectionfltr(m_contactdatabase,m_srvConnection,m_dbInfo);
                 intersectionfltr.createSelectQuery(filter,sqlSelectQuery,error);
-                sqlSelectQuery += ")";
+                sqlSelectQuery += ')';
                 break;
                 }
             case QContactFilter::UnionFilter:
@@ -167,7 +167,7 @@ void CntFilterIntersection::getSelectQueryforFilter(const QContactFilter& filter
                 sqlSelectQuery += "SELECT DISTINCT contact_id FROM (";
                 CntFilterUnion unionfltr(m_contactdatabase,m_srvConnection,m_dbInfo);
                 unionfltr.createSelectQuery(filter,sqlSelectQuery,error);
-                sqlSelectQuery += ")";
+                sqlSelectQuery += ')';
                 break;
                 }
             default:

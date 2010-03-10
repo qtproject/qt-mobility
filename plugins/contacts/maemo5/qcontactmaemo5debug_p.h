@@ -39,33 +39,27 @@
 **
 ****************************************************************************/
 
-#ifndef UT_QVCARD30WRITER_H
-#define UT_QVCARD30WRITER_H
+#ifndef QCONTACTMAEMO5DEBUG_P_H
+#define QCONTACTMAEMO5DEBUG_P_H
 
-#include <QObject>
-#include <qmobilityglobal.h>
+#include <QDebug>
 
-QTM_BEGIN_NAMESPACE
+/* To Enable debugging of Maemo5 Contact plugin set QCONTACT_MAEMO5_DEBUG env var
+ * eg: export QCONTACT_MAEMO5_DEBUG=1
+ */
 
-class QVCard30Writer;
+extern bool QCM5_DEBUG_ENABLED;
 
-QTM_END_NAMESPACE
-QTM_USE_NAMESPACE
+/* This Macro must be defined only one time*/
+#define DEFINE_GLOBAL_DEBUG_VAR bool QCM5_DEBUG_ENABLED;
 
-class UT_QVCard30Writer : public QObject
-{
-     Q_OBJECT
+/* Define Macros for debugging */
+#define QCM5_DEBUG  if (QCM5_DEBUG_ENABLED) qDebug()
+#define QCM5_DEBUG_ARG(x)  if (QCM5_DEBUG_ENABLED) qDebug() << x;
 
-private slots: // Tests
-
-    void init();
-    void cleanup();
-
-    void testEncodeVersitProperty();
-    void testEncodeParameters();
-
-private: // Data
-    QVCard30Writer* mWriter;
-};
-
-#endif // UT_QVCARD30WRITER_H
+/* Check env var and switch on/off debugging */
+static inline void initDebugLogger(){
+  QCM5_DEBUG_ENABLED = !qgetenv("QCONTACT_MAEMO5_DEBUG").isEmpty();
+  QCM5_DEBUG << "Logging has been enabled";
+}
+#endif

@@ -1,6 +1,7 @@
+
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,34 +40,33 @@
 **
 ****************************************************************************/
 
-#ifndef UT_QVCARD21WRITER_H
-#define UT_QVCARD21WRITER_H
+#ifndef QCONTACTTAG_H
+#define QCONTACTTAG_H
 
-#include <QObject>
-#include <qmobilityglobal.h>
+#include <QString>
 
+#include "qtcontactsglobal.h"
+#include "qcontactdetail.h"
+#include "qcontact.h"
 
 QTM_BEGIN_NAMESPACE
-class QVCard21Writer;
-QTM_END_NAMESPACE
 
-QTM_USE_NAMESPACE
-class UT_QVCard21Writer : public QObject
+/* Leaf class */
+class Q_CONTACTS_EXPORT QContactTag : public QContactDetail
 {
-     Q_OBJECT
+public:
+#ifdef Q_QDOC
+    const char* DefinitionName;
+    const char* FieldTag;
+#else
+    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactTag, "Tag")
+    Q_DECLARE_LATIN1_LITERAL(FieldTag, "Tag");
+#endif
 
-private slots: // Tests
-
-    void init();
-    void cleanup();
-
-    void testEncodeVersitProperty();
-    void testEncodeParameters();
-    void testEncodeGroupsAndName();
-    void testQuotedPrintableEncode();
-
-private: // Data
-    QVCard21Writer* mWriter;
+    void setTag(const QString& tag) {setValue(FieldTag, tag);}
+    QString tag() const {return value(FieldTag);}
 };
 
-#endif // UT_QVCARD21WRITER_H
+QTM_END_NAMESPACE
+
+#endif

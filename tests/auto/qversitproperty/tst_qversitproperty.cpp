@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "ut_qversitproperty.h"
+#include "tst_qversitproperty.h"
 #include "qversitproperty.h"
 #include "qversitproperty_p.h"
 #include "qversitdocument.h"
@@ -47,18 +47,18 @@
 
 QTM_USE_NAMESPACE
 
-void UT_QVersitProperty::init()
+void tst_QVersitProperty::init()
 {
     mVersitProperty = new QVersitProperty();
     QVERIFY(mVersitProperty);
 }
 
-void UT_QVersitProperty::cleanup()
+void tst_QVersitProperty::cleanup()
 {
    delete mVersitProperty;
 }
 
-void UT_QVersitProperty::testGroup()
+void tst_QVersitProperty::testGroup()
 {
     // One group
     QStringList group(QString::fromAscii("GROUP_NAME"));
@@ -74,7 +74,7 @@ void UT_QVersitProperty::testGroup()
     QCOMPARE(mVersitProperty->groups(), groupList);
 }
 
-void UT_QVersitProperty::testName()
+void tst_QVersitProperty::testName()
 {
     // Name in upper case
     QString name(QString::fromAscii("TEL"));
@@ -86,7 +86,7 @@ void UT_QVersitProperty::testName()
     QCOMPARE(mVersitProperty->name(), name);
 }
 
-void UT_QVersitProperty::testParameters()
+void tst_QVersitProperty::testParameters()
 {
     QString typeParameterName(QString::fromAscii("TYPE"));
 
@@ -118,14 +118,14 @@ void UT_QVersitProperty::testParameters()
     QCOMPARE(mVersitProperty->parameters().count(), 0);
 }
 
-void UT_QVersitProperty::testValue()
+void tst_QVersitProperty::testValue()
 {
     QString value(QString::fromAscii("050484747"));
     mVersitProperty->setValue(value);
     QCOMPARE(mVersitProperty->value(), value);
 }
 
-void UT_QVersitProperty::testEmbeddedDocument()
+void tst_QVersitProperty::testEmbeddedDocument()
 {
     QVersitDocument document;
     QVersitProperty property;
@@ -138,7 +138,7 @@ void UT_QVersitProperty::testEmbeddedDocument()
     QCOMPARE(embeddedDocumentProperties[0].name(),QString::fromAscii("X-TENSION"));
 }
 
-void UT_QVersitProperty::testEquality()
+void tst_QVersitProperty::testEquality()
 {
     QVersitProperty property1;
     QVersitProperty property2;
@@ -164,5 +164,5 @@ void UT_QVersitProperty::testEquality()
     QVERIFY(!(property1 != property2));
 }
 
-QTEST_MAIN(UT_QVersitProperty)
+QTEST_MAIN(tst_QVersitProperty)
 

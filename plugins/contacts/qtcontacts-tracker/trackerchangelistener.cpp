@@ -68,7 +68,7 @@ TrackerChangeListener::~TrackerChangeListener()
 QContactLocalId url2UniqueId(const QString &contactUrl)
 {
 
-    /* Telepathy URI would look like telepathy:///org/freedesktop...
+    /* Telepathy URI would look like telepathy:/org/freedesktop...
        convert the URI component which contains the 
        account + contat id to uint32 expected by
        qcontactlocalid
