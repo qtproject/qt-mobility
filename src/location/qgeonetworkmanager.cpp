@@ -372,7 +372,7 @@ void QGeoNetworkManager::netReplyFinished(QNetworkReply* reply)
     QGeoReply* rawReply = replyMap[reply];
     QString className = rawReply->metaObject()->className();
 
-    if (className == "QtMobility::QRouteReply") {
+    if (className == "QRouteReply") {
         QRouteReply* routeReply = static_cast<QRouteReply*>(rawReply);
         routeReply->fin = true;
 
@@ -390,7 +390,7 @@ void QGeoNetworkManager::netReplyFinished(QNetworkReply* reply)
             emit routeReply->error((QGeoReply::ErrorCode) QNetworkReply::UnknownContentError);
         }
 
-    } else if (className == "QtMobility::QGeocodingReply") {
+    } else if (className == "QGeocodingReply") {
         QGeocodingReply* geoReply = static_cast<QGeocodingReply*>(rawReply);
         geoReply->fin = true;
 
@@ -407,7 +407,7 @@ void QGeoNetworkManager::netReplyFinished(QNetworkReply* reply)
             emit error(geoReply, (QGeoReply::ErrorCode) QNetworkReply::UnknownContentError);
             emit geoReply->error((QGeoReply::ErrorCode) QNetworkReply::UnknownContentError);
         }
-    } else if (className == "QtMobility::QMapTileReply") {
+    } else if (className == "QMapTileReply") {
         QMapTileReply* tileReply = static_cast<QMapTileReply*>(rawReply);
         tileReply->fin = true;
         tileReply->rawData() = reply->readAll();
