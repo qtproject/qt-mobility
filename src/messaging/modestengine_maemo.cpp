@@ -804,6 +804,7 @@ bool ModestEngine::sendEmail(QMessage &message)
     ModestStringMapList images;
     uint priority = 0;
     ModestStringMap headers;
+    QMessage::StatusFlags messageStatus;
 
     qDebug() << __PRETTY_FUNCTION__ << "Sending message";
 
