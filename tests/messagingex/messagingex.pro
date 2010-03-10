@@ -10,6 +10,10 @@ INCLUDEPATH += $$SOURCE_DIR/src/messaging
 CONFIG += mobility
 MOBILITY = messaging
 
+maemo5|maemo6 {
+    QMAKE_CXXFLAGS+=-DUSE_TABBED_LAYOUT
+}
+
 HEADERS += \
     messagingex.h
 
