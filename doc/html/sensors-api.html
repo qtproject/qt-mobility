@@ -47,7 +47,7 @@
 </ul>
 <p>Here is an example of creating a sensor on the heap and on the stack.</p>
 <pre><span class="comment">    // On the heap (deleted when this object is deleted)</span>
-    QAccelerationSensor *sensor = new QAccelerationSensor(this);
+    QAccelerometer *sensor = new QAccelerometer(this);
 
 <span class="comment">    // On the stack (deleted when the current scope ends)</span>
     QOrientationSensor orient_sensor;</pre>
@@ -91,11 +91,11 @@
 <p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
 <tr valign="top" class="odd"><th><a href="qaccelerometerreading.html">QAccelerometerReading</a></th><td>Reports on linear acceleration along the X, Y and Z axes</td></tr>
 <tr valign="top" class="even"><th><a href="qambientlightreading.html">QAmbientLightReading</a></th><td>Represents one reading from the ambient light sensor</td></tr>
-<tr valign="top" class="odd"><th><a href="qcompassreading.html">QCompassReading</a></th><td>Represents one reading from a compass</td></tr>
-<tr valign="top" class="even"><th><a href="qmagnetometerreading.html">QMagnetometerReading</a></th><td>Represents one reading from the magnetometer</td></tr>
-<tr valign="top" class="odd"><th><a href="qorientationreading.html">QOrientationReading</a></th><td>Represents one reading from the orientation sensor</td></tr>
-<tr valign="top" class="even"><th><a href="qproximityreading.html">QProximityReading</a></th><td>Represents one reading from the proximity sensor</td></tr>
-<tr valign="top" class="odd"><th><a href="qrotationreading.html">QRotationReading</a></th><td>Represents one reading from the rotation sensor</td></tr>
+<tr valign="top" class="odd"><th><a href="qattitudereading.html">QAttitudeReading</a></th><td>Represents one reading from the attitude sensor</td></tr>
+<tr valign="top" class="even"><th><a href="qcompassreading.html">QCompassReading</a></th><td>Represents one reading from a compass</td></tr>
+<tr valign="top" class="odd"><th><a href="qmagnetometerreading.html">QMagnetometerReading</a></th><td>Represents one reading from the magnetometer</td></tr>
+<tr valign="top" class="even"><th><a href="qorientationreading.html">QOrientationReading</a></th><td>Represents one reading from the orientation sensor</td></tr>
+<tr valign="top" class="odd"><th><a href="qproximityreading.html">QProximityReading</a></th><td>Represents one reading from the proximity sensor</td></tr>
 <tr valign="top" class="even"><th><a href="qtapreading.html">QTapReading</a></th><td>Represents one reading from the tap sensor</td></tr>
 </table></p>
 <a name="sensor-classes"></a>
@@ -104,11 +104,11 @@
 <p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
 <tr valign="top" class="odd"><th><a href="qaccelerometer.html">QAccelerometer</a></th><td>Convenience wrapper around QSensor</td></tr>
 <tr valign="top" class="even"><th><a href="qambientlightsensor.html">QAmbientLightSensor</a></th><td>Convenience wrapper around QSensor</td></tr>
-<tr valign="top" class="odd"><th><a href="qcompass.html">QCompass</a></th><td>Convenience wrapper around QSensor</td></tr>
-<tr valign="top" class="even"><th><a href="qmagnetometer.html">QMagnetometer</a></th><td>Convenience wrapper around QSensor</td></tr>
-<tr valign="top" class="odd"><th><a href="qorientationsensor.html">QOrientationSensor</a></th><td>Convenience wrapper around QSensor</td></tr>
-<tr valign="top" class="even"><th><a href="qproximitysensor.html">QProximitySensor</a></th><td>Convenience wrapper around QSensor</td></tr>
-<tr valign="top" class="odd"><th><a href="qrotationsensor.html">QRotationSensor</a></th><td>Convenience wrapper around QSensor</td></tr>
+<tr valign="top" class="odd"><th><a href="qattitudesensor.html">QAttitudeSensor</a></th><td>Convenience wrapper around QSensor</td></tr>
+<tr valign="top" class="even"><th><a href="qcompass.html">QCompass</a></th><td>Convenience wrapper around QSensor</td></tr>
+<tr valign="top" class="odd"><th><a href="qmagnetometer.html">QMagnetometer</a></th><td>Convenience wrapper around QSensor</td></tr>
+<tr valign="top" class="even"><th><a href="qorientationsensor.html">QOrientationSensor</a></th><td>Convenience wrapper around QSensor</td></tr>
+<tr valign="top" class="odd"><th><a href="qproximitysensor.html">QProximitySensor</a></th><td>Convenience wrapper around QSensor</td></tr>
 <tr valign="top" class="even"><th><a href="qtapsensor.html">QTapSensor</a></th><td>Convenience wrapper around QSensor</td></tr>
 </table></p>
 <a name="filter-classes"></a>
@@ -117,11 +117,11 @@
 <p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
 <tr valign="top" class="odd"><th><a href="qaccelerometerfilter.html">QAccelerometerFilter</a></th><td>Convenience wrapper around QSensorFilter</td></tr>
 <tr valign="top" class="even"><th><a href="qambientlightfilter.html">QAmbientLightFilter</a></th><td>Convenience wrapper around QSensorFilter</td></tr>
-<tr valign="top" class="odd"><th><a href="qcompassfilter.html">QCompassFilter</a></th><td>Convenience wrapper around QSensorFilter</td></tr>
-<tr valign="top" class="even"><th><a href="qmagnetometerfilter.html">QMagnetometerFilter</a></th><td>Convenience wrapper around QSensorFilter</td></tr>
-<tr valign="top" class="odd"><th><a href="qorientationfilter.html">QOrientationFilter</a></th><td>Convenience wrapper around QSensorFilter</td></tr>
-<tr valign="top" class="even"><th><a href="qproximityfilter.html">QProximityFilter</a></th><td>Convenience wrapper around QSensorFilter</td></tr>
-<tr valign="top" class="odd"><th><a href="qrotationfilter.html">QRotationFilter</a></th><td>Convenience wrapper around QSensorFilter</td></tr>
+<tr valign="top" class="odd"><th><a href="qattitudefilter.html">QAttitudeFilter</a></th><td>Convenience wrapper around QSensorFilter</td></tr>
+<tr valign="top" class="even"><th><a href="qcompassfilter.html">QCompassFilter</a></th><td>Convenience wrapper around QSensorFilter</td></tr>
+<tr valign="top" class="odd"><th><a href="qmagnetometerfilter.html">QMagnetometerFilter</a></th><td>Convenience wrapper around QSensorFilter</td></tr>
+<tr valign="top" class="even"><th><a href="qorientationfilter.html">QOrientationFilter</a></th><td>Convenience wrapper around QSensorFilter</td></tr>
+<tr valign="top" class="odd"><th><a href="qproximityfilter.html">QProximityFilter</a></th><td>Convenience wrapper around QSensorFilter</td></tr>
 <tr valign="top" class="even"><th><a href="qtapfilter.html">QTapFilter</a></th><td>Convenience wrapper around QSensorFilter</td></tr>
 </table></p>
 <p /><address><hr /><div align="center">

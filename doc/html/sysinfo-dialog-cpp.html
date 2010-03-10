@@ -308,6 +308,9 @@
 
         homeMMCLabel-&gt;setText(ni-&gt;homeMobileCountryCode());
         homeMNCLabel-&gt;setText(ni-&gt;homeMobileNetworkCode());
+
+        networkModeChanged(ni-&gt;currentMode());
+
     }
     void Dialog::netStatusComboActivated(int index)
     {

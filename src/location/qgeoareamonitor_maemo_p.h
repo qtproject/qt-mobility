@@ -39,40 +39,39 @@
 **
 ****************************************************************************/
 
-#ifndef QROTATIONSENSOR_P_H
-#define QROTATIONSENSOR_P_H
+#ifndef QGEOAREAMONITORMAEMO_H
+#define QGEOAREAMONITORMAEMO_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API. It exists purely as an
-// implementation detail. This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include "qgeoareamonitor.h"
+#include "qgeopositioninfosource.h"
 
-#include "qsensor_p.h"
+extern "C" {
+    #include <location/location-distance-utils.h>
+}
 
 QTM_BEGIN_NAMESPACE
 
-class QRotationReadingPrivate : public QSensorReadingPrivate
+/**
+ *  QGeoAreaMonitorMaemo
+ *
+ */
+class QGeoAreaMonitorMaemo : public QGeoAreaMonitor
 {
-public:
-    QRotationReadingPrivate()
-        : x(0)
-        , y(0)
-        , z(0)
-    {
-    }
+    Q_OBJECT
 
-    qreal x;
-    qreal y;
-    qreal z;
+public :
+    QGeoAreaMonitorMaemo(QObject *parent = 0);
+    ~QGeoAreaMonitorMaemo();
+    void setCenter(const QGeoCoordinate &coordinate);
+    void setRadius(qreal radius);
+
+private slots:
+    void positionUpdated(const QGeoPositionInfo &info);
+
+private:
+    bool insideArea;
+    QGeoPositionInfoSource *location;
 };
 
 QTM_END_NAMESPACE
-
-#endif
-
+#endif // QGEOAREAMONITORMAEMO_H
