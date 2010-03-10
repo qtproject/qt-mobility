@@ -71,7 +71,7 @@ contains(QT_CONFIG, multimedia) {
 }
 
 include(mediaplayer/mediaplayer.pri)
-!maemo {
+!maemo* {
   include(mediacapture/mediacapture.pri)
 } else {
   include(mediacapture/mediacapture_maemo.pri)
