@@ -164,6 +164,13 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
+   \class QContactTag
+   \brief The QContactTag class contains a tag associated with a
+   contact.
+   \ingroup contacts-details
+ */
+
+/*!
    \class QContactTimestamp
    \brief The QContactTimestamp class contains the creation and
    last-modified timestamp associated with the contact.
@@ -221,13 +228,13 @@ Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::DefinitionName, "PhoneNumber");
 
 /*!
    \variable QContactSyncTarget::DefinitionName
-   The constant string which identifies the definition of details which are synchronisation target stores.
+   The constant string which identifies the definition of details which are synchronization target stores.
  */
 Q_DEFINE_LATIN1_LITERAL(QContactSyncTarget::DefinitionName, "SyncTarget");
 
 /*!
    \variable QContactTimestamp::DefinitionName
-   The constant string which identifies the definition of details which are contact synchronisation timestamps.
+   The constant string which identifies the definition of details which are contact synchronization timestamps.
  */
 Q_DEFINE_LATIN1_LITERAL(QContactTimestamp::DefinitionName, "Timestamp");
 
@@ -297,6 +304,12 @@ Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::DefinitionName, "GeoLocation");
    given context.
  */
 Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::DefinitionName, "OnlineAccount");
+
+/*!
+   \variable QContactTag::DefinitionName
+   The constant string which identifies the definition of details which are tags..
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactTag::DefinitionName, "Tag");
 
 /*!
    \variable QContactOnlineAccount::FieldNickname
@@ -446,7 +459,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactGuid::FieldGuid, "Guid");
    \variable QContactSyncTarget::FieldSyncTarget
 
    The constant key for which the value of the target store for
-   synchronisation is stored in details of the QContactSyncTarget type.
+   synchronization is stored in details of the QContactSyncTarget type.
  */
 Q_DEFINE_LATIN1_LITERAL(QContactSyncTarget::FieldSyncTarget, "SyncTarget");
 
@@ -765,6 +778,14 @@ Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldHeading, "Heading");
    the QContactGeoLocation type.
  */
 Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldSpeed, "Speed");
+
+/*!
+   \variable QContactTag::FieldTag
+
+   The constant key for which the tag value is stored in details
+   of the QContactTag type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactTag::FieldTag, "Tag");
 
 /*!
    \variable QContactGeoLocation::FieldTimestamp
@@ -1169,14 +1190,14 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
    \fn QContactSyncTarget::syncTarget() const
 
    Returns the identifier of the backend store to which the contact
-   containing this detail should be synchronised.
+   containing this detail should be synchronized.
  */
 
 /*!
    \fn QContactSyncTarget::setSyncTarget(const QString& syncTarget)
 
    Sets the identifier of the backend store to which the contact
-   containing this detail should be synchronised to \a syncTarget.
+   containing this detail should be synchronized to \a syncTarget.
  */
 
 /*!
@@ -1211,12 +1232,12 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
 
 /*!
    \fn QContactAnniversary::originalDate() const
-   Returns the original date of occurrance of the event stored in this detail.
+   Returns the original date of occurrence of the event stored in this detail.
  */
 
 /*!
    \fn QContactAnniversary::setOriginalDate(const QDate& date)
-   Sets the original date of occurrance of the event stored in this detail to \a date.
+   Sets the original date of occurrence of the event stored in this detail to \a date.
  */
 
 /*!
@@ -1645,6 +1666,16 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
 /*!
    \fn QContactNote::note() const
    Returns a string for a note associated with a contact.
+ */
+
+/*!
+   \fn QContactTag::setTag(const QString& tag)
+   Sets the tag associated with a contact which is stored in this detail to \a tag.
+ */
+
+/*!
+   \fn QContactTag::tag() const
+   Returns the tag associated with a contact which is stored in this detail.
  */
 
 /*!

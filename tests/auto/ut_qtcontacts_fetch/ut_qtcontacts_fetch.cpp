@@ -43,18 +43,31 @@
 
 #include <QContactManager>
 #include <QContactName>
-#include <QContactDetailFilter>
-#include <QtTest/QtTest>
-#include <QDebug>
+#include <QContactFetchRequest>
+#include <QContactRemoveRequest>
+#include <QContactSaveRequest>
+#include <QContactUrl>
 
-// Note that we try to avoid using any names that might already be in the database:
-const char* TESTNAME_FIRST = "ut_qtcontacts_fetch_firstname";
-const char* TESTNAME_LAST = "ut_qtcontacts_fetch_firstlast";
+#define CHECK_CURRENT_TEST_FAILED                                               \
+do {                                                                            \
+    if (QTest::currentTestFailed()) {                                           \
+         qWarning("Failing test was called from %s(%d)", __FILE__, __LINE__);   \
+         return;                                                                \
+    }                                                                           \
+} while (0)
 
 ut_qtcontacts_fetch::ut_qtcontacts_fetch()
-: waiting(false),
-  state(STATE_START)
+  : mContactManager(0)
 {
+    const QString uuid(QUuid::createUuid());
+
+    mFirstName = "ut_qtcontacts_fetch_firstname_" + uuid;
+    mLastName = "ut_qtcontacts_fetch_lastname_" + uuid;
+    mWebPage = "ut_qtcontacts_fetch_url_" + uuid;
+
+    mNameFilter.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
+    mNameFilter.setMatchFlags(QContactFilter::MatchExactly);
+    mNameFilter.setValue(mFirstName);
 }
 
 ut_qtcontacts_fetch::~ut_qtcontacts_fetch()
@@ -72,226 +85,210 @@ void ut_qtcontacts_fetch::cleanupTestCase()
 
 void ut_qtcontacts_fetch::init()
 {
+    QVERIFY(0 == mContactManager);
+    mContactManager = new QContactManager("tracker");
+    QVERIFY(0 != mContactManager);
 }
 
 void ut_qtcontacts_fetch::cleanup()
 {
-  waiting = false;
-}
+    if (mContactManager) {
+        if (not mLocalIds.isEmpty()) {
+#if 0 // FIXME: qtcontacts-tracker doesn't implement QContactRemoveRequest yet
+            QContactRemoveRequest request;
+            request.setManager(mContactManager);
+            request.setContactIds(mLocalIds);
 
-void ut_qtcontacts_fetch::doNextOperation()
-{
-     qDebug() << "ut_qtcontacts_fetch::doNextOperation(): state=" << state;
+            if (not request.start())
+                qDebug() << "error code" << request.error();
+            //QVERIFY(request.start());
 
-     switch(state) {
-     case STATE_START:
-         //qDebug() << "debug: ut_testAddContact";
-         //Make sure that the contact is not already in the database.
-         getExistingContact();
+            waitForRequest(request);
+            CHECK_CURRENT_TEST_FAILED;
 
-         //Block (allowing the mainloop to run) until we have finished.
-         waitForStop();
-         break;
-     case STATE_INITIAL_EXISTING_FETCHED:
-         removeContact();
-         break;
-     case STATE_INITIAL_EXISTING_REMOVED:
-         addContact();
-         break;
-     case STATE_CONTACT_SAVED:
-         //Get the contact, to check that the save worked:
-         getExistingContact(true /* any_contact */);
-         break;
-     case STATE_AFTER_SAVE_FETCHED_FOR_CHECK:
-         checkSavedContact();
-         break;
-     case STATE_AFTER_SAVE_CHECKED:
-         //Get the saved contact, to remove it, to restore original conditions:
-         getExistingContact();
-         break;
-     case STATE_AFTER_SAVE_FETCHED_FOR_REMOVAL:
-         removeContact();
-         break;
-     case STATE_SAVED_CONTACT_REMOVED:
-         //Allow our actual test function to return:
-         waiting = false; //Make waitForStop() return.
-         break;
-     default:
-         qDebug() << "ut_qtcontacts_fetch::doNextOperation(): Unexpected state: " << state;
-         waiting = false;
-         break;
+            QVERIFY(request.isFinished());
+            QCOMPARE(request.error(), QContactManager::NoError);
+#else
+            QMap<int, QContactManager::Error> errors;
+            bool success = mContactManager->removeContacts(&mLocalIds, &errors);
+            QCOMPARE(mContactManager->error(), QContactManager::NoError);
+            QVERIFY(errors.isEmpty());
+            QVERIFY(success);
+#endif
+
+            mLocalIds.clear();
+        }
+
+        mContactManager->deleteLater();
+        mContactManager = 0;
     }
 }
 
-bool ut_qtcontacts_fetch::waitForStop()
+void ut_qtcontacts_fetch::waitForRequest(QContactAbstractRequest &request, int ms)
 {
-    waiting = true;
+    // check pre-conditions
+    QCOMPARE((int) request.state(), (int) QContactAbstractRequest::ActiveState);
 
-    const int max_secs = 100000;
+    // wait for the request to do its work (or get canceled)
+    QTime timer;
+    timer.start();
 
-    // wait for signal
-    int i = 0;
-    while(waiting && i++ < max_secs) {
-        // Allow the mainloop to run:
+    while (request.isActive() && timer.elapsed() < ms) {
         QTest::qWait(10);
     }
 
-    return !waiting;
+    // check post-conditions
+    QVERIFY2(not request.isActive(), "timeout expired");
 }
 
-QContactManager* ut_qtcontacts_fetch::getContactManager()
+void ut_qtcontacts_fetch::setupTestContact(QContact &contact)
 {
-    static QContactManager manager("tracker");
-    return &manager;
-}
-
-void ut_qtcontacts_fetch::onContactFetchRequestProgress()
-{
-    if (!contactFetchRequest.isFinished())
-        return;
-
-    qDebug() << "onContactFetchRequestProgress: state=: " << state;
-
-    //Store the contact so the callback can use it.
-    if(!(contactFetchRequest.contacts().isEmpty())) {
-        contact = contactFetchRequest.contacts()[0];
-        QVERIFY(contact.localId() != 0);
-    }
-
-    qDebug() << "debug: fetched localId=" << contact.localId();
-
-    //Avoid more slot calls, though this is unlikely because it has finished.
-    if(contactFetchRequest.isActive()) {
-        const bool cancelled = contactFetchRequest.cancel();
-        Q_ASSERT(cancelled);
-    }
-
-    //Choose the next state and do the next appropriate operation:
-    if(state == STATE_START)
-        state = STATE_INITIAL_EXISTING_FETCHED; //Or not found.
-    else if(state == STATE_CONTACT_SAVED)
-        state = STATE_AFTER_SAVE_FETCHED_FOR_CHECK; //Or not found.
-    else if(state == STATE_AFTER_SAVE_CHECKED)
-        state = STATE_AFTER_SAVE_FETCHED_FOR_REMOVAL;
-    else {
-        qDebug() << "ut_qtcontacts_fetch::onContactFetchRequestProgress(): Ignoring unexpected state: " << state
-        << "  (Probably due to progress callbacks even after contactFetchRequest.cancel())";
-        return;
-    }
-    QTimer::singleShot(1000, this, SLOT(doNextOperation()));
-}
-
-
-void ut_qtcontacts_fetch::getExistingContact(bool any_contact)
-{
-    qDebug() << "getExistingContact: state=: " << state;
-    QContactManager* manager = getContactManager();
-    Q_ASSERT(manager);
-
-    // Stop pending fetch requests
-    if (contactFetchRequest.isActive())
-        contactFetchRequest.cancel();
-
-    //Initialize the result:
-    contact = QContact();
-
-    //TODO: How can we AND on both the first and last name?
-    connect(&contactFetchRequest, SIGNAL(resultsAvailable()),
-        SLOT(onContactFetchRequestProgress()));
-
-    if(!any_contact) {
-        QContactDetailFilter nameFilter;
-        nameFilter.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
-        nameFilter.setValue(QLatin1String(TESTNAME_FIRST));
-        nameFilter.setMatchFlags(QContactFilter::MatchExactly);
-        contactFetchRequest.setManager(manager);
-        contactFetchRequest.setFilter(nameFilter);
-    }
-
-    //qDebug() << "debug: start request";
-    contactFetchRequest.start();
-}
-
-//This is our actual test function:
-void ut_qtcontacts_fetch::ut_testAddContact()
-{
-    state = STATE_START;
-    doNextOperation();
-}
-
-void ut_qtcontacts_fetch::removeContact()
-{
-    qDebug() << "ut_qtcontacts_fetch::removeContact(): state:" << state;
-
-    if (contact.localId() != 0) { //If it was found.
-        //qDebug() << "debug: Removing the existing contact, if it exists.";
-        QContactManager* manager = getContactManager();
-        Q_ASSERT(manager);
-
-        //TODO: Find and use an async API that tells us when it has finished.
-        qDebug() << "  ut_qtcontacts_fetch::removeContact(): removing localID=" << contact.localId();
-        manager->removeContact(contact.localId());
-    }
-
-    //Choose the next state and do the next appropriate operation:
-    if(state == STATE_INITIAL_EXISTING_FETCHED)
-        state = STATE_INITIAL_EXISTING_REMOVED;
-    else if(state == STATE_AFTER_SAVE_FETCHED_FOR_REMOVAL) //Or not found.
-        state = STATE_SAVED_CONTACT_REMOVED;
-    else
-        qDebug() << "ut_qtcontacts_fetch::removeContact: Unexpected state.";
-
-    QTimer::singleShot(1000, this, SLOT(doNextOperation()));
-}
-
-void ut_qtcontacts_fetch::addContact()
-{
-    //qDebug() << "debug: Trying to add contact.";
-
-    // Offer a UI to edit a prefilled contact.
     QContactName name;
-    name.setFirstName(QLatin1String(TESTNAME_FIRST));
-    name.setLastName(QLatin1String(TESTNAME_LAST));
-    //TODO: Find and use an async API that tells us when it has finished.
-    contact.saveDetail(&name);
-    //const bool saved = contact.saveDetail(&name);
-    //Q_ASSERT(saved); //This won't necessarily be useful because our implementation doesn't support sync methods.
+    name.setFirstName(mFirstName);
+    name.setLastName(mLastName);
+    QVERIFY(contact.saveDetail(&name));
 
-    //Save the contact.
-    //But note that our QContactManager backend does not set localId when returning.
-    QContactManager* manager = getContactManager();
-    Q_ASSERT(manager);
-
-
-    //manager->saveContact(&contact);
-    //This works too:
-    QContact copy(contact);
-    manager->saveContact(&copy);
-
-    //Check that it was really saved:
-    //qDebug() << "debug: checking that the contact was saved.";
-    state = STATE_CONTACT_SAVED;
-    QTimer::singleShot(1000, this, SLOT(doNextOperation()));
+    QContactUrl url;
+    url.setUrl(mWebPage);
+    QVERIFY(contact.saveDetail(&url));
 }
 
-void ut_qtcontacts_fetch::checkSavedContact()
+void ut_qtcontacts_fetch::checkDatabaseEmpty()
 {
-    //Check that it was really saved:
-    // The ContactManager::saveContact() documentation suggests that localeId=0 is for non-saved contacts.
-    QVERIFY(contact.localId() != 0);
+    // try to fetch our testing contact
+    QContactFetchRequest request;
+    request.setManager(mContactManager);
+    request.setFilter(mNameFilter);
+    QVERIFY(request.start());
 
-    //Check that the correct details were saved:
-    const QContactName name = contact.detail<QContactName>();
-    QVERIFY(name.firstName() == QLatin1String(TESTNAME_FIRST));
-    QVERIFY(name.lastName() == QLatin1String(TESTNAME_LAST));
+    // wait for the request to finish
+    waitForRequest(request);
+    CHECK_CURRENT_TEST_FAILED;
 
-    qDebug() << "ut_qtcontacts_fetch::checkSavedContact(): found contact: firstName=" <<  name.firstName() <<
-      ", lastName=" << name.lastName();
-
-    //Try to restore original conditions:
-    state = STATE_AFTER_SAVE_CHECKED;
-    doNextOperation();
+    // verify that there really is no test contact yet
+    QVERIFY(request.isFinished());
+    QVERIFY(request.contacts().isEmpty());
 }
 
+void ut_qtcontacts_fetch::saveContact(QContact &contact)
+{
+    // add the contact to database
+    QContactSaveRequest request;
+    request.setManager(mContactManager);
+    request.setContacts(QList<QContact>() << contact);
+    QVERIFY(request.start());
+
+    waitForRequest(request);
+    CHECK_CURRENT_TEST_FAILED;
+
+    // verify the contact got saved
+    QVERIFY(request.isFinished());
+    QCOMPARE(request.error(), QContactManager::NoError);
+    QCOMPARE(request.contacts().count(), 1);
+
+    // copy back the saved contact
+    contact = request.contacts().at(0);
+
+    // verify the contact got a local id
+    QVERIFY(contact.localId());
+
+    // remember the local id so that we can remove the contact from database later
+    mLocalIds.append(contact.localId());
+}
+
+void ut_qtcontacts_fetch::ut_checkDatabaseEmpty()
+{
+    // test if this test works in general
+    checkDatabaseEmpty();
+    CHECK_CURRENT_TEST_FAILED;
+}
+
+void ut_qtcontacts_fetch::ut_testSaveContact()
+{
+    // check that we start with a clean database
+    checkDatabaseEmpty();
+    CHECK_CURRENT_TEST_FAILED;
+
+    // create a named contact and save it
+    QContact contact;
+
+    setupTestContact(contact);
+    CHECK_CURRENT_TEST_FAILED;
+
+    saveContact(contact);
+    CHECK_CURRENT_TEST_FAILED;
+}
+
+void ut_qtcontacts_fetch::ut_testSaveContactCopy()
+{
+    // check that we start with a clean database
+    checkDatabaseEmpty();
+    CHECK_CURRENT_TEST_FAILED;
+
+    // create a named contact
+    QContact contact;
+
+    setupTestContact(contact);
+    CHECK_CURRENT_TEST_FAILED;
+
+    // add copy of the contact to database
+    QContact copy(contact);
+
+    saveContact(copy);
+    CHECK_CURRENT_TEST_FAILED;
+}
+
+void ut_qtcontacts_fetch::ut_testFetchSavedContact()
+{
+    // check that we start with a clean database
+    checkDatabaseEmpty();
+    CHECK_CURRENT_TEST_FAILED;
+
+    // create a named contact and save it
+    QContact savedContact;
+
+    setupTestContact(savedContact);
+    CHECK_CURRENT_TEST_FAILED;
+
+    foreach(const QContactDetail &d, savedContact.details())
+        qDebug() << d.definitionName() << d.variantValues();
+
+    saveContact(savedContact);
+    CHECK_CURRENT_TEST_FAILED;
+    mLocalIds.clear();
+
+    // fetch the saved contact
+    QContactFetchRequest request;
+    request.setManager(mContactManager);
+    request.setFilter(mNameFilter);
+    QVERIFY(request.start());
+
+    waitForRequest(request);
+    CHECK_CURRENT_TEST_FAILED;
+
+    // check that exactly one contact can be fetched now
+    QVERIFY(request.isFinished());
+    QCOMPARE(request.contacts().count(), 1);
+
+    const QContact &fetchedContact(request.contacts().at(0));
+    QVERIFY(0 != fetchedContact.localId());
+
+    foreach(const QContactDetail &d, fetchedContact.details())
+        qDebug() << d.definitionName() << d.variantValues();
+
+    QList<QContactDetail> details;
+
+    // check that the fetched contact has the expected properties
+    details = fetchedContact.details(QContactName::DefinitionName);
+
+    QCOMPARE(details.count(), 1);
+    QCOMPARE(details[0].value(QContactName::FieldFirstName), mFirstName);
+    QCOMPARE(details[0].value(QContactName::FieldLastName), mLastName);
+
+    details = fetchedContact.details(QContactUrl::DefinitionName);
+
+    QCOMPARE(details.count(), 1);
+    QCOMPARE(details[0].value(QContactUrl::FieldUrl), mWebPage);
+}
 
 QTEST_MAIN(ut_qtcontacts_fetch)

@@ -134,7 +134,7 @@ QList<QContactLocalId> CntSymbianFilter::contacts(
             && (static_cast<const QContactDetailFilter &>(filter)).value().type() == QVariant::StringList) {
         QStringList values = (static_cast<const QContactDetailFilter &>(filter)).value().toStringList();
         QContactIntersectionFilter intersectionFilter;
-        foreach(QString value, values) {
+        foreach(const QString& value, values) {
             QContactDetailFilter detailFilter = filter;
             detailFilter.setValue(value);
             intersectionFilter.append(detailFilter);
@@ -327,7 +327,7 @@ QList<QContactLocalId> CntSymbianFilter::filterContacts(
                     && detailFilter.matchFlags() == QContactFilter::MatchStartsWith) {
 
                     // Remove false positives
-                    for(TInt i(0); i < idArray->Count(); i++) {
+                    for(TInt i(0); i < idArray->Count(); ++i) {
                         CContactItem* contactItem = m_contactDatabase.ReadContactLC((*idArray)[i]);
                         const CContactItemFieldSet& fieldSet(contactItem->CardFields());
                         if(isFalsePositive(fieldSet, KUidContactFieldGivenName, namePtr)
@@ -377,7 +377,7 @@ bool CntSymbianFilter::isFalsePositive(const CContactItemFieldSet& fieldSet, con
         // Check if this is the first word beginning with search string
         if(index == 0)
             value = false;
-        // Check if this is in the beginning of a word (the preceeding
+        // Check if this is in the beginning of a word (the preceding
         // character is a space)
         else if(index > 0 && TChar(text[index-1]) == TChar(0x20))
             value = false;

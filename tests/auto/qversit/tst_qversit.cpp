@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "qversitdefs_p.h"
-#include "ut_qversit.h"
+#include "tst_qversit.h"
 #include "qversitreader.h"
 #include "qversitreader_p.h"
 #include "qversitcontactimporter.h"
@@ -90,7 +90,7 @@ QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QList<QContact>)
 
-void UT_QVersit::testImportFiles()
+void tst_QVersit::testImportFiles()
 {
     QFETCH(QString, filename);
     QFETCH(QByteArray, charset);
@@ -138,7 +138,7 @@ void UT_QVersit::testImportFiles()
         << QByteArray(charset) \
         << (contact)
 
-void UT_QVersit::testImportFiles_data()
+void tst_QVersit::testImportFiles_data()
 {
     QTest::addColumn<QString>("filename");
     QTest::addColumn<QByteArray>("charset");
@@ -211,4 +211,4 @@ void UT_QVersit::testImportFiles_data()
     QTEST_NEW_ROW("gmail.vcf", "UTF-8", QList<QContact>());
 }
 
-QTEST_MAIN(UT_QVersit)
+QTEST_MAIN(tst_QVersit)

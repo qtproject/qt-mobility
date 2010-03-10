@@ -59,7 +59,7 @@
 #include <QtTracker/QLive>
 
 #include <qmobilityglobal.h>
-#include "qtcontacts.h"
+#include <qcontactmanagerengine.h>
 #include <qcontactmanagerenginefactory.h>
 
 using namespace SopranoLive;
