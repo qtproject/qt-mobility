@@ -48,7 +48,7 @@
 QTM_USE_NAMESPACE
 
 // API is used as name since underlying symbian API is called sensor API
-class QSensorPluginS60SensorAPI : public QObject, public QSensorPluginInterface, public QSensorBackendFactory
+class s60SensorApiSensorPlugin : public QObject, public QSensorPluginInterface, public QSensorBackendFactory
 {
     Q_OBJECT
     Q_INTERFACES(QtMobility::QSensorPluginInterface)
@@ -78,6 +78,6 @@ public:
     }
 };
 
-Q_EXPORT_PLUGIN2(libsensors_S60SensorAPI, QSensorPluginS60SensorAPI)
+Q_EXPORT_PLUGIN2(libsensors_s60SensorApi, s60SensorApiSensorPlugin)
 
 #include "main.moc"

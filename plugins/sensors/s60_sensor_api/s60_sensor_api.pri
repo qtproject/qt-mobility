@@ -4,7 +4,7 @@ SOURCES += main.cpp
 
 LIBS += -lRRSensorApi
 
-# Enable this to build winscw
+# Enable this to build winscw and comment LIBS += -lRRSensorApi out
 # MMP_RULES does not work with sbsv2
 # Sbsv2 does not work with s60 v3.1 winscw (works fine with armv5)
 #MMP_RULES += "$${LITERAL_HASH}ifndef WINSCW" \
