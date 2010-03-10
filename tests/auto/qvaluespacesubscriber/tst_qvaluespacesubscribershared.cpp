@@ -1078,7 +1078,7 @@ class WriteThread : public QThread
     Q_OBJECT
 
 public:
-    WriteThread();
+    WriteThread(const QUuid& layerId);
 
     void setDone();
 
@@ -1088,10 +1088,11 @@ protected:
 private:
     QValueSpacePublisher *publisher;
     bool done;
+    const QUuid& layerId;
 };
 
-WriteThread::WriteThread()
-:   publisher(0), done(false)
+WriteThread::WriteThread(const QUuid& layerId)
+:   publisher(0), done(false), layerId(layerId)
 {
 }
 
@@ -1104,7 +1105,7 @@ void WriteThread::run()
 {
     QTest::qWait(100);  // give some ReadThreads some time to start.
 
-    QValueSpacePublisher publisher("/threads");
+    QValueSpacePublisher publisher(layerId, "/threads");
 
     uint value = 0;
     while (!done) {
@@ -1120,7 +1121,7 @@ class ReadThread : public QThread
     Q_OBJECT
 
 public:
-    ReadThread(QValueSpaceSubscriber *subscriber, bool sync);
+    ReadThread(QValueSpaceSubscriber *subscriber, bool sync, const QUuid& layerId);
 
 protected:
     void run();
@@ -1129,18 +1130,18 @@ private:
     QValueSpaceSubscriber *masterSubscriber;
     int iterations;
     bool synchronised;
+    const QUuid& layerId;
 };
 
-ReadThread::ReadThread(QValueSpaceSubscriber *subscriber, bool sync)
-:   masterSubscriber(subscriber), iterations(0), synchronised(sync)
+ReadThread::ReadThread(QValueSpaceSubscriber *subscriber, bool sync, const QUuid& layerId)
+:   masterSubscriber(subscriber), iterations(0), synchronised(sync), layerId(layerId)
 {
 }
 
 void ReadThread::run()
 {
     while (true) {
-        QValueSpaceSubscriber subscriber;
-        subscriber.setPath(masterSubscriber);
+        QValueSpaceSubscriber subscriber(layerId, masterSubscriber->path());
 
         if (synchronised) {
             QEventLoop loop;
@@ -1161,39 +1162,60 @@ void tst_QValueSpaceSubscriber::threads_data()
 {
     QTest::addColumn<unsigned int>("threads");
     QTest::addColumn<bool>("synchronised");
+    QTest::addColumn<QUuid>("layerId");
 
-    QTest::newRow("1 thread") << uint(1) << true;
-    QTest::newRow("2 threads") << uint(2) << true;
+    QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
+
+    int foundLayers = 0;
+    for (int i = 0; i < layers.count(); ++i) {
+        QAbstractValueSpaceLayer *layer = layers.at(i);
+
+        //GConfLayer can't provide thread-safety because it eventually depends on
+        //DBus which isn't fully thread-safe
+        if (layer->id() == QVALUESPACE_GCONF_LAYER) {
+            continue;
+        }
+
+        const QUuid id = layer->id();
+
+        QTest::newRow("1 thread") << uint(1) << true << id;
+        QTest::newRow("2 threads") << uint(2) << true << id;
 #if defined(Q_OS_WINCE) || defined(Q_OS_SYMBIAN)
-    QTest::newRow("10 threads") << uint(10) << true;
+        QTest::newRow("10 threads") << uint(10) << true << id;
 #else
-    QTest::newRow("100 threads") << uint(100) << true;
+        QTest::newRow("100 threads") << uint(100) << true << id;
 #endif
-    QTest::newRow("1 thread, unsynchronised") << uint(1) << false;
-    QTest::newRow("2 threads, unsynchronised") << uint(2) << false;
+        QTest::newRow("1 thread, unsynchronised") << uint(1) << false << id;
+        QTest::newRow("2 threads, unsynchronised") << uint(2) << false << id;
 #if defined(Q_OS_WINCE) || defined(Q_OS_SYMBIAN)
-    QTest::newRow("10 threads") << uint(10) << false;
+        QTest::newRow("10 threads") << uint(10) << false  << id;
 #else
-    QTest::newRow("100 threads, unsynchronised") << uint(100) << false;
+        QTest::newRow("100 threads, unsynchronised") << uint(100) << false << id;
 #endif
+        foundLayers++;
+    }
+
+    if (foundLayers == 0)
+        QSKIP("No layers providing thread-safety found", SkipAll);
 }
 
 void tst_QValueSpaceSubscriber::threads()
 {
     QFETCH(unsigned int, threads);
     QFETCH(bool, synchronised);
+    QFETCH(QUuid, layerId);
 
     QEventLoop writeLoop;
-    WriteThread *writeThread = new WriteThread;
+    WriteThread *writeThread = new WriteThread(layerId);
     connect(writeThread, SIGNAL(finished()), &writeLoop, SLOT(quit()));
     writeThread->start();
 
-    QValueSpaceSubscriber masterSubscriber("/threads/value");
+    QValueSpaceSubscriber masterSubscriber(layerId, "/threads/value");
 
     QVector<ReadThread *> readThreads(threads);
 
     for (unsigned int i = 0; i < threads; ++i) {
-        readThreads[i] = new ReadThread(&masterSubscriber, synchronised);
+        readThreads[i] = new ReadThread(&masterSubscriber, synchronised, layerId);
         readThreads[i]->start();
     }
 
@@ -1213,7 +1235,7 @@ void tst_QValueSpaceSubscriber::threads()
 
     delete writeThread;
     #ifdef Q_OS_SYMBIAN
-        QValueSpacePublisher resetPublisher("/threads");
+        QValueSpacePublisher resetPublisher(id, "/threads");
         resetPublisher.resetValue("value");
     #endif
 
