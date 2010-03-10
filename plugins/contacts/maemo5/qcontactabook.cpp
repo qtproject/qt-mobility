@@ -45,8 +45,6 @@
 
 #include <libebook/e-book-util.h>
 
-#include "qcontactmaemo5debug_p.h"
-
 
 /* Error handling Macros */
 #define FATAL_IF_ERROR(x) if(x) { \
@@ -100,7 +98,7 @@ static void contactsAddedCB(OssoABookRoster *roster, OssoABookContact **contacts
     // Add a new localID to the local ID hash
     const char* uid = CONST_CHAR(e_contact_get_const(E_CONTACT(*p), E_CONTACT_UID));
     QContactLocalId id = d->hash->append(uid);
-    FREE(uid);
+    
     if (id)
       contactIds << id;
   }
@@ -122,7 +120,7 @@ static void contactsChangedCB(OssoABookRoster *roster, OssoABookContact **contac
     
     const char* uid = CONST_CHAR(e_contact_get_const(E_CONTACT(*p), E_CONTACT_UID));
     QContactLocalId id = d->hash->find(uid);
-    FREE(uid);
+    //FREE(uid);
     if (id)
       contactIds << id;
   }
@@ -212,7 +210,8 @@ void QContactABook::initLocalIdHash()
    for (node = contactList; node != NULL; node = g_list_next (node)) {
      EContact *contact = E_CONTACT(node->data);
      const char* data = CONST_CHAR(e_contact_get_const(contact, E_CONTACT_UID));
-     QByteArray localId = QByteArray::fromRawData(data, sizeof(data));
+     QByteArray localId(data);
+     //FREE(data);
      m_localIds << localId; //FIXME MemLeak
      QCM5_DEBUG << "eContactID " << localId << "has been stored in m_localIDs with key" << m_localIds[localId];
      
@@ -331,7 +330,7 @@ static void commitContactCB(EBook* book, EBookStatus  status, gpointer user_data
   svSharedData *sd = static_cast<svSharedData*>(user_data);
   
   *sd->result = (status == E_BOOK_ERROR_OK) ? true : false;  
-  sd->that->savingJobFinished();
+  sd->that->_savingJobFinished();
 }
 
 static void addContactCB(EBook* book, EBookStatus  status, const char  *uid, gpointer user_data)

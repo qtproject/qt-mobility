@@ -46,6 +46,7 @@
 #include <QMutex>
 
 #include "qtcontacts.h"
+#include "qcontactmaemo5debug_p.h"
 
 #include <libosso-abook/osso-abook-init.h>
 #include <libosso-abook/osso-abook-types.h>
@@ -131,11 +132,22 @@ public:
   QContactIDsHash(): key(1){};
   
   /* Append */
-  QContactIDsHash& operator<< (const QByteArray& eContactId){ m_localIds[key] = eContactId; key++; return (*this); };
-  const QContactLocalId append(const QByteArray& eContactId){ int id = key;
+  QContactIDsHash& operator<< (const QByteArray& eContactId){ if (find(eContactId))
+                                                                return (*this);
+                                                              m_localIds[key] = eContactId;
+							      QCM5_DEBUG << "Add key:" << key << "eContactId:" << eContactId;
+                                                              key++;
+							      return (*this);
+                                                            };
+  const QContactLocalId append(const QByteArray& eContactId){ uint id = find(eContactId);
+                                                              if (id)
+								return id;
+							      id = key;
                                                               m_localIds[id] = eContactId;
+							      QCM5_DEBUG << "Add key:" << key << "eContactId:" << eContactId;
 							      key++;
-							      return id;};
+							      return id;
+                                                            };
   /* Find */
   const char* operator[] (const QContactLocalId localId) { return m_localIds.value(localId).constData(); };
   const char* find(const QContactLocalId localId) { return m_localIds.value(localId).constData(); };
@@ -143,8 +155,15 @@ public:
   const QContactLocalId find(const QByteArray& eContactId) { return m_localIds.key(eContactId, 0); };
   
   /* Remove */ //TEST Remove functions not used nor tested yet
-  bool remove(const QContactLocalId localId){ return (m_localIds.remove(localId) == 1) ? true : false;};
-  bool remove(const QByteArray& eContactId){ const QContactLocalId hashKey = m_localIds.key(eContactId, 0); return remove(hashKey); };
+  bool remove(const QContactLocalId localId){ bool removed = (m_localIds.remove(localId) == 1) ? true : false;
+                                              QCM5_DEBUG << "Remove QContactLocalId:" << localId << ((removed) ? "OK" : "NO");
+                                              return removed;
+                                            };
+  bool remove(const QByteArray& eContactId){ const QContactLocalId hashKey = m_localIds.key(eContactId, 0);
+                                             bool removed = remove(hashKey);
+					     QCM5_DEBUG << "Remove QContactLocalId:" << hashKey << ((removed) ? "OK" : "NO");
+                                             return removed;
+                                           };
   
   /* Take */
   const QContactLocalId take(const QByteArray& eContactId){ const QContactLocalId hashKey = m_localIds.key(eContactId, 0);
@@ -180,7 +199,7 @@ public:
   void _contactsAdded(const QList<QContactLocalId> & contactIds ){ /*TODO*/ };
   void _contactsRemoved(const QList<QContactLocalId> & contactIds ){ /*TODO*/ };
   void _contactsChanged(const QList<QContactLocalId> & contactIds ){ /*TODO*/ };
-  void savingJobFinished(){ emit savingJobDone(); };
+  void _savingJobFinished(){ emit savingJobDone(); };
   
 private:
   void initAddressBook();
