@@ -105,7 +105,7 @@ bool  QMLBackendMonitorCreateTriggerAO::InitializeTrigger(QGeoAreaMonitorS60* aP
 
         CleanupStack::PushL(trigArea);
 
-        CLbtTriggerConditionArea* cond;
+        CLbtTriggerConditionArea* cond = NULL;
 
         if (aType == EntryTrigger) {
             //2: Construct a entry type of trigger condition

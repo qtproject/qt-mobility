@@ -56,6 +56,7 @@ public:
     n900lightsensor(QSensor *sensor);
 
     void poll();
+    void start();
 
 private:
     QAmbientLightReading m_reading;

@@ -18,3 +18,5 @@ SOURCES=\
 
 CONFIG+=strict_flags
 
+maemo5:DEFINES+=MAEMO5
+

@@ -13,4 +13,9 @@ symbian: {
         LIBS += -letel \
                 -letelmm
     }
+    
+    # In S60 3.1 we need to use TMobilePhoneBookInfoV1 instead of TMobilePhoneBookInfoV5
+    contains(S60_VERSION, 3.1) {
+        DEFINES += SYMBIANSIM_BACKEND_PHONEBOOKINFOV1
+    }    
 }

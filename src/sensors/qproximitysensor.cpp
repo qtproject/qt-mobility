@@ -55,45 +55,40 @@ IMPLEMENT_READING(QProximityReading)
            proximity sensor.
 
     \target QProximityReading_Units
-    The proximity sensor returns an indication of how far the user is
-    away from the device using the pre-defined values found in the
-    QProximityReading::Proximity enum.
+    The proximity sensor measures the distance to the user in meters.
+
+    Note that the maximum value supported by the sensor is reported if the user is
+    out of range of the sensor.
+
+    Some proximity sensors can only detect close/not close with a threshold. These
+    sensors will set the maximum to their threshold and their accuracy to the same
+    value. They will return 0 to indicate close and their maximum to indicate not close.
+
+    \sa QSensor::measurementMaximum, QSensor::measurementAccuracy
 */
 
 /*!
-    \enum QProximityReading::Proximity
+    \property QProximityReading::distance
+    \brief the distance of the user.
 
-    This enum represents the proximity of the user.
-
-    \value Undefined  The proximity is unknown.
-    \value Close      The user is close to the device.
-    \value NotClose   The user is not close to the device.
-*/
-
-/*!
-    \property QProximityReading::proximity
-    \brief the proximity of the user.
-
-    The value is an indication of if the user is close or not.
+    Measured in meters.
     \sa QProximityReading_Units
 */
 
-QProximityReading::Proximity QProximityReading::proximity() const
+qreal QProximityReading::distance() const
 {
-    return static_cast<QProximityReading::Proximity>(d->proximity);
+    return d->distance;
 }
 
 /*!
-    Sets the \a proximity of the user.
+    Sets the \a distance to the user.
 */
-void QProximityReading::setProximity(QProximityReading::Proximity proximity)
+void QProximityReading::setDistance(qreal distance)
 {
-    d->proximity = proximity;
+    d->distance = distance;
 }
 
 // =====================================================================
-
-// begin generated code
 
 /*!
     \class QProximityFilter
@@ -151,7 +146,6 @@ const char *QProximitySensor::type("QProximitySensor");
 
     \sa QSensor::reading()
 */
-// end generated code
 
 #include "moc_qproximitysensor.cpp"
 QTM_END_NAMESPACE

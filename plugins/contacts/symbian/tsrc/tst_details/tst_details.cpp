@@ -104,9 +104,9 @@ void tst_details::dumpContact(const QContact& contact)
 {
     qDebug() << "Contact: " << contact.localId();
     QList<QContactDetail> details = contact.details();
-    foreach(QContactDetail d, details) {
+    foreach(const QContactDetail& d, details) {
         qDebug() << "  " << d.definitionName() << ":";
-        foreach( QString key, d.variantValues().keys() )
+        foreach( const QString& key, d.variantValues().keys() )
             qDebug() << "    " << key << d.variantValue(key);
     }
 }
@@ -114,7 +114,7 @@ void tst_details::dumpContact(const QContact& contact)
 void tst_details::initTestCase()
 {
     qDebug() << "Available managers:";
-    foreach( QString manager, QContactManager::availableManagers() )
+    foreach( const QString& manager, QContactManager::availableManagers() )
         qDebug() << manager;
     QVERIFY(QContactManager::availableManagers().contains("symbian"));
 

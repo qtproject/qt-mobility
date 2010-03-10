@@ -523,19 +523,12 @@ void QContactRequestWorker::processContactRelationshipFetchRequest(QContactRelat
 
         // third criteria: participant must be empty or must match (including role in relationship)
         QString myUri = req->manager()->managerUri();
-        QContactId anonymousParticipant;
-        anonymousParticipant.setLocalId(QContactLocalId(0));
-        anonymousParticipant.setManagerUri(QString());
-        if (req->second() != anonymousParticipant) {
+        if (req->second() != QContactId()) {
             allRelationships = requestedRelationships;
             requestedRelationships.clear();
             for (int i = 0; i < allRelationships.size(); i++) {
                 QContactRelationship currRelationship = allRelationships.at(i);
-                if ((req->participantRole() == QContactRelationshipFilter::Either || req->participantRole() == QContactRelationshipFilter::Second)
-                        && currRelationship.second() == req->second()) {
-                    requestedRelationships.append(currRelationship);
-                } else if ((req->participantRole() == QContactRelationshipFilter::Either || req->participantRole() == QContactRelationshipFilter::First)
-                        && currRelationship.first() == req->second()) {
+                if (currRelationship.second() == req->second()) {
                     requestedRelationships.append(currRelationship);
                 }
             }
