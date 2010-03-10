@@ -52,7 +52,8 @@
 QTM_BEGIN_NAMESPACE
 
 /* Leaf class */
-class Q_CONTACTS_EXPORT QContactGeolocation : public QContactDetail
+// replaces the below
+class Q_CONTACTS_EXPORT QContactGeoLocation : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
@@ -67,7 +68,7 @@ public:
     const char* FieldSpeed;
     const char* FieldTimestamp;
 #else
-    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactGeolocation, "Geolocation")
+    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactGeoLocation, "GeoLocation")
     Q_DECLARE_LATIN1_LITERAL(FieldLabel, "Label");
     Q_DECLARE_LATIN1_LITERAL(FieldLatitude, "Latitude");
     Q_DECLARE_LATIN1_LITERAL(FieldLongitude, "Longitude");

@@ -47,11 +47,14 @@
 #include <QString>
 #include <qcontactrequests.h>
 
-
-
+QTM_BEGIN_NAMESPACE
 class QContactLocalIdFetchRequest;
 class QContactFetchRequest;
+QTM_END_NAMESPACE
+
 class QContactTrackerEngine;
+QTM_USE_NAMESPACE
+
 /**
  * QtContacts Tracker plugin unittests
  */
@@ -63,6 +66,7 @@ public:
 private slots:
     void initTestCase();
     void cleanupTestCase();
+    void cleanup();
     void testSavePhoneNumber();
     void testPhoneNumberContext();
     void testWritingOnlyWorkMobile();
@@ -87,6 +91,9 @@ private slots:
 //    void testDetailDefinition();
 //    void testSaveDetailDefinition();
 //    void testRemoveDetailDefinition();
+    void testSyncContactManagerContactsAddedSince();
+    void testSyncTrackerEngineContactsIdsAddedSince();
+    void testSyncContactManagerContactIdsAddedSince();
     void testContactsAddedSince();
     void testContactsModifiedSince();
     void testContactsRemovedSince();
@@ -94,26 +101,33 @@ private slots:
 //    void testGroupsModifiedSince();
 //    void testGroupsRemovedSince();
     void testNcoTypes();
+    void testQRelationshipAndMetacontacts();
     void testAsyncReadContacts();
     void testFilterContacts();
     void testFilterContactsEndsWith();
+    void testFilterTwoNameFields();
     void testTrackerUriToUniqueId();
-    void testQRelationshipAndMetacontacts();
     void testIMContactsAndMetacontactMasterPresence();
+    void testIMContactsFilterring();
+    void testContactsWithoutMeContact();
 
 private:
-    void insertContact( QContactLocalId uid, QString imId, QString imStatus );
-    void updateIMContactStatus(QContactLocalId uId, QString imStatus);
+    void syncContactsAddedSinceHelper(QDateTime& start, QList<QContactLocalId>& addedIds);
+
+    void insertContact(const QString& URI, QContactLocalId uid, QString imId, QString imStatus, QString accountPath, QString protocol = "jabber");
+    void updateIMContactStatus(const QString& uri, QString imStatus);
     QContact contact(QContactLocalId uid, QStringList detailsToLoad = QStringList());
     QList<QContact> contacts(QList<QContactLocalId> uids, QStringList detailsToLoad = QStringList());
 
 private:
     QContactTrackerEngine *trackerEngine;
     QContactManager::Error error;
+    QMap<int, QContactManager::Error>* errorMap;
     // Filtering and sort options used for QContactTrackerEngine.
     // Not used.
     QContactFilter queryFilter;
     QList<QContactSortOrder> sortOrders;
+    QList<QContactLocalId> addedContacts;
 };
 
 class Slots: public QObject

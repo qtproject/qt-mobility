@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qtrackercontactsaverequest.h"
+#include "trackerchangelistener.h"
 
 #include <QtTracker/Tracker>
 using namespace SopranoLive;
@@ -48,7 +49,7 @@ using namespace SopranoLive;
 
 // TODO better error handling when saving
 QTrackerContactSaveRequest::QTrackerContactSaveRequest(QContactAbstractRequest* req, QContactManagerEngine* parent)
-: QObject(parent), QTrackerContactAsyncRequest(req)
+: QObject(parent), QTrackerContactAsyncRequest(req), errorCount(0)
 {
     Q_ASSERT(req);
     Q_ASSERT(req->type() == QContactAbstractRequest::ContactSaveRequest);
@@ -56,21 +57,23 @@ QTrackerContactSaveRequest::QTrackerContactSaveRequest(QContactAbstractRequest* 
 
     QContactSaveRequest* r = qobject_cast<QContactSaveRequest*>(req);
     if (!r) {
-        QList<QContactManager::Error> dummy;
-        QContactManagerEngine::updateRequestStatus(req, QContactManager::UnspecifiedError, dummy, QContactAbstractRequest::Finished);
+        QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::FinishedState);
         return;
     }
 
     QList<QContact> contacts = r->contacts();
 
     if(contacts.isEmpty()) {
-        QList<QContactManager::Error> errors(QList<QContactManager::Error>()<<QContactManager::BadArgumentError);
-        QContactManagerEngine::updateRequest(req, contacts, QContactManager::BadArgumentError, errors, QContactAbstractRequest::Finished);
+        QMap<int, QContactManager::Error> errors; 
+        errors[0] = QContactManager::BadArgumentError;
+        QContactSaveRequest* saveRequest = qobject_cast<QContactSaveRequest*>(req);
+        QContactManagerEngine::updateContactSaveRequest(saveRequest, contacts, QContactManager::BadArgumentError,
+                                             errors);
         return;
     }
-    QList<QContactManager::Error> dummy;
-    QContactManagerEngine::updateRequestStatus(req, QContactManager::NoError, dummy,
-            QContactAbstractRequest::Active);
+
+    QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::ActiveState);
+
 
     // Save contacts with batch size
     /// @todo where to get reasonable batch size
@@ -80,27 +83,37 @@ QTrackerContactSaveRequest::QTrackerContactSaveRequest(QContactAbstractRequest* 
     }
 }
 
-void QTrackerContactSaveRequest::computeProgress()
+void QTrackerContactSaveRequest::onTrackerSignal(const QList<QContactLocalId> &ids)
+{
+    computeProgress(ids);
+}
+
+void QTrackerContactSaveRequest::computeProgress(const QList<QContactLocalId> &addedIds)
 {
     Q_ASSERT(req->type() == QContactAbstractRequest::ContactSaveRequest);
     QContactSaveRequest* r = qobject_cast<QContactSaveRequest*>(req);
     if (!r) {
-        QList<QContactManager::Error> dummy;
-        QContactManagerEngine::updateRequestStatus(req, QContactManager::UnspecifiedError, dummy, QContactAbstractRequest::Finished);
+        QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::FinishedState);
         return;
     }
 
-    if( r->contacts().size() == contactsFinished.size() )
-    {
+    foreach (QContactLocalId id, addedIds) {
+        pendingContactIds.remove(id);
+    }
+
+    if (pendingContactIds.count() == 0) {
         // compute master error - part of qtcontacts api
         QContactManager::Error error = QContactManager::NoError;
-        foreach(QContactManager::Error err, errorsOfContactsFinished)
+        
+        foreach(QContactManager::Error err, errorsOfContactsFinished.values()) {
             if( QContactManager::NoError != err )
             {
                 error = err;
                 break;
             }
-        QContactManagerEngine::updateRequest(req, contactsFinished, error, errorsOfContactsFinished, QContactAbstractRequest::Finished);
+        }
+        QContactManagerEngine::updateContactSaveRequest(r, contactsFinished, error, errorsOfContactsFinished);
+        QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::FinishedState);
     }
 }
 
@@ -112,6 +125,7 @@ void QTrackerContactSaveRequest::saveContacts(const QList<QContact> &contacts)
     QSettings definitions(QSettings::IniFormat, QSettings::UserScope, "Nokia", "Trackerplugin");
     QTrackerContactsLive cLive;
     RDFServicePtr service = cLive.service();
+    bool isModified = false;
 
     foreach(QContact contact, contacts) {
         QContactManager::Error error;
@@ -119,8 +133,8 @@ void QTrackerContactSaveRequest::saveContacts(const QList<QContact> &contacts)
         // Ensure that the contact data is ok. This comes from QContactModelEngine
         if(!engine->validateContact(contact, error)) {
             contactsFinished << contact;
-            errorsOfContactsFinished << error;
-            computeProgress();
+            errorsOfContactsFinished[errorCount++] =  error;
+            computeProgress(QList<QContactLocalId>());
             continue;
         }
 
@@ -134,14 +148,20 @@ void QTrackerContactSaveRequest::saveContacts(const QList<QContact> &contacts)
             definitions.setValue("nextAvailableContactId", QString::number(++m_lastUsedId));
 
             ncoContact = service->liveNode(QUrl("contact:"+(QString::number(m_lastUsedId))));
-            QContactId id; id.setLocalId(m_lastUsedId);
+            QContactId id;
+            id.setLocalId(m_lastUsedId);
+            id.setManagerUri(engine->managerUri());
             contact.setId(id);
             ncoContact->setContactUID(QString::number(m_lastUsedId));
             ncoContact->setContentCreated(QDateTime::currentDateTime());
         }  else {
+            isModified = true;
             ncoContact = service->liveNode(QUrl("contact:"+QString::number(contact.localId())));
+            /// @note Following needed in case we save new contact with given localId
+            ncoContact->setContactUID(QString::number(contact.localId()));
             ncoContact->setContentLastModified(QDateTime::currentDateTime());
         }
+        pendingContactIds.insert(contact.localId());
 
         // if there are work related details, need to be saved to Affiliation.
         if( QTrackerContactSaveRequest::contactHasWorkRelatedDetails(contact)) {
@@ -165,13 +185,20 @@ void QTrackerContactSaveRequest::saveContacts(const QList<QContact> &contacts)
 
         // TODO add async signal handling of for transaction's commitFinished
         contactsFinished << contact;
-        errorsOfContactsFinished << QContactManager::NoError; // TODO ask how to get error code from tracker
-        computeProgress();
+        errorsOfContactsFinished[errorCount++] =  QContactManager::NoError; // TODO ask how to get error code from tracker
+    }
+
+    TrackerChangeListener *changeListener = new TrackerChangeListener(this);
+    if (isModified) {
+        connect(changeListener, SIGNAL(contactsChanged(const QList<QContactLocalId> &)),
+                SLOT(onTrackerSignal(const QList<QContactLocalId> &)));
+    } else {
+        connect(changeListener, SIGNAL(contactsAdded(const QList<QContactLocalId> &)),
+                SLOT(onTrackerSignal(const QList<QContactLocalId> &)));
     }
 
     // remember to commit the transaction, otherwise all changes will be rolled back.
     cLive.commit();
-    computeProgress();
 }
 
 
@@ -285,20 +312,9 @@ void QTrackerContactSaveRequest::saveContactDetails( RDFServicePtr service,
                     Live<nie::DataObject> fdo = service->liveNode( avatar );
                     ncoContact->setPhoto(fdo);
                 }
-/*                else if (definition == QContactOnlineAccount::DefinitionName){
-                    // TODO parse URI, once it is defined
-                    QString account = det.value("Account");
-                    QString serviceName = det.value("ServiceName");
-                    // TODO refactor  - remove blocking call in next line
-                    Live<nco::IMAccount> liveIMAccount = ncoContact->firstHasIMAccount();
-                    if (0 == liveIMAccount)
-                    {
-                        liveIMAccount = ncoContact->addHasIMAccount();
-                    }
-                    liveIMAccount->setImID(account);
-                    liveIMAccount->setImAccountType(serviceName);
+                if(definition == QContactBirthday::DefinitionName) {
+                    ncoContact->setBirthDate(QDateTime(det.variantValue(QContactBirthday::FieldBirthday).toDate(), QTime(), Qt::UTC));
                 }
-*/
             } // end foreach detail
         }
     }
@@ -337,7 +353,13 @@ void QTrackerContactSaveRequest::savePhoneNumbers(RDFServicePtr service, RDFVari
     RDFVariable varForInsert = var.deepCopy();
     foreach(const QContactDetail& det, details)
     {
-        QString value = det.value(QContactPhoneNumber::FieldNumber);
+        QString formattedValue = det.value(QContactPhoneNumber::FieldNumber);
+        // Strip RFC 3966 visual-separators reg exp "[(|-|.|)| ]"
+        QString value = formattedValue.replace( QRegExp("[\\(|" \
+                                                        "\\-|" \
+                                                        "\\.|" \
+                                                        "\\)|" \
+                                                        " ]"), "");
         // Temporary, because affiliation is still used - to be refactored next week to use Live nodes
         // using RFC 3966 canonical URI form
         QUrl newPhone = QString("tel:%1").arg(value);

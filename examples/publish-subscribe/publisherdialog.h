@@ -65,7 +65,7 @@ public:
     PublisherDialog(QWidget *parent = 0);
     ~PublisherDialog();
 
-#ifdef Q_OS_SYMBIAN
+#ifdef QTM_SMALL_SCREEN
 signals:
     void switchRequested();
 #endif

@@ -58,26 +58,48 @@ class Q_VERSIT_EXPORT QVersitWriter : public QObject
     Q_OBJECT
 
 public:
+    enum Error {
+        NoError = 0,
+        UnspecifiedError,
+        IOError,
+        OutOfMemoryError,
+        NotReadyError
+    };
+
+    enum State {
+        InactiveState = 0,
+        ActiveState,
+        CanceledState,
+        FinishedState
+    };
+
     QVersitWriter();
     ~QVersitWriter();
 
-    // input:
-    void setVersitDocument(const QVersitDocument& versitDocument);
-    QVersitDocument versitDocument() const;
-    // output:
+    // output device
     void setDevice(QIODevice* device);
     QIODevice* device() const;
-    // writing:
-    bool startWriting();
-    bool writeAll();
 
-signals:
-    void writingDone();
+    void setDefaultCodec(QTextCodec* codec);
+    QTextCodec* defaultCodec() const;
+
+    // writing:
+    bool startWriting(const QList<QVersitDocument>& input);
+    void cancel();
+    bool waitForFinished(int msec = -1);
+
+    State state() const;
+    Error error() const;
+
+Q_SIGNALS:
+    void stateChanged(QVersitWriter::State state);
 
 private: // data
     QVersitWriterPrivate* d;
 };
 
 QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QVersitWriter::State))
 
 #endif // QVERSITWRITER_H

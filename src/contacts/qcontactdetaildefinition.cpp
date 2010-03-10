@@ -45,28 +45,30 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
- * \class QContactDetailDefinition
- *
- * The QContactDetailDefinition class provides the specification for
- * a detail that can be included in any particular QContact.
- * The definition does not include any data, but defines
- * the semantics of the representation and use of data
- * details that are stored in a QContact.
+  \class QContactDetailDefinition
+
+  The QContactDetailDefinition class provides the specification for
+  a detail that can be included in any particular QContact.
+  The definition does not include any data, but defines
+  the semantics of the representation and use of data
+  details that are stored in a QContact.
  */
 
 /*!
- * \fn QContactDetailDefinition::operator!=(const QContactDetailDefinition& other) const
- * Returns true if this detail definition has different allowable field types, access constraints or uniqueness to the \a other definition
+  \fn QContactDetailDefinition::operator!=(const QContactDetailDefinition& other) const
+  Returns true if this detail definition has different allowable field types or uniqueness to the \a other definition
  */
 
 /*!
- * \enum QContactDetailDefinition::AccessConstraint
- *
- * This enum defines the access constraints which may be set on all details of this definition in the store for which the definition is valid.
- *
- * \value NoConstraint Details of definitions with this access constraint set have no special access semantics associated with them.  Users can read, write, and otherwise modify such details in any manner.
- * \value ReadOnly Details of definitions with this access constraint set are dynamically modified by the backend.  Users cannot write values to details of definitions with this access constraint set.
- * \value CreateOnly Details of definitions with this access constraint set are static once created.  Their value cannot be changed dynamically, nor can they be written or read by users.
+  \enum QContactDetailDefinition::AccessConstraint
+
+  \obsolete
+
+  This enum defines the access constraints which may be set on all details of this definition in the store for which the definition is valid.
+
+  \value NoConstraint Details of definitions with this access constraint set have no special access semantics associated with them.  Users can read, write, and otherwise modify such details in any manner.
+  \value ReadOnly Details of definitions with this access constraint set are dynamically modified by the backend.  Users cannot write values to details of definitions with this access constraint set.
+  \value CreateOnly Details of definitions with this access constraint set are static once created.  Their value cannot be changed dynamically, nor can they be written or read by users.
  */
 
 /*! Construct a new, invalid QContactDetailDefinition */
@@ -93,14 +95,12 @@ QContactDetailDefinition::~QContactDetailDefinition()
 {
 }
 
-/*! Returns true if the definition has the same type, uniqueness, access constraint and allowable value datatypes as \a other */
+/*! Returns true if the definition has the same type, uniqueness and allowable value datatypes as \a other */
 bool QContactDetailDefinition::operator==(const QContactDetailDefinition& other) const
 {
     if (d->m_name != other.d->m_name)
         return false;
     if (d->m_unique != other.d->m_unique)
-        return false;
-    if (d->m_constraint != other.d->m_constraint)
         return false;
     if (d->m_fields != other.d->m_fields)
         return false;
@@ -124,9 +124,9 @@ void QContactDetailDefinition::setName(const QString& definitionName)
 }
 
 /*!
- * Sets whether a contact can have more than one detail of this type.
- * If \a unique is true, only one detail of this type can be added.
- * Otherwise, any number can be added.
+  Sets whether a contact can have more than one detail of this type.
+  If \a unique is true, only one detail of this type can be added.
+  Otherwise, any number can be added.
  */
 void QContactDetailDefinition::setUnique(bool unique)
 {
@@ -146,40 +146,52 @@ bool QContactDetailDefinition::isUnique() const
 }
 
 /*! Sets the fields which constitute the data of details of this this definition to \a fields */
-void QContactDetailDefinition::setFields(const QMap<QString, QContactDetailDefinitionField>& fields)
+void QContactDetailDefinition::setFields(const QMap<QString, QContactDetailFieldDefinition>& fields)
 {
     d->m_fields = fields;
 }
 
 /*! Returns the map of keys to fields which are present in details of this definition */
-QMap<QString, QContactDetailDefinitionField> QContactDetailDefinition::fields() const
+QMap<QString, QContactDetailFieldDefinition> QContactDetailDefinition::fields() const
 {
     return d->m_fields;
+}
+
+/*! Inserts the field \a field into the map of fields which constitute the data of details of this definition for the given field key \a key.
+    If another field for that key already exists in the definition, it will be overwritten. */
+void QContactDetailDefinition::insertField(const QString& key, const QContactDetailFieldDefinition& field)
+{
+    d->m_fields.insert(key, field);
+}
+
+/*! Removes the field associated with the given field key \a key from the map of fields which constitute the data of details of this definition. */
+void QContactDetailDefinition::removeField(const QString& key)
+{
+    d->m_fields.remove(key);
 }
 
 /*!
- * Returns a reference to the map of keys to fields which are present in details of this definition.
- *
- * You can make changes to the returned map.
- */
-QMap<QString, QContactDetailDefinitionField>& QContactDetailDefinition::fields()
-{
-    return d->m_fields;
-}
+  Returns the access constraint that is applied to details of this definition
 
-/*! Returns the access constraint that is applied to details of this definition */
+  \obsolete
+
+  This function is obsolete - use \l QContactDetail::accessConstraints()
+ */
 QContactDetailDefinition::AccessConstraint QContactDetailDefinition::accessConstraint() const
 {
-    return d->m_constraint;
+    return QContactDetailDefinition::NoConstraint;
 }
 
 /*!
- * \fn QContactDetailDefinition::setAccessConstraint(const QContactDetailDefinition::AccessConstraint& constraint)
- * Sets the access constraint that is applied to details of this definition to \a constraint
+  Sets the access constraint that is applied to details of this definition to \a constraint
+
+  \obsolete
+
+  This function is obsolete.
  */
 void QContactDetailDefinition::setAccessConstraint(const QContactDetailDefinition::AccessConstraint& constraint)
 {
-    d->m_constraint = constraint;
+    Q_UNUSED(constraint);
 }
 
 QTM_END_NAMESPACE

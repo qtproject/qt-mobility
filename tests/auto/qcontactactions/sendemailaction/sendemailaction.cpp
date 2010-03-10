@@ -110,7 +110,7 @@ QContactActionDescriptor QContactSendEmailAction::actionDescriptor() const
     return ret;
 }
 
-QVariantMap QContactSendEmailAction::metadata() const
+QVariantMap QContactSendEmailAction::metaData() const
 {
     return QVariantMap();
 }
@@ -143,5 +143,5 @@ QVariantMap QContactSendEmailAction::result() const
 void QContactSendEmailAction::performAction()
 {
     QMessageBox::information(0, "SendEmail Action", "This example action exists as an example of how the action interface may be implemented; it does not offer the advertised functionality.");
-    emit progress(QContactAction::Finished, QVariantMap());
+    emit progress(QContactAction::FinishedState, QVariantMap());
 }

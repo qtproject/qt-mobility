@@ -97,10 +97,11 @@ public:
 
     int bufferStatus() const { return _bufferStatus; }
 
+    bool isAudioAvailable() const { return _audioAvailable; }
     bool isVideoAvailable() const { return _videoAvailable; }
 
     bool isSeekable() const { return _isSeekable; }
-    QPair<qint64, qint64> seekRange() const { return _seekRange; }
+    QMediaTimeRange availablePlaybackRanges() const { return QMediaTimeRange(_seekRange.first, _seekRange.second); }
     void setSeekRange(qint64 minimum, qint64 maximum) { _seekRange = qMakePair(minimum, maximum); }
 
     qreal playbackRate() const { return _playbackRate; }
@@ -132,6 +133,7 @@ public:
     int _volume;
     bool _muted;
     int _bufferStatus;
+    bool _audioAvailable;
     bool _videoAvailable;
     bool _isSeekable;
     QPair<qint64, qint64> _seekRange;

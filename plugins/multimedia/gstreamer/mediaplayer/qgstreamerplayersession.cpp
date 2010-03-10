@@ -49,7 +49,9 @@
 #include <QtCore/qdatetime.h>
 #include <QtCore/qdebug.h>
 
-//#define USE_PLAYBIN2
+#ifdef Q_WS_MAEMO_5
+#define USE_PLAYBIN2
+#endif
 
 QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
     :QObject(parent),
@@ -63,6 +65,7 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
      m_volume(100),
      m_playbackRate(1.0),
      m_muted(false),
+     m_audioAvailable(false),
      m_videoAvailable(false),
      m_seekable(false),
      m_lastPosition(0),
@@ -229,6 +232,11 @@ int QGstreamerPlayerSession::volume() const
 bool QGstreamerPlayerSession::isMuted() const
 {
     return m_muted;
+}
+
+bool QGstreamerPlayerSession::isAudioAvailable() const
+{
+    return m_audioAvailable;
 }
 
 void QGstreamerPlayerSession::setVideoRenderer(QObject *videoOutput)
@@ -565,6 +573,7 @@ void QGstreamerPlayerSession::getStreamsInfo()
     }
 
     //check if video is available:
+    bool haveAudio = false;
     bool haveVideo = false;
     m_streamProperties.clear();
     m_streamTypes.clear();
@@ -577,6 +586,9 @@ void QGstreamerPlayerSession::getStreamsInfo()
     g_object_get(G_OBJECT(m_playbin), "n-audio", &audioStreamsCount, NULL);
     g_object_get(G_OBJECT(m_playbin), "n-video", &videoStreamsCount, NULL);
     g_object_get(G_OBJECT(m_playbin), "n-text", &textStreamsCount, NULL);
+
+    haveAudio = audioStreamsCount > 0;
+    haveVideo = videoStreamsCount > 0;
 
     m_playbin2StreamOffset[QMediaStreamsControl::AudioStream] = 0;
     m_playbin2StreamOffset[QMediaStreamsControl::VideoStream] = audioStreamsCount;
@@ -654,9 +666,11 @@ void QGstreamerPlayerSession::getStreamsInfo()
         switch (type) {
         case GST_STREAM_TYPE_VIDEO:
             streamType = QMediaStreamsControl::VideoStream;
+            haveVideo = true;
             break;
         case GST_STREAM_TYPE_AUDIO:
             streamType = QMediaStreamsControl::AudioStream;
+            haveAudio = true;
             break;
         case GST_STREAM_TYPE_SUBPICTURE:
             streamType = QMediaStreamsControl::SubPictureStream;
@@ -674,6 +688,10 @@ void QGstreamerPlayerSession::getStreamsInfo()
     }
 #endif
 
+    if (haveAudio != m_audioAvailable) {
+        m_audioAvailable = haveAudio;
+        emit audioAvailableChanged(m_audioAvailable);
+    }
     if (haveVideo != m_videoAvailable) {
         m_videoAvailable = haveVideo;
         emit videoAvailableChanged(m_videoAvailable);

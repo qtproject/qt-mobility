@@ -67,10 +67,10 @@ public:
     QAudioDeviceInfo* deviceInfo() const;
     bool isFormatSupported(const QAudioFormat &format) const;
     bool setFormat(const QAudioFormat &format);
-    QStringList supportedAudioCodecs() const;
-    QString codecDescription(const QString &codecName);
-    bool setAudioCodec(const QString &codecName);
-    QString audioCodec() const;
+    QStringList supportedContainers() const;
+    QString containerMimeType() const;
+    void setContainerMimeType(const QString &formatMimeType);
+    QString containerDescription(const QString &formatMimeType) const;
 
     QUrl outputLocation() const;
     bool setOutputLocation(const QUrl& sink);

@@ -42,9 +42,7 @@
 #ifndef S60VIDEOOVERLAY_H
 #define S60VIDEOOVERLAY_H
 
-#ifndef QT_NO_MULTIMEDIA
-
-#include <QObject>
+#include <QtCore/qobject.h>
 #include <QVideoWindowControl>
 
 QTM_USE_NAMESPACE
@@ -105,7 +103,5 @@ private:
     QSize m_aspectRatio;
     bool m_fullScreen;
 };
-
-#endif // QT_NO_MULTIMEDIA
 
 #endif // S60VIDEOOVERLAY_H

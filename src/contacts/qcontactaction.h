@@ -73,7 +73,7 @@ public:
     virtual ~QContactAction() = 0;
 
     virtual QContactActionDescriptor actionDescriptor() const = 0;          // the descriptor which uniquely identifies this action
-    virtual QVariantMap metadata() const = 0;                               // label, icon etc - under discussion!
+    virtual QVariantMap metaData() const = 0;                               // label, icon etc - under discussion! - replaces the above
 
     virtual QContactFilter contactFilter(const QVariant& value = QVariant()) const = 0; // use for matching
     virtual bool supportsDetail(const QContactDetail& detail) const = 0;    // whether this implementation supports the given detail
@@ -83,19 +83,19 @@ public:
     virtual void invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail()) = 0;
 
     /* The possible states of an action */
-    enum Status {
-        Inactive = 0,      // operation not yet started
-        Autonomous,        // operation started, no further information available - name under discussion.
-        Active,            // operation started, not yet finished
-        Finished,          // operation successfully completed
-        FinishedWithError  // operation finished, but error occurred
+    enum State {
+        InactiveState = 0,      // operation not yet started
+        AutonomousState,        // operation started, no further information available - name under discussion.
+        ActiveState,            // operation started, not yet finished
+        FinishedState,          // operation successfully completed
+        FinishedWithErrorState  // operation finished, but error occurred
     };
 
     /* Returns the most recently received result, or an invalid QVariantMap if no results received */
     virtual QVariantMap result() const = 0;
 
-signals:
-    void progress(QContactAction::Status status, const QVariantMap& result);
+Q_SIGNALS:
+    void progress(QContactAction::State state, const QVariantMap& result);
 };
 
 QTM_END_NAMESPACE

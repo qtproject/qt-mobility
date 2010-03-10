@@ -77,18 +77,18 @@ private slots:
     void backendSelected();
     void addContactClicked();
     void editClicked();
-    void findClicked();
+    void filterClicked();
+    void deleteClicked();
+    void importClicked();
+    void exportClicked();
 
 private:
     // elements of the contact list "page"
-    QLabel *m_backendsLabel;
     QComboBox *m_backendsCombo;
     QLabel *m_filterActiveLabel;
 
     QListWidget *m_contactsList;
-    QPushButton *m_addContactBtn;
-    QPushButton *m_editBtn;
-    QPushButton *m_findBtn;
+
 
     // data
     QContactManager *m_manager;

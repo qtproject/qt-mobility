@@ -64,9 +64,7 @@ public:
 
     /* Results */
     QList<QContact> contacts() const;
-
-signals:
-    void progress(QContactSaveRequest* self);
+    QMap<int, QContactManager::Error> errorMap() const;
 
 private:
     Q_DISABLE_COPY(QContactSaveRequest)

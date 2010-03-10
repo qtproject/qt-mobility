@@ -51,17 +51,17 @@
 /*!
 
 \page multimedia.html
-
 \title Multimedia
-
 \brief Provides a set of APIs to play and record media, and manage a 
 collection of media content.
-
 \ingroup mobility
+
+\warning The camera support classes are in a technology preview state. They
+are in development and subject to change.
 
 Multimedia provides a set of APIs that allow the developer to play, record
 and manage a collection of media content. It is dependent on the
-QtMultimedia API.
+QtMultimedia API. This API is planned to replace Phonon at a later stage.
 
 \tableofcontents
 

@@ -45,13 +45,14 @@
 #include <QtCore/qobject.h>
 
 #include <QMediaPlayerControl>
-#include <QMediaPlayer>
 
 #include "ms60mediaplayerresolver.h"
+#include <QtCore/qdebug.h>
 
 QTM_BEGIN_NAMESPACE
-class QMediaPlaylist;
-class QMediaPlaylistNavigator;
+class QMediaPlayer;
+class QMediaTimeRange;
+class QMediaContent;
 QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
@@ -59,14 +60,29 @@ QTM_USE_NAMESPACE
 class S60MediaPlayerSession;
 class S60MediaPlayerService;
 
-
-class S60MediaControlSettings
+class S60MediaSettings
 {
+
 public:
-    int m_vol;
+    S60MediaSettings() 
+        : m_volume(0)
+        , m_muted(false)
+        , m_playbackRate(1.0)
+    {
+    }
+    
+    void setVolume(int volume) { m_volume = volume; }
+    void setMuted(bool muted) { m_muted = muted; }
+    void setPlaybackRate(int rate) { m_playbackRate = rate; }
+    
+    int volume() const { return m_volume; }
+    bool isMuted() const { return m_muted; }
+    qreal playbackRate() const { return m_playbackRate; }
+    
+private:
+    int m_volume;
     bool m_muted;
     qreal m_playbackRate;
-    int m_position;
 };
 
 class S60MediaPlayerControl : public QMediaPlayerControl
@@ -77,51 +93,40 @@ public:
     S60MediaPlayerControl(MS60MediaPlayerResolver& mediaPlayerResolver, QObject *parent = 0);
     ~S60MediaPlayerControl();
 
-    QMediaPlayer::State state() const;
-    QMediaPlayer::MediaStatus mediaStatus() const;
+    // from QMediaPlayerControl
+    virtual QMediaPlayer::State state() const;
+    virtual QMediaPlayer::MediaStatus mediaStatus() const;
+    virtual qint64 duration() const;
+    virtual qint64 position() const;
+    virtual void setPosition(qint64 pos);
+    virtual int volume() const;
+    virtual void setVolume(int volume);
+    virtual bool isMuted() const;
+    virtual void setMuted(bool muted);
+    virtual int bufferStatus() const;
+    virtual bool isAudioAvailable() const;
+    virtual bool isVideoAvailable() const;
+    virtual bool isSeekable() const;
+    virtual QMediaTimeRange availablePlaybackRanges() const;
+    virtual qreal playbackRate() const;
+    virtual void setPlaybackRate(qreal rate);
+    virtual QMediaContent media() const;
+    virtual const QIODevice *mediaStream() const;
+    virtual void setMedia(const QMediaContent&, QIODevice *);
+    virtual void play();
+    virtual void pause();
+    virtual void stop();  
 
-    qint64 position() const;
-    qint64 duration() const;
-
-    int bufferStatus() const;
-
-    int volume() const;
-    bool isMuted() const;
-
-    bool isVideoAvailable() const;
+    // Own methods
     void setVideoOutput(QObject *output);
-
-    bool isSeekable() const;
-    QPair<qint64, qint64> seekRange() const;
-	
-    qreal playbackRate() const;
-    void setPlaybackRate(qreal rate);
-
-    QMediaContent media() const;
-    const QIODevice *mediaStream() const;
-    void setMedia(const QMediaContent&, QIODevice *);
-
-    const S60MediaControlSettings& mediaControlSettings() const;
-    
-public Q_SLOTS:
-    void setPosition(qint64 pos);
-
-    void play();
-    void pause();
-    void stop();
-
-    void setVolume(int volume);
-    void setMuted(bool muted);
-
-private: 
-    S60MediaPlayerSession* currentPlayerSession();
-    
+    const S60MediaSettings& mediaControlSettings() const;
+ 
 private:
-    MS60MediaPlayerResolver& m_mediaPlayerResolver;
+    MS60MediaPlayerResolver &m_mediaPlayerResolver;
     S60MediaPlayerSession *m_session;
     QMediaContent m_currentResource; 
     QIODevice *m_stream;
-    S60MediaControlSettings m_controlSettings;
+    S60MediaSettings m_mediaSettings;
 };
 
 #endif

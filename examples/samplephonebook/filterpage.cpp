@@ -50,8 +50,28 @@ FilterPage::FilterPage(QWidget* parent)
     m_fieldCriteriaCombo = new QComboBox(this);
     m_criteriaTypeCombo = new QComboBox(this);
     m_joinMethodCombo = new QComboBox(this);
-    m_cumulativeExpressionLabel = new QLabel(this);
-    m_cumulativeExpressionLabel->setText("Match All Contacts");
+    m_cumulativeExpressionLabel = new QLabel("Match All Contacts", this);
+    m_cumulativeExpressionLabel->setWordWrap(true);
+    m_cumulativeExpressionLabel->setFocusPolicy(Qt::StrongFocus);
+    
+#ifdef Q_OS_SYMBIAN
+    // In symbian use softkeys instead of normal buttons
+    m_addBtn = new QAction("Add", this);
+    m_addBtn->setSoftKeyRole(QAction::PositiveSoftKey);
+    addAction(m_addBtn);
+    connect(m_addBtn, SIGNAL(triggered(bool)), this, SLOT(addClicked()));    
+    m_filterBtn = new QAction("Filter", this);
+    m_filterBtn->setSoftKeyRole(QAction::NegativeSoftKey);
+    addAction(m_filterBtn);
+    connect(m_filterBtn, SIGNAL(triggered(bool)), this, SLOT(filterClicked()));
+#else
+    m_addBtn = new QPushButton("Add", this);
+    connect(m_addBtn, SIGNAL(clicked()), this, SLOT(addClicked()));
+    m_filterBtn = new QPushButton("Filter", this);
+    connect(m_filterBtn, SIGNAL(clicked()), this, SLOT(filterClicked()));
+#endif
+    m_clearBtn = new QPushButton("Clear", this);
+    connect(m_clearBtn, SIGNAL(clicked()), this, SLOT(clearClicked()));
 
     QStringList filterableFields;
     filterableFields.append("Name");
@@ -59,41 +79,52 @@ FilterPage::FilterPage(QWidget* parent)
     filterableFields.append("Email");
     m_fieldCriteriaCombo->addItems(filterableFields);
 
-    QStringList criteriaTypes;
-    criteriaTypes.append("Exact Match");
-    criteriaTypes.append("Starts With");
-    criteriaTypes.append("Ends With");
-    criteriaTypes.append("Contains");
-    m_criteriaTypeCombo->addItems(criteriaTypes);
+    m_criteriaTypeCombo->addItem("Equals", QContactFilter::MatchExactly);
+    m_criteriaTypeCombo->addItem("Contains", QContactFilter::MatchContains);
+    m_criteriaTypeCombo->addItem("Starts with", QContactFilter::MatchStartsWith);
+    m_criteriaTypeCombo->addItem("Ends with", QContactFilter::MatchEndsWith);
 
     QStringList joinTypes;
     joinTypes.append("AND");
     joinTypes.append("OR");
     m_joinMethodCombo->addItems(joinTypes);
-
+    
     QFormLayout *formLayout = new QFormLayout;
-    formLayout->addRow("Search String: ", m_valueCriteriaEdit);
-    formLayout->addRow("Search Field: ", m_fieldCriteriaCombo);
-    formLayout->addRow("Criteria Type: ", m_criteriaTypeCombo);
-    formLayout->addRow("Join Method: ", m_joinMethodCombo);
-    // TODO: add separator.
-    formLayout->addRow("Filter Expression: ", m_cumulativeExpressionLabel);
-
-    m_add = new QPushButton("Add", this);
-    connect(m_add, SIGNAL(clicked()), this, SLOT(addClicked()));
-    m_clear = new QPushButton("Clear", this);
-    connect(m_clear, SIGNAL(clicked()), this, SLOT(clearClicked()));
-    m_done = new QPushButton("Filter", this);
-    connect(m_done, SIGNAL(clicked()), this, SLOT(doneClicked()));
-
-    QHBoxLayout *btnLayout = new QHBoxLayout;
-    btnLayout->addWidget(m_add);
-    btnLayout->addWidget(m_clear);
-    btnLayout->addWidget(m_done);
-
+    formLayout->addRow(new QLabel("Search String:", this));
+    formLayout->addRow(m_valueCriteriaEdit);
+    formLayout->addRow(new QLabel("Search Field:", this));
+    formLayout->addRow(m_fieldCriteriaCombo);
+    formLayout->addRow(new QLabel("Criteria Type:", this));
+    formLayout->addRow(m_criteriaTypeCombo);
+    formLayout->addRow(new QLabel("Join Method:", this));
+    formLayout->addRow(m_joinMethodCombo);
+    QFrame* separatorFrame = new QFrame(this);
+    separatorFrame->setFrameShape(QFrame::HLine);
+    separatorFrame->setFrameShadow(QFrame::Plain);
+    separatorFrame->setLineWidth(2);
+    formLayout->addRow(separatorFrame);
+    formLayout->addRow(new QLabel("Filter Expression:", this));
+    formLayout->addRow(m_cumulativeExpressionLabel);
+#ifdef Q_OS_SYMBIAN
+    formLayout->addRow(m_clearBtn);
+#endif    
+    
     QVBoxLayout *pageLayout = new QVBoxLayout;
-    pageLayout->addLayout(formLayout);
+    
+    QScrollArea *formScrollArea = new QScrollArea(this);
+    formScrollArea->setWidgetResizable(true);
+    QWidget *formContainer = new QWidget(formScrollArea);
+    formContainer->setLayout(formLayout);
+    formScrollArea->setWidget(formContainer);
+    pageLayout->addWidget(formScrollArea);
+    
+#ifndef Q_OS_SYMBIAN
+    QHBoxLayout *btnLayout = new QHBoxLayout;
+    btnLayout->addWidget(m_addBtn);
+    btnLayout->addWidget(m_clearBtn);
+    btnLayout->addWidget(m_filterBtn);
     pageLayout->addLayout(btnLayout);
+#endif
 
     setLayout(pageLayout);
 }
@@ -145,37 +176,9 @@ void FilterPage::addClicked()
     fil.setDetailDefinitionName(defName, fieldName);
     fil.setValue(m_valueCriteriaEdit->text());
 
-    QContactFilter::MatchFlags matchFlags;
-    switch (m_criteriaTypeCombo->currentIndex()) {
-        case 0:
-        {
-            matchFlags |= QContactFilter::MatchExactly;
-            exprMatch = "equals";
-        }
-        break;
-
-        case 1:
-        {
-            matchFlags |= QContactFilter::MatchStartsWith;
-            exprMatch = "starts with";
-        }
-        break;
-
-        case 2:
-        {
-            matchFlags |= QContactFilter::MatchEndsWith;
-            exprMatch = "ends with";
-        }
-        break;
-
-        default:
-        {
-            matchFlags |= QContactFilter::MatchContains;
-            exprMatch = "contains";
-        }
-        break;
-    }
-    fil.setMatchFlags(matchFlags);
+    int flag = m_criteriaTypeCombo->itemData(m_criteriaTypeCombo->currentIndex()).toInt();
+    fil.setMatchFlags(QContactFilter::MatchFlags(flag));
+    exprMatch = m_criteriaTypeCombo->currentText().toLower();
 
     // if OR then join with OR
     if (m_joinMethodCombo->currentIndex() == 1) {
@@ -217,7 +220,7 @@ void FilterPage::clearClicked()
     m_cumulativeFilter = QContactFilter();
 }
 
-void FilterPage::doneClicked()
+void FilterPage::filterClicked()
 {
     emit showListPage(m_cumulativeFilter);
 }

@@ -47,12 +47,10 @@
 
 
 QTM_BEGIN_NAMESPACE
+class QVCard21Writer;
 QTM_END_NAMESPACE
 
-class MyQVCard21Writer;
-
 QTM_USE_NAMESPACE
-
 class UT_QVCard21Writer : public QObject
 {
      Q_OBJECT
@@ -64,11 +62,11 @@ private slots: // Tests
 
     void testEncodeVersitProperty();
     void testEncodeParameters();
-    void testQuotedPrintableEncode();
     void testEncodeGroupsAndName();
+    void testQuotedPrintableEncode();
 
 private: // Data
-    MyQVCard21Writer* mWriter;
+    QVCard21Writer* mWriter;
 };
 
 #endif // UT_QVCARD21WRITER_H

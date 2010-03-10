@@ -46,6 +46,11 @@
 
 #include <QList>
 #include <QSharedDataPointer>
+#include <QVariant>
+
+QT_BEGIN_NAMESPACE
+class QTextCodec;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 
@@ -60,26 +65,35 @@ public:
     ~QVersitDocument();
 
     QVersitDocument& operator=(const QVersitDocument& other);
-    
+    bool operator==(const QVersitDocument& other) const;
+    bool operator!=(const QVersitDocument& other) const;
+
     /*! Versit document type */
     enum VersitType {
-        VCard21,   // vCard version 2.1
-        VCard30    // vCard version 3.0 (RFC 2426)
+        InvalidType,
+        VCard21Type,   // vCard version 2.1
+        VCard30Type    // vCard version 3.0 (RFC 2426)
     };
 
     // metadata about the versit document itself.
-    void setVersitType(VersitType type);
-    VersitType versitType() const;
+    void setType(VersitType type);
+    VersitType type() const;
 
     void addProperty(const QVersitProperty& property);
-    QList<QVersitProperty> properties() const;
+    void removeProperty(const QVersitProperty& property);
     void removeProperties(const QString& name);
+    QList<QVersitProperty> properties() const;
+
+    bool isEmpty() const;
+    void clear();
 
 private:
-    
+
     QSharedDataPointer<QVersitDocumentPrivate> d;
 };
 
 QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QVersitDocument))
 
 #endif // QVERSITDOCUMENT_H

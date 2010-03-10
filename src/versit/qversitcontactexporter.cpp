@@ -47,70 +47,70 @@
 #include <qcontact.h>
 #include <qcontactdetail.h>
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
 /*!
-  \class QVersitContactExporter
- 
-  \brief The QVersitContactExporter class exports QContact(s) into QVersitDocument(s).
-
+  \class QVersitContactExporterDetailHandler
+  \preliminary
+  \brief The QVersitContactExporterDetailHandler class is an interface for clients wishing to
+  implement custom export behaviour for certain contact details.
   \ingroup versit
- 
-  If the exported QContact has some detail with an image as its value,
-  signal \l QVersitContactExporter::scale() is emitted and
-  the client can scale the image's data to the size it wishes.
-  The client may retrieve the list contact details
-  which were not exported using QVersitContactExporter::unknownContactDetails().
- 
-  \code
- 
-  // An example of exporting a QContact:
-   QVersitContactExporter contactExporter;
-   QContact contact;
- 
-   // Create a name
-   QContactName name;
-   name.setFirst(QString::fromAscii("John"));
-   contact.saveDetail(&name);
- 
-   // Create an avatar type which is not supported by the exporter
-   QContactAvatar contactAvatar;
-   contactAvatar.setAvatar(QString::fromAscii("/my/image/avatar_path/texture.type"));
-   contactAvatar.setSubType(QContactAvatar::SubTypeTexturedMesh);
-   contact.saveDetail(&contactAvatar);
- 
-   // Create an organization detail with a title and a logo
-   QContactOrganization organization;
-   organization.setTitle(QString::fromAscii("Developer"));
-   organization.setLogo(QString::fromAscii("/my/image/logo_path/logo.jpg"));
-   contact.saveDetail(&organization);
- 
-   QVersitDocument versitDocument = contactExporter.exportContact(contact);
-   // Client will receive the signal "scale" with the logo image path
- 
-   QList<QContactDetail> unknownDetails = contactExporter.unknownContactDetails();
- 
-   // The returned unknownDetails can be processed by the client and
-   // the client can append details directly into QVersitDocument if needed.
-   // (In this example QContactAvatar::SubTypeTexturedMesh.
-   //  Currently for QContactAvatar details,
-   //  only exporting subtypes QContactAvatar::SubTypeImage and
-   //  QContactAvatar::SubTypeAudioRingtone is supported.)
- 
-  \endcode
- 
-  \sa QVersitDocument, QVersitProperty
+
+  \sa QVersitContactExporter
  */
 
+/*!
+ * \fn virtual QVersitContactExporterDetailHandler::~QVersitContactExporterDetailHandler()
+ * Frees any memory in use by this handler.
+ */
 
 /*!
- * \fn void QVersitContactExporter::scale(const QString& imageFileName, QByteArray& imageData)
- * This signal is emitted by \l QVersitContactExporter::exportContact(),
- * when a contact detail containing an image is found in a QContact.
- * The input for the client is the path of the image in \a imageFileName.
- * When the client has performed the scaling,
- * it should write the result to \a imageData.
- * Image scaling can be done for example by using class QImage.
+ * \fn virtual bool QVersitContactExporterDetailHandler::preProcessDetail(const QContact& contact, const QContactDetail& detail, QVersitDocument* document) = 0;
+ * Process \a detail and update \a document with the corresponding QVersitProperty(s).
+ * \a contact provides the context within which the detail was found.
+ *
+ * Returns true if the detail has been handled and requires no furthur processing, false otherwise.
+ *
+ * This function is called on every QContactDetail encountered during an export.  Supply this
+ * function and return true to implement custom export behaviour.
+ */
+
+/*!
+ * \fn virtual bool QVersitContactExporterDetailHandler::postProcessDetail(const QContact& contact, const QContactDetail& detail, bool alreadyProcessed, QVersitDocument* document) = 0;
+ * Process \a detail and update \a document with the corresponding QVersitProperty(s).
+ * \a contact provides the context within which the detail was found.
+ * \a alreadyProcessed is true if the detail has already been processed either by
+ * \l preProcessDetail() or by QVersitContactExporter itself.
+ *
+ * Returns true if the detail has been handled, false otherwise.
+ *
+ * This function is called on every \l QContactDetail encountered during an export.  This can be
+ * used to implement support for QContactDetails not supported by QVersitContactExporter.
+ */
+
+/*!
+ * \class QVersitContactExporter
+ * \preliminary
+ * \brief The QVersitContactExporter class converts \l {QContact}{QContacts} into
+ * \l {QVersitDocument}{QVersitDocuments}.
+ * \ingroup versit
+ *
+ * A \l QVersitResourceHandler is associated with the exporter to supply the behaviour for loading
+ * files from persistent storage.  By default, this is set to a \l QVersitDefaultResourceHandler,
+ * which supports basic resource loading from the file system.  An alternative resource handler
+ * can be specified with setResourceHandler().
+ *
+ * By associating a \l QVersitContactExporterDetailHandler with the exporter using
+ * setDetailHandler(), the client can pass in a handler to override the processing of details and/or
+ * handle details that QVersitContactExporter doesn't support.
+ *
+ * An example detail handler that logs unknown properties:
+ * \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Detail handler
+ *
+ * An example usage of QVersitContactExporter
+ * \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Export example
+ *
+ * \sa QVersitDocument, QVersitProperty, QVersitContactExporterDetailHandler, QVersitResourceHandler
  */
 
 /*!
@@ -119,8 +119,6 @@ QTM_BEGIN_NAMESPACE
 QVersitContactExporter::QVersitContactExporter()
     : d(new QVersitContactExporterPrivate())
 {
-    connect(d, SIGNAL(scale(const QString&,QByteArray&)),
-            this, SIGNAL(scale(const QString&,QByteArray&)));
 }
 
 /*!
@@ -128,33 +126,62 @@ QVersitContactExporter::QVersitContactExporter()
  */
 QVersitContactExporter::~QVersitContactExporter()
 {
+    delete d;
 }
 
 /*!
- * Returns the versit document corresponding
- * to the \a contact and \a versitType.
+ * Converts \a contacts into a list of corresponding QVersitDocuments, using the format given by
+ * \a versitType.
  */
-QVersitDocument QVersitContactExporter::exportContact(
-    const QContact& contact,
+QList<QVersitDocument> QVersitContactExporter::exportContacts(
+    const QList<QContact>& contacts,
     QVersitDocument::VersitType versitType)
 {
-    QVersitDocument versitDocument;
-    versitDocument.setVersitType(versitType);
-    d->exportContact(versitDocument,contact);
+    QList<QVersitDocument> list;
+    foreach (QContact contact, contacts) {
+        QVersitDocument versitDocument;
+        versitDocument.setType(versitType);
+        d->exportContact(contact, versitDocument);
+        list.append(versitDocument);
+    }
 
-    return versitDocument;
+    return list;
 }
 
 /*!
- * Returns the list of contact details, which were not exported
- * by the most recent call of \l QVersitContactExporter::exportContact().
+ * Sets \a handler to be the handler for processing QContactDetails, or 0 to have no handler.
+ *
+ * Does not take ownership of the handler.  The client should ensure the handler remains valid for
+ * the lifetime of the exporter.
  */
-QList<QContactDetail> QVersitContactExporter::unknownContactDetails()
+void QVersitContactExporter::setDetailHandler(QVersitContactExporterDetailHandler* handler)
 {
-    return d->mUnknownContactDetails;
+    d->mDetailHandler = handler;
 }
 
+/*!
+ * Gets the handler for processing QContactDetails.
+ */
+QVersitContactExporterDetailHandler* QVersitContactExporter::detailHandler() const
+{
+    return d->mDetailHandler;
+}
 
-#include "moc_qversitcontactexporter.cpp"
+/*!
+ * Sets \a handler to be the handler to load files with, or 0 to have no handler.
+ *
+ * Does not take ownership of the handler.  The client should ensure the handler remains valid for
+ * the lifetime of the exporter.
+ */
+void QVersitContactExporter::setResourceHandler(QVersitResourceHandler* handler)
+{
+    d->mResourceHandler = handler;
+}
 
-QTM_END_NAMESPACE
+/*!
+ * Returns the associated resource handler.
+ */
+QVersitResourceHandler* QVersitContactExporter::resourceHandler() const
+{
+    return d->mResourceHandler;
+}

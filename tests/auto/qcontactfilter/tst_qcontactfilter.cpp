@@ -73,7 +73,10 @@ private slots:
     void boringFilters();
     void idListFilter();
 
+    void traits();
+
     void sortObject(); // should perhaps be in a different test :)
+    void sortTraits();
 };
 
 tst_QContactFilter::tst_QContactFilter()
@@ -620,27 +623,27 @@ void tst_QContactFilter::relationshipFilter()
 
     QVERIFY(crf.type() == QContactFilter::RelationshipFilter);
 
-    QVERIFY(crf.role() == QContactRelationshipFilter::Either);
+
     QVERIFY(crf.relationshipType() == QString());
-    QVERIFY(crf.otherParticipantId() == QContactId());
+    QVERIFY(crf.relatedContactId() == QContactId());
 
     QContactId newId;
     newId.setManagerUri("test");
     newId.setLocalId(QContactLocalId(5));
-    crf.setOtherParticipantId(newId);
-    QVERIFY(crf.role() == QContactRelationshipFilter::Either);
-    QVERIFY(crf.relationshipType() == QString());
-    QVERIFY(crf.otherParticipantId() == newId);
+    crf.setRelatedContactId(newId);
 
-    crf.setRole(QContactRelationshipFilter::First);
-    QVERIFY(crf.role() == QContactRelationshipFilter::First);
     QVERIFY(crf.relationshipType() == QString());
-    QVERIFY(crf.otherParticipantId() == newId);
+    QVERIFY(crf.relatedContactId() == newId);
+
+    crf.setRelatedContactRole(QContactRelationshipFilter::First);
+    
+    QVERIFY(crf.relationshipType() == QString());
+    QVERIFY(crf.relatedContactId() == newId);
 
     crf.setRelationshipType(QContactRelationship::HasManager);
-    QVERIFY(crf.role() == QContactRelationshipFilter::First);
+
     QVERIFY(crf.relationshipType() == QContactRelationship::HasManager);
-    QVERIFY(crf.otherParticipantId() == newId);
+    QVERIFY(crf.relatedContactId() == newId);
 
     /* Test op= */
     QContactFilter f = crf;
@@ -914,7 +917,27 @@ void tst_QContactFilter::idListFilter()
     idf.setIds(ids); // force a detach
 }
 
+void tst_QContactFilter::traits()
+{
+    // QCOMPARE(sizeof(QContactFilter), sizeof(void *));
+    QTypeInfo<QTM_PREPEND_NAMESPACE(QContactFilter)> ti;
+    QVERIFY(ti.isComplex);
+    QVERIFY(!ti.isStatic);
+    QVERIFY(ti.isLarge); // virtual table + d pointer
+    QVERIFY(!ti.isPointer);
+    QVERIFY(!ti.isDummy);
+}
 
+void tst_QContactFilter::sortTraits()
+{
+    QCOMPARE(sizeof(QContactSortOrder), sizeof(void *));
+    QTypeInfo<QTM_PREPEND_NAMESPACE(QContactSortOrder)> ti;
+    QVERIFY(ti.isComplex);
+    QVERIFY(!ti.isStatic);
+    QVERIFY(!ti.isLarge);
+    QVERIFY(!ti.isPointer);
+    QVERIFY(!ti.isDummy);
+}
 
 
 QTEST_MAIN(tst_QContactFilter)

@@ -24,12 +24,14 @@
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactavatar.html#avatar">avatar</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QPixmap </td><td class="memItemRight" valign="bottom"><b><a href="qcontactavatar.html#pixmap">pixmap</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactavatar.html#setAvatar">setAvatar</a></b> ( const QString &amp; <i>avatar</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactavatar.html#setPixmap">setPixmap</a></b> ( const QPixmap &amp; <i>pixmap</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactavatar.html#setSubType">setSubType</a></b> ( const QString &amp; <i>subType</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactavatar.html#subType">subType</a></b> () const</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>17 public functions inherited from <a href="qcontactdetail.html#public-functions">QContactDetail</a></li>
+<li><div bar="2" class="fn"></div>25 public functions inherited from <a href="qcontactdetail.html#public-functions">QContactDetail</a></li>
 </ul>
 <hr />
 <a name="public-variables"></a>
@@ -37,6 +39,7 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactavatar.html#DefinitionName-var">DefinitionName</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactavatar.html#FieldAvatar-var">FieldAvatar</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactavatar.html#FieldAvatarPixmap-var">FieldAvatarPixmap</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactavatar.html#FieldSubType-var">FieldSubType</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactavatar.html#SubTypeAudioRingtone-var">SubTypeAudioRingtone</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactavatar.html#SubTypeImage-var">SubTypeImage</a></b></td></tr>
@@ -58,10 +61,19 @@
 <h3 class="fn"><a name="avatar"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QContactAvatar::avatar () const</h3>
 <p>Returns the location of an avatar file associated with the contact.</p>
 <p>See also <a href="qcontactavatar.html#setAvatar">setAvatar</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactAvatar/pixmap"></a>
+<h3 class="fn"><a name="pixmap"></a><a href="http://qt.nokia.com/doc/4.6/qpixmap.html">QPixmap</a> QContactAvatar::pixmap () const</h3>
+<p>Returns a thumbnail for a picture associated with this contact.</p>
+<p>See also <a href="qcontactavatar.html#setPixmap">setPixmap</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactAvatar/setAvatar"></a>
 <h3 class="fn"><a name="setAvatar"></a>void QContactAvatar::setAvatar ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>avatar</i> )</h3>
 <p>Sets the location of an avatar file associated with the contact to <i>avatar</i>.</p>
 <p>See also <a href="qcontactavatar.html#avatar">avatar</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactAvatar/setPixmap"></a>
+<h3 class="fn"><a name="setPixmap"></a>bool QContactAvatar::setPixmap ( const <a href="http://qt.nokia.com/doc/4.6/qpixmap.html">QPixmap</a> &amp; <i>pixmap</i> )</h3>
+<p>Sets the thumbnail of a picture avatar associated with the contact to <i>pixmap</i>. If <i>pixmap</i> is empty, the thumbnail pixmap will be removed.</p>
+<p>Returns true if the pixmap could be set, and false otherwise.</p>
+<p>See also <a href="qcontactavatar.html#pixmap">pixmap</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactAvatar/setSubType"></a>
 <h3 class="fn"><a name="setSubType"></a>void QContactAvatar::setSubType ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>subType</i> )</h3>
 <p>Sets the subtype which this detail implements to be the given <i>subType</i>.</p>
@@ -77,6 +89,9 @@
 <p>The constant string which identifies the definition of details which are avatars.</p>
 <a name="//apple_ref/cpp/data/QContactAvatar/FieldAvatar"></a>
 <h3 class="fn"><a name="FieldAvatar-var"></a>const char * QContactAvatar::FieldAvatar</h3>
+<p>The constant key for which the path the avatar value is stored in details of the <a href="qcontactavatar.html">QContactAvatar</a> type.</p>
+<a name="//apple_ref/cpp/data/QContactAvatar/FieldAvatarPixmap"></a>
+<h3 class="fn"><a name="FieldAvatarPixmap-var"></a>const char * QContactAvatar::FieldAvatarPixmap</h3>
 <p>The constant key for which the path the avatar value is stored in details of the <a href="qcontactavatar.html">QContactAvatar</a> type.</p>
 <a name="//apple_ref/cpp/data/QContactAvatar/FieldSubType"></a>
 <h3 class="fn"><a name="FieldSubType-var"></a>const char * QContactAvatar::FieldSubType</h3>

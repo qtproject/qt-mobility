@@ -62,13 +62,15 @@ public:
     const char* HasMember;
     const char* Aggregates;
     const char* Is;
+    const char* IsSameAs;
     const char* HasAssistant;
     const char* HasManager;
     const char* HasSpouse;
 #else
     Q_DECLARE_LATIN1_LITERAL(HasMember, "HasMember");
     Q_DECLARE_LATIN1_LITERAL(Aggregates, "Aggregates");
-    Q_DECLARE_LATIN1_LITERAL(Is, "Is");
+    Q_DECLARE_LATIN1_LITERAL(Is, "IsSameAs"); // deprecated
+    Q_DECLARE_LATIN1_LITERAL(IsSameAs, "IsSameAs");
     Q_DECLARE_LATIN1_LITERAL(HasAssistant, "HasAssistant");
     Q_DECLARE_LATIN1_LITERAL(HasManager, "HasManager");
     Q_DECLARE_LATIN1_LITERAL(HasSpouse, "HasSpouse");

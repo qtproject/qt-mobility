@@ -62,6 +62,7 @@
 #include <QApplication>
 #include <QMenuBar>
 #include <QTabWidget>
+#include <QScrollArea>
 
 namespace {
 
@@ -77,7 +78,7 @@ QString simpleAddress(const QString &recipient)
 
 QString simpleAddress(const QMessageAddress &address)
 {
-    return simpleAddress(address.recipient());
+    return simpleAddress(address.addressee());
 }
 
 //! [contact-lookup]
@@ -100,14 +101,14 @@ QString contactDisplayName(const QMessageAddress &address)
     }
 
     QContactManager manager;
-    foreach (const QContactLocalId &contactId, manager.contacts(filter)) {
+    foreach (const QContactLocalId &contactId, manager.contactIds(filter)) {
         // Any match is acceptable
         const QContact &contact(manager.contact(contactId));
         return contact.displayLabel();
     }
 
     // We couldn't match anything, so return the original address
-    return address.recipient();
+    return address.addressee();
 }
 //! [contact-lookup]
 
@@ -385,7 +386,10 @@ void AddressFinder::setupUi()
     connect(tabWidget,SIGNAL(currentChanged(int)),this,SLOT(tabChanged(int)));
 #else
     QWidget* centralWidget = new QWidget(this);
-    setCentralWidget(centralWidget);
+    QScrollArea* sa = new QScrollArea(this);
+    sa->setWidget(centralWidget);
+    sa->setWidgetResizable(true);
+    setCentralWidget(sa);
     QVBoxLayout* centralLayout = new QVBoxLayout(centralWidget);
 #endif
 

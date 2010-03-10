@@ -51,7 +51,6 @@
 #include <QObject>
 #include <QPluginLoader>
 #include <QFile>
-//#include <QDebug>
 #include <QCoreApplication>
 #include <QDir>
 
@@ -74,21 +73,19 @@ static QString qservicemanager_resolveLibraryPath(const QString &libNameOrPath)
             libPath = fi.completeBaseName() + QLatin1String(".qtplugin");
         else
             libPath += QLatin1String(".qtplugin");
-#endif       
-        
+
+        QLibrary lib(libPath);
+        if (QFile::exists(libPath) && lib.load()) {
+            lib.unload();
+            return libPath;
+        }
+#else       
         QLibrary lib(libPath);  
         if (lib.load()) {
             lib.unload();
-#ifdef Q_OS_SYMBIAN
-         QFileInfo fi2(libPath);
-         QString fileName = lib.fileName();
-         fileName.chop(4); // .dll is removed
-         libPath = QDir::toNativeSeparators(fi2.absolutePath()) + QDir::separator() + fileName + QLatin1String(".qtplugin");
-         // qDebug() << libPath;
-         return libPath;  
-#endif
             return lib.fileName();
         }
+#endif        
     }
     return QString();
 }
@@ -431,6 +428,11 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
 
     If \a interfaceName is not a known interface the returned pointer will be null.
 
+    Note that using this function implies that service and client share
+    the implamentation of T which means that service and client become tightly coupled.
+    This may cause issue during later updates as certain changes may require code changes
+    to the service and client.
+
     The caller takes ownership of the returned pointer.
 
     The security session object is not mandatory. If the session pointer is null,
@@ -450,6 +452,11 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     by the caller of this function. The template class must be derived from QObject.
 
     If the \a serviceDescriptor is not valid the returned pointer will be null.
+
+    Note that using this function implies that service and client share
+    the implamentation of T which means that service and client become tightly coupled.
+    This may cause issue during later updates as certain changes may require code changes
+    to the service and client.
 
     The caller takes ownership of the returned pointer.
 

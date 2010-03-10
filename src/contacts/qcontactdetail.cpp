@@ -45,7 +45,12 @@
 
 QTM_BEGIN_NAMESPACE
 
+/* Initialise our static private data member */
+QAtomicInt QContactDetailPrivate::lastDetailKey(1);
+
 /* Definitions of predefined string constants */
+Q_DEFINE_LATIN1_LITERAL(QContactDetail::FieldDetailUri, "DetailUri");
+Q_DEFINE_LATIN1_LITERAL(QContactDetail::FieldLinkedDetailUris, "LinkedDetailUris");
 Q_DEFINE_LATIN1_LITERAL(QContactDetail::FieldContext, "Context");
 Q_DEFINE_LATIN1_LITERAL(QContactDetail::ContextOther, "Other");
 Q_DEFINE_LATIN1_LITERAL(QContactDetail::ContextHome, "Home");
@@ -65,9 +70,18 @@ Q_DEFINE_LATIN1_LITERAL(QContactDetail::ContextWork, "Work");
   restrictions on their values, and any restrictions on creating or updating details of that
   definition.
  
-  A field which is common to all details is the context field.  This field is intended to store the
-  context that this detail is associated with.  Commonly this will be something like
-  "Home" or "Work", although no limitations are placed on which values may be stored in this field.
+  One field which is common to all details is the context field.  This field is intended to store the
+  context or contexts that this detail is associated with.  Commonly this will be something like
+  "Home" and/or "Work", although no limitations are placed on which values may be stored in this field
+  in the default schema.
+
+  There are two other, related fields which are common to all details.  The first is
+  \a QContactDetail::FieldDetailUri, which stores the unique URI of the detail if one exists.
+  The field is not mandatory, and backends are not required to verify that the given URI is indeed
+  unique within the contact.  The second field is \a QContactDetail::LinkedDetailUris, which stores
+  a list of detail URIs to which this detail is linked.  The link is one-way, and intended mainly
+  for use by read-only details which are populated by the backend (for example, a presence detail
+  which is linked to a particular online account detail of the contact).
  
   It is possible to inherit from QContactDetail to provide convenience or
   standardized access to values.  For example, \l QContactPhoneNumber provides
@@ -114,37 +128,30 @@ Q_DEFINE_LATIN1_LITERAL(QContactDetail::ContextWork, "Work");
  */
 
 /*!
- * \macro Q_DECLARE_CUSTOM_CONTACT_DETAIL
- * \relates QContactDetail
- *
- * Macro for simplifying declaring custom (leaf) detail classes.
- *
- * If you are creating a convenience class for a type of QContactDetail,
- * you should use this macro when declaring your class to ensure that
- * it interoperates with other contact functionality.
- *
- * Here is an example of a class (\l QContactPhoneNumber) using this macro.
- * Note that the class provides some predefined constants
- * and some convenience methods that return values associated with schema
- * fields.
- *
- * \snippet ../../src/contacts/details/qcontactphonenumber.h 0
- *
+  \macro Q_DECLARE_CUSTOM_CONTACT_DETAIL
+  \relates QContactDetail
+
+  Macro for simplifying declaring custom (leaf) detail classes.
+
+  If you are creating a convenience class for a type of QContactDetail,
+  you should use this macro when declaring your class to ensure that
+  it interoperates with other contact functionality.
+
+  Here is an example of a class (\l QContactPhoneNumber) using this macro.
+  Note that the class provides some predefined constants
+  and some convenience methods that return values associated with schema
+  fields.
+
+  \snippet ../../src/contacts/details/qcontactphonenumber.h 0
  */
 
 /*!
- * \fn QContactDetail::operator!=(const QContactDetail& other) const
- * Returns true if the values or id of this detail is different to those of the \a other detail
+  \fn QContactDetail::operator!=(const QContactDetail& other) const
+  Returns true if the values or id of this detail is different to those of the \a other detail
  */
 
 /*!
- * \fn T QContactDetail::value(const QString& key) const
- * \overload
- * Returns the value of the template type associated with the given \a key
- */
-
-/*!
- * Constructs a new, empty detail
+  Constructs a new, empty detail
  */
 QContactDetail::QContactDetail()
     : d(new QContactDetailPrivate)
@@ -208,10 +215,15 @@ QString QContactDetail::definitionName() const
     return d.constData()->m_definitionName;
 }
 
-/*! Compares this detail to \a other.  Returns true if the definition and values of \a other are equal to those of this detail */
+/*! Compares this detail to \a other.  Returns true if the definition and values of \a other are equal to those of this detail.
+    The keys of each detail are not considered during the comparison, in order to allow details from different contacts to
+    be compared according to their values. */
 bool QContactDetail::operator==(const QContactDetail& other) const
 {
     if (d.constData()->m_definitionName != other.d.constData()->m_definitionName)
+        return false;
+
+    if (d.constData()->m_access != other.d.constData()->m_access)
         return false;
 
     if (d.constData()->m_values != other.d.constData()->m_values)
@@ -240,13 +252,35 @@ bool QContactDetail::isEmpty() const
     return true;
 }
 
-/*! Returns the value stored in this detail for the given \a key as a QString, or an empty QString if no value for the given \a key exists */
+/*! Returns the key of this detail. */
+int QContactDetail::key() const
+{
+    return d->m_id;
+}
+
+/*! Causes the implicitly-shared detail to be detached from any other copies, and generates a new key for it.
+    This ensures that calling QContact::saveDetail() will result in a new detail being saved, rather than
+    another detail being updated. */
+void QContactDetail::resetKey()
+{
+    d->m_id = QContactDetailPrivate::lastDetailKey.fetchAndAddOrdered(1);
+}
+
+/*! \overload
+  Returns the value stored in this detail for the given \a key as a QString, or an empty QString if
+  no value for the given \a key exists */
 QString QContactDetail::value(const QString& key) const
 {
     if (d.constData()->m_values.contains(key))
         return d.constData()->m_values.value(key).toString();
     return QString();
 }
+
+// A bug in qdoc means this comment needs to appear below the comment for the other value().
+/*!
+  \fn T QContactDetail::value(const QString& key) const
+  Returns the value of the template type associated with the given \a key
+ */
 
 /*! Returns the value stored in this detail for the given \a key as a QVariant, or an invalid QVariant if no value for the given \a key exists */
 QVariant QContactDetail::variantValue(const QString& key) const
@@ -257,7 +291,7 @@ QVariant QContactDetail::variantValue(const QString& key) const
 }
 
 /*!
- * Returns true if this detail has a field with the given \a key, or false otherwise.
+  Returns true if this detail has a field with the given \a key, or false otherwise.
  */
 bool QContactDetail::hasValue(const QString& key) const
 {
@@ -287,50 +321,146 @@ bool QContactDetail::removeValue(const QString& key)
     return false;
 }
 
-/*! Returns the values stored in this detail */
-QVariantMap QContactDetail::values() const
+/*!
+  Returns the values stored in this detail as a map from value key to value
+ */
+QVariantMap QContactDetail::variantValues() const
 {
     return d.constData()->m_values;
 }
 
 /*!
- * \fn void QContactDetail::setContexts(const QStringList& contexts)
- *
- * This is a convenience function that sets the \c Context field of this detail to the given \a contexts.
- *
- * It is equivalent to the following code:
- * \code
- * setValue(QContactDetail::FieldContext, contexts);
- * \endcode
- *
- * \sa setValue()
+  \enum QContactDetail::AccessConstraint
+
+  This enum defines the access constraints for a detail.  This information is typically provided by
+  the manager when a contact is retrieved.
+
+  \value NoConstraint Users can read, write, and otherwise modify this detail in any manner.
+  \value ReadOnly Users cannot write or modify values in this detail.
+  \value Irremovable Users cannot remove this detail from a contact.
+ */
+
+
+/*!
+  Returns the access constraints associated with the detail.
+
+  Some details may not be written to, while other details may
+  not be removed from a contact.
+
+  \sa QContactDetail::AccessConstraints
+ */
+QContactDetail::AccessConstraints QContactDetail::accessConstraints() const
+{
+    return d.constData()->m_access;
+}
+
+/*!
+  \fn void QContactDetail::setContexts(const QStringList& contexts)
+
+  This is a convenience function that sets the \c Context field of this detail to the given \a contexts.
+
+  It is equivalent to the following code:
+  \code
+  setValue(QContactDetail::FieldContext, contexts);
+  \endcode
+
+  \sa setValue()
  */
 
 /*!
- * \fn void QContactDetail::setContexts(const QString& context)
- *
- * This is a convenience function that sets the \c Context field of this detail to the given \a context.
- * It is useful if the detail is only valid in a single context.
- *
- * It is equivalent to the following code:
- * \code
- * setValue(FieldContext, QStringList(context));
- * \endcode
- *
- * \sa setValue()
+  \fn void QContactDetail::setContexts(const QString& context)
+
+  This is a convenience function that sets the \c Context field of this detail to the given \a context.
+  It is useful if the detail is only valid in a single context.
+
+  It is equivalent to the following code:
+  \code
+  setValue(FieldContext, QStringList(context));
+  \endcode
+
+  \sa setValue()
  */
 
 /*!
- * \fn QStringList QContactDetail::contexts() const
- *
- * This is a convenience function to return the \c Context field of this detail.
- *
- * It is equivalent to the following code:
- * \code
- * value(QContactDetail::FieldContext);
- * \endcode
- *
- * \sa value()
+  \fn QStringList QContactDetail::contexts() const
+
+  This is a convenience function to return the \c Context field of this detail.
+
+  It is equivalent to the following code:
+  \code
+  value<QStringList>(QContactDetail::FieldContext);
+  \endcode
+
+  \sa value()
+ */
+
+
+/*!
+  \fn void QContactDetail::setDetailUri(const QString& detailUri)
+
+  This is a convenience function that sets the \c DetailUri field of this detail to the given \a detailUri.
+  In order to be linked to, a detail must have a specific and (per-contact) unique detail URI set.
+
+  It is equivalent to the following code:
+  \code
+  setValue(FieldDetailUri, detailUri);
+  \endcode
+
+  \sa setValue()
+ */
+
+/*!
+  \fn QString QContactDetail::detailUri() const
+
+  This is a convenience function to return the \c DetailUri field of this detail.
+
+  It is equivalent to the following code:
+  \code
+  value(QContactDetail::FieldDetailUri);
+  \endcode
+
+  \sa value()
+ */
+
+
+/*!
+  \fn void QContactDetail::setLinkedDetailUris(const QStringList& linkedDetailUris)
+
+  This is a convenience function that sets the \c LinkedDetailUris field of this detail to the given \a linkedDetailUris.
+
+  It is equivalent to the following code:
+  \code
+  setValue(QContactDetail::FieldLinkedDetailUris, linkedDetailUris);
+  \endcode
+
+  \sa setValue()
+ */
+
+/*!
+  \fn void QContactDetail::setLinkedDetailUris(const QString& linkedDetailUri)
+
+  This is a convenience function that sets the \c LinkedDetailUris field of this detail to the given \a linkedDetailUri.
+  It is useful if the detail is linked to a single other detail in the contact.
+
+  It is equivalent to the following code:
+  \code
+  setValue(FieldLinkedDetailUris, QStringList(linkedDetailUri));
+  \endcode
+
+  \sa setValue()
+ */
+
+/*!
+  \fn QStringList QContactDetail::linkedDetailUris() const
+
+  This is a convenience function to return the \c Context field of this detail.
+
+  It is equivalent to the following code:
+  \code
+  value<QStringList>(QContactDetail::FieldLinkedDetailUris);
+  \endcode
+
+  \sa value()
  */
 
 QTM_END_NAMESPACE

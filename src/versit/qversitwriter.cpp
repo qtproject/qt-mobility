@@ -40,61 +40,79 @@
 ****************************************************************************/
 
 #include "qversitwriter.h"
-#include "qvcard21writer_p.h"
-#include "qvcard30writer_p.h"
+#include "qversitwriter_p.h"
 #include "versitutils_p.h"
 #include "qmobilityglobal.h"
 
 #include <QStringList>
+#include <QTextCodec>
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
 /*!
   \class QVersitWriter
- 
-  \brief The QVersitWriter class provides an interface
-  for writing a versit document such as a vCard to a text stream.
-
+  \preliminary
+  \brief The QVersitWriter class writes Versit documents such as vCards to a device.
   \ingroup versit
- 
+
   QVersitWriter converts a QVersitDocument into its textual representation.
   QVersitWriter supports writing to an abstract I/O device
   which can be for example a file or a memory buffer.
-  The writing can be done synchronously or asynchronously.
- 
-  \code
-  // An example of writing a simple vCard to a memory buffer:
-  QBuffer vCardBuffer;
-  vCardBuffer.open(QBuffer::ReadWrite);
-  QVersitWriter writer;
-  writer.setDevice(&vCardBuffer);
-  QVersitDocument document;
-  QVersitProperty property;
-  property.setName("N");
-  property.setValue("Citizen;John;Q;;");
-  document.addProperty(property);
-  writer.setVersitDocument(document);
-  if (writer.writeAll()) {
-      // Use the vCardBuffer...
-  }
-  \endcode
- 
+  The writing can be done asynchronously and the waitForFinished()
+  function can be used to implement a blocking write.
+
+  The serialization of the document is done in accordance with the type of the QVersitDocument
+  being written.  The value of each QVersitProperty is encoded according to the type of object:
+  \list
+  \o \l{QString}{QStrings} are serialized verbatim, unless the default codec of the writer cannot
+  encode the string: in this case, UTF-8 is used to encode it (and the CHARSET parameter added to
+  the property, as per the vCard 2.1 specification).  If the document type is vCard 2.1,
+  quoted-printable encoding may also be performed.
+  \o \l{QByteArray}{QByteArrays} are assumed to be binary data and are serialized as base-64 encoded
+  values.
+  \o \l{QVersitDocument}{QVersitDocuments} are serialized as a nested document (eg. as per the
+  AGENT property in vCard).
+  \endlist
+
   \sa QVersitDocument, QVersitProperty
  */
 
+
 /*!
- * \fn QVersitWriter::writingDone()
- * The signal is emitted by the writer when the asynchronous writing has been completed.
+ * \enum QVersitWriter::Error
+ * This enum specifies an error that occurred during the most recent operation:
+ * \value NoError The most recent operation was successful
+ * \value UnspecifiedError The most recent operation failed for an undocumented reason
+ * \value IOError The most recent operation failed because of a problem with the device
+ * \value OutOfMemoryError The most recent operation failed due to running out of memory
+ * \value NotReadyError The most recent operation failed because there is an operation in progress
+ */
+
+/*!
+ * \enum QVersitWriter::State
+ * Enumerates the various states that a reader may be in at any given time
+ * \value InactiveState Write operation not yet started
+ * \value ActiveState Write operation started, not yet finished
+ * \value CanceledState Write operation is finished due to cancelation
+ * \value FinishedState Write operation successfully completed
+ */
+
+/*!
+ * \fn QVersitWriter::stateChanged(QVersitWriter::State state)
+ * The signal is emitted by the writer when its state has changed (eg. when it has finished
+ * writing to the device).
+ * \a state is the new state of the writer.
  */
 
 /*! Constructs a new writer. */
-QVersitWriter::QVersitWriter() : d(new QVCard21Writer)
+QVersitWriter::QVersitWriter() : d(new QVersitWriterPrivate)
 {
-    connect(d,SIGNAL(finished()),this,SIGNAL(writingDone()),Qt::DirectConnection);
+    connect(d, SIGNAL(stateChanged(QVersitWriter::State)),
+            this, SIGNAL(stateChanged(QVersitWriter::State)), Qt::DirectConnection);
 }
 
-/*! 
- * Frees the memory used by the writer. 
+/*!
+ * Frees the memory used by the writer.
  * Waits until a pending asynchronous writing has been completed.
  */
 QVersitWriter::~QVersitWriter()
@@ -104,41 +122,8 @@ QVersitWriter::~QVersitWriter()
 }
 
 /*!
- * Set the versit document to be written to \a versitDocument and
- * selects the actual writer implementation based on the versit document type.
- */
-void QVersitWriter::setVersitDocument(const QVersitDocument& versitDocument)
-{
-    QVersitWriterPrivate* updatedWriter = 0;
-    switch (versitDocument.versitType()) {
-        case QVersitDocument::VCard21:
-            updatedWriter = new QVCard21Writer;
-            break;
-        case QVersitDocument::VCard30:
-            updatedWriter = new QVCard30Writer;
-            break;
-        default:
-            break;
-    }
-    if (updatedWriter) {
-        updatedWriter->mIoDevice = d->mIoDevice;
-        delete d;
-        d = updatedWriter;
-        connect(d,SIGNAL(finished()),this,SIGNAL(writingDone()),Qt::DirectConnection);
-    }
-    d->mVersitDocument = versitDocument;
-}
-
-/*!
- * Returns the current versit document.
- */
-QVersitDocument QVersitWriter::versitDocument() const
-{
-    return d->mVersitDocument;
-}
-
-/*!
  * Sets the device used for writing to \a device.
+ * Does not take ownership of the device.
  */
 void QVersitWriter::setDevice(QIODevice* device)
 {
@@ -154,37 +139,88 @@ QIODevice* QVersitWriter::device() const
 }
 
 /*!
- * Starts writing the output asynchronously.
- * Returns false if the output device has not been set or opened or
- * if there is another asynchronous write operation already pending.
- * Signal \l writingDone() is emitted when the writing has finished.
+ * Sets the default codec for the writer to use for writing the entire output.
+ *
+ * If \a codec is NULL, the writer uses the codec according to the specification prescribed default.
+ * (for vCard 2.1, ASCII; for vCard 3.0, UTF-8).
  */
-bool QVersitWriter::startWriting()
+void QVersitWriter::setDefaultCodec(QTextCodec *codec)
 {
-    bool started = false;
-    if (d->isReady() && !d->isRunning()) {
-        d->start();
-        started = true;
-    }
-
-    return started;
+    d->mDefaultCodec = codec;
 }
 
 /*!
- * Writes the output synchronously.
- * Returns false if the output device has not been set or opened or
- * if there is an asynchronous write operation pending.
- * Using this function may block the user thread for an undefined period.
- * In most cases asynchronous \l startWriting() should be used instead.
+ * Returns the document's codec.
  */
-bool QVersitWriter::writeAll()
+QTextCodec* QVersitWriter::defaultCodec() const
 {
-    bool ok = false;
-    if (!d->isRunning())
-        ok = d->write();
-    return ok;
+    return d->mDefaultCodec;
+}
+
+/*!
+ * Starts writing \a input to device() asynchronously.
+ * Returns false if the output device has not been set or opened or
+ * if there is another asynchronous write operation already pending.
+ * Signal \l stateChanged() is emitted with parameter FinishedState
+ * when the writing has finished.
+ */
+bool QVersitWriter::startWriting(const QList<QVersitDocument>& input)
+{
+    d->mInput = input;
+    if (d->state() == ActiveState || d->isRunning()) {
+        d->setError(QVersitWriter::NotReadyError);
+        return false;
+    } else if (!d->mIoDevice || !d->mIoDevice->isWritable()) {
+        d->setError(QVersitWriter::IOError);
+        return false;
+    } else {
+        d->setState(ActiveState);
+        d->setError(NoError);
+        d->start();
+        return true;
+    }
+}
+
+/*!
+ * Attempts to asynchronously cancel the write request.
+ */
+void QVersitWriter::cancel()
+{
+    d->setCanceling(true);
+}
+
+/*!
+ * If the state is ActiveState, blocks until the writer has finished writing or \a msec milliseconds
+ * has elapsed, returning true if it successfully finishes or is cancelled by the user.
+ * If the state is FinishedState, returns true immediately.
+ * Otherwise, returns false immediately.
+ */
+bool QVersitWriter::waitForFinished(int msec)
+{
+    State state = d->state();
+    if (state == ActiveState) {
+        return d->wait(msec);
+    } else if (state == FinishedState) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/*!
+ * Returns the state of the writer.
+ */
+QVersitWriter::State QVersitWriter::state() const
+{
+    return d->state();
+}
+
+/*!
+ * Returns the error encountered by the last operation.
+ */
+QVersitWriter::Error QVersitWriter::error() const
+{
+    return d->error();
 }
 
 #include "moc_qversitwriter.cpp"
-
-QTM_END_NAMESPACE

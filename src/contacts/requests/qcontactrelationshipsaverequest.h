@@ -65,9 +65,7 @@ public:
 
     /* Results */
     QList<QContactRelationship> relationships() const;
-
-signals:
-    void progress(QContactRelationshipSaveRequest* self);
+    QMap<int, QContactManager::Error> errorMap() const;
 
 private:
     Q_DISABLE_COPY(QContactRelationshipSaveRequest)

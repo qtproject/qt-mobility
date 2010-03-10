@@ -80,11 +80,12 @@ public:
     int volume() const;
     bool isMuted() const;
 
+    bool isAudioAvailable() const;
     bool isVideoAvailable() const;
     void setVideoOutput(QObject *output);
 
     bool isSeekable() const;
-    QPair<qint64, qint64> seekRange() const;
+    QMediaTimeRange availablePlaybackRanges() const;
 
     qreal playbackRate() const;
     void setPlaybackRate(qreal rate);

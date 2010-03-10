@@ -55,7 +55,7 @@ class QGeoSatelliteInfoPrivate;
 class Q_LOCATION_EXPORT QGeoSatelliteInfo
 {
 public:
-    enum Property {
+    enum Attribute {
         Elevation,
         Azimuth
     };
@@ -67,7 +67,9 @@ public:
     QGeoSatelliteInfo &operator=(const QGeoSatelliteInfo &other);
 
     bool operator==(const QGeoSatelliteInfo &other) const;
-    inline bool operator!=(const QGeoSatelliteInfo &other) const { return !operator==(other); }
+    inline bool operator!=(const QGeoSatelliteInfo &other) const {
+        return !operator==(other);
+    }
 
     void setPrnNumber(int prn);
     int prnNumber() const;
@@ -75,11 +77,11 @@ public:
     void setSignalStrength(int signalStrength);
     int signalStrength() const;
 
-    void setProperty(Property property, qreal value);
-    qreal property(Property property) const;
-    void removeProperty(Property property);
+    void setAttribute(Attribute attribute, qreal value);
+    qreal attribute(Attribute attribute) const;
+    void removeAttribute(Attribute attribute);
 
-    bool hasProperty(Property property) const;
+    bool hasAttribute(Attribute attribute) const;
 
 private:
 #ifndef QT_NO_DEBUG_STREAM

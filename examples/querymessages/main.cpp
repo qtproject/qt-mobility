@@ -39,21 +39,34 @@
 **
 ****************************************************************************/
 
-#include <QApplication>
-
+#include <QCoreApplication>
 #include <qmessagemanager.h>
 #include <qdebug.h>
+#ifdef Q_OS_SYMBIAN
+#include <iostream>
+#endif
 
 QTM_USE_NAMESPACE
 
+static void printMessage(const QString& msg)
+{
+#ifdef Q_OS_SYMBIAN
+    std::cout << qPrintable(msg) << std::endl;
+#else
+    qDebug() << qPrintable(msg);
+#endif
+}
+
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
+    QCoreApplication app(argc, argv);
+
+    printMessage("Querying messages...");
 
 //! [setup-query]
     // Match all messages whose status field includes the Incoming flag
     QMessageFilter filter(QMessageFilter::byStatus(QMessage::Incoming));
-    
+
     // Order the matching results by their reception timestamp, in descending order
     QMessageSortOrder sortOrder(QMessageSortOrder::byReceptionTimeStamp(Qt::DescendingOrder));
 //! [setup-query]
@@ -99,11 +112,11 @@ int main(int argc, char *argv[])
                     } else if ((arg == "to") || (arg == "cc") || (arg == "bcc")) {
                         QStringList addresses;
                         foreach (const QMessageAddress &addr, (arg == "to" ? message.to() : (arg == "cc" ? message.cc() : message.bcc()))) {
-                            addresses.append(addr.recipient());
+                            addresses.append(addr.addressee());
                         }
                         result.append(addresses.join(","));
                     } else if (arg == "from") {
-                        result.append(message.from().recipient());
+                        result.append(message.from().addressee());
                     } else if (arg == "type") {
                         result.append(message.contentType() + '/' + message.contentSubType());
                     } else if (arg == "body") {
@@ -119,10 +132,13 @@ int main(int argc, char *argv[])
             }
 
 //! [print-result]
-            qDebug() << qPrintable(QString::number(++n) + '\t') << qPrintable(result.join("\t"));
+            printMessage(QString::number(++n) + '\t' + result.join("\t"));
 //! [print-result]
         }
     }
+
+    if(matchingIds.isEmpty())
+        printMessage("No matching messages!");
 
     return 0;
 }

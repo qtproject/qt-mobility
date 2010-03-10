@@ -59,13 +59,12 @@ public:
     ~QContactDetailDefinitionRemoveRequest();
 
     /* Selection */
-    void setNames(const QStringList& names);
-    QStringList names() const;
-    void setContactType(const QString& contactType);
+    void setDefinitionNames(const QString& contactType, const QStringList& names);
+    QStringList definitionNames() const;
     QString contactType() const;
 
-signals:
-    void progress(QContactDetailDefinitionRemoveRequest* self);
+    /* Results */
+    QMap<int, QContactManager::Error> errorMap() const;
 
 private:
     Q_DISABLE_COPY(QContactDetailDefinitionRemoveRequest)

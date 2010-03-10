@@ -41,7 +41,6 @@
 
 
 #include <QtTracker/ontologies/nco.h>
-#include <QDebug>
 
 #include "trackerchangelistener.h"
 #include "qcontact.h"
@@ -51,31 +50,13 @@ using namespace SopranoLive;
 TrackerChangeListener::TrackerChangeListener(QObject* parent)
 :QObject(parent)
 {
-    SopranoLive::BackEnds::Tracker::ClassUpdateSignaler *signaler =
-            SopranoLive::BackEnds::Tracker::ClassUpdateSignaler::get(
+    signaler_contact = SopranoLive::BackEnds::Tracker::ClassUpdateSignaler::get(
                     nco::Contact::iri());
-    // Note here that we are not using
-    // QAbstractItemModel signals from LiveNodes::model() because
-    // node list for which notification comes is fixed. Those are used for
-    // async implementation
-    if (signaler)
-    {
-        connect(signaler, SIGNAL(subjectsAdded(const QStringList &)),
-                SLOT(subjectsAdded(const QStringList &)));
-        connect(signaler,
-                SIGNAL(baseRemoveSubjectsd(const QStringList &)),
-                SLOT(subjectsRemoved(const QStringList &)));
-        connect(signaler,
-                SIGNAL(subjectsChanged(const QStringList &)),
-                SLOT(subjectsChanged(const QStringList &)));
-    }
-    //this corresponds with telepathysupport/ TrackerSink::onSimplePresenceChanged
-       signaler = SopranoLive::BackEnds::Tracker::ClassUpdateSignaler::get(
-                    nfo::IMAccount::iri());
-        connect(signaler,
-                SIGNAL(subjectsChanged(const QStringList &)),
-                SLOT(imAccountChanged(const QStringList &)));
+    connectSignals(signaler_contact);
 
+    signaler_imaccount = SopranoLive::BackEnds::Tracker::ClassUpdateSignaler::get(
+                    nco::IMAccount::iri());
+    connectSignals(signaler_imaccount);
 }
 
 TrackerChangeListener::~TrackerChangeListener()
@@ -86,6 +67,22 @@ TrackerChangeListener::~TrackerChangeListener()
 // let's see which signals will be used from libqttracker
 QContactLocalId url2UniqueId(const QString &contactUrl)
 {
+
+    /* Telepathy URI would look like telepathy:///org/freedesktop...
+       convert the URI component which contains the 
+       account + contat id to uint32 expected by
+       qcontactlocalid
+    */
+    if (contactUrl.contains("telepathy")) {
+        QContactLocalId id = 0;
+        QStringList decoded = contactUrl.split(":");
+        id = qHash(decoded.value(1).remove(0,1));
+        return id;
+    }
+
+    /* handle conatact:interger URL types comming from
+       which are non telepathy url's
+    */
     QRegExp rx("(\\d+)");
     bool conversion = false;
     QContactLocalId id = 0;
@@ -106,7 +103,6 @@ void TrackerChangeListener::subjectsAdded(const QStringList &subjects)
     {
         added << url2UniqueId(uri);
     }
-    qDebug() << Q_FUNC_INFO << "added contactids:" << added;
     emit contactsAdded(added);
 }
 
@@ -117,7 +113,6 @@ void TrackerChangeListener::subjectsRemoved(const QStringList &subjects)
     {
         added << url2UniqueId(uri);
     }
-    qDebug() << Q_FUNC_INFO << "removed contactids:" << added;
     emit contactsRemoved(added);
 }
 
@@ -131,28 +126,9 @@ void TrackerChangeListener::subjectsChanged(const QStringList &subjects)
             changed << id;
         }
     }
-    qDebug() << Q_FUNC_INFO << "changed contactids:" << changed;
     emit contactsChanged(changed);
 }
 
-void TrackerChangeListener::imAccountChanged(const QStringList& subjects) {
-    // leave the debug output for few days as TODO remainder to fix writing to tracker
-    qDebug() << Q_FUNC_INFO << subjects;
-
-    RDFVariable RDFContact = RDFVariable::fromType<nco::PersonContact>();
-    // fetch all changed contacts at once
-    QSet<QUrl> urls;
-    foreach(const QString &str, subjects)
-        urls << QUrl(str);
-    RDFContact.property<nco::hasIMAccount>().isMemberOf(urls.toList());
-    RDFSelect query;
-    query.addColumn("contactId", RDFContact.property<nco::contactUID>());
-
-    QSharedPointer<AsyncQuery> request = QSharedPointer<AsyncQuery> (new AsyncQuery(query),
-                       &QObject::deleteLater);
-    connect(request.data(), SIGNAL(queryReady(AsyncQuery*)), SLOT(imQueryReady(AsyncQuery*)));
-    pendingQueries[request.data()] = request;
-}
 
 AsyncQuery::AsyncQuery(RDFSelect selectQuery)
 {
@@ -166,16 +142,20 @@ void AsyncQuery::queryReady()
     emit queryReady(this);
 }
 
-void TrackerChangeListener::imQueryReady(AsyncQuery* req)
-{
-    if( pendingQueries.contains(req))
+void TrackerChangeListener::connectSignals(SopranoLive::BackEnds::Tracker::ClassUpdateSignaler *signaler) {
+    // Note here that we are not using
+    // QAbstractItemModel signals from LiveNodes::model() because
+    // node list for which notification comes is fixed. Those are used for
+    // async implementation
+    if (signaler)
     {
-        QSharedPointer<AsyncQuery> query = pendingQueries.take(req);
-        QSet<QContactLocalId> contactsChangedPresence;
-        for(int i=0; i<query->nodes->rowCount(); i++) {
-            contactsChangedPresence << query->nodes->index(i, 0).data().toUInt();
-        }
-        if( !contactsChangedPresence.isEmpty() )
-            emit contactsChanged(contactsChangedPresence.toList());
+        connect(signaler, SIGNAL(subjectsAdded(const QStringList &)),
+                SLOT(subjectsAdded(const QStringList &)));
+        connect(signaler,
+                SIGNAL(baseRemoveSubjectsd(const QStringList &)),
+                SLOT(subjectsRemoved(const QStringList &)));
+        connect(signaler,
+                SIGNAL(subjectsChanged(const QStringList &)),
+                SLOT(subjectsChanged(const QStringList &)));
     }
 }

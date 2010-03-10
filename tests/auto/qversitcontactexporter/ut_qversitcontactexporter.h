@@ -49,7 +49,9 @@
 QTM_BEGIN_NAMESPACE
 
 class QVersitContactExporter;
-class MyQVersitContactExporterPrivate;
+class QVersitContactExporterPrivate;
+class MyQVersitResourceHandler;
+class MyQVersitContactExporterDetailHandler;
 
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
@@ -58,17 +60,12 @@ class UT_QVersitContactExporter : public QObject
 {
     Q_OBJECT
 
-public slots:
-    void scale(const QString& imageFileName, QByteArray& imageData);
-
 private slots:
     void init();
     void cleanup();
-    void initTestCase();
-    void cleanupTestCase();
 
     void testConvertContact();
-    void testUnknownContactDetails();
+    void testContactDetailHandler();
     void testEncodeName();
     void testEncodePhoneNumber();
     void testEncodeEmailAddress();
@@ -90,17 +87,15 @@ private slots:
     void testEncodeFamily();
     void testEncodeAvatar();
     void testEncodeDisplayLabel();
+    void testDefaultResourceHandler();
 
     // Test Utility Function
     QContactDetail searchDetail(QList<QContactDetail> details, QString search);
 
 private: // Data
     QVersitContactExporter* mExporter;
-    MyQVersitContactExporterPrivate* mExporterPrivate;
-    QString mTestPhotoFile;
-    QString mTestAudioFile;
-    bool mScaleSignalEmitted;
-    QByteArray mSimulatedImageData;
+    MyQVersitResourceHandler* mResourceHandler;
+    MyQVersitContactExporterDetailHandler* mDetailHandler;
 };
 
 #endif // UT_QVERSITCONTACTEXPORTER_H

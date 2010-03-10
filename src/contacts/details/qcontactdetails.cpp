@@ -38,6 +38,13 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include <QByteArray>
+#include <QUrl>
+#include <QFile>
+#include <QPixmap>
+#include <QImage>
+#include "qcontactmanager.h"
+#include "qtcontacts.h"
 
 #include "qcontactdetails.h"
 
@@ -96,11 +103,11 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
-   \class QContactGeolocation
-   \brief The QContactGeolocation class contains the global location
+   \class QContactGeoLocation
+   \brief The QContactGeoLocation class contains the global location
    coordinate associated with a contact.
    \ingroup contacts-details
- */
+*/
 
 /*!
    \class QContactGuid
@@ -275,12 +282,12 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::DefinitionName, "Anniversary");
 Q_DEFINE_LATIN1_LITERAL(QContactGender::DefinitionName, "Gender");
 
 /*!
-   \variable QContactGeolocation::DefinitionName
+   \variable QContactGeoLocation::DefinitionName
 
    The constant string which identifies the definition of details
    which describe a location associated with a contact.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::DefinitionName, "Geolocation");
+Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::DefinitionName, "GeoLocation");
 
 /*!
    \variable QContactOnlineAccount::DefinitionName
@@ -362,6 +369,14 @@ Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::PresenceOffline, "Offline");
 Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldStatusMessage, "StatusMessage");
 
 /*!
+   \variable QContactOnlineAccount::FieldCapabilities
+
+   The constant key for which the account capabilities value is stored in
+   details of the QContactOnlineAccount type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldCapabilities, "Capabilities");
+
+/*!
    \variable QContactOrganization::DefinitionName
 
    The constant string which identifies the definition of details
@@ -388,9 +403,9 @@ Q_DEFINE_LATIN1_LITERAL(QContactDisplayLabel::DefinitionName, "DisplayLabel");
 Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::FieldNumber, "PhoneNumber");
 
 /*!
-   \variable QContactPhoneNumber::FieldSubType
+   \variable QContactPhoneNumber::FieldSubTypes
 
-   The constant key for which the subtypes value is stored in details
+   The constant key for which the subtype values are stored in details
    of the QContactPhoneNumber type.
  */
 Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::FieldSubTypes, "SubTypes");
@@ -444,6 +459,14 @@ Q_DEFINE_LATIN1_LITERAL(QContactSyncTarget::FieldSyncTarget, "SyncTarget");
 Q_DEFINE_LATIN1_LITERAL(QContactAvatar::FieldAvatar, "Avatar");
 
 /*!
+   \variable QContactAvatar::FieldAvatarPixmap
+
+   The constant key for which the path the avatar value is stored in
+   details of the QContactAvatar type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactAvatar::FieldAvatarPixmap, "AvatarPixmap");
+
+/*!
    \variable QContactAvatar::FieldSubType
 
    The constant key for which the subtypes value is stored in details
@@ -460,12 +483,36 @@ Q_DEFINE_LATIN1_LITERAL(QContactAvatar::FieldSubType, "SubType");
 Q_DEFINE_LATIN1_LITERAL(QContactName::FieldPrefix, "Prefix");
 
 /*!
+   \variable QContactName::FieldFirstName
+
+   The constant key for which the first name value is stored in
+   details of the QContactName type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactName::FieldFirstName, "FirstName");
+
+/*!
+   \variable QContactName::FieldMiddleName
+
+   The constant key for which the middle name value is stored in
+   details of the QContactName type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactName::FieldMiddleName, "MiddleName");
+
+/*!
+   \variable QContactName::FieldLastName
+
+   The constant key for which the last name value is stored in details
+   of the QContactName type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactName::FieldLastName, "LastName");
+
+/*!
    \variable QContactName::FieldFirst
 
    The constant key for which the first name value is stored in
    details of the QContactName type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactName::FieldFirst, "First");
+Q_DEFINE_LATIN1_LITERAL(QContactName::FieldFirst, "FirstName");
 
 /*!
    \variable QContactName::FieldMiddle
@@ -473,7 +520,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactName::FieldFirst, "First");
    The constant key for which the middle name value is stored in
    details of the QContactName type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactName::FieldMiddle, "Middle");
+Q_DEFINE_LATIN1_LITERAL(QContactName::FieldMiddle, "MiddleName");
 
 /*!
    \variable QContactName::FieldLast
@@ -481,7 +528,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactName::FieldMiddle, "Middle");
    The constant key for which the last name value is stored in details
    of the QContactName type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactName::FieldLast, "Last");
+Q_DEFINE_LATIN1_LITERAL(QContactName::FieldLast, "LastName");
 
 /*!
    \variable QContactName::FieldSuffix
@@ -655,77 +702,77 @@ Q_DEFINE_LATIN1_LITERAL(QContactGender::GenderFemale, "Female");
 Q_DEFINE_LATIN1_LITERAL(QContactGender::GenderUnspecified, "Unspecified");
 
 /*!
-   \variable QContactGeolocation::FieldLabel
+   \variable QContactGeoLocation::FieldLabel
 
    The constant key for which the location label value is stored in
-   details of the QContactGeolocation type.
+   details of the QContactGeoLocation type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::FieldLabel, "Label");
+Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldLabel, "Label");
 
 /*!
-   \variable QContactGeolocation::FieldLatitude
+   \variable QContactGeoLocation::FieldLatitude
 
    The constant key for which the latitude value is stored in details
-   of the QContactGeolocation type.
+   of the QContactGeoLocation type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::FieldLatitude, "Latitude");
+Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldLatitude, "Latitude");
 
 /*!
-   \variable QContactGeolocation::FieldLongitude
+   \variable QContactGeoLocation::FieldLongitude
 
    The constant key for which the longitude value is stored in details
-   of the QContactGeolocation type.
+   of the QContactGeoLocation type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::FieldLongitude, "Longitude");
+Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldLongitude, "Longitude");
 
 /*!
-   \variable QContactGeolocation::FieldAccuracy
+   \variable QContactGeoLocation::FieldAccuracy
 
    The constant key for which the location accuracy value is stored in
-   details of the QContactGeolocation type.
+   details of the QContactGeoLocation type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::FieldAccuracy, "Accuracy");
+Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldAccuracy, "Accuracy");
 
 /*!
-   \variable QContactGeolocation::FieldAltitude
+   \variable QContactGeoLocation::FieldAltitude
 
    The constant key for which the altitude value is stored in details
-   of the QContactGeolocation type.
+   of the QContactGeoLocation type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::FieldAltitude, "Altitude");
+Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldAltitude, "Altitude");
 
 
 /*!
-   \variable QContactGeolocation::FieldAltitudeAccuracy
+   \variable QContactGeoLocation::FieldAltitudeAccuracy
 
    The constant key for which the altitude accuracy value is stored in
-   details of the QContactGeolocation type.
+   details of the QContactGeoLocation type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::FieldAltitudeAccuracy, "AltitudeAccuracy");
+Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldAltitudeAccuracy, "AltitudeAccuracy");
 
 /*!
-   \variable QContactGeolocation::FieldHeading
+   \variable QContactGeoLocation::FieldHeading
 
    The constant key for which the heading value is stored in details
-   of the QContactGeolocation type.
+   of the QContactGeoLocation type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::FieldHeading, "Heading");
+Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldHeading, "Heading");
 
 /*!
-   \variable QContactGeolocation::FieldSpeed
+   \variable QContactGeoLocation::FieldSpeed
 
    The constant key for which the speed value is stored in details of
-   the QContactGeolocation type.
+   the QContactGeoLocation type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::FieldSpeed, "Speed");
+Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldSpeed, "Speed");
 
 /*!
-   \variable QContactGeolocation::FieldTimestamp
+   \variable QContactGeoLocation::FieldTimestamp
 
    The constant key for which the timestamp value is stored in details
-   of the QContactGeolocation type.
+   of the QContactGeoLocation type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactGeolocation::FieldTimestamp, "Timestamp");
+Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldTimestamp, "Timestamp");
 
 /*!
    \variable QContactOnlineAccount::FieldAccountUri
@@ -1213,6 +1260,19 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
  */
 
 /*!
+   \fn QContactAvatar::pixmap() const
+   Returns a thumbnail for a picture associated with this contact.
+ */
+
+/*!
+   \fn QContactAvatar::setPixmap(const QPixmap& pixmap)
+   Sets the thumbnail of a picture avatar associated with the contact to \a pixmap.
+   If \a pixmap is empty, the thumbnail pixmap will be removed.
+
+   Returns true if the pixmap could be set, and false otherwise.
+ */
+
+/*!
    \fn QContactAvatar::setSubType(const QString& subType)
    Sets the subtype which this detail implements to be the given \a subType.
  */
@@ -1369,85 +1429,85 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
  */
 
 /*!
-   \fn QContactGeolocation::setLabel(const QString& label)
+   \fn QContactGeoLocation::setLabel(const QString& label)
    Sets the label of the location stored in the detail to \a label.
  */
 
 /*!
-   \fn QContactGeolocation::label() const
+   \fn QContactGeoLocation::label() const
    Returns the label of the location stored in the detail.
  */
 
 /*!
-   \fn QContactGeolocation::setLatitude(double latitude)
+   \fn QContactGeoLocation::setLatitude(double latitude)
 
    Sets the latitude portion of the coordinate (in decimal degrees) of
    the location stored in the detail to \a latitude.
  */
 
 /*!
-   \fn QContactGeolocation::latitude() const
+   \fn QContactGeoLocation::latitude() const
 
    Returns the latitude portion of the coordinate (specified in
    decimal degrees) of the location stored in the detail.
  */
 
 /*!
-   \fn QContactGeolocation::setLongitude(double longitude)
+   \fn QContactGeoLocation::setLongitude(double longitude)
 
    Sets the longitude portion of the coordinate (in decimal degrees)
    of the location stored in the detail to \a longitude.
  */
 
 /*!
-   \fn QContactGeolocation::longitude() const
+   \fn QContactGeoLocation::longitude() const
 
    Returns the longitude portion of the coordinate (specified in
    decimal degrees) of the location stored in the detail.
  */
 
 /*!
-   \fn QContactGeolocation::setAccuracy(double accuracy)
+   \fn QContactGeoLocation::setAccuracy(double accuracy)
 
    Specifies that the latitude and longitude portions of the location
    stored in the detail are accurate to within \a accuracy metres.
  */
 
 /*!
-   \fn QContactGeolocation::accuracy() const
+   \fn QContactGeoLocation::accuracy() const
 
    Returns the accuracy (in metres) of the latitude and longitude of
    the location stored in the detail.
  */
 
 /*!
-   \fn QContactGeolocation::setAltitude(double altitude)
+   \fn QContactGeoLocation::setAltitude(double altitude)
 
    Sets the altitude portion of the coordinate (in metres above the
    ellipsoid) of the location stored in the detail to \a altitude.
  */
 
 /*!
-   \fn QContactGeolocation::altitude() const
+   \fn QContactGeoLocation::altitude() const
    Returns the altitude (in metres) of the location stored in the detail.
  */
 
 /*!
-   \fn QContactGeolocation::setAltitudeAccuracy(double altitudeAccuracy)
+   \fn QContactGeoLocation::setAltitudeAccuracy(double altitudeAccuracy)
 
    Sets the altitude-accuracy portion of the coordinate (in metres) of
    the location stored in the detail to \a altitudeAccuracy.
  */
 
 /*!
-   \fn QContactGeolocation::altitudeAccuracy() const
+   \fn QContactGeoLocation::altitudeAccuracy() const
 
    Returns the accuracy of the altitude portion of the location stored
    in the detail.
  */
 
 /*!
-   \fn QContactGeolocation::setHeading(double heading)
+   \fn QContactGeoLocation::setHeading(double heading)
 
    Sets the heading portion of the coordinate (in decimal degrees
    clockwise relative to true north) of the location-aware device at
@@ -1455,7 +1515,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
  */
 
 /*!
-   \fn QContactGeolocation::heading() const
+   \fn QContactGeoLocation::heading() const
 
    Returns the heading (at the time of measurement) of the
    location-aware device that recorded (or was provided) the
@@ -1463,14 +1523,14 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
  */
 
 /*!
-   \fn QContactGeolocation::setSpeed(double speed)
+   \fn QContactGeoLocation::setSpeed(double speed)
 
    Sets the speed portion of the coordinate (in metres per second) of
    the location-aware device at the time of measurement to \a speed.
  */
 
 /*!
-   \fn QContactGeolocation::speed() const
+   \fn QContactGeoLocation::speed() const
 
    Returns the speed (at the time of measurement) of the
    location-aware device that recorded (or was provided) the
@@ -1478,14 +1538,14 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
  */
 
 /*!
-   \fn QContactGeolocation::setTimestamp(const QDateTime& timestamp)
+   \fn QContactGeoLocation::setTimestamp(const QDateTime& timestamp)
 
    Sets the creation (or first-valid) timestamp of the location
    information to \a timestamp.
  */
 
 /*!
-   \fn QContactGeolocation::timestamp() const
+   \fn QContactGeoLocation::timestamp() const
 
    Returns the timestamp associated with the location stored in the
    detail.
@@ -1514,37 +1574,37 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
  */
 
 /*!
-   \fn QContactName::first() const
+   \fn QContactName::firstName() const
    Returns the first (given) name segment of the name stored in this detail.
  */
 
 /*!
-   \fn QContactName::setFirst(const QString& first)
-   Sets the first name segment of the name stored in this detail to \a first.
+   \fn QContactName::setFirstName(const QString& firstName)
+   Sets the first name segment of the name stored in this detail to \a firstName.
  */
 
 /*!
-   \fn QContactName::middle() const
+   \fn QContactName::middleName() const
    
    Returns the middle (additional, or other) name segment of the name
    stored in this detail.
  */
 
 /*!
-   \fn QContactName::setMiddle(const QString& middle)
-   Sets the middle name segment of the name stored in this detail to \a middle.
+   \fn QContactName::setMiddleName(const QString& middleName)
+   Sets the middle name segment of the name stored in this detail to \a middleName.
  */
 
 /*!
-   \fn QContactName::last() const
+   \fn QContactName::lastName() const
 
    Returns the last (family, or surname) name segment of the name
    stored in this detail.
  */
 
 /*!
-   \fn QContactName::setLast(const QString& last)
-   Sets the last name segment of the name stored in this detail to \a last.
+   \fn QContactName::setLastName(const QString& lastName)
+   Sets the last name segment of the name stored in this detail to \a lastName.
  */
 
 /*!
@@ -1712,6 +1772,22 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
  */
 
 /*!
+   \fn QContactOnlineAccount::setCapabilities(const QStringList& capabilities)
+
+   Sets the capabilities of the online account about which this detail stores
+   presence information to \a capabilities.  The \a capabilities list is a
+   list of service-provider specified strings which together identify the
+   types of communication which may be possible.
+ */
+
+/*!
+   \fn QContactOnlineAccount::capabilities() const
+
+   Returns the capabilities of the online account about which this detail stores
+   presence information.
+ */
+
+/*!
    \fn QContactOrganization::setName(const QString& name)
    Sets the name of the organization stored in this detail to \a name.
  */
@@ -1793,5 +1869,105 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
    Returns the name of the default assistant of contacts belonging to
    this organization.
  */
+
+
+/* Convenience filters */
+
+/*!
+    Returns a filter suitable for finding
+    contacts with a display label matching the specified \a label.
+*/
+QContactFilter QContactDisplayLabel::match(const QString &label)
+{
+    QContactDetailFilter f;
+    f.setDetailDefinitionName(QContactDisplayLabel::DefinitionName);
+    f.setValue(label);
+
+    return f;
+}
+
+/*!
+    Returns a filter suitable for finding
+    contacts with a name matching the specified \a firstName and
+    \a lastName.  If either parameter is empty, any value will match
+    that component.
+*/
+QContactFilter QContactName::match(const QString &firstName, const QString &lastName)
+{
+    if (firstName.isEmpty()) {
+        if (lastName.isEmpty()) {
+            // Matches contacts that have a name
+            QContactDetailFilter f;
+            f.setDetailDefinitionName(QContactName::DefinitionName);
+            return f;
+        } else {
+            // Contact with matching lastname
+            QContactDetailFilter f;
+            f.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldLastName);
+            f.setValue(lastName);
+            return f;
+        }
+    } else {
+        if (lastName.isEmpty()) {
+            // Contact with matching firstName
+            QContactDetailFilter f;
+            f.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirstName);
+            f.setValue(firstName);
+            return f;
+        } else {
+            // Match a contact with the specified first and last names
+            // XXX This needs multi detail filter!
+
+            // Best we can currently do is "and" and assume there's only one name per contact
+            QContactDetailFilter f;
+            f.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirstName);
+            f.setValue(firstName);
+            QContactDetailFilter l;
+            l.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldLastName);
+            l.setValue(lastName);
+
+            return f & l;
+        }
+    }
+}
+
+/*!
+    Returns a filter suitable for finding
+    contacts with a name field (e.g. first, last) that
+    matches the supplied \a name.
+*/
+QContactFilter QContactName::match(const QString &name)
+{
+    QContactDetailFilter l;
+    l.setDetailDefinitionName(QContactName::DefinitionName);
+    l.setValue(name);
+    return l;
+}
+
+/*!
+    Returns a filter suitable for finding
+    contacts with an email address matching the specified \a emailAddress.
+*/
+QContactFilter QContactEmailAddress::match(const QString &emailAddress)
+{
+    QContactDetailFilter l;
+    l.setDetailDefinitionName(QContactEmailAddress::DefinitionName, QContactEmailAddress::FieldEmailAddress);
+    l.setValue(emailAddress);
+    return l;
+}
+
+/*!
+    Returns a filter suitable for finding
+    contacts with a phone number matching the specified \a number.
+*/
+QContactFilter QContactPhoneNumber::match(const QString &number)
+{
+    QContactDetailFilter l;
+    l.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
+    l.setValue(number);
+    l.setMatchFlags(QContactFilter::MatchPhoneNumber);
+    return l;
+}
+
 
 QTM_END_NAMESPACE

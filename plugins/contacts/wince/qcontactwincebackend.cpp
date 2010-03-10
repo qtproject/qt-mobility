@@ -87,12 +87,14 @@ QContactWinCEEngine::QContactWinCEEngine(ContactWinceFactory* factory, const QSt
                 if(SUCCEEDED(d->m_app->GetDefaultFolder(olFolderContacts, &d->m_folder))) {
                     if(SUCCEEDED(d->m_folder->get_Items(&d->m_collection))) {
                         // Register/retrieve our custom ids
-                        LPCWSTR customIds[2] = { L"QTCONTACTS_PHONE_META", L"QTCONTACTS_EMAIL_META" };
-                        CEPROPID outIds[2];
+                        LPCWSTR customIds[4] = { L"QTCONTACTS_PHONE_META", L"QTCONTACTS_EMAIL_META", L"QTCONTACTS_AVATAR_META",  L"QTCONTACTS_AVATAR_TYPE_META" };
+                        CEPROPID outIds[4];
 
-                        if (SUCCEEDED(d->m_app->GetIDsFromNames(2, customIds, PIM_CREATE | CEVT_LPWSTR, outIds))) {
+                        if (SUCCEEDED(d->m_app->GetIDsFromNames(4, customIds, PIM_CREATE | CEVT_LPWSTR, outIds))) {
                             d->m_phonemeta = outIds[0];
                             d->m_emailmeta = outIds[1];
+                            d->m_avatarmeta = outIds[2];
+                            d->m_avatartypemeta = outIds[3];
                         }
 
                         // get an IPOLItems2 pointer for the collection, too
@@ -146,8 +148,10 @@ QString QContactWinCEEngine::managerName() const
     return d->m_engineName;
 }
 
-QContact QContactWinCEEngine::contact(const QContactLocalId& contactId, QContactManager::Error& error) const
+QContact QContactWinCEEngine::contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const
 {
+    // TODO: implementation for definitionRestrictions!
+    Q_UNUSED(definitionRestrictions);
     QContact ret;
 
     // id == 0 gives a bad argument error from POOM, so don't even try it
@@ -241,7 +245,7 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QContactManager::Error&
                 hr = icontact->get_Oid(&oid);
                 if (SUCCEEDED(hr)) {
                     error = QContactManager::NoError; 
-                    QContact c = this->contact((QContactLocalId)oid, error);
+                    QContact c = this->contact((QContactLocalId)oid, QStringList(), error);
                     
                     if (error == QContactManager::NoError) {
                         *contact = c;
@@ -312,39 +316,49 @@ QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitions(c
 
     // Remove the details we don't support
     defns[contactType].remove(QContactSyncTarget::DefinitionName);
-    defns[contactType].remove(QContactGeolocation::DefinitionName);
+    defns[contactType].remove(QContactGeoLocation::DefinitionName);
     defns[contactType].remove(QContactTimestamp::DefinitionName);
     defns[contactType].remove(QContactGuid::DefinitionName);
     defns[contactType].remove(QContactGender::DefinitionName); // ? Surprising
 
+    QMap<QString, QContactDetailFieldDefinition> fields = defns[contactType][QContactAnniversary::DefinitionName].fields();
     // Simple anniversarys
-    defns[contactType][QContactAnniversary::DefinitionName].fields().remove(QContactAnniversary::FieldCalendarId);
-    defns[contactType][QContactAnniversary::DefinitionName].fields().remove(QContactAnniversary::FieldEvent);
-    defns[contactType][QContactAnniversary::DefinitionName].fields().remove(QContactAnniversary::FieldSubType);
+    fields.remove(QContactAnniversary::FieldCalendarId);
+    fields.remove(QContactAnniversary::FieldEvent);
+    fields.remove(QContactAnniversary::FieldSubType);
+    defns[contactType][QContactAnniversary::DefinitionName].setFields(fields);
 
     // No logo for organisation
-    defns[contactType][QContactOrganization::DefinitionName].fields().remove(QContactOrganization::FieldLogo);
+    fields = defns[contactType][QContactOrganization::DefinitionName].fields();
+    fields.remove(QContactOrganization::FieldLogo);
+    defns[contactType][QContactOrganization::DefinitionName].setFields(fields);
 
     // No subtypes for these details
-    defns[contactType][QContactUrl::DefinitionName].fields().remove(QContactUrl::FieldSubType);
+    fields = defns[contactType][QContactUrl::DefinitionName].fields();
+    fields.remove(QContactUrl::FieldSubType);
+    defns[contactType][QContactUrl::DefinitionName].setFields(fields);
 
     // No contexts for these details
-    defns[contactType][QContactAvatar::DefinitionName].fields().remove(QContactDetail::FieldContext);
-    defns[contactType][QContactAnniversary::DefinitionName].fields().remove(QContactDetail::FieldContext);
-    defns[contactType][QContactBirthday::DefinitionName].fields().remove(QContactDetail::FieldContext);
-    defns[contactType][QContactName::DefinitionName].fields().remove(QContactDetail::FieldContext);
-    defns[contactType][QContactNickname::DefinitionName].fields().remove(QContactDetail::FieldContext);
-    defns[contactType][QContactOrganization::DefinitionName].fields().remove(QContactDetail::FieldContext);
-    defns[contactType][QContactUrl::DefinitionName].fields().remove(QContactDetail::FieldContext);
+    fields =  defns[contactType][QContactAvatar::DefinitionName].fields();
+    fields.remove(QContactDetail::FieldContext);
+    fields.remove(QContactDetail::FieldContext);
+    fields.remove(QContactDetail::FieldContext);
+    fields.remove(QContactDetail::FieldContext);
+    fields.remove(QContactDetail::FieldContext);
+    fields.remove(QContactDetail::FieldContext);
+    fields.remove(QContactDetail::FieldContext);
+    defns[contactType][QContactAvatar::DefinitionName].setFields(fields);
 
     // Simple phone number types (non multiple)
     // defns[QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].dataType = QVariant::String; // XXX doesn't work
-    defns[contactType][QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues().removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeBulletinBoardSystem)));
-    defns[contactType][QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues().removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeLandline)));
-    defns[contactType][QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues().removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeMessagingCapable)));
-    defns[contactType][QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues().removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeModem)));
-    defns[contactType][QContactPhoneNumber::DefinitionName].fields()[QContactPhoneNumber::FieldSubTypes].allowableValues().removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeVideo)));
-
+    fields = defns[contactType][QContactPhoneNumber::DefinitionName].fields();
+    fields[QContactPhoneNumber::FieldSubTypes].allowableValues().removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeBulletinBoardSystem)));
+    fields[QContactPhoneNumber::FieldSubTypes].allowableValues().removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeLandline)));
+    fields[QContactPhoneNumber::FieldSubTypes].allowableValues().removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeMessagingCapable)));
+    fields[QContactPhoneNumber::FieldSubTypes].allowableValues().removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeModem)));
+    fields[QContactPhoneNumber::FieldSubTypes].allowableValues().removeAll(QString(QLatin1String(QContactPhoneNumber::SubTypeVideo)));
+    defns[contactType][QContactPhoneNumber::DefinitionName].setFields(fields);
+    
     // XXX temporary definitions that we should support but don't yet.
     defns[contactType].remove(QContactOnlineAccount::DefinitionName);
 
@@ -370,11 +384,6 @@ bool QContactWinCEEngine::cancelRequest(QContactAbstractRequest* req)
     return  d->m_requestWorker.cancelRequest(req);
 }
 
-/*! \reimp */
-bool QContactWinCEEngine::waitForRequestProgress(QContactAbstractRequest* req, int msecs)
-{
-    return d->m_requestWorker.waitRequest(req, msecs);
-}
 
 /*! \reimp */
 bool QContactWinCEEngine::waitForRequestFinished(QContactAbstractRequest* req, int msecs)
@@ -394,7 +403,7 @@ bool QContactWinCEEngine::hasFeature(QContactManager::ManagerFeature feature) co
 }
 
 /* Synthesise the display label of a contact */
-QString QContactWinCEEngine::synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const
+QString QContactWinCEEngine::synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const
 {
     Q_UNUSED(error)
     // The POOM API (well, lack thereof) makes this a bit strange.
@@ -410,15 +419,15 @@ QString QContactWinCEEngine::synthesizeDisplayLabel(const QContact& contact, QCo
     if (!name.customLabel().isEmpty()) {
         return name.customLabel();
     }
-    else if (!name.last().isEmpty()) {
-        if (!name.first().isEmpty()) {
-            return QString(QLatin1String("%1, %2")).arg(name.last()).arg(name.first());
+    else if (!name.lastName().isEmpty()) {
+        if (!name.firstName().isEmpty()) {
+            return QString(QLatin1String("%1, %2")).arg(name.lastName()).arg(name.firstName());
         } else {
             // Just last
-            return name.last();
+            return name.lastName();
         }
-    } else if (!name.first().isEmpty()) {
-        return name.first();
+    } else if (!name.firstName().isEmpty()) {
+        return name.firstName();
     } else if (!org.name().isEmpty()) {
         return org.name();
     } else {
@@ -427,8 +436,30 @@ QString QContactWinCEEngine::synthesizeDisplayLabel(const QContact& contact, QCo
     }
 }
 
+
+
+PROPID QContactWinCEEngine::metaAvatar() const
+{
+    return d->m_avatarmeta;
+}
+
+PROPID QContactWinCEEngine::metaAvatarType() const
+{
+    return d->m_avatartypemeta;
+}
+
+PROPID QContactWinCEEngine::metaEmail() const
+{
+    return d->m_emailmeta;
+}
+
+PROPID QContactWinCEEngine::metaPhone() const
+{
+    return d->m_phonemeta;
+}
+
 /*! \reimp */
-bool QContactWinCEEngine::filterSupported(const QContactFilter& filter) const
+bool QContactWinCEEngine::isFilterSupported(const QContactFilter& filter) const
 {
     switch (filter.type()) {
         case QContactFilter::InvalidFilter:

@@ -55,17 +55,9 @@ class QContactManagerEngine;
 class Q_CONTACTS_EXPORT QContactManagerEngineFactory
 {
 public:
-
-    int version() const
-    {
-        return QContactManager::version();
-    }
-
-    virtual QList<int> supportedImplementationVersions() const
-    {
-        return QList<int>();
-    }
-    virtual ~QContactManagerEngineFactory() {}
+    // engine factory functions
+    virtual QList<int> supportedImplementationVersions() const;
+    virtual ~QContactManagerEngineFactory();
     virtual QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error& error) = 0;
     virtual QString managerName() const = 0;
 };

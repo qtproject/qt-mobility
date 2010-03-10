@@ -52,19 +52,21 @@ class QVersitDocument;
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
 
-class UT_QVersitDocument : public QObject                 
+class UT_QVersitDocument : public QObject
 {
     Q_OBJECT
-    
+
 private slots:
     void init();
     void cleanup();
 
     void testConstructor();
-    void testVersitType();
+    void testType();
     void testAddProperty();
-    void testRemoveProperties();
-    
+    void testRemoveProperty();
+    void testRemoveAllProperties();
+    void testEquality();
+
 private: // data
     QVersitDocument* mVersitDocument;
 };

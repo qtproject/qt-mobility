@@ -54,6 +54,12 @@
     **
     ****************************************************************************/</span>
 
+    #if defined(Q_OS_SYMBIAN)
+<span class="comment">    // Maximized windows are resizing correctly on S60 w/ Qt 4.6.0</span>
+<span class="comment">    // Use tabs to reduce the minimal height required</span>
+    #define USE_TABBED_LAYOUT
+    #endif
+
     #include &quot;messagesender.h&quot;
 
     #include &lt;QComboBox&gt;
@@ -70,6 +76,11 @@
     #include &lt;QTextEdit&gt;
     #include &lt;QTimer&gt;
     #include &lt;QDebug&gt;
+    #include &lt;QScrollArea&gt;
+
+    #ifdef USE_TABBED_LAYOUT
+    #include &lt;QTabWidget&gt;
+    #endif
 
     MessageSender::MessageSender(QWidget *parent, Qt::WindowFlags flags)
         : QWidget(parent, flags),
@@ -82,6 +93,17 @@
           addButton(0),
           attachmentsList(0)
     {
+        QVBoxLayout* vbl = new QVBoxLayout(this);
+        vbl-&gt;setSpacing(0);
+        vbl-&gt;setContentsMargins(0,0,0,0);
+
+        QWidget* mainWidget = new QWidget(this);
+
+        QScrollArea* sa = new QScrollArea(this);
+        vbl-&gt;addWidget(sa);
+        sa-&gt;setWidget(mainWidget);
+        sa-&gt;setWidgetResizable(true);
+
         setWindowTitle(tr(&quot;Write Message&quot;));
 
         accountCombo = new QComboBox;
@@ -145,11 +167,21 @@
 
         connect(sendButton, SIGNAL(clicked()), this, SLOT(send()), Qt::QueuedConnection);
 
-        QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    #ifdef USE_TABBED_LAYOUT
+        QTabWidget *tabWidget = new QTabWidget;
+        tabWidget-&gt;addTab(textEdit, tr(&quot;Text&quot;));
+        tabWidget-&gt;addTab(attachmentsGroup, tr(&quot;Attachments&quot;));
+    #endif
+
+        QVBoxLayout *mainLayout = new QVBoxLayout(mainWidget);
         mainLayout-&gt;setContentsMargins(0, 0, 0, 0);
         mainLayout-&gt;addLayout(metaDataLayout, 0);
+    #ifdef USE_TABBED_LAYOUT
+        mainLayout-&gt;addWidget(tabWidget, 0);
+    #else
         mainLayout-&gt;addWidget(textEdit, 2);
         mainLayout-&gt;addWidget(attachmentsGroup, 1);
+    #endif
         mainLayout-&gt;addWidget(sendButton, 0);
         mainLayout-&gt;setAlignment(sendButton, Qt::AlignRight);
 

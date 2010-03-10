@@ -52,7 +52,7 @@ bool QMessageAccountSortOrderPrivate::lessThan(const QMessageAccountSortOrder &s
                                                const QMessageAccount &account1, const QMessageAccount &account2)
 {
     QMessageAccountSortOrderPrivate *d(sortOrder.d_ptr);
-    if (d->_order == Qt::AscendingOrder) {
+    if (d && d->_order == Qt::AscendingOrder) { // Hack preventing null ointer
         return (account1.name().compare(account2.name(), Qt::CaseInsensitive) < 0);
     }
     return (account1.name().compare(account2.name(), Qt::CaseInsensitive) > 0);

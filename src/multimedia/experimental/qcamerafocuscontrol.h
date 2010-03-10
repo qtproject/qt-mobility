@@ -67,17 +67,19 @@ public:
 
     virtual qreal maximumOpticalZoom() const = 0;
     virtual qreal maximumDigitalZoom() const = 0;
-    virtual qreal zoomValue() const = 0;
-    virtual void zoomTo(qreal value) = 0;
+    virtual qreal opticalZoom() const = 0;
+    virtual qreal digitalZoom() const = 0;
+
+    virtual void zoomTo(qreal optical, qreal digital) = 0;
 
 public Q_SLOTS:
     virtual void startFocusing() = 0;
     virtual void cancelFocusing() = 0;
 
 Q_SIGNALS:
-    void zoomValueChanged(qreal);
+    void opticalZoomChanged(qreal opticalZoom);
+    void digitalZoomChanged(qreal digitalZoom);
     void focusStatusChanged(QCamera::FocusStatus);
-    void focusLocked();
 
 protected:
     QCameraFocusControl(QObject* parent = 0);

@@ -14,12 +14,8 @@ PUBLIC_HEADERS += \
            qmessagecontentcontainerid.h \
            qmessagefolderid.h \
            qmessageaccountid.h \
-           qmessagecontentcontainer.h \
-           qmessagecontentcontainer_p.h \
-           addresshelper_p.h \
+           qmessagecontentcontainer.h \ 
 	   qmessageaddress.h \
-           qmessageaddress_p.h \
-           qmessage_p.h \ 
            qmessage.h \
            qmessagefolder.h \
            qmessageaccount.h \
@@ -30,9 +26,12 @@ PUBLIC_HEADERS += \
            qmessagefilter.h \
            qmessagemanager.h \
            qmessagesortorder.h \
-           qmessageservice.h
+           qmessageservice.h \
+           qmessagedatacomparator.h \
+           qmessageglobal.h
 
 PRIVATE_HEADERS += \
+           addresshelper_p.h \
            qmessageid_p.h \
            qmessagecontentcontainerid_p.h \
            qmessagefolderid_p.h \
@@ -72,8 +71,26 @@ SOURCES += qmessageid.cpp \
            qmessageservice.cpp
 
 
-symbian|win32|maemo6 {
-maemo6 {
+symbian|win32|maemo6|maemo5|mac {
+mac {
+SOURCES += qmessageid_stub.cpp \
+           qmessagecontentcontainerid_stub.cpp \
+           qmessagefolderid_stub.cpp \
+           qmessageaccountid_stub.cpp \
+           qmessagecontentcontainer_stub.cpp \
+           qmessage_stub.cpp \
+           qmessagefolder_stub.cpp \
+           qmessageaccount_stub.cpp \
+           qmessageaccountfilter_stub.cpp \
+           qmessageaccountsortorder_stub.cpp \
+           qmessagefolderfilter_stub.cpp \
+           qmessagefoldersortorder_stub.cpp \
+           qmessagefilter_stub.cpp \
+           qmessagesortorder_stub.cpp \
+           qmessagestore_stub.cpp \
+           qmessageservice_stub.cpp 
+}
+maemo6|maemo5 {
     QT += dbus
     CONFIG += link_pkgconfig
 
@@ -86,6 +103,7 @@ maemo6 {
     HEADERS += qmessagecontentcontainer_maemo_p.h \
                qmessageservice_maemo_p.h \
                modestengine_maemo_p.h \
+               telepathyengine_maemo_p.h \
                maemohelpers_p.h
 
     SOURCES += qmessageid_maemo.cpp \
@@ -105,15 +123,16 @@ maemo6 {
                qmessagestore_maemo.cpp \
                qmessageservice_maemo.cpp \
                modestengine_maemo.cpp \
+               telepathyengine_maemo.cpp \
                maemohelpers.cpp
 
     documentation.path = $$QT_MOBILITY_PREFIX/doc
     documentation.files = doc/html
 
-    PKGCONFIG += glib-2.0 dbus-glib-1 gconf-2.0 libosso libmodest-dbus-client-1.0
+    PKGCONFIG += glib-2.0 dbus-glib-1 gconf-2.0 libosso libmodest-dbus-client-1.0 TpSession TelepathyQt4
 
     CONFIG += create_pc create_prl
-    QMAKE_PKGCONFIG_REQUIRES = glib-2.0 dbus-glib-1 gconf-2.0 osso modest-dbus-client-1.0
+    QMAKE_PKGCONFIG_REQUIRES = glib-2.0 dbus-glib-1 gconf-2.0 osso modest-dbus-client-1.0 TpSession TelepathyQt4
     pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
     pkgconfig.files = QtMessaging.pc
 
@@ -170,13 +189,6 @@ symbian {
     TARGET.CAPABILITY = ALL -TCB
     TARGET.UID3 = 0x2002AC82
 
-    deploy.path = $${EPOCROOT}
-    exportheaders.sources = $$PUBLIC_HEADERS
-    exportheaders.path = epoc32/include/mw
-    for(header, exportheaders.sources) {
-        BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
-    }
-            
     QtMessaging.sources = QtMessaging.dll
     QtMessaging.path = /sys/bin
     DEPLOYMENT += QtMessaging
@@ -246,6 +258,8 @@ else {
 
 }
 } else {
+    contains(qmf_enabled, yes) {
+
 DEFINES += USE_QMF_IMPLEMENTATION
 
 # QMF headers must be located at $QMF_INCLUDEDIR
@@ -276,7 +290,8 @@ SOURCES += qmessageid_qmf.cpp \
            qmessageservice_qmf.cpp \
            qmfhelpers.cpp
 }
-
+}
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
+CONFIG += middleware
 include(../../features/deploy.pri)

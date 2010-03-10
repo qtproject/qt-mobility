@@ -43,6 +43,7 @@
 #define UT_QVERSITCONTACTIMPORTER_H
 
 #include <QObject>
+#include <qversitcontactimporter.h>
 #include <qversitdocument.h>
 #include <qmobilityglobal.h>
 
@@ -50,6 +51,8 @@ QTM_BEGIN_NAMESPACE
 
 class QVersitContactImporter;
 class QVersitContactImporterPrivate;
+class MyQVersitContactImporterPropertyHandler;
+class MyQVersitResourceHandler;
 
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
@@ -59,15 +62,13 @@ class UT_QVersitContactImporter : public QObject
     Q_OBJECT
 
 private slots: // Tests
-    
-    void initTestCase();
-    void cleanupTestCase();
     void init();
     void cleanup();
-    
+
     void testName();
+    void testNameWithFormatted();
     void testAddress();
-    void testTel();    
+    void testTel();
     void testEmail();
     void testUrl();
     void testUid();
@@ -81,33 +82,31 @@ private slots: // Tests
     void testBirthday();
     void testGender();
     void testNickname();
-    void testAvatarJpegStored();
-    void testAvatarGifStored();
-    void testAvatarJpegTwoContactsWithSameName();
-    void testAvatarJpegNonexistentPath();
+    void testAvatarStored();
     void testAvatarUrl();
-    void testAvatarEncoding();
+    void testAvatarInvalid();
     void testGeo();
     void testNote();
     void testOnlineAccount();
     void testFamily();
     void testSound();
     void testLabel();
-    void testUnknownVersitProperties();
+    void testPref();
+    void testPropertyHandler();
 
 private: // Utilities
-    
+
     QVersitDocument createDocumentWithProperty(const QVersitProperty& property);
 
     QVersitDocument createDocumentWithNameAndPhoto(
-        const QByteArray& name,
+        const QString& name,
         QByteArray image,
-        const QString& photoType,
-        const QString& encoding);
+        const QString& photoType);
 
 private:
     QVersitContactImporter* mImporter;
-    QVersitContactImporterPrivate* mImporterPrivate;
+    MyQVersitContactImporterPropertyHandler* mPropertyHandler;
+    MyQVersitResourceHandler* mResourceHandler;
 };
 
 #endif // UT_QVERSITCONTACTIMPORTER_H
