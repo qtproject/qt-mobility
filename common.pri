@@ -109,7 +109,7 @@ contains(build_unit_tests, yes):DEFINES+=QTM_BUILD_UNITTESTS
 }
 
 # On Symbian, we are freezing libraryies only
-symbian:!isEmpty(defFilePath) {
+symbian:isEmpty(defFilePath) {
     MMP_RULES += "EXPORTUNFROZEN"
 }
 
