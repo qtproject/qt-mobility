@@ -330,10 +330,10 @@ void QCoreWlanEngine::connectToId(const QString &id)
             emit connectionError(id, InterfaceLookupError);
             [autoreleasepool release];
 
-#endif
         } else {
             // not wifi
         }
+#endif        
     }
     emit connectionError(id, OperationNotSupported);
 }
@@ -476,7 +476,6 @@ bool QCoreWlanEngine::isKnownSsid( const QString &ssid)
     }
 
 #else
-    Q_UNUSED(interfaceName);
     Q_UNUSED(ssid);
 #endif
     return false;
@@ -578,6 +577,7 @@ void QCoreWlanEngine::startNetworkChangeLoop()
 
 void QCoreWlanEngine::getUserConfigurations()
 {
+#ifdef MAC_SDK_10_6
     NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
 
     userProfiles.clear();
@@ -606,6 +606,8 @@ void QCoreWlanEngine::getUserConfigurations()
         }
     }
     [autoreleasepool release];
+#endif
+
 }
 
 #include "moc_qcorewlanengine_mac_p.cpp"
