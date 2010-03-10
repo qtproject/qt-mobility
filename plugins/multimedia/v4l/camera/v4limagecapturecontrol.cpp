@@ -40,7 +40,6 @@
 ****************************************************************************/
 
 #include "v4limagecapturecontrol.h"
-#include <QtCore/QDebug>
 
 V4LImageCaptureControl::V4LImageCaptureControl(V4LCameraSession *session)
     :QImageCaptureControl(session), m_session(session), m_ready(false)

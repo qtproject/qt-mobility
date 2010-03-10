@@ -49,7 +49,7 @@
 
 QTM_USE_NAMESPACE
 
-class S60CameraSession;
+class S60VideoCaptureSession;
 
 class S60VideoEncoder : public QVideoEncoderControl
 {
@@ -90,7 +90,7 @@ public:
     void setVideoSettings(const QVideoEncoderSettings &settings);
 
 private:
-    S60CameraSession* m_session;
+    S60VideoCaptureSession* m_session;
 
     QStringList m_codecs;
     QMap<QString,QString> m_codecDescriptions;

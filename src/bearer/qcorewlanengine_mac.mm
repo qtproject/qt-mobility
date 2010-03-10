@@ -54,6 +54,8 @@
 #include <CoreWLAN/CWInterface.h>
 #include <CoreWLAN/CWNetwork.h>
 #include <CoreWLAN/CWNetwork.h>
+#include <CoreWLAN/CW8021XProfile.h>
+
 #endif
 
 #include <Foundation/NSEnumerator.h>
@@ -168,7 +170,9 @@ QCoreWlanEngine::QCoreWlanEngine(QObject *parent)
     QNSListener *listener;
     listener = [[QNSListener alloc] init];
 #endif
+    getUserConfigurations();
     requestUpdate();
+    [pool release];
 }
 
 QCoreWlanEngine::~QCoreWlanEngine()
@@ -261,73 +265,77 @@ bool QCoreWlanEngine::hasIdentifier(const QString &id)
 
 void QCoreWlanEngine::connectToId(const QString &id)
 {
-    NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
     QString interfaceString = getInterfaceFromId(id);
 
     if(networkInterfaces.value(interfaceString) == "WLAN") {
 #if defined(MAC_SDK_10_6)
+        NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
         CWInterface *wifiInterface = [CWInterface interfaceWithName: qstringToNSString(interfaceString)];
-        CWConfiguration *userConfig = [ wifiInterface configuration];
 
-        NSSet *remNets = [userConfig rememberedNetworks]; //CWWirelessProfile
+        if([wifiInterface power]) {
+            NSError *err = nil;
+            NSMutableDictionary *params = [NSMutableDictionary dictionaryWithCapacity:0];
 
-        NSEnumerator *enumerator = [remNets objectEnumerator];
-        CWWirelessProfile *wProfile;
-        NSUInteger index=0;
+            NSString *wantedSsid = 0;
+            bool okToProceed = true;
 
-        NSDictionary *parametersDict;
-        NSArray* apArray;
-
-        CW8021XProfile *user8021XProfile;
-        NSError *err;
-        NSMutableDictionary *params;
-
-        while ((wProfile = [enumerator nextObject])) { //CWWirelessProfile
-
-            if(id == nsstringToQString([wProfile ssid])) {
-                user8021XProfile = nil;
-                user8021XProfile = [ wProfile user8021XProfile];
-
-                err = nil;
-                params = [NSMutableDictionary dictionaryWithCapacity:0];
-
-                if(user8021XProfile) {
-                    [params setValue: user8021XProfile forKey:kCWAssocKey8021XProfile];
-                } else {
-                    [params setValue: [wProfile passphrase] forKey: kCWAssocKeyPassphrase];
+            NSArray *array = [CW8021XProfile allUser8021XProfiles];
+            for (NSUInteger i=0; i<[array count]; ++i) {
+                if(id == nsstringToQString([[array objectAtIndex:i] userDefinedName])) {
+                    wantedSsid = [[array objectAtIndex:i] userDefinedName];
+                    okToProceed = false;
+                    [params setValue: [array objectAtIndex:i] forKey:kCWAssocKey8021XProfile];
+                    break;
                 }
+            }
 
-               parametersDict = nil;
-               apArray = [NSMutableArray arrayWithArray:[wifiInterface scanForNetworksWithParameters:parametersDict error:&err]];
+            if(okToProceed) {
+                NSUInteger index = 0;
+                CWConfiguration *userConfig = [ wifiInterface configuration];
+                NSSet *remNets = [userConfig rememberedNetworks];
+                NSEnumerator *enumerator = [remNets objectEnumerator];
+                CWWirelessProfile *wProfile;
 
-                if(!err) {
+                while ((wProfile = [enumerator nextObject])) {
+                    if(id == nsstringToQString([wProfile ssid])) {
+                        wantedSsid = [wProfile ssid];
+                        [params setValue: [wProfile passphrase] forKey: kCWAssocKeyPassphrase];
+                        break;
+                    }
+                    index++;
+                }
+            }
 
-                    for(uint row=0; row < [apArray count]; row++ ) {
-                        CWNetwork *apNetwork = [apArray objectAtIndex:row];
-                        if([[apNetwork ssid] compare:[wProfile ssid]] == NSOrderedSame) {
+            NSDictionary *parametersDict = nil;
+            NSArray *apArray = [NSMutableArray arrayWithArray:[wifiInterface scanForNetworksWithParameters:parametersDict error:&err]];
 
-                            bool result = [wifiInterface associateToNetwork: apNetwork parameters:[NSDictionary dictionaryWithDictionary:params] error:&err];
+            if(!err) {
+                for(uint row=0; row < [apArray count]; row++ ) {
+                    CWNetwork *apNetwork = [apArray objectAtIndex:row];
+                    if([[apNetwork ssid] compare:wantedSsid] == NSOrderedSame) {
+                        bool result = [wifiInterface associateToNetwork: apNetwork parameters:[NSDictionary dictionaryWithDictionary:params] error:&err];
 
-                            if(!result) {
-                                emit connectionError(id, ConnectError);
-                            } else {
-                                [autoreleasepool release];
-                                return;
-                            }
+                        if(!result) {
+                            emit connectionError(id, ConnectError);
+                        } else {
+                            [autoreleasepool release];
+                            return;
                         }
                     }
                 }
+            } else {
+                qDebug() <<"ERROR"<< nsstringToQString([err localizedDescription ]);
             }
-            index++;
-        }
 
-        emit connectionError(id, InterfaceLookupError);
-#endif
-    } else {
-        // not wifi
+            emit connectionError(id, InterfaceLookupError);
+            [autoreleasepool release];
+
+        } else {
+            // not wifi
+        }
+#endif        
     }
     emit connectionError(id, OperationNotSupported);
-        [autoreleasepool release];
 }
 
 void QCoreWlanEngine::disconnectFromId(const QString &id)
@@ -353,6 +361,7 @@ void QCoreWlanEngine::disconnectFromId(const QString &id)
 void QCoreWlanEngine::requestUpdate()
 {
     getAllScInterfaces();
+    getUserConfigurations();
     emit configurationsChanged();
 }
 
@@ -366,8 +375,9 @@ QList<QNetworkConfigurationPrivate *> QCoreWlanEngine::scanForSsids(const QStrin
     QList<QNetworkConfigurationPrivate *> foundConfigs;
 #if defined(MAC_SDK_10_6)
     NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
-
     CWInterface *currentInterface = [CWInterface interfaceWithName:qstringToNSString(interfaceName)];
+    QStringList addedConfigs;
+
     if([currentInterface power]) {
         NSError *err = nil;
         NSDictionary *parametersDict = nil;
@@ -376,11 +386,11 @@ QList<QNetworkConfigurationPrivate *> QCoreWlanEngine::scanForSsids(const QStrin
         CWNetwork *apNetwork;
         if(!err) {
             for(uint row=0; row < [apArray count]; row++ ) {
-                NSAutoreleasePool *looppool = [[NSAutoreleasePool alloc] init];
-
                 apNetwork = [apArray objectAtIndex:row];
-                QNetworkConfigurationPrivate* cpPriv = new QNetworkConfigurationPrivate();
+
                 QString networkSsid = nsstringToQString([apNetwork ssid]);
+
+                QNetworkConfigurationPrivate* cpPriv = new QNetworkConfigurationPrivate();
                 cpPriv->name = networkSsid;
                 cpPriv->isValid = true;
                 cpPriv->id = networkSsid;
@@ -395,25 +405,50 @@ QList<QNetworkConfigurationPrivate *> QCoreWlanEngine::scanForSsids(const QStrin
                         cpPriv->state |=  QNetworkConfiguration::Active;
                     }
                 }
+
                 if(!cpPriv->state) {
-                    if(isKnownSsid(cpPriv->serviceInterface.name(), networkSsid)) {
+                    if(isKnownSsid(networkSsid)) {
                         cpPriv->state =  QNetworkConfiguration::Discovered;
                     } else {
-                        cpPriv->state =  QNetworkConfiguration::Defined;
+                        cpPriv->state = QNetworkConfiguration::Undefined;
                     }
-                }
-                if(!cpPriv->state) {
-                    cpPriv->state = QNetworkConfiguration::Undefined;
                 }
                 if([[apNetwork securityMode ] intValue]== kCWSecurityModeOpen)
                     cpPriv->purpose = QNetworkConfiguration::PublicPurpose;
                 else
                     cpPriv->purpose = QNetworkConfiguration::PrivatePurpose;
+
                 foundConfigs.append(cpPriv);
-                [looppool release];
+                addedConfigs << networkSsid;
+
+            } //end scanned row
+        }
+    } //end power
+
+
+    // add known configurations that are not around.
+    QMapIterator<QString, QString> i(userProfiles);
+    while (i.hasNext()) {
+        i.next();
+        QString networkSsid = i.key();
+        if(!addedConfigs.contains(networkSsid)) {
+            QNetworkConfigurationPrivate* cpPriv = new QNetworkConfigurationPrivate();
+            cpPriv->name = networkSsid;
+            cpPriv->isValid = true;
+            cpPriv->id = networkSsid;
+            cpPriv->internet = true;
+            cpPriv->bearer = QLatin1String("WLAN");
+            cpPriv->type = QNetworkConfiguration::InternetAccessPoint;
+            cpPriv->serviceInterface = QNetworkInterface::interfaceFromName(i.value());
+
+            if(!cpPriv->state) {
+                cpPriv->state =  QNetworkConfiguration::Defined;
             }
+
+            foundConfigs.append(cpPriv);
         }
     }
+
     [autoreleasepool drain];
 #else
     Q_UNUSED(interfaceName);
@@ -433,18 +468,14 @@ bool QCoreWlanEngine::isWifiReady(const QString &wifiDeviceName)
     return false;
 }
 
-bool QCoreWlanEngine::isKnownSsid(const QString &interfaceName, const QString &ssid)
+bool QCoreWlanEngine::isKnownSsid( const QString &ssid)
 {
 #if defined(MAC_SDK_10_6)
-    CWInterface *wifiInterface = [CWInterface interfaceWithName: qstringToNSString(interfaceName)];
-    CWConfiguration *userConfig = [wifiInterface configuration];
-    NSSet *remNets = [userConfig rememberedNetworks];
-    for (CWWirelessProfile *wProfile in remNets) {
-        if(ssid == nsstringToQString([wProfile ssid]))
-            return true;
+    if(userProfiles.keys().contains(ssid) ){
+     return true;
     }
+
 #else
-    Q_UNUSED(interfaceName);
     Q_UNUSED(ssid);
 #endif
     return false;
@@ -544,6 +575,40 @@ void QCoreWlanEngine::startNetworkChangeLoop()
     return;
 }
 
+void QCoreWlanEngine::getUserConfigurations()
+{
+#ifdef MAC_SDK_10_6
+    NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
+
+    userProfiles.clear();
+
+    NSArray *wifiInterfaces = [CWInterface supportedInterfaces];
+    for(uint row=0; row < [wifiInterfaces count]; row++ ) {
+
+        CWInterface *wifiInterface = [CWInterface interfaceWithName: [wifiInterfaces objectAtIndex:row]];
+
+        // add user configured networks
+        CWConfiguration *userConfig = [ wifiInterface configuration];
+
+        NSSet *remNets = [userConfig rememberedNetworks];
+
+        NSEnumerator *enumerator = [remNets objectEnumerator];
+        CWWirelessProfile *wProfile;
+
+        while ((wProfile = [enumerator nextObject])) {
+          userProfiles.insert(nsstringToQString([wProfile ssid] ), nsstringToQString([wifiInterface name]));
+        }
+
+        // add user configured 802.1X networks
+        NSArray *array = [CW8021XProfile allUser8021XProfiles];
+        for (NSUInteger i=0; i<[array count]; ++i) {
+            userProfiles.insert(nsstringToQString( [[array objectAtIndex:i] userDefinedName]), nsstringToQString([wifiInterface name]));
+        }
+    }
+    [autoreleasepool release];
+#endif
+
+}
 
 #include "moc_qcorewlanengine_mac_p.cpp"
 

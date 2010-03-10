@@ -16,8 +16,8 @@ INCLUDEPATH += \
     ../../../src/contacts/requests \
     ../../../src/contacts/filters
 
-HEADERS += ut_qvcard21writer.h
-SOURCES += ut_qvcard21writer.cpp
+HEADERS += tst_qvcard21writer.h
+SOURCES += tst_qvcard21writer.cpp
 
 CONFIG += mobility
 MOBILITY = contacts versit

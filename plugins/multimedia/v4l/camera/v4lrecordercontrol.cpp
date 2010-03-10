@@ -40,14 +40,13 @@
 ****************************************************************************/
 
 #include "v4lrecordercontrol.h"
-#include <QtCore/QDebug>
 
 V4LRecorderControl::V4LRecorderControl(V4LCameraSession *session)
     :QMediaRecorderControl(session), m_session(session), m_state(QMediaRecorder::StoppedState)
 {
     connect(m_session, SIGNAL(recordStateChanged(QMediaRecorder::State)), SLOT(updateState(QMediaRecorder::State)));
-    //connect(m_session, SIGNAL(error(int,QString)), SIGNAL(error(int,QString)));
-    //connect(m_session, SIGNAL(durationChanged(qint64)), SIGNAL(durationChanged(qint64)));
+    connect(m_session, SIGNAL(error(int,QString)), SIGNAL(error(int,QString)));
+    connect(m_session, SIGNAL(durationChanged(qint64)), SIGNAL(durationChanged(qint64)));
 }
 
 V4LRecorderControl::~V4LRecorderControl()

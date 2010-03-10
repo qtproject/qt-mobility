@@ -132,7 +132,6 @@ these domains have dependencies and these are outlined below:
        For 5th edition sdk plugins are installed with installer (all at once), but for FP1 and FP2 devices a zip is provided. You will need following plugins to compile all features: 
        MediaPlayerEngine (MediaPlayerUtilityAPI for 3rd FP2), AudioRoutingAPI , Tuner Utility (only for 3rd FP1) Radio Utility API (for 3rd FP2 and 5th ed), SymbianOnboardCameraAdvancedSettingsAPI(for 3rd FP2 and 5th ed) and 
        autofocus_extension_library_s60_3rd_ed for (3rd FP1 included in the camera example \l http://sw.nokia.com/id/2f492479-ac8c-4c3e-aa90-cc883e190d83/S60_Platform_Camera_Example_with_AutoFocus_Support_v2_2_en.zip)
-       To get camera service working you will also need camera wrapper from Forum Nokia at \l http://sw.nokia.com/id/1cde08b0-1f57-41ba-851b-776c43fdec6c/S60_Platform_Camera_Example_v3_0_en.zip Example application contains camerawrapper binaries and sis for the device
        
     \o Y
     \o N

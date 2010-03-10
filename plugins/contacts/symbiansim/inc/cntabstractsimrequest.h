@@ -43,6 +43,7 @@
 #define CNTABSTRACTSIMREQUEST_H_
 
 #include <QObject>
+#include <qtcontacts.h>
 
 class CntSymbianSimEngine;
 class CntSimStore;
@@ -53,18 +54,23 @@ class CntAbstractSimRequest : public QObject
 Q_OBJECT
 public:
     CntAbstractSimRequest(CntSymbianSimEngine *engine);
-    virtual ~CntAbstractSimRequest() {}
+
+public Q_SLOTS:    
     virtual bool start() = 0;
     virtual bool cancel() = 0;
+    virtual void retry() {};
     
 protected:
+    bool waitAndRetry();
     void singleShotTimer(int msec, QObject *receiver, const char *member);
     void cancelTimer();
     CntSymbianSimEngine *engine();
     CntSimStore *simStore();
+    void clearRetryCount() { m_retryCount = 0; }
     
 private:
     QTimer *m_timer;
+    int m_retryCount;
 };
 
 #endif // CNTABSTRACTSIMREQUEST_H_

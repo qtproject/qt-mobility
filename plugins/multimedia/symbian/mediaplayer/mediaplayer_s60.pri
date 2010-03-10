@@ -43,13 +43,20 @@ SOURCES += \
     $$PWD/s60audioplayersession.cpp \
     $$PWD/s60videowidget.cpp
 
-exists($${EPOCROOT}epoc32/release/winscw/udeb/mpengine.lib){
+contains(S60_VERSION, 3.1) {
+    MMP_RULES += "$${LITERAL_HASH}ifndef WINSCW" \
+    "LIBRARY    MPEngine.lib" \
+    "MACRO    HAS_MEDIA_PLAYER" \
+    "$${LITERAL_HASH}endif"
+} else {
     LIBS += -lMPEngine
     DEFINES += HAS_MEDIA_PLAYER
 }
-else {
-    MMP_RULES += "$${LITERAL_HASH}ifndef WINSCW" \
-        "LIBRARY		MPEngine.lib" \
-        "MACRO		HAS_MEDIA_PLAYER" \
-        "$${LITERAL_HASH}endif"
+exists($${EPOCROOT}epoc32\include\platform\mw\mediarecognizer.h) {
+    symbian:LIBS += -lplaybackhelper
+    DEFINES += USE_SYMBIAN_MEDIARECOGNIZER
+    #these are sdk plugins that don't exits in Symbian3
+    symbian:LIBS -= -lMPEngine
+    message("Using Symbian mediarecognizer")
 }
+

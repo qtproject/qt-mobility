@@ -23,7 +23,7 @@
 <a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmediaserviceproviderhint.html#Feature-enum">Feature</a></b> { LowLatencyPlayback, RecordingSupport }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmediaserviceproviderhint.html#Feature-enum">Feature</a></b> { LowLatencyPlayback, RecordingSupport, StreamPlayback }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qmediaserviceproviderhint.html#Feature-enum">Features</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmediaserviceproviderhint.html#Type-enum">Type</a></b> { Null, ContentType, Device, SupportedFeatures }</td></tr>
 </table>
@@ -57,6 +57,7 @@
 <a name="//apple_ref/cpp/tag/QMediaServiceProviderHint/Feature"></a>
 <a name="//apple_ref/cpp/econst/QMediaServiceProviderHint/LowLatencyPlayback"></a>
 <a name="//apple_ref/cpp/econst/QMediaServiceProviderHint/RecordingSupport"></a>
+<a name="//apple_ref/cpp/econst/QMediaServiceProviderHint/StreamPlayback"></a>
 <a name="//apple_ref/cpp/tdef/QMediaServiceProviderHint/Features"></a>
 <h3 class="flags"><a name="Feature-enum"></a>enum QMediaServiceProviderHint::Feature<br />flags QMediaServiceProviderHint::Features</h3>
 <p>Enumerates features a media service may provide.</p>
@@ -64,6 +65,7 @@
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QMediaServiceProviderHint::LowLatencyPlayback</tt></td><td align="center" valign="top"><tt>0x01</tt></td><td valign="top">The service is expected to play simple audio formats, but playback should start without significant delay. Such playback service can be used for beeps, ringtones, etc.</td></tr>
 <tr><td valign="top"><tt>QMediaServiceProviderHint::RecordingSupport</tt></td><td align="center" valign="top"><tt>0x02</tt></td><td valign="top">The service provides audio or video recording functions.</td></tr>
+<tr><td valign="top"><tt>QMediaServiceProviderHint::StreamPlayback</tt></td><td align="center" valign="top"><tt>0x04</tt></td><td valign="top">The service is capable of playing <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> based streams.</td></tr>
 </table></p>
 <p>The Features type is a typedef for <a href="qflags.html">QFlags</a>&lt;Feature&gt;. It stores an OR combination of Feature values.</p>
 <a name="//apple_ref/cpp/tag/QMediaServiceProviderHint/Type"></a>
