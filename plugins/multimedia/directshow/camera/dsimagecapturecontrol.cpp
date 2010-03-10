@@ -63,6 +63,11 @@ void DSImageCaptureControl::capture(const QString &fileName)
     m_session->captureImage(fileName);
 }
 
+void DSImageCaptureControl::cancelCapture()
+{
+    m_session->cancelCapture();
+}
+
 void DSImageCaptureControl::updateState()
 {
     bool ready = m_session->state() == QCamera::ActiveState;
