@@ -47,6 +47,7 @@ QGstreamerImageCaptureControl::QGstreamerImageCaptureControl(QGstreamerCaptureSe
 {
     connect(m_session, SIGNAL(stateChanged(QGstreamerCaptureSession::State)), SLOT(updateState()));
     connect(m_session, SIGNAL(imageCaptured(QString,QImage)), this, SIGNAL(imageCaptured(QString,QImage)));
+    connect(m_session, SIGNAL(imageSaved(QString)), this, SIGNAL(imageSaved(QString)));
 }
 
 QGstreamerImageCaptureControl::~QGstreamerImageCaptureControl()
