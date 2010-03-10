@@ -39,74 +39,40 @@
 **
 ****************************************************************************/
 
-#ifndef UT_QVERSITCONTACTIMPORTER_H
-#define UT_QVERSITCONTACTIMPORTER_H
+#ifndef tst_QVERSITPROPERTY_H
+#define tst_QVERSITPROPERTY_H
 
 #include <QObject>
-#include <qversitcontactimporter.h>
-#include <qversitdocument.h>
 #include <qmobilityglobal.h>
 
 QTM_BEGIN_NAMESPACE
 
-class QVersitContactImporter;
-class QVersitContactImporterPrivate;
-class MyQVersitContactImporterPropertyHandler;
-class MyQVersitResourceHandler;
+class QVersitProperty;
 
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
 
-class UT_QVersitContactImporter : public QObject
+class tst_QVersitProperty : public QObject
 {
     Q_OBJECT
 
-private slots: // Tests
+private slots:
+
     void init();
     void cleanup();
 
+private slots: //test methods
+
+    void testGroup();
     void testName();
-    void testNameWithFormatted();
-    void testAddress();
-    void testTel();
-    void testEmail();
-    void testUrl();
-    void testUid();
-    void testOrganizationName();
-    void testOrganizationTitle();
-    void testOrganizationLogo();
-    void testOrganizationAssistant();
-    void testOrganizationRole();
-    void testTimeStamp();
-    void testAnniversary();
-    void testBirthday();
-    void testGender();
-    void testNickname();
-    void testAvatarStored();
-    void testAvatarUrl();
-    void testAvatarInvalid();
-    void testGeo();
-    void testNote();
-    void testOnlineAccount();
-    void testFamily();
-    void testSound();
-    void testLabel();
-    void testPref();
-    void testPropertyHandler();
-
-private: // Utilities
-
-    QVersitDocument createDocumentWithProperty(const QVersitProperty& property);
-
-    QVersitDocument createDocumentWithNameAndPhoto(
-        const QString& name,
-        QByteArray image,
-        const QString& photoType);
+    void testParameters();
+    void testValue();
+    void testEmbeddedDocument();
+    void testEquality();
 
 private:
-    QVersitContactImporter* mImporter;
-    MyQVersitContactImporterPropertyHandler* mPropertyHandler;
-    MyQVersitResourceHandler* mResourceHandler;
+    QVersitProperty* mVersitProperty;
+
 };
 
-#endif // UT_QVERSITCONTACTIMPORTER_H
+#endif //tst_QVERSITPROPERTY_H
