@@ -194,7 +194,7 @@ void QTrackerContactSaveRequest::saveContacts(const QList<QContact> &contacts)
         errorsOfContactsFinished[errorCount++] =  QContactManager::NoError; // TODO ask how to get error code from tracker
     }
 
-    TrackerChangeListener *changeListener = new TrackerChangeListener(this);
+    TrackerChangeListener *changeListener = new TrackerChangeListener(engine, this);
     if (isModified) {
         connect(changeListener, SIGNAL(contactsChanged(const QList<QContactLocalId> &)),
                 SLOT(onTrackerSignal(const QList<QContactLocalId> &)));
