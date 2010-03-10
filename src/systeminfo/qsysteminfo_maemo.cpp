@@ -256,7 +256,28 @@ qint32 QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Netw
     {
             return cellSignalStrength;
     }
-    case QSystemNetworkInfo::EthernetMode:
+    case QSystemNetworkInfo::EthernetMode: {
+        QString result;
+        QString baseSysDir = "/sys/class/net/";
+        QString interface = QSystemNetworkInfoLinuxCommonPrivate::interfaceForMode(mode).humanReadableName();
+        if (interface == "usb0") {
+            QString dir = QSystemNetworkInfoLinuxCommonPrivate::interfaceForMode(mode).name();
+            QString devFile = baseSysDir + dir;
+            QFileInfo fi(devFile + "/carrier");
+            if(fi.exists()) {
+                QFile rx(fi.absoluteFilePath());
+                if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                    QTextStream stream(&rx);
+                    stream >> result;
+                    rx.close();
+                    return result.toInt() * 100;
+                    break;
+                }
+            }
+        }
+        return QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(mode);
+        break;
+    }
     case QSystemNetworkInfo::WlanMode:
     case QSystemNetworkInfo::BluetoothMode:
         return QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(mode);
@@ -361,6 +382,28 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
     case QSystemNetworkInfo::WcdmaMode:
     case QSystemNetworkInfo::WimaxMode:
         break;
+    case QSystemNetworkInfo::EthernetMode: {
+        QString address;
+        QString baseSysDir = "/sys/class/net/";
+        QString interface = QSystemNetworkInfoLinuxCommonPrivate::interfaceForMode(mode).humanReadableName();
+        if (interface == "usb0") {
+            QString dir = QSystemNetworkInfoLinuxCommonPrivate::interfaceForMode(mode).name();
+            QString devFile = baseSysDir + dir;
+            QFileInfo fi(devFile + "/address");
+            if(fi.exists()) {
+                QFile rx(fi.absoluteFilePath());
+                if(rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                    QTextStream stream(&rx);
+                    stream >> address;
+                    rx.close();
+                    return address;
+                    break;
+                }
+            }
+        }
+        return QSystemNetworkInfoLinuxCommonPrivate::macAddress(mode);
+        break;
+    }
     default:
         return QSystemNetworkInfoLinuxCommonPrivate::macAddress(mode);
         break;
