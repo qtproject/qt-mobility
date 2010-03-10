@@ -134,7 +134,7 @@ void QContactDetailFieldDefinition::setAllowableValues(const QVariantList values
  * Returns the access constraints which apply to this field
  *
  * \obsolete
- * Obsolete - use \l QContactDetail::accessConstraint instead.
+ * Obsolete - use \l QContactDetail::accessConstraints() instead.
  */
 QContactDetailFieldDefinition::AccessConstraint QContactDetailFieldDefinition::accessConstraint() const
 {

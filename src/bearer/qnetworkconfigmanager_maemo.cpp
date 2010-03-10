@@ -438,10 +438,10 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
     /* We return currently configured IAPs in the first run and do the WLAN
      * scan in subsequent runs.
      */
-    QList<QString> all_iaps;
+    const QList<QString> all_iaps;
     Maemo::IAPConf::getAll(all_iaps);
 
-    foreach (QString iap_id, all_iaps) {
+    foreach (const QString iap_id, all_iaps) {
 	QByteArray ssid;
 
 	Maemo::IAPConf saved_ap(iap_id);

@@ -51,6 +51,8 @@ QTM_BEGIN_NAMESPACE
 
 class QVersitContactImporter;
 class QVersitContactImporterPrivate;
+class MyQVersitContactImporterPropertyHandler;
+class MyQVersitResourceHandler;
 
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
@@ -62,11 +64,11 @@ class UT_QVersitContactImporter : public QObject
 private slots: // Tests
     void init();
     void cleanup();
-    
+
     void testName();
     void testNameWithFormatted();
     void testAddress();
-    void testTel();    
+    void testTel();
     void testEmail();
     void testUrl();
     void testUid();
@@ -82,16 +84,18 @@ private slots: // Tests
     void testNickname();
     void testAvatarStored();
     void testAvatarUrl();
+    void testAvatarInvalid();
     void testGeo();
     void testNote();
     void testOnlineAccount();
     void testFamily();
     void testSound();
     void testLabel();
+    void testPref();
     void testPropertyHandler();
 
 private: // Utilities
-    
+
     QVersitDocument createDocumentWithProperty(const QVersitProperty& property);
 
     QVersitDocument createDocumentWithNameAndPhoto(
@@ -101,7 +105,8 @@ private: // Utilities
 
 private:
     QVersitContactImporter* mImporter;
-    QVersitContactImporterPrivate* mImporterPrivate;
+    MyQVersitContactImporterPropertyHandler* mPropertyHandler;
+    MyQVersitResourceHandler* mResourceHandler;
 };
 
 #endif // UT_QVERSITCONTACTIMPORTER_H

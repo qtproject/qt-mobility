@@ -10,7 +10,7 @@ wince* {
 
 CONFIG += testcase
 include(../../../common.pri)
-DEFINES += BUILD_QTVERSIT QT_ASCII_CAST_WARNINGS
+DEFINES += QT_ASCII_CAST_WARNINGS
 DEPENDPATH += .
 INCLUDEPATH += . \
     ../../ \
