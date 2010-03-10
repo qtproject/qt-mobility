@@ -119,7 +119,8 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo -no-docs .......... Do not build documentation (build by default)
     echo -modules ^<list^> ... Build only the specified modules (default all)
     echo                     Choose from: bearer contacts location publishsubscribe
-    echo                     messaging multimedia serviceframework sensors systeminfo versit
+    echo                     messaging multimedia systeminfo serviceframework versit
+    echo                     sensors
     echo                     Modules should be separated by a space and surrounded
     echo                     by double quotation. If a
     echo                     selected module depends on other modules dependencies
@@ -432,6 +433,7 @@ echo Start of compile tests
 REM compile tests go here.
 call :compileTest LBT lbt
 call :compileTest SNAP snap
+call :compileTest SymbianContactSIM symbiancntsim
 echo End of compile tests
 echo.
 echo.

@@ -213,7 +213,8 @@ void Explorer::loadSensorProperties()
             //name == "type" ||
             name == "reading" ||
             name == "connected" ||
-            name == "running") {
+            name == "running" ||
+            name == "supportsPolling") {
             ++offset;
             continue;
         }
@@ -240,6 +241,8 @@ void Explorer::loadSensorProperties()
 
     // We don't add all properties
     ui.sensorprops->setRowCount(rows - offset);
+
+    ui.poll->setEnabled(m_sensor->supportsPolling());
 
     ignoreItemChanged = false;
 }
@@ -355,11 +358,38 @@ bool Explorer::filter(QSensorReading *reading)
 
     for(int i = firstProperty; i < mo->propertyCount(); ++i) {
         int row = i - firstProperty;
+        QString typeName = QLatin1String(mo->property(i).typeName());
+        int crap = typeName.lastIndexOf("::");
+        if (crap != -1)
+            typeName = typeName.mid(crap + 2);
         QLatin1String name(mo->property(i).name());
         QTableWidgetItem *value = ui.reading->item(row, 3);
         QVariant val = mo->property(i).read(reading);
-        if (val.userType() == QMetaType::type("QtMobility::qtimestamp")) {
-            value->setText(QString("%1").arg(val.value<QtMobility::qtimestamp>()));
+        if (typeName == "qtimestamp") {
+            value->setText(QString("%1").arg(val.value<qtimestamp>()));
+        } else if (typeName == "LightLevel") {
+            QString text;
+            switch (val.toInt()) {
+            case 1:
+                text = "Dark";
+                break;
+            case 2:
+                text = "Twilight";
+                break;
+            case 3:
+                text = "Light";
+                break;
+            case 4:
+                text = "Bright";
+                break;
+            case 5:
+                text = "Sunny";
+                break;
+            default:
+                text = "Undefined";
+                break;
+            }
+            value->setText(text);
         } else {
             value->setText(val.toString());
         }

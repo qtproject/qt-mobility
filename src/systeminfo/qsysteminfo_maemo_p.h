@@ -61,6 +61,19 @@
 #include "qsysteminfo_linux_common_p.h"
 #include "qsysteminfo.h"
 #include <qmobilityglobal.h>
+#if !defined(QT_NO_DBUS)
+#include <qhalservice_linux_p.h>
+
+struct ProfileDataValue {
+    QString key;
+    QString val;
+    QString type;
+    };
+
+Q_DECLARE_METATYPE(ProfileDataValue)
+Q_DECLARE_METATYPE(QList<ProfileDataValue>)
+
+#endif
 
 QT_BEGIN_HEADER
 
@@ -114,6 +127,7 @@ public:
     QString macAddress(QSystemNetworkInfo::NetworkMode mode);
 
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
+    QSystemNetworkInfo::NetworkMode currentMode();
 
 };
 
@@ -154,8 +168,30 @@ public:
     QSystemDeviceInfo::SimStatus simStatus();
     bool isDeviceLocked();
     QSystemDeviceInfo::Profile currentProfile();
+    QSystemDeviceInfo::PowerState currentPowerState();
 
 protected:
+#if !defined(QT_NO_DBUS)
+    QHalInterface *halIface;
+    QHalDeviceInterface *halIfaceDevice;
+    void setupBluetooth();
+    void setupProfile();
+
+private Q_SLOTS:
+    void halChanged(int,QVariantList);
+    void bluezPropertyChanged(const QString&, QDBusVariant);
+    void deviceModeChanged(QString newMode);
+    void profileChanged(bool changed, bool active, QString profile, QList<ProfileDataValue> values);
+
+private:
+    bool flightMode;
+    QString profileName;
+    bool silentProfile;
+    bool vibratingAlertEnabled;
+    int ringingAlertVolume;
+
+    QSystemDeviceInfo::PowerState previousPowerState;
+#endif
 };
 
 
@@ -164,13 +200,20 @@ class QSystemScreenSaverPrivate : public QSystemScreenSaverLinuxCommonPrivate
     Q_OBJECT
 
 public:
-    QSystemScreenSaverPrivate(QSystemScreenSaverLinuxCommonPrivate *parent = 0);
+    QSystemScreenSaverPrivate(QObject *parent = 0);
     ~QSystemScreenSaverPrivate();
 
     bool screenSaverInhibited();
     bool setScreenSaverInhibit();
     bool isScreenLockEnabled();
     bool isScreenSaverActive();
+
+private Q_SLOTS:
+    void display_blanking_pause();
+
+private:    //data
+    bool m_screenSaverInhibited;
+    QTimer *ssTimer;
 
 protected:
     QString screenPath;

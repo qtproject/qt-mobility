@@ -69,8 +69,8 @@ IMPLEMENT_READING(QAttitudeReading)
     attitude can be represented uniquely.
 
     \list
-    \o Pitch: -180 to 180
-    \o Roll: -90 to 90
+    \o Pitch: -90 to 90
+    \o Roll: -180 to 180
     \o Yaw: 0 to 360
     \endlist
 

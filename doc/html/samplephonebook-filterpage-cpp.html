@@ -94,12 +94,10 @@
         filterableFields.append(&quot;Email&quot;);
         m_fieldCriteriaCombo-&gt;addItems(filterableFields);
 
-        QStringList criteriaTypes;
-        criteriaTypes.append(&quot;Exact Match&quot;);
-        criteriaTypes.append(&quot;Starts With&quot;);
-        criteriaTypes.append(&quot;Ends With&quot;);
-        criteriaTypes.append(&quot;Contains&quot;);
-        m_criteriaTypeCombo-&gt;addItems(criteriaTypes);
+        m_criteriaTypeCombo-&gt;addItem(&quot;Equals&quot;, QContactFilter::MatchExactly);
+        m_criteriaTypeCombo-&gt;addItem(&quot;Contains&quot;, QContactFilter::MatchContains);
+        m_criteriaTypeCombo-&gt;addItem(&quot;Starts with&quot;, QContactFilter::MatchStartsWith);
+        m_criteriaTypeCombo-&gt;addItem(&quot;Ends with&quot;, QContactFilter::MatchEndsWith);
 
         QStringList joinTypes;
         joinTypes.append(&quot;AND&quot;);
@@ -193,37 +191,9 @@
         fil.setDetailDefinitionName(defName, fieldName);
         fil.setValue(m_valueCriteriaEdit-&gt;text());
 
-        QContactFilter::MatchFlags matchFlags;
-        switch (m_criteriaTypeCombo-&gt;currentIndex()) {
-            case 0:
-            {
-                matchFlags |= QContactFilter::MatchExactly;
-                exprMatch = &quot;equals&quot;;
-            }
-            break;
-
-            case 1:
-            {
-                matchFlags |= QContactFilter::MatchStartsWith;
-                exprMatch = &quot;starts with&quot;;
-            }
-            break;
-
-            case 2:
-            {
-                matchFlags |= QContactFilter::MatchEndsWith;
-                exprMatch = &quot;ends with&quot;;
-            }
-            break;
-
-            default:
-            {
-                matchFlags |= QContactFilter::MatchContains;
-                exprMatch = &quot;contains&quot;;
-            }
-            break;
-        }
-        fil.setMatchFlags(matchFlags);
+        int flag = m_criteriaTypeCombo-&gt;itemData(m_criteriaTypeCombo-&gt;currentIndex()).toInt();
+        fil.setMatchFlags(QContactFilter::MatchFlags(flag));
+        exprMatch = m_criteriaTypeCombo-&gt;currentText().toLower();
 
         <span class="comment">// if OR then join with OR</span>
         if (m_joinMethodCombo-&gt;currentIndex() == 1) {

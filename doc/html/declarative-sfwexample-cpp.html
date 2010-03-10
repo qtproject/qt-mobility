@@ -103,6 +103,7 @@
             return;
 
         m_descriptor = d;
+
         if (serviceInstance)
             delete serviceInstance;
 
@@ -131,9 +132,12 @@
         }
     }
 
+    QML_DEFINE_TYPE(QtSFW,1,0,Services,ServiceRegister)
+
     ServiceRegister::ServiceRegister()
     {
         serviceManager = new QServiceManager();
+        unregisterExampleServices();
         registerExampleServices();
 
         //! [1]
@@ -158,9 +162,9 @@
     {
         //! [0]
         QStringList exampleXmlFiles;
-        exampleXmlFiles &lt;&lt;&quot;voipdialerservice.xml&quot; &lt;&lt; &quot;landlinedialerservice.xml&quot;;
+        exampleXmlFiles &lt;&lt; &quot;voipdialerservice.xml&quot; &lt;&lt; &quot;landlinedialerservice.xml&quot;;
         foreach (const QString &amp;fileName, exampleXmlFiles) {
-            QString path = QCoreApplication::applicationDirPath() + &quot;/../../examples/declarative/&quot; + fileName;
+            QString path = QCoreApplication::applicationDirPath() + &quot;/xmldata/&quot; + fileName;
             serviceManager-&gt;addService(path);
         }
         //! [0]

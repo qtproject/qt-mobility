@@ -65,4 +65,7 @@ plugin_commonU.def
 
 #QtCreator project files
 *.pro.user
+=======
+*.pro.user*
+*~
 

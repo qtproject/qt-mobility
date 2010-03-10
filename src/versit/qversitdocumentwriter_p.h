@@ -56,26 +56,38 @@
 #include "qversitproperty.h"
 #include <QByteArray>
 #include <QMultiHash>
-#include <QTextCodec>
+
+class QIODevice;
+class QTextCodec;
+class QTextEncoder;
 
 QTM_BEGIN_NAMESPACE
 
-class Q_VERSIT_EXPORT QVersitDocumentWriter
+class Q_AUTOTEST_EXPORT QVersitDocumentWriter
 {
 public:
     QVersitDocumentWriter(const QByteArray& documentType, const QByteArray& version);
+    virtual ~QVersitDocumentWriter();
 
-    virtual QByteArray encodeVersitProperty(const QVersitProperty& property,
-                                            QTextCodec* codec) = 0;
-    virtual QByteArray encodeParameters(const QMultiHash<QString,QString>& parameters,
-                                        QTextCodec* codec) const = 0;
-    QByteArray encodeVersitDocument(const QVersitDocument& document,
-                                    QTextCodec* codec = QTextCodec::codecForName("UTF-8"));
-    QByteArray encodeGroupsAndName(const QVersitProperty& property,
-                                   QTextCodec* codec = QTextCodec::codecForName("UTF-8")) const;
+    void setCodec(QTextCodec* codec);
+    void setDevice(QIODevice* device);
+
+    virtual void encodeVersitProperty(const QVersitProperty& property) = 0;
+    virtual void encodeParameters(const QMultiHash<QString,QString>& parameters) = 0;
+    void encodeVersitDocument(const QVersitDocument& document);
+    void encodeGroupsAndName(const QVersitProperty& property);
+
+    void writeString(const QString& string, bool useUtf8 = false);
+    void writeCrlf();
 
     QByteArray mDocumentType;
     QByteArray mVersion;
+    QIODevice* mDevice;
+    QTextCodec* mCodec;
+    QTextEncoder* mEncoder;
+    QTextEncoder* mUtf8Encoder;
+    bool mSuccessful;
+    int mCurrentLineLength;
 };
 
 QTM_END_NAMESPACE

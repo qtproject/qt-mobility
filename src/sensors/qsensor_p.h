@@ -82,6 +82,7 @@ public:
         , filter_reading(0)
         , cache_reading(0)
         , error(0)
+        , supportsPolling(false)
     {
     }
 
@@ -108,6 +109,7 @@ public:
     QSensorReading *cache_reading;
 
     int error;
+    bool supportsPolling;
 };
 
 class QSensorReadingPrivate

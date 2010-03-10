@@ -68,21 +68,21 @@ QTM_BEGIN_NAMESPACE
 class QVersitPropertyPrivate : public QSharedData
 {
 public:
-    QVersitPropertyPrivate() : QSharedData() 
+    QVersitPropertyPrivate() : QSharedData()
     {
-    }   
-    
-    QVersitPropertyPrivate(const QVersitPropertyPrivate& other) 
+    }
+
+    QVersitPropertyPrivate(const QVersitPropertyPrivate& other)
         : QSharedData(other),
         mGroups(other.mGroups),
         mName(other.mName),
         mParameters(other.mParameters),
         mValue(other.mValue)
     {
-    }     
-    
+    }
+
     ~QVersitPropertyPrivate() {}
-    
+
     QStringList mGroups;
     QString mName;
     QMultiHash<QString,QString> mParameters;
