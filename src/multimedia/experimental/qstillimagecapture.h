@@ -45,7 +45,9 @@
 #include <qmediaobject.h>
 #include <qmediaencodersettings.h>
 
+QT_BEGIN_NAMESPACE
 class QSize;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 

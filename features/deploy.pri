@@ -9,7 +9,7 @@ contains(TEMPLATE,.*lib) {
         middleware {  path=$$MW_LAYER_PUBLIC_EXPORT_PATH("") }
         app {  path=$$APP_LAYER_PUBLIC_EXPORT_PATH("") }
 
-        exportPath=$$dirname(path)
+        exportPath=$$EPOCROOT"."$$dirname(path)
         nativePath=$$replace(exportPath, /,\)
         exists($$nativePath) {
         } else {

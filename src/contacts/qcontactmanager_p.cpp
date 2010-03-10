@@ -142,12 +142,13 @@ void QContactManagerData::createEngine(const QString& managerName, const QMap<QS
                         versions.isEmpty() || //the manager engine factory does not report any version
                         versions.contains(implementationVersion)) {
                     m_engine = f->engine(parameters, m_error);
+                    found = true;
                     break;
                 }
             }
-
-            // If this is the second time through, break
-            if (loadedDynamic)
+            
+            // Break if found or if this is the second time through
+            if (loadedDynamic || found)
                 break;
 
             // otherwise load dynamic factories and reloop

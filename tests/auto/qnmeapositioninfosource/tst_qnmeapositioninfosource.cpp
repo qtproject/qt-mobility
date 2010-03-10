@@ -229,7 +229,9 @@ void tst_QNmeaPositionInfoSource::startUpdates_withTimeout()
     QDateTime dt = QDateTime::currentDateTime().toUTC();    
 
     if (m_mode == QNmeaPositionInfoSource::SimulationMode) {
+        // the first sentence primes the simulation
         proxy->feedBytes(QLocationTestUtils::createRmcSentence(dt).toLatin1());
+        proxy->feedBytes(QLocationTestUtils::createRmcSentence(dt.addMSecs(50)).toLatin1());
         proxy->feedBytes(QLocationTestUtils::createRmcSentence(dt.addSecs(1)).toLatin1());
         proxy->feedBytes(QLocationTestUtils::createRmcSentence(dt.addSecs(2)).toLatin1());
         proxy->feedBytes(QLocationTestUtils::createRmcSentence(dt.addSecs(9)).toLatin1());
@@ -238,7 +240,7 @@ void tst_QNmeaPositionInfoSource::startUpdates_withTimeout()
 
         for (int j = 0; j < 3; ++j) {
             i = 0;
-            for (; i < 15; ++i) {
+            for (; i < 12; ++i) {
                 QTest::qWait(100);
                 if ((spyUpdate.count() == 1) && (spyTimeout.count() == 0))
                     break;
@@ -251,7 +253,7 @@ void tst_QNmeaPositionInfoSource::startUpdates_withTimeout()
         }
        
         i = 0;
-        for (; i < 75; ++i) {
+        for (; i < 72; ++i) {
             QTest::qWait(100);
             if ((spyUpdate.count() == 0) && (spyTimeout.count() == 1))
                 break;
@@ -259,12 +261,13 @@ void tst_QNmeaPositionInfoSource::startUpdates_withTimeout()
         QVERIFY((spyUpdate.count() == 0) && (spyTimeout.count() == 1));
         spyTimeout.clear();
 
-        for (; i < 75; ++i) {
+        for (; i < 72; ++i) {
             QTest::qWait(100);
             if ((spyUpdate.count() == 1) && (spyTimeout.count() == 0))
                 break;
         }
         QVERIFY((spyUpdate.count() == 1) && (spyTimeout.count() == 0));
+
     } else {
         QTest::qWait(900);
         // dt + 900    

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -183,7 +183,7 @@ bool TestCase::run()
         ICheckLib ichecklib;
         ichecklib.ParseHeader(chIncludepathlist, chFilelist);
 
-        ichecklib.check(i_ichecklib);
+        ichecklib.check(i_ichecklib, "");
         QStringList result = ichecklib.getErrorMsg();
         if(result.count() != expectedResult.count()){
             out << testName << " failed. Expected result line count doesn't equals to the result line count." << endl;

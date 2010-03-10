@@ -17,7 +17,7 @@
 <p>The QSensorReading class holds the readings from the sensor. <a href="#details">More...</a></p>
 <pre>    #include &lt;QSensorReading&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
 <p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
-<p>Inherited by <a href="qaccelerometerreading.html">QAccelerometerReading</a>, <a href="qambientlightreading.html">QAmbientLightReading</a>, <a href="qcompassreading.html">QCompassReading</a>, <a href="qmagnetometerreading.html">QMagnetometerReading</a>, <a href="qorientationreading.html">QOrientationReading</a>, <a href="qproximityreading.html">QProximityReading</a>, <a href="qrotationreading.html">QRotationReading</a>, and <a href="qtapreading.html">QTapReading</a>.</p>
+<p>Inherited by <a href="qaccelerometerreading.html">QAccelerometerReading</a>, <a href="qambientlightreading.html">QAmbientLightReading</a>, <a href="qattitudereading.html">QAttitudeReading</a>, <a href="qcompassreading.html">QCompassReading</a>, <a href="qmagnetometerreading.html">QMagnetometerReading</a>, <a href="qorientationreading.html">QOrientationReading</a>, <a href="qproximityreading.html">QProximityReading</a>, and <a href="qtapreading.html">QTapReading</a>.</p>
 <ul>
 <li><a href="qsensorreading-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -25,7 +25,7 @@
 <a name="properties"></a>
 <h2>Properties</h2>
 <ul>
-<li><div class="fn"><b><a href="qsensorreading.html#timestamp-prop">timestamp</a></b> : const qtimestamp</div></li>
+<li><div class="fn"><b><a href="qsensorreading.html#timestamp-prop">timestamp</a></b> : const QtMobility::qtimestamp</div></li>
 </ul>
 <ul>
 <li><div bar="2" class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
@@ -36,6 +36,8 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensorreading.html#setTimestamp">setTimestamp</a></b> ( qtimestamp <i>timestamp</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">qtimestamp </td><td class="memItemRight" valign="bottom"><b><a href="qsensorreading.html#timestamp-prop">timestamp</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qsensorreading.html#value">value</a></b> ( int <i>index</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qsensorreading.html#valueCount">valueCount</a></b> () const</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
@@ -64,7 +66,7 @@
 <hr />
 <h2>Property Documentation</h2>
 <a name="//apple_ref/cpp/instm/QSensorReading/timestamp"></a>
-<h3 class="fn"><a name="timestamp-prop"></a>timestamp : const <a href="qsensor.html#qtimestamp-typedef">qtimestamp</a></h3>
+<h3 class="fn"><a name="timestamp-prop"></a>timestamp : const QtMobility::qtimestamp</h3>
 <p>This property holds the timestamp of the reading.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -77,6 +79,25 @@
 <h3 class="fn"><a name="setTimestamp"></a>void QSensorReading::setTimestamp ( <a href="qsensor.html#qtimestamp-typedef">qtimestamp</a> <i>timestamp</i> )</h3>
 <p>Sets the <i>timestamp</i> of the reading.</p>
 <p>See also <a href="qsensorreading.html#timestamp-prop">timestamp</a>().</p>
+<a name="//apple_ref/cpp/instm/QSensorReading/value"></a>
+<h3 class="fn"><a name="value"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QSensorReading::value ( int <i>index</i> ) const</h3>
+<p>Returns the value of the property at <i>index</i>.</p>
+<p>Note that this function is slower than calling the data function directly.</p>
+<p>Here is an example of getting a property via the different mechanisms available.</p>
+<p>Accessing directly provides the best performance but requires compile-time knowledge of the data you are accessing.</p>
+<pre>    QAccelerometerReading *reading = ...;
+    qreal x = reading-&gt;x();</pre>
+<p>You can also access a property by name. To do this you must call <a href="http://qt.nokia.com/doc/4.6/qobject.html#property">QObject::property</a>().</p>
+<pre>    qreal x = reading-&gt;property(&quot;x&quot;).value&lt;qreal&gt;();</pre>
+<p>Finally, you can access values via numeric index.</p>
+<pre>    qreal x = reading-&gt;value(0).value&lt;qreal&gt;();</pre>
+<p>Note that value() can only access properties declared with <a href="http://qt.nokia.com/doc/4.6/qobject.html#Q_PROPERTY">Q_PROPERTY</a>() in sub-classes of <a href="qsensorreading.html">QSensorReading</a>.</p>
+<p>See also <a href="qsensorreading.html#valueCount">valueCount</a>() and <a href="http://qt.nokia.com/doc/4.6/qobject.html#property">QObject::property</a>().</p>
+<a name="//apple_ref/cpp/instm/QSensorReading/valueCount"></a>
+<h3 class="fn"><a name="valueCount"></a>int QSensorReading::valueCount () const</h3>
+<p>Returns the number of extra properties that the reading has.</p>
+<p>Note that this does not count properties declared in <a href="qsensorreading.html">QSensorReading</a>.</p>
+<p>As an example, this returns 3 for <a href="qaccelerometerreading.html">QAccelerometerReading</a> because there are 3 properties defined in that class.</p>
 <hr />
 <h2>Macro Documentation</h2>
 <a name="//apple_ref/cpp/macro//DECLARE_READING"></a>

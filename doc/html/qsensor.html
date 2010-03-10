@@ -17,31 +17,32 @@
 <p>The QSensor class represents a single hardware sensor. <a href="#details">More...</a></p>
 <pre>    #include &lt;QSensor&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
 <p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
-<p>Inherited by <a href="qaccelerometer.html">QAccelerometer</a>, <a href="qambientlightsensor.html">QAmbientLightSensor</a>, <a href="qcompass.html">QCompass</a>, <a href="qmagnetometer.html">QMagnetometer</a>, <a href="qorientationsensor.html">QOrientationSensor</a>, <a href="qproximitysensor.html">QProximitySensor</a>, <a href="qrotationsensor.html">QRotationSensor</a>, and <a href="qtapsensor.html">QTapSensor</a>.</p>
+<p>Inherited by <a href="qaccelerometer.html">QAccelerometer</a>, <a href="qambientlightsensor.html">QAmbientLightSensor</a>, <a href="qattitudesensor.html">QAttitudeSensor</a>, <a href="qcompass.html">QCompass</a>, <a href="qmagnetometer.html">QMagnetometer</a>, <a href="qorientationsensor.html">QOrientationSensor</a>, <a href="qproximitysensor.html">QProximitySensor</a>, and <a href="qtapsensor.html">QTapSensor</a>.</p>
 <ul>
 <li><a href="qsensor-members.html">List of all members, including inherited members</a></li>
 </ul>
-<hr />
-<a name="public-types"></a>
-<h2>Public Types</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#UpdatePolicy-enum">UpdatePolicies</a></b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#UpdatePolicy-enum">UpdatePolicy</a></b> { Undefined, OnChangeUpdates, OccasionalUpdates, InfrequentUpdates, ..., PolledUpdates }</td></tr>
-</table>
 <hr />
 <a name="properties"></a>
 <h2>Properties</h2>
 <p><table class="propsummary" width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td width="45%" valign="top"><ul>
-<li><div class="fn"><b><a href="qsensor.html#isAvailable-prop">isAvailable</a></b> : const bool</div></li>
-<li><div class="fn"><b><a href="qsensor.html#reading-prop">reading</a></b> : QSensorReading * const</div></li>
-<li><div class="fn"><b><a href="qsensor.html#running-prop">running</a></b> : bool</div></li>
-<li><div class="fn"><b><a href="qsensor.html#sensorid-prop">sensorid</a></b> : QByteArray</div></li>
+<li><div class="fn"><b><a href="qsensor.html#active-prop">active</a></b> : const bool</div></li>
+<li><div class="fn"><b><a href="qsensor.html#availableDataRates-prop">availableDataRates</a></b> : const QtMobility::qrangelist</div></li>
+<li><div class="fn"><b><a href="qsensor.html#busy-prop">busy</a></b> : const bool</div></li>
+<li><div class="fn"><b><a href="qsensor.html#connected-prop">connected</a></b> : const bool</div></li>
+<li><div class="fn"><b><a href="qsensor.html#description-prop">description</a></b> : const QString</div></li>
+<li><div class="fn"><b><a href="qsensor.html#error-prop">error</a></b> : const int</div></li>
+<li><div class="fn"><b><a href="qsensor.html#measurementAccuracy-prop">measurementAccuracy</a></b> : const qreal</div></li>
+<li><div class="fn"><b><a href="qsensor.html#measurementMaximum-prop">measurementMaximum</a></b> : const qreal</div></li>
 </ul></td><td valign="top"><ul>
-<li><div class="fn"><b><a href="qsensor.html#supportedUpdatePolicies-prop">supportedUpdatePolicies</a></b> : const UpdatePolicies</div></li>
+<li><div class="fn"><b><a href="qsensor.html#measurementMinimum-prop">measurementMinimum</a></b> : const qreal</div></li>
+<li><div class="fn"><b><a href="qsensor.html#outputRange-prop">outputRange</a></b> : int</div></li>
+<li><div class="fn"><b><a href="qsensor.html#outputRangeCount-prop">outputRangeCount</a></b> : const int</div></li>
+<li><div class="fn"><b><a href="qsensor.html#reading-prop">reading</a></b> : QSensorReading * const</div></li>
+<li><div class="fn"><b><a href="qsensor.html#sensorid-prop">sensorid</a></b> : QByteArray</div></li>
+<li><div class="fn"><b><a href="qsensor.html#supportsPolling-prop">supportsPolling</a></b> : const bool</div></li>
 <li><div class="fn"><b><a href="qsensor.html#type-prop">type</a></b> : QByteArray</div></li>
 <li><div class="fn"><b><a href="qsensor.html#updateInterval-prop">updateInterval</a></b> : int</div></li>
-<li><div class="fn"><b><a href="qsensor.html#updatePolicy-prop">updatePolicy</a></b> : UpdatePolicy</div></li>
 </ul>
 </td></tr>
 </table></p>
@@ -55,24 +56,31 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#QSensor">QSensor</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#dtor.QSensor">~QSensor</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#addFilter">addFilter</a></b> ( QSensorFilter * <i>filter</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#connect">connect</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">qrangelist </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#availableDataRates-prop">availableDataRates</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#connect">connect</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#description-prop">description</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#error-prop">error</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QByteArray </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#sensorid-prop">identifier</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#running-prop">isActive</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#isAvailable-prop">isAvailable</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#active-prop">isActive</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#busy-prop">isBusy</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#connected-prop">isConnected</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#isSignalEnabled">isSignalEnabled</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#measurementAccuracy-prop">measurementAccuracy</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#measurementMaximum-prop">measurementMaximum</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#measurementMinimum-prop">measurementMinimum</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#outputRange-prop">outputRange</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#outputRangeCount-prop">outputRangeCount</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#poll">poll</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QSensorReading * </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#reading-prop">reading</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#removeFilter">removeFilter</a></b> ( QSensorFilter * <i>filter</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#running-prop">setActive</a></b> ( bool <i>running</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#sensorid-prop">setIdentifier</a></b> ( const QByteArray &amp; <i>identifier</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#outputRange-prop">setOutputRange</a></b> ( int <i>index</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#setSignalEnabled">setSignalEnabled</a></b> ( bool <i>enabled</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#type-prop">setType</a></b> ( const QByteArray &amp; <i>type</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#updateInterval-prop">setUpdateInterval</a></b> ( int <i>interval</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#updatePolicy-prop">setUpdatePolicy</a></b> ( UpdatePolicy <i>policy</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">UpdatePolicies </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#supportedUpdatePolicies-prop">supportedUpdatePolicies</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#supportsPolling-prop">supportsPolling</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QByteArray </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#type-prop">type</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#updateInterval-prop">updateInterval</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">UpdatePolicy </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#updatePolicy-prop">updatePolicy</a></b> () const</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
@@ -81,7 +89,7 @@
 <a name="public-slots"></a>
 <h2>Public Slots</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#start">start</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#start">start</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#stop">stop</a></b> ()</td></tr>
 </table>
 <ul>
@@ -91,7 +99,9 @@
 <a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#busyChanged">busyChanged</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#readingChanged">readingChanged</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#sensorError">sensorError</a></b> ( int <i>error</i> )</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
@@ -133,44 +143,119 @@
 </ul>
 <p>The sensor data is delivered via QSensorData and its sub-classes.</p>
 <hr />
-<h2>Member Type Documentation</h2>
-<a name="//apple_ref/cpp/tag/QSensor/UpdatePolicy"></a>
-<a name="//apple_ref/cpp/econst/QSensor/Undefined"></a>
-<a name="//apple_ref/cpp/econst/QSensor/OnChangeUpdates"></a>
-<a name="//apple_ref/cpp/econst/QSensor/OccasionalUpdates"></a>
-<a name="//apple_ref/cpp/econst/QSensor/InfrequentUpdates"></a>
-<a name="//apple_ref/cpp/econst/QSensor/FrequentUpdates"></a>
-<a name="//apple_ref/cpp/econst/QSensor/TimedUpdates"></a>
-<a name="//apple_ref/cpp/econst/QSensor/PolledUpdates"></a>
-<a name="//apple_ref/cpp/tdef/QSensor/UpdatePolicies"></a>
-<h3 class="flags"><a name="UpdatePolicy-enum"></a>enum QSensor::UpdatePolicy<br />flags QSensor::UpdatePolicies</h3>
-<p>This enum is used to indicate to the sensor how often data will be collected. Note that most sensors will only support one sensitivity. Setting an update policy that the sensor does not support will result in undefined behaviour. You can determine the policies the sensor supports with the <a href="qsensor.html#supportedUpdatePolicies-prop">QSensor::supportedUpdatePolicies</a>() method.</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QSensor::Undefined</tt></td><td align="center" valign="top"><tt>0x00</tt></td><td valign="top">The sensor has no specific update policy. Updates may arrive frequently or infrequently. Updates based on user interaction are likely to fit into this category.</td></tr>
-<tr><td valign="top"><tt>QSensor::OnChangeUpdates</tt></td><td align="center" valign="top"><tt>0x01</tt></td><td valign="top">Updates are delivered as they happen, usually based on user activity.</td></tr>
-<tr><td valign="top"><tt>QSensor::OccasionalUpdates</tt></td><td align="center" valign="top"><tt>0x02</tt></td><td valign="top">Updates are delivered occasionally, about one every 5 seconds.</td></tr>
-<tr><td valign="top"><tt>QSensor::InfrequentUpdates</tt></td><td align="center" valign="top"><tt>0x04</tt></td><td valign="top">Updates are delivered infrequently, no more than once per second.</td></tr>
-<tr><td valign="top"><tt>QSensor::FrequentUpdates</tt></td><td align="center" valign="top"><tt>0x08</tt></td><td valign="top">Updates are delivered frequently, several per second.</td></tr>
-<tr><td valign="top"><tt>QSensor::TimedUpdates</tt></td><td align="center" valign="top"><tt>0x10</tt></td><td valign="top">Updates are delivered at a specific time interval. Note that not all sensors may be able to run with the exact timings requested and may operate slightly faster or slower.</td></tr>
-<tr><td valign="top"><tt>QSensor::PolledUpdates</tt></td><td align="center" valign="top"><tt>0x20</tt></td><td valign="top">Updates are retrieved when the currentReading() method is called.</td></tr>
-</table></p>
-<p>The UpdatePolicies type is a typedef for <a href="qflags.html">QFlags</a>&lt;UpdatePolicy&gt;. It stores an OR combination of UpdatePolicy values.</p>
-<hr />
 <h2>Property Documentation</h2>
-<a name="//apple_ref/cpp/instm/QSensor/isAvailable"></a>
-<h3 class="fn"><a name="isAvailable-prop"></a>isAvailable : const bool</h3>
-<p>This property holds the validity of the sensor.</p>
-<p>If the sensor is not valid then you cannot use it.</p>
+<a name="//apple_ref/cpp/instm/QSensor/isActive"></a>
+<h3 class="fn"><a name="active-prop"></a>active : const bool</h3>
+<p>This property holds a value to indicate if the sensor is active.</p>
+<p>This is true if the sensor is active (returning values). This is false otherwise.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>isAvailable</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>isActive</b> () const</td></tr>
 </table>
+<a name="//apple_ref/cpp/instm/QSensor/availableDataRates"></a>
+<h3 class="fn"><a name="availableDataRates-prop"></a>availableDataRates : const QtMobility::qrangelist</h3>
+<p>This property holds the data rates that the sensor supports.</p>
+<p>This is a list of the data rates that the sensor supports. Entries in the list can represent discrete rates or a continuous range of rates. A discrete rate is noted by having both values the same.</p>
+<p>See the sensor_explorer example for an example of how to interpret and use this information.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">qrangelist </td><td class="memItemRight" valign="bottom"><b>availableDataRates</b> () const</td></tr>
+</table>
+<p>See also <a href="qsensor.html#updateInterval-prop">updateInterval</a>.</p>
+<a name="//apple_ref/cpp/instm/QSensor/isBusy"></a>
+<h3 class="fn"><a name="busy-prop"></a>busy : const bool</h3>
+<p>This property holds a value to indicate if the sensor is busy.</p>
+<p>Some sensors may be on the system but unavailable for use. This function will return true if the sensor is busy. You will not be able to <a href="qsensor.html#start">start</a>() the sensor.</p>
+<p>Note that this function does not return true if you are using the sensor, only if another process is using the sensor.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>isBusy</b> () const</td></tr>
+</table>
+<p>See also <a href="qsensor.html#busyChanged">busyChanged</a>().</p>
+<a name="//apple_ref/cpp/instm/QSensor/isConnected"></a>
+<h3 class="fn"><a name="connected-prop"></a>connected : const bool</h3>
+<p>This property holds a value indicating if the sensor has connected to a backend.</p>
+<p>A sensor that has not been connected to a backend cannot do anything useful.</p>
+<p>Call the <a href="qsensor.html#connect">connect</a>() method to force the sensor to connect to a backend immediately.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>isConnected</b> () const</td></tr>
+</table>
+<a name="//apple_ref/cpp/instm/QSensor/description"></a>
+<h3 class="fn"><a name="description-prop"></a>description : const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a></h3>
+<p>This property holds a descriptive string for the sensor.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>description</b> () const</td></tr>
+</table>
+<a name="//apple_ref/cpp/instm/QSensor/error"></a>
+<a name="//apple_ref/cpp/instm/QSensor/sensorError"></a>
+<h3 class="fn"><a name="error-prop"></a>error : const int</h3>
+<p>This property holds the last error code set on the sensor.</p>
+<p>Note that error codes are sensor-specific.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>error</b> () const</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#sensorError">sensorError</a></b> ( int <i>error</i> )</td></tr>
+</table>
+<a name="//apple_ref/cpp/instm/QSensor/measurementAccuracy"></a>
+<h3 class="fn"><a name="measurementAccuracy-prop"></a>measurementAccuracy : const <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a></h3>
+<p>This property holds the accuracy of the sensor.</p>
+<p>The units are defined by the sensor.</p>
+<p>Note that the sensor may have multiple output ranges.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b>measurementAccuracy</b> () const</td></tr>
+</table>
+<p>See also <a href="qsensor.html#outputRange-prop">QSensor::outputRange</a>.</p>
+<a name="//apple_ref/cpp/instm/QSensor/measurementMaximum"></a>
+<h3 class="fn"><a name="measurementMaximum-prop"></a>measurementMaximum : const <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a></h3>
+<p>This property holds the maximum value that the sensor will return.</p>
+<p>The units are defined by the sensor.</p>
+<p>Note that the sensor may have multiple output ranges.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b>measurementMaximum</b> () const</td></tr>
+</table>
+<p>See also <a href="qsensor.html#outputRange-prop">QSensor::outputRange</a>.</p>
+<a name="//apple_ref/cpp/instm/QSensor/measurementMinimum"></a>
+<h3 class="fn"><a name="measurementMinimum-prop"></a>measurementMinimum : const <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a></h3>
+<p>This property holds the minimum value that the sensor will return.</p>
+<p>The units are defined by the sensor.</p>
+<p>Note that the sensor may have multiple output ranges.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b>measurementMinimum</b> () const</td></tr>
+</table>
+<p>See also <a href="qsensor.html#outputRange-prop">QSensor::outputRange</a>.</p>
+<a name="//apple_ref/cpp/instm/QSensor/outputRange"></a>
+<a name="//apple_ref/cpp/instm/QSensor/setOutputRange"></a>
+<h3 class="fn"><a name="outputRange-prop"></a>outputRange : int</h3>
+<p>This property holds the output range in use by the sensor.</p>
+<p>A sensor may have more than one output range. Typically this is done to give a greater measurement range at the cost of lowering accuracy.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>outputRange</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setOutputRange</b> ( int <i>index</i> )</td></tr>
+</table>
+<p>See also <a href="qsensor.html#outputRangeCount-prop">QSensor::outputRangeCount</a>, <a href="qsensor.html#measurementMinimum-prop">QSensor::measurementMinimum</a>, <a href="qsensor.html#measurementMaximum-prop">QSensor::measurementMaximum</a>, and <a href="qsensor.html#measurementAccuracy-prop">QSensor::measurementAccuracy</a>.</p>
+<a name="//apple_ref/cpp/instm/QSensor/outputRangeCount"></a>
+<h3 class="fn"><a name="outputRangeCount-prop"></a>outputRangeCount : const int</h3>
+<p>This property holds the number of output ranges that the sensor has.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>outputRangeCount</b> () const</td></tr>
+</table>
+<p>See also <a href="qsensor.html#outputRange-prop">QSensor::outputRange</a>.</p>
 <a name="//apple_ref/cpp/instm/QSensor/reading"></a>
 <a name="//apple_ref/cpp/instm/QSensor/readingChanged"></a>
 <h3 class="fn"><a name="reading-prop"></a>reading : <a href="qsensorreading.html">QSensorReading</a> * const</h3>
 <p>This property holds the reading class.</p>
 <p>The reading class provides access to sensor readings.</p>
+<p>Note that this will return 0 until a sensor backend is connected.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QSensorReading * </td><td class="memItemRight" valign="bottom"><b>reading</b> () const</td></tr>
@@ -179,37 +264,30 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensor.html#readingChanged">readingChanged</a></b> ()</td></tr>
 </table>
-<a name="//apple_ref/cpp/instm/QSensor/isActive"></a>
-<a name="//apple_ref/cpp/instm/QSensor/setActive"></a>
-<h3 class="fn"><a name="running-prop"></a>running : bool</h3>
-<p>This property holds controls the running state of the sensor.</p>
-<p>This is provided for QML, set running: true to cause the sensor to start on.</p>
-<p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>isActive</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setActive</b> ( bool <i>running</i> )</td></tr>
-</table>
+<p>See also <a href="qsensor.html#connected-prop">isConnected</a>().</p>
 <a name="//apple_ref/cpp/instm/QSensor/identifier"></a>
 <a name="//apple_ref/cpp/instm/QSensor/setIdentifier"></a>
 <h3 class="fn"><a name="sensorid-prop"></a>sensorid : <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a></h3>
 <p>This property holds the backend identifier for the sensor.</p>
-<p>Note if the sensor is not connected to a backend the identifier may be empty.</p>
+<p>Note that the identifier is filled out automatically when the sensor is connected to a backend. If you want to connect a specific backend, you should call setIdentifier() before <a href="qsensor.html#connect">connect</a>().</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QByteArray </td><td class="memItemRight" valign="bottom"><b>identifier</b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setIdentifier</b> ( const QByteArray &amp; <i>identifier</i> )</td></tr>
 </table>
-<a name="//apple_ref/cpp/instm/QSensor/supportedUpdatePolicies"></a>
-<h3 class="fn"><a name="supportedUpdatePolicies-prop"></a>supportedUpdatePolicies : const <a href="qsensor.html#UpdatePolicy-enum">UpdatePolicies</a></h3>
-<p>This property holds the supported policies of the sensor.</p>
+<a name="//apple_ref/cpp/instm/QSensor/supportsPolling"></a>
+<h3 class="fn"><a name="supportsPolling-prop"></a>supportsPolling : const bool</h3>
+<p>This property holds a value indicating if the sensor supports polling.</p>
+<p>If true, the <a href="qsensor.html#poll">poll</a>() function can be used. If false, the <a href="qsensor.html#poll">poll</a>() function cannot be used.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">UpdatePolicies </td><td class="memItemRight" valign="bottom"><b>supportedUpdatePolicies</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>supportsPolling</b> () const</td></tr>
 </table>
 <a name="//apple_ref/cpp/instm/QSensor/type"></a>
 <a name="//apple_ref/cpp/instm/QSensor/setType"></a>
 <h3 class="fn"><a name="type-prop"></a>type : <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a></h3>
 <p>This property holds the type of the sensor.</p>
+<p>Note that setType() can only be used if you are using <a href="qsensor.html">QSensor</a> directly. Sub-classes of <a href="qsensor.html">QSensor</a> call this automatically for you.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QByteArray </td><td class="memItemRight" valign="bottom"><b>type</b> () const</td></tr>
@@ -218,22 +296,17 @@
 <a name="//apple_ref/cpp/instm/QSensor/updateInterval"></a>
 <a name="//apple_ref/cpp/instm/QSensor/setUpdateInterval"></a>
 <h3 class="fn"><a name="updateInterval-prop"></a>updateInterval : int</h3>
-<p>This property holds the update interval of the sensor.</p>
-<p>This value is only useful if the <a href="qsensor.html#updatePolicy-prop">QSensor::updatePolicy</a> property is set to <a href="qsensor.html#UpdatePolicy-enum">TimedUpdates</a>.</p>
+<p>This property holds the update interval of the sensor (measured in milliseconds).</p>
+<p>The default value is -1. Note that this causes undefined behaviour.</p>
+<p>If the value is set to 0 the sensor will not poll for updates and you will need to call <a href="qsensor.html#poll">poll</a>() manually.</p>
+<p>This should be set before calling <a href="qsensor.html#start">start</a>() because the sensor may not notice changes to this value while it is running.</p>
+<p>Note that some sensors can only operate at particular rates. The system will attempt to run the sensor at an appropriate rate while delivering updates as often as requested.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>updateInterval</b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setUpdateInterval</b> ( int <i>interval</i> )</td></tr>
 </table>
-<a name="//apple_ref/cpp/instm/QSensor/updatePolicy"></a>
-<a name="//apple_ref/cpp/instm/QSensor/setUpdatePolicy"></a>
-<h3 class="fn"><a name="updatePolicy-prop"></a>updatePolicy : <a href="qsensor.html#UpdatePolicy-enum">UpdatePolicy</a></h3>
-<p>This property holds the update policy of the sensor.</p>
-<p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">UpdatePolicy </td><td class="memItemRight" valign="bottom"><b>updatePolicy</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setUpdatePolicy</b> ( UpdatePolicy <i>policy</i> )</td></tr>
-</table>
+<p>See also <a href="qsensor.html#availableDataRates-prop">availableDataRates</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QSensor/QSensor"></a>
@@ -247,12 +320,15 @@
 <p>Add a <i>filter</i> to the sensor.</p>
 <p>The sensor does not take ownership of the filter. <a href="qsensorfilter.html">QSensorFilter</a> will inform the sensor if it is destroyed.</p>
 <p>See also <a href="qsensorfilter.html">QSensorFilter</a>.</p>
+<a name="//apple_ref/cpp/instm/QSensor/busyChanged"></a>
+<h3 class="fn"><a name="busyChanged"></a>void QSensor::busyChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted when the busy state changes. This can be used to grab a sensor when it becomes available.</p>
 <a name="//apple_ref/cpp/instm/QSensor/connect"></a>
-<h3 class="fn"><a name="connect"></a>void QSensor::connect ()</h3>
+<h3 class="fn"><a name="connect"></a>bool QSensor::connect ()</h3>
 <p>Try to connect to a sensor backend.</p>
-<p>You can test for failure with the <a href="qsensor.html#isAvailable-prop">isAvailable</a>() function.</p>
+<p>Returns true if a suitable backend could be found, false otherwise.</p>
 <p>The type must be set before calling this method if you are using <a href="qsensor.html">QSensor</a> directly.</p>
-<p>See also <a href="qsensor.html#isAvailable-prop">isAvailable</a>().</p>
+<p>See also <a href="qsensor.html#connected-prop">isConnected</a>().</p>
 <a name="//apple_ref/cpp/clm/QSensor/defaultSensorForType"></a>
 <h3 class="fn"><a name="defaultSensorForType"></a><a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> QSensor::defaultSensorForType ( const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>type</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns the default sensor identifier for <i>type</i>. This is set in a config file and can be overridden if required. If no default is available the system will return the first registered sensor for <i>type</i>.</p>
@@ -262,6 +338,9 @@
 <a name="//apple_ref/cpp/instm/QSensor/poll"></a>
 <h3 class="fn"><a name="poll"></a>void QSensor::poll ()</h3>
 <p>Poll the sensor.</p>
+<p>This only works if the sensor supports polling and if <a href="qsensor.html#updateInterval-prop">QSensor::updateInterval</a> is set to 0.</p>
+<p>The sensor must be active before it can be polled.</p>
+<p>See also <a href="qsensor.html#supportsPolling-prop">QSensor::supportsPolling</a>.</p>
 <a name="//apple_ref/cpp/instm/QSensor/readingChanged"></a>
 <h3 class="fn"><a name="readingChanged"></a>void QSensor::readingChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted when the reading has changed.</p>
@@ -269,6 +348,9 @@
 <h3 class="fn"><a name="removeFilter"></a>void QSensor::removeFilter ( <a href="qsensorfilter.html">QSensorFilter</a> * <i>filter</i> )</h3>
 <p>Remove <i>filter</i> from the sensor.</p>
 <p>See also <a href="qsensorfilter.html">QSensorFilter</a>.</p>
+<a name="//apple_ref/cpp/instm/QSensor/sensorError"></a>
+<h3 class="fn"><a name="sensorError"></a>void QSensor::sensorError ( int <i>error</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted when an <i>error</i> code is set on the sensor. Note that some errors will cause the sensor to stop working. You should call <a href="qsensor.html#active-prop">isActive</a>() to determine if the sensor is still running.</p>
 <a name="//apple_ref/cpp/clm/QSensor/sensorTypes"></a>
 <h3 class="fn"><a name="sensorTypes"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a>&gt; QSensor::sensorTypes ()&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a list of all sensor types.</p>
@@ -281,13 +363,15 @@
 <p>You might want to do this for performance reasons. If you are polling the sensor or using a filter in a performance-critical application then the overhead of emitting the signal may be too high even if nothing is connected to it.</p>
 <p>See also <a href="qsensor.html#isSignalEnabled">isSignalEnabled</a>().</p>
 <a name="//apple_ref/cpp/instm/QSensor/start"></a>
-<h3 class="fn"><a name="start"></a>void QSensor::start ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
-<p>Start retrieving values from the sensor.</p>
-<p>Note that some sensors require exclusive access so this function may fail and return false.</p>
-<p>Also note that some sensors may not honour settings set after this method is called.</p>
+<h3 class="fn"><a name="start"></a>bool QSensor::start ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<p>Start retrieving values from the sensor. Returns true if the sensor was started, false otherwise.</p>
+<p>Note that the sensor may fail to start for several reasons.</p>
+<p>See also <a href="qsensor.html#busy-prop">QSensor::busy</a>.</p>
 <a name="//apple_ref/cpp/instm/QSensor/stop"></a>
 <h3 class="fn"><a name="stop"></a>void QSensor::stop ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Stop retrieving values from the sensor.</p>
+<p>This releases the sensor so that other processes can use it.</p>
+<p>See also <a href="qsensor.html#busy-prop">QSensor::busy</a>.</p>
 <hr />
 <h2>Related Non-Members</h2>
 <a name="//apple_ref/cpp/tdef//qtimestamp"></a>

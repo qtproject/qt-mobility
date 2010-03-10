@@ -3,9 +3,9 @@ import Qt 4.6
 //Layout of the DialScreen control
 //------------------------------------
 //|DialScreen                        |  
-//| ---------------------  ____  NumberPad
-//| |DialNumber         | /          |
-//| ---------------------/          _|__  HangUpButton
+//| ---------------------  ____  numberPad
+//| |dialNumber         | /          |
+//| ---------------------/          _|__  hangUpButton
 //| --------------------/- ------- / |
 //| |      |      |      | |     |/  |      
 //| |   1  |   2  |   3  | |     |   |    
@@ -14,7 +14,7 @@ import Qt 4.6
 //| |      |      |      | |     |   |    
 //| |   4  |   5  |   6  | |     |   |    
 //| |      |      |      | -------   |         
-//| ----------------------          _|__  CallButton
+//| ----------------------          _|__  callButton
 //| |      |      |      | ------- / |          
 //| |   7  |   8  |   9  | |     |/  |
 //| |      |      |      | |     |   |         
@@ -36,9 +36,9 @@ Item {
     //! [0]
 
     Rectangle {
-        id: DialNumber
+        id: dialNumber
         height: 20
-        width: NumberPad.width
+        width: numberPad.width
         anchors.top: parent.top
         anchors.left: parent.left
         color: "white"
@@ -53,10 +53,10 @@ Item {
     }
 
     Grid {
-        id: NumberPad
+        id: numberPad
         width: childrenRect.width
         height: childrenRect.height
-        anchors.top: DialNumber.bottom
+        anchors.top: dialNumber.bottom
         anchors.left: parent.left
         anchors.topMargin: 5
         columns: 3
@@ -78,11 +78,11 @@ Item {
     
     //! [1]
     DialButton {
-        id: HangUpButton
-        height: { (NumberPad.height / 2) - 2 }
+        id: hangUpButton
+        height: { (numberPad.height / 2) - 2 }
         width: 50
-        anchors.top: NumberPad.top
-        anchors.left: NumberPad.right
+        anchors.top: numberPad.top
+        anchors.left: numberPad.right
         anchors.leftMargin: 5
         hoverColor: "red"
         color: "crimson"
@@ -100,11 +100,11 @@ Item {
     
     //! [2]
     DialButton {
-        id: CallButton
+        id: callButton
         width: 50
-        height: {(NumberPad.height/2) -2}
-        anchors.top: HangUpButton.bottom
-        anchors.left: NumberPad.right
+        height: {(numberPad.height/2) -2}
+        anchors.top: hangUpButton.bottom
+        anchors.left: numberPad.right
         anchors.leftMargin: 5
         anchors.topMargin: 4
         color: "mediumseagreen"

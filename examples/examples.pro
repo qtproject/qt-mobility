@@ -1,4 +1,4 @@
-include($$QT_MOBILITY_BUILD_TREE/config.pri)
+include(../staticconfig.pri)
 
 TEMPLATE = subdirs
 
@@ -6,15 +6,18 @@ TEMPLATE = subdirs
 contains(mobility_modules,serviceframework) {
     SUBDIRS += filemanagerplugin \
             bluetoothtransferplugin \
+            notesmanagerplugin \
             servicebrowser
+#            todotool
+    
+    contains(QT_CONFIG, declarative) {
+        SUBDIRS += declarative
+    }
 }
 
 #BearerManagement examples
 contains(mobility_modules,bearer) {
     SUBDIRS += bearermonitor bearercloud
-    contains(QT_CONFIG, declarative) {
-        SUBDIRS += declarative
-    }
 }
 
 #Location examples
@@ -33,8 +36,10 @@ contains(mobility_modules,location) {
 
 #Contacts examples
 contains(mobility_modules,contacts) {
-    SUBDIRS += samplephonebook \
-            incomingcalls
+    SUBDIRS += samplephonebook
+    contains(mobility_modules,versit):contains(QT_CONFIG, declarative) {
+        SUBDIRS += qmlcontacts
+    }
 }
 
 #Publish and Subscribe examples
@@ -59,21 +64,23 @@ contains(mobility_modules,multimedia) {
         cameracapture \
         slideshow \
         audiorecorder
+
 }
 
+
 #Messaging examples
-contains(mobility_modules,messaging) {
-    contains(qmf_enabled,yes)|wince*|win32|symbian|maemo6 {
+contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5 {
+    contains(mobility_modules,messaging) {
         !win32-g++ {
-            SUBDIRS += \
+	    SUBDIRS += \
                 querymessages \
                 writemessage \
                 serviceactions
 
-            contains(mobility_modules,contacts) {
-                SUBDIRS += keepintouch
-            }
-        }
+                contains(mobility_modules,contacts) {
+                    SUBDIRS += keepintouch
+                }
+         }
     }
 }
 

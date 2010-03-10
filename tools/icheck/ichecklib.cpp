@@ -50,18 +50,42 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QProcess>
+#include <QLibraryInfo>
+
+QT_USE_NAMESPACE
 
 QStringList getQTIncludePath()
 {
     QStringList ret;
-    QStringList processevironment = QProcess::systemEnvironment();
-    foreach(QString item, processevironment){
-        if(item.indexOf("QTDIR=") == 0){
-            QString qtpath = item.remove("QTDIR=");
-            ret << qtpath + "/include/QtCore";
-            break;
-        }
-    }
+    QString qtpath = QLibraryInfo::location(QLibraryInfo::HeadersPath);
+
+    ret << qtpath;
+    ret << qtpath + "/ActiveQt";
+    ret << qtpath + "/phonon";
+    ret << qtpath + "/phonon_compat";
+    ret << qtpath + "/Qt";
+    ret << qtpath + "/Qt3Support";
+    ret << qtpath + "/QtAssistant";
+    ret << qtpath + "/QtCore";
+    ret << qtpath + "/QtDBus";
+    ret << qtpath + "/QtDeclarative";
+    ret << qtpath + "/QtDesigner";
+    ret << qtpath + "/QtGui";
+    ret << qtpath + "/QtHelp";
+    ret << qtpath + "/QtMultimedia";
+    ret << qtpath + "/QtNetwork";
+    ret << qtpath + "/QtOpenGL";
+    ret << qtpath + "/QtOpenVG";
+    ret << qtpath + "/QtScript";
+    ret << qtpath + "/QtScriptTools";
+    ret << qtpath + "/QtSql";
+    ret << qtpath + "/QtSvg";
+    ret << qtpath + "/QtTest";
+    ret << qtpath + "/QtUiTools";
+    ret << qtpath + "/QtWebKit";
+    ret << qtpath + "/QtXml";
+    ret << qtpath + "/QtXmlPatterns";
+
     return ret;
 }
 
@@ -80,11 +104,11 @@ void ICheckLib::ParseHeader(const QStringList& includePath, const QStringList& f
     pParseManager->parse(filelist);
 }
 
-bool ICheckLib::check(const ICheckLib& ichecklib /*ICheckLib from interface header*/)
+bool ICheckLib::check(const ICheckLib& ichecklib /*ICheckLib from interface header*/, QString outputfile)
 {
     if(pParseManager){
         CPlusPlus::ParseManager* cpparsemanager = ichecklib.pParseManager;
-        return pParseManager->checkAllMetadatas(cpparsemanager);
+        return pParseManager->checkAllMetadatas(cpparsemanager, outputfile);
     }
     return false;
 }

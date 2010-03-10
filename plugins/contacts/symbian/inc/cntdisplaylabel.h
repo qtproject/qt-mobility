@@ -69,8 +69,6 @@ public:
     
 private:
     void setDisplayLabelDetails();
-    QList<QList<QPair<QLatin1String, QLatin1String> > > contactDisplayLabelDetails() const;
-    QList<QList<QPair<QLatin1String, QLatin1String> > > groupDisplayLabelDetails() const;
     QString generateDisplayLabel( const QContact &contact, const QList<QList<QPair<QLatin1String, QLatin1String> > > detailList) const;
     QString delimiter() const;
     

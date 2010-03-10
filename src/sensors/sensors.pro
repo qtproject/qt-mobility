@@ -4,18 +4,19 @@ TARGET = QtSensors
 include(../../common.pri)
 
 DEFINES += QT_BUILD_SENSORS_LIB QT_MAKEDLL
-symbian:TARGET.EPOCALLOWDLLDATA = 1
+symbian {
+    TARGET.EPOCALLOWDLLDATA = 1
+    TARGET.CAPABILITY = ALL -TCB
+    TARGET.UID3 = 0x2002BFC0
 
-STRICT=$$(STRICT)
-equals(STRICT,1) {
-    win32 {
-        QMAKE_CXXFLAGS+=-WX
-    } else {
-        QMAKE_CXXFLAGS+=-Werror
-        QMAKE_LFLAGS+=-Wl,-no-undefined
-    }
-    DEFINES += QT_NO_CAST_FROM_ASCII
+    ### Sensors
+    # Main library
+    SENSORS_DEPLOYMENT.sources = QtSensors.dll
+    SENSORS_DEPLOYMENT.path = \sys\bin
+    DEPLOYMENT += CONTACTS_DEPLOYMENT
 }
+
+CONFIG+=strict_flags
 
 INCLUDEPATH += .
 DEPENDPATH += .
@@ -42,7 +43,7 @@ SENSORS=\
     qmagnetometer\
     qorientationsensor\
     qproximitysensor\
-    qrotationsensor\
+    qattitudesensor\
     qtapsensor\
 
 for(s,SENSORS) {
@@ -55,4 +56,5 @@ for(s,SENSORS) {
 
 HEADERS = $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
+CONFIG += middleware
 include(../../features/deploy.pri)
