@@ -179,13 +179,33 @@ bool QMessageService::send(QMessage &message)
     d_ptr->_state = QMessageService::ActiveState;
     emit stateChanged(d_ptr->_state);
 
+    QMessageAccountId accountId = message.parentAccountId();
+    QMessage::Type msgType = QMessage::NoType;
+
     // Check message type
-    if(message.type() == QMessage::AnyType || message.type() == QMessage::NoType) {
-        d_ptr->_error = QMessageManager::ConstraintFailure;
-        retVal = false;
+    if (message.type() == QMessage::AnyType || message.type() == QMessage::NoType) {
+        QMessage::TypeFlags types = QMessage::NoType;
+        if (accountId.isValid()) {
+            // ParentAccountId was defined => Message type can be read
+            // from parent account
+            QMessageAccount account = QMessageAccount(accountId);
+            QMessage::TypeFlags types = account.messageTypes();
+            if (types & QMessage::Sms) {
+                msgType = QMessage::Sms;
+            } else if (account.messageTypes() & QMessage::InstantMessage) {
+                msgType = QMessage::InstantMessage;
+            } else if (types & QMessage::Mms) {
+                msgType = QMessage::Mms;
+            } else if (types & QMessage::Email) {
+                msgType = QMessage::Email;
+            }
+        }
+        if (msgType == QMessage::NoType) {
+            d_ptr->_error = QMessageManager::ConstraintFailure;
+            retVal = false;
+        }
     }
 
-    QMessageAccountId accountId = message.parentAccountId();
     if (retVal) {
         // Check account
         if (!accountId.isValid()) {
@@ -200,7 +220,7 @@ bool QMessageService::send(QMessage &message)
     QMessageAccount account(accountId);
     if (retVal) {
         // Check account/message type compatibility
-        if (!(account.messageTypes() & message.type())) {
+        if (!(account.messageTypes() & message.type()) && (msgType == QMessage::NoType)) {
             d_ptr->_error = QMessageManager::ConstraintFailure;
             retVal = false;
         }
@@ -211,18 +231,18 @@ bool QMessageService::send(QMessage &message)
         QMessageAddressList recipients = message.to() + message.bcc() + message.cc();
         if (recipients.isEmpty()) {
             d_ptr->_error = QMessageManager::ConstraintFailure;
-            return false;
+            retVal = false;
         }
     }
 
-    QMessage outgoing(message);
-
-    // Set default account if unset
-    if (!outgoing.parentAccountId().isValid()) {
-        outgoing.setParentAccountId(accountId);
-    }
-
     if (retVal) {
+        QMessage outgoing(message);
+
+        // Set default account if unset
+        if (!outgoing.parentAccountId().isValid()) {
+            outgoing.setParentAccountId(accountId);
+        }
+
         if (account.messageTypes() & QMessage::Sms) {
             retVal = TelepathyEngine::instance()->sendMessage(message);
         } else if (account.messageTypes() & QMessage::InstantMessage) {

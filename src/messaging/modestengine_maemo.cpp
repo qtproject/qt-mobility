@@ -796,7 +796,6 @@ bool ModestEngine::sendEmail(QMessage &message)
     QMessageContentContainer body;
     QString value;
     QMessageAccountId accountId;
-    QMessageAccount account;
     ModestStringMap senderInfo;
     ModestStringMap recipients;
     ModestStringMap messageData;
@@ -817,7 +816,9 @@ bool ModestEngine::sendEmail(QMessage &message)
 
     senderInfo["account-name"] = modestAccountIdFromAccountId(accountId);
 
-    address = message.from();
+    QMessageAccount messageAccount = account(accountId);
+    QMessageAccountPrivate* privAccount = QMessageAccountPrivate::implementation(messageAccount);
+    address = privAccount->_address;
     value = address.addressee();
 
     if (value.isEmpty() == false && value.isNull() == false) {
