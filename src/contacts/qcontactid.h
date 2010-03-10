@@ -49,6 +49,8 @@
 
 QTM_BEGIN_NAMESPACE
 
+typedef quint32 QContactLocalId;
+
 class QContactIdPrivate;
 class Q_CONTACTS_EXPORT QContactId
 {
@@ -72,6 +74,8 @@ public:
 private:
     QSharedDataPointer<QContactIdPrivate> d;
 };
+
+uint Q_CONTACTS_EXPORT qHash(const QContactId& key);
 
 QTM_END_NAMESPACE
 

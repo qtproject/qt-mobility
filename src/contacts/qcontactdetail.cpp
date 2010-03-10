@@ -232,6 +232,17 @@ bool QContactDetail::operator==(const QContactDetail& other) const
     return true;
 }
 
+/*! Returns the hash value for \a key. */
+uint qHash(const QContactDetail &key)
+{
+    uint hash = ::qHash(key.definitionName()) + ::qHash(key.accessConstraints());
+    foreach(const QVariant& variant, key.variantValues()) {
+        hash += ::qHash(variant.toString());
+    }
+    return hash;
+}
+
+
 /*! Sets the preferred actions for this detail to be the given list of \a preferredActions */
 void QContactDetail::setPreferredActions(const QList<QContactActionDescriptor>& preferredActions)
 {

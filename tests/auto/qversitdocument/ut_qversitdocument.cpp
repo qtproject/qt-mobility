@@ -182,5 +182,24 @@ void UT_QVersitDocument::testEquality()
     QVERIFY(!document2.isEmpty());
 }
 
+void UT_QVersitDocument::testHash()
+{
+    QVersitDocument document1;
+    QVersitProperty property1;
+    property1.setName(QLatin1String("name"));
+    property1.setValue(QLatin1String("value"));
+    document1.addProperty(property1);
+    QVersitDocument document2;
+    document2.addProperty(property1);
+    QVersitDocument document3;
+    QVersitProperty property3;
+    property3.setName(QLatin1String("name"));
+    property3.setValue(QLatin1String("another value"));
+    document3.addProperty(property3);
+
+    QVERIFY(qHash(document1) == qHash(document2));
+    QVERIFY(qHash(document1) != qHash(document3));
+}
+
 QTEST_MAIN(UT_QVersitDocument)
 

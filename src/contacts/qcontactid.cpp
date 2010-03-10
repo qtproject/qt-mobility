@@ -41,6 +41,7 @@
 
 #include "qcontactid.h"
 #include "qcontactid_p.h"
+#include <QHash>
 
 QTM_BEGIN_NAMESPACE
 
@@ -138,6 +139,14 @@ bool QContactId::operator<(const QContactId& other) const
         return true;
 
     return this->localId() < other.localId();
+}
+
+/*!
+ * Returns the hash value for \a key.
+ */
+uint qHash(const QContactId &key)
+{
+    return ::qHash(key.managerUri()) + ::qHash(key.localId());
 }
 
 /*!

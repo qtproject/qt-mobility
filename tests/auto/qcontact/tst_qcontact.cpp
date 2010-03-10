@@ -42,7 +42,9 @@
 #include <QtTest/QtTest>
 
 #include "qtcontacts.h"
+#include "qcontactid.h"
 #include "qcontactmanagerdataholder.h" //QContactManagerDataHolder
+#include <QSet>
 
 //TESTED_CLASS=
 //TESTED_FILES=
@@ -66,6 +68,8 @@ private slots:
     void displayName();
     void type();
     void emptiness();
+    void idHash();
+    void hash();
     void traits();
     void idTraits();
     void localIdTraits();
@@ -643,6 +647,42 @@ void tst_QContact::emptiness()
     c.setType(QContactType::TypeContact);
     QVERIFY(c.type() == QString(QLatin1String(QContactType::TypeContact)));
     QVERIFY(c.isEmpty() == true); // type doesn't affect emptiness
+}
+
+void tst_QContact::idHash()
+{
+    QContactId id1;
+    id1.setManagerUri("a");
+    id1.setLocalId(1);
+    QContactId id2;
+    id2.setManagerUri("a");
+    id2.setLocalId(1);
+    QContactId id3;
+    id3.setManagerUri("b");
+    id3.setLocalId(1);
+    QVERIFY(qHash(id1) == qHash(id2));
+    QVERIFY(qHash(id1) != qHash(id3));
+    QSet<QContactId> set;
+    set.insert(id1);
+    set.insert(id2);
+    set.insert(id3);
+    QCOMPARE(set.size(), 2);
+}
+
+void tst_QContact::hash()
+{
+    QContact contact1;
+    QContactDetail detail1("definition");
+    detail1.setValue("key", "value");
+    contact1.saveDetail(&detail1);
+    QContact contact2;
+    contact2.saveDetail(&detail1);
+    QContact contact3;
+    QContactDetail detail3("definition");
+    detail3.setValue("key", "another value");
+    contact3.saveDetail(&detail3);
+    QVERIFY(qHash(contact1) == qHash(contact2));
+    QVERIFY(qHash(contact1) != qHash(contact3));
 }
 
 void tst_QContact::traits()

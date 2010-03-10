@@ -155,6 +155,8 @@ private:
     QSharedDataPointer<QContactData> d;
 };
 
+uint Q_CONTACTS_EXPORT qHash(const QContact& key);
+
 QTM_END_NAMESPACE
 
 Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QContact), Q_MOVABLE_TYPE);

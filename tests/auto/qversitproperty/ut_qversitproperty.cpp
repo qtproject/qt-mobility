@@ -164,5 +164,29 @@ void UT_QVersitProperty::testEquality()
     QVERIFY(!(property1 != property2));
 }
 
+void UT_QVersitProperty::testHash()
+{
+    QVersitProperty property1;
+    property1.setGroups(QStringList() << QLatin1String("group1") << QLatin1String("group2"));
+    property1.setName(QLatin1String("name"));
+    property1.setValue(QLatin1String("value"));
+    QVersitProperty property2;
+    property2.setGroups(QStringList() << QLatin1String("group1") << QLatin1String("group2"));
+    property2.setName(QLatin1String("name"));
+    property2.setValue(QLatin1String("value"));
+    QVersitProperty property3;
+    property3.setGroups(QStringList() << QLatin1String("group1") << QLatin1String("another group"));
+    property3.setName(QLatin1String("name"));
+    property3.setValue(QLatin1String("value"));
+
+    QVERIFY(qHash(property1) == qHash(property2));
+    QVERIFY(qHash(property1) != qHash(property3));
+    QSet<QVersitProperty> set;
+    set.insert(property1);
+    set.insert(property2);
+    set.insert(property3);
+    QCOMPARE(set.size(), 2);
+}
+
 QTEST_MAIN(UT_QVersitProperty)
 

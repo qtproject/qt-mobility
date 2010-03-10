@@ -406,6 +406,15 @@ bool QContact::operator==(const QContact& other) const
         other.d->m_details == d->m_details;
 }
 
+/*! Returns the hash value for \a key. */
+uint qHash(const QContact &key)
+{
+    uint hash = qHash(key.id());
+    foreach (const QContactDetail& detail, key.details()) {
+        hash += qHash(detail);
+    }
+    return hash;
+}
 
 /*! Retrieve the first detail for which the given \a actionName is available */
 QContactDetail QContact::detailWithAction(const QString& actionName) const

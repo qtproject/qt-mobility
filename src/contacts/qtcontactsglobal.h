@@ -51,8 +51,6 @@
 
 QTM_BEGIN_NAMESPACE
 
-typedef quint32 QContactLocalId; // XXX Put this else where
-
 /*
  * Latin1Literal
  *

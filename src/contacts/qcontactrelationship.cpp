@@ -47,6 +47,7 @@
 #include <QList>
 #include <QPair>
 #include <QString>
+#include <QHash>
 
 QTM_BEGIN_NAMESPACE
 
@@ -159,6 +160,14 @@ bool QContactRelationship::operator==(const QContactRelationship &other) const
     if (d->m_relationshipType != other.d->m_relationshipType)
         return false;
     return true;
+}
+
+/*!
+ * Returns the hash value for \a key.
+ */
+uint qHash(const QContactRelationship &key)
+{
+    return qHash(key.first()) + qHash(key.second()) + ::qHash(key.relationshipType());
 }
 
 /*!

@@ -46,7 +46,7 @@
 #include <QStringList>
 #include <QTextCodec>
 
-QTM_USE_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 /*!
   \class QVersitProperty
@@ -108,6 +108,22 @@ bool QVersitProperty::operator==(const QVersitProperty& other) const
 bool QVersitProperty::operator!=(const QVersitProperty& other) const
 {
     return !(*this == other);
+}
+
+/*! Returns the hash value for \a key. */
+uint qHash(const QVersitProperty &key)
+{
+    uint hash = ::qHash(key.name()) + ::qHash(key.value());
+    foreach (const QString& group, key.groups()) {
+        hash += ::qHash(group);
+    }
+    QHash<QString,QString>::const_iterator it = key.parameters().constBegin();
+    QHash<QString,QString>::const_iterator end = key.parameters().constEnd();
+    while (it != end) {
+        hash += ::qHash(it.key()) + ::qHash(it.value());
+        ++it;
+    }
+    return hash;
 }
 
 /*!
@@ -269,3 +285,5 @@ void QVersitProperty::clear()
     d->mValue.clear();
     d->mParameters.clear();
 }
+
+QTM_END_NAMESPACE

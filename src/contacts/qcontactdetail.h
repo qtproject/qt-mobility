@@ -165,6 +165,8 @@ private:
     QSharedDataPointer<QContactDetailPrivate> d;
 };
 
+uint Q_CONTACTS_EXPORT qHash(const QContactDetail& key);
+
 Q_DECLARE_OPERATORS_FOR_FLAGS(QContactDetail::AccessConstraints);
 
 #define Q_DECLARE_CUSTOM_CONTACT_DETAIL(className, definitionNameString) \
