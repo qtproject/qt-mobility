@@ -130,7 +130,7 @@ public:
     int digitalZoomFactor();
 
     //cameraexposurecontrol
-    void setFlashMode(QCamera::FlashMode mode);
+    void setFlashMode(QCamera::FlashModes mode);
     void setExposureMode(QCamera::ExposureMode mode);
     QCamera::ExposureMode exposureMode();
     QCamera::ExposureModes supportedExposureModes();
@@ -159,7 +159,7 @@ private:
     
     void setWhiteBalanceModeL(QCamera::WhiteBalanceMode mode);    
     void resetSession();
-    void setFlashModeL(QCamera::FlashMode mode);
+    void setFlashModeL(QCamera::FlashModes mode);
     void setExposureModeL(QCamera::ExposureMode mode);
     void saveImageL(TDesC8* aData, TFileName aPath);
     TFileName imagePath();

@@ -691,13 +691,13 @@ int S60ImageCaptureSession::maxDigitalZoom()
     }
 }
 
-void S60ImageCaptureSession::setFlashMode(QCamera::FlashMode mode)
+void S60ImageCaptureSession::setFlashMode(QCamera::FlashModes mode)
 {
     TRAPD(err, setFlashModeL(mode));
     setError(err);
 }
 
-void S60ImageCaptureSession::setFlashModeL(QCamera::FlashMode mode)
+void S60ImageCaptureSession::setFlashModeL(QCamera::FlashModes mode)
 {
     if (m_cameraEngine) {
         CCamera *camera = m_cameraEngine->Camera();
