@@ -90,6 +90,10 @@
 #include <IOKit/hid/IOHIDLib.h>
 
 #include <CoreServices/CoreServices.h>
+
+//#include <QuickTime/QuickTime.h>
+//#include <QuickTime/QuickTimeComponents.h>
+
 #include <qabstracteventdispatcher.h>
 
 #include <QtCore/qthread.h>
@@ -444,7 +448,10 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::VideoOutFeature:
         {
-
+            ComponentDescription description = {'vout', 0, 0, 0L, 1L << 0};
+            if( ::CountComponents(&description) > 0) {
+                featureSupported = true;
+            }
         }
         break;
     case QSystemInfo::HapticsFeature:
