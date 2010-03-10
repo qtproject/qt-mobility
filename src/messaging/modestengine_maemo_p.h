@@ -52,8 +52,11 @@
 #include "libosso.h"
 #include <QDBusPendingCallWatcher>
 #include <QFileInfoList>
+#include <QThread>
+#include <QMutex>
 
 class QDBusInterface;
+class QFileSystemWatcher;
 
 QTM_BEGIN_NAMESPACE
 
@@ -61,6 +64,90 @@ typedef QMap< QString, QString > ModestStringMap;
 typedef QList< ModestStringMap > ModestStringMapList;
 
 class QMessageService;
+
+struct MessageQueryInfo
+{
+    int queryId;
+    QString body;
+    QMessageDataComparator::MatchFlags matchFlags;
+    QMessageFilter filter;
+    QMessageSortOrder sortOrder;
+    int limit;
+    int offset;
+    QMessageService* messageService;
+    QDBusPendingCallWatcher* pendingCallWatcher;
+    int currentFilterListIndex;
+    int handledFiltersCount;
+    QMessageIdList ids;
+};
+
+struct ModestUnreadMessageDBusStruct
+{
+    qlonglong timeStamp;
+    QString subject;
+};
+
+struct ModestAccountsUnreadMessagesDBusStruct
+{
+    QString accountId;
+    QString accountName;
+    QString accountProtocol;
+    qlonglong unreadCount;
+    QList<ModestUnreadMessageDBusStruct> unreadMessages;
+};
+
+struct ModestMessage
+{
+    QString id;
+    QString subject;
+    QString folder;
+    QString sender;
+    long long size;
+    bool hasAttachment;
+    bool isUnread;
+    long long timeStamp;
+};
+
+struct INotifyEvent
+{
+    int watchDescriptor;
+    uint32_t mask;
+    QString fileName;
+};
+
+class INotifyWatcher : public QThread
+{
+    Q_OBJECT
+
+public:
+    enum FileNotification
+    {
+        FileNotificationAdded,
+        FileNotificationUpdated,
+        FileNotificationRemoved
+    };
+
+    INotifyWatcher();
+    ~INotifyWatcher();
+
+    void run();
+    int addFile(const QString& path, uint eventsToWatch = 0);
+    QStringList files() const;
+    int addDirectory(const QString& path, uint eventsToWatch = 0);
+    QStringList directories() const;
+
+private slots:
+    void notifySlot();
+
+signals:
+   void fileChanged(int watchDescriptor, const QString& filePath, uint events);
+
+private: //Data
+    int m_inotifyFileDescriptor;
+    QMutex m_mutex;
+    QMap<int, QString> m_files;
+    QMap<int, QString> m_dirs;
+};
 
 class ModestEngine : public QObject
 {
@@ -72,6 +159,13 @@ public:
         EmailProtocolUnknown = -1,
         EmailProtocolPop3 = 1,
         EmailProtocolIMAP,
+    };
+
+    enum NotificationType
+    {
+        Added,
+        Updated,
+        Removed
     };
 
     static ModestEngine* instance();
@@ -106,15 +200,68 @@ private:
     QString localRootFolder() const;
     QString accountRootFolder(QMessageAccountId& accountId) const;
     EmailProtocol accountEmailProtocol(QMessageAccountId& accountId) const;
+    QString accountEmailProtocolAsString(const QMessageAccountId& accountId) const;
+    QString accountUsername(QMessageAccountId& accountId) const;
+    QString accountHostname(QMessageAccountId& accountId) const;
 
     void updateEmailAccounts() const;
 
+    void filterMessages(QMessageIdList messageIds, QMessageFilterPrivate::SortedMessageFilterList filterList, int start) const;
+    void queryAndFilterMessagesReady(int queryId, QMessageIdList ids) const;
+    bool queryAndFilterMessages(MessageQueryInfo &msgQueryInfo) const;
+    bool searchMessages(MessageQueryInfo &msgQueryInfo, const QStringList& accountIds,
+                        const QStringList& folderUris, const QDateTime& startDate,
+                        const QDateTime& endDate) const;
+    void searchNewMessages(const QString& searchString, const QString& folderToSearch,
+                           const QDateTime& startDate, const QDateTime& endDate,
+                           int searchflags, uint minimumMessageSize) const;
+
+    void watchAllKnownEmailFolders();
+    void notification(const QMessageFolderId& folderId, const QMessageId& messageId, NotificationType notificationType) const;
+
+    QMessageAccountId accountIdFromModestMessageId(const QString& modestMessageId) const;
+    QMessageFolderId folderIdFromModestMessageId(const QString& modestMessageId,
+                                                 const QMessageAccountId accountId = QMessageAccountId()) const;
+
+    QString modestAccountIdFromAccountId(const QMessageAccountId& accountId) const;
+    QString modestFolderIdFromFolderId(const QMessageFolderId& folderId) const;
+    QString modestFolderUriFromFolderId(const QMessageFolderId& folderId) const;
+    QString modestMessageIdFromMessageId(const QMessageId& messageId) const;
+    QMessageAccountId accountIdFromModestAccountId(const QString& accountId) const;
+    QMessageFolderId folderIdFromModestFolderId(const QMessageAccountId& accountId, const QString& folderId) const;
+    QMessageId messageIdFromModestMessageId(const QString& messageId) const;
+    QMessageId messageIdFromModestMessageFilePath(const QString& messageFilePath) const;
+
+    static QString unescapeString(const QString& string);
+    static QString escapeString(const QString& string);
+
+private slots:
+    void searchMessagesHeadersReceivedSlot(QDBusMessage msg);
+    void searchMessagesHeadersFetchedSlot(QDBusMessage msg);
+    void folderUpdatedSlot(QDBusMessage msg);
+    void messageReadChangedSlot(QDBusMessage msg);
+    void pendingGetUnreadMessagesFinishedSlot(QDBusPendingCallWatcher* pendingCallWatcher);
+    void pendingSearchFinishedSlot(QDBusPendingCallWatcher* pendingCallWatcher);
+    void fileChangedSlot(int watchDescriptor, const QString& filePath, uint events);
+
+    void tempSlot();
+
+    // Async D-BUS call ended
+    void sendEmailCallEnded(QDBusPendingCallWatcher *watcher);
+
 private: //Data
     GConfClient *m_gconfclient;
+
     QDBusInterface *m_ModestDBusInterface;
+    QDBusInterface *m_QtmPluginDBusInterface;
+
+    INotifyWatcher m_MailFoldersWatcher;
 
     mutable QHash<QString, QMessageAccount> iAccounts;
     mutable QMessageAccountId iDefaultEmailAccountId;
+
+    mutable int m_queryIds;
+    mutable QList<MessageQueryInfo> m_pendingMessageQueries;
 };
 
 QTM_END_NAMESPACE
@@ -125,8 +272,12 @@ QDBusArgument &operator<<(QDBusArgument &argument, const QtMobility::ModestStrin
 // Retrieve the MyStructure data from the D-Bus argument
 const QDBusArgument &operator>>(const QDBusArgument &argument, QtMobility::ModestStringMap &map);
 
-Q_DECLARE_METATYPE (QtMobility::ModestStringMap);
-Q_DECLARE_METATYPE (QtMobility::ModestStringMapList);
+Q_DECLARE_METATYPE(QtMobility::ModestStringMap);
+Q_DECLARE_METATYPE(QtMobility::ModestStringMapList);
+Q_DECLARE_METATYPE(QtMobility::INotifyWatcher::FileNotification);
+Q_DECLARE_METATYPE(QtMobility::ModestUnreadMessageDBusStruct);
+Q_DECLARE_METATYPE(QtMobility::ModestAccountsUnreadMessagesDBusStruct);
+Q_DECLARE_METATYPE(QtMobility::ModestMessage)
 
 #endif // MODESTENGINE_MAEMO_H
 
