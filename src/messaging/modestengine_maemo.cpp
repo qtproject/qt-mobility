@@ -818,7 +818,7 @@ bool ModestEngine::sendEmail(QMessage &message)
     senderInfo["account-name"] = modestAccountIdFromAccountId(accountId);
 
     address = message.from();
-    value = address.recipient();
+    value = address.addressee();
 
     if (value.isEmpty() == false && value.isNull() == false) {
         senderInfo["from"] = value;
@@ -832,10 +832,10 @@ bool ModestEngine::sendEmail(QMessage &message)
         address = addresses[i];
 
         if (value.isEmpty()) {
-            value = address.recipient();
+            value = address.addressee();
         } else {
             value.append (",");
-            value.append (address.recipient());
+            value.append (address.addressee());
         }
     }
 
@@ -851,10 +851,10 @@ bool ModestEngine::sendEmail(QMessage &message)
         address = addresses[i];
 
         if (value.isEmpty()) {
-            value = address.recipient();
+            value = address.addressee();
         } else {
             value.append (",");
-            value.append (address.recipient());
+            value.append (address.addressee());
         }
     }
 
@@ -870,10 +870,10 @@ bool ModestEngine::sendEmail(QMessage &message)
         address = addresses[i];
 
         if (value.isEmpty()) {
-            value = address.recipient();
+            value = address.addressee();
         } else {
             value.append (",");
-            value.append (address.recipient());
+            value.append (address.addressee());
         }
     }
 
