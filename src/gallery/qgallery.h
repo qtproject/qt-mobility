@@ -44,6 +44,8 @@
 
 #include <qgalleryrequest.h>
 
+#include <QtCore/qstringbuilder.h>
+
 class QGalleryAbstractResponse;
 class QGalleryAbstractRequest;
 
@@ -83,6 +85,53 @@ class Q_GALLERY_EXPORT QDocumentGallery : public QAbstractGallery
     Q_OBJECT
     Q_DECLARE_PRIVATE(QDocumentGallery)
 public:
+    static const QLatin1Literal Media;
+    static const QLatin1Literal Audio;
+    static const QLatin1Literal Image;
+    static const QLatin1Literal Video;
+    static const QLatin1Literal Artist;
+    static const QLatin1Literal AlbumArtist;
+    static const QLatin1Literal Album;
+
+    // Item
+    static const QLatin1Literal author;
+    static const QLatin1Literal copyright;
+    static const QLatin1Literal description;
+    static const QLatin1Literal mimeType;
+    static const QLatin1Literal rating;
+    static const QLatin1Literal title;
+    static const QLatin1Literal type;
+    static const QLatin1Literal url;
+    static const QLatin1Literal thumbnail;
+
+    // Media
+    static const QLatin1Literal duration;
+    static const QLatin1Literal producer;
+    static const QLatin1Literal writer;
+
+    // Audio/Music
+    static const QLatin1Literal artist;
+    static const QLatin1Literal albumArtist;
+    static const QLatin1Literal albumId;
+    static const QLatin1Literal albumTitle;
+    static const QLatin1Literal composer;
+    static const QLatin1Literal discNumber;
+    static const QLatin1Literal genre;
+    static const QLatin1Literal trackCount;
+    static const QLatin1Literal trackNumber;
+
+    // Image, Video common.
+    static const QLatin1Literal width;
+    static const QLatin1Literal height;
+
+    // Image/Photo
+    static const QLatin1Literal dateTaken;
+    static const QLatin1Literal cameraManufacturer;
+    static const QLatin1Literal cameraModel;
+
+    // Video
+    static const QLatin1Literal director;
+
     QDocumentGallery(QObject *parent = 0);
     ~QDocumentGallery();
 
