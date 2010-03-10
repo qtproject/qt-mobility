@@ -118,9 +118,9 @@ void QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
 void QVCard21Writer::encodeParameters(const QMultiHash<QString,QString>& parameters)
 {
     QList<QString> names = parameters.uniqueKeys();
-    foreach (QString name, names) {
+    foreach (const QString& name, names) {
         QStringList values = parameters.values(name);
-        foreach (QString value, values) {
+        foreach (const QString& value, values) {
             writeString(QLatin1String(";"));
             QString typeParameterName(QLatin1String("TYPE"));
             if (name.length() > 0 && name != typeParameterName) {

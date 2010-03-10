@@ -39,42 +39,36 @@
 **
 ****************************************************************************/
 
-#ifndef UT_QVERSITREADER_H
-#define UT_QVERSITREADER_H
+#ifndef tst_QVERSITWRITER_H
+#define tst_QVERSITWRITER_H
 
 #include <QObject>
 #include <QBuffer>
 #include <qmobilityglobal.h>
-#include "qversitreader.h"
+#include "qversitwriter.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QVersitReaderPrivate;
-class LineReader;
+class QVersitWriterPrivate;
 
 QTM_END_NAMESPACE
+
 QTM_USE_NAMESPACE
 
 // Poor man's QSignalSpy because I couldn't get QSignalSpy to work with the user type QVR::State.
 class SignalCatcher : public QObject
 {
 Q_OBJECT
-public:
-    SignalCatcher() : mResultsCount(0) {}
 public slots:
-    void stateChanged(QVersitReader::State state) {
-        mStateChanges.append(state);
-    }
-    void resultsAvailable() {
-        mResultsCount += 1;
+    void stateChanged(QVersitWriter::State state) {
+        mReceived.append(state);
     }
 
 public:
-    QList<QVersitReader::State> mStateChanges;
-    int mResultsCount;
+    QList<QVersitWriter::State> mReceived;
 };
 
-class UT_QVersitReader : public QObject
+class tst_QVersitWriter : public QObject
 {
      Q_OBJECT
 
@@ -85,31 +79,14 @@ private slots: // Tests
 
     void testDevice();
     void testDefaultCodec();
-    void testReading();
-    void testResult();
-    void testSetVersionFromProperty();
-    void testParseNextVersitPropertyVCard21();
-    void testParseNextVersitPropertyVCard30();
-    void testParseVersitDocument();
-    void testParseVersitDocument_data();
-    void testDecodeQuotedPrintable();
-    void testParamName();
-    void testParamValue();
-    void testExtractPart();
-    void testExtractParts();
-    void testExtractPropertyGroupsAndName();
-    void testExtractVCard21PropertyParams();
-    void testExtractVCard30PropertyParams();
-    void testExtractParams();
+    void testFold();
+    void testWriting21();
+    void testWriting30();
 
-    void testReadLine();
-    void testReadLine_data();
 private: // Data
-    QVersitReader* mReader;
-    QVersitReaderPrivate* mReaderPrivate;
-    QBuffer* mInputDevice;
-    QTextCodec* mAsciiCodec;
+    QVersitWriter* mWriter;
+    QBuffer* mOutputDevice;
     SignalCatcher* mSignalCatcher;
 };
 
-#endif // UT_VERSITREADER_H
+#endif // tst_QVERSITWRITER_H

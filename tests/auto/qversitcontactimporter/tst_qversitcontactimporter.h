@@ -39,63 +39,74 @@
 **
 ****************************************************************************/
 
-#ifndef UT_QVERSITCONTACTEXPORTER_H
-#define UT_QVERSITCONTACTEXPORTER_H
+#ifndef tst_QVERSITCONTACTIMPORTER_H
+#define tst_QVERSITCONTACTIMPORTER_H
 
-#include <qcontactdetail.h>
 #include <QObject>
+#include <qversitcontactimporter.h>
+#include <qversitdocument.h>
 #include <qmobilityglobal.h>
 
 QTM_BEGIN_NAMESPACE
 
-class QVersitContactExporter;
-class QVersitContactExporterPrivate;
+class QVersitContactImporter;
+class QVersitContactImporterPrivate;
+class MyQVersitContactImporterPropertyHandler;
 class MyQVersitResourceHandler;
-class MyQVersitContactExporterDetailHandler;
 
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
 
-class UT_QVersitContactExporter : public QObject
+class tst_QVersitContactImporter : public QObject
 {
     Q_OBJECT
 
-private slots:
+private slots: // Tests
     void init();
     void cleanup();
 
-    void testConvertContact();
-    void testContactDetailHandler();
-    void testEncodeName();
-    void testEncodePhoneNumber();
-    void testEncodeEmailAddress();
-    void testEncodeStreetAddress();
-    void testEncodeUrl();
-    void testEncodeParameters();
-    void testEncodeUid();
-    void testEncodeRev();
-    void testEncodeBirthDay();
-    void testEncodeNote();
-    void testEncodeGeoLocation();
-    void testEncodeOrganization();
-    void testEncodeEmbeddedContent();
-    void testIsValidRemoteUrl();
-    void testEncodeGender();
-    void testEncodeNickName();
-    void testEncodeAnniversary();
-    void testEncodeOnlineAccount();
-    void testEncodeFamily();
-    void testEncodeAvatar();
-    void testEncodeDisplayLabel();
-    void testDefaultResourceHandler();
+    void testName();
+    void testNameWithFormatted();
+    void testAddress();
+    void testTel();
+    void testEmail();
+    void testUrl();
+    void testUid();
+    void testOrganizationName();
+    void testOrganizationTitle();
+    void testOrganizationLogo();
+    void testOrganizationAssistant();
+    void testOrganizationRole();
+    void testTimeStamp();
+    void testAnniversary();
+    void testBirthday();
+    void testGender();
+    void testNickname();
+    void testAvatarStored();
+    void testAvatarUrl();
+    void testAvatarInvalid();
+    void testGeo();
+    void testNote();
+    void testOnlineAccount();
+    void testFamily();
+    void testSound();
+    void testLabel();
+    void testPref();
+    void testPropertyHandler();
 
-    // Test Utility Function
-    QContactDetail searchDetail(QList<QContactDetail> details, QString search);
+private: // Utilities
 
-private: // Data
-    QVersitContactExporter* mExporter;
+    QVersitDocument createDocumentWithProperty(const QVersitProperty& property);
+
+    QVersitDocument createDocumentWithNameAndPhoto(
+        const QString& name,
+        QByteArray image,
+        const QString& photoType);
+
+private:
+    QVersitContactImporter* mImporter;
+    MyQVersitContactImporterPropertyHandler* mPropertyHandler;
     MyQVersitResourceHandler* mResourceHandler;
-    MyQVersitContactExporterDetailHandler* mDetailHandler;
 };
 
-#endif // UT_QVERSITCONTACTEXPORTER_H
+#endif // tst_QVERSITCONTACTIMPORTER_H

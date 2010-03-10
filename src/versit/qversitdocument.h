@@ -68,7 +68,6 @@ public:
     bool operator==(const QVersitDocument& other) const;
     bool operator!=(const QVersitDocument& other) const;
 
-    /*! Versit document type */
     enum VersitType {
         InvalidType,
         VCard21Type,   // vCard version 2.1

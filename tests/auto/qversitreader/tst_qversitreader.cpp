@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "ut_qversitreader.h"
+#include "tst_qversitreader.h"
 #include "qversitreader.h"
 #include "qversitreader_p.h"
 #include "versitutils_p.h"
@@ -68,7 +68,7 @@ const QByteArray KATAKANA_NOKIA("\xe3\x83\x8e\xe3\x82\xad\xe3\x82\xa2");
 
 QTM_USE_NAMESPACE
 
-void UT_QVersitReader::init()
+void tst_QVersitReader::init()
 {
     mInputDevice = new QBuffer;
     mInputDevice->open(QBuffer::ReadWrite);
@@ -83,7 +83,7 @@ void UT_QVersitReader::init()
     mAsciiCodec = QTextCodec::codecForName("ISO 8859-1");
 }
 
-void UT_QVersitReader::cleanup()
+void tst_QVersitReader::cleanup()
 {
     delete mReaderPrivate;
     delete mReader;
@@ -91,7 +91,7 @@ void UT_QVersitReader::cleanup()
     delete mSignalCatcher;
 }
 
-void UT_QVersitReader::testDevice()
+void tst_QVersitReader::testDevice()
 {
     // No device
     QVERIFY(mReader->device() == NULL);
@@ -111,14 +111,14 @@ void UT_QVersitReader::testDevice()
     QVERIFY(mReader->device() == mInputDevice);
 }
 
-void UT_QVersitReader::testDefaultCodec()
+void tst_QVersitReader::testDefaultCodec()
 {
     QVERIFY(mReader->defaultCodec() == QTextCodec::codecForName("UTF-8"));
     mReader->setDefaultCodec(QTextCodec::codecForName("UTF-16BE"));
     QVERIFY(mReader->defaultCodec() == QTextCodec::codecForName("UTF-16BE"));
 }
 
-void UT_QVersitReader::testReading()
+void tst_QVersitReader::testReading()
 {
     // No I/O device set
     QVERIFY(!mReader->startReading());
@@ -272,12 +272,12 @@ BEGIN:VCARD\r\nFN:Jane\r\nEND:VCARD";
             || state == QVersitReader::FinishedState);
 }
 
-void UT_QVersitReader::testResult()
+void tst_QVersitReader::testResult()
 {
     QCOMPARE(mReader->results().count(),0);
 }
 
-void UT_QVersitReader::testSetVersionFromProperty()
+void tst_QVersitReader::testSetVersionFromProperty()
 {
     QVersitDocument document;
 
@@ -312,7 +312,7 @@ void UT_QVersitReader::testSetVersionFromProperty()
     QVERIFY(!mReaderPrivate->setVersionFromProperty(document,property));
 }
 
-void UT_QVersitReader::testParseNextVersitPropertyVCard21()
+void tst_QVersitReader::testParseNextVersitPropertyVCard21()
 {
     QVersitDocument::VersitType type = QVersitDocument::VCard21Type;
 
@@ -418,7 +418,7 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard21()
     QVERIFY(property.isEmpty());
 }
 
-void UT_QVersitReader::testParseNextVersitPropertyVCard30()
+void tst_QVersitReader::testParseNextVersitPropertyVCard30()
 {
     QVersitDocument::VersitType type = QVersitDocument::VCard30Type;
 
@@ -515,7 +515,7 @@ void UT_QVersitReader::testParseNextVersitPropertyVCard30()
     QVERIFY(property.isEmpty());
 }
 
-void UT_QVersitReader::testParseVersitDocument()
+void tst_QVersitReader::testParseVersitDocument()
 {
     QFETCH(QByteArray, vCard);
     QFETCH(bool, expectedSuccess);
@@ -531,7 +531,7 @@ void UT_QVersitReader::testParseVersitDocument()
     QCOMPARE(mReaderPrivate->mDocumentNestingLevel, 0);
 }
 
-void UT_QVersitReader::testParseVersitDocument_data()
+void tst_QVersitReader::testParseVersitDocument_data()
 {
     QTest::addColumn<QByteArray>("vCard");
     QTest::addColumn<bool>("expectedSuccess");
@@ -631,7 +631,7 @@ void UT_QVersitReader::testParseVersitDocument_data()
             << 0;
 }
 
-void UT_QVersitReader::testDecodeQuotedPrintable()
+void tst_QVersitReader::testDecodeQuotedPrintable()
 {
     // Soft line breaks
     QString encoded(QLatin1String("This=\r\n is =\r\none line."));
@@ -652,7 +652,7 @@ void UT_QVersitReader::testDecodeQuotedPrintable()
     mReaderPrivate->decodeQuotedPrintable(encoded);
     QCOMPARE(encoded, decoded);
 }
-void UT_QVersitReader::testParamName()
+void tst_QVersitReader::testParamName()
 {
     // Empty value
     QByteArray param;
@@ -683,7 +683,7 @@ void UT_QVersitReader::testParamName()
 
 }
 
-void UT_QVersitReader::testParamValue()
+void tst_QVersitReader::testParamValue()
 {
     // Empty value
     QByteArray param;
@@ -719,7 +719,7 @@ void UT_QVersitReader::testParamValue()
              QString::fromAscii("WORK"));
 }
 
-void UT_QVersitReader::testExtractPart()
+void tst_QVersitReader::testExtractPart()
 {
     QByteArray originalStr;
 
@@ -751,7 +751,7 @@ void UT_QVersitReader::testExtractPart()
              QByteArray("ENCODING=8BIT"));
 }
 
-void UT_QVersitReader::testExtractParts()
+void tst_QVersitReader::testExtractParts()
 {
     QList<QByteArray> parts;
 
@@ -812,7 +812,7 @@ void UT_QVersitReader::testExtractParts()
     QCOMPARE(codec->toUnicode(parts[1]),QString::fromAscii("part2"));
 }
 
-void UT_QVersitReader::testExtractPropertyGroupsAndName()
+void tst_QVersitReader::testExtractPropertyGroupsAndName()
 {
     QPair<QStringList,QString> groupsAndName;
 
@@ -912,7 +912,7 @@ void UT_QVersitReader::testExtractPropertyGroupsAndName()
 
 }
 
-void UT_QVersitReader::testExtractVCard21PropertyParams()
+void tst_QVersitReader::testExtractVCard21PropertyParams()
 {
     // No parameters
     VersitCursor cursor(QByteArray(":123"));
@@ -994,7 +994,7 @@ void UT_QVersitReader::testExtractVCard21PropertyParams()
     QCOMPARE(encodingParams[0],QString::fromAscii("UTF-16"));
 }
 
-void UT_QVersitReader::testExtractVCard30PropertyParams()
+void tst_QVersitReader::testExtractVCard30PropertyParams()
 {
     // No parameters
     VersitCursor cursor(QByteArray(":123"));
@@ -1083,7 +1083,7 @@ void UT_QVersitReader::testExtractVCard30PropertyParams()
     QCOMPARE(encodingParams[0],QString::fromAscii("UTF-16"));
 }
 
-void UT_QVersitReader::testExtractParams()
+void tst_QVersitReader::testExtractParams()
 {
     VersitCursor cursor;
     QByteArray data = ":123";
@@ -1125,7 +1125,7 @@ void UT_QVersitReader::testExtractParams()
 
 Q_DECLARE_METATYPE(QList<QString>)
 
-void UT_QVersitReader::testReadLine()
+void tst_QVersitReader::testReadLine()
 {
     QFETCH(QByteArray, codecName);
     QFETCH(QString, data);
@@ -1159,7 +1159,7 @@ void UT_QVersitReader::testReadLine()
     delete encoder;
 }
 
-void UT_QVersitReader::testReadLine_data()
+void tst_QVersitReader::testReadLine_data()
 {
     // Note: for this test, we set mLineReader to read 10 bytes at a time.  Lines of multiples of
     // 10 bytes are hence border cases.
@@ -1248,5 +1248,5 @@ void UT_QVersitReader::testReadLine_data()
     }
 }
 
-QTEST_MAIN(UT_QVersitReader)
+QTEST_MAIN(tst_QVersitReader)
 

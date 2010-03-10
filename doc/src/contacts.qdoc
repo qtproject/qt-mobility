@@ -118,6 +118,12 @@ in a platform and datastore independent manner. The engine of a manager may
 be implemented as a plugin to allow dynamic loading of different engines at
 run-time.
 
+The functionality exposed by the QContactManager class may be implemented by
+plugins which interface directly to a platform-specific backend or provide
+their own data storage backend.  As such, the terms "manager", "plugin" and
+"backend" are used interchangeably in this documentation to refer to any plugin
+which implements the functionality exposed by the QContactManager interface.
+
 \section1 Using the API
 
 This section provides some examples of common usage of the API.
@@ -128,31 +134,40 @@ The synchronous API provides the simplest way to access or modify the
 contact information managed by a particular backend.  It has the
 disadvantage that calls block until completion and is therefore
 most suitable only for applications which interact with local, high-speed
-datastores.
+datastores, or for applications which do not require a responsive UI.
 
-\section3 Saving a new contact to the default manager
+The synchronous API is offered through the QContactManager class, and includes
+manipulation of \l{QContact}{contacts}, \l{QContactRelationship}{contact relationships},
+and \l{QContactDetailDefinition}{schema definitions} as well as capability and
+metadata information reporting.
 
-The client creates a new contact, adds a name and a phone number, and
-saves it to the default store of the default manager.
+For more detailed documentation on the synchronous API, see the \l{Contacts Synchronous API}.
 
-We assume the existence of a specialised leaf-class that allows simple
-access to details of the definition identified by the "PhoneNumber"
-identifier, and another that allows simple access to details of the
-definition identified by the "Name" identifier.  These specialised leaf
-classes may be written by anyone, and simply wrap the functionality
-provided by QContactDetail in order to allow simpler access to fields
-supported by a particular definition.
+\section2 Asynchronous API Usage
 
-    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Creating a new contact
+The asynchronous API provides a way to access or modify the
+contact information managed by a particular backend via non-blocking,
+asynchronous requests.  It is recommended for most
+applications that the asynchronous API be used where possible.
 
-\section3 Filtering by detail definition and value
+The asynchronous API is offered through various classes derived from the
+QContactAbstractRequest class, including QContactLocalIdFetchRequest,
+QContactFetchRequest, QContactSaveRequest, QContactRemoveRequest,
+QContactDetailDefinitionFetchRequest, QContactDetailDefinitionSaveRequest,
+QContactDetailDefinitionRemoveRequest, QContactRelationshipFetchRequest,
+QContactRelationshipSaveRequest, and QContactRelationshipRemoveRequest.
 
-The client utilises a default manager and asks for any contacts with a
-particular phone number.  The example assumes that the default manager
-supports the provided QContactPhoneNumber detail leaf class (which
-implements the default definition for phone number details).
+The asynchronous API allows manipulation of \l{QContact}{contacts}, \l{QContactRelationship}{contact relationships},
+and \l{QContactDetailDefinition}{schema definitions}, but does not provide manager capability or
+metadata information reporting (which is only available through the \l{Contacts Synchronous API}).
 
-    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Filtering by definition and value
+For more detailed documentation on the asynchronous API, see the \l{Contacts Asynchronous API}.
+
+\section2 Contact Details
+
+Once a contact has been created (or retrieved from a manager), the client can retrieve, create,
+update or delete details from the contact.  Since QContact and QContactDetail are both container
+(value) classes, the API offered for these operations is purely synchronous.
 
 \section3 Viewing a specific detail of a contact
 
@@ -172,55 +187,6 @@ semantics surrounding saving, removal and modification.  The following example
 demonstrates these semantics
 
     \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Demonstration of detail sharing semantics
-
-\section3 Installing a plugin that modifies the definition of one type of detail
-
-The client installs a plugin, which requires a new field to be added to
-details of the "EmailAddress" definition.  It loads the definition from the
-default manager, modifies it (by adding the new field - a label field), and
-saves it back.
-
-    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Installing a plugin which modifies a definition
-
-\section3 Modifying an existing contact and saving the modifications
-
-The client retrieves a contact, modifies one of its details, adds a new
-detail, and then saves the contact back to the manager.  Note that it uses
-the newly added field of the email address definition!
-
-    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Modifying an existing contact
-
-\section2 Asynchronous API Usage
-
-The asynchronous API provides a flexible and powerful method of accessing
-and modifying the contact information managed by a particular backend in an
-asynchronous manner.  Use of the asynchronous API is slightly more complex
-than use of the synchronous API, but offers the programmer greater
-flexibility when requesting information from remote or slow, local
-datastores.
-
-\section3 Requesting Contacts
-
-The client sets up a request for contacts matching a specific criteria
-from a particular manager.
-
-Results from the request will be displayed to the user as they are
-received.
-
-    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Asynchronous contact request
-
-\section3 Other Asynchronous Operations
-
-All other asynchronous operations are performed in a similar manner to the
-previous example. A request of the desired type (which is derived from
-QContactAbstractRequest) is created, certain criteria are set which
-determine the result of the request, and the progress signal of the request
-is connected to a slot which deals with the result.  The request can then
-be started.
-
-Any operation that may be performed using the synchronous API may also be
-performed using the asynchronous API.  It is recommended for most
-applications that the asynchronous API be used where possible.
 
 \section1 Manager Settings And Configuration
 
@@ -276,8 +242,10 @@ may have certain constraints, as listed in the \l{Qt Contacts Schema}{schema}.
 
 \section2 Asynchronous Requests
 
-Clients may use either the synchronous or asynchronous API to access
-functionality provided by a manager backend. The asynchronous API is
+Clients may use either the \l{Contacts Synchronous API}{synchronous}
+or \l{Contacts Asynchronous API}{asynchronous} API to access
+functionality provided by a manager backend. The
+\l{Contacts Asynchronous API}{asynchronous} API is
 offered through subclasses of the \l{QContactAbstractRequest} class:
 
 \annotatedlist contacts-requests
