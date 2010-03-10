@@ -1,15 +1,8 @@
-<<<<<<< HEAD
-HEADERS += \
-    $$PWD/support.h
-
-symbian|win32 {
-=======
 
 HEADERS += \
     $$PWD/support.h
 
 symbian|wince*|maemo5|win32|mac {
->>>>>>> remotes/origin/master
     symbian {
         SOURCES += $$PWD/support_symbian.cpp
     }
@@ -24,16 +17,14 @@ symbian|wince*|maemo5|win32|mac {
         }
 
     }
-<<<<<<< HEAD
-} maemo5|maemo6 {
-    CONFIG += link_pkgconfig
-    PKGCONFIG += glib-2.0 gconf-2.0
-    SOURCES += $$PWD/support_maemo5.cpp
-=======
-    maemo5|mac {
+    maemo5|maemo6 {
+        CONFIG += link_pkgconfig
+        PKGCONFIG += glib-2.0 gconf-2.0
+        SOURCES += $$PWD/support_maemo5.cpp
+    }
+    mac {
          SOURCES += $$PWD/support_stub.cpp       
     }
->>>>>>> remotes/origin/master
 } else {
     # QMF headers must be located at $QMF_INCLUDEDIR
     INCLUDEPATH += $$(QMF_INCLUDEDIR) $$(QMF_INCLUDEDIR)/support
@@ -43,7 +34,4 @@ symbian|wince*|maemo5|win32|mac {
 
     SOURCES += $$PWD/support_qmf.cpp
 }
-<<<<<<< HEAD
-=======
 
->>>>>>> remotes/origin/master
