@@ -962,7 +962,6 @@ bool QContactManagerEngine::validateContact(const QContact& contact, QContactMan
     return true;
 }
 
-
 /*!
   Checks that the given detail definition \a definition seems valid,
   with a correct id, defined fields, and any specified value types
@@ -1698,12 +1697,14 @@ int QContactManagerEngine::compareContact(const QContact& a, const QContact& b, 
  */
 void QContactManagerEngine::addSorted(QList<QContact>* sorted, const QContact& toAdd, const QList<QContactSortOrder>& sortOrders)
 {
-    for (int i = 0; i < sorted->size(); i++) {
-        // check to see if the new contact should be inserted here
-        int comparison = compareContact(sorted->at(i), toAdd, sortOrders);
-        if (comparison > 0) {
-            sorted->insert(i, toAdd);
-            return;
+    if (sortOrders.count() > 0) {
+        for (int i = 0; i < sorted->size(); i++) {
+            // check to see if the new contact should be inserted here
+            int comparison = compareContact(sorted->at(i), toAdd, sortOrders);
+            if (comparison > 0) {
+                sorted->insert(i, toAdd);
+                return;
+            }
         }
     }
 
