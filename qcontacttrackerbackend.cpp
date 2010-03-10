@@ -63,7 +63,8 @@
 QContactManagerEngine* ContactTrackerFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
 {
     Q_UNUSED(error);
-    return new QContactTrackerEngine(managerName(), 1, parameters);
+    QString version = QLatin1String(VERSION_INFO);
+    return new QContactTrackerEngine(managerName(), version.toInt(), parameters);
 }
 
 QString ContactTrackerFactory::managerName() const
@@ -521,9 +522,9 @@ QString QContactTrackerEngine::managerName() const
 }
 
 /*!
- * Returns the implementation version of this engine
+ * Returns the manager version of this engine
  */
-int QContactTrackerEngine::implementationVersion() const
+int QContactTrackerEngine::managerVersion() const
 {
     return d->m_engineVersion;
 }

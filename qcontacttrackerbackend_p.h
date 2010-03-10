@@ -145,7 +145,7 @@ public:
 
     /* Version Reporting */
     QString managerName() const;
-    int implementationVersion() const;
+    int managerVersion() const;
 
     /* Synthesise the display label of a contact */
     QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const;

@@ -15,6 +15,8 @@ MOBILITY = contacts
 # include version number for the plugin
 include(version.pri)
 
+DEFINES += VERSION_INFO=\\\"$${VERSION_INT}\\\"
+
 INCLUDEPATH += /usr/include/qt4/QtMobility
 INCLUDEPATH += .
 
