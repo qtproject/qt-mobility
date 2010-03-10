@@ -91,9 +91,6 @@
 
 #include <CoreServices/CoreServices.h>
 
-//#include <QuickTime/QuickTime.h>
-//#include <QuickTime/QuickTimeComponents.h>
-
 #include <qabstracteventdispatcher.h>
 
 #include <QtCore/qthread.h>
@@ -124,8 +121,6 @@
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 
-//
-////////
 static QString stringFromCFString(CFStringRef value) {
     QString retVal;
     if(CFStringGetLength(value) > 1) {
@@ -550,7 +545,6 @@ void QRunLoopThread::run()
         [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode beforeDate: loopUntil]) {
         loopUntil = [NSDate dateWithTimeIntervalSinceNow:1.0];
     }
-  //  [listener release]; //crash
     [pool release];
 #endif
 }
@@ -703,7 +697,6 @@ QString QSystemNetworkInfoPrivate::getDefaultInterface()
              defaultInterface = interfaceName;
         }
     }
-//    qWarning() << __FUNCTION__ << interfaceName;
     return interfaceName;
 }
 
