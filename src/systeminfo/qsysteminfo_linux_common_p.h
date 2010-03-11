@@ -137,6 +137,7 @@ public:
     virtual QString macAddress(QSystemNetworkInfo::NetworkMode mode);
 
     virtual QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
+   // virtual QSystemNetworkInfo::NetworkMode currentMode();
 
 //public Q_SLOTS:
 //    void getPrimaryMode();

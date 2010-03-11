@@ -127,6 +127,7 @@ public:
     QString macAddress(QSystemNetworkInfo::NetworkMode mode);
 
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
+    QSystemNetworkInfo::NetworkMode currentMode();
 
 };
 
