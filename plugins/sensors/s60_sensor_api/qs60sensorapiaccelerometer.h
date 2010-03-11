@@ -39,34 +39,31 @@
 **
 ****************************************************************************/
 
-#include "qs60sensorapiaccelerometer.h"
-#include <qsensorplugin.h>
-#include <qsensorbackend.h>
-#include <qsensormanager.h>
+#ifndef QS60SENSORAPIACCELEROMETER_H
+#define QS60SENSORAPIACCELEROMETER_H
+
+#include "qs60sensorapicommon.h"
+#include <qaccelerometer.h>
 
 QTM_USE_NAMESPACE
 
-// API is used as name since underlying symbian API is called sensor API
-class s60SensorApiSensorPlugin : public QObject, public QSensorPluginInterface, public QSensorBackendFactory
+class QS60SensorApiAccelerometer : public QS60SensorApiCommon
 {
-    Q_OBJECT
-    Q_INTERFACES(QtMobility::QSensorPluginInterface)
-
 public:
-    void registerSensors()
-    {
-        QSensorManager::registerBackend(QAccelerometer::type, QS60SensorApiAccelerometer::id, this);
-    }
+    static const char *id;
+    
+    QS60SensorApiAccelerometer(QSensor *sensor);
 
-    QSensorBackend *createBackend(QSensor *sensor)
-    {
-        if (sensor->identifier() == QS60SensorApiAccelerometer::id)
-            return new QS60SensorApiAccelerometer(sensor);
-
-        return 0;
-    }
+    // from MRRSensorDataListener
+    void HandleDataEventL(TRRSensorInfo aSensor, TRRSensorEvent aEvent);
+    
+protected:
+    // from QS60SensorApiCommon
+    int nativeSensorId();
+    
+private:
+    QAccelerometerReading m_reading;
+    qreal m_sampleFactor;
 };
 
-Q_EXPORT_PLUGIN2(libsensors_s60SensorApi, s60SensorApiSensorPlugin)
-
-#include "main.moc"
+#endif // QS60SENSORAPIACCELEROMETER_H

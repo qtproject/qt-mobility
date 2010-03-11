@@ -60,9 +60,14 @@ public:
     virtual void start();
     virtual void stop();
     void poll();
+
+    // from MRRSensorDataListener
+    virtual void HandleDataEventL(TRRSensorInfo aSensor, TRRSensorEvent aEvent);
+
     
 protected:
     void findAndCreateNativeSensorL();
+    virtual int nativeSensorId()= 0;
 
 private:
     CRRSensorApi* m_nativeSensor;

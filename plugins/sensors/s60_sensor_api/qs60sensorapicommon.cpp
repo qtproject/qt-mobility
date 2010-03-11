@@ -40,16 +40,13 @@
 ****************************************************************************/
 
 #include "qs60sensorapicommon.h"
-
-const TInt KAccelerometerSensorUID = 0x10273024;
+#include <QtCore/private/qcore_symbian_p.h>
 
 QS60SensorApiCommon::QS60SensorApiCommon(QSensor *sensor)
     : QSensorBackend(sensor)
     , m_nativeSensor(NULL)
 {
-    TRAPD(err, findAndCreateNativeSensorL());
-    if(err != KErrNone)
-        sensorError(err);
+    //Empty implementation
 }
 
 QS60SensorApiCommon::~QS60SensorApiCommon()
@@ -80,6 +77,13 @@ void QS60SensorApiCommon::poll()
     //empty implementation
 }
 
+void QS60SensorApiCommon::HandleDataEventL(TRRSensorInfo aSensor, TRRSensorEvent aEvent)
+{
+    Q_UNUSED(aEvent);
+    if (aSensor.iSensorId != nativeSensorId()) 
+        return;    
+}
+
 void QS60SensorApiCommon::findAndCreateNativeSensorL()
 {
     if(m_nativeSensor)
@@ -91,9 +95,10 @@ void QS60SensorApiCommon::findAndCreateNativeSensorL()
 
     TInt index = 0;
     do {
-        if (sensorList[index].iSensorId == KAccelerometerSensorUID)
+        //qDebug() <<qt_TDesC2QString(sensorList[index].iSensorName)<<sensorList[index].iSensorId<<sensorList[index].iSensorCategory;
+        if (sensorList[index].iSensorId == nativeSensorId())
             m_nativeSensor = CRRSensorApi::NewL(sensorList[index]);
-    } while(!m_nativeSensor || index < sensorList.Count());
+    } while(!m_nativeSensor && ++index < sensorList.Count());
         
     if (!m_nativeSensor)
         User::Leave(KErrNotFound);

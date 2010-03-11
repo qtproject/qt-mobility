@@ -1,9 +1,11 @@
 INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE
 
-HEADERS += qs60sensorapicommon.h
+HEADERS += qs60sensorapicommon.h \
+           qs60sensorapiaccelerometer.h
 
 SOURCES += main.cpp \
-           qs60sensorapicommon.cpp
+           qs60sensorapicommon.cpp \
+           qs60sensorapiaccelerometer.cpp
 
 LIBS += -lRRSensorApi
 
