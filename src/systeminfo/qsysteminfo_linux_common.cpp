@@ -458,8 +458,6 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::networkS
     switch(mode) {
     case QSystemNetworkInfo::WlanMode:
         {
-            qWarning() << __PRETTY_FUNCTION__ << "WLAN";
-
             QString baseSysDir = "/sys/class/net/";
             QDir wDir(baseSysDir);
             QStringList dirs = wDir.entryList(QStringList() << "*", QDir::AllDirs | QDir::NoDotAndDotDot);
@@ -483,13 +481,11 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::networkS
         break;
     case QSystemNetworkInfo::EthernetMode:
         {
-            qWarning() << __PRETTY_FUNCTION__ << "Ethernet";
             QString baseSysDir = "/sys/class/net/";
             QDir eDir(baseSysDir);
             QString dir = QSystemNetworkInfoLinuxCommonPrivate::interfaceForMode(mode).name();
 
             QString devFile = baseSysDir + dir;
-            qWarning() << devFile;
             QFileInfo fi("/proc/net/route");
             if(fi.exists()) {
                 QFile rx(fi.absoluteFilePath());
@@ -536,7 +532,6 @@ QString QSystemNetworkInfoLinuxCommonPrivate::networkName(QSystemNetworkInfo::Ne
                 QFileInfo fi(devFile + "/wireless");
                 if(fi.exists()) {
                     wlanInterface = dir;
-                    qWarning() << "interface is" << wlanInterface;
                 }
             }
             int sock = socket(PF_INET, SOCK_DGRAM, 0);
