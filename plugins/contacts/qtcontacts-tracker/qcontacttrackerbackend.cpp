@@ -63,7 +63,8 @@
 QContactManagerEngine* ContactTrackerFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
 {
     Q_UNUSED(error);
-    return new QContactTrackerEngine(managerName(), 1, parameters);
+    QString version = QLatin1String(VERSION_INFO);
+    return new QContactTrackerEngine(managerName(), version.toInt(), parameters);
 }
 
 QString ContactTrackerFactory::managerName() const
@@ -389,14 +390,7 @@ QMap<QString, QContactDetailDefinition> QContactTrackerEngine::detailDefinitions
     if (d->m_definitions.isEmpty()) {
         // none in the list?  get the schema definitions, and modify them to match our capabilities.
         d->m_definitions = QContactManagerEngine::schemaDefinitions().value(QContactType::TypeContact);
-        {
-            qDebug() << "the definitions";
-            QList<QString> defs = d->m_definitions.keys();
-            foreach(QString def,  defs)
-            {
-                qDebug() << def;
-            }
-        }
+
         // modification: name is unique
         QContactDetailDefinition nameDef = d->m_definitions.value(QContactName::DefinitionName);
         nameDef.setUnique(true);
@@ -426,6 +420,7 @@ QMap<QString, QContactDetailDefinition> QContactTrackerEngine::detailDefinitions
             fields.insert(QContactUrl::FieldSubType, f);
             newUrlDef.setFields(fields);
             newUrlDef.setUnique(true);
+            newUrlDef.setName(QContactUrl::DefinitionName);
             d->m_definitions.insert(QContactUrl::DefinitionName, newUrlDef);
         }
 
@@ -442,10 +437,9 @@ QMap<QString, QContactDetailDefinition> QContactTrackerEngine::detailDefinitions
             fields.insert("Account", f);
             fields.insert("AccountPath", f);
             newAccountDefinition.setFields(fields);
+            newAccountDefinition.setName(QContactOnlineAccount::DefinitionName);
             d->m_definitions.insert(QContactOnlineAccount::DefinitionName, newAccountDefinition);
         }
-
-
     }
 
     error = QContactManager::NoError;
@@ -455,8 +449,12 @@ QMap<QString, QContactDetailDefinition> QContactTrackerEngine::detailDefinitions
 /*!
  * \reimp
  */
-bool QContactTrackerEngine::hasFeature(QContactManager::ManagerFeature feature) const
+bool QContactTrackerEngine::hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const
 {
+    if (!supportedContactTypes().contains(contactType)) {
+        return false;
+    }
+
     switch (feature) {
         case QContactManager::Groups:
         case QContactManager::ActionPreferences:
@@ -524,9 +522,9 @@ QString QContactTrackerEngine::managerName() const
 }
 
 /*!
- * Returns the implementation version of this engine
+ * Returns the manager version of this engine
  */
-int QContactTrackerEngine::implementationVersion() const
+int QContactTrackerEngine::managerVersion() const
 {
     return d->m_engineVersion;
 }
