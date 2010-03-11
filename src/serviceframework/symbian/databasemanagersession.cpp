@@ -81,10 +81,10 @@ void CDatabaseManagerServerSession::ConstructL()
     }
 
 CDatabaseManagerServerSession::CDatabaseManagerServerSession(CDatabaseManagerServer& aServer) 
-    : iServer(aServer)
+    : iServer(aServer),
       iDatabaseManagerSignalHandler(NULL),
       iDb(NULL),
-      m_watcher(NULL),
+      m_watcher(NULL)
     {
     iServer.IncreaseSessions();
     }
