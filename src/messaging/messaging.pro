@@ -146,7 +146,8 @@ symbian {
                qmessagestore_symbian_p.h \
                qmessageservice_symbian_p.h \
                qmessagecontentcontainer_symbian_p.h \
-               qmessage_symbian_p.h
+               qmessage_symbian_p.h \
+               symbianhelpers_p.h
 
     SOURCES += qmtmengine_symbian.cpp \
     	       qfsengine_symbian.cpp \
@@ -165,7 +166,8 @@ symbian {
                qmessagefilter_symbian.cpp \
                qmessagesortorder_symbian.cpp \
                qmessagestore_symbian.cpp \
-               qmessageservice_symbian.cpp
+               qmessageservice_symbian.cpp \
+               symbianhelpers.cpp
            
     LIBS += -lsendas2 \
             -lmsgs \
