@@ -120,7 +120,7 @@ public:
     QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     QList<QContact> contacts(const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
     QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
-    QContact contact(const QContactLocalId& contactId, QContactManager::Error& error) const;
+    QContact contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
 
     /* Save contacts - single and in batch */
     bool saveContact( QContact* contact, QContactManager::Error& error);
@@ -155,7 +155,7 @@ private:
     //called from both constructors, connecting to all contact NodeList changes signals
     void connectToSignals();
     RDFVariable contactDetail2Rdf(const RDFVariable& rdfContact, const QString& definitionName, const QString& fieldName) const;
-    QContact contact_impl(const QContactLocalId& contactId, QContactManager::Error& error) const;
+    QContact contact_impl(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
 private:
     QSharedDataPointer<QContactTrackerEngineData> d;
     const QString contactArchiveFile;

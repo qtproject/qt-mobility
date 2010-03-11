@@ -16,6 +16,8 @@ OBJECTS_DIR = .obj
 # CONFIG += contacts
 INCLUDEPATH += $$QCONTACTS_TRACKER_BACKENDDIR
 
+DEFINES += VERSION_INFO=\\\"$${VERSION_INT}\\\"
+
 ## Include source files under test.
 HEADERS += $$QCONTACTS_TRACKER_BACKENDDIR/qcontacttrackerbackend_p.h \
            $$QCONTACTS_TRACKER_BACKENDDIR/qtrackercontactasyncrequest.h \
