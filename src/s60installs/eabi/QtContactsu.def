@@ -868,4 +868,6 @@ EXPORTS
 	_ZTVN10QtMobility35QContactDetailDefinitionSaveRequestE @ 867 NONAME
 	_ZTVN10QtMobility36QContactDetailDefinitionFetchRequestE @ 868 NONAME
 	_ZTVN10QtMobility37QContactDetailDefinitionRemoveRequestE @ 869 NONAME
+	_ZN10QtMobility11QContactTag14DefinitionNameE @ 870 NONAME DATA 4
+	_ZN10QtMobility11QContactTag8FieldTagE @ 871 NONAME DATA 4
 

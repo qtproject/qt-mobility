@@ -110,7 +110,7 @@ contains(build_unit_tests, yes):DEFINES+=QTM_BUILD_UNITTESTS
 
 # On Symbian, we are freezing libraryies only
 symbian:isEmpty(defFilePath) {
-    MMP_RULES += "EXPORTUNFROZEN"
+#    MMP_RULES += "EXPORTUNFROZEN"
 }
 
 contains(TEMPLATE,.*lib):DEFINES += QT_SHARED

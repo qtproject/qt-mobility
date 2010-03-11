@@ -1088,4 +1088,13 @@ EXPORTS
 	?staticMetaObject@QContactDetailDefinitionFetchRequest@QtMobility@@2UQMetaObject@@B @ 1087 NONAME ; struct QMetaObject const QtMobility::QContactDetailDefinitionFetchRequest::staticMetaObject
 	?SubTypeDomestic@QContactAddress@QtMobility@@2U?$Latin1Literal@$08@2@B @ 1088 NONAME ; struct QtMobility::Latin1Literal<9> const QtMobility::QContactAddress::SubTypeDomestic
 	?FieldLabel@QContactGeoLocation@QtMobility@@2U?$Latin1Literal@$05@2@B @ 1089 NONAME ; struct QtMobility::Latin1Literal<6> const QtMobility::QContactGeoLocation::FieldLabel
+	??0QContactTag@QtMobility@@QAE@ABVQContactDetail@1@@Z @ 1090 NONAME ; QtMobility::QContactTag::QContactTag(class QtMobility::QContactDetail const &)
+	??0QContactTag@QtMobility@@QAE@XZ @ 1091 NONAME ; QtMobility::QContactTag::QContactTag(void)
+	??1QContactTag@QtMobility@@UAE@XZ @ 1092 NONAME ; QtMobility::QContactTag::~QContactTag(void)
+	??4QContactTag@QtMobility@@QAEAAV01@ABVQContactDetail@1@@Z @ 1093 NONAME ; class QtMobility::QContactTag & QtMobility::QContactTag::operator=(class QtMobility::QContactDetail const &)
+	??_EQContactTag@QtMobility@@UAE@I@Z @ 1094 NONAME ; QtMobility::QContactTag::~QContactTag(unsigned int)
+	?setTag@QContactTag@QtMobility@@QAEXABVQString@@@Z @ 1095 NONAME ; void QtMobility::QContactTag::setTag(class QString const &)
+	?tag@QContactTag@QtMobility@@QBE?AVQString@@XZ @ 1096 NONAME ; class QString QtMobility::QContactTag::tag(void) const
+	?DefinitionName@QContactTag@QtMobility@@2U?$Latin1Literal@$03@2@B @ 1097 NONAME ; struct QtMobility::Latin1Literal<4> const QtMobility::QContactTag::DefinitionName
+	?FieldTag@QContactTag@QtMobility@@2U?$Latin1Literal@$03@2@B @ 1098 NONAME ; struct QtMobility::Latin1Literal<4> const QtMobility::QContactTag::FieldTag
 
