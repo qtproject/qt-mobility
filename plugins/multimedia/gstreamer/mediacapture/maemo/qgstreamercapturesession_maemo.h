@@ -50,6 +50,8 @@
 
 #include "qgstreamerbushelper.h"
 
+#include "qcamera.h"
+
 QTM_USE_NAMESPACE
 
 class QGstreamerMessage;
@@ -59,6 +61,7 @@ class QGstreamerVideoEncode;
 class QGstreamerImageEncode;
 class QGstreamerRecorderControl;
 class QGstreamerMediaContainerControl;
+class QGstreamerCameraExposureControl;
 
 class QGstreamerElementFactory
 {
@@ -97,6 +100,7 @@ public:
     QGstreamerAudioEncode *audioEncodeControl() const { return m_audioEncodeControl; }
     QGstreamerVideoEncode *videoEncodeControl() const { return m_videoEncodeControl; }
     QGstreamerImageEncode *imageEncodeControl() const { return m_imageEncodeControl; }
+    QGstreamerCameraExposureControl *cameraExposureControl() const  { return m_cameraExposureControl; }
 
     QGstreamerRecorderControl *recorderControl() const { return m_recorderControl; }
     QGstreamerMediaContainerControl *mediaContainerControl() const { return m_mediaContainerControl; }
@@ -119,6 +123,9 @@ public:
     qint64 duration() const;
 
     bool processSyncMessage(const QGstreamerMessage &message);
+
+public:
+    void setFlashMode(QCamera::FlashMode mode);
 
 signals:
     void stateChanged(QGstreamerCaptureSession::State state);
@@ -160,12 +167,13 @@ private:
     QGstreamerImageEncode *m_imageEncodeControl;
     QGstreamerRecorderControl *m_recorderControl;
     QGstreamerMediaContainerControl *m_mediaContainerControl;
+    QGstreamerCameraExposureControl *m_cameraExposureControl;
 
     QGstreamerBusHelper *m_busHelper;
     GstBus* m_bus;
     GstElement *m_camerabin;
     GstElement *m_videoSrc;
-
+    bool m_videoPreviewFactoryHasChanged;
 public:
     QString m_imageFileName;
 };

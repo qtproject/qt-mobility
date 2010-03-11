@@ -45,9 +45,10 @@
 #include "qgstreameraudioencode_maemo.h"
 #include "qgstreamervideoencode_maemo.h"
 #include "qgstreamerimageencode_maemo.h"
+#include "qgstreamercameraexposurecontrol_maemo.h"
 #include "qgstreamerbushelper.h"
 #include <qmediarecorder.h>
-
+#include <gst/interfaces/photography.h>
 #include <gst/gsttagsetter.h>
 #include <gst/gstversion.h>
 
@@ -78,7 +79,8 @@ QGstreamerCaptureSession::QGstreamerCaptureSession(QGstreamerCaptureSession::Cap
      m_videoInputFactory(0),
      m_videoPreviewFactory(0),
      m_camerabin(0),
-     m_videoSrc(0)
+     m_videoSrc(0),
+     m_videoPreviewFactoryHasChanged(false)
 {
     m_camerabin = gst_element_factory_make("camerabin", "camerabin");
     m_bus = gst_element_get_bus(m_camerabin);
@@ -93,6 +95,7 @@ QGstreamerCaptureSession::QGstreamerCaptureSession(QGstreamerCaptureSession::Cap
     m_imageEncodeControl = new QGstreamerImageEncode(this);
     m_recorderControl = new QGstreamerRecorderControl(this);
     m_mediaContainerControl = new QGstreamerMediaContainerControl(this);
+    m_cameraExposureControl = new QGstreamerCameraExposureControl(this);
 }
 
 QGstreamerCaptureSession::~QGstreamerCaptureSession()
@@ -155,6 +158,10 @@ void QGstreamerCaptureSession::captureImage(const QString &fileName)
     gstUnref(previewCaps);
 
     g_object_set(G_OBJECT(m_camerabin), "filename", fileName.toLocal8Bit().constData(), NULL);
+    //g_signal_emit_by_name(G_OBJECT(m_camerabin), "user-start", NULL);
+
+    //gst_photography_set_autofocus (GST_PHOTOGRAPHY (m_camerabin), TRUE);
+
     g_signal_emit_by_name(G_OBJECT(m_camerabin), "user-start", NULL);
 
     m_imageFileName = fileName;
@@ -189,6 +196,7 @@ void QGstreamerCaptureSession::setVideoInput(QGstreamerVideoInput *videoInput)
 void QGstreamerCaptureSession::setVideoPreview(QGstreamerElementFactory *videoPreview)
 {
     m_videoPreviewFactory = videoPreview;
+    m_videoPreviewFactoryHasChanged = true;
 }
 
 QGstreamerCaptureSession::State QGstreamerCaptureSession::state() const
@@ -220,12 +228,18 @@ void QGstreamerCaptureSession::setState(QGstreamerCaptureSession::State newState
             }
             break;
         case StoppedState:
-            setupPipeline();
             m_state = newState;
             if (newState == PreviewState) {
+
+                if (m_videoPreviewFactory && m_videoPreviewFactoryHasChanged) {
+                    m_videoPreviewFactoryHasChanged = false;
+                    GstElement *preview = m_videoPreviewFactory->buildElement();
+                    g_object_set(G_OBJECT(m_camerabin), "vfsink", preview, NULL);
+                }
                 gst_element_set_state(m_camerabin, GST_STATE_PLAYING);
                 g_object_set(G_OBJECT(m_camerabin), "mode", 0, NULL);        
             } else {
+                setupPipeline();
                 g_object_set(G_OBJECT(m_camerabin), "filename", m_sink.toString().toLocal8Bit().constData(), NULL);
                 g_object_set(G_OBJECT(m_camerabin), "mode", 1, NULL);
                 g_signal_emit_by_name(m_camerabin, "user-start", 0);
@@ -461,6 +475,34 @@ void QGstreamerCaptureSession::busMessage(const QGstreamerMessage &message)
             //qDebug() << "New session state:" << ENUM_NAME(QGstreamerCaptureSession,"State",m_state);
         }
     }
+}
+
+void QGstreamerCaptureSession::setFlashMode(QCamera::FlashMode mode)
+{
+    GstFlashMode flashMode;
+    switch (mode) {
+        case QCamera::FlashOff:
+            flashMode = GST_PHOTOGRAPHY_FLASH_MODE_OFF;
+            break;
+        case QCamera::FlashOn:
+            flashMode = GST_PHOTOGRAPHY_FLASH_MODE_ON;
+            break;
+        case QCamera::FlashAuto:
+            flashMode = GST_PHOTOGRAPHY_FLASH_MODE_AUTO;
+            break;
+        case QCamera::FlashRedEyeReduction:
+            flashMode = GST_PHOTOGRAPHY_FLASH_MODE_RED_EYE;
+            break;
+        case QCamera::FlashFill:
+            flashMode = GST_PHOTOGRAPHY_FLASH_MODE_FILL_IN;
+            break;
+            break;
+        default:
+            return;
+    }
+
+    gst_photography_set_flash_mode(GST_PHOTOGRAPHY (m_camerabin),
+                                             flashMode);
 }
 
 static gboolean imgCaptured(GstElement *camera,
