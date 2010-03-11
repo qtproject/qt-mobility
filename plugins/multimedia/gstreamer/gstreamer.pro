@@ -75,7 +75,7 @@ include(mediaplayer/mediaplayer.pri)
 #!maemo* {
 #  include(mediacapture/mediacapture.pri)
 #} else {
-  include(mediacapture/mediacapture_maemo.pri)
+  include(mediacapture/maemo/mediacapture_maemo.pri)
 #}
 
 target.path=$$QT_MOBILITY_PREFIX/plugins/mediaservice
