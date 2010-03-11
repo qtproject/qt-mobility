@@ -182,10 +182,21 @@ void matchName(RDFVariable &variable, QContactDetailFilter &filter)
 QContactManager::Error QTrackerContactFetchRequest::applyFilterToContact(RDFVariable &variable,
         const QContactFilter &filter)
 {
+
+    QContactFetchRequest* r = qobject_cast<QContactFetchRequest*> (req);
+
+    if (!r) {
+            return QContactManager::BadArgumentError;
+    }
+
     if (filter.type() == QContactFilter::LocalIdFilter) {
         QContactLocalIdFilter filt = filter;
         if (!filt.ids().isEmpty()) {
+            if (!isMeContact(r->filter())) {
             variable.property<nco::contactUID>().isMemberOf(filt.ids());
+            } else {
+                variable == nco::default_contact_me::iri();
+            }
         } else {
             qWarning() << Q_FUNC_INFO << "QContactLocalIdFilter idlist is empty";
             return QContactManager::BadArgumentError;
@@ -355,17 +366,19 @@ RDFSelect prepareIMAddressesQuery(RDFVariable  &contact)
     return queryidsimacccounts;
 }
 
-RDFSelect prepareIMAccountsQuery()
+RDFSelect prepareIMAccountsQuery(RDFVariable  &contact)
 {
     RDFVariable imAccount;
     imAccount = RDFVariable::fromType<nco::IMAccount>();
     RDFSelect queryidsimaccounts;
 
-    queryidsimaccounts.addColumn("protocol", imAccount.property<nco::imID> ());
-    queryidsimaccounts.addColumn("presence",imAccount.optional().property<nco::imPresence> ());
-    queryidsimaccounts.addColumn("message", imAccount.optional().property<nco::imStatusMessage> ());
-    queryidsimaccounts.addColumn("nick", imAccount.optional().property<nco::imNickname> ());
-    queryidsimaccounts.addColumn("displayname", imAccount.optional().property<nco::imDisplayName> ());
+    RDFVariable address = imAccount.property<nco::imAccountAddress>();
+    queryidsimaccounts.addColumn("uri", contact);
+    queryidsimaccounts.addColumn("presence", address.property<nco::imPresence>());
+    queryidsimaccounts.addColumn("message", address.property<nco::imStatusMessage>());
+    queryidsimaccounts.addColumn("nick", address.property<nco::imNickname>());
+    queryidsimaccounts.addColumn("distinct ", address.property<nco::imID>());
+    queryidsimaccounts.addColumn("address_uri", address);
 
     return queryidsimaccounts;
 }
@@ -494,7 +507,8 @@ void QTrackerContactFetchRequest::run()
         RDFSelect queryidsimaccounts;
         if(isMeContact(r->filter())) {
             // Prepare a query to get all IMAccounts
-            queryidsimaccounts = prepareIMAccountsQuery();
+            RDFVariable meContact = RDFVariable::fromInstance<nco::default_contact_me>();
+            queryidsimaccounts = prepareIMAccountsQuery(meContact);
         } else {
             RDFVariable rdfIMContact;
             rdfIMContact = rdfIMContact.fromType<nco::PersonContact> ();
@@ -515,7 +529,7 @@ void QTrackerContactFetchRequest::run()
     RDFVariable middlename = RDFContact1.optional().property<nco::nameAdditional> ();
     RDFVariable firstname = RDFContact1.optional().property<nco::nameGiven> ();
     RDFVariable nickname = RDFContact1.optional().property<nco::nickname> ();
-    quer.addColumn("contactId", RDFContact1.property<nco::contactUID> ());
+    quer.addColumn("contactId", RDFContact1.optional().property<nco::contactUID> ());
     quer.addColumn("prefix", prefix);
     quer.addColumn("firstname", firstname);
     quer.addColumn("middlename", middlename);
@@ -603,21 +617,32 @@ void QTrackerContactFetchRequest::contactsReady()
         return;
     }
 
-    // 1) process contacts:
-    for(int i = 0; i < query->rowCount(); i++) {
-        QContact contact; // one we will be filling with this row
+    QContactManagerEngine *engine = qobject_cast<QContactManagerEngine *>(parent());
+    Q_ASSERT(engine);
 
+        // 1) process contacts:
+    for(int i = 0; i < query->rowCount(); i++) {
         bool ok;
         QContactLocalId contactid = query->index(i, 0).data().toUInt(&ok);
+
+
+        QContact contact; // one we will be filling with this row
+        if (isMeContact(request->filter())) {
+            /* Me Contact does not have any cotactUID so assigning 0*/
+            if(engine) {
+               QContactManager::Error error;
+               contactid = engine->selfContactId(error);
+               ok = true;
+            }
+        }
+
         if (!ok) {
             qWarning()<< Q_FUNC_INFO <<"Invalid contact ID: "<< query->index(i, 0).data().toString();
             continue;
         }
         QContactId id; id.setLocalId(contactid);
 
-        QContactManagerEngine *engine = qobject_cast<QContactManagerEngine *>(parent());
-        Q_ASSERT(engine);
-        if(engine)
+                if(engine)
             id.setManagerUri(engine->managerUri());
 
         contact.setId(id);
@@ -665,8 +690,6 @@ void QTrackerContactFetchRequest::contactsReady()
     }
 
     // 5) update display labels
-    QContactManagerEngine *engine = dynamic_cast<QContactManagerEngine*>(parent());
-    Q_ASSERT(engine);
     for(int i = 0; i < result.count(); i++)
     {
         QContact &cont(result[i]);
@@ -938,6 +961,7 @@ QContactOnlineAccount QTrackerContactFetchRequest::getOnlineAccountFromIMQuery(L
 void QTrackerContactFetchRequest::processQueryIMContacts(SopranoLive::LiveNodes queryIMContacts)
 {
     Q_ASSERT_X(queryIMAccountNodesPending == 0, Q_FUNC_INFO, "IMAccount query was supposed to be ready and it is not." );
+
     for (int i = 0; i < queryIMContacts->rowCount(); i++) {
         QContactOnlineAccount account = getOnlineAccountFromIMQuery(queryIMContacts, i);
         QContactLocalId contactid = queryIMContacts->index(i, IMContact::ContactId).data().toUInt();
@@ -978,6 +1002,7 @@ QContactOnlineAccount QTrackerContactFetchRequest::getIMAccountFromIMQuery(LiveN
     account.setValue(QContactOnlineAccount::FieldAccountUri, imAccountQuery->index(queryRow, IMAccount::ContactIMId).data().toString()); // IMId
 
     account.setNickname(imAccountQuery->index(queryRow, IMAccount::ContactNickname).data().toString()); // nick
+    qDebug() << Q_FUNC_INFO << imAccountQuery->index(queryRow, IMAccount::ContactNickname).data().toString();
 
     QString presence = imAccountQuery->index(queryRow, IMAccount::ContactPresence).data().toString(); // imPresence iri
     presence = presence.right(presence.length() - presence.lastIndexOf("presence-status"));

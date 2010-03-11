@@ -74,12 +74,12 @@ protected:
 
 namespace IMAccount {
     enum IMResultColumn {
-        URI,
-        ContactIMId,
+        URI = 0,
         ContactPresence,
         ContactMessage,
         ContactNickname,
-        ContactDisplayname
+        ContactDisplayname,
+        ContactIMId,
     };
 };
 
