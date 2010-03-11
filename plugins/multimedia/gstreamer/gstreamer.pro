@@ -24,8 +24,11 @@ PKGCONFIG += \
     gstreamer-base-0.10 \
     gstreamer-interfaces-0.10 \
     gstreamer-audio-0.10 \
-    gstreamer-video-0.10 \
-    gstreamer-plugins-bad-0.10
+    gstreamer-video-0.10
+
+maemo* {
+  PKGCONFIG +=gstreamer-plugins-bad-0.10
+}
 
 # Input
 HEADERS += \
@@ -72,11 +75,11 @@ contains(QT_CONFIG, multimedia) {
 }
 
 include(mediaplayer/mediaplayer.pri)
-#!maemo* {
-#  include(mediacapture/mediacapture.pri)
-#} else {
+!maemo* {
+  include(mediacapture/mediacapture.pri)
+} else {
   include(mediacapture/maemo/mediacapture_maemo.pri)
-#}
+}
 
 target.path=$$QT_MOBILITY_PREFIX/plugins/mediaservice
 INSTALLS+=target
