@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qgstreamercapturemetadatacontrol.h"
+#include "qgstreamercapturemetadatacontrol_maemo.h"
 
 #include <gst/gst.h>
 #include <gst/gstversion.h>
