@@ -147,6 +147,7 @@ private:
 
     void setupCameraBin();
     GstElement *buildVideoSrc();
+    void buildAudioEncodeBin();
 
     QUrl m_sink;
     QString m_captureDevice;

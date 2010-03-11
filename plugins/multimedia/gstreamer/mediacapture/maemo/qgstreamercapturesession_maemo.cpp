@@ -82,11 +82,16 @@ QGstreamerCaptureSession::QGstreamerCaptureSession(QGstreamerCaptureSession::Cap
      m_videoSrc(0),
      m_videoPreviewFactoryHasChanged(false)
 {
-    m_pipeline = gst_element_factory_make("camerabin", "camerabin");
+    if (m_captureMode == AudioAndVideo)
+        m_pipeline = gst_element_factory_make("camerabin", "camerabin");
+    else if (m_captureMode & Audio) {
+        m_pipeline = gst_pipeline_new("audio-capture-pipeline");
+    }
+
+    gstRef(m_pipeline);
 
     m_bus = gst_element_get_bus(m_pipeline);
     g_signal_connect(G_OBJECT(m_pipeline), "img-done", G_CALLBACK(imgCaptured), this);
-    //gstRef(m_pipeline);
 
     m_busHelper = new QGstreamerBusHelper(m_bus, this);
     m_busHelper->installSyncEventFilter(this);
@@ -135,6 +140,19 @@ void QGstreamerCaptureSession::setupCameraBin()
     gst_element_set_state(m_pipeline, GST_STATE_PLAYING);
 }
 
+void QGstreamerCaptureSession::buildAudioEncodeBin()
+{    
+    GstElement *audioSrc = gst_element_factory_make("pulsesrc", "pulsesrc");
+    GstElement *audioConvert = gst_element_factory_make("audioconvert", "audioconvert");
+    GstElement *capsFilter = gst_element_factory_make("capsfilter", "capsfilter-audio");
+    GstElement *audioEncoder = m_audioEncodeControl->createEncoder();
+    GstElement *fileSink = gst_element_factory_make("filesink", "filesink");
+    g_object_set(G_OBJECT(fileSink), "location", m_sink.toString().toLocal8Bit().constData(), NULL);
+
+    gst_bin_add_many(GST_BIN(m_pipeline), audioSrc, audioConvert, audioEncoder, fileSink, NULL);
+    bool ok = gst_element_link_many(audioSrc, audioConvert, audioEncoder, fileSink, NULL);
+    // TODO: What to do In case of linking fails?
+}
 
 GstElement *QGstreamerCaptureSession::buildVideoSrc()
 {
@@ -240,10 +258,15 @@ void QGstreamerCaptureSession::setState(QGstreamerCaptureSession::State newState
                 gst_element_set_state(m_pipeline, GST_STATE_PLAYING);
                 g_object_set(G_OBJECT(m_pipeline), "mode", 0, NULL);
             } else {
-                setupCameraBin();
-                g_object_set(G_OBJECT(m_pipeline), "filename", m_sink.toString().toLocal8Bit().constData(), NULL);
-                g_object_set(G_OBJECT(m_pipeline), "mode", 1, NULL);
-                g_signal_emit_by_name(m_pipeline, "user-start", 0);
+                if (m_captureMode == AudioAndVideo) {
+                    setupCameraBin();
+                    g_object_set(G_OBJECT(m_pipeline), "filename", m_sink.toString().toLocal8Bit().constData(), NULL);
+                    g_object_set(G_OBJECT(m_pipeline), "mode", 1, NULL);
+                    g_signal_emit_by_name(m_pipeline, "user-start", 0);
+                } else if (m_captureMode & Audio) {
+                    buildAudioEncodeBin();
+                    gst_element_set_state(m_pipeline, GST_STATE_PLAYING);
+                }
             }
             break;
         case PausedState:
@@ -252,7 +275,13 @@ void QGstreamerCaptureSession::setState(QGstreamerCaptureSession::State newState
                 g_signal_emit_by_name(m_pipeline, "user-pause", 0);
                 m_state = PausedState;
             } else {
-                g_signal_emit_by_name(m_pipeline, "user-stop", 0);
+                if (m_captureMode == AudioAndVideo)
+                    g_signal_emit_by_name(m_pipeline, "user-stop", 0);
+                else if (m_captureMode & Audio) {
+                    gst_element_send_event(m_pipeline, gst_event_new_eos());
+                    gst_element_set_state(m_pipeline, GST_STATE_NULL);
+                }
+
                 m_state = StoppedState;
                 if (newState == PreviewState)
                     setState(newState);
@@ -264,7 +293,6 @@ void QGstreamerCaptureSession::setState(QGstreamerCaptureSession::State newState
 
 qint64 QGstreamerCaptureSession::duration() const
 {
-    // TODO: Returned duration isn't correct...
     GstFormat   format = GST_FORMAT_TIME;
     gint64      duration = 0;
 
