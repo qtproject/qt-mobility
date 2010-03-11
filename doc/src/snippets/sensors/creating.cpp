@@ -59,5 +59,8 @@ QAccelerometer *sensor = new QAccelerometer(this);
 // On the stack (deleted when the current scope ends)
 QOrientationSensor orient_sensor;
 //! [Creating a sensor]
+
+    Q_UNUSED(sensor)
+    Q_UNUSED(orient_sensor);
 }
 

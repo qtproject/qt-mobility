@@ -56,4 +56,7 @@ QSensorReading *reading = sensor.reading();
 qreal x = reading->property("x").value<qreal>();
 qreal y = reading->value(1).value<qreal>();
 //! [Starting a sensor]
+
+    Q_UNUSED(x)
+    Q_UNUSED(y)
 }
