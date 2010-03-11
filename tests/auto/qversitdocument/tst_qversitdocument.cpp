@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "ut_qversitdocument.h"
+#include "tst_qversitdocument.h"
 #include "qversitdocument.h"
 #include "qversitproperty.h"
 #include <QString>
@@ -47,24 +47,24 @@
 
 QTM_USE_NAMESPACE
 
-void UT_QVersitDocument::init()
+void tst_QVersitDocument::init()
 {
     mVersitDocument = new QVersitDocument();
     QVERIFY(mVersitDocument);
 }
 
-void UT_QVersitDocument::cleanup()
+void tst_QVersitDocument::cleanup()
 {
     delete mVersitDocument;
 }
 
 
-void UT_QVersitDocument::testConstructor()
+void tst_QVersitDocument::testConstructor()
 {
     QCOMPARE(QVersitDocument::InvalidType, mVersitDocument->type());
 }
 
-void UT_QVersitDocument::testType()
+void tst_QVersitDocument::testType()
 {
     mVersitDocument->setType(QVersitDocument::VCard21Type);
     QCOMPARE(QVersitDocument::VCard21Type, mVersitDocument->type());
@@ -73,7 +73,7 @@ void UT_QVersitDocument::testType()
     QCOMPARE(QVersitDocument::VCard30Type, mVersitDocument->type());
 }
 
-void UT_QVersitDocument::testAddProperty()
+void tst_QVersitDocument::testAddProperty()
 {
     QCOMPARE(0, mVersitDocument->properties().count());
     QVersitProperty property;
@@ -81,7 +81,7 @@ void UT_QVersitDocument::testAddProperty()
     QCOMPARE(1, mVersitDocument->properties().count());
 }
 
-void UT_QVersitDocument::testRemoveProperty()
+void tst_QVersitDocument::testRemoveProperty()
 {
     // Remove an empty property.
     QCOMPARE(mVersitDocument->properties().count(), 0);
@@ -112,7 +112,7 @@ void UT_QVersitDocument::testRemoveProperty()
     QCOMPARE(mVersitDocument->properties().count(), 0);
 }
 
-void UT_QVersitDocument::testRemoveAllProperties()
+void tst_QVersitDocument::testRemoveAllProperties()
 {
     QString name(QString::fromAscii("FN"));
 
@@ -150,7 +150,7 @@ void UT_QVersitDocument::testRemoveAllProperties()
     QCOMPARE(1, mVersitDocument->properties().count());
 }
 
-void UT_QVersitDocument::testEquality()
+void tst_QVersitDocument::testEquality()
 {
     QVersitDocument document1;
     QVersitDocument document2;
@@ -182,7 +182,7 @@ void UT_QVersitDocument::testEquality()
     QVERIFY(!document2.isEmpty());
 }
 
-void UT_QVersitDocument::testHash()
+void tst_QVersitDocument::testHash()
 {
     QVersitDocument document1;
     QVersitProperty property1;
@@ -201,5 +201,5 @@ void UT_QVersitDocument::testHash()
     QVERIFY(qHash(document1) != qHash(document3));
 }
 
-QTEST_MAIN(UT_QVersitDocument)
+QTEST_MAIN(tst_QVersitDocument)
 

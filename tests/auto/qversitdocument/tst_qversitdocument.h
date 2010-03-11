@@ -39,41 +39,37 @@
 **
 ****************************************************************************/
 
-#ifndef UT_QVERSITPROPERTY_H
-#define UT_QVERSITPROPERTY_H
+#ifndef tst_QVERSITDOCUMENT_H
+#define tst_QVERSITDOCUMENT_H
 
 #include <QObject>
 #include <qmobilityglobal.h>
 
 QTM_BEGIN_NAMESPACE
 
-class QVersitProperty;
+class QVersitDocument;
 
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
 
-class UT_QVersitProperty : public QObject
+class tst_QVersitDocument : public QObject
 {
     Q_OBJECT
 
 private slots:
-
     void init();
     void cleanup();
 
-private slots: //test methods
-
-    void testGroup();
-    void testName();
-    void testParameters();
-    void testValue();
-    void testEmbeddedDocument();
+    void testConstructor();
+    void testType();
+    void testAddProperty();
+    void testRemoveProperty();
+    void testRemoveAllProperties();
     void testEquality();
     void testHash();
 
-private:
-    QVersitProperty* mVersitProperty;
-
+private: // data
+    QVersitDocument* mVersitDocument;
 };
 
-#endif //UT_QVERSITPROPERTY_H
+#endif // tst_QVERSITDOCUMENT_H

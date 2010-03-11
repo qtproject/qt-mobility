@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef UT_QVERSITCONTACTEXPORTER_H
-#define UT_QVERSITCONTACTEXPORTER_H
+#ifndef tst_QVERSITCONTACTEXPORTER_H
+#define tst_QVERSITCONTACTEXPORTER_H
 
 #include <qcontactdetail.h>
 #include <QObject>
@@ -56,7 +56,7 @@ class MyQVersitContactExporterDetailHandler;
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
 
-class UT_QVersitContactExporter : public QObject
+class tst_QVersitContactExporter : public QObject
 {
     Q_OBJECT
 
@@ -98,4 +98,4 @@ private: // Data
     MyQVersitContactExporterDetailHandler* mDetailHandler;
 };
 
-#endif // UT_QVERSITCONTACTEXPORTER_H
+#endif // tst_QVERSITCONTACTEXPORTER_H

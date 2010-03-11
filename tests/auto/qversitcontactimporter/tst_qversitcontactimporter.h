@@ -39,33 +39,74 @@
 **
 ****************************************************************************/
 
-#ifndef UT_QVCARD30WRITER_H
-#define UT_QVCARD30WRITER_H
+#ifndef tst_QVERSITCONTACTIMPORTER_H
+#define tst_QVERSITCONTACTIMPORTER_H
 
 #include <QObject>
+#include <qversitcontactimporter.h>
+#include <qversitdocument.h>
 #include <qmobilityglobal.h>
 
 QTM_BEGIN_NAMESPACE
 
-class QVCard30Writer;
+class QVersitContactImporter;
+class QVersitContactImporterPrivate;
+class MyQVersitContactImporterPropertyHandler;
+class MyQVersitResourceHandler;
 
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
 
-class UT_QVCard30Writer : public QObject
+class tst_QVersitContactImporter : public QObject
 {
-     Q_OBJECT
+    Q_OBJECT
 
 private slots: // Tests
-
     void init();
     void cleanup();
 
-    void testEncodeVersitProperty();
-    void testEncodeParameters();
+    void testName();
+    void testNameWithFormatted();
+    void testAddress();
+    void testTel();
+    void testEmail();
+    void testUrl();
+    void testUid();
+    void testOrganizationName();
+    void testOrganizationTitle();
+    void testOrganizationLogo();
+    void testOrganizationAssistant();
+    void testOrganizationRole();
+    void testTimeStamp();
+    void testAnniversary();
+    void testBirthday();
+    void testGender();
+    void testNickname();
+    void testAvatarStored();
+    void testAvatarUrl();
+    void testAvatarInvalid();
+    void testGeo();
+    void testNote();
+    void testOnlineAccount();
+    void testFamily();
+    void testSound();
+    void testLabel();
+    void testPref();
+    void testPropertyHandler();
 
-private: // Data
-    QVCard30Writer* mWriter;
+private: // Utilities
+
+    QVersitDocument createDocumentWithProperty(const QVersitProperty& property);
+
+    QVersitDocument createDocumentWithNameAndPhoto(
+        const QString& name,
+        QByteArray image,
+        const QString& photoType);
+
+private:
+    QVersitContactImporter* mImporter;
+    MyQVersitContactImporterPropertyHandler* mPropertyHandler;
+    MyQVersitResourceHandler* mResourceHandler;
 };
 
-#endif // UT_QVCARD30WRITER_H
+#endif // tst_QVERSITCONTACTIMPORTER_H

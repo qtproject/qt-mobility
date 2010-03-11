@@ -39,74 +39,54 @@
 **
 ****************************************************************************/
 
-#ifndef UT_QVERSITCONTACTIMPORTER_H
-#define UT_QVERSITCONTACTIMPORTER_H
+#ifndef tst_QVERSITWRITER_H
+#define tst_QVERSITWRITER_H
 
 #include <QObject>
-#include <qversitcontactimporter.h>
-#include <qversitdocument.h>
+#include <QBuffer>
 #include <qmobilityglobal.h>
+#include "qversitwriter.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QVersitContactImporter;
-class QVersitContactImporterPrivate;
-class MyQVersitContactImporterPropertyHandler;
-class MyQVersitResourceHandler;
+class QVersitWriterPrivate;
 
 QTM_END_NAMESPACE
+
 QTM_USE_NAMESPACE
 
-class UT_QVersitContactImporter : public QObject
+// Poor man's QSignalSpy because I couldn't get QSignalSpy to work with the user type QVR::State.
+class SignalCatcher : public QObject
 {
-    Q_OBJECT
+Q_OBJECT
+public slots:
+    void stateChanged(QVersitWriter::State state) {
+        mReceived.append(state);
+    }
+
+public:
+    QList<QVersitWriter::State> mReceived;
+};
+
+class tst_QVersitWriter : public QObject
+{
+     Q_OBJECT
 
 private slots: // Tests
+
     void init();
     void cleanup();
 
-    void testName();
-    void testNameWithFormatted();
-    void testAddress();
-    void testTel();
-    void testEmail();
-    void testUrl();
-    void testUid();
-    void testOrganizationName();
-    void testOrganizationTitle();
-    void testOrganizationLogo();
-    void testOrganizationAssistant();
-    void testOrganizationRole();
-    void testTimeStamp();
-    void testAnniversary();
-    void testBirthday();
-    void testGender();
-    void testNickname();
-    void testAvatarStored();
-    void testAvatarUrl();
-    void testAvatarInvalid();
-    void testGeo();
-    void testNote();
-    void testOnlineAccount();
-    void testFamily();
-    void testSound();
-    void testLabel();
-    void testPref();
-    void testPropertyHandler();
+    void testDevice();
+    void testDefaultCodec();
+    void testFold();
+    void testWriting21();
+    void testWriting30();
 
-private: // Utilities
-
-    QVersitDocument createDocumentWithProperty(const QVersitProperty& property);
-
-    QVersitDocument createDocumentWithNameAndPhoto(
-        const QString& name,
-        QByteArray image,
-        const QString& photoType);
-
-private:
-    QVersitContactImporter* mImporter;
-    MyQVersitContactImporterPropertyHandler* mPropertyHandler;
-    MyQVersitResourceHandler* mResourceHandler;
+private: // Data
+    QVersitWriter* mWriter;
+    QBuffer* mOutputDevice;
+    SignalCatcher* mSignalCatcher;
 };
 
-#endif // UT_QVERSITCONTACTIMPORTER_H
+#endif // tst_QVERSITWRITER_H

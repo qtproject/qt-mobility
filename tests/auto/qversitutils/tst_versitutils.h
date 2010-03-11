@@ -39,37 +39,23 @@
 **
 ****************************************************************************/
 
-#ifndef UT_QVERSITDOCUMENT_H
-#define UT_QVERSITDOCUMENT_H
+#ifndef tst_VERSITUTILS_H
+#define tst_VERSITUTILS_H
 
 #include <QObject>
 #include <qmobilityglobal.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
+class QTextCodec;
+QT_END_NAMESPACE
 
-class QVersitDocument;
-
-QTM_END_NAMESPACE
-QTM_USE_NAMESPACE
-
-class UT_QVersitDocument : public QObject
+class tst_VersitUtils : public QObject
 {
-    Q_OBJECT
+     Q_OBJECT
 
 private slots:
-    void init();
-    void cleanup();
-
-    void testConstructor();
-    void testType();
-    void testAddProperty();
-    void testRemoveProperty();
-    void testRemoveAllProperties();
-    void testEquality();
-    void testHash();
-
-private: // data
-    QVersitDocument* mVersitDocument;
+    void testBackSlashEscape();
+    void testRemoveBackSlashEscaping();
 };
 
-#endif // UT_QVERSITDOCUMENT_H
+#endif // tst_VERSITUTILS_H

@@ -39,31 +39,33 @@
 **
 ****************************************************************************/
 
-#ifndef UT_QVERSIT_H
-#define UT_QVERSIT_H
+#ifndef tst_QVCARD30WRITER_H
+#define tst_QVCARD30WRITER_H
 
 #include <QObject>
-#include <qversitdocument.h>
 #include <qmobilityglobal.h>
 
 QTM_BEGIN_NAMESPACE
 
-class QVersitContactImporter;
-class QVersitContactImporterPrivate;
-class QVersitReader;
+class QVCard30Writer;
 
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
 
-class UT_QVersit : public QObject
+class tst_QVCard30Writer : public QObject
 {
-    Q_OBJECT
+     Q_OBJECT
 
 private slots: // Tests
-    void testImportFiles();
-    void testImportFiles_data();
 
-private:
+    void init();
+    void cleanup();
+
+    void testEncodeVersitProperty();
+    void testEncodeParameters();
+
+private: // Data
+    QVCard30Writer* mWriter;
 };
 
-#endif // UT_QVERSIT_H
+#endif // tst_QVCARD30WRITER_H

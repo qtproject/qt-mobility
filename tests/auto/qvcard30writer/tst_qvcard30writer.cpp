@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "ut_qvcard30writer.h"
+#include "tst_qvcard30writer.h"
 #include "qvcard30writer_p.h"
 #include "qversitdocument.h"
 #include "qversitproperty.h"
@@ -52,18 +52,18 @@ const QString KATAKANA_NOKIA(QString::fromUtf8("\xe3\x83\x8e\xe3\x82\xad\xe3\x82
 
 QTM_USE_NAMESPACE
 
-void UT_QVCard30Writer::init()
+void tst_QVCard30Writer::init()
 {
     mWriter = new QVCard30Writer;
     mWriter->setCodec(QTextCodec::codecForName("UTF-8"));
 }
 
-void UT_QVCard30Writer::cleanup()
+void tst_QVCard30Writer::cleanup()
 {
     delete mWriter;
 }
 
-void UT_QVCard30Writer::testEncodeVersitProperty()
+void tst_QVCard30Writer::testEncodeVersitProperty()
 {
     QByteArray encodedProperty;
     QBuffer buffer(&encodedProperty);
@@ -172,7 +172,7 @@ void UT_QVCard30Writer::testEncodeVersitProperty()
     QCOMPARE(encodedProperty, expectedResult);
 }
 
-void UT_QVCard30Writer::testEncodeParameters()
+void tst_QVCard30Writer::testEncodeParameters()
 {
     QByteArray encodedParameters;
     QBuffer buffer(&encodedParameters);
@@ -235,5 +235,5 @@ void UT_QVCard30Writer::testEncodeParameters()
     QCOMPARE(encodedParameters, QByteArray(";X-P\\;ARAM=VA\\,LUE"));
 }
 
-QTEST_MAIN(UT_QVCard30Writer)
+QTEST_MAIN(tst_QVCard30Writer)
 
