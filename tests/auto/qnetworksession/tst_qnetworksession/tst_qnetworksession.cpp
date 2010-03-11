@@ -42,6 +42,7 @@
 #include <QtTest/QtTest>
 #include <QLocalServer>
 #include <QLocalSocket>
+#include <QTimer>
 #include "../../qbearertestcommon.h"
 #include <qnetworkconfigmanager.h>
 #include <qnetworksession.h>
@@ -75,6 +76,9 @@ private slots:
     void repeatedOpenClose();
     
     void roamingErrorCodes();
+    
+    void sessionStop_data();
+    void sessionStop();
 
     void sessionProperties_data();
     void sessionProperties();
@@ -430,6 +434,142 @@ void tst_QNetworkSession::roamingErrorCodes() {
     QVERIFY(error == QNetworkSession::SessionAbortedError);
     QVERIFY(iapSession2.state() == QNetworkSession::Disconnected);
     */
+}
+
+
+void tst_QNetworkSession::sessionStop_data() {
+    QTest::addColumn<QString>("bearerType");
+    QTest::addColumn<QNetworkConfiguration::Type>("configurationType");
+
+    QTest::newRow("SNAP") << "bearer_type_not_relevant_with_SNAPs" << QNetworkConfiguration::ServiceNetwork;
+    QTest::newRow("WLAN_IAP") << "WLAN" << QNetworkConfiguration::InternetAccessPoint;
+    QTest::newRow("Cellular_IAP") << "cellular" << QNetworkConfiguration::InternetAccessPoint;
+}
+
+void tst_QNetworkSession::sessionStop() {
+#ifndef Q_OS_SYMBIAN
+    QSKIP("Testcase contains mainly Symbian specific checks, because it is only platform to really support interface (IAP-level) Stop.", SkipAll);
+#endif 
+    QFETCH(QString, bearerType);
+    QFETCH(QNetworkConfiguration::Type, configurationType);
+    
+    int configWaitdelayInMs = 1000;
+    
+    QNetworkConfiguration config = suitableConfiguration(bearerType, configurationType);
+    if (!config.isValid()) {
+        QSKIP("No suitable configurations, skipping this round of session stop test.", SkipSingle);
+    }
+    qDebug() << "Using following configuration to open and stop a session: " << config.name();
+
+    QNetworkSession openedSession(config);
+    QNetworkSession closedSession(config);
+    QNetworkSession innocentSession(config);
+    QNetworkConfigurationManager mgr;
+    
+    QSignalSpy closedSessionOpenedSpy(&closedSession, SIGNAL(opened()));
+    QSignalSpy closedSessionClosedSpy(&closedSession, SIGNAL(closed()));
+    QSignalSpy closedSessionStateChangedSpy(&closedSession, SIGNAL(stateChanged(QNetworkSession::State)));
+    QSignalSpy closedErrorSpy(&closedSession, SIGNAL(error(QNetworkSession::SessionError)));
+    
+    QSignalSpy innocentSessionClosedSpy(&innocentSession, SIGNAL(closed()));
+    QSignalSpy innocentSessionStateChangedSpy(&innocentSession, SIGNAL(stateChanged(QNetworkSession::State)));
+    QSignalSpy innocentErrorSpy(&innocentSession, SIGNAL(error(QNetworkSession::SessionError)));
+    QNetworkSession::SessionError sessionError;
+    
+    // 1. Verify that stopping an opened session works (the simplest usecase).
+    qDebug("----------1. Verify that stopping an opened session works (the simplest usecase)");
+    QSignalSpy configChangeSpy(&mgr, SIGNAL(configurationChanged(QNetworkConfiguration)));
+    QVERIFY(openSession(&openedSession));
+    qDebug("Waiting for %d ms to get all configurationChange signals from platform.", configWaitdelayInMs);
+    // Clear signals caused by opening
+    closedSessionOpenedSpy.clear();
+    closedSessionClosedSpy.clear();
+    closedSessionStateChangedSpy.clear();
+    closedErrorSpy.clear();
+    openedSession.stop();
+
+    QVERIFY(openedSession.state() == QNetworkSession::Disconnected);
+    QTest::qWait(configWaitdelayInMs); // Wait to get all relevant configurationChange() signals
+    QVERIFY(config.state() == QNetworkConfiguration::Discovered);
+    
+    // 2. Verify that stopping a session based on non-connected configuration does nothing
+    qDebug("----------2. Verify that stopping a session based on non-connected configuration does nothing");
+    QNetworkSession::State closedSessionOriginalState = closedSession.state();
+    // Clear all possible signals
+    configChangeSpy.clear();
+    closedSessionOpenedSpy.clear();
+    closedSessionClosedSpy.clear();
+    closedSessionStateChangedSpy.clear();
+    closedErrorSpy.clear();
+    
+    closedSession.stop();
+    qDebug("Waiting for %d ms to get all configurationChange signals from platform.", configWaitdelayInMs);
+    QTest::qWait(configWaitdelayInMs); // Wait to get all relevant configurationChange() signals
+    
+    QVERIFY(closedSessionOpenedSpy.isEmpty());
+    QVERIFY(closedSessionClosedSpy.isEmpty());
+    QVERIFY(closedSessionStateChangedSpy.isEmpty());
+    QVERIFY(closedErrorSpy.isEmpty());
+    QVERIFY(closedSession.state() == closedSessionOriginalState); // State remains
+    
+    // 3. Check that stopping a opened session affects also other opened session based on the same configuration.
+    if (config.type() == QNetworkConfiguration::InternetAccessPoint) {
+        qDebug("----------3. Check that stopping a opened session affects also other opened session based on the same configuration.");
+        QVERIFY(openSession(&openedSession));
+        QVERIFY(openSession(&innocentSession));
+
+        configChangeSpy.clear();
+        innocentSessionClosedSpy.clear();
+        innocentSessionStateChangedSpy.clear();
+        innocentErrorSpy.clear();
+      
+        openedSession.stop();    
+        qDebug("Waiting for %d ms to get all configurationChange signals from platform.", configWaitdelayInMs);
+        QTest::qWait(configWaitdelayInMs); // Wait to get all relevant configurationChange() signals
+
+        QVERIFY(!innocentSessionClosedSpy.isEmpty());
+        QVERIFY(!innocentSessionStateChangedSpy.isEmpty());
+        QVERIFY(!innocentErrorSpy.isEmpty());
+        QVERIFY(innocentSession.state() == QNetworkSession::Disconnected);
+        QVERIFY(openedSession.state() == QNetworkSession::Disconnected);
+        sessionError = qvariant_cast<QNetworkSession::SessionError>(innocentErrorSpy.first().at(0));
+        QVERIFY(sessionError == QNetworkSession::SessionAbortedError);
+
+        innocentSessionClosedSpy.clear();
+        innocentSessionStateChangedSpy.clear();
+        innocentErrorSpy.clear();
+    } else {
+        qDebug("----------3. Skip for SNAP configuration.");
+    }
+    // 4. Check that stopping a non-opened session stops the other session based on the 
+    // same configuration if configuration is IAP. Stopping closed SNAP session has no impact on other opened SNAP session.
+    if (config.type() == QNetworkConfiguration::ServiceNetwork) {
+        qDebug("----------4. Skip for SNAP configuration.");
+    } else if (config.type() == QNetworkConfiguration::InternetAccessPoint) {
+        qDebug("----------4. Check that stopping a non-opened session stops the other session based on the same configuration");
+        QVERIFY(openSession(&innocentSession));
+        qDebug("Waiting for %d ms after open to make sure all platform indications are propagated", configWaitdelayInMs);
+        QTest::qWait(configWaitdelayInMs);
+        closedSession.stop();
+        qDebug("Waiting for %d ms to get all configurationChange signals from platform..", configWaitdelayInMs);
+        QTest::qWait(configWaitdelayInMs); // Wait to get all relevant configurationChange() signals
+    
+        QVERIFY(!innocentSessionClosedSpy.isEmpty());
+        QVERIFY(!innocentSessionStateChangedSpy.isEmpty());
+        QVERIFY(!innocentErrorSpy.isEmpty());
+        QVERIFY(innocentSession.state() == QNetworkSession::Disconnected);
+        QVERIFY(closedSession.state() == QNetworkSession::Disconnected);
+        sessionError = qvariant_cast<QNetworkSession::SessionError>(innocentErrorSpy.first().at(0));
+        QVERIFY(sessionError == QNetworkSession::SessionAbortedError);
+        QVERIFY(config.state() == QNetworkConfiguration::Discovered);
+    }
+    
+    // 5. Sanity check that stopping invalid session does not crash
+    qDebug("----------5. Sanity check that stopping invalid session does not crash");
+    QNetworkSession invalidSession(QNetworkConfiguration(), 0);
+    QVERIFY(invalidSession.state() == QNetworkSession::Invalid);
+    invalidSession.stop();
+    QVERIFY(invalidSession.state() == QNetworkSession::Invalid);
 }
 
 void tst_QNetworkSession::userChoiceSession_data()
@@ -1042,6 +1182,7 @@ void tst_QNetworkSession::outOfProcessSession()
 // Ignores configurations in other than 'discovered' -state. Returns invalid (QNetworkConfiguration())
 // if none found.
 QNetworkConfiguration suitableConfiguration(QString bearerType, QNetworkConfiguration::Type configType) {
+    
     // Refresh configurations and derive configurations matching given parameters.
     QNetworkConfigurationManager mgr;
     QSignalSpy updateSpy(&mgr, SIGNAL(updateCompleted()));
