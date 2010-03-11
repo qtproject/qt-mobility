@@ -83,6 +83,12 @@ TrackerChangeListener::TrackerChangeListener(QContactManagerEngine *eng, QObject
 
 TrackerChangeListener::~TrackerChangeListener()
 {
+    if (signaler_imaddress)
+        signaler_imaddress->disconnect(this);
+    if (signaler_contact)
+        signaler_contact->disconnect(this);
+    if (signaler_imaccount)
+        signaler_imaccount->disconnect(this);
 }
 
 QContactLocalId url2UniqueId(const QString &contactUrl)

@@ -192,6 +192,12 @@ QContact QContactTrackerEngine::contact(const QContactLocalId& contactId, const 
     return contact_impl(contactId, definitionRestrictions, error);
 }
 
+QContactLocalId QContactTrackerEngine::selfContactId(QContactManager::Error& error) const
+{
+    error = QContactManager::NoError;
+    return QContactLocalId(0xFFFFFFFF);
+}
+
 // used in tests, removed warning while decided if to provide sync api. Until then customers are advised to use async
 QContact QContactTrackerEngine::contact_impl(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error ) const
 {
@@ -464,6 +470,7 @@ bool QContactTrackerEngine::hasFeature(QContactManager::ManagerFeature feature, 
         case QContactManager::Groups:
         case QContactManager::ActionPreferences:
         case QContactManager::Relationships:
+        case QContactManager::SelfContact:
             return true;
         case QContactManager::ArbitraryRelationshipTypes:
             return true;

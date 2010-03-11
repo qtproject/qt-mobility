@@ -132,6 +132,8 @@ public:
     /* Definitions - Accessors and Mutators */
     QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error& error) const;
 
+    QContactLocalId selfContactId(QContactManager::Error& error) const;
+
     /* Asynchronous Request Support */
     void requestDestroyed(QContactAbstractRequest* req);
     bool startRequest(QContactAbstractRequest* req);
