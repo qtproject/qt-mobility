@@ -479,7 +479,7 @@ bool QContactTrackerEngine::hasFeature(QContactManager::ManagerFeature feature, 
  * Definition identifiers which are natively (fast) filterable
  * on the default backend store managed by the manager from which the capabilities object was accessed
  */
-bool QContactTrackerEngine::filterSupported(const QContactFilter& filter) const
+bool QContactTrackerEngine::isFilterSupported(const QContactFilter& filter) const
 {
     switch (filter.type()) {
         case QContactFilter::InvalidFilter:

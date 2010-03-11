@@ -140,7 +140,7 @@ public:
     /* Capabilities reporting */
     bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const;
 
-    bool filterSupported(const QContactFilter& filter) const;
+    bool isFilterSupported(const QContactFilter& filter) const;
     QList<QVariant::Type> supportedDataTypes() const;
 
     /* Version Reporting */
