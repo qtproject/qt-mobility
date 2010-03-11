@@ -96,6 +96,7 @@ private:
     QUrl recordPath(QDir outputDir);
 
     QAudioEncoderControl *audioEncoder;
+    QAudioEncoderControl *videoAudioEncoder;
     QAudioEndpointSelector *audioEndpoint;
     QVideoDeviceControl *videoDevice;
     QCamera *camera;
@@ -114,8 +115,9 @@ void tst_QMediaRecorder::initTestCase()
     camera = new QCamera;
     capture = new QMediaRecorder(camera);
     captureSource = new QAudioCaptureSource;
-    audiocapture = new QMediaRecorder(captureSource);                                                                                   
+    audiocapture = new QMediaRecorder(captureSource);          
     
+    videoAudioEncoder = qobject_cast<QAudioEncoderControl*>(capture->service()->control(QAudioEncoderControl_iid));
     videoDevice = qobject_cast<QVideoDeviceControl*>(capture->service()->control(QVideoDeviceControl_iid));
     videoEncoder = qobject_cast<QVideoEncoderControl*>(capture->service()->control(QVideoEncoderControl_iid));
     audioEndpoint = qobject_cast<QAudioEndpointSelector*>(audiocapture->service()->control(QAudioEndpointSelector_iid));    
@@ -218,6 +220,7 @@ void tst_QMediaRecorder::testAudioEndPointSelector()
 void tst_QMediaRecorder::testAudioEncoderControl()
 {
     QStringList codecs = audiocapture->supportedAudioCodecs();    
+    qDebug() << "tst_QMediaRecorder::testAudioEncoderControl, audio codec count"<<codecs.count();
     QVERIFY(codecs.count() == 1);    
     QVERIFY(audiocapture->audioCodecDescription("audio/wav") == "WAV Write Format");
     QStringList options = audioEncoder->supportedEncodingOptions("audio/wav");
@@ -282,10 +285,7 @@ void tst_QMediaRecorder::testVideoEncoderControl()
     QCOMPARE(continuous, false);
 
     QStringList vCodecs = capture->supportedVideoCodecs();
-    QVERIFY(vCodecs.count() == 3);
-    QCOMPARE(capture->videoCodecDescription("video/mp4"), QString("MPEG-4 File Format"));
-    QCOMPARE(capture->videoCodecDescription("video/3gpp"), QString("3GPP File Format"));
-    QCOMPARE(capture->videoCodecDescription("video/3ggp2"), QString("3GPP2 File Format"));
+    QVERIFY(vCodecs.count() == 30);    
 
     QStringList options = videoEncoder->supportedEncodingOptions("video/mp4");
     QCOMPARE(options.count(), 4);
@@ -294,6 +294,14 @@ void tst_QMediaRecorder::testVideoEncoderControl()
     videoEncoder->setEncodingOption("video/mp4", "bitrate", QVariant(128000));
     QCOMPARE(videoEncoder->encodingOption("video/mp4","bitrate"), QVariant(128000));
     videoEncoder->setEncodingOption("video/mp4", "bitrate", QVariant(-1));
+    
+    QStringList aCodecs = capture->supportedAudioCodecs();   
+    qDebug() << "tst_QMediaRecorder::testVideoEncoderControl, audio codec count"<<aCodecs.count();  
+    foreach(QString codec, aCodecs)
+        qDebug() << "tst_QMediaRecorder::testVideoEncoderControl, audio codec: "<<codec;
+    QVERIFY(aCodecs.count() == 2);    
+    QVERIFY(capture->audioCodecDescription("audio/aac") == "Advanced Audio Coding");
+    QVERIFY(capture->audioCodecDescription("audio/amr") == "Adaptive Multi-Rate audio codec");
 }
 
 void tst_QMediaRecorder::testEncodingSettings()
@@ -301,9 +309,9 @@ void tst_QMediaRecorder::testEncodingSettings()
     QAudioEncoderSettings audioSettings;
     QVideoEncoderSettings videoSettings;
     QString format;
-/*
-    audioSettings.setCodec("audio/mpeg");
-    audioSettings.setSampleRate(44100);
+
+    audioSettings.setCodec("audio/aac");
+/*    audioSettings.setSampleRate(44100);
     audioSettings.setBitRate(256*1024);
     audioSettings.setQuality(QtMedia::HighQuality);
     audioSettings.setEncodingMode(QtMedia::AverageBitRateEncoding);*/
