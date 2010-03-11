@@ -88,6 +88,7 @@
         connect(player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
                 this, SLOT(statusChanged(QMediaPlayer::MediaStatus)));
         connect(player, SIGNAL(bufferStatusChanged(int)), this, SLOT(bufferingProgress(int)));
+        connect(player, SIGNAL(error(QMediaPlayer::Error)), this, SLOT(displayErrorMessage()));
 
         videoWidget = new VideoWidget;
         videoWidget-&gt;setMediaObject(player);
@@ -122,7 +123,7 @@
         connect(controls, SIGNAL(pause()), player, SLOT(pause()));
         connect(controls, SIGNAL(stop()), player, SLOT(stop()));
         connect(controls, SIGNAL(next()), playlist, SLOT(next()));
-        connect(controls, SIGNAL(previous()), playlist, SLOT(previous()));
+        connect(controls, SIGNAL(previous()), this, SLOT(previousClicked()));
         connect(controls, SIGNAL(changeVolume(int)), player, SLOT(setVolume(int)));
         connect(controls, SIGNAL(changeMuting(bool)), player, SLOT(setMuted(bool)));
         connect(controls, SIGNAL(changeRate(qreal)), player, SLOT(setPlaybackRate(qreal)));
@@ -248,7 +249,9 @@
 
     void Player::positionChanged(qint64 progress)
     {
-        slider-&gt;setValue(progress / 1000);
+        if (!slider-&gt;isSliderDown()) {
+            slider-&gt;setValue(progress / 1000);
+        }
     }
 
     void Player::metaDataChanged()
@@ -267,6 +270,16 @@
                         : QPixmap());
             }
         }
+    }
+
+    void Player::previousClicked()
+    {
+        <span class="comment">// Go to previous track if we are within the first 5 seconds of playback</span>
+        <span class="comment">// Otherwise, seek to the beginning.</span>
+        if(player-&gt;position() &lt;= 5000)
+            playlist-&gt;previous();
+        else
+            player-&gt;setPosition(0);
     }
 
     void Player::jump(const QModelIndex &amp;index)
@@ -356,6 +369,12 @@
         else
             setWindowTitle(trackInfo);
     }
+
+    void Player::displayErrorMessage()
+    {
+        setStatusInfo(player-&gt;errorString());
+    }
+
     #ifdef Q_OS_SYMBIAN
     #else
     void Player::showColorDialog()

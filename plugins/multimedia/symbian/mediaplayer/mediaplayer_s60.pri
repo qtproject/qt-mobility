@@ -52,4 +52,11 @@ contains(S60_VERSION, 3.1) {
     LIBS += -lMPEngine
     DEFINES += HAS_MEDIA_PLAYER
 }
+exists($${EPOCROOT}epoc32\include\platform\mw\mediarecognizer.h) {
+    symbian:LIBS += -lplaybackhelper
+    DEFINES += USE_SYMBIAN_MEDIARECOGNIZER
+    #these are sdk plugins that don't exits in Symbian3
+    symbian:LIBS -= -lMPEngine
+    message("Using Symbian mediarecognizer")
+}
 

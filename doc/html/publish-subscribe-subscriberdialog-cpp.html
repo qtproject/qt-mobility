@@ -59,7 +59,11 @@
 
     #include &lt;qvaluespacesubscriber.h&gt;
 
-    #ifdef Q_OS_SYMBIAN
+    #include &lt;QTableWidget&gt;
+    #include &lt;QListWidget&gt;
+    #include &lt;QDesktopWidget&gt;
+
+    #ifdef QTM_SMALL_SCREEN
     #include &lt;QPushButton&gt;
     #include &lt;QSizePolicy&gt;
     #endif
@@ -69,17 +73,34 @@
     SubscriberDialog::SubscriberDialog(QWidget *parent) :
             QDialog(parent),
             ui(new Ui::SubscriberDialog),
-            subscriber(0)
+            subscriber(0),
+            tableWidget(0), listWidget(0)
     {
         ui-&gt;setupUi(this);
 
-    #ifdef Q_OS_SYMBIAN
-        QPushButton *switchButton = new QPushButton(&quot;Switch&quot;, this);
-        switchButton-&gt;setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
-        ui-&gt;verticalLayout-&gt;addWidget(switchButton);
-        switchButton-&gt;show();
+    #ifdef QTM_SMALL_SCREEN
+        QPushButton *switchButton =
+            ui-&gt;buttonBox-&gt;addButton(tr(&quot;Switch&quot;), QDialogButtonBox::ActionRole);
         connect(switchButton, SIGNAL(clicked()), this, SIGNAL(switchRequested()));
     #endif
+
+        QDesktopWidget desktopWidget;
+        if (desktopWidget.availableGeometry().width() &lt; 400) {
+            <span class="comment">// Screen is too small to fit a table widget without scrolling, use a list widget instead.</span>
+            listWidget = new QListWidget;
+            listWidget-&gt;setAlternatingRowColors(true);
+            ui-&gt;verticalLayout-&gt;insertWidget(2, listWidget);
+        } else {
+            tableWidget = new QTableWidget;
+            QStringList headerLabels;
+            headerLabels &lt;&lt; tr(&quot;Key&quot;) &lt;&lt; tr(&quot;Value&quot;) &lt;&lt; tr(&quot;Type&quot;);
+            tableWidget-&gt;setColumnCount(3);
+            tableWidget-&gt;setHorizontalHeaderLabels(headerLabels);
+            tableWidget-&gt;horizontalHeader()-&gt;setStretchLastSection(true);
+            tableWidget-&gt;verticalHeader()-&gt;setVisible(false);
+
+            ui-&gt;verticalLayout-&gt;insertWidget(2, tableWidget);
+        }
 
         connect(ui-&gt;connectButton, SIGNAL(clicked()), this, SLOT(changeSubscriberPath()));
         changeSubscriberPath();
@@ -104,7 +125,10 @@
 
     void SubscriberDialog::changeSubscriberPath()
     {
-        ui-&gt;values-&gt;clearContents();
+        if (listWidget)
+            listWidget-&gt;clear();
+        else if (tableWidget)
+            tableWidget-&gt;clearContents();
 
         if (!subscriber)
             subscriber = new QValueSpaceSubscriber(ui-&gt;basePath-&gt;text(), this);
@@ -118,23 +142,37 @@
 
     void SubscriberDialog::subscriberChanged()
     {
-        ui-&gt;values-&gt;clearContents();
-
         QStringList subPaths = subscriber-&gt;subPaths();
-        ui-&gt;values-&gt;setRowCount(subPaths.count());
+
+        if (listWidget) {
+            listWidget-&gt;clear();
+        } else if (tableWidget) {
+            tableWidget-&gt;clearContents();
+            tableWidget-&gt;setRowCount(subPaths.count());
+        }
 
         for (int i = 0; i &lt; subPaths.count(); ++i) {
             QVariant v = subscriber-&gt;value(subPaths.at(i));
 
-            QTableWidgetItem *pathItem = new QTableWidgetItem(subPaths.at(i));
-            pathItem-&gt;setFlags(pathItem-&gt;flags() &amp; ~Qt::ItemIsEditable);
-            QTableWidgetItem *valueItem = new QTableWidgetItem(v.toString());
-            valueItem-&gt;setFlags(valueItem-&gt;flags() &amp; ~Qt::ItemIsEditable);
-            QTableWidgetItem *typeItem = new QTableWidgetItem(v.typeName());
-            typeItem-&gt;setFlags(typeItem-&gt;flags() &amp; ~Qt::ItemIsEditable);
-            ui-&gt;values-&gt;setItem(i, 0, pathItem);
-            ui-&gt;values-&gt;setItem(i, 1, valueItem);
-            ui-&gt;values-&gt;setItem(i, 2, typeItem);
+            if (listWidget) {
+                const QString itemTemplate(&quot;%1 (%2)\n%3&quot;);
+
+                QListWidgetItem *item =
+                    new QListWidgetItem(itemTemplate.arg(subPaths.at(i), v.typeName(), v.toString()));
+                item-&gt;setFlags(item-&gt;flags() &amp; ~Qt::ItemIsEditable);
+                listWidget-&gt;addItem(item);
+            } else if (tableWidget) {
+                QTableWidgetItem *pathItem = new QTableWidgetItem(subPaths.at(i));
+                pathItem-&gt;setFlags(pathItem-&gt;flags() &amp; ~Qt::ItemIsEditable);
+                QTableWidgetItem *valueItem = new QTableWidgetItem(v.toString());
+                valueItem-&gt;setFlags(valueItem-&gt;flags() &amp; ~Qt::ItemIsEditable);
+                QTableWidgetItem *typeItem = new QTableWidgetItem(v.typeName());
+                typeItem-&gt;setFlags(typeItem-&gt;flags() &amp; ~Qt::ItemIsEditable);
+
+                tableWidget-&gt;setItem(i, 0, pathItem);
+                tableWidget-&gt;setItem(i, 1, valueItem);
+                tableWidget-&gt;setItem(i, 2, typeItem);
+            }
         }
     }</pre>
 <p /><address><hr /><div align="center">

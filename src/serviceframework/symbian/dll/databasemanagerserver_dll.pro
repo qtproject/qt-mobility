@@ -6,10 +6,13 @@ TARGET.UID3 = 0x2002BFBE
 
 DEFINES += QT_BUILD_SFW_LIB QT_MAKEDLL
 DEFINES += DATABASEMANAGERSERVER_LIBRARY
+DEFINES += QT_SFW_SERVICEDATABASE_USE_SECURITY_TOKEN
 
 DEPENDPATH += ../..
 
 include(../../../../common.pri)
+# override the defFilePath set by common.pri
+defFilePath=../../../s60installs
 
 
 DEPENDPATH += ..

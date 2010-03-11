@@ -57,7 +57,7 @@ QTM_BEGIN_NAMESPACE
     The interface name of QImageCaptureControl is \c com.nokia.Qt.QImageCaptureControl/1.0 as
     defined in QImageCaptureControl_iid.
 
-The Camera API of Qt Mobility is still in \bold ALPHA. It has not undergone
+The Camera API of Qt Mobility is still in \bold Technology Preview. It has not undergone
 the same level of review and testing as the rest of the APIs.
 
 The API exposed by the classes in this component are not stable, and will

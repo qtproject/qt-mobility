@@ -92,6 +92,46 @@ void UT_QVersitWriter::testDevice()
     QVERIFY(mWriter->device() == mOutputDevice);
 }
 
+void UT_QVersitWriter::testDefaultCodec()
+{
+    QVERIFY(mWriter->defaultCodec() == 0);
+    mWriter->setDefaultCodec(QTextCodec::codecForName("UTF-16BE"));
+    QVERIFY(mWriter->defaultCodec() == QTextCodec::codecForName("UTF-16BE"));
+}
+
+void UT_QVersitWriter::testFold()
+{
+    // 87 characters long
+    QString longString(QLatin1String(
+        "4567890123456789012345678901234567890123456789012345678901234567890123456"
+        "234567890123456789012345678901234567890123456789012345678901234567890123456"
+        "234567890123456789012"));
+    QByteArray expected(
+            "BEGIN:VCARD\r\n"
+            "VERSION:2.1\r\n"
+            "FN:4567890123456789012345678901234567890123456789012345678901234567890123456\r\n"
+            " 234567890123456789012345678901234567890123456789012345678901234567890123456\r\n"
+            " 234567890123456789012\r\n"
+            "END:VCARD\r\n");
+    QVersitDocument document;
+    QVersitProperty property;
+    property.setName(QLatin1String("FN"));
+    property.setValue(longString);
+    document.addProperty(property);
+    document.setType(QVersitDocument::VCard21Type);
+    QList<QVersitDocument> list;
+    list.append(document);
+    mWriter->setDevice(mOutputDevice);
+    mOutputDevice->open(QBuffer::ReadWrite);
+    QVERIFY(mWriter->startWriting(list));
+    QVERIFY(mWriter->waitForFinished());
+    QCOMPARE(mWriter->state(), QVersitWriter::FinishedState);
+    QCOMPARE(mWriter->error(), QVersitWriter::NoError);
+    mOutputDevice->seek(0);
+    QByteArray result(mOutputDevice->readAll());
+    QCOMPARE(result, expected);
+}
+
 void UT_QVersitWriter::testWriting21()
 {
     // vCard 2.1
@@ -146,8 +186,13 @@ END:VCARD\r\n");
     QCOMPARE(mWriter->error(), QVersitWriter::NoError);
     mOutputDevice->seek(0);
     result = mOutputDevice->readAll();
-    QEXPECT_FAIL("", "Byte-order marks are peppered throughout the output.", Continue);
-    QCOMPARE(result, utf16->fromUnicode(QLatin1String(vCard21.data())));
+    QByteArray expected(utf16->fromUnicode(QLatin1String(vCard21.data())));
+    QString out;
+    for (int i = 0; i < result.length(); i++) {
+        QString t;
+        out += t.sprintf("%02X ", (unsigned char)result.at(i));
+    }
+    QCOMPARE(result, expected);
 }
 
 void UT_QVersitWriter::testWriting30()

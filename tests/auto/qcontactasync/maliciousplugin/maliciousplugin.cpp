@@ -77,7 +77,11 @@ QString MaliciousAsyncManagerEngine::managerName() const
 
 bool MaliciousAsyncManagerEngine::startRequest(QContactAbstractRequest* req)
 {
-    QContactManager::Error errorResult = QContactManager::NoError;
+    // maliciously attempt to update the request with every result type
+    updateRequestState(req, QContactAbstractRequest::ActiveState);
+    // XXX TODO: call the request-type specific update functions
+/*
+    //QContactManager::Error errorResult = QContactManager::NoError;
     QList<QContactManager::Error> errorsResult;
     QList<QContactLocalId> idResult;
     QList<QContact> contactResult;
@@ -85,10 +89,6 @@ bool MaliciousAsyncManagerEngine::startRequest(QContactAbstractRequest* req)
     QMap<QString, QContactDetailDefinition> defMapResult;
     QList<QContactRelationship> relResult;
 
-    // maliciously attempt to update the request with every result type
-    updateRequestState(req, QContactAbstractRequest::ActiveState);
-    // XXX TODO: call the request-type specific update functions
-/*
     updateContactLocalIdFetchRequest(req, idResult, errorResult, errorsResult, QContactAbstractRequest::ActiveState, false);
     updateContactFetchRequest(req, contactResult, errorResult, errorsResult, QContactAbstractRequest::ActiveState, false);
     updateDefinitionSaveRequest(req, defResult, errorResult, errorsResult, QContactAbstractRequest::ActiveState);

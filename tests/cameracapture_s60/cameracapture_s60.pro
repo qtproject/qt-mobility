@@ -16,7 +16,7 @@ SOURCES = main.cpp \
     stillsettings.cpp
 
 symbian: {
-    TARGET.CAPABILITY = UserEnvironment WriteDeviceData ReadDeviceData
+    TARGET.CAPABILITY = UserEnvironment WriteDeviceData ReadDeviceData MultimediaDD
     FORMS += cameracapture.ui \
         settings_s60.ui \
         stillsettings_s60.ui

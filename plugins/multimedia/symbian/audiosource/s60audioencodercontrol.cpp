@@ -46,9 +46,10 @@
 
 #include <QtCore/qdebug.h>
 
-S60AudioEncoderControl::S60AudioEncoderControl(QObject *parent)
+S60AudioEncoderControl::S60AudioEncoderControl(QObject *session, QObject *parent)
     :QAudioEncoderControl(parent)
 {
+    qDebug()<<"S60AudioEncoderControl::S60AudioEncoderControl";
     QAudioFormat fmt;
     fmt.setSampleSize(8);
     fmt.setChannels(1);
@@ -56,7 +57,7 @@ S60AudioEncoderControl::S60AudioEncoderControl(QObject *parent)
     fmt.setSampleType(QAudioFormat::SignedInt);
     //fmt.setCodec("audio/pcm");
 
-    m_session = qobject_cast<S60AudioCaptureSession*>(parent);
+    m_session = qobject_cast<S60AudioCaptureSession*>(session);
 }
 
 S60AudioEncoderControl::~S60AudioEncoderControl()
@@ -169,7 +170,10 @@ void S60AudioEncoderControl::setEncodingOption(
     //QAudioFormat fmt = m_session->format();
 
     if(qstrcmp(name.toLocal8Bit().constData(), "bitrate") == 0) {
-		setBitRate(value.toInt());
+        if (value.toString() == "vbr")
+            setBitRate(-1);
+        else
+            setBitRate(value.toInt());
 
     } else if(qstrcmp(name.toLocal8Bit().constData(), "quality") == 0) {
         setQuality((QtMedia::EncodingQuality)value.toInt());

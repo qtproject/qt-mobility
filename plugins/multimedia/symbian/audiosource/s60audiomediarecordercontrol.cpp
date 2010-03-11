@@ -44,10 +44,10 @@
 
 #include <QtCore/qdebug.h>
 
-S60AudioMediaRecorderControl::S60AudioMediaRecorderControl(QObject *parent)
+S60AudioMediaRecorderControl::S60AudioMediaRecorderControl(QObject *session, QObject *parent)
     :QMediaRecorderControl(parent)
 {
-    m_session = qobject_cast<S60AudioCaptureSession*>(parent);
+    m_session = qobject_cast<S60AudioCaptureSession*>(session);
     connect(m_session, SIGNAL(positionChanged(qint64)), this, SIGNAL(durationChanged(qint64)));
     connect(m_session, SIGNAL(stateChanged(QMediaRecorder::State)), this, SIGNAL(stateChanged(QMediaRecorder::State)));
 }

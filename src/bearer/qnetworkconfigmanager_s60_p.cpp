@@ -103,9 +103,12 @@ QNetworkConfigurationManagerPrivate::QNetworkConfigurationManagerPrivate()
 
     updateConfigurations();
     updateStatesToSnaps();
+
+    updateAvailableAccessPoints(); // On first time updates synchronously (without WLAN scans)
     
     // Start monitoring IAP and/or SNAP changes in Symbian CommsDB
     startCommsDatabaseNotifications();
+    iFirstUpdate = false;
 }
 
 QNetworkConfigurationManagerPrivate::~QNetworkConfigurationManagerPrivate() 
@@ -113,21 +116,21 @@ QNetworkConfigurationManagerPrivate::~QNetworkConfigurationManagerPrivate()
     Cancel();
 
     QList<QString> configIdents = snapConfigurations.keys();
-    foreach(QString oldIface, configIdents) {
+    foreach(const QString oldIface, configIdents) {
         QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = snapConfigurations.take(oldIface);
         priv->isValid = false;
         priv->id.clear();
     }
 
     configIdents = accessPointConfigurations.keys();
-    foreach(QString oldIface, configIdents) {
+    foreach(const QString oldIface, configIdents) {
         QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.take(oldIface);
         priv->isValid = false;
         priv->id.clear();
     }
 
     configIdents = userChoiceConfigurations.keys();
-    foreach(QString oldIface, configIdents) {
+    foreach(const QString oldIface, configIdents) {
         QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = userChoiceConfigurations.take(oldIface);
         priv->isValid = false;
         priv->id.clear();
@@ -142,7 +145,14 @@ QNetworkConfigurationManagerPrivate::~QNetworkConfigurationManagerPrivate()
 #endif
     
     delete ipAccessPointsAvailabilityScanner;
+
+    // CCommsDatabase destructor uses cleanup stack. Since QNetworkConfigurationManager
+    // is a global static, but the time we are here, E32Main() has been exited already and
+    // the thread's default cleanup stack has been deleted. Without this line, a
+    // 'E32USER-CBase 69' -panic will occur.
+    CTrapCleanup* cleanup = CTrapCleanup::New();
     delete ipCommsDB;
+    delete cleanup;
 }
 
 
@@ -340,7 +350,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurationsL()
 #endif
     updateActiveAccessPoints();
     
-    foreach (QString oldIface, knownConfigs) {
+    foreach (const QString oldIface, knownConfigs) {
         //remove non existing IAP
         QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.take(oldIface);
         priv->isValid = false;
@@ -350,8 +360,8 @@ void QNetworkConfigurationManagerPrivate::updateConfigurationsL()
             emit configurationRemoved(item);
         }
         // Remove non existing IAP from SNAPs
-        QList<QString> snapConfigIdents = snapConfigurations.keys();
-        foreach (QString iface, snapConfigIdents) {
+        const QList<QString> snapConfigIdents = snapConfigurations.keys();
+        foreach (const QString iface, snapConfigIdents) {
             QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv2 = snapConfigurations.value(iface);
             // => Check if one of the IAPs of the SNAP is active
             for (int i=0; i<priv2->serviceNetworkMembers.count(); i++) {
@@ -362,7 +372,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurationsL()
             }
         }    
     }
-    foreach (QString oldIface, knownSnapConfigs) {
+    foreach (const QString oldIface, knownSnapConfigs) {
         //remove non existing SNAPs
         QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = snapConfigurations.take(oldIface);
         priv->isValid = false;
@@ -372,8 +382,6 @@ void QNetworkConfigurationManagerPrivate::updateConfigurationsL()
             emit configurationRemoved(item);
         }
     }
-
-    iFirstUpdate = false;
 }
 
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE
@@ -611,7 +619,7 @@ void QNetworkConfigurationManagerPrivate::updateActiveAccessPoints()
     }
 
     // Make sure that state of rest of the IAPs won't be Active
-    foreach (QString iface, inactiveConfigs) {
+    foreach (const QString iface, inactiveConfigs) {
         QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.value(iface);
         if (priv.data()) {
             // Configuration is either Defined or Discovered
@@ -657,7 +665,7 @@ void QNetworkConfigurationManagerPrivate::accessPointScanningReady(TBool scanSuc
         }
         
         // Make sure that state of rest of the IAPs won't be Discovered or Active
-        foreach (QString iface, unavailableConfigs) {
+        foreach (const QString iface, unavailableConfigs) {
             QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.value(iface);
             if (priv.data()) {
                 // Configuration is Defined
@@ -668,16 +676,17 @@ void QNetworkConfigurationManagerPrivate::accessPointScanningReady(TBool scanSuc
 
     updateStatesToSnaps();
     
-    startCommsDatabaseNotifications();
-    
-    emit this->configurationUpdateComplete();
+    if (!iFirstUpdate) {
+        startCommsDatabaseNotifications();
+        emit this->configurationUpdateComplete();
+    }
 }
 
 void QNetworkConfigurationManagerPrivate::updateStatesToSnaps()
 {
     // Go through SNAPs and set correct state to SNAPs
-    QList<QString> snapConfigIdents = snapConfigurations.keys();
-    foreach (QString iface, snapConfigIdents) {
+    const QList<QString> snapConfigIdents = snapConfigurations.keys();
+    foreach (const QString iface, snapConfigIdents) {
         bool discovered = false;
         bool active = false;
         QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = snapConfigurations.value(iface);
@@ -873,8 +882,8 @@ void QNetworkConfigurationManagerPrivate::EventL(const CConnMonEventBase& aEvent
         }
         
         bool online = false;
-        QList<QString> iapConfigs = accessPointConfigurations.keys();
-        foreach (QString iface, iapConfigs) {
+        const QList<QString> iapConfigs = accessPointConfigurations.keys();
+        foreach (const QString iface, iapConfigs) {
             QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.value(iface);
             if (priv.data()->state == QNetworkConfiguration::Active) {
                 online = true;
@@ -903,7 +912,7 @@ void QNetworkConfigurationManagerPrivate::EventL(const CConnMonEventBase& aEvent
                 unDiscoveredConfigs.removeOne(ident);
             }
         }
-        foreach (QString iface, unDiscoveredConfigs) {
+        foreach (const QString iface, unDiscoveredConfigs) {
             QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.value(iface);
             if (priv.data()) {
                 // Configuration is Defined
@@ -955,11 +964,22 @@ void AccessPointsAvailabilityScanner::DoCancel()
 
 void AccessPointsAvailabilityScanner::StartScanning()
 {
-    iConnectionMonitor.GetPckgAttribute(EBearerIdAll, 0, KIapAvailability, iIapBuf, iStatus);
-    if (!IsActive()) {
-        SetActive();
+    if (iOwner.iFirstUpdate) {
+        // On first update (the mgr is being instantiated) update only those bearers who
+        // don't need time-consuming scans (WLAN).
+        // Note: EBearerIdWCDMA covers also GPRS bearer
+        iConnectionMonitor.GetPckgAttribute(EBearerIdWCDMA, 0, KIapAvailability, iIapBuf, iStatus);
+        User::WaitForRequest(iStatus);
+        if (iStatus.Int() == KErrNone) {
+            iOwner.accessPointScanningReady(true,iIapBuf());
+        }
+    } else {
+        iConnectionMonitor.GetPckgAttribute(EBearerIdAll, 0, KIapAvailability, iIapBuf, iStatus);
+        if (!IsActive()) {
+            SetActive();
+        }
     }
-}    
+}
 
 void AccessPointsAvailabilityScanner::RunL()
 {

@@ -53,11 +53,14 @@
 // We mean it.
 //
 
-#include <qnetworkconfiguration.h>
 #include <QtCore/qshareddata.h>
 #include <QNetworkInterface>
 
+#include "qnetworkconfiguration.h"
+
 QTM_BEGIN_NAMESPACE
+
+class QNetworkConfigurationManagerPrivate;
 
 class QNetworkConfigurationPrivate : public QSharedData
 {

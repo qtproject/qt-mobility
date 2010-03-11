@@ -47,7 +47,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">TapDirection </td><td class="memItemRight" valign="bottom"><b><a href="qtapreading.html#tapDirection-prop">tapDirection</a></b> () const</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>2 public functions inherited from <a href="qsensorreading.html#public-functions">QSensorReading</a></li>
+<li><div bar="2" class="fn"></div>4 public functions inherited from <a href="qsensorreading.html#public-functions">QSensorReading</a></li>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
@@ -63,6 +63,8 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QTapReading class represents one reading from the tap sensor.</p>
+<a name="qtapreading-units"></a>
+<h3>QTapReading Units</h3>
 <p>The tap sensor registers tap and double tap events in one of the six directions. There are 3 axes that originate from the phone. They are arranged as follows.</p>
 <pre>             +z
               |
@@ -114,10 +116,15 @@
 <a name="//apple_ref/cpp/instm/QTapReading/isDoubleTap"></a>
 <h3 class="fn"><a name="doubleTap-prop"></a>doubleTap : const bool</h3>
 <p>This property holds a value indicating if there was a single or double tap.</p>
+<ul>
+<li>true - double tap</li>
+<li>false - single tap</li>
+</ul>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>isDoubleTap</b> () const</td></tr>
 </table>
+<p>See also <a href="qtapreading.html#qtapreading-units">QTapReading Units</a>.</p>
 <a name="//apple_ref/cpp/instm/QTapReading/tapDirection"></a>
 <h3 class="fn"><a name="tapDirection-prop"></a>tapDirection : const <a href="qtapreading.html#TapDirection-enum">TapDirection</a></h3>
 <p>This property holds the direction of the tap.</p>
@@ -125,7 +132,7 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">TapDirection </td><td class="memItemRight" valign="bottom"><b>tapDirection</b> () const</td></tr>
 </table>
-<p>See also <a href="qtapreading.html#TapDirection-enum">TapDirection</a>.</p>
+<p>See also <a href="qtapreading.html#qtapreading-units">QTapReading Units</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QTapReading/setDoubleTap"></a>

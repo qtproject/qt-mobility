@@ -76,68 +76,35 @@ public:
 
     QContact importContact(const QVersitDocument& versitDocument, int contactIndex);
     QList<QVersitProperty> unconvertedVersitProperties();
-    
+
 private:
-    QContactDetail* createName(
-        const QVersitProperty& property,
-        const QContact& contact) const;
-
-    QContactDetail* createPhone(const QVersitProperty& property) const;
-
-    QContactDetail* createAddress(const QVersitProperty& property) const;
-
-    QContactDetail* createOrganization(
-        const QVersitProperty& property,
-        const QContact& contact) const;
-
-    void setOrganizationNames(
-        QContactOrganization& org,
-        const QVersitProperty& property) const;
-
-    void setOrganizationLogo(
-        QContactOrganization& org,
-        const QVersitProperty& property) const;
-
-    QContactDetail* createTimeStamp(const QVersitProperty& property) const;
-
-    QContactDetail* createAnniversary(const QVersitProperty& property) const;
-
-    QContactDetail* createBirthday(const QVersitProperty& property) const;
-
-    QContactDetail* createAvatar(
-        const QVersitProperty& property,
-        const QString& subType) const;
-
-    void createNicknames(
-        const QVersitProperty& property,
-        QContact& contact) const;
-
-    QContactDetail* createGeoLocation(const QVersitProperty& property) const;
-
-    QContactDetail* createOnlineAccount(const QVersitProperty& property) const;
-
-    QContactDetail* createFamily(
-        const QVersitProperty& property,
-        const QContact& contact)const;
-
-    QContactDetail* createNameValueDetail(const QVersitProperty& property) const;
-
-    QContactDetail* createLabel(
-            const QVersitProperty& property,
-            const QContact& contact) const;
-
+    void importProperty(const QVersitDocument& document, const QVersitProperty& property,
+                        int contactIndex, QContact* contact) const;
+    bool createName(const QVersitProperty& property, QContact* contact) const;
+    bool createPhone(const QVersitProperty& property, QContact* contact) const;
+    bool createAddress(const QVersitProperty& property, QContact* contact) const;
+    bool createOrganization(const QVersitProperty& property, QContact* contact) const;
+    void setOrganizationNames(QContactOrganization& org, const QVersitProperty& property) const;
+    void setOrganizationLogo(QContactOrganization& org, const QVersitProperty& property) const;
+    bool createTimeStamp(const QVersitProperty& property, QContact* contact) const;
+    bool createAnniversary(const QVersitProperty& property, QContact* contact) const;
+    bool createBirthday(const QVersitProperty& property, QContact* contact) const;
+    bool createNicknames(const QVersitProperty& property, QContact* contact) const;
+    bool createOnlineAccount(const QVersitProperty& property, QContact* contact) const;
+    bool createAvatar(const QVersitProperty& property, const QString& subType, QContact* contact) const;
+    bool createGeoLocation(const QVersitProperty& property, QContact* contact) const;
+    bool createFamily(const QVersitProperty& property, QContact* contact) const;
+    bool createNameValueDetail(const QVersitProperty& property, QContact* contact) const;
+    bool createLabel(const QVersitProperty& property, QContact* contact) const;
     QStringList extractContexts(const QVersitProperty& property) const;
-
     QStringList extractSubTypes(const QVersitProperty& property) const;
-
     QString takeFirst(QList<QString>& list) const;
-
     QDateTime parseDateTime(const QString& text, const QString& format) const;
-
     QString saveContentToFile(const QVersitProperty& property, const QByteArray& data) const;
+    bool saveDataFromProperty(const QVersitProperty& property, QString* location, QByteArray* data) const;
+    void saveDetailWithContext(
+            QContact* contact, QContactDetail* detail, const QStringList& contexts) const;
 
-    QString getFirstAndLastName(const QVersitDocument& document) const;
-    
 public: // Data
     QVersitContactImporterPropertyHandler* mPropertyHandler;
     QVersitDefaultResourceHandler* mDefaultResourceHandler;
@@ -147,7 +114,6 @@ private: // Data
     QHash<QString,QPair<QString,QString> > mDetailMappings;
     QHash<QString,QString> mContextMappings;
     QHash<QString,QString> mSubTypeMappings;
-    QHash<QString,QString> mFileExtensionMappings;
 };
 
 QTM_END_NAMESPACE

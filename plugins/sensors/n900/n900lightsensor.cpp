@@ -40,22 +40,39 @@
 ****************************************************************************/
 
 #include "n900lightsensor.h"
+#include <QFile>
 #include <QDebug>
 #include <time.h>
 
 const char *n900lightsensor::id("n900.ambientlight");
+const char *n900lightsensor::filename("/sys/class/i2c-adapter/i2c-2/2-0029/lux");
 
 n900lightsensor::n900lightsensor(QSensor *sensor)
     : n900filebasedsensor(sensor)
-    , m_filename(LIGHTSENSOR_FILE)
 {
     setReading<QAmbientLightReading>(&m_reading);
+    // Sensor takes 12-400ms to complete one reading and is triggered by
+    // a read of the /sys file (no interrupt/timing loop/etc. is used).
+    // Since no continuous operation is possible, don't set a data rate.
+    //addDataRate(2, 2); // Approx 2Hz operation.
+    setDescription(QLatin1String("tsl2563"));
+}
+
+void n900lightsensor::start()
+{
+    if (!QFile::exists(QLatin1String(filename)))
+        goto error;
+
+    n900filebasedsensor::start();
+    return;
+
+error:
+    sensorStopped();
 }
 
 void n900lightsensor::poll()
 {
-    m_reading.setTimestamp(clock());
-    FILE *fd = fopen(m_filename, "r");
+    FILE *fd = fopen(filename, "r");
     if (!fd) return;
     int lux;
     int rs = fscanf(fd, "%i", &lux);
@@ -74,6 +91,7 @@ void n900lightsensor::poll()
     else
         lightLevel = QAmbientLightReading::Sunny;
 
+    m_reading.setTimestamp(clock());
     m_reading.setLightLevel(lightLevel);
 
     newReadingAvailable();

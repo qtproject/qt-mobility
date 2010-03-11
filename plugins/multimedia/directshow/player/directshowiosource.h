@@ -61,7 +61,7 @@ public:
 
     void setDevice(QIODevice *device);
     void setAllocator(IMemAllocator *allocator);
-    
+
     // IUnknown
     HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject);
     ULONG STDMETHODCALLTYPE AddRef();

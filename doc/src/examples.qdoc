@@ -57,7 +57,7 @@
 
     \list
     \o \l{samplephonebook}{Sample Phonebook}
-    \o \l{incomingcalls}{Incoming Call Simulator}
+    \o \l{qmlcontacts}{QML-based Sample Phonebook}
     \endlist
 
     \section2 Location
@@ -65,6 +65,9 @@
     \list
     \o \l{fetchgooglemaps}{Fetch Google Maps}
     \o \l{logfilepositionsource}{Log File Position Source}
+    \o \l{flickrdemo}{Flickr Demo}
+    \o \l{lightmaps}{Light Maps}
+    \o \l{weatherinfo}{Weather Info}
     \endlist
 
     \section2 Messaging
@@ -85,7 +88,6 @@
     \o \l{radio}{Radio}
     \o \l{recorder}{Recorder}
     \o \l{slideshow}{Slideshow}
-    \o \l{streamplayer}{Stream Player}
     \endlist
 
     \section2 Publish and Subscribe

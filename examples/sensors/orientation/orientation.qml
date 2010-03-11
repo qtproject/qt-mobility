@@ -50,9 +50,19 @@ Rectangle {
         id: orientation
 
         onReadingChanged: {
-            if (reading.orientation == OrientationReading.LeftUp)
-                content.state = "Portrait";
-            else if (reading.orientation == OrientationReading.BottomDown)
+            if (reading.orientation == OrientationReading.TopUp)
+                content.state = "TopUp";
+            else if (reading.orientation == OrientationReading.TopDown)
+                content.state = "TopDown";
+            else if (reading.orientation == OrientationReading.LeftUp)
+                content.state = "LeftUp";
+            else if (reading.orientation == OrientationReading.RightUp)
+                content.state = "RightUp";
+            else if (reading.orientation == OrientationReading.FaceUp)
+                content.state = "FaceUp";
+            else if (reading.orientation == OrientationReading.FaceDown)
+                content.state = "FaceDown";
+            else
                 content.state = "";
         }
     }
@@ -63,16 +73,55 @@ Rectangle {
         transformOrigin: Item.Center
         anchors.centerIn: parent
         Text {
-            text: "hello world"
+            id: text
+            text: "Orientation: Unknown"
             color: "white"
             font.pointSize: 24
             anchors.centerIn: parent
         }
 
-        states: State {
-            name: "Portrait"
-            PropertyChanges { target: content; rotation: -90 }
-        }
+        states: [
+            State {
+                name: "TopUp"
+                changes: [
+                    PropertyChanges { target: text; text: "Orientation: TopUp" }
+                ]
+            },
+            State {
+                name: "TopDown"
+                changes: [
+                    PropertyChanges { target: content; rotation: 180 },
+                    PropertyChanges { target: text; text: "Orientation: TopDown" }
+                ]
+            },
+            State {
+                name: "LeftUp"
+                changes: [
+                    PropertyChanges { target: content; rotation: -90 },
+                    PropertyChanges { target: text; text: "Orientation: LeftUp" }
+                ]
+            },
+            State {
+                name: "RightUp"
+                changes: [
+                    PropertyChanges { target: content; rotation: 90 },
+                    PropertyChanges { target: text; text: "Orientation: RightUp" }
+                ]
+            },
+            State {
+                name: "FaceUp"
+                changes: [
+                    PropertyChanges { target: text; text: "Orientation: FaceUp" }
+                ]
+            },
+            State {
+                name: "FaceDown"
+                changes: [
+                    PropertyChanges { target: text; text: "Orientation: FaceDown" }
+                ]
+            }
+        ]
+
         transitions: Transition {
             NumberAnimation { matchProperties: "rotation"; easing: "InOutQuad"; duration: 400 }
         }

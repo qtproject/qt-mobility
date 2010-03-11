@@ -49,6 +49,10 @@
 #include <qvideowidget.h>
 
 #ifdef Q_OS_SYMBIAN
+#include <QtGui/QDialog>
+#include <QtGui/QLineEdit>
+#include <QtGui/QListWidget>
+#include <QtNetwork/QHttp>
 #include "mediakeysobserver.h"
 #endif
 
@@ -97,9 +101,16 @@ private slots:
 
 #ifdef Q_OS_SYMBIAN
     void handleFullScreen(bool isFullscreen);
+    void handleAspectRatio(bool aspectRatio);
     void handleStateChange(QMediaPlayer::State state);
     void handleMediaKeyEvent(MediaKeysObserver::MediaKeys key);
     void showPlayList();
+    void hideOrShowCoverArt();
+    void launchYoutubeDialog();
+    void youtubeHttpRequestFinished(int requestId, bool error);
+    void youtubeReadResponseHeader(const QHttpResponseHeader& responseHeader);
+    void searchYoutubeVideo();
+    void addYoutubeVideo();
 #else
     void showColorDialog();
 #endif
@@ -107,6 +118,11 @@ private slots:
 private:
     void setTrackInfo(const QString &info);
     void setStatusInfo(const QString &info);
+    void handleCursor(QMediaPlayer::MediaStatus status);
+
+#ifdef Q_OS_SYMBIAN
+    void createMenus();
+#endif
 
     QMediaPlayer *player;
     QMediaPlaylist *playlist;
@@ -117,12 +133,17 @@ private:
     QAbstractItemView *playlistView;
     QString trackInfo;
     QString statusInfo;
-#ifdef Q_OS_SYMBIAN    
+#ifdef Q_OS_SYMBIAN
     MediaKeysObserver *mediaKeysObserver;
     QDialog *playlistDialog;
+    QAction *toggleAspectRatio;
+    QAction *showYoutubeDialog;
+    QDialog *youtubeDialog;
+    QHttp http;
+    int httpGetId;
 #else
     QDialog *colorDialog;
-#endif    
+#endif
 };
 
 #endif

@@ -163,11 +163,10 @@ S60MediaPlayerSession* S60MediaPlayerService::PlayerSession()
     
     switch (mediaType) {
     	case S60MediaRecognizer::Video:
-            return VideoPlayerSession(true);
+    	case S60MediaRecognizer::Url:
+            return VideoPlayerSession();
     	case S60MediaRecognizer::Audio:
             return AudioPlayerSession();
-    	case S60MediaRecognizer::Url:
-            return VideoPlayerSession(false);
     	default:	
     		break;
     }
@@ -175,7 +174,7 @@ S60MediaPlayerSession* S60MediaPlayerService::PlayerSession()
     return NULL;
 }
 
-S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession(bool isLocal)
+S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession()
 {
     if (!m_videoPlayerSession) {
         m_videoPlayerSession = new S60VideoPlayerSession(this);
@@ -192,6 +191,8 @@ S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession(bool isLocal)
                 m_control, SIGNAL(bufferStatusChanged(int)));
         connect(m_videoPlayerSession, SIGNAL(videoAvailableChanged(bool)),
                 m_control, SIGNAL(videoAvailableChanged(bool)));
+        connect(m_videoPlayerSession, SIGNAL(audioAvailableChanged(bool)),
+                m_control, SIGNAL(audioAvailableChanged(bool)));
         connect(m_videoPlayerSession, SIGNAL(seekableChanged(bool)),
                 m_control, SIGNAL(seekableChanged(bool)));
         connect(m_videoPlayerSession, SIGNAL(availablePlaybackRangesChanged(const QMediaTimeRange&)),
@@ -204,11 +205,10 @@ S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession(bool isLocal)
     
     m_videoPlayerSession->setVolume(m_control->mediaControlSettings().volume());
     m_videoPlayerSession->setMuted(m_control->mediaControlSettings().isMuted());
-    m_videoPlayerSession->setMediaFileLocal(isLocal);
     return m_videoPlayerSession;
 }
 
-S60MediaPlayerSession* S60MediaPlayerService::AudioPlayerSession(bool isLocal)
+S60MediaPlayerSession* S60MediaPlayerService::AudioPlayerSession()
 {
     if (!m_audioPlayerSession) {
         m_audioPlayerSession = new S60AudioPlayerSession(this);
@@ -225,6 +225,8 @@ S60MediaPlayerSession* S60MediaPlayerService::AudioPlayerSession(bool isLocal)
                 m_control, SIGNAL(bufferStatusChanged(int)));
         connect(m_audioPlayerSession, SIGNAL(videoAvailableChanged(bool)),
                 m_control, SIGNAL(videoAvailableChanged(bool)));
+        connect(m_audioPlayerSession, SIGNAL(audioAvailableChanged(bool)),
+                m_control, SIGNAL(audioAvailableChanged(bool)));
         connect(m_audioPlayerSession, SIGNAL(seekableChanged(bool)),
                 m_control, SIGNAL(seekableChanged(bool)));
         connect(m_audioPlayerSession, SIGNAL(availablePlaybackRangesChanged(const QMediaTimeRange&)),    
@@ -237,7 +239,5 @@ S60MediaPlayerSession* S60MediaPlayerService::AudioPlayerSession(bool isLocal)
     
     m_audioPlayerSession->setVolume(m_control->mediaControlSettings().volume());
     m_audioPlayerSession->setMuted(m_control->mediaControlSettings().isMuted());
-    m_audioPlayerSession->setMediaFileLocal(isLocal);
     return m_audioPlayerSession;
 }
-

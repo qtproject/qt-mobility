@@ -56,7 +56,7 @@ QTM_BEGIN_NAMESPACE
     The interface name of QCameraExposureControl is \c com.nokia.Qt.QCameraExposureControl/1.0 as
     defined in QCameraExposureControl_iid.
 
-The Camera API of Qt Mobility is still in \bold ALPHA. It has not undergone
+The Camera API of Qt Mobility is still in \bold Technology Preview. It has not undergone
 the same level of review and testing as the rest of the APIs.
 
 The API exposed by the classes in this component are not stable, and will
@@ -107,16 +107,20 @@ QCameraExposureControl::~QCameraExposureControl()
 
 
 /*!
-  \fn QCamera::FlashMode QCameraExposureControl::flashMode() const
+  \fn QCamera::FlashModes QCameraExposureControl::flashMode() const
 
   Returns the current flash mode.
 */
 
 
 /*!
-  \fn void QCameraExposureControl::setFlashMode(QCamera::FlashMode mode)
+  \fn void QCameraExposureControl::setFlashMode(QCamera::FlashModes mode)
 
   Set the current flash \a mode.
+
+  Usually the single QCamera::FlashMode flag is used,
+  but some non conflicting flags combination are also allowed,
+  like QCamera::FlashManual | QCamera::FlashSlowSyncRearCurtain.
 */
 
 

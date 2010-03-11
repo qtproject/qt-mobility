@@ -59,6 +59,14 @@ enum TCameraEngineError
     EErrOptimisedFocusComplete,  
 };
 
+class MAdvancedSettingsObserver
+    {
+public:
+    
+    virtual void HandleAdvancedEvent( const TECAMEvent &aEvent ) = 0;
+    
+    };
+
 
 class MCameraEngineObserver
 {

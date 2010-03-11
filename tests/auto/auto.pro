@@ -1,6 +1,6 @@
 TEMPLATE = subdirs
 
-include($$QT_MOBILITY_BUILD_TREE/config.pri)
+include(../../staticconfig.pri)
 
 contains(mobility_modules,serviceframework) {
     SUBDIRS += databasemanager \                #service framework
@@ -43,15 +43,15 @@ contains(mobility_modules,publishsubscribe) {
     SUBDIRS += qvaluespace \                           #Publish and Subscribe
            qvaluespacepublisher \
            qvaluespacesubscriber \
-	   qcrmlparser
+           qcrmlparser
 
     unix|win32 {
-        !symbian:!maemo6: SUBDIRS+= \
+        !symbian:!maemo6:!maemo5: SUBDIRS+= \
             qsystemreadwritelock \
             qsystemreadwritelock_oop
     }
 
-    unix:!symbian:!maemo6: {
+    unix:!symbian:!maemo6:!maemo5 {
         SUBDIRS+= \
                qpacket \
                qmallocpool \
@@ -69,7 +69,8 @@ contains(mobility_modules,systeminfo) {
 }
 
 contains(mobility_modules,contacts) {
-    SUBDIRS +=  qcontact \                      #Contacts
+    #Contacts
+    SUBDIRS +=  qcontact \
             qcontactactions \
             qcontactasync \
             qcontactdetail \
@@ -118,25 +119,20 @@ contains(mobility_modules,multimedia) {
         qvideowidget \
         qmediatimerange
 
-    contains(QT_CONFIG, declarative) {
-        SUBDIRS += \
-            qmlaudio \
-            qmlgraphicsvideo
-    }
-
     symbian: {
         #symbian spesific autotests
         SUBDIRS += symbian 
         SUBDIRS -= \
-                qcamera \
-                qmediaplayer \
-                qradiotuner \
-                qmediaobject
+                qcamera_s60 \
+                qmediaplayer_s60 \
+                qradiotuner_s60 \
+                qmediaobject_s60 \
+                qmediarecorder_s60
     }
 }
 #Messaging
 contains(mobility_modules,messaging) {
-    contains(qmf_enabled,yes)|wince*|win32|symbian|maemo6 {
+    contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5 {
     !win32-g++:SUBDIRS += \
         qmessagestore \
         qmessagestorekeys \

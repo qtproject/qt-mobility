@@ -63,14 +63,14 @@ void QSensorPluginLoader::load()
 
     QStringList     paths = QCoreApplication::libraryPaths();
 
-    foreach (QString const &path, paths) {
+    Q_FOREACH (QString const &path, paths) {
         QString     pluginPathName(path + m_location);
         QDir        pluginDir(pluginPathName);
 
         if (!pluginDir.exists())
             continue;
 
-        foreach (QString pluginLib, pluginDir.entryList(QDir::Files)) {
+        Q_FOREACH (QString pluginLib, pluginDir.entryList(QDir::Files)) {
             QPluginLoader   loader(pluginPathName + pluginLib);
 
             QObject *o = loader.instance();

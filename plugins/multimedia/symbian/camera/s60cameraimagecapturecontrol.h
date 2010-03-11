@@ -48,7 +48,7 @@
 QTM_USE_NAMESPACE
 
 class S60CameraService;
-class S60CameraSession;
+class S60ImageCaptureSession;
 
 class S60CameraImageCaptureControl : public QImageCaptureControl
 {
@@ -63,7 +63,7 @@ public:
     void cancelCapture();
     
 private:
-    S60CameraSession *m_session;
+    S60ImageCaptureSession *m_session;
     S60CameraService *m_service;
 };
 

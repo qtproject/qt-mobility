@@ -92,9 +92,6 @@ CameraCapture::CameraCapture(QWidget *parent) :
         }
         ui->actionCamera->menu()->addAction(videoDeviceAction);
     }
-    
-    m_autoFocus = false;
-    m_takeImage = false;
 
     connect(videoDevicesGroup, SIGNAL(triggered(QAction*)), this, SLOT(updateCameraDevice(QAction*)));
     connect(ui->actionFlash_On_2, SIGNAL(triggered()), this, SLOT(setFlashOn()));
@@ -130,10 +127,6 @@ CameraCapture::CameraCapture(QWidget *parent) :
 
 CameraCapture::~CameraCapture()
 {
-    delete imageCapture;
-    delete mediaRecorder;
-    delete videoWidget;
-    delete camera;
 }
 
 void CameraCapture::setFlashOn()
@@ -163,14 +156,12 @@ void CameraCapture::setFlashFillIn()
 
 void CameraCapture::setFocusOn()
 {
-    m_autoFocus = true;
-    m_takeImage = false;
+    camera->setFocusMode(QCamera::AutoFocus);
 }
 
 void CameraCapture::setFocusOff()
 {
-    m_autoFocus = false;
-    m_takeImage = false;
+    camera->setFocusMode(QCamera::ManualFocus);
 }
 
 void CameraCapture::setExposureNight()
@@ -235,23 +226,24 @@ void CameraCapture::setCamera(const QByteArray &cameraDevice)
     delete videoWidget;
     delete camera;
 
-    qDebug() << "CameraCapture::setCamera cameraDevice.isEmpty()=" << cameraDevice.isEmpty();
+    //qDebug() << "CameraCapture::setCamera cameraDevice.isEmpty()=" << cameraDevice.isEmpty();
     if (cameraDevice.isEmpty())
-        camera = new QCamera;
+        camera = new QCamera(this);
     else       
-        camera = new QCamera(cameraDevice);
+        camera = new QCamera(cameraDevice, this);
 
     connect(camera, SIGNAL(stateChanged(QCamera::State)), this, SLOT(updateCameraState(QCamera::State)));
     connect(camera, SIGNAL(focusStatusChanged(QCamera::FocusStatus)), this, SLOT(focusStatusChanged(QCamera::FocusStatus)));
-    connect(camera, SIGNAL(zoomValueChanged(qreal)), this, SLOT(zoomValueChanged(qreal)));
+    connect(camera, SIGNAL(opticalZoomChanged(qreal)), this, SLOT(zoomValueChanged(qreal)));
+    connect(camera, SIGNAL(digitalZoomChanged(qreal)), this, SLOT(zoomValueChanged(qreal)));
     connect(camera, SIGNAL(error(QCamera::Error)), this, SLOT(error(QCamera::Error)));
 
-    mediaRecorder = new QMediaRecorder(camera);
+    mediaRecorder = new QMediaRecorder(camera, this);
     connect(mediaRecorder, SIGNAL(stateChanged(QMediaRecorder::State)), this, SLOT(updateRecorderState(QMediaRecorder::State)));
 
-    imageCapture = new QStillImageCapture(camera);
+    imageCapture = new QStillImageCapture(camera, this);
 
-    audioSource = new QAudioCaptureSource(camera);
+    audioSource = new QAudioCaptureSource(camera,this);
     connect(audioSource, SIGNAL(availableAudioInputsChanged()), SLOT(updateAudioDevices()));
 
     mediaRecorder->setOutputLocation(QUrl("test.mkv"));
@@ -261,7 +253,7 @@ void CameraCapture::setCamera(const QByteArray &cameraDevice)
 
     camera->setMetaData(QtMedia::Title, QVariant(QLatin1String("Test Title")));
 
-    videoWidget = new QVideoWidget;
+    videoWidget = new QVideoWidget(this);
     videoWidget->setMediaObject(camera);
     ui->stackedWidget->addWidget(videoWidget);
 
@@ -372,16 +364,17 @@ void CameraCapture::stop()
 
 void CameraCapture::takeImage()
 {
-    if (m_autoFocus) {
+    if (camera->focusMode() == QCamera::AutoFocus) {
+        qDebug() << "CameraCapture::takeImage: if (camera->focusMode() == QCamera::AutoFocus)"; 
         m_takeImage = true;
         camera->startFocusing();
     } else {
+        qDebug() << "CameraCapture::takeImage: else";
         int lastImage = 0;
         foreach( QString fileName, outputDirImage.entryList(QStringList() << "img_*.jpg") ) {
             int imgNumber = fileName.mid(4, fileName.size()-8).toInt();
             lastImage = qMax(lastImage, imgNumber);
-        }
-        
+        }        
         imageCapture->capture(QString("img_%1.jpg").arg(lastImage+1,
                                                         4, //fieldWidth
                                                         10,
@@ -470,6 +463,10 @@ void CameraCapture::updateCameraDevice(QAction *action)
     qDebug() << "CameraCapture::updateCameraDevice(), action="<<action;
     qDebug() << "CameraCapture::updateCameraDevice(), device="<<action->data().toByteArray();
     setCamera(action->data().toByteArray());
+    if (action->data().toByteArray() == "Secondary camera")
+        setFocusOff();
+    else
+        setFocusOn();
 }
 
 void CameraCapture::updateAudioDevice(QAction *action)
@@ -479,7 +476,7 @@ void CameraCapture::updateAudioDevice(QAction *action)
 
 void CameraCapture::focusStatusChanged(QCamera::FocusStatus status)
 {
-    qDebug() << "CameraCapture focus locked";
+    qDebug() << "CameraCapture::focusStatusChanged: "<<status;
     if (status == QCamera::FocusReached && m_takeImage) {
         int lastImage = 0;
         foreach( QString fileName, outputDirImage.entryList(QStringList() << "img_*.jpg") ) {

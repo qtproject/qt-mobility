@@ -95,10 +95,11 @@ void  QMLBackendMonitorAO::DoCancel()
 
 void QMLBackendMonitorAO::RunL()
 {
+    CMonitorTriggerInfo *triggerInfo = NULL;
     switch (iStatus.Int()) {
         case KErrNone :
             //retrieve the triggerInfo corresponding to iTriggerInfo.iTriggerId
-            CMonitorTriggerInfo* triggerInfo = iTriggerMonitorInfo->getMonitorTriggerInfo(
+            triggerInfo = iTriggerMonitorInfo->getMonitorTriggerInfo(
                                                    iTriggerInfo.iTriggerId);
             if (triggerInfo) {
                 //callback called only if generated for the current AO - Trigger ID
