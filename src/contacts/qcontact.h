@@ -156,6 +156,9 @@ private:
 };
 
 Q_CONTACTS_EXPORT uint qHash(const QContact& key);
+#ifndef QT_NO_DEBUG_STREAM
+Q_CONTACTS_EXPORT QDebug operator<<(QDebug dbg, const QContact& contact);
+#endif
 
 QTM_END_NAMESPACE
 

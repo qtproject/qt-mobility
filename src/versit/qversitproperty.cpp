@@ -126,6 +126,28 @@ uint qHash(const QVersitProperty &key)
     return hash;
 }
 
+#ifndef QT_NO_DEBUG_STREAM
+QDebug operator<<(QDebug dbg, const QVersitProperty& property)
+{
+    QStringList groups = property.groups();
+    QString name = property.name();
+    QMultiHash<QString,QString> parameters = property.parameters();
+    QString value = property.value();
+    dbg.nospace() << "QVersitProperty(";
+    foreach (const QString& group, groups) {
+        dbg.nospace() << group << '.';
+    }
+    dbg.nospace() << name;
+    QHash<QString,QString>::const_iterator it;
+    for (it = parameters.constBegin(); it != parameters.constEnd(); it++) {
+        dbg.nospace() << ';' << it.key() << '=' << it.value();
+    }
+    dbg.nospace() << ':' << value;
+    dbg.nospace() << ')';
+    return dbg.maybeSpace();
+}
+#endif
+
 /*!
  * Sets the groups in the property to the given list of \a groups.
  */

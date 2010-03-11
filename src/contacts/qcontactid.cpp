@@ -42,6 +42,7 @@
 #include "qcontactid.h"
 #include "qcontactid_p.h"
 #include <QHash>
+#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
@@ -147,6 +148,14 @@ uint qHash(const QContactId &key)
     return QT_PREPEND_NAMESPACE(qHash)(key.managerUri())
             + QT_PREPEND_NAMESPACE(qHash)(key.localId());
 }
+
+#ifndef QT_NO_DEBUG_STREAM
+QDebug operator<<(QDebug dbg, const QContactId& id)
+{
+    dbg.nospace() << "QContactId(" << id.managerUri() << ", " << id.localId() << ")";
+    return dbg.maybeSpace();
+}
+#endif
 
 /*!
  * Returns the URI of the manager which contains the contact identified by this id

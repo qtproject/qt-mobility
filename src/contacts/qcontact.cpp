@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include <QSet>
+#include <QDebug>
 
 #include "qcontact.h"
 #include "qcontact_p.h"
@@ -414,6 +415,15 @@ uint qHash(const QContact &key)
         hash += qHash(detail);
     }
     return hash;
+}
+
+QDebug operator<<(QDebug dbg, const QContact& contact)
+{
+    dbg.nospace() << "QContact(" << contact.id() << ")";
+    foreach (const QContactDetail& detail, contact.details()) {
+        dbg.space() << '\n' << detail;
+    }
+    return dbg.maybeSpace();
 }
 
 /*! Retrieve the first detail for which the given \a actionName is available */

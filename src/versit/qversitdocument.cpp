@@ -116,6 +116,17 @@ uint qHash(const QVersitDocument &key)
     return hash;
 }
 
+#ifndef QT_NO_DEBUG_STREAM
+QDebug operator<<(QDebug dbg, const QVersitDocument& document)
+{
+    dbg.nospace() << "QVersitDocument(" << document.type() << ')';
+    foreach (const QVersitProperty& property, document.properties()) {
+        dbg.space() << '\n' << property;
+    }
+    return dbg.maybeSpace();
+}
+#endif
+
 /*!
  * Sets the versit document type to \a type.
  */
