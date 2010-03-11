@@ -54,6 +54,9 @@
 
 QTM_USE_NAMESPACE
 
+// Can be used to configure tests that require manual attention (such as roaming)
+// #define QNETWORKSESSION_MANUAL_TESTS 1
+
 Q_DECLARE_METATYPE(QNetworkConfiguration)
 Q_DECLARE_METATYPE(QNetworkConfiguration::Type);
 Q_DECLARE_METATYPE(QNetworkSession::State);
@@ -107,6 +110,7 @@ private:
 // Helper functions
 bool openSession(QNetworkSession *session);
 bool closeSession(QNetworkSession *session, bool lastSessionOnConfiguration = true);
+void updateConfigurations();
 QNetworkConfiguration suitableConfiguration(QString bearerType, QNetworkConfiguration::Type configType);
 
 void tst_QNetworkSession::initTestCase()
@@ -227,13 +231,12 @@ void tst_QNetworkSession::cleanupTestCase()
 
 void tst_QNetworkSession::invalidSession()
 {
-    // Verify that session created with invalid configuration remains in invalid state
+    // 1. Verify that session created with invalid configuration remains in invalid state
     QNetworkSession session(QNetworkConfiguration(), 0);
     QVERIFY(!session.isOpen());
     QVERIFY(session.state() == QNetworkSession::Invalid);
     
-    // Verify that opening session with invalid configuration both 1) emits invalidconfigurationerror
-    // and 2) sets session's state as invalid.
+    // 2. Verify that opening session with invalid configuration both 1) emits invalidconfigurationerror and 2) sets session's state as invalid.
     QSignalSpy errorSpy(&session, SIGNAL(error(QNetworkSession::SessionError)));
     session.open();
     session.waitForOpened(1000); // Should bail out right away
@@ -243,24 +246,56 @@ void tst_QNetworkSession::invalidSession()
     QVERIFY(error == QNetworkSession::InvalidConfigurationError);
     QVERIFY(session.state() == QNetworkSession::Invalid);
 
-    // Check same thing with a config from platform (there are subtle differences
-    // because emtpy configuration does not have private pointer). Test with config 
-    // in '(un)defined' state
-    QList<QNetworkConfiguration> allConfigs = manager.allConfigurations();
-    foreach(QNetworkConfiguration config, allConfigs) {
-        if ((config.state() & QNetworkConfiguration::Discovered) != QNetworkConfiguration::Discovered) {
-            QNetworkSession session2(config);
-            QSignalSpy errorSpy2(&session2, SIGNAL(error(QNetworkSession::SessionError)));
-            session2.open();
-            session2.waitForOpened(1000); // Should bail out right away
-            QVERIFY(errorSpy2.count() == 1); 
-            QNetworkSession::SessionError error2 =
-                       qvariant_cast<QNetworkSession::SessionError> (errorSpy2.first().at(0));
-            QVERIFY(error2 == QNetworkSession::InvalidConfigurationError);
-            QVERIFY(session2.state() == QNetworkSession::Invalid);
-            break; // Once is enough
-        }
+#ifdef QNETWORKSESSION_MANUAL_TESTS
+    QNetworkConfiguration definedConfig = suitableConfiguration("WLAN",QNetworkConfiguration::InternetAccessPoint);
+    if (definedConfig.isValid()) {
+        // 3. Verify that opening a session with defined configuration emits error and enters notavailable-state
+        // TODO these timer waits should be changed to waiting appropriate signals, now these wait excessively
+        qDebug() << "Shutdown WLAN IAP (waiting 60 seconds): " << definedConfig.name();
+        QTest::qWait(60000);
+        // Shutting down WLAN should bring back to defined -state.
+        QVERIFY((definedConfig.state() & QNetworkConfiguration::Defined) == QNetworkConfiguration::Defined);
+        QNetworkSession definedSession(definedConfig);
+        QSignalSpy errorSpy(&definedSession, SIGNAL(error(QNetworkSession::SessionError)));
+        QNetworkSession::SessionError sessionError;
+
+        definedSession.open();
+
+        QVERIFY(definedConfig.isValid()); // Session remains valid
+        QVERIFY(definedSession.state() == QNetworkSession::NotAvailable); // State is not available because WLAN is not in coverage
+        QVERIFY(!errorSpy.isEmpty()); // Session tells with error about invalidated configuration
+        sessionError = qvariant_cast<QNetworkSession::SessionError> (errorSpy.first().at(0));
+        qDebug() << "Error code is: " << sessionError;
+        QVERIFY(sessionError == QNetworkSession::InvalidConfigurationError);
+        
+        qDebug() << "Turn the WLAN IAP back on (waiting 60 seconds): " << definedConfig.name();
+        QTest::qWait(60000);
+        updateConfigurations();
+        
+        QVERIFY(definedConfig.state() == QNetworkConfiguration::Discovered);
     }
+        
+    QNetworkConfiguration invalidatedConfig = suitableConfiguration("WLAN",QNetworkConfiguration::InternetAccessPoint);
+    if (invalidatedConfig.isValid()) {
+        // 4. Verify that invalidating a session after its successfully configured works
+        QNetworkSession invalidatedSession(invalidatedConfig);
+        QSignalSpy errorSpy(&invalidatedSession, SIGNAL(error(QNetworkSession::SessionError)));
+        QNetworkSession::SessionError sessionError;
+        
+        qDebug() << "Delete the WLAN IAP from phone now (waiting 60 seconds): " << invalidatedConfig.name();
+        QTest::qWait(60000);
+        
+        invalidatedSession.open();
+        QVERIFY(!invalidatedConfig.isValid());
+        QVERIFY(invalidatedSession.state() == QNetworkSession::Invalid);
+        QVERIFY(!errorSpy.isEmpty());
+        
+        sessionError = qvariant_cast<QNetworkSession::SessionError> (errorSpy.first().at(0));
+        QVERIFY(sessionError == QNetworkSession::InvalidConfigurationError);
+        qDebug() << "Add the WLAN IAP back (waiting 60 seconds): " << invalidatedConfig.name();
+        QTest::qWait(60000);
+    }
+#endif
 }
 
 void tst_QNetworkSession::sessionProperties_data()
@@ -376,7 +411,6 @@ void tst_QNetworkSession::repeatedOpenClose() {
 }
 
 void tst_QNetworkSession::roamingErrorCodes() {
-    
 #ifndef Q_OS_SYMBIAN
     QSKIP("Roaming supported on Symbian.", SkipAll);
 #else 
@@ -404,8 +438,9 @@ void tst_QNetworkSession::roamingErrorCodes() {
     QVERIFY(iapSession.state() == QNetworkSession::Disconnected);
     QVERIFY(adminIapSession.state() == QNetworkSession::Disconnected);
 #endif // Q_OS_SYMBIAN
-    /*
-     // Check for roaming error. Challenging to automate, therefore commented out.
+   
+#ifdef QNETWORKSESSION_MANUAL_TESTS
+     // Check for roaming error.
      // Case requires that you have controllable WLAN in Internet SNAP (only).
     QNetworkConfiguration snapConfig = suitableConfiguration("bearer_not_relevant_with_snaps", QNetworkConfiguration::ServiceNetwork);
     if (!snapConfig.isValid()) {
@@ -433,7 +468,7 @@ void tst_QNetworkSession::roamingErrorCodes() {
     error = qvariant_cast<QNetworkSession::SessionError>(errorSpy2.first().at(0));
     QVERIFY(error == QNetworkSession::SessionAbortedError);
     QVERIFY(iapSession2.state() == QNetworkSession::Disconnected);
-    */
+#endif
 }
 
 
@@ -446,7 +481,8 @@ void tst_QNetworkSession::sessionStop_data() {
     QTest::newRow("Cellular_IAP") << "cellular" << QNetworkConfiguration::InternetAccessPoint;
 }
 
-void tst_QNetworkSession::sessionStop() {
+void tst_QNetworkSession::sessionStop() 
+{
 #ifndef Q_OS_SYMBIAN
     QSKIP("Testcase contains mainly Symbian specific checks, because it is only platform to really support interface (IAP-level) Stop.", SkipAll);
 #endif 
@@ -1223,6 +1259,15 @@ QNetworkConfiguration suitableConfiguration(QString bearerType, QNetworkConfigur
     }
 }
 
+// A convinience-function: updates configurations and waits that they are updated.
+void updateConfigurations() 
+{
+    QNetworkConfigurationManager mgr;
+    QSignalSpy updateSpy(&mgr, SIGNAL(updateCompleted()));
+    mgr.updateConfigurations();
+    QTRY_NOOP(updateSpy.count() == 1);
+}
+
 // A convinience function for test-cases: opens the given configuration and return
 // true if it was done gracefully.
 bool openSession(QNetworkSession *session) {
@@ -1329,9 +1374,6 @@ bool closeSession(QNetworkSession *session, bool lastSessionOnConfiguration) {
     return true;
 }
 
-
-
 QTEST_MAIN(tst_QNetworkSession)
 
 #include "tst_qnetworksession.moc"
-

@@ -244,13 +244,22 @@ void QNetworkSessionPrivate::open()
     // => RConnection::ProgressNotification will be used for IAP/SNAP monitoring
     iConnectionMonitor.CancelNotifications();
 
-    // Configuration must be at least in Discovered - state for connecting purposes.
-    if ((publicConfig.state() & QNetworkConfiguration::Discovered) !=
-                QNetworkConfiguration::Discovered) {
+    // Configuration may have been invalidated after session creation by platform
+    // (e.g. configuration has been deleted).
+    if (!publicConfig.isValid()) {
         newState(QNetworkSession::Invalid);
         iError = QNetworkSession::InvalidConfigurationError;
         emit q->error(iError);
         syncStateWithInterface();
+        return;
+    }
+    // If opening a (un)defined configuration, session emits error and enters
+    // NotAvailable -state.
+    if (publicConfig.state() == QNetworkConfiguration::Undefined ||
+        publicConfig.state() == QNetworkConfiguration::Defined) {
+        newState(QNetworkSession::NotAvailable);
+        iError = QNetworkSession::InvalidConfigurationError;
+        emit q->error(iError);
         return;
     }
     
