@@ -39,54 +39,40 @@
 **
 ****************************************************************************/
 
-#ifndef UT_QVERSITWRITER_H
-#define UT_QVERSITWRITER_H
+#ifndef tst_QVERSITPROPERTY_H
+#define tst_QVERSITPROPERTY_H
 
 #include <QObject>
-#include <QBuffer>
 #include <qmobilityglobal.h>
-#include "qversitwriter.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QVersitWriterPrivate;
+class QVersitProperty;
 
 QTM_END_NAMESPACE
-
 QTM_USE_NAMESPACE
 
-// Poor man's QSignalSpy because I couldn't get QSignalSpy to work with the user type QVR::State.
-class SignalCatcher : public QObject
+class tst_QVersitProperty : public QObject
 {
-Q_OBJECT
-public slots:
-    void stateChanged(QVersitWriter::State state) {
-        mReceived.append(state);
-    }
+    Q_OBJECT
 
-public:
-    QList<QVersitWriter::State> mReceived;
-};
-
-class UT_QVersitWriter : public QObject
-{
-     Q_OBJECT
-
-private slots: // Tests
+private slots:
 
     void init();
     void cleanup();
 
-    void testDevice();
-    void testDefaultCodec();
-    void testFold();
-    void testWriting21();
-    void testWriting30();
+private slots: //test methods
 
-private: // Data
-    QVersitWriter* mWriter;
-    QBuffer* mOutputDevice;
-    SignalCatcher* mSignalCatcher;
+    void testGroup();
+    void testName();
+    void testParameters();
+    void testValue();
+    void testEmbeddedDocument();
+    void testEquality();
+
+private:
+    QVersitProperty* mVersitProperty;
+
 };
 
-#endif // UT_QVERSITWRITER_H
+#endif //tst_QVERSITPROPERTY_H

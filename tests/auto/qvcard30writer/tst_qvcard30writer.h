@@ -39,23 +39,33 @@
 **
 ****************************************************************************/
 
-#ifndef UT_VERSITUTILS_H
-#define UT_VERSITUTILS_H
+#ifndef tst_QVCARD30WRITER_H
+#define tst_QVCARD30WRITER_H
 
 #include <QObject>
 #include <qmobilityglobal.h>
 
-QT_BEGIN_NAMESPACE
-class QTextCodec;
-QT_END_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
-class UT_VersitUtils : public QObject
+class QVCard30Writer;
+
+QTM_END_NAMESPACE
+QTM_USE_NAMESPACE
+
+class tst_QVCard30Writer : public QObject
 {
      Q_OBJECT
 
-private slots:
-    void testBackSlashEscape();
-    void testRemoveBackSlashEscaping();
+private slots: // Tests
+
+    void init();
+    void cleanup();
+
+    void testEncodeVersitProperty();
+    void testEncodeParameters();
+
+private: // Data
+    QVCard30Writer* mWriter;
 };
 
-#endif // UT_VERSITUTILS_H
+#endif // tst_QVCARD30WRITER_H

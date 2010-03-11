@@ -39,34 +39,31 @@
 **
 ****************************************************************************/
 
-#ifndef CNTSIMCONTACTLOCALIDFETCHREQUEST_H_
-#define CNTSIMCONTACTLOCALIDFETCHREQUEST_H_
+#ifndef CNTSIMSTOREEVENTLISTENER_H_
+#define CNTSIMSTOREEVENTLISTENER_H_
 
-#include "cntabstractsimrequest.h"
+#include <e32base.h>
 
-QTM_USE_NAMESPACE
+class CntSymbianSimEngine;
+class RMobilePhoneBookStore;
 
-class CntSimContactLocalIdFetchRequest : public CntAbstractSimRequest
+class CntSimStoreEventListener : public CActive
 {
-Q_OBJECT
 public:
-    CntSimContactLocalIdFetchRequest(CntSymbianSimEngine *engine, QContactLocalIdFetchRequest *req);
-    virtual ~CntSimContactLocalIdFetchRequest();
+    CntSimStoreEventListener(CntSymbianSimEngine &engine, RMobilePhoneBookStore& store);
+    ~CntSimStoreEventListener();
     
-public Q_SLOTS:    
-    // from CntAbstractSimRequest
-    bool start();
-    bool cancel();
-    void retry();
+    void start();
     
-private Q_SLOTS:
-    void readComplete(QList<QContact> contacts, QContactManager::Error error);
+    // from CActive
+    void DoCancel();
+    void RunL();
     
 private:
-    bool execute(QContactManager::Error &error);
-    
-private:
-    QContactLocalIdFetchRequest *m_req;    
+    CntSymbianSimEngine &m_engine;
+    RMobilePhoneBookStore &m_store;
+    TUint32 m_event;
+    TInt m_index;
 };
 
-#endif // CNTSIMCONTACTLOCALIDFETCHREQUEST_H_
+#endif // CNTSIMSTOREEVENTLISTENER_H_

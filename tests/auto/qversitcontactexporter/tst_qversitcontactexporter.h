@@ -39,31 +39,64 @@
 **
 ****************************************************************************/
 
-#ifndef UT_QVERSIT_H
-#define UT_QVERSIT_H
+#ifndef tst_QVERSITCONTACTEXPORTER_H
+#define tst_QVERSITCONTACTEXPORTER_H
 
+#include <qcontactdetail.h>
 #include <QObject>
-#include <qversitdocument.h>
 #include <qmobilityglobal.h>
 
 QTM_BEGIN_NAMESPACE
 
-class QVersitContactImporter;
-class QVersitContactImporterPrivate;
-class QVersitReader;
+class QVersitContactExporter;
+class QVersitContactExporterPrivate;
+class MyQVersitResourceHandler;
+class MyQVersitContactExporterDetailHandler;
 
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
 
-class UT_QVersit : public QObject
+class tst_QVersitContactExporter : public QObject
 {
     Q_OBJECT
 
-private slots: // Tests
-    void testImportFiles();
-    void testImportFiles_data();
+private slots:
+    void init();
+    void cleanup();
 
-private:
+    void testConvertContact();
+    void testContactDetailHandler();
+    void testEncodeName();
+    void testEncodePhoneNumber();
+    void testEncodeEmailAddress();
+    void testEncodeStreetAddress();
+    void testEncodeUrl();
+    void testEncodeParameters();
+    void testEncodeUid();
+    void testEncodeRev();
+    void testEncodeBirthDay();
+    void testEncodeNote();
+    void testEncodeGeoLocation();
+    void testEncodeOrganization();
+    void testEncodeEmbeddedContent();
+    void testIsValidRemoteUrl();
+    void testEncodeGender();
+    void testEncodeNickName();
+    void testEncodeTag();
+    void testEncodeAnniversary();
+    void testEncodeOnlineAccount();
+    void testEncodeFamily();
+    void testEncodeAvatar();
+    void testEncodeDisplayLabel();
+    void testDefaultResourceHandler();
+
+    // Test Utility Function
+    QContactDetail searchDetail(QList<QContactDetail> details, QString search);
+
+private: // Data
+    QVersitContactExporter* mExporter;
+    MyQVersitResourceHandler* mResourceHandler;
+    MyQVersitContactExporterDetailHandler* mDetailHandler;
 };
 
-#endif // UT_QVERSIT_H
+#endif // tst_QVERSITCONTACTEXPORTER_H

@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "ut_qvcard21writer.h"
+#include "tst_qvcard21writer.h"
 #include "qvcard21writer_p.h"
 #include "qversitproperty.h"
 #include "qversitdocument.h"
@@ -52,18 +52,18 @@ const QString KATAKANA_NOKIA(QString::fromUtf8("\xe3\x83\x8e\xe3\x82\xad\xe3\x82
 
 QTM_USE_NAMESPACE
 
-void UT_QVCard21Writer::init()
+void tst_QVCard21Writer::init()
 {
     mWriter = new QVCard21Writer;
     mWriter->setCodec(QTextCodec::codecForName("ISO_8859-1"));
 }
 
-void UT_QVCard21Writer::cleanup()
+void tst_QVCard21Writer::cleanup()
 {
     delete mWriter;
 }
 
-void UT_QVCard21Writer::testEncodeVersitProperty()
+void tst_QVCard21Writer::testEncodeVersitProperty()
 {
     QByteArray encodedProperty;
     QBuffer buffer(&encodedProperty);
@@ -187,7 +187,7 @@ END:VCARD\r\n\
     QCOMPARE(encodedProperty, expectedResult);
 }
 
-void UT_QVCard21Writer::testEncodeParameters()
+void tst_QVCard21Writer::testEncodeParameters()
 {
     QByteArray encodedParameters;
     QBuffer buffer(&encodedParameters);
@@ -240,7 +240,7 @@ void UT_QVCard21Writer::testEncodeParameters()
     QCOMPARE(encodedParameters, QByteArray(";X-PARAM=VALUE;ENCODING=8BIT"));
 }
 
-void UT_QVCard21Writer::testEncodeGroupsAndName()
+void tst_QVCard21Writer::testEncodeGroupsAndName()
 {
     QVersitProperty property;
     QByteArray result;
@@ -279,7 +279,7 @@ void UT_QVCard21Writer::testEncodeGroupsAndName()
 }
 
 
-void UT_QVCard21Writer::testQuotedPrintableEncode()
+void tst_QVCard21Writer::testQuotedPrintableEncode()
 {
     QByteArray encodedBytes;
 
@@ -341,5 +341,5 @@ void UT_QVCard21Writer::testQuotedPrintableEncode()
     QCOMPARE(inputOutput, QLatin1String("=7E"));
 }
 
-QTEST_MAIN(UT_QVCard21Writer)
+QTEST_MAIN(tst_QVCard21Writer)
 

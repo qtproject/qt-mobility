@@ -119,8 +119,13 @@ private:
 
 private:
     QContactManager* m_cm;
+#ifdef SYMBIANSIM_BACKEND_PHONEBOOKINFOV1
+    RMobilePhoneBookStore::TMobilePhoneBookInfoV1 m_etelStoreInfo;
+    RMobilePhoneBookStore::TMobilePhoneBookInfoV1Pckg m_etelStoreInfoPckg;
+#else
     RMobilePhoneBookStore::TMobilePhoneBookInfoV5 m_etelStoreInfo;
     RMobilePhoneBookStore::TMobilePhoneBookInfoV5Pckg m_etelStoreInfoPckg;
+#endif
 };
 
 tst_SimCM::tst_SimCM() :
@@ -924,7 +929,7 @@ void tst_SimCM::batchOperations()
 
     // 2. Update contacts (updates name of each contact)
     if(expectedResult) {
-        foreach (const QContact& contact, contacts) {
+        foreach (QContact contact, contacts) {
             int index = contacts.indexOf(contact);
             QContactName name = contact.detail(QContactName::DefinitionName);
             name.setCustomLabel(name.customLabel() + QString("u"));
@@ -976,6 +981,7 @@ void tst_SimCM::signalEmission()
     QTRY_COMPARE(spyRemoved.count(), 1);
 
     // 4. contacts added
+    spyAdded.clear();
     int batchOpCount(10);
     QList<QContact> contacts;
     for(int i(0); i < batchOpCount; i++) {
@@ -989,10 +995,12 @@ void tst_SimCM::signalEmission()
     QTRY_COMPARE(spyAdded.count(), batchOpCount);
 
     // 5. contacts changed
+    spyChanged.clear();
     QVERIFY(m_cm->saveContacts(&contacts, &errorMap));
     QTRY_COMPARE(spyChanged.count(), batchOpCount);
 
     // 6. contacts removed
+    spyRemoved.clear();
     QList<QContactLocalId> contactIds;
     foreach(const QContact& contact, contacts) {
         contactIds.append(contact.localId());
@@ -1123,7 +1131,7 @@ void tst_SimCM::parseDetails(QContact &contact, QStringList details, QList<QCont
  */
 void tst_SimCM::compareDetails(QContact contact, QList<QContactDetail> expectedDetails)
 {
-    foreach (const QContactDetail& expectedDetail, expectedDetails) {
+    foreach (QContactDetail expectedDetail, expectedDetails) {
         QContactDetail actualDetail = contact.detail(expectedDetail.definitionName());
         QVERIFY(!actualDetail.isEmpty());
 
