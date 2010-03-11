@@ -76,9 +76,10 @@ contains(QT_CONFIG, multimedia) {
 
 include(mediaplayer/mediaplayer.pri)
 !maemo* {
-  include(mediacapture/mediacapture.pri)
+    include(mediacapture/mediacapture.pri)
 } else {
-  include(mediacapture/maemo/mediacapture_maemo.pri)
+    include(mediacapture/maemo/mediacapture_maemo.pri)
+    DEFINES += GST_USE_UNSTABLE_API #prevents warnings because of unstable photography API 
 }
 
 target.path=$$QT_MOBILITY_PREFIX/plugins/mediaservice
