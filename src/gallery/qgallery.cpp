@@ -125,6 +125,56 @@ QAbstractGallery::~QAbstractGallery()
     Creates a response to a gallery \a request.
 */
 
+#define QT_GALLERY_DEFINE_LATIN1_LITERAL(Name, String) \
+    const QLatin1String Name(String)
+
+QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::Media, "Media");
+QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::Audio, "Audio");
+QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::Image, "Image");
+QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::Video, "Video");
+QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::Artist, "Artist");
+QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::AlbumArtist, "AlbumArtist");
+QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::Album, "Album");
+
+// Item
+QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::author, "author");
+QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::copyright, "copyright");
+QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::description, "description");
+QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::mimeType, "mimeType");
+QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::rating, "rating");
+QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::title, "title");
+QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::url, "url");
+QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::thumbnail, "thumbnail");
+
+// Media
+QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::duration, "duration");
+QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::producer, "producer");
+QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::writer, "writer");
+
+// Audio/Music
+QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::artist, "artist");
+QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::albumArtist, "albumArtist");
+QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::albumId, "albumId");
+QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::albumTitle, "albumTitle");
+QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::composer, "composer");
+QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::discNumber, "discNumber");
+QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::genre, "genre");
+QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::trackCount, "trackCount");
+QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::trackNumber, "trackNumber");
+
+// Image, Video common.
+QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::width, "width");
+QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::height, "height");
+
+// Image/Photo
+QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::dateTaken, "dateTaken");
+QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::cameraManufacturer, "cameraManufacturer");
+QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::cameraModel, "cameraModel");
+
+// Video
+QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::director, "director");
+
+
 #ifdef QT_DOCUMENT_GALLERY_NULL
 
 /*!
@@ -135,56 +185,6 @@ QAbstractGallery::~QAbstractGallery()
 
     \brief The QDocumentGallery class provides a gallery of documents.
 */
-
-#define QT_GALLERY_DEFINE_LATIN1_LITERAL(Name, String) \
-const Name = QLatin1Literal<sizeof(String)>(String);
-
-QT_GALLERY_DEFINE_LATIN1LITERAL(QDocumentGallery::Media, "Media");
-QT_GALLERY_DEFINE_LATIN1LITERAL(QDocumentGallery::Audio, "Audio");
-QT_GALLERY_DEFINE_LATIN1LITERAL(QDocumentGallery::Image, "Image");
-QT_GALLERY_DEFINE_LATIN1LITERAL(QDocumentGallery::Video, "Video");
-QT_GALLERY_DEFINE_LATIN1LITERAL(QDocumentGallery::Artist, "Artist");
-QT_GALLERY_DEFINE_LATIN1LITERAL(QDocumentGallery::AlbumArtist, "AlbumArtist");
-QT_GALLERY_DEFINE_LATIN1LITERAL(QDocumentGallery::Album, "Album");
-
-// Item
-QT_GALLERY_DEFINE_LATIN1LITERAL(QDocumentGallery::author, "author");
-QT_GALLERY_DEFINE_LATIN1LITERAL(QDocumentGallery::copyright, "copyright");
-QT_GALLERY_DEFINE_LATIN1LITERAL(QDocumentGallery::description, "description");
-QT_GALLERY_DEFINE_LATIN1LITERAL(QDocumentGallery::mimeType, "mimeType");
-QT_GALLERY_DEFINE_LATIN1LITERAL(QDocumentGallery::rating, "rating");
-QT_GALLERY_DEFINE_LATIN1LITERAL(QDocumentGallery::title, "title");
-QT_GALLERY_DEFINE_LATIN1LITERAL(QDocumentGallery::type, "type");
-QT_GALLERY_DEFINE_LATIN1LITERAL(QDocumentGallery::url, "url");
-QT_GALLERY_DEFINE_LATIN1LITERAL(QDocumentGallery::thumbnail, "thumbnail");
-
-// Media
-QT_GALLERY_DEFINE_LATIN1LITERAL(QDocumentGallery::duration, "duration");
-QT_GALLERY_DEFINE_LATIN1LITERAL(QDocumentGallery::producer, "producer");
-QT_GALLERY_DEFINE_LATIN1LITERAL(QDocumentGallery::writer, "writer");
-
-// Audio/Music
-QT_GALLERY_DEFINE_LATIN1LITERAL(QDocumentGallery::artist, "artist");
-QT_GALLERY_DEFINE_LATIN1LITERAL(QDocumentGallery::albumArtist, "albumArtist");
-QT_GALLERY_DEFINE_LATIN1LITERAL(QDocumentGallery::albumId, "albumId");
-QT_GALLERY_DEFINE_LATIN1LITERAL(QDocumentGallery::albumTitle, "albumTitle");
-QT_GALLERY_DEFINE_LATIN1LITERAL(QDocumentGallery::composer, "composer");
-QT_GALLERY_DEFINE_LATIN1LITERAL(QDocumentGallery::discNumber, "discNumber");
-QT_GALLERY_DEFINE_LATIN1LITERAL(QDocumentGallery::genre, "genre");
-QT_GALLERY_DEFINE_LATIN1LITERAL(QDocumentGallery::trackCount, "trackCount");
-QT_GALLERY_DEFINE_LATIN1LITERAL(QDocumentGallery::trackNumber, "trackNumber");
-
-// Image, Video common.
-QT_GALLERY_DEFINE_LATIN1LITERAL(QDocumentGallery::width, "width");
-QT_GALLERY_DEFINE_LATIN1LITERAL(QDocumentGallery::height, "height");
-
-// Image/Photo
-QT_GALLERY_DEFINE_LATIN1LITERAL(QDocumentGallery::dateTaken, "dateTaken");
-QT_GALLERY_DEFINE_LATIN1LITERAL(QDocumentGallery::cameraManufacturer, "cameraManufacturer");
-QT_GALLERY_DEFINE_LATIN1LITERAL(QDocumentGallery::cameraModel, "cameraModel");
-
-// Video
-QT_GALLERY_DEFINE_LATIN1LITERAL(QDocumentGallery::director, "director");
 
 /*!
     Constructs a new document gallery.
