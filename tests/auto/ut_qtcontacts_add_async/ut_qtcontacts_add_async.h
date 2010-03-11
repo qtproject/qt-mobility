@@ -69,6 +69,8 @@ private slots:
     // Test functions:
     void ut_testAddContact();
 
+    void checkSubTypes();
+
 // Protected or public slots are _not_ called by the QTest framework.
 protected slots:
     void onContactFetchRequestProgress();

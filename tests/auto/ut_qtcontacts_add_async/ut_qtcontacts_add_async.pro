@@ -13,7 +13,9 @@ LIBS += -lQtContacts
 MOC_DIR = .moc
 OBJECTS_DIR = .obj
 
-# CONFIG += contacts
+CONFIG += mobility
+MOBILITY += contacts 
+
 INCLUDEPATH += /usr/include/qt4/QtContacts \
                /usr/include \
                $$QCONTACTS_TRACKER_BACKENDDIR
