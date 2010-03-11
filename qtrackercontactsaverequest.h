@@ -84,13 +84,14 @@ private:
     void deletePhoneNumbers(SopranoLive::RDFServicePtr service, const SopranoLive::RDFVariable& rdfContactIn);
     void addTag(SopranoLive::RDFServicePtr service, SopranoLive::RDFVariable &var, const QString &tag);
     void createTagIfItDoesntExistAlready(SopranoLive::RDFServicePtr service, const QString &tag);
-    void findAndDelete(const QContact& contact);
 
 private:
     /*holding the data about status of async operation*/
     QList<QContact> contactsFinished;
-    //QList<QContactManager::Error> errorsOfContactsFinished;
+
     QMap<int, QContactManager::Error> errorsOfContactsFinished;
+    // needed for error reporting - errorsOfContactsFinished is map (array index -> error)
+    QMap<QContactLocalId, int> id2Index;
     int errorCount;
 
     /* extracted utilities */
