@@ -75,7 +75,7 @@ private:
     QSharedDataPointer<QContactIdPrivate> d;
 };
 
-uint Q_CONTACTS_EXPORT qHash(const QContactId& key);
+Q_CONTACTS_EXPORT uint qHash(const QContactId& key);
 
 QTM_END_NAMESPACE
 

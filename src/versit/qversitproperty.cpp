@@ -113,14 +113,14 @@ bool QVersitProperty::operator!=(const QVersitProperty& other) const
 /*! Returns the hash value for \a key. */
 uint qHash(const QVersitProperty &key)
 {
-    uint hash = ::qHash(key.name()) + ::qHash(key.value());
+    uint hash = QT_PREPEND_NAMESPACE(qHash)(key.name()) + QT_PREPEND_NAMESPACE(qHash)(key.value());
     foreach (const QString& group, key.groups()) {
-        hash += ::qHash(group);
+        hash += QT_PREPEND_NAMESPACE(qHash)(group);
     }
     QHash<QString,QString>::const_iterator it = key.parameters().constBegin();
     QHash<QString,QString>::const_iterator end = key.parameters().constEnd();
     while (it != end) {
-        hash += ::qHash(it.key()) + ::qHash(it.value());
+        hash += QT_PREPEND_NAMESPACE(qHash)(it.key()) + QT_PREPEND_NAMESPACE(qHash)(it.value());
         ++it;
     }
     return hash;

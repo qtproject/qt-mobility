@@ -41,6 +41,7 @@
 
 #include "qcontactactiondescriptor.h"
 #include "qcontactactiondescriptor_p.h"
+#include <QHash>
 
 QTM_BEGIN_NAMESPACE
 
@@ -164,6 +165,30 @@ bool QContactActionDescriptor::operator==(const QContactActionDescriptor& other)
 bool QContactActionDescriptor::operator!=(const QContactActionDescriptor& other) const
 {
     return !(*this == other);
+}
+
+/*!
+ * Returns true if the action descriptor is less than the \a other action descriptor.  The
+ * comparison is performed first on the vendor name, then the action name, then the implementation
+ * version.
+ */
+bool QContactActionDescriptor::operator<(const QContactActionDescriptor& other) const
+{
+    int comp = d->m_vendorName.compare(other.d->m_vendorName);
+    if (comp != 0)
+        return comp < 0;
+    comp = d->m_actionName.compare(other.d->m_actionName);
+    if (comp != 0)
+        return comp < 0;
+    return d->m_implementationVersion < other.d->m_implementationVersion;
+}
+
+/*! Returns the hash value for \a key. */
+uint qHash(const QContactActionDescriptor& key)
+{
+    return QT_PREPEND_NAMESPACE(qHash)(key.vendorName())
+            + QT_PREPEND_NAMESPACE(qHash)(key.actionName())
+            + QT_PREPEND_NAMESPACE(qHash)(key.implementationVersion());
 }
 
 QTM_END_NAMESPACE

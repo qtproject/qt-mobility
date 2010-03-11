@@ -167,7 +167,8 @@ bool QContactRelationship::operator==(const QContactRelationship &other) const
  */
 uint qHash(const QContactRelationship &key)
 {
-    return qHash(key.first()) + qHash(key.second()) + ::qHash(key.relationshipType());
+    return qHash(key.first()) + qHash(key.second())
+        + QT_PREPEND_NAMESPACE(qHash)(key.relationshipType());
 }
 
 /*!

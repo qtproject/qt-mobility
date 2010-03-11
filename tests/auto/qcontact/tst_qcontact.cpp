@@ -68,6 +68,7 @@ private slots:
     void displayName();
     void type();
     void emptiness();
+    void idLessThan();
     void idHash();
     void hash();
     void traits();
@@ -649,6 +650,34 @@ void tst_QContact::emptiness()
     QVERIFY(c.isEmpty() == true); // type doesn't affect emptiness
 }
 
+void tst_QContact::idLessThan()
+{
+    QContactId id1;
+    id1.setManagerUri("a");
+    id1.setLocalId(1);
+    QContactId id2;
+    id2.setManagerUri("a");
+    id2.setLocalId(1);
+    QVERIFY(!(id1 < id2));
+    QVERIFY(!(id2 < id1));
+    QContactId id3;
+    id3.setManagerUri("a");
+    id3.setLocalId(2);
+    QContactId id4;
+    id4.setManagerUri("b");
+    id4.setLocalId(1);
+    QContactId id5; // no URI
+    id5.setLocalId(2);
+    QVERIFY(id1 < id3);
+    QVERIFY(!(id3 < id1));
+    QVERIFY(id1 < id4);
+    QVERIFY(!(id4 < id1));
+    QVERIFY(id3 < id4);
+    QVERIFY(!(id4 < id3));
+    QVERIFY(id5 < id1);
+    QVERIFY(!(id1 < id5));
+}
+
 void tst_QContact::idHash()
 {
     QContactId id1;
@@ -671,18 +700,34 @@ void tst_QContact::idHash()
 
 void tst_QContact::hash()
 {
+    QContactId id;
+    id.setManagerUri("a");
+    id.setLocalId(1);
     QContact contact1;
+    contact1.setId(id);
     QContactDetail detail1("definition");
     detail1.setValue("key", "value");
     contact1.saveDetail(&detail1);
     QContact contact2;
+    contact2.setId(id);
     contact2.saveDetail(&detail1);
     QContact contact3;
+    contact3.setId(id);
     QContactDetail detail3("definition");
     detail3.setValue("key", "another value");
     contact3.saveDetail(&detail3);
+    QContact contact4; // no details
+    contact4.setId(id);
+    QContact contact5; // preferred details and relationships shouldn't affect the hash
+    contact5.setId(id);
+    contact5.saveDetail(&detail1);
+    contact5.setPreferredDetail("action", detail1);
+    QContactRelationship rel;
+    QContactManagerEngine::setContactRelationships(&contact5, QList<QContactRelationship>() << rel);
     QVERIFY(qHash(contact1) == qHash(contact2));
     QVERIFY(qHash(contact1) != qHash(contact3));
+    QVERIFY(qHash(contact1) != qHash(contact4));
+    QVERIFY(qHash(contact1) == qHash(contact5));
 }
 
 void tst_QContact::traits()

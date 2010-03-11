@@ -91,7 +91,7 @@ private:
     QSharedDataPointer<QVersitDocumentPrivate> d;
 };
 
-uint Q_VERSIT_EXPORT qHash(const QVersitDocument& key);
+Q_VERSIT_EXPORT uint qHash(const QVersitDocument& key);
 
 QTM_END_NAMESPACE
 

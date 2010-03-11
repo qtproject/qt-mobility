@@ -132,11 +132,9 @@ bool QContactId::operator!=(const QContactId& other) const
  */
 bool QContactId::operator<(const QContactId& other) const
 {
-    if (this->managerUri() > other.managerUri())
-        return false;
-
-    if (this->managerUri() < other.managerUri())
-        return true;
+    const int comp = this->managerUri().compare(other.managerUri());
+    if (comp != 0)
+        return comp < 0;
 
     return this->localId() < other.localId();
 }
@@ -146,7 +144,8 @@ bool QContactId::operator<(const QContactId& other) const
  */
 uint qHash(const QContactId &key)
 {
-    return ::qHash(key.managerUri()) + ::qHash(key.localId());
+    return QT_PREPEND_NAMESPACE(qHash)(key.managerUri())
+            + QT_PREPEND_NAMESPACE(qHash)(key.localId());
 }
 
 /*!
