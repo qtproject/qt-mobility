@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#include "qgstreamerimageencode.h"
-#include "qgstreamercapturesession.h"
+#include "qgstreamerimageencode_maemo.h"
+#include "qgstreamercapturesession_maemo.h"
 
 #include <QtCore/qdebug.h>
 

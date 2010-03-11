@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "qgstreameraudioencode_maemo.h"
-#include "qgstreamermediacontainercontrol.h"
+#include "qgstreamermediacontainercontrol_maemo.h"
 
 #include <QtCore/qdebug.h>
 
