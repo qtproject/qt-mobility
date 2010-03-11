@@ -243,6 +243,8 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
             return QSystemNetworkInfoLinuxCommonPrivate::networkStatus(mode);
         }
         break;
+    default:
+        break;
     };
     return QSystemNetworkInfo::UndefinedStatus;
 }
@@ -281,6 +283,8 @@ qint32 QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Netw
     case QSystemNetworkInfo::WlanMode:
     case QSystemNetworkInfo::BluetoothMode:
         return QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(mode);
+        break;
+    default:
         break;
     };
 
@@ -518,7 +522,7 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
 #endif
 }
 
-void QSystemNetworkInfoPrivate::cellNetworkSignalStrengthChanged(uchar var1, uchar var2)
+void QSystemNetworkInfoPrivate::cellNetworkSignalStrengthChanged(uchar var1, uchar)
 {
     QSystemNetworkInfo::NetworkMode mode = QSystemNetworkInfo::UnknownMode;
     cellSignalStrength = var1;
@@ -874,7 +878,7 @@ void QSystemDeviceInfoPrivate::deviceModeChanged(QString newMode)
         emit currentProfileChanged(currentProfile());
 }
 
-void QSystemDeviceInfoPrivate::profileChanged(bool changed, bool active, QString profile, QList<ProfileDataValue> values)
+void QSystemDeviceInfoPrivate::profileChanged(bool, bool, QString profile, QList<ProfileDataValue> values)
 {
     QSystemDeviceInfo::Profile previousProfile = currentProfile();
 
