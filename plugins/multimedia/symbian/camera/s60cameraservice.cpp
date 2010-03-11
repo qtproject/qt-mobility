@@ -59,6 +59,7 @@
 #include "S60videooutputcontrol.h"
 #include "S60mediacontainercontrol.h"
 #include "s60videoencoder.h"
+#include "s60audioencoder.h"
 #include "s60cameraimageencodercontrol.h"
 
 S60CameraService::S60CameraService(QObject *parent)
@@ -76,7 +77,8 @@ S60CameraService::S60CameraService(QObject *parent)
     m_imageCaptureControl = new S60CameraImageCaptureControl(m_imagesession, this);     
     m_media = new S60MediaControl(m_videosession, this);    
     m_mediaFormat = new S60MediaContainerControl(m_videosession, this);    
-    m_videoEncoder = new S60VideoEncoder(m_videosession, this);    
+    m_videoEncoder = new S60VideoEncoder(m_videosession, this);
+    m_audioEncoder = new S60AudioEncoder(m_videosession, this);
     m_viewFinderWidget = new S60ViewFinderWidgetControl(this);    
     m_videoOutput = new S60VideoOutputControl(this);    
     m_imageEncoderControl = new S60CameraImageEncoderControl(m_imagesession, this);    
@@ -102,6 +104,9 @@ QMediaControl *S60CameraService::control(const char *name) const
 
     if(qstrcmp(name,QVideoEncoderControl_iid) == 0)
         return m_videoEncoder;
+    
+    if(qstrcmp(name,QAudioEncoderControl_iid) == 0)
+        return m_audioEncoder;
 
     if(qstrcmp(name,QMediaContainerControl_iid) == 0)
         return m_mediaFormat;

@@ -100,8 +100,7 @@ void S60VideoEncoder::setQuality(QtMedia::EncodingQuality quality)
 }
 
 QList< qreal > S60VideoEncoder::supportedFrameRates(const QVideoEncoderSettings &settings, bool *continuous) const
-{
-    qDebug() << "S60VideoEncoder::supportedFrameRates START";
+{    
     if (!settings.isNull())
         return m_session->supportedVideoFrameRates(settings);
     return m_session->supportedVideoFrameRates();
@@ -135,8 +134,7 @@ void S60VideoEncoder::setFrameRate(qreal frameRate)
 }
 
 QList<QSize> S60VideoEncoder::supportedResolutions(const QVideoEncoderSettings &settings, bool *continuous) const
-{
-    qDebug() << "S60VideoEncoder::supportedResolutions START";
+{    
     if (!settings.isNull())
         return m_session->supportedVideoResolutions(settings);
     return m_session->supportedVideoResolutions();

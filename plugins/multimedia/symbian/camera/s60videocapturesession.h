@@ -133,8 +133,11 @@ public:
     qint64 position();
 
     QStringList supportedVideoCaptureCodecs();
+	QStringList supportedAudioCaptureCodecs();
     QString videoCaptureCodec();
+	QString audioCaptureCodec();
     void setVideoCaptureCodec(const QString &codecName);
+	void setAudioCaptureCodec(const QString &codecName);
     bool isSupportedVideoCaptureCodec(const QString &codecName);
     int bitrate();
     void setBitrate(const int &bitrate);
@@ -144,7 +147,9 @@ public:
     void setFrameRate(qreal rate);
     QString videoCaptureCodecDescription(const QString &codecName);
     void saveVideoEncoderSettings(QVideoEncoderSettings &videoSettings);
+	void saveAudioEncoderSettings(QAudioEncoderSettings &audioSettings);
     void getCurrentVideoEncoderSettings(QVideoEncoderSettings &videoSettings);
+	void getCurrentAudioEncoderSettings(QAudioEncoderSettings &audioSettings);
     QtMedia::EncodingQuality videoCaptureQuality() const;
     void setVideoCaptureQuality(QtMedia::EncodingQuality quality);
 
@@ -184,8 +189,10 @@ private:
     void doSetVideoResolution(const QSize &resolution);
     void doSetFrameRate(qreal rate);
     void doPopulateVideoCodecsDataL();
+	void doPopulateVideoCodecsL();
     void doInitializeVideoRecorderL();
     void resetSession();
+	void doPopulateAudioCodecsL();
 
 Q_SIGNALS:
     void stateChanged(S60VideoCaptureSession::TVideoCaptureState);
@@ -200,10 +207,13 @@ private:
     mutable TCameraInfo m_info; // information about camera
     CVideoRecorderUtility *m_videoRecorder;    
     QVideoEncoderSettings m_videoSettings;
+	QAudioEncoderSettings m_audioSettings;    
     TVideoCaptureState m_captureState;
     QString m_container;
     QHash<QString, VideoControllerData> m_videoControllerMap;
-    QHash<QString, QList<TSupportedFrameRatePictureSize> > m_codecList;
+    QHash<QString, QList<TSupportedFrameRatePictureSize> > m_videoCodecData;
+	QStringList m_videoCodeclist;
+    QHash<QString, TFourCC> m_audioCodeclist;    
 };
 
 #endif

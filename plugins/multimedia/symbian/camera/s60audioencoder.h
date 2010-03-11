@@ -39,10 +39,10 @@
 **
 ****************************************************************************/
 
-#ifndef S60VIDEOENCODE_H
-#define S60VIDEOENCODE_H
+#ifndef S60AUDIOENCODE_H
+#define S60AUDIOENCODE_H
 
-#include "qvideoencodercontrol.h"
+#include <QAudioEncoderControl>
 
 #include <QtCore/qstringlist.h>
 #include <QtCore/qmap.h>
@@ -51,59 +51,46 @@ QTM_USE_NAMESPACE
 
 class S60VideoCaptureSession;
 
-class S60VideoEncoder : public QVideoEncoderControl
+class S60AudioEncoder : public QAudioEncoderControl
 {
     Q_OBJECT
 public:
-    S60VideoEncoder(QObject *parent = 0);
-    S60VideoEncoder(QObject *session, QObject *parent = 0);
-    virtual ~S60VideoEncoder();
-          
-    QStringList supportedVideoCodecs() const;
-    QString videoCodecDescription(const QString &codecName) const;
-    QString videoCodec() const;
-    void setVideoCodec(const QString &codecName);    
-    
+    S60AudioEncoder(QObject *session, QObject *parent = 0);
+    virtual ~S60AudioEncoder();
+
+    QStringList supportedAudioCodecs() const;
+    QString audioCodec() const;
+    void setAudioCodec(const QString &codecName);
+
+    QString codecDescription(const QString &codecName) const;
+
     int bitRate() const;
     void setBitRate(int);
 
     QtMedia::EncodingQuality quality() const;
     void setQuality(QtMedia::EncodingQuality);
 
-    QList<qreal>  supportedFrameRates(const QVideoEncoderSettings &settings, bool *continuous = 0) const;
-    qreal minimumFrameRate() const;
-    qreal maximumFrameRate() const;
-    qreal frameRate() const;
-    void setFrameRate(qreal frameRate);    
-
-    QList<QSize> supportedResolutions(const QVideoEncoderSettings &settings, bool *continuous = 0) const;
-    QSize minimumResolution() const;
-    QSize maximumResolution() const;
-    QSize videoResolution() const;
-    void setResolution(const QSize resolution);    
-
     QStringList supportedEncodingOptions(const QString &codec) const;
     QVariant encodingOption(const QString &codec, const QString &name) const;
     void setEncodingOption(const QString &codec, const QString &name, const QVariant &value);
-    
-    QVideoEncoderSettings videoSettings() const;
-    void setVideoSettings(const QVideoEncoderSettings &settings);
+
+    int sampleRate() const;
+    void setSampleRate(int sampleRate);
+    QList<int> supportedSampleRates(const QAudioEncoderSettings &settings, bool *continuous = 0) const;
+
+    int channelCount() const;
+    void setChannelCount(int channels);
+    QList<int> supportedChannelCounts() const;
+
+    int sampleSize() const;
+    void setSampleSize(int sampleSize);
+    QList<int> supportedSampleSizes() const;
+
+    QAudioEncoderSettings audioSettings() const;
+    void setAudioSettings(const QAudioEncoderSettings&);
 
 private:
     S60VideoCaptureSession* m_session;
-
-/*    QStringList m_codecs;
-    QMap<QString,QString> m_codecDescriptions;
-    QMap<QString,QStringList> m_codecOptions;
-
-    QString m_codec;
-    QMap<QString, QMap<QString, QVariant> > m_options;
-    QSize m_resolution;
-    qreal m_frameRate;
-
-    QVideoEncoderSettings m_videoSettings;*/
-
-
 };
 
-#endif
+#endif // S60AUDIOENCODE_H

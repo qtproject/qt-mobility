@@ -53,6 +53,7 @@ QTM_USE_NAMESPACE
 
 class S60MediaContainerControl;
 class S60VideoEncoder;
+class S60AudioEncoder;
 class S60CameraControl;
 class S60CameraVideoDeviceControl;
 class S60MediaControl;
@@ -102,6 +103,7 @@ private:
     S60VideoCaptureSession *m_videosession;
     S60MediaContainerControl *m_mediaFormat;
     S60VideoEncoder *m_videoEncoder;
+    S60AudioEncoder *m_audioEncoder; 
     S60CameraControl *m_control;
     S60CameraVideoDeviceControl *m_videoDeviceControl;
     S60CameraFocusControl *m_focusControl;
