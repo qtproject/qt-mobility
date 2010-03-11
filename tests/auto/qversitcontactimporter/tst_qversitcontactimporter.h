@@ -39,78 +39,75 @@
 **
 ****************************************************************************/
 
-#ifndef UT_QVERSITREADER_H
-#define UT_QVERSITREADER_H
+#ifndef tst_QVERSITCONTACTIMPORTER_H
+#define tst_QVERSITCONTACTIMPORTER_H
 
 #include <QObject>
-#include <QBuffer>
+#include <qversitcontactimporter.h>
+#include <qversitdocument.h>
 #include <qmobilityglobal.h>
-#include "qversitreader.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QVersitReaderPrivate;
-class LineReader;
+class QVersitContactImporter;
+class QVersitContactImporterPrivate;
+class MyQVersitContactImporterPropertyHandler;
+class MyQVersitResourceHandler;
 
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
 
-// Poor man's QSignalSpy because I couldn't get QSignalSpy to work with the user type QVR::State.
-class SignalCatcher : public QObject
+class tst_QVersitContactImporter : public QObject
 {
-Q_OBJECT
-public:
-    SignalCatcher() : mResultsCount(0) {}
-public slots:
-    void stateChanged(QVersitReader::State state) {
-        mStateChanges.append(state);
-    }
-    void resultsAvailable() {
-        mResultsCount += 1;
-    }
-
-public:
-    QList<QVersitReader::State> mStateChanges;
-    int mResultsCount;
-};
-
-class UT_QVersitReader : public QObject
-{
-     Q_OBJECT
+    Q_OBJECT
 
 private slots: // Tests
-
     void init();
     void cleanup();
 
-    void testDevice();
-    void testDefaultCodec();
-    void testReading();
-    void testResult();
-    void testSetVersionFromProperty();
-    void testParseNextVersitPropertyVCard21();
-    void testParseNextVersitPropertyVCard30();
-    void testParseVersitDocument();
-    void testParseVersitDocument_data();
-    void testDecodeQuotedPrintable();
-    void testParamName();
-    void testParamValue();
-    void testExtractPart();
-    void testExtractParts();
-    void testExtractPropertyGroupsAndName();
-    void testExtractVCard21PropertyParams();
-    void testExtractVCard30PropertyParams();
-    void testExtractParams();
-    void testReadLine();
-    void testReadLine_data();
-    void testByteArrayInput();
+    void testName();
+    void testNameWithFormatted();
+    void testAddress();
+    void testTel();
+    void testEmail();
+    void testUrl();
+    void testUid();
+    void testOrganizationName();
+    void testOrganizationTitle();
+    void testOrganizationLogo();
+    void testOrganizationAssistant();
+    void testOrganizationRole();
+    void testTimeStamp();
+    void testAnniversary();
+    void testBirthday();
+    void testGender();
+    void testNickname();
+    void testAvatarStored();
+    void testAvatarUrl();
+    void testAvatarInvalid();
+    void testGeo();
+    void testNote();
+    void testOnlineAccount();
+    void testFamily();
+    void testSound();
+    void testLabel();
+    void testPref();
+    void testPropertyHandler();
+    void testInvalidDocument();
 
-private: // Data
-    QVersitReader* mReader;
-    QVersitReaderPrivate* mReaderPrivate;
-    QBuffer* mInputDevice;
-    QTextCodec* mAsciiCodec;
-    SignalCatcher* mSignalCatcher;
+private: // Utilities
+
+    QVersitDocument createDocumentWithProperty(const QVersitProperty& property);
+
+    QVersitDocument createDocumentWithNameAndPhoto(
+        const QString& name,
+        QByteArray image,
+        const QString& photoType);
+
+private:
+    QVersitContactImporter* mImporter;
+    MyQVersitContactImporterPropertyHandler* mPropertyHandler;
+    MyQVersitResourceHandler* mResourceHandler;
 };
 
-#endif // UT_VERSITREADER_H
+#endif // tst_QVERSITCONTACTIMPORTER_H

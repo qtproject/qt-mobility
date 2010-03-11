@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "ut_qversitwriter.h"
+#include "tst_qversitwriter.h"
 #include "qversitwriter.h"
 #include "qversitdocument.h"
 #include "qversitproperty.h"
@@ -65,7 +65,7 @@
 
 QTM_USE_NAMESPACE
 
-void UT_QVersitWriter::init()
+void tst_QVersitWriter::init()
 {
     mOutputDevice = new QBuffer;
     mWriter = new QVersitWriter;
@@ -75,14 +75,14 @@ void UT_QVersitWriter::init()
             mSignalCatcher, SLOT(stateChanged(QVersitWriter::State)));
 }
 
-void UT_QVersitWriter::cleanup()
+void tst_QVersitWriter::cleanup()
 {
     delete mWriter;
     delete mOutputDevice;
     delete mSignalCatcher;
 }
 
-void UT_QVersitWriter::testDevice()
+void tst_QVersitWriter::testDevice()
 {
     // No device
     QVERIFY(mWriter->device() == NULL);
@@ -92,14 +92,14 @@ void UT_QVersitWriter::testDevice()
     QVERIFY(mWriter->device() == mOutputDevice);
 }
 
-void UT_QVersitWriter::testDefaultCodec()
+void tst_QVersitWriter::testDefaultCodec()
 {
     QVERIFY(mWriter->defaultCodec() == 0);
     mWriter->setDefaultCodec(QTextCodec::codecForName("UTF-16BE"));
     QVERIFY(mWriter->defaultCodec() == QTextCodec::codecForName("UTF-16BE"));
 }
 
-void UT_QVersitWriter::testFold()
+void tst_QVersitWriter::testFold()
 {
     // 87 characters long
     QString longString(QLatin1String(
@@ -132,7 +132,7 @@ void UT_QVersitWriter::testFold()
     QCOMPARE(result, expected);
 }
 
-void UT_QVersitWriter::testWriting21()
+void tst_QVersitWriter::testWriting21()
 {
     // vCard 2.1
     QByteArray vCard21(
@@ -195,7 +195,7 @@ END:VCARD\r\n");
     QCOMPARE(result, expected);
 }
 
-void UT_QVersitWriter::testWriting30()
+void tst_QVersitWriter::testWriting30()
 {
     // vCard 3.0
     QByteArray vCard30(
@@ -249,7 +249,7 @@ END:VCARD\r\n");
             || state == QVersitWriter::FinishedState);
 }
 
-void UT_QVersitWriter::testByteArrayOutput()
+void tst_QVersitWriter::testByteArrayOutput()
 {
     const QByteArray vCard30(
         "BEGIN:VCARD\r\n"
@@ -275,4 +275,4 @@ void UT_QVersitWriter::testByteArrayOutput()
 
 }
 
-QTEST_MAIN(UT_QVersitWriter)
+QTEST_MAIN(tst_QVersitWriter)

@@ -39,65 +39,40 @@
 **
 ****************************************************************************/
 
-#ifndef UT_QVERSITCONTACTEXPORTER_H
-#define UT_QVERSITCONTACTEXPORTER_H
+#ifndef tst_QVERSITPROPERTY_H
+#define tst_QVERSITPROPERTY_H
 
-#include <qcontactdetail.h>
 #include <QObject>
 #include <qmobilityglobal.h>
-#include <qcontact.h>
 
 QTM_BEGIN_NAMESPACE
 
-class QVersitContactExporter;
-class QVersitContactExporterPrivate;
-class MyQVersitResourceHandler;
-class MyQVersitContactExporterDetailHandler;
+class QVersitProperty;
 
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
 
-class UT_QVersitContactExporter : public QObject
+class tst_QVersitProperty : public QObject
 {
     Q_OBJECT
 
 private slots:
+
     void init();
     void cleanup();
 
-    void testConvertContact();
-    void testContactDetailHandler();
-    void testEncodeName();
-    void testEncodePhoneNumber();
-    void testEncodeEmailAddress();
-    void testEncodeStreetAddress();
-    void testEncodeUrl();
-    void testEncodeParameters();
-    void testEncodeUid();
-    void testEncodeRev();
-    void testEncodeBirthDay();
-    void testEncodeNote();
-    void testEncodeGeoLocation();
-    void testEncodeOrganization();
-    void testEncodeEmbeddedContent();
-    void testIsValidRemoteUrl();
-    void testEncodeGender();
-    void testEncodeNickName();
-    void testEncodeAnniversary();
-    void testEncodeOnlineAccount();
-    void testEncodeFamily();
-    void testEncodeAvatar();
-    void testEncodeDisplayLabel();
-    void testDefaultResourceHandler();
+private slots: //test methods
 
-    // Test Utility Functions
-    QContact createContactWithName(QString name);
-    QContactDetail searchDetail(QList<QContactDetail> details, QString search);
+    void testGroup();
+    void testName();
+    void testParameters();
+    void testValue();
+    void testEmbeddedDocument();
+    void testEquality();
 
-private: // Data
-    QVersitContactExporter* mExporter;
-    MyQVersitResourceHandler* mResourceHandler;
-    MyQVersitContactExporterDetailHandler* mDetailHandler;
+private:
+    QVersitProperty* mVersitProperty;
+
 };
 
-#endif // UT_QVERSITCONTACTEXPORTER_H
+#endif //tst_QVERSITPROPERTY_H

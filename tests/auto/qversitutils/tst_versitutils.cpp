@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "ut_versitutils.h"
+#include "tst_versitutils.h"
 #include <QByteArray>
 #include <QtTest/QtTest>
 #include <QTextCodec>
@@ -48,7 +48,7 @@
 
 QTM_USE_NAMESPACE
 
-void UT_VersitUtils::testBackSlashEscape()
+void tst_VersitUtils::testBackSlashEscape()
 {
     // Empty string
     QString input;
@@ -107,7 +107,7 @@ void UT_VersitUtils::testBackSlashEscape()
 
 }
 
-void UT_VersitUtils::testRemoveBackSlashEscaping()
+void tst_VersitUtils::testRemoveBackSlashEscaping()
 {
     // Empty string
     QString input;
@@ -130,5 +130,5 @@ void UT_VersitUtils::testRemoveBackSlashEscaping()
     QCOMPARE(input, QString::fromAscii("\"Quoted \\n \\N \\; \\,\""));
 }
 
-QTEST_MAIN(UT_VersitUtils)
+QTEST_MAIN(tst_VersitUtils)
 

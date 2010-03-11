@@ -39,31 +39,36 @@
 **
 ****************************************************************************/
 
-#ifndef UT_QVERSIT_H
-#define UT_QVERSIT_H
+#ifndef tst_QVERSITDOCUMENT_H
+#define tst_QVERSITDOCUMENT_H
 
 #include <QObject>
-#include <qversitdocument.h>
 #include <qmobilityglobal.h>
 
 QTM_BEGIN_NAMESPACE
 
-class QVersitContactImporter;
-class QVersitContactImporterPrivate;
-class QVersitReader;
+class QVersitDocument;
 
 QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
 
-class UT_QVersit : public QObject
+class tst_QVersitDocument : public QObject
 {
     Q_OBJECT
 
-private slots: // Tests
-    void testImportFiles();
-    void testImportFiles_data();
+private slots:
+    void init();
+    void cleanup();
 
-private:
+    void testConstructor();
+    void testType();
+    void testAddProperty();
+    void testRemoveProperty();
+    void testRemoveAllProperties();
+    void testEquality();
+
+private: // data
+    QVersitDocument* mVersitDocument;
 };
 
-#endif // UT_QVERSIT_H
+#endif // tst_QVERSITDOCUMENT_H

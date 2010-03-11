@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "ut_qversitcontactexporter.h"
+#include "tst_qversitcontactexporter.h"
 #include "qversitcontactexporter.h"
 #include "qversitcontactexporter_p.h"
 #include "qversitproperty.h"
@@ -176,7 +176,7 @@ QTM_USE_NAMESPACE
 const QString TEST_PHOTO_FILE(QLatin1String("versitTest001.jpg"));
 const QString TEST_AUDIO_FILE(QLatin1String("versitTest001.wav"));
 
-void UT_QVersitContactExporter::init()
+void tst_QVersitContactExporter::init()
 {
     mExporter = new QVersitContactExporter();
     mDetailHandler = new MyQVersitContactExporterDetailHandler;
@@ -185,7 +185,7 @@ void UT_QVersitContactExporter::init()
     mExporter->setResourceHandler(mResourceHandler);
 }
 
-void UT_QVersitContactExporter::cleanup()
+void tst_QVersitContactExporter::cleanup()
 {
     QVERIFY(mExporter->detailHandler() == mDetailHandler);
     mExporter->setDetailHandler(0);
@@ -196,7 +196,7 @@ void UT_QVersitContactExporter::cleanup()
     delete mExporter;
 }
 
-void UT_QVersitContactExporter::testConvertContact()
+void tst_QVersitContactExporter::testConvertContact()
 {
     QContact contact;
 
@@ -220,7 +220,7 @@ void UT_QVersitContactExporter::testConvertContact()
     QCOMPARE(documents.first().properties().count(), 3);
 }
 
-void UT_QVersitContactExporter::testContactDetailHandler()
+void tst_QVersitContactExporter::testContactDetailHandler()
 {
     // Test1: Un-supported Avatar Test
     QContact contact(createContactWithName(QLatin1String("asdf")));
@@ -271,7 +271,7 @@ void UT_QVersitContactExporter::testContactDetailHandler()
     QVERIFY(mExporter->detailHandler() == mDetailHandler);
 }
 
-void UT_QVersitContactExporter::testEncodeName()
+void tst_QVersitContactExporter::testEncodeName()
 {
     QContact contact;
     QContactName name;
@@ -335,7 +335,7 @@ void UT_QVersitContactExporter::testEncodeName()
              QString::fromAscii("Simp\\;son;Hom\\,er;J\\;;\\;Mr.;Sir\\,"));
 }
 
-void UT_QVersitContactExporter::testEncodePhoneNumber()
+void tst_QVersitContactExporter::testEncodePhoneNumber()
 {
     QContact contact(createContactWithName(QLatin1String("asdf")));
     QContactPhoneNumber phoneNumber;
@@ -359,7 +359,7 @@ void UT_QVersitContactExporter::testEncodePhoneNumber()
     QCOMPARE(property.value(), phoneNumber.number());
 }
 
-void UT_QVersitContactExporter::testEncodeEmailAddress()
+void tst_QVersitContactExporter::testEncodeEmailAddress()
 {
     QContact contact(createContactWithName(QLatin1String("asdf")));
     QContactEmailAddress email;
@@ -380,7 +380,7 @@ void UT_QVersitContactExporter::testEncodeEmailAddress()
     QCOMPARE(property.value(), email.emailAddress());
 }
 
-void UT_QVersitContactExporter::testEncodeStreetAddress()
+void tst_QVersitContactExporter::testEncodeStreetAddress()
 {
     QContact contact(createContactWithName(QLatin1String("asdf")));
     QContactAddress address;
@@ -429,7 +429,7 @@ void UT_QVersitContactExporter::testEncodeStreetAddress()
              QString::fromAscii("PO\\;Box;;My\\;Street;My\\;Town;My\\;State;12345\\;;My\\;Country"));
 }
 
-void UT_QVersitContactExporter::testEncodeUrl()
+void tst_QVersitContactExporter::testEncodeUrl()
 {
     QContact contact(createContactWithName(QLatin1String("asdf")));
     QContactUrl url;
@@ -451,7 +451,7 @@ void UT_QVersitContactExporter::testEncodeUrl()
     QCOMPARE(property.value(), url.url());
 }
 
-void UT_QVersitContactExporter::testEncodeUid()
+void tst_QVersitContactExporter::testEncodeUid()
 {
     QContact contact(createContactWithName(QLatin1String("asdf")));
     QContactGuid guid;
@@ -487,7 +487,7 @@ void UT_QVersitContactExporter::testEncodeUid()
     QCOMPARE(property.value(), QString::fromAscii("1\\;2\\,3\\n4\\\\5"));
 }
 
-void UT_QVersitContactExporter::testEncodeRev()
+void tst_QVersitContactExporter::testEncodeRev()
 {
     QContact contact(createContactWithName(QLatin1String("asdf")));
     QContactTimestamp timeStamp;
@@ -545,7 +545,7 @@ void UT_QVersitContactExporter::testEncodeRev()
     QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT);
 }
 
-void UT_QVersitContactExporter::testEncodeBirthDay()
+void tst_QVersitContactExporter::testEncodeBirthDay()
 {
     QContact contact(createContactWithName(QLatin1String("asdf")));
     QDate date(2009,1,1);
@@ -563,7 +563,7 @@ void UT_QVersitContactExporter::testEncodeBirthDay()
     QCOMPARE(property.value(), QString::fromAscii("2009-01-01"));
 }
 
-void UT_QVersitContactExporter::testEncodeNote()
+void tst_QVersitContactExporter::testEncodeNote()
 {
     QContact contact(createContactWithName(QLatin1String("asdf")));
     QContactNote note;
@@ -580,7 +580,7 @@ void UT_QVersitContactExporter::testEncodeNote()
     QCOMPARE(property.value(), note.note());
 }
 
-void UT_QVersitContactExporter::testEncodeGeoLocation()
+void tst_QVersitContactExporter::testEncodeGeoLocation()
 {
     QContact contact(createContactWithName(QLatin1String("asdf")));
     QContactGeoLocation geoLocation;
@@ -601,7 +601,7 @@ void UT_QVersitContactExporter::testEncodeGeoLocation()
     QCOMPARE(property.value(), expectedValue);
 }
 
-void UT_QVersitContactExporter::testEncodeOrganization()
+void tst_QVersitContactExporter::testEncodeOrganization()
 {
     QContact contact(createContactWithName(QLatin1String("asdf")));
     QContactOrganization organization;
@@ -743,7 +743,7 @@ void UT_QVersitContactExporter::testEncodeOrganization()
 
 }
 
-void UT_QVersitContactExporter::testEncodeAvatar()
+void tst_QVersitContactExporter::testEncodeAvatar()
 {
     QContact contact = createContactWithName(QLatin1String("asdf"));
     QContactAvatar contactAvatar;
@@ -818,7 +818,7 @@ void UT_QVersitContactExporter::testEncodeAvatar()
 }
 
 
-void UT_QVersitContactExporter::testEncodeEmbeddedContent()
+void tst_QVersitContactExporter::testEncodeEmbeddedContent()
 {
     QContact contact = createContactWithName(QLatin1String("asdf"));
     QContactAvatar contactAvatar;
@@ -902,7 +902,7 @@ void UT_QVersitContactExporter::testEncodeEmbeddedContent()
     mExporter->setResourceHandler(mResourceHandler);
 }
 
-void UT_QVersitContactExporter::testEncodeParameters()
+void tst_QVersitContactExporter::testEncodeParameters()
 {
     QContact contact(createContactWithName(QLatin1String("asdf")));
     QContactPhoneNumber phoneNumber;
@@ -925,7 +925,7 @@ void UT_QVersitContactExporter::testEncodeParameters()
         QString::fromAscii("TYPE"),QString::fromAscii("VIDEO")));
 }
 
-void UT_QVersitContactExporter::testIsValidRemoteUrl()
+void tst_QVersitContactExporter::testIsValidRemoteUrl()
 {
     QContact contact(createContactWithName(QLatin1String("asdf")));
     QContactAvatar contactAvatar;
@@ -977,7 +977,7 @@ void UT_QVersitContactExporter::testIsValidRemoteUrl()
     QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT);
 }
 
-void UT_QVersitContactExporter::testEncodeGender()
+void tst_QVersitContactExporter::testEncodeGender()
 {
     QContact contact(createContactWithName(QLatin1String("asdf")));
     QContactGender gender;
@@ -993,7 +993,7 @@ void UT_QVersitContactExporter::testEncodeGender()
     QCOMPARE(property.value(), gender.gender());
 }
 
-void UT_QVersitContactExporter::testEncodeNickName()
+void tst_QVersitContactExporter::testEncodeNickName()
 {
     QContact contact(createContactWithName(QLatin1String("asdf")));
 
@@ -1028,7 +1028,7 @@ void UT_QVersitContactExporter::testEncodeNickName()
     QCOMPARE(property.value(), QString::fromAscii("Homie,Jay"));
 }
 
-void UT_QVersitContactExporter::testEncodeAnniversary()
+void tst_QVersitContactExporter::testEncodeAnniversary()
 {
     QContact contact(createContactWithName(QLatin1String("asdf")));
     QContactAnniversary anniversary;
@@ -1050,7 +1050,7 @@ void UT_QVersitContactExporter::testEncodeAnniversary()
 }
 
 
-void UT_QVersitContactExporter::testEncodeOnlineAccount()
+void tst_QVersitContactExporter::testEncodeOnlineAccount()
 {
     QContact contact(createContactWithName(QLatin1String("asdf")));
     QContactOnlineAccount onlineAccount;
@@ -1137,7 +1137,7 @@ void UT_QVersitContactExporter::testEncodeOnlineAccount()
     QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT);
 }
 
-void UT_QVersitContactExporter::testEncodeFamily()
+void tst_QVersitContactExporter::testEncodeFamily()
 {
     QContact contact(createContactWithName(QLatin1String("asdf")));
     QContactFamily family;
@@ -1181,7 +1181,7 @@ void UT_QVersitContactExporter::testEncodeFamily()
 }
 
 
-void UT_QVersitContactExporter::testEncodeDisplayLabel()
+void tst_QVersitContactExporter::testEncodeDisplayLabel()
 {
     QContact contact;
     QContactName contactName;
@@ -1214,7 +1214,7 @@ void UT_QVersitContactExporter::testEncodeDisplayLabel()
         QString::fromAscii("Custom\\,Label"));
 }
 
-void UT_QVersitContactExporter::testDefaultResourceHandler()
+void tst_QVersitContactExporter::testDefaultResourceHandler()
 {
     QVersitDefaultResourceHandler handler;
     QByteArray contents;
@@ -1228,7 +1228,7 @@ void UT_QVersitContactExporter::testDefaultResourceHandler()
 }
 
 // Test utility functions
-QContact UT_QVersitContactExporter::createContactWithName(QString name)
+QContact tst_QVersitContactExporter::createContactWithName(QString name)
 {
     QContact contact;
     QContactName nameDetail;
@@ -1237,7 +1237,7 @@ QContact UT_QVersitContactExporter::createContactWithName(QString name)
     return contact;
 }
 
-QContactDetail UT_QVersitContactExporter::searchDetail(
+QContactDetail tst_QVersitContactExporter::searchDetail(
     QList<QContactDetail> details,
     QString search)
 {
@@ -1249,5 +1249,5 @@ QContactDetail UT_QVersitContactExporter::searchDetail(
     return detail;
 }
 
-QTEST_MAIN(UT_QVersitContactExporter)
+QTEST_MAIN(tst_QVersitContactExporter)
 

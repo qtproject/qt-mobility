@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "qversitdefs_p.h"
-#include "ut_qversitcontactimporter.h"
+#include "tst_qversitcontactimporter.h"
 #include "qversitcontactimporter.h"
 #include "qversitcontactimporter_p.h"
 #include <qversitproperty.h>
@@ -163,7 +163,7 @@ QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
-void UT_QVersitContactImporter::init()
+void tst_QVersitContactImporter::init()
 {
     mImporter = new QVersitContactImporter();
     mResourceHandler = new MyQVersitResourceHandler();
@@ -172,7 +172,7 @@ void UT_QVersitContactImporter::init()
     mImporter->setPropertyHandler(mPropertyHandler);
 }
 
-void UT_QVersitContactImporter::cleanup()
+void tst_QVersitContactImporter::cleanup()
 {
     QVERIFY(mImporter->propertyHandler() == mPropertyHandler);
     mImporter->setPropertyHandler(0);
@@ -183,7 +183,7 @@ void UT_QVersitContactImporter::cleanup()
     delete mImporter;
 }
 
-void UT_QVersitContactImporter::testName()
+void tst_QVersitContactImporter::testName()
 {
     QVersitDocument document(QVersitDocument::VCard30Type);
     QVersitProperty nameProperty;
@@ -230,7 +230,7 @@ void UT_QVersitContactImporter::testName()
 }
 
 // check that it doesn't crash if the FN property comes before the N property.
-void UT_QVersitContactImporter::testNameWithFormatted()
+void tst_QVersitContactImporter::testNameWithFormatted()
 {
     QVersitDocument document(QVersitDocument::VCard30Type);
     QVersitProperty fnProperty;
@@ -252,7 +252,7 @@ void UT_QVersitContactImporter::testNameWithFormatted()
     QCOMPARE(name.customLabel(), QString::fromAscii("First Last"));
 }
 
-void UT_QVersitContactImporter::testAddress()
+void tst_QVersitContactImporter::testAddress()
 {
     QVersitDocument document(QVersitDocument::VCard30Type);
     QVersitProperty property;
@@ -331,7 +331,7 @@ void UT_QVersitContactImporter::testAddress()
     QVERIFY(subTypes.contains(QContactAddress::SubTypeParcel));
 }
 
-void UT_QVersitContactImporter::testOrganizationName()
+void tst_QVersitContactImporter::testOrganizationName()
 {
     QVersitDocument document(QVersitDocument::VCard30Type);
     QVersitProperty property;
@@ -414,7 +414,7 @@ void UT_QVersitContactImporter::testOrganizationName()
     QCOMPARE(organization.department().at(2),QString::fromAscii("Qt"));
 }
 
-void UT_QVersitContactImporter::testOrganizationTitle()
+void tst_QVersitContactImporter::testOrganizationTitle()
 {
     QVersitDocument document(QVersitDocument::VCard30Type);
     QVersitProperty property;
@@ -465,7 +465,7 @@ void UT_QVersitContactImporter::testOrganizationTitle()
     QCOMPARE(secondOrganization.name(),QString());
 }
 
-void UT_QVersitContactImporter::testOrganizationAssistant()
+void tst_QVersitContactImporter::testOrganizationAssistant()
 {
     QContact contact;
     QVersitDocument document(QVersitDocument::VCard30Type);
@@ -480,7 +480,7 @@ void UT_QVersitContactImporter::testOrganizationAssistant()
     QCOMPARE(organization.assistantName(), assistantValue);
 }
 
-void UT_QVersitContactImporter::testOrganizationLogo()
+void tst_QVersitContactImporter::testOrganizationLogo()
 {
     QContact contact;
     QVersitDocument document(QVersitDocument::VCard30Type);
@@ -512,7 +512,7 @@ void UT_QVersitContactImporter::testOrganizationLogo()
     QCOMPARE(organization.logo(),logoUrl);
 }
 
-void UT_QVersitContactImporter::testOrganizationRole()
+void tst_QVersitContactImporter::testOrganizationRole()
 {
     QContact contact;
     QVersitDocument document(QVersitDocument::VCard30Type);
@@ -529,7 +529,7 @@ void UT_QVersitContactImporter::testOrganizationRole()
     QCOMPARE(organization.role(), roleValue);
 }
 
-void UT_QVersitContactImporter::testTel()
+void tst_QVersitContactImporter::testTel()
 {
     QVersitDocument document(QVersitDocument::VCard30Type);
     QVersitProperty property;
@@ -571,7 +571,7 @@ void UT_QVersitContactImporter::testTel()
     QVERIFY(contexts.contains(QContactDetail::ContextHome));
 }
 
-void UT_QVersitContactImporter::testEmail()
+void tst_QVersitContactImporter::testEmail()
 {
     QVersitProperty property;
     property.setName(QString::fromAscii("EMAIL"));
@@ -590,7 +590,7 @@ void UT_QVersitContactImporter::testEmail()
     QCOMPARE(mPropertyHandler->mUnknownProperties.size(), 0);
 }
 
-void UT_QVersitContactImporter::testUrl()
+void tst_QVersitContactImporter::testUrl()
 {
     QVersitProperty property;
     property.setName(QString::fromAscii("URL"));
@@ -607,7 +607,7 @@ void UT_QVersitContactImporter::testUrl()
     QVERIFY(contexts.contains(QContactDetail::ContextWork));
 }
 
-void UT_QVersitContactImporter::testUid()
+void tst_QVersitContactImporter::testUid()
 {
     QVersitProperty property;
     property.setName(QString::fromAscii("UID"));
@@ -620,7 +620,7 @@ void UT_QVersitContactImporter::testUid()
     QCOMPARE(uid.guid(),value);
 }
 
-void UT_QVersitContactImporter::testTimeStamp()
+void tst_QVersitContactImporter::testTimeStamp()
 {
     // Simple date : ISO 8601 extended format
     QVersitProperty property;
@@ -677,7 +677,7 @@ void UT_QVersitContactImporter::testTimeStamp()
     QCOMPARE(timeStamp.lastModified().timeSpec(),Qt::UTC);
 }
 
-void UT_QVersitContactImporter::testAnniversary()
+void tst_QVersitContactImporter::testAnniversary()
 {
     // Date : ISO 8601 extended format
     QVersitProperty property;
@@ -702,7 +702,7 @@ void UT_QVersitContactImporter::testAnniversary()
 
 }
 
-void UT_QVersitContactImporter::testBirthday()
+void tst_QVersitContactImporter::testBirthday()
 {
     // Date : ISO 8601 extended format
     QVersitProperty property;
@@ -728,7 +728,7 @@ void UT_QVersitContactImporter::testBirthday()
 
 }
 
-void UT_QVersitContactImporter::testGender()
+void tst_QVersitContactImporter::testGender()
 {
     // Date : ISO 8601 extended format
     QVersitProperty property;
@@ -742,7 +742,7 @@ void UT_QVersitContactImporter::testGender()
     QCOMPARE(gender.gender(),val);
 }
 
-void UT_QVersitContactImporter::testNickname()
+void tst_QVersitContactImporter::testNickname()
 {
     // one value
     QVersitDocument document(QVersitDocument::VCard30Type);
@@ -791,7 +791,7 @@ void UT_QVersitContactImporter::testNickname()
     QCOMPARE(nickName.nickname(),singleVal);
 }
 
-void UT_QVersitContactImporter::testAvatarStored()
+void tst_QVersitContactImporter::testAvatarStored()
 {
     QByteArray gif(SAMPLE_GIF);
     QStringList nameValues(QString::fromAscii("John")); // First name
@@ -833,7 +833,7 @@ void UT_QVersitContactImporter::testAvatarStored()
     mImporter->setResourceHandler(mResourceHandler);
 }
 
-void UT_QVersitContactImporter::testAvatarUrl()
+void tst_QVersitContactImporter::testAvatarUrl()
 {
     QVersitProperty property;
     property.setName(QLatin1String("PHOTO"));
@@ -866,7 +866,7 @@ void UT_QVersitContactImporter::testAvatarUrl()
     QVERIFY(avatar.subType() == QContactAvatar::SubTypeImage);
 }
 
-void UT_QVersitContactImporter::testAvatarInvalid()
+void tst_QVersitContactImporter::testAvatarInvalid()
 {
     // An avatar that's a QVersitDocument?  It shouldn't work.
     QVersitDocument document(QVersitDocument::VCard30Type);
@@ -891,7 +891,7 @@ void UT_QVersitContactImporter::testAvatarInvalid()
     QCOMPARE(contact.details(QContactAvatar::DefinitionName).size(), 0);
 }
 
-void UT_QVersitContactImporter::testGeo()
+void tst_QVersitContactImporter::testGeo()
 {
     // some positive values
     QVersitDocument document(QVersitDocument::VCard30Type);
@@ -929,7 +929,7 @@ void UT_QVersitContactImporter::testGeo()
     QCOMPARE(str,val[1]);
 }
 
-void UT_QVersitContactImporter::testNote()
+void tst_QVersitContactImporter::testNote()
 {
     // single line value
     QVersitDocument document(QVersitDocument::VCard30Type);
@@ -960,7 +960,7 @@ void UT_QVersitContactImporter::testNote()
     QCOMPARE(note.note(),val);
 }
 
-void UT_QVersitContactImporter::testLabel()
+void tst_QVersitContactImporter::testLabel()
 {
     QVersitDocument document(QVersitDocument::VCard30Type);
     QVersitProperty nameProperty;
@@ -975,7 +975,7 @@ void UT_QVersitContactImporter::testLabel()
     QCOMPARE(name.customLabel(),val);
 }
 
-void UT_QVersitContactImporter::testOnlineAccount()
+void tst_QVersitContactImporter::testOnlineAccount()
 {
     QString accountUri(QString::fromAscii("sip:john.citizen@example.com"));
 
@@ -1075,7 +1075,7 @@ void UT_QVersitContactImporter::testOnlineAccount()
     QVERIFY(subTypes.first() == QContactOnlineAccount::SubTypeImpp);
 }
 
-void UT_QVersitContactImporter::testFamily()
+void tst_QVersitContactImporter::testFamily()
 {
     // Interesting : kid but no wife :)
     QVersitDocument document(QVersitDocument::VCard30Type);
@@ -1135,7 +1135,7 @@ void UT_QVersitContactImporter::testFamily()
     QCOMPARE(family.spouse(),val); // make sure thats your wife:(
 }
 
-void UT_QVersitContactImporter::testSound()
+void tst_QVersitContactImporter::testSound()
 {
     QVersitDocument document(QVersitDocument::VCard30Type);
     QVersitProperty nameProperty;
@@ -1160,7 +1160,7 @@ void UT_QVersitContactImporter::testSound()
     QCOMPARE(content, val);
 }
 
-void UT_QVersitContactImporter::testPref()
+void tst_QVersitContactImporter::testPref()
 {
     QVersitDocument document(QVersitDocument::VCard30Type);
     QVersitProperty property1;
@@ -1194,7 +1194,7 @@ void UT_QVersitContactImporter::testPref()
     QCOMPARE(numbers.at(3).number(), QLatin1String("4"));
 }
 
-void UT_QVersitContactImporter::testPropertyHandler()
+void tst_QVersitContactImporter::testPropertyHandler()
 {
     QVersitDocument document(QVersitDocument::VCard30Type);
     QVersitProperty property;
@@ -1257,7 +1257,7 @@ void UT_QVersitContactImporter::testPropertyHandler()
     QCOMPARE(unknownProperties[1].value(), QString::fromAscii("extension value 2"));
 }
 
-void UT_QVersitContactImporter::testInvalidDocument()
+void tst_QVersitContactImporter::testInvalidDocument()
 {
     // invalid document (invalid type)
     QList<QVersitDocument> documents;
@@ -1294,7 +1294,7 @@ void UT_QVersitContactImporter::testInvalidDocument()
     QCOMPARE(errors.value(0), QVersitContactImporter::EmptyDocumentError);
 }
 
-QVersitDocument UT_QVersitContactImporter::createDocumentWithProperty(
+QVersitDocument tst_QVersitContactImporter::createDocumentWithProperty(
     const QVersitProperty& property)
 {
     QVersitDocument document(QVersitDocument::VCard30Type);
@@ -1302,7 +1302,7 @@ QVersitDocument UT_QVersitContactImporter::createDocumentWithProperty(
     return document;
 }
 
-QVersitDocument UT_QVersitContactImporter::createDocumentWithNameAndPhoto(
+QVersitDocument tst_QVersitContactImporter::createDocumentWithNameAndPhoto(
     const QString& name,
     QByteArray image,
     const QString& imageType)
@@ -1325,5 +1325,5 @@ QVersitDocument UT_QVersitContactImporter::createDocumentWithNameAndPhoto(
     return document;
 }
 
-QTEST_MAIN(UT_QVersitContactImporter)
+QTEST_MAIN(tst_QVersitContactImporter)
 

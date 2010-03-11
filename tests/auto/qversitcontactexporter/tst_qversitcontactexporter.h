@@ -39,34 +39,65 @@
 **
 ****************************************************************************/
 
-#ifndef UT_QVCARD21WRITER_H
-#define UT_QVCARD21WRITER_H
+#ifndef tst_QVERSITCONTACTEXPORTER_H
+#define tst_QVERSITCONTACTEXPORTER_H
 
+#include <qcontactdetail.h>
 #include <QObject>
 #include <qmobilityglobal.h>
-
+#include <qcontact.h>
 
 QTM_BEGIN_NAMESPACE
-class QVCard21Writer;
+
+class QVersitContactExporter;
+class QVersitContactExporterPrivate;
+class MyQVersitResourceHandler;
+class MyQVersitContactExporterDetailHandler;
+
 QTM_END_NAMESPACE
-
 QTM_USE_NAMESPACE
-class UT_QVCard21Writer : public QObject
+
+class tst_QVersitContactExporter : public QObject
 {
-     Q_OBJECT
+    Q_OBJECT
 
-private slots: // Tests
-
+private slots:
     void init();
     void cleanup();
 
-    void testEncodeVersitProperty();
+    void testConvertContact();
+    void testContactDetailHandler();
+    void testEncodeName();
+    void testEncodePhoneNumber();
+    void testEncodeEmailAddress();
+    void testEncodeStreetAddress();
+    void testEncodeUrl();
     void testEncodeParameters();
-    void testEncodeGroupsAndName();
-    void testQuotedPrintableEncode();
+    void testEncodeUid();
+    void testEncodeRev();
+    void testEncodeBirthDay();
+    void testEncodeNote();
+    void testEncodeGeoLocation();
+    void testEncodeOrganization();
+    void testEncodeEmbeddedContent();
+    void testIsValidRemoteUrl();
+    void testEncodeGender();
+    void testEncodeNickName();
+    void testEncodeAnniversary();
+    void testEncodeOnlineAccount();
+    void testEncodeFamily();
+    void testEncodeAvatar();
+    void testEncodeDisplayLabel();
+    void testDefaultResourceHandler();
+
+    // Test Utility Functions
+    QContact createContactWithName(QString name);
+    QContactDetail searchDetail(QList<QContactDetail> details, QString search);
 
 private: // Data
-    QVCard21Writer* mWriter;
+    QVersitContactExporter* mExporter;
+    MyQVersitResourceHandler* mResourceHandler;
+    MyQVersitContactExporterDetailHandler* mDetailHandler;
 };
 
-#endif // UT_QVCARD21WRITER_H
+#endif // tst_QVERSITCONTACTEXPORTER_H

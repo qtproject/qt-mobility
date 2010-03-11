@@ -39,40 +39,34 @@
 **
 ****************************************************************************/
 
-#ifndef UT_QVERSITPROPERTY_H
-#define UT_QVERSITPROPERTY_H
+#ifndef tst_QVCARD21WRITER_H
+#define tst_QVCARD21WRITER_H
 
 #include <QObject>
 #include <qmobilityglobal.h>
 
+
 QTM_BEGIN_NAMESPACE
-
-class QVersitProperty;
-
+class QVCard21Writer;
 QTM_END_NAMESPACE
+
 QTM_USE_NAMESPACE
-
-class UT_QVersitProperty : public QObject
+class tst_QVCard21Writer : public QObject
 {
-    Q_OBJECT
+     Q_OBJECT
 
-private slots:
+private slots: // Tests
 
     void init();
     void cleanup();
 
-private slots: //test methods
+    void testEncodeVersitProperty();
+    void testEncodeParameters();
+    void testEncodeGroupsAndName();
+    void testQuotedPrintableEncode();
 
-    void testGroup();
-    void testName();
-    void testParameters();
-    void testValue();
-    void testEmbeddedDocument();
-    void testEquality();
-
-private:
-    QVersitProperty* mVersitProperty;
-
+private: // Data
+    QVCard21Writer* mWriter;
 };
 
-#endif //UT_QVERSITPROPERTY_H
+#endif // tst_QVCARD21WRITER_H
