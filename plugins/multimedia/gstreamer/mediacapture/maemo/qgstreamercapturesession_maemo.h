@@ -145,7 +145,7 @@ private slots:
 private:
     enum PipelineMode { EmptyPipeline, PreviewPipeline, RecordingPipeline, PreviewAndRecordingPipeline };
 
-    void setupPipeline();
+    void setupCameraBin();
     GstElement *buildVideoSrc();
 
     QUrl m_sink;

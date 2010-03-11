@@ -107,7 +107,7 @@ QGstreamerCaptureSession::~QGstreamerCaptureSession()
     }
 }
 
-void QGstreamerCaptureSession::setupPipeline()
+void QGstreamerCaptureSession::setupCameraBin()
 {
     GstState currentState = GST_STATE_PLAYING;
     gst_element_get_state(m_camerabin, &currentState, 0, 0);
@@ -239,7 +239,7 @@ void QGstreamerCaptureSession::setState(QGstreamerCaptureSession::State newState
                 gst_element_set_state(m_camerabin, GST_STATE_PLAYING);
                 g_object_set(G_OBJECT(m_camerabin), "mode", 0, NULL);        
             } else {
-                setupPipeline();
+                setupCameraBin();
                 g_object_set(G_OBJECT(m_camerabin), "filename", m_sink.toString().toLocal8Bit().constData(), NULL);
                 g_object_set(G_OBJECT(m_camerabin), "mode", 1, NULL);
                 g_signal_emit_by_name(m_camerabin, "user-start", 0);
