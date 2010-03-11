@@ -89,7 +89,7 @@ private slots:
     
 private: 
     bool resetNativeHandles();
-    QPair<qreal, qreal> S60VideoPlayerSession::scaleFactor();
+    QPair<qreal, qreal> scaleFactor();
     void startDirectScreenAccess();
     bool stopDirectScreenAccess();
     
