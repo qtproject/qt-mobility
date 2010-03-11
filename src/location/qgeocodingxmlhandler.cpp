@@ -346,11 +346,11 @@ bool QGeocodingXmlHandler::characters(const QString& ch)
     if (parseStates.count() > 1 &&
             parseStates[0] == Latitude &&
             parseStates[1] == Position) {
-        currPlace->pos.setY(ch.toDouble());
+        currPlace->pos.setLatitude(ch.toDouble());
     } else if (parseStates.count() > 1 &&
                parseStates[0] == Longitude &&
                parseStates[1] == Position) {
-        currPlace->pos.setX(ch.toDouble());
+        currPlace->pos.setLongitude(ch.toDouble());
     } else if (parseStates[0] == Address_Country) {
         currPlace->addr.sCountry = ch;
     } else if (parseStates[0] == Address_CountryCode) {
