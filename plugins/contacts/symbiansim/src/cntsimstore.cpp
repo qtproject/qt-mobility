@@ -44,7 +44,8 @@
 #include "cntsymbiansimtransformerror.h"
 
 CntSimStore::CntSimStore(CntSymbianSimEngine* engine, QString storeName, QContactManager::Error &error)
-    :QObject((QObject *)engine)
+    :QObject((QObject *)engine),
+     d_ptr(0)
 {
     error = QContactManager::NoError;
     
@@ -53,6 +54,7 @@ CntSimStore::CntSimStore(CntSymbianSimEngine* engine, QString storeName, QContac
     qRegisterMetaType<QContact>("QContact");
     qRegisterMetaType<QList<QContact> >("QList<QContact>");
     qRegisterMetaType<QContactManager::Error>("QContactManager::Error");
+    qRegisterMetaType<QList<int> >("QList<int>");
     
     TRAPD(err, d_ptr = CntSimStorePrivate::NewL(*engine, *this, storeName));
     CntSymbianSimTransformError::transformError(err, error);
@@ -86,6 +88,11 @@ bool CntSimStore::write(const QContact &contact, QContactManager::Error &error)
 bool CntSimStore::remove(int index, QContactManager::Error &error)
 {
     return d_ptr->remove(index, error);
+}
+
+bool CntSimStore::getReservedSlots(QContactManager::Error &error)
+{
+    return d_ptr->getReservedSlots(error);
 }
 
 void CntSimStore::cancel()

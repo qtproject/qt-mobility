@@ -55,18 +55,10 @@ public:
     
 public Q_SLOTS:    
     // from CntAbstractSimRequest
-    bool start();
-    bool cancel();
-    void retry();
+    void run();
     
 private Q_SLOTS:
-    void readComplete(QList<QContact> contacts, QContactManager::Error error);
-    
-private:
-    bool execute(QContactManager::Error &error);
-    
-private:
-    QContactLocalIdFetchRequest *m_req;    
+    void readComplete(QList<QContact> contacts, QContactManager::Error error); 
 };
 
 #endif // CNTSIMCONTACTLOCALIDFETCHREQUEST_H_
