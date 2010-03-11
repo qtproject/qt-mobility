@@ -57,8 +57,8 @@ public:
     QGstreamerCameraExposureControl(QGstreamerCaptureSession *session);
     virtual ~QGstreamerCameraExposureControl();
 
-    QCamera::FlashMode flashMode() const;
-    void setFlashMode(QCamera::FlashMode mode);
+    QCamera::FlashModes flashMode() const;
+    void setFlashMode(QCamera::FlashModes mode);
     QCamera::FlashModes supportedFlashModes() const;
 
     qreal flashCompensation() const;
@@ -103,7 +103,7 @@ public Q_SLOTS:
 
 private:
     QGstreamerCaptureSession *m_session;
-    QCamera::FlashMode m_flashMode;
+    QCamera::FlashModes m_flashMode;
 /*Q_SIGNALS:
     void exposureLocked();
     void flashReady(bool);

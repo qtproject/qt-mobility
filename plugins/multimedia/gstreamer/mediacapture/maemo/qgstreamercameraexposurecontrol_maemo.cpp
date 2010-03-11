@@ -54,15 +54,15 @@ QGstreamerCameraExposureControl::~QGstreamerCameraExposureControl()
 {
 }
 
-QCamera::FlashMode QGstreamerCameraExposureControl::flashMode() const
+QCamera::FlashModes QGstreamerCameraExposureControl::flashMode() const
 {
     return m_flashMode;
 }
 
-void QGstreamerCameraExposureControl::setFlashMode(QCamera::FlashMode mode)
+void QGstreamerCameraExposureControl::setFlashMode(QCamera::FlashModes mode)
 {
     m_flashMode = mode;
-    m_session->setFlashMode(m_flashMode);
+    //m_session->setFlashMode(m_flashMode);
 }
 
 QCamera::FlashModes QGstreamerCameraExposureControl::supportedFlashModes() const
