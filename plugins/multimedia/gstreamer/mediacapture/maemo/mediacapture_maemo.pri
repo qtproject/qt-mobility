@@ -4,7 +4,7 @@ INCLUDEPATH += $$PWD \
 
 DEFINES += QMEDIA_GSTREAMER_CAPTURE
 
-HEADERS += $$PWDqgstreamercaptureservice_maemo.h \
+HEADERS += $$PWD\qgstreamercaptureservice_maemo.h \
     $$PWD\qgstreamercapturesession_maemo.h \
     $$PWD\qgstreameraudioencode_maemo.h \
     $$PWD\qgstreamervideoencode_maemo.h \
