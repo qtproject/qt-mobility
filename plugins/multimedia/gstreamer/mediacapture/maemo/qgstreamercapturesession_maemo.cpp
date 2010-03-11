@@ -78,14 +78,15 @@ QGstreamerCaptureSession::QGstreamerCaptureSession(QGstreamerCaptureSession::Cap
      m_audioPreviewFactory(0),
      m_videoInputFactory(0),
      m_videoPreviewFactory(0),
-     m_camerabin(0),
+     m_pipeline(0),
      m_videoSrc(0),
      m_videoPreviewFactoryHasChanged(false)
 {
-    m_camerabin = gst_element_factory_make("camerabin", "camerabin");
-    m_bus = gst_element_get_bus(m_camerabin);
-    g_signal_connect(G_OBJECT(m_camerabin), "img-done", G_CALLBACK(imgCaptured), this);
-    //gstRef(m_camerabin);
+    m_pipeline = gst_element_factory_make("camerabin", "camerabin");
+
+    m_bus = gst_element_get_bus(m_pipeline);
+    g_signal_connect(G_OBJECT(m_pipeline), "img-done", G_CALLBACK(imgCaptured), this);
+    //gstRef(m_pipeline);
 
     m_busHelper = new QGstreamerBusHelper(m_bus, this);
     m_busHelper->installSyncEventFilter(this);
@@ -100,38 +101,38 @@ QGstreamerCaptureSession::QGstreamerCaptureSession(QGstreamerCaptureSession::Cap
 
 QGstreamerCaptureSession::~QGstreamerCaptureSession()
 {
-    if (m_camerabin) {
-        gst_element_set_state(m_camerabin, GST_STATE_NULL);
-        gst_element_get_state(m_camerabin, NULL, NULL, GST_CLOCK_TIME_NONE);
-        gstUnref(m_camerabin);
+    if (m_pipeline) {
+        gst_element_set_state(m_pipeline, GST_STATE_NULL);
+        gst_element_get_state(m_pipeline, NULL, NULL, GST_CLOCK_TIME_NONE);
+        gstUnref(m_pipeline);
     }
 }
 
 void QGstreamerCaptureSession::setupCameraBin()
 {
     GstState currentState = GST_STATE_PLAYING;
-    gst_element_get_state(m_camerabin, &currentState, 0, 0);
+    gst_element_get_state(m_pipeline, &currentState, 0, 0);
     GstState previousState = currentState;
 
     if (currentState != GST_STATE_NULL) {
-        gst_element_set_state(m_camerabin, GST_STATE_NULL);
-        gst_element_get_state(m_camerabin, NULL, NULL, GST_CLOCK_TIME_NONE);
+        gst_element_set_state(m_pipeline, GST_STATE_NULL);
+        gst_element_get_state(m_pipeline, NULL, NULL, GST_CLOCK_TIME_NONE);
     }
 
     m_recorderControl->applySettings();
 
-    g_object_set(m_camerabin, "videosrc", buildVideoSrc(), NULL);
-    g_object_set(m_camerabin, "videoenc", m_videoEncodeControl->createEncoder(), NULL);
-    g_object_set(m_camerabin, "audioenc", m_audioEncodeControl->createEncoder(), NULL);
-    g_object_set(m_camerabin, "videomux",
+    g_object_set(m_pipeline, "videosrc", buildVideoSrc(), NULL);
+    g_object_set(m_pipeline, "videoenc", m_videoEncodeControl->createEncoder(), NULL);
+    g_object_set(m_pipeline, "audioenc", m_audioEncodeControl->createEncoder(), NULL);
+    g_object_set(m_pipeline, "videomux",
                  gst_element_factory_make(m_mediaContainerControl->formatElementName().constData(), NULL), NULL);
 
     if (m_videoPreviewFactory) {
         GstElement *preview = m_videoPreviewFactory->buildElement();
-        g_object_set(G_OBJECT(m_camerabin), "vfsink", preview, NULL);
+        g_object_set(G_OBJECT(m_pipeline), "vfsink", preview, NULL);
     }
 
-    gst_element_set_state(m_camerabin, GST_STATE_PLAYING);
+    gst_element_set_state(m_pipeline, GST_STATE_PLAYING);
 }
 
 
@@ -151,18 +152,18 @@ void QGstreamerCaptureSession::captureImage(const QString &fileName)
 {
     QSize resolution = m_imageEncodeControl->imageSettings().resolution();
     if (!resolution.isEmpty())
-        g_signal_emit_by_name(G_OBJECT(m_camerabin), "user-image-res", resolution.width(), resolution.height(), NULL);
+        g_signal_emit_by_name(G_OBJECT(m_pipeline), "user-image-res", resolution.width(), resolution.height(), NULL);
     
     GstCaps *previewCaps = gst_caps_from_string(PREVIEW_CAPS);
-    g_object_set(G_OBJECT(m_camerabin), "preview-caps", previewCaps, NULL);
+    g_object_set(G_OBJECT(m_pipeline), "preview-caps", previewCaps, NULL);
     gstUnref(previewCaps);
 
-    g_object_set(G_OBJECT(m_camerabin), "filename", fileName.toLocal8Bit().constData(), NULL);
-    //g_signal_emit_by_name(G_OBJECT(m_camerabin), "user-start", NULL);
+    g_object_set(G_OBJECT(m_pipeline), "filename", fileName.toLocal8Bit().constData(), NULL);
+    //g_signal_emit_by_name(G_OBJECT(m_pipeline), "user-start", NULL);
 
-    //gst_photography_set_autofocus (GST_PHOTOGRAPHY (m_camerabin), TRUE);
+    //gst_photography_set_autofocus (GST_PHOTOGRAPHY (m_pipeline), TRUE);
 
-    g_signal_emit_by_name(G_OBJECT(m_camerabin), "user-start", NULL);
+    g_signal_emit_by_name(G_OBJECT(m_pipeline), "user-start", NULL);
 
     m_imageFileName = fileName;
 }
@@ -217,11 +218,11 @@ void QGstreamerCaptureSession::setState(QGstreamerCaptureSession::State newState
         case PreviewState:
             if (newState == StoppedState) {
                 m_state = StoppedState;
-                gst_element_set_state(m_camerabin, GST_STATE_NULL);
-                gst_element_get_state(m_camerabin, NULL, NULL, GST_CLOCK_TIME_NONE);
+                gst_element_set_state(m_pipeline, GST_STATE_NULL);
+                gst_element_get_state(m_pipeline, NULL, NULL, GST_CLOCK_TIME_NONE);
                 emit stateChanged(StoppedState);
             }
-            g_object_set(G_OBJECT(m_camerabin), "mode", 1, NULL);
+            g_object_set(G_OBJECT(m_pipeline), "mode", 1, NULL);
             m_state = StoppedState;
             if (newState == RecordingState) {
                 setState(newState);
@@ -234,24 +235,24 @@ void QGstreamerCaptureSession::setState(QGstreamerCaptureSession::State newState
                 if (m_videoPreviewFactory && m_videoPreviewFactoryHasChanged) {
                     m_videoPreviewFactoryHasChanged = false;
                     GstElement *preview = m_videoPreviewFactory->buildElement();
-                    g_object_set(G_OBJECT(m_camerabin), "vfsink", preview, NULL);
+                    g_object_set(G_OBJECT(m_pipeline), "vfsink", preview, NULL);
                 }
-                gst_element_set_state(m_camerabin, GST_STATE_PLAYING);
-                g_object_set(G_OBJECT(m_camerabin), "mode", 0, NULL);        
+                gst_element_set_state(m_pipeline, GST_STATE_PLAYING);
+                g_object_set(G_OBJECT(m_pipeline), "mode", 0, NULL);
             } else {
                 setupCameraBin();
-                g_object_set(G_OBJECT(m_camerabin), "filename", m_sink.toString().toLocal8Bit().constData(), NULL);
-                g_object_set(G_OBJECT(m_camerabin), "mode", 1, NULL);
-                g_signal_emit_by_name(m_camerabin, "user-start", 0);
+                g_object_set(G_OBJECT(m_pipeline), "filename", m_sink.toString().toLocal8Bit().constData(), NULL);
+                g_object_set(G_OBJECT(m_pipeline), "mode", 1, NULL);
+                g_signal_emit_by_name(m_pipeline, "user-start", 0);
             }
             break;
         case PausedState:
         case RecordingState:
             if (newState == PausedState) {
-                g_signal_emit_by_name(m_camerabin, "user-pause", 0);
+                g_signal_emit_by_name(m_pipeline, "user-pause", 0);
                 m_state = PausedState;
             } else {
-                g_signal_emit_by_name(m_camerabin, "user-stop", 0);
+                g_signal_emit_by_name(m_pipeline, "user-stop", 0);
                 m_state = StoppedState;
                 if (newState == PreviewState)
                     setState(newState);
@@ -268,7 +269,7 @@ qint64 QGstreamerCaptureSession::duration() const
     gint64      duration = 0;
 
     GstElement *encoderElement = 0;
-    g_object_get(G_OBJECT(m_camerabin), "videomux", &encoderElement, NULL);
+    g_object_get(G_OBJECT(m_pipeline), "videomux", &encoderElement, NULL);
     if (encoderElement && gst_element_query_position(encoderElement, &format, &duration)) {
         g_object_unref(encoderElement);
         return duration / 1000000;
@@ -285,8 +286,8 @@ void QGstreamerCaptureSession::setMetaData(const QMap<QByteArray, QVariant> &dat
 {
     m_metaData = data;
 
-    if (m_camerabin) {
-        GstIterator *elements = gst_bin_iterate_all_by_interface(GST_BIN(m_camerabin), GST_TYPE_TAG_SETTER);
+    if (m_pipeline) {
+        GstIterator *elements = gst_bin_iterate_all_by_interface(GST_BIN(m_pipeline), GST_TYPE_TAG_SETTER);
         GstElement *element = 0;
         while (gst_iterator_next(elements, (void**)&element) == GST_ITERATOR_OK) {
             QMapIterator<QByteArray, QVariant> it(data);
@@ -408,7 +409,7 @@ void QGstreamerCaptureSession::busMessage(const QGstreamerMessage &message)
             g_free (debug);
         }
 
-        if (GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_camerabin)) {
+        if (GST_MESSAGE_SRC(gm) == GST_OBJECT_CAST(m_pipeline)) {
             switch (GST_MESSAGE_TYPE(gm))  {
             case GST_MESSAGE_DURATION:
                 break;
@@ -501,7 +502,7 @@ void QGstreamerCaptureSession::setFlashMode(QCamera::FlashMode mode)
             return;
     }
 
-    gst_photography_set_flash_mode(GST_PHOTOGRAPHY (m_camerabin),
+    gst_photography_set_flash_mode(GST_PHOTOGRAPHY (m_pipeline),
                                              flashMode);
 }
 

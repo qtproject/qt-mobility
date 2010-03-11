@@ -171,7 +171,7 @@ private:
 
     QGstreamerBusHelper *m_busHelper;
     GstBus* m_bus;
-    GstElement *m_camerabin;
+    GstElement *m_pipeline;
     GstElement *m_videoSrc;
     bool m_videoPreviewFactoryHasChanged;
 public:
