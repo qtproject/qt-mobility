@@ -157,4 +157,5 @@ void TrackerChangeListener::imAddressesChanged(const QStringList &subjects)
 {
     Q_UNUSED(subjects)
     // TODO use QHash in engine - mapping IMAddress URIs to contacts
+    qWarning() << __PRETTY_FUNCTION__ << "Not implemented";
 }

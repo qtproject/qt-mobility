@@ -65,7 +65,7 @@ class TrackerChangeListener : public QObject
 {
     Q_OBJECT
 public:
-    TrackerChangeListener(QContactManagerEngine *engine, QObject *parent=0);
+    explicit TrackerChangeListener(QContactManagerEngine *engine, QObject *parent);
     virtual ~TrackerChangeListener();
 
 signals:
