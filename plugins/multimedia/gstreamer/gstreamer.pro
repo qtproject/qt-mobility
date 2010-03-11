@@ -72,11 +72,11 @@ contains(QT_CONFIG, multimedia) {
 }
 
 include(mediaplayer/mediaplayer.pri)
-!maemo* {
-  include(mediacapture/mediacapture.pri)
-} else {
+#!maemo* {
+#  include(mediacapture/mediacapture.pri)
+#} else {
   include(mediacapture/mediacapture_maemo.pri)
-}
+#}
 
 target.path=$$QT_MOBILITY_PREFIX/plugins/mediaservice
 INSTALLS+=target
