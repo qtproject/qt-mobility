@@ -20,5 +20,10 @@ pluginDep.sources = $${TARGET}.dll
 pluginDep.path = $${QT_PLUGINS_BASE_DIR}/sensors
 DEPLOYMENT += pluginDep
 
+#Sensor API spesific deployment
+QtSensorsDeployment.sources = QtSensors.dll
+QtSensorsDeployment.path = /sys/bin
+DEPLOYMENT += QtSensorsDeployment
+
 target.path += $$[QT_INSTALL_PLUGINS]/sensors
 INSTALLS += target
