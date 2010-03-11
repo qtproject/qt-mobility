@@ -108,7 +108,6 @@ extern "C" {
                                                                  int radius,
                                                                  const guint8 border_color[4]);
 	OssoABookContact*   osso_abook_contact_new              (void);
-	//TEST
 	guint               osso_abook_contact_async_add        (OssoABookContact *contact,
                                                                  EBook *book,
                                                                  EBookIdCallback callback,
@@ -121,6 +120,11 @@ extern "C" {
                                                                  const char *attr_name,
                                                                  GCompareFunc value_check,
                                                                  const char *value);
+	void                osso_abook_contact_set_pixbuf       (OssoABookContact *contact,
+                                                                 GdkPixbuf *pixbuf,
+                                                                 EBook *book,
+                                                                 GtkWindow *window);
+
 	
 }
 

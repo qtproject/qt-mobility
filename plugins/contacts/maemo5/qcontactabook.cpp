@@ -1376,7 +1376,22 @@ void QContactABook::setAddressDetail(const OssoABookContact* aContact, const QCo
 void QContactABook::setAvatarDetail(const OssoABookContact* aContact, const QContactAvatar& detail) const
 {
   if (!aContact) return;
-  Q_UNUSED(detail);
+ 
+  EBook *book;
+  {
+    OssoABookRoster* roster = reinterpret_cast<OssoABookRoster*>(m_abookAgregator);
+    book = osso_abook_roster_get_book(roster);
+  }
+
+  QImage image = detail.pixmap().toImage();
+  if (image.format() != QImage::Format_ARGB32_Premultiplied)
+      image = image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
+  GdkPixbuf *pixbuf = gdk_pixbuf_new_from_data(image.bits(), GDK_COLORSPACE_RGB,
+                                               image.hasAlphaChannel(), 8,
+                                               image.width(), image.height(),
+                                               image.bytesPerLine(), 0, 0);
+  osso_abook_contact_set_pixbuf((OssoABookContact*)aContact, pixbuf, book, 0);
+  g_object_unref(pixbuf);
 }
 
 void QContactABook::setBirthdayDetail(const OssoABookContact* aContact, const QContactBirthday& detail) const
