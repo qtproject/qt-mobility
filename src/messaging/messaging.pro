@@ -142,12 +142,14 @@ symbian {
                qmessage_p.h
 
     HEADERS += qmtmengine_symbian_p.h \
+    	       qfsengine_symbian_p.h \
                qmessagestore_symbian_p.h \
                qmessageservice_symbian_p.h \
                qmessagecontentcontainer_symbian_p.h \
                qmessage_symbian_p.h
 
     SOURCES += qmtmengine_symbian.cpp \
+    	       qfsengine_symbian.cpp \
                qmessageid_symbian.cpp \
                qmessagecontentcontainerid_symbian.cpp \
                qmessagefolderid_symbian.cpp \

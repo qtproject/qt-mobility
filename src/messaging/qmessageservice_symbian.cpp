@@ -82,6 +82,7 @@ bool QMessageServicePrivate::sendEmail(QMessage &message)
 
 bool QMessageServicePrivate::show(const QMessageId& id)
 {
+    // check the prefix: if FS prefix -> CFSEngine::instance()->showMessage(id)
 	return CMTMEngine::instance()->showMessage(id);
 }
 
