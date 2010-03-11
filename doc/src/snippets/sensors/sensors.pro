@@ -10,3 +10,4 @@ HEADERS+=myplugin.h
 LIBS+=-rdynamic
 CONFIG+=mobility
 MOBILITY+=sensors
+CONFIG+=strict_flags

@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "genericorientationsensor.h"
+#include "genericattitudesensor.h"
 #include <qsensorplugin.h>
 #include <qsensorbackend.h>
 #include <qsensormanager.h>
@@ -55,6 +56,7 @@ public:
     {
         qDebug() << "loaded the Generic plugin";
         QSensorManager::registerBackend(QOrientationSensor::type, genericorientationsensor::id, this);
+        QSensorManager::registerBackend(QAttitudeSensor::type, genericattitudesensor::id, this);
     }
 
     QSensorBackend *createBackend(QSensor *sensor)
@@ -63,6 +65,13 @@ public:
             // Can't make this unless we have an accelerometer
             if (!QSensor::defaultSensorForType(QAccelerometer::type).isEmpty())
                 return new genericorientationsensor(sensor);
+            qDebug() << "can't make" << sensor->identifier() << "because no" << QAccelerometer::type << "sensors exist";
+        }
+
+        if (sensor->identifier() == genericattitudesensor::id) {
+            // Can't make this unless we have an accelerometer
+            if (!QSensor::defaultSensorForType(QAccelerometer::type).isEmpty())
+                return new genericattitudesensor(sensor);
             qDebug() << "can't make" << sensor->identifier() << "because no" << QAccelerometer::type << "sensors exist";
         }
 

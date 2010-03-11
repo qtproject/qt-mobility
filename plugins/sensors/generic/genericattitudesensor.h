@@ -39,37 +39,34 @@
 **
 ****************************************************************************/
 
-#include <QtCore>
-#include <qsensor.h>
+#ifndef GENERICATTITUDESENSOR_H
+#define GENERICATTITUDESENSOR_H
+
+#include <qsensorbackend.h>
+#include <qattitudesensor.h>
+#include <qaccelerometer.h>
+#include <qmagnetometer.h>
 
 QTM_USE_NAMESPACE
 
-class Filter : public QSensorFilter
+class genericattitudesensor : public QSensorBackend, public QSensorFilter
 {
 public:
-    bool filter(QSensorReading *reading)
-    {
-        int percent = reading->property("chanceOfBeingEaten").value<qreal>() * 100;
-        qDebug() << "Your chance of being eaten by a Grue:" << percent << "percent.";
-        return false;
-    }
+    static const char *id;
+
+    genericattitudesensor(QSensor *sensor);
+
+    void start();
+    void stop();
+    void poll();
+
+    bool filter(QSensorReading *reading);
+
+private:
+    QAttitudeReading m_reading;
+    QAccelerometer *accelerometer;
+    QMagnetometer *magnetometer;
 };
 
-int main(int argc, char **argv)
-{
-    QCoreApplication app(argc, argv);
-
-    QSensor sensor;
-    sensor.setType("GrueSensor");
-    if (!sensor.connect()) {
-        qWarning("Grue sensor is not available!");
-        return 1;
-    }
-
-    Filter filter;
-    sensor.addFilter(&filter);
-    sensor.start();
-
-    return app.exec();
-}
+#endif
 
