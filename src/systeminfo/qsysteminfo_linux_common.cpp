@@ -197,9 +197,11 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
              QStringList filters;
              filters << "*";
              QStringList sysList = sysDir.entryList( filters ,QDir::Dirs, QDir::Name);
-             if(sysList.contains("radio")) {
-                 featureSupported = true;
-             }
+             foreach(const QString dir, sysList) {
+                if (dir.contains("radio")) {
+                    featureSupported = true;
+                }
+            }
          }
          break;
      case QSystemInfo::IrFeature :
