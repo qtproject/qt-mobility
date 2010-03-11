@@ -199,6 +199,12 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     // QContactBirthday
     // QContactDisplayLabel
     // QContactEmailAddress
+    fields = defns[contactType][QContactEmailAddress::DefinitionName].fields();
+    QContactDetailFieldDefinition ed;
+    ed.setDataType(QVariant::String);
+    fields.insert(QContactDetail::FieldDetailUri, ed);
+    defns[contactType][QContactEmailAddress::DefinitionName].setFields(fields);
+    
     // QContactFamily
     // QContactGender
     // QContactGeoLocation

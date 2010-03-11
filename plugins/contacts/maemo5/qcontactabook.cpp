@@ -787,17 +787,17 @@ QContactNickname* QContactABook::createNicknameDetail(EContact *eContact) const
   return rtn;
 }
 
-//FIXME Maemo5 eContacts can contain several email account for the same context
 QList<QContactEmailAddress*> QContactABook::createEmailDetail(EContact *eContact) const
 {
   QList<QContactEmailAddress*> rtnList;
   
   GList* attrList = osso_abook_contact_get_attributes(eContact, EVC_EMAIL); //FIXME MemLeak
-  while(attrList){
+  
+  for (GList *node = g_list_last(attrList); node != NULL; node = g_list_previous(node)) {
     QContactEmailAddress *email = new QContactEmailAddress;
     QVariantMap map;
   
-    EVCardAttribute *attr = static_cast<EVCardAttribute*>(attrList->data);
+    EVCardAttribute *attr = static_cast<EVCardAttribute*>(node->data);
 
     // Set Address Context using attribute parameter value
     EVCardAttributeParam *param = NULL;
@@ -825,9 +825,9 @@ QList<QContactEmailAddress*> QContactABook::createEmailDetail(EContact *eContact
     }
     g_list_free(v);
     
+    map[QContactDetail::FieldDetailUri] = QString::number(g_list_position(attrList, node));
     setDetailValues(map, email);
     rtnList << email;
-    attrList = attrList->next;
   }
   g_list_free(attrList);
   
@@ -1140,6 +1140,9 @@ static void addAttributeToAContact(const OssoABookContact* contact,
 				   bool overwrite = true,
 				   const int index = 0)
 {
+  if (!contact)
+    return;
+  
   EVCard *vcard = E_VCARD (contact);
   EVCardAttribute *attr = NULL;
   EVCardAttributeParam* param = NULL;
@@ -1154,8 +1157,14 @@ static void addAttributeToAContact(const OssoABookContact* contact,
     
     for (GList *node = g_list_last(attributeList); node != NULL; node = g_list_previous(node)) {
       EVCardAttribute* eAttr = (EVCardAttribute*)node->data;
+      int pos =  g_list_position(attributeList, node);
       
-      if (index != g_list_position(attributeList, node))
+      if (index > pos){
+	qWarning() << "Attribute doesn't found at position" << index;
+	return;
+      }
+      
+      if (index != pos)
         continue;
       
       // Select the current EVCard Attribute if it contains the same parameters of
@@ -1239,6 +1248,11 @@ OssoABookContact* QContactABook::convert(const QContact *contact) const
   QCM5_DEBUG << "Converting QContact id:" << id << " to aContact";
   if (id){
     rtn = getAContact(id);
+    /*
+    QContactTimestamp* ts = createTimestampDetail(E_CONTACT(rtn));
+    if (*ts != contact->detail<QContactTimestamp>())
+      return NULL;
+    */
   } else {
     rtn = osso_abook_contact_new();
   }
@@ -1293,7 +1307,7 @@ OssoABookContact* QContactABook::convert(const QContact *contact) const
 
 void QContactABook::setAddressDetail(const OssoABookContact* aContact, const QContactAddress& detail) const
 {
-  Q_CHECK_PTR(aContact);
+  if (!aContact) return;
   
   QStringList adrAttrValues, 
               lblAttrValues,
@@ -1361,13 +1375,13 @@ void QContactABook::setAddressDetail(const OssoABookContact* aContact, const QCo
 //TODO 
 void QContactABook::setAvatarDetail(const OssoABookContact* aContact, const QContactAvatar& detail) const
 {
-  Q_CHECK_PTR(aContact);
+  if (!aContact) return;
   Q_UNUSED(detail);
 }
 
 void QContactABook::setBirthdayDetail(const OssoABookContact* aContact, const QContactBirthday& detail) const
 {
-  Q_CHECK_PTR(aContact);
+  if (!aContact) return;
   
   QStringList attrValues;
   attrValues << detail.value(QContactBirthday::FieldBirthday);
@@ -1377,7 +1391,7 @@ void QContactABook::setBirthdayDetail(const OssoABookContact* aContact, const QC
 
 void QContactABook::setEmailDetail(const OssoABookContact* aContact, const QContactEmailAddress& detail) const
 {
-  Q_CHECK_PTR(aContact);
+  if (!aContact) return;
   QStringList attrValues,
               paramValues;
 
@@ -1387,19 +1401,23 @@ void QContactABook::setEmailDetail(const OssoABookContact* aContact, const QCont
     i.next();
     int index = -1;
     QString key = i.key();
-      
+    
+    // We don't want to save the Detail URI
+    if (key == QContactDetail::FieldDetailUri)
+      continue;
+    
     if (key == QContactDetail::FieldContext)
-      paramValues << i.value().toString();
+      paramValues << i.value().toString().toUpper();
     else
       attrValues << i.value().toString();
   }
   
-  addAttributeToAContact(aContact, EVC_EMAIL, attrValues, EVC_TYPE, paramValues);
+  addAttributeToAContact(aContact, EVC_EMAIL, attrValues, EVC_TYPE, paramValues, true, detail.detailUri().toInt());
 }
 
 void QContactABook::setGenderDetail(const OssoABookContact* aContact, const QContactGender& detail) const
 {
-  Q_CHECK_PTR(aContact);
+  if (!aContact) return;
   
   QStringList attrValues;
   attrValues << detail.value(QContactGender::FieldGender).toLower();
@@ -1409,7 +1427,7 @@ void QContactABook::setGenderDetail(const OssoABookContact* aContact, const QCon
 
 void QContactABook::setNameDetail(const OssoABookContact* aContact, const QContactName& detail) const
 {
-  Q_CHECK_PTR(aContact);
+  if (!aContact) return;
   
   QStringList attrValues;
   // Save First and Last name in the N vcard attribute
@@ -1439,7 +1457,7 @@ void QContactABook::setNameDetail(const OssoABookContact* aContact, const QConta
 
 void QContactABook::setNicknameDetail(const OssoABookContact* aContact, const QContactNickname& detail) const
 {
-  Q_CHECK_PTR(aContact);
+  if (!aContact) return;
   
   QStringList attrValues;
   attrValues << detail.value(QContactNickname::FieldNickname);
@@ -1449,7 +1467,7 @@ void QContactABook::setNicknameDetail(const OssoABookContact* aContact, const QC
 
 void QContactABook::setNoteDetail(const OssoABookContact* aContact, const QContactNote& detail) const
 {
-  Q_CHECK_PTR(aContact);
+  if (!aContact) return;
   
   QStringList attrValues;
   attrValues << detail.value(QContactNote::FieldNote);
@@ -1460,13 +1478,13 @@ void QContactABook::setNoteDetail(const OssoABookContact* aContact, const QConta
 //TODO
 void QContactABook::setOnlineAccountDetail(const OssoABookContact* aContact, const QContactOnlineAccount& detail) const
 {
-  Q_CHECK_PTR(aContact);
+  if (!aContact) return;
   Q_UNUSED(detail)
 }
 
 void QContactABook::setOrganizationDetail(const OssoABookContact* aContact, const QContactOrganization& detail) const
 {
-  Q_CHECK_PTR(aContact);
+  if (!aContact) return;
   
   QStringList attrValues;
   attrValues << detail.value(QContactOrganization::FieldTitle);
@@ -1476,7 +1494,7 @@ void QContactABook::setOrganizationDetail(const OssoABookContact* aContact, cons
 
 void QContactABook::setPhoneDetail(const OssoABookContact* aContact, const QContactPhoneNumber& detail) const
 {
-  Q_CHECK_PTR(aContact);
+  if (!aContact) return;
   QStringList attrValues,
               paramValues;
 
@@ -1509,7 +1527,7 @@ void QContactABook::setPhoneDetail(const OssoABookContact* aContact, const QCont
 
 void QContactABook::setUrlDetail(const OssoABookContact* aContact, const QContactUrl& detail) const
 {
-  Q_CHECK_PTR(aContact);
+  if (!aContact) return;
   
   QStringList attrValues;
   attrValues << detail.value(QContactUrl::FieldUrl);
