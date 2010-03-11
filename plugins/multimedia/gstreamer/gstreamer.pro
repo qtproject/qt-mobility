@@ -24,7 +24,8 @@ PKGCONFIG += \
     gstreamer-base-0.10 \
     gstreamer-interfaces-0.10 \
     gstreamer-audio-0.10 \
-    gstreamer-video-0.10
+    gstreamer-video-0.10 \
+    gstreamer-plugins-bad-0.10
 
 # Input
 HEADERS += \
