@@ -154,7 +154,7 @@ void completeExample()
 
     // Export the QContacts back to QVersitDocuments
     QVersitContactExporter exporter;
-    if (!exporter.exportContacts(contacts))
+    if (!exporter.exportContacts(contacts, QVersitDocument::VCard30Type))
         return;
     QList<QVersitDocument> outputDocuments = exporter.documents();
 
@@ -193,7 +193,7 @@ void exportExample()
     contactAvatar.setSubType(QContactAvatar::SubTypeTexturedMesh);
     contact.saveDetail(&contactAvatar);
 
-    if (!contactExporter.exportContacts(QList<QContact>() << contact))
+    if (!contactExporter.exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type))
         return;
     QList<QVersitDocument> versitDocuments = contactExporter.documents();
 

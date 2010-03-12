@@ -242,7 +242,7 @@ void ContactListPage::exportClicked()
     file.open(QIODevice::WriteOnly);
     if (file.isWritable()) {
         QVersitContactExporter exporter;
-        if(exporter.exportContacts(contacts)) {
+        if(exporter.exportContacts(contacts, QVersitDocument::VCard30Type)) {
             QList<QVersitDocument> documents = exporter.documents();
             QVersitWriter writer;
             writer.setDevice(&file);

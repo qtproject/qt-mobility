@@ -80,7 +80,7 @@ public:
     ~QVersitContactExporter();
 
     bool exportContacts(const QList<QContact>& contacts,
-        QVersitDocument::VersitType versitType=QVersitDocument::VCard30Type);
+        QVersitDocument::VersitType versitType);
     QList<QVersitDocument> documents() const;
     QMap<int, Error> errors() const;
 
