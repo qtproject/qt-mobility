@@ -41,12 +41,14 @@
 
 #include "qgstreamercamerafocuscontrol_maemo.h"
 #include "qgstreamercapturesession_maemo.h"
+
 #include <gst/interfaces/photography.h>
 
 QGstreamerCameraFocusControl::QGstreamerCameraFocusControl(GstElement &camerabin, QGstreamerCaptureSession *session)
     :QCameraFocusControl(session),
      m_session(session),
-     m_camerabin(camerabin)
+     m_camerabin(camerabin),
+     m_focusStatus(QCamera::FocusInitial)
 {
 }
 
@@ -72,10 +74,13 @@ QCamera::FocusModes QGstreamerCameraFocusControl::supportedFocusModes() const
 
 QCamera::FocusStatus QGstreamerCameraFocusControl::focusStatus() const
 {
+    // TODO: Real focus states can be retrieved via bus (?)
+    return m_focusStatus;
 }
 
 bool QGstreamerCameraFocusControl::macroFocusingEnabled() const
 {
+    return false;
 }
 
 bool QGstreamerCameraFocusControl::isMacroFocusingSupported() const
@@ -85,43 +90,55 @@ bool QGstreamerCameraFocusControl::isMacroFocusingSupported() const
 
 void QGstreamerCameraFocusControl::setMacroFocusingEnabled(bool)
 {
-    // Macro focusing isn't supported
+    // Macro focusing isn't supported. (Auto focus mode is only supported).
 }
 
 qreal QGstreamerCameraFocusControl::maximumOpticalZoom() const
 {
+    return 1.0;
 }
 
 qreal QGstreamerCameraFocusControl::maximumDigitalZoom() const
 {
+    return 1000;
 }
 
 qreal QGstreamerCameraFocusControl::opticalZoom() const
 {
+    return 1.0;
 }
 
 qreal QGstreamerCameraFocusControl::digitalZoom() const
 {
+    gint zoomFactor = 0;
+    g_object_get(GST_BIN(&m_camerabin), "zoom", &zoomFactor, NULL);
+    return zoomFactor;
 }
 
 void QGstreamerCameraFocusControl::zoomTo(qreal optical, qreal digital)
 {
+    Q_UNUSED(optical);
+    g_object_set(GST_BIN(&m_camerabin), "zoom", digital, NULL);
 }
 
 QCamera::FocusPointMode QGstreamerCameraFocusControl::focusPointMode() const
 {
+    return QCamera::FocusPointAuto;
 }
 
 void QGstreamerCameraFocusControl::setFocusPointMode(QCamera::FocusPointMode mode)
 {
+    Q_UNUSED(mode);
 }
 
 QCamera::FocusPointModes QGstreamerCameraFocusControl::supportedFocusPointModes() const
 {
+    return QCamera::FocusPointAuto;
 }
 
 QPointF QGstreamerCameraFocusControl::customFocusPoint() const
 {
+    return QPointF(0.5, 0.5);
 }
 
 void QGstreamerCameraFocusControl::setCustomFocusPoint(const QPointF &point)
@@ -136,9 +153,13 @@ QList<QRectF> QGstreamerCameraFocusControl::focusZones() const
 
 void QGstreamerCameraFocusControl::startFocusing()
 {
+    m_focusStatus = QCamera::FocusRequested;
+    gst_photography_set_autofocus(GST_PHOTOGRAPHY(&m_camerabin), TRUE);
 }
 
 void QGstreamerCameraFocusControl::cancelFocusing()
 {
+    m_focusStatus = QCamera::FocusCanceled;
+    gst_photography_set_autofocus(GST_PHOTOGRAPHY(&m_camerabin), FALSE);
 }
 

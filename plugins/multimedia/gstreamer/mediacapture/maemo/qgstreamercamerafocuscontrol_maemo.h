@@ -91,6 +91,7 @@ public Q_SLOTS:
 private:
     QGstreamerCaptureSession *m_session;
     GstElement &m_camerabin;
+    QCamera::FocusStatus m_focusStatus;
 
 /*Q_SIGNALS:
     void opticalZoomChanged(qreal opticalZoom);

@@ -102,6 +102,7 @@ public:
     QGstreamerVideoEncode *videoEncodeControl() const { return m_videoEncodeControl; }
     QGstreamerImageEncode *imageEncodeControl() const { return m_imageEncodeControl; }
     QGstreamerCameraExposureControl *cameraExposureControl() const  { return m_cameraExposureControl; }
+    QGstreamerCameraFocusControl *cameraFocusControl() const  { return m_cameraFocusControl; }
 
     QGstreamerRecorderControl *recorderControl() const { return m_recorderControl; }
     QGstreamerMediaContainerControl *mediaContainerControl() const { return m_mediaContainerControl; }

@@ -15,7 +15,7 @@ SOURCES = main.cpp \
     settings.cpp \
     stillsettings.cpp
 
-symbian:maemo5: {
+symbian|maemo5: {
     FORMS += cameracapture.ui \
         settings_s60.ui \
         stillsettings_s60.ui
