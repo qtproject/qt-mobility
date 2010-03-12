@@ -40,6 +40,8 @@
 ****************************************************************************/
 
 #include "symbianhelpers_p.h"
+#include "qmessageid.h"
+
 
 QTM_BEGIN_NAMESPACE
 
@@ -47,17 +49,18 @@ namespace SymbianHelpers {
 
 const QString FreestylePrefix = QString("FS_");
 
-bool isFreestyleMessage(QString &msgId) {
-    return msgId.indexOf(FreestylePrefix)==0?true:false;
+bool isFreestyleMessage(QMessageId &msgId) {
+    return msgId.toString().indexOf(FreestylePrefix)==0?true:false;
 }
 
-QString addFreestylePrefix(QString &msgId) {
-    return QString(FreestylePrefix)+msgId;
+QMessageId addFreestylePrefix(QMessageId &msgId) {
+    return QMessageId(FreestylePrefix+msgId.toString());
 }
 
-QString removeFreestylePrefix(QString &msgId) {
+QMessageId removeFreestylePrefix(QMessageId &msgId) {
     if (isFreestyleMessage(msgId))
-        return QString(msgId).remove(0, FreestylePrefix.length());
+        return QMessageId(msgId.toString().remove(0, FreestylePrefix.length()));
+    return QMessageId();
 }
 
 }
