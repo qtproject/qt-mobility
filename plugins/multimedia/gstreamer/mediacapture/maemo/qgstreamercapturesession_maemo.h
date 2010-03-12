@@ -175,6 +175,12 @@ private:
     GstElement *m_pipeline;
     GstElement *m_videoSrc;
     bool m_videoPreviewFactoryHasChanged;
+
+    GstElement *m_audioSrc;
+    GstElement *m_audioConvert;
+    GstElement *m_capsFilter;
+    GstElement *m_fileSink;
+    GstElement *m_audioEncoder;
 public:
     QString m_imageFileName;
 };

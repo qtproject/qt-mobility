@@ -80,18 +80,36 @@ QGstreamerCaptureSession::QGstreamerCaptureSession(QGstreamerCaptureSession::Cap
      m_videoPreviewFactory(0),
      m_pipeline(0),
      m_videoSrc(0),
-     m_videoPreviewFactoryHasChanged(false)
+     m_videoPreviewFactoryHasChanged(false),
+     m_audioSrc(0),
+     m_audioConvert(0),
+     m_capsFilter(0),
+     m_fileSink(0),
+     m_audioEncoder(0)
 {
-    if (m_captureMode == AudioAndVideo)
+    if (m_captureMode == AudioAndVideo) {
         m_pipeline = gst_element_factory_make("camerabin", "camerabin");
-    else if (m_captureMode & Audio) {
+        g_signal_connect(G_OBJECT(m_pipeline), "img-done", G_CALLBACK(imgCaptured), this);
+    } else if (m_captureMode & Audio) {
         m_pipeline = gst_pipeline_new("audio-capture-pipeline");
+        m_audioSrc = gst_element_factory_make("pulsesrc", "pulsesrc");
+        m_audioConvert = gst_element_factory_make("audioconvert", "audioconvert");
+        m_capsFilter = gst_element_factory_make("capsfilter", "capsfilter-audio");
+        m_fileSink = gst_element_factory_make("filesink", "filesink");
+
+        if (!m_audioSrc || !m_audioConvert || !m_fileSink)
+            emit error(int(QMediaRecorder::ResourceError), QString("Element creation failed."));
+
+        gst_bin_add_many(GST_BIN(m_pipeline), m_audioSrc, m_audioConvert, m_fileSink, NULL);
+
+        if (!gst_element_link(m_audioSrc, m_audioConvert))
+            emit error(int(QMediaRecorder::ResourceError), QString("Element linking failed."));
+
     }
 
     gstRef(m_pipeline);
 
     m_bus = gst_element_get_bus(m_pipeline);
-    g_signal_connect(G_OBJECT(m_pipeline), "img-done", G_CALLBACK(imgCaptured), this);
 
     m_busHelper = new QGstreamerBusHelper(m_bus, this);
     m_busHelper->installSyncEventFilter(this);
@@ -140,18 +158,22 @@ void QGstreamerCaptureSession::setupCameraBin()
     gst_element_set_state(m_pipeline, GST_STATE_PLAYING);
 }
 
+#define REMOVE_ELEMENT(element) { if (element) {gst_bin_remove(GST_BIN(m_pipeline), element); element = 0;} }
+
 void QGstreamerCaptureSession::buildAudioEncodeBin()
 {    
-    GstElement *audioSrc = gst_element_factory_make("pulsesrc", "pulsesrc");
-    GstElement *audioConvert = gst_element_factory_make("audioconvert", "audioconvert");
-    GstElement *capsFilter = gst_element_factory_make("capsfilter", "capsfilter-audio");
-    GstElement *audioEncoder = m_audioEncodeControl->createEncoder();
-    GstElement *fileSink = gst_element_factory_make("filesink", "filesink");
-    g_object_set(G_OBJECT(fileSink), "location", m_sink.toString().toLocal8Bit().constData(), NULL);
+    REMOVE_ELEMENT(m_audioEncoder);
 
-    gst_bin_add_many(GST_BIN(m_pipeline), audioSrc, audioConvert, audioEncoder, fileSink, NULL);
-    bool ok = gst_element_link_many(audioSrc, audioConvert, audioEncoder, fileSink, NULL);
-    // TODO: What to do In case of linking fails?
+    m_audioEncoder = m_audioEncodeControl->createEncoder();
+    if (!m_audioEncoder)
+       emit error(int(QMediaRecorder::ResourceError), QString("Element creation failed"));
+
+    gst_bin_add(GST_BIN(m_pipeline), m_audioEncoder);
+
+    if (!gst_element_link_many(m_audioConvert, m_audioEncoder, m_fileSink, NULL))
+        emit error(int(QMediaRecorder::ResourceError), QString("Element linking failed"));
+
+    g_object_set(G_OBJECT(m_fileSink), "location", m_sink.toString().toLocal8Bit().constData(), NULL);
 }
 
 GstElement *QGstreamerCaptureSession::buildVideoSrc()
