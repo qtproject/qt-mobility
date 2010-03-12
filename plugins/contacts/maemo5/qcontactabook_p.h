@@ -217,26 +217,27 @@ private:
   
   /* Reading - eContact/abookContact to QContact methods */
   QContact* convert(EContact *eContact) const;
-
-  QContactId createContactId(EContact *eContact) const;
-  QList<QContactAddress*> createAddressDetail(EContact *eContact) const;
-  QContactName* createNameDetail(EContact *eContact) const;
-  QContactNickname* createNicknameDetail(EContact *eContact) const;
-  QList<QContactEmailAddress*> createEmailDetail(EContact *eContact) const;
-  //QContactAnniversary*  createAnniversaryDetail(EContact *eContact) const; NOT SUPPORTED BY MAEMO5
-  QContactAvatar* createAvatarDetail(EContact *eContact) const;
-  QContactBirthday* createBirthdayDetail(EContact *eContact) const;
-  QContactGender* createGenderDetail(EContact *eContact) const;
-  QContactGuid* createGuidDetail(EContact *eContact) const;
-  QContactNote* createNoteDetail(EContact *eContact) const;
-  QList<QContactOnlineAccount*> createOnlineAccountDetail(EContact *eContact) const;
-  QContactOrganization* createOrganizationDetail(EContact *eContact) const;
-  QList<QContactPhoneNumber*> createPhoneDetail(EContact *eContact) const; 
-  QContactTimestamp* createTimestampDetail(EContact *eContact) const; 
-  QContactUrl* createUrlDetail(EContact *eContact) const;
+  
+  QContactId getContactId(EContact *eContact) const;
+  QList<QContactAddress*> getAddressDetail(EContact *eContact) const;
+  QContactName* getNameDetail(EContact *eContact) const;
+  QContactNickname* getNicknameDetail(EContact *eContact) const;
+  QList<QContactEmailAddress*> getEmailDetail(EContact *eContact) const;
+  QContactAvatar* getAvatarDetail(EContact *eContact) const;
+  QContactBirthday* getBirthdayDetail(EContact *eContact) const;
+  QContactGender* getGenderDetail(EContact *eContact) const;
+  QContactGuid* getGuidDetail(EContact *eContact) const;
+  QContactNote* getNoteDetail(EContact *eContact) const;
+  QList<QContactOnlineAccount*> getOnlineAccountDetail(EContact *eContact) const;
+  QContactOrganization* getOrganizationDetail(EContact *eContact) const;
+  QList<QContactPhoneNumber*> getPhoneDetail(EContact *eContact) const; 
+  QContactTimestamp* getTimestampDetail(EContact *eContact) const; 
+  QContactUrl* getUrlDetail(EContact *eContact) const;
   
   /* Saving - QContact to abookContact */
   OssoABookContact* convert(const QContact *contact) const;
+  
+  /* Save QDetails in OssoABookContact attributes */
   void setAddressDetail(const OssoABookContact* aContact, const QContactAddress& detail) const;
   void setAvatarDetail(const OssoABookContact* aContact, const QContactAvatar& detail) const;
   void setBirthdayDetail(const OssoABookContact* aContact, const QContactBirthday& detail) const;

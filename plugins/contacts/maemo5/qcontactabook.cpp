@@ -547,59 +547,59 @@ QContact* QContactABook::convert(EContact *eContact) const
   QList<QContactDetail*> detailList;
   
   /* Id */
-  contact->setId(createContactId(eContact));
+  contact->setId(getContactId(eContact));
   
   /* Address */
-  QList<QContactAddress*> addressList = createAddressDetail(eContact);
+  QList<QContactAddress*> addressList = getAddressDetail(eContact);
   QContactAddress* address;
   foreach(address, addressList)
     detailList << address;
   
   /* Avatar */
-  detailList << createAvatarDetail(eContact);
+  detailList << getAvatarDetail(eContact);
 
   /* BirthDay */
-  detailList << createBirthdayDetail(eContact);
+  detailList << getBirthdayDetail(eContact);
   
   /* Email */
-  QList<QContactEmailAddress*> emailList = createEmailDetail(eContact);
+  QList<QContactEmailAddress*> emailList = getEmailDetail(eContact);
   QContactEmailAddress* email;
   foreach(email, emailList)
     detailList << email;
   
   /* Gender */
-  detailList << createGenderDetail(eContact);
+  detailList << getGenderDetail(eContact);
  
   /* Global UID*/
-  detailList << createGuidDetail(eContact);
+  detailList << getGuidDetail(eContact);
   
   /* Name & NickName*/
-  detailList << createNameDetail(eContact);
-  detailList << createNicknameDetail(eContact);
+  detailList << getNameDetail(eContact);
+  detailList << getNicknameDetail(eContact);
 
   /* Note */
-  detailList << createNoteDetail(eContact);
+  detailList << getNoteDetail(eContact);
   
   /* Online Account */
-  QList<QContactOnlineAccount*> onlineAccountList = createOnlineAccountDetail(eContact);
+  QList<QContactOnlineAccount*> onlineAccountList = getOnlineAccountDetail(eContact);
   QContactOnlineAccount* onlineAccount;
   foreach(onlineAccount, onlineAccountList)
     detailList << onlineAccount;
   
   /* Organization */
-  detailList << createOrganizationDetail(eContact);
+  detailList << getOrganizationDetail(eContact);
   
   /* Phone*/
-  QList<QContactPhoneNumber*> phoneNumberList = createPhoneDetail(eContact);
+  QList<QContactPhoneNumber*> phoneNumberList = getPhoneDetail(eContact);
   QContactPhoneNumber* phoneNumber;
   foreach(phoneNumber, phoneNumberList)
     detailList << phoneNumber;
   
   /* TimeStamp */
-  detailList << createTimestampDetail(eContact);
+  detailList << getTimestampDetail(eContact);
 
   /* Url */
-  detailList << createUrlDetail(eContact);
+  detailList << getUrlDetail(eContact);
   
   bool ok;
   QContactDetail* detail;
@@ -669,7 +669,7 @@ OssoABookContact* QContactABook::getAContact(const QContactLocalId& contactId) c
   return rtn;
 }
 
-QContactId QContactABook::createContactId(EContact *eContact) const
+QContactId QContactABook::getContactId(EContact *eContact) const
 {
   QContactId rtn;
 
@@ -685,7 +685,7 @@ QContactId QContactABook::createContactId(EContact *eContact) const
   return rtn;
 }
 
-QList<QContactAddress*> QContactABook::createAddressDetail(EContact *eContact) const
+QList<QContactAddress*> QContactABook::getAddressDetail(EContact *eContact) const
 {
   QList<QContactAddress*> rtnList;
 
@@ -751,7 +751,7 @@ QList<QContactAddress*> QContactABook::createAddressDetail(EContact *eContact) c
   return rtnList;
 }
 
-QContactName* QContactABook::createNameDetail(EContact *eContact) const
+QContactName* QContactABook::getNameDetail(EContact *eContact) const
 {
   QContactName* rtn = new QContactName;
   QVariantMap map;
@@ -775,7 +775,7 @@ QContactName* QContactABook::createNameDetail(EContact *eContact) const
   return rtn;
 }
 
-QContactNickname* QContactABook::createNicknameDetail(EContact *eContact) const
+QContactNickname* QContactABook::getNicknameDetail(EContact *eContact) const
 {
   QContactNickname* rtn = new QContactNickname;
   QVariantMap map;
@@ -784,7 +784,7 @@ QContactNickname* QContactABook::createNicknameDetail(EContact *eContact) const
   return rtn;
 }
 
-QList<QContactEmailAddress*> QContactABook::createEmailDetail(EContact *eContact) const
+QList<QContactEmailAddress*> QContactABook::getEmailDetail(EContact *eContact) const
 {
   QList<QContactEmailAddress*> rtnList;
   
@@ -831,7 +831,7 @@ QList<QContactEmailAddress*> QContactABook::createEmailDetail(EContact *eContact
   return rtnList;
 }
 
-QContactAvatar* QContactABook::createAvatarDetail(EContact *eContact) const
+QContactAvatar* QContactABook::getAvatarDetail(EContact *eContact) const
 {  
   QContactAvatar* rtn = new QContactAvatar;
   QVariantMap map;
@@ -859,7 +859,7 @@ QContactAvatar* QContactABook::createAvatarDetail(EContact *eContact) const
   return rtn;
 }
 
-QContactBirthday* QContactABook::createBirthdayDetail(EContact *eContact) const
+QContactBirthday* QContactABook::getBirthdayDetail(EContact *eContact) const
 {
   QContactBirthday* rtn = new QContactBirthday;
   QVariantMap map;
@@ -873,7 +873,7 @@ QContactBirthday* QContactABook::createBirthdayDetail(EContact *eContact) const
   return rtn;
 }
 
-QContactGender* QContactABook::createGenderDetail(EContact *eContact) const
+QContactGender* QContactABook::getGenderDetail(EContact *eContact) const
 {
   QContactGender* rtn = new QContactGender;
   QVariantMap map;
@@ -893,7 +893,7 @@ QContactGender* QContactABook::createGenderDetail(EContact *eContact) const
 }  
 
 //NOTE Using UID as GUID
-QContactGuid* QContactABook::createGuidDetail(EContact *eContact) const
+QContactGuid* QContactABook::getGuidDetail(EContact *eContact) const
 {
   QContactGuid* rtn = new QContactGuid;
   QVariantMap map;
@@ -904,7 +904,7 @@ QContactGuid* QContactABook::createGuidDetail(EContact *eContact) const
   return rtn;
 }
 
-QContactNote* QContactABook::createNoteDetail(EContact *eContact) const
+QContactNote* QContactABook::getNoteDetail(EContact *eContact) const
 {
   QContactNote* rtn = new QContactNote;
   QVariantMap map;
@@ -916,7 +916,7 @@ QContactNote* QContactABook::createNoteDetail(EContact *eContact) const
 }
 
 //FIXME Review required. 
-QList<QContactOnlineAccount*> QContactABook::createOnlineAccountDetail(EContact *eContact) const
+QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eContact) const
 {
   QList<QContactOnlineAccount*> rtnList;
   
@@ -1051,7 +1051,7 @@ QList<QContactOnlineAccount*> QContactABook::createOnlineAccountDetail(EContact 
   return rtnList;
 }
 
-QContactOrganization* QContactABook::createOrganizationDetail(EContact *eContact) const
+QContactOrganization* QContactABook::getOrganizationDetail(EContact *eContact) const
 {
   QContactOrganization* rtn = new QContactOrganization;
   QVariantMap map;
@@ -1062,7 +1062,7 @@ QContactOrganization* QContactABook::createOrganizationDetail(EContact *eContact
   return rtn;
 }
 
-QList<QContactPhoneNumber*> QContactABook::createPhoneDetail(EContact *eContact) const
+QList<QContactPhoneNumber*> QContactABook::getPhoneDetail(EContact *eContact) const
 {
   QList<QContactPhoneNumber*> rtnList;
   
@@ -1109,7 +1109,7 @@ QList<QContactPhoneNumber*> QContactABook::createPhoneDetail(EContact *eContact)
   return rtnList;
 }
 
-QContactTimestamp* QContactABook::createTimestampDetail(EContact *eContact) const
+QContactTimestamp* QContactABook::getTimestampDetail(EContact *eContact) const
 {
    QContactTimestamp* rtn = new QContactTimestamp;
    QVariantMap map;
@@ -1120,7 +1120,7 @@ QContactTimestamp* QContactABook::createTimestampDetail(EContact *eContact) cons
    return rtn;
 }
 
-QContactUrl* QContactABook::createUrlDetail(EContact *eContact) const
+QContactUrl* QContactABook::getUrlDetail(EContact *eContact) const
 {
    QContactUrl* rtn = new QContactUrl;
    QVariantMap map;
@@ -1246,7 +1246,7 @@ OssoABookContact* QContactABook::convert(const QContact *contact) const
   if (id){
     rtn = getAContact(id);
     /*
-    QContactTimestamp* ts = createTimestampDetail(E_CONTACT(rtn));
+    QContactTimestamp* ts = getTimestampDetail(E_CONTACT(rtn));
     if (*ts != contact->detail<QContactTimestamp>())
       return NULL;
     */
