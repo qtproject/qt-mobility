@@ -250,7 +250,7 @@ QMediaControl *QGstreamerCaptureService::control(const char *name) const
         return m_captureSession->cameraExposureControl();
 
     if (qstrcmp(name, QCameraFocusControl_iid) == 0)
-        return m_captureSession->cameraExposureControl();
+        return m_captureSession->cameraFocusControl();
 
     return 0;
 }
