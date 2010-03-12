@@ -70,7 +70,7 @@ QRectF QGeoLocation::boundingBox() const
 /*!
     Returns the geocoordinate of this location.
 */
-QGeoCoordinateMaps QGeoLocation::position() const
+QGeoCoordinate QGeoLocation::position() const
 {
     return pos;
 }

@@ -129,7 +129,7 @@ HEADERS += qaddress.h \
            qbasexmlhandler.h \
            qgeocodingreply.h \
            qgeocodingrequest.h \
-           qgeocodingxmlhandler.h \
+           qgeocodingxmlparser.h \
            qgeocoordinatemaps.h \
            qgeoengine.h \
            qgeolocation.h \
@@ -153,7 +153,8 @@ HEADERS += qaddress.h \
            qroute.h \
            qroutereply.h \
            qrouterequest.h \
-           qroutexmlhandler.h
+           qroutexmlhandler.h \
+           qroutexmlparser.h
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
@@ -197,7 +198,7 @@ SOURCES += qaddress.cpp \
             qbasexmlhandler.cpp \
            qgeocodingreply.cpp \
            qgeocodingrequest.cpp \
-           qgeocodingxmlhandler.cpp \
+            qgeocodingxmlparser.cpp \
            qgeocoordinatemaps.cpp \
            qgeoengine.cpp \
            qgeolocation.cpp \
@@ -214,6 +215,7 @@ SOURCES += qaddress.cpp \
            qroutereply.cpp \
            qrouterequest.cpp \
            qroutexmlhandler.cpp \
+            qroutexmlparser.cpp
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

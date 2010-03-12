@@ -53,7 +53,7 @@
 #include "qroutereply.h"
 #include "qroutexmlhandler.h"
 #include "qgeocodingreply.h"
-#include "qgeocodingxmlhandler.h"
+#include "qgeocodingxmlparser.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -532,6 +532,7 @@ bool QGeoNetworkManager::parseRouteReply(QNetworkReply* netReply, QRouteReply* r
 */
 bool QGeoNetworkManager::parseCodingReply(QNetworkReply* netReply, QGeocodingReply* codingReply)
 {
+    /*
     QGeocodingXmlHandler handler(codingReply);
     QXmlInputSource xmlSrc(netReply);
     QXmlSimpleReader xmlReader;
@@ -539,6 +540,9 @@ bool QGeoNetworkManager::parseCodingReply(QNetworkReply* netReply, QGeocodingRep
     xmlReader.setErrorHandler(&handler);
 
     return xmlReader.parse(xmlSrc);
+    */
+    QGeocodingXmlParser parser;
+    return parser.parse(netReply, codingReply);
 }
 
 /*!
