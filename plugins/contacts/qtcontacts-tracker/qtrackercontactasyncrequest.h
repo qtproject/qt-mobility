@@ -94,7 +94,6 @@ namespace IMContact {
         ContactNickname,
         AccountType,
         Capabilities,
-        MetaContact,
         ServiceProvider
     };
 };
@@ -145,16 +144,13 @@ private:
     void processQueryIMContacts(SopranoLive::LiveNodes queryIMContacts);
     void validateRequest();
     void readFromQueryRowToContact(QContact &contact, int queryRow);
-    QContact &linkContactsWithSameMetaContact(QContact &first, QContact &second);
-    void addContactToResultSet(QContact &contact, const QString &metacontact);
+    void addContactToResultSet(QContact &contact);
     QContactOnlineAccount getOnlineAccountFromIMQuery(SopranoLive::LiveNodes imAccountQuery, int queryRow);
     QContactOnlineAccount getIMAccountFromIMQuery(SopranoLive::LiveNodes imAccountQuery, int queryRow) ;
     QContactOnlineAccount getIMContactFromIMQuery(SopranoLive::LiveNodes imAccountQuery, int queryRow);
 
     // access existing contacts in result list, contactid to index in \sa result lookup
     QHash<quint32, int> id2ContactLookup;
-    // metacontact to index in \sa result lookup - index of metacontact contact: only 1 contact returned when multiple have the same metacontact
-    QHash<QString, int> metacontactLookup;
 };
 
 #endif /* QTRACKERCONTACTASYNCREQUEST_H_ */

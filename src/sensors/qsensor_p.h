@@ -59,20 +59,30 @@ QTM_BEGIN_NAMESPACE
 
 typedef QList<QSensorFilter*> QFilterList;
 
+struct measurementdetails
+{
+    qreal measurementMinimum;
+    qreal measurementMaximum;
+    qreal measurementAccuracy;
+};
+
 class QSensorPrivate
 {
 public:
     QSensorPrivate()
-        : supportedUpdatePolicies(QSensor::Undefined)
-        , updatePolicy(QSensor::Undefined)
-        , updateInterval(0)
+        : identifier()
+        , type()
+        , outputRange(-1)
+        , updateInterval(-1)
         , backend(0)
         , signalEnabled(true)
         , active(false)
+        , busy(false)
         , device_reading(0)
         , filter_reading(0)
         , cache_reading(0)
-        , complete(true)
+        , error(0)
+        , supportsPolling(false)
     {
     }
 
@@ -80,20 +90,26 @@ public:
     QByteArray identifier;
     QByteArray type;
 
+    QString description;
+
+    QList<measurementdetails> measurementDetails;
+    int outputRange;
+
     // policy
-    QSensor::UpdatePolicies supportedUpdatePolicies;
-    QSensor::UpdatePolicy updatePolicy;
+    qrangelist availableDataRates;
     int updateInterval;
 
     QSensorBackend *backend;
     QFilterList filters;
     bool signalEnabled;
     bool active;
+    bool busy;
     QSensorReading *device_reading;
     QSensorReading *filter_reading;
     QSensorReading *cache_reading;
 
-    bool complete;
+    int error;
+    bool supportsPolling;
 };
 
 class QSensorReadingPrivate

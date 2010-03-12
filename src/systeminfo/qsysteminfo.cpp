@@ -478,7 +478,6 @@ QSystemNetworkInfo::~QSystemNetworkInfo()
 */
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfo::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
-    qWarning() << __FUNCTION__;
     return netInfoPrivate()->networkStatus(mode);
 }
 
@@ -582,6 +581,14 @@ QString QSystemNetworkInfo::macAddress(QSystemNetworkInfo::NetworkMode mode)
 QNetworkInterface QSystemNetworkInfo::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
 {
     return netInfoPrivate()->interfaceForMode(mode);
+}
+/*!
+  Returns the current active mode. If more than one mode is active, returns the
+  default or preferred mode. If no modes are active, returns UnknownMode.
+  */
+QSystemNetworkInfo::NetworkMode QSystemNetworkInfo::currentMode()
+{
+    return netInfoPrivate()->currentMode();
 }
 
 // display

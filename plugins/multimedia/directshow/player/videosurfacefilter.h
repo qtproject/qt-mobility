@@ -42,6 +42,7 @@
 #ifndef VIDEOSURFACEFILTER_H
 #define VIDEOSURFACEFILTER_H
 
+#include "directshowglobal.h"
 #include "directshowmediatypelist.h"
 #include "directshowsamplescheduler.h"
 #include "directshowmediatype.h"

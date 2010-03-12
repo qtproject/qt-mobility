@@ -50,18 +50,20 @@ Rectangle {
         id: orientation
 
         onReadingChanged: {
-            if (reading.orientation == OrientationReading.LeftUp)
-                content.state = "Portrait";
-            else if (reading.orientation == OrientationReading.BottomDown)
-                content.state = "";
+            if (reading.orientation == OrientationReading.TopUp)
+                content.state = "TopUp";
+            else if (reading.orientation == OrientationReading.TopDown)
+                content.state = "TopDown";
+            else if (reading.orientation == OrientationReading.LeftUp)
+                content.state = "LeftUp";
             else if (reading.orientation == OrientationReading.RightUp)
-                content.state = "ReversePortrait";
-            else if (reading.orientation == OrientationReading.BottomUp)
-                content.state = "ReverseLandscape";
+                content.state = "RightUp";
             else if (reading.orientation == OrientationReading.FaceUp)
                 content.state = "FaceUp";
             else if (reading.orientation == OrientationReading.FaceDown)
                 content.state = "FaceDown";
+            else
+                content.state = "";
         }
     }
     Component.onCompleted: orientation.start()
@@ -72,7 +74,7 @@ Rectangle {
         anchors.centerIn: parent
         Text {
             id: text
-            text: "hello world"
+            text: "Orientation: Unknown"
             color: "white"
             font.pointSize: 24
             anchors.centerIn: parent
@@ -80,24 +82,43 @@ Rectangle {
 
         states: [
             State {
-                name: "Portrait"
-                PropertyChanges { target: content; rotation: -90 }
+                name: "TopUp"
+                changes: [
+                    PropertyChanges { target: text; text: "Orientation: TopUp" }
+                ]
             },
             State {
-                name: "ReversePortrait"
-                PropertyChanges { target: content; rotation: 90 }
+                name: "TopDown"
+                changes: [
+                    PropertyChanges { target: content; rotation: 180 },
+                    PropertyChanges { target: text; text: "Orientation: TopDown" }
+                ]
             },
             State {
-                name: "ReverseLandscape"
-                PropertyChanges { target: content; rotation: 180 }
+                name: "LeftUp"
+                changes: [
+                    PropertyChanges { target: content; rotation: -90 },
+                    PropertyChanges { target: text; text: "Orientation: LeftUp" }
+                ]
+            },
+            State {
+                name: "RightUp"
+                changes: [
+                    PropertyChanges { target: content; rotation: 90 },
+                    PropertyChanges { target: text; text: "Orientation: RightUp" }
+                ]
             },
             State {
                 name: "FaceUp"
-                PropertyChanges { target: text; text: "hello roof" }
+                changes: [
+                    PropertyChanges { target: text; text: "Orientation: FaceUp" }
+                ]
             },
             State {
                 name: "FaceDown"
-                PropertyChanges { target: text; text: "hello ground" }
+                changes: [
+                    PropertyChanges { target: text; text: "Orientation: FaceDown" }
+                ]
             }
         ]
 

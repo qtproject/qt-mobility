@@ -65,20 +65,16 @@ public:
 };
 
 DirectShowEventLoop::DirectShowEventLoop(QObject *parent)
-    : QWinEventNotifier(parent)
+    : QObject(parent)
     , m_postsHead(0)
     , m_postsTail(0)
     , m_eventHandle(::CreateEvent(0, 0, 0, 0))
     , m_waitHandle(::CreateEvent(0, 0, 0, 0))
 {
-    setHandle(m_eventHandle);
-    setEnabled(true);
 }
 
 DirectShowEventLoop::~DirectShowEventLoop()
 {
-    setEnabled(false);
-
     ::CloseHandle(m_eventHandle);
     ::CloseHandle(m_waitHandle);
 
@@ -120,17 +116,16 @@ void DirectShowEventLoop::postEvent(QObject *receiver, QEvent *event)
 
     m_postsTail = post;
 
+    QCoreApplication::postEvent(this, new QEvent(QEvent::User));
     ::SetEvent(m_eventHandle);
 }
 
-bool DirectShowEventLoop::event(QEvent *event)
+void DirectShowEventLoop::customEvent(QEvent *event)
 {
-    if (event->type() == QEvent::WinEventAct) {
+    if (event->type() == QEvent::User) {
         processEvents();
-
-        return true;
     } else {
-        return QWinEventNotifier::event(event);
+        QObject::customEvent(event);
     }
 }
 
@@ -138,17 +133,18 @@ void DirectShowEventLoop::processEvents()
 {
     QMutexLocker locker(&m_mutex);
 
-    while(m_postsHead) {
-        ::ResetEvent(m_eventHandle);
+    ::ResetEvent(m_eventHandle);
 
+    while(m_postsHead) {
         DirectShowPostedEvent *post = m_postsHead;
         m_postsHead = m_postsHead->next;
+
+        if (!m_postsHead)
+            m_postsTail = 0;
 
         locker.unlock();
         QCoreApplication::sendEvent(post->receiver, post->event);
         delete post;
         locker.relock();
     }
-
-    m_postsTail = 0;
 }

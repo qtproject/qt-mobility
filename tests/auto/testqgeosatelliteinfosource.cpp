@@ -150,29 +150,29 @@ void TestQGeoSatelliteInfoSource::test_slot1()
 
 void TestQGeoSatelliteInfoSource::test_slot2()
 {
-	m_testSlot2Called = true;
+    m_testSlot2Called = true;
 }
 
 void TestQGeoSatelliteInfoSource::constructor_withParent()
 {
-    QLocationTestUtils::uheap_mark();
+    //QLocationTestUtils::uheap_mark();
     QObject *parent = new QObject();
     new MySatelliteSource(parent);
     delete parent;
-    QLocationTestUtils::uheap_mark_end();
+    //QLocationTestUtils::uheap_mark_end();
 }
 
 void TestQGeoSatelliteInfoSource::constructor_noParent()
 {
-    QLocationTestUtils::uheap_mark();
+    //QLocationTestUtils::uheap_mark();
     MySatelliteSource *obj = new MySatelliteSource();
     delete obj;
-    QLocationTestUtils::uheap_mark_end();
+    //QLocationTestUtils::uheap_mark_end();
 }
 
 void TestQGeoSatelliteInfoSource::createDefaultSource()
 {
-    QLocationTestUtils::uheap_mark();
+    //QLocationTestUtils::uheap_mark();
     QObject *parent = new QObject;
 
     QGeoSatelliteInfoSource *source = QGeoSatelliteInfoSource::createDefaultSource(parent);
@@ -180,27 +180,31 @@ void TestQGeoSatelliteInfoSource::createDefaultSource()
     QVERIFY(source != 0);
 #elif defined(Q_OS_WINCE)
     QVERIFY(source != 0);
-#else
+#elif defined(Q_WS_MAEMO_5)
+    QVERIFY(source != 0);
+#else    
     QVERIFY(source == 0);
 #endif
     delete parent;
-    QLocationTestUtils::uheap_mark_end();
+    //QLocationTestUtils::uheap_mark_end();
 }
 
 void TestQGeoSatelliteInfoSource::createDefaultSource_noParent()
 {
-    QLocationTestUtils::uheap_mark();
+    //QLocationTestUtils::uheap_mark();
 
     QGeoSatelliteInfoSource *source = QGeoSatelliteInfoSource::createDefaultSource(0);
 #if defined(Q_OS_SYMBIAN)
     QVERIFY(source != 0);
 #elif defined(Q_OS_WINCE)
     QVERIFY(source != 0);
+#elif defined(Q_WS_MAEMO_5)
+    QVERIFY(source != 0);
 #else
     QVERIFY(source == 0);
 #endif
     delete source;
-    QLocationTestUtils::uheap_mark_end();
+    //QLocationTestUtils::uheap_mark_end();
 }
 
 void TestQGeoSatelliteInfoSource::startUpdates()
@@ -479,16 +483,16 @@ void TestQGeoSatelliteInfoSource::removeSlotForRequestTimeout()
 
 void TestQGeoSatelliteInfoSource::removeSlotForSatellitesInUseUpdated()
 {
-	CHECK_SOURCE_VALID;
-	
-	bool i = connect(m_source, SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)), this, SLOT(test_slot1()));
-	QVERIFY(i == true);
-	i = connect(m_source, SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)), this, SLOT(test_slot2()));
-	QVERIFY(i == true);
-	i = disconnect(m_source, SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)), this, SLOT(test_slot1()));
-	QVERIFY(i == true);
-	
-	m_source->requestUpdate(7000);
+    CHECK_SOURCE_VALID;
+
+    bool i = connect(m_source, SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)), this, SLOT(test_slot1()));
+    QVERIFY(i == true);
+    i = connect(m_source, SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)), this, SLOT(test_slot2()));
+    QVERIFY(i == true);
+    i = disconnect(m_source, SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)), this, SLOT(test_slot1()));
+    QVERIFY(i == true);
+
+    m_source->requestUpdate(7000);
 
     EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
 
@@ -497,16 +501,16 @@ void TestQGeoSatelliteInfoSource::removeSlotForSatellitesInUseUpdated()
 
 void TestQGeoSatelliteInfoSource::removeSlotForSatellitesInViewUpdated()
 {
-	CHECK_SOURCE_VALID;
-	
-	bool i = connect(m_source, SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)), this, SLOT(test_slot1()));
-	QVERIFY(i == true);
-	i = connect(m_source, SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)), this, SLOT(test_slot2()));
-	QVERIFY(i == true);
-	i = disconnect(m_source, SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)), this, SLOT(test_slot1()));
-	QVERIFY(i == true);
-	
-	m_source->requestUpdate(7000);
+    CHECK_SOURCE_VALID;
+
+    bool i = connect(m_source, SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)), this, SLOT(test_slot1()));
+    QVERIFY(i == true);
+    i = connect(m_source, SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)), this, SLOT(test_slot2()));
+    QVERIFY(i == true);
+    i = disconnect(m_source, SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)), this, SLOT(test_slot1()));
+    QVERIFY(i == true);
+
+    m_source->requestUpdate(7000);
 
     EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
 

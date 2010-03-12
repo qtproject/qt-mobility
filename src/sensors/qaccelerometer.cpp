@@ -147,27 +147,7 @@ void QAccelerometerReading::setZ(qreal z)
     d->z = z;
 }
 
-/*!
-    \reimp
-
-    Reimplemented to bypass the meta-object system for better performance.
-*/
-QVariant QAccelerometerReading::value(int index) const
-{
-    switch (index) {
-    case 0:
-        return x();
-    case 1:
-        return y();
-    case 2:
-        return z();
-    }
-    return QVariant();
-}
-
 // =====================================================================
-
-// begin generated code
 
 /*!
     \class QAccelerometerFilter
@@ -225,7 +205,6 @@ const char *QAccelerometer::type("QAccelerometer");
 
     \sa QSensor::reading()
 */
-// end generated code
 
 #include "moc_qaccelerometer.cpp"
 QTM_END_NAMESPACE

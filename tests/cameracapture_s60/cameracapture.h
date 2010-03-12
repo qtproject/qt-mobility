@@ -84,6 +84,9 @@ private slots:
     void takeImage();
 
     void settings();
+#ifdef Q_OS_SYMBIAN
+    void stillSettings();
+#endif
 
     void displayErrorMessage();
 
@@ -122,11 +125,17 @@ private slots:
     void setWBSunlight();
     void setWBCloudy();
     void setWBTungsten();
+    
+    void setSharpnessHard();
+    void setSharpnessNormal();
+    void setSharpnessSoft();
+
 
 private:
     Ui::CameraCapture *ui;
 
-    QDir outputDir;
+    QDir outputDirVideo;
+    QDir outputDirImage;
     QCamera *camera;
     QStillImageCapture *imageCapture;
     QMediaRecorder* mediaRecorder;

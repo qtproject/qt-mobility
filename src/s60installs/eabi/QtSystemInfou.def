@@ -107,16 +107,17 @@ EXPORTS
 	_ZNK10QtMobility18QSystemNetworkInfo10metaObjectEv @ 106 NONAME
 	_ZNK10QtMobility18QSystemScreenSaver10metaObjectEv @ 107 NONAME
 	_ZNK10QtMobility18QSystemStorageInfo10metaObjectEv @ 108 NONAME
-	_ZTIN10QtMobility11QSystemInfoE @ 109 NONAME ; #<TI>#
-	_ZTIN10QtMobility17QSystemDeviceInfoE @ 110 NONAME ; #<TI>#
-	_ZTIN10QtMobility18QSystemDisplayInfoE @ 111 NONAME ; #<TI>#
-	_ZTIN10QtMobility18QSystemNetworkInfoE @ 112 NONAME ; #<TI>#
-	_ZTIN10QtMobility18QSystemScreenSaverE @ 113 NONAME ; #<TI>#
-	_ZTIN10QtMobility18QSystemStorageInfoE @ 114 NONAME ; #<TI>#
-	_ZTVN10QtMobility11QSystemInfoE @ 115 NONAME ; #<VT>#
-	_ZTVN10QtMobility17QSystemDeviceInfoE @ 116 NONAME ; #<VT>#
-	_ZTVN10QtMobility18QSystemDisplayInfoE @ 117 NONAME ; #<VT>#
-	_ZTVN10QtMobility18QSystemNetworkInfoE @ 118 NONAME ; #<VT>#
-	_ZTVN10QtMobility18QSystemScreenSaverE @ 119 NONAME ; #<VT>#
-	_ZTVN10QtMobility18QSystemStorageInfoE @ 120 NONAME ; #<VT>#
+	_ZTIN10QtMobility11QSystemInfoE @ 109 NONAME
+	_ZTIN10QtMobility17QSystemDeviceInfoE @ 110 NONAME
+	_ZTIN10QtMobility18QSystemDisplayInfoE @ 111 NONAME
+	_ZTIN10QtMobility18QSystemNetworkInfoE @ 112 NONAME
+	_ZTIN10QtMobility18QSystemScreenSaverE @ 113 NONAME
+	_ZTIN10QtMobility18QSystemStorageInfoE @ 114 NONAME
+	_ZTVN10QtMobility11QSystemInfoE @ 115 NONAME
+	_ZTVN10QtMobility17QSystemDeviceInfoE @ 116 NONAME
+	_ZTVN10QtMobility18QSystemDisplayInfoE @ 117 NONAME
+	_ZTVN10QtMobility18QSystemNetworkInfoE @ 118 NONAME
+	_ZTVN10QtMobility18QSystemScreenSaverE @ 119 NONAME
+	_ZTVN10QtMobility18QSystemStorageInfoE @ 120 NONAME
+	_ZN10QtMobility18QSystemNetworkInfo11currentModeEv @ 121 NONAME
 

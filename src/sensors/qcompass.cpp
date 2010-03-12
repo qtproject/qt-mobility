@@ -63,15 +63,10 @@ IMPLEMENT_READING(QCompassReading)
     Digital compasses are susceptible to magnetic interference and may need
     calibration after being placed near anything that emits a magnetic force.
     Accuracy of the compass can be affected by any ferrous materials that are nearby.
-*/
 
-/*!
-    \enum QCompassReading::CalibrationLevel
-
-    \value Undefined The calibration level is not defined or is too low.
-    \value Low       The reported azimuth may be off by up to 15.4 degrees.
-    \value Middle    The reported azimuth may be off by up to 11.8 degrees.
-    \value High      The reported azimuth may be off by up to 7.4 degrees.
+    The calibration status of the device is measured as a number from 0 to 1.
+    A value of 1 is the highest level that the device can support and 0 is
+    the worst.
 */
 
 /*!
@@ -100,26 +95,24 @@ void QCompassReading::setAzimuth(qreal azimuth)
     \property QCompassReading::calibrationLevel
     \brief the calibration level of the reading.
 
-    The higher the calibration, the more accurate the measurement is.
+    Measured as a value from 0 to 1 with higher values being better.
     \sa {QCompassReading Units}
 */
 
-QCompassReading::CalibrationLevel QCompassReading::calibrationLevel() const
+qreal QCompassReading::calibrationLevel() const
 {
-    return static_cast<QCompassReading::CalibrationLevel>(d->calibrationLevel);
+    return d->calibrationLevel;
 }
 
 /*!
     Sets the calibration level of the reading to \a calibrationLevel.
 */
-void QCompassReading::setCalibrationLevel(QCompassReading::CalibrationLevel calibrationLevel)
+void QCompassReading::setCalibrationLevel(qreal calibrationLevel)
 {
     d->calibrationLevel = calibrationLevel;
 }
 
 // =====================================================================
-
-// begin generated code
 
 /*!
     \class QCompassFilter
@@ -177,7 +170,6 @@ const char *QCompass::type("QCompass");
 
     \sa QSensor::reading()
 */
-// end generated code
 
 #include "moc_qcompass.cpp"
 QTM_END_NAMESPACE

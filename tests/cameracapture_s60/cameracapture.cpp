@@ -42,6 +42,9 @@
 #include "cameracapture.h"
 #include "ui_cameracapture.h"
 #include "settings.h"
+#ifdef Q_OS_SYMBIAN
+#include "stillsettings.h"
+#endif
 
 #include <qmediaservice.h>
 #include <qmediarecorder.h>
@@ -63,9 +66,13 @@ CameraCapture::CameraCapture(QWidget *parent) :
 {
     ui->setupUi(this);
     #if defined(Q_OS_SYMBIAN)
-    outputDir = QDir::rootPath(); // this defaults to C:\Data in symbian
+    outputDirVideo = QDir::rootPath(); // this defaults to C:\Data\Videos in symbian
+    outputDirVideo.cd("Videos");
+    outputDirImage = QDir::rootPath(); // this defaults to C:\Data\Images in symbian
+    outputDirImage.cd("Images");
     #else
-    outputDir = QDir::currentPath();
+    outputDirVideo = QDir::currentPath();
+    outputDirImage = QDir::currentPath();
     #endif
 
     //camera devices
@@ -85,9 +92,6 @@ CameraCapture::CameraCapture(QWidget *parent) :
         }
         ui->actionCamera->menu()->addAction(videoDeviceAction);
     }
-    
-    m_autoFocus = true;
-    m_takeImage = false;
 
     connect(videoDevicesGroup, SIGNAL(triggered(QAction*)), this, SLOT(updateCameraDevice(QAction*)));
     connect(ui->actionFlash_On_2, SIGNAL(triggered()), this, SLOT(setFlashOn()));
@@ -109,6 +113,10 @@ CameraCapture::CameraCapture(QWidget *parent) :
     connect(ui->actionCloudy, SIGNAL(triggered()), this, SLOT(setWBCloudy())); 
     connect(ui->actionTungsten, SIGNAL(triggered()), this, SLOT(setWBTungsten()));
     
+    connect(ui->actionHard, SIGNAL(triggered()), this, SLOT(setSharpnessHard()));
+    connect(ui->actionNormal, SIGNAL(triggered()), this, SLOT(setSharpnessNormal()));
+    connect(ui->actionSoft, SIGNAL(triggered()), this, SLOT(setSharpnessSoft()));
+    
     ui->actionAudio->setMenu(new QMenu(this));
 
     setCamera(cameraDevice);
@@ -119,9 +127,6 @@ CameraCapture::CameraCapture(QWidget *parent) :
 
 CameraCapture::~CameraCapture()
 {
-    delete mediaRecorder;
-    delete videoWidget;
-    delete camera;
 }
 
 void CameraCapture::setFlashOn()
@@ -151,14 +156,12 @@ void CameraCapture::setFlashFillIn()
 
 void CameraCapture::setFocusOn()
 {
-    m_autoFocus = true;
-    m_takeImage = false;
+    camera->setFocusMode(QCamera::AutoFocus);
 }
 
 void CameraCapture::setFocusOff()
 {
-    m_autoFocus = false;
-    m_takeImage = false;
+    camera->setFocusMode(QCamera::ManualFocus);
 }
 
 void CameraCapture::setExposureNight()
@@ -201,30 +204,46 @@ void CameraCapture::setWBTungsten()
     camera->setWhiteBalanceMode(QCamera::WhiteBalanceTungsten);
 }
 
+void CameraCapture::setSharpnessHard()
+{
+    // no qcamera implementation
+}
+
+void CameraCapture::setSharpnessNormal()
+{
+    // no qcamera implementation
+}
+
+void CameraCapture::setSharpnessSoft()
+{
+    // no qcamera implementation
+}
+
 void CameraCapture::setCamera(const QByteArray &cameraDevice)
 {
     delete imageCapture;
     delete mediaRecorder;
     delete videoWidget;
     delete camera;
-    
-    qDebug() << "CameraCapture::setCamera cameraDevice.isEmpty()=" << cameraDevice.isEmpty();
+
+    //qDebug() << "CameraCapture::setCamera cameraDevice.isEmpty()=" << cameraDevice.isEmpty();
     if (cameraDevice.isEmpty())
-        camera = new QCamera;
+        camera = new QCamera(this);
     else       
-        camera = new QCamera(cameraDevice);
+        camera = new QCamera(cameraDevice, this);
 
     connect(camera, SIGNAL(stateChanged(QCamera::State)), this, SLOT(updateCameraState(QCamera::State)));
     connect(camera, SIGNAL(focusStatusChanged(QCamera::FocusStatus)), this, SLOT(focusStatusChanged(QCamera::FocusStatus)));
-    connect(camera, SIGNAL(zoomValueChanged(qreal)), this, SLOT(zoomValueChanged(qreal)));
+    connect(camera, SIGNAL(opticalZoomChanged(qreal)), this, SLOT(zoomValueChanged(qreal)));
+    connect(camera, SIGNAL(digitalZoomChanged(qreal)), this, SLOT(zoomValueChanged(qreal)));
     connect(camera, SIGNAL(error(QCamera::Error)), this, SLOT(error(QCamera::Error)));
 
-    mediaRecorder = new QMediaRecorder(camera);
+    mediaRecorder = new QMediaRecorder(camera, this);
     connect(mediaRecorder, SIGNAL(stateChanged(QMediaRecorder::State)), this, SLOT(updateRecorderState(QMediaRecorder::State)));
 
-    imageCapture = new QStillImageCapture(camera);
+    imageCapture = new QStillImageCapture(camera, this);
 
-    audioSource = new QAudioCaptureSource(camera);
+    audioSource = new QAudioCaptureSource(camera,this);
     connect(audioSource, SIGNAL(availableAudioInputsChanged()), SLOT(updateAudioDevices()));
 
     mediaRecorder->setOutputLocation(QUrl("test.mkv"));
@@ -234,13 +253,17 @@ void CameraCapture::setCamera(const QByteArray &cameraDevice)
 
     camera->setMetaData(QtMedia::Title, QVariant(QLatin1String("Test Title")));
 
-    videoWidget = new QVideoWidget;
+    videoWidget = new QVideoWidget(this);
     videoWidget->setMediaObject(camera);
     ui->stackedWidget->addWidget(videoWidget);
 
     updateCameraState(camera->state());
     updateRecorderState(mediaRecorder->state());
     updateAudioDevices();
+    
+    ui->recordButton->setEnabled(false);
+    ui->pauseButton->setEnabled(false);
+    ui->stopButton->setEnabled(false);
 
     connect(imageCapture, SIGNAL(readyForCaptureChanged(bool)), ui->takeImageButton, SLOT(setEnabled(bool)));
     connect(imageCapture, SIGNAL(imageCaptured(QString,QImage)), this, SLOT(processCapturedImage(QString,QImage)));
@@ -300,15 +323,27 @@ void CameraCapture::settings()
     }
 }
 
+#ifdef Q_OS_SYMBIAN
+void CameraCapture::stillSettings()
+{    
+    StillSettings settingsDialog(imageCapture);    
+    settingsDialog.setImageSettings(imageCapture->encodingSettings());
+    
+    if (settingsDialog.exec() == QDialog::Accepted) {
+        imageCapture->setEncodingSettings(settingsDialog.imageSettings());
+    }
+}
+#endif
+
 void CameraCapture::record()
 {
     int lastImage = 0;
-    foreach( QString fileName, outputDir.entryList(QStringList() << "clip_*.mpg") ) {
+    foreach( QString fileName, outputDirVideo.entryList(QStringList() << "clip_*.mpg") ) {
         int imgNumber = fileName.mid(5, fileName.size()-9).toInt();
         lastImage = qMax(lastImage, imgNumber);
     }
     
-    QUrl location(QDir::toNativeSeparators(outputDir.canonicalPath()+
+    QUrl location(QDir::toNativeSeparators(outputDirVideo.canonicalPath()+
         QString("/clip_%1.mpg").arg(lastImage+1,4,10,QLatin1Char('0'))));
 
     mediaRecorder->setOutputLocation(location);
@@ -329,16 +364,17 @@ void CameraCapture::stop()
 
 void CameraCapture::takeImage()
 {
-    if (m_autoFocus) {
+    if (camera->focusMode() == QCamera::AutoFocus) {
+        qDebug() << "CameraCapture::takeImage: if (camera->focusMode() == QCamera::AutoFocus)"; 
         m_takeImage = true;
         camera->startFocusing();
     } else {
+        qDebug() << "CameraCapture::takeImage: else";
         int lastImage = 0;
-        foreach( QString fileName, outputDir.entryList(QStringList() << "img_*.jpg") ) {
+        foreach( QString fileName, outputDirImage.entryList(QStringList() << "img_*.jpg") ) {
             int imgNumber = fileName.mid(4, fileName.size()-8).toInt();
             lastImage = qMax(lastImage, imgNumber);
-        }
-        
+        }        
         imageCapture->capture(QString("img_%1.jpg").arg(lastImage+1,
                                                         4, //fieldWidth
                                                         10,
@@ -367,6 +403,8 @@ void CameraCapture::updateCameraState(QCamera::State state)
         ui->startCameraButton->setChecked(true);
         //ui->imageCaptureBox->setEnabled(true);
         //ui->videoCaptureBox->setEnabled(true);
+        ui->recordButton->setEnabled(true);
+        
     } else {
         ui->actionCamera->setEnabled(true);
         ui->actionAudio->setEnabled(true);
@@ -374,6 +412,12 @@ void CameraCapture::updateCameraState(QCamera::State state)
 
         ui->startCameraButton->setText(tr("Start Camera"));
         ui->startCameraButton->setChecked(false);
+        ui->takeImageButton->setEnabled(false);
+        
+        ui->recordButton->setEnabled(false);
+        ui->pauseButton->setEnabled(false);
+        ui->stopButton->setEnabled(false);
+        
         //ui->imageCaptureBox->setEnabled(false);
         //ui->videoCaptureBox->setEnabled(false);
     }
@@ -388,10 +432,11 @@ void CameraCapture::updateCameraState(QCamera::State state)
 
 void CameraCapture::updateRecorderState(QMediaRecorder::State state)
 {
+    qDebug() << "CameraCapture::updateRecorderState";
     switch (state) {
     case QMediaRecorder::StoppedState:
         ui->recordButton->setEnabled(true);
-        ui->pauseButton->setEnabled(true);
+        ui->pauseButton->setEnabled(false);
         ui->stopButton->setEnabled(false);
         break;
     case QMediaRecorder::PausedState:
@@ -418,6 +463,10 @@ void CameraCapture::updateCameraDevice(QAction *action)
     qDebug() << "CameraCapture::updateCameraDevice(), action="<<action;
     qDebug() << "CameraCapture::updateCameraDevice(), device="<<action->data().toByteArray();
     setCamera(action->data().toByteArray());
+    if (action->data().toByteArray() == "Secondary camera")
+        setFocusOff();
+    else
+        setFocusOn();
 }
 
 void CameraCapture::updateAudioDevice(QAction *action)
@@ -427,10 +476,10 @@ void CameraCapture::updateAudioDevice(QAction *action)
 
 void CameraCapture::focusStatusChanged(QCamera::FocusStatus status)
 {
-    qDebug() << "CameraCapture focus locked";
+    qDebug() << "CameraCapture::focusStatusChanged: "<<status;
     if (status == QCamera::FocusReached && m_takeImage) {
         int lastImage = 0;
-        foreach( QString fileName, outputDir.entryList(QStringList() << "img_*.jpg") ) {
+        foreach( QString fileName, outputDirImage.entryList(QStringList() << "img_*.jpg") ) {
             int imgNumber = fileName.mid(4, fileName.size()-8).toInt();
             lastImage = qMax(lastImage, imgNumber);
         }
@@ -465,24 +514,4 @@ void CameraCapture::handleMediaKeyEvent(MediaKeysObserver::MediaKeys key)
 void CameraCapture::error(QCamera::Error aError)
 {
     qDebug() << "CameraCapture error: " << aError;
-    QMessageBox msgBox;
-    msgBox.setStandardButtons(QMessageBox::Close);
-
-    if (aError == QCamera::NoError) {
-    msgBox.setText(tr("NoError"));
-    } else if (aError == QCamera::NotReadyToCaptureError) {
-        msgBox.setText(tr("NotReadyToCaptureError"));
-    } else if (aError == QCamera::InvalidRequestError) {
-        msgBox.setText(tr("InvalidRequestError"));
-    } else if (aError == QCamera::ServiceMissingError) {
-        msgBox.setText(tr("ServiceMissingError"));
-    } else if (aError == QCamera::NotSupportedFeatureError) {
-        msgBox.setText(tr("NotSupportedFeatureError"));
-    } else if (aError == QCamera::CameraError) {
-        msgBox.setText(tr("CameraError"));
-    }
-    else {
-        msgBox.setText(tr("Other error"));
-    }  
-    msgBox.exec();
 }

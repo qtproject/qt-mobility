@@ -60,7 +60,7 @@ TInt QMLBackendTriggerChangeAO::refCount = 0;
 void QMLBackendTriggerChangeAO::NotifyChangeEvent()
 {
     if (!IsActive()) {
-        iStatue = KRequestPending;
+        iStatus = KRequestPending;
         iLbt.NotifyTriggerChangeEvent(iTriggerChangeEvent, iStatus);
         SetActive();
     }
@@ -332,7 +332,7 @@ QMLBackendTriggerChangeAO* QMLBackendTriggerChangeAO::NewL(RLbtServer& aLbtServ)
 
 }
 
-QMLBackendTriggerChangeAO::QMLBackendTriggerChangeAO() : iTriggerMonitorInfo(NULL), CActive(EPriorityNormal)
+QMLBackendTriggerChangeAO::QMLBackendTriggerChangeAO() : CActive(EPriorityNormal), iTriggerMonitorInfo(NULL)
 {
     CActiveScheduler::Add(this);        //add current AO, to the Schedular
 }

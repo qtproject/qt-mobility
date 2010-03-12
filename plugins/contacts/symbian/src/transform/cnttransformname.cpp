@@ -212,7 +212,9 @@ void CntTransformName::detailDefinitions(QMap<QString, QContactDetailDefinition>
             // issues for S60 Phonebook editor. If custom label support is
             // needed in 10.1 or later, it needs to be variated away from
             // pre-10.1 platforms.
+#ifndef SYMBIAN_BACKEND_USE_SQLITE        
             fields.remove(QContactName::FieldCustomLabel);
+#endif            
         }
 
         // Context not supported in symbian back-end, remove

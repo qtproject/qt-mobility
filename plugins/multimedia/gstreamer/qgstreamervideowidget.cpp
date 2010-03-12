@@ -112,6 +112,11 @@ QGstreamerVideoWidgetControl::QGstreamerVideoWidgetControl(QObject *parent)
             gst_element_set_state(m_videoSink, GST_STATE_NULL);
 
             g_object_set(G_OBJECT(m_videoSink), "force-aspect-ratio", 1, (const char*)NULL);
+#ifdef Q_WS_MAEMO_5
+            //the overlay xvideo adapter fails to switch winId,
+            //use "SGX Textured Video" adapter instead
+            g_object_set(G_OBJECT(m_videoSink), "device", "1", NULL);
+#endif
         }
     }
 
@@ -120,6 +125,8 @@ QGstreamerVideoWidgetControl::QGstreamerVideoWidgetControl(QObject *parent)
 
     gst_object_ref (GST_OBJECT (m_videoSink)); //Take ownership
     gst_object_sink (GST_OBJECT (m_videoSink));
+
+
 }
 
 QGstreamerVideoWidgetControl::~QGstreamerVideoWidgetControl()

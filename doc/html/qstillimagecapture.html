@@ -66,7 +66,8 @@
 <a name="public-slots"></a>
 <h2>Public Slots</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qstillimagecapture.html#capture">capture</a></b> ( const QString &amp; <i>file</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qstillimagecapture.html#cancelCapture">cancelCapture</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qstillimagecapture.html#capture">capture</a></b> ( const QString &amp; <i>file</i> = QString() )</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
@@ -151,8 +152,11 @@
 <h3 class="fn"><a name="availabilityError"></a><a href="qtmedia.html#AvailabilityError-enum">QtMedia::AvailabilityError</a> QStillImageCapture::availabilityError () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qmediaobject.html#availabilityError">QMediaObject::availabilityError</a>().</p>
 <p>Returns the availability error code.</p>
+<a name="//apple_ref/cpp/instm/QStillImageCapture/cancelCapture"></a>
+<h3 class="fn"><a name="cancelCapture"></a>void QStillImageCapture::cancelCapture ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<p>Cancel pending capture requests.</p>
 <a name="//apple_ref/cpp/instm/QStillImageCapture/capture"></a>
-<h3 class="fn"><a name="capture"></a>void QStillImageCapture::capture ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>file</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<h3 class="fn"><a name="capture"></a>void QStillImageCapture::capture ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>file</i> = QString() )&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Capture the image and save it to <i>file</i>. This operation is asynchronous in majority of cases, followed by signals <a href="qstillimagecapture.html#imageCaptured">QStillImageCapture::imageCaptured</a>(), <a href="qstillimagecapture.html#imageSaved">QStillImageCapture::imageSaved</a>() or <a href="qstillimagecapture.html#error">QStillImageCapture::error</a>()</p>
 <a name="//apple_ref/cpp/instm/QStillImageCapture/encodingSettings"></a>
 <h3 class="fn"><a name="encodingSettings"></a><a href="qimageencodersettings.html">QImageEncoderSettings</a> QStillImageCapture::encodingSettings () const</h3>
