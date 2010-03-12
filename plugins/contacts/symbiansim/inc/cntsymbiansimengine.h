@@ -141,6 +141,7 @@ public:
 public:
     void updateDisplayLabel(QContact& contact) const;
     CntSimStore* simStore() { return d->m_simStore; }
+    void setReadOnlyAccessConstraint(QContactDetail* detail) const;
 
 private:
     bool executeRequest(QContactAbstractRequest *req, QContactManager::Error& qtError) const;

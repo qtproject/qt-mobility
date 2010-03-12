@@ -105,6 +105,7 @@ private:
     RMobilePhone m_etelPhone;
     RMobilePhoneBookStore m_etelStore;
     QString m_storeName;
+    bool m_readOnlyAccess;
     TSimStoreInfo m_storeInfo;
     TSimStoreInfoPckg m_storeInfoPckg;
     RBuf8 m_buffer;
