@@ -216,3 +216,12 @@ QVersitResourceHandler* QVersitContactExporter::resourceHandler() const
 {
     return d->mResourceHandler;
 }
+
+// Deprecated:
+
+/*! \internal */
+QList<QVersitDocument> QVersitContactExporter::exportContacts(const QList<QContact>& contacts)
+{
+    exportContacts(contacts);
+    return documents();
+}
