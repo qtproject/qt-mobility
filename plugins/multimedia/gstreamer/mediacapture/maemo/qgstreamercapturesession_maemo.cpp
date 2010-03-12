@@ -120,7 +120,7 @@ QGstreamerCaptureSession::QGstreamerCaptureSession(QGstreamerCaptureSession::Cap
     m_imageEncodeControl = new QGstreamerImageEncode(this);
     m_recorderControl = new QGstreamerRecorderControl(this);
     m_mediaContainerControl = new QGstreamerMediaContainerControl(this);
-    m_cameraExposureControl = new QGstreamerCameraExposureControl(this);
+    m_cameraExposureControl = new QGstreamerCameraExposureControl(*m_pipeline, this);
     m_cameraFocusControl = new QGstreamerCameraFocusControl(*m_pipeline, this);
 }
 

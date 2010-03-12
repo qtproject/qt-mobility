@@ -45,6 +45,9 @@
 #include <experimental/qcamera.h>
 #include <experimental/qcameraexposurecontrol.h>
 
+#include <gst/gst.h>
+#include <glib.h>
+
 class QGstreamerCaptureSession;
 
 QTM_USE_NAMESPACE
@@ -54,7 +57,7 @@ class Q_MEDIA_EXPORT QGstreamerCameraExposureControl : public QCameraExposureCon
     Q_OBJECT
 
 public:
-    QGstreamerCameraExposureControl(QGstreamerCaptureSession *session);
+    QGstreamerCameraExposureControl(GstElement &camerabin, QGstreamerCaptureSession *session);
     virtual ~QGstreamerCameraExposureControl();
 
     QCamera::FlashModes flashMode() const;
@@ -102,6 +105,7 @@ public Q_SLOTS:
     void unlockExposure();
 
 private:
+    GstElement &m_camerabin;
     QGstreamerCaptureSession *m_session;
     QCamera::FlashModes m_flashMode;
 /*Q_SIGNALS:

@@ -43,8 +43,9 @@
 #include "qgstreamercapturesession_maemo.h"
 
 #include <QDebug>
-QGstreamerCameraExposureControl::QGstreamerCameraExposureControl(QGstreamerCaptureSession *session)
+QGstreamerCameraExposureControl::QGstreamerCameraExposureControl(GstElement &camerabin, QGstreamerCaptureSession *session)
     :QCameraExposureControl(session),
+     m_camerabin(camerabin),
      m_session(session),
      m_flashMode(QCamera::FlashOff)
 {
