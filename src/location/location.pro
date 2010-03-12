@@ -81,7 +81,7 @@ maemo5 {
                qgeosatelliteinfosource_maemo5.cpp \
                qgeoareamonitor_maemo.cpp
     HEADERS += gconfitem.h  \
-               liblocationwrapper.h \
+               liblocationwrapper_p.h \
                qgeopositioninfosource_maemo5_p.h \
                qgeosatelliteinfosource_maemo5_p.h \
                qgeoareamonitor_maemo_p.h
