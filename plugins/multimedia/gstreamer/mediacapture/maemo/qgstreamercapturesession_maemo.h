@@ -62,6 +62,7 @@ class QGstreamerImageEncode;
 class QGstreamerRecorderControl;
 class QGstreamerMediaContainerControl;
 class QGstreamerCameraExposureControl;
+class QGstreamerCameraFocusControl;
 
 class QGstreamerElementFactory
 {
@@ -169,6 +170,7 @@ private:
     QGstreamerRecorderControl *m_recorderControl;
     QGstreamerMediaContainerControl *m_mediaContainerControl;
     QGstreamerCameraExposureControl *m_cameraExposureControl;
+    QGstreamerCameraFocusControl *m_cameraFocusControl;
 
     QGstreamerBusHelper *m_busHelper;
     GstBus* m_bus;

@@ -46,6 +46,7 @@
 #include "qgstreamervideoencode_maemo.h"
 #include "qgstreamerimageencode_maemo.h"
 #include "qgstreamercameraexposurecontrol_maemo.h"
+#include "qgstreamercamerafocuscontrol_maemo.h"
 #include "qgstreamerbushelper.h"
 #include <qmediarecorder.h>
 #include <gst/interfaces/photography.h>
@@ -120,6 +121,7 @@ QGstreamerCaptureSession::QGstreamerCaptureSession(QGstreamerCaptureSession::Cap
     m_recorderControl = new QGstreamerRecorderControl(this);
     m_mediaContainerControl = new QGstreamerMediaContainerControl(this);
     m_cameraExposureControl = new QGstreamerCameraExposureControl(this);
+    m_cameraFocusControl = new QGstreamerCameraFocusControl(*m_pipeline, this);
 }
 
 QGstreamerCaptureSession::~QGstreamerCaptureSession()

@@ -41,91 +41,104 @@
 
 #include "qgstreamercamerafocuscontrol_maemo.h"
 #include "qgstreamercapturesession_maemo.h"
+#include <gst/interfaces/photography.h>
 
-QCGstreamerCameraFocusControl::QCGstreamerCameraFocusControl(QGstreamerCaptureSession *session)
+QGstreamerCameraFocusControl::QGstreamerCameraFocusControl(GstElement &camerabin, QGstreamerCaptureSession *session)
+    :QCameraFocusControl(session),
+     m_session(session),
+     m_camerabin(camerabin)
 {
 }
 
-QCGstreamerCameraFocusControl::~QCGstreamerCameraFocusControl()
+QGstreamerCameraFocusControl::~QGstreamerCameraFocusControl()
 {
 }
 
-QCamera::FocusMode QCGstreamerCameraFocusControl::focusMode()
+QCamera::FocusMode QGstreamerCameraFocusControl::focusMode() const
+{
+    return QCamera::AutoFocus;
+}
+
+void QGstreamerCameraFocusControl::setFocusMode(QCamera::FocusMode mode)
+{
+    if (mode == QCamera::AutoFocus)
+        gst_photography_set_autofocus(GST_PHOTOGRAPHY(&m_camerabin), TRUE);
+}
+
+QCamera::FocusModes QGstreamerCameraFocusControl::supportedFocusModes() const
+{
+    return QCamera::AutoFocus;
+}
+
+QCamera::FocusStatus QGstreamerCameraFocusControl::focusStatus() const
 {
 }
 
-void QCGstreamerCameraFocusControl::setFocusMode(QCamera::FocusMode mode)
-{
-}
-QCamera::FocusModes QCGstreamerCameraFocusControl::supportedFocusModes() const
+bool QGstreamerCameraFocusControl::macroFocusingEnabled() const
 {
 }
 
-QCamera::FocusStatus QCGstreamerCameraFocusControl::focusStatus() const
+bool QGstreamerCameraFocusControl::isMacroFocusingSupported() const
+{
+    return false;
+}
+
+void QGstreamerCameraFocusControl::setMacroFocusingEnabled(bool)
+{
+    return false;
+}
+
+qreal QGstreamerCameraFocusControl::maximumOpticalZoom() const
 {
 }
 
-bool QCGstreamerCameraFocusControl::macroFocusingEnabled() const
+qreal QGstreamerCameraFocusControl::maximumDigitalZoom() const
 {
 }
 
-bool QCGstreamerCameraFocusControl::isMacroFocusingSupported() const
+qreal QGstreamerCameraFocusControl::opticalZoom() const
 {
 }
 
-void QCGstreamerCameraFocusControl::setMacroFocusingEnabled(bool)
+qreal QGstreamerCameraFocusControl::digitalZoom() const
 {
 }
 
-qreal QCGstreamerCameraFocusControl::maximumOpticalZoom() const
+void QGstreamerCameraFocusControl::zoomTo(qreal optical, qreal digital)
 {
 }
 
-qreal QCGstreamerCameraFocusControl::maximumDigitalZoom() const
+QCamera::FocusPointMode QGstreamerCameraFocusControl::focusPointMode() const
 {
 }
 
-qreal QCGstreamerCameraFocusControl::opticalZoom() const
+void QGstreamerCameraFocusControl::setFocusPointMode(QCamera::FocusPointMode mode)
 {
 }
 
-qreal QCGstreamerCameraFocusControl::digitalZoom() const
+QCamera::FocusPointModes QGstreamerCameraFocusControl::supportedFocusPointModes() const
 {
 }
 
-void QCGstreamerCameraFocusControl::zoomTo(qreal optical, qreal digital)
+QPointF QGstreamerCameraFocusControl::customFocusPoint() const
 {
 }
 
-QCamera::FocusPointMode QCGstreamerCameraFocusControl::focusPointMode() const
+void QGstreamerCameraFocusControl::setCustomFocusPoint(const QPointF &point)
+{
+    Q_UNUSED(point);
+}
+
+QList<QRectF> QGstreamerCameraFocusControl::focusZones() const
+{
+    return QList<QRectF> ();
+}
+
+void QGstreamerCameraFocusControl::startFocusing()
 {
 }
 
-void QCGstreamerCameraFocusControl::setFocusPointMode(QCamera::FocusPointMode mode)
-{
-}
-
-QCamera::FocusPointModes QCGstreamerCameraFocusControl::supportedFocusPointModes() const
-{
-}
-
-QPointF QCGstreamerCameraFocusControl::customFocusPoint() const
-{
-}
-
-void QCGstreamerCameraFocusControl::setCustomFocusPoint(const QPointF &point)
-{
-}
-
-QList<QRectF> QCGstreamerCameraFocusControl::focusZones() const
-{
-}
-
-void QCGstreamerCameraFocusControl::startFocusing()
-{
-}
-
-void QCGstreamerCameraFocusControl::cancelFocusing()
+void QGstreamerCameraFocusControl::cancelFocusing()
 {
 }
 

@@ -45,19 +45,22 @@
 #include <experimental/qcamera.h>
 #include <experimental/qcamerafocuscontrol.h>
 
+#include <gst/gst.h>
+#include <glib.h>
+
 class QGstreamerCaptureSession;
 
 QTM_USE_NAMESPACE
 
-class QCGstreamerCameraFocusControl  : public QCameraFocusControl
+class QGstreamerCameraFocusControl  : public QCameraFocusControl
 {
     Q_OBJECT
 
 public:
-    QCGstreamerCameraFocusControl(QGstreamerCaptureSession *session);
-    virtual ~QCGstreamerCameraFocusControl();
+    QGstreamerCameraFocusControl(GstElement &camerabin, QGstreamerCaptureSession *session);
+    virtual ~QGstreamerCameraFocusControl();
 
-    QCamera::FocusMode focusMode();
+    QCamera::FocusMode focusMode() const;
     void setFocusMode(QCamera::FocusMode mode);
     QCamera::FocusModes supportedFocusModes() const;
     QCamera::FocusStatus focusStatus() const;
@@ -84,6 +87,10 @@ public:
 public Q_SLOTS:
     void startFocusing();
     void cancelFocusing();
+
+private:
+    QGstreamerCaptureSession *m_session;
+    GstElement &m_camerabin;
 
 /*Q_SIGNALS:
     void opticalZoomChanged(qreal opticalZoom);
