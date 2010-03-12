@@ -15,14 +15,17 @@ SOURCES = main.cpp \
     settings.cpp \
     stillsettings.cpp
 
-symbian: {
-    TARGET.CAPABILITY = UserEnvironment WriteDeviceData ReadDeviceData MultimediaDD
+symbian:maemo5: {
     FORMS += cameracapture.ui \
         settings_s60.ui \
         stillsettings_s60.ui
-    } else {
+} else {
     FORMS += cameracapture.ui \
         settings.ui
 }
 
-include(mediakeysobserver.pri)
+symbian: {
+    TARGET.CAPABILITY = UserEnvironment WriteDeviceData ReadDeviceData MultimediaDD
+    include(mediakeysobserver.pri)
+}
+

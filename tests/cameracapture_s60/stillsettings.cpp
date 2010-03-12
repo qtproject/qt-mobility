@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "stillsettings.h"
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN) || defined (Q_WS_MAEMO_5)
 #include "ui_stillsettings_s60.h"
 #else
 //#include "ui_stillsettings.h"

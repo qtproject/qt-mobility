@@ -47,7 +47,9 @@
 #include <experimental/qstillimagecapture.h>
 #include <qaudiocapturesource.h>
 
+#ifdef Q_OS_SYMBIAN
 #include "mediakeysobserver.h"
+#endif
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -84,10 +86,9 @@ private slots:
     void takeImage();
 
     void settings();
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO5)
     void stillSettings();
 #endif
-
     void displayErrorMessage();
 
     void updateCameraDevice(QAction*);
@@ -103,7 +104,9 @@ private slots:
     void focusStatusChanged(QCamera::FocusStatus status);
     void zoomValueChanged(qreal value);
     
+#ifdef Q_OS_SYMBIAN
     void handleMediaKeyEvent(MediaKeysObserver::MediaKeys key);
+#endif
     void error(QCamera::Error aError);
     
     
@@ -142,7 +145,9 @@ private:
     QAudioCaptureSource *audioSource;
     QVideoWidget *videoWidget;
     
+#ifdef Q_OS_SYMBIAN
     MediaKeysObserver *mediaKeysObserver;
+#endif
     
     bool m_autoFocus;
     bool m_takeImage;

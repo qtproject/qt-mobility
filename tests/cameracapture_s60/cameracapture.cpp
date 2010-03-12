@@ -42,7 +42,8 @@
 #include "cameracapture.h"
 #include "ui_cameracapture.h"
 #include "settings.h"
-#ifdef Q_OS_SYMBIAN
+
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO5)
 #include "stillsettings.h"
 #endif
 
@@ -120,9 +121,11 @@ CameraCapture::CameraCapture(QWidget *parent) :
     ui->actionAudio->setMenu(new QMenu(this));
 
     setCamera(cameraDevice);
-    
+
+#ifdef Q_OS_SYMBIAN
     mediaKeysObserver = new MediaKeysObserver(this);
     connect(mediaKeysObserver, SIGNAL(mediaKeyPressed(MediaKeysObserver::MediaKeys)), this, SLOT(handleMediaKeyEvent(MediaKeysObserver::MediaKeys)));
+#endif
 }
 
 CameraCapture::~CameraCapture()
@@ -323,7 +326,7 @@ void CameraCapture::settings()
     }
 }
 
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO5)
 void CameraCapture::stillSettings()
 {    
     StillSettings settingsDialog(imageCapture);    
@@ -497,6 +500,7 @@ void CameraCapture::zoomValueChanged(qreal value)
 	qDebug() << "CameraCapture zoom value changed to: " << value;
 }
 
+#ifdef Q_OS_SYMBIAN
 void CameraCapture::handleMediaKeyEvent(MediaKeysObserver::MediaKeys key)
 {
     switch (key) {
@@ -510,6 +514,7 @@ void CameraCapture::handleMediaKeyEvent(MediaKeysObserver::MediaKeys key)
         break;
     }
 }
+#endif
 
 void CameraCapture::error(QCamera::Error aError)
 {
