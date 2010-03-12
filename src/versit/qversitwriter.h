@@ -57,9 +57,6 @@ class Q_VERSIT_EXPORT QVersitWriter : public QObject
 {
     Q_OBJECT
 
-private:
-    void init();
-
 public:
     enum Error {
         NoError = 0,

@@ -60,10 +60,6 @@ class QVersitReaderPrivate;
 class Q_VERSIT_EXPORT QVersitReader : public QObject
 {
     Q_OBJECT
-
-private:
-    void init();
-
 public:
     enum Error {
         NoError = 0,

@@ -80,6 +80,7 @@ signals:
 public:
     QVersitWriterPrivate();
     virtual ~QVersitWriterPrivate();
+    void init(QVersitWriter* writer);
     void write();
 
     // mutexed getters and setters.

@@ -112,35 +112,24 @@ QTM_USE_NAMESPACE
 /*! Constructs a new reader. */
 QVersitReader::QVersitReader() : d(new QVersitReaderPrivate)
 {
-    init();
+    d->init(this);
 }
 
 /*! Constructs a new reader that reads from \a inputDevice. */
 QVersitReader::QVersitReader(QIODevice *inputDevice) : d(new QVersitReaderPrivate)
 {
-    init();
+    d->init(this);
     d->mIoDevice = inputDevice;
 }
 
 /*! Constructs a new reader that reads from \a inputData. */
 QVersitReader::QVersitReader(const QByteArray &inputData) : d(new QVersitReaderPrivate)
 {
-    init();
+    d->init(this);
     d->mInputBytes.reset(new QBuffer);
     d->mInputBytes->setData(inputData);
     d->mInputBytes->open(QIODevice::ReadOnly);
     d->mIoDevice = d->mInputBytes.data();
-}
-
-/*! Common constructor code. */
-void QVersitReader::init()
-{
-    connect(d, SIGNAL(stateChanged(QVersitReader::State)),
-            this, SIGNAL(stateChanged(QVersitReader::State)),Qt::DirectConnection);
-    connect(d, SIGNAL(resultsAvailable(QList<QVersitDocument>&)),
-            this, SIGNAL(resultsAvailable(QList<QVersitDocument>&)), Qt::DirectConnection);
-    connect(d, SIGNAL(resultsAvailable(QList<QVersitDocument>&)),
-            this, SIGNAL(resultsAvailable()), Qt::DirectConnection);
 }
 
 /*!

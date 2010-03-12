@@ -129,6 +129,7 @@ class Q_AUTOTEST_EXPORT QVersitReaderPrivate : public QThread
 public: // Constructors and destructor
     QVersitReaderPrivate();
     ~QVersitReaderPrivate();
+    void init(QVersitReader* reader);
 
 signals:
     void stateChanged(QVersitReader::State state);
