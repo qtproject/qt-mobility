@@ -95,11 +95,15 @@ private:
 
     SCDynamicStoreRef storeSession;
     CFRunLoopSourceRef runloopSource;
+    bool hasWifi;
+
 protected:
-   QMap<QString, QString> userProfiles;
+   QMap<QString, QMap<QString,QString> > userProfiles;
 
     void startNetworkChangeLoop();
     void getUserConfigurations();
+    QString getNetworkNameFromSsid(const QString &ssid);
+    QString getSsidFromNetworkName(const QString &name);
 };
 
 QTM_END_NAMESPACE
