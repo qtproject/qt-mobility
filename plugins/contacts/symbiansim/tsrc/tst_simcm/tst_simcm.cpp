@@ -1020,7 +1020,7 @@ void tst_SimCM::sdnContacts()
     if (cm->error() == QContactManager::NotSupportedError)
         QSKIP("The store not supported by the SIM card", SkipSingle);
     
-    QVERIFY(cm->error() == QContactManager::NotSupportedError);
+    QVERIFY(cm->error() == QContactManager::NoError);
     
     // Verify that contact details have read only flag
     QList<QContact> contacts = cm->contacts();
