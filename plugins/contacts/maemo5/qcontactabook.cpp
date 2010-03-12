@@ -487,7 +487,7 @@ EBookQuery* QContactABook::convert(const QContactFilter& filter) const
 	QCM5_DEBUG << "ActionFilter"; //TODO
 	break;
       case QContactFilter::RelationshipFilter:
-	QCM5_DEBUG << "RelationshipFilter"; //TODO
+	QCM5_DEBUG << "RelationshipFilter"; //Not supported
 	break;
       case QContactFilter::IntersectionFilter:
 	{

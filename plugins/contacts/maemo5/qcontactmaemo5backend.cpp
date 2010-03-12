@@ -122,6 +122,23 @@ QList<QContactLocalId> QContactMaemo5Engine::contactIds(const QContactFilter& fi
   return d->m_abook->contactIds(filter, sortOrders, error);
 }
 
+QList<QContact> QContactMaemo5Engine::contacts(const QContactFilter & filter, const QList<QContactSortOrder> & sortOrders, const QStringList & definitionRestrictions, 
+			  QContactManager::Error & error ) const
+{
+  Q_CHECK_PTR(d->m_abook);
+  QList<QContact> rtn;
+  
+  QList<QContactLocalId> ids = contactIds(filter, sortOrders,error);
+  foreach (QContactLocalId id, ids)
+    rtn << contact(id, QStringList(), error);
+  return rtn;
+}
+
+QList<QContact> QContactMaemo5Engine::contacts( const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error ) const
+{
+  return contacts(QContactFilter(), sortOrders, definitionRestrictions, error);
+}
+
 QContact QContactMaemo5Engine::contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const
 {
   Q_UNUSED(definitionRestrictions); //TODO
