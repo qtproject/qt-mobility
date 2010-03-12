@@ -92,6 +92,7 @@ private:
     QGstreamerCaptureSession *m_session;
     GstElement &m_camerabin;
     QCamera::FocusStatus m_focusStatus;
+    QCamera::FocusMode m_focusMode;
 
 /*Q_SIGNALS:
     void opticalZoomChanged(qreal opticalZoom);

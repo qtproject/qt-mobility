@@ -44,11 +44,14 @@
 
 #include <gst/interfaces/photography.h>
 
+#include <QDebug>
+
 QGstreamerCameraFocusControl::QGstreamerCameraFocusControl(GstElement &camerabin, QGstreamerCaptureSession *session)
     :QCameraFocusControl(session),
      m_session(session),
      m_camerabin(camerabin),
-     m_focusStatus(QCamera::FocusInitial)
+     m_focusStatus(QCamera::FocusInitial),
+     m_focusMode(QCamera::ManualFocus)
 {
 }
 
@@ -58,18 +61,27 @@ QGstreamerCameraFocusControl::~QGstreamerCameraFocusControl()
 
 QCamera::FocusMode QGstreamerCameraFocusControl::focusMode() const
 {
-    return QCamera::AutoFocus;
+    qDebug() << "Current focusMode: " << m_focusMode;
+    return m_focusMode;
 }
 
 void QGstreamerCameraFocusControl::setFocusMode(QCamera::FocusMode mode)
 {
-    if (mode == QCamera::AutoFocus)
-        gst_photography_set_autofocus(GST_PHOTOGRAPHY(&m_camerabin), TRUE);
+    if (supportedFocusModes() & mode) {
+        m_focusMode = mode;
+        if (mode == QCamera::AutoFocus)
+            gst_photography_set_autofocus(GST_PHOTOGRAPHY(&m_camerabin), TRUE);
+        else
+            gst_photography_set_autofocus(GST_PHOTOGRAPHY(&m_camerabin), FALSE);
+    }
 }
 
 QCamera::FocusModes QGstreamerCameraFocusControl::supportedFocusModes() const
 {
-    return QCamera::AutoFocus;
+    QCamera::FocusModes focusModes;
+    focusModes |= QCamera::AutoFocus;
+    focusModes |= QCamera::ManualFocus;
+    return focusModes;
 }
 
 QCamera::FocusStatus QGstreamerCameraFocusControl::focusStatus() const
