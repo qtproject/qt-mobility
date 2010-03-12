@@ -61,6 +61,7 @@ public:
     bool isEmpty() const;
     bool operator==(const QContactActionDescriptor& other) const;
     bool operator!=(const QContactActionDescriptor& other) const;
+    bool operator<(const QContactActionDescriptor& other) const;
 
     void setActionName(const QString& actionName);
     void setVendorName(const QString& vendorName);
@@ -73,6 +74,8 @@ public:
 private:
     QSharedDataPointer<QContactActionDescriptorPrivate> d;
 };
+
+Q_CONTACTS_EXPORT uint qHash(const QContactActionDescriptor& key);
 
 QTM_END_NAMESPACE
 

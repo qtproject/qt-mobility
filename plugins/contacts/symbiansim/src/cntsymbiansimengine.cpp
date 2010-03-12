@@ -53,6 +53,8 @@
 #include <QTimer>
 #include <QDebug>
 
+const int KRequestTimeout = 30000; // in ms
+
 CntSymbianSimEngineData::CntSymbianSimEngineData()
     :m_simStore(0)
 {
@@ -547,6 +549,8 @@ void CntSymbianSimEngine::updateDisplayLabel(QContact& contact) const
  */
 bool CntSymbianSimEngine::executeRequest(QContactAbstractRequest *req, QContactManager::Error& qtError) const
 {
+    qtError = QContactManager::NoError;
+    
     // TODO:
     // Remove this code when threads-branch is merged to master. Then this code
     // should not be needed because the default implementation at QContactManager
@@ -557,11 +561,17 @@ bool CntSymbianSimEngine::executeRequest(QContactAbstractRequest *req, QContactM
     CntSymbianSimEngine engine(*this);
     
     // Mimic the way how async requests are normally run
-    if (engine.startRequest(req))
-        engine.waitForRequestFinished(req, 0); // should we have a timeout?
+    if (!engine.startRequest(req)) {
+        qtError = QContactManager::LockedError;
+    } else {
+        if (!engine.waitForRequestFinished(req, KRequestTimeout))
+            qtError = QContactManager::UnspecifiedError; // timeout occurred
+    }
     engine.requestDestroyed(req);
     
-    qtError = req->error();
+    if (req->error())
+        qtError = req->error();
+    
     return (qtError == QContactManager::NoError);
 }
 

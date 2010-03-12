@@ -432,7 +432,6 @@ void tst_SimCMAsync::removeContactReq()
     QVERIFY(resultSpy.count() == 0);
     
     // Remove same ones again
-#ifndef SYMBIANSIM_BACKEND_PHONEBOOKINFOV1
     stateSpy.clear();
     resultSpy.clear();
     QVERIFY(req.start());
@@ -448,10 +447,6 @@ void tst_SimCMAsync::removeContactReq()
         QVERIFY(req.errorMap().value(0) == QContactManager::DoesNotExistError);
         QVERIFY(req.errorMap().value(1) == QContactManager::DoesNotExistError);
     }
-#else
-    QFAIL("Removing nonexistent contacts will cause a reboot in S60 3.1 device!");
-    // The first remove works fine but the second will not. Observed with Nokia E66.
-#endif
 }
 
 void tst_SimCMAsync::detailDefinitionFetchReq()

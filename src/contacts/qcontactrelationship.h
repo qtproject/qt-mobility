@@ -96,6 +96,11 @@ private:
     QSharedDataPointer<QContactRelationshipPrivate> d;
 };
 
+Q_CONTACTS_EXPORT uint qHash(const QContactRelationship& key);
+#ifndef QT_NO_DEBUG_STREAM
+Q_CONTACTS_EXPORT QDebug operator<<(QDebug dbg, const QContactRelationship& rel);
+#endif
+
 QTM_END_NAMESPACE
 
 #endif

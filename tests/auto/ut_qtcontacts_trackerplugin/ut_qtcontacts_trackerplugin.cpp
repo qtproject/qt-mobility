@@ -91,7 +91,7 @@ void ut_qtcontacts_trackerplugin::testContacts()
 void ut_qtcontacts_trackerplugin::testContact()
 {
     // Test invalid contact id
-    QContact invalidContact = trackerEngine->contact_impl( -1, error);
+    QContact invalidContact = trackerEngine->contact_impl( -1, QStringList(), error);
     QVERIFY(error != QContactManager::NoError);
 
     // Add a contact
@@ -103,7 +103,7 @@ void ut_qtcontacts_trackerplugin::testContact()
     QVERIFY( id != oldid );
 
     // Find the added contact
-    QContact c = trackerEngine->contact_impl( id, error );
+    QContact c = trackerEngine->contact_impl( id, QStringList(), error );
     QVERIFY( c.localId() == newContact.localId() );
 }
 
@@ -141,7 +141,7 @@ void ut_qtcontacts_trackerplugin::testSaveName()
     trackerEngine->saveContact(&c, error);
     QCOMPARE(error,  QContactManager::NoError);
     QVERIFY(c.localId() != initialId);
-    QContact contact = trackerEngine->contact_impl(c.localId(), error);
+    QContact contact = this->contact(c.localId());
     QList<QContactName> details = contact.details<QContactName>();
     QList<QContactNickname> details2 = contact.details<QContactNickname>();
     QCOMPARE(details.count(), detailsAdded);
@@ -176,7 +176,7 @@ void ut_qtcontacts_trackerplugin::testSaveName()
         QCOMPARE(error,  QContactManager::NoError);
         QVERIFY(c.localId() != initialId);
 
-        QContact contact = trackerEngine->contact_impl(c.localId(), error);
+        QContact contact = trackerEngine->contact_impl(c.localId(), QStringList(), error);
         QCOMPARE(error,  QContactManager::NoError);
         QList<QContactName> details = contact.details<QContactName>();
         QList<QContactNickname> details2 = contact.details<QContactNickname>();
@@ -262,7 +262,7 @@ void ut_qtcontacts_trackerplugin::testSavePhoneNumber()
 
 
     // verify with synchronous read too
-    QContact contact = trackerEngine->contact_impl(c.localId(), error);
+    QContact contact = trackerEngine->contact_impl(c.localId(), QStringList(), error);
     QCOMPARE(error,  QContactManager::NoError);
     QList<QContactPhoneNumber> details = contact.details<QContactPhoneNumber>();
 
@@ -477,7 +477,7 @@ void ut_qtcontacts_trackerplugin::testSaveAddress()
     trackerEngine->saveContact(&c, error);
     QCOMPARE(error,  QContactManager::NoError);
     QVERIFY(c.localId() != initialId);
-    QContact contact = trackerEngine->contact_impl(c.localId(), error);
+    QContact contact = trackerEngine->contact_impl(c.localId(), QStringList(), error);
     QList<QContactAddress> details = contact.details<QContactAddress>();
     QCOMPARE(details.count(), detailsAdded);
     bool found = false;
@@ -521,7 +521,7 @@ void ut_qtcontacts_trackerplugin::testSaveEmailAddress()
     trackerEngine->saveContact(&c, error);
     QCOMPARE(error,  QContactManager::NoError);
     QVERIFY(c.localId() != initialId);
-    QContact contact = trackerEngine->contact_impl(c.localId(), error);
+    QContact contact = trackerEngine->contact_impl(c.localId(), QStringList(), error);
     QList<QContactEmailAddress> details = contact.details<QContactEmailAddress>();
     QCOMPARE(details.count(), detailsAdded);
     foreach (QContactEmailAddress detail, details) {
@@ -548,7 +548,7 @@ void ut_qtcontacts_trackerplugin::testRemoveContact()
     QVERIFY2(trackerEngine->saveContact(&c, error) && error == QContactManager::NoError, "Saving a contact failed");
     QVERIFY2(trackerEngine->removeContact(c.localId(), error), "Removing a contact failed");
     QCOMPARE(error, QContactManager::NoError);
-    QVERIFY2(trackerEngine->contact_impl(c.localId(), error) == QContact(), "Found a contact, which should have been removed");
+    QVERIFY2(trackerEngine->contact_impl(c.localId(), QStringList(), error) == QContact(), "Found a contact, which should have been removed");
 }
 
 void ut_qtcontacts_trackerplugin::testSaveContacts()
@@ -568,7 +568,7 @@ void ut_qtcontacts_trackerplugin::testSaveContacts()
     QCOMPARE(error, QContactManager::NoError);
     for (int i = 0; i < contacts.count(); i++) {
         QVERIFY(contacts[i].localId() != 0);
-        QList<QContactName> details = trackerEngine->contact_impl(contacts[i].localId(), error).details<QContactName>();
+        QList<QContactName> details = trackerEngine->contact_impl(contacts[i].localId(), QStringList(), error).details<QContactName>();
         QVERIFY(details.count());
         QCOMPARE(details.at(0).lastName(),
                  QString("%1").arg(QString::number(i,10)));
@@ -624,7 +624,7 @@ void ut_qtcontacts_trackerplugin::testAvatar()
     contactWithAvatar.saveDetail(&name);
     QVERIFY(trackerEngine->saveContact( &contactWithAvatar, error));
 
-    QContact c = trackerEngine->contact_impl( contactWithAvatar.localId(), error);
+    QContact c = trackerEngine->contact_impl( contactWithAvatar.localId(), QStringList(), error);
     QList<QContactAvatar> avatars = c.details<QContactAvatar>();
     QVERIFY( avatars.size() );
     QCOMPARE( avatars[0].avatar(), avatar.avatar() );
@@ -673,23 +673,17 @@ void ut_qtcontacts_trackerplugin::testUrl()
     QContactLocalId id1 = contactWithUrl1.localId();
     QContactLocalId id2 = contactWithUrl2.localId();
     QContactLocalId id3 = contactWithUrl3.localId();
-    QCOMPARE(trackerEngine->contact_impl(id1, error).detail<QContactUrl>().url(), QString("http://home.homepage"));
-    QCOMPARE(trackerEngine->contact_impl(id2, error).detail<QContactUrl>().url(), QString("http://work.homepage"));
-    QCOMPARE(trackerEngine->contact_impl(id3, error).detail<QContactUrl>().url(), QString("http://home.favourite"));
+    QCOMPARE(contact(id1).detail<QContactUrl>().url(), QString("http://home.homepage"));
+    QCOMPARE(contact(id2).detail<QContactUrl>().url(), QString("http://work.homepage"));
+    QCOMPARE(contact(id3).detail<QContactUrl>().url(), QString("http://home.favourite"));
 
-    QVERIFY(trackerEngine->contact_impl(id1, error).detail<QContactUrl>().contexts()[0] ==
-            QContactDetail::ContextHome );
-    QVERIFY(trackerEngine->contact_impl(id2, error).detail<QContactUrl>().contexts()[0] ==
-            QContactDetail::ContextWork );
-    QVERIFY(trackerEngine->contact_impl(id3, error).detail<QContactUrl>().contexts()[0] ==
-            QContactDetail::ContextHome );
+    QVERIFY(contact(id1).detail<QContactUrl>().contexts()[0] == QContactDetail::ContextHome );
+    QVERIFY(contact(id2).detail<QContactUrl>().contexts()[0] == QContactDetail::ContextWork );
+    QVERIFY(contact(id3).detail<QContactUrl>().contexts()[0] == QContactDetail::ContextHome );
 
-    QVERIFY(trackerEngine->contact_impl(id1, error).detail<QContactUrl>().subType() ==
-            QContactUrl::SubTypeHomePage );
-    QVERIFY(trackerEngine->contact_impl(id2, error).detail<QContactUrl>().subType() ==
-            QContactUrl::SubTypeHomePage );
-    QVERIFY(trackerEngine->contact_impl(id3, error).detail<QContactUrl>().subType() ==
-            QContactUrl::SubTypeFavourite );
+    QVERIFY(contact(id1).detail<QContactUrl>().subType() == QContactUrl::SubTypeHomePage );
+    QVERIFY(contact(id2).detail<QContactUrl>().subType() == QContactUrl::SubTypeHomePage );
+    QVERIFY(contact(id3).detail<QContactUrl>().subType() == QContactUrl::SubTypeFavourite );
 
 }
 
@@ -928,7 +922,7 @@ void ut_qtcontacts_trackerplugin::testContactsModifiedSince()
 
    // Modify and save rest of the contacts
     for (int i = 0; i < contactsToModify; i++) {
-        QContact c = trackerEngine->contact_impl(addedIds[i], error);
+        QContact c = contact(addedIds[i]);
         QContactName name = c.detail<QContactName>();
         // Modify name
         name.setFirstName("B"+QString::number(i));
@@ -1486,6 +1480,38 @@ void ut_qtcontacts_trackerplugin::updateIMContactStatus(const QString& uri, QStr
     inserter.waitForFinished();
 }
 
+void ut_qtcontacts_trackerplugin::testMergeTwoOnlineContacts()
+{
+    QList<QContact> contacts;
+    for( int i = 0; i < 3; i++ )
+    {
+        unsigned int contactid = 555+i;
+        insertContact(QString("contact:") + QString::number(contactid),
+            contactid, QString::number(contactid)+ "@ovi.com", "nco:presence-status-available", QString("/org/freedesktop/fake/account/%1").arg(contactid),"ovi.com");
+        QContact c = contact(contactid, QStringList()<<QContactOnlineAccount::DefinitionName);
+        contacts << c;
+    }
+    QContactRelationship rel;
+    rel.setFirst(contacts.at(0).id());
+    rel.setSecond(contacts.at(1).id());
+    QContactRelationship rel2;
+    rel2.setFirst(contacts.at(0).id());
+    rel2.setSecond(contacts.at(2).id());
+    
+    QContactRelationshipSaveRequest req;
+    //TODO adding rel2 to the following causes segfault
+    req.setRelationships(QList<QContactRelationship>()<<rel);
+    QVERIFY(trackerEngine->startRequest(&req));
+    trackerEngine->waitForRequestFinished(&req, 1000);
+    QVERIFY(req.isFinished());
+    QVERIFY(QContactManager::NoError == req.error());
+    
+    QList<QContactOnlineAccount> onlineAccounts = contacts.at(0).details<QContactOnlineAccount>();
+    qDebug() << onlineAccounts.size();
+    QEXPECT_FAIL("", "Do net yet support merging multiple im contacts", Continue);
+    QVERIFY(onlineAccounts.size() == 2);
+}
+
 void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
 {
     if( !QFileInfo(PATH_TO_SPARQL_TESTS).exists() )
@@ -1740,12 +1766,23 @@ void ut_qtcontacts_trackerplugin::testContactsWithoutMeContact() {
 
 }
 
+void ut_qtcontacts_trackerplugin::testDefinitionNames()
+{
+    QContactManager *cm(ContactManager::instance());
+    QMap<QString, QContactDetailDefinition> defs(cm->detailDefinitions());
+
+    foreach(QString key, defs.keys()) {
+        QCOMPARE(defs[key].name(), key);
+    }
+}
+
+
 /***************************     Helper functions for unit tests   ***************'*/
 
 QContact ut_qtcontacts_trackerplugin::contact(QContactLocalId id, QStringList details)
 {
-    QList<QContact> conts = contacts(QList<QContactLocalId>()<<id, details);
-    return conts.size()?conts[0]:QContact();
+    QContactManager::Error error;
+    return trackerEngine->contact_impl(id, details, error);
 }
 
 QList<QContact> ut_qtcontacts_trackerplugin::contacts(QList<QContactLocalId> ids, QStringList details)

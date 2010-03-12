@@ -55,14 +55,7 @@ public:
 
 public Q_SLOTS:    
     // from CntAbstractSimRequest
-    bool start();
-    bool cancel();
-    
-private Q_SLOTS:
-    void readDetailDefinitions();
-    
-private:
-    QContactDetailDefinitionFetchRequest* m_req;      
+    void run();    
 };
 
 #endif // CNTSIMDETAILDEFINITIONFETCHREQUEST_H_

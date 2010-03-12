@@ -101,6 +101,7 @@ private slots:
 //    void testGroupsModifiedSince();
 //    void testGroupsRemovedSince();
     void testNcoTypes();
+    void testMergeTwoOnlineContacts();
     void testQRelationshipAndMergingContacts();
     void testAsyncReadContacts();
     void testFilterContacts();
@@ -110,6 +111,7 @@ private slots:
     void testIMContactsAndMetacontactMasterPresence();
     void testIMContactsFilterring();
     void testContactsWithoutMeContact();
+    void testDefinitionNames();
 
 private:
     void syncContactsAddedSinceHelper(QDateTime& start, QList<QContactLocalId>& addedIds);

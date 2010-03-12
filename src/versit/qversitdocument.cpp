@@ -45,7 +45,7 @@
 
 #include <QTextCodec>
 
-QTM_USE_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 /*!
   \class QVersitDocument
@@ -112,6 +112,27 @@ bool QVersitDocument::operator!=(const QVersitDocument& other) const
 {
     return !(*this == other);
 }
+
+/*! Returns the hash value for \a key. */
+uint qHash(const QVersitDocument &key)
+{
+    int hash = QT_PREPEND_NAMESPACE(qHash)(key.type());
+    foreach (const QVersitProperty& property, key.properties()) {
+        hash += qHash(property);
+    }
+    return hash;
+}
+
+#ifndef QT_NO_DEBUG_STREAM
+QDebug operator<<(QDebug dbg, const QVersitDocument& document)
+{
+    dbg.nospace() << "QVersitDocument(" << document.type() << ')';
+    foreach (const QVersitProperty& property, document.properties()) {
+        dbg.space() << '\n' << property;
+    }
+    return dbg.maybeSpace();
+}
+#endif
 
 /*!
  * Sets the versit document type to \a type.
@@ -184,3 +205,5 @@ bool QVersitDocument::isEmpty() const
 {
     return d->mProperties.count() == 0 && d->mVersitType == QVersitDocument::InvalidType;
 }
+
+QTM_END_NAMESPACE

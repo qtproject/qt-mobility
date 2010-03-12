@@ -47,6 +47,8 @@
 #include <QList>
 #include <QPair>
 #include <QString>
+#include <QHash>
+#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
@@ -160,6 +162,24 @@ bool QContactRelationship::operator==(const QContactRelationship &other) const
         return false;
     return true;
 }
+
+/*!
+ * Returns the hash value for \a key.
+ */
+uint qHash(const QContactRelationship &key)
+{
+    return qHash(key.first()) + qHash(key.second())
+        + QT_PREPEND_NAMESPACE(qHash)(key.relationshipType());
+}
+
+#ifndef QT_NO_DEBUG_STREAM
+QDebug operator<<(QDebug dbg, const QContactRelationship& rel)
+{
+    dbg.nospace() << "QContactRelationship(" << rel.first() << ' ' << rel.relationshipType()
+            << ' ' << rel.second() << ')';
+    return dbg.maybeSpace();
+}
+#endif
 
 /*!
  * \fn QContactRelationship::operator!=(const QContactRelationship& other) const

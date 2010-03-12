@@ -15,6 +15,8 @@ MOBILITY = contacts
 include(version.pri)
 include(../../../common.pri)
 
+DEFINES += VERSION_INFO=\\\"$${VERSION_INT}\\\"
+
 INCLUDEPATH += $$SOURCE_DIR/src/contacts
 INCLUDEPATH += $$SOURCE_DIR/src/contacts/details
 INCLUDEPATH += $$SOURCE_DIR/src/contacts/filters
