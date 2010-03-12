@@ -48,7 +48,7 @@
 #include <QSharedPointer>
 #include <QtTracker/QLive>
 #include <QtTracker/Tracker>
-#include <QContactManagerEngine>
+#include <qcontactmanagerengine.h>
 
 QTM_USE_NAMESPACE
 
