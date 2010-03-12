@@ -1430,7 +1430,12 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoLinuxCommonPrivate::inputMe
         QHalInterface iface2;
         if (iface2.isValid()) {
             QStringList capList;
-            capList << "input.keyboard" << "input.keys" << "input.keypad" << "input.mouse" << "input.tablet";
+            capList << QLatin1String("input.keyboard") 
+                    << QLatin1String("input.keys")
+                    << QLatin1String("input.keypad") 
+                    << QLatin1String("input.mouse") 
+                    << QLatin1String("input.tablet")
+                    << QLatin1String("input.touchpad");
             for(int i = 0; i < capList.count(); i++) {
                 QStringList list = iface2.findDeviceByCapability(capList.at(i));
                 if(!list.isEmpty()) {
@@ -1450,7 +1455,10 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoLinuxCommonPrivate::inputMe
                     case 4:
                         methods = (methods | QSystemDeviceInfo::SingleTouch);
                         break;
-                    };
+                    case 5:
+                        methods = (methods | QSystemDeviceInfo::SingleTouch);
+                        break;
+                    }
                 }
             }
             if(methods != 0)
