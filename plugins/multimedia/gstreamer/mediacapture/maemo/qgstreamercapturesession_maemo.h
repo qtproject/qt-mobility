@@ -62,6 +62,7 @@ class QGstreamerImageEncode;
 class QGstreamerRecorderControl;
 class QGstreamerMediaContainerControl;
 class QGstreamerCameraExposureControl;
+class QGstreamerCameraFocusControl;
 
 class QGstreamerElementFactory
 {
@@ -147,6 +148,7 @@ private:
 
     void setupCameraBin();
     GstElement *buildVideoSrc();
+    void buildAudioEncodeBin();
 
     QUrl m_sink;
     QString m_captureDevice;
@@ -168,12 +170,19 @@ private:
     QGstreamerRecorderControl *m_recorderControl;
     QGstreamerMediaContainerControl *m_mediaContainerControl;
     QGstreamerCameraExposureControl *m_cameraExposureControl;
+    QGstreamerCameraFocusControl *m_cameraFocusControl;
 
     QGstreamerBusHelper *m_busHelper;
     GstBus* m_bus;
-    GstElement *m_camerabin;
+    GstElement *m_pipeline;
     GstElement *m_videoSrc;
     bool m_videoPreviewFactoryHasChanged;
+
+    GstElement *m_audioSrc;
+    GstElement *m_audioConvert;
+    GstElement *m_capsFilter;
+    GstElement *m_fileSink;
+    GstElement *m_audioEncoder;
 public:
     QString m_imageFileName;
 };

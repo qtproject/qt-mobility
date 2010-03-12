@@ -51,6 +51,7 @@ QGstreamerAudioEncode::QGstreamerAudioEncode(QObject *parent)
     codecCandidates << "audio/mpeg";
 
     m_elementNames["audio/mpeg"] = "nokiaaacenc";
+    m_elementNames["audio/PCM"] = "wavenc";
 
     m_codecOptions["audio/mpeg"] = QStringList() << "mode";
 
