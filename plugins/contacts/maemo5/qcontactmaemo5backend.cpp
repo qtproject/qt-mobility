@@ -184,12 +184,16 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     QMap<QString, QMap<QString, QContactDetailDefinition> > defns = QContactManagerEngine::schemaDefinitions();
     QMap<QString, QContactDetailFieldDefinition> fields;
     
+    QContactDetailFieldDefinition uri;
+    uri.setDataType(QVariant::String);
+    
     // QContactAddress
     fields = defns[contactType][QContactAddress::DefinitionName].fields();
     //fields.remove(QContactAddress::FieldSubTypes);
     QContactDetailFieldDefinition ad;
     ad.setDataType(QVariant::String);
     fields.insert("Estension", ad);
+    fields.insert(QContactDetail::FieldDetailUri, uri);
     defns[contactType][QContactAddress::DefinitionName].setFields(fields);
     
     // QContactAnniversary
@@ -200,9 +204,7 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     // QContactDisplayLabel
     // QContactEmailAddress
     fields = defns[contactType][QContactEmailAddress::DefinitionName].fields();
-    QContactDetailFieldDefinition ed;
-    ed.setDataType(QVariant::String);
-    fields.insert(QContactDetail::FieldDetailUri, ed);
+    fields.insert(QContactDetail::FieldDetailUri, uri);
     defns[contactType][QContactEmailAddress::DefinitionName].setFields(fields);
     
     // QContactFamily
@@ -232,9 +234,7 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     
     // QContactPhoneNumber
     fields = defns[contactType][QContactPhoneNumber::DefinitionName].fields();
-    QContactDetailFieldDefinition pd;
-    pd.setDataType(QVariant::String);
-    fields.insert(QContactDetail::FieldDetailUri, pd);
+    fields.insert(QContactDetail::FieldDetailUri, uri);
     defns[contactType][QContactPhoneNumber::DefinitionName].setFields(fields);
     
     // QContactSyncTarget
