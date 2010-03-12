@@ -64,6 +64,20 @@
 #if !defined(QT_NO_DBUS)
 #include <qhalservice_linux_p.h>
 
+typedef enum
+{
+    NM_DEVICE_STATE_UNKNOWN = 0,
+    NM_DEVICE_STATE_UNMANAGED,
+    NM_DEVICE_STATE_UNAVAILABLE,
+    NM_DEVICE_STATE_DISCONNECTED,
+    NM_DEVICE_STATE_PREPARE,
+    NM_DEVICE_STATE_CONFIG,
+    NM_DEVICE_STATE_NEED_AUTH,
+    NM_DEVICE_STATE_IP_CONFIG,
+    NM_DEVICE_STATE_ACTIVATED,
+    NM_DEVICE_STATE_FAILED
+} NMDeviceState;
+
 struct ProfileDataValue {
     QString key;
     QString val;
@@ -136,6 +150,8 @@ private Q_SLOTS:
     void networkModeChanged(int);
     void operatorNameChanged(uchar,QString,QString,uint,uint);
     void registrationStatusChanged(uchar,ushort,uint,uint,uint,uchar,uchar);
+    void wiredPropertiesChanged(QMap<QString,QVariant>);
+    void wirelessPropertiesChanged(QMap<QString,QVariant>);
 
 private:
     // The index of wanted argument in the QDBusMessage which is received as a

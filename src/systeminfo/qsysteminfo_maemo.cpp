@@ -518,7 +518,22 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
                        "radio_access_technology_change",
                        this, SLOT(networkModeChanged(int)))) {
         qWarning() << "unable to connect to radio_access_technology_change";
+    }   
+    if(!systemDbusConnection.connect("org.freedesktop.NetworkManager",
+                              "/org/freedesktop/NetworkManager",
+                              "NetworkManager.Wired",
+                              QLatin1String("PropertiesChanged"),
+                              this, SLOT(wiredPropertiesChanged( QMap<QString,QVariant>))) ) {
+        qWarning() << "unable to connect to Wired PropertiesChanged";
     }
+    if(!systemDbusConnection.connect("org.freedesktop.NetworkManager",
+                              "/org/freedesktop/NetworkManager",
+                              "NetworkManager.Wireless",
+                              QLatin1String("PropertiesChanged"),
+                              this, SLOT(wirelessPropertiesChanged( QMap<QString,QVariant>))) ) {
+        qWarning() << "unable to connect to Wireless PropertiesChanged";
+    }
+
 #endif
 }
 
@@ -559,8 +574,9 @@ void QSystemNetworkInfoPrivate::operatorNameChanged(uchar, QString name, QString
         emit networkNameChanged(QSystemNetworkInfo::WcdmaMode, currentOperatorName);
 }
 
-void QSystemNetworkInfoPrivate::registrationStatusChanged(uchar, ushort var2, uint var3, uint var4, uint var5, uchar, uchar)
+void QSystemNetworkInfoPrivate::registrationStatusChanged(uchar var1, ushort var2, uint var3, uint var4, uint var5, uchar, uchar)
 {
+    int newCellNetworkStatus = var1;
     int newLac = var2;
     int newCellId = var3;
     QString newMobileCountryCode;
@@ -568,6 +584,15 @@ void QSystemNetworkInfoPrivate::registrationStatusChanged(uchar, ushort var2, ui
     newMobileCountryCode.setNum(var4);
     newMobileNetworkCode.setNum(var5);
 
+    if (currentCellNetworkStatus != newCellNetworkStatus) {
+        currentCellNetworkStatus = newCellNetworkStatus;
+        if (radioAccessTechnology == 1)
+            emit networkStatusChanged(QSystemNetworkInfo::GsmMode,
+                                      networkStatus(QSystemNetworkInfo::GsmMode));
+        if (radioAccessTechnology == 2)
+            emit networkStatusChanged(QSystemNetworkInfo::WcdmaMode,
+                                      networkStatus(QSystemNetworkInfo::WcdmaMode));
+    }
     if (currentLac != newLac) {
         currentLac = newLac;
     }
@@ -581,6 +606,42 @@ void QSystemNetworkInfoPrivate::registrationStatusChanged(uchar, ushort var2, ui
     if (currentMNC != newMobileNetworkCode) {
         currentMNC = newMobileNetworkCode;
         emit currentMobileNetworkCodeChanged(currentMNC);
+    }
+}
+
+void QSystemNetworkInfoPrivate::wiredPropertiesChanged(QMap<QString,QVariant> map)
+{
+    QMapIterator<QString, QVariant> i(map);
+    while (i.hasNext()) {
+        i.next();
+        if( i.key() == "State") { //state only applies to device interfaces
+            quint32 state = i.value().toUInt();
+            if( state == NM_DEVICE_STATE_ACTIVATED
+                || state == NM_DEVICE_STATE_DISCONNECTED
+                || state == NM_DEVICE_STATE_UNAVAILABLE
+                || state == NM_DEVICE_STATE_FAILED) {
+                emit networkStatusChanged(QSystemNetworkInfo::EthernetMode,
+                                          networkStatus(QSystemNetworkInfo::EthernetMode));
+            }
+        }
+    }
+}
+
+void QSystemNetworkInfoPrivate::wirelessPropertiesChanged(QMap<QString,QVariant> map)
+{
+    QMapIterator<QString, QVariant> i(map);
+    while (i.hasNext()) {
+        i.next();
+        if( i.key() == "State") { //state only applies to device interfaces
+            quint32 state = i.value().toUInt();
+            if( state == NM_DEVICE_STATE_ACTIVATED
+                || state == NM_DEVICE_STATE_DISCONNECTED
+                || state == NM_DEVICE_STATE_UNAVAILABLE
+                || state == NM_DEVICE_STATE_FAILED) {
+                emit networkStatusChanged(QSystemNetworkInfo::WlanMode,
+                                          networkStatus(QSystemNetworkInfo::WlanMode));
+            }
+        }
     }
 }
 
