@@ -54,7 +54,7 @@ QTM_BEGIN_NAMESPACE
 /*!
 * Internal representation of an ellipse that has been added to the map.
 */
-class QMapEllipse : public QMapObject
+class Q_LOCATION_EXPORT QMapEllipse : public QMapObject
 {
     friend class QMapView;
 
@@ -66,7 +66,7 @@ public:
     * @param pen Then pen used for drawing the ellipse.
     * @param brush The brush used for drawing the ellipse.
     */
-    QMapEllipse(const QMapView& mapView, const QGeoCoordinateMaps& topLeft, const QGeoCoordinateMaps& bottomRight,
+    QMapEllipse(const QGeoCoordinateMaps& topLeft, const QGeoCoordinateMaps& bottomRight,
                 const QPen& pen = QPen(), const QBrush& brush = QBrush(),
                 quint16 layerIndex = 0);
 

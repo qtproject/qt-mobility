@@ -54,7 +54,7 @@ QTM_BEGIN_NAMESPACE
 /*!
 * Internal representation of a rectangle that has been added to the map.
 */
-class QMapRect : public QMapObject
+class Q_LOCATION_EXPORT QMapRect : public QMapObject
 {
     friend class QMapView;
 
@@ -67,9 +67,8 @@ public:
     * @param brush The brush used for drawing the rectangle.
     * @param layerIndex The layer index of the rectangle. Higher layers are stacked on top of lower layers.
     */
-    QMapRect(const QMapView& mapView, const QGeoCoordinateMaps& topLeft,
-             const QGeoCoordinateMaps& bottomRight, const QPen& pen = QPen(),
-             const QBrush& brush = QBrush(), quint16 layerIndex = 0);
+    QMapRect(const QGeoCoordinateMaps& topLeft, const QGeoCoordinateMaps& bottomRight,
+             const QPen& pen = QPen(), const QBrush& brush = QBrush(), quint16 layerIndex = 0);
 
     /*!
     * @return The top left geo coordinate of the rectangle.

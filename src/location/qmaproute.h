@@ -57,7 +57,7 @@ QTM_BEGIN_NAMESPACE
 * Internal representation of a route that has been added to the map.
 * It keeps track of all individual \ref QRouteSegment<i></i>s.
 */
-class QMapRoute : public QMapObject
+class Q_LOCATION_EXPORT QMapRoute : public QMapObject
 {
     friend class QMapView;
 
@@ -66,8 +66,7 @@ public:
     * Constructor.
     * @param route The actual \ref QRoute that this map route represents.
     */
-    QMapRoute(const QMapView& mapView,
-              const QRoute& route,
+    QMapRoute(const QRoute& route,
               const QPen& pen = QPen(),
               const QPixmap& endpointMarker = QPixmap(),
               quint16 layerIndex = 0);

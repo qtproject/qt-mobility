@@ -69,6 +69,9 @@ QTM_BEGIN_NAMESPACE
 //TODO: there sometimes seems to be an infinite-loop issue with QList::clear() when map objects have been added and the zoom level is changed
 //TODO: map object selection
 
+/*!
+    Constructor.
+*/
 QMapView::QMapView(QGraphicsItem* parent, Qt::WindowFlags wFlags)
         : QGraphicsWidget(parent, wFlags),
         releaseTimer(this),
@@ -87,6 +90,10 @@ QMapView::QMapView(QGraphicsItem* parent, Qt::WindowFlags wFlags)
     panActive = false;
 }
 
+/*!
+    Initializes a the map view with a given \a geoEngine and centers
+    the map at \a center.
+*/
 void QMapView::init(QGeoEngine* geoEngine, const QGeoCoordinateMaps& center)
 {
     if (!geoEngine)
@@ -420,6 +427,9 @@ QHash<quint64, QPair<QPixmap, bool> > QMapView::preZoomOut(qreal scale)
     return scaledTiles;
 }
 
+/*!
+    Centers the view port on the given map coordinate \a pos.
+*/
 void QMapView::centerOn(const QPointF& pos)
 {
     viewPort.moveCenter(pos.toPoint());
@@ -433,26 +443,43 @@ void QMapView::centerOn(const QPointF& pos)
     emit centerChanged();
 }
 
+/*
+    Centers the view port on the given map \a x and \a y coordinate (in pixels).
+*/
 void QMapView::centerOn(qreal x, qreal y)
 {
     centerOn(QPointF(x, y));
 }
 
+/*
+    Centers the view port on the given \a geoPos.
+*/
 void QMapView::centerOn(const QGeoCoordinateMaps& geoPos)
 {
     centerOn(geoToMap(geoPos));
 }
 
+/*!
+    Returns the geo coordinate at the center of the map's current view port.
+*/
 QGeoCoordinateMaps QMapView::center() const
 {
     return mapToGeo(viewPort.center());
 }
 
+/*!
+    Returns the map coordinate (in pixels) at the center of the map's current view port.
+*/
 QPointF QMapView::mapCenter() const
 {
     return viewPort.center();
 }
 
+/*!
+    Moves the view port relative to its current position,
+    with \a deltaX specifying the number of pixels the view port is moved along the x-axis
+    and \a deltaY specifying the number of pixels the view port is moved along the y-axis.
+*/
 void QMapView::moveViewPort(int deltaX, int deltaY)
 {
     if (!geoEngine)
@@ -546,85 +573,35 @@ void QMapView::mapToTile(const QPointF& mapCoord, quint32* col, quint32* row) co
     *row = mapCoord.y() / mapRes.size.height();
 }
 
-void QMapView::removeMapObject(const QMapObject* /*mapObject*/)
+/*!
+    Removes the given \a mapObject from the map.
+    The \a mapObject is deleted in the process.
+*/
+void QMapView::removeMapObject(QMapObject* mapObject)
 {
-    //TODO: remove map object
+    QHash<quint64, QList<QMapObject*> > tileToObjectsMap; //!< Map tile to map object hash map.
+
+    mapObjects.remove(mapObject);
+
+    for (int i = 0; i < mapObject->intersectingTiles.count(); i++)
+    {
+        if (tileToObjectsMap.contains(mapObject->intersectingTiles[i]))
+            tileToObjectsMap[mapObject->intersectingTiles[i]].removeAll(mapObject);
+    }
+
+    delete mapObject;
 }
 
-const QMapPixmap* QMapView::addPixmap(const QGeoCoordinateMaps& /*topLeft*/, const QPixmap& /*pixmap*/, quint16 /*layerIndex*/)
+/*!
+    Adds \a mapObject to the QMapView. The QMapView takes ownership of the \a mapObject.
+*/
+void QMapView::addMapObject(QMapObject* mapObject)
 {
-    //TODO: add pixmap
-    return NULL;
-}
-
-const QMapEllipse* QMapView::addEllipse(const QGeoCoordinateMaps& topLeft, const QGeoCoordinateMaps& bottomRight,
-                                        const QPen& pen, const QBrush& brush, quint16 layerIndex)
-{
-    QMapEllipse* ellipse = new QMapEllipse(*this, topLeft, bottomRight, pen, brush, layerIndex);
-    mapObjects.insert(ellipse);
-    ellipse->compMapCoords();
-    addMapObjectToTiles(ellipse);
+    mapObject->setParentView(this);
+    mapObjects.insert(mapObject);
+    mapObject->compMapCoords();
+    addMapObjectToTiles(mapObject);
     update();
-    return ellipse;
-}
-
-const QMapRect* QMapView::addRect(const QGeoCoordinateMaps& topLeft, const QGeoCoordinateMaps& bottomRight,
-                                  const QPen& pen, const QBrush& brush, quint16 layerIndex)
-{
-    QMapRect* rect = new QMapRect(*this, topLeft, bottomRight, pen, brush, layerIndex);
-    mapObjects.insert(rect);
-    rect->compMapCoords();
-    addMapObjectToTiles(rect);
-    update();
-    return rect;
-}
-
-const QMapPolygon* QMapView::addPolygon(const QList<QGeoCoordinateMaps>& polygon,
-                                        const QPen& pen, const QBrush& brush, quint16 layerIndex)
-{
-    QMapPolygon* poly = new QMapPolygon(*this, polygon, pen, brush, layerIndex);
-    mapObjects.insert(poly);
-    poly->compMapCoords();
-    addMapObjectToTiles(poly);
-    update();
-    return poly;
-}
-
-const QMapMarker* QMapView::addMarker(const QGeoCoordinateMaps& point, const QString& text,
-                                      const QFont& font, const QColor& fontColor,
-                                      const QPixmap& icon, const QRectF& textRect,
-                                      quint16 layerIndex)
-{
-    QMapMarker* marker = new QMapMarker(*this, point, text, font, fontColor,
-                                        icon, textRect, layerIndex);
-    mapObjects.insert(marker);
-    marker->compMapCoords();
-    addMapObjectToTiles(marker);
-    update();
-    return marker;
-}
-
-const QMapLine* QMapView::addLine(const QGeoCoordinateMaps& point1, const QGeoCoordinateMaps& point2,
-                                  const QPen& pen, quint16 layerIndex)
-{
-    QMapLine* line = new QMapLine(*this, point1, point2, pen, layerIndex);
-    mapObjects.insert(line);
-    line->compMapCoords();
-    addMapObjectToTiles(line);
-    update();
-
-    return line;
-}
-
-const QMapRoute* QMapView::addRoute(const QRoute& route, const QPen& pen,
-                                    const QPixmap& endpointMarker, quint16 layerIndex)
-{
-    QMapRoute* mapRoute = new QMapRoute(*this, route, pen, endpointMarker, layerIndex);
-    mapObjects.insert(mapRoute);
-    mapRoute->compMapCoords();
-    addMapObjectToTiles(mapRoute);
-    update();
-    return mapRoute;
 }
 
 QRectF QMapView::getTileRect(quint32 col, quint32 row) const
@@ -643,6 +620,9 @@ void QMapView::addMapObjectToTiles(QMapObject* mapObject)
     }
 }
 
+/*!
+    Paints all map objects that are covered by the current view port.
+*/
 void QMapView::paintLayers(QPainter* painter)
 {
     TileIterator it(*this, viewPort);

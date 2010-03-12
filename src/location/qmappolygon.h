@@ -54,7 +54,7 @@ QTM_BEGIN_NAMESPACE
 /*!
 * Internal representation of a polygon that has been added to the map.
 */
-class QMapPolygon : public QMapObject
+class Q_LOCATION_EXPORT QMapPolygon : public QMapObject
 {
     friend class QMapView;
 
@@ -66,7 +66,7 @@ public:
     * @param brush The brush used for drawing the rectangle.
     * @param layerIndex The layer index of the polygon. Higher layers are stacked on top of lower layers.
     */
-    QMapPolygon(const QMapView& mapView, const QList<QGeoCoordinateMaps>& polygon,
+    QMapPolygon(const QList<QGeoCoordinateMaps>& polygon,
                 const QPen& pen, const QBrush& brush, quint16 layerIndex);
 
     /*!

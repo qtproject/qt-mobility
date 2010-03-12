@@ -53,7 +53,7 @@ QTM_BEGIN_NAMESPACE
 /*!
 * Internal representation of a pixmap that has been added to the map.
 */
-class QMapPixmap : public QMapObject
+class Q_LOCATION_EXPORT QMapPixmap : public QMapObject
 {
     friend class QMapView;
 

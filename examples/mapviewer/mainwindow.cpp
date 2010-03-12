@@ -48,6 +48,14 @@
 #include "qmaptile.h"
 #include "qrouterequest.h"
 #include "qmapmarker.h"
+#include "qmapellipse.h"
+#include "qmaproute.h"
+#include "qmaprect.h"
+#include "qmapline.h"
+#include "qmappolygon.h"
+#include "qmapmarker.h"
+
+QTM_USE_NAMESPACE
 
 MainWindow::MainWindow(QWidget *parent) :
         QMainWindow(parent),
@@ -175,7 +183,7 @@ void MainWindow::routeReplyFinished(QRouteReply* reply)
         QPen pen(routeColor);
         pen.setWidth(7);
         pen.setCapStyle(Qt::RoundCap);
-        mapView->addRoute(routes[0], pen);
+        mapView->addMapObject(new QMapRoute(routes[0], pen));
     }
 }
 
@@ -224,8 +232,9 @@ void MainWindow::setScheme(bool /*checked*/)
 
 void MainWindow::addMarker(bool /*checked*/)
 {
-    selectedMarkers.append(mapView->addMarker(lastClicked,
-                           QString::number(selectedMarkers.count() + 1)));
+    QMapMarker* marker = new QMapMarker(lastClicked, QString::number(selectedMarkers.count() + 1));
+    mapView->addMapObject(marker);
+    selectedMarkers.append(marker);
 }
 
 void MainWindow::drawLine(bool /*checked*/)
@@ -235,7 +244,8 @@ void MainWindow::drawLine(bool /*checked*/)
         const QMapMarker* m2 = selectedMarkers[i + 1];
         QPen pen(Qt::red);
         pen.setWidth(2);
-        mapView->addLine(m1->point(), m2->point(), pen, 1);
+        QMapLine* line = new QMapLine(m1->point(), m2->point(), pen, 1);
+        mapView->addMapObject(line);
     }
 
     selectedMarkers.clear();
@@ -250,7 +260,7 @@ void MainWindow::drawRect(bool /*checked*/)
         pen.setWidth(2);
         QColor fill(Qt::black);
         fill.setAlpha(65);
-        mapView->addRect(m1->point(), m2->point(), pen, QBrush(fill), 1);
+        mapView->addMapObject(new QMapRect(m1->point(), m2->point(), pen, QBrush(fill), 1));
     }
 
     selectedMarkers.clear();
@@ -265,7 +275,7 @@ void MainWindow::drawEllipse(bool /*checked*/)
         pen.setWidth(2);
         QColor fill(Qt::black);
         fill.setAlpha(65);
-        mapView->addEllipse(m1->point(), m2->point(), pen, QBrush(fill), 1);
+        mapView->addMapObject(new QMapEllipse(m1->point(), m2->point(), pen, QBrush(fill), 1));
     }
 
     selectedMarkers.clear();
@@ -283,8 +293,7 @@ void MainWindow::drawPolygon(bool /*checked*/)
     pen.setWidth(2);
     QColor fill(Qt::black);
     fill.setAlpha(65);
-    mapView->addPolygon(coords, pen, QBrush(fill), 1);
-
+    mapView->addMapObject(new QMapPolygon(coords, pen, QBrush(fill), 1));
     selectedMarkers.clear();
 }
 

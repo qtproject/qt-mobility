@@ -61,13 +61,16 @@ QTM_BEGIN_NAMESPACE
 *******************************************************************************/
 void QMapObject::compIntersectingTiles(const QRectF& box)
 {
-    QMapView::TileIterator it(mapView, box);
+    if (!mapView)
+        return;
+
+    QMapView::TileIterator it(*mapView, box);
 
     while (it.hasNext()) {
         it.next();
 
         if (it.isValid() && intersects(it.tileRect()))
-            intersectingTiles.append(mapView.getTileIndex(it.col(), it.row()));
+            intersectingTiles.append(mapView->getTileIndex(it.col(), it.row()));
     }
 }
 
@@ -125,11 +128,16 @@ bool QMapObject::intersect(const QRectF& rect, const QLineF& line)
     return false;
 }
 
+void QMapObject::setParentView(QMapView *mapView)
+{
+    this->mapView = mapView;
+}
+
 /******************************************************************************
 * QMapRoute
 *******************************************************************************/
-QMapRoute::QMapRoute(const QMapView& mapView, const QRoute& route, const QPen& pen, const QPixmap& /*endpointMarker*/, quint16 layerIndex)
-        : QMapObject(mapView, QMapObject::Route, layerIndex), rt(route), rPen(pen)
+QMapRoute::QMapRoute(const QRoute& route, const QPen& pen, const QPixmap& /*endpointMarker*/, quint16 layerIndex)
+        : QMapObject(QMapObject::Route, layerIndex), rt(route), rPen(pen)
 {
     //TODO: endpoint marker for routes
 }
@@ -137,7 +145,11 @@ QMapRoute::QMapRoute(const QMapView& mapView, const QRoute& route, const QPen& p
 void QMapRoute::compMapCoords()
 {
     segments.clear();
-    quint32 minDist = mapView.routeDetailLevel();
+
+    if (!mapView)
+        return;
+
+    quint32 minDist = mapView->routeDetailLevel();
     QList<QManeuver> maneuvers = rt.maneuvers();
     QGeoCoordinateMaps last;
     QGeoCoordinateMaps here;
@@ -153,10 +165,10 @@ void QMapRoute::compMapCoords()
             }
 
             here = wayPoints[n];
-            QLineF line = mapView.connectShortest(here, last);
+            QLineF line = mapView->connectShortest(here, last);
 
             if ((line.p1() - line.p2()).manhattanLength() >= minDist ||
-                    mapView.zoomLevel() == mapView.maxZoomLevel()) {
+                    mapView->zoomLevel() == mapView->maxZoomLevel()) {
                 addSegment(line);
                 last = here;
                 here = QGeoCoordinateMaps();
@@ -166,7 +178,7 @@ void QMapRoute::compMapCoords()
 
     //make sure last waypoint is always shown
     if (!here.isNull()) {
-        QLineF line = mapView.connectShortest(here, last);
+        QLineF line = mapView->connectShortest(here, last);
         addSegment(line);
     }
 
@@ -175,14 +187,17 @@ void QMapRoute::compMapCoords()
 
 void QMapRoute::addSegment(const QLineF& line)
 {
+    if (!mapView)
+        return;
+
     //TODO: refine: check whether tiles are actually being intersected
-    QMapView::TileIterator it(mapView, QMapObject::boundingRect(line));
+    QMapView::TileIterator it(*mapView, QMapObject::boundingRect(line));
 
     while (it.hasNext()) {
         it.next();
 
         if (it.isValid()) {
-            quint64 tileIndex = mapView.getTileIndex(it.col(), it.row());
+            quint64 tileIndex = mapView->getTileIndex(it.col(), it.row());
 
             if (!segments.contains(tileIndex))
                 segments.insert(tileIndex, QList<QLineF>());
@@ -205,7 +220,10 @@ void QMapRoute::compIntersectingTiles(const QRectF& /*box*/)
 
 bool QMapRoute::intersects(const QRectF& rect) const
 {
-    QMapView::TileIterator it(mapView, rect);
+    if (!mapView)
+        return false;
+
+    QMapView::TileIterator it(*mapView, rect);
 
     while (it.hasNext()) {
         it.next();
@@ -213,7 +231,7 @@ bool QMapRoute::intersects(const QRectF& rect) const
         if (!it.isValid())
             continue;
 
-        quint64 tileIndex = mapView.getTileIndex(it.col(), it.row());
+        quint64 tileIndex = mapView->getTileIndex(it.col(), it.row());
 
         if (segments.contains(tileIndex)) {
             QRectF tile = it.tileRect();
@@ -233,9 +251,12 @@ bool QMapRoute::intersects(const QRectF& rect) const
 
 void QMapRoute::paint(QPainter* painter, const QRectF& viewPort)
 {
+    if (!mapView)
+        return;
+
     QPen oldPen = painter->pen();
     painter->setPen(rPen);
-    QMapView::TileIterator it(mapView, viewPort);
+    QMapView::TileIterator it(*mapView, viewPort);
     int count = 0;
     QPainterPath path;
 
@@ -245,7 +266,7 @@ void QMapRoute::paint(QPainter* painter, const QRectF& viewPort)
         if (!it.isValid())
             continue;
 
-        quint64 tileIndex = mapView.getTileIndex(it.col(), it.row());
+        quint64 tileIndex = mapView->getTileIndex(it.col(), it.row());
 
         if (segments.contains(tileIndex)) {
             QListIterator<QLineF> lit(segments[tileIndex]);
@@ -261,7 +282,7 @@ void QMapRoute::paint(QPainter* painter, const QRectF& viewPort)
     }
 
     painter->drawPath(path);
-    qint64 mapWidth = static_cast<qint64>(mapView.mapWidth());
+    qint64 mapWidth = static_cast<qint64>(mapView->mapWidth());
 
     //Is view port wrapping around date line?
     if (viewPort.right() >= mapWidth) {
@@ -281,21 +302,24 @@ void QMapRoute::paint(QPainter* painter, const QRectF& viewPort)
 /******************************************************************************
 * QMapLine
 *******************************************************************************/
-QMapLine::QMapLine(const QMapView& mapView, const QGeoCoordinateMaps& point1,
+QMapLine::QMapLine(const QGeoCoordinateMaps& point1,
                    const QGeoCoordinateMaps& point2, const QPen& pen, quint16 layerIndex)
-        : QMapObject(mapView, QMapObject::Line, layerIndex), pt1(point1), pt2(point2), p(pen)
+        : QMapObject(QMapObject::Line, layerIndex), pt1(point1), pt2(point2), p(pen)
 {
 }
 
 void QMapLine::compMapCoords()
 {
-    QPointF p1 = mapView.geoToMap(pt1);
-    QPointF p2 = mapView.geoToMap(pt2);
+    if (!mapView)
+        return;
+
+    QPointF p1 = mapView->geoToMap(pt1);
+    QPointF p2 = mapView->geoToMap(pt2);
     line = QLineF(p1, p2);
 
     //lines are drawn from west to east
     if (pt2.longitude() < pt1.longitude()) {
-        p2.rx() += mapView.mapWidth();
+        p2.rx() += mapView->mapWidth();
         line.setP2(p2);
     }
 
@@ -307,7 +331,10 @@ void QMapLine::compMapCoords()
 
 void QMapLine::paint(QPainter* painter, const QRectF& viewPort)
 {
-    qint64 mapWidth = static_cast<qint64>(mapView.mapWidth());
+    if (!mapView)
+        return;
+
+    qint64 mapWidth = static_cast<qint64>(mapView->mapWidth());
     QPen oldPen = painter->pen();
     painter->setPen(p);
     line.translate(-viewPort.left(), -viewPort.top());
@@ -360,12 +387,12 @@ bool QMapLine::intersects(const QRectF& rect) const
 #define MARKER_WIDTH 25
 #define MARKER_PIN_LEN 10
 
-QMapMarker::QMapMarker(const QMapView& mapView, const QGeoCoordinateMaps& point,
+QMapMarker::QMapMarker(const QGeoCoordinateMaps& point,
                        const QString& text, const QFont& font, const QColor& fontColor,
                        const QPixmap& icon, const QRectF& textRect,
                        quint16 layerIndex)
-        : QMapObject(mapView, QMapObject::Marker, layerIndex),
-        pt(point), txt(text), txtFont(font), fColor(fontColor), icn(icon), txtRect(textRect)
+        : QMapObject(QMapObject::Marker, layerIndex),
+          pt(point), txt(text), txtFont(font), fColor(fontColor), icn(icon), txtRect(textRect)
 {
     if (icon.isNull()) {
         box.setHeight(MARKER_HEIGHT);
@@ -375,8 +402,11 @@ QMapMarker::QMapMarker(const QMapView& mapView, const QGeoCoordinateMaps& point,
 
 void QMapMarker::compMapCoords()
 {
+    if (!mapView)
+        return;
+
     if (icn.isNull()) {
-        mapPt = mapView.geoToMap(pt);
+        mapPt = mapView->geoToMap(pt);
         box.moveLeft(mapPt.x() - (MARKER_WIDTH / 2));
         box.moveTop(mapPt.y() - (MARKER_HEIGHT - 1));
         intersectingTiles.clear();
@@ -411,8 +441,11 @@ void QMapMarker::constructMarker(QPainter* painter, const QPointF& point)
 
 void QMapMarker::paint(QPainter* painter, const QRectF& viewPort)
 {
+    if (!mapView)
+        return;
+
     if (icn.isNull()) {
-        quint64 mapWidth = mapView.mapWidth();
+        quint64 mapWidth = mapView->mapWidth();
         QPen oldPen = painter->pen();
         QBrush oldBrush = painter->brush();
         constructMarker(painter, mapPt - viewPort.topLeft());
@@ -439,17 +472,20 @@ bool QMapMarker::intersects(const QRectF& tileRect) const
 /******************************************************************************
 * QMapRect
 *******************************************************************************/
-QMapRect::QMapRect(const QMapView& mapView, const QGeoCoordinateMaps& topLeft, const QGeoCoordinateMaps& bottomRight,
+QMapRect::QMapRect(const QGeoCoordinateMaps& topLeft, const QGeoCoordinateMaps& bottomRight,
                    const QPen& pen, const QBrush& brush, quint16 layerIndex)
-        : QMapObject(mapView, QMapObject::Rect, layerIndex),
+        : QMapObject(QMapObject::Rect, layerIndex),
         geoTopLeft(topLeft), geoBottomRight(bottomRight), p(pen), b(brush)
 {
 }
 
 void QMapRect::compMapCoords()
 {
-    QPointF p1 = mapView.geoToMap(geoTopLeft);
-    QPointF p2 = mapView.geoToMap(geoBottomRight);
+    if (!mapView)
+        return;
+
+    QPointF p1 = mapView->geoToMap(geoTopLeft);
+    QPointF p2 = mapView->geoToMap(geoBottomRight);
 
     if (p2.y() < p1.y()) {
         qreal y = p2.y();
@@ -460,7 +496,7 @@ void QMapRect::compMapCoords()
     //Lines will always connect points from west to east.
     //If we cross the date line, we need to split.
     if (geoTopLeft.longitude() > geoBottomRight.longitude())
-        p2.rx() += mapView.mapWidth();
+        p2.rx() += mapView->mapWidth();
 
     rect = QRectF(p1, p2);
     //compute intersecting map tiles now
@@ -470,6 +506,9 @@ void QMapRect::compMapCoords()
 
 void QMapRect::paint(QPainter* painter, const QRectF& viewPort)
 {
+    if (!mapView)
+        return;
+
     QPen oldPen = painter->pen();
     QBrush oldBrush = painter->brush();
     painter->setPen(p);
@@ -477,7 +516,7 @@ void QMapRect::paint(QPainter* painter, const QRectF& viewPort)
     rect.translate(-viewPort.left(), -viewPort.top());
     painter->drawRect(rect);
     rect.translate(viewPort.left(), viewPort.top());
-    qint64 mapWidth = static_cast<qint64>(mapView.mapWidth());
+    qint64 mapWidth = static_cast<qint64>(mapView->mapWidth());
 
     //Is view port wrapping around date line?
     if (viewPort.right() >= mapWidth) {
@@ -508,25 +547,28 @@ bool QMapRect::intersects(const QRectF& rect) const
 /******************************************************************************
 * QMapPolygon
 *******************************************************************************/
-QMapPolygon::QMapPolygon(const QMapView& mapView, const QList<QGeoCoordinateMaps>& polygon,
+QMapPolygon::QMapPolygon(const QList<QGeoCoordinateMaps>& polygon,
                          const QPen& pen, const QBrush& brush, quint16 layerIndex)
-        : QMapObject(mapView, QMapObject::Polygon, layerIndex),
+        : QMapObject(QMapObject::Polygon, layerIndex),
         poly(polygon), p(pen), br(brush)
 {
 }
 
 void QMapPolygon::compMapCoords()
 {
+    if (!mapView)
+        return;
+
     if (poly.count() < 2)
         return;
 
     QPolygonF pgn;
 
     for (int i = 0; i < poly.count(); i++) {
-        pgn << mapView.geoToMap(poly[i]);
+        pgn << mapView->geoToMap(poly[i]);
     }
 
-    pgn << mapView.geoToMap(poly[0]);
+    pgn << mapView->geoToMap(poly[0]);
     path = QPainterPath();
     path.addPolygon(pgn);
     //compute intersecting map tiles now
@@ -536,13 +578,16 @@ void QMapPolygon::compMapCoords()
 
 void QMapPolygon::paint(QPainter* painter, const QRectF& viewPort)
 {
+    if (!mapView)
+        return;
+
     QPen oldPen = painter->pen();
     QBrush oldBrush = painter->brush();
     painter->setPen(p);
     painter->setBrush(br);
     path.translate(-viewPort.topLeft());
     painter->drawPath(path);
-    qint64 mapWidth = static_cast<qint64>(mapView.mapWidth());
+    qint64 mapWidth = static_cast<qint64>(mapView->mapWidth());
 
     //Is view port wrapping around date line?
     if (viewPort.right() >= mapWidth) {
@@ -564,9 +609,9 @@ bool QMapPolygon::intersects(const QRectF& rect) const
 /******************************************************************************
 * QMapEllipse
 *******************************************************************************/
-QMapEllipse::QMapEllipse(const QMapView& mapView, const QGeoCoordinateMaps& topLeft, const QGeoCoordinateMaps& bottomRight,
+QMapEllipse::QMapEllipse(const QGeoCoordinateMaps& topLeft, const QGeoCoordinateMaps& bottomRight,
                          const QPen& pen, const QBrush& brush, quint16 layerIndex)
-        : QMapObject(mapView, QMapObject::Ellipse, layerIndex),
+        : QMapObject(QMapObject::Ellipse, layerIndex),
           geoTopLeft(topLeft), geoBottomRight(bottomRight), p(pen), b(brush)
 
 {
@@ -574,8 +619,11 @@ QMapEllipse::QMapEllipse(const QMapView& mapView, const QGeoCoordinateMaps& topL
 
 void QMapEllipse::compMapCoords()
 {
-    QPointF p1 = mapView.geoToMap(geoTopLeft);
-    QPointF p2 = mapView.geoToMap(geoBottomRight);
+    if (!mapView)
+        return;
+
+    QPointF p1 = mapView->geoToMap(geoTopLeft);
+    QPointF p2 = mapView->geoToMap(geoBottomRight);
 
     if (p2.y() < p1.y()) {
         qreal y = p2.y();
@@ -586,7 +634,7 @@ void QMapEllipse::compMapCoords()
     //Lines will always connect points from west to east.
     //If we cross the date line, we need to split.
     if ( geoTopLeft.longitude() > geoBottomRight.longitude() )
-        p2.rx() += mapView.mapWidth();
+        p2.rx() += mapView->mapWidth();
 
     QRectF rect(p1, p2);
     path = QPainterPath();
@@ -598,13 +646,16 @@ void QMapEllipse::compMapCoords()
 
 void QMapEllipse::paint(QPainter* painter, const QRectF& viewPort)
 {
+    if (!mapView)
+        return;
+
     QPen oldPen = painter->pen();
     QBrush oldBrush = painter->brush();
     painter->setPen(p);
     painter->setBrush(b);
     path.translate(-viewPort.left(), -viewPort.top());
     painter->drawPath(path);
-    qint64 mapWidth = static_cast<qint64>(mapView.mapWidth());
+    qint64 mapWidth = static_cast<qint64>(mapView->mapWidth());
     path.translate(viewPort.left(), viewPort.top());
 
     //Is view port wrapping around date line?

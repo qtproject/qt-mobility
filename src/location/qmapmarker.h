@@ -58,10 +58,13 @@ class Q_LOCATION_EXPORT QMapMarker : public QMapObject
     friend class QMapView;
 
 public:
-    QMapMarker(const QMapView& mapView, const QGeoCoordinateMaps& point,
-               const QString& text, const QFont& font, const QColor& fontColor,
-               const QPixmap& icon, const QRectF& textRect,
-               quint16 layerIndex);
+    QMapMarker(const QGeoCoordinateMaps& point,
+               const QString& text = QString(),
+               const QFont& font = QFont("Arial", 10, QFont::Bold),
+               const QColor& fontColor = QColor(Qt::white),
+               const QPixmap& icon = QPixmap(),
+               const QRectF& textRect = QRectF(),
+               quint16 layerIndex = 0);
     /*!
     * @return The icon used for displaying the marker.
     */
