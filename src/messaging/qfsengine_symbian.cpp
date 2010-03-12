@@ -44,6 +44,7 @@
 #include "qfsengine_symbian_p.h"
 #include "qmessage_symbian_p.h"
 
+#include <emailinterfacefactory.h>
 #include <QTextCodec>
 
 QTM_BEGIN_NAMESPACE
@@ -51,7 +52,15 @@ QTM_BEGIN_NAMESPACE
 
 CFSEngine::CFSEngine()
 {
-
+ /*   CEmailInterfaceFactory* factory = CEmailInterfaceFactory::NewL(); 
+    CleanupStack::PushL(factory); 
+    MEmailInterface* ifPtr = factory->InterfaceL(KEmailClientApiInterface); 
+    MEmailClientApi* clientApi = static_cast<MEmailClientApi*>(ifPtr); 
+    CleanupReleasePushL(clientApi); 
+    
+    RMailboxPtrArray mailboxes;
+    clientApi->GetMailboxesL(mailboxes);
+    CleanupStack::PopAndDestroy(2); // clientApi and factory*/
 }
 
 CFSEngine::~CFSEngine()
