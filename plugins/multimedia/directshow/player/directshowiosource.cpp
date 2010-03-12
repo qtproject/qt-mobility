@@ -45,6 +45,8 @@
 #include "directshowmediatype.h"
 #include "directshowpinenum.h"
 
+#include <QtCore/qcoreapplication.h>
+#include <QtCore/qurl.h>
 
 static const GUID directshow_subtypes[] =
 {
@@ -53,15 +55,16 @@ static const GUID directshow_subtypes[] =
     MEDIASUBTYPE_NULL
 };
 
-DirectShowIOSource::DirectShowIOSource(QIODevice *device, DirectShowEventLoop *loop)
+DirectShowIOSource::DirectShowIOSource(DirectShowEventLoop *loop)
     : m_ref(1)
     , m_state(State_Stopped)
+    , m_reader(0)
+    , m_loop(loop)
     , m_graph(0)
     , m_clock(0)
     , m_allocator(0)
     , m_peerPin(0)
     , m_pinId(QLatin1String("Data"))
-    , m_reader(device, this, loop)
 {
     QVector<AM_MEDIA_TYPE> mediaTypes;
 
@@ -91,6 +94,15 @@ DirectShowIOSource::DirectShowIOSource(QIODevice *device, DirectShowEventLoop *l
 DirectShowIOSource::~DirectShowIOSource()
 {
     Q_ASSERT(m_ref == 0);
+
+    delete m_reader;
+}
+
+void DirectShowIOSource::setDevice(QIODevice *device)
+{
+    Q_ASSERT(!m_reader);
+
+    m_reader = new DirectShowIOReader(device, this, m_loop);
 }
 
 void DirectShowIOSource::setAllocator(IMemAllocator *allocator)
@@ -107,6 +119,10 @@ void DirectShowIOSource::setAllocator(IMemAllocator *allocator)
 // IUnknown
 HRESULT DirectShowIOSource::QueryInterface(REFIID riid, void **ppvObject)
 {
+    // 2dd74950-a890-11d1-abe8-00a0c905f375
+    static const GUID iid_IAmFilterMiscFlags = {
+        0x2dd74950, 0xa890, 0x11d1, {0xab, 0xe8, 0x00, 0xa0, 0xc9, 0x05, 0xf3, 0x75}};
+
     if (!ppvObject) {
         return E_POINTER;
     } else if (riid == IID_IUnknown
@@ -114,12 +130,12 @@ HRESULT DirectShowIOSource::QueryInterface(REFIID riid, void **ppvObject)
             || riid == IID_IMediaFilter
             || riid == IID_IBaseFilter) {
         *ppvObject = static_cast<IBaseFilter *>(this);
-    } else if (riid == IID_IAMFilterMiscFlags) {
+    } else if (riid == iid_IAmFilterMiscFlags) {
         *ppvObject = static_cast<IAMFilterMiscFlags *>(this);
     } else if (riid == IID_IPin) {
         *ppvObject = static_cast<IPin *>(this);
     } else if (riid == IID_IAsyncReader) {
-        *ppvObject = static_cast<IAsyncReader *>(&m_reader);
+        *ppvObject = static_cast<IAsyncReader *>(m_reader);
     } else {
         *ppvObject = 0;
 
@@ -400,8 +416,8 @@ HRESULT DirectShowIOSource::tryConnect(IPin *pin, const AM_MEDIA_TYPE *type)
     } else if (!m_allocator) {
         hr = VFW_E_NO_TRANSPORT;
 
-        if (IMemInputPin *memPin = com_cast<IMemInputPin>(pin)) {
-            if ((m_allocator = com_new<IMemAllocator>(CLSID_MemoryAllocator))) {
+        if (IMemInputPin *memPin = com_cast<IMemInputPin>(pin, IID_IMemInputPin)) {
+            if ((m_allocator = com_new<IMemAllocator>(CLSID_MemoryAllocator, IID_IMemAllocator))) {
                 ALLOCATOR_PROPERTIES properties;
                 if (memPin->GetAllocatorRequirements(&properties) == S_OK
                         || m_allocator->GetProperties(&properties) == S_OK) {
@@ -569,12 +585,12 @@ HRESULT DirectShowIOSource::EndOfStream()
 
 HRESULT DirectShowIOSource::BeginFlush()
 {
-    return m_reader.BeginFlush();
+    return m_reader->BeginFlush();
 }
 
 HRESULT DirectShowIOSource::EndFlush()
 {
-    return m_reader.EndFlush();
+    return m_reader->EndFlush();
 }
 
 HRESULT DirectShowIOSource::NewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate)
@@ -597,3 +613,27 @@ HRESULT DirectShowIOSource::QueryDirection(PIN_DIRECTION *pPinDir)
     }
 }
 
+DirectShowRcSource::DirectShowRcSource(DirectShowEventLoop *loop)
+    : DirectShowIOSource(loop)
+{
+}
+
+bool DirectShowRcSource::open(const QUrl &url)
+{
+    m_file.moveToThread(QCoreApplication::instance()->thread());
+
+    m_file.setFileName(QLatin1Char(':') + url.path());
+
+    qDebug("qrc file %s", qPrintable(m_file.fileName()));
+
+    if (m_file.open(QIODevice::ReadOnly)) {
+        qDebug("Size %d", m_file.size());
+        qDebug("Sequential %d", int(m_file.isSequential()));
+
+        setDevice(&m_file);
+
+        return true;
+    } else {
+        return false;
+    }
+}

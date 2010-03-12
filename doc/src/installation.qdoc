@@ -132,7 +132,6 @@ these domains have dependencies and these are outlined below:
        For 5th edition sdk plugins are installed with installer (all at once), but for FP1 and FP2 devices a zip is provided. You will need following plugins to compile all features: 
        MediaPlayerEngine (MediaPlayerUtilityAPI for 3rd FP2), AudioRoutingAPI , Tuner Utility (only for 3rd FP1) Radio Utility API (for 3rd FP2 and 5th ed), SymbianOnboardCameraAdvancedSettingsAPI(for 3rd FP2 and 5th ed) and 
        autofocus_extension_library_s60_3rd_ed for (3rd FP1 included in the camera example \l http://sw.nokia.com/id/2f492479-ac8c-4c3e-aa90-cc883e190d83/S60_Platform_Camera_Example_with_AutoFocus_Support_v2_2_en.zip)
-       To get camera service working you will also need camera wrapper from Forum Nokia at \l http://sw.nokia.com/id/1cde08b0-1f57-41ba-851b-776c43fdec6c/S60_Platform_Camera_Example_v3_0_en.zip Example application contains camerawrapper binaries and sis for the device
        
     \o Y
     \o N
@@ -190,6 +189,9 @@ NOTE: The install path must not contain any spaces.
 \section1 Building
 Ensure that all compile time dependencies for your particular
 platform have been met before building.
+
+If Qt is installed for multiple platforms it is also important 
+to ensure that the correct version of \c{qmake} is being used.
 
 \section2 Building On Unix
 
@@ -250,12 +252,19 @@ mobility libraries into $PWD/install.
     Type \c {configure -help} to get a list of all available options.
 
     The actual commands needed to build and install Qt Mobility depends on your
-    development system.  For Microsoft Visual Studio to create and install the 
-    libraries and tools type:
+    development system.  To create and install the  libraries and tools from a 
+    Microsoft Visual Studio command prompt, type:
 \code 
     nmake
     nmake install
 \endcode
+
+\section2 Building For Windows CE
+
+    The process is much the same as for Windows, although it is 
+    important to run the \c{setcepaths} script from the \c{bin} 
+    directory of the Qt for Windows CE installation to ensure that 
+    the correct headers and libraries are used.
 
 \section2 Building For Symbian On Windows
     Building Qt Mobility for Symbian is not necessary as the
@@ -293,43 +302,37 @@ mobility libraries into $PWD/install.
     be ready to use for compiling applications for the
     emulator and/or device.
 
-\section2 Building Individual Qt Mobility Domains
+\section2 Building Individual Qt Mobility Modules
 
-    Qt Mobility is comprised of several domains but all of
-    these may not need to be built.  To build a single domain,
-    perform the configure step as outlined above,
-    and then perform the make step in the appropriate directory
-    to create the desired library.
+    Qt Mobility is comprised of several modules but all of
+    these may not need to be built.  To specify which modules
+    should be built, use the \c{-modules} switch with the configure 
+    script when performing the configure step as outlined above.
 
-    The directory structure will look something like
+    e.g. To build just the bearer module:
 \code
-    ./src/bearer
-    ./src/contacts
-    ...
-    ./src/systeminfo
+    configure -modules bearer
 \endcode
 
-    e.g. To build bearer on Unix:
+    If multiple modules are required the module names should be separated 
+    by a space and surrounded by double quotation marks. If a selected module 
+    depends on other modules the dependencies will be enabled automatically.
+
+    .e.g. To build just the bearer and location modules:
 \code
-    cd ./src/bearer
-    make
-    make install
+    configure -modules "bearer location"
 \endcode
 
-    or on Windows:
-\code
-    cd src\bearer
-    nmake
-    nmake install
-\endcode
+    Type \c {configure -help} to see the names of the available modules.
 
-\section1 Environment Variables
+\section1 Making the libraries available to applications
+
 In order to use QtMobility some environment variables
 need to be extended to locate the libraries, which are
 placed in the lib directory of the install path.
 
-On Unix:
-LD_LIBRARY_PATH should be extended to include:
+\section2 Making the libraries available on Unix
+The environment variable LD_LIBRARY_PATH should be extended to include:
 \c {$TARGET_DIR/lib}
 
 In .profile (if your Unix shell is bash,ksh,zsh or sh),
@@ -348,14 +351,26 @@ line:
 If you use a different Unix shell, please modify your
 your environment variables accordingly.
 
-On Windows:
-PATH should be extended to include:
+\section2 Making the libraries available on Windows
+The environment variable PATH should be extended to include:
 \c {C:\%TARGET_DIR%\lib}
 
 For newer versions of windows, PATH can be extended
 through "Start->Settings->Control Panel->System->Advanced->
 Environment variables" and for older versions by 
 editing \c{C:\autoexec.bat}
+
+\section2 Making the libraries available on Windows CE
+
+    Environment variables do not exist on Windows CE, and so users 
+    of Qt Mobility for Windows CE have to do things slightly differently.
+
+    The deployment of the libraries to the device is normally done 
+    with Microsoft Visual Studio or Microsoft ActiveSync.
+
+    The libraries can be made globally available by deploying them 
+    to \c{c:\Windows} on the device, or can be deployed once per 
+    application by copying them into the same directory as the executable.
 
 And now the installation is complete, we hope you enjoy 
 using Qt Mobility.

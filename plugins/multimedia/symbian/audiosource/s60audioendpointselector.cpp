@@ -46,13 +46,11 @@
 #include <QtCore/QDebug>
 
 
-S60AudioEndpointSelector::S60AudioEndpointSelector(QObject *parent)
+S60AudioEndpointSelector::S60AudioEndpointSelector(QObject *session, QObject *parent)
     :QAudioEndpointSelector(parent)
-{
-    m_session = qobject_cast<S60AudioCaptureSession*>(parent);
-
-    update();
-
+{    
+    m_session = qobject_cast<S60AudioCaptureSession*>(session); 
+    update();    
     m_audioInput = defaultEndpoint();
 }
 
@@ -71,7 +69,7 @@ QString S60AudioEndpointSelector::endpointDescription(const QString& name) const
 
     for(int i = 0; i < m_names.count(); i++) {
         if (m_names.at(i).compare(name) == 0) {
-            desc = m_names.at(i);
+            desc = m_descriptions.at(i);
             break;
         }
     }
@@ -80,6 +78,8 @@ QString S60AudioEndpointSelector::endpointDescription(const QString& name) const
 
 QString S60AudioEndpointSelector::defaultEndpoint() const
 {
+    if (m_names.size() > 0)
+        return m_names.at(0);
     return QString();
 }
 
@@ -90,8 +90,11 @@ QString S60AudioEndpointSelector::activeEndpoint() const
 
 void S60AudioEndpointSelector::setActiveEndpoint(const QString& name)
 {
-    m_audioInput = name;
-    m_session->setCaptureDevice(name);
+    if (m_audioInput.compare(name) != 0) {
+        m_audioInput = name;    
+        m_session->setCaptureDevice(name);
+        emit activeEndpointChanged(name);
+    }
 }
 
 void S60AudioEndpointSelector::update()

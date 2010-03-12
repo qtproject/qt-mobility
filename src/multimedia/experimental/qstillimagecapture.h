@@ -90,7 +90,8 @@ public:
     void setEncodingSettings(const QImageEncoderSettings& settings);
 
 public Q_SLOTS:
-    void capture(const QString &fileName);
+    void capture(const QString &fileName = QString());
+    void cancelCapture();
 
 Q_SIGNALS:
     void error(QStillImageCapture::Error error);

@@ -263,6 +263,8 @@ bool QXVideoSurface::start(const QVideoSurfaceFormat &format)
 {
     //qDebug() << "QXVideoSurface::start" << format;
 
+    m_lastFrame = QVideoFrame();
+
     if (m_image)
         XFree(m_image);
 
@@ -340,7 +342,7 @@ void QXVideoSurface::stop()
     if (m_image) {
         XFree(m_image);
         m_image = 0;
-        lastFrame = QVideoFrame();
+        m_lastFrame = QVideoFrame();
 
         QAbstractVideoSurface::stop();
     }
@@ -355,9 +357,9 @@ bool QXVideoSurface::present(const QVideoFrame &frame)
         setError(IncorrectFormatError);
         return false;
     } else {
-        lastFrame = frame;
+        m_lastFrame = frame;
 
-        if (!lastFrame.map(QAbstractVideoBuffer::ReadOnly)) {
+        if (!m_lastFrame.map(QAbstractVideoBuffer::ReadOnly)) {
             qWarning() << "Failed to map video frame";
             setError(IncorrectFormatError);
             return false;
@@ -365,12 +367,12 @@ bool QXVideoSurface::present(const QVideoFrame &frame)
             bool presented = false;
 
             if (frame.handleType() != XvHandleType &&
-                m_image->data_size > lastFrame.mappedBytes()) {
+                m_image->data_size > m_lastFrame.mappedBytes()) {
                 qWarning("Insufficient frame buffer size");
                 setError(IncorrectFormatError);
             } else if (frame.handleType() != XvHandleType &&
                        m_image->num_planes > 0 &&
-                       m_image->pitches[0] != lastFrame.bytesPerLine()) {
+                       m_image->pitches[0] != m_lastFrame.bytesPerLine()) {
                 qWarning("Incompatible frame pitches");
                 setError(IncorrectFormatError);
             } else {
@@ -380,7 +382,7 @@ bool QXVideoSurface::present(const QVideoFrame &frame)
                     img = frame.handle().value<XvImage*>();
                 } else {
                     img = m_image;
-                    memcpy(m_image->data, lastFrame.bits(), qMin(lastFrame.mappedBytes(), m_image->data_size));
+                    memcpy(m_image->data, m_lastFrame.bits(), qMin(m_lastFrame.mappedBytes(), m_image->data_size));
                 }
 
                 if (img)
@@ -403,7 +405,7 @@ bool QXVideoSurface::present(const QVideoFrame &frame)
                 presented = true;
             }
 
-            lastFrame.unmap();
+            m_lastFrame.unmap();
 
             return presented;
         }
@@ -412,8 +414,8 @@ bool QXVideoSurface::present(const QVideoFrame &frame)
 
 void QXVideoSurface::repaintLastFrame()
 {
-    if (lastFrame.isValid())
-        present(QVideoFrame(lastFrame));
+    if (m_lastFrame.isValid())
+        present(QVideoFrame(m_lastFrame));
 }
 
 bool QXVideoSurface::findPort()

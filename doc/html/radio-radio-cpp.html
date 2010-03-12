@@ -66,10 +66,6 @@
 
         if(radio-&gt;isBandSupported(QRadioTuner::FM))
             radio-&gt;setBand(QRadioTuner::FM);
-        else {
-            qWarning()&lt;&lt;&quot;Currently only works for FM&quot;;
-            exit(0);
-        }
 
         QWidget *window = new QWidget;
         QVBoxLayout* layout = new QVBoxLayout;
@@ -86,7 +82,10 @@
         topBar-&gt;addWidget(freq);
 
         signal = new QLabel;
-        signal-&gt;setText(tr(&quot;No Signal&quot;));
+        if (radio-&gt;isAvailable())
+            signal-&gt;setText(tr(&quot;No Signal&quot;));
+        else
+            signal-&gt;setText(tr(&quot;No radio found&quot;));
         topBar-&gt;addWidget(signal);
 
         volumeSlider = new QSlider(Qt::Vertical,this);
@@ -94,7 +93,6 @@
     #if defined Q_OS_SYMBIAN
         volumeSlider-&gt;setRange(0,10);
     #endif
-        qWarning()&lt;&lt;radio-&gt;volume();
         volumeSlider-&gt;setValue(radio-&gt;volume());
         connect(volumeSlider,SIGNAL(valueChanged(int)),this,SLOT(updateVolume(int)));
         topBar-&gt;addWidget(volumeSlider);

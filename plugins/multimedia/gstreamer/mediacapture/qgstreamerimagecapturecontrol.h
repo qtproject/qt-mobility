@@ -56,6 +56,7 @@ public:
 
     bool isReadyForCapture() const;
     void capture(const QString &fileName);
+    void cancelCapture();
 
 private slots:
     void updateState();

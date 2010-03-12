@@ -98,7 +98,7 @@ void CntDisplayLabelSqlFilter::createSqlQuery(const QContactDetailFilter& filter
         }
         
         if(!subQuery.isEmpty()){
-            sqlQuery += " AND (" + subQuery + ")";
+            sqlQuery += " AND (" + subQuery + ')';
         }
    
         error = QContactManager::NoError;
@@ -155,7 +155,7 @@ void CntDisplayLabelSqlFilter::createQueryMultipleSearchValues(QString& sqlQuery
  */
 QString CntDisplayLabelSqlFilter::createSubQuery(const QString &searchValue, const QString &column) const
 {
-    return ("(" + column + " LIKE \'" + searchValue + "%\' OR " + column + " LIKE \'% " + searchValue + "%\')");
+    return ('(' + column + " LIKE \'" + searchValue + "%\' OR " + column + " LIKE \'% " + searchValue + "%\')");
 }
 
 /*

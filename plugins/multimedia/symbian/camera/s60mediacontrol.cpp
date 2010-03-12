@@ -41,7 +41,7 @@
 
 #include "s60mediacontrol.h"
 #include "s60cameracontrol.h"
-#include "s60camerasession.h"
+#include "s60videocapturesession.h"
 
 #include <QtCore/qdebug.h>
 
@@ -51,12 +51,13 @@ S60MediaControl::S60MediaControl(QObject *parent)
 }
 
 S60MediaControl::S60MediaControl(QObject *session, QObject *parent)
-   :QMediaRecorderControl(parent)
+   :QMediaRecorderControl(parent), m_state(QMediaRecorder::StoppedState)
 {
     // use cast if we want to change session class later on..
-    m_session = qobject_cast<S60CameraSession*>(session);
+    m_session = qobject_cast<S60VideoCaptureSession*>(session);
 
-    connect(m_session,SIGNAL(stateChanged(QCamera::State)),this,SIGNAL(stateChanged(QCamera::State)));
+    connect(m_session,SIGNAL(stateChanged(S60VideoCaptureSession::TVideoCaptureState)),this,SLOT(updateState(S60VideoCaptureSession::TVideoCaptureState)));
+   // connect(m_session, SIGNAL(positionChanged(qint64)), this, SIGNAL(durationChanged(qint64)));
     connect(m_session,SIGNAL(error(int,const QString &)),this,SIGNAL(error(int,const QString &)));
 }
 
@@ -78,13 +79,39 @@ bool S60MediaControl::setOutputLocation(const QUrl& sink)
     return false;
 }
 
-QMediaRecorder::State S60MediaControl::state() const
+QMediaRecorder::State S60MediaControl::convertState(S60VideoCaptureSession::TVideoCaptureState aState) const
 {
-    if (m_session)
-        return (QMediaRecorder::State)m_session->state();
-    return QMediaRecorder::StoppedState;
+    QMediaRecorder::State state = QMediaRecorder::StoppedState;;       
+    switch (aState) {
+    case S60VideoCaptureSession::ERecording:
+        state = QMediaRecorder::RecordingState;            
+        break;            
+    case S60VideoCaptureSession::EPaused:            
+        state = QMediaRecorder::PausedState;            
+        break;            
+    case S60VideoCaptureSession::ERecordComplete:             
+    case S60VideoCaptureSession::ENotInitialized:
+    case S60VideoCaptureSession::EOpenCompelete:
+    case S60VideoCaptureSession::EInitialized:            
+        state = QMediaRecorder::StoppedState;            
+        break;            
+    }            
+    return state;         
 }
 
+void S60MediaControl::updateState(S60VideoCaptureSession::TVideoCaptureState aState)
+{   
+    QMediaRecorder::State newState = convertState(aState);
+    if (m_state != newState) {
+        m_state = newState;
+        emit stateChanged(m_state);
+    }
+}
+
+QMediaRecorder::State S60MediaControl::state() const
+{   
+    return m_state;
+}
 qint64 S60MediaControl::duration() const
 {
     if (m_session)
@@ -98,26 +125,19 @@ to reduce delay before recording is started.
 */
 void S60MediaControl::applySettings()
 {
-
 }
 
 void S60MediaControl::record()
-{
-    if (m_session)
-        m_session->startRecording();
-    emit stateChanged(QMediaRecorder::RecordingState);
+{     
+    m_session->startRecording();    
 }
 
 void S60MediaControl::pause()
-{
-    if (m_session)
-        m_session->pauseRecording();
-    emit stateChanged(QMediaRecorder::PausedState);
+{     
+    m_session->pauseRecording();    
 }
 
 void S60MediaControl::stop()
 {
-    if (m_session)
-        m_session->stopRecording();
-    emit stateChanged(QMediaRecorder::StoppedState);
+    m_session->stopRecording();     
 }

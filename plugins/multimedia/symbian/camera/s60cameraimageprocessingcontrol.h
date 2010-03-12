@@ -44,11 +44,12 @@
 
 #include <QtCore/qobject.h>
 #include "qimageprocessingcontrol.h"
+#include "s60camerasettings.h"
 
 QTM_USE_NAMESPACE
 
 class S60CameraService;
-class S60CameraSession;
+class S60ImageCaptureSession;
 
 class S60CameraImageProcessingControl : public QImageProcessingControl
 {
@@ -64,23 +65,30 @@ public:
     int manualWhiteBalance() const;
     void setManualWhiteBalance(int colorTemperature);
 
-    qreal contrast() const;
-    void setContrast(qreal value);
+    int contrast() const;
+    void setContrast(int value);
 
-    qreal saturation() const;
-    void setSaturation(qreal value);
+    int saturation() const;
+    void setSaturation(int value);
 
     bool isSharpeningSupported() const;
-    qreal sharpeningLevel() const;
-    void setSharpeningLevel(qreal value);
+    int sharpeningLevel() const;
+    void setSharpeningLevel(int value);
 
     bool isDenoisingSupported() const;
-    qreal denoisingLevel() const;
-    void setDenoisingLevel(qreal value);
-    
+    int denoisingLevel() const;
+    void setDenoisingLevel(int value);
+    bool isWhiteBalanceLocked() const;
+
+public Q_SLOTS:
+    void resetAdvancedSetting();
+    void unlockWhiteBalance();
+    void lockWhiteBalance();
+
 private:
-    S60CameraSession *m_session;
+    S60ImageCaptureSession *m_session;
     S60CameraService *m_service;
+    S60CameraSettings *m_advancedSettings;
 };
 
 #endif

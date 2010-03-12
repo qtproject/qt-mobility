@@ -47,9 +47,13 @@
 #include <qvideooutputcontrol.h>
 #include <qvideorenderercontrol.h>
 
+#include <QtCore/qcoreevent.h>
+
 #include <QtMultimedia/qvideosurfaceformat.h>
-//#include <QtOpenGL/qgl.h>
-//#define QGRAPHICSVIDEOITEM_SHADERS
+
+#if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
+#include <QtOpenGL/qgl.h>
+#endif
 
 QTM_BEGIN_NAMESPACE
 
@@ -204,18 +208,6 @@ void QGraphicsVideoItemPrivate::_q_mediaObjectDestroyed()
 */
 
 /*!
-    \enum QGraphicsVideoItem::FillMode
-
-    Enumerates the methods of scaling a video to fit a graphics item.
-
-    \value Stretch The video is stretched to fit the item's size.
-    \value PreserveAspectFit The video is uniformly scaled to fix the item's
-    size without cropping.
-    \value PreserveAspectCrop The video is uniformly scaled to fill the item's
-    size, cropping if necessary.
-*/
-
-/*!
     Constructs a graphics item that displays video.
 
     The \a parent is passed to QGraphicsItem.
@@ -282,7 +274,7 @@ void QGraphicsVideoItem::setMediaObject(QMediaObject *object)
         d->service = d->mediaObject->service();
 
         if (d->service) {
-            connect(d->service, SIGNAL(destroyed()), this, SLOT(_q_serviceDestroyed()));            
+            connect(d->service, SIGNAL(destroyed()), this, SLOT(_q_serviceDestroyed()));
 
             d->outputControl = qobject_cast<QVideoOutputControl *>(
                     d->service->control(QVideoOutputControl_iid));
@@ -397,9 +389,7 @@ void QGraphicsVideoItem::paint(
     if (d->surface && d->surface->isActive()) {
         d->surface->paint(painter, d->boundingRect, d->sourceRect);
         d->surface->setReady(true);
-#ifndef QGRAPHICSVIDEOITEM_SHADERS    // Flickers
-    }
-#else
+#if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
     } else if (d->updatePaintDevice && (painter->paintEngine()->type() == QPaintEngine::OpenGL
             || painter->paintEngine()->type() == QPaintEngine::OpenGL2)) {
         d->updatePaintDevice = false;
@@ -410,8 +400,8 @@ void QGraphicsVideoItem::paint(
         } else {
             d->surface->setShaderType(QPainterVideoSurface::FragmentProgramShader);
         }
-    }
 #endif
+    }
 }
 
 /*!
@@ -421,21 +411,12 @@ void QGraphicsVideoItem::paint(
 */
 QVariant QGraphicsVideoItem::itemChange(GraphicsItemChange change, const QVariant &value)
 {
-    Q_D(QGraphicsVideoItem);
+    return QGraphicsItem::itemChange(change, value);
+}
 
-    if (change == ItemVisibleChange && d->outputControl != 0 && d->rendererControl != 0) {
-        if (value.toBool()) {
-            d->outputControl->setOutput(QVideoOutputControl::RendererOutput);
-
-            return d->outputControl->output() == QVideoOutputControl::RendererOutput;
-        } else {
-            d->outputControl->setOutput(QVideoOutputControl::NoOutput);
-
-            return value;
-        }
-    } else {
-        return QGraphicsItem::itemChange(change, value);
-    }
+void QGraphicsVideoItem::timerEvent(QTimerEvent *event)
+{
+    QGraphicsObject::timerEvent(event);
 }
 
 #include "moc_qgraphicsvideoitem.cpp"

@@ -82,6 +82,7 @@ private slots:
     void organization();
     void phoneNumber();
     void syncTarget();
+    void tag();
     void timestamp();
     void type();
     void url();
@@ -608,6 +609,39 @@ void tst_QContactDetails::nickname()
     QCOMPARE(c.details(QContactNickname::DefinitionName).count(), 0);
 }
 
+void tst_QContactDetails::note()
+{
+    QContact c;
+    QContactNote n1, n2;
+
+    // test property set
+    n1.setNote("lorem ipsum");
+    QCOMPARE(n1.note(), QString("lorem ipsum"));
+    QCOMPARE(n1.value(QContactNote::FieldNote), QString("lorem ipsum"));
+
+    // test property add
+    QVERIFY(c.saveDetail(&n1));
+    QCOMPARE(c.details(QContactNote::DefinitionName).count(), 1);
+    QCOMPARE(QContactNote(c.details(QContactNote::DefinitionName).value(0)).note(), n1.note());
+
+    // test property update
+    n1.setValue("label","label1");
+    n1.setNote("orange gypsum");
+    QVERIFY(c.saveDetail(&n1));
+    QCOMPARE(c.details(QContactNote::DefinitionName).value(0).value("label"), QString("label1"));
+    QCOMPARE(c.details(QContactNote::DefinitionName).value(0).value(QContactNote::FieldNote), QString("orange gypsum"));
+
+    // test property remove
+    QVERIFY(c.removeDetail(&n1));
+    QCOMPARE(c.details(QContactNote::DefinitionName).count(), 0);
+    QVERIFY(c.saveDetail(&n2));
+    QCOMPARE(c.details(QContactNote::DefinitionName).count(), 1);
+    QVERIFY(c.removeDetail(&n2));
+    QCOMPARE(c.details(QContactNote::DefinitionName).count(), 0);
+    QVERIFY(c.removeDetail(&n2) == false);
+    QCOMPARE(c.details(QContactNote::DefinitionName).count(), 0);
+}
+
 void tst_QContactDetails::onlineAccount()
 {
     QContact c;
@@ -812,6 +846,39 @@ void tst_QContactDetails::syncTarget()
     QCOMPARE(c.details(QContactSyncTarget::DefinitionName).count(), 0);
 }
 
+void tst_QContactDetails::tag()
+{
+    QContact c;
+    QContactTag t1, t2;
+
+    // test property set
+    t1.setTag("red");
+    QCOMPARE(t1.tag(), QString("red"));
+    QCOMPARE(t1.value(QContactTag::FieldTag), QString("red"));
+
+    // test property add
+    QVERIFY(c.saveDetail(&t1));
+    QCOMPARE(c.details(QContactTag::DefinitionName).count(), 1);
+    QCOMPARE(QContactTag(c.details(QContactTag::DefinitionName).value(0)).tag(), t1.tag());
+    QVERIFY(c.saveDetail(&t2));
+    QCOMPARE(c.details(QContactTag::DefinitionName).count(), 2);
+
+    // test property update
+    t1.setValue("label","label1");
+    t1.setTag("green");
+    QVERIFY(c.saveDetail(&t1));
+    QCOMPARE(c.details(QContactTag::DefinitionName).value(0).value("label"), QString("label1"));
+    QCOMPARE(c.details(QContactTag::DefinitionName).value(0).value(QContactTag::FieldTag), QString("green"));
+
+    // test property remove
+    QVERIFY(c.removeDetail(&t1));
+    QCOMPARE(c.details(QContactTag::DefinitionName).count(), 1);
+    QVERIFY(c.removeDetail(&t2));
+    QCOMPARE(c.details(QContactTag::DefinitionName).count(), 0);
+    QVERIFY(c.removeDetail(&t2) == false);
+    QCOMPARE(c.details(QContactTag::DefinitionName).count(), 0);
+}
+
 void tst_QContactDetails::timestamp()
 {
     QContact c;
@@ -918,9 +985,53 @@ void tst_QContactDetails::url()
     QCOMPARE(c.details(QContactUrl::DefinitionName).count(), 0);
 }
 
+
+
+
+
+
+
+
+
+
+
+
+// define a custom detail to test inheritance/slicing
+class CustomTestDetail : public QContactDetail
+{
+public:
+    Q_DECLARE_CUSTOM_CONTACT_DETAIL(CustomTestDetail, "CustomTestDetail");
+    Q_DECLARE_LATIN1_LITERAL(FieldTestLabel, "TestLabel");
+
+    ~CustomTestDetail()
+    {
+        // we define a dtor which does some random stuff
+        // to test that the virtual dtor works as expected.
+
+        int *temp = 0;
+        int random = qrand();
+        random += 1;
+        if (random > 0) {
+            temp = new int;
+            *temp = 5;
+        }
+
+        if (temp) {
+            delete temp;
+        }
+    }
+
+    void setTestLabel(const QString& testLabel) { setValue(FieldTestLabel, testLabel); }
+    QString testLabel() const { return value(FieldTestLabel); }
+};
+Q_DEFINE_LATIN1_LITERAL(CustomTestDetail::FieldTestLabel, "TestLabel");
+Q_DEFINE_LATIN1_LITERAL(CustomTestDetail::DefinitionName, "CustomTestDetail");
+
 void tst_QContactDetails::custom()
 {
     QContact c;
+
+    // first, test a custom definition detail
     QContactDetail c1("mycustom"), c2("mycustom");
 
     // test property set
@@ -946,39 +1057,63 @@ void tst_QContactDetails::custom()
     QCOMPARE(c.details("mycustom").count(), 0);
     QVERIFY(c.removeDetail(&c2) == false);
     QCOMPARE(c.details("mycustom").count(), 0);
-}
 
-void tst_QContactDetails::note()
-{
-    QContact c;
-    QContactNote n1, n2;
 
-    // test property set
-    n1.setNote("lorem ipsum");
-    QCOMPARE(n1.note(), QString("lorem ipsum"));
-    QCOMPARE(n1.value(QContactNote::FieldNote), QString("lorem ipsum"));
+    // then, test a custom subclass (we don't test registration of the custom definition, however)
+    CustomTestDetail ctd1, ctd2;
+    ctd1.setTestLabel("this is a test");
+    ctd2.setTestLabel("test 2");
+    QCOMPARE(ctd1.testLabel(), QString("this is a test"));
 
-    // test property add
-    QVERIFY(c.saveDetail(&n1));
-    QCOMPARE(c.details(QContactNote::DefinitionName).count(), 1);
-    QCOMPARE(QContactNote(c.details(QContactNote::DefinitionName).value(0)).note(), n1.note());
+    // prior to add
+    QCOMPARE(c.details("CustomTestDetail").count(), 0);
+    QCOMPARE(c.details<CustomTestDetail>().count(), 0);
 
-    // test property update
-    n1.setValue("label","label1");
-    n1.setNote("orange gypsum");
-    QVERIFY(c.saveDetail(&n1));
-    QCOMPARE(c.details(QContactNote::DefinitionName).value(0).value("label"), QString("label1"));
-    QCOMPARE(c.details(QContactNote::DefinitionName).value(0).value(QContactNote::FieldNote), QString("orange gypsum"));
+    // test detail add
+    QVERIFY(c.saveDetail(&ctd1));
+    QCOMPARE(c.details("CustomTestDetail").count(), 1);
+    QCOMPARE(c.details<CustomTestDetail>().count(), 1);
+    QCOMPARE(c.details<CustomTestDetail>().first().testLabel(), QString("this is a test"));
 
-    // test property remove
-    QVERIFY(c.removeDetail(&n1));
-    QCOMPARE(c.details(QContactNote::DefinitionName).count(), 0);
-    QVERIFY(c.saveDetail(&n2));
-    QCOMPARE(c.details(QContactNote::DefinitionName).count(), 1);
-    QVERIFY(c.removeDetail(&n2));
-    QCOMPARE(c.details(QContactNote::DefinitionName).count(), 0);
-    QVERIFY(c.removeDetail(&n2) == false);
-    QCOMPARE(c.details(QContactNote::DefinitionName).count(), 0);
+    // test detail update
+    ctd1.setTestLabel("this is a modified test");
+    QVERIFY(c.saveDetail(&ctd1)); // should merely update
+    QCOMPARE(c.details("CustomTestDetail").count(), 1);
+    QCOMPARE(c.details<CustomTestDetail>().count(), 1);
+    QCOMPARE(c.details<CustomTestDetail>().first().testLabel(), QString("this is a modified test"));
+
+    // test detail remove
+    QVERIFY(c.removeDetail(&ctd1));
+    QCOMPARE(c.details("CustomTestDetail").count(), 0);
+    QCOMPARE(c.details<CustomTestDetail>().count(), 0);
+
+    // now test how custom details interact with foreach loops.
+    QVERIFY(c.saveDetail(&ctd1));
+    QVERIFY(c.saveDetail(&ctd2));
+    QVERIFY(c.saveDetail(&c1));
+
+    // first, definition agnostic foreach.
+    foreach (const QContactDetail& det, c.details()) {
+        QCOMPARE(det.definitionName().isEmpty(), false);
+    }
+
+    // second, definition parameter foreach, with assignment.
+    foreach (const QContactDetail& det, c.details("CustomTestDetail")) {
+        CustomTestDetail customDet = det;
+        QCOMPARE(det.definitionName(), QString("CustomTestDetail"));
+        QCOMPARE(customDet.testLabel().isEmpty(), false);
+    }
+
+    // third, definition parameter foreach, with cast.
+    foreach (const QContactDetail& det, c.details("CustomTestDetail")) {
+        QCOMPARE(static_cast<CustomTestDetail>(det).definitionName(), QString("CustomTestDetail"));
+        QCOMPARE(static_cast<CustomTestDetail>(det).testLabel().isEmpty(), false);
+    }
+
+    // fourth, parametrized foreach.
+    foreach (const CustomTestDetail& det, c.details<CustomTestDetail>()) {
+        QCOMPARE(det.definitionName(), QString("CustomTestDetail"));
+    }
 }
 
 

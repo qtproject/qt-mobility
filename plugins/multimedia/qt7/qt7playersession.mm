@@ -67,6 +67,7 @@ QTM_USE_NAMESPACE
 - (QTMovieObserver *) initWithPlayerSession:(QT7PlayerSession*)session;
 - (void) setMovie:(QTMovie *)movie;
 - (void) processEOS:(NSNotification *)notification;
+- (void) processStateChange:(NSNotification *)notification;
 @end
 
 @implementation QTMovieObserver
@@ -96,6 +97,12 @@ QTM_USE_NAMESPACE
         [[NSNotificationCenter defaultCenter] addObserver: self selector:
             @selector(processEOS:) name: QTMovieDidEndNotification object: m_movie];
 
+        [[NSNotificationCenter defaultCenter] addObserver: self selector:
+            @selector(processStateChange:) name: QTMovieLoadStateDidChangeNotification object: m_movie];
+
+        [[NSNotificationCenter defaultCenter] addObserver: self selector:
+            @selector(processVolumeChange:) name: QTMovieVolumeDidChangeNotification object: m_movie];
+
         [movie retain];
     }
 }
@@ -105,6 +112,19 @@ QTM_USE_NAMESPACE
     Q_UNUSED(notification);
     m_session->processEOS();
 }
+
+- (void) processStateChange:(NSNotification *)notification
+{
+    Q_UNUSED(notification);
+    m_session->processStateChange();
+}
+
+- (void) processVolumeChange:(NSNotification *)notification
+{
+    Q_UNUSED(notification);
+    m_session->processVolumeChange();
+}
+
 
 @end
 
@@ -250,12 +270,11 @@ void QT7PlayerSession::setPosition(qint64 pos)
 
 void QT7PlayerSession::play()
 {
-    m_state = QMediaPlayer::PlayingState;
-
     float preferredRate = [[(QTMovie*)m_QTMovie attributeForKey:@"QTMoviePreferredRateAttribute"] floatValue];
     [(QTMovie*)m_QTMovie setRate:preferredRate*m_rate];
 
-    emit stateChanged(m_state);
+    if (m_state != QMediaPlayer::PlayingState)
+        emit stateChanged(m_state = QMediaPlayer::PlayingState);
 }
 
 void QT7PlayerSession::pause()
@@ -326,6 +345,7 @@ void QT7PlayerSession::setMedia(const QMediaContent &content, QIODevice *stream)
 
     m_resources = content;
     m_mediaStream = stream;
+    m_mediaStatus = QMediaPlayer::NoMedia;
 
     QUrl url;
 
@@ -361,19 +381,16 @@ void QT7PlayerSession::setMedia(const QMediaContent &content, QIODevice *stream)
         m_QTMovie = 0;
         QString description = QString::fromUtf8([[err localizedDescription] UTF8String]);
 
-        qDebug() << "QT7PlayerSession::setMedia error" << description;
+        qWarning() << "QT7PlayerSession::setMedia error" << description;
         emit error(QMediaPlayer::FormatError, description );
     } else {
         [(QTMovieObserver*)m_movieObserver setMovie:(QTMovie*)m_QTMovie];
 
-        if (m_videoOutput) {
-            m_videoOutput->setEnabled(true);
+        if (m_videoOutput) {            
             m_videoOutput->setMovie(m_QTMovie);
+            m_videoOutput->setEnabled(true);
         }
-
-        emit durationChanged(duration());
-        emit audioAvailableChanged(isAudioAvailable());
-        emit videoAvailableChanged(isVideoAvailable());
+        processStateChange();
 
         [(QTMovie*)m_QTMovie setMuted:m_muted];
         setVolume(m_volume);
@@ -403,6 +420,75 @@ void QT7PlayerSession::processEOS()
     m_mediaStatus = QMediaPlayer::EndOfMedia;
     emit stateChanged(m_state = QMediaPlayer::StoppedState);
     emit mediaStatusChanged(m_mediaStatus);
+}
+
+void QT7PlayerSession::processStateChange()
+{
+    signed long state = [[(QTMovie*)m_QTMovie attributeForKey:QTMovieLoadStateAttribute]
+                         longValue];
+    //qDebug() << "new State:" << state;
+
+#ifndef QUICKTIME_C_API_AVAILABLE
+    enum {
+      kMovieLoadStateError          = -1L,
+      kMovieLoadStateLoading        = 1000,
+      kMovieLoadStateLoaded         = 2000,
+      kMovieLoadStatePlayable       = 10000,
+      kMovieLoadStatePlaythroughOK  = 20000,
+      kMovieLoadStateComplete       = 100000
+    };
+#endif
+
+    QMediaPlayer::MediaStatus newStatus = QMediaPlayer::NoMedia;
+    bool isPlaying = (m_state != QMediaPlayer::StoppedState);
+
+    if (state >= kMovieLoadStateComplete) {
+        newStatus = isPlaying ? QMediaPlayer::BufferedMedia : QMediaPlayer::LoadedMedia;
+    } else if (state >= kMovieLoadStatePlayable)
+        newStatus = isPlaying ? QMediaPlayer::BufferingMedia : QMediaPlayer::LoadingMedia;
+    else if (state >= kMovieLoadStateLoading)
+        newStatus = isPlaying ? QMediaPlayer::StalledMedia : QMediaPlayer::LoadingMedia;
+
+    if (state == kMovieLoadStateError) {
+        newStatus = QMediaPlayer::InvalidMedia;
+        emit error(QMediaPlayer::FormatError, tr("Playback failed"));
+    }
+
+    if (newStatus != m_mediaStatus) {
+        switch (newStatus) {
+        case QMediaPlayer::BufferedMedia:
+        case QMediaPlayer::BufferingMedia:
+            //delayed playback start is necessary for network sources
+            if (m_state == QMediaPlayer::PlayingState) {
+                QMetaObject::invokeMethod(this, "play", Qt::QueuedConnection);
+            }
+            //fall
+        case QMediaPlayer::LoadedMedia:
+        case QMediaPlayer::LoadingMedia:
+            emit durationChanged(duration());
+            emit audioAvailableChanged(isAudioAvailable());
+            emit videoAvailableChanged(isVideoAvailable());
+            break;
+        case QMediaPlayer::InvalidMedia:
+            emit stateChanged(m_state = QMediaPlayer::StoppedState);
+        default:
+            break;
+        }
+
+        emit mediaStatusChanged(m_mediaStatus = newStatus);
+    }
+}
+
+void QT7PlayerSession::processVolumeChange()
+{
+    if (!m_QTMovie)
+        return;
+
+    int newVolume = qRound(100.0f*[((QTMovie*)m_QTMovie) volume]);
+
+    if (newVolume != m_volume) {
+        emit volumeChanged(m_volume = newVolume);
+    }
 }
 
 #include "moc_qt7playersession.cpp"

@@ -140,31 +140,6 @@ public:
     void setMyprop(qreal myprop);
 };
 
-// begin generated code
-// end generated code
-
-QTM_END_NAMESPACE
-
-#endif
-';
-    close OUT;
-}
-
-if (-e $header) {
-    open IN, "$header" or die $!;
-    my @data = <IN>;
-    close IN;
-    my @tags = grep /^\/\/ (begin|end) generated code/, @data;
-    if (scalar(@tags) == 2 &&
-    $tags[0] eq "// begin generated code\n" &&
-    $tags[1] eq "// end generated code\n") {
-        print "Updating generated code in $header\n";
-        open OUT, ">$header" or die $!;
-        my $skip = 0;
-        for (@data) {
-            if ($_ eq $tags[0]) {
-                print OUT $_;
-                print OUT '
 class Q_SENSORS_EXPORT '.$filter.' : public QSensorFilter
 {
 public:
@@ -183,17 +158,12 @@ public:
     '.$reading.' *reading() const { return static_cast<'.$reading.'*>(QSensor::reading()); }
     static const char *type;
 };
+
+QTM_END_NAMESPACE
+
+#endif
 ';
-                $skip = 1;
-            }
-            if ($_ eq $tags[1]) {
-                $skip = 0;
-            }
-            if (!$skip) {
-                print OUT $_;
-            }
-        }
-    }
+    close OUT;
 }
 
 if (! -e $source) {
@@ -244,30 +214,6 @@ void '.$reading.'::setMyprop(qreal myprop)
 
 // =====================================================================
 
-// begin generated code
-// end generated code
-
-#include "moc_'.$source.'"
-QTM_END_NAMESPACE
-';
-    close OUT;
-}
-
-if (-e $source) {
-    open IN, "$source" or die $!;
-    my @data = <IN>;
-    close IN;
-    my @tags = grep /^\/\/ (begin|end) generated code/, @data;
-    if (scalar(@tags) == 2 &&
-    $tags[0] eq "// begin generated code\n" &&
-    $tags[1] eq "// end generated code\n") {
-        print "Updating generated code in $source\n";
-        open OUT, ">$source" or die $!;
-        my $skip = 0;
-        for (@data) {
-            if ($_ eq $tags[0]) {
-                print OUT $_;
-                print OUT '
 /*!
     \class '.$filter.'
     \ingroup sensors_filter
@@ -324,19 +270,12 @@ const char *'.$sensor.'::type("'.$sensor.'");
 
     \sa QSensor::reading()
 */
-';
-                $skip = 1;
-            }
-            if ($_ eq $tags[1]) {
-                $skip = 0;
-            }
-            if (!$skip) {
-                print OUT $_;
-            }
-        }
-    }
-}
 
+#include "moc_'.$source.'"
+QTM_END_NAMESPACE
+';
+    close OUT;
+}
 
 exit 0;
 

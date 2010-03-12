@@ -5,51 +5,37 @@ echo "usage: $0 <contact-uri> <contact-uid> <im-id> <accountPath> <imPresence> <
 exit 1
 fi
 
+echo "create nco:IMAddress"
+tracker-sparql --update --query "
+INSERT {
+		<telepathy:$4/$3> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> nco:IMAddress;
+	    nco:imID '$3';
+	    nco:imNickname '$8$9';
+	    nco:imPresence $5;
+	    nco:imStatusMessage '$6';
+	    nco:imCapability <bogus>
+}
+"
+
 echo "create nco:IMAccount"
 tracker-sparql -u -q "
 INSERT 
 { 
 <telepathy:$4> 
 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> 
-<http://www.semanticdesktop.org/ontologies/2007/03/22/nco#IMAccount>
+<http://www.semanticdesktop.org/ontologies/2007/03/22/nco#IMAccount>;
+nco:imDisplayName '$7'; 
+nco:hasIMContact <telepathy:$4/$3>
 }
 "
 
-tracker-sparql -u -q "
-INSERT 
-{ 
-<telepathy:$4> 
- nco:imDisplayName '$7' 
-}
-"
-
-echo "create nco:IMContact"
+echo "create nco:PersonContact"
 tracker-sparql -u -q "
 INSERT
 {
-<$1>
-<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>
-<http://www.semanticdesktop.org/ontologies/2007/03/22/nco#IMContact>
-}
-"
-
-echo "create nco:IMContact"
-tracker-sparql --update --query "
-INSERT {
-	    <$1> a nco:IMContact;
+        <$1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> nco:PersonContact;
 	    nco:contactUID '$2';
-	    nco:imContactId '$3';
-	    nco:imContactNickname '$8$9';
-	    nco:imContactPresence $5;
-	    nco:imContactStatusMessage '$6';
-	    nco:fromIMAccount <telepathy:$4>;
-	    nco:imContactCapability <bogus>
-}
-"
-
-echo "update nco:IMContact"
-tracker-sparql --update --query "INSERT {
-        <$1> a nco:IMContact;
+	    nco:hasIMAddress <telepathy:$4/$3>;
 	    nco:nameGiven '$8';
         nco:nameFamily '$9'
 }

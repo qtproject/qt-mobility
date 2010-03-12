@@ -45,12 +45,10 @@
 
 S60AudioPlayerSession::S60AudioPlayerSession(QObject *parent)
     : S60MediaPlayerSession(parent)
+    , m_player(0)
 {    
     QT_TRAP_THROWING(m_player = CAudioPlayer::NewL(*this, 0, EMdaPriorityPreferenceNone));
-    
-#if defined(S60_DRM_SUPPORTED) && defined(__S60_50__)
     m_player->RegisterForAudioLoadingNotification(*this);
-#endif   
 }
 
 S60AudioPlayerSession::~S60AudioPlayerSession()
@@ -64,16 +62,16 @@ void S60AudioPlayerSession::doLoadL(const TDesC &path)
     m_player->OpenFileL(path);
 }
 
-int S60AudioPlayerSession::doGetDurationL() const
+qint64 S60AudioPlayerSession::doGetDurationL() const
 {
-    return m_player->Duration().Int64() / 1000;
+    return m_player->Duration().Int64() / qint64(1000);
 }
 
 qint64 S60AudioPlayerSession::doGetPositionL() const
 {
     TTimeIntervalMicroSeconds ms = 0;
     m_player->GetPosition(ms);
-    return ms.Int64() / 1000;
+    return ms.Int64() / qint64(1000);
 }
 
 bool S60AudioPlayerSession::isVideoAvailable() const
@@ -84,9 +82,28 @@ bool S60AudioPlayerSession::isAudioAvailable() const
 {
     return true; // this is a bit happy scenario, but we do emit error that we can't play
 }
+
+void S60AudioPlayerSession::MaloLoadingStarted()
+{
+    buffering();
+}
+
+void S60AudioPlayerSession::MaloLoadingComplete()
+{
+    buffered();
+}
+
 void S60AudioPlayerSession::doPlay()
 {
+// For some reason loading progress callbalck are not called on emulator    
+#ifdef __WINSCW__  
+    buffering();
+#endif    
     m_player->Play();
+#ifdef __WINSCW__  
+    buffered();
+#endif    
+    
 }
 
 void S60AudioPlayerSession::doPauseL()
@@ -125,6 +142,13 @@ void S60AudioPlayerSession::updateMetaDataEntriesL()
     emit metaDataChanged();
 }
 
+int S60AudioPlayerSession::doGetBufferStatusL() const
+{
+    int progress = 0;
+    m_player->GetAudioLoadingProgressL(progress);
+    return progress;    
+}
+
 #ifdef S60_DRM_SUPPORTED   
 void S60AudioPlayerSession::MdapcInitComplete(TInt aError, const TTimeIntervalMicroSeconds& aDuration)
 #else 
@@ -133,7 +157,7 @@ void S60AudioPlayerSession::MapcInitComplete(TInt aError, const TTimeIntervalMic
 {
     Q_UNUSED(aDuration);
     setError(aError);
-    initComplete();
+    loaded();
 }
 
 #ifdef S60_DRM_SUPPORTED   
@@ -143,5 +167,5 @@ void S60AudioPlayerSession::MapcPlayComplete(TInt aError)
 #endif
 {
     setError(aError);
-    playComplete();
+    endOfMedia();
 }

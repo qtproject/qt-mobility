@@ -48,7 +48,7 @@
 
 QTM_USE_NAMESPACE
 
-class S60CameraSession;
+class S60VideoCaptureSession;
 
 class S60MediaContainerControl : public QMediaContainerControl
 {
@@ -65,8 +65,7 @@ public:
     QString containerDescription(const QString &containerMimeType) const;
 
 private:
-    S60CameraSession* m_session;
-
+    S60VideoCaptureSession* m_session;
     QString m_containerMimeType;
     QStringList m_supportedContainers;
     QMap<QString, QString> m_containerDescriptions;

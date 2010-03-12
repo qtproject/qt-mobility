@@ -65,10 +65,10 @@ EXPORTS
 	_ZNK10QtMobility27QServiceInterfaceDescriptor7isValidEv @ 64 NONAME
 	_ZNK10QtMobility27QServiceInterfaceDescriptor9attributeENS0_9AttributeE @ 65 NONAME
 	_ZNK10QtMobility27QServiceInterfaceDescriptoreqERKS0_ @ 66 NONAME
-	_ZTIN10QtMobility22CDatabaseManagerServerE @ 67 NONAME ; #<TI>#
-	_ZTIN10QtMobility23QServicePluginInterfaceE @ 68 NONAME ; #<TI>#
-	_ZTIN10QtMobility24QAbstractSecuritySessionE @ 69 NONAME ; #<TI>#
-	_ZTVN10QtMobility22CDatabaseManagerServerE @ 70 NONAME ; #<VT>#
-	_ZTVN10QtMobility23QServicePluginInterfaceE @ 71 NONAME ; #<VT>#
-	_ZTVN10QtMobility24QAbstractSecuritySessionE @ 72 NONAME ; #<VT>#
+	_ZTIN10QtMobility22CDatabaseManagerServerE @ 67 NONAME
+	_ZTIN10QtMobility23QServicePluginInterfaceE @ 68 NONAME
+	_ZTIN10QtMobility24QAbstractSecuritySessionE @ 69 NONAME
+	_ZTVN10QtMobility22CDatabaseManagerServerE @ 70 NONAME
+	_ZTVN10QtMobility23QServicePluginInterfaceE @ 71 NONAME
+	_ZTVN10QtMobility24QAbstractSecuritySessionE @ 72 NONAME
 
