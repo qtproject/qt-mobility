@@ -41,7 +41,7 @@
 
 #include "s60cameraimagecapturecontrol.h"
 #include "s60cameraservice.h"
-#include "s60camerasession.h"
+#include "s60imagecapturesession.h"
 
 #include <QtCore/qdebug.h>
 #include <QtCore/qstring.h>
@@ -56,7 +56,7 @@ S60CameraImageCaptureControl::S60CameraImageCaptureControl(QObject *session, QOb
    :QImageCaptureControl(parent)
 {
     // use cast if we want to change session class later on..
-    m_session = qobject_cast<S60CameraSession*>(session);
+    m_session = qobject_cast<S60ImageCaptureSession*>(session);
     // chain these signals from session class
     connect(m_session, SIGNAL(imageCaptured(QString,QImage)),
             this, SIGNAL(imageCaptured(QString,QImage)));
@@ -69,7 +69,6 @@ S60CameraImageCaptureControl::S60CameraImageCaptureControl(QObject *session, QOb
     
 }
 
-
 S60CameraImageCaptureControl::~S60CameraImageCaptureControl()
 {
 }
@@ -81,9 +80,13 @@ bool S60CameraImageCaptureControl::isReadyForCapture() const
     else
         return false;
 }
+
 void S60CameraImageCaptureControl::capture(const QString &fileName)
 {
     if (m_session)
         m_session->capture(fileName);
 }
 
+void S60CameraImageCaptureControl::cancelCapture()
+{
+}

@@ -67,7 +67,7 @@
 <p>Destroys a video encoder settings object.</p>
 <a name="//apple_ref/cpp/instm/QVideoEncoderSettings/bitRate"></a>
 <h3 class="fn"><a name="bitRate"></a>int QVideoEncoderSettings::bitRate () const</h3>
-<p>Returns bit rate of the encoded video stream.</p>
+<p>Returns bit rate of the encoded video stream in bits per second.</p>
 <p>See also <a href="qvideoencodersettings.html#setBitRate">setBitRate</a>().</p>
 <a name="//apple_ref/cpp/instm/QVideoEncoderSettings/codec"></a>
 <h3 class="fn"><a name="codec"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QVideoEncoderSettings::codec () const</h3>
@@ -104,6 +104,8 @@
 <a name="//apple_ref/cpp/instm/QVideoEncoderSettings/setEncodingMode"></a>
 <h3 class="fn"><a name="setEncodingMode"></a>void QVideoEncoderSettings::setEncodingMode ( <a href="qtmedia.html#EncodingMode-enum">QtMedia::EncodingMode</a> <i>mode</i> )</h3>
 <p>Sets the video encoding <i>mode</i>.</p>
+<p>If <a href="qtmedia.html#EncodingMode-enum">QtMedia::ConstantQualityEncoding</a> is set, the quality encoding parameter is used and bit rate is ignored, otherwise the bitrate is used.</p>
+<p>The rest of encoding settings are respected regardless of encoding mode.</p>
 <p>See also <a href="qvideoencodersettings.html#encodingMode">encodingMode</a>() and <a href="qtmedia.html#EncodingMode-enum">QtMedia::EncodingMode</a>.</p>
 <a name="//apple_ref/cpp/instm/QVideoEncoderSettings/setFrameRate"></a>
 <h3 class="fn"><a name="setFrameRate"></a>void QVideoEncoderSettings::setFrameRate ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>rate</i> )</h3>
@@ -113,6 +115,8 @@
 <a name="//apple_ref/cpp/instm/QVideoEncoderSettings/setQuality"></a>
 <h3 class="fn"><a name="setQuality"></a>void QVideoEncoderSettings::setQuality ( <a href="qtmedia.html#EncodingQuality-enum">QtMedia::EncodingQuality</a> <i>quality</i> )</h3>
 <p>Sets the video encoding <i>quality</i>.</p>
+<p>Setting the video quality parameter allows backend to choose the balanced set of encoding parameters to achieve the desired quality level.</p>
+<p>The <i>quality</i> settings parameter is only used in the <a href="qtmedia.html#EncodingMode-enum">constant quality</a> <a href="qvideoencodersettings.html#encodingMode">encoding mode</a>.</p>
 <p>See also <a href="qvideoencodersettings.html#quality">quality</a>().</p>
 <a name="//apple_ref/cpp/instm/QVideoEncoderSettings/setResolution"></a>
 <h3 class="fn"><a name="setResolution"></a>void QVideoEncoderSettings::setResolution ( const <a href="http://qt.nokia.com/doc/4.6/qsize.html">QSize</a> &amp; <i>resolution</i> )</h3>

@@ -43,18 +43,18 @@
 #define S60CAMERASETTINGS_H
 
 #include <QtCore/qobject.h>
-#include <cameraengine.h>
-#include <cameraengineobserver.h>
+#include <s60cameraengine.h>
+#include <s60cameraengineobserver.h>
 
 #include "qcamera.h"
 
 QTM_USE_NAMESPACE
 
-class S60CameraSettings : public QObject,
-    public MCameraObserver2
-
+class S60CameraSettings : public QObject, public MAdvancedSettingsObserver
 {
+
     Q_OBJECT
+ 
 public:
     S60CameraSettings(QObject *parent = 0, CCameraEngine *engine = 0);
     ~S60CameraSettings();
@@ -78,10 +78,18 @@ public:
     void setFocusMode(QCamera::FocusMode mode);
     QCamera::FocusMode focusMode();
     QCamera::FocusModes supportedFocusModes();
+    void cancelFocusing();
     
     TInt shutterSpeed();
     void setShutterSpeed(TInt speed);
     QList<qreal> supportedShutterSpeeds(bool *continuous);
+    
+    void setSharpeningLevel(int value);
+    bool isSharpeningSupported() const;
+    int sharpeningLevel() const;
+    
+    void setSaturation(int value);
+    int saturation() const;
     
 Q_SIGNALS:
     void exposureLocked();
@@ -90,22 +98,19 @@ Q_SIGNALS:
     void apertureRangeChanged();
     void shutterSpeedChanged(qreal speed);
     void isoSensitivityChanged(int iso);
+    void focusStatusChanged(QCamera::FocusStatus);
+    void error(QCamera::Error);    
     
-    void error(QCamera::Error);
-    
-    
-protected: // from MCameraObserver2
-    void HandleEvent(const TECAMEvent& aEvent);
-    void ViewFinderReady(MCameraBuffer& aCameraBuffer,TInt aError);
-    void ImageBufferReady(MCameraBuffer& aCameraBuffer,TInt aError); 
-    void VideoBufferReady(MCameraBuffer& aCameraBuffer,TInt aError);
-    
+protected: // from MAdvancedSettingsObserver
+    void HandleAdvancedEvent(const TECAMEvent& aEvent);
+
 private:    
     bool queryAdvancedSettingsInfo();
 
 private:
 #if defined(USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER) || defined(USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER)
     CCamera::CCameraAdvancedSettings *m_advancedSettings;
+    CCamera::CCameraImageProcessing * m_imageProcessingSettings;
 #endif
     CCameraEngine *m_cameraEngine;
 

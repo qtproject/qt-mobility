@@ -52,10 +52,13 @@ class n900accelerometer : public n900filebasedsensor
 public:
     static const char *id;
     static const char *filename;
+    static const char *range;
+    static const char *rate;
 
     n900accelerometer(QSensor *sensor);
 
     void poll();
+    void start();
 
 private:
     QAccelerometerReading m_reading;

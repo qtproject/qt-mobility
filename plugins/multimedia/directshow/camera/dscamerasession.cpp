@@ -183,6 +183,10 @@ void DSCameraSession::captureImage(const QString &fileName)
     m_snapshot = fileName;
 }
 
+void DSCameraSession::cancelCapture()
+{
+}
+
 void DSCameraSession::setSurface(QAbstractVideoSurface* surface)
 {
     m_surface = surface;

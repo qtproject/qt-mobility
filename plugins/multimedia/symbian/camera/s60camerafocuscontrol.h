@@ -49,7 +49,7 @@
 QTM_USE_NAMESPACE
 
 class S60CameraService;
-class S60CameraSession;
+class S60ImageCaptureSession;
 
 class S60CameraFocusControl : public QCameraFocusControl
 {
@@ -75,22 +75,30 @@ public:
     qreal digitalZoom() const;
 
     void zoomTo(qreal optical, qreal digital);
+    
+
+    QCamera::FocusPointMode focusPointMode() const;
+    void setFocusPointMode(QCamera::FocusPointMode mode);
+    QCamera::FocusPointModes supportedFocusPointModes() const;
+    QPointF customFocusPoint() const;
+    void setCustomFocusPoint(const QPointF &point);
+
+    QList<QRectF> focusZones() const;
 
 public Q_SLOTS:
 
     void startFocusing();
     void cancelFocusing();
     void focusChanged(QCamera::FocusStatus status);
+    void resetAdvancedSetting();
    
 private:
-    S60CameraSession *m_session;
-    S60CameraService *m_service;
-    
-    S60CameraSettings *m_advancedSettings;
-    
-    bool m_focusLocked;
-    qreal m_digitalZoomValue;
+    S60ImageCaptureSession *m_session;
+    S60CameraService *m_service;    
+    S60CameraSettings *m_advancedSettings;    
+    bool m_focusLocked;    
     qreal m_opticalZoomValue;
+    qreal m_digitalZoomValue;
     bool m_macroFocusingEnabled;
     QCamera::FocusMode m_focusMode;
     QCamera::FocusStatus m_focusStatus;

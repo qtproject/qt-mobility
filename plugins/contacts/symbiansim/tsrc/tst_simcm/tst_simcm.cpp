@@ -119,8 +119,13 @@ private:
 
 private:
     QContactManager* m_cm;
+#ifdef SYMBIANSIM_BACKEND_PHONEBOOKINFOV1
+    RMobilePhoneBookStore::TMobilePhoneBookInfoV1 m_etelStoreInfo;
+    RMobilePhoneBookStore::TMobilePhoneBookInfoV1Pckg m_etelStoreInfoPckg;
+#else
     RMobilePhoneBookStore::TMobilePhoneBookInfoV5 m_etelStoreInfo;
     RMobilePhoneBookStore::TMobilePhoneBookInfoV5Pckg m_etelStoreInfoPckg;
+#endif
 };
 
 tst_SimCM::tst_SimCM() :
@@ -166,7 +171,7 @@ void tst_SimCM::initManager_data()
 {
     QTest::addColumn<QString>("simStore"); // empty (defaults to ADN), "ADN", "SDN" or "FDN"
 
-    QString es = QString();
+    QString es;
 
     QTest::newRow("Empty store string (defaults to ADN store)") << es;
     QTest::newRow("Initialize SDN store") << "SDN";
@@ -220,7 +225,7 @@ void tst_SimCM::hasFeature_data()
     QTest::addColumn<QString>("simStore");      // empty (defaults to ADN), "ADN", "SDN" or "FDN"
     QTest::addColumn<int>("managerFeature");              // one of QContactManager::ManagerFeature
     QTest::addColumn<bool>("expectedResult");   // true = has feature, false = does not have feature
-    QString es = QString();
+    QString es;
 
     QTest::newRow("ADN store (default)") << es << (int) QContactManager::Groups << false;
     QTest::newRow("ADN store (default)") << es << (int) QContactManager::ActionPreferences << false;
@@ -353,7 +358,7 @@ void tst_SimCM::addContact_data()
     QTest::addColumn<QString>("expectedDisplayLabel");
     QTest::addColumn<QStringList>("details"); // format is <detail definition name>:<field name>:<value>
     QString unnamedLabel("Unnamed");
-    QString es = QString();
+    QString es;
     QString tooLongText("James Hunt the 12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890th");
 
     // TODO: what name field to use for a sim contact name?
@@ -691,7 +696,7 @@ void tst_SimCM::fetchContacts()
     // 3. Verify result
     QVERIFY(contacts.count() > 0);
     QCOMPARE(contacts.count(), existingContactCount + contactCount);
-    foreach (QContact contact, contacts) {
+    foreach (const QContact& contact, contacts) {
         QVERIFY(contact.id() != QContactId());
     }
 
@@ -838,7 +843,7 @@ void tst_SimCM::updateContactDetail()
     compareDetails(contact, parsedDetails);
 
     // 3. Update contact detail and verify result
-    foreach (QContactDetail detail, parsedDetails) {
+    foreach (const QContactDetail& detail, parsedDetails) {
         QContactDetail savedDetail = contact.detail(detail.definitionName());
         QVERIFY(contact.removeDetail(&savedDetail));
     }
@@ -910,14 +915,14 @@ void tst_SimCM::batchOperations()
         QVERIFY(m_cm->saveContacts(&contacts, &errorMap));
         QCOMPARE(m_cm->error(), QContactManager::NoError);
         QCOMPARE(errorMap.count(), 0);
-        foreach (QContact contact, contacts) {
+        foreach (const QContact& contact, contacts) {
             QVERIFY(contact.id() != QContactId());
         }
     } else {
         QVERIFY(!m_cm->saveContacts(&contacts, &errorMap));
         QVERIFY(m_cm->error() != QContactManager::NoError);
         QCOMPARE(errorMap.count(), 10);
-        foreach (QContact contact, contacts) {
+        foreach (const QContact& contact, contacts) {
             QCOMPARE(contact.id(), QContactId());
         }
     }
@@ -939,7 +944,7 @@ void tst_SimCM::batchOperations()
     // 3. Remove contacts
     if(expectedResult) {
         QList<QContactLocalId> contactIds;
-        foreach (QContact contact, contacts) {
+        foreach (const QContact& contact, contacts) {
             contactIds.append(contact.localId());
         }
         QVERIFY(m_cm->removeContacts(&contactIds, &errorMap));
@@ -976,6 +981,7 @@ void tst_SimCM::signalEmission()
     QTRY_COMPARE(spyRemoved.count(), 1);
 
     // 4. contacts added
+    spyAdded.clear();
     int batchOpCount(10);
     QList<QContact> contacts;
     for(int i(0); i < batchOpCount; i++) {
@@ -989,12 +995,14 @@ void tst_SimCM::signalEmission()
     QTRY_COMPARE(spyAdded.count(), batchOpCount);
 
     // 5. contacts changed
+    spyChanged.clear();
     QVERIFY(m_cm->saveContacts(&contacts, &errorMap));
     QTRY_COMPARE(spyChanged.count(), batchOpCount);
 
     // 6. contacts removed
+    spyRemoved.clear();
     QList<QContactLocalId> contactIds;
-    foreach(QContact contact, contacts) {
+    foreach(const QContact& contact, contacts) {
         contactIds.append(contact.localId());
     }
     QVERIFY(m_cm->removeContacts(&contactIds, &errorMap));
@@ -1045,7 +1053,7 @@ bool tst_SimCM::isContactSupported(QContact contact)
         
     QList<QString> uniqueDetails = QList<QString>();
 
-    foreach(QContactDetail detail, contact.details()) {
+    foreach(const QContactDetail& detail, contact.details()) {
         QString definitionName = detail.definitionName();
 
         // TODO: should we save a contact that has empty, non-supported details?
@@ -1071,7 +1079,7 @@ bool tst_SimCM::isContactSupported(QContact contact)
             }
 
             // check the fields of the detail
-            foreach (QString fieldKey, detail.variantValues().keys()) {
+            foreach (const QString& fieldKey, detail.variantValues().keys()) {
                 if (!detailDef.fields().contains(fieldKey)) {
                     return false;
                 }
@@ -1093,7 +1101,7 @@ bool tst_SimCM::isContactSupported(QContact contact)
 void tst_SimCM::parseDetails(QContact &contact, QStringList details, QList<QContactDetail> &parsedDetails)
 {
     parsedDetails.clear();
-    foreach (QString detail, details) {
+    foreach (const QString& detail, details) {
         // the expected format is <detail definition name>:<field name>:<value>
         QStringList detailParts = detail.split(QChar(':'), QString::KeepEmptyParts, Qt::CaseSensitive);
         QVERIFY(detailParts.count() == 3);
@@ -1142,7 +1150,7 @@ void tst_SimCM::compareDetails(QContact contact, QList<QContactDetail> expectedD
         if(!contact.details().contains(expectedDetail)) {
             // FAIL! Make it easier to debug the output by
             // comparing the contact detail field contents
-            foreach (QString key, expectedDetail.variantValues().keys()) {
+            foreach (const QString& key, expectedDetail.variantValues().keys()) {
                 QVariant value1 = actualDetail.value(key);
                 QVariant value2 = expectedDetail.value(key);
                 QCOMPARE(actualDetail.value(key), expectedDetail.value(key));

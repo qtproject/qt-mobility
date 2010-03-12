@@ -141,6 +141,7 @@ public:
     static QSystemNetworkInfoPrivate *instance() {return self;}
     void networkChanged(const QString &notification, const QString interfaceName);
     QString getDefaultInterface();
+    QSystemNetworkInfo::NetworkMode currentMode();
 
 Q_SIGNALS:
    void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);

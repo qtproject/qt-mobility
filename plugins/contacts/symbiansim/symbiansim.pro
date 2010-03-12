@@ -31,6 +31,7 @@ symbian: {
         inc/cntsymbiansimtransformerror.h \
         inc/cntsimstore.h \
         inc/cntsimstoreprivate.h \
+        inc/cntsimstoreeventlistener.h \
         inc/cntabstractsimrequest.h \
         inc/cntsimcontactfetchrequest.h \
         inc/cntsimcontactlocalidfetchrequest.h \
@@ -42,6 +43,7 @@ symbian: {
         src/cntsymbiansimtransformerror.cpp \
         src/cntsimstore.cpp \
         src/cntsimstoreprivate.cpp \
+        src/cntsimstoreeventlistener.cpp \
         src/cntabstractsimrequest.cpp \
         src/cntsimcontactfetchrequest.cpp \
         src/cntsimcontactlocalidfetchrequest.cpp \

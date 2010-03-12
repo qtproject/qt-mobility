@@ -67,14 +67,14 @@ QTrackerContactIdFetchRequest::QTrackerContactIdFetchRequest(QContactAbstractReq
     }
 }
 
-void QTrackerContactIdFetchRequest::emitFinished()
+void QTrackerContactIdFetchRequest::emitFinished(QContactManager::Error error)
 {
     // for now this only serves get all contacts
     QList<QContactLocalId> results;
     foreach(const QContact &c, result) {
         results << c.localId();
     }
-    QContactManagerEngine::updateContactLocalIdFetchRequest(idfetchrequest, results, QContactManager::NoError);
     QContactManagerEngine::updateRequestState(idfetchrequest, QContactAbstractRequest::FinishedState);
+    QContactManagerEngine::updateContactLocalIdFetchRequest(idfetchrequest, results, error);
 }
 

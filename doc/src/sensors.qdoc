@@ -89,13 +89,7 @@ The life cycle of a sensor is typically:
 
 Here is an example of creating a sensor on the heap and on the stack.
 
-\code
-// On the heap (deleted when this object is deleted)
-QAccelerationSensor *sensor = new QAccelerationSensor(this);
-
-// On the stack (deleted when the current scope ends)
-QOrientationSensor orient_sensor;
-\endcode
+\snippet snippets/sensors/creating.cpp Creating a sensor
 
 The API supports sensors that poll for their data and sensors that push
 data to the app as it arrives. Each sensor will support certain update
@@ -122,17 +116,7 @@ For example, here is an example of how you can access a property of the accelero
 This code does not require any compile-time links to \l QAccelerometer or
 \l QAccelerometerReading.
 
-\code
-// start the sensor
-QSensor sensor;
-sensor.setType("QAccelerometer");
-sensor.start();
-
-// later
-QSensorReading *reading = sensor.reading();
-qreal x = reading->property("x").value<qreal>();
-qreal y = reading->value(1).value<qreal>();
-\endcode
+\snippet snippets/sensors/start.cpp Starting a sensor
 
 You can discover all of this information at runtime too. The sensor_explorer example
 shows you information about available sensors.
@@ -226,33 +210,7 @@ that multiple sensor backends cannot be in a plugin.
 
 An example follows.
 
-\code
-#include "mybackend.h"
-#include <qsensorplugin.h>
-#include <qsensormanager.h>
-
-class MyPluginClass : public QtMobility::QSensorPluginInterface, public QtMobility::QSensorBackendFactory
-{
-    Q_OBJECT
-    Q_INTERFACES(QtMobility::QSensorPluginInterface)
-public:
-    void registerSensors()
-    {
-        QSensorManager::registerBackend(QAccelerationSensor::type, MyBackend::id, this);
-    }
-
-    QSensorBackend *createBackend(QSensor *sensor)
-    {
-        if (sensor->identifier() == MyBackend::id)
-            return new MyBackend(sensor);
-        return 0;
-    }
-};
-
-Q_EXPORT_PLUGIN2(libmy_plugin_file_name, MyPluginClass);
-
-#include "main.moc"
-\endcode
+\snippet snippets/sensors/plugin.cpp Plugin
 
 If you woud like to build a backend into a library or application you can use the
 REGISTER_STATIC_PLUGIN() macro although it may not work in all situations as it

@@ -50,9 +50,10 @@ class n900filebasedsensor : public QSensorBackend
 {
 public:
     n900filebasedsensor(QSensor *sensor);
+    virtual ~n900filebasedsensor();
 
-    void start();
-    void stop();
+    virtual void start();
+    virtual void stop();
     void timerEvent(QTimerEvent * /*event*/);
 
 private:

@@ -70,10 +70,10 @@ EXPORTS
 	_ZNK10QtMobility21QValueSpaceSubscriber6valuexERK8QVariant @ 69 NONAME
 	_ZNK10QtMobility21QValueSpaceSubscriber8subPathsEv @ 70 NONAME
 	_ZNK10QtMobility24QAbstractValueSpaceLayer10metaObjectEv @ 71 NONAME
-	_ZTIN10QtMobility20QValueSpacePublisherE @ 72 NONAME ; #<TI>#
-	_ZTIN10QtMobility21QValueSpaceSubscriberE @ 73 NONAME ; #<TI>#
-	_ZTIN10QtMobility24QAbstractValueSpaceLayerE @ 74 NONAME ; #<TI>#
-	_ZTVN10QtMobility20QValueSpacePublisherE @ 75 NONAME ; #<VT>#
-	_ZTVN10QtMobility21QValueSpaceSubscriberE @ 76 NONAME ; #<VT>#
-	_ZTVN10QtMobility24QAbstractValueSpaceLayerE @ 77 NONAME ; #<VT>#
+	_ZTIN10QtMobility20QValueSpacePublisherE @ 72 NONAME
+	_ZTIN10QtMobility21QValueSpaceSubscriberE @ 73 NONAME
+	_ZTIN10QtMobility24QAbstractValueSpaceLayerE @ 74 NONAME
+	_ZTVN10QtMobility20QValueSpacePublisherE @ 75 NONAME
+	_ZTVN10QtMobility21QValueSpaceSubscriberE @ 76 NONAME
+	_ZTVN10QtMobility24QAbstractValueSpaceLayerE @ 77 NONAME
 

@@ -67,22 +67,26 @@ public:
     S60MediaSettings() 
         : m_volume(0)
         , m_muted(false)
-        , m_playbackRate(1.0)
+        , m_playbackRate(0)
+        , m_mediaStatus(QMediaPlayer::UnknownMediaStatus)
     {
     }
     
     void setVolume(int volume) { m_volume = volume; }
     void setMuted(bool muted) { m_muted = muted; }
     void setPlaybackRate(int rate) { m_playbackRate = rate; }
+    void setMediaStatus(QMediaPlayer::MediaStatus status) {m_mediaStatus=status;}
     
     int volume() const { return m_volume; }
     bool isMuted() const { return m_muted; }
     qreal playbackRate() const { return m_playbackRate; }
+    QMediaPlayer::MediaStatus mediaStatus() const {return m_mediaStatus;}
     
 private:
     int m_volume;
     bool m_muted;
     qreal m_playbackRate;
+    QMediaPlayer::MediaStatus m_mediaStatus;
 };
 
 class S60MediaPlayerControl : public QMediaPlayerControl

@@ -90,6 +90,7 @@
 #include <IOKit/hid/IOHIDLib.h>
 
 #include <CoreServices/CoreServices.h>
+
 #include <qabstracteventdispatcher.h>
 
 #include <QtCore/qthread.h>
@@ -120,8 +121,6 @@
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 
-//
-////////
 static QString stringFromCFString(CFStringRef value) {
     QString retVal;
     if(CFStringGetLength(value) > 1) {
@@ -397,12 +396,18 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::MemcardFeature:
         {
-
+// IOSCSIPeripheralDeviceType0E
+            if(hasIOServiceMatching("IOUSBMassStorageClass")) {
+                featureSupported = true;
+            }
         }
         break;
     case QSystemInfo::UsbFeature:
         {
-            if(hasIOServiceMatching(kIOUSBDeviceClassName)) {
+            if(hasIOServiceMatching("AppleUSBOHCI")) {
+                featureSupported = true;
+            }
+            if(hasIOServiceMatching("AppleUSBEHCI")) {
                 featureSupported = true;
             }
         }
@@ -438,7 +443,10 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::VideoOutFeature:
         {
-
+            ComponentDescription description = {'vout', 0, 0, 0L, 1L << 0};
+            if( ::CountComponents(&description) > 0) {
+                featureSupported = true;
+            }
         }
         break;
     case QSystemInfo::HapticsFeature:
@@ -537,7 +545,6 @@ void QRunLoopThread::run()
         [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode beforeDate: loopUntil]) {
         loopUntil = [NSDate dateWithTimeIntervalSinceNow:1.0];
     }
-  //  [listener release]; //crash
     [pool release];
 #endif
 }
@@ -690,7 +697,6 @@ QString QSystemNetworkInfoPrivate::getDefaultInterface()
              defaultInterface = interfaceName;
         }
     }
-//    qWarning() << __FUNCTION__ << interfaceName;
     return interfaceName;
 }
 
@@ -862,6 +868,11 @@ int QSystemNetworkInfoPrivate::locationAreaCode()
 
 QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
 {
+#if defined(MAC_SDK_10_6)
+    CWInterface *primary = [CWInterface interface ];
+    if([primary power])
+        return  nsstringToQString( [primary countryCode]);
+#endif
     return "";
 }
 
@@ -963,9 +974,6 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
 
 void QSystemNetworkInfoPrivate::networkChanged(const QString &notification, const QString interfaceName)
 {
-    qWarning() << __FUNCTION__ << notification;
-   // runloopThread->stopLoop();
-
     if(notification == QLatin1String("SSID_CHANGED_NOTIFICATION")) {
         Q_EMIT networkNameChanged(QSystemNetworkInfo::WlanMode, networkName(QSystemNetworkInfo::WlanMode));
     }
@@ -990,8 +998,13 @@ void QSystemNetworkInfoPrivate::networkChanged(const QString &notification, cons
         }
 #endif
     }
- //   runloopThread->start();
 }
+
+QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
+{
+    return modeForInterface(getDefaultInterface());
+}
+
 
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
         : QObject(parent)

@@ -44,24 +44,43 @@
 
 #include <QMainWindow>
 #include <ui_explorer.h>
+#include <qsensor.h>
 
-class Explorer : public QMainWindow, public Ui::Explorer
+QTM_USE_NAMESPACE
+
+class Explorer : public QMainWindow, public QSensorFilter
 {
     Q_OBJECT
 public:
     Explorer(QWidget *parent = 0);
     ~Explorer();
 
+    bool filter(QSensorReading *reading);
+
 private slots:
     void loadSensors();
-    void loadReading();
+    void on_sensors_currentItemChanged();
+    void on_sensorprops_itemChanged(QTableWidgetItem *item);
+    void on_start_clicked();
+    void on_stop_clicked();
+    void on_poll_clicked();
+    void sensor_changed();
+    void adjustSizes();
+    void loadSensorProperties();
 
 private:
     void showEvent(QShowEvent *event);
+    void resizeEvent(QResizeEvent *event);
 
     void clearReading();
-    void adjustReadingColumns();
-    bool eventFilter(QObject *obj, QEvent *event);
+    void loadReading();
+    void clearSensorProperties();
+    void adjustTableColumns(QTableWidget *table);
+    void resizeSensors();
+
+    Ui::Explorer ui;
+    QSensor *m_sensor;
+    bool ignoreItemChanged;
 };
 
 #endif

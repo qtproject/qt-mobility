@@ -54,23 +54,15 @@ class QMagnetometerReadingPrivate;
 class Q_SENSORS_EXPORT QMagnetometerReading : public QSensorReading
 {
     Q_OBJECT
-    Q_ENUMS(CalibrationLevel)
     Q_PROPERTY(qreal x READ x)
     Q_PROPERTY(qreal y READ y)
     Q_PROPERTY(qreal z READ z)
-    Q_PROPERTY(qreal calibrated_x READ calibrated_x)
-    Q_PROPERTY(qreal calibrated_y READ calibrated_y)
-    Q_PROPERTY(qreal calibrated_z READ calibrated_z)
-    Q_PROPERTY(CalibrationLevel calibrationLevel READ calibrationLevel)
+    Q_PROPERTY(qreal geo_x READ geo_x)
+    Q_PROPERTY(qreal geo_y READ geo_y)
+    Q_PROPERTY(qreal geo_z READ geo_z)
+    Q_PROPERTY(qreal calibrationLevel READ calibrationLevel)
     DECLARE_READING(QMagnetometerReading)
 public:
-    enum CalibrationLevel {
-        Undefined = 0,
-        Low       = 1,
-        Middle    = 2,
-        High      = 3
-    };
-
     qreal x() const;
     void setX(qreal x);
 
@@ -80,20 +72,18 @@ public:
     qreal z() const;
     void setZ(qreal z);
 
-    qreal calibrated_x() const;
-    void setCalibrated_x(qreal calibrated_x);
+    qreal geo_x() const;
+    void setGeo_x(qreal geo_x);
 
-    qreal calibrated_y() const;
-    void setCalibrated_y(qreal calibrated_y);
+    qreal geo_y() const;
+    void setGeo_y(qreal geo_y);
 
-    qreal calibrated_z() const;
-    void setCalibrated_z(qreal calibrated_z);
+    qreal geo_z() const;
+    void setGeo_z(qreal geo_z);
 
-    CalibrationLevel calibrationLevel() const;
-    void setCalibrationLevel(CalibrationLevel calibrationLevel);
+    qreal calibrationLevel() const;
+    void setCalibrationLevel(qreal calibrationLevel);
 };
-
-// begin generated code
 
 class Q_SENSORS_EXPORT QMagnetometerFilter : public QSensorFilter
 {
@@ -106,6 +96,10 @@ private:
 class Q_SENSORS_EXPORT QMagnetometer : public QSensor
 {
     Q_OBJECT
+#ifdef Q_QDOC
+    Q_PROPERTY(bool returnRawValues)
+    Q_PROPERTY(bool returnGeoValues)
+#endif
 public:
     explicit QMagnetometer(QObject *parent = 0) : QSensor(parent)
     { setType(QMagnetometer::type); }
@@ -113,7 +107,6 @@ public:
     QMagnetometerReading *reading() const { return static_cast<QMagnetometerReading*>(QSensor::reading()); }
     static const char *type;
 };
-// end generated code
 
 QTM_END_NAMESPACE
 

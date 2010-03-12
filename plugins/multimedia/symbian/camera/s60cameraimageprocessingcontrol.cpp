@@ -41,7 +41,7 @@
 
 #include "s60cameraimageprocessingcontrol.h"
 #include "s60cameraservice.h"
-#include "s60camerasession.h"
+#include "s60imagecapturesession.h"
 
 #include <QtCore/qdebug.h>
 #include <QtCore/qstring.h>
@@ -49,42 +49,59 @@
 
 S60CameraImageProcessingControl::S60CameraImageProcessingControl(QObject *parent)
     :QImageProcessingControl(parent)
+     , m_session(NULL)
+     , m_advancedSettings(NULL)
 {
-    m_session = qobject_cast<S60CameraSession*>(parent);
+    m_session = qobject_cast<S60ImageCaptureSession*>(parent);
+    connect(m_session, SIGNAL(advancedSettingCreated()), this, SLOT(resetAdvancedSetting()));
 }
 
 S60CameraImageProcessingControl::S60CameraImageProcessingControl(QObject *session, QObject *parent)
    :QImageProcessingControl(parent)
 {
     // use cast if we want to change session class later on..
-    m_session = qobject_cast<S60CameraSession*>(session);
+    m_session = qobject_cast<S60ImageCaptureSession*>(session);
 }
 
 S60CameraImageProcessingControl::~S60CameraImageProcessingControl()
 {
+    m_advancedSettings = NULL;
+}
+
+void S60CameraImageProcessingControl::resetAdvancedSetting()
+{
+    m_advancedSettings = NULL;    
+    m_advancedSettings = m_session->advancedSettings();    
 }
 
 QCamera::WhiteBalanceMode S60CameraImageProcessingControl::whiteBalanceMode() const
 {
-    return m_session->whiteBalanceMode();
+    if (m_session)
+        return m_session->whiteBalanceMode();
+    return QCamera::WhiteBalanceMode();
 }
 
 void S60CameraImageProcessingControl::setWhiteBalanceMode(QCamera::WhiteBalanceMode mode)
 {
-    QCamera::WhiteBalanceModes supportedModes = supportedWhiteBalanceModes();
-    if (supportedModes & mode) {
-        m_session->setWhiteBalanceMode(mode);
+    if (m_session) {
+        QCamera::WhiteBalanceModes supportedModes = supportedWhiteBalanceModes();
+        if (supportedModes & mode) {
+            m_session->setWhiteBalanceMode(mode);
+        }
     }
 }
 
 QCamera::WhiteBalanceModes S60CameraImageProcessingControl::supportedWhiteBalanceModes() const
 {
-    return m_session->supportedWhiteBalanceModes();
+    //qDebug()<<"S60CameraImageProcessingControl::supportedWhiteBalanceModes";
+    if (m_session)
+        return m_session->supportedWhiteBalanceModes();
+    return QCamera::WhiteBalanceModes();
 }
 
 int S60CameraImageProcessingControl::manualWhiteBalance() const
 {
-    return 0;
+    return -1;
 }
 
 void S60CameraImageProcessingControl::setManualWhiteBalance(int colorTemperature)
@@ -92,51 +109,73 @@ void S60CameraImageProcessingControl::setManualWhiteBalance(int colorTemperature
     Q_UNUSED(colorTemperature)
 }
 
-void S60CameraImageProcessingControl::setContrast(qreal value)
+void S60CameraImageProcessingControl::setContrast(int value)
 {
     m_session->setContrast(value);
 }
-qreal S60CameraImageProcessingControl::contrast() const
+
+int S60CameraImageProcessingControl::contrast() const
 {
     return m_session->contrast();
 }
 
-void S60CameraImageProcessingControl::setSaturation(qreal value)
+void S60CameraImageProcessingControl::setSaturation(int value)
 {
-    Q_UNUSED(value);
+    if (m_advancedSettings)
+        m_advancedSettings->setSaturation(value);
 }
 
-qreal S60CameraImageProcessingControl::saturation() const
+int S60CameraImageProcessingControl::saturation() const
 {
-    return 0;
+    if (m_advancedSettings)
+        return m_advancedSettings->saturation();
+    return 0.0;
 }
 
-void S60CameraImageProcessingControl::setDenoisingLevel(qreal value)
+void S60CameraImageProcessingControl::setDenoisingLevel(int value)
 {
-    Q_UNUSED(value);
+    Q_UNUSED(value); // not supported for S60
 }
 
 bool S60CameraImageProcessingControl::isDenoisingSupported() const
 {
-    return false;
+    return false; // not supported for S60
 }
 
-qreal S60CameraImageProcessingControl::denoisingLevel() const
+int S60CameraImageProcessingControl::denoisingLevel() const
 {
-    return 0;
+    return 0; // not supported for S60
 }
 
-void S60CameraImageProcessingControl::setSharpeningLevel(qreal value)
+void S60CameraImageProcessingControl::setSharpeningLevel(int value)
 {
-    Q_UNUSED(value);
+    if (m_advancedSettings)
+        m_advancedSettings->setSharpeningLevel(value);
 }
 
 bool S60CameraImageProcessingControl::isSharpeningSupported() const
 {
+    if (m_advancedSettings)
+        return m_advancedSettings->isSharpeningSupported();
     return false;
 }
-qreal S60CameraImageProcessingControl::sharpeningLevel() const
+
+int S60CameraImageProcessingControl::sharpeningLevel() const
 {
-    return 0;
+    if (m_advancedSettings)
+        return m_advancedSettings->sharpeningLevel();
+    return 0.0;
 }
 
+bool S60CameraImageProcessingControl::isWhiteBalanceLocked() const
+{
+    return false;
+}
+
+void S60CameraImageProcessingControl::lockWhiteBalance()
+{
+}
+
+void S60CameraImageProcessingControl::unlockWhiteBalance()
+{
+}

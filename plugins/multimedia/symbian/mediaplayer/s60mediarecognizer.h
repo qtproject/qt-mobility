@@ -44,7 +44,16 @@
 
 #include <QtCore/qobject.h>
 
-class CMPMediaRecognizer;
+#ifdef USE_SYMBIAN_MEDIARECOGNIZER
+#include <mediarecognizer.h>
+typedef CMediaRecognizer MobilityMediaRecognizer;
+typedef CMediaRecognizer::TMediaType MobilityMediaType;
+#else
+#include <mpmediarecognizer.h>
+typedef CMPMediaRecognizer MobilityMediaRecognizer;
+typedef CMPMediaRecognizer::TMPMediaType MobilityMediaType;
+#endif
+
 class QUrl;
 
 class S60MediaRecognizer : public QObject
@@ -61,11 +70,11 @@ public:
         
     S60MediaRecognizer(QObject *parent = 0);
     ~S60MediaRecognizer();
-    bool checkUrl(const QUrl &url);
+    
     MediaType IdentifyMediaType(const QUrl &url);
 
 private:
-    CMPMediaRecognizer *m_recognizer;
+    MobilityMediaRecognizer *m_recognizer;
 };
 
 #endif /* S60MEDIARECOGNIZER_H_ */
