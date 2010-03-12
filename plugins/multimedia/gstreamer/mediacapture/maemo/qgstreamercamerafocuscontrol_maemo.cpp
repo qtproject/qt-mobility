@@ -53,6 +53,8 @@ QGstreamerCameraFocusControl::QGstreamerCameraFocusControl(GstElement &camerabin
      m_focusStatus(QCamera::FocusInitial),
      m_focusMode(QCamera::ManualFocus)
 {
+    connect(m_session, SIGNAL(focusStatusChanged(QCamera::FocusStatus)),
+            this, SIGNAL(focusStatusChanged(QCamera::FocusStatus)));
 }
 
 QGstreamerCameraFocusControl::~QGstreamerCameraFocusControl()

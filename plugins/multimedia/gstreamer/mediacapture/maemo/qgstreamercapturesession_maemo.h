@@ -135,6 +135,7 @@ signals:
     void error(int error, const QString &errorString);
     void imageCaptured(const QString &fileName, const QImage &img);
     void imageSaved(const QString &fileName);
+    void focusStatusChanged(QCamera::FocusStatus status);
 
 public slots:
     void setState(QGstreamerCaptureSession::State);
