@@ -77,7 +77,6 @@ private slots: //test methods
     void testCreateStringSearch();
     void testCreateSpaceStringSearch();
     void testCreateSpaceString();
-
     
 private:
  
