@@ -133,23 +133,23 @@ QTM_USE_NAMESPACE
 /* QContactIDsHash stores abookContact IDs (strings)*/
 class QContactIDsHash{
 public:
-  QContactIDsHash(): key(1){};
+  QContactIDsHash(){};
   
   /* Append */
   QContactIDsHash& operator<< (const QByteArray& eContactId){ if (find(eContactId))
                                                                 return (*this);
+							      quint16 key = qChecksum(eContactId, eContactId.size());
                                                               m_localIds[key] = eContactId;
 							      QCM5_DEBUG << "Add key:" << key << "eContactId:" << eContactId;
-                                                              key++;
+                                                        
 							      return (*this);
                                                             };
   const QContactLocalId append(const QByteArray& eContactId){ uint id = find(eContactId);
                                                               if (id)
 								return id;
-							      id = key;
+							      id = qChecksum(eContactId, eContactId.size());
                                                               m_localIds[id] = eContactId;
-							      QCM5_DEBUG << "Add key:" << key << "eContactId:" << eContactId;
-							      key++;
+							      QCM5_DEBUG << "Add key:" << id << "eContactId:" << eContactId;
 							      return id;
                                                             };
   /* Find */
@@ -174,7 +174,6 @@ public:
                                                             remove(hashKey);
                                                             return hashKey; };
 private:
-  uint key; //LocalID
   QHash<QContactLocalId, QByteArray> m_localIds; //[int/QContactLocalId Maemo5LocalId, QByteArray eContactID]
 };
 
