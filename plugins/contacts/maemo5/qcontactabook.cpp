@@ -685,7 +685,6 @@ QContactId QContactABook::createContactId(EContact *eContact) const
   return rtn;
 }
 
-//FIXME Maemo5 contacts can contain more than one address with the same context
 QList<QContactAddress*> QContactABook::createAddressDetail(EContact *eContact) const
 {
   QList<QContactAddress*> rtnList;
@@ -701,13 +700,14 @@ QList<QContactAddress*> QContactABook::createAddressDetail(EContact *eContact) c
                 << QContactAddress::FieldCountry;
   
   GList* attrList = osso_abook_contact_get_attributes(eContact, EVC_ADR);
-    
-  while(attrList){
+  
+  for (GList *node = g_list_last(attrList); node != NULL; node = g_list_previous(node)) {
     QContactAddress *address = new QContactAddress;
     QVariantMap map;
-  
-    EVCardAttribute *attr = static_cast<EVCardAttribute*>(attrList->data);
-
+ 
+    EVCardAttribute *attr = static_cast<EVCardAttribute*>(node->data);
+    
+    
     // Set Address Context using attribute parameter value
     EVCardAttributeParam *param = NULL;
     GList* p = e_vcard_attribute_get_params(attr);
@@ -740,13 +740,10 @@ QList<QContactAddress*> QContactABook::createAddressDetail(EContact *eContact) c
       v = v->next;
     }
     g_list_free(v);
-    
-    
+    map[QContactDetail::FieldDetailUri] = QString::number(g_list_position(attrList, node));
     setDetailValues(map, address);
     
     rtnList << address;
-    
-    attrList = attrList->next;
   }
   
   g_list_free(attrList);
@@ -1309,21 +1306,24 @@ void QContactABook::setAddressDetail(const OssoABookContact* aContact, const QCo
 {
   if (!aContact) return;
   
+  uint detailUri;
+  const uint nAddressElems = 7;
   QStringList adrAttrValues, 
               lblAttrValues,
               paramValues;
   
   // Get parameters
   foreach(QString c, detail.contexts())
-    paramValues << c;
+    paramValues << c.toUpper();
   
   // Initialize adrAttrValues;
-  for (int i=0; i < 7; ++i)
+  for (int i=0; i < nAddressElems; ++i)
     adrAttrValues << "";
 
   // Fill adrAttrValues
   QVariantMap vm = detail.variantValues();
   QMapIterator<QString, QVariant> i(vm);
+  
   while (i.hasNext()) {
     i.next();
     int index = -1;
@@ -1337,12 +1337,14 @@ void QContactABook::setAddressDetail(const OssoABookContact* aContact, const QCo
     else if (key == QContactAddress::FieldPostcode) index = 5;
     else if (key == QContactAddress::FieldCountry) index = 6;  
     else if (key == QContactDetail::FieldContext) continue;
+    else if (key == QContactDetail::FieldDetailUri) detailUri = i.value().toInt();
     else {
       qWarning() << "Address contains an invalid field:" << key;
       return;
     }
     
-    adrAttrValues[index] = i.value().toString();
+    if (index != -1)
+      adrAttrValues[index] = i.value().toString();
   }
 
   // Fill lblAttrValues
@@ -1368,8 +1370,14 @@ void QContactABook::setAddressDetail(const OssoABookContact* aContact, const QCo
     return;
   
   // Saving LABEL and ADR attributes into the VCard
-  addAttributeToAContact(aContact, EVC_ADR, adrAttrValues, EVC_TYPE, paramValues);
-  addAttributeToAContact(aContact, EVC_LABEL, lblAttrValues, EVC_TYPE, paramValues);
+  addAttributeToAContact(aContact, EVC_ADR, adrAttrValues, EVC_TYPE, paramValues, true, detailUri);
+  
+  //BUG Label attribute contains a bug
+  //It contains TYPE(TYPE) if ADDRESS doesn't contain any parameter value.
+  if (paramValues.isEmpty())
+    paramValues << EVC_TYPE;
+  
+  addAttributeToAContact(aContact, EVC_LABEL, lblAttrValues, EVC_TYPE, paramValues, true, detailUri);
 }
 
 //TODO 
