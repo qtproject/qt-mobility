@@ -85,12 +85,15 @@ private slots:
     void updateBatteryStatus(int);
     void updatePowerState(QSystemDeviceInfo::PowerState);
     void displayBatteryStatus(QSystemDeviceInfo::BatteryStatus);
-    void updateProfile(QSystemDeviceInfo::Profile);
+    void updateProfile(QSystemDeviceInfo::Profile profile);
+    void updateSimStatus();
+    void updateProfile();
 
      void displayNetworkStatus(QSystemNetworkInfo::NetworkStatus);
      void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
      void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int);
      void networkNameChanged(QSystemNetworkInfo::NetworkMode,const QString &);
+     void networkModeChanged(QSystemNetworkInfo::NetworkMode);
 
 };
 

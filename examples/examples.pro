@@ -1,4 +1,4 @@
-include($$QT_MOBILITY_BUILD_TREE/config.pri)
+include(../staticconfig.pri)
 
 TEMPLATE = subdirs
 
@@ -7,14 +7,15 @@ contains(mobility_modules,serviceframework) {
     SUBDIRS += filemanagerplugin \
             bluetoothtransferplugin \
             servicebrowser
+    
+    contains(QT_CONFIG, declarative) {
+        SUBDIRS += declarative
+    }
 }
 
 #BearerManagement examples
 contains(mobility_modules,bearer) {
     SUBDIRS += bearermonitor bearercloud
-    contains(QT_CONFIG, declarative) {
-        SUBDIRS += declarative
-    }
 }
 
 #Location examples
@@ -60,13 +61,14 @@ contains(mobility_modules,multimedia) {
         slideshow \
         streamplayer \
         audiorecorder
+
+    contains (QT_CONFIG, declarative) {
+        SUBDIRS += \
+            declarativemusic \
+            declarativevideo
+    }
 }
 
-contains (QT_CONFIG, declarative) {
-    SUBDIRS += \
-        declarativemusic \
-        declarativevideo
-}
 
 #Messaging examples
 contains(mobility_modules,messaging) {

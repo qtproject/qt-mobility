@@ -383,6 +383,8 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QSystemNetworkInfoLinuxComm
 {
 #if !defined(QT_NO_NETWORKMANAGER)
     setupNmConnections();
+    updateActivePaths();
+    QTimer::singleShot(200, this,SLOT(getPrimaryMode()));
 #endif
 }
 
@@ -429,8 +431,134 @@ void QSystemNetworkInfoPrivate::setupNmConnections()
     }
 }
 
-void QSystemNetworkInfoPrivate::updateDeviceInterfaceState(const QString &/*path*/, quint32 /*nmState*/)
+
+bool QSystemNetworkInfoPrivate::isDefaultConnectionPath(const QString &path)
 {
+    bool isDefault = false;
+
+    QMapIterator<QString, QString> i(activePaths);
+    QString devicepath;
+    while (i.hasNext()) {
+        i.next();
+        QScopedPointer<QNetworkManagerConnectionActive> activeCon;
+        activeCon.reset(new QNetworkManagerConnectionActive(i.key()));
+        if(i.value() == path) {
+            isDefault = activeCon->defaultRoute();
+        }
+    }
+    return isDefault;
+}
+
+void QSystemNetworkInfoPrivate::getPrimaryMode()
+{
+    // try to see if there are any default route
+    bool anyDefaultRoute = false;
+
+    QMapIterator<QString, QString> i(activePaths);
+    QString devicepath;
+    while (i.hasNext()) {
+        i.next();
+        QScopedPointer<QNetworkManagerConnectionActive> activeCon;
+        activeCon.reset(new QNetworkManagerConnectionActive(i.key()));
+
+        if(activeCon->defaultRoute()) {
+            anyDefaultRoute = activeCon->defaultRoute();
+            QNetworkManagerInterfaceDevice *devIface = new QNetworkManagerInterfaceDevice(i.value());
+            emit networkModeChanged(deviceTypeToMode(devIface->deviceType()));
+        }
+        devicepath = i.value();
+    }
+
+    if(!anyDefaultRoute) {
+        emit networkModeChanged(QSystemNetworkInfo::UnknownMode);
+    }
+}
+
+
+QString QSystemNetworkInfoPrivate::getNmNetName(QSystemNetworkInfo::NetworkMode mode)
+{
+    QString devPath;
+    QMapIterator<QString, QString> i(activePaths);
+    QString devicepath;
+    while (i.hasNext()) {
+        i.next();
+        devicepath = i.value();
+        QScopedPointer<QNetworkManagerInterfaceDevice> devIface;
+        devIface.reset(new QNetworkManagerInterfaceDevice(devicepath));
+
+        if(deviceTypeToMode(devIface->deviceType()) == mode) {
+            devPath = i.value();
+
+            if(mode == QSystemNetworkInfo::WlanMode
+               && devIface->deviceType() == DEVICE_TYPE_802_11_WIRELESS) {
+
+                QNetworkManagerInterfaceDeviceWireless *devWirelessIfaceL;
+                devWirelessIfaceL = new QNetworkManagerInterfaceDeviceWireless(devPath);
+                if(devWirelessIfaceL->activeAccessPoint().path().length() > 2) {
+                    QNetworkManagerInterfaceAccessPoint *accessPointIfaceL;
+                    accessPointIfaceL = new QNetworkManagerInterfaceAccessPoint(devWirelessIfaceL->activeAccessPoint().path());
+                    QString ssid =  accessPointIfaceL->ssid();
+
+                    if(ssid.isEmpty()) {
+                        ssid = "Hidden Network";
+                    }
+                    return ssid;
+                }
+            } else {
+                QDBusObjectPath ip4Path = devIface->ip4config();
+
+                QNetworkManagerIp4Config *ip4ConfigInterface;
+                ip4ConfigInterface = new QNetworkManagerIp4Config(ip4Path.path(),this);
+
+                QStringList domains = ip4ConfigInterface->domains();
+
+                if(!domains.isEmpty()) {
+                    return domains.at(0);
+                }
+            }
+        }
+    }
+    return getNetworkNameForConnectionPath(devPath);
+}
+
+QString QSystemNetworkInfoPrivate::getNetworkNameForConnectionPath(const QString &path)
+{
+    QMapIterator<QString, QString> i(activePaths);
+    QString devicepath;
+    while (i.hasNext()) {
+        i.next();
+        QScopedPointer<QNetworkManagerConnectionActive> activeCon;
+        activeCon.reset(new QNetworkManagerConnectionActive(i.key()));
+        if(i.value() == path) {
+            QScopedPointer<QNetworkManagerSettingsConnection> settingsConIface;
+            settingsConIface.reset(new QNetworkManagerSettingsConnection(activeCon->serviceName(),activeCon->connection().path()));
+            if(settingsConIface->isValid()) {
+                qWarning() << settingsConIface->getId();
+                return settingsConIface->getId();
+            } else {
+                //qWarning() << "not valid";
+            }
+        }
+    }
+    return "";
+}
+
+void QSystemNetworkInfoPrivate::updateActivePaths()
+{
+    activePaths.clear();
+    QScopedPointer<QNetworkManagerInterface> dbIface;
+    dbIface.reset(new QNetworkManagerInterface);
+    QList <QDBusObjectPath> connections = dbIface->activeConnections();
+    foreach(QDBusObjectPath activeconpath, connections) {
+
+        QScopedPointer<QNetworkManagerConnectionActive> activeCon;
+        activeCon.reset(new QNetworkManagerConnectionActive(activeconpath.path()));
+
+        QList<QDBusObjectPath> devices = activeCon->devices();
+        foreach(QDBusObjectPath device, devices) {
+            activePaths.insert(activeconpath.path(),device.path());
+        }
+    }
 }
 
 void QSystemNetworkInfoPrivate::nmPropertiesChanged( const QString & path, QMap<QString,QVariant> map)
@@ -438,89 +566,54 @@ void QSystemNetworkInfoPrivate::nmPropertiesChanged( const QString & path, QMap<
     QMapIterator<QString, QVariant> i(map);
     while (i.hasNext()) {
         i.next();
+//        qWarning() << __FUNCTION__ <<  i.key();
+
         if( i.key() == "State") {
             QNetworkManagerInterfaceDevice *devIface = new QNetworkManagerInterfaceDevice(path);
             quint32 nmState = i.value().toUInt();
-            switch(devIface->deviceType()) {
-            case DEVICE_TYPE_802_3_ETHERNET:
-                {
-                    if(nmState == NM_DEVICE_STATE_ACTIVATED) {
-                        QNetworkManagerInterfaceDevice *devIface = new QNetworkManagerInterfaceDevice(path);
-                        QDBusObjectPath ip4Path = devIface->ip4config();
+          //  qWarning() << "state" << nmState << path;
+            quint32 nmDevType = devIface->deviceType();
+            QSystemNetworkInfo::NetworkMode mode = deviceTypeToMode(nmDevType);
 
-                        QNetworkManagerIp4Config *ip4ConfigInterface;
-                        ip4ConfigInterface = new QNetworkManagerIp4Config(path,this);
-                        QStringList domains = ip4ConfigInterface->domains();
-                        if(!domains.isEmpty()) {
-                            emit networkNameChanged(QSystemNetworkInfo::EthernetMode, domains.at(0));
-                        } else {
-                            QNetworkManagerInterfaceDeviceWired *wiredInterface;
-                            wiredInterface = new QNetworkManagerInterfaceDeviceWired(path);
-                            emit networkNameChanged(QSystemNetworkInfo::EthernetMode, wiredInterface->hwAddress());
-                        }
+            if(nmState == NM_DEVICE_STATE_DISCONNECTED
+                || nmState == NM_DEVICE_STATE_UNAVAILABLE
+                || nmState == NM_DEVICE_STATE_FAILED) {
+                updateActivePaths();
+                emit networkNameChanged(mode, "");
+                emit networkStatusChanged(mode, QSystemNetworkInfo::NoNetworkAvailable);
+            }
+            if(nmState == NM_DEVICE_STATE_PREPARE
+               || nmState == NM_DEVICE_STATE_CONFIG
+               || nmState == NM_DEVICE_STATE_NEED_AUTH) {
+                emit networkNameChanged(mode, "");
+                emit networkStatusChanged(mode, QSystemNetworkInfo::Searching);
+            }
 
-                        emit networkStatusChanged(QSystemNetworkInfo::EthernetMode, QSystemNetworkInfo::Connected);
-                    }
-                    if(nmState == NM_DEVICE_STATE_DISCONNECTED) {
-                        emit networkNameChanged(QSystemNetworkInfo::EthernetMode, "");
-                        emit networkStatusChanged(QSystemNetworkInfo::EthernetMode, QSystemNetworkInfo::NoNetworkAvailable);
-                    }
-                    if(nmState == NM_DEVICE_STATE_PREPARE
-                       || nmState == NM_DEVICE_STATE_CONFIG
-                       || nmState == NM_DEVICE_STATE_NEED_AUTH) {
-                        emit networkNameChanged(QSystemNetworkInfo::EthernetMode, "");
-                        emit networkStatusChanged(QSystemNetworkInfo::EthernetMode, QSystemNetworkInfo::Searching);
-                    }
+            if(nmState == NM_DEVICE_STATE_ACTIVATED) {
+                updateActivePaths();
+                emit networkStatusChanged(mode, QSystemNetworkInfo::Connected);
 
-                }
-                break;
-            case DEVICE_TYPE_802_11_WIRELESS:
-                {
-                    if(nmState == NM_DEVICE_STATE_ACTIVATED) {
-                        QNetworkManagerInterfaceDeviceWireless *devWirelessIfaceL;
-                        devWirelessIfaceL = new QNetworkManagerInterfaceDeviceWireless(path);
-                        if(devWirelessIfaceL->activeAccessPoint().path().length() > 2) {
-                            QNetworkManagerInterfaceAccessPoint *accessPointIfaceL;
-                            accessPointIfaceL = new QNetworkManagerInterfaceAccessPoint(devWirelessIfaceL->activeAccessPoint().path());
-                            QString ssid =  accessPointIfaceL->ssid();
-
-                            if(ssid.isEmpty()) {
-                                ssid = "Hidden Network";
-                            }
-                            emit networkSignalStrengthChanged(QSystemNetworkInfo::WlanMode, accessPointIfaceL->strength());
-                            emit networkStatusChanged(QSystemNetworkInfo::WlanMode, QSystemNetworkInfo::Connected);
-                            emit networkNameChanged(QSystemNetworkInfo::WlanMode,ssid);
-                        }
-                    }
-                    if(nmState == NM_DEVICE_STATE_DISCONNECTED
-                       || nmState == NM_DEVICE_STATE_UNAVAILABLE
-                       || nmState == NM_DEVICE_STATE_FAILED) {
-                        emit networkStatusChanged(QSystemNetworkInfo::WlanMode, QSystemNetworkInfo::NoNetworkAvailable);
-                        emit networkNameChanged(QSystemNetworkInfo::WlanMode, "");
-                    }
-                    if(nmState == NM_DEVICE_STATE_PREPARE
-                       || nmState == NM_DEVICE_STATE_CONFIG
-                       || nmState == NM_DEVICE_STATE_NEED_AUTH) {
-                        emit networkNameChanged(QSystemNetworkInfo::WlanMode, "");
-                        emit networkStatusChanged(QSystemNetworkInfo::WlanMode, QSystemNetworkInfo::Searching);
+                if(nmDevType == DEVICE_TYPE_802_11_WIRELESS){
+                    QNetworkManagerInterfaceDeviceWireless *devWirelessIfaceL;
+                    devWirelessIfaceL = new QNetworkManagerInterfaceDeviceWireless(path);
+                    if(devWirelessIfaceL->activeAccessPoint().path().length() > 2) {
+                        QNetworkManagerInterfaceAccessPoint *accessPointIfaceL;
+                        accessPointIfaceL = new QNetworkManagerInterfaceAccessPoint(devWirelessIfaceL->activeAccessPoint().path());
+                        QString ssid = accessPointIfaceL->ssid();
+                        emit networkNameChanged(QSystemNetworkInfo::WlanMode, ssid);
+                        emit networkSignalStrengthChanged(QSystemNetworkInfo::WlanMode, accessPointIfaceL->strength());
                     }
                 }
-                break;
-            default:
-                break;
-            };
-
+            }
         }
         if( i.key() == "ActiveAccessPoint") {
             accessPointIface = new QNetworkManagerInterfaceAccessPoint(path);
+
             accessPointIface->setConnections();
             if(!connect(accessPointIface, SIGNAL(propertiesChanged(const QString &,QMap<QString,QVariant>)),
                         this,SLOT(nmAPPropertiesChanged( const QString &, QMap<QString,QVariant>)))) {
-                qWarning() << "connect is false";
+             //   qWarning() << "connect is false";
             }
-
-            QString ssid = accessPointIface->ssid();
-            emit networkNameChanged(QSystemNetworkInfo::WlanMode, ssid);
 
         }
         if( i.key() == "Carrier") {
@@ -534,6 +627,10 @@ void QSystemNetworkInfoPrivate::nmPropertiesChanged( const QString & path, QMap<
             };
             emit networkSignalStrengthChanged(QSystemNetworkInfo::EthernetMode, strength);
         }
+        if( i.key() == "Ip4Config") {
+            // || i.key() == "Ip46Config") {
+            getPrimaryMode();
+        }
     }
 }
 
@@ -546,6 +643,23 @@ void QSystemNetworkInfoPrivate::nmAPPropertiesChanged( const QString & /*path*/,
            emit networkSignalStrengthChanged(QSystemNetworkInfo::WlanMode,  i.value().toUInt());
        }
    }
+}
+
+QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::deviceTypeToMode(quint32 type)
+{
+    switch(type) {
+    case DEVICE_TYPE_802_3_ETHERNET:
+        return QSystemNetworkInfo::EthernetMode;
+        break;
+    case DEVICE_TYPE_802_11_WIRELESS:
+        return QSystemNetworkInfo::WlanMode;
+        break;
+    case DEVICE_TYPE_UNKNOWN:
+    case DEVICE_TYPE_GSM:
+    case DEVICE_TYPE_CDMA:
+        break;
+    };
+    return QSystemNetworkInfo::UnknownMode;
 }
 
 #endif
@@ -734,15 +848,22 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
 {
     QString netname = "";
 
+#if !defined(QT_NO_NETWORKMANAGER)
+    netname =  getNmNetName(mode);
+#else
+    netname =  getSysNetName(mode);
+#endif
+    return netname;
+}
+
+QString QSystemNetworkInfoPrivate::getSysNetName(QSystemNetworkInfo::NetworkMode mode)
+{
     switch(mode) {
     case QSystemNetworkInfo::WlanMode:
         {
-            if(networkStatus(mode) != QSystemNetworkInfo::Connected) {
-                qWarning() << "not connected";
-                return netname;
-            }
-
             QString wlanInterface;
+            QString netname;
+
             QString baseSysDir = "/sys/class/net/";
             QDir wDir(baseSysDir);
             QStringList dirs = wDir.entryList(QStringList() << "*", QDir::AllDirs | QDir::NoDotAndDotDot);
@@ -751,7 +872,7 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
                 QFileInfo fi(devFile + "/wireless");
                 if(fi.exists()) {
                     wlanInterface = dir;
-                    qWarning() << "interface is" << wlanInterface;
+                    //     qWarning() << "interface is" << wlanInterface;
                 }
             }
             int sock = socket(PF_INET, SOCK_DGRAM, 0);
@@ -777,10 +898,12 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
                 qWarning() << "no socket";
             }
             close(sock);
+            return netname;
         }
         break;
     case QSystemNetworkInfo::EthernetMode:
         {
+            QString netname;
             QFile resFile("/etc/resolv.conf");
             if(resFile.exists()) {
                 if(resFile.exists() && resFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -791,23 +914,24 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
                         if(line.contains("domain")) {
                             netname = line.section(" ",1,1);
                         }
-                } while (!line.isNull());
-                resFile.close();
+                    } while (!line.isNull());
+                    resFile.close();
+                }
             }
+            return netname;
         }
-    }
-    break;
-        case QSystemNetworkInfo::BluetoothMode:
-            {
-    #if !defined(QT_NO_DBUS)
-        netname = getBluetoothInfo("name");
+        break;
+    case QSystemNetworkInfo::BluetoothMode:
+        {
+#if !defined(QT_NO_DBUS)
+            return getBluetoothInfo("name");
 #endif
-    }
+        }
         break;
     default:
         break;
     };
-    return netname;
+    return "";
 }
 
 QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mode)

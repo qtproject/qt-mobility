@@ -7220,6 +7220,7 @@
             <page access="public" status="commendable" name="sysinfo/dialog.cpp" href="sysinfo-dialog-cpp.html" subtype="file" title="" fulltitle="dialog.cpp Example File" subtitle="sysinfo/dialog.cpp" location=""/>
             <page access="public" status="commendable" name="sysinfo/dialog.h" href="sysinfo-dialog-h.html" subtype="file" title="" fulltitle="dialog.h Example File" subtitle="sysinfo/dialog.h" location=""/>
             <page access="public" status="commendable" name="sysinfo/main.cpp" href="sysinfo-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="sysinfo/main.cpp" location=""/>
+            <page access="public" status="commendable" name="sysinfo/examples.qrc" href="sysinfo-examples-qrc.html" subtype="file" title="" fulltitle="examples.qrc Example File" subtitle="sysinfo/examples.qrc" location=""/>
             <page access="public" status="commendable" name="sysinfo/sysinfo.pro" href="sysinfo-sysinfo-pro.html" subtype="file" title="" fulltitle="sysinfo.pro Example File" subtitle="sysinfo/sysinfo.pro" location=""/>
         </page>
         <page access="public" status="commendable" name="filemanagerplugin" href="filemanagerplugin.html" subtype="example" title="File Manager Plugin Example" fulltitle="File Manager Plugin Example" subtitle="" location="filemanagerplugin.qdoc">
@@ -7664,21 +7665,15 @@
             <contents name="service-framework-api" title="Service Framework API" level="3"/>
             <contents name="system-info-api" title="System Info API" level="3"/>
             <contents name="known-issues" title="Known Issues" level="1"/>
-            <contents name="issues-affecting-all-platforms" title="Issues Affecting All Platforms" level="2"/>
-            <contents name="symbian-s60-specific" title="Symbian/S60 Specific" level="2"/>
-            <contents name="bearer-management" title="Bearer Management" level="3"/>
-            <contents name="contacts-api" title="Contacts API" level="3"/>
-            <contents name="location-api" title="Location API" level="3"/>
-            <contents name="messaging-api" title="Messaging API" level="3"/>
-            <contents name="multimedia-api" title="Multimedia API" level="3"/>
-            <contents name="publish-and-subscribe-api" title="Publish and Subscribe API" level="3"/>
-            <contents name="service-framework-api" title="Service Framework API" level="3"/>
-            <contents name="system-info-api" title="System Info API" level="3"/>
-            <contents name="maemo-specific" title="Maemo Specific" level="2"/>
-            <contents name="windows-mobile-specific" title="Windows Mobile Specific" level="2"/>
-            <contents name="contacts-api" title="Contacts API" level="3"/>
-            <contents name="messaging-api" title="Messaging API" level="3"/>
-            <contents name="windows-specific" title="Windows Specific" level="2"/>
+            <contents name="non-api-specific-issues" title="Non-API specific issues" level="2"/>
+            <contents name="contacts-api" title="Contacts API" level="2"/>
+            <contents name="location-api" title="Location API" level="2"/>
+            <contents name="messaging-api" title="Messaging API" level="2"/>
+            <contents name="multimedia-api" title="Multimedia API" level="2"/>
+            <contents name="publish-and-subscribe-api" title="Publish and Subscribe API" level="2"/>
+            <contents name="sensors-api" title="Sensors API" level="2"/>
+            <contents name="system-info-api" title="System Info API" level="2"/>
+            <contents name="versit-api" title="Versit API" level="2"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoEncoderControl_iid" href="qvideoencodercontrol.html#QVideoEncoderControl_iid" location="qvideoencodercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoEncoderControl" type="" signature="QVideoEncoderControl_iid()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QMediaPlaylistControl_iid" href="qmediaplaylistcontrol.html#QMediaPlaylistControl_iid" location="qmediaplaylistcontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QMediaPlaylistControl" type="" signature="QMediaPlaylistControl_iid()"/>
