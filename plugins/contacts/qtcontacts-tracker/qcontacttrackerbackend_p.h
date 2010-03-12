@@ -58,9 +58,9 @@
 #include <QtTracker/ontologies/nco.h>
 #include <QtTracker/QLive>
 
-#include <qmobilityglobal.h>
 #include <qcontactmanagerengine.h>
 #include <qcontactmanagerenginefactory.h>
+#include <qmobilityglobal.h>
 
 using namespace SopranoLive;
 #include "qtrackercontactasyncrequest.h"
@@ -121,7 +121,7 @@ public:
     QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     QList<QContact> contacts(const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
     QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
-    QContact contact(const QContactLocalId& contactId, QContactManager::Error& error) const;
+    QContact contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
 
     /* Save contacts - single and in batch */
     bool saveContact( QContact* contact, QContactManager::Error& error);
@@ -133,6 +133,8 @@ public:
     /* Definitions - Accessors and Mutators */
     QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error& error) const;
 
+    QContactLocalId selfContactId(QContactManager::Error& error) const;
+
     /* Asynchronous Request Support */
     void requestDestroyed(QContactAbstractRequest* req);
     bool startRequest(QContactAbstractRequest* req);
@@ -141,7 +143,7 @@ public:
     /* Capabilities reporting */
     bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const;
 
-    bool filterSupported(const QContactFilter& filter) const;
+    bool isFilterSupported(const QContactFilter& filter) const;
     QList<QVariant::Type> supportedDataTypes() const;
 
     /* Version Reporting */
@@ -156,7 +158,7 @@ private:
     //called from both constructors, connecting to all contact NodeList changes signals
     void connectToSignals();
     RDFVariable contactDetail2Rdf(const RDFVariable& rdfContact, const QString& definitionName, const QString& fieldName) const;
-    QContact contact_impl(const QContactLocalId& contactId, QContactManager::Error& error) const;
+    QContact contact_impl(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
 private:
     QSharedDataPointer<QContactTrackerEngineData> d;
     const QString contactArchiveFile;

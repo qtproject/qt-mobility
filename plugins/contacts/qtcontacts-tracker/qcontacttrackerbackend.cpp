@@ -102,7 +102,7 @@ QContactTrackerEngine::QContactTrackerEngine(const QContactTrackerEngine& other)
 
 void QContactTrackerEngine::connectToSignals()
 {
-    TrackerChangeListener *listener = new TrackerChangeListener(this);
+    TrackerChangeListener *listener = new TrackerChangeListener(this, this);
     connect(listener, SIGNAL(contactsAdded(const QList<QContactLocalId>&)), SIGNAL(contactsAdded(const QList<QContactLocalId>&)));
     connect(listener, SIGNAL(contactsChanged(const QList<QContactLocalId>&)), SIGNAL(contactsChanged(const QList<QContactLocalId>&)));
     connect(listener, SIGNAL(contactsRemoved(const QList<QContactLocalId>&)), SIGNAL(contactsRemoved(const QList<QContactLocalId>&)));
@@ -184,34 +184,45 @@ QList<QContact> QContactTrackerEngine::contacts(const QContactFilter& filter, co
     return request.contacts();
 }
 
-QContact QContactTrackerEngine::contact(const QContactLocalId& contactId, QContactManager::Error& error ) const
+QContact QContactTrackerEngine::contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const
 {
-    qWarning() << "QContactManager::contact()" << "api is not supported for tracker plugin. Please use asynchronous API QContactFetchRequest.";
-    return contact_impl(contactId, error);
+    // plan to keep this warning for a while - as message to customers using the API
+    qWarning() << "QContactManager::contact()" << "api is blocking on dbus roundtrip while accessing tracker. Please, consider using asynchronous API QContactFetchRequest and not fetching contacts by id \n"
+            "- reading 100 ids and 100 contact by ids is ~100 times slower then reading 100 contacts at once with QContactFetchRequest.";
+    return contact_impl(contactId, definitionRestrictions, error);
 }
-// used in tests, removed warning while decided if to provide sync api. Until then customers are advised to use async
-QContact QContactTrackerEngine::contact_impl(const QContactLocalId& contactId, QContactManager::Error& error ) const
+
+QContactLocalId QContactTrackerEngine::selfContactId(QContactManager::Error& error) const
 {
-    // the rest of the code is for internal usage, unit tests etc.
+    error = QContactManager::NoError;
+    return QContactLocalId(0xFFFFFFFF);
+}
+
+// used in tests, removed warning while decided if to provide sync api. Until then customers are advised to use async
+QContact QContactTrackerEngine::contact_impl(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error ) const
+{
     QContactLocalIdFilter idlist;
     QList<QContactLocalId> ids; ids << contactId;
     idlist.setIds(ids);
     QContactFetchRequest request;
-    QStringList fields;
+    QStringList fields = definitionRestrictions;
+    if (definitionRestrictions.isEmpty())
+    {
+        fields << QContactAvatar::DefinitionName
+                << QContactBirthday::DefinitionName
+                << QContactAddress::DefinitionName
+                << QContactEmailAddress::DefinitionName
+                << QContactDisplayLabel::DefinitionName
+                << QContactGender::DefinitionName
+                << QContactAnniversary::DefinitionName
+                << QContactName::DefinitionName
+                << QContactOnlineAccount::DefinitionName
+                << QContactOrganization::DefinitionName
+                << QContactPhoneNumber::DefinitionName
+                << QContactOnlineAccount::DefinitionName
+                << QContactUrl::DefinitionName;
+    }
 
-    fields << QContactAvatar::DefinitionName
-            << QContactBirthday::DefinitionName
-            << QContactAddress::DefinitionName
-            << QContactEmailAddress::DefinitionName
-            << QContactDisplayLabel::DefinitionName
-            << QContactGender::DefinitionName
-            << QContactAnniversary::DefinitionName
-            << QContactName::DefinitionName
-            << QContactOnlineAccount::DefinitionName
-            << QContactOrganization::DefinitionName
-            << QContactPhoneNumber::DefinitionName
-            << QContactOnlineAccount::DefinitionName
-            << QContactUrl::DefinitionName;
     request.setDefinitionRestrictions(fields);
     request.setFilter(idlist);
 
@@ -459,6 +470,7 @@ bool QContactTrackerEngine::hasFeature(QContactManager::ManagerFeature feature, 
         case QContactManager::Groups:
         case QContactManager::ActionPreferences:
         case QContactManager::Relationships:
+        case QContactManager::SelfContact:
             return true;
         case QContactManager::ArbitraryRelationshipTypes:
             return true;
@@ -479,7 +491,7 @@ bool QContactTrackerEngine::hasFeature(QContactManager::ManagerFeature feature, 
  * Definition identifiers which are natively (fast) filterable
  * on the default backend store managed by the manager from which the capabilities object was accessed
  */
-bool QContactTrackerEngine::filterSupported(const QContactFilter& filter) const
+bool QContactTrackerEngine::isFilterSupported(const QContactFilter& filter) const
 {
     switch (filter.type()) {
         case QContactFilter::InvalidFilter:
