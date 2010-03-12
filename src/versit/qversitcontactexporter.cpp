@@ -133,19 +133,50 @@ QVersitContactExporter::~QVersitContactExporter()
  * Converts \a contacts into a list of corresponding QVersitDocuments, using the format given by
  * \a versitType.
  */
-QList<QVersitDocument> QVersitContactExporter::exportContacts(
+bool QVersitContactExporter::exportContacts(
     const QList<QContact>& contacts,
     QVersitDocument::VersitType versitType)
 {
-    QList<QVersitDocument> list;
+    int contactIndex = 0;
+    d->mDocuments.clear();
+    d->mErrors.clear();
+    bool ok = true;
     foreach (const QContact& contact, contacts) {
         QVersitDocument versitDocument;
         versitDocument.setType(versitType);
-        d->exportContact(contact, versitDocument);
-        list.append(versitDocument);
+        QVersitContactExporter::Error error;
+        if (d->exportContact(contact, versitDocument, &error)) {
+            d->mDocuments.append(versitDocument);
+        } else {
+            d->mErrors.insert(contactIndex, error);
+            ok = false;
+        }
+        contactIndex++;
     }
 
-    return list;
+    return ok;
+}
+
+/*!
+ * Returns the documents exported in the most recent call to exportContacts().
+ *
+ * \sa exportContacts()
+ */
+QList<QVersitDocument> QVersitContactExporter::documents() const
+{
+    return d->mDocuments;
+}
+
+/*!
+ * Returns the map of errors encountered in the most recent call to exportContacts().  The key is
+ * the index into the input list of contacts and the value is the error that occured on that
+ * contact.
+ *
+ * \sa exportContacts()
+ */
+QMap<int, QVersitContactExporter::Error> QVersitContactExporter::errors() const
+{
+    return d->mErrors;
 }
 
 /*!
@@ -184,4 +215,13 @@ void QVersitContactExporter::setResourceHandler(QVersitResourceHandler* handler)
 QVersitResourceHandler* QVersitContactExporter::resourceHandler() const
 {
     return d->mResourceHandler;
+}
+
+// Deprecated:
+
+/*! \internal */
+QList<QVersitDocument> QVersitContactExporter::exportContacts(const QList<QContact>& contacts)
+{
+    exportContacts(contacts);
+    return documents();
 }

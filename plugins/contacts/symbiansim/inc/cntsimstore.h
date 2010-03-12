@@ -77,6 +77,7 @@ public:
     bool read(int index, int numSlots, QContactManager::Error &error);
     bool write(const QContact &contact, QContactManager::Error &error);
     bool remove(int index, QContactManager::Error &error);
+    bool getReservedSlots(QContactManager::Error &error);
     
     void cancel();
     bool isBusy();
@@ -90,6 +91,7 @@ signals:
     void readComplete(QList<QContact> contacts, QContactManager::Error error);
     void writeComplete(QContact contacts, QContactManager::Error error);
     void removeComplete(QContactManager::Error error);
+    void getReservedSlotsComplete(QList<int> reservedSlots, QContactManager::Error error);
     
 private:
     CntSimStorePrivate *d_ptr;

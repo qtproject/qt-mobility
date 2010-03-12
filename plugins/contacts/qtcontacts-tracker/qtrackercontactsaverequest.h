@@ -88,8 +88,10 @@ private:
 private:
     /*holding the data about status of async operation*/
     QList<QContact> contactsFinished;
-    //QList<QContactManager::Error> errorsOfContactsFinished;
+
     QMap<int, QContactManager::Error> errorsOfContactsFinished;
+    // needed for error reporting - errorsOfContactsFinished is map (array index -> error)
+    QMap<QContactLocalId, int> id2Index;
     int errorCount;
 
     /* extracted utilities */

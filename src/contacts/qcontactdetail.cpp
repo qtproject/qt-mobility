@@ -42,6 +42,7 @@
 #include "qcontactdetail.h"
 #include "qcontactdetail_p.h"
 #include "qcontactmanager.h"
+#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
@@ -231,6 +232,35 @@ bool QContactDetail::operator==(const QContactDetail& other) const
 
     return true;
 }
+
+/*! Returns the hash value for \a key. */
+uint qHash(const QContactDetail &key)
+{
+    uint hash = QT_PREPEND_NAMESPACE(qHash)(key.definitionName())
+                + QT_PREPEND_NAMESPACE(qHash)(key.accessConstraints());
+    QVariantMap::const_iterator it = key.variantValues().constBegin();
+    QVariantMap::const_iterator end = key.variantValues().constEnd();
+    while (it != end) {
+        hash += QT_PREPEND_NAMESPACE(qHash)(it.key())
+                + QT_PREPEND_NAMESPACE(qHash)(it.value().toString());
+        ++it;
+    }
+    return hash;
+}
+
+#ifndef QT_NO_DEBUG_STREAM
+QDebug operator<<(QDebug dbg, const QContactDetail& detail)
+{
+    dbg.nospace() << "QContactDetail(name=" << detail.definitionName() << ", key=" << detail.key();
+    QVariantMap fields = detail.variantValues();
+    QVariantMap::const_iterator it;
+    for (it = fields.constBegin(); it != fields.constEnd(); it++) {
+        dbg.nospace() << ", " << it.key() << '=' << it.value();
+    }
+    dbg.nospace() << ')';
+    return dbg.maybeSpace();
+}
+#endif
 
 /*! Sets the preferred actions for this detail to be the given list of \a preferredActions */
 void QContactDetail::setPreferredActions(const QList<QContactActionDescriptor>& preferredActions)

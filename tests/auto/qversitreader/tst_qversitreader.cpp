@@ -1248,5 +1248,27 @@ void tst_QVersitReader::testReadLine_data()
     }
 }
 
+void tst_QVersitReader::testByteArrayInput()
+{
+    delete mReader;
+    const QByteArray& oneDocument =
+        "BEGIN:VCARD\r\nVERSION:2.1\r\nFN:John\r\nEND:VCARD\r\n";
+
+    mReader = new QVersitReader(oneDocument);
+    QVERIFY(mReader->device() == 0);
+    QVERIFY(mReader->startReading());
+    QVERIFY(mReader->waitForFinished());
+    QList<QVersitDocument> results = mReader->results();
+    QCOMPARE(mReader->state(), QVersitReader::FinishedState);
+    QCOMPARE(mReader->error(), QVersitReader::NoError);
+    QCOMPARE(results.count(),1);
+    QVersitDocument result = results.first();
+    QCOMPARE(result.type(), QVersitDocument::VCard21Type);
+    QList<QVersitProperty> properties = result.properties();
+    QCOMPARE(properties.length(), 1);
+    QCOMPARE(properties.first().name(), QLatin1String("FN"));
+    QCOMPARE(properties.first().value(), QLatin1String("John"));
+}
+
 QTEST_MAIN(tst_QVersitReader)
 

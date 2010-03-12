@@ -122,24 +122,34 @@ QVersitContactImporterPrivate::~QVersitContactImporterPrivate()
 /*!
  * Generates a QContact from \a versitDocument.
  */
-QContact QVersitContactImporterPrivate::importContact(
-     const QVersitDocument& document, int contactIndex)
+bool QVersitContactImporterPrivate::importContact(
+        const QVersitDocument& document, int contactIndex, QContact* contact,
+        QVersitContactImporter::Error* error)
 {
-    QContact contact;
+    if (document.type() != QVersitDocument::VCard21Type
+        && document.type() != QVersitDocument::VCard30Type) {
+        *error = QVersitContactImporter::InvalidDocumentError;
+        return false;
+    }
     const QList<QVersitProperty> properties = document.properties();
+    if (properties.size() == 0) {
+        *error = QVersitContactImporter::EmptyDocumentError;
+        return false;
+    }
+
     // First, do the properties with PREF set so they appear first in the contact details
     foreach (const QVersitProperty& property, properties) {
         if (property.parameters().contains(QLatin1String("TYPE"), QLatin1String("PREF")))
-            importProperty(document, property, contactIndex, &contact);
+            importProperty(document, property, contactIndex, contact);
     }
     // ... then, do the rest of the properties.
     foreach (const QVersitProperty& property, properties) {
         if (!property.parameters().contains(QLatin1String("TYPE"), QLatin1String("PREF")))
-            importProperty(document, property, contactIndex, &contact);
+            importProperty(document, property, contactIndex, contact);
     }
 
-    contact.setType(QContactType::TypeContact);
-    return contact;
+    contact->setType(QContactType::TypeContact);
+    return true;
 }
 
 void QVersitContactImporterPrivate::importProperty(

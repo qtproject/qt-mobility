@@ -41,6 +41,8 @@
 
 #include "qcontactid.h"
 #include "qcontactid_p.h"
+#include <QHash>
+#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
@@ -114,6 +116,46 @@ bool QContactId::operator!=(const QContactId& other) const
 {
     return !(*this == other);
 }
+
+/*! Returns true if this id is less than the \a other id.
+    This id will be considered less than the \a other id if the
+    manager URI of this id is alphabetically less than the manager
+    URI of the \a other id.  If both ids have the same manager URI,
+    this id will be considered less than the \a other id if the
+    local id of this id is less than the local id of the \a other id.
+
+    The invalid, empty id consists of an empty manager URI and the
+    invalid, zero local id, and hence will be less than any non-invalid
+    id.
+
+    This operator is provided primarily to allow use of a QContactId
+    as a key in a QMap.
+ */
+bool QContactId::operator<(const QContactId& other) const
+{
+    const int comp = this->managerUri().compare(other.managerUri());
+    if (comp != 0)
+        return comp < 0;
+
+    return this->localId() < other.localId();
+}
+
+/*!
+ * Returns the hash value for \a key.
+ */
+uint qHash(const QContactId &key)
+{
+    return QT_PREPEND_NAMESPACE(qHash)(key.managerUri())
+            + QT_PREPEND_NAMESPACE(qHash)(key.localId());
+}
+
+#ifndef QT_NO_DEBUG_STREAM
+QDebug operator<<(QDebug dbg, const QContactId& id)
+{
+    dbg.nospace() << "QContactId(" << id.managerUri() << ", " << id.localId() << ")";
+    return dbg.maybeSpace();
+}
+#endif
 
 /*!
  * Returns the URI of the manager which contains the contact identified by this id

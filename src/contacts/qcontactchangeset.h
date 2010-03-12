@@ -44,6 +44,7 @@
 #define QCONTACTCHANGESET_H
 
 #include "qtcontactsglobal.h"
+#include "qcontactid.h"
 
 #include <QSet>
 #include <QPair>

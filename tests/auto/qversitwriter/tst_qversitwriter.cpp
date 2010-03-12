@@ -249,5 +249,30 @@ END:VCARD\r\n");
             || state == QVersitWriter::FinishedState);
 }
 
-QTEST_MAIN(tst_QVersitWriter)
+void tst_QVersitWriter::testByteArrayOutput()
+{
+    const QByteArray vCard30(
+        "BEGIN:VCARD\r\n"
+        "VERSION:3.0\r\n"
+        "FN:John\r\n"
+        "END:VCARD\r\n");
 
+    delete mWriter; // we don't want the init()ed writer.
+
+    QByteArray output;
+    mWriter = new QVersitWriter(&output);
+
+    QVERIFY(mWriter->device() == 0);
+
+    QVersitDocument document(QVersitDocument::VCard30Type);
+    QVersitProperty property;
+    property.setName(QString(QString::fromAscii("FN")));
+    property.setValue(QString::fromAscii("John"));
+    document.addProperty(property);
+    QVERIFY(mWriter->startWriting(QList<QVersitDocument>() << document));
+    QVERIFY(mWriter->waitForFinished());
+    QCOMPARE(output, vCard30);
+
+}
+
+QTEST_MAIN(tst_QVersitWriter)

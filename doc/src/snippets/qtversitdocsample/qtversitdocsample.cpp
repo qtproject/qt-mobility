@@ -137,6 +137,7 @@ void completeExample()
     input.seek(0);
 
     // Parse the input into QVersitDocuments
+    // Note: we could also use the more convenient QVersitReader(QByteArray) constructor.
     QVersitReader reader;
     reader.setDevice(&input);
     reader.startReading(); // Remember to check the return value
@@ -145,15 +146,20 @@ void completeExample()
     // Convert the QVersitDocuments to QContacts
     QList<QVersitDocument> inputDocuments = reader.results();
     QVersitContactImporter importer;
-    QList<QContact> contacts = importer.importContacts(inputDocuments);
+    if (!importer.importDocuments(inputDocuments))
+        return;
+    QList<QContact> contacts = importer.contacts();
     // Note that the QContacts are not saved yet.
     // Use QContactManager::saveContacts() for saving if necessary
 
     // Export the QContacts back to QVersitDocuments
     QVersitContactExporter exporter;
-    QList<QVersitDocument> outputDocuments = exporter.exportContacts(contacts);
+    if (!exporter.exportContacts(contacts, QVersitDocument::VCard30Type))
+        return;
+    QList<QVersitDocument> outputDocuments = exporter.documents();
 
     // Encode the QVersitDocument back to a vCard
+    // Note: we could also use the more convenient QVersitWriter(QByteArray*) constructor.
     QBuffer output;
     output.open(QBuffer::ReadWrite);
     QVersitWriter writer;
@@ -187,9 +193,9 @@ void exportExample()
     contactAvatar.setSubType(QContactAvatar::SubTypeTexturedMesh);
     contact.saveDetail(&contactAvatar);
 
-    QList<QContact> contactList;
-    contactList.append(contact);
-    QList<QVersitDocument> versitDocuments = contactExporter.exportContacts(contactList);
+    if (!contactExporter.exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type))
+        return;
+    QList<QVersitDocument> versitDocuments = contactExporter.documents();
 
     // detailHandler.mUnknownDetails now contains the list of unknown details
     //! [Export example]
@@ -214,11 +220,10 @@ void importExample()
     property.setValue("some value");
     document.addProperty(property);
 
-    QList<QVersitDocument> list;
-    list.append(document);
-
-    QList<QContact> contactList = importer.importContacts(list);
-    // contactList.first() now contains the "N" property as a QContactName
-    // propertyHandler.mUnknownProperties contains the list of unknown properties
+    if (importer.importDocuments(QList<QVersitDocument>() << document)) {
+        QList<QContact> contactList = importer.contacts();
+        // contactList.first() now contains the "N" property as a QContactName
+        // propertyHandler.mUnknownProperties contains the list of unknown properties
+    }
     //! [Import example]
 }
