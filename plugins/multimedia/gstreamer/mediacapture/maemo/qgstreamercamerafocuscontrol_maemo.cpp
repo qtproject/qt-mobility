@@ -61,7 +61,6 @@ QGstreamerCameraFocusControl::~QGstreamerCameraFocusControl()
 
 QCamera::FocusMode QGstreamerCameraFocusControl::focusMode() const
 {
-    qDebug() << "Current focusMode: " << m_focusMode;
     return m_focusMode;
 }
 
@@ -69,10 +68,6 @@ void QGstreamerCameraFocusControl::setFocusMode(QCamera::FocusMode mode)
 {
     if (supportedFocusModes() & mode) {
         m_focusMode = mode;
-        if (mode == QCamera::AutoFocus)
-            gst_photography_set_autofocus(GST_PHOTOGRAPHY(&m_camerabin), TRUE);
-        else
-            gst_photography_set_autofocus(GST_PHOTOGRAPHY(&m_camerabin), FALSE);
     }
 }
 
