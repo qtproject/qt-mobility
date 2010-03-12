@@ -101,6 +101,7 @@ public slots:
 
 private slots:
     void signalEmission();
+    void filtering();
     void avatarSubTypes();
     void avatarSubTypes_data();
     void avatarPixmap();
@@ -139,6 +140,9 @@ void tst_QContactManagerSymbian::init()
     name.setFirstName("James");
     name.setLastName("Hunt");
     contact.saveDetail(&name);
+    QContactPhoneNumber number;
+    number.setNumber("+44752222222");
+    contact.saveDetail(&number);
     QVERIFY(m_cm->saveContact(&contact));
     m_contactId = contact.id();
 }
@@ -261,19 +265,59 @@ void tst_QContactManagerSymbian::signalEmission()
     QTRY_COMPARE_SIGNAL_COUNTS();
 }
 
-QContact tst_QContactManagerSymbian::createContact(QString type, QString firstName, QString lastName)
+/*
+ * Special filtering cases that cannot be covered in QtMobility system level
+ * test cases.
+ */
+void tst_QContactManagerSymbian::filtering()
 {
-    QContact contact;
-    contact.setType(type);
-    QContactName name;
-    if(type == QContactType::TypeContact) {
-        name.setFirstName(firstName);
-        name.setLastName(lastName);
-    } else {
-        name.setCustomLabel(firstName);
-    }
-    contact.saveDetail(&name);
-    return contact;
+    QContactDetailFilter df;
+    df.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
+    df.setValue("222");
+
+    // Ends with
+    df.setMatchFlags(QContactFilter::MatchEndsWith);
+
+    QList<QContactLocalId> ids = m_cm->contactIds(df);
+    QCOMPARE(m_cm->error(), QContactManager::NoError);
+    QCOMPARE(ids.count(), 1);
+
+    df.setValue("333");
+    ids = m_cm->contactIds(df);
+    QCOMPARE(m_cm->error(), QContactManager::NoError);
+    QCOMPARE(ids.count(), 0);
+
+    df.setValue("222222");
+    ids = m_cm->contactIds(df);
+    QCOMPARE(m_cm->error(), QContactManager::NoError);
+    QCOMPARE(ids.count(), 1);
+
+    df.setValue("2222222");
+    ids = m_cm->contactIds(df);
+    QCOMPARE(m_cm->error(), QContactManager::NoError);
+    QCOMPARE(ids.count(), 1);
+
+    // Match phone number
+    df.setMatchFlags(QContactFilter::MatchPhoneNumber);
+
+    df.setValue("2222222");
+    ids = m_cm->contactIds(df);
+    QCOMPARE(m_cm->error(), QContactManager::NoError);
+    QCOMPARE(ids.count(), 1);
+
+    df.setValue("2222");
+    ids = m_cm->contactIds(df);
+    // Should fail with not supported error because symbian's phone number
+    // match algorithm cannot be applied with less than 7 digit search strings
+    QCOMPARE(m_cm->error(), QContactManager::NotSupportedError);
+    QCOMPARE(ids.count(), 0);
+
+    df.setValue("3333");
+    ids = m_cm->contactIds(df);
+    // Should fail with not supported error because symbian's phone number
+    // match algorithm cannot be applied with less than 7 digit search strings
+    QCOMPARE(m_cm->error(), QContactManager::NotSupportedError);
+    QCOMPARE(ids.count(), 0);
 }
 
 void tst_QContactManagerSymbian::avatarSubTypes_data()
@@ -292,6 +336,10 @@ void tst_QContactManagerSymbian::avatarSubTypes_data()
     QTest::newRow("No sub type") << "C:\\Data\\Images\\avatar_sharks_s.jpg" << emptyString;
 }
 
+/*
+ * Special avatar cases that cannot be covered in QtMobility system level
+ * test cases.
+ */
 void tst_QContactManagerSymbian::avatarSubTypes()
 {
     QFETCH(QString, fileName);
@@ -362,6 +410,10 @@ void tst_QContactManagerSymbian::avatarPixmap()
     QVERIFY(!pixmap.isNull());
 }
 
+/*
+ * Special avatar cases that cannot be covered in QtMobility system level
+ * test cases.
+ */
 void tst_QContactManagerSymbian::avatarPathAndPixmap()
 {
     QString fileName("C:\\Data\\Images\\avatar_sharks_s.jpg");
@@ -447,6 +499,10 @@ void tst_QContactManagerSymbian::displayLabel_data()
             << "Organization:Name:McLaren");
 }
 
+/*
+ * Special display label test cases for testing symbian backend specific
+ * display label generation.
+ */
 void tst_QContactManagerSymbian::displayLabel()
 {
     qDebug() << QTest::currentDataTag();
@@ -482,6 +538,10 @@ void tst_QContactManagerSymbian::displayLabel()
     QVERIFY(m_cm->removeContact(contact.localId()));
 }
 
+/*
+ * Special contact handling test cases that cannot be covered in QtMobility
+ * system level test cases.
+ */
 void tst_QContactManagerSymbian::invalidContactItems()
 {
     // 1. Empty contact
@@ -501,6 +561,21 @@ void tst_QContactManagerSymbian::invalidContactItems()
     // TODO: check that 3 fields are removed during save?
     QVERIFY(m_cm->saveContact(&invalidContact));
     QVERIFY(m_cm->removeContact(invalidContact.localId()));
+}
+
+QContact tst_QContactManagerSymbian::createContact(QString type, QString firstName, QString lastName)
+{
+    QContact contact;
+    contact.setType(type);
+    QContactName name;
+    if(type == QContactType::TypeContact) {
+        name.setFirstName(firstName);
+        name.setLastName(lastName);
+    } else {
+        name.setCustomLabel(firstName);
+    }
+    contact.saveDetail(&name);
+    return contact;
 }
 
 void tst_QContactManagerSymbian::addContactItemWithInvalidFieldsL(TContactItemId& itemId)
