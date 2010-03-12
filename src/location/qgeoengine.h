@@ -94,7 +94,7 @@ signals:
     void error(QMapTileReply* reply, QGeoReply::ErrorCode code);
 
 public:
-    static void getMercatorTileIndex(const QGeoCoordinateMaps& coordinate, quint16 zoomLevel, quint32* col, quint32* row);
+    static void getMercatorTileIndex(const QGeoCoordinate& coordinate, quint16 zoomLevel, quint32* col, quint32* row);
 };
 
 QTM_END_NAMESPACE

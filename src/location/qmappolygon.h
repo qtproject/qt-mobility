@@ -47,7 +47,7 @@
 #include <QPainterPath>
 
 #include "qmapobject.h"
-#include "qgeocoordinatemaps.h"
+#include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -66,13 +66,13 @@ public:
     * @param brush The brush used for drawing the rectangle.
     * @param layerIndex The layer index of the polygon. Higher layers are stacked on top of lower layers.
     */
-    QMapPolygon(const QMapView& mapView, const QList<QGeoCoordinateMaps>& polygon,
+    QMapPolygon(const QMapView& mapView, const QList<QGeoCoordinate>& polygon,
                 const QPen& pen, const QBrush& brush, quint16 layerIndex);
 
     /*!
     * @return The polygon.
     */
-    QList<QGeoCoordinateMaps> polygon() const {
+    QList<QGeoCoordinate> polygon() const {
         return poly;
     }
     /*!
@@ -94,7 +94,7 @@ protected:
     virtual void paint(QPainter* painter, const QRectF& viewPort);
 
 private:
-    QList<QGeoCoordinateMaps> poly; //!< The polygon.
+    QList<QGeoCoordinate> poly; //!< The polygon.
     QPen p; //!< The pen used for drawing the polygon.
     QBrush br; //!< The brush used for drawing the polygon.
     QPainterPath path;

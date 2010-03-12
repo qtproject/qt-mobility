@@ -102,8 +102,8 @@ void MainWindow::changeEvent(QEvent *e)
 
 void MainWindow::on_btnRequest_clicked()
 {
-    QPointF src(ui->srcLong->toPlainText().toDouble(), ui->srcLat->toPlainText().toDouble());
-    QPointF dst(ui->dstLong->toPlainText().toDouble(), ui->dstLat->toPlainText().toDouble());
+    QGeoCoordinate src(ui->srcLat->toPlainText().toDouble(),ui->srcLong->toPlainText().toDouble());
+    QGeoCoordinate dst(ui->dstLat->toPlainText().toDouble(), ui->dstLong->toPlainText().toDouble());
     QRouteRequest request;
 
     request.setSource(src);
@@ -118,9 +118,7 @@ void MainWindow::on_btnRequest_clicked()
 
 void MainWindow::on_btnReverseCoding_clicked()
 {
-    QPointF coord(ui->locLong->toPlainText().toDouble(),
-                  ui->locLat->toPlainText().toDouble()
-                 );
+    QGeoCoordinate coord(ui->locLat->toPlainText().toDouble(), ui->locLong->toPlainText().toDouble());
     QReverseGeocodingRequest request(coord);
 
     ui->mapTileLabel->setVisible(false);
@@ -157,8 +155,8 @@ void MainWindow::on_btnCoding_clicked()
 
 void MainWindow::on_btnRequestTile_clicked()
 {
-    QGeoCoordinateMaps coord(ui->tileLong->toPlainText().toDouble(),
-                             ui->tileLat->toPlainText().toDouble()
+    QGeoCoordinate coord(ui->tileLat->toPlainText().toDouble(),
+                            ui->tileLong->toPlainText().toDouble()
                             );
     quint16 zoomLevel = ui->tileZoomLevel->toPlainText().toInt();
 

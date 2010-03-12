@@ -47,7 +47,7 @@
 #include <QDateTime>
 #include <QList>
 
-#include "qgeocoordinatemaps.h"
+#include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -83,11 +83,11 @@ public:
 
     QString version() const;
 
-    void setSource(const QGeoCoordinateMaps& source);
-    QGeoCoordinateMaps source() const;
+    void setSource(const QGeoCoordinate& source);
+    QGeoCoordinate source() const;
 
-    void setDestination(const QGeoCoordinateMaps& destination);
-    QGeoCoordinateMaps destination() const;
+    void setDestination(const QGeoCoordinate& destination);
+    QGeoCoordinate destination() const;
 
     void setTotalResults(quint32 totalResults);
     quint32 totalResults() const;
@@ -113,9 +113,9 @@ public:
     void setAvoid(QList<RouteAvoid> avoid);
     QList<RouteAvoid> avoid() const;
 
-    void addStopOver(const QGeoCoordinateMaps& stopOver);
-    void removeStopOver(const QGeoCoordinateMaps& stopOver);
-    const QList<QGeoCoordinateMaps>& stopOvers() const;
+    void addStopOver(const QGeoCoordinate& stopOver);
+    void removeStopOver(const QGeoCoordinate& stopOver);
+    const QList<QGeoCoordinate>& stopOvers() const;
 
 private:
     Q_DISABLE_COPY(QRouteRequest)
@@ -126,8 +126,8 @@ private:
     QString avoidToString() const;
 
     QString vers;
-    QGeoCoordinateMaps src;
-    QGeoCoordinateMaps dst;
+    QGeoCoordinate src;
+    QGeoCoordinate dst;
     quint32 nTotal;
     quint16 nAlternatives;
     QString languageCode;
@@ -136,7 +136,7 @@ private:
     RouteType rType;
     RouteMode rMode;
     QList<RouteAvoid> rAvoid;
-    QList<QGeoCoordinateMaps> stpOvers;
+    QList<QGeoCoordinate> stpOvers;
 };
 
 QTM_END_NAMESPACE

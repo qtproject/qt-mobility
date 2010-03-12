@@ -66,7 +66,7 @@ private:
     void parseRouteReply(const QXmlAttributes& atts);
     void parseRoute(const QXmlAttributes& atts);
     void parseManeuver(const QXmlAttributes& atts);
-    bool parseGeoPoints(const QString& strPoints, QList<QGeoCoordinateMaps>& points);
+    bool parseGeoPoints(const QString& strPoints, QList<QGeoCoordinate>& points);
 
 private:
     //! Internal parsing states.

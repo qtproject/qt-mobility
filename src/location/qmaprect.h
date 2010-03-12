@@ -47,7 +47,7 @@
 #include <QRectF>
 
 #include "qmapobject.h"
-#include "qgeocoordinatemaps.h"
+#include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -67,20 +67,20 @@ public:
     * @param brush The brush used for drawing the rectangle.
     * @param layerIndex The layer index of the rectangle. Higher layers are stacked on top of lower layers.
     */
-    QMapRect(const QMapView& mapView, const QGeoCoordinateMaps& topLeft,
-             const QGeoCoordinateMaps& bottomRight, const QPen& pen = QPen(),
+    QMapRect(const QMapView& mapView, const QGeoCoordinate& topLeft,
+             const QGeoCoordinate& bottomRight, const QPen& pen = QPen(),
              const QBrush& brush = QBrush(), quint16 layerIndex = 0);
 
     /*!
     * @return The top left geo coordinate of the rectangle.
     */
-    QGeoCoordinateMaps topLeft() const {
+    QGeoCoordinate topLeft() const {
         return geoTopLeft;
     }
     /*!
     * @return The bottom right geo coordinate of the rectangle.
     */
-    QGeoCoordinateMaps bottomRight() const {
+    QGeoCoordinate bottomRight() const {
         return geoBottomRight;
     }
     /*!
@@ -102,8 +102,8 @@ protected:
     virtual void paint(QPainter* painter, const QRectF& viewPort);
 
 private:
-    QGeoCoordinateMaps geoTopLeft; //!< The top left geo coordinate of the rectangle.
-    QGeoCoordinateMaps geoBottomRight; //!< The bottom right geo coordinate of the rectangle.
+    QGeoCoordinate geoTopLeft; //!< The top left geo coordinate of the rectangle.
+    QGeoCoordinate geoBottomRight; //!< The bottom right geo coordinate of the rectangle.
     QPen p; //!< The pen used for drawing the rectangle.
     QBrush b; //!< The brush used for drawing the rectangle.
     QRectF rect;

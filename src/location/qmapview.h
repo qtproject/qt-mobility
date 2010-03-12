@@ -52,7 +52,7 @@
 #include <QFont>
 #include <QColor>
 
-#include "qgeocoordinatemaps.h"
+#include "qgeocoordinate.h"
 #include "qgeoengine.h"
 #include "qroute.h"
 
@@ -165,13 +165,13 @@ public:
     * @param geoEngine A pointer to the underlying geo engine.
     * @param center The initial geo coordinate of the center of the view port.
     */
-    void init(QGeoEngine* geoEngine, const QGeoCoordinateMaps& center = QGeoCoordinateMaps(0, 0));
+    void init(QGeoEngine* geoEngine, const QGeoCoordinate& center = QGeoCoordinate(0, 0));
 
     virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
     /*!
     * @return The geo coordinate at the center of the map's current view port.
     */
-    QGeoCoordinateMaps center() const;
+    QGeoCoordinate center() const;
     /*!
     * @return The map coordinate (in pixels) at the center of the map's current view port.
     */
@@ -193,7 +193,7 @@ public:
     * Centers the view port on the given geo coordinate.
     * @param geoPos the geo coordinate.
     */
-    void centerOn(const QGeoCoordinateMaps& geoPos);
+    void centerOn(const QGeoCoordinate& geoPos);
 
     /*!
     * Moves the view port relative to its current position.
@@ -251,7 +251,7 @@ public:
      * @param geoCoord A geo coordinate.
      * @return The corresponding map coordinate (in pixels).
      */
-    QPointF geoToMap(const QGeoCoordinateMaps& geoCoord) const;
+    QPointF geoToMap(const QGeoCoordinate& geoCoord) const;
     /*!
      * Converts a normalized Mercator coordinate to a map coordinate.
      * @param mercatorCoord A normalized Mercator coordinate.
@@ -262,7 +262,7 @@ public:
     * Converts a map coordinate (in pixels) into its corresponding geo coordinate.
     * @param mapCoord The map coordinate (in pixels).
     */
-    QGeoCoordinateMaps mapToGeo(const QPointF& mapCoord) const;
+    QGeoCoordinate mapToGeo(const QPointF& mapCoord) const;
     /*!
     * To compute the normalized mercator coordinate for the given pixel coordinate
     * according to the map.
@@ -317,7 +317,7 @@ public:
                               const QPen& pen = QPen(),
                               const QPixmap& endpointMarker = QPixmap(),
                               quint16 layerIndex = 0);
-    const QMapMarker* addMarker(const QGeoCoordinateMaps& point, const QString& text = QString(),
+    const QMapMarker* addMarker(const QGeoCoordinate& point, const QString& text = QString(),
                                 const QFont& font = QFont("Arial", 10, QFont::Bold),
                                 const QColor& fontColor = QColor(Qt::white),
                                 const QPixmap& icon = QPixmap(), const QRectF& textRect = QRectF(),
@@ -329,7 +329,7 @@ public:
     * @param layerIndex The layer index for the pixmap. Higher layers are stacked on top of lower layers.
     * @return The internal map object.
     */
-    const QMapPixmap* addPixmap(const QGeoCoordinateMaps& topLeft, const QPixmap& pixmap, quint16 layerIndex = 0);
+    const QMapPixmap* addPixmap(const QGeoCoordinate& topLeft, const QPixmap& pixmap, quint16 layerIndex = 0);
     /*!
     * Adds a line to the map.
     * @param point1 The geo coordinate of the first endpoint.
@@ -338,7 +338,7 @@ public:
     * @param layerIndex The layer index of the pixmap. Higher layers are stacked on top of lower layers.
     * @return The internal map object.
     */
-    const QMapLine* addLine(const QGeoCoordinateMaps& point1, const QGeoCoordinateMaps& point2,
+    const QMapLine* addLine(const QGeoCoordinate& point1, const QGeoCoordinate& point2,
                             const QPen& pen = QPen(), quint16 layerIndex = 0);
     /*!
     * Adds an ellipse to the map.
@@ -349,7 +349,7 @@ public:
     * @param layerIndex The layer index of the line. Higher layers are stacked on top of lower layers.
     * @return The internal map object.
     */
-    const QMapEllipse* addEllipse(const QGeoCoordinateMaps& topLeft, const QGeoCoordinateMaps& bottomRight,
+    const QMapEllipse* addEllipse(const QGeoCoordinate& topLeft, const QGeoCoordinate& bottomRight,
                                   const QPen& pen = QPen(), const QBrush& brush = QBrush(),
                                   quint16 layerIndex = 0);
     /*!
@@ -361,7 +361,7 @@ public:
     * @param layerIndex The layer index of the rectangle. Higher layers are stacked on top of lower layers.
     * @return The internal map object.
     */
-    const QMapRect* addRect(const QGeoCoordinateMaps& topLeft, const QGeoCoordinateMaps& bottomRight,
+    const QMapRect* addRect(const QGeoCoordinate& topLeft, const QGeoCoordinate& bottomRight,
                             const QPen& pen = QPen(), const QBrush& brush = QBrush(),
                             quint16 layerIndex = 0);
     /*!
@@ -372,7 +372,7 @@ public:
     * @param layerIndex The layer index of the polygon. Higher layers are stacked on top of lower layers.
     * @return The internal map object.
     */
-    const QMapPolygon* addPolygon(const QList<QGeoCoordinateMaps>& polygon,
+    const QMapPolygon* addPolygon(const QList<QGeoCoordinate>& polygon,
                                   const QPen& pen = QPen(), const QBrush& brush = QBrush(),
                                   quint16 layerIndex = 0);
 
@@ -405,7 +405,7 @@ public:
     inline quint64 getTileIndex(quint32 col, quint32 row) const {
         return ((quint64) row) * numColRow + col;
     }
-    QLineF connectShortest(const QGeoCoordinateMaps& point1, const QGeoCoordinateMaps& point2) const;
+    QLineF connectShortest(const QGeoCoordinate& point1, const QGeoCoordinate& point2) const;
 
     /*!
     * @return The current map version.
@@ -535,7 +535,7 @@ signals:
     * @param geoCoord The geo coordinate where the click occured.
     * @param mouseEvent The associated mouse event.
     */
-    void mapClicked(QGeoCoordinateMaps geoCoord, QGraphicsSceneMouseEvent* mouseEvent);
+    void mapClicked(QGeoCoordinate geoCoord, QGraphicsSceneMouseEvent* mouseEvent);
     /*!
     * This signal is emitted after the map has changed its zoom level.
     * @param oldZoomLevel The previous zoom level.

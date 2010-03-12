@@ -160,7 +160,7 @@ qint64 QManeuver::icon() const
 
     \sa maneuverPoints()
 */
-const QList<QGeoCoordinateMaps> QManeuver::wayPoints() const
+const QList<QGeoCoordinate> QManeuver::wayPoints() const
 {
     return wPoints;
 }
@@ -172,7 +172,7 @@ const QList<QGeoCoordinateMaps> QManeuver::wayPoints() const
 
     \sa wayPoints()
 */
-const QList<QGeoCoordinateMaps> QManeuver::maneuverPoints() const
+const QList<QGeoCoordinate> QManeuver::maneuverPoints() const
 {
     return mPoints;
 }
