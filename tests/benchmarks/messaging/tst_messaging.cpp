@@ -286,33 +286,6 @@ private slots:
     void tst_removeAllMessage_data();
     void tst_removeAllMessage();
     
-
-//    void tst_fetchAllContactIds();
-//    void tst_fetchOneContact();
-//    void tst_fetchTenContact();
-//
-//    void tst_createContact();
-//    void tst_saveContact();
-//
-//    void tst_nameFilter();
-//
-//    void tst_removeOneContact();
-//    void tst_removeAllContacts();
-
-
-//    void tst_currentLanguage();
-//    void tst_availableLanguages();
-//
-//    void tst_versions_data();
-//    void tst_versions();
-//
-//    void tst_hasFeatures_data();
-//    void tst_hasFeatures();
-
-public slots:
-
-    void timeout();
-
 private:
     QMessage *createMessage();
     QMessage *messageTemplate();
@@ -323,13 +296,10 @@ private:
 
     QMessageManager *m_mgr;
     
-    QEventLoop *m_loop;
-    
-    QTimer *m_timer;
     QMessageIdList msg_list;
     
     QMessageAccount m_act;
-    QMessageFolder m_fol;
+    //QMessageFolder m_fol;
     
 
     OsNative *m_native;
@@ -354,12 +324,6 @@ void tst_messaging::initTestCase()
 #endif
 
     m_mgr = new QMessageManager();
-
-    // setup an event loop for waiting
-    m_loop = new QEventLoop;
-    
-    m_timer = new QTimer(this);
-    connect(m_timer, SIGNAL(timeout()), this, SLOT(timeout()));
     
     QMessageAccountIdList list;
     list = m_mgr->queryAccounts();
@@ -374,18 +338,17 @@ void tst_messaging::initTestCase()
 #endif      
     }
 
-    QMessageFolderIdList flist;
-    flist = m_mgr->queryFolders();
-    while(!flist.empty()) {      
-      QMessageFolder fol = m_mgr->folder(flist.takeFirst());
-      qDebug() << "Folder: " << fol.name();
-#if defined(Q_OS_SYMBIAN)      
-      if(fol.name() == "Inbox"){
-        m_fol = fol;
-        break;
-      }     
-#endif      
-    }
+//    QMessageFolderIdList flist = m_mgr->queryFolders();
+//    while(!flist.empty()) {      
+//      QMessageFolder fol = m_mgr->folder(flist.takeFirst());
+//      qDebug() << "Folder: " << fol.name();
+//#if defined(Q_OS_SYMBIAN)      
+//      if(fol.name() == "Inbox"){
+//        m_fol = fol;
+//        break;
+//      }     
+//#endif      
+//    }
     
 #if defined(Q_OS_SYMBIAN)
     // define/init native features we need native
@@ -417,17 +380,8 @@ void tst_messaging::cleanupTestCase()
   
   clearMessages();
   delete m_mgr;
-  delete m_loop;
-  delete m_timer;
 
 
-}
-
-
-void tst_messaging::timeout()
-{    
-    qDebug() << "***** Timeout, haven't received the signal/contact within 1sec";
-    m_loop->exit(1); // timeout, fail test
 }
 
 
@@ -438,6 +392,7 @@ void tst_messaging::tst_createTime_data()
     QTest::newRow("Qt-Create") << tst_messaging::QMessaging;
     QTest::newRow("Native-Create") << tst_messaging::Native;
 }
+
 
 void tst_messaging::tst_createTime()
 {
@@ -493,7 +448,7 @@ void tst_messaging::tst_counts_data()
     QTest::newRow("Qt-Accounts") << tst_messaging::QMessaging << tst_messaging::Accounts;
 //    QTest::newRow("Native-Accounts") << tst_messaging::Native << tst_messaging::Accounts;
     QTest::newRow("Qt-Folders") << tst_messaging::QMessaging << tst_messaging::Folders;
-//    QTest::newRow("Native-Folders") << tst_messaging::Native << tst_messaging::Folders;
+    QTest::newRow("Native-Folders") << tst_messaging::Native << tst_messaging::Folders;
     QTest::newRow("Qt-Messages") << tst_messaging::QMessaging << tst_messaging::Messages;
     QTest::newRow("Qt-MessagesAlt") << tst_messaging::QMessaging << tst_messaging::MessagesAlt;
     QTest::newRow("Native-Messages") << tst_messaging::Native << tst_messaging::Messages;
@@ -560,7 +515,7 @@ void tst_messaging::tst_query_data()
     QTest::addColumn<tst_messaging::bases>("base");
 
     QTest::newRow("Qt-Accounts") << tst_messaging::QMessaging << tst_messaging::Accounts;    
-    QTest::newRow("Qt-Folders") << tst_messaging::QMessaging << tst_messaging::Folders;    
+//    QTest::newRow("Qt-Folders") << tst_messaging::QMessaging << tst_messaging::Folders;    
     QTest::newRow("Qt-Messages") << tst_messaging::QMessaging << tst_messaging::Messages;
     
     QTest::newRow("Native-Accounts") << tst_messaging::Native << tst_messaging::Accounts;
@@ -934,7 +889,7 @@ void tst_messaging::tst_fetchAll_data()
 
     QTest::newRow("Qt-Accounts") << tst_messaging::QMessaging << tst_messaging::Accounts;
     QTest::newRow("Native-Accounts") << tst_messaging::Native << tst_messaging::Accounts;
-    QTest::newRow("Qt-Folders") << tst_messaging::QMessaging << tst_messaging::Folders;
+//    QTest::newRow("Qt-Folders") << tst_messaging::QMessaging << tst_messaging::Folders;
     QTest::newRow("Native-Folders") << tst_messaging::Native << tst_messaging::Folders;
     QTest::newRow("Qt-Messages") << tst_messaging::QMessaging << tst_messaging::Messages;
     QTest::newRow("Native-Messages") << tst_messaging::Native << tst_messaging::Messages;
@@ -997,11 +952,6 @@ void tst_messaging::tst_fetchAll()
         int total = 0;
         int skipped = 0;
         
-//        aFolders.Append(KMsvGlobalInBoxIndexEntryId);
-//        aFolders.Append(KMsvGlobalOutBoxIndexEntryId);
-//        aFolders.Append(KMsvDraftEntryId);
-//        aFolders.Append(KMsvSentEntryId);
-//        aFolders.Append(KMsvDeletedEntryFolderEntryId);
         m_native->getFolders(aFolders);
 
         // Access the Inbox
@@ -1581,7 +1531,8 @@ void tst_messaging::tst_addMessage()
     
     if(platform == tst_messaging::QMessaging){
       QBENCHMARK {
-        createMessage();
+        QMessage *msg = createMessage();
+        addMessage(msg);
       }
     }
     else if(platform == tst_messaging::Native){
@@ -1618,29 +1569,33 @@ void tst_messaging::tst_removeMessage()
   QFETCH(tst_messaging::platform, platform);
 
   if(platform == tst_messaging::QMessaging){
-    QBENCHMARK {
-      if(!msg_list.empty())
-        m_mgr->removeMessage(msg_list.takeFirst());
+#ifdef Q_OS_SYMBIAN
+      TMsvId id;
+      id = m_native->makeIMAP4(KMsvDraftEntryIdValue);
+      QString str;
+      str.setNum(id);
+      QMessageId qmid = str;    
+#else
+      QMessageId qmid = msg_list.takeFirst();
+#endif
+
+   QBENCHMARK_ONCE {
+          m_mgr->removeMessage(qmid);
     }
   }  
   else if(platform == tst_messaging::Native){
 #ifdef Q_OS_SYMBIAN
-    if(m_native->iNewMsgs.Count() == 0) {
       TMsvId id;
-      id = m_native->makeSMS(KMsvDraftEntryIdValue);      
-      m_native->iNewMsgs.Append(id);
-    }
-    TMsvId id = m_native->iNewMsgs[0];
-    m_native->iNewMsgs.Remove(0);    
-    CMsvEntry *pEntry = CMsvEntry::NewL(*m_native->iSession, id, TMsvSelectionOrdering());
-    CleanupStack::PushL(pEntry);
-    QBENCHMARK {
-      TRAPD(err, pEntry->DeleteL(id)); // slightly dangerous since we never want this failing, but it can fail too something, should debug TODO
-      if(err){
-        QFAIL(QString("Message delete failed with error: " + QString::number(err)).toAscii());
+      id = m_native->makeIMAP4(KMsvDraftEntryIdValue);      
+      CMsvEntry *pEntry = CMsvEntry::NewL(*m_native->iSession, id, TMsvSelectionOrdering());
+      CleanupStack::PushL(pEntry);
+      QBENCHMARK_ONCE {    // We're only guaranteed one entry to delete.  Not a fast process anyways.s
+          TRAPD(err, pEntry->DeleteL(id)); // slightly dangerous since we never want this failing, but it can fail too something, should debug TODO
+          if(err){
+          QFAIL(QString("Message delete failed with error: " + QString::number(err)).toAscii());
+          }
       }
-    }
-    CleanupStack::PopAndDestroy(pEntry);          
+      CleanupStack::PopAndDestroy(pEntry);          
 #endif
   }
 
