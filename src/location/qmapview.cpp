@@ -557,11 +557,15 @@ const QMapPixmap* QMapView::addPixmap(const QGeoCoordinateMaps& /*topLeft*/, con
     return NULL;
 }
 
-const QMapEllipse* QMapView::addEllipse(const QGeoCoordinateMaps& /*topLeft*/, const QGeoCoordinateMaps& /*bottomRight*/,
-                                        const QPen& /*pen*/, const QBrush& /*brush*/, quint16 /*layerIndex*/)
+const QMapEllipse* QMapView::addEllipse(const QGeoCoordinateMaps& topLeft, const QGeoCoordinateMaps& bottomRight,
+                                        const QPen& pen, const QBrush& brush, quint16 layerIndex)
 {
-    //TODO: add ellipse
-    return NULL;
+    QMapEllipse* ellipse = new QMapEllipse(*this, topLeft, bottomRight, pen, brush, layerIndex);
+    mapObjects.insert(ellipse);
+    ellipse->compMapCoords();
+    addMapObjectToTiles(ellipse);
+    update();
+    return ellipse;
 }
 
 const QMapRect* QMapView::addRect(const QGeoCoordinateMaps& topLeft, const QGeoCoordinateMaps& bottomRight,

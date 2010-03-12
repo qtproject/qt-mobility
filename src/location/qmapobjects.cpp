@@ -51,6 +51,7 @@
 #include "qmapmarker.h"
 #include "qmaprect.h"
 #include "qmappolygon.h"
+#include "qmapellipse.h"
 #include "qgeocoordinatemaps.h"
 
 QTM_BEGIN_NAMESPACE
@@ -556,6 +557,79 @@ void QMapPolygon::paint(QPainter* painter, const QRectF& viewPort)
 }
 
 bool QMapPolygon::intersects(const QRectF& rect) const
+{
+    return path.intersects(rect);
+}
+
+/******************************************************************************
+* QMapEllipse
+*******************************************************************************/
+QMapEllipse::QMapEllipse(const QMapView& mapView, const QGeoCoordinateMaps& topLeft, const QGeoCoordinateMaps& bottomRight,
+                         const QPen& pen, const QBrush& brush, quint16 layerIndex)
+        : QMapObject(mapView, QMapObject::Ellipse, layerIndex),
+          geoTopLeft(topLeft), geoBottomRight(bottomRight), p(pen), b(brush)
+
+{
+}
+
+void QMapEllipse::compMapCoords()
+{
+    QPointF p1 = mapView.geoToMap(geoTopLeft);
+    QPointF p2 = mapView.geoToMap(geoBottomRight);
+
+    if (p2.y() < p1.y()) {
+        qreal y = p2.y();
+        p2.setY( p1.y() );
+        p1.setY(y);
+    }
+
+    //Lines will always connect points from west to east.
+    //If we cross the date line, we need to split.
+    if ( geoTopLeft.longitude() > geoBottomRight.longitude() )
+        p2.rx() += mapView.mapWidth();
+
+    QRectF rect(p1, p2);
+    path = QPainterPath();
+    path.addEllipse(rect);
+    //compute intersecting map tiles now
+    intersectingTiles.clear();
+    compIntersectingTiles(rect);
+}
+
+void QMapEllipse::paint(QPainter* painter, const QRectF& viewPort)
+{
+    QPen oldPen = painter->pen();
+    QBrush oldBrush = painter->brush();
+    painter->setPen(p);
+    painter->setBrush(b);
+    path.translate(-viewPort.left(), -viewPort.top());
+    painter->drawPath(path);
+    qint64 mapWidth = static_cast<qint64>(mapView.mapWidth());
+    path.translate(viewPort.left(), viewPort.top());
+
+    //Is view port wrapping around date line?
+    if (viewPort.right() >= mapWidth) {
+        path.translate(-viewPort.left(), -viewPort.top());
+        path.translate(mapWidth, 0);
+        painter->drawPath(path);
+        path.translate(-mapWidth, 0);
+        path.translate(viewPort.left(), viewPort.top());
+    }
+
+    //Is line crossing date line?
+    if (path.boundingRect().right() >= mapWidth) {
+        path.translate(-viewPort.left(), -viewPort.top());
+        path.translate(-mapWidth, 0);
+        painter->drawPath(path);
+        path.translate(mapWidth, 0);
+        path.translate(viewPort.left(), viewPort.top());
+    }
+
+    painter->setPen(oldPen);
+    painter->setBrush(oldBrush);
+}
+
+bool QMapEllipse::intersects(const QRectF& rect) const
 {
     return path.intersects(rect);
 }

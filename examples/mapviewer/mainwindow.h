@@ -81,6 +81,7 @@ private slots:
     void addMarker(bool checked);
     void drawLine(bool checked);
     void drawRect(bool checked);
+    void drawEllipse(bool checked);
     void drawPolygon(bool checked);
 
 private:
@@ -96,10 +97,13 @@ private:
     QAction* mnRoute;
     QAction* mnLine;
     QAction* mnRect;
+    QAction* mnEllipse;
     QAction* mnPolygon;
     QAction* mnDay;
     QAction* mnSat;
     QAction* mnTer;
+    QAction* mnSep1;
+    QAction* mnSep2;
 
     QGeoCoordinateMaps lastClicked;
 
