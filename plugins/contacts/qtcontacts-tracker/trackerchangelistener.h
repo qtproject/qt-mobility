@@ -44,11 +44,12 @@
 
 #include <QObject>
 #include <QHash>
-#include <qcontact.h>
 #include <QSharedPointer>
 #include <QtTracker/QLive>
 #include <QtTracker/Tracker>
-#include <QContactManagerEngine>
+#include <qmobilityglobal.h>
+#include <qcontactmanagerengine.h>
+#include <qcontact.h>
 
 QTM_USE_NAMESPACE
 
