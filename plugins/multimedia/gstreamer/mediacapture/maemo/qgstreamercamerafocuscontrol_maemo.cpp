@@ -85,7 +85,7 @@ bool QGstreamerCameraFocusControl::isMacroFocusingSupported() const
 
 void QGstreamerCameraFocusControl::setMacroFocusingEnabled(bool)
 {
-    return false;
+    // Macro focusing isn't supported
 }
 
 qreal QGstreamerCameraFocusControl::maximumOpticalZoom() const
