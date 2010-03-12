@@ -63,6 +63,7 @@ class QGstreamerRecorderControl;
 class QGstreamerMediaContainerControl;
 class QGstreamerCameraExposureControl;
 class QGstreamerCameraFocusControl;
+class QGstreamerImageProcessingControl;
 
 class QGstreamerElementFactory
 {
@@ -103,6 +104,7 @@ public:
     QGstreamerImageEncode *imageEncodeControl() const { return m_imageEncodeControl; }
     QGstreamerCameraExposureControl *cameraExposureControl() const  { return m_cameraExposureControl; }
     QGstreamerCameraFocusControl *cameraFocusControl() const  { return m_cameraFocusControl; }
+    QGstreamerImageProcessingControl *imageProcessingControl() const { return m_imageProcessingControl; }
 
     QGstreamerRecorderControl *recorderControl() const { return m_recorderControl; }
     QGstreamerMediaContainerControl *mediaContainerControl() const { return m_mediaContainerControl; }
@@ -173,6 +175,7 @@ private:
     QGstreamerMediaContainerControl *m_mediaContainerControl;
     QGstreamerCameraExposureControl *m_cameraExposureControl;
     QGstreamerCameraFocusControl *m_cameraFocusControl;
+    QGstreamerImageProcessingControl *m_imageProcessingControl;
 
     QGstreamerBusHelper *m_busHelper;
     GstBus* m_bus;
