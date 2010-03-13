@@ -80,6 +80,7 @@ namespace IMAccount {
         ContactNickname,
         ContactDisplayname,
         ContactIMId,
+        ContactAvatar
     };
 };
 
