@@ -16,7 +16,6 @@ CONFIG += mobility
 
 MOBILITY = messaging
 
-LIBS += msgs.lib msgs_autoshutdown.lib imcm.lib
 
 symbian {
     TARGET.CAPABILITY = All -TCB
