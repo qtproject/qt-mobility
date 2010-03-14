@@ -13,8 +13,6 @@ QT=core
 CONFIG+=mobility
 MOBILITY+=sensors
 
-LIBS += -lm
-
 CONFIG+=strict_flags
 
 DESTDIR = $$OUTPUT_DIR/bin/examples/sensors

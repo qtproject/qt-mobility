@@ -1,7 +1,11 @@
-HEADERS += genericorientationsensor.h\
-           genericattitudesensor.h\
+HEADERS += genericorientationsensor.h
 
 SOURCES += genericorientationsensor.cpp\
            main.cpp\
-           genericattitudesensor.cpp\
+
+!symbian:!win* {
+    HEADERS += genericattitudesensor.h
+    SOURCES += genericattitudesensor.cpp
+    LIBS += -lm
+}
 
