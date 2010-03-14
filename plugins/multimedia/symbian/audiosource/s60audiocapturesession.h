@@ -96,7 +96,7 @@ signals:
     void positionChanged(qint64 position);
 
 private slots:
-    void stateChanged(QAudio::State state);
+//    void stateChanged(QAudio::State state);
     void notify();
 
 private:
@@ -117,10 +117,10 @@ private:
     QString m_captureDevice;
     QUrl m_sink;
     QMediaRecorder::State m_state;
-    
+    TTimeIntervalMicroSeconds m_pausedPosition;
     CMdaAudioRecorderUtility *m_recorderUtility;
     QAudioFormat m_format;
-    qint64 m_position;
+    qint64 m_position;    
     bool wavFile;
     
     QHash<QString, ItemData> m_controllerIdMap;

@@ -43,8 +43,6 @@
 #include "v4lcameraservice.h"
 #include "v4lcamerasession.h"
 
-#include <QtCore/qdebug.h>
-
 
 V4LCameraControl::V4LCameraControl(QObject *parent)
     :QCameraControl(parent),m_captureMode(QCamera::CaptureStillImage)

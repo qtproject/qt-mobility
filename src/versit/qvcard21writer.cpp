@@ -59,81 +59,112 @@ QVCard21Writer::~QVCard21Writer()
 }
 
 /*!
- * Encodes the \a property to text. 
+ * Encodes the \a property and writes it to the device.
  */
-QByteArray QVCard21Writer::encodeVersitProperty(const QVersitProperty& property, QTextCodec* codec)
+void QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
 {
-    QByteArray encodedProperty(encodeGroupsAndName(property, codec));
+    encodeGroupsAndName(property);
     QMultiHash<QString,QString> parameters = property.parameters();
     QVariant variant(property.variantValue());
 
-    QByteArray renderedValue;
+    QString renderedValue;
+    bool useUtf8 = false;
 
     if (variant.type() == QVariant::String) {
         QString valueString = variant.toString();
 
         // Quoted-Printable encode the value and add Quoted-Printable parameter, if necessary
         if (!parameters.contains(QLatin1String("ENCODING"))) {
-            if (VersitUtils::quotedPrintableEncode(valueString))
+            if (quotedPrintableEncode(valueString))
                 parameters.insert(QLatin1String("ENCODING"), QLatin1String("QUOTED-PRINTABLE"));
         }
 
-        // Encode with the correct charset and add the CHARSET parameter, if necessary
-        if (codec->canEncode(valueString)) {
-            renderedValue = codec->fromUnicode(valueString);
-        } else {
-            renderedValue = valueString.toUtf8();
+        // Add the CHARSET parameter, if necessary and encode in UTF-8 later
+        if (!mCodec->canEncode(valueString)) {
             parameters.insert(QLatin1String("CHARSET"), QLatin1String("UTF-8"));
+            useUtf8 = true;
         }
+        renderedValue = valueString;
     } else if (variant.type() == QVariant::ByteArray) {
         parameters.insert(QLatin1String("ENCODING"), QLatin1String("BASE64"));
-        renderedValue = codec->fromUnicode(QLatin1String(variant.toByteArray().toBase64().data()));
+        renderedValue = QLatin1String(variant.toByteArray().toBase64().data());
     }
 
     // Encode parameters
-    encodedProperty.append(encodeParameters(parameters, codec));
+    encodeParameters(parameters);
 
     // Encode value
-    encodedProperty.append(codec->fromUnicode(QLatin1String(":")));
+    writeString(QLatin1String(":"));
     if (variant.canConvert<QVersitDocument>()) {
-        encodedProperty.append(codec->fromUnicode(QLatin1String("\r\n")));
+        writeCrlf();
         QVersitDocument embeddedDocument = variant.value<QVersitDocument>();
-        encodedProperty.append(encodeVersitDocument(embeddedDocument, codec));
+        encodeVersitDocument(embeddedDocument);
     } else if (variant.type() == QVariant::String) {
-        encodedProperty += renderedValue;
+        writeString(renderedValue, useUtf8);
     } else if (variant.type() == QVariant::ByteArray) {
         // One extra folding before the value and
         // one extra line break after the value are needed in vCard 2.1
-        encodedProperty += codec->fromUnicode(QLatin1String("\r\n "))
-                           + renderedValue
-                           + codec->fromUnicode(QLatin1String("\r\n"));
+        writeCrlf();
+        writeString(QLatin1String(" "));
+        writeString(renderedValue, useUtf8);
+        writeCrlf();
     }
-    encodedProperty.append(codec->fromUnicode(QLatin1String("\r\n")));
-
-    return encodedProperty;
+    writeCrlf();
 }
 
 /*!
- * Encodes the \a parameters to text.
+ * Encodes the \a parameters and writes it to the device.
  */
-QByteArray QVCard21Writer::encodeParameters(
-    const QMultiHash<QString,QString>& parameters,
-    QTextCodec* codec) const
+void QVCard21Writer::encodeParameters(const QMultiHash<QString,QString>& parameters)
 {
-    QByteArray encodedParameters;
     QList<QString> names = parameters.uniqueKeys();
-    foreach (QString name, names) {
+    foreach (const QString& name, names) {
         QStringList values = parameters.values(name);
-        foreach (QString value, values) {
-            encodedParameters.append(codec->fromUnicode(QLatin1String(";")));
+        foreach (const QString& value, values) {
+            writeString(QLatin1String(";"));
             QString typeParameterName(QLatin1String("TYPE"));
             if (name.length() > 0 && name != typeParameterName) {
-                encodedParameters.append(codec->fromUnicode(name));
-                encodedParameters.append(codec->fromUnicode(QLatin1String("=")));
+                writeString(name);
+                writeString(QLatin1String("="));
             }
-            encodedParameters.append(codec->fromUnicode(value));
+            writeString(value);
         }
     }
-    return encodedParameters;
 }
 
+
+
+/*!
+ * Encodes special characters in \a text
+ * using Quoted-Printable encoding (RFC 1521).
+ * Returns true if at least one character was encoded.
+ */
+bool QVCard21Writer::quotedPrintableEncode(QString& text) const
+{
+    bool encoded = false;
+    for (int i=0; i<text.length(); i++) {
+        QChar current = text.at(i);
+        if (shouldBeQuotedPrintableEncoded(current)) {
+            QString encodedStr(QString::fromAscii("=%1").
+                               arg(current.unicode(), 2, 16, QLatin1Char('0')).toUpper());
+            text.replace(i, 1, encodedStr);
+            i += 2;
+            encoded = true;
+        }
+    }
+    return encoded;
+}
+
+
+/*!
+ * Checks whether the \a chr should be Quoted-Printable encoded (RFC 1521).
+ */
+bool QVCard21Writer::shouldBeQuotedPrintableEncoded(QChar chr) const
+{
+    int c = chr.unicode();
+    return (c < 32 ||
+            c == '!' || c == '"' || c == '#' || c == '$' ||
+            c == '=' || c == '@' || c == '[' || c == '\\' ||
+            c == ']' || c == '^' || c == '`' ||
+            (c > 122 && c < 256));
+}

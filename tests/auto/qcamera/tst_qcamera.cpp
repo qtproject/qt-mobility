@@ -116,6 +116,10 @@ public:
                        QLatin1String("Could not capture in stopped state"));
     }
 
+    void cancelCapture()
+    {
+    }
+
     MockCameraControl *m_cameraControl;
 
 };
@@ -139,12 +143,12 @@ public:
 
     ~MockCameraExposureControl() {}
 
-    QCamera::FlashMode flashMode() const
+    QCamera::FlashModes flashMode() const
     {
         return m_flashMode;
     }
 
-    void setFlashMode(QCamera::FlashMode mode)
+    void setFlashMode(QCamera::FlashModes mode)
     {
         if (supportedFlashModes() & mode) {
             m_flashMode = mode;
@@ -155,6 +159,13 @@ public:
     {
         return QCamera::FlashAuto | QCamera::FlashOff | QCamera::FlashOn;
     }
+
+    qreal flashCompensation() const { return 0; }
+    void setFlashCompensation(qreal) {}
+
+    qreal flashPower() const { return 0; }
+    void setFlashPower(qreal) {}
+
 
     bool isFlashReady() const
     {
@@ -299,7 +310,7 @@ private:
     QCamera::MeteringMode m_meteringMode;
     qreal m_exposureCompensation;
     QCamera::ExposureMode m_exposureMode;
-    QCamera::FlashMode m_flashMode;
+    QCamera::FlashModes m_flashMode;
 };
 
 class MockCameraFocusControl : public QCameraFocusControl
@@ -312,7 +323,9 @@ public:
         m_digitalZoom(1.0),
         m_macroFocusingEnabled(false),
         m_focusMode(QCamera::AutoFocus),
-        m_focusStatus(QCamera::FocusInitial)
+        m_focusStatus(QCamera::FocusInitial),
+        m_focusPointMode(QCamera::FocusPointAuto),
+        m_focusPoint(0.5, 0.5)
     {
     }
 
@@ -391,6 +404,34 @@ public:
         }
     }
 
+    QCamera::FocusPointMode focusPointMode() const
+    {
+        return m_focusPointMode;
+    }
+
+    void setFocusPointMode(QCamera::FocusPointMode mode)
+    {
+        if (mode & supportedFocusPointModes())
+            m_focusPointMode = mode;
+    }
+
+    QCamera::FocusPointModes supportedFocusPointModes() const
+    {
+        return QCamera::FocusPointAuto | QCamera::FocusPointCenter | QCamera::FocusPointCustom;
+    }
+
+    QPointF customFocusPoint() const
+    {
+        return m_focusPoint;
+    }
+
+    void setCustomFocusPoint(const QPointF &point)
+    {
+        m_focusPoint = point;
+    }
+
+    QList<QRectF> focusZones() const { return QList<QRectF>() << QRectF(0.45, 0.45, 0.1, 0.1); }
+
 public Q_SLOTS:
     void startFocusing()
     {
@@ -406,20 +447,24 @@ private:
     bool m_macroFocusingEnabled;
     QCamera::FocusMode m_focusMode;
     QCamera::FocusStatus m_focusStatus;
+    QCamera::FocusPointMode m_focusPointMode;
+    QPointF m_focusPoint;
 };
 
 class MockImageProcessingControl : public QImageProcessingControl
 {
+    Q_OBJECT
 public:
     MockImageProcessingControl(QObject *parent = 0)
         : QImageProcessingControl(parent)
         , m_supportedWhiteBalance(QCamera::WhiteBalanceAuto)
-        , m_contrast(0.0)
-        , m_saturation(0.0)
-        , m_sharpeningLevel(0.0)
-        , m_denoisingLevel(0.0)
+        , m_contrast(0)
+        , m_saturation(0)
+        , m_sharpeningLevel(-1)
+        , m_denoisingLevel(-1)
         , m_sharpeningSupported(false)
         , m_denoisingSupported(true)
+        , m_whiteBalanceLocked(false)
     {
     }
 
@@ -434,33 +479,40 @@ public:
     int manualWhiteBalance() const { return m_manualWhiteBalance; }
     void setManualWhiteBalance(int colorTemperature) { m_manualWhiteBalance = colorTemperature; }
 
-    qreal contrast() const { return m_contrast; }
-    void setContrast(qreal value) { m_contrast = value; }
+    int contrast() const { return m_contrast; }
+    void setContrast(int value) { m_contrast = value; }
 
-    qreal saturation() const { return m_saturation; }
-    void setSaturation(qreal value) { m_saturation = value; }
+    int saturation() const { return m_saturation; }
+    void setSaturation(int value) { m_saturation = value; }
 
     bool isSharpeningSupported() const { return m_sharpeningSupported; }
     void setSharpendingSupported(bool supported) { m_sharpeningSupported = supported; }
 
-    qreal sharpeningLevel() const { return m_sharpeningLevel; }
-    void setSharpeningLevel(qreal value) { m_sharpeningLevel = value; }
+    int sharpeningLevel() const { return m_sharpeningLevel; }
+    void setSharpeningLevel(int value) { m_sharpeningLevel = value; }
 
     bool isDenoisingSupported() const { return m_denoisingSupported; }
     void setDenoisingSupported(bool supported) { m_denoisingSupported = supported; }
-    qreal denoisingLevel() const { return m_denoisingLevel; }
-    void setDenoisingLevel(qreal value) { m_denoisingLevel = value; }
+    int denoisingLevel() const { return m_denoisingLevel; }
+    void setDenoisingLevel(int value) { m_denoisingLevel = value; }
+
+    bool isWhiteBalanceLocked() const { return m_whiteBalanceLocked; }
+
+public Q_SLOTS:
+    void lockWhiteBalance() { m_whiteBalanceLocked = true; emit whiteBalanceLocked(); }
+    void unlockWhiteBalance() { m_whiteBalanceLocked = false; }
 
 private:
     QCamera::WhiteBalanceMode m_whiteBalanceMode;
     QCamera::WhiteBalanceModes m_supportedWhiteBalance;
     int m_manualWhiteBalance;
-    qreal m_contrast;
-    qreal m_saturation;
-    qreal m_sharpeningLevel;
-    qreal m_denoisingLevel;
+    int m_contrast;
+    int m_saturation;
+    int m_sharpeningLevel;
+    int m_denoisingLevel;
     bool m_sharpeningSupported;
     bool m_denoisingSupported;
+    bool m_whiteBalanceLocked;
 };
 
 class MockImageEncoderControl : public QImageEncoderControl
@@ -770,6 +822,16 @@ void tst_QCamera::testSimpleCameraFocus()
     QCOMPARE(camera.digitalZoom(), 1.0);
     QCOMPARE(errorSignal.count(), 1);
     QCOMPARE(camera.error(), QCamera::NotSupportedFeatureError);
+
+    QCOMPARE(camera.supportedFocusPointModes(), QCamera::FocusPointAuto);
+    QCOMPARE(camera.focusPointMode(), QCamera::FocusPointAuto);
+
+    camera.setFocusPointMode( QCamera::FocusPointCenter );
+    QCOMPARE(camera.focusPointMode(), QCamera::FocusPointAuto);
+
+    QCOMPARE(camera.customFocusPoint(), QPointF(0.5, 0.5));
+    camera.setCustomFocusPoint(QPointF(1.0, 1.0));
+    QCOMPARE(camera.customFocusPoint(), QPointF(0.5, 0.5));
 }
 
 void tst_QCamera::testSimpleCameraCapture()
@@ -974,6 +1036,20 @@ void tst_QCamera::testCameraFocus()
     camera.zoomTo(2000000.0, 1000000.0);
     QVERIFY(qFuzzyCompare(camera.opticalZoom(), camera.maximumOpticalZoom()));
     QVERIFY(qFuzzyCompare(camera.digitalZoom(), camera.maximumDigitalZoom()));
+
+    QCOMPARE(camera.supportedFocusPointModes(),
+             QCamera::FocusPointAuto | QCamera::FocusPointCenter | QCamera::FocusPointCustom);
+    QCOMPARE(camera.focusPointMode(), QCamera::FocusPointAuto);
+
+    camera.setFocusPointMode( QCamera::FocusPointCenter );
+    QCOMPARE(camera.focusPointMode(), QCamera::FocusPointCenter);
+
+    camera.setFocusPointMode( QCamera::FocusPointFaceDetection );
+    QCOMPARE(camera.focusPointMode(), QCamera::FocusPointCenter);
+
+    QCOMPARE(camera.customFocusPoint(), QPointF(0.5, 0.5));
+    camera.setCustomFocusPoint(QPointF(1.0, 1.0));
+    QCOMPARE(camera.customFocusPoint(), QPointF(1.0, 1.0));
 }
 
 void tst_QCamera::testImageSettings()

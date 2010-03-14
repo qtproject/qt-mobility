@@ -14,7 +14,7 @@
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QVersitContactExporter Class Reference</h1>
-<p>The QVersitContactExporter class converts QContact(s) into QVersitDocument(s). <a href="#details">More...</a></p>
+<p>The QVersitContactExporter class converts <a href="qcontact.html">QContacts</a> into <a href="qversitdocument.html">QVersitDocuments</a>. <a href="#details">More...</a></p>
 <pre>    #include &lt;QVersitContactExporter&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
 <ul>
 <li><a href="qversitcontactexporter-members.html">List of all members, including inherited members</a></li>
@@ -34,52 +34,50 @@
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
-<p>The QVersitContactExporter class converts QContact(s) into QVersitDocument(s).</p>
-<p>A <a href="qversitresourcehandler.html">QVersitResourceHandler</a> is associated with the exporter to supply the behaviour for loading files from persistent storage. By default, this is set to a QVersitDefaultResourceHandler, which supports basic resource loading from the file system. An alternative resource handler can be specified with <a href="qversitcontactexporter.html#setResourceHandler">setResourceHandler</a>().</p>
+<p>The QVersitContactExporter class converts <a href="qcontact.html">QContacts</a> into <a href="qversitdocument.html">QVersitDocuments</a>.</p>
+<p>A <a href="qversitresourcehandler.html">QVersitResourceHandler</a> is associated with the exporter to supply the behaviour for loading files from persistent storage. By default, this is set to a <a href="qversitdefaultresourcehandler.html">QVersitDefaultResourceHandler</a>, which supports basic resource loading from the file system. An alternative resource handler can be specified with <a href="qversitcontactexporter.html#setResourceHandler">setResourceHandler</a>().</p>
 <p>By associating a <a href="qversitcontactexporterdetailhandler.html">QVersitContactExporterDetailHandler</a> with the exporter using <a href="qversitcontactexporter.html#setDetailHandler">setDetailHandler</a>(), the client can pass in a handler to override the processing of details and/or handle details that QVersitContactExporter doesn't support.</p>
+<p>An example detail handler that logs unknown properties:</p>
 <pre>    class MyDetailHandler : public QVersitContactExporterDetailHandler {
     public:
-        bool preProcessDetail(const QContact&amp; contact, const QContactDetail&amp; detail, QVersitDocument* document) {
+        bool preProcessDetail(const QContact&amp; contact, const QContactDetail&amp; detail,
+                              QVersitDocument* document) {
+            Q_UNUSED(contact) Q_UNUSED(detail) Q_UNUSED(document)
             return false;
         }
-        bool postProcessDetail(const QContact&amp; contact, const QContactDetail&amp; detail, bool alreadyProcessed, QVersitDocument* document) {
+        bool postProcessDetail(const QContact&amp; contact, const QContactDetail&amp; detail,
+                               bool alreadyProcessed, QVersitDocument* document) {
+            Q_UNUSED(contact) Q_UNUSED(document)
             if (!alreadyProcessed)
                 mUnknownDetails.append(detail);
             return false;
         }
         QList&lt;QContactDetail&gt; mUnknownDetails;
-    };
+    };</pre>
+<p>An example usage of QVersitContactExporter</p>
+<pre>        QVersitContactExporter contactExporter;
 
-<span class="comment">    // An example of exporting a QContact:</span>
-    QVersitContactExporter contactExporter;
+        MyDetailHandler detailHandler;
+        contactExporter.setDetailHandler(&amp;detailHandler);
 
-    MyDetailHandler detailHandler;
-    contactExporter.setDetailHandler(&amp;detailHandler);
+        QContact contact;
+        <span class="comment">// Create a name</span>
+        QContactName name;
+        name.setFirstName(QString::fromAscii(&quot;John&quot;));
+        contact.saveDetail(&amp;name);
 
-    QContact contact;
-<span class="comment">    // Create a name</span>
-    QContactName name;
-    name.setFirst(QString::fromAscii(&quot;John&quot;));
-    contact.saveDetail(&amp;name);
+        <span class="comment">// Create an avatar type which is not supported by the exporter</span>
+        QContactAvatar contactAvatar;
+        contactAvatar.setAvatar(QString::fromAscii(&quot;/my/image/avatar_path/texture.type&quot;));
+        contactAvatar.setSubType(QContactAvatar::SubTypeTexturedMesh);
+        contact.saveDetail(&amp;contactAvatar);
 
-<span class="comment">    // Create an avatar type which is not supported by the exporter</span>
-    QContactAvatar contactAvatar;
-    contactAvatar.setAvatar(QString::fromAscii(&quot;/my/image/avatar_path/texture.type&quot;));
-    contactAvatar.setSubType(QContactAvatar::SubTypeTexturedMesh);
-    contact.saveDetail(&amp;contactAvatar);
+        QList&lt;QContact&gt; contactList;
+        contactList.append(contact);
+        QList&lt;QVersitDocument&gt; versitDocuments = contactExporter.exportContacts(contactList);
 
-<span class="comment">    // Create an organization detail with a title and a logo</span>
-    QContactOrganization organization;
-    organization.setTitle(QString::fromAscii(&quot;Developer&quot;));
-    organization.setLogo(QString::fromAscii(&quot;/my/image/logo_path/logo.jpg&quot;));
-    contact.saveDetail(&amp;organization);
-
-    QList&lt;QContact&gt; contactList;
-    contactList.append(contact);
-    QList&lt;QVersitDocument&gt; versitDocuments = contactExporter.exportContacts(contactList);
-
-<span class="comment">    // detailHandler.mUnknownDetails now contains the list of unknown details</span></pre>
-<p>See also <a href="qversitdocument.html">QVersitDocument</a>, <a href="qversitproperty.html">QVersitProperty</a>, <a href="qversitcontactexporterdetailhandler.html">QVersitContactExporterDetailHandler</a>, and QVersitResourceLoader.</p>
+        <span class="comment">// detailHandler.mUnknownDetails now contains the list of unknown details</span></pre>
+<p>See also <a href="qversitdocument.html">QVersitDocument</a>, <a href="qversitproperty.html">QVersitProperty</a>, <a href="qversitcontactexporterdetailhandler.html">QVersitContactExporterDetailHandler</a>, and <a href="qversitresourcehandler.html">QVersitResourceHandler</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QVersitContactExporter/QVersitContactExporter"></a>
@@ -101,11 +99,13 @@
 <p>See also <a href="qversitcontactexporter.html#setResourceHandler">setResourceHandler</a>().</p>
 <a name="//apple_ref/cpp/instm/QVersitContactExporter/setDetailHandler"></a>
 <h3 class="fn"><a name="setDetailHandler"></a>void QVersitContactExporter::setDetailHandler ( <a href="qversitcontactexporterdetailhandler.html">QVersitContactExporterDetailHandler</a> * <i>handler</i> )</h3>
-<p>Sets <i>handler</i> to be the handler for processing QContactDetails.</p>
+<p>Sets <i>handler</i> to be the handler for processing QContactDetails, or 0 to have no handler.</p>
+<p>Does not take ownership of the handler. The client should ensure the handler remains valid for the lifetime of the exporter.</p>
 <p>See also <a href="qversitcontactexporter.html#detailHandler">detailHandler</a>().</p>
 <a name="//apple_ref/cpp/instm/QVersitContactExporter/setResourceHandler"></a>
 <h3 class="fn"><a name="setResourceHandler"></a>void QVersitContactExporter::setResourceHandler ( <a href="qversitresourcehandler.html">QVersitResourceHandler</a> * <i>handler</i> )</h3>
-<p>Sets <i>handler</i> to be the handler to load files with.</p>
+<p>Sets <i>handler</i> to be the handler to load files with, or 0 to have no handler.</p>
+<p>Does not take ownership of the handler. The client should ensure the handler remains valid for the lifetime of the exporter.</p>
 <p>See also <a href="qversitcontactexporter.html#resourceHandler">resourceHandler</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

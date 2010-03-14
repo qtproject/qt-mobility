@@ -45,58 +45,131 @@
 
 QTM_USE_NAMESPACE
 
-#define MAX_CHARS_FOR_LINE 76
+#define MAX_LINE_LENGTH 76
 
 /*!
- * \class QVersitDocumentWriter
- *
- * \brief The QVersitDocumentWriter class provides an interface for writing a
- * single versit document into a vCard text string.
+  \class QVersitDocumentWriter
+  \internal
+  \brief The QVersitDocumentWriter class provides an interface for writing a
+  single versit document into a vCard text string.
  */
 
-/*! Constructs a writer. */
+/*! Constructs a writer.
+ * \a documentType is the type of Versit document, as printed on the BEGIN line of output
+ * eg. "VCARD"
+ * \a version is the version of the Versit format, as printed on the VERSION line of output.
+ * eg. "2.1"
+ */
 QVersitDocumentWriter::QVersitDocumentWriter(
     const QByteArray& documentType,
     const QByteArray& version)
     : mDocumentType(documentType),
-    mVersion(version)
+    mVersion(version),
+    mCodec(0),
+    mEncoder(0),
+    mUtf8Encoder(QTextCodec::codecForName("UTF-8")->makeEncoder()),
+    mSuccessful(true),
+    mCurrentLineLength(0)
 {
+    // Hack so the encoder doesn't output a byte order mark for UTF-8.
+    mUtf8Encoder->fromUnicode(QString());
 }
 
+QVersitDocumentWriter::~QVersitDocumentWriter()
+{
+    if (mEncoder)
+        delete mEncoder;
+    delete mUtf8Encoder;
+}
 
 /*!
-* Encodes the \a document to text.
+  Sets the codec to write with.
+  */
+void QVersitDocumentWriter::setCodec(QTextCodec *codec)
+{
+    if (mEncoder)
+        delete mEncoder;
+    mCodec = codec;
+    mEncoder = codec->makeEncoder();
+
+    // Hack so the encoder doesn't output a byte order mark for UTF-8.
+    if (mCodec->name() == "UTF-8")
+        mEncoder->fromUnicode(QString());
+}
+
+/*!
+  Sets the device to write to.
+  */
+void QVersitDocumentWriter::setDevice(QIODevice *device)
+{
+    mDevice = device;
+}
+
+/*!
+* Encodes the \a document and writes it to the device
 */
-QByteArray QVersitDocumentWriter::encodeVersitDocument(const QVersitDocument& document,
-                                                       QTextCodec* codec)
+void QVersitDocumentWriter::encodeVersitDocument(const QVersitDocument& document)
 {
+    mSuccessful = true;
     QList<QVersitProperty> properties = document.properties();
-    QByteArray encodedDocument;
 
-    encodedDocument += codec->fromUnicode(QLatin1String("BEGIN:" + mDocumentType + "\r\n"));
-    encodedDocument += codec->fromUnicode(QLatin1String("VERSION:" + mVersion + "\r\n"));
-    foreach (QVersitProperty property, properties) {
-        encodedDocument.append(encodeVersitProperty(property, codec));
+    writeString(QLatin1String("BEGIN:" + mDocumentType));
+    writeCrlf();
+    writeString(QLatin1String("VERSION:" + mVersion));
+    writeCrlf();
+    foreach (const QVersitProperty& property, properties) {
+        encodeVersitProperty(property);
     }
-    encodedDocument += codec->fromUnicode(QLatin1String("END:" + mDocumentType + "\r\n"));
-
-    VersitUtils::fold(encodedDocument, MAX_CHARS_FOR_LINE);
-    return encodedDocument;
+    writeString(QLatin1String("END:" + mDocumentType));
+    writeCrlf();
 }
 
 /*!
- * Encodes the groups and name in the \a property to text.
+ * Encodes the groups and name in the \a property and writes it to the device
  */
-QByteArray QVersitDocumentWriter::encodeGroupsAndName(const QVersitProperty& property,
-                                                      QTextCodec* codec) const
+void QVersitDocumentWriter::encodeGroupsAndName(const QVersitProperty& property)
 {
-    QByteArray encodedGroupAndName;
     QStringList groups = property.groups();
     if (!groups.isEmpty()) {
-        QString groupAsString = groups.join(QLatin1String("."));
-        encodedGroupAndName.append(codec->fromUnicode(groupAsString));
-        encodedGroupAndName.append(codec->fromUnicode(QLatin1String(".")));
+        writeString(groups.join(QLatin1String(".")));
+        writeString(QLatin1String("."));
     }
-    encodedGroupAndName.append(codec->fromUnicode(property.name()));
-    return encodedGroupAndName;
+    writeString(property.name());
+}
+
+/*!
+  Writes \a string to the device.
+  If \a useUtf8 is true, uses the UTF-8 codec instead of the one set in setCodec().
+
+  This function tracks how many characters have been written to the line and folds (wraps) the line
+  according to RFC2425.
+  */
+void QVersitDocumentWriter::writeString(const QString &string, bool useUtf8)
+{
+    QString value(string); // nonconst copy
+    QTextEncoder* encoder = useUtf8 ? mUtf8Encoder : mEncoder;
+    int spaceRemaining = MAX_LINE_LENGTH - mCurrentLineLength;
+    while (spaceRemaining < value.length()) {
+        // Write the first "spaceRemaining" characters
+        QString line(value.left(spaceRemaining));
+        value.remove(0, spaceRemaining);
+        if (mDevice->write(encoder->fromUnicode(line + QLatin1String("\r\n "))) < 0)
+            mSuccessful = false;
+        spaceRemaining = MAX_LINE_LENGTH - 1; // minus 1 for the space at the front.
+        mCurrentLineLength = 1;
+    }
+
+    if (mDevice->write(encoder->fromUnicode(value)) < 0)
+        mSuccessful = false;
+    mCurrentLineLength += value.length();
+}
+
+/*!
+  Writes a CRLF to the device.  By using this function, rather than writeString("\\r\\n"), you will
+  allow the writer to know where a line starts, for folding purposes.
+  */
+void QVersitDocumentWriter::writeCrlf()
+{
+    writeString(QLatin1String("\r\n"));
+    mCurrentLineLength = 0;
 }

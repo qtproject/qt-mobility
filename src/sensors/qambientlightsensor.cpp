@@ -48,12 +48,13 @@ IMPLEMENT_READING(QAmbientLightReading)
 
 /*!
     \class QAmbientLightReading
-    \ingroup sensors
+    \ingroup sensors_reading
 
     \preliminary
     \brief The QAmbientLightReading class represents one reading from the
            ambient light sensor.
 
+    \section2 QAmbientLightReading Units
     The ambient light sensor returns the intensity of the ambient light
     using the pre-defined values found in the QAmbientLightReading::LightLevel
     enum.
@@ -75,11 +76,11 @@ IMPLEMENT_READING(QAmbientLightReading)
 /*!
     \property QAmbientLightReading::lightLevel
     \brief the ambient light level.
+
+    The value represents the ambient light and comes from QAmbientLightReading::LightLevel.
+    \sa {QAmbientLightReading Units}
 */
 
-/*!
-    Returns the ambient light level.
-*/
 QAmbientLightReading::LightLevel QAmbientLightReading::lightLevel() const
 {
     return static_cast<LightLevel>(d->lightLevel);
@@ -95,11 +96,9 @@ void QAmbientLightReading::setLightLevel(QAmbientLightReading::LightLevel lightL
 
 // =====================================================================
 
-// begin generated code
-
 /*!
     \class QAmbientLightFilter
-    \ingroup sensors_helpers
+    \ingroup sensors_filter
 
     \preliminary
     \brief The QAmbientLightFilter class is a convenience wrapper around QSensorFilter.
@@ -120,7 +119,7 @@ const char *QAmbientLightSensor::type("QAmbientLightSensor");
 
 /*!
     \class QAmbientLightSensor
-    \ingroup sensors_helpers
+    \ingroup sensors_type
 
     \preliminary
     \brief The QAmbientLightSensor class is a convenience wrapper around QSensor.
@@ -153,7 +152,6 @@ const char *QAmbientLightSensor::type("QAmbientLightSensor");
 
     \sa QSensor::reading()
 */
-// end generated code
 
 #include "moc_qambientlightsensor.cpp"
 QTM_END_NAMESPACE

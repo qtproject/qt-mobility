@@ -65,4 +65,19 @@ plugin_commonU.def
 
 #QtCreator project files
 *.pro.user
+=======
+*.pro.user*
+*.o
+moc_*.cpp
+
+/build-stamp
+/configure-stamp
+/debian/files
+/debian/libqtcontacts-tracker.substvars
+/debian/libqtcontacts-tracker/
+/tests/ut_qtcontacts_add_async/ut_qtcontacts_add_async
+/tests/ut_qtcontacts_fetch/ut_qtcontacts_fetch
+/tests/ut_qtcontacts_sparql/ut_qtcontacts_sparql
+
+*~
 

@@ -25,6 +25,7 @@
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qimagecapturecontrol.html#dtor.QImageCaptureControl">~QImageCaptureControl</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qimagecapturecontrol.html#cancelCapture">cancelCapture</a></b> () = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qimagecapturecontrol.html#capture">capture</a></b> ( const QString &amp; <i>fileName</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qimagecapturecontrol.html#isReadyForCapture">isReadyForCapture</a></b> () const = 0</td></tr>
 </table>
@@ -71,7 +72,7 @@
 <h2>Detailed Description</h2>
 <p>The QImageCaptureControl class provides a control interface for image capture services.</p>
 <p>The interface name of QImageCaptureControl is <tt>com.nokia.Qt.QImageCaptureControl/1.0</tt> as defined in <a href="qimagecapturecontrol.html#QImageCaptureControl_iid">QImageCaptureControl_iid</a>.</p>
-<p>The Camera API of Qt Mobility is still in <b>ALPHA</b>. It has not undergone the same level of review and testing as the rest of the APIs.</p>
+<p>The Camera API of Qt Mobility is still in <b>Technology</b> Preview. It has not undergone the same level of review and testing as the rest of the APIs.</p>
 <p>The API exposed by the classes in this component are not stable, and will undergo modification or removal prior to the final release of Qt Mobility.</p>
 <p>See also <a href="qmediaservice.html#control">QMediaService::control</a>().</p>
 <hr />
@@ -82,9 +83,13 @@
 <a name="//apple_ref/cpp/instm/QImageCaptureControl/~QImageCaptureControl"></a>
 <h3 class="fn"><a name="dtor.QImageCaptureControl"></a>QImageCaptureControl::~QImageCaptureControl ()</h3>
 <p>Destroys an image capture control.</p>
+<a name="//apple_ref/cpp/instm/QImageCaptureControl/cancelCapture"></a>
+<h3 class="fn"><a name="cancelCapture"></a>void QImageCaptureControl::cancelCapture ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Cancel pending capture requests.</p>
 <a name="//apple_ref/cpp/instm/QImageCaptureControl/capture"></a>
 <h3 class="fn"><a name="capture"></a>void QImageCaptureControl::capture ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>fileName</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Initiates the capture of an image to <i>fileName</i>.</p>
+<p>Initiates the capture of an image to <i>fileName</i>. The <i>fileName</i> can be relative or empty, in this case the service should use the system specific place and file naming scheme.</p>
+<p>The sequental <a href="qimagecapturecontrol.html#imageSaved">imageSaved</a>() signal should use the absolute file name.</p>
 <a name="//apple_ref/cpp/instm/QImageCaptureControl/error"></a>
 <h3 class="fn"><a name="error"></a>void QImageCaptureControl::error ( int <i>error</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>errorString</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <a name="//apple_ref/cpp/instm/QImageCaptureControl/imageCaptured"></a>

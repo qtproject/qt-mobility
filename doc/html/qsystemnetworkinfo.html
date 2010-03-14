@@ -35,6 +35,7 @@
 <li><div class="fn"><b><a href="qsystemnetworkinfo.html#cellId-prop">cellId</a></b> : const int</div></li>
 <li><div class="fn"><b><a href="qsystemnetworkinfo.html#currentMobileCountryCode-prop">currentMobileCountryCode</a></b> : const QString</div></li>
 <li><div class="fn"><b><a href="qsystemnetworkinfo.html#currentMobileNetworkCode-prop">currentMobileNetworkCode</a></b> : const QString</div></li>
+<li><div class="fn"><b><a href="qsystemnetworkinfo.html#currentMode-prop">currentMode</a></b> : const QSystemNetworkInfo::NetworkMode</div></li>
 </ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="qsystemnetworkinfo.html#homeMobileCountryCode-prop">homeMobileCountryCode</a></b> : const QString</div></li>
 <li><div class="fn"><b><a href="qsystemnetworkinfo.html#homeMobileNetworkCode-prop">homeMobileNetworkCode</a></b> : const QString</div></li>
@@ -51,7 +52,14 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#QSystemNetworkInfo">QSystemNetworkInfo</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#dtor.QSystemNetworkInfo">~QSystemNetworkInfo</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#cellId-prop">cellId</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#currentMobileCountryCode-prop">currentMobileCountryCode</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#currentMobileNetworkCode-prop">currentMobileNetworkCode</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QSystemNetworkInfo::NetworkMode </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#currentMode-prop">currentMode</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#homeMobileCountryCode-prop">homeMobileCountryCode</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#homeMobileNetworkCode-prop">homeMobileNetworkCode</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QNetworkInterface </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#interfaceForMode">interfaceForMode</a></b> ( QSystemNetworkInfo::NetworkMode <i>mode</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#locationAreaCode-prop">locationAreaCode</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#macAddress">macAddress</a></b> ( QSystemNetworkInfo::NetworkMode <i>mode</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QSystemNetworkInfo::NetworkStatus </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#networkStatus">networkStatus</a></b> ( QSystemNetworkInfo::NetworkMode <i>mode</i> )</td></tr>
 </table>
@@ -76,12 +84,6 @@
 <a name="static-public-members"></a>
 <h2>Static Public Members</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#cellId-prop">cellId</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#currentMobileCountryCode-prop">currentMobileCountryCode</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#currentMobileNetworkCode-prop">currentMobileNetworkCode</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#homeMobileCountryCode-prop">homeMobileCountryCode</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#homeMobileNetworkCode-prop">homeMobileNetworkCode</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#locationAreaCode-prop">locationAreaCode</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#networkName">networkName</a></b> ( QSystemNetworkInfo::NetworkMode <i>mode</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#networkSignalStrength">networkSignalStrength</a></b> ( QSystemNetworkInfo::NetworkMode <i>mode</i> )</td></tr>
 </table>
@@ -151,14 +153,15 @@
 </table></p>
 <hr />
 <h2>Property Documentation</h2>
-<a name="//apple_ref/cpp/clm/QSystemNetworkInfo/cellId"></a>
+<a name="//apple_ref/cpp/instm/QSystemNetworkInfo/cellId"></a>
 <h3 class="fn"><a name="cellId-prop"></a>cellId : const int</h3>
 <p>This property holds the devices Cell ID Returns the Cell ID of the connected tower or based station.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>cellId</b> ()</td></tr>
 </table>
-<a name="//apple_ref/cpp/clm/QSystemNetworkInfo/currentMobileCountryCode"></a>
+<a name="//apple_ref/cpp/instm/QSystemNetworkInfo/currentMobileCountryCode"></a>
+<a name="//apple_ref/cpp/instm/QSystemNetworkInfo/currentMobileCountryCodeChanged"></a>
 <h3 class="fn"><a name="currentMobileCountryCode-prop"></a>currentMobileCountryCode : const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a></h3>
 <p>This property holds the current MCC.</p>
 <p>Returns the current Mobile Country Code. In the case of none such as a Desktop, an empty string. /</p>
@@ -166,7 +169,12 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>currentMobileCountryCode</b> ()</td></tr>
 </table>
-<a name="//apple_ref/cpp/clm/QSystemNetworkInfo/currentMobileNetworkCode"></a>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#currentMobileCountryCodeChanged">currentMobileCountryCodeChanged</a></b> ( const QString &amp; <i>mcc</i> )</td></tr>
+</table>
+<a name="//apple_ref/cpp/instm/QSystemNetworkInfo/currentMobileNetworkCode"></a>
+<a name="//apple_ref/cpp/instm/QSystemNetworkInfo/currentMobileNetworkCodeChanged"></a>
 <h3 class="fn"><a name="currentMobileNetworkCode-prop"></a>currentMobileNetworkCode : const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a></h3>
 <p>This property holds the current MNC.</p>
 <p>Returns the current Mobile Network Code. In the case of none such as a Desktop, an empty string.</p>
@@ -174,7 +182,17 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>currentMobileNetworkCode</b> ()</td></tr>
 </table>
-<a name="//apple_ref/cpp/clm/QSystemNetworkInfo/homeMobileCountryCode"></a>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsystemnetworkinfo.html#currentMobileNetworkCodeChanged">currentMobileNetworkCodeChanged</a></b> ( const QString &amp; <i>mnc</i> )</td></tr>
+</table>
+<a name="//apple_ref/cpp/instm/QSystemNetworkInfo/currentMode"></a>
+<h3 class="fn"><a name="currentMode-prop"></a>currentMode : const <a href="qsystemnetworkinfo.html#NetworkMode-enum">QSystemNetworkInfo::NetworkMode</a></h3>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QSystemNetworkInfo::NetworkMode </td><td class="memItemRight" valign="bottom"><b>currentMode</b> ()</td></tr>
+</table>
+<a name="//apple_ref/cpp/instm/QSystemNetworkInfo/homeMobileCountryCode"></a>
 <h3 class="fn"><a name="homeMobileCountryCode-prop"></a>homeMobileCountryCode : const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a></h3>
 <p>This property holds the home MNC.</p>
 <p>Returns the home Mobile Network Code. In the case of none such as a Desktop, an empty string.</p>
@@ -182,7 +200,7 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>homeMobileCountryCode</b> ()</td></tr>
 </table>
-<a name="//apple_ref/cpp/clm/QSystemNetworkInfo/homeMobileNetworkCode"></a>
+<a name="//apple_ref/cpp/instm/QSystemNetworkInfo/homeMobileNetworkCode"></a>
 <h3 class="fn"><a name="homeMobileNetworkCode-prop"></a>homeMobileNetworkCode : const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a></h3>
 <p>This property holds the home MCC.</p>
 <p>Returns the home Mobile Country Code. In the case of none such as a Desktop, an empty string.</p>
@@ -190,7 +208,7 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>homeMobileNetworkCode</b> ()</td></tr>
 </table>
-<a name="//apple_ref/cpp/clm/QSystemNetworkInfo/locationAreaCode"></a>
+<a name="//apple_ref/cpp/instm/QSystemNetworkInfo/locationAreaCode"></a>
 <h3 class="fn"><a name="locationAreaCode-prop"></a>locationAreaCode : const int</h3>
 <p>This property holds the LAC.</p>
 <p>Returns the Location Area Code. In the case of none such as a Desktop, an empty string.</p>

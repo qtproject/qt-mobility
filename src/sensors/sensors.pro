@@ -6,19 +6,17 @@ include(../../common.pri)
 DEFINES += QT_BUILD_SENSORS_LIB QT_MAKEDLL
 symbian {
     TARGET.EPOCALLOWDLLDATA = 1
+    TARGET.CAPABILITY = ALL -TCB
     TARGET.UID3 = 0x2002BFC0
+
+    ### Sensors
+    # Main library
+    SENSORS_DEPLOYMENT.sources = QtSensors.dll
+    SENSORS_DEPLOYMENT.path = \sys\bin
+    DEPLOYMENT += CONTACTS_DEPLOYMENT
 }
 
-STRICT=$$(STRICT)
-equals(STRICT,1) {
-    win32 {
-        QMAKE_CXXFLAGS+=-WX
-    } else {
-        QMAKE_CXXFLAGS+=-Werror
-        QMAKE_LFLAGS+=-Wl,-no-undefined
-    }
-    DEFINES += QT_NO_CAST_FROM_ASCII
-}
+CONFIG+=strict_flags
 
 INCLUDEPATH += .
 DEPENDPATH += .
@@ -45,7 +43,7 @@ SENSORS=\
     qmagnetometer\
     qorientationsensor\
     qproximitysensor\
-    qrotationsensor\
+    qattitudesensor\
     qtapsensor\
 
 for(s,SENSORS) {

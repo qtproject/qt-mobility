@@ -88,7 +88,7 @@ QStringList CntRelationship::supportedRelationshipTypes(const QString &contactTy
     
     QStringList supportedTypes;
 
-    foreach(QString type, m_relationshipMap.keys()) {
+    foreach(const QString& type, m_relationshipMap.keys()) {
         supportedTypes.append(type);
     }
     return supportedTypes;
@@ -110,7 +110,7 @@ QList<QContactRelationship> CntRelationship::relationships(const QString& relati
     // if relationshipType is empty, relationships of any type are returned.
     if (relationshipType.isEmpty())
     {
-        foreach (QString type, m_relationshipMap.keys())
+        foreach (const QString& type, m_relationshipMap.keys())
         {
             // get the relationship
             CntAbstractRelationship *abstractRelationship = m_relationshipMap.value(type);
@@ -124,9 +124,14 @@ QList<QContactRelationship> CntRelationship::relationships(const QString& relati
             }
             
             // return empty list if there was an error
-            if (error != QContactManager::NoError) {
+            if (error != QContactManager::NoError && error != QContactManager::DoesNotExistError) {
                 return QList<QContactRelationship>();
             }
+        }
+        // if relationships found, update error
+        if (!returnValue.isEmpty() && error == QContactManager::DoesNotExistError) {
+            // this can be the case if nothing is found for last relationship type
+            error = QContactManager::NoError;
         }
     }
     //check if we support the relationship

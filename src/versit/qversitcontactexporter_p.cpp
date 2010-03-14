@@ -85,35 +85,25 @@ QVersitContactExporterPrivate::QVersitContactExporterPrivate() :
     int versitPropertyCount =
         sizeof(versitContactDetailMappings)/sizeof(VersitContactDetailMapping);
     for (int i=0; i < versitPropertyCount; i++) {
-        QString contactDetailName =
-            QString::fromAscii(versitContactDetailMappings[i].contactDetailDefinitionName);
-        QString versitPropertyName =
-            QString::fromAscii(versitContactDetailMappings[i].versitPropertyName);
-        mPropertyMappings.insert(contactDetailName,versitPropertyName);
+        mPropertyMappings.insert(
+                QLatin1String(versitContactDetailMappings[i].contactDetailDefinitionName),
+                QLatin1String(versitContactDetailMappings[i].versitPropertyName));
     }
 
     // Contexts mappings
     int contextCount = sizeof(versitContextMappings)/sizeof(VersitMapping);
     for (int i=0; i < contextCount; i++) {
         mParameterMappings.insert(
-            QString::fromAscii(versitContextMappings[i].contactString),
-            QString::fromAscii(versitContextMappings[i].versitString));
+                QLatin1String(versitContextMappings[i].contactString),
+                QLatin1String(versitContextMappings[i].versitString));
     }
 
     // Subtypes mappings
     int subTypeCount = sizeof(versitSubTypeMappings)/sizeof(VersitMapping);
     for (int i=0; i < subTypeCount; i++) {
         mParameterMappings.insert(
-            QString::fromAscii(versitSubTypeMappings[i].contactString),
-            QString::fromAscii(versitSubTypeMappings[i].versitString));
-    }
-
-    // File extension mappings
-    int fileExtensionCount = sizeof(versitFileExtensionMappings)/sizeof(VersitMapping);
-    for (int i=0; i < fileExtensionCount; i++) {
-        mParameterMappings.insert(
-            QString::fromAscii(versitFileExtensionMappings[i].contactString),
-            QString::fromAscii(versitFileExtensionMappings[i].versitString));
+                QLatin1String(versitSubTypeMappings[i].contactString),
+                QLatin1String(versitSubTypeMappings[i].versitString));
     }
 }
 
@@ -164,7 +154,7 @@ void QVersitContactExporterPrivate::exportContact(
             addProperty = encodeRev(property, detail);
         } else if (detail.definitionName() == QContactBirthday::DefinitionName) {
             encodeBirthDay(property, detail);
-        } else if (detail.definitionName() == QContactGeolocation::DefinitionName) {
+        } else if (detail.definitionName() == QContactGeoLocation::DefinitionName) {
             encodeGeoLocation(property, detail);
         } else if (detail.definitionName() == QContactNote::DefinitionName) {
             encodeNote(property, detail);
@@ -206,20 +196,19 @@ void QVersitContactExporterPrivate::exportContact(
 }
 
 /*!
- * Encode Contact Name Field Information into the Versit Document 
+ * Encode Contact Name Field Information into the Versit Document
  */
 void QVersitContactExporterPrivate::encodeName(
-    QVersitProperty& property, 
+    QVersitProperty& property,
     const QContactDetail& detail)
-{   
+{
     QContactName contactName = static_cast<QContactName>(detail);
-    QString value =
-        escape(contactName.lastName()) + QChar::fromAscii(';') +
-        escape(contactName.firstName()) + QChar::fromAscii(';') +
-        escape(contactName.middleName()) + QChar::fromAscii(';') +
-        escape(contactName.prefix()) + QChar::fromAscii(';') +
-        escape(contactName.suffix());
-    property.setValue(value);
+    property.setValue(QString::fromAscii("%1;%2;%3;%4;%5").arg(
+            escape(contactName.lastName()),
+            escape(contactName.firstName()),
+            escape(contactName.middleName()),
+            escape(contactName.prefix()),
+            escape(contactName.suffix())));
 }
 
 /*!
@@ -235,7 +224,7 @@ void QVersitContactExporterPrivate::encodePhoneNumber(
 }
 
 /*!
- * Encode Email Field Information into the Versit Document 
+ * Encode Email Field Information into the Versit Document
  */
 void QVersitContactExporterPrivate::encodeEmail(
     QVersitProperty& property,
@@ -247,7 +236,7 @@ void QVersitContactExporterPrivate::encodeEmail(
 }
 
 /*!
- * Encode Address Field Information into the Versit Document 
+ * Encode Address Field Information into the Versit Document
  */
 void QVersitContactExporterPrivate::encodeAddress(
     QVersitProperty& property,
@@ -255,15 +244,14 @@ void QVersitContactExporterPrivate::encodeAddress(
 {
     QContactAddress address = static_cast<QContactAddress>(detail);
     encodeParameters(property, address.contexts(), address.subTypes());
-    QString value =
-        escape(address.postOfficeBox()) + QChar::fromAscii(';') +
-        QChar::fromAscii(';') + // Extended address
-        escape(address.street()) + QChar::fromAscii(';') +
-        escape(address.locality()) + QChar::fromAscii(';') +
-        escape(address.region()) + QChar::fromAscii(';') +
-        escape(address.postcode()) + QChar::fromAscii(';') +
-        escape(address.country());
-    property.setValue(value);
+    // Leave out the extended address field:
+    property.setValue(QString::fromAscii("%1;;%2;%3;%4;%5;%6").arg(
+            escape(address.postOfficeBox()),
+            escape(address.street()),
+            escape(address.locality()),
+            escape(address.region()),
+            escape(address.postcode()),
+            escape(address.country())));
 }
 
 /*!
@@ -305,7 +293,7 @@ bool QVersitContactExporterPrivate::encodeRev(
     if ( rev.lastModified().toString(Qt::ISODate).size() ) {
         encoded = true;
         if ( rev.lastModified().timeSpec() == Qt::UTC ) {
-            value = rev.lastModified().toString(Qt::ISODate) + QString::fromAscii("Z");
+            value = rev.lastModified().toString(Qt::ISODate) + QLatin1Char('Z');
         }
         else {
             value = rev.lastModified().toString(Qt::ISODate);
@@ -315,7 +303,7 @@ bool QVersitContactExporterPrivate::encodeRev(
     else if ( rev.created().toString(Qt::ISODate).size()) {
         encoded = true;
         if ( rev.created().timeSpec() == Qt::UTC ) {
-            value = rev.created().toString(Qt::ISODate) + QString::fromAscii("Z");
+            value = rev.created().toString(Qt::ISODate) + QLatin1Char('Z');
         }
         else {
             value = rev.created().toString(Qt::ISODate);
@@ -358,7 +346,7 @@ void QVersitContactExporterPrivate::encodeGeoLocation(
 {
     QContactGeoLocation geoLocation = static_cast<QContactGeoLocation>(detail);
     QString value =
-        QString::number(geoLocation.longitude()) + QChar::fromAscii(',') +
+        QString::number(geoLocation.longitude()) + QLatin1Char(',') +
         QString::number(geoLocation.latitude());
     property.setValue(value);
 }
@@ -373,19 +361,19 @@ void QVersitContactExporterPrivate::encodeOrganization(
     QContactOrganization organization = static_cast<QContactOrganization>(detail);
     if (organization.title().length() > 0) {
         QVersitProperty property;
-        property.setName(QString::fromAscii("TITLE"));
+        property.setName(QLatin1String("TITLE"));
         setEscapedValue(property,organization.title());
         document.addProperty(property);
     }
     if (organization.name().length() > 0 || organization.department().size() > 0) {
         QVersitProperty property;
-        property.setName(QString::fromAscii("ORG"));
+        property.setName(QLatin1String("ORG"));
         QString value = escape(organization.name());
         QStringList departments(organization.department());
         if (departments.count() == 0)
-            value += QString::fromAscii(";");
-        foreach (QString department, departments) {
-            value += QString::fromAscii(";");
+            value += QLatin1Char(';');
+        foreach (const QString& department, departments) {
+            value += QLatin1Char(';');
             value += escape(department);
         }
         property.setValue(value);
@@ -394,20 +382,20 @@ void QVersitContactExporterPrivate::encodeOrganization(
     if (organization.logo().length() > 0) {
         QVersitProperty property;
         if (encodeContentFromFile(organization.logo(), property)) {
-            property.setName(QString::fromAscii("LOGO"));
+            property.setName(QLatin1String("LOGO"));
             document.addProperty(property);
         }
     }
     if (organization.assistantName().length() > 0) {
         QVersitProperty property;
-        property.setName(QString::fromAscii("X-ASSISTANT"));
+        property.setName(QLatin1String("X-ASSISTANT"));
         setEscapedValue(property,organization.assistantName());
         document.addProperty(property);
     }
 
     if (organization.role().length() > 0) {
         QVersitProperty property;
-        property.setName(QString::fromAscii("ROLE"));
+        property.setName(QLatin1String("ROLE"));
         setEscapedValue(property,organization.role());
         document.addProperty(property);
     }
@@ -424,9 +412,9 @@ bool QVersitContactExporterPrivate::encodeAvatar(
     bool encoded = false;
     QString propertyName;
     if (contactAvatar.subType() == QContactAvatar::SubTypeImage) {
-        propertyName = QString::fromAscii("PHOTO");
+        propertyName = QLatin1String("PHOTO");
     } else if (contactAvatar.subType() == QContactAvatar::SubTypeAudioRingtone) {
-        propertyName = QString::fromAscii("SOUND");
+        propertyName = QLatin1String("SOUND");
     } else {
         // NOP
     }
@@ -460,23 +448,23 @@ void QVersitContactExporterPrivate::encodeNickname(
 {
     QContactNickname nicknameDetail = static_cast<QContactNickname>(detail);
     QVersitProperty property;
-    property.setName(QString::fromAscii("X-NICKNAME"));
+    property.setName(QLatin1String("X-NICKNAME"));
     bool found = false;
-    for (int i=0; i < document.properties().count() && !found; i++) {
-        QVersitProperty currentProperty = document.properties()[i];
-        if (currentProperty.name() == QString::fromAscii("X-NICKNAME")) {
+    foreach (const QVersitProperty& currentProperty, document.properties()) {
+        if (currentProperty.name() == QLatin1String("X-NICKNAME")) {
             property = currentProperty;
             found = true;
+            break;
         }
     }
     QString value(property.value());
     if (found)
-        value += QChar::fromAscii(',');
+        value += QLatin1Char(',');
     QString nickname = escape(nicknameDetail.nickname());
     value.append(nickname);
     property.setValue(value);
     // Replace the current property
-    document.removeProperties(QString::fromAscii("X-NICKNAME"));
+    document.removeProperties(QLatin1String("X-NICKNAME"));
     document.addProperty(property);
 }
 
@@ -508,9 +496,9 @@ bool QVersitContactExporterPrivate::encodeOnlineAccount(
         subTypes.contains(QContactOnlineAccount::SubTypeImpp)) {
         encoded = true;
         encodeParameters(property, onlineAccount.contexts(), subTypes);
-        QString name(QString::fromAscii("X-SIP"));
+        QString name(QLatin1String("X-SIP"));
         if (subTypes.contains(QContactOnlineAccount::SubTypeImpp))
-            name = QString::fromAscii("X-IMPP");
+            name = QLatin1String("X-IMPP");
         property.setName(name);
         setEscapedValue(property,onlineAccount.accountUri());
     }
@@ -528,15 +516,15 @@ bool QVersitContactExporterPrivate::encodeFamily(
 
     if (family.spouse().size()) {
         QVersitProperty property;
-        property.setName(QString::fromAscii("X-SPOUSE"));
+        property.setName(QLatin1String("X-SPOUSE"));
         setEscapedValue(property,family.spouse());
         document.addProperty(property);
     }
 
     if (family.children().size()) {
         QVersitProperty property;
-        property.setName(QString::fromAscii("X-CHILDREN"));
-        QString children = family.children().join(QString::fromAscii(","));
+        property.setName(QLatin1String("X-CHILDREN"));
+        QString children = family.children().join(QLatin1String(","));
         setEscapedValue(property,children);
         document.addProperty(property);
     }
@@ -569,7 +557,7 @@ bool QVersitContactExporterPrivate::encodeDisplayLabel(
         if (name.customLabel().length()) {
             value = name.customLabel();
         } else {
-            value = name.firstName() + QChar::fromAscii(' ') + name.lastName();
+            value = name.firstName() + QLatin1Char(' ') + name.lastName();
         }
         if (name.customLabel().length() ||
             name.firstName().length() ||
@@ -590,7 +578,7 @@ bool QVersitContactExporterPrivate::isValidRemoteUrl(
     QUrl remoteResource(resourceIdentifier);
     if ((!remoteResource.scheme().isEmpty() &&
          !remoteResource.host().isEmpty()) ||
-        resourceIdentifier.contains(QString::fromAscii("www."), Qt::CaseInsensitive))
+        resourceIdentifier.contains(QLatin1String("www."), Qt::CaseInsensitive))
         return true;
     return false;
 }
@@ -611,7 +599,7 @@ void QVersitContactExporterPrivate::encodeParameters(
         if (mappedValue.length() > 0) {
             // QVersitProperty::addParameter inserts into beginning.
             // This is why the last value is taken from the list
-            property.insertParameter(QString::fromAscii("TYPE"),mappedValue);
+            property.insertParameter(QLatin1String("TYPE"),mappedValue);
         }
     }
 }

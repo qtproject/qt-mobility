@@ -59,10 +59,16 @@
 #include <QtTracker/QLive>
 
 #include <qmobilityglobal.h>
-#include "qtcontacts.h"
+#include <qcontactmanagerengine.h>
+#include <qcontactmanagerenginefactory.h>
 
 using namespace SopranoLive;
 #include "qtrackercontactasyncrequest.h"
+
+QTM_BEGIN_NAMESPACE
+class QContactAbstractRequest;
+class QContactChangeSet;
+QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
@@ -110,19 +116,19 @@ public:
     QContactManagerEngine* clone();
     void deref();
 
-    /* Filtering */
-    QList<QContactLocalId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-
-    /* Contacts - Accessors and Mutators */
-    QList<QContactLocalId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    // sync methods, wrapping async methods & waitForFinished
+    QList<QContactLocalId> contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    QList<QContact> contacts(const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
+    QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
     QContact contact(const QContactLocalId& contactId, QContactManager::Error& error) const;
 
-    bool saveContact(QContact* contact, QContactManager::Error& error);
-
-    QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QContactManager::Error& error);
+    /* Save contacts - single and in batch */
+    bool saveContact( QContact* contact, QContactManager::Error& error);
+    bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error);
 
     bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
-    QList<QContactManager::Error> removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error);
+    bool removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error) ;
 
     /* Definitions - Accessors and Mutators */
     QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error& error) const;
@@ -142,7 +148,7 @@ public:
     int implementationVersion() const;
 
     /* Synthesise the display label of a contact */
-    QString synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
+    QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
 
 
 private:
@@ -157,7 +163,7 @@ private:
     friend class ut_qtcontacts_trackerplugin;
 };
 
-class Q_DECL_EXPORT ContactTrackerFactory : public QObject, public QContactManagerEngineFactory
+class Q_DECL_EXPORT ContactTrackerFactory : public QObject, public QtMobility::QContactManagerEngineFactory
 {
     Q_OBJECT
     Q_INTERFACES(QtMobility::QContactManagerEngineFactory)

@@ -39,13 +39,54 @@
 **
 ****************************************************************************/
 #include "qmessageservice.h"
-
+#include "modestengine_maemo_p.h"
+#include "telepathyengine_maemo_p.h"
+#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
-QMessageService::QMessageService(QObject *parent)
-    : QObject(parent)
+class QMessageServicePrivate : public QObject
 {
+public:
+    QMessageServicePrivate(QMessageService* parent);
+    ~QMessageServicePrivate();
+
+    void setFinished(bool successful);
+
+public:
+    QMessageService* q_ptr;
+    QMessageService::State _state;
+    bool _active;
+    QMessageManager::Error _error;
+};
+
+QMessageServicePrivate::QMessageServicePrivate(QMessageService* parent)
+ : q_ptr(parent),
+   _state(QMessageService::InactiveState),
+   _active(false)
+{
+}
+
+QMessageServicePrivate::~QMessageServicePrivate()
+{
+}
+
+QMessageService::QMessageService(QObject *parent)
+ : QObject(parent),
+   d_ptr(new QMessageServicePrivate(this))
+{
+}
+
+void QMessageServicePrivate::setFinished(bool successful)
+{
+    if (!successful && (_error == QMessageManager::NoError)) {
+        // We must report an error of some sort
+        _error = QMessageManager::RequestIncomplete;
+    }
+
+    _state = QMessageService::FinishedState;
+    emit q_ptr->stateChanged(_state);
+    _active = false;
 }
 
 QMessageService::~QMessageService()
@@ -54,41 +95,163 @@ QMessageService::~QMessageService()
 
 bool QMessageService::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset)
 {
-    Q_UNUSED(filter);
-    Q_UNUSED(sortOrder);
-    Q_UNUSED(limit);
-    Q_UNUSED(offset);
-    return false; // stub
+    if (d_ptr->_active) {
+        return false;
+    }
+
+    d_ptr->_active = true;
+    d_ptr->_error = QMessageManager::NoError;
+
+    if (ModestEngine::instance()->queryMessages(*this, filter, sortOrder, limit, offset)) {
+        d_ptr->_state = QMessageService::ActiveState;
+        emit stateChanged(d_ptr->_state);
+    } else {
+        d_ptr->setFinished(false);
+    }
+
+    return d_ptr->_active;
 }
 
 bool QMessageService::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset)
 {
-    Q_UNUSED(filter);
-    Q_UNUSED(body);
-    Q_UNUSED(matchFlags);
-    Q_UNUSED(sortOrder);
-    Q_UNUSED(limit);
-    Q_UNUSED(offset);
-    return false; // stub
+    if (d_ptr->_active) {
+        return false;
+    }
+
+    d_ptr->_active = true;
+    d_ptr->_error = QMessageManager::NoError;
+
+    if (ModestEngine::instance()->queryMessages(*this, filter, body, matchFlags, sortOrder, limit, offset)) {
+        d_ptr->_state = QMessageService::ActiveState;
+        emit stateChanged(d_ptr->_state);
+    } else {
+        d_ptr->setFinished(false);
+    }
+
+    return d_ptr->_active;
 }
 
 bool QMessageService::countMessages(const QMessageFilter &filter)
 {
-    // TODO: Implement this
-    Q_UNUSED(filter);
-    return false;
+    if (d_ptr->_active) {
+        return false;
+    }
+
+    d_ptr->_active = true;
+    d_ptr->_error = QMessageManager::NoError;
+
+    if (ModestEngine::instance()->countMessages(*this, filter)) {
+        d_ptr->_state = QMessageService::ActiveState;
+        emit stateChanged(d_ptr->_state);
+    } else {
+        d_ptr->setFinished(false);
+    }
+
+    return d_ptr->_active;
 }
 
 bool QMessageService::send(QMessage &message)
 {
-    Q_UNUSED(message)
-    return false; // stub
+    if (d_ptr->_active) {
+        return false;
+    }
+
+    d_ptr->_active = true;
+    d_ptr->_error = QMessageManager::NoError;
+
+    bool retVal = true;
+
+    d_ptr->_state = QMessageService::ActiveState;
+    emit stateChanged(d_ptr->_state);
+
+    // Check message type
+    if(message.type() == QMessage::AnyType || message.type() == QMessage::NoType) {
+        d_ptr->_error = QMessageManager::ConstraintFailure;
+        retVal = false;
+    }
+
+    QMessageAccountId accountId = message.parentAccountId();
+    if (retVal) {
+        // Check account
+        if (!accountId.isValid()) {
+            accountId = QMessageAccount::defaultAccount(message.type());
+            if (!accountId.isValid()) {
+                d_ptr->_error = QMessageManager::InvalidId;
+                retVal = false;
+            }
+        }
+    }
+
+    QMessageAccount account(accountId);
+    if (retVal) {
+        // Check account/message type compatibility
+        if (!(account.messageTypes() & message.type())) {
+            d_ptr->_error = QMessageManager::ConstraintFailure;
+            retVal = false;
+        }
+    }
+
+    if (retVal) {
+        // Check recipients
+        QMessageAddressList recipients = message.to() + message.bcc() + message.cc();
+        if (recipients.isEmpty()) {
+            d_ptr->_error = QMessageManager::ConstraintFailure;
+            return false;
+        }
+    }
+
+    QMessage outgoing(message);
+
+    // Set default account if unset
+    if (!outgoing.parentAccountId().isValid()) {
+        outgoing.setParentAccountId(accountId);
+    }
+
+    if (retVal) {
+        if (account.messageTypes() & QMessage::Sms) {
+            retVal = TelepathyEngine::instance()->sendMessage(message);
+        } else if (account.messageTypes() & QMessage::InstantMessage) {
+            retVal = TelepathyEngine::instance()->sendMessage(message);
+        } else if (account.messageTypes() & QMessage::Mms) {
+            d_ptr->_error = QMessageManager::NotYetImplemented;
+            qWarning() << "QMessageService::send not yet implemented for MMS";
+            retVal = false;
+        } else if (account.messageTypes() & QMessage::Email) {
+            retVal = ModestEngine::instance()->sendEmail(message);
+        }
+    }
+
+    d_ptr->setFinished(retVal);
+    return retVal;
 }
 
 bool QMessageService::compose(const QMessage &message)
 {
-    Q_UNUSED(message)
-    return false; // stub
+    if (d_ptr->_active) {
+        return false;
+    }
+
+    d_ptr->_active = true;
+    d_ptr->_error = QMessageManager::NoError;
+
+    bool retVal = true;
+    d_ptr->_state = QMessageService::ActiveState;
+    emit stateChanged(d_ptr->_state);
+
+    if (message.type() == QMessage::Sms) {
+        d_ptr->_error = QMessageManager::NotYetImplemented; //TODO:
+        qWarning() << "QMessageService::compose not yet implemented for SMS";
+        retVal = false;
+    } else if (message.type() == QMessage::Mms) {
+        d_ptr->_error = QMessageManager::NotYetImplemented; //TODO:
+        qWarning() << "QMessageService::compose not yet implemented for MMS";
+        retVal = false;
+    } else if (message.type() == QMessage::Email) {
+        retVal = ModestEngine::instance()->composeEmail(message);
+    }
+
+    d_ptr->setFinished(retVal);
+    return retVal;
 }
 
 bool QMessageService::retrieveHeader(const QMessageId& id)

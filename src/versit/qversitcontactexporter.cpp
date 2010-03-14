@@ -50,14 +50,18 @@
 QTM_USE_NAMESPACE
 
 /*!
- * \class QVersitContactExporterDetailHandler
- * \preliminary
- * \brief The QVersitContactExporterDetailHandler class is an interface for clients wishing to implement
- * custom export behaviour for certain contact details.
- *
- * \ingroup versit
- *
- * \sa QVersitContactExporter
+  \class QVersitContactExporterDetailHandler
+  \preliminary
+  \brief The QVersitContactExporterDetailHandler class is an interface for clients wishing to
+  implement custom export behaviour for certain contact details.
+  \ingroup versit
+
+  \sa QVersitContactExporter
+ */
+
+/*!
+ * \fn virtual QVersitContactExporterDetailHandler::~QVersitContactExporterDetailHandler()
+ * Frees any memory in use by this handler.
  */
 
 /*!
@@ -65,7 +69,7 @@ QTM_USE_NAMESPACE
  * Process \a detail and update \a document with the corresponding QVersitProperty(s).
  * \a contact provides the context within which the detail was found.
  *
- * Returns true if the detail has been handled and requires no furthur processing, false otherwise.
+ * Returns true if the detail has been handled and requires no further processing, false otherwise.
  *
  * This function is called on every QContactDetail encountered during an export.  Supply this
  * function and return true to implement custom export behaviour.
@@ -75,19 +79,20 @@ QTM_USE_NAMESPACE
  * \fn virtual bool QVersitContactExporterDetailHandler::postProcessDetail(const QContact& contact, const QContactDetail& detail, bool alreadyProcessed, QVersitDocument* document) = 0;
  * Process \a detail and update \a document with the corresponding QVersitProperty(s).
  * \a contact provides the context within which the detail was found.
+ * \a alreadyProcessed is true if the detail has already been processed either by
+ * \l preProcessDetail() or by QVersitContactExporter itself.
  *
  * Returns true if the detail has been handled, false otherwise.
  *
- * This function is called on every \l QContactDetail encountered during an export which is not
- * handled by either \l preProcessDetail() or by QVersitContactExporter.  This can be used to
- * implement support for \l QContactDetail(s) not supported by QVersitContactExporter.
+ * This function is called on every \l QContactDetail encountered during an export.  This can be
+ * used to implement support for QContactDetails not supported by QVersitContactExporter.
  */
 
 /*!
  * \class QVersitContactExporter
  * \preliminary
- * \brief The QVersitContactExporter class converts \l QContact(s) into \l QVersitDocument(s).
- *
+ * \brief The QVersitContactExporter class converts \l {QContact}{QContacts} into
+ * \l {QVersitDocument}{QVersitDocuments}.
  * \ingroup versit
  *
  * A \l QVersitResourceHandler is associated with the exporter to supply the behaviour for loading
@@ -99,54 +104,13 @@ QTM_USE_NAMESPACE
  * setDetailHandler(), the client can pass in a handler to override the processing of details and/or
  * handle details that QVersitContactExporter doesn't support.
  *
- * \code
+ * An example detail handler that logs unknown properties:
+ * \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Detail handler
  *
- * class MyDetailHandler : public QVersitContactExporterDetailHandler {
- * public:
- *     bool preProcessDetail(const QContact& contact, const QContactDetail& detail, QVersitDocument* document) {
- *         return false;
- *     }
- *     bool postProcessDetail(const QContact& contact, const QContactDetail& detail, bool alreadyProcessed, QVersitDocument* document) {
- *         if (!alreadyProcessed)
- *             mUnknownDetails.append(detail);
- *         return false;
- *     }
- *     QList<QContactDetail> mUnknownDetails;
- * };
+ * An example usage of QVersitContactExporter
+ * \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Export example
  *
- * // An example of exporting a QContact:
- * QVersitContactExporter contactExporter;
- *
- * MyDetailHandler detailHandler;
- * contactExporter.setDetailHandler(&detailHandler);
- *
- * QContact contact;
- * // Create a name
- * QContactName name;
- * name.setFirst(QString::fromAscii("John"));
- * contact.saveDetail(&name);
- *
- * // Create an avatar type which is not supported by the exporter
- * QContactAvatar contactAvatar;
- * contactAvatar.setAvatar(QString::fromAscii("/my/image/avatar_path/texture.type"));
- * contactAvatar.setSubType(QContactAvatar::SubTypeTexturedMesh);
- * contact.saveDetail(&contactAvatar);
- *
- * // Create an organization detail with a title and a logo
- * QContactOrganization organization;
- * organization.setTitle(QString::fromAscii("Developer"));
- * organization.setLogo(QString::fromAscii("/my/image/logo_path/logo.jpg"));
- * contact.saveDetail(&organization);
- *
- * QList<QContact> contactList;
- * contactList.append(contact);
- * QList<QVersitDocument> versitDocuments = contactExporter.exportContacts(contactList);
- *
- * // detailHandler.mUnknownDetails now contains the list of unknown details
- *
- * \endcode
- *
- * \sa QVersitDocument, QVersitProperty, QVersitContactExporterDetailHandler, QVersitResourceLoader
+ * \sa QVersitDocument, QVersitProperty, QVersitContactExporterDetailHandler, QVersitResourceHandler
  */
 
 /*!
@@ -174,7 +138,7 @@ QList<QVersitDocument> QVersitContactExporter::exportContacts(
     QVersitDocument::VersitType versitType)
 {
     QList<QVersitDocument> list;
-    foreach (QContact contact, contacts) {
+    foreach (const QContact& contact, contacts) {
         QVersitDocument versitDocument;
         versitDocument.setType(versitType);
         d->exportContact(contact, versitDocument);
@@ -185,7 +149,10 @@ QList<QVersitDocument> QVersitContactExporter::exportContacts(
 }
 
 /*!
- * Sets \a handler to be the handler for processing QContactDetails.
+ * Sets \a handler to be the handler for processing QContactDetails, or 0 to have no handler.
+ *
+ * Does not take ownership of the handler.  The client should ensure the handler remains valid for
+ * the lifetime of the exporter.
  */
 void QVersitContactExporter::setDetailHandler(QVersitContactExporterDetailHandler* handler)
 {
@@ -201,7 +168,10 @@ QVersitContactExporterDetailHandler* QVersitContactExporter::detailHandler() con
 }
 
 /*!
- * Sets \a handler to be the handler to load files with.
+ * Sets \a handler to be the handler to load files with, or 0 to have no handler.
+ *
+ * Does not take ownership of the handler.  The client should ensure the handler remains valid for
+ * the lifetime of the exporter.
  */
 void QVersitContactExporter::setResourceHandler(QVersitResourceHandler* handler)
 {

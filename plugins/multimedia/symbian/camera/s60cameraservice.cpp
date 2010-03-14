@@ -53,35 +53,39 @@
 #include "S60cameraimageprocessingcontrol.h"
 #include "s60cameraimagecapturecontrol.h"
 #include "S60mediacontrol.h"
-#include "S60camerasession.h"
+#include "S60videocapturesession.h"
+#include "S60imagecapturesession.h"
 #include "S60viewfinderwidget.h"
 #include "S60videooutputcontrol.h"
 #include "S60mediacontainercontrol.h"
 #include "s60videoencoder.h"
+#include "s60cameraimageencodercontrol.h"
 
 S60CameraService::S60CameraService(QObject *parent)
     : QMediaService(parent)
-{
-    // session class is the main symbian backend class
-    m_session = new S60CameraSession(this);
+{   
+    // session classes for video and image capturing
+    m_imagesession = new S60ImageCaptureSession(this);
+    m_videosession = new S60VideoCaptureSession(this);    
     // different control classes which use session class to do the work
-    m_control = new S60CameraControl(m_session, this);
-    m_videoDeviceControl = new S60CameraVideoDeviceControl(m_session, this);
-    m_focusControl = new S60CameraFocusControl(m_session, this);
-    m_exposureControl = new S60CameraExposureControl(m_session, this);
-    m_imageProccessingControl = new S60CameraImageProcessingControl(m_session, this);
-    m_imageCaptureControl = new S60CameraImageCaptureControl(m_session, this);
+    m_control = new S60CameraControl(m_videosession, m_imagesession, this);    
+    m_videoDeviceControl = new S60CameraVideoDeviceControl(m_control, this);    
+    m_focusControl = new S60CameraFocusControl(m_imagesession, this);    
+    m_exposureControl = new S60CameraExposureControl(m_imagesession, this);    
+    m_imageProcessingControl = new S60CameraImageProcessingControl(m_imagesession, this);    
+    m_imageCaptureControl = new S60CameraImageCaptureControl(m_imagesession, this);     
+    m_media = new S60MediaControl(m_videosession, this);    
+    m_mediaFormat = new S60MediaContainerControl(m_videosession, this);    
+    m_videoEncoder = new S60VideoEncoder(m_videosession, this);    
+    m_viewFinderWidget = new S60ViewFinderWidgetControl(this);    
+    m_videoOutput = new S60VideoOutputControl(this);    
+    m_imageEncoderControl = new S60CameraImageEncoderControl(m_imagesession, this);    
 
-    m_media = new S60MediaControl(m_session, this);
-    m_mediaFormat = new S60MediaContainerControl(m_session, this);
-    m_videoEncoder = new S60VideoEncoder(m_session, this);
-    m_viewFinderWidget = new S60ViewFinderWidgetControl(this);
-    m_videoOutput = new S60VideoOutputControl(this);
     connect(m_videoOutput, SIGNAL(outputChanged(QVideoOutputControl::Output)),
             this, SLOT(videoOutputChanged(QVideoOutputControl::Output)));
     
     m_videoOutput->setAvailableOutputs(QList<QVideoOutputControl::Output>() 
-            << QVideoOutputControl::WidgetOutput);
+            << QVideoOutputControl::WidgetOutput);    
 }
 
 S60CameraService::~S60CameraService()
@@ -115,7 +119,7 @@ QMediaControl *S60CameraService::control(const char *name) const
         return m_focusControl;
 
     if(qstrcmp(name,QImageProcessingControl_iid) == 0)
-        return m_imageProccessingControl;
+        return m_imageProcessingControl;
 
     if(qstrcmp(name,QImageCaptureControl_iid) == 0)
         return m_imageCaptureControl;
@@ -123,21 +127,23 @@ QMediaControl *S60CameraService::control(const char *name) const
     if(qstrcmp(name,QVideoDeviceControl_iid) == 0)
         return m_videoDeviceControl;
 
+    if(qstrcmp(name,QImageEncoderControl_iid) == 0)
+        return m_imageEncoderControl;
 
     return 0;
 }
 int S60CameraService::deviceCount()
 {
-    return S60CameraSession::deviceCount();
+    return S60CameraControl::deviceCount();
 }
 
 QString S60CameraService::deviceDescription(const int index)
 {
-    return S60CameraSession::description(index);
+    return S60CameraControl::description(index);
 }
 QString S60CameraService::deviceName(const int index)
 {
-    return S60CameraSession::name(index);
+    return S60CameraControl::name(index);
 }
 
 void S60CameraService::videoOutputChanged(QVideoOutputControl::Output output)

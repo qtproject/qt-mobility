@@ -76,8 +76,8 @@ QTM_BEGIN_NAMESPACE
         camera->start();
     \endcode
 
-The Camera API of Qt Mobility is still in \bold ALPHA. It has not undergone
-the same level of review and testing as the rest of the APIs.
+The Camera API of Qt Mobility is still in \bold Technology Preview. It has
+not undergone the same level of review and testing as the rest of the APIs.
 
 The API exposed by the classes in this component are not stable, and will
 undergo modification or removal prior to the final release of Qt Mobility.
@@ -175,7 +175,13 @@ void QCameraPrivate::initControls()
                 q, SLOT(_q_updateFocusStatus(QCamera::FocusStatus)));
         q->connect(focusControl, SIGNAL(opticalZoomChanged(qreal)), q, SIGNAL(opticalZoomChanged(qreal)));
         q->connect(focusControl, SIGNAL(digitalZoomChanged(qreal)), q, SIGNAL(digitalZoomChanged(qreal)));
-    }   
+    }
+
+    if (imageControl) {
+        q->connect(imageControl, SIGNAL(whiteBalanceLocked()),
+                   q, SIGNAL(whiteBalanceLocked()));
+    }
+
 }
 
 /*!
@@ -282,7 +288,7 @@ QCamera::CaptureModes QCamera::supportedCaptureModes() const
 /*!
   \property QCamera::captureMode
 
-  Returns the type of media (video or still images),
+  The type of media (video or still images),
   the camera is configured to capture.
 */
 
@@ -370,6 +376,36 @@ void QCamera::unlockExposure()
 }
 
 /*!
+    Lock the white balance.
+*/
+
+void QCamera::lockWhiteBalance()
+{
+    Q_D(QCamera);
+
+    d->unsetError();
+
+    if(d->imageControl)
+        d->imageControl->lockWhiteBalance();
+    else
+        d->_q_error(NotSupportedFeatureError, tr("White balance locking is not supported"));
+}
+
+/*!
+    Unlock the white balance.
+*/
+
+void QCamera::unlockWhiteBalance()
+{
+    Q_D(QCamera);
+
+    d->unsetError();
+
+    if(d->imageControl)
+        d->imageControl->unlockWhiteBalance();
+}
+
+/*!
     Starts single or continuous autofocus.
 
     Does nothing in hyperfocal or infinity focus modes.
@@ -437,16 +473,20 @@ QCamera::State QCamera::state() const
     Returns the flash mode being used.
 */
 
-QCamera::FlashMode QCamera::flashMode() const
+QCamera::FlashModes QCamera::flashMode() const
 {
     return d_func()->exposureControl ? d_func()->exposureControl->flashMode() : QCamera::FlashOff;
 }
 
 /*!
-    Set the flash mode to \a mode
+    Set the flash mode to \a mode.
+
+    Usually the single QCamera::FlashMode flag is used,
+    but some non conflicting flags combination are also allowed,
+    like QCamera::FlashManual | QCamera::FlashSlowSyncRearCurtain.
 */
 
-void QCamera::setFlashMode(QCamera::FlashMode mode)
+void QCamera::setFlashMode(QCamera::FlashModes mode)
 {
     if (d_func()->exposureControl)
         d_func()->exposureControl->setFlashMode(mode);
@@ -499,7 +539,7 @@ QCamera::FocusModes QCamera::supportedFocusModes() const
 }
 
 /*!
-    Returns the focus status
+    Returns the focus status.
 */
 
 QCamera::FocusStatus QCamera::focusStatus() const
@@ -533,6 +573,75 @@ void QCamera::setMacroFocusingEnabled(bool enabled)
 {
     if (d_func()->focusControl)
         d_func()->focusControl->setMacroFocusingEnabled(enabled);
+}
+
+/*!
+  \property QCamera::focusPointMode
+  The camera focus point selection mode.
+*/
+
+QCamera::FocusPointMode QCamera::focusPointMode() const
+{
+    return d_func()->focusControl ?
+            d_func()->focusControl->focusPointMode() :
+            QCamera::FocusPointAuto;
+}
+
+void QCamera::setFocusPointMode(QCamera::FocusPointMode mode)
+{
+    if (d_func()->focusControl)
+        d_func()->focusControl->setFocusPointMode(mode);
+    else if ( mode != QCamera::FocusPointAuto ) {
+        d_func()->_q_error(NotSupportedFeatureError, tr("Focus points mode selection is not supported"));
+    }
+}
+
+/*!
+  Returns supported focus selection modes.
+ */
+QCamera::FocusPointModes QCamera::supportedFocusPointModes() const
+{
+    return d_func()->focusControl ?
+            d_func()->focusControl->supportedFocusPointModes() :
+            QCamera::FocusPointAuto;
+
+}
+
+/*!
+  \property QCamera::customFocusPoint
+
+  Position of custom focus point, in relative frame coordinates:
+  QPointF(0,0) points to the left top frame point, QPointF(0.5,0.5) points to the frame center.
+
+  Custom focus point is used only in FocusPointCustom focus mode.
+ */
+
+QPointF QCamera::customFocusPoint() const
+{
+    return d_func()->focusControl ?
+            d_func()->focusControl->customFocusPoint() :
+            QPointF(0.5,0.5);
+}
+
+void QCamera::setCustomFocusPoint(const QPointF &point)
+{
+    if (d_func()->focusControl)
+        d_func()->focusControl->setCustomFocusPoint(point);
+    else {
+        d_func()->_q_error(NotSupportedFeatureError, tr("Focus points selection is not supported"));
+    }
+}
+
+/*!
+  \property QCamera::focusZones
+
+  The list of zones, the camera is actually focused on.
+ */
+QList<QRectF> QCamera::focusZones() const
+{
+    return d_func()->focusControl ?
+            d_func()->focusControl->focusZones() :
+            QList<QRectF>();
 }
 
 /*!
@@ -863,12 +972,21 @@ void QCamera::zoomTo(qreal optical, qreal digital)
 }
 
 /*!
-    Return true if exposure locked.
+    Returns true if exposure is locked.
 */
 
 bool QCamera::isExposureLocked() const
 {
     return d_func()->exposureControl ? d_func()->exposureControl->isExposureLocked() : true;
+}
+
+/*!
+    Returns true if white balance is locked.
+*/
+
+bool QCamera::isWhiteBalanceLocked() const
+{
+    return d_func()->imageControl ? d_func()->imageControl->isWhiteBalanceLocked() : false;
 }
 
 /*!
@@ -888,6 +1006,13 @@ bool QCamera::isExposureLocked() const
     \value FlashAuto            Automatic flash.
     \value FlashRedEyeReduction Red eye reduction flash.
     \value FlashFill            Use flash to fillin shadows.
+    \value FlashTorch           Constant light source, useful for focusing and video capture.
+    \value FlashSlowSyncFrontCurtain 
+                                Use the flash in conjunction with a slow shutter speed. 
+                                This mode allows better exposure of distant objects and/or motion blur effect.
+    \value FlashSlowSyncRearCurtain 
+                                The similar mode to FlashSlowSyncFrontCurtain but flash is fired at the end of exposure.
+    \value FlashManual          Flash power is manualy set.
 */
 
 /*!
@@ -901,6 +1026,16 @@ bool QCamera::isExposureLocked() const
                                 All objects at distances from half of this
                                 distance out to infinity will be acceptably sharp.
 */
+
+/*!
+    \enum QCamera::FocusPointMode
+
+    \value FocusPointAuto       Automaticaly select one or multiple focus points.
+    \value FocusPointCenter     Focus to the frame center.
+    \value FocusPointFaceDetection Focus on faces in the frame.
+    \value FocusPointCustom     Focus to the custom point, defined by QCamera::customFocusPoint property.
+*/
+
 
 /*!
     \enum QCamera::FocusStatus

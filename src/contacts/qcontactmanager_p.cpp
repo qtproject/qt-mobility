@@ -142,12 +142,13 @@ void QContactManagerData::createEngine(const QString& managerName, const QMap<QS
                         versions.isEmpty() || //the manager engine factory does not report any version
                         versions.contains(implementationVersion)) {
                     m_engine = f->engine(parameters, m_error);
+                    found = true;
                     break;
                 }
             }
-
-            // If this is the second time through, break
-            if (loadedDynamic)
+            
+            // Break if found or if this is the second time through
+            if (loadedDynamic || found)
                 break;
 
             // otherwise load dynamic factories and reloop
@@ -273,7 +274,7 @@ void QContactManagerData::loadFactories()
             QStringList directories;
             directories << QString("plugins/contacts") << QString("contacts") << QString("../plugins/contacts");
             foreach (const QString& dirName, directories) {
-                QString testDirPath = pluginsDir.path() + "/" + dirName;
+                QString testDirPath = pluginsDir.path() + '/' + dirName;
                 testDirPath = QDir::cleanPath(testDirPath);
                 // Use native Symbian code to check for directory existence, because checking
                 // for files from under non-existent protected dir like E:/private/<uid> using

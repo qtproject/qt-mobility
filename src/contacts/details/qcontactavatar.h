@@ -48,8 +48,10 @@
 #include "qcontactdetail.h"
 #include "qcontact.h"
 
+QT_BEGIN_NAMESPACE
 class QPixmap;
 class QSize;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 

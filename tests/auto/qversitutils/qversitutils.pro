@@ -4,7 +4,7 @@ TARGET=tst_versitutils
 CONFIG+=testcase
 
 include(../../../common.pri)
-DEFINES += BUILD_QTVERSIT QT_ASCII_CAST_WARNINGS
+DEFINES += QT_ASCII_CAST_WARNINGS
 
 DEPENDPATH += .
 INCLUDEPATH += \
@@ -16,8 +16,8 @@ INCLUDEPATH += \
     ../../../src/contacts/requests \
     ../../../src/contacts/filters
 
-HEADERS += ut_versitutils.h
-SOURCES += ut_versitutils.cpp
+HEADERS += tst_versitutils.h
+SOURCES += tst_versitutils.cpp
 
 CONFIG += mobility
 MOBILITY = contacts versit

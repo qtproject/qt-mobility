@@ -4,7 +4,7 @@ TARGET=tst_qversitreader
 CONFIG+=testcase
 
 include(../../../common.pri)
-DEFINES += BUILD_QTVERSIT QT_ASCII_CAST_WARNINGS
+DEFINES += QT_ASCII_CAST_WARNINGS
 
 DEPENDPATH += .
 INCLUDEPATH += \
@@ -16,8 +16,8 @@ INCLUDEPATH += \
     ../../../src/contacts/requests \
     ../../../src/contacts/filters
 
-HEADERS += ut_qversitreader.h
-SOURCES += ut_qversitreader.cpp
+HEADERS += tst_qversitreader.h
+SOURCES += tst_qversitreader.cpp
 
 CONFIG += mobility
 MOBILITY = contacts versit

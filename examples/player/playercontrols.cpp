@@ -56,49 +56,51 @@ PlayerControls::PlayerControls(QWidget *parent)
     , nextButton(0)
     , previousButton(0)
     , muteButton(0)
-#ifdef Q_OS_SYMBIAN    
+#ifdef Q_OS_SYMBIAN
     , openButton(0)
     , fullScreenButton(0)
     , playListButton(0)
 #else
     , volumeSlider(0)
     , rateBox(0)
-#endif    
+#endif
 {
-    playButton = new QToolButton;
+    playButton = new QToolButton(this);
     playButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
 
     connect(playButton, SIGNAL(clicked()), this, SLOT(playClicked()));
 
-    stopButton = new QToolButton;
+    stopButton = new QToolButton(this);
     stopButton->setIcon(style()->standardIcon(QStyle::SP_MediaStop));
     stopButton->setEnabled(false);
 
     connect(stopButton, SIGNAL(clicked()), this, SIGNAL(stop()));
 
-    nextButton = new QToolButton;
+    nextButton = new QToolButton(this);
     nextButton->setIcon(style()->standardIcon(QStyle::SP_MediaSkipForward));
 
     connect(nextButton, SIGNAL(clicked()), this, SIGNAL(next()));
 
-    previousButton = new QToolButton;
+    previousButton = new QToolButton(this);
     previousButton->setIcon(style()->standardIcon(QStyle::SP_MediaSkipBackward));
 
     connect(previousButton, SIGNAL(clicked()), this, SIGNAL(previous()));
 
-    muteButton = new QToolButton;
+    muteButton = new QToolButton(this);
     muteButton->setIcon(style()->standardIcon(QStyle::SP_MediaVolume));
 
     connect(muteButton, SIGNAL(clicked()), this, SLOT(muteClicked()));
 
-#ifdef Q_OS_SYMBIAN
-#else
-    volumeSlider = new QSlider(Qt::Horizontal);
+#ifndef Q_OS_SYMBIAN
+    volumeSlider = new QSlider(Qt::Horizontal, this);
+
+#ifndef Q_WS_MAEMO_5
     volumeSlider->setRange(0, 100);
 
     connect(volumeSlider, SIGNAL(sliderMoved(int)), this, SIGNAL(changeVolume(int)));
+#endif
 
-    rateBox = new QComboBox;
+    rateBox = new QComboBox(this);
     rateBox->addItem("0.5x", QVariant(0.5));
     rateBox->addItem("1.0x", QVariant(1.0));
     rateBox->addItem("2.0x", QVariant(2.0));
@@ -106,7 +108,7 @@ PlayerControls::PlayerControls(QWidget *parent)
 
     connect(rateBox, SIGNAL(activated(int)), SLOT(updateRate()));
 
-#endif    
+#endif
 #ifdef Q_OS_SYMBIAN
     playButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
     playButton->setMinimumSize(1, 1);
@@ -118,28 +120,28 @@ PlayerControls::PlayerControls(QWidget *parent)
     previousButton->setMinimumSize(1, 1);
     muteButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
     muteButton->setMinimumSize(1, 1);
-    
+
     openButton = new QToolButton(this);
     openButton->setIcon(style()->standardIcon(QStyle::SP_DirOpenIcon));
     openButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
     openButton->setMinimumSize(1, 1);
     connect(openButton, SIGNAL(clicked()), this, SIGNAL(open()));
-    
+
     fullScreenButton = new QToolButton(this);
-    fullScreenButton->setIcon(style()->standardIcon(QStyle::SP_DesktopIcon));
+    fullScreenButton->setIcon(style()->standardIcon(QStyle::SP_ComputerIcon));
     fullScreenButton->setCheckable(true);
     fullScreenButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
     fullScreenButton->setMinimumSize(1, 1);
-    connect(fullScreenButton, SIGNAL(clicked(bool)), this, SIGNAL(fullScreen(bool)));
-    
+    connect(fullScreenButton, SIGNAL(toggled(bool)), this, SIGNAL(fullScreen(bool)));
+
     playListButton = new QToolButton(this);
     playListButton->setIcon(style()->standardIcon(QStyle::SP_FileDialogDetailedView));
     playListButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
     playListButton->setMinimumSize(1, 1);
     connect(playListButton, SIGNAL(clicked(bool)), this, SIGNAL(openPlayList()));
-    
+
 #endif
-    
+
     QBoxLayout *layout = new QHBoxLayout;
     layout->setMargin(0);
     layout->addWidget(stopButton);
@@ -151,9 +153,12 @@ PlayerControls::PlayerControls(QWidget *parent)
     layout->addWidget(openButton);
     layout->addWidget(playListButton);
     layout->addWidget(fullScreenButton);
-#else    
-    layout->addWidget(volumeSlider);
-    layout->addWidget(rateBox);
+#else
+    if (volumeSlider)
+        layout->addWidget(volumeSlider);
+
+    if (rateBox)
+        layout->addWidget(rateBox);
 #endif
     setLayout(layout);
 }
@@ -189,17 +194,17 @@ int PlayerControls::volume() const
 {
 #ifdef Q_OS_SYMBIAN
     return 0;
-#else    
-    return volumeSlider->value();
+#else
+    return volumeSlider ? volumeSlider->value() : 0;
 #endif
 }
 
 void PlayerControls::setVolume(int volume)
 {
-#ifdef Q_OS_SYMBIAN
-#else    
-    volumeSlider->setValue(volume);
-#endif    
+#ifndef Q_OS_SYMBIAN
+    if (volumeSlider)
+        volumeSlider->setValue(volume);
+#endif
 }
 
 bool PlayerControls::isMuted() const
@@ -240,15 +245,14 @@ qreal PlayerControls::playbackRate() const
 {
 #ifdef Q_OS_SYMBIAN
     return 0;
-#else 
+#else
     return rateBox->itemData(rateBox->currentIndex()).toDouble();
-#endif    
+#endif
 }
 
 void PlayerControls::setPlaybackRate(float rate)
 {
-#ifdef Q_OS_SYMBIAN
-#else   
+#ifndef Q_OS_SYMBIAN
     for (int i=0; i<rateBox->count(); i++) {
         if (qFuzzyCompare(rate, float(rateBox->itemData(i).toDouble()))) {
             rateBox->setCurrentIndex(i);
@@ -258,13 +262,12 @@ void PlayerControls::setPlaybackRate(float rate)
 
     rateBox->addItem( QString("%1x").arg(rate), QVariant(rate));
     rateBox->setCurrentIndex(rateBox->count()-1);
-#endif    
+#endif
 }
 
 void PlayerControls::updateRate()
 {
-#ifdef Q_OS_SYMBIAN
-#else 
+#ifndef Q_OS_SYMBIAN
     emit changeRate(playbackRate());
-#endif    
+#endif
 }

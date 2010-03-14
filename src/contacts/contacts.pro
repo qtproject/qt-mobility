@@ -25,7 +25,6 @@ PUBLIC_HEADERS += \
     qcontactchangeset.h \
     qcontactdetail.h \
     qcontactdetaildefinition.h \
-    qcontactdetaildefinitionfield.h \
     qcontactdetailfielddefinition.h \
     qcontactfilter.h \
     qcontactid.h \
@@ -75,8 +74,21 @@ HEADERS += \
     $$PUBLIC_HEADERS \
     $$PRIVATE_HEADERS
 
-maemo {
+maemo5 {
+    isEmpty(CONTACTS_DEFAULT_ENGINE): CONTACTS_DEFAULT_ENGINE=maemo5
+}
+
+maemo6 {
     isEmpty(CONTACTS_DEFAULT_ENGINE): CONTACTS_DEFAULT_ENGINE=tracker
+}
+
+maemo5|maemo6 {
+    CONFIG += create_pc create_prl
+    QMAKE_PKGCONFIG_DESCRIPTION = Qt Mobility - Contacts API
+    pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
+    pkgconfig.files = QtContacts.pc
+
+    INSTALLS += pkgconfig
 }
 
 wince* {
@@ -99,7 +111,7 @@ symbian {
     DEPLOYMENT += CONTACTS_DEPLOYMENT
 }
 
-!isEmpty(CONTACTS_DEFAULT_ENGINE): DEFINES += Q_CONTACTS_DEFAULT_ENGINE=CONTACTS_DEFAULT_ENGINE
+!isEmpty(CONTACTS_DEFAULT_ENGINE): DEFINES += Q_CONTACTS_DEFAULT_ENGINE=$$CONTACTS_DEFAULT_ENGINE
 
 CONFIG += app
 include(../../features/deploy.pri)

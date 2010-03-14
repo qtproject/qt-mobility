@@ -62,11 +62,11 @@ class Q_MESSAGING_EXPORT QMessage : public QMessageContentContainer
 public:
     enum Type
     {
-        NoType  = 0,
-        Mms     = 0x1,
-        Sms     = 0x2,
-        Email   = 0x4,
-        Xmpp    = 0x8,
+        NoType            = 0,
+        Mms               = 0x1,
+        Sms               = 0x2,
+        Email             = 0x4,
+        InstantMessage    = 0x8,
         // Extensible
         AnyType = 0xFFFFFFFF
     };

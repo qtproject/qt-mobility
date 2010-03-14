@@ -56,7 +56,7 @@ QTM_BEGIN_NAMESPACE
     The interface name of QCameraFocusControl is \c com.nokia.Qt.QCameraFocusControl/1.0 as
     defined in QCameraFocusControl_iid.
 
-The Camera API of Qt Mobility is still in \bold ALPHA. It has not undergone
+The Camera API of Qt Mobility is still in \bold Technology Preview. It has not undergone
 the same level of review and testing as the rest of the APIs.
 
 The API exposed by the classes in this component are not stable, and will
@@ -197,6 +197,52 @@ QCameraFocusControl::~QCameraFocusControl()
   Set the zoom value to \a value
 */
 
+/*!
+  \fn QCameraFocusControl::focusPointMode() const
+
+  Returns the camera focus point selection mode.
+*/
+
+/*!
+  \fn QCameraFocusControl::setFocusPointMode(QCamera::FocusPointMode mode)
+
+  Sets the camera focus point selection mode.
+*/
+
+/*!
+  \fn QCameraFocusControl::supportedFocusPointModes() const
+
+  Returns supported focus selection modes.
+*/
+
+/*!
+  \fn QCameraFocusControl::customFocusPoint() const
+
+  Return the position of custom focus point, in relative frame coordinates:
+  QPointF(0,0) points to the left top frame point, QPointF(0.5,0.5) points to the frame center.
+
+  Custom focus point is used only in FocusPointCustom focus mode.
+*/
+
+/*!
+  \fn QCameraFocusControl::setCustomFocusPoint(const QPointF &point)
+
+  Sets the custom focus point.
+
+  If camera supports fixed set of focus points,
+  it should use the nearest supported focus point,
+  and return the actual focus point with QCameraFocusControl::focusZones().
+
+  \sa QCameraFocusControl::customFocusPoint(), QCameraFocusControl::focusZones()
+*/
+
+/*!
+  \fn QCameraFocusControl::focusZones() const
+
+  Returns the list of zones, the camera is actually focused on.
+
+  \sa QCameraFocusControl::focusZonesChanged
+*/
 
 /*!
     \fn void QCameraFocusControl::focusStatusChanged(QCamera::FocusStatus status)
@@ -216,6 +262,16 @@ QCameraFocusControl::~QCameraFocusControl()
 
     Signal emitted when the digital \a zoom value changed.
 */
+
+/*!
+  \fn QCameraFocusControl::focusZonesChanged(const QList<QRectF> &)
+
+  Signal is emited when the set of zones, camera focused on is changed.
+
+  Usually the zones list is changed when the camera is focused.
+*/
+
+
 
 #include "moc_qcamerafocuscontrol.cpp"
 QTM_END_NAMESPACE

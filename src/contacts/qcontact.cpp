@@ -52,7 +52,7 @@ QTM_BEGIN_NAMESPACE
 /*!
   \class QContact
  
-  \brief The QContact class provides an addressbook contact.
+  \brief The QContact class represents an addressbook contact.
 
   \ingroup contacts-main
  
@@ -60,7 +60,7 @@ QTM_BEGIN_NAMESPACE
  
   An instance of the QContact class represents an in-memory contact,
   and may not reflect the state of that contact found in persistent
-  storage until the appropriate synchronisation method is called
+  storage until the appropriate synchronization method is called
   on the QContactManager (i.e., saveContact, removeContact).
  
   \sa QContactManager, QContactDetail
@@ -304,7 +304,9 @@ QList<QContactDetail> QContact::details(const QString& definitionName, const QSt
  * accessConstraint set to QContactDetail::Irremovable | QContactDetail::ReadOnly,
  * and the function will return false.
  *
- * Returns true if the detail was saved successfully, otherwise returns false
+ * Returns true if the detail was saved successfully, otherwise returns false.
+ *
+ * Note that the caller retains ownership of the detail.
  */
 bool QContact::saveDetail(QContactDetail* detail)
 {
@@ -355,7 +357,9 @@ bool QContact::saveDetail(QContactDetail* detail)
  * If the detail's access constraint includes \c QContactDetail::Irremovable,
  * this function will return false.
  *
- * Returns true if the detail was removed successfully, false if an error occurred
+ * Returns true if the detail was removed successfully, false if an error occurred.
+ *
+ * Note that the caller retains ownership of the detail.
  */
 bool QContact::removeDetail(QContactDetail* detail)
 {
