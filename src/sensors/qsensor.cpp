@@ -64,7 +64,8 @@ QTM_BEGIN_NAMESPACE
 // A bit of a hack to call qRegisterMetaType when the library is loaded.
 static int qtimestamp_id = qRegisterMetaType<QtMobility::qtimestamp>("QtMobility::qtimestamp");
 static int qrange_id = qRegisterMetaType<QtMobility::qrange>("QtMobility::qrange");
-static int qlist_qrange_id = qRegisterMetaType<QtMobility::qrangelist>("QtMobility::qrangelist");
+static int qrangelist_id = qRegisterMetaType<QtMobility::qrangelist>("QtMobility::qrangelist");
+static int qoutputrangelist_id = qRegisterMetaType<QtMobility::qoutputrangelist>("QtMobility::qoutputrangelist");
 
 // =====================================================================
 
@@ -441,69 +442,18 @@ void QSensor::removeFilter(QSensorFilter *filter)
 */
 
 /*!
-    \property QSensor::measurementMinimum
-    \brief the minimum value that the sensor will return.
+    \property QSensor::outputRanges
+    \brief a list of output ranges the sensor supports.
 
-    The units are defined by the sensor.
-
-    Note that the sensor may have multiple output ranges.
-
-    \sa QSensor::outputRange
-*/
-
-qreal QSensor::measurementMinimum() const
-{
-    if (d->outputRange == -1)
-        return 0;
-    return d->measurementDetails[d->outputRange].measurementMinimum;
-}
-
-/*!
-    \property QSensor::measurementMaximum
-    \brief the maximum value that the sensor will return.
-
-    The units are defined by the sensor.
-
-    Note that the sensor may have multiple output ranges.
+    A sensor may have more than one output range. Typically this is done
+    to give a greater measurement range at the cost of lowering accuracy.
 
     \sa QSensor::outputRange
 */
 
-qreal QSensor::measurementMaximum() const
+qoutputrangelist QSensor::outputRanges() const
 {
-    if (d->outputRange == -1)
-        return 0;
-    return d->measurementDetails[d->outputRange].measurementMaximum;
-}
-
-/*!
-    \property QSensor::measurementAccuracy
-    \brief the accuracy of the sensor.
-
-    The units are defined by the sensor.
-
-    Note that the sensor may have multiple output ranges.
-
-    \sa QSensor::outputRange
-*/
-
-qreal QSensor::measurementAccuracy() const
-{
-    if (d->outputRange == -1)
-        return 0;
-    return d->measurementDetails[d->outputRange].measurementAccuracy;
-}
-
-/*!
-    \property QSensor::outputRangeCount
-    \brief the number of output ranges that the sensor has.
-
-    \sa QSensor::outputRange
-*/
-
-int QSensor::outputRangeCount() const
-{
-    return d->measurementDetails.count();
+    return d->outputRanges;
 }
 
 /*!
@@ -513,8 +463,7 @@ int QSensor::outputRangeCount() const
     A sensor may have more than one output range. Typically this is done
     to give a greater measurement range at the cost of lowering accuracy.
 
-    \sa QSensor::outputRangeCount, QSensor::measurementMinimum, QSensor::measurementMaximum,
-        QSensor::measurementAccuracy
+    \sa QSensor::outputRanges
 */
 
 int QSensor::outputRange() const
@@ -524,7 +473,7 @@ int QSensor::outputRange() const
 
 void QSensor::setOutputRange(int index)
 {
-    if (index < 0 || index >= outputRangeCount()) {
+    if (index < 0 || index >= d->outputRanges.count()) {
         qWarning() << "ERROR: Output range" << index << "is not valid";
         return;
     }

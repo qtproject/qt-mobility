@@ -64,7 +64,7 @@ IMPLEMENT_READING(QProximityReading)
     sensors will set the maximum to their threshold and their accuracy to the same
     value. They will return 0 to indicate close and their maximum to indicate not close.
 
-    \sa QSensor::measurementMaximum, QSensor::measurementAccuracy
+    \sa QSensor::outputRanges
 */
 
 /*!

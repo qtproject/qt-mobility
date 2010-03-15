@@ -73,6 +73,13 @@ private:
 
 typedef QPair<int,int> qrange;
 typedef QList<qrange> qrangelist;
+struct qoutputrange
+{
+    qreal minimum;
+    qreal maximum;
+    qreal accuracy;
+};
+typedef QList<qoutputrange> qoutputrangelist;
 
 class Q_SENSORS_EXPORT QSensor : public QObject
 {
@@ -88,10 +95,7 @@ class Q_SENSORS_EXPORT QSensor : public QObject
     Q_PROPERTY(QSensorReading* reading READ reading NOTIFY readingChanged)
     Q_PROPERTY(bool busy READ isBusy)
     Q_PROPERTY(bool active READ isActive)
-    Q_PROPERTY(qreal measurementMinimum READ measurementMinimum)
-    Q_PROPERTY(qreal measurementMaximum READ measurementMaximum)
-    Q_PROPERTY(qreal measurementAccuracy READ measurementAccuracy)
-    Q_PROPERTY(int outputRangeCount READ outputRangeCount)
+    Q_PROPERTY(QtMobility::qoutputrangelist outputRanges READ outputRanges)
     Q_PROPERTY(int outputRange READ outputRange WRITE setOutputRange)
     Q_PROPERTY(QString description READ description)
     Q_PROPERTY(int error READ error NOTIFY sensorError)
@@ -119,11 +123,7 @@ public:
     int updateInterval() const;
     void setUpdateInterval(int interval);
 
-    qreal measurementMinimum() const;
-    qreal measurementMaximum() const;
-    qreal measurementAccuracy() const;
-
-    int outputRangeCount() const;
+    qoutputrangelist outputRanges() const;
     int outputRange() const;
     void setOutputRange(int index);
 
@@ -258,6 +258,7 @@ QTM_END_NAMESPACE
 Q_DECLARE_METATYPE(QtMobility::qtimestamp)
 Q_DECLARE_METATYPE(QtMobility::qrange)
 Q_DECLARE_METATYPE(QtMobility::qrangelist)
+Q_DECLARE_METATYPE(QtMobility::qoutputrangelist)
 
 #endif
 

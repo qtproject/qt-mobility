@@ -269,19 +269,15 @@ void QSensorBackend::enablePolling()
     Note that this function should be called from the constructor so that the information
     is available immediately.
 
-    \sa QSensor::measurementMinimum, QSensor::measurementMaximum, QSensor::measurementAccuracy,
-        QSensor::outputRange
+    \sa QSensor::outputRange, QSensor::outputRanges
 */
 void QSensorBackend::addOutputRange(qreal min, qreal max, qreal accuracy)
 {
     QSensorPrivate *d = m_sensor->d_func();
 
-    measurementdetails m;
-    m.measurementMinimum = min;
-    m.measurementMaximum = max;
-    m.measurementAccuracy = accuracy;
+    qoutputrange details = {min, max, accuracy};
 
-    d->measurementDetails << m;
+    d->outputRanges << details;
 
     // When adding the first range, set outputRage to it
     if (d->outputRange == -1) {
