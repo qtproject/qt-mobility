@@ -262,13 +262,23 @@ QDebug operator<<(QDebug dbg, const QContactDetail& detail)
 }
 #endif
 
-/*! Sets the preferred actions for this detail to be the given list of \a preferredActions */
+/*!
+ * \obsolete
+ * Sets the preferred actions for this detail to be the given list of \a preferredActions.
+ * This functionality may not be supported on all backends.
+ * This function is deprecated and will be removed after the transition period has elapsed.
+ */
 void QContactDetail::setPreferredActions(const QList<QContactActionDescriptor>& preferredActions)
 {
     d->m_preferredActions = preferredActions;
 }
 
-/*! Returns the list of preferred actions for this detail */
+/*!
+ * \obsolete
+ * Returns the list of preferred actions for this detail.
+ * This functionality may not be supported on all backends.
+ * This function is deprecated and will be removed after the transition period has elapsed.
+ */
 QList<QContactActionDescriptor> QContactDetail::preferredActions() const
 {
     return d->m_preferredActions;

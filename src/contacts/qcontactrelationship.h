@@ -92,6 +92,12 @@ public:
     void setSecond(const QContactId& secondId);
     void setRelationshipType(const QString& relationshipType);
 
+    enum Role {
+        First = 0,
+        Second,
+        Either
+    };
+
 private:
     QSharedDataPointer<QContactRelationshipPrivate> d;
 };

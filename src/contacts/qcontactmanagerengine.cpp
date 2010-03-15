@@ -381,14 +381,11 @@ QList<QContactRelationship> QContactManagerEngine::relationships(const QString& 
   to \c QContactManager::NoError.  Note that relationships cannot be updated directly using this function; in order
   to update a relationship, you must remove the old relationship, make the required modifications, and then save it.
 
-  The given relationship is invalid if it is circular (one of the destination contacts is also the source contact), or
-  if it references a non-existent local contact (either source or destination).  If the given \a relationship is invalid,
+  The given relationship is invalid if it is circular (the first contact is the second contact), or
+  if it references a non-existent local contact (either first or second).  If the given \a relationship is invalid,
   the function will return \c false and the \a error will be set to \c QContactManager::InvalidRelationshipError.
   If the given \a relationship could not be saved in the database (due to backend limitations)
   the function will return \c false and \a error will be set to \c QContactManager::NotSupportedError.
-
-  If any destination contact manager URI is not set in the \a relationship, these will be
-  automatically set to the URI of this manager, before the relationship is saved.
  */
 bool QContactManagerEngine::saveRelationship(QContactRelationship* relationship, QContactManager::Error& error)
 {
@@ -412,8 +409,6 @@ QList<QContactManager::Error> QContactManagerEngine::saveRelationships(QList<QCo
   will be removed, the \a error will be set to \c QContactManager::NoError and this function will return true.  If no such
   relationship exists in the manager, the \a error will be set to \c QContactManager::DoesNotExistError and this function
   will return false.
-
-  The priority of the relationship is ignored when determining existence of the relationship.
  */
 bool QContactManagerEngine::removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error)
 {
@@ -1306,19 +1301,15 @@ bool QContactManagerEngine::saveContacts(QList<QContact>* contacts, QMap<int, QC
   \a contactIds.  Returns true if all contacts were removed successfully,
   otherwise false.
 
+  Any contact that was removed successfully will have the relationships
+  in which it was involved removed also.
+
   The manager might populate \a errorMap (the map of indices of the \a contactIds list to
   the error which occurred when saving the contact at that index) for every
   index for which the contact could not be removed, if it is able.
   The \l QContactManager::error() function will
   only return \c QContactManager::NoError if all contacts were removed
   successfully.
-
-  For each contact that was removed successfully, the corresponding
-  id in the \a contactIds list will be retained but set to zero.  The id of contacts
-  that were not successfully removed will be left alone.
-
-  Any contact that was removed successfully will have the relationships
-  in which it was involved removed also.
 
   Any errors encountered during this operation should be stored to
   \a error.
@@ -1351,6 +1342,94 @@ bool QContactManagerEngine::removeContacts(QList<QContactLocalId>* contactIds, Q
 
     error = functionError;
     return (functionError == QContactManager::NoError);
+}
+
+/*!
+  \preliminary
+  Returns a pruned or modified version of the \a original contact which is valid and can be saved in the manager.
+  The returned contact might have entire details removed or arbitrarily changed.  The cache of relationships
+  in the contact are ignored entirely when considering compatibility with the backend, as they are
+  saved and validated separately.  Any error which occurs will be saved to \a error.
+
+  This function is preliminary and the behaviour is subject to change!
+ */
+QContact QContactManagerEngine::compatibleContact(const QContact& original, QContactManager::Error& error)
+{
+    QContact conforming;
+    QContactManager::Error tempError;
+    QList<QString> uniqueDefinitionIds;
+    QList<QContactDetail> allDetails = original.details();
+    QMap<QString, QContactDetailDefinition> defs = detailDefinitions(original.type(), tempError);
+    for (int j = 0; j < allDetails.size(); j++) {
+        // check that the detail conforms to the definition in this manager.
+        // if so, then add it to the conforming contact to be returned.  if not, prune it.
+        const QContactDetail& d = allDetails.at(j);
+
+        QVariantMap values = d.variantValues();
+        QContactDetailDefinition def = detailDefinition(d.definitionName(), original.type(), tempError);
+        // check that the definition is supported
+        if (error != QContactManager::NoError) {
+            continue; // this definition is not supported.
+        }
+
+        // check uniqueness
+        if (def.isUnique()) {
+            if (uniqueDefinitionIds.contains(def.name())) {
+                continue; // can't have two of a unique detail.
+            }
+            uniqueDefinitionIds.append(def.name());
+        }
+
+        bool addToConforming = true;
+        QList<QString> keys = values.keys();
+        for (int i=0; i < keys.count(); i++) {
+            const QString& key = keys.at(i);
+            // check that no values exist for nonexistent fields.
+            if (!def.fields().contains(key)) {
+                addToConforming = false;
+                break; // value for nonexistent field.
+            }
+
+            QContactDetailFieldDefinition field = def.fields().value(key);
+            // check that the type of each value corresponds to the allowable field type
+            if (static_cast<int>(field.dataType()) != values.value(key).userType()) {
+                addToConforming = false;
+                break; // type doesn't match.
+            }
+
+            // check that the value is allowable
+            // if the allowable values is an empty list, any are allowed.
+            if (!field.allowableValues().isEmpty()) {
+                // if the field datatype is a list, check that it contains only allowable values
+                if (field.dataType() == QVariant::List || field.dataType() == QVariant::StringList) {
+                    QList<QVariant> innerValues = values.value(key).toList();
+                    for (int i = 0; i < innerValues.size(); i++) {
+                        if (!field.allowableValues().contains(innerValues.at(i))) {
+                            addToConforming = false;
+                            break; // value not allowed.
+                        }
+                    }
+                } else if (!field.allowableValues().contains(values.value(key))) {
+                    // the datatype is not a list; the value wasn't allowed.
+                    addToConforming = false;
+                    break; // value not allowed.
+                }
+            }
+        }
+
+        // if it conforms to this manager's schema, save it in the conforming contact
+        // else, ignore it (prune it out of the conforming contact).
+        if (addToConforming) {
+            QContactDetail saveCopy = d;
+            conforming.saveDetail(&saveCopy);
+        }
+    }
+
+    if (!conforming.isEmpty())
+        error = QContactManager::NoError;
+    else
+        error = QContactManager::DoesNotExistError;
+    return conforming;
 }
 
 /*!
@@ -1623,17 +1702,17 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                 // now check to see if we have a match.
                 foreach (const QContactRelationship& rel, allRelationships) {
                     // perform the matching.
-                    if (rf.relatedContactRole() == QContactRelationshipFilter::Second) { // this is the role of the related contact; ie, to match, contact.id() must be the first in the relationship.
+                    if (rf.relatedContactRole() == QContactRelationship::Second) { // this is the role of the related contact; ie, to match, contact.id() must be the first in the relationship.
                         if ((rf.relationshipType().isEmpty() || rel.relationshipType() == rf.relationshipType())
                                 && CONTACT_IDS_MATCH(rel.first(), contact.id()) && CONTACT_IDS_MATCH(relatedContactId, rel.second())) {
                             return true;
                         }
-                    } else if (rf.relatedContactRole() == QContactRelationshipFilter::First) { // this is the role of the related contact; ie, to match, contact.id() must be the second in the relationship.
+                    } else if (rf.relatedContactRole() == QContactRelationship::First) { // this is the role of the related contact; ie, to match, contact.id() must be the second in the relationship.
                         if ((rf.relationshipType().isEmpty() || rel.relationshipType() == rf.relationshipType())
                                 && CONTACT_IDS_MATCH(rel.second(), contact.id()) && CONTACT_IDS_MATCH(relatedContactId, rel.first())) {
                             return true;
                         }
-                    } else { // QContactRelationshipFilter::Either
+                    } else { // QContactRelationship::Either
                         if ((rf.relationshipType().isEmpty() || rel.relationshipType() == rf.relationshipType())
                                 && ((CONTACT_IDS_MATCH(relatedContactId, rel.first()) && !CONTACT_IDS_MATCH(contactUri, relatedContactId)) || (CONTACT_IDS_MATCH(relatedContactId, rel.second()) && !CONTACT_IDS_MATCH(contactUri, relatedContactId)))) {
                             return true;

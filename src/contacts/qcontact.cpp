@@ -489,10 +489,13 @@ QList<QContactRelationship> QContact::relationships(const QString& relationshipT
 }
 
 /*!
- * \preliminary
- * Returns a list of ids of contacts which are related to this contact in a relationship of the
- * given \a relationshipType, where those other contacts participate in the relationship in the
- * given \a role
+  \obsolete
+  Returns a list of ids of contacts which are related to this contact in a relationship of the
+  given \a relationshipType, where those other contacts participate in the relationship in the
+  given \a role.
+
+  This function is deprecated and will be removed after the transition period has elapsed.
+  Use the relatedContacts() function which takes a QContactRelationship::Role argument instead!
  */
 QList<QContactId> QContact::relatedContacts(const QString& relationshipType, QContactRelationshipFilter::Role role) const
 {
@@ -531,7 +534,48 @@ QList<QContactId> QContact::relatedContacts(const QString& relationshipType, QCo
 }
 
 /*!
- * \preliminary
+  Returns a list of ids of contacts which are related to this contact in a relationship of the
+  given \a relationshipType, where those other contacts participate in the relationship in the
+  given \a role.
+ */
+QList<QContactId> QContact::relatedContacts(const QString& relationshipType, QContactRelationship::Role role) const
+{
+    QList<QContactId> retn;
+    for (int i = 0; i < d->m_relationshipsCache.size(); i++) {
+        QContactRelationship curr = d->m_relationshipsCache.at(i);
+        if (relationshipType.isEmpty() || curr.relationshipType() == relationshipType) {
+            // check that the other contacts fill the given role
+            if (role == QContactRelationship::First) {
+                if (curr.first() != d->m_id) {
+                    if (!retn.contains(curr.first())) {
+                        retn.append(curr.first());
+                    }
+                }
+            } else if (role == QContactRelationship::Second) {
+                if (curr.first() == d->m_id) {
+                    if (!retn.contains(curr.second())) {
+                        retn.append(curr.second());
+                    }
+                }
+            } else { // role == Either.
+                if (curr.first() == d->m_id) {
+                    if (!retn.contains(curr.second())) {
+                        retn.append(curr.second());
+                    }
+                } else {
+                    if (!retn.contains(curr.first())) {
+                        retn.append(curr.first());
+                    }
+                }
+            }
+        }
+    }
+
+    return retn;
+}
+
+/*!
+ * \obsolete
  * Sets the order of importance of the relationships for this contact by saving a \a reordered list of relationships which involve the contact.
  * The list must include all of the relationships in which the contact is involved, and must not include any relationships which do
  * not involve the contact.  In order for the ordering preference to be persisted, the contact must be saved in its manager.
@@ -541,6 +585,8 @@ QList<QContactId> QContact::relatedContacts(const QString& relationshipType, QCo
  * its relationships will result in an error occurring. The updated relationships list must be retrieved from the manager, reordered and set
  * in the contact before the contact can be saved successfully.
  *
+ * This function is deprecated and will be removed after the transition period has elapsed.
+ *
  * \sa relationships(), relationshipOrder()
  */
 void QContact::setRelationshipOrder(const QList<QContactRelationship>& reordered)
@@ -549,9 +595,11 @@ void QContact::setRelationshipOrder(const QList<QContactRelationship>& reordered
 }
 
 /*!
- * \preliminary
+ * \obsolete
  * Returns the ordered list of relationships in which the contact is involved.  By default, this list is equal to the cached
  * list of relationships which is available by calling relationships().
+ *
+ * This function is deprecated and will be removed after the transition period has elapsed.
  *
  * \sa setRelationshipOrder()
  */

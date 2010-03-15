@@ -88,6 +88,9 @@ public:
     virtual bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
     virtual bool removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error);
 
+    /* Return a pruned or modified contact which is valid and can be saved in the backend */
+    virtual QContact compatibleContact(const QContact& original, QContactManager::Error& error);
+
     /* Synthesize the display label of a contact */
     virtual QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const; // replaces the above
     QContact setContactDisplayLabel(const QString& displayLabel, const QContact& contact) const;

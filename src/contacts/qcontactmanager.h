@@ -124,7 +124,11 @@ public:
     QList<QContactManager::Error> Q_DECL_DEPRECATED saveContacts(QList<QContact>* contacts);       // deprecated batch API - save
     QList<QContactManager::Error> Q_DECL_DEPRECATED removeContacts(QList<QContactLocalId>* contactIds);  // deprecated batch API - remove
     bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap); // batch API - save.
-    bool removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap); // batch API - remove.
+    bool Q_DECL_DEPRECATED removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap); // batch API - remove. deprecated also.
+    bool removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap); // batch API - remove.
+
+    /* Return a pruned or modified contact which is valid and can be saved in the manager */
+    QContact compatibleContact(const QContact& original); // Preliminary function!
 
     /* Synthesize the display label of a contact */
     QString synthesizedDisplayLabel(const QContact& contact) const; // replaces the above
@@ -134,12 +138,16 @@ public:
     QContactLocalId selfContactId() const;
 
     /* Relationships */
-    QList<QContactRelationship> relationships(const QContactId& participantId, QContactRelationshipFilter::Role role = QContactRelationshipFilter::Either) const;
-    QList<QContactRelationship> relationships(const QString& relationshipType = QString(), const QContactId& participantId = QContactId(), QContactRelationshipFilter::Role role = QContactRelationshipFilter::Either) const;
+    QList<QContactRelationship> Q_DECL_DEPRECATED relationships(const QContactId& participantId, QContactRelationshipFilter::Role role = QContactRelationshipFilter::Either) const;
+    QList<QContactRelationship> Q_DECL_DEPRECATED relationships(const QString& relationshipType = QString(), const QContactId& participantId = QContactId(), QContactRelationshipFilter::Role role = QContactRelationshipFilter::Either) const;
+    QList<QContactRelationship> relationships(const QContactId& participantId, QContactRelationship::Role role /* = QContactRelationship::Either */) const;
+    QList<QContactRelationship> relationships(const QString& relationshipType /* = QString() */, const QContactId& participantId /* = QContactId() */, QContactRelationship::Role role /* = QContactRelationship::Either */) const;
     bool saveRelationship(QContactRelationship* relationship);
-    QList<QContactManager::Error> saveRelationships(QList<QContactRelationship>* relationships);
+    QList<QContactManager::Error> Q_DECL_DEPRECATED saveRelationships(QList<QContactRelationship>* relationships); // deprecated
+    bool saveRelationships(QList<QContactRelationship>* relationships, QMap<int, QContactManager::Error>* errorMap); // replaces the above
     bool removeRelationship(const QContactRelationship& relationship);
-    QList<QContactManager::Error> removeRelationships(const QList<QContactRelationship>& relationships);
+    QList<QContactManager::Error> Q_DECL_DEPRECATED removeRelationships(const QList<QContactRelationship>& relationships); // deprecated
+    bool removeRelationships(const QList<QContactRelationship>& relationships, QMap<int, QContactManager::Error>* errorMap); // replaces the above
 
     /* Definitions - Accessors and Mutators */
     QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType = QContactType::TypeContact) const;
@@ -149,12 +157,12 @@ public:
 
     /* Functionality reporting */
     enum ManagerFeature {
-        Groups = 0,
-        ActionPreferences,
+        Groups = 0,               // backend supports QContactType::TypeGroup type contacts (convenience for clients... should be deprecated)
+        ActionPreferences,        // per-contact action preferences
         MutableDefinitions,
         Relationships,
         ArbitraryRelationshipTypes,
-        RelationshipOrdering,
+        RelationshipOrdering,     // deprecated along with setRelationshipOrder() etc in QContact.
         DetailOrdering,
         SelfContact,
         Anonymous,

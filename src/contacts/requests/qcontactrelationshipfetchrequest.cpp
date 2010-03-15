@@ -127,7 +127,7 @@ QContactId QContactRelationshipFetchRequest::second() const
 }
 
 /*!
-  \internal
+  \obsolete
   Sets the participant criterion of the fetch request to \a
   participantUri.  If the \a participantUri references a contact in
   the manager from which the relationships are being fetched and the
@@ -156,7 +156,7 @@ void QContactRelationshipFetchRequest::setParticipant(const QContactId& particip
 }
 
 /*!
-  \internal
+  \obsolete
   Returns the participant criterion of the fetch request
  */
 QContactId QContactRelationshipFetchRequest::participant() const
@@ -166,7 +166,7 @@ QContactId QContactRelationshipFetchRequest::participant() const
 }
 
 /*!
-  \internal
+  \obsolete
   Returns the role of the participant criterion of the fetch request
  */
 QContactRelationshipFilter::Role QContactRelationshipFetchRequest::participantRole() const
