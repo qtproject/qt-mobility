@@ -106,8 +106,7 @@ public Q_SLOTS:
 
 private:
     GstElement &m_camerabin;
-    QGstreamerCaptureSession *m_session;
-    QCamera::FlashModes m_flashMode;
+    QGstreamerCaptureSession *m_session;    
 /*Q_SIGNALS:
     void exposureLocked();
     void flashReady(bool);

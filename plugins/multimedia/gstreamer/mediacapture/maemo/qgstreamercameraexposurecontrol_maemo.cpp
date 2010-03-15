@@ -41,13 +41,14 @@
 
 #include "qgstreamercameraexposurecontrol_maemo.h"
 #include "qgstreamercapturesession_maemo.h"
+#include <gst/interfaces/photography.h>
 
 #include <QDebug>
+
 QGstreamerCameraExposureControl::QGstreamerCameraExposureControl(GstElement &camerabin, QGstreamerCaptureSession *session)
     :QCameraExposureControl(session),
      m_camerabin(camerabin),
-     m_session(session),
-     m_flashMode(QCamera::FlashOff)
+     m_session(session)
 {
 }
 
@@ -57,13 +58,38 @@ QGstreamerCameraExposureControl::~QGstreamerCameraExposureControl()
 
 QCamera::FlashModes QGstreamerCameraExposureControl::flashMode() const
 {
-    return m_flashMode;
+    GstPhotoSettings config;
+    gst_photography_get_config(GST_PHOTOGRAPHY(&m_camerabin), &config);
+    GstFlashMode flashMode = config.flash_mode;
+
+    QCamera::FlashModes modes;
+    switch (flashMode) {
+    case GST_PHOTOGRAPHY_FLASH_MODE_AUTO: modes |= QCamera::FlashAuto; break;
+    case GST_PHOTOGRAPHY_FLASH_MODE_OFF: modes |= QCamera::FlashOff; break;
+    case GST_PHOTOGRAPHY_FLASH_MODE_ON: modes |= QCamera::FlashOn; break;
+    case GST_PHOTOGRAPHY_FLASH_MODE_FILL_IN: modes |= QCamera::FlashFill; break;
+    case GST_PHOTOGRAPHY_FLASH_MODE_RED_EYE: modes |= QCamera::FlashRedEyeReduction; break;
+    default:
+        modes |= QCamera::FlashManual;
+        break;
+    }
+    return modes;
 }
 
 void QGstreamerCameraExposureControl::setFlashMode(QCamera::FlashModes mode)
 {
-    m_flashMode = mode;
-    //m_session->setFlashMode(m_flashMode);
+    GstPhotoSettings config;
+    gst_photography_get_config(GST_PHOTOGRAPHY(&m_camerabin), &config);
+
+    GstFlashMode flashMode;
+    if (mode.testFlag(QCamera::FlashAuto)) flashMode = GST_PHOTOGRAPHY_FLASH_MODE_AUTO;
+    else if (mode.testFlag(QCamera::FlashOff)) flashMode = GST_PHOTOGRAPHY_FLASH_MODE_OFF;
+    else if (mode.testFlag(QCamera::FlashOn)) flashMode = GST_PHOTOGRAPHY_FLASH_MODE_ON;
+    else if (mode.testFlag(QCamera::FlashFill)) flashMode = GST_PHOTOGRAPHY_FLASH_MODE_FILL_IN;
+    else if (mode.testFlag(QCamera::FlashRedEyeReduction)) flashMode = GST_PHOTOGRAPHY_FLASH_MODE_RED_EYE;
+
+    config.flash_mode = flashMode;
+    gst_photography_set_config(GST_PHOTOGRAPHY(&m_camerabin), &config);
 }
 
 QCamera::FlashModes QGstreamerCameraExposureControl::supportedFlashModes() const
