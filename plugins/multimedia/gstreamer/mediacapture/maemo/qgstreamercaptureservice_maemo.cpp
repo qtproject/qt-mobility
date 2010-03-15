@@ -52,6 +52,7 @@
 #include "qgstreamercameraexposurecontrol_maemo.h"
 #include "qgstreamercamerafocuscontrol_maemo.h"
 #include "qgstreamerimagecapturecontrol_maemo.h"
+#include "qgstreamerimageprocessingcontrol_maemo.h"
 
 #include "qgstreamervideooutputcontrol.h"
 #include "qgstreameraudioinputendpointselector.h"
@@ -250,7 +251,10 @@ QMediaControl *QGstreamerCaptureService::control(const char *name) const
         return m_captureSession->cameraExposureControl();
 
     if (qstrcmp(name, QCameraFocusControl_iid) == 0)
-        return m_captureSession->cameraExposureControl();
+        return m_captureSession->cameraFocusControl();
+
+    if (qstrcmp(name, QImageProcessingControl_iid) == 0)
+        return m_captureSession->imageProcessingControl();
 
     return 0;
 }

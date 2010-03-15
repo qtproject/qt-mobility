@@ -47,6 +47,7 @@
 #include "qgstreamerimageencode_maemo.h"
 #include "qgstreamercameraexposurecontrol_maemo.h"
 #include "qgstreamercamerafocuscontrol_maemo.h"
+#include "qgstreamerimageprocessingcontrol_maemo.h"
 #include "qgstreamerbushelper.h"
 #include <qmediarecorder.h>
 #include <gst/interfaces/photography.h>
@@ -122,6 +123,9 @@ QGstreamerCaptureSession::QGstreamerCaptureSession(QGstreamerCaptureSession::Cap
     m_mediaContainerControl = new QGstreamerMediaContainerControl(this);
     m_cameraExposureControl = new QGstreamerCameraExposureControl(*m_pipeline, this);
     m_cameraFocusControl = new QGstreamerCameraFocusControl(*m_pipeline, this);
+    m_imageProcessingControl = new QGstreamerImageProcessingControl(*m_pipeline, this);
+
+    qRegisterMetaType<QCamera::FocusStatus>("QCamera::FocusStatus");
 }
 
 QGstreamerCaptureSession::~QGstreamerCaptureSession()
@@ -441,6 +445,25 @@ bool QGstreamerCaptureSession::processSyncMessage(const QGstreamerMessage &messa
                 m_videoPreviewFactory->prepareWinId();
 
             return true;
+        }
+
+        if (gst_structure_has_name(gm->structure, GST_PHOTOGRAPHY_AUTOFOCUS_DONE)) {
+            gint status = GST_PHOTOGRAPHY_FOCUS_STATUS_NONE;
+            gst_structure_get_int (gm->structure, "status", &status);
+            switch (status) {
+                case GST_PHOTOGRAPHY_FOCUS_STATUS_FAIL:
+                    emit focusStatusChanged(QCamera::FocusLost);
+                    break;
+                case GST_PHOTOGRAPHY_FOCUS_STATUS_SUCCESS:
+                    emit focusStatusChanged(QCamera::FocusReached);
+                    break;
+                case GST_PHOTOGRAPHY_FOCUS_STATUS_NONE:
+                    emit focusStatusChanged(QCamera::FocusUnableToReach);
+                    break;
+                case GST_PHOTOGRAPHY_FOCUS_STATUS_RUNNING:
+                default:
+                    break;
+            }
         }
     }
 

@@ -39,11 +39,11 @@
 **
 ****************************************************************************/
 
-#ifndef QGSTREAMERCAMERAFOCUSCONTROL_H
-#define QGSTREAMERCAMERAFOCUSCONTROL_H
+#ifndef QGSTREAMERIMAGEPROCESSINGCONTROL_H
+#define QGSTREAMERIMAGEPROCESSINGCONTROL_H
 
 #include <experimental/qcamera.h>
-#include <experimental/qcamerafocuscontrol.h>
+#include <experimental/qimageprocessingcontrol.h>
 
 #include <gst/gst.h>
 #include <glib.h>
@@ -52,54 +52,42 @@ class QGstreamerCaptureSession;
 
 QTM_USE_NAMESPACE
 
-class QGstreamerCameraFocusControl  : public QCameraFocusControl
+class QGstreamerImageProcessingControl : public QImageProcessingControl
 {
     Q_OBJECT
 
 public:
-    QGstreamerCameraFocusControl(GstElement &camerabin, QGstreamerCaptureSession *session);
-    virtual ~QGstreamerCameraFocusControl();
+    QGstreamerImageProcessingControl(GstElement &camerabin, QGstreamerCaptureSession *session);
+    virtual ~QGstreamerImageProcessingControl();
 
-    QCamera::FocusMode focusMode() const;
-    void setFocusMode(QCamera::FocusMode mode);
-    QCamera::FocusModes supportedFocusModes() const;
-    QCamera::FocusStatus focusStatus() const;
+    QCamera::WhiteBalanceMode whiteBalanceMode() const;
+    void setWhiteBalanceMode(QCamera::WhiteBalanceMode mode);
+    QCamera::WhiteBalanceModes supportedWhiteBalanceModes() const;
+    int manualWhiteBalance() const;
+    void setManualWhiteBalance(int colorTemperature);
 
-    bool macroFocusingEnabled() const;
-    bool isMacroFocusingSupported() const;
-    void setMacroFocusingEnabled(bool);
+    int contrast() const;
+    void setContrast(int value);
 
-    qreal maximumOpticalZoom() const;
-    qreal maximumDigitalZoom() const;
-    qreal opticalZoom() const;
-    qreal digitalZoom() const;
+    int saturation() const;
+    void setSaturation(int value);
 
-    void zoomTo(qreal optical, qreal digital) ;
+    bool isSharpeningSupported() const;
+    int sharpeningLevel() const;
+    void setSharpeningLevel(int value);
 
-    QCamera::FocusPointMode focusPointMode() const;
-    void setFocusPointMode(QCamera::FocusPointMode mode) ;
-    QCamera::FocusPointModes supportedFocusPointModes() const;
-    QPointF customFocusPoint() const;
-    void setCustomFocusPoint(const QPointF &point);
+    bool isDenoisingSupported() const;
+    int denoisingLevel() const;
+    void setDenoisingLevel(int value);
 
-    QList<QRectF> focusZones() const;
+    bool isWhiteBalanceLocked() const;
 
-public Q_SLOTS:
-    void startFocusing();
-    void cancelFocusing();
-
-private:
-    QGstreamerCaptureSession *m_session;
-    GstElement &m_camerabin;
-    QCamera::FocusStatus m_focusStatus;
-    QCamera::FocusMode m_focusMode;
+    void lockWhiteBalance();
+    void unlockWhiteBalance();
 
 /*Q_SIGNALS:
-    void opticalZoomChanged(qreal opticalZoom);
-    void digitalZoomChanged(qreal digitalZoom);
-    void focusStatusChanged(QCamera::FocusStatus);
-    void focusZonesChanged(const QList<QRectF> &);
-*/
+    void whiteBalanceLocked();
+    */
 };
 
-#endif // QGSTREAMERCAMERAFOCUSCONTROL_H
+#endif // QGSTREAMERIMAGEPROCESSINGCONTROL_H
