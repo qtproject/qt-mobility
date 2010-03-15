@@ -139,8 +139,9 @@ QList<QContactLocalId> CntSymbianEngine::contactIds(
     if (filter.type() == QContactFilter::RelationshipFilter)
     {
         QContactRelationshipFilter rf = static_cast<QContactRelationshipFilter>(filter);
+        // XXX enum changed classes - engine API will reflect this eventually
         QList<QContactRelationship> relationshipsList = relationships(
-            rf.relationshipType(), rf.relatedContactId(), rf.relatedContactRole(), error);
+            rf.relationshipType(), rf.relatedContactId(), static_cast<QContactRelationshipFilter::Role>(rf.relatedContactRole()), error);
         if(error == QContactManager::NoError) {
             foreach(const QContactRelationship& r, relationshipsList) {
                 if(rf.relatedContactRole() == QContactRelationshipFilter::First) {
