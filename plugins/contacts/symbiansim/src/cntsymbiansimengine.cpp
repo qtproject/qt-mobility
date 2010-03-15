@@ -538,6 +538,11 @@ void CntSymbianSimEngine::updateDisplayLabel(QContact& contact) const
     }
 }
 
+void CntSymbianSimEngine::setReadOnlyAccessConstraint(QContactDetail* detail) const
+{
+    setDetailAccessConstraints(detail, QContactDetail::ReadOnly); 
+}
+
 /*!
  * Executes an asynchronous request so that it will appear synchronous. This is
  * used internally in all synchronous functions. This way we only need to 

@@ -108,6 +108,7 @@ private slots:
 
     /* Test cases that take no data */
     void signalEmission();
+    void sdnContacts();
 
 private:
     void initManager(QString simStore);
@@ -1007,6 +1008,32 @@ void tst_SimCM::signalEmission()
     }
     QVERIFY(m_cm->removeContacts(&contactIds, &errorMap));
     QTRY_COMPARE(spyRemoved.count(), batchOpCount);
+}
+
+/*!
+ * Tests SDN store specific stuff
+ */
+void tst_SimCM::sdnContacts()
+{
+    QString uri("qtcontacts:symbiansim:store=SDN");
+    QScopedPointer<QContactManager> cm(QContactManager::fromUri(uri));
+    if (cm->error() == QContactManager::NotSupportedError)
+        QSKIP("The store not supported by the SIM card", SkipSingle);
+    
+    QVERIFY(cm->error() == QContactManager::NoError);
+    
+    // Verify that contact details have read only flag
+    QList<QContact> contacts = cm->contacts();
+    QVERIFY(contacts.count());
+    foreach(QContact c, contacts) {
+        foreach(QContactDetail d, c.details()) {
+            QVERIFY(d.accessConstraints().testFlag(QContactDetail::ReadOnly));
+        }
+    }
+
+    // Writing should fail
+    QContact c = createContact("foo", "1234567");
+    QVERIFY(!cm->saveContact(&c));
 }
 
 /*!

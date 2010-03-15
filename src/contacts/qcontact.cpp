@@ -592,8 +592,10 @@ QList<QContactActionDescriptor> QContact::availableActions(const QString& vendor
 /*!
  * \preliminary
  * Set a particular detail as the \a preferredDetail for a given \a actionName.  Returns
- * true if the detail was successfully set as the preferred detail for the action
- * identified by \a actionName, otherwise returns false
+ * true if the detail exists in the contact and was successfully set as the preferred detail for the action
+ * identified by \a actionName, otherwise returns false.
+ * Note that since QContact is a value class, no error checking is done on the action name
+ * (to ensure that an action of that name is available) in this function.
  */
 bool QContact::setPreferredDetail(const QString& actionName, const QContactDetail& preferredDetail)
 {
@@ -655,6 +657,24 @@ QContactDetail QContact::preferredDetail(const QString& actionName) const
     }
 
     return retn;
+}
+
+
+
+/*!
+ * \preliminary
+ * Returns a map of action name to the preferred detail for the action of that name.
+ */
+QMap<QString, QContactDetail> QContact::preferredDetails() const
+{
+    QMap<QString, QContactDetail> ret;
+    QMap<QString, int>::const_iterator it = d->m_preferences.constBegin();
+    while (it != d->m_preferences.constEnd()) {
+        ret.insert(it.key(), d->m_details.at(it.value()));
+        ++it;
+    }
+
+    return ret;
 }
 
 QTM_END_NAMESPACE

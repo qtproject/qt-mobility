@@ -199,6 +199,22 @@ QTextCodec* QVersitReader::defaultCodec() const
 }
 
 /*!
+ * Returns the state of the reader.
+ */
+QVersitReader::State QVersitReader::state() const
+{
+    return d->state();
+}
+
+/*!
+ * Returns the error encountered by the last operation.
+ */
+QVersitReader::Error QVersitReader::error() const
+{
+    return d->error();
+}
+
+/*!
  * Starts reading the input asynchronously.
  * Returns false if the input device has not been set or opened or
  * if there is another asynchronous read operation already pending.
@@ -255,22 +271,6 @@ QList<QVersitDocument> QVersitReader::results() const
 {
     QMutexLocker locker(&d->mMutex);
     return d->mVersitDocuments;
-}
-
-/*!
- * Returns the state of the reader.
- */
-QVersitReader::State QVersitReader::state() const
-{
-    return d->state();
-}
-
-/*!
- * Returns the error encountered by the last operation.
- */
-QVersitReader::Error QVersitReader::error() const
-{
-    return d->error();
 }
 
 #include "moc_qversitreader.cpp"

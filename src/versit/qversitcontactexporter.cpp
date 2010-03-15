@@ -222,6 +222,6 @@ QVersitResourceHandler* QVersitContactExporter::resourceHandler() const
 /*! \internal */
 QList<QVersitDocument> QVersitContactExporter::exportContacts(const QList<QContact>& contacts)
 {
-    exportContacts(contacts);
+    exportContacts(contacts, QVersitDocument::VCard30Type);
     return documents();
 }

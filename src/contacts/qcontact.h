@@ -146,6 +146,7 @@ public:
     bool setPreferredDetail(const QString& actionName, const QContactDetail& preferredDetail);
     bool isPreferredDetail(const QString& actionName, const QContactDetail& detail) const;
     QContactDetail preferredDetail(const QString& actionName) const;
+    QMap<QString, QContactDetail> preferredDetails() const;
 
 private:
     friend class QContactManager;

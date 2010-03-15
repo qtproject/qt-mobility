@@ -68,6 +68,7 @@ CntSimStorePrivate::CntSimStorePrivate(CntSymbianSimEngine &engine, CntSimStore 
      m_engine(engine),
      m_simStore(simStore),
      m_storeName(storeName),
+     m_readOnlyAccess(false),
      m_storeInfoPckg(m_storeInfo),
      m_listener(0)
 {
@@ -80,6 +81,10 @@ void CntSimStorePrivate::ConstructL()
     TBuf<RMobilePhoneBookStore::KMaxPBIDSize> storeName;
     convertStoreNameL(storeName);
     
+    // SDN store is allways read only
+    if (m_storeName == KParameterValueSimStoreNameSdn)
+        m_readOnlyAccess = true;
+
     // Open etel server
     User::LeaveIfError(m_etelServer.Connect());
     User::LeaveIfError(m_etelServer.LoadPhoneModule(KMmTsyModuleName));
@@ -387,6 +392,8 @@ QList<QContact> CntSimStorePrivate::decodeSimContactsL(TDes8& rawData) const
                             QString number = lastNumber.number();
                             number.insert(0, "+");
                             lastNumber.setNumber(number);
+                            if (m_readOnlyAccess)
+                                m_engine.setReadOnlyAccessConstraint(&lastNumber);
                             currentContact.saveDetail(&lastNumber);
                         }
                     }
@@ -409,6 +416,8 @@ QList<QContact> CntSimStorePrivate::decodeSimContactsL(TDes8& rawData) const
                         QContactName name;
                         QString nameString = QString::fromUtf16(bufPtr.Ptr(), bufPtr.Length());
                         name.setCustomLabel(nameString);
+                        if (m_readOnlyAccess)
+                            m_engine.setReadOnlyAccessConstraint(&name);                        
                         currentContact.saveDetail(&name);
                         QContactManager::Error error(QContactManager::NoError);
                         currentContact = m_engine.setContactDisplayLabel(m_engine.synthesizedDisplayLabel(currentContact, error), currentContact);
@@ -422,6 +431,8 @@ QList<QContact> CntSimStorePrivate::decodeSimContactsL(TDes8& rawData) const
                     QContactNickname nickName;
                     QString name = QString::fromUtf16(bufPtr.Ptr(), bufPtr.Length());
                     nickName.setNickname(name);
+                    if (m_readOnlyAccess)
+                        m_engine.setReadOnlyAccessConstraint(&nickName);                    
                     currentContact.saveDetail(&nickName);
                 }
                 break;
@@ -433,6 +444,8 @@ QList<QContact> CntSimStorePrivate::decodeSimContactsL(TDes8& rawData) const
                     phoneNumber.setSubTypes( QContactPhoneNumber::SubTypeMobile );
                     QString number = QString::fromUtf16(bufPtr.Ptr(), bufPtr.Length());
                     phoneNumber.setNumber(number);
+                    if (m_readOnlyAccess)
+                        m_engine.setReadOnlyAccessConstraint(&phoneNumber);                    
                     currentContact.saveDetail(&phoneNumber);
                 }
                 break;
@@ -449,6 +462,8 @@ QList<QContact> CntSimStorePrivate::decodeSimContactsL(TDes8& rawData) const
                     QContactEmailAddress email;
                     QString emailAddress = QString::fromUtf16(bufPtr.Ptr(), bufPtr.Length());
                     email.setEmailAddress(emailAddress);
+                    if (m_readOnlyAccess)
+                        m_engine.setReadOnlyAccessConstraint(&email);                    
                     currentContact.saveDetail(&email);
                 }
                 break;
