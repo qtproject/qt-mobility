@@ -609,7 +609,7 @@ bool QMapPolygon::intersects(const QRectF& rect) const
 /******************************************************************************
 * QMapEllipse
 *******************************************************************************/
-QMapEllipse::QMapEllipse(const QGeoCoordinateMaps& topLeft, const QGeoCoordinateMaps& bottomRight,
+QMapEllipse::QMapEllipse(const QGeoCoordinate& topLeft, const QGeoCoordinate& bottomRight,
                          const QPen& pen, const QBrush& brush, quint16 layerIndex)
         : QMapObject(QMapObject::Ellipse, layerIndex),
           geoTopLeft(topLeft), geoBottomRight(bottomRight), p(pen), b(brush)
