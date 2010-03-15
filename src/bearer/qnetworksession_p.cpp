@@ -496,19 +496,18 @@ void QNetworkSessionPrivate::setActiveTimeStamp()
         return;
     }
     QString interface = currentInterface().hardwareAddress().toLower();
-    const QString devicePath = "/org/freedesktop/Hal/devices/net_" + interface.replace(":","_");
+    const QString devicePath = QLatin1String("/org/freedesktop/Hal/devices/net_") +
+                               interface.replace(QLatin1Char(':'), QLatin1Char('_'));
 
     QString path;
     QString serviceName;
     QScopedPointer<QNetworkManagerInterface> ifaceD(new QNetworkManagerInterface());
 
-    const QList<QDBusObjectPath> connections = ifaceD->activeConnections();
-    foreach(const QDBusObjectPath conpath, connections) {
+    foreach (const QDBusObjectPath &conpath, ifaceD->activeConnections()) {
         QScopedPointer<QNetworkManagerConnectionActive> conDetails(new QNetworkManagerConnectionActive(conpath.path()));
         const QDBusObjectPath connection = conDetails->connection();
         serviceName = conDetails->serviceName();
-        const QList<QDBusObjectPath> so = conDetails->devices();
-        foreach(const QDBusObjectPath device, so) {
+        foreach (const QDBusObjectPath &device, conDetails->devices()) {
             if(device.path() == devicePath) {
                 path = connection.path();
             }
@@ -520,8 +519,7 @@ void QNetworkSessionPrivate::setActiveTimeStamp()
         return;
 
     QScopedPointer<QNetworkManagerSettings> settingsiface(new QNetworkManagerSettings(serviceName));
-    const QList<QDBusObjectPath> list = settingsiface->listConnections();
-    foreach(const QDBusObjectPath path, list) {
+    foreach (const QDBusObjectPath &path, settingsiface->listConnections()) {
         QScopedPointer<QNetworkManagerSettingsConnection> sysIface;
         sysIface.reset(new QNetworkManagerSettingsConnection(serviceName, path.path()));
         startTime = QDateTime::fromTime_t(sysIface->getTimestamp());

@@ -334,7 +334,7 @@ void QNetworkConfigurationManagerPrivate::addConfiguration(QString& iap_id)
 	    cpPriv->network_attrs = getNetworkAttrs(true, iap_id, iap_type, QString());
 	    cpPriv->service_id = saved_iap.value("service_id").toString();
 	    cpPriv->service_type = saved_iap.value("service_type").toString();
-	    if (iap_type.startsWith("WLAN")) {
+        if (iap_type.startsWith(QLatin1String("WLAN"))) {
 		QByteArray ssid = saved_iap.value("wlan_ssid").toByteArray();
 		if (ssid.isEmpty()) {
 		    qWarning() << "Cannot get ssid for" << iap_id;
@@ -383,7 +383,7 @@ void QNetworkConfigurationManagerPrivate::addConfiguration(QString& iap_id)
 		    ptr->iap_type = iap_type;
 		    update_needed = true;
 		}
-		if (iap_type.startsWith("WLAN")) {
+        if (iap_type.startsWith(QLatin1String("WLAN"))) {
 		    QByteArray ssid = changed_iap.value("wlan_ssid").toByteArray();
 		    if (ssid.isEmpty()) {
 			qWarning() << "Cannot get ssid for" << iap_id;
@@ -441,7 +441,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
     QList<QString> all_iaps;
     Maemo::IAPConf::getAll(all_iaps);
 
-    foreach (QString iap_id, all_iaps) {
+    foreach (const QString &iap_id, all_iaps) {
 	QByteArray ssid;
 
 	Maemo::IAPConf saved_ap(iap_id);
@@ -454,7 +454,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 	}
 
 	QString iap_type = saved_ap.value("type").toString();
-	if (iap_type.startsWith("WLAN")) {
+    if (iap_type.startsWith(QLatin1String("WLAN"))) {
 	    ssid = saved_ap.value("wlan_ssid").toByteArray();
 	    if (ssid.isEmpty()) {
 		qWarning() << "Cannot get ssid for" << iap_id;
@@ -554,7 +554,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 		qDebug("IAP: %s, ssid: %s, discovered", iapid.toAscii().data(), priv->network_id.data());
 #endif
 
-		if (!ap.scan.network_type.startsWith("WLAN"))
+        if (!ap.scan.network_type.startsWith(QLatin1String("WLAN")))
 		    continue; // not a wlan AP
 
 		/* Remove scanned AP from known configurations so that we can

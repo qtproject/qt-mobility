@@ -357,7 +357,7 @@ quint64 QNetworkSessionPrivate::getStatistics(bool sent) const
 	return 0;
     }
 
-    foreach (const Maemo::IcdStatisticsResult res, stats_results) {
+    foreach (const Maemo::IcdStatisticsResult &res, stats_results) {
 	if (res.params.network_attrs & ICD_NW_ATTR_IAPNAME) {
 	    /* network_id is the IAP UUID */
 	    if (QString(res.params.network_id.data()) == activeConfig.identifier()) {

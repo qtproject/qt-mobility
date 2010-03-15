@@ -234,10 +234,9 @@ QList<QNetworkConfiguration> QNetworkConfigurationManager::allConfigurations(QNe
 {
     QList<QNetworkConfiguration> result;
     QNetworkConfigurationManagerPrivate* conPriv = connManager();
-    QList<QString> cpsIdents = conPriv->accessPointConfigurations.keys();
 
     //find all InternetAccessPoints
-    foreach(const QString ii, cpsIdents) {
+    foreach (const QString &ii, conPriv->accessPointConfigurations.keys()) {
         QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> p = 
             conPriv->accessPointConfigurations.value(ii);
         if ( (p->state & filter) == filter ) {
@@ -248,8 +247,7 @@ QList<QNetworkConfiguration> QNetworkConfigurationManager::allConfigurations(QNe
     }
 
     //find all service networks
-    cpsIdents = conPriv->snapConfigurations.keys();
-    foreach(const QString ii, cpsIdents) {
+    foreach (const QString &ii, conPriv->snapConfigurations.keys()) {
         QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> p = 
             conPriv->snapConfigurations.value(ii);
         if ( (p->state & filter) == filter ) {
