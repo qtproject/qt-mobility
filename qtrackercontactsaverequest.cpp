@@ -264,9 +264,11 @@ void QTrackerContactSaveRequest::saveContactDetails( RDFServicePtr service,
         QList<QContactDetail> workDetails;
         QList<QContactDetail> homeDetails;
         foreach(const QContactDetail& det, details) {
+            // details can be for both contexts, so check for both seperately
             if( det.contexts().contains(QContactDetail::ContextWork) ) {
                 workDetails << det;
-            } else {
+            }
+            if( det.contexts().contains(QContactDetail::ContextHome)) {
                 homeDetails << det;
             }
         }
