@@ -112,8 +112,6 @@ these domains have dependencies and these are outlined below:
        On all platforms, QML elements for sound effects and music and video playing are exported if QtDeclarative (auto-detected) is available.
 
        On all platforms, additional rendering paths are enabled of QtOpenGL (auto-detected) is available.
-
-       On Maemo 5, QtMedia depends on \l {http://www.pulseaudio.org}{PulseAudio} if QtDeclarative is used.
     \o
     \o
 \row
