@@ -295,4 +295,3 @@ void UT_CntSqlSearch::testCreateSpaceString()
     QVERIFY(!result.compare(reference));
 }
 
-QTEST_MAIN(UT_CntSqlSearch)
