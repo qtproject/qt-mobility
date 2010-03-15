@@ -58,6 +58,7 @@
 #include <QDir>
 #include <QNetworkInterface>
 #include <QString>
+#include <QHostInfo>
 
 #include <locale.h>
 
@@ -893,6 +894,9 @@ QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
 
 QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode mode)
 {
+    if(networkStatus(mode) == QSystemNetworkInfo::NoNetworkAvailable) {
+        return "";
+    }
     switch(mode) {
         case QSystemNetworkInfo::GsmMode:
         break;
@@ -912,6 +916,7 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
         break;
     case QSystemNetworkInfo::EthernetMode:
         {
+            return QHostInfo::localDomainName();
         }
         break;
     case QSystemNetworkInfo::BluetoothMode:
