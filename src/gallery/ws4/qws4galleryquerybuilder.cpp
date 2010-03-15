@@ -45,114 +45,127 @@
 
 #include <QtCore/qstringbuilder.h>
 
-typedef int (*buildQueryFragment)(QString *fragment, int flags, const QVariant &value);
-typedef int (*buildQueryRangeFragment)(
-        QString *fragment, int flags, const QVariant &minimum, const QVariant &maximum);
-
-static int buildInvalidQueryFragment(QString *, const QVariant &)
+namespace QWS4Gallery
 {
-    return QGalleryDocumentRequest::InvalidFilter;
-}
+    typedef QString (*buildQuery)(
+            int *error,
+            QVector<QWS4GalleryQueryBuilder::Column> *columns,
+            const QWS4GalleryQueryBuilder &builder);
 
-static int buildInvalidQueryRangeFragment(QString *, int, const QVariant &, const QVariant &)
-{
-    return QGalleryDocumentRequest::InvalidFilter;
-}
+    typedef QString (*buildMetaDataFragment)(
+            int *error, const QLatin1String &field, int flags, const QVariant &value);
 
-struct QWS4QueryFragment
-{
-    virtual int build(QString *fragment, int flags, const QVariant &value) const = 0;
-    virtual int buildRange(
-            QString *fragment,
+    typedef QString (*buildMetaDataRangeFragment)(
+            int *error,
+            const QLatin1String &field,
             int flags,
             const QVariant &minimum,
-            const QVariant &maximum) const = 0;
+            const QVariant &maximum);
+
+    struct WhereFragmentMap
+    {
+        QLatin1String field;
+        QLatin1String wsField;
+        buildMetaDataFragment buildMetaData;
+        buildMetaDataRangeFragment buildMetaDataRange;
+    };
+
+    struct FieldMap
+    {
+        QLatin1String field;
+        QLatin1String wsField;
+    };
+
+    struct AggregateMap
+    {
+        QLatin1String field;
+        QLatin1String wsField;
+        QLatin1String alias;
+    };
+
+    struct TypeMap
+    {
+        QLatin1String type;
+        buildQuery buildQuery;
+    };
 };
 
 template <typename T>
-struct QWS4QueryTemplateFragment : public QWS4QueryFragment
+static QString qt_encodeMetaData(const QVariant &value)
 {
-    QWS4QueryTemplateFragment(const char *field)
-        : m_field(field)
-    {
-    }
-
-    int build(QString *fragment, int flags, const QVariant &value) const;
-    int buildRange(
-            QString *fragment, int flags, const QVariant &minimum, const QVariant &maximum) const;
-
-    QString encode(const QVariant &value) const;
-
-private:
-    inline QLatin1String latin1(const char *str) const { return QLatin1String(str); }
-    QLatin1String m_field;
-};
-
+    return value.toString();
+}
 
 template <>
-int QWS4QueryTemplateFragment<QString>::build(QString *fragment, int flags, const QVariant &value) const
+static QString qt_encodeMetaData<QString>(const QVariant &value)
 {
-    switch (flags & 0x0F) {
-    case Qt::MatchExactly:
-        *fragment = m_field + latin1(" = ") + encode(value);
-        return 0;
-    case Qt::MatchFixedString:
-        *fragment = m_field + latin1(" LIKE ") + encode(value);
-        return 0;
-    case Qt::MatchContains:
-        *fragment = QString::fromLatin1("CONTAINS(%1, '\"%2\"')").arg(m_field, value.toString());
-        return 0;
-    case Qt::MatchStartsWith:
-        *fragment = QString::fromLatin1("CONTAINS(%1, \"%2*\"\')").arg(m_field, value.toString());
-        return 0;
-    case Qt::MatchEndsWith:
-        *fragment = QString::fromLatin1("CONTAINS(%1, \"*%2\"\')")
-                .arg(m_field, value.toString());
-        return 0;
-    case Qt::MatchWildcard:
-        *fragment = QString::fromLatin1("%1 LIKE '%2'")
-                .arg(m_field, value.toString().replace(QLatin1Char('*'), QLatin1Char('%')));
-        return 0;
-    case Qt::MatchRegExp:
-    default:
-        return QGalleryDocumentRequest::InvalidFilter;
+    return QLatin1Char('\'')
+            + value.toString().replace(QLatin1String("'"), QLatin1String("''"))
+            + QLatin1Char('\'');
+}
+
+template<typename T>
+static QString qt_buildMetaDataFragment(
+        int *error, const QLatin1String &field, int flags, const QVariant &value)
+{
+    if ((flags & 0x0F) == Qt::MatchExactly) {
+        return field + QLatin1String(" = ") + qt_encodeMetaData<T>(value);
+    } else {
+        *error = QGalleryDocumentRequest::InvalidFilter;
+
+        return QString();
     }
 }
 
 template<>
-QString QWS4QueryTemplateFragment<QString>::encode(const QVariant &value) const
-{   // Have to do better than this, remove quotes etc.
-    return QChar(L'\'') + value.toString() + QChar(L'\'');
-}
-
-template<typename T>
-int QWS4QueryTemplateFragment<T>::build(QString *fragment, int flags, const QVariant &value) const
+static QString qt_buildMetaDataFragment<QString>(
+        int *error, const QLatin1String &field, int flags, const QVariant &value)
 {
-    if ((flags & 0x0F) == Qt::MatchExactly) {
-        *fragment = m_field + latin1(" = ") + encode(value);
-
-        return 0;
-    } else {
-        return QGalleryDocumentRequest::InvalidFilter;
+    switch (flags & 0x0F) {
+    case Qt::MatchExactly:
+        return field + QLatin1String(" = ") + qt_encodeMetaData<QString>(value);
+    case Qt::MatchFixedString:
+        return field + QLatin1String(" LIKE ") + qt_encodeMetaData<QString>(value);
+    case Qt::MatchContains:
+        return QString::fromLatin1("CONTAINS(%1, '\"%2\"')").arg(field, value.toString()
+                .replace(QLatin1String("'"), QLatin1String("''")));
+    case Qt::MatchStartsWith:
+        return QString::fromLatin1("CONTAINS(%1, \"%2*\"\')").arg(field, value.toString()
+                .replace(QLatin1String("'"), QLatin1String("''")));
+    case Qt::MatchEndsWith:
+        return QString::fromLatin1("CONTAINS(%1, \"*%2\"\')").arg(field, value.toString()
+                .replace(QLatin1String("'"), QLatin1String("''")));
+    case Qt::MatchWildcard:
+        return QString::fromLatin1("%1 LIKE '%2'").arg(field, value.toString()
+                .replace(QLatin1Char('*'), QLatin1Char('%'))
+                .replace(QLatin1String("'"), QLatin1String("''")));
+    case Qt::MatchRegExp:
+    default:
+        *error = QGalleryDocumentRequest::InvalidFilter;
+        return QString();
     }
 }
 
 template<typename T>
-int QWS4QueryTemplateFragment<T>::buildRange(
-        QString *fragment, int flags, const QVariant &minimum, const QVariant &maximum) const
+static QString qt_buildMetaDataRangeFragment(
+        int *error,
+        const QLatin1String &field,
+        int flags,
+        const QVariant &minimum,
+        const QVariant &maximum)
 {
     QString minimumFragment;
     QString maximumFragment;
 
     switch (flags & QGalleryFilter::GreaterThanEqualsMinimum) {
     case QGalleryFilter::EqualsMinimum:
-        minimumFragment = m_field + latin1(" = ") + encode(minimum);
+        minimumFragment = field + QLatin1String(" = ") + qt_encodeMetaData<T>(minimum);
         break;
     case QGalleryFilter::GreaterThanMinimum:
-        minimumFragment = m_field + latin1(" > ") + encode(minimum);
+        minimumFragment = field + QLatin1String(" > ") + qt_encodeMetaData<T>(minimum);
         break;
     case QGalleryFilter::GreaterThanEqualsMinimum:
-        minimumFragment = m_field + latin1(" >= ") + encode(minimum);
+        minimumFragment = field + QLatin1String(" >= ") + qt_encodeMetaData<T>(minimum);
         break;
     default:
         break;
@@ -160,13 +173,13 @@ int QWS4QueryTemplateFragment<T>::buildRange(
 
     switch (flags & QGalleryFilter::LessThanEqualsMaximum) {
     case QGalleryFilter::LessThanMaximum:
-        maximumFragment = m_field + latin1(" < ") + encode(maximum);
+        maximumFragment = field + QLatin1String(" < ") + qt_encodeMetaData<T>(maximum);
         break;
     case QGalleryFilter::EqualsMaximum:
-        maximumFragment = m_field + latin1(" = ") + encode(maximum);
+        maximumFragment = field + QLatin1String(" = ") + qt_encodeMetaData<T>(maximum);
         break;
     case QGalleryFilter::LessThanEqualsMaximum:
-        maximumFragment = m_field + latin1(" <= ") + encode(maximum);
+        maximumFragment = field + QLatin1String(" <= ") + qt_encodeMetaData<T>(maximum);
         break;
     default:
         break;
@@ -174,274 +187,802 @@ int QWS4QueryTemplateFragment<T>::buildRange(
 
     if ((flags & QGalleryFilter::GreaterThanEqualsMinimum)
             && (flags & QGalleryFilter::LessThanEqualsMaximum)) {
-        *fragment = minimumFragment + latin1(" AND ") + maximumFragment;
+        return minimumFragment + QLatin1String(" AND ") + maximumFragment;
     } else if (flags & QGalleryFilter::GreaterThanEqualsMinimum) {
-        *fragment = minimumFragment;
+        return minimumFragment;
     } else if (flags & QGalleryFilter::LessThanEqualsMaximum) {
-        *fragment = maximumFragment;
+        return maximumFragment;
     } else {
-        return QGalleryDocumentRequest::InvalidFilter;
+        *error = QGalleryDocumentRequest::InvalidFilter;
+        return QString();
     }
-    return 0;
 }
 
-template <typename T>
-QString QWS4QueryTemplateFragment<T>::encode(const QVariant &value) const
-{ 
-    return value.toString();
-}
+template <typename T, int N>
+int qt_arraySize(const T (&)[N]) { return N; }
 
-
-template <typename T>
-struct QWS4QueryCompositeFragment : public QWS4QueryFragment
-{
-    QWS4QueryCompositeFragment(const char *fieldA, const char *fieldB)
-        : m_a(fieldA)
-        , m_b(fieldB)
-    {
+#define QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(TYPE, FIELD, WS_FIELD) \
+    {                                                      \
+        QLatin1String(#FIELD),                             \
+        QLatin1String(WS_FIELD),                           \
+        qt_buildMetaDataFragment<TYPE>,                    \
+        qt_buildMetaDataRangeFragment<TYPE>                \
     }
 
-    int build(QString *fragment, int flags, const QVariant &value) const;
-    int buildRange(
-            QString *fragment, int flags, const QVariant &minimum, const QVariant &maximum) const;
+#define QT_DEFINE_GALLERY_FIELD_MAP(FIELD, WS_FIELD) \
+    { QLatin1String(#FIELD), QLatin1String(WS_FIELD) }
 
-private:
-    QWS4QueryTemplateFragment<T> m_a;
-    QWS4QueryTemplateFragment<T> m_b;
-};
+#define QT_DEFINE_GALLERY_AGGREGATE_MAP(FIELD, WS_FIELD, ALIAS) \
+    { QLatin1String(#FIELD), QLatin1String(WS_FIELD), QLatin1String(ALIAS) }
 
-template <typename T>
-int QWS4QueryCompositeFragment<T>::build(QString *fragment, int flags, const QVariant &value) const
+static QStringList qt_buildAggregates(
+        int *,
+        QVector<QWS4GalleryQueryBuilder::Column> *columns,
+        QStringList *fields,
+        const QWS4Gallery::AggregateMap map[], int count)
 {
-    QString fragmentA;
-    QString fragmentB;
+    QStringList fragments;
 
-    int result = m_a.build(fragment, flags, value);
-    if (result != 0)
-        return result;
+    for (QStringList::iterator it = fields->begin(); it != fields->end();) {
+        bool erase = false;
+        for (int i = 0; i < count && !erase; ++i) {
+            if (map[i].field == *it) {
+                do {
+                    fragments.append(map[i].wsField);
+                    columns->append(qMakePair(QString(map[i].field), QString(map[i].alias)));
+                } while (++i < count && map[i].field == *it);
+                erase = true;
+            }
+        }
+        if (erase)
+            it = fields->erase(it);
+        else
+            ++it;
+    }
 
-    result = m_b.build(fragment, flags, value);
-    if (result != 0)
-        return result;
-
-    *fragment = QLatin1Char('(') 
-            + fragmentA
-            + QLatin1String(" OR ")
-            + fragmentB
-            + QLatin1Char(')');
-
-    return 0;
+    return fragments;
 }
 
-template <typename T>
-int QWS4QueryCompositeFragment<T>::buildRange(
-            QString *fragment, int flags, const QVariant &minimum, const QVariant &maximum) const
+static QStringList qt_buildSelect(
+        int *,
+        QVector<QWS4GalleryQueryBuilder::Column> *columns,
+        const QStringList &fields,
+        const QWS4Gallery::FieldMap map[],
+        int count)
 {
-    QString fragmentA;
-    QString fragmentB;
+    QStringList fragments;
 
-    int result = m_a.buildRange(fragment, flags, minimum, maximum);
-    if (result != 0)
-        return result;
+    for (QStringList::const_iterator it = fields.begin(), end = fields.end(); it != end; ++it) {
+        for (int i = 0; i < count; ++i) {
+            if (map[i].field == *it) {
+                do {
+                    fragments.append(map[i].wsField);
+                    columns->append(qMakePair(QString(map[i].field), QString(map[i].wsField)));
+                } while (++i < count && map[i].field == *it);
+                break;
+            }
+        }
+    }
 
-    result = m_b.buildRange(fragment, flags, minimum, maximum);
-    if (result != 0)
-        return result;
-
-    *fragment = QLatin1Char('(') 
-            + fragmentA
-            + QLatin1String(" OR ")
-            + fragmentB
-            + QLatin1Char(')');
-
-    return 0;
+    return fragments;
 }
 
-#define QWS4_DEFINE_QUERY_FRAGMENT(TYPE, FIELD, WS_FIELD) \
-    static const QWS4QueryTemplateFragment<TYPE> qt_##FIELD##QueryFragment(WS_FIELD);
-
-// Item
-QWS4_DEFINE_QUERY_FRAGMENT(QString, author     , "System.Author")
-QWS4_DEFINE_QUERY_FRAGMENT(QString, copyright  , "System.Copyright")
-QWS4_DEFINE_QUERY_FRAGMENT(QString, description, "System.Description")
-QWS4_DEFINE_QUERY_FRAGMENT(QString, mimeType   , "System.MIMEType")
-QWS4_DEFINE_QUERY_FRAGMENT(int    , rating     , "System.Rating")
-QWS4_DEFINE_QUERY_FRAGMENT(QString, title      , "System.Title")
-QWS4_DEFINE_QUERY_FRAGMENT(QString, url        , "System.ItemURL")
-
-// Media
-QWS4_DEFINE_QUERY_FRAGMENT(int    , duration, "System.Media.Duration")
-QWS4_DEFINE_QUERY_FRAGMENT(QString, producer, "System.Media.Producer")
-QWS4_DEFINE_QUERY_FRAGMENT(QString, writer  , "System.Media.Writer")
-
-// Audio/Music
-QWS4_DEFINE_QUERY_FRAGMENT(QString, artist     , "System.Music.Artist")
-QWS4_DEFINE_QUERY_FRAGMENT(QString, albumArtist, "System.Music.AlbumArtist")
-QWS4_DEFINE_QUERY_FRAGMENT(QString, albumId    , "System.Music.AlbumId")
-QWS4_DEFINE_QUERY_FRAGMENT(QString, albumTitle , "System.Music.AlbumTitle")
-QWS4_DEFINE_QUERY_FRAGMENT(QString, composer   , "System.Music.Composer")
-QWS4_DEFINE_QUERY_FRAGMENT(QString, discNumber , "System.Music.SetNumber")
-QWS4_DEFINE_QUERY_FRAGMENT(QString, genre      , "System.Music.Genre")
-QWS4_DEFINE_QUERY_FRAGMENT(QString, trackNumber, "System.Music.TrackNumber")
-
-// Image/Video
-static const QWS4QueryCompositeFragment<int> qt_widthQueryFragment( 
-        "System.Image.HorizontalSize", "System.Video.FrameWidth");
-static const QWS4QueryCompositeFragment<int> qt_heightQueryFragment(
-        "System.Image.VerticalSize", "System.Video.FrameHeight");
-
-// Image/Photo
-QWS4_DEFINE_QUERY_FRAGMENT(QString, dateTaken         , "System.Photo.DateTaken")
-QWS4_DEFINE_QUERY_FRAGMENT(QString, cameraManufacturer, "System.Photo.CameraManufacturer")
-QWS4_DEFINE_QUERY_FRAGMENT(QString, cameraModel       , "System.Photo.CameraModel")
-
-// Video
-QWS4_DEFINE_QUERY_FRAGMENT(QString, director, "System.Video.Director")
-
-struct QWS4QueryFragmentLookupItem
+static QString qt_buildOrderBy(
+        int *, const QStringList &fields, const QWS4Gallery::FieldMap map[], int count)
 {
-    const QLatin1String field;
-    const QWS4QueryFragment *fragment;
-};
+    QStringList fragments;
 
-#define QWS4_QUERY_FRAGMENT_LOOKUP_ITEM(FIELD) \
-    { QLatin1String(#FIELD), &qt_##FIELD##QueryFragment }
+    for (QStringList::const_iterator it = fields.begin(), end = fields.end(); it != end; ++it) {
+        QStringRef field;
+        if (it->startsWith(QLatin1Char('+')) || it->startsWith(QLatin1Char('-')))
+            field = QStringRef(it.operator ->(), 1, it->length() - 1);
+        else
+            field = QStringRef(it.operator ->());
 
-static const QWS4QueryFragmentLookupItem qt_queryFragmentLookup[] =
+        for (int i = 0; i < count; ++i) {
+            if (map[i].field == field) {
+                do {
+                    if (it->startsWith(QLatin1Char('+'))) {
+                        fragments.append(map[i].wsField + QLatin1String(" ASC"));
+                    } else if (it->startsWith(QLatin1Char('-'))) {
+                        fragments.append(map[i].wsField + QLatin1String(" DESC"));
+                    } else {
+                        fragments.append(map[i].wsField);
+                    }
+                } while (++i < count && map[i].field == field);
+                break;
+            }
+        }
+    }
+
+    return fragments.join(QLatin1String(", "));
+}
+
+static QString qt_buildWhere(
+        int *error,
+        const QGalleryMetaDataFilter &filter,
+        const QWS4Gallery::WhereFragmentMap map[],
+        int count)
 {
-    // Item
-    QWS4_QUERY_FRAGMENT_LOOKUP_ITEM(author),
-    QWS4_QUERY_FRAGMENT_LOOKUP_ITEM(copyright),
-    QWS4_QUERY_FRAGMENT_LOOKUP_ITEM(description),
-    QWS4_QUERY_FRAGMENT_LOOKUP_ITEM(mimeType),
-    QWS4_QUERY_FRAGMENT_LOOKUP_ITEM(rating),
-    QWS4_QUERY_FRAGMENT_LOOKUP_ITEM(title),
-    QWS4_QUERY_FRAGMENT_LOOKUP_ITEM(url),
+    const QString field = filter.fieldName();
+
+    for (int i = 0; i < count; ++i) {
+        if (map[i].field == field) {
+            return map[i].buildMetaData(
+                error, map[i].wsField, filter.matchFlags(), filter.value());
+        }
+    }
+
+    *error = QGalleryDocumentRequest::InvalidFilter;
+
+    return QString();
+}
+
+static QString qt_buildWhere(
+        int *error,
+        const QGalleryMetaDataRangeFilter &filter,
+        const QWS4Gallery::WhereFragmentMap map[],
+        int count)
+{
+    const QString field = filter.fieldName();
+
+    for (int i = 0; i < count; ++i) {
+        if (map[i].field == field) {
+            return map[i].buildMetaDataRange(
+                    error,
+                    map[i].wsField,
+                    filter.rangeFlags(),
+                    filter.minimumValue(),
+                    filter.maximumValue());
+        }
+    }
+
+    *error = QGalleryDocumentRequest::InvalidFilter;
+
+    return QString();
+}
+
+static QString qt_buildWhere(
+        int *error,
+        const QGalleryUnionFilter &filter,
+        const QWS4Gallery::WhereFragmentMap map[],
+        int count)
+{
+    const QList<QGalleryFilter> filters = filter.filters();
+
+    QStringList fragments;
+
+    for (QList<QGalleryFilter>::const_iterator it = filters.begin(), end = filters.end();
+            it != end && *error != 0;
+            ++it) {
+        switch (it->type()) {
+        case QGalleryFilter::MetaData:
+            fragments.append(qt_buildWhere(error, it->toMetaDataFilter(), map, count));
+            break;
+        case QGalleryFilter::MetaDataRange:
+            fragments.append(qt_buildWhere(error, it->toMetaDataRangeFilter(), map, count));
+            break;
+        default:
+            *error = QGalleryDocumentRequest::InvalidFilter;
+            break;
+        }
+    }
+
+    return fragments.join(QLatin1String(" AND "));
+}
+
+static QString qt_buildWhere(
+        int *error,
+        const QGalleryIntersectionFilter &filter,
+        const QWS4Gallery::WhereFragmentMap map[],
+        int count)
+{
+    const QList<QGalleryFilter> filters = filter.filters();
+
+    if (filters.isEmpty())
+        *error = QGalleryDocumentRequest::InvalidFilter;
+
+    QStringList fragments;
+
+    for (QList<QGalleryFilter>::const_iterator it = filters.begin(), end = filters.end();
+            it != end && *error != 0;
+            ++it) {
+        switch (it->type()) {
+        case QGalleryFilter::Union:
+            fragments.append(qt_buildWhere(error, it->toUnionFilter(), map, count));
+        case QGalleryFilter::MetaData:
+            fragments.append(qt_buildWhere(error, it->toMetaDataFilter(), map, count));
+            break;
+        case QGalleryFilter::MetaDataRange:
+            fragments.append(qt_buildWhere(error, it->toMetaDataRangeFilter(), map, count));
+            break;
+        default:
+            *error = QGalleryDocumentRequest::InvalidFilter;
+            break;
+        }
+    }
+
+    return fragments.join(QLatin1String(" OR "));
+}
+
+/////////////////
+//
+// Media Queries.
+//
+/////////////////
+static const QWS4Gallery::WhereFragmentMap qt_mediaWhereFragmentMap[] =
+{
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, author, "System.Author"),
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, copyright, "System.Copyright"),
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, description, "System.Description"),
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, mimeType, "System.MIMEType"),
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, rating, "System.Rating"),
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, title, "System.Title"),
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, url, "System.ItemUrl"),
 
     // Media
-    QWS4_QUERY_FRAGMENT_LOOKUP_ITEM(duration),
-    QWS4_QUERY_FRAGMENT_LOOKUP_ITEM(producer),
-    QWS4_QUERY_FRAGMENT_LOOKUP_ITEM(writer),
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(int, duration, "System.Media.Duration"),
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, producer, "System.Media.Producer"),
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, writer, "System.Media.Writer"),
 
     // Audio/Music
-    QWS4_QUERY_FRAGMENT_LOOKUP_ITEM(artist),
-    QWS4_QUERY_FRAGMENT_LOOKUP_ITEM(albumArtist),
-    QWS4_QUERY_FRAGMENT_LOOKUP_ITEM(albumId),
-    QWS4_QUERY_FRAGMENT_LOOKUP_ITEM(albumTitle),
-    QWS4_QUERY_FRAGMENT_LOOKUP_ITEM(composer),
-    QWS4_QUERY_FRAGMENT_LOOKUP_ITEM(discNumber),
-    QWS4_QUERY_FRAGMENT_LOOKUP_ITEM(genre),
-    QWS4_QUERY_FRAGMENT_LOOKUP_ITEM(trackNumber),
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, artist, "System.Music.Artist"),
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, albumArtist, "System.Music.AlbumArtist"),
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, albumId, "System.Music.AlbumID"),
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, albumTitle, "System.Music.AlbumTitle"),
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, composer, "System.Music.Composer"),
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, discNumber, "System.Music.SetNumber"),
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, genre, "System.Music.Genre"),
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, trackNumber, "System.Music.TrackNumber"),
 
     // Image, Video common.
-    QWS4_QUERY_FRAGMENT_LOOKUP_ITEM(width),
-    QWS4_QUERY_FRAGMENT_LOOKUP_ITEM(height),
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(int, width, "System.Image.HorizontalSize"),
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(int, width, "System.Video.FrameWidth"),
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(int, height, "System.Image.VerticalSize"),
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(int, height, "System.Video.FrameHeight"),
 
     // Image/Photo
-    QWS4_QUERY_FRAGMENT_LOOKUP_ITEM(dateTaken),
-    QWS4_QUERY_FRAGMENT_LOOKUP_ITEM(cameraManufacturer),
-    QWS4_QUERY_FRAGMENT_LOOKUP_ITEM(cameraModel),
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(int, dateTaken, "System.Photo.DateTaken"),
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(int, cameraManufacturer, "System.Photo.CameraManufacturer"),
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(int, cameraModel, "System.Photo.CameraModel"),
 
     // Video
-    QWS4_QUERY_FRAGMENT_LOOKUP_ITEM(director)
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, director, "System.Video.Director")
 };
 
-struct QWS4SelectFragmentLookupItem
+static const QWS4Gallery::FieldMap qt_mediaFieldMap[] =
 {
-    const QLatin1String field;
-    const QLatin1String fragment;
-};
-
-#define QWS4_SELECT_FRAGMENT_LOOKUP_ITEM(FIELD, FRAGMENT) \
-    { QLatin1String(#FIELD), QLatin1String(FRAGMENT) }
-
-static const QWS4SelectFragmentLookupItem qt_selectFragmentLookup[] =
-{
-    QWS4_SELECT_FRAGMENT_LOOKUP_ITEM(author, "System.Author"),
-    QWS4_SELECT_FRAGMENT_LOOKUP_ITEM(copyright, "System.Copyright"),
-    QWS4_SELECT_FRAGMENT_LOOKUP_ITEM(description, "System.Description"),
-    QWS4_SELECT_FRAGMENT_LOOKUP_ITEM(mimeType, "System.MIMEType"),
-    QWS4_SELECT_FRAGMENT_LOOKUP_ITEM(rating, "System.Rating"),
-    QWS4_SELECT_FRAGMENT_LOOKUP_ITEM(title, "System.Title"),
-    QWS4_SELECT_FRAGMENT_LOOKUP_ITEM(url, "System.ItemUrl"),
+    QT_DEFINE_GALLERY_FIELD_MAP(author, "System.Author"),
+    QT_DEFINE_GALLERY_FIELD_MAP(copyright, "System.Copyright"),
+    QT_DEFINE_GALLERY_FIELD_MAP(description, "System.Description"),
+    QT_DEFINE_GALLERY_FIELD_MAP(mimeType, "System.MIMEType"),
+    QT_DEFINE_GALLERY_FIELD_MAP(rating, "System.Rating"),
+    QT_DEFINE_GALLERY_FIELD_MAP(title, "System.Title"),
+    QT_DEFINE_GALLERY_FIELD_MAP(url, "System.ItemUrl"),
 
     // Media
-    QWS4_SELECT_FRAGMENT_LOOKUP_ITEM(duration, "System.Media.Duration"),
-    QWS4_SELECT_FRAGMENT_LOOKUP_ITEM(producer, "System.Media.Producer"),
-    QWS4_SELECT_FRAGMENT_LOOKUP_ITEM(writer, "System.Media.Writer"),
+    QT_DEFINE_GALLERY_FIELD_MAP(duration, "System.Media.Duration"),
+    QT_DEFINE_GALLERY_FIELD_MAP(producer, "System.Media.Producer"),
+    QT_DEFINE_GALLERY_FIELD_MAP(writer, "System.Media.Writer"),
 
     // Audio/Music
-    QWS4_SELECT_FRAGMENT_LOOKUP_ITEM(artist, "System.Music.Artist"),
-    QWS4_SELECT_FRAGMENT_LOOKUP_ITEM(albumArtist, "System.Music.AlbumArtist"),
-    QWS4_SELECT_FRAGMENT_LOOKUP_ITEM(albumId, "System.Music.AlbumID"),
-    QWS4_SELECT_FRAGMENT_LOOKUP_ITEM(albumTitle, "System.Music.AlbumTitle"),
-    QWS4_SELECT_FRAGMENT_LOOKUP_ITEM(composer, "System.Music.Composer"),
-    QWS4_SELECT_FRAGMENT_LOOKUP_ITEM(discNumber, "System.Music.SetNumber"),
-    QWS4_SELECT_FRAGMENT_LOOKUP_ITEM(genre, "System.Music.Genre"),
-    QWS4_SELECT_FRAGMENT_LOOKUP_ITEM(trackNumber, "System.Music.TrackNumber"),
+    QT_DEFINE_GALLERY_FIELD_MAP(artist, "System.Music.Artist"),
+    QT_DEFINE_GALLERY_FIELD_MAP(albumArtist, "System.Music.AlbumArtist"),
+    QT_DEFINE_GALLERY_FIELD_MAP(albumId, "System.Music.AlbumID"),
+    QT_DEFINE_GALLERY_FIELD_MAP(albumTitle, "System.Music.AlbumTitle"),
+    QT_DEFINE_GALLERY_FIELD_MAP(composer, "System.Music.Composer"),
+    QT_DEFINE_GALLERY_FIELD_MAP(discNumber, "System.Music.SetNumber"),
+    QT_DEFINE_GALLERY_FIELD_MAP(genre, "System.Music.Genre"),
+    QT_DEFINE_GALLERY_FIELD_MAP(trackNumber, "System.Music.TrackNumber"),
 
     // Image, Video common.
-    QWS4_SELECT_FRAGMENT_LOOKUP_ITEM(width, "System.Image.HorizontalSize"),
-    QWS4_SELECT_FRAGMENT_LOOKUP_ITEM(width, "System.Video.FrameWidth"),
-    QWS4_SELECT_FRAGMENT_LOOKUP_ITEM(height, "System.Image.VerticalSize"),
-    QWS4_SELECT_FRAGMENT_LOOKUP_ITEM(height, "System.Video.FrameHeight"),
+    QT_DEFINE_GALLERY_FIELD_MAP(width, "System.Image.HorizontalSize"),
+    QT_DEFINE_GALLERY_FIELD_MAP(width, "System.Video.FrameWidth"),
+    QT_DEFINE_GALLERY_FIELD_MAP(height, "System.Image.VerticalSize"),
+    QT_DEFINE_GALLERY_FIELD_MAP(height, "System.Video.FrameHeight"),
 
     // Image/Photo
-    QWS4_SELECT_FRAGMENT_LOOKUP_ITEM(dateTaken, "System.Photo.DateTaken"),
-    QWS4_SELECT_FRAGMENT_LOOKUP_ITEM(cameraManufacturer, "System.Photo.CameraManufacturer"),
-    QWS4_SELECT_FRAGMENT_LOOKUP_ITEM(cameraModel, "System.Photo.CameraModel"),
+    QT_DEFINE_GALLERY_FIELD_MAP(dateTaken, "System.Photo.DateTaken"),
+    QT_DEFINE_GALLERY_FIELD_MAP(cameraManufacturer, "System.Photo.CameraManufacturer"),
+    QT_DEFINE_GALLERY_FIELD_MAP(cameraModel, "System.Photo.CameraModel"),
 
     // Video
-    QWS4_SELECT_FRAGMENT_LOOKUP_ITEM(director, "System.Video.Director")
+    QT_DEFINE_GALLERY_FIELD_MAP(director, "System.Video.Director")
 };
 
-struct QWS4OrderByFragmentLookupItem
+static QString qt_buildMediaWhere(int *error, const QGalleryDocumentFilter &filter)
 {
-    const QLatin1String field;
-    const QLatin1String fragment;
+    const QStringList ids = filter.documentIds();
+
+    if (ids.isEmpty())
+        *error = QGalleryDocumentRequest::InvalidFilter;
+
+    QStringList fragments;
+
+    for (QStringList::const_iterator it = ids.begin(), end = ids.end(); it != end; ++it)
+        fragments.append(QLatin1String("(System.ItemUrl = '") + *it + QLatin1Char('\''));
+
+    return fragments.join(QLatin1String(" OR "));
+}
+
+static QString qt_buildMediaWhere(int *error, const QGalleryDocumentUrlFilter &filter)
+{
+    const QList<QUrl> urls = filter.documentUrls();
+
+    if (urls.isEmpty())
+        *error = QGalleryDocumentRequest::InvalidFilter;
+
+    QStringList fragments;
+
+    for (QList<QUrl>::const_iterator it = urls.begin(), end = urls.end(); it != end; ++it)
+        fragments.append(QLatin1String("(System.ItemUrl = '") + it->toString() + QLatin1Char('\''));
+
+    return fragments.join(QLatin1String(" OR "));
+}
+
+static QString qt_buildMediaWhere(int *error, const QGalleryContainerFilter &filter)
+{
+    const QString id = filter.containerId();
+
+    if (id.isEmpty()) {
+        *error = QGalleryDocumentRequest::InvalidFilter;
+
+        return QString();
+    } else {
+        return QLatin1String("DIRECTORY = '") + id + QLatin1Char('\'');
+    }
+}
+
+static QString qt_buildMediaWhere(int *error, const QGalleryContainerUrlFilter &filter)
+{
+    const QUrl url = filter.containerUrl();
+
+    if (url.isEmpty()) {
+        *error = QGalleryDocumentRequest::InvalidFilter;
+
+        return QString();
+    } else {
+        return QLatin1String("DIRECTORY = '") + url.toString() + QLatin1Char('\'');
+    }
+}
+
+static QString qt_buildMediaQuery(
+        int *error,
+        QVector<QWS4GalleryQueryBuilder::Column> *columns,
+        const QWS4GalleryQueryBuilder &builder)
+{
+    QString where;
+
+    const QGalleryFilter filter = builder.filter();
+    switch (filter.type()) {
+    case QGalleryFilter::Invalid:
+        break;
+    case QGalleryFilter::Document:
+        where = qt_buildMediaWhere(error, filter.toDocumentFilter());
+        break;
+    case QGalleryFilter::DocumentUrl:
+        where = qt_buildMediaWhere(error, filter.toDocumentUrlFilter());
+        break;
+    case QGalleryFilter::Container:
+        where = qt_buildMediaWhere(error, filter.toContainerFilter());
+        break;
+    case QGalleryFilter::ContainerUrl:
+        where = qt_buildMediaWhere(error, filter.toContainerUrlFilter());
+        break;
+    case QGalleryFilter::Intersection:
+        where = qt_buildWhere(
+                error,
+                filter.toIntersectionFilter(),
+                qt_mediaWhereFragmentMap,
+                qt_arraySize(qt_mediaWhereFragmentMap));
+        break;
+    case QGalleryFilter::Union:
+        where = qt_buildWhere(
+                error,
+                filter.toUnionFilter(),
+                qt_mediaWhereFragmentMap,
+                qt_arraySize(qt_mediaWhereFragmentMap));
+        break;
+    case QGalleryFilter::MetaData:
+        where = qt_buildWhere(
+                error,
+                filter.toMetaDataFilter(),
+                qt_mediaWhereFragmentMap,
+                qt_arraySize(qt_mediaWhereFragmentMap));
+        break;
+    case QGalleryFilter::MetaDataRange:
+        where = qt_buildWhere(
+                error,
+                filter.toMetaDataRangeFilter(),
+                qt_mediaWhereFragmentMap,
+                qt_arraySize(qt_mediaWhereFragmentMap));
+        break;
+    default:
+        *error = QGalleryDocumentRequest::InvalidFilter;
+        return QString();
+    }
+
+    QStringList selectFragments = qt_buildSelect(
+            error, columns, builder.fields(), qt_mediaFieldMap, qt_arraySize(qt_mediaFieldMap));
+    if (*error != 0)
+        return QString();
+
+    QString orderBy = qt_buildOrderBy(
+            error, builder.sortFields(), qt_mediaFieldMap, qt_arraySize(qt_mediaFieldMap));
+    if (*error != 0)
+        return QString();
+
+    selectFragments.append(QLatin1String("System.ItemUrl"));
+    selectFragments.append(QLatin1String("System.Kind"));
+    selectFragments.removeDuplicates();
+
+    QString query
+            = QLatin1String("SELECT ")
+            + selectFragments.join(QLatin1String(", "))
+            + QLatin1String("\nFROM SystemIndex");
+
+    if (!where.isEmpty())
+        query += QLatin1String("\nWHERE ") + where;
+
+    if (!orderBy.isEmpty())
+        query += QLatin1String("\nORDER BY ") + orderBy;
+
+    return query;
+}
+
+/////////////////
+//
+// Artist Queries.
+//
+/////////////////
+static const QWS4Gallery::WhereFragmentMap qt_artistWhereFragmentMap[] =
+{
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, title, "System.Music.Artist"),
+
+    // Audio/Music
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, artist, "System.Music.Artist"),
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, albumTitle, "System.Music.AlbumTitle"),
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, genre, "System.Music.Genre")
 };
 
-#define QWS4_ORDERBY_FRAGMENT_LOOKUP_ITEM(FIELD, FRAGMENT) \
-    { QLatin1String(#FIELD), QLatin1String(FRAGMENT) }
-
-static const QWS4OrderByFragmentLookupItem qt_orderByFragmentLookup[] =
+static const QWS4Gallery::AggregateMap qt_artistAggregateFieldMap[] =
 {
-    QWS4_ORDERBY_FRAGMENT_LOOKUP_ITEM(author, "System.Author"),
-    QWS4_ORDERBY_FRAGMENT_LOOKUP_ITEM(copyright, "System.Copyright"),
-    QWS4_ORDERBY_FRAGMENT_LOOKUP_ITEM(description, "System.Description"),
-    QWS4_ORDERBY_FRAGMENT_LOOKUP_ITEM(mimeType, "System.MIMEType"),
-    QWS4_ORDERBY_FRAGMENT_LOOKUP_ITEM(rating, "System.Rating"),
-    QWS4_ORDERBY_FRAGMENT_LOOKUP_ITEM(title, "System.Title"),
-    QWS4_ORDERBY_FRAGMENT_LOOKUP_ITEM(url, "System.ItemUrl"),
+    QT_DEFINE_GALLERY_AGGREGATE_MAP(rating, "AVG(System.Rating)", "AVG_SystemRating"),
 
     // Media
-    QWS4_ORDERBY_FRAGMENT_LOOKUP_ITEM(duration, "System.Media.Duration"),
-    QWS4_ORDERBY_FRAGMENT_LOOKUP_ITEM(producer, "System.Media.Producer"),
-    QWS4_ORDERBY_FRAGMENT_LOOKUP_ITEM(writer, "System.Media.Writer"),
+    QT_DEFINE_GALLERY_AGGREGATE_MAP(duration, "SUM(System.Media.Duration)", "SUM_SystemMediaDuration"),
 
     // Audio/Music
-    QWS4_ORDERBY_FRAGMENT_LOOKUP_ITEM(artist, "System.Music.Artist"),
-    QWS4_ORDERBY_FRAGMENT_LOOKUP_ITEM(albumArtist, "System.Music.AlbumArtist"),
-    QWS4_ORDERBY_FRAGMENT_LOOKUP_ITEM(albumId, "System.Music.AlbumID"),
-    QWS4_ORDERBY_FRAGMENT_LOOKUP_ITEM(albumTitle, "System.Music.AlbumTitle"),
-    QWS4_ORDERBY_FRAGMENT_LOOKUP_ITEM(composer, "System.Music.Composer"),
-    QWS4_ORDERBY_FRAGMENT_LOOKUP_ITEM(discNumber, "System.Music.SetNumber"),
-    QWS4_ORDERBY_FRAGMENT_LOOKUP_ITEM(genre, "System.Music.Genre"),
-    QWS4_ORDERBY_FRAGMENT_LOOKUP_ITEM(trackNumber, "System.Music.TrackNumber"),
+    QT_DEFINE_GALLERY_AGGREGATE_MAP(albumCount, "CHILDCOUNT()", "CHILDCOUNT"),
+    QT_DEFINE_GALLERY_AGGREGATE_MAP(trackCount, "COUNT()", "COUNT")
+};
 
-    // Image, Video common.
-    QWS4_ORDERBY_FRAGMENT_LOOKUP_ITEM(width, "System.Image.HorizontalSize"),
-    QWS4_ORDERBY_FRAGMENT_LOOKUP_ITEM(width, "System.Video.FrameWidth"),
-    QWS4_ORDERBY_FRAGMENT_LOOKUP_ITEM(height, "System.Image.VerticalSize"),
-    QWS4_ORDERBY_FRAGMENT_LOOKUP_ITEM(height, "System.Video.FrameHeight"),
+static const QWS4Gallery::FieldMap qt_artistSelectFieldMap[] =
+{
+    QT_DEFINE_GALLERY_FIELD_MAP(title, "System.Music.Artist"),
+    // Audio/Music
+    QT_DEFINE_GALLERY_FIELD_MAP(artist, "System.Music.Artist")
+};
 
-    // Image/Photo
-    QWS4_ORDERBY_FRAGMENT_LOOKUP_ITEM(dateTaken, "System.Photo.DateTaken"),
-    QWS4_ORDERBY_FRAGMENT_LOOKUP_ITEM(cameraManufacturer, "System.Photo.CameraManufacturer"),
-    QWS4_ORDERBY_FRAGMENT_LOOKUP_ITEM(cameraModel, "System.Photo.CameraModel"),
+static const QWS4Gallery::FieldMap qt_artistOrderByFieldMap[] =
+{
+    QT_DEFINE_GALLERY_FIELD_MAP(title, "System.Music.Artist"),
+    QT_DEFINE_GALLERY_FIELD_MAP(rating, "AVG(System.Rating)"),
 
-    // Video
-    QWS4_ORDERBY_FRAGMENT_LOOKUP_ITEM(director, "System.Video.Director")
+    // Media
+    QT_DEFINE_GALLERY_FIELD_MAP(duration, "SUM(System.Media.Duration)"),
+
+    // Audio/Music
+    QT_DEFINE_GALLERY_FIELD_MAP(albumCount, "CHILDCOUNT()"),
+    QT_DEFINE_GALLERY_FIELD_MAP(trackCount, "COUNT()"),
+    QT_DEFINE_GALLERY_FIELD_MAP(artist, "System.Music.Artist")
+};
+
+static QString qt_buildArtistWhere(int *error, const QGalleryDocumentFilter &filter)
+{
+    *error = QGalleryDocumentRequest::InvalidFilter;
+
+    return QString();
+}
+
+static QString qt_buildArtistWhere(int *error, const QGalleryContainerFilter &filter)
+{
+    *error = QGalleryDocumentRequest::InvalidFilter;
+
+    return QString();
+}
+
+static QString qt_buildArtistQuery(
+        int *error,
+        QVector<QWS4GalleryQueryBuilder::Column> *columns,
+        const QWS4GalleryQueryBuilder &builder)
+{
+    QString where;
+
+    const QGalleryFilter filter = builder.filter();
+    switch (filter.type()) {
+    case QGalleryFilter::Invalid:
+        break;
+    case QGalleryFilter::Document:
+        where = qt_buildArtistWhere(error, filter.toDocumentFilter());
+        break;
+    case QGalleryFilter::Container:
+        where = qt_buildArtistWhere(error, filter.toContainerFilter());
+        break;
+    case QGalleryFilter::Intersection:
+        where = qt_buildWhere(
+                error,
+                filter.toIntersectionFilter(),
+                qt_artistWhereFragmentMap,
+                qt_arraySize(qt_artistWhereFragmentMap));
+        break;
+    case QGalleryFilter::Union:
+        where = qt_buildWhere(
+                error,
+                filter.toUnionFilter(),
+                qt_artistWhereFragmentMap,
+                qt_arraySize(qt_artistWhereFragmentMap));
+        break;
+    case QGalleryFilter::MetaData:
+        where = qt_buildWhere(
+                error,
+                filter.toMetaDataFilter(),
+                qt_artistWhereFragmentMap,
+                qt_arraySize(qt_artistWhereFragmentMap));
+        break;
+    case QGalleryFilter::MetaDataRange:
+        where = qt_buildWhere(
+                error,
+                filter.toMetaDataRangeFilter(),
+                qt_artistWhereFragmentMap,
+                qt_arraySize(qt_artistWhereFragmentMap));
+    default:
+        *error = QGalleryDocumentRequest::InvalidFilter;
+        return QString();
+    }
+
+    QStringList fields = builder.fields();
+
+    QStringList aggregateFragments = qt_buildAggregates(
+            error,
+            columns,
+            &fields,
+            qt_artistAggregateFieldMap,
+            qt_arraySize(qt_artistAggregateFieldMap));
+    if (*error != 0)
+        return QString();
+
+    QStringList selectFragments = qt_buildSelect(
+            error,
+            columns,
+            fields,
+            qt_artistSelectFieldMap,
+            qt_arraySize(qt_artistSelectFieldMap));
+    if (*error != 0)
+        return QString();
+
+    QString orderBy = qt_buildOrderBy(
+            error,
+            builder.sortFields(),
+            qt_artistOrderByFieldMap,
+            qt_arraySize(qt_artistOrderByFieldMap));
+    if (*error != 0)
+        return QString();
+
+    selectFragments.append(QLatin1String("System.Music.Artist"));
+    selectFragments.append(QLatin1String("System.Music.AlbumTitle"));
+    selectFragments.removeDuplicates();
+
+    QString query = QLatin1String("GROUP ON System.Music.Artist");
+
+    if (!aggregateFragments.isEmpty())
+        query += QLatin1String("\nAGGREGATE ") + aggregateFragments.join(QLatin1String(", "));
+
+    if (!orderBy.isEmpty())
+        query += QLatin1String("\nORDER BY ") + orderBy;
+
+    query += QLatin1String("\nOVER(GROUP ON System.Music.AlbumTitle OVER(\nSELECT ")
+            + selectFragments.join(QLatin1String(", "))
+            + QLatin1String("\nFROM SystemIndex");
+
+    if (!where.isEmpty()) {
+        query += QLatin1String("\nWHERE System.Music.Artist IS NOT NULL AND ")
+                + where
+                + QLatin1String(")))");
+    } else {
+        query += QLatin1String("\nWHERE System.Music.Artist IS NOT NULL))");
+    }
+    return query;
+}
+
+/////////////////
+//
+// Album Queries.
+//
+/////////////////
+
+static const QWS4Gallery::WhereFragmentMap qt_albumWhereFragmentMap[] =
+{
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, title, "System.Music.AlbumTitle"),
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, rating, "System.Rating"),
+
+    // Media
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, producer, "System.Media.Producer"),
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, writer, "System.Media.Writer"),
+
+    // Audio/Music
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, artist, "System.Music.Artist"),
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, albumArtist, "System.Music.AlbumArtist"),
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, albumTitle, "System.Music.AlbumTitle"),
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, composer, "System.Music.Composer"),
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, discNumber, "System.Music.SetNumber"),
+    QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, genre, "System.Music.Genre")
+};
+
+static const QWS4Gallery::AggregateMap qt_albumAggregateFieldMap[] =
+{
+    QT_DEFINE_GALLERY_AGGREGATE_MAP(rating, "AVG(System.Rating)", "AVG_SystemRating"),
+
+    // Media
+    QT_DEFINE_GALLERY_AGGREGATE_MAP(duration, "SUM(System.Media.Duration)", "SUM_SystemMediaDuration"),
+
+    // Audio/Music
+    QT_DEFINE_GALLERY_AGGREGATE_MAP(albumCount, "CHILDCOUNT()", "CHILDCOUNT"),
+    QT_DEFINE_GALLERY_AGGREGATE_MAP(trackCount, "COUNT()", "COUNT")
+};
+
+static const QWS4Gallery::FieldMap qt_albumSelectFieldMap[] =
+{
+    QT_DEFINE_GALLERY_FIELD_MAP(title, "System.Music.AlbumTitle"),
+
+    // Audio/Music
+    QT_DEFINE_GALLERY_FIELD_MAP(artist, "System.Music.Artist"),
+    QT_DEFINE_GALLERY_FIELD_MAP(albumArtist, "System.Music.AlbumArtist"),
+    QT_DEFINE_GALLERY_FIELD_MAP(albumTitle, "System.Music.AlbumTitle")
+};
+
+static const QWS4Gallery::FieldMap qt_albumOrderByFieldMap[] =
+{
+    QT_DEFINE_GALLERY_FIELD_MAP(title, "System.Music.AlbumTitle"),
+    QT_DEFINE_GALLERY_FIELD_MAP(rating, "AVG(System.Rating)"),
+
+    // Media
+    QT_DEFINE_GALLERY_FIELD_MAP(duration, "SUM(System.Media.Duration)"),
+
+    // Audio/Music
+    QT_DEFINE_GALLERY_FIELD_MAP(trackCount, "CHILDCOUNT()"),
+    QT_DEFINE_GALLERY_FIELD_MAP(artist, "System.Music.Artist"),
+    QT_DEFINE_GALLERY_FIELD_MAP(albumArtist, "System.Music.AlbumArtist"),
+    QT_DEFINE_GALLERY_FIELD_MAP(albumTitle, "System.Music.AlbumTitle")
+};
+
+static QString qt_buildAlbumWhere(int *error, const QGalleryDocumentFilter &filter)
+{
+    *error = QGalleryDocumentRequest::InvalidFilter;
+
+    return QString();
+}
+
+static QString qt_buildAlbumWhere(int *error, const QGalleryContainerFilter &filter)
+{
+    *error = QGalleryDocumentRequest::InvalidFilter;
+
+    return QString();
+}
+
+static QString qt_buildAlbumQuery(
+        int *error,
+        QVector<QWS4GalleryQueryBuilder::Column> *columns,
+        const QWS4GalleryQueryBuilder &builder)
+{
+    QString where;
+
+    const QGalleryFilter filter = builder.filter();
+    switch (filter.type()) {
+    case QGalleryFilter::Invalid:
+        break;
+    case QGalleryFilter::Document:
+        where = qt_buildAlbumWhere(error, filter.toDocumentFilter());
+        break;
+    case QGalleryFilter::Container:
+        where = qt_buildAlbumWhere(error, filter.toContainerFilter());
+        break;
+    case QGalleryFilter::Intersection:
+        where = qt_buildWhere(
+                error,
+                filter.toIntersectionFilter(),
+                qt_albumWhereFragmentMap,
+                qt_arraySize(qt_albumWhereFragmentMap));
+        break;
+    case QGalleryFilter::Union:
+        where = qt_buildWhere(
+                error,
+                filter.toUnionFilter(),
+                qt_albumWhereFragmentMap,
+                qt_arraySize(qt_albumWhereFragmentMap));
+        break;
+    case QGalleryFilter::MetaData:
+        where = qt_buildWhere(
+                error,
+                filter.toMetaDataFilter(),
+                qt_albumWhereFragmentMap,
+                qt_arraySize(qt_albumWhereFragmentMap));
+        break;
+    case QGalleryFilter::MetaDataRange:
+        where = qt_buildWhere(
+                error,
+                filter.toMetaDataRangeFilter(),
+                qt_albumWhereFragmentMap,
+                qt_arraySize(qt_albumWhereFragmentMap));
+    default:
+        *error = QGalleryDocumentRequest::InvalidFilter;
+        return QString();
+    }
+
+    QStringList fields = builder.fields();
+
+    QStringList aggregateFragments = qt_buildAggregates(
+            error,
+            columns,
+            &fields,
+            qt_albumAggregateFieldMap,
+            qt_arraySize(qt_albumAggregateFieldMap));
+    if (*error != 0)
+        return QString();
+
+    QStringList selectFragments = qt_buildSelect(
+            error,
+            columns,
+            fields,
+            qt_albumSelectFieldMap,
+            qt_arraySize(qt_albumSelectFieldMap));
+    if (*error != 0)
+        return QString();
+
+    QString orderBy = qt_buildOrderBy(
+            error,
+            builder.sortFields(),
+            qt_albumOrderByFieldMap,
+            qt_arraySize(qt_albumOrderByFieldMap));
+    if (*error != 0)
+        return QString();
+
+    selectFragments.append(QLatin1String("System.Music.AlbumTitle"));
+    selectFragments.append(QLatin1String("System.Music.Artist"));
+    selectFragments.removeDuplicates();
+
+    QString query = QLatin1String("GROUP ON System.Music.AlbumTitle");
+
+    if (!aggregateFragments.isEmpty())
+        query += QLatin1String("\nAGGREGATE ") + aggregateFragments.join(QLatin1String(", "));
+
+    if (!orderBy.isEmpty())
+        query += QLatin1String("\nORDER BY ") + orderBy;
+
+    query += QLatin1String("\nOVER(GROUP ON System.Music.Artist OVER(\nSELECT ")
+            + selectFragments.join(QLatin1String(", "))
+            + QLatin1String("\nFROM SystemIndex");
+
+    if (!where.isEmpty()) {
+        query += QLatin1String("\nWHERE System.Music.AlbumTitle IS NOT NULL AND ")
+                + where
+                + QLatin1String(")))");
+    } else {
+        query += QLatin1String("\nWHERE System.Music.AlbumTitle IS NOT NULL))");
+    }
+    return query;
+}
+
+//////////////////////////
+//
+// QWS4GalleryQueryBuilder
+//
+//////////////////////////
+
+static const QWS4Gallery::TypeMap qt_queryTypeMap[] =
+{
+    { QLatin1String("Artist"), qt_buildArtistQuery },
+    { QLatin1String("Album"), qt_buildAlbumQuery },
 };
 
 QWS4GalleryQueryBuilder::QWS4GalleryQueryBuilder()
@@ -456,339 +997,23 @@ QWS4GalleryQueryBuilder::~QWS4GalleryQueryBuilder()
 
 int QWS4GalleryQueryBuilder::buildQuery()
 {
-    QString select;
-    QString where;
-    QString orderBy;
-    
-    int result = buildSelect(&select);
-    if (result != 0)
-        return result;
+    int error = 0;
+    m_columns.clear();
+    m_fields.removeDuplicates();
 
-    if ((result = buildWhere(&where)) != 0)
-        return result;
-    
-    if ((result = buildOrderBy(&orderBy)) != 0)
-        return result;
+    for (int i = 0; i < qt_arraySize(qt_queryTypeMap); ++i) {
+        if (qt_queryTypeMap[i].type == m_documentType) {
+            m_query = qt_queryTypeMap[i].buildQuery(&error, &m_columns, *this);
 
-    //if (m_maximumCount > 0) {
-    //    m_query = QString::fromLatin1("SELECT TOP %1 %2\nFROM SystemIndex")
-    //            .arg(m_maximumCount + qMax(0, m_startIndex))
-    //            .arg(select);
-    //} else {
-        m_query = QString::fromLatin1("SELECT %2\nFROM SystemIndex").arg(select);
-    //}
+            qDebug("Built Query:\n%s", qPrintable(m_query));
 
-    if (!where.isEmpty())
-        m_query += QString::fromLatin1("\nWHERE %1").arg(where);
-
-    if (!orderBy.isEmpty())
-        m_query += QString::fromLatin1("\nORDER BY %1").arg(orderBy);
-
-    return 0;
-}
-
-int QWS4GalleryQueryBuilder::buildSelect(QString *statement)
-{
-    *statement = QLatin1String("System.ItemUrl, System.Kind");
-
-    static int count = sizeof(qt_selectFragmentLookup) / sizeof(QWS4SelectFragmentLookupItem);
-
-    for (QStringList::const_iterator it = m_fields.begin(), end = m_fields.end(); it != end; ++it) {
-        for (int i = 0; i < count; ++i) {
-            if (qt_selectFragmentLookup[i].field == *it) {
-                do {
-                    *statement += QLatin1String(", ") + qt_selectFragmentLookup[i].fragment;
-                } while (++i < count && qt_selectFragmentLookup[i].field == *it);
-            }
+            return error;
         }
     }
 
-    return 0;
-}
+    m_query = qt_buildMediaQuery(&error, &m_columns, *this);
 
-int QWS4GalleryQueryBuilder::buildWhere(QString *statement)
-{
-    int result = 0;
+    qDebug("Built Query:\n%s", qPrintable(m_query));
 
-    switch (m_filter.type()) {
-    case QGalleryFilter::Invalid:
-        break;
-    case QGalleryFilter::Document:
-        result = buildWhere(statement, m_filter.toDocumentFilter());
-        break;
-    case QGalleryFilter::DocumentUrl:
-        result = buildWhere(statement, m_filter.toDocumentUrlFilter());
-        break;
-    case QGalleryFilter::Container:
-        result = buildWhere(statement, m_filter.toContainerFilter());
-        break;
-    case QGalleryFilter::ContainerUrl:
-        result = buildWhere(statement, m_filter.toContainerUrlFilter());
-        break;
-    case QGalleryFilter::Intersection:
-        result = buildWhere(statement, m_filter.toIntersectionFilter());
-        break;
-    case QGalleryFilter::Union:
-        result = buildWhere(statement, m_filter.toUnionFilter());
-        break;
-    case QGalleryFilter::MetaData:
-        result = buildWhere(statement, m_filter.toMetaDataFilter());
-        break;
-    case QGalleryFilter::MetaDataRange:
-        result = buildWhere(statement, m_filter.toMetaDataRangeFilter());
-        break;
-    default:
-        result = QGalleryDocumentRequest::InvalidFilter;
-        break;
-    }
-
-    if (result == 0 && !m_documentType.isEmpty()) {
-        if (!statement->isEmpty()) {
-            *statement = QString::fromLatin1("System.Kind = '%1' AND %2")
-                    .arg(m_documentType, *statement);
-        } else {
-            *statement = QString::fromLatin1("System.Kind = '%1'").arg(m_documentType);
-        }
-    }
-
-    return result;
-}
-
-int QWS4GalleryQueryBuilder::buildOrderBy(QString *statement)
-{
-    QStringList fragments;
-
-    static int count = sizeof(qt_orderByFragmentLookup) / sizeof(QWS4OrderByFragmentLookupItem);
-
-    QStringList::const_iterator it = m_sortFields.begin();
-    QStringList::const_iterator end = m_sortFields.end();
-
-    for (; it != end; ++it) {
-        QStringRef field;
-        if (it->startsWith(QLatin1Char('+')) || it->startsWith(QLatin1Char('-')))
-            field = QStringRef(it.operator ->(), 1, it->length() - 1);
-        else
-            field = QStringRef(it.operator ->());
-
-        for (int i = 0; i < count; ++i) {
-            if (qt_orderByFragmentLookup[i].field == field) {
-                do {
-                    if (it->startsWith(QLatin1Char('+'))) {
-                        fragments.append(
-                                qt_orderByFragmentLookup[i].fragment + QLatin1String(" ASC"));
-                    } else if (it->startsWith(QLatin1Char('-'))) {
-                        fragments.append(
-                                qt_orderByFragmentLookup[i].fragment + QLatin1String(" DESC"));
-                    } else {
-                        fragments.append(qt_orderByFragmentLookup[i].fragment);
-                    }
-                } while (++i < count && qt_orderByFragmentLookup[i].field == field);
-                break;
-            }
-        }
-    }
-
-    *statement = fragments.join(QLatin1String(", "));
-
-    return 0;
-}
-
-int QWS4GalleryQueryBuilder::buildWhere(
-        QString *statement, const QGalleryDocumentFilter &filter)
-{
-    const QStringList documentIds = filter.documentIds();
-
-    QStringList::const_iterator it = documentIds.begin();
-    QStringList::const_iterator end= documentIds.end();
-
-    if (it != end) {
-        *statement = QString::fromLatin1("System.ItemUrl = '%1'").arg(*it);
-
-        for (++it; it != end; ++it)
-            *statement += QString::fromLatin1(" OR System.ItemUrl = '%1'").arg(*it);
-
-        if (documentIds.count() > 1)
-            *statement = QLatin1Char('(') + *statement + QLatin1Char(')');
-
-        return 0;
-    } else {
-        return QGalleryDocumentRequest::InvalidFilter;
-    }
-}
-
-int QWS4GalleryQueryBuilder::buildWhere(
-        QString *statement, const QGalleryDocumentUrlFilter &filter)
-{
-    const QList<QUrl> urls = filter.documentUrls();
-
-    if (urls.isEmpty())
-        return QGalleryDocumentRequest::InvalidFilter;
-
-    QList<QUrl>::const_iterator it = urls.begin();
-    QList<QUrl>::const_iterator end= urls.end();
-
-    if (it != end) {
-        *statement = QString::fromLatin1("System.ItemUrl = '%1'").arg(it->toString());
-
-        for (++it; it != end; ++it)
-            *statement += QString::fromLatin1(" OR System.ItemUrl = '%1'").arg(it->toString());
-
-        if (urls.count() > 1)
-            *statement = QLatin1Char('(') + *statement + QLatin1Char(')');
-
-        return 0;
-    } else {
-        return QGalleryDocumentRequest::InvalidFilter;
-    }
-}
-
-int QWS4GalleryQueryBuilder::buildWhere(
-        QString *statement, const QGalleryContainerFilter &filter)
-{
-    const QString id = filter.containerId();
-
-    if (!id.isEmpty()) {
-        *statement = QString::fromLatin1("DIRECTORY = '%1'").arg(id);
-        return 0;
-    } else {
-        return QGalleryDocumentRequest::InvalidFilter;
-    }
-}
-
-int QWS4GalleryQueryBuilder::buildWhere(
-        QString *statement, const QGalleryContainerUrlFilter &filter)
-{
-    const QUrl url = filter.containerUrl();
-
-    if (!url.isEmpty()) {
-        *statement = QString::fromLatin1("DIRECTORY = '%1'").arg(url.toString());
-        return 0;
-    } else {
-        return QGalleryDocumentRequest::InvalidFilter;
-    }
-}
-
-int QWS4GalleryQueryBuilder::buildWhere(
-        QString *statement, const QGalleryIntersectionFilter &filter)
-{
-    const QList<QGalleryFilter> filters = filter.filters();
-
-    QStringList statements;
-    
-    for (QList<QGalleryFilter>::const_iterator it = filters.begin(), end = filters.end();
-            it != end;
-            ++it) {
-        QString subStatement;
-
-        int result = 0;
-    
-        switch (it->type()) {
-        case QGalleryFilter::Union:
-            result = buildWhere(&subStatement, it->toUnionFilter());
-            break;
-        case QGalleryFilter::MetaData:
-            result = buildWhere(&subStatement, it->toMetaDataFilter());
-            break;
-        case QGalleryFilter::MetaDataRange:
-            result = buildWhere(&subStatement, it->toMetaDataRangeFilter());
-            break;
-        default:
-            result = QGalleryDocumentRequest::InvalidFilter;
-            break;
-        }
-
-        if (result != 0)
-            return result;
-
-        statements.append(subStatement);
-    }
-
-    switch (statements.count()) {
-    case 0:
-        return QGalleryDocumentRequest::InvalidFilter;
-    case 1:
-        *statement = statements.first();
-        return 0;
-    default:
-        *statement = QLatin1Char('(') + statements.join(QLatin1String(" OR ")) + QLatin1Char(')');
-        return 0;
-    }
-}
-
-int QWS4GalleryQueryBuilder::buildWhere(
-        QString *statement, const QGalleryUnionFilter &filter)
-{
-    const QList<QGalleryFilter> filters = filter.filters();
-
-    QStringList statements;
-
-    for (QList<QGalleryFilter>::const_iterator it = filters.begin(), end = filters.end();
-            it != end;
-            ++it) {
-        QString subStatement;
-
-        int result = 0;
-
-        switch (it->type()) {
-        case QGalleryFilter::MetaData:
-            result = buildWhere(&subStatement, it->toMetaDataFilter());
-            break;
-        case QGalleryFilter::MetaDataRange:
-            result = buildWhere(&subStatement, it->toMetaDataRangeFilter());
-            break;
-        default:
-            result = QGalleryDocumentRequest::InvalidFilter;
-            break;
-        }
-
-        if (result != 0)
-            return result;
-
-        statements.append(subStatement);
-    }
-
-    switch (statements.count()) {
-    case 0:
-        return QGalleryDocumentRequest::InvalidFilter;
-    case 1:
-        *statement = statements.first();
-        return 0;
-    default:
-        *statement = QLatin1Char('(') + statements.join(QLatin1String(" OR ")) + QLatin1Char(')');
-        return 0;
-    }
-}
-
-int QWS4GalleryQueryBuilder::buildWhere(
-        QString *statement, const QGalleryMetaDataFilter &filter)
-{
-    static int count = sizeof(qt_queryFragmentLookup) / sizeof(QWS4QueryFragmentLookupItem);
-
-    const QString field = filter.fieldName();
-
-    for (int i = 0; i < count; ++i) {
-        if (qt_queryFragmentLookup[i].field == field) {
-            return qt_queryFragmentLookup[i].fragment->build(
-                    statement, filter.matchFlags(), filter.value());
-        }
-    }
-
-    return QGalleryDocumentRequest::InvalidFilter;
-}
-
-int QWS4GalleryQueryBuilder::buildWhere(
-        QString *statement, const QGalleryMetaDataRangeFilter &filter)
-{
-    static int count = sizeof(qt_queryFragmentLookup) / sizeof(QWS4QueryFragmentLookupItem);
-
-    const QString field = filter.fieldName();
-
-    for (int i = 0; i < count; ++i) {
-        if (qt_queryFragmentLookup[i].field == field) {
-            return qt_queryFragmentLookup[i].fragment->buildRange(
-                    statement, filter.rangeFlags(), filter.minimumValue(), filter.maximumValue());
-        }
-    }
-
-    return QGalleryDocumentRequest::InvalidFilter;
+    return error;
 }

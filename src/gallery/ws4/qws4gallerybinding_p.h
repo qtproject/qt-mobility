@@ -56,7 +56,9 @@ public:
     HACCESSOR handle() const { return m_handle; }
 
     int bufferSize() const { return m_bufferSize; }
-    int columnCount() const { return m_offsets.count(); }
+    int columnCount() const { return m_count; }
+
+    QString columnName(int column) const { return m_columnNames.at(column); }
 
     qint32 toInt32(const char *buffer, int column) const;
     QString toString(const char *buffer, int column) const;
@@ -70,12 +72,14 @@ private:
     bool generateColumnBinding(DBBINDING *binding, const DBCOLUMNINFO &column);
 
     int m_bufferSize;
+    int m_count;
     HACCESSOR m_handle;
     IAccessor *m_accessor;
     QVector<int> m_offsets;
     QVector<readInt32> m_int32Readers;
     QVector<readString> m_stringReaders;
     QVector<readVariant> m_variantReaders;
+    QVector<QString> m_columnNames;
 };
 
 #endif

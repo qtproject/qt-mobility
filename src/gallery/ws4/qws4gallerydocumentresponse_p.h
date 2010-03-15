@@ -55,6 +55,8 @@
 
 #include "qgalleryrequest.h"
 
+#include "qws4galleryquerybuilder_p.h"
+
 #include <QtCore/qmutex.h>
 #include <QtCore/qwaitcondition.h>
 
@@ -83,7 +85,10 @@ class QWS4GalleryDocumentResponse
     Q_OBJECT
 public:
     QWS4GalleryDocumentResponse(
-            IRowset *rows, QGalleryDocumentRequest *request, QObject *parent = 0);
+            IRowset *rowSet,
+            const QGalleryDocumentRequest &request,
+            const QVector<QWS4GalleryQueryBuilder::Column> &columns,
+            QObject *parent = 0);
     ~QWS4GalleryDocumentResponse();
 
     QList<int> keys() const;
@@ -164,13 +169,16 @@ private:
     typedef QSharedDataPointer<QWS4GalleryDocumentListRow> Row;
 
     volatile LONG m_ref;
+    int m_urlIndex;
+    int m_typeIndex;
     DWORD m_asynchNotifyCookie;
     DWORD m_rowsetNotifyCookie;
     DWORD m_rowsetEventsCookie;
     IRowset *m_rowSet;
     QWS4GalleryBinding *m_binding;
     QStringList m_fields;
-    QList<int>m_keys;
+    QList<int> m_keys;
+    QList<int> m_columnIndexes;
     QVector<Row> m_rows;
     QVector<Row> m_pendingRows;
     QMutex m_asynchMutex;

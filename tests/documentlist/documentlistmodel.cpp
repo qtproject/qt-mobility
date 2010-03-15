@@ -45,7 +45,6 @@ DocumentListModel::DocumentListModel(QObject *parent)
     : QAbstractItemModel(parent)
     , m_list(0)
 {
-
 }
 
 DocumentListModel::~DocumentListModel()
@@ -97,7 +96,7 @@ void DocumentListModel::setColumnCount(int count)
     } else if (m_fields.count() < count) {
         int index = m_fields.count();
 
-        beginInsertColumns(QModelIndex(), index, count -1);
+        beginInsertColumns(QModelIndex(), index, count - 1);
 
         m_fields.resize(count);
         m_keys.resize(count);

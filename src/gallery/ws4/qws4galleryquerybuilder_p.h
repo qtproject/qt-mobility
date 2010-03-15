@@ -60,6 +60,8 @@
 class QWS4GalleryQueryBuilder
 {
 public:
+    typedef QPair<QString, QString> Column;
+
     QWS4GalleryQueryBuilder();
     ~QWS4GalleryQueryBuilder();
 
@@ -82,24 +84,14 @@ public:
     void setFilter(const QGalleryFilter &filter) { m_filter = filter; }
 
     QString query() const { return m_query; }
+    QVector<Column> columns() const { return m_columns; }
 
     int buildQuery();
 
 private:
-    int buildSelect(QString *statement);
-    int buildWhere(QString *statement);
-    int buildOrderBy(QString *statement);
-    int buildWhere(QString *statement, const QGalleryDocumentFilter &filter);
-    int buildWhere(QString *statement, const QGalleryDocumentUrlFilter &filter);
-    int buildWhere(QString *statement, const QGalleryContainerFilter &filter);
-    int buildWhere(QString *statement, const QGalleryContainerUrlFilter &filter);
-    int buildWhere(QString *statement, const QGalleryIntersectionFilter &filter);
-    int buildWhere(QString *statement, const QGalleryUnionFilter &filter);
-    int buildWhere(QString *statement, const QGalleryMetaDataFilter &filter);
-    int buildWhere(QString *statement, const QGalleryMetaDataRangeFilter &filter);
-
     QStringList m_fields;
     QStringList m_sortFields;
+    QVector<Column> m_columns;
     QString m_documentType;
     QString m_query;
     QGalleryFilter m_filter;

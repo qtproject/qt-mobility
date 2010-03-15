@@ -49,22 +49,63 @@
 #include <oledberr.h>
 
 QWS4GalleryDocumentResponse::QWS4GalleryDocumentResponse(
-        IRowset *rowSet, QGalleryDocumentRequest *request, QObject *parent)
+            IRowset *rowSet,
+            const QGalleryDocumentRequest &request,
+            const QVector<QWS4GalleryQueryBuilder::Column> &columns,
+            QObject *parent)
     : QGalleryAbstractResponse(parent)
     , m_ref(1)
+    , m_urlIndex(0)
+    , m_typeIndex(0)
     , m_asynchNotifyCookie(0)
     , m_rowsetNotifyCookie(0)
     , m_rowsetEventsCookie(0)
     , m_rowSet(rowSet)
     , m_binding(0)
-    , m_fields(request->fields())
+    , m_fields(request.fields())
 {
-    for (int i = 0, count = m_fields.count(); i < count; ++i)
-        m_keys.append(i);
-
     m_binding = new QWS4GalleryBinding(m_rowSet);
 
-    if (m_binding->handle()) {
+    if (m_binding->handle()) {    
+        for (int i = 0; i < m_fields.count(); ++i) {
+            bool matched = false;
+            for (int j = 0; j < columns.count() && !matched; ++j) {
+                if (m_fields.at(i) == columns.at(j).first) {
+                    for (int k = 0; k < m_binding->columnCount() && !matched; ++k) {
+                        if (QString::compare(
+                                columns.at(j).second,
+                                m_binding->columnName(k),
+                                Qt::CaseInsensitive) == 0) {
+                            m_columnIndexes.append(k);
+                            matched = true;
+                        }
+                    }
+                }
+            }
+            m_keys.append(i);
+            if (!matched)
+                m_columnIndexes.append(m_binding->columnCount());
+        }
+
+        m_urlIndex = m_binding->columnCount();
+        m_typeIndex = m_binding->columnCount();
+
+        for (int k = 0; k < m_binding->columnCount(); ++k) {
+            if (QString::compare(QLatin1String("System.ItemUrl"), 
+                    m_binding->columnName(k),
+                    Qt::CaseInsensitive) == 0) {
+                m_urlIndex = k;
+                break;
+            }
+        }
+
+        for (int k = 0; k < m_binding->columnCount(); ++k) {
+            if (QString::compare(QLatin1String("System.Kind"), m_binding->columnName(k)) == 0) {
+                m_typeIndex = k;
+                break;
+            }
+        }
+
         IConnectionPointContainer *container = 0;
         if (SUCCEEDED(m_rowSet->QueryInterface(
                 IID_IConnectionPointContainer, reinterpret_cast<void **>(&container)))) {
@@ -423,11 +464,11 @@ void QWS4GalleryDocumentResponse::readRows(const HROW rows[], DBCOUNTITEM count)
             Row row = Row(new QWS4GalleryDocumentListRow);
             row->workId = 0;
             row->flags = 0;
-            row->url = m_binding->toString(buffer.data(), 0);
-            row->type = m_binding->toString(buffer.data(), 1);
+            row->url = m_binding->toString(buffer.data(), m_urlIndex);
+            row->type = m_binding->toString(buffer.data(), m_typeIndex);
 
-            for (int i = 2; i < m_binding->columnCount(); ++i)
-                row->metaData.append(m_binding->toVariant(buffer.data(), i));
+            for (int i = 0; i < m_columnIndexes.count(); ++i)
+                row->metaData.append(m_binding->toVariant(buffer.data(), m_columnIndexes.at(i)));
 
             newRows.append(row);
         }

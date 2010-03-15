@@ -204,7 +204,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createDocumentResponse(
 
     if (result == 0) {
         if (IRowset *rowSet = execute(builder.query(), request->isLive(), &result))
-            return new QWS4GalleryDocumentResponse(rowSet, request);
+            return new QWS4GalleryDocumentResponse(rowSet, *request, builder.columns());
     }
 
     return new QGalleryErrorResponse(result);
