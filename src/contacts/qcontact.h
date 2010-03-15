@@ -135,7 +135,7 @@ public:
 
     /* Relationships that this contact was involved in when it was retrieved from the manager */
     QList<QContactRelationship> relationships(const QString& relationshipType = QString()) const;
-    QList<QContactId> relatedContacts(const QString& relationshipType /* = QString() */, QContactRelationship::Role /* role = QContactRelationship::Either */) const;
+    QList<QContactId> relatedContacts(const QString& relationshipType /* = QString() */, QContactRelationship::Role role /* = QContactRelationship::Either */) const;
     QList<QContactId> Q_DECL_DEPRECATED relatedContacts(const QString& relationshipType = QString(), QContactRelationshipFilter::Role role = QContactRelationshipFilter::Either) const;
     void Q_DECL_DEPRECATED setRelationshipOrder(const QList<QContactRelationship>& reordered);
     QList<QContactRelationship> Q_DECL_DEPRECATED relationshipOrder() const;
