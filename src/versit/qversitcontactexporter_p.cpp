@@ -234,11 +234,11 @@ void QVersitContactExporterPrivate::encodeName(
 {
     QContactName contactName = static_cast<QContactName>(detail);
     property.setValue(QString::fromAscii("%1;%2;%3;%4;%5").arg(
-            escape(contactName.lastName()),
-            escape(contactName.firstName()),
-            escape(contactName.middleName()),
-            escape(contactName.prefix()),
-            escape(contactName.suffix())));
+            versitEscaped(contactName.lastName()),
+            versitEscaped(contactName.firstName()),
+            versitEscaped(contactName.middleName()),
+            versitEscaped(contactName.prefix()),
+            versitEscaped(contactName.suffix())));
 }
 
 /*!
@@ -250,7 +250,7 @@ void QVersitContactExporterPrivate::encodePhoneNumber(
 {
     QContactPhoneNumber phoneNumber = static_cast<QContactPhoneNumber>(detail);
     encodeParameters(property, phoneNumber.contexts(), phoneNumber.subTypes());
-    setEscapedValue(property,phoneNumber.number());
+    property.setValue(versitEscaped(phoneNumber.number()));
 }
 
 /*!
@@ -262,7 +262,7 @@ void QVersitContactExporterPrivate::encodeEmail(
 {
     QContactEmailAddress emailAddress = static_cast<QContactEmailAddress>(detail);
     encodeParameters(property, emailAddress.contexts());
-    setEscapedValue(property,emailAddress.emailAddress());
+    property.setValue(versitEscaped(emailAddress.emailAddress()));
 }
 
 /*!
@@ -276,12 +276,12 @@ void QVersitContactExporterPrivate::encodeAddress(
     encodeParameters(property, address.contexts(), address.subTypes());
     // Leave out the extended address field:
     property.setValue(QString::fromAscii("%1;;%2;%3;%4;%5;%6").arg(
-            escape(address.postOfficeBox()),
-            escape(address.street()),
-            escape(address.locality()),
-            escape(address.region()),
-            escape(address.postcode()),
-            escape(address.country())));
+            versitEscaped(address.postOfficeBox()),
+            versitEscaped(address.street()),
+            versitEscaped(address.locality()),
+            versitEscaped(address.region()),
+            versitEscaped(address.postcode()),
+            versitEscaped(address.country())));
 }
 
 /*!
@@ -306,7 +306,7 @@ void QVersitContactExporterPrivate::encodeUid(
     const QContactDetail& detail)
 {
     QContactGuid uid = static_cast<QContactGuid>(detail);
-    setEscapedValue(property,uid.guid());
+    property.setValue(versitEscaped(uid.guid()));
 }
 
 /*!
@@ -364,7 +364,7 @@ void QVersitContactExporterPrivate::encodeNote(
     const QContactDetail& detail)
 {
     QContactNote contactNote = static_cast<QContactNote>(detail);
-    setEscapedValue(property,contactNote.note());
+    property.setValue(versitEscaped(contactNote.note()));
 }
 
 /*!
@@ -392,19 +392,19 @@ void QVersitContactExporterPrivate::encodeOrganization(
     if (organization.title().length() > 0) {
         QVersitProperty property;
         property.setName(QLatin1String("TITLE"));
-        setEscapedValue(property,organization.title());
+        property.setValue(versitEscaped(organization.title()));
         document.addProperty(property);
     }
     if (organization.name().length() > 0 || organization.department().size() > 0) {
         QVersitProperty property;
         property.setName(QLatin1String("ORG"));
-        QString value = escape(organization.name());
+        QString value = versitEscaped(organization.name());
         QStringList departments(organization.department());
         if (departments.count() == 0)
             value += QLatin1Char(';');
         foreach (const QString& department, departments) {
             value += QLatin1Char(';');
-            value += escape(department);
+            value += versitEscaped(department);
         }
         property.setValue(value);
         document.addProperty(property);
@@ -419,14 +419,14 @@ void QVersitContactExporterPrivate::encodeOrganization(
     if (organization.assistantName().length() > 0) {
         QVersitProperty property;
         property.setName(QLatin1String("X-ASSISTANT"));
-        setEscapedValue(property,organization.assistantName());
+        property.setValue(versitEscaped(organization.assistantName()));
         document.addProperty(property);
     }
 
     if (organization.role().length() > 0) {
         QVersitProperty property;
         property.setName(QLatin1String("ROLE"));
-        setEscapedValue(property,organization.role());
+        property.setValue(versitEscaped(organization.role()));
         document.addProperty(property);
     }
 }
@@ -466,7 +466,7 @@ void QVersitContactExporterPrivate::encodeGender(
     QContactDetail& detail)
 {
     QContactGender gender = static_cast<QContactGender>(detail);
-    setEscapedValue(property,gender.gender());
+    property.setValue(versitEscaped(gender.gender()));
 }
 
 /*!
@@ -478,7 +478,6 @@ void QVersitContactExporterPrivate::encodeNickname(
 {
     QContactNickname nicknameDetail = static_cast<QContactNickname>(detail);
     QVersitProperty property;
-    property.setName(QLatin1String("X-NICKNAME"));
     bool found = false;
     foreach (const QVersitProperty& currentProperty, document.properties()) {
         if (currentProperty.name() == QLatin1String("X-NICKNAME")) {
@@ -490,7 +489,9 @@ void QVersitContactExporterPrivate::encodeNickname(
     QString value(property.value());
     if (found)
         value += QLatin1Char(',');
-    QString nickname = escape(nicknameDetail.nickname());
+    else
+        property.setName(QLatin1String("X-NICKNAME"));
+    QString nickname = versitEscaped(nicknameDetail.nickname());
     value.append(nickname);
     property.setValue(value);
     // Replace the current property
@@ -507,9 +508,8 @@ void QVersitContactExporterPrivate::encodeTag(
 {
     QContactTag tagDetail = static_cast<QContactTag>(detail);
     QVersitProperty property;
-    property.setName(QLatin1String("CATEGORIES"));
     bool found = false;
-    foreach (QVersitProperty currentProperty, document.properties()) {
+    foreach (const QVersitProperty& currentProperty, document.properties()) {
         if (currentProperty.name() == QLatin1String("CATEGORIES")) {
             property = currentProperty;
             found = true;
@@ -519,7 +519,9 @@ void QVersitContactExporterPrivate::encodeTag(
     QString value(property.value());
     if (found)
         value += QLatin1Char(',');
-    QString tag = escape(tagDetail.tag());
+    else
+        property.setName(QLatin1String("CATEGORIES"));
+    QString tag = versitEscaped(tagDetail.tag());
     value.append(tag);
     property.setValue(value);
     // Replace the current property
@@ -559,7 +561,7 @@ bool QVersitContactExporterPrivate::encodeOnlineAccount(
         if (subTypes.contains(QContactOnlineAccount::SubTypeImpp))
             name = QLatin1String("X-IMPP");
         property.setName(name);
-        setEscapedValue(property,onlineAccount.accountUri());
+        property.setValue(versitEscaped(onlineAccount.accountUri()));
     }
     return encoded;
 }
@@ -576,7 +578,7 @@ bool QVersitContactExporterPrivate::encodeFamily(
     if (family.spouse().size()) {
         QVersitProperty property;
         property.setName(QLatin1String("X-SPOUSE"));
-        setEscapedValue(property,family.spouse());
+        property.setValue(versitEscaped(family.spouse()));
         document.addProperty(property);
     }
 
@@ -584,7 +586,7 @@ bool QVersitContactExporterPrivate::encodeFamily(
         QVersitProperty property;
         property.setName(QLatin1String("X-CHILDREN"));
         QString children = family.children().join(QLatin1String(","));
-        setEscapedValue(property,children);
+        property.setValue(versitEscaped(children));
         document.addProperty(property);
     }
     return false;
@@ -603,7 +605,7 @@ bool QVersitContactExporterPrivate::encodeDisplayLabel(
     QContactDisplayLabel displayLabel = static_cast<QContactDisplayLabel>(detail);
     if (displayLabel.label().size()) {
         encoded = true;
-        setEscapedValue(property,displayLabel.label());
+        property.setValue(versitEscaped(displayLabel.label()));
     } else {
         QContactDetail contactDetail;
         for (int i = 0; i < contact.details().count(); i++) {
@@ -622,7 +624,7 @@ bool QVersitContactExporterPrivate::encodeDisplayLabel(
             name.firstName().length() ||
             name.lastName().length()) {
             encoded = true;
-            property.setValue(escape(value));
+            property.setValue(versitEscaped(value));
         }
     }
     return encoded;
@@ -716,23 +718,12 @@ bool QVersitContactExporterPrivate::encodeContentFromPixmap(const QPixmap& pixma
 }
 
 /*!
- * Escapes \a value if necessary and sets it to \a property
- */
-void QVersitContactExporterPrivate::setEscapedValue(
-    QVersitProperty& property,
-    const QString& value)
-{
-    QString escapedValue(escape(value));
-    property.setValue(escapedValue);
-}
-
-/*!
  * Escapes \a value if necessary.
- * For vCard there is no concept of escaping the property values.
+ * For vCard 2.1, there is no concept of escaping the property values.
  * Starting from 3.0 the property values having certain special
  * characters should be escaped.
  */
-QString QVersitContactExporterPrivate::escape(const QString& value)
+QString QVersitContactExporterPrivate::versitEscaped(const QString& value)
 {
     QString escaped(value);
     if (mVersitType != QVersitDocument::VCard21Type) {

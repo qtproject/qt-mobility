@@ -1163,21 +1163,24 @@ void tst_QVersitContactImporter::testSound()
 void tst_QVersitContactImporter::testTag()
 {
     // one value
-    QVersitDocument document;
+    QVersitDocument document(QVersitDocument::VCard30Type);
     QVersitProperty tagProperty;
     tagProperty.setName(QLatin1String("CATEGORIES"));
     tagProperty.setValue(QLatin1String("red"));
     document.addProperty(tagProperty);
-    QContact contact = mImporter->importContacts(QList<QVersitDocument>() << document).first();
+    QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
+    QContact contact = mImporter->contacts().first();
     QContactTag tagDetail = contact.detail<QContactTag>();
     QCOMPARE(tagDetail.tag(), QLatin1String("red"));
 
     // comma separated values should generate multiple nickname fields
     document.clear();
+    document.setType(QVersitDocument::VCard30Type);
     tagProperty.setName(QLatin1String("CATEGORIES"));
     tagProperty.setValue(QLatin1String("red,green,blue"));
     document.addProperty(tagProperty);
-    contact = mImporter->importContacts(QList<QVersitDocument>() << document).first();
+    QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
+    contact = mImporter->contacts().first();
     QList<QContactTag> tagDetails = contact.details<QContactTag>();
     QCOMPARE(tagDetails.count(), 3);
     QCOMPARE(tagDetails.at(0).tag(), QLatin1String("red"));

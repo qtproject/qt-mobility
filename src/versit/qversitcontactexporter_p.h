@@ -103,8 +103,7 @@ protected:
         const QStringList& subTypes=QStringList());
     bool encodeContentFromFile(const QString& resourcePath, QVersitProperty& property);
     bool encodeContentFromPixmap(const QPixmap& pixmap, QVersitProperty& property);
-    void setEscapedValue(QVersitProperty& property,const QString& value);
-    QString escape(const QString& value);
+    QString versitEscaped(const QString& value);
 
 public: // Data
     QList<QVersitDocument> mDocuments;

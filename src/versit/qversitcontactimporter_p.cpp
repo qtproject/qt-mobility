@@ -409,7 +409,7 @@ bool QVersitContactImporterPrivate::createTags(
 {
     QStringList values = property.value().split(QLatin1Char(','), QString::SkipEmptyParts);
     QStringList contexts = extractContexts(property);
-    foreach(QString value, values) {
+    foreach(const QString& value, values) {
         QContactTag tag;
         tag.setTag(value);
         saveDetailWithContext(contact, &tag, contexts);

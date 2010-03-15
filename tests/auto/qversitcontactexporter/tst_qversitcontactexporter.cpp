@@ -1032,7 +1032,7 @@ void tst_QVersitContactExporter::testEncodeNickName()
 
 void tst_QVersitContactExporter::testEncodeTag()
 {
-    QContact contact;
+    QContact contact(createContactWithName(QLatin1String("asdf")));
 
     // Add an extra detail
     QContactGender gender;
@@ -1043,22 +1043,24 @@ void tst_QVersitContactExporter::testEncodeTag()
     QContactTag firstTag;
     firstTag.setTag(QLatin1String("red"));
     contact.saveDetail(&firstTag);
-    QVersitDocument document = mExporter->exportContacts(QList<QContact>() << contact).first();
-    QCOMPARE(document.properties().count(), 2);
-    QVersitProperty property = document.properties().at(1);
+    QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
+    QVersitDocument document = mExporter->documents().first();
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+2);
+    QVersitProperty property = document.properties().at(BASE_PROPERTY_COUNT+1);
     QCOMPARE(property.name(), QLatin1String("CATEGORIES"));
     QCOMPARE(property.value(), QLatin1String("red"));
 
     // Two tags given, should be collated into a single property
-    contact.clearDetails();
+    contact = createContactWithName(QLatin1String("asdf"));
     contact.saveDetail(&firstTag);
     contact.saveDetail(&gender);
     QContactTag secondTag;
     secondTag.setTag(QLatin1String("green"));
     contact.saveDetail(&secondTag);
-    document = mExporter->exportContacts(QList<QContact>() << contact).first();
-    QCOMPARE(document.properties().count(), 2);
-    property = document.properties().at(1);
+    QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
+    document = mExporter->documents().first();
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+2);
+    property = document.properties().at(BASE_PROPERTY_COUNT+1);
     QCOMPARE(property.name(), QString::fromAscii("CATEGORIES"));
     QCOMPARE(property.value(), QString::fromAscii("red,green"));
 }
