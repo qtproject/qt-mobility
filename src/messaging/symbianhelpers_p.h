@@ -52,8 +52,11 @@ class QMessageId;
 namespace SymbianHelpers {
 
     bool isFreestyleMessage(QMessageId& msgId);
+    bool isFreestyleMessage(QString& msgId);
     QMessageId addFreestylePrefix(QMessageId& msgId);
+    QString addFreestylePrefix(QString& msgId);
     QMessageId removeFreestylePrefix(QMessageId& msgId);
+    QString removeFreestylePrefix(QString& msgId);
 
 };
 

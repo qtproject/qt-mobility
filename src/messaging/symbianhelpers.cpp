@@ -63,5 +63,18 @@ QMessageId removeFreestylePrefix(QMessageId &msgId) {
     return QMessageId();
 }
 
+bool isFreestyleMessage(QString &msgId) {
+    return msgId.indexOf(FreestylePrefix)==0?true:false;
+}
+
+QString addFreestylePrefix(QString &msgId) {
+    return QString(FreestylePrefix+msgId);
+}
+
+QString removeFreestylePrefix(QString &msgId) {
+    if (isFreestyleMessage(msgId))
+        return QString(msgId.remove(0, FreestylePrefix.length()));
+    return QString();
+}
 }
 QTM_END_NAMESPACE

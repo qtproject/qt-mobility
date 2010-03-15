@@ -43,29 +43,38 @@
 #include "qmessageservice_symbian_p.h"
 #include "qfsengine_symbian_p.h"
 #include "qmessage_symbian_p.h"
+#include "symbianhelpers_p.h"
+#include "qmessageaccount.h"
+#include "qmessageaccount_p.h"
 
 #include <emailinterfacefactory.h>
 #include <QTextCodec>
+#include <emailapidefs.h>
+#include <memailmailbox.h>
+
+
+using namespace EmailInterface;
 
 QTM_BEGIN_NAMESPACE
 
 
 CFSEngine::CFSEngine()
 {
- /*   CEmailInterfaceFactory* factory = CEmailInterfaceFactory::NewL(); 
+    CEmailInterfaceFactory* factory = CEmailInterfaceFactory::NewL(); 
     CleanupStack::PushL(factory); 
     MEmailInterface* ifPtr = factory->InterfaceL(KEmailClientApiInterface); 
-    MEmailClientApi* clientApi = static_cast<MEmailClientApi*>(ifPtr); 
-    CleanupReleasePushL(clientApi); 
+    m_clientApi = static_cast<MEmailClientApi*>(ifPtr); 
+    /*CleanupReleasePushL(clientApi); 
     
     RMailboxPtrArray mailboxes;
     clientApi->GetMailboxesL(mailboxes);
     CleanupStack::PopAndDestroy(2); // clientApi and factory*/
+    CleanupStack::PopAndDestroy(factory); // factory
 }
 
 CFSEngine::~CFSEngine()
 {
-    
+    m_clientApi->Release();
 }
 
 CFSEngine* CFSEngine::instance()
@@ -75,7 +84,10 @@ CFSEngine* CFSEngine::instance()
 
 QMessageAccountIdList CFSEngine::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder, uint limit, uint offset) const
 {
-    QMessageAccountIdList accountIds; 
+    QMessageAccountIdList accountIds;
+
+    TRAPD(err, updateEmailAccountsL());
+    
     return accountIds;
 }
 
@@ -92,6 +104,42 @@ QMessageAccount CFSEngine::account(const QMessageAccountId &id) const
 QMessageAccountId CFSEngine::defaultAccount(QMessage::Type type) const
 {
     return QMessageAccountId();
+}
+
+void CFSEngine::updateEmailAccountsL() const
+{
+    QStringList keys = m_accounts.keys();
+    
+    RMailboxPtrArray mailboxes;
+    m_clientApi->GetMailboxesL(mailboxes);
+    CleanupClosePushL(mailboxes);
+
+    for (TInt i = 0; i < mailboxes.Count(); i++) {
+        MEmailMailbox *mailbox = mailboxes[i];
+        QString idAsString = QString::number(mailbox->MailboxId().iId);
+        QString fsIdAsString = SymbianHelpers::addFreestylePrefix(idAsString);
+
+        if (!m_accounts.contains(fsIdAsString)) {
+            
+            QMessageAccount account = QMessageAccountPrivate::from(
+                QMessageAccountId(SymbianHelpers::addFreestylePrefix(fsIdAsString)),
+                QString::fromUtf16(mailbox->MailboxName().Ptr(), mailbox->MailboxName().Length()),
+                0, //TODO: ID for IMAP service if needed
+                0, //TODO: ID for SMTP service if needed
+                QMessage::Email);
+            
+            m_accounts.insert(fsIdAsString, account);
+        } else {
+            keys.removeOne(fsIdAsString);
+        }
+    }
+    
+    CleanupStack::PopAndDestroy(&mailboxes);  // mailboxes
+    
+    for (int i=0; i < keys.count(); i++) {
+        m_accounts.remove(keys[i]);
+    }
+    
 }
 
 bool CFSEngine::addMessage(QMessage* message)

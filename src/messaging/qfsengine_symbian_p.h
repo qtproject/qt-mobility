@@ -56,6 +56,10 @@
 #include "qmessagefolderfilter.h"
 #include "qmessageservice.h"
 
+#include <memailclientapi.h>
+
+using namespace EmailInterface;
+
 QTM_BEGIN_NAMESPACE
 class QMessageId;
 class QMessageAccount;
@@ -108,8 +112,17 @@ public:
 
 private:
     
+    void updateEmailAccountsL() const;
+
+    
     friend class QMessageService;
     friend class CMessagesFindOperation;
+    
+private:
+    MEmailClientApi* m_clientApi;
+
+    mutable QHash<QString, QMessageAccount> m_accounts;
+
 };
 
 QTM_END_NAMESPACE
