@@ -54,7 +54,7 @@ QTM_BEGIN_NAMESPACE
 /*!
 * Internal representation of a line that has been added to the map.
 */
-class QMapLine : public QMapObject
+class Q_LOCATION_EXPORT QMapLine : public QMapObject
 {
     friend class QMapView;
 
@@ -66,7 +66,7 @@ public:
     * @param pen The pen used for drawing the line.
     * @param layerIndex The map layer index of the pixmap.
     */
-    QMapLine(const QMapView& mapView, const QGeoCoordinate& point1, const QGeoCoordinate& point2,
+    QMapLine(const QGeoCoordinate& point1, const QGeoCoordinate& point2,
              const QPen& pen = QPen(), quint16 layerIndex = 0);
 
     /*!

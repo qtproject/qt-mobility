@@ -155,52 +155,19 @@ public:
     };
 
 public:
-    /*!
-    * Constructor.
-    */
     QMapView(QGraphicsItem* parent = 0, Qt::WindowFlags wFlags = 0);
 
-    /*!
-    * Initializes a the map view.
-    * @param geoEngine A pointer to the underlying geo engine.
-    * @param center The initial geo coordinate of the center of the view port.
-    */
     void init(QGeoEngine* geoEngine, const QGeoCoordinate& center = QGeoCoordinate(0, 0));
 
     virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
-    /*!
-    * @return The geo coordinate at the center of the map's current view port.
-    */
-    QGeoCoordinate center() const;
-    /*!
-    * @return The map coordinate (in pixels) at the center of the map's current view port.
-    */
-    QPointF mapCenter() const;
-    /*!
-    * Reimplemented from Qt::QGraphicsView::centerOn()
-    * Centers the view port on the given map coordinate (in pixels).
-    * @param pos The map coordinate.
-    */
-    void centerOn(const QPointF& pos); //overloaded from QGraphicsView
-    /*
-    * Reimplemented from Qt::QGraphicsView::centerOn()
-    * Centers the view port on the given map coordinate (in pixels).
-    * @param x The map x coordinate (in pixels).
-    * @param y The map y coordinate (in pixels).
-    */
-    void centerOn(qreal x, qreal y); //overloaded from QGraphicsView
-    /*
-    * Centers the view port on the given geo coordinate.
-    * @param geoPos the geo coordinate.
-    */
-    void centerOn(const QGeoCoordinate& geoPos);
 
-    /*!
-    * Moves the view port relative to its current position.
-    * @param deltaX The number of pixels the view port is moved along the x-axis.
-    * @param deltaY The number of pixels the view port is moved along the y-axis.
-    */
+    QGeoCoordinate center() const;
+    QPointF mapCenter() const;
+    void centerOn(const QPointF& pos);
+    void centerOn(qreal x, qreal y);
+    void centerOn(const QGeoCoordinate& geoPos);
     void moveViewPort(int deltaX, int deltaY);
+
     /*!
     * @return The width of the logical map space in pixels.
               I.e. the pixel range from 180W to 180E.
@@ -307,80 +274,8 @@ public:
         return routeDetails;
     }
 
-    /*!
-    * Adds a route to the map.
-    * @param route The route to be added.
-    * @param pen The pen to be used for drawing the route.
-    * @param endpointMarker A pixmap that is displayed at the endpoints of the route.
-    */
-    const QMapRoute* addRoute(const QRoute& route,
-                              const QPen& pen = QPen(),
-                              const QPixmap& endpointMarker = QPixmap(),
-                              quint16 layerIndex = 0);
-    const QMapMarker* addMarker(const QGeoCoordinate& point, const QString& text = QString(),
-                                const QFont& font = QFont("Arial", 10, QFont::Bold),
-                                const QColor& fontColor = QColor(Qt::white),
-                                const QPixmap& icon = QPixmap(), const QRectF& textRect = QRectF(),
-                                quint16 layerIndex = 0);
-    /*!
-    * Adds a pixmap to the map.
-    * @param topLeft The top left geo coordinate where the pixmap should be added to the map.
-    * @param pixmap The pixmap.
-    * @param layerIndex The layer index for the pixmap. Higher layers are stacked on top of lower layers.
-    * @return The internal map object.
-    */
-    const QMapPixmap* addPixmap(const QGeoCoordinate& topLeft, const QPixmap& pixmap, quint16 layerIndex = 0);
-    /*!
-    * Adds a line to the map.
-    * @param point1 The geo coordinate of the first endpoint.
-    * @param point2 The geo coordinate of the second endpoint.
-    * @param pen Then pen used for drawing the line.
-    * @param layerIndex The layer index of the pixmap. Higher layers are stacked on top of lower layers.
-    * @return The internal map object.
-    */
-    const QMapLine* addLine(const QGeoCoordinate& point1, const QGeoCoordinate& point2,
-                            const QPen& pen = QPen(), quint16 layerIndex = 0);
-    /*!
-    * Adds an ellipse to the map.
-    * @param topLeft The top left geo coordinate of the bounding box of the ellipse.
-    * @param bottomRight The bottom right geo coordinate of the bounding box of the ellipse.
-    * @param pen Then pen used for drawing the ellipse.
-    * @param brush The brush used for drawing the ellipse.
-    * @param layerIndex The layer index of the line. Higher layers are stacked on top of lower layers.
-    * @return The internal map object.
-    */
-    const QMapEllipse* addEllipse(const QGeoCoordinate& topLeft, const QGeoCoordinate& bottomRight,
-                                  const QPen& pen = QPen(), const QBrush& brush = QBrush(),
-                                  quint16 layerIndex = 0);
-    /*!
-    * Adds a rectangle to the map.
-    * @param topLeft The top left geo coordinate of the rectangle.
-    * @param bottomRight The bottom right geo coordinate of the rectangle.
-    * @param pen Then pen used for drawing the rectangle.
-    * @param brush The brush used for drawing the rectangle.
-    * @param layerIndex The layer index of the rectangle. Higher layers are stacked on top of lower layers.
-    * @return The internal map object.
-    */
-    const QMapRect* addRect(const QGeoCoordinate& topLeft, const QGeoCoordinate& bottomRight,
-                            const QPen& pen = QPen(), const QBrush& brush = QBrush(),
-                            quint16 layerIndex = 0);
-    /*!
-    * Adds a polygon to the map.
-    * @param polygon The list of geo coordinates that define the polygon.
-    * @param pen Then pen used for drawing the rectangle.
-    * @param brush The brush used for drawing the rectangle.
-    * @param layerIndex The layer index of the polygon. Higher layers are stacked on top of lower layers.
-    * @return The internal map object.
-    */
-    const QMapPolygon* addPolygon(const QList<QGeoCoordinate>& polygon,
-                                  const QPen& pen = QPen(), const QBrush& brush = QBrush(),
-                                  quint16 layerIndex = 0);
-
-    /*!
-    * Removes the given map object from the map.
-    * @param mapObject The map object to be removed.
-    */
-    void removeMapObject(const QMapObject* mapObject);
+    void addMapObject(QMapObject* mapObject);
+    void removeMapObject(QMapObject* mapObject);
 
     /*!
     * @return The maximum zoom level.
@@ -491,9 +386,7 @@ protected:
     *         as specified by its <i>center</i>.
     */
     QPointF getTopLeftFromCenter(const QPointF& center);
-    /*!
-    * Paints all map objects that are covered by the current view port.
-    */
+
     void paintLayers(QPainter* painter);
 
 
@@ -514,8 +407,8 @@ protected:
 
 public slots:
     /*!
-    * This slot is connected to \ref releaseTimer .timeout().
-    * It releases all map tiles that are not  currently covered by the view port.
+    * This slot is connected to \ref releaseTimer timeout().
+    * It releases all map tiles that are not currently covered by the view port.
     */
     void releaseRemoteTiles();
     /*!

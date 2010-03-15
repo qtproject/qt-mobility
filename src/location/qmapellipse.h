@@ -44,7 +44,7 @@
 
 #include <QPen>
 #include <QBrush>
-#include <QPointF>
+#include <QPainterPath>
 
 #include "qmapobject.h"
 #include "qgeocoordinate.h"
@@ -54,7 +54,7 @@ QTM_BEGIN_NAMESPACE
 /*!
 * Internal representation of an ellipse that has been added to the map.
 */
-class QMapEllipse : public QMapObject
+class Q_LOCATION_EXPORT QMapEllipse : public QMapObject
 {
     friend class QMapView;
 
@@ -69,6 +69,10 @@ public:
     QMapEllipse(const QGeoCoordinate& topLeft, const QGeoCoordinate& bottomRight,
                 const QPen& pen = QPen(), const QBrush& brush = QBrush(),
                 quint16 layerIndex = 0);
+
+    virtual bool intersects(const QRectF& rect) const;
+    virtual void compMapCoords();
+    virtual void paint(QPainter* painter, const QRectF& viewPort);
 
     /*!
     * @return The top left geo coordinate of the bounding box of the ellipse.
@@ -97,11 +101,10 @@ public:
 
 private:
     QGeoCoordinate geoTopLeft; //!< The top left geo coordinate of the bounding box of the ellipse.
-    QPointF mapTopLeft; //!< The top left map coordinate of the bounding box of the ellipse, for internal use only
     QGeoCoordinate geoBottomRight; //!< The bottom right geo coordinate of the bounding box of the ellipse.
-    QPointF mapBottomRight; //!< The bottom right map coordinate of the bounding box of the ellipse, for internal use only
     QPen p; //!< The pen used for drawing the ellipse.
     QBrush b; //!< The brush used for drawing the ellipse.
+    QPainterPath path; //!< The painter path of the ellipse
 };
 
 QTM_END_NAMESPACE

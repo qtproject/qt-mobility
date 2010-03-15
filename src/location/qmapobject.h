@@ -78,8 +78,8 @@ public:
     /*!
     * Constructor.
     */
-    QMapObject(const QMapView& mapView, MapObjectType type, quint16 z = 0)
-            : mapView(mapView), objType(type), z(z) {}
+    QMapObject(MapObjectType type, quint16 z = 0)
+            : mapView(0), objType(type), z(z) {}
 
     /*!
     * @return The z index of this map object, as used for layering.
@@ -110,10 +110,12 @@ protected:
     virtual void compIntersectingTiles(const QRectF& box);
     virtual void paint(QPainter* painter, const QRectF& viewPort) = 0;
 
+    void setParentView(QMapView* mapView);
+
 protected:
     //! The one-dimensional indices of the tiles that this map object either intersects or completely lies on.
     QList<quint64> intersectingTiles;
-    const QMapView& mapView;
+    QMapView* mapView;
     MapObjectType objType;
     quint16 z; //!< The z index, used for layering.
 };
