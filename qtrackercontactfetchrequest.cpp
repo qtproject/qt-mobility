@@ -354,7 +354,7 @@ RDFSelect prepareIMAddressesQuery(RDFVariable  &contact)
     queryidsimacccounts.groupBy(imaddress);
     queryidsimacccounts.addColumn("IMId", imaddress.property<nco::imID> ());
     queryidsimacccounts.addColumn("status", imaddress.optional().property<nco::imPresence> ());
-    queryidsimacccounts.addColumn("message", imaddress.optional().property<nco::imContactStatusMessage> ());
+    queryidsimacccounts.addColumn("message", imaddress.optional().property<nco::imStatusMessage> ());
     queryidsimacccounts.addColumn("nick", imaddress.optional().property<nco::imNickname> ());
     queryidsimacccounts.addColumn("type", imaccount); // account path
     queryidsimacccounts.addColumn("capabilities",
@@ -1070,8 +1070,6 @@ QContactOnlineAccount QTrackerContactFetchRequest::getIMContactFromIMQuery(LiveN
     account.setPresence(presenceConversion[presence]);
 
     account.setStatusMessage(imContactQuery->index(queryRow, IMContact::ContactMessage).data().toString()); // imStatusMessage
-    qDebug() << Q_FUNC_INFO << imContactQuery->index(queryRow,
-            IMContact::ContactMessage).data().toString(); 
     account.setServiceProvider(imContactQuery->index(queryRow, IMContact::ServiceProvider).data().toString()); // service name
     return account;
 }
