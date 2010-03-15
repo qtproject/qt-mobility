@@ -193,14 +193,19 @@ void QGstreamerCameraExposureControl::setExposureCompensation(qreal ev)
 
 QCamera::MeteringMode QGstreamerCameraExposureControl::meteringMode() const
 {
+    return QCamera::MeteringAverage;
 }
 
 void QGstreamerCameraExposureControl::setMeteringMode(QCamera::MeteringMode mode)
 {
+    //pass
 }
 
 QCamera::MeteringModes QGstreamerCameraExposureControl::supportedMeteringModes() const
 {
+    QCamera::MeteringModes modes;
+    modes |= QCamera::MeteringAverage;
+    return modes;
 }
 
 int QGstreamerCameraExposureControl::isoSensitivity() const
