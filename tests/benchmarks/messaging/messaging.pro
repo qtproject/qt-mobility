@@ -19,7 +19,9 @@ MOBILITY = messaging
 
 symbian {
     TARGET.CAPABILITY = All -TCB
-    LIBS += msgs.lib msgs_autoshutdown.lib imcm.lib smcm.lib gsmu.lib etext.lib bafl.lib
+    LIBS += -lmsgs -lmsgs_autoshutdown -limcm -lsmcm -lgsmu -letext -lbafl
+    INCLUDEPATH += $$(EPOCROOT)epoc32/include/app
+    INCLUDEPATH += $$(EPOCROOT)epoc32/include/platform/app
 }
 
 maemo {
