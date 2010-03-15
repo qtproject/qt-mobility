@@ -86,7 +86,7 @@ public:
     virtual bool saveContact(QContact* contact, QContactManager::Error& error);
     virtual bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error);
     virtual bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
-    virtual bool removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error);
+    virtual bool removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error);
 
     /* Return a pruned or modified contact which is valid and can be saved in the backend */
     virtual QContact conformingContact(const QContact& original, QContactManager::Error& error);
@@ -100,14 +100,11 @@ public:
     virtual QContactLocalId selfContactId(QContactManager::Error& error) const;
 
     /* Relationships between contacts */
-    virtual QList<QContactRelationship> Q_DECL_DEPRECATED relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const;
-    virtual QList<QContactRelationship> relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationship::Role role, QContactManager::Error& error) const;
+    virtual QList<QContactRelationship> relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const;
     virtual bool saveRelationship(QContactRelationship* relationship, QContactManager::Error& error);
-    virtual QList<QContactManager::Error> Q_DECL_DEPRECATED saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error); // deprecated
-    virtual bool saveRelationships(QList<QContactRelationship>* relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error); // replaces the above
+    virtual QList<QContactManager::Error> saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error);
     virtual bool removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error);
-    virtual QList<QContactManager::Error> Q_DECL_DEPRECATED removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error); // deprecated
-    virtual bool removeRelationships(const QList<QContactRelationship>& relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error); // replaces the above
+    virtual QList<QContactManager::Error> removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error);
 
     /* Validation for saving */
     virtual bool validateContact(const QContact& contact, QContactManager::Error& error) const;

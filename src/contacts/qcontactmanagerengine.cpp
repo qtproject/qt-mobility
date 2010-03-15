@@ -359,33 +359,13 @@ QContactLocalId QContactManagerEngine::selfContactId(QContactManager::Error& err
 }
 
 /*!
-  \obsolete
   Returns a list of relationships of the given \a relationshipType in which the contact identified by the given \a participantId participates in the given \a role.
   If \a participantId is the default-constructed id, \a role is ignored and all relationships of the given \a relationshipType are returned.
   If \a relationshipType is empty, relationships of any type are returned.
   If no relationships of the given \a relationshipType in which the contact identified by the given \a participantId is involved in the given \a role exists,
   \a error is set to QContactManager::DoesNotExistError.
-
-  This function is deprecated and will be removed after the transition period has elapsed.
-  Use the relationships() function which takes a QContactRelationship::Role argument instead!
  */
 QList<QContactRelationship> QContactManagerEngine::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const
-{
-    Q_UNUSED(relationshipType);
-    Q_UNUSED(participantId);
-    Q_UNUSED(role);
-    error = QContactManager::NotSupportedError;
-    return QList<QContactRelationship>();
-}
-
-/*!
-  Returns a list of relationships of the given \a relationshipType in which the contact identified by the given \a participantId participates in the given \a role.
-  If \a participantId is the default-constructed id, \a role is ignored and all relationships of the given \a relationshipType are returned.
-  If \a relationshipType is empty, relationships of any type are returned.
-  If no relationships of the given \a relationshipType in which the contact identified by the given \a participantId is involved in the given \a role exists,
-  \a error is set to QContactManager::DoesNotExistError.
- */
-QList<QContactRelationship> QContactManagerEngine::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationship::Role role, QContactManager::Error& error) const
 {
     Q_UNUSED(relationshipType);
     Q_UNUSED(participantId);
@@ -415,33 +395,13 @@ bool QContactManagerEngine::saveRelationship(QContactRelationship* relationship,
 }
 
 /*!
-  \obsolete
   Saves the given \a relationships in the database and returns a list of error codes.  Any error which occurs will be saved in \a error.
-
-  This function is deprecated and will be removed after the transition period has elapsed.
-  Use the saveRelationships() function which takes an errorMap argument instead.
  */
 QList<QContactManager::Error> QContactManagerEngine::saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error)
 {
     Q_UNUSED(relationships);
     error = QContactManager::NotSupportedError;
     return QList<QContactManager::Error>();
-}
-
-/*!
-  Saves the given \a relationships in the database and returns true if the operation was successful.
-  For any relationship which was unable to be saved, an entry into the \a errorMap will be created,
-  with the key being the index into the input relationships list, and the value being the error which
-  occurred for that index.
-
-  The overall operation error will be saved in \a error.
- */
-bool QContactManagerEngine::saveRelationships(QList<QContactRelationship>* relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error)
-{
-    Q_UNUSED(relationships);
-    Q_UNUSED(errorMap);
-    error = QContactManager::NotSupportedError;
-    return false;
 }
 
 /*!
@@ -458,33 +418,13 @@ bool QContactManagerEngine::removeRelationship(const QContactRelationship& relat
 }
 
 /*!
-  \obsolete
   Removes the given \a relationships from the database and returns a list of error codes.  Any error which occurs will be saved in \a error.
-
-  This function is deprecated and will be removed after the transition period has elapsed.
-  Use the removeRelationships() function which takes an errorMap argument instead.
  */
 QList<QContactManager::Error> QContactManagerEngine::removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error)
 {
     Q_UNUSED(relationships);
     error = QContactManager::DoesNotExistError;
     return QList<QContactManager::Error>();
-}
-
-/*!
-  Removes the given \a relationships from the database and returns true if the operation was successful.
-  For any relationship which was unable to be removed, an entry into the \a errorMap will be created,
-  with the key being the index into the input relationships list, and the value being the error which
-  occurred for that index.
-
-  The overall operation error will be saved in \a error.
- */
-bool QContactManagerEngine::removeRelationships(const QList<QContactRelationship>& relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error)
-{
-    Q_UNUSED(relationships);
-    Q_UNUSED(errorMap);
-    error = QContactManager::NotSupportedError;
-    return false;
 }
 
 /*!
@@ -1376,20 +1316,27 @@ bool QContactManagerEngine::saveContacts(QList<QContact>* contacts, QMap<int, QC
 
   \sa QContactManager::removeContact()
  */
-bool QContactManagerEngine::removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error)
+bool QContactManagerEngine::removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error)
 {
-    if (errorMap) {
+    if(errorMap) {
         errorMap->clear();
     }
 
+    if (!contactIds) {
+        error = QContactManager::BadArgumentError;
+        return false;
+    }
+
     QContactManager::Error functionError = QContactManager::NoError;
-    for (int i = 0; i < contactIds.count(); i++) {
-        QContactLocalId current = contactIds.at(i);
+    for (int i = 0; i < contactIds->count(); i++) {
+        QContactLocalId current = contactIds->at(i);
         if (!removeContact(current, error)) {
             functionError = error;
             if (errorMap) {
                 errorMap->insert(i, functionError);
             }
+        } else {
+            (*contactIds)[i] = 0;
         }
     }
 
