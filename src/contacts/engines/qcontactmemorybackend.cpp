@@ -1105,7 +1105,6 @@ bool QContactMemoryEngine::hasFeature(QContactManager::ManagerFeature feature, c
     switch (feature) {
         case QContactManager::Groups:
         case QContactManager::ActionPreferences:
-        case QContactManager::DetailActionPreferences:
         case QContactManager::Relationships:
         case QContactManager::ArbitraryRelationshipTypes:
         case QContactManager::RelationshipOrdering:
