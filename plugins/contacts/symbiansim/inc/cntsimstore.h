@@ -53,6 +53,14 @@
 
 QTM_USE_NAMESPACE
 
+#ifdef SYMBIANSIM_BACKEND_PHONEBOOKINFOV1    
+typedef RMobilePhoneBookStore::TMobilePhoneBookInfoV1 TSimStoreInfo;
+typedef RMobilePhoneBookStore::TMobilePhoneBookInfoV1Pckg TSimStoreInfoPckg;
+#else
+typedef RMobilePhoneBookStore::TMobilePhoneBookInfoV5 TSimStoreInfo;
+typedef RMobilePhoneBookStore::TMobilePhoneBookInfoV5Pckg TSimStoreInfoPckg;
+#endif
+
 class CntSimStorePrivate;
 class CntSymbianSimEngine;
 
@@ -60,21 +68,25 @@ class CntSimStore : public QObject
 {
 Q_OBJECT
 public:
-    CntSimStore(CntSymbianSimEngine* engine);
+    CntSimStore(CntSymbianSimEngine* engine, QString storeName, QContactManager::Error &error);
     ~CntSimStore();
-
-    QContactManager::Error getInfo();
-    QContactManager::Error read(int index, int numSlots);
-    QContactManager::Error write(const QContact &contact);
-    QContactManager::Error remove(int index);
+    
+    QString storeName();
+    TSimStoreInfo storeInfo();
+    
+    bool read(int index, int numSlots, QContactManager::Error &error);
+    bool write(const QContact &contact, QContactManager::Error &error);
+    bool remove(int index, QContactManager::Error &error);
+    
     void cancel();
     bool isBusy();
+    
+    TInt lastAsyncError();
 
 signals:
     // NOTE: Use Qt::QueuedConnection as connection type to make signals asynchronous.
     // CntSimStorePrivate emitting these signals is an active object and emitting
     // signals synchronously will corrupt the AO state.
-    void getInfoComplete(RMobilePhoneBookStore::TMobilePhoneBookInfoV5 info, QContactManager::Error error);
     void readComplete(QList<QContact> contacts, QContactManager::Error error);
     void writeComplete(QContact contacts, QContactManager::Error error);
     void removeComplete(QContactManager::Error error);
@@ -83,6 +95,5 @@ private:
     CntSimStorePrivate *d_ptr;
     friend class CntSimStorePrivate;    
 };
-
 
 #endif // CNTSIMSTORE_H_

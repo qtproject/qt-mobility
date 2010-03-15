@@ -40,7 +40,6 @@
 ****************************************************************************/
 
 #include "cameraformatconverter.h"
-#include <QDebug>
 
 /*
     Create a format converter

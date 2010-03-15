@@ -5,13 +5,15 @@ TEMPLATE = subdirs
 #ServiceFramework examples
 contains(mobility_modules,serviceframework) {
     SUBDIRS += filemanagerplugin \
-            bluetoothtransferplugin \
-            notesmanagerplugin \
-            servicebrowser
-#            todotool
+               bluetoothtransferplugin \
+               notesmanagerplugin \
+               servicebrowser
+
+    !symbian:SUBDIRS+= servicenotesmanager/sfw-notes
     
     contains(QT_CONFIG, declarative) {
-        SUBDIRS += declarative
+        SUBDIRS += servicenotesmanager/declarative-sfw-notes \
+                   declarative-sfw-dialer
     }
 }
 
@@ -37,7 +39,7 @@ contains(mobility_modules,location) {
 #Contacts examples
 contains(mobility_modules,contacts) {
     SUBDIRS += samplephonebook
-    contains(QT_CONFIG, declarative) {
+    contains(mobility_modules,versit):contains(QT_CONFIG, declarative) {
         SUBDIRS += qmlcontacts
     }
 }
@@ -63,14 +65,8 @@ contains(mobility_modules,multimedia) {
         player \
         cameracapture \
         slideshow \
-        streamplayer \
         audiorecorder
 
-    contains (QT_CONFIG, declarative) {
-        SUBDIRS += \
-            declarativemusic \
-            declarativevideo
-    }
 }
 
 

@@ -69,7 +69,7 @@ QTM_USE_NAMESPACE
  * Process \a detail and update \a document with the corresponding QVersitProperty(s).
  * \a contact provides the context within which the detail was found.
  *
- * Returns true if the detail has been handled and requires no furthur processing, false otherwise.
+ * Returns true if the detail has been handled and requires no further processing, false otherwise.
  *
  * This function is called on every QContactDetail encountered during an export.  Supply this
  * function and return true to implement custom export behaviour.
@@ -138,7 +138,7 @@ QList<QVersitDocument> QVersitContactExporter::exportContacts(
     QVersitDocument::VersitType versitType)
 {
     QList<QVersitDocument> list;
-    foreach (QContact contact, contacts) {
+    foreach (const QContact& contact, contacts) {
         QVersitDocument versitDocument;
         versitDocument.setType(versitType);
         d->exportContact(contact, versitDocument);
@@ -150,6 +150,9 @@ QList<QVersitDocument> QVersitContactExporter::exportContacts(
 
 /*!
  * Sets \a handler to be the handler for processing QContactDetails, or 0 to have no handler.
+ *
+ * Does not take ownership of the handler.  The client should ensure the handler remains valid for
+ * the lifetime of the exporter.
  */
 void QVersitContactExporter::setDetailHandler(QVersitContactExporterDetailHandler* handler)
 {
@@ -166,6 +169,9 @@ QVersitContactExporterDetailHandler* QVersitContactExporter::detailHandler() con
 
 /*!
  * Sets \a handler to be the handler to load files with, or 0 to have no handler.
+ *
+ * Does not take ownership of the handler.  The client should ensure the handler remains valid for
+ * the lifetime of the exporter.
  */
 void QVersitContactExporter::setResourceHandler(QVersitResourceHandler* handler)
 {

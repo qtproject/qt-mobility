@@ -74,8 +74,21 @@ HEADERS += \
     $$PUBLIC_HEADERS \
     $$PRIVATE_HEADERS
 
-maemo {
+maemo5 {
+    isEmpty(CONTACTS_DEFAULT_ENGINE): CONTACTS_DEFAULT_ENGINE=maemo5
+}
+
+maemo6 {
     isEmpty(CONTACTS_DEFAULT_ENGINE): CONTACTS_DEFAULT_ENGINE=tracker
+}
+
+maemo5|maemo6 {
+    CONFIG += create_pc create_prl
+    QMAKE_PKGCONFIG_DESCRIPTION = Qt Mobility - Contacts API
+    pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
+    pkgconfig.files = QtContacts.pc
+
+    INSTALLS += pkgconfig
 }
 
 wince* {

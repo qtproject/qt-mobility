@@ -241,7 +241,7 @@ void tst_SimCMAsync::fetchContactReq()
     QVERIFY(stateSpy.count() == 1);
     QTRY_COMPARE(resultSpy.count(), 1);
     QVERIFY(req.state() == QContactAbstractRequest::FinishedState);
-    QVERIFY(req.error() == QContactManager::NoError);
+    QVERIFY(req.error() == QContactManager::DoesNotExistError);
     QVERIFY(stateSpy.count() == 2);
     QVERIFY(req.contacts().count() == 0);
 }
@@ -300,7 +300,7 @@ void tst_SimCMAsync::localIdFetchReq()
     QVERIFY(stateSpy.count() == 1);
     QTRY_COMPARE(resultSpy.count(), 1);
     QVERIFY(req.state() == QContactAbstractRequest::FinishedState);
-    QVERIFY(req.error() == QContactManager::NoError);
+    QVERIFY(req.error() == QContactManager::DoesNotExistError);
     QVERIFY(stateSpy.count() == 2);
     QVERIFY(req.ids().count() == 0);    
 }
@@ -432,6 +432,7 @@ void tst_SimCMAsync::removeContactReq()
     QVERIFY(resultSpy.count() == 0);
     
     // Remove same ones again
+#ifndef SYMBIANSIM_BACKEND_PHONEBOOKINFOV1
     stateSpy.clear();
     resultSpy.clear();
     QVERIFY(req.start());
@@ -439,14 +440,18 @@ void tst_SimCMAsync::removeContactReq()
     QVERIFY(stateSpy.count() == 1);
     QTRY_COMPARE(resultSpy.count(), 1);
     QVERIFY(req.state() == QContactAbstractRequest::FinishedState);
-#ifndef __WINS__
-    QWARN("This test fails in hardware!");
-    QWARN("In hardware removing SIM contacts which do not exist the etel server will return KErrNone instead of KErrNotFound");
+    // NOTE: In emulator removing a nonexisting contact will return DoesNotExistError
+    // and in hardware there will be no error.
+    QVERIFY(req.error() == QContactManager::DoesNotExistError || req.error() == QContactManager::NoError);
+    if (req.errorMap().count()) {
+        QVERIFY(req.errorMap().count() == 2);
+        QVERIFY(req.errorMap().value(0) == QContactManager::DoesNotExistError);
+        QVERIFY(req.errorMap().value(1) == QContactManager::DoesNotExistError);
+    }
+#else
+    QFAIL("Removing nonexistent contacts will cause a reboot in S60 3.1 device!");
+    // The first remove works fine but the second will not. Observed with Nokia E66.
 #endif
-    QVERIFY(req.error() == QContactManager::DoesNotExistError);
-    QVERIFY(req.errorMap().count() == 2);
-    QVERIFY(req.errorMap().value(0) == QContactManager::DoesNotExistError);
-    QVERIFY(req.errorMap().value(1) == QContactManager::DoesNotExistError);
 }
 
 void tst_SimCMAsync::detailDefinitionFetchReq()

@@ -24,20 +24,20 @@
 // Susan Daniel  +044035022423 dan.susa@nokia.com
 //-----------------------------------------------------------------------
 //Name - Match exactly
-[ContactDetailFilter1: Name, First, Stefann,MatchExactly, 1, 0]
-[ContactDetailFilter2: Name, Last, Daniel,MatchExactly, 1, 0]
+[ContactDetailFilter1: Name, FirstName, Stefann,MatchExactly, 1, 0]
+[ContactDetailFilter2: Name, LastName, Daniel,MatchExactly, 1, 0]
          //Name - MatchContains
-[ContactDetailFilter3: Name, First, nn,MatchContains, 3, 0]
-[ContactDetailFilter4: Name, Last, n,MatchContains, 4, 0]
+[ContactDetailFilter3: Name, FirstName, nn,MatchContains, 3, 0]
+[ContactDetailFilter4: Name, LastName, n,MatchContains, 4, 0]
          //Name - MatchStartsWith
-[ContactDetailFilter5: Name, First, Jo,MatchStartsWith, 2, 0]
-[ContactDetailFilter6: Name, Last, Len,MatchStartsWith, 1, 0]
+[ContactDetailFilter5: Name, FirstName, Jo,MatchStartsWith, 2, 0]
+[ContactDetailFilter6: Name, LastName, Len,MatchStartsWith, 1, 0]
          //Name - MatchEndsWith
-[ContactDetailFilter7: Name, First, nn,MatchEndsWith, 3, 0]
-[ContactDetailFilter8: Name, Last, ack,MatchEndsWith, 1, 0]
+[ContactDetailFilter7: Name, FirstName, nn,MatchEndsWith, 3, 0]
+[ContactDetailFilter8: Name, LastName, ack,MatchEndsWith, 1, 0]
          //Name - No results search
-[ContactDetailFilter7: Name, First, King,MatchEndsWith, 0, 0]
-[ContactDetailFilter8: Name, Last, Queen,MatchEndsWith, 0, 0]
+[ContactDetailFilter7: Name, FirstName, King,MatchEndsWith, 0, 0]
+[ContactDetailFilter8: Name, LastName, Queen,MatchEndsWith, 0, 0]
 //-----------------------------------------------------------------------
 //Email - Match exactly
 [ContactDetailFilter9: EmailAddress, EmailAddress, ste.Fed@nokia.com,MatchExactly, 1, 0]

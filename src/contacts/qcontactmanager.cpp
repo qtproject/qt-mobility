@@ -53,7 +53,7 @@
 QTM_BEGIN_NAMESPACE
 /*!
   \class QContactManager
-  \brief The QContactManager class provides clients with access to contact information stored in a particular backend.
+  \brief The QContactManager class provides an interface which allows clients with access to contact information stored in a particular backend.
   \ingroup contacts-main
  
   This class provides adding, updating and removal of contacts.
@@ -511,7 +511,7 @@ bool QContactManager::saveContacts(QList<QContact>* contacts, QMap<int, QContact
   only return \c QContactManager::NoError if all contacts were removed
   successfully.
 
-  For each contact that was removed succesfully, the corresponding
+  For each contact that was removed successfully, the corresponding
   id in the \a contactIds list will be retained but set to zero.  The id of contacts
   that were not successfully removed will be left alone.
 
@@ -533,7 +533,7 @@ bool QContactManager::removeContacts(QList<QContactLocalId>* contactIds, QMap<in
   only return \c QContactManager::NoError if all contacts were removed
   successfully.
 
-  For each contact that was removed succesfully, the corresponding
+  For each contact that was removed successfully, the corresponding
   id in the list will be retained but set to zero.  The id of contacts
   that were not successfully removed will be left alone.
 
@@ -763,13 +763,15 @@ bool QContactManager::isFilterSupported(const QContactFilter& filter) const
 }
 
 /*!
-  Returns the list of relationship types which are supported by this manager for contacts of
-  the given \a contactType.
+  Returns the list of relationship types which are supported by this manager where contacts of the
+  given type \a contactType may be the first (dominant) contact in the relationship.
   If the backend does not support the \c QContactManager::Relationships feature, this list should
   be empty.  If the backend supports the \c QContactManager::Relationships feature and also
   supports the \c QContactManager::ArbitraryRelationshipTypes feature, the list will
   contain the natively supported (well-known) relationship types contained in the list, but clients
   are able to add relationships of any custom type also.
+
+  \sa QContactRelationship::first()
  */
 QStringList QContactManager::supportedRelationshipTypes(const QString& contactType) const
 {

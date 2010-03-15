@@ -74,7 +74,7 @@ QVersitWriterPrivate::~QVersitWriterPrivate()
 void QVersitWriterPrivate::write()
 {
     bool canceled = false;
-    foreach (QVersitDocument document, mInput) {
+    foreach (const QVersitDocument& document, mInput) {
         if (isCanceling()) {
             canceled = true;
             break;

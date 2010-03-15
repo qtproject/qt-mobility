@@ -103,27 +103,19 @@
             return 1;
 
         QmlView canvas;
-        canvas.setUrl(url);
+        canvas.setSource(url);
         //! [1]
 
         //! [2]
         <span class="comment">//...</span>
         //! [2]
 
-        //! [4]
-        QmlContext* ctxt = canvas.rootContext();
-        ServiceRegister registration;
-        ctxt-&gt;addDefaultObject(&amp;registration);
-        ctxt-&gt;setContextProperty(&quot;services&quot;, QVariant::fromValue&lt;QList&lt;ServiceWrapper*&gt;*&gt;(registration.registeredservices()));
-        //! [4]
-
         //! [3]
         canvas.execute();
         canvas.show();
         //! [3]
 
-        return app.exec();
-    }</pre>
+        return app.exec();}</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

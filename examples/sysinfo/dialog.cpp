@@ -294,6 +294,9 @@ void Dialog::setupNetwork()
 
     homeMMCLabel->setText(ni->homeMobileCountryCode());
     homeMNCLabel->setText(ni->homeMobileNetworkCode());
+
+    networkModeChanged(ni->currentMode());
+
 }
 void Dialog::netStatusComboActivated(int index)
 {

@@ -104,8 +104,11 @@ QList<QContactLocalId> CntFilterDetail::contacts(
     else 
     {
         createSelectQuery(filter,sqlQuery,error);
-        //fetch the contacts
-        idList =  m_srvConnection.searchContacts(sqlQuery, error);
+        if(error == QContactManager::NoError)
+            {
+            //fetch the contacts
+            idList =  m_srvConnection.searchContacts(sqlQuery, error);
+            }
     }
     
     return idList;
@@ -156,10 +159,10 @@ void CntFilterDetail::createSelectQuery(const QContactFilter& filter,
        {
            if(detailFilter.detailFieldName() == QContactGuid::FieldGuid)
            {
-               QStringList fullGuidValue = detailFilter.value().toString().split("-");
+               QStringList fullGuidValue = detailFilter.value().toString().split('-');
                if (fullGuidValue.count() == 3) {
                    QString localGuidValue = fullGuidValue.at(1);
-                   sqlQuery = "SELECT contact_id FROM contact WHERE guid_string = '" + localGuidValue + "'";
+                   sqlQuery = "SELECT contact_id FROM contact WHERE guid_string = '" + localGuidValue + '\'';
                 }
             }
        }
@@ -190,7 +193,7 @@ void CntFilterDetail::updateForMatchFlag( const QContactDetailFilter& filter,
                 // Pattern for MatchExactly:
                 // " ='xyz'"
                 fieldToUpdate = " ='"
-                               + filter.value().toString() + "'";
+                               + filter.value().toString() + '\'';
                 error = QContactManager::NoError;
                 break;
                 }
@@ -214,7 +217,7 @@ void CntFilterDetail::updateForMatchFlag( const QContactDetailFilter& filter,
                 {
                 // Pattern for MatchEndsWith:
                 // " LIKE '%xyz'"
-                fieldToUpdate = " LIKE '%" + filter.value().toString() + "'" ;
+                fieldToUpdate = " LIKE '%" + filter.value().toString() + '\'' ;
                 error = QContactManager::NoError;
                 break;
                 }
@@ -252,13 +255,13 @@ void CntFilterDetail::getTableNameWhereClause( const QContactDetailFilter& detai
     m_dbInfo.getDbTableAndColumnName(fieldId,tableName,columnName);
 
     //return if tableName is empty
-    if(tableName == "" ){
+    if(tableName.isEmpty()){
         error = QContactManager::NotSupportedError;
         return;
     }
 
     //check columnName
-    if(columnName == "") {
+    if(columnName.isEmpty()) {
         error = QContactManager::NotSupportedError;
         return;
     }
@@ -268,7 +271,7 @@ void CntFilterDetail::getTableNameWhereClause( const QContactDetailFilter& detai
     }
     else {
 
-        sqlWhereClause += " " + columnName + " ";
+        sqlWhereClause += ' ' + columnName + ' ';
         QString fieldToUpdate;
         //Update the value depending on the match flag
         updateForMatchFlag(detailfilter,fieldToUpdate,error);

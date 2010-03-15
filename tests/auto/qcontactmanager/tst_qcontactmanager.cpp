@@ -124,6 +124,7 @@ private:
     bool isSuperset(const QContact& ca, const QContact& cb);
     QList<QContactDetail> removeAllDefaultDetails(const QList<QContactDetail>& details);
     void addManagers(); // add standard managers to the data
+    QContact createContact(QContactDetailDefinition nameDef, QString firstName, QString lastName, QString phoneNumber);
     void setContactName(QContactDetailDefinition nameDef, QContactName& contactName, const QString &name) const;
 
     QContactManagerDataHolder managerDataHolder;
@@ -382,9 +383,6 @@ void tst_QContactManager::addManagers()
     managers.removeAll("testdummy");
     managers.removeAll("teststaticdummy");
     managers.removeAll("maliciousplugin");
-#if defined(Q_OS_SYMBIAN)
-    managers.removeAll("symbiansim");
-#endif
 
     foreach(QString mgr, managers) {
         QMap<QString, QString> params;
@@ -394,6 +392,45 @@ void tst_QContactManager::addManagers()
             QTest::newRow(QString("mgr='%1', params").arg(mgr).toLatin1().constData()) << QContactManager::buildUri(mgr, params);
         }
     }
+}
+
+/*
+ * Helper method for creating a QContact instance with name and phone number
+ * details. Name is generated according to the detail definition assuming that
+ * either first and last name or custom label is supported.
+ */
+QContact tst_QContactManager::createContact(
+    QContactDetailDefinition nameDef,
+    QString firstName,
+    QString lastName,
+    QString phoneNumber)
+{
+    QContact contact;
+
+    if(!firstName.isEmpty() || !lastName.isEmpty()) {
+        QContactName n;
+
+        if(nameDef.fields().contains(QContactName::FieldFirstName)
+            && nameDef.fields().contains(QContactName::FieldFirstName)) {
+            n.setFirstName(firstName);
+            n.setLastName(lastName);
+        } else if(nameDef.fields().contains(QContactName::FieldCustomLabel)) {
+            n.setCustomLabel(firstName + " " + lastName);
+        } else {
+            // assume that either first and last name or custom label is supported
+            QTest::qWarn("Neither custom label nor first name/last name supported!");
+            return QContact();
+        }
+        contact.saveDetail(&n);
+    }
+
+    if (!phoneNumber.isEmpty()) {
+        QContactPhoneNumber ph;
+        ph.setNumber(phoneNumber);
+        contact.saveDetail(&ph);
+    }
+
+    return contact;
 }
 
 void tst_QContactManager::setContactName(QContactDetailDefinition nameDef, QContactName& contactName, const QString &name) const
@@ -659,18 +696,8 @@ void tst_QContactManager::add()
     QFETCH(QString, uri);
     QScopedPointer<QContactManager> cm(QContactManager::fromUri(uri));
 
-    QContact alice;
-    QContactName na;
-    na.setFirstName("Alice");
-    na.setLastName("inWonderland");
-    alice.saveDetail(&na);
-
-    QContactPhoneNumber ph;
-    ph.setNumber("1234567");
-    ph.setContexts("Home");
-    ph.setSubTypes(QStringList("Mobile"));
-
-    alice.saveDetail(&ph);
+    QContactDetailDefinition nameDef = cm->detailDefinition(QContactName::DefinitionName, QContactType::TypeContact);
+    QContact alice = createContact(nameDef, "Alice", "inWonderland", "1234567");
     int currCount = cm->contactIds().count();
     QVERIFY(cm->saveContact(&alice));
     QVERIFY(cm->error() == QContactManager::NoError);
@@ -689,10 +716,7 @@ void tst_QContactManager::add()
     }
 
     // now try adding a contact that does not exist in the database with non-zero id
-    QContact nonexistent;
-    QContactName name;
-    setContactName(cm->detailDefinition(QContactName::DefinitionName, QContactType::TypeContact), name, "nonexistent contact");
-    nonexistent.saveDetail(&name);
+    QContact nonexistent = createContact(nameDef, "nonexistent", "contact", "");
     QVERIFY(cm->saveContact(&nonexistent));       // should work
     QVERIFY(cm->removeContact(nonexistent.id().localId())); // now nonexistent has an id which does not exist
     QVERIFY(!cm->saveContact(&nonexistent));      // hence, should fail
@@ -785,10 +809,7 @@ void tst_QContactManager::add()
 
     // now a contact with many details of a particular definition
     // this will fail on some backends; how do we query for this capability?
-    QContact veryContactable;
-    QContactName contactableName;
-    setContactName(cm->detailDefinition(QContactName::DefinitionName, QContactType::TypeContact), contactableName, "Very Contactable");
-    veryContactable.saveDetail(&contactableName);
+    QContact veryContactable = createContact(nameDef, "Very", "Contactable", "");
     for (int i = 0; i < 50; i++) {
         QString phnStr = QString::number(i);
         QContactPhoneNumber vcphn;
@@ -811,62 +832,40 @@ void tst_QContactManager::update()
 {
     QFETCH(QString, uri);
     QScopedPointer<QContactManager> cm(QContactManager::fromUri(uri));
-    bool didUpdate = false;
 
     /* Save a new contact first */
-    QContact alice;
-    QContactName na;
-    na.setFirstName("Alice");
-    na.setLastName("inWonderland");
-    alice.saveDetail(&na);
-
-    QContactPhoneNumber ph;
-    ph.setNumber("1234567");
-    ph.setContexts(QStringList("Home"));
-    ph.setSubTypes(QStringList("Mobile"));
-
-    alice.saveDetail(&ph);
-
+    QContactDetailDefinition nameDef = cm->detailDefinition(QContactName::DefinitionName, QContactType::TypeContact);
+    QContact alice = createContact(nameDef, "Alice", "inWonderland", "1234567");
     QVERIFY(cm->saveContact(&alice));
     QVERIFY(cm->error() == QContactManager::NoError);
 
-    QList<QContactLocalId> ids = cm->contactIds();
-    for(int i = 0; i < ids.count(); i++) {
-        QContact current = cm->contact(ids.at(i));
-        QContactName nc = current.detail(QContactName::DefinitionName);
-        if (nc.firstName() == "Alice" && nc.lastName() == "inWonderland") {
-            nc.setMiddleName("Fictional");
-            current.saveDetail(&nc);
-            QVERIFY(cm->saveContact(&current));
-            QVERIFY(cm->error() == QContactManager::NoError);
+    /* Update name */
+    QContactName name = alice.detail(QContactName::DefinitionName);
+    setContactName(nameDef, name, "updated");
+    alice.saveDetail(&name);
+    QVERIFY(cm->saveContact(&alice));
+    QVERIFY(cm->error() == QContactManager::NoError);
+    QContact updated = cm->contact(alice.localId());
+    QContactName updatedName = updated.detail(QContactName::DefinitionName);
+    QCOMPARE(updatedName, name);
 
-            QContact updated = cm->contact(ids.at(i));
-            QContactName cn = updated.detail(QContactName::DefinitionName);
-            QCOMPARE(cn.middleName(), nc.middleName());
-            didUpdate = true;
-            break;
-        }
+    if (cm->hasFeature(QContactManager::Groups)) {
+        // Try changing types - not allowed
+        // from contact -> group
+        alice.setType(QContactType::TypeGroup);
+        QContactName na = alice.detail(QContactName::DefinitionName);
+        alice.removeDetail(&na);
+        QVERIFY(!cm->saveContact(&alice));
+        QVERIFY(cm->error() == QContactManager::AlreadyExistsError);
+
+        // from group -> contact
+        QContact jabberwock = createContact(nameDef, "", "", "1234567890");
+        jabberwock.setType(QContactType::TypeGroup);
+        QVERIFY(cm->saveContact(&jabberwock));
+        jabberwock.setType(QContactType::TypeContact);
+        QVERIFY(!cm->saveContact(&jabberwock));
+        QVERIFY(cm->error() == QContactManager::AlreadyExistsError);
     }
-
-    QVERIFY(didUpdate);
-
-    // Try changing types - not allowed
-    // from contact -> group
-    alice.setType(QContactType::TypeGroup);
-    alice.removeDetail(&na);
-    QVERIFY(!cm->saveContact(&alice));
-    QVERIFY(cm->error() == QContactManager::AlreadyExistsError);
-    
-    // from group -> contact
-    QContact jabberwock;
-    QContactPhoneNumber n;
-    n.setNumber("1234567890");
-    jabberwock.saveDetail(&n);
-    jabberwock.setType(QContactType::TypeGroup);
-    QVERIFY(cm->saveContact(&jabberwock));
-    jabberwock.setType(QContactType::TypeContact);
-    QVERIFY(!cm->saveContact(&jabberwock));
-    QVERIFY(cm->error() == QContactManager::AlreadyExistsError);
 }
 
 void tst_QContactManager::remove()
@@ -875,36 +874,18 @@ void tst_QContactManager::remove()
     QScopedPointer<QContactManager> cm(QContactManager::fromUri(uri));
 
     /* Save a new contact first */
-    QContact alice;
-    QContactName na;
-    na.setFirstName("Alice");
-    na.setLastName("inWonderland");
-    alice.saveDetail(&na);
-
-    QContactPhoneNumber ph;
-    ph.setNumber("1234567");
-    ph.setContexts(QStringList("Home"));
-    ph.setSubTypes(QStringList("Mobile"));
-
-    alice.saveDetail(&ph);
-
+    QContactDetailDefinition nameDef = cm->detailDefinition(QContactName::DefinitionName, QContactType::TypeContact);
+    QContact alice = createContact(nameDef, "Alice", "inWonderland", "1234567");
     QVERIFY(cm->saveContact(&alice));
     QVERIFY(cm->error() == QContactManager::NoError);
+    QVERIFY(alice.id() != QContactId());
 
-    bool atLeastOne = false;
-    QList<QContactLocalId> ids = cm->contactIds();
-    for(int i = 0; i < ids.count(); i++) {
-        QContact current = cm->contact(ids.at(i));
-        QContactName nc = current.detail(QContactName::DefinitionName);
-        if (nc.firstName() == "Alice" && nc.lastName() == "inWonderland") {
-            int currCount = cm->contactIds().count();
-            atLeastOne = cm->removeContact(current.id().localId());
-            QVERIFY(atLeastOne);
-            QCOMPARE(cm->contactIds().count(), currCount - 1);
-        }
-    }
-
-    QVERIFY(atLeastOne);
+    /* Remove the created contact */
+    const int contactCount = cm->contactIds().count();
+    QVERIFY(cm->removeContact(alice.localId()));
+    QCOMPARE(cm->contactIds().count(), contactCount - 1);
+    QVERIFY(cm->contact(alice.localId()).isEmpty());
+    QCOMPARE(cm->error(), QContactManager::DoesNotExistError);
 }
 
 void tst_QContactManager::batch()

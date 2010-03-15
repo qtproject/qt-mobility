@@ -40,17 +40,29 @@
 ****************************************************************************/
 
 #include "ut_cntfiltering.h"
-#include "cntsymbianfiltersqlhelper.h"
-
+#include "cntdbinfo.h"
+#include "cntsymbiansrvconnection.h"
 #include <qtcontacts.h>
 #include <QContactDetailFilter.h>
 #include <QtTest/QtTest>
+
+
+#include "cntfilterdetail.h"
+#include "cntfilterdefault.h"
+#include "cntfilterunion.h"
+#include "cntfilterintersection.h"
+#include "cntfilteraction.h"
+#include "cntfilterlocalid.h"
+#include "cntfilterinvalid.h"
+#include "cntfilterchangelog.h"
+#include "cntfilterrelationship.h"
+
 
 void TestFiltering::initTestCase()
 {
     mCntMng = new QContactManager("symbian");
     //open symbian database
-    CContactDatabase *m_database = 0;
+    m_database = 0;
         TRAPD(error, m_database = CContactDatabase::OpenL());
         QVERIFY(error == KErrNone);
     mFilters = new QHash<QContactFilter::FilterType, TFilter>;
@@ -298,6 +310,11 @@ void TestFiltering::createContact_3()
     email.setEmailAddress("Joronn.Bondnn@nokia.com");
     phonecontact.saveDetail(&email);
     
+    QContactOnlineAccount accounturi;
+    accounturi.setAccountUri("sip.com");
+    accounturi.setSubTypes( QContactOnlineAccount::SubTypeSip );
+    phonecontact.saveDetail(&accounturi);
+    
     QVERIFY(mCntMng->saveContact(&phonecontact));
     
 
@@ -326,6 +343,11 @@ void TestFiltering::createContact_4()
     QContactEmailAddress email;
     email.setEmailAddress("micheal.jack@nokia.com");
     phonecontact.saveDetail(&email);
+    
+    QContactOnlineAccount accounturi;
+    accounturi.setAccountUri("voipsip.com");
+    accounturi.setSubTypes( QContactOnlineAccount::SubTypeSipVoip );
+    phonecontact.saveDetail(&accounturi);
     
     QVERIFY(mCntMng->saveContact(&phonecontact));
     
@@ -370,6 +392,12 @@ QContactFilter::MatchFlags TestFiltering::getMatchFlag(QString& inputflag)
 	        return QContactFilter::MatchEndsWith ;
     else if (inputflag.compare("MatchContains") == 0)
 		return QContactFilter::MatchContains;
+    else if (inputflag.compare("MatchFixedString") == 0)
+		return QContactFilter::MatchFixedString;
+    else if (inputflag.compare("MatchCaseSensitive") == 0)
+            return QContactFilter::MatchCaseSensitive;
+    else if (inputflag.compare("MatchKeypadCollation") == 0)
+               return QContactFilter::MatchKeypadCollation;
     else 
         return QContactFilter::MatchPhoneNumber ;
     
@@ -391,6 +419,12 @@ void TestFiltering::testInvalidFilter()
 
 void TestFiltering::testContactDetailFilter()
 {
+    testContactDetailFilter_1();
+    testContactDetailFilter_2();
+}
+
+void TestFiltering::testContactDetailFilter_1()
+{
     QList<QContactLocalId> cnt_ids;
     QContactManager::Error error;
     QList<QContactSortOrder> sortOrder;
@@ -402,7 +436,7 @@ void TestFiltering::testContactDetailFilter()
         const QContactDetailFilter cdf(fs[i].filter);
         cnt_ids = mCntMng->contactIds(cdf, sortOrder);
         error = mCntMng->error();
-        //QVERIFY(error == QContactManager::NoError);
+        QVERIFY(error == QContactManager::NoError);
         
         // check counts 
         int seachedcontactcount = cnt_ids.count();
@@ -423,6 +457,61 @@ void TestFiltering::testContactDetailFilter()
         }
     }
 }
+
+void TestFiltering::testContactDetailFilter_2()
+{
+    // Test Contact Sip field support
+    QList<QContactLocalId> cnt_ids;
+    QContactManager::Error error;
+    QList<QContactSortOrder> sortOrder;
+    
+    QContactDetailFilter cdf1;
+    cdf1.setDetailDefinitionName(QContactOnlineAccount::DefinitionName, QContactOnlineAccount::SubTypeSip);
+    cdf1.setValue("sip");
+    cdf1.setMatchFlags(QContactFilter::MatchStartsWith);
+    cnt_ids = mCntMng->contactIds(cdf1, sortOrder);
+    error = mCntMng->error();
+    // check counts 
+    int seachedcontactcount = cnt_ids.count();
+    int expectedCount =1;  
+    QVERIFY(expectedCount == seachedcontactcount);
+    
+    QContactDetailFilter cdf2;
+    cdf2.setDetailDefinitionName(QContactOnlineAccount::DefinitionName, QContactOnlineAccount::SubTypeSipVoip);
+    cdf2.setValue("voip");
+    cdf2.setMatchFlags(QContactFilter::MatchStartsWith);
+    cnt_ids = mCntMng->contactIds(cdf2, sortOrder);
+    error = mCntMng->error();
+    // check counts 
+    seachedcontactcount = cnt_ids.count();
+    expectedCount =1;  
+    QVERIFY(expectedCount == seachedcontactcount);
+    
+    // Test Not supported fields
+    QContactDetailFilter cdf3;
+    cdf3.setDetailDefinitionName(QContactNickname::DefinitionName, QContactNickname::FieldNickname);
+    cdf3.setValue("aba");
+    cdf3.setMatchFlags(QContactFilter::MatchFixedString);
+    cnt_ids = mCntMng->contactIds(cdf3, sortOrder);
+    error = mCntMng->error();
+    // check counts 
+    seachedcontactcount = cnt_ids.count();
+    expectedCount =0;  
+    QVERIFY(expectedCount == seachedcontactcount);
+    QVERIFY(error == QContactManager::NotSupportedError);
+    
+    QContactDetailFilter cdf4;
+    cdf4.setDetailDefinitionName(QContactNickname::DefinitionName, QContactNickname::FieldNickname);
+    cdf4.setValue("aba");
+    cdf4.setMatchFlags(QContactFilter::MatchExactly);
+    cnt_ids = mCntMng->contactIds(cdf4, sortOrder);
+    error = mCntMng->error();
+    // check counts 
+    seachedcontactcount = cnt_ids.count();
+    expectedCount =0;  
+    QVERIFY(expectedCount == seachedcontactcount);
+    QVERIFY(error == QContactManager::NotSupportedError);
+}   
 
 void TestFiltering::testContactDetailRangeFilter()
 {
@@ -465,15 +554,43 @@ void TestFiltering::testActionFilter()
 
 void TestFiltering::testRelationshipFilter()
 {
+    // create a group contact
+    QContact groupContact;
+    groupContact.setType(QContactType::TypeGroup);
+    mCntMng->saveContact(&groupContact);
+
+    // create a local contact
+    QContact aContact;
+    aContact.setType(QContactType::TypeContact);
+    mCntMng->saveContact(&aContact);
+
+    // create a relationship
+    QContactRelationship relationship;
+    relationship.setRelationshipType(QContactRelationship::HasMember);
+    relationship.setFirst(groupContact.id());
+    relationship.setSecond(aContact.id());
+    
+    // save relationship
+    mCntMng->saveRelationship(&relationship);
+    
+    
     QList<QContactLocalId> cnt_ids;
-    QContactRelationshipFilter filter;
     QContactManager::Error error;
     QList<QContactSortOrder> sortOrder;
     
-    cnt_ids = mCntMng->contactIds(filter, sortOrder);
-    error = mCntMng->error();
+    QContactRelationshipFilter groupFilter;                   
+    groupFilter.setRelationshipType(QContactRelationship::HasMember);
+    groupFilter.setRelatedContactId(groupContact.id());                
+    groupFilter.setRelatedContactRole(QContactRelationshipFilter::First);
 
-    QVERIFY(error == QContactManager::NoError);
+    
+    cnt_ids = mCntMng->contactIds(groupFilter, sortOrder);
+    error = mCntMng->error();
+    
+    // check counts 
+    int seachedcontactcount = cnt_ids.count();
+    int expectedCount =1;  
+    QVERIFY(expectedCount == seachedcontactcount);
 }
 
 void TestFiltering::testIntersectionFilter()
@@ -716,33 +833,6 @@ void TestFiltering::testDefaultFilter()
     QVERIFY(error == QContactManager::NoError);
 }
 
-void TestFiltering::testDefaultFilterWithPredictiveSearch()
-{
-    QList<QContactLocalId> cnt_ids;
-    QContactDetailFilter df;
-    QContactManager::Error error;
-    QList<QContactSortOrder> sortOrder;
-    QList<QString> testString;
-    testString << "Micheal" << "Jack" << "Stefann" << "Fedrernn" << "Susan"<< "Daniel"; 
-    bool isPredSearch = false;
-    QString pattern = "607";
-       
-    df.setDetailDefinitionName(QContactName::DefinitionName);
-    df.setMatchFlags( QContactFilter::MatchKeypadCollation );
-    df.setValue( pattern );
-    cnt_ids = mCntMng->contactIds(df, sortOrder);
-    error = mCntMng->error();
-
-    for( int i=0;i<cnt_ids.count();i++ ) {
-            QContactLocalId cid = cnt_ids.at( i );    
-            QContact contact = mCntMng->contact( cid );
-            QContactName contactName = contact.detail( QContactName::DefinitionName );
-            testString.removeAll( contactName.value( QContactName::FieldFirst ) );
-            testString.removeAll( contactName.value( QContactName::FieldLast ) );
-            } 
-    QVERIFY( testString.count() == 0 );
-}
-
 void TestFiltering::testZeroSearch()
 {
     QList<QContactLocalId> cnt_ids;
@@ -770,6 +860,99 @@ void TestFiltering::testZeroSearch()
             } 
 }
 
+
+void TestFiltering::testFilterSupported()
+    {
+    QContactDetailFilter f1;
+    f1.setDetailDefinitionName(QContactNickname::DefinitionName, QContactNickname::FieldNickname);
+    f1.setValue("Mic");
+    f1.setMatchFlags(QContactFilter::MatchStartsWith);
+    CntSymbianSrvConnection srvConnection;
+    CntDbInfo dbInfo;
+      
+    CntFilterDefault filterDefault(*m_database,srvConnection,dbInfo);
+    bool flag = filterDefault.filterSupported(f1);
+    QVERIFY(flag ==false);
+        
+    CntFilterChangeLog filterChangeLog(*m_database,srvConnection,dbInfo);
+    flag = filterChangeLog.filterSupported(f1);
+    QVERIFY(flag ==false);   
+    
+    CntFilterRelationship filterRlationship(*m_database,srvConnection,dbInfo);
+    flag = filterRlationship.filterSupported(f1);
+    QVERIFY(flag ==false);   
+       
+
+    CntFilterLocalId filterLocalId(*m_database,srvConnection,dbInfo);
+    flag = filterLocalId.filterSupported(f1);
+    QVERIFY(flag ==false);   
+        
+    CntFilterInvalid filterInvalid(*m_database,srvConnection,dbInfo);
+    flag = filterInvalid.filterSupported(f1);
+    QVERIFY(flag ==false);   
+            
+    CntFilterAction filterAction(*m_database,srvConnection,dbInfo);
+    flag = filterAction.filterSupported(f1);
+    QVERIFY(flag ==false);   
+               
+    CntFilterUnion filterUnion(*m_database,srvConnection,dbInfo);
+    flag = filterUnion.filterSupported(f1);
+    QVERIFY(flag ==false);   
+               
+    CntFilterIntersection filterIntersection(*m_database,srvConnection,dbInfo);
+    flag = filterIntersection.filterSupported(f1);
+    QVERIFY(flag ==false);   
+    
+    }
+
+void TestFiltering::testCreateSelectQuery()
+    {
+    QContactDetailFilter f1;
+    f1.setDetailDefinitionName(QContactNickname::DefinitionName, QContactNickname::FieldNickname);
+    f1.setValue("Mic");
+    f1.setMatchFlags(QContactFilter::MatchStartsWith);
+    CntSymbianSrvConnection srvConnection;
+    CntDbInfo dbInfo;
+    QString sqlquery;
+    QContactManager::Error error;
+    CntFilterDetail filterDtl(*m_database,srvConnection,dbInfo);
+    filterDtl.createSelectQuery(f1,sqlquery,error);
+    QVERIFY(error == QContactManager::NotSupportedError);
+    
+    CntFilterDefault filterDefault(*m_database,srvConnection,dbInfo);
+    filterDefault.createSelectQuery(f1,sqlquery,error);
+    QVERIFY(error == QContactManager::NotSupportedError);
+        
+    CntFilterChangeLog filterChangeLog(*m_database,srvConnection,dbInfo);
+    filterChangeLog.createSelectQuery(f1,sqlquery,error);
+    QVERIFY(error == QContactManager::NotSupportedError);
+    
+    CntFilterRelationship filterRlationship(*m_database,srvConnection,dbInfo);
+    filterRlationship.createSelectQuery(f1,sqlquery,error);
+    QVERIFY(error == QContactManager::NotSupportedError); 
+       
+
+    CntFilterLocalId filterLocalId(*m_database,srvConnection,dbInfo);
+    filterLocalId.createSelectQuery(f1,sqlquery,error);
+    QVERIFY(error == QContactManager::NotSupportedError);
+        
+    CntFilterInvalid filterInvalid(*m_database,srvConnection,dbInfo);
+    filterInvalid.createSelectQuery(f1,sqlquery,error);
+    QVERIFY(error == QContactManager::NotSupportedError);
+            
+    CntFilterAction filterAction(*m_database,srvConnection,dbInfo);
+    filterAction.createSelectQuery(f1,sqlquery,error);
+    QVERIFY(error == QContactManager::NotSupportedError);
+               
+    CntFilterUnion filterUnion(*m_database,srvConnection,dbInfo);
+    filterUnion.filterSupported(f1);
+    QVERIFY(error == QContactManager::NotSupportedError);
+               
+    CntFilterIntersection filterIntersection(*m_database,srvConnection,dbInfo);
+    filterIntersection.createSelectQuery(f1,sqlquery,error);
+    QVERIFY(error == QContactManager::NotSupportedError);
+    
+    }
 //QTEST_MAIN(TestFiltering);
 /*int main(int argc, char *argv[]) 
 {

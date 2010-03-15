@@ -321,7 +321,7 @@ void TestSymbianEngine::saveContacts()
     foreach(QContactManager::Error err, errorMap) {
         QVERIFY(err == QContactManager::InvalidDetailError);
     }
-    foreach(QContact c, contacts) {
+    foreach(const QContact& c, contacts) {
         QVERIFY(c.id() == empty);
         QVERIFY(c.localId() == 0);
     }
@@ -342,7 +342,7 @@ void TestSymbianEngine::saveContacts()
         QVERIFY(err == QContactManager::NoError);
     }
     QString uri = QString(QLatin1String(CNT_SYMBIAN_MANAGER_NAME));
-    foreach(QContact c, contacts) {
+    foreach(const QContact& c, contacts) {
         QVERIFY(c.id() != empty);
         QVERIFY(c.localId() != 0);
         QVERIFY(c.id().managerUri().contains(uri, Qt::CaseInsensitive));
@@ -656,7 +656,7 @@ void TestSymbianEngine::addOwnCard()
     // Set a non existent contact as own card and verify
     // ensure this contact does not exist in dbase
     QContactLocalId id(12);
-    m_engine->removeContact(id, err);   // Dont test err. May or may not be in dbase
+    m_engine->removeContact(id, err);   // Don't test err. May or may not be in dbase
     QVERIFY(!m_engine->setSelfContactId(id, err)); // does not exist
     QVERIFY(err == QContactManager::DoesNotExistError);
 

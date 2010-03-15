@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>300</width>
-    <height>383</height>
+    <width>338</width>
+    <height>396</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -125,7 +125,7 @@
            <property name="minimumSize">
             <size>
              <width>1</width>
-             <height>1</height>
+             <height>5</height>
             </size>
            </property>
            <property name="text">
@@ -153,7 +153,7 @@
            <property name="minimumSize">
             <size>
              <width>1</width>
-             <height>1</height>
+             <height>5</height>
             </size>
            </property>
            <property name="text">
@@ -167,6 +167,9 @@
         <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,0,0">
          <item>
           <widget class="QToolButton" name="stopButton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
              <horstretch>0</horstretch>
@@ -176,7 +179,7 @@
            <property name="minimumSize">
             <size>
              <width>1</width>
-             <height>1</height>
+             <height>5</height>
             </size>
            </property>
            <property name="text">
@@ -186,6 +189,9 @@
          </item>
          <item>
           <widget class="QToolButton" name="pauseButton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
              <horstretch>0</horstretch>
@@ -195,7 +201,7 @@
            <property name="minimumSize">
             <size>
              <width>1</width>
-             <height>1</height>
+             <height>5</height>
             </size>
            </property>
            <property name="text">
@@ -205,6 +211,9 @@
          </item>
          <item>
           <widget class="QToolButton" name="recordButton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
              <horstretch>0</horstretch>
@@ -214,7 +223,7 @@
            <property name="minimumSize">
             <size>
              <width>1</width>
-             <height>1</height>
+             <height>5</height>
             </size>
            </property>
            <property name="text">
@@ -234,7 +243,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>300</width>
+     <width>338</width>
      <height>18</height>
     </rect>
    </property>
@@ -293,10 +302,19 @@
      <addaction name="actionCloudy"/>
      <addaction name="actionTungsten"/>
     </widget>
+    <widget class="QMenu" name="menuSharpness">
+     <property name="title">
+      <string>Sharpness</string>
+     </property>
+     <addaction name="actionHard"/>
+     <addaction name="actionNormal"/>
+     <addaction name="actionSoft"/>
+    </widget>
     <addaction name="menuFlash_On"/>
     <addaction name="menuFocus"/>
     <addaction name="menuExposure"/>
     <addaction name="menuWhiteBalance"/>
+    <addaction name="menuSharpness"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuDevices"/>
@@ -396,6 +414,21 @@
   <action name="actionTungsten">
    <property name="text">
     <string>Tungsten</string>
+   </property>
+  </action>
+  <action name="actionHard">
+   <property name="text">
+    <string>Hard</string>
+   </property>
+  </action>
+  <action name="actionNormal">
+   <property name="text">
+    <string>Normal</string>
+   </property>
+  </action>
+  <action name="actionSoft">
+   <property name="text">
+    <string>Soft</string>
    </property>
   </action>
  </widget>

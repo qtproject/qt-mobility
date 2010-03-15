@@ -148,7 +148,9 @@ QList<CContactItemField *> CntTransformOnlineAccount::transformDetailL(const QCo
 
 QContactDetail *CntTransformOnlineAccount::transformItemField(const CContactItemField& field, const QContact &contact)
 {
-    QContactOnlineAccount *onlineAccount = new QContactOnlineAccount(contact.detail<QContactOnlineAccount>());
+    Q_UNUSED(contact);
+
+    QContactOnlineAccount *onlineAccount = new QContactOnlineAccount();
 	CContactTextField* storage = field.TextStorage();
 	QString onlineAccountString = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
 
@@ -237,8 +239,10 @@ QList<TUid> CntTransformOnlineAccount::supportedSortingFieldTypes(QString detail
  */
 bool CntTransformOnlineAccount::supportsSubType(const QString& subType) const
 {
-    Q_UNUSED(subType);
-    return false;
+    if(QContactOnlineAccount::FieldSubTypes  == subType)
+        return true;
+    else
+        return false;
 }
 
 /*!

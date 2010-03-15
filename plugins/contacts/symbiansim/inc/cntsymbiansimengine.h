@@ -54,16 +54,37 @@
 //
 #include "qcontactmanagerengine.h"
 #include "qcontactmanagerenginefactory.h"
+#include <flogger.h>
+#include <f32file.h>
 
-#ifdef SYMBIANSIM_BACKEND_USE_ETEL_TESTSERVER
-#include <etelmm_etel_test_server.h>
+//#define SYMBIANSIM_BACKEND_DEBUG
+
+namespace {
+#ifdef SYMBIANSIM_BACKEND_DEBUG
+    void PbkPrintToLog( TRefByValue<const TDesC> aFormat, ... )
+    {
+        _LIT( KLogDir, "Sim" );
+        _LIT( KLogName, "sim.log" );
+
+        VA_LIST args;
+        VA_START( args, aFormat );
+        RFileLogger::WriteFormat(KLogDir, KLogName, EFileLoggingModeAppend, aFormat, args);
+        VA_END( args );
+    }
 #else
-#include <etelmm.h>
-#endif
+    void PbkPrintToLog( TRefByValue<const TDesC> aFormat, ... ) { Q_UNUSED(aFormat); }
+#endif    
+}  // namespace
 
 QTM_USE_NAMESPACE
 
 #define CNT_SYMBIANSIM_MANAGER_NAME "symbiansim"
+
+Q_DEFINE_LATIN1_LITERAL(KSimSyncTarget, "SIM");
+Q_DEFINE_LATIN1_LITERAL(KParameterKeySimStoreName, "store");
+Q_DEFINE_LATIN1_LITERAL(KParameterValueSimStoreNameAdn, "ADN");
+Q_DEFINE_LATIN1_LITERAL(KParameterValueSimStoreNameSdn, "SDN");
+Q_DEFINE_LATIN1_LITERAL(KParameterValueSimStoreNameFdn, "FDN");
 
 class CntSimStore;
 class CntAbstractSimRequest;
@@ -74,13 +95,6 @@ public:
     CntSymbianSimEngineData();
     ~CntSymbianSimEngineData();
     
-    RTelServer m_etelServer;
-    RMobilePhone m_etelPhone;
-    RMobilePhoneBookStore m_etelStore;
-    RMobilePhoneBookStore::TMobilePhoneBookInfoV5 m_etelStoreInfo;
-    RMobilePhoneBookStore::TMobilePhoneBookInfoV5Pckg m_etelStoreInfoPckg;
-
-    QString m_managerUri;
     CntSimStore *m_simStore;
     QMap<QContactAbstractRequest *, CntAbstractSimRequest *> m_asyncRequests;    
 };
@@ -108,6 +122,9 @@ public:
     bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
     bool removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error);
 
+    /* Synthesize the display label of a contact */
+    QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
+    
     /* Definitions - Accessors and Mutators */
     QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error& error) const;
 
@@ -117,27 +134,15 @@ public:
     bool cancelRequest(QContactAbstractRequest* req);
     bool waitForRequestFinished(QContactAbstractRequest* req, int msecs);    
     
-    /* Functionality reporting */
+    /* Capabilities reporting */
     bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType = QContactType::TypeContact) const;
-    //QStringList supportedRelationshipTypes(const QString& contactType = QContactType::TypeContact) const;
-    //QList<QVariant::Type> supportedDataTypes() const;
-    //bool filterSupported(const QContactFilter& filter) const;
     QStringList supportedContactTypes() const;
-
-    /* Synthesize the display label of a contact */
-    QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
 
 public:
     void updateDisplayLabel(QContact& contact) const;
-    QList<QContact> decodeSimContactsL(TDes8& rawData) const;
-    QContact encodeSimContactL(const QContact* contact, TDes8& rawData) const;
-    RMobilePhoneBookStore &store() { return d->m_etelStore; }
-    CntSimStore *simStore() { return d->m_simStore; }  
+    CntSimStore* simStore() { return d->m_simStore; }
 
 private:
-    void initializeL(const QMap<QString, QString> &parameters);
-    void convertStoreNameL(const QMap<QString, QString> &parameters, TDes &symbianStoreName);
-    void getEtelStoreInfoL() const;
     bool executeRequest(QContactAbstractRequest *req, QContactManager::Error& qtError) const;
 
 private:

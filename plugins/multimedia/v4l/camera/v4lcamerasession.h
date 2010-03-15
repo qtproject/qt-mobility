@@ -43,17 +43,18 @@
 #define V4LCAMERASESSION_H
 
 #include <QtCore/qobject.h>
-#include <QSocketNotifier>
-#include <QTime>
-#include <QUrl>
-#include <QFile>
-
-#include <qmediarecorder.h>
-#include <experimental/qcamera.h>
+#include <QtCore/qsocketnotifier.h>
+#include <QtCore/qdatetime.h>
+#include <QtCore/qurl.h>
+#include <QtCore/qfile.h>
 #include <QtMultimedia/qvideoframe.h>
 #include <QtMultimedia/qabstractvideosurface.h>
 
+#include <qmediarecorder.h>
+#include <experimental/qcamera.h>
+
 #include "cameraformatconverter.h"
+
 QTM_USE_NAMESPACE
 
 class V4LVideoRenderer;
@@ -125,6 +126,8 @@ public:
     void captureToFile(bool value);
 
 Q_SIGNALS:
+    void durationChanged(qint64 position);
+    void error(int error, const QString &errorString);
     void cameraStateChanged(QCamera::State);
     void recordStateChanged(QMediaRecorder::State);
     void imageCaptured(const QString &fileName, const QImage &img);

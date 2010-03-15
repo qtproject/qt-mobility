@@ -180,6 +180,9 @@ utilised by introspecting the object, using Qt's meta object system.
 However in some use cases it may be more convenient to
 directly interact with the service object by including the service header
 and/or linking against the service provider. The main advantage is compile time checking.
+Its disdvantage is that client and service must share the implementation of the service object via a library
+they link against or via a common header file. Note that such sharing breaks the fundamental ServiceFramework
+principle of separating clients from service as changes of the service type may require changes to both, services and clients.
 
 The subsequent code snippet demonstrates how this may look like:
 

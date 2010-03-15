@@ -100,6 +100,9 @@ Settings::Settings(QMediaRecorder *mediaRecorder, QWidget *parent) :
     }    
     connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
     connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+
+    connect(ui->videoCodecBox, SIGNAL(activated(const QString)), this, SLOT(updateResolutions()));
+    connect(ui->videoResolutionBox, SIGNAL(activated(const QString)), this, SLOT(updateFramerates()));
 }
 
 Settings::~Settings()
@@ -186,5 +189,33 @@ void Settings::selectComboBoxItem(QComboBox *box, const QVariant &value)
             box->setCurrentIndex(i);
             break;
         }
+    }
+}
+
+void Settings::updateResolutions()
+{
+    QVideoEncoderSettings settings = mediaRecorder->videoSettings();
+    settings.setCodec(boxValue(ui->videoCodecBox).toString());
+
+    QList<QSize> supportedResolutions = mediaRecorder->supportedResolutions(settings);
+    ui->videoResolutionBox->clear();
+    foreach(const QSize &resolution, supportedResolutions) {
+        ui->videoResolutionBox->addItem(QString("%1x%2").arg(resolution.width()).arg(resolution.height()),
+                                        QVariant(resolution));
+    }
+}
+
+void Settings::updateFramerates()
+{
+    QVideoEncoderSettings settings = mediaRecorder->videoSettings();
+    settings.setCodec(boxValue(ui->videoCodecBox).toString());
+    settings.setResolution(boxValue(ui->videoResolutionBox).toSize());
+
+    QList<qreal> supportedFrameRates = mediaRecorder->supportedFrameRates(settings);
+    ui->videoFramerateBox->clear();
+    qreal rate;
+    foreach(rate, supportedFrameRates) {
+        QString rateString = QString("%1").arg(rate, 0, 'f', 2);
+        ui->videoFramerateBox->addItem(rateString, QVariant(rate));
     }
 }

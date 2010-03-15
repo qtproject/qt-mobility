@@ -71,5 +71,14 @@ symbian {
         -TCB
 }
 
+maemo5|maemo6 {
+    CONFIG += create_pc create_prl
+    QMAKE_PKGCONFIG_DESCRIPTION = Qt Mobility - Versit API
+    pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
+    pkgconfig.files = QtVersit.pc
+
+    INSTALLS += pkgconfig
+}
+
 CONFIG += app
 include(../../features/deploy.pri)

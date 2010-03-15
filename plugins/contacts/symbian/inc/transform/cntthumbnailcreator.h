@@ -41,7 +41,7 @@
 #ifndef THUMBNAIL_CREATOR_H
 #define THUMBNAIL_CREATOR_H
 
-#include <QList.h>
+#include <qlist.h>
 #include <e32base.h>
 #include <f32file.h>
 

@@ -67,7 +67,7 @@ public:
     }
 
     qreal azimuth;
-    int calibrationLevel;
+    qreal calibrationLevel;
 };
 
 QTM_END_NAMESPACE

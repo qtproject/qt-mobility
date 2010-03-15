@@ -57,7 +57,7 @@ public:
     QMessageAddress *q_ptr;
 
     QMessageAddress::Type type;
-    QString recipient;
+    QString addressee;
 };
 
 QTM_END_NAMESPACE

@@ -123,6 +123,7 @@ QVersitWriter::~QVersitWriter()
 
 /*!
  * Sets the device used for writing to \a device.
+ * Does not take ownership of the device.
  */
 void QVersitWriter::setDevice(QIODevice* device)
 {

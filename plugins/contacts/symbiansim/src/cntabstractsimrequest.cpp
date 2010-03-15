@@ -43,12 +43,30 @@
 #include "cntsymbiansimengine.h"
 #include "cntsimstore.h"
 #include <QTimer>
+#include <QDebug>
+#include <QCoreApplication>
+
+const int KRetryCount = 10;
+const int KRetryTime = 100; // in ms
 
 CntAbstractSimRequest::CntAbstractSimRequest(CntSymbianSimEngine *engine)
     :QObject(engine),
-    m_timer(0)
+    m_timer(0),
+    m_retryCount(0)
 {
     
+}
+
+bool CntAbstractSimRequest::waitAndRetry()
+{
+    if (m_retryCount < KRetryCount)
+    {
+        singleShotTimer(KRetryTime, this, SLOT(retry()));
+        m_retryCount++;
+        qDebug() << "retrying request" << m_retryCount;
+        return true;
+    }
+    return false;
 }
 
 void CntAbstractSimRequest::singleShotTimer(int msec, QObject *receiver, const char *member)
@@ -71,6 +89,7 @@ CntSymbianSimEngine *CntAbstractSimRequest::engine()
 {
     return static_cast<CntSymbianSimEngine*>(parent());
 }
+
 CntSimStore *CntAbstractSimRequest::simStore()
 {
     return engine()->simStore();

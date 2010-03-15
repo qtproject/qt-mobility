@@ -40,6 +40,7 @@
 ****************************************************************************/
 #include <cntdef.h>
 #include "cntdbinfo.h"
+#include "cntmodelextuids.h"
 
 
 CntDbInfo::CntDbInfo()       
@@ -51,8 +52,11 @@ CntDbInfo::CntDbInfo()
     contactsTableIdColumNameMapping.insert(KUidContactFieldFamilyNamePronunciation.iUid,"lastname_prn" );
     contactsTableIdColumNameMapping.insert(KUidContactFieldCompanyName.iUid,"company_name" );
     contactsTableIdColumNameMapping.insert(KUidContactFieldCompanyNamePronunciation.iUid,"companyname_prn" );
-
+    
     commAddrTableIdColumNameMapping.insert(KUidContactFieldSIPID.iUid,ESipAddress );
+    commAddrTableIdColumNameMapping.insert(KUidContactFieldVCardMapVOIP.iUid,ESipAddress );
+    commAddrTableIdColumNameMapping.insert(KUidContactFieldVCardMapSWIS.iUid,ESipAddress );
+    commAddrTableIdColumNameMapping.insert(KUidContactFieldIMPP.iUid,ESipAddress );
     commAddrTableIdColumNameMapping.insert(KUidContactFieldEMail.iUid,EEmailAddress );
 }
 
@@ -96,7 +100,7 @@ void CntDbInfo::getDbTableAndColumnName( const quint32 fieldId ,
          tableName = "contact";
      }
 
-    if( ("" == columnName)  || ("" == tableName)){
+    if( (columnName.isEmpty())  || (tableName.isEmpty())){
         //Search comm Addr table
         if (commAddrTableIdColumNameMapping.contains(fieldId)){
                 // communication address table has slightly differnt format, so we make the column name as

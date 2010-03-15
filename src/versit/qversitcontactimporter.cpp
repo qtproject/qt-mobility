@@ -138,7 +138,7 @@ QList<QContact> QVersitContactImporter::importContacts(const QList<QVersitDocume
 {
     QList<QContact> list;
     int i = 0;
-    foreach (QVersitDocument document, documents) {
+    foreach (const QVersitDocument& document, documents) {
         list.append(d->importContact(document, i));
         i++;
     }
@@ -148,6 +148,9 @@ QList<QContact> QVersitContactImporter::importContacts(const QList<QVersitDocume
 
 /*!
  * Sets \a handler to be the handler for processing QVersitProperties, or 0 to have no handler.
+ *
+ * Does not take ownership of the handler.  The client should ensure the handler remains valid for
+ * the lifetime of the exporter.
  */
 void QVersitContactImporter::setPropertyHandler(QVersitContactImporterPropertyHandler* handler)
 {
@@ -164,6 +167,9 @@ QVersitContactImporterPropertyHandler* QVersitContactImporter::propertyHandler()
 
 /*!
  * Sets \a handler to be the handler to save files with, or 0 to have no handler.
+ *
+ * Does not take ownership of the handler.  The client should ensure the handler remains valid for
+ * the lifetime of the exporter.
  */
 void QVersitContactImporter::setResourceHandler(QVersitResourceHandler* handler)
 {

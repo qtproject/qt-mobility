@@ -51,29 +51,34 @@
 #include <qcontact.h>
 
 #include "cntsymbiansimengine.h"
+#include "cntsimstore.h"
 
 QTM_USE_NAMESPACE
 
 class CntSimStore;
 class CntSymbianSimEngine;
+class CntSimStoreEventListener;
 
 class CntSimStorePrivate : public CActive
 {
 public:
     enum State {
         InactiveState,
-        GetInfoState,
         ReadState,
         WriteState,
         DeleteState
     };
-    CntSimStorePrivate(CntSymbianSimEngine &engine, CntSimStore &simStore);
+    static CntSimStorePrivate* NewL(CntSymbianSimEngine &engine, CntSimStore &simStore, const QString &storeName);
     ~CntSimStorePrivate();
+    
+    QString storeName() { return m_storeName; }
+    TSimStoreInfo storeInfo() { return m_storeInfo; }
 
-    QContactManager::Error getInfo();
-    QContactManager::Error read(int index, int numSlots);
-    QContactManager::Error write(const QContact &contact);
-    QContactManager::Error remove(int index);    
+    bool read(int index, int numSlots, QContactManager::Error &error);
+    bool write(const QContact &contact, QContactManager::Error &error);
+    bool remove(int index, QContactManager::Error &error);
+    
+    TInt lastAsyncError() { return m_asyncError; }
     
 private: 
     // from CActive
@@ -82,18 +87,28 @@ private:
     TInt RunError(TInt aError);
     
 private:
-    RMobilePhoneBookStore &mobilePhoneBookStore()
-        { return m_engine.store(); }
+    CntSimStorePrivate(CntSymbianSimEngine &engine, CntSimStore &simStore, const QString &storeName);
+    void ConstructL();
+    void convertStoreNameL(TDes &storeName);
+    QList<QContact> decodeSimContactsL(TDes8& rawData) const;
+    QContact encodeSimContactL(const QContact* contact, TDes8& rawData) const;    
     
 private:
     State m_state;
     CntSymbianSimEngine &m_engine;
+    QString m_managerUri;
     CntSimStore &m_simStore;
-    RMobilePhoneBookStore::TMobilePhoneBookInfoV5 m_etelStoreInfo;
-    RMobilePhoneBookStore::TMobilePhoneBookInfoV5Pckg m_etelInfoPckg;
+    RTelServer m_etelServer;
+    RMobilePhone m_etelPhone;
+    RMobilePhoneBookStore m_etelStore;
+    QString m_storeName;
+    TSimStoreInfo m_storeInfo;
+    TSimStoreInfoPckg m_storeInfoPckg;
     RBuf8 m_buffer;
     QContact m_convertedContact;
     int m_writeIndex;
+    CntSimStoreEventListener* m_listener;
+    TInt m_asyncError;
 };
 
 #endif // CNTSIMSTOREPRIVATE_H_
