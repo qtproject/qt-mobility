@@ -66,6 +66,10 @@ public:
     */
     QMapPixmap(const QGeoCoordinate& topLeft, const QPixmap& pixmap, quint16 layerIndex = 0);
 
+    virtual bool intersects(const QRectF& rect) const;
+    virtual void compMapCoords();
+    virtual void paint(QPainter* painter, const QRectF& viewPort);
+
     /*!
     * @return The pixmap.
     */
@@ -82,7 +86,7 @@ public:
 private:
     QPixmap pic; //!< The pixmap.
     QGeoCoordinate geoTopLeft; //!< The top left coordinate of this pixmap.
-    QPointF mapTopLeft; //!< The top left coordinate, for internal use only
+    QRectF pixRect;
 };
 
 QTM_END_NAMESPACE

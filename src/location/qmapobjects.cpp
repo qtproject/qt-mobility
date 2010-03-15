@@ -52,6 +52,7 @@
 #include "qmaprect.h"
 #include "qmappolygon.h"
 #include "qmapellipse.h"
+#include "qmappixmap.h"
 #include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
@@ -683,6 +684,60 @@ void QMapEllipse::paint(QPainter* painter, const QRectF& viewPort)
 bool QMapEllipse::intersects(const QRectF& rect) const
 {
     return path.intersects(rect);
+}
+
+/******************************************************************************
+* QMapPixmap
+*******************************************************************************/
+QMapPixmap::QMapPixmap(const QGeoCoordinate& topLeft, const QPixmap& pixmap, quint16 layerIndex)
+        : QMapObject(QMapObject::Pixmap, layerIndex), geoTopLeft(topLeft), pic(pixmap)
+{
+}
+
+void QMapPixmap::compMapCoords()
+{
+    if (!mapView)
+        return;
+
+    QPointF mapTopLeft(mapView->geoToMap(geoTopLeft));
+    pixRect = pic.rect();
+    pixRect.moveTopLeft(mapTopLeft);
+    //compute intersecting map tiles now
+    intersectingTiles.clear();
+    compIntersectingTiles(pixRect);
+}
+
+void QMapPixmap::paint(QPainter* painter, const QRectF& viewPort)
+{
+    if (!mapView)
+        return;
+
+    pixRect.translate(-viewPort.left(), -viewPort.top());
+    painter->drawRect(pixRect);
+    pixRect.translate(viewPort.left(), viewPort.top());
+    qint64 mapWidth = static_cast<qint64>(mapView->mapWidth());
+
+    //Is view port wrapping around date line?
+    if (viewPort.right() >= mapWidth) {
+        pixRect.translate(-viewPort.left(), -viewPort.top());
+        pixRect.translate(mapWidth, 0);
+        painter->drawRect(pixRect);
+        pixRect.translate(-mapWidth, 0);
+        pixRect.translate(viewPort.left(), viewPort.top());
+    }
+    //Is rect crossing date line?
+    if (pixRect.right() >= mapWidth) {
+        pixRect.translate(-viewPort.left(), -viewPort.top());
+        pixRect.translate(-mapWidth, 0);
+        painter->drawRect(pixRect);
+        pixRect.translate(mapWidth, 0);
+        pixRect.translate(viewPort.left(), viewPort.top());
+    }
+}
+
+bool QMapPixmap::intersects(const QRectF& rect) const
+{
+    return pixRect.intersects(rect);
 }
 
 QTM_END_NAMESPACE
