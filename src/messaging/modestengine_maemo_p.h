@@ -12,7 +12,7 @@
 ** You may use this file in accordance with the terms and conditions
 ** contained in the Technology Preview License Agreement accompanying
 ** this package.
-**file:///home/maminkki/sbox/qtm-messaging/src/messaging/qmtmengine_symbian_p.h
+**
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 2.1 as published by the Free Software
