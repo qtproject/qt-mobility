@@ -106,6 +106,11 @@ public:
 class Q_FEEDBACK_EXPORT QFeedbackEffect : public QAbstractAnimation
 {
 public:
+    enum Duration {
+        INFINITE = -1
+    };
+
+
     QFeedbackEffect();
     virtual ~QFeedbackEffect();
 
@@ -135,6 +140,8 @@ public:
     //- the period (and more generally the difference between magSweep and periodic
     //- the wave type
     //- the effect style (there is an equivalent to that in S60)
+
+    //Is it enough to be able to repeat an animation with the animation framework?
 
     void start();
     void pause();
