@@ -145,6 +145,7 @@ void QTrackerContactSaveRequest::saveContacts(const QList<QContact> &contacts)
         }
 */
         Live<nco::PersonContact> ncoContact;
+        bool newContact = false;
 
         if(contact.localId() == 0) {
             // Save new contact. compute ID
@@ -160,6 +161,7 @@ void QTrackerContactSaveRequest::saveContacts(const QList<QContact> &contacts)
             contact.setId(id);
             ncoContact->setContactUID(QString::number(m_lastUsedId));
             ncoContact->setContentCreated(QDateTime::currentDateTime());
+            newContact = true;
         }  else {
             ncoContact = service->liveNode(QUrl("contact:"+QString::number(contact.localId())));
             /// @note Following needed in case we save new contact with given localId
@@ -179,7 +181,7 @@ void QTrackerContactSaveRequest::saveContacts(const QList<QContact> &contacts)
         rdfContact.property<nco::contactUID>() = LiteralValue(QString::number(contact.localId()));
         addTag(service, rdfContact, "addressbook");
 
-        saveContactDetails( service, ncoContact, contact);
+        saveContactDetails( service, ncoContact, contact, newContact);
 
         // name & nickname - different way from other details
         cLive.setLiveContact(ncoContact);
@@ -240,7 +242,8 @@ void QTrackerContactSaveRequest::addAffiliation(RDFServicePtr service, QContactL
 
 void QTrackerContactSaveRequest::saveContactDetails( RDFServicePtr service,
                                                 Live<nco::PersonContact>& ncoContact,
-                                                const QContact& contact)
+                                                const QContact& contact,
+                                                bool newContact)
 {
     QStringList detailDefinitionsToSave = detailsDefinitionsInContact(contact);
 
@@ -248,8 +251,10 @@ void QTrackerContactSaveRequest::saveContactDetails( RDFServicePtr service,
     RDFVariable rdfPerson = RDFVariable::fromType<nco::PersonContact>();
     rdfPerson.property<nco::contactUID>() = LiteralValue(QString::number(contact.localId()));
 
-    // Delete all existing phone numbers - office and home
-    deletePhoneNumbers(service, rdfPerson);
+    if(not newContact) {
+        // Delete all existing phone numbers - office and home
+        deletePhoneNumbers(service, rdfPerson);
+    }
 
     foreach(QString definition, detailDefinitionsToSave)
     {
@@ -276,29 +281,29 @@ void QTrackerContactSaveRequest::saveContactDetails( RDFServicePtr service,
         /* Save details */
         if(definition == QContactPhoneNumber::DefinitionName) {
             if (!homeDetails.isEmpty()) {
-                savePhoneNumbers(service, rdfPerson, homeDetails);
+                savePhoneNumbers(service, rdfPerson, homeDetails, newContact);
             }
             if( !workDetails.isEmpty()) {
-                savePhoneNumbers(service, rdfAffiliation, workDetails);
+                savePhoneNumbers(service, rdfAffiliation, workDetails, newContact);
             }
         }
         else if(definition == QContactEmailAddress::DefinitionName) {
             if (!homeDetails.isEmpty())
-                saveEmails(service, rdfPerson, homeDetails);
+                saveEmails(service, rdfPerson, homeDetails, newContact);
             if( !workDetails.isEmpty())
-                saveEmails(service, rdfAffiliation, workDetails);
+                saveEmails(service, rdfAffiliation, workDetails, newContact);
         }
         else if(definition == QContactAddress::DefinitionName) {
             if (!homeDetails.isEmpty())
-                saveAddresses(service, rdfPerson, homeDetails);
+                saveAddresses(service, rdfPerson, homeDetails, newContact);
             if( !workDetails.isEmpty())
-                saveAddresses(service, rdfAffiliation, workDetails);
+                saveAddresses(service, rdfAffiliation, workDetails, newContact);
         }
         else if(definition == QContactUrl::DefinitionName) {
             if (!homeDetails.isEmpty())
-                saveUrls(service, rdfPerson, homeDetails);
+                saveUrls(service, rdfPerson, homeDetails, newContact);
             if( !workDetails.isEmpty())
-                saveUrls(service, rdfAffiliation, workDetails);
+                saveUrls(service, rdfAffiliation, workDetails, newContact);
         }
         else {
             // TODO refactor (bug: editing photo doesn't work)
@@ -345,7 +350,7 @@ void QTrackerContactSaveRequest::deletePhoneNumbers(RDFServicePtr service, const
  * TODO this is temporary code for creating new, saving contacts need to handle only what was
  * changed.
  */
-void QTrackerContactSaveRequest::savePhoneNumbers(RDFServicePtr service, RDFVariable &var, const QList<QContactDetail> &details )
+void QTrackerContactSaveRequest::savePhoneNumbers(RDFServicePtr service, RDFVariable &var, const QList<QContactDetail> &details, bool newContact )
 {
     RDFUpdate up;
     RDFVariable varForInsert = var.deepCopy();
@@ -362,7 +367,9 @@ void QTrackerContactSaveRequest::savePhoneNumbers(RDFServicePtr service, RDFVari
         // using RFC 3966 canonical URI form
         QUrl newPhone = QString("tel:%1").arg(value);
         Live<nco::PhoneNumber> ncoPhone = service->liveNode(newPhone);
-        ncoPhone->remove();
+        if(not newContact) {
+            ncoPhone->remove();
+        }
 
         QStringList subtypes = det.value<QStringList>(QContactPhoneNumber::FieldSubTypes);
 
@@ -394,13 +401,15 @@ void QTrackerContactSaveRequest::savePhoneNumbers(RDFServicePtr service, RDFVari
  * TODO this is temporary code for creating new, saving contacts need to handle only what was
  * changed.
  */
-void QTrackerContactSaveRequest::saveEmails(RDFServicePtr service, RDFVariable &var, const QList<QContactDetail> &details )
+void QTrackerContactSaveRequest::saveEmails(RDFServicePtr service, RDFVariable &var, const QList<QContactDetail> &details, bool newContact )
 {
     RDFUpdate up;
     RDFVariable varForInsert = var.deepCopy();
     RDFVariable emails = var.property<nco::hasEmailAddress>();
-    // delete previous references - keep email IRIs
-    up.addDeletion(RDFVariableStatement(var, nco::hasEmailAddress::iri(), emails));
+    if(not newContact) {
+        // delete previous references - keep email IRIs
+        up.addDeletion(RDFVariableStatement(var, nco::hasEmailAddress::iri(), emails));
+    }
 
     foreach(const QContactDetail& det, details)
     {
@@ -420,7 +429,7 @@ void QTrackerContactSaveRequest::saveEmails(RDFServicePtr service, RDFVariable &
  * TODO this is temporary code for creating new, saving contacts need to handle only what was
  * changed.
  */
-void QTrackerContactSaveRequest::saveUrls(RDFServicePtr service, RDFVariable &rdfContact, const QList<QContactDetail> &details )
+void QTrackerContactSaveRequest::saveUrls(RDFServicePtr service, RDFVariable &rdfContact, const QList<QContactDetail> &details, bool newContact )
 {
     RDFUpdate up;
     RDFVariable varForInsert = rdfContact.deepCopy();
@@ -430,9 +439,11 @@ void QTrackerContactSaveRequest::saveUrls(RDFServicePtr service, RDFVariable &rd
     RDFVariable websiteUrls = rdfContact.property<nco::websiteUrl>();
     RDFVariable websiteUrlTypes = websiteUrls.property<rdf::type>();
 
-    up.addDeletion(RDFVariableStatement(rdfContact, nco::url::iri(), urls));
-    up.addDeletion(RDFVariableStatement(rdfContact, nco::websiteUrl::iri(), websiteUrls));
-    // first part - deleting previous before adding new again is to be removed
+    if(not newContact) {
+        // first part - deleting previous before adding new again is to be removed
+        up.addDeletion(RDFVariableStatement(rdfContact, nco::url::iri(), urls));
+        up.addDeletion(RDFVariableStatement(rdfContact, nco::websiteUrl::iri(), websiteUrls));
+    }
 
     // second part, write all urls
     foreach(const QContactDetail& det, details)
@@ -455,14 +466,16 @@ void QTrackerContactSaveRequest::saveUrls(RDFServicePtr service, RDFVariable &rd
  * TODO this is temporary code for creating new, saving contacts need to handle only what was
  * changed.
  */
-void QTrackerContactSaveRequest::saveAddresses(RDFServicePtr service, RDFVariable &var, const QList<QContactDetail> &details )
+void QTrackerContactSaveRequest::saveAddresses(RDFServicePtr service, RDFVariable &var, const QList<QContactDetail> &details, bool newContact )
 {
     RDFUpdate up;
     RDFVariable varForInsert = var.deepCopy();
     RDFVariable addresses = var.property<nco::hasPostalAddress>();
     RDFVariable types = addresses.property<rdf::type>();
-    up.addDeletion(RDFVariableStatement(var, nco::hasPostalAddress::iri(), addresses));
-    up.addDeletion(addresses, rdf::type::iri(), types);
+    if(not newContact) {
+        up.addDeletion(RDFVariableStatement(var, nco::hasPostalAddress::iri(), addresses));
+        up.addDeletion(addresses, rdf::type::iri(), types);
+    }
     foreach(const QContactDetail& det, details)
     {
         QUrl newPostalAddress = ::tracker()->createLiveNode().uri();

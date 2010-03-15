@@ -76,11 +76,11 @@ private:
     void saveContacts(const QList<QContact> &contacts);
     void computeProgress(const QList<QContactLocalId> &addedIds);
     void addAffiliation(SopranoLive::RDFServicePtr service, QContactLocalId contactId);
-    void saveContactDetails(SopranoLive::RDFServicePtr service,SopranoLive::Live<SopranoLive::nco::PersonContact>& ncoContact,const QContact &contact);
-    void saveAddresses(SopranoLive::RDFServicePtr service, SopranoLive::RDFVariable &var, const QList<QContactDetail> &details );
-    void saveEmails(SopranoLive::RDFServicePtr service, SopranoLive::RDFVariable &var, const QList<QContactDetail> &details );
-    void saveUrls(SopranoLive::RDFServicePtr service, SopranoLive::RDFVariable &var, const QList<QContactDetail> &details );
-    void savePhoneNumbers(SopranoLive::RDFServicePtr service, SopranoLive::RDFVariable &var, const QList<QContactDetail> &details );
+    void saveContactDetails(SopranoLive::RDFServicePtr service,SopranoLive::Live<SopranoLive::nco::PersonContact>& ncoContact,const QContact &contact, bool newContact);
+    void saveAddresses(SopranoLive::RDFServicePtr service, SopranoLive::RDFVariable &var, const QList<QContactDetail> &details, bool newContact );
+    void saveEmails(SopranoLive::RDFServicePtr service, SopranoLive::RDFVariable &var, const QList<QContactDetail> &details, bool newContact );
+    void saveUrls(SopranoLive::RDFServicePtr service, SopranoLive::RDFVariable &var, const QList<QContactDetail> &details, bool newContact );
+    void savePhoneNumbers(SopranoLive::RDFServicePtr service, SopranoLive::RDFVariable &var, const QList<QContactDetail> &details, bool newContact );
     void deletePhoneNumbers(SopranoLive::RDFServicePtr service, const SopranoLive::RDFVariable& rdfContactIn);
     void addTag(SopranoLive::RDFServicePtr service, SopranoLive::RDFVariable &var, const QString &tag);
     void createTagIfItDoesntExistAlready(SopranoLive::RDFServicePtr service, const QString &tag);
