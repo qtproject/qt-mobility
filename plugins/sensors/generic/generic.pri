@@ -6,6 +6,7 @@ SOURCES += genericorientationsensor.cpp\
 !symbian:!win* {
     HEADERS += genericattitudesensor.h
     SOURCES += genericattitudesensor.cpp
+    DEFINES += ENABLE_ATTITUDE
     LIBS += -lm
 }
 
