@@ -81,7 +81,7 @@ void QGstreamerCameraExposureControl::setFlashMode(QCamera::FlashModes mode)
     GstPhotoSettings config;
     gst_photography_get_config(GST_PHOTOGRAPHY(&m_camerabin), &config);
 
-    GstFlashMode flashMode;
+    GstFlashMode flashMode = config.flash_mode;
     if (mode.testFlag(QCamera::FlashAuto)) flashMode = GST_PHOTOGRAPHY_FLASH_MODE_AUTO;
     else if (mode.testFlag(QCamera::FlashOff)) flashMode = GST_PHOTOGRAPHY_FLASH_MODE_OFF;
     else if (mode.testFlag(QCamera::FlashOn)) flashMode = GST_PHOTOGRAPHY_FLASH_MODE_ON;
@@ -133,14 +133,53 @@ bool QGstreamerCameraExposureControl::isFlashReady() const
 
 QCamera::ExposureMode QGstreamerCameraExposureControl::exposureMode() const
 {
+    GstPhotoSettings config;
+    gst_photography_get_config(GST_PHOTOGRAPHY(&m_camerabin), &config);
+    GstSceneMode sceneMode = config.scene_mode;
+
+    switch (sceneMode) {
+    case GST_PHOTOGRAPHY_SCENE_MODE_PORTRAIT: return QCamera::ExposurePortrait;
+    case GST_PHOTOGRAPHY_SCENE_MODE_SPORT: return QCamera::ExposureSports;
+    case GST_PHOTOGRAPHY_SCENE_MODE_NIGHT: return QCamera::ExposureNight;
+    case GST_PHOTOGRAPHY_SCENE_MODE_AUTO: return QCamera::ExposureAuto;
+    case GST_PHOTOGRAPHY_SCENE_MODE_MANUAL:
+    case GST_PHOTOGRAPHY_SCENE_MODE_CLOSEUP:    //no direct mapping available so mapping to manual mode
+    case GST_PHOTOGRAPHY_SCENE_MODE_LANDSCAPE:  //no direct mapping available so mapping to manual mode
+    default:
+         return QCamera::ExposureManual;
+    }
 }
 
 void QGstreamerCameraExposureControl::setExposureMode(QCamera::ExposureMode mode)
 {
+    GstPhotoSettings config;
+    gst_photography_get_config(GST_PHOTOGRAPHY(&m_camerabin), &config);
+    GstSceneMode sceneMode = config.scene_mode;
+
+    if (mode == QCamera::ExposureManual) sceneMode = GST_PHOTOGRAPHY_SCENE_MODE_MANUAL;
+    else if (mode == QCamera::ExposurePortrait) sceneMode = GST_PHOTOGRAPHY_SCENE_MODE_PORTRAIT;
+    else if (mode == QCamera::ExposureSports) sceneMode = GST_PHOTOGRAPHY_SCENE_MODE_SPORT;
+    else if (mode == QCamera::ExposureNight) sceneMode = GST_PHOTOGRAPHY_SCENE_MODE_NIGHT;
+    else if (mode == QCamera::ExposureAuto) sceneMode = GST_PHOTOGRAPHY_SCENE_MODE_AUTO;
+
+    config.scene_mode = sceneMode;
+    gst_photography_set_config(GST_PHOTOGRAPHY(&m_camerabin), &config);
 }
 
 QCamera::ExposureModes QGstreamerCameraExposureControl::supportedExposureModes() const
 {
+    //Similar mode names can be found in gst as GstSceneMode
+    QCamera::ExposureModes modes;
+    modes |= QCamera::ExposureManual;
+    modes |= QCamera::ExposurePortrait;
+    modes |= QCamera::ExposureSports;
+    modes |= QCamera::ExposureNight;
+    modes |= QCamera::ExposureAuto;
+
+    //No direct mapping available for GST_PHOTOGRAPHY_SCENE_MODE_CLOSEUP and
+    //GST_PHOTOGRAPHY_SCENE_MODE_LANDSCAPE
+
+    return modes;
 }
 
 qreal QGstreamerCameraExposureControl::exposureCompensation() const
