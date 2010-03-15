@@ -49,18 +49,11 @@
 #include <QtTracker/RDFService>
 #include <QtTracker/Tracker>
 
+#include <QtTracker/ontologies/nco.h>
+
 using namespace SopranoLive;
 
-#define CHECK_CURRENT_TEST_FAILED                                               \
-do {                                                                            \
-    if (QTest::currentTestFailed()) {                                           \
-         qWarning("Failing test was called from %s(%d)", __FILE__, __LINE__);   \
-         return;                                                                \
-    }                                                                           \
-} while (0)
-
 ut_qtcontacts_sparql::ut_qtcontacts_sparql()
-  : mContactManager(0)
 {
     const QString uuid(QUuid::createUuid());
 
@@ -72,65 +65,6 @@ ut_qtcontacts_sparql::ut_qtcontacts_sparql()
     mNameFilter.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
     mNameFilter.setMatchFlags(QContactFilter::MatchExactly);
     mNameFilter.setValue(mFirstName);
-}
-
-ut_qtcontacts_sparql::~ut_qtcontacts_sparql()
-{
-
-}
-
-void ut_qtcontacts_sparql::initTestCase()
-{
-}
-
-void ut_qtcontacts_sparql::cleanupTestCase()
-{
-}
-
-void ut_qtcontacts_sparql::init()
-{
-    QVERIFY(0 == mContactManager);
-    mContactManager = new QContactManager("tracker");
-    QVERIFY(0 != mContactManager);
-}
-
-void ut_qtcontacts_sparql::cleanup()
-{
-    if (mContactManager) {
-        if (not mLocalIds.isEmpty()) {
-            // eliminate duplicate contact ids
-            mLocalIds = mLocalIds.toSet().toList();
-
-            QMap<int, QContactManager::Error> errors;
-
-            if (not mContactManager->removeContacts(&mLocalIds, &errors)) {
-                QFAIL(qPrintable(QString("removing contacts failed: %1").
-                                 arg(mContactManager->error())));
-            }
-
-            mLocalIds.clear();
-        }
-
-        delete mContactManager;
-        mContactManager = 0;
-    }
-}
-
-void ut_qtcontacts_sparql::waitForRequest(QContactAbstractRequest &request, int ms)
-{
-    // check pre-conditions
-    QVERIFY2(request.isActive(), "request must be active");
-
-    // wait for the request to do its work (or get canceled)
-    QTime timer;
-    timer.start();
-
-    while (request.isActive() && timer.elapsed() < ms) {
-        QTest::qWait(10);
-    }
-
-    // check post-conditions
-    QVERIFY2(not request.isActive(), "timeout expired");
 }
 
 void ut_qtcontacts_sparql::setupTestContact(QContact &contact)
@@ -171,20 +105,6 @@ void ut_qtcontacts_sparql::checkDatabaseEmpty()
     QVERIFY(request.contacts().isEmpty());
 }
 
-void ut_qtcontacts_sparql::saveContact(QContact &contact)
-{
-    // add the contact to database
-    bool contactSaved = mContactManager->saveContact(&contact);
-    QCOMPARE(mContactManager->error(), QContactManager::NoError);
-    QVERIFY(contactSaved);
-
-    // check local Id
-    QVERIFY(contact.localId());
-
-    // remember the local Id so that we can remove the contact from database later
-    mLocalIds.append(contact.localId());
-}
-
 template <class PhoneNumberType>
 void ut_qtcontacts_sparql::checkOntology(QContactLocalId contactId, int expectedCount)
 {
@@ -213,14 +133,7 @@ void ut_qtcontacts_sparql::checkOntology(QContactLocalId contactId, int expected
     QCOMPARE(phoneNumbers[0], mPhoneNumber);
 }
 
-void ut_qtcontacts_sparql::ut_checkDatabaseEmpty()
-{
-    // test if this test works in general
-    checkDatabaseEmpty();
-    CHECK_CURRENT_TEST_FAILED;
-}
-
-void ut_qtcontacts_sparql::ut_testSaveContact()
+void ut_qtcontacts_sparql::testSaveContact()
 {
     // check that we start with a clean database
     checkDatabaseEmpty();
@@ -241,7 +154,7 @@ void ut_qtcontacts_sparql::ut_testSaveContact()
 }
 
 // this test basically checks for NB#158859
-void ut_qtcontacts_sparql::ut_testModifyContact()
+void ut_qtcontacts_sparql::testModifyContact()
 {
     // check that we start with a clean database
     checkDatabaseEmpty();

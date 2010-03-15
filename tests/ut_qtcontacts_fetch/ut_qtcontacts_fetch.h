@@ -42,53 +42,33 @@
 #ifndef UT_QTCONTACTS_TRACKERPLUGIN_FETCH_H
 #define UT_QTCONTACTS_TRACKERPLUGIN_FETCH_H
 
-#include <QContactAbstractRequest>
-#include <QContactDetailFilter>
-#include <QtTest/QtTest>
+#include "ut_qtcontacts_common.h"
 
 QTM_USE_NAMESPACE
 
-class ut_qtcontacts_fetch : public QObject
+class ut_qtcontacts_fetch : public ut_qtcontacts_common
 {
     Q_OBJECT
 
 public:
     ut_qtcontacts_fetch();
-    ~ut_qtcontacts_fetch();
 
-// private slots are called by the QTest framework.
 private slots:
-    // Per test class:
-    void initTestCase();
-    void cleanupTestCase();
+    void checkDatabaseEmpty();
 
-    // Per test-function:
-    void init();
-    void cleanup();
-
-    // Test functions:
-    void ut_checkDatabaseEmpty();
-    void ut_testSaveContact();
-    void ut_testSaveContactCopy();
-    void ut_testFetchSavedContact();
-
-// protected or public slots are _not_ called by the QTest framework.
-protected slots:
+    void testSaveContact();
+    void testSaveContactCopy();
+    void testFetchSavedContact();
 
 private:
-    void waitForRequest(QContactAbstractRequest &request, int timeout = 5000);
-
-    void checkDatabaseEmpty();
     void setupTestContact(QContact &contact);
-    void saveContact(QContact &contact);
 
-    QContactManager* mContactManager;
     QContactDetailFilter mNameFilter;
-    QList<QContactLocalId> mLocalIds;
 
+    QString mUuid;
     QString mFirstName;
     QString mLastName;
     QString mWebPage;
 };
 
-#endif /* UT_CONTACTSGUI_H_ */
+#endif /* UT_QTCONTACTS_TRACKERPLUGIN_FETCH_H */

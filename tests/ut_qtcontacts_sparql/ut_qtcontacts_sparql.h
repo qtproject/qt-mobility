@@ -39,62 +39,38 @@
 **
 ****************************************************************************/
 
-#ifndef UT_QTCONTACTS_TRACKERPLUGIN_FETCH_H
-#define UT_QTCONTACTS_TRACKERPLUGIN_FETCH_H
+#ifndef UT_QTCONTACTS_TRACKERPLUGIN_SPARQL_H
+#define UT_QTCONTACTS_TRACKERPLUGIN_SPARQL_H
 
-#include <QContactAbstractRequest>
-#include <QContactDetailFilter>
-
-#include <QtTest/QtTest>
-#include <QtTracker/ontologies/nco.h>
+#include "ut_qtcontacts_common.h"
 
 QTM_USE_NAMESPACE
 
-using namespace SopranoLive;
-
-class ut_qtcontacts_sparql : public QObject
+class ut_qtcontacts_sparql : public ut_qtcontacts_common
 {
     Q_OBJECT
 
 public:
     ut_qtcontacts_sparql();
-    ~ut_qtcontacts_sparql();
 
 // private slots are called by the QTest framework.
 private slots:
-    // Per test class:
-    void initTestCase();
-    void cleanupTestCase();
-
-    // Per test-function:
-    void init();
-    void cleanup();
-
     // Test functions:
-    void ut_checkDatabaseEmpty();
-    void ut_testSaveContact();
-    void ut_testModifyContact();
-
-// protected or public slots are _not_ called by the QTest framework.
-protected slots:
+    void checkDatabaseEmpty();
+    void testSaveContact();
+    void testModifyContact();
 
 private:
-    void waitForRequest(QContactAbstractRequest &request, int timeout = 5000);
-
-    void checkDatabaseEmpty();
     void setupTestContact(QContact &contact);
-    void saveContact(QContact &contact);
 
     template <class PhoneNumberType>
     void checkOntology(QContactLocalId contactId, int expectedCount = 1);
 
-    QContactManager* mContactManager;
     QContactDetailFilter mNameFilter;
-    QList<QContactLocalId> mLocalIds;
 
     QString mFirstName;
     QString mLastName;
     QString mPhoneNumber;
 };
 
-#endif /* UT_CONTACTSGUI_H_ */
+#endif /* UT_QTCONTACTS_TRACKERPLUGIN_SPARQL_H */
