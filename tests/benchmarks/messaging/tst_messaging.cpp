@@ -1131,7 +1131,7 @@ void tst_messaging::tst_fetchFilter()
         QString email = "singletst@boo.com";
         QMessage *msg = messageTemplate();
         QMessageAddress addr;
-        addr.setRecipient(email);
+        addr.setAddressee(email);
         msg->setFrom(addr);
         msgId = addMessage(msg);
 
@@ -1187,7 +1187,7 @@ void tst_messaging::tst_fetchFilter()
       msg_list.push_back(id);   
       QMessage msg = m_mgr->message(id);
       
-      mf = QMessageFilter::bySender(msg.from().recipient());
+      mf = QMessageFilter::bySender(msg.from().addressee());
     }
     if(!mf.isSupported()){
         QFAIL("QMessage filter returned unsupported");
@@ -1472,10 +1472,10 @@ QMessage *tst_messaging::messageTemplate()
   msg->setDate(QDateTime::currentDateTime());
   msg->setSubject("test");
   QMessageAddress addr;
-  addr.setAddress("abr@foo.com");
+  addr.setAddressee("abr@foo.com");
   addr.setType(QMessageAddress::Email);
   msg->setTo(addr);
-  addr.setAddress("from@bar.com");
+  addr.setAddressee("from@bar.com");
   addr.setType(QMessageAddress::Email);
   msg->setFrom(addr);
 
@@ -1551,6 +1551,8 @@ void tst_messaging::tst_addMessage()
         }
         m_native->iNewMsgs.Append(id);
       }
+#else 
+    Q_UNUSED(type);
 #endif
     }
 
