@@ -338,6 +338,7 @@ RDFSelect prepareEmailAddressesQuery(RDFVariable &rdfcontact1, bool forAffiliati
  */
 RDFSelect prepareIMAddressesQuery(RDFVariable  &contact)
 {
+    ::tracker()->setVerbosity(4);
     RDFSelect queryidsimacccounts;
     // this establishes query graph relationship: imaddress that we want is a property in contact
     RDFVariable imaddress = contact.property<nco::hasIMAddress>();
@@ -640,7 +641,7 @@ void QTrackerContactFetchRequest::contactsReady()
         }
         QContactId id; id.setLocalId(contactid);
 
-                if(engine)
+        if(engine)
             id.setManagerUri(engine->managerUri());
 
         contact.setId(id);
@@ -963,7 +964,7 @@ QContactOnlineAccount QTrackerContactFetchRequest::getOnlineAccountFromIMQuery(L
  */
 void QTrackerContactFetchRequest::processQueryIMContacts(SopranoLive::LiveNodes queryIMContacts)
 {
-    Q_ASSERT_X(queryIMAccountNodesPending == 0, Q_FUNC_INFO, "IMAccount query was supposed to be ready and it is not." );
+    //Q_ASSERT_X(queryEmailAddressNodes == 0, Q_FUNC_INFO, "IMAccount query was supposed to be ready and it is not." );
     QContactFetchRequest* r = qobject_cast<QContactFetchRequest*> (req);
     QContactManagerEngine *engine = qobject_cast<QContactManagerEngine *>(parent());
     Q_ASSERT(engine);
@@ -1070,6 +1071,8 @@ QContactOnlineAccount QTrackerContactFetchRequest::getIMContactFromIMQuery(LiveN
     account.setPresence(presenceConversion[presence]);
 
     account.setStatusMessage(imContactQuery->index(queryRow, IMContact::ContactMessage).data().toString()); // imStatusMessage
+    qDebug() << Q_FUNC_INFO << imContactQuery->index(queryRow,
+            IMContact::ContactMessage).data().toString(); 
     account.setServiceProvider(imContactQuery->index(queryRow, IMContact::ServiceProvider).data().toString()); // service name
     return account;
 }

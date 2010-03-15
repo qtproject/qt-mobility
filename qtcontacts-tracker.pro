@@ -10,7 +10,7 @@ PLUGIN_TYPE=contacts
 LIBS += -L/usr/lib
 LIBS += -lqttracker
 CONFIG += mobility
-MOBILITY = contacts
+OBILITY = contacts
 
 # include version number for the plugin
 include(version.pri)
@@ -28,7 +28,7 @@ HEADERS += qcontacttrackerbackend_p.h \
            qtrackerrelationshipfetchrequest.h \
            qtrackerrelationshipsaverequest.h \
            qtrackercontactidfetchrequest.h \
-           trackerchangelistener.hb
+           trackerchangelistener.h
 
 SOURCES += qcontacttrackerbackend.cpp \
            qtrackercontactfetchrequest.cpp \
