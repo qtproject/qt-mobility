@@ -85,6 +85,9 @@ public:
     void lockWhiteBalance();
     void unlockWhiteBalance();
 
+private:
+    QGstreamerCaptureSession *m_session;
+    GstElement &m_camerabin;
 /*Q_SIGNALS:
     void whiteBalanceLocked();
     */

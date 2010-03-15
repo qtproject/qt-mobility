@@ -43,7 +43,9 @@
 #include "qgstreamercapturesession_maemo.h"
 
 QGstreamerImageProcessingControl::QGstreamerImageProcessingControl(GstElement &camerabin, QGstreamerCaptureSession *session)
-    :QImageProcessingControl(session)
+    :QImageProcessingControl(session),
+     m_session(session),
+     m_camerabin(camerabin)
 {
 }
 
