@@ -46,7 +46,7 @@
 #include <QPointF>
 
 #include "qmapobject.h"
-#include "qgeocoordinatemaps.h"
+#include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -64,7 +64,7 @@ public:
     * @param pixmap The pixmap.
     * @param layerIndex The map layer index of the pixmap.
     */
-    QMapPixmap(const QGeoCoordinateMaps& topLeft, const QPixmap& pixmap, quint16 layerIndex = 0);
+    QMapPixmap(const QGeoCoordinate& topLeft, const QPixmap& pixmap, quint16 layerIndex = 0);
 
     /*!
     * @return The pixmap.
@@ -75,13 +75,13 @@ public:
     /*!
     * @return The top left corner (as geo coordinate) of this pixmap.
     */
-    QGeoCoordinateMaps topLeft() const {
+    QGeoCoordinate topLeft() const {
         return geoTopLeft;
     }
 
 private:
     QPixmap pic; //!< The pixmap.
-    QGeoCoordinateMaps geoTopLeft; //!< The top left coordinate of this pixmap.
+    QGeoCoordinate geoTopLeft; //!< The top left coordinate of this pixmap.
     QPointF mapTopLeft; //!< The top left coordinate, for internal use only
 };
 

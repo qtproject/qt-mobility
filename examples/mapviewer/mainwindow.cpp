@@ -83,12 +83,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QObject::connect(&geoNetworkManager, SIGNAL(finished(QRouteReply*)),
                      this, SLOT(routeReplyFinished(QRouteReply*)));
-    QObject::connect(mapView, SIGNAL(mapClicked(QGeoCoordinateMaps, QGraphicsSceneMouseEvent*)),
-                     this, SLOT(mapClicked(QGeoCoordinateMaps, QGraphicsSceneMouseEvent*)));
+    QObject::connect(mapView, SIGNAL(mapClicked(QGeoCoordinate, QGraphicsSceneMouseEvent*)),
+                     this, SLOT(mapClicked(QGeoCoordinate, QGraphicsSceneMouseEvent*)));
     QObject::connect(mapView, SIGNAL(zoomLevelChanged(quint16, quint16)),
                      this, SLOT(zoomLevelChanged(quint16, quint16)));
 
-    mapView->init(&geoNetworkManager, QPointF(13, 52.35));
+    //mapView->init(&geoNetworkManager, QPointF(13, 52.35));
+    mapView->init(&geoNetworkManager, QGeoCoordinate(52.35, 13));
 
     slider = new QSlider(Qt::Vertical, this);
     slider->setMinimum(0);
@@ -187,7 +188,7 @@ void MainWindow::routeReplyFinished(QRouteReply* reply)
     }
 }
 
-void MainWindow::mapClicked(QGeoCoordinateMaps geoCoord, QGraphicsSceneMouseEvent* mouseEvent)
+void MainWindow::mapClicked(QGeoCoordinate geoCoord, QGraphicsSceneMouseEvent* mouseEvent)
 {
     if (mouseEvent->buttons() & Qt::RightButton) {
         lastClicked = geoCoord;
@@ -200,8 +201,8 @@ void MainWindow::setRtFromTo(bool /*checked*/)
     if (selectedMarkers.count() < 2)
         return;
 
-    QGeoCoordinateMaps from = selectedMarkers.first()->point();
-    QGeoCoordinateMaps to = selectedMarkers.last()->point();
+    QGeoCoordinate from = selectedMarkers.first()->point();
+    QGeoCoordinate to = selectedMarkers.last()->point();
     QRouteRequest request;
     request.setSource(from);
     request.setDestination(to);
@@ -283,7 +284,7 @@ void MainWindow::drawEllipse(bool /*checked*/)
 
 void MainWindow::drawPolygon(bool /*checked*/)
 {
-    QList<QGeoCoordinateMaps> coords;
+    QList<QGeoCoordinate> coords;
 
     for (int i = 0; i < selectedMarkers.count(); i++) {
         coords.append(selectedMarkers[i]->point());

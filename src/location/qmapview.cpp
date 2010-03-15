@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+#define PI 3.14159265358979323846
 #include <math.h>
 
 #include <QGraphicsSceneMouseEvent>
@@ -94,7 +95,7 @@ QMapView::QMapView(QGraphicsItem* parent, Qt::WindowFlags wFlags)
     Initializes a the map view with a given \a geoEngine and centers
     the map at \a center.
 */
-void QMapView::init(QGeoEngine* geoEngine, const QGeoCoordinateMaps& center)
+void QMapView::init(QGeoEngine* geoEngine, const QGeoCoordinate& center)
 {
     if (!geoEngine)
         return;
@@ -245,7 +246,7 @@ void QMapView::cancelPendingTiles()
 void QMapView::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     QPointF mapCoord = event->pos() + viewPort.topLeft();
-    QGeoCoordinateMaps geoCoord = mapToGeo(mapCoord);
+    QGeoCoordinate geoCoord = mapToGeo(mapCoord);
 
     if (event->button() == Qt::LeftButton) {
         panActive = true;
@@ -454,7 +455,7 @@ void QMapView::centerOn(qreal x, qreal y)
 /*
     Centers the view port on the given \a geoPos.
 */
-void QMapView::centerOn(const QGeoCoordinateMaps& geoPos)
+void QMapView::centerOn(const QGeoCoordinate& geoPos)
 {
     centerOn(geoToMap(geoPos));
 }
@@ -462,7 +463,7 @@ void QMapView::centerOn(const QGeoCoordinateMaps& geoPos)
 /*!
     Returns the geo coordinate at the center of the map's current view port.
 */
-QGeoCoordinateMaps QMapView::center() const
+QGeoCoordinate QMapView::center() const
 {
     return mapToGeo(viewPort.center());
 }
@@ -539,9 +540,18 @@ void QMapView::releaseRemoteTiles()
     }
 }
 
-QPointF QMapView::geoToMap(const QGeoCoordinateMaps& geoCoord) const
+QPointF QMapView::geoToMap(const QGeoCoordinate& geoCoord) const
 {
-    return mercatorToMap(geoCoord.toMercator());
+    float lng = geoCoord.longitude();
+    float lat = geoCoord.latitude();
+
+    lng = lng / 360.0f + 0.5f;
+
+    lat = 0.5f - (log(tan((PI / 4.0f) + (PI / 2.0f) * lat / 180.0f)) / PI) / 2.0f;
+    lat = qMax(0.0f, lat);
+    lat = qMin(1.0f, lat);
+
+    return mercatorToMap(QPointF(lng, lat));
 }
 
 QPointF QMapView::mercatorToMap(const QPointF& mercatorCoord) const
@@ -562,9 +572,42 @@ QPointF QMapView::mapToMercator(const QPointF& mapCoord) const
                    mapCoord.y() / (((qreal) numColRow) * ((qreal) mapRes.size.height())));
 }
 
-QGeoCoordinateMaps QMapView::mapToGeo(const QPointF& mapCoord) const
+qreal rmod(const qreal a, const qreal b)
 {
-    return QGeoCoordinateMaps::fromMercator(mapToMercator(mapCoord));
+    quint64 div = static_cast<quint64>(a / b);
+    return a - static_cast<qreal>(div) * b;
+}
+
+QGeoCoordinate QMapView::mapToGeo(const QPointF& mapCoord) const
+{
+    QPointF mercCoord = mapToMercator(mapCoord);
+    qreal x = mercCoord.x();
+    qreal y = mercCoord.y();
+
+    if (y < 0.0f)
+        y = 0.0f;
+    else if (y > 1.0f)
+        y = 1.0f;
+
+    qreal lat;
+
+    if (y == 0.0f)
+        lat = 90.0f;
+    else if (y == 1.0f)
+        lat = -90.0f;
+    else
+        lat = (180.0f / PI) * (2.0f * atan(exp(PI * (1.0f - 2.0f * y))) - (PI / 2.0f));
+
+    qreal lng;
+    if (lng >= 0) {
+        lng = rmod(x, 1.0f);
+    } else {
+        lng = rmod(1.0f - rmod(-1.0f * x, 1.0f), 1.0f);
+    }
+
+    lng = lng * 360.0f - 180.0f;
+
+    return QGeoCoordinate(lat, lng);
 }
 
 void QMapView::mapToTile(const QPointF& mapCoord, quint32* col, quint32* row) const
@@ -669,11 +712,11 @@ void QMapView::setScheme(const MapScheme& mapScheme)
     update();
 }
 
-QLineF QMapView::connectShortest(const QGeoCoordinateMaps& point1, const QGeoCoordinateMaps& point2) const
+QLineF QMapView::connectShortest(const QGeoCoordinate& point1, const QGeoCoordinate& point2) const
 {
     //order from west to east
-    QGeoCoordinateMaps pt1;
-    QGeoCoordinateMaps pt2;
+    QGeoCoordinate pt1;
+    QGeoCoordinate pt2;
 
     if (point1.longitude() < point2.longitude()) {
         pt1 = point1;

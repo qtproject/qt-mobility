@@ -52,7 +52,7 @@
 #include "qmaprect.h"
 #include "qmappolygon.h"
 #include "qmapellipse.h"
-#include "qgeocoordinatemaps.h"
+#include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -151,15 +151,15 @@ void QMapRoute::compMapCoords()
 
     quint32 minDist = mapView->routeDetailLevel();
     QList<QManeuver> maneuvers = rt.maneuvers();
-    QGeoCoordinateMaps last;
-    QGeoCoordinateMaps here;
+    QGeoCoordinate last;
+    QGeoCoordinate here;
 
     for (int i = 0; i < maneuvers.size(); i++) {
-        QList<QGeoCoordinateMaps> wayPoints = maneuvers[i].wayPoints();
+        QList<QGeoCoordinate> wayPoints = maneuvers[i].wayPoints();
 
         for (int n = 0; n < wayPoints.size(); n++) {
             //make sure first waypoint is always shown
-            if (last.isNull()) {
+            if (!last.isValid()) {
                 last = wayPoints[n];
                 continue;
             }
@@ -171,13 +171,13 @@ void QMapRoute::compMapCoords()
                     mapView->zoomLevel() == mapView->maxZoomLevel()) {
                 addSegment(line);
                 last = here;
-                here = QGeoCoordinateMaps();
+                here = QGeoCoordinate();
             }
         }
     }
 
     //make sure last waypoint is always shown
-    if (!here.isNull()) {
+    if (here.isValid()) {
         QLineF line = mapView->connectShortest(here, last);
         addSegment(line);
     }
@@ -302,8 +302,8 @@ void QMapRoute::paint(QPainter* painter, const QRectF& viewPort)
 /******************************************************************************
 * QMapLine
 *******************************************************************************/
-QMapLine::QMapLine(const QGeoCoordinateMaps& point1,
-                   const QGeoCoordinateMaps& point2, const QPen& pen, quint16 layerIndex)
+QMapLine::QMapLine(const QGeoCoordinate& point1,
+                   const QGeoCoordinate& point2, const QPen& pen, quint16 layerIndex)
         : QMapObject(QMapObject::Line, layerIndex), pt1(point1), pt2(point2), p(pen)
 {
 }
@@ -387,7 +387,7 @@ bool QMapLine::intersects(const QRectF& rect) const
 #define MARKER_WIDTH 25
 #define MARKER_PIN_LEN 10
 
-QMapMarker::QMapMarker(const QGeoCoordinateMaps& point,
+QMapMarker::QMapMarker(const QGeoCoordinate& point,
                        const QString& text, const QFont& font, const QColor& fontColor,
                        const QPixmap& icon, const QRectF& textRect,
                        quint16 layerIndex)
@@ -472,7 +472,7 @@ bool QMapMarker::intersects(const QRectF& tileRect) const
 /******************************************************************************
 * QMapRect
 *******************************************************************************/
-QMapRect::QMapRect(const QGeoCoordinateMaps& topLeft, const QGeoCoordinateMaps& bottomRight,
+QMapRect::QMapRect(const QGeoCoordinate& topLeft, const QGeoCoordinate& bottomRight,
                    const QPen& pen, const QBrush& brush, quint16 layerIndex)
         : QMapObject(QMapObject::Rect, layerIndex),
         geoTopLeft(topLeft), geoBottomRight(bottomRight), p(pen), b(brush)
@@ -547,7 +547,7 @@ bool QMapRect::intersects(const QRectF& rect) const
 /******************************************************************************
 * QMapPolygon
 *******************************************************************************/
-QMapPolygon::QMapPolygon(const QList<QGeoCoordinateMaps>& polygon,
+QMapPolygon::QMapPolygon(const QList<QGeoCoordinate>& polygon,
                          const QPen& pen, const QBrush& brush, quint16 layerIndex)
         : QMapObject(QMapObject::Polygon, layerIndex),
         poly(polygon), p(pen), br(brush)

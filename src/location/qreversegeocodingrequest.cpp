@@ -61,7 +61,7 @@ QReverseGeocodingRequest::QReverseGeocodingRequest()
 /*!
     Constructs a request for the geocoordinate \a coordinate.
 */
-QReverseGeocodingRequest::QReverseGeocodingRequest(const QGeoCoordinateMaps& coordinate)
+QReverseGeocodingRequest::QReverseGeocodingRequest(const QGeoCoordinate& coordinate)
         : coord(coordinate)
 {
     languageMARC = "eng";
@@ -99,7 +99,7 @@ QString QReverseGeocodingRequest::language() const
 /*!
     Sets the geocoordinate for this request to \a coordinate.
 */
-void QReverseGeocodingRequest::setCoordinate(const QGeoCoordinateMaps& coordinate)
+void QReverseGeocodingRequest::setCoordinate(const QGeoCoordinate& coordinate)
 {
     coord = coordinate;
 }
@@ -107,7 +107,7 @@ void QReverseGeocodingRequest::setCoordinate(const QGeoCoordinateMaps& coordinat
 /*!
     Return the geocoordinate for this request.
 */
-QGeoCoordinateMaps QReverseGeocodingRequest::coordinate() const
+QGeoCoordinate QReverseGeocodingRequest::coordinate() const
 {
     return coord;
 }

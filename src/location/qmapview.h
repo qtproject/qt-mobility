@@ -52,7 +52,7 @@
 #include <QFont>
 #include <QColor>
 
-#include "qgeocoordinatemaps.h"
+#include "qgeocoordinate.h"
 #include "qgeoengine.h"
 #include "qroute.h"
 
@@ -157,15 +157,15 @@ public:
 public:
     QMapView(QGraphicsItem* parent = 0, Qt::WindowFlags wFlags = 0);
 
-    void init(QGeoEngine* geoEngine, const QGeoCoordinateMaps& center = QGeoCoordinateMaps(0, 0));
+    void init(QGeoEngine* geoEngine, const QGeoCoordinate& center = QGeoCoordinate(0, 0));
 
     virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
 
-    QGeoCoordinateMaps center() const;
+    QGeoCoordinate center() const;
     QPointF mapCenter() const;
     void centerOn(const QPointF& pos);
     void centerOn(qreal x, qreal y);
-    void centerOn(const QGeoCoordinateMaps& geoPos);
+    void centerOn(const QGeoCoordinate& geoPos);
     void moveViewPort(int deltaX, int deltaY);
 
     /*!
@@ -218,7 +218,7 @@ public:
      * @param geoCoord A geo coordinate.
      * @return The corresponding map coordinate (in pixels).
      */
-    QPointF geoToMap(const QGeoCoordinateMaps& geoCoord) const;
+    QPointF geoToMap(const QGeoCoordinate& geoCoord) const;
     /*!
      * Converts a normalized Mercator coordinate to a map coordinate.
      * @param mercatorCoord A normalized Mercator coordinate.
@@ -229,7 +229,7 @@ public:
     * Converts a map coordinate (in pixels) into its corresponding geo coordinate.
     * @param mapCoord The map coordinate (in pixels).
     */
-    QGeoCoordinateMaps mapToGeo(const QPointF& mapCoord) const;
+    QGeoCoordinate mapToGeo(const QPointF& mapCoord) const;
     /*!
     * To compute the normalized mercator coordinate for the given pixel coordinate
     * according to the map.
@@ -300,7 +300,7 @@ public:
     inline quint64 getTileIndex(quint32 col, quint32 row) const {
         return ((quint64) row) * numColRow + col;
     }
-    QLineF connectShortest(const QGeoCoordinateMaps& point1, const QGeoCoordinateMaps& point2) const;
+    QLineF connectShortest(const QGeoCoordinate& point1, const QGeoCoordinate& point2) const;
 
     /*!
     * @return The current map version.
@@ -428,7 +428,7 @@ signals:
     * @param geoCoord The geo coordinate where the click occured.
     * @param mouseEvent The associated mouse event.
     */
-    void mapClicked(QGeoCoordinateMaps geoCoord, QGraphicsSceneMouseEvent* mouseEvent);
+    void mapClicked(QGeoCoordinate geoCoord, QGraphicsSceneMouseEvent* mouseEvent);
     /*!
     * This signal is emitted after the map has changed its zoom level.
     * @param oldZoomLevel The previous zoom level.

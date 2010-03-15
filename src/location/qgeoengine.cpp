@@ -72,14 +72,14 @@ QTM_BEGIN_NAMESPACE
 * An address can either be specified by a "one box location" description, or by its individual
 * country, state, city, post code, street name and street number fields.<br>
 * Depending on the address input, the corresponding QGeocodingReply can contain several QGeoLocation<i></i>s, each
-* containing a QGeoCoordinateMaps, a QAddress and possibly a QAlternativeAddress.
+* containing a QGeoCoordinate, a QAddress and possibly a QAlternativeAddress.
 
 * \section sec_reverse_geocoding Reverse Geocoding Requests and Replies
-* A QReverseGeocodingRequests tries to map a QGeoCoordinateMaps to an address.<br>
+* A QReverseGeocodingRequests tries to map a QGeoCoordinate to an address.<br>
 * It too returns a QGeocodingReply.
 
 * \section sec_routing Routing Requests and Replies
-* A QRouteRequest requests a route from a source QGeoCoordinateMaps to a destination QGeoCoordinateMaps.<br>
+* A QRouteRequest requests a route from a source QGeoCoordinate to a destination QGeoCoordinate.<br>
 * The return QRouteReply can contain several QRoute<i></i>s, each containing numerous QManeuver<i></i>s.
 * A QManeuver is defined by a collection of QManeuver::wayPoints() and QManeuver::maneuverPoints().
 *
@@ -259,12 +259,12 @@ QGeoEngine::~QGeoEngine() {}
 
     \note This does not mean that the coordinate lies in the center of the calculated tile.
 */
-void QGeoEngine::getMercatorTileIndex(const QGeoCoordinateMaps& coordinate, quint16 zoomLevel, quint32* col, quint32* row)
+void QGeoEngine::getMercatorTileIndex(const QGeoCoordinate& coordinate, quint16 zoomLevel, quint32* col, quint32* row)
 {
     qreal p = pow((double) 2, zoomLevel);
 
-    double x = coordinate.x() / 360 + 0.5;
-    double y = 0.5 - (log(tan((PI / 4.0) + (PI / 2.0) * coordinate.y() / 180)) / PI) / 2;
+    double x = coordinate.longitude() / 360 + 0.5;
+    double y = 0.5 - (log(tan((PI / 4.0) + (PI / 2.0) * coordinate.latitude() / 180)) / PI) / 2;
 
     if (y < 0)
         y = 0;

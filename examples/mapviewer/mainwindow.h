@@ -73,7 +73,7 @@ protected:
     virtual void resizeEvent(QResizeEvent* event);
 
 private slots:
-    void mapClicked(QGeoCoordinateMaps geoCoord, QGraphicsSceneMouseEvent* mouseEvent);
+    void mapClicked(QGeoCoordinate geoCoord, QGraphicsSceneMouseEvent* mouseEvent);
     void routeReplyFinished(QRouteReply* reply);
     void setRtFromTo(bool checked);
     void zoomLevelChanged(quint16 oldZoomLevel, quint16 newZoomLevel);
@@ -105,7 +105,7 @@ private:
     QAction* mnSep1;
     QAction* mnSep2;
 
-    QGeoCoordinateMaps lastClicked;
+    QGeoCoordinate lastClicked;
 
     QList<const QMapMarker*> selectedMarkers;
 };

@@ -49,7 +49,7 @@
 #include <QColor>
 
 #include "qmapobject.h"
-#include "qgeocoordinatemaps.h"
+#include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -58,7 +58,7 @@ class Q_LOCATION_EXPORT QMapMarker : public QMapObject
     friend class QMapView;
 
 public:
-    QMapMarker(const QGeoCoordinateMaps& point,
+    QMapMarker(const QGeoCoordinate& point,
                const QString& text = QString(),
                const QFont& font = QFont("Arial", 10, QFont::Bold),
                const QColor& fontColor = QColor(Qt::white),
@@ -74,7 +74,7 @@ public:
     /*!
     * @return The geo coordinate that is marked.
     */
-    inline QGeoCoordinateMaps point() const {
+    inline QGeoCoordinate point() const {
         return pt;
     }
     inline QString text() const {
@@ -95,7 +95,7 @@ protected:
     void constructMarker(QPainter* painter, const QPointF& point);
 
 protected:
-    QGeoCoordinateMaps pt;
+    QGeoCoordinate pt;
     QPointF mapPt;
     QRectF box;
     QPixmap icn;

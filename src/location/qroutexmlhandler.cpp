@@ -119,7 +119,7 @@ bool QRouteXmlHandler::startElement(const QString& namespaceURI,
 
     Returns a boolean indicating whether or not the parsing succeeded.
 */
-bool QRouteXmlHandler::parseGeoPoints(const QString& strPoints, QList<QGeoCoordinateMaps>& geoPoints)
+bool QRouteXmlHandler::parseGeoPoints(const QString& strPoints, QList<QGeoCoordinate>& geoPoints)
 {
     QStringList rawPoints = strPoints.split(' ');
 
@@ -129,7 +129,7 @@ bool QRouteXmlHandler::parseGeoPoints(const QString& strPoints, QList<QGeoCoordi
         if (coords.length() != 2)
             return false;
 
-        QGeoCoordinateMaps geoPoint(coords[1].toDouble(), coords[0].toDouble());
+        QGeoCoordinate geoPoint(coords[0].toDouble(), coords[1].toDouble());
         geoPoints.append(geoPoint);
         int x = geoPoints.size();
         x++;

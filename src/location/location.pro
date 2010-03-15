@@ -130,7 +130,6 @@ HEADERS += qaddress.h \
            qgeocodingreply.h \
            qgeocodingrequest.h \
            qgeocodingxmlhandler.h \
-           qgeocoordinatemaps.h \
            qgeoengine.h \
            qgeolocation.h \
            qgeonetworkmanager.h \
@@ -198,7 +197,6 @@ SOURCES += qaddress.cpp \
            qgeocodingreply.cpp \
            qgeocodingrequest.cpp \
            qgeocodingxmlhandler.cpp \
-           qgeocoordinatemaps.cpp \
            qgeoengine.cpp \
            qgeolocation.cpp \
            qgeonetworkmanager.cpp \

@@ -179,7 +179,7 @@ void RoutePresenter::showManeuver(QTreeWidgetItem* routeItem, const QManeuver& m
     showPoints(maneuverPointsItem, maneuver.maneuverPoints());
 }
 
-void RoutePresenter::showPoints(QTreeWidgetItem* pointsItem, const QList<QGeoCoordinateMaps>& points)
+void RoutePresenter::showPoints(QTreeWidgetItem* pointsItem, const QList<QGeoCoordinate>& points)
 {
     for (int i = 0; i < points.length(); i++) {
         QTreeWidgetItem* point = new QTreeWidgetItem(pointsItem);
@@ -194,20 +194,24 @@ void GeoPresenter::showBoundingBox(QTreeWidgetItem* routeItem, const QRectF& box
     QTreeWidgetItem* boxItem = new QTreeWidgetItem(routeItem);
     boxItem->setText(0, "bounding box");
 
+    QGeoCoordinate topLeft = QGeoCoordinate(box.topLeft().y(), box.topLeft().x());
+
     QTreeWidgetItem* nwItem = new QTreeWidgetItem(boxItem);
     nwItem->setText(0, "NW");
-    nwItem->setText(1, formatGeoCoordinate(box.topLeft()));
+    nwItem->setText(1, formatGeoCoordinate(topLeft));
+
+    QGeoCoordinate bottomRight = QGeoCoordinate(box.bottomRight().y(), box.bottomRight().x());
 
     QTreeWidgetItem* seItem = new QTreeWidgetItem(boxItem);
     seItem->setText(0, "SE");
-    seItem->setText(1, formatGeoCoordinate(box.bottomRight()));
+    seItem->setText(1, formatGeoCoordinate(bottomRight));
 }
 
-QString GeoPresenter::formatGeoCoordinate(const QGeoCoordinateMaps& coord)
+QString GeoPresenter::formatGeoCoordinate(const QGeoCoordinate& coord)
 {
-    return QString().setNum(coord.x()) %
+    return QString().setNum(coord.longitude()) %
            ", " %
-           QString().setNum(coord.y());
+           QString().setNum(coord.latitude());
 }
 
 

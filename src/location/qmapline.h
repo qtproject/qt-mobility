@@ -47,7 +47,7 @@
 #include <QPainter>
 
 #include "qmapobject.h"
-#include "qgeocoordinatemaps.h"
+#include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -66,7 +66,7 @@ public:
     * @param pen The pen used for drawing the line.
     * @param layerIndex The map layer index of the pixmap.
     */
-    QMapLine(const QGeoCoordinateMaps& point1, const QGeoCoordinateMaps& point2,
+    QMapLine(const QGeoCoordinate& point1, const QGeoCoordinate& point2,
              const QPen& pen = QPen(), quint16 layerIndex = 0);
 
     /*!
@@ -78,13 +78,13 @@ public:
     /*!
     * @return The first end point (as geo coordinate) of the line.
     */
-    QGeoCoordinateMaps point1() const {
+    QGeoCoordinate point1() const {
         return pt1;
     }
     /*!
     * @return The second end point (as geo coordinate) of the line.
     */
-    QGeoCoordinateMaps point2() const {
+    QGeoCoordinate point2() const {
         return pt2;
     }
 
@@ -94,8 +94,8 @@ protected:
     virtual void paint(QPainter* painter, const QRectF& viewPort);
 
 private:
-    QGeoCoordinateMaps pt1; //!< The first end point of the line.
-    QGeoCoordinateMaps pt2; //!< The second end point of the line.
+    QGeoCoordinate pt1; //!< The first end point of the line.
+    QGeoCoordinate pt2; //!< The second end point of the line.
     QPen p; //!< The pen used for drawing this line.
     QLineF line;
 };
