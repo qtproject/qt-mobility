@@ -43,15 +43,13 @@
 #include <math.h>
 
 #include <QStringBuilder>
-#include <QXmlInputSource>
-#include <QXmlSimpleReader>
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QUrl>
 
 #include "qgeonetworkmanager.h"
 #include "qroutereply.h"
-#include "qroutexmlhandler.h"
+#include "qroutexmlparser.h"
 #include "qgeocodingreply.h"
 #include "qgeocodingxmlparser.h"
 
@@ -518,13 +516,8 @@ QList<MapScheme> QGeoNetworkManager::schemes() const {
 */
 bool QGeoNetworkManager::parseRouteReply(QNetworkReply* netReply, QRouteReply* routeReply)
 {
-    QRouteXmlHandler handler(routeReply);
-    QXmlInputSource xmlSrc(netReply);
-    QXmlSimpleReader xmlReader;
-    xmlReader.setContentHandler(&handler);
-    xmlReader.setErrorHandler(&handler);
-
-    return xmlReader.parse(xmlSrc);
+    QRouteXmlParser parser;
+    return parser.parse(netReply, routeReply);
 }
 
 /*!
@@ -532,15 +525,6 @@ bool QGeoNetworkManager::parseRouteReply(QNetworkReply* netReply, QRouteReply* r
 */
 bool QGeoNetworkManager::parseCodingReply(QNetworkReply* netReply, QGeocodingReply* codingReply)
 {
-    /*
-    QGeocodingXmlHandler handler(codingReply);
-    QXmlInputSource xmlSrc(netReply);
-    QXmlSimpleReader xmlReader;
-    xmlReader.setContentHandler(&handler);
-    xmlReader.setErrorHandler(&handler);
-
-    return xmlReader.parse(xmlSrc);
-    */
     QGeocodingXmlParser parser;
     return parser.parse(netReply, codingReply);
 }

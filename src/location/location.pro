@@ -1,6 +1,6 @@
 TEMPLATE = lib
 TARGET = QtLocation
-QT = core gui xml network
+QT = core gui network
 
 include(../../common.pri)
 
@@ -126,10 +126,9 @@ maemo5 {
 # maps header files - sort into public and private later
 HEADERS += qaddress.h \
            qalternativeaddress.h \
-           qbasexmlhandler.h \
            qgeocodingreply.h \
            qgeocodingrequest.h \
-           qgeocodingxmlhandler.h \
+           qgeocodingxmlparser.h \
            qgeoengine.h \
            qgeolocation.h \
            qgeonetworkmanager.h \
@@ -152,7 +151,6 @@ HEADERS += qaddress.h \
            qroute.h \
            qroutereply.h \
            qrouterequest.h \
-           qroutexmlhandler.h \
            qroutexmlparser.h
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
@@ -194,10 +192,9 @@ SOURCES += qlocationutils.cpp \
 # maps source files
 SOURCES += qaddress.cpp \
             qalternativeaddress.cpp \
-            qbasexmlhandler.cpp \
            qgeocodingreply.cpp \
            qgeocodingrequest.cpp \
-           qgeocodingxmlhandler.cpp \
+           qgeocodingxmlparser.cpp \
            qgeoengine.cpp \
            qgeolocation.cpp \
            qgeonetworkmanager.cpp \
@@ -212,7 +209,6 @@ SOURCES += qaddress.cpp \
            qroute.cpp \
            qroutereply.cpp \
            qrouterequest.cpp \
-           qroutexmlhandler.cpp \
             qroutexmlparser.cpp
 
 symbian {

@@ -599,7 +599,7 @@ QGeoCoordinate QMapView::mapToGeo(const QPointF& mapCoord) const
         lat = (180.0f / PI) * (2.0f * atan(exp(PI * (1.0f - 2.0f * y))) - (PI / 2.0f));
 
     qreal lng;
-    if (lng >= 0) {
+    if (x >= 0) {
         lng = rmod(x, 1.0f);
     } else {
         lng = rmod(1.0f - rmod(-1.0f * x, 1.0f), 1.0f);

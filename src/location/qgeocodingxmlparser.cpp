@@ -8,11 +8,14 @@
 
 #include <QXmlStreamReader>
 #include <QIODevice>
+#include <QRectF>
+
+#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
 QGeocodingXmlParser::QGeocodingXmlParser()
-    : m_reader(0)
+        : m_reader(0)
 {
 }
 
@@ -28,8 +31,9 @@ bool QGeocodingXmlParser::parse(QIODevice* source, QGeocodingReply *output)
         delete m_reader;
     m_reader = new QXmlStreamReader(source);
 
-    if(!readRootElement(output)) {
+    if (!readRootElement(output)) {
         // set errors appropriately
+        qWarning() << m_reader->errorString();
         return false;
     }
 
@@ -38,6 +42,7 @@ bool QGeocodingXmlParser::parse(QIODevice* source, QGeocodingReply *output)
 
 bool QGeocodingXmlParser::readRootElement(QGeocodingReply *output)
 {
+    qWarning() << "root";
     /*
     <xsd:element name="places">
         <xsd:complexType>
@@ -84,7 +89,7 @@ bool QGeocodingXmlParser::readRootElement(QGeocodingReply *output)
 
                     output->plcs.append(location);
                 } else {
-                    m_reader->raiseError(QString("The element \"places\" did not expect a child element named \"\%1\".").arg(m_reader->name().toString()));
+                    m_reader->raiseError(QString("The element \"places\" did not expect a child element named \"%1\".").arg(m_reader->name().toString()));
                     return false;
                 }
             }
@@ -107,6 +112,7 @@ bool QGeocodingXmlParser::readRootElement(QGeocodingReply *output)
 
 bool QGeocodingXmlParser::readPlace(QGeoLocation *location)
 {
+    qWarning() << "place";
     /*
     <xsd:complexType name="Place">
         <xsd:all>
@@ -135,15 +141,15 @@ bool QGeocodingXmlParser::readPlace(QGeoLocation *location)
     location->ttl = m_reader->attributes().value("title").toString();
 
     if (!m_reader->attributes().hasAttribute("language")) {
-        m_reader->raiseError("The element \"place\" did not have the required attribute \"language\".");
-        return false;
-    }
+        //m_reader->raiseError("The element \"place\" did not have the required attribute \"language\".");
+        //return false;
+    } else {
+        location->lang = m_reader->attributes().value("language").toString();
 
-    location->lang = m_reader->attributes().value("language").toString();
-
-    if (location->lang.length() != 3) {
-        m_reader->raiseError(QString("The attribute \"language\" of the element \"place\" was not of length 3 (length was %1).").arg(location->lang.length()));
-        return false;
+        if (location->lang.length() != 3) {
+            m_reader->raiseError(QString("The attribute \"language\" of the element \"place\" was not of length 3 (length was %1).").arg(location->lang.length()));
+            return false;
+        }
     }
 
     bool parsedLocation = false;
@@ -185,7 +191,7 @@ bool QGeocodingXmlParser::readPlace(QGeoLocation *location)
 
             parsedAlternatives = true;
         } else {
-            m_reader->raiseError(QString("The element \"place\" did not expect a child element named \"\%1\".").arg(m_reader->name().toString()));
+            m_reader->raiseError(QString("The element \"place\" did not expect a child element named \"%1\".").arg(m_reader->name().toString()));
             return false;
         }
     }
@@ -200,6 +206,7 @@ bool QGeocodingXmlParser::readPlace(QGeoLocation *location)
 
 bool QGeocodingXmlParser::readLocation(QGeoLocation *location)
 {
+    qWarning() << "location";
     /*
     <xsd:complexType name="Location">
         <xsd:all>
@@ -221,7 +228,7 @@ bool QGeocodingXmlParser::readLocation(QGeoLocation *location)
     bool parsedPosition = false;
     bool parsedBox = false;
 
-    while(m_reader->readNextStartElement()) {
+    while (m_reader->readNextStartElement()) {
         QString name = m_reader->name().toString();
         if (name == "position") {
             if (parsedPosition) {
@@ -239,47 +246,12 @@ bool QGeocodingXmlParser::readLocation(QGeoLocation *location)
                 return false;
             }
 
-            if (!m_reader->readNextStartElement()) {
-                m_reader->raiseError("The element \"boundingBox\" was expected to have 2 child elements (0 found)");
+            if (!readBoundingBox(&(location->box)))
                 return false;
-            }
-
-            QGeoCoordinate nw;
-
-            if (m_reader->name() == "northWest") {
-                if (!readCoordinate(&nw, "northWest"))
-                    return false;
-            } else {
-                m_reader->raiseError(QString("The element \"boundingBox\" expected this child element to be named \"northWest\" (found an element named \"%1\")").arg(m_reader->name().toString()));
-                return false;
-            }
-
-            if (!m_reader->readNextStartElement()) {
-                m_reader->raiseError("The element \"boundingBox\" was expected to have 2 child elements (1 found)");
-                return false;
-            }
-
-            QGeoCoordinate se;
-
-            if (m_reader->name() == "southEast") {
-                if (!readCoordinate(&se, "northWest"))
-                    return false;
-            } else {
-                m_reader->raiseError(QString("The element \"boundingBox\" expected this child element to be named \"southEast\" (found an element named \"%1\")").arg(m_reader->name().toString()));
-                return false;
-            }
-
-            if (m_reader->readNextStartElement()) {
-                m_reader->raiseError("The element \"boundingBox\" was expected to have 2 child elements (more than 2 found)");
-                return false;
-            }
-
-            location->box.setTopLeft(QPointF(nw.longitude(), nw.latitude()));
-            location->box.setBottomRight(QPointF(se.longitude(), se.latitude()));
 
             parsedBox = true;
         } else {
-            m_reader->raiseError(QString("The element \"location\" did not expect a child element named \"\%1\".").arg(m_reader->name().toString()));
+            m_reader->raiseError(QString("The element \"location\" did not expect a child element named \"%1\".").arg(m_reader->name().toString()));
             return false;
         }
     }
@@ -294,6 +266,7 @@ bool QGeocodingXmlParser::readLocation(QGeoLocation *location)
 
 bool QGeocodingXmlParser::readAddress(QAddress *address)
 {
+    qWarning() << "address";
     /*
     <xsd:complexType name="Address">
         <xsd:sequence>
@@ -330,13 +303,13 @@ bool QGeocodingXmlParser::readAddress(QAddress *address)
     if (!m_reader->readNextStartElement())
         return true;
 
-    if(m_reader->name() == "country") {
+    if (m_reader->name() == "country") {
         address->sCountry = m_reader->readElementText();
         if (!m_reader->readNextStartElement())
             return true;
     }
 
-    if(m_reader->name() == "countryCode") {
+    if (m_reader->name() == "countryCode") {
         address->sCountryCode = m_reader->readElementText();
 
         if (address->sCountryCode.length() != 3) {
@@ -348,25 +321,25 @@ bool QGeocodingXmlParser::readAddress(QAddress *address)
             return true;
     }
 
-    if(m_reader->name() == "state") {
+    if (m_reader->name() == "state") {
         address->sState = m_reader->readElementText();
         if (!m_reader->readNextStartElement())
             return true;
     }
 
-    if(m_reader->name() == "county") {
+    if (m_reader->name() == "county") {
         address->sCounty = m_reader->readElementText();
         if (!m_reader->readNextStartElement())
             return true;
     }
 
-    if(m_reader->name() == "city") {
+    if (m_reader->name() == "city") {
         address->sCity = m_reader->readElementText();
         if (!m_reader->readNextStartElement())
             return true;
     }
 
-    if(m_reader->name() == "district") {
+    if (m_reader->name() == "district") {
         address->sDistrict = m_reader->readElementText();
         if (!m_reader->readNextStartElement())
             return true;
@@ -374,7 +347,7 @@ bool QGeocodingXmlParser::readAddress(QAddress *address)
 
     bool inThoroughfare = false;
 
-    if(m_reader->name() == "thoroughFare") {
+    if (m_reader->name() == "thoroughfare") {
         inThoroughfare = m_reader->readNextStartElement();
 
         if (inThoroughfare && (m_reader->name() == "name")) {
@@ -398,7 +371,7 @@ bool QGeocodingXmlParser::readAddress(QAddress *address)
             return true;
     }
 
-    if(m_reader->name() == "postCode") {
+    if (m_reader->name() == "postCode") {
         address->sPostCode = m_reader->readElementText();
         if (!m_reader->readNextStartElement())
             return true;
@@ -408,8 +381,64 @@ bool QGeocodingXmlParser::readAddress(QAddress *address)
     return false;
 }
 
-bool QGeocodingXmlParser::readCoordinate(QGeoCoordinate *coordinate, QString elementName)
+bool QGeocodingXmlParser::readBoundingBox(QRectF *rect)
 {
+    qWarning() << "boundingBox";
+    /*
+    <xsd:complexType name="GeoBox">
+        <xsd:sequence>
+            <xsd:element name="northWest" type="gc:GeoCoord"/>
+            <xsd:element name="southEast" type="gc:GeoCoord"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    */
+
+    Q_ASSERT(m_reader->isStartElement() && m_reader->name() == "boundingBox");
+
+    if (!m_reader->readNextStartElement()) {
+        m_reader->raiseError("The element \"boundingBox\" was expected to have 2 child elements (0 found)");
+        return false;
+    }
+
+    QGeoCoordinate nw;
+
+    if (m_reader->name() == "northWest") {
+        if (!readCoordinate(&nw, "northWest"))
+            return false;
+    } else {
+        m_reader->raiseError(QString("The element \"boundingBox\" expected this child element to be named \"northWest\" (found an element named \"%1\")").arg(m_reader->name().toString()));
+        return false;
+    }
+
+    if (!m_reader->readNextStartElement()) {
+        m_reader->raiseError("The element \"boundingBox\" was expected to have 2 child elements (1 found)");
+        return false;
+    }
+
+    QGeoCoordinate se;
+
+    if (m_reader->name() == "southEast") {
+        if (!readCoordinate(&se, "southEast"))
+            return false;
+    } else {
+        m_reader->raiseError(QString("The element \"boundingBox\" expected this child element to be named \"southEast\" (found an element named \"%1\")").arg(m_reader->name().toString()));
+        return false;
+    }
+
+    if (m_reader->readNextStartElement()) {
+        m_reader->raiseError("The element \"boundingBox\" was expected to have 2 child elements (more than 2 found)");
+        return false;
+    }
+
+    rect->setTopLeft(QPointF(nw.longitude(), nw.latitude()));
+    rect->setBottomRight(QPointF(se.longitude(), se.latitude()));
+
+    return true;
+}
+
+bool QGeocodingXmlParser::readCoordinate(QGeoCoordinate *coordinate, const QString &elementName)
+{
+    qWarning() << "coord";
     /*
     <xsd:complexType name="GeoCoord">
         <xsd:sequence>
@@ -435,7 +464,7 @@ bool QGeocodingXmlParser::readCoordinate(QGeoCoordinate *coordinate, QString ele
 
     Q_ASSERT(m_reader->isStartElement() && m_reader->name() == elementName);
 
-    if(!m_reader->readNextStartElement()) {
+    if (!m_reader->readNextStartElement()) {
         m_reader->raiseError(QString("The element \"%1\" was expected to have 2 child elements (0 found)").arg(elementName));
         return false;
     }
@@ -460,7 +489,7 @@ bool QGeocodingXmlParser::readCoordinate(QGeoCoordinate *coordinate, QString ele
         m_reader->raiseError(QString("The element \"%1\" expected this child element to be named \"latitude\" (found an element named \"%2\")").arg(elementName).arg(m_reader->name().toString()));
     }
 
-    if(!m_reader->readNextStartElement()) {
+    if (!m_reader->readNextStartElement()) {
         m_reader->raiseError(QString("The element \"%1\" was expected to have 2 child elements (1 found)").arg(elementName));
         return false;
     }
@@ -485,12 +514,12 @@ bool QGeocodingXmlParser::readCoordinate(QGeoCoordinate *coordinate, QString ele
         m_reader->raiseError(QString("The element \"%1\" expected this child element to be named \"longitude\" (found an element named \"%2\")").arg(elementName).arg(m_reader->name().toString()));
     }
 
-    if(m_reader->readNextStartElement()) {
+    if (m_reader->readNextStartElement()) {
         m_reader->raiseError(QString("The element \"%1\" was expected to have 2 child elements (more than 2 found)").arg(elementName));
         return false;
     }
 
-    return false;
+    return true;
 }
 
 QTM_END_NAMESPACE

@@ -5,6 +5,7 @@
 
 class QXmlStreamReader;
 class QIODevice;
+class QRectF;
 
 QTM_BEGIN_NAMESPACE
 
@@ -13,7 +14,8 @@ class QGeocodingReply;
 class QGeoLocation;
 class QAddress;
 
-class QGeocodingXmlParser {
+class QGeocodingXmlParser
+{
 
 public:
 
@@ -27,7 +29,8 @@ private:
     bool readPlace(QGeoLocation *location);
     bool readLocation(QGeoLocation *location);
     bool readAddress(QAddress *address);
-    bool readCoordinate(QGeoCoordinate *coordinate, QString elementName);
+    bool readBoundingBox(QRectF *rect);
+    bool readCoordinate(QGeoCoordinate *coordinate, const QString &elementName);
 
     QXmlStreamReader *m_reader;
 };
