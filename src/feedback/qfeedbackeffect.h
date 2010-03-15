@@ -43,11 +43,9 @@
 #define QFEEDBACKEFFECT_H
 
 #include <qmobilityglobal.h>
-#include <QtCore/qscopedpointer.h>
+#include <QtCore/QAbstractAnimation>
 
 QTM_BEGIN_NAMESPACE
-
-//TODO: should those classes be QObject subclasses or even QAbstractAnimation subclasses?
 
 //continous
 enum ContinuousEffect {
@@ -74,10 +72,41 @@ QT_FORWARD_DECLARE_CLASS(QWidget)
 class QFeedbackEffectPrivate;
 class QVibraEffectPrivate;
 class QTouchEffectPrivate;
+class QFeedbackEffect;
 
-class Q_FEEDBACK_EXPORT QFeedbackEffect
+class Q_FEEDBACK_EXPORT QFeedbackDevice
 {
 public:
+    enum Type {
+        //should we have different type for actuators: vibra, motor...
+        Vibra,
+        Motor
+    };
+
+    enum Capability {
+        Envelope
+      //TBD
+    };
+
+    enum State {
+        //TBD
+        Busy,
+        Ready
+    };
+
+    State state() const;
+    QFeedbackEffect *currentPlayingEffect() const;
+    int simultaneousEffect() const; // I guess usually 1
+
+    QFeedbackDevive defaultDevice(Type t = Vibra);
+
+    static QList<QFeedbackDevice> devices();
+};
+
+class Q_FEEDBACK_EXPORT QFeedbackEffect : public QAbstractAnimation
+{
+public:
+    QFeedbackEffect();
     virtual ~QFeedbackEffect();
 
     void setDuration(int msecs);
@@ -86,11 +115,30 @@ public:
     void setIntensity(qreal intensity);
     qreal intensity() const;
 
-    virtual void play() = 0;
+    //the envelope
+    void setAttackTime(int msecs);
+    int attackTime() const;
 
-protected:
-    QFeedbackEffect(QFeedbackEffectPrivate &dd);
-    QScopedPointer<QFeedbackEffectPrivate> d_ptr;
+    void setAttackIntensity(qreal intensity);
+    qreal attackIntensity() const;
+
+    void setPriority(int); //TBD
+    int priority() const;
+
+    void setFadeTime(int msecs);
+    int fadeTime() const;
+
+    void setDevice(const QFeedBackDevice &device);
+    QFeedbackDevice device() const;
+
+    //What do we do with
+    //- the period (and more generally the difference between magSweep and periodic
+    //- the wave type
+    //- the effect style (there is an equivalent to that in S60)
+
+    void start();
+    void pause();
+    void stop();
 
 private:
     Q_DECLARE_PRIVATE(QFeedbackEffect)
@@ -107,7 +155,7 @@ public:
     QVibraEffect();
     ~QVibraEffect();
 
-    void play();
+    void start();
 
 private:
     Q_DISABLE_COPY(QVibraEffect)
@@ -127,7 +175,7 @@ public:
     QTouchEffect();
     ~QTouchEffect();
 
-    void play();
+    void start();
 
     void setContinuousEffect(ContinuousEffect);
     ContinuousEffect continuousEffect() const;
