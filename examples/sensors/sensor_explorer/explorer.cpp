@@ -224,7 +224,28 @@ void Explorer::loadSensorProperties()
         if (crap != -1)
             typeName = typeName.mid(crap + 2);
         QTableWidgetItem *type = new QTableWidgetItem(typeName);
-        QString val = mo->property(i).read(m_sensor).toString();
+        QVariant v = mo->property(i).read(m_sensor);
+        QString val;
+        if (typeName == "qrangelist") {
+            qrangelist rl = v.value<qrangelist>();
+            QStringList out;
+            foreach (const qrange &r, rl) {
+                if (r.first == r.second)
+                    out << QString("%1 Hz").arg(r.first);
+                else
+                    out << QString("%1-%2 Hz").arg(r.first).arg(r.second);
+            }
+            val = out.join(", ");
+        } else if (typeName == "qoutputrangelist") {
+            qoutputrangelist rl = v.value<qoutputrangelist>();
+            QStringList out;
+            foreach (const qoutputrange &r, rl) {
+                out << QString("(%1, %2) += %3").arg(r.minimum).arg(r.maximum).arg(r.accuracy);
+            }
+            val = out.join(", ");
+        } else {
+            val = v.toString();
+        }
         QTableWidgetItem *value = new QTableWidgetItem(val);
 
         prop->setFlags(value->flags() ^ Qt::ItemIsEditable);
