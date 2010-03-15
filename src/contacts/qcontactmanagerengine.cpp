@@ -1347,11 +1347,13 @@ bool QContactManagerEngine::removeContacts(QList<QContactLocalId>* contactIds, Q
 /*!
   \preliminary
   Returns a pruned or modified version of the \a original contact which is valid and can be saved in the manager.
-  The returned contact might have entire details removed or arbitrarily changed.
+  The returned contact might have entire details removed or arbitrarily changed.  The cache of relationships
+  in the contact are ignored entirely when considering compatibility with the backend, as they are
+  saved and validated separately.  Any error which occurs will be saved to \a error.
 
-  This function is preliminary, and the signature and behaviour are subject to change!
+  This function is preliminary and the behaviour is subject to change!
  */
-QContact QContactManagerEngine::conformingContact(const QContact& original, QContactManager::Error& error)
+QContact QContactManagerEngine::compatibleContact(const QContact& original, QContactManager::Error& error)
 {
     QContact conforming;
     QContactManager::Error tempError;
