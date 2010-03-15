@@ -106,17 +106,11 @@ QCamera::FlashModes QGstreamerCameraExposureControl::supportedFlashModes() const
 
 qreal QGstreamerCameraExposureControl::flashCompensation() const
 {
-    GstPhotoSettings config;
-    gst_photography_get_config(GST_PHOTOGRAPHY(&m_camerabin), &config);
-    return config.ev_compensation;
+    return 0;
 }
 
 void QGstreamerCameraExposureControl::setFlashCompensation(qreal ev)
 {
-    GstPhotoSettings config;
-    gst_photography_get_config(GST_PHOTOGRAPHY(&m_camerabin), &config);
-    config.ev_compensation = ev;
-    gst_photography_set_config(GST_PHOTOGRAPHY(&m_camerabin), &config);
 }
 
 qreal QGstreamerCameraExposureControl::flashPower() const
@@ -184,10 +178,17 @@ QCamera::ExposureModes QGstreamerCameraExposureControl::supportedExposureModes()
 
 qreal QGstreamerCameraExposureControl::exposureCompensation() const
 {
+    GstPhotoSettings config;
+    gst_photography_get_config(GST_PHOTOGRAPHY(&m_camerabin), &config);
+    return config.ev_compensation;
 }
 
 void QGstreamerCameraExposureControl::setExposureCompensation(qreal ev)
 {
+    GstPhotoSettings config;
+    gst_photography_get_config(GST_PHOTOGRAPHY(&m_camerabin), &config);
+    config.ev_compensation = ev;
+    gst_photography_set_config(GST_PHOTOGRAPHY(&m_camerabin), &config);
 }
 
 QCamera::MeteringMode QGstreamerCameraExposureControl::meteringMode() const
