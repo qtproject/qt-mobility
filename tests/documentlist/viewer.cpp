@@ -54,12 +54,12 @@ Viewer::Viewer(QWidget *parent)
     , m_limitInput(0)
 {
     m_request.setGallery(&m_gallery);
-    m_request.setFields(QStringList() << QDocumentGallery::title << QDocumentGallery::artist);
+    m_request.setFields(QStringList() << QDocumentGallery::title << QDocumentGallery::duration);
     connect(&m_request, SIGNAL(documentsChanged()), this, SLOT(documentsChanged()));
 
     m_model.setColumnCount(2);
     m_model.setColumnField(0, QDocumentGallery::title);
-    m_model.setColumnField(1, QDocumentGallery::artist);
+    m_model.setColumnField(1, QDocumentGallery::duration);
 
     m_typeInput = new QLineEdit;
 
@@ -77,7 +77,7 @@ Viewer::Viewer(QWidget *parent)
     view->setModel(&m_model);
 
     QFormLayout *layout = new QFormLayout;
-    layout->addRow(tr("Artist:"), m_typeInput);
+    layout->addRow(tr("Type:"), m_typeInput);
     layout->addRow(tr("Offset:"), m_offsetInput);
     layout->addRow(tr("Limit:"), m_limitInput);
     layout->addRow(executeButton);
@@ -92,13 +92,9 @@ Viewer::~Viewer()
 
 void Viewer::execute()
 {
-    QGalleryMetaDataFilter filter;
-    filter.setFieldName(QDocumentGallery::artist);
-    filter.setValue(m_typeInput->text());
-
+    m_request.setDocumentType(m_typeInput->text());
     m_request.setStartIndex(m_offsetInput->value());
     m_request.setMaximumCount((m_limitInput->value()));
-    m_request.setFilter(filter);
     m_request.execute();
 }
 

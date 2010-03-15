@@ -647,10 +647,10 @@ static const QWS4Gallery::WhereFragmentMap qt_artistWhereFragmentMap[] =
 
 static const QWS4Gallery::AggregateMap qt_artistAggregateFieldMap[] =
 {
-    QT_DEFINE_GALLERY_AGGREGATE_MAP(rating, "AVG(System.Rating)", "AVG_SystemRating"),
+    QT_DEFINE_GALLERY_AGGREGATE_MAP(rating, "AVG(System.Rating)", "AVG_System.Rating"),
 
     // Media
-    QT_DEFINE_GALLERY_AGGREGATE_MAP(duration, "SUM(System.Media.Duration)", "SUM_SystemMediaDuration"),
+    QT_DEFINE_GALLERY_AGGREGATE_MAP(duration, "SUM(System.Media.Duration)", "SUM_System.Media.Duration"),
 
     // Audio/Music
     QT_DEFINE_GALLERY_AGGREGATE_MAP(albumCount, "CHILDCOUNT()", "CHILDCOUNT"),
@@ -821,10 +821,10 @@ static const QWS4Gallery::WhereFragmentMap qt_albumWhereFragmentMap[] =
 
 static const QWS4Gallery::AggregateMap qt_albumAggregateFieldMap[] =
 {
-    QT_DEFINE_GALLERY_AGGREGATE_MAP(rating, "AVG(System.Rating)", "AVG_SystemRating"),
+    QT_DEFINE_GALLERY_AGGREGATE_MAP(rating, "AVG(System.Rating)", "AVG_System.Rating"),
 
     // Media
-    QT_DEFINE_GALLERY_AGGREGATE_MAP(duration, "SUM(System.Media.Duration)", "SUM_SystemMediaDuration"),
+    QT_DEFINE_GALLERY_AGGREGATE_MAP(duration, "SUM(System.Media.Duration)", "SUM_System.Media.Duration"),
 
     // Audio/Music
     QT_DEFINE_GALLERY_AGGREGATE_MAP(albumCount, "CHILDCOUNT()", "CHILDCOUNT"),
