@@ -96,7 +96,7 @@
 
     QML_DECLARE_TYPE(ServiceWrapper)
 
-    class ServiceRegister : public QObject{
+    class ServiceRegister : public QObject {
         Q_OBJECT
         Q_PROPERTY(QList&lt;ServiceWrapper*&gt;* registeredservices READ registeredservices NOTIFY modelChanged CONSTANT);
 
@@ -115,7 +115,12 @@
     private:
         QServiceManager* serviceManager;
         QList&lt;ServiceWrapper *&gt; m_services;
-    };</pre>
+
+    signals:
+        void modelChanged();
+    };
+
+    QML_DECLARE_TYPE(ServiceRegister)</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

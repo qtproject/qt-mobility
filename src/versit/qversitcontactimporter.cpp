@@ -48,24 +48,29 @@
 QTM_USE_NAMESPACE
 
 /*!
- * \class QVersitContactImporterPropertyHandler
- * \preliminary
- * \brief The QVersitContactImporterPropertyHandler class is an interface for clients wishing to
- * implement custom import behaviour for versit properties
- *
- * \ingroup versit
- *
- * \sa QVersitContactImporter
+  \class QVersitContactImporterPropertyHandler
+  \preliminary
+  \brief The QVersitContactImporterPropertyHandler class is an interface for clients wishing to
+  implement custom import behaviour for versit properties
+
+  \ingroup versit
+
+  \sa QVersitContactImporter
  */
 
 /*!
- * \fn virtual bool preProcessProperty(const QVersitDocument& document, const QVersitProperty& property, int contactIndex, QContact* contact) = 0;
+ * \fn QVersitContactImporterPropertyHandler::~QVersitContactImporterPropertyHandler()
+ * Frees any memory in use by this handler.
+ */
+
+/*!
+ * \fn virtual bool QVersitContactImporterPropertyHandler::preProcessProperty(const QVersitDocument& document, const QVersitProperty& property, int contactIndex, QContact* contact) = 0;
  * Process \a property and update \a contact with the corresponding QContactDetail(s).
  * \a document provides the context within which the property was found.
  * \a contactIndex specifies the position that \a contact will take in the list returned by
  * \l QVersitContactImporter::importContacts().
  *
- * Returns true if the property has been handled and requires no furthur processing, false
+ * Returns true if the property has been handled and requires no further processing, false
  * otherwise.
  *
  * This function is called on every QVersitProperty encountered during an import.  Supply this
@@ -73,18 +78,18 @@ QTM_USE_NAMESPACE
  */
 
 /*!
- * \fn virtual bool postProcessProperty(const QVersitDocument& document, const QVersitProperty& property, bool alreadyProcessed, int contactIndex, QContact* contact) = 0;
+ * \fn virtual bool QVersitContactImporterPropertyHandler::postProcessProperty(const QVersitDocument& document, const QVersitProperty& property, bool alreadyProcessed, int contactIndex, QContact* contact) = 0;
  * Process \a property and update \a contact with the corresponding QContactDetail(s).
  * \a document provides the context within which the property was found.
  * \a contactIndex specifies the position that \a contact will take in the list returned by
  * \l QVersitContactImporter::importContacts().
+ * \a alreadyProcessed is true if the detail has already been processed either by
+ * \l preProcessProperty() or by QVersitContactImporter itself.
  *
  * Returns true if the property has been handled, false otherwise.
  *
- * This function is called on every QVersitProperty encountered during an import which is not
- * handled by either \l preProcessProperty() or by QVersitContactImporter.  Supply this
- * function and return true to implement support for QVersitProperty(s) not supported by
- * QVersitContactImporter.
+ * This function is called on every QVersitProperty encountered during an import.  This can be
+ * used to implement support for QVersitProperties not supported by QVersitContactImporter.
  */
 
 /*!
@@ -105,69 +110,17 @@ QTM_USE_NAMESPACE
  * setPropertyHandler(), the client can pass in a handler to override the processing of properties
  * and/or handle properties that QVersitContactImporter doesn't support.
  *
- * \code
+ * An example property handler that logs unknown properties:
+ * \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Property handler
  *
- * class MyPropertyHandler : public QVersitContactImporterPropertyHandler {
- * public:
- *    bool preProcessProperty(const QVersitDocument& document, const QVersitProperty& property,
- *                            int contactIndex, QContact* contact) {
- *        return false;
- *    }
- *    bool postProcessProperty(const QVersitDocument& document, const QVersitProperty& property,
- *                             bool alreadyProcessed, int contactIndex, QContact* contact) {
- *        if (!alreadyProcessed)
- *            mUnknownProperties.append(property);
- *        return false;
- *    }
- *    QList<QVersitProperty> mUnknownProperties;
- * };
- *
- * class MyResourceHandler : public QVersitResourceHandler {
- * public:
- *    bool saveResource(const QByteArray& contents, const QVersitProperty& property,
- *                      QString* location) {
- *        *location = QString::number(qrand());
- *        QFile file(*location);
- *        file.open(QIODevice::WriteOnly);
- *        file.write(contents);
- *        return true;
- *    }
- *    bool loadResource(const QString& location, QByteArray* contents, QString* mimeType)
- *    {
- *        return false;
- *    }
- * }
- *
- * MyPropertyHandler propertyHandler;
- * importer.setPropertyHandler(&propertyHandler);
- * MyResourceHandler resourceHandler;
- * importer.setResourceHandler(&resourceHandler);
- *
- * QVersitDocument document;
- *
- * QVersitProperty property;
- * property.setName(QString::fromAscii("N"));
- * property.setValue("Citizen;John;Q;;");
- * document.addProperty(property);
- *
- * property.setName(QString::fromAscii("X-UNKNOWN-PROPERTY"));
- * property.setValue("some value");
- * document.addProperty(property);
- *
- * QList<QVersitDocument> list;
- * list.append(document);
- *
- * QList<QContact> contactList = importer.importContacts(list);
- * // contactList.first() now contains the "N" property as a QContactName
- * // propertyHandler.mUnknownProperties contains the list of unknown properties
- *
- * \endcode
+ * An example usage of QVersitContactImporter
+ * \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Import example
  *
  * \sa QVersitDocument, QVersitReader, QVersitContactImporterPropertyHandler
  */
 
 /*! Constructs a new importer */
-QVersitContactImporter::QVersitContactImporter() 
+QVersitContactImporter::QVersitContactImporter()
     : d(new QVersitContactImporterPrivate)
 {
 }
@@ -185,7 +138,7 @@ QList<QContact> QVersitContactImporter::importContacts(const QList<QVersitDocume
 {
     QList<QContact> list;
     int i = 0;
-    foreach (QVersitDocument document, documents) {
+    foreach (const QVersitDocument& document, documents) {
         list.append(d->importContact(document, i));
         i++;
     }
@@ -194,7 +147,10 @@ QList<QContact> QVersitContactImporter::importContacts(const QList<QVersitDocume
 }
 
 /*!
- * Sets \a handler to be the handler for processing QVersitProperties
+ * Sets \a handler to be the handler for processing QVersitProperties, or 0 to have no handler.
+ *
+ * Does not take ownership of the handler.  The client should ensure the handler remains valid for
+ * the lifetime of the exporter.
  */
 void QVersitContactImporter::setPropertyHandler(QVersitContactImporterPropertyHandler* handler)
 {
@@ -202,7 +158,7 @@ void QVersitContactImporter::setPropertyHandler(QVersitContactImporterPropertyHa
 }
 
 /*!
- * Gets the handler for processing QVersitProperties
+ * Gets the handler for processing QVersitProperties.
  */
 QVersitContactImporterPropertyHandler* QVersitContactImporter::propertyHandler() const
 {
@@ -210,7 +166,10 @@ QVersitContactImporterPropertyHandler* QVersitContactImporter::propertyHandler()
 }
 
 /*!
- * Sets \a handler to be the handler to save files with.
+ * Sets \a handler to be the handler to save files with, or 0 to have no handler.
+ *
+ * Does not take ownership of the handler.  The client should ensure the handler remains valid for
+ * the lifetime of the exporter.
  */
 void QVersitContactImporter::setResourceHandler(QVersitResourceHandler* handler)
 {

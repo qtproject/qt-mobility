@@ -61,6 +61,7 @@ public:
 #ifdef Q_QDOC
     const char* HasMember;
     const char* Aggregates;
+    const char* Is;
     const char* IsSameAs;
     const char* HasAssistant;
     const char* HasManager;

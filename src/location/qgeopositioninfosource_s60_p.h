@@ -216,9 +216,9 @@ protected:
 
 private:
     /**
-    * Active object for requestUpdate
+    *  current module ID
     */
-    CQMLBackendAO * mReqUpdateAO;
+    TPositionModuleId mCurrentModuleId;
 
     /**
     *prvmoduleID
@@ -231,15 +231,19 @@ private:
     CQMLBackendAO * mDevStatusUpdateAO;
 
     /**
-     * Positioner server
-     */
-    RPositionServer mPositionServer;
-
+    * Active object for requestUpdate
+    */
+    CQMLBackendAO * mReqUpdateAO;
 
     /**
     * Active object for regular updates.
     */
     CQMLBackendAO * mRegUpdateAO;
+
+    /**
+     * Positioner server
+     */
+    RPositionServer mPositionServer;
 
     /**
     *  list of supported position methods
@@ -249,11 +253,6 @@ private:
     PositioningMethods mSupportedMethods;
 
     PositioningMethod mCurrentMethod;
-
-    /**
-    *  current module ID
-    */
-    TPositionModuleId mCurrentModuleId;
 
     /**
      * maintaiss the size of thr CPosMethodInfo array

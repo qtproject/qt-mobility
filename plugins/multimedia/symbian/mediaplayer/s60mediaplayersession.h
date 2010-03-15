@@ -81,21 +81,13 @@ public:
     void play();
     void pause();
     void stop();
-    
+    void reset();
     bool isMetadataAvailable() const; 
     QVariant metaData(const QString &key) const;
     QMap<QString, QVariant> availableMetaData() const;
-    
-    void load(const QUrl &url);
-    void loadUrl(const QUrl &url);
-    
-    int mediaLoadingProgress();
-    
-    bool mediaFileLocal() const;
-    void setMediaFileLocal(bool localMediaFile);
-    
+    void load(QUrl url);
+    int bufferStatus();
     virtual void setVideoRenderer(QObject *renderer);
-
     void setMediaStatus(QMediaPlayer::MediaStatus);
     void setState(QMediaPlayer::State state);
     
@@ -109,32 +101,39 @@ protected:
     virtual void doSetPositionL(qint64 microSeconds) = 0;
     virtual qint64 doGetPositionL() const = 0;
     virtual void updateMetaDataEntriesL() = 0;
-    virtual int doGetMediaLoadingProgressL() const = 0;
-    virtual int doGetDurationL() const = 0;
+    virtual int doGetBufferStatusL() const = 0;
+    virtual qint64 doGetDurationL() const = 0;
 
 protected:
-    
-    void setError(int error,  const QString &errorString = QString());
-    void initComplete();
-    void playComplete();
+    void setError(int error,  const QString &errorString = QString(), bool forceReset = false);
+    void loaded();
+    void buffering();
+    void buffered();
+    void endOfMedia();
     QMap<QString, QVariant>& metaDataEntries();
     QMediaPlayer::Error fromSymbianErrorToMultimediaError(int error);
+    void startProgressTimer();
+    void stopProgressTimer();
+    void startStalledTimer();
+    void stopStalledTimer();
     
 protected slots:
     void tick();
+    void stalled();
     
 signals:
     void durationChanged(qint64 duration);
     void positionChanged(qint64 position);
     void stateChanged(QMediaPlayer::State state);
     void mediaStatusChanged(QMediaPlayer::MediaStatus mediaStatus);
-    void videoAvailableChanged(bool videoAvailable);
+    void videoAvailableChanged(bool videoAvailable);    
+    void audioAvailableChanged(bool audioAvailable);
     void bufferStatusChanged(int percentFilled);
     void seekableChanged(bool);     
     void availablePlaybackRangesChanged(const QMediaTimeRange&);
     void metaDataChanged();
     void error(int error, const QString &errorString);
-
+    
 private:
     qreal m_playbackRate;
     QMap<QString, QVariant> m_metaDataMap;
@@ -142,10 +141,11 @@ private:
     int m_volume;
     QMediaPlayer::State m_state;
     QMediaPlayer::MediaStatus m_mediaStatus;
-    QTimer *m_timer;
+    QTimer *m_progressTimer;
+    QTimer *m_stalledTimer;
     int m_error;    
-    bool m_localMediaFile;
     bool m_play_requested;
+    bool m_stream;
 };
 
 #endif

@@ -40,9 +40,7 @@
 ****************************************************************************/
 
 #include <QApplication>
-
 #include <qvaluespace.h>
-
 #include "batterypublisher.h"
 
 int main(int argc, char *argv[])

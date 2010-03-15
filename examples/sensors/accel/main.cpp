@@ -79,8 +79,7 @@ int main(int argc, char **argv)
 
     QAccelerometer sensor;
     accelerometer = &sensor;
-    sensor.connect();
-    if (!sensor.isAvailable()) {
+    if (!sensor.connect()) {
         qWarning("No Accelerometer available!");
         return 1;
     }

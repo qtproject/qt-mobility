@@ -44,19 +44,55 @@
 
 #include <QtCore/qobject.h>
 #include "qcameracontrol.h"
+#include <s60cameraengineobserver.h>
+#include "s60cameraservice.h"
+#include <s60cameraengine.h>
+#include <e32base.h>
+#include <fbs.h>
 
 QTM_USE_NAMESPACE
 
 class S60CameraService;
-class S60CameraSession;
+class S60ImageCaptureSession;
+class S60VideoCaptureSession;
 
-class S60CameraControl : public QCameraControl
+class S60CameraControl : public QCameraControl, public MCameraEngineObserver
 {
     Q_OBJECT
 public:
+    
+    enum Error {
+        NoError = 0,
+        OutOfMemoryError,
+        InUseError,
+        NotReadyError,
+        UnknownError = -1
+    };
+    
+    enum EcamErrors {
+        KErrECamCameraDisabled = -12100, // The camera has been disabled, hence calls do not succeed 
+        KErrECamSettingDisabled = -12101, //  This parameter or operation is supported, but presently is disabled. 
+        KErrECamParameterNotInRange = -12102, //  This value is out of range. 
+        KErrECamSettingNotSupported = -12103, //  This parameter or operation is not supported. 
+        KErrECamNotOptimalFocus = -12104 // The optimum focus is lost  
+    };
+    
     S60CameraControl(QObject *parent = 0);
-    S60CameraControl(QObject *session, QObject *parent = 0);
+    S60CameraControl(QObject *videosession, QObject *imagesession, QObject *parent = 0);
     ~S60CameraControl();
+    
+    void setError(TInt aError);
+    QCamera::Error fromSymbianErrorToMultimediaError(int aError);
+    
+    bool deviceReady();
+    
+    //videodevicecontrol
+    static int deviceCount();
+    static QString name(const int index);
+    static QString description(const int index);
+    int defaultDevice() const;
+    int selectedDevice() const;
+    void setSelectedDevice(int index);
 
     void start();
     void stop();
@@ -66,10 +102,39 @@ public:
     QCamera::CaptureModes supportedCaptureModes() const;
     
     void setVideoOutput(QObject *output);
-
+    
+protected: // From MCameraEngineObserver
+    void MceoCameraReady();
+    void MceoFocusComplete();
+    void MceoCapturedDataReady(TDesC8* aData);
+    void MceoCapturedBitmapReady(CFbsBitmap* aBitmap);
+    void MceoViewFinderFrameReady(CFbsBitmap& aFrame);
+    void MceoHandleError(TCameraEngineError aErrorType, TInt aError);
+    
 private:
-    S60CameraSession *m_session;
+    void startCamera();
+    void stopCamera();
+    void resetCamera();
+    void setVideoRenderer(QObject *videoOutput);
+    void setCameraHandles();
+
+private slots: 
+    void resetVFSize(QSize size);
+    
+Q_SIGNALS:
+    void viewFinderFrameReady(const QPixmap &pixmap);
+    void stateChanged(QCamera::State);
+    void cameraReadyChanged(bool);
+
+private:    
+    CCameraEngine *m_cameraEngine;
+    S60ImageCaptureSession *m_imageSession;
+    S60VideoCaptureSession *m_videoSession;
     QCamera::CaptureMode m_captureMode;
+    QCamera::State m_state;
+    int m_deviceIndex;
+    QSize m_VFWidgetSize;    
+    mutable int m_error;
 };
 
 #endif

@@ -48,10 +48,11 @@
 #include "qmediarecorder.h"
 #include "qmediarecordercontrol.h"
 #include "qcameracontrol.h"
+#include "s60videocapturesession.h"
 
 QTM_USE_NAMESPACE
 
-class S60CameraSession;
+class S60VideoCaptureSession;
 
 class S60MediaControl : public QMediaRecorderControl
 {
@@ -68,16 +69,20 @@ public:
 
     qint64 duration() const;
 
-    void applySettings();
-
+    void applySettings();        
 
 public slots:
     void record();
     void pause();
     void stop();
 
+private slots:
+    void updateState(S60VideoCaptureSession::TVideoCaptureState aState);
+    QMediaRecorder::State convertState(S60VideoCaptureSession::TVideoCaptureState aState) const;
+
 private:
-    S60CameraSession* m_session;
+    S60VideoCaptureSession* m_session;
+    QMediaRecorder::State m_state;
 };
 
 #endif

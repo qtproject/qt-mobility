@@ -115,8 +115,8 @@
 <p><b>This function is under development and is subject to change.</b></p>
 <p>Returns true if the given <i>detail</i> is a preferred detail for the given <i>actionName</i>, or for any action if the <i>actionName</i> is empty</p>
 <a name="//apple_ref/cpp/instm/QContact/localId"></a>
-<h3 class="fn"><a name="localId"></a>QContactLocalId QContact::localId () const</h3>
-<p>Returns the QContactLocalId that identifies this contact within its manager</p>
+<h3 class="fn"><a name="localId"></a><a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a> QContact::localId () const</h3>
+<p>Returns the <a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a> that identifies this contact within its manager</p>
 <a name="//apple_ref/cpp/instm/QContact/preferredDetail"></a>
 <h3 class="fn"><a name="preferredDetail"></a><a href="qcontactdetail.html">QContactDetail</a> QContact::preferredDetail ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>actionName</i> ) const</h3>
 <p><b>This function is under development and is subject to change.</b></p>
@@ -140,14 +140,16 @@
 <p>Removes the <i>detail</i> from the contact.</p>
 <p>The detail in the contact which has the same key as that of the given <i>detail</i> will be removed if it exists. That is, the information in the detail may be different. Any preference for the given field is also removed.</p>
 <p>If the detail's access constraint includes <tt>QContactDetail::Irremovable</tt>, this function will return false.</p>
-<p>Returns true if the detail was removed successfully, false if an error occurred</p>
+<p>Returns true if the detail was removed successfully, false if an error occurred.</p>
+<p>Note that the caller retains ownership of the detail.</p>
 <a name="//apple_ref/cpp/instm/QContact/saveDetail"></a>
 <h3 class="fn"><a name="saveDetail"></a>bool QContact::saveDetail ( <a href="qcontactdetail.html">QContactDetail</a> * <i>detail</i> )</h3>
 <p>Saves the given <i>detail</i> in the list of stored details, and sets its Id. If another detail of the same type and Id has been previously saved in this contact, that detail is overwritten. Otherwise, a new Id is generated and set in the detail, and the detail is added to the list.</p>
 <p>If the detail's access constraint includes <tt>QContactDetail::ReadOnly</tt>, this function will return false.</p>
 <p>If <i>detail</i> is a contact type, the existing contact type will be overwritten with <i>detail</i>. There is never more than one contact type in a contact. The supplied <i>detail</i> will have its accessConstraint set to <a href="qcontactdetail.html#AccessConstraint-enum">QContactDetail::Irremovable</a>.</p>
 <p>If <i>detail</i> is a display label, the supplied <i>detail</i> will have its accessConstraint set to <a href="qcontactdetail.html#AccessConstraint-enum">QContactDetail::Irremovable</a> | <a href="qcontactdetail.html#AccessConstraint-enum">QContactDetail::ReadOnly</a>, and the function will return false.</p>
-<p>Returns true if the detail was saved successfully, otherwise returns false</p>
+<p>Returns true if the detail was saved successfully, otherwise returns false.</p>
+<p>Note that the caller retains ownership of the detail.</p>
 <a name="//apple_ref/cpp/instm/QContact/setId"></a>
 <h3 class="fn"><a name="setId"></a>void QContact::setId ( const <a href="qcontactid.html">QContactId</a> &amp; <i>id</i> )</h3>
 <p>Sets the id of this contact to <i>id</i>. Note that this only affects this structure, not any corresponding structures stored by a <a href="qcontactmanager.html">QContactManager</a>.</p>

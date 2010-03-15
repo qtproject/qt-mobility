@@ -68,6 +68,7 @@ public:
     /* Contacts - Accessors and Mutators */
     QList<QContactLocalId> contacts(QContactManager::Error& error) const;
     QContact contact(const QContactLocalId& contactId, QContactManager::Error& error) const;
+    QContact contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
     bool saveContact(QContact* contact, bool batch, QContactManager::Error& error);
     bool removeContact(const QContactLocalId& contactId, bool batch, QContactManager::Error& error);
 
@@ -156,6 +157,14 @@ QList<QContactLocalId> DummyEngine::contacts(QContactManager::Error& error) cons
 QContact DummyEngine::contact(const QContactLocalId& contactId, QContactManager::Error& error) const
 {
     Q_UNUSED(contactId);
+    error = QContactManager::DoesNotExistError;
+    return QContact();
+}
+
+QContact DummyEngine::contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const
+{
+    Q_UNUSED(contactId);
+    Q_UNUSED(definitionRestrictions);
     error = QContactManager::DoesNotExistError;
     return QContact();
 }

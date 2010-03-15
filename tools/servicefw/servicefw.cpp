@@ -42,8 +42,11 @@
 #include <stdio.h>
 
 #include <QtCore>
-
+#include <QTextStream>
 #include <qservicemanager.h>
+#include <QString>
+
+QT_USE_NAMESPACE
 
 QTM_USE_NAMESPACE
 

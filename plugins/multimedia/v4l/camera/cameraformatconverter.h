@@ -42,7 +42,7 @@
 #ifndef CAMERAFORMATCONVERTER_H
 #define CAMERAFORMATCONVERTER_H
 
-#include <QList>
+#include <QtCore/qlist.h>
 #include <QtMultimedia/qvideoframe.h>
 
 /*

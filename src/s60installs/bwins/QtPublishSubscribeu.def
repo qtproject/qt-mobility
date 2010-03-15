@@ -1,0 +1,80 @@
+EXPORTS
+	??0QAbstractValueSpaceLayer@QtMobility@@QAE@XZ @ 1 NONAME ; QtMobility::QAbstractValueSpaceLayer::QAbstractValueSpaceLayer(void)
+	??0QValueSpaceManager@QtMobility@@QAE@XZ @ 2 NONAME ; QtMobility::QValueSpaceManager::QValueSpaceManager(void)
+	??0QValueSpacePublisher@QtMobility@@QAE@ABUQUuid@@ABVQString@@PAVQObject@@@Z @ 3 NONAME ; QtMobility::QValueSpacePublisher::QValueSpacePublisher(struct QUuid const &, class QString const &, class QObject *)
+	??0QValueSpacePublisher@QtMobility@@QAE@ABVQString@@PAVQObject@@@Z @ 4 NONAME ; QtMobility::QValueSpacePublisher::QValueSpacePublisher(class QString const &, class QObject *)
+	??0QValueSpacePublisher@QtMobility@@QAE@V?$QFlags@W4LayerOption@QValueSpace@QtMobility@@@@ABVQString@@PAVQObject@@@Z @ 5 NONAME ; QtMobility::QValueSpacePublisher::QValueSpacePublisher(class QFlags<enum QtMobility::QValueSpace::LayerOption>, class QString const &, class QObject *)
+	??0QValueSpaceSubscriber@QtMobility@@QAE@ABUQUuid@@ABVQString@@PAVQObject@@@Z @ 6 NONAME ; QtMobility::QValueSpaceSubscriber::QValueSpaceSubscriber(struct QUuid const &, class QString const &, class QObject *)
+	??0QValueSpaceSubscriber@QtMobility@@QAE@ABVQString@@PAVQObject@@@Z @ 7 NONAME ; QtMobility::QValueSpaceSubscriber::QValueSpaceSubscriber(class QString const &, class QObject *)
+	??0QValueSpaceSubscriber@QtMobility@@QAE@PAVQObject@@@Z @ 8 NONAME ; QtMobility::QValueSpaceSubscriber::QValueSpaceSubscriber(class QObject *)
+	??0QValueSpaceSubscriber@QtMobility@@QAE@V?$QFlags@W4LayerOption@QValueSpace@QtMobility@@@@ABVQString@@PAVQObject@@@Z @ 9 NONAME ; QtMobility::QValueSpaceSubscriber::QValueSpaceSubscriber(class QFlags<enum QtMobility::QValueSpace::LayerOption>, class QString const &, class QObject *)
+	??1QAbstractValueSpaceLayer@QtMobility@@UAE@XZ @ 10 NONAME ; QtMobility::QAbstractValueSpaceLayer::~QAbstractValueSpaceLayer(void)
+	??1QValueSpaceManager@QtMobility@@QAE@XZ @ 11 NONAME ; QtMobility::QValueSpaceManager::~QValueSpaceManager(void)
+	??1QValueSpacePublisher@QtMobility@@UAE@XZ @ 12 NONAME ; QtMobility::QValueSpacePublisher::~QValueSpacePublisher(void)
+	??1QValueSpaceSubscriber@QtMobility@@UAE@XZ @ 13 NONAME ; QtMobility::QValueSpaceSubscriber::~QValueSpaceSubscriber(void)
+	??_EQAbstractValueSpaceLayer@QtMobility@@UAE@I@Z @ 14 NONAME ; QtMobility::QAbstractValueSpaceLayer::~QAbstractValueSpaceLayer(unsigned int)
+	??_EQValueSpaceManager@QtMobility@@QAE@I@Z @ 15 NONAME ; QtMobility::QValueSpaceManager::~QValueSpaceManager(unsigned int)
+	??_EQValueSpacePublisher@QtMobility@@UAE@I@Z @ 16 NONAME ; QtMobility::QValueSpacePublisher::~QValueSpacePublisher(unsigned int)
+	??_EQValueSpaceSubscriber@QtMobility@@UAE@I@Z @ 17 NONAME ; QtMobility::QValueSpaceSubscriber::~QValueSpaceSubscriber(unsigned int)
+	?availableLayers@QValueSpace@QtMobility@@YA?AV?$QList@UQUuid@@@@XZ @ 18 NONAME ; class QList<struct QUuid> QtMobility::QValueSpace::availableLayers(void)
+	?cd@QValueSpaceSubscriber@QtMobility@@QAEXABVQString@@@Z @ 19 NONAME ; void QtMobility::QValueSpaceSubscriber::cd(class QString const &)
+	?cdUp@QValueSpaceSubscriber@QtMobility@@QAEXXZ @ 20 NONAME ; void QtMobility::QValueSpaceSubscriber::cdUp(void)
+	?commonInit@QValueSpaceManager@QtMobility@@AAEXW4Type@QAbstractValueSpaceLayer@2@@Z @ 21 NONAME ; void QtMobility::QValueSpaceManager::commonInit(enum QtMobility::QAbstractValueSpaceLayer::Type)
+	?connectNotify@QValueSpacePublisher@QtMobility@@MAEXPBD@Z @ 22 NONAME ; void QtMobility::QValueSpacePublisher::connectNotify(char const *)
+	?connectNotify@QValueSpaceSubscriber@QtMobility@@MAEXPBD@Z @ 23 NONAME ; void QtMobility::QValueSpaceSubscriber::connectNotify(char const *)
+	?contentsChanged@QValueSpaceSubscriber@QtMobility@@IAEXXZ @ 24 NONAME ; void QtMobility::QValueSpaceSubscriber::contentsChanged(void)
+	?disconnectNotify@QValueSpaceSubscriber@QtMobility@@MAEXPBD@Z @ 25 NONAME ; void QtMobility::QValueSpaceSubscriber::disconnectNotify(char const *)
+	?emitInterestChanged@QAbstractValueSpaceLayer@QtMobility@@IAEXPAVQValueSpacePublisher@2@ABVQString@@_N@Z @ 26 NONAME ; void QtMobility::QAbstractValueSpaceLayer::emitInterestChanged(class QtMobility::QValueSpacePublisher *, class QString const &, bool)
+	?getLayers@QValueSpaceManager@QtMobility@@QAEABV?$QList@PAVQAbstractValueSpaceLayer@QtMobility@@@@XZ @ 27 NONAME ; class QList<class QtMobility::QAbstractValueSpaceLayer *> const & QtMobility::QValueSpaceManager::getLayers(void)
+	?getStaticMetaObject@QAbstractValueSpaceLayer@QtMobility@@SAABUQMetaObject@@XZ @ 28 NONAME ; struct QMetaObject const & QtMobility::QAbstractValueSpaceLayer::getStaticMetaObject(void)
+	?getStaticMetaObject@QValueSpacePublisher@QtMobility@@SAABUQMetaObject@@XZ @ 29 NONAME ; struct QMetaObject const & QtMobility::QValueSpacePublisher::getStaticMetaObject(void)
+	?getStaticMetaObject@QValueSpaceSubscriber@QtMobility@@SAABUQMetaObject@@XZ @ 30 NONAME ; struct QMetaObject const & QtMobility::QValueSpaceSubscriber::getStaticMetaObject(void)
+	?handleChanged@QAbstractValueSpaceLayer@QtMobility@@IAEXI@Z @ 31 NONAME ; void QtMobility::QAbstractValueSpaceLayer::handleChanged(unsigned int)
+	?init@QValueSpaceManager@QtMobility@@QAEXXZ @ 32 NONAME ; void QtMobility::QValueSpaceManager::init(void)
+	?initLayer@QValueSpaceManager@QtMobility@@AAE_NPAVQAbstractValueSpaceLayer@2@@Z @ 33 NONAME ; bool QtMobility::QValueSpaceManager::initLayer(class QtMobility::QAbstractValueSpaceLayer *)
+	?initServer@QValueSpaceManager@QtMobility@@QAEXXZ @ 34 NONAME ; void QtMobility::QValueSpaceManager::initServer(void)
+	?initValueSpaceServer@QValueSpace@QtMobility@@YAXXZ @ 35 NONAME ; void QtMobility::QValueSpace::initValueSpaceServer(void)
+	?install@QValueSpaceManager@QtMobility@@QAEXP6APAVQAbstractValueSpaceLayer@2@XZ@Z @ 36 NONAME ; void QtMobility::QValueSpaceManager::install(class QtMobility::QAbstractValueSpaceLayer * (*)(void))
+	?install@QValueSpaceManager@QtMobility@@QAEXPAVQAbstractValueSpaceLayer@2@@Z @ 37 NONAME ; void QtMobility::QValueSpaceManager::install(class QtMobility::QAbstractValueSpaceLayer *)
+	?installLayer@QValueSpace@QtMobility@@YAXP6APAVQAbstractValueSpaceLayer@2@XZ@Z @ 38 NONAME ; void QtMobility::QValueSpace::installLayer(class QtMobility::QAbstractValueSpaceLayer * (*)(void))
+	?installLayer@QValueSpace@QtMobility@@YAXPAVQAbstractValueSpaceLayer@2@@Z @ 39 NONAME ; void QtMobility::QValueSpace::installLayer(class QtMobility::QAbstractValueSpaceLayer *)
+	?instance@QValueSpaceManager@QtMobility@@SAPAV12@XZ @ 40 NONAME ; class QtMobility::QValueSpaceManager * QtMobility::QValueSpaceManager::instance(void)
+	?interestChanged@QValueSpacePublisher@QtMobility@@IAEXABVQString@@_N@Z @ 41 NONAME ; void QtMobility::QValueSpacePublisher::interestChanged(class QString const &, bool)
+	?isConnected@QValueSpacePublisher@QtMobility@@QBE_NXZ @ 42 NONAME ; bool QtMobility::QValueSpacePublisher::isConnected(void) const
+	?isConnected@QValueSpaceSubscriber@QtMobility@@QBE_NXZ @ 43 NONAME ; bool QtMobility::QValueSpaceSubscriber::isConnected(void) const
+	?isServer@QValueSpaceManager@QtMobility@@QBE_NXZ @ 44 NONAME ; bool QtMobility::QValueSpaceManager::isServer(void) const
+	?metaObject@QAbstractValueSpaceLayer@QtMobility@@UBEPBUQMetaObject@@XZ @ 45 NONAME ; struct QMetaObject const * QtMobility::QAbstractValueSpaceLayer::metaObject(void) const
+	?metaObject@QValueSpacePublisher@QtMobility@@UBEPBUQMetaObject@@XZ @ 46 NONAME ; struct QMetaObject const * QtMobility::QValueSpacePublisher::metaObject(void) const
+	?metaObject@QValueSpaceSubscriber@QtMobility@@UBEPBUQMetaObject@@XZ @ 47 NONAME ; struct QMetaObject const * QtMobility::QValueSpaceSubscriber::metaObject(void) const
+	?path@QValueSpacePublisher@QtMobility@@QBE?AVQString@@XZ @ 48 NONAME ; class QString QtMobility::QValueSpacePublisher::path(void) const
+	?path@QValueSpaceSubscriber@QtMobility@@QBE?AVQString@@XZ @ 49 NONAME ; class QString QtMobility::QValueSpaceSubscriber::path(void) const
+	?qt_metacall@QAbstractValueSpaceLayer@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 50 NONAME ; int QtMobility::QAbstractValueSpaceLayer::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QValueSpacePublisher@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 51 NONAME ; int QtMobility::QValueSpacePublisher::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QValueSpaceSubscriber@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 52 NONAME ; int QtMobility::QValueSpaceSubscriber::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacast@QAbstractValueSpaceLayer@QtMobility@@UAEPAXPBD@Z @ 53 NONAME ; void * QtMobility::QAbstractValueSpaceLayer::qt_metacast(char const *)
+	?qt_metacast@QValueSpacePublisher@QtMobility@@UAEPAXPBD@Z @ 54 NONAME ; void * QtMobility::QValueSpacePublisher::qt_metacast(char const *)
+	?qt_metacast@QValueSpaceSubscriber@QtMobility@@UAEPAXPBD@Z @ 55 NONAME ; void * QtMobility::QValueSpaceSubscriber::qt_metacast(char const *)
+	?resetValue@QValueSpacePublisher@QtMobility@@QAEXABVQString@@@Z @ 56 NONAME ; void QtMobility::QValueSpacePublisher::resetValue(class QString const &)
+	?setPath@QValueSpaceSubscriber@QtMobility@@QAEXABVQString@@@Z @ 57 NONAME ; void QtMobility::QValueSpaceSubscriber::setPath(class QString const &)
+	?setPath@QValueSpaceSubscriber@QtMobility@@QAEXPAV12@@Z @ 58 NONAME ; void QtMobility::QValueSpaceSubscriber::setPath(class QtMobility::QValueSpaceSubscriber *)
+	?setValue@QValueSpacePublisher@QtMobility@@QAEXABVQString@@ABVQVariant@@@Z @ 59 NONAME ; void QtMobility::QValueSpacePublisher::setValue(class QString const &, class QVariant const &)
+	?subPaths@QValueSpaceSubscriber@QtMobility@@QBE?AVQStringList@@XZ @ 60 NONAME ; class QStringList QtMobility::QValueSpaceSubscriber::subPaths(void) const
+	?sync@QValueSpacePublisher@QtMobility@@QAEXXZ @ 61 NONAME ; void QtMobility::QValueSpacePublisher::sync(void)
+	?tr@QAbstractValueSpaceLayer@QtMobility@@SA?AVQString@@PBD0@Z @ 62 NONAME ; class QString QtMobility::QAbstractValueSpaceLayer::tr(char const *, char const *)
+	?tr@QAbstractValueSpaceLayer@QtMobility@@SA?AVQString@@PBD0H@Z @ 63 NONAME ; class QString QtMobility::QAbstractValueSpaceLayer::tr(char const *, char const *, int)
+	?tr@QValueSpacePublisher@QtMobility@@SA?AVQString@@PBD0@Z @ 64 NONAME ; class QString QtMobility::QValueSpacePublisher::tr(char const *, char const *)
+	?tr@QValueSpacePublisher@QtMobility@@SA?AVQString@@PBD0H@Z @ 65 NONAME ; class QString QtMobility::QValueSpacePublisher::tr(char const *, char const *, int)
+	?tr@QValueSpaceSubscriber@QtMobility@@SA?AVQString@@PBD0@Z @ 66 NONAME ; class QString QtMobility::QValueSpaceSubscriber::tr(char const *, char const *)
+	?tr@QValueSpaceSubscriber@QtMobility@@SA?AVQString@@PBD0H@Z @ 67 NONAME ; class QString QtMobility::QValueSpaceSubscriber::tr(char const *, char const *, int)
+	?trUtf8@QAbstractValueSpaceLayer@QtMobility@@SA?AVQString@@PBD0@Z @ 68 NONAME ; class QString QtMobility::QAbstractValueSpaceLayer::trUtf8(char const *, char const *)
+	?trUtf8@QAbstractValueSpaceLayer@QtMobility@@SA?AVQString@@PBD0H@Z @ 69 NONAME ; class QString QtMobility::QAbstractValueSpaceLayer::trUtf8(char const *, char const *, int)
+	?trUtf8@QValueSpacePublisher@QtMobility@@SA?AVQString@@PBD0@Z @ 70 NONAME ; class QString QtMobility::QValueSpacePublisher::trUtf8(char const *, char const *)
+	?trUtf8@QValueSpacePublisher@QtMobility@@SA?AVQString@@PBD0H@Z @ 71 NONAME ; class QString QtMobility::QValueSpacePublisher::trUtf8(char const *, char const *, int)
+	?trUtf8@QValueSpaceSubscriber@QtMobility@@SA?AVQString@@PBD0@Z @ 72 NONAME ; class QString QtMobility::QValueSpaceSubscriber::trUtf8(char const *, char const *)
+	?trUtf8@QValueSpaceSubscriber@QtMobility@@SA?AVQString@@PBD0H@Z @ 73 NONAME ; class QString QtMobility::QValueSpaceSubscriber::trUtf8(char const *, char const *, int)
+	?value@QValueSpaceSubscriber@QtMobility@@QBE?AVQVariant@@ABVQString@@ABV3@@Z @ 74 NONAME ; class QVariant QtMobility::QValueSpaceSubscriber::value(class QString const &, class QVariant const &) const
+	?valuex@QValueSpaceSubscriber@QtMobility@@ABE?AVQVariant@@ABV3@@Z @ 75 NONAME ; class QVariant QtMobility::QValueSpaceSubscriber::valuex(class QVariant const &) const
+	?staticMetaObject@QValueSpacePublisher@QtMobility@@2UQMetaObject@@B @ 76 NONAME ; struct QMetaObject const QtMobility::QValueSpacePublisher::staticMetaObject
+	?staticMetaObject@QAbstractValueSpaceLayer@QtMobility@@2UQMetaObject@@B @ 77 NONAME ; struct QMetaObject const QtMobility::QAbstractValueSpaceLayer::staticMetaObject
+	?staticMetaObject@QValueSpaceSubscriber@QtMobility@@2UQMetaObject@@B @ 78 NONAME ; struct QMetaObject const QtMobility::QValueSpaceSubscriber::staticMetaObject
+

@@ -79,12 +79,10 @@ FilterPage::FilterPage(QWidget* parent)
     filterableFields.append("Email");
     m_fieldCriteriaCombo->addItems(filterableFields);
 
-    QStringList criteriaTypes;
-    criteriaTypes.append("Exact Match");
-    criteriaTypes.append("Starts With");
-    criteriaTypes.append("Ends With");
-    criteriaTypes.append("Contains");
-    m_criteriaTypeCombo->addItems(criteriaTypes);
+    m_criteriaTypeCombo->addItem("Equals", QContactFilter::MatchExactly);
+    m_criteriaTypeCombo->addItem("Contains", QContactFilter::MatchContains);
+    m_criteriaTypeCombo->addItem("Starts with", QContactFilter::MatchStartsWith);
+    m_criteriaTypeCombo->addItem("Ends with", QContactFilter::MatchEndsWith);
 
     QStringList joinTypes;
     joinTypes.append("AND");
@@ -178,37 +176,9 @@ void FilterPage::addClicked()
     fil.setDetailDefinitionName(defName, fieldName);
     fil.setValue(m_valueCriteriaEdit->text());
 
-    QContactFilter::MatchFlags matchFlags;
-    switch (m_criteriaTypeCombo->currentIndex()) {
-        case 0:
-        {
-            matchFlags |= QContactFilter::MatchExactly;
-            exprMatch = "equals";
-        }
-        break;
-
-        case 1:
-        {
-            matchFlags |= QContactFilter::MatchStartsWith;
-            exprMatch = "starts with";
-        }
-        break;
-
-        case 2:
-        {
-            matchFlags |= QContactFilter::MatchEndsWith;
-            exprMatch = "ends with";
-        }
-        break;
-
-        default:
-        {
-            matchFlags |= QContactFilter::MatchContains;
-            exprMatch = "contains";
-        }
-        break;
-    }
-    fil.setMatchFlags(matchFlags);
+    int flag = m_criteriaTypeCombo->itemData(m_criteriaTypeCombo->currentIndex()).toInt();
+    fil.setMatchFlags(QContactFilter::MatchFlags(flag));
+    exprMatch = m_criteriaTypeCombo->currentText().toLower();
 
     // if OR then join with OR
     if (m_joinMethodCombo->currentIndex() == 1) {

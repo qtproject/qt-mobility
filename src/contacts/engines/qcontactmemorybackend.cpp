@@ -137,7 +137,7 @@ QString QContactMemoryEngine::managerName() const
     return d->m_engineName;
 }
 
-/*! \reimp */
+/*! This function is deprecated and should not be used.  Use QContactMemoryEngine::managerVersion() instead! */
 int QContactMemoryEngine::implementationVersion() const
 {
     return d->m_engineVersion;
@@ -400,6 +400,10 @@ QList<QContactManager::Error> QContactMemoryEngine::saveContacts(QList<QContact>
 /*! \reimp */
 bool QContactMemoryEngine::saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error)
 {
+    if(errorMap) {
+        errorMap->clear();
+    }
+
     if (!contacts) {
         error = QContactManager::BadArgumentError;
         return false;
@@ -420,8 +424,8 @@ bool QContactMemoryEngine::saveContacts(QList<QContact>* contacts, QMap<int, QCo
 
     error = operationError;
     changeSet.emitSignals(this);
-    // XXX TODO: do we return true or false if some error occurred?
-    return true;
+    // return false if some error occurred
+    return error == QContactManager::NoError;
 }
 
 bool QContactMemoryEngine::removeContact(const QContactLocalId& contactId, QContactChangeSet& changeSet, QContactManager::Error& error)
@@ -525,8 +529,8 @@ bool QContactMemoryEngine::removeContacts(QList<QContactLocalId>* contactIds, QM
 
     error = operationError;
     changeSet.emitSignals(this);
-    // XXX TODO: return true or false if some errors occurred?
-    return true;
+    // return false if some errors occurred
+    return error == QContactManager::NoError;
 }
 
 /*! \reimp */
@@ -799,7 +803,10 @@ bool QContactMemoryEngine::cancelRequest(QContactAbstractRequest* req)
     return true;
 }
 
-/*! \reimp */
+/*! This function is deprecated!  Use QContactMemoryEngine::waitForRequestFinished() instead!
+    Waits up to \a msecs milliseconds for the request \a req to emit the progress() signal.
+    Returns true if the progress() signal was emitted during the period, otherwise false.
+*/
 bool QContactMemoryEngine::waitForRequestProgress(QContactAbstractRequest* req, int msecs)
 {
     Q_UNUSED(msecs);
@@ -994,8 +1001,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
             }
 
             // there are no results, so just update the status with the error.
-            if (!errorMap.isEmpty() || operationError != QContactManager::NoError)
-                updateDefinitionRemoveRequest(r, operationError, errorMap); // emit resultsAvailable()
+            updateDefinitionRemoveRequest(r, operationError, errorMap); // emit resultsAvailable()
             updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
         }
         break;
@@ -1125,6 +1131,7 @@ QStringList QContactMemoryEngine::supportedRelationshipTypes(const QString& cont
         << QContactRelationship::Aggregates
         << QContactRelationship::IsSameAs
         << QContactRelationship::HasAssistant
+        << QContactRelationship::HasManager
         << QContactRelationship::HasSpouse;
 }
 
@@ -1150,7 +1157,8 @@ QList<QVariant::Type> QContactMemoryEngine::supportedDataTypes() const
 }
 
 /*!
- * \reimp
+ * This function is deprecated.  Use QContactManagerEngine::isFilterSupported() instead!
+ * The function returns true if the backend natively supports the given filter \a filter, otherwise false.
  */
 bool QContactMemoryEngine::filterSupported(const QContactFilter& filter) const
 {

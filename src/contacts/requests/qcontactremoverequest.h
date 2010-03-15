@@ -69,9 +69,6 @@ public:
     /* Results */
     QMap<int, QContactManager::Error> errorMap() const;
 
-signals:
-    void progress(QContactRemoveRequest* self); // deprecated in week 2, removed after transition period has elapsed.
-
 private:
     Q_DISABLE_COPY(QContactRemoveRequest)
     friend class QContactManagerEngine;

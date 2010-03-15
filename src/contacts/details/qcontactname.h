@@ -92,14 +92,6 @@ public:
     void setSuffix(const QString& suffix) {setValue(FieldSuffix, suffix);}
     void setCustomLabel(const QString& customLabel) {setValue(FieldCustomLabel, customLabel);}
 
-    // deprecated functions, will be removed after transition period according to process.
-    QString Q_DECL_DEPRECATED first() const {qWarning("QContactName::first() This function was deprecated in week 1 and will be removed after the transition period has elapsed.  Use firstName() instead!"); return firstName();}
-    QString Q_DECL_DEPRECATED middle() const {qWarning("QContactName::middle() This function was deprecated in week 1 and will be removed after the transition period has elapsed.  Use middleName() instead!"); return middleName();}
-    QString Q_DECL_DEPRECATED last() const {qWarning("QContactName::last() This function was deprecated in week 1 and will be removed after the transition period has elapsed.  Use lastName() instead!"); return lastName();}
-    void Q_DECL_DEPRECATED setFirst(const QString& first) {Q_UNUSED(first);qWarning("QContactName::setFirst() This function was deprecated in week 1 and will be removed after the transition period has elapsed.  Use setFirstName() instead!"); setFirstName(first);}
-    void Q_DECL_DEPRECATED setMiddle(const QString& middle) {Q_UNUSED(middle);qWarning("QContactName::setMiddle() This function was deprecated in week 1 and will be removed after the transition period has elapsed.  Use setMiddleName() instead!"); setMiddleName(middle);}
-    void Q_DECL_DEPRECATED setLast(const QString& last) {Q_UNUSED(last);qWarning("QContactName::setLast() This function was deprecated in week 1 and will be removed after the transition period has elapsed.  Use setLastName() instead!"); setLastName(last);}
-
     // Convenience filter
     static QContactFilter match(const QString& name);
     static QContactFilter match(const QString& firstName, const QString& lastName);

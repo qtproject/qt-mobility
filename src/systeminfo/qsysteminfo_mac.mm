@@ -90,6 +90,7 @@
 #include <IOKit/hid/IOHIDLib.h>
 
 #include <CoreServices/CoreServices.h>
+
 #include <qabstracteventdispatcher.h>
 
 #include <QtCore/qthread.h>
@@ -120,8 +121,6 @@
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 
-//
-////////
 static QString stringFromCFString(CFStringRef value) {
     QString retVal;
     if(CFStringGetLength(value) > 1) {
@@ -296,8 +295,8 @@ QSystemInfoPrivate::~QSystemInfoPrivate()
 QString QSystemInfoPrivate::currentLanguage() const
 {
  QString lang = QLocale::system().name().left(2);
-    if(lang.isEmpty() || lang == "C") {
-        lang = "en";
+    if(lang.isEmpty() || lang == QLatin1String("C")) {
+        lang = QLatin1String("en");
     }
     return lang;
 }
@@ -329,7 +328,7 @@ QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &p
     Q_UNUSED(parameter);
     QString errorStr = "Not Available";
     bool useDate = false;
-    if(parameter == "versionDate") {
+    if(parameter == QLatin1String("versionDate")) {
         useDate = true;
     }
     switch(type) {
@@ -397,12 +396,18 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::MemcardFeature:
         {
-
+// IOSCSIPeripheralDeviceType0E
+            if(hasIOServiceMatching("IOUSBMassStorageClass")) {
+                featureSupported = true;
+            }
         }
         break;
     case QSystemInfo::UsbFeature:
         {
-            if(hasIOServiceMatching(kIOUSBDeviceClassName)) {
+            if(hasIOServiceMatching("AppleUSBOHCI")) {
+                featureSupported = true;
+            }
+            if(hasIOServiceMatching("AppleUSBEHCI")) {
                 featureSupported = true;
             }
         }
@@ -438,7 +443,10 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::VideoOutFeature:
         {
-
+            ComponentDescription description = {'vout', 0, 0, 0L, 1L << 0};
+            if( ::CountComponents(&description) > 0) {
+                featureSupported = true;
+            }
         }
         break;
     case QSystemInfo::HapticsFeature:
@@ -537,7 +545,6 @@ void QRunLoopThread::run()
         [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode beforeDate: loopUntil]) {
         loopUntil = [NSDate dateWithTimeIntervalSinceNow:1.0];
     }
-  //  [listener release]; //crash
     [pool release];
 #endif
 }
@@ -598,8 +605,9 @@ void QRunLoopThread::startNetworkChangeLoop()
 
 
 QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
-        : QObject(parent), signalStrengthCache(0), defaultInterface(0)
+        : QObject(parent), signalStrengthCache(0)
 {
+     defaultInterface = "";
     qRegisterMetaType<QSystemNetworkInfo::NetworkMode>("QSystemNetworkInfo::NetworkMode");
     qRegisterMetaType<QSystemNetworkInfo::NetworkStatus>("QSystemNetworkInfo::NetworkStatus");
 #ifdef MAC_SDK_10_6
@@ -689,7 +697,6 @@ QString QSystemNetworkInfoPrivate::getDefaultInterface()
              defaultInterface = interfaceName;
         }
     }
-//    qWarning() << __FUNCTION__ << interfaceName;
     return interfaceName;
 }
 
@@ -861,6 +868,11 @@ int QSystemNetworkInfoPrivate::locationAreaCode()
 
 QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
 {
+#if defined(MAC_SDK_10_6)
+    CWInterface *primary = [CWInterface interface ];
+    if([primary power])
+        return  nsstringToQString( [primary countryCode]);
+#endif
     return "";
 }
 
@@ -921,7 +933,7 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
         IOBluetoothHostController* controller = [IOBluetoothHostController defaultController];
         if (controller != NULL) {
             addy = [controller addressAsString];
-            mac = [addy UTF8String];
+            mac = QLatin1String([addy UTF8String]);
             mac.replace("-",":");
         }
         return mac;
@@ -962,18 +974,15 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
 
 void QSystemNetworkInfoPrivate::networkChanged(const QString &notification, const QString interfaceName)
 {
-    qWarning() << __FUNCTION__ << notification;
-   // runloopThread->stopLoop();
-
-    if(notification == "SSID_CHANGED_NOTIFICATION") {
+    if(notification == QLatin1String("SSID_CHANGED_NOTIFICATION")) {
         Q_EMIT networkNameChanged(QSystemNetworkInfo::WlanMode, networkName(QSystemNetworkInfo::WlanMode));
     }
 
-    if(notification == "BSSID_CHANGED_NOTIFICATION") {
+    if(notification == QLatin1String("BSSID_CHANGED_NOTIFICATION")) {
         QSystemNetworkInfo::NetworkStatus status =  networkStatus(QSystemNetworkInfo::WlanMode);
         Q_EMIT networkStatusChanged( QSystemNetworkInfo::WlanMode, status);
     }
-    if(notification == "POWER_CHANGED_NOTIFICATION") {
+    if(notification == QLatin1String("POWER_CHANGED_NOTIFICATION")) {
 #ifdef MAC_SDK_10_6
         CWInterface *wifiInterface = [CWInterface interfaceWithName:  qstringToNSString(interfaceName)];
         if([wifiInterface power]) {
@@ -989,8 +998,13 @@ void QSystemNetworkInfoPrivate::networkChanged(const QString &notification, cons
         }
 #endif
     }
- //   runloopThread->start();
 }
+
+QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
+{
+    return modeForInterface(getDefaultInterface());
+}
+
 
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
         : QObject(parent)
@@ -1116,7 +1130,7 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
             osstatusResult = FSGetVolumeParms(actualVolume, &volumeParmeters, sizeof(volumeParmeters));
 
             QString devId = QString((char *)volumeParmeters.vMDeviceID);
-            devId = devId.prepend("/dev/");
+            devId = devId.prepend(QLatin1String("/dev/"));
             if(mountEntriesHash.value(devId) == driveVolume) {
                 if (volumeParmeters.vMServerAdr == 0) { //local drive
                     io_service_t ioService;
@@ -1285,7 +1299,7 @@ QString QSystemDeviceInfoPrivate::model()
     QString model;
       size_t sz = sizeof(modelBuffer);
       if (0 == sysctlbyname("hw.model", modelBuffer, &sz, NULL, 0)) {
-          model = modelBuffer;
+          model = QLatin1String(modelBuffer);
       }
     return  model;
 }

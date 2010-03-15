@@ -56,14 +56,6 @@ QTM_BEGIN_NAMESPACE
   \ingroup contacts-requests
  */
 
-/*!
-  \fn QContactRemoveRequest::progress(QContactRemoveRequest* self)
-  \deprecated
-  This signal is emitted when some progress has been made on the request, causing either a change of
-  status or an update of results, or both.  It identifies which request the signal originated from
-  by including a pointer to \a self.
- */
-
 /*! Constructs a new contact remove request */
 QContactRemoveRequest::QContactRemoveRequest()
     : QContactAbstractRequest(new QContactRemoveRequestPrivate)
@@ -75,19 +67,25 @@ QContactRemoveRequest::~QContactRemoveRequest()
 {
 }
 
-/*! Sets the filter which will be used to select the contacts to remove to \a filter */
+/*!
+  \internal
+  Sets the filter which will be used to select the contacts to remove to \a filter.
+  This function is obsolete; set the list of contacts that will be removed by calling setContactIds().
+ */
 void QContactRemoveRequest::setFilter(const QContactFilter& filter)
 {
     Q_D(QContactRemoveRequest);
-    qWarning("QContactRemoveRequest::setFilter() This function was deprecated in week 4 and will be removed once the transition period has elapsed.  Use setContacts() instead!");
     d->m_filter = filter;
 }
 
-/*! Returns the filter which will be used to select the contacts to remove */
+/*!
+  \internal
+  Returns the filter which will be used to select the contacts to remove.
+  This function is obsolete; retrieve the list of contacts that will be removed by calling contactIds().
+ */
 QContactFilter QContactRemoveRequest::filter() const
 {
     Q_D(const QContactRemoveRequest);
-    qWarning("QContactRemoveRequest::setFilter() This function was deprecated in week 4 and will be removed once the transition period has elapsed.  Use contacts() instead!");
     return d->m_filter;
 }
 

@@ -33,11 +33,19 @@
 <tr><td class="memItemLeft" align="right" valign="top">QContactId &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactid.html#operator-eq">operator=</a></b> ( const QContactId &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactid.html#operator-eq-eq">operator==</a></b> ( const QContactId &amp; <i>other</i> ) const</td></tr>
 </table>
+<hr />
+<a name="related-non-members"></a>
+<h2>Related Non-Members</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">typedef </td><td class="memItemRight" valign="bottom"><b><a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a></b></td></tr>
+</table>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
 <p>The QContactId class provides information that uniquely identifies a contact in a particular manager.</p>
 <p>It consists of a manager URI which identifies the manager which contains the contact, and the local id of the contact in that manager.</p>
+<p>A &quot;null&quot; QContactId has an empty manager URI, and an invalid <a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a> (0).</p>
+<p>See also <a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QContactId/QContactId"></a>
@@ -49,7 +57,7 @@
 <h3 class="fn"><a name="dtor.QContactId"></a>QContactId::~QContactId ()</h3>
 <p>Cleans up the memory in use by the contact id</p>
 <a name="//apple_ref/cpp/instm/QContactId/localId"></a>
-<h3 class="fn"><a name="localId"></a>QContactLocalId QContactId::localId () const</h3>
+<h3 class="fn"><a name="localId"></a><a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a> QContactId::localId () const</h3>
 <p>Returns the manager-local id of the contact identified by this contact id</p>
 <p>See also <a href="qcontactid.html#setLocalId">setLocalId</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactId/managerUri"></a>
@@ -57,7 +65,7 @@
 <p>Returns the URI of the manager which contains the contact identified by this id</p>
 <p>See also <a href="qcontactid.html#setManagerUri">setManagerUri</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactId/setLocalId"></a>
-<h3 class="fn"><a name="setLocalId"></a>void QContactId::setLocalId ( const QContactLocalId &amp; <i>id</i> )</h3>
+<h3 class="fn"><a name="setLocalId"></a>void QContactId::setLocalId ( const <a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a> &amp; <i>id</i> )</h3>
 <p>Sets the manager-local id of the contact identified by this contact id to <i>id</i></p>
 <p>See also <a href="qcontactid.html#localId">localId</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactId/setManagerUri"></a>
@@ -73,6 +81,14 @@
 <a name="//apple_ref/cpp/instm/QContactId/operator=="></a>
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QContactId::operator== ( const QContactId &amp; <i>other</i> ) const</h3>
 <p>Returns true if the contact id has the same manager URI and local id as <i>other</i></p>
+<hr />
+<h2>Related Non-Members</h2>
+<a name="//apple_ref/cpp/tdef//QContactLocalId"></a>
+<h3 class="fn"><a name="QContactLocalId-typedef"></a>typedef QContactLocalId</h3>
+<p>The QContactLocalId type represents the unique id of a contact within its manager.</p>
+<p>Most operations within a <a href="qcontactmanager.html">QContactManager</a> accept a QContactLocalId. Some operations (involving links to contacts outside a particular manager) also accept a manager URI - this combination is stored in a <a href="qcontactid.html">QContactId</a>.</p>
+<p>An invalid QContactLocalId is represented by a zero (0) value.</p>
+<p>See also <a href="qcontactid.html">QContactId</a>.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

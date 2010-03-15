@@ -61,9 +61,6 @@
 #include "qsysteminfo_linux_common_p.h"
 #include "qsysteminfo.h"
 #include <qmobilityglobal.h>
-#if !defined(QT_NO_DBUS)
-#include <qhalservice_linux_p.h>
-#endif
 
 QT_BEGIN_HEADER
 
@@ -87,9 +84,6 @@ public:
 
     QString version(QSystemInfo::Version,  const QString &parameter = QString());
 
-    bool hasFeatureSupported(QSystemInfo::Feature feature);
-
-
 private:
 #if !defined(QT_NO_DBUS)
     bool hasHalDeviceFeature(const QString &param);
@@ -112,7 +106,6 @@ public:
     QSystemNetworkInfoPrivate(QSystemNetworkInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemNetworkInfoPrivate();
 
-    QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
     qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
     int cellId();
     int locationAreaCode();
@@ -122,20 +115,14 @@ public:
 
     QString homeMobileCountryCode();
     QString homeMobileNetworkCode();
+    QSystemNetworkInfo::NetworkMode currentMode();
 
-    QString networkName(QSystemNetworkInfo::NetworkMode mode);
-    QString macAddress(QSystemNetworkInfo::NetworkMode mode);
-
-    QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
-
+public Q_SLOTS:
+#if !defined(QT_NO_NETWORKMANAGER)
+        void primaryModeChanged();
+#endif
 
 private:
-   bool isDefaultInterface(const QString &device);
-#if !defined(QT_NO_DBUS)
-   QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
-   int getBluetoothRssi();
-   QString getBluetoothInfo(const QString &file);
-#endif
 #if !defined(QT_NO_NETWORKMANAGER)
     QNetworkManagerInterface *iface;
     QNetworkManagerInterfaceDeviceWired * devWiredIface;
@@ -152,14 +139,14 @@ private:
     QString getNmNetName(QSystemNetworkInfo::NetworkMode mode);
 
     inline QSystemNetworkInfo::NetworkMode deviceTypeToMode(quint32 type);
+
 #endif
     QString getSysNetName(QSystemNetworkInfo::NetworkMode mode);
 
 private Q_SLOTS:
+#if !defined(QT_NO_NETWORKMANAGER)
     void nmPropertiesChanged( const QString &, QMap<QString,QVariant>);
     void nmAPPropertiesChanged( const QString &, QMap<QString,QVariant>);
-#if !defined(QT_NO_NETWORKMANAGER)
-    void getPrimaryMode();
 #endif
 };
 
@@ -171,9 +158,6 @@ public:
 
     QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemDisplayInfoPrivate();
-
-    int displayBrightness(int screen);
-    int colorDepth(int screen);
 };
 
 class QSystemStorageInfoPrivate : public QSystemStorageInfoLinuxCommonPrivate
@@ -184,16 +168,6 @@ public:
 
     QSystemStorageInfoPrivate(QSystemStorageInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemStorageInfoPrivate();
-
-    qint64 availableDiskSpace(const QString &driveVolume);
-    qint64 totalDiskSpace(const QString &driveVolume);
-    QStringList logicalDrives();
-    QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
-
-private:
-    QMap<QString, QString> mountEntriesMap;
-    void mountEntries();
-
 };
 
 class QSystemDeviceInfoPrivate : public QSystemDeviceInfoLinuxCommonPrivate
@@ -207,19 +181,9 @@ public:
 
     QString imei();
     QString imsi();
-    QString manufacturer();
-    QString model();
-    QString productName();
-
-    QSystemDeviceInfo::InputMethodFlags inputMethodType();
-
-    int  batteryLevel() const;
-
     QSystemDeviceInfo::SimStatus simStatus();
     bool isDeviceLocked();
     QSystemDeviceInfo::Profile currentProfile();
-
-    QSystemDeviceInfo::PowerState currentPowerState();
     void setConnection();
 
 private:
@@ -229,8 +193,6 @@ private:
     void setupBluetooth();
 
 private Q_SLOTS:
-    void halChanged(int,QVariantList);
-    void bluezPropertyChanged(const QString&, QDBusVariant);
 #endif
 };
 

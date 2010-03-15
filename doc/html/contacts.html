@@ -142,7 +142,7 @@
         for (int i = 0; i &lt; allDetails.size(); i++) {
             QContactDetail detail = allDetails.at(i);
             QContactDetailDefinition currentDefinition = cm-&gt;detailDefinition(detail.definitionName());
-            QMap&lt;QString, QContactDetailDefinitionField&gt; fields = currentDefinition.fields();
+            QMap&lt;QString, QContactDetailFieldDefinition&gt; fields = currentDefinition.fields();
 
             qDebug(&quot;\tDetail #%d (%s):&quot;, i, detail.definitionName().toAscii().constData());
             foreach (const QString&amp; fieldKey, fields.keys()) {
@@ -231,9 +231,9 @@
         QContactDetailDefinition modified = definitions.value(QContactEmailAddress::DefinitionName);
 
         <span class="comment">/* Make our modifications: we add a &quot;Label&quot; field to email addresses */</span>
-        QContactDetailDefinitionField newField;
+        QContactDetailFieldDefinition newField;
         newField.setDataType(QVariant::String);
-        QMap&lt;QString, QContactDetailDefinitionField&gt; fields = modified.fields();
+        QMap&lt;QString, QContactDetailFieldDefinition&gt; fields = modified.fields();
         fields.insert(&quot;Label&quot;, newField);
 
         <span class="comment">/* Update the definition with the new field included */</span>
@@ -291,7 +291,9 @@
         <span class="comment">// m_fetchRequest was created with m_fetchRequest = new QContactFetchRequest() in the ctor.</span>
         m_fetchRequest-&gt;setManager(this-&gt;m_manager); <span class="comment">// m_manager is a QContactManager*.</span>
         m_fetchRequest-&gt;setFilter(dfil);
-        connect(m_fetchRequest, SIGNAL(progress(QContactFetchRequest*,bool)), this, SLOT(printContacts(QContactFetchRequest*,bool)));
+        connect(m_fetchRequest, SIGNAL(resultsAvailable()), this, SLOT(printContacts()));
+        connect(m_fetchRequest, SIGNAL(stateChanged(QContactAbstractRequest::State)),
+                this, SLOT(stateChanged(QContactAbstractRequest::State)));
         if (!m_fetchRequest-&gt;start()) {
             qDebug() &lt;&lt; &quot;Unable to request contacts!&quot;;
             QCoreApplication::exit(0);
@@ -300,23 +302,19 @@
         }
     }
 
-    void RequestExample::printContacts(QContactFetchRequest* request, bool appendOnly)
+    void RequestExample::printContacts()
     {
-        QList&lt;QContact&gt; results = request-&gt;contacts();
-        if (appendOnly) {
-            <span class="comment">// we know that the results are still in the same order; just display the new results.</span>
-            for (m_previousLastIndex += 1; m_previousLastIndex &lt; results.size(); m_previousLastIndex++) {
-                qDebug() &lt;&lt; &quot;Found another Alice:&quot; &lt;&lt; results.at(m_previousLastIndex).displayLabel();
-            }
-        } else {
-            <span class="comment">// the order of results has changed; display them all.</span>
-            for (m_previousLastIndex = 0; m_previousLastIndex &lt; results.size(); m_previousLastIndex++) {
-                qDebug() &lt;&lt; &quot;Found another Alice:&quot; &lt;&lt; results.at(m_previousLastIndex).displayLabel();
-            }
+        QList&lt;QContact&gt; results = m_fetchRequest-&gt;contacts();
+        for (m_previousLastIndex = 0; m_previousLastIndex &lt; results.size(); m_previousLastIndex++) {
+            qDebug() &lt;&lt; &quot;Found an Alice:&quot; &lt;&lt; results.at(m_previousLastIndex).displayLabel();
         }
+    }
 
+    void RequestExample::stateChanged(QContactAbstractRequest::State state)
+    {
         <span class="comment">// once we've finished retrieving results, stop processing events.</span>
-        if (request-&gt;state() == QContactAbstractRequest::FinishedState || request-&gt;state() == QContactAbstractRequest::CanceledState) {
+        if (state == QContactAbstractRequest::FinishedState
+            || state == QContactAbstractRequest::CanceledState) {
             qDebug() &lt;&lt; &quot;Finished displaying asynchronously retrieved contacts!&quot;;
             QCoreApplication::exit(0);
         }
@@ -357,7 +355,7 @@
         qDebug() &lt;&lt; &quot;This backend currently supports the following detail definitions:&quot;;
         QList&lt;QContactDetailDefinition&gt; allDefinitions = definitions.values();
         foreach (const QContactDetailDefinition&amp; defn, allDefinitions) {
-            QMap&lt;QString, QContactDetailDefinitionField&gt; fields = defn.fields();
+            QMap&lt;QString, QContactDetailFieldDefinition&gt; fields = defn.fields();
             foreach (const QString&amp; fieldKey, fields.keys()) {
                 QList&lt;QVariant&gt; allowableValues = fields.value(fieldKey).allowableValues();
                 qDebug() &lt;&lt; &quot;\t&quot; &lt;&lt; fieldKey &lt;&lt; &quot;(&quot; &lt;&lt; fields.value(fieldKey).dataType() &lt;&lt; &quot;):&quot;;
@@ -456,13 +454,13 @@
 <p>Different backends have different capabilities and offer different functionality. In order to allow clients to query the provided functionality at runtime, every backend must be capable of reporting their functionality and implementation version. They are reported to clients through various functions provided by the <a href="qcontactmanager.html">QContactManager</a> class.</p>
 <a name="synchronization-and-serialization"></a>
 <h4>Synchronization and Serialization</h4>
-<p>The contacts API is used by another Qt Mobility module: the <a href="qtmobility-known-issues.html#versit-api">Versit</a>* module. It allows serialization of a <a href="qcontact.html">QContact</a> into a vCard document, and vice versa.</p>
+<p>The contacts API is used by another Qt Mobility module: the Versit* module. It allows serialization of a <a href="qcontact.html">QContact</a> into a vCard document, and vice versa.</p>
 <p>[*] Versit <sup>&reg;</sup> is a trademark of the Internet Mail Consortium.</p>
 <a name="examples"></a>
 <h4>Examples</h4>
 <ul>
 <li><a href="samplephonebook.html">Sample Phonebook</a></li>
-<li><a href="incomingcalls.html">Incoming Call Simulator</a></li>
+<li><a href="qmlcontacts.html">QML-based Sample Phonebook</a></li>
 </ul>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

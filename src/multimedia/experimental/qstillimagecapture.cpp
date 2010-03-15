@@ -321,6 +321,25 @@ void QStillImageCapture::capture(const QString &file)
     }
 }
 
+/*!
+    Cancel pending capture requests.
+*/
+void QStillImageCapture::cancelCapture()
+{
+    Q_D(QStillImageCapture);
+
+    d->unsetError();
+
+    if (d->control) {
+        d->control->cancelCapture();
+    } else {
+        d->error = NotSupportedFeatureError;
+        d->errorString = tr("Device does not support images capture.");
+
+        emit error(d->error);
+    }
+}
+
 
 /*!
     \enum QStillImageCapture::Error

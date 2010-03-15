@@ -48,41 +48,36 @@ IMPLEMENT_READING(QCompassReading)
 
 /*!
     \class QCompassReading
-    \ingroup sensors
+    \ingroup sensors_reading
 
     \preliminary
     \brief The QCompassReading class represents one reading from a
            compass.
 
+    \section2 QCompassReading Units
     The compass returns the azimuth of the device as degrees from
-    magnetic north in a clockwise direction based on the top of the device.
-    Note that the top of the device is a fixed point and may not represent the
-    orientation that the user is holding the device in.
+    magnetic north in a clockwise direction based on the top of the UI.
     There is also a value to indicate the calibration status of the device.
     If the device is not calibrated the azimuth may not be accurate.
 
     Digital compasses are susceptible to magnetic interference and may need
     calibration after being placed near anything that emits a magnetic force.
     Accuracy of the compass can be affected by any ferrous materials that are nearby.
-*/
 
-/*!
-    \enum QCompassReading::CalibrationLevel
-
-    \value Undefined The calibration level is not defined or is too low.
-    \value Low       The reported azimuth may be off by up to 15.4 degrees.
-    \value Middle    The reported azimuth may be off by up to 11.8 degrees.
-    \value High      The reported azimuth may be off by up to 7.4 degrees.
+    The calibration status of the device is measured as a number from 0 to 1.
+    A value of 1 is the highest level that the device can support and 0 is
+    the worst.
 */
 
 /*!
     \property QCompassReading::azimuth
     \brief the azimuth of the device.
+
+    Measured in degrees from magnetic north in a clockwise direction based
+    the top of the UI.
+    \sa {QCompassReading Units}
 */
 
-/*!
-    Returns the azimuth of the device.
-*/
 qreal QCompassReading::azimuth() const
 {
     return d->azimuth;
@@ -100,32 +95,28 @@ void QCompassReading::setAzimuth(qreal azimuth)
     \property QCompassReading::calibrationLevel
     \brief the calibration level of the reading.
 
-    The higher the calibration, the more accurate the measurement is.
+    Measured as a value from 0 to 1 with higher values being better.
+    \sa {QCompassReading Units}
 */
 
-/*!
-    Returns the calibration level of the reading.
-*/
-QCompassReading::CalibrationLevel QCompassReading::calibrationLevel() const
+qreal QCompassReading::calibrationLevel() const
 {
-    return static_cast<QCompassReading::CalibrationLevel>(d->calibrationLevel);
+    return d->calibrationLevel;
 }
 
 /*!
     Sets the calibration level of the reading to \a calibrationLevel.
 */
-void QCompassReading::setCalibrationLevel(QCompassReading::CalibrationLevel calibrationLevel)
+void QCompassReading::setCalibrationLevel(qreal calibrationLevel)
 {
     d->calibrationLevel = calibrationLevel;
 }
 
 // =====================================================================
 
-// begin generated code
-
 /*!
     \class QCompassFilter
-    \ingroup sensors_helpers
+    \ingroup sensors_filter
 
     \preliminary
     \brief The QCompassFilter class is a convenience wrapper around QSensorFilter.
@@ -146,7 +137,7 @@ const char *QCompass::type("QCompass");
 
 /*!
     \class QCompass
-    \ingroup sensors_helpers
+    \ingroup sensors_type
 
     \preliminary
     \brief The QCompass class is a convenience wrapper around QSensor.
@@ -179,7 +170,6 @@ const char *QCompass::type("QCompass");
 
     \sa QSensor::reading()
 */
-// end generated code
 
 #include "moc_qcompass.cpp"
 QTM_END_NAMESPACE

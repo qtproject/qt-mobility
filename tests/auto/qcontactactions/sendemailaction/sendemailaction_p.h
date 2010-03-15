@@ -71,7 +71,6 @@ public:
     ~QContactSendEmailAction();
 
     QContactActionDescriptor actionDescriptor() const;
-    QVariantMap metadata() const;
     QVariantMap metaData() const;
 
     QContactFilter contactFilter(const QVariant& value) const;

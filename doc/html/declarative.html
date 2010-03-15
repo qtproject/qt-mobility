@@ -61,24 +61,21 @@
             return 1;
 
         QmlView canvas;
-        canvas.setUrl(url);
+        canvas.setSource(url);
         <span class="comment">//...</span>
         canvas.execute();
         canvas.show();</pre>
 <p>Furthermore we are using the <a href="http://qt.nokia.com/doc/4.6/qmlcontext.html">QmlContext</a> header which we need to add our own implemented object in the Qml context. This means that we can create our own object and access it in a QML script file. <a name="addpropertyinqmlcontext"></a>In this case we can access our service list over the &quot;services&quot; property in Qml script.</p>
-<pre>        QmlContext* ctxt = canvas.rootContext();
-        ServiceRegister registration;
-        ctxt-&gt;addDefaultObject(&amp;registration);
-        ctxt-&gt;setContextProperty(&quot;services&quot;, QVariant::fromValue&lt;QList&lt;ServiceWrapper*&gt;*&gt;(registration.registeredservices()));</pre>
+<pre></pre>
 <p><b>The Services:</b></p>
 <p>The services are implemented in a shared library and can be register in the service framework. After the service is registered it can be used in different applications. In our case we'll access the services over an application that is based on QML scripting. We will be able to change between different services and call their properties, receiving their signals and so forth.</p>
 <p>In this example we've implemented 2 services called Landdialer and Voipdialer. You can find the projects for those services in:</p>
 <p>declarative\landlinedialer and declarative\voipdialer. Those projects will create a shared library in each case.</p>
 <p>If the library needs to be available over the Service Framework, we need to register the library. You can do this by using the <a href="qservicemanager.html">QServiceManager</a> function addService(..&#x2e;)&#x2e; In our example this will be done in the function registerExampleServices in ServiceRegister:</p>
 <pre>        QStringList exampleXmlFiles;
-        exampleXmlFiles &lt;&lt;&quot;voipdialerservice.xml&quot; &lt;&lt; &quot;landlinedialerservice.xml&quot;;
+        exampleXmlFiles &lt;&lt; &quot;voipdialerservice.xml&quot; &lt;&lt; &quot;landlinedialerservice.xml&quot;;
         foreach (const QString &amp;fileName, exampleXmlFiles) {
-            QString path = QCoreApplication::applicationDirPath() + &quot;/../../examples/declarative/&quot; + fileName;
+            QString path = QCoreApplication::applicationDirPath() + &quot;/xmldata/&quot; + fileName;
             serviceManager-&gt;addService(path);
         }</pre>
 <p>As you can see we register the services using a xml file. This xml file basically contains all information to register the shared library in the Service Framework enviroment. For more information please read more about the Qt Service Framework <a href="service-frameworks.html#adding-and-removing-of-services">XML Format</a></p>
@@ -128,9 +125,9 @@
 <p><b>The ServiceRegister:</b></p>
 <p>The ServiceRegister contains a list of all available services they contain the com.nokia.qt.examples.Dialer interface. In the constructor of ServiceRegister a call will be made to register the dialer services (LandLineDialer and VoipDaler) from this example.</p>
 <pre>        QStringList exampleXmlFiles;
-        exampleXmlFiles &lt;&lt;&quot;voipdialerservice.xml&quot; &lt;&lt; &quot;landlinedialerservice.xml&quot;;
+        exampleXmlFiles &lt;&lt; &quot;voipdialerservice.xml&quot; &lt;&lt; &quot;landlinedialerservice.xml&quot;;
         foreach (const QString &amp;fileName, exampleXmlFiles) {
-            QString path = QCoreApplication::applicationDirPath() + &quot;/../../examples/declarative/&quot; + fileName;
+            QString path = QCoreApplication::applicationDirPath() + &quot;/xmldata/&quot; + fileName;
             serviceManager-&gt;addService(path);
         }</pre>
 <p>After this call the ServiceRegister fills it's internal ServiceWrappper <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>.</p>
@@ -144,7 +141,7 @@
             m_services.append(service);
         }</pre>
 <p>In the header of ServiceRegister we allow external objects to access the ServiceWrapper <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>.</p>
-<pre>    class ServiceRegister : public QObject{
+<pre>    class ServiceRegister : public QObject {
         Q_OBJECT
         Q_PROPERTY(QList&lt;ServiceWrapper*&gt;* registeredservices READ registeredservices NOTIFY modelChanged CONSTANT);</pre>
 <p>You may remember that we add this <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a> to our qml context as a property named <a href="#addpropertyinqmlcontext"> services</a></p>
@@ -152,51 +149,52 @@
 <p>The QML elements are implemented in 4 different qml scripting files <a href="#guidesign"> see GUI design</a>.</p>
 <p>In the ServiceList.qml file the services property is assigned to the ListView model property.</p>
 <pre>            ListView {
-                id: ServiceListView
+                id: serviceListView
                 height: 100
                 width: 260
                 anchors.topMargin: 5
                 anchors.leftMargin: 5
                 anchors.rightMargin: 5
-                model: services</pre>
+                model: services.registeredservices</pre>
 <p>To show the items of the model property we need to create a delegate component and assign it to the ListView Delegate property:</p>
 <pre>            Component {
-                id: Delegate</pre>
+                id: delegate</pre>
 <p>In this component you can define how you want to draw one ListView item. You can acces insite of this component the current ListWiew item by using the variable modelData. In our example we are using two text lines. Furthermore we can define whats happening if we click on a ListView item by using the MouseRegion.</p>
 <a name="servicelist-qml-2"></a><pre>                    MouseRegion {
-                        id: ListItemMouseRegion
+                        id: listItemMouseRegion
                         anchors.fill: parent
                         onClicked: {
-                            if(ListFrame.nohighlightlistitem){
-                                ServiceListView.highlight = Highlight
-                                ListFrame.nohighlightlistitem = false;
+                            if(listFrame.nohighlightlistitem){
+                                serviceListView.highlight = highlight
+                                listFrame.nohighlightlistitem = false;
                             }
-                            ServiceListView.currentIndex = index;
-                            dialService = modelData;
+                            serviceListView.currentIndex = index;
+                            dialService = model.modelData;
+                            console.log(&quot;HELLO: &quot; + dialService + &quot; &quot; + model.modelData);
                             serviceSelected()
                         }
                     }
 
                     Text {
-                        id: ServiceItemInfo
+                        id: serviceItemInfo
                         anchors.top: parent.top
                         anchors.left: parent.left
                         anchors.topMargin: 5
                         anchors.leftMargin: 3
-                        text: &quot; &lt;b&gt;Service:&lt;/b&gt; &quot;+ modelData.serviceName + &quot;  (&quot;+modelData.version+&quot;)&quot;
+                        text: &quot; &lt;b&gt;Service:&lt;/b&gt; &quot; + serviceName + &quot;  (&quot; + version + &quot;)&quot;
                     }
 
                     Text {
-                        id: ServiceItemInterfaceName
-                        anchors.top: ServiceItemInfo.bottom
+                        id: serviceItemInterfaceName
+                        anchors.top: serviceItemInfo.bottom
                         anchors.left: parent.left
                         anchors.topMargin: 2
                         anchors.leftMargin: 3
-                        text: &quot; &lt;b&gt;Interface:&lt;/b&gt; &quot; + modelData.interfaceName;
+                        text: &quot; &lt;b&gt;Interface:&lt;/b&gt; &quot; + interfaceName;
                     }</pre>
 <p>Another component can be created for highliting a list item:</p>
 <pre>            Component {
-                id: Highlight
+                id: highlight
 
                 Rectangle {
                     width: childrenRect.width
@@ -213,7 +211,7 @@
 <p><b>Service signals and function calls on the QML site</b></p>
 <p>In sfw-kinetic-example.qml we define a control named DialScreen and implement the function onDial and onHangup. As you can see in the onDial event we call the service function dialNumber and the onHangup calls hangup. Both function are implemented in the service <a href="#voipdialer-h-0"> (see voipdialer header file).</a></p>
 <pre>        DialScreen {
-            id: DialScreen
+            id: dialScreen
             property bool activeCall : false
             property var currentDialer: 0;
             anchors.topMargin: 5
@@ -223,10 +221,10 @@
             anchors.top: parent.top
             onDial: {
                 if (activeCall == false) {
-                    if (ServiceList.dialService != 0) {
-                        var o = ServiceList.dialService.serviceObject();
-                        Status.text = &quot;Dialing &quot; + numberToDial +&quot;...&quot;;
-                        DialScreen.currentDialer = o;
+                    if (serviceList.dialService != 0) {
+                        var o = serviceList.dialService.serviceObject();
+                        status.text = &quot;Dialing &quot; + numberToDial +&quot;...&quot;;
+                        dialScreen.currentDialer = o;
                         o.dialNumber(numberToDial);
                         activeCall = true;
                     }
@@ -234,20 +232,20 @@
             }
             onHangup: {
                 if (activeCall) {
-                    if (DialScreen.currentDialer != 0) {
-                        DialScreen.currentDialer.hangup();
+                    if (dialScreen.currentDialer != 0) {
+                        dialScreen.currentDialer.hangup();
                     }
-                    Status.text = &quot;Hang up&quot;;
+                    status.text = &quot;Hang up&quot;;
                 }
             }
         }</pre>
 <p>In DialScreen.qml the dial and the hangup signals are defined. The hangup signal will be emited if the HangUpButton was clicked:</p>
 <pre>        DialButton {
-            id: HangUpButton
-            height: { (NumberPad.height / 2) - 2 }
+            id: hangUpButton
+            height: { (numberPad.height / 2) - 2 }
             width: 50
-            anchors.top: NumberPad.top
-            anchors.left: NumberPad.right
+            anchors.top: numberPad.top
+            anchors.left: numberPad.right
             anchors.leftMargin: 5
             hoverColor: &quot;red&quot;
             color: &quot;crimson&quot;
@@ -257,11 +255,11 @@
             }</pre>
 <p>The dial signal will be emited if the CallButton was clicked:</p>
 <pre>        DialButton {
-            id: CallButton
+            id: callButton
             width: 50
-            height: {(NumberPad.height/2) -2}
-            anchors.top: HangUpButton.bottom
-            anchors.left: NumberPad.right
+            height: {(numberPad.height/2) -2}
+            anchors.top: hangUpButton.bottom
+            anchors.left: numberPad.right
             anchors.leftMargin: 5
             anchors.topMargin: 4
             color: &quot;mediumseagreen&quot;
@@ -274,22 +272,22 @@
             }</pre>
 <p>Now we need to connect the stateChanged signal form the services with an event handler on the QML site. This is done in the sfw-kinetic-example.qml file:</p>
 <pre>        Connection {
-            sender: DialScreen.currentDialer
+            sender: dialScreen
             signal: &quot;stateChanged()&quot;
             script: {
-                if (DialScreen.currentDialer.state == 1) {
-                    Status.text += &quot;\nRinging&quot;;
+                if (dialScreen.currentDialer.state == 1) {
+                    status.text += &quot;\nRinging&quot;;
                 }
-                else if (DialScreen.currentDialer.state == 2) {
-                    Status.text += &quot;\nConnected&quot;;
+                else if (dialScreen.currentDialer.state == 2) {
+                    status.text += &quot;\nConnected&quot;;
                 }
-                else if (DialScreen.currentDialer.state == 0) {
-                    Status.text += &quot;\nConnection terminated&quot;;
-                    DialScreen.activeCall = false;
-                    ClearStatusTimer.running = true;
+                else if (dialScreen.currentDialer.state == 0) {
+                    status.text += &quot;\nConnection terminated&quot;;
+                    dialScreen.activeCall = false;
+                    clearStatusTimer.running = true;
                 }
-                else if (DialScreen.currentDialer.state == 3) {
-                    Status.text += &quot;\nPhone already engaged&quot;;
+                else if (dialScreen.currentDialer.state == 3) {
+                    status.text += &quot;\nPhone already engaged&quot;;
                 }
             }
         }</pre>

@@ -54,14 +54,8 @@
 
 QTM_BEGIN_NAMESPACE
 
-#define IAP "/system/osso/connectivity/IAP"
-static int iap_prefix_len;
-static void notify_iap(GConfClient *client, guint id,
-		    GConfEntry *entry, gpointer user_data);
-
-
 /* The IapAddTimer is a helper class that makes sure we update
- * the configuration only after all gconf additions to certain
+ * the configuration only after all db additions to certain
  * iap are finished (after a certain timeout)
  */
 class _IapAddTimer : public QObject
@@ -156,23 +150,21 @@ void IapAddTimer::del(QString& iap_id)
 }
 
 
-class IapMonitor
+class IapMonitor : public Maemo::IAPMonitor
 {
 public:
     IapMonitor() : first_call(true) { }
-    friend void notify_iap(GConfClient *, guint,
-			GConfEntry *entry, gpointer user_data);
 
     void setup(QNetworkConfigurationManagerPrivate *d);
     void cleanup();
 
+protected:
+    void iapAdded(const QString &iapId);
+    void iapRemoved(const QString &iapId);
+
 private:
     bool first_call;
 
-    void iapAdded(const char *key, GConfEntry *entry);
-    void iapDeleted(const char *key, GConfEntry *entry);
-
-    Maemo::IAPMonitor *iap;
     QNetworkConfigurationManagerPrivate *d;
     IapAddTimer timers;
 };
@@ -180,28 +172,10 @@ private:
 Q_GLOBAL_STATIC(IapMonitor, iapMonitor);
 
 
-/* Notify func that is called when IAP is added or deleted */
-static void notify_iap(GConfClient *, guint,
-		    GConfEntry *entry, gpointer user_data)
-{
-    const char *key = gconf_entry_get_key(entry);
-    if (key && g_str_has_prefix(key, IAP)) {
-	IapMonitor *ptr = (IapMonitor *)user_data;
-	if (gconf_entry_get_value(entry)) {
-	    ptr->iapAdded(key, entry);
-	} else {
-	    ptr->iapDeleted(key, entry);
-	}
-    }
-}
-
-
 void IapMonitor::setup(QNetworkConfigurationManagerPrivate *d_ptr)
 {
     if (first_call) {
 	d = d_ptr;
-	iap_prefix_len = strlen(IAP);	
-	iap = new Maemo::IAPMonitor(notify_iap, (gpointer)this);
 	first_call = false;
     }
 }
@@ -210,38 +184,26 @@ void IapMonitor::setup(QNetworkConfigurationManagerPrivate *d_ptr)
 void IapMonitor::cleanup()
 {
     if (!first_call) {
-	delete iap;
 	timers.removeAll();
 	first_call = true;
     }
 }
 
 
-void IapMonitor::iapAdded(const char *key, GConfEntry * /*entry*/)
+void IapMonitor::iapAdded(const QString &iap_id)
 {
-    //qDebug("Notify called for added element: %s=%s", gconf_entry_get_key(entry), gconf_value_to_string(gconf_entry_get_value(entry)));
-
-    /* We cannot know when the IAP is fully added to gconf, so a timer is
+    /* We cannot know when the IAP is fully added to db, so a timer is
      * installed instead. When the timer expires we hope that IAP is added ok.
      */
-    QString iap_id = QString(key + iap_prefix_len + 1).section('/',0,0);
-    timers.add(iap_id, d);
+    QString id = iap_id;
+    timers.add(id, d);
 }
 
 
-void IapMonitor::iapDeleted(const char *key, GConfEntry * /*entry*/)
+void IapMonitor::iapRemoved(const QString &iap_id)
 {
-    //qDebug("Notify called for deleted element: %s", gconf_entry_get_key(entry));
-
-    /* We are only interested in IAP deletions so we skip the config entries
-     */
-    if (strstr(key + iap_prefix_len + 1, "/")) {	
-	//qDebug("Deleting IAP config %s", key+iap_prefix_len);
-	return;
-    }
-
-    QString iap_id = key + iap_prefix_len + 1;
-    d->deleteConfiguration(iap_id);
+    QString id = iap_id;
+    d->deleteConfiguration(id);
 }
 
 
@@ -285,9 +247,9 @@ void QNetworkConfigurationManagerPrivate::configurationChanged(QNetworkConfigura
 
 void QNetworkConfigurationManagerPrivate::deleteConfiguration(QString& iap_id)
 {
-    /* Called when IAPs are deleted in gconf, in this case we do not scan
-     * or read all the IAPs from gconf because it might take too much power
-     * (multiple applications would need to scan and read all IAPs from gconf)
+    /* Called when IAPs are deleted in db, in this case we do not scan
+     * or read all the IAPs from db because it might take too much power
+     * (multiple applications would need to scan and read all IAPs from db)
      */
     if (accessPointConfigurations.contains(iap_id)) {
 	QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.take(iap_id);
@@ -397,11 +359,10 @@ void QNetworkConfigurationManagerPrivate::addConfiguration(QString& iap_id)
 	}
     } else {
 #ifdef BEARER_MANAGEMENT_DEBUG
-	qDebug() << "IAP" << iap_id << "already in gconf.";
+	qDebug() << "IAP" << iap_id << "already in db.";
 #endif
 
-	/* Check if the data in gconf changed and update configuration
-	 * accordingly
+	/* Check if the data in db changed and update configuration accordingly
 	 */
 	QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr = accessPointConfigurations.take(iap_id);
 	if (ptr.data()) {
@@ -480,13 +441,8 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
     QList<QString> all_iaps;
     Maemo::IAPConf::getAll(all_iaps);
 
-    foreach (QString escaped_iap_id, all_iaps) {
+    foreach (QString iap_id, all_iaps) {
 	QByteArray ssid;
-
-	/* The key that is returned by getAll() needs to be unescaped */
-	gchar *unescaped_id = gconf_unescape_key(escaped_iap_id.toUtf8().data(), -1);
-	QString iap_id = QString((char *)unescaped_id);
-	g_free(unescaped_id);
 
 	Maemo::IAPConf saved_ap(iap_id);
 	bool is_temporary = saved_ap.value("temporary").toBool();
@@ -522,13 +478,13 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 
 	if (!accessPointConfigurations.contains(iap_id)) {
 	    QNetworkConfigurationPrivate* cpPriv = new QNetworkConfigurationPrivate();
-	    //cpPriv->name = iap_info.value().toString();
 	    cpPriv->name = saved_ap.value("name").toString();
-	    if (cpPriv->name.isEmpty())
+	    if (cpPriv->name.isEmpty()) {
 		if (!ssid.isEmpty() && ssid.size() > 0)
 		    cpPriv->name = ssid.data();
 		else
 		    cpPriv->name = iap_id;
+	    }
 	    cpPriv->isValid = true;
 	    cpPriv->id = iap_id;
 	    cpPriv->network_id = ssid;
