@@ -1244,11 +1244,13 @@ OssoABookContact* QContactABook::convert(const QContact *contact) const
   QCM5_DEBUG << "Converting QContact id:" << id << " to aContact";
   if (id){
     rtn = getAContact(id);
-    /*
+    // It's not safe to commit our changes to a contact that has been modified.
+    // This problem affects attributes with the same name and parameters such as
+    // EMail, Address...
     QContactTimestamp* ts = getTimestampDetail(E_CONTACT(rtn));
     if (*ts != contact->detail<QContactTimestamp>())
       return NULL;
-    */
+
   } else {
     rtn = osso_abook_contact_new();
   }
