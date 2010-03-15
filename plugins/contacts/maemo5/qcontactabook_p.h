@@ -95,6 +95,7 @@ extern "C" {
 	GList*              osso_abook_contact_get_roster_contacts
                                                                 (OssoABookContact *master_contact);
 	McProfile*          osso_abook_contact_get_profile      (OssoABookContact *contact);
+	McAccount*          osso_abook_contact_get_account      (OssoABookContact *contact);
 	gboolean            osso_abook_contact_delete           (OssoABookContact *contact,
                                                                  EBook *book,
                                                                  GtkWindow *window);
@@ -123,9 +124,7 @@ extern "C" {
 	void                osso_abook_contact_set_pixbuf       (OssoABookContact *contact,
                                                                  GdkPixbuf *pixbuf,
                                                                  EBook *book,
-                                                                 GtkWindow *window);
-
-	
+                                                                 GtkWindow *window); 
 }
 
 QTM_USE_NAMESPACE

@@ -920,20 +920,28 @@ QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eC
 {
   QList<QContactOnlineAccount*> rtnList;
   
-  QStringList evcardToSkip; 
+  QStringList evcardToSkip;
   
   // Gets info of online accounts from roster contacts associated to the master one  
   if (!osso_abook_contact_is_roster_contact (A_CONTACT(eContact))) {
     QContactOnlineAccount* rtn = new QContactOnlineAccount;
     
-    GList *contacts = osso_abook_contact_get_roster_contacts (A_CONTACT(eContact));
+    GList *contacts = osso_abook_contact_get_roster_contacts(A_CONTACT(eContact));
     GList *node;
-    for (node = contacts; node != NULL; node = g_list_next (node)) {
+    for (node = contacts; node != NULL; node = g_list_next(node)){
       OssoABookContact *rosterContact = A_CONTACT(node->data);
-      McProfile* id = static_cast<McProfile*>(osso_abook_contact_get_profile(rosterContact));
-      OssoABookPresence *presence = OSSO_ABOOK_PRESENCE (A_CONTACT(eContact));
-      TpConnectionPresenceType presenceType = osso_abook_presence_get_presence_type (presence);
+     
+      McProfile* id = osso_abook_contact_get_profile(rosterContact);
+      //McAccount* account = osso_abook_contact_get_account(rosterContact);
       
+      // Avoid to look for Roster contacts into the VCard
+      QString accountVCard = QString::fromLatin1(mc_profile_get_vcard_field(id));
+      if (!evcardToSkip.contains(accountVCard))
+        evcardToSkip << accountVCard;
+      
+      // Presence
+      OssoABookPresence *presence = OSSO_ABOOK_PRESENCE (rosterContact);
+      TpConnectionPresenceType presenceType = osso_abook_presence_get_presence_type (presence);
       QString presenceTypeString;
       switch (presenceType) {
 	case TP_CONNECTION_PRESENCE_TYPE_UNSET: presenceTypeString = "unset"; break;
@@ -949,20 +957,14 @@ QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eC
 	  qCritical() << "Presence type is not vaild" << presenceType;
       }
       
-      QString accountVCard = QString::fromLatin1(mc_profile_get_vcard_field(id));
-      if (!evcardToSkip.contains(accountVCard))
-	evcardToSkip << accountVCard;
-	
       QVariantMap map;
-      //map[QContactOnlineAccount::FieldAccountUri] = //I'M NOT ABLE TO GET this yet
-      map[QContactOnlineAccount::FieldNickname] = osso_abook_contact_get_display_name(A_CONTACT(eContact));
+      map[QContactOnlineAccount::FieldNickname] = osso_abook_contact_get_display_name(rosterContact);
       map[QContactOnlineAccount::FieldPresence] = presenceTypeString;
       map[QContactOnlineAccount::FieldServiceProvider] = mc_profile_get_unique_name(id);
-      map[QContactOnlineAccount::FieldStatusMessage] = QString::fromLatin1(osso_abook_presence_get_presence_status_message (presence));
-      //map[QContactOnlineAccount::FieldSubTypes] =
+      map[QContactOnlineAccount::FieldStatusMessage] = QString::fromLatin1(osso_abook_presence_get_presence_status_message(presence));
+      //map["accountPath"] = mc_account_get_connection_path(account);
       
       setDetailValues(map, rtn);
-      
     }
     rtnList << rtn;
     g_list_free (contacts);
