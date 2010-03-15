@@ -40,11 +40,13 @@
 ****************************************************************************/
 #include "modestengine_maemo_p.h"
 #include "maemohelpers_p.h"
+#include "qmessage_p.h"
 #include "qmessageaccount.h"
 #include "qmessageaccount_p.h"
 #include "qmessageaccountfilter.h"
 #include "qmessageaccountfilter_p.h"
 #include "qmessagefolder_p.h"
+#include "qmessagestore_p.h"
 #include "qmessageservice.h"
 #include "qmessageservice_maemo_p.h"
 #include "qmessagecontentcontainer_maemo_p.h"
@@ -171,6 +173,26 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, QtMobility::Modes
     return argument;
 }
 
+QDBusArgument &operator<<(QDBusArgument &argument, const QtMobility::MessagingModestMimePart &mimePart)
+{
+    argument.beginStructure();
+    argument << mimePart.mimeType;
+    argument << mimePart.isAttachment;
+    argument << mimePart.fileName;
+    argument.endStructure();
+    return argument;
+}
+
+const QDBusArgument &operator>>(const QDBusArgument &argument, QtMobility::MessagingModestMimePart &mimePart)
+{
+    argument.beginStructure();
+    argument >> mimePart.mimeType;
+    argument >> mimePart.isAttachment;
+    argument >> mimePart.fileName;
+    argument.endStructure();
+    return argument;
+}
+
 QTM_BEGIN_NAMESPACE
 
 /* configuration key definitions for modest */
@@ -267,26 +289,20 @@ ModestEngine::ModestEngine()
     qRegisterMetaType<ModestAccountsUnreadMessagesDBusStruct>();
     qDBusRegisterMetaType<ModestMessage>();
 
+    qRegisterMetaType<MessagingModestMimePart>();
+
     watchAllKnownEmailFolders();
 
-    /*foreach (QMessageAccount value, iAccounts) {
-qWarning() << "**** Account ****";
-qWarning() << "                 id : " << value.id().toString();
-qWarning() << "               name : " << value.name();
-qWarning() << "       messageTypes : " << value.messageTypes();
-    }*/
+    // Get latest messages from each account
+    // => This ensures that notifications of all incoming messages will be sent
+    int messagesPerAccount = 1;
+    QDBusPendingCall pendingCall = m_ModestDBusInterface->asyncCall(MODEST_DBUS_METHOD_GET_UNREAD_MESSAGES,
+                                                                    messagesPerAccount);
+    QDBusPendingCallWatcher* pendingCallWatcher = new QDBusPendingCallWatcher(pendingCall);
+    pendingCallWatcher->setProperty("setOnlyDates", true);
+    connect(pendingCallWatcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
+            this, SLOT(pendingGetUnreadMessagesFinishedSlot(QDBusPendingCallWatcher*)));
 
-    /*bool isFiltered;
-    bool isSorted;
-    QMessageFolderIdList ids = this->queryFolders(QMessageFolderFilter(), QMessageFolderSortOrder(), 0, 0, isFiltered, isSorted);
-    for (int i=0; i < ids.count(); i++) {
-qWarning() << "**** Folder ****";
-qWarning() << "                 id : " << this->folder(ids[i]).id().toString();
-qWarning() << "               name : " << this->folder(ids[i]).name();
-qWarning() << "    parentAccountId : " << this->folder(ids[i]).parentAccountId().toString();
-qWarning() << "     parentFolderId : " << this->folder(ids[i]).parentFolderId().toString();
-qWarning() << "               path : " << this->folder(ids[i]).path();
-    }*/
 }
 
 ModestEngine::~ModestEngine()
@@ -298,6 +314,41 @@ ModestEngine::~ModestEngine()
 ModestEngine* ModestEngine::instance()
 {
     return modestEngine();
+}
+
+MessagingModestMessage ModestEngine::messageFromModest(const QString& accountId, const QString &folderId, const QString& messageId) const
+{
+    MessagingModestMessage modestMessage;
+
+    QDBusMessage msg = m_QtmPluginDBusInterface->call("GetMessage", accountId, folderId, messageId);
+
+    if (msg.type() == QDBusMessage::ReplyMessage) {
+        modestMessage.url = msg.arguments()[0].toString();
+        modestMessage.mimeType = msg.arguments()[1].toString();
+        modestMessage.from = msg.arguments()[2].toString();
+        modestMessage.to = msg.arguments()[3].toString();
+        modestMessage.cc = msg.arguments()[4].toString();
+        modestMessage.bcc = msg.arguments()[5].toString();
+        modestMessage.replyTo = msg.arguments()[6].toString();
+        modestMessage.subject = msg.arguments()[7].toString();
+        modestMessage.dateReceived = msg.arguments()[8].toLongLong();
+        modestMessage.dateSent = msg.arguments()[9].toLongLong();
+        modestMessage.size = msg.arguments()[10].toLongLong();
+        modestMessage.flags = static_cast<MessagingModestMessageFlags>(msg.arguments()[11].toUInt());
+        modestMessage.priority = static_cast<MessagingModestMessagePriority>(msg.arguments()[12].toUInt());
+
+        QVariant variant = msg.arguments()[13];
+        QDBusArgument argument = variant.value<QDBusArgument>();
+        argument >> modestMessage.mimeParts;
+    } else {
+        modestMessage.dateReceived = 0;
+        modestMessage.dateSent = 0;
+        modestMessage.size = 0;
+        modestMessage.flags = MessagingModestMessageNotDefined;
+        modestMessage.priority = MessagingModestMessagePriorityDefined;
+    }
+
+    return modestMessage;
 }
 
 void ModestEngine::updateEmailAccounts() const
@@ -780,9 +831,9 @@ void ModestEngine::fileChangedSlot(int watchDescriptor, const QString& filePath,
     QString fileName = filePath.mid(filenameBegin,filePath.lastIndexOf('.')-filenameBegin);
     if (fileName != "summary") {
         if (events & (IN_MOVED_TO | IN_CREATE)) {
-            notification(QMessageFolderId(), messageIdFromModestMessageFilePath(filePath), ModestEngine::Added);
+            notification(messageIdFromModestMessageFilePath(filePath), ModestEngine::Added);
         } else if (events & IN_DELETE) {
-            notification(QMessageFolderId(), messageIdFromModestMessageFilePath(filePath), ModestEngine::Removed);
+            notification(messageIdFromModestMessageFilePath(filePath), ModestEngine::Removed);
         }
     }
 }
@@ -1060,9 +1111,212 @@ bool ModestEngine::composeEmail(const QMessage &message)
     return true;
 }
 
+bool ModestEngine::showMessage(const QMessageId &id)
+{
+    QMessage msg = message(id);
+    QMessagePrivate* privateMessage = QMessagePrivate::implementation(msg);
+    if (privateMessage->_url.isEmpty()) {
+        return false;
+    } else {
+        m_ModestDBusInterface->call(MODEST_DBUS_METHOD_OPEN_MESSAGE,
+                                    privateMessage->_url);
+    }
+    return true;
+}
+
+bool ModestEngine::exportUpdates(const QMessageAccountId &id)
+{
+    m_ModestDBusInterface->call(MODEST_DBUS_METHOD_SEND_RECEIVE);
+    return true;
+}
+
 QMessage ModestEngine::message(const QMessageId &id) const
 {
-    return QMessage();
+    QMessage message;
+
+    QString modestAccountId = modestAccountIdFromMessageId(id);
+    QString modestFolderId = modestFolderIdFromMessageId(id);
+    QString modestMessageId = modestMessageIdFromMessageId(id);
+
+    MessagingModestMessage modestMessage = messageFromModest(modestAccountId,
+                                                             modestFolderId,
+                                                             modestMessageId);
+
+    // Parent Account Id
+    message.setParentAccountId(accountIdFromModestAccountId(modestAccountId));
+
+    // Type
+    message.setType(QMessage::Email);
+
+    // Dates
+    message.setDate(QDateTime::fromTime_t(modestMessage.dateSent));
+    message.setReceivedDate(QDateTime::fromTime_t(modestMessage.dateReceived));
+
+    // Priority
+    switch (modestMessage.priority) {
+    case QtMobility::MessagingModestMessageHighPriority:
+        message.setPriority(QMessage::HighPriority);
+        break;
+    case QtMobility::MessagingModestMessageNormalPriority:
+        message.setPriority(QMessage::NormalPriority);
+        break;
+    case QtMobility::MessagingModestMessageLowPriority:
+        message.setPriority(QMessage::LowPriority);
+        break;
+    case QtMobility::MessagingModestMessageSuspendedPriority:
+        message.setPriority(QMessage::NormalPriority);
+        break;
+    }
+
+    // Standard Folder
+    if (modestFolderId == "INBOX") {
+        QMessagePrivate::setStandardFolder(message, QMessage::InboxFolder);
+    } else if (modestFolderId == "drafts") {
+        QMessagePrivate::setStandardFolder(message, QMessage::DraftsFolder);
+    } else if (modestFolderId == "sent") {
+        QMessagePrivate::setStandardFolder(message, QMessage::SentFolder);
+    }
+
+    // Body & Attachments handling
+    for (int i=0; i < modestMessage.mimeParts.count(); i++) {
+        if (!modestMessage.mimeParts[i].isAttachment) {
+            // Body
+            QString text; // TODO: Body content handling
+            // TODO: Body charset handling
+            message.setBody(text, modestMessage.mimeParts[i].mimeType.toAscii());
+        } else {
+            // Attachment
+            QString fullMimeType = modestMessage.mimeParts[i].mimeType;
+            int slashIndex = fullMimeType.indexOf('/');
+            QByteArray mimeType = fullMimeType.left(slashIndex).toAscii();
+            QByteArray mimeSubType = fullMimeType.mid(slashIndex+1).toAscii();
+            // TODO: Attachment size
+            QByteArray fileName = modestMessage.mimeParts[i].fileName.toAscii();
+            QMessageContentContainer attachment = QMessageContentContainerPrivate::from(modestMessageId,
+                                                                                        i,
+                                                                                        fileName,
+                                                                                        mimeType,
+                                                                                        mimeSubType,
+                                                                                        0);
+            appendAttachmentToMessage(message, attachment);
+        }
+    }
+
+    // From
+    if (modestMessage.from.size() > 0) {
+        message.setFrom(QMessageAddress(QMessageAddress::Email, modestMessage.from));
+        QMessagePrivate::setSenderName(message, modestMessage.from);
+    }
+
+    QList<QMessageAddress> addressList;
+    QString addresses;
+    int addressEnds;
+
+    // To
+    if (modestMessage.to.size() > 0) {
+        addresses = modestMessage.to;
+        addressEnds = addresses.indexOf(';');
+        while (addressEnds > 0) {
+            addressList.append(QMessageAddress(QMessageAddress::Email, addresses.left(addressEnds)));
+            addresses.remove(0,addressEnds+1);
+            addressEnds = addresses.indexOf(';');
+        }
+        addressList.append(QMessageAddress(QMessageAddress::Email, addresses));
+        message.setTo(addressList);
+    }
+
+    // Cc
+    if (modestMessage.cc.size() > 0) {
+        addressList.clear();
+        addresses = modestMessage.cc;
+        addressEnds = addresses.indexOf(';');
+        while (addressEnds > 0) {
+            addressList.append(QMessageAddress(QMessageAddress::Email, addresses.left(addressEnds)));
+            addresses.remove(0,addressEnds+1);
+            addressEnds = addresses.indexOf(';');
+        }
+        addressList.append(QMessageAddress(QMessageAddress::Email, addresses));
+        message.setCc(addressList);
+    }
+
+    // Bcc
+    if (modestMessage.bcc.size() > 0) {
+        addressList.clear();
+        addresses = modestMessage.bcc;
+        addressEnds = addresses.indexOf(';');
+        while (addressEnds > 0) {
+            addressList.append(QMessageAddress(QMessageAddress::Email, addresses.left(addressEnds)));
+            addresses.remove(0,addressEnds+1);
+            addressEnds = addresses.indexOf(';');
+        }
+        addressList.append(QMessageAddress(QMessageAddress::Email, addresses));
+        message.setBcc(addressList);
+    }
+
+    // Subject
+    message.setSubject(modestMessage.subject);
+
+    QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
+    QMessageContentContainerPrivate* container = QMessagePrivate::containerImplementation(message);
+
+    // Size
+    privateMessage->_size = modestMessage.size;
+
+    // Read Status
+    if (modestMessage.flags & MessagingModestMessageSeen) {
+        privateMessage->_status = privateMessage->_status | QMessage::Read;
+    }
+
+    // Message MIME type
+    QString fullMimeType = modestMessage.mimeType;
+    int slashIndex = fullMimeType.indexOf('/');
+    QByteArray mimeType = fullMimeType.left(slashIndex).toAscii();
+    QByteArray mimeSubType = fullMimeType.mid(slashIndex+1).toAscii();
+    container->_type = mimeType.data();
+    container->_subType = mimeSubType.data();
+
+    // Modest specific url
+    privateMessage->_url = modestMessage.url;
+
+    return message;
+}
+
+void ModestEngine::appendAttachmentToMessage(QMessage& message, QMessageContentContainer& attachment) const
+{
+    QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
+    QMessageContentContainerPrivate* container = QMessagePrivate::containerImplementation(message);
+
+    if (container->_attachments.isEmpty()) {
+        QMessageContentContainerId existingBodyId(message.bodyId());
+        if (existingBodyId == QMessageContentContainerPrivate::bodyContentId()) {
+            // The body content is in the message itself - move it to become the first attachment
+            QMessageContentContainer newBody(message);
+            QMessageContentContainerPrivate::implementation(newBody)->setDerivedMessage(0);
+
+            container->setContentType("multipart", "mixed", "");
+            privateMessage->_bodyId = container->prependContent(newBody);
+        } else {
+            // This message is now multipart
+            container->setContentType("multipart", "mixed", "");
+        }
+
+        container->_available = true;
+    }
+
+    container->appendContent(attachment);
+
+    bool haveAttachments = !container->_attachments.isEmpty();
+    message.setStatus(QMessage::HasAttachments,haveAttachments);
+
+    privateMessage->_modified = true;
+}
+
+bool ModestEngine::removeMessage(const QMessageId &id, QMessageManager::RemovalOption option)
+{
+    QMessage msg = message(id);
+    QMessagePrivate* privateMessage = QMessagePrivate::implementation(msg);
+    m_ModestDBusInterface->call(MODEST_DBUS_METHOD_DELETE_MESSAGE, privateMessage->_url);
+    return true;
 }
 
 void ModestEngine::filterMessages(QMessageIdList messageIds, QMessageFilterPrivate::SortedMessageFilterList filterList, int start) const
@@ -1397,13 +1651,20 @@ ModestEngine::sendEmailCallEnded(QDBusPendingCallWatcher *watcher)
 void ModestEngine::folderUpdatedSlot(QDBusMessage msg)
 {
     QList<QVariant> arguments = msg.arguments();
-    QMessageAccountId accountId = QMessageAccountId("MO_"+escapeString(arguments.takeFirst().toString()));
-    QString folder = arguments.takeFirst().toString();
-    QString protocol = accountEmailProtocolAsString(accountId);
-    if ((protocol == "pop") && (folder == "INBOX")) {
-        folder = "cache";
+    QString modestAccountId = arguments.takeFirst().toString();
+    QString modestFolderId = arguments.takeFirst().toString();
+    QMessageFolderId updatedFolderId;
+
+    if (modestAccountId == "local_folders") {
+        updatedFolderId = QMessageFolderId("LOCAL&maildir&"+modestFolderId);
+    } else {
+        QMessageAccountId accountId = QMessageAccountId("MO_"+escapeString(modestAccountId));
+        QString protocol = accountEmailProtocolAsString(accountId);
+        if ((protocol == "pop") && (modestFolderId == "INBOX")) {
+            modestFolderId = "cache";
+        }
+        updatedFolderId = QMessageFolderId(accountId.toString()+"&"+protocol+"&"+modestFolderId);
     }
-    QMessageFolderId updatedFolderId = QMessageFolderId(accountId.toString()+"&"+protocol+"&"+folder);
 
     int messagesPerAccount = 5;
     QDBusPendingCall pendingCall = m_ModestDBusInterface->asyncCall(MODEST_DBUS_METHOD_GET_UNREAD_MESSAGES,
@@ -1422,16 +1683,35 @@ void ModestEngine::pendingGetUnreadMessagesFinishedSlot(QDBusPendingCallWatcher*
     QList<ModestAccountsUnreadMessagesDBusStruct> accountsWithUnreadMessages;
     argument >> accountsWithUnreadMessages;
 
-    QMessageFolderId folderId = QMessageFolderId(pendingCallWatcher->property("folderId").toString());
-    QDateTime now = QDateTime::currentDateTime();
+    bool setOnlyDates = false;
+    if (pendingCallWatcher->property("setOnlyDates").isValid()) {
+        setOnlyDates = true;
+    }
+    QMessageFolderId folderId;
+    if (pendingCallWatcher->property("folderId").isValid()) {
+        folderId = QMessageFolderId(pendingCallWatcher->property("folderId").toString());
+    }
 
     for (int i=0; i < accountsWithUnreadMessages.count(); i++) {
+        QDateTime newLatestTimeStamp;
+        QDateTime latestTimeStamp = accountsLatestTimestamp.take(accountsWithUnreadMessages[i].accountId);
         for (int j=0; j < accountsWithUnreadMessages[i].unreadMessages.count(); j++) {
             ModestUnreadMessageDBusStruct unreadMessage = accountsWithUnreadMessages[i].unreadMessages[j];
             QDateTime time = QDateTime::fromTime_t(unreadMessage.timeStamp);
-            if (time.secsTo(now) < 60) {
-                searchNewMessages(unreadMessage.subject, QString(), time, time, MODEST_DBUS_SEARCH_SUBJECT, 0);
+            if (time > newLatestTimeStamp) {
+                newLatestTimeStamp = time;
             }
+            if (!setOnlyDates) {
+                if (time > latestTimeStamp) {
+                    searchNewMessages(unreadMessage.subject, QString(), time, time, MODEST_DBUS_SEARCH_SUBJECT, 0);
+                }
+            }
+        }
+        if (newLatestTimeStamp.isValid()) {
+            accountsLatestTimestamp.remove(accountsWithUnreadMessages[i].accountId);
+            accountsLatestTimestamp.insert(accountsWithUnreadMessages[i].accountId, newLatestTimeStamp);
+        } else {
+            accountsLatestTimestamp.insert(accountsWithUnreadMessages[i].accountId, QDateTime::currentDateTime());
         }
     }
 }
@@ -1471,30 +1751,78 @@ void ModestEngine::pendingSearchFinishedSlot(QDBusPendingCallWatcher* pendingCal
     argument >> messages;
 
     for (int i=0; i < messages.count(); i++) {
-        notification(QMessageFolderId(), messageIdFromModestMessageId(messages[i].id), ModestEngine::Added);
+        notification(messageIdFromModestMessageId(messages[i].id), ModestEngine::Added);
     }
 }
 
 void ModestEngine::messageReadChangedSlot(QDBusMessage msg)
 {
     QString changedMessageId = msg.arguments().takeFirst().toString();
-    notification(QMessageFolderId(), messageIdFromModestMessageId(changedMessageId), ModestEngine::Updated);
+    notification(messageIdFromModestMessageId(changedMessageId), ModestEngine::Updated);
 }
 
-void ModestEngine::notification(const QMessageFolderId& folderId, const QMessageId& messageId,
-                                NotificationType notificationType) const
+QMessageManager::NotificationFilterId ModestEngine::registerNotificationFilter(QMessageStorePrivate& messageStore,
+                                                                               const QMessageFilter &filter)
 {
-qWarning() << "!***************** messageNotification BEGIN ******************";
-qWarning() << "         folderId : " << folderId.toString();
-qWarning() << "        messageId : " << messageId.toString();
-if (notificationType == ModestEngine::Added) {
-    qWarning() << "                    Added";
-} else if (notificationType == ModestEngine::Updated) {
-    qWarning() << "                    Updated";
-} else if (notificationType == ModestEngine::Removed) {
-    qWarning() << "                    Removed";
+    m_messageStore = &messageStore;
+
+    int filterId = ++m_filterId;
+    m_filters.insert(filterId, filter);
+    return filterId;
 }
-qWarning() << "!***************** messageNotification END ********************";
+
+void ModestEngine::unregisterNotificationFilter(QMessageManager::NotificationFilterId notificationFilterId)
+{
+    m_filters.remove(notificationFilterId);
+}
+
+void ModestEngine::notification(const QMessageId& messageId, NotificationType notificationType) const
+{
+    MessagingModestMessage modestMessage = messageFromModest(modestAccountIdFromMessageId(messageId),
+                                                             modestFolderIdFromMessageId(messageId),
+                                                             modestMessageIdFromMessageId(messageId));
+
+    QMessageManager::NotificationFilterIdSet matchingFilters;
+
+    // Copy the filter map to protect against modification during traversal
+    QMap<int, QMessageFilter> filters(m_filters);
+    QMap<int, QMessageFilter>::const_iterator it = filters.begin(), end = filters.end();
+    QMessage message;
+    bool messageRetrieved = false;
+    bool unableToReadAndFilterMessage = false;
+    for ( ; it != end; ++it) {
+        const QMessageFilter &filter(it.value());
+
+        if (filter.isEmpty()) {
+            // Empty filter matches to all messages
+            matchingFilters.insert(it.key());
+        } else {
+            QMessageFilterPrivate* privateMessageFilter = QMessageFilterPrivate::implementation(filter);
+            if (!messageRetrieved) {
+                message = this->message(messageId);
+                if (message.type() == QMessage::NoType) {
+                    unableToReadAndFilterMessage = true;
+                    matchingFilters.clear();
+                    break;
+                }
+            } else {
+                messageRetrieved = true;
+            }
+            if (privateMessageFilter->filter(message)) {
+                matchingFilters.insert(it.key());
+            }
+        }
+    }
+
+    if (matchingFilters.count() > 0) {
+        if (notificationType == ModestEngine::Added) {
+            m_messageStore->messageAdded(messageId, matchingFilters);
+        } else if (notificationType == ModestEngine::Updated) {
+            m_messageStore->messageUpdated(messageId, matchingFilters);
+        } else if (notificationType == ModestEngine::Removed) {
+            m_messageStore->messageRemoved(messageId, matchingFilters);
+        }
+    }
 }
 
 QMessageAccountId ModestEngine::accountIdFromModestMessageId(const QString& modestMessageId) const
@@ -1587,8 +1915,39 @@ QString ModestEngine::modestFolderUriFromFolderId(const QMessageFolderId& folder
 {
 }
 
+QString ModestEngine::modestAccountIdFromMessageId(const QMessageId& messageId) const
+{
+    QString id = messageId.toString();
+    int protocolBegin = id.indexOf('&');
+    int protocolEnd = id.lastIndexOf('&');
+    QString protocol = id.mid(protocolBegin+1,protocolEnd-protocolBegin-1);
+    if (protocol == "maildir") {
+        return "local_folders";
+    }
+    return unescapeString(id.left(protocolBegin).remove(0,3));
+}
+
+QString ModestEngine::modestFolderIdFromMessageId(const QMessageId& messageId) const
+{
+    QString id = messageId.toString();
+
+    int protocolBegin = id.indexOf('&');
+    int protocolEnd = id.lastIndexOf('&');
+    int folderEnd = id.lastIndexOf('/');
+
+    QString protocol = id.mid(protocolBegin+1,protocolEnd-protocolBegin-1);
+    id = id.mid(protocolEnd+1,folderEnd-protocolEnd-1);
+    if ((protocol == "pop") && (id == "cache")) {
+        id = "INBOX";
+    }
+
+    return id;
+}
+
 QString ModestEngine::modestMessageIdFromMessageId(const QMessageId& messageId) const
 {
+    QString id = messageId.toString();
+    return id.mid(id.lastIndexOf('/')+1);
 }
 
 QMessageAccountId ModestEngine::accountIdFromModestAccountId(const QString& accountId) const
@@ -1636,10 +1995,23 @@ QMessageId ModestEngine::messageIdFromModestMessageFilePath(const QString& messa
             QMessageAccountId accountId = value.id();
             QString rootFolder = accountRootFolder(accountId);
             if (filePath.startsWith(rootFolder)) {
-                messageIdString = accountId.toString()+"&"+accountEmailProtocolAsString(accountId)+"&";
+                QString protocol = accountEmailProtocolAsString(accountId);
+                messageIdString = accountId.toString()+"&"+protocol+"&";
                 filePath.remove(0,rootFolder.length()+1);
                 filePath.remove("/subfolders");
                 messageIdString += filePath.left(filePath.lastIndexOf('.'));
+                if (protocol == "pop") {
+                    QDir dir(messageFilePath);
+                    dir.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot);
+                    QFileInfoList dirs = dir.entryInfoList();
+                    if (dirs.count() > 0) {
+                        QString fileName = dirs[0].fileName();
+                        // Remove folder that contains actual message
+                        messageIdString = messageIdString.left(messageIdString.lastIndexOf('/')+1);
+                        // Add message name
+                        messageIdString = messageIdString+fileName;
+                    }
+                }
             }
         }
     }

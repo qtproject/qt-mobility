@@ -135,6 +135,13 @@ public:
     bool _modified;
     QMessageContentContainerId _bodyId;
 
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    QString _url;
+
+    static QMessagePrivate* implementation(const QMessage &message);
+    static QMessageContentContainerPrivate* containerImplementation(const QMessage &message);
+#endif
+
     static QMessage from(const QMessageId &id);
     static QString senderName(const QMessage &message);
     static void setSenderName(const QMessage &message, const QString &senderName);

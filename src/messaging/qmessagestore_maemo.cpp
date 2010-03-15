@@ -73,6 +73,22 @@ void QMessageStorePrivate::initialize(QMessageStore *store)
     p_ptr = new QMessageStorePrivatePlatform(this, store);
 }
 
+void QMessageStorePrivate::messageAdded(const QMessageId &id, const QMessageManager::NotificationFilterIdSet &matchingFilterIds)
+{
+    emit q_ptr->messageAdded(id, matchingFilterIds);
+}
+
+void QMessageStorePrivate::messageRemoved(const QMessageId &id, const QMessageManager::NotificationFilterIdSet &matchingFilterIds)
+{
+    emit q_ptr->messageRemoved(id, matchingFilterIds);
+}
+
+void QMessageStorePrivate::messageUpdated(const QMessageId &id, const QMessageManager::NotificationFilterIdSet &matchingFilterIds)
+{
+    emit q_ptr->messageUpdated(id, matchingFilterIds);
+}
+
+
 Q_GLOBAL_STATIC(QMessageStorePrivate,data);
 
 QMessageStore::QMessageStore(QObject *parent)
@@ -189,9 +205,7 @@ int QMessageStore::countAccounts(const QMessageAccountFilter& filter) const
 
 bool QMessageStore::removeMessage(const QMessageId& id, QMessageManager::RemovalOption option)
 {
-    Q_UNUSED(id)
-    Q_UNUSED(option)
-    return false; // stub
+    return ModestEngine::instance()->removeMessage(id, option);
 }
 
 bool QMessageStore::removeMessages(const QMessageFilter& filter, QMessageManager::RemovalOption option)
@@ -215,8 +229,7 @@ bool QMessageStore::updateMessage(QMessage *m)
 
 QMessage QMessageStore::message(const QMessageId& id) const
 {
-    Q_UNUSED(id)
-    return QMessage(); // stub
+    return ModestEngine::instance()->message(id);
 }
 
 QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
@@ -233,13 +246,12 @@ QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
 
 QMessageManager::NotificationFilterId QMessageStore::registerNotificationFilter(const QMessageFilter &filter)
 {
-    Q_UNUSED(filter)
-    return 0; // stub
+    return ModestEngine::instance()->registerNotificationFilter(*data(), filter);
 }
 
 void QMessageStore::unregisterNotificationFilter(QMessageManager::NotificationFilterId notificationFilterId)
 {
-    Q_UNUSED(notificationFilterId)
+    ModestEngine::instance()->unregisterNotificationFilter(notificationFilterId);
 }
 
 

@@ -61,6 +61,12 @@ public:
 
     void initialize(QMessageStore *store);
 
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    void messageAdded(const QMessageId &id, const QMessageManager::NotificationFilterIdSet &matchingFilterIds);
+    void messageRemoved(const QMessageId &id, const QMessageManager::NotificationFilterIdSet &matchingFilterIds);
+    void messageUpdated(const QMessageId &id, const QMessageManager::NotificationFilterIdSet &matchingFilterIds);
+#endif 
+
     QMessageStore *q_ptr;
     QMessageStorePrivatePlatform *p_ptr;
 

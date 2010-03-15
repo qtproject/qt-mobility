@@ -310,19 +310,55 @@ bool QMessageService::retrieve(const QMessageId &messageId, const QMessageConten
 
 bool QMessageService::show(const QMessageId& id)
 {
-    Q_UNUSED(id)
-    return false; // stub
+    if (d_ptr->_active) {
+        return false;
+    }
+
+    if (!id.isValid()) {
+        d_ptr->_error = QMessageManager::InvalidId;
+        return false;
+    }
+
+    d_ptr->_active = true;
+    d_ptr->_error = QMessageManager::NoError;
+
+    bool retVal = true;
+    d_ptr->_state = QMessageService::ActiveState;
+    emit stateChanged(d_ptr->_state);
+
+    retVal = ModestEngine::instance()->showMessage(id);
+
+    d_ptr->setFinished(retVal);
+    return retVal;
 }
 
 bool QMessageService::exportUpdates(const QMessageAccountId &id)
 {
-    Q_UNUSED(id)
-    return false; // stub
+    if (d_ptr->_active) {
+        return false;
+    }
+
+    if (!id.isValid()) {
+        d_ptr->_error = QMessageManager::InvalidId;
+        return false;
+    }
+
+    d_ptr->_active = true;
+    d_ptr->_error = QMessageManager::NoError;
+
+    bool retVal = true;
+    d_ptr->_state = QMessageService::ActiveState;
+    emit stateChanged(d_ptr->_state);
+
+    retVal = ModestEngine::instance()->exportUpdates(id);
+
+    d_ptr->setFinished(retVal);
+    return retVal;
 }
 
 QMessageService::State QMessageService::state() const
 {
-    return InactiveState; // stub
+    return d_ptr->_state;
 }
 
 void QMessageService::cancel()
@@ -331,7 +367,7 @@ void QMessageService::cancel()
 
 QMessageManager::Error QMessageService::error() const
 {
-    return QMessageManager::NoError;
+    return d_ptr->_error;
 }
 
 QTM_END_NAMESPACE
