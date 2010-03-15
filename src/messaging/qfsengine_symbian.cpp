@@ -46,6 +46,8 @@
 #include "symbianhelpers_p.h"
 #include "qmessageaccount.h"
 #include "qmessageaccount_p.h"
+#include "qmessageaccountfilter.h"
+#include "qmessageaccountfilter_p.h"
 
 #include <emailinterfacefactory.h>
 #include <QTextCodec>
@@ -88,6 +90,32 @@ QMessageAccountIdList CFSEngine::queryAccounts(const QMessageAccountFilter &filt
 
     TRAPD(err, updateEmailAccountsL());
     
+    QMessageAccountFilterPrivate* privateMessageAccountFilter = QMessageAccountFilterPrivate::implementation(filter);
+    if (filter.isEmpty()) {
+        if (!privateMessageAccountFilter->_notFilter) {
+            // All accounts are returned for empty filter
+            foreach (QMessageAccount value, m_accounts) {
+                accountIds.append(value.id());
+            }
+        }
+    } else {
+        if (privateMessageAccountFilter->_valid) {
+            foreach (QMessageAccount value, m_accounts) {
+                if (privateMessageAccountFilter->filter(value)) {
+                    accountIds.append(value.id());
+                }
+            }
+        } else {
+            foreach (QMessageAccount value, m_accounts) {
+                if (privateMessageAccountFilter->filter(value)) {
+                    accountIds.append(value.id());
+                }
+            }
+        }
+    }
+
+    //TODO: Sort accounts according to QMessageAccountSortOrder
+    
     return accountIds;
 }
 
@@ -98,7 +126,9 @@ int CFSEngine::countAccounts(const QMessageAccountFilter &filter) const
 
 QMessageAccount CFSEngine::account(const QMessageAccountId &id) const
 {
-    return QMessageAccount();
+    TRAPD(err, updateEmailAccountsL());
+    Q_UNUSED(err)
+    return m_accounts[id.toString()];
 }
 
 QMessageAccountId CFSEngine::defaultAccount(QMessage::Type type) const
