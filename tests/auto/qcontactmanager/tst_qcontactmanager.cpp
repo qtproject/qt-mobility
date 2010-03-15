@@ -1156,7 +1156,7 @@ void tst_QContactManager::invalidManager()
     QVERIFY(manager.error() == QContactManager::NotSupportedError);
 
     QVERIFY(!manager.removeContacts(0, &errorMap));
-    QVERIFY(errorMap.count() == 0);
+    QVERIFY(errorMap.count() == 1);
     QVERIFY(manager.error() == QContactManager::BadArgumentError);
 
     QList<QContactLocalId> idlist;
