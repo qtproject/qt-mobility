@@ -63,7 +63,7 @@ public:
 
     // this enum is DEPRECATED - use QContactRelationship::Role instead!
     // enum Q_DECL_VARIABLE_DEPRECATED Role {
-    enum Q_DECL_VARIABLE_DEPRECATED Role {
+    enum Role {
         First = 0,
         Second,
         Either
