@@ -9,7 +9,9 @@ include(../../../common.pri)
 
 
 DEPENDPATH += ../xqsettingsmanager_symbian
-INCLUDEPATH += ../xqsettingsmanager_symbian
+INCLUDEPATH += ../xqsettingsmanager_symbian\
+               $${EPOCROOT}epoc32\include\platform
+
 DEFINES += XQSETTINGSMANAGER_NO_LIBRARY
 DEFINES += XQSETTINGSMANAGER_NO_TRANSACTIONS
 DEFINES += XQSETTINGSMANAGER_NO_CENREPKEY_CREATION_DELETION
