@@ -338,7 +338,6 @@ RDFSelect prepareEmailAddressesQuery(RDFVariable &rdfcontact1, bool forAffiliati
  */
 RDFSelect prepareIMAddressesQuery(RDFVariable  &contact)
 {
-    ::tracker()->setVerbosity(4);
     RDFSelect queryidsimacccounts;
     // this establishes query graph relationship: imaddress that we want is a property in contact
     RDFVariable imaddress = contact.property<nco::hasIMAddress>();
