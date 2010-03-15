@@ -16,7 +16,7 @@ symbian:
     HEADERS += $$SYMBIAN_HEADERS
     
     SOURCES += $$SYMBIAN_SOURCES \
-               ut_cntfilteringdbms.cpp
+               tst_cntfilteringdbms.cpp
 
     CONFIG += mobility
     MOBILITY = contacts

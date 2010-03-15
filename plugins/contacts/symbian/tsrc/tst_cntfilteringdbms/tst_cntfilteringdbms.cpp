@@ -57,13 +57,13 @@ Q_DECLARE_METATYPE(QContactFilter *)
 Q_DECLARE_METATYPE(CntAbstractContactFilter::FilterSupport)
 Q_DECLARE_METATYPE(QContactIds)
 
-class ut_cntfilteringdbms : public QObject
+class tst_cntfilteringdbms : public QObject
 {
 Q_OBJECT
 
 public:
-    ut_cntfilteringdbms();
-    virtual ~ut_cntfilteringdbms();
+    tst_cntfilteringdbms();
+    virtual ~tst_cntfilteringdbms();
 
 private slots:  // Init & cleanup
 	void initTestCase();
@@ -85,7 +85,7 @@ private:
     QList<QContactFilter> m_contactFilters;
 };
 
-ut_cntfilteringdbms::ut_cntfilteringdbms()
+tst_cntfilteringdbms::tst_cntfilteringdbms()
 {
     TRAPD(error, m_contactDatabase.reset(CContactDatabase::OpenL()));
     QVERIFY(error == KErrNone);
@@ -93,23 +93,23 @@ ut_cntfilteringdbms::ut_cntfilteringdbms()
     m_contactManager.reset(new QContactManager("symbian"));
 }
 
-ut_cntfilteringdbms::~ut_cntfilteringdbms()
+tst_cntfilteringdbms::~tst_cntfilteringdbms()
 {
  
 }
 
-void ut_cntfilteringdbms::initTestCase()
+void tst_cntfilteringdbms::initTestCase()
 {
     // Remove all contacts
     QList<QContactLocalId> contacts = m_contactManager->contactIds();
     m_contactManager->removeContacts(&contacts, 0);
 }
 
-void ut_cntfilteringdbms::cleanupTestCase()
+void tst_cntfilteringdbms::cleanupTestCase()
 {
 }
 
-void ut_cntfilteringdbms::filterContacts()
+void tst_cntfilteringdbms::filterContacts()
 {
     QFETCH(QContactFilter *, filter);
     QFETCH(CntAbstractContactFilter::FilterSupport, filterSupport);
@@ -129,7 +129,7 @@ void ut_cntfilteringdbms::filterContacts()
     }    
 }
 
-QContactLocalId ut_cntfilteringdbms::addContact(QString firstName, QString lastName, QString phoneNumber)
+QContactLocalId tst_cntfilteringdbms::addContact(QString firstName, QString lastName, QString phoneNumber)
 {
     QContact c;
     
@@ -147,7 +147,7 @@ QContactLocalId ut_cntfilteringdbms::addContact(QString firstName, QString lastN
     return c.localId();
 }
 
-void ut_cntfilteringdbms::addFilterData()
+void tst_cntfilteringdbms::addFilterData()
 {
     QTest::addColumn<QContactFilter *>("filter");
     QTest::addColumn<CntAbstractContactFilter::FilterSupport>("filterSupport");
@@ -213,7 +213,7 @@ void ut_cntfilteringdbms::addFilterData()
 
 
 
-void ut_cntfilteringdbms::addNewRow(QString defName, QString fieldName, int flags, CntAbstractContactFilter::FilterSupport filterSupport, QString filterCriterion, QList<QContactLocalId> matchingContacts)
+void tst_cntfilteringdbms::addNewRow(QString defName, QString fieldName, int flags, CntAbstractContactFilter::FilterSupport filterSupport, QString filterCriterion, QList<QContactLocalId> matchingContacts)
 {
     QString s;
     foreach(QContactLocalId id, matchingContacts)
@@ -229,6 +229,6 @@ void ut_cntfilteringdbms::addNewRow(QString defName, QString fieldName, int flag
     QTest::newRow(title.toAscii().constData()) << (QContactFilter*) f << filterSupport << matchingContacts;
 }
 
-QTEST_MAIN(ut_cntfilteringdbms);
-#include "ut_cntfilteringdbms.moc"
+QTEST_MAIN(tst_cntfilteringdbms);
+#include "tst_cntfilteringdbms.moc"
 
