@@ -58,9 +58,8 @@ QGstreamerCameraExposureControl::~QGstreamerCameraExposureControl()
 
 QCamera::FlashModes QGstreamerCameraExposureControl::flashMode() const
 {
-    GstPhotoSettings config;
-    gst_photography_get_config(GST_PHOTOGRAPHY(&m_camerabin), &config);
-    GstFlashMode flashMode = config.flash_mode;
+    GstFlashMode flashMode;
+    gst_photography_get_flash_mode(GST_PHOTOGRAPHY(&m_camerabin), &flashMode);
 
     QCamera::FlashModes modes;
     switch (flashMode) {
@@ -78,18 +77,16 @@ QCamera::FlashModes QGstreamerCameraExposureControl::flashMode() const
 
 void QGstreamerCameraExposureControl::setFlashMode(QCamera::FlashModes mode)
 {
-    GstPhotoSettings config;
-    gst_photography_get_config(GST_PHOTOGRAPHY(&m_camerabin), &config);
+    GstFlashMode flashMode;
+    gst_photography_get_flash_mode(GST_PHOTOGRAPHY(&m_camerabin), &flashMode);
 
-    GstFlashMode flashMode = config.flash_mode;
     if (mode.testFlag(QCamera::FlashAuto)) flashMode = GST_PHOTOGRAPHY_FLASH_MODE_AUTO;
     else if (mode.testFlag(QCamera::FlashOff)) flashMode = GST_PHOTOGRAPHY_FLASH_MODE_OFF;
     else if (mode.testFlag(QCamera::FlashOn)) flashMode = GST_PHOTOGRAPHY_FLASH_MODE_ON;
     else if (mode.testFlag(QCamera::FlashFill)) flashMode = GST_PHOTOGRAPHY_FLASH_MODE_FILL_IN;
     else if (mode.testFlag(QCamera::FlashRedEyeReduction)) flashMode = GST_PHOTOGRAPHY_FLASH_MODE_RED_EYE;
 
-    config.flash_mode = flashMode;
-    gst_photography_set_config(GST_PHOTOGRAPHY(&m_camerabin), &config);
+    gst_photography_set_flash_mode(GST_PHOTOGRAPHY(&m_camerabin), flashMode);
 }
 
 QCamera::FlashModes QGstreamerCameraExposureControl::supportedFlashModes() const
@@ -127,9 +124,8 @@ bool QGstreamerCameraExposureControl::isFlashReady() const
 
 QCamera::ExposureMode QGstreamerCameraExposureControl::exposureMode() const
 {
-    GstPhotoSettings config;
-    gst_photography_get_config(GST_PHOTOGRAPHY(&m_camerabin), &config);
-    GstSceneMode sceneMode = config.scene_mode;
+    GstSceneMode sceneMode;
+    gst_photography_get_scene_mode(GST_PHOTOGRAPHY(&m_camerabin), &sceneMode);
 
     switch (sceneMode) {
     case GST_PHOTOGRAPHY_SCENE_MODE_PORTRAIT: return QCamera::ExposurePortrait;
@@ -146,18 +142,20 @@ QCamera::ExposureMode QGstreamerCameraExposureControl::exposureMode() const
 
 void QGstreamerCameraExposureControl::setExposureMode(QCamera::ExposureMode mode)
 {
-    GstPhotoSettings config;
-    gst_photography_get_config(GST_PHOTOGRAPHY(&m_camerabin), &config);
-    GstSceneMode sceneMode = config.scene_mode;
+    GstSceneMode sceneMode;
+    gst_photography_get_scene_mode(GST_PHOTOGRAPHY(&m_camerabin), &sceneMode);
 
-    if (mode == QCamera::ExposureManual) sceneMode = GST_PHOTOGRAPHY_SCENE_MODE_MANUAL;
-    else if (mode == QCamera::ExposurePortrait) sceneMode = GST_PHOTOGRAPHY_SCENE_MODE_PORTRAIT;
-    else if (mode == QCamera::ExposureSports) sceneMode = GST_PHOTOGRAPHY_SCENE_MODE_SPORT;
-    else if (mode == QCamera::ExposureNight) sceneMode = GST_PHOTOGRAPHY_SCENE_MODE_NIGHT;
-    else if (mode == QCamera::ExposureAuto) sceneMode = GST_PHOTOGRAPHY_SCENE_MODE_AUTO;
+    switch (mode) {
+    case QCamera::ExposureManual: sceneMode = GST_PHOTOGRAPHY_SCENE_MODE_MANUAL; break;
+    case QCamera::ExposurePortrait: sceneMode = GST_PHOTOGRAPHY_SCENE_MODE_PORTRAIT; break;
+    case QCamera::ExposureSports: sceneMode = GST_PHOTOGRAPHY_SCENE_MODE_SPORT; break;
+    case QCamera::ExposureNight: sceneMode = GST_PHOTOGRAPHY_SCENE_MODE_NIGHT; break;
+    case QCamera::ExposureAuto: sceneMode = GST_PHOTOGRAPHY_SCENE_MODE_AUTO; break;
+    default:
+        break;
+    }
 
-    config.scene_mode = sceneMode;
-    gst_photography_set_config(GST_PHOTOGRAPHY(&m_camerabin), &config);
+    gst_photography_set_scene_mode(GST_PHOTOGRAPHY(&m_camerabin), sceneMode);
 }
 
 QCamera::ExposureModes QGstreamerCameraExposureControl::supportedExposureModes() const
@@ -178,17 +176,14 @@ QCamera::ExposureModes QGstreamerCameraExposureControl::supportedExposureModes()
 
 qreal QGstreamerCameraExposureControl::exposureCompensation() const
 {
-    GstPhotoSettings config;
-    gst_photography_get_config(GST_PHOTOGRAPHY(&m_camerabin), &config);
-    return config.ev_compensation;
+    gfloat ev;
+    gst_photography_get_ev_compensation(GST_PHOTOGRAPHY(&m_camerabin), &ev);
+    return ev;
 }
 
 void QGstreamerCameraExposureControl::setExposureCompensation(qreal ev)
 {
-    GstPhotoSettings config;
-    gst_photography_get_config(GST_PHOTOGRAPHY(&m_camerabin), &config);
-    config.ev_compensation = ev;
-    gst_photography_set_config(GST_PHOTOGRAPHY(&m_camerabin), &config);
+    gst_photography_set_ev_compensation(GST_PHOTOGRAPHY(&m_camerabin), ev);
 }
 
 QCamera::MeteringMode QGstreamerCameraExposureControl::meteringMode() const
@@ -222,7 +217,7 @@ QList<int> QGstreamerCameraExposureControl::supportedIsoSensitivities(bool *cont
 
 void QGstreamerCameraExposureControl::setManualIsoSensitivity(int iso)
 {
-    gst_photography_get_iso_speed(GST_PHOTOGRAPHY(&m_camerabin), (guint*)&iso);
+    gst_photography_set_iso_speed(GST_PHOTOGRAPHY(&m_camerabin), iso);
 }
 
 void QGstreamerCameraExposureControl::setAutoIsoSensitivity()
