@@ -80,6 +80,12 @@ void QMessagePrivate::setStandardFolder(QMessage& message, QMessage::StandardFol
     message.d_ptr->_modified = true;
 }
 
+QMessagePrivate* QMessagePrivate::implementation(const QMessage &message)
+{
+    return message.d_ptr;
+}
+
+
 QMessage::QMessage()
  : d_ptr(new QMessagePrivate(this))
 {
