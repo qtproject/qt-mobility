@@ -7,8 +7,6 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
 ** You may use this file in accordance with the terms and conditions
 ** contained in the Technology Preview License Agreement accompanying
 ** this package.
@@ -39,67 +37,38 @@
 **
 ****************************************************************************/
 
-#include <QApplication>
-#include <QDebug>
-#include <QFileInfo>
-#include <QString>
-#include <QUrl>
-#include <QtCore>
+#ifndef NOTE_H
+#define NOTE_H
 
-//! [0]
-//Includes for using the QML objects
-#include <QmlView>
-#include <QmlContext>
+#include <QObject>
+#include <QDateTime>
 
-//Includes for using the service framework
-#include <qserviceinterfacedescriptor.h>
-#include <qservicemanager.h>
-//! [0]
-
-#include "sfwexample.h"
-
-void usage()
+class Note : public QObject
 {
-    qWarning() << "Usage: sfw-kinetic-example.qml";
-}
+    Q_OBJECT
+    Q_PROPERTY(int index READ index WRITE setIndex)
+    Q_PROPERTY(QString message READ message WRITE setMessage)
+    Q_PROPERTY(QDateTime alarm READ alarm WRITE setAlarm)
 
-int main(int argc, char** argv)
-{
-    QApplication app(argc, argv);
+public:
+    Note(QObject *parent =0) : QObject(parent) {}
+    ~Note() {}
 
-    QString qmlFile;
-    for (int j = 1; j < argc; j++) {
-        QString arg = argv[j];
-        if (arg.startsWith(QChar('-')))
-            continue;
-        else
-            qmlFile = arg;
-    }
+public slots:
+    int index() const { return m_index; }
+    void setIndex(int index) { m_index = index; }
 
-    if (qmlFile.isEmpty()) {
-        usage();
-        return 1;
-    }
+    QString message() const { return m_message; }
+    void setMessage(const QString &message) { m_message = message; }
 
-    //! [1]
-    QUrl url(qmlFile);
-    QFileInfo fi(qmlFile);
-    if (fi.exists())
-        url = QUrl::fromLocalFile(fi.absoluteFilePath());
-    else
-        return 1;
+    QDateTime alarm() const { return m_alarm; }
+    void setAlarm(const QDateTime &alarm) { m_alarm = alarm; }
 
-    QmlView canvas;
-    canvas.setSource(url);
-    //! [1]
+private:
+    int m_index;
+    QString m_message;
+    QDateTime m_alarm;
+};
 
-    //! [2]
-    //...
-    //! [2]
+#endif
 
-    //! [3]
-    canvas.execute();
-    canvas.show();
-    //! [3]
-
-    return app.exec();}

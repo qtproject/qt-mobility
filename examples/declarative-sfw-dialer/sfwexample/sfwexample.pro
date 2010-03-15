@@ -1,5 +1,5 @@
 TEMPLATE=app
-TARGET=sfw-kinetic-example
+TARGET=declarative-sfw-dialer
 INCLUDEPATH += ../../../src/serviceframework
 
 include(../../examples.pri)
@@ -7,12 +7,14 @@ include(../../examples.pri)
 QT += gui declarative
 
 # Input 
-HEADERS += ../sfwexample.h
-SOURCES += ../sfwexample.cpp \
-           ../main.cpp
+HEADERS += sfwexample.h
+SOURCES += sfwexample.cpp \
+           main.cpp
 
 CONFIG += mobility
 MOBILITY = serviceframework
+
+RESOURCES += resource.qrc
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

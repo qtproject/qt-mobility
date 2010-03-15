@@ -7,8 +7,6 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
 ** You may use this file in accordance with the terms and conditions
 ** contained in the Technology Preview License Agreement accompanying
 ** this package.
@@ -39,20 +37,59 @@
 **
 ****************************************************************************/
 
-#include <QApplication>
-#include "todotool.h"
+#ifndef NOTE_H
+#define NOTE_H
 
-int main(int argc, char *argv[])
+#include <QObject>
+#include <QDateTime>
+#include <QtDeclarative/qdeclarative.h>
+
+class Note : public QObject
 {
-    QApplication app(argc, argv);
-    ToDoTool dialog;
-    
-#ifdef Q_OS_SYMBIAN
-    dialog.showMaximused();
-#else
-    dialog.show();
-#endif
+    Q_OBJECT
+    Q_PROPERTY(int index READ index WRITE setIndex)
+    Q_PROPERTY(QString message READ message WRITE setMessage)
+    Q_PROPERTY(QDateTime alarm READ alarm WRITE setAlarm)
 
-    return app.exec();
-}
+public:
+    Note(QObject *parent =0) : QObject(parent) {}
+    ~Note() {}
+
+public slots:
+    int index() const { return m_index; }
+    void setIndex(int index) { m_index = index; }
+
+    QString message() const { return m_message; }
+    void setMessage(const QString &message) { m_message = message; }
+
+    QDateTime alarm() const { return m_alarm; }
+    void setAlarm(const QDateTime &alarm) { m_alarm = alarm; }
+
+private:
+    int m_index;
+    QString m_message;
+    QDateTime m_alarm;
+};
+
+//QML_DECLARE_TYPE(Note)
+
+class NoteSet : public QObject
+{
+    Q_OBJECT
+    Q_PROPERTY(QList<Note*>* noteset READ noteset WRITE setnoteset)
+
+public:
+    NoteSet(QObject *parent =0) : QObject(parent) {};
+    ~NoteSet() {};
+
+    QList<Note*> *noteset() { return &m_noteset; }
+    void setnoteset(QList<Note*>* set) { m_noteset = *set; }
+
+private:
+    QList<Note*> m_noteset;
+};
+
+//QML_DECLARE_TYPE(NoteSet)
+
+#endif
 

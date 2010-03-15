@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,15 +39,20 @@
 **
 ****************************************************************************/
 
-#ifndef CPPTOOLS_GLOBAL_H
-#define CPPTOOLS_GLOBAL_H
+#include <QApplication>
+#include "sfwnotes.h"
 
-#include <QtGlobal>
-
-#if defined(CPPTOOLS_LIBRARY)
-#  define CPPTOOLS_EXPORT Q_DECL_EXPORT
+int main(int argc, char *argv[])
+{
+    QApplication app(argc, argv);
+    ToDoTool dialog;
+    
+#ifdef Q_OS_SYMBIAN
+    dialog.showMaximused();
 #else
-#  define CPPTOOLS_EXPORT Q_DECL_IMPORT
+    dialog.show();
 #endif
 
-#endif // CPPTOOLS_GLOBAL_H
+    return app.exec();
+}
+

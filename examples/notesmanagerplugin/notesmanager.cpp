@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -9,11 +9,9 @@
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
 ** This file contains pre-release code and may not be distributed.
-** You may use this fi
-#include <QList>le in accordance with the terms and conditions
+** You may use this file in accordance with the terms and conditions
 ** contained in the Technology Preview License Agreement accompanying
 ** this package.
-#include <QSqlRecord>
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -22,8 +20,7 @@
 ** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
-*#include <QStringList>
- *
+**
 ** In addition, as a special exception, Nokia gives you certain additional
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
@@ -37,10 +34,10 @@
 **
 **
 **
+**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #include <QtCore>
 #include <QDebug>
 
@@ -49,6 +46,8 @@
 NotesManager::NotesManager(QObject *parent)
     : QObject(parent)
 {
+    m_search = "";
+
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName("todoDB");
     db.open();
@@ -67,8 +66,8 @@ void NotesManager::nextAlarm()
 {
     QSqlQuery alarmQuery("SELECT * FROM todolist WHERE date > DATETIME('now', 'localtime') ORDER BY date");
     if (alarmQuery.next()) { 
-        setAlarm(QDateTime::fromString(alarmQuery.value(2).toString(), "yyyy-MM-dd HH:mm:ss"));
-        setMessage(alarmQuery.value(1).toString());
+        setAlarmTime(QDateTime::fromString(alarmQuery.value(2).toString(), "yyyy-MM-dd HH:mm:ss"));
+        setAlarmMessage(alarmQuery.value(1).toString());
     }
 }
 
@@ -77,31 +76,30 @@ void NotesManager::checkAlarm()
     QString currStr = QDateTime::currentDateTime().toString(Qt::ISODate);
     QDateTime curr = QDateTime::fromString(currStr, Qt::ISODate);
 
-    //qDebug() << "CHECKING..." << getAlarm() << " against now " << curr;
-    if (getAlarm() == curr)
-        emit soundAlarm(getAlarm());
+    if (getAlarmTime() == curr)
+        emit soundAlarm(getAlarmTime());
 
     nextAlarm();
 }
 
-QDateTime NotesManager::getAlarm() const
+QDateTime NotesManager::getAlarmTime() const
 {
-    return m_alarm;
+    return m_alarmTime;
 }
 
-void NotesManager::setAlarm(const QDateTime& alarm)
+void NotesManager::setAlarmTime(const QDateTime& alarm)
 {
-    m_alarm = alarm;
+    m_alarmTime = alarm;
 }
 
-QString NotesManager::getMessage() const
+QString NotesManager::getAlarmMessage() const
 {
-    return m_message;
+    return m_alarmMessage;
 }
 
-void NotesManager::setMessage(const QString& message)
+void NotesManager::setAlarmMessage(const QString& message)
 {
-    m_message = message;
+    m_alarmMessage = message;
 }
 
 void NotesManager::addNote(const QString& note, const QDateTime& alarm)
@@ -115,24 +113,38 @@ void NotesManager::removeNote(int id)
     QSqlQuery query("DELETE FROM todolist WHERE id='" + QString::number(id) + "'");
 }
 
-QList<Note> NotesManager::getNotes(const QString& search) const
+void NotesManager::setSearch(const QString& search)
 {
-    QList<Note> list;
+    m_search = search;
+}
+
+QList<QObject*> NotesManager::getNotes(const QString& search)
+{
+    m_notes.clear();
+    setSearch(search);
 
     QString queryString = "SELECT * FROM todolist";
-    if (search != "") queryString += " WHERE notes LIKE '%" + search + "%'"; 
+    if (m_search != "") queryString += " WHERE notes LIKE '%" + m_search + "%'"; 
     queryString += " ORDER BY date";
 
     QSqlQuery query(queryString);
     while (query.next()) {
-        Note entry;
-        entry.index = query.value(0).toInt();
-        entry.message = query.value(1).toString();
-        entry.alert = QDateTime::fromString(query.value(2).toString(), "yyyy-MM-dd HH:mm:ss");
+        Note *entry = new Note(this);
+        entry->setIndex(query.value(0).toInt());
+        entry->setMessage(query.value(1).toString());
+        entry->setAlarm(QDateTime::fromString(query.value(2).toString(), "yyyy-MM-dd HH:mm:ss"));
 
-        list << entry;
+        m_notes << entry;
     }
-
-    return list;
+   
+    return m_notes;
 }
 
+
+#ifdef DECLARATIVE
+QDeclarativeListProperty<QObject> NotesManager::noteSet()
+{
+    m_notes = getNotes(m_search);
+    return QDeclarativeListProperty<QObject>(this, m_notes);
+}
+#endif

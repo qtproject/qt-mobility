@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,15 +39,27 @@
 **
 ****************************************************************************/
 
-#ifndef CPPTOOLS_GLOBAL_H
-#define CPPTOOLS_GLOBAL_H
+#include <QApplication>
+#include <QUrl>
+#include <QtCore>
+#include <QDeclarativeView>
+#include <qserviceinterfacedescriptor.h>
+#include <qservicemanager.h>
+#include <qdeclarative.h>
 
-#include <QtGlobal>
+#include "sfwnotes.h"
+#include "note.h"
 
-#if defined(CPPTOOLS_LIBRARY)
-#  define CPPTOOLS_EXPORT Q_DECL_EXPORT
-#else
-#  define CPPTOOLS_EXPORT Q_DECL_IMPORT
-#endif
+int main(int argc, char* argv[])
+{
+    QML_REGISTER_TYPE(QtSFW,1,0,Service, ServiceWrapper);
+    //QML_REGISTER_NOCREATE_TYPE(Note);
 
-#endif // CPPTOOLS_GLOBAL_H
+    QApplication app(argc, argv);
+
+    QDeclarativeView canvas;
+    canvas.setSource(QUrl("qrc:/declarative-sfw-notes.qml"));
+    canvas.show();
+
+    return app.exec();
+}

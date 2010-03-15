@@ -39,40 +39,25 @@
 **
 ****************************************************************************/
 
-#ifndef TODOTOOL_H
-#define TODOTOOL_H
+#ifndef SFWNOTES_H
+#define SFWNOTES_H
 
 #include <QWidget>
 #include <QObject>
 #include <QDateTime>
 #include <qmobilityglobal.h>
-#ifdef Q_OS_SYMBIAN
-#include "ui_todotool_s60.h"
-#else
-#include "ui_todotool.h"
-#endif
 
-QT_BEGIN_NAMESPACE
-class QAbstractButton;
-class QGroupBox;
-class QListWidget;
-class QListWidgetItem;
-class QPushButton;
-class QRadioButton;
-QT_END_NAMESPACE
+//#ifdef Q_OS_SYMBIAN
+//#include "ui_sfwnotes.h"
+//#else
+#include "ui_sfwnotes.h"
+//#endif
 
 QTM_BEGIN_NAMESPACE
 class QServiceManager;
 QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
-
-typedef struct
-{
-    int index;
-    QString message;
-    QDateTime alert;
-} Note;
 
 class ToDoTool : public QWidget, public Ui_ToDoTool
 {
@@ -97,9 +82,9 @@ private:
     void unregisterExampleServices();
 
     QServiceManager *serviceManager;
-    QObject *notesObject;
+    QObject *notesManager;
 
-    QList<Note> ret;
+    QList<QObject*> ret;
 
     QString searchWord;
     int currentNote;

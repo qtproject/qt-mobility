@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,15 +39,36 @@
 **
 ****************************************************************************/
 
-#ifndef CPPTOOLS_GLOBAL_H
-#define CPPTOOLS_GLOBAL_H
+#include <QApplication>
+#include <QUrl>
+#include <QtCore>
 
-#include <QtGlobal>
+//! [0]
+//Includes for using the QML objects
+#include <QDeclarativeView>
 
-#if defined(CPPTOOLS_LIBRARY)
-#  define CPPTOOLS_EXPORT Q_DECL_EXPORT
-#else
-#  define CPPTOOLS_EXPORT Q_DECL_IMPORT
-#endif
+//Includes for using the service framework
+#include <qserviceinterfacedescriptor.h>
+#include <qservicemanager.h>
+//! [0]
 
-#endif // CPPTOOLS_GLOBAL_H
+#include "sfwexample.h"
+
+int main(int argc, char* argv[])
+{
+    QML_REGISTER_TYPE(QtSFW,1,0,Service,ServiceWrapper);
+    QML_REGISTER_TYPE(QtSFW,1,0,Services,ServiceRegister);
+
+    QApplication app(argc, argv);
+
+    //! [1]
+    QDeclarativeView canvas;
+    canvas.setSource(QUrl("qrc:/sfwexample.qml"));
+    
+    //![3]
+    canvas.show();
+    //![3]
+    //! [1]
+
+    return app.exec();
+}

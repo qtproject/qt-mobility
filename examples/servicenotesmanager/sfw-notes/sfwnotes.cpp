@@ -40,12 +40,11 @@
 ****************************************************************************/
 
 #include <QtGui>
-#include <QDebug>
 
 #include <qservicemanager.h>
 #include <qserviceinterfacedescriptor.h>
 
-#include "todotool.h"
+#include "sfwnotes.h"
 
 Q_DECLARE_METATYPE(QServiceInterfaceDescriptor)
 
@@ -70,11 +69,12 @@ ToDoTool::~ToDoTool()
 
 void ToDoTool::soundAlarm(const QDateTime& alarm)
 {
-    QString message = notesObject->property("message").toString();
+    QString message = notesManager->property("alarmMessage").toString();
 
     QMessageBox msgBox;
     msgBox.setWindowTitle("Alert");
-    msgBox.setText(alarm.toString() + "\n\n" + message);
+    msgBox.setText("ALARM SOUNDED!!!\n\n" +alarm.toString("yyyy-MM-dd HH:mm") + "\n\n" + message);
+    msgBox.resize(200, msgBox.height());
     msgBox.exec();
 }
 
@@ -85,17 +85,17 @@ void ToDoTool::init()
     filter.setServiceName("NotesManagerService");
     QList<QServiceInterfaceDescriptor> list = serviceManager->findInterfaces(filter);
 
-    notesObject = mgr.loadInterface(list[0]);
+    notesManager = mgr.loadInterface(list[0]);
 
-    if (notesObject)
-        notesObject->setParent(this);
+    if (notesManager)
+        notesManager->setParent(this);
 
     {
         currentNote = 1;
         searchWord = "";    
         refreshList();
 
-        QObject::connect(notesObject, SIGNAL(soundAlarm(QDateTime)), 
+        QObject::connect(notesManager, SIGNAL(soundAlarm(QDateTime)), 
                          this, SLOT(soundAlarm(QDateTime)));
     }
 }
@@ -112,19 +112,19 @@ void ToDoTool::registerExampleServices()
 
 void ToDoTool::unregisterExampleServices()
 {
-    serviceManager->removeService("DatabaseManagerService");
+    serviceManager->removeService("NotesManagerService");
 }
 
 void ToDoTool::refreshList()
 {
-        QMetaObject::invokeMethod(notesObject, "getNotes", 
-                                  Q_RETURN_ARG(QList<Note>, ret),
+        QMetaObject::invokeMethod(notesManager, "getNotes", 
+                                  Q_RETURN_ARG(QList<QObject*>, ret),
                                   Q_ARG(QString, searchWord)); 
 
         totalNotes = ret.size();
-        
-        if (totalNotes < 1)
-            currentNote = 0;
+    
+        if (totalNotes < 1) { currentNote = 0; }
+        else if (totalNotes > 0 && currentNote == 0) { currentNote = 1; }
         
         refreshNotes();
 }
@@ -138,8 +138,13 @@ void ToDoTool::refreshNotes()
         noteLabel->setText("Click + to add a note");
     }
     else {
-        dateLabel->setText(ret[currentNote-1].alert.toString());
-        noteLabel->setText(ret[currentNote-1].message);
+        QDateTime alarm;
+        QMetaObject::invokeMethod(ret[currentNote-1], "alarm", Q_RETURN_ARG(QDateTime, alarm));
+        dateLabel->setText(alarm.toString("yyyy-MM-dd HH:mm"));
+
+        QString note;
+        QMetaObject::invokeMethod(ret[currentNote-1], "message", Q_RETURN_ARG(QString, note));
+        noteLabel->setText(note);
     }
 }
 
@@ -166,7 +171,8 @@ void ToDoTool::on_addButton_clicked()
     bool ok;
     QString newNote = QInputDialog::getText(this, tr("ToDoTool"), 
                                             tr("Add a new note + alarm of format:\nnote#yyyy-mm-dd#hh:mm"), 
-                                            QLineEdit::Normal, QDir::home().dirName(), &ok);
+                                            QLineEdit::Normal, "", &ok);
+
     if (ok && !newNote.isEmpty()) {
         QStringList note = newNote.split(QRegExp("#"));
       
@@ -177,13 +183,12 @@ void ToDoTool::on_addButton_clicked()
 
             if (date.size() == 3 && time.size() == 2) {
                 QDateTime alarm = QDateTime::fromString(note.at(1)+" "+note.at(2),"yyyy-MM-dd HH:mm");
-                QMetaObject::invokeMethod(notesObject, "addNote",
+                QMetaObject::invokeMethod(notesManager, "addNote",
                                           Q_ARG(QString, note.at(0)),
                                           Q_ARG(QDateTime, alarm));
-                refreshList();
             }
         } else {
-                QMetaObject::invokeMethod(notesObject, "addNote",
+                QMetaObject::invokeMethod(notesManager, "addNote",
                                           Q_ARG(QString, note.at(0)),
                                           Q_ARG(QDateTime, QDateTime::currentDateTime()));
         }
@@ -196,14 +201,14 @@ void ToDoTool::on_deleteButton_clicked()
 {
     if (currentNote != 0) {
         QMessageBox msgBox;
-        msgBox.setWindowTitle("ToDoTool");
-        msgBox.setText("Are you sure you want to remove this note item?");
+        msgBox.setText("Confirm removing this note?");
         msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
         
         if (msgBox.exec() == QMessageBox::Ok) {
-            int index = ret[currentNote-1].index;
+            int index;
+            QMetaObject::invokeMethod(ret[currentNote-1], "index", Q_RETURN_ARG(int, index));
 
-            QMetaObject::invokeMethod(notesObject, "removeNote", Q_ARG(int, index));
+            QMetaObject::invokeMethod(notesManager, "removeNote", Q_ARG(int, index));
             if (currentNote > 1)
                 currentNote--;
 
@@ -216,7 +221,7 @@ void ToDoTool::on_searchButton_clicked()
 {
     bool ok;
     QString searchNote = QInputDialog::getText(this, tr("ToDoTool"), tr("Find a note:"),
-                                               QLineEdit::Normal, QDir::home().dirName(), &ok);
+                                               QLineEdit::Normal, "", &ok);
     if (ok) {
         if (searchNote.isEmpty())
             searchWord = "";

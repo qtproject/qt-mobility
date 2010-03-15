@@ -74,7 +74,6 @@ Rectangle {
                         }
                         serviceListView.currentIndex = index;
                         dialService = model.modelData;
-                        console.log("HELLO: " + dialService + " " + model.modelData);
                         serviceSelected()
                     }
                 }

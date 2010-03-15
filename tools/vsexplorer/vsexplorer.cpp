@@ -505,7 +505,7 @@ void VSExplorer::processLine(const QString &line)
         listwatchers();
     } else if((cmd == "subscriptions") && 1 == cmds.count()) {
         subscriptions();
-    } else if(cmd == "") {
+    } else if(cmd.isEmpty()) {
     } else {
         printError();
     }

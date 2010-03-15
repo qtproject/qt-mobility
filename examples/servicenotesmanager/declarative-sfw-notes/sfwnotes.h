@@ -39,75 +39,59 @@
 **
 ***************************************************************************/
 
+#ifndef SFWNOTES_H
+#define SFWNOTES_H
+
 #include <QtCore>
 #include <qserviceinterfacedescriptor.h>
 #include <qservicemanager.h>
-#include <qml.h>
+#include <qdeclarative.h>
 
 QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QServiceInterfaceDescriptor)
 
-//! [0]
 class ServiceWrapper : public QObject {
     Q_OBJECT
-    Q_PROPERTY(bool isValid READ isValid);
-    Q_PROPERTY(QString serviceName READ serviceName CONSTANT);
-    Q_PROPERTY(QString interfaceName READ interfaceName CONSTANT);
-    Q_PROPERTY(QString version READ version NOTIFY versionChanged);
-//! [0]
+    Q_PROPERTY(QString interfaceName READ interfaceName WRITE setInterfaceName);
+    Q_PROPERTY(QString serviceName READ serviceName WRITE setServiceName);
+    Q_PROPERTY(QString version READ version WRITE setVersion);
 
 public:
     ServiceWrapper();
-    
-    ~ServiceWrapper() ;
-
-    bool isValid() const;
-
-    QString serviceName() const;
+    ~ServiceWrapper();
 
     QString interfaceName() const;
-
-    void setNativeDescriptor(const QServiceInterfaceDescriptor& desc);
-
-    void setDescriptor(QVariant& newDescriptor);
+    void setInterfaceName(const QString& interface);
+    
+    QString serviceName() const;
+    void setServiceName(const QString& service);
 
     QString version() const;
+    void setVersion(const QString& version);
 
     Q_INVOKABLE QObject* serviceObject();
 
 private:
+    void registerExampleServices();
+    void unregisterExampleServices();
+    void findServiceInterface();
+
+    bool existsInterface();
+    bool existsService();
+    bool existsVersion();
+
+    QString m_interface;
+    QString m_service;
+    QString m_version;
+
     QServiceInterfaceDescriptor m_descriptor;
     QObject* serviceInstance;
+    
+    QServiceManager* serviceManager;
 };
 
 QML_DECLARE_TYPE(ServiceWrapper)
 
-//! [1]
-class ServiceRegister : public QObject {
-    Q_OBJECT
-    Q_PROPERTY(QList<ServiceWrapper*>* registeredservices READ registeredservices NOTIFY modelChanged CONSTANT);
-//! [1]
-
-public:
-    ServiceRegister();
-    ~ServiceRegister();
-    
-    QList<ServiceWrapper*> *registeredservices() {return &m_services; }
-
-    void registerExampleServices();
-
-    void unregisterExampleServices();
-
-    void serviceStateChange(int state);
-
-private:
-    QServiceManager* serviceManager;
-    QList<ServiceWrapper *> m_services;
-
-signals:
-    void modelChanged();
-};
-
-QML_DECLARE_TYPE(ServiceRegister)
+#endif
 

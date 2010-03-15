@@ -41,8 +41,6 @@
 
 #include "sfwexample.h"
 
-QML_DEFINE_TYPE(QtSFW,1,0,Service,ServiceWrapper)
-
 ServiceWrapper::ServiceWrapper() 
 : serviceInstance(0)
 {
@@ -117,8 +115,6 @@ QObject* ServiceWrapper::serviceObject()
         return 0;
     }
 }
-
-QML_DEFINE_TYPE(QtSFW,1,0,Services,ServiceRegister)
 
 ServiceRegister::ServiceRegister()
 {
