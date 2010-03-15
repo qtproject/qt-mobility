@@ -90,16 +90,18 @@ public:
     void setDefaultCodec(QTextCodec* codec);
     QTextCodec* defaultCodec() const;
 
-    // reading:
-    bool startReading();
-    void cancel();
-    bool waitForFinished(int msec = -1);
-
     // output:
     QList<QVersitDocument> results() const;
 
     State state() const;
     Error error() const;
+
+    // reading:
+public Q_SLOTS:
+    bool startReading();
+    void cancel();
+public:
+    Q_INVOKABLE bool waitForFinished(int msec = -1);
 
 Q_SIGNALS:
     void stateChanged(QVersitReader::State state);

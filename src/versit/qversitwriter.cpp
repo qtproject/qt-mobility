@@ -179,6 +179,22 @@ QTextCodec* QVersitWriter::defaultCodec() const
 }
 
 /*!
+ * Returns the state of the writer.
+ */
+QVersitWriter::State QVersitWriter::state() const
+{
+    return d->state();
+}
+
+/*!
+ * Returns the error encountered by the last operation.
+ */
+QVersitWriter::Error QVersitWriter::error() const
+{
+    return d->error();
+}
+
+/*!
  * Starts writing \a input to device() asynchronously.
  * Returns false if the output device has not been set or opened or
  * if there is another asynchronous write operation already pending.
@@ -226,22 +242,6 @@ bool QVersitWriter::waitForFinished(int msec)
     } else {
         return false;
     }
-}
-
-/*!
- * Returns the state of the writer.
- */
-QVersitWriter::State QVersitWriter::state() const
-{
-    return d->state();
-}
-
-/*!
- * Returns the error encountered by the last operation.
- */
-QVersitWriter::Error QVersitWriter::error() const
-{
-    return d->error();
 }
 
 #include "moc_qversitwriter.cpp"
