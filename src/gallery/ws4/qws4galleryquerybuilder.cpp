@@ -622,7 +622,9 @@ static QString qt_buildMediaQuery(
             + QLatin1String("\nFROM SystemIndex");
 
     if (!where.isEmpty())
-        query += QLatin1String("\nWHERE ") + where;
+        query += QLatin1String("\nWHERE System.Kind = 'music' AND") + where;
+    else
+        query += QLatin1String("\nWHERE System.Kind = 'music'");
 
     if (!orderBy.isEmpty())
         query += QLatin1String("\nORDER BY ") + orderBy;

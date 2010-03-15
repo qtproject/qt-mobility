@@ -95,3 +95,6 @@ contains(mobility_modules,sensors) {
     SUBDIRS += sensors
 }
 
+contains(mobility_modules,gallery) {
+    SUBDIRS += mediabrowser
+}
