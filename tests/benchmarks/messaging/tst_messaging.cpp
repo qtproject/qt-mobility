@@ -1472,10 +1472,10 @@ QMessage *tst_messaging::messageTemplate()
   msg->setDate(QDateTime::currentDateTime());
   msg->setSubject("test");
   QMessageAddress addr;
-  addr.setRecipient("abr@foo.com");
+  addr.setAddress("abr@foo.com");
   addr.setType(QMessageAddress::Email);
   msg->setTo(addr);
-  addr.setRecipient("from@bar.com");
+  addr.setAddress("from@bar.com");
   addr.setType(QMessageAddress::Email);
   msg->setFrom(addr);
 
