@@ -1,12 +1,14 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
 ** You may use this file in accordance with the terms and conditions
 ** contained in the Technology Preview License Agreement accompanying
 ** this package.
@@ -36,7 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #ifndef NOTESMANAGER_H
 #define NOTESMANAGER_H
 
@@ -47,36 +48,46 @@
 #include <QSqlDatabase>
 #include <QSqlQuery>
 
-typedef struct
-{
-    int index;
-    QString message;
-    QDateTime alert;
-} Note;
+
+#ifdef DECLARATIVE     
+#include <QtDeclarative/qdeclarativelist.h>
+#include <QtDeclarative/qdeclarative.h>
+#endif
+
+#include "note.h"
 
 class NotesManager : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QDateTime alarm READ getAlarm WRITE setAlarm  NOTIFY soundAlarm)
-    Q_PROPERTY(QString message READ getMessage WRITE setMessage)
+    Q_PROPERTY(QDateTime alarmTime READ getAlarmTime WRITE setAlarmTime NOTIFY soundAlarm)
+    Q_PROPERTY(QString alarmMessage READ getAlarmMessage WRITE setAlarmMessage)
+#ifdef DECLARATIVE     
+    Q_PROPERTY(QDeclarativeListProperty<QObject> noteSet READ noteSet)
+#endif
 
 public:
     NotesManager(QObject *parent = 0);
-    Q_INVOKABLE QList<Note> getNotes(const QString& search=QString()) const;
+    Q_INVOKABLE QList<QObject*> getNotes(const QString& search=QString());
+#ifdef DECLARATIVE     
+    QDeclarativeListProperty<QObject> noteSet();
+#endif
 
 public slots:
     void addNote(const QString &note, const QDateTime &alarm);
     void removeNote(int id);
+    void setSearch(const QString &search);
 
 private:
-    QDateTime m_alarm;
-    QString m_message;
+    QDateTime m_alarmTime;
+    QString m_alarmMessage;
+    QList<QObject *> m_notes;
+    QString m_search;
 
-    QDateTime getAlarm() const;
-    void setAlarm(const QDateTime &alarm);
+    QDateTime getAlarmTime() const;
+    void setAlarmTime(const QDateTime &alarm);
     
-    QString getMessage() const;
-    void setMessage(const QString &message);
+    QString getAlarmMessage() const;
+    void setAlarmMessage(const QString &message);
 
     void nextAlarm();
 

@@ -65,7 +65,7 @@ IMPLEMENT_READING(QOrientationReading)
 
     This enum represents the orientation of the device.
 
-    The parts of the phone are defined as follows.
+    To explain the meaning of each value it is helpful to refer to the following diagram.
 
 \code
                       Top
@@ -89,13 +89,13 @@ IMPLEMENT_READING(QOrientationReading)
       Bottom
 \endcode
 
-    \value Undefined  The orientation is unknown.
-    \value BottomUp   The device is upside down.
-    \value BottomDown The device is the right way up.
-    \value LeftUp     The device has been rotated clockwise.
-    \value RightUp    The device has been rotated counter-clockwise.
-    \value FaceDown   The screen is facing down.
-    \value FaceUp     The screen is facing up.
+    \value Undefined        The orientation is unknown.
+    \value TopUp            The Top edge of the device is pointing up.
+    \value TopDown          The Bottom edge of the device is pointing up.
+    \value LeftUp           The Left edge of the device is pointing up.
+    \value RightUp          The Right edge of the device is pointing up.
+    \value FaceUp           The Face of the device is pointing up.
+    \value FaceDown         The Face of the device is pointing down.
 */
 
 /*!
@@ -120,8 +120,6 @@ void QOrientationReading::setOrientation(QOrientationReading::Orientation orient
 }
 
 // =====================================================================
-
-// begin generated code
 
 /*!
     \class QOrientationFilter
@@ -179,7 +177,6 @@ const char *QOrientationSensor::type("QOrientationSensor");
 
     \sa QSensor::reading()
 */
-// end generated code
 
 #include "moc_qorientationsensor.cpp"
 QTM_END_NAMESPACE

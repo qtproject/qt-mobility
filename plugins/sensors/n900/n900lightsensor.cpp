@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "n900lightsensor.h"
+#include <QFile>
 #include <QDebug>
 #include <time.h>
 
@@ -50,6 +51,23 @@ n900lightsensor::n900lightsensor(QSensor *sensor)
     : n900filebasedsensor(sensor)
 {
     setReading<QAmbientLightReading>(&m_reading);
+    // Sensor takes 12-400ms to complete one reading and is triggered by
+    // a read of the /sys file (no interrupt/timing loop/etc. is used).
+    // Since no continuous operation is possible, don't set a data rate.
+    //addDataRate(2, 2); // Approx 2Hz operation.
+    setDescription(QLatin1String("tsl2563"));
+}
+
+void n900lightsensor::start()
+{
+    if (!QFile::exists(QLatin1String(filename)))
+        goto error;
+
+    n900filebasedsensor::start();
+    return;
+
+error:
+    sensorStopped();
 }
 
 void n900lightsensor::poll()

@@ -41,8 +41,6 @@
 
 #include "v4lvideorenderer.h"
 
-#include <QtCore/qdebug.h>
-
 V4LVideoRendererControl::V4LVideoRendererControl(V4LCameraSession* session, QObject *parent)
     :QVideoRendererControl(parent),
     m_surface(0),

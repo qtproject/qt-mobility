@@ -61,8 +61,6 @@
 
 QTM_BEGIN_NAMESPACE
 
-static const char  PATH_SEPARATOR[] = "\\";
-
 #ifndef QT_NO_DATASTREAM
 QDataStream &operator<<(QDataStream &out, const ServiceMetaDataResults &r)
 {

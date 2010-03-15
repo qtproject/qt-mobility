@@ -43,7 +43,7 @@ SENSORS=\
     qmagnetometer\
     qorientationsensor\
     qproximitysensor\
-    qrotationsensor\
+    qattitudesensor\
     qtapsensor\
 
 for(s,SENSORS) {

@@ -106,7 +106,7 @@ QContactDetail *CntTransformAddress::transformItemField(const CContactItemField&
 
     // Find existing address details from contact
     QContactDetail* detail = 0;
-    foreach( QContactAddress existingAddress, contact.details<QContactAddress>() )
+    foreach(const QContactAddress& existingAddress, contact.details<QContactAddress>() )
     {
         // Do not merge if contexts don't match
         if( existingAddress.contexts() != address.contexts() )
@@ -114,7 +114,7 @@ QContactDetail *CntTransformAddress::transformItemField(const CContactItemField&
 
         // Merge detail with existing detail
         detail = new QContactAddress( existingAddress );
-        foreach( QString key, address.variantValues().keys() )
+        foreach(const QString key, address.variantValues().keys() )
             detail->setValue( key, address.variantValue(key) );
         break;
     }

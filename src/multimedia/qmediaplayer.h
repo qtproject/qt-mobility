@@ -95,7 +95,8 @@ public:
 
     enum Flag
     {
-        LowLatency = 0x01
+        LowLatency = 0x01,
+        StreamPlayback = 0x02
     };
     Q_DECLARE_FLAGS(Flags, Flag)
 

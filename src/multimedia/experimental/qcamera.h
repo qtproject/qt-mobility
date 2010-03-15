@@ -45,6 +45,8 @@
 #include <QtCore/qstringlist.h>
 #include <QtCore/qpair.h>
 #include <QtCore/qsize.h>
+#include <QtCore/qpoint.h>
+#include <QtCore/qrect.h>
 
 #include <qmediacontrol.h>
 #include <qmediaobject.h>
@@ -62,9 +64,12 @@ class Q_MEDIA_EXPORT QCamera : public QMediaObject
 {
     Q_OBJECT
 
-    Q_ENUMS(CaptureMode State Error FocusStatus)
+    Q_ENUMS(CaptureMode State Error FocusStatus FocusPointMode)
 
     Q_PROPERTY(CaptureMode captureMode READ captureMode WRITE setCaptureMode NOTIFY captureModeChanged)
+    Q_PROPERTY(FocusPointMode focusPointMode READ focusPointMode WRITE setFocusPointMode)
+    Q_PROPERTY(QPointF customFocusPoint READ customFocusPoint WRITE setCustomFocusPoint)
+    Q_PROPERTY(QList<QRectF> focusZones READ focusZones NOTIFY focusZonesChanged)
     Q_PROPERTY(qreal aperture READ aperture WRITE setManualAperture NOTIFY apertureChanged)
     Q_PROPERTY(qreal shutterSpeed READ shutterSpeed WRITE setManualShutterSpeed NOTIFY shutterSpeedChanged)
     Q_PROPERTY(int isoSensitivity READ isoSensitivity WRITE setManualIsoSensitivity NOTIFY isoSensitivityChanged)
@@ -95,7 +100,11 @@ public:
         FlashOn = 0x2,
         FlashAuto = 0x4,
         FlashRedEyeReduction  = 0x8,
-        FlashFill = 0x10
+        FlashFill = 0x10,
+        FlashTorch = 0x20,
+        FlashSlowSyncFrontCurtain = 0x40,
+        FlashSlowSyncRearCurtain = 0x80,
+        FlashManual = 0x100
     };
     Q_DECLARE_FLAGS(FlashModes, FlashMode)
 
@@ -108,6 +117,14 @@ public:
     };
     Q_DECLARE_FLAGS(FocusModes, FocusMode)
 
+    enum FocusPointMode {
+        FocusPointAuto = 0x01,
+        FocusPointCenter = 0x02,
+        FocusPointFaceDetection = 0x04,
+        FocusPointCustom = 0x08
+    };
+    Q_DECLARE_FLAGS(FocusPointModes, FocusPointMode)
+
     enum FocusStatus {
         FocusInitial,
         FocusRequested,
@@ -115,7 +132,7 @@ public:
         FocusReached,
         FocusLost,
         FocusUnableToReach
-    };
+    };       
 
     enum ExposureMode {
         ExposureManual = 0x1,
@@ -176,8 +193,8 @@ public:
     CaptureMode captureMode() const;
     CaptureModes supportedCaptureModes() const;
 
-    FlashMode flashMode() const;
-    void setFlashMode(FlashMode mode);
+    FlashModes flashMode() const;
+    void setFlashMode(FlashModes mode);
     FlashModes supportedFlashModes() const;
     bool isFlashReady() const;
 
@@ -189,6 +206,14 @@ public:
     bool macroFocusingEnabled() const;
     bool isMacroFocusingSupported() const;
     void setMacroFocusingEnabled(bool);
+
+    FocusPointMode focusPointMode() const;
+    void setFocusPointMode(FocusPointMode mode);
+    FocusPointModes supportedFocusPointModes() const;
+    QPointF customFocusPoint() const;
+    void setCustomFocusPoint(const QPointF &point);
+
+    QList<QRectF> focusZones() const;
 
     ExposureMode exposureMode() const;
     void setExposureMode(ExposureMode mode);
@@ -230,6 +255,7 @@ public:
     void zoomTo(qreal opticalZoom, qreal digitalZoom);
 
     bool isExposureLocked() const;
+    bool isWhiteBalanceLocked() const;
 
     Error error() const;
     QString errorString() const;
@@ -242,6 +268,9 @@ public Q_SLOTS:
 
     void lockExposure();
     void unlockExposure();
+
+    void lockWhiteBalance();
+    void unlockWhiteBalance();
 
     void startFocusing();
     void cancelFocusing();
@@ -259,9 +288,12 @@ Q_SIGNALS:
     void isoSensitivityChanged(int);
 
     void exposureLocked();
+    void whiteBalanceLocked();
 
     void focusReached();
     void focusUnableToReach();
+
+    void focusZonesChanged(const QList<QRectF> &);
 
     void stateChanged(QCamera::State);
     void error(QCamera::Error);
@@ -276,6 +308,7 @@ private:
 Q_DECLARE_OPERATORS_FOR_FLAGS(QCamera::CaptureModes)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QCamera::FlashModes)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QCamera::FocusModes)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QCamera::FocusPointModes)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QCamera::WhiteBalanceModes)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QCamera::MeteringModes)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QCamera::ExposureModes)
