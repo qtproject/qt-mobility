@@ -39,15 +39,12 @@
 **
 ****************************************************************************/
 
+#include "qtrackercontactfetchrequest.h"
 
-
-
-#include <QTimer>
 #include <qtcontacts.h>
+
 #include <QtTracker/ontologies/nie.h>
 #include <QtTracker/ontologies/nco.h>
-#include <qtrackercontactasyncrequest.h>
-#include <QHash>
 
 using namespace SopranoLive;
 
@@ -60,7 +57,6 @@ public:
         return *this;
     }
 };
-
 
 const QString FieldQContactLocalId("QContactLocalId");
 const QString FieldAccountPath("AccountPath");
@@ -861,7 +857,7 @@ void QTrackerContactFetchRequest::emailAddressesReady()
     queryEmailAddressNodesPending--;
 }
 
-void QTrackerContactFetchRequest::iMAcountsReady()
+void QTrackerContactFetchRequest::imAcountsReady()
 {
     queryIMAccountNodesPending--;
     // now we know that the query is ready before get all contacts, check how it works with transactions
@@ -1072,8 +1068,9 @@ QContactOnlineAccount QTrackerContactFetchRequest::getIMContactFromIMQuery(LiveN
     QString presence = imContactQuery->index(queryRow, IMContact::ContactPresence).data().toString(); // imPresence iri
     presence = presence.right(presence.length() - presence.lastIndexOf("presence-status"));
     account.setPresence(presenceConversion[presence]);
- 
+
     account.setStatusMessage(imContactQuery->index(queryRow, IMContact::ContactMessage).data().toString()); // imStatusMessage
     account.setServiceProvider(imContactQuery->index(queryRow, IMContact::ServiceProvider).data().toString()); // service name
     return account;
 }
+

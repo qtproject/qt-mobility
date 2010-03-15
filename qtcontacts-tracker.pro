@@ -22,21 +22,22 @@ INCLUDEPATH += .
 
 HEADERS += qcontacttrackerbackend_p.h \
            qtrackercontactasyncrequest.h \
-           trackerchangelistener.h \
+           qtrackercontactfetchrequest.h \
            qtrackercontactslive.h \
            qtrackercontactsaverequest.h \
            qtrackerrelationshipfetchrequest.h \
            qtrackerrelationshipsaverequest.h \
-           qtrackercontactidfetchrequest.h
+           qtrackercontactidfetchrequest.h \
+           trackerchangelistener.hb
 
 SOURCES += qcontacttrackerbackend.cpp \
-           qtrackercontactasyncrequest.cpp \
-           trackerchangelistener.cpp \
+           qtrackercontactfetchrequest.cpp \
            qtrackercontactslive.cpp \
            qtrackercontactsaverequest.cpp \
            qtrackerrelationshipfetchrequest.cpp \
            qtrackerrelationshipsaverequest.cpp \
-           qtrackercontactidfetchrequest.cpp
+           qtrackercontactidfetchrequest.cpp \
+           trackerchangelistener.cpp
 
 target.path = /usr/lib/qt4/plugins/contacts
 INSTALLS+=target
