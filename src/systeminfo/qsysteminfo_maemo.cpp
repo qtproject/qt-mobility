@@ -237,6 +237,12 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
         }
         break;
     case QSystemNetworkInfo::EthernetMode:
+        if(currentEthernetState == "up") {
+            return QSystemNetworkInfo::Connected;
+        } else {
+            return QSystemNetworkInfo::NoNetworkAvailable;
+        }
+        break;
     case QSystemNetworkInfo::WlanMode:
     case QSystemNetworkInfo::BluetoothMode:
         {
@@ -435,6 +441,9 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
 void QSystemNetworkInfoPrivate::setupNetworkInfo()
 {
     currentCellNetworkStatus = QSystemNetworkInfo::UndefinedStatus;
+    currentEthernetState = "down";
+    currentEthernetSignalStrength = networkSignalStrength(QSystemNetworkInfo::EthernetMode);
+    currentWlanSignalStrength = networkSignalStrength(QSystemNetworkInfo::WlanMode);
     currentLac = -1;
     currentCellId = -1;
     currentMCC = "";
@@ -443,6 +452,16 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
     currentOperatorName = "";
     int radioAccessTechnology = 0;
 
+    QString devFile = "/sys/class/net/usb0/operstate";
+    QFileInfo fi(devFile);
+    if (fi.exists()) {
+        QFile rx(fi.absoluteFilePath());
+        if (rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            QTextStream stream(&rx);
+            stream >> currentEthernetState;
+            rx.close();
+        }
+    }
 #if !defined(QT_NO_DBUS)
     QDBusConnection systemDbusConnection = QDBusConnection::systemBus();
 
@@ -519,19 +538,26 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
                        this, SLOT(networkModeChanged(int)))) {
         qWarning() << "unable to connect to radio_access_technology_change";
     }   
-    if(!systemDbusConnection.connect("org.freedesktop.NetworkManager",
-                              "/org/freedesktop/NetworkManager",
-                              "NetworkManager.Wired",
-                              QLatin1String("PropertiesChanged"),
-                              this, SLOT(wiredPropertiesChanged( QMap<QString,QVariant>))) ) {
-        qWarning() << "unable to connect to Wired PropertiesChanged";
+    if(!systemDbusConnection.connect("com.nokia.icd",
+                              "/com/nokia/icd",
+                              "com.nokia.icd",
+                              QLatin1String("status_changed"),
+                              this, SLOT(icdStatusChanged(QString,QString,QString,QString))) ) {
+        qWarning() << "unable to connect to icdStatusChanged";
     }
-    if(!systemDbusConnection.connect("org.freedesktop.NetworkManager",
-                              "/org/freedesktop/NetworkManager",
-                              "NetworkManager.Wireless",
-                              QLatin1String("PropertiesChanged"),
-                              this, SLOT(wirelessPropertiesChanged( QMap<QString,QVariant>))) ) {
-        qWarning() << "unable to connect to Wireless PropertiesChanged";
+    if(!systemDbusConnection.connect("com.nokia.bme",
+                              "/com/nokia/bme/signal",
+                              "com.nokia.bme.signal",
+                              QLatin1String("charger_connected"),
+                              this, SLOT(usbCableConnected())) ) {
+        qWarning() << "unable to connect to usbCableConnected";
+    }
+    if(!systemDbusConnection.connect("com.nokia.bme",
+                              "/com/nokia/bme/signal",
+                              "com.nokia.bme.signal",
+                              QLatin1String("charger_disconnected"),
+                              this, SLOT(usbCableDisConnected())) ) {
+        qWarning() << "unable to connect to usbCableDisConnected";
     }
 
 #endif
@@ -606,6 +632,68 @@ void QSystemNetworkInfoPrivate::registrationStatusChanged(uchar var1, ushort var
     if (currentMNC != newMobileNetworkCode) {
         currentMNC = newMobileNetworkCode;
         emit currentMobileNetworkCodeChanged(currentMNC);
+    }
+}
+
+void QSystemNetworkInfoPrivate::icdStatusChanged(QString, QString var2, QString, QString)
+{
+    if (var2 == "WLAN_INFRA") {
+        emit networkStatusChanged(QSystemNetworkInfo::WlanMode,
+                                  networkStatus(QSystemNetworkInfo::WlanMode));
+        if (currentWlanSignalStrength != networkSignalStrength(QSystemNetworkInfo::WlanMode)) {
+            currentWlanSignalStrength = networkSignalStrength(QSystemNetworkInfo::WlanMode);
+            emit networkSignalStrengthChanged(QSystemNetworkInfo::WlanMode, currentWlanSignalStrength);
+        }
+    }
+}
+
+void QSystemNetworkInfoPrivate::usbCableConnected()
+{
+    if (currentEthernetSignalStrength != networkSignalStrength(QSystemNetworkInfo::EthernetMode)) {
+        currentEthernetSignalStrength = networkSignalStrength(QSystemNetworkInfo::EthernetMode);
+        emit networkSignalStrengthChanged(QSystemNetworkInfo::EthernetMode,
+                                  currentEthernetSignalStrength);
+    }
+    QString newEthernetState;
+    QString devFile = "/sys/class/net/usb0/operstate";
+    QFileInfo fi(devFile);
+    if (fi.exists()) {
+        QFile rx(fi.absoluteFilePath());
+        if (rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            QTextStream stream(&rx);
+            stream >> newEthernetState;
+            rx.close();
+            if (currentEthernetState != newEthernetState) {
+                currentEthernetState = newEthernetState;
+                emit networkStatusChanged(QSystemNetworkInfo::EthernetMode,
+                                          networkStatus(QSystemNetworkInfo::EthernetMode));
+            }
+        }
+    }
+}
+
+void QSystemNetworkInfoPrivate::usbCableDisConnected()
+{
+    if (currentEthernetSignalStrength != networkSignalStrength(QSystemNetworkInfo::EthernetMode)) {
+        currentEthernetSignalStrength = networkSignalStrength(QSystemNetworkInfo::EthernetMode);
+        emit networkSignalStrengthChanged(QSystemNetworkInfo::EthernetMode,
+                                          currentEthernetSignalStrength);
+    }
+    QString newEthernetState;
+    QString devFile = "/sys/class/net/usb0/operstate";
+    QFileInfo fi(devFile);
+    if (fi.exists()) {
+        QFile rx(fi.absoluteFilePath());
+        if (rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            QTextStream stream(&rx);
+            stream >> newEthernetState;
+            rx.close();
+            if (currentEthernetState != newEthernetState) {
+                currentEthernetState = newEthernetState;
+                emit networkStatusChanged(QSystemNetworkInfo::EthernetMode,
+                                          networkStatus(QSystemNetworkInfo::EthernetMode));
+            }
+        }
     }
 }
 

@@ -147,9 +147,12 @@ protected:
 
 private Q_SLOTS:
     void cellNetworkSignalStrengthChanged(uchar,uchar);
+    void icdStatusChanged(QString,QString,QString,QString);
     void networkModeChanged(int);
     void operatorNameChanged(uchar,QString,QString,uint,uint);
     void registrationStatusChanged(uchar,ushort,uint,uint,uint,uchar,uchar);
+    void usbCableConnected();
+    void usbCableDisConnected();
     void wiredPropertiesChanged(QMap<QString,QVariant>);
     void wirelessPropertiesChanged(QMap<QString,QVariant>);
 
@@ -168,10 +171,13 @@ private:
     int cellSignalStrength;
     int currentCellId;
     int currentCellNetworkStatus;
+    int currentEthernetSignalStrength;
     int currentLac;
+    QString currentEthernetState;
     QString currentMCC;
     QString currentMNC;
     QString currentOperatorName;
+    int currentWlanSignalStrength;
     int radioAccessTechnology;
 };
 
