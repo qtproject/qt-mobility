@@ -15,6 +15,7 @@ moc_*.cpp
 /tests/ut_qtcontacts_add_async/ut_qtcontacts_add_async
 /tests/ut_qtcontacts_fetch/ut_qtcontacts_fetch
 /tests/ut_qtcontacts_sparql/ut_qtcontacts_sparql
+/tests/ut_qtcontacts_trackerplugin_definitions/ut_qtcontacts_trackerplugin_definitions
 
 *~
 
