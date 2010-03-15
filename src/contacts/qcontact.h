@@ -147,6 +147,7 @@ public:
     bool setPreferredDetail(const QString& actionName, const QContactDetail& preferredDetail);
     bool isPreferredDetail(const QString& actionName, const QContactDetail& detail) const;
     QContactDetail preferredDetail(const QString& actionName) const;
+    QMap<QString, QContactDetail> preferredDetails() const;
 
 private:
     friend class QContactManager;
@@ -155,6 +156,11 @@ private:
 
     QSharedDataPointer<QContactData> d;
 };
+
+Q_CONTACTS_EXPORT uint qHash(const QContact& key);
+#ifndef QT_NO_DEBUG_STREAM
+Q_CONTACTS_EXPORT QDebug operator<<(QDebug dbg, const QContact& contact);
+#endif
 
 QTM_END_NAMESPACE
 

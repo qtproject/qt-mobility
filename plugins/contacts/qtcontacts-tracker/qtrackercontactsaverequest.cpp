@@ -74,6 +74,9 @@ QTrackerContactSaveRequest::QTrackerContactSaveRequest(QContactAbstractRequest* 
 
     QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::ActiveState);
 
+    TrackerChangeListener *changeListener = new TrackerChangeListener(parent, this);
+    connect(changeListener, SIGNAL(contactsChanged(const QList<QContactLocalId> &)),SLOT(onTrackerSignal(const QList<QContactLocalId> &)));
+    connect(changeListener, SIGNAL(contactsAdded(const QList<QContactLocalId> &)),SLOT(onTrackerSignal(const QList<QContactLocalId> &)));
 
     // Save contacts with batch size
     /// @todo where to get reasonable batch size
@@ -99,6 +102,8 @@ void QTrackerContactSaveRequest::computeProgress(const QList<QContactLocalId> &a
 
     foreach (QContactLocalId id, addedIds) {
         pendingContactIds.remove(id);
+        // since if was OK, remove entry for error
+        errorsOfContactsFinished.remove(id2Index[id]);
     }
 
     if (pendingContactIds.count() == 0) {
@@ -112,6 +117,7 @@ void QTrackerContactSaveRequest::computeProgress(const QList<QContactLocalId> &a
                 break;
             }
         }
+
         QContactManagerEngine::updateContactSaveRequest(r, contactsFinished, error, errorsOfContactsFinished);
         QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::FinishedState);
     }
@@ -125,19 +131,19 @@ void QTrackerContactSaveRequest::saveContacts(const QList<QContact> &contacts)
     QSettings definitions(QSettings::IniFormat, QSettings::UserScope, "Nokia", "Trackerplugin");
     QTrackerContactsLive cLive;
     RDFServicePtr service = cLive.service();
-    bool isModified = false;
 
     foreach(QContact contact, contacts) {
+/*
+        Validation is disabled because it blocks saving contacts parsed from vcards
+        TODO left the commented code while opaque (custom) details are under discussion as remainder
         QContactManager::Error error;
-
-        // Ensure that the contact data is ok. This comes from QContactModelEngine
         if(!engine->validateContact(contact, error)) {
             contactsFinished << contact;
             errorsOfContactsFinished[errorCount++] =  error;
             computeProgress(QList<QContactLocalId>());
             continue;
         }
-
+*/
         Live<nco::PersonContact> ncoContact;
 
         if(contact.localId() == 0) {
@@ -155,7 +161,6 @@ void QTrackerContactSaveRequest::saveContacts(const QList<QContact> &contacts)
             ncoContact->setContactUID(QString::number(m_lastUsedId));
             ncoContact->setContentCreated(QDateTime::currentDateTime());
         }  else {
-            isModified = true;
             ncoContact = service->liveNode(QUrl("contact:"+QString::number(contact.localId())));
             /// @note Following needed in case we save new contact with given localId
             ncoContact->setContactUID(QString::number(contact.localId()));
@@ -183,20 +188,11 @@ void QTrackerContactSaveRequest::saveContacts(const QList<QContact> &contacts)
             cLive.saveName();
         }
 
-        // TODO add async signal handling of for transaction's commitFinished
         contactsFinished << contact;
-        errorsOfContactsFinished[errorCount++] =  QContactManager::NoError; // TODO ask how to get error code from tracker
+        id2Index[contact.localId()] = errorCount;
+        // we fill error here - once response come that everything is OK, remove entry for this contact
+        errorsOfContactsFinished[errorCount++] =  QContactManager::BadArgumentError;
     }
-
-    TrackerChangeListener *changeListener = new TrackerChangeListener(this);
-    if (isModified) {
-        connect(changeListener, SIGNAL(contactsChanged(const QList<QContactLocalId> &)),
-                SLOT(onTrackerSignal(const QList<QContactLocalId> &)));
-    } else {
-        connect(changeListener, SIGNAL(contactsAdded(const QList<QContactLocalId> &)),
-                SLOT(onTrackerSignal(const QList<QContactLocalId> &)));
-    }
-
     // remember to commit the transaction, otherwise all changes will be rolled back.
     cLive.commit();
 }
@@ -364,6 +360,7 @@ void QTrackerContactSaveRequest::savePhoneNumbers(RDFServicePtr service, RDFVari
         // using RFC 3966 canonical URI form
         QUrl newPhone = QString("tel:%1").arg(value);
         Live<nco::PhoneNumber> ncoPhone = service->liveNode(newPhone);
+        ncoPhone->remove();
 
         QStringList subtypes = det.value<QStringList>(QContactPhoneNumber::FieldSubTypes);
 

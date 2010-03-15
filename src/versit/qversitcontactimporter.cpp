@@ -132,18 +132,56 @@ QVersitContactImporter::~QVersitContactImporter()
 }
 
 /*!
- * Converts \a documents into a corresponding list of QContacts.
+ * Converts \a documents into a corresponding list of QContacts.  After calling this, the converted
+ * contacts can be retrieved by calling contacts().
+ * Returns true on success.  If any of the documents cannot be imported as contacts (eg. they aren't
+ * vCards), false is returned and errors() will return a list describing the errors that occured.
+ *
+ * \sa contacts(), errors()
  */
-QList<QContact> QVersitContactImporter::importContacts(const QList<QVersitDocument>& documents)
+bool QVersitContactImporter::importDocuments(const QList<QVersitDocument>& documents)
 {
-    QList<QContact> list;
-    int i = 0;
-    foreach (QVersitDocument document, documents) {
-        list.append(d->importContact(document, i));
-        i++;
+    int documentIndex = 0;
+    int contactIndex = 0;
+    d->mContacts.clear();
+    d->mErrors.clear();
+    bool ok = true;
+    foreach (const QVersitDocument& document, documents) {
+        QContact contact;
+        QVersitContactImporter::Error error;
+        if (d->importContact(document, contactIndex, &contact, &error)) {
+            d->mContacts.append(contact);
+            contactIndex++;
+        } else {
+            d->mErrors.insert(documentIndex, error);
+            ok = false;
+        }
+        documentIndex++;
     }
 
-    return list;
+    return ok;
+}
+
+/*!
+ * Returns the contacts imported in the most recent call to importDocuments().
+ *
+ * \sa importDocuments()
+ */
+QList<QContact> QVersitContactImporter::contacts() const
+{
+    return d->mContacts;
+}
+
+/*!
+ * Returns the map of errors encountered in the most recent call to importDocuments().  The key is
+ * the index into the input list of documents and the value is the error that occured on that
+ * document.
+ *
+ * \sa importDocuments()
+ */
+QMap<int, QVersitContactImporter::Error> QVersitContactImporter::errors() const
+{
+    return d->mErrors;
 }
 
 /*!
@@ -182,4 +220,13 @@ void QVersitContactImporter::setResourceHandler(QVersitResourceHandler* handler)
 QVersitResourceHandler* QVersitContactImporter::resourceHandler() const
 {
     return d->mResourceHandler;
+}
+
+// Deprecated:
+
+/*! \internal */
+QList<QContact> QVersitContactImporter::importContacts(const QList<QVersitDocument> &documents)
+{
+    importDocuments(documents);
+    return contacts();
 }

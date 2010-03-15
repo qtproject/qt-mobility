@@ -53,18 +53,26 @@ class CntAbstractContactFilter
 {
 public:
     enum FilterSupport {
-        /* The filter not supported */
+        /* The filter is not supported */
         NotSupported = 0,
-        /* The filter is supported */
+        /* The filter is illegal. Filtering is not allowed and the operation
+         * should fail immediately with an error.
+         */
+        IllegalFilter,
+        /* The filter is supported natively */
         Supported,
-        /* The filter is not directly supported, but for performance reasons
-         * the contact filter implementation pretends supporting the filter
-         * when it actually maps the filter to another, less strict filter.
-         * For example if the caller uses match flag QContactFilter::MatchExactly, the
-         * filter actually gives the result as QContactFilter::MatchContains (because of
-         * the limitations in the underlying database).
+        /* The filter is not fully natively supported, but for performance
+         * reasons the contact filter implementation pretends supporting the
+         * filter when it actually maps the filter to another, less strict
+         * filter.
+         * 
+         * For example if the caller uses match flag QContactFilter::MatchExactly,
+         * the filter actually gives the result as QContactFilter::MatchContains
+         * (because of the limitations in the underlying database).
+         * 
          * The result then needs to be filtered by the caller (for example by
-         * using QContactManagerEngine::testFilter). */
+         * using QContactManagerEngine::testFilter).
+         */
         SupportedPreFilterOnly
     };
 public:

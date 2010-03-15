@@ -54,13 +54,6 @@
 //
 #include "qcontactmanagerengine.h"
 #include "qcontactmanagerenginefactory.h"
-
-#ifdef SYMBIANSIM_BACKEND_USE_ETEL_TESTSERVER
-#include <etelmm_etel_test_server.h>
-#else
-#include <etelmm.h>
-#endif
-
 #include <flogger.h>
 #include <f32file.h>
 
@@ -148,6 +141,7 @@ public:
 public:
     void updateDisplayLabel(QContact& contact) const;
     CntSimStore* simStore() { return d->m_simStore; }
+    void setReadOnlyAccessConstraint(QContactDetail* detail) const;
 
 private:
     bool executeRequest(QContactAbstractRequest *req, QContactManager::Error& qtError) const;

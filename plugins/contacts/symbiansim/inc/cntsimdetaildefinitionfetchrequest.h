@@ -44,18 +44,6 @@
 
 #include "cntabstractsimrequest.h"
 
-#ifdef SYMBIANSIM_BACKEND_USE_ETEL_TESTSERVER
-#include <mpbutil_etel_test_server.h>
-#else
-#include <mpbutil.h>
-#endif
-#include <qcontactmanager.h>
-
-QTM_BEGIN_NAMESPACE
-class QContactDetailDefinitionFetchRequest;
-QTM_END_NAMESPACE
-class CntSymbianSimEngine;
-
 QTM_USE_NAMESPACE
 
 class CntSimDetailDefinitionFetchRequest : public CntAbstractSimRequest
@@ -64,15 +52,10 @@ Q_OBJECT
 public:
     CntSimDetailDefinitionFetchRequest(CntSymbianSimEngine *engine, QContactDetailDefinitionFetchRequest *req);
     virtual ~CntSimDetailDefinitionFetchRequest();
-    bool start();
-    bool cancel();
-    
-public Q_SLOTS:
-    void readDetailDefinitions();
-    
 
-private:
-    QContactDetailDefinitionFetchRequest *m_req;
+public Q_SLOTS:    
+    // from CntAbstractSimRequest
+    void run();    
 };
 
 #endif // CNTSIMDETAILDEFINITIONFETCHREQUEST_H_

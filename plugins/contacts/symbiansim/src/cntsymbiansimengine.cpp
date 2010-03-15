@@ -40,9 +40,6 @@
 ****************************************************************************/
 
 #include "cntsymbiansimengine.h"
-#include <qtcontacts.h>
-#include <mmtsy_names.h>
-
 #include "cntsymbiansimtransformerror.h"
 #include "cntsimstore.h"
 #include "cntsimcontactfetchrequest.h"
@@ -50,17 +47,13 @@
 #include "cntsimcontactsaverequest.h"
 #include "cntsimcontactremoverequest.h"
 #include "cntsimdetaildefinitionfetchrequest.h"
-
-#ifdef SYMBIANSIM_BACKEND_USE_ETEL_TESTSERVER
-#include <mpbutil_etel_test_server.h>
-#else
-#include <mpbutil.h>
-#endif
+#include <qtcontacts.h>
 
 #include <QEventLoop>
 #include <QTimer>
+#include <QDebug>
 
-
+const int KRequestTimeout = 30000; // in ms
 
 CntSymbianSimEngineData::CntSymbianSimEngineData()
     :m_simStore(0)
@@ -87,7 +80,11 @@ CntSymbianSimEngine::CntSymbianSimEngine(const QMap<QString, QString>& parameter
     error = QContactManager::NoError;
 
     d = new CntSymbianSimEngineData();
-    d->m_simStore = new CntSimStore(this, parameters.value(KParameterKeySimStoreName));
+    d->m_simStore = new CntSimStore(this, parameters.value(KParameterKeySimStoreName), error);
+    if (error != QContactManager::NoError) {
+        //qDebug() << "Failed to open SIM store" << error;
+        return;
+    }
 
     if(d->m_simStore->storeName() == KParameterValueSimStoreNameSdn) {
         // In case of SDN store we need to check if any SDN contacts exist to
@@ -277,7 +274,7 @@ QMap<QString, QContactDetailDefinition> CntSymbianSimEngine::detailDefinitions(c
     }
 
     // Get store information
-    RMobilePhoneBookStore::TMobilePhoneBookInfoV5 storeInfo = d->m_simStore->storeInfo();
+    TSimStoreInfo storeInfo = d->m_simStore->storeInfo();
 
     // the map we will eventually return
     QMap<QString, QContactDetailDefinition> retn;
@@ -340,6 +337,7 @@ QMap<QString, QContactDetailDefinition> CntSymbianSimEngine::detailDefinitions(c
     retn.insert(def.name(), def);
 
     // email support needs to be checked run-time, because it is SIM specific
+#ifndef SYMBIANSIM_BACKEND_PHONEBOOKINFOV1
     if (storeInfo.iMaxEmailAddr > 0) {
         def.setName(QContactEmailAddress::DefinitionName);
         fields.clear();
@@ -350,6 +348,7 @@ QMap<QString, QContactDetailDefinition> CntSymbianSimEngine::detailDefinitions(c
         def.setUnique(true);
         retn.insert(def.name(), def);
     }
+#endif
 
     // phone number
     def.setName(QContactPhoneNumber::DefinitionName);
@@ -359,6 +358,7 @@ QMap<QString, QContactDetailDefinition> CntSymbianSimEngine::detailDefinitions(c
     fields.insert(QContactPhoneNumber::FieldNumber, f);
     // TODO: subtypes supported in case a sim contact can have multiple phone numbers?
     def.setFields(fields);
+#ifndef SYMBIANSIM_BACKEND_PHONEBOOKINFOV1
     if (storeInfo.iMaxAdditionalNumbers > 0) {
         // multiple numbers supported
         def.setUnique(false);
@@ -366,9 +366,14 @@ QMap<QString, QContactDetailDefinition> CntSymbianSimEngine::detailDefinitions(c
         // only one phone number allowed
         def.setUnique(true);
     }
+#else
+    // only one phone number allowed
+    def.setUnique(true);
+#endif
     retn.insert(def.name(), def);
 
     // nickname support needs to be checked run-time, because it is SIM specific
+#ifndef SYMBIANSIM_BACKEND_PHONEBOOKINFOV1
     if (storeInfo.iMaxSecondNames > 0) {
         def.setName(QContactNickname::DefinitionName);
         fields.clear();
@@ -379,6 +384,7 @@ QMap<QString, QContactDetailDefinition> CntSymbianSimEngine::detailDefinitions(c
         def.setUnique(true);
         retn.insert(def.name(), def);
     }
+#endif
 
     // name
     def.setName(QContactName::DefinitionName);
@@ -532,6 +538,11 @@ void CntSymbianSimEngine::updateDisplayLabel(QContact& contact) const
     }
 }
 
+void CntSymbianSimEngine::setReadOnlyAccessConstraint(QContactDetail* detail) const
+{
+    setDetailAccessConstraints(detail, QContactDetail::ReadOnly); 
+}
+
 /*!
  * Executes an asynchronous request so that it will appear synchronous. This is
  * used internally in all synchronous functions. This way we only need to 
@@ -543,6 +554,8 @@ void CntSymbianSimEngine::updateDisplayLabel(QContact& contact) const
  */
 bool CntSymbianSimEngine::executeRequest(QContactAbstractRequest *req, QContactManager::Error& qtError) const
 {
+    qtError = QContactManager::NoError;
+    
     // TODO:
     // Remove this code when threads-branch is merged to master. Then this code
     // should not be needed because the default implementation at QContactManager
@@ -553,11 +566,17 @@ bool CntSymbianSimEngine::executeRequest(QContactAbstractRequest *req, QContactM
     CntSymbianSimEngine engine(*this);
     
     // Mimic the way how async requests are normally run
-    if (engine.startRequest(req))
-        engine.waitForRequestFinished(req, 0); // should we have a timeout?
+    if (!engine.startRequest(req)) {
+        qtError = QContactManager::LockedError;
+    } else {
+        if (!engine.waitForRequestFinished(req, KRequestTimeout))
+            qtError = QContactManager::UnspecifiedError; // timeout occurred
+    }
     engine.requestDestroyed(req);
     
-    qtError = req->error();
+    if (req->error())
+        qtError = req->error();
+    
     return (qtError == QContactManager::NoError);
 }
 

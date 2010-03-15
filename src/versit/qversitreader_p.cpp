@@ -194,6 +194,17 @@ bool LineReader::tryReadLine(VersitCursor &cursor, bool atEnd)
     }
 }
 
+/*! Links the signals from this to the signals of \a reader. */
+void QVersitReaderPrivate::init(QVersitReader* reader)
+{
+    connect(this, SIGNAL(stateChanged(QVersitReader::State)),
+            reader, SIGNAL(stateChanged(QVersitReader::State)),Qt::DirectConnection);
+    connect(this, SIGNAL(resultsAvailable(QList<QVersitDocument>&)),
+            reader, SIGNAL(resultsAvailable(QList<QVersitDocument>&)), Qt::DirectConnection);
+    connect(this, SIGNAL(resultsAvailable(QList<QVersitDocument>&)),
+            reader, SIGNAL(resultsAvailable()), Qt::DirectConnection);
+}
+
 /*! Construct a reader. */
 QVersitReaderPrivate::QVersitReaderPrivate()
     : mIoDevice(0),

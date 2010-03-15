@@ -74,10 +74,12 @@ public:
     };
 
     QVersitWriter();
+    QVersitWriter(QIODevice* outputDevice);
+    QVersitWriter(QByteArray* outputBytes);
     ~QVersitWriter();
 
     // output device
-    void setDevice(QIODevice* device);
+    void setDevice(QIODevice* outputDevice);
     QIODevice* device() const;
 
     void setDefaultCodec(QTextCodec* codec);

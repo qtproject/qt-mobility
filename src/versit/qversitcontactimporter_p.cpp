@@ -122,24 +122,34 @@ QVersitContactImporterPrivate::~QVersitContactImporterPrivate()
 /*!
  * Generates a QContact from \a versitDocument.
  */
-QContact QVersitContactImporterPrivate::importContact(
-     const QVersitDocument& document, int contactIndex)
+bool QVersitContactImporterPrivate::importContact(
+        const QVersitDocument& document, int contactIndex, QContact* contact,
+        QVersitContactImporter::Error* error)
 {
-    QContact contact;
+    if (document.type() != QVersitDocument::VCard21Type
+        && document.type() != QVersitDocument::VCard30Type) {
+        *error = QVersitContactImporter::InvalidDocumentError;
+        return false;
+    }
     const QList<QVersitProperty> properties = document.properties();
+    if (properties.size() == 0) {
+        *error = QVersitContactImporter::EmptyDocumentError;
+        return false;
+    }
+
     // First, do the properties with PREF set so they appear first in the contact details
     foreach (const QVersitProperty& property, properties) {
         if (property.parameters().contains(QLatin1String("TYPE"), QLatin1String("PREF")))
-            importProperty(document, property, contactIndex, &contact);
+            importProperty(document, property, contactIndex, contact);
     }
     // ... then, do the rest of the properties.
     foreach (const QVersitProperty& property, properties) {
         if (!property.parameters().contains(QLatin1String("TYPE"), QLatin1String("PREF")))
-            importProperty(document, property, contactIndex, &contact);
+            importProperty(document, property, contactIndex, contact);
     }
 
-    contact.setType(QContactType::TypeContact);
-    return contact;
+    contact->setType(QContactType::TypeContact);
+    return true;
 }
 
 void QVersitContactImporterPrivate::importProperty(
@@ -199,7 +209,7 @@ bool QVersitContactImporterPrivate::createName(
     QContactDetail detail = contact->detail(QContactName::DefinitionName);
     if (!detail.isEmpty()) {
         // If multiple name properties exist,
-        // discard all except the first occurence
+        // discard all except the first occurrence
         if (!detail.value(QContactName::FieldFirstName).isEmpty())
             return false;
         else
@@ -266,7 +276,7 @@ bool QVersitContactImporterPrivate::createOrganization(
         mDetailMappings.value(property.name());
     QString fieldName = detailNameAndFieldName.second;
     QList<QContactOrganization> organizations = contact->details<QContactOrganization>();
-    foreach(QContactOrganization current, organizations) {
+    foreach(const QContactOrganization& current, organizations) {
         if (current.value(fieldName).length() == 0) {
             organization = current;
             break;
@@ -381,7 +391,7 @@ bool QVersitContactImporterPrivate::createNicknames(
 {
     QStringList values = property.value().split(QLatin1Char(','), QString::SkipEmptyParts);
     QStringList contexts = extractContexts(property);
-    foreach(QString value, values) {
+    foreach(const QString& value, values) {
         QContactNickname nickName;
         nickName.setNickname(value);
         saveDetailWithContext(contact, &nickName, extractContexts(property));
@@ -521,7 +531,7 @@ QStringList QVersitContactImporterPrivate::extractContexts(
     QStringList types =
         property.parameters().values(QLatin1String("TYPE"));
     QStringList contexts;
-    foreach (QString type, types) {
+    foreach (const QString& type, types) {
         QString value = mContextMappings.value(type);
         if (value.length() > 0)
             contexts.append(value);
@@ -538,7 +548,7 @@ QStringList QVersitContactImporterPrivate::extractSubTypes(
     QStringList types =
         property.parameters().values(QLatin1String("TYPE"));
     QStringList subTypes;
-    foreach (QString type, types) {
+    foreach (const QString& type, types) {
         QString subType = mSubTypeMappings.value(type);
         if (subType.length() > 0)
             subTypes += subType;

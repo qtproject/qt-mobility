@@ -44,11 +44,47 @@
 #include "cntsimstore.h"
 #include <QTimer>
 
-CntAbstractSimRequest::CntAbstractSimRequest(CntSymbianSimEngine *engine)
+CntAbstractSimRequest::CntAbstractSimRequest(CntSymbianSimEngine *engine, QContactAbstractRequest *req)
     :QObject(engine),
-    m_timer(0)
+    m_request(req),
+    m_timer(0),
+    m_retryCount(0)
 {
     
+}
+
+bool CntAbstractSimRequest::start()
+{
+    if (m_request->isActive())
+        return false;
+    
+    m_retryCount = 0;
+    
+    singleShotTimer(KRequestDelay, this, SLOT(run()));
+    QContactManagerEngine::updateRequestState(m_request, QContactAbstractRequest::ActiveState);
+    return true;
+}
+
+bool CntAbstractSimRequest::cancel()
+{
+    if (m_request->isActive()) {
+        cancelTimer();
+        simStore()->cancel();
+        QContactManagerEngine::updateRequestState(m_request, QContactAbstractRequest::CanceledState);
+        return true;
+    }
+    return false;
+}
+
+bool CntAbstractSimRequest::waitAndRetry()
+{
+    if (m_retryCount < KMaxRetryCount)
+    {
+        singleShotTimer(KRequestDelay, this, SLOT(run()));
+        m_retryCount++;
+        return true;
+    }
+    return false;
 }
 
 void CntAbstractSimRequest::singleShotTimer(int msec, QObject *receiver, const char *member)

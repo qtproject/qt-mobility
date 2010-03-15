@@ -14,9 +14,9 @@ MOC_DIR = .moc
 OBJECTS_DIR = .obj
 
 # CONFIG += contacts
-INCLUDEPATH += /usr/include/qt4/QtMobility \
-               /usr/include \
-               $$QCONTACTS_TRACKER_BACKENDDIR
+INCLUDEPATH += $$QCONTACTS_TRACKER_BACKENDDIR
+
+DEFINES += VERSION_INFO=\\\"0\\\"
 
 ## Include source files under test.
 HEADERS += $$QCONTACTS_TRACKER_BACKENDDIR/qcontacttrackerbackend_p.h \

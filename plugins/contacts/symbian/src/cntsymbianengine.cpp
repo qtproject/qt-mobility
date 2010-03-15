@@ -142,7 +142,7 @@ QList<QContactLocalId> CntSymbianEngine::contactIds(
         QList<QContactRelationship> relationshipsList = relationships(
             rf.relationshipType(), rf.relatedContactId(), rf.relatedContactRole(), error);
         if(error == QContactManager::NoError) {
-            foreach(QContactRelationship r, relationshipsList) {
+            foreach(const QContactRelationship& r, relationshipsList) {
                 if(rf.relatedContactRole() == QContactRelationshipFilter::First) {
                     result += r.second().localId();
                 } else if (rf.relatedContactRole() == QContactRelationshipFilter::Second) {

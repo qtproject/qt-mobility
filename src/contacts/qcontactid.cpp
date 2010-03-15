@@ -41,6 +41,8 @@
 
 #include "qcontactid.h"
 #include "qcontactid_p.h"
+#include <QHash>
+#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
@@ -131,14 +133,29 @@ bool QContactId::operator!=(const QContactId& other) const
  */
 bool QContactId::operator<(const QContactId& other) const
 {
-    if (this->managerUri() > other.managerUri())
-        return false;
-
-    if (this->managerUri() < other.managerUri())
-        return true;
+    const int comp = this->managerUri().compare(other.managerUri());
+    if (comp != 0)
+        return comp < 0;
 
     return this->localId() < other.localId();
 }
+
+/*!
+ * Returns the hash value for \a key.
+ */
+uint qHash(const QContactId &key)
+{
+    return QT_PREPEND_NAMESPACE(qHash)(key.managerUri())
+            + QT_PREPEND_NAMESPACE(qHash)(key.localId());
+}
+
+#ifndef QT_NO_DEBUG_STREAM
+QDebug operator<<(QDebug dbg, const QContactId& id)
+{
+    dbg.nospace() << "QContactId(" << id.managerUri() << ", " << id.localId() << ")";
+    return dbg.maybeSpace();
+}
+#endif
 
 /*!
  * Returns the URI of the manager which contains the contact identified by this id

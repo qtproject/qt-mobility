@@ -46,7 +46,7 @@
 #include <QStringList>
 #include <QTextCodec>
 
-QTM_USE_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 /*!
   \class QVersitProperty
@@ -110,13 +110,51 @@ bool QVersitProperty::operator!=(const QVersitProperty& other) const
     return !(*this == other);
 }
 
+/*! Returns the hash value for \a key. */
+uint qHash(const QVersitProperty &key)
+{
+    uint hash = QT_PREPEND_NAMESPACE(qHash)(key.name()) + QT_PREPEND_NAMESPACE(qHash)(key.value());
+    foreach (const QString& group, key.groups()) {
+        hash += QT_PREPEND_NAMESPACE(qHash)(group);
+    }
+    QHash<QString,QString>::const_iterator it = key.parameters().constBegin();
+    QHash<QString,QString>::const_iterator end = key.parameters().constEnd();
+    while (it != end) {
+        hash += QT_PREPEND_NAMESPACE(qHash)(it.key()) + QT_PREPEND_NAMESPACE(qHash)(it.value());
+        ++it;
+    }
+    return hash;
+}
+
+#ifndef QT_NO_DEBUG_STREAM
+QDebug operator<<(QDebug dbg, const QVersitProperty& property)
+{
+    QStringList groups = property.groups();
+    QString name = property.name();
+    QMultiHash<QString,QString> parameters = property.parameters();
+    QString value = property.value();
+    dbg.nospace() << "QVersitProperty(";
+    foreach (const QString& group, groups) {
+        dbg.nospace() << group << '.';
+    }
+    dbg.nospace() << name;
+    QHash<QString,QString>::const_iterator it;
+    for (it = parameters.constBegin(); it != parameters.constEnd(); it++) {
+        dbg.nospace() << ';' << it.key() << '=' << it.value();
+    }
+    dbg.nospace() << ':' << value;
+    dbg.nospace() << ')';
+    return dbg.maybeSpace();
+}
+#endif
+
 /*!
  * Sets the groups in the property to the given list of \a groups.
  */
 void QVersitProperty::setGroups(const QStringList& groups)
 {
     d->mGroups.clear();
-    foreach (QString group, groups) {
+    foreach (const QString& group, groups) {
         d->mGroups.append(group);
     }
 }
@@ -269,3 +307,5 @@ void QVersitProperty::clear()
     d->mValue.clear();
     d->mParameters.clear();
 }
+
+QTM_END_NAMESPACE

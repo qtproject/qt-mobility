@@ -41,18 +41,23 @@
 
 #include "cntsimstore.h"
 #include "cntsimstoreprivate.h"
+#include "cntsymbiansimtransformerror.h"
 
-CntSimStore::CntSimStore(CntSymbianSimEngine* engine, QString storeName)
-    :QObject((QObject *)engine)
+CntSimStore::CntSimStore(CntSymbianSimEngine* engine, QString storeName, QContactManager::Error &error)
+    :QObject((QObject *)engine),
+     d_ptr(0)
 {
+    error = QContactManager::NoError;
+    
     // We need to register these meta types for signals because connect() with 
     // Qt::QueuedConnection it is required.
     qRegisterMetaType<QContact>("QContact");
     qRegisterMetaType<QList<QContact> >("QList<QContact>");
     qRegisterMetaType<QContactManager::Error>("QContactManager::Error");
-    qRegisterMetaType<RMobilePhoneBookStore::TMobilePhoneBookInfoV5>("RMobilePhoneBookStore::TMobilePhoneBookInfoV5");
+    qRegisterMetaType<QList<int> >("QList<int>");
     
-    QT_TRAP_THROWING(d_ptr = CntSimStorePrivate::NewL(*engine, *this, storeName));
+    TRAPD(err, d_ptr = CntSimStorePrivate::NewL(*engine, *this, storeName));
+    CntSymbianSimTransformError::transformError(err, error);
 }
 
 CntSimStore::~CntSimStore()
@@ -65,29 +70,29 @@ QString CntSimStore::storeName()
     return d_ptr->storeName();
 }
 
-RMobilePhoneBookStore::TMobilePhoneBookInfoV5 CntSimStore::storeInfo()
+TSimStoreInfo CntSimStore::storeInfo()
 {
     return d_ptr->storeInfo();
 }
 
-QContactManager::Error CntSimStore::getInfo()
+bool CntSimStore::read(int index, int numSlots, QContactManager::Error &error)
 {
-    return d_ptr->getInfo();
+    return d_ptr->read(index, numSlots, error);
 }
 
-QContactManager::Error CntSimStore::read(int index, int numSlots)
+bool CntSimStore::write(const QContact &contact, QContactManager::Error &error)
 {
-    return d_ptr->read(index, numSlots);
+    return d_ptr->write(contact, error);
 }
 
-QContactManager::Error CntSimStore::write(const QContact &contact)
+bool CntSimStore::remove(int index, QContactManager::Error &error)
 {
-    return d_ptr->write(contact);
+    return d_ptr->remove(index, error);
 }
 
-QContactManager::Error CntSimStore::remove(int index)
+bool CntSimStore::getReservedSlots(QContactManager::Error &error)
 {
-    return d_ptr->remove(index);
+    return d_ptr->getReservedSlots(error);
 }
 
 void CntSimStore::cancel()
@@ -98,4 +103,9 @@ void CntSimStore::cancel()
 bool CntSimStore::isBusy()
 {
     return d_ptr->IsActive();
+}
+
+TInt CntSimStore::lastAsyncError()
+{
+    return d_ptr->lastAsyncError();
 }

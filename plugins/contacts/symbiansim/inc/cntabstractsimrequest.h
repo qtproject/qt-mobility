@@ -43,28 +43,51 @@
 #define CNTABSTRACTSIMREQUEST_H_
 
 #include <QObject>
+#include <qtcontacts.h>
+
+QTM_BEGIN_NAMESPACE
+class QContactAbstractRequest;
+QTM_END_NAMESPACE
+QTM_USE_NAMESPACE
 
 class CntSymbianSimEngine;
 class CntSimStore;
 class QTimer;
 
+#ifdef SYMBIANSIM_BACKEND_USE_DELAY
+const int KRequestDelay = 10; // in ms
+#else
+const int KRequestDelay = 0;
+#endif
+const int KMaxRetryCount = 10;
+
 class CntAbstractSimRequest : public QObject
 {
 Q_OBJECT
 public:
-    CntAbstractSimRequest(CntSymbianSimEngine *engine);
-    virtual ~CntAbstractSimRequest() {}
-    virtual bool start() = 0;
-    virtual bool cancel() = 0;
+    CntAbstractSimRequest(CntSymbianSimEngine *engine, QContactAbstractRequest *req);
     
+    bool start();
+
+public Q_SLOTS:    
+    virtual void run() = 0;
+    virtual bool cancel();
+        
 protected:
+    bool waitAndRetry();
     void singleShotTimer(int msec, QObject *receiver, const char *member);
     void cancelTimer();
     CntSymbianSimEngine *engine();
     CntSimStore *simStore();
+    QContactAbstractRequest *req() { return m_request; }
+
+    template<class T>
+    T *req() { return static_cast<T*>(m_request); }
     
 private:
+    QContactAbstractRequest *m_request;
     QTimer *m_timer;
+    int m_retryCount;
 };
 
 #endif // CNTABSTRACTSIMREQUEST_H_
