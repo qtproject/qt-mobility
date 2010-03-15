@@ -613,5 +613,7 @@ QString QContactTrackerEngine::synthesizedDisplayLabel(const QContact& contact, 
         label = contact.detail<QContactNickname>().nickname();
     if(label.isEmpty())
         label = contact.detail<QContactOnlineAccount>().nickname();
+
+    qDebug() << Q_FUNC_INFO << label;
     return label;
 }

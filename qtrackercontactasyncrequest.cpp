@@ -345,6 +345,7 @@ RDFSelect prepareIMAddressesQuery(RDFVariable  &contact)
     RDFSelect queryidsimacccounts;
     // this establishes query graph relationship: imaddress that we want is a property in contact
     RDFVariable imaddress = contact.property<nco::hasIMAddress>();
+    contact != nco::default_contact_me::iri();
 
     // in the query, we need to get imaccount where this imaddress resides.
     // i.e. from which local account we have established connection to imaddress
@@ -664,7 +665,10 @@ void QTrackerContactFetchRequest::contactsReady()
         }
 
         readFromQueryRowToContact(contact ,i);
-        addContactToResultSet(contact);
+        //to prevent me contact getting list in the contact list
+        if (!isMeContact(request->filter())) {
+            addContactToResultSet(contact);
+        }
     }
 
     /*
@@ -986,9 +990,17 @@ void QTrackerContactFetchRequest::processQueryIMContacts(SopranoLive::LiveNodes 
             meContact.setId(id);
             QContactAvatar avatar = meContact.detail(QContactAvatar::DefinitionName);
             avatar.setAvatar(avatarURI);
-            
+            //nick
+
+            QContactNickname qnick = meContact.detail(QContactNickname::DefinitionName);
+            QString nick = queryIMAccountNodes->index(i, IMAccount::ContactNickname).data().toString(); // nick
+            qnick.setNickname(nick);
+
+              
             if (!avatarURI.isEmpty()) {
+                meContact.saveDetail(&account);
                 meContact.saveDetail(&avatar);
+                meContact.saveDetail(&qnick);
                 addContactToResultSet(meContact);
             }
         }
