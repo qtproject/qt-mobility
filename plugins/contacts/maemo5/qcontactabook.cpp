@@ -915,7 +915,6 @@ QContactNote* QContactABook::getNoteDetail(EContact *eContact) const
   return rtn;
 }
 
-//FIXME Review required. 
 QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eContact) const
 {
   QList<QContactOnlineAccount*> rtnList;
@@ -932,7 +931,7 @@ QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eC
       OssoABookContact *rosterContact = A_CONTACT(node->data);
      
       McProfile* id = osso_abook_contact_get_profile(rosterContact);
-      //McAccount* account = osso_abook_contact_get_account(rosterContact);
+      McAccount* account = osso_abook_contact_get_account(rosterContact);
       
       // Avoid to look for Roster contacts into the VCard
       QString accountVCard = QString::fromLatin1(mc_profile_get_vcard_field(id));
@@ -944,7 +943,7 @@ QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eC
       TpConnectionPresenceType presenceType = osso_abook_presence_get_presence_type (presence);
       QString presenceTypeString;
       switch (presenceType) {
-	case TP_CONNECTION_PRESENCE_TYPE_UNSET: presenceTypeString = "unset"; break;
+	case TP_CONNECTION_PRESENCE_TYPE_UNSET: presenceTypeString = "Unset"; break;
 	case TP_CONNECTION_PRESENCE_TYPE_OFFLINE: presenceTypeString = "Offline"; break;
 	case TP_CONNECTION_PRESENCE_TYPE_AVAILABLE: presenceTypeString = "Available"; break;
 	case TP_CONNECTION_PRESENCE_TYPE_AWAY: presenceTypeString = "Away"; break;
@@ -962,7 +961,7 @@ QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eC
       map[QContactOnlineAccount::FieldPresence] = presenceTypeString;
       map[QContactOnlineAccount::FieldServiceProvider] = mc_profile_get_unique_name(id);
       map[QContactOnlineAccount::FieldStatusMessage] = QString::fromLatin1(osso_abook_presence_get_presence_status_message(presence));
-      //map["accountPath"] = mc_account_get_connection_path(account);
+      map["AccountPath"] = account->name; //MCAccount name: variable part of the D-Bus object path.
       
       setDetailValues(map, rtn);
     }
@@ -1031,7 +1030,6 @@ QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eC
 	      qCritical() << "TYPE is empty"; 
 	  }  
 	}
-	//DON'T FREE ANYTHING!! e_vcard_attribute_param_free(p);
 
 	if (ossoValidIsOk && !type.isEmpty()) {
 	  QContactOnlineAccount* rtn = new QContactOnlineAccount;
@@ -1046,7 +1044,6 @@ QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eC
 	  rtnList << rtn;
 	}
       }
-      //DON'T FREE ANYTHING!! e_vcard_attribute_free(attr);
     }
   }
 

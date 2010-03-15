@@ -57,6 +57,7 @@
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <libmcclient/mc-account.h>
 
+//### Remove in PR 1.2
 extern "C" {
         typedef void GtkWindow;
 	struct _OssoABookContact {

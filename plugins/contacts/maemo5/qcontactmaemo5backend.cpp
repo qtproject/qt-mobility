@@ -201,16 +201,14 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     QMap<QString, QMap<QString, QContactDetailDefinition> > defns = QContactManagerEngine::schemaDefinitions();
     QMap<QString, QContactDetailFieldDefinition> fields;
     
-    QContactDetailFieldDefinition uri;
-    uri.setDataType(QVariant::String);
+    QContactDetailFieldDefinition gsfd; //Generic string field definition
+    gsfd.setDataType(QVariant::String);
     
     // QContactAddress
     fields = defns[contactType][QContactAddress::DefinitionName].fields();
     //fields.remove(QContactAddress::FieldSubTypes);
-    QContactDetailFieldDefinition ad;
-    ad.setDataType(QVariant::String);
-    fields.insert("Estension", ad);
-    fields.insert(QContactDetail::FieldDetailUri, uri);
+    fields.insert("Estension", gsfd);
+    fields.insert(QContactDetail::FieldDetailUri, gsfd);
     defns[contactType][QContactAddress::DefinitionName].setFields(fields);
     
     // QContactAnniversary
@@ -221,7 +219,7 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     // QContactDisplayLabel
     // QContactEmailAddress
     fields = defns[contactType][QContactEmailAddress::DefinitionName].fields();
-    fields.insert(QContactDetail::FieldDetailUri, uri);
+    fields.insert(QContactDetail::FieldDetailUri, gsfd);
     defns[contactType][QContactEmailAddress::DefinitionName].setFields(fields);
     
     // QContactFamily
@@ -237,6 +235,7 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     fields = defns[contactType][QContactOnlineAccount::DefinitionName].fields();
     fields.remove(QContactOnlineAccount::FieldAccountUri);
     fields.remove(QContactOnlineAccount::FieldSubTypes);
+    fields.insert("AccountPath", gsfd);
     defns[contactType][QContactOnlineAccount::DefinitionName].setFields(fields);
     
     // QContactOrganization
@@ -251,7 +250,7 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     
     // QContactPhoneNumber
     fields = defns[contactType][QContactPhoneNumber::DefinitionName].fields();
-    fields.insert(QContactDetail::FieldDetailUri, uri);
+    fields.insert(QContactDetail::FieldDetailUri, gsfd);
     defns[contactType][QContactPhoneNumber::DefinitionName].setFields(fields);
     
     // QContactSyncTarget
