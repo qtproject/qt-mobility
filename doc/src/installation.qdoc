@@ -123,8 +123,6 @@ these domains have dependencies and these are outlined below:
        The gstengine plugin for Linux and Maemo depends on gstreamer-0.10 (>= 0.10.19), gstreamer-audio-0.10 (>= 0.10.19), gstreamer-base-0.10 (>= 0.10.19), gstreamer-interfaces-0.10 (>= 0.10.19) and gstreamer-video-0.10 (>= 0.10.19).
        If asound (auto-detected) is available, ALSA device detection will be enabled.
 
-       The phononengine plugin for Mac depends on phonon.
-
        The QtMobilityMultimediaEngine for Symbian depends on QtMultimedia. 
        To enable all mediaservices on symbian one must download sdk plugins. Sdk plugins are available at \l http://wiki.forum.nokia.com/index.php/SDK_API_Plug-in
        For 5th edition sdk plugins are installed with installer (all at once), but for FP1 and FP2 devices a zip is provided. You will need following plugins to compile all features: 

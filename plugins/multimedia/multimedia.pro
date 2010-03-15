@@ -34,7 +34,6 @@ unix:!mac:!symbian {
 }
 
 mac {
-    #contains(QT_CONFIG, phonon): SUBDIRS += phonon
     contains(QT_CONFIG, multimedia): SUBDIRS += audiocapture
     SUBDIRS += qt7
 }
