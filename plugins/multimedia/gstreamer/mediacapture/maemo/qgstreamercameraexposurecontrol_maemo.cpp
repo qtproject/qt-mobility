@@ -210,14 +210,19 @@ QCamera::MeteringModes QGstreamerCameraExposureControl::supportedMeteringModes()
 
 int QGstreamerCameraExposureControl::isoSensitivity() const
 {
+    guint isoSpeed = 0;
+    gst_photography_get_iso_speed(GST_PHOTOGRAPHY(&m_camerabin), &isoSpeed);
+    return isoSpeed;
 }
 
 QList<int> QGstreamerCameraExposureControl::supportedIsoSensitivities(bool *continuous) const
 {
+    return QList<int>();
 }
 
 void QGstreamerCameraExposureControl::setManualIsoSensitivity(int iso)
 {
+    gst_photography_get_iso_speed(GST_PHOTOGRAPHY(&m_camerabin), (guint*)&iso);
 }
 
 void QGstreamerCameraExposureControl::setAutoIsoSensitivity()
