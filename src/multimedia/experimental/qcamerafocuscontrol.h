@@ -72,6 +72,14 @@ public:
 
     virtual void zoomTo(qreal optical, qreal digital) = 0;
 
+    virtual QCamera::FocusPointMode focusPointMode() const = 0;
+    virtual void setFocusPointMode(QCamera::FocusPointMode mode) = 0;
+    virtual QCamera::FocusPointModes supportedFocusPointModes() const = 0;
+    virtual QPointF customFocusPoint() const = 0;
+    virtual void setCustomFocusPoint(const QPointF &point) = 0;
+
+    virtual QList<QRectF> focusZones() const = 0;
+
 public Q_SLOTS:
     virtual void startFocusing() = 0;
     virtual void cancelFocusing() = 0;
@@ -80,6 +88,7 @@ Q_SIGNALS:
     void opticalZoomChanged(qreal opticalZoom);
     void digitalZoomChanged(qreal digitalZoom);
     void focusStatusChanged(QCamera::FocusStatus);
+    void focusZonesChanged(const QList<QRectF> &);
 
 protected:
     QCameraFocusControl(QObject* parent = 0);

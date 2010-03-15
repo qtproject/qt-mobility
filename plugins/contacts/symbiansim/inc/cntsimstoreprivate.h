@@ -51,18 +51,19 @@
 #include <qcontact.h>
 
 #include "cntsymbiansimengine.h"
+#include "cntsimstore.h"
 
 QTM_USE_NAMESPACE
 
 class CntSimStore;
 class CntSymbianSimEngine;
+class CntSimStoreEventListener;
 
 class CntSimStorePrivate : public CActive
 {
 public:
     enum State {
         InactiveState,
-        GetInfoState,
         ReadState,
         WriteState,
         DeleteState
@@ -71,12 +72,13 @@ public:
     ~CntSimStorePrivate();
     
     QString storeName() { return m_storeName; }
-    RMobilePhoneBookStore::TMobilePhoneBookInfoV5 storeInfo() { return m_storeInfo; }
+    TSimStoreInfo storeInfo() { return m_storeInfo; }
 
-    QContactManager::Error getInfo();
-    QContactManager::Error read(int index, int numSlots);
-    QContactManager::Error write(const QContact &contact);
-    QContactManager::Error remove(int index);
+    bool read(int index, int numSlots, QContactManager::Error &error);
+    bool write(const QContact &contact, QContactManager::Error &error);
+    bool remove(int index, QContactManager::Error &error);
+    
+    TInt lastAsyncError() { return m_asyncError; }
     
 private: 
     // from CActive
@@ -100,11 +102,13 @@ private:
     RMobilePhone m_etelPhone;
     RMobilePhoneBookStore m_etelStore;
     QString m_storeName;
-    RMobilePhoneBookStore::TMobilePhoneBookInfoV5 m_storeInfo;
-    RMobilePhoneBookStore::TMobilePhoneBookInfoV5Pckg m_storeInfoPckg;
+    TSimStoreInfo m_storeInfo;
+    TSimStoreInfoPckg m_storeInfoPckg;
     RBuf8 m_buffer;
     QContact m_convertedContact;
     int m_writeIndex;
+    CntSimStoreEventListener* m_listener;
+    TInt m_asyncError;
 };
 
 #endif // CNTSIMSTOREPRIVATE_H_

@@ -74,6 +74,7 @@ private slots:
     void toggleRecord();
     void stateChanged(QMediaRecorder::State);
     void updateProgress(qint64 pos);
+    void errorChanged(QMediaRecorder::Error);
 
 private:
     QAudioCaptureSource* audiosource;
@@ -84,6 +85,7 @@ private:
     QComboBox*     codecsBox;
     QComboBox*     qualityBox;
     QLabel*        recTime;
+    QLabel*        statusLabel;
     QPushButton*   button;
     QPushButton*   fileButton;
     bool           active;

@@ -521,7 +521,7 @@ bool ParseManager::checkAllMetadatas(ParseManager* pInterfaceParserManager, QStr
     bool ret = true;
     
     //Create output file
-    if(resultfile != "" && ::m_resultFile == 0){
+    if(!resultfile.isEmpty() && ::m_resultFile == 0){
         ::m_resultFile = new QFile(resultfile);
         if (!::m_resultFile->open(QFile::WriteOnly | QFile::Truncate)) {
             delete ::m_resultFile;

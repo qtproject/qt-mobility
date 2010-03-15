@@ -97,12 +97,16 @@
         void positionChanged(qint64 progress);
         void metaDataChanged();
 
+        void previousClicked();
+
         void seek(int seconds);
         void jump(const QModelIndex &amp;index);
         void playlistPositionChanged(int);
 
         void statusChanged(QMediaPlayer::MediaStatus status);
         void bufferingProgress(int progress);
+
+        void displayErrorMessage();
 
     #ifdef Q_OS_SYMBIAN
         void handleFullScreen(bool isFullscreen);
