@@ -42,62 +42,33 @@
 #ifndef QLOCATION_MAPPOLYGON_H
 #define QLOCATION_MAPPOLYGON_H
 
-#include <QPen>
-#include <QBrush>
-#include <QPainterPath>
-
 #include "qmapobject.h"
-#include "qgeocoordinatemaps.h"
 
 QTM_BEGIN_NAMESPACE
 
-/*!
-* Internal representation of a polygon that has been added to the map.
-*/
+class QMapPolygonPrivate;
 class QMapPolygon : public QMapObject
 {
     friend class QMapView;
 
 public:
-    /*!
-    * Constructor
-    * @param polygon The list of geo coordinates that define the polygon.
-    * @param pen Then pen used for drawing the rectangle.
-    * @param brush The brush used for drawing the rectangle.
-    * @param layerIndex The layer index of the polygon. Higher layers are stacked on top of lower layers.
-    */
-    QMapPolygon(const QMapView& mapView, const QList<QGeoCoordinateMaps>& polygon,
-                const QPen& pen, const QBrush& brush, quint16 layerIndex);
+    QMapPolygon(const QMapView *mapView, const QList<QGeoCoordinateMaps>& polygon,
+                const QPen& pen = QPen(), const QBrush& brush = QBrush(),
+                quint16 layerIndex = 0);
 
-    /*!
-    * @return The polygon.
-    */
-    QList<QGeoCoordinateMaps> polygon() const {
-        return poly;
-    }
-    /*!
-    * @return pen Then pen used for drawing the polygon.
-    */
-    QPen pen() const {
-        return p;
-    }
-    /*!
-    * @return brush The brush used for drawing the polygon.
-    */
-    QBrush brush() const {
-        return br;
-    }
+    QList<QGeoCoordinateMaps> polygon() const;
+    QPen pen() const;
+    QBrush brush() const;
 
 protected:
     virtual bool intersects(const QRectF& rect) const;
     virtual void compMapCoords();
     virtual void paint(QPainter* painter, const QRectF& viewPort);
-
+    QMapPolygon(QMapPolygonPrivate &dd, const QMapView* mapView, const QList<QGeoCoordinateMaps>& polygon,
+                const QPen& pen = QPen(), const QBrush& brush = QBrush(),
+                quint16 layerIndex=0);
 private:
-    QList<QGeoCoordinateMaps> poly; //!< The polygon.
-    QPen p; //!< The pen used for drawing the polygon.
-    QBrush br; //!< The brush used for drawing the polygon.
-    QPainterPath path;
+    Q_DECLARE_PRIVATE(QMapPolygon)
 };
 
 QTM_END_NAMESPACE

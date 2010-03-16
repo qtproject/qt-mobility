@@ -39,41 +39,24 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_MAPMARKER_H
-#define QLOCATION_MAPMARKER_H
+#ifndef QLOCATION_MAPPIXMAP_P_H
+#define QLOCATION_MAPPIXMAP_P_H
 
-#include "qmapobject.h"
+#include "qmapobject_p.h"
+#include <QPixmap>
+#include <QPointF>
+#include "qgeocoordinatemaps.h"
+
 QTM_BEGIN_NAMESPACE
 
-class QMapMarkerPrivate;
-class Q_LOCATION_EXPORT QMapMarker : public QMapObject
+class QMapPixmapPrivate : public QMapObjectPrivate
 {
-    friend class QMapView;
-
 public:
-    QMapMarker(const QMapView* mapView, const QGeoCoordinateMaps& point,
-               const QString& text, const QFont& font, const QColor& fontColor,
-               const QPixmap& icon, const QRectF& textRect,
-               quint16 layerIndex);
+    QMapPixmapPrivate();
 
-    QPixmap icon() const;
-    QGeoCoordinateMaps point() const;
-    QString text() const;
-    QRectF textRect() const;
-    QFont font() const;
-
-protected:
-    virtual bool intersects(const QRectF& tileRect) const;
-    virtual void compMapCoords();
-    virtual void paint(QPainter* painter, const QRectF& viewPort);
-
-    void constructMarker(QPainter* painter, const QPointF& point);
-    QMapMarker(QMapMarkerPrivate &dd, const QMapView* mapView, const QGeoCoordinateMaps& point,
-               const QString& text, const QFont& font, const QColor& fontColor,
-               const QPixmap& icon, const QRectF& textRect,
-               quint16 layerIndex);
-private:
-    Q_DECLARE_PRIVATE(QMapMarker);
+    QPixmap pic; //!< The pixmap.
+    QGeoCoordinateMaps geoTopLeft; //!< The top left coordinate of this pixmap.
+    QPointF mapTopLeft; //!< The top left coordinate, for internal use only
 };
 
 QTM_END_NAMESPACE

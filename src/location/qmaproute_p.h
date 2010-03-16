@@ -39,41 +39,21 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_MAPMARKER_H
-#define QLOCATION_MAPMARKER_H
+#ifndef QLOCATION_MAPROUTE_P_H
+#define QLOCATION_MAPROUTE_P_H
 
-#include "qmapobject.h"
+#include "qmapobject_p.h"
+
 QTM_BEGIN_NAMESPACE
 
-class QMapMarkerPrivate;
-class Q_LOCATION_EXPORT QMapMarker : public QMapObject
+class QMapRoutePrivate : public QMapObjectPrivate
 {
-    friend class QMapView;
-
 public:
-    QMapMarker(const QMapView* mapView, const QGeoCoordinateMaps& point,
-               const QString& text, const QFont& font, const QColor& fontColor,
-               const QPixmap& icon, const QRectF& textRect,
-               quint16 layerIndex);
+    QMapRoutePrivate();
 
-    QPixmap icon() const;
-    QGeoCoordinateMaps point() const;
-    QString text() const;
-    QRectF textRect() const;
-    QFont font() const;
-
-protected:
-    virtual bool intersects(const QRectF& tileRect) const;
-    virtual void compMapCoords();
-    virtual void paint(QPainter* painter, const QRectF& viewPort);
-
-    void constructMarker(QPainter* painter, const QPointF& point);
-    QMapMarker(QMapMarkerPrivate &dd, const QMapView* mapView, const QGeoCoordinateMaps& point,
-               const QString& text, const QFont& font, const QColor& fontColor,
-               const QPixmap& icon, const QRectF& textRect,
-               quint16 layerIndex);
-private:
-    Q_DECLARE_PRIVATE(QMapMarker);
+    QRoute rt;
+    QMap<quint64, QList<QLineF> > segments; //!< All individual route segments.
+    QPen rPen; //!< The pen used for drawing this route.
 };
 
 QTM_END_NAMESPACE

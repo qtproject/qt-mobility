@@ -39,41 +39,26 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_MAPMARKER_H
-#define QLOCATION_MAPMARKER_H
+#ifndef QLOCATION_MAPPOLYGON_P_H
+#define QLOCATION_MAPPOLYGON_P_H
 
-#include "qmapobject.h"
+#include "qmapobject_p.h"
+
+#include "qgeocoordinatemaps.h"
+#include <QPen>
+#include <QBrush>
+#include <QPainterPath>
+
 QTM_BEGIN_NAMESPACE
 
-class QMapMarkerPrivate;
-class Q_LOCATION_EXPORT QMapMarker : public QMapObject
+class QMapPolygonPrivate : public QMapObjectPrivate
 {
-    friend class QMapView;
-
 public:
-    QMapMarker(const QMapView* mapView, const QGeoCoordinateMaps& point,
-               const QString& text, const QFont& font, const QColor& fontColor,
-               const QPixmap& icon, const QRectF& textRect,
-               quint16 layerIndex);
-
-    QPixmap icon() const;
-    QGeoCoordinateMaps point() const;
-    QString text() const;
-    QRectF textRect() const;
-    QFont font() const;
-
-protected:
-    virtual bool intersects(const QRectF& tileRect) const;
-    virtual void compMapCoords();
-    virtual void paint(QPainter* painter, const QRectF& viewPort);
-
-    void constructMarker(QPainter* painter, const QPointF& point);
-    QMapMarker(QMapMarkerPrivate &dd, const QMapView* mapView, const QGeoCoordinateMaps& point,
-               const QString& text, const QFont& font, const QColor& fontColor,
-               const QPixmap& icon, const QRectF& textRect,
-               quint16 layerIndex);
-private:
-    Q_DECLARE_PRIVATE(QMapMarker);
+    QMapPolygonPrivate();
+    QList<QGeoCoordinateMaps> poly; //!< The polygon.
+    QPen p; //!< The pen used for drawing the polygon.
+    QBrush br; //!< The brush used for drawing the polygon.
+    QPainterPath path;
 };
 
 QTM_END_NAMESPACE

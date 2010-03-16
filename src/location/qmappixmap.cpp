@@ -39,43 +39,57 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_MAPMARKER_H
-#define QLOCATION_MAPMARKER_H
+#include "qmappixmap.h"
+#include "qmappixmap_p.h"
 
-#include "qmapobject.h"
 QTM_BEGIN_NAMESPACE
 
-class QMapMarkerPrivate;
-class Q_LOCATION_EXPORT QMapMarker : public QMapObject
+QMapPixmapPrivate::QMapPixmapPrivate()
+    :pic(QPixmap()), geoTopLeft(QGeoCoordinateMaps()),
+     mapTopLeft(QPointF())
 {
-    friend class QMapView;
+}
 
-public:
-    QMapMarker(const QMapView* mapView, const QGeoCoordinateMaps& point,
-               const QString& text, const QFont& font, const QColor& fontColor,
-               const QPixmap& icon, const QRectF& textRect,
-               quint16 layerIndex);
+/*!
+    \class QMapPixmap
+    \brief The QMapPixmap class represents a pixmap on a map.
+    \ingroup location
+*/
 
-    QPixmap icon() const;
-    QGeoCoordinateMaps point() const;
-    QString text() const;
-    QRectF textRect() const;
-    QFont font() const;
+/*!
+    Constructs the \a pixmap in the \a mapView.  It's top left corner is position according to \a topLeft
+    corner.  The pixmap is displayed in the layer specified by \a layerIndex.
+*/
+QMapPixmap::QMapPixmap(const QMapView* mapView, const QGeoCoordinateMaps& topLeft, const QPixmap& pixmap, quint16 layerIndex)
+    :QMapObject(*new QMapPixmapPrivate, mapView, QMapObject::PixmapObject, layerIndex)
+{
+    Q_D(QMapPixmap);
+    d->geoTopLeft = topLeft;
+    d->pic = pixmap;
+}
 
-protected:
-    virtual bool intersects(const QRectF& tileRect) const;
-    virtual void compMapCoords();
-    virtual void paint(QPainter* painter, const QRectF& viewPort);
+QMapPixmap::QMapPixmap(QMapPixmapPrivate &dd, const QMapView* mapView, const QGeoCoordinateMaps& topLeft, const QPixmap& pixmap, quint16 layerIndex)
+    :QMapObject(dd, mapView, QMapObject::PixmapObject, layerIndex)
+{
+    Q_D(QMapPixmap);
+    d->geoTopLeft = topLeft;
+    d->pic = pixmap;
+}
 
-    void constructMarker(QPainter* painter, const QPointF& point);
-    QMapMarker(QMapMarkerPrivate &dd, const QMapView* mapView, const QGeoCoordinateMaps& point,
-               const QString& text, const QFont& font, const QColor& fontColor,
-               const QPixmap& icon, const QRectF& textRect,
-               quint16 layerIndex);
-private:
-    Q_DECLARE_PRIVATE(QMapMarker);
-};
+/*!
+    Returns the pixmap.
+*/
+QPixmap QMapPixmap::pixmap() const {
+    Q_D(const QMapPixmap);
+    return d->pic;
+}
+
+/*!
+    Returns the top left corner (as a geo coordinate) of this pixmap.
+*/
+QGeoCoordinateMaps QMapPixmap::topLeft() const {
+    Q_D(const QMapPixmap);
+    return d->geoTopLeft;
+}
 
 QTM_END_NAMESPACE
-
-#endif

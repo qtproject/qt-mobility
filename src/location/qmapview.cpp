@@ -51,12 +51,14 @@
 #include "qmaptile.h"
 #include "qmaproute.h"
 #include "qmapobject.h"
+#include "qmapobject_p.h"
 #include "qmapline.h"
 #include "qmaprect.h"
 #include "qmappixmap.h"
 #include "qmappolygon.h"
 #include "qmapellipse.h"
 #include "qmapmarker.h"
+#include "qmapmarker_p.h"
 
 #define RELEASE_INTERVAL 10000
 
@@ -567,7 +569,7 @@ const QMapEllipse* QMapView::addEllipse(const QGeoCoordinateMaps& /*topLeft*/, c
 const QMapRect* QMapView::addRect(const QGeoCoordinateMaps& topLeft, const QGeoCoordinateMaps& bottomRight,
                                   const QPen& pen, const QBrush& brush, quint16 layerIndex)
 {
-    QMapRect* rect = new QMapRect(*this, topLeft, bottomRight, pen, brush, layerIndex);
+    QMapRect* rect = new QMapRect(this, topLeft, bottomRight, pen, brush, layerIndex);
     mapObjects.insert(rect);
     rect->compMapCoords();
     addMapObjectToTiles(rect);
@@ -578,7 +580,7 @@ const QMapRect* QMapView::addRect(const QGeoCoordinateMaps& topLeft, const QGeoC
 const QMapPolygon* QMapView::addPolygon(const QList<QGeoCoordinateMaps>& polygon,
                                         const QPen& pen, const QBrush& brush, quint16 layerIndex)
 {
-    QMapPolygon* poly = new QMapPolygon(*this, polygon, pen, brush, layerIndex);
+    QMapPolygon* poly = new QMapPolygon(this, polygon, pen, brush, layerIndex);
     mapObjects.insert(poly);
     poly->compMapCoords();
     addMapObjectToTiles(poly);
@@ -591,7 +593,7 @@ const QMapMarker* QMapView::addMarker(const QGeoCoordinateMaps& point, const QSt
                                       const QPixmap& icon, const QRectF& textRect,
                                       quint16 layerIndex)
 {
-    QMapMarker* marker = new QMapMarker(*this, point, text, font, fontColor,
+    QMapMarker* marker = new QMapMarker(this, point, text, font, fontColor,
                                         icon, textRect, layerIndex);
     mapObjects.insert(marker);
     marker->compMapCoords();
@@ -603,7 +605,7 @@ const QMapMarker* QMapView::addMarker(const QGeoCoordinateMaps& point, const QSt
 const QMapLine* QMapView::addLine(const QGeoCoordinateMaps& point1, const QGeoCoordinateMaps& point2,
                                   const QPen& pen, quint16 layerIndex)
 {
-    QMapLine* line = new QMapLine(*this, point1, point2, pen, layerIndex);
+    QMapLine* line = new QMapLine(this, point1, point2, pen, layerIndex);
     mapObjects.insert(line);
     line->compMapCoords();
     addMapObjectToTiles(line);
@@ -615,7 +617,7 @@ const QMapLine* QMapView::addLine(const QGeoCoordinateMaps& point1, const QGeoCo
 const QMapRoute* QMapView::addRoute(const QRoute& route, const QPen& pen,
                                     const QPixmap& endpointMarker, quint16 layerIndex)
 {
-    QMapRoute* mapRoute = new QMapRoute(*this, route, pen, endpointMarker, layerIndex);
+    QMapRoute* mapRoute = new QMapRoute(this, route, pen, endpointMarker, layerIndex);
     mapObjects.insert(mapRoute);
     mapRoute->compMapCoords();
     addMapObjectToTiles(mapRoute);
@@ -631,11 +633,11 @@ QRectF QMapView::getTileRect(quint32 col, quint32 row) const
 
 void QMapView::addMapObjectToTiles(QMapObject* mapObject)
 {
-    for (int i = 0; i < mapObject->intersectingTiles.count(); i++) {
-        if (!tileToObjectsMap.contains(mapObject->intersectingTiles[i]))
-            tileToObjectsMap[mapObject->intersectingTiles[i]] = QList<QMapObject*>();
+    for (int i = 0; i < mapObject->d_ptr->intersectingTiles.count(); i++) {
+        if (!tileToObjectsMap.contains(mapObject->d_ptr->intersectingTiles[i]))
+            tileToObjectsMap[mapObject->d_ptr->intersectingTiles[i]] = QList<QMapObject*>();
 
-        tileToObjectsMap[mapObject->intersectingTiles[i]].append(mapObject);
+        tileToObjectsMap[mapObject->d_ptr->intersectingTiles[i]].append(mapObject);
     }
 }
 
@@ -654,11 +656,11 @@ void QMapView::paintLayers(QPainter* painter)
             for (int i = 0; i < mapObjects.size(); i++) {
                 QMapObject* obj = mapObjects[i];
 
-                if (!stackedObj.contains(obj->z))
-                    stackedObj[obj->z] = QSet<QMapObject*>();
+                if (!stackedObj.contains(obj->d_ptr->z))
+                    stackedObj[obj->d_ptr->z] = QSet<QMapObject*>();
 
-                if (!stackedObj[obj->z].contains(obj))
-                    stackedObj[obj->z].insert(obj);
+                if (!stackedObj[obj->d_ptr->z].contains(obj))
+                    stackedObj[obj->d_ptr->z].insert(obj);
             }
         }
     }

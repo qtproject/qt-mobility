@@ -39,41 +39,29 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_MAPMARKER_H
-#define QLOCATION_MAPMARKER_H
+#ifndef QLOCATION_MAPELLIPSE__P_H
+#define QLOCATION_MAPELLIPSE__P_H
 
-#include "qmapobject.h"
+#include "qmapobject_p.h"
+#include "qgeocoordinatemaps.h"
+
+#include <QPen>
+#include <QBrush>
+#include <QPointF>
+
 QTM_BEGIN_NAMESPACE
 
-class QMapMarkerPrivate;
-class Q_LOCATION_EXPORT QMapMarker : public QMapObject
+class QMapEllipsePrivate : public QMapObjectPrivate
 {
-    friend class QMapView;
-
 public:
-    QMapMarker(const QMapView* mapView, const QGeoCoordinateMaps& point,
-               const QString& text, const QFont& font, const QColor& fontColor,
-               const QPixmap& icon, const QRectF& textRect,
-               quint16 layerIndex);
+    QMapEllipsePrivate();
 
-    QPixmap icon() const;
-    QGeoCoordinateMaps point() const;
-    QString text() const;
-    QRectF textRect() const;
-    QFont font() const;
-
-protected:
-    virtual bool intersects(const QRectF& tileRect) const;
-    virtual void compMapCoords();
-    virtual void paint(QPainter* painter, const QRectF& viewPort);
-
-    void constructMarker(QPainter* painter, const QPointF& point);
-    QMapMarker(QMapMarkerPrivate &dd, const QMapView* mapView, const QGeoCoordinateMaps& point,
-               const QString& text, const QFont& font, const QColor& fontColor,
-               const QPixmap& icon, const QRectF& textRect,
-               quint16 layerIndex);
-private:
-    Q_DECLARE_PRIVATE(QMapMarker);
+    QGeoCoordinateMaps geoTopLeft; //!< The top left geo coordinate of the bounding box of the ellipse.
+    QPointF mapTopLeft; //!< The top left map coordinate of the bounding box of the ellipse, for internal use only
+    QGeoCoordinateMaps geoBottomRight; //!< The bottom right geo coordinate of the bounding box of the ellipse.
+    QPointF mapBottomRight; //!< The bottom right map coordinate of the bounding box of the ellipse, for internal use only
+    QPen p; //!< The pen used for drawing the ellipse.
+    QBrush b; //!< The brush used for drawing the ellipse.
 };
 
 QTM_END_NAMESPACE

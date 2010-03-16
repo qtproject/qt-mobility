@@ -42,47 +42,27 @@
 #ifndef QLOCATION_MAPPIXMAP_H
 #define QLOCATION_MAPPIXMAP_H
 
-#include <QPixmap>
-#include <QPointF>
-
 #include "qmapobject.h"
-#include "qgeocoordinatemaps.h"
 
 QTM_BEGIN_NAMESPACE
 
-/*!
-* Internal representation of a pixmap that has been added to the map.
-*/
+class QMapPixmapPrivate;
 class QMapPixmap : public QMapObject
 {
     friend class QMapView;
 
 public:
-    /*!
-    * The contructor.
-    * @param topLeft The top left corner (as geo coordinate) where this pixmap should be added to the map.
-    * @param pixmap The pixmap.
-    * @param layerIndex The map layer index of the pixmap.
-    */
-    QMapPixmap(const QGeoCoordinateMaps& topLeft, const QPixmap& pixmap, quint16 layerIndex = 0);
+    QMapPixmap(const QMapView* mapView, const QGeoCoordinateMaps& topLeft, const QPixmap& pixmap, quint16 layerIndex = 0);
 
-    /*!
-    * @return The pixmap.
-    */
-    QPixmap pixmap() const {
-        return pic;
-    }
-    /*!
-    * @return The top left corner (as geo coordinate) of this pixmap.
-    */
-    QGeoCoordinateMaps topLeft() const {
-        return geoTopLeft;
-    }
+    QPixmap pixmap() const;
+    QGeoCoordinateMaps topLeft() const;
+
+protected:
+    QMapPixmap(QMapPixmapPrivate &dd, const QMapView* mapView,
+                const QGeoCoordinateMaps& topLeft, const QPixmap& pixmap, quint16 layerIndex = 0);
 
 private:
-    QPixmap pic; //!< The pixmap.
-    QGeoCoordinateMaps geoTopLeft; //!< The top left coordinate of this pixmap.
-    QPointF mapTopLeft; //!< The top left coordinate, for internal use only
+    Q_DECLARE_PRIVATE(QMapPixmap)
 };
 
 QTM_END_NAMESPACE
