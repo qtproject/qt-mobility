@@ -33,7 +33,8 @@ symbian {
     include(xqsettingsmanager_symbian/settingsmanager.pri)
 
     DEPENDPATH += psmapperserver_symbian
-    INCLUDEPATH += psmapperserver_symbian
+    INCLUDEPATH += psmapperserver_symbian \
+               $${EPOCROOT}epoc32\include\platform
 
     HEADERS += pathmapper_symbian_p.h \
         pathmapper_proxy_symbian_p.h
