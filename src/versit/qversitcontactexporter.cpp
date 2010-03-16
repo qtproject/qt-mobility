@@ -110,6 +110,20 @@ QTM_USE_NAMESPACE
  * An example usage of QVersitContactExporter
  * \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Export example
  *
+ * \section1 Exporting group relationships
+ * The exporter does not handle QContactRelationships at all.
+ *
+ * Some managers use the \l{QContactRelationship::HasMember}{HasMember} QContactRelationship along
+ * with contacts of type \l{QContactType::TypeGroup}{TypeGroup} to indicate categorization of
+ * contacts.  In vCard, categorization is represented by the CATEGORIES property, which has
+ * semantics most similar to the QContactTag detail.  For contact manager backends that supports
+ * groups but not QContactTag, if the categorization information needs to be retained through
+ * CATEGORIES vCard properties, extra work can be done to convert from group relationships to
+ * QContactTag before passing the contact list to the exporter.  Below is some example code that
+ * does this translation.
+ *
+ * \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Export relationship example
+ *
  * \sa QVersitDocument, QVersitProperty, QVersitContactExporterDetailHandler, QVersitResourceHandler
  */
 

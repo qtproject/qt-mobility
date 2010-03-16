@@ -116,6 +116,16 @@ QTM_USE_NAMESPACE
  * An example usage of QVersitContactImporter
  * \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Import example
  *
+ * \section1 Importing categories
+ * The importer imports the vCard CATEGORIES property by converting each category to a QContactTag.
+ * Some managers may not have support for QContactTag, but instead support categorization using the
+ * \l{QContactRelationship::HasMember}{HasMember} QContactRelationship along with contacts of type
+ * \l{QContactType::TypeGroup}{TypeGroup}.  For these backends, if the categorization information
+ * needs to be retained through group relationships, extra work needs to be done to do the
+ * conversion.  Below is some example code that does this translation.
+ *
+ * \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Import relationship example
+ *
  * \sa QVersitDocument, QVersitReader, QVersitContactImporterPropertyHandler
  */
 
