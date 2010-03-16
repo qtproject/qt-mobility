@@ -108,11 +108,6 @@ contains(build_unit_tests, yes):DEFINES+=QTM_BUILD_UNITTESTS
     QMAKE_RPATHDIR += $$OUTPUT_DIR/lib
 }
 
-# On Symbian, we are freezing libraryies only
-symbian:isEmpty(defFilePath) {
-#    MMP_RULES += "EXPORTUNFROZEN"
-}
-
 contains(TEMPLATE,.*lib):DEFINES += QT_SHARED
 
 maemo6 {

@@ -43,18 +43,17 @@
 
 #include <QApplication>
 #include <QObject>
-#include <QmlView>
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QUrl>
-#include <qml.h>
+#include <QDeclarativeView>
+#include <qdeclarative.h>
 
 QTM_USE_NAMESPACE
 
 //! [0]
 QML_DECLARE_TYPE(QValueSpaceSubscriber);
-QML_DEFINE_TYPE(Qt, 4, 6, ValueSpaceSubscriber, QValueSpaceSubscriber);
 //! [0]
 
 class MainWidget : public QWidget
@@ -65,21 +64,27 @@ public:
     MainWidget();
 
 private:
-    QmlView *view;
+    QDeclarativeView *view;
 };
 
 MainWidget::MainWidget()
 {
+    //! [1]
+    QML_REGISTER_TYPE(Qt, 4, 6, ValueSpaceSubscriber, QValueSpaceSubscriber);
+    //! [1]
+
     QVBoxLayout *vbox = new QVBoxLayout;
     vbox->setMargin(0);
     setLayout(vbox);
 
-    view = new QmlView(this);
+    view = new QDeclarativeView(this);
     view->setFixedSize(100, 230);
     vbox->addWidget(view);
 
-    view->setUrl(QUrl("qrc:/battery-meter.qml"));
-    view->execute();
+    //! [2]
+    view->setSource(QUrl("qrc:/battery-meter.qml"));
+    view->show();
+    //! [2]
 
     QPushButton *quitButton = new QPushButton("Quit");
     vbox->addWidget(quitButton);
