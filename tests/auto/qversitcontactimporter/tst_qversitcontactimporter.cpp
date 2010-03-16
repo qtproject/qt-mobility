@@ -1160,6 +1160,35 @@ void tst_QVersitContactImporter::testSound()
     QCOMPARE(content, val);
 }
 
+void tst_QVersitContactImporter::testTag()
+{
+    // one value
+    QVersitDocument document(QVersitDocument::VCard30Type);
+    QVersitProperty tagProperty;
+    tagProperty.setName(QLatin1String("CATEGORIES"));
+    tagProperty.setValue(QLatin1String("red"));
+    document.addProperty(tagProperty);
+    QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
+    QContact contact = mImporter->contacts().first();
+    QContactTag tagDetail = contact.detail<QContactTag>();
+    QCOMPARE(tagDetail.tag(), QLatin1String("red"));
+
+    // comma separated values should generate multiple nickname fields
+    document.clear();
+    document.setType(QVersitDocument::VCard30Type);
+    tagProperty.setName(QLatin1String("CATEGORIES"));
+    tagProperty.setValue(QLatin1String("red,green,deep\\, dark blue"));
+    document.addProperty(tagProperty);
+    QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
+    contact = mImporter->contacts().first();
+    QList<QContactTag> tagDetails = contact.details<QContactTag>();
+    QEXPECT_FAIL("", "Escaped commas don't work.", Abort);
+    QCOMPARE(tagDetails.count(), 3);
+    QCOMPARE(tagDetails.at(0).tag(), QLatin1String("red"));
+    QCOMPARE(tagDetails.at(1).tag(), QLatin1String("green"));
+    QCOMPARE(tagDetails.at(2).tag(), QLatin1String("deep, dark blue"));
+}
+
 void tst_QVersitContactImporter::testPref()
 {
     QVersitDocument document(QVersitDocument::VCard30Type);

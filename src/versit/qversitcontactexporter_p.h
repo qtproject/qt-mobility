@@ -88,6 +88,7 @@ protected:
     void encodeOrganization(QVersitDocument& document, const QContactDetail& detail);
     void encodeGender(QVersitProperty& property, const QContactDetail& detail);
     void encodeNickname(QVersitDocument& document, const QContactDetail& detail);
+    void encodeTag(QVersitDocument& document, const QContactDetail& detail);
     void encodeAnniversary(QVersitProperty& property, const QContactDetail& detail);
     bool encodeOnlineAccount(QVersitProperty& property, const QContactDetail& detail);
     bool encodeFamily(QVersitDocument& document, const QContactDetail& detail);
@@ -102,8 +103,7 @@ protected:
         const QStringList& subTypes=QStringList());
     bool encodeContentFromFile(const QString& resourcePath, QVersitProperty& property);
     bool encodeContentFromPixmap(const QPixmap& pixmap, QVersitProperty& property);
-    void setEscapedValue(QVersitProperty& property,const QString& value);
-    QString escape(const QString& value);
+    QString versitEscaped(const QString& value);
 
 public: // Data
     QList<QVersitDocument> mDocuments;

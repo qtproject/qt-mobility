@@ -91,6 +91,7 @@ private:
     bool createAnniversary(const QVersitProperty& property, QContact* contact) const;
     bool createBirthday(const QVersitProperty& property, QContact* contact) const;
     bool createNicknames(const QVersitProperty& property, QContact* contact) const;
+    bool createTags(const QVersitProperty& property, QContact* contact) const;
     bool createOnlineAccount(const QVersitProperty& property, QContact* contact) const;
     bool createAvatar(const QVersitProperty& property, const QString& subType, QContact* contact) const;
     bool createGeoLocation(const QVersitProperty& property, QContact* contact) const;

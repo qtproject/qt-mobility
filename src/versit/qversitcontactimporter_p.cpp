@@ -188,6 +188,8 @@ void QVersitContactImporterPrivate::importProperty(
         success = createFamily(property, contact);
     } else if (detailDefinitionName == QContactOnlineAccount::DefinitionName) {
         success = createOnlineAccount(property, contact);
+    } else if (detailDefinitionName == QContactTag::DefinitionName) {
+        success = createTags(property, contact);
     } else if (detailDefinitionName == QContactDisplayLabel::DefinitionName) {
         // This actually sets the QContactName's customLabel field (not QContactDisplayLabel)
         success = createLabel(property, contact);
@@ -394,7 +396,23 @@ bool QVersitContactImporterPrivate::createNicknames(
     foreach(const QString& value, values) {
         QContactNickname nickName;
         nickName.setNickname(value);
-        saveDetailWithContext(contact, &nickName, extractContexts(property));
+        saveDetailWithContext(contact, &nickName, contexts);
+    }
+    return true;
+}
+
+/*!
+ * Creates QContactTags from \a property and adds them to \a contact
+ */
+bool QVersitContactImporterPrivate::createTags(
+    const QVersitProperty& property, QContact* contact) const
+{
+    QStringList values = property.value().split(QLatin1Char(','), QString::SkipEmptyParts);
+    QStringList contexts = extractContexts(property);
+    foreach(const QString& value, values) {
+        QContactTag tag;
+        tag.setTag(value);
+        saveDetailWithContext(contact, &tag, contexts);
     }
     return true;
 }
