@@ -45,7 +45,9 @@
 #include <QtCore/qdir.h>
 
 #include "v4lserviceplugin.h"
+#ifndef Q_WS_MAEMO_5
 #include "v4lcameraservice.h"
+#endif
 #include "v4lradioservice.h"
 
 #include <qmediaserviceprovider.h>
@@ -53,19 +55,25 @@
 
 QStringList V4LServicePlugin::keys() const
 {
+#ifdef Q_WS_MAEMO_5
     return QStringList() <<
-            QLatin1String(Q_MEDIASERVICE_RADIO) <<
-            QLatin1String(Q_MEDIASERVICE_CAMERA);
+        QLatin1String(Q_MEDIASERVICE_RADIO);
+#else
+    return QStringList() <<
+        QLatin1String(Q_MEDIASERVICE_RADIO) <<
+        QLatin1String(Q_MEDIASERVICE_CAMERA);
+
+#endif
 }
 
 QMediaService* V4LServicePlugin::create(QString const& key)
 {
     if (key == QLatin1String(Q_MEDIASERVICE_RADIO))
         return new V4LRadioService;
-
+#ifndef Q_WS_MAEMO_5
     if (key == QLatin1String(Q_MEDIASERVICE_CAMERA))
         return new V4LCameraService;
-
+#endif
     return 0;
 }
 
