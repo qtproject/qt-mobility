@@ -56,6 +56,7 @@ class Q_LOCATION_EXPORT QRouteReply : public QGeoReply
     Q_OBJECT
 
     friend class QRouteXmlHandler;
+    friend class QRouteXmlParser;
     friend class QGeoNetworkManager;
 
 public:
