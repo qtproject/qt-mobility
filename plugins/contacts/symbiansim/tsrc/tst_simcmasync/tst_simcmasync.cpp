@@ -119,14 +119,14 @@ void tst_SimCMAsync::init()
 {
     // remove all contacts
     QList<QContactLocalId> ids = m_cm->contactIds();
-    m_cm->removeContacts(&ids, 0);   
+    m_cm->removeContacts(ids, 0);   
 }
 
 void tst_SimCMAsync::cleanup()
 {
     // remove all contacts
     QList<QContactLocalId> ids = m_cm->contactIds();
-    m_cm->removeContacts(&ids, 0);   
+    m_cm->removeContacts(ids, 0);   
 }
 
 void tst_SimCMAsync::initTestCase()
@@ -230,7 +230,7 @@ void tst_SimCMAsync::fetchContactReq()
    
     // Remove all contacts
     QList<QContactLocalId> ids = m_cm->contactIds();
-    m_cm->removeContacts(&ids, 0);    
+    m_cm->removeContacts(ids, 0);    
     
     // Test fetching nothing
     stateSpy.clear();
@@ -290,7 +290,7 @@ void tst_SimCMAsync::localIdFetchReq()
     
     // Remove all contacts
     QList<QContactLocalId> ids = m_cm->contactIds();
-    m_cm->removeContacts(&ids, 0);    
+    m_cm->removeContacts(ids, 0);    
     
     // Start again
     stateSpy.clear();

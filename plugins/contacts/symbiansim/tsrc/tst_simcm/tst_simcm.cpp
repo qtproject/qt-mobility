@@ -143,14 +143,14 @@ void tst_SimCM::init()
 {
     // remove all contacts
     QList<QContactLocalId> ids = m_cm->contactIds();
-    m_cm->removeContacts(&ids, 0);   
+    m_cm->removeContacts(ids, 0);   
 }
 
 void tst_SimCM::cleanup()
 {
     // remove all contacts
     QList<QContactLocalId> ids = m_cm->contactIds();
-    m_cm->removeContacts(&ids, 0);   
+    m_cm->removeContacts(ids, 0);   
 }
 
 void tst_SimCM::initTestCase()
@@ -948,7 +948,7 @@ void tst_SimCM::batchOperations()
         foreach (const QContact& contact, contacts) {
             contactIds.append(contact.localId());
         }
-        QVERIFY(m_cm->removeContacts(&contactIds, &errorMap));
+        QVERIFY(m_cm->removeContacts(contactIds, &errorMap));
         QCOMPARE(m_cm->error(), QContactManager::NoError);
         QCOMPARE(errorMap.count(), 0);
     }
@@ -1006,7 +1006,7 @@ void tst_SimCM::signalEmission()
     foreach(const QContact& contact, contacts) {
         contactIds.append(contact.localId());
     }
-    QVERIFY(m_cm->removeContacts(&contactIds, &errorMap));
+    QVERIFY(m_cm->removeContacts(contactIds, &errorMap));
     QTRY_COMPARE(spyRemoved.count(), batchOpCount);
 }
 
