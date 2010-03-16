@@ -51,7 +51,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QGeocodingReply : public QGeoReply
+class Q_LOCATION_EXPORT QGeocodingReply : public QGeoReply
 {
     Q_OBJECT
 
