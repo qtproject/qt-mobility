@@ -87,6 +87,8 @@ MainWindow::MainWindow(QWidget *parent) :
                      this, SLOT(mapClicked(QGeoCoordinate, QGraphicsSceneMouseEvent*)));
     QObject::connect(mapView, SIGNAL(zoomLevelChanged(quint16, quint16)),
                      this, SLOT(zoomLevelChanged(quint16, quint16)));
+    QObject::connect(mapView, SIGNAL(mapObjectSelected(QMapObject*)),
+                     this, SLOT(mapObjectSelected(QMapObject*)));
 
     //mapView->init(&geoNetworkManager, QPointF(13, 52.35));
     mapView->init(&geoNetworkManager, QGeoCoordinate(52.35, 13));
@@ -194,6 +196,12 @@ void MainWindow::mapClicked(QGeoCoordinate geoCoord, QGraphicsSceneMouseEvent* m
         lastClicked = geoCoord;
         popupMenu->popup(mouseEvent->screenPos());
     }
+}
+
+void MainWindow::mapObjectSelected(QMapObject* mapObject)
+{
+    int x = 0;
+    x++; //just a stub
 }
 
 void MainWindow::setRtFromTo(bool /*checked*/)

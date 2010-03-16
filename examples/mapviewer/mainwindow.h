@@ -74,6 +74,7 @@ protected:
 
 private slots:
     void mapClicked(QGeoCoordinate geoCoord, QGraphicsSceneMouseEvent* mouseEvent);
+    void mapObjectSelected(QMapObject* mapObject);
     void routeReplyFinished(QRouteReply* reply);
     void setRtFromTo(bool checked);
     void zoomLevelChanged(quint16 oldZoomLevel, quint16 newZoomLevel);

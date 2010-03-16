@@ -66,26 +66,7 @@ class QMapPolygon;
 class QMapEllipse;
 class QMapObject;
 class QMapMarker;
-/*!
-* This class displays a map. The map is a 2D Mercator projection of geo coordinates.
-* The map allows seamless continual panning along the x-axis.
-* The map is logically 2^zoomLevel * width(map tile) pixels wide, and
-* 2^zoomLevel * height(map tile) high, with the top left corner being (0,0).
-* This logical 2D map space is spit equally into 2^zoomLevel map tiles along each axis.
-* The QMapView provides a view port onto that logical map space that is always
-* QMapView::width() wide and QMapView::height() high.
-* In order not to pollute the internal Qt::QGraphicsScene, the QMapView takes care
-* of dynamically adding the required graphics items to the graphics scene that are
-* currently covered by the view port, and of releasing no longer visible items.
-* This is necessary because a \ref QRoute e.g. can consists of 10,000+ route segments
-* that would, if all added to the graphics scene, make the underlying Qt::QGraphicsView
-* essentially grind to a halt.
-* Instead of using a full-blown quad tree, QMapView exploits the fact that the map is made
-* up of map tiles. Internally, it uses efficient hash maps (\ref tileToObjectsMap,
-* \ref itemToObjectMap) to map internal \ref QMapObject<i></i>s to their corresponding tiles. These
-* maps are then used to determine which map objects need to be shown in the current
-* view port.
-*/
+
 class Q_LOCATION_EXPORT QMapView : public QGraphicsWidget
 {
     Q_OBJECT
@@ -213,44 +194,13 @@ public:
     }
 
     void setPannable(bool isPannable);
-    /*!
-     * Converts a geo coordinate to a map coordinate (in pixels).
-     * @param geoCoord A geo coordinate.
-     * @return The corresponding map coordinate (in pixels).
-     */
-    QPointF geoToMap(const QGeoCoordinate& geoCoord) const;
-    /*!
-     * Converts a normalized Mercator coordinate to a map coordinate.
-     * @param mercatorCoord A normalized Mercator coordinate.
-     * @return The corresponding map coordinate (in pixels).
-     */
-    QPointF mercatorToMap(const QPointF& mercatorCoord) const;
-    /*!
-    * Converts a map coordinate (in pixels) into its corresponding geo coordinate.
-    * @param mapCoord The map coordinate (in pixels).
-    */
-    QGeoCoordinate mapToGeo(const QPointF& mapCoord) const;
-    /*!
-    * To compute the normalized mercator coordinate for the given pixel coordinate
-    * according to the map.
-    * @param coord A pixel coordinate inside the map.
-    * @return The computed normalized Mercator coordinate.
-    */
-    QPointF mapToMercator(const QPointF&mapCoord) const;
-    /*!
-    * Determines the col and row index of the tile that the given map coordinate
-    * (in pixels) lies on.
-    * @param mapCoord The map coordinate in pixels.
-    * @param col A pointer to the buffer that will take the calculated col index.
-    * @param row A pointer to the buffer that will take the calculated row index.
-    */
-    void mapToTile(const QPointF& mapCoord, quint32* col, quint32* row) const;
-    /*!
-    * @param col The col index of a map tile.
-    * @param row The row index of a map tile.
-    * @return The bounding box of the map tile given by its col and row index
-    *         for the current zoom level and map configuration.
-    */
+    bool isPannable() const;
+
+    QPointF geoToMap(const QGeoCoordinate& geoCoordinate) const;
+    QPointF mercatorToMap(const QPointF& mercatorCoordinate) const;
+    QGeoCoordinate mapToGeo(const QPointF& mapCoordinate) const;
+    QPointF mapToMercator(const QPointF&mapCoordinate) const;
+    void mapToTile(const QPointF& mapCoordinate, quint32* col, quint32* row) const;
     QRectF getTileRect(quint32 col, quint32 row) const;
 
     /*!
@@ -276,6 +226,8 @@ public:
 
     void addMapObject(QMapObject* mapObject);
     void removeMapObject(QMapObject* mapObject);
+    QMapObject* getTopmostMapObject(const QGeoCoordinate& geoCoordinate);
+    QMapObject* getTopmostMapObject(const QPointF& mapCoordinate);
 
     /*!
     * @return The maximum zoom level.
@@ -351,17 +303,7 @@ private:
     Q_DISABLE_COPY(QMapView)
 
 protected:
-
-    /*!
-    * Requests a map tile from the underlying geo engine for the given
-    * col and row index using the current zoom level and map configuration.
-    * @param col The col index of the requested map tile.
-    * @param row The row index of the requested map tile.
-    */
     void requestTile(quint32 col, quint32 row);
-    /*!
-    * Cancels all pending tile replies.
-    */
     void cancelPendingTiles();
     /*!
     * When the zoom level is increased, this method is invoked to scale and add the
@@ -380,23 +322,9 @@ protected:
     */
     QHash<quint64, QPair<QPixmap, bool> > preZoomOut(qreal scale);
 
-    /*!
-    * @param center The map coordinate (in pixels) of a view port.
-    * @return The map coordinate (in pixels) of the top left corner of a view port
-    *         as specified by its <i>center</i>.
-    */
     QPointF getTopLeftFromCenter(const QPointF& center);
 
     void paintLayers(QPainter* painter);
-
-
-    /*!
-    * Determines all map tiles that intersect or completely cover
-    * the given map object.
-    * @param mapObject The map object.
-    */
-    //void getIntersectingTiles(QMapObject* mapObject);
-
 
     /*!
     * Adds an entry to the \ref tileToObjectsMap for each tile that
@@ -406,20 +334,8 @@ protected:
     void addMapObjectToTiles(QMapObject* mapObject);
 
 public slots:
-    /*!
-    * This slot is connected to \ref releaseTimer timeout().
-    * It releases all map tiles that are not currently covered by the view port.
-    */
     void releaseRemoteTiles();
-    /*!
-    * This slot is connected to \ref QGeoEngine::finished(QMapTileReply*).
-    * @param reply The map tile reply.
-    */
     void tileFetched(QMapTileReply* reply);
-    /*!
-    * Sets the map's current zoom level.
-    * @param zoomLevel The new zoom level.
-    */
     void setZoomLevel(int zoomLevel);
 
 signals:
@@ -444,7 +360,7 @@ signals:
     * This signal is emitted when a map object was selected by left-clicking on it.
     * @param mapObject The select map object.
     */
-    void mapObjectSelected(const QMapObject* mapObject);
+    void mapObjectSelected(QMapObject* mapObject);
 
 protected:
     /*!
@@ -494,7 +410,7 @@ protected:
     * a list of all map objects that intersect or are completely covered by
     * the map tile.
     */
-    QHash<quint64, QList<QMapObject*> > tileToObjectsMap; //!< Map tile to map object hash map.
+    QHash<quint64, QList<QMapObject*> > tileToObjects; //!< Map tile to map object hash map.
 
     /*!
     * Stores for each requested map tile (as given by its
@@ -505,6 +421,7 @@ protected:
     QHash<quint64, QPair<QPixmap, bool> > mapTiles;
 
     bool panActive;
+    bool pannable;
 };
 
 QTM_END_NAMESPACE

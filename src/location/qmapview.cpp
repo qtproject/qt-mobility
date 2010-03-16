@@ -68,7 +68,27 @@
 QTM_BEGIN_NAMESPACE
 
 //TODO: there sometimes seems to be an infinite-loop issue with QList::clear() when map objects have been added and the zoom level is changed
-//TODO: map object selection
+
+/*!
+    \class QMapView
+    \brief The QMapView class displays a map. It supports panning, zooming, different map formats,
+    and the adding of map objects (overlays).
+    \ingroup location
+
+    The map is a 2D Mercator projection of geo coordinates.
+    The map allows seamless continual panning along the x-axis.
+    The map is logically 2^zoomLevel * width(map tile) pixels wide, and
+    2^zoomLevel * height(map tile) high, with the top left corner being (0,0).
+    This logical 2D map space is spit equally into 2^zoomLevel map tiles along each axis.
+    The QMapView provides a view port onto that logical map space that is always
+    QMapView::width() wide and QMapView::height() high.
+
+    Instead of using a full-blown quad tree, QMapView exploits the fact that the map is made
+    up of map tiles. Internally, it uses efficient hash maps (tileToObjectsMap, itemToObjectMap)
+    to map each internal QMapObject to its corresponding tiles.
+    These mappings are then used to determine which map objects need to be shown in the current
+    view port.
+*/
 
 /*!
     Constructor.
@@ -76,6 +96,7 @@ QTM_BEGIN_NAMESPACE
 QMapView::QMapView(QGraphicsItem* parent, Qt::WindowFlags wFlags)
         : QGraphicsWidget(parent, wFlags),
         releaseTimer(this),
+        pannable(true),
         mapVer(MapVersion(MapVersion::Newest)),
         mapSchm(MapScheme(MapScheme::Normal_Day)),
         mapRes(MapResolution(MapResolution::Res_256_256)),
@@ -167,6 +188,10 @@ void QMapView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
     painter->drawRect(boundingRect());
 }
 
+/*!
+    Requests a map tile from the underlying geo engine for the given
+    \a col and \a row index using the current zoom level and map configuration.
+*/
 void QMapView::requestTile(quint32 col, quint32 row)
 {
     if (!geoEngine)
@@ -192,6 +217,10 @@ void QMapView::requestTile(quint32 col, quint32 row)
     pendingTiles[getTileIndex(col, row)] = reply;
 }
 
+/*!
+    This slot is called when a requested map tile has become available.
+    Internally, this slot is connected to QGeoEngine::finished(QMapTileReply*).
+*/
 void QMapView::tileFetched(QMapTileReply* reply)
 {
     if (!geoEngine)
@@ -230,6 +259,9 @@ void QMapView::tileFetched(QMapTileReply* reply)
     geoEngine->release(reply);
 }
 
+/*!
+    Cancels all pending tile replies.
+*/
 void QMapView::cancelPendingTiles()
 {
     QHashIterator<quint64, QMapTileReply*> it(pendingTiles);
@@ -248,7 +280,7 @@ void QMapView::mousePressEvent(QGraphicsSceneMouseEvent* event)
     QPointF mapCoord = event->pos() + viewPort.topLeft();
     QGeoCoordinate geoCoord = mapToGeo(mapCoord);
 
-    if (event->button() == Qt::LeftButton) {
+    if (event->button() == Qt::LeftButton && pannable) {
         panActive = true;
     }
 
@@ -259,6 +291,14 @@ void QMapView::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
     if (event->button() == Qt::LeftButton) {
         panActive = false;
+    }
+
+    if (event->button() == Qt::LeftButton) {
+        QPointF mapCoord = event->pos() + viewPort.topLeft();
+        QMapObject* selected = getTopmostMapObject(mapCoord);
+
+        if (selected)
+            emit mapObjectSelected(selected);
     }
 }
 
@@ -279,6 +319,10 @@ void QMapView::wheelEvent(QGraphicsSceneWheelEvent* event)
         setZoomLevel(((qint16) currZoomLevel) - 1);
 }
 
+/*!
+    Returns the map coordinate (in pixels) of the top left corner of a view port
+    as specified by its \a center.
+*/
 QPointF QMapView::getTopLeftFromCenter(const QPointF& center)
 {
     QPointF topLeft(center.x() - viewPort.width() / 2,
@@ -292,6 +336,9 @@ QPointF QMapView::getTopLeftFromCenter(const QPointF& center)
     return topLeft;
 }
 
+/*!
+    Sets the current zoom level.
+*/
 void QMapView::setZoomLevel(int zoomLevel)
 {
     if (!geoEngine)
@@ -332,7 +379,7 @@ void QMapView::setZoomLevel(int zoomLevel)
     //***************************************
     mapTiles.clear();
     mapTiles = scaledTiles;
-    tileToObjectsMap.clear();
+    tileToObjects.clear();
     QSetIterator<QMapObject*> it(mapObjects);
 
     while (it.hasNext()) {
@@ -508,6 +555,9 @@ void QMapView::resizeEvent(QGraphicsSceneResizeEvent* /*event*/)
     viewPort.setSize(boundingRect().size());
 }
 
+/*!
+    Releases all map tiles that are not currently covered by the view port.
+*/
 void QMapView::releaseRemoteTiles()
 {
     if (panActive)
@@ -540,10 +590,13 @@ void QMapView::releaseRemoteTiles()
     }
 }
 
-QPointF QMapView::geoToMap(const QGeoCoordinate& geoCoord) const
+/*!
+    Converts a \a geoCoordinate to a map coordinate (in pixels).
+*/
+QPointF QMapView::geoToMap(const QGeoCoordinate& geoCoordinate) const
 {
-    float lng = geoCoord.longitude();
-    float lat = geoCoord.latitude();
+    float lng = geoCoordinate.longitude();
+    float lat = geoCoordinate.latitude();
 
     lng = lng / 360.0f + 0.5f;
 
@@ -554,22 +607,28 @@ QPointF QMapView::geoToMap(const QGeoCoordinate& geoCoord) const
     return mercatorToMap(QPointF(lng, lat));
 }
 
-QPointF QMapView::mercatorToMap(const QPointF& mercatorCoord) const
+/*!
+    Converts a normalized \a mercatorCoordinate to a map coordinate (in pixels).
+*/
+QPointF QMapView::mercatorToMap(const QPointF& mercatorCoordinate) const
 {
     if (!geoEngine)
         return QPointF();
 
-    return QPointF(static_cast<qint64>(mercatorCoord.x() * ((qreal) numColRow) * ((qreal) mapRes.size.width())),
-                   static_cast<qint64>(mercatorCoord.y() * ((qreal) numColRow) * ((qreal) mapRes.size.height())));
+    return QPointF(static_cast<qint64>(mercatorCoordinate.x() * ((qreal) numColRow) * ((qreal) mapRes.size.width())),
+                   static_cast<qint64>(mercatorCoordinate.y() * ((qreal) numColRow) * ((qreal) mapRes.size.height())));
 }
 
-QPointF QMapView::mapToMercator(const QPointF& mapCoord) const
+/*!
+    Computes the normalized mercator coordinate for the given \a mapCoordinate (in pixels).
+*/
+QPointF QMapView::mapToMercator(const QPointF& mapCoordinate) const
 {
     if (!geoEngine)
         return QPointF();
 
-    return QPointF(mapCoord.x() / (((qreal) numColRow) * ((qreal) mapRes.size.width())),
-                   mapCoord.y() / (((qreal) numColRow) * ((qreal) mapRes.size.height())));
+    return QPointF(mapCoordinate.x() / (((qreal) numColRow) * ((qreal) mapRes.size.width())),
+                   mapCoordinate.y() / (((qreal) numColRow) * ((qreal) mapRes.size.height())));
 }
 
 qreal rmod(const qreal a, const qreal b)
@@ -578,9 +637,12 @@ qreal rmod(const qreal a, const qreal b)
     return a - static_cast<qreal>(div) * b;
 }
 
-QGeoCoordinate QMapView::mapToGeo(const QPointF& mapCoord) const
+/*!
+    Converts a \a mapCoordinate (in pixels) into its corresponding geo coordinate.
+*/
+QGeoCoordinate QMapView::mapToGeo(const QPointF& mapCoordinate) const
 {
-    QPointF mercCoord = mapToMercator(mapCoord);
+    QPointF mercCoord = mapToMercator(mapCoordinate);
     qreal x = mercCoord.x();
     qreal y = mercCoord.y();
 
@@ -610,10 +672,14 @@ QGeoCoordinate QMapView::mapToGeo(const QPointF& mapCoord) const
     return QGeoCoordinate(lat, lng);
 }
 
-void QMapView::mapToTile(const QPointF& mapCoord, quint32* col, quint32* row) const
+/*!
+    Determines the \a col and \a row index of the tile that the given \a mapCoordinate
+    (in pixels) lies on.
+*/
+void QMapView::mapToTile(const QPointF& mapCoordinate, quint32* col, quint32* row) const
 {
-    *col = mapCoord.x() / mapRes.size.width();
-    *row = mapCoord.y() / mapRes.size.height();
+    *col = mapCoordinate.x() / mapRes.size.width();
+    *row = mapCoordinate.y() / mapRes.size.height();
 }
 
 /*!
@@ -647,6 +713,10 @@ void QMapView::addMapObject(QMapObject* mapObject)
     update();
 }
 
+/*!
+    Returns the bounding box of the map tile given by its \a col and \a row index
+    for the current zoom level and map configuration.
+*/
 QRectF QMapView::getTileRect(quint32 col, quint32 row) const
 {
     QPointF topLeft(((quint64) col) * mapRes.size.width(), ((quint64) row) * mapRes.size.height());
@@ -656,11 +726,52 @@ QRectF QMapView::getTileRect(quint32 col, quint32 row) const
 void QMapView::addMapObjectToTiles(QMapObject* mapObject)
 {
     for (int i = 0; i < mapObject->intersectingTiles.count(); i++) {
-        if (!tileToObjectsMap.contains(mapObject->intersectingTiles[i]))
-            tileToObjectsMap[mapObject->intersectingTiles[i]] = QList<QMapObject*>();
+        if (!tileToObjects.contains(mapObject->intersectingTiles[i]))
+            tileToObjects[mapObject->intersectingTiles[i]] = QList<QMapObject*>();
 
-        tileToObjectsMap[mapObject->intersectingTiles[i]].append(mapObject);
+        tileToObjects[mapObject->intersectingTiles[i]].append(mapObject);
     }
+}
+
+/*!
+    Convenience method for getTopmostMapObject(const QPointF& mapCoordinate).
+*/
+QMapObject* QMapView::getTopmostMapObject(const QGeoCoordinate& geoCoordinate)
+{
+    return getTopmostMapObject(geoToMap(geoCoordinate));
+}
+
+/*!
+    Returns the map object with the highest z-index that intersects
+    the given \a mapCoordinate. If more than object with the same (highest)
+    z-index intersect that point, the first one found is returned.
+*/
+QMapObject* QMapView::getTopmostMapObject(const QPointF& mapCoordinate)
+{
+    QMapObject* selected = 0;
+    QRectF rect(mapCoordinate.x(), mapCoordinate.y(), 1, 1);
+    quint32 col;
+    quint32 row;
+    mapToTile(mapCoordinate, &col, &row);
+    quint64 tileIndex = getTileIndex(col, row);
+
+    if (!tileToObjects.contains(tileIndex))
+        return 0;
+
+    QList<QMapObject*>& objects = tileToObjects[tileIndex];
+
+    for (int i = 0; i < objects.count(); i++)
+    {
+        QMapObject* obj = objects[i];
+
+        if (obj->intersects(rect))
+        {
+            if (!selected || selected->z < obj->z)
+                selected = obj;
+        }
+    }
+
+    return selected;
 }
 
 /*!
@@ -675,8 +786,8 @@ void QMapView::paintLayers(QPainter* painter)
         it.next();
         quint64 tileIndex = getTileIndex(it.col(), it.row());
 
-        if (tileToObjectsMap.contains(tileIndex)) {
-            QList<QMapObject*>& mapObjects = tileToObjectsMap[tileIndex];
+        if (tileToObjects.contains(tileIndex)) {
+            QList<QMapObject*>& mapObjects = tileToObjects[tileIndex];
 
             for (int i = 0; i < mapObjects.size(); i++) {
                 QMapObject* obj = mapObjects[i];
@@ -735,6 +846,22 @@ QLineF QMapView::connectShortest(const QGeoCoordinate& point1, const QGeoCoordin
     }
 
     return QLineF(mpt1, mpt2);
+}
+
+/*!
+    Sets whether the map is pannable.
+*/
+void QMapView::setPannable(bool isPannable)
+{
+    pannable = isPannable;
+}
+
+/*!
+    Returns whether the map is pannable.
+*/
+bool QMapView::isPannable() const
+{
+    return pannable;
 }
 
 /*****************************************************************************
