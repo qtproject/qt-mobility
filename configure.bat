@@ -120,6 +120,7 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo -modules ^<list^> ... Build only the specified modules (default all)
     echo                     Choose from: bearer contacts location publishsubscribe
     echo                     messaging multimedia systeminfo serviceframework versit
+    echo                     sensors
     echo                     Modules should be separated by a space and surrounded
     echo                     by double quotation. If a
     echo                     selected module depends on other modules dependencies
@@ -432,12 +433,14 @@ echo Start of compile tests
 REM compile tests go here.
 call :compileTest LBT lbt
 call :compileTest SNAP snap
+call :compileTest SymbianContactSIM symbiancntsim
 echo End of compile tests
 echo.
 echo.
 
 REM we could skip generating headers if a module is not enabled
 if not exist "%BUILD_PATH%\features" mkdir %BUILD_PATH%\features
+copy %SOURCE_PATH%\features\strict_flags.prf %BUILD_PATH%\features
 echo Generating Mobility Headers...
 rd /s /q %BUILD_PATH%\include
 mkdir %BUILD_PATH%\include

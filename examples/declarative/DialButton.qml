@@ -1,18 +1,18 @@
 import Qt 4.6
 
-//Implementation of the DialButton control.
+//Implementation of the dialButton control.
 Item {
-    id: DialButton
+    id: dialButton
     width: 50
     height: 50
-    property alias buttonText: InnerText.text;
-    property alias color: RectangleButton.color
+    property alias buttonText: innerText.text;
+    property alias color: rectangleButton.color
     property color hoverColor: "lightsteelblue"
     property color pressColor: "slategray"
     signal clicked
 
     Rectangle {
-        id: RectangleButton
+        id: rectangleButton
         anchors.fill: parent
         radius: 5
         color: "steelblue"
@@ -20,7 +20,7 @@ Item {
         border.color: "black"
 
         Text {
-            id: InnerText
+            id: innerText
             font.pointSize: 20
             anchors.centerIn: parent
         }
@@ -30,14 +30,14 @@ Item {
         State {
             name: "Hovering"
             PropertyChanges {
-                target: RectangleButton
+                target: rectangleButton
                 color: hoverColor
             }
         },
         State {
             name: "Pressed"
             PropertyChanges {
-                target: RectangleButton
+                target: rectangleButton
                 color: pressColor
             }
         }
@@ -57,16 +57,16 @@ Item {
    
     MouseRegion {
         hoverEnabled: true
-        anchors.fill: DialButton
-        onEntered: { DialButton.state='Hovering'}
-        onExited: { DialButton.state=''}
-        onClicked: { DialButton.clicked();}
-        onPressed: { DialButton.state="Pressed" }
+        anchors.fill: dialButton
+        onEntered: { dialButton.state='Hovering'}
+        onExited: { dialButton.state=''}
+        onClicked: { dialButton.clicked();}
+        onPressed: { dialButton.state="Pressed" }
         onReleased: {
             if (containsMouse)
-            DialButton.state="Hovering";
+            dialButton.state="Hovering";
             else
-            DialButton.state="";
+            dialButton.state="";
         }
     }
 }

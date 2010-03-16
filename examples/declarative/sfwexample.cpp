@@ -88,6 +88,7 @@ void ServiceWrapper::setNativeDescriptor(const QServiceInterfaceDescriptor &d)
         return;
 
     m_descriptor = d;
+    
     if (serviceInstance)
         delete serviceInstance;
 
@@ -117,9 +118,12 @@ QObject* ServiceWrapper::serviceObject()
     }
 }
 
+QML_DEFINE_TYPE(QtSFW,1,0,Services,ServiceRegister)
+
 ServiceRegister::ServiceRegister()
 {
     serviceManager = new QServiceManager();
+    unregisterExampleServices();
     registerExampleServices();
 
     //! [1]
@@ -144,9 +148,9 @@ void ServiceRegister::registerExampleServices()
 {
     //! [0]
     QStringList exampleXmlFiles;
-    exampleXmlFiles <<"voipdialerservice.xml" << "landlinedialerservice.xml";
+    exampleXmlFiles << "voipdialerservice.xml" << "landlinedialerservice.xml";
     foreach (const QString &fileName, exampleXmlFiles) {
-        QString path = QCoreApplication::applicationDirPath() + "/../../examples/declarative/" + fileName;
+        QString path = QCoreApplication::applicationDirPath() + "/xmldata/" + fileName;
         serviceManager->addService(path);
     }
     //! [0]

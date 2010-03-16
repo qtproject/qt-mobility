@@ -67,18 +67,14 @@ QTrackerContactIdFetchRequest::QTrackerContactIdFetchRequest(QContactAbstractReq
     }
 }
 
-void QTrackerContactIdFetchRequest::emitFinished()
+void QTrackerContactIdFetchRequest::emitFinished(QContactManager::Error error)
 {
-    delete req; // delete QContactFetchRequest we used to get the result
-    req = idfetchrequest;
     // for now this only serves get all contacts
     QList<QContactLocalId> results;
     foreach(const QContact &c, result) {
         results << c.localId();
     }
-    QContactManagerEngine::updateRequest(req, results, QContactManager::NoError,
-                              QList<QContactManager::Error> (),
-                              QContactAbstractRequest::Finished,
-                              false);
+    QContactManagerEngine::updateRequestState(idfetchrequest, QContactAbstractRequest::FinishedState);
+    QContactManagerEngine::updateContactLocalIdFetchRequest(idfetchrequest, results, error);
 }
 

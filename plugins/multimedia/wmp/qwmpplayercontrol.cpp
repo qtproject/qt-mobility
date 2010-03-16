@@ -68,6 +68,9 @@ QWmpPlayerControl::QWmpPlayerControl(IWMPCore3 *player, QWmpEvents *events, QObj
     m_player->get_settings(&m_settings);
     m_player->get_network(&m_network);
 
+    if (m_settings)
+        m_settings->put_autoStart(FALSE);
+
     WMPPlayState state = wmppsUndefined;
     if (m_player->get_playState(&state) == S_OK)
         playStateChangeEvent(state);
@@ -425,7 +428,7 @@ QUrl QWmpPlayerControl::url() const
 
 void QWmpPlayerControl::setUrl(const QUrl &url)
 {
-    if (m_player) {
+    if (url != QWmpPlayerControl::url() && m_player) {
         BSTR string = SysAllocString(reinterpret_cast<const wchar_t *>(url.toString().unicode()));
 
         m_player->put_URL(string);

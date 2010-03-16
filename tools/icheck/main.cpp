@@ -110,10 +110,10 @@ int main(int argc, char *argv[])
                 //Create a list of all the soucre files they need to be parsed.
                 //In our case it is just the header file
                 QStringList chFilelist;
-                chFilelist << chFileInfo.filePath();
+                chFilelist << chFileInfo.absoluteFilePath();
 
                 QStringList iFilelist;
-                iFilelist << iFileInfo.filePath();
+                iFilelist << iFileInfo.absoluteFilePath();
 
                 ICheckLib i_ichecklib;
                 i_ichecklib.ParseHeader(iIncludepathlist, iFilelist);

@@ -109,6 +109,18 @@ QImageCaptureControl::~QImageCaptureControl()
     \fn QImageCaptureControl::capture(const QString &fileName)
 
     Initiates the capture of an image to \a fileName.
+    The \a fileName can be relative or empty,
+    in this case the service should use the system specific place
+    and file naming scheme.
+
+    The sequental imageSaved() signal should use
+    the absolute file name.
+*/
+
+/*!
+    \fn QImageCaptureControl::cancelCapture()
+
+    Cancel pending capture requests.
 */
 
 /*!

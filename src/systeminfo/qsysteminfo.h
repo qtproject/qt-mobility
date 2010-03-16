@@ -74,9 +74,9 @@ public:
     QSystemInfo(QObject *parent = 0);
      virtual ~QSystemInfo();
 
-    static QString currentLanguage(); // 2 letter ISO 639-1 //signal
-    static QStringList availableLanguages(); // 2 letter ISO 639-1
-    static QString currentCountryCode(); //2 letter ISO 3166-1
+    QString currentLanguage(); // 2 letter ISO 639-1 //signal
+    QStringList availableLanguages(); // 2 letter ISO 639-1
+    QString currentCountryCode(); //2 letter ISO 3166-1
     enum Version {
         Os = 1,
         QtCore,
@@ -120,6 +120,7 @@ class  Q_SYSINFO_EXPORT QSystemNetworkInfo : public QObject
     Q_PROPERTY(QString currentMobileNetworkCode READ currentMobileNetworkCode NOTIFY currentMobileNetworkCodeChanged)
     Q_PROPERTY(QString homeMobileCountryCode READ homeMobileCountryCode CONSTANT)
     Q_PROPERTY(QString homeMobileNetworkCode READ homeMobileNetworkCode CONSTANT)
+    Q_PROPERTY(QSystemNetworkInfo::NetworkMode currentMode READ currentMode)
 
 
 public:
@@ -154,14 +155,15 @@ public:
     Q_INVOKABLE QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
     Q_INVOKABLE static int networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
     QString macAddress(QSystemNetworkInfo::NetworkMode mode);
+    QSystemNetworkInfo::NetworkMode currentMode();
 
-    static int cellId();
-    static int locationAreaCode();
+    int cellId();
+    int locationAreaCode();
 
-    static QString currentMobileCountryCode();
-    static QString currentMobileNetworkCode();
-    static QString homeMobileCountryCode();
-    static QString homeMobileNetworkCode();
+    QString currentMobileCountryCode();
+    QString currentMobileNetworkCode();
+    QString homeMobileCountryCode();
+    QString homeMobileNetworkCode();
     Q_INVOKABLE static QString networkName(QSystemNetworkInfo::NetworkMode mode);
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
 
@@ -278,11 +280,11 @@ public:
 
     QSystemDeviceInfo::InputMethodFlags inputMethodType();
 
-    static QString imei();
-    static QString imsi();
-    static QString manufacturer();
-    static QString model();
-    static QString productName();
+    QString imei();
+    QString imsi();
+    QString manufacturer();
+    QString model();
+    QString productName();
     int batteryLevel() const;
    QSystemDeviceInfo::BatteryStatus batteryStatus();
 

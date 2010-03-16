@@ -244,13 +244,22 @@ void QNetworkSessionPrivate::open()
     // => RConnection::ProgressNotification will be used for IAP/SNAP monitoring
     iConnectionMonitor.CancelNotifications();
 
-    // Configuration must be at least in Discovered - state for connecting purposes.
-    if ((publicConfig.state() & QNetworkConfiguration::Discovered) !=
-                QNetworkConfiguration::Discovered) {
+    // Configuration may have been invalidated after session creation by platform
+    // (e.g. configuration has been deleted).
+    if (!publicConfig.isValid()) {
         newState(QNetworkSession::Invalid);
         iError = QNetworkSession::InvalidConfigurationError;
         emit q->error(iError);
         syncStateWithInterface();
+        return;
+    }
+    // If opening a (un)defined configuration, session emits error and enters
+    // NotAvailable -state.
+    if (publicConfig.state() == QNetworkConfiguration::Undefined ||
+        publicConfig.state() == QNetworkConfiguration::Defined) {
+        newState(QNetworkSession::NotAvailable);
+        iError = QNetworkSession::InvalidConfigurationError;
+        emit q->error(iError);
         return;
     }
     
@@ -432,15 +441,44 @@ void QNetworkSessionPrivate::close(bool allowSignals)
 
 void QNetworkSessionPrivate::stop()
 {
-    if (!isOpen) {
-        return;
+    if (!isOpen &&
+        publicConfig.isValid() &&
+        publicConfig.type() == QNetworkConfiguration::InternetAccessPoint) {
+        // If the publicConfig is type of IAP, enumerate through connections at
+        // connection monitor. If publicConfig is active in that list, stop it.
+        // Otherwise there is nothing to stop. Note: because this QNetworkSession is not open,
+        // activeConfig is not usable.
+        TUint count;
+        TRequestStatus status;
+        iConnectionMonitor.GetConnectionCount(count, status);
+        User::WaitForRequest(status);
+        if (status.Int() != KErrNone) {
+            return;
+        }
+        TUint numSubConnections; // Not used but needed by GetConnectionInfo i/f
+        TUint connectionId;
+        for (TInt i = 1; i <= count; i++) {
+            // Get (connection monitor's assigned) connection ID
+            TInt ret = iConnectionMonitor.GetConnectionInfo(i, connectionId, numSubConnections);            
+            if (ret == KErrNone) {
+                // See if connection Id matches with our Id. If so, stop() it.
+                if (publicConfig.d.data()->connectionId == connectionId) {
+                    ret = iConnectionMonitor.SetBoolAttribute(connectionId,
+                                                              0, // subConnectionId don't care
+                                                              KConnectionStop,
+                                                              ETrue);
+                }
+            }
+        }
+    } else if (isOpen) {
+        // Since we are open, use RConnection to stop the interface
+        isOpen = false;
+        newState(QNetworkSession::Closing);
+        iConnection.Stop(RConnection::EStopAuthoritative);
+        isOpen = true;
+        close(false);
+        emit q->closed();
     }
-    isOpen = false;
-    newState(QNetworkSession::Closing);
-    iConnection.Stop(RConnection::EStopAuthoritative);
-    isOpen = true;
-    close(false);
-    emit q->closed();
 }
 
 void QNetworkSessionPrivate::migrate()
@@ -807,7 +845,6 @@ void QNetworkSessionPrivate::RunL()
                 ipConnectionNotifier->StopNotifications();
             }
             syncStateWithInterface();
-            emit quitPendingWaitsForOpened();
             break;
         case KErrCancel: // Connection attempt cancelled
         case KErrAlreadyExists: // Connection already exists
@@ -822,7 +859,6 @@ void QNetworkSessionPrivate::RunL()
                 ipConnectionNotifier->StopNotifications();
             }
             syncStateWithInterface();
-            emit quitPendingWaitsForOpened();
             break;
     }
 }

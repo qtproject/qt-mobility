@@ -57,7 +57,7 @@ class S60AudioEncoderControl : public QAudioEncoderControl
 {
     Q_OBJECT
 public:
-    S60AudioEncoderControl(QObject *parent);
+    S60AudioEncoderControl(QObject *session, QObject *parent = 0);
     virtual ~S60AudioEncoderControl();
 
     QStringList supportedAudioCodecs() const;

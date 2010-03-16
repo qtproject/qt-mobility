@@ -47,7 +47,7 @@
 #include <qpair.h>
 #include "winhelpers_p.h"
 #endif
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
 #include <qpair.h>
 #endif
 
@@ -73,7 +73,7 @@ public:
     static bool isFilterType(const QMessageSortOrder &sortOrder);
     static QList<QMessageFilter> normalize(const QList<QMessageFilter> &filters, const QMessageSortOrder &sortOrder);
 #endif
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     enum Field { Type = 0, Sender, Recipients, Subject, TimeStamp, ReceptionTimeStamp, Read, HasAttachments, Incoming, Removed, Priority, Size };
     QList<QPair<Field, Qt::SortOrder> > _fieldOrderList;
 

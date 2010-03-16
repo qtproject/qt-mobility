@@ -42,6 +42,8 @@
 
 #include "qcontactmanagerenginefactory.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
   \class QContactManagerEngineFactory
   \preliminary
@@ -59,43 +61,44 @@
  */
 
 /*!
- * \fn QContactManagerEngineFactory::~QContactManagerEngineFactory()
- *
- * A default, empty destructor.
+  A default, empty destructor.
+ */
+QContactManagerEngineFactory::~QContactManagerEngineFactory()
+{
+}
+
+/*!
+  \fn QContactManagerEngineFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error &error)
+
+  This function is called by the QContactManager implementation to
+  create an instance of the engine provided by this factory.
+
+  The \a parameters supplied can be ignored or interpreted as desired.
+
+  If a supplied parameter results in an unfulfillable request, or some other error
+  occurs, this function may return a null pointer, and the client developer will get an
+  invalid QContactManager in return.  Any error should be stored in the supplied \a error
+  reference.
  */
 
 /*!
- * \fn QContactManagerEngineFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error &error)
- *
- * This function is called by the QContactManager implementation to
- * create an instance of the engine provided by this factory.
- *
- * The \a parameters supplied can be ignored or interpreted as desired.
- *
- * If a supplied parameter results in an unfulfillable request, or some other error
- * occurs, this function may return a null pointer, and the client developer will get an
- * invalid QContactManager in return.  Any error should be stored in the supplied \a error
- * reference.
+  \fn QContactManagerEngineFactory::managerName() const
+
+  This function should return a unique string that identifies
+  the engines provided by this factory.
+
+  Typically this would be of the form "com.nokia.qt.contacts.engines.memory", with
+  the appropriate domain and engine name substituted.
  */
 
 /*!
- * \fn QContactManagerEngineFactory::managerName() const
- *
- * This function should return a unique string that identifies
- * the engines provided by this factory.
- *
- * Typically this would be of the form "com.nokia.qt.contacts.engines.memory", with
- * the appropriate domain and engine name substituted.
- */
+  \fn QContactManagerEngineFactory::supportedImplementationVersions() const
 
-/*!
- * \fn QContactManagerEngineFactory::supportedImplementationVersions() const
- *
- * This function should return a list of versions of the engine which this factory can instantiate.
+  This function should return a list of versions of the engine which this factory can instantiate.
  */
+QList<int> QContactManagerEngineFactory::supportedImplementationVersions() const
+{
+    return QList<int>();
+}
 
-/*!
- * \fn QContactManagerEngineFactory::version() const
- *
- * Returns the version of the Qt Mobility Contacts API which is implemented by engines instantiated by this factory.
- */
+QTM_END_NAMESPACE

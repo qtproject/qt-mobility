@@ -40,23 +40,21 @@
 ****************************************************************************/
 
 #include "s60cameravideodevicecontrol.h"
-#include "s60camerasession.h"
+#include "s60cameracontrol.h"
 
 #include <QtCore/qdebug.h>
 #include <QtCore/qstring.h>
 #include <QtGui/qicon.h>
 
-const int defaultCameraDevice = 0;
-
 S60CameraVideoDeviceControl::S60CameraVideoDeviceControl(QObject *parent)
-    :QVideoDeviceControl(parent), m_selectedDevice(defaultCameraDevice)
+    :QVideoDeviceControl(parent), m_selectedDevice(0)
 {
 }
 
-S60CameraVideoDeviceControl::S60CameraVideoDeviceControl(QObject *session, QObject *parent)
-   :QVideoDeviceControl(parent), m_selectedDevice(defaultCameraDevice)
+S60CameraVideoDeviceControl::S60CameraVideoDeviceControl(QObject *control, QObject *parent)
+   :QVideoDeviceControl(parent), m_selectedDevice(0)
 {
-    m_session = qobject_cast<S60CameraSession*>(session);
+    m_control = qobject_cast<S60CameraControl*>(control);
 }
 
 S60CameraVideoDeviceControl::~S60CameraVideoDeviceControl()
@@ -65,32 +63,33 @@ S60CameraVideoDeviceControl::~S60CameraVideoDeviceControl()
 
 int S60CameraVideoDeviceControl::deviceCount() const
 {
-    //qDebug() << "S60CameraVideoDeviceControl::deviceCount" ;
-    return S60CameraSession::deviceCount();
+    qDebug() << "S60CameraVideoDeviceControl::deviceCount" ;
+    return S60CameraControl::deviceCount();
 }
 
 QString S60CameraVideoDeviceControl::deviceName(int index) const
 {
-    //qDebug() << "S60CameraVideoDeviceControl::deviceName, index=" << index;
-    return S60CameraSession::name(index);
+    qDebug() << "S60CameraVideoDeviceControl::deviceName, index=" << index;
+    return S60CameraControl::name(index);
 }
+
 QString S60CameraVideoDeviceControl::deviceDescription(int index) const
 {
-    //qDebug() << "S60CameraVideoDeviceControl::deviceDescription, index=" << index;
-    return S60CameraSession::description(index);
+    qDebug() << "S60CameraVideoDeviceControl::deviceDescription, index=" << index;
+    return S60CameraControl::description(index);
 }
+
 QIcon S60CameraVideoDeviceControl::deviceIcon(int index) const
 {
     //qDebug() << "S60CameraVideoDeviceControl::deviceIcon(), index="<<index;
     return QIcon();
 }
+
 int S60CameraVideoDeviceControl::defaultDevice() const
-{
-    if (m_session) {
-        return m_session->defaultDevice();
-    }
-    return defaultCameraDevice;
+{    
+    return m_control->defaultDevice();   
 }
+
 int S60CameraVideoDeviceControl::selectedDevice() const
 {
     qDebug() << "S60CameraVideoDeviceControl::selectedDevice() called";
@@ -100,14 +99,11 @@ int S60CameraVideoDeviceControl::selectedDevice() const
 void S60CameraVideoDeviceControl::setSelectedDevice(int index)
 {
     qDebug() << "S60CameraVideoDeviceControl::setSelectedDevice(), index="<<index;
-    if (m_session) {
-        // inform that we selected new device
-        if (m_selectedDevice != index) {
-            emit selectedDeviceChanged(index);
-            emit selectedDeviceChanged(deviceName(index));
-        }
-        m_selectedDevice = index;
-        m_session->setSelectedDevice(m_selectedDevice);
-    }
-    m_selectedDevice = index;
+    // inform that we selected new device
+    if (m_selectedDevice != index) {
+        emit selectedDeviceChanged(index);
+        emit selectedDeviceChanged(deviceName(index));
+        m_selectedDevice = index;            
+        m_control->setSelectedDevice(m_selectedDevice);
+    }    
 }

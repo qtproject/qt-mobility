@@ -623,27 +623,27 @@ void tst_QContactFilter::relationshipFilter()
 
     QVERIFY(crf.type() == QContactFilter::RelationshipFilter);
 
-    QVERIFY(crf.role() == QContactRelationshipFilter::Either);
+
     QVERIFY(crf.relationshipType() == QString());
-    QVERIFY(crf.otherParticipantId() == QContactId());
+    QVERIFY(crf.relatedContactId() == QContactId());
 
     QContactId newId;
     newId.setManagerUri("test");
     newId.setLocalId(QContactLocalId(5));
-    crf.setOtherParticipantId(newId);
-    QVERIFY(crf.role() == QContactRelationshipFilter::Either);
-    QVERIFY(crf.relationshipType() == QString());
-    QVERIFY(crf.otherParticipantId() == newId);
+    crf.setRelatedContactId(newId);
 
-    crf.setRole(QContactRelationshipFilter::First);
-    QVERIFY(crf.role() == QContactRelationshipFilter::First);
     QVERIFY(crf.relationshipType() == QString());
-    QVERIFY(crf.otherParticipantId() == newId);
+    QVERIFY(crf.relatedContactId() == newId);
+
+    crf.setRelatedContactRole(QContactRelationshipFilter::First);
+    
+    QVERIFY(crf.relationshipType() == QString());
+    QVERIFY(crf.relatedContactId() == newId);
 
     crf.setRelationshipType(QContactRelationship::HasManager);
-    QVERIFY(crf.role() == QContactRelationshipFilter::First);
+
     QVERIFY(crf.relationshipType() == QContactRelationship::HasManager);
-    QVERIFY(crf.otherParticipantId() == newId);
+    QVERIFY(crf.relatedContactId() == newId);
 
     /* Test op= */
     QContactFilter f = crf;

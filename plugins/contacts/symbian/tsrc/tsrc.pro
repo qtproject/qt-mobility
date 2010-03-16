@@ -1,14 +1,14 @@
 TEMPLATE = subdirs
 TARGET = 
-
 CONFIG += ordered
 
+include(../symbian_defines.pri)
+
 SUBDIRS += performance \   
-           ut_transformcontactdata \
-           ut_cntsymbianengine \
-           ut_cntfiltering \
-           ut_cntrelationship \
-           ut_cntsymbiandatabase \
-           tst_qcontactmanagersymbian
+           tst_qcontactmanagersymbian \
+           ut_symbian
 #           tst_details
-           
+
+!contains(DEFINES, SYMBIAN_BACKEND_USE_SQLITE) {
+   SUBDIRS += ut_cntfilteringdbms
+}

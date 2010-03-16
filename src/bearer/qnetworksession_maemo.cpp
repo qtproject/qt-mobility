@@ -357,7 +357,7 @@ quint64 QNetworkSessionPrivate::getStatistics(bool sent) const
 	return 0;
     }
 
-    foreach (Maemo::IcdStatisticsResult res, stats_results) {
+    foreach (const Maemo::IcdStatisticsResult res, stats_results) {
 	if (res.params.network_attrs & ICD_NW_ATTR_IAPNAME) {
 	    /* network_id is the IAP UUID */
 	    if (QString(res.params.network_id.data()) == activeConfig.identifier()) {
@@ -891,7 +891,6 @@ void QNetworkSessionPrivate::do_open()
 	    qDebug() << "connect to"<< iap << "failed, result is empty";
 #endif
 	    updateState(QNetworkSession::Disconnected);
-	    emit quitPendingWaitsForOpened();
 	    emit q->error(QNetworkSession::InvalidConfigurationError);
 	    if (publicConfig.type() == QNetworkConfiguration::UserChoice)
 		cleanupAnyConfiguration();
@@ -906,7 +905,6 @@ void QNetworkSessionPrivate::do_open()
 	if ((publicConfig.type() != QNetworkConfiguration::UserChoice) &&
 	    (connected_iap != config.identifier())) {
 	    updateState(QNetworkSession::Disconnected);
-	    emit quitPendingWaitsForOpened();
 	    emit q->error(QNetworkSession::InvalidConfigurationError);
 	    return;
 	}
@@ -1009,7 +1007,6 @@ void QNetworkSessionPrivate::do_open()
 	updateState(QNetworkSession::Disconnected);
 	if (publicConfig.type() == QNetworkConfiguration::UserChoice)
 	    cleanupAnyConfiguration();
-	emit quitPendingWaitsForOpened();
 	emit q->error(QNetworkSession::UnknownSessionError);
     }
 }

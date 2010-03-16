@@ -84,7 +84,7 @@ private:
 QML_DECLARE_TYPE(ServiceWrapper)
 
 //! [1]
-class ServiceRegister : public QObject{
+class ServiceRegister : public QObject {
     Q_OBJECT
     Q_PROPERTY(QList<ServiceWrapper*>* registeredservices READ registeredservices NOTIFY modelChanged CONSTANT);
 //! [1]
@@ -104,7 +104,10 @@ public:
 private:
     QServiceManager* serviceManager;
     QList<ServiceWrapper *> m_services;
+
+signals:
+    void modelChanged();
 };
 
-
+QML_DECLARE_TYPE(ServiceRegister)
 

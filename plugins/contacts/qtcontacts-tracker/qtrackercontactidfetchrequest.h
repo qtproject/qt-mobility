@@ -43,7 +43,6 @@
 #define QTRACKERCONTACTIDFETCHREQUEST_H_
 
 #include <qtrackercontactasyncrequest.h>
-#include <qmobilityglobal.h>
 
 QTM_BEGIN_NAMESPACE
 class QContactAbstractRequest;
@@ -64,12 +63,10 @@ public:
     QTrackerContactIdFetchRequest(QContactAbstractRequest* req, QContactManagerEngine* parent);
 protected slots:
     //!\ reimp
-    void emitFinished();
+    void emitFinished(QContactManager::Error error = QContactManager::NoError);
 private:
     QContactLocalIdFetchRequest *idfetchrequest;
 };
 
 
-
 #endif /* QTRACKERCONTACTIDFETCHREQUEST_H_ */
-

@@ -407,7 +407,6 @@ void tst_QMediaPlaylist::saveAndLoad()
     QBuffer buffer;
     buffer.open(QBuffer::ReadWrite);
 
-    QTest::ignoreMessage(QtWarningMsg, "Load static plugins for \"/playlistformats/\" ");
     bool res = playlist.save(&buffer, "unsupported_format");
     QVERIFY(!res);
     QVERIFY(playlist.error() != QMediaPlaylist::NoError);

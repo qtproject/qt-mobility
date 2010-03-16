@@ -48,13 +48,14 @@ IMPLEMENT_READING(QMagnetometerReading)
 
 /*!
     \class QMagnetometerReading
-    \ingroup sensors
+    \ingroup sensors_reading
 
     \preliminary
     \brief The QMagnetometerReading class represents one reading from the
            magnetometer.
 
-    The magnetometer returns magnetic flux density values along 3 axes.
+    \section2 QMagnetometerReading Units
+    The magnetometer returns both raw magnetic flux and geomagnetic flux density values along 3 axes.
     The scale of the values is teslas. The axes are arranged as follows.
 
 \code
@@ -76,32 +77,32 @@ IMPLEMENT_READING(QMagnetometerReading)
     ----------  /
     |_________!/
 \endcode
-*/
 
-/*!
-    \enum QMagnetometerReading::CalibrationLevel
+    The primary difference between the raw and geomagnetic values is that extra processing
+    is done to eliminate interference from the geomagnetic values so they represent only
+    the effect of the Earth's magnetic field. This process is not perfect so a calibration
+    value exists to indicate how accurate the geomagnetic values are.
 
-    \value Undefined The calibration level is not defined or is too low.
-    \value Low       The calibrated values may be inaccurate by up to 3 micro Teslas.
-    \value Middle    The calibrated values may be inaccurate by up to 2 micro Teslas.
-    \value High      The calibrated values may be inaccurate by up to 1 micro Tesla.
+    The calibration status of the device is measured as a number from 0 to 1.
+    A value of 1 is the highest level that the device can support and 0 is
+    the worst.
 */
 
 /*!
     \property QMagnetometerReading::x
-    \brief the raw flux density on the X axis.
+    \brief the raw magnetic flux density on the X axis.
+
+    Measured as telsas.
+    \sa {QMagnetometerReading Units}
 */
 
-/*!
-    Returns the raw flux density on the X axis.
-*/
 qreal QMagnetometerReading::x() const
 {
     return d->x;
 }
 
 /*!
-    Sets the raw flux density on the X axis to \a x.
+    Sets the raw magnetic flux density on the X axis to \a x.
 */
 void QMagnetometerReading::setX(qreal x)
 {
@@ -110,19 +111,19 @@ void QMagnetometerReading::setX(qreal x)
 
 /*!
     \property QMagnetometerReading::y
-    \brief the raw flux density on the Y axis.
+    \brief the raw magnetic flux density on the Y axis.
+
+    Measured as telsas.
+    \sa {QMagnetometerReading Units}
 */
 
-/*!
-    Returns the raw flux density on the Y axis.
-*/
 qreal QMagnetometerReading::y() const
 {
     return d->y;
 }
 
 /*!
-    Sets the raw flux density on the Y axis to \a y.
+    Sets the raw magnetic flux density on the Y axis to \a y.
 */
 void QMagnetometerReading::setY(qreal y)
 {
@@ -131,19 +132,19 @@ void QMagnetometerReading::setY(qreal y)
 
 /*!
     \property QMagnetometerReading::z
-    \brief the raw flux density on the Z axis.
+    \brief the raw magnetic flux density on the Z axis.
+
+    Measured as telsas.
+    \sa {QMagnetometerReading Units}
 */
 
-/*!
-    Returns the raw flux density on the Y axis.
-*/
 qreal QMagnetometerReading::z() const
 {
     return d->z;
 }
 
 /*!
-    Sets the raw flux density on the Z axis to \a z.
+    Sets the raw magnetic flux density on the Z axis to \a z.
 */
 void QMagnetometerReading::setZ(qreal z)
 {
@@ -151,98 +152,94 @@ void QMagnetometerReading::setZ(qreal z)
 }
 
 /*!
-    \property QMagnetometerReading::calibrated_x
-    \brief the calibrated flux density on the X axis.
+    \property QMagnetometerReading::geo_x
+    \brief the geomagnetic flux density on the X axis.
+
+    Measured as telsas.
+    \sa {QMagnetometerReading Units}
 */
 
-/*!
-    Returns the calibrated flux density on the X axis.
-*/
-qreal QMagnetometerReading::calibrated_x() const
+qreal QMagnetometerReading::geo_x() const
 {
-    return d->calibrated_x;
+    return d->geo_x;
 }
 
 /*!
-    Sets the calibrated flux density on the X axis to \a calibrated_x.
+    Sets the geomagnetic flux density on the X axis to \a geo_x.
 */
-void QMagnetometerReading::setCalibrated_x(qreal calibrated_x)
+void QMagnetometerReading::setGeo_x(qreal geo_x)
 {
-    d->calibrated_x = calibrated_x;
+    d->geo_x = geo_x;
 }
 
 /*!
-    \property QMagnetometerReading::calibrated_y
-    \brief the calibrated flux density on the Y axis.
+    \property QMagnetometerReading::geo_y
+    \brief the geomagnetic flux density on the Y axis.
+
+    Measured as telsas.
+    \sa {QMagnetometerReading Units}
 */
 
-/*!
-    Returns the calibrated flux density on the Y axis.
-*/
-qreal QMagnetometerReading::calibrated_y() const
+qreal QMagnetometerReading::geo_y() const
 {
-    return d->calibrated_y;
+    return d->geo_y;
 }
 
 /*!
-    Sets the calibrated flux density on the Y axis to \a calibrated_y.
+    Sets the geomagnetic flux density on the Y axis to \a geo_y.
 */
-void QMagnetometerReading::setCalibrated_y(qreal calibrated_y)
+void QMagnetometerReading::setGeo_y(qreal geo_y)
 {
-    d->calibrated_y = calibrated_y;
+    d->geo_y = geo_y;
 }
 
 /*!
-    \property QMagnetometerReading::calibrated_z
-    \brief the calibrated flux density on the Z axis.
+    \property QMagnetometerReading::geo_z
+    \brief the geomagnetic flux density on the Z axis.
+
+    Measured as telsas.
+    \sa {QMagnetometerReading Units}
 */
 
-/*!
-    Returns the calibrated flux density on the Z axis.
-*/
-qreal QMagnetometerReading::calibrated_z() const
+qreal QMagnetometerReading::geo_z() const
 {
-    return d->calibrated_z;
+    return d->geo_z;
 }
 
 /*!
-    Sets the calibrated flux density on the Z axis to \a calibrated_z.
+    Sets the geomagnetic flux density on the Z axis to \a geo_z.
 */
-void QMagnetometerReading::setCalibrated_z(qreal calibrated_z)
+void QMagnetometerReading::setGeo_z(qreal geo_z)
 {
-    d->calibrated_z = calibrated_z;
+    d->geo_z = geo_z;
 }
 
 /*!
     \property QMagnetometerReading::calibrationLevel
     \brief the calibration level of the reading.
 
-    The higher the calibration, the more accurate the measurement is.
+    Measured as a value from 0 to 1 with higher values being better.
+    \sa {QMagnetometerReading Units}
 */
 
-/*!
-    Returns the calibration level of the reading.
-*/
-QMagnetometerReading::CalibrationLevel QMagnetometerReading::calibrationLevel() const
+qreal QMagnetometerReading::calibrationLevel() const
 {
-    return static_cast<QMagnetometerReading::CalibrationLevel>(d->calibrationLevel);
+    return d->calibrationLevel;
 }
 
 /*!
     Sets the calibration level of the reading to \a calibrationLevel.
 */
-void QMagnetometerReading::setCalibrationLevel(QMagnetometerReading::CalibrationLevel calibrationLevel)
+void QMagnetometerReading::setCalibrationLevel(qreal calibrationLevel)
 {
     d->calibrationLevel = calibrationLevel;
 }
 
 // =====================================================================
 
-// begin generated code
-
 /*!
     \class QMagnetometerFilter
-    \ingroup sensors_helpers
+    \ingroup sensors_filter
 
     \preliminary
     \brief The QMagnetometerFilter class is a convenience wrapper around QSensorFilter.
@@ -263,7 +260,7 @@ const char *QMagnetometer::type("QMagnetometer");
 
 /*!
     \class QMagnetometer
-    \ingroup sensors_helpers
+    \ingroup sensors_type
 
     \preliminary
     \brief The QMagnetometer class is a convenience wrapper around QSensor.
@@ -296,7 +293,28 @@ const char *QMagnetometer::type("QMagnetometer");
 
     \sa QSensor::reading()
 */
-// end generated code
+
+/*!
+    \property QMagnetometer::returnRawValues
+    \brief a value indicating if raw magnetometer values should be returned.
+
+    Set to true to return raw magnetometer values.
+    Set to false to suppress raw magnetometer values.
+
+    Note that you must access this property via QObject::property() and QObject::setProperty().
+    The property must be set before calling start().
+*/
+
+/*!
+    \property QMagnetometer::returnGeoValues
+    \brief a value indicating if geomagnetic magnetometer values should be returned.
+
+    Set to true to return calibrated magnetometer values.
+    Set to false to suppress calibrated magnetometer values.
+
+    Note that you must access this property via QObject::property() and QObject::setProperty().
+    The property must be set before calling start().
+*/
 
 #include "moc_qmagnetometer.cpp"
 QTM_END_NAMESPACE

@@ -104,7 +104,7 @@ public:
         return newStr;
     }
     void clear() {
-        foreach (LPWSTR str, m_list) {
+        foreach (const LPWSTR& str, m_list) {
             free(str);
         }
         m_list.clear();
@@ -608,7 +608,7 @@ static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, CEPROPI
 
         // Avatar
         PoomContactElement avatar;
-        avatar.poom << avatarMeta << avatarTypeMeta; //PIMPR_PICTURE need to be handled inside the processAvatar() function seperately.
+        avatar.poom << avatarMeta << avatarTypeMeta; //PIMPR_PICTURE need to be handled inside the processAvatar() function separately.
         avatar.func = processAvatar;
         list.append(avatar);
 
@@ -637,7 +637,7 @@ static void contactP2QTransforms(CEPROPID phoneMeta, CEPROPID emailMeta, CEPROPI
 
         // Now, build the hash
         foreach(const PoomContactElement& e, list) {
-            foreach(CEPROPID id, e.poom) {
+            foreach(const CEPROPID& id, e.poom) {
                 ids.append(id);
                 hash.insert(id, e);
             }
@@ -840,11 +840,11 @@ static void processQEmails(const QList<QContactEmailAddress>& emails, CEPROPID m
         CEPROPID id = availableIds.takeFirst();
         if (id != 0) {
             if (email.contexts().contains(QContactDetail::ContextHome))
-                meta += "H";
+                meta += 'H';
             else if (email.contexts().contains(QContactDetail::ContextWork))
-                meta += "W";
+                meta += 'W';
             else
-                meta += " ";
+                meta += ' ';
             props.append(convertToCEPropVal(id, email.emailAddress()));
         } else {
             qDebug() << "Too many email addresses";
@@ -1308,7 +1308,7 @@ static QList<CEPROPID> convertToCEPropIds(const QString& detailDefinitionName, c
 
 /*!
  * Convert from the supplied QContactFilter \a filter into a POOM query string.
- * Return empty string if any error occured.
+ * Return empty string if any error occurred.
  */
 QString QContactWinCEEngine::convertFilterToQueryString(const QContactFilter& filter) const
 {
@@ -1351,7 +1351,7 @@ QString QContactWinCEEngine::convertFilterToQueryString(const QContactFilter& fi
                     QList<CEPROPID> ids = convertToCEPropIds(cdf.detailDefinitionName(), cdf.detailFieldName());
                     if (!ids.isEmpty()) {
                         QStringList strList;
-                        foreach (CEPROPID id, ids) {
+                        foreach (const CEPROPID& id, ids) {
                             strList << QString("%1 = %2").arg(getPropertyName(id))
                                                 .arg(convertToCEPropValString(id, cdf.value()));
                         }
@@ -1375,7 +1375,7 @@ QString QContactWinCEEngine::convertFilterToQueryString(const QContactFilter& fi
                         QString minCompString, maxCompString;
                         QStringList strList;
 
-                        foreach (CEPROPID id, ids) {
+                        foreach (const CEPROPID& id, ids) {
                             if (cdf.minValue().isValid()) {
                                 minCompString = QString("%1 %2 %3").arg(getPropertyName(id))
                                                                    .arg(minComp)

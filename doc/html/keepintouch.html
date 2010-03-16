@@ -188,7 +188,7 @@
         }
 
         QContactManager manager;
-        foreach (const QContactLocalId &amp;contactId, manager.contacts(filter)) {
+        foreach (const QContactLocalId &amp;contactId, manager.contactIds(filter)) {
             <span class="comment">// Any match is acceptable</span>
             const QContact &amp;contact(manager.contact(contactId));
             return contact.displayLabel();

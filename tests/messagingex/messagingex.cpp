@@ -276,8 +276,12 @@ void MessagingEx::addMessage()
 void MessagingEx::on_sendSmsButton_clicked()
 {
     QMessage message;
+    foreach (const QMessageAccountId& id,m_accountList) {
+       QMessageAccount acc(id);
+       if(acc.messageTypes() & QMessage::Sms) message.setParentAccountId(id);
+    }
     message.setType(QMessage::Sms);
-    message.setTo(QMessageAddress(QMessageAddress::Email, phoneNumberEdit->text()));
+    message.setTo(QMessageAddress(QMessageAddress::Phone, phoneNumberEdit->text()));
     message.setBody(QString(smsMessageEdit->toPlainText()));
     
     if (!QString(phoneNumberEdit->text()).isEmpty())

@@ -310,7 +310,7 @@ void tst_QContactDetail::values()
 {
     QContactDetail p;
 
-    QCOMPARE(p.values(), QVariantMap());
+    QCOMPARE(p.variantValues(), QVariantMap());
 
     QDateTime dt = QDateTime::currentDateTime();
     QTime t = dt.time();
@@ -397,13 +397,13 @@ void tst_QContactDetail::values()
 
     /* Now set everything again */
     QVariantMap emptyValues;
-    QVariantMap values = p.values();
+    QVariantMap values = p.variantValues();
     QStringList keys = values.keys();
     foreach (const QString& key, keys)
         QVERIFY(p.setValue(key, QVariant()));
 
-    QCOMPARE(p.values(), emptyValues);
-    QVERIFY(p.values().count() == 0);
+    QCOMPARE(p.variantValues(), emptyValues);
+    QVERIFY(p.variantValues().count() == 0);
     QVERIFY(!p.hasValue("string"));
     QVERIFY(!p.hasValue("date"));
     QVERIFY(!p.hasValue("datetime"));
@@ -487,11 +487,11 @@ void tst_QContactDetail::values()
     QCOMPARE(p.value<QDateTime>("stringdate"), ddt);
 
     /* Reset again */
-    values = p.values();
+    values = p.variantValues();
     keys = values.keys();
     foreach (const QString& key, keys)
         QVERIFY(p.setValue(key, QVariant()));
-    QCOMPARE(p.values(), emptyValues);
+    QCOMPARE(p.variantValues(), emptyValues);
 
     /* Check that we can add a null variant */
     //QVERIFY(p.setValue("nullvariant", QVariant()));
@@ -523,14 +523,14 @@ void tst_QContactDetail::values()
 
     /* Check adding a null value removes the field */
     p.setValue("string", "stringvalue");
-    QVERIFY(p.values().contains("string"));
+    QVERIFY(p.variantValues().contains("string"));
     QVERIFY(p.value("string") == QString("stringvalue"));
     p.setValue("string", QVariant());
-    QVERIFY(!p.values().contains("string"));
+    QVERIFY(!p.variantValues().contains("string"));
 
     /* Check adding a field whose value is an empty string */
     p.setValue("string", "");
-    QVERIFY(p.values().contains("string"));
+    QVERIFY(p.variantValues().contains("string"));
     QVERIFY(p.value("string") == QString(""));
 
     /* Check accessing a missing value */

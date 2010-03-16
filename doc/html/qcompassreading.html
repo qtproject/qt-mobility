@@ -21,17 +21,11 @@
 <li><a href="qcompassreading-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
-<a name="public-types"></a>
-<h2>Public Types</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcompassreading.html#CalibrationLevel-enum">CalibrationLevel</a></b> { Undefined, Low, Middle, High }</td></tr>
-</table>
-<hr />
 <a name="properties"></a>
 <h2>Properties</h2>
 <ul>
 <li><div class="fn"><b><a href="qcompassreading.html#azimuth-prop">azimuth</a></b> : const qreal</div></li>
-<li><div class="fn"><b><a href="qcompassreading.html#calibrationLevel-prop">calibrationLevel</a></b> : const CalibrationLevel</div></li>
+<li><div class="fn"><b><a href="qcompassreading.html#calibrationLevel-prop">calibrationLevel</a></b> : const qreal</div></li>
 </ul>
 <ul>
 <li><div bar="2" class="fn"></div>1 property inherited from <a href="qsensorreading.html#properties">QSensorReading</a></li>
@@ -42,12 +36,12 @@
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qcompassreading.html#azimuth-prop">azimuth</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">CalibrationLevel </td><td class="memItemRight" valign="bottom"><b><a href="qcompassreading.html#calibrationLevel-prop">calibrationLevel</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qcompassreading.html#calibrationLevel-prop">calibrationLevel</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcompassreading.html#setAzimuth">setAzimuth</a></b> ( qreal <i>azimuth</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcompassreading.html#setCalibrationLevel">setCalibrationLevel</a></b> ( CalibrationLevel <i>calibrationLevel</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcompassreading.html#setCalibrationLevel">setCalibrationLevel</a></b> ( qreal <i>calibrationLevel</i> )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>2 public functions inherited from <a href="qsensorreading.html#public-functions">QSensorReading</a></li>
+<li><div bar="2" class="fn"></div>4 public functions inherited from <a href="qsensorreading.html#public-functions">QSensorReading</a></li>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
@@ -63,40 +57,31 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QCompassReading class represents one reading from a compass.</p>
-<p>The compass returns the azimuth of the device as degrees from magnetic north in a clockwise direction based on the top of the device. Note that the top of the device is a fixed point and may not represent the orientation that the user is holding the device in. There is also a value to indicate the calibration status of the device. If the device is not calibrated the azimuth may not be accurate.</p>
+<a name="qcompassreading-units"></a>
+<h3>QCompassReading Units</h3>
+<p>The compass returns the azimuth of the device as degrees from magnetic north in a clockwise direction based on the top of the UI. There is also a value to indicate the calibration status of the device. If the device is not calibrated the azimuth may not be accurate.</p>
 <p>Digital compasses are susceptible to magnetic interference and may need calibration after being placed near anything that emits a magnetic force. Accuracy of the compass can be affected by any ferrous materials that are nearby.</p>
-<hr />
-<h2>Member Type Documentation</h2>
-<a name="//apple_ref/cpp/tag/QCompassReading/CalibrationLevel"></a>
-<a name="//apple_ref/cpp/econst/QCompassReading/Undefined"></a>
-<a name="//apple_ref/cpp/econst/QCompassReading/Low"></a>
-<a name="//apple_ref/cpp/econst/QCompassReading/Middle"></a>
-<a name="//apple_ref/cpp/econst/QCompassReading/High"></a>
-<h3 class="fn"><a name="CalibrationLevel-enum"></a>enum QCompassReading::CalibrationLevel</h3>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QCompassReading::Undefined</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The calibration level is not defined or is too low.</td></tr>
-<tr><td valign="top"><tt>QCompassReading::Low</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The reported azimuth may be off by up to 15.4 degrees.</td></tr>
-<tr><td valign="top"><tt>QCompassReading::Middle</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The reported azimuth may be off by up to 11.8 degrees.</td></tr>
-<tr><td valign="top"><tt>QCompassReading::High</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The reported azimuth may be off by up to 7.4 degrees.</td></tr>
-</table></p>
+<p>The calibration status of the device is measured as a number from 0 to 1. A value of 1 is the highest level that the device can support and 0 is the worst.</p>
 <hr />
 <h2>Property Documentation</h2>
 <a name="//apple_ref/cpp/instm/QCompassReading/azimuth"></a>
 <h3 class="fn"><a name="azimuth-prop"></a>azimuth : const <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a></h3>
 <p>This property holds the azimuth of the device.</p>
+<p>Measured in degrees from magnetic north in a clockwise direction based the top of the UI.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b>azimuth</b> () const</td></tr>
 </table>
+<p>See also <a href="qcompassreading.html#qcompassreading-units">QCompassReading Units</a>.</p>
 <a name="//apple_ref/cpp/instm/QCompassReading/calibrationLevel"></a>
-<h3 class="fn"><a name="calibrationLevel-prop"></a>calibrationLevel : const <a href="qcompassreading.html#CalibrationLevel-enum">CalibrationLevel</a></h3>
+<h3 class="fn"><a name="calibrationLevel-prop"></a>calibrationLevel : const <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a></h3>
 <p>This property holds the calibration level of the reading.</p>
-<p>The higher the calibration, the more accurate the measurement is.</p>
+<p>Measured as a value from 0 to 1 with higher values being better.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">CalibrationLevel </td><td class="memItemRight" valign="bottom"><b>calibrationLevel</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b>calibrationLevel</b> () const</td></tr>
 </table>
+<p>See also <a href="qcompassreading.html#qcompassreading-units">QCompassReading Units</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QCompassReading/setAzimuth"></a>
@@ -104,7 +89,7 @@
 <p>Sets the <i>azimuth</i> of the device.</p>
 <p>See also <a href="qcompassreading.html#azimuth-prop">azimuth</a>().</p>
 <a name="//apple_ref/cpp/instm/QCompassReading/setCalibrationLevel"></a>
-<h3 class="fn"><a name="setCalibrationLevel"></a>void QCompassReading::setCalibrationLevel ( <a href="qcompassreading.html#CalibrationLevel-enum">CalibrationLevel</a> <i>calibrationLevel</i> )</h3>
+<h3 class="fn"><a name="setCalibrationLevel"></a>void QCompassReading::setCalibrationLevel ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>calibrationLevel</i> )</h3>
 <p>Sets the calibration level of the reading to <i>calibrationLevel</i>.</p>
 <p>See also <a href="qcompassreading.html#calibrationLevel-prop">calibrationLevel</a>().</p>
 <p /><address><hr /><div align="center">
