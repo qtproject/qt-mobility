@@ -53,12 +53,13 @@
 #include <QTextCodec>
 #include <emailapidefs.h>
 #include <memailmailbox.h>
-
+#include <memailfolder.h>
 
 using namespace EmailInterface;
 
 QTM_BEGIN_NAMESPACE
 
+using namespace SymbianHelpers;
 
 CFSEngine::CFSEngine()
 {
@@ -147,12 +148,12 @@ void CFSEngine::updateEmailAccountsL() const
     for (TInt i = 0; i < mailboxes.Count(); i++) {
         MEmailMailbox *mailbox = mailboxes[i];
         QString idAsString = QString::number(mailbox->MailboxId().iId);
-        QString fsIdAsString = SymbianHelpers::addFreestylePrefix(idAsString);
+        QString fsIdAsString = addFreestylePrefix(idAsString);
 
         if (!m_accounts.contains(fsIdAsString)) {
             
             QMessageAccount account = QMessageAccountPrivate::from(
-                QMessageAccountId(SymbianHelpers::addFreestylePrefix(fsIdAsString)),
+                QMessageAccountId(addFreestylePrefix(fsIdAsString)),
                 QString::fromUtf16(mailbox->MailboxName().Ptr(), mailbox->MailboxName().Length()),
                 0, //TODO: ID for IMAP service if needed
                 0, //TODO: ID for SMTP service if needed
@@ -264,6 +265,33 @@ QMessageFolder CFSEngine::folder(const QMessageFolderId &id) const
     QMessageFolder folder;
     return folder;
 }
+
+QMessageFolderIdList CFSEngine::folderIdsByAccountIdL(const QMessageAccountId& accountId) const
+{
+    QMessageFolderIdList folderIds;
+    QMessageAccount messageAccount = account(accountId);
+    
+    TMailboxId mailboxId(removeFreestylePrefix(accountId.toString()).toInt());
+    MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
+
+    RFolderArray folders;
+    
+    mailbox->GetFoldersL(folders);
+    CleanupClosePushL(folders);
+
+    for(TInt i=0; i < folders.Count(); i++) {
+        MEmailFolder *mailFolder = folders[i];
+        QString fsIdAsString = addFreestylePrefix(QString::number(mailFolder->FolderId().iId));
+        folderIds << QMessageFolderId(fsIdAsString);
+
+        //TODO: Support for subfolders?
+    }
+    
+    CleanupStack::PopAndDestroy(&folders);
+    
+    return folderIds;
+}
+
 
 QMessage CFSEngine::message(const QMessageId& id) const
 {

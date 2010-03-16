@@ -113,6 +113,7 @@ public:
 private:
     
     void updateEmailAccountsL() const;
+    QMessageFolderIdList folderIdsByAccountIdL(const QMessageAccountId& accountId) const;
 
     
     friend class QMessageService;
