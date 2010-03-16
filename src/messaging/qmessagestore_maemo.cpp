@@ -43,6 +43,7 @@
 #include "modestengine_maemo_p.h"
 #include "telepathyengine_maemo_p.h"
 #include "maemohelpers_p.h"
+#include "eventloggerengine_maemo_p.h"
 
 
 QTM_BEGIN_NAMESPACE
@@ -54,13 +55,14 @@ public:
         :d_ptr(d), q_ptr(q) {}
     QMessageStorePrivate *d_ptr;
     QMessageStore *q_ptr;
-    //...
+    EventLoggerEngine *el;
 };
 
 QMessageStorePrivate::QMessageStorePrivate()
     :q_ptr(0),
      p_ptr(0)
 {
+
 }
 
 QMessageStorePrivate::~QMessageStorePrivate()
@@ -68,9 +70,26 @@ QMessageStorePrivate::~QMessageStorePrivate()
 }
 
 void QMessageStorePrivate::initialize(QMessageStore *store)
-{
+{ 
     q_ptr = store;
     p_ptr = new QMessageStorePrivatePlatform(this, store);
+    p_ptr->el=new EventLoggerEngine();
+}
+
+void QMessageStorePrivate::messageNotification(QMessageStorePrivate::NotificationType type, const QMessageId& id,
+                                               const QMessageManager::NotificationFilterIdSet &matchingFilters)
+{
+    switch (type) {
+        case Added:
+            emit q_ptr->messageAdded(id, matchingFilters);
+            break;
+        case Updated:
+            emit q_ptr->messageUpdated(id, matchingFilters);
+            break;
+        case Removed:
+            emit q_ptr->messageRemoved(id, matchingFilters);
+            break;
+    }
 }
 
 Q_GLOBAL_STATIC(QMessageStorePrivate,data);
@@ -81,7 +100,9 @@ QMessageStore::QMessageStore(QObject *parent)
 {
     Q_ASSERT(d_ptr != 0);
     Q_ASSERT(d_ptr->q_ptr == 0); // QMessageStore should be singleton
-    d_ptr->initialize(this);
+    qDebug() << "QMessageStore::QMessageStore";
+ //   d_ptr->initialize(this);
+    qDebug() << "QMessageStore::QMessageStore exit";
 }
 
 QMessageStore::~QMessageStore()
@@ -203,8 +224,7 @@ bool QMessageStore::updateMessage(QMessage *m)
 
 QMessage QMessageStore::message(const QMessageId& id) const
 {
-    Q_UNUSED(id)
-    return QMessage(); // stub
+    return d_ptr->p_ptr->el->getMessage(id);
 }
 
 QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
@@ -222,13 +242,13 @@ QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
 
 QMessageManager::NotificationFilterId QMessageStore::registerNotificationFilter(const QMessageFilter &filter)
 {
-    Q_UNUSED(filter)
-    return 0; // stub
+
+    return d_ptr->p_ptr->el->registerNotificationFilter(*d_ptr,filter);
 }
 
 void QMessageStore::unregisterNotificationFilter(QMessageManager::NotificationFilterId notificationFilterId)
 {
-    Q_UNUSED(notificationFilterId)
+    d_ptr->p_ptr->el->unregisterNotificationFilter( notificationFilterId);
 }
 
 
