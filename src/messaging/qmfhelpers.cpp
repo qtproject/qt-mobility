@@ -201,7 +201,7 @@ QMailMessage::MessageType convert(QMessage::Type t)
     if (t & QMessage::Email) {
         result = static_cast<QMailMessage::MessageType>(result | QMailMessage::Email);
     }
-    if (t & QMessage::Xmpp) {
+    if (t & QMessage::InstantMessage) {
         result = static_cast<QMailMessage::MessageType>(result | QMailMessage::Instant);
     }
 
@@ -223,7 +223,7 @@ QMessage::Type convert(QMailMessage::MessageType t)
         result = static_cast<QMessage::Type>(static_cast<uint>(result | QMessage::Email));
     }
     if (t & QMailMessage::Instant) {
-        result = static_cast<QMessage::Type>(static_cast<uint>(result | QMessage::Xmpp));
+        result = static_cast<QMessage::Type>(static_cast<uint>(result | QMessage::InstantMessage));
     }
 
     return result;
@@ -377,8 +377,8 @@ QMessageAddress convert(const QMailAddress &address)
                 type = QMessageAddress::System;
             } else if (spec == "Phone") {
                 type = QMessageAddress::Phone;
-            } else if (spec == "XMPP") {
-                type = QMessageAddress::Xmpp;
+            } else if (spec == "InstantMessage") {
+                type = QMessageAddress::InstantMessage;
             }
         }
 
@@ -395,11 +395,11 @@ QMailAddress convert(const QMessageAddress &address)
         suffix = " (TYPE=System)";
     } else if (address.type() == QMessageAddress::Phone) {
         suffix = " (TYPE=Phone)";
-    } else if (address.type() == QMessageAddress::Xmpp) {
-        suffix = " (TYPE=XMPP)";
+    } else if (address.type() == QMessageAddress::InstantMessage) {
+        suffix = " (TYPE=InstantMessage)";
     }
 
-    return QMailAddress(address.recipient() + suffix);
+    return QMailAddress(address.addressee() + suffix);
 }
 
 QMessageAddressList convert(const QList<QMailAddress> &list)

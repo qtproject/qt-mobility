@@ -74,8 +74,8 @@ EXPORTS
 	_ZNK10QtMobility28QNetworkConfigurationManager20defaultConfigurationEv @ 73 NONAME
 	_ZNK10QtMobility28QNetworkConfigurationManager27configurationFromIdentifierERK7QString @ 74 NONAME
 	_ZNK10QtMobility28QNetworkConfigurationManager8isOnlineEv @ 75 NONAME
-	_ZTIN10QtMobility15QNetworkSessionE @ 76 NONAME ; #<TI>#
-	_ZTIN10QtMobility28QNetworkConfigurationManagerE @ 77 NONAME ; #<TI>#
-	_ZTVN10QtMobility15QNetworkSessionE @ 78 NONAME ; #<VT>#
-	_ZTVN10QtMobility28QNetworkConfigurationManagerE @ 79 NONAME ; #<VT>#
+	_ZTIN10QtMobility15QNetworkSessionE @ 76 NONAME
+	_ZTIN10QtMobility28QNetworkConfigurationManagerE @ 77 NONAME
+	_ZTVN10QtMobility15QNetworkSessionE @ 78 NONAME
+	_ZTVN10QtMobility28QNetworkConfigurationManagerE @ 79 NONAME
 

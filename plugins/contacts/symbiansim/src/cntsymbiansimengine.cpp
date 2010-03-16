@@ -40,9 +40,6 @@
 ****************************************************************************/
 
 #include "cntsymbiansimengine.h"
-#include <qtcontacts.h>
-#include <mmtsy_names.h>
-
 #include "cntsymbiansimtransformerror.h"
 #include "cntsimstore.h"
 #include "cntsimcontactfetchrequest.h"
@@ -50,17 +47,11 @@
 #include "cntsimcontactsaverequest.h"
 #include "cntsimcontactremoverequest.h"
 #include "cntsimdetaildefinitionfetchrequest.h"
-
-#ifdef SYMBIANSIM_BACKEND_USE_ETEL_TESTSERVER
-#include <mpbutil_etel_test_server.h>
-#else
-#include <mpbutil.h>
-#endif
+#include <qtcontacts.h>
 
 #include <QEventLoop>
 #include <QTimer>
-
-
+#include <QDebug>
 
 CntSymbianSimEngineData::CntSymbianSimEngineData()
     :m_simStore(0)
@@ -87,7 +78,11 @@ CntSymbianSimEngine::CntSymbianSimEngine(const QMap<QString, QString>& parameter
     error = QContactManager::NoError;
 
     d = new CntSymbianSimEngineData();
-    d->m_simStore = new CntSimStore(this, parameters.value(KParameterKeySimStoreName));
+    d->m_simStore = new CntSimStore(this, parameters.value(KParameterKeySimStoreName), error);
+    if (error != QContactManager::NoError) {
+        //qDebug() << "Failed to open SIM store" << error;
+        return;
+    }
 
     if(d->m_simStore->storeName() == KParameterValueSimStoreNameSdn) {
         // In case of SDN store we need to check if any SDN contacts exist to
@@ -277,7 +272,7 @@ QMap<QString, QContactDetailDefinition> CntSymbianSimEngine::detailDefinitions(c
     }
 
     // Get store information
-    RMobilePhoneBookStore::TMobilePhoneBookInfoV5 storeInfo = d->m_simStore->storeInfo();
+    TSimStoreInfo storeInfo = d->m_simStore->storeInfo();
 
     // the map we will eventually return
     QMap<QString, QContactDetailDefinition> retn;
@@ -340,6 +335,7 @@ QMap<QString, QContactDetailDefinition> CntSymbianSimEngine::detailDefinitions(c
     retn.insert(def.name(), def);
 
     // email support needs to be checked run-time, because it is SIM specific
+#ifndef SYMBIANSIM_BACKEND_PHONEBOOKINFOV1
     if (storeInfo.iMaxEmailAddr > 0) {
         def.setName(QContactEmailAddress::DefinitionName);
         fields.clear();
@@ -350,6 +346,7 @@ QMap<QString, QContactDetailDefinition> CntSymbianSimEngine::detailDefinitions(c
         def.setUnique(true);
         retn.insert(def.name(), def);
     }
+#endif
 
     // phone number
     def.setName(QContactPhoneNumber::DefinitionName);
@@ -359,6 +356,7 @@ QMap<QString, QContactDetailDefinition> CntSymbianSimEngine::detailDefinitions(c
     fields.insert(QContactPhoneNumber::FieldNumber, f);
     // TODO: subtypes supported in case a sim contact can have multiple phone numbers?
     def.setFields(fields);
+#ifndef SYMBIANSIM_BACKEND_PHONEBOOKINFOV1
     if (storeInfo.iMaxAdditionalNumbers > 0) {
         // multiple numbers supported
         def.setUnique(false);
@@ -366,9 +364,14 @@ QMap<QString, QContactDetailDefinition> CntSymbianSimEngine::detailDefinitions(c
         // only one phone number allowed
         def.setUnique(true);
     }
+#else
+    // only one phone number allowed
+    def.setUnique(true);
+#endif
     retn.insert(def.name(), def);
 
     // nickname support needs to be checked run-time, because it is SIM specific
+#ifndef SYMBIANSIM_BACKEND_PHONEBOOKINFOV1
     if (storeInfo.iMaxSecondNames > 0) {
         def.setName(QContactNickname::DefinitionName);
         fields.clear();
@@ -379,6 +382,7 @@ QMap<QString, QContactDetailDefinition> CntSymbianSimEngine::detailDefinitions(c
         def.setUnique(true);
         retn.insert(def.name(), def);
     }
+#endif
 
     // name
     def.setName(QContactName::DefinitionName);

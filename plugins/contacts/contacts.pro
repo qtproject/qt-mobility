@@ -19,3 +19,4 @@ symbian {
 }
 wince*:SUBDIRS += wince
 maemo6:SUBDIRS += qtcontacts-tracker
+maemo5:SUBDIRS += maemo5
