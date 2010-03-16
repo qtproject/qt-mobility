@@ -53,9 +53,13 @@
 #include <libosso-abook/osso-abook-waitable.h>
 #include <libosso-abook/osso-abook-presence.h>
 #include <libosso-abook/osso-abook-avatar.h>
+//#include <libosso-abook/osso-abook-account-manager.h>
+
 #include <libmcclient/mc-profile.h>
-#include <gdk-pixbuf/gdk-pixbuf.h>
 #include <libmcclient/mc-account.h>
+
+#include <gdk-pixbuf/gdk-pixbuf.h>
+
 
 //### Remove in PR 1.2
 extern "C" {
@@ -125,7 +129,14 @@ extern "C" {
 	void                osso_abook_contact_set_pixbuf       (OssoABookContact *contact,
                                                                  GdkPixbuf *pixbuf,
                                                                  EBook *book,
-                                                                 GtkWindow *window); 
+                                                                 GtkWindow *window);
+	// osso-abook-account-manager.h
+	const GList*        osso_abook_account_manager_get_primary_vcard_fields
+                                                                 (OssoABookAccountManager *manager);
+	OssoABookAccountManager* osso_abook_account_manager_get_default(void);
+	const char*         osso_abook_account_manager_get_vcard_field
+                                                                (OssoABookAccountManager *manager,
+                                                                 const char *account_name);
 }
 
 QTM_USE_NAMESPACE

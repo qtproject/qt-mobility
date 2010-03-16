@@ -915,11 +915,25 @@ QContactNote* QContactABook::getNoteDetail(EContact *eContact) const
   return rtn;
 }
 
+static const QStringList vcardsManagedByTelepathy(){
+  QStringList rtn;
+  OssoABookAccountManager* accountMgr = osso_abook_account_manager_get_default();
+  const GList *vcardFields = osso_abook_account_manager_get_primary_vcard_fields(accountMgr);
+  while (vcardFields){
+    QString field = (const char*)vcardFields->data;
+    if (!rtn.contains(field))
+      rtn << field;
+    vcardFields = vcardFields->next;
+  }
+  
+  return rtn;
+}
+
 QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eContact) const
 {
   QList<QContactOnlineAccount*> rtnList;
   
-  QStringList evcardToSkip;
+  QStringList evcardToSkip = vcardsManagedByTelepathy();
   
   // Gets info of online accounts from roster contacts associated to the master one  
   if (!osso_abook_contact_is_roster_contact (A_CONTACT(eContact))) {
@@ -935,8 +949,7 @@ QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eC
       
       // Avoid to look for Roster contacts into the VCard
       QString accountVCard = QString::fromLatin1(mc_profile_get_vcard_field(id));
-      if (!evcardToSkip.contains(accountVCard))
-        evcardToSkip << accountVCard;
+      evcardToSkip.removeOne(accountVCard);
       
       // Presence
       OssoABookPresence *presence = OSSO_ABOOK_PRESENCE (rosterContact);
@@ -983,12 +996,8 @@ QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eC
       QString attributeName = QString::fromLatin1(e_vcard_attribute_get_name(attr));
       
       // Skip attributes processed scanning roster contacts.
-      if (evcardToSkip.contains(attributeName))
+      if (!evcardToSkip.contains(attributeName))
 	continue;
-      
-      // We are looking for attributes defined by Maemo guys and that star with "X-" (eg: X-JABBER, X-MSN and so on)
-      if (!attributeName.contains(QRegExp("^X-")))
-        continue;
       
       GList *params = e_vcard_attribute_get_params(attr);
       GList *nodeP;
@@ -1034,12 +1043,8 @@ QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eC
 	if (ossoValidIsOk && !type.isEmpty()) {
 	  QContactOnlineAccount* rtn = new QContactOnlineAccount;
           QVariantMap map;
-	  //map[QContactOnlineAccount::FieldAccountUri] = 
-	  map[QContactOnlineAccount::FieldNickname] = QString::fromLatin1(e_vcard_attribute_get_value(attr));
-	  //map[QContactOnlineAccount::FieldPresence] = 
+	  map[QContactOnlineAccount::FieldNickname] = QString::fromLatin1(e_vcard_attribute_get_value(attr)); 
 	  map[QContactOnlineAccount::FieldServiceProvider] = type;
-	  //map[QContactOnlineAccount::FieldStatusMessage] =
-	  //map[QContactOnlineAccount::FieldSubTypes] =
           setDetailValues(map, rtn);
 	  rtnList << rtn;
 	}
@@ -1499,11 +1504,13 @@ void QContactABook::setNoteDetail(const OssoABookContact* aContact, const QConta
   addAttributeToAContact(aContact, EVC_NOTE, attrValues);
 }
 
-//TODO
 void QContactABook::setOnlineAccountDetail(const OssoABookContact* aContact, const QContactOnlineAccount& detail) const
 {
-  if (!aContact) return;
-  Q_UNUSED(detail)
+   if (!aContact)
+     return;
+   
+   //const QStringList rosterVCards = vcardsManagedByTelepathy();
+   Q_UNUSED(detail);
 }
 
 void QContactABook::setOrganizationDetail(const OssoABookContact* aContact, const QContactOrganization& detail) const
