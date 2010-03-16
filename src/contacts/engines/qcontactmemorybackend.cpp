@@ -842,8 +842,9 @@ void QContactMemoryEngine::performAsynchronousOperation()
 
             // update the request with the results.
             if (!requestedContacts.isEmpty() || operationError != QContactManager::NoError)
-                updateContactFetchRequest(r, requestedContacts, operationError); // emit resultsAvailable()
-            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
+                updateContactFetchRequest(r, requestedContacts, operationError, QContactAbstractRequest::FinishedState);
+            else
+                updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
         }
         break;
 
@@ -857,8 +858,9 @@ void QContactMemoryEngine::performAsynchronousOperation()
             QList<QContactLocalId> requestedContactIds = QContactManagerEngine::contactIds(filter, sorting, operationError);
 
             if (!requestedContactIds.isEmpty() || operationError != QContactManager::NoError)
-                updateContactLocalIdFetchRequest(r, requestedContactIds, operationError); // emit resultsAvailable()
-            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
+                updateContactLocalIdFetchRequest(r, requestedContactIds, operationError, QContactAbstractRequest::FinishedState);
+            else
+                updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
         }
         break;
 
@@ -871,8 +873,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
             QMap<int, QContactManager::Error> errorMap;
             saveContacts(&contacts, &errorMap, operationError);
 
-            updateContactSaveRequest(r, contacts, operationError, errorMap); // there will always be results of some form.  emit resultsAvailable().
-            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
+            updateContactSaveRequest(r, contacts, operationError, errorMap, QContactAbstractRequest::FinishedState);
         }
         break;
 
@@ -899,8 +900,9 @@ void QContactMemoryEngine::performAsynchronousOperation()
             }
 
             if (!errorMap.isEmpty() || operationError != QContactManager::NoError)
-                updateContactRemoveRequest(r, operationError, errorMap); // emit resultsAvailable()
-            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
+                updateContactRemoveRequest(r, operationError, errorMap, QContactAbstractRequest::FinishedState);
+            else
+                updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
         }
         break;
 
@@ -926,8 +928,9 @@ void QContactMemoryEngine::performAsynchronousOperation()
             }
 
             if (!errorMap.isEmpty() || !requestedDefinitions.isEmpty() || operationError != QContactManager::NoError)
-                updateDefinitionFetchRequest(r, requestedDefinitions, operationError, errorMap); // emit resultsAvailable()
-            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
+                updateDefinitionFetchRequest(r, requestedDefinitions, operationError, errorMap, QContactAbstractRequest::FinishedState);
+            else
+                updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
         }
         break;
 
@@ -952,8 +955,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
             }
 
             // update the request with the results.
-            updateDefinitionSaveRequest(r, savedDefinitions, operationError, errorMap); // there will always be results of some form.  emit resultsAvailable().
-            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
+            updateDefinitionSaveRequest(r, savedDefinitions, operationError, errorMap, QContactAbstractRequest::FinishedState);
         }
         break;
 
@@ -976,8 +978,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
             }
 
             // there are no results, so just update the status with the error.
-            updateDefinitionRemoveRequest(r, operationError, errorMap); // emit resultsAvailable()
-            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
+            updateDefinitionRemoveRequest(r, operationError, errorMap, QContactAbstractRequest::FinishedState);
         }
         break;
 
@@ -1003,8 +1004,9 @@ void QContactMemoryEngine::performAsynchronousOperation()
 
             // update the request with the results.
             if (!requestedRelationships.isEmpty() || operationError != QContactManager::NoError)
-                updateRelationshipFetchRequest(r, requestedRelationships, operationError); // emit resultsAvailable()
-            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
+                updateRelationshipFetchRequest(r, requestedRelationships, operationError, QContactAbstractRequest::FinishedState);
+            else
+                updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
         }
         break;
 
@@ -1030,8 +1032,9 @@ void QContactMemoryEngine::performAsynchronousOperation()
                 operationError = QContactManager::DoesNotExistError;
 
             if (!errorMap.isEmpty() || operationError != QContactManager::NoError)
-                updateRelationshipRemoveRequest(r, operationError, errorMap); // emit resultsAvailable()
-            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
+                updateRelationshipRemoveRequest(r, operationError, errorMap, QContactAbstractRequest::FinishedState);
+            else
+                updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
         }
         break;
 
@@ -1056,8 +1059,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
             }
 
             // update the request with the results.
-            updateRelationshipSaveRequest(r, savedRelationships, operationError, errorMap); // there will always be results of some form.  emit resultsAvailable().
-            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
+            updateRelationshipSaveRequest(r, savedRelationships, operationError, errorMap, QContactAbstractRequest::FinishedState);
         }
         break;
 
