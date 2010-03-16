@@ -153,6 +153,17 @@ HEADERS += qaddress.h \
            qrouterequest.h \
            qroutexmlparser.h
 
+# my experimental qgeoengine files
+PUBLIC_HEADERS +=   qdlgeoreply.h \
+                    qdlgeonetworkreply.h \
+                    qdlgeocodingreply.h \
+                    qdlroutereply.h \
+                    qdlmaptilereply.h
+PRIVATE_HEADERS +=  qdlnokiageocodingreply_p.h \
+                    qdlnokiaroutereply_p.h \
+                    qdlnokiamaptilereply_p.h
+           
+
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
 SOURCES += qlocationutils.cpp \
@@ -210,6 +221,16 @@ SOURCES += qaddress.cpp \
            qroutereply.cpp \
            qrouterequest.cpp \
             qroutexmlparser.cpp
+
+# my experimental qgeoengine files
+SOURCES +=  qdlgeoreply.cpp \
+            qdlgeonetworkreply.cpp \
+            qdlgeocodingreply.cpp \
+            qdlroutereply.cpp \
+            qdlmaptilereply.cpp \
+            qdlnokiageocodingreply_p.cpp \
+            qdlnokiaroutereply_p.cpp \
+            qdlnokiamaptilereply_p.cpp
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

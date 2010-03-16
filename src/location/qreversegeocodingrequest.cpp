@@ -112,5 +112,37 @@ QGeoCoordinate QReverseGeocodingRequest::coordinate() const
     return coord;
 }
 
+QString QReverseGeocodingRequest::requestString(const QString &host) const
+{
+    QString request = "http://";
+    request += host;
+    request += "/geocoder/rgc/";
+    request += vers;
+    request += "?referer=localhost";
+    request += "&long=";
+    request += trimDouble(coord.longitude());
+    request += "&lat=";
+    request += trimDouble(coord.latitude());
+
+    if (languageMARC != "") {
+        request += "&lg=";
+        request += languageMARC;
+    }
+
+    return request;
+}
+
+QString QReverseGeocodingRequest::trimDouble(qreal degree, int decimalDigits) const
+{
+    QString sDegree = QString::number(degree, 'g', decimalDigits);
+
+    int index = sDegree.indexOf('.');
+
+    if (index == -1)
+        return sDegree;
+    else
+        return QString::number(degree, 'g', decimalDigits + index);
+}
+
 QTM_END_NAMESPACE
 

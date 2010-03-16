@@ -67,7 +67,7 @@ public:
     };
 
 public:
-
+    QRouteReply();
     ResultCode resultCode() const;
     QString resultDescription() const;
     QString language() const;
@@ -76,8 +76,6 @@ public:
 
 private:
     Q_DISABLE_COPY(QRouteReply);
-
-    QRouteReply();
 
 private:
     ResultCode rCode;

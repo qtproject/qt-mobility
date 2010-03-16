@@ -48,13 +48,14 @@
 #include <QNetworkProxy>
 
 #include "qrouterequest.h"
-#include "qroutereply.h"
 #include "qgeocodingrequest.h"
 #include "qreversegeocodingrequest.h"
-#include "qgeocodingreply.h"
 #include "qmaptilerequest.h"
-#include "qmaptilereply.h"
 #include "qmaptile.h"
+
+#include "qdlroutereply.h"
+#include "qdlgeocodingreply.h"
+#include "qdlmaptilereply.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -66,14 +67,10 @@ public:
     QGeoEngine();
     virtual ~QGeoEngine();
 
-    virtual QRouteReply* get(const QRouteRequest& request) = 0;
-    virtual QGeocodingReply* get(const QGeocodingRequest& request) = 0;
-    virtual QGeocodingReply* get(const QReverseGeocodingRequest& request) = 0;
-    virtual QMapTileReply* get(const QMapTileRequest& request) = 0;
-
-    virtual void release(QGeoReply* reply) = 0;
-    virtual void cancel(QGeoReply* reply) = 0;
-
+    virtual QDLRouteReply* get(const QRouteRequest& request) = 0;
+    virtual QDLGeocodingReply* get(const QGeocodingRequest& request) = 0;
+    virtual QDLGeocodingReply* get(const QReverseGeocodingRequest& request) = 0;
+    virtual QDLMapTileReply* get(const QMapTileRequest& request) = 0;
     virtual quint16 maxZoomLevel() const = 0;
 
     virtual QList<MapVersion> versions() const = 0;
@@ -85,13 +82,13 @@ private:
     Q_DISABLE_COPY(QGeoEngine)
 
 signals:
-    void finished(QRouteReply* reply);
-    void finished(QGeocodingReply* reply);
-    void finished(QMapTileReply* reply);
+    void finished(QDLRouteReply* reply);
+    void finished(QDLGeocodingReply* reply);
+    void finished(QDLMapTileReply* reply);
 
-    void error(QRouteReply* reply, QGeoReply::ErrorCode code);
-    void error(QGeocodingReply* reply, QGeoReply::ErrorCode code);
-    void error(QMapTileReply* reply, QGeoReply::ErrorCode code);
+    void error(QDLRouteReply* reply, QDLGeoReply::ErrorCode errorCode, QString errorString = QString());
+    void error(QDLGeocodingReply* reply, QDLGeoReply::ErrorCode errorCode, QString errorString = QString());
+    void error(QDLMapTileReply* reply, QDLGeoReply::ErrorCode errorCode, QString errorString = QString());
 
 public:
     static void getMercatorTileIndex(const QGeoCoordinate& coordinate, quint16 zoomLevel, quint32* col, quint32* row);

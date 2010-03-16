@@ -375,5 +375,77 @@ QString QRouteRequest::avoidToString() const
     return "";
 }
 
+QString QRouteRequest::requestString(const QString &host) const
+{
+    QString request = "http://";
+    request += host;
+    request += "/routing/rt/";
+    request += vers;
+    request += "?referer=localhost";
+    request += "&slong=";
+    request += trimDouble(src.longitude());
+    request += "&slat=";
+    request += trimDouble(src.latitude());
+    request += "&dlong=";
+    request += trimDouble(dst.longitude());
+    request += "&dlat=";
+    request += trimDouble(dst.latitude());
+
+    if (nTotal > 0) {
+        request += "&total=";
+        request += QString::number(nTotal);
+    }
+
+    if (nAlternatives > 0) {
+        request += "&alternatives=";
+        request += QString::number(nAlternatives);
+    }
+    if (languageCode != "") {
+        request += "&lg=";
+        request += languageCode;
+    }
+    if (tod.isValid()) {
+        request += "&tod=";
+        request += tod.toUTC().toString();
+    }
+    if (toa.isValid()) {
+        request += "&toa=";
+        request += toa.toUTC().toString();
+    }
+
+    request += "&type=";
+    request += typeToString();
+    request +="&mode=";
+    request += modeToString();
+
+    if (rAvoid.count() > 0) {
+        request += "&avoid=";
+        request += avoidToString();
+    }
+
+    const QList<QGeoCoordinate>& stOvers = stopOvers();
+
+    for (int i = 0; i < stOvers.length(); i++) {
+        request += QString::number(stOvers[i].latitude(), 'f');
+        request += ",";
+        request += QString::number(stOvers[i].longitude(), 'f');
+        request += " ";
+    }
+
+    return request;
+}
+
+QString QRouteRequest::trimDouble(qreal degree, int decimalDigits) const
+{
+    QString sDegree = QString::number(degree, 'g', decimalDigits);
+
+    int index = sDegree.indexOf('.');
+
+    if (index == -1)
+        return sDegree;
+    else
+        return QString::number(degree, 'g', decimalDigits + index);
+}
+
 QTM_END_NAMESPACE
 

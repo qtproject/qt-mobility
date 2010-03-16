@@ -217,6 +217,50 @@ void QGeocodingRequest::setNumber(const QString& number)
     this->num = number;
 }
 
+QString QGeocodingRequest::requestString(const QString &host) const
+{
+    QString request = "http://";
+    request += host;
+    request += "/geocoder/gc/";
+    request += vers;
+    request += "?referer=localhost";
+
+    if (languageMARC != "") {
+        request += "&lg=";
+        request += languageMARC;
+    }
+
+    if (obloc.isEmpty()) {
+        request += "&country=";
+        request += cntry;
+
+        if (!st.isEmpty()) {
+            request += "&state=";
+            request += st;
+        }
+        if (!cty.isEmpty()) {
+            request += "&city=";
+            request += cty;
+        }
+        if (!pCode.isEmpty()) {
+            request += "&zip=";
+            request += pCode;
+        }
+        if (!strt.isEmpty()) {
+            request += "&street=";
+            request += strt;
+        }
+        if (!num.isEmpty()) {
+            request += "&number=";
+            request += num;
+        }
+    } else {
+        request += "&obloc=";
+        request += obloc;
+    }
+
+    return request;
+}
 
 QTM_END_NAMESPACE
 

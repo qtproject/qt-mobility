@@ -81,19 +81,10 @@ public:
     QNetworkProxy mapProxy() const;
     void setMapProxy(const QNetworkProxy& proxy);
 
-    virtual QRouteReply* get(const QRouteRequest& request);
-    virtual QGeocodingReply* get(const QGeocodingRequest& request);
-    virtual QGeocodingReply* get(const QReverseGeocodingRequest& request);
-    virtual QMapTileReply* get(const QMapTileRequest& request);
-
-    /*!
-    * @param reply A QGeoReply.
-    * @return The raw network reply associated with the QGeoReply.
-    */
-    QNetworkReply* getRawReply(const QGeoReply* reply) const;
-
-    virtual void release(QGeoReply* reply);
-    virtual void cancel(QGeoReply* reply);
+    virtual QDLRouteReply* get(const QRouteRequest& request);
+    virtual QDLGeocodingReply* get(const QGeocodingRequest& request);
+    virtual QDLGeocodingReply* get(const QReverseGeocodingRequest& request);
+    virtual QDLMapTileReply* get(const QMapTileRequest& request);
 
     virtual quint16 maxZoomLevel() const;
     virtual QList<MapVersion> versions() const;
@@ -105,14 +96,13 @@ private:
     Q_DISABLE_COPY(QGeoNetworkManager)
 
 private slots:
-    void netReplyFinished(QNetworkReply* reply);
-    void netReplyError(QNetworkReply::NetworkError code);
+    void finishedRouteRequest();
+    void finishedGeocodingRequest();
+    void finishedMapTileRequest();
 
-private:
-    bool parseRouteReply(QNetworkReply* netReply, QRouteReply* routeReply);
-    bool parseCodingReply(QNetworkReply* netReply, QGeocodingReply* codingReply);
-
-    static QString trimGeoCoordinate(qreal degree);
+    void errorRouteRequest(QDLGeoReply::ErrorCode errorCode, const QString &errorString = QString());
+    void errorGeocodingRequest(QDLGeoReply::ErrorCode errorCode, const QString &errorString = QString());
+    void errorMapTileRequest(QDLGeoReply::ErrorCode errorCode, const QString &errorString = QString());
 
 private:
     QNetworkAccessManager netManager; //!< The internal network manager
@@ -126,11 +116,6 @@ private:
     QNetworkProxy mapProx;
     QString token;
     QString referrer;
-
-    //! maps QNetworkReplies to their corresponding QGeoReplies
-    QHash<QNetworkReply*, QGeoReply*> replyMap;
-    //! maps a QGeoReply to its corresponding QNetworkReply
-    QHash<QGeoReply*, QNetworkReply*> revReplyMap;
 
     QHash<QString, MapVersion> mapVersions;
     QHash<QString, MapResolution> mapResolutions;

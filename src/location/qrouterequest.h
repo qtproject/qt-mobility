@@ -117,6 +117,8 @@ public:
     void removeStopOver(const QGeoCoordinate& stopOver);
     const QList<QGeoCoordinate>& stopOvers() const;
 
+    QString requestString(const QString &host) const;
+
 private:
     Q_DISABLE_COPY(QRouteRequest)
 
@@ -124,6 +126,8 @@ private:
     QString typeToString() const;
     QString modeToString() const;
     QString avoidToString() const;
+
+    QString trimDouble(qreal degree, int decimalDigits = 10) const;
 
     QString vers;
     QGeoCoordinate src;

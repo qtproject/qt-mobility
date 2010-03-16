@@ -64,11 +64,15 @@ public:
     QGeoCoordinate coordinate() const;
     void setCoordinate(const QGeoCoordinate& coordinate);
 
+    QString requestString(const QString &host) const;
+
 private:
     Q_DISABLE_COPY(QReverseGeocodingRequest)
 
-    QString        vers;
-    QString        languageMARC;
+    QString trimDouble(qreal degree, int decimalDigits = 10) const;
+
+    QString vers;
+    QString languageMARC;
     QGeoCoordinate coord;
 };
 

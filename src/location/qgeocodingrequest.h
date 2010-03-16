@@ -80,6 +80,8 @@ public:
     QString number() const;
     void setNumber(const QString& number);
 
+    QString requestString(const QString &host) const;
+
 private:
     Q_DISABLE_COPY(QGeocodingRequest)
 

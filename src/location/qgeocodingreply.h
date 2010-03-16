@@ -51,7 +51,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QGeocodingReply : public QGeoReply
+class Q_LOCATION_EXPORT QGeocodingReply : public QGeoReply
 {
     Q_OBJECT
 
@@ -65,6 +65,8 @@ public:
     };
 
 public:
+    QGeocodingReply();
+
     ResultCode resultCode() const;
     QString resultDescription() const;
     quint32 count() const;
@@ -72,8 +74,6 @@ public:
 
 private:
     Q_DISABLE_COPY(QGeocodingReply)
-
-    QGeocodingReply();
 
 private:
     ResultCode code;
