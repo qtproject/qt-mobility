@@ -121,7 +121,7 @@ QMessageAccountIdList CFSEngine::queryAccounts(const QMessageAccountFilter &filt
 
 int CFSEngine::countAccounts(const QMessageAccountFilter &filter) const
 {
-    return 0;
+    return queryAccounts(filter, QMessageAccountSortOrder(), 0, 0).count();
 }
 
 QMessageAccount CFSEngine::account(const QMessageAccountId &id) const
