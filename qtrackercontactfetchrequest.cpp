@@ -245,7 +245,7 @@ QContactManager::Error QTrackerContactFetchRequest::applyFilterToContact(RDFVari
         }
     } else if (filter.type() == QContactFilter::UnionFilter) {
         const QContactUnionFilter unionFilter(filter);
-        foreach (QContactFilter f, unionFilter.filters()) {
+        foreach (const QContactFilter& f, unionFilter.filters()) {
             QContactManager::Error error = applyFilterToContact(variable, f);
             if (QContactManager::NoError != error)
                 return error;
@@ -567,7 +567,7 @@ void QTrackerContactFetchRequest::run()
     // QContactGeolocation - nco:hasLocation is not having class defined in nco yet. no properties. maybe rdfs:Resource:label
 
     // supporting sorting only here, difficult and no requirements in UI for sorting in multivalue details (phones, emails)
-    foreach(QContactSortOrder sort, r->sorting()) {
+    foreach(const QContactSortOrder& sort, r->sorting()) {
         if (sort.detailDefinitionName() == QContactName::DefinitionName) {
             if (sort.detailFieldName() == QContactName::FieldFirst)
                 quer.orderBy(firstname);
