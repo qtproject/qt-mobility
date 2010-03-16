@@ -822,18 +822,6 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     f.setDataType(QVariant::String);
     fields.insert(QContactOnlineAccount::FieldAccountUri, f);
     fields.insert(QContactOnlineAccount::FieldServiceProvider, f);
-    fields.insert(QContactOnlineAccount::FieldNickname, f);
-    fields.insert(QContactOnlineAccount::FieldStatusMessage, f);
-    QVariantList presenceValues;
-    presenceValues << QString(QLatin1String(QContactOnlineAccount::PresenceAvailable));
-    presenceValues << QString(QLatin1String(QContactOnlineAccount::PresenceHidden));
-    presenceValues << QString(QLatin1String(QContactOnlineAccount::PresenceBusy));
-    presenceValues << QString(QLatin1String(QContactOnlineAccount::PresenceAway));
-    presenceValues << QString(QLatin1String(QContactOnlineAccount::PresenceExtendedAway));
-    presenceValues << QString(QLatin1String(QContactOnlineAccount::PresenceUnknown));
-    presenceValues << QString(QLatin1String(QContactOnlineAccount::PresenceOffline));
-    f.setAllowableValues(presenceValues);
-    fields.insert(QContactOnlineAccount::FieldPresence, f);
     f.setDataType(QVariant::StringList);
     f.setAllowableValues(contexts);
     fields.insert(QContactDetail::FieldContext, f);
@@ -841,6 +829,60 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     fields.insert(QContactOnlineAccount::FieldSubTypes, f);
     d.setFields(fields);
     d.setUnique(false);
+    retn.insert(d.name(), d);
+
+    // presence
+    d.setName(QContactPresence::DefinitionName);
+    fields.clear();
+    f.setAllowableValues(QVariantList());
+    f.setDataType(QVariant::DateTime);
+    fields.insert(QContactPresence::FieldLastUpdateTimestamp, f);
+    f.setDataType(QVariant::String);
+    fields.insert(QContactPresence::FieldNickname, f);
+    fields.insert(QContactPresence::FieldStatusMessage, f);
+    fields.insert(QContactPresence::FieldStatusImageUri, f);
+    QVariantList presenceValues;
+    presenceValues << QString(QLatin1String(QContactPresence::PresenceAvailable));
+    presenceValues << QString(QLatin1String(QContactPresence::PresenceHidden));
+    presenceValues << QString(QLatin1String(QContactPresence::PresenceBusy));
+    presenceValues << QString(QLatin1String(QContactPresence::PresenceAway));
+    presenceValues << QString(QLatin1String(QContactPresence::PresenceExtendedAway));
+    presenceValues << QString(QLatin1String(QContactPresence::PresenceUnknown));
+    presenceValues << QString(QLatin1String(QContactPresence::PresenceOffline));
+    f.setAllowableValues(presenceValues);
+    fields.insert(QContactPresence::FieldPresence, f);
+    f.setDataType(QVariant::StringList);
+    f.setAllowableValues(contexts);
+    fields.insert(QContactDetail::FieldContext, f);
+    d.setFields(fields);
+    d.setUnique(false);
+    retn.insert(d.name(), d);
+
+    // global presence
+    d.setName(QContactGlobalPresence::DefinitionName);
+    fields.clear();
+    f.setAllowableValues(QVariantList());
+    f.setDataType(QVariant::DateTime);
+    fields.insert(QContactGlobalPresence::FieldLastUpdateTimestamp, f);
+    f.setDataType(QVariant::String);
+    fields.insert(QContactGlobalPresence::FieldNickname, f);
+    fields.insert(QContactGlobalPresence::FieldStatusMessage, f);
+    fields.insert(QContactGlobalPresence::FieldStatusImageUri, f);
+    QVariantList globalPresenceValues;
+    globalPresenceValues << QString(QLatin1String(QContactGlobalPresence::PresenceAvailable));
+    globalPresenceValues << QString(QLatin1String(QContactGlobalPresence::PresenceHidden));
+    globalPresenceValues << QString(QLatin1String(QContactGlobalPresence::PresenceBusy));
+    globalPresenceValues << QString(QLatin1String(QContactGlobalPresence::PresenceAway));
+    globalPresenceValues << QString(QLatin1String(QContactGlobalPresence::PresenceExtendedAway));
+    globalPresenceValues << QString(QLatin1String(QContactGlobalPresence::PresenceUnknown));
+    globalPresenceValues << QString(QLatin1String(QContactGlobalPresence::PresenceOffline));
+    f.setAllowableValues(globalPresenceValues);
+    fields.insert(QContactGlobalPresence::FieldPresence, f);
+    f.setDataType(QVariant::StringList);
+    f.setAllowableValues(contexts);
+    fields.insert(QContactDetail::FieldContext, f);
+    d.setFields(fields);
+    d.setUnique(true); // unique and read only!
     retn.insert(d.name(), d);
 
     // avatar

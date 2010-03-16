@@ -110,6 +110,13 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
+   \class QContactGlobalPresence
+   \brief The QContactGlobalPresence class provides aggregated presence information
+   for a contact, synthesized or supplied by the backend.
+   \ingroup contacts-details
+ */
+
+/*!
    \class QContactGuid
    \brief The QContactGuid class contains the globally unique
    Id of a contact.
@@ -153,6 +160,13 @@ QTM_BEGIN_NAMESPACE
    \class QContactPhoneNumber
    \brief The QContactPhoneNumber class provides a phone number
    of a contact.
+   \ingroup contacts-details
+ */
+
+/*!
+   \class QContactPresence
+   \brief The QContactPresence class provides presence information
+   for an online account of a contact.
    \ingroup contacts-details
  */
 
@@ -227,6 +241,98 @@ Q_DEFINE_LATIN1_LITERAL(QContactAddress::DefinitionName, "StreetAddress");
 Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::DefinitionName, "PhoneNumber");
 
 /*!
+   \variable QContactPresence::DefinitionName
+   The constant string which identifies the definition of details which contain presence information.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactPresence::DefinitionName, "Presence");
+
+/*!
+   \variable QContactPresence::FieldLastUpdateTimestamp
+
+   The constant key for which the last update timestamp value is stored in details
+   of the QContactPresence type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactPresence::FieldLastUpdateTimestamp, "LastUpdateTimestamp");
+
+/*!
+   \variable QContactPresence::FieldNickname
+
+   The constant key for which the nickname value is stored in details
+   of the QContactPresence type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactPresence::FieldNickname, "Nickname");
+
+/*!
+   \variable QContactPresence::FieldPresence
+
+   The constant key for which the presence value is stored in details
+   of the QContactPresence typel.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactPresence::FieldPresence, "Presence");
+
+/*!
+   \variable QContactPresence::PresenceAvailable
+
+   The value for presence which specifies that the contact's current
+   status is available.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactPresence::PresenceAvailable, "Available");
+
+/*!
+   \variable QContactPresence::PresenceHidden
+
+   The value for presence which specifies that the contact's current.
+   status is hidden
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactPresence::PresenceHidden, "Hidden");
+
+/*!
+   \variable QContactPresence::PresenceBusy
+   The value for presence which specifies that the contact's current status is busy.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactPresence::PresenceBusy, "Busy");
+
+/*!
+   \variable QContactPresence::PresenceAway
+   The value for presence which specifies that the contact's current status is away.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactPresence::PresenceAway, "Away");
+
+/*!
+   \variable QContactPresence::PresenceExtendedAway
+   The value for presence which specifies that the contact's current status is extended away.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactPresence::PresenceExtendedAway, "ExtendedAway");
+
+/*!
+   \variable QContactPresence::PresenceUnknown
+   The value for presence which specifies that the contact's current status is unknown.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactPresence::PresenceUnknown, "Unknown");
+
+/*!
+   \variable QContactPresence::PresenceOffline
+   The value for presence which specifies that the contact's current status is offline.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactPresence::PresenceOffline, "Offline");
+
+/*!
+   \variable QContactPresence::FieldStatusMessage
+
+   The constant key for which the status message value is stored in
+   details of the QContactPresence type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactPresence::FieldStatusMessage, "StatusMessage");
+
+/*!
+   \variable QContactPresence::FieldStatusImageUri
+
+   The constant key for which the status image uri value is stored in
+   details of the QContactPresence type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactPresence::FieldStatusImageUri, "StatusImageUri");
+
+/*!
    \variable QContactSyncTarget::DefinitionName
    The constant string which identifies the definition of details which are synchronization target stores.
  */
@@ -297,6 +403,98 @@ Q_DEFINE_LATIN1_LITERAL(QContactGender::DefinitionName, "Gender");
 Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::DefinitionName, "GeoLocation");
 
 /*!
+   \variable QContactGlobalPresence::DefinitionName
+   The constant string which identifies the definition of details which contain presence information.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGlobalPresence::DefinitionName, "GlobalPresence");
+
+/*!
+   \variable QContactGlobalPresence::FieldLastUpdateTimestamp
+
+   The constant key for which the last update timestamp value is stored in details
+   of the QContactGlobalPresence type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGlobalPresence::FieldLastUpdateTimestamp, "LastUpdateTimestamp");
+
+/*!
+   \variable QContactGlobalPresence::FieldNickname
+
+   The constant key for which the nickname value is stored in details
+   of the QContactGlobalPresence type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGlobalPresence::FieldNickname, "Nickname");
+
+/*!
+   \variable QContactGlobalPresence::FieldPresence
+
+   The constant key for which the presence value is stored in details
+   of the QContactGlobalPresence typel.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGlobalPresence::FieldPresence, "Presence");
+
+/*!
+   \variable QContactGlobalPresence::PresenceAvailable
+
+   The value for presence which specifies that the contact's current
+   status is available.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGlobalPresence::PresenceAvailable, "Available");
+
+/*!
+   \variable QContactGlobalPresence::PresenceHidden
+
+   The value for presence which specifies that the contact's current.
+   status is hidden
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGlobalPresence::PresenceHidden, "Hidden");
+
+/*!
+   \variable QContactGlobalPresence::PresenceBusy
+   The value for presence which specifies that the contact's current status is busy.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGlobalPresence::PresenceBusy, "Busy");
+
+/*!
+   \variable QContactGlobalPresence::PresenceAway
+   The value for presence which specifies that the contact's current status is away.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGlobalPresence::PresenceAway, "Away");
+
+/*!
+   \variable QContactGlobalPresence::PresenceExtendedAway
+   The value for presence which specifies that the contact's current status is extended away.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGlobalPresence::PresenceExtendedAway, "ExtendedAway");
+
+/*!
+   \variable QContactGlobalPresence::PresenceUnknown
+   The value for presence which specifies that the contact's current status is unknown.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGlobalPresence::PresenceUnknown, "Unknown");
+
+/*!
+   \variable QContactGlobalPresence::PresenceOffline
+   The value for presence which specifies that the contact's current status is offline.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGlobalPresence::PresenceOffline, "Offline");
+
+/*!
+   \variable QContactGlobalPresence::FieldStatusMessage
+
+   The constant key for which the status message value is stored in
+   details of the QContactGlobalPresence type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGlobalPresence::FieldStatusMessage, "StatusMessage");
+
+/*!
+   \variable QContactGlobalPresence::FieldStatusImageUri
+
+   The constant key for which the status image uri value is stored in
+   details of the QContactGlobalPresence type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactGlobalPresence::FieldStatusImageUri, "StatusImageUri");
+
+/*!
    \variable QContactOnlineAccount::DefinitionName
 
    The constant string which identifies the definition of details
@@ -306,78 +504,112 @@ Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::DefinitionName, "GeoLocation");
 Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::DefinitionName, "OnlineAccount");
 
 /*!
-   \variable QContactTag::DefinitionName
-   The constant string which identifies the definition of details which are tags..
- */
-Q_DEFINE_LATIN1_LITERAL(QContactTag::DefinitionName, "Tag");
-
-/*!
+   \deprecated
    \variable QContactOnlineAccount::FieldNickname
 
    The constant key for which the nickname value is stored in details
    of the QContactOnlineAccount type.
+
+   This field is deprecated and will be removed after the transition period has elapsed.
+   Use QContactPresence::FieldNickname instead!
  */
 Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldNickname, "Nickname");
 
 /*!
+   \deprecated
    \variable QContactOnlineAccount::FieldPresence
 
    The constant key for which the presence value is stored in details
-   of the QContactOnlineAccount typel.
+   of the QContactOnlineAccount type.
+
+   This field is deprecated and will be removed after the transition period has elapsed.
+   Use QContactPresence::FieldPresence instead!
  */
 Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldPresence, "Presence");
 
 /*!
+   \deprecated
    \variable QContactOnlineAccount::PresenceAvailable
 
    The value for presence which specifies that the contact's current
+
+   This key is deprecated and will be removed after the transition period has elapsed.
+   Use QContactPresence::PresenceAvailable instead!
    status is available.
  */
 Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::PresenceAvailable, "Available");
 
 /*!
+   \deprecated
    \variable QContactOnlineAccount::PresenceHidden
 
    The value for presence which specifies that the contact's current.
+
+   This key is deprecated and will be removed after the transition period has elapsed.
+   Use QContactPresence::PresenceHidden instead!
    status is hidden
  */
 Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::PresenceHidden, "Hidden");
 
 /*!
+   \deprecated
    \variable QContactOnlineAccount::PresenceBusy
    The value for presence which specifies that the contact's current status is busy.
+
+   This key is deprecated and will be removed after the transition period has elapsed.
+   Use QContactPresence::PresenceBusy instead!
  */
 Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::PresenceBusy, "Busy");
 
 /*!
+   \deprecated
    \variable QContactOnlineAccount::PresenceAway
    The value for presence which specifies that the contact's current status is away.
+
+   This key is deprecated and will be removed after the transition period has elapsed.
+   Use QContactPresence::PresenceAway instead!
  */
 Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::PresenceAway, "Away");
 
 /*!
+   \deprecated
    \variable QContactOnlineAccount::PresenceExtendedAway
    The value for presence which specifies that the contact's current status is extended away.
+
+   This key is deprecated and will be removed after the transition period has elapsed.
+   Use QContactPresence::PresenceExtendedAway instead!
  */
 Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::PresenceExtendedAway, "ExtendedAway");
 
 /*!
+   \deprecated
    \variable QContactOnlineAccount::PresenceUnknown
    The value for presence which specifies that the contact's current status is unknown.
+
+   This key is deprecated and will be removed after the transition period has elapsed.
+   Use QContactPresence::PresenceUnknown instead!
  */
 Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::PresenceUnknown, "Unknown");
 
 /*!
+   \deprecated
    \variable QContactOnlineAccount::PresenceOffline
    The value for presence which specifies that the contact's current status is offline.
+
+   This key is deprecated and will be removed after the transition period has elapsed.
+   Use QContactPresence::PresenceOffline instead!
  */
 Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::PresenceOffline, "Offline");
 
 /*!
+   \deprecated
    \variable QContactOnlineAccount::FieldStatusMessage
 
    The constant key for which the status message value is stored in
    details of the QContactOnlineAccount type.
+
+   This field is deprecated and will be removed after the transition period has elapsed.
+   Use QContactPresence::FieldStatusMessage instead!
  */
 Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldStatusMessage, "StatusMessage");
 
@@ -388,6 +620,62 @@ Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldStatusMessage, "StatusMessag
    details of the QContactOnlineAccount type.
  */
 Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldCapabilities, "Capabilities");
+
+/*!
+   \variable QContactOnlineAccount::FieldAccountUri
+
+   The constant key for which the remote account uri value is stored
+   in details of the QContactOnlineAccount type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldAccountUri, "AccountUri");
+
+/*!
+   \variable QContactOnlineAccount::FieldServiceProvider
+
+   The constant key for which the service provider value is stored in
+   details of the QContactOnlineAccount type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldServiceProvider, "ServiceProvider");
+
+/*!
+   \variable QContactOnlineAccount::FieldSubTypes
+
+   The constant key for which the subtypes value is stored in details
+   of the QContactOnlineAccount type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldSubTypes, "SubTypes");
+
+/*!
+   \variable QContactOnlineAccount::SubTypeSip
+
+   The constant attribute value which describes the online account as
+   supporting SIP.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeSip, "Sip");
+
+/*!
+   \variable QContactOnlineAccount::SubTypeSipVoip
+
+   The constant attribute value which describes the online account as
+   supporting SIP-based VoIP.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeSipVoip, "SipVoip");
+
+/*!
+   \variable QContactOnlineAccount::SubTypeImpp
+
+   The constant attribute value which describes the online account as
+   supporting IMPP.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeImpp, "Impp");
+
+/*!
+   \variable QContactOnlineAccount::SubTypeVideoShare
+
+   The constant attribute value which describes the online account as
+   supporting VideoShare.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeVideoShare, "VideoShare");
 
 /*!
    \variable QContactOrganization::DefinitionName
@@ -462,6 +750,12 @@ Q_DEFINE_LATIN1_LITERAL(QContactGuid::FieldGuid, "Guid");
    synchronization is stored in details of the QContactSyncTarget type.
  */
 Q_DEFINE_LATIN1_LITERAL(QContactSyncTarget::FieldSyncTarget, "SyncTarget");
+
+/*!
+   \variable QContactTag::DefinitionName
+   The constant string which identifies the definition of details which are tags..
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactTag::DefinitionName, "Tag");
 
 /*!
    \variable QContactAvatar::FieldAvatar
@@ -794,62 +1088,6 @@ Q_DEFINE_LATIN1_LITERAL(QContactTag::FieldTag, "Tag");
    of the QContactGeoLocation type.
  */
 Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldTimestamp, "Timestamp");
-
-/*!
-   \variable QContactOnlineAccount::FieldAccountUri
-
-   The constant key for which the remote account uri value is stored
-   in details of the QContactOnlineAccount type.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldAccountUri, "AccountUri");
-
-/*!
-   \variable QContactOnlineAccount::FieldServiceProvider
-
-   The constant key for which the service provider value is stored in
-   details of the QContactOnlineAccount type.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldServiceProvider, "ServiceProvider");
-
-/*!
-   \variable QContactOnlineAccount::FieldSubTypes
-
-   The constant key for which the subtypes value is stored in details
-   of the QContactOnlineAccount type.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldSubTypes, "SubTypes");
-
-/*!
-   \variable QContactOnlineAccount::SubTypeSip
-
-   The constant attribute value which describes the online account as
-   supporting SIP.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeSip, "Sip");
-
-/*!
-   \variable QContactOnlineAccount::SubTypeSipVoip
-
-   The constant attribute value which describes the online account as
-   supporting SIP-based VoIP.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeSipVoip, "SipVoip");
-
-/*!
-   \variable QContactOnlineAccount::SubTypeImpp
-
-   The constant attribute value which describes the online account as
-   supporting IMPP.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeImpp, "Impp");
-
-/*!
-   \variable QContactOnlineAccount::SubTypeVideoShare
-
-   The constant attribute value which describes the online account as
-   supporting VideoShare.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeVideoShare, "VideoShare");
 
 /*!
    \variable QContactOrganization::FieldName
@@ -1757,50 +1995,99 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
    Returns the list of subtypes that this detail implements.
  */
 
+
 /*!
+   \deprecated
    \fn QContactOnlineAccount::setNickname(const QString& nickname)
    
    Sets the last-known nickname used by the contact during
    communications via the online account about which this detail
    stores presence information to \a nickname.
+
+   This function is deprecated and will be removed after the transition period has elapsed.
+   Use QContactPresence::setNickname() instead!
  */
+void QContactOnlineAccount::setNickname(const QString& nickname)
+{
+    setValue(FieldNickname, nickname);
+}
 
 /*!
+   \deprecated
    \fn QContactOnlineAccount::nickname() const
    
    Returns the last-known nickname used by the contact during
    communications via the online account.
+
+   This function is deprecated and will be removed after the transition period has elapsed.
+   Use QContactPresence::nickname() instead!
  */
+QString QContactOnlineAccount::nickname() const
+{
+    return value(FieldNickname);
+}
 
 /*!
+   \deprecated
    \fn QContactOnlineAccount::setPresence(const QString& presence)
    
    Sets the presence of the online account according to the presence
    information provider to \a presence.
+
+   This function is deprecated and will be removed after the transition period has elapsed.
+   Use QContactPresence::setPresence() instead!
  */
+void QContactOnlineAccount::setPresence(const QString& presence)
+{
+    setValue(FieldPresence, presence);
+}
 
 /*!
+   \deprecated
    \fn QContactOnlineAccount::presence() const
    
    Returns the presence of the online account according to the
    presence provider.
+
+   This function is deprecated and will be removed after the transition period has elapsed.
+   Use QContactPresence::presence() instead!
  */
+QString QContactOnlineAccount::presence() const
+{
+    return value(FieldPresence);
+}
 
 /*!
+   \deprecated
    \fn QContactOnlineAccount::setStatusMessage(const QString& statusMessage)
 
    Sets the last-known status message of the contact which was
    communicated via the online account about which this detail stores
    presence information to \a statusMessage.
+
+   This function is deprecated and will be removed after the transition period has elapsed.
+   Use QContactPresence::setStatusMessage() instead!
  */
+void QContactOnlineAccount::setStatusMessage(const QString& statusMessage)
+{
+    setValue(FieldStatusMessage, statusMessage);
+}
 
 /*!
+   \deprecated
    \fn QContactOnlineAccount::statusMessage() const
    
    Returns the last-known status message of the contact which was
    communicated via the online account about which this detail stores
    presence information.
+
+   This function is deprecated and will be removed after the transition period has elapsed.
+   Use QContactPresence::statusMessage() instead!
  */
+QString QContactOnlineAccount::statusMessage() const
+{
+    return value(FieldStatusMessage);
+}
 
 /*!
    \fn QContactOnlineAccount::setCapabilities(const QStringList& capabilities)
@@ -1900,6 +2187,155 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
    Returns the name of the default assistant of contacts belonging to
    this organization.
  */
+
+/*!
+   \fn QContactPresence::setLastUpdateTimestamp(const QDateTime& updateTimestamp)
+
+   Sets the last update timestamp of the presence detail to be
+   \a updateTimestamp.
+ */
+
+/*!
+   \fn QContactPresence::lastUpdateTimestamp() const
+
+    Returns the last update timestamp of the presence detail.
+ */
+
+/*!
+   \fn QContactPresence::setNickname(const QString& nickname)
+
+   Sets the last-known nickname used by the contact during
+   communications via the online account about which this detail
+   stores presence information to \a nickname.
+ */
+
+/*!
+   \fn QContactPresence::nickname() const
+
+   Returns the last-known nickname used by the contact during
+   communications via the online account.
+ */
+
+/*!
+   \fn QContactPresence::setPresence(const QString& presence)
+
+   Sets the presence of the online account according to the presence
+   information provider to \a presence.
+ */
+
+/*!
+   \fn QContactPresence::presence() const
+
+   Returns the presence of the online account according to the
+   presence provider.
+ */
+
+/*!
+   \fn QContactPresence::setStatusMessage(const QString& statusMessage)
+
+   Sets the last-known status message of the contact which was
+   communicated via the online account about which this detail stores
+   presence information to \a statusMessage.
+ */
+
+/*!
+   \fn QContactPresence::statusMessage() const
+
+   Returns the last-known status message of the contact which was
+   communicated via the online account about which this detail stores
+   presence information.
+ */
+
+/*!
+   \fn QContactPresence::setStatusImageUri(const QString& statusImageUri)
+
+   Sets the last-known status image uri of the contact which was
+   communicated via the online account about which this detail stores
+   presence information to \a statusImageUri.
+ */
+
+/*!
+   \fn QContactPresence::statusImageUri() const
+
+   Returns the last-known status image uri of the contact which was
+   communicated via the online account about which this detail stores
+   presence information.
+ */
+
+/*!
+   \fn QContactGlobalPresence::setLastUpdateTimestamp(const QDateTime& updateTimestamp)
+
+   Sets the last update timestamp of the presence detail to be
+   \a updateTimestamp.
+ */
+
+/*!
+   \fn QContactGlobalPresence::lastUpdateTimestamp() const
+
+    Returns the last update timestamp of the presence detail.
+ */
+
+/*!
+   \fn QContactGlobalPresence::setNickname(const QString& nickname)
+
+   Sets the last-known nickname used by the contact during
+   communications via the online account about which this detail
+   stores presence information to \a nickname.
+ */
+
+/*!
+   \fn QContactGlobalPresence::nickname() const
+
+   Returns the last-known nickname used by the contact during
+   communications via the online account.
+ */
+
+/*!
+   \fn QContactGlobalPresence::setPresence(const QString& presence)
+
+   Sets the presence of the online account according to the presence
+   information provider to \a presence.
+ */
+
+/*!
+   \fn QContactGlobalPresence::presence() const
+
+   Returns the presence of the online account according to the
+   presence provider.
+ */
+
+/*!
+   \fn QContactGlobalPresence::setStatusMessage(const QString& statusMessage)
+
+   Sets the last-known status message of the contact which was
+   communicated via the online account about which this detail stores
+   presence information to \a statusMessage.
+ */
+
+/*!
+   \fn QContactGlobalPresence::statusMessage() const
+
+   Returns the last-known status message of the contact which was
+   communicated via the online account about which this detail stores
+   presence information.
+ */
+
+/*!
+   \fn QContactGlobalPresence::setStatusImageUri(const QString& statusImageUri)
+
+   Sets the last-known status image uri of the contact which was
+   communicated via the online account about which this detail stores
+   presence information to \a statusImageUri.
+ */
+
+/*!
+   \fn QContactGlobalPresence::statusImageUri() const
+
+   Returns the last-known status image uri of the contact which was
+   communicated via the online account about which this detail stores
+   presence information.
+ */
+
 
 
 /* Convenience filters */

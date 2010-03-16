@@ -59,11 +59,17 @@ public:
     const char* DefinitionName;
     const char* FieldAccountUri;
     const char* FieldServiceProvider;
-    const char* FieldSubTypes;
-    const char* FieldNickname;
-    const char* FieldPresence;
-    const char* FieldStatusMessage;
     const char* FieldCapabilities;
+    const char* FieldSubTypes;
+    const char* SubTypeSip;
+    const char* SubTypeSipVoip;
+    const char* SubTypeImpp;
+    const char* SubTypeVideoShare;
+
+    // deprecated keys:
+    const char* FieldNickname;
+    const char* FieldStatusMessage;
+    const char* FieldPresence;
     const char* PresenceAvailable;
     const char* PresenceHidden;
     const char* PresenceBusy;
@@ -71,19 +77,21 @@ public:
     const char* PresenceExtendedAway;
     const char* PresenceUnknown;
     const char* PresenceOffline;
-    const char* SubTypeSip;
-    const char* SubTypeSipVoip;
-    const char* SubTypeImpp;
-    const char* SubTypeVideoShare;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactOnlineAccount, "OnlineAccount")
     Q_DECLARE_LATIN1_LITERAL(FieldAccountUri, "AccountUri");
     Q_DECLARE_LATIN1_LITERAL(FieldServiceProvider, "ServiceProvider");
+    Q_DECLARE_LATIN1_LITERAL(FieldCapabilities, "Capabilities");
+    Q_DECLARE_LATIN1_LITERAL(FieldSubTypes, "SubTypes");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeSip, "Sip");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeSipVoip, "SipVoip");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeImpp, "Impp");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeVideoShare, "VideoShare");
+
+    // deprecated keys:
     Q_DECLARE_LATIN1_LITERAL(FieldNickname, "Nickname");
     Q_DECLARE_LATIN1_LITERAL(FieldPresence, "Presence");
     Q_DECLARE_LATIN1_LITERAL(FieldStatusMessage, "StatusMessage");
-    Q_DECLARE_LATIN1_LITERAL(FieldCapabilities, "Capabilities");
-    Q_DECLARE_LATIN1_LITERAL(FieldSubTypes, "SubTypes");
     Q_DECLARE_LATIN1_LITERAL(PresenceAvailable, "Available");
     Q_DECLARE_LATIN1_LITERAL(PresenceHidden, "Hidden");
     Q_DECLARE_LATIN1_LITERAL(PresenceBusy, "Busy");
@@ -91,28 +99,28 @@ public:
     Q_DECLARE_LATIN1_LITERAL(PresenceExtendedAway, "ExtendedAway");
     Q_DECLARE_LATIN1_LITERAL(PresenceUnknown, "Unknown");
     Q_DECLARE_LATIN1_LITERAL(PresenceOffline, "Offline");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeSip, "Sip");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeSipVoip, "SipVoip");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeImpp, "Impp");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeVideoShare, "VideoShare");
 #endif
 
     void setAccountUri(const QString& accountUri) {setValue(FieldAccountUri, accountUri);}
     QString accountUri() const {return value(FieldAccountUri);}
+
     void setServiceProvider(const QString& serviceProvider) {setValue(FieldServiceProvider, serviceProvider);}
     QString serviceProvider() const {return value(FieldServiceProvider);}
-    void setNickname(const QString& nickname) {setValue(FieldNickname, nickname);}
-    QString nickname() const {return value(FieldNickname);}
-    void setPresence(const QString& presence) {setValue(FieldPresence, presence);}
-    QString presence() const {return value(FieldPresence);}
-    void setStatusMessage(const QString& statusMessage) {setValue(FieldStatusMessage, statusMessage);}
-    QString statusMessage() const {return value(FieldStatusMessage);}
+
     void setCapabilities(const QStringList& capabilities) {setValue(FieldCapabilities, capabilities);}
     QStringList capabilities() const {return value<QStringList>(FieldCapabilities);}
 
     void setSubTypes(const QStringList& subTypes) {setValue(FieldSubTypes, subTypes);}
     void setSubTypes(const QString& subType) {setValue(FieldSubTypes, QStringList(subType));}
     QStringList subTypes() const {return value<QStringList>(FieldSubTypes);}
+
+    // deprecated functions:
+    void Q_DECL_DEPRECATED setNickname(const QString& nickname);
+    QString Q_DECL_DEPRECATED nickname() const;
+    void Q_DECL_DEPRECATED setPresence(const QString& presence);
+    QString Q_DECL_DEPRECATED presence() const;
+    void Q_DECL_DEPRECATED setStatusMessage(const QString& statusMessage);
+    QString Q_DECL_DEPRECATED statusMessage() const;
 };
 
 QTM_END_NAMESPACE

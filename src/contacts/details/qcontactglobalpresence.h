@@ -40,8 +40,8 @@
 ****************************************************************************/
 
 
-#ifndef QCONTACTPRESENCE_H
-#define QCONTACTPRESENCE_H
+#ifndef QCONTACTGLOBALPRESENCE_H
+#define QCONTACTGLOBALPRESENCE_H
 
 #include <QString>
 
@@ -52,7 +52,7 @@
 QTM_BEGIN_NAMESPACE
 
 /* Leaf class */
-class Q_CONTACTS_EXPORT QContactPresence : public QContactDetail
+class Q_CONTACTS_EXPORT QContactGlobalPresence : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
@@ -69,11 +69,8 @@ public:
     const char* PresenceOffline;
     const char* FieldStatusMessage;
     const char* FieldStatusImageUri;
-
-    // deprecated keys:
-    //const char* FieldAccountUri;
 #else
-    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactPresence, "Presence")
+    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactGlobalPresence, "GlobalPresence")
     Q_DECLARE_LATIN1_LITERAL(FieldLastUpdateTimestamp, "LastUpdateTimestamp");
     Q_DECLARE_LATIN1_LITERAL(FieldNickname, "Nickname");
     Q_DECLARE_LATIN1_LITERAL(FieldPresence, "Presence");
@@ -86,14 +83,7 @@ public:
     Q_DECLARE_LATIN1_LITERAL(PresenceOffline, "Offline");
     Q_DECLARE_LATIN1_LITERAL(FieldStatusMessage, "StatusMessage");
     Q_DECLARE_LATIN1_LITERAL(FieldStatusImageUri, "StatusImageUri");
-
-    // deprecated keys:
-    //Q_DECLARE_LATIN1_LITERAL(FieldAccountUri, "AccountUri");
 #endif
-
-    //?? just do this via detail linking?
-    //void setAccountUri(const QString& accountUri) {setValue(FieldAccountUri, accountUri);}
-    //QString accountUri() const {return value(FieldAccountUri);}
 
     void setLastUpdateTimestamp(const QDateTime& updateTimestamp) {setValue(FieldLastUpdateTimestamp, updateTimestamp);}
     QDateTime lastUpdateTimestamp() const {return value<QDateTime>(FieldLastUpdateTimestamp);}

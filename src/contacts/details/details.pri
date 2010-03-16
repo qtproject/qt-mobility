@@ -12,6 +12,7 @@ PUBLIC_HEADERS += \
     details/qcontactfamily.h \
     details/qcontactgender.h \
     details/qcontactgeolocation.h \
+    details/qcontactglobalpresence.h \
     details/qcontactguid.h \
     details/qcontactname.h \
     details/qcontactnickname.h \
@@ -19,6 +20,7 @@ PUBLIC_HEADERS += \
     details/qcontactonlineaccount.h \
     details/qcontactorganization.h \
     details/qcontactphonenumber.h \
+    details/qcontactpresence.h \
     details/qcontactsynctarget.h \
     details/qcontacttag.h \
     details/qcontacttimestamp.h \
