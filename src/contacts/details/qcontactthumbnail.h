@@ -39,34 +39,34 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTDETAILS_H
-#define QCONTACTDETAILS_H
+#ifndef QCONTACTTHUMBNAIL_H
+#define QCONTACTTHUMBNAIL_H
 
-// this file includes all of the leaf detail classes
-// provided by the Qt Contacts API.
+#include <QString>
+#include <QImage>
 
-#include "qcontactaddress.h"
-#include "qcontactanniversary.h"
-#include "qcontactavatar.h"
-#include "qcontactbirthday.h"
-#include "qcontactdisplaylabel.h"
-#include "qcontactemailaddress.h"
-#include "qcontactfamily.h"
-#include "qcontactgender.h"
-#include "qcontactgeolocation.h"
-#include "qcontactguid.h"
-#include "qcontactname.h"
-#include "qcontactnickname.h"
-#include "qcontactnote.h"
-#include "qcontactonlineaccount.h"
-#include "qcontactorganization.h"
-#include "qcontactphonenumber.h"
-#include "qcontactringtone.h"
-#include "qcontactsynctarget.h"
-#include "qcontacttag.h"
-#include "qcontactthumbnail.h"
-#include "qcontacttimestamp.h"
-#include "qcontacttype.h"
-#include "qcontacturl.h"
+#include "qtcontactsglobal.h"
+#include "qcontactdetail.h"
+#include "qcontact.h"
+
+QTM_BEGIN_NAMESPACE
+
+/* Leaf class */
+class Q_CONTACTS_EXPORT QContactThumbnail : public QContactDetail
+{
+public:
+#ifdef Q_QDOC
+    const char* DefinitionName;
+    const char* FieldThumbnail;
+#else
+    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactThumbnail, "Thumbnail")
+    Q_DECLARE_LATIN1_LITERAL(FieldThumbnail, "Thumbnail");
+#endif
+
+    void setThumbnail(const QImage& thumbnail) {setValue(FieldThumbnail, thumbnail);}
+    QImage thumbnail() const {return value<QImage>(FieldThumbnail);}
+};
+
+QTM_END_NAMESPACE
 
 #endif

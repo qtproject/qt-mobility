@@ -69,7 +69,7 @@ public:
     const char* SubTypeDomestic;
     const char* SubTypeInternational;
 #else
-    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactAddress, "StreetAddress")
+    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactAddress, "Address")
     Q_DECLARE_LATIN1_LITERAL(FieldStreet, "Street");
     Q_DECLARE_LATIN1_LITERAL(FieldLocality, "Locality");
     Q_DECLARE_LATIN1_LITERAL(FieldRegion, "Region");
