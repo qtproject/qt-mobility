@@ -202,7 +202,7 @@ void TestCntRelationship::validGroupRelationship()
 
     relationshipList = m_relationship->relationships(QLatin1String(QContactRelationship::HasMember), groupContact.id(), QContactRelationshipFilter::Second, error);
     QVERIFY2(relationshipList.count() == 0, "group - Second");
-    QVERIFY2(error == QContactManager::NoError, "group - Second");
+    QVERIFY2(error == QContactManager::DoesNotExistError, "group - Second");
 
     relationshipList = m_relationship->relationships(QLatin1String(QContactRelationship::HasMember), groupContact.id(), QContactRelationshipFilter::Either, error);
     QVERIFY2(relationshipList.count() == 1, "group - Either");
@@ -211,7 +211,7 @@ void TestCntRelationship::validGroupRelationship()
     //Retrive contact
     relationshipList = m_relationship->relationships(QLatin1String(QContactRelationship::HasMember), contact.id(), QContactRelationshipFilter::First, error);
     QVERIFY2(relationshipList.count() == 0, "contact - First");
-    QVERIFY2(error == QContactManager::NoError, "contact - First");
+    QVERIFY2(error == QContactManager::DoesNotExistError, "contact - First");
 
     relationshipList = m_relationship->relationships(QLatin1String(QContactRelationship::HasMember), contact.id(), QContactRelationshipFilter::Second, error);
     QVERIFY2(relationshipList.count() == 1, "contact - Second");
