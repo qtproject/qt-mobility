@@ -61,6 +61,7 @@ class QMediaServicePrivate
 {
 public:
     QMediaServicePrivate(): q_ptr(0) {}
+    virtual ~QMediaServicePrivate() {}
 
     QMediaService *q_ptr;
 };

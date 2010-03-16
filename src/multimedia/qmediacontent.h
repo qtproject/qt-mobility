@@ -58,6 +58,7 @@ class Q_MEDIA_EXPORT QMediaContent
 public:
     QMediaContent();
     QMediaContent(const QUrl &contentUrl);
+    QMediaContent(const QNetworkRequest &contentRequest);
     QMediaContent(const QMediaResource &contentResource);
     QMediaContent(const QMediaResourceList &resources);
     QMediaContent(const QMediaContent &other);

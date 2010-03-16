@@ -52,7 +52,7 @@ QList<CContactItemField *> CntTransformFamily::transformDetailL(const QContactDe
 
     //create new fields without contexts
     transformToTextFieldL(family, fieldList, family.spouse(), KUidContactFieldSpouse, KUidContactFieldVCardMapSpouse, false);
-    foreach(QString childName, family.children()) {
+    foreach(const QString& childName, family.children()) {
         transformToTextFieldL(family, fieldList, childName, KUidContactFieldChildren, KUidContactFieldVCardMapChildren, false);
     }
 

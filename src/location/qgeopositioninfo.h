@@ -95,22 +95,22 @@ public:
 
 private:
 #ifndef QT_NO_DEBUG_STREAM
-    friend Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QGeoPositionInfo &update);
+    friend Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QGeoPositionInfo &info);
 #endif
 #ifndef QT_NO_DATASTREAM
-    friend Q_LOCATION_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoPositionInfo &update);
-    friend Q_LOCATION_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo &update);
+    friend Q_LOCATION_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoPositionInfo &info);
+    friend Q_LOCATION_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo &info);
 #endif
     QGeoPositionInfoPrivate *d;
 };
 
 #ifndef QT_NO_DEBUG_STREAM
-Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QGeoPositionInfo &update);
+Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QGeoPositionInfo &info);
 #endif
 
 #ifndef QT_NO_DATASTREAM
-Q_LOCATION_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoPositionInfo &update);
-Q_LOCATION_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo &update);
+Q_LOCATION_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoPositionInfo &info);
+Q_LOCATION_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo &info);
 #endif
 
 QTM_END_NAMESPACE

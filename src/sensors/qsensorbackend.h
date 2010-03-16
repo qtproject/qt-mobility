@@ -58,7 +58,12 @@ public:
     virtual void stop() = 0;
     virtual void poll() = 0;
 
-    void setSupportedUpdatePolicies(QSensor::UpdatePolicies policies);
+    // used by the backend to set metadata properties
+    void addDataRate(qreal min, qreal max);
+    void setDataRates(const QSensor *otherSensor);
+    void enablePolling();
+    void addOutputRange(qreal min, qreal max, qreal accuracy);
+    void setDescription(const QString &description);
 
     template <typename T>
     T *setReading(T *reading)
@@ -68,14 +73,19 @@ public:
         setReadings(reading, new T(this), new T(this));
         return reading;
     }
-    void newReadingAvailable();
 
     QSensorReading *reading() const;
+    QSensor *sensor() const { return m_sensor; }
+
+    // used by the backend to inform us of events
+    void newReadingAvailable();
+    void sensorStopped();
+    void sensorBusy();
+    void sensorError(int error);
 
 private:
     void setReadings(QSensorReading *device, QSensorReading *filter, QSensorReading *cache);
 
-protected:
     QSensor *m_sensor;
     Q_DISABLE_COPY(QSensorBackend)
 };

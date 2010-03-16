@@ -102,10 +102,10 @@ bool QMessageSortOrderPrivate::lessThan(const QMessageSortOrder &sortOrder,
             QString leftStr;
             QString rightStr;
             foreach (QMessageAddress a, left->to() + left->cc() + left->bcc()) {
-                leftStr.append(a.recipient() + ";");
+                leftStr.append(a.addressee() + ";");
             }
             foreach (QMessageAddress a, right->to() + right->cc() + right->bcc()) {
-                rightStr.append(a.recipient() + ";");
+                rightStr.append(a.addressee() + ";");
             }
             COMPARE(leftStr, rightStr)
         }

@@ -74,6 +74,7 @@
         ui-&gt;setupUi(this);
 
         <span class="comment">//audio codecs</span>
+        ui-&gt;audioCodecBox-&gt;addItem(tr(&quot;Default audio codec&quot;), QVariant(QString()));
         foreach(const QString &amp;codecName, mediaRecorder-&gt;supportedAudioCodecs()) {
             QString description = mediaRecorder-&gt;audioCodecDescription(codecName);
             ui-&gt;audioCodecBox-&gt;addItem(codecName+&quot;: &quot;+description, QVariant(codecName));
@@ -87,6 +88,7 @@
         ui-&gt;audioQualitySlider-&gt;setRange(0, int(QtMedia::VeryHighQuality));
 
         <span class="comment">//video codecs</span>
+        ui-&gt;videoCodecBox-&gt;addItem(tr(&quot;Default video codec&quot;), QVariant(QString()));
         foreach(const QString &amp;codecName, mediaRecorder-&gt;supportedVideoCodecs()) {
             QString description = mediaRecorder-&gt;videoCodecDescription(codecName);
             ui-&gt;videoCodecBox-&gt;addItem(codecName+&quot;: &quot;+description, QVariant(codecName));
@@ -110,6 +112,7 @@
         }
 
         <span class="comment">//containers</span>
+        ui-&gt;containerFormatBox-&gt;addItem(tr(&quot;Default container&quot;), QVariant(QString()));
         foreach(const QString &amp;format, mediaRecorder-&gt;supportedContainers()) {
             ui-&gt;containerFormatBox-&gt;addItem(format+&quot;:&quot;+mediaRecorder-&gt;containerDescription(format),
                                             QVariant(format));

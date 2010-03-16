@@ -59,7 +59,8 @@ public:
 
     enum Feature {
         LowLatencyPlayback = 0x01,
-        RecordingSupport = 0x02
+        RecordingSupport = 0x02,
+        StreamPlayback = 0x04
     };
     Q_DECLARE_FLAGS(Features, Feature)
 
@@ -110,6 +111,10 @@ public:
     virtual QString deviceDescription(const QByteArray &serviceType, const QByteArray &device);
 
     static QMediaServiceProvider* defaultServiceProvider();
+
+#ifdef QT_BUILD_INTERNAL
+    static void setDefaultServiceProvider(QMediaServiceProvider *provider);
+#endif
 };
 
 /*!
