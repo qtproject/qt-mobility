@@ -12,6 +12,7 @@ MOBILITY = messaging
 
 maemo5|maemo6 {
     QMAKE_CXXFLAGS+=-DUSE_TABBED_LAYOUT
+    QMAKE_RPATHDIR+=$$SOURCE_DIR/lib
 }
 
 HEADERS += \

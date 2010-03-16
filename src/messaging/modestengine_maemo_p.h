@@ -64,6 +64,7 @@ typedef QMap< QString, QString > ModestStringMap;
 typedef QList< ModestStringMap > ModestStringMapList;
 
 class QMessageService;
+class QMessageServicePrivate;
 class QMessageStorePrivate;
 
 struct MessageQueryInfo
@@ -75,7 +76,7 @@ struct MessageQueryInfo
     QMessageSortOrder sortOrder;
     int limit;
     int offset;
-    QMessageService* messageService;
+    QMessageServicePrivate* privateService;
     QDBusPendingCallWatcher* pendingCallWatcher;
     int currentFilterListIndex;
     int handledFiltersCount;
@@ -140,7 +141,10 @@ struct MessagingModestMimePart
 
 struct MessagingModestMessage
 {
+    QString id;
     QString url;
+    QString accountId;
+    QString folderId;
     QString mimeType;
     QString from;
     QString to;
@@ -267,8 +271,7 @@ private:
 
     void updateEmailAccounts() const;
 
-    void filterMessages(QMessageIdList messageIds, QMessageFilterPrivate::SortedMessageFilterList filterList, int start) const;
-    void queryAndFilterMessagesReady(int queryId, QMessageIdList ids) const;
+    bool filterMessage(const QMessage& message, QMessageFilterPrivate::SortedMessageFilterList filterList, int start) const;
     bool queryAndFilterMessages(MessageQueryInfo &msgQueryInfo) const;
     bool searchMessages(MessageQueryInfo &msgQueryInfo, const QStringList& accountIds,
                         const QStringList& folderUris, const QDateTime& startDate,
@@ -297,6 +300,7 @@ private:
     QMessageId messageIdFromModestMessageId(const QString& messageId) const;
     QMessageId messageIdFromModestMessageFilePath(const QString& messageFilePath) const;
 
+    QMessage messageFromModestMessage(const MessagingModestMessage& modestMessage) const;
     void appendAttachmentToMessage(QMessage& message, QMessageContentContainer& attachment) const;
 
     static QString unescapeString(const QString& string);
@@ -310,8 +314,6 @@ private slots:
     void pendingGetUnreadMessagesFinishedSlot(QDBusPendingCallWatcher* pendingCallWatcher);
     void pendingSearchFinishedSlot(QDBusPendingCallWatcher* pendingCallWatcher);
     void fileChangedSlot(int watchDescriptor, const QString& filePath, uint events);
-
-    void tempSlot();
 
     // Async D-BUS call ended
     void sendEmailCallEnded(QDBusPendingCallWatcher *watcher);

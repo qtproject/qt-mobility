@@ -268,18 +268,6 @@ ModestEngine::ModestEngine()
                                                   QDBusConnection::sessionBus(),
                                                   this);
 
-    m_QtmPluginDBusInterface->connection().connect(MODESTENGINE_QTM_PLUGIN_NAME,
-                                                   MODESTENGINE_QTM_PLUGIN_PATH,
-                                                   MODESTENGINE_QTM_PLUGIN_NAME,
-                                                   "HeadersReceived",
-                                                   this, SLOT(searchMessagesHeadersReceivedSlot(QDBusMessage)));
-
-    m_QtmPluginDBusInterface->connection().connect(MODESTENGINE_QTM_PLUGIN_NAME,
-                                                   MODESTENGINE_QTM_PLUGIN_PATH,
-                                                   MODESTENGINE_QTM_PLUGIN_NAME,
-                                                   "HeadersFetched",
-                                                   this, SLOT(searchMessagesHeadersFetchedSlot(QDBusMessage)));
-
     qDBusRegisterMetaType< ModestStringMap >();
     qDBusRegisterMetaType< ModestStringMapList >();
 
@@ -323,6 +311,9 @@ MessagingModestMessage ModestEngine::messageFromModest(const QString& accountId,
     QDBusMessage msg = m_QtmPluginDBusInterface->call("GetMessage", accountId, folderId, messageId);
 
     if (msg.type() == QDBusMessage::ReplyMessage) {
+        modestMessage.id = messageId;
+        modestMessage.accountId = accountId;
+        modestMessage.folderId = folderId;
         modestMessage.url = msg.arguments()[0].toString();
         modestMessage.mimeType = msg.arguments()[1].toString();
         modestMessage.from = msg.arguments()[2].toString();
@@ -1132,8 +1123,6 @@ bool ModestEngine::exportUpdates(const QMessageAccountId &id)
 
 QMessage ModestEngine::message(const QMessageId &id) const
 {
-    QMessage message;
-
     QString modestAccountId = modestAccountIdFromMessageId(id);
     QString modestFolderId = modestFolderIdFromMessageId(id);
     QString modestMessageId = modestMessageIdFromMessageId(id);
@@ -1142,11 +1131,33 @@ QMessage ModestEngine::message(const QMessageId &id) const
                                                              modestFolderId,
                                                              modestMessageId);
 
-    // Parent Account Id
-    message.setParentAccountId(accountIdFromModestAccountId(modestAccountId));
+    if (modestMessage.size == 0) {
+        return QMessage();
+    }
+
+    return messageFromModestMessage(modestMessage);
+}
+
+QMessage ModestEngine::messageFromModestMessage(const MessagingModestMessage& modestMessage) const
+{
+    QMessage message;
+    QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
+    QMessageContentContainerPrivate* container = QMessagePrivate::containerImplementation(message);
 
     // Type
     message.setType(QMessage::Email);
+
+    // Parent Account Id
+    QMessageAccountId accountId = accountIdFromModestAccountId(modestMessage.accountId);
+    message.setParentAccountId(accountId);
+
+    // Parent Folder Id
+    QMessageFolderId folderId = folderIdFromModestFolderId(accountId, modestMessage.folderId);
+    privateMessage->_parentFolderId = folderId;
+
+    // Message Id
+    QMessageId messageId = QMessageId(folderId.toString()+"/"+modestMessage.id);
+    privateMessage->_id = messageId;
 
     // Dates
     message.setDate(QDateTime::fromTime_t(modestMessage.dateSent));
@@ -1169,11 +1180,11 @@ QMessage ModestEngine::message(const QMessageId &id) const
     }
 
     // Standard Folder
-    if (modestFolderId == "INBOX") {
+    if (modestMessage.folderId == "INBOX") {
         QMessagePrivate::setStandardFolder(message, QMessage::InboxFolder);
-    } else if (modestFolderId == "drafts") {
+    } else if (modestMessage.folderId == "drafts") {
         QMessagePrivate::setStandardFolder(message, QMessage::DraftsFolder);
-    } else if (modestFolderId == "sent") {
+    } else if (modestMessage.folderId == "sent") {
         QMessagePrivate::setStandardFolder(message, QMessage::SentFolder);
     }
 
@@ -1192,7 +1203,8 @@ QMessage ModestEngine::message(const QMessageId &id) const
             QByteArray mimeSubType = fullMimeType.mid(slashIndex+1).toAscii();
             // TODO: Attachment size
             QByteArray fileName = modestMessage.mimeParts[i].fileName.toAscii();
-            QMessageContentContainer attachment = QMessageContentContainerPrivate::from(modestMessageId,
+            QString messageId = modestMessage.id;
+            QMessageContentContainer attachment = QMessageContentContainerPrivate::from(messageId,
                                                                                         i,
                                                                                         fileName,
                                                                                         mimeType,
@@ -1256,9 +1268,6 @@ QMessage ModestEngine::message(const QMessageId &id) const
     // Subject
     message.setSubject(modestMessage.subject);
 
-    QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
-    QMessageContentContainerPrivate* container = QMessagePrivate::containerImplementation(message);
-
     // Size
     privateMessage->_size = modestMessage.size;
 
@@ -1277,6 +1286,9 @@ QMessage ModestEngine::message(const QMessageId &id) const
 
     // Modest specific url
     privateMessage->_url = modestMessage.url;
+
+    // Modified flag
+    privateMessage->_modified = false;
 
     return message;
 }
@@ -1319,43 +1331,37 @@ bool ModestEngine::removeMessage(const QMessageId &id, QMessageManager::RemovalO
     return true;
 }
 
-void ModestEngine::filterMessages(QMessageIdList messageIds, QMessageFilterPrivate::SortedMessageFilterList filterList, int start) const
+bool ModestEngine::filterMessage(const QMessage& message, QMessageFilterPrivate::SortedMessageFilterList filterList, int start) const
 {
     if (filterList.count() > start) {
-        for (int i=0; i < messageIds.count(); i++) {
-            QMessage msg = message(messageIds[i]);
-            for (int j=start; j < filterList.count(); j++) {
-                QMessageFilterPrivate* pf = QMessageFilterPrivate::implementation(filterList[j]);
-                if (!pf->filter(msg)) {
-                    messageIds.removeAt(i);
-                    i--;
-                    break;
-                }
+        for (int j=start; j < filterList.count(); j++) {
+            QMessageFilterPrivate* pf = QMessageFilterPrivate::implementation(filterList[j]);
+            if (!pf->filter(message)) {
+                return false;
             }
         }
     }
+
+    return true;
 }
 
 bool ModestEngine::queryMessages(QMessageService& messageService, const QMessageFilter &filter, const QString &body,
                                  QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder,
                                  uint limit, uint offset) const
 {
-    MessageQueryInfo queryInfo;
-    queryInfo.queryId = ++m_queryIds;
-    if (queryInfo.queryId == 100000) {
-        m_queryIds = 1;
-        queryInfo.queryId = 1;
-    }
+    m_pendingMessageQueries.append(MessageQueryInfo());
+
+    MessageQueryInfo &queryInfo = m_pendingMessageQueries[m_pendingMessageQueries.count()-1];
+
     queryInfo.body = body;
     queryInfo.matchFlags = matchFlags;
     queryInfo.filter = filter;
     queryInfo.sortOrder = sortOrder;
     queryInfo.limit = limit;
     queryInfo.offset = offset;
-    queryInfo.messageService = &messageService;
+    queryInfo.privateService = QMessageServicePrivate::implementation(messageService);
     queryInfo.currentFilterListIndex = 0;
     queryInfo.handledFiltersCount = 0;
-    m_pendingMessageQueries.append(queryInfo);
 
     if (!queryAndFilterMessages(m_pendingMessageQueries[m_pendingMessageQueries.count()-1])) {
         QMessageServicePrivate::implementation(messageService)->setFinished(false);
@@ -1363,65 +1369,7 @@ bool ModestEngine::queryMessages(QMessageService& messageService, const QMessage
         return false;
     }
 
-    QTimer::singleShot(1000, (ModestEngine*)this, SLOT(tempSlot()));
-
     return true;
-}
-
-void ModestEngine::tempSlot()
-{
-    searchMessagesHeadersFetchedSlot(QDBusMessage());
-}
-
-void ModestEngine::queryAndFilterMessagesReady(int queryId, QMessageIdList ids) const
-{
-    int index = -1;
-    for (int i=0; i < m_pendingMessageQueries.count(); i++) {
-        if (m_pendingMessageQueries[i].queryId == queryId) {
-            index = i;
-            break;
-        }
-    }
-
-    MessageQueryInfo &queryInfo = m_pendingMessageQueries[index];
-
-    QMessageFilterPrivate* pf = QMessageFilterPrivate::implementation(queryInfo.filter);
-    if (pf->_filterList.count() == 0) {
-        if (queryInfo.handledFiltersCount == 0) {
-            QMessageFilterPrivate::SortedMessageFilterList filters;
-            filters.append(queryInfo.filter);
-            filterMessages(ids, filters, 0);
-        }
-        QMessageServicePrivate *privateService = QMessageServicePrivate::implementation(*queryInfo.messageService);
-        privateService->messagesFound(ids);
-        privateService->setFinished(true);
-        m_pendingMessageQueries.removeAt(index);
-    } else {
-        if (queryInfo.handledFiltersCount < pf->_filterList[queryInfo.currentFilterListIndex].count()) {
-            filterMessages(ids, pf->_filterList[queryInfo.currentFilterListIndex], queryInfo.handledFiltersCount);
-        }
-
-        // Append new ids to resultset
-        for (int i=0; i < ids.count(); i++) {
-            if (!queryInfo.ids.contains(ids[i])) {
-                queryInfo.ids.append(ids[i]);
-            }
-        }
-
-        queryInfo.currentFilterListIndex++;
-        if (queryInfo.currentFilterListIndex < pf->_filterList.count()) {
-            if (!queryAndFilterMessages(queryInfo)) {
-                QMessageServicePrivate::implementation(*queryInfo.messageService)->setFinished(false);
-                m_pendingMessageQueries.removeAt(index);
-            }
-        } else {
-            QMessageServicePrivate *privateService = QMessageServicePrivate::implementation(*queryInfo.messageService);
-            privateService->messagesFound(ids);
-            privateService->setFinished(true);
-            m_pendingMessageQueries.removeAt(index);
-        }
-    }
-
 }
 
 bool ModestEngine::queryAndFilterMessages(MessageQueryInfo &msgQueryInfo) const
@@ -1455,7 +1403,16 @@ bool ModestEngine::queryAndFilterMessages(MessageQueryInfo &msgQueryInfo) const
         if (pf->_notFilter) {
             // There is only one filter: empty ~QMessageFilter()
             // => return empty QMessageIdList
-            queryAndFilterMessagesReady(msgQueryInfo.queryId, QMessageIdList());
+            msgQueryInfo.privateService->messagesFound(msgQueryInfo.ids);
+            msgQueryInfo.privateService->setFinished(true);
+            int index = -1;
+            for (int i=0; i < m_pendingMessageQueries.count(); i++) {
+                if (m_pendingMessageQueries[i].queryId == msgQueryInfo.queryId) {
+                    index = i;
+                    break;
+                }
+            }
+            m_pendingMessageQueries.removeAt(index);
             return true;
         } else {
             // There is only one filter: empty QMessageFilter()
@@ -1591,11 +1548,6 @@ bool ModestEngine::searchMessages(MessageQueryInfo &msgQueryInfo, const QStringL
         eDate = endDate.toTime_t();
     }
 
-qWarning() << "accountIds : " << accountIds;
-qWarning() << "folderUris : " << folderUris;
-qWarning() << "sDate : " << sDate;
-qWarning() << "eDate : " << eDate;
-
     QDBusMessage reply = m_QtmPluginDBusInterface->call("GetHeaders",
                                                         accountIds,
                                                         folderUris,
@@ -1603,27 +1555,165 @@ qWarning() << "eDate : " << eDate;
                                                         eDate,
                                                         false);
 
-qWarning() << "reply : " << reply;
+    if (reply.type() != QDBusMessage::ErrorMessage) {
+        m_QtmPluginDBusInterface->connection().connect(MODESTENGINE_QTM_PLUGIN_NAME,
+                                                       MODESTENGINE_QTM_PLUGIN_PATH,
+                                                       MODESTENGINE_QTM_PLUGIN_NAME,
+                                                       "HeadersReceived",
+                                                       (ModestEngine*)this,
+                                                       SLOT(searchMessagesHeadersReceivedSlot(QDBusMessage)));
+
+        m_QtmPluginDBusInterface->connection().connect(MODESTENGINE_QTM_PLUGIN_NAME,
+                                                       MODESTENGINE_QTM_PLUGIN_PATH,
+                                                       MODESTENGINE_QTM_PLUGIN_NAME,
+                                                       "HeadersFetched",
+                                                       (ModestEngine*)this,
+                                                       SLOT(searchMessagesHeadersFetchedSlot(QDBusMessage)));
+
+        msgQueryInfo.queryId = reply.arguments().takeFirst().toInt();
+    } else {
+        return false;
+    }
+
     return true;
 }
 
 void ModestEngine::searchMessagesHeadersReceivedSlot(QDBusMessage msg)
 {
-    qWarning() << "HeadersReceived";
-    qWarning() << msg;
+    QList<QVariant> arguments = msg.arguments();
+    int queryId = arguments.takeFirst().toInt();
+
+    int index = -1;
+    for (int i=0; i < m_pendingMessageQueries.count(); i++) {
+        if (m_pendingMessageQueries[i].queryId == queryId) {
+            index = i;
+            break;
+        }
+    }
+    if (index == -1) {
+        // Received DBus Message is not reply for the DBus query
+        // that was sent from this process/instance of modest engine
+        // => Continue waiting
+        return;
+    }
+
+    QString accountId = arguments.takeFirst().toString();
+    accountId.remove("_store");
+
+    QString folderId = arguments.takeFirst().toString();
+    QVariant variant = arguments.takeFirst();
+
+    MessageQueryInfo &queryInfo = m_pendingMessageQueries[index];
+
+    QMessageFilterPrivate::SortedMessageFilterList filters;
+    int firstUnhandledFilterIndex = 0;
+
+    QMessageFilterPrivate* pf = QMessageFilterPrivate::implementation(queryInfo.filter);
+    if (pf->_filterList.count() == 0) {
+        filters.append(queryInfo.filter);
+    } else {
+        if (queryInfo.handledFiltersCount < pf->_filterList[queryInfo.currentFilterListIndex].count()) {
+            filters = pf->_filterList[queryInfo.currentFilterListIndex];
+        }
+    }
+    firstUnhandledFilterIndex = queryInfo.handledFiltersCount;
+
+    QDBusArgument argument = variant.value<QDBusArgument>();
+    QList<QMap<QString, QVariant> > messages;
+    argument >> messages;
+    for (int i=0; i < messages.count(); i++) {
+        MessagingModestMessage modestMessage;
+        QMapIterator<QString, QVariant> j(messages[i]);
+        while (j.hasNext()) {
+            j.next();
+            modestMessage.accountId = accountId;
+            modestMessage.folderId = folderId;
+            if (j.key() == "url") {
+                modestMessage.url = j.value().toString();
+            } else if (j.key() == "message-uid") {
+                modestMessage.id = j.value().toString();
+            } else if (j.key() == "from") {
+                modestMessage.from = j.value().toString();
+            } else if (j.key() == "to") {
+                modestMessage.to = j.value().toString();
+            } else if (j.key() == "cc") {
+                modestMessage.cc = j.value().toString();
+            } else if (j.key() == "bcc") {
+                modestMessage.bcc = j.value().toString();
+            } else if (j.key() == "replyto") {
+                modestMessage.replyTo = j.value().toString();
+            } else if (j.key() == "subject") {
+                modestMessage.subject = j.value().toString();
+            } else if (j.key() == "dete-received") {
+                modestMessage.dateReceived = j.value().toLongLong();
+            } else if (j.key() == "date-sent") {
+                modestMessage.dateSent = j.value().toLongLong();
+            } else if (j.key() == "size") {
+                modestMessage.size = j.value().toLongLong();
+            } else if (j.key() == "flags") {
+                modestMessage.flags = static_cast<MessagingModestMessageFlags>(j.value().toUInt());
+            } else if (j.key() == "priority") {
+                modestMessage.priority = static_cast<MessagingModestMessagePriority>(j.value().toUInt());
+            }
+        }
+
+        QMessage message = messageFromModestMessage(modestMessage);
+        if (filterMessage(message, filters, firstUnhandledFilterIndex)) {
+            if (!queryInfo.ids.contains(message.id())) {
+                queryInfo.ids.append(message.id());
+            }
+        }
+    }
 }
 
 void ModestEngine::searchMessagesHeadersFetchedSlot(QDBusMessage msg)
 {
-    qWarning() << "HeadersFetched";
-    qWarning() << msg;
-    if (m_pendingMessageQueries.count()) {
-        int index = 0;
-        QMessageServicePrivate* pMsgService = QMessageServicePrivate::implementation(*m_pendingMessageQueries[index].messageService);
-        pMsgService->messagesFound(m_pendingMessageQueries[index].ids);
-        pMsgService->setFinished(true);
-        m_pendingMessageQueries.removeAt(index);
+    QList<QVariant> arguments = msg.arguments();
+    int queryId = arguments.takeFirst().toInt();
+
+    int index = -1;
+    for (int i=0; i < m_pendingMessageQueries.count(); i++) {
+        if (m_pendingMessageQueries[i].queryId == queryId) {
+            index = i;
+            break;
+        }
     }
+    if (index == -1) {
+        // Received DBus Message is not reply for the DBus query
+        // that was sent from this process/instance of modest engine
+        // => Continue waiting
+        return;
+    }
+
+    MessageQueryInfo &queryInfo = m_pendingMessageQueries[index];
+
+    queryInfo.currentFilterListIndex++;
+    QMessageFilterPrivate* pf = QMessageFilterPrivate::implementation(queryInfo.filter);
+    if (queryInfo.currentFilterListIndex < pf->_filterList.count()) {
+        if (queryAndFilterMessages(queryInfo)) {
+            // Continue searching
+            return;
+        }
+    }
+
+    // Search finished
+    queryInfo.privateService->messagesFound(queryInfo.ids);
+    queryInfo.privateService->setFinished(true);
+    m_pendingMessageQueries.removeAt(index);
+
+    m_QtmPluginDBusInterface->connection().disconnect(MODESTENGINE_QTM_PLUGIN_NAME,
+                                                      MODESTENGINE_QTM_PLUGIN_PATH,
+                                                      MODESTENGINE_QTM_PLUGIN_NAME,
+                                                      "HeadersReceived",
+                                                      (ModestEngine*)this,
+                                                      SLOT(searchMessagesHeadersReceivedSlot(QDBusMessage)));
+
+    m_QtmPluginDBusInterface->connection().disconnect(MODESTENGINE_QTM_PLUGIN_NAME,
+                                                      MODESTENGINE_QTM_PLUGIN_PATH,
+                                                      MODESTENGINE_QTM_PLUGIN_NAME,
+                                                      "HeadersFetched",
+                                                      (ModestEngine*)this,
+                                                      SLOT(searchMessagesHeadersFetchedSlot(QDBusMessage)));
 }
 
 bool ModestEngine::queryMessages(QMessageService& messageService, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
@@ -1928,6 +2018,7 @@ QString ModestEngine::modestAccountIdFromMessageId(const QMessageId& messageId) 
     if (protocol == "maildir") {
         return "local_folders";
     }
+
     return unescapeString(id.left(protocolBegin).remove(0,3));
 }
 
