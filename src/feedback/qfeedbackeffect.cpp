@@ -44,61 +44,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-QFeedbackEffect::QFeedbackEffect(QFeedbackEffectPrivate &dd) : d_ptr(&dd)
-{
-}
-
 QFeedbackEffect::~QFeedbackEffect()
-{
-}
-
-void QFeedbackEffect::setDuration(int msecs)
-{
-    d_func()->duration = msecs;
-}
-
-int QFeedbackEffect::duration() const
-{
-    return d_func()->duration;
-}
-
-void QFeedbackEffect::setIntensity(qreal intensity)
-{
-    d_func()->intensity = intensity;
-}
-
-qreal QFeedbackEffect::intensity() const
-{
-    return d_func()->intensity;
-}
-
-QVibraEffect::~QVibraEffect()
-{
-}
-
-void QTouchEffect::setContinuousEffect(ContinuousEffect effect)
-{
-    d_func()->continuousEffect = effect;
-}
-
-ContinuousEffect QTouchEffect::continuousEffect() const
-{
-    return d_func()->continuousEffect;
-}
-
-void QTouchEffect::setWidget(QWidget *w)
-{
-    d_func()->widget = w;
-}
-
-QWidget *QTouchEffect::widget() const
-{
-    return d_func()->widget;
-}
-
-
-
-QTouchEffect::~QTouchEffect()
 {
 }
 

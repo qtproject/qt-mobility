@@ -80,7 +80,7 @@ public:
     enum Type {
         //should we have different type for actuators: vibra, motor...
         Vibra,
-        Motor
+        Touch
     };
 
     enum Capability {
@@ -89,30 +89,42 @@ public:
     };
 
     enum State {
-        //TBD
         Busy,
-        Ready
+        Ready,
+        Unknown
     };
 
+    int id() const;
+    QString name() const;
     State state() const;
-    QFeedbackEffect *currentPlayingEffect() const;
-    int simultaneousEffect() const; // I guess usually 1
+    QFeedbackEffect *currentPlayingEffect() const; //should that be a list?
+    int simultaneousEffect() const;
 
-    QFeedbackDevive defaultDevice(Type t = Vibra);
+    static QFeedbackDevice defaultDevice(Type t = Vibra);
 
     static QList<QFeedbackDevice> devices();
+private:
+    friend class QFeedbackEffect;
+    int m_id;
 };
 
 class Q_FEEDBACK_EXPORT QFeedbackEffect : public QAbstractAnimation
 {
 public:
+    Q_PROPERTY(int duration READ duration WRITE setDuration)
+    Q_PROPERTY(qreal intensity READ intensity WRITE setIntensity)
+    Q_PROPERTY(int attackTime READ attackTime WRITE setAttackTime)
+    Q_PROPERTY(qreal attackIntensity READ attackIntensity WRITE setAttackIntensity)
+    Q_PROPERTY(int fadeTime READ fadeTime WRITE setFadeTime)
+    Q_PROPERTY(int priority READ priority WRITE setPriority)
+    Q_PROPERTY(QFeedbackDevice device READ device WRITE setDevice)
+
     enum Duration {
         INFINITE = -1
     };
 
-
-    QFeedbackEffect();
-    virtual ~QFeedbackEffect();
+    QFeedbackEffect(QObject *parent = 0);
+    ~QFeedbackEffect();
 
     void setDuration(int msecs);
     int duration() const;
@@ -127,13 +139,13 @@ public:
     void setAttackIntensity(qreal intensity);
     qreal attackIntensity() const;
 
-    void setPriority(int); //TBD
-    int priority() const;
-
     void setFadeTime(int msecs);
     int fadeTime() const;
 
-    void setDevice(const QFeedBackDevice &device);
+    void setPriority(int); //TBD
+    int priority() const;
+
+    void setDevice(const QFeedbackDevice &device);
     QFeedbackDevice device() const;
 
     //What do we do with
@@ -143,60 +155,18 @@ public:
 
     //Is it enough to be able to repeat an animation with the animation framework?
 
-    void start();
-    void pause();
-    void stop();
+signals:
+    void deviceBusyOnStartup(); //the feedback could not be played (name should be better)
+
+protected:
+    //virtual methods from QAbstractAnimation
+    void updateCurrentTime(int currentTime);
+    void updateState(QAbstractAnimation::State newState, QAbstractAnimation::State oldState);
 
 private:
     Q_DECLARE_PRIVATE(QFeedbackEffect)
 };
 
-
-//
-// feedback used when the program need to decide dynamically the duration
-// and intensity this one is using the Continuous motor
-//
-class Q_FEEDBACK_EXPORT QVibraEffect : public QFeedbackEffect
-{
-public:
-    QVibraEffect();
-    ~QVibraEffect();
-
-    void start();
-
-private:
-    Q_DISABLE_COPY(QVibraEffect)
-    Q_DECLARE_PRIVATE(QVibraEffect)
-
-};
-
-
-
-//
-// feedback used when the program need to decide dynamically the duration
-// and intensity this one is using the Continuous touch feedback
-//
-class Q_FEEDBACK_EXPORT QTouchEffect : public QFeedbackEffect
-{
-public:
-    QTouchEffect();
-    ~QTouchEffect();
-
-    void start();
-
-    void setContinuousEffect(ContinuousEffect);
-    ContinuousEffect continuousEffect() const;
-
-    static void play(InstantEffect effect);
-
-    void setWidget(QWidget *);
-    QWidget *widget() const;
-
-private:
-    Q_DISABLE_COPY(QTouchEffect)
-    Q_DECLARE_PRIVATE(QTouchEffect)
-
-};
 
 QTM_END_NAMESPACE
 

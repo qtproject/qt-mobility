@@ -46,7 +46,6 @@
 #include "qfeedbackeffect_p.h"
 
 #include <hwrmvibra.h>
-
 #include <touchfeedback.h>
 
 QTM_BEGIN_NAMESPACE
@@ -129,67 +128,302 @@ static CCoeControl *convertToSymbian(const QT_PREPEND_NAMESPACE(QWidget) *w)
     return w ? w->winId() : 0;
 }
 
-struct QVibraEffectPrivate : public QFeedbackEffectPrivate
-{
-    QVibraEffectPrivate() : vibra(0)
-    {
-    }
-
-    ~QVibraEffectPrivate()
-    {
-        delete vibra;
-    }
-
-    CHWRMVibra *vibra;
-};
-
-QVibraEffect::QVibraEffect() : QFeedbackEffect(*new QVibraEffectPrivate)
-{
-}
-
-void QVibraEffect::play()
-{
-    Q_D(QVibraEffect);
-    if (!d->vibra)
-        d->vibra;// = CHWRMVibra::newL();
-
-    d->vibra->StartVibraL(d->duration, qRound(100 * d->intensity));
-}
-
-
-//todo: make it thread-safe
-static MTouchFeedback *feedback()
-{
-    MTouchFeedback *feedback = MTouchFeedback::Instance();
-    return feedback;
-}
-
-QTouchEffect::QTouchEffect() : QFeedbackEffect(*new QTouchEffectPrivate)
-{
-}
-
-void QTouchEffect::play()
-{
-    MTouchFeedback *fb = feedback();
-    if (!fb)
-        return;
 
 #ifdef ADVANCED_TACTILE_SUPPORT
-    Q_D(QTouchEffect);
-    fb->StartFeedback(convertToSymbian(d->widget), convertToSymbian(d->continuousEffect),
-                      0, qRound(100 * d->intensity),
-                      1000 * d->duration);
+typedef QTouchFeedback MTouchFeedback;
 #else
-    //if there is no advanced feedback, we just do the normal one and return -1
-    fb->InstantFeedback(ETouchFeedbackSensitive);
+class QTouchFeedback : public MTouchFeedback
+{
+public:
+
+    static QTouchFeedback *Instance()
+    {
+        return static_cast<QTouchFeedback*>(MTouchFeedback::Instance());
+    }
+
+    static void StopFeedback(void *dummy)
+    {
+        Q_UNUSED(dummy);
+    }
+
+    static void ModifyFeedback(void *dummy, int intensity)
+    {
+        Q_UNUSED(dummy);
+        Q_UNUSED(intensity);
+    }
+
+    static void StartFeedback(void *dummy, int effect, void *event, int intensity, int duration)
+    {
+        Q_UNUSED(dummy);
+        Q_UNUSED(effect);
+        Q_UNUSED(event);
+        Q_UNUSED(intensity);
+        Q_UNUSED(duration);
+        //if there is no advanced feedback, we just do the normal one and return -1
+        //TODO: it is slow to call the Instance() method
+        MTouchFeedback::Instance()->InstantFeedback(ETouchFeedbackSensitive);
+    }
+};
 #endif
+
+class QFeedbackEffectPrivate : public QFeedbackEffectBasePrivate
+{
+public:
+    QFeedbackEffectPrivate() : m_feedback(0), m_vibra(0)
+    {
+    }
+
+    ~QFeedbackEffectPrivate()
+    {
+        delete m_vibra;
+    }
+
+    QTouchFeedback *feedback()
+    {
+        if (!m_feedback)
+            m_feedback = QTouchFeedback::Instance();
+        return m_feedback;
+    }
+
+    CHWRMVibra *vibra()
+    {
+        if (!m_vibra)
+            m_vibra = CHWRMVibra::NewL();
+        return m_vibra;
+    }
+
+private:
+    QTouchFeedback *m_feedback;
+    CHWRMVibra *m_vibra;
+};
+
+QFeedbackEffect::QFeedbackEffect(QObject *parent) : QAbstractAnimation(*new QFeedbackEffectPrivate, parent)
+{
+}
+
+void QFeedbackEffect::updateCurrentTime(int currentTime)
+{
+    Q_UNUSED(currentTime);
+    //no random access for feedback
+}
+
+void QFeedbackEffect::updateState(QAbstractAnimation::State newState, QAbstractAnimation::State oldState)
+{
+    Q_UNUSED(oldState);
+    Q_D(QFeedbackEffect);
+    switch(d->device.id())
+    {
+    case QFeedbackDevice::Vibra:
+        switch(newState)
+        {
+        case Stopped:
+        case Paused:
+            d->vibra()->StopVibraL();
+            break;
+        case Running:
+            d->vibra()->StartVibraL(d->duration - d->currentTime, qRound(100 * d->intensity));
+            break;
+        }
+        break;
+
+        break;
+    case QFeedbackDevice::Touch:
+        switch(newState)
+        {
+        case Stopped:
+            d->feedback()->StopFeedback(0); //TODO: we need a real widget here apparently
+            break;
+        case Paused:
+            //not supported, we call stop
+            stop();
+            break;
+        case Running:
+            d->feedback()->StartFeedback(0, //we apparently need a widget
+                                         0, //what effect
+                                         0, qRound(d->intensity * 100), d->duration);
+            break;
+        }
+        break;
+    default:
+        break;
+    }
+}
+
+int QFeedbackEffect::duration() const
+{
+    return d_func()->duration;
 }
 
 
-void QTouchEffect::play(InstantEffect effect)
+void QFeedbackEffect::setDuration(int msecs)
 {
-    if (MTouchFeedback *fb = feedback())
-        fb->InstantFeedback(convertToSymbian(effect));
+    if (msecs < 0) {
+        qWarning("QFeedbackEffect::setDuration: cannot set a negative duration");
+        return;
+    }
+    d_func()->duration = msecs;
+}
+
+void QFeedbackEffect::setIntensity(qreal intensity)
+{
+    Q_D(QFeedbackEffect);
+    if (d->intensity == intensity)
+        return;
+
+    d->intensity = intensity;
+    if (state() != Running)
+        return;
+
+    switch(d->device.id())
+    {
+    case QFeedbackDevice::Vibra:
+        d->vibra()->StartVibraL(d->duration - d->currentTime, qRound(100 * intensity));
+        break;
+    case QFeedbackDevice::Touch:
+        d->feedback()->ModifyFeedback(0, qRound(100 * intensity));
+        break;
+    default:
+        break;
+    }
+
+}
+
+qreal QFeedbackEffect::intensity() const
+{
+    return d_func()->intensity;
+}
+
+
+//envelope is not supported on S60
+void QFeedbackEffect::setAttackTime(int msecs)
+{
+    Q_UNUSED(msecs);
+}
+
+int QFeedbackEffect::attackTime() const
+{
+    return d_func()->attackTime;
+}
+
+void QFeedbackEffect::setAttackIntensity(qreal intensity)
+{
+    Q_UNUSED(intensity);
+}
+
+qreal QFeedbackEffect::attackIntensity() const
+{
+    return d_func()->attackIntensity;
+}
+
+void QFeedbackEffect::setFadeTime(int msecs)
+{
+    Q_UNUSED(msecs);
+}
+
+int QFeedbackEffect::fadeTime() const
+{
+    return d_func()->fadeTime;
+}
+
+void QFeedbackEffect::setPriority(int priority)
+{
+    Q_UNUSED(priority);
+}
+
+int QFeedbackEffect::priority() const
+{
+    return d_func()->priority;
+}
+
+void QFeedbackEffect::setDevice(const QFeedbackDevice &device)
+{
+    d_func()->device = device;
+}
+
+QFeedbackDevice QFeedbackEffect::device() const
+{
+    return d_func()->device;
+}
+
+int QFeedbackDevice::id() const
+{
+    return m_id;
+}
+
+QString QFeedbackDevice::name() const
+{
+    switch(m_id)
+    {
+    case Vibra:
+        return QLatin1String("Vibra");
+    case Touch:
+        return QLatin1String("Touch");
+    }
+    return QString();
+}
+QFeedbackDevice::State QFeedbackDevice::state() const
+{
+    QFeedbackDevice::State ret = Unknown;
+    switch(m_id)
+    {
+    case Vibra:
+        {
+            //TODO we should not allocate the vibra here
+            CHWRMVibra *vibra = CHWRMVibra::NewL();
+            switch (vibra->VibraStatus())
+            {
+            case CHWRMVibra::EVibraStatusStopped:
+                ret = Ready;
+                break;
+            case CHWRMVibra::EVibraStatusOn:
+                ret = Busy;
+                break;
+            default:
+                break;
+            }
+            delete vibra;
+        }
+        break;
+    case Touch:
+        //there is no way of getting the state of the device!
+        break;
+    default:
+        break;
+    }
+    return ret;
+}
+
+QFeedbackEffect *QFeedbackDevice::currentPlayingEffect() const
+{
+    //TODO
+    return 0;
+}
+
+int QFeedbackDevice::simultaneousEffect() const
+{
+    // I guess usually 1
+    return 1;
+}
+
+QFeedbackDevice QFeedbackDevice::defaultDevice(Type t)
+{
+    QFeedbackDevice ret;
+    ret.m_id =  t;
+    return ret;
+}
+
+QList<QFeedbackDevice> QFeedbackDevice::devices()
+{
+    QList<QFeedbackDevice> ret;
+    QFeedbackDevice fb;
+    fb.m_id = Vibra;
+    ret << fb;
+    if (QTouchFeedback::Instance()->TouchFeedbackSupported()) {
+        fb.m_id = Touch;
+        ret << fb;
+    }
+    return ret;
+
 }
 
 QTM_END_NAMESPACE

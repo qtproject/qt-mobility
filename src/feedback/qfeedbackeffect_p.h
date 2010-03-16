@@ -42,6 +42,9 @@
 #ifndef QFEEDBACKEFFECT_P_H
 #define QFEEDBACKEFFECT_P_H
 
+#include <private/qabstractanimation_p.h>
+#include "qfeedbackeffect.h"
+
 //
 //  W A R N I N G
 //  -------------
@@ -56,30 +59,26 @@
 
 QTM_BEGIN_NAMESPACE
 
-struct QFeedbackEffectPrivate
-{
-    QFeedbackEffectPrivate() : duration(250), intensity(1)
-    {
-    }
 
-    virtual ~QFeedbackEffectPrivate()
+struct QFeedbackEffectBasePrivate : public QAbstractAnimationPrivate
+{
+    QFeedbackEffectBasePrivate() : duration(250),
+                    intensity(1), attackTime(0), attackIntensity(0), priority(0), fadeTime(0),
+                    device(QFeedbackDevice::defaultDevice())
     {
+
     }
 
     int duration;
     qreal intensity;
+    int attackTime;
+    qreal attackIntensity;
+    int fadeTime;
+    int priority;
+    QFeedbackDevice device;
 };
 
-struct QTouchEffectPrivate : public QFeedbackEffectPrivate
-{
-    QTouchEffectPrivate() : continuousEffect(ContinuousNone), widget(0)
-    {
-    }
 
-    ContinuousEffect continuousEffect;
-    QWidget *widget;
-
-};
 
 QTM_END_NAMESPACE
 
