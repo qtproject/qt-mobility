@@ -151,10 +151,7 @@ private Q_SLOTS:
     void networkModeChanged(int);
     void operatorNameChanged(uchar,QString,QString,uint,uint);
     void registrationStatusChanged(uchar,ushort,uint,uint,uint,uchar,uchar);
-    void usbCableConnected();
-    void usbCableDisConnected();
-    void wiredPropertiesChanged(QMap<QString,QVariant>);
-    void wirelessPropertiesChanged(QMap<QString,QVariant>);
+    void usbCableAction();
 
 private:
     // The index of wanted argument in the QDBusMessage which is received as a

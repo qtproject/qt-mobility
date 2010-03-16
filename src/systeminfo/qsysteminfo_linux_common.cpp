@@ -669,9 +669,9 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::getBluet
         return QSystemNetworkInfo::UndefinedStatus;
     }
 
-    qWarning() << req.cnum;
+    //qWarning() << req.cnum;
     for (uint j = 0; j< req.cnum; j++) {
-        qWarning() << info[j].state;
+        //qWarning() << info[j].state;
         if(info[j].state == BT_CONNECTED) {
             return QSystemNetworkInfo::Connected;
         }
@@ -1543,7 +1543,7 @@ int QSystemDeviceInfoLinuxCommonPrivate::batteryLevel() const
             while (!line.isNull()) {
                 if(line.contains("design capacity")) {
                     levelWhenFull = line.split(" ").at(1).trimmed().toFloat();
-                    qWarning() << levelWhenFull;
+                    //qWarning() << levelWhenFull;
                     infofile.close();
                     break;
                 }
@@ -1562,7 +1562,7 @@ int QSystemDeviceInfoLinuxCommonPrivate::batteryLevel() const
             while (!line.isNull()) {
                 if(line.contains("remaining capacity")) {
                     level = line.split(" ").at(1).trimmed().toFloat();
-                    qWarning() << level;
+                    //qWarning() << level;
                     statefile.close();
                     break;
                 }

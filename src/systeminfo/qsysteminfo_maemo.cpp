@@ -549,15 +549,15 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
                               "/com/nokia/bme/signal",
                               "com.nokia.bme.signal",
                               QLatin1String("charger_connected"),
-                              this, SLOT(usbCableConnected())) ) {
-        qWarning() << "unable to connect to usbCableConnected";
+                              this, SLOT(usbCableAction())) ) {
+        qWarning() << "unable to connect to usbCableAction (connect)";
     }
     if(!systemDbusConnection.connect("com.nokia.bme",
                               "/com/nokia/bme/signal",
                               "com.nokia.bme.signal",
                               QLatin1String("charger_disconnected"),
-                              this, SLOT(usbCableDisConnected())) ) {
-        qWarning() << "unable to connect to usbCableDisConnected";
+                              this, SLOT(usbCableAction())) ) {
+        qWarning() << "unable to connect to usbCableAction (disconnect)";
     }
 
 #endif
@@ -647,7 +647,7 @@ void QSystemNetworkInfoPrivate::icdStatusChanged(QString, QString var2, QString,
     }
 }
 
-void QSystemNetworkInfoPrivate::usbCableConnected()
+void QSystemNetworkInfoPrivate::usbCableAction()
 {
     if (currentEthernetSignalStrength != networkSignalStrength(QSystemNetworkInfo::EthernetMode)) {
         currentEthernetSignalStrength = networkSignalStrength(QSystemNetworkInfo::EthernetMode);
@@ -667,67 +667,6 @@ void QSystemNetworkInfoPrivate::usbCableConnected()
                 currentEthernetState = newEthernetState;
                 emit networkStatusChanged(QSystemNetworkInfo::EthernetMode,
                                           networkStatus(QSystemNetworkInfo::EthernetMode));
-            }
-        }
-    }
-}
-
-void QSystemNetworkInfoPrivate::usbCableDisConnected()
-{
-    if (currentEthernetSignalStrength != networkSignalStrength(QSystemNetworkInfo::EthernetMode)) {
-        currentEthernetSignalStrength = networkSignalStrength(QSystemNetworkInfo::EthernetMode);
-        emit networkSignalStrengthChanged(QSystemNetworkInfo::EthernetMode,
-                                          currentEthernetSignalStrength);
-    }
-    QString newEthernetState;
-    QString devFile = "/sys/class/net/usb0/operstate";
-    QFileInfo fi(devFile);
-    if (fi.exists()) {
-        QFile rx(fi.absoluteFilePath());
-        if (rx.exists() && rx.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            QTextStream stream(&rx);
-            stream >> newEthernetState;
-            rx.close();
-            if (currentEthernetState != newEthernetState) {
-                currentEthernetState = newEthernetState;
-                emit networkStatusChanged(QSystemNetworkInfo::EthernetMode,
-                                          networkStatus(QSystemNetworkInfo::EthernetMode));
-            }
-        }
-    }
-}
-
-void QSystemNetworkInfoPrivate::wiredPropertiesChanged(QMap<QString,QVariant> map)
-{
-    QMapIterator<QString, QVariant> i(map);
-    while (i.hasNext()) {
-        i.next();
-        if( i.key() == "State") { //state only applies to device interfaces
-            quint32 state = i.value().toUInt();
-            if( state == NM_DEVICE_STATE_ACTIVATED
-                || state == NM_DEVICE_STATE_DISCONNECTED
-                || state == NM_DEVICE_STATE_UNAVAILABLE
-                || state == NM_DEVICE_STATE_FAILED) {
-                emit networkStatusChanged(QSystemNetworkInfo::EthernetMode,
-                                          networkStatus(QSystemNetworkInfo::EthernetMode));
-            }
-        }
-    }
-}
-
-void QSystemNetworkInfoPrivate::wirelessPropertiesChanged(QMap<QString,QVariant> map)
-{
-    QMapIterator<QString, QVariant> i(map);
-    while (i.hasNext()) {
-        i.next();
-        if( i.key() == "State") { //state only applies to device interfaces
-            quint32 state = i.value().toUInt();
-            if( state == NM_DEVICE_STATE_ACTIVATED
-                || state == NM_DEVICE_STATE_DISCONNECTED
-                || state == NM_DEVICE_STATE_UNAVAILABLE
-                || state == NM_DEVICE_STATE_FAILED) {
-                emit networkStatusChanged(QSystemNetworkInfo::WlanMode,
-                                          networkStatus(QSystemNetworkInfo::WlanMode));
             }
         }
     }
@@ -948,7 +887,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 #if !defined(QT_NO_DBUS)
  void QSystemDeviceInfoPrivate::bluezPropertyChanged(const QString &str, QDBusVariant v)
  {
-     qWarning() << str << v.variant().toBool();
+     //qWarning() << str << v.variant().toBool();
      emit bluetoothStateChanged(v.variant().toBool());
  }
 #endif
