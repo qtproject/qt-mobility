@@ -326,7 +326,11 @@ bool QMessageService::show(const QMessageId& id)
     d_ptr->_state = QMessageService::ActiveState;
     emit stateChanged(d_ptr->_state);
 
-    retVal = ModestEngine::instance()->showMessage(id);
+    if (id.toString().startsWith("MO_")) {
+        retVal = ModestEngine::instance()->showMessage(id);
+    } else {
+        retVal = false;
+    }
 
     d_ptr->setFinished(retVal);
     return retVal;
@@ -350,7 +354,11 @@ bool QMessageService::exportUpdates(const QMessageAccountId &id)
     d_ptr->_state = QMessageService::ActiveState;
     emit stateChanged(d_ptr->_state);
 
-    retVal = ModestEngine::instance()->exportUpdates(id);
+    if (id.toString().startsWith("MO_")) {
+        retVal = ModestEngine::instance()->exportUpdates(id);
+    } else {
+        retVal = false;
+    }
 
     d_ptr->setFinished(retVal);
     return retVal;

@@ -1762,11 +1762,15 @@ void ModestEngine::messageReadChangedSlot(QDBusMessage msg)
 }
 
 QMessageManager::NotificationFilterId ModestEngine::registerNotificationFilter(QMessageStorePrivate& messageStore,
-                                                                               const QMessageFilter &filter)
+                                                                               const QMessageFilter &filter,
+                                                                               QMessageManager::NotificationFilterId id)
 {
     m_messageStore = &messageStore;
 
-    int filterId = ++m_filterId;
+    int filterId = id;
+    if (filterId == 0) {
+        filterId = ++m_filterId;
+    }
     m_filters.insert(filterId, filter);
     return filterId;
 }
@@ -1816,11 +1820,11 @@ void ModestEngine::notification(const QMessageId& messageId, NotificationType no
 
     if (matchingFilters.count() > 0) {
         if (notificationType == ModestEngine::Added) {
-            m_messageStore->messageAdded(messageId, matchingFilters);
+            m_messageStore->messageNotification(QMessageStorePrivate::Added, messageId, matchingFilters);
         } else if (notificationType == ModestEngine::Updated) {
-            m_messageStore->messageUpdated(messageId, matchingFilters);
+            m_messageStore->messageNotification(QMessageStorePrivate::Updated, messageId, matchingFilters);
         } else if (notificationType == ModestEngine::Removed) {
-            m_messageStore->messageRemoved(messageId, matchingFilters);
+            m_messageStore->messageNotification(QMessageStorePrivate::Removed, messageId, matchingFilters);
         }
     }
 }

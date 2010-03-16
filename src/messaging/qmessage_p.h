@@ -73,6 +73,7 @@ public:
     static QMessage convert(const QMailMessage &message);
     static QMailMessage convert(const QMessage &message);
     static QMailMessage *convert(QMessage *message);
+
     //static const QMailMessage *convert(const QMessage *message);
 #else
     Q_DECLARE_PUBLIC(QMessage)
@@ -102,7 +103,6 @@ public:
     }
 
     QMessage *q_ptr;
-
 #if defined(Q_OS_WIN)
     struct {
         unsigned properties : 1;

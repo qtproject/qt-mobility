@@ -249,7 +249,8 @@ public:
     bool showMessage(const QMessageId &id);
 
     QMessageManager::NotificationFilterId registerNotificationFilter(QMessageStorePrivate& messageStore,
-                                                                     const QMessageFilter& filter);
+                                                                     const QMessageFilter& filter,
+                                                                     QMessageManager::NotificationFilterId id = 0);
     void unregisterNotificationFilter(QMessageManager::NotificationFilterId notificationFilterId);
 
 private:

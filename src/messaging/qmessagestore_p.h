@@ -61,15 +61,18 @@ public:
 
     void initialize(QMessageStore *store);
 
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    void messageAdded(const QMessageId &id, const QMessageManager::NotificationFilterIdSet &matchingFilterIds);
-    void messageRemoved(const QMessageId &id, const QMessageManager::NotificationFilterIdSet &matchingFilterIds);
-    void messageUpdated(const QMessageId &id, const QMessageManager::NotificationFilterIdSet &matchingFilterIds);
-#endif 
-
     QMessageStore *q_ptr;
     QMessageStorePrivatePlatform *p_ptr;
-
+#ifdef Q_WS_MAEMO_5
+    enum NotificationType
+    {
+        Added,
+        Updated,
+        Removed
+    };
+    void messageNotification(QMessageStorePrivate::NotificationType type, const QMessageId& id,
+                             const QMessageManager::NotificationFilterIdSet &matchingFilters);
+#endif
 #ifdef Q_OS_WIN
     static QMutex* mutex(QMessageStore*);
     static QMutex* mutex(QMessageManager&);
