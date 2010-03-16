@@ -334,7 +334,7 @@ void tst_QContact::details()
     four.setNumber("");
     c.saveDetail(&four);
     QVERIFY(c.details(QContactPhoneNumber::DefinitionName).count() == 2);
-    QVERIFY(!four.values().isEmpty()); // an empty qstring is not invalid; make sure it exists in the detail.
+    QVERIFY(!four.variantValues().isEmpty()); // an empty qstring is not invalid; make sure it exists in the detail.
 
     // ensure that clearing a contact's details works correctly
     QContactName nameDetail;

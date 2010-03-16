@@ -48,13 +48,13 @@ IMPLEMENT_READING(QAccelerometerReading)
 
 /*!
     \class QAccelerometerReading
-    \ingroup sensors
+    \ingroup sensors_reading
 
     \preliminary
     \brief The QAccelerometerReading class reports on linear acceleration
            along the X, Y and Z axes.
 
-    The accelerometer returns acceleration values along 3 axes.
+    \section2 QAccelerometerReading Units
     The scale of the values is meters per second squared.
     The axes are arranged as follows.
 
@@ -87,11 +87,11 @@ IMPLEMENT_READING(QAccelerometerReading)
 /*!
     \property QAccelerometerReading::x
     \brief the acceleration on the X axis.
+
+    The scale of the values is meters per second squared.
+    \sa {QAccelerometerReading Units}
 */
 
-/*!
-    Returns the acceleration on the X axis.
-*/
 qreal QAccelerometerReading::x() const
 {
     return d->x;
@@ -108,11 +108,11 @@ void QAccelerometerReading::setX(qreal x)
 /*!
     \property QAccelerometerReading::y
     \brief the acceleration on the Y axis.
+
+    The scale of the values is meters per second squared.
+    \sa {QAccelerometerReading Units}
 */
 
-/*!
-    Returns the acceleration on the Y axis.
-*/
 qreal QAccelerometerReading::y() const
 {
     return d->y;
@@ -129,11 +129,11 @@ void QAccelerometerReading::setY(qreal y)
 /*!
     \property QAccelerometerReading::z
     \brief the acceleration on the Z axis.
+
+    The scale of the values is meters per second squared.
+    \sa {QAccelerometerReading Units}
 */
 
-/*!
-    Returns the acceleration on the Z axis.
-*/
 qreal QAccelerometerReading::z() const
 {
     return d->z;
@@ -149,11 +149,9 @@ void QAccelerometerReading::setZ(qreal z)
 
 // =====================================================================
 
-// begin generated code
-
 /*!
     \class QAccelerometerFilter
-    \ingroup sensors_helpers
+    \ingroup sensors_filter
 
     \preliminary
     \brief The QAccelerometerFilter class is a convenience wrapper around QSensorFilter.
@@ -174,7 +172,7 @@ const char *QAccelerometer::type("QAccelerometer");
 
 /*!
     \class QAccelerometer
-    \ingroup sensors_helpers
+    \ingroup sensors_type
 
     \preliminary
     \brief The QAccelerometer class is a convenience wrapper around QSensor.
@@ -207,7 +205,6 @@ const char *QAccelerometer::type("QAccelerometer");
 
     \sa QSensor::reading()
 */
-// end generated code
 
 #include "moc_qaccelerometer.cpp"
 QTM_END_NAMESPACE

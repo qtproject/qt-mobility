@@ -90,24 +90,16 @@ int main(int argc, char** argv)
         return 1;
 
     QmlView canvas;
-    canvas.setUrl(url);
+    canvas.setSource(url);
     //! [1]
 
     //! [2]
     //...
     //! [2]
 
-    //! [4]
-    QmlContext* ctxt = canvas.rootContext();
-    ServiceRegister registration;
-    ctxt->addDefaultObject(&registration);
-    ctxt->setContextProperty("services", QVariant::fromValue<QList<ServiceWrapper*>*>(registration.registeredservices()));
-    //! [4]
-
     //! [3]
     canvas.execute();
     canvas.show();
     //! [3]
 
-    return app.exec();
-}
+    return app.exec();}

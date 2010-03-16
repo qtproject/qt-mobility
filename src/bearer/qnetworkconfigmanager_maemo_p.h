@@ -53,15 +53,16 @@
 // We mean it.
 //
 
-#include <qnetworkconfigmanager.h>
-#include <qnetworkconfiguration_maemo_p.h>
-#include <qnetworksession_maemo_p.h>
-
 #include <QHash>
 #include <QStringList>
 
+#include "qnetworkconfigmanager.h"
+#include "qnetworkconfiguration_maemo_p.h"
+#include "qnetworksession_maemo_p.h"
+
 QTM_BEGIN_NAMESPACE
 
+class QNetworkConfigurationPrivate;
 
 class QNetworkConfigurationManagerPrivate : public QObject
 {

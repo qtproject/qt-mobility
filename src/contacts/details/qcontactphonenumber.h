@@ -59,7 +59,7 @@ public:
 #ifdef Q_QDOC
     const char* DefinitionName;
     const char* FieldNumber;
-    const char* FieldSubType;
+    const char* FieldSubTypes;
     const char* SubTypeLandline;
     const char* SubTypeMobile;
     const char* SubTypeFacsimile;

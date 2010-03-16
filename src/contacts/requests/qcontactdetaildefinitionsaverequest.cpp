@@ -58,14 +58,6 @@ QTM_BEGIN_NAMESPACE
   \ingroup contacts-requests
  */
 
-/*!
-  \fn QContactDetailDefinitionSaveRequest::progress(QContactDetailDefinitionSaveRequest* self)
-  \deprecated
-  This signal is emitted when some progress has been made on the request, causing either a change of
-  status or an update of results, or both.  It identifies which request the signal originated from
-  by including a pointer to \a self.
- */
-
 /*! Constructs a new detail definition save request */
 QContactDetailDefinitionSaveRequest::QContactDetailDefinitionSaveRequest()
     : QContactAbstractRequest(new QContactDetailDefinitionSaveRequestPrivate)

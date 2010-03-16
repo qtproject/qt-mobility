@@ -52,7 +52,6 @@
 #include "qcontact.h"                           // contact
 #include "qcontactid.h"                         // contact identifier
 #include "qcontactdetaildefinition.h"           // detail definition
-#include "qcontactdetaildefinitionfield.h"      // field in a detail definition (obsolete)
 #include "qcontactdetailfielddefinition.h"      // field in a detail definition
 #include "qcontactdetail.h"                     // contact detail
 #include "qcontactdetails.h"                    // leaf detail classes

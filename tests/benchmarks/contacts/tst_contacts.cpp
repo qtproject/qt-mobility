@@ -563,7 +563,7 @@ void tst_Contact::gotContact(QContactFetchRequest *request, bool appendOnly)
     Q_UNUSED(appendOnly);
 
     // first, check to make sure that the request is still valid.
-    if (request->status() == QContactAbstractRequest::Cancelled) {
+    if (request->state() == QContactAbstractRequest::CanceledState) {
         delete request;
         QWARN("Contact request canceled");
         loop->exit(1);
@@ -578,7 +578,7 @@ void tst_Contact::gotContact(QContactFetchRequest *request, bool appendOnly)
     }
 
     // check to see if the request status is "finished" - clean up.
-    if (request->status() == QContactAbstractRequest::Finished) {
+    if (request->state() == QContactAbstractRequest::FinishedState) {
         delete request;        
     }
 

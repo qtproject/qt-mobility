@@ -61,6 +61,7 @@ Settings::Settings(QMediaRecorder *mediaRecorder, QWidget *parent) :
     ui->setupUi(this);
 
     //audio codecs
+    ui->audioCodecBox->addItem(tr("Default audio codec"), QVariant(QString()));
     foreach(const QString &codecName, mediaRecorder->supportedAudioCodecs()) {
         QString description = mediaRecorder->audioCodecDescription(codecName);
         ui->audioCodecBox->addItem(codecName+": "+description, QVariant(codecName));
@@ -74,6 +75,7 @@ Settings::Settings(QMediaRecorder *mediaRecorder, QWidget *parent) :
     ui->audioQualitySlider->setRange(0, int(QtMedia::VeryHighQuality));
 
     //video codecs
+    ui->videoCodecBox->addItem(tr("Default video codec"), QVariant(QString()));
     foreach(const QString &codecName, mediaRecorder->supportedVideoCodecs()) {
         QString description = mediaRecorder->videoCodecDescription(codecName);
         ui->videoCodecBox->addItem(codecName+": "+description, QVariant(codecName));
@@ -98,6 +100,7 @@ Settings::Settings(QMediaRecorder *mediaRecorder, QWidget *parent) :
     }
 
     //containers
+    ui->containerFormatBox->addItem(tr("Default container"), QVariant(QString()));
     foreach(const QString &format, mediaRecorder->supportedContainers()) {
         ui->containerFormatBox->addItem(format+":"+mediaRecorder->containerDescription(format),
                                         QVariant(format));

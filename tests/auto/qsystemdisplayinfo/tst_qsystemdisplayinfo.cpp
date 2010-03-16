@@ -62,9 +62,12 @@ void tst_QSystemDisplayInfo::tst_colorDepth()
 {
     QSystemDisplayInfo di;
     int depth = di.colorDepth(0);
+    qWarning() << __FUNCTION__ << depth;
+
     QVERIFY(depth == 0
             || depth == 8
             || depth == 16
+            || depth == 24
             || depth == 32
             || depth == 64);
 }

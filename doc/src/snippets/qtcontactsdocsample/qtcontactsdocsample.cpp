@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+#include "qmobilityglobal.h"
 #include "qtcontacts.h"
 #include "requestexample.h"
 
@@ -46,6 +47,8 @@
 #include <QCoreApplication>
 #include <QObject>
 #include <QTimer>
+
+QTM_USE_NAMESPACE
 
 static void addContact(QContactManager*);
 static void callContact(QContactManager*);
@@ -182,7 +185,7 @@ void viewDetails(QContactManager* cm)
     for (int i = 0; i < allDetails.size(); i++) {
         QContactDetail detail = allDetails.at(i);
         QContactDetailDefinition currentDefinition = cm->detailDefinition(detail.definitionName());
-        QMap<QString, QContactDetailDefinitionField> fields = currentDefinition.fields();
+        QMap<QString, QContactDetailFieldDefinition> fields = currentDefinition.fields();
 
         qDebug("\tDetail #%d (%s):", i, detail.definitionName().toAscii().constData());
         foreach (const QString& fieldKey, fields.keys()) {
@@ -273,9 +276,9 @@ void addPlugin(QContactManager* cm)
     QContactDetailDefinition modified = definitions.value(QContactEmailAddress::DefinitionName);
 
     /* Make our modifications: we add a "Label" field to email addresses */
-    QContactDetailDefinitionField newField;
+    QContactDetailFieldDefinition newField;
     newField.setDataType(QVariant::String);
-    QMap<QString, QContactDetailDefinitionField> fields = modified.fields();
+    QMap<QString, QContactDetailFieldDefinition> fields = modified.fields();
     fields.insert("Label", newField);
 
     /* Update the definition with the new field included */
@@ -329,7 +332,9 @@ void RequestExample::performRequest()
     // m_fetchRequest was created with m_fetchRequest = new QContactFetchRequest() in the ctor.
     m_fetchRequest->setManager(this->m_manager); // m_manager is a QContactManager*.
     m_fetchRequest->setFilter(dfil);
-    connect(m_fetchRequest, SIGNAL(progress(QContactFetchRequest*,bool)), this, SLOT(printContacts(QContactFetchRequest*,bool)));
+    connect(m_fetchRequest, SIGNAL(resultsAvailable()), this, SLOT(printContacts()));
+    connect(m_fetchRequest, SIGNAL(stateChanged(QContactAbstractRequest::State)),
+            this, SLOT(stateChanged(QContactAbstractRequest::State)));
     if (!m_fetchRequest->start()) {
         qDebug() << "Unable to request contacts!";
         QCoreApplication::exit(0);
@@ -338,23 +343,19 @@ void RequestExample::performRequest()
     }
 }
 
-void RequestExample::printContacts(QContactFetchRequest* request, bool appendOnly)
+void RequestExample::printContacts()
 {
-    QList<QContact> results = request->contacts();
-    if (appendOnly) {
-        // we know that the results are still in the same order; just display the new results.
-        for (m_previousLastIndex += 1; m_previousLastIndex < results.size(); m_previousLastIndex++) {
-            qDebug() << "Found another Alice:" << results.at(m_previousLastIndex).displayLabel();
-        }
-    } else {
-        // the order of results has changed; display them all.
-        for (m_previousLastIndex = 0; m_previousLastIndex < results.size(); m_previousLastIndex++) {
-            qDebug() << "Found another Alice:" << results.at(m_previousLastIndex).displayLabel();
-        }
+    QList<QContact> results = m_fetchRequest->contacts();
+    for (m_previousLastIndex = 0; m_previousLastIndex < results.size(); ++m_previousLastIndex) {
+        qDebug() << "Found an Alice:" << results.at(m_previousLastIndex).displayLabel();
     }
+}
 
+void RequestExample::stateChanged(QContactAbstractRequest::State state)
+{
     // once we've finished retrieving results, stop processing events.
-    if (request->state() == QContactAbstractRequest::FinishedState || request->state() == QContactAbstractRequest::CanceledState) {
+    if (state == QContactAbstractRequest::FinishedState
+        || state == QContactAbstractRequest::CanceledState) {
         qDebug() << "Finished displaying asynchronously retrieved contacts!";
         QCoreApplication::exit(0);
     }
@@ -388,7 +389,7 @@ void loadManagerWithParameters()
     qDebug() << "This backend currently supports the following detail definitions:";
     QList<QContactDetailDefinition> allDefinitions = definitions.values();
     foreach (const QContactDetailDefinition& defn, allDefinitions) {
-        QMap<QString, QContactDetailDefinitionField> fields = defn.fields();
+        QMap<QString, QContactDetailFieldDefinition> fields = defn.fields();
         foreach (const QString& fieldKey, fields.keys()) {
             QList<QVariant> allowableValues = fields.value(fieldKey).allowableValues();
             qDebug() << "\t" << fieldKey << "(" << fields.value(fieldKey).dataType() << "):";

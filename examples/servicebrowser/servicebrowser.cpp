@@ -107,6 +107,7 @@ void ServiceBrowser::reloadInterfaceImplementationsList()
 
     QList<QServiceInterfaceDescriptor> descriptors = serviceManager->findInterfaces(serviceName);
 
+    attributesListWidget->clear();
     interfacesListWidget->clear();
     for (int i=0; i<descriptors.count(); i++) {
         QString text = QString("%1 %2.%3")

@@ -4,6 +4,7 @@ INCLUDEPATH += ../../src/location \
                 ../../src/global \
                 ../satellitedialog
 
+
 QT += webkit network
 
 HEADERS = mapwindow.h \
@@ -15,7 +16,8 @@ SOURCES = mapwindow.cpp \
 include(../examples.pri)
 
 CONFIG += mobility
-MOBILITY = location bearer
+MOBILITY = location
+!maemo5:MOBILITY += bearer
 
 symbian: {
     addFiles.sources = nmealog.txt

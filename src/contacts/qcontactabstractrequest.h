@@ -57,18 +57,8 @@ public:
     QContactAbstractRequest() {}
     virtual ~QContactAbstractRequest();
 
-    enum Status { // replaces the status enum.
-        Inactive = 0,   // operation not yet started
-        Active,         // operation started, not yet finished
-        Cancelled,      // operation is finished due to cancellation
-        Finished,        // operation successfully completed
-        Cancelling     // operation started then cancelled, not yet finished // moved to end so that (deprecated) status() impl is simple.
-    };
-
     QList<QContactManager::Error> Q_DECL_DEPRECATED errors() const; // deprecated, removed in week 3.  see leaf classes for detailed error reporting.
-    Status Q_DECL_DEPRECATED status() const; // deprecated in week 1, removed after transition period, replaced by state()
-
-    enum State { // replaces the status enum.
+    enum State {
         InactiveState = 0,   // operation not yet started
         ActiveState,         // operation started, not yet finished
         CanceledState,       // operation is finished due to cancellation
@@ -102,20 +92,15 @@ public:
     QContactManager* manager() const;
     void setManager(QContactManager* manager);
 
-public slots:
+public Q_SLOTS:
     /* Verbs */
     bool start();
     bool cancel();
 
     /* waiting for stuff */
     bool waitForFinished(int msecs = 0);
-#ifdef Q_MOC_RUN
-    bool waitForProgress(int msecs = 0); // deprecated, removed entirely week 1 // moc can't handle deprc.
-#else
-    bool Q_DECL_DEPRECATED waitForProgress(int msecs = 0); // deprecated, removed entirely week 1
-#endif
 
-signals:
+Q_SIGNALS:
     void stateChanged(QContactAbstractRequest::State newState);
     void resultsAvailable();
 

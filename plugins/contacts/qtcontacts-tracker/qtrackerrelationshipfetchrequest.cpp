@@ -57,19 +57,18 @@ QTrackerRelationshipFetchRequest::QTrackerRelationshipFetchRequest(QContactAbstr
 
     if( !r )
     {
-        QList<QContactManager::Error> errors(QList<QContactManager::Error>()<<QContactManager::UnspecifiedError);
-        QContactManagerEngine::updateRequest(req, QList<QContactRelationship>(), QContactManager::UnspecifiedError, errors, QContactAbstractRequest::Finished);
+        QContactManagerEngine::updateRelationshipFetchRequest(r, QList<QContactRelationship>(), QContactManager::UnspecifiedError);
+        QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::FinishedState);
         return;
     }
     if (not r->relationshipType().isEmpty() && QContactRelationship::Is != r->relationshipType())
     {
-        QList<QContactManager::Error> errors(QList<QContactManager::Error>()<<QContactManager::NotSupportedError);
-        QContactManagerEngine::updateRequest(req, r->relationships(), QContactManager::NotSupportedError, errors, QContactAbstractRequest::Finished);
+        QContactManagerEngine::updateRelationshipFetchRequest(r, r->relationships(), QContactManager::NotSupportedError);
+        QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::FinishedState);
         return;
     }
     QList<QContactManager::Error> dummy;
-    QContactManagerEngine::updateRequestStatus(req, QContactManager::NoError, dummy,
-            QContactAbstractRequest::Active);
+    QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::ActiveState);
 
     RDFVariable RDFContact = RDFVariable::fromType<nco::PersonContact>();
     RDFVariable RDFContactThis = RDFVariable::fromType<nco::PersonContact>();
@@ -99,10 +98,11 @@ QTrackerRelationshipFetchRequest::~QTrackerRelationshipFetchRequest()
 void QTrackerRelationshipFetchRequest::modelUpdated()
 {
     QContactManagerEngine *engine = qobject_cast<QContactManagerEngine *> (parent());
+    QContactRelationshipFetchRequest* r = qobject_cast<QContactRelationshipFetchRequest*>(req);
     if( !engine )
     {
-        QList<QContactManager::Error> errors(QList<QContactManager::Error>()<<QContactManager::UnspecifiedError);
-        QContactManagerEngine::updateRequest(req, QList<QContactRelationship>(), QContactManager::UnspecifiedError, errors, QContactAbstractRequest::Finished);
+        QContactManagerEngine::updateRelationshipFetchRequest(r, QList<QContactRelationship>(), QContactManager::UnspecifiedError);
+        QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::FinishedState);
         return;
     }
 
@@ -128,9 +128,7 @@ void QTrackerRelationshipFetchRequest::modelUpdated()
         }
     }
 
-    QContactManagerEngine::updateRequest(req, result, QContactManager::NoError,
-                              QList<QContactManager::Error> (),
-                              QContactAbstractRequest::Finished,
-                              false);
+    QContactManagerEngine::updateRelationshipFetchRequest(r, result, QContactManager::NoError);
+    QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::FinishedState);
 }
 

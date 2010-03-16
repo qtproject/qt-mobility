@@ -73,7 +73,6 @@ public:
     virtual ~QContactAction() = 0;
 
     virtual QContactActionDescriptor actionDescriptor() const = 0;          // the descriptor which uniquely identifies this action
-    virtual QVariantMap Q_DECL_DEPRECATED metadata() const = 0;             // label, icon etc - under discussion! - deprecated
     virtual QVariantMap metaData() const = 0;                               // label, icon etc - under discussion! - replaces the above
 
     virtual QContactFilter contactFilter(const QVariant& value = QVariant()) const = 0; // use for matching
@@ -92,21 +91,11 @@ public:
         FinishedWithErrorState  // operation finished, but error occurred
     };
 
-    /* The possible statuses of an action - DEPRECATED to be replaced by State */
-    enum Status {
-        Inactive = InactiveState,                   // operation not yet started
-        Autonomous = AutonomousState,               // operation started, no further information available - name under discussion.
-        Active = ActiveState,                       // operation started, not yet finished
-        Finished = FinishedState,                   // operation successfully completed
-        FinishedWithError = FinishedWithErrorState  // operation finished, but error occurred
-    };
-
     /* Returns the most recently received result, or an invalid QVariantMap if no results received */
     virtual QVariantMap result() const = 0;
 
-signals:
-    void progress(QContactAction::Status status, const QVariantMap& result); // deprecated by the following signal
-    void progress(QContactAction::State state, const QVariantMap& result);   // replaces the above
+Q_SIGNALS:
+    void progress(QContactAction::State state, const QVariantMap& result);
 };
 
 QTM_END_NAMESPACE

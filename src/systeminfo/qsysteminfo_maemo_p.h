@@ -63,6 +63,16 @@
 #include <qmobilityglobal.h>
 #if !defined(QT_NO_DBUS)
 #include <qhalservice_linux_p.h>
+
+struct ProfileDataValue {
+    QString key;
+    QString val;
+    QString type;
+    };
+
+Q_DECLARE_METATYPE(ProfileDataValue)
+Q_DECLARE_METATYPE(QList<ProfileDataValue>)
+
 #endif
 
 QT_BEGIN_HEADER
@@ -87,13 +97,6 @@ public:
     QString version(QSystemInfo::Version,  const QString &parameter = QString());
 
     bool hasFeatureSupported(QSystemInfo::Feature feature);
-
-protected:
-#if !defined(QT_NO_DBUS)
-    bool hasHalDeviceFeature(const QString &param);
-    bool hasHalUsbFeature(qint32 usbClass);
-    QHalInterface halIface;
-#endif
 };
 
 class QNetworkManagerInterface;
@@ -124,15 +127,8 @@ public:
     QString macAddress(QSystemNetworkInfo::NetworkMode mode);
 
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
+    QSystemNetworkInfo::NetworkMode currentMode();
 
-protected:
-#if !defined(QT_NO_DBUS)
-    QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
-    int getBluetoothRssi();
-    QString getBluetoothInfo(const QString &file);
-    bool isDefaultInterface(const QString &device);
-
-#endif
 };
 
 class QSystemDisplayInfoPrivate : public QSystemDisplayInfoLinuxCommonPrivate
@@ -144,9 +140,7 @@ public:
     QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemDisplayInfoPrivate();
 
-
     int displayBrightness(int screen);
-    int colorDepth(int screen);
 };
 
 class QSystemStorageInfoPrivate : public QSystemStorageInfoLinuxCommonPrivate
@@ -157,15 +151,6 @@ public:
 
     QSystemStorageInfoPrivate(QSystemStorageInfoLinuxCommonPrivate *parent = 0);
     virtual ~QSystemStorageInfoPrivate();
-
-    qint64 availableDiskSpace(const QString &driveVolume);
-    qint64 totalDiskSpace(const QString &driveVolume);
-    QStringList logicalDrives();
-    QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
-
-protected:
-    QMap<QString, QString> mountEntriesMap;
-    void mountEntries();
 
 };
 
@@ -180,30 +165,32 @@ public:
 
     QString imei();
     QString imsi();
-    QString manufacturer();
-    QString model();
-    QString productName();
-
-    QSystemDeviceInfo::InputMethodFlags inputMethodType();
-
-    int  batteryLevel() const;
-
     QSystemDeviceInfo::SimStatus simStatus();
     bool isDeviceLocked();
     QSystemDeviceInfo::Profile currentProfile();
-
     QSystemDeviceInfo::PowerState currentPowerState();
-    void setConnection();
 
 protected:
 #if !defined(QT_NO_DBUS)
     QHalInterface *halIface;
     QHalDeviceInterface *halIfaceDevice;
     void setupBluetooth();
+    void setupProfile();
 
 private Q_SLOTS:
     void halChanged(int,QVariantList);
     void bluezPropertyChanged(const QString&, QDBusVariant);
+    void deviceModeChanged(QString newMode);
+    void profileChanged(bool changed, bool active, QString profile, QList<ProfileDataValue> values);
+
+private:
+    bool flightMode;
+    QString profileName;
+    bool silentProfile;
+    bool vibratingAlertEnabled;
+    int ringingAlertVolume;
+
+    QSystemDeviceInfo::PowerState previousPowerState;
 #endif
 };
 
@@ -213,7 +200,7 @@ class QSystemScreenSaverPrivate : public QSystemScreenSaverLinuxCommonPrivate
     Q_OBJECT
 
 public:
-    QSystemScreenSaverPrivate(QSystemScreenSaverLinuxCommonPrivate *parent = 0);
+    QSystemScreenSaverPrivate(QObject *parent = 0);
     ~QSystemScreenSaverPrivate();
 
     bool screenSaverInhibited();
@@ -221,11 +208,17 @@ public:
     bool isScreenLockEnabled();
     bool isScreenSaverActive();
 
+private Q_SLOTS:
+    void display_blanking_pause();
+
+private:    //data
+    bool m_screenSaverInhibited;
+    QTimer *ssTimer;
+
 protected:
     QString screenPath;
     QString settingsPath;
     bool screenSaverSecure;
-
     uint currentPid;
 
 };

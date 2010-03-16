@@ -51,7 +51,25 @@ QTM_BEGIN_NAMESPACE
  
   It consists of a manager URI which identifies the manager which contains the contact,
   and the local id of the contact in that manager.
+
+  A "null" QContactId has an empty manager URI, and an invalid QContactLocalId (0).
+
+  \sa QContactLocalId
  */
+
+/*!
+  \typedef QContactLocalId
+  \relates QContactId
+  \brief The QContactLocalId type represents the unique id of a contact within its manager.
+
+  Most operations within a \l QContactManager accept a QContactLocalId.  Some operations
+  (involving links to contacts outside a particular manager) also accept a manager URI - this
+  combination is stored in a \l QContactId.
+
+  An invalid QContactLocalId is represented by a zero (0) value.
+
+  \sa QContactId
+*/
 
 /*!
  * Constructs a new contact id

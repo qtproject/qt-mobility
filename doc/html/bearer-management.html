@@ -26,6 +26,9 @@
 <li><a href="#examples">Examples</a></li>
 <ul><li><a href="#bearer-cloud-example">Bearer Cloud Example</a></li>
 <li><a href="#bearer-monitor-example">Bearer Monitor Example</a></li>
+<li><a href="#flickr-demo">Flickr Demo</a></li>
+<li><a href="#weather-info-demo">Weather Info Demo</a></li>
+<li><a href="#light-maps-demo">Light Maps Demo</a></li>
 </ul>
 <li><a href="#classes">Classes</a></li>
 </ul>
@@ -57,25 +60,21 @@
 <p>Some mobile platforms use the concept of grouped access points (also called SNAP or Service Network Access Point). In principle multiple configurations are grouped together and possibly even prioritized when compared to each other. This is useful for use cases where all configurations serve a similar purpose or context. A common context could be that they provide access to the public Internet or possibly only to the office Intranet. By providing a pool of configurations the system can make a decision based on given priorities which usually map to factors such as speed, availability and cost. Furthermore the system can automatically roam from one access point to the next one while ensuring minimal impact on the user experience.</p>
 <p>The <a href="qnetworkconfiguration.html#Type-enum">QNetworkConfiguration::Type</a> flag specifies to what category a configuration belongs. The <a href="qnetworkconfiguration.html#Type-enum">QNetworkConfiguration::InternetAccessPoint</a> type is the most common example. It represents a configuration that can be used to create a session. The above mentioned grouping behavior is provided by <a href="qnetworkconfiguration.html#Type-enum">QNetworkConfiguration::ServiceNetwork</a> configurations. Service networks are place holders until such time when the user attempts to <a href="qnetworksession.html#open">open()</a> a new session. At that point in time the system determines which of the configurations <a href="qnetworkconfiguration.html#children">QNetworkConfiguration::children</a>() is best to use. The selection algorithm is provided by the platform and is usually managed by network settings applications. A service network can only have one level of indirection which implies children can only be of type <a href="qnetworkconfiguration.html#Type-enum">QNetworkConfiguration::InternetAccessPoint</a>.</p>
 <p>Most systems allow the user to define the systems default configuration. Usually the default behavior is either a service network, a particular internet access point or the user instructs the platform to ask the user once an application requests the network. User interaction is generally implemented by some sort of system dialog which shows up at the appropriate point in time. The application does not have to handle the user input. This API provides the <a href="qnetworkconfigurationmanager.html#defaultConfiguration">QNetworkConfigurationManager::defaultConfiguration</a>() call which serves a similar purpose. The subsequent code snippet provides a quick way how an application can quickly create a new network session without (or only minimal) user interaction:</p>
-<pre>    QNetworkConfigurationManager manager;
-    const bool canStartIAP = (manager.capabilities() &amp; QNetworkConfigurationManager::BearerManagement);
+<pre><span class="comment">    // Set Internet Access Point</span>
+    QNetworkConfigurationManager manager;
+    const bool canStartIAP = (manager.capabilities()
+                              &amp; QNetworkConfigurationManager::CanStartAndStopInterfaces);
+<span class="comment">    // Is there default access point, use it</span>
     QNetworkConfiguration cfg = manager.defaultConfiguration();
-    if (!cfg.isValid() || !canStartIAP)
+    if (!cfg.isValid() || (!canStartIAP &amp;&amp; cfg.state() != QNetworkConfiguration::Active)) {
+        QMessageBox::information(this, tr(&quot;Network&quot;), tr(
+                                     &quot;No Access Point found.&quot;));
         return;
-    switch(cfg.type()) {
-        case QNetworkConfiguration::InternetAccessPoint:
-            <span class="comment">// no user interaction -&gt; system starts IAP immediately</span>
-            break;
-        case QNetworkConfiguration::ServiceNetwork:
-            <span class="comment">// no user interaction -&gt; system determines best IAP in group and starts it</span>
-            break;
-        case QNetworkConfiguration::UserChoice:
-            <span class="comment">// automatic IAP resolution by system or by asking user as</span>
-            <span class="comment">// part of QNetworkSession::open() call</span>
-            break;
     }
-    QNetworkSession* session = new QNetworkSession(cfg);
-    session-&gt;open();</pre>
+
+    session = new QNetworkSession(cfg, this);
+    session-&gt;open();
+    session-&gt;waitForOpened(-1);</pre>
 <p>To accommodate the &quot;Ask user&quot; use case the default configuration can be of type <a href="qnetworkconfiguration.html#Type-enum">QNetworkConfiguration::UserChoice</a>. A user choice configuration is resolved as part of the <a href="qnetworksession.html#open">QNetworkSession::open</a>() call. Note that a <a href="qnetworkconfiguration.html#Type-enum">UserChoice</a> configuration is only ever returned via <a href="qnetworkconfigurationmanager.html#defaultConfiguration">QNetworkConfigurationManager::defaultConfiguration</a>() and not <a href="qnetworkconfigurationmanager.html#allConfigurations">QNetworkConfigurationManager::allConfigurations</a>().</p>
 <p>On systems which do not maintain a list of <a href="qnetworkconfigurationmanager.html#defaultConfiguration">defaultConfiguration()</a> an invalid configuration is returned. A possible workaround could be to implement a custom dialog which is populated based on what <a href="qnetworkconfigurationmanager.html#allConfigurations">QNetworkConfigurationManager::allConfigurations</a>() returns.</p>
 <a name="managing-network-sessions"></a>
@@ -112,6 +111,15 @@
 <a name="bearer-monitor-example"></a>
 <h4>Bearer Monitor Example</h4>
 <p>The <a href="bearermonitor.html">Bearer Monitor</a> displays various networks or services by status and configuration.</p>
+<a name="flickr-demo"></a>
+<h4>Flickr Demo</h4>
+<p>The <a href="flickrdemo.html">Flickr Demo</a> uses the Bearer Management classes to setup a connection to a remote server to download thumbnail images.</p>
+<a name="weather-info-demo"></a>
+<h4>Weather Info Demo</h4>
+<p>The <a href="weatherinfo.html">Weather Info demo</a> uses Bearer Management to establish a connection for the demo. The demo then transfers data about the weather for the current location.</p>
+<a name="light-maps-demo"></a>
+<h4>Light Maps Demo</h4>
+<p>The <a href="lightmaps.html">Light Maps demo</a> uses Bearer Management to establish a connection and then transfer map information to the client to display a street map for the current location.</p>
 <a name="classes"></a>
 <h3>Classes</h3>
 <p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">

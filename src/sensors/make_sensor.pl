@@ -140,31 +140,6 @@ public:
     void setMyprop(qreal myprop);
 };
 
-// begin generated code
-// end generated code
-
-QTM_END_NAMESPACE
-
-#endif
-';
-    close OUT;
-}
-
-if (-e $header) {
-    open IN, "$header" or die $!;
-    my @data = <IN>;
-    close IN;
-    my @tags = grep /^\/\/ (begin|end) generated code/, @data;
-    if (scalar(@tags) == 2 &&
-    $tags[0] eq "// begin generated code\n" &&
-    $tags[1] eq "// end generated code\n") {
-        print "Updating generated code in $header\n";
-        open OUT, ">$header" or die $!;
-        my $skip = 0;
-        for (@data) {
-            if ($_ eq $tags[0]) {
-                print OUT $_;
-                print OUT '
 class Q_SENSORS_EXPORT '.$filter.' : public QSensorFilter
 {
 public:
@@ -183,17 +158,12 @@ public:
     '.$reading.' *reading() const { return static_cast<'.$reading.'*>(QSensor::reading()); }
     static const char *type;
 };
+
+QTM_END_NAMESPACE
+
+#endif
 ';
-                $skip = 1;
-            }
-            if ($_ eq $tags[1]) {
-                $skip = 0;
-            }
-            if (!$skip) {
-                print OUT $_;
-            }
-        }
-    }
+    close OUT;
 }
 
 if (! -e $source) {
@@ -209,10 +179,14 @@ IMPLEMENT_READING('.$reading.')
 
 /*!
     \class '.$reading.'
-    \ingroup sensors
+    \ingroup sensors_reading
 
     \preliminary
     \brief The '.$reading.' class holds readings from the [X] sensor.
+
+    [Fill this out]
+
+    \section2 '.$reading.' Units
 
     [Fill this out]
 */
@@ -220,11 +194,11 @@ IMPLEMENT_READING('.$reading.')
 /*!
     \property '.$reading.'::myprop
     \brief [what does it hold?]
+
+    [What are the units?]
+    \sa {'.$reading.' Units}
 */
 
-/*!
-    Returns [what?]
-*/
 qreal '.$reading.'::myprop() const
 {
     return d->myprop;
@@ -240,33 +214,9 @@ void '.$reading.'::setMyprop(qreal myprop)
 
 // =====================================================================
 
-// begin generated code
-// end generated code
-
-#include "moc_'.$source.'"
-QTM_END_NAMESPACE
-';
-    close OUT;
-}
-
-if (-e $source) {
-    open IN, "$source" or die $!;
-    my @data = <IN>;
-    close IN;
-    my @tags = grep /^\/\/ (begin|end) generated code/, @data;
-    if (scalar(@tags) == 2 &&
-    $tags[0] eq "// begin generated code\n" &&
-    $tags[1] eq "// end generated code\n") {
-        print "Updating generated code in $source\n";
-        open OUT, ">$source" or die $!;
-        my $skip = 0;
-        for (@data) {
-            if ($_ eq $tags[0]) {
-                print OUT $_;
-                print OUT '
 /*!
     \class '.$filter.'
-    \ingroup sensors_helpers
+    \ingroup sensors_filter
 
     \preliminary
     \brief The '.$filter.' class is a convenience wrapper around QSensorFilter.
@@ -287,7 +237,7 @@ const char *'.$sensor.'::type("'.$sensor.'");
 
 /*!
     \class '.$sensor.'
-    \ingroup sensors_helpers
+    \ingroup sensors_type
 
     \preliminary
     \brief The '.$sensor.' class is a convenience wrapper around QSensor.
@@ -320,19 +270,12 @@ const char *'.$sensor.'::type("'.$sensor.'");
 
     \sa QSensor::reading()
 */
-';
-                $skip = 1;
-            }
-            if ($_ eq $tags[1]) {
-                $skip = 0;
-            }
-            if (!$skip) {
-                print OUT $_;
-            }
-        }
-    }
-}
 
+#include "moc_'.$source.'"
+QTM_END_NAMESPACE
+';
+    close OUT;
+}
 
 exit 0;
 

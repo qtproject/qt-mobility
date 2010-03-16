@@ -42,11 +42,12 @@
 #ifndef DIRECTSHOWIOSOURCE_H
 #define DIRECTSHOWIOSOURCE_H
 
+#include "directshowglobal.h"
 #include "directshowioreader.h"
 #include "directshowmediatype.h"
 #include "directshowmediatypelist.h"
 
-class QIODevice;
+#include <QtCore/qfile.h>
 
 class DirectShowIOSource
     : public DirectShowMediaTypeList
@@ -55,11 +56,12 @@ class DirectShowIOSource
     , public IPin
 {
 public:
-    DirectShowIOSource(QIODevice *device, DirectShowEventLoop *loop);
+    DirectShowIOSource(DirectShowEventLoop *loop);
     ~DirectShowIOSource();
 
+    void setDevice(QIODevice *device);
     void setAllocator(IMemAllocator *allocator);
-    
+
     // IUnknown
     HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject);
     ULONG STDMETHODCALLTYPE AddRef();
@@ -121,6 +123,8 @@ private:
 
     volatile LONG m_ref;
     FILTER_STATE m_state;
+    DirectShowIOReader *m_reader;
+    DirectShowEventLoop *m_loop;
     IFilterGraph *m_graph;
     IReferenceClock *m_clock;
     IMemAllocator *m_allocator;
@@ -129,8 +133,17 @@ private:
     QString m_filterName;
     const QString m_pinId;
     QMutex m_mutex;
-    DirectShowIOReader m_reader;
+};
 
+class DirectShowRcSource : public DirectShowIOSource
+{
+public:
+    DirectShowRcSource(DirectShowEventLoop *loop);
+
+    bool open(const QUrl &url);
+
+private:
+    QFile m_file;
 };
 
 #endif

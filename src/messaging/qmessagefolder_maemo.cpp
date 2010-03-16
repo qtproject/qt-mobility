@@ -39,56 +39,76 @@
 **
 ****************************************************************************/
 #include "qmessagefolder.h"
+#include "qmessagefolder_p.h"
+#include "qmessagemanager.h"
 
 QTM_BEGIN_NAMESPACE
 
+QMessageFolder QMessageFolderPrivate::from(const QMessageFolderId &id, const QMessageAccountId &accountId, const QMessageFolderId &parentId, const QString &name, const QString &path)
+{
+    QMessageFolder result;
+    result.d_ptr->_id = id;
+    result.d_ptr->_parentAccountId = accountId;
+    result.d_ptr->_parentFolderId = parentId;
+    result.d_ptr->_name = name;
+    result.d_ptr->_path = path;
+    return result;
+}
+
 QMessageFolder::QMessageFolder()
+    :d_ptr(new QMessageFolderPrivate(this))
 {
 }
 
 QMessageFolder::QMessageFolder(const QMessageFolderId &id)
+    :d_ptr(new QMessageFolderPrivate(this))
 {
-    Q_UNUSED(id)
+    *this = QMessageManager().folder(id);
 }
 
 QMessageFolder::QMessageFolder(const QMessageFolder &other)
+    :d_ptr(new QMessageFolderPrivate(this))
 {
-    Q_UNUSED(other)
+    this->operator=(other);
 }
 
 QMessageFolder& QMessageFolder::operator=(const QMessageFolder& other)
 {
-    Q_UNUSED(other)
-    return *this; // stub
+    if (&other != this)
+        *d_ptr = *other.d_ptr;
+
+    return *this;
 }
 
 QMessageFolder::~QMessageFolder()
 {
+    delete d_ptr;
+    d_ptr = 0;
 }
 
 QMessageFolderId QMessageFolder::id() const
 {
-    return QMessageFolderId(); // stub
+    return d_ptr->_id;
 }
 
 QMessageAccountId QMessageFolder::parentAccountId() const
 {
-    return QMessageAccountId(); // stub
+    return d_ptr->_parentAccountId;
 }
 
 QMessageFolderId QMessageFolder::parentFolderId() const
 {
-    return QMessageFolderId(); // stub
+    return d_ptr->_parentFolderId;
 }
 
 QString QMessageFolder::name() const
 {
-    return QString::null; // stub
+    return d_ptr->_name;
 }
 
 QString QMessageFolder::path() const
 {
-    return QString::null; // stub
+    return d_ptr->_path;
 }
 
 QTM_END_NAMESPACE

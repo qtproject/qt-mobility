@@ -85,7 +85,6 @@ public:
     /* Mapping of field key to fields allowed in details of this definition */
     void setFields(const QMap<QString, QContactDetailFieldDefinition>& fields);
     QMap<QString, QContactDetailFieldDefinition> fields() const;
-    QMap<QString, QContactDetailFieldDefinition> Q_DECL_DEPRECATED &fields(); // deprecated, removed.  unnecessary API.
     void insertField(const QString& key, const QContactDetailFieldDefinition& field);
     void removeField(const QString& key);
 

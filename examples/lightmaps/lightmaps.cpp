@@ -74,10 +74,12 @@ QTM_USE_NAMESPACE
 // Hint: see above to find why I picked this one :)
 #define MAX_MAGNIFIER 229
 
+QT_BEGIN_NAMESPACE
 uint qHash(const QPoint& p)
 {
     return p.x() * 17 ^ p.y();
 }
+QT_END_NAMESPACE
 
 // tile size in pixels
 const int tdim = 256;
@@ -317,10 +319,8 @@ public:
         // Is there default access point, use it
         QNetworkConfiguration cfg1 = manager.defaultConfiguration();
         if (!cfg1.isValid() || (!canStartIAP && cfg1.state() != QNetworkConfiguration::Active)) {
-            m_networkSetupError = QString(tr("Avaliable Access Points not found."));
-            m_normalMap = 0;
-            m_largeMap = 0;
-            QTimer::singleShot(0, this, SLOT(delayedInit()));
+            m_networkSetupError = QString(tr("This example requires networking, and no avaliable networks or access points could be found."));
+            QTimer::singleShot(0, this, SLOT(networkSetupError()));
             return;
         }
 
@@ -368,9 +368,14 @@ public slots:
 
 private slots:
 
+    void networkSetupError() {
+        QMessageBox::critical(this, tr("LightMaps"),
+                                 m_networkSetupError);
+        QTimer::singleShot(0, qApp, SLOT(quit()));
+    }
+
     void networkSessionOpened() {
         m_location = QGeoPositionInfoSource::createDefaultSource(this);
-        m_location->setUpdateInterval(10000);
 
         if (!m_location) {
             QNmeaPositionInfoSource *nmeaLocation = new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode, this);
@@ -380,6 +385,8 @@ private slots:
             m_location = nmeaLocation;
             m_usingLogFile = true;
         }
+
+        m_location->setUpdateInterval(10000);
 
         connect(m_location,
                 SIGNAL(positionUpdated(QGeoPositionInfo)),
@@ -392,11 +399,6 @@ private slots:
         } else {
             waitForFix();
             m_location->stopUpdates();
-        }
-
-        if (!m_networkSetupError.isEmpty()) {
-            QMessageBox::information(this, tr("LightMaps"),
-                                     m_networkSetupError);
         }
 
         m_normalMap = new SlippyMap(m_session, m_location, this);

@@ -46,6 +46,8 @@
 #include <QObject>
 #include <QByteArray>
 #include <QMetaType>
+#include <QVariant>
+#include <QPair>
 
 QTM_BEGIN_NAMESPACE
 
@@ -55,23 +57,44 @@ class QSensorReading;
 class QSensorReadingPrivate;
 class QSensorFilter;
 
+#ifdef Q_QDOC
 typedef quint64 qtimestamp;
+#else
+class qtimestamp
+{
+public:
+    qtimestamp() : value() {}
+    qtimestamp(quint64 timestamp) : value(timestamp) {}
+    operator quint64() const { return value; }
+private:
+    quint64 value;
+};
+#endif
+
+typedef QPair<int,int> qrange;
+typedef QList<qrange> qrangelist;
 
 class Q_SENSORS_EXPORT QSensor : public QObject
 {
     friend class QSensorBackend;
 
     Q_OBJECT
-    Q_ENUMS(UpdatePolicy)
-    Q_FLAGS(UpdatePolicies)
     Q_PROPERTY(QByteArray sensorid READ identifier WRITE setIdentifier)
     Q_PROPERTY(QByteArray type READ type WRITE setType)
-    Q_PROPERTY(bool isAvailable READ isAvailable)
-    Q_PROPERTY(UpdatePolicies supportedUpdatePolicies READ supportedUpdatePolicies)
-    Q_PROPERTY(UpdatePolicy updatePolicy READ updatePolicy WRITE setUpdatePolicy)
+    Q_PROPERTY(bool connected READ isConnected)
+    Q_PROPERTY(QtMobility::qrangelist availableDataRates READ availableDataRates)
+    Q_PROPERTY(bool supportsPolling READ supportsPolling)
     Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval)
     Q_PROPERTY(QSensorReading* reading READ reading NOTIFY readingChanged)
-    Q_PROPERTY(bool running READ isActive WRITE setActive)
+    Q_PROPERTY(bool busy READ isBusy)
+    Q_PROPERTY(bool active READ isActive)
+    Q_PROPERTY(qreal measurementMinimum READ measurementMinimum)
+    Q_PROPERTY(qreal measurementMaximum READ measurementMaximum)
+    Q_PROPERTY(qreal measurementAccuracy READ measurementAccuracy)
+    Q_PROPERTY(int outputRangeCount READ outputRangeCount)
+    Q_PROPERTY(int outputRange READ outputRange WRITE setOutputRange)
+    Q_PROPERTY(QString description READ description)
+    Q_PROPERTY(int error READ error NOTIFY sensorError)
 public:
     explicit QSensor(QObject *parent = 0);
     virtual ~QSensor();
@@ -82,44 +105,30 @@ public:
     QByteArray type() const;
     void setType(const QByteArray &type);
 
-    Q_INVOKABLE void connect();
-    bool isAvailable() const;
+    Q_INVOKABLE bool connect();
+    bool isConnected() const;
 
+    bool isBusy() const;
     bool isActive() const;
-    void setActive(bool running);
 
     bool isSignalEnabled() const;
     void setSignalEnabled(bool enabled);
 
-    enum UpdatePolicy {
-        Undefined         = 0x00, // If the sensor has no specific policy
-
-        // Used by irregularly updating sensors
-        OnChangeUpdates   = 0x01,
-
-        // Used by continuously updating sensors
-        OccasionalUpdates = 0x02,
-        InfrequentUpdates = 0x04,
-        FrequentUpdates   = 0x08,
-
-        // For more control
-        TimedUpdates      = 0x10, // Every x milliseconds (may not be supported by all sensors)
-        PolledUpdates     = 0x20  // As often as polled (may not be supported by all sensors)
-    };
-    Q_DECLARE_FLAGS(UpdatePolicies, UpdatePolicy)
-
-    // What policies does the sensor support
-    UpdatePolicies supportedUpdatePolicies() const;
-
-    // Set the desired update policy (default is defined by the sensor)
-    // Use documentation to determine the policies that the sensor
-    // supports.
-    void setUpdatePolicy(UpdatePolicy policy);
+    qrangelist availableDataRates() const;
+    bool supportsPolling() const;
+    int updateInterval() const;
     void setUpdateInterval(int interval);
 
-    // Retrieve the policy
-    UpdatePolicy updatePolicy() const;
-    int updateInterval() const;
+    qreal measurementMinimum() const;
+    qreal measurementMaximum() const;
+    qreal measurementAccuracy() const;
+
+    int outputRangeCount() const;
+    int outputRange() const;
+    void setOutputRange(int index);
+
+    QString description() const;
+    int error() const;
 
     // Filters modify the reading
     void addFilter(QSensorFilter *filter);
@@ -138,13 +147,15 @@ public:
 
 public Q_SLOTS:
     // Start receiving values from the sensor
-    void start();
+    bool start();
 
     // Stop receiving values from the sensor
     void stop();
 
 Q_SIGNALS:
+    void busyChanged();
     void readingChanged();
+    void sensorError(int error);
 
 protected:
     // called by the back end
@@ -154,8 +165,6 @@ private:
     QScopedPointer<QSensorPrivate> d;
     Q_DISABLE_COPY(QSensor)
 };
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(QSensor::UpdatePolicies);
 
 class Q_SENSORS_EXPORT QSensorFilter
 {
@@ -174,12 +183,17 @@ class Q_SENSORS_EXPORT QSensorReading : public QObject
     friend class QSensorBackend;
 
     Q_OBJECT
-    Q_PROPERTY(qtimestamp timestamp READ timestamp)
+    Q_PROPERTY(QtMobility::qtimestamp timestamp READ timestamp)
 public:
     virtual ~QSensorReading();
 
     qtimestamp timestamp() const;
     void setTimestamp(qtimestamp timestamp);
+
+    // Access properties of sub-classes by numeric index
+    // For name-based access use QObject::property()
+    int valueCount() const;
+    QVariant value(int index) const;
 
 protected:
     explicit QSensorReading(QObject *parent, QSensorReadingPrivate *d);
@@ -240,6 +254,10 @@ private:
     }
 
 QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QtMobility::qtimestamp)
+Q_DECLARE_METATYPE(QtMobility::qrange)
+Q_DECLARE_METATYPE(QtMobility::qrangelist)
 
 #endif
 

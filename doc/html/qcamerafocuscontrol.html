@@ -25,17 +25,23 @@
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcamerafocuscontrol.html#dtor.QCameraFocusControl">~QCameraFocusControl</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QPointF </td><td class="memItemRight" valign="bottom"><b><a href="qcamerafocuscontrol.html#customFocusPoint">customFocusPoint</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual qreal </td><td class="memItemRight" valign="bottom"><b><a href="qcamerafocuscontrol.html#digitalZoom">digitalZoom</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QCamera::FocusMode </td><td class="memItemRight" valign="bottom"><b><a href="qcamerafocuscontrol.html#focusMode">focusMode</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QCamera::FocusPointMode </td><td class="memItemRight" valign="bottom"><b><a href="qcamerafocuscontrol.html#focusPointMode">focusPointMode</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QCamera::FocusStatus </td><td class="memItemRight" valign="bottom"><b><a href="qcamerafocuscontrol.html#focusStatus">focusStatus</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;QRectF&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcamerafocuscontrol.html#focusZones">focusZones</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qcamerafocuscontrol.html#isMacroFocusingSupported">isMacroFocusingSupported</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qcamerafocuscontrol.html#macroFocusingEnabled">macroFocusingEnabled</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual qreal </td><td class="memItemRight" valign="bottom"><b><a href="qcamerafocuscontrol.html#maximumDigitalZoom">maximumDigitalZoom</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual qreal </td><td class="memItemRight" valign="bottom"><b><a href="qcamerafocuscontrol.html#maximumOpticalZoom">maximumOpticalZoom</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual qreal </td><td class="memItemRight" valign="bottom"><b><a href="qcamerafocuscontrol.html#opticalZoom">opticalZoom</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qcamerafocuscontrol.html#setCustomFocusPoint">setCustomFocusPoint</a></b> ( const QPointF &amp; <i>point</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qcamerafocuscontrol.html#setFocusMode">setFocusMode</a></b> ( QCamera::FocusMode <i>mode</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qcamerafocuscontrol.html#setFocusPointMode">setFocusPointMode</a></b> ( QCamera::FocusPointMode <i>mode</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qcamerafocuscontrol.html#setMacroFocusingEnabled">setMacroFocusingEnabled</a></b> ( bool <i>enable</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QCamera::FocusModes </td><td class="memItemRight" valign="bottom"><b><a href="qcamerafocuscontrol.html#supportedFocusModes">supportedFocusModes</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QCamera::FocusPointModes </td><td class="memItemRight" valign="bottom"><b><a href="qcamerafocuscontrol.html#supportedFocusPointModes">supportedFocusPointModes</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qcamerafocuscontrol.html#zoomTo">zoomTo</a></b> ( qreal <i>opticalZoom</i>, qreal <i>digitalZoom</i> ) = 0</td></tr>
 </table>
 <ul>
@@ -57,6 +63,7 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamerafocuscontrol.html#digitalZoomChanged">digitalZoomChanged</a></b> ( qreal <i>zoom</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamerafocuscontrol.html#focusStatusChanged">focusStatusChanged</a></b> ( QCamera::FocusStatus <i>status</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamerafocuscontrol.html#focusZonesChanged">focusZonesChanged</a></b> ( const QList&lt;QRectF&gt; &amp; )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcamerafocuscontrol.html#opticalZoomChanged">opticalZoomChanged</a></b> ( qreal <i>zoom</i> )</td></tr>
 </table>
 <ul>
@@ -89,7 +96,7 @@
 <h2>Detailed Description</h2>
 <p>The QCameraFocusControl class supplies control for focusing related camera parameters.</p>
 <p>The interface name of QCameraFocusControl is <tt>com.nokia.Qt.QCameraFocusControl/1.0</tt> as defined in <a href="qcamerafocuscontrol.html#QCameraFocusControl_iid">QCameraFocusControl_iid</a>.</p>
-<p>The Camera API of Qt Mobility is still in <b>ALPHA</b>. It has not undergone the same level of review and testing as the rest of the APIs.</p>
+<p>The Camera API of Qt Mobility is still in <b>Technology</b> Preview. It has not undergone the same level of review and testing as the rest of the APIs.</p>
 <p>The API exposed by the classes in this component are not stable, and will undergo modification or removal prior to the final release of Qt Mobility.</p>
 <p>See also <a href="qmediaservice.html#control">QMediaService::control</a>() and <a href="qcamera.html">QCamera</a>.</p>
 <hr />
@@ -105,6 +112,11 @@
 <p>Cancels the single autofocus request or stops continuous focusing.</p>
 <p>Does nothing in hyperfocal or infinity focus modes.</p>
 <p>If supported by camera, <a href="qcamerafocuscontrol.html#startFocusing">startFocusing</a>() turns off the manual focusing notifications, otherwise it does nothing in manual mode.</p>
+<a name="//apple_ref/cpp/instm/QCameraFocusControl/customFocusPoint"></a>
+<h3 class="fn"><a name="customFocusPoint"></a><a href="http://qt.nokia.com/doc/4.6/qpointf.html">QPointF</a> QCameraFocusControl::customFocusPoint () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Return the position of custom focus point, in relative frame coordinates: <a href="http://qt.nokia.com/doc/4.6/qpointf.html">QPointF</a>(0,0) points to the left top frame point, <a href="http://qt.nokia.com/doc/4.6/qpointf.html">QPointF</a>(0.5,0.5) points to the frame center.</p>
+<p>Custom focus point is used only in FocusPointCustom focus mode.</p>
+<p>See also <a href="qcamerafocuscontrol.html#setCustomFocusPoint">setCustomFocusPoint</a>().</p>
 <a name="//apple_ref/cpp/instm/QCameraFocusControl/digitalZoom"></a>
 <h3 class="fn"><a name="digitalZoom"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> QCameraFocusControl::digitalZoom () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Return the current digital zoom value.</p>
@@ -115,12 +127,24 @@
 <h3 class="fn"><a name="focusMode"></a><a href="qcamera.html#FocusMode-enum">QCamera::FocusMode</a> QCameraFocusControl::focusMode () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the focus mode being used.</p>
 <p>See also <a href="qcamerafocuscontrol.html#setFocusMode">setFocusMode</a>().</p>
+<a name="//apple_ref/cpp/instm/QCameraFocusControl/focusPointMode"></a>
+<h3 class="fn"><a name="focusPointMode"></a><a href="qcamera.html#FocusPointMode-enum">QCamera::FocusPointMode</a> QCameraFocusControl::focusPointMode () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Returns the camera focus point selection mode.</p>
+<p>See also <a href="qcamerafocuscontrol.html#setFocusPointMode">setFocusPointMode</a>().</p>
 <a name="//apple_ref/cpp/instm/QCameraFocusControl/focusStatus"></a>
 <h3 class="fn"><a name="focusStatus"></a><a href="qcamera.html#FocusStatus-enum">QCamera::FocusStatus</a> QCameraFocusControl::focusStatus () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the focus status.</p>
 <a name="//apple_ref/cpp/instm/QCameraFocusControl/focusStatusChanged"></a>
 <h3 class="fn"><a name="focusStatusChanged"></a>void QCameraFocusControl::focusStatusChanged ( <a href="qcamera.html#FocusStatus-enum">QCamera::FocusStatus</a> <i>status</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal emitted when focus <i>status</i> changed.</p>
+<a name="//apple_ref/cpp/instm/QCameraFocusControl/focusZones"></a>
+<h3 class="fn"><a name="focusZones"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qrectf.html">QRectF</a>&gt; QCameraFocusControl::focusZones () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Returns the list of zones, the camera is actually focused on.</p>
+<p>See also QCameraFocusControl::focusZonesChanged.</p>
+<a name="//apple_ref/cpp/instm/QCameraFocusControl/focusZonesChanged"></a>
+<h3 class="fn"><a name="focusZonesChanged"></a>void QCameraFocusControl::focusZonesChanged ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qrectf.html">QRectF</a>&gt; &amp; )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signal is emited when the set of zones, camera focused on is changed.</p>
+<p>Usually the zones list is changed when the camera is focused.</p>
 <a name="//apple_ref/cpp/instm/QCameraFocusControl/isMacroFocusingSupported"></a>
 <h3 class="fn"><a name="isMacroFocusingSupported"></a>bool QCameraFocusControl::isMacroFocusingSupported () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns true if macro focusing is available.</p>
@@ -140,10 +164,19 @@
 <a name="//apple_ref/cpp/instm/QCameraFocusControl/opticalZoomChanged"></a>
 <h3 class="fn"><a name="opticalZoomChanged"></a>void QCameraFocusControl::opticalZoomChanged ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>zoom</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal emitted when the optical <i>zoom</i> value changed.</p>
+<a name="//apple_ref/cpp/instm/QCameraFocusControl/setCustomFocusPoint"></a>
+<h3 class="fn"><a name="setCustomFocusPoint"></a>void QCameraFocusControl::setCustomFocusPoint ( const <a href="http://qt.nokia.com/doc/4.6/qpointf.html">QPointF</a> &amp; <i>point</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Sets the custom focus point.</p>
+<p>If camera supports fixed set of focus points, it should use the nearest supported focus point, and return the actual focus point with <a href="qcamerafocuscontrol.html#focusZones">QCameraFocusControl::focusZones</a>().</p>
+<p>See also <a href="qcamerafocuscontrol.html#customFocusPoint">QCameraFocusControl::customFocusPoint</a>() and <a href="qcamerafocuscontrol.html#focusZones">QCameraFocusControl::focusZones</a>().</p>
 <a name="//apple_ref/cpp/instm/QCameraFocusControl/setFocusMode"></a>
 <h3 class="fn"><a name="setFocusMode"></a>void QCameraFocusControl::setFocusMode ( <a href="qcamera.html#FocusMode-enum">QCamera::FocusMode</a> <i>mode</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Set the focus mode to <i>mode</i>.</p>
 <p>See also <a href="qcamerafocuscontrol.html#focusMode">focusMode</a>().</p>
+<a name="//apple_ref/cpp/instm/QCameraFocusControl/setFocusPointMode"></a>
+<h3 class="fn"><a name="setFocusPointMode"></a>void QCameraFocusControl::setFocusPointMode ( <a href="qcamera.html#FocusPointMode-enum">QCamera::FocusPointMode</a> <i>mode</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Sets the camera focus point selection mode.</p>
+<p>See also <a href="qcamerafocuscontrol.html#focusPointMode">focusPointMode</a>().</p>
 <a name="//apple_ref/cpp/instm/QCameraFocusControl/setMacroFocusingEnabled"></a>
 <h3 class="fn"><a name="setMacroFocusingEnabled"></a>void QCameraFocusControl::setMacroFocusingEnabled ( bool <i>enable</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Set macro focusing to <i>enable</i></p>
@@ -156,6 +189,9 @@
 <a name="//apple_ref/cpp/instm/QCameraFocusControl/supportedFocusModes"></a>
 <h3 class="fn"><a name="supportedFocusModes"></a><a href="qcamera.html#FocusMode-enum">QCamera::FocusModes</a> QCameraFocusControl::supportedFocusModes () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns focus modes available.</p>
+<a name="//apple_ref/cpp/instm/QCameraFocusControl/supportedFocusPointModes"></a>
+<h3 class="fn"><a name="supportedFocusPointModes"></a><a href="qcamera.html#FocusPointMode-enum">QCamera::FocusPointModes</a> QCameraFocusControl::supportedFocusPointModes () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Returns supported focus selection modes.</p>
 <a name="//apple_ref/cpp/instm/QCameraFocusControl/zoomTo"></a>
 <h3 class="fn"><a name="zoomTo"></a>void QCameraFocusControl::zoomTo ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>opticalZoom</i>, <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>digitalZoom</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Set the zoom value to <i>value</i></p>

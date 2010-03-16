@@ -61,11 +61,11 @@
     {
         QApplication app(argc, argv);
 
-        PhoneBook *phoneBook = new PhoneBook;
+        PhoneBook phoneBook;
     #ifdef Q_OS_SYMBIAN
-        phoneBook-&gt;showMaximized();
+        phoneBook.showMaximized();
     #else
-        phoneBook-&gt;show();
+        phoneBook.show();
     #endif
         return app.exec();
     }</pre>

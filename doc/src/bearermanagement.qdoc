@@ -164,26 +164,21 @@ a quick way how an application can quickly create a new network session
 without (or only minimal) user interaction:
 
 \code
+    // Set Internet Access Point
     QNetworkConfigurationManager manager;
-    const bool canStartIAP = (manager.capabilities() & QNetworkConfigurationManager::BearerManagement);
+    const bool canStartIAP = (manager.capabilities()
+                              & QNetworkConfigurationManager::CanStartAndStopInterfaces);
+    // Is there default access point, use it
     QNetworkConfiguration cfg = manager.defaultConfiguration();
-    if (!cfg.isValid() || !canStartIAP)
+    if (!cfg.isValid() || (!canStartIAP && cfg.state() != QNetworkConfiguration::Active)) {
+        QMessageBox::information(this, tr("Network"), tr(
+                                     "No Access Point found."));
         return;
-    switch(cfg.type()) {
-        case QNetworkConfiguration::InternetAccessPoint:
-            // no user interaction -> system starts IAP immediately
-            break;
-        case QNetworkConfiguration::ServiceNetwork:
-            // no user interaction -> system determines best IAP in group and starts it
-            break;
-        case QNetworkConfiguration::UserChoice:
-            // automatic IAP resolution by system or by asking user as 
-            // part of QNetworkSession::open() call
-            break;
     }
-    QNetworkSession* session = new QNetworkSession(cfg);
-    session->open();
 
+    session = new QNetworkSession(cfg, this);
+    session->open();
+    session->waitForOpened(-1);
 \endcode
 
 To accommodate the "Ask user" use case the default configuration can be of
@@ -304,6 +299,19 @@ The \l {bearercloud}{Bearer Cloud} example graphically represents the available 
 \section2 Bearer Monitor Example
 The \l{bearermonitor}{Bearer Monitor} displays various networks or services by status and configuration.
 
+\section2 Flickr Demo
+The \l{flickrdemo}{Flickr Demo} uses the Bearer Management classes to setup
+a connection to a remote server to download thumbnail images.
+
+\section2 Weather Info Demo
+The \l{weatherinfo}{Weather Info demo} uses Bearer Management to establish
+a connection for the demo. The demo then transfers data about the weather
+for the current location.
+
+\section2 Light Maps Demo
+The \l{lightmaps}{Light Maps demo} uses Bearer Management to establish a
+connection and then transfer map information to the client to display a
+street map for the current location.
 
 \section1 Classes
 \annotatedlist bearer

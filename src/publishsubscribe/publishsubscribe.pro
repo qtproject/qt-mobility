@@ -59,7 +59,7 @@ unix:!symbian {
     } else {
         QT += network
 
-        !mac { 
+        !mac:maemo5 { 
             HEADERS += gconflayer_linux_p.h
             SOURCES += gconflayer_linux.cpp
 

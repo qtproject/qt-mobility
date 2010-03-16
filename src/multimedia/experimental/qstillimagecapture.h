@@ -45,7 +45,9 @@
 #include <qmediaobject.h>
 #include <qmediaencodersettings.h>
 
+QT_BEGIN_NAMESPACE
 class QSize;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 
@@ -88,7 +90,8 @@ public:
     void setEncodingSettings(const QImageEncoderSettings& settings);
 
 public Q_SLOTS:
-    void capture(const QString &fileName);
+    void capture(const QString &fileName = QString());
+    void cancelCapture();
 
 Q_SIGNALS:
     void error(QStillImageCapture::Error error);

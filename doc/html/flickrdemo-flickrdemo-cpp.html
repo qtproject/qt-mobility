@@ -1,0 +1,630 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Qt Mobility Project 1.0: flickrdemo.cpp Example File (flickrdemo/flickrdemo.cpp)</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">flickrdemo.cpp Example File<br /><span class="small-subtitle">flickrdemo/flickrdemo.cpp</span>
+</h1>
+<pre><span class="comment">    /****************************************************************************
+    **
+    ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+    ** All rights reserved.
+    ** Contact: Nokia Corporation (qt-info@nokia.com)
+    **
+    ** This file is part of the Qt Mobility Components.
+    **
+    ** $QT_BEGIN_LICENSE:LGPL$
+    ** No Commercial Usage
+    ** This file contains pre-release code and may not be distributed.
+    ** You may use this file in accordance with the terms and conditions
+    ** contained in the Technology Preview License Agreement accompanying
+    ** this package.
+    **
+    ** GNU Lesser General Public License Usage
+    ** Alternatively, this file may be used under the terms of the GNU Lesser
+    ** General Public License version 2.1 as published by the Free Software
+    ** Foundation and appearing in the file LICENSE.LGPL included in the
+    ** packaging of this file.  Please review the following information to
+    ** ensure the GNU Lesser General Public License version 2.1 requirements
+    ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+    **
+    ** In addition, as a special exception, Nokia gives you certain additional
+    ** rights.  These rights are described in the Nokia Qt LGPL Exception
+    ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+    **
+    ** If you have questions regarding the use of this file, please contact
+    ** Nokia at qt-info@nokia.com.
+    **
+    **
+    **
+    **
+    **
+    **
+    **
+    **
+    ** $QT_END_LICENSE$
+    **
+    ****************************************************************************/</span>
+
+    #include &quot;flickrdemo.h&quot;
+    #include &lt;QDomDocument&gt;
+
+    #include &lt;qnmeapositioninfosource.h&gt;
+    #include &lt;qgeopositioninfosource.h&gt;
+    #include &lt;qgeosatelliteinfosource.h&gt;
+    #include &lt;qgeopositioninfo.h&gt;
+    #include &lt;qgeosatelliteinfo.h&gt;
+    #include &lt;qnetworkconfigmanager.h&gt;
+    #include &lt;qnetworksession.h&gt;
+
+<span class="comment">    // static constant intialization</span>
+
+    const QSize FlickrDemo::gridSize = QSize(52, 52);
+    const QSize FlickrDemo::thumbnailSize = QSize(50, 50);
+    const QSize FlickrDemo::imageSize = QSize(150, 150);
+    const QString FlickrDemo::apikey = QString(&quot;e36784df8a03fea04c22ed93318b291c&quot;);
+    #ifdef Q_OS_SYMBIAN
+    const QString FlickrDemo::savePath = &quot;c:\\Data\\Images\\&quot;; <span class="comment">// In S60 Download images to Gallery</span>
+    #else
+    const QString FlickrDemo::savePath = QDir::tempPath();
+    #endif
+
+    FlickrDemo::FlickrDemo(QWidget* parent) :
+            QMainWindow(parent),
+            m_logfileInUse(false),
+            m_session(0),
+            m_file(0),
+            m_httpGetId(-1),
+            m_httpThumbnailGetId(-1),
+            m_pages(0),
+            m_page(1),
+            m_satellitesInView(0),
+            m_satellitesUsed(0),
+            m_latitude(-1000),
+            m_longitude(-1000),
+            m_downloadPictureList(true),
+            m_downloadingThumbnails(false)
+    {
+        resize(252, 344);
+
+        locationLabel = new QLabel(tr(&quot;Lat: Long:&quot;));
+        satellitesLabel = new QLabel(tr(&quot;Using 0 of 0 satellites&quot;));
+        listWidget = new XQListWidget();
+        downloadButton = new QPushButton(tr(&quot;Download Picture List&quot;));
+
+        QVBoxLayout *verticalLayout = new QVBoxLayout();
+        verticalLayout-&gt;addWidget(locationLabel);
+        verticalLayout-&gt;addWidget(satellitesLabel);
+        verticalLayout-&gt;addWidget(listWidget);
+        verticalLayout-&gt;addWidget(downloadButton);
+
+        QWidget *centralWidget = new QWidget;
+        centralWidget-&gt;setLayout(verticalLayout);
+        setCentralWidget(centralWidget);
+
+        createMenus();
+        listWidget-&gt;setGridSize(gridSize);
+        listWidget-&gt;setIconSize(thumbnailSize);
+        m_progressDialog = new QProgressDialog(this);
+        m_progressDialog-&gt;setModal(true);
+        connect(m_progressDialog, SIGNAL(canceled()), this, SLOT(cancelDownload()));
+
+        setWindowTitle(tr(&quot;Flickr Demo&quot;));
+
+        connect(downloadButton, SIGNAL(clicked()), this, SLOT(downloadButtonClicked()));
+
+        <span class="comment">// QGeoPositionInfoSource</span>
+        m_location = QGeoPositionInfoSource::createDefaultSource(this);
+
+        if (m_location == 0) {
+            QNmeaPositionInfoSource *nmeaLocation = new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode, this);
+            QFile *logFile = new QFile(QApplication::applicationDirPath()
+                                       + QDir::separator() + &quot;nmealog.txt&quot;, this);
+            nmeaLocation-&gt;setDevice(logFile);
+            m_location = nmeaLocation;
+            m_logfileInUse = true;
+        }
+
+        <span class="comment">// Listen gps position changes</span>
+        connect(m_location, SIGNAL(positionUpdated(QGeoPositionInfo)),
+                this, SLOT(positionUpdated(QGeoPositionInfo)));
+
+        <span class="comment">// QGeoSatelliteInfoSource</span>
+        m_satellite = QGeoSatelliteInfoSource::createDefaultSource(this);
+        <span class="comment">// Listen satellite status changes</span>
+        if (m_satellite != 0) {
+            connect(m_satellite, SIGNAL(satellitesInViewUpdated(const QList&lt;QGeoSatelliteInfo&gt;&amp;)),
+                    this, SLOT(satellitesInViewUpdated(const QList&lt;QGeoSatelliteInfo&gt;&amp;)));
+            connect(m_satellite, SIGNAL(satellitesInUseUpdated(const QList&lt;QGeoSatelliteInfo&gt;&amp;)),
+                    this, SLOT(satellitesInUseUpdated(const QList&lt;QGeoSatelliteInfo&gt;&amp;)));
+        }
+
+        <span class="comment">// QHttp</span>
+        m_http = new QHttp(this);
+        connect(m_http, SIGNAL(requestFinished(int, bool)),
+                this, SLOT(httpRequestFinished(int, bool)));
+        connect(m_http, SIGNAL(dataReadProgress(int, int)),
+                this, SLOT(updateDataReadProgress(int, int)));
+        connect(m_http, SIGNAL(responseHeaderReceived(const QHttpResponseHeader&amp;)),
+                this, SLOT(readResponseHeader(const QHttpResponseHeader&amp;)));
+
+        QTimer::singleShot(0, this, SLOT(delayedInit()));
+    }
+
+    FlickrDemo::~FlickrDemo()
+    {
+        m_location-&gt;stopUpdates();
+        if (m_satellite)
+            m_satellite-&gt;stopUpdates();
+        m_http-&gt;abort();
+        if (m_session)
+            m_session-&gt;close();
+    }
+
+    void FlickrDemo::delayedInit()
+    {
+        if (m_logfileInUse) {
+            QMessageBox::information(this, tr(&quot;Flickr Demo&quot;),
+                                     tr(&quot;No GPS support detected, using GPS data from a sample log file instead.&quot;));
+        }
+
+        QNetworkConfigurationManager manager;
+        const bool canStartIAP = (manager.capabilities()
+                                  &amp; QNetworkConfigurationManager::CanStartAndStopInterfaces);
+        QNetworkConfiguration cfg = manager.defaultConfiguration();
+        if (!cfg.isValid() || (!canStartIAP &amp;&amp; cfg.state() != QNetworkConfiguration::Active)) {
+            QMessageBox::information(this, tr(&quot;Flickr Demo&quot;), tr(&quot;Available Access Points not found.&quot;));
+            return;
+        }
+
+        m_session = new QNetworkSession(cfg, this);
+        m_connectivityHelper = new ConnectivityHelper(m_session, this);
+        connect(m_session, SIGNAL(opened()), this, SLOT(networkSessionOpened()));
+        connect(m_connectivityHelper, SIGNAL(networkingCancelled()), qApp, SLOT(quit()));
+
+        m_session-&gt;open();
+    }
+
+    void FlickrDemo::networkSessionOpened()
+    {
+        <span class="comment">// Start listening GPS position updates</span>
+        m_location-&gt;startUpdates();
+
+        <span class="comment">// Start listening GPS satellite status changes</span>
+        if (m_satellite != 0) {
+            m_satellite-&gt;startUpdates();
+        } else {
+            satellitesLabel-&gt;setText(tr(&quot;GPS not detected, replaying coordinates from sample log file.&quot;));
+        }
+    }
+
+    void FlickrDemo::createMenus()
+    {
+        m_downloadAct = new QAction(tr(&quot;Download Picture List&quot;), this);
+    #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE)
+        menuBar()-&gt;addAction(m_downloadAct);
+    #endif
+        connect(m_downloadAct, SIGNAL(triggered()), this, SLOT(downloadButtonClicked()));
+
+        QAction* exitAct = new QAction(tr(&quot;Exit&quot;), this);
+    #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE)
+        menuBar()-&gt;addAction(exitAct);
+    #endif
+        connect(exitAct, SIGNAL(triggered()), this, SLOT(close()));
+    }
+
+    void FlickrDemo::positionUpdated(const QGeoPositionInfo &amp;gpsPos)
+    {
+        if (gpsPos.isValid()) {
+            QGeoCoordinate coord = gpsPos.coordinate();
+            m_latitude = coord.latitude();
+            m_longitude = coord.longitude();
+
+            locationLabel-&gt;setText(tr(&quot;Lat: %1 Long: %2&quot;).arg(QString::number(m_latitude),
+                                   QString::number(m_longitude)));
+        }
+    }
+
+    void FlickrDemo::satellitesInViewUpdated(const QList&lt;QGeoSatelliteInfo&gt; &amp;satellites)
+    {
+        m_satellitesInView = satellites.count();
+        viewSatelliteInfo();
+    }
+    void FlickrDemo::satellitesInUseUpdated(const QList&lt;QGeoSatelliteInfo&gt; &amp;satellites)
+    {
+        m_satellitesUsed = satellites.count();
+        viewSatelliteInfo();
+    }
+
+    void FlickrDemo::viewSatelliteInfo()
+    {
+        if (m_satellite != 0) {
+            satellitesLabel-&gt;setText(tr(&quot;Using %1 of %2 satellites&quot;).arg(QString::number(m_satellitesUsed), QString::number(m_satellitesInView)));
+        } else {
+            satellitesLabel-&gt;setText(tr(&quot;GPS not detected, replaying coordinates from sample log file.&quot;));
+        }
+    }
+
+    void FlickrDemo::downloadButtonClicked()
+    {
+        if (m_downloadPictureList) {
+            downloadFlickerPictureList();
+        } else {
+            downloadPictureFromFlickr();
+        }
+    }
+
+    void FlickrDemo::downloadFlickerPictureList()
+    {
+        if (m_latitude == -1000 || m_longitude == -1000) {
+            if (QMessageBox::question(this,
+                                      tr(&quot;Flickr Demo&quot;),
+                                      tr(&quot;No satellite connection.\n&quot;&quot;Use hard coded coordinates?&quot;),
+                                      QMessageBox::Ok | QMessageBox::Cancel,
+                                      QMessageBox::Cancel)
+                    == QMessageBox::Cancel) {
+                return;
+            }
+            <span class="comment">// If GPS signal is not detected, Tampere area is used as default location</span>
+            m_latitude = 61.4500;
+            m_longitude = 23.8502;
+        }
+
+        <span class="comment">// Set IAP name</span>
+        satellitesLabel-&gt;setText(tr(&quot;Access Point: %1&quot;).arg(m_session-&gt;configuration().name()));
+        locationLabel-&gt;setText(tr(&quot;Lat: %1 Long: %2&quot;).arg(QString::number(m_latitude),
+                               QString::number(m_longitude)));
+
+        QString
+        urlstring =
+            &quot;http:<span class="comment">//api.flickr.com/services/rest/?min_taken_date=2000-01-01+0:00:00&amp;extras=date_taken&amp;method=flickr.photos.search&amp;per_page=30&amp;sort=date-taken-desc&quot;;</span>
+        urlstring.append(&quot;&amp;api_key=&quot;);
+        urlstring.append(apikey);
+        urlstring.append(&quot;&amp;lat=&quot;);
+        urlstring.append(QString::number(m_latitude));
+        urlstring.append(&quot;&amp;lon=&quot;);
+        urlstring.append(QString::number(m_longitude));
+        urlstring.append(&quot;&amp;page=&quot;);
+        urlstring.append(QString::number(m_page));
+
+        QUrl url(urlstring);
+
+        m_http-&gt;setHost(url.host(), QHttp::ConnectionModeHttp, url.port() == -1 ? 0 : url.port());
+        m_httpRequestAborted = false;
+
+        m_httpGetId = m_http-&gt;get(urlstring);
+
+        m_progressDialog-&gt;setWindowTitle(tr(&quot;FlickrDemo&quot;));
+        m_progressDialog-&gt;setLabelText(tr(&quot;Downloading\nPicture List.&quot;));
+        m_progressDialog-&gt;setMaximum(10);
+        m_progressDialog-&gt;setValue(0);
+        m_progressDialog-&gt;show();
+    }
+
+    bool FlickrDemo::parsePictureList(QString xmlString)
+    {
+        QString errorStr;
+        int errorLine;
+        int errorColumn;
+
+        QDomDocument domDocument;
+        if (!domDocument.setContent(xmlString, true, &amp;errorStr, &amp;errorLine, &amp;errorColumn)) {
+            QMessageBox::information(window(),
+                                     tr(&quot;Flickr Demo&quot;),
+                                     tr(&quot;XML Parse error at line %1, column %2:\n%3&quot;).arg(errorLine).arg(errorColumn).arg(errorStr));
+            return false;
+        }
+        QDomElement root = domDocument.documentElement();
+
+        if (root.tagName() != &quot;rsp&quot;) {
+            QMessageBox::information(window(), tr(&quot;Flickr Demo&quot;), tr(&quot;Invalid XML format.&quot;));
+            return false;
+        }
+        if (root.attribute(&quot;stat&quot;) != &quot;ok&quot;) {
+            QMessageBox::information(window(), tr(&quot;Flickr Demo&quot;), tr(&quot;Query failed.&quot;));
+            return false;
+        }
+
+        listWidget-&gt;clear();
+        QListWidgetItem* listItem;
+        QDomElement photosElement = root.firstChildElement(&quot;photos&quot;);
+        if (!photosElement.isNull()) {
+            m_pages = (photosElement.attribute(&quot;pages&quot;)).toInt();
+            m_page = (photosElement.attribute(&quot;page&quot;)).toInt();
+
+            QDomElement child = photosElement.firstChildElement(&quot;photo&quot;);
+            while (!child.isNull()) {
+                QString url = &quot;http:<span class="comment">//farm&quot;;</span>
+                url.append(child.attribute(&quot;farm&quot;));
+                url.append(&quot;.static.flickr.com/&quot;);
+                url.append(child.attribute(&quot;server&quot;));
+                url.append(&quot;/&quot;);
+                url.append(child.attribute(&quot;id&quot;));
+                url.append(&quot;_&quot;);
+                url.append(child.attribute(&quot;secret&quot;));
+
+                m_names &lt;&lt; url;
+
+                listItem = new QListWidgetItem(child.attribute(&quot;title&quot;));
+                QImage image(thumbnailSize, QImage::Format_Mono);
+                image.fill(1);
+                listItem-&gt;setIcon(QPixmap::fromImage(image));
+                listItem-&gt;setData(Qt::UserRole, url);
+                listWidget-&gt;addItem(listItem);
+
+                child = child.nextSiblingElement(&quot;photo&quot;);
+            }
+        } else {
+            return false;
+        }
+        m_nameCounter = -1;
+        downloadNextThumbnail();
+
+        return true;
+    }
+
+    void FlickrDemo::downloadPictureFromFlickr()
+    {
+        QListWidgetItem* item = listWidget-&gt;currentItem();
+        if (!item) {
+            return;
+        }
+        QString pictureUrl = item-&gt;data(Qt::UserRole).toString();
+        pictureUrl.append(&quot;_m.jpg&quot;);
+
+        QUrl url(pictureUrl);
+        QFileInfo fileInfo(url.path());
+        QString fileName = fileInfo.fileName();
+        if (fileName.isEmpty()) {
+            fileName = &quot;test.jpg&quot;;
+        }
+
+        m_filePath = savePath;
+        m_filePath.append(fileName);
+
+        if (QFile::exists(m_filePath)) {
+            if (QMessageBox::question(this,
+                                      tr(&quot;Flickr Demo&quot;),
+                                      tr(&quot;File %1 is already downloaded.&quot;
+                                         &quot;Overwrite?&quot;).arg(fileName),
+                                      QMessageBox::Yes | QMessageBox::No,
+                                      QMessageBox::No)
+                    == QMessageBox::No) {
+                displayImage();
+                return;
+            }
+            QFile::remove(m_filePath);
+        }
+
+        m_file = new QFile(m_filePath);
+        if (!m_file-&gt;open(QIODevice::WriteOnly)) {
+            QMessageBox::information(this, tr(&quot;Flickr Demo&quot;),
+                                     tr(&quot;Unable to save the file %1: %2.&quot;).arg(m_filePath).arg(m_file-&gt;errorString()));
+            delete m_file;
+            m_file = 0;
+            return;
+        }
+
+        m_http-&gt;setHost(url.host(), QHttp::ConnectionModeHttp, url.port() == -1 ? 0 : url.port());
+
+        m_httpRequestAborted = false;
+        QByteArray encodedUrl = QUrl::toPercentEncoding(url.path(), &quot;!$&amp;'()*+,;=:@/&quot;);
+        if (encodedUrl.isEmpty()) {
+            encodedUrl = &quot;/&quot;;
+        }
+        m_httpGetId = m_http-&gt;get(encodedUrl, m_file);
+
+        m_progressDialog-&gt;setWindowTitle(tr(&quot;Flickr Demo&quot;));
+        m_progressDialog-&gt;setLabelText(tr(&quot;Downloading:\n%1&quot;).arg(fileName));
+        m_progressDialog-&gt;setMaximum(10);
+        m_progressDialog-&gt;setValue(0);
+        m_progressDialog-&gt;show();
+
+        downloadButton-&gt;setEnabled(false);
+    }
+
+    void FlickrDemo::cancelDownload()
+    {
+        m_httpRequestAborted = true;
+        m_downloadingThumbnails = false;
+        m_http-&gt;abort();
+        downloadButton-&gt;setEnabled(true);
+    }
+
+    void FlickrDemo::httpRequestFinished(int requestId, bool error)
+    {
+        if (m_downloadingThumbnails &amp;&amp; m_httpThumbnailGetId == requestId) {
+            if (!error) {
+                QByteArray picture = m_http-&gt;readAll();
+                if (!picture.isNull() &amp;&amp; picture.size() &gt; 0) {
+                    QListWidgetItem* item = listWidget-&gt;item(m_nameCounter);
+                    QImage image;
+                    if (image.loadFromData(picture, &quot;jpg&quot;)) {
+                        item-&gt;setIcon(QPixmap::fromImage(image.scaled(thumbnailSize,
+                                                         Qt::KeepAspectRatio, Qt::SmoothTransformation)));
+                        listWidget-&gt;update();
+                    }
+                }
+            }
+            downloadNextThumbnail();
+            return;
+        }
+
+        if (requestId != m_httpGetId) {
+            return;
+        }
+
+        m_progressDialog-&gt;hide();
+
+        if (m_httpRequestAborted) {
+            if (m_file) {
+                m_file-&gt;close();
+                m_file-&gt;remove();
+                delete m_file;
+                m_file = 0;
+            }
+
+            return;
+        }
+
+        if (!m_downloadPictureList &amp;&amp; m_file) {
+            m_file-&gt;close();
+        }
+
+        if (error) {
+            if (!m_downloadPictureList &amp;&amp; m_file) {
+                m_file-&gt;remove();
+            }
+            QMessageBox::information(this,
+                                     tr(&quot;Flickr Demo&quot;),
+                                     tr(&quot;Download failed: %1.&quot;).arg(m_http-&gt;errorString()));
+        }
+
+        if (m_downloadPictureList) {
+            if (parsePictureList(QString::fromUtf8(m_http-&gt;readAll()))) {
+                m_downloadPictureList = false;
+                downloadButton-&gt;setText(tr(&quot;Download Selected Picture&quot;));
+                m_downloadAct-&gt;setText(tr(&quot;Download Selected Picture&quot;));
+            }
+        } else {
+            displayImage();
+        }
+
+        downloadButton-&gt;setEnabled(true);
+    }
+
+    void FlickrDemo::displayImage()
+    {
+        PictureDialog dialog(m_filePath, listWidget-&gt;currentItem()-&gt;text(), this);
+    #if defined(Q_OS_SYMBIAN) || defined (Q_OS_WINCE)
+        dialog.showMaximized();
+    #endif
+        if (!dialog.exec()) {
+            if (m_file &amp;&amp; m_file-&gt;exists()) {
+                m_file-&gt;remove();
+            }
+        }
+        if(m_file)
+            delete m_file;
+        m_file = 0;
+    }
+
+    void FlickrDemo::readResponseHeader(const QHttpResponseHeader&amp; responseHeader)
+    {
+        switch (responseHeader.statusCode()) {
+            case 200: <span class="comment">// Ok</span>
+            case 301: <span class="comment">// Moved Permanently</span>
+            case 302: <span class="comment">// Found</span>
+            case 303: <span class="comment">// See Other</span>
+            case 307: <span class="comment">// Temporary Redirect</span>
+                <span class="comment">// these are not error conditions</span>
+                break;
+            default:
+                QMessageBox::information(this,
+                                         tr(&quot;Flickr Demo&quot;),
+                                         tr(&quot;Download failed: %1.&quot;).arg(responseHeader.reasonPhrase()));
+                m_downloadingThumbnails = false;
+                m_httpRequestAborted = true;
+                m_progressDialog-&gt;hide();
+                m_http-&gt;abort();
+        }
+    }
+
+    void FlickrDemo::updateDataReadProgress(int bytesRead, int totalBytes)
+    {
+        if (m_httpRequestAborted) {
+            return;
+        }
+
+        if (!m_downloadingThumbnails) {
+            m_progressDialog-&gt;setMaximum(totalBytes);
+            m_progressDialog-&gt;setValue(bytesRead);
+        }
+    }
+
+    void FlickrDemo::downloadNextThumbnail()
+    {
+        m_nameCounter++;
+        if (m_nameCounter &lt; m_names.count()) {
+            QString pictureUrl = m_names[m_nameCounter];
+            pictureUrl.append(&quot;_s.jpg&quot;);
+            QUrl url(pictureUrl);
+            m_http-&gt;setHost(url.host(), QHttp::ConnectionModeHttp, url.port() == -1 ? 0 : url.port());
+            m_downloadingThumbnails = true;
+            m_httpThumbnailGetId = m_http-&gt;get(pictureUrl);
+        } else {
+            m_downloadingThumbnails = false;
+        }
+    }
+
+<span class="comment">    // static constant intialization</span>
+
+    const QSize PictureDialog::imageSize = QSize(150, 150);
+
+    PictureDialog::PictureDialog(const QString&amp; filePath, const QString&amp; pictureName, QWidget* parent) :
+            QDialog(parent)
+    {
+        resize(252, 361);
+        QVBoxLayout *verticalLayout = new QVBoxLayout();
+        verticalLayout-&gt;setSpacing(6);
+        verticalLayout-&gt;setContentsMargins(11, 11, 11, 11);
+
+        label = new QLabel();
+        QString fileName = QFileInfo(filePath).fileName();
+        label-&gt;setText(tr(&quot;Downloaded:\n%1\n%2&quot;).arg(pictureName).arg(fileName));
+
+        QSizePolicy sizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(label-&gt;sizePolicy().hasHeightForWidth());
+        label-&gt;setSizePolicy(sizePolicy);
+
+        verticalLayout-&gt;addWidget(label);
+
+        imageLabel = new QLabel();
+        QImage image;
+        image.load(filePath);
+        imageLabel-&gt;setPixmap(QPixmap::fromImage(image.scaled(imageSize, Qt::KeepAspectRatio,
+                              Qt::SmoothTransformation)));
+
+        verticalLayout-&gt;addWidget(imageLabel);
+
+        keepButton = new QPushButton(tr(&quot;Keep&quot;));
+        keepButton-&gt;setDefault(true);
+        discardButton = new QPushButton(tr(&quot;Discard&quot;));
+
+        buttonBox = new QDialogButtonBox();
+        buttonBox-&gt;addButton(keepButton, QDialogButtonBox::AcceptRole);
+        buttonBox-&gt;addButton(discardButton, QDialogButtonBox::DestructiveRole);
+        connect(buttonBox, SIGNAL(clicked(QAbstractButton *)), this, SLOT(clicked(QAbstractButton *)));
+
+        verticalLayout-&gt;addWidget(buttonBox);
+
+        setLayout(verticalLayout);
+
+        setWindowTitle(tr(&quot;Flickr Demo&quot;));
+    }
+
+    void PictureDialog::clicked(QAbstractButton* button)
+    {
+        if (button == keepButton) {
+            accept();
+        } else if (button == discardButton) {
+            reject();
+        }
+    }</pre>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+</tr></table></div></address></body>
+</html>

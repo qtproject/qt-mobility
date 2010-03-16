@@ -428,6 +428,11 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
 
     If \a interfaceName is not a known interface the returned pointer will be null.
 
+    Note that using this function implies that service and client share
+    the implamentation of T which means that service and client become tightly coupled.
+    This may cause issue during later updates as certain changes may require code changes
+    to the service and client.
+
     The caller takes ownership of the returned pointer.
 
     The security session object is not mandatory. If the session pointer is null,
@@ -447,6 +452,11 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     by the caller of this function. The template class must be derived from QObject.
 
     If the \a serviceDescriptor is not valid the returned pointer will be null.
+
+    Note that using this function implies that service and client share
+    the implamentation of T which means that service and client become tightly coupled.
+    This may cause issue during later updates as certain changes may require code changes
+    to the service and client.
 
     The caller takes ownership of the returned pointer.
 

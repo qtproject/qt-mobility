@@ -40,38 +40,53 @@
 ****************************************************************************/
 
 #include "n900proximitysensor.h"
+#include <QFile>
 #include <QDebug>
 #include <string.h>
 #include <time.h>
 
 const char *n900proximitysensor::id("n900.proximity");
+const char *n900proximitysensor::filename("/sys/bus/platform/devices/proximity/state");
 
 n900proximitysensor::n900proximitysensor(QSensor *sensor)
     : n900filebasedsensor(sensor)
-    , m_filename(PROXIMITY_FILE)
 {
     setReading<QProximityReading>(&m_reading);
+    addOutputRange(0, 0.01, 0.01);
+}
+
+void n900proximitysensor::start()
+{
+    if (!QFile::exists(QLatin1String(filename)))
+        goto error;
+
+    n900filebasedsensor::start();
+    return;
+
+error:
+    sensorStopped();
 }
 
 void n900proximitysensor::poll()
 {
-    m_reading.setTimestamp(clock());
-    FILE *fd = fopen(m_filename, "r");
+    FILE *fd = fopen(filename, "r");
     if (!fd) return;
     char buffer[20];
     int rs = fscanf(fd, "%s", buffer);
     fclose(fd);
     if (rs != 1) return;
 
-    QProximityReading::Proximity proximity = QProximityReading::Undefined;
+    qreal distance;
     if (strcmp(buffer, "closed") == 0) {
-        proximity = QProximityReading::Close;
+        distance = 0;
     } else {
-        proximity = QProximityReading::NotClose;
+        distance = 0.01;
     }
 
-    m_reading.setProximity(proximity);
-
-    newReadingAvailable();
+    if (distance != m_reading.distance()) {
+        m_reading.setTimestamp(clock());
+        m_reading.setDistance(distance);
+        newReadingAvailable();
+    }
 }
 

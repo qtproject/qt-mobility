@@ -55,8 +55,11 @@ class QGeoSatelliteInfo;
 QTM_END_NAMESPACE
 
 class SatelliteWidget;
+
+QT_BEGIN_NAMESPACE
 class QPushButton;
 class QTimer;
+QT_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 

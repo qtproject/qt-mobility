@@ -15,12 +15,21 @@ MOBILITY_DOCUMENTATION = $$QDOC $${QT_MOBILITY_SOURCE_TREE}/doc/src/qtmobility.q
                           $$GENERATOR doc/html/qtmobility.qhp -o doc/qch/qtmobility.qch
 
 # Sensors uses .dia files which must be compiled into .png for the docs
-unix:MOBILITY_DOCUMENTATION=\
-    @( cd "$$PWD/src";\
-    for file in *.dia; do\
-        dia -e "images/\$$(echo "\$$file" | sed 's/dia\$$/png/')" "\$$file";\
-    done ) || true\
-    $$LINE_SEP $$MOBILITY_DOCUMENTATION
+unix {
+    LOGNAME=$$(LOGNAME)
+    equals(LOGNAME,lramsay) {
+        # Only do this on Unix when logged in as me
+        MOBILITY_DOCUMENTATION=\
+            @( cd "$$PWD/src";\
+            for file in *.dia; do\
+                destfile="images/\$$(echo "\$$file" | sed 's/dia\$$/png/')";\
+                if [ "\$$file" -nt "\$$destfile" ]; then\
+                    dia -e "\$$destfile" "\$$file";\
+                fi;\
+            done ) || true\
+            $$LINE_SEP $$MOBILITY_DOCUMENTATION
+    }
+}
 
 contains(unixstyle, false):MOBILITY_DOCUMENTATION = $$replace(MOBILITY_DOCUMENTATION, "/", "\\")
 

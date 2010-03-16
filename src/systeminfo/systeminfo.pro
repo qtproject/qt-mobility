@@ -54,8 +54,8 @@ unix: {
             SOURCES += qhalservice_linux.cpp
             HEADERS += qhalservice_linux_p.h
                 contains(networkmanager_enabled, yes): {
-                    SOURCES += qnetworkmanagerservice_linux.cpp
-                    HEADERS += qnetworkmanagerservice_linux_p.h
+                    SOURCES += qnetworkmanagerservice_linux.cpp qnmdbushelper.cpp
+                    HEADERS += qnetworkmanagerservice_linux_p.h qnmdbushelper_p.h
                 } else {
                 DEFINES += QT_NO_NETWORKMANAGER
                 }
@@ -97,7 +97,7 @@ unix: {
                  }
             
                 !isEmpty(SDK6) {
-                        LIBS += -framework CoreWLAN  -framework IOBluetooth
+                        LIBS += -framework CoreWLAN  -framework IOBluetooth -framework CoreLocation
                         DEFINES += MAC_SDK_10_6
                 }
            } else {

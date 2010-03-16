@@ -83,10 +83,8 @@ public:
     QString managerName() const;                       // e.g. "Symbian"
     QMap<QString, QString> managerParameters() const;  // e.g. "filename=private.db"
     QString managerUri() const;                        // managerName + managerParameters
-    int Q_DECL_DEPRECATED implementationVersion() const;    // deprecated
-    int managerVersion() const;                             // replaces the above
+    int managerVersion() const;
 
-    static bool Q_DECL_DEPRECATED splitUri(const QString& uri, QString* managerName, QMap<QString, QString>* params); // deprecated
     static bool parseUri(const QString& uri, QString* managerName, QMap<QString, QString>* params); // replaces the above.
     static QString buildUri(const QString& managerName, const QMap<QString, QString>& params, int implementationVersion = -1);
 
@@ -113,13 +111,10 @@ public:
     QContactManager::Error error() const;
 
     /* Contacts - Accessors and Mutators */
-    QList<QContactLocalId> Q_DECL_DEPRECATED contacts(const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const;    // retrieve contact ids
-    QList<QContactLocalId> Q_DECL_DEPRECATED contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const; // retrieve ids of contacts matching the filter
-
     QList<QContactLocalId> contactIds(const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const;
     QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const;
-    QList<QContact> contacts(const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions) const;
-    QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions) const;
+    QList<QContact> contacts(const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>(), const QStringList& definitionRestrictions = QStringList()) const;
+    QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>(), const QStringList& definitionRestrictions = QStringList()) const;
 
     QContact contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions = QStringList()) const;  // retrieve a contact
 
@@ -132,7 +127,6 @@ public:
     bool removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap); // batch API - remove.
 
     /* Synthesize the display label of a contact */
-    QString Q_DECL_DEPRECATED synthesizeDisplayLabel(const QContact& contact) const; // deprecated
     QString synthesizedDisplayLabel(const QContact& contact) const; // replaces the above
 
     /* "Self" contact id (MyCard) */
@@ -169,17 +163,13 @@ public:
     bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType = QContactType::TypeContact) const;
     QStringList supportedRelationshipTypes(const QString& contactType = QContactType::TypeContact) const;
     QList<QVariant::Type> supportedDataTypes() const;
-    bool Q_DECL_DEPRECATED filterSupported(const QContactFilter& filter) const;  // DEPRECATED
     bool isFilterSupported(const QContactFilter& filter) const;// replaces the above.
     QStringList supportedContactTypes() const;
-
-    /* Versions */ 
-    static int Q_DECL_DEPRECATED version(); // deprecated, removed entirely in wk1, no replacement.
 
     /* return a list of available backends for which a QContactManager can be constructed. */
     static QStringList availableManagers();
 
-signals:
+Q_SIGNALS:
     void dataChanged();
     void contactsAdded(const QList<QContactLocalId>& contactIds);
     void contactsChanged(const QList<QContactLocalId>& contactIds);

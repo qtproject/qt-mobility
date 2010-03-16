@@ -48,12 +48,13 @@ IMPLEMENT_READING(QOrientationReading)
 
 /*!
     \class QOrientationReading
-    \ingroup sensors
+    \ingroup sensors_reading
 
     \preliminary
     \brief The QOrientationReading class represents one reading from the
            orientation sensor.
 
+    \section2 QOrientationReading Units
     The orientation sensor returns the orientation of the device using
     the pre-defined values found in the QOrientationReading::Orientation
     enum.
@@ -64,7 +65,7 @@ IMPLEMENT_READING(QOrientationReading)
 
     This enum represents the orientation of the device.
 
-    The parts of the phone are defined as follows.
+    To explain the meaning of each value it is helpful to refer to the following diagram.
 
 \code
                       Top
@@ -88,23 +89,23 @@ IMPLEMENT_READING(QOrientationReading)
       Bottom
 \endcode
 
-    \value Undefined  The orientation is unknown.
-    \value BottomUp   The device is upside down.
-    \value BottomDown The device is the right way up.
-    \value LeftUp     The device has been rotated clockwise.
-    \value RightUp    The device has been rotated counter-clockwise.
-    \value FaceDown   The screen is facing down.
-    \value FaceUp     The screen is facing up.
+    \value Undefined        The orientation is unknown.
+    \value TopUp            The Top edge of the device is pointing up.
+    \value TopDown          The Bottom edge of the device is pointing up.
+    \value LeftUp           The Left edge of the device is pointing up.
+    \value RightUp          The Right edge of the device is pointing up.
+    \value FaceUp           The Face of the device is pointing up.
+    \value FaceDown         The Face of the device is pointing down.
 */
 
 /*!
     \property QOrientationReading::orientation
     \brief the orientation of the device.
+
+    The unit is an enumeration describing the orientation of the screen.
+    \sa {QOrientationReading Units}
 */
 
-/*!
-    Returns the orientation of the device.
-*/
 QOrientationReading::Orientation QOrientationReading::orientation() const
 {
     return static_cast<QOrientationReading::Orientation>(d->orientation);
@@ -120,11 +121,9 @@ void QOrientationReading::setOrientation(QOrientationReading::Orientation orient
 
 // =====================================================================
 
-// begin generated code
-
 /*!
     \class QOrientationFilter
-    \ingroup sensors_helpers
+    \ingroup sensors_filter
 
     \preliminary
     \brief The QOrientationFilter class is a convenience wrapper around QSensorFilter.
@@ -145,7 +144,7 @@ const char *QOrientationSensor::type("QOrientationSensor");
 
 /*!
     \class QOrientationSensor
-    \ingroup sensors_helpers
+    \ingroup sensors_type
 
     \preliminary
     \brief The QOrientationSensor class is a convenience wrapper around QSensor.
@@ -178,7 +177,6 @@ const char *QOrientationSensor::type("QOrientationSensor");
 
     \sa QSensor::reading()
 */
-// end generated code
 
 #include "moc_qorientationsensor.cpp"
 QTM_END_NAMESPACE

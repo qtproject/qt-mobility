@@ -49,6 +49,8 @@
 #include <QDebug>
 #endif
 
+QT_USE_NAMESPACE
+
 QTM_BEGIN_NAMESPACE
 
 class QSystemReadWriteLockPrivate
