@@ -126,8 +126,10 @@ QImageProcessingControl::~QImageProcessingControl()
 */
 
 /*!
-    \fn QImageProcessingControl::setContrast(qreal value)
+    \fn QImageProcessingControl::setContrast(int value)
     Set the contrast to \a value.
+
+    Valid contrast values range between -100 and 100, the default is 0.
 */
 
 /*!
@@ -141,8 +143,10 @@ QImageProcessingControl::~QImageProcessingControl()
 */
 
 /*!
-    \fn QImageProcessingControl::setSaturation(qreal value)
+    \fn QImageProcessingControl::setSaturation(int value)
     Sets the saturation value to \a value.
+
+    Valid saturation values range between -100 and 100, the default is 0.
 */
 
 /*!
@@ -151,9 +155,12 @@ QImageProcessingControl::~QImageProcessingControl()
 */
 
 /*!
-    \fn QImageProcessingControl::setDenoisingLevel(qreal level)
+    \fn QImageProcessingControl::setDenoisingLevel(int level)
 
     Sets the denoising \a level.
+
+    Valid denoising level values range between -1 for default denoising level,
+    0 for denoising disabled and 100 for maximum denoising applied.
 */
 
 /*!
@@ -165,13 +172,43 @@ QImageProcessingControl::~QImageProcessingControl()
 */
 
 /*!
-    \fn QImageProcessingControl::setSharpeningLevel(qreal level)
+    \fn QImageProcessingControl::setSharpeningLevel(int level)
     Sets the sharpening \a level.
+
+    Valid sharpening level values range between -1 for default sharpening level,
+    0 for sharpening disabled and 100 for maximum sharpening applied.
 */
 
 /*!
     \fn QImageProcessingControl::sharpeningLevel() const
     Returns the sharpening level.
+*/
+
+/*!
+    \fn QImageProcessingControl::isWhiteBalanceLocked()
+
+    Returns true if the white balance is locked.
+*/
+
+/*!
+    \fn QImageProcessingControl::lockWhiteBalance()
+
+    Locks the white balance.
+
+    With white balance locked all the images are taken with the same white
+    balance, calculated when the balance is being locked.
+*/
+
+/*!
+    \fn QImageProcessingControl::unlockWhiteBalance()
+
+    Unlocks the white balance.
+*/
+
+/*!
+    \fn QImageProcessingControl::whiteBalanceLocked()
+
+    Signals the white balance is locked.
 */
 
 #include "moc_qimageprocessingcontrol.cpp"

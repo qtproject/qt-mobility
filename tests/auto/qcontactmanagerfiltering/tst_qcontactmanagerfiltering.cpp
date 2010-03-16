@@ -249,14 +249,17 @@ void tst_QContactManagerFiltering::detailStringFiltering_data()
     QString es; // empty string
 
     QString name = QContactName::DefinitionName;
-    QString firstname = QContactName::FieldFirst;
-    QString lastname = QContactName::FieldLast;
-    QString middlename = QContactName::FieldMiddle;
+    QString firstname = QContactName::FieldFirstName;
+    QString lastname = QContactName::FieldLastName;
+    QString middlename = QContactName::FieldMiddleName;
     QString prefixname = QContactName::FieldPrefix;
     QString suffixname = QContactName::FieldSuffix;
     QString nickname = QContactNickname::DefinitionName;
+    QString nicknameField = QContactNickname::FieldNickname;
     QString emailaddr = QContactEmailAddress::DefinitionName;
     QString emailfield = QContactEmailAddress::FieldEmailAddress;
+    QString phonenumber = QContactPhoneNumber::DefinitionName;
+    QString number = QContactPhoneNumber::FieldNumber;
 
     for (int i = 0; i < managers.size(); i++) {
         QContactManager *manager = managers.at(i);
@@ -297,16 +300,32 @@ void tst_QContactManagerFiltering::detailStringFiltering_data()
         newMRow("Name == Aaron, fixed, case sensitive", manager) << manager << name << firstname << QVariant("Aaron") << (int)(Qt::MatchFixedString | Qt::MatchCaseSensitive) << "a";
         newMRow("Name == aaron, fixed, case sensitive", manager) << manager << name << firstname << QVariant("aaron") << (int)(Qt::MatchFixedString | Qt::MatchCaseSensitive) << es;
 
-        // middle name, prefix, suffix, nickname
+        // middle name
         newMRow("MName == Arne", manager) << manager << name << middlename << QVariant("Arne") << (int)(Qt::MatchContains) << "a";
+		
+		// prefix
         newMRow("Prefix == Sir", manager) << manager << name << prefixname << QVariant("Sir") << (int)(Qt::MatchContains) << "a";
+		
+		// prefix
         newMRow("Suffix == Dr.", manager) << manager << name << suffixname << QVariant("Dr.") << (int)(Qt::MatchContains) << "a";
-        newMRow("Nickname == Sir Aaron", manager) << manager << nickname << es << QVariant("Sir Aaron") << (int)(Qt::MatchContains) << "a";
+		
+		// nickname
+        newMRow("Nickname detail exists", manager) << manager << nickname << es << QVariant() << 0 << "ab";
+        newMRow("Nickname == Aaron, contains", manager) << manager << nickname << nicknameField << QVariant("Aaron") << (int)(Qt::MatchContains) << "a";
 
         // email
         newMRow("Email == Aaron@Aaronson.com", manager) << manager << emailaddr << emailfield << QVariant("Aaron@Aaronson.com") << 0 << "a";
         newMRow("Email == Aaron@Aaronsen.com", manager) << manager << emailaddr << emailfield << QVariant("Aaron@Aaronsen.com") << 0 << es;
-
+        
+        // phone number
+        newMRow("Phone number detail exists", manager) << manager << phonenumber << es << QVariant("") << 0 << "ab";
+        newMRow("Phone number = 555-1212", manager) << manager << phonenumber << number << QVariant("555-1212") << (int) QContactFilter::MatchExactly << "a";
+        newMRow("Phone number = 34, contains", manager) << manager << phonenumber << number << QVariant("34") << (int) QContactFilter::MatchContains << "b";
+        newMRow("Phone number = 555, starts with", manager) << manager << phonenumber << number << QVariant("555") <<  (int) QContactFilter::MatchStartsWith << "ab";
+        newMRow("Phone number = 1212, ends with", manager) << manager << phonenumber << number << QVariant("1212") << (int) QContactFilter::MatchEndsWith << "a";
+        newMRow("Phone number = 555-1212, match phone number", manager) << manager << phonenumber << number << QVariant("555-1212") << (int) QContactFilter::MatchPhoneNumber << "a";
+        newMRow("Phone number = 555, keypad collation", manager) << manager << phonenumber << number << QVariant("555") << (int) QContactFilter::MatchKeypadCollation << "ab";
+        
         /* Converting other types to strings */
         QPair<QString, QString> defAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Integer");
         if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
@@ -371,8 +390,8 @@ void tst_QContactManagerFiltering::detailVariantFiltering_data()
         newMRow("no def name", manager) << manager << es << "value" << false << ev << es;
 
         /* Strings (name) */
-        newMRow("first name presence", manager) << manager << "Name" << QString(QLatin1String(QContactName::FieldFirst)) << false << ev << "abcdefg";
-        newMRow("first name == Aaron", manager) << manager << "Name" << QString(QLatin1String(QContactName::FieldFirst)) << true << QVariant("Aaron") << "a";
+        newMRow("first name presence", manager) << manager << "Name" << QString(QLatin1String(QContactName::FieldFirstName)) << false << ev << "abcdefg";
+        newMRow("first name == Aaron", manager) << manager << "Name" << QString(QLatin1String(QContactName::FieldFirstName)) << true << QVariant("Aaron") << "a";
 
         /*
          * Doubles
@@ -635,8 +654,8 @@ void tst_QContactManagerFiltering::rangeFiltering_data()
     QString es; // empty string
 
     QString namedef = QContactName::DefinitionName;
-    QString firstname = QContactName::FieldFirst;
-    QString lastname = QContactName::FieldLast;
+    QString firstname = QContactName::FieldFirstName;
+    QString lastname = QContactName::FieldLastName;
 
     QString phonedef = QContactPhoneNumber::DefinitionName;
     QString phonenum = QContactPhoneNumber::FieldNumber;
@@ -1730,6 +1749,11 @@ void tst_QContactManagerFiltering::relationshipFiltering_data()
         QTest::newRow("RF-17") << manager << static_cast<int>(QContactRelationshipFilter::First) << QString(QLatin1String(QContactRelationship::HasSpouse)) << static_cast<unsigned int>(0) << QString() << "b";
         QTest::newRow("RF-18") << manager << static_cast<int>(QContactRelationshipFilter::Either) << QString(QLatin1String(QContactRelationship::HasSpouse)) << static_cast<unsigned int>(0) << QString() << "ab";
 
+        // Unknown relationship
+        QTest::newRow("RF-19") << manager << static_cast<int>(QContactRelationshipFilter::Second) << QString(QLatin1String("UnknownRelationship")) << static_cast<unsigned int>(0) << QString() << "";
+        QTest::newRow("RF-20") << manager << static_cast<int>(QContactRelationshipFilter::First) << QString(QLatin1String("UnknownRelationship")) << static_cast<unsigned int>(0) << QString() << "";
+        QTest::newRow("RF-21") << manager << static_cast<int>(QContactRelationshipFilter::Either) << QString(QLatin1String("UnknownRelationship")) << static_cast<unsigned int>(0) << QString() << "";
+
         // match any contact that is the related contact in a relationship with contact-A
         //QTest::newRow("RF-19") << manager << static_cast<int>(QContactRelationshipFilter::Second) << QString() << static_cast<unsigned int>(contactAId.value(manager).localId()) << contactAId.value(manager).managerUri() << "h";
         // match any contact has contact-A as the related contact
@@ -1788,10 +1812,12 @@ void tst_QContactManagerFiltering::relationshipFiltering()
     h2i.setFirst(firstId);
     h2i.setSecond(secondId);
     h2i.setRelationshipType(relationshipType);
-
     // save and check error code
-    if(cm->hasFeature(QContactManager::Relationships)
-        && cm->supportedRelationshipTypes().contains(relationshipType)) {
+    bool succeeded = false;
+    if((cm->hasFeature(QContactManager::Relationships)
+        && cm->supportedRelationshipTypes().contains(relationshipType))
+        || cm->hasFeature(QContactManager::ArbitraryRelationshipTypes)) {
+        succeeded = true;
         QVERIFY(cm->saveRelationship(&h2i));
         QCOMPARE(cm->error(), QContactManager::NoError);
     } else {
@@ -1817,8 +1843,7 @@ void tst_QContactManagerFiltering::relationshipFiltering()
     QString output = convertIds(contacts, ids);
 
     // 5. Remove the created relationship and contacts
-    if(cm->hasFeature(QContactManager::Relationships)
-        && cm->supportedRelationshipTypes().contains(relationshipType)) {
+    if(succeeded) {
         // Check that an existing relationship can be removed
         QVERIFY(cm->removeRelationship(h2i));
         QCOMPARE(cm->error(), QContactManager::NoError);
@@ -1853,8 +1878,8 @@ void tst_QContactManagerFiltering::sorting_data()
     QTest::addColumn<int>("blankpolicyi");
     QTest::addColumn<QString>("expected");
 
-    QString firstname = QContactName::FieldFirst;
-    QString lastname = QContactName::FieldLast;
+    QString firstname = QContactName::FieldFirstName;
+    QString lastname = QContactName::FieldLastName;
     QString namedef = QContactName::DefinitionName;
     QString urldef = QContactUrl::DefinitionName;
     QString urlfield = QContactUrl::FieldUrl;
@@ -1912,7 +1937,7 @@ void tst_QContactManagerFiltering::sorting()
     // so we need to handle the case where e, f & g come back in any order [with first name]
 
     // so we just make sure that e,f,g appear once in the output, and remove f,g from both strings
-    if (defname == QContactName::DefinitionName && fieldname == QContactName::FieldFirst) {
+    if (defname == QContactName::DefinitionName && fieldname == QContactName::FieldFirstName) {
         QVERIFY(output.count('e') == 1);
         QVERIFY(output.count('f') == 1);
         QVERIFY(output.count('g') == 1);
@@ -1932,7 +1957,7 @@ void tst_QContactManagerFiltering::sorting()
 
     output = convertIds(contacts, ids);
 
-    if (defname == QContactName::DefinitionName && fieldname == QContactName::FieldFirst) {
+    if (defname == QContactName::DefinitionName && fieldname == QContactName::FieldFirstName) {
         QVERIFY(output.count('e') == 1);
         QVERIFY(output.count('f') == 1);
         QVERIFY(output.count('g') == 1);
@@ -1963,8 +1988,8 @@ void tst_QContactManagerFiltering::multiSorting_data()
 
     QString es;
 
-    QString firstname = QContactName::FieldFirst;
-    QString lastname = QContactName::FieldLast;
+    QString firstname = QContactName::FieldFirstName;
+    QString lastname = QContactName::FieldLastName;
     QString namedef = QContactName::DefinitionName;
     QString phonedef = QContactPhoneNumber::DefinitionName;
     QString numberfield = QContactPhoneNumber::FieldNumber;
@@ -2718,6 +2743,7 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
     name = QContactName();
     name.setFirstName("Bob");
     name.setLastName("Aaronsen");
+    nick.setNickname("Sir Bob");
     number.setNumber("555-3456");
     string.setValue(definitionDetails.value("String").second, "Bob Aaronsen");
     integer.setValue(definitionDetails.value("Integer").second, 20);
@@ -2730,6 +2756,7 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
     charr.setValue(definitionDetails.value("Char").second, QVariant(QChar('b')));
 
     b.saveDetail(&name);
+    b.saveDetail(&nick);
     b.saveDetail(&number);
     if (!definitionDetails.value("String").first.isEmpty() && !definitionDetails.value("String").second.isEmpty())
         b.saveDetail(&string);
@@ -2935,12 +2962,12 @@ void tst_QContactManagerFiltering::dumpContactDifferences(const QContact& ca, co
     bDetails = b.details();
     foreach(QContactDetail d, aDetails) {
         if (d.definitionName() != QContactDisplayLabel::DefinitionName)
-            qDebug() << "A contact had extra detail:" << d.definitionName() << d.values();
+            qDebug() << "A contact had extra detail:" << d.definitionName() << d.variantValues();
     }
     // and same for B
     foreach(QContactDetail d, bDetails) {
         if (d.definitionName() != QContactDisplayLabel::DefinitionName)
-            qDebug() << "B contact had extra detail:" << d.definitionName() << d.values();
+            qDebug() << "B contact had extra detail:" << d.definitionName() << d.variantValues();
     }
 
     QCOMPARE(b, a);
@@ -2993,7 +3020,7 @@ void tst_QContactManagerFiltering::dumpContact(const QContact& contact)
     QList<QContactDetail> details = contact.details();
     foreach(QContactDetail d, details) {
         qDebug() << "  " << d.definitionName() << ":";
-        qDebug() << "    Vals:" << d.values();
+        qDebug() << "    Vals:" << d.variantValues();
     }
 }
 
@@ -3040,7 +3067,7 @@ public:
         Q_UNUSED(contact);
         Q_UNUSED(detail);
         // Well, do something
-        emit progress(QContactAction::Finished, QVariantMap());
+        emit progress(QContactAction::FinishedState, QVariantMap());
     }
 
     QVariantMap result() const
@@ -3080,7 +3107,7 @@ public:
         Q_UNUSED(contact);
         Q_UNUSED(detail);
         // Well, do something
-        emit progress(QContactAction::Finished, QVariantMap());
+        emit progress(QContactAction::FinishedState, QVariantMap());
     }
 
     QVariantMap result() const
@@ -3121,7 +3148,7 @@ public:
         Q_UNUSED(contact);
         Q_UNUSED(detail);
         // Well, do something
-        emit progress(QContactAction::Finished, QVariantMap());
+        emit progress(QContactAction::FinishedState, QVariantMap());
     }
 
     QVariantMap result() const
@@ -3177,7 +3204,7 @@ public:
         Q_UNUSED(contact);
         Q_UNUSED(detail);
         // Well, do something
-        emit progress(QContactAction::Finished, QVariantMap());
+        emit progress(QContactAction::FinishedState, QVariantMap());
     }
 
     QVariantMap result() const
@@ -3222,7 +3249,7 @@ public:
         Q_UNUSED(contact);
         Q_UNUSED(detail);
         // Well, do something
-        emit progress(QContactAction::Finished, QVariantMap());
+        emit progress(QContactAction::FinishedState, QVariantMap());
     }
 
     QVariantMap result() const
@@ -3258,7 +3285,7 @@ public:
     }
     void invokeAction(const QContact&, const QContactDetail&)
     {
-        emit progress(QContactAction::Finished, QVariantMap());
+        emit progress(QContactAction::FinishedState, QVariantMap());
     }
 
     QVariantMap result() const

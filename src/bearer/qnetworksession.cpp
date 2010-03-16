@@ -294,6 +294,8 @@ bool QNetworkSession::waitForOpened(int msecs)
     QEventLoop* loop = new QEventLoop(this);
     QObject::connect(d, SIGNAL(quitPendingWaitsForOpened()),
                      loop, SLOT(quit()));
+    QObject::connect(this, SIGNAL(error(QNetworkSession::SessionError)),
+                     loop, SLOT(quit()));
 
     //final call
     if (msecs>=0)

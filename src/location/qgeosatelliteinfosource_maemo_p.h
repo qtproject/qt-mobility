@@ -46,18 +46,6 @@
 #include "qgeosatelliteinfo.h"
 #include "dbuscomm_maemo_p.h"
 
-#ifdef Q_WS_MAEMO_5
-#include "qgeocoordinate.h"
-
-extern "C" {
-   #include <glib.h>
-   #include <location/location-gpsd-control.h>
-   #include <location/location-gps-device.h>
-   #include <location/location-misc.h>
-   #include <location/location-distance-utils.h>
-}
-#endif
-
 QTM_BEGIN_NAMESPACE
 
 class QGeoSatelliteInfoSourceMaemo : public QGeoSatelliteInfoSource
@@ -65,30 +53,13 @@ class QGeoSatelliteInfoSourceMaemo : public QGeoSatelliteInfoSource
     Q_OBJECT
 public:
     explicit QGeoSatelliteInfoSourceMaemo(QObject *parent = 0);
-#ifdef Q_WS_MAEMO_5
-    ~QGeoSatelliteInfoSourceMaemo();
-#endif    
     int init();
 
 private:
     DBusComm* dbusComm;
     int client_id_;
     void dbusMessages(const QByteArray &msg);
-#ifdef Q_WS_MAEMO_5
-    LocationGPSDControl *satelliteControl;
-    LocationGPSDevice *satelliteDevice;
-    static void satelliteError(LocationGPSDevice *device, gint code, gpointer data);
-    static void infoChanged(LocationGPSDevice *device, gpointer data);
-    bool satInfoStopped;
-    int errorHandlerId;
-    int signalHandlerId;
 
-private Q_SLOTS:
-    void satellitesInView(const QList<QGeoSatelliteInfo> &satellites);
-    void satellitesInUse(const QList<QGeoSatelliteInfo> &satellites);    
-#endif
-
-    
 public slots:
     virtual void startUpdates();
     void stopUpdates();

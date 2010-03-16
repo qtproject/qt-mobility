@@ -282,7 +282,7 @@ bool ServiceDatabase::registerService(const ServiceMetaDataResults &service, con
     if(!executeQuery(&query, statement, bindValues)) {
         rollbackTransaction(&query);
 #ifdef QT_SFW_SERVICEDATABASE_DEBUG
-        qWarning() << "ServiceDatabase::unregisterService():-"
+        qWarning() << "ServiceDatabase::registerService():-"
                     << qPrintable(m_lastError.text());
 #endif
         return false;
@@ -298,8 +298,8 @@ bool ServiceDatabase::registerService(const ServiceMetaDataResults &service, con
              m_lastError.setError(DBError::NoWritePermissions, errorText.arg(service.name));
              rollbackTransaction(&query);
      #ifdef QT_SFW_SERVICEDATABASE_DEBUG
-             qWarning() << "ServiceDatabase::unregisterService():-"
-                         << "Problem: Unable to unregister service"
+             qWarning() << "ServiceDatabase::registerService():-"
+                         << "Problem: Unable to register service"
                          << "\nReason:" << qPrintable(m_lastError.text());
      #endif    
              return false;
@@ -1419,7 +1419,7 @@ bool ServiceDatabase::unregisterService(const QString &serviceName, const QStrin
         securityTokens << query.value(EBindIndex).toString();
     }
     
-    if (securityTokens.first() != securityToken) {
+    if (!securityTokens.isEmpty() && (securityTokens.first() != securityToken)) {
         QString errorText("Access denied: \"%1\"");
              m_lastError.setError(DBError::NoWritePermissions, errorText.arg(serviceName));
              rollbackTransaction(&query);
@@ -1885,7 +1885,7 @@ bool ServiceDatabase::dropTables()
         }
         QStringList actualTables = database.tables();
 
-        foreach(QString expectedTable, expectedTables) {
+        foreach(const QString expectedTable, expectedTables) {
             if ((actualTables.contains(expectedTable))
                 && (!executeQuery(&query, QString("DROP TABLE ") + expectedTable))) {
                 rollbackTransaction(&query);

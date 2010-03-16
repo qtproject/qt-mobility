@@ -63,17 +63,14 @@ public:
         UnspecifiedError,
         IOError,
         OutOfMemoryError,
-        NotReadyError,
-        ParseError,
-        InvalidCharsetError,
-        BadDeviceError
+        NotReadyError
     };
 
     enum State {
-        InactiveState = 0,   // operation not yet started
-        ActiveState,         // operation started, not yet finished
-        CanceledState,       // operation is finished due to cancelation
-        FinishedState        // operation successfully completed
+        InactiveState = 0,
+        ActiveState,
+        CanceledState,
+        FinishedState
     };
 
     QVersitWriter();
@@ -94,13 +91,7 @@ public:
     State state() const;
     Error error() const;
 
-    // Deprecated
-    void Q_DECL_DEPRECATED setVersitDocument(const QVersitDocument& versitDocument);
-    QVersitDocument Q_DECL_DEPRECATED versitDocument() const;
-    bool Q_DECL_DEPRECATED startWriting();
-    bool Q_DECL_DEPRECATED writeAll();
-
-signals:
+Q_SIGNALS:
     void stateChanged(QVersitWriter::State state);
 
 private: // data

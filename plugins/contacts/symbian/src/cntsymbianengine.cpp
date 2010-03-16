@@ -84,7 +84,11 @@ CntSymbianEngine::CntSymbianEngine(const QMap<QString, QString>& parameters, QCo
     if(error == QContactManager::NoError) {
         m_managerUri = QContactManager::buildUri(CNT_SYMBIAN_MANAGER_NAME, parameters);
         m_transformContact = new CntTransformContact;
+#ifdef SYMBIAN_BACKEND_USE_SQLITE
+        m_contactFilter    = new CntSymbianFilter(*this, *m_dataBase->contactDatabase(), *m_transformContact);
+#else
         m_contactFilter    = new CntSymbianFilter(*m_dataBase->contactDatabase());
+#endif
         m_contactSorter    = new CntSymbianSorterDbms(*m_dataBase->contactDatabase(), *m_transformContact);
         m_relationship     = new CntRelationship(m_dataBase->contactDatabase(), m_managerUri);
         m_displayLabel     = new CntDisplayLabel();
@@ -138,7 +142,7 @@ QList<QContactLocalId> CntSymbianEngine::contactIds(
         QList<QContactRelationship> relationshipsList = relationships(
             rf.relationshipType(), rf.relatedContactId(), rf.relatedContactRole(), error);
         if(error == QContactManager::NoError) {
-            foreach(QContactRelationship r, relationshipsList) {
+            foreach(const QContactRelationship& r, relationshipsList) {
                 if(rf.relatedContactRole() == QContactRelationshipFilter::First) {
                     result += r.second().localId();
                 } else if (rf.relatedContactRole() == QContactRelationshipFilter::Second) {
@@ -148,6 +152,9 @@ QList<QContactLocalId> CntSymbianEngine::contactIds(
                     result += r.second().localId();
                 }
             }
+            
+            //slow sorting until it's supported in SQL requests
+            result = slowSort(result, sortOrders, error);
         }
     }
     else
@@ -160,6 +167,9 @@ QList<QContactLocalId> CntSymbianEngine::contactIds(
         // Remove possible false positives
         if(!filterSupported && error == QContactManager::NotSupportedError)
             result = slowFilter(filter, result, error);
+        
+        //slow sorting until it's supported in SQL requests
+        result = slowSort(result, sortOrders, error);
 
 #else
         // Remove possible false positives
@@ -242,20 +252,23 @@ QList<QContact> CntSymbianEngine::contacts(const QContactFilter& filter, const Q
  */
 QContact CntSymbianEngine::contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const
 {
-    // TODO: implementation for definitionRestrictions!
-    Q_UNUSED(definitionRestrictions);
     QContact* contact = new QContact();
-    TRAPD(err, *contact = fetchContactL(contactId));
+    TRAPD(err, *contact = fetchContactL(contactId, definitionRestrictions));
     CntSymbianTransformError::transformError(err, error);
-    if(error == QContactManager::NoError) {
+
+    if(error == QContactManager::NoError) { 
         updateDisplayLabel(*contact);
-        QContactManager::Error relationshipError;
-        QList<QContactRelationship> relationships = this->relationships(QString(), contact->id(), QContactRelationshipFilter::Either, relationshipError);
-        if (relationshipError != QContactManager::NoError &&
-            relationshipError != QContactManager::DoesNotExistError) { // means that no relationships found
-            error = relationshipError;
+        //check relationship only if there are no definition restrictions, otherwise
+        //skip this time expensive operation.       
+        if( definitionRestrictions.isEmpty()) {
+            QContactManager::Error relationshipError;
+            QList<QContactRelationship> relationships = this->relationships(QString(), contact->id(), QContactRelationshipFilter::Either, relationshipError);
+            if (relationshipError != QContactManager::NoError &&
+                relationshipError != QContactManager::DoesNotExistError) { // means that no relationships found
+                error = relationshipError;
+            }
+            QContactManagerEngine::setContactRelationships(contact, relationships);
         }
-        QContactManagerEngine::setContactRelationships(contact, relationships);
     }
     return *QScopedPointer<QContact>(contact);
 }
@@ -389,7 +402,7 @@ bool CntSymbianEngine::doSaveContact(QContact* contact, QContactChangeSet& chang
 /*!
  * Private leaving implementation for contact()
  */
-QContact CntSymbianEngine::fetchContactL(const QContactLocalId &localId) const
+QContact CntSymbianEngine::fetchContactL(const QContactLocalId &localId, const QStringList& definitionRestrictions) const
 {
     // A contact with a zero id is not expected to exist.
     // Symbian contact database uses id 0 internally as the id of the
@@ -402,7 +415,7 @@ QContact CntSymbianEngine::fetchContactL(const QContactLocalId &localId) const
     CleanupStack::PushL(contactItem);
 
     // Convert to a QContact
-    QContact contact = m_transformContact->transformContactL(*contactItem);
+    QContact contact = m_transformContact->transformContactL(*contactItem, definitionRestrictions);
 
     // Transform details that are not available until the contact has been saved
     m_transformContact->transformPostSaveDetailsL(*contactItem, contact, *m_dataBase->contactDatabase(), m_managerUri);

@@ -101,13 +101,12 @@ public:
     void setPreferredActions(const QList<QContactActionDescriptor>& preferredActions);
     QList<QContactActionDescriptor> preferredActions() const;
 
-    QVariantMap values() const; // deprecated
     QString value(const QString& key) const;
     bool setValue(const QString& key, const QVariant& value);
     bool removeValue(const QString& key);
     bool hasValue(const QString& key) const;
 
-    QVariantMap variantValues() const; // replaces deprecated values() fn.
+    QVariantMap variantValues() const;
     QVariant variantValue(const QString& key) const;
     template <typename T> T value(const QString& key) const
     {

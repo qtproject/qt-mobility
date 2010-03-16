@@ -28,7 +28,9 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual qreal </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#aperture">aperture</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual qreal </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#exposureCompensation">exposureCompensation</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QCamera::ExposureMode </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#exposureMode">exposureMode</a></b> () const = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QCamera::FlashMode </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#flashMode">flashMode</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual qreal </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#flashCompensation">flashCompensation</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QCamera::FlashModes </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#flashMode">flashMode</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual qreal </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#flashPower">flashPower</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#isExposureLocked">isExposureLocked</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#isFlashReady">isFlashReady</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#isoSensitivity">isoSensitivity</a></b> () const = 0</td></tr>
@@ -38,7 +40,9 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#setAutoShutterSpeed">setAutoShutterSpeed</a></b> () = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#setExposureCompensation">setExposureCompensation</a></b> ( qreal <i>ev</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#setExposureMode">setExposureMode</a></b> ( QCamera::ExposureMode <i>mode</i> ) = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#setFlashMode">setFlashMode</a></b> ( QCamera::FlashMode <i>mode</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#setFlashCompensation">setFlashCompensation</a></b> ( qreal <i>ev</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#setFlashMode">setFlashMode</a></b> ( QCamera::FlashModes <i>mode</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#setFlashPower">setFlashPower</a></b> ( qreal <i>power</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#setManualAperture">setManualAperture</a></b> ( qreal <i>aperture</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#setManualIsoSensitivity">setManualIsoSensitivity</a></b> ( int <i>iso</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qcameraexposurecontrol.html#setManualShutterSpeed">setManualShutterSpeed</a></b> ( qreal <i>seconds</i> ) = 0</td></tr>
@@ -136,10 +140,17 @@
 <h3 class="fn"><a name="exposureMode"></a><a href="qcamera.html#ExposureMode-enum">QCamera::ExposureMode</a> QCameraExposureControl::exposureMode () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the exposure mode.</p>
 <p>See also <a href="qcameraexposurecontrol.html#setExposureMode">setExposureMode</a>().</p>
+<a name="//apple_ref/cpp/instm/QCameraExposureControl/flashCompensation"></a>
+<h3 class="fn"><a name="flashCompensation"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> QCameraExposureControl::flashCompensation () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>See also <a href="qcameraexposurecontrol.html#setFlashCompensation">setFlashCompensation</a>().</p>
 <a name="//apple_ref/cpp/instm/QCameraExposureControl/flashMode"></a>
-<h3 class="fn"><a name="flashMode"></a><a href="qcamera.html#FlashMode-enum">QCamera::FlashMode</a> QCameraExposureControl::flashMode () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="flashMode"></a><a href="qcamera.html#FlashMode-enum">QCamera::FlashModes</a> QCameraExposureControl::flashMode () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the current flash mode.</p>
 <p>See also <a href="qcameraexposurecontrol.html#setFlashMode">setFlashMode</a>().</p>
+<a name="//apple_ref/cpp/instm/QCameraExposureControl/flashPower"></a>
+<h3 class="fn"><a name="flashPower"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> QCameraExposureControl::flashPower () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Returns the flash power in <a href="qcamera.html#FlashMode-enum">manual flash mode</a>.</p>
+<p>See also <a href="qcameraexposurecontrol.html#setFlashPower">setFlashPower</a>().</p>
 <a name="//apple_ref/cpp/instm/QCameraExposureControl/flashReady"></a>
 <h3 class="fn"><a name="flashReady"></a>void QCameraExposureControl::flashReady ( bool <i>ready</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal emitted when flash state changes, flash is charged <i>ready</i>.</p>
@@ -173,16 +184,27 @@
 <p>Turn on auto shutter speed</p>
 <a name="//apple_ref/cpp/instm/QCameraExposureControl/setExposureCompensation"></a>
 <h3 class="fn"><a name="setExposureCompensation"></a>void QCameraExposureControl::setExposureCompensation ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>ev</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Set the exposure compensation to <i>ev</i></p>
+<p>Sets the exposure compensation to <i>ev</i></p>
 <p>See also <a href="qcameraexposurecontrol.html#exposureCompensation">exposureCompensation</a>().</p>
 <a name="//apple_ref/cpp/instm/QCameraExposureControl/setExposureMode"></a>
 <h3 class="fn"><a name="setExposureMode"></a>void QCameraExposureControl::setExposureMode ( <a href="qcamera.html#ExposureMode-enum">QCamera::ExposureMode</a> <i>mode</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Set the exposure mode to <i>mode</i>.</p>
 <p>See also <a href="qcameraexposurecontrol.html#exposureMode">exposureMode</a>().</p>
+<a name="//apple_ref/cpp/instm/QCameraExposureControl/setFlashCompensation"></a>
+<h3 class="fn"><a name="setFlashCompensation"></a>void QCameraExposureControl::setFlashCompensation ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>ev</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Sets the flash exposure compensation to <i>ev</i></p>
+<p>See also <a href="qcameraexposurecontrol.html#flashCompensation">flashCompensation</a>().</p>
 <a name="//apple_ref/cpp/instm/QCameraExposureControl/setFlashMode"></a>
-<h3 class="fn"><a name="setFlashMode"></a>void QCameraExposureControl::setFlashMode ( <a href="qcamera.html#FlashMode-enum">QCamera::FlashMode</a> <i>mode</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="setFlashMode"></a>void QCameraExposureControl::setFlashMode ( <a href="qcamera.html#FlashMode-enum">QCamera::FlashModes</a> <i>mode</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Set the current flash <i>mode</i>.</p>
+<p>Usually the single <a href="qcamera.html#FlashMode-enum">QCamera::FlashMode</a> flag is used, but some non conflicting flags combination are also allowed, like <a href="qcamera.html#FlashMode-enum">QCamera::FlashManual</a> | <a href="qcamera.html#FlashMode-enum">QCamera::FlashSlowSyncRearCurtain</a>.</p>
 <p>See also <a href="qcameraexposurecontrol.html#flashMode">flashMode</a>().</p>
+<a name="//apple_ref/cpp/instm/QCameraExposureControl/setFlashPower"></a>
+<h3 class="fn"><a name="setFlashPower"></a>void QCameraExposureControl::setFlashPower ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>power</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Sets the flash <i>power</i>.</p>
+<p>Accepted power range is [0..1&#x2e;0], with 0 value means no flash and 1.0 corresponds to full flash power.</p>
+<p>This value is only used in the <a href="qcamera.html#FlashMode-enum">manual flash mode</a>.</p>
+<p>See also <a href="qcameraexposurecontrol.html#flashPower">flashPower</a>().</p>
 <a name="//apple_ref/cpp/instm/QCameraExposureControl/setManualAperture"></a>
 <h3 class="fn"><a name="setManualAperture"></a>void QCameraExposureControl::setManualAperture ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>aperture</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Set the aperture to <i>aperture</i></p>

@@ -59,11 +59,16 @@
 
     #include &lt;QWidget&gt;
     #include &lt;qsysteminfo.h&gt;
+
+    #ifdef QTM_EXAMPLES_PREFER_LANDSCAPE
+    #include &quot;ui_dialog_landscape.h&quot;
+    #else <span class="comment">//QTM_EXAMPLES_PREFER_LANDSCAPE</span>
     #ifdef Q_OS_SYMBIAN
     #include &quot;ui_dialog_s60.h&quot;
-    #else
+    #else <span class="comment">//Q_OS_SYMBIAN</span>
     #include &quot;ui_dialog.h&quot;
-    #endif
+    #endif <span class="comment">//Q_OS_SYMBIAN</span>
+    #endif <span class="comment">//QTM_EXAMPLES_PREFER_LANDSCAPE</span>
     QTM_USE_NAMESPACE
 
     class Dialog : public QWidget, public Ui_Dialog

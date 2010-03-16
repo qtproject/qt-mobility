@@ -139,6 +139,7 @@ public:
     void setSurface(QAbstractVideoSurface* surface);
 
     void captureImage(const QString &fileName);
+    void cancelCapture();
 
     AM_MEDIA_TYPE StillMediaType;
     QList<video_buffer*> frames;

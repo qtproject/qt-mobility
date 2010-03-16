@@ -43,6 +43,7 @@
 #include "versitutils_p.h"
 #include "qmobilityglobal.h"
 #include <QTextCodec>
+#include <QBuffer>
 
 QTM_USE_NAMESPACE
 
@@ -51,9 +52,9 @@ QVCard30Writer::QVCard30Writer()
     : QVersitDocumentWriter(QByteArray("VCARD"),QByteArray("3.0"))
 {
     mPropertyNameMappings.insert(
-        QString::fromAscii("X-NICKNAME"),QString::fromAscii("NICKNAME"));
+        QLatin1String("X-NICKNAME"),QLatin1String("NICKNAME"));
     mPropertyNameMappings.insert(
-        QString::fromAscii("X-IMPP"),QString::fromAscii("IMPP"));
+        QLatin1String("X-IMPP"),QLatin1String("IMPP"));
 }
 
 /*! Destroys a writer. */
@@ -62,64 +63,63 @@ QVCard30Writer::~QVCard30Writer()
 }
 
 /*!
- * Encodes the \a property to text. 
+ * Encodes the \a property and writes it to the device.
  */
-QByteArray QVCard30Writer::encodeVersitProperty(const QVersitProperty& property, QTextCodec* codec)
+void QVCard30Writer::encodeVersitProperty(const QVersitProperty& property)
 {
     QVersitProperty modifiedProperty(property);
     QString name = mPropertyNameMappings.value(property.name(),property.name());
     modifiedProperty.setName(name);
-    QByteArray encodedProperty(encodeGroupsAndName(modifiedProperty, codec));
+    encodeGroupsAndName(modifiedProperty);
 
     QVariant variant(modifiedProperty.variantValue());
     if (variant.type() == QVariant::ByteArray) {
         modifiedProperty.insertParameter(QLatin1String("ENCODING"), QLatin1String("b"));
     }
-    encodedProperty.append(encodeParameters(modifiedProperty.parameters(), codec));
-    encodedProperty.append(codec->fromUnicode(QLatin1String(":")));
+    encodeParameters(modifiedProperty.parameters());
+    writeString(QLatin1String(":"));
 
-    QByteArray value;
+    QString value;
     if (variant.canConvert<QVersitDocument>()) {
         QVersitDocument embeddedDocument = variant.value<QVersitDocument>();
-        value = encodeVersitDocument(embeddedDocument, codec);
-        QString escapedValue(QString::fromAscii(value));
-        VersitUtils::backSlashEscape(escapedValue);
-        value = codec->fromUnicode(escapedValue);
+        QByteArray data;
+        QBuffer buffer(&data);
+        buffer.open(QIODevice::WriteOnly);
+        QVCard30Writer subWriter;
+        subWriter.setCodec(mCodec);
+        subWriter.setDevice(&buffer);
+        subWriter.encodeVersitDocument(embeddedDocument);
+        QString documentString(mCodec->toUnicode(data));
+        VersitUtils::backSlashEscape(documentString);
+        value = documentString;
     } else if (variant.type() == QVariant::String) {
-        value = codec->fromUnicode(variant.toString());
+        value = variant.toString();
     } else if (variant.type() == QVariant::ByteArray) {
-        value = codec->fromUnicode(QLatin1String(variant.toByteArray().toBase64().data()));
+        value = QLatin1String(variant.toByteArray().toBase64().data());
     }
-    encodedProperty.append(value);
-    encodedProperty.append(codec->fromUnicode(QLatin1String("\r\n")));
-
-    return encodedProperty;
+    writeString(value);
+    writeCrlf();
 }
 
 /*!
- * Encodes the \a parameters to text.
+ * Encodes the \a parameters and writes it to the device.
  */
-QByteArray QVCard30Writer::encodeParameters(
-    const QMultiHash<QString,QString>& parameters,
-    QTextCodec* codec) const
+void QVCard30Writer::encodeParameters(const QMultiHash<QString,QString>& parameters)
 {
-    QByteArray encodedParameters;
     QList<QString> names = parameters.uniqueKeys();
     foreach (QString nameString, names) {
-        encodedParameters.append(codec->fromUnicode(QLatin1String(";")));
+        writeString(QLatin1String(";"));
         QStringList values = parameters.values(nameString);
         VersitUtils::backSlashEscape(nameString);
-        encodedParameters.append(codec->fromUnicode(nameString));
-        encodedParameters.append(codec->fromUnicode(QLatin1String("=")));
+        writeString(nameString);
+        writeString(QLatin1String("="));
         for (int i=0; i<values.size(); i++) {
             if (i > 0)
-                encodedParameters.append(codec->fromUnicode(QLatin1String(",")));
+                writeString(QLatin1String(","));
             QString value = values.at(i);
 
             VersitUtils::backSlashEscape(value);
-            encodedParameters.append(codec->fromUnicode(value));
+            writeString(value);
         }
     }
-
-    return encodedParameters;
 }

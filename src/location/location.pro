@@ -61,7 +61,7 @@ wince* {
     LIBS += -lgpsapi
 }
 
-maemo* {
+maemo6 {
     CONFIG += qdbus link_pkgconfig
     SOURCES += qgeopositioninfosource_maemo.cpp \
                 qgeosatelliteinfosource_maemo.cpp \
@@ -74,8 +74,17 @@ maemo* {
 }
 
 maemo5 {
-    SOURCES += gconfitem.cpp
-    HEADERS += gconfitem.h
+    CONFIG += qdbus link_pkgconfig
+    SOURCES += gconfitem.cpp \
+               liblocationwrapper.cpp \
+               qgeopositioninfosource_maemo5.cpp \
+               qgeosatelliteinfosource_maemo5.cpp \
+               qgeoareamonitor_maemo.cpp
+    HEADERS += gconfitem.h  \
+               liblocationwrapper_p.h \
+               qgeopositioninfosource_maemo5_p.h \
+               qgeosatelliteinfosource_maemo5_p.h \
+               qgeoareamonitor_maemo_p.h
     PKGCONFIG += glib-2.0  gconf-2.0
     CONFIG += create_pc create_prl
     LIBS += -llocation

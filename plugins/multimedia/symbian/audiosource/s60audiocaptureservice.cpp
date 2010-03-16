@@ -48,23 +48,19 @@
 
 S60AudioCaptureService::S60AudioCaptureService(QObject *parent):
     QMediaService(parent)
-{
+{    
     m_session = new S60AudioCaptureSession(this);
-    m_encoderControl  = new S60AudioEncoderControl(m_session);
-    m_mediaControl   = new S60AudioMediaRecorderControl(m_session);
-    m_endpointSelector  = new S60AudioEndpointSelector(m_session);
+    m_encoderControl = new S60AudioEncoderControl(m_session,this);
+    m_mediaControl = new S60AudioMediaRecorderControl(m_session,this);
+    m_endpointSelector = new S60AudioEndpointSelector(m_session,this); 
 }
 
 S60AudioCaptureService::~S60AudioCaptureService()
 {
-    delete m_encoderControl;
-    delete m_endpointSelector;
-    delete m_mediaControl;
-    delete m_session;
 }
 
 QMediaControl *S60AudioCaptureService::control(const char *name) const
-{
+{    
     if (qstrcmp(name,QMediaRecorderControl_iid) == 0)
         return m_mediaControl;
 

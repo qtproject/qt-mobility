@@ -78,7 +78,6 @@ signals:
 public:
     QVersitWriterPrivate();
     virtual ~QVersitWriterPrivate();
-    bool isReady() const;
     void write();
 
     // mutexed getters and setters.

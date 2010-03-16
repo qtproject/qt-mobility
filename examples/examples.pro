@@ -5,13 +5,15 @@ TEMPLATE = subdirs
 #ServiceFramework examples
 contains(mobility_modules,serviceframework) {
     SUBDIRS += filemanagerplugin \
-            bluetoothtransferplugin \
-            notesmanagerplugin \
-            servicebrowser
-#            todotool
+               bluetoothtransferplugin \
+               notesmanagerplugin \
+               servicebrowser
+
+    !symbian:SUBDIRS+= servicenotesmanager/sfw-notes
     
     contains(QT_CONFIG, declarative) {
-        SUBDIRS += declarative
+        SUBDIRS += servicenotesmanager/declarative-sfw-notes \
+                   declarative-sfw-dialer
     }
 }
 
@@ -31,18 +33,15 @@ contains(mobility_modules,location) {
         contains(QT_CONFIG, webkit) {
             SUBDIRS += fetchgooglemaps
         }
-        contains(mobility_modules,contacts) {
-            contains(mobility_modules,messaging) {
-                SUBDIRS += qwhowhere
-            }
-        }
     }		
 }
 
 #Contacts examples
 contains(mobility_modules,contacts) {
-    SUBDIRS += samplephonebook \
-            incomingcalls
+    SUBDIRS += samplephonebook
+    contains(mobility_modules,versit):contains(QT_CONFIG, declarative) {
+        SUBDIRS += qmlcontacts
+    }
 }
 
 #Publish and Subscribe examples
@@ -66,28 +65,24 @@ contains(mobility_modules,multimedia) {
         player \
         cameracapture \
         slideshow \
-        streamplayer \
         audiorecorder
 
-    contains (QT_CONFIG, declarative) {
-        SUBDIRS += \
-            declarativemusic \
-            declarativevideo
-    }
 }
 
 
 #Messaging examples
-contains(mobility_modules,messaging) {
-    !win32-g++ {
-        SUBDIRS += \
-            querymessages \
-            writemessage \
-            serviceactions
+contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5 {
+    contains(mobility_modules,messaging) {
+        !win32-g++ {
+	    SUBDIRS += \
+                querymessages \
+                writemessage \
+                serviceactions
 
-        contains(mobility_modules,contacts) {
-            SUBDIRS += keepintouch
-        }
+                contains(mobility_modules,contacts) {
+                    SUBDIRS += keepintouch
+                }
+         }
     }
 }
 

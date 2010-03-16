@@ -54,10 +54,9 @@ typedef CMdaAudioPlayerUtility CAudioPlayer;
 typedef MMdaAudioPlayerCallback MAudioPlayerObserver;
 #endif
 
-class S60AudioPlayerSession : public S60MediaPlayerSession, public CBase, public MAudioPlayerObserver
-#ifdef S60_DRM_SUPPORTED
-      , public MAudioLoadingObserver
-#endif
+class S60AudioPlayerSession : public S60MediaPlayerSession
+                            , public MAudioPlayerObserver
+                            , public MAudioLoadingObserver 
 {
     Q_OBJECT
 
@@ -68,6 +67,10 @@ public:
     //From S60MediaPlayerSession
     bool isVideoAvailable() const;
     bool isAudioAvailable() const;
+
+    // From MAudioLoadingObserver
+    void MaloLoadingStarted();
+    void MaloLoadingComplete();
     
 protected:
     //From S60MediaPlayerSession
@@ -80,8 +83,8 @@ protected:
     qint64 doGetPositionL() const;
     void doSetPositionL(qint64 microSeconds);
     void updateMetaDataEntriesL();
-    int doGetMediaLoadingProgressL() const { /*empty implementation*/ return 0; }
-    int doGetDurationL() const;
+    int doGetBufferStatusL() const;
+    qint64 doGetDurationL() const;
     
 private:
 #ifdef S60_DRM_SUPPORTED    
@@ -92,12 +95,6 @@ private:
     // From MDrmAudioPlayerCallback
     void MapcInitComplete(TInt aError, const TTimeIntervalMicroSeconds& aDuration);
     void MapcPlayComplete(TInt aError);
-#endif
-    
-#if defined(S60_DRM_SUPPORTED) &&  defined(__S60_50__) 
-    // From MAudioLoadingObserver
-    void MaloLoadingStarted() {};
-    void MaloLoadingComplete() {};
 #endif
     
 private:

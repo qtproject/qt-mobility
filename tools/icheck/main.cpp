@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
         QString interfaceHeaderFile = argv[1];
         QString checkHeaderFile = argv[2];
 
-        QString curpath = QDir::currentPath();
+        const QString curpath = QDir::currentPath();
         //Create FileInfos for the header files
         QFileInfo iFileInfo(interfaceHeaderFile);
         if (iFileInfo.isDir() || !iFileInfo.exists()){
@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
             else
                 err = "File does not exist: " + interfaceHeaderFile;
         }
-        if(err == ""){
+        if(err.isEmpty()){
             QFileInfo chFileInfo(checkHeaderFile);
             if (chFileInfo.isDir() || !chFileInfo.exists()){
                 if(chFileInfo.isDir())
@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
                 else
                     err = "File does not exist: " + checkHeaderFile;
             }
-            if(err == ""){
+            if(err.isEmpty()){
                 //Read other parameters
                 QString outputfile;
                 for(int i = 3; i < argc; i++)
@@ -110,10 +110,10 @@ int main(int argc, char *argv[])
                 //Create a list of all the soucre files they need to be parsed.
                 //In our case it is just the header file
                 QStringList chFilelist;
-                chFilelist << chFileInfo.filePath();
+                chFilelist << chFileInfo.absoluteFilePath();
 
                 QStringList iFilelist;
-                iFilelist << iFileInfo.filePath();
+                iFilelist << iFileInfo.absoluteFilePath();
 
                 ICheckLib i_ichecklib;
                 i_ichecklib.ParseHeader(iIncludepathlist, iFilelist);
@@ -134,7 +134,7 @@ int main(int argc, char *argv[])
             }
         }
 
-        if(err != "") //prit out error
+        if(!err.isEmpty()) //prit out error
         {
             cout << endl << "Error:" << endl;
             cout << (const char *)err.toLatin1();

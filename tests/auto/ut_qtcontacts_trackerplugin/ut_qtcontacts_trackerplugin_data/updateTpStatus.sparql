@@ -1,11 +1,11 @@
 #!/bin/bash
 
 if [ -z "$1" ]; then
-echo "usage: $0 <imaccount-uid> <imPresence>"
+echo "usage: $0 <IMAddress-uri> <imPresence>"
 exit 1
 fi
 tracker-sparql --update --query "
-DELETE { <contact:$1> nco:imContactPresence ?status }
-WHERE { <contact:$1> nco:imContactPresence ?status }
-INSERT { <contact:$1> nco:imContactPresence $2 }
+DELETE { <$1> nco:imPresence ?status }
+WHERE { <$1> nco:imPresence ?status }
+INSERT { <$1> nco:imPresence $2 }
 "

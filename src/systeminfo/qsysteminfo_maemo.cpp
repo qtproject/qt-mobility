@@ -67,6 +67,24 @@
 
 #include <QDBusInterface>
 
+#if !defined(QT_NO_DBUS)
+QDBusArgument &operator<<(QDBusArgument &argument, const ProfileDataValue &value)
+{
+  argument.beginStructure();
+  argument << value.key << value.val << value.type;
+  argument.endStructure();
+  return argument;
+}
+
+const QDBusArgument &operator>>(const QDBusArgument &argument, ProfileDataValue &value)
+{
+  argument.beginStructure();
+  argument >> value.key >> value.val >> value.type;
+  argument.endStructure();
+  return argument;
+}
+#endif
+
 QTM_BEGIN_NAMESPACE
 
 QSystemInfoPrivate::QSystemInfoPrivate(QSystemInfoLinuxCommonPrivate *parent)
@@ -83,9 +101,9 @@ QStringList QSystemInfoPrivate::availableLanguages() const
     QStringList languages;
 
     GConfItem languagesItem("/apps/osso/inputmethod/available_languages");
-    QStringList locales = languagesItem.value().toStringList();
+    const QStringList locales = languagesItem.value().toStringList();
 
-    foreach(QString locale, locales) {
+    foreach(const QString locale, locales) {
         languages << locale.mid(0,2);
     }
     languages << currentLanguage();
@@ -131,9 +149,9 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     case QSystemInfo::SimFeature :
         {
             GConfItem locationValues("/system/nokia/location");
-            QStringList locationKeys = locationValues.listEntries();
+            const QStringList locationKeys = locationValues.listEntries();
 
-            foreach (QString str, locationKeys) {
+            foreach (const QString str, locationKeys) {
                 if (str.contains("sim_imsi"))
                     featureSupported = true;
                 break;
@@ -143,7 +161,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     case QSystemInfo::LocationFeature :
         {
             GConfItem locationValues("/system/nokia/location");
-            QStringList locationKeys = locationValues.listEntries();
+            const QStringList locationKeys = locationValues.listEntries();
             if(locationKeys.count()) {
                 featureSupported = true;
             }
@@ -151,11 +169,11 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::VideoOutFeature :
         {
-            QString sysPath = "/sys/class/video4linux/";
-            QDir sysDir(sysPath);
+            const QString sysPath = "/sys/class/video4linux/";
+            const QDir sysDir(sysPath);
             QStringList filters;
             filters << "*";
-            QStringList sysList = sysDir.entryList( filters ,QDir::Dirs, QDir::Name);
+            const QStringList sysList = sysDir.entryList( filters ,QDir::Dirs, QDir::Name);
             if(sysList.contains("video0")) {
                 featureSupported = true;
             }
@@ -165,7 +183,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         {
            // if(halIsAvailable) {
                 QHalInterface iface;
-                QStringList touchSupport =
+                const QStringList touchSupport =
                         iface.findDeviceByCapability("input.touchpad");
                 if(touchSupport.count()) {
                     featureSupported = true;
@@ -194,26 +212,35 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
+    qWarning() << __PRETTY_FUNCTION__ << mode;
+
     switch(mode) {
     case QSystemNetworkInfo::GsmMode:
+    case QSystemNetworkInfo::CdmaMode:
+    case QSystemNetworkInfo::WcdmaMode:
         {
-#if 0
-#if !defined(QT_NO_DBUS)
-            QDBusInterface connectionInterface("com.nokia.phone.net",
-                                               "/com/nokia/phone/net",
-                                               "com.nokia.SystemInfo",
-                                                QDBusConnection::systemBus());
-            if(!connectionInterface.isValid()) {
-                qWarning() << "interfacenot valid";
-            }
-            QDBusReply< QByteArray > reply = connectionInterface.call("GetConfigValue", "/device/sw-release-ver");
-            return reply.value();
-#endif
-#endif
+            qWarning() << __FUNCTION__<< "GSM" << mode;
+//#if 0
+//#if !defined(QT_NO_DBUS)
+//            QDBusInterface connectionInterface("com.nokia.phone.net",
+//                                               "/com/nokia/phone/net",
+//                                               "com.nokia.SystemInfo",
+//                                                QDBusConnection::systemBus());
+//            if(!connectionInterface.isValid()) {
+//                qWarning() << "interfacenot valid";
+//            }
+//            QDBusReply< QByteArray > reply = connectionInterface.call("GetConfigValue", "/device/sw-release-ver");
+//            return reply.value();
+//#endif
+//#endif
         }
         break;
-    default:
-        return QSystemNetworkInfoLinuxCommonPrivate::networkStatus(mode);
+    case QSystemNetworkInfo::EthernetMode:
+    case QSystemNetworkInfo::WlanMode:
+    case QSystemNetworkInfo::BluetoothMode:
+        {
+            return QSystemNetworkInfoLinuxCommonPrivate::networkStatus(mode);
+        }
         break;
     };
     return QSystemNetworkInfo::UndefinedStatus;
@@ -226,8 +253,10 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
     case QSystemNetworkInfo::CdmaMode:
     case QSystemNetworkInfo::WcdmaMode:
         break;
+    case QSystemNetworkInfo::EthernetMode:
+    case QSystemNetworkInfo::WlanMode:
+    case QSystemNetworkInfo::BluetoothMode:
         return QSystemNetworkInfoLinuxCommonPrivate::networkSignalStrength(mode);
-    default:
         break;
     };
 
@@ -316,6 +345,11 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
     return QNetworkInterface();
 }
 
+QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
+{
+    return QSystemNetworkInfo::UnknownMode;
+}
+
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent)
         : QSystemDisplayInfoLinuxCommonPrivate(parent)
 {
@@ -351,14 +385,65 @@ QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QSystemDeviceInfoLinuxCommonPrivate *parent)
         : QSystemDeviceInfoLinuxCommonPrivate(parent)
 {
+    setConnection();
+    flightMode = false;
+ #if !defined(QT_NO_DBUS)
+    previousPowerState = QSystemDeviceInfo::UnknownPower;
+    setupBluetooth();
+    setupProfile();
+#endif
 }
 
 QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
 {
 }
 
+#if !defined(QT_NO_DBUS)
+void QSystemDeviceInfoPrivate::halChanged(int,QVariantList map)
+{
+    for(int i=0; i < map.count(); i++) {
+//       qWarning() << __FUNCTION__ << map.at(i).toString();
+       if(map.at(i).toString() == "battery.charge_level.percentage") {
+            int level = batteryLevel();
+            emit batteryLevelChanged(level);
+            if(level < 4) {
+                emit batteryStatusChanged(QSystemDeviceInfo::BatteryCritical);
+            } else if(level < 11) {
+                emit batteryStatusChanged(QSystemDeviceInfo::BatteryVeryLow);
+            } else if(level < 41) {
+                emit batteryStatusChanged(QSystemDeviceInfo::BatteryLow);
+            } else if(level > 40) {
+                emit batteryStatusChanged(QSystemDeviceInfo::BatteryNormal);
+            }
+            else {
+                emit batteryStatusChanged(QSystemDeviceInfo::NoBatteryLevel);
+            }
+        }
+        if((map.at(i).toString() == "maemo.charger.connection_status")
+        || (map.at(i).toString() == "maemo.rechargeable.charging_status")) {
+            QSystemDeviceInfo::PowerState state = currentPowerState();
+            if (previousPowerState != state)
+                emit powerStateChanged(state);
+            previousPowerState = state;
+       }} //end map
+}
+#endif
+
 QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
 {
+#if !defined(QT_NO_DBUS)
+    if (flightMode)
+        return QSystemDeviceInfo::OfflineProfile;
+
+    if (silentProfile )
+        return vibratingAlertEnabled ? QSystemDeviceInfo::VibProfile : QSystemDeviceInfo::SilentProfile;
+
+    if (ringingAlertVolume > 75)
+        return QSystemDeviceInfo::LoudProfile;
+
+    return QSystemDeviceInfo::NormalProfile;
+#endif
+
     return QSystemDeviceInfo::UnknownProfile;
 }
 
@@ -382,26 +467,16 @@ QString QSystemDeviceInfoPrivate::imei()
 
 QString QSystemDeviceInfoPrivate::imsi()
 {
-    QString retVal = "Not Available";
-    GConfItem locationValues("/system/nokia/location");
-    QStringList locationKeys = locationValues.listEntries();
-
-    QStringList result;
-    foreach (QString str, locationKeys) {
-        if (str.contains("sim_imsi"))
-            retVal = "Available";
-        break;
-    }
-    return retVal;
+    return GConfItem("/system/nokia/location/sim_imsi").value().toString();
 }
 
 QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 {
     GConfItem locationValues("/system/nokia/location");
-    QStringList locationKeys = locationValues.listEntries();
+    const QStringList locationKeys = locationValues.listEntries();
     QStringList result;
     int count = 0;
-    foreach (QString str, locationKeys) {
+    foreach (const QString str, locationKeys) {
         if (str.contains("sim_imsi"))
             count++;
     }
@@ -416,35 +491,227 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 
 bool QSystemDeviceInfoPrivate::isDeviceLocked()
 {
-    QSystemScreenSaverPrivate priv;
+#if !defined(QT_NO_DBUS)
+    QDBusConnection systemDbusConnection = QDBusConnection::systemBus();
 
-    if(priv.isScreenLockEnabled()
-        && priv.isScreenSaverActive()) {
-        return true;
+    QDBusInterface mceConnectionInterface("com.nokia.mce",
+                                      "/com/nokia/mce/request",
+                                      "com.nokia.mce.request",
+                                      systemDbusConnection);
+    if (mceConnectionInterface.isValid()) {
+        QDBusReply<QString> tkLockModeReply = mceConnectionInterface.call("get_tklock_mode");
+        return tkLockModeReply.value() == "locked";
     }
 
+    qWarning() << "mce interface not valid";
+#endif
     return false;
 }
 
- QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QSystemScreenSaverLinuxCommonPrivate *parent)
-         : QSystemScreenSaverLinuxCommonPrivate(parent)
- {
- }
-
- QSystemScreenSaverPrivate::~QSystemScreenSaverPrivate()
- {
- }
-
- bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
- {
-    return false;
+QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
+{
+#if !defined(QT_NO_DBUS)
+        QHalInterface iface;
+        const QStringList list = iface.findDeviceByCapability("battery");
+        if(!list.isEmpty()) {
+            foreach(const QString dev, list) {
+                QHalDeviceInterface ifaceDevice(dev);
+                if (iface.isValid()) {
+                    if (ifaceDevice.getPropertyString("maemo.charger.connection_status") == "connected") {
+                        if (ifaceDevice.getPropertyString("maemo.rechargeable.charging_status") == "full")
+                            return QSystemDeviceInfo::WallPower;
+                        return QSystemDeviceInfo::WallPowerChargingBattery;
+                    }
+                    return QSystemDeviceInfo::BatteryPower;
+                }
+            }
+        }
+#endif
+    return QSystemDeviceInfo::UnknownPower;
 }
 
+#if !defined(QT_NO_DBUS)
+ void QSystemDeviceInfoPrivate::setupBluetooth()
+ {
+     QDBusConnection dbusConnection = QDBusConnection::systemBus();
+     QDBusInterface *connectionInterface;
+     connectionInterface = new QDBusInterface("org.bluez",
+                                              "/",
+                                              "org.bluez.Manager",
+                                              dbusConnection);
+     if (connectionInterface->isValid()) {
+
+         QDBusReply<  QDBusObjectPath > reply = connectionInterface->call("DefaultAdapter");
+         if (reply.isValid()) {
+             QDBusInterface *adapterInterface;
+             adapterInterface = new QDBusInterface("org.bluez",
+                                                   reply.value().path(),
+                                                   "org.bluez.Adapter",
+                                                   dbusConnection);
+             if (adapterInterface->isValid()) {
+                 if (!dbusConnection.connect("org.bluez",
+                                           reply.value().path(),
+                                            "org.bluez.Adapter",
+                                            "PropertyChanged",
+                                            this,SLOT(bluezPropertyChanged(QString, QDBusVariant)))) {
+                     qWarning() << "bluez could not connect signal";
+                 }
+             }
+         }
+     }
+ }
+#endif
+
+#if !defined(QT_NO_DBUS)
+ void QSystemDeviceInfoPrivate::bluezPropertyChanged(const QString &str, QDBusVariant v)
+ {
+     qWarning() << str << v.variant().toBool();
+     emit bluetoothStateChanged(v.variant().toBool());
+ }
+#endif
+
+#if !defined(QT_NO_DBUS)
+
+void QSystemDeviceInfoPrivate::setupProfile()
+{
+    QDBusConnection systemDbusConnection = QDBusConnection::systemBus();
+
+    QDBusInterface mceConnectionInterface("com.nokia.mce",
+                                      "/com/nokia/mce/request",
+                                      "com.nokia.mce.request",
+                                      systemDbusConnection);
+    if (!mceConnectionInterface.isValid()) {
+        qWarning() << "mce interface not valid";
+        return;
+    } else {
+        QDBusReply<QString> deviceModeReply = mceConnectionInterface.call("get_device_mode");
+        flightMode = deviceModeReply.value() == "flight";
+    }
+
+    if (!systemDbusConnection.connect("com.nokia.mce",
+                           "/com/nokia/mce/signal",
+                           "com.nokia.mce.signal",
+                           "sig_device_mode_ind",
+                           this, SLOT(deviceModeChanged(QString)))) {
+        qWarning() << "unable to connect to sig_device_mode_ind";
+    }
+
+
+    QDBusInterface connectionInterface("com.nokia.profiled",
+                                      "/com/nokia/profiled",
+                                      "com.nokia.profiled",
+                                      QDBusConnection::sessionBus());
+    if(!connectionInterface.isValid()) {
+       qWarning() << "profiled interface not valid";
+       return;
+    }
+
+    QDBusReply<QString> profileNameReply = connectionInterface.call("get_profile");
+    if (profileNameReply.isValid())
+        profileName = profileNameReply.value();
+
+    QDBusReply<QString> ringingAlertTypeReply = connectionInterface.call("get_value", profileName, "ringing.alert.type");
+    if (ringingAlertTypeReply.isValid())
+        silentProfile = ringingAlertTypeReply.value() == "silent";
+
+    QDBusReply<QString> vibratingAlertEnabledReply = connectionInterface.call("get_value", profileName, "vibrating.alert.enabled");
+    if (vibratingAlertEnabledReply.isValid())
+        vibratingAlertEnabled = vibratingAlertEnabledReply.value() == "On";
+
+    QDBusReply<QString> ringingAlertVolumeReply = connectionInterface.call("get_value", profileName, "ringing.alert.volume");
+    if (ringingAlertVolumeReply.isValid())
+        ringingAlertVolume = ringingAlertVolumeReply.value().toInt();
+
+    qDBusRegisterMetaType<ProfileDataValue>();
+    qDBusRegisterMetaType<QList<ProfileDataValue> >();
+
+    QDBusConnection sessionDbusConnection = QDBusConnection::sessionBus();
+    if (!sessionDbusConnection.connect("com.nokia.profiled",
+                           "/com/nokia/profiled",
+                           "com.nokia.profiled",
+                           "profile_changed",
+                           this, SLOT(profileChanged(bool, bool, QString, QList<ProfileDataValue>)))) {
+        qWarning() << "unable to connect to profile_changed";
+    }
+
+}
+
+void QSystemDeviceInfoPrivate::deviceModeChanged(QString newMode)
+{
+    bool previousFlightMode = flightMode;
+    flightMode = newMode == "flight";
+    if (previousFlightMode != flightMode)
+        emit currentProfileChanged(currentProfile());
+}
+
+void QSystemDeviceInfoPrivate::profileChanged(bool changed, bool active, QString profile, QList<ProfileDataValue> values)
+{
+    const QSystemDeviceInfo::Profile previousProfile = currentProfile();
+
+    profileName = profile;
+    foreach (const ProfileDataValue value, values) {
+        if (value.key == "ringing.alert.type")
+            silentProfile = value.val == "silent";
+        else if (value.key == "vibrating.alert.enabled")
+            vibratingAlertEnabled = value.val == "On";
+        else if (value.key == "ringing.alert.volume")
+            ringingAlertVolume = value.val.toInt();
+    }
+
+    QSystemDeviceInfo::Profile newProfile = currentProfile();
+    if (previousProfile != newProfile)
+        emit currentProfileChanged(newProfile);
+}
+
+#endif
+
+//////////////
+///////
+QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
+        : QSystemScreenSaverLinuxCommonPrivate(parent), m_screenSaverInhibited(false)
+
+{
+    ssTimer = new QTimer(this);
+}
+
+QSystemScreenSaverPrivate::~QSystemScreenSaverPrivate()
+{
+     if(ssTimer->isActive())
+         ssTimer->stop();
+
+     m_screenSaverInhibited = false;
+}
 
 bool QSystemScreenSaverPrivate::screenSaverInhibited()
 {
+    return m_screenSaverInhibited;
+}
 
-    return false;
+bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
+{
+    if (m_screenSaverInhibited)
+        return true;
+
+     m_screenSaverInhibited = true;
+     display_blanking_pause();
+     connect(ssTimer, SIGNAL(timeout()), this, SLOT(display_blanking_pause()));
+     ssTimer->start(3000); //3 seconds interval
+     return true;
+}
+
+void QSystemScreenSaverPrivate::display_blanking_pause()
+{
+#if !defined(QT_NO_DBUS)
+    QDBusInterface connectionInterface("com.nokia.mce",
+                                       "/com/nokia/mce/request",
+                                       "com.nokia.mce.request",
+                                       QDBusConnection::systemBus());
+    if (!connectionInterface.isValid()) {
+        qWarning() << "interface not valid";
+        return;
+    }
+    connectionInterface.call("req_display_blanking_pause");
+#endif
 }
 
 bool QSystemScreenSaverPrivate::isScreenLockEnabled()

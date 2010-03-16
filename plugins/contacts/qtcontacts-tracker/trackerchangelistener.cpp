@@ -41,7 +41,6 @@
 
 
 #include <QtTracker/ontologies/nco.h>
-#include <QDebug>
 
 #include "trackerchangelistener.h"
 #include "qcontact.h"
@@ -51,24 +50,13 @@ using namespace SopranoLive;
 TrackerChangeListener::TrackerChangeListener(QObject* parent)
 :QObject(parent)
 {
-    SopranoLive::BackEnds::Tracker::ClassUpdateSignaler *signaler =
-            SopranoLive::BackEnds::Tracker::ClassUpdateSignaler::get(
+    signaler_contact = SopranoLive::BackEnds::Tracker::ClassUpdateSignaler::get(
                     nco::Contact::iri());
-    // Note here that we are not using
-    // QAbstractItemModel signals from LiveNodes::model() because
-    // node list for which notification comes is fixed. Those are used for
-    // async implementation
-    if (signaler)
-    {
-        connect(signaler, SIGNAL(subjectsAdded(const QStringList &)),
-                SLOT(subjectsAdded(const QStringList &)));
-        connect(signaler,
-                SIGNAL(baseRemoveSubjectsd(const QStringList &)),
-                SLOT(subjectsRemoved(const QStringList &)));
-        connect(signaler,
-                SIGNAL(subjectsChanged(const QStringList &)),
-                SLOT(subjectsChanged(const QStringList &)));
-    }
+    connectSignals(signaler_contact);
+
+    signaler_imaccount = SopranoLive::BackEnds::Tracker::ClassUpdateSignaler::get(
+                    nco::IMAccount::iri());
+    connectSignals(signaler_imaccount);
 }
 
 TrackerChangeListener::~TrackerChangeListener()
@@ -79,6 +67,22 @@ TrackerChangeListener::~TrackerChangeListener()
 // let's see which signals will be used from libqttracker
 QContactLocalId url2UniqueId(const QString &contactUrl)
 {
+
+    /* Telepathy URI would look like telepathy:/org/freedesktop...
+       convert the URI component which contains the 
+       account + contat id to uint32 expected by
+       qcontactlocalid
+    */
+    if (contactUrl.contains("telepathy")) {
+        QContactLocalId id = 0;
+        QStringList decoded = contactUrl.split(":");
+        id = qHash(decoded.value(1).remove(0,1));
+        return id;
+    }
+
+    /* handle conatact:interger URL types comming from
+       which are non telepathy url's
+    */
     QRegExp rx("(\\d+)");
     bool conversion = false;
     QContactLocalId id = 0;
@@ -99,7 +103,6 @@ void TrackerChangeListener::subjectsAdded(const QStringList &subjects)
     {
         added << url2UniqueId(uri);
     }
-    qDebug() << Q_FUNC_INFO << "added contactids:" << added;
     emit contactsAdded(added);
 }
 
@@ -110,7 +113,6 @@ void TrackerChangeListener::subjectsRemoved(const QStringList &subjects)
     {
         added << url2UniqueId(uri);
     }
-    qDebug() << Q_FUNC_INFO << "removed contactids:" << added;
     emit contactsRemoved(added);
 }
 
@@ -124,7 +126,6 @@ void TrackerChangeListener::subjectsChanged(const QStringList &subjects)
             changed << id;
         }
     }
-    qDebug() << Q_FUNC_INFO << "changed contactids:" << changed;
     emit contactsChanged(changed);
 }
 
@@ -141,3 +142,20 @@ void AsyncQuery::queryReady()
     emit queryReady(this);
 }
 
+void TrackerChangeListener::connectSignals(SopranoLive::BackEnds::Tracker::ClassUpdateSignaler *signaler) {
+    // Note here that we are not using
+    // QAbstractItemModel signals from LiveNodes::model() because
+    // node list for which notification comes is fixed. Those are used for
+    // async implementation
+    if (signaler)
+    {
+        connect(signaler, SIGNAL(subjectsAdded(const QStringList &)),
+                SLOT(subjectsAdded(const QStringList &)));
+        connect(signaler,
+                SIGNAL(baseRemoveSubjectsd(const QStringList &)),
+                SLOT(subjectsRemoved(const QStringList &)));
+        connect(signaler,
+                SIGNAL(subjectsChanged(const QStringList &)),
+                SLOT(subjectsChanged(const QStringList &)));
+    }
+}

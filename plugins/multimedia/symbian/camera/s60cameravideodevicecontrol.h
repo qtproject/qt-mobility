@@ -46,7 +46,7 @@
 
 QTM_USE_NAMESPACE
 
-class S60CameraSession;
+class S60CameraControl;
 class QString;
 class QIcon;
 
@@ -55,7 +55,7 @@ class S60CameraVideoDeviceControl : public QVideoDeviceControl
     Q_OBJECT
 public:
     S60CameraVideoDeviceControl(QObject *parent);
-    S60CameraVideoDeviceControl(QObject *session, QObject *parent = 0);
+    S60CameraVideoDeviceControl(QObject *control, QObject *parent = 0);
     virtual ~S60CameraVideoDeviceControl();
 
     int deviceCount() const;
@@ -65,13 +65,13 @@ public:
     QIcon deviceIcon(int index) const;
 
     int defaultDevice() const;
-    int selectedDevice() const;
+    int selectedDevice() const;  
 
 public Q_SLOTS:
     void setSelectedDevice(int index);
 
 private:
-    S60CameraSession* m_session;
+    S60CameraControl* m_control;
     int m_selectedDevice;
 };
 

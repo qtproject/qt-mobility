@@ -80,8 +80,12 @@ contains(build_unit_tests, yes):DEFINES+=QTM_BUILD_UNITTESTS
 !testcase {
     OBJECTS_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET
     !plugin {
-        contains(TEMPLATE,.*lib):DESTDIR = $$OUTPUT_DIR/lib
-        else:DESTDIR = $$OUTPUT_DIR/bin
+        contains(TEMPLATE,.*lib) {
+            DESTDIR = $$OUTPUT_DIR/lib
+            symbian:defFilePath=../s60installs
+        } else {
+            DESTDIR = $$OUTPUT_DIR/bin
+        }
     } else {
         testplugin:DESTDIR = $$OUTPUT_DIR/build/tests/bin/plugins/$$PLUGIN_TYPE
         !testplugin:DESTDIR = $$OUTPUT_DIR/plugins/$$PLUGIN_TYPE
@@ -104,6 +108,11 @@ contains(build_unit_tests, yes):DEFINES+=QTM_BUILD_UNITTESTS
     QMAKE_RPATHDIR += $$OUTPUT_DIR/lib
 }
 
+# On Symbian, we are freezing libraryies only
+symbian:isEmpty(defFilePath) {
+#    MMP_RULES += "EXPORTUNFROZEN"
+}
+
 contains(TEMPLATE,.*lib):DEFINES += QT_SHARED
 
 maemo6 {
@@ -114,6 +123,10 @@ maemo6 {
 }
 maemo5 {
     DEFINES+= Q_WS_MAEMO_5
+}
+maemo* {
+    LIBS += -L/opt/qt4-maemo5/lib
+    QMAKE_LFLAGS += -Wl,-rpath,/opt/qt4-maemo5/lib
 }
 
 wince* {
@@ -156,8 +169,6 @@ mac:contains(QT_CONFIG,qt_framework) {
 }
 LIBS += -L$$OUTPUT_DIR/lib
 
-# For symbian, we are not freezing yet
-symbian:MMP_RULES += "EXPORTUNFROZEN"
 
 DEPENDPATH += . $$SOURCE_DIR
 INCLUDEPATH += $$SOURCE_DIR/src/global

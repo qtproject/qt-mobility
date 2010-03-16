@@ -24,7 +24,6 @@
 <h2>Public Types</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaction.html#State-enum">State</a></b> { InactiveState, AutonomousState, ActiveState, FinishedState, FinishedWithErrorState }</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaction.html#Status-enum">Status</a></b> { Inactive, Autonomous, Active, Finished, FinishedWithError }&nbsp;&nbsp;<tt> (deprecated)</tt></td></tr>
 </table>
 <hr />
 <a name="public-functions"></a>
@@ -47,7 +46,6 @@
 <h2>Signals</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaction.html#progress">progress</a></b> ( QContactAction::State <i>state</i>, const QVariantMap &amp; <i>result</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaction.html#progress-2">progress</a></b> ( QContactAction::Status <i>status</i>, const QVariantMap &amp; <i>result</i> )&nbsp;&nbsp;<tt> (deprecated)</tt></td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
@@ -97,23 +95,6 @@
 <tr><td valign="top"><tt>QContactAction::FinishedState</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The operation successfully completed</td></tr>
 <tr><td valign="top"><tt>QContactAction::FinishedWithErrorState</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The operation has finished, but an error occurred</td></tr>
 </table></p>
-<a name="//apple_ref/cpp/tag/QContactAction/Status"></a>
-<a name="//apple_ref/cpp/econst/QContactAction/Inactive"></a>
-<a name="//apple_ref/cpp/econst/QContactAction/Autonomous"></a>
-<a name="//apple_ref/cpp/econst/QContactAction/Active"></a>
-<a name="//apple_ref/cpp/econst/QContactAction/Finished"></a>
-<a name="//apple_ref/cpp/econst/QContactAction/FinishedWithError"></a>
-<h3 class="fn"><a name="Status-enum"></a>enum QContactAction::Status</h3>
-<p>This enum is deprecated.</p>
-<p>Describes the current status of the asynchronous action operation</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QContactAction::Inactive</tt></td><td align="center" valign="top"><tt>InactiveState</tt></td><td valign="top">The operation has not yet been initiated</td></tr>
-<tr><td valign="top"><tt>QContactAction::Autonomous</tt></td><td align="center" valign="top"><tt>AutonomousState</tt></td><td valign="top">The operation was initiated but no further information is or will be available</td></tr>
-<tr><td valign="top"><tt>QContactAction::Active</tt></td><td align="center" valign="top"><tt>ActiveState</tt></td><td valign="top">The operation was initiated and is not yet finished</td></tr>
-<tr><td valign="top"><tt>QContactAction::Finished</tt></td><td align="center" valign="top"><tt>FinishedState</tt></td><td valign="top">The operation successfully completed</td></tr>
-<tr><td valign="top"><tt>QContactAction::FinishedWithError</tt></td><td align="center" valign="top"><tt>FinishedWithErrorState</tt></td><td valign="top">The operation has finished, but an error occurred</td></tr>
-</table></p>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QContactAction/~QContactAction"></a>
@@ -146,10 +127,6 @@
 <h3 class="fn"><a name="progress"></a>void QContactAction::progress ( <a href="qcontactaction.html#State-enum">QContactAction::State</a> <i>state</i>, const <a href="http://qt.nokia.com/doc/4.6/qvariant.html#QVariantMap-typedef">QVariantMap</a> &amp; <i>result</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted by an action instance whose functionality has been initiated with <a href="qcontactaction.html#invokeAction">invokeAction</a>(). It provides clients with the current <i>state</i> of the action, and any <i>result</i> associated with the action. This signal must be emitted at least once by every action instance after <a href="qcontactaction.html#invokeAction">invokeAction</a>() is called.</p>
 <p>If the action implementation is incapable of reporting the status of the operation (for example, the action is implemented via a one-way IPC call) it should emit the progress signal with <i>state</i> set to <tt>QContactAction::AutonomousState</tt>.</p>
-<h3 class="fn"><a name="progress-2"></a>void QContactAction::progress ( <a href="qcontactaction.html#Status-enum">QContactAction::Status</a> <i>status</i>, const <a href="http://qt.nokia.com/doc/4.6/qvariant.html#QVariantMap-typedef">QVariantMap</a> &amp; <i>result</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>This function is deprecated.</p>
-<p>This signal is emitted by an action instance whose functionality has been initiated with <a href="qcontactaction.html#invokeAction">invokeAction</a>(). It provides clients with the current <i>status</i> of the action, and any <i>result</i> associated with the action. This signal must be emitted at least once by every action instance after <a href="qcontactaction.html#invokeAction">invokeAction</a>() is called.</p>
-<p>If the action implementation is incapable of reporting the status of the operation (for example, the action is implemented via a one-way IPC call) it should emit the progress signal with <i>status</i> set to <tt>QContactAction::Autonomous</tt>.</p>
 <a name="//apple_ref/cpp/instm/QContactAction/result"></a>
 <h3 class="fn"><a name="result"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html#QVariantMap-typedef">QVariantMap</a> QContactAction::result () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the result of the action, if any exists. Calling this function prior to receiving the <a href="qcontactaction.html#progress">progress</a>() signal will not return a meaningful result.</p>

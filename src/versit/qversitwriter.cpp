@@ -52,35 +52,49 @@ QTM_USE_NAMESPACE
 /*!
   \class QVersitWriter
   \preliminary
-  \brief The QVersitWriter class provides an interface
-  for writing a versit document such as a vCard to a text stream.
-
+  \brief The QVersitWriter class writes Versit documents such as vCards to a device.
   \ingroup versit
- 
+
   QVersitWriter converts a QVersitDocument into its textual representation.
   QVersitWriter supports writing to an abstract I/O device
   which can be for example a file or a memory buffer.
   The writing can be done asynchronously and the waitForFinished()
   function can be used to implement a blocking write.
- 
-  \code
-  // An example of writing a simple vCard to a memory buffer:
-  QBuffer vCardBuffer;
-  vCardBuffer.open(QBuffer::ReadWrite);
-  QVersitWriter writer;
-  writer.setDevice(&vCardBuffer);
-  QVersitDocument document;
-  QVersitProperty property;
-  property.setName("N");
-  property.setValue("Citizen;John;Q;;");
-  document.addProperty(property);
-  writer.startWriting();
-  if (writer.waitForFinished()) {
-      // Use the vCardBuffer...
-  }
-  \endcode
- 
+
+  The serialization of the document is done in accordance with the type of the QVersitDocument
+  being written.  The value of each QVersitProperty is encoded according to the type of object:
+  \list
+  \o \l{QString}{QStrings} are serialized verbatim, unless the default codec of the writer cannot
+  encode the string: in this case, UTF-8 is used to encode it (and the CHARSET parameter added to
+  the property, as per the vCard 2.1 specification).  If the document type is vCard 2.1,
+  quoted-printable encoding may also be performed.
+  \o \l{QByteArray}{QByteArrays} are assumed to be binary data and are serialized as base-64 encoded
+  values.
+  \o \l{QVersitDocument}{QVersitDocuments} are serialized as a nested document (eg. as per the
+  AGENT property in vCard).
+  \endlist
+
   \sa QVersitDocument, QVersitProperty
+ */
+
+
+/*!
+ * \enum QVersitWriter::Error
+ * This enum specifies an error that occurred during the most recent operation:
+ * \value NoError The most recent operation was successful
+ * \value UnspecifiedError The most recent operation failed for an undocumented reason
+ * \value IOError The most recent operation failed because of a problem with the device
+ * \value OutOfMemoryError The most recent operation failed due to running out of memory
+ * \value NotReadyError The most recent operation failed because there is an operation in progress
+ */
+
+/*!
+ * \enum QVersitWriter::State
+ * Enumerates the various states that a reader may be in at any given time
+ * \value InactiveState Write operation not yet started
+ * \value ActiveState Write operation started, not yet finished
+ * \value CanceledState Write operation is finished due to cancelation
+ * \value FinishedState Write operation successfully completed
  */
 
 /*!
@@ -97,8 +111,8 @@ QVersitWriter::QVersitWriter() : d(new QVersitWriterPrivate)
             this, SIGNAL(stateChanged(QVersitWriter::State)), Qt::DirectConnection);
 }
 
-/*! 
- * Frees the memory used by the writer. 
+/*!
+ * Frees the memory used by the writer.
  * Waits until a pending asynchronous writing has been completed.
  */
 QVersitWriter::~QVersitWriter()
@@ -109,6 +123,7 @@ QVersitWriter::~QVersitWriter()
 
 /*!
  * Sets the device used for writing to \a device.
+ * Does not take ownership of the device.
  */
 void QVersitWriter::setDevice(QIODevice* device)
 {
@@ -206,34 +221,6 @@ QVersitWriter::State QVersitWriter::state() const
 QVersitWriter::Error QVersitWriter::error() const
 {
     return d->error();
-}
-
-
-void Q_DECL_DEPRECATED QVersitWriter::setVersitDocument(const QVersitDocument& versitDocument)
-{
-    qWarning("QVersitWriter::setVersitDocument(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  The document should be passed directly into startWriting().");
-    QList<QVersitDocument> documents;
-    documents.append(versitDocument);
-    d->mInput = documents;
-}
-
-QVersitDocument Q_DECL_DEPRECATED QVersitWriter::versitDocument() const
-{
-    qWarning("QVersitWriter::versitDocument(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!");
-    return QVersitDocument();
-}
-
-bool Q_DECL_DEPRECATED QVersitWriter::startWriting()
-{
-    qWarning("QVersitWriter::startWriting(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  The versit document should be specified as a parameter.");
-    return startWriting(d->mInput);
-}
-
-bool Q_DECL_DEPRECATED QVersitWriter::writeAll()
-{
-    qWarning("QVersitWriter::writeAll(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  startWriting() and waitForFinished() should be used instead.");
-    startWriting(d->mInput);
-    return waitForFinished();
 }
 
 #include "moc_qversitwriter.cpp"

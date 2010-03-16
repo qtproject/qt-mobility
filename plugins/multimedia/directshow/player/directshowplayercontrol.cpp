@@ -79,8 +79,10 @@ DirectShowPlayerControl::DirectShowPlayerControl(DirectShowPlayerService *servic
     , m_updateProperties(0)
     , m_state(QMediaPlayer::StoppedState)
     , m_status(QMediaPlayer::UnknownMediaStatus)
+    , m_error(QMediaPlayer::NoError)
     , m_streamTypes(0)
     , m_muteVolume(-1)
+    , m_position(0)
     , m_duration(0)
     , m_playbackRate(0)
     , m_seekable(false)
@@ -110,7 +112,7 @@ qint64 DirectShowPlayerControl::duration() const
 
 qint64 DirectShowPlayerControl::position() const
 {
-    return m_service->position();
+    return const_cast<qint64 &>(m_position) = m_service->position();
 }
 
 void DirectShowPlayerControl::setPosition(qint64 position)
@@ -237,12 +239,7 @@ void DirectShowPlayerControl::setMedia(const QMediaContent &media, QIODevice *st
 
     m_service->load(media, stream);
 
-    emit audioAvailableChanged(m_streamTypes & DirectShowPlayerService::AudioStream);
-    emit videoAvailableChanged(m_streamTypes & DirectShowPlayerService::VideoStream);
-    emit durationChanged(m_duration);
-    emit seekableChanged(m_seekable);
-    emit mediaStatusChanged(m_status);
-    emit stateChanged(m_state);
+    emitPropertyChanges();
 }
 
 void DirectShowPlayerControl::play()
@@ -266,33 +263,44 @@ void DirectShowPlayerControl::stop()
 void DirectShowPlayerControl::customEvent(QEvent *event)
 {
     if (event->type() == QEvent::Type(PropertiesChanged)) {
-        int properties = m_updateProperties;
-        m_updateProperties = 0;
-
-        if (properties & PlaybackRateProperty)
-            emit playbackRateChanged(m_playbackRate);
-
-        if (properties & StreamTypesProperty) {
-            emit audioAvailableChanged(m_streamTypes & DirectShowPlayerService::AudioStream);
-            emit videoAvailableChanged(m_streamTypes & DirectShowPlayerService::VideoStream);
-        }
-
-        if (properties & DurationProperty)
-            emit durationChanged(m_duration);
-
-        if (properties & SeekableProperty)
-            emit seekableChanged(m_seekable);
-
-        if (properties & StatusProperty)
-            emit mediaStatusChanged(m_status);
-
-        if (properties & StateProperty)
-            emit stateChanged(m_state);
+        emitPropertyChanges();
 
         event->accept();
     } else {
         QMediaPlayerControl::customEvent(event);
     }
+}
+
+void DirectShowPlayerControl::emitPropertyChanges()
+{
+    int properties = m_updateProperties;
+    m_updateProperties = 0;
+
+    if ((properties & ErrorProperty) && m_error != QMediaPlayer::NoError)
+        emit error(m_error, m_errorString);
+
+    if (properties & PlaybackRateProperty)
+        emit playbackRateChanged(m_playbackRate);
+
+    if (properties & StreamTypesProperty) {
+        emit audioAvailableChanged(m_streamTypes & DirectShowPlayerService::AudioStream);
+        emit videoAvailableChanged(m_streamTypes & DirectShowPlayerService::VideoStream);
+    }
+
+    if (properties & PositionProperty)
+        emit positionChanged(m_position);
+
+    if (properties & DurationProperty)
+        emit durationChanged(m_duration);
+
+    if (properties & SeekableProperty)
+        emit seekableChanged(m_seekable);
+
+    if (properties & StatusProperty)
+        emit mediaStatusChanged(m_status);
+
+    if (properties & StateProperty)
+        emit stateChanged(m_state);
 }
 
 void DirectShowPlayerControl::scheduleUpdate(int properties)
@@ -360,5 +368,23 @@ void DirectShowPlayerControl::updateAudioOutput(IBaseFilter *filter)
     if (m_audio)
         m_audio->Release();
 
-    m_audio = com_cast<IBasicAudio>(filter);
+    m_audio = com_cast<IBasicAudio>(filter, IID_IBasicAudio);
+}
+
+void DirectShowPlayerControl::updateError(QMediaPlayer::Error error, const QString &errorString)
+{
+    m_error = error;
+    m_errorString = errorString;
+
+    if (m_error != QMediaPlayer::NoError)
+        scheduleUpdate(ErrorProperty);
+}
+
+void DirectShowPlayerControl::updatePosition(qint64 position)
+{
+    if (m_position != position) {
+        m_position = position;
+
+        scheduleUpdate(PositionProperty);
+    }
 }

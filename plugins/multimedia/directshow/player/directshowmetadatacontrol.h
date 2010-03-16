@@ -44,7 +44,8 @@
 
 #include <qmetadatacontrol.h>
 
-#include <dshow.h>
+#include "directshowglobal.h"
+
 #include <qnetwork.h>
 
 #ifndef QT_NO_WMSDK

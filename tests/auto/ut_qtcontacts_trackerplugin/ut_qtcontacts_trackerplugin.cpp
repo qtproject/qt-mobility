@@ -49,6 +49,7 @@
 #include <QtTracker/ontologies/nco.h>
 #include <QtTracker/ontologies/nie.h>
 #include <qcontactfilters.h>
+#include <QContactChangeLogFilter>
 #include <qtcontacts.h>
 #include <trackerchangelistener.h>
 #include <qcontactrelationshipsaverequest.h>
@@ -71,6 +72,7 @@ void ut_qtcontacts_trackerplugin::initTestCase()
 {
     QMap<QString, QString> trackerEngineParams;
     trackerEngine = new QContactTrackerEngine(trackerEngineParams);
+    errorMap = new QMap<int, QContactManager::Error>();
 }
 
 void ut_qtcontacts_trackerplugin::testContacts()
@@ -81,7 +83,7 @@ void ut_qtcontacts_trackerplugin::testContacts()
     trackerEngine->saveContact(&c1, error);
     trackerEngine->saveContact(&c2, error);
     QVERIFY2((error == QContactManager::NoError),"Saving contact");
-    QList<QContactLocalId> contacts = trackerEngine->contacts(queryFilter, sortOrders, error);
+    QList<QContactLocalId> contacts = trackerEngine->contactIds(queryFilter, sortOrders, error);
     QVERIFY2(contacts.contains(c1.localId()), "Previously added contact is not found");
     QVERIFY2(contacts.contains(c2.localId()), "Previously added contact is not found");
 }
@@ -129,9 +131,9 @@ void ut_qtcontacts_trackerplugin::testSaveName()
     c.saveDetail(&nick);
 
     QVERIFY(c.detail<QContactName>().prefix() == "Mr");
-    QVERIFY(c.detail<QContactName>().first() == "John");
-    QVERIFY(c.detail<QContactName>().middle() == "Rupert");
-    QVERIFY(c.detail<QContactName>().last() == "Doe");
+    QVERIFY(c.detail<QContactName>().firstName() == "John");
+    QVERIFY(c.detail<QContactName>().middleName() == "Rupert");
+    QVERIFY(c.detail<QContactName>().lastName() == "Doe");
     QVERIFY(c.detail<QContactNickname>().nickname() == "Johnny");
 
     detailsAdded++;
@@ -209,8 +211,8 @@ void ut_qtcontacts_trackerplugin::testSavePhoneNumber()
     QContactLocalId initialId = c.localId();
     int detailsAdded = 0;
     QContactName name;
-    name.setFirst("I have phone numbers");
-    name.setLast("Girl");
+    name.setFirstName("I have phone numbers");
+    name.setLastName("Girl");
     c.saveDetail(&name);
 
     // key: phonenumber; value: context,subtype
@@ -335,8 +337,8 @@ void ut_qtcontacts_trackerplugin::testPhoneNumberContext()
         request.setDefinitionRestrictions(details);
 
         Slots slot;
-        QObject::connect(&request, SIGNAL(progress(QContactFetchRequest*, bool)),
-                &slot, SLOT(progress(QContactFetchRequest*, bool )));
+        QObject::connect(&request, SIGNAL(resultsAvailable()),
+                &slot, SLOT(resultsAvailable()));
 
         trackerEngine->startRequest(&request);
 
@@ -359,10 +361,7 @@ void ut_qtcontacts_trackerplugin::testPhoneNumberContext()
         }
         QVERIFY(contactToTest.localId() == contactToSave.localId()); // Just to be sure we got the saved contact
         qDebug()<<contactToTest.details<QContactPhoneNumber>().count();
-        foreach(QContactPhoneNumber numbber, contactToTest.details<QContactPhoneNumber>())
-        {
-            qDebug()<<numbber.values();
-        }
+        
         QVERIFY(contactToTest.details<QContactPhoneNumber>().count() == 1);
         if (0 == iterations) {
             // perform context change
@@ -402,8 +401,8 @@ void ut_qtcontacts_trackerplugin::testWritingOnlyWorkMobile()
     request.setDefinitionRestrictions(details);
 
     Slots slot;
-    QObject::connect(&request, SIGNAL(progress(QContactFetchRequest*, bool)),
-            &slot, SLOT(progress(QContactFetchRequest*, bool )));
+    QObject::connect(&request, SIGNAL(resultsAvailable()),
+            &slot, SLOT(resultsAvailable()));
 
     trackerEngine->startRequest(&request);
 
@@ -435,8 +434,8 @@ void ut_qtcontacts_trackerplugin::testSaveAddress()
 {
     QContact c;
     QContactName name;
-    name.setFirst("Aruba & Barbados");
-    name.setLast("Girl");
+    name.setFirstName("Aruba & Barbados");
+    name.setLastName("Girl");
     c.saveDetail(&name);
     QContactLocalId initialId = c.localId();
     int detailsAdded = 0;
@@ -516,8 +515,8 @@ void ut_qtcontacts_trackerplugin::testSaveEmailAddress()
         detailsAdded++;
     }
     QContactName name;
-    name.setFirst("Jo");
-    name.setLast("H N Doe");
+    name.setFirstName("Jo");
+    name.setLastName("H N Doe");
     c.saveDetail(&name);
     trackerEngine->saveContact(&c, error);
     QCOMPARE(error,  QContactManager::NoError);
@@ -542,8 +541,8 @@ void ut_qtcontacts_trackerplugin::testRemoveContact()
     email.setEmailAddress("super.man@hotmail.com");
     c.saveDetail(&email);
     QContactName name;
-    name.setFirst("Super");
-    name.setLast("Man");
+    name.setFirstName("Super");
+    name.setLastName("Man");
     c.saveDetail(&name);
 
     QVERIFY2(trackerEngine->saveContact(&c, error) && error == QContactManager::NoError, "Saving a contact failed");
@@ -558,18 +557,20 @@ void ut_qtcontacts_trackerplugin::testSaveContacts()
     for (int i = 0; i < 3; i++) {
         QContact c;
         QContactName name;
-        name.setFirst("John");
-        name.setLast(QString::number(i,10));
+        name.setFirstName("John");
+        name.setLastName(QString::number(i,10));
         c.saveDetail(&name);
         contacts.append(c);
     }
-    trackerEngine->saveContacts(&contacts, error);
+
+    QMap<int, QContactManager::Error>* errorMap;    
+    trackerEngine->saveContacts(&contacts, errorMap, error);
     QCOMPARE(error, QContactManager::NoError);
     for (int i = 0; i < contacts.count(); i++) {
         QVERIFY(contacts[i].localId() != 0);
         QList<QContactName> details = trackerEngine->contact_impl(contacts[i].localId(), error).details<QContactName>();
         QVERIFY(details.count());
-        QCOMPARE(details.at(0).last(),
+        QCOMPARE(details.at(0).lastName(),
                  QString("%1").arg(QString::number(i,10)));
     }
 }
@@ -580,7 +581,7 @@ void ut_qtcontacts_trackerplugin::testRemoveContacts()
     for (int i = 0; i < 5; i++) {
         QContact c;
         QContactName name;
-        name.setFirst(QString("John%1").arg(QString::number(i,10)));
+        name.setFirstName(QString("John%1").arg(QString::number(i,10)));
         c.saveDetail(&name);
         QVERIFY2(trackerEngine->saveContact(&c, error) && error == QContactManager::NoError, "Saving a contact failed");
         addedIds.append(c.localId());
@@ -590,27 +591,23 @@ void ut_qtcontacts_trackerplugin::testRemoveContacts()
     toApiRemove.append(addedIds.takeLast());
     QList<QContactLocalId> toPluginRemove(addedIds);
     // Remove all, but last of the added contacts
-    QList<QContactManager::Error> errors = trackerEngine->removeContacts(&toPluginRemove, error);
-    QCOMPARE(errors.count(), toPluginRemove.count());
-    for (int i = 0; i < errors.count(); i++) {
-        QCOMPARE(errors[i], QContactManager::NoError);
+    bool success = trackerEngine->removeContacts(&toPluginRemove, errorMap, error);
+    QCOMPARE(success, true);
+    for (int i = 0; i < errorMap->count(); i++) {
         QVERIFY(toPluginRemove[i] == 0);
     }
     QCOMPARE(error, QContactManager::NoError);
 
-    errors = ContactManager::instance()->removeContacts(&toApiRemove);
-    QCOMPARE(ContactManager::instance()->error(), QContactManager::NoError);
-    QCOMPARE(errors.count(), toApiRemove.count());
-    for (int i = 0; i < errors.count(); i++) {
-        QCOMPARE(errors[i], QContactManager::NoError);
+    success = ContactManager::instance()->removeContacts(&toApiRemove, errorMap);
+    QCOMPARE(success, true);
+    for (int i = 0; i < errorMap->count(); i++) {
         QVERIFY(toApiRemove[i] == 0);
     }
 
     // Try to remove some previously removed contacts, but one valid contact
-    errors = trackerEngine->removeContacts(&addedIds, error);
-    QCOMPARE(errors.count(), addedIds.count());
-    for (int i = 0; i < errors.count() - 1; i++) {
-        QVERIFY2(errors[i] == QContactManager::DoesNotExistError, "Failed to report error of trying to remove previously removed");
+    success = trackerEngine->removeContacts(&addedIds, errorMap, error);
+    QCOMPARE(errorMap->count(), addedIds.count());
+    for (int i = 0; i < errorMap->count() - 1; i++) {
         QVERIFY2(addedIds[i] != 0, "Manager should not mark id as zero");
     }
 }
@@ -623,7 +620,7 @@ void ut_qtcontacts_trackerplugin::testAvatar()
     avatar.setAvatar("file:///home/user/.contacts/avatars/default_avatar.png");
     contactWithAvatar.saveDetail(&avatar);
     QContactName name;
-    name.setFirst("John");name.setLast("A Frog");
+    name.setFirstName("John");name.setLastName("A Frog");
     contactWithAvatar.saveDetail(&name);
     QVERIFY(trackerEngine->saveContact( &contactWithAvatar, error));
 
@@ -643,7 +640,7 @@ void ut_qtcontacts_trackerplugin::testUrl()
     url1.setContexts(QContactDetail::ContextHome);
     url1.setSubType(QContactUrl::SubTypeHomePage);
     QContactName name;
-    name.setFirst("John");name.setLast("TestUrl1");
+    name.setFirstName("John");name.setLastName("TestUrl1");
     contactWithUrl1.saveDetail(&name);
     contactWithUrl1.saveDetail(&url1);
     QVERIFY(trackerEngine->saveContact(&contactWithUrl1, error));
@@ -655,7 +652,7 @@ void ut_qtcontacts_trackerplugin::testUrl()
     url2.setContexts(QContactDetail::ContextWork);
     url2.setSubType(QContactUrl::SubTypeHomePage);
     QContactName name2;
-    name2.setLast("TestUrl2");
+    name2.setLastName("TestUrl2");
     contactWithUrl2.saveDetail(&name2);
     contactWithUrl2.saveDetail(&url2);
     QVERIFY(trackerEngine->saveContact(&contactWithUrl2, error));
@@ -667,7 +664,7 @@ void ut_qtcontacts_trackerplugin::testUrl()
     url3.setContexts(QContactDetail::ContextHome);
     url3.setSubType(QContactUrl::SubTypeFavourite);
 
-    name2.setLast("TestUrl3");
+    name2.setLastName("TestUrl3");
     contactWithUrl3.saveDetail(&name2);
     contactWithUrl3.saveDetail(&url3);
     QVERIFY(trackerEngine->saveContact(&contactWithUrl3, error));
@@ -745,14 +742,70 @@ void ut_qtcontacts_trackerplugin::testRemoveDetailDefinition()
     QVERIFY(false);
 }
 */
-void ut_qtcontacts_trackerplugin::testContactsAddedSince()
+
+void ut_qtcontacts_trackerplugin::testSyncContactManagerContactsAddedSince()
 {
-    QList<QContactLocalId> addedIds;
+    // FIXME move this code out: not supposed to compile in and load the same code as dll plugin
+    QSKIP("Statically and dinamically linking the same code is not working", SkipAll);
+
     QDateTime start;
+    QList<QContactLocalId> addedIds;
+    syncContactsAddedSinceHelper(start, addedIds);
+
+    QContactChangeLogFilter filter(QContactChangeLogFilter::EventAdded);
+    filter.setSince(start);
+
+    QList<QContactSortOrder> sortOrder;
+    
+    QList<QContact> contactIds = ContactManager::instance()->contacts( filter, sortOrder, QStringList() );
+    qDebug() << "addedIds" << addedIds.size();
+    qDebug() << "contactIds" << contactIds.size();
+    QVERIFY2( contactIds.size() == addedIds.size(), "Incorrect number of filtered contacts");
+}
+
+void ut_qtcontacts_trackerplugin::testSyncTrackerEngineContactsIdsAddedSince()
+{
+    QDateTime start;
+    QList<QContactLocalId> addedIds;
+    syncContactsAddedSinceHelper(start, addedIds);
+
+    QContactChangeLogFilter filter(QContactChangeLogFilter::EventAdded);
+    filter.setSince(start);
+
+    QList<QContactSortOrder> sortOrder;
+    QContactManager::Error error;
+
+    QList<QContactLocalId> contactIds = trackerEngine->contactIds( filter, sortOrder, error );
+    qDebug() << "addedIds" << addedIds;
+    qDebug() << "contactIds" << contactIds;
+    QVERIFY2( contactIds.size() == addedIds.size(), "Incorrect number of filtered contacts");
+}
+
+void ut_qtcontacts_trackerplugin::testSyncContactManagerContactIdsAddedSince()
+{
+    // FIXME move this code out: not supposed to compile in and load the same code as dll plugin
+    QSKIP("Statically and dinamically linking the same code is not working", SkipAll);
+    QDateTime start;
+    QList<QContactLocalId> addedIds;
+    syncContactsAddedSinceHelper(start, addedIds);
+    QContactChangeLogFilter filter(QContactChangeLogFilter::EventAdded);
+    filter.setSince(start);
+    QList<QContactSortOrder> sortOrder;
+
+
+    QList<QContactLocalId> contactIds = ContactManager::instance()->contactIds(filter, sortOrder);
+    qDebug() << "addedIds" << addedIds;
+    qDebug() << "contactIds" << contactIds;
+    QVERIFY2( contactIds.size() == addedIds.size(), "Incorrect number of filtered contacts");
+}
+
+
+void ut_qtcontacts_trackerplugin::syncContactsAddedSinceHelper(QDateTime& start, QList<QContactLocalId>& addedIds)
+{
     for (int i = 0; i < 3; i++) {
         QContact c;
         QContactName name;
-        name.setFirst("A"+QString::number(i));
+        name.setFirstName("A"+QString::number(i));
         QVERIFY2(c.saveDetail(&name), "Failed to save detail");
         QVERIFY2(trackerEngine->saveContact(&c, error), "Failed to save contact");
     }
@@ -763,7 +816,32 @@ void ut_qtcontacts_trackerplugin::testContactsAddedSince()
     for (int i = 0; i < 3; i++) {
         QContact c;
         QContactName name;
-        name.setFirst("B"+QString::number(i));
+        name.setFirstName("B"+QString::number(i));
+        QVERIFY2(c.saveDetail(&name), "Failed to save detail");
+        QVERIFY2(trackerEngine->saveContact(&c, error), "Failed to save contact");
+        addedIds.append(c.localId());
+    }
+}
+
+void ut_qtcontacts_trackerplugin::testContactsAddedSince()
+{
+    QList<QContactLocalId> addedIds;
+    QDateTime start;
+    for (int i = 0; i < 3; i++) {
+        QContact c;
+        QContactName name;
+        name.setFirstName("A"+QString::number(i));
+        QVERIFY2(c.saveDetail(&name), "Failed to save detail");
+        QVERIFY2(trackerEngine->saveContact(&c, error), "Failed to save contact");
+    }
+
+    QTest::qWait(1000);
+    start = QDateTime::currentDateTime();
+
+    for (int i = 0; i < 3; i++) {
+        QContact c;
+        QContactName name;
+        name.setFirstName("B"+QString::number(i));
         QVERIFY2(c.saveDetail(&name), "Failed to save detail");
         QVERIFY2(trackerEngine->saveContact(&c, error), "Failed to save contact");
         addedIds.append(c.localId());
@@ -791,8 +869,8 @@ void ut_qtcontacts_trackerplugin::testContactsAddedSince()
     request.setDefinitionRestrictions(details);
 
     Slots slot;
-    QObject::connect(&request, SIGNAL(progress(QContactFetchRequest*, bool)),
-            &slot, SLOT(progress(QContactFetchRequest*, bool )));
+    QObject::connect(&request, SIGNAL(resultsAvailable()),
+            &slot, SLOT(resultsAvailable()));
 
     // start. clients should, instead of following use
     // request.setManager(trackermanagerinstance);
@@ -812,8 +890,8 @@ void ut_qtcontacts_trackerplugin::testContactsAddedSince()
     idreq.setFilter(filter);
 
     Slots slot2;
-    QObject::connect(&idreq, SIGNAL(progress(QContactLocalIdFetchRequest*, bool)),
-            &slot2, SLOT(progress(QContactLocalIdFetchRequest*, bool )));
+    QObject::connect(&idreq, SIGNAL(resultsAvailable()),
+            &slot2, SLOT(idResultsAvailable()));
     trackerEngine->startRequest(&idreq);
     trackerEngine->waitForRequestFinished(&idreq, 10000);
     QVERIFY(idreq.isFinished());
@@ -839,7 +917,7 @@ void ut_qtcontacts_trackerplugin::testContactsModifiedSince()
     for (int i = 0; i < contactsToAdd; i++) {
         QContact c;
         QContactName name;
-        name.setFirst("A"+QString::number(i));
+        name.setFirstName("A"+QString::number(i));
         QVERIFY2(c.saveDetail(&name), "Failed to save detail");
         QVERIFY2(trackerEngine->saveContact(&c, error), "Failed to save contact");
         addedIds.append(c.localId());
@@ -853,7 +931,7 @@ void ut_qtcontacts_trackerplugin::testContactsModifiedSince()
         QContact c = trackerEngine->contact_impl(addedIds[i], error);
         QContactName name = c.detail<QContactName>();
         // Modify name
-        name.setFirst("B"+QString::number(i));
+        name.setFirstName("B"+QString::number(i));
         QVERIFY2(c.saveDetail(&name), "Failed to save detail");
         QVERIFY2(trackerEngine->saveContact(&c, error), "Failed to save contact");
         modified.append(c.localId());
@@ -892,7 +970,7 @@ void ut_qtcontacts_trackerplugin::testContactsRemovedSince()
     QContactChangeLogFilter filter(QContactChangeLogFilter::EventRemoved);
     filter.setSince(start);
     QList<QContactSortOrder> sorts;
-    QList<QContactLocalId> actuallyRemoved = trackerEngine->contacts(filter, sorts, error);
+    QList<QContactLocalId> actuallyRemoved = trackerEngine->contactIds(filter, sorts, error);
     QVERIFY(actuallyRemoved.isEmpty());
     QVERIFY(error == QContactManager::NotSupportedError);
 }
@@ -919,6 +997,7 @@ void ut_qtcontacts_trackerplugin::testGroupsRemovedSince()
 void ut_qtcontacts_trackerplugin::cleanupTestCase()
 {
     delete trackerEngine;
+    delete errorMap;
 }
 
 void ut_qtcontacts_trackerplugin::cleanup()
@@ -932,8 +1011,6 @@ void ut_qtcontacts_trackerplugin::cleanup()
 
 void ut_qtcontacts_trackerplugin::testNcoTypes()
 {
-    // libqttracker bug 127538
-    // when this passes our bug 127544 can be fixed
     using namespace SopranoLive;
 
     QList<QContactLocalId> ids;
@@ -952,6 +1029,7 @@ void ut_qtcontacts_trackerplugin::testNcoTypes()
 
 void ut_qtcontacts_trackerplugin::testAsyncReadContacts()
 {
+    addedContacts.clear();
     // Add at least one contact to be sure that this doesn't fail because tracker is clean
 
     QStringList firstNames, lastNames;
@@ -960,8 +1038,8 @@ void ut_qtcontacts_trackerplugin::testAsyncReadContacts()
     for (int i = 0; i < firstNames.count(); i++) {
         QContact c;
         QContactName name;
-        name.setFirst(firstNames.at(i));
-        name.setLast(lastNames.at(i));
+        name.setFirstName(firstNames.at(i));
+        name.setLastName(lastNames.at(i));
         QContactAvatar avatar;
         avatar.setAvatar("default_avatar.png");
         avatar.setSubType(QContactAvatar::SubTypeImage);
@@ -970,6 +1048,10 @@ void ut_qtcontacts_trackerplugin::testAsyncReadContacts()
         QVERIFY(trackerEngine->saveContact(&c, error));
         addedContacts.append(c.localId());
     }
+    
+    // Prepare the filter for the request - we really should test only the contact we add here.
+    QContactLocalIdFilter filter;
+    filter.setIds(addedContacts);
 
     // this one will get complete contacts
 
@@ -983,14 +1065,16 @@ void ut_qtcontacts_trackerplugin::testAsyncReadContacts()
     QStringList details; details << QContactName::DefinitionName << QContactAvatar::DefinitionName;
     request.setDefinitionRestrictions(details);
     request.setSorting(sorting);
+    request.setFilter(filter);
 
-    QObject::connect(&request, SIGNAL(progress(QContactFetchRequest*, bool)),
-            &slot, SLOT(progress(QContactFetchRequest*, bool )));
+    QObject::connect(&request, SIGNAL(resultsAvailable()),
+            &slot, SLOT(resultsAvailable()));
 
-    // this one only ids and no restrictions
+    // this one only ids
     QContactLocalIdFetchRequest request1;
-    QObject::connect(&request1, SIGNAL(progress(QContactLocalIdFetchRequest*, bool)),
-            &slot, SLOT(progress(QContactLocalIdFetchRequest*, bool )));
+    request1.setFilter(filter);
+    QObject::connect(&request1, SIGNAL(resultsAvailable()),
+            &slot, SLOT(idResultsAvailable()));
 
     // the purpose is to compare if all contacts are loaded, and
     // if optional fields are defined properly in request
@@ -1021,15 +1105,15 @@ void ut_qtcontacts_trackerplugin::testAsyncReadContacts()
     {
         QContact contact = slot.contacts[i];
         QContact contact1 = slot.contacts[i+1];
-        QString last0 = contact.detail<QContactName>().last();
-        QString first0 = contact.detail<QContactName>().first();
-        QString last1 = contact1.detail<QContactName>().last();
-        QString first1 = contact1.detail<QContactName>().first();
+        QString last0 = contact.detail<QContactName>().lastName();
+        QString first0 = contact.detail<QContactName>().firstName();
+        QString last1 = contact1.detail<QContactName>().lastName();
+        QString first1 = contact1.detail<QContactName>().firstName();
         // sorting
         qDebug() << "contacts:" << contact.localId() << first0 << last0;
         bool test = last0 < last1 || (last0 == last1 && first0 <= first1);
         if (!test) {
-            qDebug() << "contacts:" << contact1.localId() << first1 << last1;
+            qDebug() << "contacts sort failed. First: " << contact1.localId() << first0 << last1 << "lasts: " << last0 << last1;
         }
         QVERIFY2(test, "Sorting failed.");
     }
@@ -1041,13 +1125,18 @@ void ut_qtcontacts_trackerplugin::testFilterContacts()
     // this one will get complete contacts
     QContact c;
     QContactName name;
-    name.setFirst("Zuba");
-    name.setLast("Zub");
+    name.setFirstName("Zuba");
+    name.setLastName("Zub");
     c.saveDetail(&name);
     QContactPhoneNumber phone;
 
     phone.setNumber("4872444");
     c.saveDetail(&phone);
+
+    QContactBirthday birthday;
+    birthday.setDate(QDate(2010, 2, 14));
+    c.saveDetail(&birthday);
+
     trackerEngine->saveContact(&c, error);
 
     QStringList details;
@@ -1059,8 +1148,8 @@ void ut_qtcontacts_trackerplugin::testFilterContacts()
     filter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
 
     Slots slot;
-    QObject::connect(&request, SIGNAL(progress(QContactFetchRequest*, bool)),
-            &slot, SLOT(progress(QContactFetchRequest*, bool )));
+    QObject::connect(&request, SIGNAL(resultsAvailable()),
+            &slot, SLOT(resultsAvailable()));
     filter.setValue(QString("4872444"));
     filter.setMatchFlags(QContactFilter::MatchEndsWith);
 
@@ -1100,6 +1189,22 @@ void ut_qtcontacts_trackerplugin::testFilterContacts()
         QVERIFY(containsPhone);
     }
     QVERIFY(containsThisId);
+
+    // filter by birthday range
+    QContactDetailRangeFilter rangeFilter;
+    rangeFilter.setDetailDefinitionName(QContactBirthday::DefinitionName, QContactBirthday::FieldBirthday);
+    // include lower & exclude upper by default
+    rangeFilter.setRange(QDate(2010, 2, 14), QDate(2010, 2, 15));
+    QList<QContact> contacts = trackerEngine->contacts(rangeFilter, QList<QContactSortOrder>(), QStringList()<< QContactBirthday::DefinitionName, error);
+    QVERIFY(!contacts.isEmpty());
+    bool containsOurContact(false);
+    foreach(const QContact &cont, contacts)
+    {
+        QVERIFY(cont.detail<QContactBirthday>().date() == QDate(2010, 2, 14));
+        if( c.id() == cont.id() )
+            containsOurContact = true;
+    }
+    QVERIFY(containsOurContact);
 }
 
 void ut_qtcontacts_trackerplugin::testFilterContactsEndsWith()
@@ -1109,8 +1214,8 @@ void ut_qtcontacts_trackerplugin::testFilterContactsEndsWith()
 
     QContact matchingContact;
     QContactName name;
-    name.setFirst("Zuba");
-    name.setLast("Zub");
+    name.setFirstName("Zuba");
+    name.setLastName("Zub");
     matchingContact.saveDetail(&name);
     QContactPhoneNumber phone;
     // TODO doesnt work yet phone.setContexts(QContactPhoneNumber::ContextWork);
@@ -1127,8 +1232,8 @@ void ut_qtcontacts_trackerplugin::testFilterContactsEndsWith()
     filter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
 
     Slots slot;
-    QObject::connect(&request, SIGNAL(progress(QContactFetchRequest*, bool)),
-            &slot, SLOT(progress(QContactFetchRequest*, bool )));
+    QObject::connect(&request, SIGNAL(resultsAvailable()),
+            &slot, SLOT(resultsAvailable()));
 
     {
         // test matching of 7 last digits
@@ -1193,8 +1298,8 @@ void ut_qtcontacts_trackerplugin::testFilterContactsEndsWith()
 
         QContact matchingContactWithShorterNumber;
         QContactName name1;
-        name1.setFirst("ShortNumber");
-        name1.setLast("Zub1");
+        name1.setFirstName("ShortNumber");
+        name1.setLastName("Zub1");
         matchingContactWithShorterNumber.saveDetail(&name1);
         QContactPhoneNumber phone1;
         phone1.setNumber("54321");
@@ -1273,8 +1378,8 @@ void ut_qtcontacts_trackerplugin::testFilterTwoNameFields()
     for (int i = 0; i < 3; i++) {
         QContact c;
         QContactName name;
-        name.setFirst(QUuid::createUuid().toString() + QString::number(i));
-        name.setLast(QUuid::createUuid().toString() + QString::number(i));
+        name.setFirstName(QUuid::createUuid().toString() + QString::number(i));
+        name.setLastName(QUuid::createUuid().toString() + QString::number(i));
         c.saveDetail(&name);
         QContactAvatar avatar;
         avatar.setAvatar(QUuid::createUuid().toString());
@@ -1287,8 +1392,8 @@ void ut_qtcontacts_trackerplugin::testFilterTwoNameFields()
 
     // Init filter
     QContactLocalId searchId = names.keys().at(1);
-    QString searchFirst = names.value(searchId).first();
-    QString searchLast = names.value(searchId).last();
+    QString searchFirst = names.value(searchId).firstName();
+    QString searchLast = names.value(searchId).lastName();
     QContactUnionFilter ufilter;
     QContactDetailFilter filterFirst;
     filterFirst.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
@@ -1310,8 +1415,8 @@ void ut_qtcontacts_trackerplugin::testFilterTwoNameFields()
     // Test fetch result
     QCOMPARE(request.contacts().count(), 1);
     QCOMPARE(request.contacts().at(0).localId(), searchId);
-    QCOMPARE(request.contacts().at(0).detail<QContactName>().first(), searchFirst);
-    QCOMPARE(request.contacts().at(0).detail<QContactName>().last(), searchLast);
+    QCOMPARE(request.contacts().at(0).detail<QContactName>().firstName(), searchFirst);
+    QCOMPARE(request.contacts().at(0).detail<QContactName>().lastName(), searchLast);
 }
 
 void ut_qtcontacts_trackerplugin::testTrackerUriToUniqueId()
@@ -1321,11 +1426,11 @@ void ut_qtcontacts_trackerplugin::testTrackerUriToUniqueId()
     QCOMPARE( (int)id, 1234567 );
 }
 
-void ut_qtcontacts_trackerplugin::testQRelationshipAndMetacontacts()
+void ut_qtcontacts_trackerplugin::testQRelationshipAndMergingContacts()
 {
     QContact firstContact;
     QContactName name;
-    name.setFirst("FirstMeta");
+    name.setFirstName("FirstMeta");
     firstContact.saveDetail(&name);
     QVERIFY(trackerEngine->saveContact(&firstContact, error));
 
@@ -1335,7 +1440,7 @@ void ut_qtcontacts_trackerplugin::testQRelationshipAndMetacontacts()
     {
         QContact secondContact;
         QContactName name1;
-        name1.setFirst(firstname);
+        name1.setFirstName(firstname);
         secondContact.saveDetail(&name1);
         QVERIFY(trackerEngine->saveContact(&secondContact, error));
         secondIds<<secondContact.id().localId();
@@ -1352,34 +1457,31 @@ void ut_qtcontacts_trackerplugin::testQRelationshipAndMetacontacts()
         QVERIFY(QContactManager::NoError == req.error());
     }
 
-    QContactRelationshipFetchRequest req1;
-    req1.setFirst(firstContact.id());
-    QVERIFY(trackerEngine->startRequest(&req1));
-    trackerEngine->waitForRequestFinished(&req1, 10000);
-    // if it takes more, then something is wrong
-    QVERIFY(req1.isFinished());
-    QVERIFY(QContactManager::NoError == req1.error());
-    QVERIFY(2 == req1.relationships().size());
-    foreach(QContactRelationship r, req1.relationships())
+    // once they are merged - that's it - no contacts or relationship track exists
+    foreach( QContactLocalId mergedId, secondIds)
     {
-        QVERIFY(secondIds.removeOne(r.second().localId()));
+        QContact second = contact(mergedId, QStringList()<<QContactName::DefinitionName);
+        QVERIFY(second.localId() == 0); // as not existing
     }
+    QVERIFY(contact(firstContact.localId(), QStringList()<<QContactName::DefinitionName).localId() != 0);
+    // TODO check that values from secondids are merged to firstcontact
+
 }
 
-void ut_qtcontacts_trackerplugin::insertContact( QContactLocalId uid, QString imId, QString imStatus )
+void ut_qtcontacts_trackerplugin::insertContact(const QString& URI, QContactLocalId uid, QString imId, QString imStatus, QString accountPath, QString protocol )
 {
     QProcess inserter;
     QStringList args;
-    args << QString::number(uid) << QString::number(uid) << imId << "SomeGuy" << imStatus << "In Helsinki" << "jabber" << "Some" << "Guy";
+    args << URI << QString::number(uid) << imId << accountPath << imStatus << "In Helsinki" << protocol << "Some" << "Guy";
     inserter.start( PATH_TO_SPARQL_TESTS+"/insertTpContact.sparql", args );
     inserter.waitForFinished();
 }
 
-void ut_qtcontacts_trackerplugin::updateIMContactStatus(QContactLocalId uid, QString imStatus)
+void ut_qtcontacts_trackerplugin::updateIMContactStatus(const QString& uri, QString imStatus)
 {
     QProcess inserter;
     QStringList args;
-    args << QString::number(uid) << imStatus;
+    args << uri << imStatus;
     inserter.start( PATH_TO_SPARQL_TESTS+"/updateTpStatus.sparql", args );
     inserter.waitForFinished();
 }
@@ -1391,18 +1493,20 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
         qWarning()<<Q_FUNC_INFO<<"is disabled - test scripts are not installed";
         return;
     }
-    QList<unsigned int> idstoremove;
+    QList<unsigned int> idstomerge;
     QContactLocalId masterContactId; // using one master contact later for additional testing
     for( int i = 0; i < 2; i++ )
     {
         unsigned int contactid = 999998+i;
-        idstoremove << contactid;
-        insertContact(contactid, QString::number(contactid)+ "@ovi.com", "nco:presence-status-available");
+        idstomerge << contactid;
+        insertContact(QString("contact:") + QString::number(999998+i),
+                contactid, QString::number(999998 + i)+ "@ovi.com", "nco:presence-status-available", QString("/org/freedesktop/fake/account/%1").arg(999998+i),"ovi.com");
         QContact c = contact(contactid, QStringList()<<QContactOnlineAccount::DefinitionName);
         QVERIFY(c.localId() == contactid);
+        QVERIFY(c.detail<QContactOnlineAccount>().serviceProvider() == "ovi.com");
         QContact firstContact;
         QContactName name;
-        name.setFirst("FirstMetaWithIM"+QString::number(contactid));
+        name.setFirstName("FirstMetaWithIM"+QString::number(contactid));
         firstContact.saveDetail(&name);
         QVERIFY(trackerEngine->saveContact(&firstContact, error));
 
@@ -1410,7 +1514,6 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
         QContactRelationship rel;
         rel.setRelationshipType(QContactRelationship::Is);
         rel.setFirst(firstContact.id());
-        idstoremove << firstContact.localId();
         masterContactId = firstContact.localId();
         rel.setSecond(c.id());
         QContactRelationshipSaveRequest req;
@@ -1421,9 +1524,7 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
         QVERIFY(QContactManager::NoError == req.error());
     }
 
-    // expected behavior - for now - is that master contact contains details from
-    // IMContacts - that way we don't have to use QContactRelationships to fetch
-    // all contacts in master contact in order to calculate master presence
+    // expected behavior - is that master contact contains all details aggregated
     {
         QList<QContact> cons = contacts(QList<QContactLocalId> ()
                 << masterContactId << 999999, QStringList()
@@ -1438,15 +1539,13 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
                         || det.accountUri() == "999999@ovi.com")
                 {
                     QVERIFY(det.presence() == QContactOnlineAccount::PresenceAvailable);
-                    // keeping the reference to tp contact
-                    QVERIFY(det.value("QContactLocalId") == "999999");
                     containDetail = true;
                 }
             }
         QVERIFY(containDetail);
     }
-    //now update presence to IM contact and check it in metacontact (TODO and if signal is emitted)
-    updateIMContactStatus(999999, "nco:presence-status-offline");
+    //now update presence to IM Address and check it in contact (TODO and if signal is emitted)
+    updateIMContactStatus("telepathy:/org/freedesktop/fake/account/999999/999999@ovi.com", "nco:presence-status-offline");
     {
         QList<QContact> cons = contacts(QList<QContactLocalId> ()
                 << masterContactId << 999999, QStringList()
@@ -1461,15 +1560,13 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
                         || det.accountUri() == "999999@ovi.com")
                 {
                     QVERIFY(det.presence() == QContactOnlineAccount::PresenceOffline);
-                    // keeping the reference to tp contact
-                    QVERIFY(det.value("QContactLocalId") == "999999");
                     containDetail = true;
                 }
             }
         QVERIFY(containDetail);
     }
 
-    // TODO load only one contact should load also content from other in the same metacontacts
+    // load contact should load also all merged content from other contacts (that dont exis anymore)
     {
         QList<QContact> cons = contacts(QList<QContactLocalId> ()
                 << masterContactId, QStringList()
@@ -1484,8 +1581,6 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
                         || det.accountUri() == "999999@ovi.com")
                 {
                     QVERIFY(det.presence() == QContactOnlineAccount::PresenceOffline);
-                    // keeping the reference to tp contact
-                    QVERIFY(det.value("QContactLocalId") == "999999");
                     containDetail = true;
                 }
             }
@@ -1493,17 +1588,126 @@ void ut_qtcontacts_trackerplugin::testIMContactsAndMetacontactMasterPresence()
     }
 
     // remove them
+    QVERIFY2(trackerEngine->removeContact(masterContactId, error), "Removing a contact failed");
+
+    foreach(unsigned int id, idstomerge)
+    {
+        QVERIFY2(!trackerEngine->removeContact(id, error), "Merged contact doesn't exist and removing it shoudl fail");
+    }
+}
+
+void ut_qtcontacts_trackerplugin::testIMContactsFilterring()
+{
+    QList<unsigned int> idstoremove;
+    QList<QContactLocalId> idsToRetrieveThroughFilter;
+    for( int i = 0; i < 3; i++ )
+    {
+        unsigned int contactid = qHash(QString("/org/freedesktop/fake/account/") + QString::number(999995+i) + "@ovi.com");
+        idstoremove << contactid;
+        insertContact(QString("telepathy:/org/freedesktop/fake/account/") + QString::number(999995+i) + "@ovi.com",
+                contactid, QString::number(999995 + i)+ "@ovi.com", "nco:presence-status-available",
+                QString("/org/freedesktop/fake/account/%1").arg(i/2), QString("ovi%1.com").arg(i/2));
+        if(!i/2)
+            idsToRetrieveThroughFilter << contactid;
+    }
+
+    {
+    // now filter by service provider ovi0.com needs to return 2 contacts, 999995 & 999996
+    QList<QContactLocalId> ids(idsToRetrieveThroughFilter);
+
+    QContactFetchRequest request;
+    QContactDetailFilter filter;
+    filter.setDetailDefinitionName(QContactOnlineAccount::DefinitionName, QContactOnlineAccount::FieldServiceProvider);
+
+    Slots slot;
+    QObject::connect(&request, SIGNAL(resultsAvailable()),
+            &slot, SLOT(resultsAvailable()));
+    filter.setValue(QString("ovi0.com"));
+    filter.setMatchFlags(QContactFilter::MatchExactly);
+
+    request.setDefinitionRestrictions(QStringList()<<QContactOnlineAccount::DefinitionName);
+    request.setFilter(filter);
+
+    trackerEngine->startRequest(&request);
+
+    for(int i = 0; i < 100; i++)
+    {
+        usleep(100000);
+        QCoreApplication::processEvents();
+        if(request.isFinished() )
+            break;
+    }
+
+    // if it takes more, then something is wrong
+    QVERIFY(request.isFinished());
+    QVERIFY(!request.contacts().isEmpty());
+
+    QVERIFY(request.contacts().size() >= 2);
+    foreach(const QContact &contact, request.contacts())
+    {
+        //qDebug() << contact.localId()<< "acc"<<contact.detail<QContactOnlineAccount>().serviceProvider();
+        QVERIFY(contact.detail<QContactOnlineAccount>().serviceProvider() == "ovi0.com");
+        ids.removeOne(contact.localId());
+    }
+    QVERIFY(ids.isEmpty());
+    }
+
+    // now account path filter
+    {
+    // now filter by account path 999995 & 999996
+    QList<QContactLocalId> ids(idsToRetrieveThroughFilter);
+
+    QContactFetchRequest request;
+    QContactDetailFilter filter;
+    filter.setDetailDefinitionName(QContactOnlineAccount::DefinitionName, "AccountPath");
+
+    Slots slot;
+    QObject::connect(&request, SIGNAL(resultsAvailable()),
+            &slot, SLOT(resultsAvailable()));
+    // see insertTpContact
+    filter.setValue(QString("/org/freedesktop/fake/account/0"));
+    filter.setMatchFlags(QContactFilter::MatchExactly);
+
+    request.setDefinitionRestrictions(QStringList()<<QContactOnlineAccount::DefinitionName);
+    request.setFilter(filter);
+
+    trackerEngine->startRequest(&request);
+
+    for(int i = 0; i < 100; i++)
+    {
+        usleep(100000);
+        QCoreApplication::processEvents();
+        if(request.isFinished() )
+            break;
+    }
+
+    // if it takes more, then something is wrong
+    QVERIFY(request.isFinished());
+    QVERIFY(!request.contacts().isEmpty());
+
+    QVERIFY(request.contacts().size() >= 2);
+    foreach(const QContact &contact, request.contacts())
+    {
+        QVERIFY(contact.detail<QContactOnlineAccount>().serviceProvider() == "ovi0.com");
+        ids.removeOne(contact.localId());
+    }
+    QVERIFY(ids.isEmpty());
+    }
+
+
+    // remove them
     foreach(unsigned int id, idstoremove)
     {
         QVERIFY2(trackerEngine->removeContact(id, error), "Removing a contact failed");
     }
+
 }
 
 void ut_qtcontacts_trackerplugin::testContactsWithoutMeContact() {
     QContact c;
     QContactName name;
-    name.setFirst("New");
-    name.setLast("Contact");
+    name.setFirstName("Totally");
+    name.setLastName("Unique");
     c.saveDetail(&name);
     trackerEngine->saveContact(&c, error);
     QContactLocalId id = c.localId();  // Store ID for later removal. 
@@ -1527,7 +1731,8 @@ void ut_qtcontacts_trackerplugin::testContactsWithoutMeContact() {
 
     // Requst finished. Test that only one contact is removed.
     QList<QContactLocalId> contacts = nameFetchRequest.ids();
-    QVERIFY2(contacts.count() == 1, "We expected to get only one contact. Got more.");
+    QVERIFY2(contacts.count() < 2, "We expected to get only one contact. Got more.");
+    QVERIFY2(contacts.count() != 0, "We expected to get one contact. Got none.");
     QVERIFY2(contacts.first() == id, "Did not get the requested contact back.");
     
     // Cleaning up.
@@ -1558,41 +1763,20 @@ QList<QContact> ut_qtcontacts_trackerplugin::contacts(QList<QContactLocalId> ids
     return request.contacts();
 }
 
-void Slots::progress(QContactLocalIdFetchRequest* self, bool appendOnly)
+void Slots::idResultsAvailable()
 {
-    Q_UNUSED(appendOnly)
-    if( self->status() == QContactAbstractRequest::Finished )
-    {
-        ids << self->ids();
-    }
+    QContactLocalIdFetchRequest* self = qobject_cast<QContactLocalIdFetchRequest*>(sender());
+    ids << self->ids();
 }
 
-void Slots::progress(QContactFetchRequest* self, bool appendOnly)
+void Slots::resultsAvailable()
 {
-    Q_UNUSED(appendOnly)
+    QContactFetchRequest* self = qobject_cast<QContactFetchRequest*>(sender());
     contacts = self->contacts();
     QList<QContactLocalId> idsFromAllContactReq;
     foreach( QContact contact, contacts)
     {
         idsFromAllContactReq << contact.localId();
-    }
-}
-
-QString Slots::requestStatusToString(QContactAbstractRequest::Status status)
-{
-    switch (status) {
-        case QContactAbstractRequest::Inactive:
-            return "Inactive";
-        case QContactAbstractRequest::Active:
-            return "Active";
-        case QContactAbstractRequest::Cancelling:
-            return "Cancelling";
-        case QContactAbstractRequest::Cancelled:
-            return "Cancelled";
-        case QContactAbstractRequest::Finished:
-            return "Finished";
-        default:
-            return QString::number((int)status);
     }
 }
 

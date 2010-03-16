@@ -96,7 +96,8 @@ Q_SIGNALS:
 private:
     QTimer *langTimer;
     QString langCached;
-private Q_SLOTS:
+
+protected Q_SLOTS:
     void startLanguagePolling();
 
 protected:
@@ -121,7 +122,7 @@ public:
     QSystemNetworkInfoLinuxCommonPrivate(QObject *parent = 0);
     virtual ~QSystemNetworkInfoLinuxCommonPrivate();
 
-    QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
+    virtual QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
     qint32 networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
     int cellId() {return 0;}
     int locationAreaCode() {return 0;}
@@ -136,6 +137,10 @@ public:
     virtual QString macAddress(QSystemNetworkInfo::NetworkMode mode);
 
     virtual QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
+   // virtual QSystemNetworkInfo::NetworkMode currentMode();
+
+//public Q_SLOTS:
+//    void getPrimaryMode();
 
 Q_SIGNALS:
    void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
@@ -150,8 +155,8 @@ protected:
     int getBluetoothRssi();
     QString getBluetoothInfo(const QString &file);
     bool isDefaultInterface(const QString &device);
-    QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
 #endif
+    QSystemNetworkInfo::NetworkStatus getBluetoothNetStatus();
 
 };
 
@@ -228,7 +233,7 @@ protected:
     void setupBluetooth();
 
 private Q_SLOTS:
-    void halChanged(int,QVariantList);
+    virtual void halChanged(int,QVariantList);
     void bluezPropertyChanged(const QString&, QDBusVariant);
 #endif
 };
