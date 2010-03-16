@@ -56,7 +56,7 @@ class Q_LOCATION_EXPORT QGeocodingReply : public QGeoReply
     Q_OBJECT
 
     friend class QGeoNetworkManager;
-    friend class QGeocodingXmlHandler;
+    friend class QGeocodingXmlParser;
 
 public:
     enum ResultCode {

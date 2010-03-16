@@ -72,13 +72,12 @@ QMapObjectPrivate::QMapObjectPrivate()
 */
 
 /*!
-    Constructs the map object in the \a mapView with the given \a type at layer \a z.
+    Constructs the map object with the given \a type and layer \a z.
 */
-QMapObject::QMapObject(const QMapView *mapView, QMapObject::MapObjectType type, quint16 z)
+QMapObject::QMapObject(QMapObject::MapObjectType type, quint16 z)
     :d_ptr(new QMapObjectPrivate)
 {
     Q_D(QMapObject);
-    d->mapView = mapView;
     d->objType = type;
     d->z = z;
 }
@@ -86,11 +85,10 @@ QMapObject::QMapObject(const QMapView *mapView, QMapObject::MapObjectType type, 
 /*!
     \internal
 */
-QMapObject::QMapObject(QMapObjectPrivate &dd, const QMapView *mapView, MapObjectType type, quint16 z)
+QMapObject::QMapObject(QMapObjectPrivate &dd, MapObjectType type, quint16 z)
     :d_ptr(&dd)
 {
     Q_D(QMapObject);
-    d->mapView = mapView;
     d->objType = type;
     d->z =z;
 }
@@ -109,6 +107,7 @@ QMapObject::MapObjectType QMapObject::type() const {
     Q_D(const QMapObject);
     return d->objType;
 }
+
 /*!
     \fn bool QMapObject::intersects(const QRectF& rect) const = 0;
     Computes whether this map object intersects with or completely lies
@@ -134,8 +133,11 @@ QMapObject::MapObjectType QMapObject::type() const {
 void QMapObject::compIntersectingTiles(const QRectF& box)
 {
     Q_D(QMapObject);
-    QMapView::TileIterator it(*d->mapView, box);
 
+    if (!d->mapView)
+        return;
+
+    QMapView::TileIterator it(*d->mapView, box);
 
     while (it.hasNext()) {
         it.next();
@@ -213,5 +215,11 @@ bool QMapObject::intersect(const QRectF& rect, const QLineF& line)
 
     return false;
 }
+
+void QMapObject::setParentView(QMapView *mapView)
+{
+    Q_D(QMapObject);
+    d->mapView = mapView;
+};
 
 QTM_END_NAMESPACE

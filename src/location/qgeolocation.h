@@ -46,19 +46,19 @@
 
 #include "qaddress.h"
 #include "qalternativeaddress.h"
-#include "qgeocoordinatemaps.h"
+#include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
 
 class Q_LOCATION_EXPORT QGeoLocation
 {
-    friend class QGeocodingXmlHandler;
+    friend class QGeocodingXmlParser;
 
 public:
     QGeoLocation();
 
     QRectF boundingBox() const;
-    QGeoCoordinateMaps position() const;
+    QGeoCoordinate position() const;
     QString title() const;
     QString language() const;
     QAddress address() const;
@@ -66,7 +66,7 @@ public:
 
 private:
     QRectF          box;
-    QGeoCoordinateMaps  pos;
+    QGeoCoordinate  pos;
     QString         ttl;
     QString         lang;
     QAddress        addr;

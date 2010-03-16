@@ -70,7 +70,7 @@ public:
     };
 
 public:
-    QMapObject(const QMapView *mapView, MapObjectType type, quint16 z = 0);
+    QMapObject(MapObjectType type, quint16 z = 0);
 
     quint16 zValue() const;
     MapObjectType type() const;
@@ -84,7 +84,9 @@ protected:
     virtual void compIntersectingTiles(const QRectF& box);
     virtual void paint(QPainter* painter, const QRectF& viewPort) = 0;
 
-    QMapObject(QMapObjectPrivate &dd, const QMapView *mapView, MapObjectType type, quint16 z = 0);
+    void setParentView(QMapView *mapView);
+
+    QMapObject(QMapObjectPrivate &dd, MapObjectType type, quint16 z = 0);
     QMapObjectPrivate *d_ptr;
 
 private:

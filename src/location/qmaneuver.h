@@ -45,13 +45,13 @@
 #include <QString>
 #include <QList>
 
-#include "qgeocoordinatemaps.h"
+#include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
 
 class Q_LOCATION_EXPORT QManeuver
 {
-    friend class QRouteXmlHandler;
+    friend class QRouteXmlParser;
 
 public:
     QManeuver();
@@ -70,8 +70,8 @@ public:
     qint64  trafficDirection() const;
     qint64  icon() const;
 
-    const QList<QGeoCoordinateMaps> wayPoints() const;
-    const QList<QGeoCoordinateMaps> maneuverPoints() const;
+    const QList<QGeoCoordinate> wayPoints() const;
+    const QList<QGeoCoordinate> maneuverPoints() const;
 
 private:
     QString descr; //!< description
@@ -86,8 +86,8 @@ private:
     qint64  traffDir; //!< traffic directions
     qint64  icn; //!< icon
 
-    QList<QGeoCoordinateMaps> wPoints; //!< way points
-    QList<QGeoCoordinateMaps> mPoints; //!< maneuver points
+    QList<QGeoCoordinate> wPoints; //!< way points
+    QList<QGeoCoordinate> mPoints; //!< maneuver points
 };
 
 QTM_END_NAMESPACE

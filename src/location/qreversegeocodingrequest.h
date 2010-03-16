@@ -44,7 +44,7 @@
 
 #include <QString>
 
-#include "qgeocoordinatemaps.h"
+#include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -54,22 +54,22 @@ class Q_LOCATION_EXPORT QReverseGeocodingRequest
 
 public:
     QReverseGeocodingRequest();
-    QReverseGeocodingRequest(const QGeoCoordinateMaps& coordinate);
+    QReverseGeocodingRequest(const QGeoCoordinate& coordinate);
 
     QString version() const;
 
     QString language() const;
     void setLanguage(const QString& language);
 
-    QGeoCoordinateMaps coordinate() const;
-    void setCoordinate(const QGeoCoordinateMaps& coordinate);
+    QGeoCoordinate coordinate() const;
+    void setCoordinate(const QGeoCoordinate& coordinate);
 
 private:
     Q_DISABLE_COPY(QReverseGeocodingRequest)
 
     QString        vers;
     QString        languageMARC;
-    QGeoCoordinateMaps coord;
+    QGeoCoordinate coord;
 };
 
 QTM_END_NAMESPACE

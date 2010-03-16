@@ -50,7 +50,7 @@
 QTM_BEGIN_NAMESPACE
 
 QMapMarkerPrivate::QMapMarkerPrivate()
-    : pt(QGeoCoordinateMaps()),
+    : pt(QGeoCoordinate()),
       box(QRectF()), icn(QPixmap()),
       txt(QString()), txtRect(QRectF()),
       txtFont(QFont()), fColor(QColor())
@@ -66,16 +66,16 @@ QMapMarkerPrivate::QMapMarkerPrivate()
 */
 
 /*!
-    Constructs a map marker in the \a mapView at the coordinates defined by \a point.
+    Constructs a map marker with coordinates defined by \a point.
     The marker will have the prescribed \a text in the given \a font and \a fontColor
     inside the \a textRect.  The marker is represented by the \a icon and be displayed
     at the layer specified by \a layerIndex.
 */
-QMapMarker::QMapMarker(const QMapView* mapView, const QGeoCoordinateMaps& point,
+QMapMarker::QMapMarker(const QGeoCoordinate& point,
                        const QString& text, const QFont& font, const QColor& fontColor,
                        const QPixmap& icon, const QRectF& textRect,
                        quint16 layerIndex)
-        : QMapObject(*new QMapMarkerPrivate, mapView, QMapObject::MarkerObject, layerIndex)
+        : QMapObject(*new QMapMarkerPrivate, QMapObject::MarkerObject, layerIndex)
 {
     Q_D(QMapMarker);
     d->pt = point;
@@ -94,11 +94,11 @@ QMapMarker::QMapMarker(const QMapView* mapView, const QGeoCoordinateMaps& point,
 /*
     \internal
 */
-QMapMarker::QMapMarker(QMapMarkerPrivate &dd, const QMapView* mapView, const QGeoCoordinateMaps& point,
+QMapMarker::QMapMarker(QMapMarkerPrivate &dd, const QGeoCoordinate& point,
                        const QString& text, const QFont& font, const QColor& fontColor,
                        const QPixmap& icon, const QRectF& textRect,
                        quint16 layerIndex)
-        : QMapObject(dd,mapView, QMapObject::MarkerObject, layerIndex)
+        : QMapObject(dd, QMapObject::MarkerObject, layerIndex)
 {
     Q_D(QMapMarker);
     d->pt = point;
@@ -126,11 +126,11 @@ QPixmap QMapMarker::icon() const
 }
 
 /*!
-    \fn QGeoCoordinateMaps QMapMarker::point() const
+    \fn QGeoCoordinate QMapMarker::point() const
 
     Returns the geo coordinate that is marked.
 */
-QGeoCoordinateMaps QMapMarker::point() const
+QGeoCoordinate QMapMarker::point() const
 {
     Q_D(const QMapMarker);
     return d->pt;
@@ -157,6 +157,10 @@ QFont QMapMarker::font() const
 void QMapMarker::compMapCoords()
 {
     Q_D(QMapMarker);
+
+    if (!d->mapView)
+        return;
+
     if (d->icn.isNull()) {
         d->mapPt = d->mapView->geoToMap(d->pt);
         d->box.moveLeft(d->mapPt.x() - (MARKER_WIDTH / 2));
@@ -195,6 +199,10 @@ void QMapMarker::constructMarker(QPainter* painter, const QPointF& point)
 void QMapMarker::paint(QPainter* painter, const QRectF& viewPort)
 {
     Q_D(QMapMarker);
+
+    if (!d->mapView)
+        return;
+
     if (d->icn.isNull()) {
         quint64 mapWidth = d->mapView->mapWidth();
         QPen oldPen = painter->pen();

@@ -47,17 +47,17 @@
 QTM_BEGIN_NAMESPACE
 
 class QMapRectPrivate;
-class QMapRect : public QMapObject
+class Q_LOCATION_EXPORT QMapRect : public QMapObject
 {
     friend class QMapView;
 
 public:
-    QMapRect(const QMapView* mapView, const QGeoCoordinateMaps& topLeft,
-             const QGeoCoordinateMaps& bottomRight, const QPen& pen = QPen(),
+    QMapRect(const QGeoCoordinate& topLeft,
+             const QGeoCoordinate& bottomRight, const QPen& pen = QPen(),
              const QBrush& brush = QBrush(), quint16 layerIndex = 0);
 
-    QGeoCoordinateMaps topLeft() const;
-    QGeoCoordinateMaps bottomRight() const;
+    QGeoCoordinate topLeft() const;
+    QGeoCoordinate bottomRight() const;
     QPen pen() const;
     QBrush brush() const;
 
@@ -66,8 +66,8 @@ protected:
     virtual bool intersects(const QRectF& rect) const;
     virtual void paint(QPainter* painter, const QRectF& viewPort);
 
-    QMapRect(QMapRectPrivate &dd, const QMapView* mapView, const QGeoCoordinateMaps& topLeft,
-             const QGeoCoordinateMaps& bottomRight, const QPen& pen = QPen(),
+    QMapRect(QMapRectPrivate &dd, const QGeoCoordinate& topLeft,
+             const QGeoCoordinate& bottomRight, const QPen& pen = QPen(),
              const QBrush& brush = QBrush(), quint16 layerIndex = 0);
 private:
     Q_DECLARE_PRIVATE(QMapRect)

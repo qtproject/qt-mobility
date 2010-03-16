@@ -54,13 +54,12 @@
 QTM_BEGIN_NAMESPACE
 
 class QMapRoutePrivate;
-class QMapRoute : public QMapObject
+class Q_LOCATION_EXPORT QMapRoute : public QMapObject
 {
     friend class QMapView;
 
 public:
-    QMapRoute(const QMapView* mapView,
-              const QRoute& route,
+    QMapRoute( const QRoute& route,
               const QPen& pen = QPen(),
               const QPixmap& endpointMarker = QPixmap(),
               quint16 layerIndex = 0);
@@ -72,8 +71,8 @@ protected:
     virtual void compIntersectingTiles(const QRectF& box);
     virtual bool intersects(const QRectF& rect) const;
     virtual void paint(QPainter* painter, const QRectF& viewPort);
+
     QMapRoute(QMapRoutePrivate &dd,
-              const QMapView* mapView,
               const QRoute& route,
               const QPen& pen = QPen(),
               const QPixmap& endpointMarker = QPixmap(),

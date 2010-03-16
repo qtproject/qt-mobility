@@ -45,7 +45,7 @@
 QTM_BEGIN_NAMESPACE
 
 QMapLinePrivate::QMapLinePrivate()
-    :pt1(QGeoCoordinateMaps()), pt2(QGeoCoordinateMaps()),
+    :pt1(QGeoCoordinate()), pt2(QGeoCoordinate()),
     p(QPen()), line(QLineF())
 {
 }
@@ -56,13 +56,13 @@ QMapLinePrivate::QMapLinePrivate()
 */
 
 /*!
-* Constructs a map line in the \a mapView with endpoints at \a point1
+* Constructs a map line with endpoints defined by \a point1
 * and \a point2.  The line is drawn using the \a pen and at the layer
 * specified by \a layerIndex.
 */
-QMapLine::QMapLine(const QMapView* mapView, const QGeoCoordinateMaps& point1,
-                   const QGeoCoordinateMaps& point2, const QPen& pen, quint16 layerIndex)
-        : QMapObject(*new QMapLinePrivate, mapView, QMapObject::LineObject, layerIndex)
+QMapLine::QMapLine(const QGeoCoordinate& point1,
+                   const QGeoCoordinate& point2, const QPen& pen, quint16 layerIndex)
+        : QMapObject(*new QMapLinePrivate, QMapObject::LineObject, layerIndex)
 {
     Q_D(QMapLine);
     d->pt1 = point1;
@@ -73,9 +73,9 @@ QMapLine::QMapLine(const QMapView* mapView, const QGeoCoordinateMaps& point1,
 /*!
     \internal
 */
-QMapLine::QMapLine(QMapLinePrivate &dd, const QMapView* mapView, const QGeoCoordinateMaps& point1,
-                   const QGeoCoordinateMaps& point2, const QPen& pen, quint16 layerIndex)
-        : QMapObject(dd, mapView, QMapObject::LineObject, layerIndex)
+QMapLine::QMapLine(QMapLinePrivate &dd, const QGeoCoordinate& point1,
+                   const QGeoCoordinate& point2, const QPen& pen, quint16 layerIndex)
+        : QMapObject(dd, QMapObject::LineObject, layerIndex)
 {
     Q_D(QMapLine);
     d->pt1 = point1;
@@ -94,21 +94,21 @@ QPen QMapLine::pen() const {
 }
 
 /*!
-   \fn QGeoCoordinateMaps QMapLine::point1() const
+   \fn QGeoCoordinate QMapLine::point1() const
 
    Returns the first end point (as a geo coordinate) of the line.
 */
-QGeoCoordinateMaps QMapLine::point1() const {
+QGeoCoordinate QMapLine::point1() const {
     Q_D(const QMapLine);
     return d->pt1;
 }
 
 /*!
-   \fn QGeoCoordinateMaps QMapLine::point2() const
+   \fn QGeoCoordinate QMapLine::point2() const
 
    Returns the second end point (as a geo coordinate) of the line.
 */
-QGeoCoordinateMaps QMapLine::point2() const {
+QGeoCoordinate QMapLine::point2() const {
     Q_D(const QMapLine);
     return d->pt2;
 }
@@ -116,6 +116,10 @@ QGeoCoordinateMaps QMapLine::point2() const {
 void QMapLine::compMapCoords()
 {
     Q_D(QMapLine);
+
+    if (!d->mapView)
+        return;
+
     QPointF p1 = d->mapView->geoToMap(d->pt1);
     QPointF p2 = d->mapView->geoToMap(d->pt2);
     d->line = QLineF(p1, p2);
@@ -135,6 +139,10 @@ void QMapLine::compMapCoords()
 void QMapLine::paint(QPainter* painter, const QRectF& viewPort)
 {
     Q_D(QMapLine);
+
+    if (!d->mapView)
+        return;
+
     qint64 mapWidth = static_cast<qint64>(d->mapView->mapWidth());
     QPen oldPen = painter->pen();
     painter->setPen(d->p);

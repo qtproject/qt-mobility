@@ -44,7 +44,7 @@
 
 #include "qmapobject_p.h"
 
-#include "qgeocoordinatemaps.h"
+#include "qgeocoordinate.h"
 #include <QPen>
 #include <QBrush>
 #include <QPainterPath>
@@ -55,7 +55,7 @@ class QMapPolygonPrivate : public QMapObjectPrivate
 {
 public:
     QMapPolygonPrivate();
-    QList<QGeoCoordinateMaps> poly; //!< The polygon.
+    QList<QGeoCoordinate> poly; //!< The polygon.
     QPen p; //!< The pen used for drawing the polygon.
     QBrush br; //!< The brush used for drawing the polygon.
     QPainterPath path;

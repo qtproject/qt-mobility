@@ -46,38 +46,31 @@
 
 QTM_BEGIN_NAMESPACE
 
-/*!
-* Internal representation of an ellipse that has been added to the map.
-*/
 class QMapEllipsePrivate;
-class QMapEllipse : public QMapObject
+class Q_LOCATION_EXPORT QMapEllipse : public QMapObject
 {
     friend class QMapView;
 
 public:
-    /*!
-    * Constructor.
-    * @param topLeft The top left geo coordinate of the bounding box of the ellipse.
-    * @param bottomRight The bottom right geo coordinate of the bounding box of the ellipse.
-    * @param pen Then pen used for drawing the ellipse.
-    * @param brush The brush used for drawing the ellipse.
-    */
-    QMapEllipse(const QMapView *mapView, const QGeoCoordinateMaps& topLeft, const QGeoCoordinateMaps& bottomRight,
+    QMapEllipse(const QGeoCoordinate& topLeft, const QGeoCoordinate& bottomRight,
                 const QPen& pen = QPen(), const QBrush& brush = QBrush(),
                 quint16 layerIndex = 0);
 
-    QGeoCoordinateMaps topLeft() const;
-    QGeoCoordinateMaps bottomRight() const;
+    QGeoCoordinate topLeft() const;
+    QGeoCoordinate bottomRight() const;
     QPen pen() const;
     QBrush brush() const;
 
 protected:
-    QMapEllipse(QMapEllipsePrivate &dd, const QMapView *mapView, const QGeoCoordinateMaps& topLeft, const QGeoCoordinateMaps& bottomRight,
+    virtual void compMapCoords();
+    virtual bool intersects(const QRectF& rect) const;
+    virtual void paint(QPainter* painter, const QRectF& viewPort);
+
+    QMapEllipse(QMapEllipsePrivate &dd, const QGeoCoordinate& topLeft, const QGeoCoordinate& bottomRight,
                 const QPen& pen = QPen(), const QBrush& brush = QBrush(),
                 quint16 layerIndex = 0);
 private:
     Q_DECLARE_PRIVATE(QMapEllipse)
-
 };
 
 QTM_END_NAMESPACE

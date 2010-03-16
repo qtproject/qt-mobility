@@ -47,24 +47,25 @@
 QTM_BEGIN_NAMESPACE
 
 class QMapLinePrivate;
-class QMapLine : public QMapObject
+class Q_LOCATION_EXPORT QMapLine : public QMapObject
 {
     friend class QMapView;
 
 public:
-    QMapLine(const QMapView* mapView, const QGeoCoordinateMaps& point1, const QGeoCoordinateMaps& point2,
+    QMapLine(const QGeoCoordinate& point1, const QGeoCoordinate& point2,
              const QPen& pen = QPen(), quint16 layerIndex = 0);
 
     QPen pen() const;
-    QGeoCoordinateMaps point1() const;
-    QGeoCoordinateMaps point2() const;
+    QGeoCoordinate point1() const;
+    QGeoCoordinate point2() const;
 
 protected:
     virtual bool intersects(const QRectF& tileRect) const;
     virtual void compMapCoords();
     virtual void paint(QPainter* painter, const QRectF& viewPort);
-    QMapLine(QMapLinePrivate &dd, const QMapView* mapView, const QGeoCoordinateMaps& point1,
-            const QGeoCoordinateMaps& point2, const QPen& pen = QPen(), quint16 layerIndex = 0);
+
+    QMapLine(QMapLinePrivate &dd, const QGeoCoordinate& point1,
+            const QGeoCoordinate& point2, const QPen& pen = QPen(), quint16 layerIndex = 0);
 
 private:
     Q_DECLARE_PRIVATE(QMapLine)

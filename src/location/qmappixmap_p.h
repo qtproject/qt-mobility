@@ -45,7 +45,7 @@
 #include "qmapobject_p.h"
 #include <QPixmap>
 #include <QPointF>
-#include "qgeocoordinatemaps.h"
+#include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -55,8 +55,8 @@ public:
     QMapPixmapPrivate();
 
     QPixmap pic; //!< The pixmap.
-    QGeoCoordinateMaps geoTopLeft; //!< The top left coordinate of this pixmap.
-    QPointF mapTopLeft; //!< The top left coordinate, for internal use only
+    QGeoCoordinate geoTopLeft; //!< The top left coordinate of this pixmap.
+    QRectF pixRect;
 };
 
 QTM_END_NAMESPACE

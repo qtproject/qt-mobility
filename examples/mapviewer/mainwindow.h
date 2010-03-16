@@ -73,7 +73,7 @@ protected:
     virtual void resizeEvent(QResizeEvent* event);
 
 private slots:
-    void mapClicked(QGeoCoordinateMaps geoCoord, QGraphicsSceneMouseEvent* mouseEvent);
+    void mapClicked(QGeoCoordinate geoCoord, QGraphicsSceneMouseEvent* mouseEvent);
     void routeReplyFinished(QRouteReply* reply);
     void setRtFromTo(bool checked);
     void zoomLevelChanged(quint16 oldZoomLevel, quint16 newZoomLevel);
@@ -81,6 +81,7 @@ private slots:
     void addMarker(bool checked);
     void drawLine(bool checked);
     void drawRect(bool checked);
+    void drawEllipse(bool checked);
     void drawPolygon(bool checked);
 
 private:
@@ -96,12 +97,15 @@ private:
     QAction* mnRoute;
     QAction* mnLine;
     QAction* mnRect;
+    QAction* mnEllipse;
     QAction* mnPolygon;
     QAction* mnDay;
     QAction* mnSat;
     QAction* mnTer;
+    QAction* mnSep1;
+    QAction* mnSep2;
 
-    QGeoCoordinateMaps lastClicked;
+    QGeoCoordinate lastClicked;
 
     QList<const QMapMarker*> selectedMarkers;
 };

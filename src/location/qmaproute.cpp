@@ -63,8 +63,8 @@ QMapRoutePrivate::QMapRoutePrivate()
     Constructor.
     The \a route represents the route that this map route represents.
 */
-QMapRoute::QMapRoute(const QMapView* mapView, const QRoute& route, const QPen& pen, const QPixmap& /*endpointMarker*/, quint16 layerIndex)
-        : QMapObject(*new QMapRoutePrivate, mapView, QMapObject::RouteObject, layerIndex)
+QMapRoute::QMapRoute(const QRoute& route, const QPen& pen, const QPixmap& /*endpointMarker*/, quint16 layerIndex)
+        : QMapObject(*new QMapRoutePrivate, QMapObject::RouteObject, layerIndex)
 {
     Q_D(QMapRoute);
     d->rt = route;
@@ -72,8 +72,8 @@ QMapRoute::QMapRoute(const QMapView* mapView, const QRoute& route, const QPen& p
     //TODO: endpoint marker for routes
 }
 
-QMapRoute::QMapRoute(QMapRoutePrivate &dd, const QMapView* mapView, const QRoute& route, const QPen& pen, const QPixmap& /*endpointMarker*/, quint16 layerIndex)
-        : QMapObject(dd, mapView, QMapObject::RouteObject, layerIndex)
+QMapRoute::QMapRoute(QMapRoutePrivate &dd, const QRoute& route, const QPen& pen, const QPixmap& /*endpointMarker*/, quint16 layerIndex)
+        : QMapObject(dd, QMapObject::RouteObject, layerIndex)
 {
     Q_D(QMapRoute);
     d->rt = route;
@@ -96,17 +96,20 @@ void QMapRoute::compMapCoords()
     Q_D(QMapRoute);
     d->segments.clear();
 
+    if (!d->mapView)
+        return;
+
     quint32 minDist = d->mapView->routeDetailLevel();
     QList<QManeuver> maneuvers = d->rt.maneuvers();
-    QGeoCoordinateMaps last;
-    QGeoCoordinateMaps here;
+    QGeoCoordinate last;
+    QGeoCoordinate here;
 
     for (int i = 0; i < maneuvers.size(); i++) {
-        QList<QGeoCoordinateMaps> wayPoints = maneuvers[i].wayPoints();
+        QList<QGeoCoordinate> wayPoints = maneuvers[i].wayPoints();
 
         for (int n = 0; n < wayPoints.size(); n++) {
             //make sure first waypoint is always shown
-            if (last.isNull()) {
+            if (last.isValid()) {
                 last = wayPoints[n];
                 continue;
             }
@@ -118,13 +121,13 @@ void QMapRoute::compMapCoords()
                     d->mapView->zoomLevel() == d->mapView->maxZoomLevel()) {
                 addSegment(line);
                 last = here;
-                here = QGeoCoordinateMaps();
+                here = QGeoCoordinate();
             }
         }
     }
 
     //make sure last waypoint is always shown
-    if (!here.isNull()) {
+    if (!here.isValid()) {
         QLineF line = d->mapView->connectShortest(here, last);
         addSegment(line);
     }
@@ -134,8 +137,12 @@ void QMapRoute::compMapCoords()
 
 void QMapRoute::addSegment(const QLineF& line)
 {
-    //TODO: refine: check whether tiles are actually being intersected
     Q_D(QMapRoute);
+
+    if (!d->mapView)
+        return;
+
+    //TODO: refine: check whether tiles are actually being intersected
     QMapView::TileIterator it(*d->mapView, QMapObject::boundingRect(line));
 
     while (it.hasNext()) {
@@ -167,6 +174,10 @@ void QMapRoute::compIntersectingTiles(const QRectF& /*box*/)
 bool QMapRoute::intersects(const QRectF& rect) const
 {
     Q_D(const QMapRoute);
+
+    if (!d->mapView)
+        return false;
+
     QMapView::TileIterator it(*d->mapView, rect);
 
     while (it.hasNext()) {
@@ -196,6 +207,10 @@ bool QMapRoute::intersects(const QRectF& rect) const
 void QMapRoute::paint(QPainter* painter, const QRectF& viewPort)
 {
     Q_D(QMapRoute);
+
+    if (!d->mapView)
+        return;
+
     QPen oldPen = painter->pen();
     painter->setPen(d->rPen);
     QMapView::TileIterator it(*d->mapView, viewPort);

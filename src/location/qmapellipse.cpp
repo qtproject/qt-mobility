@@ -41,14 +41,13 @@
 
 #include "qmapellipse.h"
 #include "qmapellipse_p.h"
+#include <QPainter>
 
 QTM_BEGIN_NAMESPACE
 
 QMapEllipsePrivate::QMapEllipsePrivate()
-    :geoTopLeft(QGeoCoordinateMaps()),
-     mapTopLeft(QPointF()),
-     geoBottomRight(QGeoCoordinateMaps()),
-     mapBottomRight(QPointF()),
+    :geoTopLeft(QGeoCoordinate()),
+     geoBottomRight(QGeoCoordinate()),
      p(QPen()), b(QBrush())
 {
 }
@@ -61,14 +60,14 @@ QMapEllipsePrivate::QMapEllipsePrivate()
 */
 
 /*!
-    Constructs an ellipse in the \a mapView with bounding box corners specified by \a topLeft and
+    Constructs an ellipse with bounding box corners specified by \a topLeft and
     \a bottomRight.  The ellipse outline is drawn with the given \a pen and filled
     with the given \a brush.  The ellipse is displayed at the layer specified by
     \a layerIndex.
 */
-QMapEllipse::QMapEllipse(const QMapView *mapView, const QGeoCoordinateMaps& topLeft, const QGeoCoordinateMaps& bottomRight,
+QMapEllipse::QMapEllipse(const QGeoCoordinate& topLeft, const QGeoCoordinate& bottomRight,
             const QPen& pen, const QBrush& brush, quint16 layerIndex)
-    :QMapObject(*new QMapEllipsePrivate, mapView, QMapObject::EllipseObject, layerIndex)
+    :QMapObject(*new QMapEllipsePrivate, QMapObject::EllipseObject, layerIndex)
 {
     Q_D(QMapEllipse);
     d->geoTopLeft = topLeft;
@@ -80,9 +79,9 @@ QMapEllipse::QMapEllipse(const QMapView *mapView, const QGeoCoordinateMaps& topL
 /*!
     \internal
 */
-QMapEllipse::QMapEllipse(QMapEllipsePrivate &dd, const QMapView *mapView, const QGeoCoordinateMaps& topLeft, const QGeoCoordinateMaps& bottomRight,
+QMapEllipse::QMapEllipse(QMapEllipsePrivate &dd, const QGeoCoordinate& topLeft, const QGeoCoordinate& bottomRight,
             const QPen& pen, const QBrush& brush, quint16 layerIndex)
-    :QMapObject(dd, mapView, QMapObject::EllipseObject, layerIndex)
+    :QMapObject(dd, QMapObject::EllipseObject, layerIndex)
 {
     Q_D(QMapEllipse);
     d->geoTopLeft = topLeft;
@@ -94,7 +93,7 @@ QMapEllipse::QMapEllipse(QMapEllipsePrivate &dd, const QMapView *mapView, const 
 /*!
     Returns the top left geo coordinate of the bounding box of the ellipse.
 */
-QGeoCoordinateMaps QMapEllipse::topLeft() const {
+QGeoCoordinate QMapEllipse::topLeft() const {
     Q_D(const QMapEllipse);
     return d->geoTopLeft;
 }
@@ -102,7 +101,7 @@ QGeoCoordinateMaps QMapEllipse::topLeft() const {
 /*!
     Returns the bottom right geo coordinate of the bounding box of the ellipse.
 */
-QGeoCoordinateMaps QMapEllipse::bottomRight() const {
+QGeoCoordinate QMapEllipse::bottomRight() const {
     Q_D(const QMapEllipse);
     return d->geoBottomRight;
 }
@@ -120,6 +119,77 @@ QPen QMapEllipse::pen() const {
 QBrush QMapEllipse::brush() const {
     Q_D(const QMapEllipse);
     return d->b;
+}
+
+void QMapEllipse::compMapCoords()
+{
+    Q_D(QMapEllipse);
+    if (!d->mapView)
+        return;
+
+    QPointF p1 = d->mapView->geoToMap(d->geoTopLeft);
+    QPointF p2 = d->mapView->geoToMap(d->geoBottomRight);
+
+    if (p2.y() < p1.y()) {
+        qreal y = p2.y();
+        p2.setY( p1.y() );
+        p1.setY(y);
+    }
+
+    //Lines will always connect points from west to east.
+    //If we cross the date line, we need to split.
+    if ( d->geoTopLeft.longitude() > d->geoBottomRight.longitude() )
+        p2.rx() += d->mapView->mapWidth();
+
+    QRectF rect(p1, p2);
+    d->path = QPainterPath();
+    d->path.addEllipse(rect);
+    //compute intersecting map tiles now
+    d->intersectingTiles.clear();
+    compIntersectingTiles(rect);
+}
+
+void QMapEllipse::paint(QPainter* painter, const QRectF& viewPort)
+{
+    Q_D(QMapEllipse);
+    if (!d->mapView)
+        return;
+
+    QPen oldPen = painter->pen();
+    QBrush oldBrush = painter->brush();
+    painter->setPen(d->p);
+    painter->setBrush(d->b);
+    d->path.translate(-viewPort.left(), -viewPort.top());
+    painter->drawPath(d->path);
+    qint64 mapWidth = static_cast<qint64>(d->mapView->mapWidth());
+    d->path.translate(viewPort.left(), viewPort.top());
+
+    //Is view port wrapping around date line?
+    if (viewPort.right() >= mapWidth) {
+        d->path.translate(-viewPort.left(), -viewPort.top());
+        d->path.translate(mapWidth, 0);
+        painter->drawPath(d->path);
+        d->path.translate(-mapWidth, 0);
+        d->path.translate(viewPort.left(), viewPort.top());
+    }
+
+    //Is line crossing date line?
+    if (d->path.boundingRect().right() >= mapWidth) {
+        d->path.translate(-viewPort.left(), -viewPort.top());
+        d->path.translate(-mapWidth, 0);
+        painter->drawPath(d->path);
+        d->path.translate(mapWidth, 0);
+        d->path.translate(viewPort.left(), viewPort.top());
+    }
+
+    painter->setPen(oldPen);
+    painter->setBrush(oldBrush);
+}
+
+bool QMapEllipse::intersects(const QRectF& rect) const
+{
+    Q_D(const QMapEllipse);
+    return d->path.intersects(rect);
 }
 
 QTM_END_NAMESPACE

@@ -56,7 +56,7 @@ public:
 
     //! The one-dimensional indices of the tiles that this map object either intersects or completely lies on.
     QList<quint64> intersectingTiles;
-    const QMapView* mapView;
+    QMapView* mapView;
     QMapObject::MapObjectType objType;
     quint16 z; //!< The z index, used for layering.
 };

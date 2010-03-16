@@ -43,20 +43,19 @@
 #define QLOCATION_MAPPOLYGON_H
 
 #include "qmapobject.h"
-
 QTM_BEGIN_NAMESPACE
 
 class QMapPolygonPrivate;
-class QMapPolygon : public QMapObject
+class Q_LOCATION_EXPORT QMapPolygon : public QMapObject
 {
     friend class QMapView;
 
 public:
-    QMapPolygon(const QMapView *mapView, const QList<QGeoCoordinateMaps>& polygon,
+    QMapPolygon(const QList<QGeoCoordinate>& polygon,
                 const QPen& pen = QPen(), const QBrush& brush = QBrush(),
                 quint16 layerIndex = 0);
 
-    QList<QGeoCoordinateMaps> polygon() const;
+    QList<QGeoCoordinate> polygon() const;
     QPen pen() const;
     QBrush brush() const;
 
@@ -64,7 +63,7 @@ protected:
     virtual bool intersects(const QRectF& rect) const;
     virtual void compMapCoords();
     virtual void paint(QPainter* painter, const QRectF& viewPort);
-    QMapPolygon(QMapPolygonPrivate &dd, const QMapView* mapView, const QList<QGeoCoordinateMaps>& polygon,
+    QMapPolygon(QMapPolygonPrivate &dd, const QList<QGeoCoordinate>& polygon,
                 const QPen& pen = QPen(), const QBrush& brush = QBrush(),
                 quint16 layerIndex=0);
 private:

@@ -47,7 +47,7 @@
 #include <QPen>
 #include <QPointF>
 #include <QPainter>
-#include "qgeocoordinatemaps.h"
+#include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -56,8 +56,8 @@ class QMapLinePrivate : public QMapObjectPrivate
 public:
     QMapLinePrivate();
 
-    QGeoCoordinateMaps pt1; //!< The first end point of the line.
-    QGeoCoordinateMaps pt2; //!< The second end point of the line.
+    QGeoCoordinate pt1; //!< The first end point of the line.
+    QGeoCoordinate pt2; //!< The second end point of the line.
     QPen p; //!< The pen used for drawing this line.
     QLineF line;
 };

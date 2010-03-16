@@ -43,6 +43,7 @@
 #define QLOCATION_MAPMARKER_H
 
 #include "qmapobject.h"
+
 QTM_BEGIN_NAMESPACE
 
 class QMapMarkerPrivate;
@@ -51,13 +52,16 @@ class Q_LOCATION_EXPORT QMapMarker : public QMapObject
     friend class QMapView;
 
 public:
-    QMapMarker(const QMapView* mapView, const QGeoCoordinateMaps& point,
-               const QString& text, const QFont& font, const QColor& fontColor,
-               const QPixmap& icon, const QRectF& textRect,
-               quint16 layerIndex);
+    QMapMarker(const QGeoCoordinate& point,
+               const QString& text = QString(),
+               const QFont& font = QFont("Arial", 10, QFont::Bold),
+               const QColor& fontColor = QColor(Qt::white),
+               const QPixmap& icon = QPixmap(),
+               const QRectF& textRect = QRectF(),
+               quint16 layerIndex = 0);
 
     QPixmap icon() const;
-    QGeoCoordinateMaps point() const;
+    QGeoCoordinate point() const;
     QString text() const;
     QRectF textRect() const;
     QFont font() const;
@@ -68,7 +72,8 @@ protected:
     virtual void paint(QPainter* painter, const QRectF& viewPort);
 
     void constructMarker(QPainter* painter, const QPointF& point);
-    QMapMarker(QMapMarkerPrivate &dd, const QMapView* mapView, const QGeoCoordinateMaps& point,
+
+    QMapMarker(QMapMarkerPrivate &dd, const QGeoCoordinate& point,
                const QString& text, const QFont& font, const QColor& fontColor,
                const QPixmap& icon, const QRectF& textRect,
                quint16 layerIndex);

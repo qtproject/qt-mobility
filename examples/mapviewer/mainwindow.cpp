@@ -48,6 +48,14 @@
 #include "qmaptile.h"
 #include "qrouterequest.h"
 #include "qmapmarker.h"
+#include "qmapellipse.h"
+#include "qmaproute.h"
+#include "qmaprect.h"
+#include "qmapline.h"
+#include "qmappolygon.h"
+#include "qmapmarker.h"
+
+QTM_USE_NAMESPACE
 
 MainWindow::MainWindow(QWidget *parent) :
         QMainWindow(parent),
@@ -75,12 +83,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QObject::connect(&geoNetworkManager, SIGNAL(finished(QRouteReply*)),
                      this, SLOT(routeReplyFinished(QRouteReply*)));
-    QObject::connect(mapView, SIGNAL(mapClicked(QGeoCoordinateMaps, QGraphicsSceneMouseEvent*)),
-                     this, SLOT(mapClicked(QGeoCoordinateMaps, QGraphicsSceneMouseEvent*)));
+    QObject::connect(mapView, SIGNAL(mapClicked(QGeoCoordinate, QGraphicsSceneMouseEvent*)),
+                     this, SLOT(mapClicked(QGeoCoordinate, QGraphicsSceneMouseEvent*)));
     QObject::connect(mapView, SIGNAL(zoomLevelChanged(quint16, quint16)),
                      this, SLOT(zoomLevelChanged(quint16, quint16)));
 
-    mapView->init(&geoNetworkManager, QPointF(13, 52.35));
+    //mapView->init(&geoNetworkManager, QPointF(13, 52.35));
+    mapView->init(&geoNetworkManager, QGeoCoordinate(52.35, 13));
 
     slider = new QSlider(Qt::Vertical, this);
     slider->setMinimum(0);
@@ -95,12 +104,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     popupMenu = new QMenu(this);
     mnMarker = popupMenu->addAction("Add marker here");
-    popupMenu->addSeparator();
+    mnSep1 = popupMenu->addSeparator();
     mnRoute = popupMenu->addAction("Add route");
     mnLine = popupMenu->addAction("Draw line");
     mnRect = popupMenu->addAction("Draw rectangle");
+    mnEllipse = popupMenu->addAction("Draw ellipse");
     mnPolygon = popupMenu->addAction("Draw polygon");
-    popupMenu->addSeparator();
+    mnSep2 = popupMenu->addSeparator();
     mnDay = popupMenu->addAction("Normal daylight");
     mnSat = popupMenu->addAction("Satellite");
     mnTer = popupMenu->addAction("Terrain");
@@ -110,6 +120,8 @@ MainWindow::MainWindow(QWidget *parent) :
                      this, SLOT(drawLine(bool)));
     QObject::connect(mnRect, SIGNAL(triggered(bool)),
                      this, SLOT(drawRect(bool)));
+    QObject::connect(mnEllipse, SIGNAL(triggered(bool)),
+                     this, SLOT(drawEllipse(bool)));
     QObject::connect(mnPolygon, SIGNAL(triggered(bool)),
                      this, SLOT(drawPolygon(bool)));
     QObject::connect(mnRoute, SIGNAL(triggered(bool)),
@@ -124,6 +136,22 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    delete qgv;
+    delete mapView;
+    delete slider;
+    delete mnMarker;
+    delete mnRoute;
+    delete mnLine;
+    delete mnRect;
+    delete mnEllipse;
+    delete mnPolygon;
+    delete mnDay;
+    delete mnSat;
+    delete mnTer;
+    delete mnSep1;
+    delete mnSep2;
+    delete popupMenu;
+
     delete ui;
 }
 
@@ -156,11 +184,11 @@ void MainWindow::routeReplyFinished(QRouteReply* reply)
         QPen pen(routeColor);
         pen.setWidth(7);
         pen.setCapStyle(Qt::RoundCap);
-        mapView->addRoute(routes[0], pen);
+        mapView->addMapObject(new QMapRoute(routes[0], pen));
     }
 }
 
-void MainWindow::mapClicked(QGeoCoordinateMaps geoCoord, QGraphicsSceneMouseEvent* mouseEvent)
+void MainWindow::mapClicked(QGeoCoordinate geoCoord, QGraphicsSceneMouseEvent* mouseEvent)
 {
     if (mouseEvent->buttons() & Qt::RightButton) {
         lastClicked = geoCoord;
@@ -173,8 +201,8 @@ void MainWindow::setRtFromTo(bool /*checked*/)
     if (selectedMarkers.count() < 2)
         return;
 
-    QGeoCoordinateMaps from = selectedMarkers.first()->point();
-    QGeoCoordinateMaps to = selectedMarkers.last()->point();
+    QGeoCoordinate from = selectedMarkers.first()->point();
+    QGeoCoordinate to = selectedMarkers.last()->point();
     QRouteRequest request;
     request.setSource(from);
     request.setDestination(to);
@@ -205,8 +233,9 @@ void MainWindow::setScheme(bool /*checked*/)
 
 void MainWindow::addMarker(bool /*checked*/)
 {
-    selectedMarkers.append(mapView->addMarker(lastClicked,
-                           QString::number(selectedMarkers.count() + 1)));
+    QMapMarker* marker = new QMapMarker(lastClicked, QString::number(selectedMarkers.count() + 1));
+    mapView->addMapObject(marker);
+    selectedMarkers.append(marker);
 }
 
 void MainWindow::drawLine(bool /*checked*/)
@@ -216,7 +245,8 @@ void MainWindow::drawLine(bool /*checked*/)
         const QMapMarker* m2 = selectedMarkers[i + 1];
         QPen pen(Qt::red);
         pen.setWidth(2);
-        mapView->addLine(m1->point(), m2->point(), pen, 1);
+        QMapLine* line = new QMapLine(m1->point(), m2->point(), pen, 1);
+        mapView->addMapObject(line);
     }
 
     selectedMarkers.clear();
@@ -231,7 +261,22 @@ void MainWindow::drawRect(bool /*checked*/)
         pen.setWidth(2);
         QColor fill(Qt::black);
         fill.setAlpha(65);
-        mapView->addRect(m1->point(), m2->point(), pen, QBrush(fill), 1);
+        mapView->addMapObject(new QMapRect(m1->point(), m2->point(), pen, QBrush(fill), 1));
+    }
+
+    selectedMarkers.clear();
+}
+
+void MainWindow::drawEllipse(bool /*checked*/)
+{
+    for (int i = 0; i < selectedMarkers.count() - 1; i++) {
+        const QMapMarker* m1 = selectedMarkers[i];
+        const QMapMarker* m2 = selectedMarkers[i + 1];
+        QPen pen(Qt::white);
+        pen.setWidth(2);
+        QColor fill(Qt::black);
+        fill.setAlpha(65);
+        mapView->addMapObject(new QMapEllipse(m1->point(), m2->point(), pen, QBrush(fill), 1));
     }
 
     selectedMarkers.clear();
@@ -239,7 +284,7 @@ void MainWindow::drawRect(bool /*checked*/)
 
 void MainWindow::drawPolygon(bool /*checked*/)
 {
-    QList<QGeoCoordinateMaps> coords;
+    QList<QGeoCoordinate> coords;
 
     for (int i = 0; i < selectedMarkers.count(); i++) {
         coords.append(selectedMarkers[i]->point());
@@ -249,8 +294,7 @@ void MainWindow::drawPolygon(bool /*checked*/)
     pen.setWidth(2);
     QColor fill(Qt::black);
     fill.setAlpha(65);
-    mapView->addPolygon(coords, pen, QBrush(fill), 1);
-
+    mapView->addMapObject(new QMapPolygon(coords, pen, QBrush(fill), 1));
     selectedMarkers.clear();
 }
 

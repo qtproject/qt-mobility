@@ -43,7 +43,7 @@
 #define QLOCATION_MAPELLIPSE__P_H
 
 #include "qmapobject_p.h"
-#include "qgeocoordinatemaps.h"
+#include "qgeocoordinate.h"
 
 #include <QPen>
 #include <QBrush>
@@ -56,12 +56,11 @@ class QMapEllipsePrivate : public QMapObjectPrivate
 public:
     QMapEllipsePrivate();
 
-    QGeoCoordinateMaps geoTopLeft; //!< The top left geo coordinate of the bounding box of the ellipse.
-    QPointF mapTopLeft; //!< The top left map coordinate of the bounding box of the ellipse, for internal use only
-    QGeoCoordinateMaps geoBottomRight; //!< The bottom right geo coordinate of the bounding box of the ellipse.
-    QPointF mapBottomRight; //!< The bottom right map coordinate of the bounding box of the ellipse, for internal use only
+    QGeoCoordinate geoTopLeft; //!< The top left geo coordinate of the bounding box of the ellipse.
+    QGeoCoordinate geoBottomRight; //!< The bottom right geo coordinate of the bounding box of the ellipse.
     QPen p; //!< The pen used for drawing the ellipse.
     QBrush b; //!< The brush used for drawing the ellipse.
+    QPainterPath path; //!< The painter path of the ellipse
 };
 
 QTM_END_NAMESPACE

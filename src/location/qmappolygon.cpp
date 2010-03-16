@@ -46,7 +46,7 @@
 QTM_BEGIN_NAMESPACE
 
 QMapPolygonPrivate::QMapPolygonPrivate()
-    :poly(QList<QGeoCoordinateMaps>()),p(QPen()), br(QBrush()),
+    :poly(QList<QGeoCoordinate>()),p(QPen()), br(QBrush()),
      path(QPainterPath())
 {
 }
@@ -58,13 +58,13 @@ QMapPolygonPrivate::QMapPolygonPrivate()
 */
 
 /*!
-    Constructs a polygon in the \a mapView with its verticies defined in \a polygon.
+    Constructs a polygon with its verticies defined in \a polygon.
     The polygon oulined is drawn with the given \a pen and filled with the given \a brush.
     The polygon is displayed in the layer specified by \a layerIndex.
 */
-QMapPolygon::QMapPolygon(const QMapView* mapView, const QList<QGeoCoordinateMaps>& polygon,
+QMapPolygon::QMapPolygon(const QList<QGeoCoordinate>& polygon,
                          const QPen& pen, const QBrush& brush, quint16 layerIndex)
-        : QMapObject(*new QMapPolygonPrivate, mapView, QMapObject::PolygonObject, layerIndex)
+        : QMapObject(*new QMapPolygonPrivate, QMapObject::PolygonObject, layerIndex)
 {
     Q_D(QMapPolygon);
     d->poly = polygon;
@@ -75,9 +75,9 @@ QMapPolygon::QMapPolygon(const QMapView* mapView, const QList<QGeoCoordinateMaps
 /*!
     \internal
 */
-QMapPolygon::QMapPolygon(QMapPolygonPrivate &dd, const QMapView* mapView, const QList<QGeoCoordinateMaps>& polygon,
+QMapPolygon::QMapPolygon(QMapPolygonPrivate &dd, const QList<QGeoCoordinate>& polygon,
                          const QPen& pen, const QBrush& brush, quint16 layerIndex)
-        : QMapObject(dd, mapView, QMapObject::PolygonObject, layerIndex)
+        : QMapObject(dd, QMapObject::PolygonObject, layerIndex)
 {
     Q_D(QMapPolygon);
     d->poly = polygon;
@@ -86,11 +86,11 @@ QMapPolygon::QMapPolygon(QMapPolygonPrivate &dd, const QMapView* mapView, const 
 }
 
 /*!
-    \fn QList<QGeoCoordinateMaps> QMapPolygon::polygon() const
+    \fn QList<QGeoCoordinate> QMapPolygon::polygon() const
 
     Returns the polygon as a list of geo coordinates.
 */
-QList<QGeoCoordinateMaps> QMapPolygon::polygon() const {
+QList<QGeoCoordinate> QMapPolygon::polygon() const {
     Q_D(const QMapPolygon);
     return d->poly;
 }
@@ -118,6 +118,10 @@ QBrush QMapPolygon::brush() const {
 void QMapPolygon::compMapCoords()
 {
     Q_D(QMapPolygon);
+
+    if (!d->mapView)
+        return;
+
     if (d->poly.count() < 2)
         return;
 
@@ -138,6 +142,10 @@ void QMapPolygon::compMapCoords()
 void QMapPolygon::paint(QPainter* painter, const QRectF& viewPort)
 {
     Q_D(QMapPolygon);
+
+    if (!d->mapView)
+        return;
+
     QPen oldPen = painter->pen();
     QBrush oldBrush = painter->brush();
     painter->setPen(d->p);

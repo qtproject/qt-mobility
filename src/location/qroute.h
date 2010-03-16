@@ -52,7 +52,7 @@ QTM_BEGIN_NAMESPACE
 
 class Q_LOCATION_EXPORT QRoute
 {
-    friend class QRouteXmlHandler;
+    friend class QRouteXmlParser;
 
 public:
     QRoute();

@@ -46,8 +46,8 @@
 QTM_BEGIN_NAMESPACE
 
 QMapRectPrivate::QMapRectPrivate()
-    :geoTopLeft(QGeoCoordinateMaps()),
-     geoBottomRight(QGeoCoordinateMaps()),
+    :geoTopLeft(QGeoCoordinate()),
+     geoBottomRight(QGeoCoordinate()),
      p(QPen()), b(QBrush()), rect(QRect())
 {
 }
@@ -59,14 +59,14 @@ QMapRectPrivate::QMapRectPrivate()
 */
 
 /*!
- * Constructs a rectangle in the \a mapView bound by its \a topLeft and \a bottomRight
+ * Constructs a rectangle with corners defined by its \a topLeft and \a bottomRight
    coordinates.  The rectangle outline is drawn with the given \a pen and the filled
    with the given \a brush.  The rectangle is displayed at the layer specified by
    \a layerIndex.
  */
-QMapRect::QMapRect(const QMapView* mapView, const QGeoCoordinateMaps& topLeft, const QGeoCoordinateMaps& bottomRight,
+QMapRect::QMapRect(const QGeoCoordinate& topLeft, const QGeoCoordinate& bottomRight,
                    const QPen& pen, const QBrush& brush, quint16 layerIndex)
-        : QMapObject(*new QMapRectPrivate, mapView, QMapObject::RectObject, layerIndex)
+        : QMapObject(*new QMapRectPrivate, QMapObject::RectObject, layerIndex)
 {
     Q_D(QMapRect);
     d->geoTopLeft = topLeft;
@@ -78,9 +78,9 @@ QMapRect::QMapRect(const QMapView* mapView, const QGeoCoordinateMaps& topLeft, c
 /*!
     \internal
 */
-QMapRect::QMapRect(QMapRectPrivate &dd, const QMapView* mapView, const QGeoCoordinateMaps& topLeft, const QGeoCoordinateMaps& bottomRight,
+QMapRect::QMapRect(QMapRectPrivate &dd, const QGeoCoordinate& topLeft, const QGeoCoordinate& bottomRight,
                    const QPen& pen, const QBrush& brush, quint16 layerIndex)
-        : QMapObject(dd, mapView, QMapObject::RectObject, layerIndex)
+        : QMapObject(dd, QMapObject::RectObject, layerIndex)
 {
     Q_D(QMapRect);
     d->geoTopLeft = topLeft;
@@ -92,7 +92,7 @@ QMapRect::QMapRect(QMapRectPrivate &dd, const QMapView* mapView, const QGeoCoord
 /*!
      Returns the top left geo coordinate of the rectangle.
 */
-QGeoCoordinateMaps QMapRect::topLeft() const {
+QGeoCoordinate QMapRect::topLeft() const {
     Q_D(const QMapRect);
     return d->geoTopLeft;
 }
@@ -100,7 +100,7 @@ QGeoCoordinateMaps QMapRect::topLeft() const {
 /*!
     Returns the bottom right geo coordinate of the left rectangle.
 */
-QGeoCoordinateMaps QMapRect::bottomRight() const {
+QGeoCoordinate QMapRect::bottomRight() const {
     Q_D(const QMapRect);
     return d->geoBottomRight;
 }
@@ -124,6 +124,10 @@ QBrush QMapRect::brush() const {
 void QMapRect::compMapCoords()
 {
     Q_D(QMapRect);
+
+    if (!d->mapView)
+        return;
+
     QPointF p1 = d->mapView->geoToMap(d->geoTopLeft);
     QPointF p2 = d->mapView->geoToMap(d->geoBottomRight);
 
@@ -147,6 +151,10 @@ void QMapRect::compMapCoords()
 void QMapRect::paint(QPainter* painter, const QRectF& viewPort)
 {
     Q_D(QMapRect);
+
+    if (!d->mapView)
+        return;
+
     QPen oldPen = painter->pen();
     QBrush oldBrush = painter->brush();
     painter->setPen(d->p);

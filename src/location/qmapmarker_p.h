@@ -43,7 +43,7 @@
 #define QLOCATION_MAPMARKER_P_H
 
 #include "qmapobject_p.h"
-#include "qgeocoordinatemaps.h"
+#include "qgeocoordinate.h"
 #include <QPixmap>
 #include <QPointF>
 #include <QString>
@@ -57,7 +57,7 @@ class QMapMarkerPrivate : public QMapObjectPrivate
 public:
     QMapMarkerPrivate();
 
-    QGeoCoordinateMaps pt;
+    QGeoCoordinate pt;
     QPointF mapPt;
     QRectF box;
     QPixmap icn;

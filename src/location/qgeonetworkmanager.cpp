@@ -43,17 +43,15 @@
 #include <math.h>
 
 #include <QStringBuilder>
-#include <QXmlInputSource>
-#include <QXmlSimpleReader>
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QUrl>
 
 #include "qgeonetworkmanager.h"
 #include "qroutereply.h"
-#include "qroutexmlhandler.h"
+#include "qroutexmlparser.h"
 #include "qgeocodingreply.h"
-#include "qgeocodingxmlhandler.h"
+#include "qgeocodingxmlparser.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -202,10 +200,10 @@ QRouteReply* QGeoNetworkManager::get(const QRouteRequest& request)
 {
     QString rawRequest = "http://" % rtSrv % "/routing/rt/" % request.version() %
                          "?referer=localhost" %
-                         "&slong=" % trimGeoCoordinate(request.src.x()) %
-                         "&slat=" % trimGeoCoordinate(request.src.y()) %
-                         "&dlong=" % trimGeoCoordinate(request.dst.x()) %
-                         "&dlat=" % trimGeoCoordinate(request.dst.y());
+                         "&slong=" % trimGeoCoordinate(request.src.longitude()) %
+                         "&slat=" % trimGeoCoordinate(request.src.latitude()) %
+                         "&dlong=" % trimGeoCoordinate(request.dst.longitude()) %
+                         "&dlat=" % trimGeoCoordinate(request.dst.latitude());
 
     if (request.nTotal > 0)
         rawRequest += "&total=" % QString::number(request.nTotal);
@@ -224,11 +222,11 @@ QRouteReply* QGeoNetworkManager::get(const QRouteRequest& request)
     if (request.rAvoid.count() > 0)
         rawRequest += "&avoid=" % request.avoidToString();
 
-    const QList<QGeoCoordinateMaps>& stopOvers = request.stopOvers();
+    const QList<QGeoCoordinate>& stopOvers = request.stopOvers();
 
     for (int i = 0; i < stopOvers.length(); i++) {
-        rawRequest += QString::number(stopOvers[i].y(), 'f') % "," %
-                      QString::number(stopOvers[i].x(), 'f') % " ";
+        rawRequest += QString::number(stopOvers[i].latitude(), 'f') % "," %
+                      QString::number(stopOvers[i].longitude(), 'f') % " ";
     }
 
     netManager.setProxy(rtProx);
@@ -291,8 +289,8 @@ QGeocodingReply* QGeoNetworkManager::get(const QReverseGeocodingRequest& request
 {
     QString rawRequest = "http://" % geocdSrv % "/geocoder/rgc/" % request.version() %
                          "?referer=localhost" %
-                         "&long=" % trimGeoCoordinate(request.coord.x()) %
-                         "&lat=" % trimGeoCoordinate(request.coord.y());
+                         "&long=" % trimGeoCoordinate(request.coord.longitude()) %
+                         "&lat=" % trimGeoCoordinate(request.coord.latitude());
 
     if (request.languageMARC != "")
         rawRequest += "&lg=" % request.languageMARC;
@@ -514,31 +512,21 @@ QList<MapScheme> QGeoNetworkManager::schemes() const {
 }
 
 /*!
-    Parses \a netReply with a QRouteXmlHandler to populate \a routeReply.
+    Parses \a netReply to populates \a routeReply.
 */
 bool QGeoNetworkManager::parseRouteReply(QNetworkReply* netReply, QRouteReply* routeReply)
 {
-    QRouteXmlHandler handler(routeReply);
-    QXmlInputSource xmlSrc(netReply);
-    QXmlSimpleReader xmlReader;
-    xmlReader.setContentHandler(&handler);
-    xmlReader.setErrorHandler(&handler);
-
-    return xmlReader.parse(xmlSrc);
+    QRouteXmlParser parser;
+    return parser.parse(netReply, routeReply);
 }
 
 /*!
-    * Parses \a netReply with a QGeocodingXmlHandler to populate \a codingReply.
+    * Parses \a netReply to populate \a codingReply.
 */
 bool QGeoNetworkManager::parseCodingReply(QNetworkReply* netReply, QGeocodingReply* codingReply)
 {
-    QGeocodingXmlHandler handler(codingReply);
-    QXmlInputSource xmlSrc(netReply);
-    QXmlSimpleReader xmlReader;
-    xmlReader.setContentHandler(&handler);
-    xmlReader.setErrorHandler(&handler);
-
-    return xmlReader.parse(xmlSrc);
+    QGeocodingXmlParser parser;
+    return parser.parse(netReply, codingReply);
 }
 
 /*!

@@ -45,7 +45,7 @@
 #include <QPen>
 #include <QBrush>
 #include <QRectF>
-#include "qgeocoordinatemaps.h"
+#include "qgeocoordinate.h"
 #include "qmapobject_p.h"
 
 QTM_BEGIN_NAMESPACE
@@ -54,8 +54,8 @@ class QMapRectPrivate : public QMapObjectPrivate
 {
 public:
     QMapRectPrivate();
-    QGeoCoordinateMaps geoTopLeft; //!< The top left geo coordinate of the rectangle.
-    QGeoCoordinateMaps geoBottomRight; //!< The bottom right geo coordinate of the rectangle.
+    QGeoCoordinate geoTopLeft; //!< The top left geo coordinate of the rectangle.
+    QGeoCoordinate geoBottomRight; //!< The bottom right geo coordinate of the rectangle.
     QPen p; //!< The pen used for drawing the rectangle.
     QBrush b; //!< The brush used for drawing the rectangle.
     QRectF rect;

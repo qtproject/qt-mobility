@@ -42,11 +42,12 @@
 #include "qmappixmap.h"
 #include "qmappixmap_p.h"
 
+#include <QPainter>
+
 QTM_BEGIN_NAMESPACE
 
 QMapPixmapPrivate::QMapPixmapPrivate()
-    :pic(QPixmap()), geoTopLeft(QGeoCoordinateMaps()),
-     mapTopLeft(QPointF())
+    :pic(QPixmap()), geoTopLeft(QGeoCoordinate())
 {
 }
 
@@ -57,19 +58,19 @@ QMapPixmapPrivate::QMapPixmapPrivate()
 */
 
 /*!
-    Constructs the \a pixmap in the \a mapView.  It's top left corner is position according to \a topLeft
+    Constructs the \a pixmap.  It's top left corner is position according to \a topLeft
     corner.  The pixmap is displayed in the layer specified by \a layerIndex.
 */
-QMapPixmap::QMapPixmap(const QMapView* mapView, const QGeoCoordinateMaps& topLeft, const QPixmap& pixmap, quint16 layerIndex)
-    :QMapObject(*new QMapPixmapPrivate, mapView, QMapObject::PixmapObject, layerIndex)
+QMapPixmap::QMapPixmap(const QGeoCoordinate& topLeft, const QPixmap& pixmap, quint16 layerIndex)
+    :QMapObject(*new QMapPixmapPrivate, QMapObject::PixmapObject, layerIndex)
 {
     Q_D(QMapPixmap);
     d->geoTopLeft = topLeft;
     d->pic = pixmap;
 }
 
-QMapPixmap::QMapPixmap(QMapPixmapPrivate &dd, const QMapView* mapView, const QGeoCoordinateMaps& topLeft, const QPixmap& pixmap, quint16 layerIndex)
-    :QMapObject(dd, mapView, QMapObject::PixmapObject, layerIndex)
+QMapPixmap::QMapPixmap(QMapPixmapPrivate &dd, const QGeoCoordinate& topLeft, const QPixmap& pixmap, quint16 layerIndex)
+    :QMapObject(dd, QMapObject::PixmapObject, layerIndex)
 {
     Q_D(QMapPixmap);
     d->geoTopLeft = topLeft;
@@ -87,9 +88,58 @@ QPixmap QMapPixmap::pixmap() const {
 /*!
     Returns the top left corner (as a geo coordinate) of this pixmap.
 */
-QGeoCoordinateMaps QMapPixmap::topLeft() const {
+QGeoCoordinate QMapPixmap::topLeft() const {
     Q_D(const QMapPixmap);
     return d->geoTopLeft;
+}
+
+void QMapPixmap::compMapCoords()
+{
+    Q_D(QMapPixmap);
+    if (!d->mapView)
+        return;
+
+    QPointF mapTopLeft(d->mapView->geoToMap(d->geoTopLeft));
+    d->pixRect = d->pic.rect();
+    d->pixRect.moveTopLeft(mapTopLeft);
+    //compute intersecting map tiles now
+    d->intersectingTiles.clear();
+    compIntersectingTiles(d->pixRect);
+}
+
+void QMapPixmap::paint(QPainter* painter, const QRectF& viewPort)
+{
+    Q_D(QMapPixmap);
+    if (!d->mapView)
+        return;
+
+    d->pixRect.translate(-viewPort.left(), -viewPort.top());
+    painter->drawRect(d->pixRect);
+    d->pixRect.translate(viewPort.left(), viewPort.top());
+    qint64 mapWidth = static_cast<qint64>(d->mapView->mapWidth());
+
+    //Is view port wrapping around date line?
+    if (viewPort.right() >= mapWidth) {
+        d->pixRect.translate(-viewPort.left(), -viewPort.top());
+        d->pixRect.translate(mapWidth, 0);
+        painter->drawRect(d->pixRect);
+        d->pixRect.translate(-mapWidth, 0);
+        d->pixRect.translate(viewPort.left(), viewPort.top());
+    }
+    //Is rect crossing date line?
+    if (d->pixRect.right() >= mapWidth) {
+        d->pixRect.translate(-viewPort.left(), -viewPort.top());
+        d->pixRect.translate(-mapWidth, 0);
+        painter->drawRect(d->pixRect);
+        d->pixRect.translate(mapWidth, 0);
+        d->pixRect.translate(viewPort.left(), viewPort.top());
+    }
+}
+
+bool QMapPixmap::intersects(const QRectF& rect) const
+{
+    Q_D(const QMapPixmap);
+    return d->pixRect.intersects(rect);
 }
 
 QTM_END_NAMESPACE

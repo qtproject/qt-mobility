@@ -52,14 +52,18 @@ class QMapPixmap : public QMapObject
     friend class QMapView;
 
 public:
-    QMapPixmap(const QMapView* mapView, const QGeoCoordinateMaps& topLeft, const QPixmap& pixmap, quint16 layerIndex = 0);
+    QMapPixmap(const QGeoCoordinate& topLeft, const QPixmap& pixmap, quint16 layerIndex = 0);
 
     QPixmap pixmap() const;
-    QGeoCoordinateMaps topLeft() const;
+    QGeoCoordinate topLeft() const;
 
 protected:
-    QMapPixmap(QMapPixmapPrivate &dd, const QMapView* mapView,
-                const QGeoCoordinateMaps& topLeft, const QPixmap& pixmap, quint16 layerIndex = 0);
+    virtual void compMapCoords();
+    virtual bool intersects(const QRectF& rect) const;
+    virtual void paint(QPainter* painter, const QRectF& viewPort);
+
+    QMapPixmap(QMapPixmapPrivate &dd, const QGeoCoordinate& topLeft, const QPixmap& pixmap,
+            quint16 layerIndex = 0);
 
 private:
     Q_DECLARE_PRIVATE(QMapPixmap)

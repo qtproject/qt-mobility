@@ -119,7 +119,7 @@ QString QRouteRequest::version() const
 /*!
     Sets the source geo coordinate for this request to \a source.
 */
-void QRouteRequest::setSource(const QGeoCoordinateMaps& source)
+void QRouteRequest::setSource(const QGeoCoordinate& source)
 {
     src = source;
 }
@@ -127,7 +127,7 @@ void QRouteRequest::setSource(const QGeoCoordinateMaps& source)
 /*!
     Returns the source geo coordinate for this request.
 */
-QGeoCoordinateMaps QRouteRequest::source() const
+QGeoCoordinate QRouteRequest::source() const
 {
     return src;
 }
@@ -135,7 +135,7 @@ QGeoCoordinateMaps QRouteRequest::source() const
 /*!
     Sets the destination geo coordinate for this request to \a destination.
 */
-void QRouteRequest::setDestination(const QGeoCoordinateMaps& destination)
+void QRouteRequest::setDestination(const QGeoCoordinate& destination)
 {
     dst = destination;
 }
@@ -143,7 +143,7 @@ void QRouteRequest::setDestination(const QGeoCoordinateMaps& destination)
 /*!
     Returns the destination geo coordinate for this request.
 */
-QGeoCoordinateMaps QRouteRequest::destination() const
+QGeoCoordinate QRouteRequest::destination() const
 {
     return dst;
 }
@@ -296,7 +296,7 @@ QList<QRouteRequest::RouteAvoid> QRouteRequest::avoid() const
     The server calculates a route that contains these waypoints (in the given order)
     as part of the route. These waypoints must be between the destination and the source.
 */
-void QRouteRequest::addStopOver(const QGeoCoordinateMaps& stopOver)
+void QRouteRequest::addStopOver(const QGeoCoordinate& stopOver)
 {
     stpOvers += stopOver;
 }
@@ -306,7 +306,7 @@ void QRouteRequest::addStopOver(const QGeoCoordinateMaps& stopOver)
 
     \sa addStopOver()
 */
-void QRouteRequest::removeStopOver(const QGeoCoordinateMaps& stopOver)
+void QRouteRequest::removeStopOver(const QGeoCoordinate& stopOver)
 {
     int i = 0;
 
@@ -321,7 +321,7 @@ void QRouteRequest::removeStopOver(const QGeoCoordinateMaps& stopOver)
 /*!
     Returns all added stop overs.
 */
-const QList<QGeoCoordinateMaps>& QRouteRequest::stopOvers() const
+const QList<QGeoCoordinate>& QRouteRequest::stopOvers() const
 {
     return stpOvers;
 }
