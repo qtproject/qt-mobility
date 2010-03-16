@@ -42,8 +42,6 @@
 #include "v4lvideoencode.h"
 #include "v4lcamerasession.h"
 
-#include <QtCore/qdebug.h>
-
 V4LVideoEncode::V4LVideoEncode(QObject *parent)
     :QVideoEncoderControl(parent)
 {

@@ -63,7 +63,7 @@ public:
 
     qint64 duration() const;
 
-    void applySettings() {}
+    void applySettings();
 
 public slots:
     void record();

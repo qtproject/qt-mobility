@@ -1089,8 +1089,8 @@ void TestCntTransformContactData::validateCntTransformOnlineAccountL(
         
         QVERIFY(fields.at(2)->StorageType() == KStorageTypeText);
         QVERIFY(fields.at(2)->ContentType().ContainsFieldType(KUidContactFieldPresence));
-        //Presence information is encoded as single charcter value defined in enum
-        //1 for Availble
+        //Presence information is encoded as single character value defined in enum
+        //1 for Available
         QCOMPARE(fields.at(2)->TextStorage()->Text(), _L("1") );
         
         QVERIFY(fields.at(3)->StorageType() == KStorageTypeText);
@@ -1201,7 +1201,7 @@ void TestCntTransformContactData::validateCntTransformOnlineAccountL(
     newField = 0;
     
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldPresence);
-    // Set the presence availble i.e. 1
+    // Set the presence available i.e. 1
     newField->TextStorage()->SetTextL(_L("1"));
     contactDetail = transformOnlineAccount->transformItemField(*newField, contact);
     const QContactOnlineAccount* onlineAccountDetail6(static_cast<const QContactOnlineAccount*>(contactDetail));
@@ -1814,7 +1814,7 @@ void TestCntTransformContactData::validateContextsL(CntTransformContactData* tra
  * \a transformContactData the tranformcontact instance
  * \a filedname - The filedname which has to be checked
  * \a idValue - the correct id value against which the comparison is done
- * \a isSame -  If this value is true then '==' comparision is done else '!=' comparision is done
+ * \a isSame -  If this value is true then '==' comparison is done else '!=' comparison is done
  */
 void TestCntTransformContactData::validateGetIdForField(
                     const CntTransformContactData& transformContactData,

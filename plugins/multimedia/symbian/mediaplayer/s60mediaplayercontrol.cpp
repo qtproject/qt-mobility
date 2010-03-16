@@ -84,12 +84,14 @@ QMediaPlayer::MediaStatus S60MediaPlayerControl::mediaStatus() const
 {   
     if (m_session)
         return m_session->mediaStatus();
-    return QMediaPlayer::NoMedia;
+    return m_mediaSettings.mediaStatus();
 }
 
 int S60MediaPlayerControl::bufferStatus() const
 {
-    return -1;
+    if (m_session)
+        return m_session->bufferStatus();
+    return 0;
 }
 
 int S60MediaPlayerControl::volume() const
@@ -200,41 +202,41 @@ void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *str
 {
     Q_UNUSED(stream)
     // we don't want to set & load media again when it is already loaded    
-    if (m_session && m_currentResource == source && m_session->state() == QMediaPlayer::LoadedMedia)
-        return;
-
-    if (source.isNull())
+    if (m_session && m_currentResource == source)
         return;
     
     // store to variable as session is created based on the content type.
     m_currentResource = source;
-    if (m_session)
-        m_session->stop();
+    S60MediaPlayerSession *newSession = m_mediaPlayerResolver.PlayerSession();
+    m_mediaSettings.setMediaStatus(QMediaPlayer::UnknownMediaStatus);
     
-    S60MediaPlayerSession *newSession = m_mediaPlayerResolver.PlayerSession(); 
-
+    if (m_session)
+        m_session->reset();
+    else {
+        emit mediaStatusChanged(QMediaPlayer::UnknownMediaStatus);
+        emit error(QMediaPlayer::NoError, QString());
+    }
+    
     m_session = newSession;
     
-    if (m_session) {
-        QUrl url = source.canonicalUrl();
-        
-        if (m_session->mediaFileLocal())
-            m_session->load(url);	
-        else
-            m_session->loadUrl(url);
-            
-        emit mediaChanged(m_currentResource);
-    } else {
-        emit error(QMediaPlayer::FormatError, QString("Symbian: -5"));
-        emit mediaStatusChanged(QMediaPlayer::InvalidMedia);
+    if (m_session)
+        m_session->load(source.canonicalUrl());
+    else {
+        QMediaPlayer::MediaStatus status = (source.isNull()) ? QMediaPlayer::NoMedia : QMediaPlayer::InvalidMedia;
+        m_mediaSettings.setMediaStatus(status);
+        emit stateChanged(QMediaPlayer::StoppedState);
+        emit error((source.isNull()) ? QMediaPlayer::NoError : QMediaPlayer::ResourceError, 
+                   (source.isNull()) ? "" : tr("Media couldn't be resolved"));
+        emit mediaStatusChanged(status);
     }
-}
+    emit mediaChanged(m_currentResource);
+  }
 
 void S60MediaPlayerControl::setVideoOutput(QObject *output)
 {
-    if (!m_session)
-        m_session = m_mediaPlayerResolver.VideoPlayerSession();
-    m_session->setVideoRenderer(output);
+    S60MediaPlayerSession *session = NULL;
+    session = m_mediaPlayerResolver.VideoPlayerSession();
+    session->setVideoRenderer(output);
 }
 
 bool S60MediaPlayerControl::isAudioAvailable() const

@@ -45,7 +45,7 @@
 
 Vmr9VideoWindowControl::Vmr9VideoWindowControl(QObject *parent)
     : QVideoWindowControl(parent)
-    , m_filter(com_new<IBaseFilter>(CLSID_VideoMixingRenderer9))
+    , m_filter(com_new<IBaseFilter>(CLSID_VideoMixingRenderer9, IID_IBaseFilter))
     , m_windowId(0)
     , m_dirtyValues(0)
     , m_brightness(0)
@@ -54,7 +54,7 @@ Vmr9VideoWindowControl::Vmr9VideoWindowControl(QObject *parent)
     , m_saturation(0)
     , m_fullScreen(false)
 {
-    if (IVMRFilterConfig9 *config = com_cast<IVMRFilterConfig9>(m_filter)) {
+    if (IVMRFilterConfig9 *config = com_cast<IVMRFilterConfig9>(m_filter, IID_IVMRFilterConfig9)) {
         config->SetRenderingMode(VMR9Mode_Windowless);
         config->SetNumberOfStreams(1);
         config->Release();
@@ -78,7 +78,8 @@ void Vmr9VideoWindowControl::setWinId(WId id)
 {
     m_windowId = id;
 
-    if (IVMRWindowlessControl9 *control = com_cast<IVMRWindowlessControl9>(m_filter)) {
+    if (IVMRWindowlessControl9 *control = com_cast<IVMRWindowlessControl9>(
+            m_filter, IID_IVMRWindowlessControl9)) {
         control->SetVideoClippingWindow(m_windowId);
         control->Release();
     }
@@ -88,7 +89,8 @@ QRect Vmr9VideoWindowControl::displayRect() const
 {
     QRect rect;
 
-    if (IVMRWindowlessControl9 *control = com_cast<IVMRWindowlessControl9>(m_filter)) {
+    if (IVMRWindowlessControl9 *control = com_cast<IVMRWindowlessControl9>(
+            m_filter, IID_IVMRWindowlessControl9)) {
         RECT sourceRect;
         RECT displayRect;
 
@@ -106,7 +108,8 @@ QRect Vmr9VideoWindowControl::displayRect() const
 
 void Vmr9VideoWindowControl::setDisplayRect(const QRect &rect)
 {
-    if (IVMRWindowlessControl9 *control = com_cast<IVMRWindowlessControl9>(m_filter)) {
+    if (IVMRWindowlessControl9 *control = com_cast<IVMRWindowlessControl9>(
+            m_filter, IID_IVMRWindowlessControl9)) {
         RECT sourceRect = { 0, 0, 0, 0 };
         RECT displayRect = { rect.left(), rect.top(), rect.right(), rect.bottom() };
 
@@ -131,7 +134,8 @@ void Vmr9VideoWindowControl::repaint()
 
     if (QWidget *widget = QWidget::find(m_windowId)) {
         HDC dc = widget->getDC();
-        if (IVMRWindowlessControl9 *control = com_cast<IVMRWindowlessControl9>(m_filter)) {
+        if (IVMRWindowlessControl9 *control = com_cast<IVMRWindowlessControl9>(
+                m_filter, IID_IVMRWindowlessControl9)) {
             control->RepaintVideo(m_windowId, dc);
             control->Release();
         }
@@ -143,7 +147,8 @@ QSize Vmr9VideoWindowControl::nativeSize() const
 {
     QSize size;
 
-    if (IVMRWindowlessControl9 *control = com_cast<IVMRWindowlessControl9>(m_filter)) {
+    if (IVMRWindowlessControl9 *control = com_cast<IVMRWindowlessControl9>(
+            m_filter, IID_IVMRWindowlessControl9)) {
         LONG width;
         LONG height;
 
@@ -158,7 +163,8 @@ QVideoWidget::AspectRatioMode Vmr9VideoWindowControl::aspectRatioMode() const
 {
     QVideoWidget::AspectRatioMode mode = QVideoWidget::KeepAspectRatio;
 
-    if (IVMRWindowlessControl9 *control = com_cast<IVMRWindowlessControl9>(m_filter)) {
+    if (IVMRWindowlessControl9 *control = com_cast<IVMRWindowlessControl9>(
+            m_filter, IID_IVMRWindowlessControl9)) {
         DWORD arMode;
 
         if (control->GetAspectRatioMode(&arMode) == S_OK && arMode == VMR9ARMode_None)
@@ -170,7 +176,8 @@ QVideoWidget::AspectRatioMode Vmr9VideoWindowControl::aspectRatioMode() const
 
 void Vmr9VideoWindowControl::setAspectRatioMode(QVideoWidget::AspectRatioMode mode)
 {
-    if (IVMRWindowlessControl9 *control = com_cast<IVMRWindowlessControl9>(m_filter)) {
+    if (IVMRWindowlessControl9 *control = com_cast<IVMRWindowlessControl9>(
+            m_filter, IID_IVMRWindowlessControl9)) {
         switch (mode) {
         case QVideoWidget::IgnoreAspectRatio:
             control->SetAspectRatioMode(VMR9ARMode_None);
@@ -251,7 +258,7 @@ void Vmr9VideoWindowControl::setSaturation(int saturation)
 
 void Vmr9VideoWindowControl::setProcAmpValues()
 {
-    if (IVMRMixerControl9 *control = com_cast<IVMRMixerControl9>(m_filter)) {
+    if (IVMRMixerControl9 *control = com_cast<IVMRMixerControl9>(m_filter, IID_IVMRMixerControl9)) {
         VMR9ProcAmpControl procAmp;
         procAmp.dwSize = sizeof(VMR9ProcAmpControl);
         procAmp.dwFlags = m_dirtyValues;

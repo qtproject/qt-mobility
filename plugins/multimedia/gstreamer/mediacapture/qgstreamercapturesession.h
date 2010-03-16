@@ -153,6 +153,7 @@ private:
     QString m_captureDevice;
     State m_state;
     State m_pendingState;
+    bool m_waitingForEos;
     PipelineMode m_pipelineMode;
     QGstreamerCaptureSession::CaptureMode m_captureMode;
     QMap<QByteArray, QVariant> m_metaData;

@@ -42,6 +42,8 @@
 
 #if defined(Q_OS_SYMBIAN) && defined(QT_LOCATION_S60_MONITORING)
 #include "qgeoareamonitor_s60_p.h"
+#elif defined(Q_WS_MAEMO_5)
+#include "qgeoareamonitor_maemo_p.h"
 #endif
 
 /*!
@@ -173,6 +175,9 @@ QGeoAreaMonitor *QGeoAreaMonitor::createDefaultMonitor(QObject *parent)
 #if defined(Q_OS_SYMBIAN) && defined(QT_LOCATION_S60_MONITORING)
     QGeoAreaMonitor *ret = NULL;
     TRAPD(error, ret = QGeoAreaMonitorS60::NewL(parent));
+    return ret;
+#elif defined(Q_WS_MAEMO_5)
+    QGeoAreaMonitorMaemo *ret = new QGeoAreaMonitorMaemo(parent);
     return ret;
 #else
     Q_UNUSED(parent);

@@ -60,6 +60,9 @@ CntSimContactSaveRequest::~CntSimContactSaveRequest()
 
 bool CntSimContactSaveRequest::start()
 {
+    if (m_req->isActive())
+        return false;
+    
     if (simStore()->isBusy())
         return false;
     
@@ -67,6 +70,7 @@ bool CntSimContactSaveRequest::start()
     m_errorMap.clear();
     m_index = 0;
     singleShotTimer(0, this, SLOT(writeNext()));
+    
     QContactManagerEngine::updateRequestState(m_req, QContactAbstractRequest::ActiveState);
     return true; 
 }
@@ -94,7 +98,7 @@ void CntSimContactSaveRequest::writeComplete(QContact contact, QContactManager::
 
 void CntSimContactSaveRequest::writeNext()
 {
-    if (m_req->isCanceled())
+    if (!m_req->isActive())
         return;
     
     // All contacts written?
@@ -114,9 +118,9 @@ void CntSimContactSaveRequest::writeNext()
     QContact contact = m_contacts.at(m_index);
     
     // Validate & write contact 
-    QContactManager::Error error;
+    QContactManager::Error error = QContactManager::NoError;
     if (engine()->validateContact(contact, error))
-        error = simStore()->write(contact);
+        simStore()->write(contact, error);
 
     if (error) {
         m_errorMap.insert(m_index, error);

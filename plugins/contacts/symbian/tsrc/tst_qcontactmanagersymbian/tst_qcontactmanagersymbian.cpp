@@ -300,7 +300,7 @@ void tst_QContactManagerSymbian::displayLabel()
 
     // Parse details and add them to the contact
     QContact contact;
-    foreach(QString detail, details) {
+    foreach(const QString& detail, details) {
         // the expected format is <detail definition name>:<field name>:<value>
         QStringList detailParts = detail.split(QChar(':'), QString::KeepEmptyParts, Qt::CaseSensitive);
         QVERIFY(detailParts.count() == 3);

@@ -55,7 +55,7 @@ class S60AudioMediaRecorderControl : public QMediaRecorderControl
 {
     Q_OBJECT
 public:
-    S60AudioMediaRecorderControl(QObject *parent = 0);
+    S60AudioMediaRecorderControl(QObject *session,QObject *parent = 0);
     ~S60AudioMediaRecorderControl();
 
     QUrl outputLocation() const;

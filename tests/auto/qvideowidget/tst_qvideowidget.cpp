@@ -655,7 +655,7 @@ void tst_QVideoWidget::showWindowControl()
 
     widget.hide();
 
-    QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::NoOutput);
+    QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::WindowOutput);
 }
 
 void tst_QVideoWidget::showWidgetControl()
@@ -679,7 +679,7 @@ void tst_QVideoWidget::showWidgetControl()
 
     widget.hide();
 
-    QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::NoOutput);
+    QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::WidgetOutput);
     QCOMPARE(object.testService->widgetControl->videoWidget()->isVisible(), false);
 }
 
@@ -704,7 +704,7 @@ void tst_QVideoWidget::showRendererControl()
 
     widget.hide();
 
-    QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::NoOutput);
+    QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::RendererOutput);
 }
 
 void tst_QVideoWidget::aspectRatioWindowControl()

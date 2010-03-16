@@ -89,8 +89,11 @@ QString AudioEndpointSelector::activeEndpoint() const
 
 void AudioEndpointSelector::setActiveEndpoint(const QString& name)
 {
-    m_audioInput = name;
-    m_session->setCaptureDevice(name);
+    if (m_audioInput.compare(name) != 0) {
+        m_audioInput = name;
+        m_session->setCaptureDevice(name);
+        emit activeEndpointChanged(name);
+    }
 }
 
 void AudioEndpointSelector::update()
