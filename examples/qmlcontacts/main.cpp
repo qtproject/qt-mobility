@@ -65,13 +65,13 @@ int main(int argc, char ** argv)
 //        //qWarning() << "They wear a" << person->shoeSize() << "sized shoe";
 //    } else {
 //
-//        qWarning() << "An error occured";
+//        qWarning() << "An error occurred";
 //        qWarning() << component.errorsString();
 //        exit(-1);
 //    }
 //    QmlGraphicsItem *qcm = qobject_cast<QmlGraphicsItem *>(component.create());
 //    if(!qcm){
-//                qWarning() << "An error occured";
+//                qWarning() << "An error occurred";
 //                qWarning() << component.errorsString();
 //                exit(-1);
 //

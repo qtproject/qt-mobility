@@ -60,6 +60,9 @@ CntSimContactRemoveRequest::~CntSimContactRemoveRequest()
 
 bool CntSimContactRemoveRequest::start()
 {    
+    if (m_req->isActive())
+        return false;
+    
     if (simStore()->isBusy())
         return false;
     
@@ -67,6 +70,7 @@ bool CntSimContactRemoveRequest::start()
     m_errorMap.clear();
     m_index = 0;
     singleShotTimer(0, this, SLOT(removeNext()));
+    
     QContactManagerEngine::updateRequestState(m_req, QContactAbstractRequest::ActiveState);
     return true; 
 }
@@ -95,7 +99,7 @@ void CntSimContactRemoveRequest::removeNext()
     if (m_req->isCanceled())
         return;
     
-    // All contacts written?
+    // All contacts removed?
     if (m_index >= m_contactIds.count())
     {
         // Take first error from errormap (if any)
@@ -110,8 +114,8 @@ void CntSimContactRemoveRequest::removeNext()
 
     // Remove next contact
     QContactLocalId contactId = m_contactIds.at(m_index);
-    QContactManager::Error error = simStore()->remove(contactId); 
-    if (error) {
+    QContactManager::Error error = QContactManager::NoError;
+    if (!simStore()->remove(contactId, error)) {
         m_errorMap.insert(m_index, error);
         m_index++;
         singleShotTimer(0, this, SLOT(removeNext()));

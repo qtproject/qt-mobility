@@ -47,6 +47,7 @@ class QGstreamerCaptureSession;
 
 #include <QtCore/qstringlist.h>
 #include <QtCore/qmap.h>
+#include <QtCore/qset.h>
 
 #include <gst/gst.h>
 
@@ -78,6 +79,8 @@ public:
 
     GstElement *createEncoder();
 
+    QSet<QString> supportedStreamTypes(const QString &codecName) const;
+
 private:
     QStringList m_codecs;
     QMap<QString,QByteArray> m_elementNames;
@@ -85,6 +88,8 @@ private:
     QMap<QString,QStringList> m_codecOptions;
 
     QMap<QString, QMap<QString, QVariant> > m_options;
+
+    QMap<QString, QSet<QString> > m_streamTypes;
 
     QAudioEncoderSettings m_audioSettings;
 };

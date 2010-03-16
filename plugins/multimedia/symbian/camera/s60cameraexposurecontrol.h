@@ -49,7 +49,7 @@
 QTM_USE_NAMESPACE
 
 class S60CameraService;
-class S60CameraSession;
+class S60ImageCaptureSession;
 
 class S60CameraExposureControl : public QCameraExposureControl
 {
@@ -59,10 +59,15 @@ public:
     S60CameraExposureControl(QObject *session, QObject *parent = 0);
     ~S60CameraExposureControl();
 
-    QCamera::FlashMode flashMode() const;
-    void setFlashMode(QCamera::FlashMode mode);
+    QCamera::FlashModes flashMode() const;
+    void setFlashMode(QCamera::FlashModes mode);
     QCamera::FlashModes supportedFlashModes() const;
     bool isFlashReady() const;
+
+    qreal flashCompensation() const;
+    void setFlashCompensation(qreal ev);
+    qreal flashPower() const;
+    void setFlashPower(qreal power);
 
     QCamera::ExposureMode exposureMode() const;
     void setExposureMode(QCamera::ExposureMode mode);
@@ -91,19 +96,19 @@ public:
     void setAutoShutterSpeed();
 
     bool isExposureLocked() const;
-    
+
+
 public Q_SLOTS:
     void lockExposure();
     void unlockExposure();
-    
+    void resetAdvancedSetting();
+
 private:
-    S60CameraSession *m_session;
+    S60ImageCaptureSession *m_session;
     S60CameraService *m_service;
-    QCamera::Error m_error;
-    
     S60CameraSettings *m_advancedSettings;
-    
-    QCamera::FlashMode m_flashMode;
+    QCamera::Error m_error;
+    QCamera::FlashModes m_flashMode;
     QCamera::ExposureMode m_exposureMode;
     QCamera::MeteringMode m_meteringMode;
     qreal m_ev;

@@ -62,19 +62,28 @@ public:
     virtual int manualWhiteBalance() const = 0;
     virtual void setManualWhiteBalance(int colorTemperature) = 0;
 
-    virtual qreal contrast() const = 0;
-    virtual void setContrast(qreal value) = 0;
+    virtual int contrast() const = 0;
+    virtual void setContrast(int value) = 0;
 
-    virtual qreal saturation() const = 0;
-    virtual void setSaturation(qreal value) = 0;
+    virtual int saturation() const = 0;
+    virtual void setSaturation(int value) = 0;
 
     virtual bool isSharpeningSupported() const = 0;
-    virtual qreal sharpeningLevel() const = 0;
-    virtual void setSharpeningLevel(qreal value) = 0;
+    virtual int sharpeningLevel() const = 0;
+    virtual void setSharpeningLevel(int value) = 0;
 
     virtual bool isDenoisingSupported() const = 0;
-    virtual qreal denoisingLevel() const = 0;
-    virtual void setDenoisingLevel(qreal value) = 0;
+    virtual int denoisingLevel() const = 0;
+    virtual void setDenoisingLevel(int value) = 0;
+
+    virtual bool isWhiteBalanceLocked() const = 0;
+
+public Q_SLOTS:
+    virtual void lockWhiteBalance() = 0;
+    virtual void unlockWhiteBalance() = 0;
+
+Q_SIGNALS:
+    void whiteBalanceLocked();
 
 protected:
     QImageProcessingControl(QObject* parent = 0);
