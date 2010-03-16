@@ -93,7 +93,8 @@ private:
     bool createNicknames(const QVersitProperty& property, QContact* contact) const;
     bool createTags(const QVersitProperty& property, QContact* contact) const;
     bool createOnlineAccount(const QVersitProperty& property, QContact* contact) const;
-    bool createAvatar(const QVersitProperty& property, const QString& subType, QContact* contact) const;
+    bool createRingtone(const QVersitProperty& property, QContact* contact) const;
+    bool createThumbnail(const QVersitProperty& property, QContact* contact) const;
     bool createGeoLocation(const QVersitProperty& property, QContact* contact) const;
     bool createFamily(const QVersitProperty& property, QContact* contact) const;
     bool createNameValueDetail(const QVersitProperty& property, QContact* contact) const;

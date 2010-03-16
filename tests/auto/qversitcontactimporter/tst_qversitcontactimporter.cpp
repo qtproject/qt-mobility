@@ -152,12 +152,20 @@ public:
     }
 
     int mIndex;
-    QMap<QString, QByteArray> mObjects;
+    QMap<QUrl, QByteArray> mObjects;
 };
 
 const static QByteArray SAMPLE_GIF(QByteArray::fromBase64(
         "R0lGODlhEgASAIAAAAAAAP///yH5BAEAAAEALAAAAAASABIAAAIdjI+py+0G"
         "wEtxUmlPzRDnzYGfN3KBaKGT6rDmGxQAOw=="));
+
+const static QByteArray NOKIA_GIF(QByteArray::fromBase64(
+        "R0lGODdhOAAKAIQRAAAvwQAwwwAwxAAxxwAyygAzywAzzBBHwC9nz0+A0HCf35+/4LDQ78/f79/o"
+        "8O/v8PD3/////////////////////////////////////////////////////////////ywAAAAA"
+        "OAAKAAAFsCAiik9kRqPJHIfhGixjisuJpqk9Inb0vjaBC0UwFH+uhM+gNBUCw6Wh92vYDAXkCZhF"
+        "apMmA3Qajppav6tr8TqUp0DqEIwtqsmRR/Kl2A4RfFKCcnBMbYR+Uw5xg2lAjIlLCS88dyYNLn1S"
+        "TYwvk3NmkXSQLgVvXmQuBCcQXlI7Io9MpyWCbKgublgCNgxfP0eOs6dvUgsPyMgvEAUAeCafUWhe"
+        "bpI2LQMFenuhZy8hADs="));
 
 QTM_END_NAMESPACE
 
@@ -791,7 +799,7 @@ void tst_QVersitContactImporter::testNickname()
     QCOMPARE(nickName.nickname(),singleVal);
 }
 
-void tst_QVersitContactImporter::testAvatarStored()
+void tst_QVersitContactImporter::testAvatarThumbnail()
 {
     QByteArray gif(SAMPLE_GIF);
     QStringList nameValues(QString::fromAscii("John")); // First name
@@ -801,25 +809,26 @@ void tst_QVersitContactImporter::testAvatarStored()
     QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
     QContact contact = mImporter->contacts().first();
     QContactAvatar avatar = contact.detail<QContactAvatar>();
-    QVERIFY(avatar.subType() == QContactAvatar::SubTypeImage);
-    QByteArray content = mResourceHandler->mObjects.value(avatar.avatar());
+    QByteArray content = mResourceHandler->mObjects.value(avatar.imageUrl());
     QCOMPARE(content, gif);
-    QPixmap pixmap(avatar.pixmap());
-    QPixmap expectedPixmap;
-    expectedPixmap.loadFromData(gif);
-    QEXPECT_FAIL("", "Pixmap creation disabled.  Will switch to QImage later.", Abort);
-    QCOMPARE(pixmap, expectedPixmap);
+    QContactThumbnail thumbnail = contact.detail<QContactThumbnail>();
+    QImage image(thumbnail.thumbnail());
+    QImage expectedImage;
+    expectedImage.loadFromData(gif);
+    QCOMPARE(image, expectedImage);
 
+    // Without the resource handler, the thumbnail should still be set, but no avatar should be made
     mImporter->setResourceHandler(0);
     QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
     contact = mImporter->contacts().first();
-    avatar = contact.detail<QContactAvatar>();
-    QVERIFY(avatar.subType() == QContactAvatar::SubTypeImage);
-    QVERIFY(avatar.avatar().isEmpty());
-    pixmap = avatar.pixmap();
-    QCOMPARE(pixmap, expectedPixmap);
+    QCOMPARE(contact.details<QContactAvatar>().size(), 0);
+    thumbnail = contact.detail<QContactThumbnail>();
+    image = thumbnail.thumbnail();
+    QCOMPARE(image, expectedImage);
 
-    // Empty photo.  The avatar should not be added to the QContact.
+    mImporter->setResourceHandler(mResourceHandler);
+
+    // Empty photo.  The thumbnail and avatar should not be added to the QContact.
     QVersitProperty property;
     property.setName(QLatin1String("PHOTO"));
     property.setValue(QByteArray());
@@ -828,9 +837,30 @@ void tst_QVersitContactImporter::testAvatarStored()
     document.addProperty(property);
     QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
     contact = mImporter->contacts().first();
-    QCOMPARE(contact.details(QContactAvatar::DefinitionName).size(), 0);
+    QCOMPARE(contact.details<QContactAvatar>().size(), 0);
+    QCOMPARE(contact.details<QContactThumbnail>().size(), 0);
 
-    mImporter->setResourceHandler(mResourceHandler);
+    // Test multiple PHOTOs.  The chosen Thumbnail should be the smallest image supplied.
+    // All should be made into Avatars
+    QByteArray nonPhoto(QByteArray::fromBase64("UXQgaXMgZ3JlYXQh")); // the string "Qt is great!"
+    QByteArray bigPhoto(NOKIA_GIF);
+    document.clear();
+    document.setType(QVersitDocument::VCard30Type);
+    property.setName(QLatin1String("PHOTO"));
+    property.setValue(nonPhoto); // shouldn't be the thumbnail because it's not an image
+    document.addProperty(property);
+    property.setValue(bigPhoto); // shouldn't be the thumbnail because it's not the smallest
+    document.addProperty(property);
+    property.setValue(gif); // should be the thumbnail
+    document.addProperty(property);
+    QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
+    contact = mImporter->contacts().first();
+    QList<QContactThumbnail> thumbnails = contact.details<QContactThumbnail>();
+    QCOMPARE(thumbnails.size(), 1);
+    thumbnail = thumbnails.first();
+    image = thumbnail.thumbnail();
+    QCOMPARE(image, expectedImage);
+    QCOMPARE(contact.details<QContactAvatar>().size(), 3);
 }
 
 void tst_QVersitContactImporter::testAvatarUrl()
@@ -846,8 +876,7 @@ void tst_QVersitContactImporter::testAvatarUrl()
     QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
     QContact contact = mImporter->contacts().first();
     QContactAvatar avatar = contact.detail<QContactAvatar>();
-    QCOMPARE(avatar.avatar(), QLatin1String("http://example.com/example.jpg"));
-    QVERIFY(avatar.subType() == QContactAvatar::SubTypeImage);
+    QCOMPARE(avatar.imageUrl(), QUrl(QLatin1String("http://example.com/example.jpg")));
 
 
     // A URL disguised inside a QByteArray.
@@ -862,8 +891,7 @@ void tst_QVersitContactImporter::testAvatarUrl()
     QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
     contact = mImporter->contacts().first();
     avatar = contact.detail<QContactAvatar>();
-    QCOMPARE(avatar.avatar(), QLatin1String("http://example.com/example.jpg"));
-    QVERIFY(avatar.subType() == QContactAvatar::SubTypeImage);
+    QCOMPARE(avatar.imageUrl(), QUrl(QLatin1String("http://example.com/example.jpg")));
 }
 
 void tst_QVersitContactImporter::testAvatarInvalid()
@@ -1153,10 +1181,8 @@ void tst_QVersitContactImporter::testSound()
     document.addProperty(soundProperty);
     QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
     QContact contact = mImporter->contacts().first();
-    QContactAvatar avatar = (QContactAvatar)contact.detail(QContactAvatar::DefinitionName);
-    QCOMPARE(avatar.value(QContactAvatar::FieldSubType),QContactAvatar::SubTypeAudioRingtone.operator QString());
-    QVERIFY(!avatar.hasValue(QContactAvatar::FieldAvatarPixmap));
-    QByteArray content = mResourceHandler->mObjects.value(avatar.avatar());
+    QContactRingtone ringtone = contact.detail<QContactRingtone>();
+    QByteArray content = mResourceHandler->mObjects.value(ringtone.audioRingtone());
     QCOMPARE(content, val);
 }
 

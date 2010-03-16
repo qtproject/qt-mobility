@@ -76,6 +76,8 @@
 #include <qcontactfamily.h>
 #include <qcontactdisplaylabel.h>
 #include <qcontacttag.h>
+#include <qcontactringtone.h>
+#include <qcontactthumbnail.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -113,14 +115,14 @@ const VersitContactDetailMapping versitContactDetailMappings[] = {
                       QContactNote::FieldNote.str},
     {"ORG",           QContactOrganization::DefinitionName.str,
                       QContactOrganization::FieldName.str},
-    {"PHOTO",         QContactAvatar::DefinitionName.str,
-                      QContactAvatar::SubTypeImage.str},
+    {"PHOTO",         QContactThumbnail::DefinitionName.str,
+                      ""},
     {"REV",           QContactTimestamp::DefinitionName.str,
                       ""},
     {"ROLE",          QContactOrganization::DefinitionName.str,
                       QContactOrganization::FieldRole.str},
-    {"SOUND",         QContactAvatar::DefinitionName.str,
-                      QContactAvatar::SubTypeAudioRingtone.str},
+    {"SOUND",         QContactRingtone::DefinitionName.str,
+                      QContactRingtone::FieldAudioRingtone.str},
     {"TEL",           QContactPhoneNumber::DefinitionName.str,
                       QContactPhoneNumber::FieldNumber.str},
     {"TITLE",         QContactOrganization::DefinitionName.str,

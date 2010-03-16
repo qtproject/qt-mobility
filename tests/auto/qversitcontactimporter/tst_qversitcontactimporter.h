@@ -82,7 +82,7 @@ private slots: // Tests
     void testBirthday();
     void testGender();
     void testNickname();
-    void testAvatarStored();
+    void testAvatarThumbnail();
     void testAvatarUrl();
     void testAvatarInvalid();
     void testGeo();
