@@ -483,10 +483,16 @@ void tst_QValueSpacePublisher::threads_data()
 
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
 
+    int foundLayers = 0;
     for (int i = 0; i < layers.count(); ++i) {
         QAbstractValueSpaceLayer *layer = layers.at(i);
 
         if (layer->id() == QVALUESPACE_NONVOLATILEREGISTRY_LAYER)
+            continue;
+
+        //GConfLayer can't provide thread-safety because it eventually depends on
+        //DBus which isn't fully thread-safe
+        if (layer->id() == QVALUESPACE_GCONF_LAYER)
             continue;
 
 #ifdef Q_OS_WINCE
@@ -556,15 +562,6 @@ void tst_QValueSpacePublisher::threads_data()
                 << layer->id() << uint(1) << uint(10) << true;
             QTest::newRow("2 threads, 10 items, sequential")
                 << layer->id() << uint(2) << uint(10) << true;
-        } else if (layer->id() == QVALUESPACE_GCONF_LAYER) {
-            QTest::newRow("1 thread, 10 items")
-                << layer->id() << uint(1) << uint(10) << false;
-            QTest::newRow("2 threads, 10 items")
-                << layer->id() << uint(2) << uint(10) << false;
-            QTest::newRow("1 thread, 10 items, sequential")
-                << layer->id() << uint(1) << uint(10) << true;
-            QTest::newRow("2 threads, 10 items, sequential")
-                << layer->id() << uint(2) << uint(10) << true;
         } else {
             // Assume no limits on all other layers.
             QTest::newRow("1 thread, 10 items, sequential")
@@ -589,7 +586,11 @@ void tst_QValueSpacePublisher::threads_data()
             QTest::newRow("100 threads, 100 items")
                 << layer->id() << uint(100) << uint(100) << false;
         }
+        foundLayers++;
     }
+
+    if (foundLayers == 0)
+        QSKIP("No layers providing thread-safety found", SkipAll);
 }
 
 void tst_QValueSpacePublisher::threads()
