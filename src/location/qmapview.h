@@ -66,6 +66,7 @@ class QMapPolygon;
 class QMapEllipse;
 class QMapObject;
 class QMapMarker;
+class QMapViewPrivate;
 
 class Q_LOCATION_EXPORT QMapView : public QGraphicsWidget
 {
@@ -99,9 +100,6 @@ public:
         inline bool isValid() const {
             return valid;
         }
-        /*!
-        * Moves iterator to next tile.
-        */
         void next();
         /*!
         * @return The column index of the current map tile.
@@ -135,6 +133,8 @@ public:
         bool valid;
     };
 
+    friend class TileIterator;
+
 public:
     QMapView(QGraphicsItem* parent = 0, Qt::WindowFlags wFlags = 0);
 
@@ -149,49 +149,13 @@ public:
     void centerOn(const QGeoCoordinate& geoPos);
     void moveViewPort(int deltaX, int deltaY);
 
-    /*!
-    * @return The width of the logical map space in pixels.
-              I.e. the pixel range from 180W to 180E.
-    */
-    inline quint64 mapWidth() const {
-        return numColRow * mapRes.size.width();
-    }
-    /*!
-    * @return The height of the logical map space in pixels.
-              I.e. the pixel range from 90N to 90S.
-    */
-    inline quint64 mapHeight() const {
-        return numColRow * mapRes.size.height();
-    }
+    quint64 mapWidth() const;
+    quint64 mapHeight() const;
 
-    /*!
-    * This method sets the horizontal range beyond the immediate limits of
-    * the view port, for which map tiles should also be loaded. This can make
-    * for a smoother panning experience.
-    * @param range The horizontal range (in pixels) beyond the view port limits.
-    */
     void setHorizontalPadding(quint32 range);
-    /*!
-    * @return The horizontal range beyond the immediate limits of
-    *         the view port, for which map tiles should also be loaded.
-    */
-    inline quint32 horizontalPadding() const {
-        return horPadding;
-    }
-    /*!
-    * This method sets the vertical range beyond the immediate limits of
-    * the view port, for which map tiles should also be loaded. This can make
-    * for a smoother panning experience.
-    * @param range The horizontal range (in pixels) beyond the view port limits.
-    */
+    quint32 horizontalPadding() const;
     void setVerticalPadding(quint32 range);
-    /*!
-    * @return The vertical range beyond the immediate limits of
-    *         the view port, for which map tiles should also be loaded.
-    */
-    inline quint32 verticalPadding() const {
-        return verPadding;
-    }
+    quint32 verticalPadding() const;
 
     void setPannable(bool isPannable);
     bool isPannable() const;
@@ -201,6 +165,7 @@ public:
     QGeoCoordinate mapToGeo(const QPointF& mapCoordinate) const;
     QPointF mapToMercator(const QPointF&mapCoordinate) const;
     void mapToTile(const QPointF& mapCoordinate, quint32* col, quint32* row) const;
+    quint64 getTileIndex(quint32 col, quint32 row) const;
     QRectF getTileRect(quint32 col, quint32 row) const;
 
     /*!
@@ -216,122 +181,50 @@ public:
     * @param pixels The minum manhattan distance between two consecutive visible route way points.
     */
     void setRouteDetailLevel(quint32 pixels);
-    /*!
-    * \see setRouteDetailLevel()
-    * @return The minum manhattan distance between two consecutive visible route way points.
-    */
-    inline quint32 routeDetailLevel() const {
-        return routeDetails;
-    }
+    quint32 routeDetailLevel() const;
+
+    quint16 maxZoomLevel() const;
+    quint16 zoomLevel() const;
 
     void addMapObject(QMapObject* mapObject);
     void removeMapObject(QMapObject* mapObject);
     QMapObject* getTopmostMapObject(const QGeoCoordinate& geoCoordinate);
     QMapObject* getTopmostMapObject(const QPointF& mapCoordinate);
 
-    /*!
-    * @return The maximum zoom level.
-    */
-    inline quint16 maxZoomLevel() const {
-        if (geoEngine)
-            return geoEngine->maxZoomLevel();
-        return 0;
-    }
-    /*!
-    * @return The current zoom level.
-    */
-    inline quint16 zoomLevel() const {
-        return currZoomLevel;
-    }
-    /*!
-    * Map a two-dimensional map tile index onto a one-dimensional one.
-    * @param col The map tile col index.
-    * @param row The map tile row index.
-    */
-
-    inline quint64 getTileIndex(quint32 col, quint32 row) const {
-        return ((quint64) row) * numColRow + col;
-    }
     QLineF connectShortest(const QGeoCoordinate& point1, const QGeoCoordinate& point2) const;
 
-    /*!
-    * @return The current map version.
-    */
-    inline MapVersion version() const {
-        return mapVer;
-    }
+    MapVersion version() const;
     /*!
     * Sets the map version.
     * @param mapVersion The new map version.
     */
     void setVersion(const MapVersion& mapVersion);
-    /*!
-    * @return The current map resolution.
-    */
-    inline MapResolution resolution() const {
-        return mapRes;
-    }
+    MapResolution resolution() const;
     /*!
     * Sets the map resolution.
     * @param mapResolution The new map resolution.
     */
     void setResolution(const MapResolution& mapResolution);
-    /*!
-    * @return The current map format.
-    */
-    inline MapFormat format() const {
-        return mapFrmt;
-    }
+    MapFormat format() const;
     /*!
     * Sets the map format.
     * @param mapVersion The new map format.
     */
     void setFormat(const MapFormat& mapFormat);
-    /*!
-    * @return The current map scheme.
-    */
-    inline MapScheme scheme() const {
-        return mapSchm;
-    }
-    /*!
-    * Sets the map scheme.
-    * @param mapVersion The new map scheme.
-    */
+    MapScheme scheme() const;
     void setScheme(const MapScheme& mapScheme);
 
 private:
     Q_DISABLE_COPY(QMapView)
 
 protected:
-    void requestTile(quint32 col, quint32 row);
-    void cancelPendingTiles();
-    /*!
-    * When the zoom level is increased, this method is invoked to scale and add the
-    * map tiles in the view port of the old map scene to cover (as much as possible)
-    * of the view port of the new zoom level map scene
-    * while the new map tiles are being requested.
-    * @return The scaled map tiles.
-    */
-    QHash<quint64, QPair<QPixmap, bool> > preZoomIn(qreal scale);
-    /*!
-    * When the zoom level is decreased, this method is invoked to scale and add the
-    * map tiles in the view port of the old map scene to cover (as much as possible)
-    * of the view port of the new zoom level map scene
-    * while the new map tiles are being requested.
-    * @return The scaled map tiles.
-    */
-    QHash<quint64, QPair<QPixmap, bool> > preZoomOut(qreal scale);
+    QPointF getTopLeftFromCenter(const QPointF& center) const;
 
-    QPointF getTopLeftFromCenter(const QPointF& center);
-
-    void paintLayers(QPainter* painter);
-
-    /*!
-    * Adds an entry to the \ref tileToObjectsMap for each tile that
-    * intersects or completely covers he given map object.
-    * @param mapObject The map object.
-    */
-    void addMapObjectToTiles(QMapObject* mapObject);
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
+    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
+    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
+    virtual void wheelEvent(QGraphicsSceneWheelEvent* event);
+    virtual void resizeEvent(QGraphicsSceneResizeEvent* event);
 
 public slots:
     void releaseRemoteTiles();
@@ -363,65 +256,10 @@ signals:
     void mapObjectSelected(QMapObject* mapObject);
 
 protected:
-    /*!
-    * Reimplemented from Qt::QWidget::mousePressEvent()
-    */
-    virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
-    /*!
-    * Reimplemented from Qt::QWidget::mouseReleaseEvent()
-    */
-    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
-    /*!
-    * Reimplemented from Qt::QWidget::mouseMoveEvent()
-    */
-    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
-    /*!
-    * Reimplemented from Qt::QWidget::wheelEvent()
-    */
-    virtual void wheelEvent(QGraphicsSceneWheelEvent* event);
-    /*!
-    * Reimplemented from Qt::QGraphicsWidget::resizeEvent()
-    */
-    virtual void resizeEvent(QGraphicsSceneResizeEvent* event);
+    QMapViewPrivate *d_ptr;
 
-protected:
-    QRectF viewPort; //!< The logical view port.
-    quint32 numColRow; //!< The number of tiles along both the x- and y-axis
-    QGeoEngine* geoEngine; //!< the underlying geo engine
-    quint32 horPadding; //!< horizontal preload padding
-    quint32 verPadding; //!< vertical preload padding
-    quint32 routeDetails; //!< Minimum manhattan distance betwee two consecutive visible route way points.
-
-    /*! The period timer that triggers the removal
-    * of scene items that are not within the current
-    * map view port.
-    */
-    QTimer releaseTimer; //!< Periodic release timer
-
-    quint16 currZoomLevel; //!< The current zoom level
-    MapVersion mapVer; //!< The current map version
-    MapScheme mapSchm; //!< The current map scheme
-    MapResolution mapRes; //!< The current map resolution
-    MapFormat mapFrmt; //!< The current map format
-
-    QSet<QMapObject*> mapObjects; //!< Keeps track of all map objects.
-    /*!
-    * Stores for each map tile (as specified by its one-dimensional index)
-    * a list of all map objects that intersect or are completely covered by
-    * the map tile.
-    */
-    QHash<quint64, QList<QMapObject*> > tileToObjects; //!< Map tile to map object hash map.
-
-    /*!
-    * Stores for each requested map tile (as given by its
-    * one-dimensional tile index) the corresonding QMapTileReply.
-    */
-    QHash<quint64, QMapTileReply*> pendingTiles; //!< Pending requested map tiles
-
-    QHash<quint64, QPair<QPixmap, bool> > mapTiles;
-
-    bool panActive;
-    bool pannable;
+private:
+    Q_DECLARE_PRIVATE(QMapView)
 };
 
 QTM_END_NAMESPACE

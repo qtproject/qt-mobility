@@ -62,6 +62,7 @@ class QMapObject //: QObject
     //Q_OBJECT
 
     friend class QMapView;
+    friend class QMapViewPrivate;
 
 public:
     enum MapObjectType {

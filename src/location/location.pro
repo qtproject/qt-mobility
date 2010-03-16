@@ -147,6 +147,7 @@ HEADERS += qaddress.h \
            qmaptilereply.h \
            qmaptilerequest.h \
            qmapview.h \
+           qmapview_p.h \
            qreversegeocodingrequest.h \
            qroute.h \
            qroutereply.h \
@@ -205,6 +206,7 @@ SOURCES += qaddress.cpp \
            qmaptilecache.cpp \
            qmaptilereply.cpp \
            qmapview.cpp \
+           qmapview_p.cpp \
            qreversegeocodingrequest.cpp \
            qroute.cpp \
            qroutereply.cpp \
