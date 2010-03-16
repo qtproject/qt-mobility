@@ -2744,45 +2744,6 @@ void tst_QContactManager::relationships()
     QVERIFY(batchRetrieve.contains(br2));
     QVERIFY(batchRetrieve.contains(br3));
     
-    // Check relationship ordering support
-    if (cm->hasFeature(QContactManager::RelationshipOrdering))
-    {   
-        // test relationship ordering in the contact
-        source = cm->contact(source.localId());
-        QList<QContactRelationship> cachedRelationships = source.relationships();
-        QList<QContactRelationship> orderedRelationships = source.relationshipOrder();
-        QCOMPARE(cachedRelationships, orderedRelationships); // initially, should be the same
-        QVERIFY(orderedRelationships.contains(br1));
-        QVERIFY(orderedRelationships.contains(br2));
-        QVERIFY(orderedRelationships.contains(br3));    
-     
-        // ensure that the reordering works as required.
-        QContactRelationship temp1 = orderedRelationships.takeAt(0); // now fiddle with the order
-        QContactRelationship temp2 = orderedRelationships.at(0);     // this is the new first relationship
-        orderedRelationships.insert(2, temp1);                       // and save the old first back at position 3.
-        source.setRelationshipOrder(orderedRelationships);           // set the new relationship order
-        cm->saveContact(&source);                                    // save the contact to persist the new order
-        source = cm->contact(source.localId());                      // reload the contact
-        QCOMPARE(source.relationshipOrder(), orderedRelationships);  // ensure that it was persisted.
-    
-        // now lets try a negative reordering test: adding relationships which don't exist in the database.
-        QContactRelationship invalidRel;
-        invalidRel.setFirst(source.id());
-        invalidRel.setSecond(dest2.id());
-        invalidRel.setRelationshipType("test-nokia-invalid-relationship-type");
-        orderedRelationships << invalidRel;
-        source.setRelationshipOrder(orderedRelationships);
-        QVERIFY(!cm->saveContact(&source));
-        QVERIFY(cm->error() == QContactManager::InvalidRelationshipError);
-        orderedRelationships.removeOne(br3);
-        source.setRelationshipOrder(orderedRelationships);
-        QVERIFY(!cm->saveContact(&source));
-        QVERIFY(cm->error() == QContactManager::InvalidRelationshipError);
-        source.setRelationshipOrder(QList<QContactRelationship>());
-        QVERIFY(!cm->saveContact(&source));
-        QVERIFY(cm->error() == QContactManager::InvalidRelationshipError);
-    }
-
     // remove a single relationship
     QVERIFY(cm->removeRelationship(br3));
     batchRetrieve = cm->relationships(source.id(), QContactRelationshipFilter::First);
