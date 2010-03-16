@@ -133,4 +133,6 @@ EXPORTS
 	?staticMetaObject@QGeoPositionInfoSource@QtMobility@@2UQMetaObject@@B @ 132 NONAME ; struct QMetaObject const QtMobility::QGeoPositionInfoSource::staticMetaObject
 	?staticMetaObject@QNmeaPositionInfoSource@QtMobility@@2UQMetaObject@@B @ 133 NONAME ; struct QMetaObject const QtMobility::QNmeaPositionInfoSource::staticMetaObject
 	?staticMetaObject@QGeoSatelliteInfoSource@QtMobility@@2UQMetaObject@@B @ 134 NONAME ; struct QMetaObject const QtMobility::QGeoSatelliteInfoSource::staticMetaObject
+	??5QtMobility@@YAAAVQDataStream@@AAV1@AAVQGeoSatelliteInfo@0@@Z @ 135 NONAME ; class QDataStream & QtMobility::operator>>(class QDataStream &, class QtMobility::QGeoSatelliteInfo &)
+	??6QtMobility@@YAAAVQDataStream@@AAV1@ABVQGeoSatelliteInfo@0@@Z @ 136 NONAME ; class QDataStream & QtMobility::operator<<(class QDataStream &, class QtMobility::QGeoSatelliteInfo const &)
 
