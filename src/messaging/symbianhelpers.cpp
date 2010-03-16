@@ -49,31 +49,31 @@ namespace SymbianHelpers {
 
 const QString FreestylePrefix = QString("FS_");
 
-bool isFreestyleMessage(QMessageId &msgId) {
+bool isFreestyleMessage(const QMessageId &msgId) {
     return msgId.toString().indexOf(FreestylePrefix)==0?true:false;
 }
 
-QMessageId addFreestylePrefix(QMessageId &msgId) {
+QMessageId addFreestylePrefix(const QMessageId &msgId) {
     return QMessageId(FreestylePrefix+msgId.toString());
 }
 
-QMessageId removeFreestylePrefix(QMessageId &msgId) {
+QMessageId removeFreestylePrefix(const QMessageId &msgId) {
     if (isFreestyleMessage(msgId))
         return QMessageId(msgId.toString().remove(0, FreestylePrefix.length()));
     return QMessageId();
 }
 
-bool isFreestyleMessage(QString &msgId) {
+bool isFreestyleMessage(const QString &msgId) {
     return msgId.indexOf(FreestylePrefix)==0?true:false;
 }
 
-QString addFreestylePrefix(QString &msgId) {
+QString addFreestylePrefix(const QString &msgId) {
     return QString(FreestylePrefix+msgId);
 }
 
-QString removeFreestylePrefix(QString &msgId) {
+QString removeFreestylePrefix(const QString &msgId) {
     if (isFreestyleMessage(msgId))
-        return QString(msgId.remove(0, FreestylePrefix.length()));
+        return QString(QString(msgId).remove(0, FreestylePrefix.length()));
     return QString();
 }
 }
