@@ -276,6 +276,10 @@ void QTrackerContactSaveRequest::saveContactDetails( RDFServicePtr service,
             if( det.contexts().contains(QContactDetail::ContextHome)) {
                 homeDetails << det;
             }
+            if( !det.contexts().contains(QContactDetail::ContextHome)
+                && !det.contexts().contains(QContactDetail::ContextWork)) {
+                homeDetails << det;
+            }
         }
 
         /* Save details */
