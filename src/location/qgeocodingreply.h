@@ -51,12 +51,11 @@
 
 QTM_BEGIN_NAMESPACE
 
-class Q_LOCATION_EXPORT QGeocodingReply : public QGeoReply
+class QGeocodingReply : public QGeoReply
 {
     Q_OBJECT
 
     friend class QGeoNetworkManager;
-    friend class QGeocodingXmlHandler;
     friend class QGeocodingXmlParser;
 
 public:

@@ -51,7 +51,6 @@ QTM_BEGIN_NAMESPACE
 
 class Q_LOCATION_EXPORT QManeuver
 {
-    friend class QRouteXmlHandler;
     friend class QRouteXmlParser;
 
 public:

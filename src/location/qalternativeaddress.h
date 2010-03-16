@@ -51,7 +51,7 @@ QTM_BEGIN_NAMESPACE
 
 class QAlternativeAddress
 {
-    friend class QGeocodingXmlHandler;
+    friend class QGeocodingXmlParser;
 
 public:
     struct AltValue {

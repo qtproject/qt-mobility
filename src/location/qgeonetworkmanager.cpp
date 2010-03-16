@@ -512,7 +512,7 @@ QList<MapScheme> QGeoNetworkManager::schemes() const {
 }
 
 /*!
-    Parses \a netReply with a QRouteXmlHandler to populate \a routeReply.
+    Parses \a netReply to populates \a routeReply.
 */
 bool QGeoNetworkManager::parseRouteReply(QNetworkReply* netReply, QRouteReply* routeReply)
 {
@@ -521,7 +521,7 @@ bool QGeoNetworkManager::parseRouteReply(QNetworkReply* netReply, QRouteReply* r
 }
 
 /*!
-    * Parses \a netReply with a QGeocodingXmlHandler to populate \a codingReply.
+    * Parses \a netReply to populate \a codingReply.
 */
 bool QGeoNetworkManager::parseCodingReply(QNetworkReply* netReply, QGeocodingReply* codingReply)
 {

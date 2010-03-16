@@ -52,7 +52,6 @@ QTM_BEGIN_NAMESPACE
 
 class Q_LOCATION_EXPORT QGeoLocation
 {
-    friend class QGeocodingXmlHandler;
     friend class QGeocodingXmlParser;
 
 public:
