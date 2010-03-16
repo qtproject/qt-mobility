@@ -12,6 +12,7 @@ contains(QT_CONFIG, opengl): QT += opengl
 
 !static:DEFINES += QT_MAKEDLL
 DEFINES += QT_BUILD_MEDIA_LIB
+DEFINES += QTM_PLUGIN_PATH=\\\"$$QT_MOBILITY_PREFIX/plugins\\\"
 
 PRIVATE_HEADERS += \
     qmediacontrol_p.h \
