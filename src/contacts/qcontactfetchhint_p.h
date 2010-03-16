@@ -39,48 +39,51 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTFETCHREQUEST_H
-#define QCONTACTFETCHREQUEST_H
+#ifndef QCONTACTFETCHHINT_P_H
+#define QCONTACTFETCHHINT_P_H
 
-#include "qtcontactsglobal.h"
-#include "qcontactabstractrequest.h"
-#include "qcontactsortorder.h"
-#include "qcontactfilter.h"
-#include "qcontact.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
 #include "qcontactfetchhint.h"
 
-#include <QList>
+#include <QSharedData>
 #include <QStringList>
 
 QTM_BEGIN_NAMESPACE
 
-class QContactFetchRequestPrivate;
-class Q_CONTACTS_EXPORT QContactFetchRequest : public QContactAbstractRequest
+class QContactFetchHintPrivate : public QSharedData
 {
-    Q_OBJECT
-
 public:
-    QContactFetchRequest();
-    ~QContactFetchRequest();
+    QContactFetchHintPrivate()
+        : QSharedData(),
+        m_optimizationHints(QContactFetchHint::AllRequired)
+    {
+    }
 
-    /* Selection, restriction and sorting */
-    void setFilter(const QContactFilter& filter);
-    void setSorting(const QList<QContactSortOrder>& sorting);
-    void setFetchHint(const QContactFetchHint& fetchHint);
-    QContactFilter filter() const;
-    QList<QContactSortOrder> sorting() const;
-    QContactFetchHint fetchHint() const;
+    QContactFetchHintPrivate(const QContactFetchHintPrivate& other)
+        : QSharedData(other),
+        m_definitionsHint(other.m_definitionsHint),
+        m_relationshipsHint(other.m_relationshipsHint),
+        m_optimizationHints(other.m_optimizationHints)
+    {
+    }
 
-    void Q_DECL_DEPRECATED setDefinitionRestrictions(const QStringList& definitionNames);
-    QStringList Q_DECL_DEPRECATED definitionRestrictions() const;
+    ~QContactFetchHintPrivate()
+    {
+    }
 
-    /* Results */
-    QList<QContact> contacts() const;
-
-private:
-    Q_DISABLE_COPY(QContactFetchRequest)
-    friend class QContactManagerEngine;
-    Q_DECLARE_PRIVATE_D(d_ptr, QContactFetchRequest)
+    QStringList m_definitionsHint;
+    QStringList m_relationshipsHint;
+    QContactFetchHint::OptimizationHints m_optimizationHints;
 };
 
 QTM_END_NAMESPACE

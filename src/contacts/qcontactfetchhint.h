@@ -39,48 +39,46 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTFETCHREQUEST_H
-#define QCONTACTFETCHREQUEST_H
+#ifndef QCONTACTFETCHHINT_H
+#define QCONTACTFETCHHINT_H
+
+#include <QVariant>
+#include <QList>
+#include <QSharedData>
 
 #include "qtcontactsglobal.h"
-#include "qcontactabstractrequest.h"
-#include "qcontactsortorder.h"
-#include "qcontactfilter.h"
-#include "qcontact.h"
-#include "qcontactfetchhint.h"
-
-#include <QList>
-#include <QStringList>
+#include "qcontactdetaildefinition.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QContactFetchRequestPrivate;
-class Q_CONTACTS_EXPORT QContactFetchRequest : public QContactAbstractRequest
-{
-    Q_OBJECT
-
+class QContactFetchHintPrivate;
+class Q_CONTACTS_EXPORT QContactFetchHint {
 public:
-    QContactFetchRequest();
-    ~QContactFetchRequest();
+    QContactFetchHint();
+    QContactFetchHint(const QContactFetchHint& other);
+    ~QContactFetchHint();
+    QContactFetchHint& operator=(const QContactFetchHint& other);
 
-    /* Selection, restriction and sorting */
-    void setFilter(const QContactFilter& filter);
-    void setSorting(const QList<QContactSortOrder>& sorting);
-    void setFetchHint(const QContactFetchHint& fetchHint);
-    QContactFilter filter() const;
-    QList<QContactSortOrder> sorting() const;
-    QContactFetchHint fetchHint() const;
+    QStringList detailDefinitionsHint() const;
+    void setDetailDefinitionsHint(const QStringList& definitionNames);
 
-    void Q_DECL_DEPRECATED setDefinitionRestrictions(const QStringList& definitionNames);
-    QStringList Q_DECL_DEPRECATED definitionRestrictions() const;
+    QStringList relationshipTypesHint() const;
+    void setRelationshipTypesHint(const QStringList& relationshipTypes);
 
-    /* Results */
-    QList<QContact> contacts() const;
+    enum OptimizationHint {
+        AllRequired = 0x0,
+        NoRelationships = 0x1,
+        NoActionPreferences = 0x2,
+        NoBinaryBlobs = 0x4
+        // any other optimisation hints?
+    };
+    Q_DECLARE_FLAGS(OptimizationHints, OptimizationHint)
+
+    OptimizationHints optimizationHints() const;
+    void setOptimizationHints(OptimizationHints hints);
 
 private:
-    Q_DISABLE_COPY(QContactFetchRequest)
-    friend class QContactManagerEngine;
-    Q_DECLARE_PRIVATE_D(d_ptr, QContactFetchRequest)
+    QSharedDataPointer<QContactFetchHintPrivate> d;
 };
 
 QTM_END_NAMESPACE

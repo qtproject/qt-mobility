@@ -56,6 +56,7 @@
 #include "qcontactid.h"
 #include "qcontactrelationship.h"
 #include "qcontactsortorder.h"
+#include "qcontactfetchhint.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -113,10 +114,16 @@ public:
     /* Contacts - Accessors and Mutators */
     QList<QContactLocalId> contactIds(const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const;
     QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const;
-    QList<QContact> contacts(const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>(), const QStringList& definitionRestrictions = QStringList()) const;
-    QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>(), const QStringList& definitionRestrictions = QStringList()) const;
 
-    QContact contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions = QStringList()) const;  // retrieve a contact
+    // deprecated, to be removed once the transition period has elapsed.
+    QList<QContact> Q_DECL_DEPRECATED contacts(const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions) const;
+    QList<QContact> Q_DECL_DEPRECATED contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions) const;
+    QContact Q_DECL_DEPRECATED contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions) const;  // retrieve a contact
+
+    // these three functions replace the three deprecated functions above.
+    QList<QContact> contacts(const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>(), const QContactFetchHint& fetchHint = QContactFetchHint()) const;
+    QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>(), const QContactFetchHint& fetchHint = QContactFetchHint()) const;
+    QContact contact(const QContactLocalId& contactId, const QContactFetchHint& fetchHint = QContactFetchHint()) const;  // retrieve a contact
 
     bool saveContact(QContact* contact);                 // note: MODIFIES contact (sets the contactId)
     bool removeContact(const QContactLocalId& contactId);      // remove the contact from the persistent store

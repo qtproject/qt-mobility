@@ -45,6 +45,7 @@
 #include "qcontactfilter.h"
 #include "qcontactdetaildefinition.h"
 #include "qcontactmanager_p.h"
+#include "qcontactfetchhint.h"
 
 #include <QSharedData>
 #include <QPair>
@@ -344,12 +345,15 @@ QList<QContactLocalId> QContactManager::contactIds(const QContactFilter& filter,
 }
 
 /*!
+  \internal
   Returns the list of contacts stored in the manager sorted according to the given list of \a sortOrders.
 
   The \a definitionRestrictions parameter describes the details that are of
   interest, as a performance hint.  If the list is empty, all existing details for the matching
   contacts will be returned.  Otherwise, the returned contacts may only contain details of the
   supplied definition names, although the manager is free to return extra details.
+
+  This function is deprecated and will be removed once the transition period has elapsed.  Use the contacts() function which takes a fetchHint instead.
  */
 QList<QContact> QContactManager::contacts(const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions) const
 {
@@ -357,6 +361,7 @@ QList<QContact> QContactManager::contacts(const QList<QContactSortOrder>& sortOr
 }
 
 /*!
+  \internal
   Returns a list of contacts that match the given \a filter, sorted according to the given list of \a sortOrders.
 
   Depending on the manager implementation, this filtering operation might be slow and involve retrieving all the
@@ -366,6 +371,8 @@ QList<QContact> QContactManager::contacts(const QList<QContactSortOrder>& sortOr
   interest, as a performance hint.  If the list is empty, all existing details for the matching
   contacts will be returned.  Otherwise, the returned contacts may only contain details of the
   supplied definition names, although the manager is free to return extra details.
+
+  This function is deprecated and will be removed once the transition period has elapsed.  Use the contacts() function which takes a fetchHint instead.
  */
 QList<QContact> QContactManager::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions) const
 {
@@ -373,6 +380,7 @@ QList<QContact> QContactManager::contacts(const QContactFilter& filter, const QL
 }
 
 /*!
+  \internal
   Returns the contact in the database identified by \a contactId.
 
   If the contact does not exist, an empty, default constructed QContact will be returned,
@@ -382,10 +390,69 @@ QList<QContact> QContactManager::contacts(const QContactFilter& filter, const QL
   interest, as a performance hint.  If the list is empty, all existing details for the requested
   contact will be returned.  Otherwise, the returned contact may only contain details of the
   supplied definition names, although the manager is free to return extra details.
+
+  This function is deprecated and will be removed once the transition period has elapsed.  Use the contact() function which takes a fetchHint instead.
  */
 QContact QContactManager::contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions) const
 {
     return d->m_engine->contact(contactId, definitionRestrictions, d->m_error);
+}
+
+/*!
+  Returns the list of contacts stored in the manager sorted according to the given list of \a sortOrders.
+
+  The \a fetchHint parameter describes the optimization hints that a manager may take.
+  If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
+  in the matching contacts will be returned.  A client should not make changes to a contact which has
+  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
+  loss when saving the contact back to the manager (as the "new" restricted contact will
+  replace the previously saved contact in the backend).
+
+  \sa QContactFetchHint
+ */
+QList<QContact> QContactManager::contacts(const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fetchHint) const
+{
+    return d->m_engine->contacts(sortOrders, fetchHint, d->m_error);
+}
+
+/*!
+  Returns a list of contacts that match the given \a filter, sorted according to the given list of \a sortOrders.
+
+  Depending on the manager implementation, this filtering operation might be slow and involve retrieving all the
+  contacts and testing them against the supplied filter - see the \l isFilterSupported() function.
+
+  The \a fetchHint parameter describes the optimization hints that a manager may take.
+  If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
+  in the matching contacts will be returned.  A client should not make changes to a contact which has
+  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
+  loss when saving the contact back to the manager (as the "new" restricted contact will
+  replace the previously saved contact in the backend).
+
+  \sa QContactFetchHint
+ */
+QList<QContact> QContactManager::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fetchHint) const
+{
+    return d->m_engine->contacts(filter, sortOrders, fetchHint, d->m_error);
+}
+
+/*!
+  Returns the contact in the database identified by \a contactId.
+
+  If the contact does not exist, an empty, default constructed QContact will be returned,
+  and the error returned by \l error() will be \c QContactManager::DoesNotExistError.
+
+  The \a fetchHint parameter describes the optimization hints that a manager may take.
+  If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
+  in the matching contact will be returned.  A client should not make changes to a contact which has
+  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
+  loss when saving the contact back to the manager (as the "new" restricted contact will
+  replace the previously saved contact in the backend).
+
+  \sa QContactFetchHint
+ */
+QContact QContactManager::contact(const QContactLocalId& contactId, const QContactFetchHint& fetchHint) const
+{
+    return d->m_engine->contact(contactId, fetchHint, d->m_error);
 }
 
 /*!
