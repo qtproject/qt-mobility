@@ -116,7 +116,7 @@ QList<QContactRelationship> CntRelationship::relationships(const QString& relati
             CntAbstractRelationship *abstractRelationship = m_relationshipMap.value(type);
 
             // retrieve the relationships
-            TRAPD(symbianError, QT_TRYCATCH_LEAVING(returnValue.append(abstractRelationship->relationshipsL(participantId, role, error))));
+            TRAPD(symbianError, returnValue.append(abstractRelationship->relationshipsL(participantId, role, error)));
 
             // if error translate it into a qt error
             if (symbianError != KErrNone){
@@ -141,7 +141,7 @@ QList<QContactRelationship> CntRelationship::relationships(const QString& relati
         CntAbstractRelationship *abstractRelationship = m_relationshipMap.value(relationshipType);
 
         //retrieve the relationships
-        TRAPD(symbianError, QT_TRYCATCH_LEAVING(returnValue = abstractRelationship->relationshipsL(participantId, role, error)));
+        TRAPD(symbianError, returnValue = abstractRelationship->relationshipsL(participantId, role, error));
 
         //if error translate it into a qt error
         if (symbianError != KErrNone){
@@ -184,7 +184,7 @@ bool CntRelationship::saveRelationship(QSet<QContactLocalId> *affectedContactIds
         CntAbstractRelationship *abstractRelationship = m_relationshipMap.value(relationship->relationshipType());
     
         //save the relationship
-        TRAPD(symbianError, QT_TRYCATCH_LEAVING(returnValue = abstractRelationship->saveRelationshipL(affectedContactIds, relationship, error)));
+        TRAPD(symbianError, returnValue = abstractRelationship->saveRelationshipL(affectedContactIds, relationship, error));
     
         //if symbian error translate it into a qt error
         if (symbianError != KErrNone){
@@ -240,7 +240,7 @@ bool CntRelationship::removeRelationship(QSet<QContactLocalId> *affectedContactI
         //get the relationship
         CntAbstractRelationship *abstractRelationship = m_relationshipMap.value(relationship.relationshipType());
 
-        TRAPD(symbianError, QT_TRYCATCH_LEAVING(returnValue = abstractRelationship->removeRelationshipL(affectedContactIds, relationship, error)));
+        TRAPD(symbianError, returnValue = abstractRelationship->removeRelationshipL(affectedContactIds, relationship, error));
 
         //if symbian error translate it into a qt error
         if (symbianError != KErrNone){
