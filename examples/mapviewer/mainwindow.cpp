@@ -105,39 +105,67 @@ MainWindow::MainWindow(QWidget *parent) :
     //QGraphicsProxyWidget* proxy = qgv->scene()->addWidget(slider);
 
     popupMenu = new QMenu(this);
-    mnMarker = popupMenu->addAction("Add marker here");
-    mnSep1 = popupMenu->addSeparator();
-    mnRoute = popupMenu->addAction("Add route");
-    mnLine = popupMenu->addAction("Draw line");
-    mnRect = popupMenu->addAction("Draw rectangle");
-    mnEllipse = popupMenu->addAction("Draw ellipse");
-    mnPolygon = popupMenu->addAction("Draw polygon");
-    mnSep2 = popupMenu->addSeparator();
-    mnDay = popupMenu->addAction("Normal daylight");
-    mnSat = popupMenu->addAction("Satellite");
-    mnTer = popupMenu->addAction("Terrain");
-    mnSep3 = popupMenu->addSeparator();
-    mnExit = popupMenu->addAction("Exit");
-    
-    QObject::connect(mnMarker, SIGNAL(triggered(bool)),
+    QAction* menuItem;    
+    menuItem = new QAction(tr("Add marker here"), this);
+    popupMenu->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(addMarker(bool)));
-    QObject::connect(mnLine, SIGNAL(triggered(bool)),
-                     this, SLOT(drawLine(bool)));
-    QObject::connect(mnRect, SIGNAL(triggered(bool)),
-                     this, SLOT(drawRect(bool)));
-    QObject::connect(mnEllipse, SIGNAL(triggered(bool)),
-                     this, SLOT(drawEllipse(bool)));
-    QObject::connect(mnPolygon, SIGNAL(triggered(bool)),
-                     this, SLOT(drawPolygon(bool)));
-    QObject::connect(mnRoute, SIGNAL(triggered(bool)),
+    
+    menuItem = new QAction(tr(""), this);
+    menuItem->setSeparator(true);
+    popupMenu->addAction(menuItem);
+
+    menuItem = new QAction(tr("Add route"), this);
+    popupMenu->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(setRtFromTo(bool)));
+
+    menuItem = new QAction(tr("Draw line"), this);
+    popupMenu->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
+                     this, SLOT(drawLine(bool)));
+
+    menuItem = new QAction(tr("Draw rectangle"), this);
+    popupMenu->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
+                     this, SLOT(drawRect(bool)));
+
+    menuItem = new QAction(tr("Draw ellipse"), this);
+    popupMenu->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
+                     this, SLOT(drawEllipse(bool)));
+
+    menuItem = new QAction(tr("Draw polygon"), this);
+    popupMenu->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
+                     this, SLOT(drawPolygon(bool)));
+    
+    menuItem = new QAction(tr(""), this);
+    menuItem->setSeparator(true);
+    popupMenu->addAction(menuItem);
+
+    mnDay = new QAction(tr("Normal daylight"), this);
+    popupMenu->addAction(mnDay);
     QObject::connect(mnDay, SIGNAL(triggered(bool)),
                      this, SLOT(setScheme(bool)));
+    
+    mnSat = new QAction(tr("Satellite"), this);
+    popupMenu->addAction(mnSat);
     QObject::connect(mnSat, SIGNAL(triggered(bool)),
                      this, SLOT(setScheme(bool)));
+    
+    mnTer = new QAction(tr("Terrain"), this);
+    popupMenu->addAction(mnTer);
     QObject::connect(mnTer, SIGNAL(triggered(bool)),
                      this, SLOT(setScheme(bool)));
-    QObject::connect(mnExit, SIGNAL(triggered(bool)),
+    
+    menuItem = new QAction(tr(""), this);
+    menuItem->setSeparator(true);
+    popupMenu->addAction(menuItem);
+    
+    menuItem = new QAction(tr("Exit"), this);
+    popupMenu->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(close()));
 
     setContextMenuPolicy(Qt::CustomContextMenu);
@@ -147,20 +175,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    delete mnMarker;
-    delete mnRoute;
-    delete mnLine;
-    delete mnRect;
-    delete mnEllipse;
-    delete mnPolygon;
-    delete mnDay;
-    delete mnSat;
-    delete mnTer;
-    delete mnSep1;
-    delete mnSep2;
-    delete mnSep3;
-    delete mnExit;
-
     delete ui;
 }
 

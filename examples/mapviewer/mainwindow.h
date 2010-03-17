@@ -95,20 +95,10 @@ private:
     QMapView* mapView;
     QSlider* slider;
     QMenu* popupMenu;
-    QAction* mnMarker;
-    QAction* mnRoute;
-    QAction* mnLine;
-    QAction* mnRect;
-    QAction* mnEllipse;
-    QAction* mnPolygon;
     QAction* mnDay;
     QAction* mnSat;
     QAction* mnTer;
-    QAction* mnSep1;
-    QAction* mnSep2;
-    QAction* mnSep3;
-    QAction* mnExit;
-
+    
     QGeoCoordinate lastClicked;
 
     QList<const QMapMarker*> selectedMarkers;
