@@ -70,8 +70,7 @@ class Q_SENSORS_EXPORT QProximitySensor : public QSensor
 {
     Q_OBJECT
 public:
-    explicit QProximitySensor(QObject *parent = 0) : QSensor(parent)
-    { setType(QProximitySensor::type); }
+    explicit QProximitySensor(QObject *parent = 0) : QSensor(QProximitySensor::type, parent) {}
     virtual ~QProximitySensor() {}
     QProximityReading *reading() const { return static_cast<QProximityReading*>(QSensor::reading()); }
     static const char *type;

@@ -90,12 +90,13 @@ static int qoutputrangelist_id = qRegisterMetaType<QtMobility::qoutputrangelist>
 */
 
 /*!
-    Construct the sensor as a child of \a parent.
+    Construct the \a type sensor as a child of \a parent.
 */
-QSensor::QSensor(QObject *parent)
+QSensor::QSensor(const QByteArray &type, QObject *parent)
     : QObject(parent)
     , d(new QSensorPrivate)
 {
+    d->type = type;
 }
 
 /*!
@@ -155,28 +156,11 @@ void QSensor::setIdentifier(const QByteArray &identifier)
 /*!
     \property QSensor::type
     \brief the type of the sensor.
-
-    Note that setType() can only be used if you are using QSensor directly.
-    Sub-classes of QSensor call this automatically for you.
 */
 
 QByteArray QSensor::type() const
 {
     return d->type;
-}
-
-void QSensor::setType(const QByteArray &type)
-{
-    if (d->backend) {
-        qWarning() << "ERROR: Cannot call QSensor::setType while connected!";
-        return;
-    }
-    if (QLatin1String(metaObject()->className()) != QLatin1String("QSensor") &&
-            QLatin1String(metaObject()->className()) != QLatin1String(type)) {
-        qWarning() << "ERROR: Cannot call " << metaObject()->className() << "::setType!";
-        return;
-    }
-    d->type = type;
 }
 
 /*!
@@ -192,11 +176,6 @@ bool QSensor::connect()
 {
     if (d->backend)
         return true;
-
-    if (d->type.isEmpty()) {
-        qWarning() << "ERROR: Cannot call QSensor::connect unless the type is set.";
-        return false;
-    }
 
     d->backend = QSensorManager::createBackend(this);
     return (d->backend != 0);

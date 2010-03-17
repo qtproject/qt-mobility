@@ -81,8 +81,7 @@ class Q_SENSORS_EXPORT QAttitudeSensor : public QSensor
     Q_PROPERTY(bool yawAvailable)
 #endif
 public:
-    explicit QAttitudeSensor(QObject *parent = 0) : QSensor(parent)
-    { setType(QAttitudeSensor::type); }
+    explicit QAttitudeSensor(QObject *parent = 0) : QSensor(QAttitudeSensor::type, parent) {}
     virtual ~QAttitudeSensor() {}
     QAttitudeReading *reading() const { return static_cast<QAttitudeReading*>(QSensor::reading()); }
     static const char *type;

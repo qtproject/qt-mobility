@@ -87,7 +87,7 @@ class Q_SENSORS_EXPORT QSensor : public QObject
 
     Q_OBJECT
     Q_PROPERTY(QByteArray sensorid READ identifier WRITE setIdentifier)
-    Q_PROPERTY(QByteArray type READ type WRITE setType)
+    Q_PROPERTY(QByteArray type READ type)
     Q_PROPERTY(bool connected READ isConnected)
     Q_PROPERTY(QtMobility::qrangelist availableDataRates READ availableDataRates)
     Q_PROPERTY(bool supportsPolling READ supportsPolling)
@@ -100,14 +100,13 @@ class Q_SENSORS_EXPORT QSensor : public QObject
     Q_PROPERTY(QString description READ description)
     Q_PROPERTY(int error READ error NOTIFY sensorError)
 public:
-    explicit QSensor(QObject *parent = 0);
+    explicit QSensor(const QByteArray &type, QObject *parent = 0);
     virtual ~QSensor();
 
     QByteArray identifier() const;
     void setIdentifier(const QByteArray &identifier);
 
     QByteArray type() const;
-    void setType(const QByteArray &type);
 
     Q_INVOKABLE bool connect();
     bool isConnected() const;
@@ -141,6 +140,7 @@ public:
     QSensorReading *reading() const;
 
     // Information about available sensors
+    // These functions are implemented in qsensormanager.cpp
     static QList<QByteArray> sensorTypes();
     static QList<QByteArray> sensorsForType(const QByteArray &type);
     static QByteArray defaultSensorForType(const QByteArray &type);
