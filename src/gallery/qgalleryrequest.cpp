@@ -55,6 +55,8 @@ public:
         , type(type)
         , state(QGalleryAbstractRequest::Inactive)
         , result(QGalleryAbstractRequest::NoResult)
+        , currentProgress(0)
+        , maximumProgress(0)
     {
     }
 
@@ -65,6 +67,7 @@ public:
 
     void _q_finished();
     void _q_galleryDestroyed();
+    void _q_progressChanged(int current, int maximum);
 
     QGalleryAbstractRequest *q_ptr;
     QAbstractGallery *gallery;
@@ -72,6 +75,8 @@ public:
     QGalleryAbstractRequest::Type type;
     QGalleryAbstractRequest::State state;
     int result;
+    int currentProgress;
+    int maximumProgress;
 };
 
 void QGalleryAbstractRequestPrivate::_q_finished()
@@ -118,6 +123,14 @@ void QGalleryAbstractRequestPrivate::_q_galleryDestroyed()
     q->clear();
 
     emit q->supportedChanged();
+}
+
+void QGalleryAbstractRequestPrivate::_q_progressChanged(int current, int maximum)
+{
+    currentProgress = current;
+    maximumProgress = maximum;
+
+    emit q_func()->progressChanged(current, maximum);
 }
 
 /*!
@@ -308,6 +321,34 @@ int QGalleryAbstractRequest::result() const
 */
 
 /*!
+    \property QGalleryAbstractRequest::currentProgress
+
+    \brief the current progress of a request.
+*/
+
+int QGalleryAbstractRequest::currentProgress() const
+{
+    return d_func()->currentProgress;
+}
+
+/*!
+    \property QGalleryAbstractRequest::maximumProgress
+
+    \brief the maximum value of \l currentProgress
+*/
+
+int QGalleryAbstractRequest::maximumProgress() const
+{
+    return d_func()->maximumProgress;
+}
+
+/*!
+    \fn QGalleryAbstractRequest::progressChanged(int current, int maximum)
+
+    Signals that the \a current or \a maximum progress value has changed.
+*/
+
+/*!
     Waits for \a msecs for the a request to finish.
 
     Returns true if the request has finished on return, and returns false if the
@@ -353,6 +394,8 @@ void QGalleryAbstractRequest::execute()
                 d_ptr->state = Inactive;
 
             connect(d_ptr->response, SIGNAL(finished()), this, SLOT(_q_finished()));
+            connect(d_ptr->response, SIGNAL(progressChanged(int,int)),
+                    this, SLOT(_q_progressChanged(int,int)));
 
             setResponse(d_ptr->response);
         } else {
@@ -365,8 +408,16 @@ void QGalleryAbstractRequest::execute()
 
         delete oldResponse;
 
+        if (d_ptr->currentProgress != 0 || d_ptr->maximumProgress != 0) {
+            d_ptr->currentProgress = 0;
+            d_ptr->maximumProgress = 0;
+
+            emit progressChanged(0, 0);
+        }
+
         switch (d_ptr->result) {
         case QGalleryAbstractRequest::NoResult:
+            break;
         case QGalleryAbstractRequest::Cancelled:
             break;
         case QGalleryAbstractRequest::Succeeded:
@@ -1713,7 +1764,7 @@ void QGalleryMoveRequest::setDestinationId(const QString &id)
 /*!
     \property QGalleryMoveRequest::items
 
-    \brief The items moved my a request.
+    \brief The items moved by a request.
 */
 
 QGalleryItemList *QGalleryMoveRequest::items() const

@@ -63,6 +63,8 @@ class Q_GALLERY_EXPORT QGalleryAbstractRequest : public QObject
     Q_PROPERTY(bool supported READ isSupported NOTIFY supportedChanged)
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
     Q_PROPERTY(int result READ result NOTIFY resultChanged)
+    Q_PROPERTY(int currentProgress READ currentProgress NOTIFY progressChanged)
+    Q_PROPERTY(int maximumProgress READ maximumProgress NOTIFY progressChanged)
     Q_ENUMS(State)
     Q_ENUMS(Result)
     Q_ENUMS(Type)
@@ -108,6 +110,9 @@ public:
     State state() const;
     int result() const;
 
+    int currentProgress() const;
+    int maximumProgress() const;
+
     bool waitForFinished(int msecs);
 
 public Q_SLOTS:
@@ -123,6 +128,7 @@ Q_SIGNALS:
     void finished(int result);
     void stateChanged(QGalleryAbstractRequest::State state);
     void resultChanged();
+    void progressChanged(int current, int maximum);
 
 protected:
     virtual void setResponse(QGalleryAbstractResponse *response) = 0;
@@ -134,6 +140,7 @@ protected:
 private:
     Q_PRIVATE_SLOT(d_ptr, void _q_finished())
     Q_PRIVATE_SLOT(d_ptr, void _q_galleryDestroyed())
+    Q_PRIVATE_SLOT(d_ptr, void _q_progressChanged(int, int))
 };
 
 class QGalleryAbstractResponsePrivate;
@@ -156,6 +163,7 @@ public:
 
 Q_SIGNALS:
     void finished();
+    void progressChanged(int current, int maximum);
     void itemCountChanged();
 
 protected:
