@@ -522,6 +522,12 @@ QList<QContactManager::Error> QContactManager::saveContacts(QList<QContact>* con
  */
 bool QContactManager::saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap)
 {
+    if (errorMap)
+        errorMap->clear();
+    if (!contacts) {
+        d->m_error = QContactManager::BadArgumentError;
+        return false;
+    }
     return d->m_engine->saveContacts(contacts, errorMap, d->m_error);
 }
 
@@ -551,6 +557,8 @@ bool QContactManager::saveContacts(QList<QContact>* contacts, QMap<int, QContact
 bool QContactManager::removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap)
 {
     // DEPRECATED to be removed once transition period has elapsed.
+    if (errorMap)
+        errorMap->clear();
     if (!contactIds) {
         d->m_error = QContactManager::BadArgumentError;
         return false;
@@ -578,6 +586,8 @@ bool QContactManager::removeContacts(QList<QContactLocalId>* contactIds, QMap<in
  */
 bool QContactManager::removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap)
 {
+    if (errorMap)
+        errorMap->clear();
     return d->m_engine->removeContacts(contactIds, errorMap, d->m_error);
 }
 
@@ -787,13 +797,13 @@ QList<QContactManager::Error> QContactManager::saveRelationships(QList<QContactR
  */
 bool QContactManager::saveRelationships(QList<QContactRelationship>* relationships, QMap<int, QContactManager::Error>* errorMap)
 {
-
     // check arguments
+    if (errorMap)
+        errorMap->clear();
     if (!relationships) {
         d->m_error = QContactManager::BadArgumentError;
         return false;
     }
-
     return d->m_engine->saveRelationships(relationships, errorMap, d->m_error);
 }
 
@@ -849,6 +859,8 @@ QList<QContactManager::Error> QContactManager::removeRelationships(const QList<Q
  */
 bool QContactManager::removeRelationships(const QList<QContactRelationship>& relationships, QMap<int, QContactManager::Error>* errorMap)
 {
+    if (errorMap)
+        errorMap->clear();
     return d->m_engine->removeRelationships(relationships, errorMap, d->m_error);
 }
 
