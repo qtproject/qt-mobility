@@ -84,6 +84,7 @@ private slots:
     void drawRect(bool checked);
     void drawEllipse(bool checked);
     void drawPolygon(bool checked);
+    void customContextMenuRequest(const QPoint&);
 
 private:
     Ui::MainWindow *ui;

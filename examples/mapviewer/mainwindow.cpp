@@ -134,6 +134,10 @@ MainWindow::MainWindow(QWidget *parent) :
                      this, SLOT(setScheme(bool)));
     QObject::connect(mnTer, SIGNAL(triggered(bool)),
                      this, SLOT(setScheme(bool)));
+
+    setContextMenuPolicy(Qt::CustomContextMenu);
+    QObject::connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
+            this, SLOT(customContextMenuRequest(const QPoint&)));
 }
 
 MainWindow::~MainWindow()
@@ -191,11 +195,13 @@ void MainWindow::routeReplyFinished(QRouteReply* reply)
 }
 
 void MainWindow::mapClicked(QGeoCoordinate geoCoord, QGraphicsSceneMouseEvent* mouseEvent)
+{           
+    lastClicked = geoCoord;
+}
+
+void MainWindow::customContextMenuRequest(const QPoint& point)
 {
-    if (mouseEvent->buttons() & Qt::RightButton) {
-        lastClicked = geoCoord;
-        popupMenu->popup(mouseEvent->screenPos());
-    }
+    popupMenu->popup(mapToGlobal(point));
 }
 
 void MainWindow::mapObjectSelected(QMapObject* mapObject)
