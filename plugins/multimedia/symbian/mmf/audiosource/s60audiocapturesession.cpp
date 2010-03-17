@@ -56,7 +56,6 @@
 #include <mmf\common\mmfcontrollerpluginresolver.h>
 #include <mmf\common\mmfcontroller.h>
 
-#include <private/qcore_symbian_p.h>
 
 #include <BADESCA.H>
 
@@ -379,8 +378,8 @@ void S60AudioCaptureSession::fetchAudioCodecsL()
                     ItemData data;
                     data.controllerUid = controllers[index]->Uid().iUid;
                     data.destinationFormatUid = recordFormats[j]->Uid().iUid;
-                    data.destinationFormatDescription = qt_TDesC2QString(recordFormats[j]->DisplayName());
-                    m_controllerIdMap[type] = data;
+                    data.destinationFormatDescription = QString::fromUtf16(recordFormats[j]->DisplayName().Ptr(),recordFormats[j]->DisplayName().Length()); 
+                    m_controllerIdMap.insert(type, data);
                 }
 			}
 		}

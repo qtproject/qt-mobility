@@ -76,7 +76,7 @@ bool CntSimDetailDefinitionFetchRequest::cancel()
 
 void CntSimDetailDefinitionFetchRequest::readDetailDefinitions()
 {
-    if (m_req->isCanceled())
+    if (!m_req->isActive())
         return;
     
     QContactManager::Error error = QContactManager::NoError;
@@ -86,10 +86,12 @@ void CntSimDetailDefinitionFetchRequest::readDetailDefinitions()
     // Get all detail definitions
     QMap<QString, QContactDetailDefinition> allDefs = engine()->detailDefinitions(m_req->contactType(), error);
     
+    QStringList defNames = m_req->definitionNames();
+    
     // Check for error
     if (error != QContactManager::NoError) 
     {
-        for (int i=0; i<m_req->definitionNames().count(); i++)
+        for (int i=0; i<defNames.count(); i++)
             errorMap.insert(i, error);
     
         // Complete the request
@@ -105,9 +107,9 @@ void CntSimDetailDefinitionFetchRequest::readDetailDefinitions()
     }
     else 
     {
-        for (int i=0; i<m_req->definitionNames().count(); i++) 
+        for (int i=0; i<defNames.count(); i++) 
         {
-            QString defName = m_req->definitionNames().at(i);
+            QString defName = defNames.at(i);
             if (allDefs.contains(defName))
                 result.insert(defName, allDefs.value(defName));
             else

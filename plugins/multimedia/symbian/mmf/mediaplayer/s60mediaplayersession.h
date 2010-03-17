@@ -47,6 +47,7 @@
 #include <QtCore/qpair.h>
 #include <QMediaPlayer>
 #include <e32cmn.h> // for TDesC
+#include <QRect>
 #include "s60mediaplayerservice.h"
 
 QTM_BEGIN_NAMESPACE
@@ -116,7 +117,12 @@ protected:
     void stopProgressTimer();
     void startStalledTimer();
     void stopStalledTimer();
-    
+    QString TDesC2QString(const TDesC& aDescriptor);
+	TPtrC QString2TPtrC( const QString& string );
+	QRect TRect2QRect(const TRect& tr);
+	TRect QRect2TRect(const QRect& qr);
+
+
 protected slots:
     void tick();
     void stalled();

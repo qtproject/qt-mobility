@@ -45,7 +45,6 @@
 #include <QtCore/qdir.h>
 #include <QtCore/qvariant.h>
 #include <QtCore/qtimer.h>
-#include <QtCore/private/qcore_symbian_p.h>
 #include <mmf/common/mmferrors.h>
 #include <qmediatimerange.h>
 
@@ -143,9 +142,9 @@ void S60MediaPlayerSession::load(QUrl url)
     m_stream = (url.scheme() == "file")?false:true;
     TRAPD(err,
         if(m_stream)
-            doLoadUrlL(qt_QString2TPtrC(url.toString()));
+            doLoadUrlL(QString2TPtrC(url.toString()));
         else
-            doLoadL(qt_QString2TPtrC(QDir::toNativeSeparators(url.toLocalFile()))));    
+            doLoadL(QString2TPtrC(QDir::toNativeSeparators(url.toLocalFile()))));    
     setError(err);    
 }
 
@@ -467,4 +466,21 @@ void S60MediaPlayerSession::startStalledTimer()
 void S60MediaPlayerSession::stopStalledTimer()
 {
     m_stalledTimer->stop();
+}
+QString S60MediaPlayerSession::TDesC2QString(const TDesC& aDescriptor)
+{
+    return QString::fromUtf16(aDescriptor.Ptr(), aDescriptor.Length());
+}
+TPtrC S60MediaPlayerSession::QString2TPtrC( const QString& string )
+{
+	// Returned TPtrC is valid as long as the given parameter is valid and unmodified
+    return TPtrC16(static_cast<const TUint16*>(string.utf16()), string.length());
+}
+QRect S60MediaPlayerSession::TRect2QRect(const TRect& tr)
+{
+    return QRect(tr.iTl.iX, tr.iTl.iY, tr.Width(), tr.Height());
+}
+TRect S60MediaPlayerSession::QRect2TRect(const QRect& qr)
+{
+    return TRect(TPoint(qr.left(), qr.top()), TSize(qr.width(), qr.height()));
 }

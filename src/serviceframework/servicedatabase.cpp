@@ -1885,7 +1885,7 @@ bool ServiceDatabase::dropTables()
         }
         QStringList actualTables = database.tables();
 
-        foreach(QString expectedTable, expectedTables) {
+        foreach(const QString expectedTable, expectedTables) {
             if ((actualTables.contains(expectedTable))
                 && (!executeQuery(&query, QString("DROP TABLE ") + expectedTable))) {
                 rollbackTransaction(&query);

@@ -59,4 +59,8 @@ exists($${EPOCROOT}epoc32\include\platform\mw\mediarecognizer.h) {
     symbian:LIBS -= -lMPEngine
     message("Using Symbian mediarecognizer")
 }
+exists($$[QT_INSTALL_HEADERS]\QtGui\private\qwidget_p.h) {
+    DEFINES += USE_PRIVATE_QWIDGET_METHODS
+    message("Enabling use of private QWidget methods")
+}
 
