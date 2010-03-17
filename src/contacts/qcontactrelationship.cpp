@@ -75,6 +75,14 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
+  \enum QContactRelationship::Role
+  Describes the roles that a contact may take in a relationship.
+  \value First The contact is the first contact in the relationship
+  \value Second The contact is the second contact in the relationship
+  \value Either The contact is either the first or second contact in the relationship
+ */
+
+/*!
  * \variable QContactRelationship::HasMember
  * The relationship type which identifies the first contact as being a group which includes the second contact
  */

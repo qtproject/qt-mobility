@@ -68,7 +68,7 @@ QTM_USE_NAMESPACE
  * Process \a property and update \a contact with the corresponding QContactDetail(s).
  * \a document provides the context within which the property was found.
  * \a contactIndex specifies the position that \a contact will take in the list returned by
- * \l QVersitContactImporter::importContacts().
+ * \l QVersitContactImporter::importDocuments().
  *
  * Returns true if the property has been handled and requires no further processing, false
  * otherwise.
@@ -82,7 +82,7 @@ QTM_USE_NAMESPACE
  * Process \a property and update \a contact with the corresponding QContactDetail(s).
  * \a document provides the context within which the property was found.
  * \a contactIndex specifies the position that \a contact will take in the list returned by
- * \l QVersitContactImporter::importContacts().
+ * \l QVersitContactImporter::importDocuments().
  * \a alreadyProcessed is true if the detail has already been processed either by
  * \l preProcessProperty() or by QVersitContactImporter itself.
  *
@@ -129,6 +129,14 @@ QTM_USE_NAMESPACE
  * \sa QVersitDocument, QVersitReader, QVersitContactImporterPropertyHandler
  */
 
+/*!
+  \enum QVersitContactImporter::Error
+  This enum specifies an error that occurred during the most recent call to importDocuments()
+  \value NoError The most recent operation was successful
+  \value InvalidDocumentError One of the documents is not a vCard
+  \value EmptyDocumentError One of the documents is empty
+  */
+
 /*! Constructs a new importer */
 QVersitContactImporter::QVersitContactImporter()
     : d(new QVersitContactImporterPrivate)
@@ -146,6 +154,7 @@ QVersitContactImporter::~QVersitContactImporter()
  * contacts can be retrieved by calling contacts().
  * Returns true on success.  If any of the documents cannot be imported as contacts (eg. they aren't
  * vCards), false is returned and errors() will return a list describing the errors that occured.
+ * The successfully imported documents will still be available via contacts().
  *
  * \sa contacts(), errors()
  */

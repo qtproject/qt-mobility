@@ -128,6 +128,14 @@ QTM_USE_NAMESPACE
  */
 
 /*!
+  \enum QVersitContactExporter::Error
+  This enum specifies an error that occurred during the most recent call to exportContacts()
+  \value NoError The most recent operation was successful
+  \value EmptyContactError One of the contacts was empty
+  \value NoNameError One of the contacts has no QContactName field
+  */
+
+/*!
  * Constructs a new contact exporter
  */
 QVersitContactExporter::QVersitContactExporter()
@@ -146,6 +154,9 @@ QVersitContactExporter::~QVersitContactExporter()
 /*!
  * Converts \a contacts into a list of corresponding QVersitDocuments, using the format given by
  * \a versitType.
+ * Returns true on success.  If any of the contacts could not be exported, false is returned and
+ * errors() will return a list describing the errors that occured.  The successfully exported
+ * documents will still be available via documents().
  */
 bool QVersitContactExporter::exportContacts(
     const QList<QContact>& contacts,
