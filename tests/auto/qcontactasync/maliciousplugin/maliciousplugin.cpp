@@ -58,11 +58,6 @@ MaliciousAsyncManagerEngine::MaliciousAsyncManagerEngine()
 {
 }
 
-void MaliciousAsyncManagerEngine::deref()
-{
-    // does this leak?
-}
-
 QString MaliciousAsyncManagerEngine::synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const
 {
     Q_UNUSED(contact);
@@ -117,5 +112,5 @@ QContactManagerEngine* MaliciousEngineFactory::engine(const QMap<QString, QStrin
 {
     Q_UNUSED(parameters);
     error = QContactManager::NoError;
-    return &mame;
+    return new MaliciousAsyncManagerEngine();
 }
