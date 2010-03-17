@@ -114,11 +114,13 @@ QContactMemoryEngine* QContactMemoryEngine::createMemoryEngine(const QMap<QStrin
 QContactMemoryEngine::QContactMemoryEngine(QContactMemoryEngineData* data)
     : d(data)
 {
+    d->m_sharedEngines.append(this);
 }
 
 /*! \reimp */
 QContactMemoryEngine::~QContactMemoryEngine()
 {
+    d->m_sharedEngines.removeAll(this);
     if (!d->m_refCount.deref()) {
         engineDatas.remove(d->m_id);
         delete d;
@@ -149,7 +151,7 @@ bool QContactMemoryEngine::setSelfContactId(const QContactLocalId& contactId, QC
 
         QContactChangeSet cs;
         cs.oldAndNewSelfContactId() = QPair<QContactLocalId, QContactLocalId>(oldId, contactId);
-        cs.emitSignals(this);
+        d->emitSharedSignals(&cs);
         return true;
     }
 
@@ -327,7 +329,7 @@ bool QContactMemoryEngine::saveContacts(QList<QContact>* contacts, QMap<int, QCo
     }
 
     error = operationError;
-    changeSet.emitSignals(this);
+    d->emitSharedSignals(&changeSet);
     // return false if some error occurred
     return error == QContactManager::NoError;
 }
@@ -385,7 +387,7 @@ bool QContactMemoryEngine::removeContacts(const QList<QContactLocalId>& contactI
     }
 
     error = operationError;
-    changeSet.emitSignals(this);
+    d->emitSharedSignals(&changeSet);
     // return false if some errors occurred
     return error == QContactManager::NoError;
 }
@@ -504,7 +506,7 @@ bool QContactMemoryEngine::saveRelationships(QList<QContactRelationship>* relati
             error = functionError;
     }
 
-    changeSet.emitSignals(this);
+    d->emitSharedSignals(&changeSet);
     return (error == QContactManager::NoError);
 }
 
@@ -547,7 +549,7 @@ bool QContactMemoryEngine::removeRelationships(const QList<QContactRelationship>
         }
     }
 
-    cs.emitSignals(this);
+    d->emitSharedSignals(&cs);
     return (error == QContactManager::NoError);
 }
 
@@ -586,7 +588,7 @@ bool QContactMemoryEngine::saveDetailDefinition(const QContactDetailDefinition& 
 {
     QContactChangeSet changeSet;
     bool retn = saveDetailDefinition(def, contactType, changeSet, error);
-    changeSet.emitSignals(this);
+    d->emitSharedSignals(&changeSet);
     return retn;
 }
 
@@ -618,7 +620,7 @@ bool QContactMemoryEngine::removeDetailDefinition(const QString& definitionId, c
 {
     QContactChangeSet changeSet;
     bool retn = removeDetailDefinition(definitionId, contactType, changeSet, error);
-    changeSet.emitSignals(this);
+    d->emitSharedSignals(&changeSet);
     return retn;
 }
 
@@ -902,7 +904,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
     }
 
     // now emit any signals we have to emit
-    changeSet.emitSignals(this);
+    d->emitSharedSignals(&changeSet);
 }
 
 /*!

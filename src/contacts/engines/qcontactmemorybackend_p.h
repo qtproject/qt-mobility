@@ -75,6 +75,7 @@
 QTM_BEGIN_NAMESPACE
 
 class QContactAbstractRequest;
+class QContactManagerEngine;
 class QContactMemoryEngineData : public QSharedData
 {
 public:
@@ -113,6 +114,13 @@ public:
     QContactLocalId m_nextContactId;
     bool m_anonymous;                              // Is this backend ever shared?
 
+    void emitSharedSignals(QContactChangeSet* cs)
+    {
+        foreach(QContactManagerEngine* engine, m_sharedEngines)
+            cs->emitSignals(engine);
+    }
+
+    QList<QContactManagerEngine*> m_sharedEngines;   // The list of engines that share this data
     QQueue<QContactAbstractRequest*> m_asynchronousOperations; // async requests to be performed.
 };
 
