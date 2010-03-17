@@ -77,8 +77,7 @@ void CntSimDetailDefinitionFetchRequest::run()
             errorMap.insert(i, error);
     
         // Complete the request
-        QContactManagerEngine::updateRequestState(r, QContactAbstractRequest::FinishedState);
-        QContactManagerEngine::updateDefinitionFetchRequest(r, result, error, errorMap);
+        QContactManagerEngine::updateDefinitionFetchRequest(r, result, error, errorMap, QContactAbstractRequest::FinishedState);
         return;
     }
 
@@ -104,6 +103,5 @@ void CntSimDetailDefinitionFetchRequest::run()
     }
     
     // Complete the request
-    QContactManagerEngine::updateRequestState(r, QContactAbstractRequest::FinishedState);
-    QContactManagerEngine::updateDefinitionFetchRequest(r, result, error, errorMap);
+    QContactManagerEngine::updateDefinitionFetchRequest(r, result, error, errorMap, QContactAbstractRequest::FinishedState);
 }

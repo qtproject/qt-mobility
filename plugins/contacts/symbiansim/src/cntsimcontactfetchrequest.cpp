@@ -85,8 +85,7 @@ void CntSimContactFetchRequest::run()
 
     QContactManager::Error error = QContactManager::NoError;    
     if (!simStore()->read(index, numSlots, error)) {
-        QContactManagerEngine::updateRequestState(r, QContactAbstractRequest::FinishedState);
-        QContactManagerEngine::updateContactFetchRequest(r, QList<QContact>(), error);
+        QContactManagerEngine::updateContactFetchRequest(r, QList<QContact>(), error, QContactAbstractRequest::FinishedState);
     }
 }
 
@@ -114,6 +113,5 @@ void CntSimContactFetchRequest::readComplete(QList<QContact> contacts, QContactM
     }
 
     // Complete the request
-    QContactManagerEngine::updateRequestState(r, QContactAbstractRequest::FinishedState);    
-    QContactManagerEngine::updateContactFetchRequest(r, filteredAndSorted, error);
+    QContactManagerEngine::updateContactFetchRequest(r, filteredAndSorted, error, QContactAbstractRequest::FinishedState);
 }

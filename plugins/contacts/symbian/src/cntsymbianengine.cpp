@@ -967,9 +967,7 @@ void CntSymbianEngine::performAsynchronousOperation()
             QList<QContact> requestedContacts = QContactManagerEngine::contacts(filter, sorting, defs, operationError);
 
             // update the request with the results.
-            if (!requestedContacts.isEmpty() || operationError != QContactManager::NoError)
-                updateContactFetchRequest(r, requestedContacts, operationError); // emit resultsAvailable()
-            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
+            updateContactFetchRequest(r, requestedContacts, operationError, QContactAbstractRequest::FinishedState); // emit resultsAvailable()
         }
         break;
 
@@ -982,9 +980,7 @@ void CntSymbianEngine::performAsynchronousOperation()
             QContactManager::Error operationError = QContactManager::NoError;
             QList<QContactLocalId> requestedContactIds = QContactManagerEngine::contactIds(filter, sorting, operationError);
 
-            if (!requestedContactIds.isEmpty() || operationError != QContactManager::NoError)
-                updateContactLocalIdFetchRequest(r, requestedContactIds, operationError); // emit resultsAvailable()
-            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
+            updateContactLocalIdFetchRequest(r, requestedContactIds, operationError, QContactAbstractRequest::FinishedState);
         }
         break;
 
@@ -997,8 +993,7 @@ void CntSymbianEngine::performAsynchronousOperation()
             QMap<int, QContactManager::Error> errorMap;
             saveContacts(&contacts, &errorMap, operationError);
 
-            updateContactSaveRequest(r, contacts, operationError, errorMap); // there will always be results of some form.  emit resultsAvailable().
-            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
+            updateContactSaveRequest(r, contacts, operationError, errorMap, QContactAbstractRequest::FinishedState); // there will always be results of some form.  emit resultsAvailable().
         }
         break;
 
@@ -1024,9 +1019,7 @@ void CntSymbianEngine::performAsynchronousOperation()
                 }
             }
 
-            if (!errorMap.isEmpty() || operationError != QContactManager::NoError)
-                updateContactRemoveRequest(r, operationError, errorMap); // emit resultsAvailable()
-            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
+            updateContactRemoveRequest(r, operationError, errorMap, QContactAbstractRequest::FinishedState);
         }
         break;
 
@@ -1051,64 +1044,21 @@ void CntSymbianEngine::performAsynchronousOperation()
                 }
             }
 
-            if (!errorMap.isEmpty() || !requestedDefinitions.isEmpty() || operationError != QContactManager::NoError)
-                updateDefinitionFetchRequest(r, requestedDefinitions, operationError, errorMap); // emit resultsAvailable()
-            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
+            updateDefinitionFetchRequest(r, requestedDefinitions, operationError, errorMap, QContactAbstractRequest::FinishedState);
         }
         break;
 
-// symbian engine currently does not support mutable definitions.
-//
-//        case QContactAbstractRequest::DetailDefinitionSaveRequest:
-//        {
-//            QContactDetailDefinitionSaveRequest* r = static_cast<QContactDetailDefinitionSaveRequest*>(currentRequest);
-//            QContactManager::Error operationError = QContactManager::NoError;
-//            QMap<int, QContactManager::Error> errorMap;
-//            QList<QContactDetailDefinition> definitions = r->definitions();
-//            QList<QContactDetailDefinition> savedDefinitions;
-//
-//            QContactManager::Error tempError;
-//            for (int i = 0; i < definitions.size(); i++) {
-//                QContactDetailDefinition current = definitions.at(i);
-//                saveDetailDefinition(current, r->contactType(), changeSet, tempError);
-//                savedDefinitions.append(current);
-//
-//                if (tempError != QContactManager::NoError) {
-//                    errorMap.insert(i, tempError);
-//                    operationError = tempError;
-//                }
-//            }
-//
-//            // update the request with the results.
-//            updateDefinitionSaveRequest(r, savedDefinitions, operationError, errorMap); // there will always be results of some form.  emit resultsAvailable().
-//            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
-//        }
-//        break;
-//
-//        case QContactAbstractRequest::DetailDefinitionRemoveRequest:
-//        {
-//            QContactDetailDefinitionRemoveRequest* r = static_cast<QContactDetailDefinitionRemoveRequest*>(currentRequest);
-//            QStringList names = r->definitionNames();
-//
-//            QContactManager::Error operationError = QContactManager::NoError;
-//            QMap<int, QContactManager::Error> errorMap;
-//
-//            for (int i = 0; i < names.size(); i++) {
-//                QContactManager::Error tempError;
-//                removeDetailDefinition(names.at(i), r->contactType(), changeSet, tempError);
-//
-//                if (tempError != QContactManager::NoError) {
-//                    errorMap.insert(i, tempError);
-//                    operationError = tempError;
-//                }
-//            }
-//
-//            // there are no results, so just update the status with the error.
-//            if (!errorMap.isEmpty() || operationError != QContactManager::NoError)
-//                updateDefinitionRemoveRequest(r, operationError, errorMap); // emit resultsAvailable()
-//            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
-//        }
-//        break;
+        case QContactAbstractRequest::DetailDefinitionSaveRequest:
+        {
+            // symbian engine currently does not support mutable definitions.
+        }
+        break;
+
+        case QContactAbstractRequest::DetailDefinitionRemoveRequest:
+        {
+            // symbian engine currently does not support mutable definitions.
+        }
+        break;
 
         case QContactAbstractRequest::RelationshipFetchRequest:
         {
@@ -1131,9 +1081,7 @@ void CntSymbianEngine::performAsynchronousOperation()
             }
 
             // update the request with the results.
-            if (!requestedRelationships.isEmpty() || operationError != QContactManager::NoError)
-                updateRelationshipFetchRequest(r, requestedRelationships, operationError); // emit resultsAvailable()
-            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
+            updateRelationshipFetchRequest(r, requestedRelationships, operationError, QContactAbstractRequest::FinishedState);
         }
         break;
 
@@ -1158,9 +1106,7 @@ void CntSymbianEngine::performAsynchronousOperation()
             if (foundMatch == false && operationError == QContactManager::NoError)
                 operationError = QContactManager::DoesNotExistError;
 
-            if (!errorMap.isEmpty() || operationError != QContactManager::NoError)
-                updateRelationshipRemoveRequest(r, operationError, errorMap); // emit resultsAvailable()
-            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
+            updateRelationshipRemoveRequest(r, operationError, errorMap, QContactAbstractRequest::FinishedState);
         }
         break;
 
@@ -1185,8 +1131,7 @@ void CntSymbianEngine::performAsynchronousOperation()
             }
 
             // update the request with the results.
-            updateRelationshipSaveRequest(r, savedRelationships, operationError, errorMap); // there will always be results of some form.  emit resultsAvailable().
-            updateRequestState(currentRequest, QContactAbstractRequest::FinishedState);
+            updateRelationshipSaveRequest(r, savedRelationships, operationError, errorMap, QContactAbstractRequest::FinishedState);
         }
         break;
 

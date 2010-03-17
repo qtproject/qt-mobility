@@ -91,8 +91,7 @@ void CntSimContactSaveRequest::writeNext()
         return;
     
     if (r->contacts().count() == 0) {
-        QContactManagerEngine::updateRequestState(r, QContactAbstractRequest::FinishedState);
-        QContactManagerEngine::updateContactSaveRequest(r, QList<QContact>(), QContactManager::BadArgumentError, m_errorMap);
+        QContactManagerEngine::updateContactSaveRequest(r, QList<QContact>(), QContactManager::BadArgumentError, m_errorMap, QContactAbstractRequest::FinishedState);
         return;
     }    
     
@@ -104,8 +103,7 @@ void CntSimContactSaveRequest::writeNext()
         if (m_errorMap.count())
             error = m_errorMap.begin().value();
         
-        QContactManagerEngine::updateRequestState(r, QContactAbstractRequest::FinishedState);
-        QContactManagerEngine::updateContactSaveRequest(r, m_contacts, error, m_errorMap);
+        QContactManagerEngine::updateContactSaveRequest(r, m_contacts, error, m_errorMap, QContactAbstractRequest::FinishedState);
         return;
     }
 

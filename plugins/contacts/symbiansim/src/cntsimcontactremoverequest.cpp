@@ -98,8 +98,7 @@ void CntSimContactRemoveRequest::removeNext()
         return;
     
     if (r->contactIds().count() == 0) {
-        QContactManagerEngine::updateRequestState(r, QContactAbstractRequest::FinishedState);
-        QContactManagerEngine::updateContactRemoveRequest(r, QContactManager::BadArgumentError, m_errorMap);
+        QContactManagerEngine::updateContactRemoveRequest(r, QContactManager::BadArgumentError, m_errorMap, QContactAbstractRequest::FinishedState);
         return;
     }        
     
@@ -111,8 +110,7 @@ void CntSimContactRemoveRequest::removeNext()
         if (m_errorMap.count())
             error = m_errorMap.begin().value();
 
-        QContactManagerEngine::updateRequestState(r, QContactAbstractRequest::FinishedState);
-        QContactManagerEngine::updateContactRemoveRequest(r, error, m_errorMap);
+        QContactManagerEngine::updateContactRemoveRequest(r, error, m_errorMap, QContactAbstractRequest::FinishedState);
         return;
     }
 
@@ -144,8 +142,7 @@ void CntSimContactRemoveRequest::getReservedSlotsComplete(QList<int> reservedSlo
         return;
     
     if (error != QContactManager::NoError && error != QContactManager::DoesNotExistError) {
-        QContactManagerEngine::updateRequestState(r, QContactAbstractRequest::FinishedState);
-        QContactManagerEngine::updateContactRemoveRequest(r, error, m_errorMap);
+        QContactManagerEngine::updateContactRemoveRequest(r, error, m_errorMap, QContactAbstractRequest::FinishedState);
         return;
     }
 
@@ -162,7 +159,6 @@ void CntSimContactRemoveRequest::getReservedSlots()
     
     QContactManager::Error error = QContactManager::NoError;
     if (!simStore()->getReservedSlots(error)) {
-        QContactManagerEngine::updateRequestState(r, QContactAbstractRequest::FinishedState);
-        QContactManagerEngine::updateContactRemoveRequest(r, error, m_errorMap);
+        QContactManagerEngine::updateContactRemoveRequest(r, error, m_errorMap, QContactAbstractRequest::FinishedState);
     }
 }

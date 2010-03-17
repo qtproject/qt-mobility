@@ -70,8 +70,7 @@ void CntSimContactLocalIdFetchRequest::run()
     
     QContactManager::Error error = QContactManager::NoError;
     if (!simStore()->read(index, numSlots, error)) {
-        QContactManagerEngine::updateRequestState(r, QContactAbstractRequest::FinishedState);
-        QContactManagerEngine::updateContactLocalIdFetchRequest(r, QList<QContactLocalId>(), error);
+        QContactManagerEngine::updateContactLocalIdFetchRequest(r, QList<QContactLocalId>(), error, QContactAbstractRequest::FinishedState);
     }
 }
 
@@ -107,6 +106,5 @@ void CntSimContactLocalIdFetchRequest::readComplete(QList<QContact> contacts, QC
     }
         
     // Complete the request
-    QContactManagerEngine::updateRequestState(r, QContactAbstractRequest::FinishedState);    
-    QContactManagerEngine::updateContactLocalIdFetchRequest(r, filteredAndSortedIds, error);
+    QContactManagerEngine::updateContactLocalIdFetchRequest(r, filteredAndSortedIds, error, QContactAbstractRequest::FinishedState);
 }
