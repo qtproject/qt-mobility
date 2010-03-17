@@ -16,8 +16,11 @@ symbian: {
     
     contains(S60_VERSION, 3.1) {
         
-        # In S60 3.1 we need to use TMobilePhoneBookInfoV1 instead of TMobilePhoneBookInfoV5
-        DEFINES += SYMBIANSIM_BACKEND_PHONEBOOKINFOV1
+        # In S60 3.1 we need to use TMobilePhoneBookInfoV1 instead of TMobilePhoneBookInfoV5.
+        # Note: Etel testsserver uses V5 always.
+        !contains(DEFINES, SYMBIANSIM_BACKEND_USE_ETEL_TESTSERVER) {
+            	DEFINES += SYMBIANSIM_BACKEND_PHONEBOOKINFOV1
+        }
         
         # S60 3.1 device will reboot when removing several nonexisting contacts in
         # sequence. The first remove operation will succeed but right after the second
