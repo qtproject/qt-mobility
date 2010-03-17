@@ -1236,7 +1236,7 @@ void tst_QContactAsync::definitionRemove()
             drr.waitForFinished();
             drr.setDefinitionNames(QContactType::TypeContact, removeIds);
 
-            QCOMPARE(cm->detailDefinitions().keys().size(), originalCount - 2); // hasn't changed
+            QCOMPARE(cm->detailDefinitions().keys().size(), originalCount - 3); // finished
             bailoutCount -= 1;
             if (!bailoutCount) {
                 qWarning("Unable to test cancelling due to thread scheduling!");
@@ -1244,6 +1244,7 @@ void tst_QContactAsync::definitionRemove()
                 break;
             }
             spy.clear();
+            // XXX should be readded
             continue;
         }
 
@@ -1281,7 +1282,7 @@ void tst_QContactAsync::definitionRemove()
         QVERIFY(spy.count() >= 1); // active + cancelled progress signals
         spy.clear();
 
-        QCOMPARE(cm->detailDefinitions().keys().size(), originalCount - 2); // hasn't changed
+        QCOMPARE(cm->detailDefinitions().keys().size(), originalCount - 3); // hasn't changed
         break;
     }
 
