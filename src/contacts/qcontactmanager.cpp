@@ -774,7 +774,7 @@ QList<QContactManager::Error> QContactManager::saveRelationships(QList<QContactR
         QMap<int, QContactManager::Error> errorMap;
         QList<QContactManager::Error> errorList;
         int size = relationships->size();
-        d->m_engine->removeRelationships(*relationships, &errorMap, d->m_error);
+        d->m_engine->saveRelationships(relationships, &errorMap, d->m_error);
 
         for (int j=0; j < size; j++) {
             if (errorMap.contains(j))
