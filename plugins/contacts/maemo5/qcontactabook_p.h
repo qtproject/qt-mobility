@@ -65,32 +65,32 @@
 //### Remove in PR 1.2
 extern "C" {
         typedef void GtkWindow;
-	struct _OssoABookContact {
-		EContact parent;
-	};
-	
-	OssoABookRoster*    osso_abook_roster_new               (const char *name,
+        struct _OssoABookContact {
+          EContact parent;
+        };
+
+        OssoABookRoster*    osso_abook_roster_new               (const char *name,
                                                                  EBookView *book_view,
                                                                  const char *vcard_field);
-	gboolean            osso_abook_roster_is_running        (OssoABookRoster *roster);
-	void                osso_abook_roster_start             (OssoABookRoster *roster);
+        gboolean            osso_abook_roster_is_running        (OssoABookRoster *roster);
+        void                osso_abook_roster_start             (OssoABookRoster *roster);
 
-	gboolean            osso_abook_contact_has_valid_name   (OssoABookContact *contact);
-	gboolean            osso_abook_contact_is_roster_contact(OssoABookContact *contact);
+        gboolean            osso_abook_contact_has_valid_name   (OssoABookContact *contact);
+        gboolean            osso_abook_contact_is_roster_contact(OssoABookContact *contact);
 
-	OssoABookRoster*    osso_abook_aggregator_get_default   (GError **error);
-	GList*              osso_abook_aggregator_list_master_contacts
+        OssoABookRoster*    osso_abook_aggregator_get_default   (GError **error);
+        GList*              osso_abook_aggregator_list_master_contacts
                                                                 (OssoABookAggregator *aggregator);
-	unsigned            osso_abook_aggregator_get_master_contact_count
+        unsigned            osso_abook_aggregator_get_master_contact_count
                                                                 (OssoABookAggregator *aggregator);
-	GList*              osso_abook_aggregator_lookup        (OssoABookAggregator *aggregator,
+        GList*              osso_abook_aggregator_lookup        (OssoABookAggregator *aggregator,
                                                                  const char *uid);
-	const char*         osso_abook_contact_get_uid          (OssoABookContact *contact); 
-	EBook*              osso_abook_roster_get_book          (OssoABookRoster *roster);
-	char*               osso_abook_contact_to_string        (OssoABookContact *contact,
+        const char*         osso_abook_contact_get_uid          (OssoABookContact *contact); 
+        EBook*              osso_abook_roster_get_book          (OssoABookRoster *roster);
+        char*               osso_abook_contact_to_string        (OssoABookContact *contact,
                                                                  EVCardFormat format,
                                                                  gboolean inline_avatar);
-	char*               osso_abook_contact_get_value        (EContact *contact,
+        char*               osso_abook_contact_get_value        (EContact *contact,
                                                                  const char *attr_name);
         GList*              osso_abook_aggregator_find_contacts (OssoABookAggregator *aggregator,
                                                                  EBookQuery *query);
@@ -98,48 +98,48 @@ extern "C" {
                                                                  const char *attr_name);
         GList*              osso_abook_contact_get_attributes   (EContact *contact,
                                                                  const char *attr_name);
-	GList*              osso_abook_contact_get_roster_contacts
+        GList*              osso_abook_contact_get_roster_contacts
                                                                 (OssoABookContact *master_contact);
-	McProfile*          osso_abook_contact_get_profile      (OssoABookContact *contact);
-	McAccount*          osso_abook_contact_get_account      (OssoABookContact *contact);
-	gboolean            osso_abook_contact_delete           (OssoABookContact *contact,
+        McProfile*          osso_abook_contact_get_profile      (OssoABookContact *contact);
+        McAccount*          osso_abook_contact_get_account      (OssoABookContact *contact);
+        gboolean            osso_abook_contact_delete           (OssoABookContact *contact,
                                                                  EBook *book,
                                                                  GtkWindow *window);
-	GList*              osso_abook_aggregator_find_contacts (OssoABookAggregator *aggregator,
+        GList*              osso_abook_aggregator_find_contacts (OssoABookAggregator *aggregator,
                                                                  EBookQuery *query);
-	const char*         osso_abook_contact_get_display_name (OssoABookContact *contact);
-	GdkPixbuf*          osso_abook_avatar_get_image_rounded (OssoABookAvatar *avatar,
+        const char*         osso_abook_contact_get_display_name (OssoABookContact *contact);
+        GdkPixbuf*          osso_abook_avatar_get_image_rounded (OssoABookAvatar *avatar,
                                                                  int width,
                                                                  int height,
                                                                  gboolean crop,
                                                                  int radius,
                                                                  const guint8 border_color[4]);
-	OssoABookContact*   osso_abook_contact_new              (void);
-	guint               osso_abook_contact_async_add        (OssoABookContact *contact,
+        OssoABookContact*   osso_abook_contact_new              (void);
+        guint               osso_abook_contact_async_add        (OssoABookContact *contact,
                                                                  EBook *book,
                                                                  EBookIdCallback callback,
                                                                  gpointer user_data);
-	guint               osso_abook_contact_async_commit     (OssoABookContact *contact,
+        guint               osso_abook_contact_async_commit     (OssoABookContact *contact,
                                                                  EBook *book,
                                                                  EBookCallback callback,
                                                                  gpointer user_data);
-	gboolean            osso_abook_contact_add_value        (EContact *contact,
+        gboolean            osso_abook_contact_add_value        (EContact *contact,
                                                                  const char *attr_name,
                                                                  GCompareFunc value_check,
                                                                  const char *value);
-	void                osso_abook_contact_set_pixbuf       (OssoABookContact *contact,
+        void                osso_abook_contact_set_pixbuf       (OssoABookContact *contact,
                                                                  GdkPixbuf *pixbuf,
                                                                  EBook *book,
                                                                  GtkWindow *window);
-	// osso-abook-account-manager.h
-	const GList*        osso_abook_account_manager_get_primary_vcard_fields
+        // osso-abook-account-manager.h
+        const GList*        osso_abook_account_manager_get_primary_vcard_fields
                                                                  (OssoABookAccountManager *manager);
-	OssoABookAccountManager* osso_abook_account_manager_get_default(void);
-	const char*         osso_abook_account_manager_get_vcard_field
+        OssoABookAccountManager* osso_abook_account_manager_get_default(void);
+        const char*         osso_abook_account_manager_get_vcard_field
                                                                 (OssoABookAccountManager *manager,
                                                                  const char *account_name);
         // osso-abook-caps.h
-	typedef enum {
+        typedef enum {
           OSSO_ABOOK_CAPS_NONE             = (0),
           OSSO_ABOOK_CAPS_EMAIL            = (1 << 0),
           OSSO_ABOOK_CAPS_CHAT             = (1 << 1),
@@ -156,9 +156,9 @@ extern "C" {
                                  OSSO_ABOOK_CAPS_VOICE | OSSO_ABOOK_CAPS_VIDEO |
                                  OSSO_ABOOK_CAPS_PHONE | OSSO_ABOOK_CAPS_SMS)
         } OssoABookCapsFlags;
-	GType osso_abook_caps_get_type (void) G_GNUC_CONST;
+        GType osso_abook_caps_get_type (void) G_GNUC_CONST;
 
-	typedef struct _OssoABookCaps OssoABookCaps; 
+        typedef struct _OssoABookCaps OssoABookCaps; 
         #define OSSO_ABOOK_TYPE_CAPS \
                 (osso_abook_caps_get_type ())
 
@@ -167,7 +167,7 @@ extern "C" {
                  OSSO_ABOOK_TYPE_CAPS, \
                  OssoABookCaps))
 
-	OssoABookCapsFlags  osso_abook_caps_get_capabilities    (OssoABookCaps *caps);
+        OssoABookCapsFlags  osso_abook_caps_get_capabilities    (OssoABookCaps *caps);
 }
 
 QTM_USE_NAMESPACE
@@ -178,22 +178,26 @@ public:
   QContactIDsHash(){};
   
   /* Append */
-  QContactIDsHash& operator<< (const QByteArray& eContactId){ if (find(eContactId))
-                                                                return (*this);
-							      quint16 key = qChecksum(eContactId, eContactId.size());
-                                                              m_localIds[key] = eContactId;
-							      QCM5_DEBUG << "Add key:" << key << "eContactId:" << eContactId;
+  QContactIDsHash& operator<< (const QByteArray& eContactId){
+    if (find(eContactId))
+      return (*this);
+    quint16 key = qChecksum(eContactId, eContactId.size());
+    m_localIds[key] = eContactId;
+    QCM5_DEBUG << "Add key:" << key << "eContactId:" << eContactId;
                                                         
-							      return (*this);
-                                                            };
-  const QContactLocalId append(const QByteArray& eContactId){ uint id = find(eContactId);
-                                                              if (id)
-								return id;
-							      id = qChecksum(eContactId, eContactId.size());
-                                                              m_localIds[id] = eContactId;
-							      QCM5_DEBUG << "Add key:" << id << "eContactId:" << eContactId;
-							      return id;
-                                                            };
+    return (*this);
+  };
+  
+  const QContactLocalId append(const QByteArray& eContactId){
+    uint id = find(eContactId);
+    if (id)
+      return id;
+    id = qChecksum(eContactId, eContactId.size());
+    m_localIds[id] = eContactId;
+    QCM5_DEBUG << "Add key:" << id << "eContactId:" << eContactId;
+    return id;
+  };
+  
   /* Find */
   const char* operator[] (const QContactLocalId localId) { return m_localIds.value(localId).constData(); };
   const char* find(const QContactLocalId localId) { return m_localIds.value(localId).constData(); };
@@ -205,16 +209,20 @@ public:
                                               QCM5_DEBUG << "Remove QContactLocalId:" << localId << ((removed) ? "OK" : "NO");
                                               return removed;
                                             };
-  bool remove(const QByteArray& eContactId){ const QContactLocalId hashKey = m_localIds.key(eContactId, 0);
-                                             bool removed = remove(hashKey);
-					     QCM5_DEBUG << "Remove QContactLocalId:" << hashKey << ((removed) ? "OK" : "NO");
-                                             return removed;
-                                           };
+  bool remove(const QByteArray& eContactId){ 
+    const QContactLocalId hashKey = m_localIds.key(eContactId, 0);
+    bool removed = remove(hashKey);
+    QCM5_DEBUG << "Remove QContactLocalId:" << hashKey << ((removed) ? "OK" : "NO");
+    return removed;
+  };
   
   /* Take */
-  const QContactLocalId take(const QByteArray& eContactId){ const QContactLocalId hashKey = m_localIds.key(eContactId, 0);
-                                                            remove(hashKey);
-                                                            return hashKey; };
+  const QContactLocalId take(const QByteArray& eContactId){
+    const QContactLocalId hashKey = m_localIds.key(eContactId, 0);
+    remove(hashKey);
+    return hashKey;
+  };
+  
 private:
   QHash<QContactLocalId, QByteArray> m_localIds; //[int/QContactLocalId Maemo5LocalId, QByteArray eContactID]
 };

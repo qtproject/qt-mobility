@@ -459,143 +459,132 @@ EBookQuery* QContactABook::convert(const QContactFilter& filter) const
   EBookQuery* query = NULL;
   
   switch(filter.type()){
-      case QContactFilter::DefaultFilter:
-	{
-	  QCM5_DEBUG << "QContactFilter::DefaultFilter";
-	  query = e_book_query_any_field_contains(""); //Match all contacts
-	}
-	break;
-      case QContactFilter::LocalIdFilter:
-        {
-	  QCM5_DEBUG << "LocalIdFilter";
-	  const QContactLocalIdFilter f(filter);
-	  QList<QContactLocalId> ids = f.ids();
-	  if (ids.isEmpty())
-	    return NULL;
-	  
-	  query= NULL;
-	  foreach(const QContactLocalId id, ids){
-	    EBookQuery* q = NULL;
-	    
-	    // Looking for the eContact local id inside the localId hash
-	    const char* eContactId = m_localIds[id];
-	    if (!eContactId[0])
-	      return NULL;
-	    
-	    q = e_book_query_field_test(E_CONTACT_UID, E_BOOK_QUERY_IS, eContactId);
-	    if (!q)
-	      continue;
-	    
-	    if (query)
-	      query = e_book_query_orv(query, q, NULL);
-	    else
-	      query = q;
-	  }
+    case QContactFilter::DefaultFilter:
+    {
+      QCM5_DEBUG << "QContactFilter::DefaultFilter";
+      query = e_book_query_any_field_contains(""); //Match all contacts
+    } break;
+    case QContactFilter::LocalIdFilter:
+    {
+      QCM5_DEBUG << "LocalIdFilter";
+      const QContactLocalIdFilter f(filter);
+      QList<QContactLocalId> ids = f.ids();
+      if (ids.isEmpty())
+        return NULL;
+      
+      query= NULL;
+      foreach(const QContactLocalId id, ids){
+        EBookQuery* q = NULL;
+        
+        // Looking for the eContact local id inside the localId hash
+        const char* eContactId = m_localIds[id];
+        if (!eContactId[0])
+          return NULL;
+        
+        q = e_book_query_field_test(E_CONTACT_UID, E_BOOK_QUERY_IS, eContactId);
+        if (!q)
+          continue;
+        if (query)
+          query = e_book_query_orv(query, q, NULL);
+        else
+          query = q;
+      }
+    } break;
+    case QContactFilter::ContactDetailFilter:
+    {
+      QCM5_DEBUG << "ContactDetailFilter";
+      const QContactDetailFilter f(filter);
+      QString queryStr;
+      if (!f.value().isValid())
+        return NULL;
+      switch (f.matchFlags()){
+        case QContactFilter::MatchContains: queryStr = "contains"; break;
+        case QContactFilter::MatchFixedString:
+        case QContactFilter::MatchCaseSensitive:
+        case QContactFilter::MatchExactly: queryStr = "is"; break;
+        case QContactFilter::MatchStartsWith: queryStr = "beginswith"; break;
+        case QContactFilter::MatchEndsWith: queryStr = "endswith"; break;
+        default:
+          queryStr = "contains";
+          qWarning() << "Match flag not supported";
+      }
+      static QHash<QString,QString> hash;
+      if (hash.isEmpty()){
+        hash[QContactAddress::DefinitionName] = "address";
+        hash[QContactBirthday::DefinitionName] = "birth-date";
+        hash[QContactDisplayLabel::DefinitionName] = "full-name"; //hack
+        hash[QContactEmailAddress::DefinitionName] = "email";
+        hash[QContactName::DefinitionName] = "full-name";
+        hash[QContactNickname::DefinitionName] = "nickname";
+        hash[QContactNote::DefinitionName] = "note";
+        hash[QContactOrganization::DefinitionName] = "title";
+        hash[QContactPhoneNumber::DefinitionName] = "phone";
+        hash[QContactUrl::DefinitionName] = "homepage-url";
+      }
+  
+      QString eDetail = hash[f.detailDefinitionName()];
+      if (eDetail.isEmpty()){
+        qWarning() << "Unable to found an ebook detail for " << f.detailDefinitionName();
+        return NULL;
+      }
+      queryStr = queryStr + " \"" + eDetail + "\" \"" + f.value().toString() + "\"";
+      query = e_book_query_from_string(qPrintable(queryStr));
+    } break;
+    case QContactFilter::ContactDetailRangeFilter:
+    {
+      //Current version of ebook doesn't support LT/LE/GT/GL Query tests
+      qWarning() << "ContactDetailRangeFilter is not supported";
+      return NULL;
+    } break;
+    case QContactFilter::ChangeLogFilter:
+      QCM5_DEBUG << "ChangeLogFilter"; //TODO
+      break;
+    case QContactFilter::ActionFilter:
+      QCM5_DEBUG << "ActionFilter"; //Not supported
+      break;
+    case QContactFilter::RelationshipFilter:
+      QCM5_DEBUG << "RelationshipFilter"; //Not supported'
+      break;
+    case QContactFilter::IntersectionFilter:
+    {
+      QCM5_DEBUG << "IntersectionFilter";
+      const QContactIntersectionFilter f(filter);
+      const QList<QContactFilter>  fs= f.filters();
+      QContactFilter i;
+      foreach(i, fs){
+        EBookQuery* q = convert(i);
+        if (!q){
+          qWarning() << "Query is null";
+          continue;
         }
-        break;
-      case QContactFilter::ContactDetailFilter:
-	{
-	  QCM5_DEBUG << "ContactDetailFilter";
-	  
-	  const QContactDetailFilter f(filter);
-	  QString queryStr;
-	  
-	  if (!f.value().isValid())
-	    return NULL;
-	  
-	  switch (f.matchFlags()){
-	    case QContactFilter::MatchContains: queryStr = "contains"; break;
-	    case QContactFilter::MatchFixedString:
-	    case QContactFilter::MatchCaseSensitive:
-	    case QContactFilter::MatchExactly: queryStr = "is"; break;
-	    case QContactFilter::MatchStartsWith: queryStr = "beginswith"; break;
-	    case QContactFilter::MatchEndsWith: queryStr = "endswith"; break;
-	    default:
-	      queryStr = "contains";
-	      qWarning() << "Match flag not supported"; 
-	  }
-	  
-	  static QHash<QString,QString> hash;
-	  if (hash.isEmpty()){
-	    hash[QContactAddress::DefinitionName] = "address";
-	    hash[QContactBirthday::DefinitionName] = "birth-date";
-	    hash[QContactDisplayLabel::DefinitionName] = "full-name"; //hack
-	    hash[QContactEmailAddress::DefinitionName] = "email";
-	    hash[QContactName::DefinitionName] = "full-name";
-	    hash[QContactNickname::DefinitionName] = "nickname";
-	    hash[QContactNote::DefinitionName] = "note";
-	    hash[QContactOrganization::DefinitionName] = "title";
-	    hash[QContactPhoneNumber::DefinitionName] = "phone";
-	    hash[QContactUrl::DefinitionName] = "homepage-url";
-	  }
-	  
-	  QString eDetail = hash[f.detailDefinitionName()];
-	  if (eDetail.isEmpty()){
-	    qWarning() << "Unable to found an ebook detail for " << f.detailDefinitionName();
-	    return NULL;
-	  }
-	  queryStr = queryStr + " \"" + eDetail + "\" \"" + f.value().toString() + "\"";
-	  query = e_book_query_from_string(qPrintable(queryStr));
-	}
-        break;
-      case QContactFilter::ContactDetailRangeFilter:
-	{
-	  //Current version of ebook doesn't support LT/LE/GT/GL Query tests
-	  qWarning() << "ContactDetailRangeFilter is not supported";
-	  return NULL;
-	}
-        break;
-      case QContactFilter::ChangeLogFilter:
-	QCM5_DEBUG << "ChangeLogFilter"; //TODO 
-	break;
-      case QContactFilter::ActionFilter:
-	QCM5_DEBUG << "ActionFilter"; //TODO
-	break;
-      case QContactFilter::RelationshipFilter:
-	QCM5_DEBUG << "RelationshipFilter"; //Not supported
-	break;
-      case QContactFilter::IntersectionFilter:
-	{
-	  QCM5_DEBUG << "IntersectionFilter";
-	  const QContactIntersectionFilter f(filter);
-          const QList<QContactFilter>  fs= f.filters();
-	  QContactFilter i;
-	  foreach(i, fs){
-	    EBookQuery* q = convert(i);
-	    if (!q){
-	      qWarning() << "Query is null";
-	      continue;
-	    }
-	    if (query)
-	      query = e_book_query_andv(query, q, NULL);
-	    else
-	      query = q;
-	  } 
-	}
-	break;
-      case QContactFilter::UnionFilter:
-        {
-	  QCM5_DEBUG << "UnionFilter";
-	  const QContactUnionFilter f(filter);
-          const QList<QContactFilter>  fs= f.filters();
-	  QContactFilter i;
-	  foreach(i, fs){
-	    EBookQuery* q = convert(i);
-	    if (!q){
-	      qWarning() << "Query is null";
-	      continue;
-	    }
-	    if (query)
-	      query = e_book_query_orv(query, q, NULL);
-	    else
-	      query = q;
-	  }
+        if (query)
+          query = e_book_query_andv(query, q, NULL);
+        else
+          query = q;
+      } 
+    } break;
+    case QContactFilter::UnionFilter:
+    {
+      QCM5_DEBUG << "UnionFilter";
+      const QContactUnionFilter f(filter);
+      const QList<QContactFilter>  fs= f.filters();
+      QContactFilter i;
+      foreach(i, fs){
+        EBookQuery* q = convert(i);
+        if (!q){
+          qWarning() << "Query is null";
+          continue;
         }
-	break;
-      case QContactFilter::InvalidFilter:
-	QCM5_DEBUG << "InvalidFilter";
-	query = e_book_query_from_string("(is \"id\" \"-1\")");
-	break;
+        if (query)
+          query = e_book_query_orv(query, q, NULL);
+        else
+          query = q;
+      }
+    } break;
+    case QContactFilter::InvalidFilter:
+      QCM5_DEBUG << "InvalidFilter";
+      query = e_book_query_from_string("(is \"id\" \"-1\")");
+      break;
   }
  
   //Debugging
@@ -784,9 +773,9 @@ QList<QContactAddress*> QContactABook::getAddressDetail(EContact *eContact) cons
       GList *v = e_vcard_attribute_param_get_values(param);
       QString context = CONST_CHAR(v->data);
       if (context == "HOME")
-	address->setContexts(QContactDetail::ContextHome);
+        address->setContexts(QContactDetail::ContextHome);
       else if (context == "WORK")
-	address->setContexts(QContactDetail::ContextWork);
+        address->setContexts(QContactDetail::ContextWork);
     }
     
     // Set Address Values
@@ -872,9 +861,9 @@ QList<QContactEmailAddress*> QContactABook::getEmailDetail(EContact *eContact) c
       GList *v = e_vcard_attribute_param_get_values(param);
       QString context = CONST_CHAR(v->data);
       if (context == "HOME")
-	email->setContexts(QContactDetail::ContextHome);
+        email->setContexts(QContactDetail::ContextHome);
       else if (context == "WORK")
-	email->setContexts(QContactDetail::ContextWork);
+        email->setContexts(QContactDetail::ContextWork);
     }
     
     // Set Address Values
@@ -1021,17 +1010,17 @@ QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eC
       TpConnectionPresenceType presenceType = osso_abook_presence_get_presence_type (presence);
       QString presenceTypeString;
       switch (presenceType) {
-	case TP_CONNECTION_PRESENCE_TYPE_UNSET: presenceTypeString = "Unset"; break;
-	case TP_CONNECTION_PRESENCE_TYPE_OFFLINE: presenceTypeString = "Offline"; break;
-	case TP_CONNECTION_PRESENCE_TYPE_AVAILABLE: presenceTypeString = "Available"; break;
-	case TP_CONNECTION_PRESENCE_TYPE_AWAY: presenceTypeString = "Away"; break;
-	case TP_CONNECTION_PRESENCE_TYPE_EXTENDED_AWAY: presenceTypeString = "Extended Away"; break;
-	case TP_CONNECTION_PRESENCE_TYPE_HIDDEN: presenceTypeString = "Hidden"; break;
-	case TP_CONNECTION_PRESENCE_TYPE_BUSY: presenceTypeString = "Busy"; break;
-	case TP_CONNECTION_PRESENCE_TYPE_UNKNOWN: presenceTypeString = "Unknown"; break;
-	case TP_CONNECTION_PRESENCE_TYPE_ERROR: presenceTypeString = "Error"; break;
-	default:
-	  qCritical() << "Presence type is not vaild" << presenceType;
+        case TP_CONNECTION_PRESENCE_TYPE_UNSET: presenceTypeString = "Unset"; break;
+        case TP_CONNECTION_PRESENCE_TYPE_OFFLINE: presenceTypeString = "Offline"; break;
+        case TP_CONNECTION_PRESENCE_TYPE_AVAILABLE: presenceTypeString = "Available"; break;
+        case TP_CONNECTION_PRESENCE_TYPE_AWAY: presenceTypeString = "Away"; break;
+        case TP_CONNECTION_PRESENCE_TYPE_EXTENDED_AWAY: presenceTypeString = "Extended Away"; break;
+        case TP_CONNECTION_PRESENCE_TYPE_HIDDEN: presenceTypeString = "Hidden"; break;
+        case TP_CONNECTION_PRESENCE_TYPE_BUSY: presenceTypeString = "Busy"; break;
+        case TP_CONNECTION_PRESENCE_TYPE_UNKNOWN: presenceTypeString = "Unknown"; break;
+        case TP_CONNECTION_PRESENCE_TYPE_ERROR: presenceTypeString = "Error"; break;
+        default:
+          qCritical() << "Presence type is not vaild" << presenceType;
       }
       
       QVariantMap map;
@@ -1057,12 +1046,12 @@ QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eC
     for (node = attributeList; node != NULL; node = g_list_next (node)) {
       EVCardAttribute* attr = (EVCardAttribute*)node->data;
       if (!attr)
-	continue;
+        continue;
       QString attributeName = QString::fromLatin1(e_vcard_attribute_get_name(attr));
       
       // Skip attributes processed scanning roster contacts.
       if (!evcardToSkip.contains(attributeName))
-	continue;
+        continue;
       
       GList *params = e_vcard_attribute_get_params(attr);
       GList *nodeP;
@@ -1071,48 +1060,48 @@ QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eC
       bool ossoValidIsOk = (g_list_length(params) == 1) ? true : false;
 
       for (nodeP = params; nodeP != NULL; nodeP = g_list_next (nodeP)) {
-	EVCardAttributeParam* p = (EVCardAttributeParam*) nodeP->data;
-	QString paramName = QString::fromLatin1(e_vcard_attribute_param_get_name(p));
-	bool attrIsType = false;
-	bool attrIsOssoValid = false;
-
-	//If type is empty check if the attribute is "TYPE"
-	if (type.isEmpty())
+        EVCardAttributeParam* p = (EVCardAttributeParam*) nodeP->data;
+        QString paramName = QString::fromLatin1(e_vcard_attribute_param_get_name(p));
+        bool attrIsType = false;
+        bool attrIsOssoValid = false;
+        
+        //If type is empty check if the attribute is "TYPE"
+        if (type.isEmpty())
           attrIsType = paramName.contains(EVC_TYPE);
-	
-	if(!ossoValidIsOk)
-	  attrIsOssoValid = paramName.contains("X-OSSO-VALID");
-	
-	if (!attrIsType && !attrIsOssoValid) {
-	  qWarning () << "Skipping attribute parameter checking for" << paramName;
+        
+        if(!ossoValidIsOk)
+          attrIsOssoValid = paramName.contains("X-OSSO-VALID");
+        
+        if (!attrIsType && !attrIsOssoValid) {
+          qWarning () << "Skipping attribute parameter checking for" << paramName;
           continue;
-	}
-	
-	GList *values = e_vcard_attribute_param_get_values(p);
-	GList *node;
-	for (node = values; node != NULL; node = g_list_next (node)) {
-	  QString attributeParameterValue = QString::fromLatin1(CONST_CHAR(node->data));
-	  if (attrIsOssoValid) {
-	    ossoValidIsOk = (attributeParameterValue == "yes")? true : false;
-	    if (!ossoValidIsOk) {
-	      qWarning() << "X-OSSO-VALID is false.";
-	      break;
-	    }
-	  } else if (type.isEmpty()) {
-	    type = attributeParameterValue;
-	    if (type.isEmpty())
-	      qCritical() << "TYPE is empty"; 
-	  }  
-	}
-
-	if (ossoValidIsOk && !type.isEmpty()) {
-	  QContactOnlineAccount* rtn = new QContactOnlineAccount;
+        }
+        
+        GList *values = e_vcard_attribute_param_get_values(p);
+        GList *node;
+        for (node = values; node != NULL; node = g_list_next (node)) {
+          QString attributeParameterValue = QString::fromLatin1(CONST_CHAR(node->data));
+          if (attrIsOssoValid) {
+            ossoValidIsOk = (attributeParameterValue == "yes")? true : false;
+            if (!ossoValidIsOk) {
+              qWarning() << "X-OSSO-VALID is false.";
+              break;
+            }
+          } else if (type.isEmpty()) {
+            type = attributeParameterValue;
+            if (type.isEmpty())
+              qCritical() << "TYPE is empty"; 
+          }
+        }
+        
+        if (ossoValidIsOk && !type.isEmpty()) {
+          QContactOnlineAccount* rtn = new QContactOnlineAccount;
           QVariantMap map;
-	  map[QContactOnlineAccount::FieldNickname] = QString::fromLatin1(e_vcard_attribute_get_value(attr)); 
-	  map[QContactOnlineAccount::FieldServiceProvider] = type;
+          map[QContactOnlineAccount::FieldNickname] = QString::fromLatin1(e_vcard_attribute_get_value(attr)); 
+          map[QContactOnlineAccount::FieldServiceProvider] = type;
           setDetailValues(map, rtn);
-	  rtnList << rtn;
-	}
+          rtnList << rtn;
+        }
       }
     }
   }
@@ -1149,14 +1138,14 @@ QList<QContactPhoneNumber*> QContactABook::getPhoneDetail(EContact *eContact) co
       QString value = QString::fromLatin1(CONST_CHAR(p->data));
       
       if (value == "HOME")
-	phoneNumber->setContexts(QContactDetail::ContextHome);
+        phoneNumber->setContexts(QContactDetail::ContextHome);
       else if (value == "WORK")
-	phoneNumber->setContexts(QContactDetail::ContextWork);
+        phoneNumber->setContexts(QContactDetail::ContextWork);
       else
       if (value == "CELL")
-	phoneNumber->setSubTypes(QContactPhoneNumber::SubTypeMobile);
+        phoneNumber->setSubTypes(QContactPhoneNumber::SubTypeMobile);
       else if (value == "VOICE")
-	phoneNumber->setSubTypes(QContactPhoneNumber::SubTypeVoice);
+        phoneNumber->setSubTypes(QContactPhoneNumber::SubTypeVoice);
       
       p = p->next;
     }
@@ -1201,10 +1190,10 @@ QContactUrl* QContactABook::getUrlDetail(EContact *eContact) const
 }
 
 static void addAttributeToAContact(const OssoABookContact* contact,
-                                   const QString& attrName, const QStringList& attrValues, 
-				   const QString& paramName = QString(), const QStringList& paramValues = QStringList(),
-				   bool overwrite = true,
-				   const int index = 0)
+                                   const QString& attrName, const QStringList& attrValues,
+                                   const QString& paramName = QString(), const QStringList& paramValues = QStringList(),
+                                   bool overwrite = true,
+                                   const int index = 0)
 {
   if (!contact)
     return;
@@ -1226,8 +1215,8 @@ static void addAttributeToAContact(const OssoABookContact* contact,
       int pos =  g_list_position(attributeList, node);
       
       if (index > pos){
-	qWarning() << "Attribute doesn't found at position" << index;
-	return;
+        qWarning() << "Attribute doesn't found at position" << index;
+        return;
       }
       
       if (index != pos)
@@ -1240,18 +1229,18 @@ static void addAttributeToAContact(const OssoABookContact* contact,
       p = e_vcard_attribute_get_param(eAttr, qPrintable(paramName));
 
       while (p){
-	foreach(QString paramV, paramValues){
-	  QString value = CONST_CHAR(p->data);
-	  if (paramV == value)
-	    ++matchedParams;
+          foreach(QString paramV, paramValues){
+          QString value = CONST_CHAR(p->data);
+          if (paramV == value)
+            ++matchedParams;
         }
         p = p->next;
       }
       g_list_free(p);
 
       if (matchedParams == paramValues.count()) {
-	attr = eAttr;
-	break;
+        attr = eAttr;
+        break;
       }    
     }
   }
@@ -1608,7 +1597,7 @@ void QContactABook::setPhoneDetail(const OssoABookContact* aContact, const QCont
         key == QContactPhoneNumber::FieldSubTypes){
       QString value = i.value().toString();
       if (value == QContactPhoneNumber::SubTypeMobile)
-	value = "CELL";
+        value = "CELL";
       paramValues << value.toUpper();
     } else
       attrValues << i.value().toString();
