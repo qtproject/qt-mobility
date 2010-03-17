@@ -53,7 +53,7 @@
 #include <libosso-abook/osso-abook-waitable.h>
 #include <libosso-abook/osso-abook-presence.h>
 #include <libosso-abook/osso-abook-avatar.h>
-#include <libosso-abook/osso-abook-caps.h>
+//#include <libosso-abook/osso-abook-caps.h>
 //#include <libosso-abook/osso-abook-account-manager.h>
 
 #include <libmcclient/mc-profile.h>
@@ -138,6 +138,36 @@ extern "C" {
 	const char*         osso_abook_account_manager_get_vcard_field
                                                                 (OssoABookAccountManager *manager,
                                                                  const char *account_name);
+        // osso-abook-caps.h
+	typedef enum {
+          OSSO_ABOOK_CAPS_NONE             = (0),
+          OSSO_ABOOK_CAPS_EMAIL            = (1 << 0),
+          OSSO_ABOOK_CAPS_CHAT             = (1 << 1),
+          OSSO_ABOOK_CAPS_CHAT_ADDITIONAL  = (1 << 2),
+          OSSO_ABOOK_CAPS_VOICE            = (1 << 3),
+          OSSO_ABOOK_CAPS_VOICE_ADDITIONAL = (1 << 4),
+          OSSO_ABOOK_CAPS_VIDEO            = (1 << 5),
+          OSSO_ABOOK_CAPS_PHONE            = (1 << 6),
+          OSSO_ABOOK_CAPS_ADDRESSBOOK      = (1 << 7),
+          OSSO_ABOOK_CAPS_IMMUTABLE_STREAMS= (1 << 8),
+          OSSO_ABOOK_CAPS_SMS              = (1 << 9),
+
+          OSSO_ABOOK_CAPS_ALL = (OSSO_ABOOK_CAPS_EMAIL | OSSO_ABOOK_CAPS_CHAT |
+                                 OSSO_ABOOK_CAPS_VOICE | OSSO_ABOOK_CAPS_VIDEO |
+                                 OSSO_ABOOK_CAPS_PHONE | OSSO_ABOOK_CAPS_SMS)
+        } OssoABookCapsFlags;
+	GType osso_abook_caps_get_type (void) G_GNUC_CONST;
+
+	typedef struct _OssoABookCaps OssoABookCaps; 
+        #define OSSO_ABOOK_TYPE_CAPS \
+                (osso_abook_caps_get_type ())
+
+        #define OSSO_ABOOK_CAPS(obj) \
+                (G_TYPE_CHECK_INSTANCE_CAST ((obj), \
+                 OSSO_ABOOK_TYPE_CAPS, \
+                 OssoABookCaps))
+
+	OssoABookCapsFlags  osso_abook_caps_get_capabilities    (OssoABookCaps *caps);
 }
 
 QTM_USE_NAMESPACE
@@ -224,7 +254,8 @@ private:
   
   OssoABookContact* getAContact(const QContactLocalId& contactId) const;
   
-  /* Searching */
+  /* Filtering */
+  bool contactActionsMatch(OssoABookContact *contact, QList<QContactActionDescriptor> descriptors) const;
   EBookQuery* convert(const QContactFilter& filter) const;
   
   /* Reading - eContact/abookContact to QContact methods */
