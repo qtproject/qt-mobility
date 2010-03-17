@@ -1170,7 +1170,7 @@ QGalleryInsertRequest::~QGalleryInsertRequest()
 /*!
     \property QGalleryInsertRequest::fields
 
-    \brief A list of meta-data fields a request should return values for.
+    \brief A list of meta-data fields the \l insertedItems list should contain values for.
 */
 
 QStringList QGalleryInsertRequest::fields() const
@@ -1260,20 +1260,20 @@ void QGalleryInsertRequest::setItemUrls(const QList<QUrl> &urls)
 */
 
 /*!
-    \property QGalleryInsertRequest::items
+    \property QGalleryInsertRequest::insertedItems
 
-    \brief The items inserted into a gallery.
+    \brief A list of items inserted into a gallery.
 */
 
-QGalleryItemList *QGalleryInsertRequest::items() const
+QGalleryItemList *QGalleryInsertRequest::insertedItems() const
 {
     return d_func()->response;
 }
 
 /*!
-    \fn QGalleryInsertRequest::itemsChanged()
+    \fn QGalleryInsertRequest::insertedItemsChanged()
 
-    Signals the \l items property has changed.
+    Signals the \l insertedItems property has changed.
 */
 
 /*!
@@ -1284,7 +1284,7 @@ void QGalleryInsertRequest::setResponse(QGalleryAbstractResponse *response)
 {
     Q_UNUSED(response);
 
-    emit itemsChanged();
+    emit insertedItemsChanged();
 }
 
 class QGalleryRemoveRequestPrivate : public QGalleryAbstractRequestPrivate
@@ -1295,6 +1295,7 @@ public:
     {
     }
 
+    QStringList fields;
     QStringList itemIds;
 };
 
@@ -1337,6 +1338,23 @@ QGalleryRemoveRequest::QGalleryRemoveRequest(QAbstractGallery *gallery, QObject 
 
 QGalleryRemoveRequest::~QGalleryRemoveRequest()
 {
+}
+
+/*!
+    \property QGalleryRemoveRequest::fields
+
+    \brief A list of meta-data fields the \l currentItem list should contain
+    values for.
+*/
+
+QStringList QGalleryRemoveRequest::fields() const
+{
+    return d_func()->fields;
+}
+
+void QGalleryRemoveRequest::setFields(const QStringList &fields)
+{
+    d_func()->fields = fields;
 }
 
 /*!
@@ -1402,12 +1420,31 @@ void QGalleryRemoveRequest::setItemIds(const QStringList &ids)
 */
 
 /*!
+    \property QGalleryRemoveRequest::currentItem
+
+    \brief A list containing the current item being removed by a request.
+*/
+
+QGalleryItemList *QGalleryRemoveRequest::currentItem() const
+{
+    return d_func()->response;
+}
+
+/*!
+    \fn QGalleryRemoveRequest::currentItemChanged()
+
+    Signals the \l currentItem property has changed.
+*/
+
+/*!
     \reimp
 */
 
 void QGalleryRemoveRequest::setResponse(QGalleryAbstractResponse *response)
 {
     Q_UNUSED(response);
+
+    emit currentItemChanged();
 }
 
 class QGalleryCopyRequestPrivate : public QGalleryAbstractRequestPrivate
@@ -1419,7 +1456,6 @@ public:
     }
 
     QStringList fields;
-    QStringList sortFields;
     QStringList itemIds;
     QString destinationId;
 };
@@ -1467,7 +1503,8 @@ QGalleryCopyRequest::~QGalleryCopyRequest()
 /*!
     \property QGalleryCopyRequest::fields
 
-    \brief A list of meta-data fields a request should return values for.
+    \brief A list of meta-data fields the \l currentItem list should contain
+    values for.
 */
 
 QStringList QGalleryCopyRequest::fields() const
@@ -1478,26 +1515,6 @@ QStringList QGalleryCopyRequest::fields() const
 void QGalleryCopyRequest::setFields(const QStringList &fields)
 {
     d_func()->fields = fields;
-}
-
-/*!
-    \property QGalleryCopyRequest::sortFields
-
-    \brief A list of meta-data fields a request should sort its results on.
-
-    Prefixing a field name with the '+' character indicates it should be sorted
-    in ascending order, and a '-' character prefix indicates a descending order.
-    If there is no prefix ascending order is assumed.
-*/
-
-QStringList QGalleryCopyRequest::sortFields() const
-{
-    return d_func()->sortFields;
-}
-
-void QGalleryCopyRequest::setSortFields(const QStringList &fields)
-{
-    d_func()->sortFields = fields;
 }
 
 /*!
@@ -1573,20 +1590,20 @@ void QGalleryCopyRequest::setDestinationId(const QString &id)
 }
 
 /*!
-    \property QGalleryCopyRequest::items
+    \property QGalleryCopyRequest::currentItem
 
-    \brief The items copies created by a request.
+    \brief A list containing the item currently being copied by a request.
 */
 
-QGalleryItemList *QGalleryCopyRequest::items() const
+QGalleryItemList *QGalleryCopyRequest::currentItem() const
 {
     return d_func()->response;
 }
 
 /*!
-    \fn QGalleryCopyRequest::itemsChanged()
+    \fn QGalleryCopyRequest::currentItemChanged()
 
-    Signals the \l items property has changed.
+    Signals the \l currentItem property has changed.
 */
 
 /*!
@@ -1597,7 +1614,7 @@ void QGalleryCopyRequest::setResponse(QGalleryAbstractResponse *response)
 {
     Q_UNUSED(response);
 
-    emit itemsChanged();
+    emit currentItemChanged();
 }
 
 class QGalleryMoveRequestPrivate : public QGalleryAbstractRequestPrivate
@@ -1609,7 +1626,6 @@ public:
     }
 
     QStringList fields;
-    QStringList sortFields;
     QStringList itemIds;
     QString destinationId;
 };
@@ -1656,7 +1672,8 @@ QGalleryMoveRequest::~QGalleryMoveRequest()
 /*!
     \property QGalleryMoveRequest::fields
 
-    \brief A list of meta-data fields a request should return values for.
+    \brief A list of meta-data fields the \l currentItem list should contain
+    values for.
 */
 
 QStringList QGalleryMoveRequest::fields() const
@@ -1667,26 +1684,6 @@ QStringList QGalleryMoveRequest::fields() const
 void QGalleryMoveRequest::setFields(const QStringList &fields)
 {
     d_func()->fields = fields;
-}
-
-/*!
-    \property QGalleryMoveRequest::sortFields
-
-    \brief A list of meta-data fields a request should sort its results on.
-
-    Prefixing a field name with the '+' character indicates it should be sorted
-    in ascending order, and a '-' character prefix indicates a descending order.
-    If there is no prefix ascending order is assumed.
-*/
-
-QStringList QGalleryMoveRequest::sortFields() const
-{
-    return d_func()->sortFields;
-}
-
-void QGalleryMoveRequest::setSortFields(const QStringList &fields)
-{
-    d_func()->sortFields = fields;
 }
 
 /*!
@@ -1762,20 +1759,20 @@ void QGalleryMoveRequest::setDestinationId(const QString &id)
 }
 
 /*!
-    \property QGalleryMoveRequest::items
+    \property QGalleryMoveRequest::currentItem
 
-    \brief The items moved by a request.
+    \brief A list containing the current item being moved by a request.
 */
 
-QGalleryItemList *QGalleryMoveRequest::items() const
+QGalleryItemList *QGalleryMoveRequest::currentItem() const
 {
     return d_func()->response;
 }
 
 /*!
-    \fn QGalleryMoveRequest::itemsChanged()
+    \fn QGalleryMoveRequest::currentItemChanged()
 
-    Signals the \l items property has changed.
+    Signals the \l currentItem property has changed.
 */
 
 /*!
@@ -1786,7 +1783,7 @@ void QGalleryMoveRequest::setResponse(QGalleryAbstractResponse *response)
 {
     Q_UNUSED(response);
 
-    emit itemsChanged();
+    emit currentItemChanged();
 }
 
 #include "moc_qgalleryrequest.cpp"
