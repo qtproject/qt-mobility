@@ -82,6 +82,11 @@ public:
     virtual QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error) const = 0;
     virtual QContact contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const = 0;
 
+    virtual bool saveContact(QContact* contact, QContactManager::Error& error);
+    virtual bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
+    virtual bool saveRelationship(QContactRelationship* relationship, QContactManager::Error& error);
+    virtual bool removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error);
+
     virtual bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error) = 0;
     virtual bool removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error) = 0;
 

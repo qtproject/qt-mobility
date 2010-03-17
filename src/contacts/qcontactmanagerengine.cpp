@@ -336,6 +336,64 @@ bool QContactManagerEngine::saveRelationships(QList<QContactRelationship>* relat
 }
 
 /*!
+  Saves the given \a relationship in the database.  If the relationship already exists in the database, this function will
+  return \c false and the error will be set to \c QContactManager::AlreadyExistsError.
+  If the relationship is saved successfully, this function will return \c true and error will be set
+  to \c QContactManager::NoError.  Note that relationships cannot be updated directly using this function; in order
+  to update a relationship, you must remove the old relationship, make the required modifications, and then save it.
+
+  The given relationship is invalid if it is circular (the first contact is the second contact), or
+  if it references a non-existent local contact (either the first or second contact).  If the given \a relationship is invalid,
+  the function will return \c false and the error will be set to \c QContactManager::InvalidRelationshipError.
+
+  The default implementation of this function converts the argument into a call to saveRelationships.
+ */
+bool QContactManagerEngine::saveRelationship(QContactRelationship *relationship, QContactManager::Error &error)
+{
+    // Convert to a list op
+    if (relationship) {
+        QList<QContactRelationship> list;
+        list.append(*relationship);
+
+        QMap<int, QContactManager::Error> errors;
+        bool ret = saveRelationships(&list, &errors, error);
+
+        if (errors.count() > 0)
+            error = errors.begin().value();
+
+        *relationship = list.value(0);
+        return ret;
+    } else {
+        error = QContactManager::BadArgumentError;
+        return false;
+    }
+}
+
+/*!
+  Removes the given \a relationship from the manager.  If the relationship exists in the manager, the relationship
+  will be removed, the error will be set to \c QContactManager::NoError and this function will return true.  If no such
+  relationship exists in the manager, the error will be set to \c QContactManager::DoesNotExistError and this function
+  will return false.
+
+  The default implementation of this function converts the argument into a call to removeRelationships
+ */
+bool QContactManagerEngine::removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error)
+{
+    // Convert to a list op
+    QList<QContactRelationship> list;
+    list.append(relationship);
+
+    QMap<int, QContactManager::Error> errors;
+    bool ret = removeRelationships(list, &errors, error);
+
+    if (errors.count() > 0)
+        error = errors.begin().value();
+
+    return ret;
+}
+
+
+/*!
   Removes the given \a relationships from the database and returns true if the operation was successful.
   For any relationship which was unable to be removed, an entry into the \a errorMap will be created,
   with the key being the index into the input relationships list, and the value being the error which
@@ -1103,6 +1161,60 @@ void QContactManagerEngine::setDetailAccessConstraints(QContactDetail *detail, Q
     if (detail) {
         QContactDetailPrivate::setAccessConstraints(detail, constraints);
     }
+}
+
+
+/*!
+  Adds the given \a contact to the database if \a contact has a
+  default-constructed id, or an id with the manager URI set to the URI of
+  this manager and a local id of zero.
+
+  The default implementation will convert this into a call to saveContacts.
+
+  \sa managerUri()
+ */
+bool QContactManagerEngine::saveContact(QContact* contact, QContactManager::Error& error)
+{
+    // Convert to a list op
+    if (contact) {
+        QList<QContact> list;
+        list.append(*contact);
+
+        QMap<int, QContactManager::Error> errors;
+        bool ret = saveContacts(&list, &errors, error);
+
+        if (errors.count() > 0)
+            error = errors.begin().value();
+
+        *contact = list.value(0);
+        return ret;
+    } else {
+        error = QContactManager::BadArgumentError;
+        return false;
+    }
+}
+
+/*!
+  Remove the contact identified by \a contactId from the database,
+  and also removes any relationships in which the contact was involved.
+  Returns true if the contact was removed successfully, otherwise
+  returns false.
+
+  The default implementation will convert this into a call to removeContacts.
+ */
+bool QContactManagerEngine::removeContact(const QContactLocalId& contactId, QContactManager::Error& error)
+{
+    // Convert to a list op
+    QList<QContactLocalId> list;
+    list.append(contactId);
+
+    QMap<int, QContactManager::Error> errors;
+    bool ret = removeContacts(list, &errors, error);
+
+    if (errors.count() > 0)
+        error = errors.begin().value();
+
+    return ret;
 }
 
 /*!
