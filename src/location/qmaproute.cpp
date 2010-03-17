@@ -117,7 +117,11 @@ void QMapRoute::compMapCoords()
             here = wayPoints[n];
             QLineF line = d->mapView->connectShortest(here, last);
 
-            if ((line.p1() - line.p2()).manhattanLength() >= minDist ||
+            //Moved the (line.p1() - line.p2()).manhattanLength() 
+            //call out of the if(..). If used inside if-statement
+            //this will cause internal compiler error with symbian compilers.
+            qreal r = (line.p1() - line.p2()).manhattanLength();
+            if (r >= minDist ||
                     d->mapView->zoomLevel() == d->mapView->maxZoomLevel()) {
                 addSegment(line);
                 last = here;
@@ -242,13 +246,21 @@ void QMapRoute::paint(QPainter* painter, const QRectF& viewPort)
     qint64 mapWidth = static_cast<qint64>(d->mapView->mapWidth());
 
     //Is view port wrapping around date line?
-    if (viewPort.right() >= mapWidth) {
+    //Moved the viewPort.right() function call out of the if(..)
+    //If used inside if-statement this will cause internal compiler error
+    //with symbian compilers.
+    qreal r = viewPort.right();
+    if (r >= mapWidth) {
         path.translate(mapWidth, 0);
         painter->drawPath(path);
         path.translate(-mapWidth, 0);
     }
     //Is path spanning date line?
-    if (path.boundingRect().right() >= mapWidth) {
+    //Moved the path.boundingRect().right() function call out of the if(..)
+    //If used inside if-statement this will cause internal compiler error
+    //with symbian compilers.
+    r = path.boundingRect().right();
+    if (r >= mapWidth) {
         path.translate(-mapWidth, 0);
         painter->drawPath(path);
     }

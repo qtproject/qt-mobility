@@ -155,7 +155,11 @@ void QMapPolygon::paint(QPainter* painter, const QRectF& viewPort)
     qint64 mapWidth = static_cast<qint64>(d->mapView->mapWidth());
 
     //Is view port wrapping around date line?
-    if (viewPort.right() >= mapWidth) {
+    //Moved the viewPort.right() function call out of the if(..)
+    //If used inside if-statement this will cause internal compiler error
+    //with symbian compilers.
+    qreal r = viewPort.right();
+    if (r >= mapWidth) {
         d->path.translate(mapWidth, 0);
         painter->drawPath(d->path);
         d->path.translate(-mapWidth, 0);
