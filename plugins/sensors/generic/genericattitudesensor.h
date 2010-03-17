@@ -58,7 +58,6 @@ public:
 
     void start();
     void stop();
-    void poll();
 
     bool filter(QSensorReading *reading);
 

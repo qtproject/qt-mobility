@@ -221,27 +221,6 @@ bool QSensor::isActive() const
 }
 
 /*!
-    Returns true if the readingChanged() signal will be emitted.
-*/
-bool QSensor::isSignalEnabled() const
-{
-    return d->signalEnabled;
-}
-
-/*!
-    Call with \a enabled as false to turn off the readingChanged() signal.
-
-    You might want to do this for performance reasons. If you are polling
-    the sensor or using a filter in a performance-critical application
-    then the overhead of emitting the signal may be too high even if nothing
-    is connected to it.
-*/
-void QSensor::setSignalEnabled(bool enabled)
-{
-    d->signalEnabled = enabled;
-}
-
-/*!
     \property QSensor::availableDataRates
     \brief the data rates that the sensor supports.
 
@@ -262,26 +241,10 @@ qrangelist QSensor::availableDataRates() const
 }
 
 /*!
-    \property QSensor::supportsPolling
-    \brief a value indicating if the sensor supports polling.
-
-    If true, the poll() function can be used.
-    If false, the poll() function cannot be used.
-*/
-
-bool QSensor::supportsPolling() const
-{
-    return d->supportsPolling;
-}
-
-/*!
     \property QSensor::updateInterval
     \brief the update interval of the sensor (measured in milliseconds).
 
-    The default value is -1. Note that this causes undefined behaviour.
-
-    If the value is set to 0 the sensor will not poll for updates and you
-    will need to call poll() manually.
+    The default value is 0. Note that this causes undefined behaviour.
 
     This should be set before calling start() because the sensor may not
     notice changes to this value while it is running.
@@ -301,27 +264,6 @@ int QSensor::updateInterval() const
 void QSensor::setUpdateInterval(int interval)
 {
     d->updateInterval = interval;
-}
-
-/*!
-    Poll the sensor.
-
-    This only works if the sensor supports polling and if QSensor::updateInterval is set to 0.
-
-    The sensor must be active before it can be polled.
-
-    \sa QSensor::supportsPolling
-*/
-void QSensor::poll()
-{
-    if (!connect())
-        return;
-    if (!d->supportsPolling)
-        return;
-    if (!d->active)
-        return;
-    if (d->updateInterval == 0)
-        d->backend->poll();
 }
 
 /*!

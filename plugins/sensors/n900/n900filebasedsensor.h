@@ -54,6 +54,7 @@ public:
 
     virtual void start();
     virtual void stop();
+    virtual void poll() = 0;
     void timerEvent(QTimerEvent * /*event*/);
 
 private:

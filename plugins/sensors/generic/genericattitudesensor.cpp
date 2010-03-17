@@ -73,11 +73,6 @@ void genericattitudesensor::stop()
     accelerometer->stop();
 }
 
-void genericattitudesensor::poll()
-{
-    accelerometer->poll();
-}
-
 bool genericattitudesensor::filter(QSensorReading *reading)
 {
     QAccelerometerReading *ar = qobject_cast<QAccelerometerReading*>(reading);

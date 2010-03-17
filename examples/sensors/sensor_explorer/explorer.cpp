@@ -261,8 +261,6 @@ void Explorer::loadSensorProperties()
     // We don't add all properties
     ui.sensorprops->setRowCount(rows - offset);
 
-    ui.poll->setEnabled(m_sensor->supportsPolling());
-
     ignoreItemChanged = false;
 }
 
@@ -356,12 +354,6 @@ void Explorer::on_stop_clicked()
 {
     m_sensor->stop();
     QTimer::singleShot(0, this, SLOT(loadSensorProperties()));
-}
-
-void Explorer::on_poll_clicked()
-{
-    m_sensor->poll();
-    sensor_changed();
 }
 
 void Explorer::sensor_changed()
