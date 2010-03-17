@@ -94,15 +94,12 @@ void CMagnetometerSensorSym::start()
     if(sensor())
         {
         // Initialize the values
-        iReading.setGeo_x(0);
-        iReading.setGeo_y(0);
-        iReading.setGeo_z(0);
         iReading.setX(0);
         iReading.setY(0);
         iReading.setZ(0);
         // Set the required type of values
-        iReturnGeoValues = sensor()->property("returnGeoValues").toBool();
-        iReturnRawValues = sensor()->property("returnRawValues").toBool();
+        QVariant v = sensor()->property("returnGeoValues");
+        iReturnGeoValues = (v.isValid() && v.toBool()); // if the property isn't set it's false
         }
     // get current property value for calibration and set it to reading
     TSensrvProperty calibration;
@@ -138,12 +135,12 @@ void CMagnetometerSensorSym::RecvData(CSensrvChannel &aChannel)
     // If Geo values are requested set it
     if(iReturnGeoValues)
         {
-        iReading.setGeo_x(iData.iAxisXCalibrated);
-        iReading.setGeo_y(iData.iAxisYCalibrated);
-        iReading.setGeo_z(iData.iAxisZCalibrated);
+        iReading.setX(iData.iAxisXCalibrated);
+        iReading.setY(iData.iAxisYCalibrated);
+        iReading.setZ(iData.iAxisZCalibrated);
         }
     // If Raw values are requested set it
-    if(iReturnRawValues)
+    else
         {
         iReading.setX(iData.iAxisXRaw);
         iReading.setY(iData.iAxisYRaw);

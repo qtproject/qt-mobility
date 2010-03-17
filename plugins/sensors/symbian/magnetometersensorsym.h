@@ -118,7 +118,6 @@ private:
     TSensrvMagnetometerAxisData iData;
     qreal iCalibrationLevel;
     bool iReturnGeoValues;
-    bool iReturnRawValues;
     };
 
 #endif //MAGNETOMETERSENSORSYM_H
