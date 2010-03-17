@@ -44,6 +44,16 @@
 #include <commdb.h>
 #include <cdbcols.h>
 #include <d32dbms.h>
+#include <QEventLoop>
+#include <QTimer>
+#include <QTime>  // For randgen seeding
+#include <QtCore> // For randgen seeding
+
+// #define QT_BEARERMGMT_CONFIGMGR_DEBUG
+
+#ifdef QT_BEARERMGMT_CONFIGMGR_DEBUG
+#include <QDebug>
+#endif
 
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE
     #include <cmdestination.h>
@@ -64,9 +74,15 @@ static const int KValueThatWillBeAddedToSNAPId = 1000;
 static const int KUserChoiceIAPId = 0;
 
 QNetworkConfigurationManagerPrivate::QNetworkConfigurationManagerPrivate()
-    : QObject(0), CActive(CActive::EPriorityIdle), capFlags(0), iFirstUpdate(true), iInitOk(true)
+    : QObject(0), CActive(CActive::EPriorityIdle), capFlags(0),
+    iFirstUpdate(true), iInitOk(true), iIgnoringUpdates(false),
+    iTimeToWait(0), iIgnoreEventLoop(0)
 {
     CActiveScheduler::Add(this);
+
+    // Seed the randomgenerator
+    qsrand(QTime(0,0,0).secsTo(QTime::currentTime()) + QCoreApplication::applicationPid());
+    iIgnoreEventLoop = new QEventLoop(this);
 
     registerPlatformCapabilities();
     TRAPD(error, ipCommsDB = CCommsDatabase::NewL(EDatabaseTypeIAP));
@@ -100,12 +116,9 @@ QNetworkConfigurationManagerPrivate::QNetworkConfigurationManagerPrivate()
     cpPriv->manager = this;
     QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr(cpPriv);
     userChoiceConfigurations.insert(cpPriv->id, ptr);
-
     updateConfigurations();
     updateStatesToSnaps();
-
     updateAvailableAccessPoints(); // On first time updates synchronously (without WLAN scans)
-    
     // Start monitoring IAP and/or SNAP changes in Symbian CommsDB
     startCommsDatabaseNotifications();
     iFirstUpdate = false;
@@ -190,7 +203,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurationsL()
 {
     QList<QString> knownConfigs = accessPointConfigurations.keys();
     QList<QString> knownSnapConfigs = snapConfigurations.keys();
-    
+
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE    
     // S60 version is >= Series60 3rd Edition Feature Pack 2
     TInt error = KErrNone;
@@ -793,6 +806,12 @@ void QNetworkConfigurationManagerPrivate::stopCommsDatabaseNotifications()
 
 void QNetworkConfigurationManagerPrivate::RunL()
 {
+    if (iIgnoringUpdates) {
+#ifdef QT_BEARERMGMT_CONFIGMGR_DEBUG
+        qDebug("CommsDB event handling postponed (postpone-timer running because IAPs/SNAPs were updated very recently).");
+#endif
+        return;
+    }
     if (iStatus != KErrCancel) {
         RDbNotifier::TEvent event = STATIC_CAST(RDbNotifier::TEvent, iStatus.Int());
         switch (event) {
@@ -800,16 +819,32 @@ void QNetworkConfigurationManagerPrivate::RunL()
         case RDbNotifier::ECommit:   /** A transaction has been committed.  */ 
         case RDbNotifier::ERollback: /** A transaction has been rolled back */
         case RDbNotifier::ERecover:  /** The database has been recovered    */
-            // Note that if further database events occur while a client is handling
-            // a request completion, the notifier records the most significant database
-            // event and this is signalled as soon as the client issues the next
-            // RequestNotification() request.
-            // => Stop recording notifications
-            stopCommsDatabaseNotifications();
-            TRAPD(error, updateConfigurationsL());
-            if (error == KErrNone) {
-                updateStatesToSnaps();
+#ifdef QT_BEARERMGMT_CONFIGMGR_DEBUG
+            qDebug("CommsDB event (of type RDbNotifier::TEvent) received: %d", iStatus.Int());
+#endif
+            iIgnoringUpdates = true;
+            // Other events than ECommit get lower priority. In practice with those events,
+            // we delay_before_updating methods, whereas
+            // with ECommit we _update_before_delaying the reaction to next event.
+            // Few important notes: 1) listening to only ECommit does not seem to be adequate,
+            // but updates will be missed. Hence other events are reacted upon too.
+            // 2) RDbNotifier records the most significant event, and that will be returned once
+            // we issue new RequestNotification, and hence updates will not be missed even
+            // when we are 'not reacting to them' for few seconds.
+            if (event == RDbNotifier::ECommit) {
+                TRAPD(error, updateConfigurationsL());
+                if (error == KErrNone) {
+                    updateStatesToSnaps();
+                }
+                waitRandomTime();
+            } else {
+                waitRandomTime();
+                TRAPD(error, updateConfigurationsL());
+                if (error == KErrNone) {
+                    updateStatesToSnaps();
+                }   
             }
+            iIgnoringUpdates = false; // Wait time done, allow updating again
             iWaitingCommsDatabaseNotifications = true;
             break;
         default:
@@ -817,7 +852,6 @@ void QNetworkConfigurationManagerPrivate::RunL()
             break;
         }
     }
-
     if (iWaitingCommsDatabaseNotifications) {
         if (!IsActive()) {
             SetActive();
@@ -920,6 +954,20 @@ void QNetworkConfigurationManagerPrivate::EventL(const CConnMonEventBase& aEvent
         // For unrecognized events
         break;
     }
+}
+
+// Waits for 1..4 seconds.
+void QNetworkConfigurationManagerPrivate::waitRandomTime()
+{
+    iTimeToWait = (qAbs(qrand()) % 5) * 1000;
+    if (iTimeToWait < 1000) {
+        iTimeToWait = 1000;
+    }
+#ifdef QT_BEARERMGMT_CONFIGMGR_DEBUG
+    qDebug("QNetworkConfigurationManager waiting random time: %d ms", iTimeToWait);
+#endif
+    QTimer::singleShot(iTimeToWait, iIgnoreEventLoop, SLOT(quit()));
+    iIgnoreEventLoop->exec();
 }
 
 QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> QNetworkConfigurationManagerPrivate::dataByConnectionId(TUint aConnectionId)

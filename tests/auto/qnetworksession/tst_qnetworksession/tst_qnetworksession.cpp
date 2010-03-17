@@ -55,7 +55,7 @@
 QTM_USE_NAMESPACE
 
 // Can be used to configure tests that require manual attention (such as roaming)
-// #define QNETWORKSESSION_MANUAL_TESTS 1
+//#define QNETWORKSESSION_MANUAL_TESTS 1
 
 Q_DECLARE_METATYPE(QNetworkConfiguration)
 Q_DECLARE_METATYPE(QNetworkConfiguration::Type);
@@ -489,7 +489,7 @@ void tst_QNetworkSession::sessionStop()
     QFETCH(QString, bearerType);
     QFETCH(QNetworkConfiguration::Type, configurationType);
     
-    int configWaitdelayInMs = 1000;
+    int configWaitdelayInMs = 2000;
     
     QNetworkConfiguration config = suitableConfiguration(bearerType, configurationType);
     if (!config.isValid()) {
@@ -526,7 +526,7 @@ void tst_QNetworkSession::sessionStop()
 
     QVERIFY(openedSession.state() == QNetworkSession::Disconnected);
     QTest::qWait(configWaitdelayInMs); // Wait to get all relevant configurationChange() signals
-    QVERIFY(config.state() == QNetworkConfiguration::Discovered);
+    QVERIFY(config.state() != QNetworkConfiguration::Active);
     
     // 2. Verify that stopping a session based on non-connected configuration does nothing
     qDebug("----------2. Verify that stopping a session based on non-connected configuration does nothing");
@@ -1367,8 +1367,8 @@ bool closeSession(QNetworkSession *session, bool lastSessionOnConfiguration) {
         return false;
     }
     if (lastSessionOnConfiguration &&
-        session->configuration().state() != QNetworkConfiguration::Discovered) {
-         qDebug("tst_QNetworkSession::closeSession() failure: session's configuration is not back in 'Discovered' -state.");
+        session->configuration().state() == QNetworkConfiguration::Active) {
+         qDebug("tst_QNetworkSession::closeSession() failure: session's configuration is still in active state.");
          return false;
     }
     return true;
