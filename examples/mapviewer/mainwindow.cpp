@@ -116,6 +116,9 @@ MainWindow::MainWindow(QWidget *parent) :
     mnDay = popupMenu->addAction("Normal daylight");
     mnSat = popupMenu->addAction("Satellite");
     mnTer = popupMenu->addAction("Terrain");
+    mnSep3 = popupMenu->addSeparator();
+    mnExit = popupMenu->addAction("Exit");
+    
     QObject::connect(mnMarker, SIGNAL(triggered(bool)),
                      this, SLOT(addMarker(bool)));
     QObject::connect(mnLine, SIGNAL(triggered(bool)),
@@ -134,6 +137,8 @@ MainWindow::MainWindow(QWidget *parent) :
                      this, SLOT(setScheme(bool)));
     QObject::connect(mnTer, SIGNAL(triggered(bool)),
                      this, SLOT(setScheme(bool)));
+    QObject::connect(mnExit, SIGNAL(triggered(bool)),
+                     this, SLOT(close()));
 
     setContextMenuPolicy(Qt::CustomContextMenu);
     QObject::connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
@@ -142,9 +147,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    delete qgv;
-    delete mapView;
-    delete slider;
     delete mnMarker;
     delete mnRoute;
     delete mnLine;
@@ -156,7 +158,8 @@ MainWindow::~MainWindow()
     delete mnTer;
     delete mnSep1;
     delete mnSep2;
-    delete popupMenu;
+    delete mnSep3;
+    delete mnExit;
 
     delete ui;
 }

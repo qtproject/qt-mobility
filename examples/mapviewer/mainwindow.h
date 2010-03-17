@@ -106,6 +106,8 @@ private:
     QAction* mnTer;
     QAction* mnSep1;
     QAction* mnSep2;
+    QAction* mnSep3;
+    QAction* mnExit;
 
     QGeoCoordinate lastClicked;
 
