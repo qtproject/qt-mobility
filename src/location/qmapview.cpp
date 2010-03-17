@@ -325,25 +325,6 @@ void QMapView::wheelEvent(QGraphicsSceneWheelEvent* event)
 }
 
 /*!
-    Returns the map coordinate (in pixels) of the top left corner of a view port
-    as specified by its \a center.
-*/
-QPointF QMapView::getTopLeftFromCenter(const QPointF& center) const
-{
-    Q_D(const QMapView);
-
-    QPointF topLeft(center.x() - d->viewPort.width() / 2,
-                    center.y() - d->viewPort.height() / 2);
-
-    if (topLeft.x() < 0)
-        topLeft.setX(0);
-    if (topLeft.y() < 0)
-        topLeft.setY(0);
-
-    return topLeft;
-}
-
-/*!
     Returns the maximum zoom level.
 */
 quint16 QMapView::maxZoomLevel() const
@@ -790,6 +771,24 @@ bool QMapView::isPannable() const
 }
 
 /*!
+    A route can consist of 10,000+ individual legs. Drawing them all into the
+    view port (e.g. when the map is zoomed to a continent scale) can be prhobitively
+    expensive. Therefore, the map view will suppress some route legs according to the
+    current zoom level.
+
+    This method sets the minimum manhattan distance in \a pixels between two consecutive visible route way points.
+    In other words, specifying \a 0 here, will force the map view to always draw all individual
+    route legs that are in the current view port. Higher values will allow for much faster rendering,
+    especially at far out zoom levels, but the route may appear less smooth.<br>
+    The default value is 20 pixels. At QGeoEngine::maxZoomLevel(), all route legs are always shown.
+*/
+void QMapView::setRouteDetailLevel(quint32 pixels)
+{
+    Q_D(QMapView);
+    d->routeDetails = pixels;
+}
+
+/*!
     Returns the minum manhattan distance between two consecutive visible route way points.
     \sa setRouteDetailLevel()
 */
@@ -847,15 +846,48 @@ MapResolution QMapView::resolution() const
 /*****************************************************************************
   TileIterator
  *****************************************************************************/
-QMapView::TileIterator::TileIterator(const QMapView& mapView, const QRectF& viewPort)
-        : hNext(true),
-        viewPort(viewPort),
-        numColRow(mapView.d_ptr->numColRow),
-        mapRes(mapView.d_ptr->mapResolution),
+
+class QMapView::TileIteratorPrivate
+{
+public:
+    TileIteratorPrivate(const QMapViewPrivate* mapViewPrivate, const QRectF& viewPort)
+        : hasNext(true), viewPort(viewPort),
+        numColRow(mapViewPrivate->numColRow),
+        mapRes(mapViewPrivate->mapResolution),
         currX(static_cast<qint64>(viewPort.left())),
         currY(static_cast<qint64>(viewPort.top())),
-        rect(QPointF(), mapRes.size),
+        rect(QPointF(), mapViewPrivate->mapResolution.size),
         valid(false)
+    {
+    }
+
+    quint32 cl;
+    quint32 rw;
+    bool hasNext;
+    QRectF viewPort;
+    quint64 numColRow;
+    MapResolution mapRes;
+    qint64 currX;
+    qint64 currY;
+    QRectF rect;
+    bool valid;
+};
+
+/*!
+    \class QMapView::TileIterator
+    \brief The QMapView::TileIterator can be used to iterate through all map tiles that are
+    covered by a specified view port
+    \ingroup location
+
+    The iteration goes row by row
+    (top-down), with each row being walked from left to right.
+*/
+
+/*!
+    Constructs a TileIterator with its associated \a mapView and \a viewPort.
+*/
+QMapView::TileIterator::TileIterator(const QMapView& mapView, const QRectF& viewPort)
+    : d_ptr(new QMapView::TileIteratorPrivate(mapView.d_ptr, viewPort))
 {}
 
 /*!
@@ -863,32 +895,78 @@ QMapView::TileIterator::TileIterator(const QMapView& mapView, const QRectF& view
 */
 void QMapView::TileIterator::next()
 {
-    cl = (currX / mapRes.size.width()) % numColRow;
-    qint64 left = (currX / mapRes.size.width()) * mapRes.size.width();
-    rw = currY / mapRes.size.height();
+    Q_D(QMapView::TileIterator);
+    d->cl = (d->currX / d->mapRes.size.width()) % d->numColRow;
+    qint64 left = (d->currX / d->mapRes.size.width()) * d->mapRes.size.width();
+    d->rw = d->currY / d->mapRes.size.height();
 
-    if (currY > 0) {
-        qint64 top = (currY / mapRes.size.height()) * mapRes.size.height();
-        rect.moveTopLeft(QPointF(left, top));
-        valid = true;
+    if (d->currY > 0) {
+        qint64 top = (d->currY / d->mapRes.size.height()) * d->mapRes.size.height();
+        d->rect.moveTopLeft(QPointF(left, top));
+        d->valid = true;
     } else
-        valid = false;
+        d->valid = false;
 
-    currX += mapRes.size.width();
-    qint64 nextLeft = (currX / mapRes.size.width()) * mapRes.size.width();
+    d->currX += d->mapRes.size.width();
+    qint64 nextLeft = (d->currX / d->mapRes.size.width()) * d->mapRes.size.width();
 
-    if (nextLeft > viewPort.right()) {
-        currX = viewPort.left();
-        currY += mapRes.size.height();
+    if (nextLeft > d->viewPort.right()) {
+        d->currX = d->viewPort.left();
+        d->currY += d->mapRes.size.height();
     }
 
-    qint64 nextTop = (currY / mapRes.size.height()) * mapRes.size.height();
+    qint64 nextTop = (d->currY / d->mapRes.size.height()) * d->mapRes.size.height();
 
-    if (nextTop > viewPort.bottom())
-        hNext = false;
+    if (nextTop > d->viewPort.bottom())
+        d->hasNext = false;
+}
+
+/*!
+    Returns True (at least one more tile is available), False (last tile has been reached)
+*/
+bool QMapView::TileIterator::hasNext() const
+{
+    Q_D(const QMapView::TileIterator);
+    return d->hasNext;
+}
+
+/*!
+    Returns whether the current tile is valid,
+    invalid tiles occur beyond the north and south pole.
+*/
+bool QMapView::TileIterator::isValid() const
+{
+    Q_D(const QMapView::TileIterator);
+    return d->valid;
+}
+
+/*!
+    Returns the column index of the current map tile.
+*/
+quint32 QMapView::TileIterator::col() const
+{
+    Q_D(const QMapView::TileIterator);
+    return d->cl;
+}
+
+/*!
+    Returns the row index of the current map tile.
+*/
+quint32 QMapView::TileIterator::row() const
+{
+    Q_D(const QMapView::TileIterator);
+    return d->rw;
+}
+
+/*!
+    Returns the bounding box of the map tile (in map pixel coordinates).
+*/
+QRectF QMapView::TileIterator::tileRect() const
+{
+    Q_D(const QMapView::TileIterator);
+    return d->rect;
 }
 
 #include "moc_qmapview.cpp"
 
 QTM_END_NAMESPACE
-

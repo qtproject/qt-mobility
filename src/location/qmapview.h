@@ -73,64 +73,23 @@ class Q_LOCATION_EXPORT QMapView : public QGraphicsWidget
     Q_OBJECT
 
 public:
-    /*!
-    * This class can be used to iterate through all map tiles that are
-    * covered by a specified view port. The iteration goes row by row
-    * (top-down), with each row being walked from left to right.
-    */
+    class TileIteratorPrivate;
     class TileIterator
     {
     public:
-        /*!
-        * Constructor.
-        * @param mapView The associated QMapView object
-        * @param viewPort The view port.
-        */
         TileIterator(const QMapView& mapView, const QRectF& viewPort);
-        /*!
-        * @return True (at least one more tile is available), False (last tile has been reached)
-        */
-        inline bool hasNext() const {
-            return hNext;
-        }
-        /*!
-        * @return Indicates whether current tile is valid,
-        *         invalid tile occur beyond north and south pole.
-        */
-        inline bool isValid() const {
-            return valid;
-        }
+
+        bool hasNext() const;
+        bool isValid() const;
         void next();
-        /*!
-        * @return The column index of the current map tile.
-        */
-        inline quint32 col() const {
-            return cl;
-        }
-        /*!
-        * @return The row index of the current map tile.
-        */
-        inline quint32 row() const {
-            return rw;
-        }
-        /*!
-        * @return The bounding box of the map tile (in map pixel coordinates).
-        */
-        inline QRectF tileRect() const {
-            return rect;
-        }
+        quint32 col() const;
+        quint32 row() const;
+        QRectF tileRect() const;
 
     private:
-        quint32 cl;
-        quint32 rw;
-        bool hNext;
-        QRectF viewPort;
-        quint64 numColRow;
-        MapResolution mapRes;
-        qint64 currX;
-        qint64 currY;
-        QRectF rect;
-        bool valid;
+        TileIteratorPrivate *d_ptr;
+
+        Q_DECLARE_PRIVATE(TileIterator)
     };
 
     friend class TileIterator;
@@ -168,18 +127,6 @@ public:
     quint64 getTileIndex(quint32 col, quint32 row) const;
     QRectF getTileRect(quint32 col, quint32 row) const;
 
-    /*!
-    * A route can consist of 10,000+ individual legs. Drawing them all into the
-    * view port (e.g. when the map is zoomed to a continent scale) can be prhobitively
-    * expensive. Therefore, the map view will suppress some route legs according to the
-    * current zoom level.<br>
-    * This method sets the minimum manhattan distance in pixels between two consecutive visible route way points.
-    * In other words, specifying <i>0</i> here, will force the map view to always draw all individual
-    * route legs that are in the current view port. Higher values will allow for much faster rendering,
-    * especially at far out zoom levels, but the route may appear less smooth.<br>
-    * The default value is 20 pixels. At QGeoEngine::maxZoomLevel(), all route legs are always shown.
-    * @param pixels The minum manhattan distance between two consecutive visible route way points.
-    */
     void setRouteDetailLevel(quint32 pixels);
     quint32 routeDetailLevel() const;
 
@@ -218,8 +165,6 @@ private:
     Q_DISABLE_COPY(QMapView)
 
 protected:
-    QPointF getTopLeftFromCenter(const QPointF& center) const;
-
     virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
     virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
     virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
