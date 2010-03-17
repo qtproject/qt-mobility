@@ -1,26 +1,26 @@
 INCLUDEPATH += $$PWD
 
-#build camera service 
+#build camera service
 DEFINES += QMEDIA_SYMBIAN_CAMERA
 
     exists($${EPOCROOT}epoc32\include\ecamadvancedsettings.h) {
-MMP_RULES += \
+    MMP_RULES += \
     "$${LITERAL_HASH}ifndef WINSCW" \
     "LIBRARY ecamadvsettings.lib" \
     "MACRO USE_S60_32_ECAM_ADVANCED_SETTINGS_HEADER" \
     "$${LITERAL_HASH}endif"
-    message("Using from s60 3.2 CCameraAdvancedSettings header")  
+    message("Using from s60 3.2 CCameraAdvancedSettings header")
     }
     exists($${EPOCROOT}epoc32\include\ecamadvsettings.h) {
         symbian:LIBS += -lecamadvsettings
         DEFINES += USE_S60_50_ECAM_ADVANCED_SETTINGS_HEADER
-        message("Using from s60 5.0 CCameraAdvancedSettings header")  
+        message("Using from s60 5.0 CCameraAdvancedSettings header")
     }
     exists($${EPOCROOT}epoc32\include\mmf\devvideo\devvideoconstants.h) {
         symbian:LIBS += -ldevvideo
         DEFINES += S60_DEVVIDEO_RECORDING_SUPPORTED
-        message("Devvideo API supported")  
-    }    
+        message("Devvideo API supported")
+    }
 
 #3.1 platform uses old style autofocusing
 contains(S60_VERSION, 3.1) {
@@ -28,7 +28,7 @@ message ("Using s60 3.1 autofocusing")
 MMP_RULES += \
     "$${LITERAL_HASH}ifdef WINSCW" \
     "LIBRARY camautofocus.lib" \
-    "$${LITERAL_HASH}else" \ 
+    "$${LITERAL_HASH}else" \
     "STATICLIBRARY camautofocus_s.lib" \
     "$${LITERAL_HASH}endif // WINS" \
     "MACRO S60_CAM_AUTOFOCUS_SUPPORT"
@@ -43,9 +43,12 @@ symbian:LIBS += -lfbscli \
         -lconvnames \
         -lgb2312_shared \
         -ljisx0201 \
-        -ljisx0208                 
-        
-        
+        -ljisx0208 \
+        -lmmfcontrollerframework \
+        -lfbscli \
+        -lefsrv
+
+
     HEADERS += $$PWD/s60camerafocuscontrol.h \
         $$PWD/s60cameraexposurecontrol.h \
         $$PWD/s60cameracontrol.h \
@@ -70,7 +73,7 @@ symbian:LIBS += -lfbscli \
         $$PWD/s60mediacontrol.cpp \
         $$PWD/s60videocapturesession.cpp \
         $$PWD/s60imagecapturesession.cpp \
-        $$PWD/s60mediacontainercontrol.cpp \        
+        $$PWD/s60mediacontainercontrol.cpp \
         $$PWD/s60videoencoder.cpp \
         $$PWD/s60audioencoder.cpp \
         $$PWD/s60cameraservice.cpp \

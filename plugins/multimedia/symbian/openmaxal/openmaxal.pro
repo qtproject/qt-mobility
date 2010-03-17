@@ -9,7 +9,5 @@ SYMBIAN_PLATFORMS = DEFAULT
 # Check to see if the SDK supports OpenMAX AL API
 exists($${EPOCROOT}epoc32/include/platform/mw/khronos/OpenMAXAL.h) {
     SUBDIRS = mediarecorder
-}
-else {
-    message("FATAL ERROR: Required OpenMAX AL files not found.")
+    message("Building OpenMAX AL backend.")
 }

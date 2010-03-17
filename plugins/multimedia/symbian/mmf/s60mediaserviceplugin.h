@@ -49,25 +49,14 @@
 
 QTM_USE_NAMESPACE
 
-class S60MediaServicePlugin : public QMediaServiceProviderPlugin , public QMediaServiceSupportedDevicesInterface
+class S60MediaServicePlugin : public QMediaServiceProviderPlugin
 {
     Q_OBJECT
-    Q_INTERFACES(QtMobility::QMediaServiceSupportedDevicesInterface)
-
 public:
 
     QStringList keys() const;
     QMediaService* create(QString const& key);
     void release(QMediaService *service);
-
-    QList<QByteArray> devices(const QByteArray &service) const;
-    QString deviceDescription(const QByteArray &service, const QByteArray &device);
-
-private:
-    void updateDevices() const;
-
-    mutable QList<QByteArray> m_cameraDevices;
-    mutable QStringList m_cameraDescriptions;
 };
 
 #endif // S60SERVICEPLUGIN_H

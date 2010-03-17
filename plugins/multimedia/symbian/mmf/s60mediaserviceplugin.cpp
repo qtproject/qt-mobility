@@ -39,32 +39,53 @@
 **
 ****************************************************************************/
 
-#ifndef S60VIDEOOUTPUTCONTROL_H
-#define S60VIDEOOUTPUTCONTROL_H
+#include <QtCore/qstring.h>
+#include <QtCore/qdebug.h>
 
-#include <QtCore/qobject.h>
-#include <QVideoOutputControl>
-
-QTM_USE_NAMESPACE
-
-class S60VideoOutputControl : public QVideoOutputControl
-{
-    Q_OBJECT
-public:
-    S60VideoOutputControl(QObject *parent = 0);
-
-    QList<Output> availableOutputs() const;
-    void setAvailableOutputs(const QList<Output> &outputs);
-
-    Output output() const;
-    void setOutput(Output output);
-
-Q_SIGNALS:
-    void outputChanged(QVideoOutputControl::Output output);
-
-private:
-    QList<Output> m_outputs;
-    Output m_output;
-};
-
+#include "s60mediaserviceplugin.h"
+#if defined(TUNERLIBUSED) || defined(RADIOUTILITYLIBUSED) 
+#include "s60radiotunerservice.h"
 #endif
+#ifdef HAS_MEDIA_PLAYER
+#include "s60mediaplayerservice.h"
+#endif
+#include "s60audiocaptureservice.h"
+
+
+QStringList S60MediaServicePlugin::keys() const
+{
+    QStringList list;
+#if defined(TUNERLIBUSED) || defined(RADIOUTILITYLIBUSED)
+    list << QLatin1String(Q_MEDIASERVICE_RADIO);
+#endif
+
+#ifdef HAS_MEDIA_PLAYER  
+    list << QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER);
+#endif
+    list << QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE);
+    return list;
+}
+
+QMediaService* S60MediaServicePlugin::create(QString const& key)
+{
+#ifdef HAS_MEDIA_PLAYER
+    if (key == QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER))
+        return new S60MediaPlayerService;
+#endif
+    if (key == QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE))
+        return new S60AudioCaptureService;
+    
+#if defined(TUNERLIBUSED) || defined(RADIOUTILITYLIBUSED) 
+    if (key == QLatin1String(Q_MEDIASERVICE_RADIO)) 
+        return new S60RadioTunerService;
+#endif
+    
+    return 0;
+}
+
+void S60MediaServicePlugin::release(QMediaService *service)
+{
+    delete service;
+}
+
+Q_EXPORT_PLUGIN2(QtMobilityMmfEngine, S60MediaServicePlugin);
