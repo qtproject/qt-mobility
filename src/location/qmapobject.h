@@ -56,6 +56,7 @@ class QMapObjectPrivate;
 class Q_LOCATION_EXPORT QMapObject
 {
     friend class QMapView;
+    friend class QMapViewPrivate;
 
 public:
     enum MapObjectType {
