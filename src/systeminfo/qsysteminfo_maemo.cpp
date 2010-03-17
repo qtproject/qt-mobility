@@ -674,6 +674,11 @@ void QSystemNetworkInfoPrivate::usbCableAction()
 
 QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 {
+    if (radioAccessTechnology == 1)
+        return QSystemNetworkInfo::GsmMode;
+    if (radioAccessTechnology == 2)
+        return QSystemNetworkInfo::WcdmaMode;
+
     return QSystemNetworkInfo::UnknownMode;
 }
 
