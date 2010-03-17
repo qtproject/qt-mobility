@@ -1743,6 +1743,14 @@
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
         </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QContactTag" href="qcontacttag.html" location="qcontacttag.h" bases="QContactDetail" module="">
+            <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactTag::DefinitionName" href="qcontacttag.html#DefinitionName-var" location="qcontacttag.h" type="const char *" static="false"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="FieldTag" fullname="QContactTag::FieldTag" href="qcontacttag.html#FieldTag-var" location="qcontacttag.h" type="const char *" static="false"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setTag" fullname="QContactTag::setTag" href="qcontacttag.html#setTag" location="qcontacttag.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setTag(const QString &amp; tag)">
+                <parameter left="const QString &amp;" right="" name="tag" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="tag" fullname="QContactTag::tag" href="qcontacttag.html#tag" location="qcontacttag.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="tag() const"/>
+        </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMediaControl" href="qmediacontrol.html" location="qmediacontrol.h" bases="QObject" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="~QMediaControl" fullname="QMediaControl::~QMediaControl" href="qmediacontrol.html#dtor.QMediaControl" location="qmediacontrol.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMediaControl()"/>
             <function access="protected" threadsafety="unspecified" status="commendable" name="QMediaControl" fullname="QMediaControl::QMediaControl" href="qmediacontrol.html#QMediaControl" location="qmediacontrol.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMediaControl(QObject * parent)">
@@ -2100,12 +2108,12 @@
                 <value name="System" value="1"/>
                 <value name="Phone" value="2"/>
                 <value name="Email" value="3"/>
-                <value name="Xmpp" value="4"/>
+                <value name="InstantMessage" value="4"/>
             </enum>
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageAddress" fullname="QMessageAddress::QMessageAddress" href="qmessageaddress.html#QMessageAddress" location="qmessageaddress.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMessageAddress()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QMessageAddress" fullname="QMessageAddress::QMessageAddress" href="qmessageaddress.html#QMessageAddress-2" location="qmessageaddress.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QMessageAddress(Type type, const QString &amp; recipient)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QMessageAddress" fullname="QMessageAddress::QMessageAddress" href="qmessageaddress.html#QMessageAddress-2" location="qmessageaddress.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QMessageAddress(Type type, const QString &amp; addressee)">
                 <parameter left="Type" right="" name="type" default=""/>
-                <parameter left="const QString &amp;" right="" name="recipient" default=""/>
+                <parameter left="const QString &amp;" right="" name="addressee" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageAddress" fullname="QMessageAddress::QMessageAddress" href="qmessageaddress.html#QMessageAddress-3" location="qmessageaddress.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="3" type="" signature="QMessageAddress(const QMessageAddress &amp; other)">
                 <parameter left="const QMessageAddress &amp;" right="" name="other" default=""/>
@@ -2115,9 +2123,9 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setType" fullname="QMessageAddress::setType" href="qmessageaddress.html#setType" location="qmessageaddress.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setType(Type type)">
                 <parameter left="Type" right="" name="type" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="recipient" fullname="QMessageAddress::recipient" href="qmessageaddress.html#recipient" location="qmessageaddress.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="recipient() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setRecipient" fullname="QMessageAddress::setRecipient" href="qmessageaddress.html#setRecipient" location="qmessageaddress.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setRecipient(const QString &amp; recipient)">
-                <parameter left="const QString &amp;" right="" name="recipient" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="addressee" fullname="QMessageAddress::addressee" href="qmessageaddress.html#addressee" location="qmessageaddress.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="addressee() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setAddressee" fullname="QMessageAddress::setAddressee" href="qmessageaddress.html#setAddressee" location="qmessageaddress.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setAddressee(const QString &amp; addressee)">
+                <parameter left="const QString &amp;" right="" name="addressee" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="parseEmailAddress" fullname="QMessageAddress::parseEmailAddress" href="qmessageaddress.html#parseEmailAddress" location="qmessageaddress.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="void" signature="parseEmailAddress(const QString &amp; emailAddress, QString * name, QString * address, QString * suffix, bool * startDelimeterFound, bool * endDelimeterFound)">
                 <parameter left="const QString &amp;" right="" name="emailAddress" default=""/>
@@ -3267,7 +3275,7 @@
                 <value name="Mms" value="0x1"/>
                 <value name="Sms" value="0x2"/>
                 <value name="Email" value="0x4"/>
-                <value name="Xmpp" value="0x8"/>
+                <value name="InstantMessage" value="0x8"/>
                 <value name="AnyType" value="0xFFFFFFFF"/>
             </enum>
             <typedef access="public" threadsafety="unspecified" status="commendable" name="TypeFlags" fullname="QMessage::TypeFlags" href="qmessage.html#TypeFlags-typedef" location="qmessage.h" enum="QMessage::Type"/>
@@ -3447,6 +3455,14 @@
                 <parameter left="Attribute" right="" name="attribute" default=""/>
             </function>
         </class>
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qgeosatelliteinfo.html#operator&lt;&lt;-76" location="qgeosatelliteinfo.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="76" relates="QGeoSatelliteInfo" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; stream, const QGeoSatelliteInfo &amp; info)">
+            <parameter left="QDataStream &amp;" right="" name="stream" default=""/>
+            <parameter left="const QGeoSatelliteInfo &amp;" right="" name="info" default=""/>
+        </function>
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator&gt;&gt;" href="qgeosatelliteinfo.html#operator&gt;&gt;-72" location="qgeosatelliteinfo.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="72" relates="QGeoSatelliteInfo" type="QDataStream &amp;" signature="operator&gt;&gt;(QDataStream &amp; stream, QGeoSatelliteInfo &amp; info)">
+            <parameter left="QDataStream &amp;" right="" name="stream" default=""/>
+            <parameter left="QGeoSatelliteInfo &amp;" right="" name="info" default=""/>
+        </function>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QVideoDeviceControl" href="qvideodevicecontrol.html" location="qvideodevicecontrol.h" bases="QMediaControl" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="~QVideoDeviceControl" fullname="QVideoDeviceControl::~QVideoDeviceControl" href="qvideodevicecontrol.html#dtor.QVideoDeviceControl" location="qvideodevicecontrol.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QVideoDeviceControl()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="deviceCount" fullname="QVideoDeviceControl::deviceCount" href="qvideodevicecontrol.html#deviceCount" location="qvideodevicecontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="int" signature="deviceCount() const"/>
@@ -4596,11 +4612,11 @@
                 <parameter left="CoordinateFormat" right="" name="format" default="DegreesMinutesSecondsWithHemisphere"/>
             </function>
         </class>
-        <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qgeocoordinate.html#operator&lt;&lt;-77" location="qgeocoordinate.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="77" relates="QGeoCoordinate" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; stream, const QGeoCoordinate &amp; coordinate)">
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qgeocoordinate.html#operator&lt;&lt;-78" location="qgeocoordinate.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="78" relates="QGeoCoordinate" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; stream, const QGeoCoordinate &amp; coordinate)">
             <parameter left="QDataStream &amp;" right="" name="stream" default=""/>
             <parameter left="const QGeoCoordinate &amp;" right="" name="coordinate" default=""/>
         </function>
-        <function access="public" threadsafety="unspecified" status="commendable" name="operator&gt;&gt;" href="qgeocoordinate.html#operator&gt;&gt;-72" location="qgeocoordinate.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="72" relates="QGeoCoordinate" type="QDataStream &amp;" signature="operator&gt;&gt;(QDataStream &amp; stream, QGeoCoordinate &amp; coordinate)">
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator&gt;&gt;" href="qgeocoordinate.html#operator&gt;&gt;-73" location="qgeocoordinate.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="73" relates="QGeoCoordinate" type="QDataStream &amp;" signature="operator&gt;&gt;(QDataStream &amp; stream, QGeoCoordinate &amp; coordinate)">
             <parameter left="QDataStream &amp;" right="" name="stream" default=""/>
             <parameter left="QGeoCoordinate &amp;" right="" name="coordinate" default=""/>
         </function>
@@ -4906,11 +4922,11 @@
                 <parameter left="Attribute" right="" name="attribute" default=""/>
             </function>
         </class>
-        <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qgeopositioninfo.html#operator&lt;&lt;-79" location="qgeopositioninfo.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="79" relates="QGeoPositionInfo" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; stream, const QGeoPositionInfo &amp; info)">
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qgeopositioninfo.html#operator&lt;&lt;-80" location="qgeopositioninfo.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="80" relates="QGeoPositionInfo" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; stream, const QGeoPositionInfo &amp; info)">
             <parameter left="QDataStream &amp;" right="" name="stream" default=""/>
             <parameter left="const QGeoPositionInfo &amp;" right="" name="info" default=""/>
         </function>
-        <function access="public" threadsafety="unspecified" status="commendable" name="operator&gt;&gt;" href="qgeopositioninfo.html#operator&gt;&gt;-73" location="qgeopositioninfo.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="73" relates="QGeoPositionInfo" type="QDataStream &amp;" signature="operator&gt;&gt;(QDataStream &amp; stream, QGeoPositionInfo &amp; info)">
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator&gt;&gt;" href="qgeopositioninfo.html#operator&gt;&gt;-74" location="qgeopositioninfo.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="74" relates="QGeoPositionInfo" type="QDataStream &amp;" signature="operator&gt;&gt;(QDataStream &amp; stream, QGeoPositionInfo &amp; info)">
             <parameter left="QDataStream &amp;" right="" name="stream" default=""/>
             <parameter left="QGeoPositionInfo &amp;" right="" name="info" default=""/>
         </function>
@@ -6291,11 +6307,11 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="capabilities" fullname="QServiceFilter::capabilities" href="qservicefilter.html#capabilities" location="qservicefilter.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="capabilities() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="capabilityMatchRule" fullname="QServiceFilter::capabilityMatchRule" href="qservicefilter.html#capabilityMatchRule" location="qservicefilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="CapabilityMatchRule" signature="capabilityMatchRule() const"/>
         </class>
-        <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qservicefilter.html#operator&lt;&lt;-80" location="qservicefilter.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="80" relates="QServiceFilter" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; out, const QServiceFilter &amp; sf)">
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qservicefilter.html#operator&lt;&lt;-81" location="qservicefilter.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="81" relates="QServiceFilter" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; out, const QServiceFilter &amp; sf)">
             <parameter left="QDataStream &amp;" right="" name="out" default=""/>
             <parameter left="const QServiceFilter &amp;" right="" name="sf" default=""/>
         </function>
-        <function access="public" threadsafety="unspecified" status="commendable" name="operator&gt;&gt;" href="qservicefilter.html#operator&gt;&gt;-74" location="qservicefilter.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="74" relates="QServiceFilter" type="QDataStream &amp;" signature="operator&gt;&gt;(QDataStream &amp; in, QServiceFilter &amp; sf)">
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator&gt;&gt;" href="qservicefilter.html#operator&gt;&gt;-75" location="qservicefilter.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="75" relates="QServiceFilter" type="QDataStream &amp;" signature="operator&gt;&gt;(QDataStream &amp; in, QServiceFilter &amp; sf)">
             <parameter left="QDataStream &amp;" right="" name="in" default=""/>
             <parameter left="QServiceFilter &amp;" right="" name="sf" default=""/>
         </function>
@@ -6859,6 +6875,11 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="operator!=" fullname="QVersitDocument::operator!=" href="qversitdocument.html#operator!=" location="qversitdocument.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator!=(const QVersitDocument &amp; other) const">
                 <parameter left="const QVersitDocument &amp;" right="" name="other" default=""/>
             </function>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="VersitType" fullname="QVersitDocument::VersitType" href="qversitdocument.html#VersitType-enum" location="qversitdocument.h">
+                <value name="InvalidType" value="0"/>
+                <value name="VCard21Type" value="1"/>
+                <value name="VCard30Type" value="2"/>
+            </enum>
             <function access="public" threadsafety="unspecified" status="commendable" name="setType" fullname="QVersitDocument::setType" href="qversitdocument.html#setType" location="qversitdocument.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setType(VersitType type)">
                 <parameter left="VersitType" right="" name="type" default=""/>
             </function>
@@ -7086,11 +7107,11 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="customAttributes" fullname="QServiceInterfaceDescriptor::customAttributes" href="qserviceinterfacedescriptor.html#customAttributes" location="qserviceinterfacedescriptor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="customAttributes() const"/>
         </class>
-        <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qserviceinterfacedescriptor.html#operator&lt;&lt;-81" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="81" relates="QServiceInterfaceDescriptor" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; out, const QServiceInterfaceDescriptor &amp; dc)">
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" href="qserviceinterfacedescriptor.html#operator&lt;&lt;-82" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="82" relates="QServiceInterfaceDescriptor" type="QDataStream &amp;" signature="operator&lt;&lt;(QDataStream &amp; out, const QServiceInterfaceDescriptor &amp; dc)">
             <parameter left="QDataStream &amp;" right="" name="out" default=""/>
             <parameter left="const QServiceInterfaceDescriptor &amp;" right="" name="dc" default=""/>
         </function>
-        <function access="public" threadsafety="unspecified" status="commendable" name="operator&gt;&gt;" href="qserviceinterfacedescriptor.html#operator&gt;&gt;-75" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="75" relates="QServiceInterfaceDescriptor" type="QDataStream &amp;" signature="operator&gt;&gt;(QDataStream &amp; in, QServiceInterfaceDescriptor &amp; dc)">
+        <function access="public" threadsafety="unspecified" status="commendable" name="operator&gt;&gt;" href="qserviceinterfacedescriptor.html#operator&gt;&gt;-76" location="qserviceinterfacedescriptor.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="76" relates="QServiceInterfaceDescriptor" type="QDataStream &amp;" signature="operator&gt;&gt;(QDataStream &amp; in, QServiceInterfaceDescriptor &amp; dc)">
             <parameter left="QDataStream &amp;" right="" name="in" default=""/>
             <parameter left="QServiceInterfaceDescriptor &amp;" right="" name="dc" default=""/>
         </function>
@@ -7194,23 +7215,7 @@
             <page access="public" status="commendable" name="cameracapture/main.cpp" href="cameracapture-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="cameracapture/main.cpp" location=""/>
             <page access="public" status="commendable" name="cameracapture/cameracapture.pro" href="cameracapture-cameracapture-pro.html" subtype="file" title="" fulltitle="cameracapture.pro Example File" subtitle="cameracapture/cameracapture.pro" location=""/>
         </page>
-        <page access="public" status="commendable" name="declarative" href="declarative.html" subtype="example" title="Declarative Example" fulltitle="Declarative Example" subtitle="" location="undocumented.qdoc">
-            <page access="public" status="commendable" name="declarative/sfwexample.cpp" href="declarative-sfwexample-cpp.html" subtype="file" title="" fulltitle="sfwexample.cpp Example File" subtitle="declarative/sfwexample.cpp" location=""/>
-            <page access="public" status="commendable" name="declarative/sfwexample.h" href="declarative-sfwexample-h.html" subtype="file" title="" fulltitle="sfwexample.h Example File" subtitle="declarative/sfwexample.h" location=""/>
-            <page access="public" status="commendable" name="declarative/landlinedialer/landlinedialer.cpp" href="declarative-landlinedialer-landlinedialer-cpp.html" subtype="file" title="" fulltitle="landlinedialer.cpp Example File" subtitle="declarative/landlinedialer/landlinedialer.cpp" location=""/>
-            <page access="public" status="commendable" name="declarative/landlinedialer/landlinedialer.h" href="declarative-landlinedialer-landlinedialer-h.html" subtype="file" title="" fulltitle="landlinedialer.h Example File" subtitle="declarative/landlinedialer/landlinedialer.h" location=""/>
-            <page access="public" status="commendable" name="declarative/landlinedialer/landlinedialerplugin.cpp" href="declarative-landlinedialer-landlinedialerplugin-cpp.html" subtype="file" title="" fulltitle="landlinedialerplugin.cpp Example File" subtitle="declarative/landlinedialer/landlinedialerplugin.cpp" location=""/>
-            <page access="public" status="commendable" name="declarative/landlinedialer/landlinedialerplugin.h" href="declarative-landlinedialer-landlinedialerplugin-h.html" subtype="file" title="" fulltitle="landlinedialerplugin.h Example File" subtitle="declarative/landlinedialer/landlinedialerplugin.h" location=""/>
-            <page access="public" status="commendable" name="declarative/voipdialer/voipdialer.cpp" href="declarative-voipdialer-voipdialer-cpp.html" subtype="file" title="" fulltitle="voipdialer.cpp Example File" subtitle="declarative/voipdialer/voipdialer.cpp" location=""/>
-            <page access="public" status="commendable" name="declarative/voipdialer/voipdialer.h" href="declarative-voipdialer-voipdialer-h.html" subtype="file" title="" fulltitle="voipdialer.h Example File" subtitle="declarative/voipdialer/voipdialer.h" location=""/>
-            <page access="public" status="commendable" name="declarative/voipdialer/voipdialerplugin.cpp" href="declarative-voipdialer-voipdialerplugin-cpp.html" subtype="file" title="" fulltitle="voipdialerplugin.cpp Example File" subtitle="declarative/voipdialer/voipdialerplugin.cpp" location=""/>
-            <page access="public" status="commendable" name="declarative/voipdialer/voipdialerplugin.h" href="declarative-voipdialer-voipdialerplugin-h.html" subtype="file" title="" fulltitle="voipdialerplugin.h Example File" subtitle="declarative/voipdialer/voipdialerplugin.h" location=""/>
-            <page access="public" status="commendable" name="declarative/main.cpp" href="declarative-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="declarative/main.cpp" location=""/>
-            <page access="public" status="commendable" name="declarative/declarative.pro" href="declarative-declarative-pro.html" subtype="file" title="" fulltitle="declarative.pro Example File" subtitle="declarative/declarative.pro" location=""/>
-            <page access="public" status="commendable" name="declarative/demo/demo.pro" href="declarative-demo-demo-pro.html" subtype="file" title="" fulltitle="demo.pro Example File" subtitle="declarative/demo/demo.pro" location=""/>
-            <page access="public" status="commendable" name="declarative/landlinedialer/landlinedialer.pro" href="declarative-landlinedialer-landlinedialer-pro.html" subtype="file" title="" fulltitle="landlinedialer.pro Example File" subtitle="declarative/landlinedialer/landlinedialer.pro" location=""/>
-            <page access="public" status="commendable" name="declarative/voipdialer/voipdialer.pro" href="declarative-voipdialer-voipdialer-pro.html" subtype="file" title="" fulltitle="voipdialer.pro Example File" subtitle="declarative/voipdialer/voipdialer.pro" location=""/>
-        </page>
+        <page access="public" status="commendable" name="declarative" href="declarative.html" subtype="example" title="Declarative Example" fulltitle="Declarative Example" subtitle="" location="undocumented.qdoc"/>
         <page access="public" status="commendable" name="fetchgooglemaps" href="fetchgooglemaps.html" subtype="example" title="Fetch Google Maps Example" fulltitle="Fetch Google Maps Example" subtitle="" location="undocumented.qdoc">
             <page access="public" status="commendable" name="fetchgooglemaps/mapwindow.cpp" href="fetchgooglemaps-mapwindow-cpp.html" subtype="file" title="" fulltitle="mapwindow.cpp Example File" subtitle="fetchgooglemaps/mapwindow.cpp" location=""/>
             <page access="public" status="commendable" name="fetchgooglemaps/mapwindow.h" href="fetchgooglemaps-mapwindow-h.html" subtype="file" title="" fulltitle="mapwindow.h Example File" subtitle="fetchgooglemaps/mapwindow.h" location=""/>
@@ -7336,21 +7341,29 @@
         <page access="public" status="commendable" name="annotated.html" href="annotated.html" subtype="page" title="Annotated Class List" fulltitle="Annotated Class List" subtitle="" location="classes.qdoc"/>
         <page access="public" status="commendable" name="hierarchy.html" href="hierarchy.html" subtype="page" title="Inheritance Hierarchy" fulltitle="Inheritance Hierarchy" subtitle="" location="classes.qdoc"/>
         <page access="public" status="commendable" name="functions.html" href="functions.html" subtype="page" title="All Functions" fulltitle="All Functions" subtitle="" location="classes.qdoc"/>
+        <page access="public" status="commendable" name="contactssync.html" href="contactssync.html" subtype="page" title="Contacts Synchronous API" fulltitle="Contacts Synchronous API" subtitle="" location="contactssync.qdoc">
+            <contents name="introduction" title="Introduction" level="1"/>
+            <contents name="using-the-api" title="Using The API" level="1"/>
+            <contents name="information-and-reporting" title="Information And Reporting" level="2"/>
+            <contents name="contact-manipulation" title="Contact Manipulation" level="2"/>
+            <contents name="relationship-manipulation" title="Relationship Manipulation" level="2"/>
+            <contents name="schema-manipulation" title="Schema Manipulation" level="2"/>
+            <contents name="examples-of-usage" title="Examples Of Usage" level="1"/>
+            <contents name="saving-a-new-contact-to-the-default-manager" title="Saving a new contact to the default manager" level="2"/>
+            <contents name="filtering-by-detail-definition-and-value" title="Filtering by detail definition and value" level="2"/>
+            <contents name="installing-a-plugin-that-modifies-the-definition-of-one-type-of-detail" title="Installing a plugin that modifies the definition of one type of detail" level="2"/>
+            <contents name="modifying-an-existing-contact-and-saving-the-modifications" title="Modifying an existing contact and saving the modifications" level="3"/>
+        </page>
         <page access="public" status="commendable" name="trademarks.html" href="trademarks.html" subtype="page" title="Trademarks" fulltitle="Trademarks" subtitle="" location="trademarks.qdoc"/>
         <page access="public" status="commendable" name="contacts.html" href="contacts.html" subtype="page" title="Contacts" fulltitle="Contacts" subtitle="" location="contacts.qdoc">
             <contents name="introduction" title="Introduction" level="1"/>
             <contents name="overview" title="Overview" level="1"/>
             <contents name="using-the-api" title="Using the API" level="1"/>
             <contents name="synchronous-api-usage" title="Synchronous API Usage" level="2"/>
-            <contents name="saving-a-new-contact-to-the-default-manager" title="Saving a new contact to the default manager" level="3"/>
-            <contents name="filtering-by-detail-definition-and-value" title="Filtering by detail definition and value" level="3"/>
+            <contents name="asynchronous-api-usage" title="Asynchronous API Usage" level="2"/>
+            <contents name="contact-details" title="Contact Details" level="2"/>
             <contents name="viewing-a-specific-detail-of-a-contact" title="Viewing a specific detail of a contact" level="3"/>
             <contents name="viewing-all-of-the-details-of-a-contact" title="Viewing all of the details of a contact" level="3"/>
-            <contents name="installing-a-plugin-that-modifies-the-definition-of-one-type-of-detail" title="Installing a plugin that modifies the definition of one type of detail" level="3"/>
-            <contents name="modifying-an-existing-contact-and-saving-the-modifications" title="Modifying an existing contact and saving the modifications" level="3"/>
-            <contents name="asynchronous-api-usage" title="Asynchronous API Usage" level="2"/>
-            <contents name="requesting-contacts" title="Requesting Contacts" level="3"/>
-            <contents name="other-asynchronous-operations" title="Other Asynchronous Operations" level="3"/>
             <contents name="manager-settings-and-configuration" title="Manager Settings And Configuration" level="1"/>
             <contents name="loading-the-manager-for-a-specific-backend" title="Loading the manager for a specific backend" level="2"/>
             <contents name="loading-a-manager-with-specific-parameters" title="Loading a manager with specific parameters" level="2"/>
@@ -7469,21 +7482,6 @@
             <target name="addpropertyinqmlcontext"/>
             <target name="voipdialer-h-0"/>
             <target name="servicelist-qml-2"/>
-            <page access="public" status="commendable" name="declarative/sfwexample.cpp" href="declarative-sfwexample-cpp.html" subtype="file" title="" fulltitle="sfwexample.cpp Example File" subtitle="declarative/sfwexample.cpp" location=""/>
-            <page access="public" status="commendable" name="declarative/sfwexample.h" href="declarative-sfwexample-h.html" subtype="file" title="" fulltitle="sfwexample.h Example File" subtitle="declarative/sfwexample.h" location=""/>
-            <page access="public" status="commendable" name="declarative/landlinedialer/landlinedialer.cpp" href="declarative-landlinedialer-landlinedialer-cpp.html" subtype="file" title="" fulltitle="landlinedialer.cpp Example File" subtitle="declarative/landlinedialer/landlinedialer.cpp" location=""/>
-            <page access="public" status="commendable" name="declarative/landlinedialer/landlinedialer.h" href="declarative-landlinedialer-landlinedialer-h.html" subtype="file" title="" fulltitle="landlinedialer.h Example File" subtitle="declarative/landlinedialer/landlinedialer.h" location=""/>
-            <page access="public" status="commendable" name="declarative/landlinedialer/landlinedialerplugin.cpp" href="declarative-landlinedialer-landlinedialerplugin-cpp.html" subtype="file" title="" fulltitle="landlinedialerplugin.cpp Example File" subtitle="declarative/landlinedialer/landlinedialerplugin.cpp" location=""/>
-            <page access="public" status="commendable" name="declarative/landlinedialer/landlinedialerplugin.h" href="declarative-landlinedialer-landlinedialerplugin-h.html" subtype="file" title="" fulltitle="landlinedialerplugin.h Example File" subtitle="declarative/landlinedialer/landlinedialerplugin.h" location=""/>
-            <page access="public" status="commendable" name="declarative/voipdialer/voipdialer.cpp" href="declarative-voipdialer-voipdialer-cpp.html" subtype="file" title="" fulltitle="voipdialer.cpp Example File" subtitle="declarative/voipdialer/voipdialer.cpp" location=""/>
-            <page access="public" status="commendable" name="declarative/voipdialer/voipdialer.h" href="declarative-voipdialer-voipdialer-h.html" subtype="file" title="" fulltitle="voipdialer.h Example File" subtitle="declarative/voipdialer/voipdialer.h" location=""/>
-            <page access="public" status="commendable" name="declarative/voipdialer/voipdialerplugin.cpp" href="declarative-voipdialer-voipdialerplugin-cpp.html" subtype="file" title="" fulltitle="voipdialerplugin.cpp Example File" subtitle="declarative/voipdialer/voipdialerplugin.cpp" location=""/>
-            <page access="public" status="commendable" name="declarative/voipdialer/voipdialerplugin.h" href="declarative-voipdialer-voipdialerplugin-h.html" subtype="file" title="" fulltitle="voipdialerplugin.h Example File" subtitle="declarative/voipdialer/voipdialerplugin.h" location=""/>
-            <page access="public" status="commendable" name="declarative/main.cpp" href="declarative-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="declarative/main.cpp" location=""/>
-            <page access="public" status="commendable" name="declarative/declarative.pro" href="declarative-declarative-pro.html" subtype="file" title="" fulltitle="declarative.pro Example File" subtitle="declarative/declarative.pro" location=""/>
-            <page access="public" status="commendable" name="declarative/demo/demo.pro" href="declarative-demo-demo-pro.html" subtype="file" title="" fulltitle="demo.pro Example File" subtitle="declarative/demo/demo.pro" location=""/>
-            <page access="public" status="commendable" name="declarative/landlinedialer/landlinedialer.pro" href="declarative-landlinedialer-landlinedialer-pro.html" subtype="file" title="" fulltitle="landlinedialer.pro Example File" subtitle="declarative/landlinedialer/landlinedialer.pro" location=""/>
-            <page access="public" status="commendable" name="declarative/voipdialer/voipdialer.pro" href="declarative-voipdialer-voipdialer-pro.html" subtype="file" title="" fulltitle="voipdialer.pro Example File" subtitle="declarative/voipdialer/voipdialer.pro" location=""/>
         </page>
         <page access="public" status="commendable" name="flickrdemo" href="flickrdemo.html" subtype="example" title="Flickr Demo Example" fulltitle="Flickr Demo Example" subtitle="" location="flickrdemo.qdoc">
             <page access="public" status="commendable" name="flickrdemo/connectivityhelper.cpp" href="flickrdemo-connectivityhelper-cpp.html" subtype="file" title="" fulltitle="connectivityhelper.cpp Example File" subtitle="flickrdemo/connectivityhelper.cpp" location=""/>
@@ -7552,6 +7550,16 @@
             <page access="public" status="commendable" name="lightmaps/lightmaps.pro" href="lightmaps-lightmaps-pro.html" subtype="file" title="" fulltitle="lightmaps.pro Example File" subtitle="lightmaps/lightmaps.pro" location=""/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QMediaPlayerControl_iid" href="qmediaplayercontrol.html#QMediaPlayerControl_iid" location="qmediaplayercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QMediaPlayerControl" type="" signature="QMediaPlayerControl_iid()"/>
+        <page access="public" status="commendable" name="contactsasync.html" href="contactsasync.html" subtype="page" title="Contacts Asynchronous API" fulltitle="Contacts Asynchronous API" subtitle="" location="contactsasync.qdoc">
+            <contents name="introduction" title="Introduction" level="1"/>
+            <contents name="using-the-api" title="Using the API" level="1"/>
+            <contents name="contact-manipulation" title="Contact Manipulation" level="2"/>
+            <contents name="relationship-manipulation" title="Relationship Manipulation" level="3"/>
+            <contents name="schema-manipulation" title="Schema Manipulation" level="2"/>
+            <contents name="examples-of-usage" title="Examples Of Usage" level="1"/>
+            <contents name="fetching-contacts" title="Fetching Contacts" level="2"/>
+            <contents name="other-asynchronous-operations" title="Other Asynchronous Operations" level="2"/>
+        </page>
         <page access="public" status="commendable" name="contactsschema.html" href="contactsschema.html" subtype="page" title="Qt Contacts Schema" fulltitle="Qt Contacts Schema" subtitle="" location="contactsschema.qdoc">
             <contents name="introduction" title="Introduction" level="1"/>
             <contents name="schema-definition" title="Schema Definition" level="1"/>
@@ -7720,9 +7728,13 @@
             <contents name="building" title="Building" level="1"/>
             <contents name="building-on-unix" title="Building On Unix" level="2"/>
             <contents name="building-on-windows" title="Building On Windows" level="2"/>
+            <contents name="building-for-windows-ce" title="Building For Windows CE" level="2"/>
             <contents name="building-for-symbian-on-windows" title="Building For Symbian On Windows" level="2"/>
-            <contents name="building-individual-qt-mobility-domains" title="Building Individual Qt Mobility Domains" level="2"/>
-            <contents name="environment-variables" title="Environment Variables" level="1"/>
+            <contents name="building-individual-qt-mobility-modules" title="Building Individual Qt Mobility Modules" level="2"/>
+            <contents name="making-the-libraries-available-to-applications" title="Making the libraries available to applications" level="1"/>
+            <contents name="making-the-libraries-available-on-unix" title="Making the libraries available on Unix" level="2"/>
+            <contents name="making-the-libraries-available-on-windows" title="Making the libraries available on Windows" level="2"/>
+            <contents name="making-the-libraries-available-on-windows-ce" title="Making the libraries available on Windows CE" level="2"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoWidgetControl_iid" href="qvideowidgetcontrol.html#QVideoWidgetControl_iid" location="qvideowidgetcontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoWidgetControl" type="" signature="QVideoWidgetControl_iid()"/>
         <page access="public" status="commendable" name="weatherinfo" href="weatherinfo.html" subtype="example" title="Weather Info Example" fulltitle="Weather Info Example" subtitle="" location="weatherinfo.qdoc">

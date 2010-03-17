@@ -1356,6 +1356,14 @@
         <keyword ref="qcontactsynctarget.html#FieldSyncTarget-var">FieldSyncTarget</keyword>
         <section ref="qcontactsynctarget-members.html" title="List of all members"/>
     </section>
+    <section ref="qcontacttag.html" title="QContactTag Class Reference">
+        <keyword ref="qcontacttag.html">QContactTag</keyword>
+        <keyword ref="qcontacttag.html#setTag">setTag</keyword>
+        <keyword ref="qcontacttag.html#tag">tag</keyword>
+        <keyword ref="qcontacttag.html#DefinitionName-var">DefinitionName</keyword>
+        <keyword ref="qcontacttag.html#FieldTag-var">FieldTag</keyword>
+        <section ref="qcontacttag-members.html" title="List of all members"/>
+    </section>
     <section ref="qcontacttimestamp.html" title="QContactTimestamp Class Reference">
         <keyword ref="qcontacttimestamp.html">QContactTimestamp</keyword>
         <keyword ref="qcontacttimestamp.html#created">created</keyword>
@@ -2162,7 +2170,7 @@
         <keyword ref="qmessage.html#Type-enum">Type</keyword>
         <keyword ref="qmessage.html#Type-enum">TypeFlags</keyword>
         <keyword ref="qmessage.html#Type-enum">QMessage::Sms</keyword>
-        <keyword ref="qmessage.html#Type-enum">QMessage::Xmpp</keyword>
+        <keyword ref="qmessage.html#Type-enum">QMessage::InstantMessage</keyword>
         <keyword ref="qmessage.html#Type-enum">QMessage::NoType</keyword>
         <keyword ref="qmessage.html#Type-enum">QMessage::Email</keyword>
         <keyword ref="qmessage.html#Type-enum">QMessage::AnyType</keyword>
@@ -2245,13 +2253,13 @@
     <section ref="qmessageaddress.html" title="QMessageAddress Class Reference">
         <keyword ref="qmessageaddress.html">QMessageAddress</keyword>
         <keyword ref="qmessageaddress.html#Type-enum">Type</keyword>
-        <keyword ref="qmessageaddress.html#Type-enum">QMessageAddress::Xmpp</keyword>
+        <keyword ref="qmessageaddress.html#Type-enum">QMessageAddress::InstantMessage</keyword>
         <keyword ref="qmessageaddress.html#Type-enum">QMessageAddress::Email</keyword>
         <keyword ref="qmessageaddress.html#Type-enum">QMessageAddress::Phone</keyword>
         <keyword ref="qmessageaddress.html#Type-enum">QMessageAddress::System</keyword>
+        <keyword ref="qmessageaddress.html#addressee">addressee</keyword>
         <keyword ref="qmessageaddress.html#parseEmailAddress">parseEmailAddress</keyword>
-        <keyword ref="qmessageaddress.html#recipient">recipient</keyword>
-        <keyword ref="qmessageaddress.html#setRecipient">setRecipient</keyword>
+        <keyword ref="qmessageaddress.html#setAddressee">setAddressee</keyword>
         <keyword ref="qmessageaddress.html#setType">setType</keyword>
         <keyword ref="qmessageaddress.html#type">type</keyword>
         <section ref="qmessageaddress-members.html" title="List of all members"/>
@@ -3305,6 +3313,10 @@
     </section>
     <section ref="qversitdocument.html" title="QVersitDocument Class Reference">
         <keyword ref="qversitdocument.html">QVersitDocument</keyword>
+        <keyword ref="qversitdocument.html#VersitType-enum">VersitType</keyword>
+        <keyword ref="qversitdocument.html#VersitType-enum">QVersitDocument::VCard30Type</keyword>
+        <keyword ref="qversitdocument.html#VersitType-enum">QVersitDocument::VCard21Type</keyword>
+        <keyword ref="qversitdocument.html#VersitType-enum">QVersitDocument::InvalidType</keyword>
         <keyword ref="qversitdocument.html#addProperty">addProperty</keyword>
         <keyword ref="qversitdocument.html#clear">clear</keyword>
         <keyword ref="qversitdocument.html#isEmpty">isEmpty</keyword>
@@ -3573,6 +3585,12 @@
     </section>
     <section ref="contacts.html" title="Contacts">
         <keyword ref="contacts.html">Contacts</keyword>
+    </section>
+    <section ref="contactsasync.html" title="Contacts Asynchronous API">
+        <keyword ref="contactsasync.html">Contacts Asynchronous API</keyword>
+    </section>
+    <section ref="contactssync.html" title="Contacts Synchronous API">
+        <keyword ref="contactssync.html">Contacts Synchronous API</keyword>
     </section>
     <section ref="creating-a-sensor-plugin.html" title="Creating a sensor plugin">
         <keyword ref="creating-a-sensor-plugin.html">Creating a sensor plugin</keyword>
