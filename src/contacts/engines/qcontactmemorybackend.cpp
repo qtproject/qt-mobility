@@ -178,21 +178,7 @@ QContact QContactMemoryEngine::contact(const QContactLocalId& contactId, const Q
     if (index != -1) {
         // found the contact successfully.
         error = QContactManager::NoError;
-        QContact retn = d->m_contacts.at(index);
-
-        // synthesize the display label if we need to.
-        QContactDisplayLabel dl = retn.detail(QContactDisplayLabel::DefinitionName);
-        if (dl.label().isEmpty()) {
-            QContactManager::Error synthError;
-            retn = setContactDisplayLabel(synthesizedDisplayLabel(retn, synthError), retn);
-        }
-
-        // also, retrieve the current relationships the contact is involved with.
-        QList<QContactRelationship> relationshipCache = d->m_orderedRelationships.value(contactId);
-        QContactManagerEngine::setContactRelationships(&retn, relationshipCache);
-
-        // and return the contact
-        return retn;
+        return d->m_contacts.at(index);
     }
 
     error = QContactManager::DoesNotExistError;
@@ -433,19 +419,21 @@ bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, 
     // Attempt to validate the relationship.
     // first, check that the source contact exists and is in this manager.
     QString myUri = managerUri();
+    int firstContactIndex = d->m_contactIds.indexOf(relationship->first().localId());
     if ((!relationship->first().managerUri().isEmpty() && relationship->first().managerUri() != myUri)
-            ||!d->m_contactIds.contains(relationship->first().localId())) {
+            ||firstContactIndex == -1) {
         error = QContactManager::InvalidRelationshipError;
         return false;
     }
 
     // second, check that the second contact exists (if it's local); we cannot check other managers' contacts.
     QContactId dest = relationship->second();
+    int secondContactIndex = d->m_contactIds.indexOf(dest.localId());
 
     if (dest.managerUri().isEmpty() || dest.managerUri() == myUri) {
         // this entry in the destination list is supposedly stored in this manager.
         // check that it exists, and that it isn't the source contact (circular)
-        if (!d->m_contactIds.contains(dest.localId()) || dest.localId() == relationship->first().localId()) {
+        if (secondContactIndex == -1 || dest.localId() == relationship->first().localId()) {
             error = QContactManager::InvalidRelationshipError;
             return false;
         }
@@ -465,8 +453,6 @@ bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, 
     for (int i = 0; i < allRelationships.size(); i++) {
         QContactRelationship curr = allRelationships.at(i);
         if (curr == *relationship) {
-            d->m_relationships.removeAt(i);
-            d->m_relationships.insert(i, *relationship);
             return true;
             // TODO: set error to AlreadyExistsError and return false?
         }
@@ -481,6 +467,10 @@ bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, 
     d->m_orderedRelationships.insert(relationship->second().localId(), secondRelationships);
     changeSet.addedRelationshipsContacts().insert(relationship->first().localId());
     changeSet.addedRelationshipsContacts().insert(relationship->second().localId());
+
+    // update the contacts involved
+    QContactManagerEngine::setContactRelationships(&d->m_contacts[firstContactIndex], firstRelationships);
+    QContactManagerEngine::setContactRelationships(&d->m_contacts[secondContactIndex], secondRelationships);
 
     // finally, insert into our list of all relationships, and return.
     d->m_relationships.append(*relationship);
@@ -527,6 +517,14 @@ bool QContactMemoryEngine::removeRelationship(const QContactRelationship& relati
     secondRelationships.removeOne(relationship);
     d->m_orderedRelationships.insert(relationship.first().localId(), firstRelationships);
     d->m_orderedRelationships.insert(relationship.second().localId(), secondRelationships);
+
+    // Update the contacts as well
+    int firstContactIndex = d->m_contactIds.indexOf(relationship.first().localId());
+    int secondContactIndex = relationship.second().managerUri() == managerUri() ? d->m_contactIds.indexOf(relationship.second().localId()) : -1;
+    if (firstContactIndex != -1)
+        QContactMemoryEngine::setContactRelationships(&d->m_contacts[firstContactIndex], firstRelationships);
+    if (secondContactIndex != -1)
+        QContactMemoryEngine::setContactRelationships(&d->m_contacts[secondContactIndex], secondRelationships);
 
     // set our changes, and return.
     changeSet.removedRelationshipsContacts().insert(relationship.first().localId());
