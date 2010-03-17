@@ -42,7 +42,8 @@
 #ifndef QTRACKERCONTACTASYNCREQUEST_H_
 #define QTRACKERCONTACTASYNCREQUEST_H_
 
-#include <QContactAbstractRequest>
+#include <qmobilityglobal.h>
+#include <qcontactabstractrequest.h>
 
 QTM_USE_NAMESPACE
 

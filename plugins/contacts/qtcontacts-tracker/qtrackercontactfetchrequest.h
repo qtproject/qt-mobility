@@ -44,8 +44,9 @@
 
 #include "qtrackercontactasyncrequest.h"
 
-#include <QContactOnlineAccount>
-#include <QContactManager>
+#include <qmobilityglobal.h>
+#include <qcontactonlineaccount.h>
+#include <qcontactmanager.h>
 
 #include <QtTracker/Tracker>
 #include <QtTracker/QLive>
