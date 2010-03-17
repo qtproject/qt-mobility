@@ -121,7 +121,6 @@ public:
     }
 
     QList<QContactManagerEngine*> m_sharedEngines;   // The list of engines that share this data
-    QQueue<QContactAbstractRequest*> m_asynchronousOperations; // async requests to be performed.
 };
 
 class QContactMemoryEngine : public QContactManagerEngine
@@ -204,9 +203,6 @@ public:
 protected:
     QContactMemoryEngine(QContactMemoryEngineData* data);
 
-private slots:
-    void performAsynchronousOperation();
-
 private:
     /* Implement "signal coalescing" for batch functions via change set */
     bool saveContact(QContact* theContact, QContactChangeSet& changeSet, QContactManager::Error& error);
@@ -215,6 +211,8 @@ private:
     bool removeDetailDefinition(const QString& definitionId, const QString& contactType, QContactChangeSet& changeSet, QContactManager::Error& error);
     bool saveRelationship(QContactRelationship* relationship, QContactChangeSet& changeSet, QContactManager::Error& error);
     bool removeRelationship(const QContactRelationship& relationship, QContactChangeSet& changeSet, QContactManager::Error& error);
+
+    void performAsynchronousOperation(QContactAbstractRequest* request);
 
     QContactMemoryEngineData* d;
     static QMap<QString, QContactMemoryEngineData*> engineDatas;

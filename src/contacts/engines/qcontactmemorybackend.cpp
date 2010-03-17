@@ -53,6 +53,8 @@
 #include <QTimer>
 #include <QUuid>
 #include <QSharedData>
+#include <QDebug>
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -627,24 +629,24 @@ bool QContactMemoryEngine::removeDetailDefinition(const QString& definitionId, c
 /*! \reimp */
 void QContactMemoryEngine::requestDestroyed(QContactAbstractRequest* req)
 {
-    d->m_asynchronousOperations.removeOne(req);
+    Q_UNUSED(req);
 }
 
 /*! \reimp */
 bool QContactMemoryEngine::startRequest(QContactAbstractRequest* req)
 {
-    if (!d->m_asynchronousOperations.contains(req))
-        d->m_asynchronousOperations.enqueue(req);
+    if (!req)
+        return false;
     updateRequestState(req, QContactAbstractRequest::ActiveState);
-    QTimer::singleShot(0, this, SLOT(performAsynchronousOperation()));
+    performAsynchronousOperation(req);
     return true;
 }
 
 /*! \reimp */
 bool QContactMemoryEngine::cancelRequest(QContactAbstractRequest* req)
 {
-    updateRequestState(req, QContactAbstractRequest::CanceledState);
-    return true;
+    Q_UNUSED(req); // we can't cancel since we complete immediately
+    return false;
 }
 
 /*! \reimp */
@@ -652,15 +654,7 @@ bool QContactMemoryEngine::waitForRequestFinished(QContactAbstractRequest* req, 
 {
     // in our implementation, we always complete any operation we start.
     Q_UNUSED(msecs);
-
-    if (!d->m_asynchronousOperations.removeOne(req))
-        return false; // didn't exist.
-
-    // replace at head of queue
-    d->m_asynchronousOperations.insert(0, req);
-
-    // and perform the operation.
-    performAsynchronousOperation();
+    Q_UNUSED(req);
 
     return true;
 }
@@ -669,20 +663,8 @@ bool QContactMemoryEngine::waitForRequestFinished(QContactAbstractRequest* req, 
  * This slot is called some time after an asynchronous request is started.
  * It performs the required operation, sets the result and returns.
  */
-void QContactMemoryEngine::performAsynchronousOperation()
+void QContactMemoryEngine::performAsynchronousOperation(QContactAbstractRequest *currentRequest)
 {
-    QContactAbstractRequest *currentRequest;
-
-    // take the first pending request and finish it
-    if (d->m_asynchronousOperations.isEmpty())
-        return;
-    currentRequest = d->m_asynchronousOperations.dequeue();
-
-    // check to see if it is cancelling; if so, remove it from the queue and return.
-    if (currentRequest->state() == QContactAbstractRequest::CanceledState) {
-        return;
-    }
-
     // store up changes, and emit signals once at the end of the (possibly batch) operation.
     QContactChangeSet changeSet;
 
@@ -697,7 +679,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
             QStringList defs = r->definitionRestrictions();
 
             QContactManager::Error operationError;
-            QList<QContact> requestedContacts = QContactManagerEngine::contacts(filter, sorting, defs, operationError);
+            QList<QContact> requestedContacts = contacts(filter, sorting, defs, operationError);
 
             // update the request with the results.
             if (!requestedContacts.isEmpty() || operationError != QContactManager::NoError)
@@ -714,7 +696,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
             QList<QContactSortOrder> sorting = r->sorting();
 
             QContactManager::Error operationError = QContactManager::NoError;
-            QList<QContactLocalId> requestedContactIds = QContactManagerEngine::contactIds(filter, sorting, operationError);
+            QList<QContactLocalId> requestedContactIds = contactIds(filter, sorting, operationError);
 
             if (!requestedContactIds.isEmpty() || operationError != QContactManager::NoError)
                 updateContactLocalIdFetchRequest(r, requestedContactIds, operationError, QContactAbstractRequest::FinishedState);
