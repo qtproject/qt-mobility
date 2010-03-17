@@ -42,7 +42,6 @@
 #include "qcontactabook_p.h"
 
 #include <QEventLoop>
-
 #include <libebook/e-book-util.h>
 
 
@@ -299,7 +298,7 @@ bool QContactABook::removeContact(const QContactLocalId& contactId, QContactMana
   Q_UNUSED(error);
   
   bool ok = false;
-  OssoABookRoster* roster = reinterpret_cast<OssoABookRoster*>(m_abookAgregator);
+  OssoABookRoster* roster = A_ROSTER(m_abookAgregator);
   EBook *book = osso_abook_roster_get_book(roster);
   OssoABookContact* aContact = getAContact(contactId);
   
@@ -1393,7 +1392,7 @@ void QContactABook::setAvatarDetail(const OssoABookContact* aContact, const QCon
  
   EBook *book;
   {
-    OssoABookRoster* roster = reinterpret_cast<OssoABookRoster*>(m_abookAgregator);
+    OssoABookRoster* roster = A_ROSTER(m_abookAgregator);
     book = osso_abook_roster_get_book(roster);
   }
 

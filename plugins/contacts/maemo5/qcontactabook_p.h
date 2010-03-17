@@ -53,6 +53,7 @@
 #include <libosso-abook/osso-abook-waitable.h>
 #include <libosso-abook/osso-abook-presence.h>
 #include <libosso-abook/osso-abook-avatar.h>
+#include <libosso-abook/osso-abook-caps.h>
 //#include <libosso-abook/osso-abook-account-manager.h>
 
 #include <libmcclient/mc-profile.h>
