@@ -62,10 +62,13 @@
     {
         QApplication app(argc, argv);
 
-        Player player;
     #ifdef Q_OS_SYMBIAN
-        player.showMaximized();
+        QMainWindow window;
+        Player *player = new Player(&amp;window);
+        window.setCentralWidget(player);
+        window.showMaximized();
     #else
+        Player player;
         player.show();
     #endif
         return app.exec();
