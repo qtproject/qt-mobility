@@ -1,0 +1,258 @@
+#! /bin/bash
+################################################################################
+### git-send-review ############################################################
+################################################################################
+### License: GPL2
+###
+### usage: git-send-review
+###
+### Sends commits as mails from local branch HEAD against local master HEAD to
+### review addresss. If local branch is not given as a prameter, currently
+### checkedout branch is used.
+### Copy script into some directory which is in execution path.
+### Variables are stored with git-config and those can be repository specific.
+###
+### Author: tapio laxstrom <tapio.laxstrom@cybercom.com>
+################################################################################
+VERSION="0.4"
+################################################################################
+### Helpper functions. #########################################################
+################################################################################
+
+### Print optinal message, which is given as a parameter, remove generated files
+### and exit.
+clean_and_exit() {
+    if [ -n "$1" ] ; then
+        echo $1
+    fi
+    rm -rf $TMPDIR
+    exit
+}
+
+### Usage
+print_usage() {
+    echo "Usage: $0" ;
+    echo "Supported commandline parameters:" ;
+    echo "-h, --help" ;
+    echo "      Print this help." ;
+    echo "-d, --dry-run" ;
+    echo "      Do not execute commands, just print what will be done."
+    echo "-s <sub>, --subject <sub>" ;
+    echo "      Subject for summary mail." ;
+    echo "-f <commit>, --from-commit <commit>" ;
+    echo "      From commit where to start patch creation." ;
+    echo "      See \"SPECIFYING REVISIONS\" section in git-rev-parse(1) for more details." ;
+    echo "      Defaults to \"master\"." ;
+    echo "-t <commit>, --to-commit <commit>" ;
+    echo "      To commit where to end patch creation." ;
+    echo "      See \"SPECIFYING REVISIONS\" section in git-rev-parse(1) for more details." ;
+    echo "      Defaults to \"HEAD\"." ;
+    echo "-e <address>, --email-to <address>" ;
+    echo "      Address where mails are send to." ;
+    echo "-v, --version" ;
+    echo "      Print version of the script." ;
+}
+
+### Test that required commands are installed. If not, print apt-get
+### installation line.
+check_required_commands() {
+    ERR_SO_EXIT="false"
+
+    which git > /dev/null
+    if [ "$?" != "0" ] ; then
+        echo "Git core is missing. Install with 'apt-get install git-core'."
+        ERR_SO_EXIT="true"
+    fi
+    
+    which wc > /dev/null
+    if [ "$?" != "0" ] ; then
+        echo "Core utils are missing. Install with 'apt-get install git-core'."
+        ERR_SO_EXIT="true"
+    fi
+
+    if [ ! -e `git --exec-path `/git-send-email ] ; then
+        echo "Git send-email is missing. Install with 'apt-get install git-email'."
+        ERR_SO_EXIT="true"
+    fi
+
+    if [ "$ERR_SO_EXIT" == "true" ] ; then
+        clean_and_exit "Fix errors above and try again."
+    fi
+}
+
+### Get required variables from git config. If variable is not set, print
+### instructions for user how to set it.
+check_required_gitconfig_variables() {
+    USERADDRESS=`git config review.email`
+    if [ -z "$USERADDRESS" ] ; then
+        echo "Set your email with 'git config review.email \"<your_email>\"'"
+        echo "   This is used in from field of the review mail."
+        CHECKFAIL="true"
+    fi
+
+    REVIEWADDRESS=`git config review.to`
+    if [ -z "$REVIEWADDRESS" ] ; then
+        echo "Set review email address with 'git config review.to \"<review_address>\"'"
+        CHECKFAIL="true"
+    fi
+
+    SMTPSERVER=`git config review.smtpserver`
+    if [ -z "$SMTPSERVER" ] ; then
+        echo "Set smtp server with 'git config review.smtpserver \"<smtpserver>\"'"
+        CHECKFAIL="true"
+    fi
+
+    CONFIGFROMCOMMIT=`git config review.fromcommit`
+    if [ -z "$CONFIGFROMCOMMIT" ] ; then
+        echo "You can set default patch start commit with 'git config review.fromcommit \"<commit>\"'"
+        echo "   default: master/HEAD"
+        echo "   See \"SPECIFYING REVISIONS\" section in git-rev-parse(1) for more details." ;
+    else
+        FROMCOMMIT="$CONFIGFROMCOMMIT" ;
+    fi
+
+    if [ -n "$CHECKFAIL" ] ; then
+        clean_and_exit "Fix errors above and try again."
+    fi
+}
+
+### Write summary mail with short description about each commit. Subject is
+### taken from last commit. All other mails are send as a reply to this one.
+summary_mail() {
+    PATCHCOUNT=`ls -1 $TMPDIR| wc -l`
+    if [ "$PATCHCOUNT" == "0" ]; then
+        clean_and_exit "No paches to mail. Are you sure the correct brach is checked out?"
+    fi
+
+    SUMMARYSUBJECT="[PATCH 0/$PATCHCOUNT] $SUBJECT"
+
+    cat << EOF > $TMPDIR/0000-summary-mail
+From: $REPLYADDRESS
+Subject: $SUMMARYSUBJECT
+Message-Id: $SUMMARYID
+
+Using git-send-review version $VERSION
+Diff against '$FROMCOMMIT'
+---
+EOF
+    git log $FROMCOMMIT..$TOCOMMIT | git shortlog >> $TMPDIR/0000-summary-mail
+    git diff $FROMCOMMIT..$TOCOMMIT >> $TMPDIR/0000-summary-mail
+
+    echo -n "Ok to send $PATCHCOUNT patch(es) ($FROMCOMMIT..$TOCOMMIT) to $REVIEWADDRESS? [y]/n: ";
+    read OKTOSEND;
+    if [ "$OKTOSEND" == "n" ]; then
+        echo "You can change '$FROMCOMMIT' with -f and '$TOCOMMIT' with -t (more info with -h)";
+        clean_and_exit "Send canceled";
+    fi
+    $SUMMARYSENDCMD $TMPDIR/0000-summary-mail
+    rm $TMPDIR/0000-summary-mail
+    sleep 10
+}
+
+
+################################################################################
+### Setup variables (do not edit). #############################################
+################################################################################
+FROMCOMMIT="master"
+TOCOMMIT="HEAD"
+
+check_required_commands
+check_required_gitconfig_variables
+
+### Handle commandline parameters
+until [ -z "$1" ] ;
+do
+    case "$1" in
+        "-s" | \
+        "--subject" )
+            # subject for summary mail
+            shift
+            SUBJECT="$1"
+            ;;
+        "-f" | \
+        "--from-commit" )
+            shift
+            FROMCOMMIT="$1"
+            ;;
+        "-t" | \
+        "--to-commit" )
+            shift
+            TOCOMMIT="$1"
+            ;;
+        "-d" | \
+        "--dry-run" )
+            # just test
+            DRYRUN="--dry-run"
+            ;;
+        "-e" | \
+        "--email-to" )
+            shift
+            REVIEWADDRESS="$1"
+            ;;
+        "-v" | \
+        "--version" )
+            echo "$0 version $VERSION";
+            exit
+            ;;
+        "-h" | \
+        "--help" | \
+        * )
+            print_usage
+            exit
+            ;;
+    esac
+    shift
+done
+
+REPLYADDRESS="$REVIEWADDRESS"
+if [ -z "$SUBJECT" ] ; then 
+    SUBJECT=`git log --pretty=format:%s -1`
+fi
+
+TMPDIR="/tmp/peopletmp";
+if [ -e "$TMPDIR" ] ; then
+    rm -r $TMPDIR
+fi
+
+STAMP=`date +%Y%m%d%I%M.%N`
+SUMMARYID="<$STAMP@projects.maemo.org>"
+SUMMARYSENDCMD="git send-email \
+    --quiet \
+    --to $REVIEWADDRESS \
+    --from $USERADDRESS \
+    --smtp-server $SMTPSERVER \
+    --no-signed-off-by-cc \
+    --no-suppress-from \
+    $DRYRUN \
+    "
+
+PATCHSENDCMD="git send-email \
+    --quiet \
+    --to $REVIEWADDRESS \
+    --suppress-from \
+    --smtp-server $SMTPSERVER \
+    --in-reply-to $SUMMARYID \
+    --no-signed-off-by-cc \
+    --no-chain-reply-to \
+    --suppress-from \
+    $DRYRUN \
+    "
+
+################################################################################
+### Script starts here. ########################################################
+################################################################################
+## ALWAYS REBASE YOUR LOCAL BRANCH BEFORE CREATING PATCHES
+
+## create patches to tmp dir
+git format-patch -n -o $TMPDIR $FROMCOMMIT..$TOCOMMIT  || clean_and_exit "Failed to create patches"
+
+## format and send summary mail
+summary_mail
+
+## send patches as reply to summary
+for i in $TMPDIR/00*;
+do
+    $PATCHSENDCMD $i
+done
+
+clean_and_exit "Done"

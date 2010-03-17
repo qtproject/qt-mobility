@@ -1,0 +1,11 @@
+libqtcontacts-tracker (4.5.3~git20100205.1) unstable; urgency=low
+
+  * Change packge name to reflect the QtMobility release name.
+
+ -- tapio <tapio.laxstrom@plenware.fi>  Fri, 05 Feb 2010 12:32:37 +0200
+
+qtcontacts-tracker (4.5.3~git20100204.1) unstable; urgency=low
+
+  * Initial release
+
+ -- tapio <tapio.laxstrom@plenware.fi>  Thu, 04 Feb 2010 13:19:17 +0200
