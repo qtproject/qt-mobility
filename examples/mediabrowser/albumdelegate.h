@@ -39,59 +39,35 @@
 **
 ****************************************************************************/
 
-#include "albumview.h"
+#ifndef ALBUMDELEGATE_H
+#define ALBUMDELEGATE_H
 
-#include "albumdelegate.h"
-#include "gallerymodel.h"
+#include <QtGui/QAbstractItemDelegate>
 
-#include <QtGui>
-
-#include <qgallery.h>
-
-AlbumView::AlbumView(QWidget *parent)
-    : GalleryView(parent)
+class AlbumDelegate : public QAbstractItemDelegate
 {
-    setType(QDocumentGallery::Album);
-    setFields(QStringList()
-            << QDocumentGallery::title
-            << QDocumentGallery::artist
-            << QDocumentGallery::trackCount
-            << QDocumentGallery::duration
-            << QDocumentGallery::rating);
-    setSortFields(QStringList()
-            << QDocumentGallery::title);
+    Q_OBJECT
+public:
+    enum Role
+    {
+        ArtistRole
+    };
 
-    model = new GalleryModel;
-    model->setDisplayFieldForColumn(0, QDocumentGallery::title);
-    model->setUserRoleFields(QVector<QString>() << QDocumentGallery::artist);
+    AlbumDelegate(QObject *parent = 0);
+    ~AlbumDelegate();
 
-    QListView *view = new QListView;
-    view->setIconSize(QSize(100, 100));
-    view->setFlow(QListView::LeftToRight);
-    view->setViewMode(QListView::IconMode);
-    view->setUniformItemSizes(true);
-    view->setModel(model);
-    view->setItemDelegate(new AlbumDelegate(this));
+    void paint(
+            QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
-    QBoxLayout *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    layout->setSpacing(0);
-    layout->addWidget(view);
+    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
-    setLayout(layout);
-}
+private:
+    void layout(const QStyleOptionViewItem &option) const;
 
-AlbumView::~AlbumView()
-{
-}
+    QRect thumbnailRect;
+    QRect titleRect;
+    QRect artistRect;
+    QSize size;
+};
 
-void AlbumView::mediaChanged()
-{
-    model->setList(media());
-}
-
-void AlbumView::activated(const QModelIndex &index)
-{
-    emit showSongs(QGalleryContainerFilter(media()->id(index.row())));
-}
-
+#endif

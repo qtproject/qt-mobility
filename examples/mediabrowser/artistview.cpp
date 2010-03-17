@@ -41,6 +41,7 @@
 
 #include "artistview.h"
 
+#include "artistdelegate.h"
 #include "gallerymodel.h"
 
 #include <QtGui>
@@ -63,7 +64,12 @@ ArtistView::ArtistView(QWidget *parent)
     model->setDisplayFieldForColumn(0, QDocumentGallery::title);
 
     QListView *view = new QListView;
+    view->setIconSize(QSize(100, 100));
+    view->setFlow(QListView::LeftToRight);
+    view->setViewMode(QListView::IconMode);
+    view->setUniformItemSizes(true);
     view->setModel(model);
+    view->setItemDelegate(new ArtistDelegate(this));
 
     QBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
