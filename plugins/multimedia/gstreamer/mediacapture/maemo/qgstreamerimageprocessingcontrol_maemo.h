@@ -48,6 +48,9 @@
 #include <gst/gst.h>
 #include <glib.h>
 
+#include <gst/interfaces/photography.h>
+#include <gst/interfaces/colorbalance.h>
+
 class QGstreamerCaptureSession;
 
 QTM_USE_NAMESPACE
@@ -86,11 +89,14 @@ public:
     void unlockWhiteBalance();
 
 private:
+    bool setColorBalanceValue(const QString& channel, int value);
+    void updateColorBalanceValues();
+
+private:
     QGstreamerCaptureSession *m_session;
     GstElement &m_camerabin;
-/*Q_SIGNALS:
-    void whiteBalanceLocked();
-    */
+    QMap<QString, int> m_values;
+    QMap<GstWhiteBalanceMode, QCamera::WhiteBalanceMode> m_mappedWbValues;
 };
 
 #endif // QGSTREAMERIMAGEPROCESSINGCONTROL_H
