@@ -124,7 +124,7 @@ void CntFilterDetailDisplayLabel::createSelectQuery(const QContactFilter& filter
             }
             
             if(!subQuery.isEmpty()){
-            sqlQuery += " AND (" + subQuery + ")";
+            sqlQuery += " AND (" + subQuery + ')';
             }
        
             error = QContactManager::NoError;
@@ -186,7 +186,7 @@ QString CntFilterDetailDisplayLabel::createSelectQuery(const QContactFilter& fil
             }
             
             if(!subQuery.isEmpty()){
-                result += " AND (" + subQuery + ")";
+                result += " AND (" + subQuery + ')';
             }
        
             error = QContactManager::NoError;
@@ -246,7 +246,7 @@ void CntFilterDetailDisplayLabel::createQueryMultipleSearchValues(QString& sqlQu
  */
 QString CntFilterDetailDisplayLabel::createSubQuery(const QString &searchValue, const QString &column) const
 {
-    return ("(" + column + " LIKE \'" + searchValue + "%\' OR " + column + " LIKE \'% " + searchValue + "%\')");
+    return ('(' + column + " LIKE \'" + searchValue + "%\' OR " + column + " LIKE \'% " + searchValue + "%\')");
 }
 
 /*

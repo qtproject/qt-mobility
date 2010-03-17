@@ -94,7 +94,7 @@ void TestRunner::printResults()
     printf("\nTests executed: %d\n",mTestCount);
     if (mErrors.count() > 0) {
         printf("Failures (%d):\n", mErrors.count());
-        foreach(QString error, mErrors) {
+        foreach(const QString& error, mErrors) {
             printf("\n%s", error.toUtf8().data());
         }
         printf("\n");
@@ -162,13 +162,13 @@ bool TestRunner::characters(const QString& ch)
         QByteArray testResult = mCurrentTestName.toAscii() + " failed:\n";
         testResult += "File: ";
         testResult += mCurrentTestFile.toAscii();
-        testResult += "\n";
+        testResult += '\n';
         testResult += "Line: ";
         testResult += QByteArray::number(mCurrentTestFailureLine);
-        testResult += "\n";
+        testResult += '\n';
         testResult += "Reason: ";
         testResult += ch.toAscii();
-        testResult += "\n";
+        testResult += '\n';
         mErrors.append(QString::fromAscii(testResult.data()));
     }
     return true;

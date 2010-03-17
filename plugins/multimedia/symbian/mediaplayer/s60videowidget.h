@@ -47,7 +47,25 @@
 
 QTM_USE_NAMESPACE
 
-class QBlackWidget;
+class QBlackWidget : public QWidget
+{
+    Q_OBJECT
+    
+public:
+    QBlackWidget(QWidget *parent = 0);
+    virtual ~QBlackWidget();
+
+signals:
+    void beginVideoWindowNativePaint();
+    void endVideoWindowNativePaint();    
+    
+public slots:
+    void beginNativePaintEvent(const QRect&);
+    void endNativePaintEvent(const QRect&);
+    
+protected:
+    void paintEvent(QPaintEvent *event);
+};
 
 class S60VideoWidgetControl : public QVideoWidgetControl
 {
@@ -75,15 +93,19 @@ public:
     // from QObject
     bool eventFilter(QObject *object, QEvent *event);
 
+    //new methods
+    WId videoWidgetWId();
+    
 signals:
     void widgetUpdated();
+    void beginVideoWindowNativePaint();
+    void endVideoWindowNativePaint();
     
 private slots:
     void videoStateChanged(QMediaPlayer::State state);
     
 private:
     QBlackWidget *m_widget;
-    WId m_windowId;
     QVideoWidget::AspectRatioMode m_aspectRatioMode;
 };
 

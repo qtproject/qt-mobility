@@ -457,7 +457,7 @@ void QNetworkSessionPrivate::stop()
         }
         TUint numSubConnections; // Not used but needed by GetConnectionInfo i/f
         TUint connectionId;
-        for (TInt i = 1; i <= count; i++) {
+        for (TInt i = 1; i <= count; ++i) {
             // Get (connection monitor's assigned) connection ID
             TInt ret = iConnectionMonitor.GetConnectionInfo(i, connectionId, numSubConnections);            
             if (ret == KErrNone) {
@@ -786,7 +786,7 @@ void QNetworkSessionPrivate::RunL()
     TInt statusCode = iStatus.Int();
 
     switch (statusCode) {
-        case KErrNone: // Connection created succesfully
+        case KErrNone: // Connection created successfully
             {
             TInt error = KErrNone;
             QNetworkConfiguration newActiveConfig = activeConfiguration();

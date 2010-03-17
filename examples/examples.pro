@@ -63,14 +63,8 @@ contains(mobility_modules,multimedia) {
         player \
         cameracapture \
         slideshow \
-        streamplayer \
         audiorecorder
 
-    contains (QT_CONFIG, declarative) {
-        SUBDIRS += \
-            declarativemusic \
-            declarativevideo
-    }
 }
 
 

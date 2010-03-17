@@ -41,6 +41,7 @@
 
 #include "directshowsamplescheduler.h"
 
+#include <QtCore/qcoreapplication.h>
 #include <QtCore/qcoreevent.h>
 
 class DirectShowTimedSample
@@ -115,28 +116,25 @@ bool DirectShowTimedSample::isReady(IReferenceClock *clock) const
 }
 
 DirectShowSampleScheduler::DirectShowSampleScheduler(IUnknown *pin, QObject *parent)
-    : QWinEventNotifier(parent)
+    : QObject(parent)
     , m_pin(pin)
     , m_clock(0)
     , m_allocator(0)
     , m_head(0)
     , m_tail(0)
-    , m_maximumSamples(2)
+    , m_maximumSamples(1)
     , m_state(Stopped)
     , m_startTime(0)
     , m_timeoutEvent(::CreateEvent(0, 0, 0, 0))
+    , m_flushEvent(::CreateEvent(0, 0, 0, 0))
 {
     m_semaphore.release(m_maximumSamples);
-
-    setHandle(m_timeoutEvent);
-    setEnabled(true);
 }
 
 DirectShowSampleScheduler::~DirectShowSampleScheduler()
 {
-    setEnabled(false);
-
     ::CloseHandle(m_timeoutEvent);
+    ::CloseHandle(m_flushEvent);
 
     Q_ASSERT(!m_clock);
     Q_ASSERT(!m_allocator);
@@ -252,11 +250,28 @@ HRESULT DirectShowSampleScheduler::Receive(IMediaSample *pSample)
         if (m_state == Running) {
             if (!timedSample->schedule(m_clock, m_startTime, m_timeoutEvent)) {
                 // Timing information is unavailable, so schedule frames immediately.
-                QMetaObject::invokeMethod(this, "timerActivated", Qt::QueuedConnection);
+                QCoreApplication::postEvent(this, new QEvent(QEvent::UpdateRequest));
+            } else {
+                locker.unlock();
+                HANDLE handles[] = { m_flushEvent, m_timeoutEvent };
+                DWORD result = ::WaitForMultipleObjects(2, handles, FALSE, INFINITE);
+                locker.relock();
+
+                if (result == WAIT_OBJECT_0 + 1)
+                    QCoreApplication::postEvent(this, new QEvent(QEvent::UpdateRequest));
             }
         } else if (m_tail == m_head) {
-            // If this is the first frame make is available.
-            QMetaObject::invokeMethod(this, "timerActivated", Qt::QueuedConnection);
+            // If this is the first frame make it available.
+            QCoreApplication::postEvent(this, new QEvent(QEvent::UpdateRequest));
+
+            if (m_state == Paused) {
+                ::ResetEvent(m_timeoutEvent);
+
+                locker.unlock();
+                HANDLE handles[] = { m_flushEvent, m_timeoutEvent };
+                ::WaitForMultipleObjects(2, handles, FALSE, INFINITE);
+                locker.relock();
+            }
         }
 
         return S_OK;
@@ -293,6 +308,13 @@ void DirectShowSampleScheduler::run(REFERENCE_TIME startTime)
     for (DirectShowTimedSample *sample = m_head; sample; sample = sample->nextSample()) {
         sample->schedule(m_clock, m_startTime, m_timeoutEvent);
     }
+    
+    if (!(m_state & Flushing))
+        ::ResetEvent(m_flushEvent);
+    
+    if (!m_head)
+        ::SetEvent(m_timeoutEvent);
+
 }
 
 void DirectShowSampleScheduler::pause()
@@ -303,6 +325,9 @@ void DirectShowSampleScheduler::pause()
 
     for (DirectShowTimedSample *sample = m_head; sample; sample = sample->nextSample())
         sample->unschedule(m_clock);
+
+    if (!(m_state & Flushing))
+        ::ResetEvent(m_flushEvent);
 }
 
 void DirectShowSampleScheduler::stop()
@@ -319,6 +344,8 @@ void DirectShowSampleScheduler::stop()
 
     m_head = 0;
     m_tail = 0;
+
+    ::SetEvent(m_flushEvent);
 }
 
 void DirectShowSampleScheduler::setFlushing(bool flushing)
@@ -338,8 +365,13 @@ void DirectShowSampleScheduler::setFlushing(bool flushing)
             }
             m_head = 0;
             m_tail = 0;
+
+            ::SetEvent(m_flushEvent);
         } else {
             m_state &= ~Flushing;
+
+            if (m_state != Stopped)
+                ::ResetEvent(m_flushEvent);
         }
     }
 }
@@ -365,16 +397,14 @@ IMediaSample *DirectShowSampleScheduler::takeSample(bool *eos)
         IMediaSample *sample = m_head->sample();
         sample->AddRef();
 
-        if (m_state == Running) {
-            *eos =  m_head->isLast();
+        *eos =  m_head->isLast();
 
-            m_head = m_head->remove();
+        m_head = m_head->remove();
 
-            if (!m_head)
-                m_tail = 0;
+        if (!m_head)
+            m_tail = 0;
 
-            m_semaphore.release(1);
-        }
+        m_semaphore.release(1);
 
         return sample;
     } else {
@@ -397,13 +427,11 @@ bool DirectShowSampleScheduler::scheduleEndOfStream()
 
 bool DirectShowSampleScheduler::event(QEvent *event)
 {
-    if (event->type() == QEvent::WinEventAct) {
-        QObject::event(event);
-
+    if (event->type() == QEvent::UpdateRequest) {
         emit sampleReady();
 
         return true;
     } else {
-        return QWinEventNotifier::event(event);
+        return QObject::event(event);
     }
 }

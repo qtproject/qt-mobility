@@ -156,32 +156,32 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>Settings</receiver>
+   <receiver>SettingsUi</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>227</x>
-     <y>310</y>
+     <x>322</x>
+     <y>272</y>
     </hint>
     <hint type="destinationlabel">
-     <x>157</x>
-     <y>274</y>
+     <x>44</x>
+     <y>230</y>
     </hint>
    </hints>
   </connection>
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>Settings</receiver>
+   <receiver>SettingsUi</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>295</x>
-     <y>316</y>
+     <x>405</x>
+     <y>262</y>
     </hint>
     <hint type="destinationlabel">
-     <x>286</x>
-     <y>274</y>
+     <x>364</x>
+     <y>227</y>
     </hint>
    </hints>
   </connection>

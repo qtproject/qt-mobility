@@ -15,6 +15,6 @@ CONFIG += mobility
 MOBILITY = location
 
 symbian {
-    INCLUDEPATH += $${EPOCROOT}/epoc32/include/osextensions
+    INCLUDEPATH += $${EPOCROOT}epoc32/include/osextensions
     TARGET.CAPABILITY = ALL -TCB
 }
