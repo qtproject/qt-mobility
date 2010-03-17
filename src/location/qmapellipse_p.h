@@ -39,38 +39,28 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_MAPELLIPSE_H
-#define QLOCATION_MAPELLIPSE_H
+#ifndef QLOCATION_MAPELLIPSE__P_H
+#define QLOCATION_MAPELLIPSE__P_H
 
-#include "qmapobject.h"
+#include "qmapobject_p.h"
+#include "qgeocoordinate.h"
+
+#include <QPen>
+#include <QBrush>
+#include <QPointF>
 
 QTM_BEGIN_NAMESPACE
 
-class QMapEllipsePrivate;
-class Q_LOCATION_EXPORT QMapEllipse : public QMapObject
+class QMapEllipsePrivate : public QMapObjectPrivate
 {
-    friend class QMapView;
-
 public:
-    QMapEllipse(const QGeoCoordinate& topLeft, const QGeoCoordinate& bottomRight,
-                const QPen& pen = QPen(), const QBrush& brush = QBrush(),
-                quint16 layerIndex = 0);
+    QMapEllipsePrivate();
 
-    QGeoCoordinate topLeft() const;
-    QGeoCoordinate bottomRight() const;
-    QPen pen() const;
-    QBrush brush() const;
-
-protected:
-    virtual void compMapCoords();
-    virtual bool intersects(const QRectF& rect) const;
-    virtual void paint(QPainter* painter, const QRectF& viewPort);
-
-    QMapEllipse(QMapEllipsePrivate &dd, const QGeoCoordinate& topLeft, const QGeoCoordinate& bottomRight,
-                const QPen& pen = QPen(), const QBrush& brush = QBrush(),
-                quint16 layerIndex = 0);
-private:
-    Q_DECLARE_PRIVATE(QMapEllipse)
+    QGeoCoordinate geoTopLeft; //!< The top left geo coordinate of the bounding box of the ellipse.
+    QGeoCoordinate geoBottomRight; //!< The bottom right geo coordinate of the bounding box of the ellipse.
+    QPen p; //!< The pen used for drawing the ellipse.
+    QBrush b; //!< The brush used for drawing the ellipse.
+    QPainterPath path; //!< The painter path of the ellipse
 };
 
 QTM_END_NAMESPACE

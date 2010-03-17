@@ -135,13 +135,21 @@ HEADERS += qaddress.h \
            qgeoreply.h \
            qmaneuver.h \
            qmapellipse.h \
+           qmapellipse_p.h \
            qmapline.h \
+           qmapline_p.h \
            qmapmarker.h \
+           qmapmarker_p.h \
            qmapobject.h \
+           qmapobject_p.h \
            qmappixmap.h \
+           qmappixmap_p.h \
            qmappolygon.h \
+           qmappolygon_p.h \
            qmaprect.h \
+           qmaprect_p.h\
            qmaproute.h \
+           qmaproute_p.h \
            qmaptile.h \
            qmaptilecache.h \
            qmaptilereply.h \
@@ -201,7 +209,14 @@ SOURCES += qaddress.cpp \
            qgeonetworkmanager.cpp \
            qgeoreply.cpp \
            qmaneuver.cpp \
-           qmapobjects.cpp \
+           qmapobject.cpp \
+           qmapline.cpp \
+           qmapmarker.cpp \
+           qmaproute.cpp \
+           qmaprect.cpp \
+           qmappolygon.cpp \
+           qmappixmap.cpp \
+           qmapellipse.cpp \
            qmaptilerequest.cpp \
            qmaptilecache.cpp \
            qmaptilereply.cpp \

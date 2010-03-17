@@ -39,38 +39,24 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_MAPELLIPSE_H
-#define QLOCATION_MAPELLIPSE_H
+#ifndef QLOCATION_MAPPIXMAP_P_H
+#define QLOCATION_MAPPIXMAP_P_H
 
-#include "qmapobject.h"
+#include "qmapobject_p.h"
+#include <QPixmap>
+#include <QPointF>
+#include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QMapEllipsePrivate;
-class Q_LOCATION_EXPORT QMapEllipse : public QMapObject
+class QMapPixmapPrivate : public QMapObjectPrivate
 {
-    friend class QMapView;
-
 public:
-    QMapEllipse(const QGeoCoordinate& topLeft, const QGeoCoordinate& bottomRight,
-                const QPen& pen = QPen(), const QBrush& brush = QBrush(),
-                quint16 layerIndex = 0);
+    QMapPixmapPrivate();
 
-    QGeoCoordinate topLeft() const;
-    QGeoCoordinate bottomRight() const;
-    QPen pen() const;
-    QBrush brush() const;
-
-protected:
-    virtual void compMapCoords();
-    virtual bool intersects(const QRectF& rect) const;
-    virtual void paint(QPainter* painter, const QRectF& viewPort);
-
-    QMapEllipse(QMapEllipsePrivate &dd, const QGeoCoordinate& topLeft, const QGeoCoordinate& bottomRight,
-                const QPen& pen = QPen(), const QBrush& brush = QBrush(),
-                quint16 layerIndex = 0);
-private:
-    Q_DECLARE_PRIVATE(QMapEllipse)
+    QPixmap pic; //!< The pixmap.
+    QGeoCoordinate geoTopLeft; //!< The top left coordinate of this pixmap.
+    QRectF pixRect;
 };
 
 QTM_END_NAMESPACE

@@ -39,38 +39,21 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_MAPELLIPSE_H
-#define QLOCATION_MAPELLIPSE_H
+#ifndef QLOCATION_MAPROUTE_P_H
+#define QLOCATION_MAPROUTE_P_H
 
-#include "qmapobject.h"
+#include "qmapobject_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QMapEllipsePrivate;
-class Q_LOCATION_EXPORT QMapEllipse : public QMapObject
+class QMapRoutePrivate : public QMapObjectPrivate
 {
-    friend class QMapView;
-
 public:
-    QMapEllipse(const QGeoCoordinate& topLeft, const QGeoCoordinate& bottomRight,
-                const QPen& pen = QPen(), const QBrush& brush = QBrush(),
-                quint16 layerIndex = 0);
+    QMapRoutePrivate();
 
-    QGeoCoordinate topLeft() const;
-    QGeoCoordinate bottomRight() const;
-    QPen pen() const;
-    QBrush brush() const;
-
-protected:
-    virtual void compMapCoords();
-    virtual bool intersects(const QRectF& rect) const;
-    virtual void paint(QPainter* painter, const QRectF& viewPort);
-
-    QMapEllipse(QMapEllipsePrivate &dd, const QGeoCoordinate& topLeft, const QGeoCoordinate& bottomRight,
-                const QPen& pen = QPen(), const QBrush& brush = QBrush(),
-                quint16 layerIndex = 0);
-private:
-    Q_DECLARE_PRIVATE(QMapEllipse)
+    QRoute rt;
+    QMap<quint64, QList<QLineF> > segments; //!< All individual route segments.
+    QPen rPen; //!< The pen used for drawing this route.
 };
 
 QTM_END_NAMESPACE

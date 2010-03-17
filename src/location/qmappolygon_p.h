@@ -39,38 +39,26 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_MAPELLIPSE_H
-#define QLOCATION_MAPELLIPSE_H
+#ifndef QLOCATION_MAPPOLYGON_P_H
+#define QLOCATION_MAPPOLYGON_P_H
 
-#include "qmapobject.h"
+#include "qmapobject_p.h"
+
+#include "qgeocoordinate.h"
+#include <QPen>
+#include <QBrush>
+#include <QPainterPath>
 
 QTM_BEGIN_NAMESPACE
 
-class QMapEllipsePrivate;
-class Q_LOCATION_EXPORT QMapEllipse : public QMapObject
+class QMapPolygonPrivate : public QMapObjectPrivate
 {
-    friend class QMapView;
-
 public:
-    QMapEllipse(const QGeoCoordinate& topLeft, const QGeoCoordinate& bottomRight,
-                const QPen& pen = QPen(), const QBrush& brush = QBrush(),
-                quint16 layerIndex = 0);
-
-    QGeoCoordinate topLeft() const;
-    QGeoCoordinate bottomRight() const;
-    QPen pen() const;
-    QBrush brush() const;
-
-protected:
-    virtual void compMapCoords();
-    virtual bool intersects(const QRectF& rect) const;
-    virtual void paint(QPainter* painter, const QRectF& viewPort);
-
-    QMapEllipse(QMapEllipsePrivate &dd, const QGeoCoordinate& topLeft, const QGeoCoordinate& bottomRight,
-                const QPen& pen = QPen(), const QBrush& brush = QBrush(),
-                quint16 layerIndex = 0);
-private:
-    Q_DECLARE_PRIVATE(QMapEllipse)
+    QMapPolygonPrivate();
+    QList<QGeoCoordinate> poly; //!< The polygon.
+    QPen p; //!< The pen used for drawing the polygon.
+    QBrush br; //!< The brush used for drawing the polygon.
+    QPainterPath path;
 };
 
 QTM_END_NAMESPACE

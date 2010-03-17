@@ -43,6 +43,7 @@
 
 #include "qmapview_p.h"
 #include "qmapobject.h"
+#include "qmapobject_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -243,11 +244,11 @@ void QMapViewPrivate::paintLayers(QPainter* painter)
 */
 void QMapViewPrivate::addMapObjectToTiles(QMapObject* mapObject)
 {
-    for (int i = 0; i < mapObject->intersectingTiles.count(); i++) {
-        if (!tileToObjects.contains(mapObject->intersectingTiles[i]))
-            tileToObjects[mapObject->intersectingTiles[i]] = QList<QMapObject*>();
+    for (int i = 0; i < mapObject->d_ptr->intersectingTiles.count(); i++) {
+        if (!tileToObjects.contains(mapObject->d_ptr->intersectingTiles[i]))
+            tileToObjects[mapObject->d_ptr->intersectingTiles[i]] = QList<QMapObject*>();
 
-        tileToObjects[mapObject->intersectingTiles[i]].append(mapObject);
+        tileToObjects[mapObject->d_ptr->intersectingTiles[i]].append(mapObject);
     }
 }
 

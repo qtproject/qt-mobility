@@ -52,73 +52,46 @@
 
 QTM_BEGIN_NAMESPACE
 
-/*!
-* This is the abstract base class of all internal map objects. Map objects store all information
-* that is needed to generate concrete Qt:QGraphicsItem objects when they become covered by the
-* view port.
-*/
-class QMapObject //: QObject
+class QMapObjectPrivate;
+class Q_LOCATION_EXPORT QMapObject
 {
-    //Q_OBJECT
-
     friend class QMapView;
     friend class QMapViewPrivate;
 
 public:
     enum MapObjectType {
-        Marker,
-        Line,
-        Rect,
-        Route,
-        Ellipse,
-        Polygon,
-        Pixmap
+        MarkerObject,
+        LineObject,
+        RectObject,
+        RouteObject,
+        EllipseObject,
+        PolygonObject,
+        PixmapObject,
+        NullObject
     };
 
 public:
-    /*!
-    * Constructor.
-    */
-    QMapObject(MapObjectType type, quint16 z = 0)
-            : mapView(0), objType(type), z(z) {}
+    QMapObject(MapObjectType type, quint16 z = 0);
 
-    /*!
-    * @return The z index of this map object, as used for layering.
-    *         Objects with higher z indices are stacked on top of objects
-    *         with lower z indices.
-    */
-    inline quint16 zValue() const {
-        return z;
-    }
-    inline MapObjectType type() const {
-        return objType;
-    }
+    quint16 zValue() const;
+    MapObjectType type() const;
 
     static QRectF boundingRect(const QLineF& line);
     static bool intersect(const QRectF& rect, const QLineF& line);
 
 protected:
-    /*!
-    * Computes whether this map objects intersects with or completely lies in the given rectangle.
-    * @param tileRect The rectangle in terms of map (pixel) coordinates.
-    * @return true (intersects) / false (does not intersect)
-    */
     virtual bool intersects(const QRectF& rect) const = 0;
-    /*!
-    * Computes the appropriate map coordinates (in pixels) according to the current QMapView setup.
-    */
     virtual void compMapCoords() = 0;
     virtual void compIntersectingTiles(const QRectF& box);
     virtual void paint(QPainter* painter, const QRectF& viewPort) = 0;
 
-    void setParentView(QMapView* mapView);
+    void setParentView(QMapView *mapView);
 
-protected:
-    //! The one-dimensional indices of the tiles that this map object either intersects or completely lies on.
-    QList<quint64> intersectingTiles;
-    QMapView* mapView;
-    MapObjectType objType;
-    quint16 z; //!< The z index, used for layering.
+    QMapObject(QMapObjectPrivate &dd, MapObjectType type, quint16 z = 0);
+    QMapObjectPrivate *d_ptr;
+
+private:
+    Q_DECLARE_PRIVATE(QMapObject)
 };
 
 QTM_END_NAMESPACE

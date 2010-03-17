@@ -53,12 +53,14 @@
 #include "qmaptile.h"
 #include "qmaproute.h"
 #include "qmapobject.h"
+#include "qmapobject_p.h"
 #include "qmapline.h"
 #include "qmaprect.h"
 #include "qmappixmap.h"
 #include "qmappolygon.h"
 #include "qmapellipse.h"
 #include "qmapmarker.h"
+#include "qmapmarker_p.h"
 
 #define RELEASE_INTERVAL 10000
 #define DEFAULT_ZOOM_LEVEL 4
@@ -651,10 +653,12 @@ void QMapView::removeMapObject(QMapObject* mapObject)
     QHash<quint64, QList<QMapObject*> > tileToObjectsMap; //!< Map tile to map object hash map.
     d->mapObjects.remove(mapObject);
 
-    for (int i = 0; i < mapObject->intersectingTiles.count(); i++)
+    for (int i = 0; i < mapObject->d_ptr->intersectingTiles.count(); i++)
     {
-        if (d->tileToObjects.contains(mapObject->intersectingTiles[i]))
-            d->tileToObjects[mapObject->intersectingTiles[i]].removeAll(mapObject);
+        if (tileToObjectsMap.contains(mapObject->d_ptr->intersectingTiles[i]))
+            tileToObjectsMap[mapObject->d_ptr->intersectingTiles[i]].removeAll(mapObject);
+        if (d->tileToObjects.contains(mapObject->d_ptr->intersectingTiles[i]))
+            d->tileToObjects[mapObject->d_ptr->intersectingTiles[i]].removeAll(mapObject);
     }
 
     delete mapObject;

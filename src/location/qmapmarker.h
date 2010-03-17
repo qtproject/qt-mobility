@@ -42,17 +42,11 @@
 #ifndef QLOCATION_MAPMARKER_H
 #define QLOCATION_MAPMARKER_H
 
-#include <QPixmap>
-#include <QPointF>
-#include <QString>
-#include <QFont>
-#include <QColor>
-
 #include "qmapobject.h"
-#include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
 
+class QMapMarkerPrivate;
 class Q_LOCATION_EXPORT QMapMarker : public QMapObject
 {
     friend class QMapView;
@@ -65,27 +59,12 @@ public:
                const QPixmap& icon = QPixmap(),
                const QRectF& textRect = QRectF(),
                quint16 layerIndex = 0);
-    /*!
-    * @return The icon used for displaying the marker.
-    */
-    inline QPixmap icon() const {
-        return icn;
-    }
-    /*!
-    * @return The geo coordinate that is marked.
-    */
-    inline QGeoCoordinate point() const {
-        return pt;
-    }
-    inline QString text() const {
-        return txt;
-    }
-    inline QRectF textRect() const {
-        return txtRect;
-    }
-    inline QFont font() const {
-        return txtFont;
-    }
+
+    QPixmap icon() const;
+    QGeoCoordinate point() const;
+    QString text() const;
+    QRectF textRect() const;
+    QFont font() const;
 
 protected:
     virtual bool intersects(const QRectF& tileRect) const;
@@ -94,15 +73,12 @@ protected:
 
     void constructMarker(QPainter* painter, const QPointF& point);
 
-protected:
-    QGeoCoordinate pt;
-    QPointF mapPt;
-    QRectF box;
-    QPixmap icn;
-    QString txt;
-    QRectF txtRect;
-    QFont txtFont;
-    QColor fColor;
+    QMapMarker(QMapMarkerPrivate &dd, const QGeoCoordinate& point,
+               const QString& text, const QFont& font, const QColor& fontColor,
+               const QPixmap& icon, const QRectF& textRect,
+               quint16 layerIndex);
+private:
+    Q_DECLARE_PRIVATE(QMapMarker);
 };
 
 QTM_END_NAMESPACE

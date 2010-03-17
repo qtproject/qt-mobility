@@ -39,40 +39,35 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_MAPELLIPSE_H
-#define QLOCATION_MAPELLIPSE_H
+#ifndef QLOCATION_MAPMARKER_P_H
+#define QLOCATION_MAPMARKER_P_H
 
-#include "qmapobject.h"
+#include "qmapobject_p.h"
+#include "qgeocoordinate.h"
+#include <QPixmap>
+#include <QPointF>
+#include <QString>
+#include <QFont>
+#include <QColor>
 
 QTM_BEGIN_NAMESPACE
 
-class QMapEllipsePrivate;
-class Q_LOCATION_EXPORT QMapEllipse : public QMapObject
+class QMapMarkerPrivate : public QMapObjectPrivate
 {
-    friend class QMapView;
-
 public:
-    QMapEllipse(const QGeoCoordinate& topLeft, const QGeoCoordinate& bottomRight,
-                const QPen& pen = QPen(), const QBrush& brush = QBrush(),
-                quint16 layerIndex = 0);
+    QMapMarkerPrivate();
 
-    QGeoCoordinate topLeft() const;
-    QGeoCoordinate bottomRight() const;
-    QPen pen() const;
-    QBrush brush() const;
-
-protected:
-    virtual void compMapCoords();
-    virtual bool intersects(const QRectF& rect) const;
-    virtual void paint(QPainter* painter, const QRectF& viewPort);
-
-    QMapEllipse(QMapEllipsePrivate &dd, const QGeoCoordinate& topLeft, const QGeoCoordinate& bottomRight,
-                const QPen& pen = QPen(), const QBrush& brush = QBrush(),
-                quint16 layerIndex = 0);
-private:
-    Q_DECLARE_PRIVATE(QMapEllipse)
+    QGeoCoordinate pt;
+    QPointF mapPt;
+    QRectF box;
+    QPixmap icn;
+    QString txt;
+    QRectF txtRect;
+    QFont txtFont;
+    QColor fColor;
 };
 
 QTM_END_NAMESPACE
 
 #endif
+

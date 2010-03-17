@@ -39,40 +39,29 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_MAPELLIPSE_H
-#define QLOCATION_MAPELLIPSE_H
+#ifndef QLOCATION_MAPOBJECT_P_H
+#define QLOCATION_MAPOBJECT_P_H
 
+#include <QList>
+#include "qmapview.h"
 #include "qmapobject.h"
+#include "qmobilityglobal.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QMapEllipsePrivate;
-class Q_LOCATION_EXPORT QMapEllipse : public QMapObject
+class QMapObjectPrivate
 {
-    friend class QMapView;
-
 public:
-    QMapEllipse(const QGeoCoordinate& topLeft, const QGeoCoordinate& bottomRight,
-                const QPen& pen = QPen(), const QBrush& brush = QBrush(),
-                quint16 layerIndex = 0);
+    QMapObjectPrivate();
 
-    QGeoCoordinate topLeft() const;
-    QGeoCoordinate bottomRight() const;
-    QPen pen() const;
-    QBrush brush() const;
-
-protected:
-    virtual void compMapCoords();
-    virtual bool intersects(const QRectF& rect) const;
-    virtual void paint(QPainter* painter, const QRectF& viewPort);
-
-    QMapEllipse(QMapEllipsePrivate &dd, const QGeoCoordinate& topLeft, const QGeoCoordinate& bottomRight,
-                const QPen& pen = QPen(), const QBrush& brush = QBrush(),
-                quint16 layerIndex = 0);
-private:
-    Q_DECLARE_PRIVATE(QMapEllipse)
+    //! The one-dimensional indices of the tiles that this map object either intersects or completely lies on.
+    QList<quint64> intersectingTiles;
+    QMapView* mapView;
+    QMapObject::MapObjectType objType;
+    quint16 z; //!< The z index, used for layering.
 };
 
 QTM_END_NAMESPACE
 
 #endif
+
