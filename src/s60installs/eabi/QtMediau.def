@@ -1116,4 +1116,5 @@ EXPORTS
 	_ZThn8_N10QtMobility22QMediaPlaylistIOPluginD0Ev @ 1115 NONAME
 	_ZThn8_N10QtMobility22QMediaPlaylistIOPluginD1Ev @ 1116 NONAME
 	_ZThn8_NK10QtMobility18QGraphicsVideoItem12boundingRectEv @ 1117 NONAME
+	_ZNK10QtMobility13QMediaContent16canonicalRequestEv @ 1118 NONAME
 
