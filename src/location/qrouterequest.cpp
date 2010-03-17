@@ -41,6 +41,7 @@
 ****************************************************************************/
 
 #include "qrouterequest.h"
+#include "qrouterequest_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -97,13 +98,8 @@ QTM_BEGIN_NAMESPACE
     The default constructor.
 */
 QRouteRequest::QRouteRequest()
+    : d_ptr(new QRouteRequestPrivate)
 {
-    vers = "1.0";
-    nTotal = 0;
-    nAlternatives = 0;
-    languageCode = "";
-    rType = Fastest;
-    rMode = Car;
 }
 
 /*!
@@ -113,7 +109,8 @@ QRouteRequest::QRouteRequest()
 */
 QString QRouteRequest::version() const
 {
-    return vers;
+    Q_D(const QRouteRequest);
+    return d->version;
 }
 
 /*!
@@ -121,7 +118,8 @@ QString QRouteRequest::version() const
 */
 void QRouteRequest::setSource(const QGeoCoordinate& source)
 {
-    src = source;
+    Q_D(QRouteRequest);
+    d->src = source;
 }
 
 /*!
@@ -129,7 +127,8 @@ void QRouteRequest::setSource(const QGeoCoordinate& source)
 */
 QGeoCoordinate QRouteRequest::source() const
 {
-    return src;
+    Q_D(const QRouteRequest);
+    return d->src;
 }
 
 /*!
@@ -137,7 +136,8 @@ QGeoCoordinate QRouteRequest::source() const
 */
 void QRouteRequest::setDestination(const QGeoCoordinate& destination)
 {
-    dst = destination;
+    Q_D(QRouteRequest);
+    d->dst = destination;
 }
 
 /*!
@@ -145,7 +145,8 @@ void QRouteRequest::setDestination(const QGeoCoordinate& destination)
 */
 QGeoCoordinate QRouteRequest::destination() const
 {
-    return dst;
+    Q_D(const QRouteRequest);
+    return d->dst;
 }
 
 /*!
@@ -155,7 +156,8 @@ QGeoCoordinate QRouteRequest::destination() const
 */
 void QRouteRequest::setTotalResults(quint32 totalResults)
 {
-    nTotal = totalResults;
+    Q_D(QRouteRequest);
+    d->nTotal = totalResults;
 }
 
 /*!
@@ -163,7 +165,8 @@ void QRouteRequest::setTotalResults(quint32 totalResults)
 */
 quint32 QRouteRequest::totalResults() const
 {
-    return nTotal;
+    Q_D(const QRouteRequest);
+    return d->nTotal;
 }
 
 /*!
@@ -173,7 +176,8 @@ quint32 QRouteRequest::totalResults() const
 */
 void QRouteRequest::setAlternatives(quint16 nAlternatives)
 {
-    this->nAlternatives = nAlternatives;
+    Q_D(QRouteRequest);
+    d->nAlternatives = nAlternatives;
 }
 
 /*!
@@ -181,7 +185,8 @@ void QRouteRequest::setAlternatives(quint16 nAlternatives)
 */
 quint16 QRouteRequest::alternatives() const
 {
-    return nAlternatives;
+    Q_D(const QRouteRequest);
+    return d->nAlternatives;
 }
 
 /*!
@@ -191,7 +196,8 @@ quint16 QRouteRequest::alternatives() const
 */
 void QRouteRequest::setLanguage(const QString& code)
 {
-    languageCode = code;
+    Q_D(QRouteRequest);
+    d->languageCode = code;
 }
 
 /*!
@@ -199,39 +205,44 @@ void QRouteRequest::setLanguage(const QString& code)
 */
 QString QRouteRequest::language() const
 {
-    return languageCode;
+    Q_D(const QRouteRequest);
+    return d->languageCode;
 }
 
 /*!
     Sets the planned time of departure to \a tod.
 */
-void QRouteRequest::setDeparture(const QDateTime& tod)
+void QRouteRequest::setDepartureTime(const QDateTime& departureTime)
 {
-    this->tod = tod;
+    Q_D(QRouteRequest);
+    d->departureTime = departureTime;
 }
 
 /*!
     Returns the planned time of departure.
 */
-QDateTime QRouteRequest::departure() const
+QDateTime QRouteRequest::departureTime() const
 {
-    return tod;
+    Q_D(const QRouteRequest);
+    return d->departureTime;
 }
 
 /*!
     Sets the planned time of arrival to \a toa.
 */
-void QRouteRequest::setArrival(const QDateTime& toa)
+void QRouteRequest::setArrivalTime(const QDateTime& arrivalTime)
 {
-    this->toa = toa;
+    Q_D(QRouteRequest);
+    d->arrivalTime = arrivalTime;
 }
 
 /*!
     Returns the planned time of departure.
 */
-QDateTime QRouteRequest::arrival() const
+QDateTime QRouteRequest::arrivalTime() const
 {
-    return toa;
+    Q_D(const QRouteRequest);
+    return d->arrivalTime;
 }
 
 /*!
@@ -241,7 +252,8 @@ QDateTime QRouteRequest::arrival() const
 */
 void QRouteRequest::setType(RouteType type)
 {
-    this->rType = type;
+    Q_D(QRouteRequest);
+    d->routeType = type;
 }
 
 /*!
@@ -249,7 +261,8 @@ void QRouteRequest::setType(RouteType type)
 */
 QRouteRequest::RouteType QRouteRequest::type() const
 {
-    return rType;
+    Q_D(const QRouteRequest);
+    return d->routeType;
 }
 
 /*!
@@ -259,7 +272,8 @@ QRouteRequest::RouteType QRouteRequest::type() const
 */
 void QRouteRequest::setMode(RouteMode mode)
 {
-    this->rMode = mode;
+    Q_D(QRouteRequest);
+    d->routeMode = mode;
 }
 
 /*!
@@ -267,7 +281,8 @@ void QRouteRequest::setMode(RouteMode mode)
 */
 QRouteRequest::RouteMode QRouteRequest::mode() const
 {
-    return rMode;
+    Q_D(const QRouteRequest);
+    return d->routeMode;
 }
 
 /*!
@@ -279,7 +294,8 @@ QRouteRequest::RouteMode QRouteRequest::mode() const
 */
 void QRouteRequest::setAvoid(QList<RouteAvoid> avoid)
 {
-    rAvoid = avoid;
+    Q_D(QRouteRequest);
+    d->avoid = avoid;
 }
 
 /*!
@@ -287,7 +303,8 @@ void QRouteRequest::setAvoid(QList<RouteAvoid> avoid)
 */
 QList<QRouteRequest::RouteAvoid> QRouteRequest::avoid() const
 {
-    return rAvoid;
+    Q_D(const QRouteRequest);
+    return d->avoid;
 }
 
 /*!
@@ -298,7 +315,8 @@ QList<QRouteRequest::RouteAvoid> QRouteRequest::avoid() const
 */
 void QRouteRequest::addStopOver(const QGeoCoordinate& stopOver)
 {
-    stpOvers += stopOver;
+    Q_D(QRouteRequest);
+    d->stopOvers += stopOver;
 }
 
 /*!
@@ -308,11 +326,12 @@ void QRouteRequest::addStopOver(const QGeoCoordinate& stopOver)
 */
 void QRouteRequest::removeStopOver(const QGeoCoordinate& stopOver)
 {
+    Q_D(QRouteRequest);
     int i = 0;
 
-    while (i < stpOvers.length()) {
-        if (stpOvers[i] == stopOver)
-            stpOvers.removeAt(i);
+    while (i < d->stopOvers.length()) {
+        if (d->stopOvers[i] == stopOver)
+            d->stopOvers.removeAt(i);
         else
             i++;
     }
@@ -323,49 +342,61 @@ void QRouteRequest::removeStopOver(const QGeoCoordinate& stopOver)
 */
 const QList<QGeoCoordinate>& QRouteRequest::stopOvers() const
 {
-    return stpOvers;
+    Q_D(const QRouteRequest);
+    return d->stopOvers;
 }
 
-QString QRouteRequest::typeToString() const
+/*****************************************************************************
+ *****************************************************************************/
+
+QRouteRequestPrivate::QRouteRequestPrivate()
+    : version("1.0"), nTotal(0),
+    nAlternatives(0),
+    languageCode(""),
+    routeType(QRouteRequest::Fastest),
+    routeMode(QRouteRequest::Car)
+{}
+
+QString QRouteRequestPrivate::typeToString() const
 {
-    if (rType == Fastest)
+    if (routeType == QRouteRequest::Fastest)
         return "fastest";
-    else if (rType == Shortest)
+    else if (routeType == QRouteRequest::Shortest)
         return "shortest";
-    else if (rType == Economic)
+    else if (routeType == QRouteRequest::Economic)
         return "economic";
 
     return "";
 }
 
-QString QRouteRequest::modeToString() const
+QString QRouteRequestPrivate::modeToString() const
 {
-    if (rMode == Car)
+    if (routeMode == QRouteRequest::Car)
         return "car";
-    else if (rMode == Pedestrian)
+    else if (routeMode == QRouteRequest::Pedestrian)
         return "pedestrian";
-    else if (rMode == PublicTransport)
+    else if (routeMode == QRouteRequest::PublicTransport)
         return "public transport";
 
     return "";
 }
 
-QString QRouteRequest::avoidToString() const
+QString QRouteRequestPrivate::avoidToString() const
 {
     QString s;
 
-    for (int i = 0; i < rAvoid.count(); i++) {
-        if (rAvoid[i] == Highways)
+    for (int i = 0; i < avoid.count(); i++) {
+        if (avoid[i] == QRouteRequest::Highways)
             s += "highways,";
-        else if (rAvoid[i] == Tollroads)
+        else if (avoid[i] == QRouteRequest::Tollroads)
             s += "tollroads,";
-        else if (rAvoid[i] == Ferries)
+        else if (avoid[i] == QRouteRequest::Ferries)
             s += "ferries,";
-        else if (rAvoid[i] == Tunnels)
+        else if (avoid[i] == QRouteRequest::Tunnels)
             s += "tunnels,";
-        else if (rAvoid[i] == Dirtroads)
+        else if (avoid[i] == QRouteRequest::Dirtroads)
             s += "dirtroads,";
-        else if (rAvoid[i] == RailFerries)
+        else if (avoid[i] == QRouteRequest::RailFerries)
             s += "rail ferries,";
     }
 

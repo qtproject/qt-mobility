@@ -160,6 +160,7 @@ HEADERS += qaddress.h \
            qroute.h \
            qroutereply.h \
            qrouterequest.h \
+           qrouterequest_p.h \
            qroutexmlparser.h
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS

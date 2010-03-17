@@ -48,6 +48,8 @@
 #include <QUrl>
 
 #include "qgeonetworkmanager.h"
+#include "qrouterequest.h"
+#include "qrouterequest_p.h"
 #include "qroutereply.h"
 #include "qroutexmlparser.h"
 #include "qgeocodingreply.h"
@@ -200,27 +202,27 @@ QRouteReply* QGeoNetworkManager::get(const QRouteRequest& request)
 {
     QString rawRequest = "http://" % rtSrv % "/routing/rt/" % request.version() %
                          "?referer=localhost" %
-                         "&slong=" % trimGeoCoordinate(request.src.longitude()) %
-                         "&slat=" % trimGeoCoordinate(request.src.latitude()) %
-                         "&dlong=" % trimGeoCoordinate(request.dst.longitude()) %
-                         "&dlat=" % trimGeoCoordinate(request.dst.latitude());
+                         "&slong=" % trimGeoCoordinate(request.source().longitude()) %
+                         "&slat=" % trimGeoCoordinate(request.source().latitude()) %
+                         "&dlong=" % trimGeoCoordinate(request.destination().longitude()) %
+                         "&dlat=" % trimGeoCoordinate(request.destination().latitude());
 
-    if (request.nTotal > 0)
-        rawRequest += "&total=" % QString::number(request.nTotal);
-    if (request.nAlternatives > 0)
-        rawRequest += "&alternatives=" % QString::number(request.nAlternatives);
-    if (request.languageCode != "")
-        rawRequest += "&lg=" % request.languageCode;
-    if (request.tod.isValid())
-        rawRequest += "&tod=" % request.tod.toUTC().toString();
-    if (request.toa.isValid())
-        rawRequest += "&toa=" % request.toa.toUTC().toString();
+    if (request.totalResults() > 0)
+        rawRequest += "&total=" % QString::number(request.totalResults());
+    if (request.alternatives() > 0)
+        rawRequest += "&alternatives=" % QString::number(request.alternatives());
+    if (request.language() != "")
+        rawRequest += "&lg=" % request.language();
+    if (request.departureTime().isValid())
+        rawRequest += "&tod=" % request.departureTime().toUTC().toString();
+    if (request.arrivalTime().isValid())
+        rawRequest += "&toa=" % request.arrivalTime().toUTC().toString();
 
-    rawRequest += "&type=" % request.typeToString() %
-                  "&mode=" % request.modeToString();
+    rawRequest += "&type=" % request.d_ptr->typeToString() %
+                  "&mode=" % request.d_ptr->modeToString();
 
-    if (request.rAvoid.count() > 0)
-        rawRequest += "&avoid=" % request.avoidToString();
+    if (request.d_ptr->avoid.count() > 0)
+        rawRequest += "&avoid=" % request.d_ptr->avoidToString();
 
     const QList<QGeoCoordinate>& stopOvers = request.stopOvers();
 
