@@ -205,9 +205,6 @@ void QGstreamerCaptureSession::captureImage(const QString &fileName)
     gstUnref(previewCaps);
 
     g_object_set(G_OBJECT(m_pipeline), "filename", fileName.toLocal8Bit().constData(), NULL);
-    //g_signal_emit_by_name(G_OBJECT(m_pipeline), "user-start", NULL);
-
-    //gst_photography_set_autofocus (GST_PHOTOGRAPHY (m_pipeline), TRUE);
 
     g_signal_emit_by_name(G_OBJECT(m_pipeline), "user-start", NULL);
 
@@ -551,34 +548,6 @@ void QGstreamerCaptureSession::busMessage(const QGstreamerMessage &message)
             //qDebug() << "New session state:" << ENUM_NAME(QGstreamerCaptureSession,"State",m_state);
         }
     }
-}
-
-void QGstreamerCaptureSession::setFlashMode(QCamera::FlashMode mode)
-{
-    GstFlashMode flashMode;
-    switch (mode) {
-        case QCamera::FlashOff:
-            flashMode = GST_PHOTOGRAPHY_FLASH_MODE_OFF;
-            break;
-        case QCamera::FlashOn:
-            flashMode = GST_PHOTOGRAPHY_FLASH_MODE_ON;
-            break;
-        case QCamera::FlashAuto:
-            flashMode = GST_PHOTOGRAPHY_FLASH_MODE_AUTO;
-            break;
-        case QCamera::FlashRedEyeReduction:
-            flashMode = GST_PHOTOGRAPHY_FLASH_MODE_RED_EYE;
-            break;
-        case QCamera::FlashFill:
-            flashMode = GST_PHOTOGRAPHY_FLASH_MODE_FILL_IN;
-            break;
-            break;
-        default:
-            return;
-    }
-
-    gst_photography_set_flash_mode(GST_PHOTOGRAPHY (m_pipeline),
-                                             flashMode);
 }
 
 static gboolean imgCaptured(GstElement *camera,

@@ -128,9 +128,6 @@ public:
 
     bool processSyncMessage(const QGstreamerMessage &message);
 
-public:
-    void setFlashMode(QCamera::FlashMode mode);
-
 signals:
     void stateChanged(QGstreamerCaptureSession::State state);
     void durationChanged(qint64 duration);
