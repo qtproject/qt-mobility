@@ -100,7 +100,7 @@ void QGalleryErrorResponse::setMetaData(int, int, const QVariant &)
 {
 }
 
-QGalleryDocumentList::MetaDataFlags QGalleryErrorResponse::metaDataFlags(int, int) const
+QGalleryItemList::MetaDataFlags QGalleryErrorResponse::metaDataFlags(int, int) const
 {
     return 0;
 }

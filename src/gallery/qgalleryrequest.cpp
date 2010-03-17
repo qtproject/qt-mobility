@@ -162,7 +162,7 @@ void QGalleryAbstractRequestPrivate::_q_galleryDestroyed()
 
     Identifies the type of a request.
 
-    \value Document The request is a QGalleryDocumentRequest.
+    \value Item The request is a QGalleryItemRequest.
     \value Insert The request is a QGalleryInsertRequest.
     \value Remove The request is a QGalleryRemoveRequest.
     \value Copy The request is a QGalleryCopyRequest.
@@ -478,7 +478,7 @@ class QGalleryAbstractResponsePrivate
 public:
     QGalleryAbstractResponsePrivate()
         : result(QGalleryAbstractRequest::NoResult)
-        , documentCount(0)
+        , itemCount(0)
         , idle(false)
     {
     }
@@ -486,7 +486,7 @@ public:
     virtual ~QGalleryAbstractResponsePrivate() {}
 
     int result;
-    int documentCount;
+    int itemCount;
     bool idle;
 };
 
@@ -506,7 +506,7 @@ public:
 */
 
 QGalleryAbstractResponse::QGalleryAbstractResponse(QObject *parent)
-    : QGalleryDocumentList(parent)
+    : QGalleryItemList(parent)
     , d_ptr(new QGalleryAbstractResponsePrivate)
 {
 }
@@ -521,7 +521,7 @@ QGalleryAbstractResponse::~QGalleryAbstractResponse()
 }
 
 /*!
-    Identifies if the documents returned by a response are being monitored for
+    Identifies if the items returned by a response are being monitored for
     changes.
 
     Returns true if a response is in an idle state, and false otherwise.
@@ -541,24 +541,24 @@ int QGalleryAbstractResponse::result() const
 }
 
 /*!
-    Returns the number of documents affected by a gallery response.
+    Returns the number of items affected by a gallery response.
 */
 
-int QGalleryAbstractResponse::documentCount() const
+int QGalleryAbstractResponse::itemCount() const
 {
-    return d_ptr->documentCount;
+    return d_ptr->itemCount;
 }
 
 /*!
-    Updates the \a count of documents affected by a gallery response.
+    Updates the \a count of items affected by a gallery response.
 */
 
-void QGalleryAbstractResponse::updateDocumentCount(int count)
+void QGalleryAbstractResponse::updateItemCount(int count)
 {
-    if (d_ptr->documentCount != count) {
-        d_ptr->documentCount = count;
+    if (d_ptr->itemCount != count) {
+        d_ptr->itemCount = count;
 
-        emit documentCountChanged();
+        emit itemCountChanged();
     }
 }
 
@@ -572,9 +572,9 @@ void QGalleryAbstractResponse::updateDocumentCount(int count)
 */
 
 /*!
-    \fn QGalleryAbstractResponse::documentCountChanged()
+    \fn QGalleryAbstractResponse::itemCountChanged()
 
-    Signals that the number of documents related to a gallery response
+    Signals that the number of items related to a gallery response
     has changed.
 */
 
@@ -603,7 +603,7 @@ void QGalleryAbstractResponse::cancel()
 /*!
     Finalizes a gallery response, and sets the \a result.
 
-    If \a idle is true the documents returned by a response will be monitored
+    If \a idle is true the items returned by a response will be monitored
     for changes and updated as appropriate.
 */
 
@@ -623,16 +623,16 @@ void QGalleryAbstractResponse::finish(int result, bool idle)
 
     Signals that a response has finished with the given \a result.
 
-    If \a idle is true the documents returned by a response will be monitored
+    If \a idle is true the items returned by a response will be monitored
     for changes and updated as appropriate.
 */
 
-class QGalleryDocumentRequestPrivate : public QGalleryAbstractRequestPrivate
+class QGalleryItemRequestPrivate : public QGalleryAbstractRequestPrivate
 {
-    Q_DECLARE_PUBLIC(QGalleryDocumentRequest)
+    Q_DECLARE_PUBLIC(QGalleryItemRequest)
 public:
-    QGalleryDocumentRequestPrivate(QAbstractGallery *gallery)
-        : QGalleryAbstractRequestPrivate(gallery, QGalleryAbstractRequest::Document)
+    QGalleryItemRequestPrivate(QAbstractGallery *gallery)
+        : QGalleryAbstractRequestPrivate(gallery, QGalleryAbstractRequest::Item)
         , startIndex(0)
         , maximumCount(-1)
         , totalCount(0)
@@ -646,76 +646,76 @@ public:
     bool live;
     QStringList fields;
     QStringList sortFields;
-    QString documentType;
+    QString itemType;
     QGalleryFilter filter;
 };
 
 /*!
-    \class QGalleryDocumentRequest
+    \class QGalleryItemRequest
 
     \ingroup gallery
     \ingroup gallery-requests
 
-    \brief The QGalleryDocumentRequest class provides a request for a set of
-    documents from a document gallery.
+    \brief The QGalleryItemRequest class provides a request for a set of
+    items from a gallery.
 */
 
 /*!
-    \enum QGalleryDocumentRequest::Error
+    \enum QGalleryItemRequest::Error
 
-    Enumerates document request specific error results.
+    Enumerates item request specific error results.
 
     \value InvalidFilter
 */
 
 /*!
-    Constructs a new gallery document request.
+    Constructs a new gallery item request.
 
     The \a parent is passed to QObject.
 */
 
-QGalleryDocumentRequest::QGalleryDocumentRequest(QObject *parent)
-    : QGalleryAbstractRequest(*new QGalleryDocumentRequestPrivate(0), parent)
+QGalleryItemRequest::QGalleryItemRequest(QObject *parent)
+    : QGalleryAbstractRequest(*new QGalleryItemRequestPrivate(0), parent)
 {
 }
 
 /*!
-    Contructs a new document request for the given \a gallery.
+    Contructs a new item request for the given \a gallery.
 
     The \a parent is passed to QObject.
 */
 
-QGalleryDocumentRequest::QGalleryDocumentRequest(QAbstractGallery *gallery, QObject *parent)
-    : QGalleryAbstractRequest(*new QGalleryDocumentRequestPrivate(gallery), parent)
+QGalleryItemRequest::QGalleryItemRequest(QAbstractGallery *gallery, QObject *parent)
+    : QGalleryAbstractRequest(*new QGalleryItemRequestPrivate(gallery), parent)
 {
 }
 
 /*!
-    Destroys a gallery document request.
+    Destroys a gallery item request.
 */
 
-QGalleryDocumentRequest::~QGalleryDocumentRequest()
+QGalleryItemRequest::~QGalleryItemRequest()
 {
 }
 
 /*!
-    \property QGalleryDocumentRequest::fields
+    \property QGalleryItemRequest::fields
 
     \brief A list of meta-data fields a request should return values for.
 */
 
-QStringList QGalleryDocumentRequest::fields() const
+QStringList QGalleryItemRequest::fields() const
 {
     return d_func()->fields;
 }
 
-void QGalleryDocumentRequest::setFields(const QStringList &fields)
+void QGalleryItemRequest::setFields(const QStringList &fields)
 {
     d_func()->fields = fields;
 }
 
 /*!
-    \property QGalleryDocumentRequest::sortFields
+    \property QGalleryItemRequest::sortFields
 
     \brief A list of meta-data fields a request should sort its results on.
 
@@ -724,18 +724,18 @@ void QGalleryDocumentRequest::setFields(const QStringList &fields)
     If there is no prefix ascending order is assumed.
 */
 
-QStringList QGalleryDocumentRequest::sortFields() const
+QStringList QGalleryItemRequest::sortFields() const
 {
     return d_func()->sortFields;
 }
 
-void QGalleryDocumentRequest::setSortFields(const QStringList &fields)
+void QGalleryItemRequest::setSortFields(const QStringList &fields)
 {
     d_func()->sortFields = fields;
 }
 
 /*!
-    \property QGalleryDocumentRequest::live
+    \property QGalleryItemRequest::live
 
     \brief Whether a the results of a request should be updated after a request
     has finished.
@@ -744,90 +744,90 @@ void QGalleryDocumentRequest::setSortFields(const QStringList &fields)
     finished rather than returning to Inactive.
 */
 
-bool QGalleryDocumentRequest::isLive() const
+bool QGalleryItemRequest::isLive() const
 {
     return d_func()->live;
 }
 
-void QGalleryDocumentRequest::setLive(bool live)
+void QGalleryItemRequest::setLive(bool live)
 {
     d_func()->live = live;
 }
 
 /*!
-    \property QGalleryDocumentRequest::startIndex
+    \property QGalleryItemRequest::startIndex
 
-    \brief The index of the first document a request should return.
+    \brief The index of the first item a request should return.
 
     By default this is 0.
 */
 
-int QGalleryDocumentRequest::startIndex() const
+int QGalleryItemRequest::startIndex() const
 {
     return d_func()->startIndex;
 }
 
-void QGalleryDocumentRequest::setStartIndex(int index)
+void QGalleryItemRequest::setStartIndex(int index)
 {
     d_func()->startIndex = index;
 }
 
 /*!
-    \property QGalleryDocumentRequest::maximumCount
+    \property QGalleryItemRequest::maximumCount
 
-    \brief The maximum number of documents that should be returned by a request.
+    \brief The maximum number of items that should be returned by a request.
 
     If this is -1 the results will be unbounded.
 
     By default this is -1.
 */
 
-int QGalleryDocumentRequest::maximumCount() const
+int QGalleryItemRequest::maximumCount() const
 {
     return d_func()->maximumCount;
 }
 
-void QGalleryDocumentRequest::setMaximumCount(int count)
+void QGalleryItemRequest::setMaximumCount(int count)
 {
     d_func()->maximumCount = count;
 }
 
 /*!
-    \property QGalleryDocumentRequest::documentType
+    \property QGalleryItemRequest::itemType
 
-    \brief The type of documents a request should return.
+    \brief The type of items a request should return.
 
-    If this is not set documents of all types will be returned.  If no filter is
-    set all documents of this type will be returned.
+    If this is not set items of all types will be returned.  If no filter is
+    set all items of this type will be returned.
 */
 
-QString QGalleryDocumentRequest::documentType() const
+QString QGalleryItemRequest::itemType() const
 {
-    return d_func()->documentType;
+    return d_func()->itemType;
 }
 
-void QGalleryDocumentRequest::setDocumentType(const QString &type)
+void QGalleryItemRequest::setItemType(const QString &type)
 {
-    d_func()->documentType = type;
+    d_func()->itemType = type;
 }
 
 /*!
-    \property QGalleryDocumentRequest::filter
+    \property QGalleryItemRequest::filter
 
-    \brief A filter identifying the documents a request should return.
+    \brief A filter identifying the items a request should return.
 
     If no filter is set the results of the request will be determined soley
-    by the \l documentType property.
+    by the \l itemType property.
 */
 
-QGalleryFilter QGalleryDocumentRequest::filter() const
+QGalleryFilter QGalleryItemRequest::filter() const
 {
     return d_func()->filter;
 }
 
-void QGalleryDocumentRequest::setFilter(const QGalleryFilter &filter)
+void QGalleryItemRequest::setFilter(const QGalleryFilter &filter)
 {
-    Q_D(QGalleryDocumentRequest);
+    Q_D(QGalleryItemRequest);
 
     QGalleryFilter::Type oldType = d->filter.type();
 
@@ -836,11 +836,11 @@ void QGalleryDocumentRequest::setFilter(const QGalleryFilter &filter)
     emit filterChanged();
 
     switch (oldType) {
-    case QGalleryFilter::Document:
-        emit documentIdsChanged();
+    case QGalleryFilter::Item:
+        emit itemIdsChanged();
         break;
-    case QGalleryFilter::DocumentUrl:
-        emit documentUrlsChanged();
+    case QGalleryFilter::ItemUrl:
+        emit itemUrlsChanged();
         break;
     case QGalleryFilter::Container:
         emit containerIdChanged();
@@ -856,11 +856,11 @@ void QGalleryDocumentRequest::setFilter(const QGalleryFilter &filter)
 
     if (oldType != newType) {
         switch (newType) {
-        case QGalleryFilter::Document:
-            emit documentIdsChanged();
+        case QGalleryFilter::Item:
+            emit itemIdsChanged();
             break;
-        case QGalleryFilter::DocumentUrl:
-            emit documentUrlsChanged();
+        case QGalleryFilter::ItemUrl:
+            emit itemUrlsChanged();
             break;
         case QGalleryFilter::Container:
             emit containerIdChanged();
@@ -875,112 +875,112 @@ void QGalleryDocumentRequest::setFilter(const QGalleryFilter &filter)
 }
 
 /*!
-    \fn QGalleryDocumentRequest::filterChanged()
+    \fn QGalleryItemRequest::filterChanged()
 
     Signals the \l filter property has changed.
 */
 
 /*!
-    \property QGalleryDocumentRequest::documentId
+    \property QGalleryItemRequest::itemId
 
-    \brief The ID of a document a document request should return.
+    \brief The ID of a item a item request should return.
 
-    This is equivalent to setting a \l filter of type QGalleryDocumentFilter.
+    This is equivalent to setting a \l filter of type QGalleryItemFilter.
 
-    If the current \l filter is not of type QGalleryDocumentFilter or multiple
-    documents are specified in \l documentIds this will be null.
+    If the current \l filter is not of type QGalleryItemFilter or multiple
+    items are specified in \l itemIds this will be null.
 */
 
-QString QGalleryDocumentRequest::documentId() const
+QString QGalleryItemRequest::itemId() const
 {
-    return d_func()->filter.toDocumentFilter().documentId();
+    return d_func()->filter.toItemFilter().itemId();
 }
 
-void QGalleryDocumentRequest::setDocumentId(const QString &id)
+void QGalleryItemRequest::setItemId(const QString &id)
 {
-    setFilter(QGalleryDocumentFilter(id));
+    setFilter(QGalleryItemFilter(id));
 }
 
 /*!
-    \property QGalleryDocumentRequest::documentIds
+    \property QGalleryItemRequest::itemIds
 
-    \brief A list of IDs for documents a document request should return.
+    \brief A list of IDs for items a item request should return.
 
-    This is equivalent to setting a \l filter of type QGalleryDocumentFilter.
+    This is equivalent to setting a \l filter of type QGalleryItemFilter.
 
-    If the current \l filter is not of type QGalleryDocumentFilter this will be
+    If the current \l filter is not of type QGalleryItemFilter this will be
     null.
 */
 
-QStringList QGalleryDocumentRequest::documentIds() const
+QStringList QGalleryItemRequest::itemIds() const
 {
-    return d_func()->filter.toDocumentFilter().documentIds();
+    return d_func()->filter.toItemFilter().itemIds();
 }
 
-void QGalleryDocumentRequest::setDocumentIds(const QStringList &ids)
+void QGalleryItemRequest::setItemIds(const QStringList &ids)
 {
-    setFilter(QGalleryDocumentFilter(ids));
+    setFilter(QGalleryItemFilter(ids));
 }
 
 /*!
-    \fn QGalleryDocumentRequest::documentIdsChanged()
+    \fn QGalleryItemRequest::itemIdsChanged()
 
-    Signals that the documentId and \l documentIds properties have changed.
+    Signals that the itemId and \l itemIds properties have changed.
 */
 
 /*!
-    \property QGalleryDocumentRequest::documentUrl
+    \property QGalleryItemRequest::itemUrl
 
-    \brief The URL of an document a document request should return.
+    \brief The URL of an item a item request should return.
 
-    This is equivalent to setting a \l filter of type QGalleryDocumentUrlFilter.
+    This is equivalent to setting a \l filter of type QGalleryItemUrlFilter.
 
-    If the current \l filter is not of type QGalleryDocumentUrlFilter or
-    multiple documents are specified in \l documentUrls this will be null.
+    If the current \l filter is not of type QGalleryItemUrlFilter or
+    multiple items are specified in \l itemUrls this will be null.
 */
 
-QUrl QGalleryDocumentRequest::documentUrl() const
+QUrl QGalleryItemRequest::itemUrl() const
 {
-    return d_func()->filter.toDocumentUrlFilter().documentUrl();
+    return d_func()->filter.toItemUrlFilter().itemUrl();
 }
 
-void QGalleryDocumentRequest::setDocumentUrl(const QUrl &url)
+void QGalleryItemRequest::setItemUrl(const QUrl &url)
 {
-    setFilter(QGalleryDocumentUrlFilter(url));
+    setFilter(QGalleryItemUrlFilter(url));
 }
 
 /*!
-    \property QGalleryDocumentRequest::documentUrls
+    \property QGalleryItemRequest::itemUrls
 
-    \brief A list of URLs for documents a document request should return.
+    \brief A list of URLs for items a item request should return.
 
-    This is equivalent to setting a \l filter of type QGalleryDocumentUrlFilter.
+    This is equivalent to setting a \l filter of type QGalleryItemUrlFilter.
 
-    If the current \l filter is not of type QGalleryDocumentUrlFilter this will
+    If the current \l filter is not of type QGalleryItemUrlFilter this will
     be null.
 */
 
-QList<QUrl> QGalleryDocumentRequest::documentUrls() const
+QList<QUrl> QGalleryItemRequest::itemUrls() const
 {
-    return d_func()->filter.toDocumentUrlFilter().documentUrls();
+    return d_func()->filter.toItemUrlFilter().itemUrls();
 }
 
-void QGalleryDocumentRequest::setDocumentUrls(const QList<QUrl> &urls)
+void QGalleryItemRequest::setItemUrls(const QList<QUrl> &urls)
 {
-    setFilter(QGalleryDocumentUrlFilter(urls));
+    setFilter(QGalleryItemUrlFilter(urls));
 }
 
 /*!
-    \fn QGalleryDocumentRequest::documentUrlsChanged()
+    \fn QGalleryItemRequest::itemUrlsChanged()
 
-    Signals that the \l documentUrl and \l documentUrls properties have
+    Signals that the \l itemUrl and \l itemUrls properties have
     changed.
 */
 
 /*!
-    \property QGalleryDocumentRequest::containerId
+    \property QGalleryItemRequest::containerId
 
-    \brief The ID of container document a document request should return the
+    \brief The ID of container item a item request should return the
     contents of.
 
     This is equivalent to setting a \l filter of type QGalleryContainerFilter.
@@ -989,26 +989,26 @@ void QGalleryDocumentRequest::setDocumentUrls(const QList<QUrl> &urls)
     null.
 */
 
-QString QGalleryDocumentRequest::containerId() const
+QString QGalleryItemRequest::containerId() const
 {
     return d_func()->filter.toContainerFilter().containerId();
 }
 
-void QGalleryDocumentRequest::setContainerId(const QString &id)
+void QGalleryItemRequest::setContainerId(const QString &id)
 {
     setFilter(QGalleryContainerFilter(id));
 }
 
 /*!
-    \fn QGalleryDocumentRequest::containerIdChanged()
+    \fn QGalleryItemRequest::containerIdChanged()
 
     Signals that the \l containerId property has changed.
 */
 
 /*!
-    \property QGalleryDocumentRequest::containerUrl
+    \property QGalleryItemRequest::containerUrl
 
-    \brief The URL of container document a document request should return the
+    \brief The URL of container item a item request should return the
     contents of.
 
     This is equivalent to setting a \l filter of type
@@ -1018,48 +1018,48 @@ void QGalleryDocumentRequest::setContainerId(const QString &id)
     will be null.
 */
 
-QUrl QGalleryDocumentRequest::containerUrl() const
+QUrl QGalleryItemRequest::containerUrl() const
 {
     return d_func()->filter.toContainerUrlFilter().containerUrl();
 }
 
-void QGalleryDocumentRequest::setContainerUrl(const QUrl &url)
+void QGalleryItemRequest::setContainerUrl(const QUrl &url)
 {
     setFilter(QGalleryContainerUrlFilter(url));
 }
 
 /*!
-    \fn QGalleryDocumentRequest::containerUrlChanged()
+    \fn QGalleryItemRequest::containerUrlChanged()
 
     Signals that the \l containerUrl property has changed.
 */
 
 /*!
-    \property QGalleryDocumentRequest::documents
+    \property QGalleryItemRequest::items
 
-    \brief The documents returned by a request.
+    \brief The items returned by a request.
 */
 
-QGalleryDocumentList *QGalleryDocumentRequest::documents() const
+QGalleryItemList *QGalleryItemRequest::items() const
 {
     return d_func()->response;
 }
 
 /*!
-    \fn QGalleryDocumentRequest::documentsChanged()
+    \fn QGalleryItemRequest::itemsChanged()
 
-    Signals that the \l documents property has changed.
+    Signals that the \l items property has changed.
 */
 
 /*!
     \reimp
 */
 
-void QGalleryDocumentRequest::setResponse(QGalleryAbstractResponse *response)
+void QGalleryItemRequest::setResponse(QGalleryAbstractResponse *response)
 {
     Q_UNUSED(response);
 
-    emit documentsChanged();
+    emit itemsChanged();
 }
 
 class QGalleryInsertRequestPrivate : public QGalleryAbstractRequestPrivate
@@ -1072,7 +1072,7 @@ public:
 
     QStringList fields;
     QStringList sortFields;
-    QList<QUrl> documentUrls;
+    QList<QUrl> itemUrls;
 };
 
 /*!
@@ -1082,7 +1082,7 @@ public:
     \ingroup gallery-requests
 
     \brief The QGalleryInsertRequest class provides a request which inserts
-    existing documents into a gallery.
+    existing items into a gallery.
 */
 
 /*!
@@ -1153,76 +1153,76 @@ void QGalleryInsertRequest::setSortFields(const QStringList &fields)
 }
 
 /*!
-    \property QGalleryInsertRequest::documentUrl
+    \property QGalleryInsertRequest::itemUrl
 
-    \brief The URL of an document to insert into a gallery.
+    \brief The URL of an item to insert into a gallery.
 
-    This is equivalent to \a documentUrls with a single value. If multiple
-    \a documentUrls are set this will be null.
+    This is equivalent to \a itemUrls with a single value. If multiple
+    \a itemUrls are set this will be null.
 */
 
-QUrl QGalleryInsertRequest::documentUrl() const
+QUrl QGalleryInsertRequest::itemUrl() const
 {
     Q_D(const QGalleryInsertRequest);
 
-    return d->documentUrls.count() == 1
-            ? d->documentUrls.first()
+    return d->itemUrls.count() == 1
+            ? d->itemUrls.first()
             : QUrl();
 }
 
-void QGalleryInsertRequest::setDocumentUrl(const QUrl &url)
+void QGalleryInsertRequest::setItemUrl(const QUrl &url)
 {
     Q_D(QGalleryInsertRequest);
 
-    d->documentUrls.clear();
+    d->itemUrls.clear();
 
     if (!url.isEmpty())
-        d->documentUrls.append(url);
+        d->itemUrls.append(url);
 
-    emit documentUrlsChanged();
+    emit itemUrlsChanged();
 }
 
 /*!
-    \property QGalleryInsertRequest::documentUrls
+    \property QGalleryInsertRequest::itemUrls
 
     \brief A list of URLs to insert into a gallery.
 
-    If the list only contains one URL this is equivalent to \l documentUrl.
+    If the list only contains one URL this is equivalent to \l itemUrl.
 */
 
-QList<QUrl> QGalleryInsertRequest::documentUrls() const
+QList<QUrl> QGalleryInsertRequest::itemUrls() const
 {
-    return d_func()->documentUrls;
+    return d_func()->itemUrls;
 }
 
-void QGalleryInsertRequest::setDocumentUrls(const QList<QUrl> &urls)
+void QGalleryInsertRequest::setItemUrls(const QList<QUrl> &urls)
 {
-    d_func()->documentUrls = urls;
+    d_func()->itemUrls = urls;
 
-    emit documentUrlsChanged();
+    emit itemUrlsChanged();
 }
 
 /*!
-    \fn QGalleryInsertRequest::documentUrlsChanged()
+    \fn QGalleryInsertRequest::itemUrlsChanged()
 
-    Signals the \l documentUrl and \l documentUrls properties have changed.
+    Signals the \l itemUrl and \l itemUrls properties have changed.
 */
 
 /*!
-    \property QGalleryInsertRequest::documents
+    \property QGalleryInsertRequest::items
 
-    \brief The documents inserted into a gallery.
+    \brief The items inserted into a gallery.
 */
 
-QGalleryDocumentList *QGalleryInsertRequest::documents() const
+QGalleryItemList *QGalleryInsertRequest::items() const
 {
     return d_func()->response;
 }
 
 /*!
-    \fn QGalleryInsertRequest::documentsChanged()
+    \fn QGalleryInsertRequest::itemsChanged()
 
-    Signals the \l documents property has changed.
+    Signals the \l items property has changed.
 */
 
 /*!
@@ -1233,7 +1233,7 @@ void QGalleryInsertRequest::setResponse(QGalleryAbstractResponse *response)
 {
     Q_UNUSED(response);
 
-    emit documentsChanged();
+    emit itemsChanged();
 }
 
 class QGalleryRemoveRequestPrivate : public QGalleryAbstractRequestPrivate
@@ -1244,7 +1244,7 @@ public:
     {
     }
 
-    QStringList documentIds;
+    QStringList itemIds;
 };
 
 /*!
@@ -1254,7 +1254,7 @@ public:
     \ingroup gallery-requests
 
     \brief The QGalleryRemoveRequest class provides a request which removes
-    documents from a gallery.
+    items from a gallery.
 */
 
 /*!
@@ -1289,65 +1289,65 @@ QGalleryRemoveRequest::~QGalleryRemoveRequest()
 }
 
 /*!
-    \property QGalleryRemoveRequest::documentId
+    \property QGalleryRemoveRequest::itemId
 
-    \brief The ID of an document to remove from a gallery.
+    \brief The ID of an item to remove from a gallery.
 
-    This is equivalent to \l documentIds with a single ID.  If there are
-    multiple \l documentIds this will be null.
+    This is equivalent to \l itemIds with a single ID.  If there are
+    multiple \l itemIds this will be null.
 */
 
-QString QGalleryRemoveRequest::documentId() const
+QString QGalleryRemoveRequest::itemId() const
 {
     Q_D(const QGalleryRemoveRequest);
 
-    return d->documentIds.count() == 1
-            ? d->documentIds.first()
+    return d->itemIds.count() == 1
+            ? d->itemIds.first()
             : QString();
 }
 
-void QGalleryRemoveRequest::setDocumentId(const QString &id)
+void QGalleryRemoveRequest::setItemId(const QString &id)
 {
     Q_D(QGalleryRemoveRequest);
 
-    d->documentIds.clear();
+    d->itemIds.clear();
 
     if (!id.isNull())
-        d->documentIds.append(id);
+        d->itemIds.append(id);
 
-    emit documentIdsChanged();
+    emit itemIdsChanged();
 }
 
 /*!
-    \fn QGalleryRemoveRequest::documentIdChanged()
+    \fn QGalleryRemoveRequest::itemIdChanged()
 
-    Signals the \l documentId property has changed.
+    Signals the \l itemId property has changed.
 */
 
 /*!
-    \property QGalleryRemoveRequest::documentIds
+    \property QGalleryRemoveRequest::itemIds
 
-    \brief A list of IDs of documents to remove from a gallery.
+    \brief A list of IDs of items to remove from a gallery.
 
-    If the list only contains one ID this is equivalent to \l documentId.
+    If the list only contains one ID this is equivalent to \l itemId.
 */
 
-QStringList QGalleryRemoveRequest::documentIds() const
+QStringList QGalleryRemoveRequest::itemIds() const
 {
-    return d_func()->documentIds;
+    return d_func()->itemIds;
 }
 
-void QGalleryRemoveRequest::setDocumentIds(const QStringList &ids)
+void QGalleryRemoveRequest::setItemIds(const QStringList &ids)
 {
-    d_func()->documentIds = ids;
+    d_func()->itemIds = ids;
 
-    emit documentIdsChanged();
+    emit itemIdsChanged();
 }
 
 /*!
-    \fn QGalleryRemoveRequest::documentIdsChanged()
+    \fn QGalleryRemoveRequest::itemIdsChanged()
 
-    Signals that the documentId and documentIds properties have changed.
+    Signals that the itemId and itemIds properties have changed.
 */
 
 /*!
@@ -1369,7 +1369,7 @@ public:
 
     QStringList fields;
     QStringList sortFields;
-    QStringList documentIds;
+    QStringList itemIds;
     QString destinationId;
 };
 
@@ -1380,7 +1380,7 @@ public:
     \ingroup gallery-requests
 
     \brief The QGalleryCopyRequest class provides a request which copies
-    documents within a gallery.
+    items within a gallery.
 */
 
 /*!
@@ -1450,65 +1450,65 @@ void QGalleryCopyRequest::setSortFields(const QStringList &fields)
 }
 
 /*!
-    \property QGalleryCopyRequest::documentId
+    \property QGalleryCopyRequest::itemId
 
-    \brief The ID of an document to copy within a gallery.
+    \brief The ID of an item to copy within a gallery.
 
-    This is equivalent to \l documentIds with a single ID.  If there are
-    multiple \l documentIds this will be null.
+    This is equivalent to \l itemIds with a single ID.  If there are
+    multiple \l itemIds this will be null.
 */
 
-QString QGalleryCopyRequest::documentId() const
+QString QGalleryCopyRequest::itemId() const
 {
     Q_D(const QGalleryCopyRequest);
 
-    return d->documentIds.count() == 1
-            ? d->documentIds.first()
+    return d->itemIds.count() == 1
+            ? d->itemIds.first()
             : QString();
 }
 
-void QGalleryCopyRequest::setDocumentId(const QString &id)
+void QGalleryCopyRequest::setItemId(const QString &id)
 {
     Q_D(QGalleryCopyRequest);
 
-    d->documentIds.clear();
+    d->itemIds.clear();
 
     if (!id.isNull())
-        d->documentIds.append(id);
+        d->itemIds.append(id);
 
-    emit documentIdsChanged();
+    emit itemIdsChanged();
 }
 
-QStringList QGalleryCopyRequest::documentIds() const
+QStringList QGalleryCopyRequest::itemIds() const
 {
-    return d_func()->documentIds;
+    return d_func()->itemIds;
 }
 
 /*!
-    \property QGalleryCopyRequest::documentIds
+    \property QGalleryCopyRequest::itemIds
 
-    \brief A list of IDs of documents to copy within a document gallery.
+    \brief A list of IDs of items to copy within a item gallery.
 
-    If the list only contains one ID this is equivalent to \l documentId.
+    If the list only contains one ID this is equivalent to \l itemId.
 */
 
-void QGalleryCopyRequest::setDocumentIds(const QStringList &ids)
+void QGalleryCopyRequest::setItemIds(const QStringList &ids)
 {
-    d_func()->documentIds = ids;
+    d_func()->itemIds = ids;
 
-    emit documentIdsChanged();
+    emit itemIdsChanged();
 }
 
 /*!
-    \fn QGalleryCopyRequest::documentIdsChanged()
+    \fn QGalleryCopyRequest::itemIdsChanged()
 
-    Signals the \l documentId and \l documentIds properties have changed.
+    Signals the \l itemId and \l itemIds properties have changed.
 */
 
 /*!
     \property QGalleryCopyRequest::destinationId
 
-    \brief The ID of the container document a request will copy documents to.
+    \brief The ID of the container item a request will copy items to.
 */
 
 QString QGalleryCopyRequest::destinationId() const
@@ -1522,20 +1522,20 @@ void QGalleryCopyRequest::setDestinationId(const QString &id)
 }
 
 /*!
-    \property QGalleryCopyRequest::documents
+    \property QGalleryCopyRequest::items
 
-    \brief The documents copies created by a request.
+    \brief The items copies created by a request.
 */
 
-QGalleryDocumentList *QGalleryCopyRequest::documents() const
+QGalleryItemList *QGalleryCopyRequest::items() const
 {
     return d_func()->response;
 }
 
 /*!
-    \fn QGalleryCopyRequest::documentsChanged()
+    \fn QGalleryCopyRequest::itemsChanged()
 
-    Signals the \l documents property has changed.
+    Signals the \l items property has changed.
 */
 
 /*!
@@ -1546,7 +1546,7 @@ void QGalleryCopyRequest::setResponse(QGalleryAbstractResponse *response)
 {
     Q_UNUSED(response);
 
-    emit documentsChanged();
+    emit itemsChanged();
 }
 
 class QGalleryMoveRequestPrivate : public QGalleryAbstractRequestPrivate
@@ -1559,7 +1559,7 @@ public:
 
     QStringList fields;
     QStringList sortFields;
-    QStringList documentIds;
+    QStringList itemIds;
     QString destinationId;
 };
 
@@ -1570,7 +1570,7 @@ public:
     \ingroup gallery-requests
 
     \brief The QGalleryMoveRequest class provides a request which moves
-    documents within a gallery.
+    items within a gallery.
 */
 
 /*!
@@ -1639,65 +1639,65 @@ void QGalleryMoveRequest::setSortFields(const QStringList &fields)
 }
 
 /*!
-    \property QGalleryMoveRequest::documentId
+    \property QGalleryMoveRequest::itemId
 
-    \brief The ID of an document to copy within a gallery.
+    \brief The ID of an item to copy within a gallery.
 
-    This is equivalent to \l documentIds with a single ID.  If there are
-    multiple \l documentIds this will be null.
+    This is equivalent to \l itemIds with a single ID.  If there are
+    multiple \l itemIds this will be null.
 */
 
-QString QGalleryMoveRequest::documentId() const
+QString QGalleryMoveRequest::itemId() const
 {
     Q_D(const QGalleryMoveRequest);
 
-    return d->documentIds.count() == 1
-            ? d->documentIds.first()
+    return d->itemIds.count() == 1
+            ? d->itemIds.first()
             : QString();
 }
 
-void QGalleryMoveRequest::setDocumentId(const QString &id)
+void QGalleryMoveRequest::setItemId(const QString &id)
 {
     Q_D(QGalleryMoveRequest);
 
-    d->documentIds.clear();
+    d->itemIds.clear();
 
     if (!id.isNull())
-        d->documentIds.append(id);
+        d->itemIds.append(id);
 
-    emit documentIdsChanged();
+    emit itemIdsChanged();
 }
 
 /*!
-    \property QGalleryMoveRequest::documentIds
+    \property QGalleryMoveRequest::itemIds
 
-    \brief A list of IDs of documents to copy within a gallery.
+    \brief A list of IDs of items to copy within a gallery.
 
-    If the list only contains one ID this is equivalent to \l documentId.
+    If the list only contains one ID this is equivalent to \l itemId.
 */
 
-QStringList QGalleryMoveRequest::documentIds() const
+QStringList QGalleryMoveRequest::itemIds() const
 {
-    return d_func()->documentIds;
+    return d_func()->itemIds;
 }
 
-void QGalleryMoveRequest::setDocumentIds(const QStringList &ids)
+void QGalleryMoveRequest::setItemIds(const QStringList &ids)
 {
-    d_func()->documentIds = ids;
+    d_func()->itemIds = ids;
 
-    emit documentIdsChanged();
+    emit itemIdsChanged();
 }
 
 /*!
-    \fn QGalleryMoveRequest::documentIdsChanged()
+    \fn QGalleryMoveRequest::itemIdsChanged()
 
-    Signals the \l documentId and \l documentIds properties have changed.
+    Signals the \l itemId and \l itemIds properties have changed.
 */
 
 /*!
     \property QGalleryMoveRequest::destinationId
 
-    \brief The ID of the container document a request will move documents to.
+    \brief The ID of the container item a request will move items to.
 */
 
 QString QGalleryMoveRequest::destinationId() const
@@ -1711,20 +1711,20 @@ void QGalleryMoveRequest::setDestinationId(const QString &id)
 }
 
 /*!
-    \property QGalleryMoveRequest::documents
+    \property QGalleryMoveRequest::items
 
-    \brief The documents moved my a request.
+    \brief The items moved my a request.
 */
 
-QGalleryDocumentList *QGalleryMoveRequest::documents() const
+QGalleryItemList *QGalleryMoveRequest::items() const
 {
     return d_func()->response;
 }
 
 /*!
-    \fn QGalleryMoveRequest::documentsChanged()
+    \fn QGalleryMoveRequest::itemsChanged()
 
-    Signals the \l documents property has changed.
+    Signals the \l items property has changed.
 */
 
 /*!
@@ -1735,7 +1735,7 @@ void QGalleryMoveRequest::setResponse(QGalleryAbstractResponse *response)
 {
     Q_UNUSED(response);
 
-    emit documentsChanged();
+    emit itemsChanged();
 }
 
 #include "moc_qgalleryrequest.cpp"

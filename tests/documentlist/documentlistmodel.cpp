@@ -108,7 +108,7 @@ void DocumentListModel::setColumnCount(int count)
     }
 }
 
-void DocumentListModel::setList(QGalleryDocumentList *list)
+void DocumentListModel::setList(QGalleryItemList *list)
 {
     beginResetModel();
 

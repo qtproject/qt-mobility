@@ -77,8 +77,8 @@ public:
     int maximumCount() const { return m_maximumCount; }
     void setMaximumCount(int count) { m_maximumCount = count; }
 
-    QString documentType() const { return m_documentType; }
-    void setDocumentType(const QString &type) { m_documentType = type; }
+    QString itemType() const { return m_itemType; }
+    void setItemType(const QString &type) { m_itemType = type; }
 
     QGalleryFilter filter() const { return m_filter; }
     void setFilter(const QGalleryFilter &filter) { m_filter = filter; }
@@ -92,7 +92,7 @@ private:
     QStringList m_fields;
     QStringList m_sortFields;
     QVector<Column> m_columns;
-    QString m_documentType;
+    QString m_itemType;
     QString m_query;
     QGalleryFilter m_filter;
     int m_startIndex;

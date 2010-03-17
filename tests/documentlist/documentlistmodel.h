@@ -42,7 +42,7 @@
 #ifndef DOCUMENTLISTMODEL_H
 #define DOCUMENTLISTMODEL_H
 
-#include <qgallerydocumentlist.h>
+#include <qgalleryitemlist.h>
 
 #include <QtCore/qabstractitemmodel.h>
 #include <QtCore/qvector.h>
@@ -63,8 +63,8 @@ public:
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
     void setColumnCount(int count);
 
-    QGalleryDocumentList *list() const { return m_list; }
-    void setList(QGalleryDocumentList *list);
+    QGalleryItemList *list() const { return m_list; }
+    void setList(QGalleryItemList *list);
 
     QString columnField(int column) const;
     void setColumnField(int column, const QString &field);
@@ -76,7 +76,7 @@ private Q_SLOTS:
     void documentsChanged(int index, int count, const QList<int> &keys);
 
 private:
-    QGalleryDocumentList *m_list;
+    QGalleryItemList *m_list;
     QVector<int> m_keys;
     QVector<QString> m_fields;
 };

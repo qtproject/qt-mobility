@@ -51,8 +51,8 @@
 
 class QGalleryContainerFilter;
 class QGalleryContainerUrlFilter;
-class QGalleryDocumentFilter;
-class QGalleryDocumentUrlFilter;
+class QGalleryItemFilter;
+class QGalleryItemUrlFilter;
 class QGalleryIntersectionFilter;
 class QGalleryMetaDataFilter;
 class QGalleryMetaDataRangeFilter;
@@ -66,8 +66,8 @@ public:
     enum Type
     {
         Invalid,
-        Document,
-        DocumentUrl,
+        Item,
+        ItemUrl,
         Container,
         ContainerUrl,
         Intersection,
@@ -92,8 +92,8 @@ public:
 
     QGalleryFilter();
     QGalleryFilter(const QGalleryFilter &filter);
-    QGalleryFilter(const QGalleryDocumentFilter &filter);
-    QGalleryFilter(const QGalleryDocumentUrlFilter &filter);
+    QGalleryFilter(const QGalleryItemFilter &filter);
+    QGalleryFilter(const QGalleryItemUrlFilter &filter);
     QGalleryFilter(const QGalleryContainerFilter &filter);
     QGalleryFilter(const QGalleryContainerUrlFilter &filter);
     QGalleryFilter(const QGalleryIntersectionFilter &filter);
@@ -106,8 +106,8 @@ public:
 
     Type type() const;
 
-    QGalleryDocumentFilter toDocumentFilter() const;
-    QGalleryDocumentUrlFilter toDocumentUrlFilter() const;
+    QGalleryItemFilter toItemFilter() const;
+    QGalleryItemUrlFilter toItemUrlFilter() const;
     QGalleryContainerFilter toContainerFilter() const;
     QGalleryContainerUrlFilter toContainerUrlFilter() const;
     QGalleryIntersectionFilter toIntersectionFilter() const;
@@ -125,56 +125,56 @@ private:
 bool operator ==(const QGalleryFilter &filter1, const QGalleryFilter &filter2);
 bool operator !=(const QGalleryFilter &filter1, const QGalleryFilter &filter2);
 
-class QGalleryDocumentFilterPrivate;
+class QGalleryItemFilterPrivate;
 
-class Q_GALLERY_EXPORT QGalleryDocumentFilter
+class Q_GALLERY_EXPORT QGalleryItemFilter
 {
 public:
-    QGalleryDocumentFilter();
-    explicit QGalleryDocumentFilter(const QString &id);
-    explicit QGalleryDocumentFilter(const QStringList &ids);
-    QGalleryDocumentFilter(const QGalleryDocumentFilter &filter);
-    ~QGalleryDocumentFilter();
+    QGalleryItemFilter();
+    explicit QGalleryItemFilter(const QString &id);
+    explicit QGalleryItemFilter(const QStringList &ids);
+    QGalleryItemFilter(const QGalleryItemFilter &filter);
+    ~QGalleryItemFilter();
 
-    QGalleryDocumentFilter &operator =(const QGalleryDocumentFilter &filter);
+    QGalleryItemFilter &operator =(const QGalleryItemFilter &filter);
 
-    QString documentId() const;
-    void setDocumentId(const QString &id);
+    QString itemId() const;
+    void setItemId(const QString &id);
 
-    QStringList documentIds() const;
-    void setDocumentIds(const QStringList &ids);
+    QStringList itemIds() const;
+    void setItemIds(const QStringList &ids);
 
 private:
-    explicit QGalleryDocumentFilter(QGalleryFilterPrivate *d);
+    explicit QGalleryItemFilter(QGalleryFilterPrivate *d);
 
-    QSharedDataPointer<QGalleryDocumentFilterPrivate> d;
+    QSharedDataPointer<QGalleryItemFilterPrivate> d;
 
     friend class QGalleryFilter;
 };
 
-class QGalleryDocumentUrlFilterPrivate;
+class QGalleryItemUrlFilterPrivate;
 
-class Q_GALLERY_EXPORT QGalleryDocumentUrlFilter
+class Q_GALLERY_EXPORT QGalleryItemUrlFilter
 {
 public:
-    QGalleryDocumentUrlFilter();
-    explicit QGalleryDocumentUrlFilter(const QUrl &url);
-    explicit QGalleryDocumentUrlFilter(const QList<QUrl> &urls);
-    QGalleryDocumentUrlFilter(const QGalleryDocumentUrlFilter &filter);
-    ~QGalleryDocumentUrlFilter();
+    QGalleryItemUrlFilter();
+    explicit QGalleryItemUrlFilter(const QUrl &url);
+    explicit QGalleryItemUrlFilter(const QList<QUrl> &urls);
+    QGalleryItemUrlFilter(const QGalleryItemUrlFilter &filter);
+    ~QGalleryItemUrlFilter();
 
-    QGalleryDocumentUrlFilter &operator =(const QGalleryDocumentUrlFilter &filter);
+    QGalleryItemUrlFilter &operator =(const QGalleryItemUrlFilter &filter);
 
-    QUrl documentUrl() const;
-    void setDocumentUrl(const QUrl &url);
+    QUrl itemUrl() const;
+    void setItemUrl(const QUrl &url);
 
-    QList<QUrl> documentUrls() const;
-    void setDocumentUrls(const QList<QUrl> &urls);
+    QList<QUrl> itemUrls() const;
+    void setItemUrls(const QList<QUrl> &urls);
 
 private:
-    explicit QGalleryDocumentUrlFilter(QGalleryFilterPrivate *d);
+    explicit QGalleryItemUrlFilter(QGalleryFilterPrivate *d);
 
-    QSharedDataPointer<QGalleryDocumentUrlFilterPrivate> d;
+    QSharedDataPointer<QGalleryItemUrlFilterPrivate> d;
 
     friend class QGalleryFilter;
 };

@@ -80,60 +80,60 @@ public:
     bool isEqual(const QGalleryFilterPrivate &other) const { return type == other.type; }
 };
 
-class QGalleryDocumentFilterPrivate : public QGalleryFilterPrivate
+class QGalleryItemFilterPrivate : public QGalleryFilterPrivate
 {
 public:
-    QGalleryDocumentFilterPrivate()
-        : QGalleryFilterPrivate(QGalleryFilter::Document)
+    QGalleryItemFilterPrivate()
+        : QGalleryFilterPrivate(QGalleryFilter::Item)
     {
     }
 
-    QGalleryDocumentFilterPrivate(const QGalleryDocumentFilterPrivate &other)
+    QGalleryItemFilterPrivate(const QGalleryItemFilterPrivate &other)
         : QGalleryFilterPrivate(other)
-        , documentIds(other.documentIds)
+        , itemIds(other.itemIds)
     {
     }
 
     QGalleryFilterPrivate *clone() const
     {
-        return new QGalleryDocumentFilterPrivate(*this);
+        return new QGalleryItemFilterPrivate(*this);
     }
 
     bool isEqual(const QGalleryFilterPrivate &other) const
     {
-        return other.type == type && static_cast<const QGalleryDocumentFilterPrivate &>
-                (other).documentIds == documentIds;
+        return other.type == type && static_cast<const QGalleryItemFilterPrivate &>
+                (other).itemIds == itemIds;
     }
 
-    QStringList documentIds;
+    QStringList itemIds;
 };
 
-class QGalleryDocumentUrlFilterPrivate : public QGalleryFilterPrivate
+class QGalleryItemUrlFilterPrivate : public QGalleryFilterPrivate
 {
 public:
-    QGalleryDocumentUrlFilterPrivate()
-        : QGalleryFilterPrivate(QGalleryFilter::DocumentUrl)
+    QGalleryItemUrlFilterPrivate()
+        : QGalleryFilterPrivate(QGalleryFilter::ItemUrl)
     {
     }
 
-    QGalleryDocumentUrlFilterPrivate(const QGalleryDocumentUrlFilterPrivate &other)
+    QGalleryItemUrlFilterPrivate(const QGalleryItemUrlFilterPrivate &other)
         : QGalleryFilterPrivate(other)
-        , documentUrls(other.documentUrls)
+        , itemUrls(other.itemUrls)
     {
     }
 
     QGalleryFilterPrivate *clone() const
     {
-        return new QGalleryDocumentUrlFilterPrivate(*this);
+        return new QGalleryItemUrlFilterPrivate(*this);
     }
 
     bool isEqual(const QGalleryFilterPrivate &other) const
     {
-        return other.type == type && static_cast<const QGalleryDocumentUrlFilterPrivate &>
-                (other).documentUrls == documentUrls;
+        return other.type == type && static_cast<const QGalleryItemUrlFilterPrivate &>
+                (other).itemUrls == itemUrls;
     }
 
-    QList<QUrl> documentUrls;
+    QList<QUrl> itemUrls;
 };
 
 class QGalleryContainerFilterPrivate : public QGalleryFilterPrivate
@@ -353,8 +353,8 @@ public:
     Identifies the type of a filter.
 
     \value Invalid
-    \value Document
-    \value DocumentUrl
+    \value Item
+    \value ItemUrl
     \value Container
     \value ContainerUrl
     \value Intersection
@@ -397,21 +397,21 @@ QGalleryFilter::QGalleryFilter(const QGalleryFilter &filter)
 }
 
 /*!
-    Constructs a copy of a gallery document \a filter.
+    Constructs a copy of a gallery item \a filter.
 */
 
 
-QGalleryFilter::QGalleryFilter(const QGalleryDocumentFilter &filter)
-    : d(const_cast<QGalleryDocumentFilterPrivate *>(filter.d.constData()))
+QGalleryFilter::QGalleryFilter(const QGalleryItemFilter &filter)
+    : d(const_cast<QGalleryItemFilterPrivate *>(filter.d.constData()))
 {
 }
 
 /*!
-    Constructs a copy of a gallery document URL \a filter.
+    Constructs a copy of a gallery item URL \a filter.
 */
 
-QGalleryFilter::QGalleryFilter(const QGalleryDocumentUrlFilter &filter)
-    : d(const_cast<QGalleryDocumentUrlFilterPrivate *>(filter.d.constData()))
+QGalleryFilter::QGalleryFilter(const QGalleryItemUrlFilter &filter)
+    : d(const_cast<QGalleryItemUrlFilterPrivate *>(filter.d.constData()))
 {
 }
 
@@ -498,31 +498,31 @@ QGalleryFilter::Type QGalleryFilter::type() const
 }
 
 /*!
-    Casts a filter to a document filter.  The filter must be of type Document
+    Casts a filter to a item filter.  The filter must be of type Item
     or this will return an Invalid filter.
 
-    Returns a QGalleryDocumentFilter.
+    Returns a QGalleryItemFilter.
 */
 
-QGalleryDocumentFilter QGalleryFilter::toDocumentFilter() const
+QGalleryItemFilter QGalleryFilter::toItemFilter() const
 {
-    return d->type == Document
-            ? QGalleryDocumentFilter(const_cast<QGalleryFilterPrivate *>(d.constData()))
-            : QGalleryDocumentFilter();
+    return d->type == Item
+            ? QGalleryItemFilter(const_cast<QGalleryFilterPrivate *>(d.constData()))
+            : QGalleryItemFilter();
 }
 
 /*!
-    Casts a filter to a document URL filter.  The filter must be of type
-    DocumentUrl or this will return an Invalid filter.
+    Casts a filter to a item URL filter.  The filter must be of type
+    ItemUrl or this will return an Invalid filter.
 
-    Returns a QGalleryDocumentUrlFilter.
+    Returns a QGalleryItemUrlFilter.
 */
 
-QGalleryDocumentUrlFilter QGalleryFilter::toDocumentUrlFilter() const
+QGalleryItemUrlFilter QGalleryFilter::toItemUrlFilter() const
 {
-    return d->type == DocumentUrl
-            ? QGalleryDocumentUrlFilter(const_cast<QGalleryFilterPrivate *>(d.constData()))
-            : QGalleryDocumentUrlFilter();
+    return d->type == ItemUrl
+            ? QGalleryItemUrlFilter(const_cast<QGalleryFilterPrivate *>(d.constData()))
+            : QGalleryItemUrlFilter();
 }
 
 /*!
@@ -632,49 +632,49 @@ bool operator !=(const QGalleryFilter &filter1, const QGalleryFilter &filter2)
 }
 
 /*!
-    \class QGalleryDocumentFilter
+    \class QGalleryItemFilter
 
     \ingroup gallery
     \ingroup gallery-filters
 
-    \brief The QGalleryDocumentFilter class provides a gallery filter which
-    matches documents with specific IDs.
+    \brief The QGalleryItemFilter class provides a gallery filter which
+    matches items with specific IDs.
 */
 
 /*!
-    Constructs a null document filter.
+    Constructs a null item filter.
 */
 
-QGalleryDocumentFilter::QGalleryDocumentFilter()
-    : d(new QGalleryDocumentFilterPrivate)
+QGalleryItemFilter::QGalleryItemFilter()
+    : d(new QGalleryItemFilterPrivate)
 {
 }
 
 /*!
-    Constructs a document filter which matches a single \a id.
+    Constructs a item filter which matches a single \a id.
 */
 
-QGalleryDocumentFilter::QGalleryDocumentFilter(const QString &id)
-    : d(new QGalleryDocumentFilterPrivate)
+QGalleryItemFilter::QGalleryItemFilter(const QString &id)
+    : d(new QGalleryItemFilterPrivate)
 {
-    d->documentIds.append(id);
+    d->itemIds.append(id);
 }
 
 /*!
-    Constructs a document filter which matches a list of \a ids.
+    Constructs a item filter which matches a list of \a ids.
 */
 
-QGalleryDocumentFilter::QGalleryDocumentFilter(const QStringList &ids)
-    : d(new QGalleryDocumentFilterPrivate)
+QGalleryItemFilter::QGalleryItemFilter(const QStringList &ids)
+    : d(new QGalleryItemFilterPrivate)
 {
-    d->documentIds = ids;
+    d->itemIds = ids;
 }
 
 /*!
-    Constructs a copy of a document \a filter.
+    Constructs a copy of a item \a filter.
 */
 
-QGalleryDocumentFilter::QGalleryDocumentFilter(const QGalleryDocumentFilter &filter)
+QGalleryItemFilter::QGalleryItemFilter(const QGalleryItemFilter &filter)
     : d(filter.d)
 {
 }
@@ -683,24 +683,24 @@ QGalleryDocumentFilter::QGalleryDocumentFilter(const QGalleryDocumentFilter &fil
     \internal
 */
 
-QGalleryDocumentFilter::QGalleryDocumentFilter(QGalleryFilterPrivate *d)
-    : d(static_cast<QGalleryDocumentFilterPrivate *>(d))
+QGalleryItemFilter::QGalleryItemFilter(QGalleryFilterPrivate *d)
+    : d(static_cast<QGalleryItemFilterPrivate *>(d))
 {
 }
 
 /*!
-    Destroys a document filter.
+    Destroys a item filter.
 */
 
-QGalleryDocumentFilter::~QGalleryDocumentFilter()
+QGalleryItemFilter::~QGalleryItemFilter()
 {
 }
 
 /*!
-    Assigns the value of \a filter to another document filter.
+    Assigns the value of \a filter to another item filter.
 */
 
-QGalleryDocumentFilter &QGalleryDocumentFilter::operator =(const QGalleryDocumentFilter &filter)
+QGalleryItemFilter &QGalleryItemFilter::operator =(const QGalleryItemFilter &filter)
 {
     d = filter.d;
 
@@ -708,95 +708,95 @@ QGalleryDocumentFilter &QGalleryDocumentFilter::operator =(const QGalleryDocumen
 }
 
 /*!
-    Returns the ID of single document matched by a document filter.
+    Returns the ID of single item matched by a item filter.
 
-    If documentIds() contains multiple IDs this will be null.
+    If itemIds() contains multiple IDs this will be null.
 */
 
-QString QGalleryDocumentFilter::documentId() const
+QString QGalleryItemFilter::itemId() const
 {
-    return d->documentIds.count() == 1
-            ? d->documentIds.first()
+    return d->itemIds.count() == 1
+            ? d->itemIds.first()
             : QString();
 }
 
 /*!
-    Sets the \a id of a single document matched by a document filter.
+    Sets the \a id of a single item matched by a item filter.
 
-    Setting this will overwrite the value of documentIds().
+    Setting this will overwrite the value of itemIds().
 */
 
-void QGalleryDocumentFilter::setDocumentId(const QString &id)
+void QGalleryItemFilter::setItemId(const QString &id)
 {
-    d->documentIds.clear();
+    d->itemIds.clear();
 
     if (!id.isNull())
-        d->documentIds.append(id);
+        d->itemIds.append(id);
 }
 
 /*!
-    Returns the list of IDs matched by a document filter.
+    Returns the list of IDs matched by a item filter.
 */
 
-QStringList QGalleryDocumentFilter::documentIds() const
+QStringList QGalleryItemFilter::itemIds() const
 {
-    return d->documentIds;
+    return d->itemIds;
 }
 
 /*!
-    Sets the list of document \a ids matched by a document filter.
+    Sets the list of item \a ids matched by a item filter.
 
-    Setting this will overwrite the value of documentId().
+    Setting this will overwrite the value of itemId().
 */
 
-void QGalleryDocumentFilter::setDocumentIds(const QStringList &ids)
+void QGalleryItemFilter::setItemIds(const QStringList &ids)
 {
-    d->documentIds = ids;
+    d->itemIds = ids;
 }
 
 /*!
-    \class QGalleryDocumentUrlFilter
+    \class QGalleryItemUrlFilter
 
     \ingroup gallery
     \ingroup gallery-filters
 
-    \brief The QGalleryDocumentUrlFilter class provides a gallery filter which
-    matches documents with specific URLs.
+    \brief The QGalleryItemUrlFilter class provides a gallery filter which
+    matches items with specific URLs.
 */
 
 /*!
-    Constructs an empty document URL filter.
+    Constructs an empty item URL filter.
 */
-QGalleryDocumentUrlFilter::QGalleryDocumentUrlFilter()
-    : d(new QGalleryDocumentUrlFilterPrivate)
+QGalleryItemUrlFilter::QGalleryItemUrlFilter()
+    : d(new QGalleryItemUrlFilterPrivate)
 {
 }
 
 /*!
-    Constructs a document URL filter which matches a single \a url.
+    Constructs a item URL filter which matches a single \a url.
 */
 
-QGalleryDocumentUrlFilter::QGalleryDocumentUrlFilter(const QUrl &url)
-    : d(new QGalleryDocumentUrlFilterPrivate)
+QGalleryItemUrlFilter::QGalleryItemUrlFilter(const QUrl &url)
+    : d(new QGalleryItemUrlFilterPrivate)
 {
-    d->documentUrls.append(url);
+    d->itemUrls.append(url);
 }
 
 /*!
-    Constructs a document URL filter which matches a list of \a urls.
+    Constructs a item URL filter which matches a list of \a urls.
 */
 
-QGalleryDocumentUrlFilter::QGalleryDocumentUrlFilter(const QList<QUrl> &urls)
-    : d(new QGalleryDocumentUrlFilterPrivate)
+QGalleryItemUrlFilter::QGalleryItemUrlFilter(const QList<QUrl> &urls)
+    : d(new QGalleryItemUrlFilterPrivate)
 {
-    d->documentUrls = urls;
+    d->itemUrls = urls;
 }
 
 /*!
-    Constructs a copy of a document URL \a filter.
+    Constructs a copy of a item URL \a filter.
 */
 
-QGalleryDocumentUrlFilter::QGalleryDocumentUrlFilter(const QGalleryDocumentUrlFilter &filter)
+QGalleryItemUrlFilter::QGalleryItemUrlFilter(const QGalleryItemUrlFilter &filter)
     : d(filter.d)
 {
 }
@@ -805,25 +805,25 @@ QGalleryDocumentUrlFilter::QGalleryDocumentUrlFilter(const QGalleryDocumentUrlFi
     \internal
 */
 
-QGalleryDocumentUrlFilter::QGalleryDocumentUrlFilter(QGalleryFilterPrivate *d)
-    : d(static_cast<QGalleryDocumentUrlFilterPrivate *>(d))
+QGalleryItemUrlFilter::QGalleryItemUrlFilter(QGalleryFilterPrivate *d)
+    : d(static_cast<QGalleryItemUrlFilterPrivate *>(d))
 {
 }
 
 /*!
-    Destroys a document URL filter.
+    Destroys a item URL filter.
 */
 
-QGalleryDocumentUrlFilter::~QGalleryDocumentUrlFilter()
+QGalleryItemUrlFilter::~QGalleryItemUrlFilter()
 {
 }
 
 /*!
-    Assigns the value of \a filter to another document URL filter.
+    Assigns the value of \a filter to another item URL filter.
 */
 
-QGalleryDocumentUrlFilter &QGalleryDocumentUrlFilter::operator =(
-        const QGalleryDocumentUrlFilter &filter)
+QGalleryItemUrlFilter &QGalleryItemUrlFilter::operator =(
+        const QGalleryItemUrlFilter &filter)
 {
     d = filter.d;
 
@@ -831,50 +831,50 @@ QGalleryDocumentUrlFilter &QGalleryDocumentUrlFilter::operator =(
 }
 
 /*!
-    Returns the URL of single document matched by a document filter.
+    Returns the URL of single item matched by a item filter.
 
-    If documentUrls() contains multiple URLs this will be null.
+    If itemUrls() contains multiple URLs this will be null.
 */
 
-QUrl QGalleryDocumentUrlFilter::documentUrl() const
+QUrl QGalleryItemUrlFilter::itemUrl() const
 {
-    return d->documentUrls.count() == 1
-            ? d->documentUrls.first()
+    return d->itemUrls.count() == 1
+            ? d->itemUrls.first()
             : QUrl();
 }
 
 /*!
-    Sets the \a url of a single document matched by a document filter.
+    Sets the \a url of a single item matched by a item filter.
 
-    Setting this will overwrite the value of documentUrls().
+    Setting this will overwrite the value of itemUrls().
 */
 
-void QGalleryDocumentUrlFilter::setDocumentUrl(const QUrl &url)
+void QGalleryItemUrlFilter::setItemUrl(const QUrl &url)
 {
-    d->documentUrls.clear();
+    d->itemUrls.clear();
 
     if (!url.isEmpty())
-        d->documentUrls.append(url);
+        d->itemUrls.append(url);
 }
 
 /*!
-    Returns the list of URLs matched by a document filter.
+    Returns the list of URLs matched by a item filter.
 */
 
-QList<QUrl> QGalleryDocumentUrlFilter::documentUrls() const
+QList<QUrl> QGalleryItemUrlFilter::itemUrls() const
 {
-    return d->documentUrls;
+    return d->itemUrls;
 }
 
 /*!
-    Sets the list of document \a urls matched by a document filter.
+    Sets the list of item \a urls matched by a item filter.
 
-    Setting this will overwrite the value of documentUrl().
+    Setting this will overwrite the value of itemUrl().
 */
 
-void QGalleryDocumentUrlFilter::setDocumentUrls(const QList<QUrl> &urls)
+void QGalleryItemUrlFilter::setItemUrls(const QList<QUrl> &urls)
 {
-    d->documentUrls = urls;
+    d->itemUrls = urls;
 }
 
 /*!
@@ -884,7 +884,7 @@ void QGalleryDocumentUrlFilter::setDocumentUrls(const QList<QUrl> &urls)
     \ingroup gallery-filters
 
     \brief The QGalleryContainerFilter class provides a filter which matches
-    content belonging to a container document.
+    content belonging to a container item.
 */
 
 /*!
@@ -898,7 +898,7 @@ QGalleryContainerFilter::QGalleryContainerFilter()
 
 /*!
     Constructs a container filter which matches the contents of a container
-    document with the given \a id.
+    item with the given \a id.
 */
 
 QGalleryContainerFilter::QGalleryContainerFilter(const QString &id)
@@ -945,7 +945,7 @@ QGalleryContainerFilter &QGalleryContainerFilter::operator =(const QGalleryConta
 }
 
 /*!
-    Returns the ID of the container document a filter matches the contents of.
+    Returns the ID of the container item a filter matches the contents of.
 */
 
 QString QGalleryContainerFilter::containerId() const
@@ -954,7 +954,7 @@ QString QGalleryContainerFilter::containerId() const
 }
 
 /*!
-    Sets the \a id of the container document a filter should match the contents
+    Sets the \a id of the container item a filter should match the contents
     of.
 */
 
@@ -970,7 +970,7 @@ void QGalleryContainerFilter::setContainerId(const QString &id)
     \ingroup gallery-filters
 
     \brief The QGalleryContainerUrlFilter class provides a filter which matches
-    content belonging to a container document identified by a URL.
+    content belonging to a container item identified by a URL.
 */
 
 /*!
@@ -984,7 +984,7 @@ QGalleryContainerUrlFilter::QGalleryContainerUrlFilter()
 
 /*!
     Constructs a container filter which matches the contents of a container
-    document with the given \a url.
+    item with the given \a url.
 */
 
 QGalleryContainerUrlFilter::QGalleryContainerUrlFilter(const QUrl &url)
@@ -1032,7 +1032,7 @@ QGalleryContainerUrlFilter &QGalleryContainerUrlFilter::operator =(
 }
 
 /*!
-    Returns the URL of the container document a filter matches the contents of.
+    Returns the URL of the container item a filter matches the contents of.
 */
 
 QUrl QGalleryContainerUrlFilter::containerUrl() const
@@ -1041,7 +1041,7 @@ QUrl QGalleryContainerUrlFilter::containerUrl() const
 }
 
 /*!
-    Sets the \a url of the container document a filter should match the contents
+    Sets the \a url of the container item a filter should match the contents
     of.
 */
 
@@ -1441,7 +1441,7 @@ void QGalleryUnionFilter::clear()
     \ingroup gallery-filters
 
     \brief The QGalleryMetaDataFilter class provides a filter which matches
-    documents with meta-data fields containing a specific value.
+    items with meta-data fields containing a specific value.
 */
 
 /*!
@@ -1454,7 +1454,7 @@ QGalleryMetaDataFilter::QGalleryMetaDataFilter()
 }
 
 /*!
-    Constructs a meta-data filter which matches documents in which the value of
+    Constructs a meta-data filter which matches items in which the value of
     \a field matches \a value.
 
     The type of comparison made is determined by the match \a flags.
@@ -1569,7 +1569,7 @@ void QGalleryMetaDataFilter::setMatchFlags(Qt::MatchFlags flags)
     \ingroup gallery-filters
 
     \brief The QGalleryMetaDataRangeFilter class provides a filter which matches
-    documents with meta-data fields with values within a specified range.
+    items with meta-data fields with values within a specified range.
 */
 
 /*!

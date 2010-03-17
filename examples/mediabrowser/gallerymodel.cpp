@@ -41,7 +41,7 @@
 
 #include "gallerymodel.h"
 
-#include "qgallerydocumentlist.h"
+#include "qgalleryitemlist.h"
 
 GalleryModel::GalleryModel(QObject *parent)
     : QAbstractItemModel(parent)
@@ -118,12 +118,12 @@ void GalleryModel::setColumnCount(int count)
     }
 }
 
-QGalleryDocumentList *GalleryModel::list() const
+QGalleryItemList *GalleryModel::list() const
 {
     return mediaList;
 }
 
-void GalleryModel::setList(QGalleryDocumentList *list)
+void GalleryModel::setList(QGalleryItemList *list)
 {
     beginResetModel();
 

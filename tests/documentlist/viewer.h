@@ -64,7 +64,7 @@ private Q_SLOTS:
 
 private:
     QDocumentGallery m_gallery;
-    QGalleryDocumentRequest m_request;
+    QGalleryItemRequest m_request;
     DocumentListModel m_model;
     QLineEdit *m_typeInput;
     QSpinBox *m_offsetInput;

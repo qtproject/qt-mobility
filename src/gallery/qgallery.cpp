@@ -96,30 +96,6 @@ QAbstractGallery::~QAbstractGallery()
 */
 
 /*!
-    \property QAbstractGallery::rootDocumentId
-
-    \brief The document ID of a gallery's root container.
-*/
-
-/*!
-    \fn QAbstractGallery::rootDocumentIdChanged()
-
-    Signals the \l rootDocumentId property has changed.
-*/
-
-/*!
-    \property QAbstractGallery::supportedDocumentTypes
-
-    \brief A list of document types that may be found in a gallery.
-*/
-
-/*!
-    \fn QAbstractGallery::supportedDocumentTypesChanged()
-
-    Signals the \l supportedDocumentTypes property has changed.
-*/
-
-/*!
     \fn QAbstractGallery::createResponse(QGalleryAbstractRequest *request)
 
     Creates a response to a gallery \a request.
@@ -217,19 +193,12 @@ bool QDocumentGallery::isRequestSupported(QGalleryAbstractRequest::Type type) co
 }
 
 /*!
-    \reimp
+    \property QDocumentGallery::itemTypes
+
+    Returns a list of item types supported by a document gallery.
 */
 
-QString QDocumentGallery::rootDocumentId() const
-{
-    return QString();
-}
-
-/*!
-    \reimp
-*/
-
-QStringList QDocumentGallery::supportedDocumentTypes() const
+QStringList QDocumentGallery::itemTypes() const
 {
     return QStringList();
 }

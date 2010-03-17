@@ -51,7 +51,7 @@ private Q_SLOTS:
     void finish();
     void cancel();
     void idle();
-    void documentCount();
+    void itemCount();
 };
 
 class QtGalleryTestResponse : public QGalleryAbstractResponse
@@ -76,7 +76,7 @@ public:
     bool waitForFinished(int) { return true; }
 
     void doFinish(int result, bool idle) { finish(result, idle); }
-    void doUpdateDocumentCount(int count) { updateDocumentCount(count); }
+    void doUpdateItemCount(int count) { updateItemCount(count); }
 };
 
 void tst_QGalleryAbstractResponse::finish()
@@ -206,34 +206,34 @@ void tst_QGalleryAbstractResponse::idle()
     QCOMPARE(spy.count(), 2);
 }
 
-void tst_QGalleryAbstractResponse::documentCount()
+void tst_QGalleryAbstractResponse::itemCount()
 {
     QtGalleryTestResponse response;
 
-    QSignalSpy spy(&response, SIGNAL(documentCountChanged()));
+    QSignalSpy spy(&response, SIGNAL(itemCountChanged()));
 
-    QCOMPARE(response.documentCount(), 0);
+    QCOMPARE(response.itemCount(), 0);
 
-    response.doUpdateDocumentCount(45);
-    QCOMPARE(response.documentCount(), 45);
+    response.doUpdateItemCount(45);
+    QCOMPARE(response.itemCount(), 45);
     QCOMPARE(spy.count(), 1);
 
     // Don't emit a signal if unchanged.
-    response.doUpdateDocumentCount(45);
-    QCOMPARE(response.documentCount(), 45);
+    response.doUpdateItemCount(45);
+    QCOMPARE(response.itemCount(), 45);
     QCOMPARE(spy.count(), 1);
 
     // Accept negative values.
-    response.doUpdateDocumentCount(-125);
-    QCOMPARE(response.documentCount(), -125);
+    response.doUpdateItemCount(-125);
+    QCOMPARE(response.itemCount(), -125);
     QCOMPARE(spy.count(), 2);
 
-    response.doUpdateDocumentCount(3443564);
-    QCOMPARE(response.documentCount(), 3443564);
+    response.doUpdateItemCount(3443564);
+    QCOMPARE(response.itemCount(), 3443564);
     QCOMPARE(spy.count(), 3);
 
-    response.doUpdateDocumentCount(0);
-    QCOMPARE(response.documentCount(), 0);
+    response.doUpdateItemCount(0);
+    QCOMPARE(response.itemCount(), 0);
     QCOMPARE(spy.count(), 4);
 }
 

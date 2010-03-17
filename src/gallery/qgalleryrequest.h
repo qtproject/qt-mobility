@@ -42,7 +42,7 @@
 #ifndef QGALLERYREQUEST_H
 #define QGALLERYREQUEST_H
 
-#include "qgallerydocumentlist.h"
+#include "qgalleryitemlist.h"
 
 #include "qgalleryfilter.h"
 
@@ -88,7 +88,7 @@ public:
 
     enum Type
     {
-        Document,
+        Item,
         Insert,
         Remove,
         Copy,
@@ -138,7 +138,7 @@ private:
 
 class QGalleryAbstractResponsePrivate;
 
-class Q_GALLERY_EXPORT QGalleryAbstractResponse : public QGalleryDocumentList
+class Q_GALLERY_EXPORT QGalleryAbstractResponse : public QGalleryItemList
 {
     Q_OBJECT
 public:
@@ -148,7 +148,7 @@ public:
     int result() const;
     bool isIdle() const;
 
-    int documentCount() const;
+    int itemCount() const;
 
     virtual void cancel();
 
@@ -156,35 +156,35 @@ public:
 
 Q_SIGNALS:
     void finished();
-    void documentCountChanged();
+    void itemCountChanged();
 
 protected:
     void finish(int result, bool idle = false);
-    void updateDocumentCount(int count);
+    void updateItemCount(int count);
 
     QGalleryAbstractResponsePrivate *d_ptr;
 };
 
-class QGalleryDocumentRequestPrivate;
+class QGalleryItemRequestPrivate;
 
-class Q_GALLERY_EXPORT QGalleryDocumentRequest : public QGalleryAbstractRequest
+class Q_GALLERY_EXPORT QGalleryItemRequest : public QGalleryAbstractRequest
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(QGalleryDocumentRequest)
+    Q_DECLARE_PRIVATE(QGalleryItemRequest)
     Q_PROPERTY(QStringList fields READ fields WRITE setFields)
     Q_PROPERTY(QStringList sortFields READ sortFields WRITE setSortFields)
     Q_PROPERTY(bool live READ isLive WRITE setLive)
     Q_PROPERTY(int startIndex READ startIndex WRITE setStartIndex)
     Q_PROPERTY(int maximumCount READ maximumCount WRITE setMaximumCount)
-    Q_PROPERTY(QString documentType READ documentType WRITE setDocumentType)
+    Q_PROPERTY(QString itemType READ itemType WRITE setItemType)
     Q_PROPERTY(QGalleryFilter filter READ filter WRITE setFilter NOTIFY filterChanged)
-    Q_PROPERTY(QString documentId READ documentId WRITE setDocumentId NOTIFY documentIdsChanged)
-    Q_PROPERTY(QStringList documentIds READ documentIds WRITE setDocumentIds NOTIFY documentIdsChanged)
-    Q_PROPERTY(QUrl documentUrl READ documentUrl WRITE setDocumentUrl NOTIFY documentUrlsChanged)
-    Q_PROPERTY(QList<QUrl> documentUrls READ documentUrls WRITE setDocumentUrls NOTIFY documentUrlsChanged)
+    Q_PROPERTY(QString itemId READ itemId WRITE setItemId NOTIFY itemIdsChanged)
+    Q_PROPERTY(QStringList itemIds READ itemIds WRITE setItemIds NOTIFY itemIdsChanged)
+    Q_PROPERTY(QUrl itemUrl READ itemUrl WRITE setItemUrl NOTIFY itemUrlsChanged)
+    Q_PROPERTY(QList<QUrl> itemUrls READ itemUrls WRITE setItemUrls NOTIFY itemUrlsChanged)
     Q_PROPERTY(QString containerId READ containerId WRITE setContainerId)
     Q_PROPERTY(QUrl containerUrl READ containerUrl WRITE setContainerUrl)
-    Q_PROPERTY(QGalleryDocumentList* documents READ documents NOTIFY documentsChanged)
+    Q_PROPERTY(QGalleryItemList* items READ items NOTIFY itemsChanged)
     Q_ENUMS(Error)
 public:
     enum Error
@@ -192,9 +192,9 @@ public:
         InvalidFilter = RequestError
     };
 
-    explicit QGalleryDocumentRequest(QObject *parent = 0);
-    explicit QGalleryDocumentRequest(QAbstractGallery *gallery, QObject *parent = 0);
-    ~QGalleryDocumentRequest();
+    explicit QGalleryItemRequest(QObject *parent = 0);
+    explicit QGalleryItemRequest(QAbstractGallery *gallery, QObject *parent = 0);
+    ~QGalleryItemRequest();
 
     QStringList fields() const;
     void setFields(const QStringList &fields);
@@ -211,23 +211,23 @@ public:
     int maximumCount() const;
     void setMaximumCount(int count);
 
-    QString documentType() const;
-    void setDocumentType(const QString &type);
+    QString itemType() const;
+    void setItemType(const QString &type);
 
     QGalleryFilter filter() const;
     void setFilter(const QGalleryFilter &filter);
 
-    QString documentId() const;
-    void setDocumentId(const QString &id);
+    QString itemId() const;
+    void setItemId(const QString &id);
 
-    QStringList documentIds() const;
-    void setDocumentIds(const QStringList &id);
+    QStringList itemIds() const;
+    void setItemIds(const QStringList &id);
 
-    QUrl documentUrl() const;
-    void setDocumentUrl(const QUrl &url);
+    QUrl itemUrl() const;
+    void setItemUrl(const QUrl &url);
 
-    QList<QUrl> documentUrls() const;
-    void setDocumentUrls(const QList<QUrl> &urls);
+    QList<QUrl> itemUrls() const;
+    void setItemUrls(const QList<QUrl> &urls);
 
     QString containerId() const;
     void setContainerId(const QString &id);
@@ -235,15 +235,15 @@ public:
     QUrl containerUrl() const;
     void setContainerUrl(const QUrl &url);
 
-    QGalleryDocumentList *documents() const;
+    QGalleryItemList *items() const;
 
 Q_SIGNALS:
     void filterChanged();
-    void documentIdsChanged();
-    void documentUrlsChanged();
+    void itemIdsChanged();
+    void itemUrlsChanged();
     void containerIdChanged();
     void containerUrlChanged();
-    void documentsChanged();
+    void itemsChanged();
 
 protected:
     void setResponse(QGalleryAbstractResponse *response);
@@ -257,9 +257,9 @@ class Q_GALLERY_EXPORT QGalleryInsertRequest : public QGalleryAbstractRequest
     Q_DECLARE_PRIVATE(QGalleryInsertRequest)
     Q_PROPERTY(QStringList fields READ fields WRITE setFields)
     Q_PROPERTY(QStringList sortFields READ sortFields WRITE setSortFields)
-    Q_PROPERTY(QUrl documentUrl READ documentUrl WRITE setDocumentUrl NOTIFY documentUrlsChanged)
-    Q_PROPERTY(QList<QUrl> documentUrls READ documentUrls WRITE setDocumentUrls NOTIFY documentUrlsChanged)
-    Q_PROPERTY(QGalleryDocumentList *documents READ documents NOTIFY documentsChanged)
+    Q_PROPERTY(QUrl itemUrl READ itemUrl WRITE setItemUrl NOTIFY itemUrlsChanged)
+    Q_PROPERTY(QList<QUrl> itemUrls READ itemUrls WRITE setItemUrls NOTIFY itemUrlsChanged)
+    Q_PROPERTY(QGalleryItemList *items READ items NOTIFY itemsChanged)
 public:
     explicit QGalleryInsertRequest(QObject *parent = 0);
     explicit QGalleryInsertRequest(QAbstractGallery *gallery, QObject *parent = 0);
@@ -271,17 +271,17 @@ public:
     QStringList sortFields() const;
     void setSortFields(const QStringList &fields);
 
-    QUrl documentUrl() const;
-    void setDocumentUrl(const QUrl &url);
+    QUrl itemUrl() const;
+    void setItemUrl(const QUrl &url);
 
-    QList<QUrl> documentUrls() const;
-    void setDocumentUrls(const QList<QUrl> &urls);
+    QList<QUrl> itemUrls() const;
+    void setItemUrls(const QList<QUrl> &urls);
 
-    QGalleryDocumentList *documents() const;
+    QGalleryItemList *items() const;
 
 Q_SIGNALS:
-    void documentUrlsChanged();
-    void documentsChanged();
+    void itemUrlsChanged();
+    void itemsChanged();
 
 protected:
     void setResponse(QGalleryAbstractResponse *response);
@@ -293,21 +293,21 @@ class Q_GALLERY_EXPORT QGalleryRemoveRequest : public QGalleryAbstractRequest
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QGalleryRemoveRequest)
-    Q_PROPERTY(QString documentId READ documentId WRITE setDocumentId NOTIFY documentIdsChanged);
-    Q_PROPERTY(QStringList documentIds READ documentIds WRITE setDocumentIds NOTIFY documentIdsChanged)
+    Q_PROPERTY(QString itemId READ itemId WRITE setItemId NOTIFY itemIdsChanged);
+    Q_PROPERTY(QStringList itemIds READ itemIds WRITE setItemIds NOTIFY itemIdsChanged)
 public:
     explicit QGalleryRemoveRequest(QObject *parent = 0);
     explicit QGalleryRemoveRequest(QAbstractGallery *gallery, QObject *parent = 0);
     ~QGalleryRemoveRequest();
 
-    QString documentId() const;
-    void setDocumentId(const QString &id);
+    QString itemId() const;
+    void setItemId(const QString &id);
 
-    QStringList documentIds() const;
-    void setDocumentIds(const QStringList &id);
+    QStringList itemIds() const;
+    void setItemIds(const QStringList &id);
 
 Q_SIGNALS:
-    void documentIdsChanged();
+    void itemIdsChanged();
 
 protected:
     void setResponse(QGalleryAbstractResponse *response);
@@ -321,10 +321,10 @@ class Q_GALLERY_EXPORT QGalleryCopyRequest : public QGalleryAbstractRequest
     Q_DECLARE_PRIVATE(QGalleryCopyRequest)
     Q_PROPERTY(QStringList fields READ fields WRITE setFields)
     Q_PROPERTY(QStringList sortFields READ sortFields WRITE setSortFields)
-    Q_PROPERTY(QString documentId READ documentId WRITE setDocumentId NOTIFY documentIdsChanged);
-    Q_PROPERTY(QStringList documentIds READ documentIds WRITE setDocumentIds NOTIFY documentIdsChanged)
+    Q_PROPERTY(QString itemId READ itemId WRITE setItemId NOTIFY itemIdsChanged);
+    Q_PROPERTY(QStringList itemIds READ itemIds WRITE setItemIds NOTIFY itemIdsChanged)
     Q_PROPERTY(QString destinationId READ destinationId WRITE setDestinationId)
-    Q_PROPERTY(QGalleryDocumentList* documents READ documents NOTIFY documentsChanged)
+    Q_PROPERTY(QGalleryItemList* items READ items NOTIFY itemsChanged)
 public:
     explicit QGalleryCopyRequest(QObject *parent = 0);
     explicit QGalleryCopyRequest(QAbstractGallery *gallery, QObject *parent = 0);
@@ -336,20 +336,20 @@ public:
     QStringList sortFields() const;
     void setSortFields(const QStringList &fields);
 
-    QString documentId() const;
-    void setDocumentId(const QString &id);
+    QString itemId() const;
+    void setItemId(const QString &id);
 
-    QStringList documentIds() const;
-    void setDocumentIds(const QStringList &id);
+    QStringList itemIds() const;
+    void setItemIds(const QStringList &id);
 
     QString destinationId() const;
     void setDestinationId(const QString &id);
 
-    QGalleryDocumentList *documents() const;
+    QGalleryItemList *items() const;
 
 Q_SIGNALS:
-    void documentIdsChanged();
-    void documentsChanged();
+    void itemIdsChanged();
+    void itemsChanged();
 
 protected:
     void setResponse(QGalleryAbstractResponse *response);
@@ -363,10 +363,10 @@ class Q_GALLERY_EXPORT QGalleryMoveRequest : public QGalleryAbstractRequest
     Q_DECLARE_PRIVATE(QGalleryMoveRequest)
     Q_PROPERTY(QStringList fields READ fields WRITE setFields)
     Q_PROPERTY(QStringList sortFields READ sortFields WRITE setSortFields)
-    Q_PROPERTY(QString documentId READ documentId WRITE setDocumentId NOTIFY documentIdsChanged);
-    Q_PROPERTY(QStringList documentIds READ documentIds WRITE setDocumentIds NOTIFY documentIdsChanged)
+    Q_PROPERTY(QString itemId READ itemId WRITE setItemId NOTIFY itemIdsChanged);
+    Q_PROPERTY(QStringList itemIds READ itemIds WRITE setItemIds NOTIFY itemIdsChanged)
     Q_PROPERTY(QString destinationId READ destinationId WRITE setDestinationId)
-    Q_PROPERTY(QGalleryDocumentList* documents READ documents NOTIFY documentsChanged)
+    Q_PROPERTY(QGalleryItemList* items READ items NOTIFY itemsChanged)
 public:
     QGalleryMoveRequest(QObject *parent = 0);
     QGalleryMoveRequest(QAbstractGallery *gallery, QObject *parent = 0);
@@ -378,20 +378,20 @@ public:
     QStringList sortFields() const;
     void setSortFields(const QStringList &fields);
 
-    QString documentId() const;
-    void setDocumentId(const QString &id);
+    QString itemId() const;
+    void setItemId(const QString &id);
 
-    QStringList documentIds() const;
-    void setDocumentIds(const QStringList &id);
+    QStringList itemIds() const;
+    void setItemIds(const QStringList &id);
 
     QString destinationId() const;
     void setDestinationId(const QString &id);
 
-    QGalleryDocumentList *documents() const;
+    QGalleryItemList *items() const;
 
 Q_SIGNALS:
-    void documentIdsChanged();
-    void documentsChanged();
+    void itemIdsChanged();
+    void itemsChanged();
 
 protected:
     void setResponse(QGalleryAbstractResponse *response);

@@ -45,7 +45,7 @@
 #include <QtCore/QAbstractItemModel>
 #include <QtCore/QVector>
 
-class QGalleryDocumentList;
+class QGalleryItemList;
 
 class GalleryModel : public QAbstractItemModel
 {
@@ -63,8 +63,8 @@ public:
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
     void setColumnCount(int count);
 
-    QGalleryDocumentList *list() const;
-    void setList(QGalleryDocumentList *list);
+    QGalleryItemList *list() const;
+    void setList(QGalleryItemList *list);
 
     QString displayFieldForColumn(int column) const;
     void setDisplayFieldForColumn(int column, const QString &field);
@@ -79,7 +79,7 @@ private slots:
     void metaDataChanged(int index, int count, const QList<int> &keys);
 
 private:
-    QGalleryDocumentList *mediaList;
+    QGalleryItemList *mediaList;
     QVector<int> displayKeys;
     QVector<QString> displayFields;
     QVector<int> userKeys;

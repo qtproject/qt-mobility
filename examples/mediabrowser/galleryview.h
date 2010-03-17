@@ -45,9 +45,9 @@
 #include <QtGui/QWidget>
 
 class QAbstractGallery;
-class QGalleryDocumentList;
-class QGalleryDocumentRequest;
 class QGalleryFilter;
+class QGalleryItemList;
+class QGalleryItemRequest;
 
 class GalleryView : public QWidget
 {
@@ -67,13 +67,13 @@ protected:
     void setFields(const QStringList &fields);
     void setSortFields(const QStringList &fields);
 
-    QGalleryDocumentList *media() const;
+    QGalleryItemList *media() const;
 
 protected slots:
     virtual void mediaChanged() = 0;
 
 private:
-    QGalleryDocumentRequest *request;
+    QGalleryItemRequest *request;
 };
 
 #endif

@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qws4gallerydocumentresponse_p.h"
+#include "qws4galleryitemresponse_p.h"
 
 #include "qws4gallerybinding_p.h"
 
@@ -48,9 +48,9 @@
 
 #include <oledberr.h>
 
-QWS4GalleryDocumentResponse::QWS4GalleryDocumentResponse(
+QWS4GalleryItemResponse::QWS4GalleryItemResponse(
             IRowset *rowSet,
-            const QGalleryDocumentRequest &request,
+            const QGalleryItemRequest &request,
             const QVector<QWS4GalleryQueryBuilder::Column> &columns,
             QObject *parent)
     : QGalleryAbstractResponse(parent)
@@ -139,7 +139,7 @@ QWS4GalleryDocumentResponse::QWS4GalleryDocumentResponse(
     }
 }
 
-QWS4GalleryDocumentResponse::~QWS4GalleryDocumentResponse()
+QWS4GalleryItemResponse::~QWS4GalleryItemResponse()
 {
     IConnectionPointContainer *container = 0;
     if (SUCCEEDED(m_rowSet->QueryInterface(
@@ -171,54 +171,54 @@ QWS4GalleryDocumentResponse::~QWS4GalleryDocumentResponse()
     Q_ASSERT(m_ref == 1);
 }
 
-QList<int> QWS4GalleryDocumentResponse::keys() const
+QList<int> QWS4GalleryItemResponse::keys() const
 {
     return m_keys;
 }
 
-QString QWS4GalleryDocumentResponse::toString(int key) const
+QString QWS4GalleryItemResponse::toString(int key) const
 {
     return m_fields.value(key);
 }
 
-int QWS4GalleryDocumentResponse::count() const
+int QWS4GalleryItemResponse::count() const
 {
     return m_rows.count();
 }
 
-QString QWS4GalleryDocumentResponse::id(int index) const
+QString QWS4GalleryItemResponse::id(int index) const
 {
     return m_rows.at(index)->url;
 }
 
-QUrl QWS4GalleryDocumentResponse::url(int index) const
+QUrl QWS4GalleryItemResponse::url(int index) const
 {
     return QUrl(m_rows.at(index)->url);
 }
 
-QString QWS4GalleryDocumentResponse::type(int index) const
+QString QWS4GalleryItemResponse::type(int index) const
 {
     return m_rows.at(index)->type;
 }
 
-QList<QGalleryResource> QWS4GalleryDocumentResponse::resources(int index) const
+QList<QGalleryResource> QWS4GalleryItemResponse::resources(int index) const
 {
     return QList<QGalleryResource>() << QGalleryResource(QUrl(m_rows.at(index)->url));
 }
 
-QVariant QWS4GalleryDocumentResponse::metaData(int index, int key) const
+QVariant QWS4GalleryItemResponse::metaData(int index, int key) const
 {
     return m_rows.at(index)->metaData.at(key);
 }
 
-void QWS4GalleryDocumentResponse::setMetaData(int index, int key, const QVariant &value)
+void QWS4GalleryItemResponse::setMetaData(int index, int key, const QVariant &value)
 {
     Q_UNUSED(index);
     Q_UNUSED(key);
     Q_UNUSED(value);
 }
 
-QGalleryDocumentList::MetaDataFlags QWS4GalleryDocumentResponse::metaDataFlags(
+QGalleryItemList::MetaDataFlags QWS4GalleryItemResponse::metaDataFlags(
         int index, int key) const
 {
     Q_UNUSED(index);
@@ -227,7 +227,7 @@ QGalleryDocumentList::MetaDataFlags QWS4GalleryDocumentResponse::metaDataFlags(
     return 0;
 }
 
-void QWS4GalleryDocumentResponse::cancel()
+void QWS4GalleryItemResponse::cancel()
 {
 #ifdef __IRowsetEvents_INTERFACE_DEFINED__
     if (m_rowsetEventsCookie != 0) {
@@ -254,7 +254,7 @@ void QWS4GalleryDocumentResponse::cancel()
     }
 }
 
-bool QWS4GalleryDocumentResponse::waitForFinished(int msecs)
+bool QWS4GalleryItemResponse::waitForFinished(int msecs)
 {
     IDBAsynchStatus *status = 0;
     if (SUCCEEDED(m_rowSet->QueryInterface(
@@ -280,7 +280,7 @@ bool QWS4GalleryDocumentResponse::waitForFinished(int msecs)
     }
 }
 
-HRESULT QWS4GalleryDocumentResponse::QueryInterface(REFIID riid, void **ppvObject)
+HRESULT QWS4GalleryItemResponse::QueryInterface(REFIID riid, void **ppvObject)
 {
     if (!ppvObject) {
         return E_POINTER;
@@ -302,12 +302,12 @@ HRESULT QWS4GalleryDocumentResponse::QueryInterface(REFIID riid, void **ppvObjec
     return S_OK;
 }
 
-ULONG QWS4GalleryDocumentResponse::AddRef()
+ULONG QWS4GalleryItemResponse::AddRef()
 {
     return InterlockedIncrement(&m_ref);
 }
 
-ULONG QWS4GalleryDocumentResponse::Release()
+ULONG QWS4GalleryItemResponse::Release()
 {
     ULONG ref = InterlockedDecrement(&m_ref);
 
@@ -317,12 +317,12 @@ ULONG QWS4GalleryDocumentResponse::Release()
 }
 
 // IDBAsynchNotify
-HRESULT QWS4GalleryDocumentResponse::OnLowResource(DB_DWRESERVE)
+HRESULT QWS4GalleryItemResponse::OnLowResource(DB_DWRESERVE)
 {
     return E_NOTIMPL;
 }
 
-HRESULT QWS4GalleryDocumentResponse::OnProgress(
+HRESULT QWS4GalleryItemResponse::OnProgress(
         HCHAPTER hChapter,
         DBASYNCHOP eOperation,
         DBCOUNTITEM ulProgress,
@@ -345,13 +345,13 @@ HRESULT QWS4GalleryDocumentResponse::OnProgress(
 }
 
 // IRowSetNotify
-HRESULT QWS4GalleryDocumentResponse::OnStop(
+HRESULT QWS4GalleryItemResponse::OnStop(
         HCHAPTER hChapter, DBASYNCHOP eOperation, HRESULT hrStatus, LPOLESTR pwszStatusText)
 {
     return S_OK;
 }
 
-HRESULT QWS4GalleryDocumentResponse::OnFieldChange(
+HRESULT QWS4GalleryItemResponse::OnFieldChange(
         IRowset *pRowset,
         HROW hRow,
         DBORDINAL cColumns,
@@ -363,7 +363,7 @@ HRESULT QWS4GalleryDocumentResponse::OnFieldChange(
     return DB_S_UNWANTEDREASON;
 }
 
-HRESULT QWS4GalleryDocumentResponse::OnRowChange(
+HRESULT QWS4GalleryItemResponse::OnRowChange(
         IRowset *pRowset,
         DBCOUNTITEM cRows,
         const HROW rghRows[],
@@ -380,7 +380,7 @@ HRESULT QWS4GalleryDocumentResponse::OnRowChange(
     }
 }
 
-HRESULT QWS4GalleryDocumentResponse::OnRowsetChange(
+HRESULT QWS4GalleryItemResponse::OnRowsetChange(
         IRowset *pRowset, DBREASON eReason, DBEVENTPHASE ePhase, BOOL fCantDeny)
 {
     return DB_S_UNWANTEDREASON;
@@ -389,14 +389,14 @@ HRESULT QWS4GalleryDocumentResponse::OnRowsetChange(
 // IRowsetEvents
 // Not usable prior to Windows 7, so just placeholder implementations for now.
 #ifdef __IRowsetEvents_INTERFACE_DEFINED__
-HRESULT QWS4GalleryDocumentResponse::OnNewItem(
+HRESULT QWS4GalleryItemResponse::OnNewItem(
         REFPROPVARIANT itemID, ROWSETEVENT_ITEMSTATE newItemState)
 {
     Q_UNUSED(itemID);
     Q_UNUSED(newItemState);
 }
 
-HRESULT QWS4GalleryDocumentResponse::OnChangedItem(
+HRESULT QWS4GalleryItemResponse::OnChangedItem(
         REFPROPVARIANT itemID,
         ROWSETEVENT_ITEMSTATE rowsetItemState,
         ROWSETEVENT_ITEMSTATE changedItemState)
@@ -410,7 +410,7 @@ HRESULT QWS4GalleryDocumentResponse::OnChangedItem(
     return S_OK;
 }
 
-HRESULT QWS4GalleryDocumentResponse::OnDeletedItem(
+HRESULT QWS4GalleryItemResponse::OnDeletedItem(
         REFPROPVARIANT itemID, ROWSETEVENT_ITEMSTATE deletedItemState)
 {
     Q_UNUSED(itemID);
@@ -421,7 +421,7 @@ HRESULT QWS4GalleryDocumentResponse::OnDeletedItem(
     return S_OK;
 }
 
-HRESULT QWS4GalleryDocumentResponse::OnRowsetEvent(
+HRESULT QWS4GalleryItemResponse::OnRowsetEvent(
     ROWSETEVENT_TYPE eventType, REFPROPVARIANT eventData)
 {
     Q_UNUSED(eventType);
@@ -433,7 +433,7 @@ HRESULT QWS4GalleryDocumentResponse::OnRowsetEvent(
 }
 #endif
 
-void QWS4GalleryDocumentResponse::customEvent(QEvent *event)
+void QWS4GalleryItemResponse::customEvent(QEvent *event)
 {
     if (event->type() == QEvent::User) {
         int index = m_rows.count();
@@ -451,7 +451,7 @@ void QWS4GalleryDocumentResponse::customEvent(QEvent *event)
     }
 }
 
-void QWS4GalleryDocumentResponse::readRows(const HROW rows[], DBCOUNTITEM count)
+void QWS4GalleryItemResponse::readRows(const HROW rows[], DBCOUNTITEM count)
 {
     QVector<Row> newRows;
     newRows.reserve(count);
@@ -461,7 +461,7 @@ void QWS4GalleryDocumentResponse::readRows(const HROW rows[], DBCOUNTITEM count)
 
     for (DBCOUNTITEM i = 0; i < count; ++i) {
         if (SUCCEEDED(m_rowSet->GetData(rows[i], m_binding->handle(), buffer.data()))) {
-            Row row = Row(new QWS4GalleryDocumentListRow);
+            Row row = Row(new QWS4GalleryItemListRow);
             row->workId = 0;
             row->flags = 0;
             row->url = m_binding->toString(buffer.data(), m_urlIndex);

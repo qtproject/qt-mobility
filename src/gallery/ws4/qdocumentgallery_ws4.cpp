@@ -43,7 +43,7 @@
 #include "qabstractgallery_p.h"
 
 #include "qgalleryerrorresponse_p.h"
-#include "qws4gallerydocumentresponse_p.h"
+#include "qws4galleryitemresponse_p.h"
 #include "qws4galleryquerybuilder_p.h"
 
 #include <QtCore/qstringbuilder.h>
@@ -70,7 +70,7 @@ public:
     void open();
     IRowset *execute(const QString &query, bool live, int *result);
 
-    QGalleryAbstractResponse *createDocumentResponse(QGalleryDocumentRequest *request);
+    QGalleryAbstractResponse *createItemResponse(QGalleryItemRequest *request);
 };
 
 void QDocumentGalleryPrivate::open()
@@ -116,7 +116,7 @@ void QDocumentGalleryPrivate::open()
 
 IRowset *QDocumentGalleryPrivate::execute(const QString &query, bool live, int *result)
 {
-    *result = QGalleryDocumentRequest::InvalidFilter;
+    *result = QGalleryItemRequest::InvalidFilter;
 
     IRowset *rowSet = 0;
 
@@ -188,14 +188,14 @@ IRowset *QDocumentGalleryPrivate::execute(const QString &query, bool live, int *
     return rowSet;
 }
 
-QGalleryAbstractResponse *QDocumentGalleryPrivate::createDocumentResponse(
-        QGalleryDocumentRequest *request)
+QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(
+        QGalleryItemRequest *request)
 {
     QWS4GalleryQueryBuilder builder;
 
     builder.setFields(request->fields());
     builder.setSortFields(request->sortFields());
-    builder.setDocumentType(request->documentType());
+    builder.setItemType(request->itemType());
     builder.setFilter(request->filter());
     builder.setStartIndex(request->startIndex());
     builder.setMaximumCount(request->maximumCount());
@@ -204,7 +204,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createDocumentResponse(
 
     if (result == 0) {
         if (IRowset *rowSet = execute(builder.query(), request->isLive(), &result))
-            return new QWS4GalleryDocumentResponse(rowSet, *request, builder.columns());
+            return new QWS4GalleryItemResponse(rowSet, *request, builder.columns());
     }
 
     return new QGalleryErrorResponse(result);
@@ -229,19 +229,14 @@ QDocumentGallery::~QDocumentGallery()
 bool QDocumentGallery::isRequestSupported(QGalleryAbstractRequest::Type type) const
 {
     switch (type) {
-    case QGalleryAbstractRequest::Document:
+    case QGalleryAbstractRequest::Item:
         return true;
     default:
         return false;
     }
 }
 
-QString QDocumentGallery::rootDocumentId() const
-{
-    return QString();
-}
-
-QStringList QDocumentGallery::supportedDocumentTypes() const
+QStringList QDocumentGallery::itemTypes() const
 {
     return QStringList();
 }
@@ -252,8 +247,8 @@ QGalleryAbstractResponse *QDocumentGallery::createResponse(QGalleryAbstractReque
         return new QGalleryErrorResponse(QGalleryAbstractRequest::ConnectionError);
 
     switch (request->type()) {
-    case QGalleryAbstractRequest::Document:
-        return d_func()->createDocumentResponse(static_cast<QGalleryDocumentRequest *>(request));
+    case QGalleryAbstractRequest::Item:
+        return d_func()->createItemResponse(static_cast<QGalleryItemRequest *>(request));
     default:
         return 0;
     }

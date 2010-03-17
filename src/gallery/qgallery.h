@@ -54,19 +54,11 @@ class QAbstractGalleryPrivate;
 class Q_GALLERY_EXPORT QAbstractGallery : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString rootDocumentId READ rootDocumentId NOTIFY rootDocumentIdChanged);
-    Q_PROPERTY(QStringList supportedDocumentTypes READ supportedDocumentTypes NOTIFY supportedDocumentTypesChanged)
 public:
     QAbstractGallery(QObject *parent = 0);
     ~QAbstractGallery();
 
     virtual bool isRequestSupported(QGalleryAbstractRequest::Type type) const = 0;
-    virtual QString rootDocumentId() const = 0;
-    virtual QStringList supportedDocumentTypes() const = 0;
-
-Q_SIGNALS:
-    void rootDocumentIdChanged();
-    void supportedDocumentTypesChanged();
 
 protected:
     virtual QGalleryAbstractResponse *createResponse(QGalleryAbstractRequest *request) = 0;
@@ -83,6 +75,7 @@ class QDocumentGalleryPrivate;
 class Q_GALLERY_EXPORT QDocumentGallery : public QAbstractGallery
 {
     Q_OBJECT
+    Q_PROPERTY(QStringList itemTypes READ itemTypes)
     Q_DECLARE_PRIVATE(QDocumentGallery)
 public:
     static const QLatin1String Media;
@@ -135,8 +128,8 @@ public:
     ~QDocumentGallery();
 
     bool isRequestSupported(QGalleryAbstractRequest::Type type) const;
-    QString rootDocumentId() const;
-    QStringList supportedDocumentTypes() const;
+
+    QStringList itemTypes() const;
 
 protected:
     QGalleryAbstractResponse *createResponse(QGalleryAbstractRequest *request);

@@ -111,7 +111,7 @@ static QString qt_buildMetaDataFragment(
     if ((flags & 0x0F) == Qt::MatchExactly) {
         return field + QLatin1String(" = ") + qt_encodeMetaData<T>(value);
     } else {
-        *error = QGalleryDocumentRequest::InvalidFilter;
+        *error = QGalleryItemRequest::InvalidFilter;
 
         return QString();
     }
@@ -141,7 +141,7 @@ static QString qt_buildMetaDataFragment<QString>(
                 .replace(QLatin1String("'"), QLatin1String("''")));
     case Qt::MatchRegExp:
     default:
-        *error = QGalleryDocumentRequest::InvalidFilter;
+        *error = QGalleryItemRequest::InvalidFilter;
         return QString();
     }
 }
@@ -193,7 +193,7 @@ static QString qt_buildMetaDataRangeFragment(
     } else if (flags & QGalleryFilter::LessThanEqualsMaximum) {
         return maximumFragment;
     } else {
-        *error = QGalleryDocumentRequest::InvalidFilter;
+        *error = QGalleryItemRequest::InvalidFilter;
         return QString();
     }
 }
@@ -313,7 +313,7 @@ static QString qt_buildWhere(
         }
     }
 
-    *error = QGalleryDocumentRequest::InvalidFilter;
+    *error = QGalleryItemRequest::InvalidFilter;
 
     return QString();
 }
@@ -337,7 +337,7 @@ static QString qt_buildWhere(
         }
     }
 
-    *error = QGalleryDocumentRequest::InvalidFilter;
+    *error = QGalleryItemRequest::InvalidFilter;
 
     return QString();
 }
@@ -363,7 +363,7 @@ static QString qt_buildWhere(
             fragments.append(qt_buildWhere(error, it->toMetaDataRangeFilter(), map, count));
             break;
         default:
-            *error = QGalleryDocumentRequest::InvalidFilter;
+            *error = QGalleryItemRequest::InvalidFilter;
             break;
         }
     }
@@ -380,7 +380,7 @@ static QString qt_buildWhere(
     const QList<QGalleryFilter> filters = filter.filters();
 
     if (filters.isEmpty())
-        *error = QGalleryDocumentRequest::InvalidFilter;
+        *error = QGalleryItemRequest::InvalidFilter;
 
     QStringList fragments;
 
@@ -397,7 +397,7 @@ static QString qt_buildWhere(
             fragments.append(qt_buildWhere(error, it->toMetaDataRangeFilter(), map, count));
             break;
         default:
-            *error = QGalleryDocumentRequest::InvalidFilter;
+            *error = QGalleryItemRequest::InvalidFilter;
             break;
         }
     }
@@ -490,12 +490,12 @@ static const QWS4Gallery::FieldMap qt_mediaFieldMap[] =
     QT_DEFINE_GALLERY_FIELD_MAP(director, "System.Video.Director")
 };
 
-static QString qt_buildMediaWhere(int *error, const QGalleryDocumentFilter &filter)
+static QString qt_buildMediaWhere(int *error, const QGalleryItemFilter &filter)
 {
-    const QStringList ids = filter.documentIds();
+    const QStringList ids = filter.itemIds();
 
     if (ids.isEmpty())
-        *error = QGalleryDocumentRequest::InvalidFilter;
+        *error = QGalleryItemRequest::InvalidFilter;
 
     QStringList fragments;
 
@@ -505,12 +505,12 @@ static QString qt_buildMediaWhere(int *error, const QGalleryDocumentFilter &filt
     return fragments.join(QLatin1String(" OR "));
 }
 
-static QString qt_buildMediaWhere(int *error, const QGalleryDocumentUrlFilter &filter)
+static QString qt_buildMediaWhere(int *error, const QGalleryItemUrlFilter &filter)
 {
-    const QList<QUrl> urls = filter.documentUrls();
+    const QList<QUrl> urls = filter.itemUrls();
 
     if (urls.isEmpty())
-        *error = QGalleryDocumentRequest::InvalidFilter;
+        *error = QGalleryItemRequest::InvalidFilter;
 
     QStringList fragments;
 
@@ -525,7 +525,7 @@ static QString qt_buildMediaWhere(int *error, const QGalleryContainerFilter &fil
     const QString id = filter.containerId();
 
     if (id.isEmpty()) {
-        *error = QGalleryDocumentRequest::InvalidFilter;
+        *error = QGalleryItemRequest::InvalidFilter;
 
         return QString();
     } else {
@@ -538,7 +538,7 @@ static QString qt_buildMediaWhere(int *error, const QGalleryContainerUrlFilter &
     const QUrl url = filter.containerUrl();
 
     if (url.isEmpty()) {
-        *error = QGalleryDocumentRequest::InvalidFilter;
+        *error = QGalleryItemRequest::InvalidFilter;
 
         return QString();
     } else {
@@ -557,11 +557,11 @@ static QString qt_buildMediaQuery(
     switch (filter.type()) {
     case QGalleryFilter::Invalid:
         break;
-    case QGalleryFilter::Document:
-        where = qt_buildMediaWhere(error, filter.toDocumentFilter());
+    case QGalleryFilter::Item:
+        where = qt_buildMediaWhere(error, filter.toItemFilter());
         break;
-    case QGalleryFilter::DocumentUrl:
-        where = qt_buildMediaWhere(error, filter.toDocumentUrlFilter());
+    case QGalleryFilter::ItemUrl:
+        where = qt_buildMediaWhere(error, filter.toItemUrlFilter());
         break;
     case QGalleryFilter::Container:
         where = qt_buildMediaWhere(error, filter.toContainerFilter());
@@ -598,7 +598,7 @@ static QString qt_buildMediaQuery(
                 qt_arraySize(qt_mediaWhereFragmentMap));
         break;
     default:
-        *error = QGalleryDocumentRequest::InvalidFilter;
+        *error = QGalleryItemRequest::InvalidFilter;
         return QString();
     }
 
@@ -680,16 +680,16 @@ static const QWS4Gallery::FieldMap qt_artistOrderByFieldMap[] =
     QT_DEFINE_GALLERY_FIELD_MAP(artist, "System.Music.Artist")
 };
 
-static QString qt_buildArtistWhere(int *error, const QGalleryDocumentFilter &filter)
+static QString qt_buildArtistWhere(int *error, const QGalleryItemFilter &filter)
 {
-    *error = QGalleryDocumentRequest::InvalidFilter;
+    *error = QGalleryItemRequest::InvalidFilter;
 
     return QString();
 }
 
 static QString qt_buildArtistWhere(int *error, const QGalleryContainerFilter &filter)
 {
-    *error = QGalleryDocumentRequest::InvalidFilter;
+    *error = QGalleryItemRequest::InvalidFilter;
 
     return QString();
 }
@@ -705,8 +705,8 @@ static QString qt_buildArtistQuery(
     switch (filter.type()) {
     case QGalleryFilter::Invalid:
         break;
-    case QGalleryFilter::Document:
-        where = qt_buildArtistWhere(error, filter.toDocumentFilter());
+    case QGalleryFilter::Item:
+        where = qt_buildArtistWhere(error, filter.toItemFilter());
         break;
     case QGalleryFilter::Container:
         where = qt_buildArtistWhere(error, filter.toContainerFilter());
@@ -739,7 +739,7 @@ static QString qt_buildArtistQuery(
                 qt_artistWhereFragmentMap,
                 qt_arraySize(qt_artistWhereFragmentMap));
     default:
-        *error = QGalleryDocumentRequest::InvalidFilter;
+        *error = QGalleryItemRequest::InvalidFilter;
         return QString();
     }
 
@@ -858,16 +858,16 @@ static const QWS4Gallery::FieldMap qt_albumOrderByFieldMap[] =
     QT_DEFINE_GALLERY_FIELD_MAP(albumTitle, "System.Music.AlbumTitle")
 };
 
-static QString qt_buildAlbumWhere(int *error, const QGalleryDocumentFilter &filter)
+static QString qt_buildAlbumWhere(int *error, const QGalleryItemFilter &filter)
 {
-    *error = QGalleryDocumentRequest::InvalidFilter;
+    *error = QGalleryItemRequest::InvalidFilter;
 
     return QString();
 }
 
 static QString qt_buildAlbumWhere(int *error, const QGalleryContainerFilter &filter)
 {
-    *error = QGalleryDocumentRequest::InvalidFilter;
+    *error = QGalleryItemRequest::InvalidFilter;
 
     return QString();
 }
@@ -883,8 +883,8 @@ static QString qt_buildAlbumQuery(
     switch (filter.type()) {
     case QGalleryFilter::Invalid:
         break;
-    case QGalleryFilter::Document:
-        where = qt_buildAlbumWhere(error, filter.toDocumentFilter());
+    case QGalleryFilter::Item:
+        where = qt_buildAlbumWhere(error, filter.toItemFilter());
         break;
     case QGalleryFilter::Container:
         where = qt_buildAlbumWhere(error, filter.toContainerFilter());
@@ -917,7 +917,7 @@ static QString qt_buildAlbumQuery(
                 qt_albumWhereFragmentMap,
                 qt_arraySize(qt_albumWhereFragmentMap));
     default:
-        *error = QGalleryDocumentRequest::InvalidFilter;
+        *error = QGalleryItemRequest::InvalidFilter;
         return QString();
     }
 
@@ -1004,7 +1004,7 @@ int QWS4GalleryQueryBuilder::buildQuery()
     m_fields.removeDuplicates();
 
     for (int i = 0; i < qt_arraySize(qt_queryTypeMap); ++i) {
-        if (qt_queryTypeMap[i].type == m_documentType) {
+        if (qt_queryTypeMap[i].type == m_itemType) {
             m_query = qt_queryTypeMap[i].buildQuery(&error, &m_columns, *this);
 
             qDebug("Built Query:\n%s", qPrintable(m_query));

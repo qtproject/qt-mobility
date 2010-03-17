@@ -42,7 +42,7 @@
 
     \section2 Document Lists.
 
-    \l QGalleryDocumentList
+    \l QGalleryItemList
 
     \section2 Filters
 
@@ -152,7 +152,7 @@
         void setContainerId(const QString &id);
 
     // Results
-        QGalleryDocumentList *documents() const;
+        QGalleryItemList *documents() const;
 
     Q_SIGNALS:
         void documentsChanged();
@@ -203,7 +203,7 @@
         void setContainerId(const QString &id);
 
         // Results
-        QGalleryDocumentList *documents() const;
+        QGalleryItemList *documents() const;
 
     Q_SIGNALS:
         void documentsChanged();

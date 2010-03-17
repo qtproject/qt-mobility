@@ -105,7 +105,7 @@ public:
     void cancel() { if (!m_ignoreCancel) QGalleryAbstractResponse::cancel(); }
 
     void doFinish(int result, bool idle) { finish(result, idle); }
-    void doUpdateDocumentCount(int count) { updateDocumentCount(count); }
+    void doUpdateItemCount(int count) { updateItemCount(count); }
     void setIgnoreCancel(bool ignore) { m_ignoreCancel = ignore; }
     void setFinishInWait(bool finish) { m_finishInWait = finish; }
 
@@ -147,8 +147,8 @@ public:
 
     bool isRequestSupported(QGalleryAbstractRequest::Type type) const {
         return m_supportedRequests.contains(type); }
-    QString rootDocumentId() const { return QString(); }
-    QStringList supportedDocumentTypes() const { return QStringList(); }
+    QString rootItemId() const { return QString(); }
+    QStringList supportedItemTypes() const { return QStringList(); }
 
     void setResult(int result) { m_result = result; }
     void setIdle(bool idle) { m_idle = idle; }
@@ -172,8 +172,8 @@ private:
 
 void tst_QGalleryAbstractRequest::type()
 {
-    QCOMPARE(QtGalleryTestRequest(QGalleryAbstractRequest::Document).type(),
-             QGalleryAbstractRequest::Document);
+    QCOMPARE(QtGalleryTestRequest(QGalleryAbstractRequest::Item).type(),
+             QGalleryAbstractRequest::Item);
 
     QCOMPARE(QtGalleryTestRequest(QGalleryAbstractRequest::Move).type(),
              QGalleryAbstractRequest::Move);
@@ -186,7 +186,7 @@ void tst_QGalleryAbstractRequest::isSupported()
             << QGalleryAbstractRequest::Copy
             << QGalleryAbstractRequest::Move);
 
-    QCOMPARE(QtGalleryTestRequest(&gallery, QGalleryAbstractRequest::Document).isSupported(), false);
+    QCOMPARE(QtGalleryTestRequest(&gallery, QGalleryAbstractRequest::Item).isSupported(), false);
     QCOMPARE(QtGalleryTestRequest(&gallery, QGalleryAbstractRequest::Insert).isSupported(), false);
     QCOMPARE(QtGalleryTestRequest(&gallery, QGalleryAbstractRequest::Move).isSupported(), true);
     QCOMPARE(QtGalleryTestRequest(&gallery, QGalleryAbstractRequest::Copy).isSupported(), true);

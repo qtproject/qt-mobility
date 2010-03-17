@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qgallerydocumentlist.h"
+#include "qgalleryitemlist.h"
 
 /*!
     \class QGalleryResource
@@ -157,16 +157,16 @@ QVariant QGalleryResource::attribute(int key) const
 }
 
 /*!
-    \class QGalleryDocumentList
+    \class QGalleryItemList
 
     \ingroup gallery
 
-    \brief The QGalleryDocumentList class provides an abstract interface for a
+    \brief The QGalleryItemList class provides an abstract interface for a
     list of documents from a gallery.
 */
 
 /*!
-    \enum QGalleryDocumentList::MetaDataFlag
+    \enum QGalleryItemList::MetaDataFlag
 
     Provides information about the state of a meta-data value.
 
@@ -181,7 +181,7 @@ QVariant QGalleryResource::attribute(int key) const
 
     The \a parent is passed to QObject.
 */
-QGalleryDocumentList::QGalleryDocumentList(QObject *parent)
+QGalleryItemList::QGalleryItemList(QObject *parent)
     : QObject(parent)
 {
 }
@@ -189,93 +189,93 @@ QGalleryDocumentList::QGalleryDocumentList(QObject *parent)
 /*!
     Destroys a gallery document list.
 */
-QGalleryDocumentList::~QGalleryDocumentList()
+QGalleryItemList::~QGalleryItemList()
 {
 }
 
 /*!
-    \fn QGalleryDocumentList::keys() const
+    \fn QGalleryItemList::keys() const
 
     Returns a list of meta-data keys a document list has values for.
 */
 
 /*!
-    \fn QGalleryDocumentList::toString(int key) const
+    \fn QGalleryItemList::toString(int key) const
 
     Returns the string representation of a meta-data \a key.
 */
 
 /*!
-    \fn QGalleryDocumentList::count() const
+    \fn QGalleryItemList::count() const
 
     Returns the number of documents in a document list.
 */
 
 /*!
-    \fn QGalleryDocumentList::id(int index) const
+    \fn QGalleryItemList::id(int index) const
 
     Returns the id of the document at \a index.
 */
 
 /*!
-    \fn QGalleryDocumentList::url(int index) const
+    \fn QGalleryItemList::url(int index) const
 
     Returns the URL of the document at \a index.
 */
 
 /*!
-    \fn QGalleryDocumentList::type(int index) const
+    \fn QGalleryItemList::type(int index) const
 
     Returns the type of the document at \a index.
 */
 
 /*!
-    \fn QGalleryDocumentList::resources(int index) const
+    \fn QGalleryItemList::resources(int index) const
 
     Returns a list of resources for the document at \a index.
 */
 
 /*!
-    \fn QGalleryDocumentList::metaData(int index, int key) const
+    \fn QGalleryItemList::metaData(int index, int key) const
 
     Returns the meta-data \a key value of the document at \a index.
 */
 
 /*!
-    \fn QGalleryDocumentList::setMetaData(int index, int key, const QVariant &value)
+    \fn QGalleryItemList::setMetaData(int index, int key, const QVariant &value)
 
     Sets the meta-data \a key \a value of the document at \a index.
 */
 
 /*!
-    \fn QGalleryDocumentList::metaDataFlags(int index, int key) const
+    \fn QGalleryItemList::metaDataFlags(int index, int key) const
 
     Returns the state fo the meta-data \a key value at \a index.
 */
 
 /*!
-    \fn QGalleryDocumentList::inserted(int index, int count)
+    \fn QGalleryItemList::inserted(int index, int count)
 
     Signals that \a count documents have been inserted into a document list
     starting at \a index.
 */
 
 /*!
-    \fn QGalleryDocumentList::removed(int index, int count)
+    \fn QGalleryItemList::removed(int index, int count)
 
     Signals that \a count documents have been removed from a document list
     starting at \a index.
 */
 
 /*!
-    \fn QGalleryDocumentList::moved(int from, int to, int count)
+    \fn QGalleryItemList::moved(int from, int to, int count)
 
     Signals that \a count documents have been moved \a from one starting index
     \a to another.
 */
 
 /*!
-    \fn QGalleryDocumentList::metaDataChanged(int index, int count, const QList<int> &keys)
+    \fn QGalleryItemList::metaDataChanged(int index, int count, const QList<int> &keys)
 
     Signals that the meta-data identified by \a keys of \a count documents
     starting at \a index has changed.

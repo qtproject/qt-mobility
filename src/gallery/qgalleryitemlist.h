@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGALLERYDOCUMENTLIST_H
-#define QGALLERYDOCUMENTLIST_H
+#ifndef QGALLERYITEMLIST_H
+#define QGALLERYITEMLIST_H
 
 #include <qmobilityglobal.h>
 
@@ -73,7 +73,7 @@ private:
     QMap<int, QVariant> m_attributes;
 };
 
-class Q_GALLERY_EXPORT QGalleryDocumentList : public QObject
+class Q_GALLERY_EXPORT QGalleryItemList : public QObject
 {
     Q_OBJECT
 public:
@@ -87,8 +87,8 @@ public:
 
     Q_DECLARE_FLAGS(MetaDataFlags, MetaDataFlag);
 
-    QGalleryDocumentList(QObject *parent = 0);
-    ~QGalleryDocumentList();
+    QGalleryItemList(QObject *parent = 0);
+    ~QGalleryItemList();
 
     virtual QList<int> keys() const = 0;
     virtual QString toString(int key) const = 0;

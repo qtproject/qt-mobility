@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QWS4GALLERYDOCUMENTRESPONSE_P_H
-#define QWS4GALLERYDOCUMENTRESPONSE_P_H
+#ifndef QWS4GALLERYITEMRESPONSE_P_H
+#define QWS4GALLERYITEMRESPONSE_P_H
 
 //
 //  W A R N I N G
@@ -64,7 +64,7 @@
 
 class QWS4GalleryBinding;
 
-struct QWS4GalleryDocumentListRow : public QSharedData
+struct QWS4GalleryItemListRow : public QSharedData
 {
 public:
     qint32 workId;
@@ -74,7 +74,7 @@ public:
     QVector<QVariant> metaData;
 };
 
-class QWS4GalleryDocumentResponse
+class QWS4GalleryItemResponse
     : public QGalleryAbstractResponse
     , public IDBAsynchNotify
     , public IRowsetNotify
@@ -84,12 +84,12 @@ class QWS4GalleryDocumentResponse
 {
     Q_OBJECT
 public:
-    QWS4GalleryDocumentResponse(
+    QWS4GalleryItemResponse(
             IRowset *rowSet,
-            const QGalleryDocumentRequest &request,
+            const QGalleryItemRequest &request,
             const QVector<QWS4GalleryQueryBuilder::Column> &columns,
             QObject *parent = 0);
-    ~QWS4GalleryDocumentResponse();
+    ~QWS4GalleryItemResponse();
 
     QList<int> keys() const;
     QString toString(int key) const;
@@ -166,7 +166,7 @@ protected:
 private:
     void readRows(const HROW rows[], DBCOUNTITEM count);
 
-    typedef QSharedDataPointer<QWS4GalleryDocumentListRow> Row;
+    typedef QSharedDataPointer<QWS4GalleryItemListRow> Row;
 
     volatile LONG m_ref;
     int m_urlIndex;

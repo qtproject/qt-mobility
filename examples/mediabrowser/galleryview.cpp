@@ -45,9 +45,9 @@
 
 GalleryView::GalleryView(QWidget *parent)
     : QWidget(parent)
-    , request(new QGalleryDocumentRequest(this))
+    , request(new QGalleryItemRequest(this))
 {
-    connect(request, SIGNAL(documentsChanged()), this, SLOT(mediaChanged()));
+    connect(request, SIGNAL(itemsChanged()), this, SLOT(mediaChanged()));
 }
 
 GalleryView::~GalleryView()
@@ -72,7 +72,7 @@ void GalleryView::showMatches(const QGalleryFilter &filter)
 
 void GalleryView::setType(const QString &type)
 {
-    request->setDocumentType(type);
+    request->setItemType(type);
 }
 
 void GalleryView::setFields(const QStringList &fields)
@@ -85,8 +85,8 @@ void GalleryView::setSortFields(const QStringList &fields)
     request->setSortFields(fields);
 }
 
-QGalleryDocumentList *GalleryView::media() const
+QGalleryItemList *GalleryView::media() const
 {
-    return request->documents();
+    return request->items();
 }
 

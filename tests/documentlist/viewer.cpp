@@ -92,7 +92,7 @@ Viewer::~Viewer()
 
 void Viewer::execute()
 {
-    m_request.setDocumentType(m_typeInput->text());
+    m_request.setItemType(m_typeInput->text());
     m_request.setStartIndex(m_offsetInput->value());
     m_request.setMaximumCount((m_limitInput->value()));
     m_request.execute();
@@ -100,5 +100,5 @@ void Viewer::execute()
 
 void Viewer::documentsChanged()
 {
-    m_model.setList(m_request.documents());
+    m_model.setList(m_request.items());
 }
