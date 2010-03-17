@@ -56,11 +56,11 @@
                             g_error_free(x); \
                             qWarning(qPrintable(message)); \
                           }
-                          
+
+/* Casting Macros */
 #define A_CONTACT(x) reinterpret_cast<OssoABookContact*>(x)
 #define A_ROSTER(x) reinterpret_cast<OssoABookRoster*>(x)
 #define CONST_CHAR(x) static_cast<const char*>(x)
-
 #define FREE(x) free((void*)x)
 
 struct cbSharedData{
