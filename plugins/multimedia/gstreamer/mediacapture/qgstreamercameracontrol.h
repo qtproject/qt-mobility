@@ -50,7 +50,7 @@
 QTM_USE_NAMESPACE
 QT_USE_NAMESPACE
 
-class QGstreamerCameraControl : public QCameraControl, public QGstreamerVideoInput
+class QGstreamerCameraControl : public QCameraControl
 {
     Q_OBJECT
 public:
@@ -61,13 +61,8 @@ public:
 
     QCamera::State state() const;
 
-    GstElement *buildElement();
-
     void start();
     void stop();
-
-    QList<qreal> supportedFrameRates(const QSize &frameSize = QSize()) const;
-    QList<QSize> supportedResolutions(qreal frameRate = -1) const;
 
     QCamera::CaptureMode captureMode() const { return m_captureMode; }
     void setCaptureMode(QCamera::CaptureMode mode)
@@ -83,24 +78,12 @@ public:
         return QCamera::CaptureStillImage | QCamera::CaptureVideo;
     }
 
-public slots:
-    void setDevice(const QString &device);
-
 private slots:
     void updateState();
 
 private:
-    void updateSupportedResolutions(const QString &device);
-
-    QList<qreal> m_frameRates;
-    QList<QSize> m_resolutions;
-
-    QHash<QSize, QSet<int> > m_ratesByResolution;
-
     QCamera::CaptureMode m_captureMode;
-
     QGstreamerCaptureSession *m_session;
-    QByteArray m_device;
     QCamera::State m_state;    
 };
 

@@ -48,6 +48,7 @@
 #include "qgstreamerimageencode.h"
 #include "qgstreamerbushelper.h"
 #include "qgstreamercameracontrol.h"
+#include "qgstreamerv4l2input.h"
 #include "qgstreamercapturemetadatacontrol.h"
 
 #include "qgstreamervideooutputcontrol.h"
@@ -133,6 +134,7 @@ QGstreamerCaptureService::QGstreamerCaptureService(const QString &service, QObje
     m_cameraControl = 0;
     m_metaDataControl = 0;
 
+    m_videoInput = 0;
     m_audioInputEndpointSelector = 0;
     m_videoInputDevice = 0;
 
@@ -145,7 +147,6 @@ QGstreamerCaptureService::QGstreamerCaptureService(const QString &service, QObje
     m_videoWidgetFactory = 0;
     m_imageCaptureControl = 0;
 
-
     if (service == Q_MEDIASERVICE_AUDIOSOURCE) {
         m_captureSession = new QGstreamerCaptureSession(QGstreamerCaptureSession::Audio, this);
     }
@@ -153,15 +154,15 @@ QGstreamerCaptureService::QGstreamerCaptureService(const QString &service, QObje
    if (service == Q_MEDIASERVICE_CAMERA) {
         m_captureSession = new QGstreamerCaptureSession(QGstreamerCaptureSession::AudioAndVideo, this);
         m_cameraControl = new QGstreamerCameraControl(m_captureSession);
-        m_captureSession->setVideoInput(m_cameraControl);
-        m_videoInputDevice = new QGstreamerVideoInputDeviceControl(m_captureSession);
-        m_imageCaptureControl = new QGstreamerImageCaptureControl(m_captureSession);
+        m_videoInput = new QGstreamerV4L2Input(this);
+        m_captureSession->setVideoInput(m_videoInput);
+        m_videoInputDevice = new QGstreamerVideoInputDeviceControl(this);
 
         connect(m_videoInputDevice, SIGNAL(selectedDeviceChanged(QString)),
-                m_cameraControl, SLOT(setDevice(QString)));
+                m_videoInput, SLOT(setDevice(QString)));
 
         if (m_videoInputDevice->deviceCount())
-            m_cameraControl->setDevice(m_videoInputDevice->deviceName(m_videoInputDevice->selectedDevice()));
+            m_videoInput->setDevice(m_videoInputDevice->deviceName(m_videoInputDevice->selectedDevice()));
 
         m_videoOutput = new QGstreamerVideoOutputControl(this);
         connect(m_videoOutput, SIGNAL(outputChanged(QVideoOutputControl::Output)),
@@ -265,4 +266,3 @@ void QGstreamerCaptureService::videoOutputChanged(QVideoOutputControl::Output ou
         break;
     }
 }
-

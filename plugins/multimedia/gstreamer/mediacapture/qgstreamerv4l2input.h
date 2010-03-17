@@ -39,60 +39,46 @@
 **
 ****************************************************************************/
 
-#include "qgstreamercameracontrol.h"
 
-#include <QtCore/qdebug.h>
-#include <QtCore/qfile.h>
+#ifndef QGSTREAMERV4L2INPUT_H
+#define QGSTREAMERV4L2INPUT_H
 
-#include <linux/types.h>
-#include <sys/time.h>
-#include <sys/ioctl.h>
-#include <sys/poll.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <string.h>
-#include <stdlib.h>
-#include <sys/mman.h>
-#include <linux/videodev2.h>
+#include <QtCore/qhash.h>
+#include <QtCore/qbytearray.h>
+#include <QtCore/qlist.h>
+#include <QtCore/qsize.h>
+#include "qgstreamercapturesession.h"
 
+QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
-QGstreamerCameraControl::QGstreamerCameraControl(QGstreamerCaptureSession *session)
-    :QCameraControl(session), m_captureMode(QCamera::CaptureStillImage), m_session(session), m_state(QCamera::StoppedState)
+class QGstreamerV4L2Input : public QObject, public QGstreamerVideoInput
 {
-    connect(m_session, SIGNAL(stateChanged(QGstreamerCaptureSession::State)),
-            this, SLOT(updateState()));
-}
+    Q_OBJECT
+public:
+    QGstreamerV4L2Input(QObject *parent = 0);
+    virtual ~QGstreamerV4L2Input();
 
-QGstreamerCameraControl::~QGstreamerCameraControl()
-{
-}
+    GstElement *buildElement();
 
-void QGstreamerCameraControl::start()
-{
-    if (m_session->state() == QGstreamerCaptureSession::StoppedState)
-        m_session->setState(QGstreamerCaptureSession::PreviewState);
-}
+    QList<qreal> supportedFrameRates(const QSize &frameSize = QSize()) const;
+    QList<QSize> supportedResolutions(qreal frameRate = -1) const;
 
-void QGstreamerCameraControl::stop()
-{
-    m_session->setState(QGstreamerCaptureSession::StoppedState);
-}
+    QByteArray device() const;
 
+public slots:
+    void setDevice(const QByteArray &device);
+    void setDevice(const QString &device);
 
-QCamera::State QGstreamerCameraControl::state() const
-{
-    if (m_session->state() == QGstreamerCaptureSession::StoppedState)
-        return QCamera::StoppedState;
-    else
-        return QCamera::ActiveState;
-}
+private:
+    void updateSupportedResolutions(const QByteArray &device);
 
-void QGstreamerCameraControl::updateState()
-{
-    QCamera::State newState = state();
-    if (m_state != newState) {
-        m_state = newState;
-        emit stateChanged(m_state);
-    }
-}
+    QList<qreal> m_frameRates;
+    QList<QSize> m_resolutions;
+
+    QHash<QSize, QSet<int> > m_ratesByResolution;
+
+    QByteArray m_device;
+};
+
+#endif // QGSTREAMERV4L2INPUT_H
