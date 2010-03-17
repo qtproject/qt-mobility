@@ -45,7 +45,6 @@
 #include "s60videooverlay.h"
 
 #include <QtCore/qdebug.h>
-#include <QtCore/private/qcore_symbian_p.h>
 #include <QtGui/qwidget.h>
 #include <QtCore/qtimer.h>
 #include <QApplication>
@@ -152,7 +151,7 @@ bool S60VideoPlayerSession::resetNativeHandles()
         S60VideoWidgetControl* widgetControl = qobject_cast<S60VideoWidgetControl *>(m_service.control(QVideoWidgetControl_iid));
         QWidget *videoWidget = widgetControl->videoWidget();
         newId = widgetControl->videoWidgetWId();
-        newRect = qt_QRect2TRect(QRect(videoWidget->mapToGlobal(videoWidget->pos()), videoWidget->size()));
+        newRect = QRect2TRect(QRect(videoWidget->mapToGlobal(videoWidget->pos()), videoWidget->size()));
         aspectRatioMode = widgetControl->aspectRatioMode();
     } else if (videoControl->output() == QVideoOutputControl::WindowOutput) {
         S60VideoOverlay* windowControl = qobject_cast<S60VideoOverlay *>(m_service.control(QVideoWindowControl_iid));
@@ -235,9 +234,9 @@ QPair<qreal, qreal> S60VideoPlayerSession::scaleFactor()
 {
     QSize scaled = m_originalSize;
     if (m_aspectRatioMode == QVideoWidget::IgnoreAspectRatio)
-        scaled.scale(qt_TRect2QRect(m_rect).size(), Qt::IgnoreAspectRatio);    
+        scaled.scale(TRect2QRect(m_rect).size(), Qt::IgnoreAspectRatio);    
     else if(m_aspectRatioMode == QVideoWidget::KeepAspectRatio)
-        scaled.scale(qt_TRect2QRect(m_rect).size(), Qt::KeepAspectRatio);    
+        scaled.scale(TRect2QRect(m_rect).size(), Qt::KeepAspectRatio);    
     
     qreal width = qreal(scaled.width()) / qreal(m_originalSize.width()) * qreal(100);
     qreal height = qreal(scaled.height()) / qreal(m_originalSize.height()) * qreal(100);
@@ -321,7 +320,7 @@ void S60VideoPlayerSession::updateMetaDataEntriesL()
     for (int i = 0; i < numberOfMetaDataEntries; i++) {
         CMMFMetaDataEntry *entry = NULL;
         entry = m_player->MetaDataEntryL(i);
-        metaDataEntries().insert(QString::fromUtf16(entry->Name().Ptr(), entry->Name().Length()), QString::fromUtf16(entry->Value().Ptr(), entry->Value().Length()));
+        metaDataEntries().insert(TDesC2QString(entry->Name()), TDesC2QString(entry->Value()));
         delete entry;
     }
     emit metaDataChanged();
@@ -371,4 +370,3 @@ void S60VideoPlayerSession::MvloLoadingComplete()
 {
     buffered();
 }
-

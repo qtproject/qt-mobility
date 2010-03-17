@@ -40,9 +40,10 @@
 ****************************************************************************/
 
 #include "s60videowidget.h"
-
+#ifdef USE_PRIVATE_QWIDGET_METHODS
 #include <QtGui/private/qwidget_p.h>
-
+#endif
+#include <QEvent>
 #include <coemain.h>    // For CCoeEnv
 
 QBlackWidget::QBlackWidget(QWidget *parent)
@@ -53,10 +54,11 @@ QBlackWidget::QBlackWidget(QWidget *parent)
     setAttribute(Qt::WA_NoSystemBackground, true);
     setAutoFillBackground(false);
     setPalette(QPalette(Qt::black));
-    
+#ifdef USE_PRIVATE_QWIDGET_METHODS
 #if QT_VERSION >= 0x040601 && !defined(__WINSCW__)
     qt_widget_private(this)->extraData()->nativePaintMode = QWExtra::ZeroFill;
     qt_widget_private(this)->extraData()->receiveNativePaintEvents = true;
+#endif
 #endif
 }
 
@@ -194,13 +196,17 @@ WId S60VideoWidgetControl::videoWidgetWId()
 void S60VideoWidgetControl::videoStateChanged(QMediaPlayer::State state)
 {
     if (state == QMediaPlayer::StoppedState) {
-#if QT_VERSION <= 0x040600
+#ifdef USE_PRIVATE_QWIDGET_METHODS
+#if QT_VERSION <= 0x040600 && !defined(FF_QT)
         qt_widget_private(m_widget)->extraData()->disableBlit = false;
 #endif        
+#endif
         m_widget->repaint();
     } else if (state == QMediaPlayer::PlayingState) {
-#if QT_VERSION <= 0x040600        
+#ifdef USE_PRIVATE_QWIDGET_METHODS
+#if QT_VERSION <= 0x040600 && !defined(FF_QT)       
         qt_widget_private(m_widget)->extraData()->disableBlit = true;
 #endif  
+#endif
     }
 }

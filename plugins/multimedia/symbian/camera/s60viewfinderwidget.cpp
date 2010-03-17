@@ -43,7 +43,6 @@
 
 #include <QtCore/qcoreevent.h>
 #include <QtCore/qdebug.h>
-#include <QtGui/private/qwidget_p.h>
 
 #include <coemain.h>    // For CCoeEnv
 #include <coecntrl.h>
