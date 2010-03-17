@@ -69,7 +69,7 @@ QHash<quint64, QPair<QPixmap, bool> > QMapViewPrivate::preZoomIn(qreal scale)
 {
     Q_Q(QMapView);
     QHash<quint64, QPair<QPixmap, bool> > scaledTiles;
-    QMapView::TileIterator it(q, viewPort);
+    QMapView::TileIterator it(*q, viewPort);
 
     while (it.hasNext()) {
         it.next();
@@ -114,7 +114,7 @@ QHash<quint64, QPair<QPixmap, bool> > QMapViewPrivate::preZoomOut(qreal scale)
     Q_Q(QMapView);
     QHash<quint64, QImage> combinedTiles;
     quint32 reverseScale = (quint32)(1.0 / scale);
-    QMapView::TileIterator it(q, viewPort);
+    QMapView::TileIterator it(*q, viewPort);
 
     while (it.hasNext()) {
         it.next();
