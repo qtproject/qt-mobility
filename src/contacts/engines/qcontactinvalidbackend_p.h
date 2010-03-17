@@ -69,7 +69,7 @@ public:
     QString managerName() const;
 
     QMap<QString, QString> managerParameters() const {return QMap<QString, QString>();}
-    int managerVersion() const {return -1;}
+    int managerVersion() const {return 0;}
 
     QList<QContactLocalId> contactIds(const QContactFilter&, const QList<QContactSortOrder>&, QContactManager::Error& error) const
     {
