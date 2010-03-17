@@ -107,16 +107,20 @@ QCameraExposureControl::~QCameraExposureControl()
 
 
 /*!
-  \fn QCamera::FlashMode QCameraExposureControl::flashMode() const
+  \fn QCamera::FlashModes QCameraExposureControl::flashMode() const
 
   Returns the current flash mode.
 */
 
 
 /*!
-  \fn void QCameraExposureControl::setFlashMode(QCamera::FlashMode mode)
+  \fn void QCameraExposureControl::setFlashMode(QCamera::FlashModes mode)
 
   Set the current flash \a mode.
+
+  Usually the single QCamera::FlashMode flag is used,
+  but some non conflicting flags combination are also allowed,
+  like QCamera::FlashManual | QCamera::FlashSlowSyncRearCurtain.
 */
 
 
@@ -126,6 +130,45 @@ QCameraExposureControl::~QCameraExposureControl()
   Returns the flash modes available.
 */
 
+
+/*!
+  \fn qreal QCameraExposureControl::::flashCompensation() const
+
+  Returns the flash exposure compensation in EV.
+
+  \sa setFlashCompensation()
+*/
+
+/*!
+  \fn QCameraExposureControl::setFlashCompensation(qreal ev)
+
+  Sets the flash exposure compensation to \a ev
+
+  \sa flashCompensation()
+*/
+
+
+/*!
+  \fn qreal QCameraExposureControl::flashPower() const
+
+  Returns the flash power in \l{QCamera::FlashManual}{manual flash mode}.
+
+  \sa setFlashPower()
+*/
+
+
+/*!
+  \fn QCameraExposureControl::setFlashPower(qreal power)
+
+  Sets the flash \a power.
+
+  Accepted power range is [0..1.0],
+  with 0 value means no flash and 1.0 corresponds to full flash power.
+
+  This value is only used in the \l{QCamera::FlashManual}{manual flash mode}.
+
+  \sa flashPower()
+*/
 
 /*!
   \fn bool QCameraExposureControl::isFlashReady() const
@@ -166,7 +209,7 @@ QCameraExposureControl::~QCameraExposureControl()
 /*!
   \fn void QCameraExposureControl::setExposureCompensation(qreal ev)
 
-  Set the exposure compensation to \a ev
+  Sets the exposure compensation to \a ev
 */
 
 

@@ -41,6 +41,7 @@
 
 #include "qgstreamervideoencode.h"
 #include "qgstreamercapturesession.h"
+#include "qgstreamermediacontainercontrol.h"
 
 #include <QtCore/qdebug.h>
 
@@ -74,12 +75,15 @@ QGstreamerVideoEncode::QGstreamerVideoEncode(QGstreamerCaptureSession *session)
             const gchar *descr = gst_element_factory_get_description(factory);
             m_codecDescriptions.insert(codecName, QString::fromUtf8(descr));
 
+            m_streamTypes.insert(codecName,
+                                 QGstreamerMediaContainerControl::supportedStreamTypes(factory, GST_PAD_SRC));
+
             gst_object_unref(GST_OBJECT(factory));
         }
     }
 
-    if (!m_codecs.isEmpty())
-        m_videoSettings.setCodec(m_codecs[0]);
+    //if (!m_codecs.isEmpty())
+    //    m_videoSettings.setCodec(m_codecs[0]);
 }
 
 QGstreamerVideoEncode::~QGstreamerVideoEncode()
@@ -318,4 +322,10 @@ QPair<int,int> QGstreamerVideoEncode::rateAsRational() const
     }
 
     return QPair<int,int>();
+}
+
+
+QSet<QString> QGstreamerVideoEncode::supportedStreamTypes(const QString &codecName) const
+{
+    return m_streamTypes.value(codecName);
 }

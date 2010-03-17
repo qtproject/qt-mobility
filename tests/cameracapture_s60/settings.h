@@ -74,6 +74,10 @@ public:
     QString format() const;
     void setFormat(const QString &format);
 
+public slots:
+    void updateResolutions();
+    void updateFramerates();
+
 protected:
     void changeEvent(QEvent *e);
 

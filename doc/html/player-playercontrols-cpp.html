@@ -108,10 +108,13 @@
 
     #ifdef Q_OS_SYMBIAN
     #else
+
+    #ifndef Q_WS_MAEMO_5
         volumeSlider = new QSlider(Qt::Horizontal);
         volumeSlider-&gt;setRange(0, 100);
 
         connect(volumeSlider, SIGNAL(sliderMoved(int)), this, SIGNAL(changeVolume(int)));
+    #endif
 
         rateBox = new QComboBox;
         rateBox-&gt;addItem(&quot;0.5x&quot;, QVariant(0.5));
@@ -167,8 +170,11 @@
         layout-&gt;addWidget(playListButton);
         layout-&gt;addWidget(fullScreenButton);
     #else
-        layout-&gt;addWidget(volumeSlider);
-        layout-&gt;addWidget(rateBox);
+        if (volumeSlider)
+            layout-&gt;addWidget(volumeSlider);
+
+        if (rateBox)
+            layout-&gt;addWidget(rateBox);
     #endif
         setLayout(layout);
     }
@@ -205,7 +211,7 @@
     #ifdef Q_OS_SYMBIAN
         return 0;
     #else
-        return volumeSlider-&gt;value();
+        return volumeSlider ? volumeSlider-&gt;value() : 0;
     #endif
     }
 
@@ -213,7 +219,8 @@
     {
     #ifdef Q_OS_SYMBIAN
     #else
-        volumeSlider-&gt;setValue(volume);
+        if (volumeSlider)
+            volumeSlider-&gt;setValue(volume);
     #endif
     }
 

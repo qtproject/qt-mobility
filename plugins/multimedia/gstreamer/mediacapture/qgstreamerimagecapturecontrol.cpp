@@ -63,6 +63,11 @@ void QGstreamerImageCaptureControl::capture(const QString &fileName)
     m_session->captureImage(fileName);
 }
 
+void QGstreamerImageCaptureControl::cancelCapture()
+{
+
+}
+
 void QGstreamerImageCaptureControl::updateState()
 {
     bool ready = m_session->state() == QGstreamerCaptureSession::PreviewState;

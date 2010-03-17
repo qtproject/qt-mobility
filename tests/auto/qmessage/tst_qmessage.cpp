@@ -200,7 +200,7 @@ void tst_QMessage::testFrom()
     QCOMPARE(msg.from() != QMessageAddress(), true);
     QCOMPARE(msg.isModified(), true);
 
-    addr = QMessageAddress(QMessageAddress::Xmpp, "bob@example.org");
+    addr = QMessageAddress(QMessageAddress::InstantMessage, "bob@example.org");
     msg.setFrom(addr);
     QCOMPARE(msg.from(), addr);
     QCOMPARE(msg.from() != QMessageAddress(), true);
@@ -310,7 +310,7 @@ void tst_QMessage::testBcc()
     QCOMPARE(msg.isModified(), true);
 
     addresses = QMessageAddressList();
-    addresses.append(QMessageAddress(QMessageAddress::Xmpp, "charlie@example.org"));
+    addresses.append(QMessageAddress(QMessageAddress::InstantMessage, "charlie@example.org"));
     msg.setBcc(addresses);
     QCOMPARE(msg.bcc(), addresses);
 }

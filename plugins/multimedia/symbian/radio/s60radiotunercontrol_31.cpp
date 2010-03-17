@@ -98,11 +98,22 @@ bool S60RadioTunerControl::initRadio()
 		m_radioError = QRadioTuner::OpenError;
 		return m_available;
 	}
+	
+	TRAPD(initializeError, m_audioPlayerUtility->InitializeL(KAudioPriorityFMRadio, 
+												TMdaPriorityPreference(KAudioPrefRadioAudioEvent)));
+	if (initializeError != KErrNone) {
+		m_radioError = QRadioTuner::OpenError;
+		return m_available;
+	}
 		
 	m_tunerUtility->NotifyChange(*this);
 	m_tunerUtility->NotifyStereoChange(*this);
 	m_tunerUtility->NotifySignalStrength(*this);
+	setVolume(m_audioPlayerUtility->MaxVolume()/2);
 	
+	TFrequency freq(m_currentFreq);
+	m_tunerUtility->Tune(freq);
+		
 	m_available = true;
 	
     return m_available;
@@ -253,7 +264,7 @@ int S60RadioTunerControl::signalStrength() const
 				if (maxSignalStrength == 0 || currentSignalStrength == 0) {
 					return 0;
 				}
-				m_signal = currentSignalStrength/maxSignalStrength; 
+				m_signal = (currentSignalStrength/maxSignalStrength)*100; 
             }           
         }
     }
@@ -269,7 +280,7 @@ void S60RadioTunerControl::setVolume(int volume)
 {
     if (m_audioPlayerUtility) {
 		m_vol = volume;
-		TInt error = m_audioPlayerUtility->SetVolume(volume);
+		TInt error = m_audioPlayerUtility->SetVolume(m_vol);
 		emit volumeChanged(m_vol);
     }
 }
@@ -311,6 +322,7 @@ void S60RadioTunerControl::cancelSearch()
 void S60RadioTunerControl::searchForward()
 {
 	m_scanning = true;
+	setVolume(m_vol);
 	m_tunerUtility->StationSeek(CMMTunerUtility::ESearchDirectionUp);
 	emit searchingChanged(true);
 }
@@ -318,6 +330,7 @@ void S60RadioTunerControl::searchForward()
 void S60RadioTunerControl::searchBackward()
 {
 	m_scanning = true;
+	setVolume(m_vol);
 	m_tunerUtility->StationSeek(CMMTunerUtility::ESearchDirectionDown);
 	emit searchingChanged(true);
 }
@@ -354,9 +367,10 @@ void S60RadioTunerControl::MToTuneComplete(TInt aError)
 {
 	if (aError == KErrNone) {
 		m_scanning = false;
+		m_audioPlayerUtility->Play();
 		if (!m_audioInitializationComplete) {
 		TRAPD(initializeError, m_audioPlayerUtility->InitializeL(KAudioPriorityFMRadio, 
-													TMdaPriorityPreference(KAudioPrefRadioAudioEvent)));
+                                                        TMdaPriorityPreference(KAudioPrefRadioAudioEvent)));
 			if (initializeError != KErrNone) {
 				m_radioError = QRadioTuner::OpenError;
 			}

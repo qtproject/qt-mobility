@@ -7,7 +7,7 @@
         INCLUDEPATH+=$$APP_LAYER_SYSTEMINCLUDE
     }
 
-    contains(MOBILITY,bearer|location|publishsubscribe|systeminfo|multimedia|messaging|serviceframework) {
+    contains(MOBILITY,bearer|location|publishsubscribe|systeminfo|multimedia|messaging|serviceframework|sensors) {
         INCLUDEPATH+=$$MW_LAYER_SYSTEMINCLUDE
     }
 }

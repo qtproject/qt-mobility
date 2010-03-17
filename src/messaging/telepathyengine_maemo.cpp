@@ -34,12 +34,12 @@ TelepathyEngine* TelepathyEngine::instance()
 bool TelepathyEngine::sendMessage(QMessage &message)
 {
     QMessage::Type type=message.type();
-    QString cm=type == QMessage::Sms ? "ring" :  type == QMessage::Xmpp ? "gabble" : "";
+    QString cm=type == QMessage::Sms ? "ring" :  type == QMessage::InstantMessage ? "gabble" : "";
     QMessageAddressList toList=message.to();
     QMessageAccountId account=message.parentAccountId();
     if(!cm.isEmpty()) {
         foreach(QMessageAddress to,toList) {
-             tpSession->sendMessageToAddress(cm,to.recipient(),message.textContent());
+             tpSession->sendMessageToAddress(cm,to.addressee(),message.textContent());
         };
     }
     else
@@ -89,8 +89,8 @@ void TelepathyEngine::updateImAccounts() const
                 QString accountAddress = tpacc->acc->normalizedName();
                 QMessageAccount account = QMessageAccountPrivate::from(QMessageAccountId(accountId),
                                                                        accountName,
-                                                                       QMessageAddress(QMessageAddress::Xmpp, accountAddress),
-                                                                       QMessage::Xmpp);
+                                                                       QMessageAddress(QMessageAddress::InstantMessage, accountAddress),
+                                                                       QMessage::InstantMessage);
                 iAccounts.insert(accountId, account);
             } else qDebug() << "Protocol " << tpacc->acc->protocol() << "with connectionmanager " << cm << "Is not yet supported";
 //                if (strncmp(account_name_key, default_account, strlen(default_account))) iDefaultEmailAccountId = accountId;

@@ -40,7 +40,6 @@
 ****************************************************************************/
 
 #include <QtCore/qvariant.h>
-#include <QtCore/qdebug.h>
 #include <QtGui/qwidget.h>
 
 #include "v4lcameraservice.h"

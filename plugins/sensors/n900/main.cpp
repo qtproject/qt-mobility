@@ -45,7 +45,6 @@
 #include <qsensorplugin.h>
 #include <qsensorbackend.h>
 #include <qsensormanager.h>
-#include <QFile>
 #include <QDebug>
 
 class n900SensorPlugin : public QObject, public QSensorPluginInterface, public QSensorBackendFactory
@@ -63,23 +62,14 @@ public:
 
     QSensorBackend *createBackend(QSensor *sensor)
     {
-        if (sensor->identifier() == n900accelerometer::id) {
-            if (QFile::exists(QLatin1String(n900accelerometer::filename)))
-                return new n900accelerometer(sensor);
-            qDebug() << "can't make" << sensor->identifier() << "because" << n900accelerometer::filename << "doesn't exist";
-        }
+        if (sensor->identifier() == n900accelerometer::id)
+            return new n900accelerometer(sensor);
 
-        if (sensor->identifier() == n900lightsensor::id) {
-            if (QFile::exists(QLatin1String(n900lightsensor::filename)))
-                return new n900lightsensor(sensor);
-            qDebug() << "can't make" << sensor->identifier() << "because" << n900lightsensor::filename << "doesn't exist";
-        }
+        if (sensor->identifier() == n900lightsensor::id)
+            return new n900lightsensor(sensor);
 
-        if (sensor->identifier() == n900proximitysensor::id) {
-            if (QFile::exists(QLatin1String(n900proximitysensor::filename)))
-                return new n900proximitysensor(sensor);
-            qDebug() << "can't make" << sensor->identifier() << "because" << n900proximitysensor::filename << "doesn't exist";
-        }
+        if (sensor->identifier() == n900proximitysensor::id)
+            return new n900proximitysensor(sensor);
 
         return 0;
     }
