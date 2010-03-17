@@ -41,7 +41,7 @@
 
 #include "genericattitudesensor.h"
 #include <QDebug>
-#include <math.h>
+#include <qmath.h>
 
 #define RADIANS_TO_DEGREES 57.2957795
 
@@ -88,9 +88,9 @@ bool genericattitudesensor::filter(QSensorReading *reading)
     qreal y = ar->y();
     qreal z = ar->z();
 
-    pitch = atan(y / sqrt(x*x + z*z)) * RADIANS_TO_DEGREES;
-    roll = atan(x / sqrt(y*y + z*z)) * RADIANS_TO_DEGREES;
-    qreal theta = atan(sqrt(x*x + y*y) / z) * RADIANS_TO_DEGREES;
+    pitch = qAtan(y / sqrt(x*x + z*z)) * RADIANS_TO_DEGREES;
+    roll = qAtan(x / sqrt(y*y + z*z)) * RADIANS_TO_DEGREES;
+    qreal theta = qAtan(sqrt(x*x + y*y) / z) * RADIANS_TO_DEGREES;
 
     // Getting roll to -180,180 range requires some extra maths
     if (theta < 0) {
