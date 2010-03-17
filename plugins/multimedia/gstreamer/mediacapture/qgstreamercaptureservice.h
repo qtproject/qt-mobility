@@ -81,7 +81,6 @@ private:
     void setAudioPreview(GstElement*);
 
     QGstreamerCaptureSession *m_captureSession;
-    QGstreamerCameraControl *m_cameraControl;
     QGstreamerV4L2Input *m_videoInput;
     QGstreamerCaptureMetaDataControl *m_metaDataControl;
 
@@ -95,7 +94,6 @@ private:
     QGstreamerElementFactory *m_videoWindowFactory;
     QGstreamerVideoWidgetControl *m_videoWidgetControl;
     QGstreamerElementFactory *m_videoWidgetFactory;
-    QGstreamerImageCaptureControl *m_imageCaptureControl;
 };
 
 #endif // QGSTREAMERCAPTURESERVICE_H
