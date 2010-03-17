@@ -40,10 +40,8 @@
 ****************************************************************************/
 
 #include <qmobilityglobal.h>
-#include <QtTest/QtTest>
-
 #include "qgraphicsvideoitem.h"
-
+#include <QtTest/QtTest>
 #include "qmediaobject.h"
 #include "qmediaservice.h"
 #include "qpaintervideosurface_p.h"
