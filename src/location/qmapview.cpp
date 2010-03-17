@@ -129,6 +129,7 @@ void QMapView::init(QGeoEngine* geoEngine, const QGeoCoordinate& center)
     d->currZoomLevel = DEFAULT_ZOOM_LEVEL;
     d->numColRow = (qint32) pow(2.0, d->currZoomLevel);
     d->viewPort = boundingRect();
+    d->routeDetails = DEFAULT_ROUTE_DETAIL_LEVEL;
     centerOn(center);
 
     d->releaseTimer.start(RELEASE_INTERVAL);

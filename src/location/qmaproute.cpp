@@ -109,7 +109,7 @@ void QMapRoute::compMapCoords()
 
         for (int n = 0; n < wayPoints.size(); n++) {
             //make sure first waypoint is always shown
-            if (last.isValid()) {
+            if (!last.isValid()) {
                 last = wayPoints[n];
                 continue;
             }
@@ -131,7 +131,7 @@ void QMapRoute::compMapCoords()
     }
 
     //make sure last waypoint is always shown
-    if (!here.isValid()) {
+    if (here.isValid()) {
         QLineF line = d->mapView->connectShortest(here, last);
         addSegment(line);
     }
