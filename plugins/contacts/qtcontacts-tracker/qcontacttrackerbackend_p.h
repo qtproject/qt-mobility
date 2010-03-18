@@ -184,6 +184,10 @@ public:
     {
         QContactManagerEngine::updateContactSaveRequest(req, result, error, errorMap, state);
     }
+    static void updateContactSaveRequestTrampoline(QContactSaveRequest *req, const QList<QContact> &result, QContactManager::Error error, const QMap<int, QContactManager::Error> &errorMap) // non state version
+    {
+        QContactManagerEngine::updateContactSaveRequest(req, result, error, errorMap);
+    }
     static void updateRelationshipFetchRequestTrampoline(QContactRelationshipFetchRequest *req, const QList<QContactRelationship> &result, QContactManager::Error error, QContactAbstractRequest::State state)
     {
         QContactManagerEngine::updateRelationshipFetchRequest(req, result, error, state);
