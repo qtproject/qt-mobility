@@ -6,9 +6,6 @@ Rectangle {
     id: topItem
     width: 320
     height: 480
-//    border.color: "bg
-//    border.width: 5
-//    radius: 10
     x: 0
     y: 0
 
@@ -16,14 +13,10 @@ Rectangle {
 
     Script {
         function startup() {
-            print("Hello");
-
-            print("Num contacts: " + blah.numContacts);            
             blah.contacts();
         }
         function gotContacts(c) {
             if(c == undefined){
-                //print("Error, got null object for gotContacts");
                 return;
             }
 /*
@@ -70,7 +63,7 @@ Rectangle {
             id: wrapper            
             border.width: 2
             height: 30;
-            width: parent.width;
+//            width: parent.width;
 
             property color topColor: "#333333";
             property color bottomColor: "#111111";
@@ -179,11 +172,11 @@ Rectangle {
                 to: "Details"
                 reversible: true
                 ParallelAnimation {
-                    ColorAnimation { duration: 150; matchProperties: "topColor, bottomColor";}
-                    NumberAnimation { duration: 100; matchProperties: "detailsOpacity,height" }
+                    ColorAnimation { duration: 150; properties: "topColor, bottomColor";}
+                    NumberAnimation { duration: 100; properties: "detailsOpacity,height" }
                 }
             }
-            MouseRegion {
+            MouseArea {
                 id: mr
                 width: topItem.width;
                 height: wrapper.height;
