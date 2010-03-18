@@ -72,6 +72,8 @@ public:
   bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
   bool saveContact(QContact* contact, QContactManager::Error& error);
 
+  QContactLocalId selfContactId(QContactManager::Error& errors) const;
+
 Q_SIGNALS:
   void savingJobDone();
   void contactsAdded(const QList<QContactLocalId>& contactIds);

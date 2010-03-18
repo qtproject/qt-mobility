@@ -118,6 +118,13 @@ QString QContactMaemo5Engine::synthesizedDisplayLabel(const QContact& contact, Q
   return label;
 }
 
+QContactLocalId QContactMaemo5Engine::selfContactId(QContactManager::Error& error) const
+{
+  Q_CHECK_PTR(d->m_abook);
+
+  return d->m_abook->selfContactId(error);
+}
+
 QList<QContactLocalId> QContactMaemo5Engine::contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
   Q_CHECK_PTR(d->m_abook);

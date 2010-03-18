@@ -83,7 +83,11 @@ extern "C" {
                                                                  GdkPixbuf *pixbuf,
                                                                  EBook *book,
                                                                  GtkWindow *window);
-        // osso-abook-account-manager.h
+
+        OssoABookSelfContact* osso_abook_self_contact_get_default
+                                                                (void);
+
+                                                                 // osso-abook-account-manager.h
         const GList*        osso_abook_account_manager_get_primary_vcard_fields
                                                                  (OssoABookAccountManager *manager);
         OssoABookAccountManager* osso_abook_account_manager_get_default(void);

@@ -107,8 +107,8 @@ class QContactMaemo5Engine : public QContactManagerEngine
     QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
 
     /* "Self" contact id (MyCard) */
-    //bool setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& error);
-    //QContactLocalId selfContactId(QContactManager::Error& error) const;
+    // bool setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& error); /* Not supported */
+    QContactLocalId selfContactId(QContactManager::Error& errors) const;
 
     /* Filtering */
     QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
