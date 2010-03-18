@@ -65,7 +65,7 @@ class Q_DECL_EXPORT ContactMaemo5Factory : public QObject, public QContactManage
   Q_OBJECT
   Q_INTERFACES(QtMobility::QContactManagerEngineFactory)
   public:
-    QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error&);
+    QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error*);
     QString managerName() const;
 };
 
@@ -104,29 +104,29 @@ class QContactMaemo5Engine : public QContactManagerEngine
     
     void deref();
     QString managerName() const;
-    QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
+    QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error* error) const;
 
     /* "Self" contact id (MyCard) */
-    //bool setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& error);
-    //QContactLocalId selfContactId(QContactManager::Error& error) const;
+    //bool setSelfContactId(const QContactLocalId& contactId, QContactManager::Error* error);
+    //QContactLocalId selfContactId(QContactManager::Error* error) const;
 
     /* Filtering */
-    QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const;
 
     /* Contacts - Accessors and Mutators */
-    QContact contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
-    QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error ) const;
-    QList<QContact> contacts( const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error ) const;
+    QContact contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error* error) const;
+    QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error* error ) const;
+    QList<QContact> contacts( const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error* error ) const;
     
-    bool saveContact(QContact* contact, QContactManager::Error& error);
+    bool saveContact(QContact* contact, QContactManager::Error* error);
     
-    //QList<QContactManager::Error> removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error);
-    bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
+    //QList<QContactManager::Error> removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error* error);
+    bool removeContact(const QContactLocalId& contactId, QContactManager::Error* error);
     
     /* Definitions - Accessors and Mutators */
-    QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error& error) const;
-    //bool saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType, QContactManager::Error& error);
-    //bool removeDetailDefinition(const QString& definitionId, const QString& contactType, QContactManager::Error& error);
+    QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error* error) const;
+    //bool saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType, QContactManager::Error* error);
+    //bool removeDetailDefinition(const QString& definitionId, const QString& contactType, QContactManager::Error* error);
     
     /* Version Reporting */
     int implementationVersion() const { return MAEMO5_ENGINE_VERSION; };

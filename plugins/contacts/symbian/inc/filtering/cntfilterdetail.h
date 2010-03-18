@@ -68,19 +68,19 @@ public:
     void getTableNameWhereClause( const QContactDetailFilter& filter,
                                   QString& tableName,
                                   QString& sqlWhereClause ,
-                                  QContactManager::Error& error) const;
+                                  QContactManager::Error* error) const;
     void createSelectQuery(const QContactFilter& filter,
                                  QString& sqlQuery,
-                                 QContactManager::Error& error);
+                                 QContactManager::Error* error);
 private:
 
     
     void updateForMatchFlag( const QContactDetailFilter& filter,
                              QString& fieldToUpdate ,
-                             QContactManager::Error& error) const;
+                             QContactManager::Error* error) const;
     QList<QContactLocalId> HandlePhonenumberDetailFilter(const QContactFilter& filter);
     QList<QContactLocalId>  HandlePredictiveSearchFilter(const QContactFilter& filter,
-                                                         QContactManager::Error& error);
+                                                         QContactManager::Error* error);
 
     TInt CntFilterDetail::searchPhoneNumbers(
             CContactIdArray*& idArray,

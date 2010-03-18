@@ -70,7 +70,7 @@ class CntSymbianDatabase : public QObject, public MContactDbObserver
 Q_OBJECT
 
 public:
-    CntSymbianDatabase(QContactManagerEngine *engine, QContactManager::Error& error);
+    CntSymbianDatabase(QContactManagerEngine *engine, QContactManager::Error* error);
     ~CntSymbianDatabase();
 
 public:

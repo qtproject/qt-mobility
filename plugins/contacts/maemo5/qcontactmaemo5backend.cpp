@@ -47,7 +47,7 @@
 
 DEFINE_GLOBAL_DEBUG_VAR
 
-QContactManagerEngine* ContactMaemo5Factory::engine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
+QContactManagerEngine* ContactMaemo5Factory::engine(const QMap<QString, QString>& parameters, QContactManager::Error* error)
 {
     Q_UNUSED(parameters);
     Q_UNUSED(error);
@@ -98,7 +98,7 @@ QString QContactMaemo5Engine::managerName() const
 }
 
 /* Synthesise the display label of a contact */
-QString QContactMaemo5Engine::synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const
+QString QContactMaemo5Engine::synthesizedDisplayLabel(const QContact& contact, QContactManager::Error* error) const
 {
   Q_UNUSED(error)
   QString label = QContactManagerEngine::synthesizedDisplayLabel(contact, error);
@@ -114,7 +114,7 @@ QString QContactMaemo5Engine::synthesizedDisplayLabel(const QContact& contact, Q
   return label;
 }
 
-QList<QContactLocalId> QContactMaemo5Engine::contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+QList<QContactLocalId> QContactMaemo5Engine::contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const
 {
   Q_CHECK_PTR(d->m_abook);
   
@@ -134,12 +134,12 @@ QList<QContact> QContactMaemo5Engine::contacts(const QContactFilter & filter, co
   return rtn;
 }
 
-QList<QContact> QContactMaemo5Engine::contacts( const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error ) const
+QList<QContact> QContactMaemo5Engine::contacts( const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error* error ) const
 {
   return contacts(QContactFilter(), sortOrders, definitionRestrictions, error);
 }
 
-QContact QContactMaemo5Engine::contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const
+QContact QContactMaemo5Engine::contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error* error) const
 {
   Q_UNUSED(definitionRestrictions); //TODO
   Q_CHECK_PTR(d->m_abook);
@@ -154,7 +154,7 @@ QContact QContactMaemo5Engine::contact(const QContactLocalId& contactId, const Q
   return rtn;
 }
 
-bool QContactMaemo5Engine::saveContact(QContact* contact, QContactManager::Error& error)
+bool QContactMaemo5Engine::saveContact(QContact* contact, QContactManager::Error* error)
 {
   Q_CHECK_PTR(d->m_abook);
   
@@ -173,7 +173,7 @@ bool QContactMaemo5Engine::saveContact(QContact* contact, QContactManager::Error
 }
 
 #if 0
-QList<QContactManager::Error> QContactMaemo5Engine::removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error)
+QList<QContactManager::Error> QContactMaemo5Engine::removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error* error)
 {
   bool ok = true;
   
@@ -190,13 +190,13 @@ QList<QContactManager::Error> QContactMaemo5Engine::removeContacts(QList<QContac
 }
 #endif
 
-bool QContactMaemo5Engine::removeContact(const QContactLocalId& contactId, QContactManager::Error& error)
+bool QContactMaemo5Engine::removeContact(const QContactLocalId& contactId, QContactManager::Error* error)
 {
   Q_CHECK_PTR(d->m_abook);
   return d->m_abook->removeContact(contactId, error);
 }
 
-QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(const QString& contactType, QContactManager::Error& error) const
+QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(const QString& contactType, QContactManager::Error* error) const
 {
     QMap<QString, QMap<QString, QContactDetailDefinition> > defns = QContactManagerEngine::schemaDefinitions();
     QMap<QString, QContactDetailFieldDefinition> fields;

@@ -221,7 +221,7 @@ void QContactABook::initLocalIdHash()
    g_list_free(contactList);
 }
 
-QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const
 {
   QList<QContactLocalId> rtn;
   
@@ -238,10 +238,9 @@ QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, c
     // Fill Ids
     QList<QContactLocalId> Ids;
     {
-      QContactFilter f;
       QList<QContactSortOrder> so;
       QContactManager::Error e;
-      Ids = contactIds(f, so, e);
+      Ids = contactIds(filter, so, &e);
     }
       
     // Fill Contact List
@@ -249,9 +248,11 @@ QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, c
     foreach(QContactLocalId id, Ids){
       QContact *c;
       QContactManager::Error e;
-      c = getQContact(id, e);
+      c = getQContact(id, &e);
       if (e == QContactManager::NoError)
 	contacts << *c;
+      else
+        *error = e;
     }
     
     // Non native sorting
@@ -288,7 +289,7 @@ QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, c
       }
       masterContacts = g_list_delete_link(masterContacts, masterContacts);
     }
-    error = QContactManager::NoError;
+    *error = QContactManager::NoError;
     return  rtn;
   }
   
@@ -308,11 +309,11 @@ QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, c
   }
   g_list_free(l);
   
-  error = QContactManager::NoError;
+  *error = QContactManager::NoError;
   return rtn;
 }
 
-QContact* QContactABook::getQContact(const QContactLocalId& contactId, QContactManager::Error& error) const
+QContact* QContactABook::getQContact(const QContactLocalId& contactId, QContactManager::Error* error) const
 {
   QContact *rtn;
   OssoABookContact* aContact = getAContact(contactId);
@@ -327,7 +328,7 @@ QContact* QContactABook::getQContact(const QContactLocalId& contactId, QContactM
   return rtn;
 }
 
-bool QContactABook::removeContact(const QContactLocalId& contactId, QContactManager::Error& error)
+bool QContactABook::removeContact(const QContactLocalId& contactId, QContactManager::Error* error)
 {
   Q_UNUSED(error);
   
@@ -374,12 +375,12 @@ static void addContactCB(EBook* book, EBookStatus  status, const char  *uid, gpo
   commitContactCB(book, status, user_data);
 }
 
-bool QContactABook::saveContact(QContact* contact, QContactManager::Error& error)
+bool QContactABook::saveContact(QContact* contact, QContactManager::Error* error)
 {
   QMutexLocker locker(&m_saveContactMutex);
   
   if (!contact) {
-    error = QContactManager::BadArgumentError;
+    *error = QContactManager::BadArgumentError;
     return false;
   }
 
@@ -396,7 +397,7 @@ bool QContactABook::saveContact(QContact* contact, QContactManager::Error& error
   // Conver QContact to AContact
   aContact = convert(contact);
   if (!aContact){
-    error = QContactManager::UnspecifiedError;
+    *error = QContactManager::UnspecifiedError;
     return false;
   }  
 

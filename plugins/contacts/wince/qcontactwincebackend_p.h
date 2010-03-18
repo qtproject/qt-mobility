@@ -202,7 +202,7 @@ class QContactWinCEEngine : public QContactManagerEngine
     Q_OBJECT
 
 public:
-    QContactWinCEEngine(ContactWinceFactory* factory, const QString& engineName, const QMap<QString, QString>& parameters, QContactManager::Error& error);
+    QContactWinCEEngine(ContactWinceFactory* factory, const QString& engineName, const QMap<QString, QString>& parameters, QContactManager::Error* error);
     QContactWinCEEngine(const QContactWinCEEngine& other);
     ~QContactWinCEEngine();
     QContactWinCEEngine& operator=(const QContactWinCEEngine& other);
@@ -210,22 +210,22 @@ public:
     QString managerName() const;
 
     /* Filtering */
-    QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const;
 
     /* Contacts - Accessors and Mutators */
-    QList<QContactLocalId> contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-    QContact contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
-    bool saveContact(QContact* contact, QContactManager::Error& error);
-    bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
+    QList<QContactLocalId> contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const;
+    QContact contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error* error) const;
+    bool saveContact(QContact* contact, QContactManager::Error* error);
+    bool removeContact(const QContactLocalId& contactId, QContactManager::Error* error);
 
     /* Groups - Accessors and Mutators */
-    //QList<QContactLocalId> groups(QContactManager::Error& error) const;
-    //QContactGroup group(const QContactLocalId& groupId, QContactManager::Error& error) const;
-    //bool saveGroup(QContactGroup* group, QContactManager::Error& error);
-    //bool removeGroup(const QContactLocalId& groupId, QContactManager::Error& error);
+    //QList<QContactLocalId> groups(QContactManager::Error* error) const;
+    //QContactGroup group(const QContactLocalId& groupId, QContactManager::Error* error) const;
+    //bool saveGroup(QContactGroup* group, QContactManager::Error* error);
+    //bool removeGroup(const QContactLocalId& groupId, QContactManager::Error* error);
 
     /* Definitions */
-    QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error& error) const;
+    QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error* error) const;
 
     /* Asynchronous Request Support */
     void requestDestroyed(QContactAbstractRequest* req);
@@ -239,7 +239,7 @@ public:
     QList<QVariant::Type> supportedDataTypes() const;
 
     /* Synthesize the display label of a contact */
-    virtual QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
+    virtual QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error* error) const;
     
     /*helper functions*/
     PROPID metaAvatar() const;
@@ -267,7 +267,7 @@ class Q_DECL_EXPORT ContactWinceFactory : public QObject, public QContactManager
     Q_INTERFACES(QtMobility::QContactManagerEngineFactory)
 public:
     ContactWinceFactory();
-        QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error& error);
+        QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error* error);
         QString managerName() const;
         void resetEngine();
 private:

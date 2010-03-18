@@ -63,14 +63,14 @@ public:
     void getSqlQuery( const QContactIntersectionFilter& filter,
                                   QString& tableName,
                                   QString& sqlWhereClause ,
-                                  QContactManager::Error& error) const;
+                                  QContactManager::Error* error) const;
 
     void createSelectQuery(const QContactFilter& filter,
                                  QString& selectquery,
-                                 QContactManager::Error& error);    
+                                 QContactManager::Error* error);
 
 private:
-    void getSelectQueryforFilter(const QContactFilter& filter,QString& sqlSelectQuery,QContactManager::Error& error);
+    void getSelectQueryforFilter(const QContactFilter& filter,QString& sqlSelectQuery,QContactManager::Error* error);
 
 protected:
     CContactDatabase& m_contactdatabase;

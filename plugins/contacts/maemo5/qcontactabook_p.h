@@ -121,11 +121,11 @@ public:
   QContactABook(QObject* parent = 0);
   ~QContactABook();
   
-  QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-  //QList<QContactLocalId> contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-  QContact* getQContact(const QContactLocalId& contactId, QContactManager::Error& error) const;
-  bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
-  bool saveContact(QContact* contact, QContactManager::Error& error);
+  QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const;
+  //QList<QContactLocalId> contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const;
+  QContact* getQContact(const QContactLocalId& contactId, QContactManager::Error* error) const;
+  bool removeContact(const QContactLocalId& contactId, QContactManager::Error* error);
+  bool saveContact(QContact* contact, QContactManager::Error* error);
 
 Q_SIGNALS:
   void savingJobDone();

@@ -93,7 +93,7 @@ CntSymbianSrvConnection::~CntSymbianSrvConnection()
  * \return the list of matched contact ids
  */
 QList<QContactLocalId> CntSymbianSrvConnection::searchContacts(const QString& sqlQuery, 
-                                                       QContactManager::Error& error)
+                                                       QContactManager::Error* error)
 {
     QList<QContactLocalId> list;
     TPtrC queryPtr(reinterpret_cast<const TUint16*>(sqlQuery.utf16()));

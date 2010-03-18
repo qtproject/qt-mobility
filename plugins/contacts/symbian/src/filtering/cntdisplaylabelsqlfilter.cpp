@@ -59,9 +59,9 @@ CntDisplayLabelSqlFilter::~CntDisplayLabelSqlFilter()
 
 void CntDisplayLabelSqlFilter::createSqlQuery(const QContactDetailFilter& filter,
                         QString& sqlQuery,
-                        QContactManager::Error& error)
+                        QContactManager::Error* error)
 {
-    error = QContactManager::NoError;
+    *error = QContactManager::NoError;
     
     //get the contact fields that should be checked
     CntDisplayLabel displayLabel;
@@ -101,12 +101,12 @@ void CntDisplayLabelSqlFilter::createSqlQuery(const QContactDetailFilter& filter
             sqlQuery += " AND (" + subQuery + ')';
         }
    
-        error = QContactManager::NoError;
+        *error = QContactManager::NoError;
     }
     
     //if specified more filter criterias than contact fields return error
     else if(searchStrings.count() > contactFields.count()){
-        error = QContactManager::BadArgumentError;
+        *error = QContactManager::BadArgumentError;
     }
 }
 

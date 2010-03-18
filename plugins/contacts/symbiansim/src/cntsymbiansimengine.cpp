@@ -75,13 +75,13 @@ CntSymbianSimEngineData::~CntSymbianSimEngineData()
     }
 }
 
-CntSymbianSimEngine::CntSymbianSimEngine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
+CntSymbianSimEngine::CntSymbianSimEngine(const QMap<QString, QString>& parameters, QContactManager::Error* error)
 {
-    error = QContactManager::NoError;
+    *error = QContactManager::NoError;
 
     d = new CntSymbianSimEngineData();
     d->m_simStore = new CntSimStore(this, parameters.value(KParameterKeySimStoreName), error);
-    if (error != QContactManager::NoError) {
+    if (*error != QContactManager::NoError) {
         //qDebug() << "Failed to open SIM store" << error;
         return;
     }
@@ -90,7 +90,7 @@ CntSymbianSimEngine::CntSymbianSimEngine(const QMap<QString, QString>& parameter
         // In case of SDN store we need to check if any SDN contacts exist to
         // determine if the store is supported or not
         if(d->m_simStore->storeInfo().iUsedEntries == 0)
-            error = QContactManager::NotSupportedError;
+            *error = QContactManager::NotSupportedError;
     }    
 }
 
@@ -119,7 +119,7 @@ QString CntSymbianSimEngine::managerName() const
  * Returns a list of the ids of contacts that match the supplied \a filter.
  * Any error that occurs will be stored in \a error.
  */
-QList<QContactLocalId> CntSymbianSimEngine::contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+QList<QContactLocalId> CntSymbianSimEngine::contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const
 {
     QContactLocalIdFetchRequest req;
     req.setSorting(sortOrders);
@@ -131,7 +131,7 @@ QList<QContactLocalId> CntSymbianSimEngine::contactIds(const QList<QContactSortO
  * Returns a list of the ids of contacts that match the supplied \a filter, sorted according to the given \a sortOrders.
  * Any error that occurs will be stored in \a error. Uses the generic (slow) filtering of QContactManagerEngine.
  */
-QList<QContactLocalId> CntSymbianSimEngine::contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+QList<QContactLocalId> CntSymbianSimEngine::contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const
 {
     QContactLocalIdFetchRequest req;
     req.setFilter(filter);
@@ -140,7 +140,7 @@ QList<QContactLocalId> CntSymbianSimEngine::contactIds(const QContactFilter& fil
     return req.ids();
 }
 
-QList<QContact> CntSymbianSimEngine::contacts(const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error) const
+QList<QContact> CntSymbianSimEngine::contacts(const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error* error) const
 {
     QContactFetchRequest req;
     req.setSorting(sortOrders);
@@ -149,7 +149,7 @@ QList<QContact> CntSymbianSimEngine::contacts(const QList<QContactSortOrder>& so
     return req.contacts();
 }
 
-QList<QContact> CntSymbianSimEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error) const
+QList<QContact> CntSymbianSimEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error* error) const
 {
     QContactFetchRequest req;
     req.setFilter(filter);
@@ -168,7 +168,7 @@ QList<QContact> CntSymbianSimEngine::contacts(const QContactFilter& filter, cons
  * \return A QContact for the requested QContactLocalId value or 0 if the read
  *  operation was unsuccessful (e.g. contact not found).
  */
-QContact CntSymbianSimEngine::contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const
+QContact CntSymbianSimEngine::contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error* error) const
 {
     QContactFetchRequest req;
     QContactLocalIdFilter filter;
@@ -181,7 +181,7 @@ QContact CntSymbianSimEngine::contact(const QContactLocalId& contactId, const QS
     return req.contacts().at(0); 
 }
 
-QString CntSymbianSimEngine::synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const
+QString CntSymbianSimEngine::synthesizedDisplayLabel(const QContact& contact, QContactManager::Error* error) const
 {
     Q_UNUSED(error);
 
@@ -202,10 +202,10 @@ QString CntSymbianSimEngine::synthesizedDisplayLabel(const QContact& contact, QC
  * \param qtError Qt error code.
  * \return Error status.
  */
-bool CntSymbianSimEngine::saveContact(QContact* contact, QContactManager::Error& error)
+bool CntSymbianSimEngine::saveContact(QContact* contact, QContactManager::Error* error)
 {
     if (!contact) {
-        error = QContactManager::BadArgumentError;
+        *error = QContactManager::BadArgumentError;
         return false;
     }
     
@@ -214,13 +214,13 @@ bool CntSymbianSimEngine::saveContact(QContact* contact, QContactManager::Error&
     executeRequest(&req, error);
     if (req.contacts().count())
         *contact = req.contacts().at(0);
-    return (error == QContactManager::NoError);
+    return (*error == QContactManager::NoError);
 }
 
-bool CntSymbianSimEngine::saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error)
+bool CntSymbianSimEngine::saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
 {
     if (!contacts) {
-        error = QContactManager::BadArgumentError;
+        *error = QContactManager::BadArgumentError;
         return false;
     }
     
@@ -230,7 +230,7 @@ bool CntSymbianSimEngine::saveContacts(QList<QContact>* contacts, QMap<int, QCon
     if (errorMap)
         *errorMap = req.errorMap();
     *contacts = req.contacts();
-    return (error == QContactManager::NoError );    
+    return (*error == QContactManager::NoError );
 }
 
 /*!
@@ -240,17 +240,17 @@ bool CntSymbianSimEngine::saveContacts(QList<QContact>* contacts, QMap<int, QCon
  * \param qtError Qt error code.
  * \return Error status.
  */
-bool CntSymbianSimEngine::removeContact(const QContactLocalId& contactId, QContactManager::Error& error)
+bool CntSymbianSimEngine::removeContact(const QContactLocalId& contactId, QContactManager::Error* error)
 {
     QContactRemoveRequest req;
     req.setContactIds(QList<QContactLocalId>() << contactId);
     return executeRequest(&req, error);
 }
 
-bool CntSymbianSimEngine::removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error)
+bool CntSymbianSimEngine::removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
 {
     if (!contactIds) {
-        error = QContactManager::BadArgumentError;
+        *error = QContactManager::BadArgumentError;
         return false;
     }    
     QContactRemoveRequest req;
@@ -258,18 +258,18 @@ bool CntSymbianSimEngine::removeContacts(QList<QContactLocalId>* contactIds, QMa
     executeRequest(&req, error);
     if (errorMap)
         *errorMap = req.errorMap();    
-    return (error == QContactManager::NoError);    
+    return (*error == QContactManager::NoError);
 }
 
 /*!
  * Returns a map of identifier to detail definition which are valid for contacts whose type is the given \a contactType
  * which are valid for the contacts in this store
  */
-QMap<QString, QContactDetailDefinition> CntSymbianSimEngine::detailDefinitions(const QString& contactType, QContactManager::Error& error) const
+QMap<QString, QContactDetailDefinition> CntSymbianSimEngine::detailDefinitions(const QString& contactType, QContactManager::Error* error) const
 {
     if (!supportedContactTypes().contains(contactType)) {
         // Should never happen
-        error = QContactManager::NotSupportedError;
+        *error = QContactManager::NotSupportedError;
         return QMap<QString, QContactDetailDefinition>();
     }
 
@@ -552,9 +552,9 @@ void CntSymbianSimEngine::setReadOnlyAccessConstraint(QContactDetail* detail) co
  * \param qtError Qt error code.
  * \return true if succesfull, false if unsuccesfull.
  */
-bool CntSymbianSimEngine::executeRequest(QContactAbstractRequest *req, QContactManager::Error& qtError) const
+bool CntSymbianSimEngine::executeRequest(QContactAbstractRequest *req, QContactManager::Error* qtError) const
 {
-    qtError = QContactManager::NoError;
+    *qtError = QContactManager::NoError;
     
     // TODO:
     // Remove this code when threads-branch is merged to master. Then this code
@@ -567,23 +567,23 @@ bool CntSymbianSimEngine::executeRequest(QContactAbstractRequest *req, QContactM
     
     // Mimic the way how async requests are normally run
     if (!engine.startRequest(req)) {
-        qtError = QContactManager::LockedError;
+        *qtError = QContactManager::LockedError;
     } else {
         if (!engine.waitForRequestFinished(req, KRequestTimeout))
-            qtError = QContactManager::UnspecifiedError; // timeout occurred
+            *qtError = QContactManager::UnspecifiedError; // timeout occurred
     }
     engine.requestDestroyed(req);
     
     if (req->error())
-        qtError = req->error();
+        *qtError = req->error();
     
-    return (qtError == QContactManager::NoError);
+    return (*qtError == QContactManager::NoError);
 }
 
-QContactManagerEngine* CntSymbianSimFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
+QContactManagerEngine* CntSymbianSimFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error* error)
 {
     CntSymbianSimEngine *engine = new CntSymbianSimEngine(parameters, error);
-    if(error != QContactManager::NoError) {
+    if(*error != QContactManager::NoError) {
         delete engine;
         return 0;
     }

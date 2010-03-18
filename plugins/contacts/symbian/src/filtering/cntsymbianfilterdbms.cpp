@@ -304,7 +304,7 @@ CntAbstractContactFilter::FilterSupport CntSymbianFilter::filterSupportLevel(con
 
 QList<QContactLocalId> CntSymbianFilter::filterContacts(
     const QContactFilter& filter,
-    QContactManager::Error& error)
+    QContactManager::Error* error)
 {
     QList<QContactLocalId> matches;
     CContactIdArray* idArray(0);
@@ -313,7 +313,7 @@ QList<QContactLocalId> CntSymbianFilter::filterContacts(
         TTime epoch(0);
         idArray = m_contactDatabase.ContactsChangedSinceL(epoch); // return all contacts
     } else if(filterSupportLevel(filter) == NotSupported) {
-        error = QContactManager::NotSupportedError;
+        *error = QContactManager::NotSupportedError;
     } else if (filter.type() == QContactFilter::ContactDetailFilter) {
         const QContactDetailFilter &detailFilter = static_cast<const QContactDetailFilter &>(filter);
 
@@ -373,7 +373,7 @@ QList<QContactLocalId> CntSymbianFilter::filterContacts(
         }
     }
 
-    if(idArray && (error == QContactManager::NoError)) {
+    if(idArray && (*error == QContactManager::NoError)) {
         // copy the matching contact ids
         for(int i(0); i < idArray->Count(); i++) {
             matches.append(QContactLocalId((*idArray)[i]));

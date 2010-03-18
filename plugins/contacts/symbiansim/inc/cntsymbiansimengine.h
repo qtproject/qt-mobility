@@ -104,29 +104,29 @@ class CntSymbianSimEngine : public QContactManagerEngine
     Q_OBJECT
 
 public:
-    CntSymbianSimEngine(const QMap<QString, QString>& parameters, QContactManager::Error& error);
+    CntSymbianSimEngine(const QMap<QString, QString>& parameters, QContactManager::Error* error);
     CntSymbianSimEngine(const CntSymbianSimEngine &other);
     ~CntSymbianSimEngine();
     void deref();
     QString managerName() const;
 
     /* Contacts - Accessors and Mutators */
-    QList<QContactLocalId> contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-    QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-    QList<QContact> contacts(const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
-    QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
-    QContact contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
+    QList<QContactLocalId> contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const;
+    QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const;
+    QList<QContact> contacts(const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error* error) const;
+    QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error* error) const;
+    QContact contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error* error) const;
    
-    bool saveContact(QContact* contact, QContactManager::Error& error);
-    bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error);
-    bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
-    bool removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error);
+    bool saveContact(QContact* contact, QContactManager::Error* error);
+    bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error);
+    bool removeContact(const QContactLocalId& contactId, QContactManager::Error* error);
+    bool removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error);
 
     /* Synthesize the display label of a contact */
-    QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
+    QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error* error) const;
     
     /* Definitions - Accessors and Mutators */
-    QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error& error) const;
+    QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error* error) const;
 
     /* Asynchronous Request Support */
     void requestDestroyed(QContactAbstractRequest* req);
@@ -144,7 +144,7 @@ public:
     void setReadOnlyAccessConstraint(QContactDetail* detail) const;
 
 private:
-    bool executeRequest(QContactAbstractRequest *req, QContactManager::Error& qtError) const;
+    bool executeRequest(QContactAbstractRequest *req, QContactManager::Error* qtError) const;
 
 private:
     QExplicitlySharedDataPointer<CntSymbianSimEngineData> d;
@@ -155,7 +155,7 @@ class Q_DECL_EXPORT CntSymbianSimFactory : public QObject, public QContactManage
     Q_OBJECT
     Q_INTERFACES(QtMobility::QContactManagerEngineFactory)
     public:
-        QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error& error);
+        QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error* error);
         QString managerName() const;
 };
 

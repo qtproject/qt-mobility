@@ -67,10 +67,10 @@ public:
 
     void CntFilterRelationship::getSqlquery( const QContactRelationshipFilter& relationfilter,
                                                    QString& sqlquery ,
-                                                   QContactManager::Error& error) const;
+                                                   QContactManager::Error* error) const;
     void CntFilterRelationship::createSelectQuery(const QContactFilter& detailFilter,
                                   QString& sqlQuery,
-                                  QContactManager::Error& error);
+                                  QContactManager::Error* error);
 protected:
     CContactDatabase& m_contactdatabase;
     CntSymbianSrvConnection &m_srvConnection;

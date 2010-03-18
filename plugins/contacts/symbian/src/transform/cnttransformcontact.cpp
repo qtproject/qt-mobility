@@ -329,7 +329,7 @@ TUint32 CntTransformContact::GetIdForDetailL(const QContactDetailFilter& detailF
 void CntTransformContact::detailDefinitions(
         QMap<QString, QContactDetailDefinition>& defaultSchema,
         const QString& contactType,
-        QContactManager::Error& error) const
+        QContactManager::Error* error) const
 {
     Q_UNUSED(error);
 

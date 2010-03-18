@@ -86,7 +86,7 @@ class CntSymbianEngine : public QContactManagerEngine
     Q_OBJECT
 
 public:
-    CntSymbianEngine(const QMap<QString, QString>& parameters, QContactManager::Error& error);
+    CntSymbianEngine(const QMap<QString, QString>& parameters, QContactManager::Error* error);
     CntSymbianEngine(const CntSymbianEngine& other);
     ~CntSymbianEngine();
     void deref();
@@ -95,33 +95,33 @@ public:
     QString managerName() const;
 
     /* Contacts - Accessors and Mutators */
-    QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-    QList<QContactLocalId> contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-    QList<QContact> contacts(const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
-    QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
-    QContact contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
+    QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const;
+    QList<QContactLocalId> contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const;
+    QList<QContact> contacts(const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error* error) const;
+    QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error* error) const;
+    QContact contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error* error) const;
     
-    bool saveContact(QContact* contact, QContactManager::Error& error);
-    bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error);
-    bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
-    bool removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error);
+    bool saveContact(QContact* contact, QContactManager::Error* error);
+    bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error);
+    bool removeContact(const QContactLocalId& contactId, QContactManager::Error* error);
+    bool removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error);
 
     /* Synthesize the display label of a contact */
-    QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
+    QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error* error) const;
     
     /* "Self" contact id (MyCard) */
-    bool setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& error);
-    QContactLocalId selfContactId(QContactManager::Error& error) const;
+    bool setSelfContactId(const QContactLocalId& contactId, QContactManager::Error* error);
+    QContactLocalId selfContactId(QContactManager::Error* error) const;
     
     /* Relationships between contacts */
-    QList<QContactRelationship> relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const;
-    bool saveRelationship(QContactRelationship* relationship, QContactManager::Error& error);
-    QList<QContactManager::Error> saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error);
-    bool removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error);
-    QList<QContactManager::Error> removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error);
+    QList<QContactRelationship> relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error* error) const;
+    bool saveRelationship(QContactRelationship* relationship, QContactManager::Error* error);
+    QList<QContactManager::Error> saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error* error);
+    bool removeRelationship(const QContactRelationship& relationship, QContactManager::Error* error);
+    QList<QContactManager::Error> removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error* error);
 
     /* Definitions - Accessors and Mutators */
-    QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error& error) const;
+    QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error* error) const;
 
     /* Capabilities reporting */
     bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const;
@@ -130,22 +130,22 @@ public:
     QList<QVariant::Type> supportedDataTypes() const;
 
 private:
-    QList<QContactLocalId> slowFilter(const QContactFilter& filter, const QList<QContactLocalId>& contacts, QContactManager::Error& error) const;
-    QList<QContactLocalId> slowSort(const QList<QContactLocalId>& contactIds, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-    bool doSaveContact(QContact* contact, QContactChangeSet& changeSet, QContactManager::Error& error);
+    QList<QContactLocalId> slowFilter(const QContactFilter& filter, const QList<QContactLocalId>& contacts, QContactManager::Error* error) const;
+    QList<QContactLocalId> slowSort(const QList<QContactLocalId>& contactIds, const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const;
+    bool doSaveContact(QContact* contact, QContactChangeSet& changeSet, QContactManager::Error* error);
 
     QContact fetchContactL(const QContactLocalId &localId, const QStringList& definitionRestrictions) const;
 
     /* Add contact */
-    bool addContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error& qtError);
+    bool addContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error* qtError);
     int addContactL(QContact &contact);
 
     /* Update contact */
-    bool updateContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error& qtError);
+    bool updateContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error* qtError);
     void updateContactL(QContact &contact);
 
     /* Remove contact */
-    bool removeContact(const QContactLocalId &id, QContactChangeSet& changeSet, QContactManager::Error& qtError);
+    bool removeContact(const QContactLocalId &id, QContactChangeSet& changeSet, QContactManager::Error* qtError);
     int removeContactL(QContactLocalId id);
 
     void updateDisplayLabel(QContact& contact) const;
@@ -181,7 +181,7 @@ class Q_DECL_EXPORT CntSymbianFactory : public QObject, public QContactManagerEn
     Q_OBJECT
     Q_INTERFACES(QtMobility::QContactManagerEngineFactory)
     public:
-        QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error& error);
+        QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error* error);
         QString managerName() const;
 };
 #endif  //PBK_UNIT_TEST

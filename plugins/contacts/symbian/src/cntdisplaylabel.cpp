@@ -95,10 +95,10 @@ void CntDisplayLabel::setDisplayLabelDetails()
  * \a error On return, contains the possible error.
  * \return synthesised display label 
  */
-QString CntDisplayLabel::synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const
+QString CntDisplayLabel::synthesizedDisplayLabel(const QContact& contact, QContactManager::Error* error) const
 {
     QString displayLabel;
-    error = QContactManager::NoError;
+    *error = QContactManager::NoError;
     
     //contact
     if(contact.type() == QContactType::TypeContact) {
@@ -112,7 +112,7 @@ QString CntDisplayLabel::synthesizedDisplayLabel(const QContact& contact, QConta
     
     //invalid type
     else {
-        error = QContactManager::InvalidContactTypeError;
+        *error = QContactManager::InvalidContactTypeError;
     }
     
     return displayLabel;

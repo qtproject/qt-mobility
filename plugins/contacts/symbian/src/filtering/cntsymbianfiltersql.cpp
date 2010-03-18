@@ -110,7 +110,7 @@ QList<QContactLocalId> CntSymbianFilter::contacts(
             const QContactFilter& filter,
             const QList<QContactSortOrder>& sortOrders,
             bool &filterSupported,
-            QContactManager::Error& error) 
+            QContactManager::Error* error)
 {
     QList<QContactLocalId> ids;
     if(m_filterMap.contains(filter.type()))
@@ -120,7 +120,7 @@ QList<QContactLocalId> CntSymbianFilter::contacts(
         return ids;   
         
         }
-    error = QContactManager::NotSupportedError;
+    *error = QContactManager::NotSupportedError;
     return ids;
     
 }

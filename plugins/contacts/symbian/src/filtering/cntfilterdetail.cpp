@@ -131,12 +131,12 @@ bool CntFilterDetail::filterSupported(const QContactFilter& filter)
 
 void CntFilterDetail::createSelectQuery(const QContactFilter& filter,
                               QString& sqlQuery,
-                              QContactManager::Error& error)
+                              QContactManager::Error* error)
 
 {
       if(!filterSupported(filter) )
       {
-          error = QContactManager::NotSupportedError;
+          *error = QContactManager::NotSupportedError;
           return;
       }
       QContactDetailFilter detailFilter(filter);
@@ -183,7 +183,7 @@ void CntFilterDetail::createSelectQuery(const QContactFilter& filter,
  */
 void CntFilterDetail::updateForMatchFlag( const QContactDetailFilter& filter,
                                           QString& fieldToUpdate ,
-                                          QContactManager::Error& error) const
+                                          QContactManager::Error* error) const
 {
     // Modify the filed depending on the query
     switch(filter.matchFlags())
@@ -194,7 +194,7 @@ void CntFilterDetail::updateForMatchFlag( const QContactDetailFilter& filter,
                 // " ='xyz'"
                 fieldToUpdate = " ='"
                                + filter.value().toString() + '\'';
-                error = QContactManager::NoError;
+                *error = QContactManager::NoError;
                 break;
                 }
             case QContactFilter::MatchContains:
@@ -202,7 +202,7 @@ void CntFilterDetail::updateForMatchFlag( const QContactDetailFilter& filter,
                 // Pattern for MatchContains:
                 // " LIKE '%xyz%'"
                 fieldToUpdate = " LIKE '%" + filter.value().toString() + "%'" ;
-                error = QContactManager::NoError;
+                *error = QContactManager::NoError;
                 break;
                 }
             case QContactFilter::MatchStartsWith:
@@ -210,7 +210,7 @@ void CntFilterDetail::updateForMatchFlag( const QContactDetailFilter& filter,
                 // Pattern for MatchStartsWith:
                 // " LIKE 'xyz%'"
                 fieldToUpdate = " LIKE '" +  filter.value().toString() + "%'"  ;
-                error = QContactManager::NoError;
+                *error = QContactManager::NoError;
                 break;
                 }
             case QContactFilter::MatchEndsWith:
@@ -218,22 +218,22 @@ void CntFilterDetail::updateForMatchFlag( const QContactDetailFilter& filter,
                 // Pattern for MatchEndsWith:
                 // " LIKE '%xyz'"
                 fieldToUpdate = " LIKE '%" + filter.value().toString() + '\'' ;
-                error = QContactManager::NoError;
+                *error = QContactManager::NoError;
                 break;
                 }
             case QContactFilter::MatchFixedString:
                 {
-                error = QContactManager::NotSupportedError;
+                *error = QContactManager::NotSupportedError;
                 break;
                 }
             case QContactFilter::MatchCaseSensitive:
                 {
-                error = QContactManager::NotSupportedError;
+                *error = QContactManager::NotSupportedError;
                 break;
                 }
             default:
                 {
-                error = QContactManager::NotSupportedError;
+                *error = QContactManager::NotSupportedError;
                 break;
                 }
         }
@@ -243,7 +243,7 @@ void CntFilterDetail::updateForMatchFlag( const QContactDetailFilter& filter,
 void CntFilterDetail::getTableNameWhereClause( const QContactDetailFilter& detailfilter,
                                                QString& tableName,
                                                QString& sqlWhereClause ,
-                                               QContactManager::Error& error) const
+                                               QContactManager::Error* error) const
 {
     //Get the table name and the column name
     bool isSubType;
@@ -256,13 +256,13 @@ void CntFilterDetail::getTableNameWhereClause( const QContactDetailFilter& detai
 
     //return if tableName is empty
     if(tableName.isEmpty()){
-        error = QContactManager::NotSupportedError;
+        *error = QContactManager::NotSupportedError;
         return;
     }
 
     //check columnName
     if(columnName.isEmpty()) {
-        error = QContactManager::NotSupportedError;
+        *error = QContactManager::NotSupportedError;
         return;
     }
     else if(isSubType) {
@@ -281,7 +281,7 @@ void CntFilterDetail::getTableNameWhereClause( const QContactDetailFilter& detai
    
 }
 
-QList<QContactLocalId>  CntFilterDetail::HandlePredictiveSearchFilter(const QContactFilter& filter,QContactManager::Error& error)
+QList<QContactLocalId>  CntFilterDetail::HandlePredictiveSearchFilter(const QContactFilter& filter,QContactManager::Error* error)
     {
     
     QString sqlQuery;

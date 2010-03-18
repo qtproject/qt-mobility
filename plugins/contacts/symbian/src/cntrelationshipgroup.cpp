@@ -69,7 +69,7 @@ CntRelationshipGroup::~CntRelationshipGroup()
  * \a relationship to be saved
  * \a error t
  */
-bool CntRelationshipGroup::saveRelationshipL(QSet<QContactLocalId> *affectedContactIds, QContactRelationship* relationship, QContactManager::Error& error)
+bool CntRelationshipGroup::saveRelationshipL(QSet<QContactLocalId> *affectedContactIds, QContactRelationship* relationship, QContactManager::Error* error)
 {
     //get the ids of the relationship
     QScopedPointer<QContactId> groupId(new QContactId(relationship->first()));
@@ -83,11 +83,11 @@ bool CntRelationshipGroup::saveRelationshipL(QSet<QContactLocalId> *affectedCont
     affectedContactIds->insert(groupId->localId());
     affectedContactIds->insert(contactId->localId());
     
-    error = QContactManager::NoError;
+    *error = QContactManager::NoError;
     return true;
 }
 
-bool CntRelationshipGroup::removeRelationshipL(QSet<QContactLocalId> *affectedContactIds, const QContactRelationship& relationship, QContactManager::Error& error)
+bool CntRelationshipGroup::removeRelationshipL(QSet<QContactLocalId> *affectedContactIds, const QContactRelationship& relationship, QContactManager::Error* error)
 {
     //get the ids of the relationship
     QScopedPointer<QContactId> groupId(new QContactId(relationship.first()));
@@ -110,15 +110,15 @@ bool CntRelationshipGroup::removeRelationshipL(QSet<QContactLocalId> *affectedCo
     CleanupStack::PopAndDestroy(contact);
     CleanupStack::PopAndDestroy(groupContact);
 
-    error = QContactManager::NoError;
+    *error = QContactManager::NoError;
     return true;
 }
 
-bool CntRelationshipGroup::validateRelationship(const QContactRelationship &relationship, QContactManager::Error& error)
+bool CntRelationshipGroup::validateRelationship(const QContactRelationship &relationship, QContactManager::Error* error)
 {
     // check that "second" is in this manager
     if (!relationship.second().managerUri().isEmpty() && relationship.second().managerUri() != managerUri()) {
-        error = QContactManager::InvalidRelationshipError;
+        *error = QContactManager::InvalidRelationshipError;
         return false;
     }
 
@@ -162,7 +162,7 @@ void CntRelationshipGroup::isGroupMemberL(const CContactItem* contactItem, const
 }
 
 //retrieve all the groups that the contact is part of
-QList<QContactRelationship> CntRelationshipGroup::relationshipsL(const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error)
+QList<QContactRelationship> CntRelationshipGroup::relationshipsL(const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error* error)
 {
     QList<QContactRelationship> returnValue;
     
@@ -188,7 +188,7 @@ QList<QContactRelationship> CntRelationshipGroup::relationshipsL(const QContactI
     }
     
     if (returnValue.isEmpty())
-        error = QContactManager::DoesNotExistError;
+        *error = QContactManager::DoesNotExistError;
 
     return returnValue;
 }

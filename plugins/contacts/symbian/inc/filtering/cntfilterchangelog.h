@@ -60,7 +60,7 @@ public:
 
     void createSelectQuery(const QContactFilter& filter,
                                  QString& sqlQuery,
-                                 QContactManager::Error& error);
+                                 QContactManager::Error* error);
 private:
 
 protected:

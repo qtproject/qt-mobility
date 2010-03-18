@@ -79,7 +79,7 @@ bool CntFilterDetailDisplayLabel::filterSupported(const QContactFilter& filter)
 
 void CntFilterDetailDisplayLabel::createSelectQuery(const QContactFilter& filter,
                               QString& sqlQuery,
-                              QContactManager::Error& error)
+                              QContactManager::Error* error)
 
 {
     //Commented currently since this will be checked in contacts call intially
@@ -87,7 +87,7 @@ void CntFilterDetailDisplayLabel::createSelectQuery(const QContactFilter& filter
     {
         const QContactDetailFilter detailFilter(filter);
         
-        error = QContactManager::NoError;
+        *error = QContactManager::NoError;
         
         //get the contact fields that should be checked
         CntDisplayLabel displayLabel;
@@ -127,12 +127,12 @@ void CntFilterDetailDisplayLabel::createSelectQuery(const QContactFilter& filter
             sqlQuery += " AND (" + subQuery + ')';
             }
        
-            error = QContactManager::NoError;
+            *error = QContactManager::NoError;
         }
         
         //if specified more filter criterias than contact fields return error
         else if(searchStrings.count() > contactFields.count()){
-            error = QContactManager::BadArgumentError;
+            *error = QContactManager::BadArgumentError;
         }
     }
         
@@ -140,7 +140,7 @@ void CntFilterDetailDisplayLabel::createSelectQuery(const QContactFilter& filter
 
 QString CntFilterDetailDisplayLabel::createSelectQuery(const QContactFilter& filter,
                                   const QList<QContactSortOrder>& sortOrders,
-                                  QContactManager::Error& error) const
+                                  QContactManager::Error* error) const
 {
     Q_UNUSED(sortOrders);
     QString result;
@@ -149,7 +149,7 @@ QString CntFilterDetailDisplayLabel::createSelectQuery(const QContactFilter& fil
     {
         const QContactDetailFilter detailFilter(filter);
         
-        error = QContactManager::NoError;
+        *error = QContactManager::NoError;
         
         //get the contact fields that should be checked
         CntDisplayLabel displayLabel;
@@ -189,12 +189,12 @@ QString CntFilterDetailDisplayLabel::createSelectQuery(const QContactFilter& fil
                 result += " AND (" + subQuery + ')';
             }
        
-            error = QContactManager::NoError;
+            *error = QContactManager::NoError;
         }
         
         //if specified more filter criterias than contact fields return error
         else if(searchStrings.count() > contactFields.count()){
-            error = QContactManager::BadArgumentError;
+            *error = QContactManager::BadArgumentError;
         }
     }
     

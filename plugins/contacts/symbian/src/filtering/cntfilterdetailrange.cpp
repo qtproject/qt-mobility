@@ -103,13 +103,13 @@ bool CntFilterdetailrange::filterSupported(const QContactFilter& /*filter*/)
 
 void CntFilterdetailrange::createSelectQuery(const QContactFilter& filter,
                               QString& sqlQuery,
-                              QContactManager::Error& error)
+                              QContactManager::Error* error)
 
 {
     //Check if any invalid filter is passed 
     if(!filterSupported(filter))
             {
-            error =  QContactManager::NotSupportedError;
+            *error =  QContactManager::NotSupportedError;
             }
    //Not yet supported
     sqlQuery = "";

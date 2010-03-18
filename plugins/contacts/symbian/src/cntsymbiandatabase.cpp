@@ -52,7 +52,7 @@
 // Constant
 typedef QPair<QContactLocalId, QContactLocalId> QOwnCardPair;
 
-CntSymbianDatabase::CntSymbianDatabase(QContactManagerEngine *engine, QContactManager::Error& error) :
+CntSymbianDatabase::CntSymbianDatabase(QContactManagerEngine *engine, QContactManager::Error* error) :
     m_engine(engine),
     m_contactDatabase(0),
     m_currentOwnCardId(0)

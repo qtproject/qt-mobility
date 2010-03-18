@@ -69,13 +69,13 @@ public:
     QList<QContactLocalId> contacts(const QContactFilter& filter,
                                     const QList<QContactSortOrder>& sortOrders,
                                     bool &filterSupported,
-                                    QContactManager::Error& error);
+                                    QContactManager::Error* error);
     bool filterSupported(const QContactFilter& filter);
 
 private:
     FilterSupport filterSupportLevel(const QContactFilter& filter);
     QList<QContactLocalId> filterContacts(const QContactFilter& filter,
-                                          QContactManager::Error& error);
+                                          QContactManager::Error* error);
     void transformDetailFilterL(const QContactDetailFilter& detailFilter, CContactItemFieldDef*& fieldDef);
     TInt findContacts(
             CContactIdArray*& idArray,

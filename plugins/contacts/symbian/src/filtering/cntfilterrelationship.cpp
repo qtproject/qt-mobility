@@ -107,7 +107,7 @@ bool CntFilterRelationship::filterSupported(const QContactFilter& filter)
 
 void CntFilterRelationship::createSelectQuery(const QContactFilter& filter,
                               QString& sqlQuery,
-                              QContactManager::Error& error)
+                              QContactManager::Error* error)
 
 {
     //Notthing done as of now
@@ -120,7 +120,7 @@ void CntFilterRelationship::createSelectQuery(const QContactFilter& filter,
 
 void CntFilterRelationship::getSqlquery( const QContactRelationshipFilter& relationfilter,
                                                QString& sqlquery ,
-                                               QContactManager::Error& error) const
+                                               QContactManager::Error* error) const
 {
 
     Q_UNUSED(error);
