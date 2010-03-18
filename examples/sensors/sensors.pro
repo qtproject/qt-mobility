@@ -14,3 +14,5 @@ SUBDIRS += sensor_explorer
 
 SUBDIRS += reading_perf
 
+SUBDIRS += small_screen_sensors
+
