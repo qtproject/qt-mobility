@@ -1429,7 +1429,7 @@ void QContactABook::setAddressDetail(const OssoABookContact* aContact, const QCo
   QStringList labelValues;
   labelValues << adrAttrValues[1] 
               << adrAttrValues[2]
-              << "PO Box " + adrAttrValues[0] //TODO Translation...
+              << adrAttrValues[0]
               << adrAttrValues[3]
               << adrAttrValues[4]
               << adrAttrValues[5]
@@ -1458,7 +1458,6 @@ void QContactABook::setAddressDetail(const OssoABookContact* aContact, const QCo
   addAttributeToAContact(aContact, EVC_LABEL, lblAttrValues, EVC_TYPE, paramValues, true, detailUri);
 }
 
-//TODO 
 void QContactABook::setAvatarDetail(const OssoABookContact* aContact, const QContactAvatar& detail) const
 {
   if (!aContact) return;
@@ -1576,12 +1575,14 @@ void QContactABook::setNoteDetail(const OssoABookContact* aContact, const QConta
   addAttributeToAContact(aContact, EVC_NOTE, attrValues);
 }
 
+/*NOTE: Online details comes from Telepathy or can be added manually by the user.
+ *      OnlineDetals coming from Telepathy/Roster contacts can't be saved.
+ */
 void QContactABook::setOnlineAccountDetail(const OssoABookContact* aContact, const QContactOnlineAccount& detail) const
 {
    if (!aContact)
      return;
    
-   //const QStringList rosterVCards = vcardsManagedByTelepathy();
    Q_UNUSED(detail);
 }
 
