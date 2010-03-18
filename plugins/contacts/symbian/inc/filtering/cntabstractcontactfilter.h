@@ -80,7 +80,7 @@ public:
             const QContactFilter &filter,
             const QList<QContactSortOrder> &sortOrders,
             bool &filterSupported,
-            QContactManager::Error &error) = 0;
+            QContactManager::Error *error) = 0;
     virtual bool filterSupported(const QContactFilter& filter) = 0;
 };
 

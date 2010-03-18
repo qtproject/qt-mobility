@@ -102,7 +102,7 @@ QStringList CntRelationship::supportedRelationshipTypes(const QString &contactTy
  * \a role The contact role
  * \a error Error returned
  */
-QList<QContactRelationship> CntRelationship::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error* error) const
+QList<QContactRelationship> CntRelationship::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationship::Role role, QContactManager::Error* error) const
 {
     QList<QContactRelationship> returnValue;
     *error = QContactManager::NoError;

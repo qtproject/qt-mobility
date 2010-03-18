@@ -93,18 +93,19 @@ public:
     
     /* URI reporting */
     QString managerName() const;
+    /* XXX TODO - implement these correctly */
+    QMap<QString, QString> managerParameters() const {return QMap<QString, QString>();}
+    int managerVersion() const { return 1;}
 
     /* Contacts - Accessors and Mutators */
     QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const;
-    QList<QContactLocalId> contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const;
-    QList<QContact> contacts(const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error* error) const;
-    QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error* error) const;
-    QContact contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error* error) const;
-    
+    QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fetchHint, QContactManager::Error* error) const;
+    QContact contact(const QContactLocalId& contactId, const QContactFetchHint& fetchHint, QContactManager::Error* error) const;
+
     bool saveContact(QContact* contact, QContactManager::Error* error);
     bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error);
     bool removeContact(const QContactLocalId& contactId, QContactManager::Error* error);
-    bool removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error);
+    bool removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error);
 
     /* Synthesize the display label of a contact */
     QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error* error) const;
@@ -114,7 +115,7 @@ public:
     QContactLocalId selfContactId(QContactManager::Error* error) const;
     
     /* Relationships between contacts */
-    QList<QContactRelationship> relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error* error) const;
+    QList<QContactRelationship> relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationship::Role role, QContactManager::Error* error) const;
     bool saveRelationship(QContactRelationship* relationship, QContactManager::Error* error);
     QList<QContactManager::Error> saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error* error);
     bool removeRelationship(const QContactRelationship& relationship, QContactManager::Error* error);
