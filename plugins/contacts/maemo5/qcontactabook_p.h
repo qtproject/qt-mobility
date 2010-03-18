@@ -51,64 +51,9 @@
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
 #include "osso-abook-workaround.h"
-
+#include "qcontactidshash.h"
 
 QTM_USE_NAMESPACE
-
-/* QContactIDsHash stores abookContact IDs (strings)*/
-class QContactIDsHash{
-public:
-  QContactIDsHash(){};
-  
-  /* Append */
-  QContactIDsHash& operator<< (const QByteArray& eContactId){
-    if (find(eContactId))
-      return (*this);
-    quint16 key = qChecksum(eContactId, eContactId.size());
-    m_localIds[key] = eContactId;
-    QCM5_DEBUG << "Add key:" << key << "eContactId:" << eContactId;
-                                                        
-    return (*this);
-  };
-  
-  const QContactLocalId append(const QByteArray& eContactId){
-    uint id = find(eContactId);
-    if (id)
-      return id;
-    id = qChecksum(eContactId, eContactId.size());
-    m_localIds[id] = eContactId;
-    QCM5_DEBUG << "Add key:" << id << "eContactId:" << eContactId;
-    return id;
-  };
-  
-  /* Find */
-  const char* operator[] (const QContactLocalId localId) { return m_localIds.value(localId).constData(); };
-  const char* find(const QContactLocalId localId) { return m_localIds.value(localId).constData(); };
-  const QContactLocalId operator[] (const QByteArray& eContactId) { return m_localIds.key(eContactId, 0); };
-  const QContactLocalId find(const QByteArray& eContactId) { return m_localIds.key(eContactId, 0); };
-  
-  /* Remove */ //TEST Remove functions not used nor tested yet
-  bool remove(const QContactLocalId localId){ bool removed = (m_localIds.remove(localId) == 1) ? true : false;
-                                              QCM5_DEBUG << "Remove QContactLocalId:" << localId << ((removed) ? "OK" : "NO");
-                                              return removed;
-                                            };
-  bool remove(const QByteArray& eContactId){ 
-    const QContactLocalId hashKey = m_localIds.key(eContactId, 0);
-    bool removed = remove(hashKey);
-    QCM5_DEBUG << "Remove QContactLocalId:" << hashKey << ((removed) ? "OK" : "NO");
-    return removed;
-  };
-  
-  /* Take */
-  const QContactLocalId take(const QByteArray& eContactId){
-    const QContactLocalId hashKey = m_localIds.key(eContactId, 0);
-    remove(hashKey);
-    return hashKey;
-  };
-  
-private:
-  QHash<QContactLocalId, QByteArray> m_localIds; //[int/QContactLocalId Maemo5LocalId, QByteArray eContactID]
-};
 
 //Contains Data shared with contact changes/added/removed callbacks
 struct cbSharedData;
