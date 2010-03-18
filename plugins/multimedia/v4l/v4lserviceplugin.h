@@ -58,12 +58,6 @@ public:
 
     QList<QByteArray> devices(const QByteArray &service) const;
     QString deviceDescription(const QByteArray &service, const QByteArray &device);
-
-private:
-    void updateDevices() const;
-
-    mutable QList<QByteArray> m_cameraDevices;
-    mutable QStringList m_cameraDescriptions;
 };
 
 #endif // V4LSERVICEPLUGIN_H

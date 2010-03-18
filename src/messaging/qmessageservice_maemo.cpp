@@ -210,7 +210,7 @@ bool QMessageService::send(QMessage &message)
     if (retVal) {
         if (account.messageTypes() & QMessage::Sms) {
             retVal = TelepathyEngine::instance()->sendMessage(message);
-        } else if (account.messageTypes() & QMessage::Xmpp) {
+        } else if (account.messageTypes() & QMessage::InstantMessage) {
             retVal = TelepathyEngine::instance()->sendMessage(message);
         } else if (account.messageTypes() & QMessage::Mms) {
             d_ptr->_error = QMessageManager::NotYetImplemented;

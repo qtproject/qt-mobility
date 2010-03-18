@@ -514,11 +514,11 @@ void Player::handleAspectRatio(bool aspectRatio)
 {
     if(aspectRatio) {
         toggleAspectRatio->setText(tr("Keep Aspect Ratio"));
-        videoWidget->setAspectRatioMode(QVideoWidget::IgnoreAspectRatio);
+        videoWidget->setAspectRatioMode(Qt::IgnoreAspectRatio);
 
     } else {
         toggleAspectRatio->setText(tr("Ignore Aspect Ratio"));
-        videoWidget->setAspectRatioMode(QVideoWidget::KeepAspectRatio);
+        videoWidget->setAspectRatioMode(Qt::KeepAspectRatio);
     }
 }
 

@@ -209,9 +209,28 @@ findframeworks()
 
 findframeworks
 
+findUniversal()
+{
+    if [ -e "mac.inc" ]; then 
+        rm mac.inc
+    fi
+    echo "contains(QT_CONFIG,x86): system(echo CONFIG+=x86 >> mac.inc)" > 2.pro
+    echo "contains(QT_CONFIG,ppc): system(echo CONFIG+=ppc >> mac.inc)" >> 2.pro
+    echo "contains(QT_CONFIG,ppc64): system(echo CONFIG+=ppc64 >> mac.inc)" >> 2.pro
+    echo "contains(QT_CONFIG,x86_64): system(echo CONFIG+=x86_64 >> mac.inc)" >> 2.pro
+    SOMETIME=`qmake 2.pro 2>&1`
+    rm 2.pro
+    if [ -e "mac.inc" ]; then 
+         echo "exists(mac.inc): include(mac.inc)" >> "$CONFIG_IN"
+    fi
+}
+
+
 if [ -n "$BUILD_SILENT" ]; then
     echo "CONFIG += silent"  > "$CONFIG_IN"
 fi
+
+findUniversal
 
 if [ -z "$RELEASEMODE" ]; then
     RELEASEMODE="debug"
@@ -410,7 +429,6 @@ for module in $MOBILITY_MODULES; do
             ;;
         multimedia)
             $relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia/experimental
             ;;
         messaging)
             $relpath/bin/syncheaders $shadowpath/include $relpath/src/messaging

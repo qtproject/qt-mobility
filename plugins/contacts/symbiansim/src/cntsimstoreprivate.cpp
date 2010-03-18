@@ -42,12 +42,14 @@
 #include "cntsimstoreprivate.h"
 #include "cntsymbiansimtransformerror.h"
 #include "cntsimstore.h"
+#include "cntsimstoreeventlistener.h"
 
 #include <mmtsy_names.h>
 #include <qtcontacts.h>
+#include <qcontactchangeset.h>
+#include <QDebug>
 
-
-const int KOneSimContactBufferSize = 512;
+const TInt KOneSimContactBufferSize = 512;
 const TInt KDataClientBuf  = 128;
 const TInt KEtsiTonPosition = 0x70;
 
@@ -66,7 +68,8 @@ CntSimStorePrivate::CntSimStorePrivate(CntSymbianSimEngine &engine, CntSimStore 
      m_engine(engine),
      m_simStore(simStore),
      m_storeName(storeName),
-     m_storeInfoPckg(m_storeInfo)
+     m_storeInfoPckg(m_storeInfo),
+     m_listener(0)
 {
     CActiveScheduler::Add(this);
     m_managerUri = engine.managerUri();
@@ -104,16 +107,19 @@ void CntSimStorePrivate::ConstructL()
     PbkPrintToLog(_L("CntSymbianSimEngine::getEtelStoreInfoL() - MaxNumLength = %d"),
             m_storeInfo.iMaxNumLength);
     PbkPrintToLog(_L("CntSymbianSimEngine::getEtelStoreInfoL() - MaxTextLength = %d"),
-            m_storeInfo.iMaxTextLength);    
+            m_storeInfo.iMaxTextLength);
+    
+    m_listener = new (ELeave) CntSimStoreEventListener(m_engine, m_etelStore);
+    m_listener->start();
 }
 
 CntSimStorePrivate::~CntSimStorePrivate()
 {
     Cancel();
-    m_buffer.Close();
+    delete m_listener;
     m_etelStore.Close();
     m_etelPhone.Close();
-    m_etelServer.Close();    
+    m_etelServer.Close();
 }
 
 void CntSimStorePrivate::convertStoreNameL(TDes &storeName)
@@ -140,23 +146,12 @@ void CntSimStorePrivate::convertStoreNameL(TDes &storeName)
     }
 }
 
-QContactManager::Error CntSimStorePrivate::getInfo()
+bool CntSimStorePrivate::read(int index, int numSlots, QContactManager::Error &error)
 {
-    if (IsActive())
-        return QContactManager::LockedError;
-    
-    // start get info request
-    m_etelStore.GetInfo(iStatus, (TDes8&)m_storeInfoPckg);
-    SetActive();
-    m_state = GetInfoState;
-    
-    return QContactManager::NoError;
-}
-
-QContactManager::Error CntSimStorePrivate::read(int index, int numSlots)
-{
-    if (IsActive())
-        return QContactManager::LockedError;
+    if (IsActive()) {
+        error = QContactManager::LockedError;
+        return false;
+    }
     
     // start reading
     m_buffer.Zero();
@@ -165,13 +160,16 @@ QContactManager::Error CntSimStorePrivate::read(int index, int numSlots)
     SetActive();
     m_state = ReadState;
     
-    return QContactManager::NoError;
+    error = QContactManager::NoError;
+    return true;
 }
 
-QContactManager::Error CntSimStorePrivate::write(const QContact &contact)
+bool CntSimStorePrivate::write(const QContact &contact, QContactManager::Error &error)
 {
-    if (IsActive())
-        return QContactManager::LockedError;
+    if (IsActive()) {
+        error = QContactManager::LockedError;
+        return false;
+    }
     
     // get index
     m_writeIndex = KErrNotFound;
@@ -185,9 +183,8 @@ QContactManager::Error CntSimStorePrivate::write(const QContact &contact)
     m_buffer.ReAlloc(KOneSimContactBufferSize);
     TRAPD(err, m_convertedContact = encodeSimContactL(&contact, m_buffer));
     if (err != KErrNone) {
-        QContactManager::Error qtError;
-        CntSymbianSimTransformError::transformError(err, qtError);
-        return qtError;
+        CntSymbianSimTransformError::transformError(err, error);
+        return false;
     }
 
     // start writing
@@ -195,13 +192,16 @@ QContactManager::Error CntSimStorePrivate::write(const QContact &contact)
     SetActive();
     m_state = WriteState;
     
-    return QContactManager::NoError;
+    error = QContactManager::NoError;
+    return true;
 }
 
-QContactManager::Error CntSimStorePrivate::remove(int index)
+bool CntSimStorePrivate::remove(int index, QContactManager::Error &error)
 {
-    if (IsActive())
-        return QContactManager::LockedError;
+    if (IsActive()) {
+        error = QContactManager::LockedError;
+        return false;
+    }
     
     // NOTE:
     // If index points to an empty slot and running in hardware the 
@@ -211,13 +211,12 @@ QContactManager::Error CntSimStorePrivate::remove(int index)
     SetActive();
     m_state = DeleteState;
     
-    return QContactManager::NoError;
+    error = QContactManager::NoError;
+    return true;
 }
 
 void CntSimStorePrivate::DoCancel()
 {
-    if (m_state == GetInfoState)
-        m_etelStore.CancelAsyncRequest(EMobilePhoneStoreGetInfo);
     if (m_state == ReadState)
         m_etelStore.CancelAsyncRequest(EMobilePhoneStoreRead);
     if (m_state == WriteState)
@@ -230,22 +229,18 @@ void CntSimStorePrivate::DoCancel()
 
 void CntSimStorePrivate::RunL()
 {
+    //qDebug() << "CntSimStorePrivate::RunL()" << m_state << iStatus.Int();
+    
+    m_asyncError = iStatus.Int();
     User::LeaveIfError(iStatus.Int());
     
     // NOTE: It is assumed that emitting signals is queued
     
     switch (m_state)
     {
-        case GetInfoState:
-        {
-            emit m_simStore.getInfoComplete(m_storeInfo, QContactManager::NoError);
-        }
-        break;
-        
         case ReadState:
         {
             QList<QContact> contacts = decodeSimContactsL(m_buffer);
-            m_buffer.Zero();
             emit m_simStore.readComplete(contacts, QContactManager::NoError);
         }
         break;
@@ -289,10 +284,7 @@ TInt CntSimStorePrivate::RunError(TInt aError)
     
     // NOTE: It is assumed that emitting signals is queued
         
-    if (m_state == GetInfoState) {
-        RMobilePhoneBookStore::TMobilePhoneBookInfoV5 emptyInfo;
-        emit m_simStore.getInfoComplete(emptyInfo, qtError);
-    } else if (m_state == ReadState) {
+    if (m_state == ReadState) {
         QList<QContact> emptyList;
         emit m_simStore.readComplete(emptyList, qtError);            
     } else if (m_state == WriteState) {
@@ -510,6 +502,7 @@ QContact CntSimStorePrivate::encodeSimContactL(const QContact* contact, TDes8& r
     convertedContact.saveDetail(&convertedNameDetail);
 
     //add nickname
+#ifndef SYMBIANSIM_BACKEND_PHONEBOOKINFOV1
     if (m_storeInfo.iMaxSecondNames > 0) {
         QString nickname;
         QList<QContactDetail> nicknameDetails = contact->details(QContactNickname::DefinitionName);
@@ -525,6 +518,7 @@ QContact CntSimStorePrivate::encodeSimContactL(const QContact* contact, TDes8& r
             convertedContact.saveDetail(&convertedNicknameDetail);
         }
     }
+#endif
 
     //add phone number
     QList<QContactDetail> phoneNumberDetails = contact->details(QContactPhoneNumber::DefinitionName);
@@ -558,6 +552,7 @@ QContact CntSimStorePrivate::encodeSimContactL(const QContact* contact, TDes8& r
     }
 
     //add additional numbers
+#ifndef SYMBIANSIM_BACKEND_PHONEBOOKINFOV1
     if (m_storeInfo.iMaxAdditionalNumbers > 0) {
         //one number is saved already
         for (int i = 1; i < phoneNumberDetails.count() && i-1 < m_storeInfo.iMaxAdditionalNumbers; ++i) {
@@ -576,8 +571,10 @@ QContact CntSimStorePrivate::encodeSimContactL(const QContact* contact, TDes8& r
             convertedContact.saveDetail(&convertedPhoneNumberDetail);
         }
     }
+#endif
 
     //add e-mails
+#ifndef SYMBIANSIM_BACKEND_PHONEBOOKINFOV1
     if (m_storeInfo.iMaxEmailAddr > 0) {
         QList<QContactDetail> emailDetails = contact->details(QContactEmailAddress::DefinitionName);
         for (int i = 0; i < emailDetails.count() && i < m_storeInfo.iMaxEmailAddr; ++i) {
@@ -593,6 +590,7 @@ QContact CntSimStorePrivate::encodeSimContactL(const QContact* contact, TDes8& r
             convertedContact.saveDetail(&convertedEmailDetail);
         }
     }
+#endif
 
     CleanupStack::PopAndDestroy(pbBuffer);
     PbkPrintToLog(_L("CntSymbianSimEngine::encodeSimContactL() - OUT"));

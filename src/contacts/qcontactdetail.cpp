@@ -59,7 +59,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactDetail::ContextWork, "Work");
 /*!
   \class QContactDetail
  
-  \brief The QContactDetail class provides access to a single, complete detail about a contact.
+  \brief The QContactDetail class represents a single, complete detail about a contact.
   \ingroup contacts-main
  
   All of the information for a contact is stored in one or more QContactDetail objects.

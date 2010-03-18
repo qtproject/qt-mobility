@@ -391,30 +391,30 @@ EXPORTS
 	_ZNK10QtMobility8QMessage6statusEv @ 390 NONAME
 	_ZNK10QtMobility8QMessage7subjectEv @ 391 NONAME
 	_ZNK10QtMobility8QMessage8priorityEv @ 392 NONAME
-	_ZTIN10QtMobility14QMessageFilterE @ 393 NONAME ; #<TI>#
-	_ZTIN10QtMobility14QMessageFolderE @ 394 NONAME ; #<TI>#
-	_ZTIN10QtMobility15QMessageAccountE @ 395 NONAME ; #<TI>#
-	_ZTIN10QtMobility15QMessageAddressE @ 396 NONAME ; #<TI>#
-	_ZTIN10QtMobility15QMessageManagerE @ 397 NONAME ; #<TI>#
-	_ZTIN10QtMobility15QMessageServiceE @ 398 NONAME ; #<TI>#
-	_ZTIN10QtMobility17QMessageSortOrderE @ 399 NONAME ; #<TI>#
-	_ZTIN10QtMobility20QMessageFolderFilterE @ 400 NONAME ; #<TI>#
-	_ZTIN10QtMobility21QMessageAccountFilterE @ 401 NONAME ; #<TI>#
-	_ZTIN10QtMobility23QMessageFolderSortOrderE @ 402 NONAME ; #<TI>#
-	_ZTIN10QtMobility24QMessageAccountSortOrderE @ 403 NONAME ; #<TI>#
-	_ZTIN10QtMobility24QMessageContentContainerE @ 404 NONAME ; #<TI>#
-	_ZTIN10QtMobility8QMessageE @ 405 NONAME ; #<TI>#
-	_ZTVN10QtMobility14QMessageFilterE @ 406 NONAME ; #<VT>#
-	_ZTVN10QtMobility14QMessageFolderE @ 407 NONAME ; #<VT>#
-	_ZTVN10QtMobility15QMessageAccountE @ 408 NONAME ; #<VT>#
-	_ZTVN10QtMobility15QMessageAddressE @ 409 NONAME ; #<VT>#
-	_ZTVN10QtMobility15QMessageManagerE @ 410 NONAME ; #<VT>#
-	_ZTVN10QtMobility15QMessageServiceE @ 411 NONAME ; #<VT>#
-	_ZTVN10QtMobility17QMessageSortOrderE @ 412 NONAME ; #<VT>#
-	_ZTVN10QtMobility20QMessageFolderFilterE @ 413 NONAME ; #<VT>#
-	_ZTVN10QtMobility21QMessageAccountFilterE @ 414 NONAME ; #<VT>#
-	_ZTVN10QtMobility23QMessageFolderSortOrderE @ 415 NONAME ; #<VT>#
-	_ZTVN10QtMobility24QMessageAccountSortOrderE @ 416 NONAME ; #<VT>#
-	_ZTVN10QtMobility24QMessageContentContainerE @ 417 NONAME ; #<VT>#
-	_ZTVN10QtMobility8QMessageE @ 418 NONAME ; #<VT>#
+	_ZTIN10QtMobility14QMessageFilterE @ 393 NONAME
+	_ZTIN10QtMobility14QMessageFolderE @ 394 NONAME
+	_ZTIN10QtMobility15QMessageAccountE @ 395 NONAME
+	_ZTIN10QtMobility15QMessageAddressE @ 396 NONAME
+	_ZTIN10QtMobility15QMessageManagerE @ 397 NONAME
+	_ZTIN10QtMobility15QMessageServiceE @ 398 NONAME
+	_ZTIN10QtMobility17QMessageSortOrderE @ 399 NONAME
+	_ZTIN10QtMobility20QMessageFolderFilterE @ 400 NONAME
+	_ZTIN10QtMobility21QMessageAccountFilterE @ 401 NONAME
+	_ZTIN10QtMobility23QMessageFolderSortOrderE @ 402 NONAME
+	_ZTIN10QtMobility24QMessageAccountSortOrderE @ 403 NONAME
+	_ZTIN10QtMobility24QMessageContentContainerE @ 404 NONAME
+	_ZTIN10QtMobility8QMessageE @ 405 NONAME
+	_ZTVN10QtMobility14QMessageFilterE @ 406 NONAME
+	_ZTVN10QtMobility14QMessageFolderE @ 407 NONAME
+	_ZTVN10QtMobility15QMessageAccountE @ 408 NONAME
+	_ZTVN10QtMobility15QMessageAddressE @ 409 NONAME
+	_ZTVN10QtMobility15QMessageManagerE @ 410 NONAME
+	_ZTVN10QtMobility15QMessageServiceE @ 411 NONAME
+	_ZTVN10QtMobility17QMessageSortOrderE @ 412 NONAME
+	_ZTVN10QtMobility20QMessageFolderFilterE @ 413 NONAME
+	_ZTVN10QtMobility21QMessageAccountFilterE @ 414 NONAME
+	_ZTVN10QtMobility23QMessageFolderSortOrderE @ 415 NONAME
+	_ZTVN10QtMobility24QMessageAccountSortOrderE @ 416 NONAME
+	_ZTVN10QtMobility24QMessageContentContainerE @ 417 NONAME
+	_ZTVN10QtMobility8QMessageE @ 418 NONAME
 

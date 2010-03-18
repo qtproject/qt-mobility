@@ -10,7 +10,6 @@ qtAddLibrary(QtMedia)
 include(mediaplayer/mediaplayer_s60.pri)
 include(radio/radio.pri)
 include(audiosource/audiosource_s60.pri)
-include(camera/camera_s60.pri)
 
 DEPENDPATH += .
 INCLUDEPATH += . \

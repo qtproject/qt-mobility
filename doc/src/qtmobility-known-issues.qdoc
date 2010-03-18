@@ -113,7 +113,6 @@ Of all supported Symbian platforms S60 3.2+ platforms enjoy the most comprehensi
     \o Play video from local file.
     \o Retrieve meta data information from currently playing media. Following tags supported: title, artist, comment, genre, year, copyright, album, composer, albumtrack, audiobitrate, videobitrate, duration, content type.
     \o Media recording: audio capture to specified file from phone microphone or phone call (call needs to be started before media recording).
-    \o Experimental camera support.
 \endlist
 
 
@@ -186,15 +185,12 @@ Support is present for the following System Info API classes
 
 \section2 Multimedia API
 \list
-    \o \bold {Camera support classes in Multimedia API is in technology preview state.}
     \o S60: S60 specific play list not supported
     \o S60: Device specific play list management not supported.
     \o S60: Audio capture does not support currently any special features like format, encoding etc...
     \o S60: seeking is not working properly
     \o S60: video size does not remain constant in repeated plays
     \o S60: full screen video not working OK
-    \o S60: Calling QStillImageCapture::capture() with an existing file name results in Symbian:-11 error.
-    \o S60: advancedsettings focus, whitebalance, exposure,etc don't work with 3.2/5.0. 3.1 Devices do not support them at all.
     \o S60: 3.2.3 (E75 for example) player example don't work.
     \o Windows desktop: wmp multimedia plugin does not display video with Windows Media Player 10 or 12
 \endlist

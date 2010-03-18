@@ -50,7 +50,7 @@ QGstreamerVideoOverlay::QGstreamerVideoOverlay(QObject *parent)
     : QVideoWindowControl(parent)
     , m_surface(new QX11VideoSurface)
     , m_videoSink(reinterpret_cast<GstElement*>(QVideoSurfaceGstSink::createSink(m_surface)))
-    , m_aspectRatioMode(QVideoWidget::KeepAspectRatio)
+    , m_aspectRatioMode(Qt::KeepAspectRatio)
     , m_fullScreen(false)
 {
     if (m_videoSink) {
@@ -92,12 +92,12 @@ void QGstreamerVideoOverlay::setDisplayRect(const QRect &rect)
     setScaledDisplayRect();
 }
 
-QVideoWidget::AspectRatioMode QGstreamerVideoOverlay::aspectRatioMode() const
+Qt::AspectRatioMode QGstreamerVideoOverlay::aspectRatioMode() const
 {
     return m_aspectRatioMode;
 }
 
-void QGstreamerVideoOverlay::setAspectRatioMode(QVideoWidget::AspectRatioMode mode)
+void QGstreamerVideoOverlay::setAspectRatioMode(Qt::AspectRatioMode mode)
 {
     m_aspectRatioMode = mode;
 
@@ -191,7 +191,7 @@ void QGstreamerVideoOverlay::surfaceFormatChanged()
 void QGstreamerVideoOverlay::setScaledDisplayRect()
 {
     switch (m_aspectRatioMode) {
-    case QVideoWidget::KeepAspectRatio:
+    case Qt::KeepAspectRatio:
         {
             QSize size = m_surface->surfaceFormat().viewport().size();
 
@@ -203,7 +203,7 @@ void QGstreamerVideoOverlay::setScaledDisplayRect()
             m_surface->setDisplayRect(rect);
         }
         break;
-    case QVideoWidget::IgnoreAspectRatio:
+    case Qt::IgnoreAspectRatio:
         m_surface->setDisplayRect(m_displayRect);
         break;
     };
