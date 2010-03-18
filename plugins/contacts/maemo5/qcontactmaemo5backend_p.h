@@ -115,9 +115,11 @@ class QContactMaemo5Engine : public QContactManagerEngine
 
     /* Contacts - Accessors and Mutators */
     QContact contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
-
-    //QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QContactManager::Error& error);
+    QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error ) const;
+    QList<QContact> contacts( const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error ) const;
+    
     bool saveContact(QContact* contact, QContactManager::Error& error);
+    
     //QList<QContactManager::Error> removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error);
     bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
     
