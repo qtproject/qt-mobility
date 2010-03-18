@@ -174,6 +174,7 @@ private:
     GstElement *m_capsFilter;
     GstElement *m_fileSink;
     GstElement *m_audioEncoder;
+    GstElement *m_muxer;
 public:
     QString m_imageFileName;
 };

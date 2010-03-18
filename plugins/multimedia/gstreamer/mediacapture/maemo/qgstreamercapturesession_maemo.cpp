@@ -82,7 +82,8 @@ QGstreamerCaptureSession::QGstreamerCaptureSession(QGstreamerCaptureSession::Cap
      m_audioConvert(0),
      m_capsFilter(0),
      m_fileSink(0),
-     m_audioEncoder(0)
+     m_audioEncoder(0),
+     m_muxer(0)
 {
     if (m_captureMode == AudioAndVideo) {
         m_pipeline = gst_element_factory_make("camerabin", "camerabin");
@@ -157,15 +158,23 @@ void QGstreamerCaptureSession::setupCameraBin()
 void QGstreamerCaptureSession::buildAudioEncodeBin()
 {    
     REMOVE_ELEMENT(m_audioEncoder);
+    REMOVE_ELEMENT(m_muxer);
 
     m_audioEncoder = m_audioEncodeControl->createEncoder();
-    if (!m_audioEncoder)
+    m_muxer = gst_element_factory_make(m_mediaContainerControl->formatElementName().constData(), "muxer");
+
+    if (!m_audioEncoder || !m_muxer) {
        emit error(int(QMediaRecorder::ResourceError), QString("Element creation failed"));
+       return;
+   }
 
     gst_bin_add(GST_BIN(m_pipeline), m_audioEncoder);
+    gst_bin_add(GST_BIN(m_pipeline), m_muxer);
 
-    if (!gst_element_link_many(m_audioConvert, m_audioEncoder, m_fileSink, NULL))
+    if (!gst_element_link_many(m_audioConvert, m_audioEncoder, m_muxer, m_fileSink, NULL)) {
         emit error(int(QMediaRecorder::ResourceError), QString("Element linking failed"));
+        return;
+    }
 
     g_object_set(G_OBJECT(m_fileSink), "location", m_sink.toString().toLocal8Bit().constData(), NULL);
 }

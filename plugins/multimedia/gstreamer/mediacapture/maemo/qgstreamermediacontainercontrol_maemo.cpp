@@ -48,9 +48,12 @@ QGstreamerMediaContainerControl::QGstreamerMediaContainerControl(QObject *parent
     :QMediaContainerControl(parent)
 {
     QList<QByteArray> formatCandidates;
-    formatCandidates << "mp4";
+    formatCandidates << "mp4" << "ogg" << "wav" << "amr";
 
     m_elementNames["mp4"] = "hantromp4mux";
+    m_elementNames["ogg"] = "oggmux";
+    m_elementNames["wav"] = "wavenc";
+    m_elementNames["amr"] = "ffmux_amr";
 
     QSet<QString> allTypes;
 

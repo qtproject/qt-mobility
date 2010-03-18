@@ -48,12 +48,14 @@ QGstreamerAudioEncode::QGstreamerAudioEncode(QObject *parent)
     :QAudioEncoderControl(parent)
 {
     QList<QByteArray> codecCandidates;
-    codecCandidates << "audio/mpeg";
+    codecCandidates << "audio/mpeg" << "audio/PCM" << "audio/AMR" << "audio/AMR-WB" << "audio/speex";
 
     m_elementNames["audio/mpeg"] = "nokiaaacenc";
-    m_elementNames["audio/PCM"] = "wavenc";
-
-    m_codecOptions["audio/mpeg"] = QStringList() << "mode";
+    m_elementNames["audio/vorbis"] = "vorbisenc";
+    m_elementNames["audio/speex"] = "speexenc";
+    m_elementNames["audio/PCM"] = "audioresample";
+    m_elementNames["audio/AMR"] = "nokiaamrnbenc";
+    m_elementNames["audio/AMR-WB"] = "nokiaamrwbenc";
 
     foreach( const QByteArray& codecName, codecCandidates ) {
         QByteArray elementName = m_elementNames[codecName];
