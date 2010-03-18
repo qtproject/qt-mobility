@@ -180,6 +180,10 @@ public:
     {
         QContactManagerEngine::updateContactFetchRequest(req, result, error, state);
     }
+    static void setContactDisplayLabelTrampoline(const QString &displayLabel, const QContact &contact)
+    {
+        QContactManagerEngine::setContactDisplayLabel(displayLabel, contact);
+    }
 
 
 private:

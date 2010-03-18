@@ -453,7 +453,7 @@ QTrackerContactFetchRequest::QTrackerContactFetchRequest(QContactAbstractRequest
 {
     Q_ASSERT(parent);
     Q_ASSERT(request);
-    QContactTrackerBackend::updateRequestStateTrampoline(req, QContactAbstractRequest::ActiveState);
+    QContactTrackerEngine::updateRequestStateTrampoline(req, QContactAbstractRequest::ActiveState);
 
     QTimer::singleShot(0, this, SLOT(run()));
 }
@@ -616,7 +616,7 @@ void QTrackerContactFetchRequest::contactsReady()
     Q_ASSERT( request ); // signal is supposed to be used only for contact fetch
     // fastest way to get this working. refactor
     if (!request) {
-        QContactTrackerBackend::updateRequestStateTrampoline(req, QContactAbstractRequest::FinishedState);
+        QContactTrackerEngine::updateRequestStateTrampoline(req, QContactAbstractRequest::FinishedState);
         return;
     }
 
@@ -625,7 +625,7 @@ void QTrackerContactFetchRequest::contactsReady()
 
         // 1) process contacts:
     QContactFetchHint fetchHint = request->fetchHint();
-    QString definitionNames = fetchHint.detailDefinitionsHint();
+    QStringList definitionNames = fetchHint.detailDefinitionsHint();
     for(int i = 0; i < query->rowCount(); i++) {
         bool ok;
         QContactLocalId contactid = query->index(i, 0).data().toUInt(&ok);
