@@ -552,7 +552,18 @@ void tst_SimCM::addContact_data()
         << (QStringList()
             << "Name:CustomLabel:James");
 
-    // TODO: Test saving FDN contacts?
+    // Note: Executing FDN test cases has a pre-condition that the user must
+    // have been entered the PIN2 code successfully. On pre-10.1 platforms this
+    // can be done by opening S60 platform Phonebook and making some
+    // modifications that require PIN2 code; for example activate and
+    // de-activate FDN feature.
+    QTest::newRow("FDN custom label and phone number")
+        << "FDN"
+        << 1
+        << "James"
+        << (QStringList()
+            << "Name:CustomLabel:James"
+            << "PhoneNumber:PhoneNumber:+44752222222");
 }
 
 /*
