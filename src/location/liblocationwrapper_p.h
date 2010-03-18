@@ -44,6 +44,7 @@
 
 // INCLUDES
 #include <QDebug>
+#include <QFile>
 
 #include "qgeocoordinate.h"
 #include "qgeopositioninfo.h"
@@ -75,10 +76,12 @@ public:
     bool inited();
     QGeoPositionInfo position();
     bool fixIsValid();
+    bool isActive();
     QList<QGeoSatelliteInfo> satellitesInView();
     QList<QGeoSatelliteInfo> satellitesInUse();
 
 private:
+    QFile *file;
     LocationGPSDControl *locationControl;
     LocationGPSDevice *locationDevice;
 

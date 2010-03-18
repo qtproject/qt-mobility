@@ -135,4 +135,6 @@ EXPORTS
 	_ZTVN10QtMobility22QGeoPositionInfoSourceE @ 134 NONAME
 	_ZTVN10QtMobility23QGeoSatelliteInfoSourceE @ 135 NONAME
 	_ZTVN10QtMobility23QNmeaPositionInfoSourceE @ 136 NONAME
+	_ZN10QtMobilitylsER11QDataStreamRKNS_17QGeoSatelliteInfoE @ 137 NONAME
+	_ZN10QtMobilityrsER11QDataStreamRNS_17QGeoSatelliteInfoE @ 138 NONAME
 

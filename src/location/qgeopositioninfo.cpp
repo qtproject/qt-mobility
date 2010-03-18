@@ -246,13 +246,13 @@ bool QGeoPositionInfo::hasAttribute(Attribute attribute) const
 }
 
 #ifndef QT_NO_DEBUG_STREAM
-QDebug operator<<(QDebug dbg, const QGeoPositionInfo &update)
+QDebug operator<<(QDebug dbg, const QGeoPositionInfo &info)
 {
-    dbg.nospace() << "QGeoPositionInfo(" << update.d->dateTime;
+    dbg.nospace() << "QGeoPositionInfo(" << info.d->dateTime;
     dbg.nospace() << ", ";
-    dbg.nospace() << update.d->coord;
+    dbg.nospace() << info.d->coord;
 
-    QList<int> attribs = update.d->doubleAttribs.keys();
+    QList<int> attribs = info.d->doubleAttribs.keys();
     for (int i = 0; i < attribs.count(); i++) {
         dbg.nospace() << ", ";
         switch (attribs[i]) {
@@ -275,7 +275,7 @@ QDebug operator<<(QDebug dbg, const QGeoPositionInfo &update)
                 dbg.nospace() << "VerticalAccuracy=";
                 break;
         }
-        dbg.nospace() << update.d->doubleAttribs[attribs[i]];
+        dbg.nospace() << info.d->doubleAttribs[attribs[i]];
     }
     dbg.nospace() << ')';
     return dbg;
