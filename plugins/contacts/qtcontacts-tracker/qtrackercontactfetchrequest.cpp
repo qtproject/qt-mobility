@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qtrackercontactfetchrequest.h"
+#include "qcontacttrackerbackend_p.h"
 
 #include <qtcontacts.h>
 
@@ -452,7 +453,7 @@ QTrackerContactFetchRequest::QTrackerContactFetchRequest(QContactAbstractRequest
 {
     Q_ASSERT(parent);
     Q_ASSERT(request);
-    QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::ActiveState);
+    QContactTrackerBackend::updateRequestStateTrampoline(req, QContactAbstractRequest::ActiveState);
 
     QTimer::singleShot(0, this, SLOT(run()));
 }
@@ -615,7 +616,7 @@ void QTrackerContactFetchRequest::contactsReady()
     Q_ASSERT( request ); // signal is supposed to be used only for contact fetch
     // fastest way to get this working. refactor
     if (!request) {
-        QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::FinishedState);
+        QContactTrackerBackend::updateRequestStateTrampoline(req, QContactAbstractRequest::FinishedState);
         return;
     }
 
@@ -714,8 +715,7 @@ void QTrackerContactFetchRequest::emitFinished(QContactManager::Error error)
     QContactFetchRequest *fetchRequest = qobject_cast<QContactFetchRequest *>(req);
     Q_ASSERT(fetchRequest);
     if(fetchRequest) {
-        QContactManagerEngine::updateRequestState(fetchRequest, QContactAbstractRequest::FinishedState);
-        QContactManagerEngine::updateContactFetchRequest(fetchRequest, result, error);
+        QContactTrackerEngine::updateContactFetchRequestTrampoline(fetchRequest, result, error, QContactAbstractRequest::FinishedState);
     }
 }
 

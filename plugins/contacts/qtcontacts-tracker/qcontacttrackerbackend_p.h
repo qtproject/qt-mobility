@@ -170,6 +170,18 @@ public:
     QStringList supportedContactTypes() const {return (QStringList() << QContactType::TypeContact);}
 
 
+/* XXX FIXME: trampoline functions added to fix compile breakage due to updateRequestStatus functions becoming protected in QCME */
+public:
+    static updateRequestStateTrampoline(QContactAbstractRequest *req, QContactAbstractRequest::State state)
+    {
+        QContactManagerEngine::updateRequestState(req, state);
+    }
+    static updateContactFetchRequestTrampoline(QContactFetchRequest *req, const QList<QContact> &result, QContactManager::Error error, QContactAbstractRequest::State state)
+    {
+        QContactManagerEngine::updateContactFetchRequest(req, result, error, state);
+    }
+
+
 private:
     //called from both constructors, connecting to all contact NodeList changes signals
     void connectToSignals();
