@@ -86,7 +86,8 @@ private slots:
     void takeImage();
 
     void settings();
-#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO5)
+
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5)
     void stillSettings();
 #endif
     void displayErrorMessage();

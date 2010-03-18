@@ -41,9 +41,12 @@
 
 #include "cameracapture.h"
 #include "ui_cameracapture.h"
+#if defined(Q_WS_MAEMO_5)
+#include "previewdialog.h"
+#endif
 #include "settings.h"
 
-#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO5)
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5)
 #include "stillsettings.h"
 #endif
 
@@ -71,6 +74,8 @@ CameraCapture::CameraCapture(QWidget *parent) :
     outputDirVideo.cd("Videos");
     outputDirImage = QDir::rootPath(); // this defaults to C:\Data\Images in symbian
     outputDirImage.cd("Images");
+    #elif defined(Q_WS_MAEMO_5)
+    outputDirVideo = outputDirImage = QDir("/home/user/MyDocs/DCIM");
     #else
     outputDirVideo = QDir::currentPath();
     outputDirImage = QDir::currentPath();
@@ -122,6 +127,10 @@ CameraCapture::CameraCapture(QWidget *parent) :
 
     setCamera(cameraDevice);
 
+#ifdef Q_WS_MAEMO_5
+    // Fix the following to do it in ui file
+    connect(ui->actionImageSettings, SIGNAL(triggered()), this, SLOT(stillSettings()));
+#endif
 #ifdef Q_OS_SYMBIAN
     mediaKeysObserver = new MediaKeysObserver(this);
     connect(mediaKeysObserver, SIGNAL(mediaKeyPressed(MediaKeysObserver::MediaKeys)), this, SLOT(handleMediaKeyEvent(MediaKeysObserver::MediaKeys)));
@@ -307,8 +316,15 @@ void CameraCapture::updateRecordTime()
 
 void CameraCapture::processCapturedImage(const QString& fname, const QImage& img)
 {
+#ifdef Q_WS_MAEMO_5
+    PreviewDialog previewDialog;
+    previewDialog.label->setPixmap(QPixmap::fromImage(img));
+    previewDialog.setWindowTitle(fname);
+    previewDialog.exec();
+#else
     ui->lastImagePreviewLabel->setPixmap( QPixmap::fromImage(img.scaledToWidth(128)) );
     qDebug() << "image captured:" << fname;
+#endif
 }
 
 void CameraCapture::settings()
@@ -326,7 +342,7 @@ void CameraCapture::settings()
     }
 }
 
-#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO5)
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5)
 void CameraCapture::stillSettings()
 {    
     StillSettings settingsDialog(imageCapture);    
@@ -368,17 +384,15 @@ void CameraCapture::stop()
 void CameraCapture::takeImage()
 {
     if (camera->focusMode() == QCamera::AutoFocus) {
-        qDebug() << "CameraCapture::takeImage: if (camera->focusMode() == QCamera::AutoFocus)"; 
         m_takeImage = true;
         camera->startFocusing();
     } else {
-        qDebug() << "CameraCapture::takeImage: else";
         int lastImage = 0;
         foreach( QString fileName, outputDirImage.entryList(QStringList() << "img_*.jpg") ) {
             int imgNumber = fileName.mid(4, fileName.size()-8).toInt();
             lastImage = qMax(lastImage, imgNumber);
         }        
-        imageCapture->capture(QString("img_%1.jpg").arg(lastImage+1,
+        imageCapture->capture(outputDirImage.path() + QString("/img_%1.jpg").arg(lastImage+1,
                                                         4, //fieldWidth
                                                         10,
                                                         QLatin1Char('0')));
