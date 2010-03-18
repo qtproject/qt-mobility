@@ -916,16 +916,18 @@ bool QContactMemoryEngine::hasFeature(QContactManager::ManagerFeature feature, c
 /*!
  * \reimp
  */
-QStringList QContactMemoryEngine::supportedRelationshipTypes(const QString& contactType) const
+bool QContactMemoryEngine::isRelationshipTypeSupported(const QString& relationshipType, const QString& contactType) const
 {
-    Q_UNUSED(contactType);
-    return QStringList()
-        << QContactRelationship::HasMember
-        << QContactRelationship::Aggregates
-        << QContactRelationship::IsSameAs
-        << QContactRelationship::HasAssistant
-        << QContactRelationship::HasManager
-        << QContactRelationship::HasSpouse;
+    // the memory backend supports arbitrary relationship types
+    // but some relationship types don't make sense for groups.
+    if (contactType == QContactType::TypeGroup) {
+        if (relationshipType == QContactRelationship::HasSpouse || relationshipType == QContactRelationship::HasAssistant) {
+            return false;
+        }
+    }
+
+    // all other relationship types for all contact types are supported.
+    return true;
 }
 
 /*!

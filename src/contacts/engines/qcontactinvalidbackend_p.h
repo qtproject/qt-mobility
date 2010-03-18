@@ -196,9 +196,9 @@ public:
         return false;
     }
 
-    virtual QStringList supportedRelationshipTypes(const QString&) const
+    virtual bool isRelationshipTypeSupported(const QString&, const QString&) const
     {
-        return QStringList();
+        return false;
     }
 
     virtual bool isFilterSupported(const QContactFilter&) const

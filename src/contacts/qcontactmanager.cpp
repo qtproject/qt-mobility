@@ -988,19 +988,17 @@ bool QContactManager::isFilterSupported(const QContactFilter& filter) const
 }
 
 /*!
-  Returns the list of relationship types which are supported by this manager where contacts of the
-  given type \a contactType may be the first (dominant) contact in the relationship.
-  If the backend does not support the \c QContactManager::Relationships feature, this list should
-  be empty.  If the backend supports the \c QContactManager::Relationships feature and also
-  supports the \c QContactManager::ArbitraryRelationshipTypes feature, the list will
-  contain the natively supported (well-known) relationship types contained in the list, but clients
-  are able to add relationships of any custom type also.
+  Returns true if the manager supports the relationship type specified in \a relationshipType for
+  contacts whose type is the given \a contactType.
 
-  \sa QContactRelationship::first()
+  Note that some managers may support the relationship type for a contact in a limited manner
+  (for example, only as the first contact in the relationship, or only as the second contact
+  in the relationship).  In this case, it will still return true.  It will only return false
+  if the relationship is entirely unsupported for the given type of contact.
  */
-QStringList QContactManager::supportedRelationshipTypes(const QString& contactType) const
+bool QContactManager::isRelationshipTypeSupported(const QString& relationshipType, const QString& contactType) const
 {
-    return d->m_engine->supportedRelationshipTypes(contactType);
+    return d->m_engine->isRelationshipTypeSupported(relationshipType, contactType);
 }
 
 /*!

@@ -538,13 +538,20 @@ QList<QVariant::Type> QContactManagerEngine::supportedDataTypes() const
 }
 
 /*!
-  Returns the list of relationship types supported by this engine for contacts whose type is the given \a contactType.
+  Returns true if the manager supports the relationship type specified in \a relationshipType for
+  contacts whose type is the given \a contactType.
+
+  Note that some managers may support the relationship type for a contact in a limited manner
+  (for example, only as the first contact in the relationship, or only as the second contact
+  in the relationship).  In this case, it will still return true.  It will only return false
+  if the relationship is entirely unsupported for the given type of contact.
  */
-QStringList QContactManagerEngine::supportedRelationshipTypes(const QString& contactType) const
+bool QContactManagerEngine::isRelationshipTypeSupported(const QString& relationshipType, const QString& contactType) const
 {
+    Q_UNUSED(relationshipType);
     Q_UNUSED(contactType);
 
-    return QStringList();
+    return false;
 }
 
 /*!

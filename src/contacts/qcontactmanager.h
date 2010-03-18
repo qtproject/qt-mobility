@@ -176,9 +176,10 @@ public:
         ChangeLogs
     };
     bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType = QContactType::TypeContact) const;
-    QStringList supportedRelationshipTypes(const QString& contactType = QContactType::TypeContact) const;
+    QStringList Q_DECL_DEPRECATED supportedRelationshipTypes(const QString& contactType = QContactType::TypeContact) const;      // deprecated.
+    bool isRelationshipTypeSupported(const QString& relationshipType, const QString& contactType = QContactType::TypeContact) const; // replaces the above
     QList<QVariant::Type> supportedDataTypes() const;
-    bool isFilterSupported(const QContactFilter& filter) const;// replaces the above.
+    bool isFilterSupported(const QContactFilter& filter) const;
     QStringList supportedContactTypes() const;
 
     /* return a list of available backends for which a QContactManager can be constructed. */

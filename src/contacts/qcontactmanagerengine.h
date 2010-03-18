@@ -124,7 +124,7 @@ public:
 
     /* Capabilities reporting */
     virtual bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const = 0;
-    virtual QStringList supportedRelationshipTypes(const QString& contactType) const = 0;
+    virtual bool isRelationshipTypeSupported(const QString& relationshipType, const QString& contactType) const = 0;
     virtual bool isFilterSupported(const QContactFilter& filter) const = 0;
     virtual QList<QVariant::Type> supportedDataTypes() const = 0;
     virtual QStringList supportedContactTypes() const = 0;
