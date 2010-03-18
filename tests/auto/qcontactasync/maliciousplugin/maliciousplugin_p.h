@@ -69,7 +69,7 @@ class MaliciousAsyncManagerEngine : public QContactManagerEngine
 public:
     MaliciousAsyncManagerEngine();
 
-    QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
+    QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error* error) const;
     QString managerName() const;
     bool startRequest(QContactAbstractRequest* req);
     bool cancelRequest(QContactAbstractRequest *req);
@@ -77,109 +77,109 @@ public:
     QMap<QString, QString> managerParameters() const {return QMap<QString, QString>();}
     int managerVersion() const {return 0;}
 
-    QList<QContactLocalId> contactIds(const QContactFilter&, const QList<QContactSortOrder>&, QContactManager::Error& error) const
+    QList<QContactLocalId> contactIds(const QContactFilter&, const QList<QContactSortOrder>&, QContactManager::Error* error) const
     {
-        error = QContactManager::NotSupportedError;
+        *error = QContactManager::NotSupportedError;
         return QList<QContactLocalId>();
     }
 
-    QList<QContact> contacts(const QContactFilter&, const QList<QContactSortOrder>&, const QContactFetchHint&, QContactManager::Error& error) const
+    QList<QContact> contacts(const QContactFilter&, const QList<QContactSortOrder>&, const QContactFetchHint&, QContactManager::Error* error) const
     {
-        error = QContactManager::NotSupportedError;
+        *error = QContactManager::NotSupportedError;
         return QList<QContact>();
     }
 
-    QContact contact(const QContactLocalId&, const QContactFetchHint&, QContactManager::Error& error) const
+    QContact contact(const QContactLocalId&, const QContactFetchHint&, QContactManager::Error* error) const
     {
-        error = QContactManager::NotSupportedError;
+        *error = QContactManager::NotSupportedError;
         return QContact();
     }
 
-    bool saveContacts(QList<QContact>*, QMap<int, QContactManager::Error>*, QContactManager::Error& error)
+    bool saveContacts(QList<QContact>*, QMap<int, QContactManager::Error>*, QContactManager::Error* error)
     {
-        error = QContactManager::NotSupportedError;
+        *error = QContactManager::NotSupportedError;
         return false;
     }
 
-    bool removeContacts(const QList<QContactLocalId>&, QMap<int, QContactManager::Error>*, QContactManager::Error& error)
+    bool removeContacts(const QList<QContactLocalId>&, QMap<int, QContactManager::Error>*, QContactManager::Error* error)
     {
-        error = QContactManager::NotSupportedError;
+        *error = QContactManager::NotSupportedError;
         return false;
     }
 
-    QContact conformingContact(const QContact&, QContactManager::Error& error)
+    QContact conformingContact(const QContact&, QContactManager::Error* error)
     {
-        error = QContactManager::NotSupportedError;
+        *error = QContactManager::NotSupportedError;
         return QContact();
     }
 
     /* "Self" contact id (MyCard) */
-    virtual bool setSelfContactId(const QContactLocalId&, QContactManager::Error& error)
+    virtual bool setSelfContactId(const QContactLocalId&, QContactManager::Error* error)
     {
-        error = QContactManager::NotSupportedError;
+        *error = QContactManager::NotSupportedError;
         return false;
     }
 
-    virtual QContactLocalId selfContactId(QContactManager::Error& error) const
+    virtual QContactLocalId selfContactId(QContactManager::Error* error) const
     {
-        error = QContactManager::NotSupportedError;
+        *error = QContactManager::NotSupportedError;
         return 0;
     }
 
     /* Relationships between contacts */
-    virtual QList<QContactRelationship> relationships(const QString&, const QContactId&, QContactRelationship::Role, QContactManager::Error& error) const
+    virtual QList<QContactRelationship> relationships(const QString&, const QContactId&, QContactRelationship::Role, QContactManager::Error* error) const
     {
-        error = QContactManager::NotSupportedError;
+        *error = QContactManager::NotSupportedError;
         return QList<QContactRelationship>();
     }
 
-    virtual bool saveRelationships(QList<QContactRelationship>*, QMap<int, QContactManager::Error>*, QContactManager::Error& error)
+    virtual bool saveRelationships(QList<QContactRelationship>*, QMap<int, QContactManager::Error>*, QContactManager::Error* error)
     {
-        error = QContactManager::NotSupportedError;
+        *error = QContactManager::NotSupportedError;
         return false;
     }
 
-    virtual bool removeRelationships(const QList<QContactRelationship>&, QMap<int, QContactManager::Error>*, QContactManager::Error& error)
+    virtual bool removeRelationships(const QList<QContactRelationship>&, QMap<int, QContactManager::Error>*, QContactManager::Error* error)
     {
-        error = QContactManager::NotSupportedError;
+        *error = QContactManager::NotSupportedError;
         return false;
     }
 
     /* Validation for saving */
-    virtual bool validateContact(const QContact&, QContactManager::Error& error) const
+    virtual bool validateContact(const QContact&, QContactManager::Error* error) const
     {
-        error = QContactManager::NotSupportedError;
+        *error = QContactManager::NotSupportedError;
         return false;
     }
 
-    virtual bool validateDefinition(const QContactDetailDefinition&, QContactManager::Error& error) const
+    virtual bool validateDefinition(const QContactDetailDefinition&, QContactManager::Error* error) const
     {
-        error = QContactManager::NotSupportedError;
+        *error = QContactManager::NotSupportedError;
         return false;
     }
 
     /* Definitions - Accessors and Mutators */
-    virtual QMap<QString, QContactDetailDefinition> detailDefinitions(const QString&, QContactManager::Error& error) const
+    virtual QMap<QString, QContactDetailDefinition> detailDefinitions(const QString&, QContactManager::Error* error) const
     {
-        error = QContactManager::NotSupportedError;
+        *error = QContactManager::NotSupportedError;
         return QMap<QString, QContactDetailDefinition>();
     }
 
-    virtual QContactDetailDefinition detailDefinition(const QString&, const QString&, QContactManager::Error& error) const
+    virtual QContactDetailDefinition detailDefinition(const QString&, const QString&, QContactManager::Error* error) const
     {
-        error = QContactManager::NotSupportedError;
+        *error = QContactManager::NotSupportedError;
         return QContactDetailDefinition();
     }
 
-    virtual bool saveDetailDefinition(const QContactDetailDefinition&, const QString&, QContactManager::Error& error)
+    virtual bool saveDetailDefinition(const QContactDetailDefinition&, const QString&, QContactManager::Error* error)
     {
-        error = QContactManager::NotSupportedError;
+        *error = QContactManager::NotSupportedError;
         return false;
     }
 
-    virtual bool removeDetailDefinition(const QString&, const QString&, QContactManager::Error& error)
+    virtual bool removeDetailDefinition(const QString&, const QString&, QContactManager::Error* error)
     {
-        error = QContactManager::NotSupportedError;
+        *error = QContactManager::NotSupportedError;
         return false;
     }
 
@@ -193,9 +193,9 @@ public:
         return false;
     }
 
-    virtual QStringList supportedRelationshipTypes(const QString&) const
+    virtual bool isRelationshipTypeSupported(const QString&, const QString&) const
     {
-        return QStringList();
+        return false;
     }
 
     virtual bool isFilterSupported(const QContactFilter&) const
@@ -220,7 +220,7 @@ class  Q_DECL_EXPORT MaliciousEngineFactory : public QObject, public QContactMan
     Q_INTERFACES(QtMobility::QContactManagerEngineFactory)
 
     public:
-        QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error& error);
+        QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error* error);
         QString managerName() const;
 
     private:

@@ -141,7 +141,7 @@ void QContactManagerData::createEngine(const QString& managerName, const QMap<QS
                 if (implementationVersion == -1 ||//no given implementation version required
                         versions.isEmpty() || //the manager engine factory does not report any version
                         versions.contains(implementationVersion)) {
-                    m_engine = f->engine(parameters, m_error);
+                    m_engine = f->engine(parameters, &m_error);
                     found = true;
                     break;
                 }
