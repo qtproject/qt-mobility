@@ -45,11 +45,6 @@
 
 #include <QtCore/qdebug.h>
 
-S60MediaControl::S60MediaControl(QObject *parent)
-    :QMediaRecorderControl(parent)
-{
-}
-
 S60MediaControl::S60MediaControl(QObject *session, QObject *parent)
    :QMediaRecorderControl(parent), m_state(QMediaRecorder::StoppedState)
 {
@@ -57,7 +52,7 @@ S60MediaControl::S60MediaControl(QObject *session, QObject *parent)
     m_session = qobject_cast<S60VideoCaptureSession*>(session);
 
     connect(m_session,SIGNAL(stateChanged(S60VideoCaptureSession::TVideoCaptureState)),this,SLOT(updateState(S60VideoCaptureSession::TVideoCaptureState)));
-   // connect(m_session, SIGNAL(positionChanged(qint64)), this, SIGNAL(durationChanged(qint64)));
+    connect(m_session, SIGNAL(positionChanged(qint64)), this, SIGNAL(durationChanged(qint64)));
     connect(m_session,SIGNAL(error(int,const QString &)),this,SIGNAL(error(int,const QString &)));
 }
 
@@ -112,6 +107,7 @@ QMediaRecorder::State S60MediaControl::state() const
 {   
     return m_state;
 }
+
 qint64 S60MediaControl::duration() const
 {
     if (m_session)

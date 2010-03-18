@@ -43,20 +43,13 @@
 #define S60VIDEOCAPTURESESSION_H
 
 #include <QtCore/qobject.h>
-#include <QTime>
 #include <QUrl>
-#include <QtGui/qicon.h>
-#include <QList>
-#include <QtMultimedia/qvideoframe.h>
-#include <QMultiMap>
-
-#include "qcamera.h"
-#include "qstillimagecapture.h"
-#include "s60camerasettings.h"
-#include <e32base.h>
+#include <QHash>
+#include <qmediaencodersettings.h>
+#include <qcamera.h>
 #include <s60cameraengine.h>
-#include <s60cameraengineobserver.h>
 
+#include <e32base.h>
 #include <VideoRecorder.h>
 #ifdef S60_DEVVIDEO_RECORDING_SUPPORTED
 #include <mmf/devvideo/devvideobase.h>
@@ -84,6 +77,11 @@ class S60VideoCaptureSession : public QObject, public MVideoRecorderUtilityObser
 #endif // S60_DEVVIDEO_RECORDING_SUPPORTED
 {
     Q_OBJECT
+    Q_PROPERTY(qint64 position READ position NOTIFY positionChanged)
+    Q_ENUMS(Error)
+    Q_ENUMS(EcamErrors)
+    Q_ENUMS(TVideoCaptureState)
+    
 public:
 
     enum Error {
@@ -164,7 +162,7 @@ private:
     QMap<QString, int> formatMap();
     QMap<QString, int> formatDescMap();
 
-    // From observer
+    // From MVideoRecorderUtilityObserver 
     void MvruoOpenComplete(TInt aError);
     void MvruoPrepareComplete(TInt aError);
     void MvruoRecordComplete(TInt aError);
@@ -196,14 +194,14 @@ private:
 
 Q_SIGNALS:
     void stateChanged(S60VideoCaptureSession::TVideoCaptureState);
+    void positionChanged(qint64 duration);
     void error(int error, const QString &errorString);
 
 private:
     CCameraEngine *m_cameraEngine;
     int m_videoQuality;
     mutable int m_error;
-    QUrl m_sink;
-    QList<QSize> m_resolutions;
+    QUrl m_sink;    
     mutable TCameraInfo m_info; // information about camera
     CVideoRecorderUtility *m_videoRecorder;    
     QVideoEncoderSettings m_videoSettings;

@@ -39,20 +39,17 @@
 **
 ****************************************************************************/
 
-#include <BADESCA.H>
-#include <BAUTILS.H>
 
+#include "S60VideoCaptureSession.h"
 #include <QtCore/qdebug.h>
 #include <QtCore/qstring.h>
-#include "S60VideoCaptureSession.h"
-#include "s60viewfinderwidget.h"
-#include "s60videoencoder.h"
-
-#include <fbs.h>
 #include <qglobal.h>
 #include <QDir>
-#include <pathinfo.h> 
+
 #include <utf.h>
+#include <BADESCA.H>
+#include <BAUTILS.H>
+#include <EIKENV.H>  
 #ifdef S60_DEVVIDEO_RECORDING_SUPPORTED
 #include <mmf/devvideo/devvideorecord.h>
 #include <mmf/devvideo/devvideobase.h>
@@ -296,8 +293,14 @@ QList<qreal> S60VideoCaptureSession::supportedVideoFrameRates(const QVideoEncode
 bool S60VideoCaptureSession::setOutputLocation(const QUrl &sink)
 {
     //qDebug() << "S60VideoCaptureSession::setOutputlocation";
-    m_sink = sink;
-    return true;
+    QString filename = QDir::toNativeSeparators(m_sink.toString());
+    TPtrC16 path(reinterpret_cast<const TUint16*>(filename.utf16()));         
+    TRAPD(err, BaflUtils::EnsurePathExistsL(CEikonEnv::Static()->FsSession(),path));
+    if (err==KErrNone) {
+        m_sink = sink;
+        return true;
+    }else 
+        return false;    
 }
 
 QUrl S60VideoCaptureSession::outputLocation() const
