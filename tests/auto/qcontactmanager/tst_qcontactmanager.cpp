@@ -978,15 +978,9 @@ void tst_QContactManager::batch()
     QList<QContactLocalId> ids;
     QContactLocalId removedIdForLater = b.id().localId();
     ids << a.id().localId() << b.id().localId() << c.id().localId();
-    QVERIFY(cm->removeContacts(&ids, &errorMap));
+    QVERIFY(cm->removeContacts(ids, &errorMap));
     QVERIFY(errorMap.count() == 0);
     QVERIFY(cm->error() == QContactManager::NoError);
-
-    /* Make sure all the ids are now 0 */
-    QVERIFY(ids.count() == 3);
-    QVERIFY(ids.at(0) == 0);
-    QVERIFY(ids.at(1) == 0);
-    QVERIFY(ids.at(2) == 0);
 
     /* Make sure the contacts really don't exist any more */
     QVERIFY(cm->contact(a.id().localId()).id() == QContactId());
@@ -1151,19 +1145,17 @@ void tst_QContactManager::invalidManager()
     list << foo;
 
     QVERIFY(!manager.saveContacts(&list, &errorMap));
-    QVERIFY(errorMap.count() == 1);
-    QVERIFY(errorMap.value(0) == QContactManager::NotSupportedError);
+    QVERIFY(errorMap.count() == 0);
     QVERIFY(manager.error() == QContactManager::NotSupportedError);
 
     QVERIFY(!manager.removeContacts(0, &errorMap));
-    QVERIFY(errorMap.count() == 1);
+    QVERIFY(errorMap.count() == 0);
     QVERIFY(manager.error() == QContactManager::BadArgumentError);
 
     QList<QContactLocalId> idlist;
     idlist << foo.id().localId();
     QVERIFY(!manager.removeContacts(&idlist, &errorMap));
-    QVERIFY(errorMap.count() == 1);
-    QVERIFY(errorMap.value(0) == QContactManager::NotSupportedError);
+    QVERIFY(errorMap.count() == 0);
     QVERIFY(manager.error() == QContactManager::NotSupportedError);
 
     /* Detail definitions */
@@ -2738,7 +2730,7 @@ void tst_QContactManager::relationships()
 
     // ensure that the batch save works properly
     cm->saveRelationships(&batchList);
-    QVERIFY(cm->error() == QContactManager::NoError);
+    QCOMPARE(cm->error(), QContactManager::NoError);
     QList<QContactRelationship> batchRetrieve = cm->relationships(source.id(), QContactRelationshipFilter::First);
     QVERIFY(batchRetrieve.contains(br1));
     QVERIFY(batchRetrieve.contains(br2));

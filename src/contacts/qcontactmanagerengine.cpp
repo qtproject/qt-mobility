@@ -221,69 +221,21 @@ QString QContactManagerEngine::managerUri() const
 }
 
 /*!
-  Returns a list of contact ids sorted according to the given list of \a sortOrders.
-  Depending on the backend, this operation may involve retrieving all the contacts.
-  Any error which occurs will be saved in \a error.
- */
-QList<QContactLocalId> QContactManagerEngine::contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
-{
-    Q_UNUSED(sortOrders);
-    error = QContactManager::NotSupportedError;
-    return QList<QContactLocalId>();
-}
-
-/*!
   Returns a list of contact ids that match the given \a filter, sorted according to the given list of \a sortOrders.
   Depending on the backend, this filtering operation may involve retrieving all the contacts.
   Any error which occurs will be saved in \a error.
  */
 QList<QContactLocalId> QContactManagerEngine::contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
 {
-    /* Slow way */
-    QList<QContactLocalId> ret;
-
-    /* If the filter matches all ids, then return the list of all ids */
-    if (filter.type() == QContactFilter::DefaultFilter) {
-        const QList<QContactLocalId>& allIds = contactIds(sortOrders, error);
-        if (error != QContactManager::NoError)
-            return ret;
-        return allIds;
-    }
-
-    /* Otherwise, retrieve all contacts, test and return matching */
-    const QList<QContact>& all = contacts(sortOrders, QContactFetchHint(), error);
-
-    if (error != QContactManager::NoError)
-        return ret;
-
-    for (int j = 0; j < all.count(); j++) {
-        if (testFilter(filter, all.at(j)))
-            ret << all.at(j).localId();
-    }
-
-    return ret;
-}
-
-/*!
-  \internal
-  Returns the list of contacts stored in the manager sorted according to the given list of \a sortOrders.
-  If the given list of detail definition names \a definitionRestrictions is empty, each contact returned will include
-  all of the details which are stored in it, otherwise only those details which are of a definition whose name is included
-  in the \a definitionRestrictions list will be included.
-  Any error which occurs will be saved in \a error.
-
-  This function is deprecated and will be removed after the transition period has elapsed.  Use the contacts() function taking a fetchHint instead!
- */
-QList<QContact> QContactManagerEngine::contacts(const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error) const
-{
+    Q_UNUSED(filter);
     Q_UNUSED(sortOrders);
-    Q_UNUSED(definitionRestrictions);
+
     error = QContactManager::NotSupportedError;
-    return QList<QContact>();
+    return QList<QContactLocalId>();
 }
 
 /*!
-  Returns the list of contacts stored in the manager sorted according to the given list of \a sortOrders.
+  Returns the list of contacts which match the given \a filter stored in the manager sorted according to the given list of \a sortOrders.
 
   Any operation error which occurs will be saved in \a error.
 
@@ -296,94 +248,13 @@ QList<QContact> QContactManagerEngine::contacts(const QList<QContactSortOrder>& 
 
   \sa QContactFetchHint
  */
-QList<QContact> QContactManagerEngine::contacts(const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fetchHint, QContactManager::Error& error) const
+QList<QContact> QContactManagerEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fetchHint, QContactManager::Error& error) const
 {
+    Q_UNUSED(filter);
     Q_UNUSED(sortOrders);
     Q_UNUSED(fetchHint);
     error = QContactManager::NotSupportedError;
     return QList<QContact>();
-}
-
-/*!
-  \internal
-  Returns a list of contacs that match the given \a filter, sorted according to the given list of \a sortOrders.
-  Depending on the backend, this filtering operation may involve retrieving all the contacts.
-  If the given list of detail definition names \a definitionRestrictions is empty, each contact returned will include
-  all of the details which are stored in it, otherwise only those details which are of a definition whose name is included
-  in the \a definitionRestrictions list will be included.
-  Any error which occurs will be saved in \a error.
-
-  This function is deprecated and will be removed after the transition period has elapsed.  Use the contacts() function taking a fetchHint instead!
- */
-QList<QContact> QContactManagerEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error) const
-{
-    // deprecated, reimplement in terms of new function.
-    QContactFetchHint hint;
-    hint.setDetailDefinitionsHint(definitionRestrictions);
-    return contacts(filter, sortOrders, hint, error);
-}
-
-/*!
-  Returns a list of contacts that match the given \a filter, sorted according to the given list of \a sortOrders.
-
-  Depending on the manager implementation, this filtering operation might be slow and involve retrieving all the
-  contacts and testing them against the supplied filter - see the \l isFilterSupported() function.
-
-  Any operation error which occurs will be saved in \a error.
-
-  The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
-  in the matching contacts will be returned.  A client should not make changes to a contact which has
-  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
-  loss when saving the contact back to the manager (as the "new" restricted contact will
-  replace the previously saved contact in the backend).
-
-  \sa QContactFetchHint
- */
-QList<QContact> QContactManagerEngine::contacts(const QContactFilter &filter, const QList<QContactSortOrder> &sortOrders, const QContactFetchHint &fetchHint, QContactManager::Error &error) const
-{
-    /* Slow way */
-    QList<QContact> ret;
-
-    /* Retrieve each contact.. . . */
-    const QList<QContact>& all = contacts(sortOrders, fetchHint, error);
-    if (error != QContactManager::NoError)
-        return ret;
-
-    if (filter.type() == QContactFilter::DefaultFilter)
-        return all;
-
-    for (int j = 0; j < all.count(); j++) {
-        if (testFilter(filter, all.at(j))) {
-            ret << all.at(j);
-        }
-    }
-
-    return ret;
-}
-
-/*!
-  \internal
-  Returns the contact in the database identified by \a contactId.
-  If the list of detail definition names \a definitionRestrictions given is non-empty,
-  the contact returned will contain at least those details which are of a definition whose name is
-  contained in the \a definitionRestrictions list.
-  Note that the returned contact may also contain other details, but this function guarantees that
-  all details whose definition name is included in the given list of definition names \a definitionRestrictions
-  will be included in the returned contact.
-
-  The default implementation returns the entire contact.
-
-  Any errors encountered should be stored to \a error.
-
-  This function is deprecated and will be removed after the transition period has elapsed.  Use the contacts() function taking a fetchHint instead!
- */
-QContact QContactManagerEngine::contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const
-{
-    Q_UNUSED(contactId);
-    Q_UNUSED(definitionRestrictions);
-    error = QContactManager::NotSupportedError;
-    return QContact();
 }
 
 /*!
@@ -425,6 +296,7 @@ QContact QContactManagerEngine::contact(const QContactLocalId& contactId, const 
 bool QContactManagerEngine::setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& error)
 {
     Q_UNUSED(contactId);
+
     error = QContactManager::NotSupportedError;
     return false;
 }
@@ -449,66 +321,106 @@ QContactLocalId QContactManagerEngine::selfContactId(QContactManager::Error& err
   If no relationships of the given \a relationshipType in which the contact identified by the given \a participantId is involved in the given \a role exists,
   \a error is set to QContactManager::DoesNotExistError.
  */
-QList<QContactRelationship> QContactManagerEngine::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const
+QList<QContactRelationship> QContactManagerEngine::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationship::Role role, QContactManager::Error& error) const
 {
     Q_UNUSED(relationshipType);
     Q_UNUSED(participantId);
     Q_UNUSED(role);
+
     error = QContactManager::NotSupportedError;
     return QList<QContactRelationship>();
 }
 
 /*!
+  Saves the given \a relationships in the database and returns true if the operation was successful.
+  For any relationship which was unable to be saved, an entry into the \a errorMap will be created,
+  with the key being the index into the input relationships list, and the value being the error which
+  occurred for that index.
+
+  The overall operation error will be saved in \a error.
+ */
+bool QContactManagerEngine::saveRelationships(QList<QContactRelationship>* relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error)
+{
+    Q_UNUSED(relationships);
+    Q_UNUSED(errorMap);
+
+    error = QContactManager::NotSupportedError;
+    return false;
+}
+
+/*!
   Saves the given \a relationship in the database.  If the relationship already exists in the database, this function will
-  return \c false and the \a error will be set to \c QContactManager::AlreadyExistsError.
-  If the relationship is saved successfully, this function will return \c true and \a error will be set
+  return \c false and the error will be set to \c QContactManager::AlreadyExistsError.
+  If the relationship is saved successfully, this function will return \c true and error will be set
   to \c QContactManager::NoError.  Note that relationships cannot be updated directly using this function; in order
   to update a relationship, you must remove the old relationship, make the required modifications, and then save it.
 
   The given relationship is invalid if it is circular (the first contact is the second contact), or
-  if it references a non-existent local contact (either first or second).  If the given \a relationship is invalid,
-  the function will return \c false and the \a error will be set to \c QContactManager::InvalidRelationshipError.
-  If the given \a relationship could not be saved in the database (due to backend limitations)
-  the function will return \c false and \a error will be set to \c QContactManager::NotSupportedError.
- */
-bool QContactManagerEngine::saveRelationship(QContactRelationship* relationship, QContactManager::Error& error)
-{
-    Q_UNUSED(relationship);
-    error = QContactManager::NotSupportedError;
-    return false;
-}
+  if it references a non-existent local contact (either the first or second contact).  If the given \a relationship is invalid,
+  the function will return \c false and the error will be set to \c QContactManager::InvalidRelationshipError.
 
-/*!
-  Saves the given \a relationships in the database and returns a list of error codes.  Any error which occurs will be saved in \a error.
+  The default implementation of this function converts the argument into a call to saveRelationships.
  */
-QList<QContactManager::Error> QContactManagerEngine::saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error)
+bool QContactManagerEngine::saveRelationship(QContactRelationship *relationship, QContactManager::Error &error)
 {
-    Q_UNUSED(relationships);
-    error = QContactManager::NotSupportedError;
-    return QList<QContactManager::Error>();
+    // Convert to a list op
+    if (relationship) {
+        QList<QContactRelationship> list;
+        list.append(*relationship);
+
+        QMap<int, QContactManager::Error> errors;
+        bool ret = saveRelationships(&list, &errors, error);
+
+        if (errors.count() > 0)
+            error = errors.begin().value();
+
+        *relationship = list.value(0);
+        return ret;
+    } else {
+        error = QContactManager::BadArgumentError;
+        return false;
+    }
 }
 
 /*!
   Removes the given \a relationship from the manager.  If the relationship exists in the manager, the relationship
-  will be removed, the \a error will be set to \c QContactManager::NoError and this function will return true.  If no such
-  relationship exists in the manager, the \a error will be set to \c QContactManager::DoesNotExistError and this function
+  will be removed, the error will be set to \c QContactManager::NoError and this function will return true.  If no such
+  relationship exists in the manager, the error will be set to \c QContactManager::DoesNotExistError and this function
   will return false.
+
+  The default implementation of this function converts the argument into a call to removeRelationships
  */
 bool QContactManagerEngine::removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error)
 {
-    Q_UNUSED(relationship);
-    error = QContactManager::DoesNotExistError;
-    return false;
+    // Convert to a list op
+    QList<QContactRelationship> list;
+    list.append(relationship);
+
+    QMap<int, QContactManager::Error> errors;
+    bool ret = removeRelationships(list, &errors, error);
+
+    if (errors.count() > 0)
+        error = errors.begin().value();
+
+    return ret;
 }
 
+
 /*!
-  Removes the given \a relationships from the database and returns a list of error codes.  Any error which occurs will be saved in \a error.
+  Removes the given \a relationships from the database and returns true if the operation was successful.
+  For any relationship which was unable to be removed, an entry into the \a errorMap will be created,
+  with the key being the index into the input relationships list, and the value being the error which
+  occurred for that index.
+
+  The overall operation error will be saved in \a error.
  */
-QList<QContactManager::Error> QContactManagerEngine::removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error)
+bool QContactManagerEngine::removeRelationships(const QList<QContactRelationship>& relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error)
 {
     Q_UNUSED(relationships);
-    error = QContactManager::DoesNotExistError;
-    return QList<QContactManager::Error>();
+    Q_UNUSED(errorMap);
+
+    error = QContactManager::NotSupportedError;
+    return false;
 }
 
 /*!
@@ -584,7 +496,7 @@ QString QContactManagerEngine::synthesizedDisplayLabel(const QContact& contact, 
   Returns a copy of the given contact \a contact with its display label set to \a displayLabel.
   This function does not touch the database in any way, and is purely a convenience to allow engine implementations to set the display label.
  */
-QContact QContactManagerEngine::setContactDisplayLabel(const QString& displayLabel, const QContact& contact) const
+QContact QContactManagerEngine::setContactDisplayLabel(const QString& displayLabel, const QContact& contact)
 {
     QContact retn = contact;
     QContactDisplayLabel dl;
@@ -601,6 +513,7 @@ bool QContactManagerEngine::hasFeature(QContactManager::ManagerFeature feature, 
 {
     Q_UNUSED(feature);
     Q_UNUSED(contactType);
+
     return false;
 }
 
@@ -612,6 +525,7 @@ bool QContactManagerEngine::hasFeature(QContactManager::ManagerFeature feature, 
 bool QContactManagerEngine::isFilterSupported(const QContactFilter& filter) const
 {
     Q_UNUSED(filter);
+
     return false;
 }
 
@@ -629,6 +543,7 @@ QList<QVariant::Type> QContactManagerEngine::supportedDataTypes() const
 QStringList QContactManagerEngine::supportedRelationshipTypes(const QString& contactType) const
 {
     Q_UNUSED(contactType);
+
     return QStringList();
 }
 
@@ -649,13 +564,10 @@ QStringList QContactManagerEngine::supportedContactTypes() const
 }
 
 /*!
+  \fn int QContactManagerEngine::managerVersion() const
+
   Returns the engine backend implementation version number
  */
-int QContactManagerEngine::managerVersion() const
-{
-    return 0;
-}
-  
 
 /*! Returns the base schema definitions */
 QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::schemaDefinitions()
@@ -1055,57 +967,6 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     return retnSchema;
 }
 
-
-/*!
-  Adds the given \a contact to the database if \a contact has a
-  default-constructed id, or an id with the manager URI set to the URI of
-  this manager and a local id of zero.
-
-  If the manager URI of the id of the \a contact is neither empty nor equal to the URI of
-  this manager, or local id of the \a contact is non-zero but does not exist in the
-  manager, the operation will fail and \a error will be set to
-  \c QContactManager::DoesNotExistError.
-
-  Alternatively, the function will update the existing contact in the database if \a contact
-  has a non-zero id and currently exists in the database.
-
-  If the \a contact contains one or more details whose definitions have
-  not yet been saved with the manager, the operation will fail and \a error will be
-  set to \c QContactManager::UnsupportedError.
-
-  If the \a contact has had its relationships reordered, the manager
-  will check to make sure that every relationship that the contact is currently
-  involved in is included in the reordered list, and that no relationships which
-  either do not involve the contact, or have not been saved in the manager are
-  included in the list.  If these conditions are not met, the function will
-  return \c false and \a error will be set to \c QContactManager::InvalidRelationshipError.
-
-  The engine must automatically synthesize the display label of the contact when it is saved,
-  by either using the built in \l synthesizedDisplayLabel() function or overriding it, and
-  then calling \l setContactDisplayLabel().
-
-  Returns false on failure, or true on
-  success.  On successful save of a contact with an id of zero, its
-  id will be set to a new, valid id with the manager URI set to the URI of
-  this manager, and the local id set to a new, valid local id.
-
-  This function is called by the contacts framework in both the
-  single contact save and batch contact save, if the saveContacts
-  function is not overridden.
-
-  The backend must emit the appropriate signals to inform clients of changes
-  to the database resulting from this operation.
-
-  Any errors encountered during this operation should be stored to
-  \a error.
- */
-bool QContactManagerEngine::saveContact(QContact* contact, QContactManager::Error& error)
-{
-    Q_UNUSED(contact);
-    error = QContactManager::NotSupportedError;
-    return false;
-}
-
 /*!
   Checks that the given contact \a contact does not have details which
   don't conform to a valid definition, violate uniqueness constraints,
@@ -1186,7 +1047,6 @@ bool QContactManagerEngine::validateContact(const QContact& contact, QContactMan
     return true;
 }
 
-
 /*!
   Checks that the given detail definition \a definition seems valid,
   with a correct id, defined fields, and any specified value types
@@ -1239,25 +1099,6 @@ bool QContactManagerEngine::validateDefinition(const QContactDetailDefinition& d
 }
 
 /*!
-  Remove the contact identified by \a contactId from the database,
-  and removes the contact from any relationships in which it was involved.
-  Returns true if the contact was removed successfully, otherwise
-  returns false.
-
-  The backend must emit the appropriate signals to inform clients of changes
-  to the database resulting from this operation.
-
-  Any errors encountered during this operation should be stored to
-  \a error.
- */
-bool QContactManagerEngine::removeContact(const QContactLocalId& contactId, QContactManager::Error& error)
-{
-    Q_UNUSED(contactId);
-    error = QContactManager::NotSupportedError;
-    return false;
-}
-
-/*!
   Returns the registered detail definitions which are valid for contacts whose type is of the given \a contactType in this engine.
 
   Any errors encountered during this operation should be stored to
@@ -1307,6 +1148,7 @@ bool QContactManagerEngine::saveDetailDefinition(const QContactDetailDefinition&
 {
     Q_UNUSED(def);
     Q_UNUSED(contactType);
+
     error = QContactManager::NotSupportedError;
     return false;
 }
@@ -1326,6 +1168,7 @@ bool QContactManagerEngine::removeDetailDefinition(const QString& definitionName
 {
     Q_UNUSED(definitionName);
     Q_UNUSED(contactType);
+
     error = QContactManager::NotSupportedError;
     return false;
 }
@@ -1340,14 +1183,70 @@ bool QContactManagerEngine::removeDetailDefinition(const QString& definitionName
   Application code should not call this function, since validation of the
   detail will happen in the engine in any case.
  */
-void QContactManagerEngine::setDetailAccessConstraints(QContactDetail *detail, QContactDetail::AccessConstraints constraints) const
+void QContactManagerEngine::setDetailAccessConstraints(QContactDetail *detail, QContactDetail::AccessConstraints constraints)
 {
     if (detail) {
         QContactDetailPrivate::setAccessConstraints(detail, constraints);
     }
 }
 
+
 /*!
+  Adds the given \a contact to the database if \a contact has a
+  default-constructed id, or an id with the manager URI set to the URI of
+  this manager and a local id of zero.
+
+  The default implementation will convert this into a call to saveContacts.
+
+  \sa managerUri()
+ */
+bool QContactManagerEngine::saveContact(QContact* contact, QContactManager::Error& error)
+{
+    // Convert to a list op
+    if (contact) {
+        QList<QContact> list;
+        list.append(*contact);
+
+        QMap<int, QContactManager::Error> errors;
+        bool ret = saveContacts(&list, &errors, error);
+
+        if (errors.count() > 0)
+            error = errors.begin().value();
+
+        *contact = list.value(0);
+        return ret;
+    } else {
+        error = QContactManager::BadArgumentError;
+        return false;
+    }
+}
+
+/*!
+  Remove the contact identified by \a contactId from the database,
+  and also removes any relationships in which the contact was involved.
+  Returns true if the contact was removed successfully, otherwise
+  returns false.
+
+  The default implementation will convert this into a call to removeContacts.
+ */
+bool QContactManagerEngine::removeContact(const QContactLocalId& contactId, QContactManager::Error& error)
+{
+    // Convert to a list op
+    QList<QContactLocalId> list;
+    list.append(contactId);
+
+    QMap<int, QContactManager::Error> errors;
+    bool ret = removeContacts(list, &errors, error);
+
+    if (errors.count() > 0)
+        error = errors.begin().value();
+
+    return ret;
+}
+
+/*!
+  \fn bool QContactManagerEngine::saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error)
+
   Adds the list of contacts given by \a contacts list to the database.
   Returns true if the contacts were saved successfully, otherwise false.
 
@@ -1366,35 +1265,10 @@ void QContactManagerEngine::setDetailAccessConstraints(QContactDetail *detail, Q
 
   \sa QContactManager::saveContact()
  */
-bool QContactManagerEngine::saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error)
-{
-    if(errorMap) {
-        errorMap->clear();
-    }
-
-    if (!contacts) {
-        error = QContactManager::BadArgumentError;
-        return false;
-    }
-
-    QContactManager::Error functionError = QContactManager::NoError;
-    for (int i = 0; i < contacts->count(); i++) {
-        QContact current = contacts->at(i);
-        if (!saveContact(&current, error)) {
-            functionError = error;
-            if (errorMap) {
-                errorMap->insert(i, functionError);
-            }
-        } else {
-            (*contacts)[i] = current;
-        }
-    }
-
-    error = functionError;
-    return (functionError == QContactManager::NoError);
-}
 
 /*!
+  \fn bool QContactManagerEngine::removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error)
+
   Remove every contact whose id is contained in the list of contacts ids
   \a contactIds.  Returns true if all contacts were removed successfully,
   otherwise false.
@@ -1414,33 +1288,6 @@ bool QContactManagerEngine::saveContacts(QList<QContact>* contacts, QMap<int, QC
 
   \sa QContactManager::removeContact()
  */
-bool QContactManagerEngine::removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error)
-{
-    if(errorMap) {
-        errorMap->clear();
-    }
-
-    if (!contactIds) {
-        error = QContactManager::BadArgumentError;
-        return false;
-    }
-
-    QContactManager::Error functionError = QContactManager::NoError;
-    for (int i = 0; i < contactIds->count(); i++) {
-        QContactLocalId current = contactIds->at(i);
-        if (!removeContact(current, error)) {
-            functionError = error;
-            if (errorMap) {
-                errorMap->insert(i, functionError);
-            }
-        } else {
-            (*contactIds)[i] = 0;
-        }
-    }
-
-    error = functionError;
-    return (functionError == QContactManager::NoError);
-}
 
 /*!
   \preliminary
@@ -1989,12 +1836,14 @@ int QContactManagerEngine::compareContact(const QContact& a, const QContact& b, 
  */
 void QContactManagerEngine::addSorted(QList<QContact>* sorted, const QContact& toAdd, const QList<QContactSortOrder>& sortOrders)
 {
-    for (int i = 0; i < sorted->size(); i++) {
-        // check to see if the new contact should be inserted here
-        int comparison = compareContact(sorted->at(i), toAdd, sortOrders);
-        if (comparison > 0) {
-            sorted->insert(i, toAdd);
-            return;
+    if (sortOrders.count() > 0) {
+        for (int i = 0; i < sorted->size(); i++) {
+            // check to see if the new contact should be inserted here
+            int comparison = compareContact(sorted->at(i), toAdd, sortOrders);
+            if (comparison > 0) {
+                sorted->insert(i, toAdd);
+                return;
+            }
         }
     }
 

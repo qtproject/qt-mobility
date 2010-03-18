@@ -167,7 +167,7 @@ void QContactManagerData::createEngine(const QString& managerName, const QMap<QS
         if (!m_engine) {
             if (m_error == QContactManager::NoError)
                 m_error = QContactManager::DoesNotExistError;
-            m_engine = new QContactInvalidEngine(); // XXX share
+            m_engine = new QContactInvalidEngine();
         }
     }
 }

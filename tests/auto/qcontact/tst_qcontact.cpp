@@ -46,10 +46,17 @@
 #include "qcontactmanagerdataholder.h" //QContactManagerDataHolder
 #include <QSet>
 
+
 //TESTED_CLASS=
 //TESTED_FILES=
 
 QTM_USE_NAMESPACE
+class HackEngine : public QContactManagerEngine
+{
+    public:
+        static void setRels(QContact* contact, const QList<QContactRelationship>& rels) {QContactManagerEngine::setContactRelationships(contact, rels);}
+};
+
 class tst_QContact: public QObject
 {
 Q_OBJECT
@@ -563,27 +570,6 @@ void tst_QContact::relationships()
 
     relationshipList = c.relationships(QContactRelationship::HasMember);
     QVERIFY(relationshipList.isEmpty());
-
-    // now test that we can change the order of relationships regardless of the number of relationships
-    QList<QContactRelationship> orderedList = c.relationshipOrder();
-    QVERIFY(orderedList == relationshipList); // should be the same by default
-
-    QContactRelationship dummyRel;
-    QContactId firstId;
-    firstId.setManagerUri("test-nokia");
-    firstId.setLocalId(QContactLocalId(5));
-    QContactId secondId;
-    secondId.setManagerUri("test-nokia-2");
-    secondId.setLocalId(QContactLocalId(5));
-    dummyRel.setFirst(firstId);
-    dummyRel.setSecond(secondId);
-    dummyRel.setRelationshipType(QContactRelationship::HasAssistant);
-
-    QList<QContactRelationship> reorderedList;
-    reorderedList.append(dummyRel);
-    c.setRelationshipOrder(reorderedList);
-
-    QVERIFY(c.relationshipOrder() == reorderedList);
 }
 
 void tst_QContact::displayName()
@@ -723,7 +709,7 @@ void tst_QContact::hash()
     contact5.saveDetail(&detail1);
     contact5.setPreferredDetail("action", detail1);
     QContactRelationship rel;
-    QContactManagerEngine::setContactRelationships(&contact5, QList<QContactRelationship>() << rel);
+    HackEngine::setRels(&contact5, QList<QContactRelationship>() << rel);
     QVERIFY(qHash(contact1) == qHash(contact2));
     QVERIFY(qHash(contact1) != qHash(contact3));
     QVERIFY(qHash(contact1) != qHash(contact4));

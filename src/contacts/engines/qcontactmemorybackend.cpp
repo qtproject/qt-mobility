@@ -53,6 +53,8 @@
 #include <QTimer>
 #include <QUuid>
 #include <QSharedData>
+#include <QDebug>
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -74,7 +76,7 @@ QTM_BEGIN_NAMESPACE
  */
 
 /* static data for manager class */
-QMap<QString, QContactMemoryEngine*> QContactMemoryEngine::engines;
+QMap<QString, QContactMemoryEngineData*> QContactMemoryEngine::engineDatas;
 
 /*!
  * Factory function for creating a new in-memory backend, based
@@ -93,20 +95,16 @@ QContactMemoryEngine* QContactMemoryEngine::createMemoryEngine(const QMap<QStrin
         anonymous = true;
     }
 
-    if (engines.contains(idValue)) {
-        QContactMemoryEngine *engine = engines.value(idValue);
-        engine->d->m_refCount.ref();
-        engine->d->m_anonymous = anonymous;
-        return engine;
+    QContactMemoryEngineData* data = engineDatas.value(idValue);
+    if (data) {
+        data->m_refCount.ref();
     } else {
-        QContactMemoryEngine *engine = new QContactMemoryEngine(parameters);
-        engine->d->m_engineName = QString(QLatin1String("memory"));
-        engine->d->m_engineVersion = 1;
-        engine->d->m_id = idValue;
-        engine->d->m_anonymous = anonymous;
-        engines.insert(idValue, engine);
-        return engine;
+        data = new QContactMemoryEngineData();
+        data->m_id = idValue;
+        data->m_anonymous = anonymous;
+        engineDatas.insert(idValue, data);
     }
+    return new QContactMemoryEngine(data);
 }
 
 /*!
@@ -115,32 +113,26 @@ QContactMemoryEngine* QContactMemoryEngine::createMemoryEngine(const QMap<QStrin
  * Loads the in-memory data associated with the memory store identified by the "id" parameter
  * from the given \a parameters if it exists, or a new, anonymous store if it does not.
  */
-QContactMemoryEngine::QContactMemoryEngine(const QMap<QString, QString>& parameters)
-    : d(new QContactMemoryEngineData)
+QContactMemoryEngine::QContactMemoryEngine(QContactMemoryEngineData* data)
+    : d(data)
 {
-    Q_UNUSED(parameters);
+    d->m_sharedEngines.append(this);
 }
 
 /*! \reimp */
-void QContactMemoryEngine::deref()
+QContactMemoryEngine::~QContactMemoryEngine()
 {
+    d->m_sharedEngines.removeAll(this);
     if (!d->m_refCount.deref()) {
-        engines.remove(d->m_id);
+        engineDatas.remove(d->m_id);
         delete d;
-        delete this;
     }
 }
 
 /*! \reimp */
 QString QContactMemoryEngine::managerName() const
 {
-    return d->m_engineName;
-}
-
-/*! This function is deprecated and should not be used.  Use QContactMemoryEngine::managerVersion() instead! */
-int QContactMemoryEngine::implementationVersion() const
-{
-    return d->m_engineVersion;
+    return QLatin1String("memory");
 }
 
 /*! \reimp */
@@ -161,7 +153,7 @@ bool QContactMemoryEngine::setSelfContactId(const QContactLocalId& contactId, QC
 
         QContactChangeSet cs;
         cs.oldAndNewSelfContactId() = QPair<QContactLocalId, QContactLocalId>(oldId, contactId);
-        cs.emitSignals(this);
+        d->emitSharedSignals(&cs);
         return true;
     }
 
@@ -179,61 +171,59 @@ QContactLocalId QContactMemoryEngine::selfContactId(QContactManager::Error& erro
 }
 
 /*! \reimp */
-QList<QContactLocalId> QContactMemoryEngine::contactIds(const QList<QContactSortOrder> &sortOrders, QContactManager::Error &error) const
-{
-    // TODO: this needs to be done properly...
-    error = QContactManager::NoError;
-    QList<QContactLocalId> sortedIds;
-    QList<QContact> sortedContacts;
-    for (int i = 0; i < d->m_contacts.size(); i++)
-        QContactManagerEngine::addSorted(&sortedContacts, d->m_contacts.at(i), sortOrders);
-    for (int i = 0; i < sortedContacts.size(); i++)
-        sortedIds.append(sortedContacts.at(i).id().localId());
-    return sortedIds;
-}
-
-/*! \reimp */
-QList<QContact> QContactMemoryEngine::contacts(const QList<QContactSortOrder> &sortOrders, const QContactFetchHint& fetchHint, QContactManager::Error &error) const
-{
-    Q_UNUSED(fetchHint); // we don't do any optimisations in the memory backend; ignore the fetch hint.
-    error = QContactManager::NoError;
-    QList<QContact> sortedContacts;
-    for (int i = 0; i < d->m_contacts.size(); i++)
-        QContactManagerEngine::addSorted(&sortedContacts, contact(d->m_contacts.at(i).localId(), QContactFetchHint(), error), sortOrders);
-    // we ignore the restrictions - we don't want to do extra work to remove them.
-    // note that the restriction is "optional" - it defines the minimum set of detail types which _must_ be returned
-    // but doesn't require that they are the _only_ detail types which are returned.
-    return sortedContacts;
-}
-
-/*! \reimp */
 QContact QContactMemoryEngine::contact(const QContactLocalId& contactId, const QContactFetchHint& fetchHint, QContactManager::Error& error) const
 {
-    Q_UNUSED(fetchHint); // we don't do any optimisations in the memory backend; ignore the fetch hint..
+    Q_UNUSED(fetchHint); // no optimisations are possible in the memory backend; ignore the fetch hint.
     int index = d->m_contactIds.indexOf(contactId);
     if (index != -1) {
         // found the contact successfully.
         error = QContactManager::NoError;
-        QContact retn = d->m_contacts.at(index);
-
-        // synthesize the display label if we need to.
-        QContactDisplayLabel dl = retn.detail(QContactDisplayLabel::DefinitionName);
-        if (dl.label().isEmpty()) {
-            QContactManager::Error synthError;
-            retn = setContactDisplayLabel(synthesizedDisplayLabel(retn, synthError), retn);
-        }
-
-        // also, retrieve the current relationships the contact is involved with.
-        QList<QContactRelationship> relationshipCache = d->m_orderedRelationships.value(contactId);
-        QContactManagerEngine::setContactRelationships(&retn, relationshipCache);
-
-        // and return the contact
-        return retn;
+        return d->m_contacts.at(index);
     }
 
     error = QContactManager::DoesNotExistError;
     return QContact();
 }
+
+QList<QContactLocalId> QContactMemoryEngine::contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+{
+    /* Special case the fast case */
+    if (filter.type() == QContactFilter::DefaultFilter && sortOrders.count() == 0) {
+        return d->m_contactIds;
+    } else {
+        QList<QContact> clist = contacts(filter, sortOrders, QContactFetchHint(), error);
+
+        /* Extract the ids */
+        QList<QContactLocalId> ids;
+        foreach(const QContact& c, clist)
+            ids.append(c.localId());
+
+        return ids;
+    }
+}
+
+QList<QContact> QContactMemoryEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fetchHint, QContactManager::Error& error) const
+{
+    Q_UNUSED(fetchHint); // no optimisations are possible in the memory backend; ignore the fetch hint.
+    Q_UNUSED(error);
+
+    QList<QContact> sorted;
+
+    /* First filter out contacts - check for default filter first */
+    if (filter.type() == QContactFilter::DefaultFilter) {
+        foreach(const QContact&c, d->m_contacts) {
+            QContactManagerEngine::addSorted(&sorted,c, sortOrders);
+        }
+    } else {
+        foreach(const QContact&c, d->m_contacts) {
+            if (QContactManagerEngine::testFilter(filter, c))
+                QContactManagerEngine::addSorted(&sorted,c, sortOrders);
+        }
+    }
+
+    return sorted;
+}
+
 
 bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& changeSet, QContactManager::Error& error)
 {
@@ -302,15 +292,6 @@ bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& 
 }
 
 /*! \reimp */
-bool QContactMemoryEngine::saveContact(QContact* contact, QContactManager::Error& error)
-{
-    QContactChangeSet changeSet;
-    bool retn = saveContact(contact, changeSet, error);
-    changeSet.emitSignals(this);
-    return retn;
-}
-
-/*! \reimp */
 bool QContactMemoryEngine::saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error)
 {
     if(errorMap) {
@@ -336,7 +317,7 @@ bool QContactMemoryEngine::saveContacts(QList<QContact>* contacts, QMap<int, QCo
     }
 
     error = operationError;
-    changeSet.emitSignals(this);
+    d->emitSharedSignals(&changeSet);
     // return false if some error occurred
     return error == QContactManager::NoError;
 }
@@ -354,7 +335,7 @@ bool QContactMemoryEngine::removeContact(const QContactLocalId& contactId, QCont
     QContactId thisContact;
     thisContact.setManagerUri(managerUri());
     thisContact.setLocalId(contactId);
-    QList<QContactRelationship> allRelationships = relationships(QString(), thisContact, QContactRelationshipFilter::Either, error);
+    QList<QContactRelationship> allRelationships = relationships(QString(), thisContact, QContactRelationship::Either, error);
     if (error != QContactManager::NoError && error != QContactManager::DoesNotExistError) {
         error = QContactManager::UnspecifiedError; // failed to clean up relationships
         return false;
@@ -362,10 +343,7 @@ bool QContactMemoryEngine::removeContact(const QContactLocalId& contactId, QCont
 
     // this is meant to be a transaction, so if any of these fail, we're in BIG TROUBLE.
     // a real backend will use DBMS transactions to ensure database integrity.
-    for (int i = 0; i < allRelationships.size(); i++) {
-        QContactRelationship currRel = allRelationships.at(i);
-        removeRelationship(currRel, error);
-    }
+    removeRelationships(allRelationships, 0, error);
 
     // having cleaned up the relationships, remove the contact from the lists.
     d->m_contacts.removeAt(index);
@@ -383,43 +361,27 @@ bool QContactMemoryEngine::removeContact(const QContactLocalId& contactId, QCont
 }
 
 /*! \reimp */
-bool QContactMemoryEngine::removeContact(const QContactLocalId& contactId, QContactManager::Error& error)
+bool QContactMemoryEngine::removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error)
 {
-    QContactChangeSet changeSet;
-    bool retn = removeContact(contactId, changeSet, error);
-    changeSet.emitSignals(this);
-    return retn;
-}
-
-/*! \reimp */
-bool QContactMemoryEngine::removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error)
-{
-    if (!contactIds) {
-        error = QContactManager::BadArgumentError;
-        return false;
-    }
-
     QContactChangeSet changeSet;
     QContactLocalId current;
     QContactManager::Error operationError = QContactManager::NoError;
-    for (int i = 0; i < contactIds->count(); i++) {
-        current = contactIds->at(i);
+    for (int i = 0; i < contactIds.count(); i++) {
+        current = contactIds.at(i);
         if (!removeContact(current, changeSet, error)) {
             operationError = error;
             errorMap->insert(i, operationError);
-        } else {
-            (*contactIds)[i] = 0;
         }
     }
 
     error = operationError;
-    changeSet.emitSignals(this);
+    d->emitSharedSignals(&changeSet);
     // return false if some errors occurred
     return error == QContactManager::NoError;
 }
 
 /*! \reimp */
-QList<QContactRelationship> QContactMemoryEngine::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const
+QList<QContactRelationship> QContactMemoryEngine::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationship::Role role, QContactManager::Error& error) const
 {
     QContactId defaultId;
     QList<QContactRelationship> retn;
@@ -437,11 +399,11 @@ QList<QContactRelationship> QContactMemoryEngine::relationships(const QString& r
         }
 
         // otherwise, check that the participant exists and plays the required role in the relationship.
-        if (role == QContactRelationshipFilter::First && curr.first() == participantId) {
+        if (role == QContactRelationship::First && curr.first() == participantId) {
             retn.append(curr);
-        } else if (role == QContactRelationshipFilter::Second && curr.second() == participantId) {
+        } else if (role == QContactRelationship::Second && curr.second() == participantId) {
             retn.append(curr);
-        } else if (role == QContactRelationshipFilter::Either && (curr.first() == participantId || curr.second() == participantId)) {
+        } else if (role == QContactRelationship::Either && (curr.first() == participantId || curr.second() == participantId)) {
             retn.append(curr);
         }
     }
@@ -457,19 +419,21 @@ bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, 
     // Attempt to validate the relationship.
     // first, check that the source contact exists and is in this manager.
     QString myUri = managerUri();
+    int firstContactIndex = d->m_contactIds.indexOf(relationship->first().localId());
     if ((!relationship->first().managerUri().isEmpty() && relationship->first().managerUri() != myUri)
-            ||!d->m_contactIds.contains(relationship->first().localId())) {
+            ||firstContactIndex == -1) {
         error = QContactManager::InvalidRelationshipError;
         return false;
     }
 
     // second, check that the second contact exists (if it's local); we cannot check other managers' contacts.
     QContactId dest = relationship->second();
+    int secondContactIndex = d->m_contactIds.indexOf(dest.localId());
 
     if (dest.managerUri().isEmpty() || dest.managerUri() == myUri) {
         // this entry in the destination list is supposedly stored in this manager.
         // check that it exists, and that it isn't the source contact (circular)
-        if (!d->m_contactIds.contains(dest.localId()) || dest.localId() == relationship->first().localId()) {
+        if (secondContactIndex == -1 || dest.localId() == relationship->first().localId()) {
             error = QContactManager::InvalidRelationshipError;
             return false;
         }
@@ -489,8 +453,6 @@ bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, 
     for (int i = 0; i < allRelationships.size(); i++) {
         QContactRelationship curr = allRelationships.at(i);
         if (curr == *relationship) {
-            d->m_relationships.removeAt(i);
-            d->m_relationships.insert(i, *relationship);
             return true;
             // TODO: set error to AlreadyExistsError and return false?
         }
@@ -506,31 +468,27 @@ bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, 
     changeSet.addedRelationshipsContacts().insert(relationship->first().localId());
     changeSet.addedRelationshipsContacts().insert(relationship->second().localId());
 
+    // update the contacts involved
+    QContactManagerEngine::setContactRelationships(&d->m_contacts[firstContactIndex], firstRelationships);
+    QContactManagerEngine::setContactRelationships(&d->m_contacts[secondContactIndex], secondRelationships);
+
     // finally, insert into our list of all relationships, and return.
     d->m_relationships.append(*relationship);
     return true;
 }
 
 /*! \reimp */
-bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, QContactManager::Error& error)
-{
-    QContactChangeSet changeSet;
-    bool retn = saveRelationship(relationship, changeSet, error);
-    changeSet.emitSignals(this);
-    return retn;
-}
-
-/*! \reimp */
-QList<QContactManager::Error> QContactMemoryEngine::saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error)
+bool QContactMemoryEngine::saveRelationships(QList<QContactRelationship>* relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error)
 {
     error = QContactManager::NoError;
     QContactManager::Error functionError;
     QContactChangeSet changeSet;
-    QList<QContactManager::Error> retn;
+
     for (int i = 0; i < relationships->size(); i++) {
         QContactRelationship curr = relationships->at(i);
         saveRelationship(&curr, changeSet, functionError);
-        retn.append(functionError);
+        if (functionError != QContactManager::NoError && errorMap)
+            errorMap->insert(i, functionError);
 
         // and replace the current relationship with the updated version.
         relationships->replace(i, curr);
@@ -540,8 +498,8 @@ QList<QContactManager::Error> QContactMemoryEngine::saveRelationships(QList<QCon
             error = functionError;
     }
 
-    changeSet.emitSignals(this);
-    return retn;
+    d->emitSharedSignals(&changeSet);
+    return (error == QContactManager::NoError);
 }
 
 bool QContactMemoryEngine::removeRelationship(const QContactRelationship& relationship, QContactChangeSet& changeSet, QContactManager::Error& error)
@@ -560,6 +518,14 @@ bool QContactMemoryEngine::removeRelationship(const QContactRelationship& relati
     d->m_orderedRelationships.insert(relationship.first().localId(), firstRelationships);
     d->m_orderedRelationships.insert(relationship.second().localId(), secondRelationships);
 
+    // Update the contacts as well
+    int firstContactIndex = d->m_contactIds.indexOf(relationship.first().localId());
+    int secondContactIndex = relationship.second().managerUri() == managerUri() ? d->m_contactIds.indexOf(relationship.second().localId()) : -1;
+    if (firstContactIndex != -1)
+        QContactMemoryEngine::setContactRelationships(&d->m_contacts[firstContactIndex], firstRelationships);
+    if (secondContactIndex != -1)
+        QContactMemoryEngine::setContactRelationships(&d->m_contacts[secondContactIndex], secondRelationships);
+
     // set our changes, and return.
     changeSet.removedRelationshipsContacts().insert(relationship.first().localId());
     changeSet.removedRelationshipsContacts().insert(relationship.second().localId());
@@ -568,30 +534,23 @@ bool QContactMemoryEngine::removeRelationship(const QContactRelationship& relati
 }
 
 /*! \reimp */
-bool QContactMemoryEngine::removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error)
+bool QContactMemoryEngine::removeRelationships(const QList<QContactRelationship>& relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error)
 {
-    QContactChangeSet changeSet;
-    bool retn = removeRelationship(relationship, changeSet, error);
-    changeSet.emitSignals(this);
-    return retn;
-}
-
-/*! \reimp */
-QList<QContactManager::Error> QContactMemoryEngine::removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error)
-{
-    QList<QContactManager::Error> retn;
     QContactManager::Error functionError;
+    QContactChangeSet cs;
     for (int i = 0; i < relationships.size(); i++) {
-        removeRelationship(relationships.at(i), functionError);
-        retn.append(functionError);
+        removeRelationship(relationships.at(i), cs, functionError);
 
         // update the total error if it did not succeed.
         if (functionError != QContactManager::NoError) {
+            if (errorMap)
+                errorMap->insert(i, functionError);
             error = functionError;
         }
     }
 
-    return retn;
+    d->emitSharedSignals(&cs);
+    return (error == QContactManager::NoError);
 }
 
 /*! \reimp */
@@ -629,7 +588,7 @@ bool QContactMemoryEngine::saveDetailDefinition(const QContactDetailDefinition& 
 {
     QContactChangeSet changeSet;
     bool retn = saveDetailDefinition(def, contactType, changeSet, error);
-    changeSet.emitSignals(this);
+    d->emitSharedSignals(&changeSet);
     return retn;
 }
 
@@ -661,79 +620,49 @@ bool QContactMemoryEngine::removeDetailDefinition(const QString& definitionId, c
 {
     QContactChangeSet changeSet;
     bool retn = removeDetailDefinition(definitionId, contactType, changeSet, error);
-    changeSet.emitSignals(this);
+    d->emitSharedSignals(&changeSet);
     return retn;
 }
 
 /*! \reimp */
 void QContactMemoryEngine::requestDestroyed(QContactAbstractRequest* req)
 {
-    d->m_asynchronousOperations.removeOne(req);
+    Q_UNUSED(req);
 }
 
 /*! \reimp */
 bool QContactMemoryEngine::startRequest(QContactAbstractRequest* req)
 {
-    if (!d->m_asynchronousOperations.contains(req))
-        d->m_asynchronousOperations.enqueue(req);
+    if (!req)
+        return false;
     updateRequestState(req, QContactAbstractRequest::ActiveState);
-    QTimer::singleShot(0, this, SLOT(performAsynchronousOperation()));
+    performAsynchronousOperation(req);
     return true;
 }
 
 /*! \reimp */
 bool QContactMemoryEngine::cancelRequest(QContactAbstractRequest* req)
 {
-    updateRequestState(req, QContactAbstractRequest::CanceledState);
-    return true;
-}
-
-/*! This function is deprecated!  Use QContactMemoryEngine::waitForRequestFinished() instead!
-    Waits up to \a msecs milliseconds for the request \a req to emit the progress() signal.
-    Returns true if the progress() signal was emitted during the period, otherwise false.
-*/
-bool QContactMemoryEngine::waitForRequestProgress(QContactAbstractRequest* req, int msecs)
-{
-    Q_UNUSED(msecs);
-
-    if (!d->m_asynchronousOperations.removeOne(req))
-        return false; // didn't exist.
-
-    // replace at head of queue
-    d->m_asynchronousOperations.insert(0, req);
-
-    // and perform the operation.
-    performAsynchronousOperation();
-
-    return true;
+    Q_UNUSED(req); // we can't cancel since we complete immediately
+    return false;
 }
 
 /*! \reimp */
 bool QContactMemoryEngine::waitForRequestFinished(QContactAbstractRequest* req, int msecs)
 {
     // in our implementation, we always complete any operation we start.
-    // so, waitForRequestFinished is equivalent to waitForRequestProgress.
-    return waitForRequestProgress(req, msecs);
+    Q_UNUSED(msecs);
+    Q_UNUSED(req);
+
+    return true;
 }
 
 /*!
  * This slot is called some time after an asynchronous request is started.
  * It performs the required operation, sets the result and returns.
  */
-void QContactMemoryEngine::performAsynchronousOperation()
+void QContactMemoryEngine::performAsynchronousOperation(QContactAbstractRequest *currentRequest)
 {
-    QContactAbstractRequest *currentRequest;
-
-    // take the first pending request and finish it
-    if (d->m_asynchronousOperations.isEmpty())
-        return;
-    currentRequest = d->m_asynchronousOperations.dequeue();
-
-    // check to see if it is cancelling; if so, remove it from the queue and return.
-    if (currentRequest->state() == QContactAbstractRequest::CanceledState) {
-        return;
-    }
-
     // store up changes, and emit signals once at the end of the (possibly batch) operation.
     QContactChangeSet changeSet;
 
@@ -748,7 +677,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
             QContactFetchHint fetchHint = r->fetchHint();
 
             QContactManager::Error operationError;
-            QList<QContact> requestedContacts = QContactManagerEngine::contacts(filter, sorting, fetchHint, operationError);
+            QList<QContact> requestedContacts = contacts(filter, sorting, fetchHint, operationError);
 
             // update the request with the results.
             if (!requestedContacts.isEmpty() || operationError != QContactManager::NoError)
@@ -765,7 +694,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
             QList<QContactSortOrder> sorting = r->sorting();
 
             QContactManager::Error operationError = QContactManager::NoError;
-            QList<QContactLocalId> requestedContactIds = QContactManagerEngine::contactIds(filter, sorting, operationError);
+            QList<QContactLocalId> requestedContactIds = contactIds(filter, sorting, operationError);
 
             if (!requestedContactIds.isEmpty() || operationError != QContactManager::NoError)
                 updateContactLocalIdFetchRequest(r, requestedContactIds, operationError, QContactAbstractRequest::FinishedState);
@@ -897,7 +826,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
             QContactRelationshipFetchRequest* r = static_cast<QContactRelationshipFetchRequest*>(currentRequest);
             QContactManager::Error operationError = QContactManager::NoError;
             QList<QContactManager::Error> operationErrors;
-            QList<QContactRelationship> allRelationships = relationships(QString(), QContactId(), QContactRelationshipFilter::Either, operationError);
+            QList<QContactRelationship> allRelationships = relationships(QString(), QContactId(), QContactRelationship::Either, operationError);
             QList<QContactRelationship> requestedRelationships;
 
             // select the requested relationships.
@@ -927,19 +856,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
             QList<QContactRelationship> relationshipsToRemove = r->relationships();
             QMap<int, QContactManager::Error> errorMap;
 
-            bool foundMatch = false;
-            for (int i = 0; i < relationshipsToRemove.size(); i++) {
-                QContactManager::Error tempError;
-                removeRelationship(relationshipsToRemove.at(i), tempError);
-
-                if (tempError != QContactManager::NoError) {
-                    errorMap.insert(i, tempError);
-                    operationError = tempError;
-                }
-            }
-            
-            if (foundMatch == false && operationError == QContactManager::NoError)
-                operationError = QContactManager::DoesNotExistError;
+            removeRelationships(r->relationships(), &errorMap, operationError);
 
             if (!errorMap.isEmpty() || operationError != QContactManager::NoError)
                 updateRelationshipRemoveRequest(r, operationError, errorMap, QContactAbstractRequest::FinishedState);
@@ -954,22 +871,11 @@ void QContactMemoryEngine::performAsynchronousOperation()
             QContactManager::Error operationError = QContactManager::NoError;
             QMap<int, QContactManager::Error> errorMap;
             QList<QContactRelationship> requestRelationships = r->relationships();
-            QList<QContactRelationship> savedRelationships;
 
-            QContactManager::Error tempError;
-            for (int i = 0; i < requestRelationships.size(); i++) {
-                QContactRelationship current = requestRelationships.at(i);
-                saveRelationship(&current, tempError);
-                savedRelationships.append(current);
-
-                if (tempError != QContactManager::NoError) {
-                    errorMap.insert(i, tempError);
-                    operationError = tempError;
-                }
-            }
+            saveRelationships(&requestRelationships, &errorMap, operationError);
 
             // update the request with the results.
-            updateRelationshipSaveRequest(r, savedRelationships, operationError, errorMap, QContactAbstractRequest::FinishedState);
+            updateRelationshipSaveRequest(r, requestRelationships, operationError, errorMap, QContactAbstractRequest::FinishedState);
         }
         break;
 
@@ -978,7 +884,7 @@ void QContactMemoryEngine::performAsynchronousOperation()
     }
 
     // now emit any signals we have to emit
-    changeSet.emitSignals(this);
+    d->emitSharedSignals(&changeSet);
 }
 
 /*!
@@ -1047,7 +953,7 @@ QList<QVariant::Type> QContactMemoryEngine::supportedDataTypes() const
  * This function is deprecated.  Use QContactManagerEngine::isFilterSupported() instead!
  * The function returns true if the backend natively supports the given filter \a filter, otherwise false.
  */
-bool QContactMemoryEngine::filterSupported(const QContactFilter& filter) const
+bool QContactMemoryEngine::isFilterSupported(const QContactFilter& filter) const
 {
     Q_UNUSED(filter);
     // Until we add hashes for common stuff, fall back to slow code
