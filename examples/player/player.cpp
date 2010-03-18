@@ -434,7 +434,7 @@ void Player::displayErrorMessage()
 {
 #ifdef Q_OS_SYMBIAN
     if(player->error()!=QMediaPlayer::NoError)
-        QMessageBox::critical(NULL, tr("Error"), player->errorString());
+        QMessageBox::critical(NULL, tr("Error"), player->errorString(), QMessageBox::Ok);
 #else
     setStatusInfo(player->errorString());
 #endif
