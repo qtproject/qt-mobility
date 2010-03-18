@@ -22,6 +22,8 @@ include(../examples.pri)
 CONFIG += mobility
 MOBILITY = location bearer
 
+ICON = flickr_icon.svg
+
 symbian:TARGET.CAPABILITY += Location \
     NetworkServices \
     ReadUserData
