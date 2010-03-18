@@ -129,6 +129,9 @@ public:
     virtual QList<QVariant::Type> supportedDataTypes() const = 0;
     virtual QStringList supportedContactTypes() const = 0;
 
+    /* Reports the built-in definitions from the schema */
+    static QMap<QString, QMap<QString, QContactDetailDefinition> > schemaDefinitions();
+
 Q_SIGNALS:
     void dataChanged();
     void contactsAdded(const QList<QContactLocalId>& contactIds);
@@ -177,8 +180,10 @@ protected:
     static bool validateActionFilter(const QContactFilter& filter);
     static QList<QContactLocalId> sortContacts(const QList<QContact>& contacts, const QList<QContactSortOrder>& sortOrders);
 
-    /* Reports the built-in definitions from the schema */
-    static QMap<QString, QMap<QString, QContactDetailDefinition> > schemaDefinitions();
+    static QContactFilter canonicalizedFilter(const QContactFilter& filter);
+
+protected:
+    void setDetailAccessConstraints(QContactDetail* detail, QContactDetail::AccessConstraints constraints) const;
 
 private:
     /* QContactChangeSet is a utility class used to emit the appropriate signals */

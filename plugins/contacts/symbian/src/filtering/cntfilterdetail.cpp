@@ -88,11 +88,12 @@ QList<QContactLocalId> CntFilterDetail::contacts(
     QContactDetailFilter detailFilter(filter);
     QString sqlQuery;
     //Check for phonenumber. Special handling needed
-    if(detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName )
+    if( (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName ) &&
+            (detailFilter.detailFieldName() != QContactPhoneNumber::FieldSubTypes))
     {
         //Handle phonenumber ...
-    
         idList = HandlePhonenumberDetailFilter(filter);
+        
     }
     else if (detailFilter.matchFlags() == QContactFilter::MatchKeypadCollation) 
     {
@@ -104,10 +105,12 @@ QList<QContactLocalId> CntFilterDetail::contacts(
     else 
     {
         createSelectQuery(filter,sqlQuery,error);
+        QString sortQuery = m_dbInfo.getSortQuery(sortOrders, sqlQuery, error);
+        
         if(*error == QContactManager::NoError)
             {
             //fetch the contacts
-            idList =  m_srvConnection.searchContacts(sqlQuery, error);
+            idList =  m_srvConnection.searchContacts(sortQuery, error);
             }
     }
     
@@ -253,32 +256,33 @@ void CntFilterDetail::getTableNameWhereClause( const QContactDetailFilter& detai
     CntTransformContact transformContact;
     quint32 fieldId  = transformContact.GetIdForDetailL(detailfilter, isSubType);
     m_dbInfo.getDbTableAndColumnName(fieldId,tableName,columnName);
-
+    
     //return if tableName is empty
-    if(tableName.isEmpty()){
+    if(tableName.isEmpty())
+        {
         *error = QContactManager::NotSupportedError;
         return;
-    }
+        }
 
     //check columnName
-    if(columnName.isEmpty()) {
+    if(columnName.isEmpty())
+        {
         *error = QContactManager::NotSupportedError;
         return;
-    }
-    else if(isSubType) {
+        }
+    else if(isSubType) 
+        {
         sqlWhereClause += columnName;
         sqlWhereClause += " NOT NULL ";
-    }
-    else {
-
+        }
+    else 
+        {
         sqlWhereClause += ' ' + columnName + ' ';
         QString fieldToUpdate;
         //Update the value depending on the match flag
         updateForMatchFlag(detailfilter,fieldToUpdate,error);
         sqlWhereClause +=  fieldToUpdate;
-    }
-
-   
+        }
 }
 
 QList<QContactLocalId>  CntFilterDetail::HandlePredictiveSearchFilter(const QContactFilter& filter,QContactManager::Error* error)

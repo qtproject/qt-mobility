@@ -220,6 +220,8 @@ private slots:
     void threadDelivery_data() { addManagers(); }
 
 private:
+    bool compareContactLists(QList<QContact> lista, QList<QContact> listb);
+    bool compareContacts(QContact ca, QContact cb);
     bool containsIgnoringTimestamps(const QList<QContact>& list, const QContact& c);
     bool compareIgnoringTimestamps(const QContact& ca, const QContact& cb);
     QContactManager* prepareModel(const QString& uri);
@@ -251,6 +253,60 @@ void tst_QContactAsync::init()
 
 void tst_QContactAsync::cleanup()
 {
+}
+
+bool tst_QContactAsync::compareContactLists(QList<QContact> lista, QList<QContact> listb)
+{
+    // NOTE: This compare is contact order insensitive.  
+    
+    // Remove matching contacts
+    foreach (QContact a, lista) {
+        foreach (QContact b, listb) {
+            if (compareContacts(a, b)) {
+                lista.removeOne(a);
+                listb.removeOne(b);
+                break;
+            }
+        }
+    }    
+    return (lista.count() == 0 && listb.count() == 0);
+}
+
+bool tst_QContactAsync::compareContacts(QContact ca, QContact cb)
+{
+    // NOTE: This compare is contact detail order insensitive.
+    
+    if (ca.localId() != cb.localId())
+        return false;
+    
+    QList<QContactDetail> aDetails = ca.details();
+    QList<QContactDetail> bDetails = cb.details();
+
+    // Remove matching details
+    foreach (QContactDetail ad, aDetails) {
+        foreach (QContactDetail bd, bDetails) {
+            if (ad == bd) {
+                ca.removeDetail(&ad);
+                cb.removeDetail(&bd);
+                break;
+            }
+            
+            // Special handling for timestamp
+            if (ad.definitionName() == QContactTimestamp::DefinitionName &&
+                bd.definitionName() == QContactTimestamp::DefinitionName) {
+                QContactTimestamp at = static_cast<QContactTimestamp>(ad);
+                QContactTimestamp bt = static_cast<QContactTimestamp>(bd);
+                if (at.created().toString() == bt.created().toString() &&
+                    at.lastModified().toString() == bt.lastModified().toString()) {
+                    ca.removeDetail(&ad);
+                    cb.removeDetail(&bd);
+                    break;
+                }
+                    
+            }            
+        }
+    }
+    return (ca == cb);
 }
 
 bool tst_QContactAsync::containsIgnoringTimestamps(const QList<QContact>& list, const QContact& c)
@@ -901,7 +957,7 @@ void tst_QContactAsync::contactSave()
     expected.clear();
     expected << cm->contact(cm->contactIds().last());
     result = csr.contacts();
-    QCOMPARE(expected, result);
+    QVERIFY(compareContactLists(expected, result));
 
     //here we can't compare the whole contact details, testContact would be updated by async call because we just use QThreadSignalSpy to receive signals.
     //QVERIFY(containsIgnoringTimestamps(expected, testContact));
@@ -2183,6 +2239,7 @@ void tst_QContactAsync::addManagers()
     managers.removeAll("invalid");
     managers.removeAll("maliciousplugin");
     managers.removeAll("testdummy");
+    managers.removeAll("symbiansim"); // SIM backend does not support all the required details for tests to pass.
 
     foreach(QString mgr, managers) {
         QMap<QString, QString> params;
@@ -2235,6 +2292,11 @@ QContactManager* tst_QContactAsync::prepareModel(const QString& managerUri)
     cm->saveContact(&c);
     
     if (!cm->hasFeature(QContactManager::Relationships)) {
+        return cm;
+    }
+    
+    if (cm->managerName() == "symbian") {
+        // Symbian backend does not support other relationships than HasMember (which is same as groups)
         return cm;
     }
 

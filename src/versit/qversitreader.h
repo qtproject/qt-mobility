@@ -105,7 +105,6 @@ public:
 
 Q_SIGNALS:
     void stateChanged(QVersitReader::State state);
-    void resultsAvailable(QList<QVersitDocument>& results);
     void resultsAvailable();
 
 private: // data

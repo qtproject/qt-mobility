@@ -238,6 +238,19 @@ void TestCntRelationship::validGroupRelationship()
     expectedContacts += contact.localId();
     QVERIFY(true == validateRelationshipFilter(QContactRelationshipFilter::First, groupContact.id(), expectedContacts));
     
+    QList<QContactLocalId> expectedContacts1;
+    expectedContacts1 += groupContact.localId();
+    expectedContacts1 += contact.localId();
+    QList<QContactLocalId> expectedContacts2;
+    expectedContacts2 += contact.localId();
+    expectedContacts2 += groupContact.localId(); 
+    QVERIFY(true == (validateRelationshipFilter(QContactRelationshipFilter::Either, groupContact.id(), expectedContacts1) ||
+                     validateRelationshipFilter(QContactRelationshipFilter::Either, groupContact.id(), expectedContacts2)));
+
+    expectedContacts.clear();
+    expectedContacts += groupContact.localId();
+    QVERIFY(true == validateRelationshipFilter(QContactRelationshipFilter::Second, contact.id(), expectedContacts));
+    
     //remove relationship
     returnValue = m_relationship->removeRelationship(&affectedContactIds, relationship, error);
     QVERIFY2(returnValue == true, "remove");
@@ -411,8 +424,8 @@ bool TestCntRelationship::validateRelationshipFilter(const QContactRelationshipF
     for(int i = 0; i < result.count(); i++)
         qDebug() << "result: " << result.at(i);
     
-    for(int i = 0; i < expectedContacts.count(); i++)
-            qDebug() << "expectedContacts: " << expectedContacts.at(i);
+    for(int j = 0; j < expectedContacts.count(); j++)
+            qDebug() << "expectedContacts: " << expectedContacts.at(j);
     
     return (result == expectedContacts);
     }

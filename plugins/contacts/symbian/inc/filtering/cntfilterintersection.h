@@ -44,8 +44,8 @@
 
 #include "cntabstractcontactfilter.h"
 #include "cntsymbiansrvconnection.h"
-#include "qcontactdetailfilter.h"
 #include "cntdbinfo.h"
+#include "qcontactdetailfilter.h"
 
 class CntFilterIntersection : public CntAbstractContactFilter
 {
@@ -61,9 +61,9 @@ public:
     bool filterSupported(const QContactFilter& filter);
     
     void getSqlQuery( const QContactIntersectionFilter& filter,
-                                  QString& tableName,
-                                  QString& sqlWhereClause ,
-                                  QContactManager::Error* error) const;
+                            QString& tableName,
+                            QString& sqlWhereClause ,
+                            QContactManager::Error* error) const;
 
     void createSelectQuery(const QContactFilter& filter,
                                  QString& selectquery,
@@ -71,7 +71,7 @@ public:
 
 private:
     void getSelectQueryforFilter(const QContactFilter& filter,QString& sqlSelectQuery,QContactManager::Error* error);
-
+    
 protected:
     CContactDatabase& m_contactdatabase;
     CntSymbianSrvConnection &m_srvConnection;

@@ -41,6 +41,8 @@
 #include <cntdef.h>
 #include "cntdbinfo.h"
 #include "cntmodelextuids.h"
+#include "cntfilterdetail.h"
+#include "cnttransformcontact.h"
 
 
 CntDbInfo::CntDbInfo()       
@@ -58,6 +60,7 @@ CntDbInfo::CntDbInfo()
     commAddrTableIdColumNameMapping.insert(KUidContactFieldVCardMapSWIS.iUid,ESipAddress );
     commAddrTableIdColumNameMapping.insert(KUidContactFieldIMPP.iUid,ESipAddress );
     commAddrTableIdColumNameMapping.insert(KUidContactFieldEMail.iUid,EEmailAddress );
+    commAddrTableIdColumNameMapping.insert(KUidContactFieldPhoneNumber.iUid,EPhoneNumber );
 }
 
 CntDbInfo::~CntDbInfo()
@@ -114,4 +117,80 @@ void CntDbInfo::getDbTableAndColumnName( const quint32 fieldId ,
     }
 
 }
+
+QString CntDbInfo::getSortQuery( const QList<QContactSortOrder> &sortOrders,
+                                 const QString& selectQuery,
+                                 QContactManager::Error& error)
+{
+    // Set to initial select query
+    QString sortQuery =  selectQuery;
+    
+    if(error == QContactManager::NoError)
+        {
+        QList<QString> list;
+        foreach( QContactSortOrder s, sortOrders ) 
+            {
+            // Find uids for sortings
+            // Get the field id for the detail field name
+            bool isSubType;
+            QString tableName;
+            QString columnName;
+            CntTransformContact transformContact;
+            QContactDetailFilter filter;
+            
+            // Get column names for sort order
+            filter.setDetailDefinitionName(s.detailDefinitionName(), s.detailFieldName());
+            quint32 fieldId  = transformContact.GetIdForDetailL(filter, isSubType);
+            getDbTableAndColumnName(fieldId,tableName,columnName);
+            
+            if (tableName.compare("contact") != 0
+                || columnName.isEmpty())
+                {
+                // Skip invalid sort clause
+                continue;
+                }
+            else
+                {
+                if( s.direction() == Qt::DescendingOrder )
+                    {
+                    QString col;
+                    if(s.caseSensitivity() == Qt::CaseInsensitive)
+                        col= ' ' + columnName + ' ' + "COLLATE NOCASE DESC";
+                    else
+                        col= ' ' + columnName + ' ' + "DESC";
+                    list.append(col);
+                    }
+                else
+                    {
+                    // Default sort order
+                    QString col;
+                    if(s.caseSensitivity() == Qt::CaseInsensitive)
+                        col= ' ' + columnName + ' ' + "COLLATE NOCASE ASC";
+                    else
+                        col= ' ' + columnName + ' ' + "ASC";
+                    list.append(col);
+                    }
+                }
+            }
+        
+        if(list.count() > 0)
+            {
+            // Recreate query
+            // SELECT DISTINCT contact_id FROM contact WHERE contact_id in (
+            //      SELECT ..
+            // )  ORDER BY  <field> <order>
+            sortQuery = " SELECT DISTINCT contact_id FROM contact WHERE contact_id in (";
+            QString clause = " ORDER BY " + list.at(0);
+            for (int i = 1; i < list.size(); ++i)
+                {
+                clause += " ," + list.at(i);
+                }
+            sortQuery += selectQuery + ')';
+            sortQuery += clause;
+            }
+        }
+    
+    return sortQuery;
+}
+
 

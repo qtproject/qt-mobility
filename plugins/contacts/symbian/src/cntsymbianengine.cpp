@@ -167,11 +167,13 @@ QList<QContactLocalId> CntSymbianEngine::contactIds(
     
         // Remove possible false positives
         if(!filterSupported && *error == QContactManager::NotSupportedError)
+            {
             result = slowFilter(filter, result, error);
+            
+            //slow sorting until it's supported in SQL requests
+            result = slowSort(result, sortOrders, error);
+            }
         
-        //slow sorting until it's supported in SQL requests
-        result = slowSort(result, sortOrders, error);
-
 #else
         // Remove possible false positives
         if(!filterSupported && *error == QContactManager::NoError)
@@ -1019,8 +1021,8 @@ void CntSymbianEngine::performAsynchronousOperation()
                 QContactManager::Error tempError;
                 removeContact(contactsToRemove.at(i), changeSet, &tempError);
 
+                errorMap.insert(i, tempError);                
                 if (tempError != QContactManager::NoError) {
-                    errorMap.insert(i, tempError);
                     operationError = tempError;
                 }
             }
@@ -1044,8 +1046,8 @@ void CntSymbianEngine::performAsynchronousOperation()
                 QContactDetailDefinition current = detailDefinition(names.at(i), r->contactType(), &tempError);
                 requestedDefinitions.insert(names.at(i), current);
 
+                errorMap.insert(i, tempError);              
                 if (tempError != QContactManager::NoError) {
-                    errorMap.insert(i, tempError);
                     operationError = tempError;
                 }
             }
@@ -1098,19 +1100,15 @@ void CntSymbianEngine::performAsynchronousOperation()
             QList<QContactRelationship> relationshipsToRemove = r->relationships();
             QMap<int, QContactManager::Error> errorMap;
 
-            bool foundMatch = false;
             for (int i = 0; i < relationshipsToRemove.size(); i++) {
                 QContactManager::Error tempError;
                 removeRelationship(relationshipsToRemove.at(i), &tempError);
 
+                errorMap.insert(i, tempError);
                 if (tempError != QContactManager::NoError) {
-                    errorMap.insert(i, tempError);
                     operationError = tempError;
                 }
             }
-
-            if (foundMatch == false && operationError == QContactManager::NoError)
-                operationError = QContactManager::DoesNotExistError;
 
             updateRelationshipRemoveRequest(r, operationError, errorMap, QContactAbstractRequest::FinishedState);
         }
@@ -1130,8 +1128,8 @@ void CntSymbianEngine::performAsynchronousOperation()
                 saveRelationship(&current, &tempError);
                 savedRelationships.append(current);
 
+                errorMap.insert(i, tempError);
                 if (tempError != QContactManager::NoError) {
-                    errorMap.insert(i, tempError);
                     operationError = tempError;
                 }
             }

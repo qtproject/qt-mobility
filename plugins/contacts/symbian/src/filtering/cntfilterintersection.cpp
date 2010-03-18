@@ -45,7 +45,6 @@
 #include "cntfilterdefault.h"
 #include "cntfilterrelationship.h"
 #include "cnttransformcontact.h"
-#include "qcontactintersectionfilter.h"
 
 CntFilterIntersection::CntFilterIntersection(CContactDatabase& contactDatabase,CntSymbianSrvConnection &cntServer,CntDbInfo& dbInfo)
                          : m_contactdatabase(contactDatabase),
@@ -76,12 +75,13 @@ QList<QContactLocalId> CntFilterIntersection::contacts(
         return QList<QContactLocalId>();
         }
     QList<QContactLocalId> idList;
-   QString sqlQuery;
-    this->createSelectQuery( filter,sqlQuery,error) ;
+    QString sqlQuery;
+    createSelectQuery(filter,sqlQuery,error);
+    QString sortQuery = m_dbInfo.getSortQuery(sortOrders, sqlQuery, error);
     //fetch the contacts
     if(*error == QContactManager::NoError )
         {
-        idList =  m_srvConnection.searchContacts(sqlQuery, error);
+        idList =  m_srvConnection.searchContacts(sortQuery, error);
         }
     return idList;
 }
@@ -130,6 +130,7 @@ void CntFilterIntersection::createSelectQuery(const QContactFilter& filter,
         
             
 }
+
 void CntFilterIntersection::getSelectQueryforFilter(const QContactFilter& filter,QString& sqlSelectQuery,QContactManager::Error* error)
     {
     switch(filter.type())
@@ -152,6 +153,12 @@ void CntFilterIntersection::getSelectQueryforFilter(const QContactFilter& filter
                     CntFilterDetail dtlfltr(m_contactdatabase,m_srvConnection,m_dbInfo);
                     dtlfltr.createSelectQuery(filter,sqlSelectQuery,error);
                     }
+                break;
+                }
+            case QContactFilter::RelationshipFilter:
+                {
+                CntFilterRelationship relationfltr(m_contactdatabase,m_srvConnection,m_dbInfo);
+                relationfltr.createSelectQuery(filter,sqlSelectQuery,error);
                 break;
                 }
             case QContactFilter::IntersectionFilter:
