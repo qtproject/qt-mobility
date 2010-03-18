@@ -483,12 +483,6 @@ int QContactWinCEEngine::managerVersion() const
 }
 
 /*! \reimp */
-QString QContactWinCEEngine::managerUri() const
-{
-    return QString::fromLatin1("wince");
-}
-
-/*! \reimp */
 QList<QContact> QContactWinCEEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fetchHint, QContactManager::Error* error) const
 {
     QList<QContactLocalId> ids = contactIds(filter, sortOrders, error);
@@ -521,14 +515,15 @@ bool QContactWinCEEngine::removeRelationship(const QContactRelationship& relatio
 bool QContactWinCEEngine::saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
 {
     bool ret = true;
-    errorMap->clear();
+
     for (int j = 0; j < contacts->size(); j++) {
         if (!saveContact(&((*contacts)[j]), error)) {
             ret = false;
         }
-        errorMap->insert(j, *error);
+        if (*error != QContactManager::NoError) {
+            errorMap->insert(j, *error);
+        }
     }
-    
     return ret;
 }
 
@@ -536,10 +531,14 @@ bool QContactWinCEEngine::saveContacts(QList<QContact>* contacts, QMap<int, QCon
 bool QContactWinCEEngine::removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
 {
     bool ret = true;
-    errorMap->clear();
-    foreach (const QContactLocalId& id, contactIds) {
-        if (!removeContact(id, error)) {
+
+    for (int j = 0; j < contactIds.size(); j++) {
+        if (!removeContact(contactIds[j], error)) {
             ret = false;
+        }
+
+        if (*error != QContactManager::NoError) {
+            errorMap->insert(j, *error);
         }
     }
     return ret;

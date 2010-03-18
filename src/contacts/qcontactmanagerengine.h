@@ -62,6 +62,7 @@ QTM_BEGIN_NAMESPACE
 
 class QContactFilter;
 class QContactSortOrder;
+
 class Q_CONTACTS_EXPORT QContactManagerEngine : public QObject
 {
     Q_OBJECT
@@ -140,7 +141,7 @@ Q_SIGNALS:
     void relationshipsRemoved(const QList<QContactLocalId>& affectedContactIds);
     void selfContactIdChanged(const QContactLocalId& oldId, const QContactLocalId& newId);
 
-public:
+protected:
     // Async update functions
     static void updateRequestState(QContactAbstractRequest* req, QContactAbstractRequest::State state);
 
