@@ -96,6 +96,7 @@ private:
     QContactManager *m_manager;
     QContactLocalId m_contactId;
     QString m_newAvatarPath;
+    QImage m_thumbnail;
 };
 
 #endif // CONTACTEDITOR_H
