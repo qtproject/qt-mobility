@@ -46,6 +46,7 @@
 
 #include "qservicecontrol.h"
 #include "qservicetyperegister.h"
+#include "qservicepackage_p.h"
 #include <e32base.h>
 
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
@@ -54,35 +55,63 @@
 
 QTM_BEGIN_NAMESPACE
 
-// Need to migrate to clientservercommon.h
 const TUint KServerMajorVersionNumber = 1;
 const TUint KServerMinorVersionNumber = 0;
 const TUint KServerBuildVersionNumber = 0;
 
+enum TServiceProviderRequest
+{
+    EServicePackage = 1,
+    EPackageRequest = 2,
+    EPackageRequestCancel = 3,
+    EPackageRequestComplete = 4
+};
+
+
 // Forward declarations
 class ObjectEndPoint;
+class CServiceProviderServerSession;
+class CServiceProviderServer;
+class SymbianServerEndPoint;
+class SymbianClientEndPoint;
+
 // Type definitions
 typedef TPckgBuf<TInt> TError; 
 
+#ifdef QT_SFW_SYMBIAN_IPC_DEBUG
+void printServicePackage(const QServicePackage& package);
+#endif
+
+
 // Internal class handling the actual communication with the service provider.
 // Communication is based on standard Symbian client-server architecture.
-class RServiceSession : public RSessionBase
+class RServiceSession : public QObject, public RSessionBase
 {
-
+    Q_OBJECT
 public: 
     RServiceSession(QString address);
     TInt Connect(); 
     void Close();
     TVersion Version() const;
+    bool MessageAvailable();
+    void SendServicePackage(const QServicePackage& aPackage);
+
+    void ListenForPackages(TRequestStatus& aStatus); // TODO protected friend?
+    void CancelListenForPackages();
 
  public:
-    TPckgBuf<TInt> iState(); // TPckgBuf type can be used directly as IPC parameter
+    TBuf8<1455> iMessageFromServer; // TODO not necessarily enough (was 255)
+    TPckgBuf<TInt> iState; // TPckgBuf type can be used directly as IPC parameter
+
+signals:
+    // void ReadyRead();
+    void Disconnected(); // TODO not sure if this should be done like others
 
 private:
     TInt StartServer();
 
 private: 
-    TIpcArgs iArgs;
+    TIpcArgs iArgs; // These two are used in actively listening to server
     TError iError;
     QString iServerAddress;
 };
@@ -93,7 +122,7 @@ const TUint KDefaultHeapSize = 0x10000;
 class CServiceProviderServer : public CServer2
     {
     public:
-        CServiceProviderServer();
+        CServiceProviderServer(QServiceControlPrivate* aOwner);
         CSession2* NewSessionL(const TVersion& aVersion, const RMessage2& aMessage) const;
 
     public:
@@ -102,7 +131,9 @@ class CServiceProviderServer : public CServer2
         void DecreaseSessions();
 
     private:
+
         int iSessionCount;
+        QServiceControlPrivate* iOwner;
     };
 
 class CServiceProviderServerSession : public CSession2
@@ -112,6 +143,12 @@ class CServiceProviderServerSession : public CSession2
         static CServiceProviderServerSession* NewLC(CServiceProviderServer& aServer);
         virtual ~CServiceProviderServerSession();
         void ServiceL(const RMessage2& aMessage);
+        void SetParent(SymbianServerEndPoint* aOwner);
+        void SendServicePackage(const QServicePackage& aPackage);
+
+        TInt HandleServicePackageL(const RMessage2& aMessage);
+        void HandlePackageRequestL(const RMessage2& aMessage);
+        void HandlePackageRequestCancelL(const RMessage2& aMessage);
 
     private:
         CServiceProviderServerSession(CServiceProviderServer& aServer);
@@ -119,8 +156,10 @@ class CServiceProviderServerSession : public CSession2
 
     private:
         CServiceProviderServer& iServer;
+        SymbianServerEndPoint* iOwner;
         QByteArray* iByteArray;
-        RMessage2 iMsg;
+        RMessage2 iMsg; // For replying pending service package requests
+        TBool iPendingPackageRequest;
     };
 
 
@@ -132,6 +171,27 @@ public:
     QServiceControlPrivate(QObject* parent);
     void publishServices(const QString& ident );
     static QObject* proxyForService(const QServiceTypeIdent& typeId, const QString& location);
+    void processIncoming(CServiceProviderServerSession* session);
+};
+
+// A helper class that actively listens for serviceprovider messages.
+// Needed because Symbian server cannot send messages without active request
+// from the client.
+class ServiceMessageListener : public CActive
+{
+public:
+    ServiceMessageListener(RServiceSession* aSession, SymbianClientEndPoint* aOwner);
+    ~ServiceMessageListener();
+
+protected:
+    void StartListening();
+    // from CActive baseclass
+    void DoCancel();
+    void RunL();
+
+private:
+    RServiceSession* iClientSession;
+    SymbianClientEndPoint* iOwnerEndPoint;
 };
 
 QTM_END_NAMESPACE
