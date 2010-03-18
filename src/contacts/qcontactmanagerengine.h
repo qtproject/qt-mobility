@@ -182,9 +182,6 @@ protected:
 
     static QContactFilter canonicalizedFilter(const QContactFilter& filter);
 
-protected:
-    void setDetailAccessConstraints(QContactDetail* detail, QContactDetail::AccessConstraints constraints) const;
-
 private:
     /* QContactChangeSet is a utility class used to emit the appropriate signals */
     friend class QContactChangeSet;
