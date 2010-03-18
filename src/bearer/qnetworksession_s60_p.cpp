@@ -207,8 +207,16 @@ QVariant QNetworkSessionPrivate::sessionProperty(const QString& /*key*/) const
     return QVariant();
 }
 
-void QNetworkSessionPrivate::setSessionProperty(const QString& /*key*/, const QVariant& /*value*/)
+void QNetworkSessionPrivate::setSessionProperty(const QString& key, const QVariant& value)
 {
+    // Valid value means adding property, invalid means removing it.
+    if (key == "ConnectInBackground") {
+        if (value.isValid()) {
+            iConnectInBackground = value.toBool();
+        } else {
+            iConnectInBackground = EFalse;
+        }
+    }
 }
 
 QString QNetworkSessionPrivate::errorString() const
@@ -329,9 +337,21 @@ void QNetworkSessionPrivate::open()
             }
         }
         if (!connected) {
+#ifdef OCC_FUNCTIONALITY_AVAILABLE
+            // With One Click Connectivity (Symbian^3 onwards) it is possible
+            // to connect silently, without any popups.
+            TConnPrefList pref;
+            TExtendedConnPref prefs;
+            prefs.SetIapId(publicConfig.d.data()->numericId);
+            if (iConnectInBackground) {
+                prefs.SetNoteBehaviour( TExtendedConnPref::ENoteBehaviourConnSilent );
+            }
+            pref.AppendL(&prefs);
+#else
             TCommDbConnPref pref;
             pref.SetDialogPreference(ECommDbDialogPrefDoNotPrompt);
             pref.SetIapId(publicConfig.d.data()->numericId);
+#endif
             iConnection.Start(pref, iStatus);
             if (!IsActive()) {
                 SetActive();
@@ -339,7 +359,17 @@ void QNetworkSessionPrivate::open()
             newState(QNetworkSession::Connecting);
         }
     } else if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork) {
+#ifdef OCC_FUNCTIONALITY_AVAILABLE
+        TConnPrefList snapPref;
+        TExtendedConnPref prefs;
+        prefs.SetSnapId(publicConfig.d.data()->numericId);
+        if (iConnectInBackground) {
+            prefs.SetNoteBehaviour( TExtendedConnPref::ENoteBehaviourConnSilent );
+        }
+        snapPref.AppendL(&prefs);
+#else
         TConnSnapPref snapPref(publicConfig.d.data()->numericId);
+#endif
         iConnection.Start(snapPref, iStatus);
         if (!IsActive()) {
             SetActive();

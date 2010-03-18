@@ -19,6 +19,13 @@ SOURCES += qnetworksession.cpp \
            qnetworkconfiguration.cpp
 
 symbian: {
+    contains (occ_enabled, yes) {
+        message("Building with OCC enabled")
+        DEFINES += OCC_FUNCTIONALITY_AVAILABLE=1
+        LIBS += -lextendedconnpref
+    } else {
+        message("Building without OCC support")
+    }
     contains(snap_enabled, yes) {
         message("Building with SNAP support")
         DEFINES += SNAP_FUNCTIONALITY_AVAILABLE=1
