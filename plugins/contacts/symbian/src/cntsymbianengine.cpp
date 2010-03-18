@@ -142,7 +142,7 @@ QList<QContactLocalId> CntSymbianEngine::contactIds(
         QList<QContactRelationship> relationshipsList = relationships(
             rf.relationshipType(), rf.relatedContactId(), rf.relatedContactRole(), error);
         if(error == QContactManager::NoError) {
-            foreach(QContactRelationship r, relationshipsList) {
+            foreach(const QContactRelationship& r, relationshipsList) {
                 if(rf.relatedContactRole() == QContactRelationshipFilter::First) {
                     result += r.second().localId();
                 } else if (rf.relatedContactRole() == QContactRelationshipFilter::Second) {
@@ -152,21 +152,24 @@ QList<QContactLocalId> CntSymbianEngine::contactIds(
                     result += r.second().localId();
                 }
             }
+            
+            //slow sorting until it's supported in SQL requests
+            result = slowSort(result, sortOrders, error);
         }
     }
     else
     {
         bool filterSupported(true);
         result = m_contactFilter->contacts(filter, sortOrders, filterSupported, error);
-        
-        //slow sorting until it's supported in SQL requests
-        result = slowSort(result, sortOrders, error);
             
 #ifdef SYMBIAN_BACKEND_USE_SQLITE
     
         // Remove possible false positives
         if(!filterSupported && error == QContactManager::NotSupportedError)
             result = slowFilter(filter, result, error);
+        
+        //slow sorting until it's supported in SQL requests
+        result = slowSort(result, sortOrders, error);
 
 #else
         // Remove possible false positives

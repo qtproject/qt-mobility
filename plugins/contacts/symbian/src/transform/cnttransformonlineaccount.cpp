@@ -148,7 +148,9 @@ QList<CContactItemField *> CntTransformOnlineAccount::transformDetailL(const QCo
 
 QContactDetail *CntTransformOnlineAccount::transformItemField(const CContactItemField& field, const QContact &contact)
 {
-    QContactOnlineAccount *onlineAccount = new QContactOnlineAccount(contact.detail<QContactOnlineAccount>());
+    Q_UNUSED(contact);
+
+    QContactOnlineAccount *onlineAccount = new QContactOnlineAccount();
 	CContactTextField* storage = field.TextStorage();
 	QString onlineAccountString = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
 

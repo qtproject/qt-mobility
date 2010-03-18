@@ -21,7 +21,7 @@ symbian {
     DEPLOYMENT += pluginDep
 
     TARGET.EPOCALLOWDLLDATA = 1
-    TARGET.CAPABILITY = ALL -TCB
+    TARGET.CAPABILITY = LocalServices Location NetworkServices ReadUserData WriteUserData UserEnvironment
 }
 
 xml.path = $$DESTDIR/xmldata

@@ -10,10 +10,12 @@ contains(mobility_modules,serviceframework) {
             servicebrowser \
             sfwipcservice \
             sfwipcclient
-#            todotool
+
+    !symbian:SUBDIRS+= servicenotesmanager/sfw-notes
     
     contains(QT_CONFIG, declarative) {
-        SUBDIRS += declarative
+        SUBDIRS += servicenotesmanager/declarative-sfw-notes \
+                   declarative-sfw-dialer
     }
 }
 
@@ -65,14 +67,8 @@ contains(mobility_modules,multimedia) {
         player \
         cameracapture \
         slideshow \
-        streamplayer \
         audiorecorder
 
-    contains (QT_CONFIG, declarative) {
-        SUBDIRS += \
-            declarativemusic \
-            declarativevideo
-    }
 }
 
 

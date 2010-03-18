@@ -39,8 +39,9 @@
 **
 ****************************************************************************/
 
+#include <QtCore/qdebug.h>
 #include "s60mediacontainercontrol.h"
-#include "s60camerasession.h"
+#include "s60videocapturesession.h"
 
 S60MediaContainerControl::S60MediaContainerControl(QObject *parent)
     : QMediaContainerControl(parent)
@@ -50,28 +51,32 @@ S60MediaContainerControl::S60MediaContainerControl(QObject *parent)
 S60MediaContainerControl::S60MediaContainerControl(QObject *session, QObject *parent)
    : QMediaContainerControl(parent)
 {
-    m_session = qobject_cast<S60CameraSession*>(session);
+    m_session = qobject_cast<S60VideoCaptureSession*>(session);
 
-    m_supportedContainers = m_session->supportedVideoCaptureCodecs();
-    setContainerMimeType(m_supportedContainers[0]);
-
+    m_supportedContainers = m_session->supportedVideoContainers();
+    if (!m_supportedContainers.isEmpty())
+        setContainerMimeType(m_supportedContainers[0]);
+    else
+        setContainerMimeType("video/mp4");
 }
+
 QStringList S60MediaContainerControl::supportedContainers() const
 {
-    //return m_session->supportedVideoCaptureCodecs();
-    return m_supportedContainers;
+    return m_session->supportedVideoContainers();
 }
+
 QString S60MediaContainerControl::containerMimeType() const
-{
-    return m_containerMimeType;
+{    
+    return m_session->videoContainer();    
 }
+
 void S60MediaContainerControl::setContainerMimeType(const QString &containerMimeType)
 {
-    m_containerMimeType = containerMimeType;
+    m_session->setVideoContainer(containerMimeType);
 }
+
 QString S60MediaContainerControl::containerDescription(const QString &containerMimeType) const
 {
-    return m_session->videoCaptureCodecDescription(containerMimeType);
-    //return m_containerDescriptions.value(containerMimeType);
+    return m_session->videoContainerDescription(containerMimeType);
 }
 

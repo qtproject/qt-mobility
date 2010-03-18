@@ -56,6 +56,7 @@ public:
     n900proximitysensor(QSensor *sensor);
 
     void poll();
+    void start();
 
 private:
     QProximityReading m_reading;

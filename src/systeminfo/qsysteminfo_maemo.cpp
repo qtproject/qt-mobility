@@ -101,9 +101,9 @@ QStringList QSystemInfoPrivate::availableLanguages() const
     QStringList languages;
 
     GConfItem languagesItem("/apps/osso/inputmethod/available_languages");
-    QStringList locales = languagesItem.value().toStringList();
+    const QStringList locales = languagesItem.value().toStringList();
 
-    foreach(QString locale, locales) {
+    foreach(const QString locale, locales) {
         languages << locale.mid(0,2);
     }
     languages << currentLanguage();
@@ -149,9 +149,9 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     case QSystemInfo::SimFeature :
         {
             GConfItem locationValues("/system/nokia/location");
-            QStringList locationKeys = locationValues.listEntries();
+            const QStringList locationKeys = locationValues.listEntries();
 
-            foreach (QString str, locationKeys) {
+            foreach (const QString str, locationKeys) {
                 if (str.contains("sim_imsi"))
                     featureSupported = true;
                 break;
@@ -161,7 +161,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     case QSystemInfo::LocationFeature :
         {
             GConfItem locationValues("/system/nokia/location");
-            QStringList locationKeys = locationValues.listEntries();
+            const QStringList locationKeys = locationValues.listEntries();
             if(locationKeys.count()) {
                 featureSupported = true;
             }
@@ -169,11 +169,11 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::VideoOutFeature :
         {
-            QString sysPath = "/sys/class/video4linux/";
-            QDir sysDir(sysPath);
+            const QString sysPath = "/sys/class/video4linux/";
+            const QDir sysDir(sysPath);
             QStringList filters;
             filters << "*";
-            QStringList sysList = sysDir.entryList( filters ,QDir::Dirs, QDir::Name);
+            const QStringList sysList = sysDir.entryList( filters ,QDir::Dirs, QDir::Name);
             if(sysList.contains("video0")) {
                 featureSupported = true;
             }
@@ -183,7 +183,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         {
            // if(halIsAvailable) {
                 QHalInterface iface;
-                QStringList touchSupport =
+                const QStringList touchSupport =
                         iface.findDeviceByCapability("input.touchpad");
                 if(touchSupport.count()) {
                     featureSupported = true;
@@ -345,6 +345,11 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
     return QNetworkInterface();
 }
 
+QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
+{
+    return QSystemNetworkInfo::UnknownMode;
+}
+
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent)
         : QSystemDisplayInfoLinuxCommonPrivate(parent)
 {
@@ -468,10 +473,10 @@ QString QSystemDeviceInfoPrivate::imsi()
 QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 {
     GConfItem locationValues("/system/nokia/location");
-    QStringList locationKeys = locationValues.listEntries();
+    const QStringList locationKeys = locationValues.listEntries();
     QStringList result;
     int count = 0;
-    foreach (QString str, locationKeys) {
+    foreach (const QString str, locationKeys) {
         if (str.contains("sim_imsi"))
             count++;
     }
@@ -507,9 +512,9 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 {
 #if !defined(QT_NO_DBUS)
         QHalInterface iface;
-        QStringList list = iface.findDeviceByCapability("battery");
+        const QStringList list = iface.findDeviceByCapability("battery");
         if(!list.isEmpty()) {
-            foreach(QString dev, list) {
+            foreach(const QString dev, list) {
                 QHalDeviceInterface ifaceDevice(dev);
                 if (iface.isValid()) {
                     if (ifaceDevice.getPropertyString("maemo.charger.connection_status") == "connected") {
@@ -641,10 +646,10 @@ void QSystemDeviceInfoPrivate::deviceModeChanged(QString newMode)
 
 void QSystemDeviceInfoPrivate::profileChanged(bool changed, bool active, QString profile, QList<ProfileDataValue> values)
 {
-    QSystemDeviceInfo::Profile previousProfile = currentProfile();
+    const QSystemDeviceInfo::Profile previousProfile = currentProfile();
 
     profileName = profile;
-    foreach (ProfileDataValue value, values) {
+    foreach (const ProfileDataValue value, values) {
         if (value.key == "ringing.alert.type")
             silentProfile = value.val == "silent";
         else if (value.key == "vibrating.alert.enabled")

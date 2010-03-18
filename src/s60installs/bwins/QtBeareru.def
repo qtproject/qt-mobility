@@ -1,80 +1,79 @@
 EXPORTS
-	??0QNetworkConfiguration@QtMobility@@QAE@ABV01@@Z @ 1 NONAME ; QtMobility::QNetworkConfiguration::QNetworkConfiguration(class QtMobility::QNetworkConfiguration const &)
-	??0QNetworkConfiguration@QtMobility@@QAE@XZ @ 2 NONAME ; QtMobility::QNetworkConfiguration::QNetworkConfiguration(void)
-	??0QNetworkConfigurationManager@QtMobility@@QAE@PAVQObject@@@Z @ 3 NONAME ; QtMobility::QNetworkConfigurationManager::QNetworkConfigurationManager(class QObject *)
-	??0QNetworkSession@QtMobility@@QAE@ABVQNetworkConfiguration@1@PAVQObject@@@Z @ 4 NONAME ; QtMobility::QNetworkSession::QNetworkSession(class QtMobility::QNetworkConfiguration const &, class QObject *)
-	??1QNetworkConfiguration@QtMobility@@QAE@XZ @ 5 NONAME ; QtMobility::QNetworkConfiguration::~QNetworkConfiguration(void)
-	??1QNetworkConfigurationManager@QtMobility@@UAE@XZ @ 6 NONAME ; QtMobility::QNetworkConfigurationManager::~QNetworkConfigurationManager(void)
-	??1QNetworkSession@QtMobility@@UAE@XZ @ 7 NONAME ; QtMobility::QNetworkSession::~QNetworkSession(void)
-	??4QNetworkConfiguration@QtMobility@@QAEAAV01@ABV01@@Z @ 8 NONAME ; class QtMobility::QNetworkConfiguration & QtMobility::QNetworkConfiguration::operator=(class QtMobility::QNetworkConfiguration const &)
-	??8QNetworkConfiguration@QtMobility@@QBE_NABV01@@Z @ 9 NONAME ; bool QtMobility::QNetworkConfiguration::operator==(class QtMobility::QNetworkConfiguration const &) const
-	??9QNetworkConfiguration@QtMobility@@QBE_NABV01@@Z @ 10 NONAME ; bool QtMobility::QNetworkConfiguration::operator!=(class QtMobility::QNetworkConfiguration const &) const
-	??_EQNetworkConfiguration@QtMobility@@QAE@I@Z @ 11 NONAME ; QtMobility::QNetworkConfiguration::~QNetworkConfiguration(unsigned int)
-	??_EQNetworkConfigurationManager@QtMobility@@UAE@I@Z @ 12 NONAME ; QtMobility::QNetworkConfigurationManager::~QNetworkConfigurationManager(unsigned int)
-	??_EQNetworkSession@QtMobility@@UAE@I@Z @ 13 NONAME ; QtMobility::QNetworkSession::~QNetworkSession(unsigned int)
-	?accept@QNetworkSession@QtMobility@@QAEXXZ @ 14 NONAME ; void QtMobility::QNetworkSession::accept(void)
-	?activeTime@QNetworkSession@QtMobility@@QBE_KXZ @ 15 NONAME ; unsigned long long QtMobility::QNetworkSession::activeTime(void) const
-	?allConfigurations@QNetworkConfigurationManager@QtMobility@@QBE?AV?$QList@VQNetworkConfiguration@QtMobility@@@@V?$QFlags@W4StateFlag@QNetworkConfiguration@QtMobility@@@@@Z @ 16 NONAME ; class QList<class QtMobility::QNetworkConfiguration> QtMobility::QNetworkConfigurationManager::allConfigurations(class QFlags<enum QtMobility::QNetworkConfiguration::StateFlag>) const
-	?bearerName@QNetworkConfiguration@QtMobility@@QBE?AVQString@@XZ @ 17 NONAME ; class QString QtMobility::QNetworkConfiguration::bearerName(void) const
-	?bytesReceived@QNetworkSession@QtMobility@@QBE_KXZ @ 18 NONAME ; unsigned long long QtMobility::QNetworkSession::bytesReceived(void) const
-	?bytesWritten@QNetworkSession@QtMobility@@QBE_KXZ @ 19 NONAME ; unsigned long long QtMobility::QNetworkSession::bytesWritten(void) const
-	?capabilities@QNetworkConfigurationManager@QtMobility@@QBE?AV?$QFlags@W4Capability@QNetworkConfigurationManager@QtMobility@@@@XZ @ 20 NONAME ; class QFlags<enum QtMobility::QNetworkConfigurationManager::Capability> QtMobility::QNetworkConfigurationManager::capabilities(void) const
-	?children@QNetworkConfiguration@QtMobility@@QBE?AV?$QList@VQNetworkConfiguration@QtMobility@@@@XZ @ 21 NONAME ; class QList<class QtMobility::QNetworkConfiguration> QtMobility::QNetworkConfiguration::children(void) const
-	?close@QNetworkSession@QtMobility@@QAEXXZ @ 22 NONAME ; void QtMobility::QNetworkSession::close(void)
-	?closed@QNetworkSession@QtMobility@@IAEXXZ @ 23 NONAME ; void QtMobility::QNetworkSession::closed(void)
-	?configuration@QNetworkSession@QtMobility@@QBE?AVQNetworkConfiguration@2@XZ @ 24 NONAME ; class QtMobility::QNetworkConfiguration QtMobility::QNetworkSession::configuration(void) const
-	?configurationAdded@QNetworkConfigurationManager@QtMobility@@IAEXABVQNetworkConfiguration@2@@Z @ 25 NONAME ; void QtMobility::QNetworkConfigurationManager::configurationAdded(class QtMobility::QNetworkConfiguration const &)
-	?configurationChanged@QNetworkConfigurationManager@QtMobility@@IAEXABVQNetworkConfiguration@2@@Z @ 26 NONAME ; void QtMobility::QNetworkConfigurationManager::configurationChanged(class QtMobility::QNetworkConfiguration const &)
-	?configurationFromIdentifier@QNetworkConfigurationManager@QtMobility@@QBE?AVQNetworkConfiguration@2@ABVQString@@@Z @ 27 NONAME ; class QtMobility::QNetworkConfiguration QtMobility::QNetworkConfigurationManager::configurationFromIdentifier(class QString const &) const
-	?configurationRemoved@QNetworkConfigurationManager@QtMobility@@IAEXABVQNetworkConfiguration@2@@Z @ 28 NONAME ; void QtMobility::QNetworkConfigurationManager::configurationRemoved(class QtMobility::QNetworkConfiguration const &)
-	?connectNotify@QNetworkSession@QtMobility@@MAEXPBD@Z @ 29 NONAME ; void QtMobility::QNetworkSession::connectNotify(char const *)
-	?defaultConfiguration@QNetworkConfigurationManager@QtMobility@@QBE?AVQNetworkConfiguration@2@XZ @ 30 NONAME ; class QtMobility::QNetworkConfiguration QtMobility::QNetworkConfigurationManager::defaultConfiguration(void) const
-	?disconnectNotify@QNetworkSession@QtMobility@@MAEXPBD@Z @ 31 NONAME ; void QtMobility::QNetworkSession::disconnectNotify(char const *)
-	?error@QNetworkSession@QtMobility@@IAEXW4SessionError@12@@Z @ 32 NONAME ; void QtMobility::QNetworkSession::error(enum QtMobility::QNetworkSession::SessionError)
-	?error@QNetworkSession@QtMobility@@QBE?AW4SessionError@12@XZ @ 33 NONAME ; enum QtMobility::QNetworkSession::SessionError QtMobility::QNetworkSession::error(void) const
-	?errorString@QNetworkSession@QtMobility@@QBE?AVQString@@XZ @ 34 NONAME ; class QString QtMobility::QNetworkSession::errorString(void) const
-	?getStaticMetaObject@QNetworkConfigurationManager@QtMobility@@SAABUQMetaObject@@XZ @ 35 NONAME ; struct QMetaObject const & QtMobility::QNetworkConfigurationManager::getStaticMetaObject(void)
-	?getStaticMetaObject@QNetworkSession@QtMobility@@SAABUQMetaObject@@XZ @ 36 NONAME ; struct QMetaObject const & QtMobility::QNetworkSession::getStaticMetaObject(void)
-	?identifier@QNetworkConfiguration@QtMobility@@QBE?AVQString@@XZ @ 37 NONAME ; class QString QtMobility::QNetworkConfiguration::identifier(void) const
-	?ignore@QNetworkSession@QtMobility@@QAEXXZ @ 38 NONAME ; void QtMobility::QNetworkSession::ignore(void)
-	?interface@QNetworkSession@QtMobility@@QBE?AVQNetworkInterface@@XZ @ 39 NONAME ; class QNetworkInterface QtMobility::QNetworkSession::interface(void) const
-	?isOnline@QNetworkConfigurationManager@QtMobility@@QBE_NXZ @ 40 NONAME ; bool QtMobility::QNetworkConfigurationManager::isOnline(void) const
-	?isOpen@QNetworkSession@QtMobility@@QBE_NXZ @ 41 NONAME ; bool QtMobility::QNetworkSession::isOpen(void) const
-	?isRoamingAvailable@QNetworkConfiguration@QtMobility@@QBE_NXZ @ 42 NONAME ; bool QtMobility::QNetworkConfiguration::isRoamingAvailable(void) const
-	?isValid@QNetworkConfiguration@QtMobility@@QBE_NXZ @ 43 NONAME ; bool QtMobility::QNetworkConfiguration::isValid(void) const
-	?metaObject@QNetworkConfigurationManager@QtMobility@@UBEPBUQMetaObject@@XZ @ 44 NONAME ; struct QMetaObject const * QtMobility::QNetworkConfigurationManager::metaObject(void) const
-	?metaObject@QNetworkSession@QtMobility@@UBEPBUQMetaObject@@XZ @ 45 NONAME ; struct QMetaObject const * QtMobility::QNetworkSession::metaObject(void) const
-	?migrate@QNetworkSession@QtMobility@@QAEXXZ @ 46 NONAME ; void QtMobility::QNetworkSession::migrate(void)
-	?name@QNetworkConfiguration@QtMobility@@QBE?AVQString@@XZ @ 47 NONAME ; class QString QtMobility::QNetworkConfiguration::name(void) const
-	?newConfigurationActivated@QNetworkSession@QtMobility@@IAEXXZ @ 48 NONAME ; void QtMobility::QNetworkSession::newConfigurationActivated(void)
-	?onlineStateChanged@QNetworkConfigurationManager@QtMobility@@IAEX_N@Z @ 49 NONAME ; void QtMobility::QNetworkConfigurationManager::onlineStateChanged(bool)
-	?open@QNetworkSession@QtMobility@@QAEXXZ @ 50 NONAME ; void QtMobility::QNetworkSession::open(void)
-	?opened@QNetworkSession@QtMobility@@IAEXXZ @ 51 NONAME ; void QtMobility::QNetworkSession::opened(void)
-	?preferredConfigurationChanged@QNetworkSession@QtMobility@@IAEXABVQNetworkConfiguration@2@_N@Z @ 52 NONAME ; void QtMobility::QNetworkSession::preferredConfigurationChanged(class QtMobility::QNetworkConfiguration const &, bool)
-	?purpose@QNetworkConfiguration@QtMobility@@QBE?AW4Purpose@12@XZ @ 53 NONAME ; enum QtMobility::QNetworkConfiguration::Purpose QtMobility::QNetworkConfiguration::purpose(void) const
-	?qt_metacall@QNetworkConfigurationManager@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 54 NONAME ; int QtMobility::QNetworkConfigurationManager::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QNetworkSession@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 55 NONAME ; int QtMobility::QNetworkSession::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacast@QNetworkConfigurationManager@QtMobility@@UAEPAXPBD@Z @ 56 NONAME ; void * QtMobility::QNetworkConfigurationManager::qt_metacast(char const *)
-	?qt_metacast@QNetworkSession@QtMobility@@UAEPAXPBD@Z @ 57 NONAME ; void * QtMobility::QNetworkSession::qt_metacast(char const *)
-	?reject@QNetworkSession@QtMobility@@QAEXXZ @ 58 NONAME ; void QtMobility::QNetworkSession::reject(void)
-	?sessionProperty@QNetworkSession@QtMobility@@QBE?AVQVariant@@ABVQString@@@Z @ 59 NONAME ; class QVariant QtMobility::QNetworkSession::sessionProperty(class QString const &) const
-	?setSessionProperty@QNetworkSession@QtMobility@@QAEXABVQString@@ABVQVariant@@@Z @ 60 NONAME ; void QtMobility::QNetworkSession::setSessionProperty(class QString const &, class QVariant const &)
-	?state@QNetworkConfiguration@QtMobility@@QBE?AV?$QFlags@W4StateFlag@QNetworkConfiguration@QtMobility@@@@XZ @ 61 NONAME ; class QFlags<enum QtMobility::QNetworkConfiguration::StateFlag> QtMobility::QNetworkConfiguration::state(void) const
-	?state@QNetworkSession@QtMobility@@QBE?AW4State@12@XZ @ 62 NONAME ; enum QtMobility::QNetworkSession::State QtMobility::QNetworkSession::state(void) const
-	?stateChanged@QNetworkSession@QtMobility@@IAEXW4State@12@@Z @ 63 NONAME ; void QtMobility::QNetworkSession::stateChanged(enum QtMobility::QNetworkSession::State)
-	?stop@QNetworkSession@QtMobility@@QAEXXZ @ 64 NONAME ; void QtMobility::QNetworkSession::stop(void)
-	?tr@QNetworkConfigurationManager@QtMobility@@SA?AVQString@@PBD0@Z @ 65 NONAME ; class QString QtMobility::QNetworkConfigurationManager::tr(char const *, char const *)
-	?tr@QNetworkConfigurationManager@QtMobility@@SA?AVQString@@PBD0H@Z @ 66 NONAME ; class QString QtMobility::QNetworkConfigurationManager::tr(char const *, char const *, int)
-	?tr@QNetworkSession@QtMobility@@SA?AVQString@@PBD0@Z @ 67 NONAME ; class QString QtMobility::QNetworkSession::tr(char const *, char const *)
-	?tr@QNetworkSession@QtMobility@@SA?AVQString@@PBD0H@Z @ 68 NONAME ; class QString QtMobility::QNetworkSession::tr(char const *, char const *, int)
-	?trUtf8@QNetworkConfigurationManager@QtMobility@@SA?AVQString@@PBD0@Z @ 69 NONAME ; class QString QtMobility::QNetworkConfigurationManager::trUtf8(char const *, char const *)
-	?trUtf8@QNetworkConfigurationManager@QtMobility@@SA?AVQString@@PBD0H@Z @ 70 NONAME ; class QString QtMobility::QNetworkConfigurationManager::trUtf8(char const *, char const *, int)
-	?trUtf8@QNetworkSession@QtMobility@@SA?AVQString@@PBD0@Z @ 71 NONAME ; class QString QtMobility::QNetworkSession::trUtf8(char const *, char const *)
-	?trUtf8@QNetworkSession@QtMobility@@SA?AVQString@@PBD0H@Z @ 72 NONAME ; class QString QtMobility::QNetworkSession::trUtf8(char const *, char const *, int)
-	?type@QNetworkConfiguration@QtMobility@@QBE?AW4Type@12@XZ @ 73 NONAME ; enum QtMobility::QNetworkConfiguration::Type QtMobility::QNetworkConfiguration::type(void) const
-	?updateCompleted@QNetworkConfigurationManager@QtMobility@@IAEXXZ @ 74 NONAME ; void QtMobility::QNetworkConfigurationManager::updateCompleted(void)
-	?updateConfigurations@QNetworkConfigurationManager@QtMobility@@QAEXXZ @ 75 NONAME ; void QtMobility::QNetworkConfigurationManager::updateConfigurations(void)
-	?waitForOpened@QNetworkSession@QtMobility@@QAE_NH@Z @ 76 NONAME ; bool QtMobility::QNetworkSession::waitForOpened(int)
-	?staticMetaObject@QNetworkConfigurationManager@QtMobility@@2UQMetaObject@@B @ 77 NONAME ; struct QMetaObject const QtMobility::QNetworkConfigurationManager::staticMetaObject
-	?staticMetaObject@QNetworkSession@QtMobility@@2UQMetaObject@@B @ 78 NONAME ; struct QMetaObject const QtMobility::QNetworkSession::staticMetaObject
+	?getStaticMetaObject@QNetworkConfigurationManager@QtMobility@@SAABUQMetaObject@@XZ @ 1 NONAME ; struct QMetaObject const & QtMobility::QNetworkConfigurationManager::getStaticMetaObject(void)
+	?open@QNetworkSession@QtMobility@@QAEXXZ @ 2 NONAME ; void QtMobility::QNetworkSession::open(void)
+	?qt_metacall@QNetworkSession@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 3 NONAME ; int QtMobility::QNetworkSession::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?getStaticMetaObject@QNetworkSession@QtMobility@@SAABUQMetaObject@@XZ @ 4 NONAME ; struct QMetaObject const & QtMobility::QNetworkSession::getStaticMetaObject(void)
+	?trUtf8@QNetworkConfigurationManager@QtMobility@@SA?AVQString@@PBD0@Z @ 5 NONAME ; class QString QtMobility::QNetworkConfigurationManager::trUtf8(char const *, char const *)
+	?bytesReceived@QNetworkSession@QtMobility@@QBE_KXZ @ 6 NONAME ; unsigned long long QtMobility::QNetworkSession::bytesReceived(void) const
+	?stateChanged@QNetworkSession@QtMobility@@IAEXW4State@12@@Z @ 7 NONAME ; void QtMobility::QNetworkSession::stateChanged(enum QtMobility::QNetworkSession::State)
+	?trUtf8@QNetworkSession@QtMobility@@SA?AVQString@@PBD0@Z @ 8 NONAME ; class QString QtMobility::QNetworkSession::trUtf8(char const *, char const *)
+	?sessionProperty@QNetworkSession@QtMobility@@QBE?AVQVariant@@ABVQString@@@Z @ 9 NONAME ; class QVariant QtMobility::QNetworkSession::sessionProperty(class QString const &) const
+	?configuration@QNetworkSession@QtMobility@@QBE?AVQNetworkConfiguration@2@XZ @ 10 NONAME ; class QtMobility::QNetworkConfiguration QtMobility::QNetworkSession::configuration(void) const
+	?waitForOpened@QNetworkSession@QtMobility@@QAE_NH@Z @ 11 NONAME ; bool QtMobility::QNetworkSession::waitForOpened(int)
+	?type@QNetworkConfiguration@QtMobility@@QBE?AW4Type@12@XZ @ 12 NONAME ; enum QtMobility::QNetworkConfiguration::Type QtMobility::QNetworkConfiguration::type(void) const
+	?error@QNetworkSession@QtMobility@@IAEXW4SessionError@12@@Z @ 13 NONAME ; void QtMobility::QNetworkSession::error(enum QtMobility::QNetworkSession::SessionError)
+	?identifier@QNetworkConfiguration@QtMobility@@QBE?AVQString@@XZ @ 14 NONAME ; class QString QtMobility::QNetworkConfiguration::identifier(void) const
+	?connectNotify@QNetworkSession@QtMobility@@MAEXPBD@Z @ 15 NONAME ; void QtMobility::QNetworkSession::connectNotify(char const *)
+	?configurationAdded@QNetworkConfigurationManager@QtMobility@@IAEXABVQNetworkConfiguration@2@@Z @ 16 NONAME ; void QtMobility::QNetworkConfigurationManager::configurationAdded(class QtMobility::QNetworkConfiguration const &)
+	?interface@QNetworkSession@QtMobility@@QBE?AVQNetworkInterface@@XZ @ 17 NONAME ; class QNetworkInterface QtMobility::QNetworkSession::interface(void) const
+	?closed@QNetworkSession@QtMobility@@IAEXXZ @ 18 NONAME ; void QtMobility::QNetworkSession::closed(void)
+	?updateCompleted@QNetworkConfigurationManager@QtMobility@@IAEXXZ @ 19 NONAME ; void QtMobility::QNetworkConfigurationManager::updateCompleted(void)
+	?preferredConfigurationChanged@QNetworkSession@QtMobility@@IAEXABVQNetworkConfiguration@2@_N@Z @ 20 NONAME ; void QtMobility::QNetworkSession::preferredConfigurationChanged(class QtMobility::QNetworkConfiguration const &, bool)
+	?name@QNetworkConfiguration@QtMobility@@QBE?AVQString@@XZ @ 21 NONAME ; class QString QtMobility::QNetworkConfiguration::name(void) const
+	??8QNetworkConfiguration@QtMobility@@QBE_NABV01@@Z @ 22 NONAME ; bool QtMobility::QNetworkConfiguration::operator==(class QtMobility::QNetworkConfiguration const &) const
+	?trUtf8@QNetworkConfigurationManager@QtMobility@@SA?AVQString@@PBD0H@Z @ 23 NONAME ; class QString QtMobility::QNetworkConfigurationManager::trUtf8(char const *, char const *, int)
+	?ignore@QNetworkSession@QtMobility@@QAEXXZ @ 24 NONAME ; void QtMobility::QNetworkSession::ignore(void)
+	??0QNetworkSession@QtMobility@@QAE@ABVQNetworkConfiguration@1@PAVQObject@@@Z @ 25 NONAME ; QtMobility::QNetworkSession::QNetworkSession(class QtMobility::QNetworkConfiguration const &, class QObject *)
+	?bytesWritten@QNetworkSession@QtMobility@@QBE_KXZ @ 26 NONAME ; unsigned long long QtMobility::QNetworkSession::bytesWritten(void) const
+	?isOpen@QNetworkSession@QtMobility@@QBE_NXZ @ 27 NONAME ; bool QtMobility::QNetworkSession::isOpen(void) const
+	?tr@QNetworkSession@QtMobility@@SA?AVQString@@PBD0H@Z @ 28 NONAME ; class QString QtMobility::QNetworkSession::tr(char const *, char const *, int)
+	??0QNetworkConfiguration@QtMobility@@QAE@XZ @ 29 NONAME ; QtMobility::QNetworkConfiguration::QNetworkConfiguration(void)
+	?state@QNetworkConfiguration@QtMobility@@QBE?AV?$QFlags@W4StateFlag@QNetworkConfiguration@QtMobility@@@@XZ @ 30 NONAME ; class QFlags<enum QtMobility::QNetworkConfiguration::StateFlag> QtMobility::QNetworkConfiguration::state(void) const
+	?children@QNetworkConfiguration@QtMobility@@QBE?AV?$QList@VQNetworkConfiguration@QtMobility@@@@XZ @ 31 NONAME ; class QList<class QtMobility::QNetworkConfiguration> QtMobility::QNetworkConfiguration::children(void) const
+	?isValid@QNetworkConfiguration@QtMobility@@QBE_NXZ @ 32 NONAME ; bool QtMobility::QNetworkConfiguration::isValid(void) const
+	?activeTime@QNetworkSession@QtMobility@@QBE_KXZ @ 33 NONAME ; unsigned long long QtMobility::QNetworkSession::activeTime(void) const
+	??_EQNetworkSession@QtMobility@@UAE@I@Z @ 34 NONAME ; QtMobility::QNetworkSession::~QNetworkSession(unsigned int)
+	?disconnectNotify@QNetworkSession@QtMobility@@MAEXPBD@Z @ 35 NONAME ; void QtMobility::QNetworkSession::disconnectNotify(char const *)
+	?purpose@QNetworkConfiguration@QtMobility@@QBE?AW4Purpose@12@XZ @ 36 NONAME ; enum QtMobility::QNetworkConfiguration::Purpose QtMobility::QNetworkConfiguration::purpose(void) const
+	?migrate@QNetworkSession@QtMobility@@QAEXXZ @ 37 NONAME ; void QtMobility::QNetworkSession::migrate(void)
+	?isRoamingAvailable@QNetworkConfiguration@QtMobility@@QBE_NXZ @ 38 NONAME ; bool QtMobility::QNetworkConfiguration::isRoamingAvailable(void) const
+	?trUtf8@QNetworkSession@QtMobility@@SA?AVQString@@PBD0H@Z @ 39 NONAME ; class QString QtMobility::QNetworkSession::trUtf8(char const *, char const *, int)
+	?bearerName@QNetworkConfiguration@QtMobility@@QBE?AVQString@@XZ @ 40 NONAME ; class QString QtMobility::QNetworkConfiguration::bearerName(void) const
+	??0QNetworkConfigurationManager@QtMobility@@QAE@PAVQObject@@@Z @ 41 NONAME ; QtMobility::QNetworkConfigurationManager::QNetworkConfigurationManager(class QObject *)
+	?tr@QNetworkSession@QtMobility@@SA?AVQString@@PBD0@Z @ 42 NONAME ; class QString QtMobility::QNetworkSession::tr(char const *, char const *)
+	?onlineStateChanged@QNetworkConfigurationManager@QtMobility@@IAEX_N@Z @ 43 NONAME ; void QtMobility::QNetworkConfigurationManager::onlineStateChanged(bool)
+	?opened@QNetworkSession@QtMobility@@IAEXXZ @ 44 NONAME ; void QtMobility::QNetworkSession::opened(void)
+	?configurationFromIdentifier@QNetworkConfigurationManager@QtMobility@@QBE?AVQNetworkConfiguration@2@ABVQString@@@Z @ 45 NONAME ; class QtMobility::QNetworkConfiguration QtMobility::QNetworkConfigurationManager::configurationFromIdentifier(class QString const &) const
+	??4QNetworkConfiguration@QtMobility@@QAEAAV01@ABV01@@Z @ 46 NONAME ; class QtMobility::QNetworkConfiguration & QtMobility::QNetworkConfiguration::operator=(class QtMobility::QNetworkConfiguration const &)
+	?setSessionProperty@QNetworkSession@QtMobility@@QAEXABVQString@@ABVQVariant@@@Z @ 47 NONAME ; void QtMobility::QNetworkSession::setSessionProperty(class QString const &, class QVariant const &)
+	?staticMetaObject@QNetworkConfigurationManager@QtMobility@@2UQMetaObject@@B @ 48 NONAME ; struct QMetaObject const QtMobility::QNetworkConfigurationManager::staticMetaObject
+	?configurationChanged@QNetworkConfigurationManager@QtMobility@@IAEXABVQNetworkConfiguration@2@@Z @ 49 NONAME ; void QtMobility::QNetworkConfigurationManager::configurationChanged(class QtMobility::QNetworkConfiguration const &)
+	??9QNetworkConfiguration@QtMobility@@QBE_NABV01@@Z @ 50 NONAME ; bool QtMobility::QNetworkConfiguration::operator!=(class QtMobility::QNetworkConfiguration const &) const
+	??1QNetworkConfiguration@QtMobility@@QAE@XZ @ 51 NONAME ; QtMobility::QNetworkConfiguration::~QNetworkConfiguration(void)
+	?tr@QNetworkConfigurationManager@QtMobility@@SA?AVQString@@PBD0H@Z @ 52 NONAME ; class QString QtMobility::QNetworkConfigurationManager::tr(char const *, char const *, int)
+	?reject@QNetworkSession@QtMobility@@QAEXXZ @ 53 NONAME ; void QtMobility::QNetworkSession::reject(void)
+	?capabilities@QNetworkConfigurationManager@QtMobility@@QBE?AV?$QFlags@W4Capability@QNetworkConfigurationManager@QtMobility@@@@XZ @ 54 NONAME ; class QFlags<enum QtMobility::QNetworkConfigurationManager::Capability> QtMobility::QNetworkConfigurationManager::capabilities(void) const
+	?newConfigurationActivated@QNetworkSession@QtMobility@@IAEXXZ @ 55 NONAME ; void QtMobility::QNetworkSession::newConfigurationActivated(void)
+	??_EQNetworkConfigurationManager@QtMobility@@UAE@I@Z @ 56 NONAME ; QtMobility::QNetworkConfigurationManager::~QNetworkConfigurationManager(unsigned int)
+	?tr@QNetworkConfigurationManager@QtMobility@@SA?AVQString@@PBD0@Z @ 57 NONAME ; class QString QtMobility::QNetworkConfigurationManager::tr(char const *, char const *)
+	?qt_metacall@QNetworkConfigurationManager@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 58 NONAME ; int QtMobility::QNetworkConfigurationManager::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?updateConfigurations@QNetworkConfigurationManager@QtMobility@@QAEXXZ @ 59 NONAME ; void QtMobility::QNetworkConfigurationManager::updateConfigurations(void)
+	?qt_metacast@QNetworkConfigurationManager@QtMobility@@UAEPAXPBD@Z @ 60 NONAME ; void * QtMobility::QNetworkConfigurationManager::qt_metacast(char const *)
+	?close@QNetworkSession@QtMobility@@QAEXXZ @ 61 NONAME ; void QtMobility::QNetworkSession::close(void)
+	?errorString@QNetworkSession@QtMobility@@QBE?AVQString@@XZ @ 62 NONAME ; class QString QtMobility::QNetworkSession::errorString(void) const
+	?metaObject@QNetworkSession@QtMobility@@UBEPBUQMetaObject@@XZ @ 63 NONAME ; struct QMetaObject const * QtMobility::QNetworkSession::metaObject(void) const
+	?configurationRemoved@QNetworkConfigurationManager@QtMobility@@IAEXABVQNetworkConfiguration@2@@Z @ 64 NONAME ; void QtMobility::QNetworkConfigurationManager::configurationRemoved(class QtMobility::QNetworkConfiguration const &)
+	??1QNetworkConfigurationManager@QtMobility@@UAE@XZ @ 65 NONAME ; QtMobility::QNetworkConfigurationManager::~QNetworkConfigurationManager(void)
+	?metaObject@QNetworkConfigurationManager@QtMobility@@UBEPBUQMetaObject@@XZ @ 66 NONAME ; struct QMetaObject const * QtMobility::QNetworkConfigurationManager::metaObject(void) const
+	?staticMetaObject@QNetworkSession@QtMobility@@2UQMetaObject@@B @ 67 NONAME ; struct QMetaObject const QtMobility::QNetworkSession::staticMetaObject
+	?isOnline@QNetworkConfigurationManager@QtMobility@@QBE_NXZ @ 68 NONAME ; bool QtMobility::QNetworkConfigurationManager::isOnline(void) const
+	?defaultConfiguration@QNetworkConfigurationManager@QtMobility@@QBE?AVQNetworkConfiguration@2@XZ @ 69 NONAME ; class QtMobility::QNetworkConfiguration QtMobility::QNetworkConfigurationManager::defaultConfiguration(void) const
+	?stop@QNetworkSession@QtMobility@@QAEXXZ @ 70 NONAME ; void QtMobility::QNetworkSession::stop(void)
+	?allConfigurations@QNetworkConfigurationManager@QtMobility@@QBE?AV?$QList@VQNetworkConfiguration@QtMobility@@@@V?$QFlags@W4StateFlag@QNetworkConfiguration@QtMobility@@@@@Z @ 71 NONAME ; class QList<class QtMobility::QNetworkConfiguration> QtMobility::QNetworkConfigurationManager::allConfigurations(class QFlags<enum QtMobility::QNetworkConfiguration::StateFlag>) const
+	?error@QNetworkSession@QtMobility@@QBE?AW4SessionError@12@XZ @ 72 NONAME ; enum QtMobility::QNetworkSession::SessionError QtMobility::QNetworkSession::error(void) const
+	??0QNetworkConfiguration@QtMobility@@QAE@ABV01@@Z @ 73 NONAME ; QtMobility::QNetworkConfiguration::QNetworkConfiguration(class QtMobility::QNetworkConfiguration const &)
+	?qt_metacast@QNetworkSession@QtMobility@@UAEPAXPBD@Z @ 74 NONAME ; void * QtMobility::QNetworkSession::qt_metacast(char const *)
+	??1QNetworkSession@QtMobility@@UAE@XZ @ 75 NONAME ; QtMobility::QNetworkSession::~QNetworkSession(void)
+	?state@QNetworkSession@QtMobility@@QBE?AW4State@12@XZ @ 76 NONAME ; enum QtMobility::QNetworkSession::State QtMobility::QNetworkSession::state(void) const
+	?accept@QNetworkSession@QtMobility@@QAEXXZ @ 77 NONAME ; void QtMobility::QNetworkSession::accept(void)
 

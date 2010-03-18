@@ -96,8 +96,6 @@ void QAmbientLightReading::setLightLevel(QAmbientLightReading::LightLevel lightL
 
 // =====================================================================
 
-// begin generated code
-
 /*!
     \class QAmbientLightFilter
     \ingroup sensors_filter
@@ -154,7 +152,6 @@ const char *QAmbientLightSensor::type("QAmbientLightSensor");
 
     \sa QSensor::reading()
 */
-// end generated code
 
 #include "moc_qambientlightsensor.cpp"
 QTM_END_NAMESPACE

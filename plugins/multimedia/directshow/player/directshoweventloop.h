@@ -43,11 +43,14 @@
 #define DIRECTSHOWEVENTLOOP_H
 
 #include <QtCore/qmutex.h>
-#include <QtCore/private/qwineventnotifier_p.h>
+#include <QtCore/qobject.h>
+#include <QtCore/qwaitcondition.h>
+
+#include <windows.h>
 
 class DirectShowPostedEvent;
 
-class DirectShowEventLoop : public QWinEventNotifier
+class DirectShowEventLoop : public QObject
 {
     Q_OBJECT
 public:
@@ -59,7 +62,8 @@ public:
 
     void postEvent(QObject *object, QEvent *event);
 
-    bool event(QEvent *event);
+protected:
+    void customEvent(QEvent *event);
 
 private:
     void processEvents();

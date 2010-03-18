@@ -99,10 +99,11 @@ static void loadPlugins()
     \ingroup sensors_backend
 
     \preliminary
-    \brief The QSensorManager class returns the sensors on a device.
+    \brief The QSensorManager class handles registration and creation of sensor backends.
 
-    A given device will have a variety of sensors. The sensors are
-    categorized by type.
+    Sensor plugins register backends using the registerBackend() function.
+
+    When QSensor::connect() is called, the createBackend() function will be called.
 */
 
 /*!

@@ -19,8 +19,8 @@ INCLUDEPATH += . \
     ../../../src/contacts/details \
     ../../../src/contacts/requests \
     ../../../src/contacts/filters
-HEADERS += ut_qversit.h
-SOURCES += ut_qversit.cpp
+HEADERS += tst_qversit.h
+SOURCES += tst_qversit.cpp
 CONFIG += mobility
 MOBILITY = contacts \
     versit

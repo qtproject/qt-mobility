@@ -46,7 +46,7 @@ contains(mobility_modules,publishsubscribe) {
     SUBDIRS += qvaluespace \                           #Publish and Subscribe
            qvaluespacepublisher \
            qvaluespacesubscriber \
-	   qcrmlparser
+           qcrmlparser
 
     unix|win32 {
         !symbian:!maemo6:!maemo5: SUBDIRS+= \
@@ -105,6 +105,7 @@ contains(mobility_modules,multimedia) {
     SUBDIRS += \             #Multimedia
         qaudiocapturesource \
         qcamera \
+        qgraphicsvideoitem \
         qmediaimageviewer \
         qmediaobject \
         qmediaplayer \
@@ -117,24 +118,19 @@ contains(mobility_modules,multimedia) {
         qmediaserviceprovider \
         qmediacontent \
         qradiotuner \
+        qpaintervideosurface \
         qvideowidget \
         qmediatimerange
-
-    contains(QT_CONFIG, multimedia) {
-        SUBDIRS += \
-                qgraphicsvideoitem \
-                qpaintervideosurface
-
-    }
 
     symbian: {
         #symbian spesific autotests
         SUBDIRS += symbian 
         SUBDIRS -= \
-                qcamera \
-                qmediaplayer \
-                qradiotuner \
-                qmediaobject
+                qcamera_s60 \
+                qmediaplayer_s60 \
+                qradiotuner_s60 \
+                qmediaobject_s60 \
+                qmediarecorder_s60
     }
 }
 #Messaging
