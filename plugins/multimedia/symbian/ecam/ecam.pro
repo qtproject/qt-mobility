@@ -25,7 +25,14 @@ SOURCES += s60cameraserviceplugin.cpp
 contains(S60_VERSION, 3.2)|contains(S60_VERSION, 3.1) {
     DEFINES += PRE_S60_50_PLATFORM
 }
-
+exists($${EPOCROOT}epoc32\include\mmf\common\mmfvideoenums.h) {
+    DEFINES += USE_SYMBIAN_VIDEOENUMS
+    message("Using Symbian mmmfvideodeoenums")
+}
+exists($${EPOCROOT}epoc32\include\platform\mmf\common\mmfvideoenums.h) {
+    DEFINES += USE_SYMBIAN_VIDEOENUMS
+    message("Using Symbian mmmfvideodeoenums")
+}
 load(data_caging_paths)
 TARGET.EPOCALLOWDLLDATA = 1
 TARGET.UID3=0x2002BFC2

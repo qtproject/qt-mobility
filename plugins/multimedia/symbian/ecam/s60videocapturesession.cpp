@@ -57,7 +57,7 @@
 #include <mmf/devvideo/devvideorecord.h>
 #include <mmf/devvideo/devvideobase.h>
 #endif
-#ifdef USE_SYMBIAN_MEDIARECOGNIZER
+#ifdef USE_SYMBIAN_VIDEOENUMS
 #include <mmf/common/mmfvideoenums.h>
 #endif
 
