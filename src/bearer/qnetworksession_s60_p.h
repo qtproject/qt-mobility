@@ -64,6 +64,9 @@
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE
     #include <comms-infras/cs_mobility_apiext.h>
 #endif
+#ifdef OCC_FUNCTIONALITY_AVAILABLE
+    #include <extendedconnpref.h>
+#endif
 
 typedef int(*TOpenCSetdefaultifFunction)(const struct ifreq*);
 
@@ -175,6 +178,7 @@ private: // data
     QNetworkSession::SessionError iError;
     TInt iALREnabled;
     TBool iALRUpgradingConnection;
+    TBool iConnectInBackground;
     
     QList<QString> iKnownConfigsBeforeConnectionStart;
     
