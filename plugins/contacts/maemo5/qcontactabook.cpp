@@ -305,9 +305,8 @@ QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, c
     m_localIds << localId;
     rtn.append(m_localIds[localId]);
     QCM5_DEBUG << "eContactID " << localId << "has been stored in m_localIDs with key" << m_localIds[localId];
-    l = l->next;
+    l = g_list_delete_link(l, l);
   }
-  g_list_free(l);
   
   error = QContactManager::NoError;
   return rtn;
@@ -596,9 +595,12 @@ EBookQuery* QContactABook::convert(const QContactFilter& filter) const
       }
     } break;
     case QContactFilter::InvalidFilter:
+    {
       QCM5_DEBUG << "InvalidFilter";
       query = e_book_query_from_string("(is \"id\" \"-1\")");
-      break;
+    } break;
+    default:
+      QCM5_DEBUG << "Filter not supported";
   }
  
   //Debugging
@@ -764,7 +766,7 @@ QList<QContactAddress*> QContactABook::getAddressDetail(EContact *eContact) cons
   //Ordered list of Fields
   QStringList addressFields;
   addressFields << QContactAddress::FieldPostOfficeBox
-                << "Estension"
+                << "Estension" //FIXME I'm not sure we have to use a new field 
                 << QContactAddress::FieldStreet
                 << QContactAddress::FieldLocality
                 << QContactAddress::FieldRegion 
@@ -1321,13 +1323,15 @@ OssoABookContact* QContactABook::convert(const QContact *contact) const
   QCM5_DEBUG << "Converting QContact id:" << id << " to aContact";
   if (id){
     rtn = getAContact(id);
-    // It's not safe to commit our changes to a contact that has been modified.
+    // It's not safe to commit changes to a contact that has been modified.
     // This problem affects attributes with the same name and parameters such as
     // EMail, Address...
     QContactTimestamp* ts = getTimestampDetail(E_CONTACT(rtn));
-    if (*ts != contact->detail<QContactTimestamp>())
+    if (*ts != contact->detail<QContactTimestamp>()){
+      delete ts;
       return NULL;
-
+    }
+    delete ts;
   } else {
     rtn = osso_abook_contact_new();
   }
@@ -1395,7 +1399,7 @@ void QContactABook::setAddressDetail(const OssoABookContact* aContact, const QCo
     paramValues << c.toUpper();
   
   // Initialize adrAttrValues;
-  for (int i=0; i < nAddressElems; ++i)
+  for (uint i = 0; i < nAddressElems; ++i)
     adrAttrValues << "";
 
   // Fill adrAttrValues
@@ -1499,7 +1503,6 @@ void QContactABook::setEmailDetail(const OssoABookContact* aContact, const QCont
   QMapIterator<QString, QVariant> i(vm);
   while (i.hasNext()) {
     i.next();
-    int index = -1;
     QString key = i.key();
     
     // We don't want to save the Detail URI
