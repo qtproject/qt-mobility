@@ -43,15 +43,20 @@
 #define S60VIDEOPLAYERSESSION_H
 
 #include "s60mediaplayersession.h"
+#include "s60mediaplayeraudioendpointselector.h"
 #include <videoplayer.h>
 #include <QtGui/qwidget.h>
 #include <QVideoWidget>
 
+#include <AudioOutput.h>
+#include <MAudioOutputObserver.h>
+
 class QTimer;
 
-class S60VideoPlayerSession : public S60MediaPlayerSession, 
+class S60VideoPlayerSession : public S60MediaPlayerSession,
                               public MVideoPlayerUtilityObserver, 
-                              public MVideoLoadingObserver
+                              public MVideoLoadingObserver,
+                              public MAudioOutputObserver
 {
     Q_OBJECT
 
@@ -68,6 +73,19 @@ public:
     void MvloLoadingStarted();
     void MvloLoadingComplete();
     
+    // From MAudioOutputObserver
+    void DefaultAudioOutputChanged(CAudioOutput& aAudioOutput,
+        CAudioOutput::TAudioOutputPreference aNewDefault);
+
+public:
+    // From S60MediaPlayerAudioEndpointSelector
+    QString activeEndpoint() const;
+    QString defaultEndpoint() const;
+public Q_SLOTS:
+    void setActiveEndpoint(const QString& name);
+Q_SIGNALS:
+     void activeEndpointChanged(const QString &name);
+
 protected:
     //From S60MediaPlayerSession
     void doLoadL(const TDesC &path);
@@ -81,7 +99,7 @@ protected:
     void updateMetaDataEntriesL();
     int doGetBufferStatusL() const;
     qint64 doGetDurationL() const;
-    
+
 private slots: 
     void resetVideoDisplay();
     void suspendDirectScreenAccess();
@@ -92,6 +110,7 @@ private:
     QPair<qreal, qreal> scaleFactor();
     void startDirectScreenAccess();
     bool stopDirectScreenAccess();
+    QString qStringFromTAudioOutputPreference(CAudioOutput::TAudioOutputPreference output) const;
     
     
     // From MVideoPlayerUtilityObserver
@@ -117,6 +136,7 @@ private:
     QMediaService &m_service;
     QVideoWidget::AspectRatioMode m_aspectRatioMode;
     QSize m_originalSize;
+    CAudioOutput *m_audioOutput;
 };
 
 #endif

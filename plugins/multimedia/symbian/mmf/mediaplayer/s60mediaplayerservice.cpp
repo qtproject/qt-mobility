@@ -53,6 +53,7 @@
 //#include <qmediatimerange.h>
 #include "s60videooverlay.h"
 #include "s60videorenderer.h"
+#include "s60mediaplayeraudioendpointselector.h"
 
 #include <QMediaPlaylistNavigator>
 #include <QMediaPlaylist>
@@ -68,6 +69,7 @@ S60MediaPlayerService::S60MediaPlayerService(QObject *parent)
     , m_videoWidget(NULL) 
     , m_videoWindow(NULL)
     , m_videoRenderer(NULL)
+    , m_audioEndpointSelector(NULL)
 { 
     m_control = new S60MediaPlayerControl(*this, this);
     m_mediaRecognizer = new S60MediaRecognizer(this);  
@@ -122,6 +124,12 @@ QMediaControl *S60MediaPlayerService::control(const char *name) const
         if (!m_videoWindow)
             m_videoWindow = new S60VideoOverlay;
         return m_videoWindow;
+    }
+
+    if (qstrcmp(name, QAudioEndpointSelector_iid) == 0) {
+        if (!m_audioEndpointSelector)
+            m_audioEndpointSelector = new S60MediaPlayerAudioEndpointSelector(m_control);
+        return m_audioEndpointSelector;
     }
 
     return 0;

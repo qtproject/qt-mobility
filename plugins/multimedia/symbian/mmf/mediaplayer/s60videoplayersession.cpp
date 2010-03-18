@@ -54,6 +54,9 @@
 #include <w32std.h>
 #include <mmf/common/mmfcontrollerframeworkbase.h>
 
+#include <AudioOutput.h>
+#include <MAudioOutputObserver.h>
+
 S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service)
     : S60MediaPlayerSession(service)
     , m_player(0)
@@ -68,6 +71,7 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service)
     , m_service(*service)
     , m_aspectRatioMode(QVideoWidget::KeepAspectRatio)
     , m_originalSize(1, 1)
+    , m_audioOutput(0)
 {  
     resetNativeHandles();
     QT_TRAP_THROWING(m_player = CVideoPlayerUtility::NewL(
@@ -81,10 +85,17 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service)
         m_rect));
     m_dsaActive = true;
     m_player->RegisterForVideoLoadingNotification(*this);
+
+#ifndef __S60_31__
+    QT_TRAP_THROWING(m_audioOutput = CAudioOutput::NewL(*m_player));
+    QT_TRAP_THROWING(m_audioOutput->RegisterObserverL(*this));
+#endif
 }
 
 S60VideoPlayerSession::~S60VideoPlayerSession()
 {
+    m_audioOutput->UnregisterObserver(*this);
+    delete m_audioOutput;
     m_player->Close();
     delete m_player;
 }
@@ -369,4 +380,75 @@ void S60VideoPlayerSession::MvloLoadingStarted()
 void S60VideoPlayerSession::MvloLoadingComplete()
 {
     buffered();
+}
+
+QString S60VideoPlayerSession::activeEndpoint() const
+{
+#ifndef __S60_31__
+    CAudioOutput::TAudioOutputPreference output = m_audioOutput->AudioOutput();
+    return qStringFromTAudioOutputPreference(output);
+#endif
+}
+
+QString S60VideoPlayerSession::defaultEndpoint() const
+{
+#ifndef __S60_31__
+    CAudioOutput::TAudioOutputPreference output = m_audioOutput->DefaultAudioOutput();
+    return qStringFromTAudioOutputPreference(output);
+#endif
+}
+
+void S60VideoPlayerSession::setActiveEndpoint(const QString& name)
+{
+#ifndef __S60_31__
+    CAudioOutput::TAudioOutputPreference output = CAudioOutput::ENoPreference;
+
+    if (name == QString("Default"))
+        output = CAudioOutput::ENoPreference;
+    else if (name == QString("All"))
+        output = CAudioOutput::EAll;
+    else if (name == QString("None"))
+        output = CAudioOutput::ENoOutput;
+    else if (name == QString("Earphone"))
+        output = CAudioOutput::EPrivate;
+    else if (name == QString("Speaker"))
+        output = CAudioOutput::EPublic;
+    QT_TRAP_THROWING(m_audioOutput->SetAudioOutputL(output));
+#endif
+}
+
+void S60VideoPlayerSession::DefaultAudioOutputChanged( CAudioOutput& aAudioOutput,
+                                        CAudioOutput::TAudioOutputPreference aNewDefault )
+{
+#ifndef __S60_31__
+    CAudioOutput::TAudioOutputPreference output = m_audioOutput->AudioOutput();
+    if (output == CAudioOutput::ENoPreference) {
+        QString name;
+        if (output == CAudioOutput::EAll)
+            name = QString("All");
+        else if (output == CAudioOutput::ENoOutput)
+            name = QString("None");
+        else if (output == CAudioOutput::EPrivate)
+            name = QString("Earphone");
+        else if (output == CAudioOutput::EPublic)
+            name = QString("Speaker");
+        if (!name.isEmpty())
+            emit activeEndpointChanged(name);
+    }
+#endif
+}
+
+QString S60VideoPlayerSession::qStringFromTAudioOutputPreference(CAudioOutput::TAudioOutputPreference output) const
+{
+    if (output == CAudioOutput::ENoPreference)
+        return QString("Default");
+    else if (output == CAudioOutput::EAll)
+        return QString("All");
+    else if (output == CAudioOutput::ENoOutput)
+            return QString("None");
+    else if (output == CAudioOutput::EPrivate)
+            return QString("Earphone");
+    else if (output == CAudioOutput::EPublic)
+            return QString("Speaker");
+    return QString();
 }

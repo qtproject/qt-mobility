@@ -232,6 +232,11 @@ void S60MediaPlayerControl::setMedia(const QMediaContent &source, QIODevice *str
     emit mediaChanged(m_currentResource);
   }
 
+S60MediaPlayerSession* S60MediaPlayerControl::session()
+{
+    return m_session;
+}
+
 void S60MediaPlayerControl::setVideoOutput(QObject *output)
 {
     S60MediaPlayerSession *session = NULL;

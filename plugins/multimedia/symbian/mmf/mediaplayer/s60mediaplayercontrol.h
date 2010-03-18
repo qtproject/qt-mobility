@@ -120,6 +120,7 @@ public:
     virtual void play();
     virtual void pause();
     virtual void stop();  
+    S60MediaPlayerSession* session();
 
     // Own methods
     void setVideoOutput(QObject *output);
