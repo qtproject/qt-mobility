@@ -13,6 +13,11 @@ CONFIG(debug, debug|release) {
 
 include(staticconfig.pri)
 
+symbian:contains(symbian_symbols_unfrozen,1) {
+    #see configure.bat for details
+    MMP_RULES+="EXPORTUNFROZEN"
+}
+
 mac {
     contains(QT_CONFIG, qt_framework):contains(TEMPLATE, lib) {
         #MacOSX always builds debug and release libs when using mac framework
