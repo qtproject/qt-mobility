@@ -635,7 +635,7 @@ void QTrackerContactFetchRequest::contactsReady()
             /* Me Contact does not have any cotactUID so assigning 0*/
             if(engine) {
                QContactManager::Error error;
-               contactid = engine->selfContactId(error);
+               contactid = engine->selfContactId(&error);
                ok = true;
             }
         }
@@ -703,7 +703,7 @@ void QTrackerContactFetchRequest::contactsReady()
         QContactDisplayLabel dl = cont.detail(QContactDisplayLabel::DefinitionName);
         if (dl.label().isEmpty()) {
             QContactManager::Error synthError;
-            result[i] = engine->setContactDisplayLabel(engine->synthesizedDisplayLabel(cont, synthError), cont);
+            result[i] = engine->setContactDisplayLabel(engine->synthesizedDisplayLabel(cont, &synthError), cont);
         }
     }
     emitFinished();
