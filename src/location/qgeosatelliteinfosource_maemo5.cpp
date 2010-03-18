@@ -72,6 +72,12 @@ int QGeoSatelliteInfoSourceMaemo::init()
 
 void QGeoSatelliteInfoSourceMaemo::setUpdateInterval(int msec)
 {
+    bool updateTimerInterval = false;
+    
+    if (satelliteInfoState & QGeoSatelliteInfoSourceMaemo::PowersaveActive)
+        if(satelliteInfoState & QGeoSatelliteInfoSourceMaemo::Stopped)
+            updateTimerInterval = true;
+    
     satelliteInfoState &= ~(QGeoSatelliteInfoSourceMaemo::TogglePowersave |
                             QGeoSatelliteInfoSourceMaemo::PowersaveActive);
     
@@ -83,7 +89,11 @@ void QGeoSatelliteInfoSourceMaemo::setUpdateInterval(int msec)
     } else {
         satelliteInfoState &= ~(QGeoSatelliteInfoSourceMaemo::TogglePowersave |
                                 QGeoSatelliteInfoSourceMaemo::PowersaveActive);
-    }    
+    }  
+
+    if (updateTimerInterval || (satelliteInfoState &
+                                QGeoSatelliteInfoSourceMaemo::Started))
+        activateTimer();    
 }
 
 void QGeoSatelliteInfoSourceMaemo::startUpdates()

@@ -86,6 +86,12 @@ QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSourceMaemo::supporte
 
 void QGeoPositionInfoSourceMaemo::setUpdateInterval(int msec)
 {
+    bool updateTimerInterval = false;
+    
+    if (positionInfoState & QGeoPositionInfoSourceMaemo::PowersaveActive)
+        if(positionInfoState & QGeoPositionInfoSourceMaemo::Stopped)
+            updateTimerInterval = true;
+    
     positionInfoState &= ~(QGeoPositionInfoSourceMaemo::TogglePowersave |
                            QGeoPositionInfoSourceMaemo::PowersaveActive);
 
@@ -104,6 +110,10 @@ void QGeoPositionInfoSourceMaemo::setUpdateInterval(int msec)
         positionInfoState &= ~(QGeoPositionInfoSourceMaemo::TogglePowersave |
                                QGeoPositionInfoSourceMaemo::PowersaveActive);
     }
+    
+    if (updateTimerInterval || (positionInfoState & 
+                                QGeoPositionInfoSourceMaemo::Started))
+        activateTimer();
 }
 
 void QGeoPositionInfoSourceMaemo::setPreferredPositioningMethods(PositioningMethods sources)
