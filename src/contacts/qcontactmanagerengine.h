@@ -56,6 +56,7 @@
 #include "qcontactmanager.h"
 #include "qcontactabstractrequest.h"
 #include "qcontactrequests.h"
+#include "qcontactfetchhint.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -79,9 +80,16 @@ public:
     /* Filtering */
     virtual QList<QContactLocalId> contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
     virtual QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-    virtual QList<QContact> contacts(const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
-    virtual QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
-    virtual QContact contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
+
+    // the following three functions are deprecated and will be removed after the transition period has elapsed.
+    virtual QList<QContact> Q_DECL_DEPRECATED contacts(const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
+    virtual QList<QContact> Q_DECL_DEPRECATED contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
+    virtual QContact Q_DECL_DEPRECATED contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
+
+    // these functions replace the deprecated functions above:
+    virtual QList<QContact> contacts(const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fetchHint, QContactManager::Error& error) const;
+    virtual QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fetchHint, QContactManager::Error& error) const;
+    virtual QContact contact(const QContactLocalId& contactId, const QContactFetchHint& fetchHint, QContactManager::Error& error) const;
 
     virtual bool saveContact(QContact* contact, QContactManager::Error& error);
     virtual bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error);

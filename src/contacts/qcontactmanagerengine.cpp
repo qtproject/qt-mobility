@@ -52,9 +52,12 @@
 #include "qcontactabstractrequest_p.h"
 #include "qcontactrequests.h"
 #include "qcontactrequests_p.h"
+#include "qcontact.h"
+#include "qcontactfetchhint.h"
 
 #include "qcontact_p.h"
 #include "qcontactdetail_p.h"
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -262,11 +265,14 @@ QList<QContactLocalId> QContactManagerEngine::contactIds(const QContactFilter& f
 }
 
 /*!
+  \internal
   Returns the list of contacts stored in the manager sorted according to the given list of \a sortOrders.
   If the given list of detail definition names \a definitionRestrictions is empty, each contact returned will include
   all of the details which are stored in it, otherwise only those details which are of a definition whose name is included
   in the \a definitionRestrictions list will be included.
   Any error which occurs will be saved in \a error.
+
+  This function is deprecated and will be removed after the transition period has elapsed.  Use the contacts() function taking a fetchHint instead!
  */
 QList<QContact> QContactManagerEngine::contacts(const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error) const
 {
@@ -277,20 +283,70 @@ QList<QContact> QContactManagerEngine::contacts(const QList<QContactSortOrder>& 
 }
 
 /*!
+  Returns the list of contacts stored in the manager sorted according to the given list of \a sortOrders.
+
+  Any operation error which occurs will be saved in \a error.
+
+  The \a fetchHint parameter describes the optimization hints that a manager may take.
+  If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
+  in the matching contacts will be returned.  A client should not make changes to a contact which has
+  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
+  loss when saving the contact back to the manager (as the "new" restricted contact will
+  replace the previously saved contact in the backend).
+
+  \sa QContactFetchHint
+ */
+QList<QContact> QContactManagerEngine::contacts(const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fetchHint, QContactManager::Error& error) const
+{
+    Q_UNUSED(sortOrders);
+    Q_UNUSED(fetchHint);
+    error = QContactManager::NotSupportedError;
+    return QList<QContact>();
+}
+
+/*!
+  \internal
   Returns a list of contacs that match the given \a filter, sorted according to the given list of \a sortOrders.
   Depending on the backend, this filtering operation may involve retrieving all the contacts.
   If the given list of detail definition names \a definitionRestrictions is empty, each contact returned will include
   all of the details which are stored in it, otherwise only those details which are of a definition whose name is included
   in the \a definitionRestrictions list will be included.
   Any error which occurs will be saved in \a error.
+
+  This function is deprecated and will be removed after the transition period has elapsed.  Use the contacts() function taking a fetchHint instead!
  */
 QList<QContact> QContactManagerEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error& error) const
+{
+    // deprecated, reimplement in terms of new function.
+    QContactFetchHint hint;
+    hint.setDetailDefinitionsHint(definitionRestrictions);
+    return contacts(filter, sortOrders, hint, error);
+}
+
+/*!
+  Returns a list of contacts that match the given \a filter, sorted according to the given list of \a sortOrders.
+
+  Depending on the manager implementation, this filtering operation might be slow and involve retrieving all the
+  contacts and testing them against the supplied filter - see the \l isFilterSupported() function.
+
+  Any operation error which occurs will be saved in \a error.
+
+  The \a fetchHint parameter describes the optimization hints that a manager may take.
+  If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
+  in the matching contacts will be returned.  A client should not make changes to a contact which has
+  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
+  loss when saving the contact back to the manager (as the "new" restricted contact will
+  replace the previously saved contact in the backend).
+
+  \sa QContactFetchHint
+ */
+QList<QContact> QContactManagerEngine::contacts(const QContactFilter &filter, const QList<QContactSortOrder> &sortOrders, const QContactFetchHint &fetchHint, QContactManager::Error &error) const
 {
     /* Slow way */
     QList<QContact> ret;
 
     /* Retrieve each contact.. . . */
-    const QList<QContact>& all = contacts(sortOrders, definitionRestrictions, error);
+    const QList<QContact>& all = contacts(sortOrders, fetchHint, error);
     if (error != QContactManager::NoError)
         return ret;
 
@@ -307,6 +363,7 @@ QList<QContact> QContactManagerEngine::contacts(const QContactFilter& filter, co
 }
 
 /*!
+  \internal
   Returns the contact in the database identified by \a contactId.
   If the list of detail definition names \a definitionRestrictions given is non-empty,
   the contact returned will contain at least those details which are of a definition whose name is
@@ -318,11 +375,38 @@ QList<QContact> QContactManagerEngine::contacts(const QContactFilter& filter, co
   The default implementation returns the entire contact.
 
   Any errors encountered should be stored to \a error.
+
+  This function is deprecated and will be removed after the transition period has elapsed.  Use the contacts() function taking a fetchHint instead!
  */
 QContact QContactManagerEngine::contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const
 {
     Q_UNUSED(contactId);
     Q_UNUSED(definitionRestrictions);
+    error = QContactManager::NotSupportedError;
+    return QContact();
+}
+
+/*!
+  Returns the contact in the database identified by \a contactId.
+
+  If the contact does not exist, an empty, default constructed QContact will be returned,
+  and the error returned by \l error() will be \c QContactManager::DoesNotExistError.
+
+  Any operation error which occurs will be saved in \a error.
+
+  The \a fetchHint parameter describes the optimization hints that a manager may take.
+  If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
+  in the matching contact will be returned.  A client should not make changes to a contact which has
+  been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
+  loss when saving the contact back to the manager (as the "new" restricted contact will
+  replace the previously saved contact in the backend).
+
+  \sa QContactFetchHint
+ */
+QContact QContactManagerEngine::contact(const QContactLocalId& contactId, const QContactFetchHint& fetchHint, QContactManager::Error& error) const
+{
+    Q_UNUSED(contactId);
+    Q_UNUSED(fetchHint);
     error = QContactManager::NotSupportedError;
     return QContact();
 }

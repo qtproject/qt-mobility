@@ -105,7 +105,7 @@ public:
 
     QContactFilter m_filter;
     QList<QContactSortOrder> m_sorting;
-    QStringList m_definitionRestrictions;
+    QContactFetchHint m_fetchHint;
 
     QList<QContact> m_contacts;
 };
