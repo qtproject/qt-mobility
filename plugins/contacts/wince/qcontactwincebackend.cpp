@@ -137,21 +137,15 @@ QContactWinCEEngine::~QContactWinCEEngine()
     d->m_factory->resetEngine();
 }
 
-void QContactWinCEEngine::deref()
-{
-    if (!d->m_refCount.deref())
-        delete this;
-}
-
 QString QContactWinCEEngine::managerName() const
 {
     return d->m_engineName;
 }
 
-QContact QContactWinCEEngine::contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error* error) const
+QContact QContactWinCEEngine::contact(const QContactLocalId& contactId, const QtMobility::QContactFetchHint& hint, QContactManager::Error* error) const
 {
     // TODO: implementation for definitionRestrictions!
-    Q_UNUSED(definitionRestrictions);
+    Q_UNUSED(hint);
     QContact ret;
 
     // id == 0 gives a bad argument error from POOM, so don't even try it
@@ -237,7 +231,7 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QContactManager::Error*
 
     if (icontact) {
         // Convert our QContact to the Icontact (via setProps)
-        if (convertFromQContact(*contact, icontact, error)) {
+        if (convertFromQContact(*contact, icontact, *error)) {
             HRESULT hr = icontact->Save();
             if (SUCCEEDED(hr)) {
                 // yay! we also need to set the new contact id
@@ -245,7 +239,7 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QContactManager::Error*
                 hr = icontact->get_Oid(&oid);
                 if (SUCCEEDED(hr)) {
                     *error = QContactManager::NoError;
-                    QContact c = this->contact((QContactLocalId)oid, QStringList(), error);
+                    QContact c = this->contact((QContactLocalId)oid, QContactFetchHint(), error);
                     
                     if (*error == QContactManager::NoError) {
                         *contact = c;
@@ -392,8 +386,9 @@ bool QContactWinCEEngine::waitForRequestFinished(QContactAbstractRequest* req, i
 }
 
 /*! \reimp */
-bool QContactWinCEEngine::hasFeature(QContactManager::ManagerFeature feature) const
+bool QContactWinCEEngine::hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const
 {
+    Q_UNUSED(contactType);
     // The Windows CE backend is an "isolated" backend
     if (feature == QContactManager::Anonymous)
         return true;
@@ -474,6 +469,142 @@ bool QContactWinCEEngine::isFilterSupported(const QContactFilter& filter) const
     }
     return false;
 }
+
+/*! \reimp */
+QMap<QString, QString> QContactWinCEEngine::managerParameters() const
+{
+    return QMap<QString, QString>();
+}
+
+/*! \reimp */
+int QContactWinCEEngine::managerVersion() const
+{
+    return QTCONTACTS_VERSION;
+}
+
+/*! \reimp */
+QList<QContact> QContactWinCEEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fetchHint, QContactManager::Error* error) const
+{
+    QList<QContactLocalId> ids = contactIds(filter, sortOrders, error);
+    QList<QContact> cs;
+    if (*error == QContactManager::NoError) {
+        foreach (const QContactLocalId& id, ids) {
+            cs << contact(id, fetchHint, error);
+        }
+    }
+    return cs;
+}
+
+/*! \reimp */
+bool QContactWinCEEngine::saveRelationship(QContactRelationship* relationship, QContactManager::Error* error)
+{
+    Q_UNUSED(relationship);
+    *error = QContactManager::NotSupportedError;
+    return false;
+}
+
+/*! \reimp */
+bool QContactWinCEEngine::removeRelationship(const QContactRelationship& relationship, QContactManager::Error* error)
+{
+    Q_UNUSED(relationship);
+    *error = QContactManager::NotSupportedError;
+    return false;
+}
+
+/*! \reimp */
+bool QContactWinCEEngine::saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
+{
+    bool ret = true;
+
+    for (int j = 0; j < contacts->size(); j++) {
+        if (!saveContact(&((*contacts)[j]), error)) {
+            ret = false;
+        }
+        if (*error != QContactManager::NoError) {
+            errorMap->insert(j, *error);
+        }
+    }
+    return ret;
+}
+
+/*! \reimp */
+bool QContactWinCEEngine::removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
+{
+    bool ret = true;
+
+    for (int j = 0; j < contactIds.size(); j++) {
+        if (!removeContact(contactIds[j], error)) {
+            ret = false;
+        }
+
+        if (*error != QContactManager::NoError) {
+            errorMap->insert(j, *error);
+        }
+    }
+    return ret;
+}
+
+/*! \reimp */
+bool QContactWinCEEngine::setSelfContactId(const QContactLocalId& contactId, QContactManager::Error* error)
+{
+    Q_UNUSED(contactId);
+    *error = QContactManager::NotSupportedError;
+    return false;
+}
+
+/*! \reimp */
+QContactLocalId QContactWinCEEngine::selfContactId(QContactManager::Error* error) const
+{
+    *error = QContactManager::NotSupportedError;
+    return QContactLocalId();
+}
+
+/*! \reimp */
+QList<QContactRelationship> QContactWinCEEngine::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationship::Role role, QContactManager::Error* error) const
+{
+    Q_UNUSED(relationshipType);
+    Q_UNUSED(participantId);
+    Q_UNUSED(role);
+    *error = QContactManager::NotSupportedError;
+    return QList<QContactRelationship>();
+}
+
+/*! \reimp */
+bool QContactWinCEEngine::saveRelationships(QList<QContactRelationship>* relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
+{
+    Q_UNUSED(relationships);
+    Q_UNUSED(errorMap);
+    *error = QContactManager::NotSupportedError;
+    return false;
+}
+
+/*! \reimp */
+bool QContactWinCEEngine::removeRelationships(const QList<QContactRelationship>& relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
+{
+    Q_UNUSED(relationships);
+    Q_UNUSED(errorMap);
+    *error = QContactManager::NotSupportedError;
+    return false;
+}
+
+/*! \reimp */
+bool QContactWinCEEngine::saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType, QContactManager::Error* error)
+{
+    Q_UNUSED(def);
+    Q_UNUSED(contactType);
+    *error = QContactManager::NotSupportedError;
+    return false;
+}
+
+/*! \reimp */
+bool QContactWinCEEngine::removeDetailDefinition(const QString& definitionId, const QString& contactType, QContactManager::Error* error)
+{
+    Q_UNUSED(definitionId);
+    Q_UNUSED(contactType);
+    *error = QContactManager::NotSupportedError;
+    return false;
+}
+
 /*!
  * Returns the list of data types supported by the WinCE engine
  */
