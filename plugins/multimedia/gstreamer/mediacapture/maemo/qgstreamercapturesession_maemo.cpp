@@ -292,12 +292,9 @@ qint64 QGstreamerCaptureSession::duration() const
     GstFormat   format = GST_FORMAT_TIME;
     gint64      duration = 0;
 
-    GstElement *encoderElement = 0;
-    g_object_get(G_OBJECT(m_pipeline), "videomux", &encoderElement, NULL);
-    if (encoderElement && gst_element_query_position(encoderElement, &format, &duration)) {
-        g_object_unref(encoderElement);
+    if ( m_pipeline && gst_element_query_position(m_pipeline, &format, &duration))
         return duration / 1000000;
-    } else
+    else
         return 0;
 }
 
