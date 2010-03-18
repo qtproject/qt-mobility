@@ -46,7 +46,7 @@
 
 #ifdef Q_OS_SYMBIAN
 #include "qnetworksession_s60_p.h"
-#if defined(Q_WS_MAEMO_6) || defined(Q_WS_MAEMO_5)
+#elif (defined(Q_WS_MAEMO_6) || defined(Q_WS_MAEMO_5))
 #include "qnetworksession_maemo_p.h"
 #else
 #include "qnetworksession_p.h"
