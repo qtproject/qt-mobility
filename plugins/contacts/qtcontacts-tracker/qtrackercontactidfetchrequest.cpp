@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-
+#include <qcontacttrackerbackend_p.h>
 #include <qtrackercontactidfetchrequest.h>
 
 #include <qtcontacts.h>
@@ -76,7 +76,6 @@ void QTrackerContactIdFetchRequest::emitFinished(QContactManager::Error error)
     foreach(const QContact &c, result) {
         results << c.localId();
     }
-    QContactManagerEngine::updateRequestState(idfetchrequest, QContactAbstractRequest::FinishedState);
-    QContactManagerEngine::updateContactLocalIdFetchRequest(idfetchrequest, results, error);
+    QContactTrackerEngine::updateContactLocalIdFetchRequestTrampoline(idfetchrequest, results, error, QContactAbstractRequest::FinishedState);
 }
 

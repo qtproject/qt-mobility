@@ -180,6 +180,22 @@ public:
     {
         QContactManagerEngine::updateContactFetchRequest(req, result, error, state);
     }
+    static void updateContactSaveRequestTrampoline(QContactSaveRequest *req, const QList<QContact> &result, QContactManager::Error error, const QMap<int, QContactManager::Error> &errorMap, QContactAbstractRequest::State state)
+    {
+        QContactManagerEngine::updateContactSaveRequest(req, result, error, errorMap, state);
+    }
+    static void updateRelationshipFetchRequestTrampoline(QContactRelationshipFetchRequest *req, const QList<QContactRelationship> &result, QContactManager::Error error, QContactAbstractRequest::State state)
+    {
+        QContactManagerEngine::updateRelationshipFetchRequest(req, result, error, state);
+    }
+    static void updateRelationshipSaveRequestTrampoline(QContactRelationshipSaveRequest *req, const QList<QContactRelationship> &result, QContactManager::Error error, const QMap<int, QContactManager::Error> &errorMap, QContactAbstractRequest::State state)
+    {
+        QContactManagerEngine::updateRelationshipSaveRequest(req, result, error, errorMap, state);
+    }
+    static void updateContactLocalIdFetchRequestTrampoline(QContactLocalIdFetchRequest *req, const QList<QContactLocalId> &result, QContactManager::Error error, QContactAbstractRequest::State state)
+    {
+        QContactManagerEngine::updateContactLocalIdFetchRequest(req, result, error, state);
+    }
     static QContact setContactDisplayLabelTrampoline(const QString &displayLabel, const QContact &contact)
     {
         return QContactManagerEngine::setContactDisplayLabel(displayLabel, contact);

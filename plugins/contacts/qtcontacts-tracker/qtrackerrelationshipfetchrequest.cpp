@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+#include "qcontacttrackerbackend_p.h"
 #include "qtrackerrelationshipfetchrequest.h"
 
 #include <QtTracker/Tracker>
@@ -57,18 +58,16 @@ QTrackerRelationshipFetchRequest::QTrackerRelationshipFetchRequest(QContactAbstr
 
     if( !r )
     {
-        QContactManagerEngine::updateRelationshipFetchRequest(r, QList<QContactRelationship>(), QContactManager::UnspecifiedError);
-        QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::FinishedState);
+        QContactTrackerEngine::updateRelationshipFetchRequestTrampoline(r, QList<QContactRelationship>(), QContactManager::UnspecifiedError, QContactAbstractRequest::FinishedState);
         return;
     }
     if (not r->relationshipType().isEmpty() && QContactRelationship::Is != r->relationshipType())
     {
-        QContactManagerEngine::updateRelationshipFetchRequest(r, r->relationships(), QContactManager::NotSupportedError);
-        QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::FinishedState);
+        QContactTrackerEngine::updateRelationshipFetchRequestTrampoline(r, r->relationships(), QContactManager::NotSupportedError, QContactAbstractRequest::FinishedState);
         return;
     }
     QList<QContactManager::Error> dummy;
-    QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::ActiveState);
+    QContactTrackerEngine::updateRequestStateTrampoline(req, QContactAbstractRequest::ActiveState);
 
     RDFVariable RDFContact = RDFVariable::fromType<nco::PersonContact>();
     RDFVariable RDFContactThis = RDFVariable::fromType<nco::PersonContact>();
@@ -101,8 +100,7 @@ void QTrackerRelationshipFetchRequest::modelUpdated()
     QContactRelationshipFetchRequest* r = qobject_cast<QContactRelationshipFetchRequest*>(req);
     if( !engine )
     {
-        QContactManagerEngine::updateRelationshipFetchRequest(r, QList<QContactRelationship>(), QContactManager::UnspecifiedError);
-        QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::FinishedState);
+        QContactTrackerEngine::updateRelationshipFetchRequestTrampoline(r, QList<QContactRelationship>(), QContactManager::UnspecifiedError, QContactAbstractRequest::FinishedState);
         return;
     }
 
@@ -128,7 +126,6 @@ void QTrackerRelationshipFetchRequest::modelUpdated()
         }
     }
 
-    QContactManagerEngine::updateRelationshipFetchRequest(r, result, QContactManager::NoError);
-    QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::FinishedState);
+    QContactTrackerEngine::updateRelationshipFetchRequestTrampoline(r, result, QContactManager::NoError, QContactAbstractRequest::FinishedState);
 }
 

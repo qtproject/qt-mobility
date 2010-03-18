@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+#include "qcontacttrackerbackend_p.h"
 #include "qtrackercontactsaverequest.h"
 #include "trackerchangelistener.h"
 
@@ -57,7 +58,7 @@ QTrackerContactSaveRequest::QTrackerContactSaveRequest(QContactAbstractRequest* 
 
     QContactSaveRequest* r = qobject_cast<QContactSaveRequest*>(req);
     if (!r) {
-        QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::FinishedState);
+        QContactTrackerEngine::updateRequestStateTrampoline(req, QContactAbstractRequest::FinishedState);
         return;
     }
 
@@ -67,12 +68,11 @@ QTrackerContactSaveRequest::QTrackerContactSaveRequest(QContactAbstractRequest* 
         QMap<int, QContactManager::Error> errors; 
         errors[0] = QContactManager::BadArgumentError;
         QContactSaveRequest* saveRequest = qobject_cast<QContactSaveRequest*>(req);
-        QContactManagerEngine::updateContactSaveRequest(saveRequest, contacts, QContactManager::BadArgumentError,
-                                             errors);
+        QContactTrackerEngine::updateContactSaveRequestTrampoline(saveRequest, contacts, QContactManager::BadArgumentError, errors);
         return;
     }
 
-    QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::ActiveState);
+    QContactTrackerEngine::updateRequestStateTrampoline(req, QContactAbstractRequest::ActiveState);
 
     TrackerChangeListener *changeListener = new TrackerChangeListener(parent, this);
     connect(changeListener, SIGNAL(contactsChanged(const QList<QContactLocalId> &)),SLOT(onTrackerSignal(const QList<QContactLocalId> &)));
@@ -96,7 +96,7 @@ void QTrackerContactSaveRequest::computeProgress(const QList<QContactLocalId> &a
     Q_ASSERT(req->type() == QContactAbstractRequest::ContactSaveRequest);
     QContactSaveRequest* r = qobject_cast<QContactSaveRequest*>(req);
     if (!r) {
-        QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::FinishedState);
+        QContactTrackerEngine::updateRequestStateTrampoline(req, QContactAbstractRequest::FinishedState);
         return;
     }
 
@@ -118,8 +118,7 @@ void QTrackerContactSaveRequest::computeProgress(const QList<QContactLocalId> &a
             }
         }
 
-        QContactManagerEngine::updateContactSaveRequest(r, contactsFinished, error, errorsOfContactsFinished);
-        QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::FinishedState);
+        QContactTrackerEngine::updateContactSaveRequestTrampoline(r, contactsFinished, error, errorsOfContactsFinished, QContactAbstractRequest::FinishedState);
     }
 }
 
