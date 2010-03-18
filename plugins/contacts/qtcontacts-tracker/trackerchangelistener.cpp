@@ -145,7 +145,7 @@ void TrackerChangeListener::imAccountsChanged(const QStringList &subjects)
 {
     Q_UNUSED(subjects)
     QContactManager::Error error;
-    QContactLocalId selfId = engine->selfContactId(error);
+    QContactLocalId selfId = engine->selfContactId(&error);
     if (engine && QContactManager::NoError == error) {
         emit contactsChanged(QList<QContactLocalId>()<<selfId);
     } else {
