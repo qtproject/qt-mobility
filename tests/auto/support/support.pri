@@ -5,6 +5,8 @@ HEADERS += \
 symbian|wince*|maemo5|win32|mac {
     symbian {
         SOURCES += $$PWD/support_symbian.cpp
+        INCLUDEPATH += $$(EPOCROOT)epoc32/include/app
+        INCLUDEPATH += $$(EPOCROOT)epoc32/include/platform/app
     }
     win32 {
         SOURCES += $$PWD/support_win.cpp

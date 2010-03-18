@@ -45,8 +45,12 @@
 #include <QTimer>
 #include "qgeopositioninfosource.h"
 
-#define MINIMUM_UPDATE_INTERVAL 1000
-#define DEFAULT_UPDATE_INTERVAL 5000
+#define INIT_OK                     0
+#define INIT_FAILED                 -1
+#define MINIMUM_UPDATE_INTERVAL     1000
+#define DEFAULT_UPDATE_INTERVAL     5000
+#define POWERSAVE_THRESHOLD         180000
+#define POWERSAVE_POWERON_PERIOD    120000
 
 QTM_BEGIN_NAMESPACE
 
@@ -74,13 +78,18 @@ private:
     QTimer *updateTimer;
     QTimer *requestTimer;
     int timerInterval;
-
+    void activateTimer();
+    void startLocationDaemon();
+    void stopLocationDaemon();
+    
     enum PositionInfoState {
         Undefined = 0,
         Started = 1,
         Stopped = 2,
         RequestActive = 4,
-        RequestSingleShot = 8
+        RequestSingleShot = 8,
+        PowersaveActive = 16,
+        TogglePowersave = 32
     };
     int positionInfoState;
     

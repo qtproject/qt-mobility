@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "liblocationwrapper.h"
+#include "liblocationwrapper_p.h"
 
 using namespace std;
 
@@ -366,6 +366,13 @@ void LiblocationWrapper::stop() {
     }
 }
 
-#include "moc_liblocationwrapper.cpp"
+bool     LiblocationWrapper::isActive() {
+    if(locationState & LiblocationWrapper::Started)
+        return true;
+    else
+        return false;
+}
+
+#include "moc_liblocationwrapper_p.cpp"
 QTM_END_NAMESPACE
 

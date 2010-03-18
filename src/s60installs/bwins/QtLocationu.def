@@ -132,4 +132,6 @@ EXPORTS
 	?metaObject@QGeoAreaMonitor@QtMobility@@UBEPBUQMetaObject@@XZ @ 131 NONAME ; struct QMetaObject const * QtMobility::QGeoAreaMonitor::metaObject(void) const
 	?startUpdates@QNmeaPositionInfoSource@QtMobility@@UAEXXZ @ 132 NONAME ; void QtMobility::QNmeaPositionInfoSource::startUpdates(void)
 	?toString@QGeoCoordinate@QtMobility@@QBE?AVQString@@W4CoordinateFormat@12@@Z @ 133 NONAME ; class QString QtMobility::QGeoCoordinate::toString(enum QtMobility::QGeoCoordinate::CoordinateFormat) const
+	??5QtMobility@@YAAAVQDataStream@@AAV1@AAVQGeoSatelliteInfo@0@@Z @ 134 NONAME ; class QDataStream & QtMobility::operator>>(class QDataStream &, class QtMobility::QGeoSatelliteInfo &)
+	??6QtMobility@@YAAAVQDataStream@@AAV1@ABVQGeoSatelliteInfo@0@@Z @ 135 NONAME ; class QDataStream & QtMobility::operator<<(class QDataStream &, class QtMobility::QGeoSatelliteInfo const &)
 

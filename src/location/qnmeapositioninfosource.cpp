@@ -44,7 +44,6 @@
 #include <QIODevice>
 #include <QBasicTimer>
 #include <QTimerEvent>
-#include <QDebug>
 #include <QTimer>
 
 QTM_BEGIN_NAMESPACE
@@ -361,6 +360,7 @@ void QNmeaPositionInfoSourcePrivate::updateRequestTimeout()
 
 void QNmeaPositionInfoSourcePrivate::notifyNewUpdate(QGeoPositionInfo *update, bool hasFix)
 {
+    // include <QDebug> before uncommenting
     //qDebug() << "QNmeaPositionInfoSourcePrivate::notifyNewUpdate()" << update->dateTime() << hasFix << m_invokedStart << (m_requestTimer && m_requestTimer->isActive());
 
     QDate date = update->dateTime().date();

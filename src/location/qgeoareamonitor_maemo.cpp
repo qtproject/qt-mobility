@@ -43,7 +43,8 @@
 
 QTM_BEGIN_NAMESPACE
         
-#define UPDATE_INTERVAL_5S 5000
+#define UPDATE_INTERVAL_5S  5000
+#define TO_METERS           1000
         
 QGeoAreaMonitorMaemo::QGeoAreaMonitorMaemo(QObject *parent) : QGeoAreaMonitor(parent) 
 {
@@ -82,6 +83,8 @@ void QGeoAreaMonitorMaemo::positionUpdated(const QGeoPositionInfo &info)
                                       info.coordinate().longitude(),
                                       QGeoAreaMonitor::center().latitude(),
                                       QGeoAreaMonitor::center().longitude());
+    
+    distance = distance * TO_METERS;
     
     if (distance <= QGeoAreaMonitor::radius()) {
         if(!insideArea)
