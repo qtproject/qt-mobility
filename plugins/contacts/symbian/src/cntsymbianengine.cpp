@@ -167,11 +167,13 @@ QList<QContactLocalId> CntSymbianEngine::contactIds(
     
         // Remove possible false positives
         if(!filterSupported && error == QContactManager::NotSupportedError)
+            {
             result = slowFilter(filter, result, error);
+            
+            //slow sorting until it's supported in SQL requests
+            result = slowSort(result, sortOrders, error);
+            }
         
-        //slow sorting until it's supported in SQL requests
-        result = slowSort(result, sortOrders, error);
-
 #else
         // Remove possible false positives
         if(!filterSupported && error == QContactManager::NoError)
