@@ -871,7 +871,11 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfo::currentPowerState()
 QSystemScreenSaver::QSystemScreenSaver(QObject *parent)
     : QObject(parent)
 {
+#ifdef Q_OS_LINUX
+    d = new QSystemScreenSaverPrivate(static_cast<QSystemScreenSaverLinuxCommonPrivate*>(parent));
+#else
     d = new QSystemScreenSaverPrivate(parent);
+#endif
     screenSaverIsInhibited = screenSaverInhibited();
 }
 
