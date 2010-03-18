@@ -1014,7 +1014,7 @@ QContact QContactWinCEEngine::convertToQContact(IItem *contact) const
 
     // Synthesize the display label.
     QContactManager::Error error;
-    QString synth = synthesizedDisplayLabel(ret, error);
+    QString synth = synthesizedDisplayLabel(ret, &error);
     ret = setContactDisplayLabel(synth, ret);
 
     return ret;
@@ -1604,33 +1604,4 @@ QList<QContactLocalId> QContactWinCEEngine::contactIds(const QContactFilter& fil
     return QContactManagerEngine::contactIds(filter, sortOrders, error);
 }
 
-QList<QContactLocalId> QContactWinCEEngine::contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const
-{
-    QList<QContactLocalId> ids;
-    *error = QContactManager::NoError;
-    if (sortOrders.isEmpty()) {
-        ids = d->m_ids;
-    } else {
-        SimpleComPointer<IPOutlookItemCollection> newCollection;
-        HRESULT hr = d->m_collection->Restrict(TEXT("[Oid] <> 0"), &newCollection);
-
-        if (SUCCEEDED(hr)) {
-            //Try native sorting first...
-            if (sortOrders.size() == 1 && sortPOOMContacts(newCollection, sortOrders.at(0))) {
-                ids = convertP2QIdList(newCollection);
-                return ids;
-            } 
-        }
-
-        //Multi sort orders or native sorting failed, fall back to the generic sorting
-        QList<QContact> contacts;
-        if (convertP2QContacts(d->m_collection, &contacts)) {
-            ids = sortContacts(contacts, sortOrders);
-        } else {
-            *error = QContactManager::UnspecifiedError;
-            qDebug() << "Wince contact manager internal error";
-        }
-    }
-    return ids;
-}
 
