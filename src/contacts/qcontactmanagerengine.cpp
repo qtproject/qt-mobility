@@ -225,12 +225,12 @@ QString QContactManagerEngine::managerUri() const
   Depending on the backend, this filtering operation may involve retrieving all the contacts.
   Any error which occurs will be saved in \a error.
  */
-QList<QContactLocalId> QContactManagerEngine::contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
+QList<QContactLocalId> QContactManagerEngine::contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const
 {
     Q_UNUSED(filter);
     Q_UNUSED(sortOrders);
 
-    error = QContactManager::NotSupportedError;
+    *error = QContactManager::NotSupportedError;
     return QList<QContactLocalId>();
 }
 
@@ -248,12 +248,12 @@ QList<QContactLocalId> QContactManagerEngine::contactIds(const QContactFilter& f
 
   \sa QContactFetchHint
  */
-QList<QContact> QContactManagerEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fetchHint, QContactManager::Error& error) const
+QList<QContact> QContactManagerEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fetchHint, QContactManager::Error* error) const
 {
     Q_UNUSED(filter);
     Q_UNUSED(sortOrders);
     Q_UNUSED(fetchHint);
-    error = QContactManager::NotSupportedError;
+    *error = QContactManager::NotSupportedError;
     return QList<QContact>();
 }
 
@@ -274,11 +274,11 @@ QList<QContact> QContactManagerEngine::contacts(const QContactFilter& filter, co
 
   \sa QContactFetchHint
  */
-QContact QContactManagerEngine::contact(const QContactLocalId& contactId, const QContactFetchHint& fetchHint, QContactManager::Error& error) const
+QContact QContactManagerEngine::contact(const QContactLocalId& contactId, const QContactFetchHint& fetchHint, QContactManager::Error* error) const
 {
     Q_UNUSED(contactId);
     Q_UNUSED(fetchHint);
-    error = QContactManager::NotSupportedError;
+    *error = QContactManager::NotSupportedError;
     return QContact();
 }
 
@@ -293,11 +293,11 @@ QContact QContactManagerEngine::contact(const QContactLocalId& contactId, const 
   \c QContactManager::NotSupportedError and the function will
   return false.
  */
-bool QContactManagerEngine::setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& error)
+bool QContactManagerEngine::setSelfContactId(const QContactLocalId& contactId, QContactManager::Error* error)
 {
     Q_UNUSED(contactId);
 
-    error = QContactManager::NotSupportedError;
+    *error = QContactManager::NotSupportedError;
     return false;
 }
 
@@ -308,9 +308,9 @@ bool QContactManagerEngine::setSelfContactId(const QContactLocalId& contactId, Q
   the concept of a "self" contact, an invalid id will be returned
   and the \a error will be set to \c QContactManager::DoesNotExistError.
  */
-QContactLocalId QContactManagerEngine::selfContactId(QContactManager::Error& error) const
+QContactLocalId QContactManagerEngine::selfContactId(QContactManager::Error* error) const
 {
-    error = QContactManager::DoesNotExistError;
+    *error = QContactManager::DoesNotExistError;
     return QContactLocalId();
 }
 
@@ -321,13 +321,13 @@ QContactLocalId QContactManagerEngine::selfContactId(QContactManager::Error& err
   If no relationships of the given \a relationshipType in which the contact identified by the given \a participantId is involved in the given \a role exists,
   \a error is set to QContactManager::DoesNotExistError.
  */
-QList<QContactRelationship> QContactManagerEngine::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationship::Role role, QContactManager::Error& error) const
+QList<QContactRelationship> QContactManagerEngine::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationship::Role role, QContactManager::Error* error) const
 {
     Q_UNUSED(relationshipType);
     Q_UNUSED(participantId);
     Q_UNUSED(role);
 
-    error = QContactManager::NotSupportedError;
+    *error = QContactManager::NotSupportedError;
     return QList<QContactRelationship>();
 }
 
@@ -339,12 +339,12 @@ QList<QContactRelationship> QContactManagerEngine::relationships(const QString& 
 
   The overall operation error will be saved in \a error.
  */
-bool QContactManagerEngine::saveRelationships(QList<QContactRelationship>* relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error)
+bool QContactManagerEngine::saveRelationships(QList<QContactRelationship>* relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
 {
     Q_UNUSED(relationships);
     Q_UNUSED(errorMap);
 
-    error = QContactManager::NotSupportedError;
+    *error = QContactManager::NotSupportedError;
     return false;
 }
 
@@ -361,7 +361,7 @@ bool QContactManagerEngine::saveRelationships(QList<QContactRelationship>* relat
 
   The default implementation of this function converts the argument into a call to saveRelationships.
  */
-bool QContactManagerEngine::saveRelationship(QContactRelationship *relationship, QContactManager::Error &error)
+bool QContactManagerEngine::saveRelationship(QContactRelationship *relationship, QContactManager::Error *error)
 {
     // Convert to a list op
     if (relationship) {
@@ -372,12 +372,12 @@ bool QContactManagerEngine::saveRelationship(QContactRelationship *relationship,
         bool ret = saveRelationships(&list, &errors, error);
 
         if (errors.count() > 0)
-            error = errors.begin().value();
+            *error = errors.begin().value();
 
         *relationship = list.value(0);
         return ret;
     } else {
-        error = QContactManager::BadArgumentError;
+        *error = QContactManager::BadArgumentError;
         return false;
     }
 }
@@ -390,7 +390,7 @@ bool QContactManagerEngine::saveRelationship(QContactRelationship *relationship,
 
   The default implementation of this function converts the argument into a call to removeRelationships
  */
-bool QContactManagerEngine::removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error)
+bool QContactManagerEngine::removeRelationship(const QContactRelationship& relationship, QContactManager::Error* error)
 {
     // Convert to a list op
     QList<QContactRelationship> list;
@@ -400,7 +400,7 @@ bool QContactManagerEngine::removeRelationship(const QContactRelationship& relat
     bool ret = removeRelationships(list, &errors, error);
 
     if (errors.count() > 0)
-        error = errors.begin().value();
+        *error = errors.begin().value();
 
     return ret;
 }
@@ -414,12 +414,12 @@ bool QContactManagerEngine::removeRelationship(const QContactRelationship& relat
 
   The overall operation error will be saved in \a error.
  */
-bool QContactManagerEngine::removeRelationships(const QList<QContactRelationship>& relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error)
+bool QContactManagerEngine::removeRelationships(const QList<QContactRelationship>& relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
 {
     Q_UNUSED(relationships);
     Q_UNUSED(errorMap);
 
-    error = QContactManager::NotSupportedError;
+    *error = QContactManager::NotSupportedError;
     return false;
 }
 
@@ -428,10 +428,10 @@ bool QContactManagerEngine::removeRelationships(const QList<QContactRelationship
   Any error that occurs will be stored in \a error.
   Returns the synthesized display label.
  */
-QString QContactManagerEngine::synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const
+QString QContactManagerEngine::synthesizedDisplayLabel(const QContact& contact, QContactManager::Error* error) const
 {
     // synthesize the display name from the name of the contact, or, failing that, the organisation of the contact.
-    error = QContactManager::NoError;
+    *error = QContactManager::NoError;
     QList<QContactDetail> allNames = contact.details(QContactName::DefinitionName);
 
     const QLatin1String space(" ");
@@ -488,7 +488,7 @@ QString QContactManagerEngine::synthesizedDisplayLabel(const QContact& contact, 
         }
     }
 
-    error = QContactManager::UnspecifiedError;
+    *error = QContactManager::UnspecifiedError;
     return QString();
 }
 
@@ -556,7 +556,7 @@ QStringList QContactManagerEngine::supportedRelationshipTypes(const QString& con
 QStringList QContactManagerEngine::supportedContactTypes() const
 {
     QContactManager::Error error;
-    QList<QVariant> allowableVals = detailDefinition(QContactType::DefinitionName, QContactType::TypeContact, error).fields().value(QContactType::FieldType).allowableValues();
+    QList<QVariant> allowableVals = detailDefinition(QContactType::DefinitionName, QContactType::TypeContact, &error).fields().value(QContactType::FieldType).allowableValues();
     QStringList retn;
     for (int i = 0; i < allowableVals.size(); i++)
         retn += allowableVals.at(i).toString();
@@ -983,7 +983,7 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
   Any errors encountered during this operation should be stored to
   \a error.
  */
-bool QContactManagerEngine::validateContact(const QContact& contact, QContactManager::Error& error) const
+bool QContactManagerEngine::validateContact(const QContact& contact, QContactManager::Error* error) const
 {
     QList<QString> uniqueDefinitionIds;
 
@@ -993,15 +993,15 @@ bool QContactManagerEngine::validateContact(const QContact& contact, QContactMan
         QVariantMap values = d.variantValues();
         QContactDetailDefinition def = detailDefinition(d.definitionName(), contact.type(), error);
         // check that the definition is supported
-        if (error != QContactManager::NoError) {
-            error = QContactManager::InvalidDetailError;
+        if (*error != QContactManager::NoError) {
+            *error = QContactManager::InvalidDetailError;
             return false; // this definition is not supported.
         }
 
         // check uniqueness
         if (def.isUnique()) {
             if (uniqueDefinitionIds.contains(def.name())) {
-                error = QContactManager::AlreadyExistsError;
+                *error = QContactManager::AlreadyExistsError;
                 return false; // can't have two of a unique detail.
             }
             uniqueDefinitionIds.append(def.name());
@@ -1012,14 +1012,14 @@ bool QContactManagerEngine::validateContact(const QContact& contact, QContactMan
             const QString& key = keys.at(i);
             // check that no values exist for nonexistent fields.
             if (!def.fields().contains(key)) {
-                error = QContactManager::InvalidDetailError;
+                *error = QContactManager::InvalidDetailError;
                 return false; // value for nonexistent field.
             }
 
             QContactDetailFieldDefinition field = def.fields().value(key);
             // check that the type of each value corresponds to the allowable field type
             if (static_cast<int>(field.dataType()) != values.value(key).userType()) {
-                error = QContactManager::InvalidDetailError;
+                *error = QContactManager::InvalidDetailError;
                 return false; // type doesn't match.
             }
 
@@ -1031,13 +1031,13 @@ bool QContactManagerEngine::validateContact(const QContact& contact, QContactMan
                     QList<QVariant> innerValues = values.value(key).toList();
                     for (int i = 0; i < innerValues.size(); i++) {
                         if (!field.allowableValues().contains(innerValues.at(i))) {
-                            error = QContactManager::InvalidDetailError;
+                            *error = QContactManager::InvalidDetailError;
                             return false; // value not allowed.
                         }
                     }
                 } else if (!field.allowableValues().contains(values.value(key))) {
                     // the datatype is not a list; the value wasn't allowed.
-                    error = QContactManager::InvalidDetailError;
+                    *error = QContactManager::InvalidDetailError;
                     return false; // value not allowed.
                 }
             }
@@ -1059,15 +1059,15 @@ bool QContactManagerEngine::validateContact(const QContact& contact, QContactMan
   Any errors encountered during this operation should be stored to
   \a error.
  */
-bool QContactManagerEngine::validateDefinition(const QContactDetailDefinition& definition, QContactManager::Error& error) const
+bool QContactManagerEngine::validateDefinition(const QContactDetailDefinition& definition, QContactManager::Error* error) const
 {
     if (definition.name().isEmpty()) {
-        error = QContactManager::BadArgumentError;
+        *error = QContactManager::BadArgumentError;
         return false;
     }
 
     if (definition.fields().count() == 0) {
-        error = QContactManager::BadArgumentError;
+        *error = QContactManager::BadArgumentError;
         return false;
     }
 
@@ -1077,24 +1077,24 @@ bool QContactManagerEngine::validateDefinition(const QContactDetailDefinition& d
     while(it.hasNext()) {
         it.next();
         if (it.key().isEmpty()) {
-            error = QContactManager::BadArgumentError;
+            *error = QContactManager::BadArgumentError;
             return false;
         }
 
         if (!types.contains(it.value().dataType())) {
-            error = QContactManager::BadArgumentError;
+            *error = QContactManager::BadArgumentError;
             return false;
         }
 
         // Check that each allowed value is the same type
         for (int i=0; i < it.value().allowableValues().count(); i++) {
             if (it.value().allowableValues().at(i).type() != it.value().dataType()) {
-                error = QContactManager::BadArgumentError;
+                *error = QContactManager::BadArgumentError;
                 return false;
             }
         }
     }
-    error = QContactManager::NoError;
+    *error = QContactManager::NoError;
     return true;
 }
 
@@ -1104,10 +1104,10 @@ bool QContactManagerEngine::validateDefinition(const QContactDetailDefinition& d
   Any errors encountered during this operation should be stored to
   \a error.
  */
-QMap<QString, QContactDetailDefinition> QContactManagerEngine::detailDefinitions(const QString& contactType, QContactManager::Error& error) const
+QMap<QString, QContactDetailDefinition> QContactManagerEngine::detailDefinitions(const QString& contactType, QContactManager::Error* error) const
 {
     Q_UNUSED(contactType);
-    error = QContactManager::NotSupportedError;
+    *error = QContactManager::NotSupportedError;
     return QMap<QString, QContactDetailDefinition>();
 }
 
@@ -1119,16 +1119,16 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::detailDefinitions
   Any errors encountered during this operation should be stored to
   \a error.
  */
-QContactDetailDefinition QContactManagerEngine::detailDefinition(const QString& definitionName, const QString& contactType, QContactManager::Error& error) const
+QContactDetailDefinition QContactManagerEngine::detailDefinition(const QString& definitionName, const QString& contactType, QContactManager::Error* error) const
 {
     Q_UNUSED(definitionName);
 
     QMap<QString, QContactDetailDefinition> definitions = detailDefinitions(contactType, error);
     if (definitions.contains(definitionName))  {
-        error = QContactManager::NoError;
+        *error = QContactManager::NoError;
         return definitions.value(definitionName);
     } else {
-        error = QContactManager::DoesNotExistError;
+        *error = QContactManager::DoesNotExistError;
         return QContactDetailDefinition();
     }
 }
@@ -1144,12 +1144,12 @@ QContactDetailDefinition QContactManagerEngine::detailDefinition(const QString& 
   Any errors encountered during this operation should be stored to
   \a error.
  */
-bool QContactManagerEngine::saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType, QContactManager::Error& error)
+bool QContactManagerEngine::saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType, QContactManager::Error* error)
 {
     Q_UNUSED(def);
     Q_UNUSED(contactType);
 
-    error = QContactManager::NotSupportedError;
+    *error = QContactManager::NotSupportedError;
     return false;
 }
 
@@ -1164,12 +1164,12 @@ bool QContactManagerEngine::saveDetailDefinition(const QContactDetailDefinition&
   Any errors encountered during this operation should be stored to
   \a error.
  */
-bool QContactManagerEngine::removeDetailDefinition(const QString& definitionName, const QString& contactType, QContactManager::Error& error)
+bool QContactManagerEngine::removeDetailDefinition(const QString& definitionName, const QString& contactType, QContactManager::Error* error)
 {
     Q_UNUSED(definitionName);
     Q_UNUSED(contactType);
 
-    error = QContactManager::NotSupportedError;
+    *error = QContactManager::NotSupportedError;
     return false;
 }
 
@@ -1200,7 +1200,7 @@ void QContactManagerEngine::setDetailAccessConstraints(QContactDetail *detail, Q
 
   \sa managerUri()
  */
-bool QContactManagerEngine::saveContact(QContact* contact, QContactManager::Error& error)
+bool QContactManagerEngine::saveContact(QContact* contact, QContactManager::Error* error)
 {
     // Convert to a list op
     if (contact) {
@@ -1211,12 +1211,12 @@ bool QContactManagerEngine::saveContact(QContact* contact, QContactManager::Erro
         bool ret = saveContacts(&list, &errors, error);
 
         if (errors.count() > 0)
-            error = errors.begin().value();
+            *error = errors.begin().value();
 
         *contact = list.value(0);
         return ret;
     } else {
-        error = QContactManager::BadArgumentError;
+        *error = QContactManager::BadArgumentError;
         return false;
     }
 }
@@ -1229,7 +1229,7 @@ bool QContactManagerEngine::saveContact(QContact* contact, QContactManager::Erro
 
   The default implementation will convert this into a call to removeContacts.
  */
-bool QContactManagerEngine::removeContact(const QContactLocalId& contactId, QContactManager::Error& error)
+bool QContactManagerEngine::removeContact(const QContactLocalId& contactId, QContactManager::Error* error)
 {
     // Convert to a list op
     QList<QContactLocalId> list;
@@ -1239,13 +1239,13 @@ bool QContactManagerEngine::removeContact(const QContactLocalId& contactId, QCon
     bool ret = removeContacts(list, &errors, error);
 
     if (errors.count() > 0)
-        error = errors.begin().value();
+        *error = errors.begin().value();
 
     return ret;
 }
 
 /*!
-  \fn bool QContactManagerEngine::saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error)
+  \fn bool QContactManagerEngine::saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
 
   Adds the list of contacts given by \a contacts list to the database.
   Returns true if the contacts were saved successfully, otherwise false.
@@ -1267,7 +1267,7 @@ bool QContactManagerEngine::removeContact(const QContactLocalId& contactId, QCon
  */
 
 /*!
-  \fn bool QContactManagerEngine::removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error)
+  \fn bool QContactManagerEngine::removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
 
   Remove every contact whose id is contained in the list of contacts ids
   \a contactIds.  Returns true if all contacts were removed successfully,
@@ -1298,22 +1298,22 @@ bool QContactManagerEngine::removeContact(const QContactLocalId& contactId, QCon
 
   This function is preliminary and the behaviour is subject to change!
  */
-QContact QContactManagerEngine::compatibleContact(const QContact& original, QContactManager::Error& error)
+QContact QContactManagerEngine::compatibleContact(const QContact& original, QContactManager::Error* error)
 {
     QContact conforming;
     QContactManager::Error tempError;
     QList<QString> uniqueDefinitionIds;
     QList<QContactDetail> allDetails = original.details();
-    QMap<QString, QContactDetailDefinition> defs = detailDefinitions(original.type(), tempError);
+    QMap<QString, QContactDetailDefinition> defs = detailDefinitions(original.type(), &tempError);
     for (int j = 0; j < allDetails.size(); j++) {
         // check that the detail conforms to the definition in this manager.
         // if so, then add it to the conforming contact to be returned.  if not, prune it.
         const QContactDetail& d = allDetails.at(j);
 
         QVariantMap values = d.variantValues();
-        QContactDetailDefinition def = detailDefinition(d.definitionName(), original.type(), tempError);
+        QContactDetailDefinition def = detailDefinition(d.definitionName(), original.type(), &tempError);
         // check that the definition is supported
-        if (error != QContactManager::NoError) {
+        if (*error != QContactManager::NoError) {
             continue; // this definition is not supported.
         }
 
@@ -1371,9 +1371,9 @@ QContact QContactManagerEngine::compatibleContact(const QContact& original, QCon
     }
 
     if (!conforming.isEmpty())
-        error = QContactManager::NoError;
+        *error = QContactManager::NoError;
     else
-        error = QContactManager::DoesNotExistError;
+        *error = QContactManager::DoesNotExistError;
     return conforming;
 }
 

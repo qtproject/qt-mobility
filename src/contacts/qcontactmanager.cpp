@@ -332,7 +332,7 @@ QContactManager::Error QContactManager::error() const
  */
 QList<QContactLocalId> QContactManager::contactIds(const QList<QContactSortOrder>& sortOrders) const
 {
-    return d->m_engine->contactIds(QContactFilter(), sortOrders, d->m_error);
+    return d->m_engine->contactIds(QContactFilter(), sortOrders, &d->m_error);
 }
 
 /*!
@@ -341,7 +341,7 @@ QList<QContactLocalId> QContactManager::contactIds(const QList<QContactSortOrder
  */
 QList<QContactLocalId> QContactManager::contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders) const
 {
-    return d->m_engine->contactIds(filter, sortOrders, d->m_error);
+    return d->m_engine->contactIds(filter, sortOrders, &d->m_error);
 }
 
 /*!
@@ -359,7 +359,7 @@ QList<QContact> QContactManager::contacts(const QList<QContactSortOrder>& sortOr
 {
     QContactFetchHint fetchHint;
     fetchHint.setDetailDefinitionsHint(definitionRestrictions);
-    return d->m_engine->contacts(QContactFilter(), sortOrders, fetchHint, d->m_error);
+    return d->m_engine->contacts(QContactFilter(), sortOrders, fetchHint, &d->m_error);
 }
 
 /*!
@@ -380,7 +380,7 @@ QList<QContact> QContactManager::contacts(const QContactFilter& filter, const QL
 {
     QContactFetchHint fetchHint;
     fetchHint.setDetailDefinitionsHint(definitionRestrictions);
-    return d->m_engine->contacts(filter, sortOrders, fetchHint, d->m_error);
+    return d->m_engine->contacts(filter, sortOrders, fetchHint, &d->m_error);
 }
 
 /*!
@@ -401,7 +401,7 @@ QContact QContactManager::contact(const QContactLocalId& contactId, const QStrin
 {
     QContactFetchHint fetchHint;
     fetchHint.setDetailDefinitionsHint(definitionRestrictions);
-    return d->m_engine->contact(contactId, fetchHint, d->m_error);
+    return d->m_engine->contact(contactId, fetchHint, &d->m_error);
 }
 
 /*!
@@ -418,7 +418,7 @@ QContact QContactManager::contact(const QContactLocalId& contactId, const QStrin
  */
 QList<QContact> QContactManager::contacts(const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fetchHint) const
 {
-    return d->m_engine->contacts(QContactFilter(), sortOrders, fetchHint, d->m_error);
+    return d->m_engine->contacts(QContactFilter(), sortOrders, fetchHint, &d->m_error);
 }
 
 /*!
@@ -438,7 +438,7 @@ QList<QContact> QContactManager::contacts(const QList<QContactSortOrder>& sortOr
  */
 QList<QContact> QContactManager::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fetchHint) const
 {
-    return d->m_engine->contacts(filter, sortOrders, fetchHint, d->m_error);
+    return d->m_engine->contacts(filter, sortOrders, fetchHint, &d->m_error);
 }
 
 /*!
@@ -458,7 +458,7 @@ QList<QContact> QContactManager::contacts(const QContactFilter& filter, const QL
  */
 QContact QContactManager::contact(const QContactLocalId& contactId, const QContactFetchHint& fetchHint) const
 {
-    return d->m_engine->contact(contactId, fetchHint, d->m_error);
+    return d->m_engine->contact(contactId, fetchHint, &d->m_error);
 }
 
 /*!
@@ -500,7 +500,7 @@ QContact QContactManager::contact(const QContactLocalId& contactId, const QConta
 bool QContactManager::saveContact(QContact* contact)
 {
     if (contact) {
-        return d->m_engine->saveContact(contact, d->m_error);
+        return d->m_engine->saveContact(contact, &d->m_error);
     } else {
         d->m_error = QContactManager::BadArgumentError;
         return false;
@@ -515,7 +515,7 @@ bool QContactManager::saveContact(QContact* contact)
  */
 bool QContactManager::removeContact(const QContactLocalId& contactId)
 {
-    return d->m_engine->removeContact(contactId, d->m_error);
+    return d->m_engine->removeContact(contactId, &d->m_error);
 }
 
 /*!
@@ -541,7 +541,7 @@ QList<QContactManager::Error> QContactManager::saveContacts(QList<QContact>* con
         QMap<int, QContactManager::Error> errorMap;
         QList<QContactManager::Error> errorList;
         int size = contactList->size();
-        d->m_engine->saveContacts(contactList, &errorMap, d->m_error);
+        d->m_engine->saveContacts(contactList, &errorMap, &d->m_error);
 
         for (int j=0; j < size; j++) {
             if (errorMap.contains(j))
@@ -551,7 +551,7 @@ QList<QContactManager::Error> QContactManager::saveContacts(QList<QContact>* con
         }
         return errorList;
     } else {
-        d->m_error = QContactManager::BadArgumentError;
+        d->m_error =QContactManager::BadArgumentError;
         return QList<QContactManager::Error>();
     }
 }
@@ -577,10 +577,10 @@ bool QContactManager::saveContacts(QList<QContact>* contacts, QMap<int, QContact
     if (errorMap)
         errorMap->clear();
     if (!contacts) {
-        d->m_error = QContactManager::BadArgumentError;
+        d->m_error =QContactManager::BadArgumentError;
         return false;
     }
-    return d->m_engine->saveContacts(contacts, errorMap, d->m_error);
+    return d->m_engine->saveContacts(contacts, errorMap, &d->m_error);
 }
 
 /*!
@@ -612,11 +612,11 @@ bool QContactManager::removeContacts(QList<QContactLocalId>* contactIds, QMap<in
     if (errorMap)
         errorMap->clear();
     if (!contactIds) {
-        d->m_error = QContactManager::BadArgumentError;
+        d->m_error =QContactManager::BadArgumentError;
         return false;
     }
 
-    return d->m_engine->removeContacts(*contactIds, errorMap, d->m_error);
+    return d->m_engine->removeContacts(*contactIds, errorMap, &d->m_error);
 }
 
 /*!
@@ -640,7 +640,7 @@ bool QContactManager::removeContacts(const QList<QContactLocalId>& contactIds, Q
 {
     if (errorMap)
         errorMap->clear();
-    return d->m_engine->removeContacts(contactIds, errorMap, d->m_error);
+    return d->m_engine->removeContacts(contactIds, errorMap, &d->m_error);
 }
 
 /*!
@@ -654,7 +654,7 @@ bool QContactManager::removeContacts(const QList<QContactLocalId>& contactIds, Q
  */
 QContact QContactManager::compatibleContact(const QContact& original)
 {
-    return d->m_engine->compatibleContact(original, d->m_error);
+    return d->m_engine->compatibleContact(original, &d->m_error);
 }
 
 /*!
@@ -682,7 +682,7 @@ QList<QContactManager::Error> QContactManager::removeContacts(QList<QContactLoca
         QMap<int, QContactManager::Error> errorMap;
         QList<QContactManager::Error> errorList;
         int size = idList->size();
-        d->m_engine->removeContacts(*idList, &errorMap, d->m_error);
+        d->m_engine->removeContacts(*idList, &errorMap, &d->m_error);
 
         for (int j=0; j < size; j++) {
             if (errorMap.contains(j))
@@ -692,7 +692,7 @@ QList<QContactManager::Error> QContactManager::removeContacts(QList<QContactLoca
         }
         return errorList;
     } else {
-        d->m_error = QContactManager::BadArgumentError;
+        d->m_error =QContactManager::BadArgumentError;
         return QList<QContactManager::Error>();
     }
 }
@@ -702,7 +702,7 @@ QList<QContactManager::Error> QContactManager::removeContacts(QList<QContactLoca
  */
 QString QContactManager::synthesizedDisplayLabel(const QContact& contact) const
 {
-    return d->m_engine->synthesizedDisplayLabel(contact, d->m_error);
+    return d->m_engine->synthesizedDisplayLabel(contact, &d->m_error);
 }
 
 /*!
@@ -718,7 +718,7 @@ QString QContactManager::synthesizedDisplayLabel(const QContact& contact) const
  */
 bool QContactManager::setSelfContactId(const QContactLocalId& contactId)
 {
-    return d->m_engine->setSelfContactId(contactId, d->m_error);
+    return d->m_engine->setSelfContactId(contactId, &d->m_error);
 }
 
 /*!
@@ -730,7 +730,7 @@ bool QContactManager::setSelfContactId(const QContactLocalId& contactId)
  */
 QContactLocalId QContactManager::selfContactId() const
 {
-    return d->m_engine->selfContactId(d->m_error);
+    return d->m_engine->selfContactId(&d->m_error);
 }
 
 /*!
@@ -743,7 +743,7 @@ QContactLocalId QContactManager::selfContactId() const
  */
 QList<QContactRelationship> QContactManager::relationships(const QContactId& participantId, QContactRelationshipFilter::Role role) const
 {
-    return d->m_engine->relationships(QString(), participantId, static_cast<QContactRelationship::Role>(role), d->m_error);
+    return d->m_engine->relationships(QString(), participantId, static_cast<QContactRelationship::Role>(role), &d->m_error);
 }
 
 /*!
@@ -757,7 +757,7 @@ QList<QContactRelationship> QContactManager::relationships(const QContactId& par
  */
 QList<QContactRelationship> QContactManager::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role) const
 {
-    return d->m_engine->relationships(relationshipType, participantId, static_cast<QContactRelationship::Role>(role), d->m_error);
+    return d->m_engine->relationships(relationshipType, participantId, static_cast<QContactRelationship::Role>(role), &d->m_error);
 }
 
 /*!
@@ -766,7 +766,7 @@ QList<QContactRelationship> QContactManager::relationships(const QString& relati
  */
 QList<QContactRelationship> QContactManager::relationships(const QContactId& participantId, QContactRelationship::Role role) const
 {
-    return d->m_engine->relationships(QString(), participantId, role, d->m_error);
+    return d->m_engine->relationships(QString(), participantId, role, &d->m_error);
 }
 
 /*!
@@ -776,7 +776,7 @@ QList<QContactRelationship> QContactManager::relationships(const QContactId& par
  */
 QList<QContactRelationship> QContactManager::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationship::Role role) const
 {
-    return d->m_engine->relationships(relationshipType, participantId, role, d->m_error);
+    return d->m_engine->relationships(relationshipType, participantId, role, &d->m_error);
 }
 
 /*!
@@ -795,9 +795,9 @@ QList<QContactRelationship> QContactManager::relationships(const QString& relati
 bool QContactManager::saveRelationship(QContactRelationship* relationship)
 {
     if (relationship) {
-        return d->m_engine->saveRelationship(relationship, d->m_error);
+        return d->m_engine->saveRelationship(relationship, &d->m_error);
     } else {
-        d->m_error = QContactManager::BadArgumentError;
+        d->m_error =QContactManager::BadArgumentError;
         return false;
     }
 }
@@ -815,7 +815,7 @@ QList<QContactManager::Error> QContactManager::saveRelationships(QList<QContactR
         QMap<int, QContactManager::Error> errorMap;
         QList<QContactManager::Error> errorList;
         int size = relationships->size();
-        d->m_engine->saveRelationships(relationships, &errorMap, d->m_error);
+        d->m_engine->saveRelationships(relationships, &errorMap, &d->m_error);
 
         for (int j=0; j < size; j++) {
             if (errorMap.contains(j))
@@ -825,7 +825,7 @@ QList<QContactManager::Error> QContactManager::saveRelationships(QList<QContactR
         }
         return errorList;
     } else {
-        d->m_error = QContactManager::BadArgumentError;
+        d->m_error =QContactManager::BadArgumentError;
         return QList<QContactManager::Error>();
     }
 }
@@ -842,10 +842,10 @@ bool QContactManager::saveRelationships(QList<QContactRelationship>* relationshi
     if (errorMap)
         errorMap->clear();
     if (!relationships) {
-        d->m_error = QContactManager::BadArgumentError;
+        d->m_error =QContactManager::BadArgumentError;
         return false;
     }
-    return d->m_engine->saveRelationships(relationships, errorMap, d->m_error);
+    return d->m_engine->saveRelationships(relationships, errorMap, &d->m_error);
 }
 
 /*!
@@ -856,7 +856,7 @@ bool QContactManager::saveRelationships(QList<QContactRelationship>* relationshi
  */
 bool QContactManager::removeRelationship(const QContactRelationship& relationship)
 {
-    return d->m_engine->removeRelationship(relationship, d->m_error);
+    return d->m_engine->removeRelationship(relationship, &d->m_error);
 }
 
 /*!
@@ -871,7 +871,7 @@ QList<QContactManager::Error> QContactManager::removeRelationships(const QList<Q
     QMap<int, QContactManager::Error> errorMap;
     QList<QContactManager::Error> errorList;
     int size = relationships.size();
-    d->m_engine->removeRelationships(relationships, &errorMap, d->m_error);
+    d->m_engine->removeRelationships(relationships, &errorMap, &d->m_error);
 
     for (int j=0; j < size; j++) {
         if (errorMap.contains(j))
@@ -892,7 +892,7 @@ bool QContactManager::removeRelationships(const QList<QContactRelationship>& rel
 {
     if (errorMap)
         errorMap->clear();
-    return d->m_engine->removeRelationships(relationships, errorMap, d->m_error);
+    return d->m_engine->removeRelationships(relationships, errorMap, &d->m_error);
 }
 
 /*!
@@ -902,44 +902,44 @@ bool QContactManager::removeRelationships(const QList<QContactRelationship>& rel
 QMap<QString, QContactDetailDefinition> QContactManager::detailDefinitions(const QString& contactType) const
 {
     if (!supportedContactTypes().contains(contactType)) {
-        d->m_error = QContactManager::InvalidContactTypeError;
+        d->m_error =QContactManager::InvalidContactTypeError;
         return QMap<QString, QContactDetailDefinition>();
     }
 
-    return d->m_engine->detailDefinitions(contactType, d->m_error);
+    return d->m_engine->detailDefinitions(contactType, &d->m_error);
 }
 
 /*! Returns the definition identified by the given \a definitionName that is valid for the contacts whose type is the given \a contactType in this store, or a default-constructed QContactDetailDefinition if no such definition exists */
 QContactDetailDefinition QContactManager::detailDefinition(const QString& definitionName, const QString& contactType) const
 {
     if (!supportedContactTypes().contains(contactType)) {
-        d->m_error = QContactManager::InvalidContactTypeError;
+        d->m_error =QContactManager::InvalidContactTypeError;
         return QContactDetailDefinition();
     }
 
-    return d->m_engine->detailDefinition(definitionName, contactType, d->m_error);
+    return d->m_engine->detailDefinition(definitionName, contactType, &d->m_error);
 }
 
 /*! Persists the given definition \a def in the database, which is valid for contacts whose type is the given \a contactType.  Returns true if the definition was saved successfully, otherwise returns false */
 bool QContactManager::saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType)
 {
     if (!supportedContactTypes().contains(contactType)) {
-        d->m_error = QContactManager::InvalidContactTypeError;
+        d->m_error =QContactManager::InvalidContactTypeError;
         return false;
     }
 
-    return d->m_engine->saveDetailDefinition(def, contactType, d->m_error);
+    return d->m_engine->saveDetailDefinition(def, contactType, &d->m_error);
 }
 
 /*! Removes the detail definition identified by \a definitionName from the database, which is valid for contacts whose type is the given \a contactType.  Returns true if the definition was removed successfully, otherwise returns false */
 bool QContactManager::removeDetailDefinition(const QString& definitionName, const QString& contactType)
 {
     if (!supportedContactTypes().contains(contactType)) {
-        d->m_error = QContactManager::InvalidContactTypeError;
+        d->m_error =QContactManager::InvalidContactTypeError;
         return false;
     }
 
-    return d->m_engine->removeDetailDefinition(definitionName, contactType, d->m_error);
+    return d->m_engine->removeDetailDefinition(definitionName, contactType, &d->m_error);
 }
 
 /*!
