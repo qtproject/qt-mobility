@@ -49,7 +49,7 @@
 #include <utf.h>
 #include <BADESCA.H>
 #include <BAUTILS.H>
-#include <EIKENV.H>  
+#include <coemain.h>  
 #ifdef S60_DEVVIDEO_RECORDING_SUPPORTED
 #include <mmf/devvideo/devvideorecord.h>
 #include <mmf/devvideo/devvideobase.h>
@@ -295,7 +295,7 @@ bool S60VideoCaptureSession::setOutputLocation(const QUrl &sink)
     //qDebug() << "S60VideoCaptureSession::setOutputlocation";
     QString filename = QDir::toNativeSeparators(m_sink.toString());
     TPtrC16 path(reinterpret_cast<const TUint16*>(filename.utf16()));         
-    TRAPD(err, BaflUtils::EnsurePathExistsL(CEikonEnv::Static()->FsSession(),path));
+    TRAPD(err, BaflUtils::EnsurePathExistsL(CCoeEnv::Static()->FsSession(),path));
     if (err==KErrNone) {
         m_sink = sink;
         return true;

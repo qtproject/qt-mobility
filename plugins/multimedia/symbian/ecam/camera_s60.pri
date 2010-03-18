@@ -46,7 +46,8 @@ symbian:LIBS += -lfbscli \
         -ljisx0208 \
         -lmmfcontrollerframework \
         -lfbscli \
-        -lefsrv
+        -lefsrv \
+        -lcone
 
 
     HEADERS += $$PWD/s60camerafocuscontrol.h \
