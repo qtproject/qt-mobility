@@ -357,7 +357,9 @@ QList<QContactLocalId> QContactManager::contactIds(const QContactFilter& filter,
  */
 QList<QContact> QContactManager::contacts(const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions) const
 {
-    return d->m_engine->contacts(sortOrders, definitionRestrictions, d->m_error);
+    QContactFetchHint fetchHint;
+    fetchHint.setDetailDefinitionsHint(definitionRestrictions);
+    return d->m_engine->contacts(sortOrders, fetchHint, d->m_error);
 }
 
 /*!
@@ -376,7 +378,9 @@ QList<QContact> QContactManager::contacts(const QList<QContactSortOrder>& sortOr
  */
 QList<QContact> QContactManager::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions) const
 {
-    return d->m_engine->contacts(filter, sortOrders, definitionRestrictions, d->m_error);
+    QContactFetchHint fetchHint;
+    fetchHint.setDetailDefinitionsHint(definitionRestrictions);
+    return d->m_engine->contacts(filter, sortOrders, fetchHint, d->m_error);
 }
 
 /*!
@@ -395,7 +399,9 @@ QList<QContact> QContactManager::contacts(const QContactFilter& filter, const QL
  */
 QContact QContactManager::contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions) const
 {
-    return d->m_engine->contact(contactId, definitionRestrictions, d->m_error);
+    QContactFetchHint fetchHint;
+    fetchHint.setDetailDefinitionsHint(definitionRestrictions);
+    return d->m_engine->contact(contactId, fetchHint, d->m_error);
 }
 
 /*!

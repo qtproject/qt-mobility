@@ -323,7 +323,9 @@ void createTagsFromGroups(QList<QContact>* contacts,
             if (groupName.isEmpty()) {
                 // Try and find the group in the manager
                 QContactId groupId = rel.second();
-                QContact contact = manager->contact(groupId.localId(), QStringList(QContactDisplayLabel::DefinitionName));
+                QContactFetchHint fetchHint;
+                fetchHint.setDetailDefinitionsHint(QStringList(QContactDisplayLabel::DefinitionName));
+                QContact contact = manager->contact(groupId.localId(), fetchHint);
                 if (!contact.isEmpty()) {
                     groupName = contact.displayLabel();
                     groupMap.insert(groupId, groupName); // Cache the group id/name

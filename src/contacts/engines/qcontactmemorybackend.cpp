@@ -179,12 +179,6 @@ QContactLocalId QContactMemoryEngine::selfContactId(QContactManager::Error& erro
 }
 
 /*! \reimp */
-QList<QContactLocalId> QContactMemoryEngine::contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const
-{
-    return contactIds(sortOrders, error);
-}
-
-/*! \reimp */
 QList<QContactLocalId> QContactMemoryEngine::contactIds(const QList<QContactSortOrder> &sortOrders, QContactManager::Error &error) const
 {
     // TODO: this needs to be done properly...
@@ -199,13 +193,13 @@ QList<QContactLocalId> QContactMemoryEngine::contactIds(const QList<QContactSort
 }
 
 /*! \reimp */
-QList<QContact> QContactMemoryEngine::contacts(const QList<QContactSortOrder> &sortOrders, const QStringList& definitionRestrictions, QContactManager::Error &error) const
+QList<QContact> QContactMemoryEngine::contacts(const QList<QContactSortOrder> &sortOrders, const QContactFetchHint& fetchHint, QContactManager::Error &error) const
 {
-    Q_UNUSED(definitionRestrictions);
+    Q_UNUSED(fetchHint); // we don't do any optimisations in the memory backend; ignore the fetch hint.
     error = QContactManager::NoError;
     QList<QContact> sortedContacts;
     for (int i = 0; i < d->m_contacts.size(); i++)
-        QContactManagerEngine::addSorted(&sortedContacts, contact(d->m_contacts.at(i).localId(), QStringList(), error), sortOrders);
+        QContactManagerEngine::addSorted(&sortedContacts, contact(d->m_contacts.at(i).localId(), QContactFetchHint(), error), sortOrders);
     // we ignore the restrictions - we don't want to do extra work to remove them.
     // note that the restriction is "optional" - it defines the minimum set of detail types which _must_ be returned
     // but doesn't require that they are the _only_ detail types which are returned.
@@ -213,37 +207,9 @@ QList<QContact> QContactMemoryEngine::contacts(const QList<QContactSortOrder> &s
 }
 
 /*! \reimp */
-QContact QContactMemoryEngine::contact(const QContactLocalId& contactId, QContactManager::Error& error) const
+QContact QContactMemoryEngine::contact(const QContactLocalId& contactId, const QContactFetchHint& fetchHint, QContactManager::Error& error) const
 {
-    int index = d->m_contactIds.indexOf(contactId);
-    if (index != -1) {
-        // found the contact successfully.
-        error = QContactManager::NoError;
-        QContact retn = d->m_contacts.at(index);
-
-        // synthesize the display label if we need to.
-        QContactDisplayLabel dl = retn.detail(QContactDisplayLabel::DefinitionName);
-        if (dl.label().isEmpty()) {
-            QContactManager::Error synthError;
-            retn = setContactDisplayLabel(synthesizedDisplayLabel(retn, synthError), retn);
-        }
-
-        // also, retrieve the current relationships the contact is involved with.
-        QList<QContactRelationship> relationshipCache = d->m_orderedRelationships.value(contactId);
-        QContactManagerEngine::setContactRelationships(&retn, relationshipCache);
-
-        // and return the contact
-        return retn;
-    }
-
-    error = QContactManager::DoesNotExistError;
-    return QContact();
-}
-
-/*! \reimp */
-QContact QContactMemoryEngine::contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const
-{
-    Q_UNUSED(definitionRestrictions); // return the entire contact (meets contract, no optimisations possible for memory engine).
+    Q_UNUSED(fetchHint); // we don't do any optimisations in the memory backend; ignore the fetch hint..
     int index = d->m_contactIds.indexOf(contactId);
     if (index != -1) {
         // found the contact successfully.
@@ -345,34 +311,6 @@ bool QContactMemoryEngine::saveContact(QContact* contact, QContactManager::Error
 }
 
 /*! \reimp */
-QList<QContactManager::Error> QContactMemoryEngine::saveContacts(QList<QContact>* contacts, QContactManager::Error& error)
-{
-    QList<QContactManager::Error> ret;
-    if (!contacts) {
-        error = QContactManager::BadArgumentError;
-        return ret;
-    } else {
-        // for batch processing, we store up the changes and emit at the end.
-        QContactChangeSet changeSet;
-        QContactManager::Error functionError = QContactManager::NoError;
-        for (int i = 0; i < contacts->count(); i++) {
-            QContact current = contacts->at(i);
-            if (!saveContact(&current, changeSet, error)) {
-                functionError = error;
-                ret.append(functionError);
-            } else {
-                (*contacts)[i] = current;
-                ret.append(QContactManager::NoError);
-            }
-        }
-
-        error = functionError;
-        changeSet.emitSignals(this);
-        return ret;
-    }
-}
-
-/*! \reimp */
 bool QContactMemoryEngine::saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error& error)
 {
     if(errorMap) {
@@ -451,34 +389,6 @@ bool QContactMemoryEngine::removeContact(const QContactLocalId& contactId, QCont
     bool retn = removeContact(contactId, changeSet, error);
     changeSet.emitSignals(this);
     return retn;
-}
-
-/*! \reimp */
-QList<QContactManager::Error> QContactMemoryEngine::removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error)
-{
-    QList<QContactManager::Error> ret;
-    if (!contactIds) {
-        error = QContactManager::BadArgumentError;
-        return ret;
-    }
-
-    // for batch processing, we store up the changes and emit at the end.
-    QContactChangeSet changeSet;
-    QContactManager::Error functionError = QContactManager::NoError;
-    for (int i = 0; i < contactIds->count(); i++) {
-        QContactLocalId current = contactIds->at(i);
-        if (!removeContact(current, changeSet, error)) {
-            functionError = error;
-            ret.append(functionError);
-        } else {
-            (*contactIds)[i] = 0;
-            ret.append(QContactManager::NoError);
-        }
-    }
-
-    error = functionError;
-    changeSet.emitSignals(this);
-    return ret;
 }
 
 /*! \reimp */
@@ -835,10 +745,10 @@ void QContactMemoryEngine::performAsynchronousOperation()
             QContactFetchRequest* r = static_cast<QContactFetchRequest*>(currentRequest);
             QContactFilter filter = r->filter();
             QList<QContactSortOrder> sorting = r->sorting();
-            QStringList defs = r->definitionRestrictions();
+            QContactFetchHint fetchHint = r->fetchHint();
 
             QContactManager::Error operationError;
-            QList<QContact> requestedContacts = QContactManagerEngine::contacts(filter, sorting, defs, operationError);
+            QList<QContact> requestedContacts = QContactManagerEngine::contacts(filter, sorting, fetchHint, operationError);
 
             // update the request with the results.
             if (!requestedContacts.isEmpty() || operationError != QContactManager::NoError)

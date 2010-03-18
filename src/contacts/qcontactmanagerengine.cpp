@@ -251,7 +251,7 @@ QList<QContactLocalId> QContactManagerEngine::contactIds(const QContactFilter& f
     }
 
     /* Otherwise, retrieve all contacts, test and return matching */
-    const QList<QContact>& all = contacts(sortOrders, QStringList(), error);
+    const QList<QContact>& all = contacts(sortOrders, QContactFetchHint(), error);
 
     if (error != QContactManager::NoError)
         return ret;

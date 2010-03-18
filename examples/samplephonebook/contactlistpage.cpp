@@ -234,7 +234,7 @@ void ContactListPage::exportClicked()
         qWarning() << "No manager selected; cannot import";
         return;
     }
-    QList<QContact> contacts = m_manager->contacts(QList<QContactSortOrder>(), QStringList());
+    QList<QContact> contacts = m_manager->contacts(QList<QContactSortOrder>(), QContactFetchHint());
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save vCard"),
                                                     "./contacts.vcf",
                                                     tr("vCards (*.vcf)"));
