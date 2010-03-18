@@ -51,7 +51,6 @@ QGstreamerAudioEncode::QGstreamerAudioEncode(QObject *parent)
     codecCandidates << "audio/mpeg" << "audio/PCM" << "audio/AMR" << "audio/AMR-WB" << "audio/speex";
 
     m_elementNames["audio/mpeg"] = "nokiaaacenc";
-    m_elementNames["audio/vorbis"] = "vorbisenc";
     m_elementNames["audio/speex"] = "speexenc";
     m_elementNames["audio/PCM"] = "audioresample";
     m_elementNames["audio/AMR"] = "nokiaamrnbenc";
@@ -132,9 +131,6 @@ void QGstreamerAudioEncode::setAudioSettings(const QAudioEncoderSettings &settin
 GstElement *QGstreamerAudioEncode::createEncoder()
 {
     QString codec = m_audioSettings.codec();
-    GstElement *encoderElement = gst_element_factory_make(m_elementNames.value(codec).constData(), NULL);
-    return encoderElement;
-    /*QString codec = m_audioSettings.codec();
 
     GstBin * encoderBin = GST_BIN(gst_bin_new("audio-encoder-bin"));
     Q_ASSERT(encoderBin);
@@ -169,8 +165,6 @@ GstElement *QGstreamerAudioEncode::createEncoder()
 
         gst_caps_append_structure(caps,structure);
 
-        //qDebug() << "set caps filter:" << gst_caps_to_string(caps);
-
         g_object_set(G_OBJECT(capsFilter), "caps", caps, NULL);
     }
 
@@ -178,25 +172,16 @@ GstElement *QGstreamerAudioEncode::createEncoder()
         if (m_audioSettings.encodingMode() == QtMedia::ConstantQualityEncoding) {
             QtMedia::EncodingQuality qualityValue = m_audioSettings.quality();
 
-            if (codec == QLatin1String("audio/vorbis")) {
-                double qualityTable[] = {
-                    0.1, //VeryLow
-                    0.3, //Low
-                    0.5, //Normal
-                    0.7, //High
-                    1.0 //VeryHigh
-                };
-                g_object_set(G_OBJECT(encoderElement), "quality", qualityTable[qualityValue], NULL);
-            } else if (codec == QLatin1String("audio/mpeg")) {
+            if (codec == QLatin1String("audio/mpeg")) {
                 g_object_set(G_OBJECT(encoderElement), "target", 0, NULL); //constant quality mode
                 qreal quality[] = {
-                    1, //VeryLow
-                    3, //Low
-                    5, //Normal
-                    7, //High
-                    9 //VeryHigh
+                    8000, //VeryLow
+                    64000, //Low
+                    128000, //Normal
+                    192000, //High
+                    320000 //VeryHigh
                 };
-                g_object_set(G_OBJECT(encoderElement), "quality", quality[qualityValue], NULL);
+                g_object_set(G_OBJECT(encoderElement), "bitrate", quality[qualityValue], NULL);
             } else if (codec == QLatin1String("audio/speex")) {
                 //0-10 range with default 8
                 double qualityTable[] = {
@@ -221,9 +206,6 @@ GstElement *QGstreamerAudioEncode::createEncoder()
         } else {
             int bitrate = m_audioSettings.bitRate();
             if (bitrate > 0) {
-                if (codec == QLatin1String("audio/mpeg")) {
-                    g_object_set(G_OBJECT(encoderElement), "target", 1, NULL); //constant bitrate mode
-                }
                 g_object_set(G_OBJECT(encoderElement), "bitrate", bitrate, NULL);
             }
         }
@@ -257,7 +239,7 @@ GstElement *QGstreamerAudioEncode::createEncoder()
     }
 
     return GST_ELEMENT(encoderBin);
-    */
+
 }
 
 
