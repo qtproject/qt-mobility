@@ -112,8 +112,6 @@ these domains have dependencies and these are outlined below:
        On all platforms, QML elements for sound effects and music and video playing are exported if QtDeclarative (auto-detected) is available.
 
        On all platforms, additional rendering paths are enabled of QtOpenGL (auto-detected) is available.
-
-       On Maemo 5, QtMedia depends on \l {http://www.pulseaudio.org}{PulseAudio} if QtDeclarative is used.
     \o
     \o
 \row
@@ -124,8 +122,6 @@ these domains have dependencies and these are outlined below:
 
        The gstengine plugin for Linux and Maemo depends on gstreamer-0.10 (>= 0.10.19), gstreamer-audio-0.10 (>= 0.10.19), gstreamer-base-0.10 (>= 0.10.19), gstreamer-interfaces-0.10 (>= 0.10.19) and gstreamer-video-0.10 (>= 0.10.19).
        If asound (auto-detected) is available, ALSA device detection will be enabled.
-
-       The phononengine plugin for Mac depends on phonon.
 
        The QtMobilityMultimediaEngine for Symbian depends on QtMultimedia. 
        To enable all mediaservices on symbian one must download sdk plugins. Sdk plugins are available at \l http://wiki.forum.nokia.com/index.php/SDK_API_Plug-in
