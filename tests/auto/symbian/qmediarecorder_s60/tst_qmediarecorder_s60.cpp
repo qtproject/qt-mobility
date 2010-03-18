@@ -51,7 +51,6 @@
 #include <qaudioencodercontrol.h>
 #include <qmediacontainercontrol.h>
 #include <qvideoencodercontrol.h>
-#include <experimental/qcamera.h>
 #include <QtMultimedia/qaudioformat.h>
 #include <qaudiocapturesource.h>
 
@@ -79,29 +78,23 @@ public slots:
     void cleanupTestCase();
 
 private slots:
-    void testVideoSink();
     void testAudioSink();
-    void testVideoRecord();
     void testAudioRecord();
-    void testVideoDeviceControl();
     void testAudioEndPointSelector();
     void testAudioEncoderControl();
     void testMediaFormatsControl();
     void testDefaultVideoEncodingSettings();
 //    void testDefaultAudioEncodingSettings();
     void testVideoEncoderControl();
-    void testEncodingSettings();   
+    void testEncodingSettings();
 
 private:
     QUrl recordPath(QDir outputDir);
 
     QAudioEncoderControl *audioEncoder;
     QAudioEndpointSelector *audioEndpoint;
-    QVideoDeviceControl *videoDevice;
-    QCamera *camera;
     QMediaRecorder  *capture;
     QMediaRecorder  *audiocapture;
-    QVideoEncoderControl *videoEncoder;
     QAudioCaptureSource *captureSource;
 };
 
@@ -109,25 +102,19 @@ void tst_QMediaRecorder::initTestCase()
 {
     qRegisterMetaType<QtMobility::QMediaRecorder::State>("QMediaRecorder::State");
     qRegisterMetaType<QtMobility::QMediaRecorder::Error>("QMediaRecorder::Error");
-    qRegisterMetaType<QCamera::State>("QCamera::State");
 
-    camera = new QCamera;
-    capture = new QMediaRecorder(camera);
     captureSource = new QAudioCaptureSource;
-    audiocapture = new QMediaRecorder(captureSource);                                                                                   
-    
-    videoDevice = qobject_cast<QVideoDeviceControl*>(capture->service()->control(QVideoDeviceControl_iid));
-    videoEncoder = qobject_cast<QVideoEncoderControl*>(capture->service()->control(QVideoEncoderControl_iid));
+    audiocapture = new QMediaRecorder(captureSource);
+
     audioEndpoint = qobject_cast<QAudioEndpointSelector*>(audiocapture->service()->control(QAudioEndpointSelector_iid));    
     audioEncoder = qobject_cast<QAudioEncoderControl*>(audiocapture->service()->control(QAudioEncoderControl_iid));
 }
 
 void tst_QMediaRecorder::cleanupTestCase()
-{    
+{
     delete audiocapture;
     delete captureSource;
     delete capture;
-    delete camera;
 }
 
 QUrl tst_QMediaRecorder::recordPath(QDir outputDir)
@@ -142,66 +129,15 @@ QUrl tst_QMediaRecorder::recordPath(QDir outputDir)
     return location;
 }
 
-void tst_QMediaRecorder::testVideoSink()
-{   
-    capture->setOutputLocation(QUrl("test.tmp"));
-    QUrl s = capture->outputLocation();
-    QCOMPARE(s.toString(), QString("test.tmp"));    
-}
-
 void tst_QMediaRecorder::testAudioSink()
-{   
+{
     audiocapture->setOutputLocation(QUrl("test.tmp"));
     QUrl s = audiocapture->outputLocation();
-    QCOMPARE(s.toString(), QString("test.tmp"));    
-}
-
-void tst_QMediaRecorder::testVideoRecord()
-{
-    QSignalSpy stateSignal(capture,SIGNAL(stateChanged(QMediaRecorder::State)));
-    QSignalSpy cameraState(camera, SIGNAL(stateChanged(QCamera::State)));
-
-    QCOMPARE(capture->state(), QMediaRecorder::StoppedState);
-    QCOMPARE(camera->state(), QCamera::StoppedState);
-    camera->start();
-    QTRY_COMPARE(cameraState.count(), 1); // wait for camera to initialize itself
-    QCOMPARE(camera->state(), QCamera::ActiveState);
-    QTest::qWait(500);  // wait for recorder to initialize itself 
-    capture->setOutputLocation(recordPath(QDir::rootPath()));
-    capture->record();
-    QTRY_COMPARE(stateSignal.count(), 1); // wait for callbacks to complete in symbian API
-    QCOMPARE(capture->state(), QMediaRecorder::RecordingState);
-    QCOMPARE(capture->error(), QMediaRecorder::NoError);
-    QCOMPARE(capture->errorString(), QString());
-    QCOMPARE(stateSignal.count(), 1);
-    capture->pause();
-    QTRY_COMPARE(stateSignal.count(), 2); // wait for callbacks to complete in symbian API
-    QCOMPARE(capture->state(), QMediaRecorder::PausedState);
-    QCOMPARE(stateSignal.count(), 2);
-    capture->stop();
-    QTRY_COMPARE(stateSignal.count(), 3); // wait for callbacks to complete in symbian API
-    QCOMPARE(capture->state(), QMediaRecorder::StoppedState);
-    QCOMPARE(stateSignal.count(), 3);
-    camera->stop();
-    QTRY_COMPARE(cameraState.count(), 2); // wait for camera to uninitialize itself
-    QCOMPARE(camera->state(), QCamera::StoppedState);
+    QCOMPARE(s.toString(), QString("test.tmp"));
 }
 
 void tst_QMediaRecorder::testAudioRecord()
 {
-    
-}
-
-void tst_QMediaRecorder::testVideoDeviceControl()
-{
-    QSignalSpy readSignal(videoDevice,SIGNAL(selectedDeviceChanged(QString)));
-    QVERIFY(videoDevice->deviceCount() == 2);
-    QVERIFY(videoDevice->defaultDevice() == 0);
-    videoDevice->setSelectedDevice(1);
-    
-    QVERIFY(videoDevice->selectedDevice() == 1);
-    QVERIFY(readSignal.count() == 1);
-    QVERIFY(videoDevice->deviceDescription(0).compare("Back camera") == 0);
 }
 
 void tst_QMediaRecorder::testAudioEndPointSelector()
