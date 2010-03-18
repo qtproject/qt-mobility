@@ -52,7 +52,7 @@
 #include <mmf\common\mmfcontroller.h>
 #include <BADESCA.H>
 #include <BAUTILS.H>
-#include <EIKENV.H>  
+#include <coemain.h>  
 
 _LIT(KAudioDummyFile, "c:\\data\\temp\\temp.wav");
 
@@ -156,7 +156,7 @@ bool S60AudioCaptureSession::setOutputLocation(const QUrl& sink)
 {
     QString filename = QDir::toNativeSeparators(m_sink.toString());
     TPtrC16 path(reinterpret_cast<const TUint16*>(filename.utf16()));         
-    TRAPD(err, BaflUtils::EnsurePathExistsL(CEikonEnv::Static()->FsSession(),path));
+    TRAPD(err, BaflUtils::EnsurePathExistsL(CCoeEnv::Static()->FsSession(),path));
     if (err==KErrNone) {
         m_sink = sink;
         return true;

@@ -52,6 +52,7 @@ class S60AudioCaptureSession;
 class S60AudioEncoderControl;
 class S60AudioMediaRecorderControl;
 class S60AudioEndpointSelector;
+class S60AudioContainerControl;
 
 
 class S60AudioCaptureService : public QMediaService
@@ -66,7 +67,8 @@ private:
     S60AudioCaptureSession       *m_session;
     S60AudioEncoderControl       *m_encoderControl;
     S60AudioEndpointSelector     *m_endpointSelector;
-    S60AudioMediaRecorderControl *m_mediaControl;
+    S60AudioMediaRecorderControl *m_recorderControl;
+    S60AudioContainerControl     *m_containerControl; 
 };
 
 #endif // S60AUDIOCAPTURESERVICE_H

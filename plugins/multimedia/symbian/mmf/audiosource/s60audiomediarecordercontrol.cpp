@@ -39,17 +39,17 @@
 **
 ****************************************************************************/
 
-#include "s60audiocapturesession.h"
 #include "s60audiomediarecordercontrol.h"
+#include "s60audiocapturesession.h"
 
 #include <QtCore/qdebug.h>
 
 S60AudioMediaRecorderControl::S60AudioMediaRecorderControl(QObject *session, QObject *parent)
-    :QMediaRecorderControl(parent)
+    :QMediaRecorderControl(parent), m_state(QMediaRecorder::StoppedState)
 {
     m_session = qobject_cast<S60AudioCaptureSession*>(session);
     connect(m_session, SIGNAL(positionChanged(qint64)), this, SIGNAL(durationChanged(qint64)));
-    connect(m_session, SIGNAL(stateChanged(QMediaRecorder::State)), this, SIGNAL(stateChanged(QMediaRecorder::State)));
+    connect(m_session, SIGNAL(stateChanged(S60AudioCaptureSession::TAudioCaptureState)), this, SLOT(updateState(S60AudioCaptureSession::TAudioCaptureState)));
 }
 
 S60AudioMediaRecorderControl::~S60AudioMediaRecorderControl()
@@ -65,10 +65,39 @@ bool S60AudioMediaRecorderControl::setOutputLocation(const QUrl& sink)
 {
     return m_session->setOutputLocation(sink);
 }
+                                                  
+QMediaRecorder::State S60AudioMediaRecorderControl::convertState(S60AudioCaptureSession::TAudioCaptureState aState) const
+{
+    QMediaRecorder::State state = QMediaRecorder::StoppedState;;       
+    switch (aState) {
+    case S60AudioCaptureSession::ERecording:
+        state = QMediaRecorder::RecordingState;            
+        break;            
+    case S60AudioCaptureSession::EPaused:            
+        state = QMediaRecorder::PausedState;            
+        break;            
+    case S60AudioCaptureSession::ERecordComplete:             
+    case S60AudioCaptureSession::ENotInitialized:
+    case S60AudioCaptureSession::EOpenCompelete:
+    case S60AudioCaptureSession::EInitialized:            
+        state = QMediaRecorder::StoppedState;            
+        break;            
+    }            
+    return state;         
+}
+                                    
+void S60AudioMediaRecorderControl::updateState(S60AudioCaptureSession::TAudioCaptureState aState)
+{   
+    QMediaRecorder::State newState = convertState(aState);
+    if (m_state != newState) {
+        m_state = newState;
+        emit stateChanged(m_state);
+    }
+}
 
 QMediaRecorder::State S60AudioMediaRecorderControl::state() const
-{
-    return (QMediaRecorder::State)m_session->state();
+{   
+    return m_state;
 }
 
 qint64 S60AudioMediaRecorderControl::duration() const
@@ -83,7 +112,7 @@ void S60AudioMediaRecorderControl::record()
 
 void S60AudioMediaRecorderControl::pause()
 {
-    m_session->stop();
+    m_session->pause();
 }
 
 void S60AudioMediaRecorderControl::stop()
