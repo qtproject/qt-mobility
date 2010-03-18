@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -162,6 +162,8 @@ Q_GLOBAL_STATIC(QNetworkConfigurationManagerPrivate, connManager);
                                      sockets.
     \value DataStatistics            If this flag is set QNetworkSession can provide statistics
                                      about transmitted and received data.
+    \value NetworkSessionRequired    If this flag is set the platform requires that a network
+                                     session is created before network operations can be performed.
 */
 
 /*!
