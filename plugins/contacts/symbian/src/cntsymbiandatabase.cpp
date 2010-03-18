@@ -148,6 +148,8 @@ void CntSymbianDatabase::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
             changeSet.addedContacts().insert(id);
         break;
     case EContactDbObserverEventOwnCardDeleted:
+        m_currentOwnCardId = QContactLocalId(0);
+        // ...and send contact deleted event
     case EContactDbObserverEventContactDeleted:
         if(m_contactsEmitted.contains(id))
             m_contactsEmitted.removeOne(id);
@@ -216,12 +218,14 @@ void CntSymbianDatabase::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
         }
         break;
     case EContactDbObserverEventOwnCardChanged:
-        {
+        if(m_contactsEmitted.contains(id))
+            m_contactsEmitted.removeOne(id);
+        else {
             QOwnCardPair ownCard(m_currentOwnCardId, QContactLocalId(id));
             changeSet.oldAndNewSelfContactId() = ownCard;
             m_currentOwnCardId = QContactLocalId(id);
-            break;
         }
+        break;
     default:
         break; // ignore other events
     }
