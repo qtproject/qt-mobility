@@ -582,27 +582,13 @@ PictureDialog::PictureDialog(const QString& filePath, const QString& pictureName
 
     verticalLayout->addWidget(imageLabel);
 
-    keepButton = new QPushButton(tr("Keep"));
-    keepButton->setDefault(true);
-    discardButton = new QPushButton(tr("Discard"));
-
     buttonBox = new QDialogButtonBox();
-    buttonBox->addButton(keepButton, QDialogButtonBox::AcceptRole);
-    buttonBox->addButton(discardButton, QDialogButtonBox::DestructiveRole);
-    connect(buttonBox, SIGNAL(clicked(QAbstractButton *)), this, SLOT(clicked(QAbstractButton *)));
+    buttonBox->setStandardButtons(QDialogButtonBox::Close);
+    connect(buttonBox, SIGNAL(rejected()), this, SLOT(accept()));
 
     verticalLayout->addWidget(buttonBox);
 
     setLayout(verticalLayout);
 
     setWindowTitle(tr("Flickr Demo"));
-}
-
-void PictureDialog::clicked(QAbstractButton* button)
-{
-    if (button == keepButton) {
-        accept();
-    } else if (button == discardButton) {
-        reject();
-    }
 }

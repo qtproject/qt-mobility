@@ -150,17 +150,12 @@ class PictureDialog: public QDialog
 public:
     PictureDialog(const QString& filePath, const QString& pictureName, QWidget* parent = 0);
 
-private slots:
-    void clicked(QAbstractButton *button);
-
 private:
     static const QSize imageSize;
 
     QLabel *label;
     QLabel *imageLabel;
     QDialogButtonBox *buttonBox;
-    QPushButton *keepButton;
-    QPushButton *discardButton;
 };
 
 #endif // FLICKRDEMO_H
