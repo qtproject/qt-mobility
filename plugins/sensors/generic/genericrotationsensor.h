@@ -39,22 +39,22 @@
 **
 ****************************************************************************/
 
-#ifndef GENERICATTITUDESENSOR_H
-#define GENERICATTITUDESENSOR_H
+#ifndef GENERICROTATIONSENSOR_H
+#define GENERICROTATIONSENSOR_H
 
 #include <qsensorbackend.h>
-#include <qattitudesensor.h>
+#include <qrotationsensor.h>
 #include <qaccelerometer.h>
 #include <qmagnetometer.h>
 
 QTM_USE_NAMESPACE
 
-class genericattitudesensor : public QSensorBackend, public QSensorFilter
+class genericrotationsensor : public QSensorBackend, public QSensorFilter
 {
 public:
     static const char *id;
 
-    genericattitudesensor(QSensor *sensor);
+    genericrotationsensor(QSensor *sensor);
 
     void start();
     void stop();
@@ -62,7 +62,7 @@ public:
     bool filter(QSensorReading *reading);
 
 private:
-    QAttitudeReading m_reading;
+    QRotationReading m_reading;
     QAccelerometer *accelerometer;
     QMagnetometer *magnetometer;
 };

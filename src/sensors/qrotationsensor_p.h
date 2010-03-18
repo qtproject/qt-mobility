@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QATTITUDESENSOR_P_H
-#define QATTITUDESENSOR_P_H
+#ifndef QROTATIONSENSOR_P_H
+#define QROTATIONSENSOR_P_H
 
 //
 //  W A R N I N G
@@ -57,19 +57,19 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QAttitudeReadingPrivate : public QSensorReadingPrivate
+class QRotationReadingPrivate : public QSensorReadingPrivate
 {
 public:
-    QAttitudeReadingPrivate()
-        : pitch(0)
-        , roll(0)
-        , yaw(0)
+    QRotationReadingPrivate()
+        : x(0)
+        , y(0)
+        , z(0)
     {
     }
 
-    qreal pitch;
-    qreal roll;
-    qreal yaw;
+    qreal x;
+    qreal y;
+    qreal z;
 };
 
 QTM_END_NAMESPACE

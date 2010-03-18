@@ -39,51 +39,51 @@
 **
 ****************************************************************************/
 
-#ifndef QATTITUDESENSOR_H
-#define QATTITUDESENSOR_H
+#ifndef QROTATIONSENSOR_H
+#define QROTATIONSENSOR_H
 
 #include "qsensor.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QAttitudeReadingPrivate;
+class QRotationReadingPrivate;
 
-class Q_SENSORS_EXPORT QAttitudeReading : public QSensorReading
+class Q_SENSORS_EXPORT QRotationReading : public QSensorReading
 {
     Q_OBJECT
-    Q_PROPERTY(qreal pitch READ pitch)
-    Q_PROPERTY(qreal roll READ roll)
-    Q_PROPERTY(qreal yaw READ yaw)
-    DECLARE_READING(QAttitudeReading)
+    Q_PROPERTY(qreal x READ x)
+    Q_PROPERTY(qreal y READ y)
+    Q_PROPERTY(qreal z READ z)
+    DECLARE_READING(QRotationReading)
 public:
-    qreal pitch() const;
-    void setPitch(qreal pitch);
+    qreal x() const;
+    void setX(qreal x);
 
-    qreal roll() const;
-    void setRoll(qreal roll);
+    qreal y() const;
+    void setY(qreal y);
 
-    qreal yaw() const;
-    void setYaw(qreal yaw);
+    qreal z() const;
+    void setZ(qreal z);
 };
 
-class Q_SENSORS_EXPORT QAttitudeFilter : public QSensorFilter
+class Q_SENSORS_EXPORT QRotationFilter : public QSensorFilter
 {
 public:
-    virtual bool filter(QAttitudeReading *reading) = 0;
+    virtual bool filter(QRotationReading *reading) = 0;
 private:
-    bool filter(QSensorReading *reading) { return filter(static_cast<QAttitudeReading*>(reading)); }
+    bool filter(QSensorReading *reading) { return filter(static_cast<QRotationReading*>(reading)); }
 };
 
-class Q_SENSORS_EXPORT QAttitudeSensor : public QSensor
+class Q_SENSORS_EXPORT QRotationSensor : public QSensor
 {
     Q_OBJECT
 #ifdef Q_QDOC
-    Q_PROPERTY(bool yawAvailable)
+    Q_PROPERTY(bool hasZ)
 #endif
 public:
-    explicit QAttitudeSensor(QObject *parent = 0) : QSensor(QAttitudeSensor::type, parent) {}
-    virtual ~QAttitudeSensor() {}
-    QAttitudeReading *reading() const { return static_cast<QAttitudeReading*>(QSensor::reading()); }
+    explicit QRotationSensor(QObject *parent = 0) : QSensor(QRotationSensor::type, parent) {}
+    virtual ~QRotationSensor() {}
+    QRotationReading *reading() const { return static_cast<QRotationReading*>(QSensor::reading()); }
     static const char *type;
 };
 
