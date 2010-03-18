@@ -98,11 +98,12 @@ void QGeoSatelliteInfoSourceMaemo::startUpdates()
 
 void QGeoSatelliteInfoSourceMaemo::stopUpdates()
 {
-    updateTimer->stop();
-    requestTimer->stop();    
-    satelliteInfoState &= ~(QGeoSatelliteInfoSourceMaemo::RequestActive |
-                            QGeoSatelliteInfoSourceMaemo::RequestSingleShot);
-    stopLocationDaemon();
+    if (!(satelliteInfoState & QGeoSatelliteInfoSourceMaemo::RequestSingleShot)) {    
+        updateTimer->stop();
+        requestTimer->stop();    
+        satelliteInfoState &= ~QGeoSatelliteInfoSourceMaemo::RequestActive;
+        stopLocationDaemon();
+    }
 }
 
 void QGeoSatelliteInfoSourceMaemo::requestUpdate(int timeout)
@@ -177,7 +178,9 @@ void QGeoSatelliteInfoSourceMaemo::requestTimeoutElapsed()
 
     if (satelliteInfoState & QGeoSatelliteInfoSourceMaemo::RequestSingleShot) {
         satelliteInfoState &= ~QGeoSatelliteInfoSourceMaemo::RequestSingleShot;
-        return;
+        stopLocationDaemon();
+        if (!(satelliteInfoState & QGeoSatelliteInfoSourceMaemo::PowersaveActive))
+            return;
     }
     activateTimer();
 }

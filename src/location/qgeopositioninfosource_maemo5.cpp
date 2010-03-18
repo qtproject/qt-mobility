@@ -130,11 +130,12 @@ void QGeoPositionInfoSourceMaemo::startUpdates()
 
 void QGeoPositionInfoSourceMaemo::stopUpdates()
 {
-    updateTimer->stop();
-    requestTimer->stop();
-    positionInfoState &= ~(QGeoPositionInfoSourceMaemo::RequestActive |
-                           QGeoPositionInfoSourceMaemo::RequestSingleShot);
-    stopLocationDaemon();
+    if (!(positionInfoState & QGeoPositionInfoSourceMaemo::RequestSingleShot)) {
+        updateTimer->stop();
+        requestTimer->stop();
+        positionInfoState &= ~QGeoPositionInfoSourceMaemo::RequestActive;
+        stopLocationDaemon();
+    }
 }
 
 void QGeoPositionInfoSourceMaemo::requestUpdate(int timeout)
@@ -167,7 +168,7 @@ void QGeoPositionInfoSourceMaemo::requestUpdate(int timeout)
        positionInfoState |= QGeoPositionInfoSourceMaemo::RequestSingleShot;
 
     startLocationDaemon();
-
+    
     activateTimer();
     requestTimer->start(timeoutForRequest);
 }
@@ -201,7 +202,9 @@ void QGeoPositionInfoSourceMaemo::requestTimeoutElapsed()
 
     if (positionInfoState & QGeoPositionInfoSourceMaemo::RequestSingleShot) {
         positionInfoState &= ~QGeoPositionInfoSourceMaemo::RequestSingleShot;
-        return;
+        stopLocationDaemon();
+        if (!(positionInfoState & QGeoPositionInfoSourceMaemo::PowersaveActive))
+            return;
     }
     activateTimer();
 }
