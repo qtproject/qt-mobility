@@ -521,6 +521,158 @@ bool QContactManagerEngine::hasFeature(QContactManager::ManagerFeature feature, 
 }
 
 /*!
+  Given an input \a filter, returns the canonical version of the filter.
+
+  Some of the following transformations may be applied:
+   \li any QContactActionFilters are transformed into the corresponding
+     QContactFilters returned by matching actions
+   \li Any QContactInvalidFilters contained in a union filter will be removed
+   \li Any default QContactFilters conained in an intersection filter will be removed
+   \li Any QContactIntersectionFilters with a QContactInvalidFilter contained will be
+     replaced with a QContactInvalidFilter
+   \li Any QContactUnionFilters with a default QContactFilter contained will be replaced
+     with a default QContactFilter
+   \li An empty QContactIntersectionFilter will be replaced with a QContactDefaultFilter
+   \li An empty QContactUnionFilter will be replaced with a QContactInvalidFilter
+   \li An empty QContactLocalIdFilter will be replaced with a QContactInvalidFilter
+   \li An intersection or union filter with a single entry will be replaced by that entry
+   \li A QContactDetailFilter or QContactDetailRangeFilter with no definition name will be replaced with a QContactInvalidFilter
+   \li A QContactDetailRangeFilter with no range specified will be converted to a QContactDetailFilter
+*/
+QContactFilter QContactManagerEngine::canonicalizedFilter(const QContactFilter &filter)
+{
+    switch(filter.type()) {
+        case QContactFilter::ActionFilter:
+        {
+            // Find any matching actions, and do a union filter on their filter objects
+            QContactActionFilter af(filter);
+            QList<QContactActionDescriptor> descriptors = QContactAction::actionDescriptors(af.actionName(), af.vendorName(), af.implementationVersion());
+
+            QList<QContactFilter> filters;
+            // There's a small wrinkle if there's a value specified in the action filter
+            // we have to adjust any contained QContactDetailFilters to have that value
+            // or test if a QContactDetailRangeFilter contains this value already
+            for (int j = 0; j < descriptors.count(); j++) {
+                QContactAction* action = QContactAction::action(descriptors.at(j));
+
+                // Action filters are not allowed to return action filters, at all
+                // it's too annoying to check for recursion
+                QContactFilter d = action->contactFilter(af.value());
+                delete action; // clean up.
+                if (!validateActionFilter(d))
+                    continue;
+
+                filters.append(d);
+            }
+
+            if (filters.count() == 0)
+                return QContactInvalidFilter();
+            if (filters.count() == 1)
+                return filters.first();
+
+            QContactUnionFilter f;
+            f.setFilters(filters);
+            return canonicalizedFilter(f);
+        }
+        break;
+
+        case QContactFilter::IntersectionFilter:
+        {
+            QContactIntersectionFilter f(filter);
+            QList<QContactFilter> filters = f.filters();
+            QList<QContactFilter>::iterator it = filters.begin();
+
+            // XXX in theory we can remove duplicates in a set filter
+            while (it != filters.end()) {
+                QContactFilter canon = canonicalizedFilter(*it);
+                if (canon.type() == QContactFilter::DefaultFilter)
+                    return QContactFilter();
+                if (canon.type() == QContactFilter::InvalidFilter)
+                    it = filters.erase(it);
+                else {
+                    *it = canon;
+                    ++it;
+                }
+            }
+
+            if (filters.count() == 0)
+                return QContactFilter();
+            if (filters.count() == 1)
+                return filters.first();
+
+            f.setFilters(filters);
+            return f;
+        }
+        break;
+
+        case QContactFilter::UnionFilter:
+        {
+            QContactIntersectionFilter f(filter);
+            QList<QContactFilter> filters = f.filters();
+            QList<QContactFilter>::iterator it = filters.begin();
+
+            // XXX in theory we can remove duplicates in a set filter
+            while (it != filters.end()) {
+                QContactFilter canon = canonicalizedFilter(*it);
+                if (canon.type() == QContactFilter::InvalidFilter)
+                    return QContactInvalidFilter();
+                if (canon.type() == QContactFilter::DefaultFilter)
+                    it = filters.erase(it);
+                else {
+                    *it = canon;
+                    ++it;
+                }
+            }
+
+            if (filters.count() == 0)
+                return QContactInvalidFilter();
+            if (filters.count() == 1)
+                return filters.first();
+
+            f.setFilters(filters);
+            return f;
+        }
+        break;
+
+        case QContactFilter::LocalIdFilter:
+        {
+            QContactLocalIdFilter f(filter);
+            if (f.ids().count() == 0)
+                return QContactInvalidFilter();
+        }
+        break; // fall through to return at end
+
+        case QContactFilter::ContactDetailRangeFilter:
+        {
+            QContactDetailRangeFilter f(filter);
+            if (f.detailDefinitionName().isEmpty())
+                return QContactInvalidFilter();
+            if ((f.minValue().isNull() && f.maxValue().isNull()) || (f.minValue() == f.maxValue())) {
+                QContactDetailFilter df;
+                df.setDetailDefinitionName(f.detailDefinitionName(), f.detailFieldName());
+                df.setMatchFlags(f.matchFlags());
+                df.setValue(f.minValue());
+                return df;
+            }
+        }
+        break; // fall through to return at end
+
+        case QContactFilter::ContactDetailFilter:
+        {
+            QContactDetailFilter f(filter);
+            if (f.detailDefinitionName().isEmpty())
+                return QContactInvalidFilter();
+        }
+        break; // fall through to return at end
+
+        default:
+            break; // fall through to return at end
+    }
+    return filter;
+}
+
+
+/*!
   Returns a whether the supplied \a filter can be implemented
   natively by this engine.  If not, the base class implementation
   will emulate the functionality.

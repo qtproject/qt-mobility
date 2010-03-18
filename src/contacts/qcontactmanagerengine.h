@@ -176,6 +176,8 @@ public:
     static QList<QContactLocalId> sortContacts(const QList<QContact>& contacts, const QList<QContactSortOrder>& sortOrders);
     static void setContactRelationships(QContact* contact, const QList<QContactRelationship>& relationships);
 
+    static QContactFilter canonicalizedFilter(const QContactFilter& filter);
+
 protected:
     void setDetailAccessConstraints(QContactDetail* detail, QContactDetail::AccessConstraints constraints) const;
 
