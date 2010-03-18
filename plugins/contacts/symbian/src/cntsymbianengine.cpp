@@ -81,7 +81,7 @@ CntSymbianEngine::CntSymbianEngine(const QMap<QString, QString>& parameters, QCo
     m_dataBase = new CntSymbianDatabase(this, error);
 
     //Database opened successfully
-    if(error == QContactManager::NoError) {
+    if(*error == QContactManager::NoError) {
         m_managerUri = QContactManager::buildUri(CNT_SYMBIAN_MANAGER_NAME, parameters);
         m_transformContact = new CntTransformContact;
 #ifdef SYMBIAN_BACKEND_USE_SQLITE
@@ -142,7 +142,7 @@ QList<QContactLocalId> CntSymbianEngine::contactIds(
         // XXX enum changed classes - engine API will reflect this eventually
         QList<QContactRelationship> relationshipsList = relationships(
             rf.relationshipType(), rf.relatedContactId(), static_cast<QContactRelationshipFilter::Role>(rf.relatedContactRole()), error);
-        if(error == QContactManager::NoError) {
+        if(*error == QContactManager::NoError) {
             foreach(const QContactRelationship& r, relationshipsList) {
                 if(rf.relatedContactRole() == QContactRelationshipFilter::First) {
                     result += r.second().localId();
@@ -214,7 +214,7 @@ QList<QContact> CntSymbianEngine::contacts(const QList<QContactSortOrder>& sortO
     *error = QContactManager::NoError;
     QList<QContact> contacts;
     QList<QContactLocalId> contactIds = this->contactIds(sortOrders, error);
-    if (error == QContactManager::NoError ) {
+    if (*error == QContactManager::NoError ) {
         foreach (QContactLocalId id, contactIds) {
             QContact contact = this->contact(id, definitionRestrictions, error);
             if (error != QContactManager::NoError) {
@@ -231,7 +231,7 @@ QList<QContact> CntSymbianEngine::contacts(const QContactFilter& filter, const Q
     *error = QContactManager::NoError;
     QList<QContact> contacts;
     QList<QContactLocalId> contactIds = this->contactIds(filter, sortOrders, error);
-    if (error == QContactManager::NoError ) {
+    if (*error == QContactManager::NoError ) {
         foreach (QContactLocalId id, contactIds) {
             QContact contact = this->contact(id, definitionRestrictions, error);
             if (error != QContactManager::NoError) {
@@ -257,7 +257,7 @@ QContact CntSymbianEngine::contact(const QContactLocalId& contactId, const QStri
     TRAPD(err, *contact = fetchContactL(contactId, definitionRestrictions));
     CntSymbianTransformError::transformError(err, error);
 
-    if(error == QContactManager::NoError) { 
+    if(*error == QContactManager::NoError) {
         updateDisplayLabel(*contact);
         //check relationship only if there are no definition restrictions, otherwise
         //skip this time expensive operation.       
@@ -311,7 +311,7 @@ bool CntSymbianEngine::saveContacts(QList<QContact> *contacts, QMap<int, QContac
         }
     }
     changeSet.emitSignals(this);
-    return (error == QContactManager::NoError);
+    return (*error == QContactManager::NoError);
 }
 
 /*!
@@ -635,7 +635,7 @@ void CntSymbianEngine::updateDisplayLabel(QContact& contact) const
 {
     QContactManager::Error error(QContactManager::NoError);
     QString label = synthesizedDisplayLabel(contact, error);
-    if(error == QContactManager::NoError) {
+    if(*error == QContactManager::NoError) {
         contact = setContactDisplayLabel(label, contact);
     }
 }
@@ -675,7 +675,7 @@ bool CntSymbianEngine::removeContacts(QList<QContactLocalId> *contactIds, QMap<i
         }
     }
     changeSet.emitSignals(this);
-    return (error == QContactManager::NoError);
+    return (*error == QContactManager::NoError);
 }
 
 /* relationships */

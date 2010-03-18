@@ -74,14 +74,14 @@ QList<QContactLocalId> CntFilterDetail::contacts(
         const QContactFilter &filter,
         const QList<QContactSortOrder> &sortOrders,
         bool &filterSupportedflag,
-        QContactManager::Error &error)  
+        QContactManager::Error* error)
 {
     Q_UNUSED(sortOrders);
     Q_UNUSED(filterSupportedflag);
     //Check if any invalid filter is passed 
     if(!filterSupported(filter) )
         {
-        error =  QContactManager::NotSupportedError;
+        *error =  QContactManager::NotSupportedError;
         return QList<QContactLocalId>();
         }
     QList<QContactLocalId> idList;
@@ -104,7 +104,7 @@ QList<QContactLocalId> CntFilterDetail::contacts(
     else 
     {
         createSelectQuery(filter,sqlQuery,error);
-        if(error == QContactManager::NoError)
+        if(*error == QContactManager::NoError)
             {
             //fetch the contacts
             idList =  m_srvConnection.searchContacts(sqlQuery, error);
