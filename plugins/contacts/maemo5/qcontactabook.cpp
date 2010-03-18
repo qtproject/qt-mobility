@@ -167,7 +167,8 @@ void QContactABook::initAddressBook(){
   
   cbSD = new cbSharedData;
   cbSD->hash = &m_localIds;
-
+  cbSD->that = this;
+  
   //TODO Set up signals for added/changed eContact
   g_signal_connect(roster, "contacts-added",
                    G_CALLBACK (contactsAddedCB), cbSD);

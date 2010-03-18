@@ -74,6 +74,10 @@ Q_EXPORT_PLUGIN2(qtcontacts_maemo5, ContactMaemo5Factory);
 /*! Constructs a new invalid contacts backend. */
 QContactMaemo5Engine::QContactMaemo5Engine() : d(new QContactMaemo5EngineData)
 {
+  QContactABook *abook = d->m_abook;
+  connect(abook, SIGNAL(contactsAdded(const QList<QContactLocalId>&)), SIGNAL(contactsAdded(const QList<QContactLocalId>&)));
+  connect(abook, SIGNAL(contactsChanged(const QList<QContactLocalId>&)), SIGNAL(contactsChanged(const QList<QContactLocalId>&)));
+  connect(abook, SIGNAL(contactsRemoved(const QList<QContactLocalId>&)), SIGNAL(contactsRemoved(const QList<QContactLocalId>&)));
 }
 
 /*! \reimp */

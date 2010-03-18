@@ -74,12 +74,15 @@ public:
 
 Q_SIGNALS:
   void savingJobDone();
-
+  void contactsAdded(const QList<QContactLocalId>& contactIds);
+  void contactsChanged(const QList<QContactLocalId>& contactIds);
+  void contactsRemoved(const QList<QContactLocalId>& contactIds);
+  
 public:
   // Members used by callbacks
-  void _contactsAdded(const QList<QContactLocalId> & contactIds ){ /*TODO*/ };
-  void _contactsRemoved(const QList<QContactLocalId> & contactIds ){ /*TODO*/ };
-  void _contactsChanged(const QList<QContactLocalId> & contactIds ){ /*TODO*/ };
+  void _contactsAdded(const QList<QContactLocalId>& contactIds ){ emit contactsAdded(contactIds); };
+  void _contactsRemoved(const QList<QContactLocalId>& contactIds ){ emit contactsRemoved(contactIds); };
+  void _contactsChanged(const QList<QContactLocalId>& contactIds ){ emit contactsChanged(contactIds); };
   void _savingJobFinished(){ emit savingJobDone(); };
   
 private:
