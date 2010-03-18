@@ -75,14 +75,14 @@ public:
     QContactMaemo5EngineData()
         : QSharedData(),
         m_refCount(QAtomicInt(1)),
-	m_abook(new QContactABook)
+        m_abook(new QContactABook)
     {  
     }
 
     QContactMaemo5EngineData(const QContactMaemo5EngineData& other)
         : QSharedData(other),
         m_refCount(QAtomicInt(1)),
-	m_abook(other.m_abook)
+        m_abook(other.m_abook)
     {
     }
 
