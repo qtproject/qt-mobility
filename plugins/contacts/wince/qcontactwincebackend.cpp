@@ -250,9 +250,9 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QContactManager::Error&
                     if (error == QContactManager::NoError) {
                         *contact = c;
                         if (wasOld) {
-                            cs.changedContacts().insert(contact->localId());
+                            cs.insertChangedContact(contact->localId());
                         } else {
-                            cs.addedContacts().insert(contact->localId());
+                            cs.insertAddedContact(contact->localId());
                             d->m_ids.append(contact->localId());
                         }
                     }
@@ -288,7 +288,7 @@ bool QContactWinCEEngine::removeContact(const QContactLocalId& contactId, QConta
             if (SUCCEEDED(hr)) {
                 error = QContactManager::NoError;
                 d->m_ids.removeAll(contactId);
-                cs.removedContacts().insert(contactId);
+                cs.insertRemovedContact(contactId);
                 cs.emitSignals(this);
                 return true;
             }

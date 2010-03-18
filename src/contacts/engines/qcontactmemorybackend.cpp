@@ -151,9 +151,9 @@ bool QContactMemoryEngine::setSelfContactId(const QContactLocalId& contactId, QC
         QContactLocalId oldId = d->m_selfContactId;
         d->m_selfContactId = contactId;
 
-        QContactChangeSet cs;
-        cs.oldAndNewSelfContactId() = QPair<QContactLocalId, QContactLocalId>(oldId, contactId);
-        d->emitSharedSignals(&cs);
+        QContactChangeSet changeSet;
+        changeSet.setOldAndNewSelfContactId(QPair<QContactLocalId, QContactLocalId>(oldId, contactId));
+        d->emitSharedSignals(&changeSet);
         return true;
     }
 
@@ -254,7 +254,7 @@ bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& 
 
         // Looks ok, so continue
         d->m_contacts.replace(index, *theContact);
-        changeSet.changedContacts().insert(theContact->localId());
+        changeSet.insertChangedContact(theContact->localId());
     } else {
         // id does not exist; if not zero, fail.
         QContactId newId;
@@ -284,7 +284,7 @@ bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& 
         d->m_contacts.append(*theContact);                   // add contact to list
         d->m_contactIds.append(theContact->localId());  // track the contact id.
 
-        changeSet.addedContacts().insert(theContact->localId());
+        changeSet.insertAddedContact(theContact->localId());
     }
 
     *error = QContactManager::NoError;     // successful.
@@ -353,10 +353,10 @@ bool QContactMemoryEngine::removeContact(const QContactLocalId& contactId, QCont
     // and if it was the self contact, reset the self contact id
     if (contactId == d->m_selfContactId) {
         d->m_selfContactId = QContactLocalId(0);
-        changeSet.oldAndNewSelfContactId() = QPair<QContactLocalId, QContactLocalId>(contactId, QContactLocalId(0));
+        changeSet.setOldAndNewSelfContactId(QPair<QContactLocalId, QContactLocalId>(contactId, QContactLocalId(0)));
     }
 
-    changeSet.removedContacts().insert(contactId);
+    changeSet.insertRemovedContact(contactId);
     return true;
 }
 
@@ -465,8 +465,8 @@ bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, 
     secondRelationships.append(*relationship);
     d->m_orderedRelationships.insert(relationship->first().localId(), firstRelationships);
     d->m_orderedRelationships.insert(relationship->second().localId(), secondRelationships);
-    changeSet.addedRelationshipsContacts().insert(relationship->first().localId());
-    changeSet.addedRelationshipsContacts().insert(relationship->second().localId());
+    changeSet.insertAddedRelationshipsContact(relationship->first().localId());
+    changeSet.insertAddedRelationshipsContact(relationship->second().localId());
 
     // update the contacts involved
     QContactManagerEngine::setContactRelationships(&d->m_contacts[firstContactIndex], firstRelationships);
@@ -527,8 +527,8 @@ bool QContactMemoryEngine::removeRelationship(const QContactRelationship& relati
         QContactMemoryEngine::setContactRelationships(&d->m_contacts[secondContactIndex], secondRelationships);
 
     // set our changes, and return.
-    changeSet.removedRelationshipsContacts().insert(relationship.first().localId());
-    changeSet.removedRelationshipsContacts().insert(relationship.second().localId());
+    changeSet.insertRemovedRelationshipsContact(relationship.first().localId());
+    changeSet.insertRemovedRelationshipsContact(relationship.second().localId());
     *error = QContactManager::NoError;
     return true;
 }

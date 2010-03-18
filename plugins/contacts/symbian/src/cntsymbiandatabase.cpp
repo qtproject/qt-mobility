@@ -145,27 +145,27 @@ void CntSymbianDatabase::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
         if(m_contactsEmitted.contains(id))
             m_contactsEmitted.removeOne(id);
         else
-            changeSet.addedContacts().insert(id);
+            changeSet.insertAddedContact(id);
         break;
     case EContactDbObserverEventOwnCardDeleted:
     case EContactDbObserverEventContactDeleted:
         if(m_contactsEmitted.contains(id))
             m_contactsEmitted.removeOne(id);
         else
-            changeSet.removedContacts().insert(id);
+            changeSet.insertRemovedContact(id);
         break;
     case EContactDbObserverEventContactChanged:
         if(m_contactsEmitted.contains(id))
             m_contactsEmitted.removeOne(id);
         else
-            changeSet.changedContacts().insert(id);
+            changeSet.insertChangedContacts(id);
         break;
     case EContactDbObserverEventGroupAdded:
         if(m_contactsEmitted.contains(id)) {
             // adding a group triggers also a "changed" event. The work-around
             // is to leave the id to m_contactsEmitted
         } else {
-            changeSet.addedContacts().insert(id);
+            changeSet.insertAddedContacts(id);
             m_contactsEmitted.append(id);
         }
         break;
@@ -173,7 +173,7 @@ void CntSymbianDatabase::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
         if(m_contactsEmitted.contains(id))
             m_contactsEmitted.removeOne(id);
         else
-            changeSet.removedContacts().insert(id);
+            changeSet.insertRemovedContact(id);
         break;
     case EContactDbObserverEventGroupChanged:
         if(m_contactsEmitted.contains(id))
@@ -190,16 +190,16 @@ void CntSymbianDatabase::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
             } else if(removed.count()) {
                 // The group changed event was caused by removing contacts
                 // from the group
-                changeSet.removedRelationshipsContacts().insert(id);
-                changeSet.removedRelationshipsContacts() += removed;
+                changeSet.insertRemovedRelationshipsContact(id);
+                changeSet.insertRemovedRelationshipsContacts(removed);
             } else if(added.count()) {
                 // The group changed event was caused by adding contacts
                 // to the group
-                changeSet.addedRelationshipsContacts().insert(id);
-                changeSet.addedRelationshipsContacts() += added;
+                changeSet.insertAddedRelationshipsContact(id);
+                changeSet.insertAddedRelationshipsContacts(added);
             } else {
                 // The group changed event was caused by modifying the group
-                changeSet.changedContacts().insert(id);
+                changeSet.insertChangedContacts(id);
             }
 #else
             // Currently the group membership check is only used in pre-10.1
@@ -211,14 +211,14 @@ void CntSymbianDatabase::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
             // EContactDbObserverEventGroupMembersAdded and 
             // EContactDbObserverEventGroupMembersRemoved need to be added to
             // MContactDbObserver.
-            changeSet.changedContacts().insert(id); //group is a contact
+            changeSet.insertChangedContacts(id); //group is a contact
 #endif
         }
         break;
     case EContactDbObserverEventOwnCardChanged:
         {
             QOwnCardPair ownCard(m_currentOwnCardId, QContactLocalId(id));
-            changeSet.oldAndNewSelfContactId() = ownCard;
+            changeSet.setOldAndNewSelfContactId(ownCard);
             m_currentOwnCardId = QContactLocalId(id);
             break;
         }

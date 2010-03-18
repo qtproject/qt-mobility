@@ -1981,7 +1981,7 @@ void tst_QContactManager::detailDefinitions()
     badfields.insert("Bad allowed", badfield);
     invalidAllowedValuesDef.setFields(badfields);
 
-    /* XXX Multiply defined fields.. depends on semantics. */
+    /* XXX Multiply defined fields.. depends on semantichangeSet. */
 
     if (cm->hasFeature(QContactManager::MutableDefinitions)) {
         /* First do some negative testing */
@@ -2168,59 +2168,59 @@ void tst_QContactManager::changeSet()
 {
     QContactLocalId id(1);
 
-    QContactChangeSet cs;
-    QVERIFY(cs.addedContacts().isEmpty());
-    QVERIFY(cs.changedContacts().isEmpty());
-    QVERIFY(cs.removedContacts().isEmpty());
+    QContactChangeSet changeSet;
+    QVERIFY(changeSet.addedContacts().isEmpty());
+    QVERIFY(changeSet.changedContacts().isEmpty());
+    QVERIFY(changeSet.removedContacts().isEmpty());
 
-    cs.addedContacts().insert(id);
-    QVERIFY(!cs.addedContacts().isEmpty());
-    QVERIFY(cs.changedContacts().isEmpty());
-    QVERIFY(cs.removedContacts().isEmpty());
-    QVERIFY(cs.addedContacts().contains(id));
+    changeSet.insertAddedContact(id);
+    QVERIFY(!changeSet.addedContacts().isEmpty());
+    QVERIFY(changeSet.changedContacts().isEmpty());
+    QVERIFY(changeSet.removedContacts().isEmpty());
+    QVERIFY(changeSet.addedContacts().contains(id));
 
-    cs.changedContacts().insert(id);
-    cs.changedContacts().insert(id);
-    QVERIFY(cs.changedContacts().size() == 1); // set, should only be added once.
-    QVERIFY(!cs.addedContacts().isEmpty());
-    QVERIFY(!cs.changedContacts().isEmpty());
-    QVERIFY(cs.removedContacts().isEmpty());
-    QVERIFY(cs.changedContacts().contains(id));
+    changeSet.insertChangedContact(id);
+    changeSet.insertChangedContact(id);
+    QVERIFY(changeSet.changedContacts().size() == 1); // set, should only be added once.
+    QVERIFY(!changeSet.addedContacts().isEmpty());
+    QVERIFY(!changeSet.changedContacts().isEmpty());
+    QVERIFY(changeSet.removedContacts().isEmpty());
+    QVERIFY(changeSet.changedContacts().contains(id));
 
-    QVERIFY(cs.dataChanged() == false);
-    QContactChangeSet cs2;
-    cs2 = cs;
-    QVERIFY(cs.addedContacts() == cs2.addedContacts());
-    cs.emitSignals(0);
+    QVERIFY(changeSet.dataChanged() == false);
+    QContactChangeSet changeSet2;
+    changeSet2 = changeSet;
+    QVERIFY(changeSet.addedContacts() == changeSet2.addedContacts());
+    changeSet.emitSignals(0);
 
-    cs2.clear();
-    QVERIFY(cs.addedContacts() != cs2.addedContacts());
+    changeSet2.clearAll();
+    QVERIFY(changeSet.addedContacts() != changeSet2.addedContacts());
 
-    QContactChangeSet cs3(cs2);
-    QVERIFY(cs.addedContacts() != cs3.addedContacts());
-    QVERIFY(cs2.addedContacts() == cs3.addedContacts());
+    QContactChangeSet changeSet3(changeSet2);
+    QVERIFY(changeSet.addedContacts() != changeSet3.addedContacts());
+    QVERIFY(changeSet2.addedContacts() == changeSet3.addedContacts());
 
-    cs.setDataChanged(true);
-    QVERIFY(cs.dataChanged() == true);
-    QVERIFY(cs.dataChanged() != cs2.dataChanged());
-    QVERIFY(cs.dataChanged() != cs3.dataChanged());
-    cs.emitSignals(0);
+    changeSet.setDataChanged(true);
+    QVERIFY(changeSet.dataChanged() == true);
+    QVERIFY(changeSet.dataChanged() != changeSet2.dataChanged());
+    QVERIFY(changeSet.dataChanged() != changeSet3.dataChanged());
+    changeSet.emitSignals(0);
 
-    cs.addedRelationshipsContacts().insert(id);
-    cs.emitSignals(0);
-    cs.removedRelationshipsContacts().insert(id);
-    cs.emitSignals(0);
+    changeSet.addedRelationshipsContacts().insert(id);
+    changeSet.emitSignals(0);
+    changeSet.removedRelationshipsContacts().insert(id);
+    changeSet.emitSignals(0);
 
-    cs.oldAndNewSelfContactId() = QPair<QContactLocalId, QContactLocalId>(QContactLocalId(0), id);
-    cs2 = cs;
-    QVERIFY(cs2.addedRelationshipsContacts() == cs.addedRelationshipsContacts());
-    QVERIFY(cs2.removedRelationshipsContacts() == cs.removedRelationshipsContacts());
-    QVERIFY(cs2.oldAndNewSelfContactId() == cs.oldAndNewSelfContactId());
-    cs.emitSignals(0);
-    cs.oldAndNewSelfContactId() = QPair<QContactLocalId, QContactLocalId>(id, QContactLocalId(0));
-    QVERIFY(cs2.oldAndNewSelfContactId() != cs.oldAndNewSelfContactId());
-    cs.setDataChanged(true);
-    cs.emitSignals(0);
+    changeSet.setOldAndNewSelfContactId(QPair<QContactLocalId, QContactLocalId>(QContactLocalId(0), id));
+    changeSet2 = changeSet;
+    QVERIFY(changeSet2.addedRelationshipsContacts() == changeSet.addedRelationshipsContacts());
+    QVERIFY(changeSet2.removedRelationshipsContacts() == changeSet.removedRelationshipsContacts());
+    QVERIFY(changeSet2.oldAndNewSelfContactId() == changeSet.oldAndNewSelfContactId());
+    changeSet.emitSignals(0);
+    changeSet.setOldAndNewSelfContactId(QPair<QContactLocalId, QContactLocalId>(id, QContactLocalId(0)));
+    QVERIFY(changeSet2.oldAndNewSelfContactId() != changeSet.oldAndNewSelfContactId());
+    changeSet.setDataChanged(true);
+    changeSet.emitSignals(0);
 }
 
 void tst_QContactManager::selfContactId()
