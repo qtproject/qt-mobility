@@ -531,20 +531,8 @@ EBookQuery* QContactABook::convert(const QContactFilter& filter) const
       queryStr = queryStr + " \"" + eDetail + "\" \"" + f.value().toString() + "\"";
       query = e_book_query_from_string(qPrintable(queryStr));
     } break;
-    case QContactFilter::ContactDetailRangeFilter:
-    {
-      //Current version of ebook doesn't support LT/LE/GT/GL Query tests
-      qWarning() << "ContactDetailRangeFilter is not supported";
-      return NULL;
-    } break;
-    case QContactFilter::ChangeLogFilter:
-      QCM5_DEBUG << "ChangeLogFilter"; //TODO
-      break;
     case QContactFilter::ActionFilter:
-      QCM5_DEBUG << "ActionFilter"; //Not supported
-      break;
-    case QContactFilter::RelationshipFilter:
-      QCM5_DEBUG << "RelationshipFilter"; //Not supported'
+      QCM5_DEBUG << "ActionFilter"; //eQuery doesn't support ActionFilter
       break;
     case QContactFilter::IntersectionFilter:
     {

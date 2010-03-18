@@ -130,6 +130,12 @@ class QContactMaemo5Engine : public QContactManagerEngine
     
     /* Version Reporting */
     int implementationVersion() const { return MAEMO5_ENGINE_VERSION; };
+    
+    /* Capabilities reporting */
+    bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const;
+    QStringList supportedRelationshipTypes(const QString& contactType) const;
+    bool isFilterSupported(const QContactFilter& filter) const;
+    QList<QVariant::Type> supportedDataTypes() const;
 
   private:
     QSharedDataPointer<QContactMaemo5EngineData> d;

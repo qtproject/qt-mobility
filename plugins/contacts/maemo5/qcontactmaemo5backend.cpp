@@ -270,3 +270,42 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     error = QContactManager::NoError;
     return defns[contactType];
 }
+
+bool QContactMaemo5Engine::hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const {
+  Q_UNUSED(contactType);
+  if (feature == QContactManager::Anonymous)
+    return true;
+  
+  return false;
+}
+
+QStringList QContactMaemo5Engine::supportedRelationshipTypes(const QString& contactType) const {
+  Q_UNUSED(contactType);
+  return QStringList();
+}
+
+bool QContactMaemo5Engine::isFilterSupported(const QContactFilter& filter) const {
+  switch (filter.type()) {
+    case QContactFilter::InvalidFilter:
+    case QContactFilter::DefaultFilter:
+    case QContactFilter::LocalIdFilter:
+    case QContactFilter::ContactDetailFilter:
+    case QContactFilter::ActionFilter:
+    case QContactFilter::IntersectionFilter:
+    case QContactFilter::UnionFilter:
+      return true;
+  }
+  return false;
+}
+
+QList<QVariant::Type> QContactMaemo5Engine::supportedDataTypes() const {
+  QList<QVariant::Type> st;
+  st.append(QVariant::String);
+  st.append(QVariant::Int);
+  st.append(QVariant::UInt);
+  st.append(QVariant::Double);
+  st.append(QVariant::Date);
+  st.append(QVariant::DateTime);
+
+  return st;   
+}
