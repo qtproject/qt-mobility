@@ -38,42 +38,31 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qmessageaddress.h"
+
+#include "qmessageservice.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QMessageAccountPrivate
+class QMessageServicePrivate
 {
-    Q_DECLARE_PUBLIC(QMessageAccount)
+public:
+    QMessageServicePrivate(QMessageService* parent);
+    ~QMessageServicePrivate();
+
+    static QMessageServicePrivate* implementation(const QMessageService &service);
+
+    void setFinished(bool successful);
+    void stateChanged(QMessageService::State state);
+    void messagesFound(const QMessageIdList &ids);
+    void messagesCounted(int count);
+    void progressChanged(uint value, uint total);
 
 public:
-    QMessageAccountPrivate(QMessageAccount *account)
-        :q_ptr(account)
-    {
-    }
-
-    QMessageAccount *q_ptr;
-
-    QMessageAccountId _id;
-    QString _name;
-#if defined(Q_OS_SYMBIAN)
-    long int _service1EntryId; 
-    long int _service2EntryId; 
-#else
-    QMessageAddress _address;
-#endif    
-    QMessage::TypeFlags _types;
-
-#if defined(Q_OS_WIN)
-    static QMessageAccount from(const QMessageAccountId &id, const QString &name, const QMessageAddress &address, const QMessage::TypeFlags &types);
-#endif
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    static QMessageAccount from(const QMessageAccountId &id, const QString &name, const QMessageAddress &address, const QMessage::TypeFlags &types);
-    static QMessageAccountPrivate* implementation(const QMessageAccount &account);
-#endif
-#if defined(Q_OS_SYMBIAN)
-    static QMessageAccount from(const QMessageAccountId &id, const QString &name, long int service1EntryId, long int service2EntryId, const QMessage::TypeFlags &types);
-#endif
+    QMessageService* q_ptr;
+    QMessageService::State _state;
+    QMessageManager::Error _error;
+    bool _active;
+    int _actionId;
 };
 
 QTM_END_NAMESPACE
