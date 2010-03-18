@@ -133,7 +133,7 @@ public: // Constructors and destructor
 
 signals:
     void stateChanged(QVersitReader::State state);
-    void resultsAvailable(QList<QVersitDocument>& results);
+    void resultsAvailable();
 
 protected: // From QThread
      void run();

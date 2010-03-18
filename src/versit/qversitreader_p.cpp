@@ -199,9 +199,7 @@ void QVersitReaderPrivate::init(QVersitReader* reader)
 {
     connect(this, SIGNAL(stateChanged(QVersitReader::State)),
             reader, SIGNAL(stateChanged(QVersitReader::State)),Qt::DirectConnection);
-    connect(this, SIGNAL(resultsAvailable(QList<QVersitDocument>&)),
-            reader, SIGNAL(resultsAvailable(QList<QVersitDocument>&)), Qt::DirectConnection);
-    connect(this, SIGNAL(resultsAvailable(QList<QVersitDocument>&)),
+    connect(this, SIGNAL(resultsAvailable()),
             reader, SIGNAL(resultsAvailable()), Qt::DirectConnection);
 }
 
@@ -256,7 +254,7 @@ void QVersitReaderPrivate::read()
             else {
                 QMutexLocker locker(&mMutex);
                 mVersitDocuments.append(document);
-                emit resultsAvailable(mVersitDocuments);
+                emit resultsAvailable();
             }
         } else {
             setError(QVersitReader::ParseError);
