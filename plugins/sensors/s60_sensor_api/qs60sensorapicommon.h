@@ -59,7 +59,6 @@ public:
     // from QSensorBackend
     virtual void start();
     virtual void stop();
-    void poll();
 
     // from MRRSensorDataListener
     virtual void HandleDataEventL(TRRSensorInfo aSensor, TRRSensorEvent aEvent);

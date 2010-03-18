@@ -72,11 +72,6 @@ void QS60SensorApiCommon::stop()
     m_nativeSensor->RemoveDataListener();
 }
 
-void QS60SensorApiCommon::poll()
-{
-    //empty implementation
-}
-
 void QS60SensorApiCommon::HandleDataEventL(TRRSensorInfo aSensor, TRRSensorEvent aEvent)
 {
     Q_UNUSED(aEvent);
