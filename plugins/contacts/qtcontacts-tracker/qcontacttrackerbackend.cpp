@@ -368,7 +368,7 @@ bool QContactTrackerEngine::removeContacts(const QList<QContactLocalId>& contact
     for (int i = 0; i < contactIds.count(); i++) {
         QContactManager::Error lastError;
         removeContact(contactIds.at(i), &lastError);
-        else {
+        if (lastError != QContactManager::NoError) {
             errorMap->insert(i, lastError);
         }
     }
