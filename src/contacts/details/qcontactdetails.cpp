@@ -1988,7 +1988,7 @@ void QContactAvatar::setSubType(const QString& subtype)
  */
 
 /*!
-   \fn QContactOrganization::setLogo(const QString& logo)
+   \fn QContactOrganization::setLogo(const QUrl& logo)
    Sets the logo of the organization stored in this detail to \a logo.
  */
 
@@ -2067,7 +2067,7 @@ void QContactAvatar::setSubType(const QString& subtype)
  */
 
 /*!
-  \fn QContactRingtone::setAudioRingtone(const QString& audioRingtone)
+  \fn QContactRingtone::setAudioRingtone(const QUrl& audioRingtone)
 
   Sets the uri of the audio ringtone stored in the ringtone detail
   to \a audioRingtone.
@@ -2080,7 +2080,7 @@ void QContactAvatar::setSubType(const QString& subtype)
  */
 
 /*!
-  \fn QContactRingtone::setVideoRingtone(const QString& videoRingtone)
+  \fn QContactRingtone::setVideoRingtone(const QUrl& videoRingtone)
 
   Sets the uri of the video ringtone stored in the ringtone detail
   to \a videoRingtone.
@@ -2093,7 +2093,7 @@ void QContactAvatar::setSubType(const QString& subtype)
  */
 
 /*!
-  \fn QContactRingtone::setVibrationRingtone(const QString& vibrationRingtone)
+  \fn QContactRingtone::setVibrationRingtone(const QUrl& vibrationRingtone)
 
   Sets the uri of the vibration ringtone stored in the ringtone detail
   to \a vibrationRingtone.

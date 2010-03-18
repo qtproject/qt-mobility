@@ -76,8 +76,8 @@ public:
 
     void setName(const QString& name) {setValue(FieldName, name);}
     QString name() const {return value(FieldName);}
-    void setLogo(const QString& logo) {setValue(FieldLogo, logo);}
-    QString logo() const {return value(FieldLogo);}
+    void setLogo(const QUrl& logo) {setValue(FieldLogo, logo);}
+    QUrl logo() const {return value(FieldLogo);}
     void setDepartment(const QStringList& department) {setValue(FieldDepartment, department);}
     QStringList department() const {return value<QStringList>(FieldDepartment);}
     void setLocation(const QString& location) {setValue(FieldLocation, location);}

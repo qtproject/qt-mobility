@@ -675,9 +675,10 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     f.setDataType(QVariant::String);
     f.setAllowableValues(QVariantList());
     fields.insert(QContactOrganization::FieldName, f);
-    fields.insert(QContactOrganization::FieldLogo, f);
     fields.insert(QContactOrganization::FieldLocation, f);
     fields.insert(QContactOrganization::FieldTitle, f);
+    f.setDataType(QVariant::Url);
+    fields.insert(QContactOrganization::FieldLogo, f);
     f.setDataType(QVariant::StringList);
     fields.insert(QContactOrganization::FieldDepartment, f);
     f.setAllowableValues(contexts);
@@ -849,7 +850,7 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     // avatar
     d.setName(QContactAvatar::DefinitionName);
     fields.clear();
-    f.setDataType(QVariant::String);
+    f.setDataType(QVariant::Url);
     f.setAllowableValues(QVariantList());
     fields.insert(QContactAvatar::FieldImageUrl, f);
     fields.insert(QContactAvatar::FieldVideoUrl, f);
@@ -863,7 +864,7 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     // ringtone
     d.setName(QContactRingtone::DefinitionName);
     fields.clear();
-    f.setDataType(QVariant::String);
+    f.setDataType(QVariant::Url);
     f.setAllowableValues(QVariantList());
     fields.insert(QContactRingtone::FieldAudioRingtone, f);
     fields.insert(QContactRingtone::FieldVideoRingtone, f);

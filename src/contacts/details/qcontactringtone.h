@@ -66,14 +66,14 @@ public:
     Q_DECLARE_LATIN1_LITERAL(FieldVibrationRingtone, "VibrationRingtone");
 #endif
 
-    void setAudioRingtone(const QString& audioRingtone) {setValue(FieldAudioRingtone, audioRingtone);}
-    QString audioRingtone() const {return value(FieldAudioRingtone);}
+    void setAudioRingtone(const QUrl& audioRingtone) {setValue(FieldAudioRingtone, audioRingtone);}
+    QUrl audioRingtone() const {return value(FieldAudioRingtone);}
 
-    void setVideoRingtone(const QString& videoRingtone) {setValue(FieldVideoRingtone, videoRingtone);}
-    QString videoRingtone() const {return value(FieldVideoRingtone);}
+    void setVideoRingtone(const QUrl& videoRingtone) {setValue(FieldVideoRingtone, videoRingtone);}
+    QUrl videoRingtone() const {return value(FieldVideoRingtone);}
 
-    void setVibrationRingtone(const QString& vibrationRingtone) {setValue(FieldVibrationRingtone, vibrationRingtone);}
-    QString vibrationRingtone() const {return value(FieldVibrationRingtone);}
+    void setVibrationRingtone(const QUrl& vibrationRingtone) {setValue(FieldVibrationRingtone, vibrationRingtone);}
+    QUrl vibrationRingtone() const {return value(FieldVibrationRingtone);}
 };
 
 QTM_END_NAMESPACE
