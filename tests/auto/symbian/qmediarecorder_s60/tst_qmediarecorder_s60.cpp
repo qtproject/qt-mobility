@@ -88,12 +88,13 @@ private slots:
     void testAudioEncoderControl();
     void testMediaFormatsControl();
     void testDefaultVideoEncodingSettings();
-//    void testDefaultAudioEncodingSettings();
+    void testDefaultAudioEncodingSettings();
     void testVideoEncoderControl();
     void testEncodingSettings();   
 
 private:
-    QUrl recordPath(QDir outputDir);
+    QUrl recordPathVideo(QDir outputDir);
+    QUrl recordPathAudio(QDir outputDir);
 
     QAudioEncoderControl *audioEncoder;
     QAudioEncoderControl *videoAudioEncoder;
@@ -132,9 +133,9 @@ void tst_QMediaRecorder::cleanupTestCase()
     delete camera;
 }
 
-QUrl tst_QMediaRecorder::recordPath(QDir outputDir)
+QUrl tst_QMediaRecorder::recordPathVideo(QDir outputDir)
 {
-    int lastImage = 0;
+    int lastImage = 0;    
     foreach( QString fileName, outputDir.entryList(QStringList() << "testclip_*.mpg") ) {
         int imgNumber = fileName.mid(5, fileName.size()-9).toInt();
         lastImage = qMax(lastImage, imgNumber);
@@ -143,6 +144,19 @@ QUrl tst_QMediaRecorder::recordPath(QDir outputDir)
     QUrl location(QDir::toNativeSeparators(outputDir.canonicalPath()+QString("/testclip_%1.mpg").arg(lastImage+1,4,10,QLatin1Char('0'))));
     return location;
 }
+
+QUrl tst_QMediaRecorder::recordPathAudio(QDir outputDir)
+{
+    int lastImage = 0;    
+    foreach( QString fileName, outputDir.entryList(QStringList() << "testclip_*.amr") ) {
+        int imgNumber = fileName.mid(5, fileName.size()-9).toInt();
+        lastImage = qMax(lastImage, imgNumber);
+    }
+
+    QUrl location(QDir::toNativeSeparators(outputDir.canonicalPath()+QString("/testclip_%1.amr").arg(lastImage+1,4,10,QLatin1Char('0'))));
+    return location;
+}
+
 
 void tst_QMediaRecorder::testVideoSink()
 {   
@@ -169,7 +183,7 @@ void tst_QMediaRecorder::testVideoRecord()
     QTRY_COMPARE(cameraState.count(), 1); // wait for camera to initialize itself
     QCOMPARE(camera->state(), QCamera::ActiveState);
     QTest::qWait(500);  // wait for recorder to initialize itself 
-    capture->setOutputLocation(recordPath(QDir::rootPath()));
+    capture->setOutputLocation(recordPathVideo(QDir::rootPath()));
     capture->record();
     QTRY_COMPARE(stateSignal.count(), 1); // wait for callbacks to complete in symbian API
     QCOMPARE(capture->state(), QMediaRecorder::RecordingState);
@@ -191,7 +205,23 @@ void tst_QMediaRecorder::testVideoRecord()
 
 void tst_QMediaRecorder::testAudioRecord()
 {
-    
+    QSignalSpy stateSignal(audiocapture,SIGNAL(stateChanged(QMediaRecorder::State)));    
+    QCOMPARE(audiocapture->state(), QMediaRecorder::StoppedState);        
+    audiocapture->setOutputLocation(recordPathAudio(QDir::rootPath()));        
+    audiocapture->record();
+    QTRY_COMPARE(stateSignal.count(), 1); // wait for callbacks to complete in symbian API
+    QCOMPARE(audiocapture->state(), QMediaRecorder::RecordingState);
+    QCOMPARE(audiocapture->error(), QMediaRecorder::NoError);
+    QCOMPARE(audiocapture->errorString(), QString());
+    QCOMPARE(stateSignal.count(), 1);    
+    audiocapture->pause();
+    QTRY_COMPARE(stateSignal.count(), 2); // wait for callbacks to complete in symbian API    
+    QCOMPARE(audiocapture->state(), QMediaRecorder::PausedState);
+    QCOMPARE(stateSignal.count(), 2);
+    audiocapture->stop();
+    QTRY_COMPARE(stateSignal.count(), 3); // wait for callbacks to complete in symbian API
+    QCOMPARE(audiocapture->state(), QMediaRecorder::StoppedState);
+    QCOMPARE(stateSignal.count(), 3);        
 }
 
 void tst_QMediaRecorder::testVideoDeviceControl()
@@ -199,8 +229,7 @@ void tst_QMediaRecorder::testVideoDeviceControl()
     QSignalSpy readSignal(videoDevice,SIGNAL(selectedDeviceChanged(QString)));
     QVERIFY(videoDevice->deviceCount() == 2);
     QVERIFY(videoDevice->defaultDevice() == 0);
-    videoDevice->setSelectedDevice(1);
-    
+    videoDevice->setSelectedDevice(1);    
     QVERIFY(videoDevice->selectedDevice() == 1);
     QVERIFY(readSignal.count() == 1);
     QVERIFY(videoDevice->deviceDescription(0).compare("Back camera") == 0);
@@ -220,15 +249,14 @@ void tst_QMediaRecorder::testAudioEndPointSelector()
 void tst_QMediaRecorder::testAudioEncoderControl()
 {
     QStringList codecs = audiocapture->supportedAudioCodecs();    
-    qDebug() << "tst_QMediaRecorder::testAudioEncoderControl, audio codec count"<<codecs.count();
-    QVERIFY(codecs.count() == 1);    
-    QVERIFY(audiocapture->audioCodecDescription("audio/wav") == "WAV Write Format");
-    QStringList options = audioEncoder->supportedEncodingOptions("audio/wav");
+    QVERIFY(codecs.count() == 3);    
+    QVERIFY(audiocapture->audioCodecDescription("PCM") == "Pulse code modulation");
+    QStringList options = audioEncoder->supportedEncodingOptions("PCM");
     QCOMPARE(options.count(), 0);    
-    QVERIFY(audioEncoder->encodingOption("audio/wav","bitrate").toInt() == -1);
-    audioEncoder->setEncodingOption("audio/wav", "bitrate", QString("vbr"));
-    QCOMPARE(audioEncoder->encodingOption("audio/wav","bitrate").toInt(), -1);
-    QCOMPARE(audiocapture->supportedAudioSampleRates(), QList<int>() << 44100);
+    QVERIFY(audioEncoder->encodingOption("PCM","bitrate").toInt() == -1);
+    audioEncoder->setEncodingOption("PCM", "bitrate", QString("vbr"));
+    QCOMPARE(audioEncoder->encodingOption("PCM","bitrate").toInt(), -1);
+    QCOMPARE(audiocapture->supportedAudioSampleRates().count(), 12);
 }
 
 void tst_QMediaRecorder::testMediaFormatsControl()
@@ -239,11 +267,9 @@ void tst_QMediaRecorder::testMediaFormatsControl()
     QCOMPARE(capture->containerDescription("video/mp4"), QString("MPEG-4 File Format"));
     QCOMPARE(capture->containerDescription("video/3gpp2"), QString("3GPP2 File Format"));
     //audioocontainer types
-    QCOMPARE(audiocapture->supportedContainers(), QStringList() << "audio/wav" << "audio/pcm");
-    QCOMPARE(audiocapture->containerDescription("audio/pcm"), QString("WAV file format"));
-    QCOMPARE(audiocapture->containerDescription("audio/x-wav"), QString("RAW file format"));
-//    QCOMPARE(capture->containerDescription("mp3"), QString("MP3 format"));
-//    QCOMPARE(capture->containerDescription("ogg"), QString());
+    QCOMPARE(audiocapture->supportedContainers(), QStringList() << "audio/wav" << "audio/basic" << "audio/amr");   
+    QCOMPARE(audiocapture->containerDescription("audio/wav"), QString("WAV Write Format"));    
+    QCOMPARE(audiocapture->containerDescription("audio/amr"), QString("AMR Write Format"));
 }
 
 void tst_QMediaRecorder::testDefaultVideoEncodingSettings()
@@ -259,19 +285,21 @@ void tst_QMediaRecorder::testDefaultVideoEncodingSettings()
     QString format = capture->containerMimeType();
     QCOMPARE(format, QString("video/3gpp"));
 }
-/*  
+  
 void tst_QMediaRecorder::testDefaultAudioEncodingSettings()
 {
-  QAudioEncoderSettings audioSettings = capture->audioSettings();
-    QCOMPARE(audioSettings.codec(), QString("audio/pcm"));
-    QCOMPARE(audioSettings.bitRate(), 128*1024);
+    QAudioEncoderSettings audioSettings = audiocapture->audioSettings();
+    QCOMPARE(audioSettings.codec(), QString("AMR"));
+    QString format = audiocapture->containerMimeType();
+    QCOMPARE(format, QString("audio/amr"));
+/*    QCOMPARE(audioSettings.bitRate(), 128*1024);
     QCOMPARE(audioSettings.sampleRate(), -1);
     QCOMPARE(audioSettings.quality(), QtMedia::NormalQuality);
     QCOMPARE(audioSettings.channelCount(), -1);
 
-    QCOMPARE(audioSettings.encodingMode(), QtMedia::ConstantQualityEncoding);
+    QCOMPARE(audioSettings.encodingMode(), QtMedia::ConstantQualityEncoding);*/
    
-}*/ 
+}
 
 void tst_QMediaRecorder::testVideoEncoderControl()
 {
@@ -295,10 +323,7 @@ void tst_QMediaRecorder::testVideoEncoderControl()
     QCOMPARE(videoEncoder->encodingOption("video/mp4","bitrate"), QVariant(128000));
     videoEncoder->setEncodingOption("video/mp4", "bitrate", QVariant(-1));
     
-    QStringList aCodecs = capture->supportedAudioCodecs();   
-    qDebug() << "tst_QMediaRecorder::testVideoEncoderControl, audio codec count"<<aCodecs.count();  
-    foreach(QString codec, aCodecs)
-        qDebug() << "tst_QMediaRecorder::testVideoEncoderControl, audio codec: "<<codec;
+    QStringList aCodecs = capture->supportedAudioCodecs();    
     QVERIFY(aCodecs.count() == 2);    
     QVERIFY(capture->audioCodecDescription("audio/aac") == "Advanced Audio Coding");
     QVERIFY(capture->audioCodecDescription("audio/amr") == "Adaptive Multi-Rate audio codec");
