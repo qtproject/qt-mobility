@@ -58,6 +58,11 @@ namespace Ui
 {
 class MainWindow;
 }
+#ifdef Q_OS_SYMBIAN
+QTM_BEGIN_NAMESPACE
+class QNetworkSession;
+QTM_END_NAMESPACE
+#endif
 
 QTM_USE_NAMESPACE
 
@@ -85,6 +90,7 @@ private slots:
     void drawEllipse(bool checked);
     void drawPolygon(bool checked);
     void customContextMenuRequest(const QPoint&);
+    void delayedInit();
 
 private:
     Ui::MainWindow *ui;
@@ -102,6 +108,10 @@ private:
     QGeoCoordinate lastClicked;
 
     QList<const QMapMarker*> selectedMarkers;
+#ifdef Q_OS_SYMBIAN
+    QNetworkSession *session;
+#endif
+
 };
 
 #endif // MAINWINDOW_H
