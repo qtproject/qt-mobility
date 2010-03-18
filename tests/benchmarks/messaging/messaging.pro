@@ -22,6 +22,7 @@ symbian {
     LIBS += -lmsgs -lmsgs_autoshutdown -limcm -lsmcm -lgsmu -letext -lbafl
     INCLUDEPATH += $$(EPOCROOT)epoc32/include/app
     INCLUDEPATH += $$(EPOCROOT)epoc32/include/platform/app
+    INCLUDEPATH += $$(EPOCROOT)epoc32/include/applications
 }
 
 maemo {
