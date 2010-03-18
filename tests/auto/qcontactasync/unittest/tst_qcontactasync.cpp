@@ -2238,6 +2238,7 @@ void tst_QContactAsync::addManagers()
     managers.removeAll("invalid");
     managers.removeAll("maliciousplugin");
     managers.removeAll("testdummy");
+    managers.removeAll("symbiansim"); // SIM backend does not support all the required details for tests to pass.
 
     foreach(QString mgr, managers) {
         QMap<QString, QString> params;
@@ -2290,6 +2291,11 @@ QContactManager* tst_QContactAsync::prepareModel(const QString& managerUri)
     cm->saveContact(&c);
     
     if (!cm->hasFeature(QContactManager::Relationships)) {
+        return cm;
+    }
+    
+    if (cm->managerName() == "symbian") {
+        // Symbian backend does not support other relationships than HasMember (which is same as groups)
         return cm;
     }
 
