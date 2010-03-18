@@ -429,7 +429,6 @@ for module in $MOBILITY_MODULES; do
             ;;
         multimedia)
             $relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia/experimental
             ;;
         messaging)
             $relpath/bin/syncheaders $shadowpath/include $relpath/src/messaging
