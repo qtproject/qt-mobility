@@ -119,14 +119,14 @@ void tst_SimCMAsync::init()
 {
     // remove all contacts
     QList<QContactLocalId> ids = m_cm->contactIds();
-    m_cm->removeContacts(&ids, 0);   
+    m_cm->removeContacts(ids, 0);   
 }
 
 void tst_SimCMAsync::cleanup()
 {
     // remove all contacts
     QList<QContactLocalId> ids = m_cm->contactIds();
-    m_cm->removeContacts(&ids, 0);   
+    m_cm->removeContacts(ids, 0);   
 }
 
 void tst_SimCMAsync::initTestCase()
@@ -230,7 +230,7 @@ void tst_SimCMAsync::fetchContactReq()
    
     // Remove all contacts
     QList<QContactLocalId> ids = m_cm->contactIds();
-    m_cm->removeContacts(&ids, 0);    
+    m_cm->removeContacts(ids, 0);    
     
     // Test fetching nothing
     stateSpy.clear();
@@ -290,7 +290,7 @@ void tst_SimCMAsync::localIdFetchReq()
     
     // Remove all contacts
     QList<QContactLocalId> ids = m_cm->contactIds();
-    m_cm->removeContacts(&ids, 0);    
+    m_cm->removeContacts(ids, 0);    
     
     // Start again
     stateSpy.clear();
@@ -439,14 +439,14 @@ void tst_SimCMAsync::removeContactReq()
     QVERIFY(stateSpy.count() == 1);
     QTRY_COMPARE(resultSpy.count(), 1);
     QVERIFY(req.state() == QContactAbstractRequest::FinishedState);
-#ifndef __WINS__
-    QWARN("This test fails in hardware!");
-    QWARN("In hardware removing SIM contacts which do not exist the etel server will return KErrNone instead of KErrNotFound");
-#endif
-    QVERIFY(req.error() == QContactManager::DoesNotExistError);
-    QVERIFY(req.errorMap().count() == 2);
-    QVERIFY(req.errorMap().value(0) == QContactManager::DoesNotExistError);
-    QVERIFY(req.errorMap().value(1) == QContactManager::DoesNotExistError);
+    // NOTE: In emulator removing a nonexisting contact will return DoesNotExistError
+    // and in hardware there will be no error.
+    QVERIFY(req.error() == QContactManager::DoesNotExistError || req.error() == QContactManager::NoError);
+    if (req.errorMap().count()) {
+        QVERIFY(req.errorMap().count() == 2);
+        QVERIFY(req.errorMap().value(0) == QContactManager::DoesNotExistError);
+        QVERIFY(req.errorMap().value(1) == QContactManager::DoesNotExistError);
+    }
 }
 
 void tst_SimCMAsync::detailDefinitionFetchReq()

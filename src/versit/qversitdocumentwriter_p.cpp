@@ -117,7 +117,7 @@ void QVersitDocumentWriter::encodeVersitDocument(const QVersitDocument& document
     writeCrlf();
     writeString(QLatin1String("VERSION:" + mVersion));
     writeCrlf();
-    foreach (QVersitProperty property, properties) {
+    foreach (const QVersitProperty& property, properties) {
         encodeVersitProperty(property);
     }
     writeString(QLatin1String("END:" + mDocumentType));

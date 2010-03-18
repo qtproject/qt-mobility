@@ -44,7 +44,6 @@
 
 #include "cntabstractcontactfilter.h"
 #include "cntsymbiansrvconnection.h"
-#include "qcontactdetailfilter.h"
 #include "cntdbinfo.h"
 
 #include <qmobilityglobal.h>

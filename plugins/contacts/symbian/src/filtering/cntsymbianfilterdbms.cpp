@@ -90,6 +90,13 @@ CntSymbianFilter::~CntSymbianFilter()
  * are sorted only if the sort order is supported by contacts database. See
  * CntSymbianSorterDbms::filterSupportLevel for the list of supported sort
  * orders.
+ * 
+ * Using detail filter with match flag MatchPhoneNumber is implemented by the
+ * contact model "phone number match" that filters by comparing the search
+ * string characters (digits) starting from the rightmost digit. The detail
+ * filter value must be at least 7 digits, otherwise an error code
+ * NotSupportedError is given. The actual digit count that is used is 7 to 15
+ * digits, depending on the configuration of the device.
  *
  * \a filter The QContactFilter to be used.
  * \a sortOrders The sort orders to be used. If the sort orders are not
@@ -134,7 +141,7 @@ QList<QContactLocalId> CntSymbianFilter::contacts(
             && (static_cast<const QContactDetailFilter &>(filter)).value().type() == QVariant::StringList) {
         QStringList values = (static_cast<const QContactDetailFilter &>(filter)).value().toStringList();
         QContactIntersectionFilter intersectionFilter;
-        foreach(QString value, values) {
+        foreach(const QString& value, values) {
             QContactDetailFilter detailFilter = filter;
             detailFilter.setValue(value);
             intersectionFilter.append(detailFilter);
@@ -142,15 +149,20 @@ QList<QContactLocalId> CntSymbianFilter::contacts(
         // The resulting filter is handled with a recursive function call
         result = contacts(intersectionFilter, sortOrders, filterSupportedFlag, error);
     } else {
-        if (filterSupportLevel(filter) == Supported) {
+        FilterSupport filterSupport = filterSupportLevel(filter);
+        if (filterSupport == Supported) {
             filterSupportedFlag = true;
             // Filter supported, use as the result directly
             result = filterContacts(filter, error);
-        } else if (filterSupportLevel(filter) == SupportedPreFilterOnly) {
+        } else if (filterSupport == SupportedPreFilterOnly) {
             // Filter only does pre-filtering, the caller is responsible of
             // removing possible false positives after filtering
             filterSupportedFlag = false;
             result = filterContacts(filter, error);
+        } else if (filterSupport == IllegalFilter) {
+            // Don't do filtering; fail with an error
+            filterSupportedFlag = false;
+            error = QContactManager::NotSupportedError;
         } else {
             // Don't do filtering here, return all contact ids and tell the
             // caller to do slow filtering
@@ -225,13 +237,29 @@ CntAbstractContactFilter::FilterSupport CntSymbianFilter::filterSupportLevel(con
         if (defName == QContactPhoneNumber::DefinitionName) {
             
             if (matchFlags == QContactFilter::MatchPhoneNumber) {
-                return Supported;
-            }
-            
-            if (matchFlags == QContactFilter::MatchExactly ||
-                matchFlags == QContactFilter::MatchEndsWith ||
-                matchFlags == QContactFilter::MatchFixedString) {
-                return SupportedPreFilterOnly;
+                if (detailFilter.value().canConvert(QVariant::String)) {
+                    if (detailFilter.value().toString().length() >= 7) {
+                        return Supported;
+                    } else {
+                        // It is a feature of Symbian contact model that phone
+                        // number match requires at least 7 digits. In case of
+                        // phone number match it is best to give an error as a
+                        // result because the phone number match logic would
+                        // not be much of use with less than 7 digit matching.
+                        // It would give false positives too often.
+                        return IllegalFilter;
+                    }
+                }
+            } else if (matchFlags == QContactFilter::MatchExactly
+                || matchFlags == QContactFilter::MatchEndsWith
+                || matchFlags == QContactFilter::MatchFixedString) {
+                if (detailFilter.value().canConvert(QVariant::String)) {
+                    // It is a feature of Symbian contact model that phone
+                    // number match requires at least 7 digits
+                    if (detailFilter.value().toString().length() >= 7) {
+                        return SupportedPreFilterOnly;
+                    }
+                }
             }
         // Names
         } else if (defName == QContactName::DefinitionName
@@ -281,7 +309,7 @@ QList<QContactLocalId> CntSymbianFilter::filterContacts(
     QList<QContactLocalId> matches;
     CContactIdArray* idArray(0);
 
-    if (filter.type() == QContactFilter::InvalidFilter ){
+    if (filter.type() == QContactFilter::InvalidFilter) {
         TTime epoch(0);
         idArray = m_contactDatabase.ContactsChangedSinceL(epoch); // return all contacts
     } else if(filterSupportLevel(filter) == NotSupported) {
@@ -327,7 +355,7 @@ QList<QContactLocalId> CntSymbianFilter::filterContacts(
                     && detailFilter.matchFlags() == QContactFilter::MatchStartsWith) {
 
                     // Remove false positives
-                    for(TInt i(0); i < idArray->Count(); i++) {
+                    for(TInt i(0); i < idArray->Count(); ++i) {
                         CContactItem* contactItem = m_contactDatabase.ReadContactLC((*idArray)[i]);
                         const CContactItemFieldSet& fieldSet(contactItem->CardFields());
                         if(isFalsePositive(fieldSet, KUidContactFieldGivenName, namePtr)
@@ -377,7 +405,7 @@ bool CntSymbianFilter::isFalsePositive(const CContactItemFieldSet& fieldSet, con
         // Check if this is the first word beginning with search string
         if(index == 0)
             value = false;
-        // Check if this is in the beginning of a word (the preceeding
+        // Check if this is in the beginning of a word (the preceding
         // character is a space)
         else if(index > 0 && TChar(text[index-1]) == TChar(0x20))
             value = false;

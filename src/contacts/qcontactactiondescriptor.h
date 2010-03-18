@@ -53,7 +53,7 @@ class QContactActionDescriptorPrivate;
 class Q_CONTACTS_EXPORT QContactActionDescriptor
 {
 public:
-    QContactActionDescriptor(const QString& actionName = QString(), const QString& vendorName = QString(), int vendorVersion = -1);
+    explicit QContactActionDescriptor(const QString& actionName = QString(), const QString& vendorName = QString(), int vendorVersion = -1);
     QContactActionDescriptor(const QContactActionDescriptor& other);
     QContactActionDescriptor& operator=(const QContactActionDescriptor& other);
     ~QContactActionDescriptor();
@@ -61,6 +61,7 @@ public:
     bool isEmpty() const;
     bool operator==(const QContactActionDescriptor& other) const;
     bool operator!=(const QContactActionDescriptor& other) const;
+    bool operator<(const QContactActionDescriptor& other) const;
 
     void setActionName(const QString& actionName);
     void setVendorName(const QString& vendorName);
@@ -73,6 +74,8 @@ public:
 private:
     QSharedDataPointer<QContactActionDescriptorPrivate> d;
 };
+
+Q_CONTACTS_EXPORT uint qHash(const QContactActionDescriptor& key);
 
 QTM_END_NAMESPACE
 

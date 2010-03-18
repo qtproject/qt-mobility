@@ -16,8 +16,8 @@ INCLUDEPATH += \
     ../../../src/contacts/requests \
     ../../../src/contacts/filters
 
-HEADERS += ut_versitutils.h
-SOURCES += ut_versitutils.cpp
+HEADERS += tst_versitutils.h
+SOURCES += tst_versitutils.cpp
 
 CONFIG += mobility
 MOBILITY = contacts versit

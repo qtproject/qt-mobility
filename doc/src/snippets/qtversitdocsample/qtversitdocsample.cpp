@@ -41,6 +41,7 @@
 
 #include "qmobilityglobal.h"
 #include "qtcontacts.h"
+#include "qcontacttag.h"
 #include "qversitreader.h"
 #include "qversitcontactimporter.h"
 #include "qversitwriter.h"
@@ -137,6 +138,7 @@ void completeExample()
     input.seek(0);
 
     // Parse the input into QVersitDocuments
+    // Note: we could also use the more convenient QVersitReader(QByteArray) constructor.
     QVersitReader reader;
     reader.setDevice(&input);
     reader.startReading(); // Remember to check the return value
@@ -145,15 +147,20 @@ void completeExample()
     // Convert the QVersitDocuments to QContacts
     QList<QVersitDocument> inputDocuments = reader.results();
     QVersitContactImporter importer;
-    QList<QContact> contacts = importer.importContacts(inputDocuments);
+    if (!importer.importDocuments(inputDocuments))
+        return;
+    QList<QContact> contacts = importer.contacts();
     // Note that the QContacts are not saved yet.
     // Use QContactManager::saveContacts() for saving if necessary
 
     // Export the QContacts back to QVersitDocuments
     QVersitContactExporter exporter;
-    QList<QVersitDocument> outputDocuments = exporter.exportContacts(contacts);
+    if (!exporter.exportContacts(contacts, QVersitDocument::VCard30Type))
+        return;
+    QList<QVersitDocument> outputDocuments = exporter.documents();
 
     // Encode the QVersitDocument back to a vCard
+    // Note: we could also use the more convenient QVersitWriter(QByteArray*) constructor.
     QBuffer output;
     output.open(QBuffer::ReadWrite);
     QVersitWriter writer;
@@ -187,9 +194,9 @@ void exportExample()
     contactAvatar.setSubType(QContactAvatar::SubTypeTexturedMesh);
     contact.saveDetail(&contactAvatar);
 
-    QList<QContact> contactList;
-    contactList.append(contact);
-    QList<QVersitDocument> versitDocuments = contactExporter.exportContacts(contactList);
+    if (!contactExporter.exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type))
+        return;
+    QList<QVersitDocument> versitDocuments = contactExporter.documents();
 
     // detailHandler.mUnknownDetails now contains the list of unknown details
     //! [Export example]
@@ -214,11 +221,127 @@ void importExample()
     property.setValue("some value");
     document.addProperty(property);
 
-    QList<QVersitDocument> list;
-    list.append(document);
-
-    QList<QContact> contactList = importer.importContacts(list);
-    // contactList.first() now contains the "N" property as a QContactName
-    // propertyHandler.mUnknownProperties contains the list of unknown properties
+    if (importer.importDocuments(QList<QVersitDocument>() << document)) {
+        QList<QContact> contactList = importer.contacts();
+        // contactList.first() now contains the "N" property as a QContactName
+        // propertyHandler.mUnknownProperties contains the list of unknown properties
+    }
     //! [Import example]
 }
+
+//! [Import relationship example]
+/*! Adds contacts in  \a newContacts into \a manager, converting categories specified
+  with tags into group membership relationships.  Note that this implementation uses the
+  synchronous API of QContactManager for clarity.  It is recommended that the asynchronous
+  API is used in practice.
+
+  Relationships are added so that if a contact, A, has a tag "b", then a HasMember relationship is
+  created between a group contact in the manager, B with display label "b", and contact A.  If there
+  does not exist a group contact with display label "b", one is created.
+  */
+void insertWithGroups(const QList<QContact>& newContacts, QContactManager* manager)
+{
+    // Cache map from group names to QContactIds
+    QMap<QString, QContactId> groupMap;
+
+    foreach (QContact contact, newContacts) {
+        if (!manager->saveContact(&contact))
+            continue; // In practice, better error handling may be required
+        foreach (const QContactTag& tag, contact.details<QContactTag>()) {
+            QString groupName = tag.tag();
+            QContactId groupId;
+            if (groupMap.contains(groupName)) {
+                // We've already seen a group with the right name
+                groupId = groupMap.value(groupName);
+            } else {
+                QContactDetailFilter groupFilter;
+                groupFilter.setDetailDefinitionName(QContactType::DefinitionName);
+                groupFilter.setValue(QLatin1String(QContactType::TypeGroup));
+                groupFilter.setMatchFlags(QContactFilter::MatchExactly);
+                // In practice, some detail other than the display label could be used
+                QContactDetailFilter nameFilter = QContactDisplayLabel::match(groupName);
+                QList<QContactLocalId> matchingGroups = manager->contactIds(groupFilter & nameFilter);
+                if (!matchingGroups.isEmpty()) {
+                    // Found an existing group in the manager
+                    QContactId groupId;
+                    groupId.setManagerUri(manager->managerUri());
+                    groupId.setLocalId(matchingGroups.first());
+                    groupMap.insert(groupName, groupId);
+                }
+                else {
+                    // Make a new group
+                    QContact groupContact;
+                    QContactName name;
+                    name.setCustomLabel(groupName);
+                    // Beware that not all managers support custom label
+                    groupContact.saveDetail(&name);
+                    if (!manager->saveContact(&groupContact))
+                        continue; // In practice, better error handling may be required
+                    groupId = groupContact.id();
+                    groupMap.insert(groupName, groupId);
+                }
+            }
+            // Add the relationship
+            QContactRelationship rel;
+            rel.setFirst(groupId);
+            rel.setRelationshipType(QContactRelationship::HasMember);
+            rel.setSecond(contact.id());
+            manager->saveRelationship(&rel);
+        }
+    }
+}
+//! [Import relationship example]
+
+//! [Export relationship example]
+/*! Adds QContactTag details to the \a contacts, based on the \a relationships.
+
+  Tags are created such that if a group contact, B with display label "b", has a HasMember
+  relationship with a contact, A, then a QContactTag, "b", is added to A.
+
+  Group contacts can be passed in with the \a contacts list.  If a contact is part of a group which
+  is not in \a contacts, the \a manager is queried to find them.
+  */
+void createTagsFromGroups(QList<QContact>* contacts,
+                          const QList<QContactRelationship>& relationships,
+                          const QContactManager* manager)
+{
+    // Map from QContactIds to group names
+    QMap<QContactId, QString> groupMap;
+
+    // Map from QContactIds to indices into the contacts list
+    QMap<QContactId, int> indexMap;
+    // Build up groupMap and indexMap
+    for (int i = 0; i < contacts->size(); ++i) {
+        QContact contact = contacts->at(i);
+        if (contact.type() == QContactType::TypeGroup) {
+            // In practice, you may want to check that there aren't two distinct groups with the
+            // same name, and you may want to use a field other than display label.
+            groupMap.insert(contact.id(), contact.displayLabel());
+        }
+        indexMap.insert(contact.id(), i);
+    }
+
+    // Now add all the tags specified by the group relationships
+    foreach (const QContactRelationship& rel, relationships) {
+        if (rel.relationshipType() == QContactRelationship::HasMember
+            && indexMap.contains(rel.second())) {
+            QString groupName = groupMap.value(rel.first()); // Have we seen the group before?
+            if (groupName.isEmpty()) {
+                // Try and find the group in the manager
+                QContactId groupId = rel.second();
+                QContact contact = manager->contact(groupId.localId(), QStringList(QContactDisplayLabel::DefinitionName));
+                if (!contact.isEmpty()) {
+                    groupName = contact.displayLabel();
+                    groupMap.insert(groupId, groupName); // Cache the group id/name
+                }
+            }
+            if (!groupName.isEmpty()) {
+                // Add the tag
+                QContactTag tag;
+                tag.setTag(groupName);
+                (*contacts)[indexMap.value(rel.second())].saveDetail(&tag);
+            }
+        }
+    }
+}
+//! [Export relationship example]

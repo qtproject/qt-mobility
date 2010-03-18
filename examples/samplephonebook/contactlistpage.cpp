@@ -216,10 +216,12 @@ void ContactListPage::importClicked()
         reader.setDevice(&file);
         if (reader.startReading() && reader.waitForFinished()) {
             QVersitContactImporter importer;
-            QList<QContact> contacts = importer.importContacts(reader.results());
-            QMap<int, QContactManager::Error> errorMap;
-            m_manager->saveContacts(&contacts, &errorMap);
-            rebuildList(m_currentFilter);
+            if (importer.importDocuments(reader.results())) {
+                QList<QContact> contacts = importer.contacts();
+                QMap<int, QContactManager::Error> errorMap;
+                m_manager->saveContacts(&contacts, &errorMap);
+                rebuildList(m_currentFilter);
+            }
         }
     }
 #endif
@@ -240,11 +242,13 @@ void ContactListPage::exportClicked()
     file.open(QIODevice::WriteOnly);
     if (file.isWritable()) {
         QVersitContactExporter exporter;
-        QList<QVersitDocument> documents = exporter.exportContacts(contacts);
-        QVersitWriter writer;
-        writer.setDevice(&file);
-        writer.startWriting(documents);
-        writer.waitForFinished();
+        if(exporter.exportContacts(contacts, QVersitDocument::VCard30Type)) {
+            QList<QVersitDocument> documents = exporter.documents();
+            QVersitWriter writer;
+            writer.setDevice(&file);
+            writer.startWriting(documents);
+            writer.waitForFinished();
+        }
     }
 #endif
 }

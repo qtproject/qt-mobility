@@ -44,7 +44,6 @@
 
 #include "cntabstractcontactfilter.h"
 #include "cntsymbiansrvconnection.h"
-#include "qcontactdetailfilter.h"
 #include "cntdbinfo.h"
 
 #include <qmobilityglobal.h>
@@ -69,7 +68,7 @@ public:
 
 private:
     void getSelectQueryforFilter(const QContactFilter& filter,QString& sqlSelectQuery,QContactManager::Error& error);
-
+    
 protected:
     CContactDatabase& m_contactdatabase;
     CntSymbianSrvConnection &m_srvConnection;

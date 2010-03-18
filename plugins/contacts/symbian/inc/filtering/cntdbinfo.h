@@ -44,8 +44,11 @@
 #define CNTDBINFO_H_
 
 #include <qtcontacts.h>
-#include <qcontactmanager.h>
 #include <qcontactfilter.h>
+#include <qcontactmanager.h>
+#include <qcontactsortorder.h>
+
+QTM_USE_NAMESPACE
 
 class CntSymbianSrvConnection;
 class CntSymbianFilter;
@@ -67,16 +70,14 @@ public:
                                       QString& tableName,
                                       QString& columnName ) const;
     bool SupportsUid(int uid);
+    
+    QString getSortQuery(const QList<QContactSortOrder> &sortOrders,
+                         const QString& selectQuery,
+                         QContactManager::Error& error);
 
 private:
     QHash<int,QString> contactsTableIdColumNameMapping;
     QHash<int,int> commAddrTableIdColumNameMapping;
-
 };
-
-
-
-
-
 
 #endif /* CNTDBINFO_H_ */

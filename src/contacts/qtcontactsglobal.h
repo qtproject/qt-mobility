@@ -45,13 +45,11 @@
 #include <qmobilityglobal.h>
 #include <QString>
 
-#define QTCONTACTS_VERSION_NAME "com.nokia.qt.mobility.contacts.api.version" 
-#define QTCONTACTS_IMPLEMENTATION_VERSION_NAME "com.nokia.qt.mobility.contacts.implementation.version" 
-#define QTCONTACTS_VERSION 1 
+#define QTCONTACTS_VERSION_NAME "com.nokia.qt.mobility.contacts.api.version"
+#define QTCONTACTS_IMPLEMENTATION_VERSION_NAME "com.nokia.qt.mobility.contacts.implementation.version"
+#define QTCONTACTS_VERSION 1
 
 QTM_BEGIN_NAMESPACE
-
-typedef quint32 QContactLocalId; // XXX Put this else where
 
 /*
  * Latin1Literal
@@ -125,5 +123,8 @@ QTM_END_NAMESPACE
 
 // Not needed since this is a typedef, and qglobal already does this for the base type
 // Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QContactLocalId), Q_PRIMITIVE_TYPE);
+
+// Workaround for unannounced SC break
+#include "qcontactid.h"
 
 #endif

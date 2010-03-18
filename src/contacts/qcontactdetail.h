@@ -98,8 +98,8 @@ public:
     int key() const;
     void resetKey();
 
-    void setPreferredActions(const QList<QContactActionDescriptor>& preferredActions);
-    QList<QContactActionDescriptor> preferredActions() const;
+    void Q_DECL_DEPRECATED setPreferredActions(const QList<QContactActionDescriptor>& preferredActions);
+    QList<QContactActionDescriptor> Q_DECL_DEPRECATED preferredActions() const;
 
     QString value(const QString& key) const;
     bool setValue(const QString& key, const QVariant& value);
@@ -164,6 +164,11 @@ private:
     friend class QContactDetailPrivate;
     QSharedDataPointer<QContactDetailPrivate> d;
 };
+
+Q_CONTACTS_EXPORT uint qHash(const QContactDetail& key);
+#ifndef QT_NO_DEBUG_STREAM
+Q_CONTACTS_EXPORT QDebug operator<<(QDebug dbg, const QContactDetail& detail);
+#endif
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QContactDetail::AccessConstraints);
 

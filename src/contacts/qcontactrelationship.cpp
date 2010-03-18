@@ -47,6 +47,8 @@
 #include <QList>
 #include <QPair>
 #include <QString>
+#include <QHash>
+#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
@@ -70,6 +72,14 @@ QTM_BEGIN_NAMESPACE
   may fail when attempting to save the relationship in a QContactManager.
 
   \sa QContactRelationshipFilter
+ */
+
+/*!
+  \enum QContactRelationship::Role
+  Describes the roles that a contact may take in a relationship.
+  \value First The contact is the first contact in the relationship
+  \value Second The contact is the second contact in the relationship
+  \value Either The contact is either the first or second contact in the relationship
  */
 
 /*!
@@ -160,6 +170,24 @@ bool QContactRelationship::operator==(const QContactRelationship &other) const
         return false;
     return true;
 }
+
+/*!
+ * Returns the hash value for \a key.
+ */
+uint qHash(const QContactRelationship &key)
+{
+    return qHash(key.first()) + qHash(key.second())
+        + QT_PREPEND_NAMESPACE(qHash)(key.relationshipType());
+}
+
+#ifndef QT_NO_DEBUG_STREAM
+QDebug operator<<(QDebug dbg, const QContactRelationship& rel)
+{
+    dbg.nospace() << "QContactRelationship(" << rel.first() << ' ' << rel.relationshipType()
+            << ' ' << rel.second() << ')';
+    return dbg.maybeSpace();
+}
+#endif
 
 /*!
  * \fn QContactRelationship::operator!=(const QContactRelationship& other) const

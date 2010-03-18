@@ -88,11 +88,12 @@ QList<QContactLocalId> CntFilterDetail::contacts(
     QContactDetailFilter detailFilter(filter);
     QString sqlQuery;
     //Check for phonenumber. Special handling needed
-    if(detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName )
+    if( (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName ) &&
+            (detailFilter.detailFieldName() != QContactPhoneNumber::FieldSubTypes))
     {
         //Handle phonenumber ...
-    
         idList = HandlePhonenumberDetailFilter(filter);
+        
     }
     else if (detailFilter.matchFlags() == QContactFilter::MatchKeypadCollation) 
     {
@@ -104,10 +105,12 @@ QList<QContactLocalId> CntFilterDetail::contacts(
     else 
     {
         createSelectQuery(filter,sqlQuery,error);
+        QString sortQuery = m_dbInfo.getSortQuery(sortOrders, sqlQuery, error);
+        
         if(error == QContactManager::NoError)
             {
             //fetch the contacts
-            idList =  m_srvConnection.searchContacts(sqlQuery, error);
+            idList =  m_srvConnection.searchContacts(sortQuery, error);
             }
     }
     
@@ -159,10 +162,10 @@ void CntFilterDetail::createSelectQuery(const QContactFilter& filter,
        {
            if(detailFilter.detailFieldName() == QContactGuid::FieldGuid)
            {
-               QStringList fullGuidValue = detailFilter.value().toString().split("-");
+               QStringList fullGuidValue = detailFilter.value().toString().split('-');
                if (fullGuidValue.count() == 3) {
                    QString localGuidValue = fullGuidValue.at(1);
-                   sqlQuery = "SELECT contact_id FROM contact WHERE guid_string = '" + localGuidValue + "'";
+                   sqlQuery = "SELECT contact_id FROM contact WHERE guid_string = '" + localGuidValue + '\'';
                 }
             }
        }
@@ -193,7 +196,7 @@ void CntFilterDetail::updateForMatchFlag( const QContactDetailFilter& filter,
                 // Pattern for MatchExactly:
                 // " ='xyz'"
                 fieldToUpdate = " ='"
-                               + filter.value().toString() + "'";
+                               + filter.value().toString() + '\'';
                 error = QContactManager::NoError;
                 break;
                 }
@@ -217,7 +220,7 @@ void CntFilterDetail::updateForMatchFlag( const QContactDetailFilter& filter,
                 {
                 // Pattern for MatchEndsWith:
                 // " LIKE '%xyz'"
-                fieldToUpdate = " LIKE '%" + filter.value().toString() + "'" ;
+                fieldToUpdate = " LIKE '%" + filter.value().toString() + '\'' ;
                 error = QContactManager::NoError;
                 break;
                 }
@@ -253,32 +256,33 @@ void CntFilterDetail::getTableNameWhereClause( const QContactDetailFilter& detai
     CntTransformContact transformContact;
     quint32 fieldId  = transformContact.GetIdForDetailL(detailfilter, isSubType);
     m_dbInfo.getDbTableAndColumnName(fieldId,tableName,columnName);
-
+    
     //return if tableName is empty
-    if(tableName == "" ){
+    if(tableName.isEmpty())
+        {
         error = QContactManager::NotSupportedError;
         return;
-    }
+        }
 
     //check columnName
-    if(columnName == "") {
+    if(columnName.isEmpty())
+        {
         error = QContactManager::NotSupportedError;
         return;
-    }
-    else if(isSubType) {
+        }
+    else if(isSubType) 
+        {
         sqlWhereClause += columnName;
         sqlWhereClause += " NOT NULL ";
-    }
-    else {
-
-        sqlWhereClause += " " + columnName + " ";
+        }
+    else 
+        {
+        sqlWhereClause += ' ' + columnName + ' ';
         QString fieldToUpdate;
         //Update the value depending on the match flag
         updateForMatchFlag(detailfilter,fieldToUpdate,error);
         sqlWhereClause +=  fieldToUpdate;
-    }
-
-   
+        }
 }
 
 QList<QContactLocalId>  CntFilterDetail::HandlePredictiveSearchFilter(const QContactFilter& filter,QContactManager::Error& error)

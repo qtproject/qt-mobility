@@ -75,12 +75,12 @@ QList<QContactLocalId> CntFilterInvalid::contacts(
 bool CntFilterInvalid::filterSupported(const QContactFilter& filter) 
 {
     bool result = false;
-       if(QContactFilter::InvalidFilter == filter.type())
-           {
-           result = true;
-           }
+    if(QContactFilter::InvalidFilter == filter.type())
+        {
+        result = true;
+        }
     
-       return result;
+    return result;
 }
 
 void CntFilterInvalid::createSelectQuery(const QContactFilter& filter,
@@ -88,9 +88,9 @@ void CntFilterInvalid::createSelectQuery(const QContactFilter& filter,
                               QContactManager::Error& error)
 
 {
-    Q_UNUSED(filter);
     Q_UNUSED(sqlQuery);
-    Q_UNUSED(error);
-    //Not implementation needed in this case
-    
+    if(!filterSupported(filter))
+        {
+        error =  QContactManager::NotSupportedError;
+        }
 }

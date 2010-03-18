@@ -74,7 +74,8 @@ public:
     QVersitContactImporterPrivate();
     ~QVersitContactImporterPrivate();
 
-    QContact importContact(const QVersitDocument& versitDocument, int contactIndex);
+    bool importContact(const QVersitDocument& versitDocument, int contactIndex,
+                       QContact* contact, QVersitContactImporter::Error* error);
     QList<QVersitProperty> unconvertedVersitProperties();
 
 private:
@@ -90,6 +91,7 @@ private:
     bool createAnniversary(const QVersitProperty& property, QContact* contact) const;
     bool createBirthday(const QVersitProperty& property, QContact* contact) const;
     bool createNicknames(const QVersitProperty& property, QContact* contact) const;
+    bool createTags(const QVersitProperty& property, QContact* contact) const;
     bool createOnlineAccount(const QVersitProperty& property, QContact* contact) const;
     bool createAvatar(const QVersitProperty& property, const QString& subType, QContact* contact) const;
     bool createGeoLocation(const QVersitProperty& property, QContact* contact) const;
@@ -106,11 +108,12 @@ private:
             QContact* contact, QContactDetail* detail, const QStringList& contexts) const;
 
 public: // Data
+    QList<QContact> mContacts;
+    QMap<int, QVersitContactImporter::Error> mErrors;
     QVersitContactImporterPropertyHandler* mPropertyHandler;
     QVersitDefaultResourceHandler* mDefaultResourceHandler;
     QVersitResourceHandler* mResourceHandler;
 
-private: // Data
     QHash<QString,QPair<QString,QString> > mDetailMappings;
     QHash<QString,QString> mContextMappings;
     QHash<QString,QString> mSubTypeMappings;

@@ -172,6 +172,7 @@ private:
     QQueue<QContactAbstractRequest*> m_asynchronousOperations; // async requests to be performed.
 #ifdef PBK_UNIT_TEST
     friend class TestSymbianEngine;
+    friend class TestCntRelationship;
 #endif  //PBK_UNIT_TEST
 };
 #ifndef PBK_UNIT_TEST

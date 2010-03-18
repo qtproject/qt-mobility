@@ -73,14 +73,15 @@ void TestCntRelationship::initTestCase()
     qRegisterMetaType<QList<QContactLocalId> >("QList<QContactLocalId>");
 
     //create manager
-    m_manager = new QContactManager("symbian");
+    QContactManager::Error err;
+    m_manager = new CntSymbianEngine(QMap<QString, QString>(), err);
 
     //open symbian database
     TRAPD(error, m_database = CContactDatabase::OpenL());
     QVERIFY(error == KErrNone);
 
     // create relationship
-    m_relationship = new CntRelationship(m_database, m_manager->managerUri());
+    m_relationship = new CntRelationship(m_database, m_manager->m_managerUri);
 }
 
 
@@ -100,8 +101,11 @@ void TestCntRelationship::cleanupTestCase()
 void TestCntRelationship::init()
 {
     //delete all contacts from the database
-    QList<QContactLocalId> contacts = m_manager->contactIds();
-    m_manager->removeContacts(&contacts);
+    QContactManager::Error err;
+    QList<QContactLocalId> contacts = m_manager->contactIds(QContactFilter(), QList<QContactSortOrder>(), err);
+    
+    QMap<int, QContactManager::Error> errorMap;
+    m_manager->removeContacts(&contacts, &errorMap, err);
 }
 
 void TestCntRelationship::cleanup()
@@ -168,12 +172,13 @@ void TestCntRelationship::validGroupRelationship()
     //create a group
     QContact groupContact;
     groupContact.setType(QContactType::TypeGroup);
-    m_manager->saveContact(&groupContact);
+    QContactManager::Error err;
+    m_manager->saveContact(&groupContact, err);
 
     //create a contact
     QContact contact;
     contact.setType(QContactType::TypeContact);
-    m_manager->saveContact(&contact);
+    m_manager->saveContact(&contact, err);
 
     //create relationship
     QContactRelationship relationship;
@@ -202,7 +207,7 @@ void TestCntRelationship::validGroupRelationship()
 
     relationshipList = m_relationship->relationships(QLatin1String(QContactRelationship::HasMember), groupContact.id(), QContactRelationshipFilter::Second, error);
     QVERIFY2(relationshipList.count() == 0, "group - Second");
-    QVERIFY2(error == QContactManager::NoError, "group - Second");
+    QVERIFY2(error == QContactManager::DoesNotExistError, "group - Second");
 
     relationshipList = m_relationship->relationships(QLatin1String(QContactRelationship::HasMember), groupContact.id(), QContactRelationshipFilter::Either, error);
     QVERIFY2(relationshipList.count() == 1, "group - Either");
@@ -211,7 +216,7 @@ void TestCntRelationship::validGroupRelationship()
     //Retrive contact
     relationshipList = m_relationship->relationships(QLatin1String(QContactRelationship::HasMember), contact.id(), QContactRelationshipFilter::First, error);
     QVERIFY2(relationshipList.count() == 0, "contact - First");
-    QVERIFY2(error == QContactManager::NoError, "contact - First");
+    QVERIFY2(error == QContactManager::DoesNotExistError, "contact - First");
 
     relationshipList = m_relationship->relationships(QLatin1String(QContactRelationship::HasMember), contact.id(), QContactRelationshipFilter::Second, error);
     QVERIFY2(relationshipList.count() == 1, "contact - Second");
@@ -221,11 +226,30 @@ void TestCntRelationship::validGroupRelationship()
     QVERIFY2(relationshipList.count() == 1, "contact - Either");
     QVERIFY2(error == QContactManager::NoError, "contact - Either");   
     
+    //Relationship for empty contact -> all relationships are returned 
+    relationshipList = m_relationship->relationships(QLatin1String(QContactRelationship::HasMember), QContactId(),
+                QContactRelationshipFilter::First, error);
+    QVERIFY2(relationshipList.count() == 1, "All relationships");
+    QVERIFY2(error == QContactManager::NoError, "All relatiosnships");
+
     
     //Validate Filter
     QList<QContactLocalId> expectedContacts;
     expectedContacts += contact.localId();
     QVERIFY(true == validateRelationshipFilter(QContactRelationshipFilter::First, groupContact.id(), expectedContacts));
+    
+    QList<QContactLocalId> expectedContacts1;
+    expectedContacts1 += groupContact.localId();
+    expectedContacts1 += contact.localId();
+    QList<QContactLocalId> expectedContacts2;
+    expectedContacts2 += contact.localId();
+    expectedContacts2 += groupContact.localId(); 
+    QVERIFY(true == (validateRelationshipFilter(QContactRelationshipFilter::Either, groupContact.id(), expectedContacts1) ||
+                     validateRelationshipFilter(QContactRelationshipFilter::Either, groupContact.id(), expectedContacts2)));
+
+    expectedContacts.clear();
+    expectedContacts += groupContact.localId();
+    QVERIFY(true == validateRelationshipFilter(QContactRelationshipFilter::Second, contact.id(), expectedContacts));
     
     //remove relationship
     returnValue = m_relationship->removeRelationship(&affectedContactIds, relationship, error);
@@ -258,7 +282,8 @@ void TestCntRelationship::invalidFirstContactGroupRelationship()
     //create a contact
     QContact contact;
     contact.setType(QContactType::TypeContact);
-    m_manager->saveContact(&contact);
+    QContactManager::Error err;
+    m_manager->saveContact(&contact, err);
 
     //create relationship
     QContactId invalidId;
@@ -291,7 +316,8 @@ void TestCntRelationship::invalidSecondContactGroupRelationship()
     //create a group
     QContact groupContact;
     groupContact.setType(QContactType::TypeGroup);
-    m_manager->saveContact(&groupContact);
+    QContactManager::Error err;
+    m_manager->saveContact(&groupContact, err);
 
     //create relationship
     QContactId invalidId;
@@ -310,6 +336,15 @@ void TestCntRelationship::invalidSecondContactGroupRelationship()
     QVERIFY2(error != QContactManager::NoError, "save");
 
     //remove relationship
+    returnValue = m_relationship->removeRelationship(&affectedContactIds, relationship, error);
+    QVERIFY2(returnValue == false, "remove");
+    QVERIFY2(affectedContactIds.count() == 0, "remove");
+    QVERIFY2(error != QContactManager::NoError, "remove");
+    
+    //remove relationship: cyclic relantionship
+    relationship.setRelationshipType(QContactRelationship::HasMember);
+    relationship.setFirst(groupContact.id());
+    relationship.setSecond(groupContact.id());
     returnValue = m_relationship->removeRelationship(&affectedContactIds, relationship, error);
     QVERIFY2(returnValue == false, "remove");
     QVERIFY2(affectedContactIds.count() == 0, "remove");
@@ -342,6 +377,38 @@ void TestCntRelationship::invalidFirstAndSecondContactGroupRelationship()
     QVERIFY(returnValue == false);
     QVERIFY(affectedContactIds.count() == 0);
     QVERIFY(error != QContactManager::NoError);
+    
+    //remove relationship: first contact's manager is not the same as cntrelationship's 
+    QContactRelationship relationshipDifManagers;
+    QContactId id1;
+    id1.setLocalId(10);
+    id1.setManagerUri("manager1");
+    QContactId id2;
+    id2.setLocalId(15);
+    id2.setManagerUri("manager2");
+    relationshipDifManagers.setRelationshipType(QContactRelationship::HasMember);
+    relationshipDifManagers.setFirst(id1);
+    relationshipDifManagers.setSecond(id2);
+    returnValue = m_relationship->removeRelationship(&affectedContactIds, relationshipDifManagers, error);
+    QVERIFY(returnValue == false);
+    QVERIFY(affectedContactIds.count() == 0);
+    QVERIFY(error != QContactManager::NoError);
+    
+    //remove relationship: second contact's manager is not the same as cntrelationship's
+    QContact contact;
+    contact.setType(QContactType::TypeContact);
+    QContactManager::Error err;
+    m_manager->saveContact(&contact, err);
+    QContactRelationship relationshipDifManagers2;
+    id2.setLocalId(15);
+    id2.setManagerUri("manager2");
+    relationshipDifManagers2.setRelationshipType(QContactRelationship::HasMember);
+    relationshipDifManagers2.setFirst(contact.id());
+    relationshipDifManagers2.setSecond(id2);
+    returnValue = m_relationship->removeRelationship(&affectedContactIds, relationshipDifManagers2, error);
+    QVERIFY(returnValue == false);
+    QVERIFY(affectedContactIds.count() == 0);
+    QVERIFY(error != QContactManager::NoError);
 }
 
 bool TestCntRelationship::validateRelationshipFilter(const QContactRelationshipFilter::Role role, const QContactId contactId, const QList<QContactLocalId> expectedContacts)
@@ -351,13 +418,14 @@ bool TestCntRelationship::validateRelationshipFilter(const QContactRelationshipF
     filter.setRelatedContactRole(role);
     filter.setRelatedContactId(contactId);
     
-    QList<QContactLocalId> result = m_manager->contactIds(filter);
+    QContactManager::Error err;
+    QList<QContactLocalId> result = m_manager->contactIds(filter, QList<QContactSortOrder>(), err);
     
     for(int i = 0; i < result.count(); i++)
         qDebug() << "result: " << result.at(i);
     
-    for(int i = 0; i < expectedContacts.count(); i++)
-            qDebug() << "expectedContacts: " << expectedContacts.at(i);
+    for(int j = 0; j < expectedContacts.count(); j++)
+            qDebug() << "expectedContacts: " << expectedContacts.at(j);
     
     return (result == expectedContacts);
     }

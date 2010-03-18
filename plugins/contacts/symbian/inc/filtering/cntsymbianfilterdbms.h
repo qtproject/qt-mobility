@@ -94,7 +94,7 @@ private:
     CntAbstractContactSorter *m_contactSorter;
     CntTransformContact *m_transformContact;
 #ifdef PBK_UNIT_TEST
-    friend class ut_cntfilteringdbms;
+    friend class tst_cntfilteringdbms;
 #endif
 };
 

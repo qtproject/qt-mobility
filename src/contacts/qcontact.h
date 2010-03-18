@@ -135,9 +135,10 @@ public:
 
     /* Relationships that this contact was involved in when it was retrieved from the manager */
     QList<QContactRelationship> relationships(const QString& relationshipType = QString()) const;
-    QList<QContactId> relatedContacts(const QString& relationshipType = QString(), QContactRelationshipFilter::Role role = QContactRelationshipFilter::Either) const;
-    void setRelationshipOrder(const QList<QContactRelationship>& reordered);
-    QList<QContactRelationship> relationshipOrder() const;
+    QList<QContactId> relatedContacts(const QString& relationshipType /* = QString() */, QContactRelationship::Role role /* = QContactRelationship::Either */) const;
+    QList<QContactId> Q_DECL_DEPRECATED relatedContacts(const QString& relationshipType = QString(), QContactRelationshipFilter::Role role = QContactRelationshipFilter::Either) const;
+    void Q_DECL_DEPRECATED setRelationshipOrder(const QList<QContactRelationship>& reordered);
+    QList<QContactRelationship> Q_DECL_DEPRECATED relationshipOrder() const;
 
     /* Actions available to be performed on this contact */
     QList<QContactActionDescriptor> availableActions(const QString& vendorName = QString(), int implementationVersion = -1) const;
@@ -146,6 +147,7 @@ public:
     bool setPreferredDetail(const QString& actionName, const QContactDetail& preferredDetail);
     bool isPreferredDetail(const QString& actionName, const QContactDetail& detail) const;
     QContactDetail preferredDetail(const QString& actionName) const;
+    QMap<QString, QContactDetail> preferredDetails() const;
 
 private:
     friend class QContactManager;
@@ -154,6 +156,11 @@ private:
 
     QSharedDataPointer<QContactData> d;
 };
+
+Q_CONTACTS_EXPORT uint qHash(const QContact& key);
+#ifndef QT_NO_DEBUG_STREAM
+Q_CONTACTS_EXPORT QDebug operator<<(QDebug dbg, const QContact& contact);
+#endif
 
 QTM_END_NAMESPACE
 

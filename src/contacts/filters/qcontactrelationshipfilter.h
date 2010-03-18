@@ -45,6 +45,7 @@
 #include "qtcontactsglobal.h"
 #include "qcontactfilter.h"
 #include "qcontactid.h"
+#include "qcontactrelationship.h"
 
 #include <QSharedDataPointer>
 #include <QStringList>
@@ -60,6 +61,8 @@ public:
     QContactRelationshipFilter();
     QContactRelationshipFilter(const QContactFilter& other);
 
+    // this enum is DEPRECATED - use QContactRelationship::Role instead!
+    // enum Q_DECL_VARIABLE_DEPRECATED Role {
     enum Role {
         First = 0,
         Second,
@@ -68,11 +71,13 @@ public:
 
     void setRelationshipType(const QString& relationshipType);
     void setRelatedContactId(const QContactId& relatedContactId);
-    void setRelatedContactRole(QContactRelationshipFilter::Role relatedContactRole);
+    void setRelatedContactRole(QContactRelationship::Role relatedContactRole);
+    void Q_DECL_DEPRECATED setRelatedContactRole(QContactRelationshipFilter::Role relatedContactRole);
 
     QString relationshipType() const;
     QContactId relatedContactId() const;
-    QContactRelationshipFilter::Role relatedContactRole() const;
+    QContactRelationship::Role relatedContactRole() const;
+    //QContactRelationshipFilter::Role Q_DECL_DEPRECATED relatedContactRole() const; // cannot deprecated as signature is the same.
 
     // deprecated and will be removed after transition period has elapsed.  replaced by setRelatedContactRole / setRelatedContactId.
     void Q_DECL_DEPRECATED setRole(QContactRelationshipFilter::Role roleInRelationship);

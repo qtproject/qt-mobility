@@ -42,9 +42,9 @@
 #include "cntfilterunion.h"
 #include "cntfilterdetail.h"
 #include "cntfilterdefault.h"
+#include "cntfilterrelationship.h"
 #include "cntfilterintersection.h"
 #include "cnttransformcontact.h"
-#include "qcontactunionfilter.h"
 
 CntFilterUnion::CntFilterUnion(CContactDatabase& contactDatabase,CntSymbianSrvConnection &cntServer,CntDbInfo& dbInfo) : 
                     m_contactdatabase(contactDatabase),
@@ -76,11 +76,12 @@ QList<QContactLocalId> CntFilterUnion::contacts(
         }
      QList<QContactLocalId> idList;
      QString sqlQuery;
-     this->createSelectQuery( filter,sqlQuery,error) ;
+     createSelectQuery(filter,sqlQuery,error);
+     QString sortQuery = m_dbInfo.getSortQuery(sortOrders, sqlQuery, error);
      //fetch the contacts
      if(error == QContactManager::NoError )
          {
-         idList =  m_srvConnection.searchContacts(sqlQuery, error);
+         idList =  m_srvConnection.searchContacts(sortQuery, error);
          }
      return idList;
 }
@@ -131,6 +132,7 @@ void CntFilterUnion::createSelectQuery(const QContactFilter& filter,
         
             
 }
+
 void CntFilterUnion::getSelectQueryforFilter(const QContactFilter& filter,QString& sqlSelectQuery,QContactManager::Error& error)
     {
     switch(filter.type())
@@ -155,12 +157,18 @@ void CntFilterUnion::getSelectQueryforFilter(const QContactFilter& filter,QStrin
                     }
                 break;
                 }
+            case QContactFilter::RelationshipFilter:
+                {
+                CntFilterRelationship relationfltr(m_contactdatabase,m_srvConnection,m_dbInfo);
+                relationfltr.createSelectQuery(filter,sqlSelectQuery,error);
+                break;
+                }
             case QContactFilter::IntersectionFilter:
                 {
                 sqlSelectQuery += "SELECT DISTINCT contact_id FROM (";
                 CntFilterIntersection intersectionfltr(m_contactdatabase,m_srvConnection,m_dbInfo);
                 intersectionfltr.createSelectQuery(filter,sqlSelectQuery,error);
-                sqlSelectQuery += ")";
+                sqlSelectQuery += ')';
                 break;
                 }
             case QContactFilter::UnionFilter:
@@ -168,7 +176,7 @@ void CntFilterUnion::getSelectQueryforFilter(const QContactFilter& filter,QStrin
                 sqlSelectQuery += "SELECT DISTINCT contact_id FROM (";
                 CntFilterUnion unionfltr(m_contactdatabase,m_srvConnection,m_dbInfo);
                 unionfltr.createSelectQuery(filter,sqlSelectQuery,error);
-                sqlSelectQuery += ")";
+                sqlSelectQuery += ')';
                 break;
                 }
             default:
