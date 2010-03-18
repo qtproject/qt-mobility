@@ -94,6 +94,15 @@ QMapObject::QMapObject(QMapObjectPrivate &dd, MapObjectType type, quint16 z)
 }
 
 /*!
+    Destroys the map object
+*/
+QMapObject::~QMapObject()
+{
+    Q_D(QMapObject);
+    delete d;
+}
+
+/*!
     Returns the z index of this map object, as used for layering.
     Objects with higher z indices are stacked on top of objects
     with lower z indices.

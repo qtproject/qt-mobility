@@ -72,6 +72,7 @@ public:
 
 public:
     QMapObject(MapObjectType type, quint16 z = 0);
+    virtual ~QMapObject();
 
     quint16 zValue() const;
     MapObjectType type() const;
