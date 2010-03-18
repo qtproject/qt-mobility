@@ -50,8 +50,6 @@
 
 #include "qgstreamerbushelper.h"
 
-#include "qcamera.h"
-
 QTM_USE_NAMESPACE
 
 class QGstreamerMessage;
@@ -85,11 +83,10 @@ class QGstreamerCaptureSession : public QObject, public QGstreamerSyncEventFilte
     Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
     Q_ENUMS(State)
     Q_ENUMS(CaptureMode)
-    Q_ENUMS(CameraMode)
+
 public:
     enum CaptureMode { Audio = 1, Video = 2, AudioAndVideo = Audio | Video };
     enum State { StoppedState, PreviewState, PausedState, RecordingState };
-    enum CameraMode { ImageMode, VideoMode};
 
     QGstreamerCaptureSession(CaptureMode captureMode, QObject *parent);
     ~QGstreamerCaptureSession();
@@ -102,9 +99,6 @@ public:
     QGstreamerAudioEncode *audioEncodeControl() const { return m_audioEncodeControl; }
     QGstreamerVideoEncode *videoEncodeControl() const { return m_videoEncodeControl; }
     QGstreamerImageEncode *imageEncodeControl() const { return m_imageEncodeControl; }
-    QGstreamerCameraExposureControl *cameraExposureControl() const  { return m_cameraExposureControl; }
-    QGstreamerCameraFocusControl *cameraFocusControl() const  { return m_cameraFocusControl; }
-    QGstreamerImageProcessingControl *imageProcessingControl() const { return m_imageProcessingControl; }
 
     QGstreamerRecorderControl *recorderControl() const { return m_recorderControl; }
     QGstreamerMediaContainerControl *mediaContainerControl() const { return m_mediaContainerControl; }
@@ -120,9 +114,7 @@ public:
 
     QGstreamerElementFactory *videoPreview() const { return m_videoPreviewFactory; }
     void setVideoPreview(QGstreamerElementFactory *videoPreview);
-
-    void captureImage(const QString &fileName);
-
+    
     State state() const;
     qint64 duration() const;
 
@@ -132,9 +124,6 @@ signals:
     void stateChanged(QGstreamerCaptureSession::State state);
     void durationChanged(qint64 duration);
     void error(int error, const QString &errorString);
-    void imageCaptured(const QString &fileName, const QImage &img);
-    void imageSaved(const QString &fileName);
-    void focusStatusChanged(QCamera::FocusStatus status);
 
 public slots:
     void setState(QGstreamerCaptureSession::State);
