@@ -107,7 +107,6 @@ void tst_QMediaRecorder::cleanupTestCase()
 {
     delete audiocapture;
     delete captureSource;
-    delete capture;
 }
 
 void tst_QMediaRecorder::testAudioSink()
