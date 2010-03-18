@@ -63,7 +63,9 @@ QTrackerContactIdFetchRequest::QTrackerContactIdFetchRequest(QContactAbstractReq
     {
         fetchReq->setFilter(idfetchrequest->filter());
         // IMContacts needs to be fetched to use metacontact matching
-        fetchReq->setDefinitionRestrictions(QStringList()<<QContactOnlineAccount::DefinitionName);
+        QContactFetchHint fetchHint;
+        fetchHint.setDetailDefinitionsHint(QStringList() << QContactOnlineAccount::DefinitionName);
+        fetchReq->setFetchHint(fetchHint);
     }
 }
 
