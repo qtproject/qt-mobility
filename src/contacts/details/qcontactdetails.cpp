@@ -157,6 +157,13 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
+   \class QContactRingtone
+   \brief The QContactRingtone class provides a ringtone associated
+   with a contact
+   \ingroup contacts-details
+ */
+
+/*!
    \class QContactSyncTarget
    \brief The QContactSyncTarget class provides a sync target
    for a contact.
@@ -167,6 +174,13 @@ QTM_BEGIN_NAMESPACE
    \class QContactTag
    \brief The QContactTag class contains a tag associated with a
    contact.
+   \ingroup contacts-details
+ */
+
+/*!
+   \class QContactThumbnail
+   \brief The QContactThumbnail class contains a thumbnail used
+   in display lists to represent the contact.
    \ingroup contacts-details
  */
 
@@ -218,13 +232,19 @@ Q_DEFINE_LATIN1_LITERAL(QContactAvatar::DefinitionName, "Avatar");
    \variable QContactAddress::DefinitionName
    The constant string which identifies the definition of details which are street addresses.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactAddress::DefinitionName, "StreetAddress");
+Q_DEFINE_LATIN1_LITERAL(QContactAddress::DefinitionName, "Address");
 
 /*!
    \variable QContactPhoneNumber::DefinitionName
    The constant string which identifies the definition of details which are phone numbers.
  */
 Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::DefinitionName, "PhoneNumber");
+
+/*!
+   \variable QContactRingtone::DefinitionName
+   The constant string which identifies the definition of details which are ringtones.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactRingtone::DefinitionName, "Ringtone");
 
 /*!
    \variable QContactSyncTarget::DefinitionName
@@ -307,9 +327,15 @@ Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::DefinitionName, "OnlineAccount");
 
 /*!
    \variable QContactTag::DefinitionName
-   The constant string which identifies the definition of details which are tags..
+   The constant string which identifies the definition of details which are tags.
  */
 Q_DEFINE_LATIN1_LITERAL(QContactTag::DefinitionName, "Tag");
+
+/*!
+   \variable QContactThumbnail::DefinitionName
+   The constant string which identifies the definition of details which are thumbnails.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactThumbnail::DefinitionName, "Thumbnail");
 
 /*!
    \variable QContactOnlineAccount::FieldNickname
@@ -464,26 +490,51 @@ Q_DEFINE_LATIN1_LITERAL(QContactGuid::FieldGuid, "Guid");
 Q_DEFINE_LATIN1_LITERAL(QContactSyncTarget::FieldSyncTarget, "SyncTarget");
 
 /*!
+   \variable QContactAvatar::FieldImageUrl
+
+   The constant key for which the url of the avatar image value is stored in
+   details of the QContactAvatar type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactAvatar::FieldImageUrl, "ImageUrl");
+
+/*!
+   \variable QContactAvatar::FieldVideoUrl
+
+   The constant key for which the url of the avatar video value is stored in
+   details of the QContactAvatar type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactAvatar::FieldVideoUrl, "VideoUrl");
+
+/*!
+   \deprecated
    \variable QContactAvatar::FieldAvatar
 
-   The constant key for which the path the avatar value is stored in
+   The constant key for which the uri of the avatar value is stored in
    details of the QContactAvatar type.
+
+   This field is deprecated and will be removed after the transition period has elapsed.
  */
 Q_DEFINE_LATIN1_LITERAL(QContactAvatar::FieldAvatar, "Avatar");
 
 /*!
+   \deprecated
    \variable QContactAvatar::FieldAvatarPixmap
 
-   The constant key for which the path the avatar value is stored in
+   The constant key for which the pixmap of the avatar value is stored in
    details of the QContactAvatar type.
+
+   This field is deprecated and will be removed after the transition period has elapsed.
  */
 Q_DEFINE_LATIN1_LITERAL(QContactAvatar::FieldAvatarPixmap, "AvatarPixmap");
 
 /*!
+   \deprecated
    \variable QContactAvatar::FieldSubType
 
-   The constant key for which the subtypes value is stored in details
-   of the QContactAvatar type.
+   The constant key for which the subtype value is stored in
+   details of the QContactAvatar type.
+
+   This field is deprecated and will be removed after the transition period has elapsed.
  */
 Q_DEFINE_LATIN1_LITERAL(QContactAvatar::FieldSubType, "SubType");
 
@@ -687,6 +738,14 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::FieldCalendarId, "CalendarId");
    of the QContactAnniversary type.
  */
 Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::FieldSubType, "SubType");
+
+/*!
+   \variable QContactDisplayLabel::FieldLabel
+
+   The constant key for which the display label value is stored in
+   details of the QContactDisplayLabel type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactDisplayLabel::FieldLabel, "Label");
 
 /*!
    \variable QContactGender::FieldGender
@@ -908,14 +967,37 @@ Q_DEFINE_LATIN1_LITERAL(QContactOrganization::FieldTitle, "Title");
  */
 Q_DEFINE_LATIN1_LITERAL(QContactOrganization::FieldAssistantName, "AssistantName");
 
+/*!
+   \variable QContactRingtone::FieldAudioRingtone
+
+   The constant key for which the uri of the audio ringtone value is
+   stored in details of the QContactRingtone type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactRingtone::FieldAudioRingtone, "AudioRingtone");
 
 /*!
-   \variable QContactDisplayLabel::FieldLabel
+   \variable QContactRingtone::FieldVideoRingtone
 
-   The constant key for which the display label value is stored in
-   details of the QContactDisplayLabel type.
+   The constant key for which the uri of the video ringtone value is
+   stored in details of the QContactRingtone type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactDisplayLabel::FieldLabel, "Label");
+Q_DEFINE_LATIN1_LITERAL(QContactRingtone::FieldVideoRingtone, "VideoRingtone");
+
+/*!
+   \variable QContactRingtone::FieldVibrationRingtone
+
+   The constant key for which the uri of the vibration ringtone value is
+   stored in details of the QContactRingtone type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactRingtone::FieldVibrationRingtone, "VibrationRingtone");
+
+/*!
+   \variable QContactThumbnail::FieldThumbnail
+
+   The constant key for which the thumbnail image is stored in details
+   of the QContactThumbnail type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactThumbnail::FieldThumbnail, "Thumbnail");
 
 /*!
    \variable QContactTimestamp::FieldModificationTimestamp
@@ -1089,43 +1171,58 @@ Q_DEFINE_LATIN1_LITERAL(QContactAddress::SubTypeDomestic, "Domestic");
 Q_DEFINE_LATIN1_LITERAL(QContactAddress::SubTypeInternational, "International");
 
 /*!
+   \deprecated
    \variable QContactAvatar::SubTypeImage
 
    The constant attribute value which describes the avatar as being an
    image.
+
+   This value is deprecated and should not be used, and will be removed after the transition period has elapsed.
  */
 Q_DEFINE_LATIN1_LITERAL(QContactAvatar::SubTypeImage, "Image");
 
 /*!
+   \deprecated
    \variable QContactAvatar::SubTypeVideo
 
    The constant attribute value which describes the avatar as being a
    video.
+
+   This value is deprecated and should not be used, and will be removed after the transition period has elapsed.
  */
 Q_DEFINE_LATIN1_LITERAL(QContactAvatar::SubTypeVideo, "Video");
 
 /*!
+   \deprecated
    \variable QContactAvatar::SubTypeAudioRingtone
 
    The constant attribute value which describes the avatar as being an
    audio ringtone.
+
+   This value is deprecated and should not be used, and will be removed after the transition period has elapsed.
  */
 Q_DEFINE_LATIN1_LITERAL(QContactAvatar::SubTypeAudioRingtone, "AudioRingtone");
 
 /*!
+   \deprecated
    \variable QContactAvatar::SubTypeVideoRingtone
 
    The constant attribute value which describes the avatar as being a
    video ringtone.
+
+   This value is deprecated and should not be used, and will be removed after the transition period has elapsed.
  */
 Q_DEFINE_LATIN1_LITERAL(QContactAvatar::SubTypeVideoRingtone, "VideoRingtone");
 
 
 /*!
+   \deprecated
    \variable QContactAvatar::SubTypeTexturedMesh
 
    The constant attribute value which describes the avatar as being a
    textured, 3D mesh.
+
+   This value is deprecated and should not be used, and will be removed after the transition period has elapsed.
  */
 Q_DEFINE_LATIN1_LITERAL(QContactAvatar::SubTypeTexturedMesh, "TexturedMesh");
 
@@ -1271,37 +1368,99 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
  */
 
 /*!
+  \fn QContactAvatar::imageUrl(const QUrl& imageUrl)
+  Returns the url of an avatar image associated with the contact
+ */
+
+/*!
+  \fn QContactAvatar::setImageUrl(const QUrl& imageUrl)
+  Sets the url of an avatar image associated with the contact to \a imageUrl
+ */
+
+/*!
+  \fn QContactAvatar::videoUrl(const QUrl& videoUrl)
+  Returns the url of an avatar video associated with the contact
+ */
+
+/*!
+  \fn QContactAvatar::setVideoUrl(const QUrl& videoUrl)
+  Sets the url of an avatar video associated with the contact to \a imageUrl
+ */
+
+/*!
+   \deprecated
    \fn QContactAvatar::avatar() const
    Returns the location of an avatar file associated with the contact.
+   This function is deprecated and will be removed after the transition period has elapsed.
  */
+QString QContactAvatar::avatar() const
+{
+    qWarning("QContactAvatar::avatar() This function is deprecated and will be removed after the transition period has elapsed!  Use imageUri() or QContactThumbnail instead!");
+    return QString();
+}
 
 /*!
+   \deprecated
    \fn QContactAvatar::setAvatar(const QString& avatar)
    Sets the location of an avatar file associated with the contact to \a avatar.
+   This function is deprecated and will be removed after the transition period has elapsed.
  */
+void QContactAvatar::setAvatar(const QString& avatar)
+{
+    Q_UNUSED(avatar);
+    qWarning("QContactAvatar::setAvatar() This function is deprecated and will be removed after the transition period has elapsed!  Use setImageUri() or QContactThumbnail instead!");
+}
 
 /*!
+   \deprecated
    \fn QContactAvatar::pixmap() const
    Returns a thumbnail for a picture associated with this contact.
+   This function is deprecated and will be removed after the transition period has elapsed.
  */
+QPixmap QContactAvatar::pixmap() const
+{
+    qWarning("QContactAvatar::pixmap() This function is deprecated and will be removed after the transition period has elapsed!  Use imageUri() or QContactThumbnail instead!");
+    return QPixmap();
+}
 
 /*!
+   \deprecated
    \fn QContactAvatar::setPixmap(const QPixmap& pixmap)
    Sets the thumbnail of a picture avatar associated with the contact to \a pixmap.
    If \a pixmap is empty, the thumbnail pixmap will be removed.
 
    Returns true if the pixmap could be set, and false otherwise.
+   This function is deprecated and will be removed after the transition period has elapsed.
  */
+void QContactAvatar::setPixmap(const QPixmap& pixmap)
+{
+    Q_UNUSED(pixmap);
+    qWarning("QContactAvatar::setPixmap() This function is deprecated and will be removed after the transition period has elapsed!  Use setImageUri() or QContactThumbnail instead!");
+}
 
 /*!
-   \fn QContactAvatar::setSubType(const QString& subType)
-   Sets the subtype which this detail implements to be the given \a subType.
- */
-
-/*!
+   \deprecated
    \fn QContactAvatar::subType() const
    Returns the subtype that this detail implements, if defined.
+   This function is deprecated and will be removed after the transition period has elapsed.
  */
+QString QContactAvatar::subType() const
+{
+    qWarning("QContactAvatar::subType() This function is deprecated and will be removed after the transition period has elapsed!");
+    return QString();
+}
+
+/*!
+   \deprecated
+   \fn QContactAvatar::setSubType(const QString& subType)
+   Sets the subtype which this detail implements to be the given \a subType.
+   This function is deprecated and will be removed after the transition period has elapsed.
+ */
+void QContactAvatar::setSubType(const QString& subtype)
+{
+    Q_UNUSED(subtype);
+    qWarning("QContactAvatar::avatar() This function is deprecated and will be removed after the transition period has elapsed!");
+}
 
 /*!
    \fn QContactAddress::postOfficeBox() const
@@ -1899,6 +2058,45 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
 
    Returns the name of the default assistant of contacts belonging to
    this organization.
+ */
+
+/*!
+  \fn QContactRingtone::audioRingtone() const
+
+  Returns the uri of the audio ringtone stored in the ringtone detail.
+ */
+
+/*!
+  \fn QContactRingtone::setAudioRingtone(const QString& audioRingtone)
+
+  Sets the uri of the audio ringtone stored in the ringtone detail
+  to \a audioRingtone.
+ */
+
+/*!
+  \fn QContactRingtone::videoRingtone() const
+
+  Returns the uri of the video ringtone stored in the ringtone detail.
+ */
+
+/*!
+  \fn QContactRingtone::setVideoRingtone(const QString& videoRingtone)
+
+  Sets the uri of the video ringtone stored in the ringtone detail
+  to \a videoRingtone.
+ */
+
+/*!
+  \fn QContactRingtone::vibrationRingtone() const
+
+  Returns the uri of the vibration ringtone stored in the ringtone detail.
+ */
+
+/*!
+  \fn QContactRingtone::setVibrationRingtone(const QString& vibrationRingtone)
+
+  Sets the uri of the vibration ringtone stored in the ringtone detail
+  to \a vibrationRingtone.
  */
 
 

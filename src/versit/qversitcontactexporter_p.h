@@ -92,8 +92,9 @@ protected:
     void encodeAnniversary(QVersitProperty& property, const QContactDetail& detail);
     bool encodeOnlineAccount(QVersitProperty& property, const QContactDetail& detail);
     bool encodeFamily(QVersitDocument& document, const QContactDetail& detail);
-    bool encodeAvatar(QVersitProperty& property,
-        const QContactDetail& detail);
+    bool encodeRingtone(QVersitProperty& property, const QContactDetail& detail);
+    bool encodeThumbnail(QVersitProperty& property, const QContactDetail& detail);
+    bool encodeAvatar(QVersitProperty& property, const QContactDetail& detail);
     bool encodeDisplayLabel(QVersitProperty& property,
         const QContactDetail& detail,
         const QContact& contact);
@@ -102,7 +103,6 @@ protected:
         const QStringList& contexts,
         const QStringList& subTypes=QStringList());
     bool encodeContentFromFile(const QString& resourcePath, QVersitProperty& property);
-    bool encodeContentFromPixmap(const QPixmap& pixmap, QVersitProperty& property);
     QString versitEscaped(const QString& value);
 
 public: // Data

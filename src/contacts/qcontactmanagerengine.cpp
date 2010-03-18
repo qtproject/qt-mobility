@@ -932,24 +932,38 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     fields.clear();
     f.setDataType(QVariant::String);
     f.setAllowableValues(QVariantList());
-    fields.insert(QContactAvatar::FieldAvatar, f);
-
-    f.setDataType(QVariant::Pixmap);
-    f.setAllowableValues(QVariantList());
-    fields.insert(QContactAvatar::FieldAvatarPixmap, f);
-
-    f.setDataType(QVariant::String); // only allowed to be a single subtype
-    subTypes.clear();
-    subTypes << QString(QLatin1String(QContactAvatar::SubTypeImage));
-    subTypes << QString(QLatin1String(QContactAvatar::SubTypeTexturedMesh));
-    subTypes << QString(QLatin1String(QContactAvatar::SubTypeVideo));
-    f.setAllowableValues(subTypes);
-    fields.insert(QContactAvatar::FieldSubType, f);
+    fields.insert(QContactAvatar::FieldImageUrl, f);
+    fields.insert(QContactAvatar::FieldVideoUrl, f);
     f.setDataType(QVariant::StringList);
     f.setAllowableValues(contexts);
     fields.insert(QContactDetail::FieldContext, f);
     d.setFields(fields);
     d.setUnique(false);
+    retn.insert(d.name(), d);
+
+    // ringtone
+    d.setName(QContactRingtone::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QContactRingtone::FieldAudioRingtone, f);
+    fields.insert(QContactRingtone::FieldVideoRingtone, f);
+    fields.insert(QContactRingtone::FieldVibrationRingtone, f);
+    f.setDataType(QVariant::StringList);
+    f.setAllowableValues(contexts);
+    fields.insert(QContactDetail::FieldContext, f);
+    d.setFields(fields);
+    d.setUnique(false);
+    retn.insert(d.name(), d);
+
+    // thumbnail
+    d.setName(QContactThumbnail::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Image);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QContactThumbnail::FieldThumbnail, f);
+    d.setFields(fields);
+    d.setUnique(true); // only one thumbnail, no context.
     retn.insert(d.name(), d);
 
     // GeoLocation

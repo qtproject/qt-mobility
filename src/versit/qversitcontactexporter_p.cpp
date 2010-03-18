@@ -65,6 +65,7 @@
 #include <qcontactonlineaccount.h>
 #include <qcontactfamily.h>
 #include <qcontactdisplaylabel.h>
+#include <qcontactthumbnail.h>
 
 #include <QUrl>
 #include <QBuffer>
@@ -166,6 +167,12 @@ bool QVersitContactExporterPrivate::exportContact(
         } else if (detail.definitionName() == QContactOrganization::DefinitionName) {
             encodeOrganization(document, detail);
             addProperty = false;
+        } else if (detail.definitionName() == QContactRingtone::DefinitionName) {
+            addProperty = encodeRingtone(property, detail);
+        } else if (detail.definitionName() == QContactThumbnail::DefinitionName) {
+            addProperty = encodeThumbnail(property, detail);
+            if (!addProperty)
+                unknown = true;
         } else if (detail.definitionName() == QContactAvatar::DefinitionName){
             addProperty = encodeAvatar(property, detail);
             if (!addProperty)
@@ -431,31 +438,56 @@ void QVersitContactExporterPrivate::encodeOrganization(
     }
 }
 
+bool QVersitContactExporterPrivate::encodeRingtone(QVersitProperty &property, const QContactDetail &detail)
+{
+    QContactRingtone ringtone = static_cast<QContactRingtone>(detail);
+    Q_ASSERT(property.name() == QLatin1String("SOUND"));
+    return encodeContentFromFile(ringtone.audioRingtone(), property);
+}
+
 /*!
- * Encode avatar content into the Versit Document
+ * Encode thumbnail content into the Versit Document
+ */
+bool QVersitContactExporterPrivate::encodeThumbnail(
+    QVersitProperty& property,
+    const QContactDetail& detail)
+{
+    QContactThumbnail contactThumbnail = static_cast<QContactThumbnail>(detail);
+    property.setName(QLatin1String("PHOTO"));
+    QImage image = contactThumbnail.thumbnail();
+    if (image.isNull())
+        return false;
+    QByteArray imageData;
+    QBuffer buffer(&imageData);
+    buffer.open(QIODevice::WriteOnly);
+    // Always store a pixmap as a PNG.
+    if (!image.save(&buffer, "PNG")) {
+        return false;
+    }
+    property.setValue(imageData);
+    property.insertParameter(QLatin1String("TYPE"), QLatin1String("PNG"));
+    return true;
+}
+
+/*!
+ * Encode avatar URIs into the Versit Document
  */
 bool QVersitContactExporterPrivate::encodeAvatar(
     QVersitProperty& property,
     const QContactDetail& detail)
 {
+    property.setName(QLatin1String("PHOTO"));
     QContactAvatar contactAvatar = static_cast<QContactAvatar>(detail);
-    bool encoded = false;
-    QString propertyName;
-    if (contactAvatar.subType() == QContactAvatar::SubTypeImage) {
-        propertyName = QLatin1String("PHOTO");
-    } else if (contactAvatar.subType() == QContactAvatar::SubTypeAudioRingtone) {
-        propertyName = QLatin1String("SOUND");
+    QUrl imageUrl(contactAvatar.imageUrl());
+    // XXX: fix up this mess: checking the scheme here and in encodeContentFromFile,
+    // organisation logo and ringtone are QStrings but avatar is a QUrl
+    if (!imageUrl.scheme().isEmpty() && !imageUrl.host().isEmpty()) {
+        property.insertParameter(QLatin1String("VALUE"), QLatin1String("URL"));
+        property.setValue(imageUrl.toString());
+        return true;
     } else {
-        // NOP
+        return encodeContentFromFile(contactAvatar.imageUrl().toString(), property);
     }
-    if (propertyName.length() > 0) {
-        encoded = encodeContentFromFile(contactAvatar.avatar(), property);
-        if (!encoded)
-            encoded = encodeContentFromPixmap(contactAvatar.pixmap(), property);
-        if (encoded)
-            property.setName(propertyName);
-    }
-    return encoded;
 }
 
 /*!
@@ -695,26 +727,6 @@ bool QVersitContactExporterPrivate::encodeContentFromFile(const QString& resourc
     }
     property.setValue(value);
     return encodeContent;
-}
-
-/*!
- * Encode embedded content from the given \a pixmap into \a property.
- */
-bool QVersitContactExporterPrivate::encodeContentFromPixmap(const QPixmap& pixmap,
-                                                            QVersitProperty& property)
-{
-    if (pixmap.isNull())
-        return false;
-    QByteArray imageData;
-    QBuffer buffer(&imageData);
-    buffer.open(QIODevice::WriteOnly);
-    // Always store a pixmap as a PNG.
-    if (!pixmap.save(&buffer, "PNG")) {
-        return false;
-    }
-    property.setValue(imageData);
-    property.insertParameter(QLatin1String("TYPE"), QLatin1String("PNG"));
-    return true;
 }
 
 /*!

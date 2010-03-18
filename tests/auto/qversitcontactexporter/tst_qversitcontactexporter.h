@@ -80,7 +80,7 @@ private slots:
     void testEncodeGeoLocation();
     void testEncodeOrganization();
     void testEncodeEmbeddedContent();
-    void testIsValidRemoteUrl();
+    void testEncodeRingtone();
     void testEncodeGender();
     void testEncodeNickName();
     void testEncodeTag();
@@ -88,6 +88,7 @@ private slots:
     void testEncodeOnlineAccount();
     void testEncodeFamily();
     void testEncodeAvatar();
+    void testEncodeThumbnail();
     void testEncodeDisplayLabel();
     void testDefaultResourceHandler();
 

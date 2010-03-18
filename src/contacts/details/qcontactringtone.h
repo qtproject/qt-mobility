@@ -39,34 +39,43 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTDETAILS_H
-#define QCONTACTDETAILS_H
+#ifndef QCONTACTRINGTONE_H
+#define QCONTACTRINGTONE_H
 
-// this file includes all of the leaf detail classes
-// provided by the Qt Contacts API.
+#include <QString>
 
-#include "qcontactaddress.h"
-#include "qcontactanniversary.h"
-#include "qcontactavatar.h"
-#include "qcontactbirthday.h"
-#include "qcontactdisplaylabel.h"
-#include "qcontactemailaddress.h"
-#include "qcontactfamily.h"
-#include "qcontactgender.h"
-#include "qcontactgeolocation.h"
-#include "qcontactguid.h"
-#include "qcontactname.h"
-#include "qcontactnickname.h"
-#include "qcontactnote.h"
-#include "qcontactonlineaccount.h"
-#include "qcontactorganization.h"
-#include "qcontactphonenumber.h"
-#include "qcontactringtone.h"
-#include "qcontactsynctarget.h"
-#include "qcontacttag.h"
-#include "qcontactthumbnail.h"
-#include "qcontacttimestamp.h"
-#include "qcontacttype.h"
-#include "qcontacturl.h"
+#include "qtcontactsglobal.h"
+#include "qcontactdetail.h"
+#include "qcontact.h"
+
+QTM_BEGIN_NAMESPACE
+
+/* Leaf class */
+class Q_CONTACTS_EXPORT QContactRingtone : public QContactDetail
+{
+public:
+#ifdef Q_QDOC
+    const char* DefinitionName;
+    const char* FieldAudioRingtone;
+    const char* FieldVideoRingtone;
+    const char* FieldVibrationRingtone;
+#else
+    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactRingtone, "Ringtone")
+    Q_DECLARE_LATIN1_LITERAL(FieldAudioRingtone, "AudioRingtone");
+    Q_DECLARE_LATIN1_LITERAL(FieldVideoRingtone, "VideoRingtone");
+    Q_DECLARE_LATIN1_LITERAL(FieldVibrationRingtone, "VibrationRingtone");
+#endif
+
+    void setAudioRingtone(const QString& audioRingtone) {setValue(FieldAudioRingtone, audioRingtone);}
+    QString audioRingtone() const {return value(FieldAudioRingtone);}
+
+    void setVideoRingtone(const QString& videoRingtone) {setValue(FieldVideoRingtone, videoRingtone);}
+    QString videoRingtone() const {return value(FieldVideoRingtone);}
+
+    void setVibrationRingtone(const QString& vibrationRingtone) {setValue(FieldVibrationRingtone, vibrationRingtone);}
+    QString vibrationRingtone() const {return value(FieldVibrationRingtone);}
+};
+
+QTM_END_NAMESPACE
 
 #endif

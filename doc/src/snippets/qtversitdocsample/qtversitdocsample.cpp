@@ -188,12 +188,6 @@ void exportExample()
     name.setFirstName(QString::fromAscii("John"));
     contact.saveDetail(&name);
 
-    // Create an avatar type which is not supported by the exporter
-    QContactAvatar contactAvatar;
-    contactAvatar.setAvatar(QString::fromAscii("/my/image/avatar_path/texture.type"));
-    contactAvatar.setSubType(QContactAvatar::SubTypeTexturedMesh);
-    contact.saveDetail(&contactAvatar);
-
     if (!contactExporter.exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type))
         return;
     QList<QVersitDocument> versitDocuments = contactExporter.documents();
