@@ -88,11 +88,12 @@ QList<QContactLocalId> CntFilterDetail::contacts(
     QContactDetailFilter detailFilter(filter);
     QString sqlQuery;
     //Check for phonenumber. Special handling needed
-    if(detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName )
+    if( (detailFilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName ) &&
+            (detailFilter.detailFieldName() != QContactPhoneNumber::FieldSubTypes))
     {
         //Handle phonenumber ...
-    
         idList = HandlePhonenumberDetailFilter(filter);
+        
     }
     else if (detailFilter.matchFlags() == QContactFilter::MatchKeypadCollation) 
     {

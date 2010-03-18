@@ -58,6 +58,7 @@ CntDbInfo::CntDbInfo()
     commAddrTableIdColumNameMapping.insert(KUidContactFieldVCardMapSWIS.iUid,ESipAddress );
     commAddrTableIdColumNameMapping.insert(KUidContactFieldIMPP.iUid,ESipAddress );
     commAddrTableIdColumNameMapping.insert(KUidContactFieldEMail.iUid,EEmailAddress );
+    commAddrTableIdColumNameMapping.insert(KUidContactFieldPhoneNumber.iUid,EPhoneNumber );
 }
 
 CntDbInfo::~CntDbInfo()

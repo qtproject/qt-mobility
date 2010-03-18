@@ -449,6 +449,7 @@ void TestSymbianEngine::retrieveContacts()
     // Retrieve all contacts
     cnt_ids = m_engine->contactIds(f, s, err);
     QVERIFY(err == QContactManager::NoError);
+    QVERIFY(cnt_ids.count() > 0);
 
     QContactDetailFilter mobileFilter;
     mobileFilter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldSubTypes);
@@ -457,6 +458,14 @@ void TestSymbianEngine::retrieveContacts()
     // Retrieve contacts with mobile number
     cnt_ids = m_engine->contactIds(mobileFilter, s, err);
     QVERIFY(err == QContactManager::NoError);
+    QVERIFY(cnt_ids.count() > 0);
+    
+    // Slow filter
+    QList<QContactLocalId> fast_ids = m_engine->contactIds(mobileFilter, s, err);
+    QList<QContactLocalId> all_ids = m_engine->contactIds(f, s, err);
+    QList<QContactLocalId> slow_ids = m_engine->slowFilter(mobileFilter, all_ids, err);
+    QVERIFY(err == QContactManager::NoError);
+    QVERIFY(slow_ids.count() == fast_ids.count());
 
     QContactDetailFilter invalidFilter;
     mobileFilter.setDetailDefinitionName("asfdasdf", "asdfasdf");
@@ -483,6 +492,16 @@ void TestSymbianEngine::retrieveContacts()
     sortOrder1.setDetailDefinitionName("asdfasdf", "asdfasd");
 
     cnt_ids = m_engine->contactIds(s2, err);
+    QVERIFY(err == QContactManager::NoError);
+    
+    // Retrieve full contacts (with all details)
+    QList<QContact> contactList;
+    QList<QContactSortOrder> sortOrders;
+    QStringList definitionRestrictions;
+    contactList = m_engine->contacts(sortOrders, definitionRestrictions, err);
+    QVERIFY(err == QContactManager::NoError);
+    QContactFilter filter;
+    contactList = m_engine->contacts(filter, sortOrders, definitionRestrictions, err);
     QVERIFY(err == QContactManager::NoError);
 }
 
@@ -977,4 +996,131 @@ void TestSymbianEngine::definitionDetails()
     QVERIFY(err == QContactManager::NoError);
     defs = m_engine->detailDefinitions(QContactType::TypeGroup, err);
     QVERIFY(err == QContactManager::NoError);
+}
+
+void TestSymbianEngine::asyncRequests()
+{
+    //create a contact
+    QContactManager::Error err;
+    QContact dummy;
+    dummy.setType(QContactType::TypeContact);
+    QContactName name;
+    name.setFirstName("dummy");
+    dummy.saveDetail(&name);
+    QVERIFY(m_engine->saveContact(&dummy, err));
+    QVERIFY(err == QContactManager::NoError);
+    
+    //create a group with members 
+    QContact groupContact;
+    groupContact.setType(QContactType::TypeGroup);
+    m_engine->saveContact(&groupContact, err);
+    QVERIFY(err == QContactManager::NoError);
+    QContactRelationship relationship;
+    relationship.setRelationshipType(QContactRelationship::HasMember);
+    relationship.setFirst(groupContact.id());
+    relationship.setSecond(dummy.id());
+    bool returnValue(false);
+    returnValue = m_engine->saveRelationship(&relationship, err);
+    QVERIFY(returnValue == true);
+    QVERIFY(err == QContactManager::NoError);
+    
+    //fetch request
+    QContactFetchRequest fetch;
+    QVERIFY(m_engine->startRequest(&fetch));
+    QTest::qWait(1000); //1sec
+    QVERIFY(fetch.error() == QContactManager::NoError);
+    QVERIFY(fetch.state() == QContactFetchRequest::FinishedState);
+    QVERIFY(fetch.contacts().count() > 0);
+    
+    //fetch ids request
+    QContactLocalIdFetchRequest fetchIds;
+    QVERIFY(m_engine->startRequest(&fetchIds));
+    QTest::qWait(1000); //1sec
+    QVERIFY(fetchIds.error() == QContactManager::NoError);
+    QVERIFY(fetchIds.state() == QContactFetchRequest::FinishedState);
+    QVERIFY(fetchIds.ids().count() > 0);
+    
+    //save request
+    QContactSaveRequest saveReq;
+    QContact c;
+    c.setType(QContactType::TypeContact);
+    QList<QContact> contactList;
+    contactList += c;
+    saveReq.setContacts(contactList);
+    QVERIFY(m_engine->startRequest(&saveReq));
+    QTest::qWait(1000); //1sec
+    QVERIFY(saveReq.error() == QContactManager::NoError);
+    QVERIFY(saveReq.state() == QContactFetchRequest::FinishedState);
+    QVERIFY(saveReq.contacts().count() > 0);
+    
+    //remove request
+    QContactRemoveRequest removeReq;
+    QList<QContactLocalId> idList;
+    idList += saveReq.contacts().at(0).localId();
+    removeReq.setContactIds(idList);
+    QVERIFY(m_engine->startRequest(&removeReq));
+    QTest::qWait(1000); //1sec
+    int err_temp = removeReq.error();
+    QVERIFY(removeReq.error() == QContactManager::NoError);
+    QVERIFY(removeReq.state() == QContactFetchRequest::FinishedState);
+    
+    //detail definition request
+    QContactDetailDefinitionFetchRequest detDefReq;
+    detDefReq.setContactType(QContactType::TypeContact);
+    QStringList defList;
+    defList += QContactName::DefinitionName;
+    detDefReq.setDefinitionNames(defList);
+    QVERIFY(m_engine->startRequest(&detDefReq));
+    QTest::qWait(1000); //1sec
+    QVERIFY(detDefReq.error() == QContactManager::NoError);
+    QVERIFY(detDefReq.state() == QContactFetchRequest::FinishedState);
+    
+    //relationship fetch request
+    QContactRelationshipFetchRequest relFetchReq;
+    relFetchReq.setFirst(groupContact.id());
+    relFetchReq.setSecond(dummy.id());
+    relFetchReq.setRelationshipType(QContactRelationship::HasMember);
+    QVERIFY(m_engine->startRequest(&relFetchReq));
+    QTest::qWait(1000); //1sec
+    QVERIFY(relFetchReq.error() == QContactManager::NoError);
+    QVERIFY(relFetchReq.state() == QContactFetchRequest::FinishedState);
+    QVERIFY(relFetchReq.relationships().count() > 0);
+    
+    //relationship remove request
+    QContactRelationshipRemoveRequest relRemoveReq;
+    QList<QContactRelationship> relList;
+    relList += relationship;
+    relRemoveReq.setRelationships(relList);
+    QVERIFY(m_engine->startRequest(&relRemoveReq));
+    QTest::qWait(1000); //1sec
+    QVERIFY(relRemoveReq.error() == QContactManager::NoError);
+    QVERIFY(relRemoveReq.state() == QContactFetchRequest::FinishedState);
+
+    //relationship save request
+    QContactRelationshipSaveRequest relSaveReq;
+    relSaveReq.setRelationships(relList);
+    QVERIFY(m_engine->startRequest(&relSaveReq));
+    QTest::qWait(1000); //1sec
+    QVERIFY(relSaveReq.error() == QContactManager::NoError);
+    QVERIFY(relSaveReq.state() == QContactFetchRequest::FinishedState);
+    
+    //cancel request
+    QVERIFY(m_engine->startRequest(&relRemoveReq));
+    m_engine->cancelRequest(&relRemoveReq);
+    QTest::qWait(1000); //1sec
+    QVERIFY(relRemoveReq.error() == QContactManager::NoError);
+    QVERIFY(relRemoveReq.state() == QContactFetchRequest::CanceledState);
+    
+    //wait for a request finish
+    QVERIFY(!m_engine->waitForRequestFinished(&relSaveReq, 1000));
+    QVERIFY(m_engine->startRequest(&relRemoveReq));
+    QVERIFY(m_engine->waitForRequestFinished(&relRemoveReq, 1000));
+    QTest::qWait(1000); //1sec
+    QVERIFY(relRemoveReq.error() == QContactManager::NoError);
+    QVERIFY(relRemoveReq.state() == QContactFetchRequest::FinishedState);
+    
+    //destroy request
+    QVERIFY(m_engine->startRequest(&relRemoveReq));
+    m_engine->requestDestroyed(&relRemoveReq);
+    QVERIFY(!m_engine->m_asynchronousOperations.contains(&relRemoveReq));
 }

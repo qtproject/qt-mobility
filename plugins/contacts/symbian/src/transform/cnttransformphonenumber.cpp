@@ -255,27 +255,27 @@ quint32 CntTransformPhoneNumber::getIdForField(const QString& fieldName) const
     if (QContactPhoneNumber::FieldNumber  == fieldName)
         return 0;
     else if (QContactPhoneNumber::SubTypeLandline == fieldName)
-        return 0;
+        return KUidContactFieldPhoneNumber.iUid;
     else if (QContactPhoneNumber::SubTypeMobile == fieldName)
-        return 0;
+        return KUidContactFieldPhoneNumber.iUid;
     else if (QContactPhoneNumber::SubTypeFacsimile == fieldName)
         return KUidContactFieldFax.iUid;
     else if (QContactPhoneNumber::SubTypePager == fieldName)
-        return 0;
+        return KUidContactFieldPhoneNumber.iUid;
     else if (QContactPhoneNumber::SubTypeVoice == fieldName)
         return 0;
     else if (QContactPhoneNumber::SubTypeModem == fieldName)
-        return 0;
+        return KUidContactFieldPhoneNumber.iUid;
     else if (QContactPhoneNumber::SubTypeVideo == fieldName)
-        return 0;
+        return KUidContactFieldPhoneNumber.iUid;
     else if (QContactPhoneNumber::SubTypeCar == fieldName)
-        return 0;
+        return KUidContactFieldPhoneNumber.iUid;
     else if (QContactPhoneNumber::SubTypeBulletinBoardSystem == fieldName)
-        return 0;
+        return KUidContactFieldPhoneNumber.iUid;
     else if (QContactPhoneNumber::SubTypeMessagingCapable == fieldName)
         return 0;
     else if (QContactPhoneNumber::SubTypeAssistant == fieldName)
-        return 0;
+        return KUidContactFieldPhoneNumber.iUid;
     else if (QContactPhoneNumber::SubTypeDtmfMenu == fieldName)
         return KUidContactFieldDTMF.iUid;
     else
