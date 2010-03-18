@@ -46,23 +46,23 @@
 #include <QRegExp>
 #include <QTimer>
 
-#include <SysUtil.h>
-#include <ptiengine.h>
-#include <FeatDiscovery.h>
+#include <sysutil.h>
+#include <PtiEngine.h>
+#include <featdiscovery.h>
 #ifndef KFeatureIdMmc
 #include <featureinfo.h>
 #endif
 #include <hwrmvibra.h>
 #include <AknUtils.h>
-#include <W32STD.H>
+#include <w32std.h>
 #include <centralrepository.h>
-#include <mproengengine.h>
-#include <proengfactory.h>
-#include <mproengnotifyhandler.h>
+#include <MProEngEngine.h>
+#include <ProEngFactory.h>
+#include <MProEngNotifyHandler.h>
 #include <btserversdkcrkeys.h>
 #include <bt_subscribe.h>
 #include <bttypes.h>
-#include <Etel3rdParty.h>
+#include <etel3rdparty.h>
 #include <aknkeylock.h>
 
 QTM_BEGIN_NAMESPACE
