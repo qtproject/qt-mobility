@@ -42,14 +42,13 @@
 #ifndef S60AUDIOMEDIARECORDERCONTROL_H
 #define S60AUDIOMEDIARECORDERCONTROL_H
 
+#include "qmediarecordercontrol.h"
+#include "s60audiocapturesession.h"
 #include <QtCore/qobject.h>
-
-#include <QMediaRecorder>
-#include <QMediaRecorderControl>
+#include <QUrl>
+#include "qmediarecorder.h"
 
 QTM_USE_NAMESPACE
-
-class S60AudioCaptureSession;
 
 class S60AudioMediaRecorderControl : public QMediaRecorderControl
 {
@@ -67,13 +66,20 @@ public:
 
     void applySettings() {}
 
+private:                    
+    QMediaRecorder::State convertState(S60AudioCaptureSession::TAudioCaptureState aState) const;
+    
 public slots:
     void record();
     void pause();
     void stop();
+    
+private slots:
+    void updateState(S60AudioCaptureSession::TAudioCaptureState aState);        
 
 private:
     S60AudioCaptureSession* m_session;
+    QMediaRecorder::State m_state;
 };
 
 #endif

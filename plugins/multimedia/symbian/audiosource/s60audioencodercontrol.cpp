@@ -83,13 +83,7 @@ bool S60AudioEncoderControl::setAudioCodec(const QString &codecName)
 
 QString S60AudioEncoderControl::codecDescription(const QString &codecName) const
 {
-	return m_session->codecDescription(codecName);
-    /*
-	if(qstrcmp(codecName.toLocal8Bit().constData(), "audio/x-wav") == 0)
-        return QString("wav file format");
-
-    return QString();
-    */
+	return m_session->codecDescription(codecName);    
 }
 
 int S60AudioEncoderControl::bitRate() const
@@ -200,9 +194,8 @@ QList<int> S60AudioEncoderControl::supportedSampleRates(const QAudioEncoderSetti
 {
     if (continuous)
         *continuous = false;
-
-    //TODO: return supported sample rates
-    return QList<int>(); //m_session->deviceInfo()->supportedFrequencies();
+    
+    return m_session->supportedAudioSampleRates();       
 }
 
 int S60AudioEncoderControl::channelCount() const

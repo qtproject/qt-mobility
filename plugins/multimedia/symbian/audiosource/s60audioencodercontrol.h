@@ -43,11 +43,7 @@
 #define AUDIOENCODERCONTROL_H
 
 #include <QAudioEncoderControl>
-
 #include <QtCore/qstringlist.h>
-#include <QtCore/qmap.h>
-
-#include <QAudioFormat>
 
 QTM_USE_NAMESPACE
 

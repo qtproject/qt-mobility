@@ -39,35 +39,32 @@
 **
 ****************************************************************************/
 
-#ifndef S60AUDIOCAPTURESERVICE_H
-#define S60AUDIOCAPTURESERVICE_H
+#ifndef S60AUDIOFORMATCONTROL_H
+#define S60AUDIOFORMATCONTROL_H
 
-#include <QtCore/qobject.h>
-#include <QMediaService>
+#include "QMediaContainerControl"
+#include <QtCore/qstringlist.h>
+
 
 QTM_USE_NAMESPACE
 
 class S60AudioCaptureSession;
-class S60AudioEncoderControl;
-class S60AudioMediaRecorderControl;
-class S60AudioEndpointSelector;
-class S60AudioContainerControl;
 
-
-class S60AudioCaptureService : public QMediaService
+class S60AudioContainerControl : public QMediaContainerControl
 {
-    Q_OBJECT
+Q_OBJECT
 public:
-    S60AudioCaptureService(QObject *parent = 0);
-    ~S60AudioCaptureService();
+    S60AudioContainerControl(QObject *parent = 0);
+    S60AudioContainerControl(QObject *session, QObject *parent = 0);
+    virtual ~S60AudioContainerControl() {};
 
-    QMediaControl *control(const char *name) const;
+    QStringList supportedContainers() const;
+    QString containerMimeType() const;
+    void setContainerMimeType(const QString &containerMimeType);
+    QString containerDescription(const QString &containerMimeType) const;
+
 private:
-    S60AudioCaptureSession       *m_session;
-    S60AudioEncoderControl       *m_encoderControl;
-    S60AudioEndpointSelector     *m_endpointSelector;
-    S60AudioMediaRecorderControl *m_recorderControl;
-    S60AudioContainerControl     *m_containerControl; 
+    S60AudioCaptureSession* m_session;    
 };
 
-#endif // S60AUDIOCAPTURESERVICE_H
+#endif // S60AUDIOFORMATCONTROL_H
