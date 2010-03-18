@@ -49,7 +49,7 @@ QEvrVideoOverlay::QEvrVideoOverlay(HINSTANCE evrHwnd)
     , ptrMFCreateVideoPresenter(0)
     , m_presenter(0)
     , m_displayControl(0)
-    , m_aspectRatioMode(QVideoWidget::KeepAspectRatio)
+    , m_aspectRatioMode(Qt::KeepAspectRatio)
     , m_winId(0)
     , m_fullScreen(0)
 {
@@ -119,21 +119,21 @@ QSize QEvrVideoOverlay::nativeSize() const
     }
 }
 
-QVideoWidget::AspectRatioMode QEvrVideoOverlay::aspectRatioMode() const
+Qt::AspectRatioMode QEvrVideoOverlay::aspectRatioMode() const
 {
     return m_aspectRatioMode;
 }
 
-void QEvrVideoOverlay::setAspectRatioMode(QVideoWidget::AspectRatioMode mode)
+void QEvrVideoOverlay::setAspectRatioMode(Qt::AspectRatioMode mode)
 {
     switch (mode) {
-    case QVideoWidget::KeepAspectRatio:
+    case Qt::KeepAspectRatio:
         if (m_displayControl)
                 m_displayControl->SetAspectRatioMode(MFVideoARMode_PreservePicture);
 
         m_aspectRatioMode = mode;
         break;
-    case QVideoWidget::IgnoreAspectRatio:
+    case Qt::IgnoreAspectRatio:
         if (m_displayControl)
                 m_displayControl->SetAspectRatioMode(MFVideoARMode_None);
 
