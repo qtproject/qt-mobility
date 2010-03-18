@@ -172,11 +172,11 @@ public:
 
 /* XXX FIXME: trampoline functions added to fix compile breakage due to updateRequestStatus functions becoming protected in QCME */
 public:
-    static updateRequestStateTrampoline(QContactAbstractRequest *req, QContactAbstractRequest::State state)
+    static void updateRequestStateTrampoline(QContactAbstractRequest *req, QContactAbstractRequest::State state)
     {
         QContactManagerEngine::updateRequestState(req, state);
     }
-    static updateContactFetchRequestTrampoline(QContactFetchRequest *req, const QList<QContact> &result, QContactManager::Error error, QContactAbstractRequest::State state)
+    static void updateContactFetchRequestTrampoline(QContactFetchRequest *req, const QList<QContact> &result, QContactManager::Error error, QContactAbstractRequest::State state)
     {
         QContactManagerEngine::updateContactFetchRequest(req, result, error, state);
     }
