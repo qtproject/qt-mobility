@@ -46,12 +46,36 @@
 #include "placepresenter.h"
 #include "qmaptile.h"
 
+#ifdef Q_OS_SYMBIAN
+#include <QMessageBox>
+#include <qnetworksession.h>
+#include <qnetworkconfigmanager.h>
+#endif
+
 MainWindow::MainWindow(QWidget *parent) :
         QMainWindow(parent),
         ui(new Ui::MainWindow),
         geoNetworkManager("", "")
 {
     ui->setupUi(this);
+    
+#ifdef Q_OS_SYMBIAN
+    // Set Internet Access Point
+    QNetworkConfigurationManager manager;
+    const bool canStartIAP = (manager.capabilities()
+                              & QNetworkConfigurationManager::CanStartAndStopInterfaces);
+    // Is there default access point, use it
+    QNetworkConfiguration cfg = manager.defaultConfiguration();
+    if (!cfg.isValid() || (!canStartIAP && cfg.state() != QNetworkConfiguration::Active)) {
+        QMessageBox::information(this, tr("QGeoApiUI Example"), tr(
+                                     "Available Access Points not found."));
+        return;
+    }
+  
+    session = new QNetworkSession(cfg, this);
+    session->open();
+    session->waitForOpened(-1);
+#endif
 
     QObject::connect(&geoNetworkManager, SIGNAL(finished(QRouteReply*)),
                      this, SLOT(routeReplyFinished(QRouteReply*)));

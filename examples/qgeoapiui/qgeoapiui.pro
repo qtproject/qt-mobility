@@ -1,5 +1,5 @@
 
-QT += xml network opengl
+QT += xml network
 
 TARGET = QGeoApiUI
 TEMPLATE = app thread
@@ -21,3 +21,7 @@ include(../examples.pri)
 CONFIG += mobility
 MOBILITY = location
 
+symbian: {
+    MOBILITY += bearer
+    TARGET.CAPABILITY = Location NetworkServices ReadUserData WriteUserData
+}

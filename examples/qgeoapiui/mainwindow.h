@@ -52,6 +52,11 @@ namespace Ui
 {
 class MainWindow;
 }
+#ifdef Q_OS_SYMBIAN
+QTM_BEGIN_NAMESPACE
+class QNetworkSession;
+QTM_END_NAMESPACE
+#endif
 
 QTM_USE_NAMESPACE
 
@@ -81,6 +86,9 @@ private slots:
 
 private:
     QGeoNetworkManager geoNetworkManager;
+#ifdef Q_OS_SYMBIAN
+    QNetworkSession *session;
+#endif
 
 };
 
