@@ -100,6 +100,15 @@ QMapView::QMapView(QGraphicsItem* parent, Qt::WindowFlags wFlags)
 }
 
 /*!
+    Destructor. Destroys the map view.
+*/
+QMapView::~QMapView()
+{
+    Q_D(QMapView);
+    delete d;
+}
+
+/*!
     Initializes a the map view with a given \a geoEngine and centers
     the map at \a center.
 */
@@ -134,6 +143,31 @@ void QMapView::init(QGeoEngine* geoEngine, const QGeoCoordinate& center)
 
     d->releaseTimer.start(RELEASE_INTERVAL);
 }
+
+/*!
+    \fn QMapView::mapClicked(QGeoCoordinate geoCoord, QGraphicsSceneMouseEvent* mouseEvent)
+
+    This signal is emitted when the map receieves a \a mouseEvent (clicked) at 
+    \a geoCoord.
+*/
+
+/*!
+    \fn QMapView::zoomLevelChanged(quint16 oldZoomLevel, quint16 newZoomLevel)
+
+    This signal is emitted after the map has changed its zoom level.
+*/
+
+/*!
+    \fn QMapViewer::centerChanged()
+
+    This signal is emitted when the center of the viewport onto the map has changed.
+*/
+
+/*!
+    \fn QMapView::mapObjectSelected(QMapObject* mapObject)
+
+    This signal is emitted when a \a mapObject was selected by left-clicking on it.
+*/
 
 /*!
     This method sets the horizontal \a range (in pixels) beyond the immediate limits of
@@ -890,6 +924,15 @@ public:
 QMapView::TileIterator::TileIterator(const QMapView& mapView, const QRectF& viewPort)
     : d_ptr(new QMapView::TileIteratorPrivate(mapView.d_ptr, viewPort))
 {}
+
+/*!
+    Destroys the TileIterator.
+*/
+QMapView::TileIterator::~TileIterator()
+{
+    Q_D(QMapView::TileIterator);
+    delete d;
+}
 
 /*!
     Moves iterator to next tile.

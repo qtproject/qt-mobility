@@ -82,6 +82,7 @@ public:
 
 public:
     QRouteRequest();
+    ~QRouteRequest();
 
     QString version() const;
 
