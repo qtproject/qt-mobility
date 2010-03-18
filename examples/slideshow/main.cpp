@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
 
     SlideShow slideShow;
 #ifdef Q_OS_SYMBIAN
-    slideshow.showMaximized();
+    slideShow.showMaximized();
 #else
     slideShow.show();
 #endif
