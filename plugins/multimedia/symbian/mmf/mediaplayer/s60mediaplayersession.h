@@ -54,8 +54,6 @@ QTM_BEGIN_NAMESPACE
 class QMediaTimeRange;
 QTM_END_NAMESPACE
 
-QTM_USE_NAMESPACE
-
 class QTimer;
 
 class S60MediaPlayerSession : public QObject
@@ -104,6 +102,15 @@ protected:
     virtual void updateMetaDataEntriesL() = 0;
     virtual int doGetBufferStatusL() const = 0;
     virtual qint64 doGetDurationL() const = 0;
+
+public:
+    // From S60MediaPlayerAudioEndpointSelector
+    virtual QString activeEndpoint() const = 0;
+    virtual QString defaultEndpoint() const = 0;
+public Q_SLOTS:
+    virtual void setActiveEndpoint(const QString& name) = 0;
+Q_SIGNALS:
+    virtual void activeEndpointChanged(const QString &name) = 0;
 
 protected:
     void setError(int error,  const QString &errorString = QString(), bool forceReset = false);

@@ -54,9 +54,13 @@ typedef CMdaAudioPlayerUtility CAudioPlayer;
 typedef MMdaAudioPlayerCallback MAudioPlayerObserver;
 #endif
 
+#include <AudioOutput.h>
+#include <MAudioOutputObserver.h>
+
 class S60AudioPlayerSession : public S60MediaPlayerSession
                             , public MAudioPlayerObserver
                             , public MAudioLoadingObserver 
+                            , public MAudioOutputObserver
 {
     Q_OBJECT
 
@@ -72,6 +76,19 @@ public:
     void MaloLoadingStarted();
     void MaloLoadingComplete();
     
+    // From MAudioOutputObserver
+    void DefaultAudioOutputChanged( CAudioOutput& aAudioOutput,
+        CAudioOutput::TAudioOutputPreference aNewDefault );
+
+public:
+    // From S60MediaPlayerAudioEndpointSelector
+    QString activeEndpoint() const;
+    QString defaultEndpoint() const;
+public Q_SLOTS:
+    void setActiveEndpoint(const QString& name);
+Q_SIGNALS:
+    void activeEndpointChanged(const QString & name);
+
 protected:
     //From S60MediaPlayerSession
     void doLoadL(const TDesC &path);
@@ -96,9 +113,11 @@ private:
     void MapcInitComplete(TInt aError, const TTimeIntervalMicroSeconds& aDuration);
     void MapcPlayComplete(TInt aError);
 #endif
+    QString qStringFromTAudioOutputPreference(CAudioOutput::TAudioOutputPreference output) const;
     
 private:
     CAudioPlayer *m_player;
+    CAudioOutput *m_audioOutput;
 };
 
 #endif

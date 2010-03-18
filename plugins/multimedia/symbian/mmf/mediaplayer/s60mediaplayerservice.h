@@ -50,6 +50,8 @@
 #include "s60videooutputcontrol.h"
 #include "ms60mediaplayerresolver.h"
 
+#include "s60mediaplayeraudioendpointselector.h"
+
 QTM_BEGIN_NAMESPACE
 class QMediaMetaData;
 class QMediaPlayerControl;
@@ -78,7 +80,7 @@ public:
     ~S60MediaPlayerService();
 
     QMediaControl *control(const char *name) const;
-    
+
 private slots:
     void videoOutputChanged(QVideoOutputControl::Output output);
 
@@ -97,6 +99,7 @@ private:
     mutable S60VideoWidgetControl *m_videoWidget;
     mutable S60VideoOverlay *m_videoWindow;
     mutable S60VideoRenderer *m_videoRenderer;
+    mutable S60MediaPlayerAudioEndpointSelector *m_audioEndpointSelector;
 };
 
 #endif
