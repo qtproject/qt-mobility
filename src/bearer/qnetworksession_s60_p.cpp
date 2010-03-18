@@ -54,7 +54,7 @@ QTM_BEGIN_NAMESPACE
 QNetworkSessionPrivate::QNetworkSessionPrivate()
     : CActive(CActive::EPriorityStandard), state(QNetworkSession::Invalid),
       isOpen(false), ipConnectionNotifier(0), iError(QNetworkSession::UnknownSessionError),
-      iALREnabled(0)
+      iALREnabled(0), iConnectInBackground(false)
 {
     CActiveScheduler::Add(this);
     
@@ -202,8 +202,11 @@ QNetworkInterface QNetworkSessionPrivate::currentInterface() const
     return activeInterface;
 }
 
-QVariant QNetworkSessionPrivate::sessionProperty(const QString& /*key*/) const
+QVariant QNetworkSessionPrivate::sessionProperty(const QString& key) const
 {
+    if (key == "ConnectInBackground") {
+        return QVariant(iConnectInBackground);
+    }
     return QVariant();
 }
 
