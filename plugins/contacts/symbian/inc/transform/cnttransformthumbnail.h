@@ -38,10 +38,11 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef TRANSFORMAVATAR_H
-#define TRANSFORMAVATAR_H
+#ifndef TRANSFORMTHUMBNAIL_H
+#define TRANSFORMTHUMBNAIL_H
 
 #include "cnttransformcontactdata.h"
+#include "cntthumbnailcreator.h"
 
 QTM_USE_NAMESPACE
 

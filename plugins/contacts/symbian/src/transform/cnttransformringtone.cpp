@@ -54,10 +54,9 @@ QList<CContactItemField *> CntTransformRingtone::transformDetailL(const QContact
     const QContactRingtone &ringtone(static_cast<const QContactRingtone&>(detail));
 
 	//create new field
-    if (!ringtone.audioRingtone().isEmpty()) {
-        TPtrC fieldText(reinterpret_cast<const TUint16*>(ringtone.audioRingtone().utf16()));
+    if (ringtone.audioRingtone().isValid()) {
+        TPtrC fieldText(reinterpret_cast<const TUint16*>(ringtone.audioRingtone().toString().utf16()));
 
-        QString subType = ringtone.subType();
         TUid uid(KUidContactFieldRingTone);
 	    CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, uid);
 
@@ -68,10 +67,9 @@ QList<CContactItemField *> CntTransformRingtone::transformDetailL(const QContact
 	    CleanupStack::Pop(newField);
 	}
 
-    if (!ringtone.videoRingtone()) {
-        TPtrC fieldText(reinterpret_cast<const TUint16*>(ringtone.audioRingtone().utf16()));
+    if (ringtone.videoRingtone().isValid()) {
+        TPtrC fieldText(reinterpret_cast<const TUint16*>(ringtone.videoRingtone().toString().utf16()));
 
-        QString subType = ringtone.subType();
         TUid uid(KUidContactFieldVideoRingTone);
         CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, uid);
 

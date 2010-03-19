@@ -38,8 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef TRANSFORMAVATAR_H
-#define TRANSFORMAVATAR_H
+#ifndef TRANSFORMRINGTONE_H
+#define TRANSFORMRINGTONE_H
 
 #include "cnttransformcontactdata.h"
 

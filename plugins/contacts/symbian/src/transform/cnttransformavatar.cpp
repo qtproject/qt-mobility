@@ -41,10 +41,6 @@
 #include "cnttransformavatar.h"
 #include "cntmodelextuids.h"
 
-// S60 specific contact field type containing image call object data
-#define KUidContactFieldCodImageValue 0x101F8841
-const TUid KUidContactFieldCodImage={KUidContactFieldCodImageValue};
-
 QList<CContactItemField *> CntTransformAvatar::transformDetailL(const QContactDetail &detail)
 {
     if(detail.definitionName() != QContactAvatar::DefinitionName)
@@ -106,7 +102,6 @@ bool CntTransformAvatar::supportsField(TUint32 fieldType) const
     bool ret = false;
     if (fieldType == KUidContactFieldCodImage.iUid)
         ret = true;
-    }
     return ret;
 }
 

@@ -42,6 +42,12 @@
 #include "cntmodelextuids.h"
 
 #include "qcontactthumbnail.h"
+#include "cntsymbiantransformerror.h"
+
+#include <QPixmap>
+#include <QImage>
+
+const TSize KMaxThumbnailSize(80, 96);
 
 CntTransformThumbnail::CntTransformThumbnail() :
     m_thumbnailCreator(0)
@@ -73,7 +79,7 @@ QList<CContactItemField *> CntTransformThumbnail::transformDetailL(const QContac
         // toSymbianCFbsBitmap may generate a duplicate of the bitmap data
         // Note: scaling to thumbnail may take some time if the image is big
         // TODO: aspect ratio?
-        QPixmap scaled = QPixmap::fromImage(thumbnail.thubnail().scaled(KMaxThumbnailSize.iWidth, KMaxThumbnailSize.iHeight));
+        QPixmap scaled = QPixmap::fromImage(thumbnail.thumbnail().scaled(KMaxThumbnailSize.iWidth, KMaxThumbnailSize.iHeight));
         CFbsBitmap* bitmap = scaled.toSymbianCFbsBitmap();
         CleanupStack::PushL(bitmap);
 
@@ -100,7 +106,7 @@ QContactDetail *CntTransformThumbnail::transformItemField(const CContactItemFiel
         QByteArray bytes((char*)theThing->Ptr(), theThing->Length());
         bool loaded = image.loadFromData(bytes, "JPG");
         if (loaded) {
-            thumbnail->setImage(image);
+            thumbnail->setThumbnail(image);
         } else {
             User::Leave(KErrInvalidContactDetail);
         }
