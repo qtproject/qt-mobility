@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_ROUTEREQUEST_P_H
+#ifndef QLOCATION_GEONETWORKMANAGERPRIVATE_P_H
 #define QLOCATION_GEONETWORKMANAGERPRIVATE_P_H
 
 #include <QString>
