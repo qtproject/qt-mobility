@@ -898,8 +898,8 @@ void TestSymbianEngine::batchRelationships()
     }
 
     // fetch relationships
-    QContactRelationshipFilter::Role role;
-    role = QContactRelationshipFilter::First;
+    QContactRelationship::Role role;
+    role = QContactRelationship::First;
     list.clear();
     list = m_engine->relationships(QContactRelationship::HasSpouse, a.id(), role, error);
     QVERIFY(&list != NULL);
