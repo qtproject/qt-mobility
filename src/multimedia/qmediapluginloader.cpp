@@ -99,6 +99,10 @@ void QMediaPluginLoader::load()
     } else {
         QStringList     paths = QCoreApplication::libraryPaths();
 
+#ifdef QTM_PLUGIN_PATH
+        paths << QTM_PLUGIN_PATH;
+#endif
+
         foreach (QString const &path, paths) {
             QString     pluginPathName(path + m_location);
             QDir        pluginDir(pluginPathName);

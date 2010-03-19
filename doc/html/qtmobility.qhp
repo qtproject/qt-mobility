@@ -1961,19 +1961,12 @@
             <keyword name="QMagnetometer" id="QMagnetometer" ref="qmagnetometer.html"/>
             <keyword name="reading" id="QMagnetometer::reading" ref="qmagnetometer.html#reading"/>
             <keyword name="returnGeoValues" id="QMagnetometer::returnGeoValues" ref="qmagnetometer.html#returnGeoValues-prop"/>
-            <keyword name="returnRawValues" id="QMagnetometer::returnRawValues" ref="qmagnetometer.html#returnRawValues-prop"/>
             <keyword name="~QMagnetometer" id="QMagnetometer::~QMagnetometer" ref="qmagnetometer.html#dtor.QMagnetometer"/>
             <keyword name="QMagnetometerFilter" id="QMagnetometerFilter" ref="qmagnetometerfilter.html"/>
             <keyword name="filter" id="QMagnetometerFilter::filter" ref="qmagnetometerfilter.html#filter"/>
             <keyword name="QMagnetometerReading" id="QMagnetometerReading" ref="qmagnetometerreading.html"/>
             <keyword name="calibrationLevel" id="QMagnetometerReading::calibrationLevel" ref="qmagnetometerreading.html#calibrationLevel-prop"/>
-            <keyword name="geo_x" id="QMagnetometerReading::geo_x" ref="qmagnetometerreading.html#geo_x-prop"/>
-            <keyword name="geo_y" id="QMagnetometerReading::geo_y" ref="qmagnetometerreading.html#geo_y-prop"/>
-            <keyword name="geo_z" id="QMagnetometerReading::geo_z" ref="qmagnetometerreading.html#geo_z-prop"/>
             <keyword name="setCalibrationLevel" id="QMagnetometerReading::setCalibrationLevel" ref="qmagnetometerreading.html#setCalibrationLevel"/>
-            <keyword name="setGeo_x" id="QMagnetometerReading::setGeo_x" ref="qmagnetometerreading.html#setGeo_x"/>
-            <keyword name="setGeo_y" id="QMagnetometerReading::setGeo_y" ref="qmagnetometerreading.html#setGeo_y"/>
-            <keyword name="setGeo_z" id="QMagnetometerReading::setGeo_z" ref="qmagnetometerreading.html#setGeo_z"/>
             <keyword name="setX" id="QMagnetometerReading::setX" ref="qmagnetometerreading.html#setX"/>
             <keyword name="setY" id="QMagnetometerReading::setY" ref="qmagnetometerreading.html#setY"/>
             <keyword name="setZ" id="QMagnetometerReading::setZ" ref="qmagnetometerreading.html#setZ"/>
@@ -2984,11 +2977,8 @@
             <keyword name="isBusy" id="QSensor::isBusy" ref="qsensor.html#busy-prop"/>
             <keyword name="isConnected" id="QSensor::isConnected" ref="qsensor.html#connected-prop"/>
             <keyword name="isSignalEnabled" id="QSensor::isSignalEnabled" ref="qsensor.html#isSignalEnabled"/>
-            <keyword name="measurementAccuracy" id="QSensor::measurementAccuracy" ref="qsensor.html#measurementAccuracy-prop"/>
-            <keyword name="measurementMaximum" id="QSensor::measurementMaximum" ref="qsensor.html#measurementMaximum-prop"/>
-            <keyword name="measurementMinimum" id="QSensor::measurementMinimum" ref="qsensor.html#measurementMinimum-prop"/>
             <keyword name="outputRange" id="QSensor::outputRange" ref="qsensor.html#outputRange-prop"/>
-            <keyword name="outputRangeCount" id="QSensor::outputRangeCount" ref="qsensor.html#outputRangeCount-prop"/>
+            <keyword name="outputRanges" id="QSensor::outputRanges" ref="qsensor.html#outputRanges-prop"/>
             <keyword name="poll" id="QSensor::poll" ref="qsensor.html#poll"/>
             <keyword name="reading" id="QSensor::reading" ref="qsensor.html#reading-prop"/>
             <keyword name="readingChanged" id="QSensor::readingChanged" ref="qsensor.html#readingChanged"/>
@@ -3310,7 +3300,6 @@
             <keyword name="QTapSensor" id="QTapSensor" ref="qtapsensor.html"/>
             <keyword name="reading" id="QTapSensor::reading" ref="qtapsensor.html#reading"/>
             <keyword name="returnDoubleTapEvents" id="QTapSensor::returnDoubleTapEvents" ref="qtapsensor.html#returnDoubleTapEvents-prop"/>
-            <keyword name="returnTapEvents" id="QTapSensor::returnTapEvents" ref="qtapsensor.html#returnTapEvents-prop"/>
             <keyword name="~QTapSensor" id="QTapSensor::~QTapSensor" ref="qtapsensor.html#dtor.QTapSensor"/>
             <keyword name="QVALUESPACE_AUTO_INSTALL_LAYER" id="QVALUESPACE_AUTO_INSTALL_LAYER" ref="qabstractvaluespacelayer.html#QVALUESPACE_AUTO_INSTALL_LAYER"/>
             <keyword name="QVALUESPACE_CONTEXTKIT_LAYER" id="QVALUESPACE_CONTEXTKIT_LAYER" ref="qvaluespace.html#QVALUESPACE_CONTEXTKIT_LAYER"/>
