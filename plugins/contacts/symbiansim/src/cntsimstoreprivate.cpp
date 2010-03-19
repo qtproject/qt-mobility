@@ -151,7 +151,7 @@ void CntSimStorePrivate::convertStoreNameL(TDes &storeName)
     }
 }
 
-bool CntSimStorePrivate::read(int index, int numSlots, QContactManager::Error* error)
+bool CntSimStorePrivate::read(int index, int numSlots, QContactManager::Error *error)
 {
     if (IsActive()) {
         *error = QContactManager::LockedError;
@@ -169,7 +169,7 @@ bool CntSimStorePrivate::read(int index, int numSlots, QContactManager::Error* e
     return true;
 }
 
-bool CntSimStorePrivate::write(const QContact &contact, QContactManager::Error* error)
+bool CntSimStorePrivate::write(const QContact &contact, QContactManager::Error *error)
 {
     if (IsActive()) {
         *error = QContactManager::LockedError;
@@ -180,13 +180,17 @@ bool CntSimStorePrivate::write(const QContact &contact, QContactManager::Error* 
     m_writeIndex = KErrNotFound;
     if (contact.id().managerUri() == m_managerUri &&
         contact.localId() > 0) {
-        m_writeIndex = contact.localId();  
+        m_writeIndex = contact.localId();
+
+        // TODO: check that the contact exist in the sim 
     }
     
     // encode
     m_buffer.Zero();
     m_buffer.ReAlloc(KOneSimContactBufferSize);
-    TRAPD(err, m_convertedContact = encodeSimContactL(&contact, m_buffer));
+    m_convertedContact = QContact(contact);
+
+    TRAPD(err, encodeSimContactL(&m_convertedContact, m_buffer));
     if (err != KErrNone) {
         CntSymbianSimTransformError::transformError(err, error);
         return false;
@@ -201,7 +205,7 @@ bool CntSimStorePrivate::write(const QContact &contact, QContactManager::Error* 
     return true;
 }
 
-bool CntSimStorePrivate::remove(int index, QContactManager::Error* error)
+bool CntSimStorePrivate::remove(int index, QContactManager::Error *error)
 {
     if (IsActive()) {
         *error = QContactManager::LockedError;
@@ -220,7 +224,7 @@ bool CntSimStorePrivate::remove(int index, QContactManager::Error* error)
     return true;
 }
 
-bool CntSimStorePrivate::getReservedSlots(QContactManager::Error* error)
+bool CntSimStorePrivate::getReservedSlots(QContactManager::Error *error)
 {
     if (IsActive()) {
         *error = QContactManager::LockedError;
@@ -279,10 +283,12 @@ void CntSimStorePrivate::RunL()
             m_convertedContact.setId(contactId);  
             
             // set sync target
-            QContactSyncTarget syncTarget;
-            syncTarget.setSyncTarget(KSimSyncTarget);
-            m_convertedContact.saveDetail(&syncTarget);
-            
+            if(m_convertedContact.detail(QContactSyncTarget::DefinitionName).isEmpty()) {
+                QContactSyncTarget syncTarget = m_convertedContact.detail(QContactSyncTarget::DefinitionName);
+                syncTarget.setSyncTarget(KSimSyncTarget);
+                m_convertedContact.saveDetail(&syncTarget);
+            }
+
             emit m_simStore.writeComplete(m_convertedContact, QContactManager::NoError);
         }
         break;
@@ -441,6 +447,7 @@ QList<QContact> CntSimStorePrivate::decodeSimContactsL(TDes8& rawData) const
             {
                 if (pbBuffer->GetValue(bufPtr) == KErrNone) {
                     QContactPhoneNumber phoneNumber;
+                    phoneNumber.setSubTypes( QContactPhoneNumber::SubTypeMobile );
                     QString number = QString::fromUtf16(bufPtr.Ptr(), bufPtr.Length());
                     phoneNumber.setNumber(number);
                     if (m_readOnlyAccess)
@@ -506,136 +513,125 @@ QList<QContact> CntSimStorePrivate::decodeSimContactsL(TDes8& rawData) const
  *
  * \param contact QContact to be converted
  * \param rawData Contact in TLV format on return.
- * \return QContact containing actually saved information.
 */
-QContact CntSimStorePrivate::encodeSimContactL(const QContact* contact, TDes8& rawData) const
+void CntSimStorePrivate::encodeSimContactL(QContact* contact, TDes8& rawData) const
 {
-    PbkPrintToLog(_L("CntSymbianSimEngine::encodeSimContactL() - IN"));
-    QContact convertedContact;
+    // TODO: get detail definition schema and verify (unique)
+
+    // Keep track of the count of phone numbers added
+    int phoneNumberCount(0);
+    int emailCount(0);
+
     CPhoneBookBuffer* pbBuffer = new(ELeave) CPhoneBookBuffer();
     CleanupStack::PushL(pbBuffer);
     pbBuffer->Set(&rawData);
-
-    //add new enty tag
     User::LeaveIfError(pbBuffer->AddNewEntryTag());
 
-    //add name
-    QString name;
-    QList<QContactDetail> nameDetails = contact->details(QContactName::DefinitionName);
-    if (nameDetails.count() == 0) {
-        // TODO: should we leave name empty?
-        name.append("Unnamed");
-    }
-    else {
-        QContactName nameDetail = static_cast<QContactName>(nameDetails.at(0));
-        name.append(nameDetail.customLabel());
-        if (name.isNull()) {
-            // TODO: should we leave name empty?
-            name.append("Unnamed)");
-        }
-    }
-    name = name.left(m_storeInfo.iMaxTextLength); //trim to the max possible length
-    TPtrC nameValue(reinterpret_cast<const TUint16*>(name.utf16()));
-    User::LeaveIfError(pbBuffer->PutTagAndValue(RMobilePhoneBookStore::ETagPBText, nameValue));
+    foreach(QContactDetail detail, contact->details()) {
+        QString definitionName = detail.definitionName();
 
-    QContactName convertedNameDetail;
-    convertedNameDetail.setCustomLabel(name);
-    convertedContact.saveDetail(&convertedNameDetail);
-
-    //add nickname
+        if (definitionName == QContactName::DefinitionName) {
+            // Name
+            QContactName nameDetail = static_cast<QContactName>(detail);
+            // Trim to the max possible length
+            QString name = nameDetail.customLabel().left(m_storeInfo.iMaxTextLength);
+            if (name.isEmpty()) {
+                name = "Unnamed";
+            }
+            putTagAndValueL(
+                pbBuffer,
+                RMobilePhoneBookStore::ETagPBText,
+                name);
+            // Replace detail value with the trimmed one
+            nameDetail.setCustomLabel(name);
+            contact->saveDetail(&nameDetail);
+        } else if (definitionName == QContactPhoneNumber::DefinitionName
 #ifndef SYMBIANSIM_BACKEND_PHONEBOOKINFOV1
-    if (m_storeInfo.iMaxSecondNames > 0) {
-        QString nickname;
-        QList<QContactDetail> nicknameDetails = contact->details(QContactNickname::DefinitionName);
-        if (nicknameDetails.count() > 0) {
-            QContactNickname nicknameDetail = static_cast<QContactNickname>(nicknameDetails.at(0));
-            nickname = nicknameDetail.nickname();
-            nickname = nickname.left(m_storeInfo.iMaxTextLengthSecondName); //trim to the max possible length
-            TPtrC nicknameValue(reinterpret_cast<const TUint16*>(nickname.utf16()));
-            User::LeaveIfError(pbBuffer->PutTagAndValue(RMobilePhoneBookStore::ETagPBSecondName, nicknameValue));
-
-            QContactNickname convertedNicknameDetail;
-            convertedNicknameDetail.setNickname(nickname);
-            convertedContact.saveDetail(&convertedNicknameDetail);
-        }
-    }
+            && (phoneNumberCount == 0
+            || phoneNumberCount <= m_storeInfo.iMaxAdditionalNumbers)) {
+#else
+            && phoneNumberCount == 0) {
 #endif
+            // Phone number
+            phoneNumberCount++;
+            QContactPhoneNumber numberDetail = static_cast<QContactPhoneNumber>(detail);
+            QString number = numberDetail.number();
 
-    //add phone number
-    QList<QContactDetail> phoneNumberDetails = contact->details(QContactPhoneNumber::DefinitionName);
-    if (phoneNumberDetails.count() > 0) {
-        PbkPrintToLog(_L("CntSymbianSimEngine::encodeSimContactL() - add phone number"));
-        QContactPhoneNumber phoneNumberDetail = static_cast<QContactPhoneNumber>(phoneNumberDetails.at(0));
-        QString number = phoneNumberDetail.number();
-        foreach (const QChar character, number) {
-            if(!character.isDigit()) {
-                if(character != QChar('+')
-                    && character != QChar('*')
-                    && character != QChar('#')
-                    && character != QChar('p')
-                    && character != QChar('w')) {
-                    User::Leave(KErrArgument);
+            // Verify the number only contains legal digits
+            foreach (const QChar character, number) {
+                if(!character.isDigit()) {
+                    if(character != QChar('+')
+                        && character != QChar('*')
+                        && character != QChar('#')
+                        && character != QChar('p')
+                        && character != QChar('w')) {
+                        User::Leave(KErrArgument);
+                    }
                 }
             }
-        }
-        PbkPrintToLog(_L("CntSymbianSimEngine::encodeSimContactL() - phone number length = %d"),
-            phoneNumberDetail.number().length());
-        if (phoneNumberDetail.number().length() > m_storeInfo.iMaxNumLength) {
-            User::Leave(KErrTooBig);
-        }
-        TPtrC phoneNumberValue(reinterpret_cast<const TUint16*>(phoneNumberDetail.number().utf16()));
-        PbkPrintToLog(_L("CntSymbianSimEngine::encodeSimContactL() - number = %S"), &phoneNumberValue);
-        User::LeaveIfError(pbBuffer->PutTagAndValue(RMobilePhoneBookStore::ETagPBNumber, phoneNumberValue));
 
-        QContactPhoneNumber convertedPhoneNumberDetail;
-        convertedPhoneNumberDetail.setNumber(phoneNumberDetail.number());
-        convertedContact.saveDetail(&convertedPhoneNumberDetail);
-    }
+            // TODO: check if the number is empty (do we have a test case for that?)
 
-    //add additional numbers
-#ifndef SYMBIANSIM_BACKEND_PHONEBOOKINFOV1
-    if (m_storeInfo.iMaxAdditionalNumbers > 0) {
-        //one number is saved already
-        for (int i = 1; i < phoneNumberDetails.count() && i-1 < m_storeInfo.iMaxAdditionalNumbers; ++i) {
-            QContactPhoneNumber phoneNumberDetail = static_cast<QContactPhoneNumber>(phoneNumberDetails.at(i));
-            if (phoneNumberDetail.number().length() > m_storeInfo.iMaxNumLengthAdditionalNumber) {
+            // Verify the number length
+            PbkPrintToLog(_L("CntSymbianSimEngine::encodeSimContactL() - phone number length = %d"),
+                numberDetail.number().length());
+            if (numberDetail.number().length() > m_storeInfo.iMaxNumLength) {
                 User::Leave(KErrTooBig);
             }
-            //mark the beginning of an additional number
-            User::LeaveIfError(pbBuffer->AddNewNumberTag());
-            //add number itself
-            TPtrC phoneNumberValue(reinterpret_cast<const TUint16*>(phoneNumberDetail.number().utf16()));
-            User::LeaveIfError(pbBuffer->PutTagAndValue(RMobilePhoneBookStore::ETagPBNumber, phoneNumberValue));
 
-            QContactPhoneNumber convertedPhoneNumberDetail;
-            convertedPhoneNumberDetail.setNumber(phoneNumberDetail.number());
-            convertedContact.saveDetail(&convertedPhoneNumberDetail);
-        }
-    }
-#endif
+            if (phoneNumberCount > 1) {
+                // Mark the beginning of an additional number
+                User::LeaveIfError(pbBuffer->AddNewNumberTag());
+            }
 
-    //add e-mails
+            // The number itself
+            putTagAndValueL(
+                pbBuffer,
+                RMobilePhoneBookStore::ETagPBNumber,
+                number);
 #ifndef SYMBIANSIM_BACKEND_PHONEBOOKINFOV1
-    if (m_storeInfo.iMaxEmailAddr > 0) {
-        QList<QContactDetail> emailDetails = contact->details(QContactEmailAddress::DefinitionName);
-        for (int i = 0; i < emailDetails.count() && i < m_storeInfo.iMaxEmailAddr; ++i) {
-            QContactEmailAddress emailDetail = static_cast<QContactEmailAddress>(emailDetails.at(i));
-            TPtrC emailValue(reinterpret_cast<const TUint16*>(emailDetail.emailAddress().utf16()));
-            if (emailValue.Length() > m_storeInfo.iMaxTextLengthEmailAddr) {
+        // Phonebook info version 1 does not support nick name or e-mail
+        } else if (definitionName == QContactNickname::DefinitionName
+            && m_storeInfo.iMaxSecondNames > 0) {
+            // nickname
+            QContactNickname nicknameDetail = static_cast<QContactNickname>(detail);
+            // Trim to the max possible length;
+            QString nickname = nicknameDetail.nickname().left(m_storeInfo.iMaxTextLengthSecondName);
+            putTagAndValueL(
+                pbBuffer,
+                RMobilePhoneBookStore::ETagPBSecondName,
+                nickname);
+            // Replace detail value with the trimmed one
+            nicknameDetail.setNickname(nickname);
+            contact->saveDetail(&nicknameDetail);
+        } else if (definitionName == QContactEmailAddress::DefinitionName
+            && emailCount < m_storeInfo.iMaxEmailAddr) {
+            emailCount++;
+            QContactEmailAddress emailDetail = static_cast<QContactEmailAddress>(detail);
+            if (emailDetail.emailAddress().length() > m_storeInfo.iMaxTextLengthEmailAddr) {
                 User::Leave(KErrTooBig);
             }
-            User::LeaveIfError(pbBuffer->PutTagAndValue(RMobilePhoneBookStore::ETagPBEmailAddress, emailValue));
-
-            QContactEmailAddress convertedEmailDetail;
-            convertedEmailDetail.setEmailAddress(emailDetail.emailAddress());
-            convertedContact.saveDetail(&convertedEmailDetail);
+            putTagAndValueL(
+                pbBuffer,
+                RMobilePhoneBookStore::ETagPBEmailAddress,
+                emailDetail.emailAddress());
+#endif
+        // These are ignored in the conversion
+        } else if (definitionName == QContactSyncTarget::DefinitionName
+            || definitionName == QContactDisplayLabel::DefinitionName
+            || definitionName == QContactType::DefinitionName) {
+            // Do nothing
+        } else {
+            User::Leave(KErrArgument);
         }
     }
-#endif
-
     CleanupStack::PopAndDestroy(pbBuffer);
-    PbkPrintToLog(_L("CntSymbianSimEngine::encodeSimContactL() - OUT"));
-    return convertedContact;
+}
+
+void CntSimStorePrivate::putTagAndValueL(CPhoneBookBuffer* pbBuffer, TUint8 tag, QString data) const
+{
+    TPtrC value(reinterpret_cast<const TUint16*>(data.utf16()));
+    User::LeaveIfError(pbBuffer->PutTagAndValue(tag, value));
 }
 
 QList<int> CntSimStorePrivate::decodeReservedSlotsL(TDes8& rawData) const
@@ -664,4 +660,3 @@ QList<int> CntSimStorePrivate::decodeReservedSlotsL(TDes8& rawData) const
     CleanupStack::PopAndDestroy(pbBuffer);
     return reservedSlots;
 }
-
