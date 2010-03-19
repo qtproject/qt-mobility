@@ -385,7 +385,7 @@ void QGeoNetworkManager::netReplyFinished(QNetworkReply* reply)
         routeReply->fin = true;
 
         if (d->parseRouteReply(reply, routeReply)) {
-            if (routeReply->rCode == QRouteReply::Failed) {
+            if (routeReply->resultCode() == QRouteReply::Failed) {
                 emit error(routeReply, (QGeoReply::ErrorCode) QNetworkReply::ContentNotFoundError);
                 emit routeReply->error((QGeoReply::ErrorCode) QNetworkReply::ContentNotFoundError);
             } else {
@@ -393,7 +393,7 @@ void QGeoNetworkManager::netReplyFinished(QNetworkReply* reply)
                 emit routeReply->finished();
             }
         } else {
-            routeReply->rCode = QRouteReply::Failed;
+            routeReply->setResultCode(QRouteReply::Failed);
             emit error(routeReply, (QGeoReply::ErrorCode) QNetworkReply::UnknownContentError);
             emit routeReply->error((QGeoReply::ErrorCode) QNetworkReply::UnknownContentError);
         }
@@ -445,7 +445,7 @@ void QGeoNetworkManager::netReplyError(QNetworkReply::NetworkError code)
     } else if (senderType == "QtMobility::QRouteReply") {
         QRouteReply* routeReply = static_cast<QRouteReply*>(sgnSender);
         routeReply->fin = true;
-        routeReply->rCode = QRouteReply::Failed;
+        routeReply->setResultCode(QRouteReply::Failed);
 
         emit error(routeReply, (QGeoReply::ErrorCode) code);
         emit routeReply->error((QGeoReply::ErrorCode) code);

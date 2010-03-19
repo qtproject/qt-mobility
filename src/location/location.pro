@@ -160,6 +160,7 @@ HEADERS += qaddress.h \
            qreversegeocodingrequest.h \
            qroute.h \
            qroutereply.h \
+           qroutereply_p.h \
            qrouterequest.h \
            qrouterequest_p.h \
            qroutexmlparser.h
