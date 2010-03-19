@@ -42,10 +42,11 @@
 #include <QApplication>
 #include <QUrl>
 #include <QtCore>
+#include <QDebug>
 
 //! [0]
 //Includes for using the QML objects
-#include <QDeclarativeView>
+#include <QtDeclarative/QDeclarativeView>
 
 //Includes for using the service framework
 #include <qserviceinterfacedescriptor.h>
@@ -56,15 +57,15 @@
 
 int main(int argc, char* argv[])
 {
-    QML_REGISTER_TYPE(QtSFW,1,0,Service,ServiceWrapper);
-    QML_REGISTER_TYPE(QtSFW,1,0,Services,ServiceRegister);
-
+    qmlRegisterType<ServiceWrapper>("QtSFW", 1, 0, "Service");
+    qmlRegisterType<ServiceRegister>("QtSFW", 1, 0, "Services");
+        
     QApplication app(argc, argv);
 
     //! [1]
     QDeclarativeView canvas;
     canvas.setSource(QUrl("qrc:/sfwexample.qml"));
-    
+
     //![3]
     canvas.show();
     //![3]

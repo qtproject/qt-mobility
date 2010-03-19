@@ -178,7 +178,7 @@ private:
 class DeviceInfo;
 QTM_END_NAMESPACE
 
-#include <mproengprofileactivationobserver.h>
+#include <MProEngProfileActivationObserver.h>
 #include <cenrepnotifyhandler.h>
 
 class MProEngEngine;
