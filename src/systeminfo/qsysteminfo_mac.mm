@@ -947,7 +947,7 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
 
                 if([wifiInterface power]) {
                     if(!rssiTimer->isActive())
-                        rssiTimer->start(1000);
+                        rssiTimer->start(5000);
                 }  else {
                     if(rssiTimer->isActive())
                         rssiTimer->stop();
@@ -1173,7 +1173,7 @@ void QSystemNetworkInfoPrivate::wifiNetworkChanged(const QString &notification, 
         CWInterface *wifiInterface = [CWInterface interfaceWithName:  qstringToNSString(interfaceName)];
         if([wifiInterface power]) {
             if(!rssiTimer->isActive()) {
-                rssiTimer->start(1000);
+                rssiTimer->start(5000);
 
             }
         }  else {
