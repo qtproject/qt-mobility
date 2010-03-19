@@ -531,12 +531,10 @@ class QGalleryAbstractResponsePrivate : public QGalleryItemListPrivate
 public:
     QGalleryAbstractResponsePrivate()
         : result(QGalleryAbstractRequest::NoResult)
-        , itemCount(0)
         , idle(false)
     {
     }
     int result;
-    int itemCount;
     bool idle;
 };
 
@@ -599,43 +597,12 @@ int QGalleryAbstractResponse::result() const
 }
 
 /*!
-    Returns the number of items affected by a gallery response.
-*/
-
-int QGalleryAbstractResponse::itemCount() const
-{
-    return d_func()->itemCount;
-}
-
-/*!
-    Updates the \a count of items affected by a gallery response.
-*/
-
-void QGalleryAbstractResponse::updateItemCount(int count)
-{
-    Q_D(QGalleryAbstractResponse);
-
-    if (d->itemCount != count) {
-        d->itemCount = count;
-
-        emit itemCountChanged();
-    }
-}
-
-/*!
     \fn QGalleryAbstractResponse::waitForFinished(int msecs)
 
     Waits for \a msecs for the a response to finish.
 
     Returns true if the response has finished on return, and returns false if
     the wait time expires or the request is inactive or idle.
-*/
-
-/*!
-    \fn QGalleryAbstractResponse::itemCountChanged()
-
-    Signals that the number of items related to a gallery response
-    has changed.
 */
 
 /*!
@@ -699,14 +666,12 @@ public:
         : QGalleryAbstractRequestPrivate(gallery, QGalleryAbstractRequest::Item)
         , initialCursorPosition(0)
         , minimumCacheSize(200)
-        , totalCount(0)
         , live(false)
     {
     }
 
     int initialCursorPosition;
     int minimumCacheSize;
-    int totalCount;
     bool live;
     QStringList fields;
     QStringList sortFields;

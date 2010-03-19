@@ -156,8 +156,6 @@ public:
     int result() const;
     bool isIdle() const;
 
-    int itemCount() const;
-
     virtual void cancel();
 
     virtual bool waitForFinished(int msecs) = 0;
@@ -165,13 +163,11 @@ public:
 Q_SIGNALS:
     void finished();
     void progressChanged(int current, int maximum);
-    void itemCountChanged();
 
 protected:
     QGalleryAbstractResponse(QGalleryAbstractResponsePrivate &dd, QObject *parent);
 
     void finish(int result, bool idle = false);
-    void updateItemCount(int count);
 };
 
 class QGalleryItemRequestPrivate;

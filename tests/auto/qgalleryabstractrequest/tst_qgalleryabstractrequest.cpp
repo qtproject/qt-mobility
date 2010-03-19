@@ -105,7 +105,6 @@ public:
     void cancel() { if (!m_ignoreCancel) QGalleryAbstractResponse::cancel(); }
 
     void doFinish(int result, bool idle) { finish(result, idle); }
-    void doUpdateItemCount(int count) { updateItemCount(count); }
     void setIgnoreCancel(bool ignore) { m_ignoreCancel = ignore; }
     void setFinishInWait(bool finish) { m_finishInWait = finish; }
 
@@ -147,8 +146,6 @@ public:
 
     bool isRequestSupported(QGalleryAbstractRequest::Type type) const {
         return m_supportedRequests.contains(type); }
-    QString rootItemId() const { return QString(); }
-    QStringList supportedItemTypes() const { return QStringList(); }
 
     void setResult(int result) { m_result = result; }
     void setIdle(bool idle) { m_idle = idle; }

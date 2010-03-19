@@ -51,7 +51,6 @@ private Q_SLOTS:
     void finish();
     void cancel();
     void idle();
-    void itemCount();
 };
 
 class QtGalleryTestResponse : public QGalleryAbstractResponse
@@ -76,7 +75,6 @@ public:
     bool waitForFinished(int) { return true; }
 
     void doFinish(int result, bool idle) { finish(result, idle); }
-    void doUpdateItemCount(int count) { updateItemCount(count); }
 };
 
 void tst_QGalleryAbstractResponse::finish()
@@ -204,37 +202,6 @@ void tst_QGalleryAbstractResponse::idle()
     QCOMPARE(response.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(response.isIdle(), false);
     QCOMPARE(spy.count(), 2);
-}
-
-void tst_QGalleryAbstractResponse::itemCount()
-{
-    QtGalleryTestResponse response;
-
-    QSignalSpy spy(&response, SIGNAL(itemCountChanged()));
-
-    QCOMPARE(response.itemCount(), 0);
-
-    response.doUpdateItemCount(45);
-    QCOMPARE(response.itemCount(), 45);
-    QCOMPARE(spy.count(), 1);
-
-    // Don't emit a signal if unchanged.
-    response.doUpdateItemCount(45);
-    QCOMPARE(response.itemCount(), 45);
-    QCOMPARE(spy.count(), 1);
-
-    // Accept negative values.
-    response.doUpdateItemCount(-125);
-    QCOMPARE(response.itemCount(), -125);
-    QCOMPARE(spy.count(), 2);
-
-    response.doUpdateItemCount(3443564);
-    QCOMPARE(response.itemCount(), 3443564);
-    QCOMPARE(spy.count(), 3);
-
-    response.doUpdateItemCount(0);
-    QCOMPARE(response.itemCount(), 0);
-    QCOMPARE(spy.count(), 4);
 }
 
 #include "tst_qgalleryabstractresponse.moc"
