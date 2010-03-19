@@ -13,7 +13,7 @@ Rectangle {
 
     Script {
         function startup() {
-            blah.contacts();
+            manager.contacts();
         }
         function gotContacts(c) {
             if(c == undefined){
@@ -26,7 +26,6 @@ Rectangle {
 */
             var o = c.values("OnlineAccount");
             var q = c.values("Presence");
-
 
             nameModel.append({"name": c.name, "accountPath": "Account: " + o.AccountPath, "presence": "Status: " + q.Presence, "email": c.email, "avatarSource": "qrc:/default.svg"});
 
@@ -46,10 +45,11 @@ Rectangle {
             mainList.currentIndex = index;
         }
     }
+
     Component.onCompleted: startup();
 
     QMLContactManagerAsync {
-        id: "blah"
+        id: "manager"
 
         manager: "memory"
         onDataChanged: print("Data changed!");
@@ -63,7 +63,6 @@ Rectangle {
             id: wrapper            
             border.width: 2
             height: 30;
-//            width: parent.width;
 
             property color topColor: "#333333";
             property color bottomColor: "#111111";
@@ -202,12 +201,11 @@ Rectangle {
         width: parent.width; height: parent.height
         delegate: listdelegate
         highlight: listhighlight
-        //highlightFollowsCurrentItem: true
+        highlightFollowsCurrentItem: true
         focus: true
         anchors.fill: parent
         highlightMoveSpeed: 5000
     }
-
 
     ListModel {
         id: nameModel
@@ -216,13 +214,14 @@ Rectangle {
     // Attach scrollbar to the right edge of the view.
     ScrollBar {
         id: verticalScrollBar
-        opacity: 0.1
+        opacity: 0
         orientation: "Vertical"
         position: mainList.visibleArea.yPosition
         pageSize: mainList.visibleArea.heightRatio
         width: 20
         height: mainList.height
         anchors.right: mainList.right
+        fgColor: "white"
         // Only show the scrollbar when the view is moving.
         states: [
             State {
@@ -232,9 +231,6 @@ Rectangle {
         ]
         transitions: [ Transition { NumberAnimation { property: "opacity"; duration: 400 } } ]
     }
-
-
-
 }
 
 
