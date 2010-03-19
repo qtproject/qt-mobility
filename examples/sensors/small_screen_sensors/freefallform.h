@@ -56,7 +56,7 @@ class FreeFallForm : public QWidget,
     Q_OBJECT
 
 public:
-    FreeFallForm(QWidget* parent = 0);
+    FreeFallForm(QWidget *parent = 0);
 
 protected:  //from QAccelerometerFilter
     bool filter(QAccelerometerReading *reading);

@@ -44,8 +44,9 @@
 #include "accelerationform.h"
 #include "orientationform.h"
 
-SensorsWindow::SensorsWindow(QWidget* parent)
-    : QMainWindow(parent), m_currentCentralWidget(NULL)
+SensorsWindow::SensorsWindow(QWidget *parent)
+    : QMainWindow(parent)
+    , m_currentCentralWidget(NULL)
 {
     setupUi(this);
 
@@ -54,17 +55,15 @@ SensorsWindow::SensorsWindow(QWidget* parent)
         << "Acceleration"
         << "Orientation";
 
-    QSignalMapper* signalMapper = new QSignalMapper(this);
+    QSignalMapper *signalMapper = new QSignalMapper(this);
 
-    for (int i = 0; i < m_formNames.length(); ++i)
-    {
-        QAction* action = new QAction(m_formNames.at(i), this);
+    for (int i = 0; i < m_formNames.length(); ++i) {
+        QAction *action = new QAction(m_formNames.at(i), this);
         connect(action, SIGNAL(triggered()), signalMapper, SLOT(map()));
         signalMapper->setMapping(action, i);
         menuBar()->addAction(action);
     }
     connect(signalMapper, SIGNAL(mapped(int)), this, SLOT(changeForm(int)));
-
     changeForm(0);
 }
 
@@ -73,14 +72,12 @@ void SensorsWindow::changeForm(int formIndex)
     delete m_currentCentralWidget;
     m_currentCentralWidget = createForm(formIndex);
     setCentralWidget(m_currentCentralWidget);
-
     setWindowTitle(QString("Sensors - ") + m_formNames.at(formIndex));
 }
 
-QWidget* SensorsWindow::createForm(int formIndex)
+QWidget *SensorsWindow::createForm(int formIndex)
 {
-    switch (formIndex)
-    {
+    switch (formIndex) {
         case 0: return new FreeFallForm(this);
         case 1: return new AccelerationForm(this);
         case 2: return new OrientationForm(this);

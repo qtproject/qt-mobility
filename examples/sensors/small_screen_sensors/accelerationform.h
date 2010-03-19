@@ -56,7 +56,7 @@ class AccelerationForm : public QWidget,
     Q_OBJECT
 
 public:
-    AccelerationForm(QWidget* parent = 0);
+    AccelerationForm(QWidget *parent = 0);
 
 protected:  //from QAccelerometerFilter
     bool filter(QAccelerometerReading *reading);

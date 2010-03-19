@@ -41,19 +41,15 @@
 
 #include "accelerationform.h"
 
-AccelerationForm::AccelerationForm(QWidget* parent)
+AccelerationForm::AccelerationForm(QWidget *parent)
     : QWidget(parent)
 {
     setupUi(this);
     m_accelerationSensor.connect();
-    
-    qreal min = m_accelerationSensor.outputRanges()[m_accelerationSensor.outputRange()].minimum;
-    qreal max = m_accelerationSensor.outputRanges()[m_accelerationSensor.outputRange()].maximum;;
-    
-    horizontalSliderX->setRange(min, max);
-    horizontalSliderY->setRange(min, max);
-    horizontalSliderZ->setRange(min, max);
-    
+    qoutputrange range = m_accelerationSensor.outputRanges()[m_accelerationSensor.outputRange()]; 
+    horizontalSliderX->setRange(range.minimum, range.maximum);
+    horizontalSliderY->setRange(range.minimum, range.maximum);
+    horizontalSliderZ->setRange(range.minimum, range.maximum);
     m_accelerationSensor.addFilter(this);
     m_accelerationSensor.start();
 }

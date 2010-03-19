@@ -51,16 +51,16 @@ class SensorsWindow : public QMainWindow,
     Q_OBJECT
 
 public:
-    SensorsWindow(QWidget* parent = 0);
+    SensorsWindow(QWidget *parent = 0);
 
 private Q_SLOTS:
     void changeForm(int formIndex);
 
 private:
-    QWidget* createForm(int formIndex);
+    QWidget *createForm(int formIndex);
 
 private:
-    QWidget* m_currentCentralWidget;
+    QWidget *m_currentCentralWidget;
     QStringList m_formNames;
 };
 

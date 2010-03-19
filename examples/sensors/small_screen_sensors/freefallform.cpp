@@ -43,7 +43,7 @@
 
 const int KTreshold = 2;
 
-FreeFallForm::FreeFallForm(QWidget* parent)
+FreeFallForm::FreeFallForm(QWidget *parent)
     : QWidget(parent)
 {
     setupUi(this);
@@ -65,35 +65,26 @@ void FreeFallForm::on_setupButton_clicked()
 
 bool FreeFallForm::filter(QAccelerometerReading *reading)
 {
-    switch (m_freeFallState)
-    {
-        case StateSetup:
-        {
-            if (abs(reading->x()) < KTreshold && abs(reading->y()) < KTreshold && abs(reading->z()) < KTreshold)
-            {
-                m_freeFallTimer.start();
-                m_freeFallState = StateFalling;
-            }
-            break;
+    switch (m_freeFallState) {
+    case StateSetup:
+        if (abs(reading->x()) < KTreshold && abs(reading->y()) < KTreshold && abs(reading->z()) < KTreshold) {
+            m_freeFallTimer.start();
+            m_freeFallState = StateFalling;
         }
-        case StateFalling:
-        {
-            if (abs(reading->x()) > KTreshold || abs(reading->y()) > KTreshold || abs(reading->z()) > KTreshold)
-            {
-                freeFallTimeLabel->setNum(m_freeFallTimer.elapsed());
-                qreal t = (qreal(m_freeFallTimer.elapsed()) / 1000);
-                freeFallHeightLabel->setNum(9.81 / 2 * t * t);
-                m_freeFallState = StateNotStarted;
-                setupButton->setEnabled(true);
-                setupButton->setFocus();
-                dropItLabel->setText("");
-            }
-            break;
+        break;
+    case StateFalling:
+        if (abs(reading->x()) > KTreshold || abs(reading->y()) > KTreshold || abs(reading->z()) > KTreshold) {
+            freeFallTimeLabel->setNum(m_freeFallTimer.elapsed());
+            qreal t = (qreal(m_freeFallTimer.elapsed()) / 1000);
+            freeFallHeightLabel->setNum(9.81 / 2 * t * t);
+            m_freeFallState = StateNotStarted;
+            setupButton->setEnabled(true);
+            setupButton->setFocus();
+            dropItLabel->setText("");
         }
-        default:
-        {
-            break;
-        }
+        break;
+    default:
+        break;
     }
 
     return false;

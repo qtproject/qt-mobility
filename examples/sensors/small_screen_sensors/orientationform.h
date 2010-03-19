@@ -57,9 +57,9 @@ class OrientationForm : public QWidget,
     Q_OBJECT
 
 public:
-    OrientationForm(QWidget* parent = 0);
+    OrientationForm(QWidget *parent = 0);
 
-    //from QAttitudeFilter
+    //from QRotationFilter
     bool filter(QRotationReading *reading);
 
 private Q_SLOTS:

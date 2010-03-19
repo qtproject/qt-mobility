@@ -42,14 +42,15 @@
 #include <QtGui/QApplication>
 #include "sensorswindow.h"
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
     QApplication application(argc, argv);
     SensorsWindow window;
-#ifdef Q_OS_SYMBIAN    
+    
+#ifdef QTM_EXAMPLES_SMALL_SCREEN
     window.showMaximized();
 #else
     window.show();
-#endif
+#endif    
     return application.exec();
 }

@@ -1,6 +1,8 @@
 TARGET = SmallSensors
 TEMPLATE = app
 
+include(../../examples.pri)
+
 QT=core gui
 CONFIG+=mobility
 MOBILITY+=sensors
@@ -20,7 +22,5 @@ FORMS += sensorswindow.ui \
     freefallform.ui \
     accelerationform.ui \
     orientationform.ui
-
-#INCLUDEPATH += ..\..\include
 
 symbian:TARGET.CAPABILITY += ReadDeviceData

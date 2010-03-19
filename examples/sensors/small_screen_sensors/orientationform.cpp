@@ -41,13 +41,12 @@
 
 #include "orientationform.h"
 
-OrientationForm::OrientationForm(QWidget* parent)
+OrientationForm::OrientationForm(QWidget *parent)
     : QWidget(parent)
 {
     setupUi(this);
     connect(&m_orientation, SIGNAL(readingChanged()), this, SLOT(orientationChanged()));
   
-    // Genreic attitude sensor does't give output ranges
     // Copy-pasted from documentation
     horizontalSliderX->setRange(-90, 90);
     horizontalSliderY->setRange(-180, 180);
