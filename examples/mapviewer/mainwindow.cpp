@@ -126,24 +126,27 @@ MainWindow::MainWindow(QWidget *parent) :
     popupMenu->addAction(menuItem);
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(setRtFromTo(bool)));
-
-    menuItem = new QAction(tr("Draw line"), this);
-    popupMenu->addAction(menuItem);
+    
+    QMenu* subMenuItem = new QMenu(tr("Draw"), this);
+    popupMenu->addMenu(subMenuItem);
+    
+    menuItem = new QAction(tr("Line"), this);
+    subMenuItem->addAction(menuItem);
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(drawLine(bool)));
 
-    menuItem = new QAction(tr("Draw rectangle"), this);
-    popupMenu->addAction(menuItem);
+    menuItem = new QAction(tr("Rectangle"), this);
+    subMenuItem->addAction(menuItem);
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(drawRect(bool)));
 
-    menuItem = new QAction(tr("Draw ellipse"), this);
-    popupMenu->addAction(menuItem);
+    menuItem = new QAction(tr("Ellipse"), this);
+    subMenuItem->addAction(menuItem);
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(drawEllipse(bool)));
 
-    menuItem = new QAction(tr("Draw polygon"), this);
-    popupMenu->addAction(menuItem);
+    menuItem = new QAction(tr("Polygon"), this);
+    subMenuItem->addAction(menuItem);
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(drawPolygon(bool)));
     
