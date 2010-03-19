@@ -114,15 +114,15 @@ void CntFilterRelationship::createSelectQuery(const QContactFilter& filter,
     QContactRelationshipFilter relationfilter(filter);
     QContactId  id_to_search = relationfilter.relatedContactId();
 
-    if(relationfilter.relatedContactRole() == QContactRelationshipFilter::First )
+    if(relationfilter.relatedContactRole() == QContactRelationship::First )
     {
         sqlQuery = QString("SELECT DISTINCT contact_group_member_id FROM  groups WHERE contact_group_id = %1").arg(id_to_search.localId());
     }
-    else if(relationfilter.relatedContactRole() == QContactRelationshipFilter::Second )
+    else if(relationfilter.relatedContactRole() == QContactRelationship::Second )
     {
         sqlQuery = QString("SELECT DISTINCT contact_group_id FROM  groups WHERE contact_group_member_id = %1").arg(id_to_search.localId());
     }
-    else if(relationfilter.relatedContactRole() == QContactRelationshipFilter::Either )
+    else if(relationfilter.relatedContactRole() == QContactRelationship::Either )
     {
         sqlQuery = QString("SELECT contact_group_member_id FROM  groups WHERE contact_group_id = %1").arg(id_to_search.localId());
                + " union " + 
