@@ -94,9 +94,10 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service)
 S60VideoPlayerSession::~S60VideoPlayerSession()
 {
 #ifndef __SERIES60_31__
-    m_audioOutput->UnregisterObserver(*this);
-#endif
+    if (m_audioOutput)
+        m_audioOutput->UnregisterObserver(*this);
     delete m_audioOutput;
+#endif
     m_player->Close();
     delete m_player;
 }
@@ -292,7 +293,7 @@ void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
     TRAPD(err, 
         m_player->SetDisplayWindowL(m_wsSession, 
                                     m_screenDevice, 
-                                    *m_window, 
+                                    *m_window,
                                     m_rect, 
                                     m_rect);
         TSize originalSize;

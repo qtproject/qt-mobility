@@ -60,7 +60,8 @@ S60AudioPlayerSession::S60AudioPlayerSession(QObject *parent)
 
 S60AudioPlayerSession::~S60AudioPlayerSession()
 {
-    m_audioOutput->UnregisterObserver(*this);
+    if (m_audioOutput)
+        m_audioOutput->UnregisterObserver(*this);
     delete m_audioOutput;
     m_player->Close();
     delete m_player;
