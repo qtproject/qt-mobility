@@ -67,8 +67,6 @@ QList<CContactItemField *> CntTransformAvatar::transformDetailL(const QContactDe
     }
 
     if(filename.Length()) {
-        const QString& subTypeImage(QContactAvatar::SubTypeImage);
-
         TUid uid(KUidContactFieldCodImage);
 
         CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, uid);
@@ -129,9 +127,10 @@ QList<TUid> CntTransformAvatar::supportedSortingFieldTypes(QString /*detailField
  */
 bool CntTransformAvatar::supportsSubType(const QString& subType) const
 {
-    if(QContactAvatar::FieldSubType  == subType)
-      return true;
-    else
+    // avatar no longer supports subtype
+    //if(QContactAvatar::FieldSubType  == subType)
+    //  return true;
+    //else
       return false;
 }
 
