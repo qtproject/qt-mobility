@@ -265,72 +265,34 @@ Q_DEFINE_LATIN1_LITERAL(QContactPresence::FieldNickname, "Nickname");
 /*!
    \variable QContactPresence::FieldPresence
 
-   The constant key for which the presence value is stored in details
+   The constant key for which the presence state value is stored in details
    of the QContactPresence typel.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactPresence::FieldPresence, "Presence");
+Q_DEFINE_LATIN1_LITERAL(QContactPresence::FieldPresenceState, "PresenceState");
 
 /*!
-   \variable QContactPresence::PresenceAvailable
+   \variable QContactPresence::FieldPresenceStateText
 
-   The value for presence which specifies that the contact's current
-   status is available.
+   The constant key for which the presence provider provided text representation
+   of the presence state is stored in details of the QContactPresence type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactPresence::PresenceAvailable, "Available");
+Q_DEFINE_LATIN1_LITERAL(QContactPresence::FieldPresenceStateText, "PresenceStateText");
 
 /*!
-   \variable QContactPresence::PresenceHidden
+   \variable QContactPresence::FieldPresenceStateImageUrl
 
-   The value for presence which specifies that the contact's current.
-   status is hidden
+   The constant key for which the image url value for the current presence state
+   is stored in details of the QContactPresence type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactPresence::PresenceHidden, "Hidden");
+Q_DEFINE_LATIN1_LITERAL(QContactPresence::FieldPresenceStateImageUrl, "PresenceStateImageUrl");
 
 /*!
-   \variable QContactPresence::PresenceBusy
-   The value for presence which specifies that the contact's current status is busy.
+   \variable QContactPresence::FieldCustomMessage
+
+   The constant key for which the user-entered custom message for their state
+   is stored in details of the QContactPresence type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactPresence::PresenceBusy, "Busy");
-
-/*!
-   \variable QContactPresence::PresenceAway
-   The value for presence which specifies that the contact's current status is away.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactPresence::PresenceAway, "Away");
-
-/*!
-   \variable QContactPresence::PresenceExtendedAway
-   The value for presence which specifies that the contact's current status is extended away.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactPresence::PresenceExtendedAway, "ExtendedAway");
-
-/*!
-   \variable QContactPresence::PresenceUnknown
-   The value for presence which specifies that the contact's current status is unknown.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactPresence::PresenceUnknown, "Unknown");
-
-/*!
-   \variable QContactPresence::PresenceOffline
-   The value for presence which specifies that the contact's current status is offline.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactPresence::PresenceOffline, "Offline");
-
-/*!
-   \variable QContactPresence::FieldStatusMessage
-
-   The constant key for which the status message value is stored in
-   details of the QContactPresence type.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactPresence::FieldStatusMessage, "StatusMessage");
-
-/*!
-   \variable QContactPresence::FieldStatusImageUri
-
-   The constant key for which the status image uri value is stored in
-   details of the QContactPresence type.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactPresence::FieldStatusImageUri, "StatusImageUri");
+Q_DEFINE_LATIN1_LITERAL(QContactPresence::FieldCustomMessage, "CustomMessage");
 
 /*!
    \variable QContactSyncTarget::DefinitionName
@@ -427,72 +389,34 @@ Q_DEFINE_LATIN1_LITERAL(QContactGlobalPresence::FieldNickname, "Nickname");
 /*!
    \variable QContactGlobalPresence::FieldPresence
 
-   The constant key for which the presence value is stored in details
+   The constant key for which the presence state value is stored in details
    of the QContactGlobalPresence typel.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactGlobalPresence::FieldPresence, "Presence");
+Q_DEFINE_LATIN1_LITERAL(QContactGlobalPresence::FieldPresenceState, "PresenceState");
 
 /*!
-   \variable QContactGlobalPresence::PresenceAvailable
+   \variable QContactGlobalPresence::FieldPresenceStateText
 
-   The value for presence which specifies that the contact's current
-   status is available.
+   The constant key for which the presence provider provided text representation
+   of the presence state is stored in details of the QContactGlobalPresence type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactGlobalPresence::PresenceAvailable, "Available");
+Q_DEFINE_LATIN1_LITERAL(QContactGlobalPresence::FieldPresenceStateText, "PresenceStateText");
 
 /*!
-   \variable QContactGlobalPresence::PresenceHidden
+   \variable QContactGlobalPresence::FieldPresenceStateImageUrl
 
-   The value for presence which specifies that the contact's current.
-   status is hidden
+   The constant key for which the image url value for the current presence state
+   is stored in details of the QContactGlobalPresence type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactGlobalPresence::PresenceHidden, "Hidden");
+Q_DEFINE_LATIN1_LITERAL(QContactGlobalPresence::FieldPresenceStateImageUrl, "PresenceStateImageUrl");
 
 /*!
-   \variable QContactGlobalPresence::PresenceBusy
-   The value for presence which specifies that the contact's current status is busy.
+   \variable QContactGlobalPresence::FieldCustomMessage
+
+   The constant key for which the user-entered custom message for their state
+   is stored in details of the QContactGlobalPresence type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactGlobalPresence::PresenceBusy, "Busy");
-
-/*!
-   \variable QContactGlobalPresence::PresenceAway
-   The value for presence which specifies that the contact's current status is away.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactGlobalPresence::PresenceAway, "Away");
-
-/*!
-   \variable QContactGlobalPresence::PresenceExtendedAway
-   The value for presence which specifies that the contact's current status is extended away.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactGlobalPresence::PresenceExtendedAway, "ExtendedAway");
-
-/*!
-   \variable QContactGlobalPresence::PresenceUnknown
-   The value for presence which specifies that the contact's current status is unknown.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactGlobalPresence::PresenceUnknown, "Unknown");
-
-/*!
-   \variable QContactGlobalPresence::PresenceOffline
-   The value for presence which specifies that the contact's current status is offline.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactGlobalPresence::PresenceOffline, "Offline");
-
-/*!
-   \variable QContactGlobalPresence::FieldStatusMessage
-
-   The constant key for which the status message value is stored in
-   details of the QContactGlobalPresence type.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactGlobalPresence::FieldStatusMessage, "StatusMessage");
-
-/*!
-   \variable QContactGlobalPresence::FieldStatusImageUri
-
-   The constant key for which the status image uri value is stored in
-   details of the QContactGlobalPresence type.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactGlobalPresence::FieldStatusImageUri, "StatusImageUri");
+Q_DEFINE_LATIN1_LITERAL(QContactGlobalPresence::FieldCustomMessage, "CustomMessage");
 
 /*!
    \variable QContactOnlineAccount::DefinitionName
@@ -2217,49 +2141,59 @@ QString QContactOnlineAccount::statusMessage() const
  */
 
 /*!
-   \fn QContactPresence::setPresence(const QString& presence)
+   \fn QContactPresence::setPresenceState(QContactPresence::PresenceState presenceState)
 
-   Sets the presence of the online account according to the presence
-   information provider to \a presence.
+   Sets the presence state of the online account according to the presence
+   information provider to the given \a presenceState.
  */
 
 /*!
-   \fn QContactPresence::presence() const
+   \fn QContactPresence::presenceState() const
 
-   Returns the presence of the online account according to the
+   Returns the presence state of the online account according to the
    presence provider.
  */
 
 /*!
-   \fn QContactPresence::setStatusMessage(const QString& statusMessage)
+   \fn QContactPresence::setPresenceStateText(const QString& presenceStateText)
 
-   Sets the last-known status message of the contact which was
-   communicated via the online account about which this detail stores
-   presence information to \a statusMessage.
+   Sets the text corresponding to the presence state.  This function is generally
+   called by presence providers to allow custom naming of states, or to allow
+   finer grained state reporting than is provided by the presence state API.
  */
 
 /*!
-   \fn QContactPresence::statusMessage() const
+   \fn QContactPresence::presenceStateText() const
 
-   Returns the last-known status message of the contact which was
-   communicated via the online account about which this detail stores
-   presence information.
+   Returns the text corresponding to the current presence state.
  */
 
 /*!
-   \fn QContactPresence::setStatusImageUri(const QString& statusImageUri)
+  \fn QContactPresence::setCustomMessage(const QString& customMessage)
 
-   Sets the last-known status image uri of the contact which was
-   communicated via the online account about which this detail stores
-   presence information to \a statusImageUri.
+   Sets the custom status message from the contact for the online account
+   about which this detail stores presence information, to \a statusMessage.
  */
 
 /*!
-   \fn QContactPresence::statusImageUri() const
+   \fn QContactPresence::customMessage() const
 
-   Returns the last-known status image uri of the contact which was
-   communicated via the online account about which this detail stores
-   presence information.
+   Returns the custom status message from the contact for the online account
+   about which this detail stores presence information.
+ */
+
+/*!
+   \fn QContactPresence::setPresenceStateImageUrl(const QUrl& presenceStateImageUrl)
+
+   Sets the last-known status image url of the contact for the online account
+   about which this detail stores presence information, to \a presenceStateImageUrl.
+ */
+
+/*!
+   \fn QContactPresence::presenceStateImageUrl() const
+
+   Returns the last-known status image url of the contact for the online account
+   about which this detail stores presence information.
  */
 
 /*!
@@ -2291,49 +2225,59 @@ QString QContactOnlineAccount::statusMessage() const
  */
 
 /*!
-   \fn QContactGlobalPresence::setPresence(const QString& presence)
+   \fn QContactGlobalPresence::setPresenceState(QContactPresence::PresenceState presenceState)
 
-   Sets the presence of the online account according to the presence
-   information provider to \a presence.
+   Sets the presence state of the online account according to the presence
+   information provider to the given \a presenceState.
  */
 
 /*!
-   \fn QContactGlobalPresence::presence() const
+   \fn QContactGlobalPresence::presenceState() const
 
-   Returns the presence of the online account according to the
+   Returns the presence state of the online account according to the
    presence provider.
  */
 
 /*!
-   \fn QContactGlobalPresence::setStatusMessage(const QString& statusMessage)
+   \fn QContactGlobalPresence::setPresenceStateText(const QString& presenceStateText)
 
-   Sets the last-known status message of the contact which was
-   communicated via the online account about which this detail stores
-   presence information to \a statusMessage.
+   Sets the text corresponding to the presence state.  This function is generally
+   called by presence providers to allow custom naming of states, or to allow
+   finer grained state reporting than is provided by the presence state API.
  */
 
 /*!
-   \fn QContactGlobalPresence::statusMessage() const
+   \fn QContactGlobalPresence::presenceStateText() const
 
-   Returns the last-known status message of the contact which was
-   communicated via the online account about which this detail stores
-   presence information.
+   Returns the text corresponding to the current presence state.
  */
 
 /*!
-   \fn QContactGlobalPresence::setStatusImageUri(const QString& statusImageUri)
+  \fn QContactGlobalPresence::setCustomMessage(const QString& customMessage)
 
-   Sets the last-known status image uri of the contact which was
-   communicated via the online account about which this detail stores
-   presence information to \a statusImageUri.
+   Sets the custom status message from the contact for the online account
+   about which this detail stores presence information, to \a statusMessage.
  */
 
 /*!
-   \fn QContactGlobalPresence::statusImageUri() const
+   \fn QContactGlobalPresence::customMessage() const
 
-   Returns the last-known status image uri of the contact which was
-   communicated via the online account about which this detail stores
-   presence information.
+   Returns the custom status message from the contact for the online account
+   about which this detail stores presence information.
+ */
+
+/*!
+   \fn QContactGlobalPresence::setPresenceStateImageUrl(const QUrl& presenceStateImageUrl)
+
+   Sets the last-known status image url of the contact for the online account
+   about which this detail stores presence information, to \a presenceStateImageUrl.
+ */
+
+/*!
+   \fn QContactGlobalPresence::presenceStateImageUrl() const
+
+   Returns the last-known status image url of the contact for the online account
+   about which this detail stores presence information.
  */
 
 

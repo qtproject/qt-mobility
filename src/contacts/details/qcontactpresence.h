@@ -44,6 +44,7 @@
 #define QCONTACTPRESENCE_H
 
 #include <QString>
+#include <QUrl>
 
 #include "qtcontactsglobal.h"
 #include "qcontactdetail.h"
@@ -59,52 +60,42 @@ public:
     const char* DefinitionName;
     const char* FieldLastUpdateTimestamp;
     const char* FieldNickname;
-    const char* FieldPresence;
-    const char* PresenceAvailable;
-    const char* PresenceHidden;
-    const char* PresenceBusy;
-    const char* PresenceAway;
-    const char* PresenceExtendedAway;
-    const char* PresenceUnknown;
-    const char* PresenceOffline;
-    const char* FieldStatusMessage;
-    const char* FieldStatusImageUri;
-
-    // deprecated keys:
-    //const char* FieldAccountUri;
+    const char* FieldPresenceState;
+    const char* FieldPresenceStateText;
+    const char* FieldPresenceStateImageUrl;
+    const char* FieldCustomMessage;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactPresence, "Presence")
     Q_DECLARE_LATIN1_LITERAL(FieldLastUpdateTimestamp, "LastUpdateTimestamp");
     Q_DECLARE_LATIN1_LITERAL(FieldNickname, "Nickname");
-    Q_DECLARE_LATIN1_LITERAL(FieldPresence, "Presence");
-    Q_DECLARE_LATIN1_LITERAL(PresenceAvailable, "Available");
-    Q_DECLARE_LATIN1_LITERAL(PresenceHidden, "Hidden");
-    Q_DECLARE_LATIN1_LITERAL(PresenceBusy, "Busy");
-    Q_DECLARE_LATIN1_LITERAL(PresenceAway, "Away");
-    Q_DECLARE_LATIN1_LITERAL(PresenceExtendedAway, "ExtendedAway");
-    Q_DECLARE_LATIN1_LITERAL(PresenceUnknown, "Unknown");
-    Q_DECLARE_LATIN1_LITERAL(PresenceOffline, "Offline");
-    Q_DECLARE_LATIN1_LITERAL(FieldStatusMessage, "StatusMessage");
-    Q_DECLARE_LATIN1_LITERAL(FieldStatusImageUri, "StatusImageUri");
-
-    // deprecated keys:
-    //Q_DECLARE_LATIN1_LITERAL(FieldAccountUri, "AccountUri");
+    Q_DECLARE_LATIN1_LITERAL(FieldPresenceState, "PresenceState");
+    Q_DECLARE_LATIN1_LITERAL(FieldPresenceStateText, "PresenceStateText");
+    Q_DECLARE_LATIN1_LITERAL(FieldPresenceStateImageUrl, "PresenceStateImageUrl");
+    Q_DECLARE_LATIN1_LITERAL(FieldCustomMessage, "CustomMessage");
 #endif
 
-    //?? just do this via detail linking?
-    //void setAccountUri(const QString& accountUri) {setValue(FieldAccountUri, accountUri);}
-    //QString accountUri() const {return value(FieldAccountUri);}
+    enum PresenceState {
+        PresenceAvailable = 1,
+        PresenceHidden,
+        PresenceBusy,
+        PresenceAway,
+        PresenceExtendedAway,
+        PresenceOffline,
+        PresenceUnknown
+    };
 
     void setLastUpdateTimestamp(const QDateTime& updateTimestamp) {setValue(FieldLastUpdateTimestamp, updateTimestamp);}
     QDateTime lastUpdateTimestamp() const {return value<QDateTime>(FieldLastUpdateTimestamp);}
     void setNickname(const QString& nickname) {setValue(FieldNickname, nickname);}
     QString nickname() const {return value(FieldNickname);}
-    void setPresence(const QString& presence) {setValue(FieldPresence, presence);}
-    QString presence() const {return value(FieldPresence);}
-    void setStatusMessage(const QString& statusMessage) {setValue(FieldStatusMessage, statusMessage);}
-    QString statusMessage() const {return value(FieldStatusMessage);}
-    void setStatusImageUri(const QString& statusImageUri) {setValue(FieldStatusImageUri, statusImageUri);}
-    QString statusImageUri() const {return value(FieldStatusImageUri);}
+    void setPresenceState(PresenceState presence) {setValue(FieldPresenceState, static_cast<int>(presence));}
+    PresenceState presenceState() const {return static_cast<PresenceState>(value<int>(FieldPresenceState));}
+    void setPresenceStateText(const QString& presenceStateText) {setValue(FieldPresenceStateText, presenceStateText);}
+    QString presenceStateText() const {return value(FieldPresenceStateText);}
+    void setPresenceStateImageUrl(const QUrl& presenceStateImageUrl) {setValue(FieldPresenceStateImageUrl, presenceStateImageUrl);}
+    QUrl presenceStateImageUrl() const {return value(FieldPresenceStateImageUrl);}
+    void setCustomMessage(const QString& customMessage) {setValue(FieldCustomMessage, customMessage);}
+    QString customMessage() const {return value(FieldCustomMessage);}
 };
 
 QTM_END_NAMESPACE
