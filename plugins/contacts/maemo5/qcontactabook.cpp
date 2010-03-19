@@ -1036,7 +1036,7 @@ QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eC
       OssoABookPresence *presence = OSSO_ABOOK_PRESENCE (rosterContact);
       TpConnectionPresenceType presenceType = osso_abook_presence_get_presence_type (presence);
       QString presenceTypeString;
-      QContactPresence presenceTypeEnum;
+      QContactPresence::PresenceState presenceTypeEnum;
       switch (presenceType) {
         case TP_CONNECTION_PRESENCE_TYPE_UNSET: presenceTypeString = "Unset"; presenceTypeEnum = QContactPresence::PresenceUnknown; break;
         case TP_CONNECTION_PRESENCE_TYPE_OFFLINE: presenceTypeString = "Offline"; presenceTypeEnum = QContactPresence::PresenceOffline; break;
@@ -1219,7 +1219,7 @@ QList<QContactPresence*> QContactABook::getPresenceDetail(EContact *eContact) co
       OssoABookPresence *presence = OSSO_ABOOK_PRESENCE (rosterContact);
       TpConnectionPresenceType presenceType = osso_abook_presence_get_presence_type (presence);
       QString presenceTypeString;
-      QContactPresence presenceTypeEnum;
+      QContactPresence::PresenceState presenceTypeEnum;
       switch (presenceType) {
         case TP_CONNECTION_PRESENCE_TYPE_UNSET: presenceTypeString = "Unset"; presenceTypeEnum = QContactPresence::PresenceUnknown; break;
         case TP_CONNECTION_PRESENCE_TYPE_OFFLINE: presenceTypeString = "Offline"; presenceTypeEnum = QContactPresence::PresenceOffline; break;
@@ -1306,7 +1306,7 @@ QList<QContactPresence*> QContactABook::getPresenceDetail(EContact *eContact) co
         }
 
         if (ossoValidIsOk && !type.isEmpty()) {
-          QContactPresence* rtn = new QContactOnlineAccount;
+          QContactPresence* rtn = new QContactPresence;
           QVariantMap map;
           map[QContactPresence::FieldNickname] = QString::fromLatin1(e_vcard_attribute_get_value(attr));
           map[QContactPresence::FieldLinkedDetailUris] = type; // XXX FIXME
