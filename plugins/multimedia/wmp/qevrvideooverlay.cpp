@@ -42,6 +42,7 @@
 #include "qevrvideooverlay.h"
 
 #include <d3d9.h>
+#include <wmp.h>
 
 QEvrVideoOverlay::QEvrVideoOverlay(HINSTANCE evrHwnd)
     : m_ref(1)
@@ -69,17 +70,16 @@ WId QEvrVideoOverlay::winId() const
 
 void QEvrVideoOverlay::setWinId(WId id)
 {
+    m_winId = id;
+
     if (m_displayControl) {
         m_displayControl->SetVideoWindow(id);
+        m_displayControl->SetAspectRatioMode(m_aspectRatioMode == Qt::KeepAspectRatio
+                ? MFVideoARMode_PreservePicture
+                : MFVideoARMode_None);
 
-        QRect rect = m_displayRect;
-
-        RECT displayRect = { rect.left(), rect.top(), rect.right(), rect.bottom() };
-
-        m_displayControl->SetVideoPosition(0, &displayRect);
+        setDisplayRect(m_displayRect);
     }
-
-    m_winId = id;
 }
 
 QRect QEvrVideoOverlay::displayRect() const
@@ -92,7 +92,27 @@ void QEvrVideoOverlay::setDisplayRect(const QRect &rect)
     if (m_displayControl) {
         RECT displayRect = { rect.left(), rect.top(), rect.right(), rect.bottom() };
 
-        m_displayControl->SetVideoPosition(0, &displayRect);
+        if (m_aspectRatioMode == Qt::KeepAspectRatioByExpanding) {
+            SIZE size;
+            m_displayControl->GetNativeVideoSize(&size, 0);
+
+            QSize clippedSize = rect.size();
+            clippedSize.scale(size.cx, size.cy, Qt::KeepAspectRatio);
+
+            long x = (size.cx - clippedSize.width()) / 2;
+            long y = (size.cy - clippedSize.height()) / 2;
+
+            MFVideoNormalizedRect sourceRect =
+            { 
+                float(x) / size.cx,
+                float(y) / size.cy, 
+                float(x + clippedSize.width()) / size.cx,
+                float(y + clippedSize.height()) / size.cy
+            }; 
+            m_displayControl->SetVideoPosition(&sourceRect, &displayRect);
+        } else {
+            m_displayControl->SetVideoPosition(0, &displayRect);
+        }
     }
 
     m_displayRect = rect;
@@ -126,22 +146,14 @@ Qt::AspectRatioMode QEvrVideoOverlay::aspectRatioMode() const
 
 void QEvrVideoOverlay::setAspectRatioMode(Qt::AspectRatioMode mode)
 {
-    switch (mode) {
-    case Qt::KeepAspectRatio:
-        if (m_displayControl)
-                m_displayControl->SetAspectRatioMode(MFVideoARMode_PreservePicture);
+    m_aspectRatioMode = mode;
 
-        m_aspectRatioMode = mode;
-        break;
-    case Qt::IgnoreAspectRatio:
-        if (m_displayControl)
-                m_displayControl->SetAspectRatioMode(MFVideoARMode_None);
-
-        m_aspectRatioMode = mode;
-        break;
-    default:
-        break;
-    }
+    if (m_displayControl) {
+        m_displayControl->SetAspectRatioMode(mode == Qt::KeepAspectRatio
+                ? MFVideoARMode_PreservePicture
+                : MFVideoARMode_None);
+        setDisplayRect(m_displayRect);
+    } 
 }
 
 void QEvrVideoOverlay::repaint()
@@ -194,14 +206,24 @@ void QEvrVideoOverlay::setDisplayControl(IMFVideoDisplayControl *control)
     m_displayControl = control;
 
     if (m_displayControl) {
-        QRect rect = displayRect();
-        RECT displayRect = { rect.left(), rect.top(), rect.right(), rect.bottom() };
-
         m_displayControl->AddRef();
-        m_displayControl->SetVideoWindow(winId());
-        m_displayControl->SetVideoPosition(0, &displayRect);
+        m_displayControl->SetVideoWindow(m_winId);
+        m_displayControl->SetAspectRatioMode(m_aspectRatioMode == Qt::KeepAspectRatio
+                ? MFVideoARMode_PreservePicture
+                : MFVideoARMode_None);
+
+        setDisplayRect(m_displayRect);
     }
 }
+
+void QEvrVideoOverlay::openStateChanged(long state)
+{
+    if (state == wmposMediaOpen) {
+        setDisplayRect(m_displayRect);
+
+        emit nativeSizeChanged();
+    }
+};
 
 // IUnknown
 HRESULT QEvrVideoOverlay::QueryInterface(REFIID riid, void **object)

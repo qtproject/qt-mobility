@@ -97,6 +97,9 @@ public:
     HRESULT STDMETHODCALLTYPE ShutdownObject();
     HRESULT STDMETHODCALLTYPE DetachObject();
 
+public Q_SLOTS:
+    void openStateChanged(long state);
+
 private:
     typedef HRESULT (WINAPI *PtrMFCreateVideoPresenter)(IUnknown*, REFIID, REFIID, void**);
 
