@@ -71,6 +71,28 @@ QTM_BEGIN_NAMESPACE
   \sa QVersitDocument
  */
 
+/*!
+  \enum QVersitProperty::ValueType
+  Describes the type of data held in the property's value.
+
+  The vCard and iCalendar specifications allows a property value to hold a string, binary data, or a
+  nested document.  String values can either be unstructured or structured.  Structured strings can
+  be either of compound type or list type.  A compound value is one that is delimited by semicolons,
+  allows empty components, and has a property-specific cardinality and ordering.  A list value is
+  one that is delimited by commas, does not have empty components, and has no restrictions on
+  cardinality or ordering.
+
+  \value PlainType The property value holds an unstructured string and can be retrieved with
+  QVersitProperty::value()
+  \value CompoundType The property value holds a compound string and can be retrieved with
+  QVersitProperty::value<QStringList>()
+  \value ListType The property value holds a list of strings and can be retrieved with
+  QVersitProperty::value<QStringList>()
+  \value BinaryType The property value holds a binary value and can be retrieved with
+  QVersitProperty::value<QByteArray>()
+  \value VersitDocumentType The property value holds a nested Versit document and can be retrieved
+  with QVersitProperty::value<QVersitDocument>()
+ */
 
 /*! Constructs a new empty property */
 QVersitProperty::QVersitProperty() : d(new QVersitPropertyPrivate())
@@ -284,6 +306,22 @@ QString QVersitProperty::value() const
     } else {
         return d->mValue.toString();
     }
+}
+
+/*!
+ * Sets the type of value held in the property to \a type.
+ */
+void QVersitProperty::setValueType(QVersitProperty::ValueType type)
+{
+    d->mValueType = type;
+}
+
+/*!
+ * Returns the type of value held in the property.
+ */
+QVersitProperty::ValueType QVersitProperty::valueType() const
+{
+    return d->mValueType;
 }
 
 /*!
