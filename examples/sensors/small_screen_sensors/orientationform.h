@@ -45,14 +45,14 @@
 #include <QtGui>
 #include "ui_orientationform.h"
 
-#include <qattitudesensor.h>
+#include <qrotationsensor.h>
 #include <qorientationsensor.h>
 
 QTM_USE_NAMESPACE
 
 class OrientationForm : public QWidget,
     private Ui::OrientationForm, 
-    public QAttitudeFilter
+    public QRotationFilter
 {
     Q_OBJECT
 
@@ -60,7 +60,7 @@ public:
     OrientationForm(QWidget* parent = 0);
 
     //from QAttitudeFilter
-    bool filter(QAttitudeReading *reading);
+    bool filter(QRotationReading *reading);
 
 private Q_SLOTS:
     void orientationChanged();
@@ -68,7 +68,7 @@ private Q_SLOTS:
 private:
     QString mapOrientationToString(QOrientationReading *reading);
     
-    QAttitudeSensor m_attitude;
+    QRotationSensor m_rotation;
     QOrientationSensor m_orientation;
 };
 

@@ -54,7 +54,6 @@ AccelerationForm::AccelerationForm(QWidget* parent)
     horizontalSliderY->setRange(min, max);
     horizontalSliderZ->setRange(min, max);
     
-    m_accelerationSensor.setSignalEnabled(false);
     m_accelerationSensor.addFilter(this);
     m_accelerationSensor.start();
 }

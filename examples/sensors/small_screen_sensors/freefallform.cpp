@@ -49,10 +49,8 @@ FreeFallForm::FreeFallForm(QWidget* parent)
     setupUi(this);
     dropItLabel->setText("");
 
-    m_accelerationSensor.setSignalEnabled(false);
     m_accelerationSensor.addFilter(this);
     m_accelerationSensor.start();
-
     m_freeFallState = StateNotStarted;
 }
 

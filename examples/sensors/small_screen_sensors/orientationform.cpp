@@ -51,24 +51,23 @@ OrientationForm::OrientationForm(QWidget* parent)
     // Copy-pasted from documentation
     horizontalSliderX->setRange(-90, 90);
     horizontalSliderY->setRange(-180, 180);
-    horizontalSliderZ->setRange(0, 360);
+    horizontalSliderZ->setRange(-180, 180);
     
-    m_attitude.setSignalEnabled(false);
-    m_attitude.addFilter(this);
-    m_attitude.start();
+    m_rotation.addFilter(this);
+    m_rotation.start();
     m_orientation.start();    
 }
 
-bool OrientationForm::filter(QAttitudeReading *reading)
+bool OrientationForm::filter(QRotationReading *reading)
 {
-    horizontalSliderX->setValue(reading->pitch());
-    labelX->setText(QString("pitch = %1").arg(reading->pitch()));
+    horizontalSliderX->setValue(reading->x());
+    labelX->setText(QString("X = %1").arg(reading->x()));
     
-    horizontalSliderY->setValue(reading->roll());
-    labelY->setText(QString("roll = %1").arg(reading->roll()));
+    horizontalSliderY->setValue(reading->y());
+    labelY->setText(QString("Y = %1").arg(reading->y()));
 
-    horizontalSliderZ->setValue(reading->yaw());
-    labelZ->setText(QString("yaw = %1").arg(reading->yaw()));
+    horizontalSliderZ->setValue(reading->z());
+    labelZ->setText(QString("Z = %1").arg(reading->z()));
     
     return false;
 }
