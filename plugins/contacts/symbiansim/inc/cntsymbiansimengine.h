@@ -80,11 +80,11 @@ QTM_USE_NAMESPACE
 
 #define CNT_SYMBIANSIM_MANAGER_NAME "symbiansim"
 
-Q_DEFINE_LATIN1_LITERAL(KSimSyncTarget, "SIM");
-Q_DEFINE_LATIN1_LITERAL(KParameterKeySimStoreName, "store");
-Q_DEFINE_LATIN1_LITERAL(KParameterValueSimStoreNameAdn, "ADN");
-Q_DEFINE_LATIN1_LITERAL(KParameterValueSimStoreNameSdn, "SDN");
-Q_DEFINE_LATIN1_LITERAL(KParameterValueSimStoreNameFdn, "FDN");
+Q_DEFINE_LATIN1_CONSTANT(KSimSyncTarget, "SIM");
+Q_DEFINE_LATIN1_CONSTANT(KParameterKeySimStoreName, "store");
+Q_DEFINE_LATIN1_CONSTANT(KParameterValueSimStoreNameAdn, "ADN");
+Q_DEFINE_LATIN1_CONSTANT(KParameterValueSimStoreNameSdn, "SDN");
+Q_DEFINE_LATIN1_CONSTANT(KParameterValueSimStoreNameFdn, "FDN");
 
 class CntSimStore;
 class CntAbstractSimRequest;
