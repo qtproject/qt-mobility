@@ -196,10 +196,12 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
              const QDir sysDir(sysPath);
              QStringList filters;
              filters << "*";
-             const QStringList sysList = sysDir.entryList( filters ,QDir::Dirs, QDir::Name);
-             if(sysList.contains("radio")) {
-                 featureSupported = true;
-             }
+             QStringList sysList = sysDir.entryList( filters ,QDir::Dirs, QDir::Name);
+             foreach(const QString dir, sysList) {
+                if (dir.contains("radio")) {
+                    featureSupported = true;
+                }
+            }
          }
          break;
      case QSystemInfo::IrFeature :
@@ -617,7 +619,6 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::getBluet
         qWarning() << "Cannot get bnep connection list.";
         return QSystemNetworkInfo::UndefinedStatus;
     }
-
     for (uint j = 0; j< req.cnum; j++) {
         if(info[j].state == BT_CONNECTED) {
             return QSystemNetworkInfo::Connected;
@@ -1373,7 +1374,12 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoLinuxCommonPrivate::inputMe
         QHalInterface iface2;
         if (iface2.isValid()) {
             QStringList capList;
-            capList << "input.keyboard" << "input.keys" << "input.keypad" << "input.mouse" << "input.tablet";
+            capList << QLatin1String("input.keyboard") 
+                    << QLatin1String("input.keys")
+                    << QLatin1String("input.keypad") 
+                    << QLatin1String("input.mouse") 
+                    << QLatin1String("input.tablet")
+                    << QLatin1String("input.touchpad");
             for(int i = 0; i < capList.count(); i++) {
                 QStringList list = iface2.findDeviceByCapability(capList.at(i));
                 if(!list.isEmpty()) {
@@ -1393,7 +1399,10 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoLinuxCommonPrivate::inputMe
                     case 4:
                         methods = (methods | QSystemDeviceInfo::SingleTouch);
                         break;
-                    };
+                    case 5:
+                        methods = (methods | QSystemDeviceInfo::SingleTouch);
+                        break;
+                    }
                 }
             }
             if(methods != 0)
@@ -1478,7 +1487,7 @@ int QSystemDeviceInfoLinuxCommonPrivate::batteryLevel() const
             while (!line.isNull()) {
                 if(line.contains("design capacity")) {
                     levelWhenFull = line.split(" ").at(1).trimmed().toFloat();
-                    qWarning() << levelWhenFull;
+                    //qWarning() << levelWhenFull;
                     infofile.close();
                     break;
                 }
@@ -1497,7 +1506,7 @@ int QSystemDeviceInfoLinuxCommonPrivate::batteryLevel() const
             while (!line.isNull()) {
                 if(line.contains("remaining capacity")) {
                     level = line.split(" ").at(1).trimmed().toFloat();
-                    qWarning() << level;
+                    //qWarning() << level;
                     statefile.close();
                     break;
                 }
