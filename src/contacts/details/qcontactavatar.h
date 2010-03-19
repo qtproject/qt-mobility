@@ -97,7 +97,7 @@ public:
     QString Q_DECL_DEPRECATED avatar() const;
     void Q_DECL_DEPRECATED setAvatar(const QString& avatar);
     QPixmap Q_DECL_DEPRECATED pixmap() const;
-    void Q_DECL_DEPRECATED setPixmap(const QPixmap& pixmap);
+    bool Q_DECL_DEPRECATED setPixmap(const QPixmap& pixmap);
     QString Q_DECL_DEPRECATED subType() const;
     void Q_DECL_DEPRECATED setSubType(const QString& subtype);
 };

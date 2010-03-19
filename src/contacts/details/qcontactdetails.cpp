@@ -1616,10 +1616,11 @@ QPixmap QContactAvatar::pixmap() const
    Returns true if the pixmap could be set, and false otherwise.
    This function is deprecated and will be removed after the transition period has elapsed.
  */
-void QContactAvatar::setPixmap(const QPixmap& pixmap)
+bool QContactAvatar::setPixmap(const QPixmap& pixmap)
 {
     Q_UNUSED(pixmap);
     qWarning("QContactAvatar::setPixmap() This function is deprecated and will be removed after the transition period has elapsed!  Use setImageUri() or QContactThumbnail instead!");
+    return false;
 }
 
 /*!
