@@ -709,7 +709,7 @@ if([[CWInterface supportedInterfaces] count] > 0 ) {
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
 #ifdef MAC_SDK_10_6
-    if(hasWifi) {
+    if(hasWifi && runloopThread->isRunning()) {
         runloopThread->quit();
         runloopThread->wait();
         [delegate release];
@@ -744,6 +744,16 @@ void QSystemNetworkInfoPrivate::disconnectNotify(const char *signal)
     if (QLatin1String(signal) == SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int))) {
         rssiTimer->stop();
         disconnect(rssiTimer, SIGNAL(timeout()), this, SLOT(rssiTimeout()));
+    }
+    if (QLatin1String(signal) == SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString))
+        || QLatin1String(signal) == SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus))) {
+#ifdef MAC_SDK_10_6
+        if(hasWifi && runloopThread->isRunning()) {
+            runloopThread->quit();
+            runloopThread->wait();
+            [delegate release];
+        }
+#endif
     }
 }
 
