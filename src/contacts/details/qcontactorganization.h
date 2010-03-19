@@ -66,16 +66,16 @@ public:
     const char* FieldAssistantName;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactOrganization, "Organization")
-    Q_DECLARE_LATIN1_LITERAL(FieldName, "Name");
-    Q_DECLARE_LATIN1_LITERAL(FieldLogoUrl, "LogoUrl");
-    Q_DECLARE_LATIN1_LITERAL(FieldDepartment, "Department");
-    Q_DECLARE_LATIN1_LITERAL(FieldLocation, "Location");
-    Q_DECLARE_LATIN1_LITERAL(FieldRole, "Role");
-    Q_DECLARE_LATIN1_LITERAL(FieldTitle, "Title");
-    Q_DECLARE_LATIN1_LITERAL(FieldAssistantName, "AssistantName");
+    Q_DECLARE_LATIN1_CONSTANT(FieldName, "Name");
+    Q_DECLARE_LATIN1_CONSTANT(FieldLogoUrl, "LogoUrl");
+    Q_DECLARE_LATIN1_CONSTANT(FieldDepartment, "Department");
+    Q_DECLARE_LATIN1_CONSTANT(FieldLocation, "Location");
+    Q_DECLARE_LATIN1_CONSTANT(FieldRole, "Role");
+    Q_DECLARE_LATIN1_CONSTANT(FieldTitle, "Title");
+    Q_DECLARE_LATIN1_CONSTANT(FieldAssistantName, "AssistantName");
 
     // deprecated keys:
-    Q_DECLARE_LATIN1_LITERAL(FieldLogo, "Logo");
+    Q_DECLARE_LATIN1_CONSTANT(FieldLogo, "Logo");
 
 #endif
 

@@ -79,26 +79,26 @@ public:
     const char* PresenceOffline;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactOnlineAccount, "OnlineAccount")
-    Q_DECLARE_LATIN1_LITERAL(FieldAccountUri, "AccountUri");
-    Q_DECLARE_LATIN1_LITERAL(FieldServiceProvider, "ServiceProvider");
-    Q_DECLARE_LATIN1_LITERAL(FieldCapabilities, "Capabilities");
-    Q_DECLARE_LATIN1_LITERAL(FieldSubTypes, "SubTypes");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeSip, "Sip");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeSipVoip, "SipVoip");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeImpp, "Impp");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeVideoShare, "VideoShare");
+    Q_DECLARE_LATIN1_CONSTANT(FieldAccountUri, "AccountUri");
+    Q_DECLARE_LATIN1_CONSTANT(FieldServiceProvider, "ServiceProvider");
+    Q_DECLARE_LATIN1_CONSTANT(FieldCapabilities, "Capabilities");
+    Q_DECLARE_LATIN1_CONSTANT(FieldSubTypes, "SubTypes");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeSip, "Sip");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeSipVoip, "SipVoip");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeImpp, "Impp");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeVideoShare, "VideoShare");
 
     // deprecated keys:
-    Q_DECLARE_LATIN1_LITERAL(FieldNickname, "Nickname");
-    Q_DECLARE_LATIN1_LITERAL(FieldPresence, "Presence");
-    Q_DECLARE_LATIN1_LITERAL(FieldStatusMessage, "StatusMessage");
-    Q_DECLARE_LATIN1_LITERAL(PresenceAvailable, "Available");
-    Q_DECLARE_LATIN1_LITERAL(PresenceHidden, "Hidden");
-    Q_DECLARE_LATIN1_LITERAL(PresenceBusy, "Busy");
-    Q_DECLARE_LATIN1_LITERAL(PresenceAway, "Away");
-    Q_DECLARE_LATIN1_LITERAL(PresenceExtendedAway, "ExtendedAway");
-    Q_DECLARE_LATIN1_LITERAL(PresenceUnknown, "Unknown");
-    Q_DECLARE_LATIN1_LITERAL(PresenceOffline, "Offline");
+    Q_DECLARE_LATIN1_CONSTANT(FieldNickname, "Nickname");
+    Q_DECLARE_LATIN1_CONSTANT(FieldPresence, "Presence");
+    Q_DECLARE_LATIN1_CONSTANT(FieldStatusMessage, "StatusMessage");
+    Q_DECLARE_LATIN1_CONSTANT(PresenceAvailable, "Available");
+    Q_DECLARE_LATIN1_CONSTANT(PresenceHidden, "Hidden");
+    Q_DECLARE_LATIN1_CONSTANT(PresenceBusy, "Busy");
+    Q_DECLARE_LATIN1_CONSTANT(PresenceAway, "Away");
+    Q_DECLARE_LATIN1_CONSTANT(PresenceExtendedAway, "ExtendedAway");
+    Q_DECLARE_LATIN1_CONSTANT(PresenceUnknown, "Unknown");
+    Q_DECLARE_LATIN1_CONSTANT(PresenceOffline, "Offline");
 #endif
 
     void setAccountUri(const QString& accountUri) {setValue(FieldAccountUri, accountUri);}

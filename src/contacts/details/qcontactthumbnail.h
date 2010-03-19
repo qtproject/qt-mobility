@@ -60,7 +60,7 @@ public:
     const char* FieldThumbnail;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactThumbnail, "Thumbnail")
-    Q_DECLARE_LATIN1_LITERAL(FieldThumbnail, "Thumbnail");
+    Q_DECLARE_LATIN1_CONSTANT(FieldThumbnail, "Thumbnail");
 #endif
 
     void setThumbnail(const QImage& thumbnail) {setValue(FieldThumbnail, thumbnail);}

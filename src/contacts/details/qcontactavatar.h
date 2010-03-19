@@ -71,19 +71,19 @@ public:
     const char* SubTypeTexturedMesh;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactAvatar, "Avatar")
-    Q_DECLARE_LATIN1_LITERAL(FieldImageUrl, "ImageUrl");
-    Q_DECLARE_LATIN1_LITERAL(FieldVideoUrl, "VideoUrl");
+    Q_DECLARE_LATIN1_CONSTANT(FieldImageUrl, "ImageUrl");
+    Q_DECLARE_LATIN1_CONSTANT(FieldVideoUrl, "VideoUrl");
     // MeshUri, VibetoneUri, Audio(theme)Uri, ...?
 
     // deprecated keys:
-    Q_DECLARE_LATIN1_LITERAL(FieldAvatar, "Avatar");
-    Q_DECLARE_LATIN1_LITERAL(FieldAvatarPixmap, "AvatarPixmap");
-    Q_DECLARE_LATIN1_LITERAL(FieldSubType, "SubType");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeImage, "Image");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeVideo, "Video");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeAudioRingtone, "AudioRingtone");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeVideoRingtone, "VideoRingtone");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeTexturedMesh, "TexturedMesh");
+    Q_DECLARE_LATIN1_CONSTANT(FieldAvatar, "Avatar");
+    Q_DECLARE_LATIN1_CONSTANT(FieldAvatarPixmap, "AvatarPixmap");
+    Q_DECLARE_LATIN1_CONSTANT(FieldSubType, "SubType");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeImage, "Image");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeVideo, "Video");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeAudioRingtone, "AudioRingtone");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeVideoRingtone, "VideoRingtone");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeTexturedMesh, "TexturedMesh");
 #endif
 
     void setImageUrl(const QUrl& imageUrl) {setValue(FieldImageUrl, imageUrl);}
