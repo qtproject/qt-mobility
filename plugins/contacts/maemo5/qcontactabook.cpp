@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+#include "qcontactmaemo5backend_p.h"
 #include "qcontactabook_p.h"
 
 #include <QEventLoop>
@@ -423,12 +424,12 @@ bool QContactABook::saveContact(QContact* contact, QContactManager::Error* error
   return ok;
 }
 
-QContactLocalId QContactABook::selfContactId(QContactManager::Error& errors) const
+QContactLocalId QContactABook::selfContactId(QContactManager::Error* errors) const
 {
   QContactLocalId id;
   EContact *self = E_CONTACT(osso_abook_self_contact_get_default());
   if (self) {
-    errors = QContactManager::NoError;
+    *errors = QContactManager::NoError;
     const char* data = CONST_CHAR(e_contact_get_const(self, E_CONTACT_UID));
     const QByteArray eContactUID(data);
     QContactLocalId localId = m_localIds[eContactUID];

@@ -115,8 +115,7 @@ class QContactMaemo5Engine : public QContactManagerEngine
 
     /* Contacts - Accessors and Mutators */
     QContact contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error* error) const;
-    QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error* error ) const;
-    QList<QContact> contacts( const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error* error ) const;
+    QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fetchHint, QContactManager::Error* error ) const;
     
     bool saveContact(QContact* contact, QContactManager::Error* error);
     
@@ -137,6 +136,29 @@ class QContactMaemo5Engine : public QContactManagerEngine
     bool isFilterSupported(const QContactFilter& filter) const;
     QList<QVariant::Type> supportedDataTypes() const;
 
+
+
+
+    // XXX TODO: FIXME - these are pure virtual and so MUST be implemented by the backend.  Stubs here.
+    QMap<QString, QString> managerParameters() const {return QMap<QString,QString>();}
+    int managerVersion() const {return 1;}
+    bool saveContacts(QList<QContact>*, QMap<int, QContactManager::Error>*, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
+    bool removeContacts(const QList<QContactLocalId>&, QMap<int, QContactManager::Error>*, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
+    bool setSelfContactId(const QContactLocalId&, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
+    QList<QContactRelationship> relationships(const QString&, const QContactId&, QContactRelationship::Role, QContactManager::Error* error) const {*error = QContactManager::NotSupportedError; return QList<QContactRelationship>();}
+    bool saveRelationships(QList<QContactRelationship>*, QMap<int, QContactManager::Error>*, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
+    bool removeRelationships(const QList<QContactRelationship>&, QMap<int, QContactManager::Error>*, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
+    bool validateContact(const QContact&, QContactManager::Error* error) const {*error = QContactManager::NotSupportedError; return false;}
+    bool validateDefinition(const QContactDetailDefinition&, QContactManager::Error* error) const {*error = QContactManager::NotSupportedError; return false;}
+    QContactDetailDefinition detailDefinition(const QString&, const QString&, QContactManager::Error* error) const {*error = QContactManager::NotSupportedError; return QContactDetailDefinition();}
+    bool saveDetailDefinition(const QContactDetailDefinition&, const QString&, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
+    bool removeDetailDefinition(const QString&, const QString&, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
+    void requestDestroyed(QContactAbstractRequest*) {}
+    bool startRequest(QContactAbstractRequest*) {return false;}
+    bool cancelRequest(QContactAbstractRequest*) {return false;}
+    bool waitForRequestFinished(QContactAbstractRequest*, int) {return false;}
+    bool isRelationshipTypeSupported(const QString&, const QString&) const {return false;}
+    QStringList supportedContactTypes() const {return (QStringList() << QContactType::TypeContact);}
 
     // XXX TODO: FIXME - include some trampoline functions to access protected static members of QCME.
     static QList<QContactLocalId> sortContactsTrampoline(const QList<QContact>& unsorted, const QList<QContactSortOrder>& sortOrders)

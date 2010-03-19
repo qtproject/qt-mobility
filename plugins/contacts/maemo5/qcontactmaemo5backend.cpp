@@ -133,9 +133,10 @@ QList<QContactLocalId> QContactMaemo5Engine::contactIds(const QContactFilter& fi
   return d->m_abook->contactIds(filter, sortOrders, error);
 }
 
-QList<QContact> QContactMaemo5Engine::contacts(const QContactFilter & filter, const QList<QContactSortOrder> & sortOrders, const QStringList & definitionRestrictions, 
+QList<QContact> QContactMaemo5Engine::contacts(const QContactFilter & filter, const QList<QContactSortOrder> & sortOrders, const QContactFetchHint & fetchHint,
 			  QContactManager::Error* error ) const
 {
+  Q_UNUSED(fetchHint); // no optimisations currently, ignore the fetchhint.
   Q_CHECK_PTR(d->m_abook);
   QList<QContact> rtn;
   
@@ -145,14 +146,9 @@ QList<QContact> QContactMaemo5Engine::contacts(const QContactFilter & filter, co
   return rtn;
 }
 
-QList<QContact> QContactMaemo5Engine::contacts( const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error* error ) const
+QContact QContactMaemo5Engine::contact(const QContactLocalId& contactId, const QContactFetchHint& fetchHint, QContactManager::Error* error) const
 {
-  return contacts(QContactFilter(), sortOrders, definitionRestrictions, error);
-}
-
-QContact QContactMaemo5Engine::contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error* error) const
-{
-  Q_UNUSED(definitionRestrictions); //TODO
+  Q_UNUSED(fetchHint); //TODO
   Q_CHECK_PTR(d->m_abook);
   
   QContact *contact = d->m_abook->getQContact(contactId, error);
@@ -170,14 +166,14 @@ bool QContactMaemo5Engine::saveContact(QContact* contact, QContactManager::Error
   Q_CHECK_PTR(d->m_abook);
   
   if (!contact) {
-    error = QContactManager::BadArgumentError;
+    *error = QContactManager::BadArgumentError;
     return false;
   }
   
   // ensure that the contact's details conform to their definitions
   if (!validateContact(*contact, error)) {
     QCM5_DEBUG << "Validate Contact failed";
-    error = QContactManager::InvalidDetailError;
+    *error = QContactManager::InvalidDetailError;
     return false;
   }
   return d->m_abook->saveContact(contact, error);
@@ -274,7 +270,7 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     fields.remove(QContactUrl::FieldSubType);
     defns[contactType][QContactUrl::DefinitionName].setFields(fields);
   
-    error = QContactManager::NoError;
+    *error = QContactManager::NoError;
     return defns[contactType];
 }
 
