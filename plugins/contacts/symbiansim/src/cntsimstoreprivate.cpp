@@ -312,7 +312,7 @@ void CntSimStorePrivate::RunL()
 TInt CntSimStorePrivate::RunError(TInt aError)
 {
     QContactManager::Error qtError = QContactManager::NoError;
-    CntSymbianSimTransformError::transformError(aError, qtError);
+    CntSymbianSimTransformError::transformError(aError, &qtError);
     
     // NOTE: It is assumed that emitting signals is queued
         
@@ -420,7 +420,7 @@ QList<QContact> CntSimStorePrivate::decodeSimContactsL(TDes8& rawData) const
                             m_engine.setReadOnlyAccessConstraint(&name);                        
                         currentContact.saveDetail(&name);
                         QContactManager::Error error(QContactManager::NoError);
-                        currentContact = m_engine.setContactDisplayLabel(m_engine.synthesizedDisplayLabel(currentContact, error), currentContact);
+                        currentContact = m_engine.setContactDisplayLabel(m_engine.synthesizedDisplayLabel(currentContact, &error), currentContact);
                     }
                 }
                 break;
