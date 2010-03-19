@@ -112,11 +112,11 @@ int main(int argc, char *argv[])
                     } else if ((arg == "to") || (arg == "cc") || (arg == "bcc")) {
                         QStringList addresses;
                         foreach (const QMessageAddress &addr, (arg == "to" ? message.to() : (arg == "cc" ? message.cc() : message.bcc()))) {
-                            addresses.append(addr.recipient());
+                            addresses.append(addr.addressee());
                         }
                         result.append(addresses.join(","));
                     } else if (arg == "from") {
-                        result.append(message.from().recipient());
+                        result.append(message.from().addressee());
                     } else if (arg == "type") {
                         result.append(message.contentType() + '/' + message.contentSubType());
                     } else if (arg == "body") {

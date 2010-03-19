@@ -60,8 +60,10 @@
     #include &lt;qgeopositioninfosource.h&gt;
     #include &lt;qnmeapositioninfosource.h&gt;
     #include &lt;qgeosatelliteinfosource.h&gt;
+    #ifndef Q_WS_MAEMO_5
     #include &lt;qnetworksession.h&gt;
     #include &lt;qnetworkconfigmanager.h&gt;
+    #endif
 
     #include &quot;satellitedialog.h&quot;
 
@@ -93,6 +95,7 @@
         }
 
         location-&gt;setUpdateInterval(5000);
+
         connect(location, SIGNAL(positionUpdated(QGeoPositionInfo)),
                 this, SLOT(positionUpdated(QGeoPositionInfo)));
 
@@ -118,7 +121,9 @@
     MapWindow::~MapWindow()
     {
         location-&gt;stopUpdates();
+    #ifndef Q_WS_MAEMO_5
         session-&gt;close();
+    #endif
     }
 
     void MapWindow::delayedInit()
@@ -131,6 +136,7 @@
             location-&gt;stopUpdates();
         }
 
+    #ifndef Q_WS_MAEMO_5
         <span class="comment">// Set Internet Access Point</span>
         QNetworkConfigurationManager manager;
         const bool canStartIAP = (manager.capabilities()
@@ -146,7 +152,7 @@
         session = new QNetworkSession(cfg, this);
         session-&gt;open();
         session-&gt;waitForOpened(-1);
-
+    #endif
         connect(location, SIGNAL(updateTimeout()), this, SLOT(waitForFix()));
 
         location-&gt;startUpdates();

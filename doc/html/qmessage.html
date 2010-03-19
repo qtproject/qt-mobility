@@ -29,7 +29,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#StandardFolder-enum">StandardFolder</a></b> { InboxFolder, DraftsFolder, OutboxFolder, SentFolder, TrashFolder }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#Status-enum">Status</a></b> { Read, HasAttachments, Incoming, Removed }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#Status-enum">StatusFlags</a></b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#Type-enum">Type</a></b> { NoType, Mms, Sms, Email, Xmpp, AnyType }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#Type-enum">Type</a></b> { NoType, Mms, Sms, Email, InstantMessage, AnyType }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#Type-enum">TypeFlags</a></b></td></tr>
 </table>
 <hr />
@@ -92,13 +92,13 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QMessage class provides a convenient interface for working with messages.</p>
-<p>QMessage supports a number of types. Including internet email messages, the telephony types SMS and MMS, and also XMPP messages.</p>
+<p>QMessage supports a number of types. Including internet email messages, and the telephony types SMS and MMS.</p>
 <p>The <a href="qmessageid.html">QMessageId</a> identifier for a message is returned by <a href="qmessage.html#id">id</a>(). Messages can be constructed by retrieval from the messaging store via their identifier using <a href="qmessagemanager.html#message">QMessageManager::message</a>(). A QMessage can also be constructed piece by piece using functions such as <a href="qmessage.html#setType">setType</a>(), <a href="qmessage.html#setFrom">setFrom</a>(), <a href="qmessage.html#setTo">setTo</a>(), <a href="qmessage.html#setSubject">setSubject</a>(), <a href="qmessage.html#setBody">setBody</a>() and <a href="qmessage.html#appendAttachments">appendAttachments</a>().</p>
 <p>If a message has been modified since it was last constructed <a href="qmessage.html#isModified">isModified</a>() returns true.</p>
 <p>A list of attachments identifiers will be returned by <a href="qmessage.html#attachmentIds">attachmentIds</a>() and an identifier for the message body will be returned by <a href="qmessage.html#bodyId">bodyId</a>(). Attachments can be appended to the content of the message using <a href="qmessage.html#appendAttachments">appendAttachments</a>(), the body of the message can be set with <a href="qmessage.html#setBody">setBody</a>().</p>
 <p>The folder and account a message is associated with are returned by <a href="qmessage.html#parentFolderId">parentFolderId</a>() and <a href="qmessage.html#parentAccountId">parentAccountId</a>() respectively.</p>
 <p>Message data that is less commonly accessed or relatively large should be lazily retrieved on demand by the associated getter function.</p>
-<p>Only phone numbers are valid destination addresses for SMS messages, only email addresses are valid destination addresses for Email messages, MMS messages may be addressed to either phone numbers or email addresses. Only XMPP addresses are valid destination addresses for XMPP messages.</p>
+<p>Only phone numbers are valid destination addresses for SMS messages, only email addresses are valid destination addresses for Email messages, MMS messages may be addressed to either phone numbers or email addresses.</p>
 <p>See also <a href="qmessagecontentcontainer.html">QMessageContentContainer</a>, <a href="qmessagemanager.html">QMessageManager</a>, and <a href="qmessageid.html">QMessageId</a>.</p>
 <hr />
 <h2>Member Type Documentation</h2>
@@ -164,7 +164,7 @@
 <a name="//apple_ref/cpp/econst/QMessage/Mms"></a>
 <a name="//apple_ref/cpp/econst/QMessage/Sms"></a>
 <a name="//apple_ref/cpp/econst/QMessage/Email"></a>
-<a name="//apple_ref/cpp/econst/QMessage/Xmpp"></a>
+<a name="//apple_ref/cpp/econst/QMessage/InstantMessage"></a>
 <a name="//apple_ref/cpp/econst/QMessage/AnyType"></a>
 <a name="//apple_ref/cpp/tdef/QMessage/TypeFlags"></a>
 <h3 class="flags"><a name="Type-enum"></a>enum QMessage::Type<br />flags QMessage::TypeFlags</h3>
@@ -175,7 +175,7 @@
 <tr><td valign="top"><tt>QMessage::Mms</tt></td><td align="center" valign="top"><tt>0x1</tt></td><td valign="top">The message is an MMS, Multimedia Messaging Service object.</td></tr>
 <tr><td valign="top"><tt>QMessage::Sms</tt></td><td align="center" valign="top"><tt>0x2</tt></td><td valign="top">The message is an SMS, Short Message Service object.</td></tr>
 <tr><td valign="top"><tt>QMessage::Email</tt></td><td align="center" valign="top"><tt>0x4</tt></td><td valign="top">The message is an Email, Internet Message Format object.</td></tr>
-<tr><td valign="top"><tt>QMessage::Xmpp</tt></td><td align="center" valign="top"><tt>0x8</tt></td><td valign="top">The message is an XMPP, Extensible Messaging and Presence Protocol object.</td></tr>
+<tr><td valign="top"><tt>QMessage::InstantMessage</tt></td><td align="center" valign="top"><tt>0x8</tt></td><td valign="top">The message is an instant message object, such as XMPP.</td></tr>
 <tr><td valign="top"><tt>QMessage::AnyType</tt></td><td align="center" valign="top"><tt>0xFFFFFFFF</tt></td><td valign="top">Bitflag value that matches any message type defined.</td></tr>
 </table></p>
 <p>The TypeFlags type is a typedef for <a href="qflags.html">QFlags</a>&lt;Type&gt;. It stores an OR combination of Type values.</p>

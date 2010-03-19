@@ -27,11 +27,6 @@ symbian:TARGET.CAPABILITY += Location \
     ReadUserData
 
 symbian: {
-    license.depends = "\"install.txt\" - \"\", FILETEXT, TEXTEXIT"
-    DEPLOYMENT += license
-}
-
-symbian: {
     addFiles.sources = nmealog.txt
     DEPLOYMENT += addFiles
 } else {

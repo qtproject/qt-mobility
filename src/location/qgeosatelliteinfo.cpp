@@ -42,6 +42,7 @@
 
 #include <QHash>
 #include <QDebug>
+#include <QDataStream>
 
 QTM_BEGIN_NAMESPACE
 
@@ -226,6 +227,45 @@ QDebug operator<<(QDebug dbg, const QGeoSatelliteInfo &info)
     }
     dbg.nospace() << ')';
     return dbg;
+}
+#endif
+
+#ifndef QT_NO_DATASTREAM
+/*!
+    \fn QDataStream &operator<<(QDataStream &stream, const QGeoSatelliteInfo &info)
+    \relates QGeoSatelliteInfo
+
+    Writes the given \a info to the specified \a stream.
+
+    \sa {Format of the QDataStream Operators}
+*/
+
+QDataStream &operator<<(QDataStream &stream, const QGeoSatelliteInfo &info)
+{
+    stream << info.d->prn;
+    stream << info.d->signal;
+    stream << info.d->doubleAttribs;
+    return stream;
+}
+#endif
+
+#ifndef QT_NO_DATASTREAM
+/*!
+    \fn QDataStream &operator>>(QDataStream &stream, QGeoSatelliteInfo &info)
+    \relates QGeoSatelliteInfo
+
+    Reads satellite information from the specified \a stream into the given
+    \a info.
+
+    \sa {Format of the QDataStream Operators}
+*/
+
+QDataStream &operator>>(QDataStream &stream, QGeoSatelliteInfo &info)
+{
+    stream >> info.d->prn;
+    stream >> info.d->signal;
+    stream >> info.d->doubleAttribs;
+    return stream;
 }
 #endif
 
