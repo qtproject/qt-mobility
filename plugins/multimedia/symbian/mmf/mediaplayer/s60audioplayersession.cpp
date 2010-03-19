@@ -54,8 +54,8 @@ S60AudioPlayerSession::S60AudioPlayerSession(QObject *parent)
     QT_TRAP_THROWING(m_player = CAudioPlayer::NewL(*this, 0, EMdaPriorityPreferenceNone));
     m_player->RegisterForAudioLoadingNotification(*this);
     
-    QT_TRAP_THROWING(m_audioOutput = CAudioOutput::NewL(*m_player));
-    QT_TRAP_THROWING(m_audioOutput->RegisterObserverL(*this));
+    //QT_TRAP_THROWING(m_audioOutput = CAudioOutput::NewL(*m_player));
+    //QT_TRAP_THROWING(m_audioOutput->RegisterObserverL(*this));
 }
 
 S60AudioPlayerSession::~S60AudioPlayerSession()
@@ -181,14 +181,22 @@ void S60AudioPlayerSession::MapcPlayComplete(TInt aError)
 
 QString S60AudioPlayerSession::activeEndpoint() const
 {
-    CAudioOutput::TAudioOutputPreference output = m_audioOutput->AudioOutput();
-    return qStringFromTAudioOutputPreference(output);
+    QString outputName;
+    if (m_audioOutput) {
+        CAudioOutput::TAudioOutputPreference output = m_audioOutput->AudioOutput();
+        outputName = qStringFromTAudioOutputPreference(output);
+    }
+    return outputName;
 }
 
 QString S60AudioPlayerSession::defaultEndpoint() const
 {
-    CAudioOutput::TAudioOutputPreference output = m_audioOutput->DefaultAudioOutput();
-    return qStringFromTAudioOutputPreference(output);
+    QString outputName;
+    if (m_audioOutput) {
+        CAudioOutput::TAudioOutputPreference output = m_audioOutput->DefaultAudioOutput();
+        outputName = qStringFromTAudioOutputPreference(output);
+    }
+    return outputName;
 }
 
 void S60AudioPlayerSession::setActiveEndpoint(const QString& name)
@@ -205,26 +213,30 @@ void S60AudioPlayerSession::setActiveEndpoint(const QString& name)
         output = CAudioOutput::EPrivate;
     else if (name == QString("Speaker"))
         output = CAudioOutput::EPublic;
-    TRAPD(err, m_audioOutput->SetAudioOutputL(output));
-    setError(err);
+    if (m_audioOutput) {
+        TRAPD(err, m_audioOutput->SetAudioOutputL(output));
+        setError(err);
+    }
 }
 
 void S60AudioPlayerSession::DefaultAudioOutputChanged(CAudioOutput& aAudioOutput,
                                         CAudioOutput::TAudioOutputPreference aNewDefault)
 {
-    CAudioOutput::TAudioOutputPreference output = m_audioOutput->AudioOutput();
-    if (output == CAudioOutput::ENoPreference) {
-        QString name;
-        if (output == CAudioOutput::EAll)
-            name = QString("All");
-        else if (output == CAudioOutput::ENoOutput)
-            name = QString("None");
-        else if (output == CAudioOutput::EPrivate)
-            name = QString("Earphone");
-        else if (output == CAudioOutput::EPublic)
-            name = QString("Speaker");
-        if (!name.isEmpty())
-            emit activeEndpointChanged(name);
+    if (m_audioOutput) {
+        CAudioOutput::TAudioOutputPreference output = m_audioOutput->AudioOutput();
+        if (output == CAudioOutput::ENoPreference) {
+            QString name;
+            if (output == CAudioOutput::EAll)
+                name = QString("All");
+            else if (output == CAudioOutput::ENoOutput)
+                name = QString("None");
+            else if (output == CAudioOutput::EPrivate)
+                name = QString("Earphone");
+            else if (output == CAudioOutput::EPublic)
+                name = QString("Speaker");
+            if (!name.isEmpty())
+                emit activeEndpointChanged(name);
+        }
     }
 }
 
