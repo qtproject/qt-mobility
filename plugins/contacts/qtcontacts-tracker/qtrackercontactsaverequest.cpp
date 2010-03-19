@@ -58,7 +58,7 @@ QTrackerContactSaveRequest::QTrackerContactSaveRequest(QContactAbstractRequest* 
 
     QContactSaveRequest* r = qobject_cast<QContactSaveRequest*>(req);
     if (!r) {
-        QContactTrackerEngine::updateRequestStateTrampoline(req, QContactAbstractRequest::FinishedState);
+        QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::FinishedState);
         return;
     }
 
@@ -68,11 +68,11 @@ QTrackerContactSaveRequest::QTrackerContactSaveRequest(QContactAbstractRequest* 
         QMap<int, QContactManager::Error> errors; 
         errors[0] = QContactManager::BadArgumentError;
         QContactSaveRequest* saveRequest = qobject_cast<QContactSaveRequest*>(req);
-        QContactTrackerEngine::updateContactSaveRequestTrampoline(saveRequest, contacts, QContactManager::BadArgumentError, errors);
+        QContactManagerEngine::updateContactSaveRequest(saveRequest, contacts, QContactManager::BadArgumentError, errors);
         return;
     }
 
-    QContactTrackerEngine::updateRequestStateTrampoline(req, QContactAbstractRequest::ActiveState);
+    QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::ActiveState);
 
     TrackerChangeListener *changeListener = new TrackerChangeListener(parent, this);
     connect(changeListener, SIGNAL(contactsChanged(const QList<QContactLocalId> &)),SLOT(onTrackerSignal(const QList<QContactLocalId> &)));
@@ -96,7 +96,7 @@ void QTrackerContactSaveRequest::computeProgress(const QList<QContactLocalId> &a
     Q_ASSERT(req->type() == QContactAbstractRequest::ContactSaveRequest);
     QContactSaveRequest* r = qobject_cast<QContactSaveRequest*>(req);
     if (!r) {
-        QContactTrackerEngine::updateRequestStateTrampoline(req, QContactAbstractRequest::FinishedState);
+        QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::FinishedState);
         return;
     }
 
@@ -118,7 +118,7 @@ void QTrackerContactSaveRequest::computeProgress(const QList<QContactLocalId> &a
             }
         }
 
-        QContactTrackerEngine::updateContactSaveRequestTrampoline(r, contactsFinished, error, errorsOfContactsFinished, QContactAbstractRequest::FinishedState);
+        QContactManagerEngine::updateContactSaveRequest(r, contactsFinished, error, errorsOfContactsFinished, QContactAbstractRequest::FinishedState);
     }
 }
 

@@ -63,10 +63,10 @@ QTrackerRelationshipSaveRequest::QTrackerRelationshipSaveRequest(QContactAbstrac
     if(links.isEmpty()) {
         QMap<int, QContactManager::Error> errors;
         errors[0] = QContactManager::BadArgumentError;
-        QContactTrackerEngine::updateRelationshipSaveRequestTrampoline(r, links, QContactManager::BadArgumentError, errors, QContactAbstractRequest::FinishedState);
+        QContactManagerEngine::updateRelationshipSaveRequest(r, links, QContactManager::BadArgumentError, errors, QContactAbstractRequest::FinishedState);
         return;
     }
-    QContactTrackerEngine::updateRequestStateTrampoline(req, QContactAbstractRequest::ActiveState);
+    QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::ActiveState);
 
 
     // the logic is like this
@@ -136,7 +136,7 @@ void QTrackerRelationshipSaveRequest::commitFinished()
         QContactManager::Error error = QContactManager::NoError;
         QMap<int, QContactManager::Error> errors;
         errors[0] = error;
-        QContactTrackerEngine::updateRelationshipSaveRequestTrampoline(r, r->relationships(), error, errors, QContactAbstractRequest::FinishedState);
+        QContactManagerEngine::updateRelationshipSaveRequest(r, r->relationships(), error, errors, QContactAbstractRequest::FinishedState);
     }
     else
         qWarning()<<Q_FUNC_INFO<<r;
@@ -151,13 +151,13 @@ void QTrackerRelationshipSaveRequest::commitError(QString message)
         QContactManager::Error error = QContactManager::InvalidRelationshipError;
         QMap<int, QContactManager::Error> errors; 
         errors[0] = error;
-        QContactTrackerEngine::updateRelationshipSaveRequestTrampoline(r, r->relationships(), error, errors, QContactAbstractRequest::FinishedState);
+        QContactManagerEngine::updateRelationshipSaveRequest(r, r->relationships(), error, errors, QContactAbstractRequest::FinishedState);
     }
     else
     {
         QMap<int, QContactManager::Error> errors;
         errors[0] = QContactManager::UnspecifiedError;
-        QContactTrackerEngine::updateRelationshipSaveRequestTrampoline(r, QList<QContactRelationship>(), QContactManager::UnspecifiedError, errors, QContactAbstractRequest::FinishedState);
+        QContactManagerEngine::updateRelationshipSaveRequest(r, QList<QContactRelationship>(), QContactManager::UnspecifiedError, errors, QContactAbstractRequest::FinishedState);
         return;
     }
 }

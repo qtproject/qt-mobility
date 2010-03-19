@@ -453,7 +453,7 @@ QTrackerContactFetchRequest::QTrackerContactFetchRequest(QContactAbstractRequest
 {
     Q_ASSERT(parent);
     Q_ASSERT(request);
-    QContactTrackerEngine::updateRequestStateTrampoline(req, QContactAbstractRequest::ActiveState);
+    QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::ActiveState);
 
     QTimer::singleShot(0, this, SLOT(run()));
 }
@@ -616,7 +616,7 @@ void QTrackerContactFetchRequest::contactsReady()
     Q_ASSERT( request ); // signal is supposed to be used only for contact fetch
     // fastest way to get this working. refactor
     if (!request) {
-        QContactTrackerEngine::updateRequestStateTrampoline(req, QContactAbstractRequest::FinishedState);
+        QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::FinishedState);
         return;
     }
 
@@ -704,7 +704,7 @@ void QTrackerContactFetchRequest::contactsReady()
         QContactDisplayLabel dl = cont.detail(QContactDisplayLabel::DefinitionName);
         if (dl.label().isEmpty()) {
             QContactManager::Error synthError;
-            result[i] = QContactTrackerEngine::setContactDisplayLabelTrampoline(engine->synthesizedDisplayLabel(cont, &synthError), cont);
+            result[i] = QContactTrackerEngine::setContactDisplayLabel(engine->synthesizedDisplayLabel(cont, &synthError), cont);
         }
     }
     emitFinished();
@@ -715,7 +715,7 @@ void QTrackerContactFetchRequest::emitFinished(QContactManager::Error error)
     QContactFetchRequest *fetchRequest = qobject_cast<QContactFetchRequest *>(req);
     Q_ASSERT(fetchRequest);
     if(fetchRequest) {
-        QContactTrackerEngine::updateContactFetchRequestTrampoline(fetchRequest, result, error, QContactAbstractRequest::FinishedState);
+        QContactManagerEngine::updateContactFetchRequest(fetchRequest, result, error, QContactAbstractRequest::FinishedState);
     }
 }
 

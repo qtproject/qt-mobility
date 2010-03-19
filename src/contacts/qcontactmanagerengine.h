@@ -141,7 +141,7 @@ Q_SIGNALS:
     void relationshipsRemoved(const QList<QContactLocalId>& affectedContactIds);
     void selfContactIdChanged(const QContactLocalId& oldId, const QContactLocalId& newId);
 
-protected:
+public:
     // Async update functions
     static void updateRequestState(QContactAbstractRequest* req, QContactAbstractRequest::State state);
 
@@ -185,7 +185,6 @@ protected:
 private:
     /* QContactChangeSet is a utility class used to emit the appropriate signals */
     friend class QContactChangeSet;
-    friend class QContact; // for helper functions
 };
 
 QTM_END_NAMESPACE

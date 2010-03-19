@@ -258,7 +258,7 @@ QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, c
     }
     
     // Non native sorting
-    return QContactMaemo5Engine::sortContactsTrampoline(contacts, sortOrders);
+    return QContactManagerEngine::sortContacts(contacts, sortOrders);
   }
   
   /* Matching action filter */
