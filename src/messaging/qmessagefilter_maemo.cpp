@@ -497,30 +497,30 @@ bool QMessageFilterPrivate::filter(const QMessage &message, const QMessageFilter
         if (filter._comparatorType == QMessageFilterPrivate::Equality) {
             QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(filter._comparatorValue));
             if (cmp == QMessageDataComparator::Equal) {
-                if (message.size() == filter._value.toUInt()) {
+                if (message.size() == filter._value.toInt()) {
                     return true;
                 }
             } else { // NotEqual
-                if (message.size() != filter._value.toUInt()) {
+                if (message.size() != filter._value.toInt()) {
                     return true;
                 }
             }
         } else if (filter._comparatorType == QMessageFilterPrivate::Relation) {
             QMessageDataComparator::RelationComparator cmp(static_cast<QMessageDataComparator::RelationComparator>(filter._comparatorValue));
             if (cmp == QMessageDataComparator::LessThan) {
-                if (message.size() < filter._value.toUInt()) {
+                if (message.size() < filter._value.toInt()) {
                     return true;
                 }
             } else if (cmp == QMessageDataComparator::LessThanEqual) {
-                if (message.size() <= filter._value.toUInt()) {
+                if (message.size() <= filter._value.toInt()) {
                     return true;
                 }
             } else if (cmp == QMessageDataComparator::GreaterThan) {
-                if (message.size() > filter._value.toUInt()) {
+                if (message.size() > filter._value.toInt()) {
                     return true;
                 }
             } else { // GreaterThanEqual
-                if (message.size() >= filter._value.toUInt()) {
+                if (message.size() >= filter._value.toInt()) {
                     return true;
                 }
             }

@@ -41,6 +41,7 @@
 #include "qmessageaccount.h"
 #include "qmessageaccount_p.h"
 #include "qmessagemanager.h"
+#include "modestengine_maemo_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -52,6 +53,11 @@ QMessageAccount QMessageAccountPrivate::from(const QMessageAccountId &id, const 
     result.d_ptr->_address = address;
     result.d_ptr->_types = types;
     return result;
+}
+
+QMessageAccountPrivate* QMessageAccountPrivate::implementation(const QMessageAccount &account)
+{
+    return account.d_ptr;
 }
 
 QMessageAccount::QMessageAccount()
@@ -103,7 +109,14 @@ QMessage::TypeFlags QMessageAccount::messageTypes() const
 
 QMessageAccountId QMessageAccount::defaultAccount(QMessage::Type type)
 {
-    //TODO:
+    QMessageAccountId accountId;
+
+    if (type == QMessage::Email) {
+        accountId = ModestEngine::instance()->defaultAccount();
+    }
+    //TODO: Default SMS Account
+
+    return accountId;
 }
 
 QTM_END_NAMESPACE
