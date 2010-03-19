@@ -61,15 +61,15 @@ IMPLEMENT_READING(QRotationReading)
     following order.
 
     \list
-    \o Right-handed rotation (-180, 180]. Starting from the x axis and incrementing towards the
-       y axis (around the z axis).
-    \o Right-handed rotation (-90, 90]. Starting from the new (once-rotated) y axis and
-       incrementing towards the z axis (around the x axis).
-    \o Right-handed rotation (-180, 180]. Starting from the new (twice-rotated) z axis and
-       incrementing towards the x axis (around the y axis).
+    \o Right-handed rotation z (-180, 180]. Starting from the x axis and incrementing towards the
+       y axis.
+    \o Right-handed rotation x (-90, 90]. Starting from the new (once-rotated) y axis and
+       incrementing towards the z axis.
+    \o Right-handed rotation y (-180, 180]. Starting from the new (twice-rotated) z axis and
+       incrementing towards the x axis.
     \endlist
 
-    \image Attitude_angles.png Visual representation of the device attitude angles.
+    \image Rotation_angles.png Visual representation of the rotation angles.
 
     The 0 point for the z angle is defined as a fixed, external entity and is device-specific. While magnetic
     north is typically used as this reference point it may not be. Do not attempt to compare values
