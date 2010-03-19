@@ -39,54 +39,27 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_GEOCODINGREQUEST_H
-#define QLOCATION_GEOCODINGREQUEST_H
+#ifndef QLOCATION_GEOCODINGREQUEST_P_H
+#define QLOCATION_GEOCODINGREQUEST_P_H
 
-#include "qmobilityglobal.h"
-#include <QString>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeocodingRequestPrivate;
-class Q_LOCATION_EXPORT QGeocodingRequest
+class QGeocodingRequestPrivate
 {
-    friend class QGeoNetworkManager;
-
 public:
-    QGeocodingRequest();
+    QGeocodingRequestPrivate();
 
-    QString version() const;
+    QString vers;
+    QString languageMARC;
 
-    QString language() const;
-    void setLanguage(const QString& language);
-
-    QString oneBoxLocation() const;
-    void setOneBoxLocation(const QString& obloc);
-
-    QString country() const;
-    void setCountry(const QString& country);
-
-    QString state() const;
-    void setState(const QString& state);
-
-    QString city() const;
-    void setCity(const QString& city);
-
-    QString postCode() const;
-    void setPostCode(const QString& postCode);
-
-    QString street() const;
-    void setStreet(const QString& street);
-
-    QString number() const;
-    void setNumber(const QString& number);
-
-private:
-    Q_DISABLE_COPY(QGeocodingRequest)
-
-private:
-    QGeocodingRequestPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QGeocodingRequest)
+    QString obloc;
+    QString cntry;
+    QString st;
+    QString cty;
+    QString pCode;
+    QString strt;
+    QString num;
 };
 
 QTM_END_NAMESPACE

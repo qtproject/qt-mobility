@@ -256,24 +256,24 @@ QGeocodingReply* QGeoNetworkManager::get(const QGeocodingRequest& request)
     QString rawRequest = "http://" % d->geocdSrv % "/geocoder/gc/" % request.version() %
                          "?referer=localhost";
 
-    if (request.languageMARC != "")
-        rawRequest += "&lg=" % request.languageMARC;
+    if (request.language() != "")
+        rawRequest += "&lg=" % request.language();
 
-    if (request.obloc.isEmpty()) {
-        rawRequest += "&country=" % request.cntry;
+    if (request.oneBoxLocation().isEmpty()) {
+        rawRequest += "&country=" % request.country();
 
-        if (!request.st.isEmpty())
-            rawRequest += "&state=" % request.st;
-        if (!request.cty.isEmpty())
-            rawRequest += "&city=" % request.cty;
-        if (!request.pCode.isEmpty())
-            rawRequest += "&zip=" % request.pCode;
-        if (!request.strt.isEmpty())
-            rawRequest += "&street=" % request.strt;
-        if (!request.num.isEmpty())
-            rawRequest += "&number=" % request.num;
+        if (!request.state().isEmpty())
+            rawRequest += "&state=" % request.state();
+        if (!request.city().isEmpty())
+            rawRequest += "&city=" % request.city();
+        if (!request.postCode().isEmpty())
+            rawRequest += "&zip=" % request.postCode();
+        if (!request.street().isEmpty())
+            rawRequest += "&street=" % request.street();
+        if (!request.number().isEmpty())
+            rawRequest += "&number=" % request.number();
     } else {
-        rawRequest += "&obloc=" % request.obloc;
+        rawRequest += "&obloc=" % request.oneBoxLocation();
     }
 
     d->netManager.setProxy(d->geocdProx);

@@ -129,6 +129,7 @@ HEADERS += qaddress.h \
            qgeocodingreply.h \
            qgeocodingreply_p.h \
            qgeocodingrequest.h \
+           qgeocodingrequest_p.h \
            qgeocodingxmlparser.h \
            qgeoengine.h \
            qgeolocation.h \
