@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -128,7 +128,7 @@ public:
     void deleteConfiguration(QString &iap_id);
     void addConfiguration(QString &iap_id);
     void configurationChanged(QNetworkConfigurationPrivate *ptr);
-    uint32_t getNetworkAttrs(bool is_iap_id, QString& iap_id,
+    uint32_t getNetworkAttrs(bool is_iap_id, const QString& iap_id,
 			     QString& iap_type, QString security_method);
 
     QDBusInterface *m_dbusInterface;
