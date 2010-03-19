@@ -42,6 +42,8 @@
 #include "cntthumbnailcreator.h"
 #include "cntsymbiantransformerror.h"
 
+#include <QPixmap>
+
 // S60 specific contact field type containing image call object data
 #define KUidContactFieldCodImageValue 0x101F8841
 const TUid KUidContactFieldCodImage={KUidContactFieldCodImageValue};
