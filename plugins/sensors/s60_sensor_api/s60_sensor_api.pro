@@ -21,15 +21,5 @@ s60sensorapi.sources = $${TARGET}.dll
 s60sensorapi.path = $${QT_PLUGINS_BASE_DIR}/sensors
 DEPLOYMENT += s60sensorapi
 
-#Qt sensor deployment
-qtsensors.sources = QtSensors.dll
-qtsensors.path = /sys/bin
-DEPLOYMENT += qtsensors
-
-#Generic sensor deployment
-genericsensors.sources = sensors_generic.dll
-genericsensors.path = $${QT_PLUGINS_BASE_DIR}/sensors
-DEPLOYMENT += genericsensors
-
 target.path += $$[QT_INSTALL_PLUGINS]/sensors
 INSTALLS += target
