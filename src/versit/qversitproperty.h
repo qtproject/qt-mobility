@@ -61,6 +61,14 @@ class QVersitPropertyPrivate;
 class Q_VERSIT_EXPORT QVersitProperty
 {
 public:
+    enum ValueType {
+        PlainType,
+        CompoundType,
+        ListType,
+        BinaryType,
+        VersitDocumentType
+    };
+
     QVersitProperty();
     QVersitProperty(const QVersitProperty& other);
     ~QVersitProperty();
@@ -89,6 +97,9 @@ public:
         return variantValue().value<T>();
     }
     QString value() const;
+
+    void setValueType(ValueType type);
+    ValueType valueType() const;
 
     bool isEmpty() const;
     void clear();
