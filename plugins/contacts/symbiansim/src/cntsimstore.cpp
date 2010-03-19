@@ -43,7 +43,7 @@
 #include "cntsimstoreprivate.h"
 #include "cntsymbiansimtransformerror.h"
 
-CntSimStore::CntSimStore(CntSymbianSimEngine* engine, QString storeName, QContactManager::Error &error)
+CntSimStore::CntSimStore(CntSymbianSimEngine* engine, QString storeName, QContactManager::Error* error)
     :QObject((QObject *)engine),
      d_ptr(0)
 {
@@ -75,22 +75,22 @@ TSimStoreInfo CntSimStore::storeInfo()
     return d_ptr->storeInfo();
 }
 
-bool CntSimStore::read(int index, int numSlots, QContactManager::Error &error)
+bool CntSimStore::read(int index, int numSlots, QContactManager::Error* error)
 {
     return d_ptr->read(index, numSlots, error);
 }
 
-bool CntSimStore::write(const QContact &contact, QContactManager::Error &error)
+bool CntSimStore::write(const QContact &contact, QContactManager::Error* error)
 {
     return d_ptr->write(contact, error);
 }
 
-bool CntSimStore::remove(int index, QContactManager::Error &error)
+bool CntSimStore::remove(int index, QContactManager::Error* error)
 {
     return d_ptr->remove(index, error);
 }
 
-bool CntSimStore::getReservedSlots(QContactManager::Error &error)
+bool CntSimStore::getReservedSlots(QContactManager::Error* error)
 {
     return d_ptr->getReservedSlots(error);
 }

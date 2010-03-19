@@ -67,14 +67,14 @@ public:
     const char* SubTypeVideoShare;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactOnlineAccount, "OnlineAccount")
-    Q_DECLARE_LATIN1_LITERAL(FieldAccountUri, "AccountUri");
-    Q_DECLARE_LATIN1_LITERAL(FieldServiceProvider, "ServiceProvider");
-    Q_DECLARE_LATIN1_LITERAL(FieldCapabilities, "Capabilities");
-    Q_DECLARE_LATIN1_LITERAL(FieldSubTypes, "SubTypes");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeSip, "Sip");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeSipVoip, "SipVoip");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeImpp, "Impp");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeVideoShare, "VideoShare");
+    Q_DECLARE_LATIN1_CONSTANT(FieldAccountUri, "AccountUri");
+    Q_DECLARE_LATIN1_CONSTANT(FieldServiceProvider, "ServiceProvider");
+    Q_DECLARE_LATIN1_CONSTANT(FieldCapabilities, "Capabilities");
+    Q_DECLARE_LATIN1_CONSTANT(FieldSubTypes, "SubTypes");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeSip, "Sip");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeSipVoip, "SipVoip");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeImpp, "Impp");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeVideoShare, "VideoShare");
 #endif
 
     void setAccountUri(const QString& accountUri) {setValue(FieldAccountUri, accountUri);}

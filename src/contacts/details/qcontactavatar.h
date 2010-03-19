@@ -61,8 +61,8 @@ public:
     const char* FieldVideoUrl;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactAvatar, "Avatar")
-    Q_DECLARE_LATIN1_LITERAL(FieldImageUrl, "ImageUrl");
-    Q_DECLARE_LATIN1_LITERAL(FieldVideoUrl, "VideoUrl");
+    Q_DECLARE_LATIN1_CONSTANT(FieldImageUrl, "ImageUrl");
+    Q_DECLARE_LATIN1_CONSTANT(FieldVideoUrl, "VideoUrl");
     // MeshUri, VibetoneUri, Audio(theme)Uri, ...?
 #endif
 

@@ -66,12 +66,12 @@ public:
     const char* FieldCustomMessage;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactPresence, "Presence")
-    Q_DECLARE_LATIN1_LITERAL(FieldTimestamp, "Timestamp");
-    Q_DECLARE_LATIN1_LITERAL(FieldNickname, "Nickname");
-    Q_DECLARE_LATIN1_LITERAL(FieldPresenceState, "PresenceState");
-    Q_DECLARE_LATIN1_LITERAL(FieldPresenceStateText, "PresenceStateText");
-    Q_DECLARE_LATIN1_LITERAL(FieldPresenceStateImageUrl, "PresenceStateImageUrl");
-    Q_DECLARE_LATIN1_LITERAL(FieldCustomMessage, "CustomMessage");
+    Q_DECLARE_LATIN1_CONSTANT(FieldTimestamp, "Timestamp");
+    Q_DECLARE_LATIN1_CONSTANT(FieldNickname, "Nickname");
+    Q_DECLARE_LATIN1_CONSTANT(FieldPresenceState, "PresenceState");
+    Q_DECLARE_LATIN1_CONSTANT(FieldPresenceStateText, "PresenceStateText");
+    Q_DECLARE_LATIN1_CONSTANT(FieldPresenceStateImageUrl, "PresenceStateImageUrl");
+    Q_DECLARE_LATIN1_CONSTANT(FieldCustomMessage, "CustomMessage");
 #endif
 
     enum PresenceState {

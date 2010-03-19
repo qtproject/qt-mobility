@@ -70,17 +70,17 @@ public:
     const char* SubTypeInternational;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactAddress, "Address")
-    Q_DECLARE_LATIN1_LITERAL(FieldStreet, "Street");
-    Q_DECLARE_LATIN1_LITERAL(FieldLocality, "Locality");
-    Q_DECLARE_LATIN1_LITERAL(FieldRegion, "Region");
-    Q_DECLARE_LATIN1_LITERAL(FieldPostcode, "Postcode");
-    Q_DECLARE_LATIN1_LITERAL(FieldCountry, "Country");
-    Q_DECLARE_LATIN1_LITERAL(FieldSubTypes, "SubTypes");
-    Q_DECLARE_LATIN1_LITERAL(FieldPostOfficeBox, "PostOfficeBox");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeParcel, "Parcel");
-    Q_DECLARE_LATIN1_LITERAL(SubTypePostal, "Postal");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeDomestic, "Domestic");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeInternational, "International");
+    Q_DECLARE_LATIN1_CONSTANT(FieldStreet, "Street");
+    Q_DECLARE_LATIN1_CONSTANT(FieldLocality, "Locality");
+    Q_DECLARE_LATIN1_CONSTANT(FieldRegion, "Region");
+    Q_DECLARE_LATIN1_CONSTANT(FieldPostcode, "Postcode");
+    Q_DECLARE_LATIN1_CONSTANT(FieldCountry, "Country");
+    Q_DECLARE_LATIN1_CONSTANT(FieldSubTypes, "SubTypes");
+    Q_DECLARE_LATIN1_CONSTANT(FieldPostOfficeBox, "PostOfficeBox");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeParcel, "Parcel");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypePostal, "Postal");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeDomestic, "Domestic");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeInternational, "International");
 #endif
 
     void setStreet(const QString& street) {setValue(FieldStreet, street);}

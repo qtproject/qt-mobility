@@ -1001,7 +1001,7 @@ class CustomTestDetail : public QContactDetail
 {
 public:
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(CustomTestDetail, "CustomTestDetail");
-    Q_DECLARE_LATIN1_LITERAL(FieldTestLabel, "TestLabel");
+    Q_DECLARE_LATIN1_CONSTANT(FieldTestLabel, "TestLabel");
 
     ~CustomTestDetail()
     {
@@ -1024,8 +1024,8 @@ public:
     void setTestLabel(const QString& testLabel) { setValue(FieldTestLabel, testLabel); }
     QString testLabel() const { return value(FieldTestLabel); }
 };
-Q_DEFINE_LATIN1_LITERAL(CustomTestDetail::FieldTestLabel, "TestLabel");
-Q_DEFINE_LATIN1_LITERAL(CustomTestDetail::DefinitionName, "CustomTestDetail");
+Q_DEFINE_LATIN1_CONSTANT(CustomTestDetail::FieldTestLabel, "TestLabel");
+Q_DEFINE_LATIN1_CONSTANT(CustomTestDetail::DefinitionName, "CustomTestDetail");
 
 void tst_QContactDetails::custom()
 {
