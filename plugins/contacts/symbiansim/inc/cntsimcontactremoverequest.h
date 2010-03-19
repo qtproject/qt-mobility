@@ -55,18 +55,19 @@ public:
 
 public Q_SLOTS:    
     // from CntAbstractSimRequest
-    bool start();
-    bool cancel();
+    void run();
    
 private Q_SLOTS:
     void removeComplete(QContactManager::Error error);
     void removeNext();
+    void getReservedSlotsComplete(QList<int> reservedSlots, QContactManager::Error error);
+    void getReservedSlots();
     
 private:
-    QContactRemoveRequest *m_req;
     QList<QContactLocalId> m_contactIds;
     int m_index;
-    QMap<int, QContactManager::Error> m_errorMap;    
+    QMap<int, QContactManager::Error> m_errorMap;
+    QList<int> m_reservedSlots;
 };
 
 #endif // CNTSIMCONTACTREMOVEREQUEST_H_

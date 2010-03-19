@@ -82,7 +82,7 @@ private slots: // Tests
     void testBirthday();
     void testGender();
     void testNickname();
-    void testAvatarStored();
+    void testAvatarThumbnail();
     void testAvatarUrl();
     void testAvatarInvalid();
     void testGeo();
@@ -90,9 +90,11 @@ private slots: // Tests
     void testOnlineAccount();
     void testFamily();
     void testSound();
+    void testTag();
     void testLabel();
     void testPref();
     void testPropertyHandler();
+    void testInvalidDocument();
 
 private: // Utilities
 

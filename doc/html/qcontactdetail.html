@@ -15,7 +15,7 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QContactDetail Class Reference</h1>
 <p>The QContactDetail class represents a single, complete detail about a contact. <a href="#details">More...</a></p>
-<pre>    #include &lt;QContactDetail&gt;</pre><p>Inherited by <a href="qcontactaddress.html">QContactAddress</a>, <a href="qcontactanniversary.html">QContactAnniversary</a>, <a href="qcontactavatar.html">QContactAvatar</a>, <a href="qcontactbirthday.html">QContactBirthday</a>, <a href="qcontactdisplaylabel.html">QContactDisplayLabel</a>, <a href="qcontactemailaddress.html">QContactEmailAddress</a>, <a href="qcontactfamily.html">QContactFamily</a>, <a href="qcontactgender.html">QContactGender</a>, <a href="qcontactgeolocation.html">QContactGeoLocation</a>, <a href="qcontactguid.html">QContactGuid</a>, <a href="qcontactname.html">QContactName</a>, <a href="qcontactnickname.html">QContactNickname</a>, <a href="qcontactnote.html">QContactNote</a>, <a href="qcontactonlineaccount.html">QContactOnlineAccount</a>, <a href="qcontactorganization.html">QContactOrganization</a>, <a href="qcontactphonenumber.html">QContactPhoneNumber</a>, <a href="qcontactsynctarget.html">QContactSyncTarget</a>, <a href="qcontacttag.html">QContactTag</a>, <a href="qcontacttimestamp.html">QContactTimestamp</a>, <a href="qcontacttype.html">QContactType</a>, and <a href="qcontacturl.html">QContactUrl</a>.</p>
+<pre>    #include &lt;QContactDetail&gt;</pre><p>Inherited by <a href="qcontactaddress.html">QContactAddress</a>, <a href="qcontactanniversary.html">QContactAnniversary</a>, <a href="qcontactavatar.html">QContactAvatar</a>, <a href="qcontactbirthday.html">QContactBirthday</a>, <a href="qcontactdisplaylabel.html">QContactDisplayLabel</a>, <a href="qcontactemailaddress.html">QContactEmailAddress</a>, <a href="qcontactfamily.html">QContactFamily</a>, <a href="qcontactgender.html">QContactGender</a>, <a href="qcontactgeolocation.html">QContactGeoLocation</a>, <a href="qcontactglobalpresence.html">QContactGlobalPresence</a>, <a href="qcontactguid.html">QContactGuid</a>, <a href="qcontactname.html">QContactName</a>, <a href="qcontactnickname.html">QContactNickname</a>, <a href="qcontactnote.html">QContactNote</a>, <a href="qcontactonlineaccount.html">QContactOnlineAccount</a>, <a href="qcontactorganization.html">QContactOrganization</a>, <a href="qcontactphonenumber.html">QContactPhoneNumber</a>, <a href="qcontactpresence.html">QContactPresence</a>, <a href="qcontactringtone.html">QContactRingtone</a>, <a href="qcontactsynctarget.html">QContactSyncTarget</a>, <a href="qcontacttag.html">QContactTag</a>, <a href="qcontactthumbnail.html">QContactThumbnail</a>, <a href="qcontacttimestamp.html">QContactTimestamp</a>, <a href="qcontacttype.html">QContactType</a>, and <a href="qcontacturl.html">QContactUrl</a>.</p>
 <ul>
 <li><a href="qcontactdetail-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -42,7 +42,6 @@
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#isEmpty">isEmpty</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#key">key</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#linkedDetailUris">linkedDetailUris</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QContactActionDescriptor&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#preferredActions">preferredActions</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#removeValue">removeValue</a></b> ( const QString &amp; <i>key</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#resetKey">resetKey</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#setContexts">setContexts</a></b> ( const QStringList &amp; <i>contexts</i> )</td></tr>
@@ -50,7 +49,6 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#setDetailUri">setDetailUri</a></b> ( const QString &amp; <i>detailUri</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#setLinkedDetailUris">setLinkedDetailUris</a></b> ( const QStringList &amp; <i>linkedDetailUris</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#setLinkedDetailUris-2">setLinkedDetailUris</a></b> ( const QString &amp; <i>linkedDetailUri</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#setPreferredActions">setPreferredActions</a></b> ( const QList&lt;QContactActionDescriptor&gt; &amp; <i>preferredActions</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#setValue">setValue</a></b> ( const QString &amp; <i>key</i>, const QVariant &amp; <i>value</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">T </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#value">value</a></b> ( const QString &amp; <i>key</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#value-2">value</a></b> ( const QString &amp; <i>key</i> ) const</td></tr>
@@ -177,10 +175,6 @@
 <p>It is equivalent to the following code:</p>
 <pre>    value&lt;QStringList&gt;(QContactDetail::FieldLinkedDetailUris);</pre>
 <p>See also <a href="qcontactdetail.html#setLinkedDetailUris">setLinkedDetailUris</a>() and <a href="qcontactdetail.html#value">value</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactDetail/preferredActions"></a>
-<h3 class="fn"><a name="preferredActions"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactactiondescriptor.html">QContactActionDescriptor</a>&gt; QContactDetail::preferredActions () const</h3>
-<p>Returns the list of preferred actions for this detail</p>
-<p>See also <a href="qcontactdetail.html#setPreferredActions">setPreferredActions</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactDetail/removeValue"></a>
 <h3 class="fn"><a name="removeValue"></a>bool QContactDetail::removeValue ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>key</i> )</h3>
 <p>Removes the value stored in this detail for the given <i>key</i>. Returns true if a value was stored for the given <i>key</i> and the operation succeeded, and false otherwise</p>
@@ -215,10 +209,6 @@
 <p>It is equivalent to the following code:</p>
 <pre>    setValue(FieldLinkedDetailUris, QStringList(linkedDetailUri));</pre>
 <p>See also <a href="qcontactdetail.html#setValue">setValue</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactDetail/setPreferredActions"></a>
-<h3 class="fn"><a name="setPreferredActions"></a>void QContactDetail::setPreferredActions ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactactiondescriptor.html">QContactActionDescriptor</a>&gt; &amp; <i>preferredActions</i> )</h3>
-<p>Sets the preferred actions for this detail to be the given list of <i>preferredActions</i></p>
-<p>See also <a href="qcontactdetail.html#preferredActions">preferredActions</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactDetail/setValue"></a>
 <h3 class="fn"><a name="setValue"></a>bool QContactDetail::setValue ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>key</i>, const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>value</i> )</h3>
 <p>Inserts <i>value</i> into the detail for the given <i>key</i> if <i>value</i> is valid. If <i>value</i> is invalid, removes the field with the given <i>key</i> from the detail. Returns true if the given <i>value</i> was set for the <i>key</i> (if the <i>value</i> was valid), or if the given <i>key</i> was removed from detail (if the <i>value</i> was invalid), and returns false if the key was unable to be removed (and the <i>value</i> was invalid)</p>
@@ -261,7 +251,7 @@
         const char* FieldSubTypes;
         const char* SubTypeLandline;
         const char* SubTypeMobile;
-        const char* SubTypeFacsimile;
+        const char* SubTypeFax;
         const char* SubTypePager;
         const char* SubTypeVoice;
         const char* SubTypeModem;
@@ -273,20 +263,20 @@
         const char* SubTypeDtmfMenu;
     #else
         Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactPhoneNumber, &quot;PhoneNumber&quot;)
-        Q_DECLARE_LATIN1_LITERAL(FieldNumber, &quot;PhoneNumber&quot;);
-        Q_DECLARE_LATIN1_LITERAL(FieldSubTypes, &quot;SubTypes&quot;);
-        Q_DECLARE_LATIN1_LITERAL(SubTypeLandline, &quot;Landline&quot;);
-        Q_DECLARE_LATIN1_LITERAL(SubTypeMobile, &quot;Mobile&quot;);
-        Q_DECLARE_LATIN1_LITERAL(SubTypeFacsimile, &quot;Facsimile&quot;);
-        Q_DECLARE_LATIN1_LITERAL(SubTypePager, &quot;Pager&quot;);
-        Q_DECLARE_LATIN1_LITERAL(SubTypeVoice, &quot;Voice&quot;);
-        Q_DECLARE_LATIN1_LITERAL(SubTypeModem, &quot;Modem&quot;);
-        Q_DECLARE_LATIN1_LITERAL(SubTypeVideo, &quot;Video&quot;);
-        Q_DECLARE_LATIN1_LITERAL(SubTypeCar, &quot;Car&quot;);
-        Q_DECLARE_LATIN1_LITERAL(SubTypeBulletinBoardSystem, &quot;BulletinBoardSystem&quot;);
-        Q_DECLARE_LATIN1_LITERAL(SubTypeMessagingCapable, &quot;MessagingCapable&quot;);
-        Q_DECLARE_LATIN1_LITERAL(SubTypeAssistant, &quot;Assistant&quot;);
-        Q_DECLARE_LATIN1_LITERAL(SubTypeDtmfMenu, &quot;DtmfMenu&quot;);
+        Q_DECLARE_LATIN1_CONSTANT(FieldNumber, &quot;PhoneNumber&quot;);
+        Q_DECLARE_LATIN1_CONSTANT(FieldSubTypes, &quot;SubTypes&quot;);
+        Q_DECLARE_LATIN1_CONSTANT(SubTypeLandline, &quot;Landline&quot;);
+        Q_DECLARE_LATIN1_CONSTANT(SubTypeMobile, &quot;Mobile&quot;);
+        Q_DECLARE_LATIN1_CONSTANT(SubTypeFax, &quot;Fax&quot;);
+        Q_DECLARE_LATIN1_CONSTANT(SubTypePager, &quot;Pager&quot;);
+        Q_DECLARE_LATIN1_CONSTANT(SubTypeVoice, &quot;Voice&quot;);
+        Q_DECLARE_LATIN1_CONSTANT(SubTypeModem, &quot;Modem&quot;);
+        Q_DECLARE_LATIN1_CONSTANT(SubTypeVideo, &quot;Video&quot;);
+        Q_DECLARE_LATIN1_CONSTANT(SubTypeCar, &quot;Car&quot;);
+        Q_DECLARE_LATIN1_CONSTANT(SubTypeBulletinBoardSystem, &quot;BulletinBoardSystem&quot;);
+        Q_DECLARE_LATIN1_CONSTANT(SubTypeMessagingCapable, &quot;MessagingCapable&quot;);
+        Q_DECLARE_LATIN1_CONSTANT(SubTypeAssistant, &quot;Assistant&quot;);
+        Q_DECLARE_LATIN1_CONSTANT(SubTypeDtmfMenu, &quot;DtmfMenu&quot;);
     #endif
 
         void setNumber(const QString&amp; number) {setValue(FieldNumber, number);}

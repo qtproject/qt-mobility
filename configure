@@ -367,7 +367,7 @@ compileTest()
         cd config.tests/$2
     fi
 
-    qmake "$relpath/config.tests/$2/$2.pro" >> "$CONFIG_LOG"
+    qmake "$relpath/config.tests/$2/$2.pro" 2>> "$CONFIG_LOG" >> "$CONFIG_LOG"
     printf  " ."
     "$MAKE" clean >> "$CONFIG_LOG"
     printf "."
@@ -387,6 +387,7 @@ compileTest()
 compileTest QMF qmf
 compileTest NetworkManager networkmanager
 compileTest "CoreWLAN (MacOS 10.6)" corewlan
+compileTest "Maemo ICD" maemo-icd
 
 # Now module selection
 # using 'expr match ....' should help a bit
@@ -398,6 +399,7 @@ compileTest "CoreWLAN (MacOS 10.6)" corewlan
 # It's a lot easier to make qmake do the dependency checking...
 echo "mobility_modules = $MOBILITY_MODULES" >> "$CONFIG_IN"
 echo "contains(mobility_modules,versit): mobility_modules *= contacts" >> "$CONFIG_IN"
+echo "maemo5|maemo6:contains(maemo-icd_enabled, no): mobility_modules -= bearer" >> "$CONFIG_IN"
 
 # Ideally we'd skip generating headers for modules that are not enabled
 echo "Generating Mobility Headers..."
@@ -429,7 +431,6 @@ for module in $MOBILITY_MODULES; do
             ;;
         multimedia)
             $relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia/experimental
             ;;
         messaging)
             $relpath/bin/syncheaders $shadowpath/include $relpath/src/messaging

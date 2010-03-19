@@ -60,7 +60,7 @@ public:
     const char* FieldEmailAddress;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactEmailAddress, "EmailAddress")
-    Q_DECLARE_LATIN1_LITERAL(FieldEmailAddress, "EmailAddress");
+    Q_DECLARE_LATIN1_CONSTANT(FieldEmailAddress, "EmailAddress");
 #endif
 
     void setEmailAddress(const QString& emailAddress) {setValue(FieldEmailAddress, emailAddress);}

@@ -68,8 +68,8 @@ public:
 
     QSize nativeSize() const;
 
-    QVideoWidget::AspectRatioMode aspectRatioMode() const;
-    void setAspectRatioMode(QVideoWidget::AspectRatioMode mode);
+    Qt::AspectRatioMode aspectRatioMode() const;
+    void setAspectRatioMode(Qt::AspectRatioMode mode);
 
     void repaint();
 
@@ -97,6 +97,9 @@ public:
     HRESULT STDMETHODCALLTYPE ShutdownObject();
     HRESULT STDMETHODCALLTYPE DetachObject();
 
+public Q_SLOTS:
+    void openStateChanged(long state);
+
 private:
     typedef HRESULT (WINAPI *PtrMFCreateVideoPresenter)(IUnknown*, REFIID, REFIID, void**);
 
@@ -105,7 +108,7 @@ private:
     PtrMFCreateVideoPresenter ptrMFCreateVideoPresenter;
     IMFVideoPresenter *m_presenter;
     IMFVideoDisplayControl *m_displayControl;
-    QVideoWidget::AspectRatioMode m_aspectRatioMode;
+    Qt::AspectRatioMode m_aspectRatioMode;
     QSize m_sizeHint;
     QRect m_displayRect;
     WId m_winId;

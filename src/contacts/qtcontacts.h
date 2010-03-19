@@ -55,6 +55,7 @@
 #include "qcontactdetailfielddefinition.h"      // field in a detail definition
 #include "qcontactdetail.h"                     // contact detail
 #include "qcontactdetails.h"                    // leaf detail classes
+#include "qcontactfetchhint.h"                  // backend optimization hint class
 #include "qcontactfilter.h"                     // contact filter
 #include "qcontactfilters.h"                    // leaf filter classes
 #include "qcontactsortorder.h"                  // contact sorting

@@ -43,12 +43,10 @@
 #define QTRACKERRELATIONSHIPSAVEREQUEST_H_
 
 #include <QObject>
-
 #include <qtrackercontactasyncrequest.h>
-#include <qmobilityglobal.h>
 #include <qtcontacts.h>
-
 #include <QtTracker/QLive>
+
 #include <QtTracker/ontologies/nco.h>
 
 

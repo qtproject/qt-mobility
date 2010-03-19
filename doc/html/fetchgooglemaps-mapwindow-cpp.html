@@ -74,15 +74,23 @@
 
     MapWindow::MapWindow(QWidget *parent, Qt::WFlags flags)
             : QMainWindow(parent, flags),
-            webView(new QWebView),
-            posLabel(new QLabel),
-            headingAndSpeedLabel(new QLabel),
-            dateTimeLabel(new QLabel),
             loading(false),
             usingLogFile(false),
             location(0),
             waitingForFix(false)
     {
+        webView = new QWebView(this);
+        webView-&gt;setMaximumSize(640, 480);
+
+        posLabel = new QLabel(this);
+        posLabel-&gt;setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+
+        headingAndSpeedLabel = new QLabel(this);
+        headingAndSpeedLabel-&gt;setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+
+        dateTimeLabel = new QLabel(this);
+        dateTimeLabel-&gt;setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+
         location = QGeoPositionInfoSource::createDefaultSource(this);
         if (!location) {
             QNmeaPositionInfoSource *nmeaSource = new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode, this);
@@ -104,10 +112,30 @@
 
         QWidget *mainWidget = new QWidget;
         QVBoxLayout *layout = new QVBoxLayout(mainWidget);
-        layout-&gt;addWidget(webView);
-        layout-&gt;addWidget(posLabel);
-        layout-&gt;addWidget(headingAndSpeedLabel);
-        layout-&gt;addWidget(dateTimeLabel);
+        layout-&gt;addWidget(webView, 1);
+
+        QVBoxLayout *labelLayout = new QVBoxLayout();
+        labelLayout-&gt;addWidget(posLabel);
+        labelLayout-&gt;addWidget(headingAndSpeedLabel);
+        labelLayout-&gt;addWidget(dateTimeLabel);
+
+        layout-&gt;addLayout(labelLayout, 0);
+        layout-&gt;setSizeConstraint(QLayout::SetMaximumSize);
+
+        int maxHeight = webView-&gt;maximumSize().height();
+        maxHeight += posLabel-&gt;size().height();
+        maxHeight += headingAndSpeedLabel-&gt;size().height();
+        maxHeight += dateTimeLabel-&gt;size().height();
+
+        setMaximumHeight(maxHeight);
+
+        int maxWidth = webView-&gt;maximumWidth();
+        maxWidth = qMin(maxWidth, posLabel-&gt;maximumWidth());
+        maxWidth = qMin(maxWidth, headingAndSpeedLabel-&gt;maximumWidth());
+        maxWidth = qMin(maxWidth, dateTimeLabel-&gt;maximumWidth());
+
+        setMaximumWidth(maxWidth);
+
         setCentralWidget(mainWidget);
 
     #if !defined(Q_OS_SYMBIAN)
@@ -214,6 +242,10 @@
             <span class="comment">// Google Maps does not provide maps larger than 640x480</span>
             int width = qMin(webView-&gt;width(), 640);
             int height = qMin(webView-&gt;height(), 480);
+
+            if ((width == 0) || (height == 0))
+                return;
+
             QString url = GMAPS_STATICMAP_URL_TEMPLATE
                           .arg(QString::number(info.coordinate().latitude()))
                           .arg(QString::number(info.coordinate().longitude()))

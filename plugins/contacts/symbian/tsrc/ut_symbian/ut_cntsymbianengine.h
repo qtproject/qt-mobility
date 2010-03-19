@@ -74,6 +74,7 @@ private slots:
     void dataTypeSupport();
     void synthesizeDisplaylable();
     void definitionDetails();
+    void asyncRequests();
     
 private:
     void removeAllContacts();

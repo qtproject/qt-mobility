@@ -59,7 +59,7 @@ public:
     const char* FieldBirthday;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactBirthday, "Birthday")
-    Q_DECLARE_LATIN1_LITERAL(FieldBirthday, "Birthday");
+    Q_DECLARE_LATIN1_CONSTANT(FieldBirthday, "Birthday");
 #endif
 
     void setDate(const QDate& date) {setValue(FieldBirthday, date);}

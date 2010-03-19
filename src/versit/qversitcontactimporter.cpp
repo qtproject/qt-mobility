@@ -68,7 +68,7 @@ QTM_USE_NAMESPACE
  * Process \a property and update \a contact with the corresponding QContactDetail(s).
  * \a document provides the context within which the property was found.
  * \a contactIndex specifies the position that \a contact will take in the list returned by
- * \l QVersitContactImporter::importContacts().
+ * \l QVersitContactImporter::importDocuments().
  *
  * Returns true if the property has been handled and requires no further processing, false
  * otherwise.
@@ -82,7 +82,7 @@ QTM_USE_NAMESPACE
  * Process \a property and update \a contact with the corresponding QContactDetail(s).
  * \a document provides the context within which the property was found.
  * \a contactIndex specifies the position that \a contact will take in the list returned by
- * \l QVersitContactImporter::importContacts().
+ * \l QVersitContactImporter::importDocuments().
  * \a alreadyProcessed is true if the detail has already been processed either by
  * \l preProcessProperty() or by QVersitContactImporter itself.
  *
@@ -116,8 +116,26 @@ QTM_USE_NAMESPACE
  * An example usage of QVersitContactImporter
  * \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Import example
  *
+ * \section1 Importing categories
+ * The importer imports the vCard CATEGORIES property by converting each category to a QContactTag.
+ * Some managers may not have support for QContactTag, but instead support categorization using the
+ * \l{QContactRelationship::HasMember}{HasMember} QContactRelationship along with contacts of type
+ * \l{QContactType::TypeGroup}{TypeGroup}.  For these backends, if the categorization information
+ * needs to be retained through group relationships, extra work needs to be done to do the
+ * conversion.  Below is some example code that does this translation.
+ *
+ * \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Import relationship example
+ *
  * \sa QVersitDocument, QVersitReader, QVersitContactImporterPropertyHandler
  */
+
+/*!
+  \enum QVersitContactImporter::Error
+  This enum specifies an error that occurred during the most recent call to importDocuments()
+  \value NoError The most recent operation was successful
+  \value InvalidDocumentError One of the documents is not a vCard
+  \value EmptyDocumentError One of the documents is empty
+  */
 
 /*! Constructs a new importer */
 QVersitContactImporter::QVersitContactImporter()
@@ -132,18 +150,57 @@ QVersitContactImporter::~QVersitContactImporter()
 }
 
 /*!
- * Converts \a documents into a corresponding list of QContacts.
+ * Converts \a documents into a corresponding list of QContacts.  After calling this, the converted
+ * contacts can be retrieved by calling contacts().
+ * Returns true on success.  If any of the documents cannot be imported as contacts (eg. they aren't
+ * vCards), false is returned and errors() will return a list describing the errors that occured.
+ * The successfully imported documents will still be available via contacts().
+ *
+ * \sa contacts(), errors()
  */
-QList<QContact> QVersitContactImporter::importContacts(const QList<QVersitDocument>& documents)
+bool QVersitContactImporter::importDocuments(const QList<QVersitDocument>& documents)
 {
-    QList<QContact> list;
-    int i = 0;
+    int documentIndex = 0;
+    int contactIndex = 0;
+    d->mContacts.clear();
+    d->mErrors.clear();
+    bool ok = true;
     foreach (const QVersitDocument& document, documents) {
-        list.append(d->importContact(document, i));
-        i++;
+        QContact contact;
+        QVersitContactImporter::Error error;
+        if (d->importContact(document, contactIndex, &contact, &error)) {
+            d->mContacts.append(contact);
+            contactIndex++;
+        } else {
+            d->mErrors.insert(documentIndex, error);
+            ok = false;
+        }
+        documentIndex++;
     }
 
-    return list;
+    return ok;
+}
+
+/*!
+ * Returns the contacts imported in the most recent call to importDocuments().
+ *
+ * \sa importDocuments()
+ */
+QList<QContact> QVersitContactImporter::contacts() const
+{
+    return d->mContacts;
+}
+
+/*!
+ * Returns the map of errors encountered in the most recent call to importDocuments().  The key is
+ * the index into the input list of documents and the value is the error that occured on that
+ * document.
+ *
+ * \sa importDocuments()
+ */
+QMap<int, QVersitContactImporter::Error> QVersitContactImporter::errors() const
+{
+    return d->mErrors;
 }
 
 /*!

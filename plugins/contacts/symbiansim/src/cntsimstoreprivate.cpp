@@ -68,6 +68,7 @@ CntSimStorePrivate::CntSimStorePrivate(CntSymbianSimEngine &engine, CntSimStore 
      m_engine(engine),
      m_simStore(simStore),
      m_storeName(storeName),
+     m_readOnlyAccess(false),
      m_storeInfoPckg(m_storeInfo),
      m_listener(0)
 {
@@ -80,6 +81,10 @@ void CntSimStorePrivate::ConstructL()
     TBuf<RMobilePhoneBookStore::KMaxPBIDSize> storeName;
     convertStoreNameL(storeName);
     
+    // SDN store is allways read only
+    if (m_storeName == KParameterValueSimStoreNameSdn)
+        m_readOnlyAccess = true;
+
     // Open etel server
     User::LeaveIfError(m_etelServer.Connect());
     User::LeaveIfError(m_etelServer.LoadPhoneModule(KMmTsyModuleName));
@@ -146,10 +151,10 @@ void CntSimStorePrivate::convertStoreNameL(TDes &storeName)
     }
 }
 
-bool CntSimStorePrivate::read(int index, int numSlots, QContactManager::Error &error)
+bool CntSimStorePrivate::read(int index, int numSlots, QContactManager::Error* error)
 {
     if (IsActive()) {
-        error = QContactManager::LockedError;
+        *error = QContactManager::LockedError;
         return false;
     }
     
@@ -160,14 +165,14 @@ bool CntSimStorePrivate::read(int index, int numSlots, QContactManager::Error &e
     SetActive();
     m_state = ReadState;
     
-    error = QContactManager::NoError;
+    *error = QContactManager::NoError;
     return true;
 }
 
-bool CntSimStorePrivate::write(const QContact &contact, QContactManager::Error &error)
+bool CntSimStorePrivate::write(const QContact &contact, QContactManager::Error* error)
 {
     if (IsActive()) {
-        error = QContactManager::LockedError;
+        *error = QContactManager::LockedError;
         return false;
     }
     
@@ -192,14 +197,14 @@ bool CntSimStorePrivate::write(const QContact &contact, QContactManager::Error &
     SetActive();
     m_state = WriteState;
     
-    error = QContactManager::NoError;
+    *error = QContactManager::NoError;
     return true;
 }
 
-bool CntSimStorePrivate::remove(int index, QContactManager::Error &error)
+bool CntSimStorePrivate::remove(int index, QContactManager::Error* error)
 {
     if (IsActive()) {
-        error = QContactManager::LockedError;
+        *error = QContactManager::LockedError;
         return false;
     }
     
@@ -211,8 +216,26 @@ bool CntSimStorePrivate::remove(int index, QContactManager::Error &error)
     SetActive();
     m_state = DeleteState;
     
-    error = QContactManager::NoError;
+    *error = QContactManager::NoError;
     return true;
+}
+
+bool CntSimStorePrivate::getReservedSlots(QContactManager::Error* error)
+{
+    if (IsActive()) {
+        *error = QContactManager::LockedError;
+        return false;
+    }
+    
+    // start reading
+    m_buffer.Zero();
+    m_buffer.ReAlloc(KOneSimContactBufferSize*m_storeInfo.iTotalEntries);
+    m_etelStore.Read(iStatus, 1, m_storeInfo.iTotalEntries, m_buffer);
+    SetActive();
+    m_state = ReadReservedSlotsState;
+    
+    *error = QContactManager::NoError;
+    return true;  
 }
 
 void CntSimStorePrivate::DoCancel()
@@ -223,6 +246,8 @@ void CntSimStorePrivate::DoCancel()
         m_etelStore.CancelAsyncRequest(EMobilePhoneStoreWrite);
     if (m_state == DeleteState)
         m_etelStore.CancelAsyncRequest(EMobilePhoneStoreDelete);
+    if (m_state == ReadReservedSlotsState)
+        m_etelStore.CancelAsyncRequest(EMobilePhoneStoreRead);
     
     m_state = InactiveState;
 }
@@ -268,6 +293,13 @@ void CntSimStorePrivate::RunL()
         }
         break;
         
+        case ReadReservedSlotsState:
+        {
+            QList<int> reservedSlots = decodeReservedSlotsL(m_buffer);
+            emit m_simStore.getReservedSlotsComplete(reservedSlots, QContactManager::NoError);
+        }
+        break;
+        
         default:
         {
             User::Leave(KErrUnknown);
@@ -280,19 +312,19 @@ void CntSimStorePrivate::RunL()
 TInt CntSimStorePrivate::RunError(TInt aError)
 {
     QContactManager::Error qtError = QContactManager::NoError;
-    CntSymbianSimTransformError::transformError(aError, qtError);
+    CntSymbianSimTransformError::transformError(aError, &qtError);
     
     // NOTE: It is assumed that emitting signals is queued
         
-    if (m_state == ReadState) {
-        QList<QContact> emptyList;
-        emit m_simStore.readComplete(emptyList, qtError);            
-    } else if (m_state == WriteState) {
+    if (m_state == ReadState) 
+        emit m_simStore.readComplete(QList<QContact>(), qtError);            
+    else if (m_state == WriteState)
         emit m_simStore.writeComplete(m_convertedContact, qtError);  
-    } else if (m_state == DeleteState) {
+     else if (m_state == DeleteState)
         emit m_simStore.removeComplete(qtError);
-    }
-    
+    else if (m_state == ReadReservedSlotsState)
+        emit m_simStore.getReservedSlotsComplete(QList<int>(), qtError);
+        
     m_state = InactiveState;
     
     return KErrNone;
@@ -360,6 +392,8 @@ QList<QContact> CntSimStorePrivate::decodeSimContactsL(TDes8& rawData) const
                             QString number = lastNumber.number();
                             number.insert(0, "+");
                             lastNumber.setNumber(number);
+                            if (m_readOnlyAccess)
+                                m_engine.setReadOnlyAccessConstraint(&lastNumber);
                             currentContact.saveDetail(&lastNumber);
                         }
                     }
@@ -382,9 +416,11 @@ QList<QContact> CntSimStorePrivate::decodeSimContactsL(TDes8& rawData) const
                         QContactName name;
                         QString nameString = QString::fromUtf16(bufPtr.Ptr(), bufPtr.Length());
                         name.setCustomLabel(nameString);
+                        if (m_readOnlyAccess)
+                            m_engine.setReadOnlyAccessConstraint(&name);                        
                         currentContact.saveDetail(&name);
                         QContactManager::Error error(QContactManager::NoError);
-                        currentContact = m_engine.setContactDisplayLabel(m_engine.synthesizedDisplayLabel(currentContact, error), currentContact);
+                        currentContact = m_engine.setContactDisplayLabel(m_engine.synthesizedDisplayLabel(currentContact, &error), currentContact);
                     }
                 }
                 break;
@@ -395,6 +431,8 @@ QList<QContact> CntSimStorePrivate::decodeSimContactsL(TDes8& rawData) const
                     QContactNickname nickName;
                     QString name = QString::fromUtf16(bufPtr.Ptr(), bufPtr.Length());
                     nickName.setNickname(name);
+                    if (m_readOnlyAccess)
+                        m_engine.setReadOnlyAccessConstraint(&nickName);                    
                     currentContact.saveDetail(&nickName);
                 }
                 break;
@@ -406,6 +444,8 @@ QList<QContact> CntSimStorePrivate::decodeSimContactsL(TDes8& rawData) const
                     phoneNumber.setSubTypes( QContactPhoneNumber::SubTypeMobile );
                     QString number = QString::fromUtf16(bufPtr.Ptr(), bufPtr.Length());
                     phoneNumber.setNumber(number);
+                    if (m_readOnlyAccess)
+                        m_engine.setReadOnlyAccessConstraint(&phoneNumber);                    
                     currentContact.saveDetail(&phoneNumber);
                 }
                 break;
@@ -422,6 +462,8 @@ QList<QContact> CntSimStorePrivate::decodeSimContactsL(TDes8& rawData) const
                     QContactEmailAddress email;
                     QString emailAddress = QString::fromUtf16(bufPtr.Ptr(), bufPtr.Length());
                     email.setEmailAddress(emailAddress);
+                    if (m_readOnlyAccess)
+                        m_engine.setReadOnlyAccessConstraint(&email);                    
                     currentContact.saveDetail(&email);
                 }
                 break;
@@ -595,5 +637,32 @@ QContact CntSimStorePrivate::encodeSimContactL(const QContact* contact, TDes8& r
     CleanupStack::PopAndDestroy(pbBuffer);
     PbkPrintToLog(_L("CntSymbianSimEngine::encodeSimContactL() - OUT"));
     return convertedContact;
+}
+
+QList<int> CntSimStorePrivate::decodeReservedSlotsL(TDes8& rawData) const
+{
+    QList<int> reservedSlots;
+
+    TUint8 tagValue(0);
+    CPhoneBookBuffer::TPhBkTagType dataType;
+
+    CPhoneBookBuffer* pbBuffer = new (ELeave) CPhoneBookBuffer();
+    CleanupStack::PushL(pbBuffer);
+    pbBuffer->Set(&rawData);
+    pbBuffer->StartRead();
+
+    while (pbBuffer->GetTagAndType(tagValue, dataType) == KErrNone)
+    {
+        if (tagValue == RMobilePhoneBookStore::ETagPBAdnIndex) 
+        {
+            TUint16 index;
+            if (pbBuffer->GetValue(index) == KErrNone)
+                reservedSlots.append(index);
+        } else
+            pbBuffer->SkipValue(dataType);
+    } //while
+    
+    CleanupStack::PopAndDestroy(pbBuffer);
+    return reservedSlots;
 }
 

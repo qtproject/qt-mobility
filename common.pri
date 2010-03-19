@@ -13,6 +13,11 @@ CONFIG(debug, debug|release) {
 
 include(staticconfig.pri)
 
+symbian:contains(symbian_symbols_unfrozen,1) {
+    #see configure.bat for details
+    MMP_RULES+="EXPORTUNFROZEN"
+}
+
 mac {
     contains(QT_CONFIG, qt_framework):contains(TEMPLATE, lib) {
         #MacOSX always builds debug and release libs when using mac framework
@@ -118,7 +123,7 @@ maemo6 {
 }
 maemo5 {
     DEFINES+= Q_WS_MAEMO_5
-}
+    LIBS += -lgconf-2 -lrtcom-eventlogger -lmodest-dbus-client-1.0 -losso -ldbus-glib-1 -ldbus-1 -lgobject-2.0 -lglib-2.0 -ltpsession -ltelepathy-qt4}
 maemo* {
     LIBS += -L/opt/qt4-maemo5/lib
     QMAKE_LFLAGS += -Wl,-rpath,/opt/qt4-maemo5/lib

@@ -59,7 +59,7 @@ public:
     const char* FieldNote;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactNote, "Note")
-    Q_DECLARE_LATIN1_LITERAL(FieldNote, "Note");
+    Q_DECLARE_LATIN1_CONSTANT(FieldNote, "Note");
 #endif
 
     void setNote(const QString& note) {setValue(FieldNote, note);}

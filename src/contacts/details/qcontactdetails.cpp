@@ -110,6 +110,13 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
+   \class QContactGlobalPresence
+   \brief The QContactGlobalPresence class provides aggregated presence information
+   for a contact, synthesized or supplied by the backend.
+   \ingroup contacts-details
+ */
+
+/*!
    \class QContactGuid
    \brief The QContactGuid class contains the globally unique
    Id of a contact.
@@ -157,6 +164,20 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
+   \class QContactPresence
+   \brief The QContactPresence class provides presence information
+   for an online account of a contact.
+   \ingroup contacts-details
+ */
+
+/*!
+   \class QContactRingtone
+   \brief The QContactRingtone class provides a ringtone associated
+   with a contact
+   \ingroup contacts-details
+ */
+
+/*!
    \class QContactSyncTarget
    \brief The QContactSyncTarget class provides a sync target
    for a contact.
@@ -167,6 +188,13 @@ QTM_BEGIN_NAMESPACE
    \class QContactTag
    \brief The QContactTag class contains a tag associated with a
    contact.
+   \ingroup contacts-details
+ */
+
+/*!
+   \class QContactThumbnail
+   \brief The QContactThumbnail class contains a thumbnail used
+   in display lists to represent the contact.
    \ingroup contacts-details
  */
 
@@ -194,91 +222,151 @@ QTM_BEGIN_NAMESPACE
    \variable QContactName::DefinitionName
    The constant string which identifies the definition of details which are names.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactName::DefinitionName, "Name");
+Q_DEFINE_LATIN1_CONSTANT(QContactName::DefinitionName, "Name");
 
 /*!
    \variable QContactNickname::DefinitionName
    The constant string which identifies the definition of details which are nicknames.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactNickname::DefinitionName, "Nickname");
+Q_DEFINE_LATIN1_CONSTANT(QContactNickname::DefinitionName, "Nickname");
 
 /*!
    \variable QContactNote::DefinitionName
    The constant string which identifies the definition of details which are notes.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactNote::DefinitionName, "Note");
+Q_DEFINE_LATIN1_CONSTANT(QContactNote::DefinitionName, "Note");
 
 /*!
    \variable QContactAvatar::DefinitionName
    The constant string which identifies the definition of details which are avatars.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactAvatar::DefinitionName, "Avatar");
+Q_DEFINE_LATIN1_CONSTANT(QContactAvatar::DefinitionName, "Avatar");
 
 /*!
    \variable QContactAddress::DefinitionName
    The constant string which identifies the definition of details which are street addresses.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactAddress::DefinitionName, "StreetAddress");
+Q_DEFINE_LATIN1_CONSTANT(QContactAddress::DefinitionName, "Address");
 
 /*!
    \variable QContactPhoneNumber::DefinitionName
    The constant string which identifies the definition of details which are phone numbers.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::DefinitionName, "PhoneNumber");
+Q_DEFINE_LATIN1_CONSTANT(QContactPhoneNumber::DefinitionName, "PhoneNumber");
+
+/*!
+   \variable QContactPresence::DefinitionName
+   The constant string which identifies the definition of details which contain presence information.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactPresence::DefinitionName, "Presence");
+
+/*!
+   \variable QContactPresence::FieldTimestamp
+
+   The constant key for which the last update timestamp value is stored in details
+   of the QContactPresence type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactPresence::FieldTimestamp, "Timestamp");
+
+/*!
+   \variable QContactPresence::FieldNickname
+
+   The constant key for which the nickname value is stored in details
+   of the QContactPresence type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactPresence::FieldNickname, "Nickname");
+
+/*!
+   \variable QContactPresence::FieldPresence
+
+   The constant key for which the presence state value is stored in details
+   of the QContactPresence typel.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactPresence::FieldPresenceState, "PresenceState");
+
+/*!
+   \variable QContactPresence::FieldPresenceStateText
+
+   The constant key for which the presence provider provided text representation
+   of the presence state is stored in details of the QContactPresence type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactPresence::FieldPresenceStateText, "PresenceStateText");
+
+/*!
+   \variable QContactPresence::FieldPresenceStateImageUrl
+
+   The constant key for which the image url value for the current presence state
+   is stored in details of the QContactPresence type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactPresence::FieldPresenceStateImageUrl, "PresenceStateImageUrl");
+
+/*!
+   \variable QContactPresence::FieldCustomMessage
+
+   The constant key for which the user-entered custom message for their state
+   is stored in details of the QContactPresence type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactPresence::FieldCustomMessage, "CustomMessage");
+
+/*!
+   \variable QContactRingtone::DefinitionName
+   The constant string which identifies the definition of details which are ringtones.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactRingtone::DefinitionName, "Ringtone");
 
 /*!
    \variable QContactSyncTarget::DefinitionName
    The constant string which identifies the definition of details which are synchronization target stores.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactSyncTarget::DefinitionName, "SyncTarget");
+Q_DEFINE_LATIN1_CONSTANT(QContactSyncTarget::DefinitionName, "SyncTarget");
 
 /*!
    \variable QContactTimestamp::DefinitionName
    The constant string which identifies the definition of details which are contact synchronization timestamps.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactTimestamp::DefinitionName, "Timestamp");
+Q_DEFINE_LATIN1_CONSTANT(QContactTimestamp::DefinitionName, "Timestamp");
 
 /*!
    \variable QContactType::DefinitionName
    The constant string which identifies the definition of details which identify the type of the contact.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactType::DefinitionName, "Type");
+Q_DEFINE_LATIN1_CONSTANT(QContactType::DefinitionName, "Type");
 
 /*!
    \variable QContactGuid::DefinitionName
    The constant string which identifies the definition of details which are globally unique identifiers.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactGuid::DefinitionName, "Guid");
+Q_DEFINE_LATIN1_CONSTANT(QContactGuid::DefinitionName, "Guid");
 
 /*!
    \variable QContactEmailAddress::DefinitionName
    The constant string which identifies the definition of details which are email addresses.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactEmailAddress::DefinitionName, "EmailAddress");
+Q_DEFINE_LATIN1_CONSTANT(QContactEmailAddress::DefinitionName, "EmailAddress");
 
 /*!
    \variable QContactFamily::DefinitionName
    The constant string which identifies the definition of details which contain the names of the contact's family.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactFamily::DefinitionName, "Family");
+Q_DEFINE_LATIN1_CONSTANT(QContactFamily::DefinitionName, "Family");
 
 /*!
    \variable QContactUrl::DefinitionName
    The constant string which identifies the definition of details which are universal resource location paths.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactUrl::DefinitionName, "Url");
+Q_DEFINE_LATIN1_CONSTANT(QContactUrl::DefinitionName, "Url");
 
 /*!
    \variable QContactBirthday::DefinitionName
    The constant string which identifies the definition of details which are the dates of birthdays.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactBirthday::DefinitionName, "Birthday");
+Q_DEFINE_LATIN1_CONSTANT(QContactBirthday::DefinitionName, "Birthday");
 
 /*!
    \variable QContactAnniversary::DefinitionName
    The constant string which identifies the definition of details which are anniversary dates.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::DefinitionName, "Anniversary");
+Q_DEFINE_LATIN1_CONSTANT(QContactAnniversary::DefinitionName, "Anniversary");
 
 /*!
    \variable QContactGender::DefinitionName
@@ -286,7 +374,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::DefinitionName, "Anniversary");
    The constant string which identifies the definition of details
    which identify the gender of a contact in a given context.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactGender::DefinitionName, "Gender");
+Q_DEFINE_LATIN1_CONSTANT(QContactGender::DefinitionName, "Gender");
 
 /*!
    \variable QContactGeoLocation::DefinitionName
@@ -294,7 +382,61 @@ Q_DEFINE_LATIN1_LITERAL(QContactGender::DefinitionName, "Gender");
    The constant string which identifies the definition of details
    which describe a location associated with a contact.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::DefinitionName, "GeoLocation");
+Q_DEFINE_LATIN1_CONSTANT(QContactGeoLocation::DefinitionName, "GeoLocation");
+
+/*!
+   \variable QContactGlobalPresence::DefinitionName
+   The constant string which identifies the definition of details which contain presence information.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactGlobalPresence::DefinitionName, "GlobalPresence");
+
+/*!
+   \variable QContactGlobalPresence::FieldTimestamp
+
+   The constant key for which the last update timestamp value is stored in details
+   of the QContactGlobalPresence type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactGlobalPresence::FieldTimestamp, "Timestamp");
+
+/*!
+   \variable QContactGlobalPresence::FieldNickname
+
+   The constant key for which the nickname value is stored in details
+   of the QContactGlobalPresence type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactGlobalPresence::FieldNickname, "Nickname");
+
+/*!
+   \variable QContactGlobalPresence::FieldPresence
+
+   The constant key for which the presence state value is stored in details
+   of the QContactGlobalPresence typel.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactGlobalPresence::FieldPresenceState, "PresenceState");
+
+/*!
+   \variable QContactGlobalPresence::FieldPresenceStateText
+
+   The constant key for which the presence provider provided text representation
+   of the presence state is stored in details of the QContactGlobalPresence type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactGlobalPresence::FieldPresenceStateText, "PresenceStateText");
+
+/*!
+   \variable QContactGlobalPresence::FieldPresenceStateImageUrl
+
+   The constant key for which the image url value for the current presence state
+   is stored in details of the QContactGlobalPresence type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactGlobalPresence::FieldPresenceStateImageUrl, "PresenceStateImageUrl");
+
+/*!
+   \variable QContactGlobalPresence::FieldCustomMessage
+
+   The constant key for which the user-entered custom message for their state
+   is stored in details of the QContactGlobalPresence type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactGlobalPresence::FieldCustomMessage, "CustomMessage");
 
 /*!
    \variable QContactOnlineAccount::DefinitionName
@@ -303,83 +445,19 @@ Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::DefinitionName, "GeoLocation");
    which identify the organization to which a contact belongs in a
    given context.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::DefinitionName, "OnlineAccount");
+Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::DefinitionName, "OnlineAccount");
 
 /*!
    \variable QContactTag::DefinitionName
-   The constant string which identifies the definition of details which are tags..
+   The constant string which identifies the definition of details which are tags.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactTag::DefinitionName, "Tag");
+Q_DEFINE_LATIN1_CONSTANT(QContactTag::DefinitionName, "Tag");
 
 /*!
-   \variable QContactOnlineAccount::FieldNickname
-
-   The constant key for which the nickname value is stored in details
-   of the QContactOnlineAccount type.
+   \variable QContactThumbnail::DefinitionName
+   The constant string which identifies the definition of details which are thumbnails.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldNickname, "Nickname");
-
-/*!
-   \variable QContactOnlineAccount::FieldPresence
-
-   The constant key for which the presence value is stored in details
-   of the QContactOnlineAccount typel.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldPresence, "Presence");
-
-/*!
-   \variable QContactOnlineAccount::PresenceAvailable
-
-   The value for presence which specifies that the contact's current
-   status is available.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::PresenceAvailable, "Available");
-
-/*!
-   \variable QContactOnlineAccount::PresenceHidden
-
-   The value for presence which specifies that the contact's current.
-   status is hidden
- */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::PresenceHidden, "Hidden");
-
-/*!
-   \variable QContactOnlineAccount::PresenceBusy
-   The value for presence which specifies that the contact's current status is busy.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::PresenceBusy, "Busy");
-
-/*!
-   \variable QContactOnlineAccount::PresenceAway
-   The value for presence which specifies that the contact's current status is away.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::PresenceAway, "Away");
-
-/*!
-   \variable QContactOnlineAccount::PresenceExtendedAway
-   The value for presence which specifies that the contact's current status is extended away.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::PresenceExtendedAway, "ExtendedAway");
-
-/*!
-   \variable QContactOnlineAccount::PresenceUnknown
-   The value for presence which specifies that the contact's current status is unknown.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::PresenceUnknown, "Unknown");
-
-/*!
-   \variable QContactOnlineAccount::PresenceOffline
-   The value for presence which specifies that the contact's current status is offline.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::PresenceOffline, "Offline");
-
-/*!
-   \variable QContactOnlineAccount::FieldStatusMessage
-
-   The constant key for which the status message value is stored in
-   details of the QContactOnlineAccount type.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldStatusMessage, "StatusMessage");
+Q_DEFINE_LATIN1_CONSTANT(QContactThumbnail::DefinitionName, "Thumbnail");
 
 /*!
    \variable QContactOnlineAccount::FieldCapabilities
@@ -387,7 +465,63 @@ Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldStatusMessage, "StatusMessag
    The constant key for which the account capabilities value is stored in
    details of the QContactOnlineAccount type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldCapabilities, "Capabilities");
+Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::FieldCapabilities, "Capabilities");
+
+/*!
+   \variable QContactOnlineAccount::FieldAccountUri
+
+   The constant key for which the remote account uri value is stored
+   in details of the QContactOnlineAccount type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::FieldAccountUri, "AccountUri");
+
+/*!
+   \variable QContactOnlineAccount::FieldServiceProvider
+
+   The constant key for which the service provider value is stored in
+   details of the QContactOnlineAccount type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::FieldServiceProvider, "ServiceProvider");
+
+/*!
+   \variable QContactOnlineAccount::FieldSubTypes
+
+   The constant key for which the subtypes value is stored in details
+   of the QContactOnlineAccount type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::FieldSubTypes, "SubTypes");
+
+/*!
+   \variable QContactOnlineAccount::SubTypeSip
+
+   The constant attribute value which describes the online account as
+   supporting SIP.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::SubTypeSip, "Sip");
+
+/*!
+   \variable QContactOnlineAccount::SubTypeSipVoip
+
+   The constant attribute value which describes the online account as
+   supporting SIP-based VoIP.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::SubTypeSipVoip, "SipVoip");
+
+/*!
+   \variable QContactOnlineAccount::SubTypeImpp
+
+   The constant attribute value which describes the online account as
+   supporting IMPP.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::SubTypeImpp, "Impp");
+
+/*!
+   \variable QContactOnlineAccount::SubTypeVideoShare
+
+   The constant attribute value which describes the online account as
+   supporting VideoShare.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::SubTypeVideoShare, "VideoShare");
 
 /*!
    \variable QContactOrganization::DefinitionName
@@ -396,7 +530,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldCapabilities, "Capabilities"
    which identify the organization to which a contact belongs in a
    given context.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactOrganization::DefinitionName, "Organization");
+Q_DEFINE_LATIN1_CONSTANT(QContactOrganization::DefinitionName, "Organization");
 
 /*!
    \variable QContactDisplayLabel::DefinitionName
@@ -404,7 +538,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactOrganization::DefinitionName, "Organization");
    The constant string which identifies the definition of details
    which contain a display label of a contact.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactDisplayLabel::DefinitionName, "DisplayLabel");
+Q_DEFINE_LATIN1_CONSTANT(QContactDisplayLabel::DefinitionName, "DisplayLabel");
 
 
 /*!
@@ -413,7 +547,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactDisplayLabel::DefinitionName, "DisplayLabel");
    The constant key for which the phone number value is stored in
    details of the QContactPhoneNumber type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::FieldNumber, "PhoneNumber");
+Q_DEFINE_LATIN1_CONSTANT(QContactPhoneNumber::FieldNumber, "PhoneNumber");
 
 /*!
    \variable QContactPhoneNumber::FieldSubTypes
@@ -421,7 +555,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::FieldNumber, "PhoneNumber");
    The constant key for which the subtype values are stored in details
    of the QContactPhoneNumber type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::FieldSubTypes, "SubTypes");
+Q_DEFINE_LATIN1_CONSTANT(QContactPhoneNumber::FieldSubTypes, "SubTypes");
 
 /*!
    \variable QContactEmailAddress::FieldEmailAddress
@@ -429,7 +563,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::FieldSubTypes, "SubTypes");
    The constant key for which the email address value is stored in
    details of the QContactEmailAddress type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactEmailAddress::FieldEmailAddress, "EmailAddress");
+Q_DEFINE_LATIN1_CONSTANT(QContactEmailAddress::FieldEmailAddress, "EmailAddress");
 
 /*!
    \variable QContactFamily::FieldSpouse
@@ -437,7 +571,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactEmailAddress::FieldEmailAddress, "EmailAddress")
    The constant key for which the spouse name value is stored in
    details of the QContactFamily type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactFamily::FieldSpouse, "Spouse");
+Q_DEFINE_LATIN1_CONSTANT(QContactFamily::FieldSpouse, "Spouse");
 
 /*!
    \variable QContactFamily::FieldChildren
@@ -445,7 +579,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactFamily::FieldSpouse, "Spouse");
    The constant key for which the children names value is stored in
    details of the QContactFamily type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactFamily::FieldChildren, "Children");
+Q_DEFINE_LATIN1_CONSTANT(QContactFamily::FieldChildren, "Children");
 
 /*!
    \variable QContactGuid::FieldGuid
@@ -453,7 +587,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactFamily::FieldChildren, "Children");
    The constant key for which the globally unique identifier value is
    stored in details of the QContactGuid type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactGuid::FieldGuid, "Guid");
+Q_DEFINE_LATIN1_CONSTANT(QContactGuid::FieldGuid, "Guid");
 
 /*!
    \variable QContactSyncTarget::FieldSyncTarget
@@ -461,31 +595,23 @@ Q_DEFINE_LATIN1_LITERAL(QContactGuid::FieldGuid, "Guid");
    The constant key for which the value of the target store for
    synchronization is stored in details of the QContactSyncTarget type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactSyncTarget::FieldSyncTarget, "SyncTarget");
+Q_DEFINE_LATIN1_CONSTANT(QContactSyncTarget::FieldSyncTarget, "SyncTarget");
 
 /*!
-   \variable QContactAvatar::FieldAvatar
+   \variable QContactAvatar::FieldImageUrl
 
-   The constant key for which the path the avatar value is stored in
+   The constant key for which the url of the avatar image value is stored in
    details of the QContactAvatar type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactAvatar::FieldAvatar, "Avatar");
+Q_DEFINE_LATIN1_CONSTANT(QContactAvatar::FieldImageUrl, "ImageUrl");
 
 /*!
-   \variable QContactAvatar::FieldAvatarPixmap
+   \variable QContactAvatar::FieldVideoUrl
 
-   The constant key for which the path the avatar value is stored in
+   The constant key for which the url of the avatar video value is stored in
    details of the QContactAvatar type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactAvatar::FieldAvatarPixmap, "AvatarPixmap");
-
-/*!
-   \variable QContactAvatar::FieldSubType
-
-   The constant key for which the subtypes value is stored in details
-   of the QContactAvatar type.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactAvatar::FieldSubType, "SubType");
+Q_DEFINE_LATIN1_CONSTANT(QContactAvatar::FieldVideoUrl, "VideoUrl");
 
 /*!
    \variable QContactName::FieldPrefix
@@ -493,7 +619,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactAvatar::FieldSubType, "SubType");
    The constant key for which the name prefix value is stored in
    details of the QContactName type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactName::FieldPrefix, "Prefix");
+Q_DEFINE_LATIN1_CONSTANT(QContactName::FieldPrefix, "Prefix");
 
 /*!
    \variable QContactName::FieldFirstName
@@ -501,7 +627,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactName::FieldPrefix, "Prefix");
    The constant key for which the first name value is stored in
    details of the QContactName type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactName::FieldFirstName, "FirstName");
+Q_DEFINE_LATIN1_CONSTANT(QContactName::FieldFirstName, "FirstName");
 
 /*!
    \variable QContactName::FieldMiddleName
@@ -509,7 +635,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactName::FieldFirstName, "FirstName");
    The constant key for which the middle name value is stored in
    details of the QContactName type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactName::FieldMiddleName, "MiddleName");
+Q_DEFINE_LATIN1_CONSTANT(QContactName::FieldMiddleName, "MiddleName");
 
 /*!
    \variable QContactName::FieldLastName
@@ -517,31 +643,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactName::FieldMiddleName, "MiddleName");
    The constant key for which the last name value is stored in details
    of the QContactName type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactName::FieldLastName, "LastName");
-
-/*!
-   \variable QContactName::FieldFirst
-
-   The constant key for which the first name value is stored in
-   details of the QContactName type.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactName::FieldFirst, "FirstName");
-
-/*!
-   \variable QContactName::FieldMiddle
-
-   The constant key for which the middle name value is stored in
-   details of the QContactName type.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactName::FieldMiddle, "MiddleName");
-
-/*!
-   \variable QContactName::FieldLast
-
-   The constant key for which the last name value is stored in details
-   of the QContactName type.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactName::FieldLast, "LastName");
+Q_DEFINE_LATIN1_CONSTANT(QContactName::FieldLastName, "LastName");
 
 /*!
    \variable QContactName::FieldSuffix
@@ -549,7 +651,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactName::FieldLast, "LastName");
    The constant key for which the name suffix value is stored in
    details of the QContactName type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactName::FieldSuffix, "Suffix");
+Q_DEFINE_LATIN1_CONSTANT(QContactName::FieldSuffix, "Suffix");
 
 /*!
    \variable QContactName::FieldCustomLabel
@@ -557,7 +659,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactName::FieldSuffix, "Suffix");
    The constant key for which the custom name label value is stored in
    details of the QContactName type, if supported.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactName::FieldCustomLabel, "CustomLabel");
+Q_DEFINE_LATIN1_CONSTANT(QContactName::FieldCustomLabel, "CustomLabel");
 
 /*!
    \variable QContactNickname::FieldNickname
@@ -565,7 +667,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactName::FieldCustomLabel, "CustomLabel");
    The constant key for which the nickname value is stored in details
    of the QContactNickname type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactNickname::FieldNickname, "Nickname");
+Q_DEFINE_LATIN1_CONSTANT(QContactNickname::FieldNickname, "Nickname");
 
 /*!
    \variable QContactNote::FieldNote
@@ -573,7 +675,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactNickname::FieldNickname, "Nickname");
    The constant key for which the note value is stored in details of
    the QContactNote type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactNote::FieldNote, "Note");
+Q_DEFINE_LATIN1_CONSTANT(QContactNote::FieldNote, "Note");
 
 /*!
    \variable QContactAddress::FieldStreet
@@ -581,7 +683,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactNote::FieldNote, "Note");
    The constant key for which the street value is stored in details of
    the QContactAddress type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactAddress::FieldStreet, "Street");
+Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldStreet, "Street");
 
 /*!
    \variable QContactAddress::FieldLocality
@@ -589,7 +691,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactAddress::FieldStreet, "Street");
    The constant key for which the locality value is stored in details
    of the QContactAddress type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactAddress::FieldLocality, "Locality");
+Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldLocality, "Locality");
 
 /*!
    \variable QContactAddress::FieldRegion
@@ -597,7 +699,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactAddress::FieldLocality, "Locality");
    The constant key for which the region value is stored in details of
    the QContactAddress type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactAddress::FieldRegion, "Region");
+Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldRegion, "Region");
 
 /*!
    \variable QContactAddress::FieldPostcode
@@ -605,7 +707,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactAddress::FieldRegion, "Region");
    The constant key for which the postcode value is stored in details
    of the QContactAddress type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactAddress::FieldPostcode, "Postcode");
+Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldPostcode, "Postcode");
 
 /*!
    \variable QContactAddress::FieldCountry
@@ -613,7 +715,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactAddress::FieldPostcode, "Postcode");
    The constant key for which the country value is stored in details
    of the QContactAddress type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactAddress::FieldCountry, "Country");
+Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldCountry, "Country");
 
 /*!
    \variable QContactAddress::FieldPostOfficeBox
@@ -621,7 +723,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactAddress::FieldCountry, "Country");
    The constant key for which the post office box value is stored in
    details of the QContactAddress type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactAddress::FieldPostOfficeBox, "PostOfficeBox");
+Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldPostOfficeBox, "PostOfficeBox");
 
 /*!
    \variable QContactAddress::FieldSubTypes
@@ -629,7 +731,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactAddress::FieldPostOfficeBox, "PostOfficeBox");
    The constant key for which the subtypes value is stored in details
    of the QContactAddress type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactAddress::FieldSubTypes, "SubTypes");
+Q_DEFINE_LATIN1_CONSTANT(QContactAddress::FieldSubTypes, "SubTypes");
 
 /*!
    \variable QContactUrl::FieldUrl
@@ -637,7 +739,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactAddress::FieldSubTypes, "SubTypes");
    The constant key for which the url value is stored in details of
    the QContactUrl type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactUrl::FieldUrl, "Url");
+Q_DEFINE_LATIN1_CONSTANT(QContactUrl::FieldUrl, "Url");
 
 /*!
    \variable QContactUrl::FieldSubType
@@ -645,7 +747,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactUrl::FieldUrl, "Url");
    The constant key for which the subtypes value is stored in details
    of the QContactUrl type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactUrl::FieldSubType, "SubType");
+Q_DEFINE_LATIN1_CONSTANT(QContactUrl::FieldSubType, "SubType");
 
 /*!
    \variable QContactBirthday::FieldBirthday
@@ -653,7 +755,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactUrl::FieldSubType, "SubType");
    The constant key for which the birthday date value is stored in
    details of the QContactBirthday type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactBirthday::FieldBirthday, "Birthday");
+Q_DEFINE_LATIN1_CONSTANT(QContactBirthday::FieldBirthday, "Birthday");
 
 /*!
    \variable QContactAnniversary::FieldOriginalDate
@@ -661,7 +763,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactBirthday::FieldBirthday, "Birthday");
    The constant key for which the anniversary original event date
    value is stored in details of the QContactAnniversary type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::FieldOriginalDate, "OriginalDate");
+Q_DEFINE_LATIN1_CONSTANT(QContactAnniversary::FieldOriginalDate, "OriginalDate");
 
 /*!
    \variable QContactAnniversary::FieldEvent
@@ -669,7 +771,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::FieldOriginalDate, "OriginalDate");
    The constant key for which the name of the event is stored in
    details of the QContactAnniversary type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::FieldEvent, "Event");
+Q_DEFINE_LATIN1_CONSTANT(QContactAnniversary::FieldEvent, "Event");
 
 /*!
    \variable QContactAnniversary::FieldCalendarId
@@ -678,7 +780,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::FieldEvent, "Event");
    associated calendar entry is stored in details of the
    QContactAnniversary type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::FieldCalendarId, "CalendarId");
+Q_DEFINE_LATIN1_CONSTANT(QContactAnniversary::FieldCalendarId, "CalendarId");
 
 /*!
    \variable QContactAnniversary::FieldSubType
@@ -686,7 +788,15 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::FieldCalendarId, "CalendarId");
    The constant key for which the subtypes value is stored in details
    of the QContactAnniversary type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::FieldSubType, "SubType");
+Q_DEFINE_LATIN1_CONSTANT(QContactAnniversary::FieldSubType, "SubType");
+
+/*!
+   \variable QContactDisplayLabel::FieldLabel
+
+   The constant key for which the display label value is stored in
+   details of the QContactDisplayLabel type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactDisplayLabel::FieldLabel, "Label");
 
 /*!
    \variable QContactGender::FieldGender
@@ -694,25 +804,25 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::FieldSubType, "SubType");
    The constant key for which the gender value is stored in details of
    the QContactGender type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactGender::FieldGender, "Gender");
+Q_DEFINE_LATIN1_CONSTANT(QContactGender::FieldGender, "Gender");
 
 /*!
    \variable QContactGender::GenderMale
    The value that identifies this contact as being male.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactGender::GenderMale, "Male");
+Q_DEFINE_LATIN1_CONSTANT(QContactGender::GenderMale, "Male");
 
 /*!
    \variable QContactGender::GenderFemale
    The value that identifies this contact as being female.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactGender::GenderFemale, "Female");
+Q_DEFINE_LATIN1_CONSTANT(QContactGender::GenderFemale, "Female");
 
 /*!
    \variable QContactGender::GenderUnspecified
    The value that identifies this contact as being of unspecified gender.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactGender::GenderUnspecified, "Unspecified");
+Q_DEFINE_LATIN1_CONSTANT(QContactGender::GenderUnspecified, "Unspecified");
 
 /*!
    \variable QContactGeoLocation::FieldLabel
@@ -720,7 +830,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactGender::GenderUnspecified, "Unspecified");
    The constant key for which the location label value is stored in
    details of the QContactGeoLocation type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldLabel, "Label");
+Q_DEFINE_LATIN1_CONSTANT(QContactGeoLocation::FieldLabel, "Label");
 
 /*!
    \variable QContactGeoLocation::FieldLatitude
@@ -728,7 +838,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldLabel, "Label");
    The constant key for which the latitude value is stored in details
    of the QContactGeoLocation type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldLatitude, "Latitude");
+Q_DEFINE_LATIN1_CONSTANT(QContactGeoLocation::FieldLatitude, "Latitude");
 
 /*!
    \variable QContactGeoLocation::FieldLongitude
@@ -736,7 +846,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldLatitude, "Latitude");
    The constant key for which the longitude value is stored in details
    of the QContactGeoLocation type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldLongitude, "Longitude");
+Q_DEFINE_LATIN1_CONSTANT(QContactGeoLocation::FieldLongitude, "Longitude");
 
 /*!
    \variable QContactGeoLocation::FieldAccuracy
@@ -744,7 +854,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldLongitude, "Longitude");
    The constant key for which the location accuracy value is stored in
    details of the QContactGeoLocation type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldAccuracy, "Accuracy");
+Q_DEFINE_LATIN1_CONSTANT(QContactGeoLocation::FieldAccuracy, "Accuracy");
 
 /*!
    \variable QContactGeoLocation::FieldAltitude
@@ -752,7 +862,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldAccuracy, "Accuracy");
    The constant key for which the altitude value is stored in details
    of the QContactGeoLocation type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldAltitude, "Altitude");
+Q_DEFINE_LATIN1_CONSTANT(QContactGeoLocation::FieldAltitude, "Altitude");
 
 
 /*!
@@ -761,7 +871,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldAltitude, "Altitude");
    The constant key for which the altitude accuracy value is stored in
    details of the QContactGeoLocation type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldAltitudeAccuracy, "AltitudeAccuracy");
+Q_DEFINE_LATIN1_CONSTANT(QContactGeoLocation::FieldAltitudeAccuracy, "AltitudeAccuracy");
 
 /*!
    \variable QContactGeoLocation::FieldHeading
@@ -769,7 +879,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldAltitudeAccuracy, "AltitudeAcc
    The constant key for which the heading value is stored in details
    of the QContactGeoLocation type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldHeading, "Heading");
+Q_DEFINE_LATIN1_CONSTANT(QContactGeoLocation::FieldHeading, "Heading");
 
 /*!
    \variable QContactGeoLocation::FieldSpeed
@@ -777,7 +887,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldHeading, "Heading");
    The constant key for which the speed value is stored in details of
    the QContactGeoLocation type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldSpeed, "Speed");
+Q_DEFINE_LATIN1_CONSTANT(QContactGeoLocation::FieldSpeed, "Speed");
 
 /*!
    \variable QContactTag::FieldTag
@@ -785,7 +895,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldSpeed, "Speed");
    The constant key for which the tag value is stored in details
    of the QContactTag type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactTag::FieldTag, "Tag");
+Q_DEFINE_LATIN1_CONSTANT(QContactTag::FieldTag, "Tag");
 
 /*!
    \variable QContactGeoLocation::FieldTimestamp
@@ -793,63 +903,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactTag::FieldTag, "Tag");
    The constant key for which the timestamp value is stored in details
    of the QContactGeoLocation type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldTimestamp, "Timestamp");
-
-/*!
-   \variable QContactOnlineAccount::FieldAccountUri
-
-   The constant key for which the remote account uri value is stored
-   in details of the QContactOnlineAccount type.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldAccountUri, "AccountUri");
-
-/*!
-   \variable QContactOnlineAccount::FieldServiceProvider
-
-   The constant key for which the service provider value is stored in
-   details of the QContactOnlineAccount type.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldServiceProvider, "ServiceProvider");
-
-/*!
-   \variable QContactOnlineAccount::FieldSubTypes
-
-   The constant key for which the subtypes value is stored in details
-   of the QContactOnlineAccount type.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::FieldSubTypes, "SubTypes");
-
-/*!
-   \variable QContactOnlineAccount::SubTypeSip
-
-   The constant attribute value which describes the online account as
-   supporting SIP.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeSip, "Sip");
-
-/*!
-   \variable QContactOnlineAccount::SubTypeSipVoip
-
-   The constant attribute value which describes the online account as
-   supporting SIP-based VoIP.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeSipVoip, "SipVoip");
-
-/*!
-   \variable QContactOnlineAccount::SubTypeImpp
-
-   The constant attribute value which describes the online account as
-   supporting IMPP.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeImpp, "Impp");
-
-/*!
-   \variable QContactOnlineAccount::SubTypeVideoShare
-
-   The constant attribute value which describes the online account as
-   supporting VideoShare.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeVideoShare, "VideoShare");
+Q_DEFINE_LATIN1_CONSTANT(QContactGeoLocation::FieldTimestamp, "Timestamp");
 
 /*!
    \variable QContactOrganization::FieldName
@@ -857,15 +911,15 @@ Q_DEFINE_LATIN1_LITERAL(QContactOnlineAccount::SubTypeVideoShare, "VideoShare");
    The constant key for which the name value is stored in details of
    the QContactOrganization type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactOrganization::FieldName, "Name");
+Q_DEFINE_LATIN1_CONSTANT(QContactOrganization::FieldName, "Name");
 
 /*!
-   \variable QContactOrganization::FieldLogo
+   \variable QContactOrganization::FieldLogoUrl
 
-   The constant key for which the logo path value is stored in details
+   The constant key for which the logo url is stored in details
    of the QContactOrganization type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactOrganization::FieldLogo, "Logo");
+Q_DEFINE_LATIN1_CONSTANT(QContactOrganization::FieldLogoUrl, "LogoUrl");
 
 /*!
    \variable QContactOrganization::FieldDepartment
@@ -873,7 +927,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactOrganization::FieldLogo, "Logo");
    The constant key for which the organization's department value is
    stored in details of the QContactOrganization type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactOrganization::FieldDepartment, "Department");
+Q_DEFINE_LATIN1_CONSTANT(QContactOrganization::FieldDepartment, "Department");
 
 /*!
    \variable QContactOrganization::FieldLocation
@@ -882,7 +936,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactOrganization::FieldDepartment, "Department");
    location of the contact's part of the organization) value is stored
    in details of the QContactOrganization type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactOrganization::FieldLocation, "Location");
+Q_DEFINE_LATIN1_CONSTANT(QContactOrganization::FieldLocation, "Location");
 
 /*!
    \variable QContactOrganization::FieldRole
@@ -890,7 +944,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactOrganization::FieldLocation, "Location");
    The constant key for which the contact's role within the
    organization is stored in details of the QContactOrganization type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactOrganization::FieldRole, "Role");
+Q_DEFINE_LATIN1_CONSTANT(QContactOrganization::FieldRole, "Role");
 
 /*!
    \variable QContactOrganization::FieldTitle
@@ -898,7 +952,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactOrganization::FieldRole, "Role");
    The constant key for which the contact's title within the
    organization is stored in details of the QContactOrganization type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactOrganization::FieldTitle, "Title");
+Q_DEFINE_LATIN1_CONSTANT(QContactOrganization::FieldTitle, "Title");
 
 /*!
    \variable QContactOrganization::FieldAssistantName
@@ -906,16 +960,39 @@ Q_DEFINE_LATIN1_LITERAL(QContactOrganization::FieldTitle, "Title");
    The constant key for which the contact's assistant name within the
    organization is stored in details of the QContactOrganization type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactOrganization::FieldAssistantName, "AssistantName");
-
+Q_DEFINE_LATIN1_CONSTANT(QContactOrganization::FieldAssistantName, "AssistantName");
 
 /*!
-   \variable QContactDisplayLabel::FieldLabel
+   \variable QContactRingtone::FieldAudioRingtone
 
-   The constant key for which the display label value is stored in
-   details of the QContactDisplayLabel type.
+   The constant key for which the uri of the audio ringtone value is
+   stored in details of the QContactRingtone type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactDisplayLabel::FieldLabel, "Label");
+Q_DEFINE_LATIN1_CONSTANT(QContactRingtone::FieldAudioRingtone, "AudioRingtone");
+
+/*!
+   \variable QContactRingtone::FieldVideoRingtone
+
+   The constant key for which the uri of the video ringtone value is
+   stored in details of the QContactRingtone type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactRingtone::FieldVideoRingtone, "VideoRingtone");
+
+/*!
+   \variable QContactRingtone::FieldVibrationRingtone
+
+   The constant key for which the uri of the vibration ringtone value is
+   stored in details of the QContactRingtone type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactRingtone::FieldVibrationRingtone, "VibrationRingtone");
+
+/*!
+   \variable QContactThumbnail::FieldThumbnail
+
+   The constant key for which the thumbnail image is stored in details
+   of the QContactThumbnail type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactThumbnail::FieldThumbnail, "Thumbnail");
 
 /*!
    \variable QContactTimestamp::FieldModificationTimestamp
@@ -924,7 +1001,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactDisplayLabel::FieldLabel, "Label");
    QContactTimestamp type which describes the last modification date
    and time of a contact.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactTimestamp::FieldModificationTimestamp, "ModificationTimestamp");
+Q_DEFINE_LATIN1_CONSTANT(QContactTimestamp::FieldModificationTimestamp, "ModificationTimestamp");
 
 /*!
    \variable QContactTimestamp::FieldCreationTimestamp
@@ -933,7 +1010,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactTimestamp::FieldModificationTimestamp, "Modifica
    QContactTimestamp type which describes the creation date and time
    of a contact.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactTimestamp::FieldCreationTimestamp, "CreationTimestamp");
+Q_DEFINE_LATIN1_CONSTANT(QContactTimestamp::FieldCreationTimestamp, "CreationTimestamp");
 
 /*!
    \variable QContactType::FieldType
@@ -941,7 +1018,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactTimestamp::FieldCreationTimestamp, "CreationTime
    The constant key for the type value which is stored in details of
    the QContactType definition.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactType::FieldType, "Type");
+Q_DEFINE_LATIN1_CONSTANT(QContactType::FieldType, "Type");
 
 
 /*!
@@ -950,7 +1027,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactType::FieldType, "Type");
    The constant attribute value which describes the contact as being
    an ordinary contact.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactType::TypeContact, "Contact");
+Q_DEFINE_LATIN1_CONSTANT(QContactType::TypeContact, "Contact");
 
 /*!
    \variable QContactType::TypeGroup
@@ -958,7 +1035,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactType::TypeContact, "Contact");
    The constant attribute value which describes the contact as being a
    group.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactType::TypeGroup, "Group");
+Q_DEFINE_LATIN1_CONSTANT(QContactType::TypeGroup, "Group");
 
 /*!
    \variable QContactPhoneNumber::SubTypeLandline
@@ -966,7 +1043,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactType::TypeGroup, "Group");
    The constant attribute value which describes the phone number as
    identifying a landline phone.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::SubTypeLandline, "Landline");
+Q_DEFINE_LATIN1_CONSTANT(QContactPhoneNumber::SubTypeLandline, "Landline");
 
 /*!
    \variable QContactPhoneNumber::SubTypeMobile
@@ -974,15 +1051,15 @@ Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::SubTypeLandline, "Landline");
    The constant attribute value which describes the phone number as
    identifying a mobile phone.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::SubTypeMobile, "Mobile");
+Q_DEFINE_LATIN1_CONSTANT(QContactPhoneNumber::SubTypeMobile, "Mobile");
 
 /*!
-   \variable QContactPhoneNumber::SubTypeFacsimile
+   \variable QContactPhoneNumber::SubTypeFax
 
    The constant attribute value which describes the phone number as
-   identifying a facsimile machine.
+   identifying a fax machine.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::SubTypeFacsimile, "Facsimile");
+Q_DEFINE_LATIN1_CONSTANT(QContactPhoneNumber::SubTypeFax, "Fax");
 
 /*!
    \variable QContactPhoneNumber::SubTypePager
@@ -990,7 +1067,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::SubTypeFacsimile, "Facsimile");
    The constant attribute value which describes the phone number as
    identifying a pager device.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::SubTypePager, "Pager");
+Q_DEFINE_LATIN1_CONSTANT(QContactPhoneNumber::SubTypePager, "Pager");
 
 /*!
    \variable QContactPhoneNumber::SubTypeCar
@@ -998,7 +1075,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::SubTypePager, "Pager");
    The constant attribute value which describes the phone number as
    identifying a car phone.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::SubTypeCar, "Car");
+Q_DEFINE_LATIN1_CONSTANT(QContactPhoneNumber::SubTypeCar, "Car");
 
 /*!
    \variable QContactPhoneNumber::SubTypeBulletinBoardSystem
@@ -1006,7 +1083,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::SubTypeCar, "Car");
    The constant attribute value which describes the phone number as
    identifying a bulletin board system.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::SubTypeBulletinBoardSystem, "BulletinBoardSystem");
+Q_DEFINE_LATIN1_CONSTANT(QContactPhoneNumber::SubTypeBulletinBoardSystem, "BulletinBoardSystem");
 
 /*!
    \variable QContactPhoneNumber::SubTypeVoice
@@ -1014,7 +1091,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::SubTypeBulletinBoardSystem, "Bullet
    The constant attribute value which describes the phone number as
    supporting voice transmission.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::SubTypeVoice, "Voice");
+Q_DEFINE_LATIN1_CONSTANT(QContactPhoneNumber::SubTypeVoice, "Voice");
 
 /*!
    \variable QContactPhoneNumber::SubTypeModem
@@ -1022,7 +1099,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::SubTypeVoice, "Voice");
    The constant attribute value which describes the phone number as
    supporting digital data transfer.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::SubTypeModem, "Modem");
+Q_DEFINE_LATIN1_CONSTANT(QContactPhoneNumber::SubTypeModem, "Modem");
 
 /*!
    \variable QContactPhoneNumber::SubTypeVideo
@@ -1030,7 +1107,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::SubTypeModem, "Modem");
    The constant attribute value which describes the phone number as
    supporting video transmission.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::SubTypeVideo, "Video");
+Q_DEFINE_LATIN1_CONSTANT(QContactPhoneNumber::SubTypeVideo, "Video");
 
 /*!
    \variable QContactPhoneNumber::SubTypeMessagingCapable
@@ -1038,7 +1115,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::SubTypeVideo, "Video");
    The constant attribute value which describes the phone number as
    supporting messaging services.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::SubTypeMessagingCapable, "MessagingCapable");
+Q_DEFINE_LATIN1_CONSTANT(QContactPhoneNumber::SubTypeMessagingCapable, "MessagingCapable");
 
 /*!
    \variable QContactPhoneNumber::SubTypeAssistant
@@ -1046,7 +1123,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::SubTypeMessagingCapable, "Messaging
    The constant attribute value which describes the phone number as an
    assistant phone number.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::SubTypeAssistant, "Assistant");
+Q_DEFINE_LATIN1_CONSTANT(QContactPhoneNumber::SubTypeAssistant, "Assistant");
 
 /*!
    \variable QContactPhoneNumber::SubTypeDtmfMenu
@@ -1054,7 +1131,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::SubTypeAssistant, "Assistant");
    The constant attribute value which describes the phone number as
    supporting DTMF-controlled electronic menu navigation.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::SubTypeDtmfMenu, "DtmfMenu");
+Q_DEFINE_LATIN1_CONSTANT(QContactPhoneNumber::SubTypeDtmfMenu, "DtmfMenu");
 
 /*!
    \variable QContactAddress::SubTypeParcel
@@ -1062,7 +1139,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::SubTypeDtmfMenu, "DtmfMenu");
    The constant attribute value which describes the address as being
    an address for parcel delivery.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactAddress::SubTypeParcel, "Parcel");
+Q_DEFINE_LATIN1_CONSTANT(QContactAddress::SubTypeParcel, "Parcel");
 
 /*!
    \variable QContactAddress::SubTypePostal
@@ -1070,7 +1147,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactAddress::SubTypeParcel, "Parcel");
    The constant attribute value which describes the address as being
    an address for postal delivery.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactAddress::SubTypePostal, "Postal");
+Q_DEFINE_LATIN1_CONSTANT(QContactAddress::SubTypePostal, "Postal");
 
 /*!
    \variable QContactAddress::SubTypeDomestic
@@ -1078,7 +1155,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactAddress::SubTypePostal, "Postal");
    The constant attribute value which describes the address as being a
    domestic address.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactAddress::SubTypeDomestic, "Domestic");
+Q_DEFINE_LATIN1_CONSTANT(QContactAddress::SubTypeDomestic, "Domestic");
 
 /*!
    \variable QContactAddress::SubTypeInternational
@@ -1086,48 +1163,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactAddress::SubTypeDomestic, "Domestic");
    The constant attribute value which describes the address as being
    an international address.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactAddress::SubTypeInternational, "International");
-
-/*!
-   \variable QContactAvatar::SubTypeImage
-
-   The constant attribute value which describes the avatar as being an
-   image.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactAvatar::SubTypeImage, "Image");
-
-/*!
-   \variable QContactAvatar::SubTypeVideo
-
-   The constant attribute value which describes the avatar as being a
-   video.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactAvatar::SubTypeVideo, "Video");
-
-/*!
-   \variable QContactAvatar::SubTypeAudioRingtone
-
-   The constant attribute value which describes the avatar as being an
-   audio ringtone.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactAvatar::SubTypeAudioRingtone, "AudioRingtone");
-
-/*!
-   \variable QContactAvatar::SubTypeVideoRingtone
-
-   The constant attribute value which describes the avatar as being a
-   video ringtone.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactAvatar::SubTypeVideoRingtone, "VideoRingtone");
-
-
-/*!
-   \variable QContactAvatar::SubTypeTexturedMesh
-
-   The constant attribute value which describes the avatar as being a
-   textured, 3D mesh.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactAvatar::SubTypeTexturedMesh, "TexturedMesh");
+Q_DEFINE_LATIN1_CONSTANT(QContactAddress::SubTypeInternational, "International");
 
 /*!
    \variable QContactUrl::SubTypeHomePage
@@ -1135,7 +1171,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactAvatar::SubTypeTexturedMesh, "TexturedMesh");
    The constant attribute value which describes the url as being the
    homepage of the contact.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactUrl::SubTypeHomePage, "HomePage");
+Q_DEFINE_LATIN1_CONSTANT(QContactUrl::SubTypeHomePage, "HomePage");
 
 /*!
    \variable QContactUrl::SubTypeFavourite
@@ -1143,7 +1179,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactUrl::SubTypeHomePage, "HomePage");
    The constant attribute value which describes the url as being a
    favourite page of the contact.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactUrl::SubTypeFavourite, "Favourite");
+Q_DEFINE_LATIN1_CONSTANT(QContactUrl::SubTypeFavourite, "Favourite");
 
 /*!
    \variable QContactAnniversary::SubTypeWedding
@@ -1151,7 +1187,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactUrl::SubTypeFavourite, "Favourite");
    The constant attribute value which describes the anniversary as
    being a wedding anniversary.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeWedding, "Wedding");
+Q_DEFINE_LATIN1_CONSTANT(QContactAnniversary::SubTypeWedding, "Wedding");
 
 /*!
    \variable QContactAnniversary::SubTypeEngagement
@@ -1159,7 +1195,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeWedding, "Wedding");
    The constant attribute value which describes the anniversary as
    being an engagement anniversary.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeEngagement, "Engagement");
+Q_DEFINE_LATIN1_CONSTANT(QContactAnniversary::SubTypeEngagement, "Engagement");
 
 /*!
    \variable QContactAnniversary::SubTypeHouse
@@ -1167,7 +1203,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeEngagement, "Engagement");
    The constant attribute value which describes the anniversary as
    being an anniversary of ownership of a particular residence.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeHouse, "House");
+Q_DEFINE_LATIN1_CONSTANT(QContactAnniversary::SubTypeHouse, "House");
 
 /*!
    \variable QContactAnniversary::SubTypeEmployment
@@ -1175,7 +1211,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeHouse, "House");
    The constant attribute value which describes the anniversary as
    being an anniversary of employment at a particular company.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeEmployment, "Employment");
+Q_DEFINE_LATIN1_CONSTANT(QContactAnniversary::SubTypeEmployment, "Employment");
 
 /*!
    \variable QContactAnniversary::SubTypeMemorial
@@ -1183,7 +1219,7 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeEmployment, "Employment");
    The constant attribute value which describes the anniversary as
    being an anniversary of an event of sentimental significance.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
+Q_DEFINE_LATIN1_CONSTANT(QContactAnniversary::SubTypeMemorial, "Memorial");
 
 
 /*!
@@ -1271,36 +1307,23 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
  */
 
 /*!
-   \fn QContactAvatar::avatar() const
-   Returns the location of an avatar file associated with the contact.
+  \fn QContactAvatar::imageUrl(const QUrl& imageUrl)
+  Returns the url of an avatar image associated with the contact
  */
 
 /*!
-   \fn QContactAvatar::setAvatar(const QString& avatar)
-   Sets the location of an avatar file associated with the contact to \a avatar.
+  \fn QContactAvatar::setImageUrl(const QUrl& imageUrl)
+  Sets the url of an avatar image associated with the contact to \a imageUrl
  */
 
 /*!
-   \fn QContactAvatar::pixmap() const
-   Returns a thumbnail for a picture associated with this contact.
+  \fn QContactAvatar::videoUrl(const QUrl& videoUrl)
+  Returns the url of an avatar video associated with the contact
  */
 
 /*!
-   \fn QContactAvatar::setPixmap(const QPixmap& pixmap)
-   Sets the thumbnail of a picture avatar associated with the contact to \a pixmap.
-   If \a pixmap is empty, the thumbnail pixmap will be removed.
-
-   Returns true if the pixmap could be set, and false otherwise.
- */
-
-/*!
-   \fn QContactAvatar::setSubType(const QString& subType)
-   Sets the subtype which this detail implements to be the given \a subType.
- */
-
-/*!
-   \fn QContactAvatar::subType() const
-   Returns the subtype that this detail implements, if defined.
+  \fn QContactAvatar::setVideoUrl(const QUrl& videoUrl)
+  Sets the url of an avatar video associated with the contact to \a imageUrl
  */
 
 /*!
@@ -1758,51 +1781,6 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
  */
 
 /*!
-   \fn QContactOnlineAccount::setNickname(const QString& nickname)
-   
-   Sets the last-known nickname used by the contact during
-   communications via the online account about which this detail
-   stores presence information to \a nickname.
- */
-
-/*!
-   \fn QContactOnlineAccount::nickname() const
-   
-   Returns the last-known nickname used by the contact during
-   communications via the online account.
- */
-
-/*!
-   \fn QContactOnlineAccount::setPresence(const QString& presence)
-   
-   Sets the presence of the online account according to the presence
-   information provider to \a presence.
- */
-
-/*!
-   \fn QContactOnlineAccount::presence() const
-   
-   Returns the presence of the online account according to the
-   presence provider.
- */
-
-/*!
-   \fn QContactOnlineAccount::setStatusMessage(const QString& statusMessage)
-
-   Sets the last-known status message of the contact which was
-   communicated via the online account about which this detail stores
-   presence information to \a statusMessage.
- */
-
-/*!
-   \fn QContactOnlineAccount::statusMessage() const
-   
-   Returns the last-known status message of the contact which was
-   communicated via the online account about which this detail stores
-   presence information.
- */
-
-/*!
    \fn QContactOnlineAccount::setCapabilities(const QStringList& capabilities)
 
    Sets the capabilities of the online account about which this detail stores
@@ -1829,15 +1807,14 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
  */
 
 /*!
-   \fn QContactOrganization::setLogo(const QString& logo)
-   Sets the logo of the organization stored in this detail to \a logo.
+   \fn QContactOrganization::setLogoUrl(const QUrl& logo)
+   Sets the url of the logo of the organization stored in this detail to \a logo.
  */
 
 /*!
-   \fn QContactOrganization::logo() const
-   Returns the logo of the organization stored in this detail.
+   \fn QContactOrganization::logoUrl() const
+   Returns the url of the logo of the organization stored in this detail.
  */
-
 
 /*!
    \fn QContactOrganization::setDepartment(const QStringList& department)
@@ -1900,6 +1877,214 @@ Q_DEFINE_LATIN1_LITERAL(QContactAnniversary::SubTypeMemorial, "Memorial");
    Returns the name of the default assistant of contacts belonging to
    this organization.
  */
+
+/*!
+  \fn QContactRingtone::audioRingtone() const
+
+  Returns the uri of the audio ringtone stored in the ringtone detail.
+ */
+
+/*!
+  \fn QContactRingtone::setAudioRingtone(const QUrl& audioRingtone)
+
+  Sets the uri of the audio ringtone stored in the ringtone detail
+  to \a audioRingtone.
+ */
+
+/*!
+  \fn QContactRingtone::videoRingtone() const
+
+  Returns the uri of the video ringtone stored in the ringtone detail.
+ */
+
+/*!
+  \fn QContactRingtone::setVideoRingtone(const QUrl& videoRingtone)
+
+  Sets the uri of the video ringtone stored in the ringtone detail
+  to \a videoRingtone.
+ */
+
+/*!
+  \fn QContactRingtone::vibrationRingtone() const
+
+  Returns the uri of the vibration ringtone stored in the ringtone detail.
+ */
+
+/*!
+  \fn QContactRingtone::setVibrationRingtone(const QUrl& vibrationRingtone)
+
+  Sets the uri of the vibration ringtone stored in the ringtone detail
+  to \a vibrationRingtone.
+ */
+
+/*!
+   \fn QContactPresence::setTimestamp(const QDateTime& updateTimestamp)
+
+   Sets the update timestamp of the presence detail to be
+   \a updateTimestamp.
+ */
+
+/*!
+   \fn QContactPresence::timestamp() const
+
+    Returns the timestamp at which the data in the presence detail was valid.
+ */
+
+/*!
+   \fn QContactPresence::setNickname(const QString& nickname)
+
+   Sets the last-known nickname used by the contact during
+   communications via the online account about which this detail
+   stores presence information to \a nickname.
+ */
+
+/*!
+   \fn QContactPresence::nickname() const
+
+   Returns the last-known nickname used by the contact during
+   communications via the online account.
+ */
+
+/*!
+   \fn QContactPresence::setPresenceState(QContactPresence::PresenceState presenceState)
+
+   Sets the presence state of the online account according to the presence
+   information provider to the given \a presenceState.
+ */
+
+/*!
+   \fn QContactPresence::presenceState() const
+
+   Returns the presence state of the online account according to the
+   presence provider.
+ */
+
+/*!
+   \fn QContactPresence::setPresenceStateText(const QString& presenceStateText)
+
+   Sets the text corresponding to the presence state.  This function is generally
+   called by presence providers to allow custom naming of states, or to allow
+   finer grained state reporting than is provided by the presence state API.
+ */
+
+/*!
+   \fn QContactPresence::presenceStateText() const
+
+   Returns the text corresponding to the current presence state.
+ */
+
+/*!
+  \fn QContactPresence::setCustomMessage(const QString& customMessage)
+
+   Sets the custom status message from the contact for the online account
+   about which this detail stores presence information, to \a statusMessage.
+ */
+
+/*!
+   \fn QContactPresence::customMessage() const
+
+   Returns the custom status message from the contact for the online account
+   about which this detail stores presence information.
+ */
+
+/*!
+   \fn QContactPresence::setPresenceStateImageUrl(const QUrl& presenceStateImageUrl)
+
+   Sets the last-known status image url of the contact for the online account
+   about which this detail stores presence information, to \a presenceStateImageUrl.
+ */
+
+/*!
+   \fn QContactPresence::presenceStateImageUrl() const
+
+   Returns the last-known status image url of the contact for the online account
+   about which this detail stores presence information.
+ */
+
+/*!
+   \fn QContactGlobalPresence::setTimestamp(const QDateTime& updateTimestamp)
+
+   Sets the update timestamp of the global presence detail to be
+   \a updateTimestamp.
+ */
+
+/*!
+   \fn QContactGlobalPresence::timestamp() const
+
+    Returns the timestamp at which the data in the global presence detail was valid.
+ */
+
+/*!
+   \fn QContactGlobalPresence::setNickname(const QString& nickname)
+
+   Sets the last-known nickname used by the contact during
+   communications via any online account about which this detail
+   aggregates presence information to \a nickname.
+ */
+
+/*!
+   \fn QContactGlobalPresence::nickname() const
+
+   Returns the last-known nickname used by the contact during
+   communications via any online account about which this detail
+   aggregates presence information.
+ */
+
+/*!
+   \fn QContactGlobalPresence::setPresenceState(QContactPresence::PresenceState presenceState)
+
+   Sets the presence state of this aggregate detail according to the presence
+   information available from the presence providers which this detail aggregates
+   to the given \a presenceState.
+ */
+
+/*!
+   \fn QContactGlobalPresence::presenceState() const
+
+   Returns the aggregate presence state of any online accounts about which this detail
+   aggregates presence information.
+ */
+
+/*!
+   \fn QContactGlobalPresence::setPresenceStateText(const QString& presenceStateText)
+
+   Sets the text corresponding to the presence state.  This function is generally
+   called by presence providers to allow custom naming of states, or to allow
+   finer grained state reporting than is provided by the presence state API.
+ */
+
+/*!
+   \fn QContactGlobalPresence::presenceStateText() const
+
+   Returns the text corresponding to the current presence state.
+ */
+
+/*!
+  \fn QContactGlobalPresence::setCustomMessage(const QString& customMessage)
+
+   Sets the custom status message from the contact for the aggregate presence
+   detail, to \a statusMessage.
+ */
+
+/*!
+   \fn QContactGlobalPresence::customMessage() const
+
+   Returns the custom status message from the contact for the aggregate presence
+   detail.
+ */
+
+/*!
+   \fn QContactGlobalPresence::setPresenceStateImageUrl(const QUrl& presenceStateImageUrl)
+
+   Sets the last-known status image url of the contact to \a presenceStateImageUrl.
+ */
+
+/*!
+   \fn QContactGlobalPresence::presenceStateImageUrl() const
+
+   Returns the last-known status image url of the contact.
+ */
+
 
 
 /* Convenience filters */

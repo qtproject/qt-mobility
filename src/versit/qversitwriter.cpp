@@ -46,6 +46,7 @@
 
 #include <QStringList>
 #include <QTextCodec>
+#include <QBuffer>
 
 QTM_USE_NAMESPACE
 
@@ -107,8 +108,24 @@ QTM_USE_NAMESPACE
 /*! Constructs a new writer. */
 QVersitWriter::QVersitWriter() : d(new QVersitWriterPrivate)
 {
-    connect(d, SIGNAL(stateChanged(QVersitWriter::State)),
-            this, SIGNAL(stateChanged(QVersitWriter::State)), Qt::DirectConnection);
+    d->init(this);
+}
+
+/*! Constructs a new writer that writes to \a outputDevice. */
+QVersitWriter::QVersitWriter(QIODevice *outputDevice) : d(new QVersitWriterPrivate)
+{
+    d->init(this);
+    d->mIoDevice = outputDevice;
+}
+
+/*! Constructs a new writer that appends to \a outputBytes. */
+QVersitWriter::QVersitWriter(QByteArray *outputBytes) : d(new QVersitWriterPrivate)
+{
+    d->init(this);
+    d->mOutputBytes.reset(new QBuffer);
+    d->mOutputBytes->setBuffer(outputBytes);
+    d->mOutputBytes->open(QIODevice::WriteOnly);
+    d->mIoDevice = d->mOutputBytes.data();
 }
 
 /*!
@@ -127,15 +144,19 @@ QVersitWriter::~QVersitWriter()
  */
 void QVersitWriter::setDevice(QIODevice* device)
 {
+    d->mOutputBytes.reset(0);
     d->mIoDevice = device;
 }
 
 /*!
- * Returns the device used for writing.
+ * Returns the device used for writing, or 0 if no device has been set.
  */
 QIODevice* QVersitWriter::device() const
 {
-    return d->mIoDevice;
+    if (d->mOutputBytes.isNull())
+        return d->mIoDevice;
+    else
+        return 0;
 }
 
 /*!
@@ -155,6 +176,22 @@ void QVersitWriter::setDefaultCodec(QTextCodec *codec)
 QTextCodec* QVersitWriter::defaultCodec() const
 {
     return d->mDefaultCodec;
+}
+
+/*!
+ * Returns the state of the writer.
+ */
+QVersitWriter::State QVersitWriter::state() const
+{
+    return d->state();
+}
+
+/*!
+ * Returns the error encountered by the last operation.
+ */
+QVersitWriter::Error QVersitWriter::error() const
+{
+    return d->error();
 }
 
 /*!
@@ -205,22 +242,6 @@ bool QVersitWriter::waitForFinished(int msec)
     } else {
         return false;
     }
-}
-
-/*!
- * Returns the state of the writer.
- */
-QVersitWriter::State QVersitWriter::state() const
-{
-    return d->state();
-}
-
-/*!
- * Returns the error encountered by the last operation.
- */
-QVersitWriter::Error QVersitWriter::error() const
-{
-    return d->error();
 }
 
 #include "moc_qversitwriter.cpp"

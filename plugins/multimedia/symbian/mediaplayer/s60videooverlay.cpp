@@ -46,7 +46,7 @@
 S60VideoOverlay::S60VideoOverlay(QObject *parent)
     : QVideoWindowControl(parent)
     , m_surface(new S60VideoSurface)
-    , m_aspectRatioMode(QVideoWidget::KeepAspectRatio)
+    , m_aspectRatioMode(Qt::KeepAspectRatio)
     , m_fullScreen(false)
 {
     connect(m_surface, SIGNAL(surfaceFormatChanged(QVideoSurfaceFormat)),
@@ -80,12 +80,12 @@ void S60VideoOverlay::setDisplayRect(const QRect &rect)
     setScaledDisplayRect();
 }
 
-QVideoWidget::AspectRatioMode S60VideoOverlay::aspectRatioMode() const
+Qt::AspectRatioMode S60VideoOverlay::aspectRatioMode() const
 {
     return m_aspectRatioMode;
 }
 
-void S60VideoOverlay::setAspectRatioMode(QVideoWidget::AspectRatioMode ratio)
+void S60VideoOverlay::setAspectRatioMode(Qt::AspectRatioMode ratio)
 {
     m_aspectRatioMode = ratio;
 
@@ -186,7 +186,7 @@ void S60VideoOverlay::surfaceFormatChanged()
 void S60VideoOverlay::setScaledDisplayRect()
 {
     switch (m_aspectRatioMode) {
-    case QVideoWidget::KeepAspectRatio:
+    case Qt::KeepAspectRatio:
         {
             QSize size = m_surface->surfaceFormat().viewport().size();
 
@@ -198,7 +198,7 @@ void S60VideoOverlay::setScaledDisplayRect()
             m_surface->setDisplayRect(rect);
         }
         break;
-    case QVideoWidget::IgnoreAspectRatio:
+    case Qt::IgnoreAspectRatio:
         m_surface->setDisplayRect(m_displayRect);
         break;
     };

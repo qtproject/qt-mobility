@@ -58,11 +58,14 @@
 #include <QDateTime>
 
 #include <e32base.h>
-#include <CommDbConnPref.h>
+#include <commdbconnpref.h>
 #include <es_sock.h>
 #include <rconnmon.h>
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE
     #include <comms-infras/cs_mobility_apiext.h>
+#endif
+#ifdef OCC_FUNCTIONALITY_AVAILABLE
+    #include <extendedconnpref.h>
 #endif
 
 typedef int(*TOpenCSetdefaultifFunction)(const struct ifreq*);
@@ -71,12 +74,11 @@ QTM_BEGIN_NAMESPACE
 
 class ConnectionProgressNotifier;
 
+class QNetworkSessionPrivate : public QObject, public CActive,
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE
-class QNetworkSessionPrivate : public QObject, public CActive, public MMobilityProtocolResp, 
-                               public MConnectionMonitorObserver
-#else
-class QNetworkSessionPrivate : public QObject, public CActive, public MConnectionMonitorObserver
+                               public MMobilityProtocolResp,
 #endif
+                               public MConnectionMonitorObserver
 {
     Q_OBJECT
 public:
@@ -176,6 +178,7 @@ private: // data
     QNetworkSession::SessionError iError;
     TInt iALREnabled;
     TBool iALRUpgradingConnection;
+    TBool iConnectInBackground;
     
     QList<QString> iKnownConfigsBeforeConnectionStart;
     
