@@ -39,56 +39,65 @@
 **
 ****************************************************************************/
 
-#ifndef QATTITUDESENSOR_H
-#define QATTITUDESENSOR_H
+#ifndef PROXIMITYSENSORSYM_H
+#define PROXIMITYSENSORSYM_H
 
-#include "qsensor.h"
+// QT Mobility Sensor API headers
+#include <qsensorbackend.h>
+#include <qproximitysensor.h>
 
-QTM_BEGIN_NAMESPACE
+// Internal Headers
+#include "sensorbackendsym.h"
 
-class QAttitudeReadingPrivate;
+// Sensor client headers
+// Proximity Sensor specific header
+#include <sensrvproximitysensor.h>
 
-class Q_SENSORS_EXPORT QAttitudeReading : public QSensorReading
-{
-    Q_OBJECT
-    Q_PROPERTY(qreal pitch READ pitch)
-    Q_PROPERTY(qreal roll READ roll)
-    Q_PROPERTY(qreal yaw READ yaw)
-    DECLARE_READING(QAttitudeReading)
+QTM_USE_NAMESPACE
+
+class CProximitySensorSym: public CSensorBackendSym
+    {
 public:
-    qreal pitch() const;
-    void setPitch(qreal pitch);
+    /**
+     * Factory function, this is used to create the proximity sensor object
+     * @return CProximitySensorSym if successful, leaves on failure
+     */
+    static CProximitySensorSym* NewL(QSensor *sensor);
 
-    qreal roll() const;
-    void setRoll(qreal roll);
-
-    qreal yaw() const;
-    void setYaw(qreal yaw);
-};
-
-class Q_SENSORS_EXPORT QAttitudeFilter : public QSensorFilter
-{
-public:
-    virtual bool filter(QAttitudeReading *reading) = 0;
+    /**
+     * Destructor
+     * Closes the backend resources
+     */
+    ~CProximitySensorSym();
+    
 private:
-    bool filter(QSensorReading *reading) { return filter(static_cast<QAttitudeReading*>(reading)); }
-};
-
-class Q_SENSORS_EXPORT QAttitudeSensor : public QSensor
-{
-    Q_OBJECT
-#ifdef Q_QDOC
-    Q_PROPERTY(bool yawAvailable)
-#endif
+    /**
+     * Default constructor
+     */
+    CProximitySensorSym(QSensor *sensor);
+    
+    /*
+     * RecvData is used to retrieve the sensor reading from sensor server
+     * It is implemented here to handle proximity sensor specific
+     * reading data and provides conversion and utility code
+     */ 
+    void RecvData(CSensrvChannel &aChannel);
+    
+    /**
+     * Second phase constructor
+     * Initialize the backend resources
+     */
+    void ConstructL();
+    
 public:
-    explicit QAttitudeSensor(QObject *parent = 0) : QSensor(parent)
-    { setType(QAttitudeSensor::type); }
-    virtual ~QAttitudeSensor() {}
-    QAttitudeReading *reading() const { return static_cast<QAttitudeReading*>(QSensor::reading()); }
-    static const char *type;
-};
+    /**
+     * Holds the id of the proximity sensor
+     */
+    static const char *id;
+    
+private:     
+    QProximityReading iReading;
+    TSensrvProximityData iData;
+    };
 
-QTM_END_NAMESPACE
-
-#endif
-
+#endif //PROXIMITYSENSORSYM_H

@@ -39,40 +39,34 @@
 **
 ****************************************************************************/
 
-#ifndef QATTITUDESENSOR_P_H
-#define QATTITUDESENSOR_P_H
+#include "qs60sensorapiaccelerometer.h"
+#include <qsensorplugin.h>
+#include <qsensorbackend.h>
+#include <qsensormanager.h>
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API. It exists purely as an
-// implementation detail. This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+QTM_USE_NAMESPACE
 
-#include "qsensor_p.h"
-
-QTM_BEGIN_NAMESPACE
-
-class QAttitudeReadingPrivate : public QSensorReadingPrivate
+// API is used as name since underlying symbian API is called sensor API
+class s60SensorApiSensorPlugin : public QObject, public QSensorPluginInterface, public QSensorBackendFactory
 {
+    Q_OBJECT
+    Q_INTERFACES(QtMobility::QSensorPluginInterface)
+
 public:
-    QAttitudeReadingPrivate()
-        : pitch(0)
-        , roll(0)
-        , yaw(0)
+    void registerSensors()
     {
+        QSensorManager::registerBackend(QAccelerometer::type, QS60SensorApiAccelerometer::id, this);
     }
 
-    qreal pitch;
-    qreal roll;
-    qreal yaw;
+    QSensorBackend *createBackend(QSensor *sensor)
+    {
+        if (sensor->identifier() == QS60SensorApiAccelerometer::id)
+            return new QS60SensorApiAccelerometer(sensor);
+
+        return 0;
+    }
 };
 
-QTM_END_NAMESPACE
+Q_EXPORT_PLUGIN2(libsensors_s60SensorApi, s60SensorApiSensorPlugin)
 
-#endif
-
+#include "main.moc"

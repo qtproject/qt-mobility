@@ -64,9 +64,6 @@ public:
         : x(0)
         , y(0)
         , z(0)
-        , geo_x(0)
-        , geo_y(0)
-        , geo_z(0)
         , calibrationLevel(0)
     {
     }
@@ -74,9 +71,6 @@ public:
     qreal x;
     qreal y;
     qreal z;
-    qreal geo_x;
-    qreal geo_y;
-    qreal geo_z;
     qreal calibrationLevel;
 };
 

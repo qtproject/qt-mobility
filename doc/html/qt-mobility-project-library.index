@@ -1141,7 +1141,6 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QTapSensor" href="qtapsensor.html" location="qtapsensor.h" bases="QSensor" module="">
-            <property access="public" threadsafety="unspecified" status="commendable" name="returnTapEvents" fullname="QTapSensor::returnTapEvents" href="qtapsensor.html#returnTapEvents-prop" location="qtapsensor.h" type="bool"/>
             <property access="public" threadsafety="unspecified" status="commendable" name="returnDoubleTapEvents" fullname="QTapSensor::returnDoubleTapEvents" href="qtapsensor.html#returnDoubleTapEvents-prop" location="qtapsensor.h" type="bool"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QTapSensor" fullname="QTapSensor::QTapSensor" href="qtapsensor.html#QTapSensor" location="qtapsensor.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QTapSensor(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
@@ -5576,15 +5575,6 @@
             <property access="public" threadsafety="unspecified" status="commendable" name="z" fullname="QMagnetometerReading::z" href="qmagnetometerreading.html#z-prop" location="qmagnetometer.h" type="qreal">
                 <getter name="z"/>
             </property>
-            <property access="public" threadsafety="unspecified" status="commendable" name="geo_x" fullname="QMagnetometerReading::geo_x" href="qmagnetometerreading.html#geo_x-prop" location="qmagnetometer.h" type="qreal">
-                <getter name="geo_x"/>
-            </property>
-            <property access="public" threadsafety="unspecified" status="commendable" name="geo_y" fullname="QMagnetometerReading::geo_y" href="qmagnetometerreading.html#geo_y-prop" location="qmagnetometer.h" type="qreal">
-                <getter name="geo_y"/>
-            </property>
-            <property access="public" threadsafety="unspecified" status="commendable" name="geo_z" fullname="QMagnetometerReading::geo_z" href="qmagnetometerreading.html#geo_z-prop" location="qmagnetometer.h" type="qreal">
-                <getter name="geo_z"/>
-            </property>
             <property access="public" threadsafety="unspecified" status="commendable" name="calibrationLevel" fullname="QMagnetometerReading::calibrationLevel" href="qmagnetometerreading.html#calibrationLevel-prop" location="qmagnetometer.h" type="qreal">
                 <getter name="calibrationLevel"/>
             </property>
@@ -5600,18 +5590,6 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setZ" fullname="QMagnetometerReading::setZ" href="qmagnetometerreading.html#setZ" location="qmagnetometer.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setZ(qreal z)">
                 <parameter left="qreal" right="" name="z" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="geo_x" fullname="QMagnetometerReading::geo_x" href="qmagnetometerreading.html#geo_x-prop" location="qmagnetometer.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="geo_x" type="qreal" signature="geo_x() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setGeo_x" fullname="QMagnetometerReading::setGeo_x" href="qmagnetometerreading.html#setGeo_x" location="qmagnetometer.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setGeo_x(qreal geo_x)">
-                <parameter left="qreal" right="" name="geo_x" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="geo_y" fullname="QMagnetometerReading::geo_y" href="qmagnetometerreading.html#geo_y-prop" location="qmagnetometer.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="geo_y" type="qreal" signature="geo_y() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setGeo_y" fullname="QMagnetometerReading::setGeo_y" href="qmagnetometerreading.html#setGeo_y" location="qmagnetometer.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setGeo_y(qreal geo_y)">
-                <parameter left="qreal" right="" name="geo_y" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="geo_z" fullname="QMagnetometerReading::geo_z" href="qmagnetometerreading.html#geo_z-prop" location="qmagnetometer.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="geo_z" type="qreal" signature="geo_z() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setGeo_z" fullname="QMagnetometerReading::setGeo_z" href="qmagnetometerreading.html#setGeo_z" location="qmagnetometer.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setGeo_z(qreal geo_z)">
-                <parameter left="qreal" right="" name="geo_z" default=""/>
-            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="calibrationLevel" fullname="QMagnetometerReading::calibrationLevel" href="qmagnetometerreading.html#calibrationLevel-prop" location="qmagnetometer.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="calibrationLevel" type="qreal" signature="calibrationLevel() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setCalibrationLevel" fullname="QMagnetometerReading::setCalibrationLevel" href="qmagnetometerreading.html#setCalibrationLevel" location="qmagnetometer.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setCalibrationLevel(qreal calibrationLevel)">
                 <parameter left="qreal" right="" name="calibrationLevel" default=""/>
@@ -5623,7 +5601,6 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMagnetometer" href="qmagnetometer.html" location="qmagnetometer.h" bases="QSensor" module="">
-            <property access="public" threadsafety="unspecified" status="commendable" name="returnRawValues" fullname="QMagnetometer::returnRawValues" href="qmagnetometer.html#returnRawValues-prop" location="qmagnetometer.h" type="bool"/>
             <property access="public" threadsafety="unspecified" status="commendable" name="returnGeoValues" fullname="QMagnetometer::returnGeoValues" href="qmagnetometer.html#returnGeoValues-prop" location="qmagnetometer.h" type="bool"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QMagnetometer" fullname="QMagnetometer::QMagnetometer" href="qmagnetometer.html#QMagnetometer" location="qmagnetometer.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMagnetometer(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
@@ -6125,17 +6102,8 @@
             <property access="public" threadsafety="unspecified" status="commendable" name="active" fullname="QSensor::active" href="qsensor.html#active-prop" location="qsensor.h" type="bool">
                 <getter name="isActive"/>
             </property>
-            <property access="public" threadsafety="unspecified" status="commendable" name="measurementMinimum" fullname="QSensor::measurementMinimum" href="qsensor.html#measurementMinimum-prop" location="qsensor.h" type="qreal">
-                <getter name="measurementMinimum"/>
-            </property>
-            <property access="public" threadsafety="unspecified" status="commendable" name="measurementMaximum" fullname="QSensor::measurementMaximum" href="qsensor.html#measurementMaximum-prop" location="qsensor.h" type="qreal">
-                <getter name="measurementMaximum"/>
-            </property>
-            <property access="public" threadsafety="unspecified" status="commendable" name="measurementAccuracy" fullname="QSensor::measurementAccuracy" href="qsensor.html#measurementAccuracy-prop" location="qsensor.h" type="qreal">
-                <getter name="measurementAccuracy"/>
-            </property>
-            <property access="public" threadsafety="unspecified" status="commendable" name="outputRangeCount" fullname="QSensor::outputRangeCount" href="qsensor.html#outputRangeCount-prop" location="qsensor.h" type="int">
-                <getter name="outputRangeCount"/>
+            <property access="public" threadsafety="unspecified" status="commendable" name="outputRanges" fullname="QSensor::outputRanges" href="qsensor.html#outputRanges-prop" location="qsensor.h" type="QtMobility::qoutputrangelist">
+                <getter name="outputRanges"/>
             </property>
             <property access="public" threadsafety="unspecified" status="commendable" name="outputRange" fullname="QSensor::outputRange" href="qsensor.html#outputRange-prop" location="qsensor.h" type="int">
                 <getter name="outputRange"/>
@@ -6173,10 +6141,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setUpdateInterval" fullname="QSensor::setUpdateInterval" href="qsensor.html#updateInterval-prop" location="qsensor.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="updateInterval" type="void" signature="setUpdateInterval(int interval)">
                 <parameter left="int" right="" name="interval" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="measurementMinimum" fullname="QSensor::measurementMinimum" href="qsensor.html#measurementMinimum-prop" location="qsensor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="measurementMinimum" type="qreal" signature="measurementMinimum() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="measurementMaximum" fullname="QSensor::measurementMaximum" href="qsensor.html#measurementMaximum-prop" location="qsensor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="measurementMaximum" type="qreal" signature="measurementMaximum() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="measurementAccuracy" fullname="QSensor::measurementAccuracy" href="qsensor.html#measurementAccuracy-prop" location="qsensor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="measurementAccuracy" type="qreal" signature="measurementAccuracy() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="outputRangeCount" fullname="QSensor::outputRangeCount" href="qsensor.html#outputRangeCount-prop" location="qsensor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="outputRangeCount" type="int" signature="outputRangeCount() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="outputRanges" fullname="QSensor::outputRanges" href="qsensor.html#outputRanges-prop" location="qsensor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="outputRanges" type="qoutputrangelist" signature="outputRanges() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="outputRange" fullname="QSensor::outputRange" href="qsensor.html#outputRange-prop" location="qsensor.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="outputRange" type="int" signature="outputRange() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setOutputRange" fullname="QSensor::setOutputRange" href="qsensor.html#outputRange-prop" location="qsensor.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="outputRange" type="void" signature="setOutputRange(int index)">
                 <parameter left="int" right="" name="index" default=""/>

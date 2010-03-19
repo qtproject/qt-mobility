@@ -74,8 +74,7 @@ class Q_SENSORS_EXPORT QCompass : public QSensor
 {
     Q_OBJECT
 public:
-    explicit QCompass(QObject *parent = 0) : QSensor(parent)
-    { setType(QCompass::type); }
+    explicit QCompass(QObject *parent = 0) : QSensor(QCompass::type, parent) {}
     virtual ~QCompass() {}
     QCompassReading *reading() const { return static_cast<QCompassReading*>(QSensor::reading()); }
     static const char *type;

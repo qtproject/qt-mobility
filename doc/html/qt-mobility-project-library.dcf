@@ -1602,7 +1602,6 @@
     <section ref="qmagnetometer.html" title="QMagnetometer Class Reference">
         <keyword ref="qmagnetometer.html">QMagnetometer</keyword>
         <keyword ref="qmagnetometer.html#returnGeoValues-prop">returnGeoValues</keyword>
-        <keyword ref="qmagnetometer.html#returnRawValues-prop">returnRawValues</keyword>
         <keyword ref="qmagnetometer.html#reading">reading</keyword>
         <section ref="qmagnetometer-members.html" title="List of all members"/>
     </section>
@@ -1614,16 +1613,10 @@
     <section ref="qmagnetometerreading.html" title="QMagnetometerReading Class Reference">
         <keyword ref="qmagnetometerreading.html">QMagnetometerReading</keyword>
         <keyword ref="qmagnetometerreading.html#calibrationLevel-prop">calibrationLevel</keyword>
-        <keyword ref="qmagnetometerreading.html#geo_x-prop">geo_x</keyword>
-        <keyword ref="qmagnetometerreading.html#geo_y-prop">geo_y</keyword>
-        <keyword ref="qmagnetometerreading.html#geo_z-prop">geo_z</keyword>
         <keyword ref="qmagnetometerreading.html#x-prop">x</keyword>
         <keyword ref="qmagnetometerreading.html#y-prop">y</keyword>
         <keyword ref="qmagnetometerreading.html#z-prop">z</keyword>
         <keyword ref="qmagnetometerreading.html#setCalibrationLevel">setCalibrationLevel</keyword>
-        <keyword ref="qmagnetometerreading.html#setGeo_x">setGeo_x</keyword>
-        <keyword ref="qmagnetometerreading.html#setGeo_y">setGeo_y</keyword>
-        <keyword ref="qmagnetometerreading.html#setGeo_z">setGeo_z</keyword>
         <keyword ref="qmagnetometerreading.html#setX">setX</keyword>
         <keyword ref="qmagnetometerreading.html#setY">setY</keyword>
         <keyword ref="qmagnetometerreading.html#setZ">setZ</keyword>
@@ -2747,12 +2740,9 @@
         <keyword ref="qsensor.html#connected-prop">isConnected</keyword>
         <keyword ref="qsensor.html#description-prop">description</keyword>
         <keyword ref="qsensor.html#error-prop">error</keyword>
-        <keyword ref="qsensor.html#measurementAccuracy-prop">measurementAccuracy</keyword>
-        <keyword ref="qsensor.html#measurementMaximum-prop">measurementMaximum</keyword>
-        <keyword ref="qsensor.html#measurementMinimum-prop">measurementMinimum</keyword>
         <keyword ref="qsensor.html#outputRange-prop">outputRange</keyword>
         <keyword ref="qsensor.html#outputRange-prop">setOutputRange</keyword>
-        <keyword ref="qsensor.html#outputRangeCount-prop">outputRangeCount</keyword>
+        <keyword ref="qsensor.html#outputRanges-prop">outputRanges</keyword>
         <keyword ref="qsensor.html#reading-prop">reading</keyword>
         <keyword ref="qsensor.html#sensorid-prop">sensorid</keyword>
         <keyword ref="qsensor.html#sensorid-prop">identifier</keyword>
@@ -3134,7 +3124,6 @@
     <section ref="qtapsensor.html" title="QTapSensor Class Reference">
         <keyword ref="qtapsensor.html">QTapSensor</keyword>
         <keyword ref="qtapsensor.html#returnDoubleTapEvents-prop">returnDoubleTapEvents</keyword>
-        <keyword ref="qtapsensor.html#returnTapEvents-prop">returnTapEvents</keyword>
         <keyword ref="qtapsensor.html#reading">reading</keyword>
         <section ref="qtapsensor-members.html" title="List of all members"/>
     </section>
