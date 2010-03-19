@@ -178,7 +178,7 @@ const VersitMapping versitSubTypeMappings[] = {
     {"MODEM",  QContactPhoneNumber::SubTypeModem.str},
     {"CAR",    QContactPhoneNumber::SubTypeCar.str},
     {"VIDEO",  QContactPhoneNumber::SubTypeVideo.str},
-    {"FAX",    QContactPhoneNumber::SubTypeFacsimile.str},
+    {"FAX",    QContactPhoneNumber::SubTypeFax.str},
     {"BBS",    QContactPhoneNumber::SubTypeBulletinBoardSystem.str},
     {"PAGER",  QContactPhoneNumber::SubTypePager.str},
     {"SWIS",   QContactOnlineAccount::SubTypeVideoShare.str},

@@ -63,6 +63,7 @@ public:
     const char* SubTypeLandline;
     const char* SubTypeMobile;
     const char* SubTypeFacsimile;
+    const char* SubTypeFax;
     const char* SubTypePager;
     const char* SubTypeVoice;
     const char* SubTypeModem;
@@ -78,7 +79,8 @@ public:
     Q_DECLARE_LATIN1_LITERAL(FieldSubTypes, "SubTypes");
     Q_DECLARE_LATIN1_LITERAL(SubTypeLandline, "Landline");
     Q_DECLARE_LATIN1_LITERAL(SubTypeMobile, "Mobile");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeFacsimile, "Facsimile");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeFacsimile, "Fax");
+    Q_DECLARE_LATIN1_LITERAL(SubTypeFax, "Fax");
     Q_DECLARE_LATIN1_LITERAL(SubTypePager, "Pager");
     Q_DECLARE_LATIN1_LITERAL(SubTypeVoice, "Voice");
     Q_DECLARE_LATIN1_LITERAL(SubTypeModem, "Modem");

@@ -851,7 +851,7 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeBulletinBoardSystem));
     subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeCar));
     subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeDtmfMenu));
-    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeFacsimile));
+    subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeFax));
     subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeLandline));
     subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeMessagingCapable));
     subTypes << QString(QLatin1String(QContactPhoneNumber::SubTypeMobile));

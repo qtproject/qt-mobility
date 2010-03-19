@@ -1233,11 +1233,22 @@ Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::SubTypeMobile, "Mobile");
 
 /*!
    \variable QContactPhoneNumber::SubTypeFacsimile
+   \deprecated
 
    The constant attribute value which describes the phone number as
-   identifying a facsimile machine.
+   identifying a fax machine.
+
+   This has been deprecated - use QContactPhoneNumebr::SubTypeFax instead.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::SubTypeFacsimile, "Facsimile");
+Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::SubTypeFacsimile, "Fax");
+
+/*!
+   \variable QContactPhoneNumber::SubTypeFax
+
+   The constant attribute value which describes the phone number as
+   identifying a fax machine.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::SubTypeFax, "Fax");
 
 /*!
    \variable QContactPhoneNumber::SubTypePager
