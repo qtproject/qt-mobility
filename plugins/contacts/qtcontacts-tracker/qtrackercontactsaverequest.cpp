@@ -314,7 +314,7 @@ void QTrackerContactSaveRequest::saveContactDetails( RDFServicePtr service,
             {
                 definition = det.definitionName();
                 if(definition == QContactAvatar::DefinitionName) {
-                    QUrl avatar = det.value(QContactAvatar::FieldAvatar);
+                    QUrl avatar = det.value(QContactAvatar::FieldImageUrl);
                     Live<nie::DataObject> fdo = service->liveNode( avatar );
                     ncoContact->setPhoto(fdo);
                 }
@@ -382,7 +382,7 @@ void QTrackerContactSaveRequest::savePhoneNumbers(RDFServicePtr service, RDFVari
             up.addInsertion(newPhone, rdf::type::iri(), nco::CarPhoneNumber::iri());
         else if( subtypes.contains(QContactPhoneNumber::SubTypeBulletinBoardSystem))
             up.addInsertion(newPhone, rdf::type::iri(), nco::BbsNumber::iri());
-        else if( subtypes.contains(QContactPhoneNumber::SubTypeFacsimile))
+        else if( subtypes.contains(QContactPhoneNumber::SubTypeFax))
             up.addInsertion(newPhone, rdf::type::iri(), nco::FaxNumber::iri());
         else if( subtypes.contains(QContactPhoneNumber::SubTypeModem))
             up.addInsertion(newPhone, rdf::type::iri(), nco::ModemNumber::iri());
