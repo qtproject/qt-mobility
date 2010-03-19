@@ -40,8 +40,8 @@
 ****************************************************************************/
 
 
-#ifndef QCONTACTPRESENCE_H
-#define QCONTACTPRESENCE_H
+#ifndef QCONTACTGLOBALPRESENCE_H
+#define QCONTACTGLOBALPRESENCE_H
 
 #include <QString>
 #include <QUrl>
@@ -49,11 +49,12 @@
 #include "qtcontactsglobal.h"
 #include "qcontactdetail.h"
 #include "qcontact.h"
+#include "qcontactpresence.h"
 
 QTM_BEGIN_NAMESPACE
 
 /* Leaf class */
-class Q_CONTACTS_EXPORT QContactPresence : public QContactDetail
+class Q_CONTACTS_EXPORT QContactGlobalPresence : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
@@ -65,7 +66,7 @@ public:
     const char* FieldPresenceStateImageUrl;
     const char* FieldCustomMessage;
 #else
-    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactPresence, "Presence")
+    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactGlobalPresence, "GlobalPresence")
     Q_DECLARE_LATIN1_LITERAL(FieldTimestamp, "Timestamp");
     Q_DECLARE_LATIN1_LITERAL(FieldNickname, "Nickname");
     Q_DECLARE_LATIN1_LITERAL(FieldPresenceState, "PresenceState");
@@ -74,26 +75,16 @@ public:
     Q_DECLARE_LATIN1_LITERAL(FieldCustomMessage, "CustomMessage");
 #endif
 
-    enum PresenceState {
-        PresenceUnknown = 0,
-        PresenceAvailable,
-        PresenceHidden,
-        PresenceBusy,
-        PresenceAway,
-        PresenceExtendedAway,
-        PresenceOffline,
-    };
-
     void setTimestamp(const QDateTime& timestamp) {setValue(FieldTimestamp, timestamp);}
     QDateTime timestamp() const {return value<QDateTime>(FieldTimestamp);}
     void setNickname(const QString& nickname) {setValue(FieldNickname, nickname);}
     QString nickname() const {return value(FieldNickname);}
-    void setPresenceState(PresenceState presence) {setValue(FieldPresenceState, static_cast<int>(presence));}
-    PresenceState presenceState() const {return static_cast<PresenceState>(value<int>(FieldPresenceState));}
+    void setPresenceState(QContactPresence::PresenceState presenceState) {setValue(FieldPresenceState, static_cast<int>(presenceState));}
+    QContactPresence::PresenceState presenceState() const {return static_cast<QContactPresence::PresenceState>(value<int>(FieldPresenceState));}
     void setPresenceStateText(const QString& presenceStateText) {setValue(FieldPresenceStateText, presenceStateText);}
     QString presenceStateText() const {return value(FieldPresenceStateText);}
     void setPresenceStateImageUrl(const QUrl& presenceStateImageUrl) {setValue(FieldPresenceStateImageUrl, presenceStateImageUrl);}
-    QUrl presenceStateImageUrl() const {return value(FieldPresenceStateImageUrl);}
+    QUrl presenceStateImageUrl() const {return value<QUrl>(FieldPresenceStateImageUrl);}
     void setCustomMessage(const QString& customMessage) {setValue(FieldCustomMessage, customMessage);}
     QString customMessage() const {return value(FieldCustomMessage);}
 };
