@@ -178,30 +178,30 @@ symbian: {
             contains(S60_VERSION, 3.1) {
                 pluginstubs += \
                     "IF package(0x102032BE)" \
-                    "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/s60_sensor_api/qmakepluginstubs/sensor_s60sensorapi.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\sensor_s60sensorapi.qtplugin\"" \
-                    "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/generic/qmakepluginstubs/sensors_generic.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\sensors_generic.qtplugin\"" \
+                    "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/s60_sensor_api/qmakepluginstubs/sensor_s60sensorapi.qtplugin\" - \"!:\\resource\\qt\\plugins\\sensors\\sensor_s60sensorapi.qtplugin\"" \
+                    "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/generic/qmakepluginstubs/sensors_generic.qtplugin\" - \"!:\\resource\\qt\\plugins\\sensors\\sensors_generic.qtplugin\"" \
                     "ENDIF"
             } else {
                 pluginstubs += \
                     "IF package(0x1028315F)" \
-                    "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/symbian/qmakepluginstubs/sensors_sym.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\sensors_sym.qtplugin\"" \
+                    "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/symbian/qmakepluginstubs/sensors_sym.qtplugin\" - \"!:\\resource\\qt\\plugins\\sensors\\sensors_sym.qtplugin\"" \
                     "ELSEIF package(0x102752AE)" \
-                    "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/symbian/qmakepluginstubs/sensors_sym.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\sensors_sym.qtplugin\"" \
+                    "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/symbian/qmakepluginstubs/sensors_sym.qtplugin\" - \"!:\\resource\\qt\\plugins\\sensors\\sensors_sym.qtplugin\"" \
                     "ELSE" \
-                    "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/symbian/qmakepluginstubs/sensors_sym.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\sensors_sym.qtplugin\"" \
+                    "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/symbian/qmakepluginstubs/sensors_sym.qtplugin\" - \"!:\\resource\\qt\\plugins\\sensors\\sensors_sym.qtplugin\"" \
                     "ENDIF"
             }
         } else {
             pluginstubs += \
                 "IF package(0x1028315F)" \
-                "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/symbian/qmakepluginstubs/sensors_sym.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\sensors_sym.qtplugin\"" \
+                "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/symbian/qmakepluginstubs/sensors_sym.qtplugin\" - \"!:\\resource\\qt\\plugins\\sensors\\sensors_sym.qtplugin\"" \
                 "ELSEIF package(0x102752AE)" \
-                "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/symbian/qmakepluginstubs/sensors_sym.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\sensors_sym.qtplugin\"" \
+                "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/symbian/qmakepluginstubs/sensors_sym.qtplugin\" - \"!:\\resource\\qt\\plugins\\sensors\\sensors_sym.qtplugin\"" \
                 "ELSEIF package(0x102032BE)" \
-                "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/s60_sensor_api/qmakepluginstubs/sensor_s60sensorapi.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\sensor_s60sensorapi.qtplugin\"" \
-                "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/generic/qmakepluginstubs/sensors_generic.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\sensors_generic.qtplugin\"" \
+                "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/s60_sensor_api/qmakepluginstubs/sensor_s60sensorapi.qtplugin\" - \"!:\\resource\\qt\\plugins\\sensors\\sensor_s60sensorapi.qtplugin\"" \
+                "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/generic/qmakepluginstubs/sensors_generic.qtplugin\" - \"!:\\resource\\qt\\plugins\\sensors\\sensors_generic.qtplugin\"" \
                 "ELSE" \
-                "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/symbian/qmakepluginstubs/sensors_sym.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\sensors_sym.qtplugin\"" \
+                "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/symbian/qmakepluginstubs/sensors_sym.qtplugin\" - \"!:\\resource\\qt\\plugins\\sensors\\sensors_sym.qtplugin\"" \
                 "ENDIF"
         }
     }
