@@ -65,17 +65,17 @@ QTM_BEGIN_NAMESPACE
   \preliminary
   \brief The QContactManagerEngine class provides the interface for all
   implementations of the contact manager backend functionality.
- 
+
   Instances of this class are usually provided by a
   \l QContactManagerEngineFactory, which is loaded from a plugin.
- 
+
   The default implementation of this interface provides a basic
   level of functionality for some functions so that specific engines
   can simply implement the functionality that is supported by
   the specific contacts engine that is being adapted.
- 
+
   More information on writing a contacts engine plugin is TODO.
- 
+
   \sa QContactManager, QContactManagerEngineFactory
  */
 
@@ -524,7 +524,7 @@ bool QContactManagerEngine::hasFeature(QContactManager::ManagerFeature feature, 
    \li any QContactActionFilters are transformed into the corresponding
      QContactFilters returned by matching actions
    \li Any QContactInvalidFilters contained in a union filter will be removed
-   \li Any default QContactFilters conained in an intersection filter will be removed
+   \li Any default QContactFilters contained in an intersection filter will be removed
    \li Any QContactIntersectionFilters with a QContactInvalidFilter contained will be
      replaced with a QContactInvalidFilter
    \li Any QContactUnionFilters with a default QContactFilter contained will be replaced
