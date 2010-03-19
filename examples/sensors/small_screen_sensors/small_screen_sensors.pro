@@ -6,6 +6,7 @@ include(../../examples.pri)
 QT=core gui
 CONFIG+=mobility
 MOBILITY+=sensors
+INCLUDEPATH += ../../../src/sensors
 
 SOURCES += main.cpp \
     sensorswindow.cpp \
