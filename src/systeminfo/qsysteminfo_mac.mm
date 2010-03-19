@@ -707,7 +707,7 @@ void QSystemNetworkInfoPrivate::connectNotify(const char *signal)
 {
     if (QLatin1String(signal) == SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int))) {
         connect(rssiTimer, SIGNAL(timeout()), this, SLOT(rssiTimeout()));
-        rssiTimer->start(1000);
+        rssiTimer->start(5000);
     }
     if (QLatin1String(signal) == SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString))
         || QLatin1String(signal) == SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus))) {
@@ -847,7 +847,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
 
                 if([wifiInterface power]) {
                     if(!rssiTimer->isActive())
-                        rssiTimer->start(1000);
+                        rssiTimer->start(5000);
                 }  else {
                     if(rssiTimer->isActive())
                         rssiTimer->stop();
