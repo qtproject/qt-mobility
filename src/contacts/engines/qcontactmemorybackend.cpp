@@ -900,7 +900,6 @@ bool QContactMemoryEngine::hasFeature(QContactManager::ManagerFeature feature, c
         case QContactManager::ActionPreferences:
         case QContactManager::Relationships:
         case QContactManager::ArbitraryRelationshipTypes:
-        case QContactManager::RelationshipOrdering:
         case QContactManager::MutableDefinitions:
             return true;
         case QContactManager::Anonymous:

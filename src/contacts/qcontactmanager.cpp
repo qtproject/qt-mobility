@@ -486,42 +486,6 @@ bool QContactManager::saveContacts(QList<QContact>* contacts, QMap<int, QContact
 }
 
 /*!
-  \obsolete
-
-  Remove every contact whose id is contained in the list of contacts ids
-  \a contactIds.  Returns true if all contacts were removed successfully,
-  otherwise false.
-
-  The manager might populate \a errorMap (the map of indices of the \a contactIds list to
-  the error which occurred when saving the contact at that index) for every
-  index for which the contact could not be removed, if it is able.
-  The \l QContactManager::error() function will
-  only return \c QContactManager::NoError if all contacts were removed
-  successfully.
-
-  For each contact that was removed successfully, the corresponding
-  id in the \a contactIds list will be retained but set to zero.  The id of contacts
-  that were not successfully removed will be left alone.
-
-  Any contact that was removed successfully will have the relationships
-  in which it was involved removed also.
-
-  \sa QContactManager::removeContact()
- */
-bool QContactManager::removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap)
-{
-    // DEPRECATED to be removed once transition period has elapsed.
-    if (errorMap)
-        errorMap->clear();
-    if (!contactIds) {
-        d->m_error =QContactManager::BadArgumentError;
-        return false;
-    }
-
-    return d->m_engine->removeContacts(*contactIds, errorMap, &d->m_error);
-}
-
-/*!
   Remove every contact whose id is contained in the list of contacts ids
   \a contactIds.  Returns true if all contacts were removed successfully,
   otherwise false.
@@ -770,37 +734,6 @@ QList<QVariant::Type> QContactManager::supportedDataTypes() const
 bool QContactManager::isFilterSupported(const QContactFilter& filter) const
 {
     return d->m_engine->isFilterSupported(filter);
-}
-
-/*!
-  Returns the list of relationship types which are supported by this manager where contacts of the
-  given type \a contactType may be the first (dominant) contact in the relationship.
-  If the backend does not support the \c QContactManager::Relationships feature, this list should
-  be empty.  If the backend supports the \c QContactManager::Relationships feature and also
-  supports the \c QContactManager::ArbitraryRelationshipTypes feature, the list will
-  contain the natively supported (well-known) relationship types contained in the list, but clients
-  are able to add relationships of any custom type also.
-
-  \sa QContactRelationship::first()
- */
-QStringList QContactManager::supportedRelationshipTypes(const QString& contactType) const
-{
-    QStringList standardRels;
-    standardRels << QContactRelationship::HasMember;
-    standardRels << QContactRelationship::Aggregates;
-    standardRels << QContactRelationship::IsSameAs;
-    standardRels << QContactRelationship::HasAssistant;
-    standardRels << QContactRelationship::HasSpouse;
-    standardRels << QContactRelationship::HasManager;
-
-    QStringList retnList;
-    foreach (const QString& relType, standardRels) {
-        if (d->m_engine->isRelationshipTypeSupported(relType, contactType)) {
-            retnList.append(relType);
-        }
-    }
-
-    return retnList;
 }
 
 /*!

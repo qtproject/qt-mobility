@@ -126,55 +126,6 @@ QContactId QContactRelationshipFetchRequest::second() const
     return d->m_second;
 }
 
-/*!
-  \obsolete
-  Sets the participant criterion of the fetch request to \a
-  participantUri.  If the \a participantUri references a contact in
-  the manager from which the relationships are being fetched and the
-  \a role is \c QContactRelationshipFilter::Either, a relationship
-  will match the criterion if the contact appears in the relationship
-  as either the source or a destination contact.  If the \a
-  participantUri references a contact in a different manager to the
-  one from which the relationships are being fetched and the \a role
-  is \c QContactRelationshipFilter::Either, a relationship will match
-  the criterion only if the contact appears in the relationship as a
-  destination contact.  If the \a participantUri references a contact
-  in a different manager to the one from which the relationships are
-  being fetched and the \a role is \c
-  QContactRelationshipFilter::Source, no relationships will be
-  fetched.
-  
-  If the \a participantUri consists of an empty manager URI and the
-  zero contact id, or if the participant criterion is not set, the
-  request will fetch relationships involving any participant.
- */
-void QContactRelationshipFetchRequest::setParticipant(const QContactId& participantUri, QContactRelationshipFilter::Role role)
-{
-    Q_D(QContactRelationshipFetchRequest);
-    d->m_participantUri = participantUri;
-    d->m_role = role;
-}
-
-/*!
-  \obsolete
-  Returns the participant criterion of the fetch request
- */
-QContactId QContactRelationshipFetchRequest::participant() const
-{
-    Q_D(const QContactRelationshipFetchRequest);
-    return d->m_participantUri;
-}
-
-/*!
-  \obsolete
-  Returns the role of the participant criterion of the fetch request
- */
-QContactRelationshipFilter::Role QContactRelationshipFetchRequest::participantRole() const
-{
-    Q_D(const QContactRelationshipFetchRequest);
-    return d->m_role;
-}
-
 /*! Returns the list of relationships that was the result of the request
  */
 QList<QContactRelationship> QContactRelationshipFetchRequest::relationships() const
