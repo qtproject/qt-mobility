@@ -124,7 +124,7 @@ void CntSimContactRemoveRequest::removeNext()
     else
         error = QContactManager::DoesNotExistError;
 #else
-    simStore()->remove(contactId, error);
+    simStore()->remove(contactId, &error);
 #endif
 
     if (error) {
@@ -158,7 +158,7 @@ void CntSimContactRemoveRequest::getReservedSlots()
         return;
     
     QContactManager::Error error = QContactManager::NoError;
-    if (!simStore()->getReservedSlots(error)) {
+    if (!simStore()->getReservedSlots(&error)) {
         QContactManagerEngine::updateContactRemoveRequest(r, error, m_errorMap, QContactAbstractRequest::FinishedState);
     }
 }

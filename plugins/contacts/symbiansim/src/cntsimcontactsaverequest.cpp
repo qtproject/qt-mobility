@@ -112,8 +112,8 @@ void CntSimContactSaveRequest::writeNext()
     
     // Validate & write contact 
     QContactManager::Error error = QContactManager::NoError;
-    if (engine()->validateContact(contact, error))
-        simStore()->write(contact, error);
+    if (engine()->validateContact(contact, &error))
+        simStore()->write(contact, &error);
 
     if (error) {
         m_errorMap.insert(m_index, error);
