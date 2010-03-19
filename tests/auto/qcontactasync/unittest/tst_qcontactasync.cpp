@@ -474,8 +474,10 @@ void tst_QContactAsync::contactFetch()
     sorting.clear();
     cfr.setFilter(fil);
     cfr.setSorting(sorting);
-    cfr.setDefinitionRestrictions(QStringList(QContactName::DefinitionName));
-    QCOMPARE(cfr.definitionRestrictions(), QStringList(QContactName::DefinitionName));
+    QContactFetchHint fetchHint;
+    fetchHint.setDetailDefinitionsHint(QStringList(QContactName::DefinitionName));
+    cfr.setFetchHint(fetchHint);
+    QCOMPARE(cfr.fetchHint().detailDefinitionsHint(), QStringList(QContactName::DefinitionName));
     QVERIFY(!cfr.cancel()); // not started
     QVERIFY(cfr.start());
     QVERIFY((cfr.isActive() && cfr.state() == QContactAbstractRequest::ActiveState) || cfr.isFinished());
@@ -534,7 +536,7 @@ void tst_QContactAsync::contactFetch()
     sorting.clear();
     cfr.setFilter(fil);
     cfr.setSorting(sorting);
-    cfr.setDefinitionRestrictions(QStringList());
+    cfr.setFetchHint(QContactFetchHint());
 
     int bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT; // attempt to cancel 40 times.  If it doesn't work due to threading, bail out.
     while (true) {
@@ -549,7 +551,8 @@ void tst_QContactAsync::contactFetch()
             sorting.clear();
             cfr.setFilter(fil);
             cfr.setSorting(sorting);
-            cfr.setDefinitionRestrictions(QStringList());
+            cfr.setFetchHint(QContactFetchHint());
+            cfr.setFetchHint(QContactFetchHint());
             bailoutCount -= 1;
             if (!bailoutCount) {
                 qWarning("Unable to test cancelling due to thread scheduling!");
@@ -580,7 +583,7 @@ void tst_QContactAsync::contactFetch()
             sorting.clear();
             cfr.setFilter(fil);
             cfr.setSorting(sorting);
-            cfr.setDefinitionRestrictions(QStringList());
+            cfr.setFetchHint(QContactFetchHint());
             bailoutCount -= 1;
             spy.clear();
             if (!bailoutCount) {
@@ -1595,7 +1598,7 @@ void tst_QContactAsync::relationshipFetch()
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
-    rels = cm->relationships(aId, QContactRelationshipFilter::First);
+    rels = cm->relationships(aId, QContactRelationship::First);
     result = rfr.relationships();
     QCOMPARE(rels, result);
 
@@ -1623,7 +1626,7 @@ void tst_QContactAsync::relationshipFetch()
     spy.clear();
 
     // retrieve rels where second = id of B, and ensure that we get the same results
-    rels = cm->relationships(bId, QContactRelationshipFilter::Second);
+    rels = cm->relationships(bId, QContactRelationship::Second);
     result = rfr.relationships();
     QCOMPARE(rels, result);
 
@@ -1656,7 +1659,7 @@ void tst_QContactAsync::relationshipFetch()
     QVERIFY(rfr.start());
     QVERIFY(rfr.waitForFinished());
     result = rfr.relationships();
-    rels = cm->relationships(cId, QContactRelationshipFilter::First);
+    rels = cm->relationships(cId, QContactRelationship::First);
     QCOMPARE(rels, result);
 
     // cancelling
@@ -1785,7 +1788,7 @@ void tst_QContactAsync::relationshipRemove()
     QVERIFY(rrr.isFinished());
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
-    QCOMPARE(cm->relationships(QContactRelationship::HasAssistant, cId, QContactRelationshipFilter::Second).size(), 1);
+    QCOMPARE(cm->relationships(QContactRelationship::HasAssistant, cId, QContactRelationship::Second).size(), 1);
 
     // remove (asynchronously) a nonexistent relationship - should fail.
     r.setFirst(cId);
@@ -1805,7 +1808,7 @@ void tst_QContactAsync::relationshipRemove()
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
-    QCOMPARE(cm->relationships(QContactRelationship::HasManager, cId, QContactRelationshipFilter::First).size(), 0);
+    QCOMPARE(cm->relationships(QContactRelationship::HasManager, cId, QContactRelationship::First).size(), 0);
 //    QCOMPARE(rrr.error(), QContactManager::DoesNotExistError);
 
     // cancelling
@@ -1938,7 +1941,7 @@ void tst_QContactAsync::relationshipSave()
     QVERIFY(spy.count() >= 1); // active + finished progress signals
     spy.clear();
 
-    QList<QContactRelationship> expected = cm->relationships(QContactRelationship::HasSpouse, aId, QContactRelationshipFilter::First);
+    QList<QContactRelationship> expected = cm->relationships(QContactRelationship::HasSpouse, aId, QContactRelationship::First);
     QList<QContactRelationship> result = rsr.relationships();
     QCOMPARE(expected, result);
     QVERIFY(result.contains(testRel));
@@ -1961,7 +1964,7 @@ void tst_QContactAsync::relationshipSave()
     spy.clear();
 
     expected.clear();
-    expected = cm->relationships(QContactRelationship::HasSpouse, aId, QContactRelationshipFilter::First);
+    expected = cm->relationships(QContactRelationship::HasSpouse, aId, QContactRelationship::First);
     result = rsr.relationships();
     QCOMPARE(result, QList<QContactRelationship>() << testRel);
     QVERIFY(expected.contains(testRel));
@@ -2002,7 +2005,7 @@ void tst_QContactAsync::relationshipSave()
         spy.clear();
 
         // verify that the changes were not saved
-        QList<QContactRelationship> aRels = cm->relationships(aId, QContactRelationshipFilter::First);
+        QList<QContactRelationship> aRels = cm->relationships(aId, QContactRelationship::First);
         QVERIFY(!aRels.contains(testRel));
         QCOMPARE(cm->relationships(aId).size(), originalCount + 2); // should still only be two extra
 
@@ -2037,7 +2040,7 @@ void tst_QContactAsync::relationshipSave()
         spy.clear();
 
         // verify that the changes were not saved
-        QList<QContactRelationship> aRels = cm->relationships(aId, QContactRelationshipFilter::First);
+        QList<QContactRelationship> aRels = cm->relationships(aId, QContactRelationship::First);
         QVERIFY(!aRels.contains(testRel));
         QCOMPARE(cm->relationships(aId).size(), originalCount + 2); // should still only be two extra
 

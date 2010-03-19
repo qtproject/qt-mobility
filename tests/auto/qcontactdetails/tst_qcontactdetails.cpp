@@ -238,14 +238,9 @@ void tst_QContactDetails::avatar()
     QContactAvatar a1, a2;
 
     // test property set
-    a1.setAvatar("1234");
-    QCOMPARE(a1.avatar(), QString("1234"));
-    QCOMPARE(a1.value(QContactAvatar::FieldAvatar), QString("1234"));
-    a1.setSubType(QContactAvatar::SubTypeAudioRingtone);
-    QCOMPARE(a1.subType(), QString(QLatin1String(QContactAvatar::SubTypeAudioRingtone)));
-    QCOMPARE(a1.value(QContactAvatar::FieldSubType), QString(QLatin1String(QContactAvatar::SubTypeAudioRingtone)));
-
-    a1.setSubType(QContactAvatar::SubTypeImage);
+    a1.setImageUrl(QUrl("1234"));
+    QCOMPARE(a1.imageUrl(), QUrl("1234"));
+    QCOMPARE(a1.value(QContactAvatar::FieldAvatarUrl), QUrl("1234"));
     
     //pixmap
     uchar pixDataRGB[] = {255, 0, 0, 0, 0, 255, 0, 0, 255, 255, 0, 0}; // Red, Blue, Red, Blue
