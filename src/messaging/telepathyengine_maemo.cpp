@@ -57,7 +57,9 @@ Q_GLOBAL_STATIC(TelepathyEngine,telepathyEngine);
 
 TelepathyEngine::TelepathyEngine()
 {
+    qDebug() << "TelepathyEngine::TelepathyEngine()";
     tpSession=new TpSession("ring",TRUE); // Create as sync, telephony "ring" as default
+    qDebug() << "TelepathyEngine::TelepathyEngine() exit";
 
 }
 

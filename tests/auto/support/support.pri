@@ -19,7 +19,12 @@ symbian|wince*|maemo5|win32|mac {
         }
 
     }
-    maemo5|mac {
+    maemo5|maemo6 {
+        CONFIG += link_pkgconfig
+        PKGCONFIG += glib-2.0 gconf-2.0
+        SOURCES += $$PWD/support_maemo5.cpp
+    }
+    mac {
          SOURCES += $$PWD/support_stub.cpp       
     }
 } else {
