@@ -176,6 +176,10 @@ void QContactManagerData::createEngine(const QString& managerName, const QMap<QS
 void QContactManagerData::loadStaticFactories()
 {
     if (!m_discoveredStatic) {
+#if !defined QT_NO_DEBUG
+        const bool showDebug = qgetenv("QT_DEBUG_PLUGINS").toInt() > 0;
+#endif
+
         m_discoveredStatic = true;
 
         /* Clean stuff up at the end */
@@ -188,7 +192,10 @@ void QContactManagerData::loadStaticFactories()
             QContactActionFactory *g = qobject_cast<QContactActionFactory*>(staticPlugins.at(i));
             if (f) {
                 QString name = f->managerName();
-                qDebug() << "Static: found an engine plugin" << f << "with name" << name;
+#if !defined QT_NO_DEBUG
+                if (showDebug)
+                    qDebug() << "Static: found an engine plugin" << f << "with name" << name;
+#endif
                 if (name != QLatin1String("memory") && name != QLatin1String("invalid") && !name.isEmpty()) {
                     // we also need to ensure that we haven't already loaded this factory.
                     if (m_engines.keys().contains(name)) {
@@ -203,8 +210,10 @@ void QContactManagerData::loadStaticFactories()
 
             if (g) {
                 QString name = g->name();
-                qDebug() << "Static: found an action factory" << g << "with name" << name;
-
+#if !defined QT_NO_DEBUG
+                if (showDebug)
+                    qDebug() << "Static: found an action factory" << g << "with name" << name;
+#endif
                 if (m_actionfactories.contains(g)) {
                     qWarning() << "Static contacts plugin" << name << "has the same name as currently loaded plugin; ignored";
                 } else {
@@ -228,6 +237,10 @@ void QContactManagerData::loadStaticFactories()
 /* Plugin loader */
 void QContactManagerData::loadFactories()
 {
+#if !defined QT_NO_DEBUG
+    const bool showDebug = qgetenv("QT_DEBUG_PLUGINS").toInt() > 0;
+#endif
+
     // Always do this..
     loadStaticFactories();
 
@@ -242,7 +255,10 @@ void QContactManagerData::loadFactories()
         QSet<QString> processed;
 
         paths << QApplication::applicationDirPath() << QApplication::libraryPaths();
-        qDebug() << "Plugin paths:" << paths;
+#if !defined QT_NO_DEBUG
+        if (showDebug)
+            qDebug() << "Plugin paths:" << paths;
+#endif
 
         /* Enumerate our plugin paths */
         for (int i=0; i < paths.count(); i++) {
@@ -296,7 +312,10 @@ void QContactManagerData::loadFactories()
             if (pluginsDir.cd(QLatin1String("plugins/contacts")) || pluginsDir.cd(QLatin1String("contacts")) || (pluginsDir.cdUp() && pluginsDir.cd(QLatin1String("plugins/contacts")))) {
 #endif
                 const QStringList& files = pluginsDir.entryList(QDir::Files);
-                qDebug() << "Looking for plugins in" << pluginsDir.path() << files;
+#if !defined QT_NO_DEBUG
+                if (showDebug)
+                    qDebug() << "Looking for contacts plugins in" << pluginsDir.path() << files;
+#endif
                 for (int j=0; j < files.count(); j++) {
                     plugins << pluginsDir.absoluteFilePath(files.at(j));
                 }
@@ -311,8 +330,10 @@ void QContactManagerData::loadFactories()
 
             if (f) {
                 QString name = f->managerName();
-                qDebug() << "Dynamic: found an engine plugin" << f << "with name" << name;
-
+#if !defined QT_NO_DEBUG
+                if (showDebug)
+                    qDebug() << "Dynamic: found a contact engine plugin" << f << "with name" << name;
+#endif
                 if (name != QLatin1String("memory") && name != QLatin1String("invalid") && !name.isEmpty()) {
                     // we also need to ensure that we haven't already loaded this factory.
                     if (m_engines.keys().contains(name)) {
@@ -327,8 +348,10 @@ void QContactManagerData::loadFactories()
 
             if (g) {
                 QString name = g->name();
-                qDebug() << "Dynamic: found an action factory" << g << "with name" << name;
-
+#if !defined QT_NO_DEBUG
+                if (showDebug)
+                    qDebug() << "Dynamic: found a contact action factory" << g << "with name" << name;
+#endif
                 // we also need to ensure that we haven't already loaded this factory.
                 if (m_actionfactories.contains(g)) {
                     qWarning() << "Contacts plugin" << plugins.at(i) << "has the same name as currently loaded plugin" << name << "; ignored";
@@ -348,12 +371,14 @@ void QContactManagerData::loadFactories()
             }
 
             /* Debugging */
-            if (!f && !g) {
+#if !defined QT_NO_DEBUG
+            if (showDebug && !f && !g) {
                 qDebug() << "Unknown plugin:" << qpl.errorString();
                 if (qpl.instance()) {
                     qDebug() << "[qobject:" << qpl.instance() << "]";
                 }
             }
+#endif
         }
         
         QStringList engineNames;
@@ -364,8 +389,12 @@ void QContactManagerData::loadFactories()
             }
             engineNames << QString::fromAscii("%1[%2]").arg(f->managerName()).arg(versions.join(QString::fromAscii(",")));
         }
-        qDebug() << "Found engines:" << engineNames;
-        qDebug() << "Found actions:" << m_actionmap.keys();
+#if !defined QT_NO_DEBUG
+        if (showDebug) {
+            qDebug() << "Found engines:" << engineNames;
+            qDebug() << "Found actions:" << m_actionmap.keys();
+        }
+#endif
     }
 }
 
