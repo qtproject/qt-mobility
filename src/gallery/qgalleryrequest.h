@@ -148,6 +148,7 @@ class QGalleryAbstractResponsePrivate;
 class Q_GALLERY_EXPORT QGalleryAbstractResponse : public QGalleryItemList
 {
     Q_OBJECT
+    Q_DECLARE_PRIVATE(QGalleryAbstractResponse)
 public:
     QGalleryAbstractResponse(QObject *parent = 0);
     ~QGalleryAbstractResponse();
@@ -167,10 +168,10 @@ Q_SIGNALS:
     void itemCountChanged();
 
 protected:
+    QGalleryAbstractResponse(QGalleryAbstractResponsePrivate &dd, QObject *parent);
+
     void finish(int result, bool idle = false);
     void updateItemCount(int count);
-
-    QGalleryAbstractResponsePrivate *d_ptr;
 };
 
 class QGalleryItemRequestPrivate;
@@ -182,8 +183,8 @@ class Q_GALLERY_EXPORT QGalleryItemRequest : public QGalleryAbstractRequest
     Q_PROPERTY(QStringList fields READ fields WRITE setFields)
     Q_PROPERTY(QStringList sortFields READ sortFields WRITE setSortFields)
     Q_PROPERTY(bool live READ isLive WRITE setLive)
-    Q_PROPERTY(int startIndex READ startIndex WRITE setStartIndex)
-    Q_PROPERTY(int maximumCount READ maximumCount WRITE setMaximumCount)
+    Q_PROPERTY(int initialCursorPosition READ initialCursorPosition WRITE setInitialCursorPosition)
+    Q_PROPERTY(int minimumCacheSize READ minimumCacheSize WRITE setMinimumCacheSize)
     Q_PROPERTY(QString itemType READ itemType WRITE setItemType)
     Q_PROPERTY(QGalleryFilter filter READ filter WRITE setFilter NOTIFY filterChanged)
     Q_PROPERTY(QString itemId READ itemId WRITE setItemId NOTIFY itemIdsChanged)
@@ -213,11 +214,11 @@ public:
     bool isLive() const;
     void setLive(bool live);
 
-    int startIndex() const;
-    void setStartIndex(int index);
+    int initialCursorPosition() const;
+    void setInitialCursorPosition(int index);
 
-    int maximumCount() const;
-    void setMaximumCount(int count);
+    int minimumCacheSize() const;
+    void setMinimumCacheSize(int size);
 
     QString itemType() const;
     void setItemType(const QString &type);

@@ -353,6 +353,19 @@ bool QWS4GalleryBinding::generateColumnBinding(DBBINDING *binding, const DBCOLUM
     DBTYPE type = column.wType;
     DBMEMOWNER memOwner = DBMEMOWNER_CLIENTOWNED;
 
+    qDebug("Column: %s"
+        "\n\ttype: %d"
+        "\n\tsize: %d"
+        "\n\tflags: %x"
+        "\n\tprecision: %d"
+        "\n\tscale: %d",
+        qPrintable(QString::fromWCharArray(column.pwszName)),
+        int(column.wType),
+        int(column.ulColumnSize),
+        int(column.dwFlags),
+        int(column.bPrecision),
+        int(column.bScale));
+
     switch (column.wType) {
     case DBTYPE_I1:
         m_int32Readers.append(qws4ReadInt32<qint8>);
@@ -495,7 +508,18 @@ bool QWS4GalleryBinding::generateColumnBinding(DBBINDING *binding, const DBCOLUM
 
         break;
     default:
-        qWarning("Unhandled column type %s %d", qPrintable(QString::fromWCharArray(column.pwszName)), column.wType);
+        qWarning("Unhandled column: %s"
+            "\n\ttype: %d"
+            "\n\tsize: %d"
+            "\n\tflags: %x"
+            "\n\tprecision: %d"
+            "\n\tscale: %d",
+            qPrintable(QString::fromWCharArray(column.pwszName)),
+            int(column.wType),
+            int(column.ulColumnSize),
+            int(column.dwFlags),
+            int(column.bPrecision),
+            int(column.bScale));
 
         return false;
     }

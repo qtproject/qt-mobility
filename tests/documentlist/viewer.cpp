@@ -50,8 +50,6 @@
 Viewer::Viewer(QWidget *parent)
     : QWidget(parent)
     , m_typeInput(0)
-    , m_offsetInput(0)
-    , m_limitInput(0)
 {
     m_request.setGallery(&m_gallery);
     m_request.setFields(QStringList() << QDocumentGallery::title << QDocumentGallery::duration);
@@ -63,13 +61,6 @@ Viewer::Viewer(QWidget *parent)
 
     m_typeInput = new QLineEdit;
 
-    m_offsetInput = new QSpinBox;
-    m_offsetInput->setRange(0, 1000);
-
-    m_limitInput = new  QSpinBox;
-    m_limitInput->setRange(0, 1000);
-    m_limitInput->setValue(100);
-
     QPushButton *executeButton = new QPushButton(tr("Execute"));
     connect(executeButton, SIGNAL(clicked()), this, SLOT(execute()));
 
@@ -78,8 +69,6 @@ Viewer::Viewer(QWidget *parent)
 
     QFormLayout *layout = new QFormLayout;
     layout->addRow(tr("Type:"), m_typeInput);
-    layout->addRow(tr("Offset:"), m_offsetInput);
-    layout->addRow(tr("Limit:"), m_limitInput);
     layout->addRow(executeButton);
     layout->addRow(view);
 
@@ -93,8 +82,6 @@ Viewer::~Viewer()
 void Viewer::execute()
 {
     m_request.setItemType(m_typeInput->text());
-    m_request.setStartIndex(m_offsetInput->value());
-    m_request.setMaximumCount((m_limitInput->value()));
     m_request.execute();
 }
 

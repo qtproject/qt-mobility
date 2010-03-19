@@ -617,7 +617,7 @@ static QString qt_buildMediaQuery(
     selectFragments.removeDuplicates();
 
     QString query
-            = QLatin1String("SELECT ")
+            = QLatin1String("SELECT System.ProviderItemId, ")
             + selectFragments.join(QLatin1String(", "))
             + QLatin1String("\nFROM SystemIndex");
 
@@ -988,8 +988,6 @@ static const QWS4Gallery::TypeMap qt_queryTypeMap[] =
 };
 
 QWS4GalleryQueryBuilder::QWS4GalleryQueryBuilder()
-    : m_startIndex(0)
-    , m_maximumCount(-1)
 {
 }
 

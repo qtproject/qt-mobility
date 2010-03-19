@@ -73,9 +73,14 @@ private:
     QMap<int, QVariant> m_attributes;
 };
 
+class QGalleryItemListPrivate;
+
 class Q_GALLERY_EXPORT QGalleryItemList : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(int cursorPosition READ cursorPosition WRITE setCursorPosition)
+    Q_PROPERTY(int cacheSize READ cacheSize)
+    Q_DECLARE_PRIVATE(QGalleryItemList)
 public:
     enum MetaDataFlag
     {
@@ -93,6 +98,9 @@ public:
     virtual QList<int> keys() const = 0;
     virtual QString toString(int key) const = 0;
 
+    int cursorPosition() const;
+    virtual int cacheSize() const;
+
     virtual int count() const = 0;
 
     virtual QString id(int index) const = 0;
@@ -105,12 +113,20 @@ public:
 
     virtual MetaDataFlags metaDataFlags(int index, int key) const = 0;
 
+public Q_SLOTS:
+    virtual void setCursorPosition(int position);
+
 Q_SIGNALS:
     void inserted(int index, int count);
     void removed(int index, int count);
     void moved(int from, int to, int count);
 
     void metaDataChanged(int index, int count, const QList<int> &keys = QList<int>());
+
+protected:
+    QGalleryItemList(QGalleryItemListPrivate &dd, QObject *parent);
+
+    QGalleryItemListPrivate *d_ptr;
 };
 
 #endif

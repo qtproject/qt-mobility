@@ -10,7 +10,8 @@ DEFINES += QT_BUILD_GALLERY_LIB
 
 PRIVATE_HEADERS = \
         qabstractgallery_p.h \
-        qgalleryerrorresponse_p.h
+        qgalleryerrorresponse_p.h \
+        qgalleryitemlist_p.h
 
 PUBLIC_HEADERS = \
         qgallery.h \

@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qgalleryitemlist.h"
+#include "qgalleryitemlist_p.h"
 
 /*!
     \class QGalleryResource
@@ -181,16 +181,32 @@ QVariant QGalleryResource::attribute(int key) const
 
     The \a parent is passed to QObject.
 */
+
 QGalleryItemList::QGalleryItemList(QObject *parent)
     : QObject(parent)
+    , d_ptr(new QGalleryItemListPrivate)
 {
+    d_ptr->q_ptr = this;
+}
+
+/*!
+    \internal
+*/
+
+QGalleryItemList::QGalleryItemList(QGalleryItemListPrivate &dd, QObject *parent)
+    : QObject(parent)
+    , d_ptr(&dd)
+{
+    d_ptr->q_ptr = this;
 }
 
 /*!
     Destroys a gallery document list.
 */
+
 QGalleryItemList::~QGalleryItemList()
 {
+    delete d_ptr;
 }
 
 /*!
@@ -204,6 +220,33 @@ QGalleryItemList::~QGalleryItemList()
 
     Returns the string representation of a meta-data \a key.
 */
+
+/*!
+    \property QGalleryItemList::cursorPosition
+
+    \brief The current position of the cache cursor.
+*/
+
+int QGalleryItemList::cursorPosition() const
+{
+    return d_ptr->cursorPosition;
+}
+
+void QGalleryItemList::setCursorPosition(int position)
+{
+    d_ptr->cursorPosition = position;
+}
+
+/*!
+    \property QGalleryItemList::cacheSize
+
+    \brief The number of items cached by a list.
+*/
+
+int QGalleryItemList::cacheSize() const
+{
+    return d_ptr->cacheSize;
+}
 
 /*!
     \fn QGalleryItemList::count() const

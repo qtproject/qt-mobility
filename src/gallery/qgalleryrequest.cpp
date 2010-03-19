@@ -43,6 +43,8 @@
 
 #include "qgallery.h"
 
+#include "qgalleryitemlist_p.h"
+
 #include <QtCore/qstringlist.h>
 
 class QGalleryAbstractRequestPrivate
@@ -524,7 +526,7 @@ void QGalleryAbstractRequest::clear()
     Sets the \a response to an executed request.
 */
 
-class QGalleryAbstractResponsePrivate
+class QGalleryAbstractResponsePrivate : public QGalleryItemListPrivate
 {
 public:
     QGalleryAbstractResponsePrivate()
@@ -533,9 +535,6 @@ public:
         , idle(false)
     {
     }
-
-    virtual ~QGalleryAbstractResponsePrivate() {}
-
     int result;
     int itemCount;
     bool idle;
@@ -557,8 +556,17 @@ public:
 */
 
 QGalleryAbstractResponse::QGalleryAbstractResponse(QObject *parent)
-    : QGalleryItemList(parent)
-    , d_ptr(new QGalleryAbstractResponsePrivate)
+    : QGalleryItemList(*new QGalleryAbstractResponsePrivate, parent)
+{
+}
+
+/*!
+    \internal
+*/
+
+QGalleryAbstractResponse::QGalleryAbstractResponse(
+        QGalleryAbstractResponsePrivate &dd, QObject *parent)
+    : QGalleryItemList(dd, parent)
 {
 }
 
@@ -568,7 +576,6 @@ QGalleryAbstractResponse::QGalleryAbstractResponse(QObject *parent)
 
 QGalleryAbstractResponse::~QGalleryAbstractResponse()
 {
-    delete d_ptr;
 }
 
 /*!
@@ -579,7 +586,7 @@ QGalleryAbstractResponse::~QGalleryAbstractResponse()
 */
 bool QGalleryAbstractResponse::isIdle() const
 {
-    return d_ptr->idle;
+    return d_func()->idle;
 }
 
 /*!
@@ -588,7 +595,7 @@ bool QGalleryAbstractResponse::isIdle() const
 
 int QGalleryAbstractResponse::result() const
 {
-    return d_ptr->result;
+    return d_func()->result;
 }
 
 /*!
@@ -597,7 +604,7 @@ int QGalleryAbstractResponse::result() const
 
 int QGalleryAbstractResponse::itemCount() const
 {
-    return d_ptr->itemCount;
+    return d_func()->itemCount;
 }
 
 /*!
@@ -606,8 +613,10 @@ int QGalleryAbstractResponse::itemCount() const
 
 void QGalleryAbstractResponse::updateItemCount(int count)
 {
-    if (d_ptr->itemCount != count) {
-        d_ptr->itemCount = count;
+    Q_D(QGalleryAbstractResponse);
+
+    if (d->itemCount != count) {
+        d->itemCount = count;
 
         emit itemCountChanged();
     }
@@ -639,13 +648,15 @@ void QGalleryAbstractResponse::updateItemCount(int count)
 
 void QGalleryAbstractResponse::cancel()
 {
-    if (d_ptr->result == QGalleryAbstractRequest::NoResult) {
-        d_ptr->result = QGalleryAbstractRequest::Cancelled;
-        d_ptr->idle = false;
+    Q_D(QGalleryAbstractResponse);
+
+    if (d->result == QGalleryAbstractRequest::NoResult) {
+        d->result = QGalleryAbstractRequest::Cancelled;
+        d->idle = false;
 
         emit finished();
-    } else if (d_ptr->idle) {
-        d_ptr->idle = false;
+    } else if (d->idle) {
+        d->idle = false;
 
         emit finished();
     }
@@ -660,10 +671,12 @@ void QGalleryAbstractResponse::cancel()
 
 void QGalleryAbstractResponse::finish(int result, bool idle)
 {
-    if (d_ptr->result == QGalleryAbstractRequest::NoResult
+    Q_D(QGalleryAbstractResponse);
+
+    if (d->result == QGalleryAbstractRequest::NoResult
             && result != QGalleryAbstractRequest::NoResult) {
-        d_ptr->result = result;
-        d_ptr->idle = idle;
+        d->result = result;
+        d->idle = idle;
 
         emit finished();
     }
@@ -684,15 +697,15 @@ class QGalleryItemRequestPrivate : public QGalleryAbstractRequestPrivate
 public:
     QGalleryItemRequestPrivate(QAbstractGallery *gallery)
         : QGalleryAbstractRequestPrivate(gallery, QGalleryAbstractRequest::Item)
-        , startIndex(0)
-        , maximumCount(-1)
+        , initialCursorPosition(0)
+        , minimumCacheSize(200)
         , totalCount(0)
         , live(false)
     {
     }
 
-    int startIndex;
-    int maximumCount;
+    int initialCursorPosition;
+    int minimumCacheSize;
     int totalCount;
     bool live;
     QStringList fields;
@@ -806,41 +819,40 @@ void QGalleryItemRequest::setLive(bool live)
 }
 
 /*!
-    \property QGalleryItemRequest::startIndex
+    \property QGalleryItemRequest::initialCursorPosition
 
     \brief The index of the first item a request should return.
 
     By default this is 0.
 */
 
-int QGalleryItemRequest::startIndex() const
+int QGalleryItemRequest::initialCursorPosition() const
 {
-    return d_func()->startIndex;
+    return d_func()->initialCursorPosition;
 }
 
-void QGalleryItemRequest::setStartIndex(int index)
+void QGalleryItemRequest::setInitialCursorPosition(int position)
 {
-    d_func()->startIndex = index;
+    d_func()->initialCursorPosition = position;
 }
 
 /*!
-    \property QGalleryItemRequest::maximumCount
+    \property QGalleryItemRequest::minimumCacheSize
 
-    \brief The maximum number of items that should be returned by a request.
+    \brief The minimum number of consecutive items the list returned by a
+    request should cache.
 
-    If this is -1 the results will be unbounded.
-
-    By default this is -1.
+    By default this is 200.
 */
 
-int QGalleryItemRequest::maximumCount() const
+int QGalleryItemRequest::minimumCacheSize() const
 {
-    return d_func()->maximumCount;
+    return d_func()->minimumCacheSize;
 }
 
-void QGalleryItemRequest::setMaximumCount(int count)
+void QGalleryItemRequest::setMinimumCacheSize(int size)
 {
-    d_func()->maximumCount = count;
+    d_func()->minimumCacheSize = size;
 }
 
 /*!

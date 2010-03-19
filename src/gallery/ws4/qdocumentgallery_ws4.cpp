@@ -197,8 +197,6 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(
     builder.setSortFields(request->sortFields());
     builder.setItemType(request->itemType());
     builder.setFilter(request->filter());
-    builder.setStartIndex(request->startIndex());
-    builder.setMaximumCount(request->maximumCount());
 
     int result = builder.buildQuery();
 

@@ -71,12 +71,6 @@ public:
     QStringList sortFields() const { return m_sortFields; }
     void setSortFields(const QStringList &fields) { m_sortFields = fields; }
 
-    int startIndex() const { return m_startIndex; }
-    void setStartIndex(int index) { m_startIndex = index; }
-
-    int maximumCount() const { return m_maximumCount; }
-    void setMaximumCount(int count) { m_maximumCount = count; }
-
     QString itemType() const { return m_itemType; }
     void setItemType(const QString &type) { m_itemType = type; }
 
@@ -95,8 +89,6 @@ private:
     QString m_itemType;
     QString m_query;
     QGalleryFilter m_filter;
-    int m_startIndex;
-    int m_maximumCount;
 };
 
 #endif

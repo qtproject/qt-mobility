@@ -39,34 +39,36 @@
 **
 ****************************************************************************/
 
-#ifndef VIEWER_H
-#define VIEWER_H
+#ifndef QGALLERYITEMLIST_P_H
+#define QGALLERYITEMLIST_P_H
 
-#include "documentlistmodel.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API. It exists purely as an
+// implementation detail. This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include <qgallery.h>
+#include "qgalleryitemlist.h"
 
-#include <QtGui/qwidget.h>
-
-class QLineEdit;
-class QSpinBox;
-
-class Viewer : public QWidget
+class QGalleryItemListPrivate
 {
-    Q_OBJECT
 public:
-    Viewer(QWidget *parent = 0);
-    ~Viewer();
+    QGalleryItemListPrivate()
+        : q_ptr(0)
+        , cursorPosition(0)
+        , cacheSize(-1)
+    {
+    }
+    virtual ~QGalleryItemListPrivate() {}
 
-private Q_SLOTS:
-    void execute();
-    void documentsChanged();
-
-private:
-    QDocumentGallery m_gallery;
-    QGalleryItemRequest m_request;
-    DocumentListModel m_model;
-    QLineEdit *m_typeInput;
+    QGalleryItemList *q_ptr;
+    int cursorPosition;
+    int cacheSize;
 };
 
 #endif
