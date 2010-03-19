@@ -1234,10 +1234,10 @@ void tst_QValueSpaceSubscriber::threads()
         writeLoop.exec();
 
     delete writeThread;
-    #ifdef Q_OS_SYMBIAN
-        QValueSpacePublisher resetPublisher(id, "/threads");
-        resetPublisher.resetValue("value");
-    #endif
+#ifdef Q_OS_SYMBIAN
+    QValueSpacePublisher resetPublisher(layerId, "/threads");
+    resetPublisher.resetValue("value");
+#endif
 
 }
 
