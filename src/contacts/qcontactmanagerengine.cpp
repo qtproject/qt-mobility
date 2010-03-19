@@ -836,7 +836,7 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     fields.clear();
     f.setAllowableValues(QVariantList());
     f.setDataType(QVariant::DateTime);
-    fields.insert(QContactPresence::FieldLastUpdateTimestamp, f);
+    fields.insert(QContactPresence::FieldTimestamp, f);
     f.setDataType(QVariant::String);
     fields.insert(QContactPresence::FieldNickname, f);
     fields.insert(QContactPresence::FieldCustomMessage, f);
@@ -867,7 +867,7 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     fields.clear();
     f.setAllowableValues(QVariantList());
     f.setDataType(QVariant::DateTime);
-    fields.insert(QContactGlobalPresence::FieldLastUpdateTimestamp, f);
+    fields.insert(QContactGlobalPresence::FieldTimestamp, f);
     f.setDataType(QVariant::String);
     fields.insert(QContactGlobalPresence::FieldNickname, f);
     fields.insert(QContactGlobalPresence::FieldCustomMessage, f);

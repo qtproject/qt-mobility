@@ -247,12 +247,12 @@ Q_DEFINE_LATIN1_LITERAL(QContactPhoneNumber::DefinitionName, "PhoneNumber");
 Q_DEFINE_LATIN1_LITERAL(QContactPresence::DefinitionName, "Presence");
 
 /*!
-   \variable QContactPresence::FieldLastUpdateTimestamp
+   \variable QContactPresence::FieldTimestamp
 
    The constant key for which the last update timestamp value is stored in details
    of the QContactPresence type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactPresence::FieldLastUpdateTimestamp, "LastUpdateTimestamp");
+Q_DEFINE_LATIN1_LITERAL(QContactPresence::FieldTimestamp, "Timestamp");
 
 /*!
    \variable QContactPresence::FieldNickname
@@ -371,12 +371,12 @@ Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::DefinitionName, "GeoLocation");
 Q_DEFINE_LATIN1_LITERAL(QContactGlobalPresence::DefinitionName, "GlobalPresence");
 
 /*!
-   \variable QContactGlobalPresence::FieldLastUpdateTimestamp
+   \variable QContactGlobalPresence::FieldTimestamp
 
    The constant key for which the last update timestamp value is stored in details
    of the QContactGlobalPresence type.
  */
-Q_DEFINE_LATIN1_LITERAL(QContactGlobalPresence::FieldLastUpdateTimestamp, "LastUpdateTimestamp");
+Q_DEFINE_LATIN1_LITERAL(QContactGlobalPresence::FieldTimestamp, "Timestamp");
 
 /*!
    \variable QContactGlobalPresence::FieldNickname
@@ -2113,16 +2113,16 @@ QString QContactOnlineAccount::statusMessage() const
  */
 
 /*!
-   \fn QContactPresence::setLastUpdateTimestamp(const QDateTime& updateTimestamp)
+   \fn QContactPresence::setTimestamp(const QDateTime& updateTimestamp)
 
-   Sets the last update timestamp of the presence detail to be
+   Sets the update timestamp of the presence detail to be
    \a updateTimestamp.
  */
 
 /*!
-   \fn QContactPresence::lastUpdateTimestamp() const
+   \fn QContactPresence::timestamp() const
 
-    Returns the last update timestamp of the presence detail.
+    Returns the timestamp at which the data in the presence detail was valid.
  */
 
 /*!
@@ -2197,45 +2197,47 @@ QString QContactOnlineAccount::statusMessage() const
  */
 
 /*!
-   \fn QContactGlobalPresence::setLastUpdateTimestamp(const QDateTime& updateTimestamp)
+   \fn QContactGlobalPresence::setTimestamp(const QDateTime& updateTimestamp)
 
-   Sets the last update timestamp of the presence detail to be
+   Sets the update timestamp of the global presence detail to be
    \a updateTimestamp.
  */
 
 /*!
-   \fn QContactGlobalPresence::lastUpdateTimestamp() const
+   \fn QContactGlobalPresence::timestamp() const
 
-    Returns the last update timestamp of the presence detail.
+    Returns the timestamp at which the data in the global presence detail was valid.
  */
 
 /*!
    \fn QContactGlobalPresence::setNickname(const QString& nickname)
 
    Sets the last-known nickname used by the contact during
-   communications via the online account about which this detail
-   stores presence information to \a nickname.
+   communications via any online account about which this detail
+   aggregates presence information to \a nickname.
  */
 
 /*!
    \fn QContactGlobalPresence::nickname() const
 
    Returns the last-known nickname used by the contact during
-   communications via the online account.
+   communications via any online account about which this detail
+   aggregates presence information.
  */
 
 /*!
    \fn QContactGlobalPresence::setPresenceState(QContactPresence::PresenceState presenceState)
 
-   Sets the presence state of the online account according to the presence
-   information provider to the given \a presenceState.
+   Sets the presence state of this aggregate detail according to the presence
+   information available from the presence providers which this detail aggregates
+   to the given \a presenceState.
  */
 
 /*!
    \fn QContactGlobalPresence::presenceState() const
 
-   Returns the presence state of the online account according to the
-   presence provider.
+   Returns the aggregate presence state of any online accounts about which this detail
+   aggregates presence information.
  */
 
 /*!
@@ -2255,29 +2257,27 @@ QString QContactOnlineAccount::statusMessage() const
 /*!
   \fn QContactGlobalPresence::setCustomMessage(const QString& customMessage)
 
-   Sets the custom status message from the contact for the online account
-   about which this detail stores presence information, to \a statusMessage.
+   Sets the custom status message from the contact for the aggregate presence
+   detail, to \a statusMessage.
  */
 
 /*!
    \fn QContactGlobalPresence::customMessage() const
 
-   Returns the custom status message from the contact for the online account
-   about which this detail stores presence information.
+   Returns the custom status message from the contact for the aggregate presence
+   detail.
  */
 
 /*!
    \fn QContactGlobalPresence::setPresenceStateImageUrl(const QUrl& presenceStateImageUrl)
 
-   Sets the last-known status image url of the contact for the online account
-   about which this detail stores presence information, to \a presenceStateImageUrl.
+   Sets the last-known status image url of the contact to \a presenceStateImageUrl.
  */
 
 /*!
    \fn QContactGlobalPresence::presenceStateImageUrl() const
 
-   Returns the last-known status image url of the contact for the online account
-   about which this detail stores presence information.
+   Returns the last-known status image url of the contact.
  */
 
 

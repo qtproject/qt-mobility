@@ -59,7 +59,7 @@ class Q_CONTACTS_EXPORT QContactGlobalPresence : public QContactDetail
 public:
 #ifdef Q_QDOC
     const char* DefinitionName;
-    const char* FieldLastUpdateTimestamp;
+    const char* FieldTimestamp;
     const char* FieldNickname;
     const char* FieldPresenceState;
     const char* FieldPresenceStateText;
@@ -67,7 +67,7 @@ public:
     const char* FieldCustomMessage;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactGlobalPresence, "GlobalPresence")
-    Q_DECLARE_LATIN1_LITERAL(FieldLastUpdateTimestamp, "LastUpdateTimestamp");
+    Q_DECLARE_LATIN1_LITERAL(FieldTimestamp, "Timestamp");
     Q_DECLARE_LATIN1_LITERAL(FieldNickname, "Nickname");
     Q_DECLARE_LATIN1_LITERAL(FieldPresenceState, "PresenceState");
     Q_DECLARE_LATIN1_LITERAL(FieldPresenceStateText, "PresenceStateText");
@@ -75,8 +75,8 @@ public:
     Q_DECLARE_LATIN1_LITERAL(FieldCustomMessage, "CustomMessage");
 #endif
 
-    void setLastUpdateTimestamp(const QDateTime& updateTimestamp) {setValue(FieldLastUpdateTimestamp, updateTimestamp);}
-    QDateTime lastUpdateTimestamp() const {return value<QDateTime>(FieldLastUpdateTimestamp);}
+    void setTimestamp(const QDateTime& timestamp) {setValue(FieldTimestamp, timestamp);}
+    QDateTime timestamp() const {return value<QDateTime>(FieldTimestamp);}
     void setNickname(const QString& nickname) {setValue(FieldNickname, nickname);}
     QString nickname() const {return value(FieldNickname);}
     void setPresenceState(QContactPresence::PresenceState presenceState) {setValue(FieldPresenceState, static_cast<int>(presenceState));}
