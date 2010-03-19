@@ -81,6 +81,7 @@ private:
     void activateTimer();
     void startLocationDaemon();
     void stopLocationDaemon();
+    int lowSignalLevelCount;
     
     enum PositionInfoState {
         Undefined = 0,
@@ -89,7 +90,8 @@ private:
         RequestActive = 4,
         RequestSingleShot = 8,
         PowersaveActive = 16,
-        TogglePowersave = 32
+        TogglePowersave = 32,
+        SignalLevelLow = 64,        
     };
     int positionInfoState;
     

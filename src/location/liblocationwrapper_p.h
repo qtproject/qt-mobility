@@ -91,7 +91,7 @@ private:
     int errorHandlerId;
     int posChangedId;
     int origUpdateInterval;
-    
+    int startcounter;
     QGeoPositionInfo lastUpdate;
     QGeoPositionInfo lastSatUpdate;
     bool validLastUpdate;
