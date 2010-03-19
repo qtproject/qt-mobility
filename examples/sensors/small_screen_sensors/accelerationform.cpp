@@ -46,7 +46,12 @@ AccelerationForm::AccelerationForm(QWidget *parent)
 {
     setupUi(this);
     m_accelerationSensor.connect();
-    qoutputrange range = m_accelerationSensor.outputRanges()[m_accelerationSensor.outputRange()]; 
+    
+    // Usually sensor operates -2g-2g range on Symbian platforms
+    qoutputrange range = {-2.0f*9.80665f, -2.0f*9.80665f, 0.0f}; 
+    if(m_accelerationSensor.outputRange()<-1)
+        range = m_accelerationSensor.outputRanges()[m_accelerationSensor.outputRange()];    
+     
     horizontalSliderX->setRange(range.minimum, range.maximum);
     horizontalSliderY->setRange(range.minimum, range.maximum);
     horizontalSliderZ->setRange(range.minimum, range.maximum);
