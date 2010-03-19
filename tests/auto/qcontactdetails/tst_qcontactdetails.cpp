@@ -240,27 +240,19 @@ void tst_QContactDetails::avatar()
     // test property set
     a1.setImageUrl(QUrl("1234"));
     QCOMPARE(a1.imageUrl(), QUrl("1234"));
-    QCOMPARE(a1.value(QContactAvatar::FieldAvatarUrl), QUrl("1234"));
-    
-    //pixmap
-    uchar pixDataRGB[] = {255, 0, 0, 0, 0, 255, 0, 0, 255, 255, 0, 0}; // Red, Blue, Red, Blue
-    QImage img(pixDataRGB, 2, 2, 6, QImage::Format_RGB888); // 2 pixels width, 2 pixels height, 6 bytes per line, RGB888 format
-    QImage scaled = img.scaled(100, 100); // Scale image to show results better
-    QPixmap pix = QPixmap::fromImage(scaled); // Create pixmap from image
-    a1.setPixmap(pix);
+    QCOMPARE(a1.value<QUrl>(QContactAvatar::FieldImageUrl), QUrl("1234"));
 
     // test property add
     QVERIFY(c.saveDetail(&a1));
     QCOMPARE(c.details(QContactAvatar::DefinitionName).count(), 1);
-    QCOMPARE(QContactAvatar(c.details(QContactAvatar::DefinitionName).value(0)).avatar(), a1.avatar());
-    QCOMPARE(a1.pixmap(), pix);
+    QCOMPARE(QContactAvatar(c.details(QContactAvatar::DefinitionName).value(0)).imageUrl(), a1.imageUrl());
 
     // test property update
     a1.setValue("label","label1");
-    a1.setAvatar("12345");
+    a1.setImageUrl(QUrl("12345"));
     QVERIFY(c.saveDetail(&a1));
     QCOMPARE(c.details(QContactAvatar::DefinitionName).value(0).value("label"), QString("label1"));
-    QCOMPARE(c.details(QContactAvatar::DefinitionName).value(0).value(QContactAvatar::FieldAvatar), QString("12345"));
+    QCOMPARE(c.details(QContactAvatar::DefinitionName).value(0).value<QUrl>(QContactAvatar::FieldImageUrl), QUrl("12345"));
 
     // test property remove
     QVERIFY(c.removeDetail(&a1));
@@ -646,15 +638,6 @@ void tst_QContactDetails::onlineAccount()
     o1.setAccountUri("test@nokia.com");
     QCOMPARE(o1.accountUri(), QString("test@nokia.com"));
     QCOMPARE(o1.value(QContactOnlineAccount::FieldAccountUri), QString("test@nokia.com"));
-    o1.setNickname("test");
-    QCOMPARE(o1.nickname(), QString("test"));
-    QCOMPARE(o1.value(QContactOnlineAccount::FieldNickname), QString("test"));
-    o1.setStatusMessage("Gone Fishing");
-    QCOMPARE(o1.statusMessage(), QString("Gone Fishing"));
-    QCOMPARE(o1.value(QContactOnlineAccount::FieldStatusMessage), QString("Gone Fishing"));
-    o1.setPresence("Extended Away");
-    QCOMPARE(o1.presence(), QString("Extended Away"));
-    QCOMPARE(o1.value(QContactOnlineAccount::FieldPresence), QString("Extended Away"));
 
     // Sub types
     o1.setSubTypes(QContactOnlineAccount::SubTypeSip);
@@ -672,9 +655,6 @@ void tst_QContactDetails::onlineAccount()
     QVERIFY(c.saveDetail(&o1));
     QCOMPARE(c.details(QContactOnlineAccount::DefinitionName).count(), 1);
     QCOMPARE(QContactOnlineAccount(c.details(QContactOnlineAccount::DefinitionName).value(0)).accountUri(), o1.accountUri());
-    QCOMPARE(QContactOnlineAccount(c.details(QContactOnlineAccount::DefinitionName).value(0)).presence(), o1.presence());
-    QCOMPARE(QContactOnlineAccount(c.details(QContactOnlineAccount::DefinitionName).value(0)).nickname(), o1.nickname());
-    QCOMPARE(QContactOnlineAccount(c.details(QContactOnlineAccount::DefinitionName).value(0)).statusMessage(), o1.statusMessage());
     QCOMPARE(QContactOnlineAccount(c.details(QContactOnlineAccount::DefinitionName).value(0)).accountUri(), o1.accountUri());
 
     // test property update
@@ -713,9 +693,9 @@ void tst_QContactDetails::organization()
     QCOMPARE(o1.location(), QString("location one"));
     QCOMPARE(o1.value(QContactOrganization::FieldLocation), QString("location one"));
 
-    o1.setLogo("logo one");
-    QCOMPARE(o1.logo(), QString("logo one"));
-    QCOMPARE(o1.value(QContactOrganization::FieldLogo), QString("logo one"));
+    o1.setLogoUrl(QUrl("logo one"));
+    QCOMPARE(o1.logoUrl(), QUrl("logo one"));
+    QCOMPARE(o1.value<QUrl>(QContactOrganization::FieldLogoUrl), QUrl("logo one"));
 
     o1.setTitle("title one");
     QCOMPARE(o1.title(), QString("title one"));
@@ -748,13 +728,13 @@ void tst_QContactDetails::organization()
     // organization-specific API testing
     o1.setDepartment(QStringList(QString("Imaginary Dept")));
     o1.setLocation("Utopia");
-    o1.setLogo("logo.png");
+    o1.setLogoUrl(QUrl("logo.png"));
     o1.setName("Utopian Megacorporation");
     o1.setTitle("Generic Employee");
     c.saveDetail(&o1);
     QVERIFY(c.detail(QContactOrganization::DefinitionName).value<QStringList>(QContactOrganization::FieldDepartment) == QStringList(QString("Imaginary Dept")));
     QVERIFY(c.detail(QContactOrganization::DefinitionName).value(QContactOrganization::FieldLocation) == QString("Utopia"));
-    QVERIFY(c.detail(QContactOrganization::DefinitionName).value(QContactOrganization::FieldLogo) == QString("logo.png"));
+    QVERIFY(c.detail(QContactOrganization::DefinitionName).value<QUrl>(QContactOrganization::FieldLogoUrl) == QUrl("logo.png"));
     QVERIFY(c.detail(QContactOrganization::DefinitionName).value(QContactOrganization::FieldName) == QString("Utopian Megacorporation"));
     QVERIFY(c.detail(QContactOrganization::DefinitionName).value(QContactOrganization::FieldTitle) == QString("Generic Employee"));
 }
@@ -774,7 +754,7 @@ void tst_QContactDetails::phoneNumber()
     QCOMPARE(p1.subTypes(), QStringList() << QLatin1String(QContactPhoneNumber::SubTypeCar));
 
     QStringList sl;
-    sl << QLatin1String(QContactPhoneNumber::SubTypeMobile) << QLatin1String(QContactPhoneNumber::SubTypeFacsimile);
+    sl << QLatin1String(QContactPhoneNumber::SubTypeMobile) << QLatin1String(QContactPhoneNumber::SubTypeFax);
     p1.setSubTypes(sl);
     QCOMPARE(p1.subTypes(), sl);
 
@@ -793,7 +773,7 @@ void tst_QContactDetails::phoneNumber()
     p1.setSubTypes(QContactPhoneNumber::SubTypeDtmfMenu);
     c.saveDetail(&p1);
     QVERIFY(c.detail(QContactPhoneNumber::DefinitionName).variantValue(QContactPhoneNumber::FieldSubTypes).toStringList() == QStringList(QString(QLatin1String(QContactPhoneNumber::SubTypeDtmfMenu))));
-    p1.setSubTypes(QStringList() << QContactPhoneNumber::SubTypeModem << QContactPhoneNumber::SubTypeFacsimile);
+    p1.setSubTypes(QStringList() << QContactPhoneNumber::SubTypeModem << QContactPhoneNumber::SubTypeFax);
     c.saveDetail(&p1);
     QVERIFY(c.detail(QContactPhoneNumber::DefinitionName).variantValue(QContactPhoneNumber::FieldSubTypes).toStringList() == p1.subTypes());
 
