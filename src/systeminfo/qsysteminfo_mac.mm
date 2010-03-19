@@ -312,16 +312,16 @@ QSystemInfoPrivate *QSystemInfoPrivate::self = 0;
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
  : QObject(parent)
 {
-    langloopThread = new QLangLoopThread(this);
-    langloopThread->start();
     if(!self)
         self = this;
 }
 
 QSystemInfoPrivate::~QSystemInfoPrivate()
 {
-    langloopThread->quit();
-    langloopThread->wait();
+    if(langloopThread->isRunning()) {
+        langloopThread->quit();
+        langloopThread->wait();
+    }
 }
 
 QString QSystemInfoPrivate::currentLanguage() const
@@ -356,6 +356,23 @@ void QSystemInfoPrivate::languageChanged(const QString &lang)
     Q_EMIT currentLanguageChanged(lang);
 }
 
+void QSystemInfoPrivate::connectNotify(const char *signal)
+{
+    if (QLatin1String(signal) == SIGNAL(currentLanguageChanged(QString))) {
+        langloopThread = new QLangLoopThread(this);
+        langloopThread->start();
+    }
+}
+
+void QSystemInfoPrivate::disconnectNotify(const char *signal)
+{
+    if (QLatin1String(signal) == SIGNAL(currentLanguageChanged(QString))) {
+        if(langloopThread->isRunning()) {
+            langloopThread->quit();
+            langloopThread->wait();
+        }
+    }
+}
 
 QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &parameter)
 {
