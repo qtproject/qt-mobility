@@ -142,7 +142,7 @@ QList<QContact> QContactMaemo5Engine::contacts(const QContactFilter & filter, co
   
   QList<QContactLocalId> ids = contactIds(filter, sortOrders,error);
   foreach (QContactLocalId id, ids)
-    rtn << contact(id, QStringList(), error);
+    rtn << contact(id, QContactFetchHint(), error);
   return rtn;
 }
 
