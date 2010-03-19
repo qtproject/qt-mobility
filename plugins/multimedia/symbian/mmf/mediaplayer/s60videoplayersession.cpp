@@ -85,16 +85,17 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service)
         m_rect));
     m_dsaActive = true;
     m_player->RegisterForVideoLoadingNotification(*this);
-
-    if (QSysInfo::s60Version() != QSysInfo::SV_S60_3_1) {
-        QT_TRAP_THROWING(m_audioOutput = CAudioOutput::NewL(*m_player));
-        QT_TRAP_THROWING(m_audioOutput->RegisterObserverL(*this));
-    }
+#ifndef __SERIES60_31__
+    QT_TRAP_THROWING(m_audioOutput = CAudioOutput::NewL(*m_player));
+    QT_TRAP_THROWING(m_audioOutput->RegisterObserverL(*this));
+#endif
 }
 
 S60VideoPlayerSession::~S60VideoPlayerSession()
 {
+#ifndef __SERIES60_31__
     m_audioOutput->UnregisterObserver(*this);
+#endif
     delete m_audioOutput;
     m_player->Close();
     delete m_player;
@@ -384,60 +385,63 @@ void S60VideoPlayerSession::MvloLoadingComplete()
 
 QString S60VideoPlayerSession::activeEndpoint() const
 {
-    if (QSysInfo::s60Version() != QSysInfo::SV_S60_3_1) {
-        CAudioOutput::TAudioOutputPreference output = m_audioOutput->AudioOutput();
-        return qStringFromTAudioOutputPreference(output);
-    }
+#ifndef __SERIES60_31__
+    CAudioOutput::TAudioOutputPreference output = m_audioOutput->AudioOutput();
+    return qStringFromTAudioOutputPreference(output);
+#else
     return QString();
+#endif
 }
 
 QString S60VideoPlayerSession::defaultEndpoint() const
 {
-    if (QSysInfo::s60Version() != QSysInfo::SV_S60_3_1) {
-        CAudioOutput::TAudioOutputPreference output = m_audioOutput->DefaultAudioOutput();
-        return qStringFromTAudioOutputPreference(output);
-    }
+#ifndef __SERIES60_31__
+    CAudioOutput::TAudioOutputPreference output = m_audioOutput->DefaultAudioOutput();
+    return qStringFromTAudioOutputPreference(output);
+#else
     return QString();
+#endif
 }
 
 void S60VideoPlayerSession::setActiveEndpoint(const QString& name)
 {
-    if (QSysInfo::s60Version() != QSysInfo::SV_S60_3_1) {
-        CAudioOutput::TAudioOutputPreference output = CAudioOutput::ENoPreference;
-    
-        if (name == QString("Default"))
-            output = CAudioOutput::ENoPreference;
-        else if (name == QString("All"))
-            output = CAudioOutput::EAll;
-        else if (name == QString("None"))
-            output = CAudioOutput::ENoOutput;
-        else if (name == QString("Earphone"))
-            output = CAudioOutput::EPrivate;
-        else if (name == QString("Speaker"))
-            output = CAudioOutput::EPublic;
-        QT_TRAP_THROWING(m_audioOutput->SetAudioOutputL(output));
-    }
+    CAudioOutput::TAudioOutputPreference output = CAudioOutput::ENoPreference;
+
+    if (name == QString("Default"))
+        output = CAudioOutput::ENoPreference;
+    else if (name == QString("All"))
+        output = CAudioOutput::EAll;
+    else if (name == QString("None"))
+        output = CAudioOutput::ENoOutput;
+    else if (name == QString("Earphone"))
+        output = CAudioOutput::EPrivate;
+    else if (name == QString("Speaker"))
+        output = CAudioOutput::EPublic;
+#ifndef __SERIES60_31__
+    TRAPD(err, m_audioOutput->SetAudioOutputL(output));
+    setError(err);
+#endif
 }
 
 void S60VideoPlayerSession::DefaultAudioOutputChanged( CAudioOutput& aAudioOutput,
                                         CAudioOutput::TAudioOutputPreference aNewDefault )
 {
-    if (QSysInfo::s60Version() != QSysInfo::SV_S60_3_1) {
-        CAudioOutput::TAudioOutputPreference output = m_audioOutput->AudioOutput();
-        if (output == CAudioOutput::ENoPreference) {
-            QString name;
-            if (output == CAudioOutput::EAll)
-                name = QString("All");
-            else if (output == CAudioOutput::ENoOutput)
-                name = QString("None");
-            else if (output == CAudioOutput::EPrivate)
-                name = QString("Earphone");
-            else if (output == CAudioOutput::EPublic)
-                name = QString("Speaker");
-            if (!name.isEmpty())
-                emit activeEndpointChanged(name);
-        }
+#ifndef __SERIES60_31__
+    CAudioOutput::TAudioOutputPreference output = m_audioOutput->AudioOutput();
+    if (output == CAudioOutput::ENoPreference) {
+        QString name;
+        if (output == CAudioOutput::EAll)
+            name = QString("All");
+        else if (output == CAudioOutput::ENoOutput)
+            name = QString("None");
+        else if (output == CAudioOutput::EPrivate)
+            name = QString("Earphone");
+        else if (output == CAudioOutput::EPublic)
+            name = QString("Speaker");
+        if (!name.isEmpty())
+            emit activeEndpointChanged(name);
     }
+#endif
 }
 
 QString S60VideoPlayerSession::qStringFromTAudioOutputPreference(CAudioOutput::TAudioOutputPreference output) const

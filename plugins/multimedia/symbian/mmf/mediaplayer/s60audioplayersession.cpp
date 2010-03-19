@@ -205,7 +205,8 @@ void S60AudioPlayerSession::setActiveEndpoint(const QString& name)
         output = CAudioOutput::EPrivate;
     else if (name == QString("Speaker"))
         output = CAudioOutput::EPublic;
-    QT_TRAP_THROWING(m_audioOutput->SetAudioOutputL(output));
+    TRAPD(err, m_audioOutput->SetAudioOutputL(output));
+    setError(err);
 }
 
 void S60AudioPlayerSession::DefaultAudioOutputChanged(CAudioOutput& aAudioOutput,

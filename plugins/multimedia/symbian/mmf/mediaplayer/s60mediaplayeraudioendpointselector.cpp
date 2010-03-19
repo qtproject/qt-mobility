@@ -46,16 +46,17 @@
 #include <QtGui/QIcon>
 #include <QtCore/QDebug>
 
-#include <QStringList>
-
 S60MediaPlayerAudioEndpointSelector::S60MediaPlayerAudioEndpointSelector(QObject *control, QObject *parent)
    :QAudioEndpointSelector(parent)
+    , m_control(0)
 {
     m_control = qobject_cast<S60MediaPlayerControl*>(control);
 }
 
 S60MediaPlayerAudioEndpointSelector::~S60MediaPlayerAudioEndpointSelector()
 {
+    delete m_audioEndpointNames;
+    delete m_control;
 }
 
 QList<QString> S60MediaPlayerAudioEndpointSelector::availableEndpoints() const
@@ -93,16 +94,23 @@ QString S60MediaPlayerAudioEndpointSelector::endpointDescription(const QString& 
 
 QString S60MediaPlayerAudioEndpointSelector::activeEndpoint() const
 {
-    m_control->session()->activeEndpoint();
+    if (m_control->session())
+        return m_control->session()->activeEndpoint();
+
+    return QString();
 }
 
 QString S60MediaPlayerAudioEndpointSelector::defaultEndpoint() const
 {
-    m_control->session()->defaultEndpoint();
+    if (m_control->session())
+        return m_control->session()->defaultEndpoint();
+
+    return QString();
 }
 
 void S60MediaPlayerAudioEndpointSelector::setActiveEndpoint(const QString& name)
 {
-    m_control->session()->setActiveEndpoint(name);
+    if (m_control->session())
+        m_control->session()->setActiveEndpoint(name);
 }
 
