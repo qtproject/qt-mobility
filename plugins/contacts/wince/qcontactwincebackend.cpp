@@ -324,7 +324,7 @@ QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitions(c
 
     // No logo for organisation
     fields = defns[contactType][QContactOrganization::DefinitionName].fields();
-    fields.remove(QContactOrganization::FieldLogo);
+    fields.remove(QContactOrganization::FieldLogoUrl);
     defns[contactType][QContactOrganization::DefinitionName].setFields(fields);
 
     // No subtypes for these details
