@@ -128,7 +128,7 @@ QList<QContactRelationship> CntRelationship::relationships(const QString& relati
             }
             
             // return empty list if there was an error
-            if (error != QContactManager::NoError && error != QContactManager::DoesNotExistError) {
+            if (*error != QContactManager::NoError && *error != QContactManager::DoesNotExistError) {
                 return QList<QContactRelationship>();
             }
         }
@@ -188,7 +188,7 @@ bool CntRelationship::saveRelationship(QSet<QContactLocalId> *affectedContactIds
         CntAbstractRelationship *abstractRelationship = m_relationshipMap.value(relationship->relationshipType());
     
         //save the relationship
-        TRAPD(symbianError, returnValue = abstractRelationship->saveRelationshipL(affectedContactIds, relationship, *error));
+        TRAPD(symbianError, returnValue = abstractRelationship->saveRelationshipL(affectedContactIds, relationship, error));
     
         //if symbian error translate it into a qt error
         if (symbianError != KErrNone){
@@ -251,7 +251,7 @@ bool CntRelationship::removeRelationship(QSet<QContactLocalId> *affectedContactI
         //get the relationship
         CntAbstractRelationship *abstractRelationship = m_relationshipMap.value(relationship.relationshipType());
 
-        TRAPD(symbianError, returnValue = abstractRelationship->removeRelationshipL(affectedContactIds, relationship, *error));
+        TRAPD(symbianError, returnValue = abstractRelationship->removeRelationshipL(affectedContactIds, relationship, error));
 
         //if symbian error translate it into a qt error
         if (symbianError != KErrNone){

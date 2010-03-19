@@ -160,14 +160,14 @@ void CntSymbianDatabase::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
         if(m_contactsEmitted.contains(id))
             m_contactsEmitted.removeOne(id);
         else
-            changeSet.insertChangedContacts(id);
+            changeSet.insertChangedContact(id);
         break;
     case EContactDbObserverEventGroupAdded:
         if(m_contactsEmitted.contains(id)) {
             // adding a group triggers also a "changed" event. The work-around
             // is to leave the id to m_contactsEmitted
         } else {
-            changeSet.insertAddedContacts(id);
+            changeSet.insertAddedContact(id);
             m_contactsEmitted.append(id);
         }
         break;
@@ -213,7 +213,7 @@ void CntSymbianDatabase::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
             // EContactDbObserverEventGroupMembersAdded and 
             // EContactDbObserverEventGroupMembersRemoved need to be added to
             // MContactDbObserver.
-            changeSet.insertChangedContacts(id); //group is a contact
+            changeSet.insertChangedContact(id); //group is a contact
 #endif
         }
         break;

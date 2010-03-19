@@ -73,7 +73,7 @@ public:
     
     QString getSortQuery(const QList<QContactSortOrder> &sortOrders,
                          const QString& selectQuery,
-                         QContactManager::Error& error);
+                         QContactManager::Error* error);
 
 private:
     QHash<int,QString> contactsTableIdColumNameMapping;

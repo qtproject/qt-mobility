@@ -162,7 +162,7 @@ void CntRelationshipGroup::isGroupMemberL(const CContactItem* contactItem, const
 }
 
 //retrieve all the groups that the contact is part of
-QList<QContactRelationship> CntRelationshipGroup::relationshipsL(const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error* error)
+QList<QContactRelationship> CntRelationshipGroup::relationshipsL(const QContactId& participantId, QContactRelationship::Role role, QContactManager::Error* error)
 {
     QList<QContactRelationship> returnValue;
     

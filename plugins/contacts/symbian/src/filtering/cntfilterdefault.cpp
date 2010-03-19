@@ -60,7 +60,7 @@ QList<QContactLocalId> CntFilterDefault::contacts(
         const QContactFilter &filter,
         const QList<QContactSortOrder> &sortOrders,
         bool &filterSupportedflag,
-        QContactManager::Error &error)  
+        QContactManager::Error* error)
 {
     Q_UNUSED(sortOrders);
     Q_UNUSED(filterSupportedflag);

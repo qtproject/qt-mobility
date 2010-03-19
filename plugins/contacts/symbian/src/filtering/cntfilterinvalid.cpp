@@ -60,7 +60,7 @@ QList<QContactLocalId> CntFilterInvalid::contacts(
         const QContactFilter &filter,
         const QList<QContactSortOrder> &sortOrders,
         bool &filterSupportedflag,
-        QContactManager::Error &error)  
+        QContactManager::Error* error)
 {
     Q_UNUSED(filter);
     Q_UNUSED(sortOrders);
@@ -91,6 +91,6 @@ void CntFilterInvalid::createSelectQuery(const QContactFilter& filter,
     Q_UNUSED(sqlQuery);
     if(!filterSupported(filter))
         {
-        error =  QContactManager::NotSupportedError;
+        *error =  QContactManager::NotSupportedError;
         }
 }

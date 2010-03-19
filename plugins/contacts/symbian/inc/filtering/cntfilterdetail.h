@@ -59,7 +59,7 @@ public:
             const QContactFilter &filter,
             const QList<QContactSortOrder> &sortOrders,
             bool &filterSupported,
-            QContactManager::Error &error);
+            QContactManager::Error* error);
     bool filterSupported(const QContactFilter& filter) ;
     
     //bool isFilterSupported(const QContactFilter& filter) const;

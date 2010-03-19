@@ -120,12 +120,12 @@ void CntDbInfo::getDbTableAndColumnName( const quint32 fieldId ,
 
 QString CntDbInfo::getSortQuery( const QList<QContactSortOrder> &sortOrders,
                                  const QString& selectQuery,
-                                 QContactManager::Error& error)
+                                 QContactManager::Error* error)
 {
     // Set to initial select query
     QString sortQuery =  selectQuery;
     
-    if(error == QContactManager::NoError)
+    if(*error == QContactManager::NoError)
         {
         QList<QString> list;
         foreach( QContactSortOrder s, sortOrders ) 
