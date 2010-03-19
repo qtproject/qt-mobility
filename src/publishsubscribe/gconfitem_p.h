@@ -82,6 +82,7 @@
 
 */
 
+
 class GConfItem : public QObject
 {
     Q_OBJECT
@@ -94,7 +95,7 @@ class GConfItem : public QObject
         \param key    The name of the key.
         \param parent Parent object
     */
-    explicit GConfItem(const QString &key, QObject *parent = 0);
+    explicit GConfItem(const QString &key, bool monitor = false, QObject *parent = 0);
 
     /*! Finalizes a GConfItem.
      */
@@ -156,11 +157,16 @@ class GConfItem : public QObject
      */
     void valueChanged();
 
+    /*! Emitted when some value in subtree of this item changes
+      */
+
+    void subtreeChanged(const QString& key, const QVariant& value);
+
  private:
     friend struct GConfItemPrivate;
     struct GConfItemPrivate *priv;
 
-    void update_value(bool emit_signal);
+    void update_value(bool emit_signal,  const QString& key, const QVariant& value);
 };
 
 #endif // GCONFITEM_H

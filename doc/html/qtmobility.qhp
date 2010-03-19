@@ -238,6 +238,9 @@
                     <section ref="qcontactsynctarget.html" title="QContactSyncTarget Class Reference">
                         <section ref="qcontactsynctarget-members.html" title="List of all members"/>
                     </section>
+                    <section ref="qcontacttag.html" title="QContactTag Class Reference">
+                        <section ref="qcontacttag-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qcontacttimestamp.html" title="QContactTimestamp Class Reference">
                         <section ref="qcontacttimestamp-members.html" title="List of all members"/>
                     </section>
@@ -631,6 +634,8 @@
                     <section ref="bearer-management.html" title="Bearer Management"/>
                     <section ref="classlists.html" title="Class and Function Documentation"/>
                     <section ref="contacts.html" title="Contacts"/>
+                    <section ref="contactsasync.html" title="Contacts Asynchronous API"/>
+                    <section ref="contactssync.html" title="Contacts Synchronous API"/>
                     <section ref="creating-a-sensor-plugin.html" title="Creating a sensor plugin"/>
                     <section ref="future.html" title="Future Additional APIs"/>
                     <section ref="gpl.html" title="GNU General Public License (GPL)"/>
@@ -683,6 +688,8 @@
             <keyword name="Camera Capture Example" id="Camera Capture Example" ref="cameracapture.html"/>
             <keyword name="Class and Function Documentation" id="Class and Function Documentation" ref="classlists.html"/>
             <keyword name="Contacts" id="Contacts" ref="contacts.html"/>
+            <keyword name="Contacts Asynchronous API" id="Contacts Asynchronous API" ref="contactsasync.html"/>
+            <keyword name="Contacts Synchronous API" id="Contacts Synchronous API" ref="contactssync.html"/>
             <keyword name="Creating a sensor plugin" id="Creating a sensor plugin" ref="creating-a-sensor-plugin.html"/>
             <keyword name="DECLARE_READING" id="DECLARE_READING" ref="qsensorreading.html#DECLARE_READING"/>
             <keyword name="Declarative Example" id="Declarative Example" ref="declarative.html"/>
@@ -1760,6 +1767,9 @@
             <keyword name="QContactSyncTarget" id="QContactSyncTarget" ref="qcontactsynctarget.html"/>
             <keyword name="setSyncTarget" id="QContactSyncTarget::setSyncTarget" ref="qcontactsynctarget.html#setSyncTarget"/>
             <keyword name="syncTarget" id="QContactSyncTarget::syncTarget" ref="qcontactsynctarget.html#syncTarget"/>
+            <keyword name="QContactTag" id="QContactTag" ref="qcontacttag.html"/>
+            <keyword name="setTag" id="QContactTag::setTag" ref="qcontacttag.html#setTag"/>
+            <keyword name="tag" id="QContactTag::tag" ref="qcontacttag.html#tag"/>
             <keyword name="QContactTimestamp" id="QContactTimestamp" ref="qcontacttimestamp.html"/>
             <keyword name="created" id="QContactTimestamp::created" ref="qcontacttimestamp.html#created"/>
             <keyword name="lastModified" id="QContactTimestamp::lastModified" ref="qcontacttimestamp.html#lastModified"/>
@@ -2454,7 +2464,7 @@
             <keyword name="QMessage::Mms" id="QMessage::Mms" ref="qmessage.html#Type-enum"/>
             <keyword name="QMessage::Sms" id="QMessage::Sms" ref="qmessage.html#Type-enum"/>
             <keyword name="QMessage::Email" id="QMessage::Email" ref="qmessage.html#Type-enum"/>
-            <keyword name="QMessage::Xmpp" id="QMessage::Xmpp" ref="qmessage.html#Type-enum"/>
+            <keyword name="QMessage::InstantMessage" id="QMessage::InstantMessage" ref="qmessage.html#Type-enum"/>
             <keyword name="QMessage::AnyType" id="QMessage::AnyType" ref="qmessage.html#Type-enum"/>
             <keyword name="QMessage::TypeFlags" id="QMessage::TypeFlags" ref="qmessage.html#Type-enum"/>
             <keyword name="appendAttachments" id="QMessage::appendAttachments" ref="qmessage.html#appendAttachments"/>
@@ -2529,10 +2539,10 @@
             <keyword name="QMessageAddress::System" id="QMessageAddress::System" ref="qmessageaddress.html#Type-enum"/>
             <keyword name="QMessageAddress::Phone" id="QMessageAddress::Phone" ref="qmessageaddress.html#Type-enum"/>
             <keyword name="QMessageAddress::Email" id="QMessageAddress::Email" ref="qmessageaddress.html#Type-enum"/>
-            <keyword name="QMessageAddress::Xmpp" id="QMessageAddress::Xmpp" ref="qmessageaddress.html#Type-enum"/>
+            <keyword name="QMessageAddress::InstantMessage" id="QMessageAddress::InstantMessage" ref="qmessageaddress.html#Type-enum"/>
+            <keyword name="addressee" id="QMessageAddress::addressee" ref="qmessageaddress.html#addressee"/>
             <keyword name="parseEmailAddress" id="QMessageAddress::parseEmailAddress" ref="qmessageaddress.html#parseEmailAddress"/>
-            <keyword name="recipient" id="QMessageAddress::recipient" ref="qmessageaddress.html#recipient"/>
-            <keyword name="setRecipient" id="QMessageAddress::setRecipient" ref="qmessageaddress.html#setRecipient"/>
+            <keyword name="setAddressee" id="QMessageAddress::setAddressee" ref="qmessageaddress.html#setAddressee"/>
             <keyword name="setType" id="QMessageAddress::setType" ref="qmessageaddress.html#setType"/>
             <keyword name="type" id="QMessageAddress::type" ref="qmessageaddress.html#type"/>
             <keyword name="~QMessageAddress" id="QMessageAddress::~QMessageAddress" ref="qmessageaddress.html#dtor.QMessageAddress"/>
@@ -3362,6 +3372,10 @@
             <keyword name="saveResource" id="QVersitDefaultResourceHandler::saveResource" ref="qversitdefaultresourcehandler.html#saveResource"/>
             <keyword name="~QVersitDefaultResourceHandler" id="QVersitDefaultResourceHandler::~QVersitDefaultResourceHandler" ref="qversitdefaultresourcehandler.html#dtor.QVersitDefaultResourceHandler"/>
             <keyword name="QVersitDocument" id="QVersitDocument" ref="qversitdocument.html"/>
+            <keyword name="QVersitDocument::VersitType" id="QVersitDocument::VersitType" ref="qversitdocument.html#VersitType-enum"/>
+            <keyword name="QVersitDocument::InvalidType" id="QVersitDocument::InvalidType" ref="qversitdocument.html#VersitType-enum"/>
+            <keyword name="QVersitDocument::VCard21Type" id="QVersitDocument::VCard21Type" ref="qversitdocument.html#VersitType-enum"/>
+            <keyword name="QVersitDocument::VCard30Type" id="QVersitDocument::VCard30Type" ref="qversitdocument.html#VersitType-enum"/>
             <keyword name="addProperty" id="QVersitDocument::addProperty" ref="qversitdocument.html#addProperty"/>
             <keyword name="clear" id="QVersitDocument::clear" ref="qversitdocument.html#clear"/>
             <keyword name="isEmpty" id="QVersitDocument::isEmpty" ref="qversitdocument.html#isEmpty"/>
@@ -3759,7 +3773,6 @@
             <file>qsystemdisplayinfo.html</file>
             <file>keepintouch-main-cpp.html</file>
             <file>qcontactsaverequest.html</file>
-            <file>declarative-voipdialer-voipdialerplugin-h.html</file>
             <file>qcontactdisplaylabel-members.html</file>
             <file>qcontactdetailfilter.html</file>
             <file>qmagnetometerfilter.html</file>
@@ -3769,7 +3782,6 @@
             <file>weatherinfo-icons-weather-storm-svg.html</file>
             <file>qmediaserviceprovider-members.html</file>
             <file>fetchgooglemaps-mapwindow-h.html</file>
-            <file>declarative-landlinedialer-landlinedialerplugin-h.html</file>
             <file>qradiotuner.html</file>
             <file>3rdparty.html</file>
             <file>creating-a-sensor-plugin.html</file>
@@ -3804,7 +3816,6 @@
             <file>qvideodevicecontrol-members.html</file>
             <file>qversitcontactexporter.html</file>
             <file>serviceactions-serviceactions-pro.html</file>
-            <file>declarative-landlinedialer-landlinedialer-cpp.html</file>
             <file>qtapsensor.html</file>
             <file>qservicemanager.html</file>
             <file>qcontacttimestamp.html</file>
@@ -3822,8 +3833,8 @@
             <file>qversitcontactimporterpropertyhandler.html</file>
             <file>qmessageaccountid-members.html</file>
             <file>qmessageaccount.html</file>
-            <file>qimageprocessingcontrol.html</file>
             <file>qcontactsynctarget-members.html</file>
+            <file>qimageprocessingcontrol.html</file>
             <file>qmediarecordercontrol.html</file>
             <file>servicebrowser-servicebrowser-pro.html</file>
             <file>qmediaimageviewer-members.html</file>
@@ -3836,7 +3847,6 @@
             <file>player-videowidget-cpp.html</file>
             <file>images/servicebrowser.png</file>
             <file>weatherinfo-icons-weather-sunny-very-few-clouds-svg.html</file>
-            <file>declarative-sfwexample-cpp.html</file>
             <file>battery-charge.html</file>
             <file>qmediaplaylistreader-members.html</file>
             <file>qmediaplaylistprovider-members.html</file>
@@ -3862,8 +3872,8 @@
             <file>samplephonebook-contacteditor-h.html</file>
             <file>location-overview.html</file>
             <file>qcontactinvalidfilter.html</file>
-            <file>qmediaplayercontrol-members.html</file>
             <file>qmessagemanager.html</file>
+            <file>qmediaplayercontrol-members.html</file>
             <file>qorientationreading.html</file>
             <file>qmessage-members.html</file>
             <file>qcontactemailaddress-members.html</file>
@@ -3896,7 +3906,6 @@
             <file>qattitudesensor.html</file>
             <file>qattitudereading.html</file>
             <file>qservice.html</file>
-            <file>declarative-landlinedialer-landlinedialer-pro.html</file>
             <file>qmessageaccount-members.html</file>
             <file>qcamerafocuscontrol.html</file>
             <file>qtmedia.html</file>
@@ -3911,7 +3920,6 @@
             <file>quickstart-quickstart-pro.html</file>
             <file>querymessages-main-cpp.html</file>
             <file>bearercloud-bearercloud-pro.html</file>
-            <file>declarative-voipdialer-voipdialer-h.html</file>
             <file>serviceactions.html</file>
             <file>querymessages.html</file>
             <file>service-framework-on-symbian.html</file>
@@ -3961,7 +3969,6 @@
             <file>sysinfo.html</file>
             <file>qserviceplugininterface-members.html</file>
             <file>opensourceedition.html</file>
-            <file>declarative-voipdialer-voipdialer-pro.html</file>
             <file>fetchgooglemaps.html</file>
             <file>qgeosatelliteinfosource-members.html</file>
             <file>qcontactnickname-members.html</file>
@@ -4058,6 +4065,7 @@
             <file>qgeoareamonitor-members.html</file>
             <file>qmediatimerange-members.html</file>
             <file>qcontactunionfilter-members.html</file>
+            <file>contactsasync.html</file>
             <file>qmessagesortorder.html</file>
             <file>qambientlightfilter.html</file>
             <file>flickrdemo-xqlistwidget-h.html</file>
@@ -4123,10 +4131,10 @@
             <file>examples.html</file>
             <file>cameracapture.html</file>
             <file>linereader.html</file>
+            <file>qcontacttag.html</file>
             <file>qcontactaction-members.html</file>
             <file>battery-charge-battery-publisher-batterypublisher-h.html</file>
             <file>qcontacttype.html</file>
-            <file>declarative-sfwexample-h.html</file>
             <file>bluetoothtransferplugin.html</file>
             <file>licenses-fonts.html</file>
             <file>qsysteminfo.html</file>
@@ -4134,7 +4142,6 @@
             <file>qmagnetometerreading-members.html</file>
             <file>functions.html</file>
             <file>mobility.html</file>
-            <file>declarative-demo-demo-pro.html</file>
             <file>qcontactdetaildefinitionremoverequest.html</file>
             <file>qmediarecorder.html</file>
             <file>bearercloud-bearercloud-cpp.html</file>
@@ -4183,8 +4190,8 @@
             <file>qmediaplayer.html</file>
             <file>cameracapture-cameracapture-cpp.html</file>
             <file>qambientlightfilter-members.html</file>
-            <file>qgeoareamonitor.html</file>
             <file>qcontactphonenumber-members.html</file>
+            <file>qgeoareamonitor.html</file>
             <file>qmediatimeinterval.html</file>
             <file>qmessagefoldersortorder.html</file>
             <file>qmediaservicesupportedformatsinterface-members.html</file>
@@ -4194,7 +4201,6 @@
             <file>qmediaplaylistprovider.html</file>
             <file>qorientationsensor.html</file>
             <file>qcompass-members.html</file>
-            <file>declarative-voipdialer-voipdialerplugin-cpp.html</file>
             <file>qsensormanager-members.html</file>
             <file>qvaluespacesubscriber-members.html</file>
             <file>player.html</file>
@@ -4223,10 +4229,11 @@
             <file>qmediatimerange.html</file>
             <file>servicebrowser.html</file>
             <file>samplephonebook-samplephonebook-pro.html</file>
-            <file>qcontactmanager-members.html</file>
             <file>qcontacturl-members.html</file>
+            <file>qcontactmanager-members.html</file>
             <file>qversitwriter.html</file>
             <file>sysinfo-main-cpp.html</file>
+            <file>qcontacttag-members.html</file>
             <file>installation.html</file>
             <file>licensing.html</file>
             <file>qimageencodercontrol.html</file>
@@ -4241,7 +4248,6 @@
             <file>qcontactrelationship-members.html</file>
             <file>sysinfo-dialog-h.html</file>
             <file>qcontacttimestamp-members.html</file>
-            <file>declarative-landlinedialer-landlinedialer-h.html</file>
             <file>recorder.html</file>
             <file>qmetadatacontrol-members.html</file>
             <file>radio-radio-cpp.html</file>
@@ -4266,7 +4272,6 @@
             <file>qcontactactiondescriptor.html</file>
             <file>qcontactrelationshipsaverequest-members.html</file>
             <file>qmediaplaylistnavigator-members.html</file>
-            <file>declarative-main-cpp.html</file>
             <file>qmessagecontentcontainer-members.html</file>
             <file>qversitwriter-members.html</file>
             <file>bluetoothtransferplugin-bluetoothtransfer-h.html</file>
@@ -4280,7 +4285,6 @@
             <file>gpl.html</file>
             <file>editions.html</file>
             <file>samplephonebook-contactlistpage-h.html</file>
-            <file>declarative-landlinedialer-landlinedialerplugin-cpp.html</file>
             <file>qaudioencodercontrol-members.html</file>
             <file>qmediaplaylistwriter.html</file>
             <file>qversitdocument-members.html</file>
@@ -4327,7 +4331,6 @@
             <file>qcontactgender.html</file>
             <file>qmessagecontentcontainerid-members.html</file>
             <file>qsystemstorageinfo-members.html</file>
-            <file>declarative-voipdialer-voipdialer-cpp.html</file>
             <file>qproximitysensor.html</file>
             <file>weatherinfo-icons-weather-sleet-svg.html</file>
             <file>qgeopositioninfo-members.html</file>
@@ -4338,6 +4341,7 @@
             <file>qnmeapositioninfosource-members.html</file>
             <file>qmediaimageviewer.html</file>
             <file>qaudiocapturesource-members.html</file>
+            <file>contactssync.html</file>
             <file>qcontactlocalidfilter.html</file>
             <file>qmediaplaylist.html</file>
             <file>service-frameworks.html</file>
@@ -4356,7 +4360,6 @@
             <file>qversitcontactexporter-members.html</file>
             <file>qcamera-members.html</file>
             <file>qcamera.html</file>
-            <file>declarative-declarative-pro.html</file>
             <file>radio.html</file>
             <file>qversitdefaultresourcehandler.html</file>
             <file>qcontactguid-members.html</file>

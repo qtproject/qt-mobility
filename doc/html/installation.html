@@ -20,10 +20,15 @@
 <li><a href="#building">Building</a></li>
 <ul><li><a href="#building-on-unix">Building On Unix</a></li>
 <li><a href="#building-on-windows">Building On Windows</a></li>
+<li><a href="#building-for-windows-ce">Building For Windows CE</a></li>
 <li><a href="#building-for-symbian-on-windows">Building For Symbian On Windows</a></li>
-<li><a href="#building-individual-qt-mobility-domains">Building Individual Qt Mobility Domains</a></li>
+<li><a href="#building-individual-qt-mobility-modules">Building Individual Qt Mobility Modules</a></li>
 </ul>
-<li><a href="#environment-variables">Environment Variables</a></li>
+<li><a href="#making-the-libraries-available-to-applications">Making the libraries available to applications</a></li>
+<ul><li><a href="#making-the-libraries-available-on-unix">Making the libraries available on Unix</a></li>
+<li><a href="#making-the-libraries-available-on-windows">Making the libraries available on Windows</a></li>
+<li><a href="#making-the-libraries-available-on-windows-ce">Making the libraries available on Windows CE</a></li>
+</ul>
 </ul>
 <a name="get-the-qt-mobility-api-package"></a>
 <h2>Get the Qt Mobility API Package</h2>
@@ -73,6 +78,7 @@
 <a name="building"></a>
 <h2>Building</h2>
 <p>Ensure that all compile time dependencies for your particular platform have been met before building.</p>
+<p>If Qt is installed for multiple platforms it is also important to ensure that the correct version of <tt>qmake</tt> is being used.</p>
 <a name="building-on-unix"></a>
 <h3>Building On Unix</h3>
 <p>To configure the Qt Mobility libraries for your machine, run the <tt>./configure</tt> script in the package directory.</p>
@@ -97,9 +103,12 @@
 <pre>        cd c:\QtMobility\%DISTNAME%
         configure -prefix %TARGET_DIR%</pre>
 <p>Type <tt>configure -help</tt> to get a list of all available options.</p>
-<p>The actual commands needed to build and install Qt Mobility depends on your development system. For Microsoft Visual Studio to create and install the libraries and tools type:</p>
+<p>The actual commands needed to build and install Qt Mobility depends on your development system. To create and install the libraries and tools from a Microsoft Visual Studio command prompt, type:</p>
 <pre>    nmake
     nmake install</pre>
+<a name="building-for-windows-ce"></a>
+<h3>Building For Windows CE</h3>
+<p>The process is much the same as for Windows, although it is important to run the <tt>setcepaths</tt> script from the <tt>bin</tt> directory of the Qt for Windows CE installation to ensure that the correct headers and libraries are used.</p>
 <a name="building-for-symbian-on-windows"></a>
 <h3>Building For Symbian On Windows</h3>
 <p>Building Qt Mobility for Symbian is not necessary as the package contains pre-built binaries for the SDK and SIS file for the device. See the <tt>symbian\install.txt</tt> file on how to deploy these.</p>
@@ -112,34 +121,36 @@
 <p>To create the libraries and tools for a device run:</p>
 <pre>    make release-gcce</pre>
 <p>Note: <tt>make install</tt> has no meaning for building on Symbian. The libraries will be deployed into the SDK (when running make) and will be ready to use for compiling applications for the emulator and/or device.</p>
-<a name="building-individual-qt-mobility-domains"></a>
-<h3>Building Individual Qt Mobility Domains</h3>
-<p>Qt Mobility is comprised of several domains but all of these may not need to be built. To build a single domain, perform the configure step as outlined above, and then perform the make step in the appropriate directory to create the desired library.</p>
-<p>The directory structure will look something like</p>
-<pre>    ./src/bearer
-    ./src/contacts
-    ...
-    ./src/systeminfo</pre>
-<p>e.g&#x2e; To build bearer on Unix:</p>
-<pre>    cd ./src/bearer
-    make
-    make install</pre>
-<p>or on Windows:</p>
-<pre>    cd src\bearer
-    nmake
-    nmake install</pre>
-<a name="environment-variables"></a>
-<h2>Environment Variables</h2>
+<a name="building-individual-qt-mobility-modules"></a>
+<h3>Building Individual Qt Mobility Modules</h3>
+<p>Qt Mobility is comprised of several modules but all of these may not need to be built. To specify which modules should be built, use the <tt>-modules</tt> switch with the configure script when performing the configure step as outlined above.</p>
+<p>e.g&#x2e; To build just the bearer module:</p>
+<pre>    configure -modules bearer</pre>
+<p>If multiple modules are required the module names should be separated by a space and surrounded by double quotation marks. If a selected module depends on other modules the dependencies will be enabled automatically.</p>
+<p>.e.g&#x2e; To build just the bearer and location modules:</p>
+<pre>    configure -modules &quot;bearer location&quot;</pre>
+<p>Type <tt>configure -help</tt> to see the names of the available modules.</p>
+<a name="making-the-libraries-available-to-applications"></a>
+<h2>Making the libraries available to applications</h2>
 <p>In order to use QtMobility some environment variables need to be extended to locate the libraries, which are placed in the lib directory of the install path.</p>
-<p>On Unix: LD_LIBRARY_PATH should be extended to include: <tt>$TARGET_DIR/lib</tt></p>
+<a name="making-the-libraries-available-on-unix"></a>
+<h3>Making the libraries available on Unix</h3>
+<p>The environment variable LD_LIBRARY_PATH should be extended to include: <tt>$TARGET_DIR/lib</tt></p>
 <p>In .profile (if your Unix shell is bash,ksh,zsh or sh), add the following lines</p>
 <pre>    LD_LIBRARY_PATH=$TARGET_DIR/lib:$LD_LIBRARY_PATH
     export LD_LIBRARY_PATH</pre>
 <p>In .login (incase your shell is csh or tcsh), add the following line:</p>
 <pre>    setenv LD_LIBRARY_PATH=$TARGET_DIR/lib:$LD_LIBRARY_PATH</pre>
 <p>If you use a different Unix shell, please modify your your environment variables accordingly.</p>
-<p>On Windows: PATH should be extended to include: <tt>C:\%TARGET_DIR%\lib</tt></p>
+<a name="making-the-libraries-available-on-windows"></a>
+<h3>Making the libraries available on Windows</h3>
+<p>The environment variable PATH should be extended to include: <tt>C:\%TARGET_DIR%\lib</tt></p>
 <p>For newer versions of windows, PATH can be extended through &quot;Start-&gt;Settings-&gt;Control Panel-&gt;System-&gt;Advanced-&gt; Environment variables&quot; and for older versions by editing <tt>C:\autoexec.bat</tt></p>
+<a name="making-the-libraries-available-on-windows-ce"></a>
+<h3>Making the libraries available on Windows CE</h3>
+<p>Environment variables do not exist on Windows CE, and so users of Qt Mobility for Windows CE have to do things slightly differently.</p>
+<p>The deployment of the libraries to the device is normally done with Microsoft Visual Studio or Microsoft ActiveSync.</p>
+<p>The libraries can be made globally available by deploying them to <tt>c:\Windows</tt> on the device, or can be deployed once per application by copying them into the same directory as the executable.</p>
 <p>And now the installation is complete, we hope you enjoy using Qt Mobility.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

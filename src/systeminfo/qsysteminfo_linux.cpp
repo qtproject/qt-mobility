@@ -284,8 +284,6 @@ QString QSystemNetworkInfoPrivate::getNetworkNameForConnectionPath(const QString
             settingsConIface.reset(new QNetworkManagerSettingsConnection(activeCon->serviceName(),activeCon->connection().path(), this));
             if(settingsConIface->isValid()) {
                 return settingsConIface->getId();
-            } else {
-                //qWarning() << "not valid";
             }
         }
     }
@@ -360,7 +358,6 @@ void QSystemNetworkInfoPrivate::nmPropertiesChanged( const QString & path, QMap<
             accessPointIface->setConnections();
             if(!connect(accessPointIface, SIGNAL(propertiesChanged(const QString &,QMap<QString,QVariant>)),
                         this,SLOT(nmAPPropertiesChanged( const QString &, QMap<QString,QVariant>)))) {
-             //   qWarning() << "connect is false";
             }
 
         }
@@ -618,15 +615,16 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
                                                       QLatin1String("/ScreenSaver"),
                                                       QLatin1String(iface.toLatin1()),
                                                       dbusConnection);
-             QDBusReply<uint> reply =  connectionInterface->call(QLatin1String("Inhibit"),
-                                                                 QString::number((int)pid),
-                                                                 QLatin1String("QSystemScreenSaver"));
-             if(reply.isValid()) {
-                 currentPid = reply.value();
-              //   qWarning() << "Inhibit" << currentPid;
-                 return reply.isValid();
-             } else {
-                 qWarning() << reply.error();
+             if(connectionInterface->isValid()) {
+                 QDBusReply<uint> reply =  connectionInterface->call(QLatin1String("Inhibit"),
+                                                                     QString::number((int)pid),
+                                                                     QLatin1String("QSystemScreenSaver"));
+                 if(reply.isValid()) {
+                     currentPid = reply.value();
+                     return reply.isValid();
+                 } else {
+                     qWarning() << reply.error();
+                 }
              }
          }
 #endif

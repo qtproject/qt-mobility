@@ -73,6 +73,7 @@ public:
     static QMessage convert(const QMailMessage &message);
     static QMailMessage convert(const QMessage &message);
     static QMailMessage *convert(QMessage *message);
+
     //static const QMailMessage *convert(const QMessage *message);
 #else
     Q_DECLARE_PUBLIC(QMessage)
@@ -102,7 +103,6 @@ public:
     }
 
     QMessage *q_ptr;
-
 #if defined(Q_OS_WIN)
     struct {
         unsigned properties : 1;
@@ -134,6 +134,13 @@ public:
     QDateTime _receivedDate;
     bool _modified;
     QMessageContentContainerId _bodyId;
+
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    QString _url;
+
+    static QMessagePrivate* implementation(const QMessage &message);
+    static QMessageContentContainerPrivate* containerImplementation(const QMessage &message);
+#endif
 
     static QMessage from(const QMessageId &id);
     static QString senderName(const QMessage &message);

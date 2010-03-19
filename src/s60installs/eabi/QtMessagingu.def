@@ -66,7 +66,7 @@ EXPORTS
 	_ZN10QtMobility15QMessageAccountD1Ev @ 65 NONAME
 	_ZN10QtMobility15QMessageAccountD2Ev @ 66 NONAME
 	_ZN10QtMobility15QMessageAccountaSERKS0_ @ 67 NONAME
-	_ZN10QtMobility15QMessageAddress12setRecipientERK7QString @ 68 NONAME
+	_ZN10QtMobility15QMessageAddress12setAddresseeERK7QString @ 68 NONAME
 	_ZN10QtMobility15QMessageAddress17parseEmailAddressERK7QStringPS1_S4_S4_PbS5_ @ 69 NONAME
 	_ZN10QtMobility15QMessageAddress7setTypeENS0_4TypeE @ 70 NONAME
 	_ZN10QtMobility15QMessageAddressC1ENS0_4TypeERK7QString @ 71 NONAME
@@ -290,7 +290,7 @@ EXPORTS
 	_ZNK10QtMobility15QMessageAccount2idEv @ 289 NONAME
 	_ZNK10QtMobility15QMessageAccount4nameEv @ 290 NONAME
 	_ZNK10QtMobility15QMessageAddress4typeEv @ 291 NONAME
-	_ZNK10QtMobility15QMessageAddress9recipientEv @ 292 NONAME
+	_ZNK10QtMobility15QMessageAddress9addresseeEv @ 292 NONAME
 	_ZNK10QtMobility15QMessageAddresseqERKS0_ @ 293 NONAME
 	_ZNK10QtMobility15QMessageAddressneERKS0_ @ 294 NONAME
 	_ZNK10QtMobility15QMessageManager10metaObjectEv @ 295 NONAME

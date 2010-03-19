@@ -23,6 +23,9 @@
 <li><a href="#location-of-qcrml-files">Location of QCRML Files</a></li>
 <li><a href="#limitations">Limitations</a></li>
 </ul>
+<li><a href="#gconf-layer">GConf Layer</a></li>
+<ul><li><a href="#limitations">Limitations</a></li>
+</ul>
 </ul>
 <li><a href="#examples">Examples</a></li>
 <ul><li><a href="#publish-and-subscribe">Publish and Subscribe</a></li>
@@ -55,6 +58,7 @@
 <tr valign="top" class="odd"><td>Non-volatile Registry Layer</td><td>The Non-volatile Registry layer provides a permanent Value Space backing store using keys stored in the Windows' registry. The Non-volatile Registry layer is only available on Windows platforms. The Non-volatile Registry layer has an order of 0.</td></tr>
 <tr valign="top" class="even"><td>ContextKit Layer</td><td>The ContextKit layer provides a non-permanent Value Space backing store using ContextKit. Publishing values to this layer via <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> is currently not supported. The ContextKit layer has an order of 0.</td></tr>
 <tr valign="top" class="odd"><td><a href="#symbian-settings-layer">Symbian Settings Layer</a></td><td>The Symbian Settings layer provides a permanent Value Space backing store using the Symbian OS' Properties (RProperty) as well as Central Repository files (CRepository). The Symbian Settings layer has an order of 0.</td></tr>
+<tr valign="top" class="even"><td><a href="#gconf-layer">GConf Layer</a></td><td>The GConf Layer provides a permanent Value Space backing store using the GConf configuration system designed for the GNOME desktop environment. The GConf Layer has an order of 0 and it's the only available layer in Maemo 5.</td></tr>
 </table></p>
 <p>The Value Space has support for both client/server and peer-to-peer layer architectures. If a layer that uses a client/server architecture is used and a server process is not provided by the underlying system it will be necessary to start one. This can be done by calling QValueSpace::initValueSpaceServer() prior to any other use of the Value Space.</p>
 <a name="detailed-layer-descriptions"></a>
@@ -98,6 +102,12 @@
 <a name="limitations"></a>
 <h5>Limitations</h5>
 <p>The underlying Symbian APIs limit the data types that can be stored natively in available backing stores. In practice this is not a problem since the unsupported data types are automatically serialized in <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> and stored as 8-bit byte form by SymbianSettingslayer. The serialization/deserialization is transparent operation to the API user but may cause interoperatibility issues with native Symbian codes that access the same data directly. The maximum size of the bytearray is 65535 for RPropery backing store.</p>
+<a name="gconf-layer"></a>
+<h4>GConf Layer</h4>
+<p>Publish and Subscribe API can be used to access the GConf configuration system.</p>
+<a name="limitations"></a>
+<h5>Limitations</h5>
+<p>GConf can natively store only a limited set of <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> data types. These types are Bool, Int, Double, String, StringList and List. When publishing other data types the values are automatically serialized and stored to GConf as BASE64 encoded strings. When reading these values they are automatically converted back to the original data types. The serialization/deserialization is transparent operation to the API user but may cause interoperatibility issues with native applications that access the same data directly.</p>
 <a name="examples"></a>
 <h3>Examples</h3>
 <a name="publish-and-subscribe"></a>
