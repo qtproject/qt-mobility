@@ -66,7 +66,7 @@ void CntSimDetailDefinitionFetchRequest::run()
     QMap<int, QContactManager::Error> errorMap;
         
     // Get all detail definitions
-    QMap<QString, QContactDetailDefinition> allDefs = engine()->detailDefinitions(r->contactType(), error);
+    QMap<QString, QContactDetailDefinition> allDefs = engine()->detailDefinitions(r->contactType(), &error);
     
     QStringList defNames = r->definitionNames();
     

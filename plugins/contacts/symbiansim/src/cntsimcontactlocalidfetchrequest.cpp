@@ -69,7 +69,7 @@ void CntSimContactLocalIdFetchRequest::run()
     int numSlots = simStore()->storeInfo().iTotalEntries;
     
     QContactManager::Error error = QContactManager::NoError;
-    if (!simStore()->read(index, numSlots, error)) {
+    if (!simStore()->read(index, numSlots, &error)) {
         QContactManagerEngine::updateContactLocalIdFetchRequest(r, QList<QContactLocalId>(), error, QContactAbstractRequest::FinishedState);
     }
 }
