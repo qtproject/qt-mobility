@@ -68,7 +68,7 @@ QTrackerContactSaveRequest::QTrackerContactSaveRequest(QContactAbstractRequest* 
         QMap<int, QContactManager::Error> errors; 
         errors[0] = QContactManager::BadArgumentError;
         QContactSaveRequest* saveRequest = qobject_cast<QContactSaveRequest*>(req);
-        QContactTrackerEngine::updateContactSaveRequestTrampoline(saveRequest, contacts, QContactManager::BadArgumentError, errors);
+        QContactTrackerEngine::updateContactSaveRequestTrampoline(saveRequest, contacts, QContactManager::BadArgumentError, errors, r->state());
         return;
     }
 
