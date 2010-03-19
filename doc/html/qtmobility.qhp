@@ -3773,7 +3773,6 @@
             <file>qsystemdisplayinfo.html</file>
             <file>keepintouch-main-cpp.html</file>
             <file>qcontactsaverequest.html</file>
-            <file>declarative-voipdialer-voipdialerplugin-h.html</file>
             <file>qcontactdisplaylabel-members.html</file>
             <file>qcontactdetailfilter.html</file>
             <file>qmagnetometerfilter.html</file>
@@ -3783,7 +3782,6 @@
             <file>weatherinfo-icons-weather-storm-svg.html</file>
             <file>qmediaserviceprovider-members.html</file>
             <file>fetchgooglemaps-mapwindow-h.html</file>
-            <file>declarative-landlinedialer-landlinedialerplugin-h.html</file>
             <file>qradiotuner.html</file>
             <file>3rdparty.html</file>
             <file>creating-a-sensor-plugin.html</file>
@@ -3818,7 +3816,6 @@
             <file>qvideodevicecontrol-members.html</file>
             <file>qversitcontactexporter.html</file>
             <file>serviceactions-serviceactions-pro.html</file>
-            <file>declarative-landlinedialer-landlinedialer-cpp.html</file>
             <file>qtapsensor.html</file>
             <file>qservicemanager.html</file>
             <file>qcontacttimestamp.html</file>
@@ -3836,8 +3833,8 @@
             <file>qversitcontactimporterpropertyhandler.html</file>
             <file>qmessageaccountid-members.html</file>
             <file>qmessageaccount.html</file>
-            <file>qimageprocessingcontrol.html</file>
             <file>qcontactsynctarget-members.html</file>
+            <file>qimageprocessingcontrol.html</file>
             <file>qmediarecordercontrol.html</file>
             <file>servicebrowser-servicebrowser-pro.html</file>
             <file>qmediaimageviewer-members.html</file>
@@ -3850,7 +3847,6 @@
             <file>player-videowidget-cpp.html</file>
             <file>images/servicebrowser.png</file>
             <file>weatherinfo-icons-weather-sunny-very-few-clouds-svg.html</file>
-            <file>declarative-sfwexample-cpp.html</file>
             <file>battery-charge.html</file>
             <file>qmediaplaylistreader-members.html</file>
             <file>qmediaplaylistprovider-members.html</file>
@@ -3910,7 +3906,6 @@
             <file>qattitudesensor.html</file>
             <file>qattitudereading.html</file>
             <file>qservice.html</file>
-            <file>declarative-landlinedialer-landlinedialer-pro.html</file>
             <file>qmessageaccount-members.html</file>
             <file>qcamerafocuscontrol.html</file>
             <file>qtmedia.html</file>
@@ -3925,7 +3920,6 @@
             <file>quickstart-quickstart-pro.html</file>
             <file>querymessages-main-cpp.html</file>
             <file>bearercloud-bearercloud-pro.html</file>
-            <file>declarative-voipdialer-voipdialer-h.html</file>
             <file>serviceactions.html</file>
             <file>querymessages.html</file>
             <file>service-framework-on-symbian.html</file>
@@ -3975,7 +3969,6 @@
             <file>sysinfo.html</file>
             <file>qserviceplugininterface-members.html</file>
             <file>opensourceedition.html</file>
-            <file>declarative-voipdialer-voipdialer-pro.html</file>
             <file>fetchgooglemaps.html</file>
             <file>qgeosatelliteinfosource-members.html</file>
             <file>qcontactnickname-members.html</file>
@@ -4071,8 +4064,8 @@
             <file>player-mediakeysobserver-h.html</file>
             <file>qgeoareamonitor-members.html</file>
             <file>qmediatimerange-members.html</file>
-            <file>contactsasync.html</file>
             <file>qcontactunionfilter-members.html</file>
+            <file>contactsasync.html</file>
             <file>qmessagesortorder.html</file>
             <file>qambientlightfilter.html</file>
             <file>flickrdemo-xqlistwidget-h.html</file>
@@ -4142,7 +4135,6 @@
             <file>qcontactaction-members.html</file>
             <file>battery-charge-battery-publisher-batterypublisher-h.html</file>
             <file>qcontacttype.html</file>
-            <file>declarative-sfwexample-h.html</file>
             <file>bluetoothtransferplugin.html</file>
             <file>licenses-fonts.html</file>
             <file>qsysteminfo.html</file>
@@ -4150,7 +4142,6 @@
             <file>qmagnetometerreading-members.html</file>
             <file>functions.html</file>
             <file>mobility.html</file>
-            <file>declarative-demo-demo-pro.html</file>
             <file>qcontactdetaildefinitionremoverequest.html</file>
             <file>qmediarecorder.html</file>
             <file>bearercloud-bearercloud-cpp.html</file>
@@ -4210,7 +4201,6 @@
             <file>qmediaplaylistprovider.html</file>
             <file>qorientationsensor.html</file>
             <file>qcompass-members.html</file>
-            <file>declarative-voipdialer-voipdialerplugin-cpp.html</file>
             <file>qsensormanager-members.html</file>
             <file>qvaluespacesubscriber-members.html</file>
             <file>player.html</file>
@@ -4239,12 +4229,12 @@
             <file>qmediatimerange.html</file>
             <file>servicebrowser.html</file>
             <file>samplephonebook-samplephonebook-pro.html</file>
-            <file>qcontactmanager-members.html</file>
             <file>qcontacturl-members.html</file>
+            <file>qcontactmanager-members.html</file>
             <file>qversitwriter.html</file>
             <file>sysinfo-main-cpp.html</file>
-            <file>installation.html</file>
             <file>qcontacttag-members.html</file>
+            <file>installation.html</file>
             <file>licensing.html</file>
             <file>qimageencodercontrol.html</file>
             <file>qsystemscreensaver-members.html</file>
@@ -4258,7 +4248,6 @@
             <file>qcontactrelationship-members.html</file>
             <file>sysinfo-dialog-h.html</file>
             <file>qcontacttimestamp-members.html</file>
-            <file>declarative-landlinedialer-landlinedialer-h.html</file>
             <file>recorder.html</file>
             <file>qmetadatacontrol-members.html</file>
             <file>radio-radio-cpp.html</file>
@@ -4283,7 +4272,6 @@
             <file>qcontactactiondescriptor.html</file>
             <file>qcontactrelationshipsaverequest-members.html</file>
             <file>qmediaplaylistnavigator-members.html</file>
-            <file>declarative-main-cpp.html</file>
             <file>qmessagecontentcontainer-members.html</file>
             <file>qversitwriter-members.html</file>
             <file>bluetoothtransferplugin-bluetoothtransfer-h.html</file>
@@ -4297,7 +4285,6 @@
             <file>gpl.html</file>
             <file>editions.html</file>
             <file>samplephonebook-contactlistpage-h.html</file>
-            <file>declarative-landlinedialer-landlinedialerplugin-cpp.html</file>
             <file>qaudioencodercontrol-members.html</file>
             <file>qmediaplaylistwriter.html</file>
             <file>qversitdocument-members.html</file>
@@ -4344,7 +4331,6 @@
             <file>qcontactgender.html</file>
             <file>qmessagecontentcontainerid-members.html</file>
             <file>qsystemstorageinfo-members.html</file>
-            <file>declarative-voipdialer-voipdialer-cpp.html</file>
             <file>qproximitysensor.html</file>
             <file>weatherinfo-icons-weather-sleet-svg.html</file>
             <file>qgeopositioninfo-members.html</file>
@@ -4374,7 +4360,6 @@
             <file>qversitcontactexporter-members.html</file>
             <file>qcamera-members.html</file>
             <file>qcamera.html</file>
-            <file>declarative-declarative-pro.html</file>
             <file>radio.html</file>
             <file>qversitdefaultresourcehandler.html</file>
             <file>qcontactguid-members.html</file>
