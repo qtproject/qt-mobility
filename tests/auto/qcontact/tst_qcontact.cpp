@@ -562,7 +562,7 @@ void tst_QContact::relationships()
     related = c.relatedContacts(QContactRelationship::HasMember);
     QVERIFY(related.isEmpty());
 
-    related = c.relatedContacts(QContactRelationship::HasMember, QContactRelationshipFilter::First);
+    related = c.relatedContacts(QContactRelationship::HasMember, QContactRelationship::First);
     QVERIFY(related.isEmpty());
 
     QList<QContactRelationship> relationshipList = c.relationships();
