@@ -59,8 +59,7 @@ int main(int argc, char **argv)
 {
     QCoreApplication app(argc, argv);
 
-    QSensor sensor;
-    sensor.setType("GrueSensor");
+    QSensor sensor("GrueSensor");
     if (!sensor.connect()) {
         qWarning("Grue sensor is not available!");
         return 1;

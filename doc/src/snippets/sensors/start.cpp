@@ -47,8 +47,7 @@ void start()
 {
 //! [Starting a sensor]
 // start the sensor
-QSensor sensor;
-sensor.setType("QAccelerometer");
+QSensor sensor("QAccelerometer");
 sensor.start();
 
 // later

@@ -90,11 +90,7 @@ void QSensorBackend::newReadingAvailable()
     // Copy the values from the filter reading to the cached reading
     d->cache_reading->copyValuesFrom(d->filter_reading);
 
-    if (d->updateInterval == 0)
-        return; // We don't emit the signal if we're polling
-
-    if (d->signalEnabled)
-        Q_EMIT m_sensor->readingChanged();
+    Q_EMIT m_sensor->readingChanged();
 }
 
 /*!
@@ -107,12 +103,6 @@ void QSensorBackend::newReadingAvailable()
     \fn QSensorBackend::stop()
 
     Stop reporting values.
-*/
-
-/*!
-    \fn QSensorBackend::poll()
-
-    Poll the sensor for a reading.
 */
 
 /*!
@@ -247,20 +237,6 @@ void QSensorBackend::setDataRates(const QSensor *otherSensor)
     }
     QSensorPrivate *d = m_sensor->d_func();
     d->availableDataRates = otherSensor->availableDataRates();
-}
-
-/*!
-    Notify the front end that the backend supports polling.
-
-    Note that this function should be called from the constructor so that the information
-    is available immediately.
-
-    \sa QSensor::supportsPolling
-*/
-void QSensorBackend::enablePolling()
-{
-    QSensorPrivate *d = m_sensor->d_func();
-    d->supportsPolling = true;
 }
 
 /*!

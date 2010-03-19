@@ -39,26 +39,28 @@
 **
 ****************************************************************************/
 
-#include "genericattitudesensor.h"
+#include "genericrotationsensor.h"
 #include <QDebug>
 #include <qmath.h>
 
 #define RADIANS_TO_DEGREES 57.2957795
 
-const char *genericattitudesensor::id("generic.attitude");
+const char *genericrotationsensor::id("generic.rotation");
 
-genericattitudesensor::genericattitudesensor(QSensor *sensor)
+genericrotationsensor::genericrotationsensor(QSensor *sensor)
     : QSensorBackend(sensor)
 {
     accelerometer = new QAccelerometer(this);
     accelerometer->addFilter(this);
     accelerometer->connect();
 
-    setReading<QAttitudeReading>(&m_reading);
+    setReading<QRotationReading>(&m_reading);
     setDataRates(accelerometer);
+
+    sensor->setProperty("hasZ", false);
 }
 
-void genericattitudesensor::start()
+void genericrotationsensor::start()
 {
     accelerometer->setUpdateInterval(sensor()->updateInterval());
     accelerometer->start();
@@ -68,17 +70,12 @@ void genericattitudesensor::start()
         sensorBusy();
 }
 
-void genericattitudesensor::stop()
+void genericrotationsensor::stop()
 {
     accelerometer->stop();
 }
 
-void genericattitudesensor::poll()
-{
-    accelerometer->poll();
-}
-
-bool genericattitudesensor::filter(QSensorReading *reading)
+bool genericrotationsensor::filter(QSensorReading *reading)
 {
     QAccelerometerReading *ar = qobject_cast<QAccelerometerReading*>(reading);
     qreal pitch = 0;
@@ -88,11 +85,19 @@ bool genericattitudesensor::filter(QSensorReading *reading)
     qreal y = ar->y();
     qreal z = ar->z();
 
+    // Note that the formula used come from this document:
+    // http://www.freescale.com/files/sensors/doc/app_note/AN3461.pdf
     pitch = qAtan(y / sqrt(x*x + z*z)) * RADIANS_TO_DEGREES;
     roll = qAtan(x / sqrt(y*y + z*z)) * RADIANS_TO_DEGREES;
-    qreal theta = qAtan(sqrt(x*x + y*y) / z) * RADIANS_TO_DEGREES;
+    // Roll is a left-handed rotation but we need right-handed rotation
+    roll = -roll;
 
-    // Getting roll to -180,180 range requires some extra maths
+    // We need to fix up roll to the (-180,180] range required.
+    // Check for negative theta values and apply an offset as required.
+    // Note that theta is defined as the angle of the Z axis relative
+    // to gravity (see referenced document). It's negative when the
+    // face of the device points downward.
+    qreal theta = qAtan(sqrt(x*x + y*y) / z) * RADIANS_TO_DEGREES;
     if (theta < 0) {
         if (roll > 0)
             roll = 180 - roll;
@@ -101,9 +106,9 @@ bool genericattitudesensor::filter(QSensorReading *reading)
     }
 
     m_reading.setTimestamp(ar->timestamp());
-    m_reading.setPitch(pitch);
-    m_reading.setRoll(roll);
-    m_reading.setYaw(0);
+    m_reading.setX(pitch);
+    m_reading.setY(roll);
+    m_reading.setZ(0);
     newReadingAvailable();
     return false;
 }

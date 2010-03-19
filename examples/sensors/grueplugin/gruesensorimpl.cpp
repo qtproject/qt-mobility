@@ -68,11 +68,6 @@ void gruesensorimpl::stop()
     lightSensor->stop();
 }
 
-void gruesensorimpl::poll()
-{
-    lightSensor->poll();
-}
-
 bool gruesensorimpl::filter(QAmbientLightReading *reading)
 {
     qreal chance;

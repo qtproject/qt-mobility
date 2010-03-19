@@ -79,11 +79,6 @@ class CSensorBackendSym : public CBase, public QSensorBackend, public MSensrvDat
         virtual void stop();
         
         /*
-         * poll is used to poll the sensor, it works only for QSensor::PolledUpdates policy
-         */
-        void poll();
-        
-        /*
          * Backend Destructor
          */
         ~CSensorBackendSym();

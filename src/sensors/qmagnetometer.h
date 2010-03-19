@@ -88,8 +88,7 @@ class Q_SENSORS_EXPORT QMagnetometer : public QSensor
     Q_PROPERTY(bool returnGeoValues)
 #endif
 public:
-    explicit QMagnetometer(QObject *parent = 0) : QSensor(parent)
-    { setType(QMagnetometer::type); }
+    explicit QMagnetometer(QObject *parent = 0) : QSensor(QMagnetometer::type, parent) {}
     virtual ~QMagnetometer() {}
     QMagnetometerReading *reading() const { return static_cast<QMagnetometerReading*>(QSensor::reading()); }
     static const char *type;

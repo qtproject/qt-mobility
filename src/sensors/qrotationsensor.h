@@ -39,34 +39,55 @@
 **
 ****************************************************************************/
 
-#ifndef GENERICATTITUDESENSOR_H
-#define GENERICATTITUDESENSOR_H
+#ifndef QROTATIONSENSOR_H
+#define QROTATIONSENSOR_H
 
-#include <qsensorbackend.h>
-#include <qattitudesensor.h>
-#include <qaccelerometer.h>
-#include <qmagnetometer.h>
+#include "qsensor.h"
 
-QTM_USE_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
-class genericattitudesensor : public QSensorBackend, public QSensorFilter
+class QRotationReadingPrivate;
+
+class Q_SENSORS_EXPORT QRotationReading : public QSensorReading
+{
+    Q_OBJECT
+    Q_PROPERTY(qreal x READ x)
+    Q_PROPERTY(qreal y READ y)
+    Q_PROPERTY(qreal z READ z)
+    DECLARE_READING(QRotationReading)
+public:
+    qreal x() const;
+    void setX(qreal x);
+
+    qreal y() const;
+    void setY(qreal y);
+
+    qreal z() const;
+    void setZ(qreal z);
+};
+
+class Q_SENSORS_EXPORT QRotationFilter : public QSensorFilter
 {
 public:
-    static const char *id;
-
-    genericattitudesensor(QSensor *sensor);
-
-    void start();
-    void stop();
-    void poll();
-
-    bool filter(QSensorReading *reading);
-
+    virtual bool filter(QRotationReading *reading) = 0;
 private:
-    QAttitudeReading m_reading;
-    QAccelerometer *accelerometer;
-    QMagnetometer *magnetometer;
+    bool filter(QSensorReading *reading) { return filter(static_cast<QRotationReading*>(reading)); }
 };
+
+class Q_SENSORS_EXPORT QRotationSensor : public QSensor
+{
+    Q_OBJECT
+#ifdef Q_QDOC
+    Q_PROPERTY(bool hasZ)
+#endif
+public:
+    explicit QRotationSensor(QObject *parent = 0) : QSensor(QRotationSensor::type, parent) {}
+    virtual ~QRotationSensor() {}
+    QRotationReading *reading() const { return static_cast<QRotationReading*>(QSensor::reading()); }
+    static const char *type;
+};
+
+QTM_END_NAMESPACE
 
 #endif
 

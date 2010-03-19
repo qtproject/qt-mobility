@@ -95,29 +95,7 @@ void CProximitySensorSym::RecvData(CSensrvChannel &aChannel)
         }
     // Get a lock on the reading data
     iBackendData.iReadingLock.Wait();    
-    //As Qt want proximity in qreal but symbian provides in enum
-    switch (iData.iProximityState)
-        {
-        // Indicates the object is away from sensor
-        case TSensrvProximityData::EProximityIndiscernible:
-            {
-            // Assuming threshold is 1 cm, as agreed with DS team.
-            iReading.setDistance(0.01);                
-            }
-            break;
-
-            // Indicates the object is near to the sensor
-        case TSensrvProximityData::EProximityDiscernible:
-            {
-            iReading.setDistance(0.0);
-            }
-            break;
-
-        default:
-            {
-            iReading.setDistance(-1.0);
-            }
-        }
+    iReading.setClose(iData.iProximityState == TSensrvProximityData::EProximityDiscernible);
     // Set the timestamp
     iReading.setTimestamp(iData.iTimeStamp.Int64());
     // Release the lock

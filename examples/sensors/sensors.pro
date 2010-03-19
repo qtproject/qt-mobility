@@ -2,7 +2,7 @@ TEMPLATE = subdirs
 
 include(../../common.pri)
 
-SUBDIRS += accel accel_perf
+SUBDIRS += accel
 
 contains(QT_CONFIG, declarative) {
     SUBDIRS += orientation

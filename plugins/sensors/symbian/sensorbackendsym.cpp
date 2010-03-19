@@ -199,11 +199,6 @@ CSensorBackendSym::CSensorBackendSym(QSensor *sensor):QSensorBackend(sensor)
     iBackendData.iDataListening = ETrue;
     // By default disabling Property listening
     iBackendData.iPropertyListening = EFalse;
-    // Setting polling to true
-    if(sensor)
-        {
-        enablePolling();
-        }
     }
 
 /*
@@ -263,22 +258,6 @@ void CSensorBackendSym::stop()
         {
         sensorError(err);
         }
-    }
-
-/*
- * poll is used to poll the sensor, it works only for QSensor::PolledUpdates policy
- */
-void CSensorBackendSym::poll()
-    {
-    TTime time;
-    //Getting a device time to update the timestamp of reading
-    time.HomeTime();
-    //Use synchronization mechanism and emit the reading value
-    // This is required to synchronize poll() and DataReceived
-    iBackendData.iReadingLock.Wait();    
-    sensor()->reading()->setTimestamp(time.Int64());
-    newReadingAvailable();
-    iBackendData.iReadingLock.Signal();
     }
 
 //Derived From MSensrvDataListener

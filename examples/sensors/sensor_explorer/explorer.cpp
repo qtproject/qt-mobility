@@ -79,8 +79,7 @@ void Explorer::loadSensors()
         foreach (const QByteArray &identifier, QSensor::sensorsForType(type)) {
             qDebug() << "Found identifier" << identifier;
             // Don't put in sensors we can't connect to
-            QSensor sensor;
-            sensor.setType(type);
+            QSensor sensor(type);
             sensor.setIdentifier(identifier);
             if (!sensor.connect()) {
                 qDebug() << "Couldn't connect to" << identifier;
@@ -127,9 +126,8 @@ void Explorer::on_sensors_currentItemChanged()
     QByteArray identifier = item->data(0, Qt::DisplayRole).toString().toLatin1();
 
     // Connect to the sensor so we can probe it
-    m_sensor = new QSensor(this);
+    m_sensor = new QSensor(type, this);
     connect(m_sensor, SIGNAL(readingChanged()), this, SLOT(sensor_changed()));
-    m_sensor->setType(type);
     m_sensor->setIdentifier(identifier);
     if (!m_sensor->connect()) {
         delete m_sensor;
@@ -263,8 +261,6 @@ void Explorer::loadSensorProperties()
     // We don't add all properties
     ui.sensorprops->setRowCount(rows - offset);
 
-    ui.poll->setEnabled(m_sensor->supportsPolling());
-
     ignoreItemChanged = false;
 }
 
@@ -358,12 +354,6 @@ void Explorer::on_stop_clicked()
 {
     m_sensor->stop();
     QTimer::singleShot(0, this, SLOT(loadSensorProperties()));
-}
-
-void Explorer::on_poll_clicked()
-{
-    m_sensor->poll();
-    sensor_changed();
 }
 
 void Explorer::sensor_changed()
