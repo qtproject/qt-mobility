@@ -71,7 +71,7 @@ public:
     QServiceFilter();
     ~QServiceFilter();
     QServiceFilter(const QServiceFilter& other);
-    QServiceFilter(const QString& interfaceName,
+    explicit QServiceFilter(const QString& interfaceName,
                    const QString& version = QString(),
                    QServiceFilter::VersionMatchRule rule = QServiceFilter::MinimumVersionMatch);
 

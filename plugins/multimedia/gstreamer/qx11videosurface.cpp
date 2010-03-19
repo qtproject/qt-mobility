@@ -162,6 +162,8 @@ WId QX11VideoSurface::winId() const
 
 void QX11VideoSurface::setWinId(WId id)
 {
+    //qDebug() << "setWinID:" << id;
+
     if (id == m_winId)
         return;
 
@@ -189,13 +191,18 @@ void QX11VideoSurface::setWinId(WId id)
         if (m_image) {
             m_image = 0;
 
-            if (!start(surfaceFormat()))
+            if (!start(surfaceFormat())) {
                 QAbstractVideoSurface::stop();
+                qWarning() << "Failed to start video surface with format" << surfaceFormat();
+            }
         }
-    } else if (m_image) {
-        m_image = 0;
+    } else {
+        qWarning() << "Failed to find XVideo port";
+        if (m_image) {
+            m_image = 0;
 
-        QAbstractVideoSurface::stop();
+            QAbstractVideoSurface::stop();
+        }
     }
 
     emit supportedFormatsChanged();
@@ -440,7 +447,13 @@ bool QX11VideoSurface::findPort()
     bool portFound = false;
 
     if (XvQueryAdaptors(QX11Info::display(), m_winId, &count, &adaptors) == Success) {
+#ifdef Q_WS_MAEMO_5
+            //the overlay xvideo adapter fails to switch winId,
+            //prefer the "SGX Textured Video" adapter instead
+        for (unsigned int i = count-1; i >=0 && !portFound; --i) {
+#else
         for (unsigned int i = 0; i < count && !portFound; ++i) {
+#endif
             if (adaptors[i].type & XvImageMask) {
                 m_portId = adaptors[i].base_id;
 

@@ -288,7 +288,6 @@ void CQMLBackendAO::requestUpdate(int aTimeout)
 {
     TPositionUpdateOptions  aPosOption;
 
-
     mPositioner.GetUpdateOptions(aPosOption);
 
     aPosOption.SetUpdateInterval(TTimeIntervalMicroSeconds(0));

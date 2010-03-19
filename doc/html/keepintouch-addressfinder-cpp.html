@@ -93,7 +93,7 @@
 
     QString simpleAddress(const QMessageAddress &amp;address)
     {
-        return simpleAddress(address.recipient());
+        return simpleAddress(address.addressee());
     }
 
     QString contactDisplayName(const QMessageAddress &amp;address)
@@ -115,14 +115,14 @@
         }
 
         QContactManager manager;
-        foreach (const QContactLocalId &amp;contactId, manager.contacts(filter)) {
+        foreach (const QContactLocalId &amp;contactId, manager.contactIds(filter)) {
             <span class="comment">// Any match is acceptable</span>
             const QContact &amp;contact(manager.contact(contactId));
             return contact.displayLabel();
         }
 
         <span class="comment">// We couldn't match anything, so return the original address</span>
-        return address.recipient();
+        return address.addressee();
     }
 
     }

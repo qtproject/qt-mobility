@@ -55,7 +55,11 @@
     ****************************************************************************/</span>
 
     #include &quot;publisherdialog.h&quot;
+    #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    #include &quot;ui_publisherdialog_hor.h&quot;
+    #else
     #include &quot;ui_publisherdialog.h&quot;
+    #endif
 
     #include &lt;qvaluespacepublisher.h&gt;
 

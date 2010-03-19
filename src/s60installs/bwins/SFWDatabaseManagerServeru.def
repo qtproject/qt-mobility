@@ -1,0 +1,65 @@
+EXPORTS
+	?metaObject@QAbstractSecuritySession@QtMobility@@UBEPBUQMetaObject@@XZ @ 1 NONAME ; struct QMetaObject const * QtMobility::QAbstractSecuritySession::metaObject(void) const
+	?staticMetaObject@QAbstractSecuritySession@QtMobility@@2UQMetaObject@@B @ 2 NONAME ; struct QMetaObject const QtMobility::QAbstractSecuritySession::staticMetaObject
+	?minorVersion@QServiceFilter@QtMobility@@QBEHXZ @ 3 NONAME ; int QtMobility::QServiceFilter::minorVersion(void) const
+	?uninstallService@QServicePluginInterface@QtMobility@@UAEXXZ @ 4 NONAME ; void QtMobility::QServicePluginInterface::uninstallService(void)
+	?qt_metacall@QAbstractSecuritySession@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 5 NONAME ; int QtMobility::QAbstractSecuritySession::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?getStaticMetaObject@QAbstractSecuritySession@QtMobility@@SAABUQMetaObject@@XZ @ 6 NONAME ; struct QMetaObject const & QtMobility::QAbstractSecuritySession::getStaticMetaObject(void)
+	?serviceName@QServiceInterfaceDescriptor@QtMobility@@QBE?AVQString@@XZ @ 7 NONAME ; class QString QtMobility::QServiceInterfaceDescriptor::serviceName(void) const
+	??8QServiceInterfaceDescriptor@QtMobility@@QBE_NABV01@@Z @ 8 NONAME ; bool QtMobility::QServiceInterfaceDescriptor::operator==(class QtMobility::QServiceInterfaceDescriptor const &) const
+	??0QServiceInterfaceDescriptor@QtMobility@@QAE@XZ @ 9 NONAME ; QtMobility::QServiceInterfaceDescriptor::QServiceInterfaceDescriptor(void)
+	??1QServicePluginInterface@QtMobility@@UAE@XZ @ 10 NONAME ; QtMobility::QServicePluginInterface::~QServicePluginInterface(void)
+	?customAttribute@QServiceInterfaceDescriptor@QtMobility@@QBE?AVQString@@ABV3@@Z @ 11 NONAME ; class QString QtMobility::QServiceInterfaceDescriptor::customAttribute(class QString const &) const
+	??5QtMobility@@YAAAVQDataStream@@AAV1@AAVQServiceFilter@0@@Z @ 12 NONAME ; class QDataStream & QtMobility::operator>>(class QDataStream &, class QtMobility::QServiceFilter &)
+	?tr@QAbstractSecuritySession@QtMobility@@SA?AVQString@@PBD0H@Z @ 13 NONAME ; class QString QtMobility::QAbstractSecuritySession::tr(char const *, char const *, int)
+	?interfaceName@QServiceFilter@QtMobility@@QBE?AVQString@@XZ @ 14 NONAME ; class QString QtMobility::QServiceFilter::interfaceName(void) const
+	?minorVersion@QServiceInterfaceDescriptor@QtMobility@@QBEHXZ @ 15 NONAME ; int QtMobility::QServiceInterfaceDescriptor::minorVersion(void) const
+	??0QServiceFilter@QtMobility@@QAE@XZ @ 16 NONAME ; QtMobility::QServiceFilter::QServiceFilter(void)
+	?versionMatchRule@QServiceFilter@QtMobility@@QBE?AW4VersionMatchRule@12@XZ @ 17 NONAME ; enum QtMobility::QServiceFilter::VersionMatchRule QtMobility::QServiceFilter::versionMatchRule(void) const
+	?setInterface@QServiceFilter@QtMobility@@QAEXABVQString@@0W4VersionMatchRule@12@@Z @ 18 NONAME ; void QtMobility::QServiceFilter::setInterface(class QString const &, class QString const &, enum QtMobility::QServiceFilter::VersionMatchRule)
+	?customAttribute@QServiceFilter@QtMobility@@QBE?AVQString@@ABV3@@Z @ 19 NONAME ; class QString QtMobility::QServiceFilter::customAttribute(class QString const &) const
+	??1QServiceFilter@QtMobility@@QAE@XZ @ 20 NONAME ; QtMobility::QServiceFilter::~QServiceFilter(void)
+	??_ECDatabaseManagerServer@QtMobility@@UAE@I@Z @ 21 NONAME ; QtMobility::CDatabaseManagerServer::~CDatabaseManagerServer(unsigned int)
+	??1CDatabaseManagerServer@QtMobility@@UAE@XZ @ 22 NONAME ; QtMobility::CDatabaseManagerServer::~CDatabaseManagerServer(void)
+	?setServiceName@QServiceFilter@QtMobility@@QAEXABVQString@@@Z @ 23 NONAME ; void QtMobility::QServiceFilter::setServiceName(class QString const &)
+	?setCapabilities@QServiceFilter@QtMobility@@QAEXW4CapabilityMatchRule@12@ABVQStringList@@@Z @ 24 NONAME ; void QtMobility::QServiceFilter::setCapabilities(enum QtMobility::QServiceFilter::CapabilityMatchRule, class QStringList const &)
+	?scope@QServiceInterfaceDescriptor@QtMobility@@QBE?AW4Scope@QService@2@XZ @ 25 NONAME ; enum QtMobility::QService::Scope QtMobility::QServiceInterfaceDescriptor::scope(void) const
+	?customAttributes@QServiceFilter@QtMobility@@QBE?AVQStringList@@XZ @ 26 NONAME ; class QStringList QtMobility::QServiceFilter::customAttributes(void) const
+	??1QServiceInterfaceDescriptor@QtMobility@@QAE@XZ @ 27 NONAME ; QtMobility::QServiceInterfaceDescriptor::~QServiceInterfaceDescriptor(void)
+	??4QServiceInterfaceDescriptor@QtMobility@@QAEAAV01@ABV01@@Z @ 28 NONAME ; class QtMobility::QServiceInterfaceDescriptor & QtMobility::QServiceInterfaceDescriptor::operator=(class QtMobility::QServiceInterfaceDescriptor const &)
+	?majorVersion@QServiceInterfaceDescriptor@QtMobility@@QBEHXZ @ 29 NONAME ; int QtMobility::QServiceInterfaceDescriptor::majorVersion(void) const
+	?isValid@QServiceInterfaceDescriptor@QtMobility@@QBE_NXZ @ 30 NONAME ; bool QtMobility::QServiceInterfaceDescriptor::isValid(void) const
+	??0QAbstractSecuritySession@QtMobility@@QAE@PAVQObject@@@Z @ 31 NONAME ; QtMobility::QAbstractSecuritySession::QAbstractSecuritySession(class QObject *)
+	??4QServiceFilter@QtMobility@@QAEAAV01@ABV01@@Z @ 32 NONAME ; class QtMobility::QServiceFilter & QtMobility::QServiceFilter::operator=(class QtMobility::QServiceFilter const &)
+	?interfaceName@QServiceInterfaceDescriptor@QtMobility@@QBE?AVQString@@XZ @ 33 NONAME ; class QString QtMobility::QServiceInterfaceDescriptor::interfaceName(void) const
+	??6QtMobility@@YAAAVQDataStream@@AAV1@ABVQServiceInterfaceDescriptor@0@@Z @ 34 NONAME ; class QDataStream & QtMobility::operator<<(class QDataStream &, class QtMobility::QServiceInterfaceDescriptor const &)
+	??9QServiceInterfaceDescriptor@QtMobility@@QBE_NABV01@@Z @ 35 NONAME ; bool QtMobility::QServiceInterfaceDescriptor::operator!=(class QtMobility::QServiceInterfaceDescriptor const &) const
+	??1QAbstractSecuritySession@QtMobility@@UAE@XZ @ 36 NONAME ; QtMobility::QAbstractSecuritySession::~QAbstractSecuritySession(void)
+	?installService@QServicePluginInterface@QtMobility@@UAEXXZ @ 37 NONAME ; void QtMobility::QServicePluginInterface::installService(void)
+	?DecreaseSessions@CDatabaseManagerServer@QtMobility@@QAEXXZ @ 38 NONAME ; void QtMobility::CDatabaseManagerServer::DecreaseSessions(void)
+	??0QServiceFilter@QtMobility@@QAE@ABVQString@@0W4VersionMatchRule@01@@Z @ 39 NONAME ; QtMobility::QServiceFilter::QServiceFilter(class QString const &, class QString const &, enum QtMobility::QServiceFilter::VersionMatchRule)
+	?IncreaseSessions@CDatabaseManagerServer@QtMobility@@QAEXXZ @ 40 NONAME ; void QtMobility::CDatabaseManagerServer::IncreaseSessions(void)
+	?attribute@QServiceInterfaceDescriptor@QtMobility@@QBE?AVQVariant@@W4Attribute@12@@Z @ 41 NONAME ; class QVariant QtMobility::QServiceInterfaceDescriptor::attribute(enum QtMobility::QServiceInterfaceDescriptor::Attribute) const
+	?tr@QAbstractSecuritySession@QtMobility@@SA?AVQString@@PBD0@Z @ 42 NONAME ; class QString QtMobility::QAbstractSecuritySession::tr(char const *, char const *)
+	??0QServicePluginInterface@QtMobility@@QAE@XZ @ 43 NONAME ; QtMobility::QServicePluginInterface::QServicePluginInterface(void)
+	?clearCustomAttribute@QServiceFilter@QtMobility@@QAEXABVQString@@@Z @ 44 NONAME ; void QtMobility::QServiceFilter::clearCustomAttribute(class QString const &)
+	?majorVersion@QServiceFilter@QtMobility@@QBEHXZ @ 45 NONAME ; int QtMobility::QServiceFilter::majorVersion(void) const
+	?trUtf8@QAbstractSecuritySession@QtMobility@@SA?AVQString@@PBD0@Z @ 46 NONAME ; class QString QtMobility::QAbstractSecuritySession::trUtf8(char const *, char const *)
+	??0QServiceInterfaceDescriptor@QtMobility@@QAE@ABV01@@Z @ 47 NONAME ; QtMobility::QServiceInterfaceDescriptor::QServiceInterfaceDescriptor(class QtMobility::QServiceInterfaceDescriptor const &)
+	??0CDatabaseManagerServer@QtMobility@@QAE@XZ @ 48 NONAME ; QtMobility::CDatabaseManagerServer::CDatabaseManagerServer(void)
+	?capabilityMatchRule@QServiceFilter@QtMobility@@QBE?AW4CapabilityMatchRule@12@XZ @ 49 NONAME ; enum QtMobility::QServiceFilter::CapabilityMatchRule QtMobility::QServiceFilter::capabilityMatchRule(void) const
+	??5QtMobility@@YAAAVQDataStream@@AAV1@AAVQServiceInterfaceDescriptor@0@@Z @ 50 NONAME ; class QDataStream & QtMobility::operator>>(class QDataStream &, class QtMobility::QServiceInterfaceDescriptor &)
+	??_EQServicePluginInterface@QtMobility@@UAE@I@Z @ 51 NONAME ; QtMobility::QServicePluginInterface::~QServicePluginInterface(unsigned int)
+	?capabilities@QServiceFilter@QtMobility@@QBE?AVQStringList@@XZ @ 52 NONAME ; class QStringList QtMobility::QServiceFilter::capabilities(void) const
+	?serviceName@QServiceFilter@QtMobility@@QBE?AVQString@@XZ @ 53 NONAME ; class QString QtMobility::QServiceFilter::serviceName(void) const
+	??0QServiceFilter@QtMobility@@QAE@ABV01@@Z @ 54 NONAME ; QtMobility::QServiceFilter::QServiceFilter(class QtMobility::QServiceFilter const &)
+	??6QtMobility@@YAAAVQDataStream@@AAV1@ABVQServiceFilter@0@@Z @ 55 NONAME ; class QDataStream & QtMobility::operator<<(class QDataStream &, class QtMobility::QServiceFilter const &)
+	??6QtMobility@@YA?AVQDebug@@V1@ABVQServiceInterfaceDescriptor@0@@Z @ 56 NONAME ; class QDebug QtMobility::operator<<(class QDebug, class QtMobility::QServiceInterfaceDescriptor const &)
+	??_EQAbstractSecuritySession@QtMobility@@UAE@I@Z @ 57 NONAME ; QtMobility::QAbstractSecuritySession::~QAbstractSecuritySession(unsigned int)
+	?trUtf8@QAbstractSecuritySession@QtMobility@@SA?AVQString@@PBD0H@Z @ 58 NONAME ; class QString QtMobility::QAbstractSecuritySession::trUtf8(char const *, char const *, int)
+	?qt_metacast@QAbstractSecuritySession@QtMobility@@UAEPAXPBD@Z @ 59 NONAME ; void * QtMobility::QAbstractSecuritySession::qt_metacast(char const *)
+	?NewSessionL@CDatabaseManagerServer@QtMobility@@UBEPAVCSession2@@ABVTVersion@@ABVRMessage2@@@Z @ 60 NONAME ; class CSession2 * QtMobility::CDatabaseManagerServer::NewSessionL(class TVersion const &, class RMessage2 const &) const
+	?PanicServer@CDatabaseManagerServer@QtMobility@@SAXW4TDatabaseManagerSerververPanic@@@Z @ 61 NONAME ; void QtMobility::CDatabaseManagerServer::PanicServer(enum TDatabaseManagerSerververPanic)
+	?setCustomAttribute@QServiceFilter@QtMobility@@QAEXABVQString@@0@Z @ 62 NONAME ; void QtMobility::QServiceFilter::setCustomAttribute(class QString const &, class QString const &)
+	?customAttributes@QServiceInterfaceDescriptor@QtMobility@@QBE?AVQStringList@@XZ @ 63 NONAME ; class QStringList QtMobility::QServiceInterfaceDescriptor::customAttributes(void) const
+

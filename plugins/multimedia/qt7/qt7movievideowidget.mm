@@ -217,7 +217,7 @@ bool QT7MovieVideoWidget::createVisualContext()
     NSOpenGLPixelFormat *nsglPixelFormat = [NSOpenGLView defaultPixelFormat];
     CGLPixelFormatObj cglPixelFormat = static_cast<CGLPixelFormatObj>([nsglPixelFormat CGLPixelFormatObj]);
 
-    CFTypeRef keys[] = { kQTVisualContextWorkingColorSpaceKey };
+    CFTypeRef keys[] = { kQTVisualContextOutputColorSpaceKey };
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CFDictionaryRef textureContextAttributes = CFDictionaryCreate(kCFAllocatorDefault,
                                                                   (const void **)keys,

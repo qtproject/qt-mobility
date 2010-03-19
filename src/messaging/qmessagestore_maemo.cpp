@@ -43,6 +43,7 @@
 #include "modestengine_maemo_p.h"
 #include "telepathyengine_maemo_p.h"
 #include "maemohelpers_p.h"
+#include "eventloggerengine_maemo_p.h"
 
 
 QTM_BEGIN_NAMESPACE
@@ -54,13 +55,14 @@ public:
         :d_ptr(d), q_ptr(q) {}
     QMessageStorePrivate *d_ptr;
     QMessageStore *q_ptr;
-    //...
+    EventLoggerEngine *el;
 };
 
 QMessageStorePrivate::QMessageStorePrivate()
     :q_ptr(0),
      p_ptr(0)
 {
+
 }
 
 QMessageStorePrivate::~QMessageStorePrivate()
@@ -68,10 +70,28 @@ QMessageStorePrivate::~QMessageStorePrivate()
 }
 
 void QMessageStorePrivate::initialize(QMessageStore *store)
-{
+{ 
     q_ptr = store;
     p_ptr = new QMessageStorePrivatePlatform(this, store);
+    p_ptr->el=new EventLoggerEngine();
 }
+
+void QMessageStorePrivate::messageNotification(QMessageStorePrivate::NotificationType type, const QMessageId& id,
+                                               const QMessageManager::NotificationFilterIdSet &matchingFilters)
+{
+    switch (type) {
+    case Added:
+        emit q_ptr->messageAdded(id, matchingFilters);
+        break;
+    case Updated:
+        emit q_ptr->messageUpdated(id, matchingFilters);
+        break;
+    case Removed:
+        emit q_ptr->messageRemoved(id, matchingFilters);
+        break;
+    }
+}
+
 
 Q_GLOBAL_STATIC(QMessageStorePrivate,data);
 
@@ -81,7 +101,9 @@ QMessageStore::QMessageStore(QObject *parent)
 {
     Q_ASSERT(d_ptr != 0);
     Q_ASSERT(d_ptr->q_ptr == 0); // QMessageStore should be singleton
-    d_ptr->initialize(this);
+    qDebug() << "QMessageStore::QMessageStore";
+ //   d_ptr->initialize(this);
+    qDebug() << "QMessageStore::QMessageStore exit";
 }
 
 QMessageStore::~QMessageStore()
@@ -125,11 +147,20 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
 
 QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &filter, const QMessageFolderSortOrder &sortOrder, uint limit, uint offset) const
 {
-    Q_UNUSED(filter)
-    Q_UNUSED(sortOrder)
-    Q_UNUSED(limit)
-    Q_UNUSED(offset)
-    return QMessageFolderIdList(); // stub
+    QMessageFolderIdList folderIds;
+
+    bool isFiltered = false;
+    bool isSorted = false;
+    folderIds = ModestEngine::instance()->queryFolders(filter, sortOrder, limit, offset, isFiltered, isSorted);
+    if (!isFiltered) {
+        MessagingHelper::filterFolders(folderIds, filter);
+    }
+    if (!isSorted) {
+        MessagingHelper::orderFolders(folderIds, sortOrder);
+    }
+    MessagingHelper::applyOffsetAndLimitToFolderIdList(folderIds, limit, offset);
+
+    return folderIds;
 }
 
 QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder, uint limit, uint offset) const
@@ -162,8 +193,11 @@ int QMessageStore::countMessages(const QMessageFilter& filter) const
 
 int QMessageStore::countFolders(const QMessageFolderFilter& filter) const
 {
-    Q_UNUSED(filter)
-    return 0; // stub
+    int count = 0;
+
+    count += ModestEngine::instance()->countFolders(filter);
+
+    return count;
 }
 
 int QMessageStore::countAccounts(const QMessageAccountFilter& filter) const
@@ -177,9 +211,11 @@ int QMessageStore::countAccounts(const QMessageAccountFilter& filter) const
 
 bool QMessageStore::removeMessage(const QMessageId& id, QMessageManager::RemovalOption option)
 {
-    Q_UNUSED(id)
-    Q_UNUSED(option)
-    return false; // stub
+    if (id.toString().startsWith("MO_")) {
+        return ModestEngine::instance()->removeMessage(id, option);
+    }
+
+    return false;
 }
 
 bool QMessageStore::removeMessages(const QMessageFilter& filter, QMessageManager::RemovalOption option)
@@ -203,32 +239,41 @@ bool QMessageStore::updateMessage(QMessage *m)
 
 QMessage QMessageStore::message(const QMessageId& id) const
 {
-    Q_UNUSED(id)
-    return QMessage(); // stub
+    if (id.toString().startsWith("MO_")) {
+        return ModestEngine::instance()->message(id);
+    } else {
+        return d_ptr->p_ptr->el->getMessage(id);
+    }
 }
 
 QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
 {
-    Q_UNUSED(id)
-    return QMessageFolder(); // stub
+    if (id.toString().startsWith("MO_")) {
+        return ModestEngine::instance()->folder(id);
+    }
+
+    return QMessageFolder();
 }
 
 QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
 {
-    QMessageAccount acc=ModestEngine::instance()->account(id);
-    if(acc.id()==id) return acc;
-    return  TelepathyEngine::instance()->account(id);
+    if (id.toString().startsWith("MO_")) {
+        return ModestEngine::instance()->account(id);
+    } else {
+        return  TelepathyEngine::instance()->account(id);
+    }
 }
 
 QMessageManager::NotificationFilterId QMessageStore::registerNotificationFilter(const QMessageFilter &filter)
 {
-    Q_UNUSED(filter)
-    return 0; // stub
+    QMessageManager::NotificationFilterId id = d_ptr->p_ptr->el->registerNotificationFilter(*d_ptr,filter);
+    return ModestEngine::instance()->registerNotificationFilter(*data(), filter, id);
 }
 
 void QMessageStore::unregisterNotificationFilter(QMessageManager::NotificationFilterId notificationFilterId)
 {
-    Q_UNUSED(notificationFilterId)
+    ModestEngine::instance()->unregisterNotificationFilter(notificationFilterId);
+    d_ptr->p_ptr->el->unregisterNotificationFilter( notificationFilterId);
 }
 
 

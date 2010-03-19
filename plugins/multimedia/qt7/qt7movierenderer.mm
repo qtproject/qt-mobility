@@ -233,7 +233,9 @@ bool QT7MovieRenderer::createPixelBufferVisualContext()
                                                                              &kCFTypeDictionaryKeyCallBacks,
                                                                              &kCFTypeDictionaryValueCallBacks);
     CFDictionarySetValue(visualContextOptions, kQTVisualContextPixelBufferAttributesKey, pixelBufferOptions);
+
     CFDictionarySetValue(visualContextOptions, kQTVisualContextWorkingColorSpaceKey, CGColorSpaceCreateDeviceRGB());
+    CFDictionarySetValue(visualContextOptions, kQTVisualContextOutputColorSpaceKey, CGColorSpaceCreateDeviceRGB());
 
     OSStatus err = QTPixelBufferContextCreate(kCFAllocatorDefault,
                                                visualContextOptions,

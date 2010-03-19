@@ -41,9 +41,6 @@
 
 #include "gconflayer_linux_p.h"
 #include <QVariant>
-#include <GConfItem>
-
-#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
@@ -52,6 +49,8 @@ QVALUESPACE_AUTO_INSTALL_LAYER(GConfLayer);
 
 GConfLayer::GConfLayer()
 {
+    GConfItem *gconfItem = new GConfItem("/", true, this);
+    connect(gconfItem, SIGNAL(subtreeChanged(const QString &, const QVariant &)), this, SLOT(notifyChanged(const QString &, const QVariant &)));
 }
 
 GConfLayer::~GConfLayer()
@@ -60,7 +59,7 @@ GConfLayer::~GConfLayer()
     while (i.hasNext()) {
         i.next();
 
-        removeHandle(Handle(i.value()));
+        doRemoveHandle(Handle(i.value()));
     }
 }
 
@@ -97,14 +96,21 @@ bool GConfLayer::startup(Type /*type*/)
 
 bool GConfLayer::value(Handle handle, QVariant *data)
 {
+    QMutexLocker locker(&m_mutex);
     GConfHandle *sh = gConfHandle(handle);
     if (!sh)
         return false;
 
-    return value(InvalidHandle, sh->path, data);
+    return getValue(InvalidHandle, sh->path, data);
 }
 
 bool GConfLayer::value(Handle handle, const QString &subPath, QVariant *data)
+{
+    QMutexLocker locker(&m_mutex);
+    return getValue(handle, subPath, data);
+}
+
+bool GConfLayer::getValue(Handle handle, const QString &subPath, QVariant *data)
 {
     if (handle != InvalidHandle && !gConfHandle(handle))
         return false;
@@ -127,7 +133,7 @@ bool GConfLayer::value(Handle handle, const QString &subPath, QVariant *data)
         value = path.mid(index + 1);
         path.truncate(index);
 
-        handle = item(handle, path);
+        handle = getItem(handle, path);
         createdHandle = true;
     }
 
@@ -136,64 +142,92 @@ bool GConfLayer::value(Handle handle, const QString &subPath, QVariant *data)
         return false;
 
     QString fullPath(sh->path);
-    if (fullPath != QLatin1String("/"))
+    if (fullPath != QLatin1String("/") && !value.isEmpty())
         fullPath.append(QLatin1Char('/'));
 
     fullPath.append(value);
 
-    qDebug() << "Read value from" << fullPath;
     GConfItem gconfItem(fullPath);
-    *data = gconfItem.value();
-    qDebug() << "*data = " << *data;
+    QVariant readValue = gconfItem.value();
+    switch (readValue.type()) {
+    case QVariant::Invalid:
+    case QVariant::Bool:
+    case QVariant::Int:
+    case QVariant::Double:
+    case QVariant::StringList:
+    case QVariant::List:
+        *data = readValue;
+        break;
+    case QVariant::String:
+    {
+        QString readString = readValue.toString();
+        QDataStream readStream(QByteArray::fromBase64(readString.toAscii()));
+        QVariant serializedValue;
+        readStream >> serializedValue;
+        if (serializedValue.isValid()) {
+            *data = serializedValue;
+        } else {
+            *data = readValue;
+        }
+        break;
+    }
+    default:
+        break;
+    }
 
     if (createdHandle)
-        removeHandle(handle);
-
+        doRemoveHandle(handle);
     return data->isValid();
 }
 
 QSet<QString> GConfLayer::children(Handle handle)
 {
+    QMutexLocker locker(&m_mutex);
+
     GConfHandle *sh = gConfHandle(handle);
     if (!sh)
         return QSet<QString>();
 
-    qDebug() << "Get children from" << sh->path;
     GConfItem gconfItem(sh->path);
 
     QSet<QString> ret;
-    foreach (QString child, gconfItem.listEntries() + gconfItem.listDirs()) {
-        int index = child.lastIndexOf(QLatin1Char('/'), -1);
+    foreach (const QString child, gconfItem.listEntries() + gconfItem.listDirs()) {
+        const int index = child.lastIndexOf(QLatin1Char('/'), -1);
         ret += child.mid(index + 1);
-        qDebug() << "found" << child.mid(index + 1);
     }
 
     return ret;
 }
 
-QAbstractValueSpaceLayer::Handle GConfLayer::item(Handle parent, const QString &path)
+QAbstractValueSpaceLayer::Handle GConfLayer::item(Handle parent, const QString &subPath)
+{
+    QMutexLocker locker(&m_mutex);
+    return getItem(parent, subPath);
+}
+
+QAbstractValueSpaceLayer::Handle GConfLayer::getItem(Handle parent, const QString &subPath)
 {
     QString fullPath;
 
     // Fail on invalid path.
-    if (path.isEmpty() || path.contains(QLatin1String("//")))
+    if (subPath.isEmpty() || subPath.contains(QLatin1String("//")))
         return InvalidHandle;
 
     if (parent == InvalidHandle) {
-        fullPath = path;
+        fullPath = subPath;
     } else {
         GConfHandle *sh = gConfHandle(parent);
         if (!sh)
             return InvalidHandle;
 
-        if (path == QLatin1String("/")) {
+        if (subPath == QLatin1String("/")) {
             fullPath = sh->path;
-        } else if (sh->path.endsWith(QLatin1Char('/')) && path.startsWith(QLatin1Char('/')))
-            fullPath = sh->path + path.mid(1);
-        else if (!sh->path.endsWith(QLatin1Char('/')) && !path.startsWith(QLatin1Char('/')))
-            fullPath = sh->path + QLatin1Char('/') + path;
+        } else if (sh->path.endsWith(QLatin1Char('/')) && subPath.startsWith(QLatin1Char('/')))
+            fullPath = sh->path + subPath.mid(1);
+        else if (!sh->path.endsWith(QLatin1Char('/')) && !subPath.startsWith(QLatin1Char('/')))
+            fullPath = sh->path + QLatin1Char('/') + subPath;
         else
-            fullPath = sh->path + path;
+            fullPath = sh->path + subPath;
     }
 
     if (m_handles.contains(fullPath)) {
@@ -211,19 +245,30 @@ QAbstractValueSpaceLayer::Handle GConfLayer::item(Handle parent, const QString &
 
 void GConfLayer::setProperty(Handle handle, Properties properties)
 {
+    QMutexLocker locker(&m_mutex);
+
     GConfHandle *sh = gConfHandle(handle);
     if (!sh)
         return;
-
-    if (properties & QAbstractValueSpaceLayer::Publish) {
-        qDebug() << "TODO: Start monitoring (child) items from" << sh->path;
-    } else {
-        qDebug() << "TODO: Stop monitoring (child) items from" << sh->path;
+    QString basePath = sh->path;
+    if (!basePath.endsWith(QLatin1Char('/'))) {
+        basePath += QLatin1Char('/');
     }
 
+    if (properties & QAbstractValueSpaceLayer::Publish) {
+        m_monitoringHandles.insert(sh);
+    } else {
+        m_monitoringHandles.remove(sh);
+    }
 }
 
 void GConfLayer::removeHandle(Handle handle)
+{
+    QMutexLocker locker(&m_mutex);
+    doRemoveHandle(handle);
+}
+
+void GConfLayer::doRemoveHandle(Handle handle)
 {
     GConfHandle *sh = gConfHandle(handle);
     if (!sh)
@@ -232,6 +277,7 @@ void GConfLayer::removeHandle(Handle handle)
     if (--sh->refCount)
         return;
 
+    m_monitoringHandles.remove(sh);
     m_handles.remove(sh->path);
 
     delete sh;
@@ -242,6 +288,8 @@ bool GConfLayer::setValue(QValueSpacePublisher */*creator*/,
                                     const QString &subPath,
                                     const QVariant &data)
 {
+    QMutexLocker locker(&m_mutex);
+
     GConfHandle *sh = gConfHandle(handle);
     if (!sh)
         return false;
@@ -265,7 +313,7 @@ bool GConfLayer::setValue(QValueSpacePublisher */*creator*/,
         if (path.isEmpty())
             path.append(QLatin1Char('/'));
 
-        sh = gConfHandle(item(Handle(sh), path));
+        sh = gConfHandle(getItem(Handle(sh), path));
         createdHandle = true;
     }
 
@@ -275,14 +323,29 @@ bool GConfLayer::setValue(QValueSpacePublisher */*creator*/,
 
     fullPath.append(value);
 
-
-    qDebug() << "Write value" << data << "to" << fullPath;
     GConfItem gconfItem(fullPath);
-    gconfItem.set(data);
+    switch (data.type()) {
+    case QVariant::Invalid:
+    case QVariant::Bool:
+    case QVariant::Int:
+    case QVariant::Double:
+    case QVariant::String:
+    case QVariant::StringList:
+    case QVariant::List:
+        gconfItem.set(data);
+        break;
+    default:
+        QByteArray byteArray;
+        QDataStream writeStream(&byteArray, QIODevice::WriteOnly);
+        writeStream << data;
+        QString serializedValue(byteArray.toBase64());
+        gconfItem.set(serializedValue);
+    }
 
     if (createdHandle)
-        removeHandle(Handle(sh));
-    return true;    //TODO: How to check whether set was ok?
+        doRemoveHandle(Handle(sh));
+
+    return true;
 }
 
 void GConfLayer::sync()
@@ -300,47 +363,31 @@ bool GConfLayer::removeValue(QValueSpacePublisher */*creator*/,
     Handle handle,
     const QString &subPath)
 {
+    QMutexLocker locker(&m_mutex);
+
+    QString fullPath;
+
     GConfHandle *sh = gConfHandle(handle);
     if (!sh)
         return false;
 
-    QString path(subPath);
-    while (path.endsWith(QLatin1Char('/')))
-        path.chop(1);
-
-    int index = path.lastIndexOf(QLatin1Char('/'), -1);
-
-    bool createdHandle = false;
-
-    QString value;
-    if (index == -1) {
-        value = path;
+    if (handle == InvalidHandle) {
+        fullPath = subPath;
     } else {
-        // want a value that is in a sub path under handle
-        value = path.mid(index + 1);
-        path.truncate(index);
-
-        if (path.isEmpty())
-            path.append(QLatin1Char('/'));
-
-        sh = gConfHandle(item(Handle(sh), path));
-        createdHandle = true;
+        if (subPath == QLatin1String("/"))
+            fullPath = sh->path;
+        else if (sh->path.endsWith(QLatin1Char('/')) && subPath.startsWith(QLatin1Char('/')))
+            fullPath = sh->path + subPath.mid(1);
+        else if (!sh->path.endsWith(QLatin1Char('/')) && !subPath.startsWith(QLatin1Char('/')))
+            fullPath = sh->path + QLatin1Char('/') + subPath;
+        else
+            fullPath = sh->path + subPath;
     }
 
-    QString fullPath(sh->path);
-    if (fullPath != QLatin1String("/"))
-        fullPath.append(QLatin1Char('/'));
-
-    fullPath.append(value);
-
-    qDebug() << "TODO: Remove value from" << fullPath;
     GConfItem gconfItem(fullPath);
     gconfItem.unset();
 
-    if (createdHandle)
-        removeHandle(Handle(sh));
-
-    return true;    //TODO: How to check whether unset was ok?
+    return true;
 }
 
 void GConfLayer::addWatch(QValueSpacePublisher *, Handle)
@@ -362,6 +409,15 @@ bool GConfLayer::notifyInterest(Handle, bool)
 {
     //Not needed
     return false;
+}
+
+void GConfLayer::notifyChanged(const QString &key, const QVariant & /*value*/)
+{
+    foreach (GConfHandle *handle, m_monitoringHandles.values()) {
+        if (key.startsWith(handle->path)) {
+            emit handleChanged(Handle(handle));
+        }
+    }
 }
 
 #include "moc_gconflayer_linux_p.cpp"

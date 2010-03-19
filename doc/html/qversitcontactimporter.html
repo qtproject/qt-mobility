@@ -35,61 +35,48 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QVersitContactImporter class creates QContacts from QVersitDocuments.</p>
-<p>A <a href="qversitresourcehandler.html">QVersitResourceHandler</a> is associated with the importer to supply the behaviour for saving files to persistent storage. By default, this is set to a QVersitDefaultResourceHandler, which does not save files to persistent storage. Note that although avatars found in vCards are not saved to disk by default, the importer does set the pixmap of the contact detail to the image. If a full-sized avatar image needs to be persisted, a custom <a href="qversitresourcehandler.html">QVersitResourceHandler</a> should be supplied which implements this.</p>
+<p>A <a href="qversitresourcehandler.html">QVersitResourceHandler</a> is associated with the importer to supply the behaviour for saving files to persistent storage. By default, this is set to a <a href="qversitdefaultresourcehandler.html">QVersitDefaultResourceHandler</a>, which does not save files to persistent storage. Note that although avatars found in vCards are not saved to disk by default, the importer does set the pixmap of the contact detail to the image. If a full-sized avatar image needs to be persisted, a custom <a href="qversitresourcehandler.html">QVersitResourceHandler</a> should be supplied which implements this.</p>
 <p>By associating a <a href="qversitcontactimporterpropertyhandler.html">QVersitContactImporterPropertyHandler</a> with the importer using <a href="qversitcontactimporter.html#setPropertyHandler">setPropertyHandler</a>(), the client can pass in a handler to override the processing of properties and/or handle properties that QVersitContactImporter doesn't support.</p>
+<p>An example property handler that logs unknown properties:</p>
 <pre>    class MyPropertyHandler : public QVersitContactImporterPropertyHandler {
     public:
        bool preProcessProperty(const QVersitDocument&amp; document, const QVersitProperty&amp; property,
                                int contactIndex, QContact* contact) {
+           Q_UNUSED(document) Q_UNUSED(property) Q_UNUSED(contactIndex) Q_UNUSED(contact)
            return false;
        }
        bool postProcessProperty(const QVersitDocument&amp; document, const QVersitProperty&amp; property,
                                 bool alreadyProcessed, int contactIndex, QContact* contact) {
+           Q_UNUSED(document) Q_UNUSED(contactIndex) Q_UNUSED(contact)
            if (!alreadyProcessed)
                mUnknownProperties.append(property);
            return false;
        }
        QList&lt;QVersitProperty&gt; mUnknownProperties;
-    };
+    };</pre>
+<p>An example usage of QVersitContactImporter</p>
+<pre>        QVersitContactImporter importer;
 
-    class MyResourceHandler : public QVersitResourceHandler {
-    public:
-       bool saveResource(const QByteArray&amp; contents, const QVersitProperty&amp; property,
-                         QString* location) {
-           *location = QString::number(qrand());
-           QFile file(*location);
-           file.open(QIODevice::WriteOnly);
-           file.write(contents);
-           return true;
-       }
-       bool loadResource(const QString&amp; location, QByteArray* contents, QString* mimeType)
-       {
-           return false;
-       }
-    }
+        MyPropertyHandler propertyHandler;
+        importer.setPropertyHandler(&amp;propertyHandler);
 
-    MyPropertyHandler propertyHandler;
-    importer.setPropertyHandler(&amp;propertyHandler);
-    MyResourceHandler resourceHandler;
-    importer.setResourceHandler(&amp;resourceHandler);
+        QVersitDocument document;
 
-    QVersitDocument document;
+        QVersitProperty property;
+        property.setName(QString::fromAscii(&quot;N&quot;));
+        property.setValue(&quot;Citizen;John;Q;;&quot;);
+        document.addProperty(property);
 
-    QVersitProperty property;
-    property.setName(QString::fromAscii(&quot;N&quot;));
-    property.setValue(&quot;Citizen;John;Q;;&quot;);
-    document.addProperty(property);
+        property.setName(QString::fromAscii(&quot;X-UNKNOWN-PROPERTY&quot;));
+        property.setValue(&quot;some value&quot;);
+        document.addProperty(property);
 
-    property.setName(QString::fromAscii(&quot;X-UNKNOWN-PROPERTY&quot;));
-    property.setValue(&quot;some value&quot;);
-    document.addProperty(property);
+        QList&lt;QVersitDocument&gt; list;
+        list.append(document);
 
-    QList&lt;QVersitDocument&gt; list;
-    list.append(document);
-
-    QList&lt;QContact&gt; contactList = importer.importContacts(list);
-<span class="comment">    // contactList.first() now contains the &quot;N&quot; property as a QContactName</span>
-<span class="comment">    // propertyHandler.mUnknownProperties contains the list of unknown properties</span></pre>
+        QList&lt;QContact&gt; contactList = importer.importContacts(list);
+        <span class="comment">// contactList.first() now contains the &quot;N&quot; property as a QContactName</span>
+        <span class="comment">// propertyHandler.mUnknownProperties contains the list of unknown properties</span></pre>
 <p>See also <a href="qversitdocument.html">QVersitDocument</a>, <a href="qversitreader.html">QVersitReader</a>, and <a href="qversitcontactimporterpropertyhandler.html">QVersitContactImporterPropertyHandler</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
@@ -104,7 +91,7 @@
 <p>Converts <i>documents</i> into a corresponding list of QContacts.</p>
 <a name="//apple_ref/cpp/instm/QVersitContactImporter/propertyHandler"></a>
 <h3 class="fn"><a name="propertyHandler"></a><a href="qversitcontactimporterpropertyhandler.html">QVersitContactImporterPropertyHandler</a> * QVersitContactImporter::propertyHandler () const</h3>
-<p>Gets the handler for processing QVersitProperties</p>
+<p>Gets the handler for processing QVersitProperties.</p>
 <p>See also <a href="qversitcontactimporter.html#setPropertyHandler">setPropertyHandler</a>().</p>
 <a name="//apple_ref/cpp/instm/QVersitContactImporter/resourceHandler"></a>
 <h3 class="fn"><a name="resourceHandler"></a><a href="qversitresourcehandler.html">QVersitResourceHandler</a> * QVersitContactImporter::resourceHandler () const</h3>
@@ -112,11 +99,13 @@
 <p>See also <a href="qversitcontactimporter.html#setResourceHandler">setResourceHandler</a>().</p>
 <a name="//apple_ref/cpp/instm/QVersitContactImporter/setPropertyHandler"></a>
 <h3 class="fn"><a name="setPropertyHandler"></a>void QVersitContactImporter::setPropertyHandler ( <a href="qversitcontactimporterpropertyhandler.html">QVersitContactImporterPropertyHandler</a> * <i>handler</i> )</h3>
-<p>Sets <i>handler</i> to be the handler for processing QVersitProperties</p>
+<p>Sets <i>handler</i> to be the handler for processing QVersitProperties, or 0 to have no handler.</p>
+<p>Does not take ownership of the handler. The client should ensure the handler remains valid for the lifetime of the exporter.</p>
 <p>See also <a href="qversitcontactimporter.html#propertyHandler">propertyHandler</a>().</p>
 <a name="//apple_ref/cpp/instm/QVersitContactImporter/setResourceHandler"></a>
 <h3 class="fn"><a name="setResourceHandler"></a>void QVersitContactImporter::setResourceHandler ( <a href="qversitresourcehandler.html">QVersitResourceHandler</a> * <i>handler</i> )</h3>
-<p>Sets <i>handler</i> to be the handler to save files with.</p>
+<p>Sets <i>handler</i> to be the handler to save files with, or 0 to have no handler.</p>
+<p>Does not take ownership of the handler. The client should ensure the handler remains valid for the lifetime of the exporter.</p>
 <p>See also <a href="qversitcontactimporter.html#resourceHandler">resourceHandler</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

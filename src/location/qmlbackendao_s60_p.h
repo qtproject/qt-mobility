@@ -129,6 +129,8 @@ private:
 
 private:
 
+    HPositionGenericInfo *mPosInfo;
+
     // Request is a device or a regular
     CQGeoPositionInfoSourceS60 *mRequester;
 
@@ -141,7 +143,6 @@ private:
     // Positioning Information
     RPositioner mPositioner;
 
-    HPositionGenericInfo *mPosInfo;
 
     TPositionSatelliteInfo mPosSatInfo;
 };

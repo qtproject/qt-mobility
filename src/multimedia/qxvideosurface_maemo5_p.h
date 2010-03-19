@@ -75,6 +75,8 @@ public:
     QList<QVideoFrame::PixelFormat> supportedPixelFormats(
             QAbstractVideoBuffer::HandleType handleType = QAbstractVideoBuffer::NoHandle) const;
 
+    QVideoFrame lastFrame() const { return m_lastFrame; }
+
 public slots:
     bool start(const QVideoSurfaceFormat &format);
     void stop();
@@ -95,7 +97,7 @@ private:
     QRect m_displayRect;
     QColor m_colorKey;
 
-    QVideoFrame lastFrame;
+    QVideoFrame m_lastFrame;
 
     bool findPort();
     void querySupportedFormats();

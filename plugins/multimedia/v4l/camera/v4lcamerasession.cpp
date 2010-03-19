@@ -39,9 +39,11 @@
 **
 ****************************************************************************/
 
+#include <QtGui/qwidget.h>
+#include <QtCore/qfile.h>
 #include <QtCore/qdebug.h>
-#include <QWidget>
-#include <QFile>
+#include <QtMultimedia/qabstractvideobuffer.h>
+#include <QtMultimedia/qvideosurfaceformat.h>
 
 #include <linux/types.h>
 #include <sys/time.h>
@@ -59,8 +61,6 @@
 #include "v4lvideorenderer.h"
 #include "v4lvideobuffer.h"
 
-#include <QtMultimedia/qabstractvideobuffer.h>
-#include <QtMultimedia/qvideosurfaceformat.h>
 
 V4LCameraSession::V4LCameraSession(QObject *parent)
     :QObject(parent)
@@ -498,7 +498,6 @@ void V4LCameraSession::record()
             if (m_surface->isFormatSupported(QVideoSurfaceFormat(m_windowSize,format))) {
                 // found a match, try to use it!
                 if(isFormatSupported(format)) {
-                    qWarning()<<"found a match "<<format;
                     match = true;
                     pixelF = format;
                     break;
@@ -520,7 +519,6 @@ void V4LCameraSession::record()
                     match = true;
                     converter = CameraFormatConverter::createFormatConverter(pixelF,m_windowSize.width(),
                             m_windowSize.height());
-                    qWarning()<<"found a converter match from: "<<pixelF<<" to RGB565";
                 }
             }
             if (!match) {
@@ -533,7 +531,6 @@ void V4LCameraSession::record()
                             match = true;
                             converter = CameraFormatConverter::createFormatConverter(pixelF,m_windowSize.width(),
                                     m_windowSize.height());
-                            qWarning()<<"fallback, convert from: "<<pixelF<<" to RGB565";
                             break;
                         }
                     }
@@ -721,7 +718,6 @@ void V4LCameraSession::captureFrame()
         qWarning()<<"error reading frame";
         return;
     }
-    //qWarning()<<"size: "<<buf.bytesused<<", time: "<<buf.timestamp.tv_sec;
 
     if(m_surface) {
         if(converter) {

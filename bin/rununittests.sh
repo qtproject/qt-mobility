@@ -77,14 +77,18 @@ cd $shell_path/../build/tests/bin
 ./tst_qgeosatelliteinfo
 ./tst_qgeosatelliteinfosource
 ./tst_qlocationutils
-./tst_qnmeapositioninfosource
+./tst_dummynmeapositioninfosource
+./tst_qnmeapositioninfosource_realtime
+./tst_qnmeapositioninfosource_realtime_generic
+./tst_qnmeapositioninfosource_simulation
+./tst_qnmeapositioninfosource_simulation_generic
 
 #Publish and Subscribe
 ./tst_qmallocpool
 ./tst_qpacket
 ./tst_qpacketprotocol
 ./tst_qvaluespace
-./tst_qvaluespaceprovider
+./tst_qvaluespacepublisher
 ./tst_qvaluespacesubscriber
 ./tst_qvaluespacesubscriber_oop
 ./tst_qsystemreadwritelock

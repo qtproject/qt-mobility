@@ -45,6 +45,7 @@
 
 QT_BEGIN_NAMESPACE
 class QDebug;
+class QDataStream;
 QT_END_NAMESPACE
 
 QT_BEGIN_HEADER
@@ -87,11 +88,20 @@ private:
 #ifndef QT_NO_DEBUG_STREAM
     friend Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QGeoSatelliteInfo &info);
 #endif
+#ifndef QT_NO_DATASTREAM
+    friend Q_LOCATION_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoSatelliteInfo &info);
+    friend Q_LOCATION_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoSatelliteInfo &info);
+#endif
     QGeoSatelliteInfoPrivate *d;
 };
 
 #ifndef QT_NO_DEBUG_STREAM
 Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QGeoSatelliteInfo &info);
+#endif
+
+#ifndef QT_NO_DATASTREAM
+Q_LOCATION_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoSatelliteInfo &info);
+Q_LOCATION_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoSatelliteInfo &info);
 #endif
 
 QTM_END_NAMESPACE

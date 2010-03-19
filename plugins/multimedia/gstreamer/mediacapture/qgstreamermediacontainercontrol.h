@@ -45,6 +45,9 @@
 
 #include <qmediacontainercontrol.h>
 #include <QtCore/qstringlist.h>
+#include <QtCore/qset.h>
+
+#include <gst/gst.h>
 
 QTM_USE_NAMESPACE
 
@@ -63,11 +66,16 @@ public:
 
     QByteArray formatElementName() const { return m_elementNames.value(containerMimeType()); }
 
+    QSet<QString> supportedStreamTypes(const QString &container) const;
+
+    static QSet<QString> supportedStreamTypes(GstElementFactory *factory, GstPadDirection direction);
+
 private:
     QString m_format;
     QStringList m_supportedContainers;
     QMap<QString,QByteArray> m_elementNames;
     QMap<QString, QString> m_containerDescriptions;
+    QMap<QString, QSet<QString> > m_streamTypes;
 };
 
 #endif // QGSTREAMERMEDIACONTAINERCONTROL_H

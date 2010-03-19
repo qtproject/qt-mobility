@@ -1,4 +1,5 @@
 TEMPLATE = app
+TARGET = lightmaps_with_location
 
 HEADERS = ../satellitedialog/satellitedialog.h \
             ../flickrdemo/connectivityhelper.h
