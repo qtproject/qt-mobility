@@ -69,7 +69,6 @@ public:
 #else
     Q_DECLARE_LATIN1_LITERAL(HasMember, "HasMember");
     Q_DECLARE_LATIN1_LITERAL(Aggregates, "Aggregates");
-    Q_DECLARE_LATIN1_LITERAL(Is, "IsSameAs"); // deprecated
     Q_DECLARE_LATIN1_LITERAL(IsSameAs, "IsSameAs");
     Q_DECLARE_LATIN1_LITERAL(HasAssistant, "HasAssistant");
     Q_DECLARE_LATIN1_LITERAL(HasManager, "HasManager");

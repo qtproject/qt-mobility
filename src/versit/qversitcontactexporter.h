@@ -90,8 +90,6 @@ public:
     void setResourceHandler(QVersitResourceHandler* handler);
     QVersitResourceHandler* resourceHandler() const;
 
-    QList<QVersitDocument> Q_DECL_DEPRECATED exportContacts(const QList<QContact>& contacts);
-
 private:
     QVersitContactExporterPrivate* d;
 };

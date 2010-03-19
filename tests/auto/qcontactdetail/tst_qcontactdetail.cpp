@@ -69,7 +69,6 @@ private slots:
     void templates();
     void contexts();
     void values();
-    void preferredActions();
     void hash();
     void traits();
 };
@@ -542,31 +541,6 @@ void tst_QContactDetail::values()
 
     /* Check removing a missing value */
     QVERIFY(!p.removeValue("does not exist"));
-}
-
-void tst_QContactDetail::preferredActions()
-{
-    QSKIP("tst_QContactDetail::preferredActions() This API is deprecated, skipping test!", SkipSingle);
-    // XXX TODO: remove this test when removing the Q_DECL_DEPRECATED functions from QCD.
-#if 0
-    QList<QContactActionDescriptor> prefs;
-    QContactActionDescriptor ad;
-    QContactDetail det;
-
-    ad.setActionName("test");
-    ad.setImplementationVersion(1);
-    ad.setVendorName("Nokia");
-
-    prefs.append(ad);
-
-    ad.setActionName("test-two");
-    ad.setImplementationVersion(1);
-    ad.setVendorName("Nokia");
-
-    prefs.append(ad);
-    det.setPreferredActions(prefs);
-    QVERIFY(det.preferredActions() == prefs);
-#endif
 }
 
 void tst_QContactDetail::hash()

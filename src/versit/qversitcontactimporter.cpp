@@ -240,12 +240,3 @@ QVersitResourceHandler* QVersitContactImporter::resourceHandler() const
 {
     return d->mResourceHandler;
 }
-
-// Deprecated:
-
-/*! \internal */
-QList<QContact> QVersitContactImporter::importContacts(const QList<QVersitDocument> &documents)
-{
-    importDocuments(documents);
-    return contacts();
-}

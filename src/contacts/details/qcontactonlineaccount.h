@@ -65,18 +65,6 @@ public:
     const char* SubTypeSipVoip;
     const char* SubTypeImpp;
     const char* SubTypeVideoShare;
-
-    // deprecated keys:
-    const char* FieldNickname;
-    const char* FieldStatusMessage;
-    const char* FieldPresence;
-    const char* PresenceAvailable;
-    const char* PresenceHidden;
-    const char* PresenceBusy;
-    const char* PresenceAway;
-    const char* PresenceExtendedAway;
-    const char* PresenceUnknown;
-    const char* PresenceOffline;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactOnlineAccount, "OnlineAccount")
     Q_DECLARE_LATIN1_LITERAL(FieldAccountUri, "AccountUri");
@@ -87,18 +75,6 @@ public:
     Q_DECLARE_LATIN1_LITERAL(SubTypeSipVoip, "SipVoip");
     Q_DECLARE_LATIN1_LITERAL(SubTypeImpp, "Impp");
     Q_DECLARE_LATIN1_LITERAL(SubTypeVideoShare, "VideoShare");
-
-    // deprecated keys:
-    Q_DECLARE_LATIN1_LITERAL(FieldNickname, "Nickname");
-    Q_DECLARE_LATIN1_LITERAL(FieldPresence, "Presence");
-    Q_DECLARE_LATIN1_LITERAL(FieldStatusMessage, "StatusMessage");
-    Q_DECLARE_LATIN1_LITERAL(PresenceAvailable, "Available");
-    Q_DECLARE_LATIN1_LITERAL(PresenceHidden, "Hidden");
-    Q_DECLARE_LATIN1_LITERAL(PresenceBusy, "Busy");
-    Q_DECLARE_LATIN1_LITERAL(PresenceAway, "Away");
-    Q_DECLARE_LATIN1_LITERAL(PresenceExtendedAway, "ExtendedAway");
-    Q_DECLARE_LATIN1_LITERAL(PresenceUnknown, "Unknown");
-    Q_DECLARE_LATIN1_LITERAL(PresenceOffline, "Offline");
 #endif
 
     void setAccountUri(const QString& accountUri) {setValue(FieldAccountUri, accountUri);}
@@ -113,14 +89,6 @@ public:
     void setSubTypes(const QStringList& subTypes) {setValue(FieldSubTypes, subTypes);}
     void setSubTypes(const QString& subType) {setValue(FieldSubTypes, QStringList(subType));}
     QStringList subTypes() const {return value<QStringList>(FieldSubTypes);}
-
-    // deprecated functions:
-    void Q_DECL_DEPRECATED setNickname(const QString& nickname);
-    QString Q_DECL_DEPRECATED nickname() const;
-    void Q_DECL_DEPRECATED setPresence(const QString& presence);
-    QString Q_DECL_DEPRECATED presence() const;
-    void Q_DECL_DEPRECATED setStatusMessage(const QString& statusMessage);
-    QString Q_DECL_DEPRECATED statusMessage() const;
 };
 
 QTM_END_NAMESPACE

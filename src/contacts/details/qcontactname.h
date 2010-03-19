@@ -57,9 +57,6 @@ public:
 #ifdef Q_QDOC
     const char* DefinitionName;
     const char* FieldPrefix;
-    const char* FieldFirst; // deprecated
-    const char* FieldMiddle;// deprecated
-    const char* FieldLast;  // deprecated
     const char* FieldFirstName;
     const char* FieldMiddleName;
     const char* FieldLastName;
@@ -68,9 +65,6 @@ public:
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactName, "Name")
     Q_DECLARE_LATIN1_LITERAL(FieldPrefix, "Prefix");
-    Q_DECLARE_LATIN1_LITERAL(FieldFirst, "FirstName");  // deprecated
-    Q_DECLARE_LATIN1_LITERAL(FieldMiddle, "MiddleName");// deprecated
-    Q_DECLARE_LATIN1_LITERAL(FieldLast, "LastName");    // deprecated
     Q_DECLARE_LATIN1_LITERAL(FieldFirstName, "FirstName");
     Q_DECLARE_LATIN1_LITERAL(FieldMiddleName, "MiddleName");
     Q_DECLARE_LATIN1_LITERAL(FieldLastName, "LastName");

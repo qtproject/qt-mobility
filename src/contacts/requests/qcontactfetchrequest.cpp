@@ -96,20 +96,6 @@ void QContactFetchRequest::setFetchHint(const QContactFetchHint &fetchHint)
     d->m_fetchHint = fetchHint;
 }
 
-/*!
-  \internal
-  Sets the list of allowable detail definition names to \a definitionNames.  Any contacts retrieved
-  by the request will have any details whose definition name is not on the restricted list
-  removed prior to being returned.
-  This function is deprecated and will be removed after the transition period has been elapsed.  Use setFetchHint() instead.
- */
-void QContactFetchRequest::setDefinitionRestrictions(const QStringList& definitionNames)
-{
-    //Q_D(QContactFetchRequest);
-    Q_UNUSED(definitionNames);
-    qWarning("QContactFetchRequest::setDefinitionRestrictions() This function is deprecated and will be removed once the transition period has elapsed.  Use setFetchHint() instead!");
-}
-
 /*! Returns the filter that will be used to select contacts to be returned */
 QContactFilter QContactFetchRequest::filter() const
 {
@@ -136,18 +122,6 @@ QContactFetchHint QContactFetchRequest::fetchHint() const
 {
     Q_D(const QContactFetchRequest);
     return d->m_fetchHint;
-}
-
-/*!
-  \internal
-  Returns the list of definition names which define which details contacts in the result list will be limited to.
-  This function is deprecated and will be removed after the transition period has been elapsed.  Use fetchHint() instead.
- */
-QStringList QContactFetchRequest::definitionRestrictions() const
-{
-    //Q_D(const QContactFetchRequest);
-    qWarning("QContactFetchRequest::definitionRestrictions() This function is deprecated and will be removed once the transition period has elapsed.  Use fetchHint() instead!");
-    return QStringList();
 }
 
 /*! Returns the list of contacts retrieved by this request */

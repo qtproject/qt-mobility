@@ -73,10 +73,6 @@ public:
     Q_DECLARE_LATIN1_LITERAL(FieldRole, "Role");
     Q_DECLARE_LATIN1_LITERAL(FieldTitle, "Title");
     Q_DECLARE_LATIN1_LITERAL(FieldAssistantName, "AssistantName");
-
-    // deprecated keys:
-    Q_DECLARE_LATIN1_LITERAL(FieldLogo, "Logo");
-
 #endif
 
     void setName(const QString& name) {setValue(FieldName, name);}
@@ -92,11 +88,7 @@ public:
     void setTitle(const QString& title) {setValue(FieldTitle, title);}
     QString title() const {return value(FieldTitle);}
     void setAssistantName(const QString& assistantName) {setValue(FieldAssistantName, assistantName);}
-    QString assistantName() const {return value(FieldAssistantName);} 
-
-    // old, deprecated API: to be removed after the transition period has elapsed.
-    void setLogo(const QString& logo) {setValue(FieldLogo, logo);}
-    QString logo() const {return value(FieldLogo);}
+    QString assistantName() const {return value(FieldAssistantName);}
 };
 
 QTM_END_NAMESPACE

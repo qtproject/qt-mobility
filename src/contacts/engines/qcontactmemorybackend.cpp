@@ -952,7 +952,6 @@ QList<QVariant::Type> QContactMemoryEngine::supportedDataTypes() const
 }
 
 /*!
- * This function is deprecated.  Use QContactManagerEngine::isFilterSupported() instead!
  * The function returns true if the backend natively supports the given filter \a filter, otherwise false.
  */
 bool QContactMemoryEngine::isFilterSupported(const QContactFilter& filter) const

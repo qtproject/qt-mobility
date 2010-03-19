@@ -262,28 +262,6 @@ QDebug operator<<(QDebug dbg, const QContactDetail& detail)
 }
 #endif
 
-/*!
- * \obsolete
- * Sets the preferred actions for this detail to be the given list of \a preferredActions.
- * This functionality may not be supported on all backends.
- * This function is deprecated and will be removed after the transition period has elapsed.
- */
-void QContactDetail::setPreferredActions(const QList<QContactActionDescriptor>& preferredActions)
-{
-    d->m_preferredActions = preferredActions;
-}
-
-/*!
- * \obsolete
- * Returns the list of preferred actions for this detail.
- * This functionality may not be supported on all backends.
- * This function is deprecated and will be removed after the transition period has elapsed.
- */
-QList<QContactActionDescriptor> QContactDetail::preferredActions() const
-{
-    return d->m_preferredActions;
-}
-
 /*! Returns true if no values are contained in this detail.  Note that context is stored as a value; hence, if a context is set, this function will return false. */
 bool QContactDetail::isEmpty() const
 {
