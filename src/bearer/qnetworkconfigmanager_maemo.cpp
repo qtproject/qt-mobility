@@ -302,7 +302,7 @@ void QNetworkConfigurationManagerPrivate::deleteConfiguration(QString& iap_id)
 
 
 uint32_t QNetworkConfigurationManagerPrivate::getNetworkAttrs(bool is_iap_id,
-							    QString& iap_id,
+                                const QString& iap_id,
 							    QString& iap_type,
 							    QString security_method)
 {
