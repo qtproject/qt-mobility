@@ -132,6 +132,7 @@ HEADERS += qaddress.h \
            qgeoengine.h \
            qgeolocation.h \
            qgeonetworkmanager.h \
+           qgeonetworkmanager_p.h \
            qgeoreply.h \
            qmaneuver.h \
            qmapellipse.h \
