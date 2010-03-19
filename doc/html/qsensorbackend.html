@@ -26,9 +26,7 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#addDataRate">addDataRate</a></b> ( qreal <i>min</i>, qreal <i>max</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#addOutputRange">addOutputRange</a></b> ( qreal <i>min</i>, qreal <i>max</i>, qreal <i>accuracy</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#enablePolling">enablePolling</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#newReadingAvailable">newReadingAvailable</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#poll">poll</a></b> () = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QSensorReading * </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#reading">reading</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QSensor * </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#sensor">sensor</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensorbackend.html#sensorBusy">sensorBusy</a></b> ()</td></tr>
@@ -70,17 +68,9 @@
 <p>Add an output range (consisting of <i>min</i>, <i>max</i> values and <i>accuracy</i>) for the sensor.</p>
 <p>Note that this function should be called from the constructor so that the information is available immediately.</p>
 <p>See also <a href="qsensor.html#outputRange-prop">QSensor::outputRange</a> and <a href="qsensor.html#outputRanges-prop">QSensor::outputRanges</a>.</p>
-<a name="//apple_ref/cpp/instm/QSensorBackend/enablePolling"></a>
-<h3 class="fn"><a name="enablePolling"></a>void QSensorBackend::enablePolling ()</h3>
-<p>Notify the front end that the backend supports polling.</p>
-<p>Note that this function should be called from the constructor so that the information is available immediately.</p>
-<p>See also <a href="qsensor.html#supportsPolling-prop">QSensor::supportsPolling</a>.</p>
 <a name="//apple_ref/cpp/instm/QSensorBackend/newReadingAvailable"></a>
 <h3 class="fn"><a name="newReadingAvailable"></a>void QSensorBackend::newReadingAvailable ()</h3>
 <p>Notify the <a href="qsensor.html">QSensor</a> class that a new reading is available.</p>
-<a name="//apple_ref/cpp/instm/QSensorBackend/poll"></a>
-<h3 class="fn"><a name="poll"></a>void QSensorBackend::poll ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Poll the sensor for a reading.</p>
 <a name="//apple_ref/cpp/instm/QSensorBackend/reading"></a>
 <h3 class="fn"><a name="reading"></a><a href="qsensorreading.html">QSensorReading</a> * QSensorBackend::reading () const</h3>
 <p>If the backend has lost its reference to the reading it can call this method to get the address.</p>

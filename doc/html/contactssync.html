@@ -107,8 +107,8 @@
 <p>Some plugins support arbitrary relationship types. Clients can define custom relationships between contacts saved in such plugins. Any plugin which supports arbitrary relationship types should report this functionality by reporting that it supports the <a href="qcontactmanager.html#ManagerFeature-enum">QContactManager::ArbitraryRelationshipTypes</a> feature.</p>
 <p>The API which provides the relationship manipulation functionality consists of:</p>
 <ul>
-<li>relationships(const <a href="qcontactid.html">QContactId</a>&amp; participantId, <a href="qcontactrelationshipfilter.html#Role-enum">QContactRelationshipFilter::Role</a> role = <a href="qcontactrelationshipfilter.html#Role-enum">QContactRelationshipFilter::Either</a>) const;</li>
-<li>relationships(const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>&amp; relationshipType = <a href="http://qt.nokia.com/doc/4.6/porting4.html">QString</a>(), const <a href="qcontactid.html">QContactId</a>&amp; participantId = QContactId(), <a href="qcontactrelationshipfilter.html#Role-enum">QContactRelationshipFilter::Role</a> role = <a href="qcontactrelationshipfilter.html#Role-enum">QContactRelationshipFilter::Either</a>) const;</li>
+<li>relationships(const <a href="qcontactid.html">QContactId</a>&amp; participantId, QContactRelationshipFilter::Role role = QContactRelationshipFilter::Either) const;</li>
+<li>relationships(const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>&amp; relationshipType = <a href="http://qt.nokia.com/doc/4.6/porting4.html">QString</a>(), const <a href="qcontactid.html">QContactId</a>&amp; participantId = QContactId(), QContactRelationshipFilter::Role role = QContactRelationshipFilter::Either) const;</li>
 <li>saveRelationship(<a href="qcontactrelationship.html">QContactRelationship</a>* relationship);</li>
 <li>saveRelationships(<a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt;* relationships);</li>
 <li>removeRelationship(const <a href="qcontactrelationship.html">QContactRelationship</a>&amp; relationship);</li>
