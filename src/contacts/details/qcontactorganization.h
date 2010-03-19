@@ -67,18 +67,22 @@ public:
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactOrganization, "Organization")
     Q_DECLARE_LATIN1_LITERAL(FieldName, "Name");
-    Q_DECLARE_LATIN1_LITERAL(FieldLogo, "Logo");
+    Q_DECLARE_LATIN1_LITERAL(FieldLogoUrl, "LogoUrl");
     Q_DECLARE_LATIN1_LITERAL(FieldDepartment, "Department");
     Q_DECLARE_LATIN1_LITERAL(FieldLocation, "Location");
     Q_DECLARE_LATIN1_LITERAL(FieldRole, "Role");
     Q_DECLARE_LATIN1_LITERAL(FieldTitle, "Title");
     Q_DECLARE_LATIN1_LITERAL(FieldAssistantName, "AssistantName");
+
+    // deprecated keys:
+    Q_DECLARE_LATIN1_LITERAL(FieldLogo, "Logo");
+
 #endif
 
     void setName(const QString& name) {setValue(FieldName, name);}
     QString name() const {return value(FieldName);}
-    void setLogo(const QUrl& logo) {setValue(FieldLogo, logo);}
-    QUrl logo() const {return value(FieldLogo);}
+    void setLogoUrl(const QUrl& logo) {setValue(FieldLogoUrl, logo);}
+    QUrl logoUrl() const {return value(FieldLogoUrl);}
     void setDepartment(const QStringList& department) {setValue(FieldDepartment, department);}
     QStringList department() const {return value<QStringList>(FieldDepartment);}
     void setLocation(const QString& location) {setValue(FieldLocation, location);}
@@ -89,6 +93,10 @@ public:
     QString title() const {return value(FieldTitle);}
     void setAssistantName(const QString& assistantName) {setValue(FieldAssistantName, assistantName);}
     QString assistantName() const {return value(FieldAssistantName);} 
+
+    // old, deprecated API: to be removed after the transition period has elapsed.
+    void setLogo(const QString& logo) {setValue(FieldLogo, logo);}
+    QString logo() const {return value(FieldLogo);}
 };
 
 QTM_END_NAMESPACE

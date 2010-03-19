@@ -830,7 +830,7 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     fields.insert(QContactOrganization::FieldLocation, f);
     fields.insert(QContactOrganization::FieldTitle, f);
     f.setDataType(QVariant::Url);
-    fields.insert(QContactOrganization::FieldLogo, f);
+    fields.insert(QContactOrganization::FieldLogoUrl, f);
     f.setDataType(QVariant::StringList);
     fields.insert(QContactOrganization::FieldDepartment, f);
     f.setAllowableValues(contexts);

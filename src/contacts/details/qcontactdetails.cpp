@@ -1081,10 +1081,21 @@ Q_DEFINE_LATIN1_LITERAL(QContactGeoLocation::FieldTimestamp, "Timestamp");
 Q_DEFINE_LATIN1_LITERAL(QContactOrganization::FieldName, "Name");
 
 /*!
+   \variable QContactOrganization::FieldLogoUrl
+
+   The constant key for which the logo url is stored in details
+   of the QContactOrganization type.
+ */
+Q_DEFINE_LATIN1_LITERAL(QContactOrganization::FieldLogoUrl, "LogoUrl");
+
+/*!
+   \deprecated
    \variable QContactOrganization::FieldLogo
 
    The constant key for which the logo path value is stored in details
    of the QContactOrganization type.
+
+   This field is deprecated and will be removed after the transition period has elapsed.
  */
 Q_DEFINE_LATIN1_LITERAL(QContactOrganization::FieldLogo, "Logo");
 
@@ -2199,11 +2210,23 @@ QString QContactOnlineAccount::statusMessage() const
  */
 
 /*!
-   \fn QContactOrganization::setLogo(const QUrl& logo)
+   \fn QContactOrganization::setLogoUrl(const QUrl& logo)
+   Sets the url of the logo of the organization stored in this detail to \a logo.
+ */
+
+/*!
+   \fn QContactOrganization::logoUrl() const
+   Returns the url of the logo of the organization stored in this detail.
+ */
+
+/*!
+   \deprecated
+   \fn QContactOrganization::setLogo(const QString& logo)
    Sets the logo of the organization stored in this detail to \a logo.
  */
 
 /*!
+   \deprecated
    \fn QContactOrganization::logo() const
    Returns the logo of the organization stored in this detail.
  */
