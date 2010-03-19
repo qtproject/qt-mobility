@@ -41,6 +41,10 @@
 #include "cnttransformavatar.h"
 #include "cntmodelextuids.h"
 
+// S60 specific contact field type containing image call object data
+#define KUidContactFieldCodImageValue 0x101F8841
+const TUid KUidContactFieldCodImage={KUidContactFieldCodImageValue};
+
 QList<CContactItemField *> CntTransformAvatar::transformDetailL(const QContactDetail &detail)
 {
     if(detail.definitionName() != QContactAvatar::DefinitionName)
@@ -48,73 +52,59 @@ QList<CContactItemField *> CntTransformAvatar::transformDetailL(const QContactDe
 
     QList<CContactItemField *> fieldList;
 
-	//cast to avatar
-	const QContactAvatar &avatar(static_cast<const QContactAvatar&>(detail));
+    //cast to avatar
+    const QContactAvatar &avatar(static_cast<const QContactAvatar&>(detail));
 
+    //create new field
+    TPtrC fieldText(reinterpret_cast<const TUint16*>(avatar.imageUrl().toString().utf16()));
 
-	//create new field
-	TPtrC fieldText(reinterpret_cast<const TUint16*>(avatar.avatar().utf16()));
+    //copy filename and replace slash with a backslash
+    TFileName filename;
+    for(TInt i(0); i < fieldText.Length(); ++i) {
+        if(i >= filename.MaxLength())
+            User::Leave(KErrTooBig);
+        if(fieldText[i] == '/') {
+            filename.Append('\\');
+        } else {
+            filename.Append(fieldText[i]);
+        }
+    }
 
-	if(fieldText.Length()) {
-	    //supported subTypes
-	    const QString& subTypeImage(QContactAvatar::SubTypeImage);
-	    const QString& subTypeAudioRingtone(QContactAvatar::SubTypeAudioRingtone);
-	    const QString& subTypeVideoRingtone(QContactAvatar::SubTypeVideoRingtone);
+    if(filename.Length()) {
+        const QString& subTypeImage(QContactAvatar::SubTypeImage);
 
-	    QString subType = avatar.subType();
-	    TUid uid(KNullUid);
-	    if(subType.isEmpty()) {
-            uid = KUidContactFieldCodImage;
-	    } else if (subType.compare(subTypeImage) == 0) {
-	        uid = KUidContactFieldCodImage;
-	    } else if (subType.compare(subTypeAudioRingtone) == 0) {
-	        uid = KUidContactFieldRingTone;
-	    } else if (subType.compare(subTypeVideoRingtone) == 0) {
-	        uid = KUidContactFieldVideoRingTone;
-	    } else {
-	        User::LeaveIfError(KErrNotSupported);
-	    }
-	    CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, uid);
+        TUid uid(KUidContactFieldCodImage);
 
-	    newField->SetMapping(KUidContactFieldVCardMapUnknown);
-	    newField->TextStorage()->SetTextL(fieldText);
+        CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, uid);
 
-	    fieldList.append(newField);
-	    CleanupStack::Pop(newField);
-	}
+        newField->SetMapping(KUidContactFieldVCardMapUnknown);
+        newField->TextStorage()->SetTextL(filename);
 
-	return fieldList;
+        fieldList.append(newField);
+        CleanupStack::Pop(newField);
+    }
+
+    return fieldList;
 }
 
 QContactDetail *CntTransformAvatar::transformItemField(const CContactItemField& field, const QContact &contact)
 {
-	Q_UNUSED(contact);
+    Q_UNUSED(contact);
+    QContactAvatar *avatar = new QContactAvatar();
 
-	QContactAvatar *avatar = new QContactAvatar();
-
-	CContactTextField* storage = field.TextStorage();
-	QString avatarString = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
-	avatar->setAvatar(avatarString);
-
-	if (field.ContentType().ContainsFieldType(KUidContactFieldCodImage)) {
-        avatar->setSubType(QContactAvatar::SubTypeImage);
-    }
-	else if (field.ContentType().ContainsFieldType(KUidContactFieldRingTone)) {
-        avatar->setSubType(QContactAvatar::SubTypeAudioRingtone);
-	}
-    else if (field.ContentType().ContainsFieldType(KUidContactFieldVideoRingTone)) {
-        avatar->setSubType(QContactAvatar::SubTypeVideoRingtone);
+    if (field.ContentType().ContainsFieldType(KUidContactFieldCodImage)) {
+        CContactTextField* storage = field.TextStorage();
+        QString avatarString = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
+        avatar->setImageUrl(QUrl(avatarString));
     }
 
-	return avatar;
+    return avatar;
 }
 
 bool CntTransformAvatar::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
-    if (fieldType == KUidContactFieldCodImage.iUid ||
-        fieldType == KUidContactFieldRingTone.iUid ||
-        fieldType == KUidContactFieldVideoRingTone.iUid) {
+    if (fieldType == KUidContactFieldCodImage.iUid)
         ret = true;
     }
     return ret;
@@ -158,20 +148,8 @@ bool CntTransformAvatar::supportsSubType(const QString& subType) const
  */
 quint32 CntTransformAvatar::getIdForField(const QString& fieldName) const
 {
-   if (QContactAvatar::FieldAvatar  == fieldName)
-        return 0;
-    else if (QContactAvatar::SubTypeImage == fieldName)
-        return 0;
-    else if (QContactAvatar::SubTypeVideo == fieldName)
-        return 0;
-    else if (QContactAvatar::SubTypeTexturedMesh == fieldName)
-        return 0;
-    else if (QContactAvatar::SubTypeAudioRingtone == fieldName)
-        return 0;
-    else if (QContactAvatar::SubTypeVideoRingtone == fieldName)
-        return 0;
-    else
-        return 0;
+    // XXX todo
+    return 0;
 }
 
 /*!
@@ -190,17 +168,8 @@ void CntTransformAvatar::detailDefinitions(QMap<QString, QContactDetailDefinitio
         QContactDetailDefinition d = definitions.value(QContactAvatar::DefinitionName);
         QMap<QString, QContactDetailFieldDefinition> fields = d.fields();
 
-        // Update sub-types
-        QContactDetailFieldDefinition f;
-        f.setDataType(QVariant::String); // only allowed to be a single subtype
-        f.setAllowableValues(QVariantList()
-                << QString(QLatin1String(QContactAvatar::SubTypeImage))
-                << QString(QLatin1String(QContactAvatar::SubTypeAudioRingtone))
-                << QString(QLatin1String(QContactAvatar::SubTypeVideoRingtone)));
-        fields.insert(QContactAvatar::FieldSubType, f);
-
-        // Context not supported in symbian back-end, remove
-        fields.remove(QContactAvatar::FieldContext);
+        // We only support imageUrl
+        fields.remove(QContactAvatar::FieldVideoUrl);
 
         d.setFields(fields);
         d.setUnique(true);
