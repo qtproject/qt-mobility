@@ -68,16 +68,16 @@ bool QGeocodingXmlParser::readRootElement(QGeocodingReply *output)
             if (m_reader->attributes().hasAttribute("resultCode")) {
                 QStringRef result = m_reader->attributes().value("resultCode");
                 if (result == "OK") {
-                    output->code = QGeocodingReply::OK;
+                    output->setResultCode(QGeocodingReply::OK);
                 } else if (result == "FAILED") {
-                    output->code = QGeocodingReply::Failed;
+                    output->setResultCode(QGeocodingReply::Failed);
                 } else {
                     m_reader->raiseError(QString("The attribute \"resultCode\" of the element \"places\" has an unknown value (value was %1).").arg(result.toString()));
                     return false;
                 }
             }
             if (m_reader->attributes().hasAttribute("resultDescription")) {
-                output->descr = m_reader->attributes().value("resultDescription").toString();
+                output->setResultDescription(m_reader->attributes().value("resultDescription").toString());
             }
 
             while (m_reader->readNextStartElement()) {
@@ -87,7 +87,7 @@ bool QGeocodingXmlParser::readRootElement(QGeocodingReply *output)
                     if (!readPlace(&location))
                         return false;
 
-                    output->plcs.append(location);
+                    output->addPlace(location);
                 } else {
                     m_reader->raiseError(QString("The element \"places\" did not expect a child element named \"%1\".").arg(m_reader->name().toString()));
                     return false;

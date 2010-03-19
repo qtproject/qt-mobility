@@ -127,6 +127,7 @@ maemo5 {
 HEADERS += qaddress.h \
            qalternativeaddress.h \
            qgeocodingreply.h \
+           qgeocodingreply_p.h \
            qgeocodingrequest.h \
            qgeocodingxmlparser.h \
            qgeoengine.h \

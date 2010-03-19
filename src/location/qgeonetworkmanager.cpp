@@ -403,7 +403,7 @@ void QGeoNetworkManager::netReplyFinished(QNetworkReply* reply)
         geoReply->fin = true;
 
         if (d->parseCodingReply(reply, geoReply)) {
-            if (geoReply->code == QGeocodingReply::Failed) {
+            if (geoReply->resultCode() == QGeocodingReply::Failed) {
                 emit error(geoReply, (QGeoReply::ErrorCode) QNetworkReply::ContentNotFoundError);
                 emit geoReply->error((QGeoReply::ErrorCode) QNetworkReply::ContentNotFoundError);
             } else {
@@ -411,7 +411,7 @@ void QGeoNetworkManager::netReplyFinished(QNetworkReply* reply)
                 emit geoReply->finished();
             }
         } else {
-            geoReply->code = QGeocodingReply::Failed;
+            geoReply->setResultCode(QGeocodingReply::Failed);
             emit error(geoReply, (QGeoReply::ErrorCode) QNetworkReply::UnknownContentError);
             emit geoReply->error((QGeoReply::ErrorCode) QNetworkReply::UnknownContentError);
         }
@@ -452,7 +452,7 @@ void QGeoNetworkManager::netReplyError(QNetworkReply::NetworkError code)
     } else if (senderType == "QtMobility::QGeocodingReply") {
         QGeocodingReply* geoReply = static_cast<QGeocodingReply*>(sgnSender);
         geoReply->fin = true;
-        geoReply->code = QGeocodingReply::Failed;
+        geoReply->setResultCode(QGeocodingReply::Failed);
 
         emit error(geoReply, (QGeoReply::ErrorCode) code);
         emit geoReply->error((QGeoReply::ErrorCode) code);
@@ -531,10 +531,10 @@ QList<MapScheme> QGeoNetworkManager::schemes() const {
  *****************************************************************************/
 
 QGeoNetworkManagerPrivate::QGeoNetworkManagerPrivate() :
+    netManager(),
     geocdProx(QNetworkProxy::NoProxy),
     rtProx(QNetworkProxy::NoProxy),
-    mapProx(QNetworkProxy::NoProxy),
-    netManager()
+    mapProx(QNetworkProxy::NoProxy)
 {
     geocdSrv = "dev-a7.bln.gate5.de";
     mapSrv = "dev-a7.bln.gate5.de";

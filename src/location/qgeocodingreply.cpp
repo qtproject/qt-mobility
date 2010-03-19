@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qgeocodingreply.h"
+#include "qgeocodingreply_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -65,34 +66,67 @@ QTM_BEGIN_NAMESPACE
 */
 
 QGeocodingReply::QGeocodingReply() 
+    : d_ptr(new QGeocodingReplyPrivate())
 {
 }
 
 /*!
     Returns the result code as reported by the geo engine.
 */
-QGeocodingReply::ResultCode QGeocodingReply::resultCode() const {
-    return code;
+QGeocodingReply::ResultCode QGeocodingReply::resultCode() const
+{
+    Q_D(const QGeocodingReply);
+    return d->code;
 }
+
+/*!
+    Sets the result code.
+*/
+void QGeocodingReply::setResultCode(QGeocodingReply::ResultCode result)
+{
+    Q_D(QGeocodingReply);
+    d->code = result;
+}
+
 /*!
     Returns a textual description of the result.
 */
-QString QGeocodingReply::resultDescription() const {
-    return descr;
+QString QGeocodingReply::resultDescription() const
+{
+    Q_D(const QGeocodingReply);
+    return d->descr;
+}
+
+/*!
+    Sets a textual description of the result.
+*/
+void QGeocodingReply::setResultDescription(QString resultDescription)
+{
+    Q_D(QGeocodingReply);
+    d->descr = resultDescription;    
 }
 /*!
     Returns the number of places found.
 */
-quint32 QGeocodingReply::count() const {
-    return plcs.length();
+quint32 QGeocodingReply::count() const
+{
+    Q_D(const QGeocodingReply);
+    return d->plcs.length();
 }
 /*!
     Returns a list of all places found.
 */
-QList<QGeoLocation> QGeocodingReply::places() const {
-    return plcs;
+QList<QGeoLocation> QGeocodingReply::places() const
+{
+    Q_D(const QGeocodingReply);
+    return d->plcs;
 }
-
+void QGeocodingReply::addPlace(QGeoLocation place)
+{
+    Q_D(QGeocodingReply);
+    d->plcs.append(place);
+}
+    
 #include "moc_qgeocodingreply.cpp"
 
 QTM_END_NAMESPACE

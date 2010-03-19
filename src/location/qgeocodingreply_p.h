@@ -39,51 +39,21 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_GEOCODINGREPLY_H
-#define QLOCATION_GEOCODINGREPLY_H
+#ifndef QLOCATION_GEOCODINGREPLY_P_H
+#define QLOCATION_GEOCODINGREPLY_P_H
 
-#include <QString>
-#include <QObject>
-
-#include "qgeolocation.h"
-#include "qaddress.h"
-#include "qgeoreply.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGeocodingReplyPrivate;
-class Q_LOCATION_EXPORT QGeocodingReply : public QGeoReply
+class QGeocodingReplyPrivate
 {
-    Q_OBJECT
-
-    friend class QGeoNetworkManager;
-    friend class QGeocodingXmlParser;
-
 public:
-    enum ResultCode {
-        OK = 0,
-        Failed
-    };
+    QGeocodingReplyPrivate(){};
 
-public:
-    ResultCode resultCode() const;
-    void setResultCode(ResultCode result);
-    QString resultDescription() const;
-    void setResultDescription(QString resultDescription);
-    quint32 count() const;
-    QList<QGeoLocation> places() const;
-    void addPlace(QGeoLocation place);
-    
-private:
-    Q_DISABLE_COPY(QGeocodingReply)
-
-    QGeocodingReply();
-
-private:
-    QGeocodingReplyPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QGeocodingReply)
+    QGeocodingReply::ResultCode code;
+    QString descr;
+    QList<QGeoLocation> plcs;
 };
-
 
 QTM_END_NAMESPACE
 
