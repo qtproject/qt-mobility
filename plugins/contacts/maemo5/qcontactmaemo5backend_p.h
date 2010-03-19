@@ -137,6 +137,13 @@ class QContactMaemo5Engine : public QContactManagerEngine
     bool isFilterSupported(const QContactFilter& filter) const;
     QList<QVariant::Type> supportedDataTypes() const;
 
+
+    // XXX TODO: FIXME - include some trampoline functions to access protected static members of QCME.
+    static QList<QContactLocalId> sortContactsTrampoline(const QList<QContact>& unsorted, const QList<QContactSortOrder>& sortOrders)
+    {
+        return QContactManagerEngine::sortContacts(unsorted, sortOrders);
+    }
+
   private:
     QSharedDataPointer<QContactMaemo5EngineData> d;
 };

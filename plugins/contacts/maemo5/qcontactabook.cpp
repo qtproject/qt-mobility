@@ -257,7 +257,7 @@ QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, c
     }
     
     // Non native sorting
-    return QContactManagerEngine::sortContacts(contacts, sortOrders);
+    return QContactMaemo5Engine::sortContactsTrampoline(contacts, sortOrders);
   }
   
   /* Matching action filter */
@@ -319,7 +319,7 @@ QContact* QContactABook::getQContact(const QContactLocalId& contactId, QContactM
   OssoABookContact* aContact = getAContact(contactId);
   if (!aContact) {
     qWarning() << "Unable to get a valid AContact";
-    error = QContactManager::DoesNotExistError;
+    *error = QContactManager::DoesNotExistError;
     return new QContact;
   }
   
@@ -627,7 +627,8 @@ QContact* QContactABook::convert(EContact *eContact) const
     detailList << address;
 
   /* Avatar */
-  detailList << getAvatarDetail(eContact);
+  detailList << getAvatarDetail(eContact); // XXX TODO: FIXME
+  detailList << getThumbnailDetail(eContact);
 
   /* BirthDay */
   detailList << getBirthdayDetail(eContact);
@@ -908,30 +909,34 @@ QList<QContactEmailAddress*> QContactABook::getEmailDetail(EContact *eContact) c
 
 QContactAvatar* QContactABook::getAvatarDetail(EContact *eContact) const
 {  
-  QContactAvatar* rtn = new QContactAvatar;
-  QVariantMap map;
+// XXX TODO: FIXME
+//  QContactAvatar* rtn = new QContactAvatar;
+//  QVariantMap map;
+//
+//  OssoABookContact *aContact = A_CONTACT(eContact);
+//  if (!aContact)
+//    return rtn;
+//
+//  //GdkPixbuf* pixbuf = osso_abook_contact_get_avatar_pixbuf(aContact, NULL, NULL);
+//  GdkPixbuf* pixbuf = osso_abook_avatar_get_image_rounded(OSSO_ABOOK_AVATAR(aContact), 64, 64, true, 4, NULL);
+//  if (!GDK_IS_PIXBUF(pixbuf)){
+//    FREE(pixbuf);
+//    return rtn;
+//  }
+//
+//  const uchar* bdata = (const uchar*)gdk_pixbuf_get_pixels(pixbuf);
+//  QSize bsize(gdk_pixbuf_get_width(pixbuf), gdk_pixbuf_get_height(pixbuf));
+//
+//  //Convert GdkPixbuf to QPixmap
+//  QImage converted(bdata, bsize.width(), bsize.height(), QImage::Format_ARGB32_Premultiplied);
+//  map[QContactAvatar::FieldPixmap] = QPixmap::fromImage(converted);
+//  g_object_unref(pixbuf);
+//  setDetailValues(map, rtn);
+//
+//  return rtn;
 
-  OssoABookContact *aContact = A_CONTACT(eContact);
-  if (!aContact)
-    return rtn;
-  
-  //GdkPixbuf* pixbuf = osso_abook_contact_get_avatar_pixbuf(aContact, NULL, NULL);
-  GdkPixbuf* pixbuf = osso_abook_avatar_get_image_rounded(OSSO_ABOOK_AVATAR(aContact), 64, 64, true, 4, NULL);
-  if (!GDK_IS_PIXBUF(pixbuf)){
-    FREE(pixbuf);
-    return rtn;
-  }
-  
-  const uchar* bdata = (const uchar*)gdk_pixbuf_get_pixels(pixbuf);
-  QSize bsize(gdk_pixbuf_get_width(pixbuf), gdk_pixbuf_get_height(pixbuf));
-      
-  //Convert GdkPixbuf to QPixmap
-  QImage converted(bdata, bsize.width(), bsize.height(), QImage::Format_ARGB32_Premultiplied);
-  map[QContactAvatar::FieldAvatarPixmap] = QPixmap::fromImage(converted);
-  g_object_unref(pixbuf);
-  setDetailValues(map, rtn);
-  
-  return rtn;
+    QContactAvatar* empty = new QContactAvatar;
+    return empty;
 }
 
 QContactBirthday* QContactABook::getBirthdayDetail(EContact *eContact) const
@@ -1199,6 +1204,34 @@ QContactTimestamp* QContactABook::getTimestampDetail(EContact *eContact) const
    return rtn;
 }
 
+QContactThumbnail* QContactABook::getThumbnailDetail(EContact *eContact) const
+{
+  QContactThumbnail* rtn = new QContactThumbnail;
+  QVariantMap map;
+
+  OssoABookContact *aContact = A_CONTACT(eContact);
+  if (!aContact)
+    return rtn;
+
+  //GdkPixbuf* pixbuf = osso_abook_contact_get_avatar_pixbuf(aContact, NULL, NULL);
+  GdkPixbuf* pixbuf = osso_abook_avatar_get_image_rounded(OSSO_ABOOK_AVATAR(aContact), 64, 64, true, 4, NULL);
+  if (!GDK_IS_PIXBUF(pixbuf)){
+    FREE(pixbuf);
+    return rtn;
+  }
+
+  const uchar* bdata = (const uchar*)gdk_pixbuf_get_pixels(pixbuf);
+  QSize bsize(gdk_pixbuf_get_width(pixbuf), gdk_pixbuf_get_height(pixbuf));
+
+  //Convert GdkPixbuf to QPixmap
+  QImage converted(bdata, bsize.width(), bsize.height(), QImage::Format_ARGB32_Premultiplied);
+  map[QContactThumbnail::FieldThumbnail] = converted;
+  g_object_unref(pixbuf);
+  setDetailValues(map, rtn);
+
+  return rtn;
+}
+
 QContactUrl* QContactABook::getUrlDetail(EContact *eContact) const
 {
    QContactUrl* rtn = new QContactUrl;
@@ -1377,6 +1410,9 @@ OssoABookContact* QContactABook::convert(const QContact *contact) const
     if (definitionName == QContactPhoneNumber::DefinitionName){
       setPhoneDetail(rtn, detail);
     } else
+    if (definitionName == QContactThumbnail::DefinitionName){
+      setThumbnailDetail(rtn, detail);
+    } else
     if (definitionName == QContactUrl::DefinitionName){
       setUrlDetail(rtn, detail);
     }
@@ -1463,25 +1499,47 @@ void QContactABook::setAddressDetail(const OssoABookContact* aContact, const QCo
   addAttributeToAContact(aContact, EVC_LABEL, lblAttrValues, EVC_TYPE, paramValues, true, detailUri);
 }
 
+void QContactABook::setThumbnailDetail(const OssoABookContact* aContact, const QContactThumbnail& detail) const
+{
+    if (!aContact) return;
+
+    EBook *book;
+    {
+      OssoABookRoster* roster = A_ROSTER(m_abookAgregator);
+      book = osso_abook_roster_get_book(roster);
+    }
+
+    QImage image = detail.thumbnail();
+    if (image.format() != QImage::Format_ARGB32_Premultiplied)
+        image = image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
+    GdkPixbuf *pixbuf = gdk_pixbuf_new_from_data(image.bits(), GDK_COLORSPACE_RGB,
+                                                 image.hasAlphaChannel(), 8,
+                                                 image.width(), image.height(),
+                                                 image.bytesPerLine(), 0, 0);
+    osso_abook_contact_set_pixbuf((OssoABookContact*)aContact, pixbuf, book, 0);
+    g_object_unref(pixbuf);
+}
+
 void QContactABook::setAvatarDetail(const OssoABookContact* aContact, const QContactAvatar& detail) const
 {
-  if (!aContact) return;
- 
-  EBook *book;
-  {
-    OssoABookRoster* roster = A_ROSTER(m_abookAgregator);
-    book = osso_abook_roster_get_book(roster);
-  }
-
-  QImage image = detail.pixmap().toImage();
-  if (image.format() != QImage::Format_ARGB32_Premultiplied)
-      image = image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
-  GdkPixbuf *pixbuf = gdk_pixbuf_new_from_data(image.bits(), GDK_COLORSPACE_RGB,
-                                               image.hasAlphaChannel(), 8,
-                                               image.width(), image.height(),
-                                               image.bytesPerLine(), 0, 0);
-  osso_abook_contact_set_pixbuf((OssoABookContact*)aContact, pixbuf, book, 0);
-  g_object_unref(pixbuf);
+// XXX TODO: FIXME
+//  if (!aContact) return;
+//
+//  EBook *book;
+//  {
+//    OssoABookRoster* roster = A_ROSTER(m_abookAgregator);
+//    book = osso_abook_roster_get_book(roster);
+//  }
+//
+//  QImage image = detail.pixmap().toImage();
+//  if (image.format() != QImage::Format_ARGB32_Premultiplied)
+//      image = image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
+//  GdkPixbuf *pixbuf = gdk_pixbuf_new_from_data(image.bits(), GDK_COLORSPACE_RGB,
+//                                               image.hasAlphaChannel(), 8,
+//                                               image.width(), image.height(),
+//                                               image.bytesPerLine(), 0, 0);
+//  osso_abook_contact_set_pixbuf((OssoABookContact*)aContact, pixbuf, book, 0);
+//  g_object_unref(pixbuf);
 }
 
 void QContactABook::setBirthdayDetail(const OssoABookContact* aContact, const QContactBirthday& detail) const
