@@ -1090,6 +1090,257 @@ void QGalleryItemRequest::setResponse(QGalleryAbstractResponse *response)
     emit itemsChanged();
 }
 
+class QGalleryCountRequestPrivate : public QGalleryAbstractRequestPrivate
+{
+    Q_DECLARE_PUBLIC(QGalleryCountRequest)
+public:
+    QGalleryCountRequestPrivate(QAbstractGallery *gallery)
+        : QGalleryAbstractRequestPrivate(gallery, QGalleryAbstractRequest::Count)
+        , count(0)
+        , live(false)
+    {
+    }
+
+    void _q_itemsChanged();
+
+    int count;
+    bool live;
+    QString itemType;
+    QGalleryFilter filter;
+};
+
+void QGalleryCountRequestPrivate::_q_itemsChanged()
+{
+    count = response->count();
+
+    emit q_func()->countChanged();
+}
+
+/*!
+    \class QGalleryCountRequest
+
+    \ingroup gallery
+    \ingroup gallery-requests
+
+    \brief The QGalleryCountRequest class provides a request for the number of
+    items in a gallery matching some criteria.
+*/
+
+/*!
+    Constructs a new gallery count request.
+
+    The \a parent is passed to QObject.
+*/
+
+QGalleryCountRequest::QGalleryCountRequest(QObject *parent)
+    : QGalleryAbstractRequest(*new QGalleryCountRequestPrivate(0), parent)
+{
+}
+
+/*!
+    Contructs a new count request for the given \a gallery.
+
+    The \a parent is passed to QObject.
+*/
+
+QGalleryCountRequest::QGalleryCountRequest(QAbstractGallery *gallery, QObject *parent)
+    : QGalleryAbstractRequest(*new QGalleryCountRequestPrivate(gallery), parent)
+{
+}
+
+/*!
+    Destroys a count request.
+*/
+
+QGalleryCountRequest::~QGalleryCountRequest()
+{
+}
+
+/*!
+    \property QGalleryCountRequest::live
+
+    \brief Whether a the results of a request should be updated after a request
+    has finished.
+
+    If this is true the request will go into the Idle state when the request has
+    finished rather than returning to Inactive.
+*/
+
+bool QGalleryCountRequest::isLive() const
+{
+    return d_func()->live;
+}
+
+void QGalleryCountRequest::setLive(bool live)
+{
+    d_func()->live = live;
+}
+
+/*!
+    \property QGalleryCountRequest::itemType
+
+    \brief The type of items a request should count.
+
+    If this is not set items of all types will be returned.  If no filter is
+    set the number items of this type will be returned.
+*/
+
+QString QGalleryCountRequest::itemType() const
+{
+    return d_func()->itemType;
+}
+
+void QGalleryCountRequest::setItemType(const QString &type)
+{
+    d_func()->itemType = type;
+}
+
+
+/*!
+    \property QGalleryCountRequest::filter
+
+    \brief A filter identifying the items a request should count.
+
+    If no filter is set the results of the request will be determined soley
+    by the \l itemType property.
+*/
+
+QGalleryFilter QGalleryCountRequest::filter() const
+{
+    return d_func()->filter;
+}
+
+void QGalleryCountRequest::setFilter(const QGalleryFilter &filter)
+{
+    Q_D(QGalleryCountRequest);
+
+    QGalleryFilter::Type oldType = d->filter.type();
+
+    d->filter = filter;
+
+    emit filterChanged();
+
+    switch (oldType) {
+    case QGalleryFilter::Container:
+        emit containerIdChanged();
+        break;
+    case QGalleryFilter::ContainerUrl:
+        emit containerUrlChanged();
+        break;
+    default:
+        break;
+    }
+
+    QGalleryFilter::Type newType = d->filter.type();
+
+    if (oldType != newType) {
+        switch (newType) {
+        case QGalleryFilter::Container:
+            emit containerIdChanged();
+            break;
+        case QGalleryFilter::ContainerUrl:
+            emit containerUrlChanged();
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+/*!
+    \fn QGalleryCountRequest::filterChanged()
+
+    Signals the \l filter property has changed.
+*/
+
+/*!
+    \property QGalleryCountRequest::containerId
+
+    \brief The ID of container item a count request should return the
+    contents of.
+
+    This is equivalent to setting a \l filter of type QGalleryContainerFilter.
+
+    If the current \l filter is not of type QGalleryContainerFilter this will be
+    null.
+
+*/
+
+QString QGalleryCountRequest::containerId() const
+{
+    return d_func()->filter.toContainerFilter().containerId();
+}
+
+void QGalleryCountRequest::setContainerId(const QString &id)
+{
+    setFilter(QGalleryContainerFilter(id));
+}
+
+/*!
+    \fn QGalleryCountRequest::containerIdChanged()
+
+    Signals that the \l containerId property has changed.
+*/
+
+/*!
+    \property QGalleryCountRequest::containerUrl
+
+    \brief The URL of container item a count request should return the
+    contents of.
+
+    This is equivalent to setting a \l filter of type
+    QGalleryContainerUrlFilter.
+
+    If the current \l filter is not of type QGalleryContainerUrlFilter this
+    will be null.
+
+*/
+
+QUrl QGalleryCountRequest::containerUrl() const
+{
+    return d_func()->filter.toContainerUrlFilter().containerUrl();
+}
+
+void QGalleryCountRequest::setContainerUrl(const QUrl &url)
+{
+    setFilter(QGalleryContainerUrlFilter(url));
+}
+
+/*!
+    \fn QGalleryCountRequest::containerUrlChanged()
+
+    Signals that the \l containerUrl property has changed.
+*/
+
+int QGalleryCountRequest::count() const
+{
+    return d_func()->count;
+}
+
+/*!
+    \fn QGalleryCountRequest::countChanged()
+*/
+
+void QGalleryCountRequest::setResponse(QGalleryAbstractResponse *response)
+{
+    Q_D(QGalleryCountRequest);
+
+    int count  = 0;
+
+    if (response) {
+        count = response->count();
+
+        connect(response, SIGNAL(inserted(int,int)), this, SLOT(_q_itemsChanged()));
+        connect(response, SIGNAL(removed(int,int)), this, SLOT(_q_itemsChanged()));
+    }
+
+    if (d->count != count) {
+        d->count = count;
+
+        emit countChanged();
+    }
+}
+
 class QGalleryInsertRequestPrivate : public QGalleryAbstractRequestPrivate
 {
 public:

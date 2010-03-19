@@ -85,12 +85,14 @@ public:
         NoGallery,
         NotSupported,
         ConnectionError,
+        InvalidFilter,
         RequestError = 100
     };
 
     enum Type
     {
         Item,
+        Count,
         Insert,
         Remove,
         Copy,
@@ -190,13 +192,7 @@ class Q_GALLERY_EXPORT QGalleryItemRequest : public QGalleryAbstractRequest
     Q_PROPERTY(QString containerId READ containerId WRITE setContainerId)
     Q_PROPERTY(QUrl containerUrl READ containerUrl WRITE setContainerUrl)
     Q_PROPERTY(QGalleryItemList* items READ items NOTIFY itemsChanged)
-    Q_ENUMS(Error)
 public:
-    enum Error
-    {
-        InvalidFilter = RequestError
-    };
-
     explicit QGalleryItemRequest(QObject *parent = 0);
     explicit QGalleryItemRequest(QAbstractGallery *gallery, QObject *parent = 0);
     ~QGalleryItemRequest();
@@ -249,6 +245,51 @@ Q_SIGNALS:
     void containerIdChanged();
     void containerUrlChanged();
     void itemsChanged();
+
+protected:
+    void setResponse(QGalleryAbstractResponse *response);
+};
+
+class QGalleryCountRequestPrivate;
+
+class Q_GALLERY_EXPORT QGalleryCountRequest : public QGalleryAbstractRequest
+{
+    Q_OBJECT
+    Q_DECLARE_PRIVATE(QGalleryCountRequest)
+    Q_PROPERTY(bool live READ isLive WRITE setLive)
+    Q_PROPERTY(QString itemType READ itemType WRITE setItemType)
+    Q_PROPERTY(QGalleryFilter filter READ filter WRITE setFilter NOTIFY filterChanged)
+    Q_PROPERTY(QString containerId READ containerId WRITE setContainerId)
+    Q_PROPERTY(QUrl containerUrl READ containerUrl WRITE setContainerUrl)
+    Q_PROPERTY(int count READ count NOTIFY countChanged)
+    Q_ENUMS(Error)
+public:
+    explicit QGalleryCountRequest(QObject *parent = 0);
+    explicit QGalleryCountRequest(QAbstractGallery *gallery, QObject *parent = 0);
+    ~QGalleryCountRequest();
+
+    bool isLive() const;
+    void setLive(bool live);
+
+    QString itemType() const;
+    void setItemType(const QString &type);
+
+    QGalleryFilter filter() const;
+    void setFilter(const QGalleryFilter &filter);
+
+    QString containerId() const;
+    void setContainerId(const QString &id);
+
+    QUrl containerUrl() const;
+    void setContainerUrl(const QUrl &url);
+
+    int count() const;
+
+Q_SIGNALS:
+    void filterChanged();
+    void containerIdChanged();
+    void containerUrlChanged();
+    void countChanged();
 
 protected:
     void setResponse(QGalleryAbstractResponse *response);
