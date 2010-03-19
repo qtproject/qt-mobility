@@ -71,6 +71,7 @@ CntRelationship::~CntRelationship()
 {
     QMap<QString, CntAbstractRelationship *>::iterator itr;
 
+    /* XXX maybe use qDeleteAll? */
     for (itr = m_relationshipMap.begin(); itr != m_relationshipMap.end(); ++itr)
     {
         CntAbstractRelationship* value = itr.value();
@@ -80,18 +81,21 @@ CntRelationship::~CntRelationship()
 }
 
 /*!
- * \return The supported relationship types.
+ * \return whether relationships of type \a relationshipType is supported by contacts of \a contactType
  */
-QStringList CntRelationship::supportedRelationshipTypes(const QString &contactType) const
+bool CntRelationship::isRelationshipTypeSupported(const QString &relationshipType, const QString &contactType) const
 {
     Q_UNUSED(contactType);
-    
+    return m_relationshipMap.contains(relationshipType);
+
+    /* XXX Old code:
     QStringList supportedTypes;
 
     foreach(const QString& type, m_relationshipMap.keys()) {
         supportedTypes.append(type);
     }
     return supportedTypes;
+    */
 }
 
 /* !
@@ -184,7 +188,7 @@ bool CntRelationship::saveRelationship(QSet<QContactLocalId> *affectedContactIds
         CntAbstractRelationship *abstractRelationship = m_relationshipMap.value(relationship->relationshipType());
     
         //save the relationship
-        TRAPD(symbianError, returnValue = abstractRelationship->saveRelationshipL(affectedContactIds, relationship, error));
+        TRAPD(symbianError, returnValue = abstractRelationship->saveRelationshipL(affectedContactIds, relationship, *error));
     
         //if symbian error translate it into a qt error
         if (symbianError != KErrNone){
@@ -200,24 +204,31 @@ bool CntRelationship::saveRelationship(QSet<QContactLocalId> *affectedContactIds
  *
  * \a affectedContactIds will include the affected contact ids
  * \a relationships to be saved
- * \return a list of errors
+ * \a errorMap storage place for errors
+ * \return true if there were no errors saving
  */
-QList<QContactManager::Error> CntRelationship::saveRelationships(QSet<QContactLocalId> *affectedContactIds, QList<QContactRelationship>* relationships, QContactManager::Error* error)
+bool CntRelationship::saveRelationships(QSet<QContactLocalId> *affectedContactIds, QList<QContactRelationship>* relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
 {
-    QList<QContactManager::Error> returnValue;
-    *error = QContactManager::NoError;
     QContactManager::Error singleError;    
+    bool returnValue(true);
+
+    *error = QContactManager::NoError;
 
     // loop through the relationships
     for (int i = 0; i < relationships->count(); i++)
     {
         // save the relationship
-        saveRelationship(affectedContactIds, &(relationships->operator[](i)), singleError);
-        returnValue.append(singleError);
+        saveRelationship(affectedContactIds, &(relationships->operator[](i)), &singleError);
+        if (errorMap && singleError != QContactManager::NoError) {
+            errorMap->insert(i, singleError);
+        }
         
         // update the total error
-        if (singleError != QContactManager::NoError)
+        if (singleError != QContactManager::NoError) {
             *error = singleError;
+            returnValue = false;
+        }
+
     }
 
     return returnValue;
@@ -240,7 +251,7 @@ bool CntRelationship::removeRelationship(QSet<QContactLocalId> *affectedContactI
         //get the relationship
         CntAbstractRelationship *abstractRelationship = m_relationshipMap.value(relationship.relationshipType());
 
-        TRAPD(symbianError, returnValue = abstractRelationship->removeRelationshipL(affectedContactIds, relationship, error));
+        TRAPD(symbianError, returnValue = abstractRelationship->removeRelationshipL(affectedContactIds, relationship, *error));
 
         //if symbian error translate it into a qt error
         if (symbianError != KErrNone){
@@ -256,11 +267,12 @@ bool CntRelationship::removeRelationship(QSet<QContactLocalId> *affectedContactI
  *
  * \a affectedContactIds will include the affected contact ids
  * \a relationships to be removed
- * \return a list of errors
+ * \a errorMap storage place for errors
+ * \return true if there were no errors removing, false otherwise
  */
-QList<QContactManager::Error> CntRelationship::removeRelationships(QSet<QContactLocalId> *affectedContactIds, const QList<QContactRelationship>& relationships, QContactManager::Error* error)
+bool CntRelationship::removeRelationships(QSet<QContactLocalId> *affectedContactIds, const QList<QContactRelationship>& relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
 {
-    QList<QContactManager::Error> returnValue;
+    bool returnValue(true);
     *error = QContactManager::NoError;
     QContactManager::Error qtError(QContactManager::NoError);
 
@@ -268,12 +280,15 @@ QList<QContactManager::Error> CntRelationship::removeRelationships(QSet<QContact
     for(int i = 0; i < relationships.count(); i++)
     {
         //remove the relationships
-        removeRelationship(affectedContactIds, relationships.at(i), qtError);
-        returnValue.append(qtError);
+        removeRelationship(affectedContactIds, relationships.at(i), &qtError);
+        if (errorMap && qtError != QContactManager::NoError)
+            errorMap->insert(i, qtError);
         
         // update the total error
-        if (qtError != QContactManager::NoError)
+        if (qtError != QContactManager::NoError) {
+            returnValue = false;
             *error = qtError;
+        }
     }
     return returnValue;
 }

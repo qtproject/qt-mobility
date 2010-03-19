@@ -117,11 +117,6 @@ CntSymbianEngine::~CntSymbianEngine()
     delete m_displayLabel;
 }
 
-void CntSymbianEngine::deref()
-{
-    delete this;
-}
-
 /*!
  * Returns a list of the ids of contacts that match the supplied \a filter, sorted according to the given \a sortOrders.
  * Any error that occurs will be stored in \a error. Uses either the Symbian backend native filtering or in case of an
@@ -680,9 +675,9 @@ bool CntSymbianEngine::removeContacts(const QList<QContactLocalId>& contactIds, 
 
 /* relationships */
 
-QStringList CntSymbianEngine::supportedRelationshipTypes(const QString& contactType) const
+bool CntSymbianEngine::isRelationshipTypeSupported(const QString &relationshipType, const QString &contactType) const
 {
-    return m_relationship->supportedRelationshipTypes(contactType);
+    return m_relationship->isRelationshipTypeSupported(relationshipType, contactType);
 }
 
 QList<QContactRelationship> CntSymbianEngine::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationship::Role role, QContactManager::Error* error) const
@@ -710,14 +705,14 @@ bool CntSymbianEngine::saveRelationship(QContactRelationship* relationship, QCon
     return returnValue;
 }
 
-QList<QContactManager::Error> CntSymbianEngine::saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error* error)
+bool CntSymbianEngine::saveRelationships(QList<QContactRelationship>* relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
 {
     //affected contacts
     QContactChangeSet changeSet;
 
     //save the relationships
     QSet<QContactLocalId> affectedContactIds;
-    QList<QContactManager::Error> returnValue = m_relationship->saveRelationships(&affectedContactIds, relationships, error);
+    bool returnValue = m_relationship->saveRelationships(&affectedContactIds, relationships, errorMap, error);
     changeSet.insertAddedRelationshipsContacts(affectedContactIds.toList());
 
     //add contacts to the list that shouldn't be emitted
@@ -748,14 +743,14 @@ bool CntSymbianEngine::removeRelationship(const QContactRelationship& relationsh
     return returnValue;
 }
 
-QList<QContactManager::Error> CntSymbianEngine::removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error* error)
+bool CntSymbianEngine::removeRelationships(const QList<QContactRelationship>& relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
 {
     //affected contacts
     QContactChangeSet changeSet;
 
     //remove the relationships
     QSet<QContactLocalId> affectedContactIds;
-    QList<QContactManager::Error> returnValue = m_relationship->removeRelationships(&affectedContactIds, relationships, error);
+    bool returnValue = m_relationship->removeRelationships(&affectedContactIds, relationships, errorMap, error);
     changeSet.insertRemovedRelationshipsContacts(affectedContactIds.toList());
 
     //add contacts to the list that shouldn't be emitted
