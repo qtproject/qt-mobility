@@ -331,20 +331,22 @@ quint32 CntTransformOnlineAccount::encodePresence(QString aPresence)
  */
 QString CntTransformOnlineAccount::decodePresence(quint32 aPresence)
 {
-    if (CntTransformOnlineAccount::EPresenceAvailable  == aPresence)
-        return QContactPresence::PresenceAvailable;
-    else if (CntTransformOnlineAccount::EPresenceHidden == aPresence)
-        return QContactPresence::PresenceHidden;
-    else if (CntTransformOnlineAccount::EPresenceBusy == aPresence)
-        return QContactPresence::PresenceBusy;
-    else if ( CntTransformOnlineAccount::EPresenceAway == aPresence)
-        return QContactPresence::PresenceAway;
-    else if ( CntTransformOnlineAccount::EPresenceExtendedAway == aPresence)
-        return QContactPresence::PresenceExtendedAway;
-    else if ( CntTransformOnlineAccount::EPresenceUnknown == aPresence)
-        return QContactPresence::PresenceUnknown;
-    else
-        return QContactPresence::PresenceOffline;
+    //FIXME:presence
+//    if (CntTransformOnlineAccount::EPresenceAvailable  == aPresence)
+//        return QContactPresence::PresenceAvailable;
+//    else if (CntTransformOnlineAccount::EPresenceHidden == aPresence)
+//        return QContactPresence::PresenceHidden;
+//    else if (CntTransformOnlineAccount::EPresenceBusy == aPresence)
+//        return QContactPresence::PresenceBusy;
+//    else if ( CntTransformOnlineAccount::EPresenceAway == aPresence)
+//        return QContactPresence::PresenceAway;
+//    else if ( CntTransformOnlineAccount::EPresenceExtendedAway == aPresence)
+//        return QContactPresence::PresenceExtendedAway;
+//    else if ( CntTransformOnlineAccount::EPresenceUnknown == aPresence)
+//        return QContactPresence::PresenceUnknown;
+//    else
+//        return QContactPresence::PresenceOffline;
+    return QString();
 }
 
 #endif // SYMBIAN_BACKEND_USE_SQLITE
