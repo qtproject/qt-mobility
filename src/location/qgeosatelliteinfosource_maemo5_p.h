@@ -74,7 +74,6 @@ private:
     int timerInterval;
     void activateTimer();
     void startLocationDaemon();
-    void stopLocationDaemon();
 
     enum SatelliteInfoState {
         Undefined = 0,

@@ -80,7 +80,6 @@ private:
     int timerInterval;
     void activateTimer();
     void startLocationDaemon();
-    void stopLocationDaemon();
     int lowSignalLevelCount;
     
     enum PositionInfoState {
