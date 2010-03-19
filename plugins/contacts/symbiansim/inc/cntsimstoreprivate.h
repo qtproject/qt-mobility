@@ -75,10 +75,10 @@ public:
     QString storeName() { return m_storeName; }
     TSimStoreInfo storeInfo() { return m_storeInfo; }
 
-    bool read(int index, int numSlots, QContactManager::Error &error);
-    bool write(const QContact &contact, QContactManager::Error &error);
-    bool remove(int index, QContactManager::Error &error);
-    bool getReservedSlots(QContactManager::Error &error);
+    bool read(int index, int numSlots, QContactManager::Error* error);
+    bool write(const QContact &contact, QContactManager::Error* error);
+    bool remove(int index, QContactManager::Error* error);
+    bool getReservedSlots(QContactManager::Error* error);
     
     TInt lastAsyncError() { return m_asyncError; }
     

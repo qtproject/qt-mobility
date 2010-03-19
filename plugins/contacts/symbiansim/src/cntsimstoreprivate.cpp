@@ -151,10 +151,10 @@ void CntSimStorePrivate::convertStoreNameL(TDes &storeName)
     }
 }
 
-bool CntSimStorePrivate::read(int index, int numSlots, QContactManager::Error &error)
+bool CntSimStorePrivate::read(int index, int numSlots, QContactManager::Error* error)
 {
     if (IsActive()) {
-        error = QContactManager::LockedError;
+        *error = QContactManager::LockedError;
         return false;
     }
     
@@ -165,14 +165,14 @@ bool CntSimStorePrivate::read(int index, int numSlots, QContactManager::Error &e
     SetActive();
     m_state = ReadState;
     
-    error = QContactManager::NoError;
+    *error = QContactManager::NoError;
     return true;
 }
 
-bool CntSimStorePrivate::write(const QContact &contact, QContactManager::Error &error)
+bool CntSimStorePrivate::write(const QContact &contact, QContactManager::Error* error)
 {
     if (IsActive()) {
-        error = QContactManager::LockedError;
+        *error = QContactManager::LockedError;
         return false;
     }
     
@@ -197,14 +197,14 @@ bool CntSimStorePrivate::write(const QContact &contact, QContactManager::Error &
     SetActive();
     m_state = WriteState;
     
-    error = QContactManager::NoError;
+    *error = QContactManager::NoError;
     return true;
 }
 
-bool CntSimStorePrivate::remove(int index, QContactManager::Error &error)
+bool CntSimStorePrivate::remove(int index, QContactManager::Error* error)
 {
     if (IsActive()) {
-        error = QContactManager::LockedError;
+        *error = QContactManager::LockedError;
         return false;
     }
     
@@ -216,14 +216,14 @@ bool CntSimStorePrivate::remove(int index, QContactManager::Error &error)
     SetActive();
     m_state = DeleteState;
     
-    error = QContactManager::NoError;
+    *error = QContactManager::NoError;
     return true;
 }
 
-bool CntSimStorePrivate::getReservedSlots(QContactManager::Error &error)
+bool CntSimStorePrivate::getReservedSlots(QContactManager::Error* error)
 {
     if (IsActive()) {
-        error = QContactManager::LockedError;
+        *error = QContactManager::LockedError;
         return false;
     }
     
@@ -234,7 +234,7 @@ bool CntSimStorePrivate::getReservedSlots(QContactManager::Error &error)
     SetActive();
     m_state = ReadReservedSlotsState;
     
-    error = QContactManager::NoError;
+    *error = QContactManager::NoError;
     return true;  
 }
 
