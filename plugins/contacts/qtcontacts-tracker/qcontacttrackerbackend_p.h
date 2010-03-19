@@ -169,7 +169,6 @@ public:
     bool isRelationshipTypeSupported(const QString&, const QString&) const {return false;}
     QStringList supportedContactTypes() const {return (QStringList() << QContactType::TypeContact);}
 
-
 /* XXX FIXME: trampoline functions added to fix compile breakage due to updateRequestStatus functions becoming protected in QCME */
 public:
     static void updateRequestStateTrampoline(QContactAbstractRequest *req, QContactAbstractRequest::State state)

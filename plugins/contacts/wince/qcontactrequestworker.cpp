@@ -210,7 +210,7 @@ bool QContactRequestWorker::addRequest(QContactAbstractRequest* req)
                 re->waiting = false;
                 d->m_requestQueue.enqueue(re);
                 d->m_requestMap.insert(req, re);
-                QContactWinCEEngine::updateRequestStateTrampoline(req, QContactAbstractRequest::ActiveState);
+                QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::ActiveState);
                 d->m_newRequestAdded.wakeAll();
                 return true;
             }
@@ -246,7 +246,7 @@ bool QContactRequestWorker::cancelRequest(QContactAbstractRequest* req)
 {
     if (req) {
         QMutexLocker locker(&d->m_mutex);
-        QContactWinCEEngine::updateRequestStateTrampoline(req, QContactAbstractRequest::CanceledState);
+        QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::CanceledState);
         return true;
     }
     return false;
@@ -321,7 +321,7 @@ void QContactRequestWorker::processContactFetchRequest(QContactFetchRequest* req
         }
 
         // update the request with the results.
-        QContactWinCEEngine::updateContactFetchRequestTrampoline(req, requestedContacts, operationError, QContactAbstractRequest::FinishedState);
+        QContactManagerEngine::updateContactFetchRequest(req, requestedContacts, operationError, QContactAbstractRequest::FinishedState);
     }
 }
 
@@ -339,7 +339,7 @@ void QContactRequestWorker::processContactLocalIdFetchRequest(QContactLocalIdFet
         QList<QContactLocalId> requestedContactIds = req->manager()->contactIds(filter, sorting);
         operationError = req->manager()->error();
 
-        QContactWinCEEngine::updateContactLocalIdFetchRequestTrampoline(req, requestedContactIds, operationError, QContactAbstractRequest::FinishedState);
+        QContactManagerEngine::updateContactLocalIdFetchRequest(req, requestedContactIds, operationError, QContactAbstractRequest::FinishedState);
     }
 }
 
@@ -357,7 +357,7 @@ void QContactRequestWorker::processContactSaveRequest(QContactSaveRequest* req)
         req->manager()->saveContacts(&contacts, &errorMap);
         operationError = req->manager()->error();
 
-        QContactWinCEEngine::updateContactSaveRequestTrampoline(req, contacts, operationError, errorMap, QContactAbstractRequest::FinishedState);
+        QContactManagerEngine::updateContactSaveRequest(req, contacts, operationError, errorMap, QContactAbstractRequest::FinishedState);
     }
 }
 
@@ -392,7 +392,7 @@ void QContactRequestWorker::processContactRemoveRequest(QContactRemoveRequest* r
         }
 
         // there are no results, so just update the status with the error.
-        QContactWinCEEngine::updateContactRemoveRequestTrampoline(req, operationError, errorMap, QContactAbstractRequest::FinishedState);
+        QContactManagerEngine::updateContactRemoveRequest(req, operationError, errorMap, QContactAbstractRequest::FinishedState);
     }
 }
 
@@ -426,7 +426,7 @@ void QContactRequestWorker::processContactDetailDefinitionFetchRequest(QContactD
         }
 
         // update the request with the results.
-        QContactWinCEEngine::updateDefinitionFetchRequestTrampoline(req, requestedDefinitions, operationError, errorMap, QContactAbstractRequest::FinishedState);
+        QContactManagerEngine::updateDefinitionFetchRequest(req, requestedDefinitions, operationError, errorMap, QContactAbstractRequest::FinishedState);
     }
 }
 /*!
@@ -455,7 +455,7 @@ void QContactRequestWorker::processContactDetailDefinitionSaveRequest(QContactDe
         }
 
         // update the request with the results.
-        QContactWinCEEngine::updateDefinitionSaveRequestTrampoline(req, savedDefinitions, operationError, errorMap, QContactAbstractRequest::FinishedState);
+        QContactManagerEngine::updateDefinitionSaveRequest(req, savedDefinitions, operationError, errorMap, QContactAbstractRequest::FinishedState);
     }
 }
 /*!
@@ -482,7 +482,7 @@ void QContactRequestWorker::processContactDetailDefinitionRemoveRequest(QContact
         }
 
         // there are no results, so just update the status with the error.
-        QContactWinCEEngine::updateDefinitionRemoveRequestTrampoline(req, operationError, errorMap, QContactAbstractRequest::FinishedState);
+        QContactManagerEngine::updateDefinitionRemoveRequest(req, operationError, errorMap, QContactAbstractRequest::FinishedState);
     }
 }
 
@@ -536,7 +536,7 @@ void QContactRequestWorker::processContactRelationshipFetchRequest(QContactRelat
         }
 
         // update the request with the results.
-        QContactWinCEEngine::updateRelationshipFetchRequestTrampoline(req, requestedRelationships, operationError, QContactAbstractRequest::FinishedState);
+        QContactManagerEngine::updateRelationshipFetchRequest(req, requestedRelationships, operationError, QContactAbstractRequest::FinishedState);
     }
 }
 
@@ -570,7 +570,7 @@ void QContactRequestWorker::processContactRelationshipRemoveRequest(QContactRela
         }
 
         // there are no results, so just update the status with the error.
-        QContactWinCEEngine::updateRelationshipRemoveRequestTrampoline(req, operationError, errorMap, QContactAbstractRequest::FinishedState);
+        QContactManagerEngine::updateRelationshipRemoveRequest(req, operationError, errorMap, QContactAbstractRequest::FinishedState);
     }
 }
 
@@ -600,7 +600,7 @@ void QContactRequestWorker::processContactRelationshipSaveRequest(QContactRelati
         }
 
         // update the request with the results.
-        QContactWinCEEngine::updateRelationshipSaveRequestTrampoline(req, savedRelationships, operationError, errorMap, QContactAbstractRequest::FinishedState);
+        QContactManagerEngine::updateRelationshipSaveRequest(req, savedRelationships, operationError, errorMap, QContactAbstractRequest::FinishedState);
     }
 }
 

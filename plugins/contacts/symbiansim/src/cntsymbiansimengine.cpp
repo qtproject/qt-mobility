@@ -114,7 +114,7 @@ QString CntSymbianSimEngine::managerName() const
  * Returns a list of the ids of contacts that match the supplied \a filter, sorted according to the given \a sortOrders.
  * Any error that occurs will be stored in \a error. Uses the generic (slow) filtering of QContactManagerEngine.
  */
-QList<QContactLocalId> CntSymbianSimEngine::contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QContactFetchQContactManager::Error* error) const
+QList<QContactLocalId> CntSymbianSimEngine::contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const
 {
     QContactLocalIdFetchRequest req;
     req.setFilter(filter);

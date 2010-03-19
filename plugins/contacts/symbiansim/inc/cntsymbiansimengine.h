@@ -52,6 +52,7 @@
 //
 // We mean it.
 //
+#include "qtcontactsglobal.h"
 #include "qcontactmanagerengine.h"
 #include "qcontactmanagerenginefactory.h"
 #include <flogger.h>
@@ -131,8 +132,8 @@ public:
     {
         return QContactManagerEngine::removeRelationships(relationships, errorMap, error);
     }
-    bool isRelationshipTypeSupported(const QString& relationshipType, const QString& contactType) const  {return false;}
-    bool isFilterSupported(const QContactFilter& filter) const {return false;}
+    bool isRelationshipTypeSupported(const QString&, const QString&) const  {return false;}
+    bool isFilterSupported(const QContactFilter&) const {return false;}
     QList<QVariant::Type> supportedDataTypes() const {return QContactManagerEngine::supportedDataTypes();}
     bool setSelfContactId(const QContactLocalId& contactId, QContactManager::Error* error) {return QContactManagerEngine::setSelfContactId(contactId, error);}
     QContactLocalId selfContactId(QContactManager::Error* error) const {return QContactManagerEngine::selfContactId(error);}

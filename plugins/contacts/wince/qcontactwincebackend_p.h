@@ -292,61 +292,6 @@ public:
     PROPID metaEmail() const;
     PROPID metaPhone() const;
 
-/* XXX FIXME: trampoline functions added to fix compile breakage due to updateRequestStatus functions becoming protected in QCME */
-public:
-    static void updateRequestStateTrampoline(QContactAbstractRequest *req, QContactAbstractRequest::State state)
-    {
-        QContactManagerEngine::updateRequestState(req, state);
-    }
-    static void updateContactFetchRequestTrampoline(QContactFetchRequest *req, const QList<QContact> &result, QContactManager::Error error, QContactAbstractRequest::State state)
-    {
-        QContactManagerEngine::updateContactFetchRequest(req, result, error, state);
-    }
-    static void updateContactRemoveRequestTrampoline(QContactRemoveRequest* req, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap, QContactAbstractRequest::State state)
-    {
-        QContactManagerEngine::updateContactRemoveRequest(req, error, errorMap, state);
-    }
-
-    static void updateContactSaveRequestTrampoline(QContactSaveRequest *req, const QList<QContact> &result, QContactManager::Error error, const QMap<int, QContactManager::Error> &errorMap, QContactAbstractRequest::State state)
-    {
-        QContactManagerEngine::updateContactSaveRequest(req, result, error, errorMap, state);
-    }
-    static void updateContactSaveRequestTrampoline(QContactSaveRequest *req, const QList<QContact> &result, QContactManager::Error error, const QMap<int, QContactManager::Error> &errorMap) // non state version
-    {
-        QContactManagerEngine::updateContactSaveRequest(req, result, error, errorMap);
-    }
-    static void updateDefinitionSaveRequestTrampoline(QContactDetailDefinitionSaveRequest* req, const QList<QContactDetailDefinition>& result, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap, QContactAbstractRequest::State state)
-    {
-        QContactManagerEngine::updateDefinitionSaveRequest(req, result, error, errorMap, state);
-    }
-    static void updateDefinitionRemoveRequestTrampoline(QContactDetailDefinitionRemoveRequest* req, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap, QContactAbstractRequest::State state)
-    {
-        QContactManagerEngine::updateDefinitionRemoveRequest(req, error, errorMap, state);
-    }
-    static void updateDefinitionFetchRequestTrampoline(QContactDetailDefinitionFetchRequest* req, const QMap<QString, QContactDetailDefinition>& result, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap, QContactAbstractRequest::State state)
-    {
-        QContactManagerEngine::updateDefinitionFetchRequest(req, result, error, errorMap, state);
-    }
-    static void updateRelationshipRemoveRequestTrampoline(QContactRelationshipRemoveRequest* req, QContactManager::Error error, const QMap<int, QContactManager::Error>& errorMap, QContactAbstractRequest::State state)
-    {
-        QContactManagerEngine::updateRelationshipRemoveRequest(req, error, errorMap, state);
-    }
-    static void updateRelationshipFetchRequestTrampoline(QContactRelationshipFetchRequest *req, const QList<QContactRelationship> &result, QContactManager::Error error, QContactAbstractRequest::State state)
-    {
-        QContactManagerEngine::updateRelationshipFetchRequest(req, result, error, state);
-    }
-    static void updateRelationshipSaveRequestTrampoline(QContactRelationshipSaveRequest *req, const QList<QContactRelationship> &result, QContactManager::Error error, const QMap<int, QContactManager::Error> &errorMap, QContactAbstractRequest::State state)
-    {
-        QContactManagerEngine::updateRelationshipSaveRequest(req, result, error, errorMap, state);
-    }
-    static void updateContactLocalIdFetchRequestTrampoline(QContactLocalIdFetchRequest *req, const QList<QContactLocalId> &result, QContactManager::Error error, QContactAbstractRequest::State state)
-    {
-        QContactManagerEngine::updateContactLocalIdFetchRequest(req, result, error, state);
-    }
-    static QContact setContactDisplayLabelTrampoline(const QString &displayLabel, const QContact &contact)
-    {
-        return QContactManagerEngine::setContactDisplayLabel(displayLabel, contact);
-    }
 private:
     QSharedDataPointer<QContactWinCEEngineData> d;
 
@@ -362,7 +307,7 @@ private:
 
 class QMutex;
 
-class Q_DECL_EXPORT ContactWinceFactory : public QObject, public QContactManagerEngineFactory
+class ContactWinceFactory : public QObject, public QContactManagerEngineFactory
 {
     Q_OBJECT
     Q_INTERFACES(QtMobility::QContactManagerEngineFactory)

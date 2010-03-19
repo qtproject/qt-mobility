@@ -47,7 +47,7 @@ CntSimStore::CntSimStore(CntSymbianSimEngine* engine, QString storeName, QContac
     :QObject((QObject *)engine),
      d_ptr(0)
 {
-    error = QContactManager::NoError;
+    *error = QContactManager::NoError;
     
     // We need to register these meta types for signals because connect() with 
     // Qt::QueuedConnection it is required.
