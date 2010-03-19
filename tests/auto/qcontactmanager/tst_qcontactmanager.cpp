@@ -737,9 +737,10 @@ void tst_QContactManager::add()
     foreach (const QContactDetailDefinition def, defs) {
 
         // Leave these warnings here - might need an API for this
-        if (def.accessConstraint() == QContactDetailDefinition::ReadOnly) {
-            continue;
-        }
+        // XXX FIXME: access constraint reporting as moved to the detail itself
+        //if (def.accessConstraint() == QContactDetailDefinition::ReadOnly) {
+        //    continue;
+        //}
 
         // otherwise, create a new detail of the given type and save it to the contact
         QContactDetail det(def.name());
@@ -2131,7 +2132,7 @@ void tst_QContactManager::actionPreferences()
 
     // create a sample contact
     QContactAvatar a;
-    a.setAvatar("test.png");
+    a.setImageUrl(QUrl("test.png"));
     QContactPhoneNumber p1;
     p1.setNumber("12345");
     QContactPhoneNumber p2;
@@ -2544,7 +2545,16 @@ void tst_QContactManager::relationships()
     }
     
     // Get supported relationship types
-    QStringList availableRelationshipTypes = cm->supportedRelationshipTypes();
+    QStringList availableRelationshipTypes;
+    if (cm->isRelationshipTypeSupported(QContactRelationship::HasAssistant))
+        availableRelationshipTypes << QContactRelationship::HasAssistant;
+    if (cm->isRelationshipTypeSupported(QContactRelationship::HasManager))
+        availableRelationshipTypes << QContactRelationship::HasManager;
+    if (cm->isRelationshipTypeSupported(QContactRelationship::HasSpouse))
+        availableRelationshipTypes << QContactRelationship::HasSpouse;
+    if (cm->isRelationshipTypeSupported(QContactRelationship::IsSameAs))
+        availableRelationshipTypes << QContactRelationship::IsSameAs;
+
     
     // Check arbitary relationship support
     if (cm->hasFeature(QContactManager::ArbitraryRelationshipTypes)) {
