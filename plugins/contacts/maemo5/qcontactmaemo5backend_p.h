@@ -75,14 +75,14 @@ public:
     QContactMaemo5EngineData()
         : QSharedData(),
         m_refCount(QAtomicInt(1)),
-	m_abook(new QContactABook)
+        m_abook(new QContactABook)
     {  
     }
 
     QContactMaemo5EngineData(const QContactMaemo5EngineData& other)
         : QSharedData(other),
         m_refCount(QAtomicInt(1)),
-	m_abook(other.m_abook)
+        m_abook(other.m_abook)
     {
     }
 
@@ -107,8 +107,8 @@ class QContactMaemo5Engine : public QContactManagerEngine
     QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error* error) const;
 
     /* "Self" contact id (MyCard) */
-    //bool setSelfContactId(const QContactLocalId& contactId, QContactManager::Error* error);
-    //QContactLocalId selfContactId(QContactManager::Error* error) const;
+    // bool setSelfContactId(const QContactLocalId& contactId, QContactManager::Error* error); /* Not supported */
+    QContactLocalId selfContactId(QContactManager::Error* errors) const;
 
     /* Filtering */
     QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const;
@@ -130,6 +130,12 @@ class QContactMaemo5Engine : public QContactManagerEngine
     
     /* Version Reporting */
     int implementationVersion() const { return MAEMO5_ENGINE_VERSION; };
+    
+    /* Capabilities reporting */
+    bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const;
+    QStringList supportedRelationshipTypes(const QString& contactType) const;
+    bool isFilterSupported(const QContactFilter& filter) const;
+    QList<QVariant::Type> supportedDataTypes() const;
 
   private:
     QSharedDataPointer<QContactMaemo5EngineData> d;

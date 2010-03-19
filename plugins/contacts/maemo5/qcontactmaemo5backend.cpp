@@ -74,6 +74,10 @@ Q_EXPORT_PLUGIN2(qtcontacts_maemo5, ContactMaemo5Factory);
 /*! Constructs a new invalid contacts backend. */
 QContactMaemo5Engine::QContactMaemo5Engine() : d(new QContactMaemo5EngineData)
 {
+  QContactABook *abook = d->m_abook;
+  connect(abook, SIGNAL(contactsAdded(const QList<QContactLocalId>&)), SIGNAL(contactsAdded(const QList<QContactLocalId>&)));
+  connect(abook, SIGNAL(contactsChanged(const QList<QContactLocalId>&)), SIGNAL(contactsChanged(const QList<QContactLocalId>&)));
+  connect(abook, SIGNAL(contactsRemoved(const QList<QContactLocalId>&)), SIGNAL(contactsRemoved(const QList<QContactLocalId>&)));
 }
 
 /*! \reimp */
@@ -114,6 +118,13 @@ QString QContactMaemo5Engine::synthesizedDisplayLabel(const QContact& contact, Q
   return label;
 }
 
+QContactLocalId QContactMaemo5Engine::selfContactId(QContactManager::Error* error) const
+{
+  Q_CHECK_PTR(d->m_abook);
+
+  return d->m_abook->selfContactId(error);
+}
+
 QList<QContactLocalId> QContactMaemo5Engine::contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const
 {
   Q_CHECK_PTR(d->m_abook);
@@ -123,7 +134,7 @@ QList<QContactLocalId> QContactMaemo5Engine::contactIds(const QContactFilter& fi
 }
 
 QList<QContact> QContactMaemo5Engine::contacts(const QContactFilter & filter, const QList<QContactSortOrder> & sortOrders, const QStringList & definitionRestrictions, 
-			  QContactManager::Error & error ) const
+			  QContactManager::Error* error ) const
 {
   Q_CHECK_PTR(d->m_abook);
   QList<QContact> rtn;
@@ -265,4 +276,43 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
   
     error = QContactManager::NoError;
     return defns[contactType];
+}
+
+bool QContactMaemo5Engine::hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const {
+  Q_UNUSED(contactType);
+  if (feature == QContactManager::Anonymous)
+    return true;
+  
+  return false;
+}
+
+QStringList QContactMaemo5Engine::supportedRelationshipTypes(const QString& contactType) const {
+  Q_UNUSED(contactType);
+  return QStringList();
+}
+
+bool QContactMaemo5Engine::isFilterSupported(const QContactFilter& filter) const {
+  switch (filter.type()) {
+    case QContactFilter::InvalidFilter:
+    case QContactFilter::DefaultFilter:
+    case QContactFilter::LocalIdFilter:
+    case QContactFilter::ContactDetailFilter:
+    case QContactFilter::ActionFilter:
+    case QContactFilter::IntersectionFilter:
+    case QContactFilter::UnionFilter:
+      return true;
+  }
+  return false;
+}
+
+QList<QVariant::Type> QContactMaemo5Engine::supportedDataTypes() const {
+  QList<QVariant::Type> st;
+  st.append(QVariant::String);
+  st.append(QVariant::Int);
+  st.append(QVariant::UInt);
+  st.append(QVariant::Double);
+  st.append(QVariant::Date);
+  st.append(QVariant::DateTime);
+
+  return st;   
 }
