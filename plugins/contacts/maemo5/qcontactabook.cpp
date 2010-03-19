@@ -442,7 +442,7 @@ QContactLocalId QContactABook::selfContactId(QContactManager::Error* errors) con
     }
   } else {
     qWarning() << "Cannot find self contact";
-    errors = QContactManager::DoesNotExistError;
+    *errors = QContactManager::DoesNotExistError;
     id = 0;
   }
   g_object_unref(self);
