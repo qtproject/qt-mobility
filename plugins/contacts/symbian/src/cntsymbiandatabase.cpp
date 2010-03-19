@@ -193,15 +193,15 @@ void CntSymbianDatabase::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
                 // The group changed event was caused by removing contacts
                 // from the group
                 changeSet.insertRemovedRelationshipsContact(id);
-                changeSet.insertRemovedRelationshipsContacts(removed);
+                changeSet.insertRemovedRelationshipsContacts(removed.toList());
             } else if(added.count()) {
                 // The group changed event was caused by adding contacts
                 // to the group
                 changeSet.insertAddedRelationshipsContact(id);
-                changeSet.insertAddedRelationshipsContacts(added);
+                changeSet.insertAddedRelationshipsContacts(added.toList());
             } else {
                 // The group changed event was caused by modifying the group
-                changeSet.insertChangedContacts(id);
+                changeSet.insertChangedContact(id);
             }
 #else
             // Currently the group membership check is only used in pre-10.1

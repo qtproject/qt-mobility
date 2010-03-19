@@ -108,7 +108,7 @@ QList<QContactLocalId> CntSymbianFilter::contacts(
     const QContactFilter &filter,
     const QList<QContactSortOrder> &sortOrders,
     bool &filterSupportedFlag,
-    QContactManager::Error &error)
+    QContactManager::Error* error)
 {
     QList<QContactLocalId> result;
 
@@ -162,7 +162,7 @@ QList<QContactLocalId> CntSymbianFilter::contacts(
         } else if (filterSupport == IllegalFilter) {
             // Don't do filtering; fail with an error
             filterSupportedFlag = false;
-            error = QContactManager::NotSupportedError;
+            *error = QContactManager::NotSupportedError;
         } else {
             // Don't do filtering here, return all contact ids and tell the
             // caller to do slow filtering

@@ -61,9 +61,9 @@ public:
     const char* FieldVibrationRingtone;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactRingtone, "Ringtone")
-    Q_DECLARE_LATIN1_LITERAL(FieldAudioRingtone, "AudioRingtone");
-    Q_DECLARE_LATIN1_LITERAL(FieldVideoRingtone, "VideoRingtone");
-    Q_DECLARE_LATIN1_LITERAL(FieldVibrationRingtone, "VibrationRingtone");
+    Q_DECLARE_LATIN1_CONSTANT(FieldAudioRingtone, "AudioRingtone");
+    Q_DECLARE_LATIN1_CONSTANT(FieldVideoRingtone, "VideoRingtone");
+    Q_DECLARE_LATIN1_CONSTANT(FieldVibrationRingtone, "VibrationRingtone");
 #endif
 
     void setAudioRingtone(const QUrl& audioRingtone) {setValue(FieldAudioRingtone, audioRingtone);}

@@ -50,12 +50,12 @@ QTM_BEGIN_NAMESPACE
 QAtomicInt QContactDetailPrivate::lastDetailKey(1);
 
 /* Definitions of predefined string constants */
-Q_DEFINE_LATIN1_LITERAL(QContactDetail::FieldDetailUri, "DetailUri");
-Q_DEFINE_LATIN1_LITERAL(QContactDetail::FieldLinkedDetailUris, "LinkedDetailUris");
-Q_DEFINE_LATIN1_LITERAL(QContactDetail::FieldContext, "Context");
-Q_DEFINE_LATIN1_LITERAL(QContactDetail::ContextOther, "Other");
-Q_DEFINE_LATIN1_LITERAL(QContactDetail::ContextHome, "Home");
-Q_DEFINE_LATIN1_LITERAL(QContactDetail::ContextWork, "Work");
+Q_DEFINE_LATIN1_CONSTANT(QContactDetail::FieldDetailUri, "DetailUri");
+Q_DEFINE_LATIN1_CONSTANT(QContactDetail::FieldLinkedDetailUris, "LinkedDetailUris");
+Q_DEFINE_LATIN1_CONSTANT(QContactDetail::FieldContext, "Context");
+Q_DEFINE_LATIN1_CONSTANT(QContactDetail::ContextOther, "Other");
+Q_DEFINE_LATIN1_CONSTANT(QContactDetail::ContextHome, "Home");
+Q_DEFINE_LATIN1_CONSTANT(QContactDetail::ContextWork, "Work");
 
 /*!
   \class QContactDetail

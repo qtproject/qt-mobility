@@ -474,14 +474,10 @@ void tst_QContactAsync::contactFetch()
     sorting.clear();
     cfr.setFilter(fil);
     cfr.setSorting(sorting);
-
-    //DEPRECATED cfr.setDefinitionRestrictions(QStringList(QContactName::DefinitionName));
-    //DEPRECATED QCOMPARE(cfr.definitionRestrictions(), QStringList(QContactName::DefinitionName));
-    QContactFetchHint hint;
-    hint.setDetailDefinitionsHint(QStringList(QContactName::DefinitionName));
-    cfr.setFetchHint(hint);
+    QContactFetchHint fetchHint;
+    fetchHint.setDetailDefinitionsHint(QStringList(QContactName::DefinitionName));
+    cfr.setFetchHint(fetchHint);
     QCOMPARE(cfr.fetchHint().detailDefinitionsHint(), QStringList(QContactName::DefinitionName));
-
     QVERIFY(!cfr.cancel()); // not started
     QVERIFY(cfr.start());
     QVERIFY((cfr.isActive() && cfr.state() == QContactAbstractRequest::ActiveState) || cfr.isFinished());
@@ -540,10 +536,7 @@ void tst_QContactAsync::contactFetch()
     sorting.clear();
     cfr.setFilter(fil);
     cfr.setSorting(sorting);
-
-    // DEPRECATED cfr.setDefinitionRestrictions(QStringList());
-    hint.setDetailDefinitionsHint(QStringList());
-    cfr.setFetchHint(hint);
+    cfr.setFetchHint(QContactFetchHint());
 
     int bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT; // attempt to cancel 40 times.  If it doesn't work due to threading, bail out.
     while (true) {
@@ -558,10 +551,8 @@ void tst_QContactAsync::contactFetch()
             sorting.clear();
             cfr.setFilter(fil);
             cfr.setSorting(sorting);
-
-            //DEPRECATED cfr.setDefinitionRestrictions(QStringList());
-            cfr.setFetchHint(hint);
-
+            cfr.setFetchHint(QContactFetchHint());
+            cfr.setFetchHint(QContactFetchHint());
             bailoutCount -= 1;
             if (!bailoutCount) {
                 qWarning("Unable to test cancelling due to thread scheduling!");
@@ -592,10 +583,7 @@ void tst_QContactAsync::contactFetch()
             sorting.clear();
             cfr.setFilter(fil);
             cfr.setSorting(sorting);
-
-            //DEPRECATED cfr.setDefinitionRestrictions(QStringList());
-            cfr.setFetchHint(hint);
-
+            cfr.setFetchHint(QContactFetchHint());
             bailoutCount -= 1;
             spy.clear();
             if (!bailoutCount) {

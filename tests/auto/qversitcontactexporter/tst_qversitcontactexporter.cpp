@@ -673,7 +673,7 @@ void tst_QVersitContactExporter::testEncodeOrganization()
     const QString url = QString::fromAscii("http://myhome.com/test.jpg");
     contact = createContactWithName(QLatin1String("asdf"));
     organization = QContactOrganization();
-    organization.setLogo(url);
+    organization.setLogoUrl(url);
     contact.saveDetail(&organization);
     mResourceHandler->mSimulatedMimeType = QLatin1String("image/jpeg");
     mExporter->setResourceHandler(mResourceHandler);
@@ -699,7 +699,7 @@ void tst_QVersitContactExporter::testEncodeOrganization()
     mResourceHandler->mSimulatedData = "simulated data";
     contact = createContactWithName(QLatin1String("asdf"));
     organization = QContactOrganization();
-    organization.setLogo(TEST_PHOTO_FILE);
+    organization.setLogoUrl(TEST_PHOTO_FILE);
     contact.saveDetail(&organization);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     document = mExporter->documents().first();
