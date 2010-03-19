@@ -23,19 +23,12 @@
 <hr />
 <a name="properties"></a>
 <h2>Properties</h2>
-<p><table class="propsummary" width="100%" border="0" cellpadding="0" cellspacing="0">
-<tr><td width="45%" valign="top"><ul>
+<ul>
 <li><div class="fn"><b><a href="qmagnetometerreading.html#calibrationLevel-prop">calibrationLevel</a></b> : const qreal</div></li>
-<li><div class="fn"><b><a href="qmagnetometerreading.html#geo_x-prop">geo_x</a></b> : const qreal</div></li>
-<li><div class="fn"><b><a href="qmagnetometerreading.html#geo_y-prop">geo_y</a></b> : const qreal</div></li>
-<li><div class="fn"><b><a href="qmagnetometerreading.html#geo_z-prop">geo_z</a></b> : const qreal</div></li>
-</ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="qmagnetometerreading.html#x-prop">x</a></b> : const qreal</div></li>
 <li><div class="fn"><b><a href="qmagnetometerreading.html#y-prop">y</a></b> : const qreal</div></li>
 <li><div class="fn"><b><a href="qmagnetometerreading.html#z-prop">z</a></b> : const qreal</div></li>
 </ul>
-</td></tr>
-</table></p>
 <ul>
 <li><div bar="2" class="fn"></div>1 property inherited from <a href="qsensorreading.html#properties">QSensorReading</a></li>
 <li><div bar="2" class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
@@ -45,13 +38,7 @@
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qmagnetometerreading.html#calibrationLevel-prop">calibrationLevel</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qmagnetometerreading.html#geo_x-prop">geo_x</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qmagnetometerreading.html#geo_y-prop">geo_y</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qmagnetometerreading.html#geo_z-prop">geo_z</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmagnetometerreading.html#setCalibrationLevel">setCalibrationLevel</a></b> ( qreal <i>calibrationLevel</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmagnetometerreading.html#setGeo_x">setGeo_x</a></b> ( qreal <i>geo_x</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmagnetometerreading.html#setGeo_y">setGeo_y</a></b> ( qreal <i>geo_y</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmagnetometerreading.html#setGeo_z">setGeo_z</a></b> ( qreal <i>geo_z</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmagnetometerreading.html#setX">setX</a></b> ( qreal <i>x</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmagnetometerreading.html#setY">setY</a></b> ( qreal <i>y</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmagnetometerreading.html#setZ">setZ</a></b> ( qreal <i>z</i> )</td></tr>
@@ -78,7 +65,7 @@
 <p>The QMagnetometerReading class represents one reading from the magnetometer.</p>
 <a name="qmagnetometerreading-units"></a>
 <h3>QMagnetometerReading Units</h3>
-<p>The magnetometer returns both raw magnetic flux and geomagnetic flux density values along 3 axes. The scale of the values is teslas. The axes are arranged as follows.</p>
+<p>The magnetometer returns magnetic flux density values along 3 axes. The scale of the values is teslas. The axes are arranged as follows.</p>
 <pre>             +z
               |
               |      +y
@@ -96,44 +83,19 @@
     /         /  /
     ----------  /
     |_________!/</pre>
-<p>The primary difference between the raw and geomagnetic values is that extra processing is done to eliminate interference from the geomagnetic values so they represent only the effect of the Earth's magnetic field. This process is not perfect so a calibration value exists to indicate how accurate the geomagnetic values are.</p>
-<p>The calibration status of the device is measured as a number from 0 to 1. A value of 1 is the highest level that the device can support and 0 is the worst.</p>
+<p>The magnetometer can report on either raw magnetic flux values or geomagnetic flux values. By default it returns raw magnetic flux values. The <a href="qmagnetometer.html#returnGeoValues-prop">QMagnetometer::returnGeoValues</a> property must be set to return geomagnetic flux values.</p>
+<p>The primary difference between raw and geomagnetic values is that extra processing is done to eliminate local magnetic interference from the geomagnetic values so they represent only the effect of the Earth's magnetic field. This process is not perfect and the accuracy of each reading may change.</p>
+<p>The accuracy of each reading is measured as a number from 0 to 1. A value of 1 is the highest level that the device can support and 0 is the worst.</p>
 <hr />
 <h2>Property Documentation</h2>
 <a name="//apple_ref/cpp/instm/QMagnetometerReading/calibrationLevel"></a>
 <h3 class="fn"><a name="calibrationLevel-prop"></a>calibrationLevel : const <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a></h3>
-<p>This property holds the calibration level of the reading.</p>
+<p>This property holds the accuracy of the reading.</p>
 <p>Measured as a value from 0 to 1 with higher values being better.</p>
+<p>Note that this only changes when measuring geomagnetic flux density. Raw magnetic flux readings will always have a value of 1.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b>calibrationLevel</b> () const</td></tr>
-</table>
-<p>See also <a href="qmagnetometerreading.html#qmagnetometerreading-units">QMagnetometerReading Units</a>.</p>
-<a name="//apple_ref/cpp/instm/QMagnetometerReading/geo_x"></a>
-<h3 class="fn"><a name="geo_x-prop"></a>geo_x : const <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a></h3>
-<p>This property holds the geomagnetic flux density on the X axis.</p>
-<p>Measured as telsas.</p>
-<p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b>geo_x</b> () const</td></tr>
-</table>
-<p>See also <a href="qmagnetometerreading.html#qmagnetometerreading-units">QMagnetometerReading Units</a>.</p>
-<a name="//apple_ref/cpp/instm/QMagnetometerReading/geo_y"></a>
-<h3 class="fn"><a name="geo_y-prop"></a>geo_y : const <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a></h3>
-<p>This property holds the geomagnetic flux density on the Y axis.</p>
-<p>Measured as telsas.</p>
-<p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b>geo_y</b> () const</td></tr>
-</table>
-<p>See also <a href="qmagnetometerreading.html#qmagnetometerreading-units">QMagnetometerReading Units</a>.</p>
-<a name="//apple_ref/cpp/instm/QMagnetometerReading/geo_z"></a>
-<h3 class="fn"><a name="geo_z-prop"></a>geo_z : const <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a></h3>
-<p>This property holds the geomagnetic flux density on the Z axis.</p>
-<p>Measured as telsas.</p>
-<p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b>geo_z</b> () const</td></tr>
 </table>
 <p>See also <a href="qmagnetometerreading.html#qmagnetometerreading-units">QMagnetometerReading Units</a>.</p>
 <a name="//apple_ref/cpp/instm/QMagnetometerReading/x"></a>
@@ -167,20 +129,8 @@
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QMagnetometerReading/setCalibrationLevel"></a>
 <h3 class="fn"><a name="setCalibrationLevel"></a>void QMagnetometerReading::setCalibrationLevel ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>calibrationLevel</i> )</h3>
-<p>Sets the calibration level of the reading to <i>calibrationLevel</i>.</p>
+<p>Sets the accuracy of the reading to <i>calibrationLevel</i>.</p>
 <p>See also <a href="qmagnetometerreading.html#calibrationLevel-prop">calibrationLevel</a>().</p>
-<a name="//apple_ref/cpp/instm/QMagnetometerReading/setGeo_x"></a>
-<h3 class="fn"><a name="setGeo_x"></a>void QMagnetometerReading::setGeo_x ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>geo_x</i> )</h3>
-<p>Sets the geomagnetic flux density on the X axis to <i>geo_x</i>.</p>
-<p>See also <a href="qmagnetometerreading.html#geo_x-prop">geo_x</a>().</p>
-<a name="//apple_ref/cpp/instm/QMagnetometerReading/setGeo_y"></a>
-<h3 class="fn"><a name="setGeo_y"></a>void QMagnetometerReading::setGeo_y ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>geo_y</i> )</h3>
-<p>Sets the geomagnetic flux density on the Y axis to <i>geo_y</i>.</p>
-<p>See also <a href="qmagnetometerreading.html#geo_y-prop">geo_y</a>().</p>
-<a name="//apple_ref/cpp/instm/QMagnetometerReading/setGeo_z"></a>
-<h3 class="fn"><a name="setGeo_z"></a>void QMagnetometerReading::setGeo_z ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>geo_z</i> )</h3>
-<p>Sets the geomagnetic flux density on the Z axis to <i>geo_z</i>.</p>
-<p>See also <a href="qmagnetometerreading.html#geo_z-prop">geo_z</a>().</p>
 <a name="//apple_ref/cpp/instm/QMagnetometerReading/setX"></a>
 <h3 class="fn"><a name="setX"></a>void QMagnetometerReading::setX ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>x</i> )</h3>
 <p>Sets the raw magnetic flux density on the X axis to <i>x</i>.</p>

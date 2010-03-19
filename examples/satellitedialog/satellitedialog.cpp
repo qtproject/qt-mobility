@@ -405,24 +405,24 @@ SatelliteDialog::SatelliteDialog(QWidget *parent,
 
     setLayout(mainLayout);
 
-#if defined(Q_OS_SYMBIAN)
+/*#if defined(Q_OS_SYMBIAN)
     // workaround for QTBUG-4771
     oldTitle = windowTitle();
     connect(this, SIGNAL(finished(int)), this, SLOT(restoreWindowTitle()));
-#endif
+#endif*/
 
     setWindowTitle(tr("Waiting for GPS fix"));
 
     setModal(true);
 }
 
-#if defined(Q_OS_SYMBIAN)
+/*#if defined(Q_OS_SYMBIAN)
 // workaround for QTBUG-4771
 void SatelliteDialog::restoreWindowTitle()
 {
     setWindowTitle(oldTitle);
 }
-#endif
+#endif*/
 
 void SatelliteDialog::connectSources(QGeoPositionInfoSource *posSource, QGeoSatelliteInfoSource *satSource)
 {

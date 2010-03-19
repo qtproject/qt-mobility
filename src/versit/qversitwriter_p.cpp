@@ -50,6 +50,7 @@
 #include <QMutexLocker>
 #include <QScopedPointer>
 #include <QTextCodec>
+#include <QBuffer>
 
 QTM_USE_NAMESPACE
 
@@ -66,6 +67,13 @@ QVersitWriterPrivate::QVersitWriterPrivate()
 /*! Destroys a writer. */
 QVersitWriterPrivate::~QVersitWriterPrivate()
 {
+}
+
+/*! Links the signals from this to the signals of \a writer. */
+void QVersitWriterPrivate::init(QVersitWriter* writer)
+{
+    connect(this, SIGNAL(stateChanged(QVersitWriter::State)),
+            writer, SIGNAL(stateChanged(QVersitWriter::State)), Qt::DirectConnection);
 }
 
 /*!

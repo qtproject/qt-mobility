@@ -52,7 +52,7 @@ QTM_USE_NAMESPACE
 class CntSymbianTransformError
 {
 public:
-    static void transformError(TInt symbianError, QContactManager::Error& qtError);
+    static void transformError(TInt symbianError, QContactManager::Error* qtError);
 };
 
 #endif

@@ -195,7 +195,7 @@
         }
 
         <span class="comment">// We couldn't match anything, so return the original address</span>
-        return address.recipient();
+        return address.addressee();
     }</pre>
 <p>If the user selects one of these contact addresses, we fill the Messages combo box with the list of messages that were previously sent to that contact:</p>
 <pre>    void AddressFinder::addressSelected(const QString &amp;address)

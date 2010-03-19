@@ -45,6 +45,7 @@
 #include "qtcontactsglobal.h"
 #include "qcontactfilter.h"
 #include "qcontactid.h"
+#include "qcontactrelationship.h"
 
 #include <QSharedDataPointer>
 #include <QStringList>
@@ -60,25 +61,14 @@ public:
     QContactRelationshipFilter();
     QContactRelationshipFilter(const QContactFilter& other);
 
-    enum Role {
-        First = 0,
-        Second,
-        Either
-    };
-
     void setRelationshipType(const QString& relationshipType);
     void setRelatedContactId(const QContactId& relatedContactId);
-    void setRelatedContactRole(QContactRelationshipFilter::Role relatedContactRole);
+    void setRelatedContactRole(QContactRelationship::Role relatedContactRole);
 
     QString relationshipType() const;
     QContactId relatedContactId() const;
-    QContactRelationshipFilter::Role relatedContactRole() const;
+    QContactRelationship::Role relatedContactRole() const;
 
-    // deprecated and will be removed after transition period has elapsed.  replaced by setRelatedContactRole / setRelatedContactId.
-    void Q_DECL_DEPRECATED setRole(QContactRelationshipFilter::Role roleInRelationship);
-    void Q_DECL_DEPRECATED setOtherParticipantId(const QContactId& contactId);
-    QContactRelationshipFilter::Role Q_DECL_DEPRECATED role() const;
-    QContactId Q_DECL_DEPRECATED otherParticipantId() const;
 
 private:
     Q_DECLARE_CONTACTFILTER_PRIVATE(QContactRelationshipFilter)

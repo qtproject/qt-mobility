@@ -42,7 +42,7 @@
 #ifndef QTRACKERCONTACTIDFETCHREQUEST_H_
 #define QTRACKERCONTACTIDFETCHREQUEST_H_
 
-#include <qtrackercontactasyncrequest.h>
+#include <qtrackercontactfetchrequest.h>
 
 QTM_BEGIN_NAMESPACE
 class QContactAbstractRequest;

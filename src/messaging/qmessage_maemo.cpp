@@ -53,6 +53,16 @@ QMessage QMessagePrivate::from(const QMessageId &id)
     return result;
 }
 
+QMessagePrivate* QMessagePrivate::implementation(const QMessage &message)
+{
+    return message.d_ptr;
+}
+
+QMessageContentContainerPrivate* QMessagePrivate::containerImplementation(const QMessage &message)
+{
+    return ((QMessageContentContainer*)&message)->d_ptr;
+}
+
 QString QMessagePrivate::senderName(const QMessage &message)
 {
     return message.d_ptr->_senderName;

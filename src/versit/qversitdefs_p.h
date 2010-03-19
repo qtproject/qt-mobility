@@ -75,6 +75,9 @@
 #include <qcontactonlineaccount.h>
 #include <qcontactfamily.h>
 #include <qcontactdisplaylabel.h>
+#include <qcontacttag.h>
+#include <qcontactringtone.h>
+#include <qcontactthumbnail.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -92,6 +95,8 @@ const VersitContactDetailMapping versitContactDetailMappings[] = {
                       ""},
     {"BDAY",          QContactBirthday::DefinitionName.str,
                       QContactBirthday::FieldBirthday.str},
+    {"CATEGORIES",    QContactTag::DefinitionName.str,
+                      QContactTag::FieldTag.str},
     {"FN",            QContactDisplayLabel::DefinitionName.str,
                       ""},
     {"GEO",           QContactGeoLocation::DefinitionName.str,
@@ -101,7 +106,7 @@ const VersitContactDetailMapping versitContactDetailMappings[] = {
     {"IMPP",          QContactOnlineAccount::DefinitionName.str,
                       QContactOnlineAccount::SubTypeImpp.str},
     {"LOGO",          QContactOrganization::DefinitionName.str,
-                      QContactOrganization::FieldLogo.str},
+                      QContactOrganization::FieldLogoUrl.str},
     {"N",             QContactName::DefinitionName.str,
                       ""},
     {"NICKNAME",      QContactNickname::DefinitionName.str,
@@ -110,14 +115,14 @@ const VersitContactDetailMapping versitContactDetailMappings[] = {
                       QContactNote::FieldNote.str},
     {"ORG",           QContactOrganization::DefinitionName.str,
                       QContactOrganization::FieldName.str},
-    {"PHOTO",         QContactAvatar::DefinitionName.str,
-                      QContactAvatar::SubTypeImage.str},
+    {"PHOTO",         QContactThumbnail::DefinitionName.str,
+                      ""},
     {"REV",           QContactTimestamp::DefinitionName.str,
                       ""},
     {"ROLE",          QContactOrganization::DefinitionName.str,
                       QContactOrganization::FieldRole.str},
-    {"SOUND",         QContactAvatar::DefinitionName.str,
-                      QContactAvatar::SubTypeAudioRingtone.str},
+    {"SOUND",         QContactRingtone::DefinitionName.str,
+                      QContactRingtone::FieldAudioRingtone.str},
     {"TEL",           QContactPhoneNumber::DefinitionName.str,
                       QContactPhoneNumber::FieldNumber.str},
     {"TITLE",         QContactOrganization::DefinitionName.str,
@@ -173,7 +178,7 @@ const VersitMapping versitSubTypeMappings[] = {
     {"MODEM",  QContactPhoneNumber::SubTypeModem.str},
     {"CAR",    QContactPhoneNumber::SubTypeCar.str},
     {"VIDEO",  QContactPhoneNumber::SubTypeVideo.str},
-    {"FAX",    QContactPhoneNumber::SubTypeFacsimile.str},
+    {"FAX",    QContactPhoneNumber::SubTypeFax.str},
     {"BBS",    QContactPhoneNumber::SubTypeBulletinBoardSystem.str},
     {"PAGER",  QContactPhoneNumber::SubTypePager.str},
     {"SWIS",   QContactOnlineAccount::SubTypeVideoShare.str},

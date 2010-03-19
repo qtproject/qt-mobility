@@ -675,11 +675,13 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
      defaultInterface = "";
     qRegisterMetaType<QSystemNetworkInfo::NetworkMode>("QSystemNetworkInfo::NetworkMode");
     qRegisterMetaType<QSystemNetworkInfo::NetworkStatus>("QSystemNetworkInfo::NetworkStatus");
-    if([[CWInterface supportedInterfaces] count] > 0 ) {
+#ifdef MAC_SDK_10_6
+if([[CWInterface supportedInterfaces] count] > 0 ) {
         hasWifi = true;
     } else {
         hasWifi = false;
     }
+#endif
     rssiTimer = new QTimer(this);
 
     if(!self)

@@ -53,12 +53,12 @@ class CntAbstractContactSorter
 public:
     virtual QList<QContactLocalId> contacts(
             const QList<QContactSortOrder>& sortOrders,
-            QContactManager::Error& error) = 0;
+            QContactManager::Error* error) = 0;
 
     virtual QList<QContactLocalId> sort(
         QList<QContactLocalId> contactIds,
         const QList<QContactSortOrder>& sortOrders,
-        QContactManager::Error& error) = 0;
+        QContactManager::Error* error) = 0;
 
     virtual bool sortOrderSupported(const QList<QContactSortOrder>& sortOrders) = 0;
 };

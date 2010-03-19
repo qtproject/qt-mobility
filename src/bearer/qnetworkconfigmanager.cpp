@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -43,7 +43,7 @@
 
 #ifdef Q_OS_SYMBIAN
 #include "qnetworkconfigmanager_s60_p.h"
-#elif Q_WS_MAEMO_6
+#elif (defined(Q_WS_MAEMO_6) || defined(Q_WS_MAEMO_5))
 #include "qnetworkconfigmanager_maemo_p.h"
 #else
 #include "qnetworkconfigmanager_p.h"
@@ -162,6 +162,8 @@ Q_GLOBAL_STATIC(QNetworkConfigurationManagerPrivate, connManager);
                                      sockets.
     \value DataStatistics            If this flag is set QNetworkSession can provide statistics
                                      about transmitted and received data.
+    \value NetworkSessionRequired    If this flag is set the platform requires that a network
+                                     session is created before network operations can be performed.
 */
 
 /*!
@@ -234,10 +236,9 @@ QList<QNetworkConfiguration> QNetworkConfigurationManager::allConfigurations(QNe
 {
     QList<QNetworkConfiguration> result;
     QNetworkConfigurationManagerPrivate* conPriv = connManager();
-    QList<QString> cpsIdents = conPriv->accessPointConfigurations.keys();
 
     //find all InternetAccessPoints
-    foreach(const QString ii, cpsIdents) {
+    foreach (const QString &ii, conPriv->accessPointConfigurations.keys()) {
         QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> p = 
             conPriv->accessPointConfigurations.value(ii);
         if ( (p->state & filter) == filter ) {
@@ -248,8 +249,7 @@ QList<QNetworkConfiguration> QNetworkConfigurationManager::allConfigurations(QNe
     }
 
     //find all service networks
-    cpsIdents = conPriv->snapConfigurations.keys();
-    foreach(const QString ii, cpsIdents) {
+    foreach (const QString &ii, conPriv->snapConfigurations.keys()) {
         QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> p = 
             conPriv->snapConfigurations.value(ii);
         if ( (p->state & filter) == filter ) {

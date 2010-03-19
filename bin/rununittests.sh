@@ -88,7 +88,7 @@ cd $shell_path/../build/tests/bin
 ./tst_qpacket
 ./tst_qpacketprotocol
 ./tst_qvaluespace
-./tst_qvaluespaceprovider
+./tst_qvaluespacepublisher
 ./tst_qvaluespacesubscriber
 ./tst_qvaluespacesubscriber_oop
 ./tst_qsystemreadwritelock
@@ -105,7 +105,6 @@ cd $shell_path/../build/tests/bin
 
 #QMedia
 ./tst_qaudiocapturesource
-./tst_qcamera
 ./tst_qgraphicsvideoitem
 ./tst_qmediacontent
 ./tst_qmediaimageviewer

@@ -3,13 +3,17 @@ TARGET = PSPathMapperServer
 QT = core
 TARGET.UID3 = 0x2002AC88
 
+CONFIG += no_icon
+
 SOURCES += pspathmapperservermain.cpp
 
 include(../../../common.pri)
 
 
 DEPENDPATH += ../xqsettingsmanager_symbian
-INCLUDEPATH += ../xqsettingsmanager_symbian
+INCLUDEPATH += ../xqsettingsmanager_symbian\
+               $${EPOCROOT}epoc32\include\platform
+
 DEFINES += XQSETTINGSMANAGER_NO_LIBRARY
 DEFINES += XQSETTINGSMANAGER_NO_TRANSACTIONS
 DEFINES += XQSETTINGSMANAGER_NO_CENREPKEY_CREATION_DELETION

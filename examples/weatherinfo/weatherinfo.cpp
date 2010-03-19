@@ -299,6 +299,8 @@ private:
 
     void setupScene() {
 
+        m_scene.setBackgroundBrush(QBrush(palette().color(QPalette::Base)));
+
         QColor textColor = palette().color(QPalette::WindowText);
         QFont textFont = font();
         textFont.setBold(true);

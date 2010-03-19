@@ -41,6 +41,8 @@
 #include "qmessagecontentcontainer.h"
 #ifdef Q_OS_SYMBIAN
 #include "qmessagecontentcontainer_symbian_p.h"
+#elif defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+#include "qmessagecontentcontainer_maemo_p.h"
 #else
 #include "qmessagecontentcontainer_p.h"
 #endif
