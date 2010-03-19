@@ -52,6 +52,7 @@
 //
 // We mean it.
 //
+#include "qtcontactsglobal.h"
 #include "qcontactmanagerengine.h"
 #include "qcontactmanagerenginefactory.h"
 #include <flogger.h>
