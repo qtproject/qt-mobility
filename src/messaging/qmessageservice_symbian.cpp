@@ -51,8 +51,9 @@
 #include "qmtmengine_symbian_p.h"
 #include "qmessage_symbian_p.h"
 #include "symbianhelpers_p.h"
+#ifdef FREESTYLEMAILUSED
 #include "qfsengine_symbian_p.h"
-
+#endif
 
 QTM_BEGIN_NAMESPACE
 
@@ -79,18 +80,22 @@ bool QMessageServicePrivate::sendMMS(QMessage &message)
 
 bool QMessageServicePrivate::sendEmail(QMessage &message)
 {
-   // if (SymbianHelpers::isFreestyleMessage(message.parentAccountId()))
-   //     return CFSEngine::instance()->sendEmail(message);
-   // else
+  //  if (SymbianHelpers::isFreestyleMessage(message.parentAccountId()))
+  //      return CFSEngine::instance()->sendEmail(message);
+  //  else
         return CMTMEngine::instance()->sendEmail(message);
 }
 
 bool QMessageServicePrivate::show(const QMessageId& id)
 {
     QMessageId fsId = id;
-    if (SymbianHelpers::isFreestyleMessage(fsId))
+    if (SymbianHelpers::isFreestyleMessage(fsId)) {
+#ifdef FREESTYLEMAILUSED
         return CFSEngine::instance()->showMessage(id);
-    else
+#else
+        return false;
+#endif
+    } else
         return CMTMEngine::instance()->showMessage(id);
 }
 
@@ -116,28 +121,37 @@ bool QMessageServicePrivate::countMessages(const QMessageFilter &filter)
 
 bool QMessageServicePrivate::retrieve(const QMessageId &messageId, const QMessageContentContainerId &id)
 {
-    QMessageId fsId = messageId;
-    if (SymbianHelpers::isFreestyleMessage(fsId))
+    if (SymbianHelpers::isFreestyleMessage(messageId)) {
+#ifdef FREESTYLEMAILUSED
         return CFSEngine::instance()->retrieve(messageId, id);
-    else
+#else
+        return false;
+#endif
+    } else
         return CMTMEngine::instance()->retrieve(messageId, id);
 }
 
 bool QMessageServicePrivate::retrieveBody(const QMessageId& id)
 {
-    QMessageId fsId = id;
-    if (SymbianHelpers::isFreestyleMessage(fsId))
+    if (SymbianHelpers::isFreestyleMessage(id)) {
+#ifdef FREESTYLEMAILUSED
         return CFSEngine::instance()->retrieveBody(id);
-    else
+#else
+        return false;
+#endif
+    } else
         return CMTMEngine::instance()->retrieveBody(id);
 }
 
 bool QMessageServicePrivate::retrieveHeader(const QMessageId& id)
 {
-    QMessageId fsId = id;
-    if (SymbianHelpers::isFreestyleMessage(fsId))
+    if (SymbianHelpers::isFreestyleMessage(id)) {
+#ifdef FREESTYLEMAILUSED
         return CFSEngine::instance()->retrieveHeader(id);
-    else
+#else
+        return false;
+#endif
+    } else
         return CMTMEngine::instance()->retrieveHeader(id);
 }
 

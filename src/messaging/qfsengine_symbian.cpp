@@ -61,17 +61,14 @@ QTM_BEGIN_NAMESPACE
 
 using namespace SymbianHelpers;
 
+Q_GLOBAL_STATIC(CFSEngine,fsEngine);
+
 CFSEngine::CFSEngine()
 {
     CEmailInterfaceFactory* factory = CEmailInterfaceFactory::NewL(); 
     CleanupStack::PushL(factory); 
     MEmailInterface* ifPtr = factory->InterfaceL(KEmailClientApiInterface); 
     m_clientApi = static_cast<MEmailClientApi*>(ifPtr); 
-    /*CleanupReleasePushL(clientApi); 
-    
-    RMailboxPtrArray mailboxes;
-    clientApi->GetMailboxesL(mailboxes);
-    CleanupStack::PopAndDestroy(2); // clientApi and factory*/
     CleanupStack::PopAndDestroy(factory); // factory
 }
 
@@ -82,13 +79,13 @@ CFSEngine::~CFSEngine()
 
 CFSEngine* CFSEngine::instance()
 {
-
+    return fsEngine();
 }
 
 QMessageAccountIdList CFSEngine::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder, uint limit, uint offset) const
 {
     QMessageAccountIdList accountIds;
-
+    
     TRAPD(err, updateEmailAccountsL());
     
     QMessageAccountFilterPrivate* privateMessageAccountFilter = QMessageAccountFilterPrivate::implementation(filter);
