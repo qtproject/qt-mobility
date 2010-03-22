@@ -233,7 +233,6 @@ void tst_SimCM::hasFeature_data()
     QTest::newRow("ADN store (default)") << es << (int) QContactManager::MutableDefinitions << false;
     QTest::newRow("ADN store (default)") << es << (int) QContactManager::Relationships << false;
     QTest::newRow("ADN store (default)") << es << (int) QContactManager::ArbitraryRelationshipTypes << false;
-    QTest::newRow("ADN store (default)") << es << (int) QContactManager::RelationshipOrdering << false;
     // TODO: self contact may be supported on ADN? (so called "own number store")
     QTest::newRow("ADN store (default)") << es << (int) QContactManager::SelfContact << false;
     QTest::newRow("ADN store (default)") << es << (int) QContactManager::Anonymous << false;
@@ -244,7 +243,6 @@ void tst_SimCM::hasFeature_data()
     QTest::newRow("ADN store") << "ADN" << (int) QContactManager::MutableDefinitions << false;
     QTest::newRow("ADN store") << "ADN" << (int) QContactManager::Relationships << false;
     QTest::newRow("ADN store") << "ADN" << (int) QContactManager::ArbitraryRelationshipTypes << false;
-    QTest::newRow("ADN store") << "ADN" << (int) QContactManager::RelationshipOrdering << false;
     // TODO: self contact may be supported on ADN? (so called "own number store")
     QTest::newRow("ADN store") << "ADN" << (int) QContactManager::SelfContact << false;
     QTest::newRow("ADN store") << "ADN" << (int) QContactManager::Anonymous << false;
@@ -255,7 +253,6 @@ void tst_SimCM::hasFeature_data()
     QTest::newRow("SDN store") << "SDN" << (int) QContactManager::MutableDefinitions << false;
     QTest::newRow("SDN store") << "SDN" << (int) QContactManager::Relationships << false;
     QTest::newRow("SDN store") << "SDN" << (int) QContactManager::ArbitraryRelationshipTypes << false;
-    QTest::newRow("SDN store") << "SDN" << (int) QContactManager::RelationshipOrdering << false;
     QTest::newRow("SDN store") << "SDN" << (int) QContactManager::SelfContact << false;
     QTest::newRow("SDN store") << "SDN" << (int) QContactManager::Anonymous << false;
     QTest::newRow("SDN store") << "SDN" << (int) QContactManager::ChangeLogs << false;
@@ -265,7 +262,6 @@ void tst_SimCM::hasFeature_data()
     QTest::newRow("FDN store") << "FDN" << (int) QContactManager::MutableDefinitions << false;
     QTest::newRow("FDN store") << "FDN" << (int) QContactManager::Relationships << false;
     QTest::newRow("FDN store") << "FDN" << (int) QContactManager::ArbitraryRelationshipTypes << false;
-    QTest::newRow("FDN store") << "FDN" << (int) QContactManager::RelationshipOrdering << false;
     QTest::newRow("FDN store") << "FDN" << (int) QContactManager::SelfContact << false;
     QTest::newRow("FDN store") << "FDN" << (int) QContactManager::Anonymous << false;
     QTest::newRow("FDN store") << "FDN" << (int) QContactManager::ChangeLogs << false;
@@ -700,7 +696,7 @@ void tst_SimCM::fetchContacts()
     }
 
     // 2. Fetch contacts
-    QList<QContact> contacts= m_cm->contacts(QList<QContactSortOrder>(), QStringList());
+    QList<QContact> contacts= m_cm->contacts();
     QCOMPARE(m_cm->error(), QContactManager::NoError);
     QList<QContactLocalId> contactIds = m_cm->contactIds();
     QCOMPARE(m_cm->error(), QContactManager::NoError);
