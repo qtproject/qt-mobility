@@ -502,8 +502,9 @@ QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
 
 QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 {
-    QSystemNetworkInfo::NetworkMode mode;
+    QSystemNetworkInfo::NetworkMode mode = QSystemNetworkInfo::UnknownMode;
 
+#if !defined(QT_NO_NETWORKMANAGER)
     bool anyDefaultRoute = false;
 
     QMapIterator<QString, QString> i(activePaths);
@@ -520,12 +521,9 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
         }
         devicepath = i.value();
     }
+#endif
 
-    if(!anyDefaultRoute) {
-       mode = QSystemNetworkInfo::UnknownMode;
-    }
-
-    return QSystemNetworkInfo::UnknownMode;
+    return mode;
 }
 
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent)
