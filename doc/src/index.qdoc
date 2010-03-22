@@ -88,8 +88,7 @@
         \o Services built on top of these APIs would include Internet
         applications such as email and web browsing.
         \o Multimedia features enable image and video capture with audio ,
-    audio recording, and the playing of music or video clips. However,
-    camera ability is not part of this release.
+    audio recording, and the playing of music or video clips.
         \o Location will make the device aware of its geographical location
     to support GIS applications.
         \o Publish-Subscribe enables communication between separate objects
@@ -253,14 +252,6 @@
     are proud of the work we have done on this project and want to show
     not only what we are delivering now but what is around the corner.
     
-    \section2 Camera
-
-    A technology preview of the Camera API will be made available with this
-    release. The Camera will be treated separately from Multimedia at this
-    stage because of the different level of maturity of the APIs.
-
-    For more details see the \l {preview.html#Camera-Support}{Camera classes}.
-
     \section2 Sensors
 
     An API for accessing hardware sensors. This covers both high-level
@@ -417,7 +408,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="lightgreen"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="lightgreen"></td>
     <td bgcolor="green"></td>
     <td bgcolor="gray"></td>
@@ -469,21 +460,6 @@
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td></td>
-    </tr>
-    <td>Camera</td>
-    <td>TP</td>
-    <td bgcolor="lightgreen"></td>
-    <td bgcolor="lightgreen"></td>
-    <td bgcolor="lightgreen"></td>
-    <td bgcolor="lightgray"></td>
-    <td bgcolor="lightgray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="lightgreen"></td>
     <td bgcolor="gray"></td>
     <td></td>
     </tr>
