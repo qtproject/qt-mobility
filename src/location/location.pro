@@ -44,7 +44,9 @@ PUBLIC_HEADERS += qgeocoordinate.h \
                   qlandmarksortorder.h \
                   qlandmarknamesort.h \
                   qlandmarkdistancesort.h \
-                  qlandmarkcustomsort.h
+                  qlandmarkcustomsort.h \
+                  qlandmarkmanagerengine.h \
+                  qlandmarkmanagerenginefactory.h
 
 PRIVATE_HEADERS += qlocationutils_p.h \
                    qnmeapositioninfosource_p.h \
@@ -197,7 +199,9 @@ SOURCES += qlocationutils.cpp \
            qlandmarksortorder.cpp \
            qlandmarknamesort.cpp \
            qlandmarkdistancesort.cpp \
-           qlandmarkcustomsort.cpp
+           qlandmarkcustomsort.cpp \
+           qlandmarkmanagerengine.cpp \
+           qlandmarkmanagerenginefactory.cpp
 
 # maps source files
 SOURCES += qaddress.cpp \

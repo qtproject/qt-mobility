@@ -73,7 +73,7 @@ public:
     virtual ~QLandmarkManager();
 
     bool saveLandmark(QLandmark *landmark);
-    bool saveLandmarks(QList<QLandmark *> landmarks, QMap<int, QLandmarkManager::Error> *errorMap); //default of 0?
+    bool saveLandmarks(QList<QLandmark> *landmarks, QMap<int, QLandmarkManager::Error> *errorMap); //default of 0?
     bool removeLandmark(const QLandmarkId &landmarkId);
     bool removeLandmarks(const QList<QLandmarkId> &landmarksIds, QMap<int, QLandmarkManager::Error> *errorMap);
 
@@ -81,11 +81,14 @@ public:
     bool removeCategory(const QLandmarkCategoryId &categoryId);
 
     QLandmarkCategory category(const QLandmarkCategoryId &categoryId);
+    QList<QLandmarkCategory> categories(const QList<QLandmarkCategoryId> &categoryIds);
     QList<QLandmarkCategoryId> categoryIds() const;
 
     QLandmark landmark(const QLandmarkId &landmarkId);
+    QList<QLandmark> landmarks(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder>& sortOrders) const;
+    QList<QLandmark> landmarks(const QList<QLandmarkId> &landmarkIds) const;
     QList<QLandmarkId> landmarkIds(const QLandmarkFilter &filter,
-                                const QList<QLandmarkSortOrder> &sortOrders) const;
+                                   const QList<QLandmarkSortOrder> &sortOrders) const;
 
     bool importLandmarks(QIODevice *device, Format format);
     bool importLandmarks(const QString &fileName, Format format);
@@ -101,13 +104,14 @@ public:
     static bool setDefaultManager(const QString &name);
 
 Q_SIGNALS:
-    void landmarkAdded(const QLandmarkId &landmarkId);
-    void landmarkUpdated(const QLandmarkId &landmarkId);
-    void landmarkRemoved(const QLandmarkId &landmarkId);
+    void dataChanged();
+    void landmarksAdded(const QList<QLandmarkId> &landmarkIds);
+    void landmarksChanged(const QList<QLandmarkId> &landmarkIds);
+    void landmarksRemoved(const QList<QLandmarkId> &landmarkIds);
 
-    void categoryAdded(const QLandmarkCategoryId &categoryId);
-    void categoryUpdated(const QLandmarkCategoryId &categoryId);
-    void categoryRemoved(const QLandmarkCategoryId &categoryId);
+    void categoriesAdded(const QList<QLandmarkCategoryId> &categoryIds);
+    void categoriesChanged(const QList<QLandmarkCategoryId> &categoryIds);
+    void categoriesRemoved(const QList<QLandmarkCategoryId> &categoryIds);
 
 private:
     QLandmarkManagerPrivate *d;
