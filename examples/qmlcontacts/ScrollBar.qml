@@ -10,6 +10,8 @@ Item {
     property real position
     property real pageSize
     property var orientation : "Vertical"
+    property alias bgColor: background.color
+    property alias fgColor: thumb.color
 
     // A light, semi-transparent background
     Rectangle {
@@ -20,6 +22,7 @@ Item {
     }
     // Size the bar to the required size, depending upon the orientation.
     Rectangle {
+        id: thumb
         opacity: 0.7
         color: "black"
         radius: orientation == 'Vertical' ? (width/2 - 1) : (height/2 - 1)

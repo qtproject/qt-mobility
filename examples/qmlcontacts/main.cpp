@@ -41,13 +41,13 @@
 
 #include <QApplication>
 #include <QtGui>
-#include <QmlEngine>
-#include <QmlComponent>
+#include <QDeclarativeEngine>
+#include <QDeclarativeComponent>
 #include <QDebug>
-#include <QmlGraphicsItem>
-#include <QmlView>
+#include <QDeclarativeView>
 #include <QContactManager>
 #include "qmlcontactsa.h"
+#include "qmlcontact.h"
 QT_USE_NAMESPACE
 QTM_USE_NAMESPACE
 
@@ -56,40 +56,23 @@ int main(int argc, char ** argv)
     QApplication app(argc, argv);
 
 
-    QmlEngine engine;
-    QmlComponent component(&engine, ":example.qml");
-//    QMLContactManager *qcm = qobject_cast<QMLContactManager *>(component.create());
-//    if (qcm) {
-//        qWarning() << "Available back ends: " << qcm->availableManagers();
-//        qWarning() << "Current Backend: " << qcm->manager();
-//        //qWarning() << "They wear a" << person->shoeSize() << "sized shoe";
-//    } else {
-//
-//        qWarning() << "An error occurred";
-//        qWarning() << component.errorsString();
-//        exit(-1);
-//    }
-//    QmlGraphicsItem *qcm = qobject_cast<QmlGraphicsItem *>(component.create());
-//    if(!qcm){
-//                qWarning() << "An error occurred";
-//                qWarning() << component.errorsString();
-//                exit(-1);
-//
-//    }
-//    qcm->show();
+    QDeclarativeEngine engine;
+    QDeclarativeComponent component(&engine, ":example.qml");
 
-    QWidget *b = new QWidget;
+    qmlRegisterType<QmlContact>("QmlContact", 1, 0, "QmlContact");
+    qmlRegisterType<QMLContactManagerAsync>("QMLContactManagerAsync", 1, 0, "QMLContactManagerAsync");
+
+    QWidget *b = new QWidget();
     QVBoxLayout *vbox = new QVBoxLayout;
     vbox->setMargin(0);
-    b->setLayout(vbox);
 
-    QmlView *view = new QmlView(b);
+    QDeclarativeView *view = new QDeclarativeView(b);
     view->setFocusPolicy(Qt::StrongFocus);
-    view->setContentResizable(true);
-    view->setUrl(QUrl("qrc:/example.qml"));
-    view->execute();
+    view->setResizeMode(QDeclarativeView::SizeViewToRootObject);
+    view->setSource(QUrl("qrc:/example.qml"));
     vbox->addWidget(view);
-    b->resize(800,480);
+    b->setLayout(vbox);
+//    b->resize(800,480);
     b->show();    
 
     return app.exec();

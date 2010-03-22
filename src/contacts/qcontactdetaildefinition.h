@@ -95,10 +95,6 @@ public:
         CreateOnly
     };
 
-    /* Accessor and mutator for access constraints on details of this definition */
-    QContactDetailDefinition::AccessConstraint Q_DECL_DEPRECATED accessConstraint() const;
-    void Q_DECL_DEPRECATED setAccessConstraint(const QContactDetailDefinition::AccessConstraint& constraint);
-
 private:
     QSharedDataPointer<QContactDetailDefinitionData> d;
 };

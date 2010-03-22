@@ -58,7 +58,7 @@ public:
     // engine factory functions
     virtual QList<int> supportedImplementationVersions() const;
     virtual ~QContactManagerEngineFactory();
-    virtual QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error& error) = 0;
+    virtual QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error* error) = 0;
     virtual QString managerName() const = 0;
 };
 QTM_END_NAMESPACE

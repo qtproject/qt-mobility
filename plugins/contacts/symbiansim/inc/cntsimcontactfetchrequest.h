@@ -55,18 +55,10 @@ public:
     
 public Q_SLOTS:    
     // from CntAbstractSimRequest
-    bool start();
-    bool cancel();
-    void retry();
+    void run();
     
 private Q_SLOTS:
     void readComplete(QList<QContact> contacts, QContactManager::Error error);
-    
-private:
-    bool execute(QContactManager::Error &error);
-
-private:
-    QContactFetchRequest *m_req;
 };
 
 #endif // CNTSIMCONTACTFETCHREQUEST_H_

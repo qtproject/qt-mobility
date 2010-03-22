@@ -131,13 +131,13 @@ QList<TUid> CntTransformName::supportedSortingFieldTypes(QString detailFieldName
     if (detailFieldName == QContactName::FieldPrefix)
         return uids << KUidContactFieldPrefixName;
 
-    if (detailFieldName == QContactName::FieldFirst)
+    if (detailFieldName == QContactName::FieldFirstName)
         return uids << KUidContactFieldGivenName;
 
-    if (detailFieldName == QContactName::FieldMiddle)
+    if (detailFieldName == QContactName::FieldMiddleName)
         return uids << KUidContactFieldAdditionalName;
 
-    if (detailFieldName == QContactName::FieldLast)
+    if (detailFieldName == QContactName::FieldLastName)
         return uids << KUidContactFieldFamilyName;
 
     if (detailFieldName == QContactName::FieldSuffix)
@@ -171,11 +171,11 @@ quint32 CntTransformName::getIdForField(const QString& fieldName) const
 {
     if (QContactName::FieldPrefix == fieldName)
         return KUidContactFieldPrefixName.iUid;
-    else if (QContactName::FieldFirst == fieldName)
+    else if (QContactName::FieldFirstName == fieldName)
         return KUidContactFieldGivenName.iUid;
-    else if (QContactName::FieldMiddle == fieldName)
+    else if (QContactName::FieldMiddleName == fieldName)
         return KUidContactFieldAdditionalName.iUid;
-    else if (QContactName::FieldLast == fieldName)
+    else if (QContactName::FieldLastName == fieldName)
         return KUidContactFieldFamilyName.iUid;
     else if (QContactName::FieldSuffix == fieldName)
         return KUidContactFieldSuffixName.iUid;
@@ -202,9 +202,9 @@ void CntTransformName::detailDefinitions(QMap<QString, QContactDetailDefinition>
         // groups support only custom label
         if(contactType == QContactType::TypeGroup) {
             fields.remove(QContactName::FieldPrefix);
-            fields.remove(QContactName::FieldFirst);
-            fields.remove(QContactName::FieldMiddle);
-            fields.remove(QContactName::FieldLast);
+            fields.remove(QContactName::FieldFirstName);
+            fields.remove(QContactName::FieldMiddleName);
+            fields.remove(QContactName::FieldLastName);
             fields.remove(QContactName::FieldSuffix);
         } else {
             // Note: Custom labels cannot be enabled for a contact in pre-10.1

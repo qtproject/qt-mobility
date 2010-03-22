@@ -47,6 +47,8 @@
 #include <QList>
 #include <QPair>
 #include <QString>
+#include <QHash>
+#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
@@ -73,47 +75,48 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
+  \enum QContactRelationship::Role
+  Describes the roles that a contact may take in a relationship.
+  \value First The contact is the first contact in the relationship
+  \value Second The contact is the second contact in the relationship
+  \value Either The contact is either the first or second contact in the relationship
+ */
+
+/*!
  * \variable QContactRelationship::HasMember
  * The relationship type which identifies the first contact as being a group which includes the second contact
  */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::HasMember, "HasMember");
+Q_DEFINE_LATIN1_CONSTANT(QContactRelationship::HasMember, "HasMember");
 
 /*!
  * \variable QContactRelationship::Aggregates
  * The relationship type which identifies the first contact as aggregating the second contact into a metacontact
  */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::Aggregates, "Aggregates");
-
-/*!
- * \variable QContactRelationship::Is
- * \obsolete
- * Deprecated - use QContactRelationship::IsSameAs instead.
- */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::Is, "IsSameAs");
+Q_DEFINE_LATIN1_CONSTANT(QContactRelationship::Aggregates, "Aggregates");
 
 /*!
  * \variable QContactRelationship::IsSameAs
  * The relationship type which identifies the first contact as being the same contact as the second contact
  */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::IsSameAs, "IsSameAs");
+Q_DEFINE_LATIN1_CONSTANT(QContactRelationship::IsSameAs, "IsSameAs");
 
 /*!
  * \variable QContactRelationship::HasAssistant
  * The relationship type which identifies the second contact as being the assistant of the first contact
  */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::HasAssistant, "HasAssistant");
+Q_DEFINE_LATIN1_CONSTANT(QContactRelationship::HasAssistant, "HasAssistant");
 
 /*!
  * \variable QContactRelationship::HasManager
  * The relationship type which identifies the second contact as being the manager of the first contact
  */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::HasManager, "HasManager");
+Q_DEFINE_LATIN1_CONSTANT(QContactRelationship::HasManager, "HasManager");
 
 /*!
  * \variable QContactRelationship::HasSpouse
  * The relationship type which identifies the second contact as being the spouse of the first contact
  */
-Q_DEFINE_LATIN1_LITERAL(QContactRelationship::HasSpouse, "HasSpouse");
+Q_DEFINE_LATIN1_CONSTANT(QContactRelationship::HasSpouse, "HasSpouse");
 
 /*!
  * Constructs a new relationship
@@ -160,6 +163,24 @@ bool QContactRelationship::operator==(const QContactRelationship &other) const
         return false;
     return true;
 }
+
+/*!
+ * Returns the hash value for \a key.
+ */
+uint qHash(const QContactRelationship &key)
+{
+    return qHash(key.first()) + qHash(key.second())
+        + QT_PREPEND_NAMESPACE(qHash)(key.relationshipType());
+}
+
+#ifndef QT_NO_DEBUG_STREAM
+QDebug operator<<(QDebug dbg, const QContactRelationship& rel)
+{
+    dbg.nospace() << "QContactRelationship(" << rel.first() << ' ' << rel.relationshipType()
+            << ' ' << rel.second() << ')';
+    return dbg.maybeSpace();
+}
+#endif
 
 /*!
  * \fn QContactRelationship::operator!=(const QContactRelationship& other) const

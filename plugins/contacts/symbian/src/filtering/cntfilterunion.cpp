@@ -42,9 +42,9 @@
 #include "cntfilterunion.h"
 #include "cntfilterdetail.h"
 #include "cntfilterdefault.h"
+#include "cntfilterrelationship.h"
 #include "cntfilterintersection.h"
 #include "cnttransformcontact.h"
-#include "qcontactunionfilter.h"
 
 CntFilterUnion::CntFilterUnion(CContactDatabase& contactDatabase,CntSymbianSrvConnection &cntServer,CntDbInfo& dbInfo) : 
                     m_contactdatabase(contactDatabase),
@@ -64,23 +64,24 @@ QList<QContactLocalId> CntFilterUnion::contacts(
         const QContactFilter &filter,
         const QList<QContactSortOrder> &sortOrders,
         bool &filterSupportedflag,
-        QContactManager::Error &error) 
+        QContactManager::Error* error)
 {
     Q_UNUSED(sortOrders);
     Q_UNUSED(filterSupportedflag);
     //Check if any invalid filter is passed 
     if(!filterSupported(filter))
         {
-        error =  QContactManager::NotSupportedError;
+        *error = QContactManager::NotSupportedError;
         return QList<QContactLocalId>();
         }
      QList<QContactLocalId> idList;
      QString sqlQuery;
-     this->createSelectQuery( filter,sqlQuery,error) ;
+     createSelectQuery(filter,sqlQuery,error);
+     QString sortQuery = m_dbInfo.getSortQuery(sortOrders, sqlQuery, error);
      //fetch the contacts
-     if(error == QContactManager::NoError )
+     if(*error == QContactManager::NoError )
          {
-         idList =  m_srvConnection.searchContacts(sqlQuery, error);
+         idList =  m_srvConnection.searchContacts(sortQuery, error);
          }
      return idList;
 }
@@ -101,13 +102,13 @@ bool CntFilterUnion::filterSupported(const QContactFilter& filter)
 
 void CntFilterUnion::createSelectQuery(const QContactFilter& filter,
                               QString& selectquery,
-                              QContactManager::Error& error)
+                              QContactManager::Error* error)
 
 {
     const QContactUnionFilter& unionfilter = static_cast<const QContactUnionFilter&>(filter);
     if(!filterSupported(filter))
         {
-        error = QContactManager::NotSupportedError;
+        *error = QContactManager::NotSupportedError;
         return;
         }
         QList<QContactFilter> individualFilters = unionfilter.filters();
@@ -121,7 +122,7 @@ void CntFilterUnion::createSelectQuery(const QContactFilter& filter,
         
             QString query;
             getSelectQueryforFilter(individualFilters[i],query,error);
-            if(error == QContactManager::NoError )
+            if(*error == QContactManager::NoError )
                 {
                 selectquery.append(" UNION ");
                 selectquery += query;
@@ -131,7 +132,8 @@ void CntFilterUnion::createSelectQuery(const QContactFilter& filter,
         
             
 }
-void CntFilterUnion::getSelectQueryforFilter(const QContactFilter& filter,QString& sqlSelectQuery,QContactManager::Error& error)
+
+void CntFilterUnion::getSelectQueryforFilter(const QContactFilter& filter,QString& sqlSelectQuery,QContactManager::Error* error)
     {
     switch(filter.type())
             {
@@ -146,13 +148,19 @@ void CntFilterUnion::getSelectQueryforFilter(const QContactFilter& filter,QStrin
                 QContactDetailFilter detailfilter(filter);
                 if(detailfilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName ) 
                     {
-                    error=QContactManager::NotSupportedError;
+                    *error=QContactManager::NotSupportedError;
                     }
                 else
                     {
                     CntFilterDetail dtlfltr(m_contactdatabase,m_srvConnection,m_dbInfo);
                     dtlfltr.createSelectQuery(filter,sqlSelectQuery,error);
                     }
+                break;
+                }
+            case QContactFilter::RelationshipFilter:
+                {
+                CntFilterRelationship relationfltr(m_contactdatabase,m_srvConnection,m_dbInfo);
+                relationfltr.createSelectQuery(filter,sqlSelectQuery,error);
                 break;
                 }
             case QContactFilter::IntersectionFilter:
@@ -173,7 +181,7 @@ void CntFilterUnion::getSelectQueryforFilter(const QContactFilter& filter,QStrin
                 }
             default:
                 {
-                error = QContactManager::NotSupportedError;
+                *error = QContactManager::NotSupportedError;
                 break;
                 }
             }

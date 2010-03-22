@@ -77,8 +77,8 @@ public:
 
     // from QVideoWidgetControl
     QWidget *videoWidget();
-    QVideoWidget::AspectRatioMode aspectRatioMode() const;
-    void setAspectRatioMode(QVideoWidget::AspectRatioMode ratio);
+    Qt::AspectRatioMode aspectRatioMode() const;
+    void setAspectRatioMode(Qt::AspectRatioMode ratio);
     bool isFullScreen() const;
     void setFullScreen(bool fullScreen);
     int brightness() const;
@@ -106,7 +106,7 @@ private slots:
     
 private:
     QBlackWidget *m_widget;
-    QVideoWidget::AspectRatioMode m_aspectRatioMode;
+    Qt::AspectRatioMode m_aspectRatioMode;
 };
 
 #endif // S60VIDEOWIDGET_H

@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- battery-charge.qdoc -->
 <head>
   <title>Qt Mobility Project 1.0: Accessing Publish and Subscribe from QML</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -32,13 +32,8 @@
 <p>The user interface of the battery subscriber program is described in QML. It has the following features: A rectangular area representing the percent charge of the battery. It indicates a low battery state by changing the color to red, it is green otherwise. An animation is shown to indicate that the battery is being recharged.</p>
 <p align="center"><img src="images/battery-subscriber.png" /></p><a name="battery-subscriber"></a>
 <h2>Battery Subscriber</h2>
-<p>The first step is to make <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> available from within QML so that our QML code can access the keys published by the battery-publisher. This is achieved by using the QML_DECLARE_TYPE() and QML_REGISTER_TYPE() macros. The global macro QML_DECLARE_TYPE() makes QML aware of the <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> object and can be done as shown below.</p>
+<p>The first step is to make <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> available from within QML so that our QML code can access the keys published by the battery-publisher. This is achieved by using the QML_DECLARE_TYPE() and QML_DEFINE_TYPE() macros. The following code makes <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> available from within QML as ValueSpaceSubscriber.</p>
 <pre>    QML_DECLARE_TYPE(QValueSpaceSubscriber);</pre>
-<p>To make <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> available as a QML element, the QML_REGISTER_TYPE() macro must be called to register <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> as a type identified as ValueSpaceSubscriber. This is not a global macro and is usually called in the main function.</p>
-<pre>        QML_REGISTER_TYPE(Qt, 4, 6, ValueSpaceSubscriber, QValueSpaceSubscriber);</pre>
-<p>Displaying QML can be done by specifying a resource <a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a> containing the QML file as follows.</p>
-<pre>        view-&gt;setSource(QUrl(&quot;qrc:/battery-meter.qml&quot;));
-        view-&gt;show();</pre>
 <a name="qml"></a>
 <h3>QML</h3>
 <p>Two ValueSpaceSubscriber instances are created, one for each of the battery values. We give each object a unique id so that we can reference it from elsewhere in the QML. We set the <i>path</i> properties to the Value Space path of the keys. Finally we set the <i>notify</i> properties to true to enable the emission of change notification signals.</p>

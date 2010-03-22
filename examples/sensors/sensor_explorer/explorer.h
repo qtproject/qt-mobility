@@ -63,7 +63,6 @@ private slots:
     void on_sensorprops_itemChanged(QTableWidgetItem *item);
     void on_start_clicked();
     void on_stop_clicked();
-    void on_poll_clicked();
     void sensor_changed();
     void adjustSizes();
     void loadSensorProperties();

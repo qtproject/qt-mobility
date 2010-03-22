@@ -59,10 +59,10 @@ public:
 public: 
     QString createSelectQuery(const QContactFilter& filter,
                                   const QList<QContactSortOrder>& sortOrders,
-                                  QContactManager::Error& error) const;
+                                  QContactManager::Error* error) const;
     void createSelectQuery(const QContactFilter& detailFilter,
                                   QString& sqlQuery,
-                                  QContactManager::Error& error);
+                                  QContactManager::Error* error);
 private: 
     void createQuerySingleSearchValue(QString& sqlQuery, const QString &searchValue, const QStringList &columns) const;
     void createQueryMultipleSearchValues(QString& sqlQuery, const QStringList &searchValues, const QStringList &columns) const;

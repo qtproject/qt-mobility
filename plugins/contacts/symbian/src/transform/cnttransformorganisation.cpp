@@ -157,7 +157,7 @@ quint32 CntTransformOrganisation::getIdForField(const QString& fieldName) const
 
     if (QContactOrganization::FieldName  == fieldName)
         return KUidContactFieldCompanyName.iUid;
-    else if (QContactOrganization::FieldLogo == fieldName)
+    else if (QContactOrganization::FieldLogoUrl == fieldName)
         return 0;
     else if (QContactOrganization::FieldDepartment == fieldName)
         return KUidContactFieldDepartmentName.iUid;

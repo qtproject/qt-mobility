@@ -67,29 +67,6 @@ QContactRemoveRequest::~QContactRemoveRequest()
 {
 }
 
-/*!
-  \internal
-  Sets the filter which will be used to select the contacts to remove to \a filter.
-  This function is obsolete; set the list of contacts that will be removed by calling setContactIds().
- */
-void QContactRemoveRequest::setFilter(const QContactFilter& filter)
-{
-    Q_D(QContactRemoveRequest);
-    d->m_filter = filter;
-}
-
-/*!
-  \internal
-  Returns the filter which will be used to select the contacts to remove.
-  This function is obsolete; retrieve the list of contacts that will be removed by calling contactIds().
- */
-QContactFilter QContactRemoveRequest::filter() const
-{
-    Q_D(const QContactRemoveRequest);
-    return d->m_filter;
-}
-
-
 /*! Sets the list of ids of contacts which will be removed to \a contactIds */
 void QContactRemoveRequest::setContactIds(const QList<QContactLocalId>& contactIds)
 {

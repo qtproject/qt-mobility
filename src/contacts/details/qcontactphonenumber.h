@@ -62,7 +62,7 @@ public:
     const char* FieldSubTypes;
     const char* SubTypeLandline;
     const char* SubTypeMobile;
-    const char* SubTypeFacsimile;
+    const char* SubTypeFax;
     const char* SubTypePager;
     const char* SubTypeVoice;
     const char* SubTypeModem;
@@ -74,20 +74,20 @@ public:
     const char* SubTypeDtmfMenu;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactPhoneNumber, "PhoneNumber")
-    Q_DECLARE_LATIN1_LITERAL(FieldNumber, "PhoneNumber");
-    Q_DECLARE_LATIN1_LITERAL(FieldSubTypes, "SubTypes");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeLandline, "Landline");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeMobile, "Mobile");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeFacsimile, "Facsimile");
-    Q_DECLARE_LATIN1_LITERAL(SubTypePager, "Pager");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeVoice, "Voice");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeModem, "Modem");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeVideo, "Video");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeCar, "Car");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeBulletinBoardSystem, "BulletinBoardSystem");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeMessagingCapable, "MessagingCapable");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeAssistant, "Assistant");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeDtmfMenu, "DtmfMenu");
+    Q_DECLARE_LATIN1_CONSTANT(FieldNumber, "PhoneNumber");
+    Q_DECLARE_LATIN1_CONSTANT(FieldSubTypes, "SubTypes");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeLandline, "Landline");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeMobile, "Mobile");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeFax, "Fax");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypePager, "Pager");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeVoice, "Voice");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeModem, "Modem");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeVideo, "Video");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeCar, "Car");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeBulletinBoardSystem, "BulletinBoardSystem");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeMessagingCapable, "MessagingCapable");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeAssistant, "Assistant");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeDtmfMenu, "DtmfMenu");
 #endif
 
     void setNumber(const QString& number) {setValue(FieldNumber, number);}

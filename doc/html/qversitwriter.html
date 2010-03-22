@@ -32,19 +32,29 @@
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qversitwriter.html#QVersitWriter">QVersitWriter</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qversitwriter.html#QVersitWriter-2">QVersitWriter</a></b> ( QIODevice * <i>outputDevice</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qversitwriter.html#QVersitWriter-3">QVersitWriter</a></b> ( QByteArray * <i>outputBytes</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qversitwriter.html#dtor.QVersitWriter">~QVersitWriter</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qversitwriter.html#cancel">cancel</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QTextCodec * </td><td class="memItemRight" valign="bottom"><b><a href="qversitwriter.html#defaultCodec">defaultCodec</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QIODevice * </td><td class="memItemRight" valign="bottom"><b><a href="qversitwriter.html#device">device</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">Error </td><td class="memItemRight" valign="bottom"><b><a href="qversitwriter.html#error">error</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qversitwriter.html#setDefaultCodec">setDefaultCodec</a></b> ( QTextCodec * <i>codec</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qversitwriter.html#setDevice">setDevice</a></b> ( QIODevice * <i>device</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qversitwriter.html#startWriting">startWriting</a></b> ( const QList&lt;QVersitDocument&gt; &amp; <i>input</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">State </td><td class="memItemRight" valign="bottom"><b><a href="qversitwriter.html#state">state</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qversitwriter.html#waitForFinished">waitForFinished</a></b> ( int <i>msec</i> = -1 )</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+</ul>
+<hr />
+<a name="public-slots"></a>
+<h2>Public Slots</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qversitwriter.html#cancel">cancel</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qversitwriter.html#startWriting">startWriting</a></b> ( const QList&lt;QVersitDocument&gt; &amp; <i>input</i> )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
 </ul>
 <hr />
 <a name="signals"></a>
@@ -58,7 +68,6 @@
 <h3>Additional Inherited Members</h3>
 <ul>
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
-<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
 <li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
@@ -113,11 +122,15 @@
 <a name="//apple_ref/cpp/instm/QVersitWriter/QVersitWriter"></a>
 <h3 class="fn"><a name="QVersitWriter"></a>QVersitWriter::QVersitWriter ()</h3>
 <p>Constructs a new writer.</p>
+<h3 class="fn"><a name="QVersitWriter-2"></a>QVersitWriter::QVersitWriter ( <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> * <i>outputDevice</i> )</h3>
+<p>Constructs a new writer that writes to <i>outputDevice</i>.</p>
+<h3 class="fn"><a name="QVersitWriter-3"></a>QVersitWriter::QVersitWriter ( <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> * <i>outputBytes</i> )</h3>
+<p>Constructs a new writer that appends to <i>outputBytes</i>.</p>
 <a name="//apple_ref/cpp/instm/QVersitWriter/~QVersitWriter"></a>
 <h3 class="fn"><a name="dtor.QVersitWriter"></a>QVersitWriter::~QVersitWriter ()</h3>
 <p>Frees the memory used by the writer. Waits until a pending asynchronous writing has been completed.</p>
 <a name="//apple_ref/cpp/instm/QVersitWriter/cancel"></a>
-<h3 class="fn"><a name="cancel"></a>void QVersitWriter::cancel ()</h3>
+<h3 class="fn"><a name="cancel"></a>void QVersitWriter::cancel ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Attempts to asynchronously cancel the write request.</p>
 <a name="//apple_ref/cpp/instm/QVersitWriter/defaultCodec"></a>
 <h3 class="fn"><a name="defaultCodec"></a><a href="http://qt.nokia.com/doc/4.6/qtextcodec.html">QTextCodec</a> * QVersitWriter::defaultCodec () const</h3>
@@ -125,7 +138,7 @@
 <p>See also <a href="qversitwriter.html#setDefaultCodec">setDefaultCodec</a>().</p>
 <a name="//apple_ref/cpp/instm/QVersitWriter/device"></a>
 <h3 class="fn"><a name="device"></a><a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> * QVersitWriter::device () const</h3>
-<p>Returns the device used for writing.</p>
+<p>Returns the device used for writing, or 0 if no device has been set.</p>
 <p>See also <a href="qversitwriter.html#setDevice">setDevice</a>().</p>
 <a name="//apple_ref/cpp/instm/QVersitWriter/error"></a>
 <h3 class="fn"><a name="error"></a><a href="qversitwriter.html#Error-enum">Error</a> QVersitWriter::error () const</h3>
@@ -140,7 +153,7 @@
 <p>Sets the device used for writing to <i>device</i>. Does not take ownership of the device.</p>
 <p>See also <a href="qversitwriter.html#device">device</a>().</p>
 <a name="//apple_ref/cpp/instm/QVersitWriter/startWriting"></a>
-<h3 class="fn"><a name="startWriting"></a>bool QVersitWriter::startWriting ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qversitdocument.html">QVersitDocument</a>&gt; &amp; <i>input</i> )</h3>
+<h3 class="fn"><a name="startWriting"></a>bool QVersitWriter::startWriting ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qversitdocument.html">QVersitDocument</a>&gt; &amp; <i>input</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Starts writing <i>input</i> to <a href="qversitwriter.html#device">device</a>() asynchronously. Returns false if the output device has not been set or opened or if there is another asynchronous write operation already pending. Signal <a href="qversitwriter.html#stateChanged">stateChanged</a>() is emitted with parameter <a href="qversitwriter.html#State-enum">FinishedState</a> when the writing has finished.</p>
 <a name="//apple_ref/cpp/instm/QVersitWriter/state"></a>
 <h3 class="fn"><a name="state"></a><a href="qversitwriter.html#State-enum">State</a> QVersitWriter::state () const</h3>

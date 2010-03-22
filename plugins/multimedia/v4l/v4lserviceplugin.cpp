@@ -45,7 +45,6 @@
 #include <QtCore/qdir.h>
 
 #include "v4lserviceplugin.h"
-#include "v4lcameraservice.h"
 #include "v4lradioservice.h"
 
 #include <qmediaserviceprovider.h>
@@ -54,17 +53,13 @@
 QStringList V4LServicePlugin::keys() const
 {
     return QStringList() <<
-            QLatin1String(Q_MEDIASERVICE_RADIO) <<
-            QLatin1String(Q_MEDIASERVICE_CAMERA);
+            QLatin1String(Q_MEDIASERVICE_RADIO);
 }
 
 QMediaService* V4LServicePlugin::create(QString const& key)
 {
     if (key == QLatin1String(Q_MEDIASERVICE_RADIO))
         return new V4LRadioService;
-
-    if (key == QLatin1String(Q_MEDIASERVICE_CAMERA))
-        return new V4LCameraService;
 
     return 0;
 }
@@ -76,62 +71,12 @@ void V4LServicePlugin::release(QMediaService *service)
 
 QList<QByteArray> V4LServicePlugin::devices(const QByteArray &service) const
 {
-    if (service == Q_MEDIASERVICE_CAMERA) {
-        if (m_cameraDevices.isEmpty())
-            updateDevices();
-
-        return m_cameraDevices;
-    }
-
     return QList<QByteArray>();
 }
 
 QString V4LServicePlugin::deviceDescription(const QByteArray &service, const QByteArray &device)
 {
-    if (service == Q_MEDIASERVICE_CAMERA) {
-        if (m_cameraDevices.isEmpty())
-            updateDevices();
-
-        for (int i=0; i<m_cameraDevices.count(); i++)
-            if (m_cameraDevices[i] == device)
-                return m_cameraDescriptions[i];
-    }
-
     return QString();
-}
-
-void V4LServicePlugin::updateDevices() const
-{
-    m_cameraDevices.clear();
-    m_cameraDescriptions.clear();
-
-    QDir cameras = QDir::root();
-    cameras.setFilter(QDir::NoDotAndDotDot | QDir::AllEntries);
-    if (!cameras.cd("sys/class/video4linux"))
-        return;
-    else {
-        QFileInfoList list = cameras.entryInfoList();
-        for (int i = 0; i < list.size(); ++i) {
-            QFileInfo fileInfo = list.at(i);
-            if (fileInfo.fileName().contains(QLatin1String("video"))) {
-                QString videoName = QString("%1/%2/name").arg("/sys/class/video4linux").
-                    arg(fileInfo.fileName());
-                QFile videoFile(videoName);
-                if (videoFile.exists()) {
-                    if (videoFile.open(QIODevice::ReadOnly)) {
-                        char str[31];
-                        memset(str,0,31);
-                        if (videoFile.read(str,30) > 0) {
-                            m_cameraDevices.append(QString("v4l:/dev/%1").arg(fileInfo.fileName()).
-                                    toLocal8Bit().constData());
-                            m_cameraDescriptions.append(QString(str).simplified());
-                        }
-                        videoFile.close();
-                    }
-                }
-            }
-        }
-    }
 }
 
 

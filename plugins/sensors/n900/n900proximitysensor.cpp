@@ -76,16 +76,16 @@ void n900proximitysensor::poll()
     fclose(fd);
     if (rs != 1) return;
 
-    qreal distance;
+    bool close;
     if (strcmp(buffer, "closed") == 0) {
-        distance = 0;
+        close = true;
     } else {
-        distance = 0.01;
+        close = false;
     }
 
-    if (distance != m_reading.distance()) {
+    if (close != m_reading.close()) {
         m_reading.setTimestamp(clock());
-        m_reading.setDistance(distance);
+        m_reading.setClose(close);
         newReadingAvailable();
     }
 }

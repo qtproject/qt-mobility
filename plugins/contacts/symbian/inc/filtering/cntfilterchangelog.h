@@ -55,12 +55,12 @@ public:
             const QContactFilter &filter,
             const QList<QContactSortOrder> &sortOrders,
             bool &filterSupported,
-            QContactManager::Error &error);
+            QContactManager::Error* error);
     bool filterSupported(const QContactFilter& filter);
 
     void createSelectQuery(const QContactFilter& filter,
                                  QString& sqlQuery,
-                                 QContactManager::Error& error);
+                                 QContactManager::Error* error);
 private:
 
 protected:

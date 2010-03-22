@@ -61,9 +61,9 @@ public:
     const char* TypeGroup;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactType, "Type")
-    Q_DECLARE_LATIN1_LITERAL(FieldType, "Type");
-    Q_DECLARE_LATIN1_LITERAL(TypeContact, "Contact");
-    Q_DECLARE_LATIN1_LITERAL(TypeGroup, "Group");
+    Q_DECLARE_LATIN1_CONSTANT(FieldType, "Type");
+    Q_DECLARE_LATIN1_CONSTANT(TypeContact, "Contact");
+    Q_DECLARE_LATIN1_CONSTANT(TypeGroup, "Group");
 #endif
 
     void setType(const QString& type) {setValue(FieldType, type);}

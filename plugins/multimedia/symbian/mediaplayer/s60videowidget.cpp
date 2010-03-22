@@ -84,7 +84,7 @@ void QBlackWidget::paintEvent(QPaintEvent *event)
 S60VideoWidgetControl::S60VideoWidgetControl(QObject *parent)
     : QVideoWidgetControl(parent)
     , m_widget(0)
-    , m_aspectRatioMode(QVideoWidget::KeepAspectRatio)
+    , m_aspectRatioMode(Qt::KeepAspectRatio)
 {
     m_widget = new QBlackWidget();
     connect(m_widget, SIGNAL(beginVideoWindowNativePaint()), this, SIGNAL(beginVideoWindowNativePaint()));
@@ -103,12 +103,12 @@ QWidget *S60VideoWidgetControl::videoWidget()
     return m_widget;
 }
 
-QVideoWidget::AspectRatioMode S60VideoWidgetControl::aspectRatioMode() const
+Qt::AspectRatioMode S60VideoWidgetControl::aspectRatioMode() const
 {
     return m_aspectRatioMode;
 }
 
-void S60VideoWidgetControl::setAspectRatioMode(QVideoWidget::AspectRatioMode ratio)
+void S60VideoWidgetControl::setAspectRatioMode(Qt::AspectRatioMode ratio)
 {
     if (m_aspectRatioMode == ratio)
         return;

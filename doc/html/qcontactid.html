@@ -30,6 +30,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactid.html#setLocalId">setLocalId</a></b> ( const QContactLocalId &amp; <i>id</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactid.html#setManagerUri">setManagerUri</a></b> ( const QString &amp; <i>uri</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactid.html#operator-not-eq">operator!=</a></b> ( const QContactId &amp; <i>other</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactid.html#operator-lt">operator&lt;</a></b> ( const QContactId &amp; <i>other</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QContactId &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactid.html#operator-eq">operator=</a></b> ( const QContactId &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactid.html#operator-eq-eq">operator==</a></b> ( const QContactId &amp; <i>other</i> ) const</td></tr>
 </table>
@@ -75,6 +76,11 @@
 <a name="//apple_ref/cpp/instm/QContactId/operator!="></a>
 <h3 class="fn"><a name="operator-not-eq"></a>bool QContactId::operator!= ( const QContactId &amp; <i>other</i> ) const</h3>
 <p>Returns true if either the manager URI or local id of the contact id is different to that of <i>other</i></p>
+<a name="//apple_ref/cpp/instm/QContactId/operator&lt;"></a>
+<h3 class="fn"><a name="operator-lt"></a>bool QContactId::operator&lt; ( const QContactId &amp; <i>other</i> ) const</h3>
+<p>Returns true if this id is less than the <i>other</i> id. This id will be considered less than the <i>other</i> id if the manager URI of this id is alphabetically less than the manager URI of the <i>other</i> id. If both ids have the same manager URI, this id will be considered less than the <i>other</i> id if the local id of this id is less than the local id of the <i>other</i> id.</p>
+<p>The invalid, empty id consists of an empty manager URI and the invalid, zero local id, and hence will be less than any non-invalid id.</p>
+<p>This operator is provided primarily to allow use of a <a href="qcontactid.html">QContactId</a> as a key in a <a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>.</p>
 <a name="//apple_ref/cpp/instm/QContactId/operator="></a>
 <h3 class="fn"><a name="operator-eq"></a>QContactId &amp; QContactId::operator= ( const QContactId &amp; <i>other</i> )</h3>
 <p>Assigns the contact id to be equal to <i>other</i></p>
