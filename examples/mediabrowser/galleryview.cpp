@@ -93,5 +93,5 @@ QGalleryItemList *GalleryView::media() const
 void GalleryView::sliderMoved(int value)
 {
     if (QGalleryItemList *list = request->items())
-        list->setCursorPosition(value - list->cacheSize() / 3);
+        list->setCursorPosition(value - list->minimumPagedItems() / 3);
 }

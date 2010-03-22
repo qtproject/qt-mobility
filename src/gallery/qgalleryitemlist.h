@@ -79,7 +79,7 @@ class Q_GALLERY_EXPORT QGalleryItemList : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(int cursorPosition READ cursorPosition WRITE setCursorPosition)
-    Q_PROPERTY(int cacheSize READ cacheSize)
+    Q_PROPERTY(int minimumPagedItems READ minimumPagedItems)
     Q_DECLARE_PRIVATE(QGalleryItemList)
 public:
     enum MetaDataFlag
@@ -99,7 +99,7 @@ public:
     virtual QString toString(int key) const = 0;
 
     int cursorPosition() const;
-    virtual int cacheSize() const;
+    virtual int minimumPagedItems() const;
 
     virtual int count() const = 0;
 

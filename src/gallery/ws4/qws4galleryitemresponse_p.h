@@ -87,7 +87,7 @@ public:
     QString toString(int key) const;
 
     void setCursorPosition(int position);
-    int cacheSize() const;
+    int minimumPagedItems() const;
 
     int count() const;
 

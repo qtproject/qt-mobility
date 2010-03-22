@@ -238,12 +238,12 @@ void QGalleryItemList::setCursorPosition(int position)
 }
 
 /*!
-    \property QGalleryItemList::cacheSize
+    \property QGalleryItemList::minimumPagedItems
 
-    \brief The number of items cached by a list.
+    \brief The minimum number of consecutive items loaded in a list.
 */
 
-int QGalleryItemList::cacheSize() const
+int QGalleryItemList::minimumPagedItems() const
 {
     return d_ptr->cacheSize;
 }

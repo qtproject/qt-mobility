@@ -58,7 +58,7 @@ QWS4GalleryItemResponse::QWS4GalleryItemResponse(
     , m_typeIndex(0)
     , m_rowOffset(0)
     , m_count(0)
-    , m_minimumPagedItems(qMax<int>(PageSize, request.minimumCacheSize()))
+    , m_minimumPagedItems(qMax<int>(PageSize, request.minimumPagedItems()))
     , m_rowSet(rowSet)
     , m_binding(0)
     , m_placeholderRow(new QWS4GalleryItemListRow)
@@ -146,7 +146,7 @@ void QWS4GalleryItemResponse::setCursorPosition(int position)
     }
 }
 
-int QWS4GalleryItemResponse::cacheSize() const
+int QWS4GalleryItemResponse::minimumPagedItems() const
 {
     return m_minimumPagedItems;
 }

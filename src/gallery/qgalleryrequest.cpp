@@ -665,13 +665,13 @@ public:
     QGalleryItemRequestPrivate(QAbstractGallery *gallery)
         : QGalleryAbstractRequestPrivate(gallery, QGalleryAbstractRequest::Item)
         , initialCursorPosition(0)
-        , minimumCacheSize(200)
+        , minimumPagedItems(200)
         , live(false)
     {
     }
 
     int initialCursorPosition;
-    int minimumCacheSize;
+    int minimumPagedItems;
     bool live;
     QStringList fields;
     QStringList sortFields;
@@ -802,7 +802,7 @@ void QGalleryItemRequest::setInitialCursorPosition(int position)
 }
 
 /*!
-    \property QGalleryItemRequest::minimumCacheSize
+    \property QGalleryItemRequest::minimumPagedItems
 
     \brief The minimum number of consecutive items the list returned by a
     request should cache.
@@ -810,14 +810,14 @@ void QGalleryItemRequest::setInitialCursorPosition(int position)
     By default this is 200.
 */
 
-int QGalleryItemRequest::minimumCacheSize() const
+int QGalleryItemRequest::minimumPagedItems() const
 {
-    return d_func()->minimumCacheSize;
+    return d_func()->minimumPagedItems;
 }
 
-void QGalleryItemRequest::setMinimumCacheSize(int size)
+void QGalleryItemRequest::setMinimumPagedItems(int size)
 {
-    d_func()->minimumCacheSize = size;
+    d_func()->minimumPagedItems = size;
 }
 
 /*!

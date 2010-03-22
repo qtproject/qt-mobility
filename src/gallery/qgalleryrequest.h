@@ -182,7 +182,7 @@ class Q_GALLERY_EXPORT QGalleryItemRequest : public QGalleryAbstractRequest
     Q_PROPERTY(QStringList sortFields READ sortFields WRITE setSortFields)
     Q_PROPERTY(bool live READ isLive WRITE setLive)
     Q_PROPERTY(int initialCursorPosition READ initialCursorPosition WRITE setInitialCursorPosition)
-    Q_PROPERTY(int minimumCacheSize READ minimumCacheSize WRITE setMinimumCacheSize)
+    Q_PROPERTY(int minimumPagedItems READ minimumPagedItems WRITE setMinimumPagedItems)
     Q_PROPERTY(QString itemType READ itemType WRITE setItemType)
     Q_PROPERTY(QGalleryFilter filter READ filter WRITE setFilter NOTIFY filterChanged)
     Q_PROPERTY(QString itemId READ itemId WRITE setItemId NOTIFY itemIdsChanged)
@@ -209,8 +209,8 @@ public:
     int initialCursorPosition() const;
     void setInitialCursorPosition(int index);
 
-    int minimumCacheSize() const;
-    void setMinimumCacheSize(int size);
+    int minimumPagedItems() const;
+    void setMinimumPagedItems(int size);
 
     QString itemType() const;
     void setItemType(const QString &type);
