@@ -483,7 +483,7 @@ void TestSymbianEngine::retrieveContacts()
     // Retrieve sorted contacts
     QContactSortOrder sortOrder;
     QList<QContactSortOrder> s1;
-    sortOrder.setDetailDefinitionName(QContactName::DefinitionName,  QContactName::FieldFirst);
+    sortOrder.setDetailDefinitionName(QContactName::DefinitionName,  QContactName::FieldFirstName);
     sortOrder.setBlankPolicy(QContactSortOrder::BlanksLast);
     sortOrder.setDirection(Qt::AscendingOrder);
     sortOrder.setCaseSensitivity(Qt::CaseInsensitive);
