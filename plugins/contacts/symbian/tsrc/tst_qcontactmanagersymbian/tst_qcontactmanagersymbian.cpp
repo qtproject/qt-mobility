@@ -342,6 +342,8 @@ void tst_QContactManagerSymbian::avatarSubTypes_data()
  */
 void tst_QContactManagerSymbian::avatarSubTypes()
 {
+    QFAIL("Refactor test to match new API!");
+    /*
     QFETCH(QString, fileName);
     QFETCH(QString, subType);
     QContact testContact = m_cm->contact(m_contactId.localId());
@@ -376,6 +378,7 @@ void tst_QContactManagerSymbian::avatarSubTypes()
     QVERIFY(testContact.removeDetail(&retrievedAvatar));
     QVERIFY(m_cm->saveContact(&testContact));
     QCOMPARE(testContact.details(QContactAvatar::DefinitionName).count(), 0);
+    */
 }
 
 void tst_QContactManagerSymbian::avatarPixmap_data()
@@ -390,6 +393,8 @@ void tst_QContactManagerSymbian::avatarPixmap_data()
 
 void tst_QContactManagerSymbian::avatarPixmap()
 {
+    QFAIL("Refactor test to match new API!");
+    /*
     QFETCH(QString, fileName);
 
     QContact testContact = m_cm->contact(m_contactId.localId());
@@ -408,6 +413,7 @@ void tst_QContactManagerSymbian::avatarPixmap()
     QVERIFY(!avatar.isEmpty());
     pixmap = avatar.pixmap();
     QVERIFY(!pixmap.isNull());
+    */
 }
 
 /*
@@ -416,6 +422,8 @@ void tst_QContactManagerSymbian::avatarPixmap()
  */
 void tst_QContactManagerSymbian::avatarPathAndPixmap()
 {
+    QFAIL("Refactor test to match new API!");
+    /*
     QString fileName("C:\\Data\\Images\\avatar_sharks_s.jpg");
     QContact testContact = m_cm->contact(m_contactId.localId());
 
@@ -433,6 +441,7 @@ void tst_QContactManagerSymbian::avatarPathAndPixmap()
     QCOMPARE(avatar.avatar(), fileName);
     QPixmap pixmap = avatar.pixmap();
     QVERIFY(!pixmap.isNull());
+    */
 }
 
 void tst_QContactManagerSymbian::displayLabel_data()
@@ -547,7 +556,7 @@ void tst_QContactManagerSymbian::invalidContactItems()
     // 1. Empty contact
     QContact empty;
     QVERIFY(m_cm->saveContact(&empty));
-    empty = m_cm->contact(empty.localId(), QStringList());
+    empty = m_cm->contact(empty.localId());
     QVERIFY(m_cm->error() == QContactManager::NoError);
     QVERIFY(empty.id() != QContactId());
     QVERIFY(m_cm->removeContact(empty.localId()));

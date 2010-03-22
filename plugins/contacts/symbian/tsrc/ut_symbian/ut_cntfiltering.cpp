@@ -69,7 +69,7 @@ void TestFiltering::initTestCase()
 
     // Remove all contacts from the database
     QList<QContactLocalId> cnt_ids = mCntMng->contactIds();
-    mCntMng->removeContacts(&cnt_ids);
+    mCntMng->removeContacts(cnt_ids, 0);
     cnt_ids = mCntMng->contactIds();
     QVERIFY(0 == cnt_ids.count());
     parseFilters();
@@ -431,11 +431,11 @@ void TestFiltering::testContactDetailFilter_1()
     
     QContactSortOrder sortOrderFirstName;
     sortOrderFirstName.setDetailDefinitionName(QContactName::DefinitionName,
-        QContactName::FieldFirst);
+        QContactName::FieldFirstName);
 
     QContactSortOrder sortOrderLastName;
     sortOrderLastName.setDetailDefinitionName(QContactName::DefinitionName,
-        QContactName::FieldLast);
+        QContactName::FieldLastName);
 
     sortOrder.append(sortOrderFirstName);
     sortOrder.append(sortOrderLastName);
@@ -478,11 +478,11 @@ void TestFiltering::testContactDetailFilter_2()
     
     QContactSortOrder sortOrderFirstName;
     sortOrderFirstName.setDetailDefinitionName(QContactName::DefinitionName,
-        QContactName::FieldFirst);
+        QContactName::FieldFirstName);
 
     QContactSortOrder sortOrderLastName;
     sortOrderLastName.setDetailDefinitionName(QContactName::DefinitionName,
-        QContactName::FieldLast);
+        QContactName::FieldLastName);
 
     sortOrder.append(sortOrderFirstName);
     sortOrder.append(sortOrderLastName);
@@ -625,7 +625,7 @@ void TestFiltering::testIntersectionFilter_1()
 {
     //Create first filter
     QContactDetailFilter f1;
-    f1.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
+    f1.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirstName);
     f1.setValue("John");
     f1.setMatchFlags(QContactFilter::MatchStartsWith);
     //Create second filter
@@ -644,11 +644,11 @@ void TestFiltering::testIntersectionFilter_1()
     
     QContactSortOrder sortOrderFirstName;
     sortOrderFirstName.setDetailDefinitionName(QContactName::DefinitionName,
-        QContactName::FieldFirst);
+        QContactName::FieldFirstName);
 
     QContactSortOrder sortOrderLastName;
     sortOrderLastName.setDetailDefinitionName(QContactName::DefinitionName,
-        QContactName::FieldLast);
+        QContactName::FieldLastName);
 
     sortOrder.append(sortOrderFirstName);
     sortOrder.append(sortOrderLastName);
@@ -683,7 +683,7 @@ void TestFiltering::testIntersectionFilter_2()
 {
     //Create first filter
     QContactDetailFilter f1;
-    f1.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
+    f1.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirstName);
     f1.setValue("John");
     f1.setMatchFlags(QContactFilter::MatchStartsWith);
     //Create second filter
@@ -694,7 +694,7 @@ void TestFiltering::testIntersectionFilter_2()
     
     //Create third filter
     QContactDetailFilter f3;
-    f3.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
+    f3.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirstName);
     f3.setValue("Mic");
     f3.setMatchFlags(QContactFilter::MatchStartsWith);
     //Create fourth filter
@@ -751,7 +751,7 @@ void TestFiltering::testUnionFilter_1()
 {
     //Create first filter
     QContactDetailFilter f1;
-    f1.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
+    f1.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirstName);
     f1.setValue("Mic");
     f1.setMatchFlags(QContactFilter::MatchStartsWith);
     //Create second filter
@@ -770,11 +770,11 @@ void TestFiltering::testUnionFilter_1()
     
     QContactSortOrder sortOrderFirstName;
     sortOrderFirstName.setDetailDefinitionName(QContactName::DefinitionName,
-        QContactName::FieldFirst);
+        QContactName::FieldFirstName);
 
     QContactSortOrder sortOrderLastName;
     sortOrderLastName.setDetailDefinitionName(QContactName::DefinitionName,
-        QContactName::FieldLast);
+        QContactName::FieldLastName);
 
     sortOrder.append(sortOrderFirstName);
     sortOrder.append(sortOrderLastName);
@@ -809,7 +809,7 @@ void TestFiltering::testUnionFilter_2()
 {
     //Create first filter
     QContactDetailFilter f1;
-    f1.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
+    f1.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirstName);
     f1.setValue("n");
     f1.setMatchFlags(QContactFilter::MatchContains);
     //Create second filter
@@ -899,8 +899,8 @@ void TestFiltering::testZeroSearch()
             QContactLocalId cid = cnt_ids.at( i );    
             QContact contact = mCntMng->contact( cid );
             QContactName contactName = contact.detail( QContactName::DefinitionName );
-            QVERIFY( firstName == contactName.value( QContactName::FieldFirst ) );
-            QVERIFY( lastName == contactName.value( QContactName::FieldLast ) );
+            QVERIFY( firstName == contactName.value( QContactName::FieldFirstName ) );
+            QVERIFY( lastName == contactName.value( QContactName::FieldLastName ) );
             } 
 }
 
