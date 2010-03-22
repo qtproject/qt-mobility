@@ -57,7 +57,39 @@ ContactListPage::ContactListPage(QWidget *parent)
 
     m_backendsCombo = new QComboBox(this);
     QStringList availableManagers = QContactManager::availableManagers();
-    m_backendsCombo->addItems(availableManagers);
+    
+    foreach(QString managerName, availableManagers) {
+
+        QMap<QString, QString> params;
+        QString managerUri = QContactManager::buildUri(managerName, params);
+
+        // Add some parameters to SIM backend so that we can use
+        // all the stores.
+        if (managerName == "symbiansim") {
+            availableManagers.removeAll("symbiansim");
+
+            availableManagers.append("symbiansim:adn");
+            params.insert("store", "ADN");
+            managerUri = QContactManager::buildUri(managerName, params);
+            m_availableManagers.insert(availableManagers.last(), managerUri);
+            
+            availableManagers.append("symbiansim:fdn");
+            params.clear();
+            params.insert("store", "FDN");
+            managerUri = QContactManager::buildUri(managerName, params);
+            m_availableManagers.insert(availableManagers.last(), managerUri);
+
+            availableManagers.append("symbiansim:sdn");
+            params.clear();
+            params.insert("store", "SDN");
+            managerUri = QContactManager::buildUri(managerName, params);
+            m_availableManagers.insert(availableManagers.last(), managerUri);
+        }
+        else {
+            m_availableManagers.insert(managerName, managerUri);
+        }
+    }
+    m_backendsCombo->addItems(m_availableManagers.keys());
     connect(m_backendsCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(backendSelected()));
     m_filterActiveLabel = new QLabel("Inactive");
     m_filterActiveLabel->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
@@ -117,18 +149,24 @@ ContactListPage::~ContactListPage()
 
 void ContactListPage::backendSelected()
 {
-    QString backend = m_backendsCombo->currentText();
+    QString managerUri = m_availableManagers.value(m_backendsCombo->currentText());
 
     // first, check to see if they reselected the same backend.
-    if (m_manager && m_manager->managerName() == backend)
+    if (m_manager && m_manager->managerUri() == managerUri)
         return;
 
     // the change is real.  update.
-    if (m_initialisedManagers.contains(backend)) {
-        m_manager = m_initialisedManagers.value(backend);
+    if (m_initialisedManagers.contains(managerUri)) {
+        m_manager = m_initialisedManagers.value(managerUri);
     } else {
-        m_manager = new QContactManager(backend);
-        m_initialisedManagers.insert(backend, m_manager);
+        m_manager = QContactManager::fromUri(managerUri);
+        if (m_manager->error()) {
+            QMessageBox::information(this, "Failed!", QString("Failed to open store!\n(error code %1)").arg(m_manager->error()));
+            delete m_manager;
+            m_manager = 0;
+            return;
+        }
+        m_initialisedManagers.insert(managerUri, m_manager);
     }
 
     // signal that the manager has changed.
@@ -163,7 +201,8 @@ void ContactListPage::rebuildList(const QContactFilter& filter)
 
 void ContactListPage::addContactClicked()
 {
-    emit showEditorPage(QContactLocalId(0));
+    if (m_manager)
+        emit showEditorPage(QContactLocalId(0));
 }
 
 void ContactListPage::editClicked()
@@ -175,7 +214,8 @@ void ContactListPage::editClicked()
 
 void ContactListPage::filterClicked()
 {
-    emit showFilterPage(m_currentFilter);
+    if (m_manager)
+        emit showFilterPage(m_currentFilter);
 }
 
 void ContactListPage::deleteClicked()
