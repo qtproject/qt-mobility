@@ -66,7 +66,8 @@ public:
         InactiveState,
         ReadState,
         WriteState,
-        DeleteState
+        DeleteState,
+        ReadReservedSlotsState
     };
     static CntSimStorePrivate* NewL(CntSymbianSimEngine &engine, CntSimStore &simStore, const QString &storeName);
     ~CntSimStorePrivate();
@@ -74,9 +75,10 @@ public:
     QString storeName() { return m_storeName; }
     TSimStoreInfo storeInfo() { return m_storeInfo; }
 
-    bool read(int index, int numSlots, QContactManager::Error &error);
-    bool write(const QContact &contact, QContactManager::Error &error);
-    bool remove(int index, QContactManager::Error &error);
+    bool read(int index, int numSlots, QContactManager::Error* error);
+    bool write(const QContact &contact, QContactManager::Error* error);
+    bool remove(int index, QContactManager::Error* error);
+    bool getReservedSlots(QContactManager::Error* error);
     
     TInt lastAsyncError() { return m_asyncError; }
     
@@ -91,7 +93,8 @@ private:
     void ConstructL();
     void convertStoreNameL(TDes &storeName);
     QList<QContact> decodeSimContactsL(TDes8& rawData) const;
-    QContact encodeSimContactL(const QContact* contact, TDes8& rawData) const;    
+    QContact encodeSimContactL(const QContact* contact, TDes8& rawData) const;
+    QList<int> decodeReservedSlotsL(TDes8& rawData) const;
     
 private:
     State m_state;
@@ -102,6 +105,7 @@ private:
     RMobilePhone m_etelPhone;
     RMobilePhoneBookStore m_etelStore;
     QString m_storeName;
+    bool m_readOnlyAccess;
     TSimStoreInfo m_storeInfo;
     TSimStoreInfoPckg m_storeInfoPckg;
     RBuf8 m_buffer;

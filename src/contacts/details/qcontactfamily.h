@@ -61,8 +61,8 @@ public:
     const char* FieldChildren;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactFamily, "Family")
-    Q_DECLARE_LATIN1_LITERAL(FieldSpouse, "Spouse");
-    Q_DECLARE_LATIN1_LITERAL(FieldChildren, "Children");
+    Q_DECLARE_LATIN1_CONSTANT(FieldSpouse, "Spouse");
+    Q_DECLARE_LATIN1_CONSTANT(FieldChildren, "Children");
 #endif
 
     void setSpouse(const QString& spouseName) {setValue(FieldSpouse, spouseName);}

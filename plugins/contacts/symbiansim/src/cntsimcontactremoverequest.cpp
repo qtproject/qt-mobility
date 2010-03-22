@@ -43,14 +43,16 @@
 #include "cntsymbiansimengine.h"
 #include "cntsimstore.h"
 #include <qcontactremoverequest.h>
-#include <QTimer>
+#include <QDebug>
 
 CntSimContactRemoveRequest::CntSimContactRemoveRequest(CntSymbianSimEngine *engine, QContactRemoveRequest *req)
-    :CntAbstractSimRequest(engine),
-     m_req(req)
+    :CntAbstractSimRequest(engine, req)
 {
     connect( simStore(), SIGNAL(removeComplete(QContactManager::Error)),
         this, SLOT(removeComplete(QContactManager::Error)), Qt::QueuedConnection );
+    
+    connect( simStore(), SIGNAL(getReservedSlotsComplete(QList<int>, QContactManager::Error)),
+        this, SLOT(getReservedSlotsComplete(QList<int>, QContactManager::Error)), Qt::QueuedConnection );
 }
 
 CntSimContactRemoveRequest::~CntSimContactRemoveRequest()
@@ -58,46 +60,47 @@ CntSimContactRemoveRequest::~CntSimContactRemoveRequest()
     cancel();
 }
 
-bool CntSimContactRemoveRequest::start()
-{    
-    if (m_req->isActive())
-        return false;
+void CntSimContactRemoveRequest::run()
+{
+    QContactRemoveRequest *r = req<QContactRemoveRequest>();
     
-    if (simStore()->isBusy())
-        return false;
-    
-    m_contactIds = m_req->contactIds();
+    if (!r->isActive())
+        return;
+       
+    m_contactIds = r->contactIds();
     m_errorMap.clear();
     m_index = 0;
-    singleShotTimer(0, this, SLOT(removeNext()));
-    
-    QContactManagerEngine::updateRequestState(m_req, QContactAbstractRequest::ActiveState);
-    return true; 
-}
-
-bool CntSimContactRemoveRequest::cancel()
-{
-    if (m_req->isActive()) {
-        cancelTimer();
-        simStore()->cancel();
-        QContactManagerEngine::updateRequestState(m_req, QContactAbstractRequest::CanceledState);
-        return true;
-    }
-    return false;
+#ifdef SYMBIANSIM_BACKEND_CHECK_BEFORE_REMOVE
+    m_reservedSlots.clear();
+    getReservedSlots();    
+#else
+    removeNext();
+#endif
 }
 
 void CntSimContactRemoveRequest::removeComplete(QContactManager::Error error)
 {
+    if (!req()->isActive())
+        return;
+    
     if (error)
         m_errorMap.insert(m_index, error);
+    
     m_index++;
-    removeNext();
+    singleShotTimer(KRequestDelay, this, SLOT(removeNext()));
 }
 
 void CntSimContactRemoveRequest::removeNext()
 {
-    if (m_req->isCanceled())
+    QContactRemoveRequest *r = req<QContactRemoveRequest>();
+    
+    if (!r->isActive())
         return;
+    
+    if (r->contactIds().count() == 0) {
+        QContactManagerEngine::updateContactRemoveRequest(r, QContactManager::BadArgumentError, m_errorMap, QContactAbstractRequest::FinishedState);
+        return;
+    }        
     
     // All contacts removed?
     if (m_index >= m_contactIds.count())
@@ -107,17 +110,55 @@ void CntSimContactRemoveRequest::removeNext()
         if (m_errorMap.count())
             error = m_errorMap.begin().value();
 
-        QContactManagerEngine::updateRequestState(m_req, QContactAbstractRequest::FinishedState);
-        QContactManagerEngine::updateContactRemoveRequest(m_req, error, m_errorMap);
+        QContactManagerEngine::updateContactRemoveRequest(r, error, m_errorMap, QContactAbstractRequest::FinishedState);
         return;
     }
 
     // Remove next contact
     QContactLocalId contactId = m_contactIds.at(m_index);
     QContactManager::Error error = QContactManager::NoError;
-    if (!simStore()->remove(contactId, error)) {
+    
+#ifdef SYMBIANSIM_BACKEND_CHECK_BEFORE_REMOVE
+    if (m_reservedSlots.contains(contactId))
+        simStore()->remove(contactId, error);
+    else
+        error = QContactManager::DoesNotExistError;
+#else
+    simStore()->remove(contactId, &error);
+#endif
+
+    if (error) {
         m_errorMap.insert(m_index, error);
         m_index++;
-        singleShotTimer(0, this, SLOT(removeNext()));
+        singleShotTimer(KRequestDelay, this, SLOT(removeNext()));
+    }
+}
+
+void CntSimContactRemoveRequest::getReservedSlotsComplete(QList<int> reservedSlots, QContactManager::Error error)
+{
+    QContactRemoveRequest *r = req<QContactRemoveRequest>();
+    
+    if (!r->isActive())
+        return;
+    
+    if (error != QContactManager::NoError && error != QContactManager::DoesNotExistError) {
+        QContactManagerEngine::updateContactRemoveRequest(r, error, m_errorMap, QContactAbstractRequest::FinishedState);
+        return;
+    }
+
+    m_reservedSlots = reservedSlots;
+    singleShotTimer(KRequestDelay, this, SLOT(removeNext()));
+}
+
+void CntSimContactRemoveRequest::getReservedSlots()
+{
+    QContactRemoveRequest *r = req<QContactRemoveRequest>();
+    
+    if (!r->isActive())
+        return;
+    
+    QContactManager::Error error = QContactManager::NoError;
+    if (!simStore()->getReservedSlots(&error)) {
+        QContactManagerEngine::updateContactRemoveRequest(r, error, m_errorMap, QContactAbstractRequest::FinishedState);
     }
 }

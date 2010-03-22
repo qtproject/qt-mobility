@@ -41,6 +41,7 @@
 //system includes
 #include <e32base.h>
 #include <s32mem.h>
+#include <cntitem.h>
 
 //user includes
 #include "cntsymbiandatabase.h"
@@ -51,37 +52,51 @@
 // Constant
 typedef QPair<QContactLocalId, QContactLocalId> QOwnCardPair;
 
-CntSymbianDatabase::CntSymbianDatabase(QContactManagerEngine *engine, QContactManager::Error& error) :
+CntSymbianDatabase::CntSymbianDatabase(QContactManagerEngine *engine, QContactManager::Error* error) :
+    m_engine(engine),
     m_contactDatabase(0),
     m_currentOwnCardId(0)
 {
-    TRAPD(err, m_contactDatabase = CContactDatabase::OpenL())
+    TRAPD(err, initializeL());
+    CntSymbianTransformError::transformError(err, error);
+}
 
-    //Database not found, create it
-    if(err == KErrNotFound)
-    {
-        TRAP(err, m_contactDatabase = CContactDatabase::CreateL())
+void CntSymbianDatabase::initializeL()
+{
+    User::LeaveIfNull(m_engine);
+
+    TRAPD(err, m_contactDatabase = CContactDatabase::OpenL());
+
+    // Database not found, create it
+    if(err == KErrNotFound) {
+        m_contactDatabase = CContactDatabase::CreateL();
     }
 
-    //Database opened successfully
-    if (err == KErrNone)
-    {
+#ifndef SYMBIAN_BACKEND_USE_SQLITE
     // In pre 10.1 platforms the AddObserverL & RemoveObserver functions are not
     // exported so we need to use CContactChangeNotifier.
-#ifndef SYMBIAN_BACKEND_USE_SQLITE
-        TRAP(err, m_contactChangeNotifier = CContactChangeNotifier::NewL(*m_contactDatabase, this));
+    TRAP(err, m_contactChangeNotifier = CContactChangeNotifier::NewL(*m_contactDatabase, this));
 #else
-        TRAP(err, m_contactDatabase->AddObserverL(*this));
+    TRAP(err, m_contactDatabase->AddObserverL(*this));
 #endif
-        if (err == KErrNone)
-            m_engine = engine;
 
-        // Read current own card id (self contact id)
-        TContactItemId myCard = m_contactDatabase->OwnCardId();
-        if (myCard > 0)
-            m_currentOwnCardId = QContactLocalId(myCard);
-    }
-    CntSymbianTransformError::transformError(err, error);
+    // Read current own card id (self contact id)
+    TContactItemId myCard = m_contactDatabase->OwnCardId();
+    if (myCard > 0)
+        m_currentOwnCardId = QContactLocalId(myCard);
+
+    // Currently the group membership check is only used in pre-10.1
+    // platforms. In 10.1 we need to check the performance penalty
+    // caused in the instantiation of QContactManager. If the
+    // performance is too bad, then the MContactDbObserver API needs to
+    // be changed in 10.1 so that we don't need the group membership
+    // buffer in the engine level. In other words events like
+    // EContactDbObserverEventGroupMembersAdded and 
+    // EContactDbObserverEventGroupMembersRemoved need to be added to
+    // MContactDbObserver.
+#ifndef SYMBIAN_BACKEND_USE_SQLITE
+    updateGroupMembershipsL();
+#endif
 }
 
 CntSymbianDatabase::~CntSymbianDatabase()
@@ -130,46 +145,87 @@ void CntSymbianDatabase::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
         if(m_contactsEmitted.contains(id))
             m_contactsEmitted.removeOne(id);
         else
-            changeSet.addedContacts().insert(id);
+            changeSet.insertAddedContact(id);
         break;
     case EContactDbObserverEventOwnCardDeleted:
+        m_currentOwnCardId = QContactLocalId(0);
+        // ...and send contact deleted event
     case EContactDbObserverEventContactDeleted:
         if(m_contactsEmitted.contains(id))
             m_contactsEmitted.removeOne(id);
         else
-            changeSet.removedContacts().insert(id);
+            changeSet.insertRemovedContact(id);
         break;
     case EContactDbObserverEventContactChanged:
         if(m_contactsEmitted.contains(id))
             m_contactsEmitted.removeOne(id);
         else
-            changeSet.changedContacts().insert(id);
+            changeSet.insertChangedContact(id);
         break;
     case EContactDbObserverEventGroupAdded:
-        if(m_contactsEmitted.contains(id))
-            m_contactsEmitted.removeOne(id);
-        else
-            changeSet.addedRelationshipsContacts().insert(id);
+        if(m_contactsEmitted.contains(id)) {
+            // adding a group triggers also a "changed" event. The work-around
+            // is to leave the id to m_contactsEmitted
+        } else {
+            changeSet.insertAddedContact(id);
+            m_contactsEmitted.append(id);
+        }
         break;
     case EContactDbObserverEventGroupDeleted:
         if(m_contactsEmitted.contains(id))
             m_contactsEmitted.removeOne(id);
         else
-            changeSet.removedRelationshipsContacts().insert(id);
+            changeSet.insertRemovedContact(id);
         break;
     case EContactDbObserverEventGroupChanged:
         if(m_contactsEmitted.contains(id))
             m_contactsEmitted.removeOne(id);
-        else
-            changeSet.changedContacts().insert(id); //group is a contact
+        else {
+#ifndef SYMBIAN_BACKEND_USE_SQLITE
+            // Contact DB observer API does not give information of contacts
+            // possibly added to or removed from the group
+            QSet<QContactLocalId> added;
+            QSet<QContactLocalId> removed;
+            TRAPD(err, updateGroupMembershipsL(id, added, removed));
+            if(err != KErrNone){
+                changeSet.setDataChanged(true);
+            } else if(removed.count()) {
+                // The group changed event was caused by removing contacts
+                // from the group
+                changeSet.insertRemovedRelationshipsContact(id);
+                changeSet.insertRemovedRelationshipsContacts(removed.toList());
+            } else if(added.count()) {
+                // The group changed event was caused by adding contacts
+                // to the group
+                changeSet.insertAddedRelationshipsContact(id);
+                changeSet.insertAddedRelationshipsContacts(added.toList());
+            } else {
+                // The group changed event was caused by modifying the group
+                changeSet.insertChangedContact(id);
+            }
+#else
+            // Currently the group membership check is only used in pre-10.1
+            // platforms. In 10.1 we need to check the performance penalty
+            // caused in the instantiation of QContactManager. If the
+            // performance is too bad, then the MContactDbObserver API needs to
+            // be changed in 10.1 so that we don't need the group membership
+            // buffer in the engine level. In other words events like
+            // EContactDbObserverEventGroupMembersAdded and 
+            // EContactDbObserverEventGroupMembersRemoved need to be added to
+            // MContactDbObserver.
+            changeSet.insertChangedContact(id); //group is a contact
+#endif
+        }
         break;
     case EContactDbObserverEventOwnCardChanged:
-        {
+        if(m_contactsEmitted.contains(id))
+            m_contactsEmitted.removeOne(id);
+        else {
             QOwnCardPair ownCard(m_currentOwnCardId, QContactLocalId(id));
-            changeSet.oldAndNewSelfContactId() = ownCard;
+            changeSet.setOldAndNewSelfContactId(ownCard);
             m_currentOwnCardId = QContactLocalId(id);
-            break;
         }
+        break;
     default:
         break; // ignore other events
     }
@@ -177,8 +233,62 @@ void CntSymbianDatabase::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
     changeSet.emitSignals(m_engine);
 }
 
+/*
+ * Private implementation for updating the buffer containing the members of all
+ * groups.
+ */
+void CntSymbianDatabase::updateGroupMembershipsL()
+{
+    CContactIdArray *groupIds = m_contactDatabase->GetGroupIdListL();
+    for (TInt i(0); i < groupIds->Count(); i++) {
+        QContactLocalId id = (*groupIds)[i];
+        QSet<QContactLocalId> dummySet;
+        updateGroupMembershipsL(id, dummySet, dummySet);
+    }
+    delete groupIds;
+}
 
+/*
+ * Private implementation for updating the buffer containing the members of a
+ * group.
+ */
+void CntSymbianDatabase::updateGroupMembershipsL(
+    QContactLocalId groupId,
+    QSet<QContactLocalId> &added,
+    QSet<QContactLocalId> &removed)
+{
+    QSet<QContactLocalId> groupMembersNew = groupMembersL(groupId);
+    QSet<QContactLocalId> groupMembersOld = m_groupContents.value(groupId);
 
+    if(groupMembersOld.count() < groupMembersNew.count()) {
+        added = groupMembersNew - groupMembersOld;
+        m_groupContents.remove(groupId);
+        m_groupContents.insert(groupId, groupMembersNew);
+    } else if(groupMembersOld.count() > groupMembersNew.count()) {
+        removed = groupMembersOld - groupMembersNew;
+        m_groupContents.remove(groupId);
+        m_groupContents.insert(groupId, groupMembersNew);
+    }
+}
 
+/*
+ * Private implementation for fetching the members of a group.
+ */
+QSet<QContactLocalId> CntSymbianDatabase::groupMembersL(QContactLocalId groupId)
+{
+    QSet<QContactLocalId> groupMembers;
 
+    CContactItem *contactItem = m_contactDatabase->ReadContactLC(TContactItemId(groupId));
+    Q_ASSERT(contactItem && contactItem->Type() == KUidContactGroup);
+    CContactGroup *group = static_cast<CContactGroup*>(contactItem);
+    
+    const CContactIdArray *idArray = group->ItemsContained();
+    
+    //loop through all the contacts and add them to the list
+    for (int i(0); i < idArray->Count(); i++) {
+        groupMembers.insert((*idArray)[i]);
+    }
+    CleanupStack::PopAndDestroy(contactItem);
 
+    return groupMembers;
+}

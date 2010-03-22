@@ -45,18 +45,16 @@
 #include <qmobilityglobal.h>
 #include <QString>
 
-#define QTCONTACTS_VERSION_NAME "com.nokia.qt.mobility.contacts.api.version" 
-#define QTCONTACTS_IMPLEMENTATION_VERSION_NAME "com.nokia.qt.mobility.contacts.implementation.version" 
-#define QTCONTACTS_VERSION 1 
+#define QTCONTACTS_VERSION_NAME "com.nokia.qt.mobility.contacts.api.version"
+#define QTCONTACTS_IMPLEMENTATION_VERSION_NAME "com.nokia.qt.mobility.contacts.implementation.version"
+#define QTCONTACTS_VERSION 1
 
 QTM_BEGIN_NAMESPACE
 
-typedef quint32 QContactLocalId; // XXX Put this else where
-
 /*
- * Latin1Literal
+ * QLatin1Constant
  *
- * The idea of the Latin1Literal is to provide a POD-esque container
+ * The idea of the QLatin1Constant is to provide a POD-esque container
  * for constant strings which are defined in various places
  * (e.g., detail leaf class definition names, field keys, constant field values, etc).
  * We would ideally like these to be stored in the .rodata section to allow
@@ -69,61 +67,67 @@ typedef quint32 QContactLocalId; // XXX Put this else where
  * Does it work as hoped?
  */
 
-template <int N> struct Latin1Literal
+template <int N> struct QLatin1Constant
 {
     //const char str[N]; // causes compiler warning due to uninitialized const value
     char str[N];
 
+    bool operator ==(const QLatin1Constant& other) {return (str == other.str) || (qstrcmp(str, other.str) == 0);}
     operator QLatin1String() const {return QLatin1String(str);}
     operator QString() const {return QString::fromLatin1(str, N-1);}
 };
 
-template<int N> bool operator==(const Latin1Literal<N>& a, const QLatin1String& b)
+/* Operators for QLatin1String */
+template<int N> bool operator==(const QLatin1Constant<N>& a, const QLatin1String& b)
 {
-    return QLatin1String(a.str) == b;
+    return (a.str == b.latin1()) || (qstrcmp(a.str, b.latin1()) == 0);
 }
 
-template<int N> bool operator==(const Latin1Literal<N>& a, const QString& b)
+template<int N> bool operator==(const QLatin1String& b, const QLatin1Constant<N>& a)
+{
+    return (a.str == b.latin1()) || (qstrcmp(a.str, b.latin1()) == 0);
+}
+
+template<int N> bool operator!=(const QLatin1Constant<N>& a, const QLatin1String& b)
+{
+    return (a.str != b.latin1()) && (qstrcmp(a.str, b.latin1()) != 0);
+}
+
+template<int N> bool operator!=(const QLatin1String& b, const QLatin1Constant<N>& a)
+{
+    return (a.str != b.latin1()) && (qstrcmp(a.str, b.latin1()) != 0);
+}
+
+/* Operators for QString */
+template<int N> bool operator==(const QLatin1Constant<N>& a, const QString& b)
 {
     return b == QLatin1String(a.str);
 }
 
-template<int N> bool operator==(const QLatin1String& b, const Latin1Literal<N>& a)
-{
-    return QLatin1String(a.str) == b;
-}
-
-template<int N> bool operator==(const QString& b, const Latin1Literal<N>& a)
+template<int N> bool operator==(const QString& b, const QLatin1Constant<N>& a)
 {
     return b == QLatin1String(a.str);
 }
 
-template<int N> bool operator!=(const Latin1Literal<N>& a, const QLatin1String& b)
-{
-    return QLatin1String(a.str) != b;
-}
-
-template<int N> bool operator!=(const Latin1Literal<N>& a, const QString& b)
+template<int N> bool operator!=(const QLatin1Constant<N>& a, const QString& b)
 {
     return b != QLatin1String(a.str);
 }
 
-template<int N> bool operator!=(const QLatin1String& b, const Latin1Literal<N>& a)
-{
-    return QLatin1String(a.str) != b;
-}
-
-template<int N> bool operator!=(const QString& b, const Latin1Literal<N>& a)
+template<int N> bool operator!=(const QString& b, const QLatin1Constant<N>& a)
 {
     return b != QLatin1String(a.str);
 }
 
-#define Q_DECLARE_LATIN1_LITERAL(varname, str) static const Latin1Literal<sizeof(str)> varname
-#define Q_DEFINE_LATIN1_LITERAL(varname, str) const Latin1Literal<sizeof(str)> varname = {str}
+#define Q_DECLARE_LATIN1_CONSTANT(varname, str) static const QLatin1Constant<sizeof(str)> varname
+#define Q_DEFINE_LATIN1_CONSTANT(varname, str) const QLatin1Constant<sizeof(str)> varname = {str}
 
 QTM_END_NAMESPACE
 
 // Not needed since this is a typedef, and qglobal already does this for the base type
 // Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QContactLocalId), Q_PRIMITIVE_TYPE);
+
+// Workaround for unannounced SC break
+#include "qcontactid.h"
 
 #endif

@@ -45,7 +45,7 @@
 #include <QVariant>
 #include <QtDebug>
 
-#include "gconfitem.h"
+#include "gconfitem_p.h"
 
 #include <glib.h>
 #include <gconf/gconf-value.h>
@@ -54,6 +54,7 @@
 struct GConfItemPrivate {
     QString key;
     QVariant value;
+    bool monitor;
     guint notify_id;
 
     static void notify_trampoline(GConfClient*, guint, GConfEntry *, gpointer);
@@ -226,16 +227,22 @@ static int convertValue(const QVariant &src, GConfValue **valp)
 
 void GConfItemPrivate::notify_trampoline (GConfClient*,
                                              guint,
-                                             GConfEntry *,
+                                             GConfEntry *entry,
                                              gpointer data)
 {
     GConfItem *item = (GConfItem *)data;
-    item->update_value (true);
+
+
+    item->update_value (true, entry->key, convertValue(entry->value));
 }
 
-void GConfItem::update_value (bool emit_signal)
+void GConfItem::update_value (bool emit_signal, const QString& key, const QVariant& value)
 {
     QVariant new_value;
+
+    if (emit_signal) {
+        emit subtreeChanged(key, value);
+    }
 
     withClient(client) {
         GError *error = NULL;
@@ -344,18 +351,21 @@ QList<QString> GConfItem::listEntries() const
     return children;
 }
 
-GConfItem::GConfItem(const QString &key, QObject *parent)
+GConfItem::GConfItem(const QString &key, bool monitor, QObject *parent)
     : QObject (parent)
 {
     priv = new GConfItemPrivate;
     priv->key = key;
+    priv->monitor = monitor;
     withClient(client) {
-        update_value (false);
-        QByteArray k = convertKey(priv->key);
-        gconf_client_add_dir (client, k.data(), GCONF_CLIENT_PRELOAD_ONELEVEL, NULL);
-        priv->notify_id = gconf_client_notify_add (client, k.data(),
-                                                   GConfItemPrivate::notify_trampoline, this,
-                                                   NULL, NULL);
+        update_value (false, "", QVariant());
+        if (priv->monitor) {
+            QByteArray k = convertKey(priv->key);
+            gconf_client_add_dir (client, k.data(), GCONF_CLIENT_PRELOAD_ONELEVEL, NULL);
+            priv->notify_id = gconf_client_notify_add (client, k.data(),
+                                                       GConfItemPrivate::notify_trampoline, this,
+                                                       NULL, NULL);
+        }
     }
 }
 
@@ -363,8 +373,10 @@ GConfItem::~GConfItem()
 {
     withClient(client) {
         QByteArray k = convertKey(priv->key);
-        gconf_client_notify_remove (client, priv->notify_id);
-        gconf_client_remove_dir (client, k.data(), NULL);
+        if (priv->monitor) {
+            gconf_client_notify_remove (client, priv->notify_id);
+            gconf_client_remove_dir (client, k.data(), NULL);
+        }
     }
     delete priv;
 }

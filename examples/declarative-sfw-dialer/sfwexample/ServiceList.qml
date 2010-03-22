@@ -64,8 +64,8 @@ Rectangle {
                 opacity: 0.6
 
                 //! [2]
-                MouseRegion {
-                    id: listItemMouseRegion
+                MouseArea {
+                    id: listItemMouseArea
                     anchors.fill: parent
                     onClicked: {
                         if(listFrame.nohighlightlistitem){

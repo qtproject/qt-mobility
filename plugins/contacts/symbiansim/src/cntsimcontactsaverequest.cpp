@@ -43,11 +43,9 @@
 #include "cntsymbiansimengine.h"
 #include "cntsimstore.h"
 #include <qcontactsaverequest.h>
-#include <QTimer>
 
 CntSimContactSaveRequest::CntSimContactSaveRequest(CntSymbianSimEngine *engine, QContactSaveRequest *req)
-    :CntAbstractSimRequest(engine),
-     m_req(req)
+    :CntAbstractSimRequest(engine, req)
 {
     connect( simStore(), SIGNAL(writeComplete(QContact, QContactManager::Error)),
         this, SLOT(writeComplete(QContact, QContactManager::Error)), Qt::QueuedConnection );
@@ -58,48 +56,44 @@ CntSimContactSaveRequest::~CntSimContactSaveRequest()
     cancel();
 }
 
-bool CntSimContactSaveRequest::start()
+void CntSimContactSaveRequest::run()
 {
-    if (m_req->isActive())
-        return false;
+    QContactSaveRequest *r = req<QContactSaveRequest>();
     
-    if (simStore()->isBusy())
-        return false;
+    if (!r->isActive())
+        return;
     
-    m_contacts = m_req->contacts();
+    m_contacts = r->contacts();
     m_errorMap.clear();
     m_index = 0;
-    singleShotTimer(0, this, SLOT(writeNext()));
     
-    QContactManagerEngine::updateRequestState(m_req, QContactAbstractRequest::ActiveState);
-    return true; 
-}
-
-bool CntSimContactSaveRequest::cancel()
-{
-    if (m_req->isActive()) {
-        cancelTimer();
-        simStore()->cancel();
-        QContactManagerEngine::updateRequestState(m_req, QContactAbstractRequest::CanceledState);
-        return true;
-    }
-    return false;
+    writeNext();
 }
 
 void CntSimContactSaveRequest::writeComplete(QContact contact, QContactManager::Error error)
 {
+    if (!req()->isActive())
+        return;
+    
     if (error)
         m_errorMap.insert(m_index, error);
     engine()->updateDisplayLabel(contact);
     m_contacts[m_index] = contact;
     m_index++;
-    writeNext();
+    singleShotTimer(KRequestDelay, this, SLOT(writeNext()));
 }
 
 void CntSimContactSaveRequest::writeNext()
 {
-    if (!m_req->isActive())
+    QContactSaveRequest *r = req<QContactSaveRequest>();
+    
+    if (!r->isActive())
         return;
+    
+    if (r->contacts().count() == 0) {
+        QContactManagerEngine::updateContactSaveRequest(r, QList<QContact>(), QContactManager::BadArgumentError, m_errorMap, QContactAbstractRequest::FinishedState);
+        return;
+    }    
     
     // All contacts written?
     if (m_index >= m_contacts.count())
@@ -108,9 +102,8 @@ void CntSimContactSaveRequest::writeNext()
         QContactManager::Error error = QContactManager::NoError;
         if (m_errorMap.count())
             error = m_errorMap.begin().value();
-
-        QContactManagerEngine::updateRequestState(m_req, QContactAbstractRequest::FinishedState);
-        QContactManagerEngine::updateContactSaveRequest(m_req, m_contacts, error, m_errorMap);
+        
+        QContactManagerEngine::updateContactSaveRequest(r, m_contacts, error, m_errorMap, QContactAbstractRequest::FinishedState);
         return;
     }
 
@@ -119,12 +112,12 @@ void CntSimContactSaveRequest::writeNext()
     
     // Validate & write contact 
     QContactManager::Error error = QContactManager::NoError;
-    if (engine()->validateContact(contact, error))
-        simStore()->write(contact, error);
+    if (engine()->validateContact(contact, &error))
+        simStore()->write(contact, &error);
 
     if (error) {
         m_errorMap.insert(m_index, error);
         m_index++;
-        singleShotTimer(0, this, SLOT(writeNext()));
+        singleShotTimer(KRequestDelay, this, SLOT(writeNext()));
     }
 }

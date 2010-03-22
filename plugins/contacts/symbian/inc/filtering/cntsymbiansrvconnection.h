@@ -65,7 +65,7 @@ public:
 public:
     /* QT like functions */
     QList<QContactLocalId> searchContacts(const QString& searchQuery, 
-                                         QContactManager::Error& error);
+                                         QContactManager::Error* error);
 
 private:
     /* Symbian Leaving functions */

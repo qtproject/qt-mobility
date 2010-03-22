@@ -79,8 +79,7 @@ void Explorer::loadSensors()
         foreach (const QByteArray &identifier, QSensor::sensorsForType(type)) {
             qDebug() << "Found identifier" << identifier;
             // Don't put in sensors we can't connect to
-            QSensor sensor;
-            sensor.setType(type);
+            QSensor sensor(type);
             sensor.setIdentifier(identifier);
             if (!sensor.connect()) {
                 qDebug() << "Couldn't connect to" << identifier;
@@ -127,9 +126,8 @@ void Explorer::on_sensors_currentItemChanged()
     QByteArray identifier = item->data(0, Qt::DisplayRole).toString().toLatin1();
 
     // Connect to the sensor so we can probe it
-    m_sensor = new QSensor(this);
+    m_sensor = new QSensor(type, this);
     connect(m_sensor, SIGNAL(readingChanged()), this, SLOT(sensor_changed()));
-    m_sensor->setType(type);
     m_sensor->setIdentifier(identifier);
     if (!m_sensor->connect()) {
         delete m_sensor;
@@ -224,7 +222,28 @@ void Explorer::loadSensorProperties()
         if (crap != -1)
             typeName = typeName.mid(crap + 2);
         QTableWidgetItem *type = new QTableWidgetItem(typeName);
-        QString val = mo->property(i).read(m_sensor).toString();
+        QVariant v = mo->property(i).read(m_sensor);
+        QString val;
+        if (typeName == "qrangelist") {
+            qrangelist rl = v.value<qrangelist>();
+            QStringList out;
+            foreach (const qrange &r, rl) {
+                if (r.first == r.second)
+                    out << QString("%1 Hz").arg(r.first);
+                else
+                    out << QString("%1-%2 Hz").arg(r.first).arg(r.second);
+            }
+            val = out.join(", ");
+        } else if (typeName == "qoutputrangelist") {
+            qoutputrangelist rl = v.value<qoutputrangelist>();
+            QStringList out;
+            foreach (const qoutputrange &r, rl) {
+                out << QString("(%1, %2) += %3").arg(r.minimum).arg(r.maximum).arg(r.accuracy);
+            }
+            val = out.join(", ");
+        } else {
+            val = v.toString();
+        }
         QTableWidgetItem *value = new QTableWidgetItem(val);
 
         prop->setFlags(value->flags() ^ Qt::ItemIsEditable);
@@ -241,8 +260,6 @@ void Explorer::loadSensorProperties()
 
     // We don't add all properties
     ui.sensorprops->setRowCount(rows - offset);
-
-    ui.poll->setEnabled(m_sensor->supportsPolling());
 
     ignoreItemChanged = false;
 }
@@ -339,12 +356,6 @@ void Explorer::on_stop_clicked()
     QTimer::singleShot(0, this, SLOT(loadSensorProperties()));
 }
 
-void Explorer::on_poll_clicked()
-{
-    m_sensor->poll();
-    sensor_changed();
-}
-
 void Explorer::sensor_changed()
 {
     QSensorReading *reading = m_sensor->reading();
@@ -358,11 +369,38 @@ bool Explorer::filter(QSensorReading *reading)
 
     for(int i = firstProperty; i < mo->propertyCount(); ++i) {
         int row = i - firstProperty;
+        QString typeName = QLatin1String(mo->property(i).typeName());
+        int crap = typeName.lastIndexOf("::");
+        if (crap != -1)
+            typeName = typeName.mid(crap + 2);
         QLatin1String name(mo->property(i).name());
         QTableWidgetItem *value = ui.reading->item(row, 3);
         QVariant val = mo->property(i).read(reading);
-        if (val.userType() == QMetaType::type("QtMobility::qtimestamp")) {
-            value->setText(QString("%1").arg(val.value<QtMobility::qtimestamp>()));
+        if (typeName == "qtimestamp") {
+            value->setText(QString("%1").arg(val.value<qtimestamp>()));
+        } else if (typeName == "LightLevel") {
+            QString text;
+            switch (val.toInt()) {
+            case 1:
+                text = "Dark";
+                break;
+            case 2:
+                text = "Twilight";
+                break;
+            case 3:
+                text = "Light";
+                break;
+            case 4:
+                text = "Bright";
+                break;
+            case 5:
+                text = "Sunny";
+                break;
+            default:
+                text = "Undefined";
+                break;
+            }
+            value->setText(text);
         } else {
             value->setText(val.toString());
         }

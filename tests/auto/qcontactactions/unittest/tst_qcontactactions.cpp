@@ -67,6 +67,8 @@ public slots:
 private slots:
     void testSendEmail();
     void testDescriptor();
+    void testDescriptorLessThan();
+    void testDescriptorHash();
     void traits();
 };
 
@@ -404,6 +406,54 @@ void tst_QContactActions::testDescriptor()
 
     QVERIFY(sendEmailAction3->actionDescriptor() == sendEmailDescriptor);
     delete sendEmailAction3;
+}
+
+void tst_QContactActions::testDescriptorLessThan()
+{
+    QContactActionDescriptor qcad1;
+    qcad1.setVendorName("a");
+    qcad1.setActionName("a");
+    qcad1.setImplementationVersion(1);
+
+    QContactActionDescriptor qcad2;
+    qcad2.setVendorName("a");
+    qcad2.setActionName("a");
+    qcad2.setImplementationVersion(2);
+
+    QContactActionDescriptor qcad3;
+    qcad3.setVendorName("a");
+    qcad3.setActionName("b");
+    qcad3.setImplementationVersion(1);
+
+    QContactActionDescriptor qcad4;
+    qcad4.setVendorName("b");
+    qcad4.setActionName("a");
+    qcad4.setImplementationVersion(1);
+
+    QVERIFY(qcad1 < qcad2);
+    QVERIFY(qcad2 < qcad3);
+    QVERIFY(qcad3 < qcad4);
+}
+
+void tst_QContactActions::testDescriptorHash()
+{
+    QContactActionDescriptor qcad1;
+    qcad1.setVendorName("a");
+    qcad1.setActionName("a");
+    qcad1.setImplementationVersion(1);
+
+    QContactActionDescriptor qcad2;
+    qcad2.setVendorName("a");
+    qcad2.setActionName("a");
+    qcad2.setImplementationVersion(1);
+
+    QContactActionDescriptor qcad3;
+    qcad3.setVendorName("a");
+    qcad3.setActionName("a");
+    qcad3.setImplementationVersion(2);
+
+    QVERIFY(qHash(qcad1) == qHash(qcad2));
+    QVERIFY(qHash(qcad1) != qHash(qcad3));
 }
 
 void tst_QContactActions::traits()

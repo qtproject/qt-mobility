@@ -70,22 +70,22 @@
 #include <msvfind.h>   // CMsvFindOperation  
 #include <mtmdef.h>    // TMsvPartList
 #include <utf.h>       // CnvUtfConverter
-#include <MMsvAttachmentManager.h>
-#include <CMsvMimeHeaders.h> // Attachemt mimeheader
+#include <mmsvattachmentmanager.h>
+#include <cmsvmimeheaders.h> // Attachemt mimeheader
 #include <eikenv.h>
 #include <smut.h>
 #include <smuthdr.h>
 #include <mtuireg.h> // CMtmUiRegistry
 #include <mtmuibas.h> // CBaseMtmUi
-#include <senduiconsts.h>
-#include <SendUi.h>    // SendUi API
-#include <cmessagedata.h> //CMessageData
-#include <APGCLI.H>
+#include <SendUiConsts.h>
+#include <sendui.h>    // SendUi API
+#include <CMessageData.h> //CMessageData
+#include <apgcli.h>
 #include <rsendas.h>
 #include <rsendasmessage.h>
 #include <cmsvrecipientlist.h>
 #include <imapset.h>
-#include <MIUTMSG.H>
+#include <miutmsg.h>
 #include <charconv.h>
 #include <imcvtext.h> // KImcvMultipart declaration
 
