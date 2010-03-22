@@ -102,7 +102,7 @@ static void loadPlugins()
 
     Sensor plugins register backends using the registerBackend() function.
 
-    When QSensor::connect() is called, the createBackend() function will be called.
+    When QSensor::connectToBackend() is called, the createBackend() function will be called.
 */
 
 /*!

@@ -88,7 +88,7 @@ class Q_SENSORS_EXPORT QSensor : public QObject
     Q_OBJECT
     Q_PROPERTY(QByteArray sensorid READ identifier WRITE setIdentifier)
     Q_PROPERTY(QByteArray type READ type)
-    Q_PROPERTY(bool connected READ isConnected)
+    Q_PROPERTY(bool connectedToBackend READ isConnectedToBackend)
     Q_PROPERTY(QtMobility::qrangelist availableDataRates READ availableDataRates)
     Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval)
     Q_PROPERTY(QSensorReading* reading READ reading NOTIFY readingChanged)
@@ -107,8 +107,8 @@ public:
 
     QByteArray type() const;
 
-    Q_INVOKABLE bool connect();
-    bool isConnected() const;
+    Q_INVOKABLE bool connectToBackend();
+    bool isConnectedToBackend() const;
 
     bool isBusy() const;
     bool isActive() const;

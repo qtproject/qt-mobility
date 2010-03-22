@@ -116,15 +116,18 @@ QSensor::~QSensor()
 }
 
 /*!
-    \property QSensor::connected
+    \property QSensor::connectedToBackend
     \brief a value indicating if the sensor has connected to a backend.
 
     A sensor that has not been connected to a backend cannot do anything useful.
 
-    Call the connect() method to force the sensor to connect to a backend immediately.
+    Call the connectToBackend() method to force the sensor to connect to a backend
+    immediately. This is automatically called if you call start() so you only need
+    to do this if you need access to sensor properties (ie. to poll the sensor's
+    meta-data before you use it).
 */
 
-bool QSensor::isConnected() const
+bool QSensor::isConnectedToBackend() const
 {
     return (d->backend != 0);
 }
@@ -136,7 +139,7 @@ bool QSensor::isConnected() const
     Note that the identifier is filled out automatically
     when the sensor is connected to a backend. If you want
     to connect a specific backend, you should call
-    setIdentifier() before connect().
+    setIdentifier() before connectToBackend().
 */
 
 QByteArray QSensor::identifier() const
@@ -147,7 +150,7 @@ QByteArray QSensor::identifier() const
 void QSensor::setIdentifier(const QByteArray &identifier)
 {
     if (d->backend) {
-        qWarning() << "ERROR: Cannot call QSensor::setIdentifier while connected!";
+        qWarning() << "ERROR: Cannot call QSensor::setIdentifier while connected to a backend!";
         return;
     }
     d->identifier = identifier;
@@ -170,9 +173,9 @@ QByteArray QSensor::type() const
 
     The type must be set before calling this method if you are using QSensor directly.
 
-    \sa isConnected()
+    \sa isConnectedToBackend()
 */
-bool QSensor::connect()
+bool QSensor::connectToBackend()
 {
     if (d->backend)
         return true;
@@ -278,7 +281,7 @@ bool QSensor::start()
 {
     if (d->active)
         return true;
-    if (!connect())
+    if (!connectToBackend())
         return false;
     // Set these flags to their defaults
     d->active = true;
@@ -309,9 +312,9 @@ void QSensor::stop()
 
     The reading class provides access to sensor readings.
 
-    Note that this will return 0 until a sensor backend is connected.
+    Note that this will return 0 until a sensor backend is connected to a backend.
 
-    \sa isConnected()
+    \sa isConnectedToBackend()
 */
 
 QSensorReading *QSensor::reading() const

@@ -81,7 +81,7 @@ void Explorer::loadSensors()
             // Don't put in sensors we can't connect to
             QSensor sensor(type);
             sensor.setIdentifier(identifier);
-            if (!sensor.connect()) {
+            if (!sensor.connectToBackend()) {
                 qDebug() << "Couldn't connect to" << identifier;
                 continue;
             }
@@ -129,7 +129,7 @@ void Explorer::on_sensors_currentItemChanged()
     m_sensor = new QSensor(type, this);
     connect(m_sensor, SIGNAL(readingChanged()), this, SLOT(sensor_changed()));
     m_sensor->setIdentifier(identifier);
-    if (!m_sensor->connect()) {
+    if (!m_sensor->connectToBackend()) {
         delete m_sensor;
         m_sensor = 0;
         qWarning() << "Can't connect to the sensor!";

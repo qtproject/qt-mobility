@@ -49,7 +49,7 @@ genericorientationsensor::genericorientationsensor(QSensor *sensor)
 {
     accelerometer = new QAccelerometer(this);
     accelerometer->addFilter(this);
-    accelerometer->connect();
+    accelerometer->connectToBackend();
 
     setReading<QOrientationReading>(&m_reading);
     setDataRates(accelerometer);

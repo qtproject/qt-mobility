@@ -145,7 +145,7 @@ private slots:
     void testCreation()
     {
         TestSensor sensor;
-        sensor.connect();
+        sensor.connectToBackend();
         QByteArray expected = testsensorimpl::id;
         QByteArray actual = sensor.identifier();
         QCOMPARE(actual, expected);
@@ -159,7 +159,7 @@ private slots:
 
         TestSensor sensor;
         QTest::ignoreMessage(QtWarningMsg, "Can't create backend \"test sensor 2\" ");
-        sensor.connect();
+        sensor.connectToBackend();
         QByteArray expected = testsensorimpl::id;
         QByteArray actual = sensor.identifier();
         QCOMPARE(actual, expected);
@@ -168,7 +168,7 @@ private slots:
     void testBadCreation()
     {
         QSensor sensor("bogus type");
-        sensor.connect();
+        sensor.connectToBackend();
         QByteArray expected; // should be null
         QByteArray actual = sensor.identifier();
         QCOMPARE(actual, expected);
@@ -184,7 +184,7 @@ private slots:
     void testTimestamp()
     {
         TestSensor sensor;
-        sensor.connect();
+        sensor.connectToBackend();
         QVERIFY(sensor.reading() != 0);
         quint64 timestamp = sensor.reading()->timestamp();
         QVERIFY(timestamp == qtimestamp());
@@ -220,7 +220,7 @@ private slots:
     void testMetaData()
     {
         TestSensor sensor;
-        sensor.connect();
+        sensor.connectToBackend();
 
         QString actual = sensor.description();
         QString expected = "sensor description";
@@ -233,7 +233,7 @@ private slots:
         sensor.updateInterval();
         sensor.isBusy();
         sensor.error();
-        sensor.isConnected();
+        sensor.isConnectedToBackend();
 
         TestSensorReading *reading = sensor.reading();
         reading->test();
@@ -246,14 +246,14 @@ private slots:
         TestSensor sensor;
         sensor.setProperty("doThis", "rates(0)");
         QTest::ignoreMessage(QtWarningMsg, "ERROR: Cannot call QSensorBackend::setDataRates with 0 ");
-        sensor.connect();
+        sensor.connectToBackend();
     }
 
     void testMetaData3()
     {
         TestSensor sensor;
         sensor.setProperty("doThis", "rates");
-        sensor.connect();
+        sensor.connectToBackend();
 
         sensor.availableDataRates();
     }
@@ -261,7 +261,7 @@ private slots:
     void testFilter()
     {
         TestSensor sensor;
-        sensor.connect();
+        sensor.connectToBackend();
 
         MyFilter filter;
         sensor.addFilter(&filter);
@@ -272,7 +272,7 @@ private slots:
     void testStart2()
     {
         TestSensor sensor;
-        sensor.connect();
+        sensor.connectToBackend();
 
         sensor.setProperty("doThis", "busy");
         sensor.start();

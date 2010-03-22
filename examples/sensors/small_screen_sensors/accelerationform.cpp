@@ -45,7 +45,7 @@ AccelerationForm::AccelerationForm(QWidget *parent)
     : QWidget(parent)
 {
     setupUi(this);
-    m_accelerationSensor.connect();
+    m_accelerationSensor.connectToBackend();
     
     // Usually sensor operates -2g-2g range on Symbian platforms
     qoutputrange range = {-2.0f*9.80665f, -2.0f*9.80665f, 0.0f}; 
