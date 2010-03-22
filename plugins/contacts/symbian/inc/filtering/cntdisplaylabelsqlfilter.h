@@ -56,7 +56,7 @@ public:
 
     void createSqlQuery(const QContactDetailFilter& filter,
                         QString& sqlQuery,
-                        QContactManager::Error& error);
+                        QContactManager::Error* error);
 private:
     void createQuerySingleSearchValue(QString& sqlQuery, const QString &searchValue, const QStringList &columns) const;
     void createQueryMultipleSearchValues(QString& sqlQuery, const QStringList &searchValues, const QStringList &columns) const;

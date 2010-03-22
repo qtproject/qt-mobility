@@ -43,7 +43,7 @@
 #define DEVICEINFO_H
 
 #include <e32base.h>
-#include <Etel3rdParty.h>
+#include <etel3rdparty.h>
 #include <QString>
 #include <QList>
 

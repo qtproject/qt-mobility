@@ -108,6 +108,7 @@ private slots:
 
     /* Test cases that take no data */
     void signalEmission();
+    void sdnContacts();
 
 private:
     void initManager(QString simStore);
@@ -142,14 +143,14 @@ void tst_SimCM::init()
 {
     // remove all contacts
     QList<QContactLocalId> ids = m_cm->contactIds();
-    m_cm->removeContacts(&ids, 0);   
+    m_cm->removeContacts(ids, 0);   
 }
 
 void tst_SimCM::cleanup()
 {
     // remove all contacts
     QList<QContactLocalId> ids = m_cm->contactIds();
-    m_cm->removeContacts(&ids, 0);   
+    m_cm->removeContacts(ids, 0);   
 }
 
 void tst_SimCM::initTestCase()
@@ -947,7 +948,7 @@ void tst_SimCM::batchOperations()
         foreach (const QContact& contact, contacts) {
             contactIds.append(contact.localId());
         }
-        QVERIFY(m_cm->removeContacts(&contactIds, &errorMap));
+        QVERIFY(m_cm->removeContacts(contactIds, &errorMap));
         QCOMPARE(m_cm->error(), QContactManager::NoError);
         QCOMPARE(errorMap.count(), 0);
     }
@@ -1005,8 +1006,34 @@ void tst_SimCM::signalEmission()
     foreach(const QContact& contact, contacts) {
         contactIds.append(contact.localId());
     }
-    QVERIFY(m_cm->removeContacts(&contactIds, &errorMap));
+    QVERIFY(m_cm->removeContacts(contactIds, &errorMap));
     QTRY_COMPARE(spyRemoved.count(), batchOpCount);
+}
+
+/*!
+ * Tests SDN store specific stuff
+ */
+void tst_SimCM::sdnContacts()
+{
+    QString uri("qtcontacts:symbiansim:store=SDN");
+    QScopedPointer<QContactManager> cm(QContactManager::fromUri(uri));
+    if (cm->error() == QContactManager::NotSupportedError)
+        QSKIP("The store not supported by the SIM card", SkipSingle);
+    
+    QVERIFY(cm->error() == QContactManager::NoError);
+    
+    // Verify that contact details have read only flag
+    QList<QContact> contacts = cm->contacts();
+    QVERIFY(contacts.count());
+    foreach(QContact c, contacts) {
+        foreach(QContactDetail d, c.details()) {
+            QVERIFY(d.accessConstraints().testFlag(QContactDetail::ReadOnly));
+        }
+    }
+
+    // Writing should fail
+    QContact c = createContact("foo", "1234567");
+    QVERIFY(!cm->saveContact(&c));
 }
 
 /*!

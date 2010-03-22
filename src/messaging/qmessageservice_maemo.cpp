@@ -39,31 +39,18 @@
 **
 ****************************************************************************/
 #include "qmessageservice.h"
+#include "qmessageservice_maemo_p.h"
 #include "modestengine_maemo_p.h"
 #include "telepathyengine_maemo_p.h"
 #include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
-class QMessageServicePrivate : public QObject
-{
-public:
-    QMessageServicePrivate(QMessageService* parent);
-    ~QMessageServicePrivate();
-
-    void setFinished(bool successful);
-
-public:
-    QMessageService* q_ptr;
-    QMessageService::State _state;
-    bool _active;
-    QMessageManager::Error _error;
-};
-
 QMessageServicePrivate::QMessageServicePrivate(QMessageService* parent)
  : q_ptr(parent),
    _state(QMessageService::InactiveState),
-   _active(false)
+   _error(QMessageManager::NoError),
+   _active(false), _actionId(-1)
 {
 }
 
@@ -71,10 +58,9 @@ QMessageServicePrivate::~QMessageServicePrivate()
 {
 }
 
-QMessageService::QMessageService(QObject *parent)
- : QObject(parent),
-   d_ptr(new QMessageServicePrivate(this))
+QMessageServicePrivate* QMessageServicePrivate::implementation(const QMessageService &service)
 {
+    return service.d_ptr;
 }
 
 void QMessageServicePrivate::setFinished(bool successful)
@@ -87,6 +73,35 @@ void QMessageServicePrivate::setFinished(bool successful)
     _state = QMessageService::FinishedState;
     emit q_ptr->stateChanged(_state);
     _active = false;
+}
+
+void QMessageServicePrivate::stateChanged(QMessageService::State state)
+{
+    _state = state;
+    emit q_ptr->stateChanged(_state);
+}
+
+void QMessageServicePrivate::messagesFound(const QMessageIdList &ids)
+{
+    emit q_ptr->messagesFound(ids);
+}
+
+void QMessageServicePrivate::messagesCounted(int count)
+{
+    emit q_ptr->messagesCounted(count);
+}
+
+void QMessageServicePrivate::progressChanged(uint value, uint total)
+{
+    emit q_ptr->progressChanged(value, total);
+}
+
+
+
+QMessageService::QMessageService(QObject *parent)
+ : QObject(parent),
+   d_ptr(new QMessageServicePrivate(this))
+{
 }
 
 QMessageService::~QMessageService()
@@ -164,13 +179,33 @@ bool QMessageService::send(QMessage &message)
     d_ptr->_state = QMessageService::ActiveState;
     emit stateChanged(d_ptr->_state);
 
+    QMessageAccountId accountId = message.parentAccountId();
+    QMessage::Type msgType = QMessage::NoType;
+
     // Check message type
-    if(message.type() == QMessage::AnyType || message.type() == QMessage::NoType) {
-        d_ptr->_error = QMessageManager::ConstraintFailure;
-        retVal = false;
+    if (message.type() == QMessage::AnyType || message.type() == QMessage::NoType) {
+        QMessage::TypeFlags types = QMessage::NoType;
+        if (accountId.isValid()) {
+            // ParentAccountId was defined => Message type can be read
+            // from parent account
+            QMessageAccount account = QMessageAccount(accountId);
+            QMessage::TypeFlags types = account.messageTypes();
+            if (types & QMessage::Sms) {
+                msgType = QMessage::Sms;
+            } else if (account.messageTypes() & QMessage::InstantMessage) {
+                msgType = QMessage::InstantMessage;
+            } else if (types & QMessage::Mms) {
+                msgType = QMessage::Mms;
+            } else if (types & QMessage::Email) {
+                msgType = QMessage::Email;
+            }
+        }
+        if (msgType == QMessage::NoType) {
+            d_ptr->_error = QMessageManager::ConstraintFailure;
+            retVal = false;
+        }
     }
 
-    QMessageAccountId accountId = message.parentAccountId();
     if (retVal) {
         // Check account
         if (!accountId.isValid()) {
@@ -185,7 +220,7 @@ bool QMessageService::send(QMessage &message)
     QMessageAccount account(accountId);
     if (retVal) {
         // Check account/message type compatibility
-        if (!(account.messageTypes() & message.type())) {
+        if (!(account.messageTypes() & message.type()) && (msgType == QMessage::NoType)) {
             d_ptr->_error = QMessageManager::ConstraintFailure;
             retVal = false;
         }
@@ -196,18 +231,18 @@ bool QMessageService::send(QMessage &message)
         QMessageAddressList recipients = message.to() + message.bcc() + message.cc();
         if (recipients.isEmpty()) {
             d_ptr->_error = QMessageManager::ConstraintFailure;
-            return false;
+            retVal = false;
         }
     }
 
-    QMessage outgoing(message);
-
-    // Set default account if unset
-    if (!outgoing.parentAccountId().isValid()) {
-        outgoing.setParentAccountId(accountId);
-    }
-
     if (retVal) {
+        QMessage outgoing(message);
+
+        // Set default account if unset
+        if (!outgoing.parentAccountId().isValid()) {
+            outgoing.setParentAccountId(accountId);
+        }
+
         if (account.messageTypes() & QMessage::Sms) {
             retVal = TelepathyEngine::instance()->sendMessage(message);
         } else if (account.messageTypes() & QMessage::InstantMessage) {
@@ -275,19 +310,63 @@ bool QMessageService::retrieve(const QMessageId &messageId, const QMessageConten
 
 bool QMessageService::show(const QMessageId& id)
 {
-    Q_UNUSED(id)
-    return false; // stub
+    if (d_ptr->_active) {
+        return false;
+    }
+
+    if (!id.isValid()) {
+        d_ptr->_error = QMessageManager::InvalidId;
+        return false;
+    }
+
+    d_ptr->_active = true;
+    d_ptr->_error = QMessageManager::NoError;
+
+    bool retVal = true;
+    d_ptr->_state = QMessageService::ActiveState;
+    emit stateChanged(d_ptr->_state);
+
+    if (id.toString().startsWith("MO_")) {
+        retVal = ModestEngine::instance()->showMessage(id);
+    } else {
+        retVal = false;
+    }
+
+    d_ptr->setFinished(retVal);
+    return retVal;
 }
 
 bool QMessageService::exportUpdates(const QMessageAccountId &id)
 {
-    Q_UNUSED(id)
-    return false; // stub
+    if (d_ptr->_active) {
+        return false;
+    }
+
+    if (!id.isValid()) {
+        d_ptr->_error = QMessageManager::InvalidId;
+        return false;
+    }
+
+    d_ptr->_active = true;
+    d_ptr->_error = QMessageManager::NoError;
+
+    bool retVal = true;
+    d_ptr->_state = QMessageService::ActiveState;
+    emit stateChanged(d_ptr->_state);
+
+    if (id.toString().startsWith("MO_")) {
+        retVal = ModestEngine::instance()->exportUpdates(id);
+    } else {
+        retVal = false;
+    }
+
+    d_ptr->setFinished(retVal);
+    return retVal;
 }
 
 QMessageService::State QMessageService::state() const
 {
-    return InactiveState; // stub
+    return d_ptr->_state;
 }
 
 void QMessageService::cancel()
@@ -296,7 +375,7 @@ void QMessageService::cancel()
 
 QMessageManager::Error QMessageService::error() const
 {
-    return QMessageManager::NoError;
+    return d_ptr->_error;
 }
 
 QTM_END_NAMESPACE

@@ -49,6 +49,8 @@
 
 QTM_BEGIN_NAMESPACE
 
+typedef quint32 QContactLocalId;
+
 class QContactIdPrivate;
 class Q_CONTACTS_EXPORT QContactId
 {
@@ -61,6 +63,7 @@ public:
 
     bool operator==(const QContactId& other) const;
     bool operator!=(const QContactId& other) const;
+    bool operator<(const QContactId& other) const;
 
     QString managerUri() const;
     QContactLocalId localId() const;
@@ -71,6 +74,11 @@ public:
 private:
     QSharedDataPointer<QContactIdPrivate> d;
 };
+
+Q_CONTACTS_EXPORT uint qHash(const QContactId& key);
+#ifndef QT_NO_DEBUG_STREAM
+Q_CONTACTS_EXPORT QDebug operator<<(QDebug dbg, const QContactId& id);
+#endif
 
 QTM_END_NAMESPACE
 

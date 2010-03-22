@@ -144,6 +144,7 @@ void ContactEditor::setCurrentContact(QContactManager* manager, QContactLocalId 
     QContactEmailAddress em = curr.detail(QContactEmailAddress::DefinitionName);
     QContactAddress adr = curr.detail(QContactAddress::DefinitionName);
     QContactAvatar av = curr.detail(QContactAvatar::DefinitionName);
+    QContactThumbnail thumb = curr.detail(QContactThumbnail::DefinitionName);
 
     m_nameEdit->setText(manager->synthesizedDisplayLabel(curr));
     m_phoneEdit->setText(phn.value(QContactPhoneNumber::FieldNumber));
@@ -153,15 +154,17 @@ void ContactEditor::setCurrentContact(QContactManager* manager, QContactLocalId 
     m_avatarBtn->setText(QString());
     m_avatarBtn->setIcon(QIcon());
     
-    if (av.pixmap().isNull()) {
-        if (av.avatar().isEmpty()) {
+    if (thumb.thumbnail().isNull()) {
+        if (av.imageUrl().isEmpty()) {
             m_avatarBtn->setText("Add image");
         } else {
-            m_avatarBtn->setIcon(QIcon(QPixmap(av.avatar())));
+            m_avatarBtn->setIcon(QIcon(QPixmap(av.imageUrl().toLocalFile())));
+            m_thumbnail = QImage(av.imageUrl().toLocalFile());
         }
     } else {
-        m_newAvatarPath = av.avatar();
-        m_avatarBtn->setIcon(QIcon(av.pixmap()));
+        m_newAvatarPath = av.imageUrl().toLocalFile();
+        m_thumbnail = thumb.thumbnail();
+        m_avatarBtn->setIcon(QIcon(QPixmap::fromImage(thumb.thumbnail())));
     }
 }
 
@@ -190,6 +193,7 @@ void ContactEditor::avatarClicked()
     
     if (!fileName.isEmpty()) {
         m_newAvatarPath = fileName;
+        m_thumbnail = QImage(m_newAvatarPath);
         m_avatarBtn->setText(QString());
         m_avatarBtn->setIcon(QIcon(m_newAvatarPath));
     }
@@ -208,6 +212,7 @@ void ContactEditor::saveClicked()
         QContactEmailAddress em = curr.detail(QContactEmailAddress::DefinitionName);
         QContactAddress adr = curr.detail(QContactAddress::DefinitionName);
         QContactAvatar av = curr.detail(QContactAvatar::DefinitionName);
+        QContactThumbnail thumb = curr.detail(QContactThumbnail::DefinitionName);
 
         QString saveNameField = nameField();
         if (!saveNameField.isEmpty()) {
@@ -219,22 +224,26 @@ void ContactEditor::saveClicked()
         phn.setNumber(m_phoneEdit->text());
         em.setEmailAddress(m_emailEdit->text());
         adr.setStreet(m_addrEdit->text());
-        av.setAvatar(m_newAvatarPath);
+        av.setImageUrl(QUrl::fromLocalFile(m_newAvatarPath));
 
-        QPixmap pix(m_newAvatarPath);
-        av.setPixmap(pix);
+
+        QImage img(m_thumbnail);
+        thumb.setThumbnail(img);
 
         curr.saveDetail(&nm);
         curr.saveDetail(&phn);
         curr.saveDetail(&em);
         curr.saveDetail(&adr);
         curr.saveDetail(&av);
+        curr.saveDetail(&thumb);
 
         bool success = m_manager->saveContact(&curr);
         if (success)
             QMessageBox::information(this, "Success!", "Contact saved successfully!");
-        else
+        else {
             QMessageBox::information(this, "Failed!", "Failed to save contact!");
+            qDebug() << m_manager->error();
+        }
     }
 
     emit showListPage();

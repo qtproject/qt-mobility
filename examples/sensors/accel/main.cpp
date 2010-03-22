@@ -84,7 +84,6 @@ int main(int argc, char **argv)
         return 1;
     }
     AccelerometerFilter filter;
-    sensor.setSignalEnabled(false);
     sensor.addFilter(&filter);
     //sensor.setUpdatePolicy(QSensor::InfrequentUpdates);
     sensor.setUpdateInterval(100); // as fast as the sensor can go!

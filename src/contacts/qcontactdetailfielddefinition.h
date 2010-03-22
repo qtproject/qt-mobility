@@ -72,9 +72,6 @@ public:
         ReadOnly
     };
 
-    QContactDetailFieldDefinition::AccessConstraint Q_DECL_DEPRECATED accessConstraint() const;
-    void Q_DECL_DEPRECATED setAccessConstraint(QContactDetailFieldDefinition::AccessConstraint constraint);
-
     bool operator==(const QContactDetailFieldDefinition& other) const;
     bool operator!=(const QContactDetailFieldDefinition& other) const;
 

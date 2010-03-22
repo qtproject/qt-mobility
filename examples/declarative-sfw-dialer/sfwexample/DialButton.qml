@@ -55,7 +55,7 @@ Item {
         }
     ]
    
-    MouseRegion {
+    MouseArea {
         hoverEnabled: true
         anchors.fill: dialButton
         onEntered: { dialButton.state='Hovering'}

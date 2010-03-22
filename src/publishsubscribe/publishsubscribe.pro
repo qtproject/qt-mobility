@@ -33,7 +33,8 @@ symbian {
     include(xqsettingsmanager_symbian/settingsmanager.pri)
 
     DEPENDPATH += psmapperserver_symbian
-    INCLUDEPATH += psmapperserver_symbian
+    INCLUDEPATH += psmapperserver_symbian \
+               $${EPOCROOT}epoc32\include\platform
 
     HEADERS += pathmapper_symbian_p.h \
         pathmapper_proxy_symbian_p.h
@@ -64,7 +65,7 @@ unix:!symbian {
             SOURCES += gconflayer_linux.cpp
 
             #As a workaround build GConfItem wrapper class with the project
-            HEADERS += gconfitem.h
+            HEADERS += gconfitem_p.h
             SOURCES += gconfitem.cpp
 
             CONFIG += link_pkgconfig

@@ -82,6 +82,7 @@ private slots: // Tests
     void testFold();
     void testWriting21();
     void testWriting30();
+    void testByteArrayOutput();
 
 private: // Data
     QVersitWriter* mWriter;

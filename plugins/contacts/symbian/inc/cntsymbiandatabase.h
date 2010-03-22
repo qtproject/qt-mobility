@@ -70,7 +70,7 @@ class CntSymbianDatabase : public QObject, public MContactDbObserver
 Q_OBJECT
 
 public:
-    CntSymbianDatabase(QContactManagerEngine *engine, QContactManager::Error& error);
+    CntSymbianDatabase(QContactManagerEngine *engine, QContactManager::Error* error);
     ~CntSymbianDatabase();
 
 public:
@@ -83,6 +83,12 @@ public:
     void HandleDatabaseEventL(TContactDbObserverEvent aEvent);
 
 private:
+    void initializeL();
+    void updateGroupMembershipsL();
+    void updateGroupMembershipsL(QContactLocalId groupId, QSet<QContactLocalId> &added, QSet<QContactLocalId> &removed);
+    QSet<QContactLocalId> groupMembersL(QContactLocalId groupId);
+
+private:
     CContactDatabase* m_contactDatabase;
 #ifndef SYMBIAN_BACKEND_USE_SQLITE
     CContactChangeNotifier* m_contactChangeNotifier;
@@ -90,6 +96,7 @@ private:
     QContactManagerEngine *m_engine;
     QList<QContactLocalId> m_contactsEmitted;
     QContactLocalId m_currentOwnCardId;
+    QMap<QContactLocalId, QSet<QContactLocalId> > m_groupContents;
 #ifdef CNTSYMBIANDATABASE_UNIT_TEST
     friend class TestCntSymbianDatabase;
 #endif  //CNTSYMBIANDATABASE_UNIT_TEST

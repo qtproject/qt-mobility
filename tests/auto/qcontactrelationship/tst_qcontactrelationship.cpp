@@ -62,6 +62,7 @@ private:
 private slots:
     void operations();
     void emptiness();
+    void hash();
 };
 
 tst_QContactRelationship::tst_QContactRelationship()
@@ -139,6 +140,36 @@ void tst_QContactRelationship::emptiness()
     QVERIFY(r3 != r1);
 }
 
+void tst_QContactRelationship::hash()
+{
+    QContactRelationship r1;
+    QContactId id1;
+    id1.setManagerUri("a");
+    id1.setLocalId(1);
+    r1.setFirst(id1);
+    QContactId id2;
+    id2.setManagerUri("b");
+    id2.setLocalId(2);
+    r1.setSecond(id2);
+    r1.setRelationshipType(QContactRelationship::HasMember);
+
+    QContactRelationship r2;
+    r2.setFirst(id1);
+    r2.setSecond(id2);
+    r2.setRelationshipType(QContactRelationship::HasMember);
+
+    QContactRelationship r3;
+    r3.setFirst(id1);
+    QContactId id3;
+    id3.setManagerUri("c");
+    id3.setLocalId(3);
+    r3.setSecond(id3);
+    r3.setRelationshipType(QContactRelationship::HasMember);
+
+    QVERIFY(qHash(r1) == qHash(r2));
+    QVERIFY(qHash(r1) != qHash(r3));
+
+}
 
 QTEST_MAIN(tst_QContactRelationship)
 #include "tst_qcontactrelationship.moc"

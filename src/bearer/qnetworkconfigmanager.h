@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -64,7 +64,8 @@ public:
          SystemSessionSupport = 0x00000004,
          ApplicationLevelRoaming = 0x00000008,
          ForcedRoaming = 0x00000010,
-         DataStatistics = 0x00000020
+         DataStatistics = 0x00000020,
+         NetworkSessionRequired = 0x00000040
     };
 
     Q_DECLARE_FLAGS(Capabilities, Capability)

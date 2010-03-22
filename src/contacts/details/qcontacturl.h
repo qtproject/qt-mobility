@@ -63,10 +63,10 @@ public:
     const char* SubTypeSocialNetworking;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactUrl, "Url")
-    Q_DECLARE_LATIN1_LITERAL(FieldUrl, "Url");
-    Q_DECLARE_LATIN1_LITERAL(FieldSubType, "SubType");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeHomePage, "HomePage");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeFavourite, "Favourite");
+    Q_DECLARE_LATIN1_CONSTANT(FieldUrl, "Url");
+    Q_DECLARE_LATIN1_CONSTANT(FieldSubType, "SubType");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeHomePage, "HomePage");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeFavourite, "Favourite");
 #endif
 
     void setUrl(const QString& url) {setValue(FieldUrl, url);}

@@ -81,12 +81,12 @@ public:
     const char* FieldDetailUri;
     const char* FieldLinkedDetailUris;
 #else
-    Q_DECLARE_LATIN1_LITERAL(FieldContext, "Context");
-    Q_DECLARE_LATIN1_LITERAL(ContextHome, "Home");
-    Q_DECLARE_LATIN1_LITERAL(ContextWork, "Work");
-    Q_DECLARE_LATIN1_LITERAL(ContextOther, "Other");
-    Q_DECLARE_LATIN1_LITERAL(FieldDetailUri, "DetailUri");
-    Q_DECLARE_LATIN1_LITERAL(FieldLinkedDetailUris, "LinkedDetailUris");
+    Q_DECLARE_LATIN1_CONSTANT(FieldContext, "Context");
+    Q_DECLARE_LATIN1_CONSTANT(ContextHome, "Home");
+    Q_DECLARE_LATIN1_CONSTANT(ContextWork, "Work");
+    Q_DECLARE_LATIN1_CONSTANT(ContextOther, "Other");
+    Q_DECLARE_LATIN1_CONSTANT(FieldDetailUri, "DetailUri");
+    Q_DECLARE_LATIN1_CONSTANT(FieldLinkedDetailUris, "LinkedDetailUris");
 #endif
 
     bool operator==(const QContactDetail& other) const;
@@ -97,9 +97,6 @@ public:
 
     int key() const;
     void resetKey();
-
-    void setPreferredActions(const QList<QContactActionDescriptor>& preferredActions);
-    QList<QContactActionDescriptor> preferredActions() const;
 
     QString value(const QString& key) const;
     bool setValue(const QString& key, const QVariant& value);
@@ -165,6 +162,11 @@ private:
     QSharedDataPointer<QContactDetailPrivate> d;
 };
 
+Q_CONTACTS_EXPORT uint qHash(const QContactDetail& key);
+#ifndef QT_NO_DEBUG_STREAM
+Q_CONTACTS_EXPORT QDebug operator<<(QDebug dbg, const QContactDetail& detail);
+#endif
+
 Q_DECLARE_OPERATORS_FOR_FLAGS(QContactDetail::AccessConstraints);
 
 #define Q_DECLARE_CUSTOM_CONTACT_DETAIL(className, definitionNameString) \
@@ -172,10 +174,10 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(QContactDetail::AccessConstraints);
     className(const QContactDetail& field) : QContactDetail(field, DefinitionName) {} \
     className& operator=(const QContactDetail& other) {assign(other, DefinitionName); return *this;} \
     \
-    Q_DECLARE_LATIN1_LITERAL(DefinitionName, definitionNameString);
+    Q_DECLARE_LATIN1_CONSTANT(DefinitionName, definitionNameString);
 
 #define Q_IMPLEMENT_CUSTOM_CONTACT_DETAIL(className, definitionNameString) \
-    Q_DEFINE_LATIN1_LITERAL(className::DefinitionName, definitionNameString)
+    Q_DEFINE_LATIN1_CONSTANT(className::DefinitionName, definitionNameString)
 
 QTM_END_NAMESPACE
 

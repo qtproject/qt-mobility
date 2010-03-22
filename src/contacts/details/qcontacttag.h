@@ -60,7 +60,7 @@ public:
     const char* FieldTag;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactTag, "Tag")
-    Q_DECLARE_LATIN1_LITERAL(FieldTag, "Tag");
+    Q_DECLARE_LATIN1_CONSTANT(FieldTag, "Tag");
 #endif
 
     void setTag(const QString& tag) {setValue(FieldTag, tag);}
