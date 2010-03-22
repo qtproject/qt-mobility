@@ -72,7 +72,7 @@ public:
     };
     static CntSimStorePrivate* NewL(CntSymbianSimEngine &engine, CntSimStore &simStore, const QString &storeName);
     ~CntSimStorePrivate();
-    
+
     QString storeName() { return m_storeName; }
     TSimStoreInfo storeInfo() { return m_storeInfo; }
 
@@ -80,15 +80,15 @@ public:
     bool write(const QContact &contact, QContactManager::Error *error);
     bool remove(int index, QContactManager::Error *error);
     bool getReservedSlots(QContactManager::Error *error);
-    
+
     TInt lastAsyncError() { return m_asyncError; }
-    
-private: 
+
+private:
     // from CActive
     void RunL();
     void DoCancel();
     TInt RunError(TInt aError);
-    
+
 private:
     CntSimStorePrivate(CntSymbianSimEngine &engine, CntSimStore &simStore, const QString &storeName);
     void ConstructL();
@@ -97,7 +97,7 @@ private:
     void encodeSimContactL(QContact* contact, TDes8& rawData) const;
     void putTagAndValueL(CPhoneBookBuffer* pbBuffer, TUint8 tag, QString data) const;
     QList<int> decodeReservedSlotsL(TDes8& rawData) const;
-    
+
 private:
     State m_state;
     CntSymbianSimEngine &m_engine;
