@@ -39,43 +39,31 @@
 **
 ****************************************************************************/
 
-#ifndef QLANDMARKFILTER_H
-#define QLANDMARKFILTER_H
+#ifndef QLANDMARKUNIONFILTER_H
+#define QLANDMARKUNIONFILTER_H
 
-#include "qmobilityglobal.h"
-#include <QSharedDataPointer>
-
-QT_BEGIN_HEADER
+#include "qlandmarkfilter.h"
+#include <QList>
 
 QTM_BEGIN_NAMESPACE
 
-class QLandmarkFilterPrivate;
-class Q_LOCATION_EXPORT QLandmarkFilter
+class QLandmarkUnionFilterPrivate;
+class Q_LOCATION_EXPORT QLandmarkUnionFilter : public QLandmarkFilter
 {
-public:
-    enum FilterType{LandmarkInvalidFilter, LandmarkDefaultFilter,
-                    LandmarkNameFilter, LandmarkProximityFilter,
-                    LandmarkNearestFilter, LandmarkCategoryFilter,
-                    LandmarkBoxFilter, LandmarkIntersectionFilter,
-                    LandmarkUnionFilter, LandmarkCustomFilter =500};
-    QLandmarkFilter();
-    virtual ~QLandmarkFilter();
+    QLandmarkUnionFilter();
+    virtual ~QLandmarkUnionFilter();
 
-    FilterType type() const;
+    void setFilters(const QList<QLandmarkFilter>& filters);
 
-    int maximumMatches() const;
-    void setMaximumMatches(int maxMatches);
+    void prepend(const QLandmarkFilter& filter);
+    void append(const QLandmarkFilter& filter);
+    void remove(const QLandmarkFilter& filter);
 
-    bool operator!=(const QLandmarkFilter &other) const;
-    bool operator==(const QLandmarkFilter &other) const;
-    QLandmarkFilter &operator=(const QLandmarkFilter &other);
-protected:
-    QLandmarkFilter(QLandmarkFilterPrivate *dd);
-    //QSharedDataPointer<QLandmarkFilterPrivate> d_ptr;
+    QLandmarkUnionFilter& operator<<(const QLandmarkFilter& filter);
+    QList<QLandmarkFilter> filters() const;
 };
 
 QTM_END_NAMESPACE
 
-QT_END_HEADER
-
 #endif
+

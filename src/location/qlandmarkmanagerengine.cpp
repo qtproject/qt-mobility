@@ -674,8 +674,8 @@ int QLandmarkManagerEngine::compareLandmark(const QLandmark& a, const QLandmark&
 
 /*!
   Performs insertion sort \a landmark into the \a sorted list, according to the provided \a sortOrders list.
-  The first QContactSortOrder in the list has the highest priority; if the \a landmark is deemed equal to another
-  in the \a sorted list, the second QContactSortOrder in the list is used (and so on until either the contact is inserted
+  The first QLandmarkSortOrder in the list has the highest priority; if the \a landmark is deemed equal to another
+  in the \a sorted list, the second QLandmarkSortOrder in the list is used (and so on until either the landmark is inserted
   or there are no more sort order objects in the list).
  */
 void QLandmarkManagerEngine::addSorted(QList<QLandmark>* sorted, const QLandmark& landmark, const QList<QLandmarkSortOrder>& sortOrders)

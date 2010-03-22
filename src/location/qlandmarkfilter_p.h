@@ -39,43 +39,27 @@
 **
 ****************************************************************************/
 
-#ifndef QLANDMARKFILTER_H
-#define QLANDMARKFILTER_H
+#ifndef QLANDMARKFILTER_P_H
+#define QLANDMARKFILTER_P_H
 
-#include "qmobilityglobal.h"
-#include <QSharedDataPointer>
-
-QT_BEGIN_HEADER
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+#include "qlandmarkfilter.h"
+#include <QSharedData>
 
 QTM_BEGIN_NAMESPACE
-
-class QLandmarkFilterPrivate;
-class Q_LOCATION_EXPORT QLandmarkFilter
+class QLandmarkFilterPrivate : public QSharedData
 {
 public:
-    enum FilterType{LandmarkInvalidFilter, LandmarkDefaultFilter,
-                    LandmarkNameFilter, LandmarkProximityFilter,
-                    LandmarkNearestFilter, LandmarkCategoryFilter,
-                    LandmarkBoxFilter, LandmarkIntersectionFilter,
-                    LandmarkUnionFilter, LandmarkCustomFilter =500};
-    QLandmarkFilter();
-    virtual ~QLandmarkFilter();
-
-    FilterType type() const;
-
-    int maximumMatches() const;
-    void setMaximumMatches(int maxMatches);
-
-    bool operator!=(const QLandmarkFilter &other) const;
-    bool operator==(const QLandmarkFilter &other) const;
-    QLandmarkFilter &operator=(const QLandmarkFilter &other);
-protected:
-    QLandmarkFilter(QLandmarkFilterPrivate *dd);
-    //QSharedDataPointer<QLandmarkFilterPrivate> d_ptr;
+    QLandmarkFilterPrivate(){}
 };
 
 QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif

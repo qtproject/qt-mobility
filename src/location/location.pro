@@ -40,6 +40,9 @@ PUBLIC_HEADERS += qgeocoordinate.h \
                   qlandmarkproximityfilter.h \
                   qlandmarknearestfilter.h \
                   qlandmarkcategoryfilter.h \
+                  qlandmarkintersectionfilter.h \
+                  qlandmarkunionfilter.h \
+                  qlandmarkunionfilter.h \
                   qlandmarkcustomfilter.h \
                   qlandmarksortorder.h \
                   qlandmarknamesort.h \
@@ -167,7 +170,8 @@ HEADERS += qaddress.h \
            qroutereply_p.h \
            qrouterequest.h \
            qrouterequest_p.h \
-           qroutexmlparser.h
+           qroutexmlparser.h \
+           qlandmarkfilter_p.h
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
@@ -199,6 +203,8 @@ SOURCES += qlocationutils.cpp \
            qlandmarkproximityfilter.cpp \
            qlandmarknearestfilter.cpp \
            qlandmarkcategoryfilter.cpp \
+           qlandmarkintersectionfilter.cpp \
+           qlandmarkunionfilter.cpp \
            qlandmarkcustomfilter.cpp \
            qlandmarksortorder.cpp \
            qlandmarknamesort.cpp \
