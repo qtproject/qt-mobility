@@ -212,9 +212,9 @@ void LiblocationWrapper::locationChanged(LocationGPSDevice *device,
        
     posInfo.setCoordinate(coordinate);
 
-    if ((device->fix->fields & LOCATION_GPS_DEVICE_TIME_SET))
-            && (((device->fix->mode == LOCATION_GPS_DEVICE_MODE_3D) 
-                    || (device->fix->mode == LOCATION_GPS_DEVICE_MODE_2D)) 
+    if ((device->fix->fields & LOCATION_GPS_DEVICE_TIME_SET) && 
+        ((device->fix->mode == LOCATION_GPS_DEVICE_MODE_3D) || 
+         (device->fix->mode == LOCATION_GPS_DEVICE_MODE_2D))) {
         object->setLocation(posInfo, true);
     } else {
         object->setLocation(posInfo, false);

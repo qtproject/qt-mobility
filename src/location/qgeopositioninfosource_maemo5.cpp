@@ -214,7 +214,7 @@ void QGeoPositionInfoSourceMaemo::newPositionUpdate()
     } else {
         // if we an error occurs when we are updating periodically and we haven't sent an error since the last fix...
         if (!(positionInfoState & QGeoPositionInfoSourceMaemo::RequestActive) && errorOccurred && !errorSent) {
-            erorrSent = true;
+            errorSent = true;
             // we need to emit the updateTimeout signal
             emit updateTimeout();
         }
