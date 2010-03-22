@@ -52,6 +52,7 @@
 #include <QDir>
 #include <QTimer>
 #include <QMapIterator>
+#include <QSettings>
 
 #ifndef QT_NO_NETWORKMANAGER
 #include <qnetworkmanagerservice_linux_p.h>
@@ -596,6 +597,7 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
  QSystemScreenSaverPrivate::~QSystemScreenSaverPrivate()
  {
      if(currentPid != 0) {
+#if !defined(QT_NO_DBUS)
          QDBusConnection dbusConnection = QDBusConnection::sessionBus();
 
          QStringList ifaceList;
@@ -612,6 +614,7 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
                                                                      currentPid);
              }
          }
+#endif
      }
  }
 
