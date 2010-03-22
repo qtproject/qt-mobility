@@ -51,7 +51,6 @@ QGeoPositionInfoSourceMaemo::QGeoPositionInfoSourceMaemo(QObject *parent)
 {
     // default values
     availableMethods = SatellitePositioningMethods;
-    lowSignalLevelCount = 0;
     
     timerInterval = DEFAULT_UPDATE_INTERVAL;
     updateTimer = new QTimer(this);
@@ -62,6 +61,9 @@ QGeoPositionInfoSourceMaemo::QGeoPositionInfoSourceMaemo(QObject *parent)
     requestTimer->setSingleShot(true);
     connect(requestTimer, SIGNAL(timeout()), this, SLOT(requestTimeoutElapsed()));
 
+    errorOccurred = false;
+    errorSent = false;
+
     positionInfoState = QGeoPositionInfoSourceMaemo::Undefined;
 }
 
@@ -69,6 +71,7 @@ int QGeoPositionInfoSourceMaemo::init()
 {
     if (LiblocationWrapper::instance()->inited()) {
         positionInfoState = QGeoPositionInfoSourceMaemo::Stopped;
+        connect(LiblocationWrapper::instance(), SIGNAL(error()), this, SLOT(error()));
         return INIT_OK;
     } else {
         return INIT_FAILED;
@@ -191,12 +194,10 @@ void QGeoPositionInfoSourceMaemo::requestUpdate(int timeout)
 void QGeoPositionInfoSourceMaemo::newPositionUpdate()
 {
     if (LiblocationWrapper::instance()->fixIsValid()) {             
+        errorOccurred = false;
+        errorSent = false;
+
         emit positionUpdated(LiblocationWrapper::instance()->position());
-        
-        if (positionInfoState & QGeoPositionInfoSourceMaemo::SignalLevelLow) {
-            positionInfoState &= ~QGeoPositionInfoSourceMaemo::SignalLevelLow;
-            lowSignalLevelCount = 0;
-        }
         
         if (positionInfoState & QGeoPositionInfoSourceMaemo::RequestActive) {
             positionInfoState &= ~QGeoPositionInfoSourceMaemo::RequestActive;
@@ -211,12 +212,11 @@ void QGeoPositionInfoSourceMaemo::newPositionUpdate()
             }
         }
     } else {
-        if (lowSignalLevelCount++ > 2) {        
-            if (!(positionInfoState & QGeoPositionInfoSourceMaemo::SignalLevelLow)) {
-                emit updateTimeout();
-                positionInfoState |= QGeoPositionInfoSourceMaemo::SignalLevelLow;
-                lowSignalLevelCount = 0;
-            }
+        // if we an error occurs when we are updating periodically and we haven't sent an error since the last fix...
+        if (!(positionInfoState & QGeoPositionInfoSourceMaemo::RequestActive) && errorOccurred && !errorSent) {
+            erorrSent = true;
+            // we need to emit the updateTimeout signal
+            emit updateTimeout();
         }
     }
     activateTimer();
@@ -236,6 +236,11 @@ void QGeoPositionInfoSourceMaemo::requestTimeoutElapsed()
             return;
     }
     activateTimer();
+}
+
+void QGeoPositionInfoSourceMaemo::error()
+{
+    errorOccurred = true;
 }
 
 void QGeoPositionInfoSourceMaemo::activateTimer() {

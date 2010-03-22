@@ -101,7 +101,6 @@ void LiblocationWrapper::locationError(LocationGPSDevice *device,
                                        gint errorCode, gpointer data)
 {
     Q_UNUSED(device);
-    Q_UNUSED(data);
     QString locationError;
 
     switch (errorCode) {
@@ -125,6 +124,10 @@ void LiblocationWrapper::locationError(LocationGPSDevice *device,
     }
 
     qDebug() << "Location error:" << locationError;
+
+    LiblocationWrapper *object;
+    object = (LiblocationWrapper *)data;
+    emit object->error();
 }
 
 void LiblocationWrapper::locationChanged(LocationGPSDevice *device,
@@ -209,10 +212,9 @@ void LiblocationWrapper::locationChanged(LocationGPSDevice *device,
        
     posInfo.setCoordinate(coordinate);
 
-    // Only position updates with time (3D) are provided.
-    if ((device->fix->mode == LOCATION_GPS_DEVICE_MODE_3D) ||
-        ((satellitesInUseCount >= 3) && 
-         (device->fix->fields & LOCATION_GPS_DEVICE_TIME_SET))){
+    if ((device->fix->fields & LOCATION_GPS_DEVICE_TIME_SET))
+            && (((device->fix->mode == LOCATION_GPS_DEVICE_MODE_3D) 
+                    || (device->fix->mode == LOCATION_GPS_DEVICE_MODE_2D)) 
         object->setLocation(posInfo, true);
     } else {
         object->setLocation(posInfo, false);
@@ -220,12 +222,9 @@ void LiblocationWrapper::locationChanged(LocationGPSDevice *device,
 }
 
 void LiblocationWrapper::setLocation(const QGeoPositionInfo &update, 
-                                     bool location3D)
+                                     bool locationValid)
 {
-    if (!location3D)
-        validLastSatUpdate = false;
-    else
-        validLastSatUpdate = true;
+    validLastSatUpdate = locationValid;
     lastSatUpdate = update;
 }
 
