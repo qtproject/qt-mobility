@@ -222,6 +222,7 @@ QLandmarkCategory QLandmarkManager::category(const QLandmarkCategoryId &category
  */
 QList<QLandmarkCategory> QLandmarkManager::categories(const QList<QLandmarkCategoryId> &categoryIds)
 {
+    return QList<QLandmarkCategory>();
 }
 
 /*!

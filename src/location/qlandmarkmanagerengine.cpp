@@ -107,6 +107,7 @@ QList<QLandmarkId> QLandmarkManagerEngine::landmarkIds(const QLandmarkFilter& fi
         const QList<QLandmarkSortOrder>& sortOrders, QLandmarkManager::Error* error,
         QString *errorString) const
 {
+    return QList<QLandmarkId>();
 }
 
 /*!
@@ -686,11 +687,13 @@ void QLandmarkManagerEngine::addSorted(QList<QLandmark>* sorted, const QLandmark
  */
 bool QLandmarkManagerEngine::testFilter(const QLandmarkFilter& filter, const QLandmark& landmark)
 {
+    return false;
 }
 
 /*! Sorts the given list of \a landmarks according to the provided \a sortOrders */
 QList<QLandmarkId> QLandmarkManagerEngine::sortLandmarks(const QList<QLandmark>& landmarks, const QList<QLandmarkSortOrder>& sortOrders)
 {
+    return QList<QLandmarkId>();
 }
 
 #include "moc_qlandmarkmanagerengine.cpp"
