@@ -1,5 +1,7 @@
 INCLUDEPATH += $$PWD
 
+DEFINES += AUDIOSOURCEUSED
+
 symbian:LIBS += -lmediaclientaudio \
     -lmediaclientaudioinputstream \
     -lmmfcontrollerframework \

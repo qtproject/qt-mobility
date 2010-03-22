@@ -49,8 +49,9 @@
 #ifdef HAS_MEDIA_PLAYER
 #include "s60mediaplayerservice.h"
 #endif
+#ifdef AUDIOSOURCEUSED
 #include "s60audiocaptureservice.h"
-
+#endif /* AUDIOSOURCEUSED */
 
 QStringList S60MediaServicePlugin::keys() const
 {
@@ -62,7 +63,9 @@ QStringList S60MediaServicePlugin::keys() const
 #ifdef HAS_MEDIA_PLAYER  
     list << QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER);
 #endif
+#ifdef AUDIOSOURCEUSED
     list << QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE);
+#endif /* AUDIOSOURCEUSED */
     return list;
 }
 
@@ -72,9 +75,10 @@ QMediaService* S60MediaServicePlugin::create(QString const& key)
     if (key == QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER))
         return new S60MediaPlayerService;
 #endif
+#ifdef AUDIOSOURCEUSED
     if (key == QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE))
         return new S60AudioCaptureService;
-    
+#endif /* AUDIOSOURCEUSED */
 #if defined(TUNERLIBUSED) || defined(RADIOUTILITYLIBUSED) 
     if (key == QLatin1String(Q_MEDIASERVICE_RADIO)) 
         return new S60RadioTunerService;
