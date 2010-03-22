@@ -25,10 +25,9 @@
 <h2>Properties</h2>
 <ul>
 <li><div class="fn"><b><a href="qtapsensor.html#returnDoubleTapEvents-prop">returnDoubleTapEvents</a></b> : const bool</div></li>
-<li><div class="fn"><b><a href="qtapsensor.html#returnTapEvents-prop">returnTapEvents</a></b> : const bool</div></li>
 </ul>
 <ul>
-<li><div bar="2" class="fn"></div>16 properties inherited from <a href="qsensor.html#properties">QSensor</a></li>
+<li><div bar="2" class="fn"></div>12 properties inherited from <a href="qsensor.html#properties">QSensor</a></li>
 <li><div bar="2" class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 </ul>
 <hr />
@@ -40,7 +39,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">QTapReading * </td><td class="memItemRight" valign="bottom"><b><a href="qtapsensor.html#reading">reading</a></b> () const</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>26 public functions inherited from <a href="qsensor.html#public-functions">QSensor</a></li>
+<li><div bar="2" class="fn"></div>18 public functions inherited from <a href="qsensor.html#public-functions">QSensor</a></li>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
@@ -67,11 +66,7 @@
 <h2>Property Documentation</h2>
 <h3 class="fn"><a name="returnDoubleTapEvents-prop"></a>returnDoubleTapEvents : const bool</h3>
 <p>This property holds a value indicating if double tap events should be reported.</p>
-<p>Set to true to have the sensor report on double tap events. Set to false to have the sensor suppress double tap events.</p>
-<p>Note that you must access this property via <a href="http://qt.nokia.com/doc/4.6/qobject.html#property">QObject::property</a>() and <a href="http://qt.nokia.com/doc/4.6/qobject.html#setProperty">QObject::setProperty</a>(). The property must be set before calling <a href="qsensor.html#start">start</a>().</p>
-<h3 class="fn"><a name="returnTapEvents-prop"></a>returnTapEvents : const bool</h3>
-<p>This property holds a value indicating if tap events should be reported.</p>
-<p>Set to true to have the sensor report on tap events. Set to false to have the sensor suppress tap events.</p>
+<p>Set to true (the default) to have the sensor report on double tap events. Set to false to have the sensor report on individual tap events.</p>
 <p>Note that you must access this property via <a href="http://qt.nokia.com/doc/4.6/qobject.html#property">QObject::property</a>() and <a href="http://qt.nokia.com/doc/4.6/qobject.html#setProperty">QObject::setProperty</a>(). The property must be set before calling <a href="qsensor.html#start">start</a>().</p>
 <hr />
 <h2>Member Function Documentation</h2>

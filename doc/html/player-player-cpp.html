@@ -449,7 +449,7 @@
     {
     #ifdef Q_OS_SYMBIAN
         if(player-&gt;error()!=QMediaPlayer::NoError)
-            QMessageBox::critical(NULL, tr(&quot;Error&quot;), player-&gt;errorString());
+            QMessageBox::critical(NULL, tr(&quot;Error&quot;), player-&gt;errorString(), QMessageBox::Ok);
     #else
         setStatusInfo(player-&gt;errorString());
     #endif
@@ -528,11 +528,11 @@
     {
         if(aspectRatio) {
             toggleAspectRatio-&gt;setText(tr(&quot;Keep Aspect Ratio&quot;));
-            videoWidget-&gt;setAspectRatioMode(QVideoWidget::IgnoreAspectRatio);
+            videoWidget-&gt;setAspectRatioMode(Qt::IgnoreAspectRatio);
 
         } else {
             toggleAspectRatio-&gt;setText(tr(&quot;Ignore Aspect Ratio&quot;));
-            videoWidget-&gt;setAspectRatioMode(QVideoWidget::KeepAspectRatio);
+            videoWidget-&gt;setAspectRatioMode(Qt::KeepAspectRatio);
         }
     }
 
