@@ -61,7 +61,7 @@ QLandmarkPrivate::QLandmarkPrivate(const QLandmarkPrivate &other)
     name = other.name;
     coordinate = other.coordinate;
     description = other.description;
-    icon = other.icon;
+    iconUrl = other.iconUrl;
     radius = other.radius;
     street = other.street;
     locality = other.locality;
@@ -81,7 +81,7 @@ QLandmarkPrivate& QLandmarkPrivate::operator= (const QLandmarkPrivate & other)
     name = other.name;
     coordinate = other.coordinate;
     description = other.description;
-    icon = other.icon;
+    iconUrl = other.iconUrl;
     radius = other.radius;
     street = other.street;
     locality = other.locality;
@@ -101,7 +101,7 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
     return ((name == other.name)
             && (coordinate == other.coordinate)
             && (description == other.description)
-            && (icon == other.icon)
+            && (iconUrl == other.iconUrl)
             && (radius == other.radius)
             && (street == other.street)
             && (locality == other.locality)
@@ -122,7 +122,7 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
 
 
     Each landmark consists of a number of properties such as name,
-    coordinates, icon etc.  Landmarks may also be assigned a set of
+    coordinates, icon url etc.  Landmarks may also be assigned a set of
     generic attributes which may be accessed and modified by using the attribute()
     and setAttribute() functions.
 
@@ -274,19 +274,19 @@ void QLandmark::setDescription(const QString &description)
 }
 
 /*!
-    Returns the file path of the landmark's icon.
+    Returns the url of the landmark's icon.
 */
-QString QLandmark::icon() const
+QUrl QLandmark::iconUrl() const
 {
-    return d->icon;
+    return d->iconUrl;
 }
 
 /*!
-    Sets the \a filePath of the landmark's icon.
+    Sets the \a url of the landmark's icon.
 */
-void QLandmark::setIcon(const QString &filePath)
+void QLandmark::setIconUrl(const QUrl &url)
 {
-    d->icon = filePath;
+    d->iconUrl = url;
 }
 
 /*!

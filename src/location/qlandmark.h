@@ -50,6 +50,7 @@
 
 class QVariant;
 class QStringList;
+class QUrl;
 
 QT_BEGIN_HEADER
 
@@ -84,8 +85,8 @@ public:
     QString description() const;
     void setDescription(const QString &description);
 
-    QString icon() const;
-    void setIcon(const QString &iconFileName);
+    QUrl iconUrl() const;
+    void setIconUrl(const QUrl &iconUrl);
 
     double radius() const;
     void setRadius(double radius);

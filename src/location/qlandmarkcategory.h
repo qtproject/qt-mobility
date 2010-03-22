@@ -45,6 +45,7 @@
 #include "qmobilityglobal.h"
 class QVariant;
 class QStringList;
+class QUrl;
 
 QT_BEGIN_HEADER
 
@@ -67,8 +68,8 @@ public:
     QString name() const;
     void setName(const QString &name);
 
-    QString icon() const;
-    void setIcon(const QString &fileName);
+    QUrl iconUrl() const;
+    void setIconUrl(const QUrl &url);
 
     QString description() const;
     void setDescription(const QString &description);

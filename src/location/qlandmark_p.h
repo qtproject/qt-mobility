@@ -46,6 +46,7 @@
 #include <QList>
 #include <QHash>
 #include <QSharedData>
+#include <QUrl>
 
 QTM_BEGIN_NAMESPACE
 
@@ -65,7 +66,7 @@ public:
     QGeoCoordinate coordinate;
     QList<QLandmarkCategoryId> categories;
     QString description;
-    QString icon;
+    QUrl iconUrl;
     double radius;
     QHash<QString, QVariant> attributes;
     QString street;

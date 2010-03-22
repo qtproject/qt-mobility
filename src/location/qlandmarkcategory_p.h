@@ -53,6 +53,7 @@
 // We mean it.
 //
 #include <QString>
+#include <QUrl>
 
 QTM_BEGIN_NAMESPACE
 
@@ -69,7 +70,7 @@ public:
     // consider inline != in terms of ==?
 
     QString name;
-    QString icon;
+    QUrl iconUrl;
     QString description;
 };
 
