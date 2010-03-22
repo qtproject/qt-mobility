@@ -960,48 +960,48 @@ void TestFiltering::testCreateSelectQuery()
     QString sqlquery;
     QContactManager::Error error;
     CntFilterDetail filterDtl(*m_database,srvConnection,dbInfo);
-    filterDtl.createSelectQuery(f1,sqlquery,error);
+    filterDtl.createSelectQuery(f1,sqlquery,&error);
     QVERIFY(error == QContactManager::NotSupportedError);
     
     CntFilterDefault filterDefault(*m_database,srvConnection,dbInfo);
     error = QContactManager::NoError;
-    filterDefault.createSelectQuery(f1,sqlquery,error);
+    filterDefault.createSelectQuery(f1,sqlquery,&error);
     QVERIFY(error == QContactManager::NotSupportedError);
         
     CntFilterChangeLog filterChangeLog(*m_database,srvConnection,dbInfo);
     error = QContactManager::NoError;
-    filterChangeLog.createSelectQuery(f1,sqlquery,error);
+    filterChangeLog.createSelectQuery(f1,sqlquery,&error);
     QVERIFY(error == QContactManager::NotSupportedError);
     
     CntFilterRelationship filterRlationship(*m_database,srvConnection,dbInfo);
     error = QContactManager::NoError;
-    filterRlationship.createSelectQuery(f1,sqlquery,error);
+    filterRlationship.createSelectQuery(f1,sqlquery,&error);
     QVERIFY(error == QContactManager::NotSupportedError); 
        
 
     CntFilterLocalId filterLocalId(*m_database,srvConnection,dbInfo);
     error = QContactManager::NoError;
-    filterLocalId.createSelectQuery(f1,sqlquery,error);
+    filterLocalId.createSelectQuery(f1,sqlquery,&error);
     QVERIFY(error == QContactManager::NotSupportedError);
         
     CntFilterInvalid filterInvalid(*m_database,srvConnection,dbInfo);
     error = QContactManager::NoError;
-    filterInvalid.createSelectQuery(f1,sqlquery,error);
+    filterInvalid.createSelectQuery(f1,sqlquery,&error);
     QVERIFY(error == QContactManager::NotSupportedError);
             
     CntFilterAction filterAction(*m_database,srvConnection,dbInfo);
     error = QContactManager::NoError;
-    filterAction.createSelectQuery(f1,sqlquery,error);
+    filterAction.createSelectQuery(f1,sqlquery,&error);
     QVERIFY(error == QContactManager::NotSupportedError);
                
     CntFilterUnion filterUnion(*m_database,srvConnection,dbInfo);
     error = QContactManager::NoError;
-    filterUnion.createSelectQuery(f1,sqlquery,error);
+    filterUnion.createSelectQuery(f1,sqlquery,&error);
     QVERIFY(error == QContactManager::NotSupportedError);
                
     CntFilterIntersection filterIntersection(*m_database,srvConnection,dbInfo);
     error = QContactManager::NoError;
-    filterIntersection.createSelectQuery(f1,sqlquery,error);
+    filterIntersection.createSelectQuery(f1,sqlquery,&error);
     QVERIFY(error == QContactManager::NotSupportedError);
     
     }
