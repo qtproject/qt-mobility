@@ -39,59 +39,79 @@
 **
 ****************************************************************************/
 
-#include "galleryview.h"
+#include "qws4gallerycountresponse_p.h"
 
-#include <qgalleryrequest.h>
 
-GalleryView::GalleryView(QWidget *parent)
-    : QWidget(parent)
-    , request(new QGalleryItemRequest(this))
-{
-    connect(request, SIGNAL(itemsChanged()), this, SLOT(mediaChanged()));
-}
-
-GalleryView::~GalleryView()
+QWS4GalleryCountResponse::QWS4GalleryCountResponse(IRowsetScroll *rowSet, QObject *parent)
+    : QWS4GalleryRowSetResponse(rowSet, parent)
+    , m_count(0)
 {
 }
 
-QAbstractGallery *GalleryView::gallery() const
+QWS4GalleryCountResponse::~QWS4GalleryCountResponse()
 {
-    return request->gallery();
 }
 
-void GalleryView::setGallery(QAbstractGallery *gallery)
+QList<int> QWS4GalleryCountResponse::keys() const
 {
-    request->setGallery(gallery);
+    return QList<int>();
 }
 
-void GalleryView::showMatches(const QGalleryFilter &filter)
+QString QWS4GalleryCountResponse::toString(int) const
 {
-    request->setFilter(filter);
-    request->execute();
+    return QString();
 }
 
-void GalleryView::setType(const QString &type)
+int QWS4GalleryCountResponse::count() const
 {
-    request->setItemType(type);
+    return m_count;
 }
 
-void GalleryView::setFields(const QStringList &fields)
+QString QWS4GalleryCountResponse::id(int) const
 {
-    request->setFields(fields);
+    return QString();
 }
 
-void GalleryView::setSortFields(const QStringList &fields)
+QUrl QWS4GalleryCountResponse::url(int) const
 {
-    request->setSortFields(fields);
+    return QUrl();
 }
 
-QGalleryItemList *GalleryView::media() const
+QString QWS4GalleryCountResponse::type(int) const
 {
-    return request->items();
+    return QString();
 }
 
-void GalleryView::sliderMoved(int value)
+QList<QGalleryResource> QWS4GalleryCountResponse::resources(int) const
 {
-    if (QGalleryItemList *list = request->items())
-        list->setCursorPosition(value - list->cacheSize() / 3);
+    return QList<QGalleryResource>();
+}
+
+QVariant QWS4GalleryCountResponse::metaData(int, int) const
+{
+    return QVariant();
+}
+
+void QWS4GalleryCountResponse::setMetaData(int, int, const QVariant &)
+{
+}
+
+QGalleryItemList::MetaDataFlags QWS4GalleryCountResponse::metaDataFlags(int, int) const
+{
+    return 0;
+}
+
+void QWS4GalleryCountResponse::customEvent(QEvent *event)
+{
+    if (event->type() == QWS4GalleryEvent::ItemsInserted) {
+        QWS4GalleryItemsInsertedEvent *insertEvent
+                = static_cast<QWS4GalleryItemsInsertedEvent *>(event);
+        int index = m_count;
+
+        m_count += insertEvent->count;
+
+        emit inserted(index, insertEvent->count);
+    } else {
+        QWS4GalleryRowSetResponse::customEvent(event);
+    }
 }

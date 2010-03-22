@@ -73,7 +73,9 @@ SongView::SongView(QWidget *parent)
     model->setDisplayFieldForColumn(4, QDocumentGallery::composer);
 
     QTableView *view = new QTableView;
+    view->setVerticalScrollMode(QAbstractItemView::ScrollPerItem);
     view->setModel(model);
+    connect(view->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(sliderMoved(int)));
 
     QBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);

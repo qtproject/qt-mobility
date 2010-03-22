@@ -39,43 +39,49 @@
 **
 ****************************************************************************/
 
-#ifndef GALLERYVIEW_H
-#define GALLERYVIEW_H
+#ifndef QWS4GALLERYCOUNTRESPONSE_P_H
+#define QWS4GALLERYCOUNTRESPONSE_P_H
 
-#include <QtGui/QWidget>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API. It exists purely as an
+// implementation detail. This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-class QAbstractGallery;
-class QGalleryFilter;
-class QGalleryItemList;
-class QGalleryItemRequest;
+#include "qws4galleryrowsetresponse_p.h"
 
-class GalleryView : public QWidget
+class QWS4GalleryCountResponse : public QWS4GalleryRowSetResponse
 {
     Q_OBJECT
 public:
-    GalleryView(QWidget *parent = 0);
-    ~GalleryView();
+    QWS4GalleryCountResponse(IRowsetScroll *rowSet, QObject *parent = 0);
+    ~QWS4GalleryCountResponse();
 
-    QAbstractGallery *gallery() const;
-    void setGallery(QAbstractGallery *gallery);
+    QList<int> keys() const;
+    QString toString(int key) const;
 
-public slots:
-    void showMatches(const QGalleryFilter &filter);
+    int count() const;
+
+    QString id(int index) const;
+    QUrl url(int index) const;
+    QString type(int index) const;
+    QList<QGalleryResource> resources(int index) const;
+
+    QVariant metaData(int index, int key) const;
+    void setMetaData(int index, int key, const QVariant &value);
+
+    MetaDataFlags metaDataFlags(int index, int key) const;
 
 protected:
-    void setType(const QString &type);
-    void setFields(const QStringList &fields);
-    void setSortFields(const QStringList &fields);
-
-    QGalleryItemList *media() const;
-
-protected slots:
-    virtual void mediaChanged() = 0;
-
-    void sliderMoved(int value);
+    void customEvent(QEvent *event);
 
 private:
-    QGalleryItemRequest *request;
+    int m_count;
 };
 
 #endif

@@ -234,7 +234,7 @@ int QGalleryItemList::cursorPosition() const
 
 void QGalleryItemList::setCursorPosition(int position)
 {
-    d_ptr->cursorPosition = position;
+    d_ptr->cursorPosition = qMax(0, position);
 }
 
 /*!

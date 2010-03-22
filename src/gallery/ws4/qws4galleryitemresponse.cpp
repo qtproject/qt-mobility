@@ -49,22 +49,23 @@
 #include <oledberr.h>
 
 QWS4GalleryItemResponse::QWS4GalleryItemResponse(
-            IRowset *rowSet,
+            IRowsetScroll *rowSet,
             const QGalleryItemRequest &request,
             const QVector<QWS4GalleryQueryBuilder::Column> &columns,
             QObject *parent)
-    : QGalleryAbstractResponse(parent)
-    , m_ref(1)
+    : QWS4GalleryRowSetResponse(rowSet, parent)
     , m_urlIndex(0)
     , m_typeIndex(0)
-    , m_asynchNotifyCookie(0)
-    , m_rowsetNotifyCookie(0)
-    , m_rowsetEventsCookie(0)
+    , m_rowOffset(0)
+    , m_count(0)
+    , m_minimumPagedItems(qMax<int>(PageSize, request.minimumCacheSize()))
     , m_rowSet(rowSet)
     , m_binding(0)
+    , m_placeholderRow(new QWS4GalleryItemListRow)
     , m_fields(request.fields())
 {
     m_binding = new QWS4GalleryBinding(m_rowSet);
+    m_placeholderRow->metaData.resize(m_fields.count());
 
     if (m_binding->handle()) {    
         for (int i = 0; i < m_fields.count(); ++i) {
@@ -105,28 +106,6 @@ QWS4GalleryItemResponse::QWS4GalleryItemResponse(
                 break;
             }
         }
-
-        IConnectionPointContainer *container = 0;
-        if (SUCCEEDED(m_rowSet->QueryInterface(
-                IID_IConnectionPointContainer, reinterpret_cast<void **>(&container)))) {
-            IConnectionPoint *connection = 0;
-            if (SUCCEEDED(container->FindConnectionPoint(IID_IDBAsynchNotify, &connection))) {
-                connection->Advise(static_cast<IDBAsynchNotify *>(this), &m_asynchNotifyCookie);
-                connection->Release();
-            }
-            if (SUCCEEDED(container->FindConnectionPoint(IID_IRowsetNotify, &connection))) {
-                connection->Advise(static_cast<IRowsetNotify *>(this), &m_rowsetNotifyCookie);
-                connection->Release();
-            }
-    #ifdef __IRowsetEvents_INTERFACE_DEFINED__
-            if (request->isLive() && SUCCEEDED(
-                    container->FindConnectionPoint(IID_IRowsetEvents, &connection))) {
-                connection->Advise(static_cast<IRowsetEvents *>(this), &m_rowsetEventsCookie);
-                connection->Release();
-            }
-            container->Release();
-    #endif
-        }
     } else {
         IDBAsynchStatus *status = 0;
         if (SUCCEEDED(m_rowSet->QueryInterface(
@@ -141,34 +120,7 @@ QWS4GalleryItemResponse::QWS4GalleryItemResponse(
 
 QWS4GalleryItemResponse::~QWS4GalleryItemResponse()
 {
-    IConnectionPointContainer *container = 0;
-    if (SUCCEEDED(m_rowSet->QueryInterface(
-            IID_IConnectionPointContainer, reinterpret_cast<void **>(&container)))) {
-        IConnectionPoint *connection = 0;
-        if (m_asynchNotifyCookie != 0 && SUCCEEDED(
-                container->FindConnectionPoint(IID_IDBAsynchNotify, &connection))) {
-            connection->Unadvise(m_asynchNotifyCookie);
-            connection->Release();
-        }
-        if (m_rowsetNotifyCookie && SUCCEEDED(
-                container->FindConnectionPoint(IID_IRowsetNotify, &connection))) {
-            connection->Unadvise(m_rowsetNotifyCookie);
-            connection->Release();
-        }
-#ifdef __IRowsetEvents_INTERFACE_DEFINED__
-        if (m_rowsetEventsCookie && SUCCEEDED(
-                container->FindConnectionPoint(IID_IRowsetEvents, &connection))) {
-            connection->Unadvise(m_rowsetEventsCookie);
-            connection->Release();
-        }
-        container->Release();
-#endif
-    }
-
     delete m_binding;
-    m_rowSet->Release();
-
-    Q_ASSERT(m_ref == 1);
 }
 
 QList<int> QWS4GalleryItemResponse::keys() const
@@ -181,34 +133,52 @@ QString QWS4GalleryItemResponse::toString(int key) const
     return m_fields.value(key);
 }
 
+void QWS4GalleryItemResponse::setCursorPosition(int position)
+{
+    if (position > cursorPosition()) {
+        appendRows(qMax(0, position));
+
+        QGalleryAbstractResponse::setCursorPosition(position);
+    } else if (position < cursorPosition()) {
+        prependRows(qMax(0, position));
+
+        QGalleryAbstractResponse::setCursorPosition(position);
+    }
+}
+
+int QWS4GalleryItemResponse::cacheSize() const
+{
+    return m_minimumPagedItems;
+}
+
 int QWS4GalleryItemResponse::count() const
 {
-    return m_rows.count();
+    return m_count;
 }
 
 QString QWS4GalleryItemResponse::id(int index) const
 {
-    return m_rows.at(index)->url;
+    return row(index)->url;
 }
 
 QUrl QWS4GalleryItemResponse::url(int index) const
 {
-    return QUrl(m_rows.at(index)->url);
+    return QUrl(row(index)->url);
 }
 
 QString QWS4GalleryItemResponse::type(int index) const
 {
-    return m_rows.at(index)->type;
+    return row(index)->type;
 }
 
 QList<QGalleryResource> QWS4GalleryItemResponse::resources(int index) const
 {
-    return QList<QGalleryResource>() << QGalleryResource(QUrl(m_rows.at(index)->url));
+    return QList<QGalleryResource>() << QGalleryResource(QUrl(row(index)->url));
 }
 
 QVariant QWS4GalleryItemResponse::metaData(int index, int key) const
 {
-    return m_rows.at(index)->metaData.at(key);
+    return row(index)->metaData.at(key);
 }
 
 void QWS4GalleryItemResponse::setMetaData(int index, int key, const QVariant &value)
@@ -227,257 +197,180 @@ QGalleryItemList::MetaDataFlags QWS4GalleryItemResponse::metaDataFlags(
     return 0;
 }
 
-void QWS4GalleryItemResponse::cancel()
-{
-#ifdef __IRowsetEvents_INTERFACE_DEFINED__
-    if (m_rowsetEventsCookie != 0) {
-        IConnectionPointContainer *container = 0;
-        if (SUCCEEDED(m_rowSet->QueryInterface(
-                IID_IConnectionPointContainer, reinterpret_cast<void **>(&container)))) {
-            IConnectionPoint *connection = 0;
-            if (SUCCEEDED(container->FindConnectionPoint(IID_IRowsetEvents, &connection))) {
-                connection->Unadvise(m_rowsetEventsCookie);
-                connection->Release();
-
-                m_rowsetEventsCookie = 0;
-            }
-            container->Release();
-        }
-    }
-#endif
-
-    IDBAsynchStatus *status = 0;
-    if (SUCCEEDED(m_rowSet->QueryInterface(
-            IID_IDBAsynchStatus, reinterpret_cast<void **>(&status)))) {
-        status->Abort(DB_NULL_HCHAPTER, DBASYNCHOP_OPEN);
-        status->Release();
-    }
-}
-
-bool QWS4GalleryItemResponse::waitForFinished(int msecs)
-{
-    IDBAsynchStatus *status = 0;
-    if (SUCCEEDED(m_rowSet->QueryInterface(
-            IID_IDBAsynchStatus, reinterpret_cast<void **>(&status)))) {
-        QMutexLocker locker(&m_asynchMutex);
-        DBASYNCHPHASE phase = 0;
-
-        status->GetStatus(DB_NULL_HCHAPTER, DBASYNCHOP_OPEN, 0, 0, &phase, 0);
-        status->Release();
-
-        if (phase == DBASYNCHPHASE_COMPLETE || phase == DBASYNCHPHASE_CANCELED) {
-            return true;
-        } else {
-            if (m_asynchWait.wait(&m_asynchMutex, msecs)) {
-                // there might be more to do here.
-                return true;
-            } else {
-                return false;
-            }
-        }
-    } else {
-        return true;
-    }
-}
-
-HRESULT QWS4GalleryItemResponse::QueryInterface(REFIID riid, void **ppvObject)
-{
-    if (!ppvObject) {
-        return E_POINTER;
-    } else if (riid == IID_IUnknown
-            || riid == IID_IDBAsynchNotify) {
-        *ppvObject = static_cast<IDBAsynchNotify *>(this);
-#ifdef __IRowsetEvents_INTERFACE_DEFINED__
-    } else if (riid == IID_IRowsetEvents) {
-        *ppvObject = static_cast<IRowsetEvents *>(this);
-#endif
-    } else {
-        *ppvObject = 0;
-
-        return E_NOINTERFACE;
-    }
-
-    AddRef();
-
-    return S_OK;
-}
-
-ULONG QWS4GalleryItemResponse::AddRef()
-{
-    return InterlockedIncrement(&m_ref);
-}
-
-ULONG QWS4GalleryItemResponse::Release()
-{
-    ULONG ref = InterlockedDecrement(&m_ref);
-
-    Q_ASSERT(ref != 0);
-
-    return ref;
-}
-
-// IDBAsynchNotify
-HRESULT QWS4GalleryItemResponse::OnLowResource(DB_DWRESERVE)
-{
-    return E_NOTIMPL;
-}
-
-HRESULT QWS4GalleryItemResponse::OnProgress(
-        HCHAPTER hChapter,
-        DBASYNCHOP eOperation,
-        DBCOUNTITEM ulProgress,
-        DBCOUNTITEM ulProgressMax,
-        DBASYNCHPHASE eAsynchPhase,
-        LPOLESTR pwszStatusText)
-{
-    DBCOUNTITEM count = 0;
-    HROW rows[20];
-    HROW *pRows = rows;
-
-
-    if (m_rowSet->GetNextRows(DB_NULL_HCHAPTER, 0, 20, &count, &pRows) == S_OK) {
-        readRows(rows, count);
-
-        m_rowSet->ReleaseRows(count, rows, 0, 0, 0);
-    }
-
-    return S_OK;
-}
-
-// IRowSetNotify
-HRESULT QWS4GalleryItemResponse::OnStop(
-        HCHAPTER hChapter, DBASYNCHOP eOperation, HRESULT hrStatus, LPOLESTR pwszStatusText)
-{
-    return S_OK;
-}
-
-HRESULT QWS4GalleryItemResponse::OnFieldChange(
-        IRowset *pRowset,
-        HROW hRow,
-        DBORDINAL cColumns,
-        DBORDINAL rgColumns[],
-        DBREASON eReason,
-        DBEVENTPHASE ePhase,
-        BOOL fCantDeny)
-{
-    return DB_S_UNWANTEDREASON;
-}
-
-HRESULT QWS4GalleryItemResponse::OnRowChange(
-        IRowset *pRowset,
-        DBCOUNTITEM cRows,
-        const HROW rghRows[],
-        DBREASON eReason,
-        DBEVENTPHASE ePhase,
-        BOOL fCantDeny)
-{
-    if (eReason == DBREASON_ROW_INSERT || eReason == DBREASON_ROW_ASYNCHINSERT) {
-        readRows(rghRows, cRows);
-
-        return S_OK;
-    } else {
-        return DB_S_UNWANTEDREASON;
-    }
-}
-
-HRESULT QWS4GalleryItemResponse::OnRowsetChange(
-        IRowset *pRowset, DBREASON eReason, DBEVENTPHASE ePhase, BOOL fCantDeny)
-{
-    return DB_S_UNWANTEDREASON;
-}
-
-// IRowsetEvents
-// Not usable prior to Windows 7, so just placeholder implementations for now.
-#ifdef __IRowsetEvents_INTERFACE_DEFINED__
-HRESULT QWS4GalleryItemResponse::OnNewItem(
-        REFPROPVARIANT itemID, ROWSETEVENT_ITEMSTATE newItemState)
-{
-    Q_UNUSED(itemID);
-    Q_UNUSED(newItemState);
-}
-
-HRESULT QWS4GalleryItemResponse::OnChangedItem(
-        REFPROPVARIANT itemID,
-        ROWSETEVENT_ITEMSTATE rowsetItemState,
-        ROWSETEVENT_ITEMSTATE changedItemState)
-{
-    Q_UNUSED(itemID);
-    Q_UNUSED(rowsetItemState);
-    Q_UNUSED(changeItemState);
-
-    qDebug(Q_FUNC_INFO);
-
-    return S_OK;
-}
-
-HRESULT QWS4GalleryItemResponse::OnDeletedItem(
-        REFPROPVARIANT itemID, ROWSETEVENT_ITEMSTATE deletedItemState)
-{
-    Q_UNUSED(itemID);
-    Q_UNUSED(deletedItemState);
-
-    qDebug(Q_FUNC_INFO);
-
-    return S_OK;
-}
-
-HRESULT QWS4GalleryItemResponse::OnRowsetEvent(
-    ROWSETEVENT_TYPE eventType, REFPROPVARIANT eventData)
-{
-    Q_UNUSED(eventType);
-    Q_UNUSED(eventData);
-
-    qDebug(Q_FUNC_INFO);
-
-    return S_OK;
-}
-#endif
-
 void QWS4GalleryItemResponse::customEvent(QEvent *event)
 {
-    if (event->type() == QEvent::User) {
-        int index = m_rows.count();
+    if (event->type() == QWS4GalleryEvent::ItemsInserted) {
+        QWS4GalleryItemsInsertedEvent *insertEvent
+                = static_cast<QWS4GalleryItemsInsertedEvent *>(event);
+        int index = m_count;
 
-        {
-            QMutexLocker locker(&m_asynchMutex);
-            m_rows += m_pendingRows;
-            m_pendingRows.clear();
-        }
+        m_count += insertEvent->count;
 
-        if (index != m_rows.count())
-            emit inserted(index, m_rows.count() - index);
+        emit inserted(index, insertEvent->count);
+
+        appendRows(cursorPosition());
     } else {
-        QGalleryAbstractResponse::customEvent(event);
+        QWS4GalleryRowSetResponse::customEvent(event);
     }
 }
 
-void QWS4GalleryItemResponse::readRows(const HROW rows[], DBCOUNTITEM count)
+void QWS4GalleryItemResponse::appendRows(int position)
 {
+    const int alignedPosition = ~(PageSize - 1) & qMin(
+            position, qMax(0, m_count - m_minimumPagedItems));
+
+    const int count = (position + m_minimumPagedItems + PageSize - 1) & ~(PageSize - 1);
+
+    int offset = qMax(alignedPosition, m_rowOffset + m_rows.count());
+
+    if (offset == count)
+        return;
+
+    DBBOOKMARK bookmark = DBBMK_FIRST;
+    DBCOUNTITEM rowsFetched = -1;
+    HROW rows[PageSize];
+    HROW *pRows = rows;
+
     QVector<Row> newRows;
-    newRows.reserve(count);
+    newRows.reserve(count - offset);
 
     QByteArray buffer;
     buffer.resize(m_binding->bufferSize());
 
-    for (DBCOUNTITEM i = 0; i < count; ++i) {
-        if (SUCCEEDED(m_rowSet->GetData(rows[i], m_binding->handle(), buffer.data()))) {
-            Row row = Row(new QWS4GalleryItemListRow);
-            row->workId = 0;
-            row->flags = 0;
-            row->url = m_binding->toString(buffer.data(), m_urlIndex);
-            row->type = m_binding->toString(buffer.data(), m_typeIndex);
+    for (; offset < count && rowsFetched != 0; offset += rowsFetched) {
+        if (SUCCEEDED(m_rowSet->GetRowsAt(
+                0,
+                DB_NULL_HCHAPTER,
+                STD_BOOKMARKLENGTH,
+                reinterpret_cast<BYTE *>(&bookmark),
+                offset,
+                PageSize,
+                &rowsFetched,
+                &pRows))) {
+            for (DBCOUNTITEM i = 0; i < rowsFetched; ++i) {
+                if (SUCCEEDED(m_rowSet->GetData(rows[i], m_binding->handle(), buffer.data()))) {
+                    Row row = Row(new QWS4GalleryItemListRow);
+                    row->workId = 0;
+                    row->flags = 0;
+                    row->url = m_binding->toString(buffer.data(), m_urlIndex);
+                    row->type = m_binding->toString(buffer.data(), m_typeIndex);
 
-            for (int i = 0; i < m_columnIndexes.count(); ++i)
-                row->metaData.append(m_binding->toVariant(buffer.data(), m_columnIndexes.at(i)));
-
-            newRows.append(row);
+                    for (int i = 0; i < m_columnIndexes.count(); ++i) {
+                        row->metaData.append(
+                                m_binding->toVariant(buffer.data(), m_columnIndexes.at(i)));
+                    }
+                    newRows.append(row);
+                }
+            }
+            m_rowSet->ReleaseRows(rowsFetched, rows, 0, 0, 0);
+        } else {
+            rowsFetched = 0;
         }
     }
 
-    QMutexLocker locker(&m_asynchMutex);
+    if (!newRows.isEmpty()) {
+        int changeIndex = 0;
 
-    if (m_pendingRows.isEmpty())
-        QCoreApplication::postEvent(this, new QEvent(QEvent::User));
+        if (alignedPosition > m_rowOffset + m_rows.count()) {
+            changeIndex = alignedPosition;
 
-    m_pendingRows += newRows;
+            m_rows = newRows;
+
+            m_rowOffset = alignedPosition;
+        } else {
+            changeIndex = m_rowOffset + m_rows.count();
+
+            const int rowOffset = ~(PageSize - 1) & qMax(
+                    0, m_rowOffset + m_rows.count() + newRows.count() - m_minimumPagedItems);
+            if (rowOffset != m_rowOffset) {
+                m_rows = m_rows.mid(rowOffset - m_rowOffset) + newRows;
+
+                m_rowOffset = alignedPosition;
+            } else {
+                m_rows += newRows;
+            }
+        }
+        const int changeCount = newRows.count();
+        newRows.clear();
+
+        emit metaDataChanged(changeIndex, changeCount);
+    }
+    qDebug("Appended items\n\tOffset: %d\n\tCached Items: %d", m_rowOffset, m_rows.count());
 }
+
+void QWS4GalleryItemResponse::prependRows(int position)
+{
+    const int alignedPosition = ~(PageSize - 1) & qMin(
+            position, qMax(0, m_count - m_minimumPagedItems));
+
+    const int count = qMin(
+            (position + m_minimumPagedItems + PageSize - 1) & ~(PageSize - 1),
+            m_rowOffset);
+
+    if (count == alignedPosition)
+        return;
+
+    DBBOOKMARK bookmark = DBBMK_FIRST;
+    DBCOUNTITEM rowsFetched = -1;
+    HROW rows[PageSize];
+    HROW *pRows = rows;
+
+    QVector<Row> newRows;
+    newRows.reserve(count - alignedPosition);
+
+    QByteArray buffer;
+    buffer.resize(m_binding->bufferSize());
+
+    for (int offset = count - 1; offset >= alignedPosition && rowsFetched != 0; offset -= rowsFetched) {
+        if (SUCCEEDED(m_rowSet->GetRowsAt(
+                0,
+                DB_NULL_HCHAPTER,
+                STD_BOOKMARKLENGTH,
+                reinterpret_cast<BYTE *>(&bookmark),
+                offset,
+                -PageSize,
+                &rowsFetched,
+                &pRows))) {
+            for (DBCOUNTITEM i = 0; i < rowsFetched; ++i) {
+                if (SUCCEEDED(m_rowSet->GetData(rows[i], m_binding->handle(), buffer.data()))) {
+                    Row row = Row(new QWS4GalleryItemListRow);
+                    row->workId = 0;
+                    row->flags = 0;
+                    row->url = m_binding->toString(buffer.data(), m_urlIndex);
+                    row->type = m_binding->toString(buffer.data(), m_typeIndex);
+
+                    for (int i = 0; i < m_columnIndexes.count(); ++i) {
+                        row->metaData.append(
+                                m_binding->toVariant(buffer.data(), m_columnIndexes.at(i)));
+                    }
+                    newRows.prepend(row);
+                }
+            }
+            m_rowSet->ReleaseRows(rowsFetched, rows, 0, 0, 0);
+        } else {
+            rowsFetched = 0;
+        }
+    }
+
+    if (!newRows.isEmpty()) {
+        m_rowOffset = count - newRows.count();
+        if (count < m_rowOffset) {
+            m_rows = newRows;
+        } else {
+            const int maximumCount = ~(PageSize - 1)
+                    & (alignedPosition + m_minimumPagedItems + PageSize - 1);
+            if (maximumCount < m_rowOffset + m_rows.count()) {
+                m_rows = newRows + m_rows.mid(0, maximumCount - m_rowOffset);
+            } else {
+                m_rows = newRows +  m_rows;
+            }
+        }
+        const int changeCount = newRows.count();
+        newRows.clear();
+
+        emit metaDataChanged(count - changeCount, changeCount);
+    }
+
+    qDebug("Prepended items\n\tOffset: %d\n\tCached Items: %d", m_rowOffset, m_rows.count());
+}
+

@@ -70,8 +70,10 @@ AlbumView::AlbumView(QWidget *parent)
     view->setFlow(QListView::LeftToRight);
     view->setViewMode(QListView::IconMode);
     view->setUniformItemSizes(true);
+    view->setVerticalScrollMode(QAbstractItemView::ScrollPerItem);
     view->setModel(model);
     view->setItemDelegate(new AlbumDelegate(this));
+    connect(view->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(sliderMoved(int)));
 
     QBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);

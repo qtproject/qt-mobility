@@ -68,7 +68,7 @@ public:
     IDBCreateCommand *commandFactory;
 
     void open();
-    IRowset *execute(const QString &query, bool live, int *result);
+    IRowsetScroll *execute(const QString &query, bool live, int *result);
 
     QGalleryAbstractResponse *createItemResponse(QGalleryItemRequest *request);
 };
@@ -98,27 +98,19 @@ void QDocumentGalleryPrivate::open()
                     sessionFactory->CreateSession(
                             0, IID_IDBCreateCommand, reinterpret_cast<IUnknown **>(&commandFactory));
                     sessionFactory->Release();
-                } else {
-                    qWarning("no DBCreateSession interface");
                 }
-            } else {
-                qWarning("data source initialization failed");
             }
             dataSource->Release();
-        } else {
-            qWarning("No data source");
         }
         dataInitializer->Release();
-    } else {
-        qWarning("No data initializer");
     }
 }
 
-IRowset *QDocumentGalleryPrivate::execute(const QString &query, bool live, int *result)
+IRowsetScroll *QDocumentGalleryPrivate::execute(const QString &query, bool live, int *result)
 {
     *result = QGalleryItemRequest::InvalidFilter;
 
-    IRowset *rowSet = 0;
+    IRowsetScroll *rowSet = 0;
 
     IUnknown *command = 0;
     if (SUCCEEDED(commandFactory->CreateCommand(0, IID_ICommand, &command))) {
@@ -131,36 +123,13 @@ IRowset *QDocumentGalleryPrivate::execute(const QString &query, bool live, int *
             properties[0].dwPropertyID = DBPROP_ROWSET_ASYNCH;
             properties[0].dwOptions = DBPROPOPTIONS_OPTIONAL;
             properties[0].vValue.vt = VT_I4;
-            properties[0].vValue.lVal
-                    = DBPROPVAL_ASYNCH_SEQUENTIALPOPULATION
-                    | DBPROPVAL_ASYNCH_RANDOMPOPULATION;
+            properties[0].vValue.lVal = DBPROPVAL_ASYNCH_SEQUENTIALPOPULATION | DBPROPVAL_ASYNCH_RANDOMPOPULATION;
 
             propertySet.cProperties = 1;
             propertySet.rgProperties = properties;
             propertySet.guidPropertySet = DBPROPSET_ROWSET;
 
             commandProperties->SetProperties(1, &propertySet);
-/*! Windows 7
-            properties[0].dwPropertyID = DBPROP_USEEXTENDEDDBTYPES;
-            properties[0].dwOptions = DBPROPOPTIONS_OPTIONAL;
-            properties[0].vValue.vt = VT_BOOL;
-            properties[0].vValue.boolVal = VARIANT_TRUE;
-
-            if (live) {
-                properties[1].dwPropertyID = DBPROP_ENABLEROWSETEVENTS;
-                properties[1].dwOptions = DBPROPOPTIONS_OPTIONAL;
-                properties[1].vValue.vt = VT_BOOL;
-                properties[1].vValue.boolVal = VARIANT_TRUE;
-                propertySet.rgProperties = 2;
-            }
-
-            propertySet.guidPropertySet = DBPROPSET_QUERYEXT;
-
-            commandProperties->SetProperties(1, &propertySet);
-            commandProperties->Release();
-*/
-        } else {
-            qWarning("No command properties interface");
         }
 
         ICommandText *commandText = 0;
@@ -168,22 +137,17 @@ IRowset *QDocumentGalleryPrivate::execute(const QString &query, bool live, int *
                 IID_ICommandText, reinterpret_cast<void **>(&commandText)))) {
             if (SUCCEEDED(commandText->SetCommandText(
                     DBGUID_DEFAULT, reinterpret_cast<const wchar_t *>(query.unicode())))) {
-                HRESULT hr = commandText->Execute(0, IID_IRowset, 0, 0, reinterpret_cast<IUnknown **>(&rowSet));
+                HRESULT hr = commandText->Execute(
+                        0, IID_IRowsetScroll, 0, 0, reinterpret_cast<IUnknown **>(&rowSet));
 
                 if (!SUCCEEDED(hr)) {
                     qWarning("Failed to execute command %x, %s", hr, qPrintable(query));
                 }
                 *result = 0;
-            } else {
-                qWarning("Failed to set command text");
             }
             commandText->Release();
-        } else {
-            qWarning("No CommandText interface");
         }
         command->Release();
-    } else {
-        qWarning("Failed to create command interface");
     }
     return rowSet;
 }
@@ -201,7 +165,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(
     int result = builder.buildQuery();
 
     if (result == 0) {
-        if (IRowset *rowSet = execute(builder.query(), request->isLive(), &result))
+        if (IRowsetScroll *rowSet = execute(builder.query(), request->isLive(), &result))
             return new QWS4GalleryItemResponse(rowSet, *request, builder.columns());
     }
 

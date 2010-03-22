@@ -53,12 +53,10 @@
 // We mean it.
 //
 
-#include "qgalleryrequest.h"
+#include "qws4galleryrowsetresponse_p.h"
+
 
 #include "qws4galleryquerybuilder_p.h"
-
-#include <QtCore/qmutex.h>
-#include <QtCore/qwaitcondition.h>
 
 #include <searchapi.h>
 
@@ -74,18 +72,12 @@ public:
     QVector<QVariant> metaData;
 };
 
-class QWS4GalleryItemResponse
-    : public QGalleryAbstractResponse
-    , public IDBAsynchNotify
-    , public IRowsetNotify
-#ifdef __IRowsetEvents_INTERFACE_DEFINED__
-    , public IRowsetEvents
-#endif
+class QWS4GalleryItemResponse : public QWS4GalleryRowSetResponse
 {
     Q_OBJECT
 public:
     QWS4GalleryItemResponse(
-            IRowset *rowSet,
+            IRowsetScroll *rowSet,
             const QGalleryItemRequest &request,
             const QVector<QWS4GalleryQueryBuilder::Column> &columns,
             QObject *parent = 0);
@@ -93,6 +85,9 @@ public:
 
     QList<int> keys() const;
     QString toString(int key) const;
+
+    void setCursorPosition(int position);
+    int cacheSize() const;
 
     int count() const;
 
@@ -106,84 +101,31 @@ public:
 
     MetaDataFlags metaDataFlags(int index, int key) const;
 
-    void cancel();
-
-    bool waitForFinished(int msecs);
-
-    // IUnknown
-    HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject);
-    ULONG STDMETHODCALLTYPE AddRef();
-    ULONG STDMETHODCALLTYPE Release();
-
-    // IDBAsynchNotify
-    HRESULT STDMETHODCALLTYPE OnLowResource(DB_DWRESERVE dwReserved);
-    HRESULT STDMETHODCALLTYPE OnProgress(
-            HCHAPTER hChapter,
-            DBASYNCHOP eOperation,
-            DBCOUNTITEM ulProgress,
-            DBCOUNTITEM ulProgressMax,
-            DBASYNCHPHASE eAsynchPhase,
-            LPOLESTR pwszStatusText);
-    HRESULT STDMETHODCALLTYPE OnStop(
-            HCHAPTER hChapter, DBASYNCHOP eOperation, HRESULT hrStatus, LPOLESTR pwszStatusText);
-
-    // IRowSetNotify
-    HRESULT STDMETHODCALLTYPE OnFieldChange(
-            IRowset *pRowset,
-            HROW hRow,
-            DBORDINAL cColumns,
-            DBORDINAL rgColumns[],
-            DBREASON eReason,
-            DBEVENTPHASE ePhase,
-            BOOL fCantDeny);
-    HRESULT STDMETHODCALLTYPE OnRowChange(
-            IRowset *pRowset,
-            DBCOUNTITEM cRows,
-            const HROW rghRows[],
-            DBREASON eReason,
-            DBEVENTPHASE ePhase,
-            BOOL fCantDeny);
-    HRESULT STDMETHODCALLTYPE OnRowsetChange(
-            IRowset *pRowset, DBREASON eReason, DBEVENTPHASE ePhase, BOOL fCantDeny);
-
-    // IRowsetEvents
-#ifdef __IRowsetEvents_INTERFACE_DEFINED__
-    HRESULT STDMETHODCALLTYPE OnNewItem(
-            REFPROPVARIANT itemID, ROWSETEVENT_ITEMSTATE newItemState);
-    HRESULT STDMETHODCALLTYPE OnChangedItem(
-            REFPROPVARIANT itemID,
-            ROWSETEVENT_ITEMSTATE rowsetItemState,
-            ROWSETEVENT_ITEMSTATE changedItemState);
-    HRESULT STDMETHODCALLTYPE OnDeletedItem(
-            REFPROPVARIANT itemID, ROWSETEVENT_ITEMSTATE deletedItemState);
-    HRESULT STDMETHODCALLTYPE OnRowsetEvent(
-        ROWSETEVENT_TYPE eventType, REFPROPVARIANT eventData);
-#endif
-
 protected:
     void customEvent(QEvent *event);
 
 private:
-    void readRows(const HROW rows[], DBCOUNTITEM count);
-
     typedef QSharedDataPointer<QWS4GalleryItemListRow> Row;
 
-    volatile LONG m_ref;
+    const Row row(int index) const { return m_rows.value(index - m_rowOffset, m_placeholderRow); }
+
+    void appendRows(int position);
+    void prependRows(int position);
+
+    void readRows(const HROW rows[], DBCOUNTITEM count);
+
     int m_urlIndex;
     int m_typeIndex;
-    DWORD m_asynchNotifyCookie;
-    DWORD m_rowsetNotifyCookie;
-    DWORD m_rowsetEventsCookie;
-    IRowset *m_rowSet;
+    int m_rowOffset;
+    int m_count;
+    const int m_minimumPagedItems;
+    IRowsetScroll *m_rowSet;
     QWS4GalleryBinding *m_binding;
+    Row m_placeholderRow;
     QStringList m_fields;
     QList<int> m_keys;
     QList<int> m_columnIndexes;
     QVector<Row> m_rows;
-    QVector<Row> m_pendingRows;
-    QMutex m_asynchMutex;
-    QWaitCondition m_asynchWait;
-
 };
 
 #endif
