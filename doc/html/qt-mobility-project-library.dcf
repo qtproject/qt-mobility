@@ -3533,9 +3533,6 @@
     <section ref="bluetoothtransferplugin.html" title="Bluetooth Transfer Plugin Example">
         <keyword ref="bluetoothtransferplugin.html">Bluetooth Transfer Plugin Example</keyword>
     </section>
-    <section ref="cameracapture.html" title="Camera Capture Example">
-        <keyword ref="cameracapture.html">Camera Capture Example</keyword>
-    </section>
     <section ref="declarative.html" title="Declarative Example">
         <keyword ref="declarative.html">Declarative Example</keyword>
     </section>

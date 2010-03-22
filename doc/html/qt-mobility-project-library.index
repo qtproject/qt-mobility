@@ -6947,7 +6947,6 @@
             <page access="public" status="commendable" name="audiorecorder/main.cpp" href="audiorecorder-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="audiorecorder/main.cpp" location=""/>
             <page access="public" status="commendable" name="audiorecorder/audiorecorder.pro" href="audiorecorder-audiorecorder-pro.html" subtype="file" title="" fulltitle="audiorecorder.pro Example File" subtitle="audiorecorder/audiorecorder.pro" location=""/>
         </page>
-        <page access="public" status="commendable" name="cameracapture" href="cameracapture.html" subtype="example" title="Camera Capture Example" fulltitle="Camera Capture Example" subtitle="" location="undocumented.qdoc"/>
         <page access="public" status="commendable" name="declarative" href="declarative.html" subtype="example" title="Declarative Example" fulltitle="Declarative Example" subtitle="" location="undocumented.qdoc"/>
         <page access="public" status="commendable" name="fetchgooglemaps" href="fetchgooglemaps.html" subtype="example" title="Fetch Google Maps Example" fulltitle="Fetch Google Maps Example" subtitle="" location="undocumented.qdoc">
             <page access="public" status="commendable" name="fetchgooglemaps/mapwindow.cpp" href="fetchgooglemaps-mapwindow-cpp.html" subtype="file" title="" fulltitle="mapwindow.cpp Example File" subtitle="fetchgooglemaps/mapwindow.cpp" location=""/>
@@ -7136,10 +7135,8 @@
         <function access="public" threadsafety="unspecified" status="commendable" name="QMediaRecorderControl_iid" href="qmediarecordercontrol.html#QMediaRecorderControl_iid" location="qmediarecordercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QMediaRecorderControl" type="" signature="QMediaRecorderControl_iid()"/>
         <page access="public" status="commendable" name="preview.html" href="preview.html" subtype="page" title="Technology Preview" fulltitle="Technology Preview" subtitle="" location="preview.qdoc">
             <target name="management-of-versit-documents"/>
-            <target name="camera-support"/>
             <target name="sensor-classes"/>
             <contents name="management-of-versit-documents" title="Management of Versit Documents" level="1"/>
-            <contents name="camera-support-multimedia" title="Camera Support (Multimedia)" level="1"/>
             <contents name="sensor-api" title="Sensor API" level="1"/>
             <contents name="main-classes" title="Main Classes" level="2"/>
             <contents name="helper-classes" title="Helper Classes" level="2"/>
@@ -7242,7 +7239,6 @@
             <contents name="service-framework" title="Service Framework" level="2"/>
             <contents name="system-information" title="System Information" level="2"/>
             <contents name="included-technology-preview-apis" title="Included Technology Preview APIs" level="1"/>
-            <contents name="camera" title="Camera" level="2"/>
             <contents name="sensors" title="Sensors" level="2"/>
             <contents name="versit" title="Versit" level="2"/>
             <contents name="the-qtmobility-namespace" title="The QtMobility Namespace" level="1"/>
@@ -7527,9 +7523,7 @@
         </page>
         <page access="public" status="commendable" name="future.html" href="future.html" subtype="page" title="Future Additional APIs" fulltitle="Future Additional APIs" subtitle="" location="future.qdoc">
             <target name="management-of-versit-documents"/>
-            <target name="camera-support"/>
             <contents name="management-of-versit-documents" title="Management of Versit Documents" level="1"/>
-            <contents name="camera-support-multimedia" title="Camera Support (Multimedia)" level="1"/>
         </page>
         <page access="public" status="commendable" name="serviceactions" href="serviceactions.html" subtype="example" title="Service Actions Example" fulltitle="Service Actions Example" subtitle="" location="serviceactions.qdoc">
             <contents name="send-and-compose" title="Send and Compose" level="1"/>

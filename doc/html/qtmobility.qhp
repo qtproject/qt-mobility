@@ -595,7 +595,6 @@
                     <section ref="bearercloud.html" title="Bearer Cloud Example"/>
                     <section ref="bearermonitor.html" title="Bearer Monitor Example"/>
                     <section ref="bluetoothtransferplugin.html" title="Bluetooth Transfer Plugin Example"/>
-                    <section ref="cameracapture.html" title="Camera Capture Example"/>
                     <section ref="declarative.html" title="Declarative Example"/>
                     <section ref="fetchgooglemaps.html" title="Fetch Google Maps Example"/>
                     <section ref="filemanagerplugin.html" title="File Manager Plugin Example"/>
@@ -679,7 +678,6 @@
             <keyword name="Bearer Management" id="Bearer Management" ref="bearer-management.html"/>
             <keyword name="Bearer Monitor Example" id="Bearer Monitor Example" ref="bearermonitor.html"/>
             <keyword name="Bluetooth Transfer Plugin Example" id="Bluetooth Transfer Plugin Example" ref="bluetoothtransferplugin.html"/>
-            <keyword name="Camera Capture Example" id="Camera Capture Example" ref="cameracapture.html"/>
             <keyword name="Class and Function Documentation" id="Class and Function Documentation" ref="classlists.html"/>
             <keyword name="Contacts" id="Contacts" ref="contacts.html"/>
             <keyword name="Contacts Asynchronous API" id="Contacts Asynchronous API" ref="contactsasync.html"/>
@@ -3582,8 +3580,8 @@
             <file>fetchgooglemaps-mapwindow-h.html</file>
             <file>qradiotuner.html</file>
             <file>3rdparty.html</file>
-            <file>creating-a-sensor-plugin.html</file>
             <file>qmagnetometer-members.html</file>
+            <file>creating-a-sensor-plugin.html</file>
             <file>qcontactphonenumber.html</file>
             <file>qmediaplayer-members.html</file>
             <file>samplephonebook-phonebook-h.html</file>
@@ -3918,7 +3916,6 @@
             <file>publish-subscribe-publish-subscribe-pro.html</file>
             <file>qmediaservice-members.html</file>
             <file>examples.html</file>
-            <file>cameracapture.html</file>
             <file>linereader.html</file>
             <file>qcontacttag.html</file>
             <file>qcontactaction-members.html</file>

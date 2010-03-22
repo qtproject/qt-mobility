@@ -63,8 +63,7 @@
 </ul>
 <p>For example, here is an example of how you can access a property of the accelerometer. This code does not require any compile-time links to <a href="qaccelerometer.html">QAccelerometer</a> or <a href="qaccelerometerreading.html">QAccelerometerReading</a>.</p>
 <pre><span class="comment">    // start the sensor</span>
-    QSensor sensor;
-    sensor.setType(&quot;QAccelerometer&quot;);
+    QSensor sensor(&quot;QAccelerometer&quot;);
     sensor.start();
 
 <span class="comment">    // later</span>
