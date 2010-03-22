@@ -395,7 +395,7 @@ void QNetworkConfigurationManagerPrivate::addConfiguration(QString& iap_id)
                 cpPriv->network_attrs = getNetworkAttrs(true, iap_id, iap_type, QString());
                 cpPriv->service_id = saved_iap.value("service_id").toString();
                 cpPriv->service_type = saved_iap.value("service_type").toString();
-                if (iap_type.startsWith("WLAN")) {
+                if (iap_type.startsWith(QLatin1String("WLAN"))) {
                     QByteArray ssid = saved_iap.value("wlan_ssid").toByteArray();
                     if (ssid.isEmpty()) {
                         qWarning() << "Cannot get ssid for" << iap_id;
@@ -683,7 +683,7 @@ void QNetworkConfigurationManagerPrivate::doUpdateConfigurations(QList<Maemo::Ic
 	}
 
         /* Remove non existing iaps since last update */
-        foreach (QString oldIface, knownConfigs) {
+        foreach (const QString &oldIface, knownConfigs) {
             QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.take(oldIface);
             if (priv.data()) {
                 priv->isValid = false;
@@ -790,7 +790,7 @@ void QNetworkConfigurationManagerPrivate::connectionStateSignalsSlot(QDBusMessag
                     if (iapid == m_onlineIapId) {
                         // It's known that there is only one global ICD connection
                         // => Because ICD state was reported to be DISCONNECTED, Device is offline
-                        m_onlineIapId = QString();
+                        m_onlineIapId.clear();
                         emit onlineStateChanged(false);
                     }
                 }
@@ -801,7 +801,7 @@ void QNetworkConfigurationManagerPrivate::connectionStateSignalsSlot(QDBusMessag
             if (iapid == m_onlineIapId) {
                 // It's known that there is only one global ICD connection
                 // => Because ICD state was reported to be DISCONNECTED, Device is offline
-                m_onlineIapId = QString();
+                m_onlineIapId.clear();
                 emit onlineStateChanged(false);
             }
         }
