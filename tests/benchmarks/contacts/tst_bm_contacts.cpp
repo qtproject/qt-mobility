@@ -471,7 +471,7 @@ void tst_Contact::tst_fetchTenContact()
     QList<QContact> qlc;
     
     QBENCHMARK {
-      qlc = m_qm->contacts(idFil, QList<QContactSortOrder>(), QStringList());
+      qlc = m_qm->contacts(idFil, QList<QContactSortOrder>(), QContactFetchHint());
     }
     
     if(qlc.count() != 10){
@@ -815,7 +815,7 @@ void tst_Contact::tst_nameFilter()
     QList<QContact> qlc;
     
     QBENCHMARK {
-      qlc = m_qm->contacts(fil, QList<QContactSortOrder>(), QStringList());
+      qlc = m_qm->contacts(fil, QList<QContactSortOrder>(), QContactFetchHint());
     }
     
 //    while(!qlc.isEmpty()){
@@ -929,5 +929,5 @@ int main(int argc, char **argv){
 #endif
 }
 
-#include "tst_contacts.moc"
+#include "tst_bm_contacts.moc"
 
