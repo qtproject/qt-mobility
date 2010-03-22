@@ -595,22 +595,21 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
 
  QSystemScreenSaverPrivate::~QSystemScreenSaverPrivate()
  {
-     QDBusConnection dbusConnection = QDBusConnection::sessionBus();
+     if(currentPid != 0) {
+         QDBusConnection dbusConnection = QDBusConnection::sessionBus();
 
-     QStringList ifaceList;
-     ifaceList <<  QLatin1String("org.freedesktop.ScreenSaver");
-     ifaceList << QLatin1String("org.gnome.ScreenSaver");
-     QDBusInterface *connectionInterface;
-     foreach(const QString iface, ifaceList) {
-         connectionInterface = new QDBusInterface(QLatin1String(iface.toLatin1()),
-                                                  QLatin1String("/ScreenSaver"),
-                                                  QLatin1String(iface.toLatin1()),
-                                                  dbusConnection);
-         if(connectionInterface->isValid()) {
-             QDBusReply<uint> reply =  connectionInterface->call(QLatin1String("UnInhibit"),
-                                                                 QString::number((int)currentPid));
-             if(reply.isValid()) {
-
+         QStringList ifaceList;
+         ifaceList <<  QLatin1String("org.freedesktop.ScreenSaver");
+         ifaceList << QLatin1String("org.gnome.ScreenSaver");
+         QDBusInterface *connectionInterface;
+         foreach(const QString iface, ifaceList) {
+             connectionInterface = new QDBusInterface(QLatin1String(iface.toLatin1()),
+                                                      QLatin1String("/ScreenSaver"),
+                                                      QLatin1String(iface.toLatin1()),
+                                                      dbusConnection);
+             if(connectionInterface->isValid()) {
+                 QDBusReply<uint> reply =  connectionInterface->call(QLatin1String("UnInhibit"),
+                                                                     currentPid);
              }
          }
      }
@@ -639,8 +638,6 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
                  if(reply.isValid()) {
                      currentPid = reply.value();
                      return reply.isValid();
-                 } else {
-                     qWarning() << reply.error();
                  }
              }
          }
