@@ -74,8 +74,8 @@ void CntDisplayLabel::setDisplayLabelDetails()
     //Contact
     //Preferred details
     QList<QPair<QLatin1String, QLatin1String> > contactPrefferedDisplayLabelDetails;
-    contactPrefferedDisplayLabelDetails.append(qMakePair(QLatin1String(QContactName::DefinitionName), QLatin1String(QContactName::FieldFirst)));
-    contactPrefferedDisplayLabelDetails.append(qMakePair(QLatin1String(QContactName::DefinitionName), QLatin1String(QContactName::FieldLast)));
+    contactPrefferedDisplayLabelDetails.append(qMakePair(QLatin1String(QContactName::DefinitionName), QLatin1String(QContactName::FieldFirstName)));
+    contactPrefferedDisplayLabelDetails.append(qMakePair(QLatin1String(QContactName::DefinitionName), QLatin1String(QContactName::FieldLastName)));
     m_contactDisplayLabelDetails.append(contactPrefferedDisplayLabelDetails);
 
     //if preferred details doesn't exist use these

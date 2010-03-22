@@ -837,16 +837,16 @@ QContactName* QContactABook::getNameDetail(EContact *eContact) const
   EContactName* eContactName = static_cast<EContactName*> (e_contact_get(eContact, E_CONTACT_NAME));
   if (eContactName){
     map[QContactName::FieldCustomLabel] = eContactName->additional;
-    map[QContactName::FieldFirst] = eContactName->given;
-    map[QContactName::FieldLast] = eContactName->family;
-    //map[QContactName::FieldMiddle] = eContactName->
+    map[QContactName::FieldFirstName] = eContactName->given;
+    map[QContactName::FieldLastName] = eContactName->family;
+    //map[QContactName::FieldMiddleName] = eContactName->
     map[QContactName::FieldPrefix] = eContactName->prefixes;
     map[QContactName::FieldSuffix] = eContactName->suffixes;
     e_contact_name_free (eContactName);
   } else {
     //Looks that Maemo use just these two fields
-    map[QContactName::FieldFirst] = CONST_CHAR(e_contact_get_const(eContact, E_CONTACT_GIVEN_NAME));
-    map[QContactName::FieldLast] = CONST_CHAR(e_contact_get_const(eContact, E_CONTACT_FAMILY_NAME));  
+    map[QContactName::FieldFirstName] = CONST_CHAR(e_contact_get_const(eContact, E_CONTACT_GIVEN_NAME));
+    map[QContactName::FieldLastName] = CONST_CHAR(e_contact_get_const(eContact, E_CONTACT_FAMILY_NAME));
   }
   setDetailValues(map, rtn);
   return rtn;
@@ -1036,25 +1036,24 @@ QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eC
       OssoABookPresence *presence = OSSO_ABOOK_PRESENCE (rosterContact);
       TpConnectionPresenceType presenceType = osso_abook_presence_get_presence_type (presence);
       QString presenceTypeString;
+      QContactPresence::PresenceState presenceTypeEnum;
       switch (presenceType) {
-        case TP_CONNECTION_PRESENCE_TYPE_UNSET: presenceTypeString = "Unset"; break;
-        case TP_CONNECTION_PRESENCE_TYPE_OFFLINE: presenceTypeString = "Offline"; break;
-        case TP_CONNECTION_PRESENCE_TYPE_AVAILABLE: presenceTypeString = "Available"; break;
-        case TP_CONNECTION_PRESENCE_TYPE_AWAY: presenceTypeString = "Away"; break;
-        case TP_CONNECTION_PRESENCE_TYPE_EXTENDED_AWAY: presenceTypeString = "Extended Away"; break;
-        case TP_CONNECTION_PRESENCE_TYPE_HIDDEN: presenceTypeString = "Hidden"; break;
-        case TP_CONNECTION_PRESENCE_TYPE_BUSY: presenceTypeString = "Busy"; break;
-        case TP_CONNECTION_PRESENCE_TYPE_UNKNOWN: presenceTypeString = "Unknown"; break;
-        case TP_CONNECTION_PRESENCE_TYPE_ERROR: presenceTypeString = "Error"; break;
+        case TP_CONNECTION_PRESENCE_TYPE_UNSET: presenceTypeString = "Unset"; presenceTypeEnum = QContactPresence::PresenceUnknown; break;
+        case TP_CONNECTION_PRESENCE_TYPE_OFFLINE: presenceTypeString = "Offline"; presenceTypeEnum = QContactPresence::PresenceOffline; break;
+        case TP_CONNECTION_PRESENCE_TYPE_AVAILABLE: presenceTypeString = "Available"; presenceTypeEnum = QContactPresence::PresenceAvailable; break;
+        case TP_CONNECTION_PRESENCE_TYPE_AWAY: presenceTypeString = "Away"; presenceTypeEnum = QContactPresence::PresenceAway; break;
+        case TP_CONNECTION_PRESENCE_TYPE_EXTENDED_AWAY: presenceTypeString = "Extended Away"; presenceTypeEnum = QContactPresence::PresenceExtendedAway; break;
+        case TP_CONNECTION_PRESENCE_TYPE_HIDDEN: presenceTypeString = "Hidden"; presenceTypeEnum = QContactPresence::PresenceHidden; break;
+        case TP_CONNECTION_PRESENCE_TYPE_BUSY: presenceTypeString = "Busy"; presenceTypeEnum = QContactPresence::PresenceBusy; break;
+        case TP_CONNECTION_PRESENCE_TYPE_UNKNOWN: presenceTypeString = "Unknown"; presenceTypeEnum = QContactPresence::PresenceUnknown; break;
+        case TP_CONNECTION_PRESENCE_TYPE_ERROR: presenceTypeString = "Error"; presenceTypeEnum = QContactPresence::PresenceUnknown; break;
         default:
           qCritical() << "Presence type is not vaild" << presenceType;
       }
       
       QVariantMap map;
-      map[QContactOnlineAccount::FieldNickname] = osso_abook_contact_get_display_name(rosterContact);
-      map[QContactOnlineAccount::FieldPresence] = presenceTypeString;
       map[QContactOnlineAccount::FieldServiceProvider] = mc_profile_get_unique_name(id);
-      map[QContactOnlineAccount::FieldStatusMessage] = QString::fromLatin1(osso_abook_presence_get_presence_status_message(presence));
+      map[QContactOnlineAccount::FieldDetailUri] = mc_profile_get_unique_name(id); // use this as detail URI so we can link to presence.
       map["AccountPath"] = account->name; //MCAccount name: variable part of the D-Bus object path.
       
       setDetailValues(map, rtn);
@@ -1124,7 +1123,6 @@ QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eC
         if (ossoValidIsOk && !type.isEmpty()) {
           QContactOnlineAccount* rtn = new QContactOnlineAccount;
           QVariantMap map;
-          map[QContactOnlineAccount::FieldNickname] = QString::fromLatin1(e_vcard_attribute_get_value(attr)); 
           map[QContactOnlineAccount::FieldServiceProvider] = type;
           setDetailValues(map, rtn);
           rtnList << rtn;
@@ -1191,6 +1189,134 @@ QList<QContactPhoneNumber*> QContactABook::getPhoneDetail(EContact *eContact) co
   }
   g_list_free(l);
   
+  return rtnList;
+}
+
+
+QList<QContactPresence*> QContactABook::getPresenceDetail(EContact *eContact) const
+{
+  QList<QContactPresence*> rtnList;
+
+  QStringList evcardToSkip = vcardsManagedByTelepathy();
+
+  // Gets info of online accounts from roster contacts associated to the master one
+  if (!osso_abook_contact_is_roster_contact (A_CONTACT(eContact))) {
+    QContactPresence* rtn = new QContactPresence;
+
+    GList *contacts = osso_abook_contact_get_roster_contacts(A_CONTACT(eContact));
+    GList *node;
+    for (node = contacts; node != NULL; node = g_list_next(node)){
+      OssoABookContact *rosterContact = A_CONTACT(node->data);
+
+      McProfile* id = osso_abook_contact_get_profile(rosterContact);
+      McAccount* account = osso_abook_contact_get_account(rosterContact);
+
+      // Avoid to look for Roster contacts into the VCard
+      QString accountVCard = QString::fromLatin1(mc_profile_get_vcard_field(id));
+      evcardToSkip.removeOne(accountVCard);
+
+      // Presence
+      OssoABookPresence *presence = OSSO_ABOOK_PRESENCE (rosterContact);
+      TpConnectionPresenceType presenceType = osso_abook_presence_get_presence_type (presence);
+      QString presenceTypeString;
+      QContactPresence::PresenceState presenceTypeEnum;
+      switch (presenceType) {
+        case TP_CONNECTION_PRESENCE_TYPE_UNSET: presenceTypeString = "Unset"; presenceTypeEnum = QContactPresence::PresenceUnknown; break;
+        case TP_CONNECTION_PRESENCE_TYPE_OFFLINE: presenceTypeString = "Offline"; presenceTypeEnum = QContactPresence::PresenceOffline; break;
+        case TP_CONNECTION_PRESENCE_TYPE_AVAILABLE: presenceTypeString = "Available"; presenceTypeEnum = QContactPresence::PresenceAvailable; break;
+        case TP_CONNECTION_PRESENCE_TYPE_AWAY: presenceTypeString = "Away"; presenceTypeEnum = QContactPresence::PresenceAway; break;
+        case TP_CONNECTION_PRESENCE_TYPE_EXTENDED_AWAY: presenceTypeString = "Extended Away"; presenceTypeEnum = QContactPresence::PresenceExtendedAway; break;
+        case TP_CONNECTION_PRESENCE_TYPE_HIDDEN: presenceTypeString = "Hidden"; presenceTypeEnum = QContactPresence::PresenceHidden; break;
+        case TP_CONNECTION_PRESENCE_TYPE_BUSY: presenceTypeString = "Busy"; presenceTypeEnum = QContactPresence::PresenceBusy; break;
+        case TP_CONNECTION_PRESENCE_TYPE_UNKNOWN: presenceTypeString = "Unknown"; presenceTypeEnum = QContactPresence::PresenceUnknown; break;
+        case TP_CONNECTION_PRESENCE_TYPE_ERROR: presenceTypeString = "Error"; presenceTypeEnum = QContactPresence::PresenceUnknown; break;
+        default:
+          qCritical() << "Presence type is not valid" << presenceType;
+      }
+
+      QVariantMap map; // XXX FIXME
+      map[QContactPresence::FieldNickname] = osso_abook_contact_get_display_name(rosterContact);
+      map[QContactPresence::FieldPresenceState] = presenceTypeEnum;
+      map[QContactPresence::FieldPresenceStateText] = QString::fromLatin1(osso_abook_presence_get_presence_status_message(presence));
+      map[QContactPresence::FieldLinkedDetailUris] = mc_profile_get_unique_name(id); //use the unique name as a detail uri of the online account.
+      map["AccountPath"] = account->name; //MCAccount name: variable part of the D-Bus object path.
+
+      setDetailValues(map, rtn);
+    }
+    rtnList << rtn;
+    g_list_free (contacts);
+  }
+
+  /* Users can add Online account details manually. Eg: IRC username.
+   * evcardToSkip stringlist contains evCard attributes that have been already processed.
+   */
+  GList *attributeList = e_vcard_get_attributes((EVCard*)eContact);
+  GList *node;
+
+  if (attributeList) {
+    for (node = attributeList; node != NULL; node = g_list_next (node)) {
+      EVCardAttribute* attr = (EVCardAttribute*)node->data;
+      if (!attr)
+        continue;
+      QString attributeName = QString::fromLatin1(e_vcard_attribute_get_name(attr));
+
+      // Skip attributes processed scanning roster contacts.
+      if (!evcardToSkip.contains(attributeName))
+        continue;
+
+      GList *params = e_vcard_attribute_get_params(attr);
+      GList *nodeP;
+      QString type;
+      // If the parameter list lenght is 1, X-OSSO-VALID is not specified
+      bool ossoValidIsOk = (g_list_length(params) == 1) ? true : false;
+
+      for (nodeP = params; nodeP != NULL; nodeP = g_list_next (nodeP)) {
+        EVCardAttributeParam* p = (EVCardAttributeParam*) nodeP->data;
+        QString paramName = QString::fromLatin1(e_vcard_attribute_param_get_name(p));
+        bool attrIsType = false;
+        bool attrIsOssoValid = false;
+
+        //If type is empty check if the attribute is "TYPE"
+        if (type.isEmpty())
+          attrIsType = paramName.contains(EVC_TYPE);
+
+        if(!ossoValidIsOk)
+          attrIsOssoValid = paramName.contains("X-OSSO-VALID");
+
+        if (!attrIsType && !attrIsOssoValid) {
+          qWarning () << "Skipping attribute parameter checking for" << paramName;
+          continue;
+        }
+
+        GList *values = e_vcard_attribute_param_get_values(p);
+        GList *node;
+        for (node = values; node != NULL; node = g_list_next (node)) {
+          QString attributeParameterValue = QString::fromLatin1(CONST_CHAR(node->data));
+          if (attrIsOssoValid) {
+            ossoValidIsOk = (attributeParameterValue == "yes")? true : false;
+            if (!ossoValidIsOk) {
+              qWarning() << "X-OSSO-VALID is false.";
+              break;
+            }
+          } else if (type.isEmpty()) {
+            type = attributeParameterValue;
+            if (type.isEmpty())
+              qCritical() << "TYPE is empty";
+          }
+        }
+
+        if (ossoValidIsOk && !type.isEmpty()) {
+          QContactPresence* rtn = new QContactPresence;
+          QVariantMap map;
+          map[QContactPresence::FieldNickname] = QString::fromLatin1(e_vcard_attribute_get_value(attr));
+          map[QContactPresence::FieldLinkedDetailUris] = type; // XXX FIXME
+          setDetailValues(map, rtn);
+          rtnList << rtn;
+        }
+      }
+    }
+  }
+
   return rtnList;
 }
 
@@ -1596,7 +1722,7 @@ void QContactABook::setNameDetail(const OssoABookContact* aContact, const QConta
   // Save First and Last name in the N vcard attribute
   {  
     QStringList supportedDetailValues;
-    supportedDetailValues << QContactName::FieldFirst << QContactName::FieldLast;
+    supportedDetailValues << QContactName::FieldFirstName << QContactName::FieldLastName;
   
     foreach(QString key, supportedDetailValues){
       attrValues << detail.value(key);
@@ -1604,7 +1730,7 @@ void QContactABook::setNameDetail(const OssoABookContact* aContact, const QConta
   
     //REMOVE ME - We don't want to support custom label
     if (attrValues[0].isEmpty()){
-      qWarning() << "QContactName::FieldFirst is empty";
+      qWarning() << "QContactName::FieldFirstName is empty";
       attrValues[0] = detail.customLabel();
     }
   

@@ -294,7 +294,7 @@ bool QVersitContactImporterPrivate::createOrganization(
         organization.setTitle(property.value());
     } else if (fieldName == QContactOrganization::FieldRole) {
         organization.setRole(property.value());
-    } else if (fieldName == QContactOrganization::FieldLogo) {
+    } else if (fieldName == QContactOrganization::FieldLogoUrl) {
         setOrganizationLogo(organization, property);
     } else if (fieldName == QContactOrganization::FieldAssistantName) {
         organization.setAssistantName(property.value());
@@ -335,7 +335,7 @@ void QVersitContactImporterPrivate::setOrganizationLogo(
     QByteArray data;
     saveDataFromProperty(property, &location, &data);
     if (!location.isEmpty())
-        org.setLogo(location);
+        org.setLogoUrl(QUrl(location));
 }
 
 /*!

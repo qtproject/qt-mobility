@@ -505,7 +505,7 @@ void tst_QVersitContactImporter::testOrganizationLogo()
     QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
     contact = mImporter->contacts().first();
     QContactOrganization organization = contact.detail<QContactOrganization>();
-    QByteArray content = mResourceHandler->mObjects.value(organization.logo());
+    QByteArray content = mResourceHandler->mObjects.value(organization.logoUrl().toString());
     QCOMPARE(content, logo);
 
     // LOGO as a URL
@@ -517,7 +517,7 @@ void tst_QVersitContactImporter::testOrganizationLogo()
     QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
     contact = mImporter->contacts().first();
     organization = contact.detail<QContactOrganization>();
-    QCOMPARE(organization.logo(),logoUrl);
+    QCOMPARE(organization.logoUrl().toString(),logoUrl);
 }
 
 void tst_QVersitContactImporter::testOrganizationRole()
@@ -569,7 +569,7 @@ void tst_QVersitContactImporter::testTel()
     QVERIFY(subTypes.contains(QContactPhoneNumber::SubTypeModem));
     QVERIFY(subTypes.contains(QContactPhoneNumber::SubTypeCar));
     QVERIFY(subTypes.contains(QContactPhoneNumber::SubTypeVideo));
-    QVERIFY(subTypes.contains(QContactPhoneNumber::SubTypeFacsimile));
+    QVERIFY(subTypes.contains(QContactPhoneNumber::SubTypeFax));
     QVERIFY(subTypes.contains(QContactPhoneNumber::SubTypeBulletinBoardSystem));
     QVERIFY(subTypes.contains(QContactPhoneNumber::SubTypePager));
 

@@ -106,7 +106,7 @@ const VersitContactDetailMapping versitContactDetailMappings[] = {
     {"IMPP",          QContactOnlineAccount::DefinitionName.str,
                       QContactOnlineAccount::SubTypeImpp.str},
     {"LOGO",          QContactOrganization::DefinitionName.str,
-                      QContactOrganization::FieldLogo.str},
+                      QContactOrganization::FieldLogoUrl.str},
     {"N",             QContactName::DefinitionName.str,
                       ""},
     {"NICKNAME",      QContactNickname::DefinitionName.str,

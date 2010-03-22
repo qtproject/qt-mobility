@@ -169,6 +169,38 @@ public:
     bool isRelationshipTypeSupported(const QString&, const QString&) const {return false;}
     QStringList supportedContactTypes() const {return (QStringList() << QContactType::TypeContact);}
 
+/* XXX FIXME: trampoline functions added to fix compile breakage due to updateRequestStatus functions becoming protected in QCME */
+public:
+    static void updateRequestStateTrampoline(QContactAbstractRequest *req, QContactAbstractRequest::State state)
+    {
+        QContactManagerEngine::updateRequestState(req, state);
+    }
+    static void updateContactFetchRequestTrampoline(QContactFetchRequest *req, const QList<QContact> &result, QContactManager::Error error, QContactAbstractRequest::State state)
+    {
+        QContactManagerEngine::updateContactFetchRequest(req, result, error, state);
+    }
+    static void updateContactSaveRequestTrampoline(QContactSaveRequest *req, const QList<QContact> &result, QContactManager::Error error, const QMap<int, QContactManager::Error> &errorMap, QContactAbstractRequest::State state)
+    {
+        QContactManagerEngine::updateContactSaveRequest(req, result, error, errorMap, state);
+    }
+    static void updateRelationshipFetchRequestTrampoline(QContactRelationshipFetchRequest *req, const QList<QContactRelationship> &result, QContactManager::Error error, QContactAbstractRequest::State state)
+    {
+        QContactManagerEngine::updateRelationshipFetchRequest(req, result, error, state);
+    }
+    static void updateRelationshipSaveRequestTrampoline(QContactRelationshipSaveRequest *req, const QList<QContactRelationship> &result, QContactManager::Error error, const QMap<int, QContactManager::Error> &errorMap, QContactAbstractRequest::State state)
+    {
+        QContactManagerEngine::updateRelationshipSaveRequest(req, result, error, errorMap, state);
+    }
+    static void updateContactLocalIdFetchRequestTrampoline(QContactLocalIdFetchRequest *req, const QList<QContactLocalId> &result, QContactManager::Error error, QContactAbstractRequest::State state)
+    {
+        QContactManagerEngine::updateContactLocalIdFetchRequest(req, result, error, state);
+    }
+    static QContact setContactDisplayLabelTrampoline(const QString &displayLabel, const QContact &contact)
+    {
+        return QContactManagerEngine::setContactDisplayLabel(displayLabel, contact);
+    }
+
+
 private:
     //called from both constructors, connecting to all contact NodeList changes signals
     void connectToSignals();

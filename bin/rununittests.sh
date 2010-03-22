@@ -105,7 +105,6 @@ cd $shell_path/../build/tests/bin
 
 #QMedia
 ./tst_qaudiocapturesource
-./tst_qcamera
 ./tst_qgraphicsvideoitem
 ./tst_qmediacontent
 ./tst_qmediaimageviewer

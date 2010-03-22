@@ -56,12 +56,10 @@ public:
 
     virtual void start() = 0;
     virtual void stop() = 0;
-    virtual void poll() = 0;
 
     // used by the backend to set metadata properties
     void addDataRate(qreal min, qreal max);
     void setDataRates(const QSensor *otherSensor);
-    void enablePolling();
     void addOutputRange(qreal min, qreal max, qreal accuracy);
     void setDescription(const QString &description);
 

@@ -97,6 +97,8 @@ private:
 		Geolocation,
 		Note,
 		Family,
+        Ringtone,
+        Thumbnail,
 		Empty
 	};
 

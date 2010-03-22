@@ -433,11 +433,6 @@ Qt Mobility for Maemo5
         * writing metada to file not supported by S60
         * codec support depends on device model
         * AudioDeviceControl not implemented for mediaplayer, defaults to device default.
-      - Camera
-        * camera support is expiremental
-        * still capture
-        * mediacapture
-        * recording codec support is limited to video/mp4
 
 ****************************************************************************
 *                          Tools                                           *

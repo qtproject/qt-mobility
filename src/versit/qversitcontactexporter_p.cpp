@@ -416,9 +416,10 @@ void QVersitContactExporterPrivate::encodeOrganization(
         property.setValue(value);
         document.addProperty(property);
     }
-    if (organization.logo().length() > 0) {
+    if (organization.logoUrl().isValid()) {
         QVersitProperty property;
-        if (encodeContentFromFile(organization.logo(), property)) {
+        // XXX TODO: FIXME!
+        if (encodeContentFromFile(organization.logoUrl().toString(), property)) {
             property.setName(QLatin1String("LOGO"));
             document.addProperty(property);
         }

@@ -114,7 +114,8 @@ private:
   QContactNote* getNoteDetail(EContact *eContact) const;
   QList<QContactOnlineAccount*> getOnlineAccountDetail(EContact *eContact) const;
   QContactOrganization* getOrganizationDetail(EContact *eContact) const;
-  QList<QContactPhoneNumber*> getPhoneDetail(EContact *eContact) const; 
+  QList<QContactPhoneNumber*> getPhoneDetail(EContact *eContact) const;
+  QList<QContactPresence*> getPresenceDetail(EContact *eContact) const;
   QContactTimestamp* getTimestampDetail(EContact *eContact) const; 
   QContactThumbnail* getThumbnailDetail(EContact *eContact) const;
   QContactUrl* getUrlDetail(EContact *eContact) const;
@@ -134,6 +135,7 @@ private:
   void setOnlineAccountDetail(const OssoABookContact* aContact, const QContactOnlineAccount& detail) const;
   void setOrganizationDetail(const OssoABookContact* aContact, const QContactOrganization& detail) const;
   void setPhoneDetail(const OssoABookContact* aContact, const QContactPhoneNumber& detail) const;
+  void setPresenceDetail(const OssoABookContact* aContact, const QContactPresence& detail) const;
   void setThumbnailDetail(const OssoABookContact* aContact, const QContactThumbnail& detail) const;
   void setUrlDetail(const OssoABookContact* aContact, const QContactUrl& detail) const;
   

@@ -433,11 +433,11 @@ void CntSymbianFilter::transformDetailFilterL(
     if(detailFilter.detailDefinitionName() == QContactName::DefinitionName) {
         if(detailFilter.detailFieldName() == QContactName::FieldPrefix) {
             tempFieldDef->AppendL(KUidContactFieldPrefixName);
-        } else if(detailFilter.detailFieldName() == QContactName::FieldFirst) {
+        } else if(detailFilter.detailFieldName() == QContactName::FieldFirstName) {
             tempFieldDef->AppendL(KUidContactFieldGivenName);
-        } else if(detailFilter.detailFieldName() == QContactName::FieldMiddle) {
+        } else if(detailFilter.detailFieldName() == QContactName::FieldMiddleName) {
             tempFieldDef->AppendL(KUidContactFieldAdditionalName);
-        } else if(detailFilter.detailFieldName() == QContactName::FieldLast) {
+        } else if(detailFilter.detailFieldName() == QContactName::FieldLastName) {
             tempFieldDef->AppendL(KUidContactFieldFamilyName);
         } else if(detailFilter.detailFieldName() == QContactName::FieldSuffix) {
             tempFieldDef->AppendL(KUidContactFieldSuffixName);

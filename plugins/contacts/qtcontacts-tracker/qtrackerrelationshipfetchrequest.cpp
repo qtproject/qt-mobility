@@ -61,7 +61,7 @@ QTrackerRelationshipFetchRequest::QTrackerRelationshipFetchRequest(QContactAbstr
         QContactManagerEngine::updateRelationshipFetchRequest(r, QList<QContactRelationship>(), QContactManager::UnspecifiedError, QContactAbstractRequest::FinishedState);
         return;
     }
-    if (not r->relationshipType().isEmpty() && QContactRelationship::Is != r->relationshipType())
+    if (not r->relationshipType().isEmpty() && QContactRelationship::IsSameAs != r->relationshipType())
     {
         QContactManagerEngine::updateRelationshipFetchRequest(r, r->relationships(), QContactManager::NotSupportedError, QContactAbstractRequest::FinishedState);
         return;
@@ -121,7 +121,7 @@ void QTrackerRelationshipFetchRequest::modelUpdated()
             QContactRelationship rel;
             rel.setFirst(idfirst);
             rel.setSecond(idsecond);
-            rel.setRelationshipType(QContactRelationship::Is);
+            rel.setRelationshipType(QContactRelationship::IsSameAs);
             result.append(rel);
         }
     }

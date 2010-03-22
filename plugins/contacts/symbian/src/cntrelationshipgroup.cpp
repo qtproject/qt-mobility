@@ -169,13 +169,13 @@ QList<QContactRelationship> CntRelationshipGroup::relationshipsL(const QContactI
     if (participantId != QContactId())
     {
         //role is a group
-        if(role == QContactRelationshipFilter::First || role == QContactRelationshipFilter::Either)
+        if(role == QContactRelationship::First || role == QContactRelationship::Either)
         {
             fetchGroupMembersL(participantId.localId(), &returnValue);
         }
     
         //role is member of a group
-        if(role == QContactRelationshipFilter::Second || role == QContactRelationshipFilter::Either)
+        if(role == QContactRelationship::Second || role == QContactRelationship::Either)
         {
             fetchMemberOfGroupsL(participantId.localId(), &returnValue);
         }

@@ -534,13 +534,13 @@ RDFVariable QContactTrackerEngine::contactDetail2Rdf(const RDFVariable& rdfConta
                                                       const QString& fieldName) const
 {
     if (definitionName == QContactName::DefinitionName) {
-        if (fieldName == QContactName::FieldFirst) {
+        if (fieldName == QContactName::FieldFirstName) {
             return rdfContact.property<nco::nameGiven>();
         }
-        else if (fieldName == QContactName::FieldLast) {
+        else if (fieldName == QContactName::FieldLastName) {
             return rdfContact.property<nco::nameFamily>();
         }
-        else if (fieldName == QContactName::FieldMiddle) {
+        else if (fieldName == QContactName::FieldMiddleName) {
             return rdfContact.property<nco::nameAdditional>();
         }
         else if (fieldName == QContactName::FieldPrefix) {
@@ -600,8 +600,9 @@ QString QContactTrackerEngine::synthesizedDisplayLabel(const QContact& contact, 
     QString label = QContactManagerEngine::synthesizedDisplayLabel(contact, error);
     if (label.isEmpty())
         label = contact.detail<QContactNickname>().nickname();
-    if(label.isEmpty())
-        label = contact.detail<QContactOnlineAccount>().nickname();
+    //XXX TODO: FIXME - take the nickname from the presence field associated with the online account
+    //if(label.isEmpty())
+    //    label = contact.detail<QContactOnlineAccount>().nickname();
 
     qDebug() << Q_FUNC_INFO << label;
     return label;

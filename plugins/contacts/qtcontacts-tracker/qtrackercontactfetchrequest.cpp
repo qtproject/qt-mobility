@@ -49,10 +49,10 @@
 
 using namespace SopranoLive;
 
-class ConversionLookup: public QHash<QString,QString>
+class ConversionLookup: public QHash<QString,QContactPresence::PresenceState>
 {
 public:
-    ConversionLookup& operator<<(const QPair<QString, QString> &conversion)
+    ConversionLookup& operator<<(const QPair<QString, QContactPresence::PresenceState> &conversion)
     {
         this->insert(conversion.first, conversion.second);
         return *this;
@@ -62,14 +62,14 @@ public:
 const QString FieldQContactLocalId("QContactLocalId");
 const QString FieldAccountPath("AccountPath");
 const ConversionLookup presenceConversion(ConversionLookup()
-            <<QPair<QString, QString>("presence-status-offline", QContactOnlineAccount::PresenceOffline)
-            <<QPair<QString, QString>("presence-status-available", QContactOnlineAccount::PresenceAvailable)
-            <<QPair<QString, QString>("presence-status-away", QContactOnlineAccount::PresenceAway)
-            <<QPair<QString, QString>("presence-status-extended-away", QContactOnlineAccount::PresenceExtendedAway)
-            <<QPair<QString, QString>("presence-status-busy", QContactOnlineAccount::PresenceBusy)
-            <<QPair<QString, QString>("presence-status-unknown", QContactOnlineAccount::PresenceUnknown)
-            <<QPair<QString, QString>("presence-status-hidden", QContactOnlineAccount::PresenceHidden)
-            <<QPair<QString, QString>("presence-status-dnd", QContactOnlineAccount::PresenceBusy)
+            <<QPair<QString, QContactPresence::PresenceState>("presence-status-offline", QContactPresence::PresenceOffline)
+            <<QPair<QString, QContactPresence::PresenceState>("presence-status-available", QContactPresence::PresenceAvailable)
+            <<QPair<QString, QContactPresence::PresenceState>("presence-status-away", QContactPresence::PresenceAway)
+            <<QPair<QString, QContactPresence::PresenceState>("presence-status-extended-away", QContactPresence::PresenceExtendedAway)
+            <<QPair<QString, QContactPresence::PresenceState>("presence-status-busy", QContactPresence::PresenceBusy)
+            <<QPair<QString, QContactPresence::PresenceState>("presence-status-unknown", QContactPresence::PresenceUnknown)
+            <<QPair<QString, QContactPresence::PresenceState>("presence-status-hidden", QContactPresence::PresenceHidden)
+            <<QPair<QString, QContactPresence::PresenceState>("presence-status-dnd", QContactPresence::PresenceBusy)
 );
 
 void matchPhoneNumber(RDFVariable &variable, QContactDetailFilter &filter)
@@ -154,11 +154,11 @@ void matchName(RDFVariable &variable, QContactDetailFilter &filter)
     QString filterValue = filter.value().toString();
     QString field = filter.detailFieldName();
     if ((filter.matchFlags() & QContactFilter::MatchExactly) == QContactFilter::MatchExactly) {
-        if (field == QContactName::FieldFirst) {
+        if (field == QContactName::FieldFirstName) {
             variable.property<nco::nameGiven>() = LiteralValue(filterValue);
-        } else if (field == QContactName::FieldLast) {
+        } else if (field == QContactName::FieldLastName) {
             variable.property<nco::nameFamily>() = LiteralValue(filterValue);
-        } else if (field == QContactName::FieldMiddle) {
+        } else if (field == QContactName::FieldMiddleName) {
             variable.property<nco::nameAdditional>() = LiteralValue(filterValue);
         } else if (field == QContactName::FieldPrefix) {
             variable.property<nco::nameHonorificPrefix>() = LiteralValue(filterValue);
@@ -399,7 +399,7 @@ const QString rdfPhoneType2QContactSubtype(const QString rdfPhoneType)
     else if ( rdfPhoneType.endsWith("BbsPhoneNumber") )
         return QContactPhoneNumber::SubTypeBulletinBoardSystem;
     else if ( rdfPhoneType.endsWith("FaxNumber") )
-        return QContactPhoneNumber::SubTypeFacsimile;
+        return QContactPhoneNumber::SubTypeFax;
     else if ( rdfPhoneType.endsWith("ModemNumber") )
         return QContactPhoneNumber::SubTypeModem;
     else if ( rdfPhoneType.endsWith("PagerNumber") )
@@ -574,9 +574,9 @@ void QTrackerContactFetchRequest::run()
     // supporting sorting only here, difficult and no requirements in UI for sorting in multivalue details (phones, emails)
     foreach(const QContactSortOrder& sort, r->sorting()) {
         if (sort.detailDefinitionName() == QContactName::DefinitionName) {
-            if (sort.detailFieldName() == QContactName::FieldFirst)
+            if (sort.detailFieldName() == QContactName::FieldFirstName)
                 quer.orderBy(firstname);
-            else if (sort.detailFieldName() == QContactName::FieldLast)
+            else if (sort.detailFieldName() == QContactName::FieldLastName)
                 quer.orderBy(lastname);
             else
                 qWarning() << "QTrackerContactFetchRequest" << "sorting by"
@@ -760,8 +760,9 @@ void QTrackerContactFetchRequest::readFromQueryRowToContact(QContact &contact, i
     contact.saveDetail(&name);
 
     QContactAvatar avatar = contact.detail(QContactAvatar::DefinitionName);
-    avatar.setAvatar(query->index(i, column++).data().toString());
-    if (!avatar.avatar().isEmpty()) {
+    avatar.setImageUrl(QUrl(query->index(i, column++).data().toString())); // FIXME!!!
+    //avatar.setAvatar(query->index(i, column++).data().toString());
+    if (!avatar.imageUrl().isValid()) { // FIXME?
         contact.saveDetail(&avatar);
     }
         
@@ -845,7 +846,7 @@ void QTrackerContactFetchRequest::readFromQueryRowToContact(QContact &contact, i
         if (!( org.isEmpty() && logo.isEmpty())) {
             QContactOrganization o;
             o.setName(org);
-            o.setLogo(logo);
+            o.setLogoUrl(QUrl(logo));
             if (!detailExisting(QContactOrganization::DefinitionName, contact, o)) {
                 contact.saveDetail(&o);
             }
@@ -993,7 +994,7 @@ void QTrackerContactFetchRequest::processQueryIMContacts(SopranoLive::LiveNodes 
             QContactId id; id.setLocalId(meContactLocalId);
             meContact.setId(id);
             QContactAvatar avatar = meContact.detail(QContactAvatar::DefinitionName);
-            avatar.setAvatar(avatarURI);
+            avatar.setImageUrl(QUrl(avatarURI)); // FIXME?
             //nick
 
             QContactNickname qnick = meContact.detail(QContactNickname::DefinitionName);
@@ -1044,15 +1045,16 @@ QContactOnlineAccount QTrackerContactFetchRequest::getIMAccountFromIMQuery(LiveN
     // the same is supposed to be in FieldAccountUri field
     account.setValue(QContactOnlineAccount::FieldAccountUri, imAccountQuery->index(queryRow, IMAccount::ContactIMId).data().toString()); // IMId
 
-    account.setNickname(imAccountQuery->index(queryRow, IMAccount::ContactNickname).data().toString()); // nick
-    qDebug() << Q_FUNC_INFO << imAccountQuery->index(queryRow, IMAccount::ContactNickname).data().toString();
+    // XXX FIXME -- TODO VIA PRESENCE
+    //account.setNickname(imAccountQuery->index(queryRow, IMAccount::ContactNickname).data().toString()); // nick
+    //qDebug() << Q_FUNC_INFO << imAccountQuery->index(queryRow, IMAccount::ContactNickname).data().toString();
 
-    QString presence = imAccountQuery->index(queryRow, IMAccount::ContactPresence).data().toString(); // imPresence iri
-    presence = presence.right(presence.length() - presence.lastIndexOf("presence-status"));
-    account.setPresence(presenceConversion[presence]);
-    qDebug() << Q_FUNC_INFO << "Presence converted: " << account.presence() << "raw presence: " << presence;
+    //QString presence = imAccountQuery->index(queryRow, IMAccount::ContactPresence).data().toString(); // imPresence iri
+    //presence = presence.right(presence.length() - presence.lastIndexOf("presence-status"));
+    //account.setPresence(presenceConversion[presence]);
+    //qDebug() << Q_FUNC_INFO << "Presence converted: " << account.presence() << "raw presence: " << presence;
 
-    account.setStatusMessage(imAccountQuery->index(queryRow, IMAccount::ContactMessage).data().toString()); // imStatusMessage
+    //account.setStatusMessage(imAccountQuery->index(queryRow, IMAccount::ContactMessage).data().toString()); // imStatusMessage
 
     return account;
 }
@@ -1067,17 +1069,22 @@ QContactOnlineAccount QTrackerContactFetchRequest::getIMContactFromIMQuery(LiveN
         // taking out the prefix "telepathy:"
         account.setValue(FieldAccountPath, decoded.value(1));
     }
-    account.setNickname(imContactQuery->index(queryRow, IMContact::ContactNickname).data().toString()); // nick
+
+
+    // XXX FIXME -- TODO VIA PRESENCE
+    //account.setNickname(imContactQuery->index(queryRow, IMContact::ContactNickname).data().toString()); // nick
 
     QString cap = imContactQuery->index(queryRow, IMContact::Capabilities).data().toString();
     cap = cap.right(cap.length() - cap.lastIndexOf("im-capability"));
     account.setValue(QContactOnlineAccount::FieldCapabilities, cap);
 
-    QString presence = imContactQuery->index(queryRow, IMContact::ContactPresence).data().toString(); // imPresence iri
-    presence = presence.right(presence.length() - presence.lastIndexOf("presence-status"));
-    account.setPresence(presenceConversion[presence]);
+    // XXX FIXME -- TODO VIA PRESENCE
+    //QString presence = imContactQuery->index(queryRow, IMContact::ContactPresence).data().toString(); // imPresence iri
+    //presence = presence.right(presence.length() - presence.lastIndexOf("presence-status"));
+    //account.setPresence(presenceConversion[presence]);
+    //
+    //account.setStatusMessage(imContactQuery->index(queryRow, IMContact::ContactMessage).data().toString()); // imStatusMessage
 
-    account.setStatusMessage(imContactQuery->index(queryRow, IMContact::ContactMessage).data().toString()); // imStatusMessage
     account.setServiceProvider(imContactQuery->index(queryRow, IMContact::ServiceProvider).data().toString()); // service name
     return account;
 }

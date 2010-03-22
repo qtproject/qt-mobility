@@ -70,11 +70,6 @@ void genericorientationsensor::stop()
     accelerometer->stop();
 }
 
-void genericorientationsensor::poll()
-{
-    accelerometer->poll();
-}
-
 bool genericorientationsensor::filter(QAccelerometerReading *reading)
 {
     QOrientationReading::Orientation o = m_reading.orientation();

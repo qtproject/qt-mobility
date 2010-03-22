@@ -159,7 +159,7 @@ void TestCntRelationship::invalidRelationship()
     QList<QContactRelationship> relationshipList;
     QContactId id;
 
-    relationshipList = m_relationship->relationships(QLatin1String("invalid relationship"), id, QContactRelationshipFilter::Either, error);
+    relationshipList = m_relationship->relationships(QLatin1String("invalid relationship"), id, QContactRelationship::Either, error);
     QVERIFY(relationshipList.count() == 0);
     QVERIFY(error == QContactManager::NotSupportedError);
 }
@@ -201,34 +201,34 @@ void TestCntRelationship::validGroupRelationship()
     QList<QContactRelationship> relationshipList;
 
     //Retrive group
-    relationshipList = m_relationship->relationships(QLatin1String(QContactRelationship::HasMember), groupContact.id(), QContactRelationshipFilter::First, error);
+    relationshipList = m_relationship->relationships(QLatin1String(QContactRelationship::HasMember), groupContact.id(), QContactRelationship::First, error);
     QVERIFY2(relationshipList.count() == 1, "group - First");
     QVERIFY2(error == QContactManager::NoError, "group - First");
 
-    relationshipList = m_relationship->relationships(QLatin1String(QContactRelationship::HasMember), groupContact.id(), QContactRelationshipFilter::Second, error);
+    relationshipList = m_relationship->relationships(QLatin1String(QContactRelationship::HasMember), groupContact.id(), QContactRelationship::Second, error);
     QVERIFY2(relationshipList.count() == 0, "group - Second");
     QVERIFY2(error == QContactManager::DoesNotExistError, "group - Second");
 
-    relationshipList = m_relationship->relationships(QLatin1String(QContactRelationship::HasMember), groupContact.id(), QContactRelationshipFilter::Either, error);
+    relationshipList = m_relationship->relationships(QLatin1String(QContactRelationship::HasMember), groupContact.id(), QContactRelationship::Either, error);
     QVERIFY2(relationshipList.count() == 1, "group - Either");
     QVERIFY2(error == QContactManager::NoError, "group - Either");
 
     //Retrive contact
-    relationshipList = m_relationship->relationships(QLatin1String(QContactRelationship::HasMember), contact.id(), QContactRelationshipFilter::First, error);
+    relationshipList = m_relationship->relationships(QLatin1String(QContactRelationship::HasMember), contact.id(), QContactRelationship::First, error);
     QVERIFY2(relationshipList.count() == 0, "contact - First");
     QVERIFY2(error == QContactManager::DoesNotExistError, "contact - First");
 
-    relationshipList = m_relationship->relationships(QLatin1String(QContactRelationship::HasMember), contact.id(), QContactRelationshipFilter::Second, error);
+    relationshipList = m_relationship->relationships(QLatin1String(QContactRelationship::HasMember), contact.id(), QContactRelationship::Second, error);
     QVERIFY2(relationshipList.count() == 1, "contact - Second");
     QVERIFY2(error == QContactManager::NoError, "contact - Second");
 
-    relationshipList = m_relationship->relationships(QLatin1String(QContactRelationship::HasMember), contact.id(), QContactRelationshipFilter::Either, error);
+    relationshipList = m_relationship->relationships(QLatin1String(QContactRelationship::HasMember), contact.id(), QContactRelationship::Either, error);
     QVERIFY2(relationshipList.count() == 1, "contact - Either");
     QVERIFY2(error == QContactManager::NoError, "contact - Either");   
     
     //Relationship for empty contact -> all relationships are returned 
     relationshipList = m_relationship->relationships(QLatin1String(QContactRelationship::HasMember), QContactId(),
-                QContactRelationshipFilter::First, error);
+                QContactRelationship::First, error);
     QVERIFY2(relationshipList.count() == 1, "All relationships");
     QVERIFY2(error == QContactManager::NoError, "All relatiosnships");
 
@@ -236,7 +236,7 @@ void TestCntRelationship::validGroupRelationship()
     //Validate Filter
     QList<QContactLocalId> expectedContacts;
     expectedContacts += contact.localId();
-    QVERIFY(true == validateRelationshipFilter(QContactRelationshipFilter::First, groupContact.id(), expectedContacts));
+    QVERIFY(true == validateRelationshipFilter(QContactRelationship::First, groupContact.id(), expectedContacts));
     
     QList<QContactLocalId> expectedContacts1;
     expectedContacts1 += groupContact.localId();
@@ -244,12 +244,12 @@ void TestCntRelationship::validGroupRelationship()
     QList<QContactLocalId> expectedContacts2;
     expectedContacts2 += contact.localId();
     expectedContacts2 += groupContact.localId(); 
-    QVERIFY(true == (validateRelationshipFilter(QContactRelationshipFilter::Either, groupContact.id(), expectedContacts1) ||
-                     validateRelationshipFilter(QContactRelationshipFilter::Either, groupContact.id(), expectedContacts2)));
+    QVERIFY(true == (validateRelationshipFilter(QContactRelationship::Either, groupContact.id(), expectedContacts1) ||
+                     validateRelationshipFilter(QContactRelationship::Either, groupContact.id(), expectedContacts2)));
 
     expectedContacts.clear();
     expectedContacts += groupContact.localId();
-    QVERIFY(true == validateRelationshipFilter(QContactRelationshipFilter::Second, contact.id(), expectedContacts));
+    QVERIFY(true == validateRelationshipFilter(QContactRelationship::Second, contact.id(), expectedContacts));
     
     //remove relationship
     returnValue = m_relationship->removeRelationship(&affectedContactIds, relationship, error);
@@ -411,7 +411,7 @@ void TestCntRelationship::invalidFirstAndSecondContactGroupRelationship()
     QVERIFY(error != QContactManager::NoError);
 }
 
-bool TestCntRelationship::validateRelationshipFilter(const QContactRelationshipFilter::Role role, const QContactId contactId, const QList<QContactLocalId> expectedContacts)
+bool TestCntRelationship::validateRelationshipFilter(const QContactRelationship::Role role, const QContactId contactId, const QList<QContactLocalId> expectedContacts)
     {
     QContactRelationshipFilter filter;
     filter.setRelationshipType(QContactRelationship::HasMember);

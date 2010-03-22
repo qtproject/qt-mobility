@@ -80,8 +80,7 @@ class Q_SENSORS_EXPORT QAmbientLightSensor : public QSensor
 {
     Q_OBJECT
 public:
-    explicit QAmbientLightSensor(QObject *parent = 0) : QSensor(parent)
-    { setType(QAmbientLightSensor::type); }
+    explicit QAmbientLightSensor(QObject *parent = 0) : QSensor(QAmbientLightSensor::type, parent) {}
     virtual ~QAmbientLightSensor() {}
     QAmbientLightReading *reading() const { return static_cast<QAmbientLightReading*>(QSensor::reading()); }
     static const char *type;

@@ -603,7 +603,7 @@ void TestFiltering::testRelationshipFilter()
     QContactRelationshipFilter groupFilter;                   
     groupFilter.setRelationshipType(QContactRelationship::HasMember);
     groupFilter.setRelatedContactId(groupContact.id());                
-    groupFilter.setRelatedContactRole(QContactRelationshipFilter::First);
+    groupFilter.setRelatedContactRole(QContactRelationship::First);
 
     
     cnt_ids = mCntMng->contactIds(groupFilter, sortOrder);

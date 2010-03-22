@@ -262,12 +262,12 @@ QString CntFilterDetailDisplayLabel::columnName(const QPair<QLatin1String, QLati
     //Name detail
     if(detail.first == QContactName::DefinitionName)
     {
-        if(detail.second == QContactName::FieldFirst)
+        if(detail.second == QContactName::FieldFirstName)
         {
             columnName = "first_name";
         }
         
-        else if(detail.second == QContactName::FieldLast)
+        else if(detail.second == QContactName::FieldLastName)
         {
             columnName = "last_name";
         }

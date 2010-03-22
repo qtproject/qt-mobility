@@ -83,7 +83,7 @@ QList<CContactItemField *> CntTransformPhoneNumber::transformDetailL(const QCont
 	    }
 
 	    //fax
-	    else if (subTypes.contains(QContactPhoneNumber::SubTypeFacsimile))
+	    else if (subTypes.contains(QContactPhoneNumber::SubTypeFax))
 	    {
 	        newField->AddFieldTypeL(KUidContactFieldFax);
 	        newField->SetMapping(KUidContactFieldVCardMapTEL);
@@ -185,7 +185,7 @@ QContactDetail *CntTransformPhoneNumber::transformItemField(const CContactItemFi
         }
 	}
     else if (field.ContentType().ContainsFieldType(KUidContactFieldFax)) {
-        phoneNumber->setSubTypes(QContactPhoneNumber::SubTypeFacsimile);
+        phoneNumber->setSubTypes(QContactPhoneNumber::SubTypeFax);
     }
     else if (field.ContentType().ContainsFieldType(KUidContactFieldDTMF)) {
         phoneNumber->setSubTypes(QContactPhoneNumber::SubTypeDtmfMenu);
@@ -258,7 +258,7 @@ quint32 CntTransformPhoneNumber::getIdForField(const QString& fieldName) const
         return KUidContactFieldPhoneNumber.iUid;
     else if (QContactPhoneNumber::SubTypeMobile == fieldName)
         return KUidContactFieldPhoneNumber.iUid;
-    else if (QContactPhoneNumber::SubTypeFacsimile == fieldName)
+    else if (QContactPhoneNumber::SubTypeFax == fieldName)
         return KUidContactFieldFax.iUid;
     else if (QContactPhoneNumber::SubTypePager == fieldName)
         return KUidContactFieldPhoneNumber.iUid;

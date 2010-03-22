@@ -287,7 +287,7 @@ void QContactRequestWorker::processContactFetchRequest(QContactFetchRequest* req
     if (req->manager()) {   
         QContactFilter filter = req->filter();
         QList<QContactSortOrder> sorting = req->sorting();
-        QStringList defs = req->definitionRestrictions();
+        QStringList defs = req->fetchHint().detailDefinitionsHint();
 
         QContactManager::Error operationError;
         QList<QContact> requestedContacts;
@@ -493,7 +493,7 @@ void QContactRequestWorker::processContactDetailDefinitionRemoveRequest(QContact
 void QContactRequestWorker::processContactRelationshipFetchRequest(QContactRelationshipFetchRequest* req)
 {
     if (req->manager()) {
-        QList<QContactRelationship> allRelationships = req->manager()->relationships(QString(), QContactId(), QContactRelationshipFilter::Either);
+        QList<QContactRelationship> allRelationships = req->manager()->relationships(QString(), QContactId(), QContactRelationship::Either);
         QContactManager::Error operationError = req->manager()->error();
         QList<QContactRelationship> requestedRelationships;
 
@@ -550,7 +550,7 @@ void QContactRequestWorker::processContactRelationshipRemoveRequest(QContactRela
         QMap<int, QContactManager::Error> errorMap;
         QContactManager::Error operationError = req->manager()->error();
         foreach (const QContactRelationship& relationship, req->relationships()) {
-            QList<QContactRelationship> matchingRelationships = req->manager()->relationships(relationship.relationshipType(), relationship.first(), QContactRelationshipFilter::First);
+            QList<QContactRelationship> matchingRelationships = req->manager()->relationships(relationship.relationshipType(), relationship.first(), QContactRelationship::First);
 
             for (int i = 0; i < matchingRelationships.size(); i++) {
                 QContactManager::Error tempError;

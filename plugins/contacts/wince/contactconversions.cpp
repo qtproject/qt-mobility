@@ -192,9 +192,9 @@ static void processName(const QContactWinCEEngine* /*engine*/, IItem* /*contact*
 {
     QContactName name;
     setIfNotEmpty(name, QContactName::FieldPrefix, values[0].toString());
-    setIfNotEmpty(name, QContactName::FieldFirst, values[1].toString());
-    setIfNotEmpty(name, QContactName::FieldMiddle, values[2].toString());
-    setIfNotEmpty(name, QContactName::FieldLast, values[3].toString());
+    setIfNotEmpty(name, QContactName::FieldFirstName, values[1].toString());
+    setIfNotEmpty(name, QContactName::FieldMiddleName, values[2].toString());
+    setIfNotEmpty(name, QContactName::FieldLastName, values[3].toString());
     setIfNotEmpty(name, QContactName::FieldSuffix, values[4].toString());
     setIfNotEmpty(name, QContactName::FieldCustomLabel, values[5].toString());
     if (!name.isEmpty())
@@ -298,7 +298,7 @@ static void processAvatar(const QContactWinCEEngine* /*engine*/, IItem* contact,
         if (!data.isEmpty()) {
             QPixmap pixmap;
             pixmap.loadFromData(data, "PNG");
-            avatar.setPixmap(pixmap);
+            //avatar.setPixmap(pixmap);
         }
     }
 
@@ -306,13 +306,12 @@ static void processAvatar(const QContactWinCEEngine* /*engine*/, IItem* contact,
         if (!data.isEmpty()) {
             QUrl url(QUrl::fromEncoded(data.toPercentEncoding()));
             url.setScheme("data");
-            avatar.setAvatar(url.toString());
+            avatar.setImageUrl(url.toString());
         }
     } else {
-        avatar.setAvatar(values[0].toString());
+        avatar.setImageUrl(values[0].toString());
     }
 
-    setIfNotEmpty(avatar, QContactAvatar::FieldSubType, values[1].toString());
     
         
     if (!avatar.isEmpty())
@@ -435,13 +434,13 @@ static void processPhones(const QContactWinCEEngine*, IItem* /*contact*/, const 
                     m = meta.at(i);
                     if (m ==  ' ')
                         m = 'H';
-                    number.setSubTypes(QContactPhoneNumber::SubTypeFacsimile);
+                    number.setSubTypes(QContactPhoneNumber::SubTypeFax);
                     break;
                 case 10: // Business fax
                     m = meta.at(i);
                     if (m ==  ' ')
                         m = 'W';
-                    number.setSubTypes(QContactPhoneNumber::SubTypeFacsimile);
+                    number.setSubTypes(QContactPhoneNumber::SubTypeFax);
                     break;
             }
 
@@ -656,9 +655,9 @@ static void addIfNotEmpty(const CEPROPID& id, const QString& value, QVector<CEPR
 static bool processQName(const QContactWinCEEngine*, IItem* /*contact*/, const QContactDetail& detail, QVector<CEPROPVAL>& props)
 {
     addIfNotEmpty(PIMPR_TITLE, detail.value(QContactName::FieldPrefix), props);
-    addIfNotEmpty(PIMPR_FIRST_NAME, detail.value(QContactName::FieldFirst), props);
-    addIfNotEmpty(PIMPR_MIDDLE_NAME, detail.value(QContactName::FieldMiddle), props);
-    addIfNotEmpty(PIMPR_LAST_NAME, detail.value(QContactName::FieldLast), props);
+    addIfNotEmpty(PIMPR_FIRST_NAME, detail.value(QContactName::FieldFirstName), props);
+    addIfNotEmpty(PIMPR_MIDDLE_NAME, detail.value(QContactName::FieldMiddleName), props);
+    addIfNotEmpty(PIMPR_LAST_NAME, detail.value(QContactName::FieldLastName), props);
     addIfNotEmpty(PIMPR_SUFFIX, detail.value(QContactName::FieldSuffix), props);
     addIfNotEmpty(PIMPR_FILEAS, detail.value(QContactName::FieldCustomLabel), props);
     return true;
@@ -666,19 +665,23 @@ static bool processQName(const QContactWinCEEngine*, IItem* /*contact*/, const Q
 
 static bool processQAvatar(const QContactWinCEEngine* engine, IItem* contact, const QContactDetail& detail, QVector<CEPROPVAL>& props)
 {
-    QString avatarData = detail.value(QContactAvatar::FieldAvatar);
-    QPixmap avatarPixmap = detail.value<QPixmap>(QContactAvatar::FieldAvatarPixmap);
+    Q_UNUSED(engine);
+    Q_UNUSED(contact);
+    Q_UNUSED(detail);
+    Q_UNUSED(props);
+    //QString avatarData = detail.value(QContactAvatar::FieldImageUrl);
+    //QPixmap avatarPixmap = detail.value<QPixmap>(QContactAvatar::FieldAvatarPixmap);
 
-    addIfNotEmpty(engine->metaAvatarType(), detail.value(QContactAvatar::FieldSubType), props);
-    addIfNotEmpty(engine->metaAvatar(), avatarData, props);
+    //FIXME:wince avatar should be processed as thumbnail
+    //addIfNotEmpty(engine->metaAvatar(), avatarData, props);
 
-    if (!avatarPixmap.isNull()) {
-        QByteArray data;
-        QBuffer buffer(&data);
-        buffer.open(QIODevice::WriteOnly);
-        if (!avatarPixmap.save(&buffer, "PNG") || !saveAvatarData(contact, data))
-            return false;
-    }
+    //if (!avatarPixmap.isNull()) {
+    //    QByteArray data;
+    //    QBuffer buffer(&data);
+    //    buffer.open(QIODevice::WriteOnly);
+    //    if (!avatarPixmap.save(&buffer, "PNG") || !saveAvatarData(contact, data))
+    //        return false;
+    //}
     return true;
 }
 
@@ -769,7 +772,7 @@ static void processQPhones(const QList<QContactPhoneNumber>& nums, CEPROPID meta
             id = PIMPR_CAR_TELEPHONE_NUMBER;
         else if (number.subTypes().contains(QContactPhoneNumber::SubTypeMobile))
             id = PIMPR_MOBILE_TELEPHONE_NUMBER;
-        else if (number.subTypes().contains(QContactPhoneNumber::SubTypeFacsimile)) {
+        else if (number.subTypes().contains(QContactPhoneNumber::SubTypeFax)) {
             if (number.contexts().contains(QContactDetail::ContextHome))
                 id = PIMPR_HOME_FAX_NUMBER;
             else if (number.contexts().contains(QContactDetail::ContextWork))
@@ -1236,9 +1239,9 @@ void QContactWinCEEngine::buildHashForContactDetailToPoomPropId() const
     if (hashForContactDetailToPoomPropId.isEmpty()) {
         //QContactName
         Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactName, FieldPrefix, PIMPR_TITLE);
-        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactName, FieldFirst, PIMPR_FIRST_NAME);
-        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactName, FieldMiddle, PIMPR_MIDDLE_NAME);
-        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactName, FieldLast, PIMPR_LAST_NAME);
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactName, FieldFirstName, PIMPR_FIRST_NAME);
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactName, FieldMiddleName, PIMPR_MIDDLE_NAME);
+        Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactName, FieldLastName, PIMPR_LAST_NAME);
         Q_HASH_CONTACT_DETAIL_TO_POOM_ID(QContactName, FieldSuffix, PIMPR_SUFFIX);
 
         // Display label
