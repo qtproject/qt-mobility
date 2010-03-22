@@ -42,22 +42,16 @@
 #ifndef QLOCATION_GEONETWORKMANAGER_H
 #define QLOCATION_GEONETWORKMANAGER_H
 
-#include <QNetworkAccessManager>
-#include <QHash>
 #include <QNetworkReply>
-#include <QNetworkRequest>
-#include <QNetworkProxy>
-#include <QPair>
-#include <QPointF>
 #include <QString>
 
 #include "qgeoengine.h"
-#include "qmaptilecache.h"
 
 #define MAPTILE_MAX_ZOOMLEVEL 18
 
 QTM_BEGIN_NAMESPACE
 
+class QGeoNetworkManagerPrivate;
 class Q_LOCATION_EXPORT QGeoNetworkManager : public QGeoEngine
 {
     Q_OBJECT
@@ -109,33 +103,8 @@ private slots:
     void netReplyError(QNetworkReply::NetworkError code);
 
 private:
-    bool parseRouteReply(QNetworkReply* netReply, QRouteReply* routeReply);
-    bool parseCodingReply(QNetworkReply* netReply, QGeocodingReply* codingReply);
-
-    static QString trimGeoCoordinate(qreal degree);
-
-private:
-    QNetworkAccessManager netManager; //!< The internal network manager
-    QMapTileCache cache; //!< The map tile cache
-
-    QString geocdSrv;
-    QString rtSrv;
-    QString mapSrv;
-    QNetworkProxy geocdProx;
-    QNetworkProxy rtProx;
-    QNetworkProxy mapProx;
-    QString token;
-    QString referrer;
-
-    //! maps QNetworkReplies to their corresponding QGeoReplies
-    QHash<QNetworkReply*, QGeoReply*> replyMap;
-    //! maps a QGeoReply to its corresponding QNetworkReply
-    QHash<QGeoReply*, QNetworkReply*> revReplyMap;
-
-    QHash<QString, MapVersion> mapVersions;
-    QHash<QString, MapResolution> mapResolutions;
-    QHash<QString, MapFormat> mapFormats;
-    QHash<QString, MapScheme> mapSchemes;
+    QGeoNetworkManagerPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QGeoNetworkManager)
 };
 
 QTM_END_NAMESPACE

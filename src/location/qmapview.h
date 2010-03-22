@@ -78,6 +78,7 @@ public:
     {
     public:
         TileIterator(const QMapView& mapView, const QRectF& viewPort);
+        ~TileIterator();
 
         bool hasNext() const;
         bool isValid() const;
@@ -96,6 +97,7 @@ public:
 
 public:
     QMapView(QGraphicsItem* parent = 0, Qt::WindowFlags wFlags = 0);
+    virtual ~QMapView();
 
     void init(QGeoEngine* geoEngine, const QGeoCoordinate& center = QGeoCoordinate(0, 0));
 
@@ -177,27 +179,9 @@ public slots:
     void setZoomLevel(int zoomLevel);
 
 signals:
-    /*!
-    * This signal is emitted when the map receieves a mouse click event.
-    * @param geoCoord The geo coordinate where the click occured.
-    * @param mouseEvent The associated mouse event.
-    */
     void mapClicked(QGeoCoordinate geoCoord, QGraphicsSceneMouseEvent* mouseEvent);
-    /*!
-    * This signal is emitted after the map has changed its zoom level.
-    * @param oldZoomLevel The previous zoom level.
-    * @param newZoomLevel The new zoom level.
-    */
     void zoomLevelChanged(quint16 oldZoomLevel, quint16 newZoomLevel);
-    /*!
-    * This signal is emitted when the center of the viewport onto the map has changed.
-    * Call \ref center() or \ref mapCenter() to get the current center coordinates.
-    */
     void centerChanged();
-    /*!
-    * This signal is emitted when a map object was selected by left-clicking on it.
-    * @param mapObject The select map object.
-    */
     void mapObjectSelected(QMapObject* mapObject);
 
 protected:

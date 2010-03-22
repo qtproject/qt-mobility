@@ -42,6 +42,12 @@
 #include <QPointF>
 #include <QNetworkProxy>
 
+#ifdef Q_OS_SYMBIAN
+#include <QMessageBox>
+#include <qnetworksession.h>
+#include <qnetworkconfigmanager.h>
+#endif
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -90,14 +96,15 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(mapView, SIGNAL(mapObjectSelected(QMapObject*)),
                      this, SLOT(mapObjectSelected(QMapObject*)));
 
-    //mapView->init(&geoNetworkManager, QPointF(13, 52.35));
-    mapView->init(&geoNetworkManager, QGeoCoordinate(52.35, 13));
-
     slider = new QSlider(Qt::Vertical, this);
     slider->setMinimum(0);
     slider->setMaximum(18);
     slider->setSliderPosition(4);
+#ifdef Q_OS_SYMBIAN
+    slider->setGeometry(10, 10, 80, 170);
+#else
     slider->setGeometry(10, 10, 30, 100);
+#endif
     slider->setVisible(true);
     QObject::connect(slider, SIGNAL(sliderMoved(int)),
                      mapView, SLOT(setZoomLevel(int)));
@@ -119,24 +126,27 @@ MainWindow::MainWindow(QWidget *parent) :
     popupMenu->addAction(menuItem);
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(setRtFromTo(bool)));
-
-    menuItem = new QAction(tr("Draw line"), this);
-    popupMenu->addAction(menuItem);
+    
+    QMenu* subMenuItem = new QMenu(tr("Draw"), this);
+    popupMenu->addMenu(subMenuItem);
+    
+    menuItem = new QAction(tr("Line"), this);
+    subMenuItem->addAction(menuItem);
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(drawLine(bool)));
 
-    menuItem = new QAction(tr("Draw rectangle"), this);
-    popupMenu->addAction(menuItem);
+    menuItem = new QAction(tr("Rectangle"), this);
+    subMenuItem->addAction(menuItem);
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(drawRect(bool)));
 
-    menuItem = new QAction(tr("Draw ellipse"), this);
-    popupMenu->addAction(menuItem);
+    menuItem = new QAction(tr("Ellipse"), this);
+    subMenuItem->addAction(menuItem);
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(drawEllipse(bool)));
 
-    menuItem = new QAction(tr("Draw polygon"), this);
-    popupMenu->addAction(menuItem);
+    menuItem = new QAction(tr("Polygon"), this);
+    subMenuItem->addAction(menuItem);
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(drawPolygon(bool)));
     
@@ -171,13 +181,36 @@ MainWindow::MainWindow(QWidget *parent) :
     setContextMenuPolicy(Qt::CustomContextMenu);
     QObject::connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
             this, SLOT(customContextMenuRequest(const QPoint&)));
+    
+    QTimer::singleShot(0, this, SLOT(delayedInit()));
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
+void MainWindow::delayedInit()
+{
+#ifdef Q_OS_SYMBIAN
+    // Set Internet Access Point
+    QNetworkConfigurationManager manager;
+    const bool canStartIAP = (manager.capabilities()
+                              & QNetworkConfigurationManager::CanStartAndStopInterfaces);
+    // Is there default access point, use it
+    QNetworkConfiguration cfg = manager.defaultConfiguration();
+    if (!cfg.isValid() || (!canStartIAP && cfg.state() != QNetworkConfiguration::Active)) {
+        QMessageBox::information(this, tr("MapViewer Example"), tr(
+                                     "Available Access Points not found."));
+        return;
+    }
+  
+    session = new QNetworkSession(cfg, this);
+    session->open();
+    session->waitForOpened(-1);
+#endif
 
+    mapView->init(&geoNetworkManager, QGeoCoordinate(52.35, 13));
+}
 void MainWindow::resizeEvent(QResizeEvent* event)
 {
     qgv->resize(event->size());
@@ -211,17 +244,18 @@ void MainWindow::routeReplyFinished(QRouteReply* reply)
     }
 }
 
-void MainWindow::mapClicked(QGeoCoordinate geoCoord, QGraphicsSceneMouseEvent* mouseEvent)
-{           
+void MainWindow::mapClicked(QGeoCoordinate geoCoord, QGraphicsSceneMouseEvent* /*mouseEvent*/)
+{
     lastClicked = geoCoord;
 }
 
 void MainWindow::customContextMenuRequest(const QPoint& point)
 {
-    popupMenu->popup(mapToGlobal(point));
+    if(focusWidget()==qgv)
+        popupMenu->popup(mapToGlobal(point));
 }
 
-void MainWindow::mapObjectSelected(QMapObject* mapObject)
+void MainWindow::mapObjectSelected(QMapObject* /*mapObject*/)
 {
     int x = 0;
     x++; //just a stub

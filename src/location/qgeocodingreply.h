@@ -51,6 +51,7 @@
 
 QTM_BEGIN_NAMESPACE
 
+class QGeocodingReplyPrivate;
 class Q_LOCATION_EXPORT QGeocodingReply : public QGeoReply
 {
     Q_OBJECT
@@ -66,19 +67,21 @@ public:
 
 public:
     ResultCode resultCode() const;
+    void setResultCode(ResultCode result);
     QString resultDescription() const;
+    void setResultDescription(QString resultDescription);
     quint32 count() const;
     QList<QGeoLocation> places() const;
-
+    void addPlace(QGeoLocation place);
+    
 private:
     Q_DISABLE_COPY(QGeocodingReply)
 
     QGeocodingReply();
 
 private:
-    ResultCode code;
-    QString descr;
-    QList<QGeoLocation> plcs;
+    QGeocodingReplyPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QGeocodingReply)
 };
 
 

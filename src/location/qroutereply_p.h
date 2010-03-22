@@ -39,54 +39,25 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_ROUTEREPLY_H
-#define QLOCATION_ROUTEREPLY_H
+#ifndef QLOCATION_ROUTEREPLY_P_H
+#define QLOCATION_ROUTEREPLY_P_H
 
 #include <QString>
-#include <QDateTime>
-#include <QList>
 
 #include "qroute.h"
-#include "qgeoreply.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QRouteReplyPrivate;
-class Q_LOCATION_EXPORT QRouteReply : public QGeoReply
+class QRouteReplyPrivate
 {
-    Q_OBJECT
-
-    friend class QRouteXmlParser;
-    friend class QGeoNetworkManager;
-
 public:
-
-    enum ResultCode {
-        OK = 0,
-        Failed,
-        FailedWithAlternative
-    };
-
-public:
-
-    ResultCode resultCode() const;
-    void setResultCode(ResultCode result);
-    QString resultDescription() const;
-    QString language() const;
-    void setResultDescription(QString description);
-    void setLanguage(QString language);
-    int count() const;
-    const QList<QRoute>& routes() const;
-    void addRoute(QRoute route);
+    QRouteReplyPrivate():rCode(QRouteReply::Failed){};
     
-private:
-    Q_DISABLE_COPY(QRouteReply);
+    QRouteReply::ResultCode rCode;
+    QString    descr;
+    QString    lang;
 
-    QRouteReply();
-
-private:
-    QRouteReplyPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QRouteReply)
+    QList<QRoute> rt;
 };
 
 QTM_END_NAMESPACE

@@ -47,6 +47,7 @@
 
 QTM_BEGIN_NAMESPACE
 
+class QGeocodingRequestPrivate;
 class Q_LOCATION_EXPORT QGeocodingRequest
 {
     friend class QGeoNetworkManager;
@@ -84,16 +85,8 @@ private:
     Q_DISABLE_COPY(QGeocodingRequest)
 
 private:
-    QString vers;
-    QString languageMARC;
-
-    QString obloc;
-    QString cntry;
-    QString st;
-    QString cty;
-    QString pCode;
-    QString strt;
-    QString num;
+    QGeocodingRequestPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QGeocodingRequest)
 };
 
 QTM_END_NAMESPACE

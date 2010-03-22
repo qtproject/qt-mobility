@@ -129,11 +129,14 @@ maemo5 {
 HEADERS += qaddress.h \
            qalternativeaddress.h \
            qgeocodingreply.h \
+           qgeocodingreply_p.h \
            qgeocodingrequest.h \
+           qgeocodingrequest_p.h \
            qgeocodingxmlparser.h \
            qgeoengine.h \
            qgeolocation.h \
            qgeonetworkmanager.h \
+           qgeonetworkmanager_p.h \
            qgeoreply.h \
            qmaneuver.h \
            qmapellipse.h \
@@ -161,6 +164,7 @@ HEADERS += qaddress.h \
            qreversegeocodingrequest.h \
            qroute.h \
            qroutereply.h \
+           qroutereply_p.h \
            qrouterequest.h \
            qrouterequest_p.h \
            qroutexmlparser.h

@@ -48,6 +48,7 @@
 #include <QUrl>
 
 #include "qgeonetworkmanager.h"
+#include "qgeonetworkmanager_p.h"
 #include "qrouterequest.h"
 #include "qrouterequest_p.h"
 #include "qroutereply.h"
@@ -76,20 +77,13 @@ static const int DEGREE_DECIMALS = 10;
     and a \a referrer (usually a URL) for the token.
 */
 QGeoNetworkManager::QGeoNetworkManager(QString token, QString referrer)
-        : netManager(this),
-        geocdProx(QNetworkProxy::NoProxy),
-        rtProx(QNetworkProxy::NoProxy),
-        mapProx(QNetworkProxy::NoProxy),
-        token(token),
-        referrer(referrer)
+        : d_ptr(new QGeoNetworkManagerPrivate())
 {
-    connect(&netManager, SIGNAL(finished(QNetworkReply*)),
+    Q_D(QGeoNetworkManager);
+    d->token = token;
+    d->referrer = referrer;
+    connect(&d->netManager, SIGNAL(finished(QNetworkReply*)),
             this, SLOT(netReplyFinished(QNetworkReply*)));
-
-    geocdSrv = "dev-a7.bln.gate5.de";
-    mapSrv = "dev-a7.bln.gate5.de";
-    //mapSrv = "maptile.mapplayer.maps.svc.ovi.com";
-    rtSrv = "172.24.32.155";
 }
 
 /*!
@@ -97,16 +91,8 @@ QGeoNetworkManager::QGeoNetworkManager(QString token, QString referrer)
 */
 QGeoNetworkManager::~QGeoNetworkManager()
 {
-    QList<QNetworkReply*> keys = replyMap.keys();
-
-    while (keys.length() > 0) {
-        QNetworkReply* key = keys[0];
-        QGeoReply* locReply = replyMap[key];
-        replyMap.remove(key);
-        delete locReply;
-        keys.pop_front();
-        delete key;
-    }
+    Q_D(QGeoNetworkManager);
+    delete d;
 }
 
 /*!
@@ -114,26 +100,32 @@ QGeoNetworkManager::~QGeoNetworkManager()
 */
 void QGeoNetworkManager::setGeocodingServer(const QString& server)
 {
-    geocdSrv = server;
+    Q_D(QGeoNetworkManager);
+    d->geocdSrv = server;
 }
 /*!
     Return the server to be used for (reverse) geocoding requests.
 */
-QString QGeoNetworkManager::geocodingServer() const {
-    return geocdSrv;
+QString QGeoNetworkManager::geocodingServer() const
+{
+    Q_D(const QGeoNetworkManager);
+    return d->geocdSrv;
 }
 /*!
     Returns the proxy to be used for (reverse) geocoding requests.
 */
-QNetworkProxy QGeoNetworkManager::geocodingProxy() const {
-    return geocdProx;
+QNetworkProxy QGeoNetworkManager::geocodingProxy() const
+{
+    Q_D(const QGeoNetworkManager);
+    return d->geocdProx;
 }
 /*!
     Sets the proxy to be used for (reverse) geocoding requests to \a proxy.
 */
 void QGeoNetworkManager::setGeocodingProxy(const QNetworkProxy& proxy)
 {
-    geocdProx = proxy;
+    Q_D(QGeoNetworkManager);
+    d->geocdProx = proxy;
 }
 
 /*!
@@ -141,26 +133,32 @@ void QGeoNetworkManager::setGeocodingProxy(const QNetworkProxy& proxy)
 */
 void QGeoNetworkManager::setRouteServer(const QString& server)
 {
-    rtSrv = server;
+    Q_D(QGeoNetworkManager);
+    d->rtSrv = server;
 }
 /*!
     Returns the server to be used for route requests.
 */
-QString QGeoNetworkManager::routeServer() const {
-    return rtSrv;
+QString QGeoNetworkManager::routeServer() const
+{
+    Q_D(const QGeoNetworkManager);
+    return d->rtSrv;
 }
 /*!
     Returns the proxy to be used for route requests.
 */
-QNetworkProxy QGeoNetworkManager::routeProxy() const {
-    return rtProx;
+QNetworkProxy QGeoNetworkManager::routeProxy() const
+{
+    Q_D(const QGeoNetworkManager);
+    return d->rtProx;
 }
 /*!
     Sets the proxy to be used for route requests to \a proxy.
 */
 void QGeoNetworkManager::setRouteProxy(const QNetworkProxy& proxy)
 {
-    rtProx = proxy;
+    Q_D(QGeoNetworkManager);
+    d->rtProx = proxy;
 }
 
 /*!
@@ -168,28 +166,32 @@ void QGeoNetworkManager::setRouteProxy(const QNetworkProxy& proxy)
 */
 void QGeoNetworkManager::setMapServer(const QString& server)
 {
-    mapSrv = server;
+    Q_D(QGeoNetworkManager);
+    d->mapSrv = server;
 }
 /*!
     Returns the server to be used for map tile requests.
 */
 QString QGeoNetworkManager::mapServer() const 
 {
-    return mapSrv;
+    Q_D(const QGeoNetworkManager);
+    return d->mapSrv;
 }
 /*!
     Returns the proxy to be used for map tile requests.
 */
 QNetworkProxy QGeoNetworkManager::mapProxy() const
 {
-    return mapProx;
+    Q_D(const QGeoNetworkManager);
+    return d->mapProx;
 }
 /*!
     Sets the proxy to be used for map tile requests to \a proxy.
 */
 void QGeoNetworkManager::setMapProxy(const QNetworkProxy& proxy)
 {
-    mapProx = proxy;
+    Q_D(QGeoNetworkManager);
+    d->mapProx = proxy;
 }
 
 /*!
@@ -200,12 +202,13 @@ void QGeoNetworkManager::setMapProxy(const QNetworkProxy& proxy)
 */
 QRouteReply* QGeoNetworkManager::get(const QRouteRequest& request)
 {
-    QString rawRequest = "http://" % rtSrv % "/routing/rt/" % request.version() %
+    Q_D(QGeoNetworkManager);
+    QString rawRequest = "http://" % d->rtSrv % "/routing/rt/" % request.version() %
                          "?referer=localhost" %
-                         "&slong=" % trimGeoCoordinate(request.source().longitude()) %
-                         "&slat=" % trimGeoCoordinate(request.source().latitude()) %
-                         "&dlong=" % trimGeoCoordinate(request.destination().longitude()) %
-                         "&dlat=" % trimGeoCoordinate(request.destination().latitude());
+                         "&slong=" % d->trimGeoCoordinate(request.source().longitude()) %
+                         "&slat=" % d->trimGeoCoordinate(request.source().latitude()) %
+                         "&dlong=" % d->trimGeoCoordinate(request.destination().longitude()) %
+                         "&dlat=" % d->trimGeoCoordinate(request.destination().latitude());
 
     if (request.totalResults() > 0)
         rawRequest += "&total=" % QString::number(request.totalResults());
@@ -231,12 +234,12 @@ QRouteReply* QGeoNetworkManager::get(const QRouteRequest& request)
                       QString::number(stopOvers[i].longitude(), 'f') % " ";
     }
 
-    netManager.setProxy(rtProx);
+    d->netManager.setProxy(d->rtProx);
     QNetworkRequest* netRequest = new QNetworkRequest(QUrl(rawRequest));
-    QNetworkReply* netReply = netManager.get(*netRequest);
+    QNetworkReply* netReply = d->netManager.get(*netRequest);
     QRouteReply* routeReply = new QRouteReply();
-    replyMap.insert(netReply, routeReply);
-    revReplyMap.insert(routeReply, netReply);
+    d->replyMap.insert(netReply, routeReply);
+    d->revReplyMap.insert(routeReply, netReply);
 
     return routeReply;
 }
@@ -249,35 +252,36 @@ QRouteReply* QGeoNetworkManager::get(const QRouteRequest& request)
 */
 QGeocodingReply* QGeoNetworkManager::get(const QGeocodingRequest& request)
 {
-    QString rawRequest = "http://" % geocdSrv % "/geocoder/gc/" % request.version() %
+    Q_D(QGeoNetworkManager);
+    QString rawRequest = "http://" % d->geocdSrv % "/geocoder/gc/" % request.version() %
                          "?referer=localhost";
 
-    if (request.languageMARC != "")
-        rawRequest += "&lg=" % request.languageMARC;
+    if (request.language() != "")
+        rawRequest += "&lg=" % request.language();
 
-    if (request.obloc.isEmpty()) {
-        rawRequest += "&country=" % request.cntry;
+    if (request.oneBoxLocation().isEmpty()) {
+        rawRequest += "&country=" % request.country();
 
-        if (!request.st.isEmpty())
-            rawRequest += "&state=" % request.st;
-        if (!request.cty.isEmpty())
-            rawRequest += "&city=" % request.cty;
-        if (!request.pCode.isEmpty())
-            rawRequest += "&zip=" % request.pCode;
-        if (!request.strt.isEmpty())
-            rawRequest += "&street=" % request.strt;
-        if (!request.num.isEmpty())
-            rawRequest += "&number=" % request.num;
+        if (!request.state().isEmpty())
+            rawRequest += "&state=" % request.state();
+        if (!request.city().isEmpty())
+            rawRequest += "&city=" % request.city();
+        if (!request.postCode().isEmpty())
+            rawRequest += "&zip=" % request.postCode();
+        if (!request.street().isEmpty())
+            rawRequest += "&street=" % request.street();
+        if (!request.number().isEmpty())
+            rawRequest += "&number=" % request.number();
     } else {
-        rawRequest += "&obloc=" % request.obloc;
+        rawRequest += "&obloc=" % request.oneBoxLocation();
     }
 
-    netManager.setProxy(geocdProx);
+    d->netManager.setProxy(d->geocdProx);
     QNetworkRequest* netRequest = new QNetworkRequest(QUrl(rawRequest));
-    QNetworkReply* reply = netManager.get(*netRequest);
+    QNetworkReply* reply = d->netManager.get(*netRequest);
     QGeocodingReply* codingReply = new QGeocodingReply();
-    replyMap.insert(reply, codingReply);
-    revReplyMap.insert(codingReply, reply);
+    d->replyMap.insert(reply, codingReply);
+    d->revReplyMap.insert(codingReply, reply);
     return codingReply;
 }
 
@@ -289,20 +293,21 @@ QGeocodingReply* QGeoNetworkManager::get(const QGeocodingRequest& request)
 */
 QGeocodingReply* QGeoNetworkManager::get(const QReverseGeocodingRequest& request)
 {
-    QString rawRequest = "http://" % geocdSrv % "/geocoder/rgc/" % request.version() %
+    Q_D(QGeoNetworkManager);
+    QString rawRequest = "http://" % d->geocdSrv % "/geocoder/rgc/" % request.version() %
                          "?referer=localhost" %
-                         "&long=" % trimGeoCoordinate(request.coord.longitude()) %
-                         "&lat=" % trimGeoCoordinate(request.coord.latitude());
+                         "&long=" % d->trimGeoCoordinate(request.coord.longitude()) %
+                         "&lat=" % d->trimGeoCoordinate(request.coord.latitude());
 
     if (request.languageMARC != "")
         rawRequest += "&lg=" % request.languageMARC;
 
-    netManager.setProxy(geocdProx);
+    d->netManager.setProxy(d->geocdProx);
     QNetworkRequest* netRequest = new QNetworkRequest(QUrl(rawRequest));
-    QNetworkReply* reply = netManager.get(*netRequest);
+    QNetworkReply* reply = d->netManager.get(*netRequest);
     QGeocodingReply* codingReply = new QGeocodingReply();
-    replyMap.insert(reply, codingReply);
-    revReplyMap.insert(codingReply, reply);
+    d->replyMap.insert(reply, codingReply);
+    d->revReplyMap.insert(codingReply, reply);
     return codingReply;
 }
 
@@ -319,15 +324,16 @@ QGeocodingReply* QGeoNetworkManager::get(const QReverseGeocodingRequest& request
 */
 QMapTileReply* QGeoNetworkManager::get(const QMapTileRequest& request)
 {
+    Q_D(QGeoNetworkManager);
     //check cache first
     QMapTileReply* tileReply = NULL;
 
-    if ((tileReply = cache.get(request))) {
+    if ((tileReply = d->cache.get(request))) {
         tileReply->fin = true;
         emit finished(tileReply);
         emit tileReply->finished();
     } else {
-        QString rawRequest = "http://" % mapSrv % "/maptiler/maptile/" %
+        QString rawRequest = "http://" % d->mapSrv % "/maptiler/maptile/" %
                              request.version().id % '/' %
                              request.scheme().id % '/' %
                              QString::number(request.zoomLevel()) % '/' %
@@ -336,22 +342,22 @@ QMapTileReply* QGeoNetworkManager::get(const QMapTileRequest& request)
                              request.resolution().id % '/' %
                              request.format().id;
 
-        if (!token.isEmpty()) {
-            rawRequest = rawRequest % "?token=" % token;
+        if (!d->token.isEmpty()) {
+            rawRequest = rawRequest % "?token=" % d->token;
 
-            if (!referrer.isEmpty())
-                rawRequest = rawRequest % "&referrer=" % referrer;
-        } else if (!referrer.isEmpty())
-            rawRequest = rawRequest % "?referrer=" % referrer;
+            if (!d->referrer.isEmpty())
+                rawRequest = rawRequest % "&referrer=" % d->referrer;
+        } else if (!d->referrer.isEmpty())
+            rawRequest = rawRequest % "?referrer=" % d->referrer;
 
-        netManager.setProxy(mapProx);
+        d->netManager.setProxy(d->mapProx);
         QNetworkRequest* netRequest = new QNetworkRequest(QUrl(rawRequest));
-        QNetworkReply* reply = netManager.get(*netRequest);
+        QNetworkReply* reply = d->netManager.get(*netRequest);
         QObject::connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
                          this, SLOT(netReplyError(QNetworkReply::NetworkError)));
         tileReply = new QMapTileReply(request);
-        replyMap.insert(reply, tileReply);
-        revReplyMap.insert(tileReply, reply);
+        d->replyMap.insert(reply, tileReply);
+        d->revReplyMap.insert(tileReply, reply);
     }
 
     return tileReply;
@@ -362,22 +368,24 @@ QMapTileReply* QGeoNetworkManager::get(const QMapTileRequest& request)
 */
 void QGeoNetworkManager::netReplyFinished(QNetworkReply* reply)
 {
+    Q_D(QGeoNetworkManager);
+
     //get associated geo reply
-    if (!replyMap.contains(reply)) {
+    if (!d->replyMap.contains(reply)) {
         //no associated geo reply found, bail out
         reply->deleteLater();
         return;
     }
 
-    QGeoReply* rawReply = replyMap[reply];
+    QGeoReply* rawReply = d->replyMap[reply];
     QString className = rawReply->metaObject()->className();
 
     if (className == "QRouteReply") {
         QRouteReply* routeReply = static_cast<QRouteReply*>(rawReply);
         routeReply->fin = true;
 
-        if (parseRouteReply(reply, routeReply)) {
-            if (routeReply->rCode == QRouteReply::Failed) {
+        if (d->parseRouteReply(reply, routeReply)) {
+            if (routeReply->resultCode() == QRouteReply::Failed) {
                 emit error(routeReply, (QGeoReply::ErrorCode) QNetworkReply::ContentNotFoundError);
                 emit routeReply->error((QGeoReply::ErrorCode) QNetworkReply::ContentNotFoundError);
             } else {
@@ -385,7 +393,7 @@ void QGeoNetworkManager::netReplyFinished(QNetworkReply* reply)
                 emit routeReply->finished();
             }
         } else {
-            routeReply->rCode = QRouteReply::Failed;
+            routeReply->setResultCode(QRouteReply::Failed);
             emit error(routeReply, (QGeoReply::ErrorCode) QNetworkReply::UnknownContentError);
             emit routeReply->error((QGeoReply::ErrorCode) QNetworkReply::UnknownContentError);
         }
@@ -394,8 +402,8 @@ void QGeoNetworkManager::netReplyFinished(QNetworkReply* reply)
         QGeocodingReply* geoReply = static_cast<QGeocodingReply*>(rawReply);
         geoReply->fin = true;
 
-        if (parseCodingReply(reply, geoReply)) {
-            if (geoReply->code == QGeocodingReply::Failed) {
+        if (d->parseCodingReply(reply, geoReply)) {
+            if (geoReply->resultCode() == QGeocodingReply::Failed) {
                 emit error(geoReply, (QGeoReply::ErrorCode) QNetworkReply::ContentNotFoundError);
                 emit geoReply->error((QGeoReply::ErrorCode) QNetworkReply::ContentNotFoundError);
             } else {
@@ -403,7 +411,7 @@ void QGeoNetworkManager::netReplyFinished(QNetworkReply* reply)
                 emit geoReply->finished();
             }
         } else {
-            geoReply->code = QGeocodingReply::Failed;
+            geoReply->setResultCode(QGeocodingReply::Failed);
             emit error(geoReply, (QGeoReply::ErrorCode) QNetworkReply::UnknownContentError);
             emit geoReply->error((QGeoReply::ErrorCode) QNetworkReply::UnknownContentError);
         }
@@ -413,7 +421,7 @@ void QGeoNetworkManager::netReplyFinished(QNetworkReply* reply)
         tileReply->rawData() = reply->readAll();
 
         if (tileReply->data.length() > 0)
-            cache.cache(*tileReply);
+            d->cache.cache(*tileReply);
 
         emit finished(tileReply);
         emit tileReply->finished();
@@ -437,14 +445,14 @@ void QGeoNetworkManager::netReplyError(QNetworkReply::NetworkError code)
     } else if (senderType == "QtMobility::QRouteReply") {
         QRouteReply* routeReply = static_cast<QRouteReply*>(sgnSender);
         routeReply->fin = true;
-        routeReply->rCode = QRouteReply::Failed;
+        routeReply->setResultCode(QRouteReply::Failed);
 
         emit error(routeReply, (QGeoReply::ErrorCode) code);
         emit routeReply->error((QGeoReply::ErrorCode) code);
     } else if (senderType == "QtMobility::QGeocodingReply") {
         QGeocodingReply* geoReply = static_cast<QGeocodingReply*>(sgnSender);
         geoReply->fin = true;
-        geoReply->code = QGeocodingReply::Failed;
+        geoReply->setResultCode(QGeocodingReply::Failed);
 
         emit error(geoReply, (QGeoReply::ErrorCode) code);
         emit geoReply->error((QGeoReply::ErrorCode) code);
@@ -459,10 +467,12 @@ void QGeoNetworkManager::netReplyError(QNetworkReply::NetworkError code)
 */
 void QGeoNetworkManager::release(QGeoReply* reply)
 {
-    if (revReplyMap.contains(reply)) {
-        QNetworkReply* netReply = revReplyMap[reply];
-        revReplyMap.remove(reply);
-        replyMap.remove(netReply);
+    Q_D(QGeoNetworkManager);
+    
+    if (d->revReplyMap.contains(reply)) {
+        QNetworkReply* netReply = d->revReplyMap[reply];
+        d->revReplyMap.remove(reply);
+        d->replyMap.remove(netReply);
         netReply->deleteLater();
     }
 
@@ -477,9 +487,9 @@ void QGeoNetworkManager::release(QGeoReply* reply)
 */
 void QGeoNetworkManager::cancel(QGeoReply* reply)
 {
-    if (revReplyMap.contains(reply)) {
-        revReplyMap[reply]->abort();
-    }
+    Q_D(QGeoNetworkManager);
+    if (d->revReplyMap.contains(reply))
+        d->revReplyMap[reply]->abort();
 }
 
 /*!
@@ -492,31 +502,64 @@ quint16 QGeoNetworkManager::maxZoomLevel() const {
     Returns a list of all available \l {MapVersion}{MapVersions}.
 */
 QList<MapVersion> QGeoNetworkManager::versions() const {
-    return mapVersions.values();
+    Q_D(const QGeoNetworkManager);
+    return d->mapVersions.values();
 }
 /*!
     Returns a list of all available \l {MapResolution}{MapResolutions}.
 */
 QList<MapResolution> QGeoNetworkManager::resolutions() const {
-    return mapResolutions.values();
+    Q_D(const QGeoNetworkManager);
+    return d->mapResolutions.values();
 }
 /*!
     Returns a list of all available \l {MapFormat}{MapFormats}.
 */
 QList<MapFormat> QGeoNetworkManager::formats() const {
-    return mapFormats.values();
+    Q_D(const QGeoNetworkManager);
+    return d->mapFormats.values();
 }
 /*!
     Returns a list of all available \l {MapScheme}{MapSchemes}.
 */
 QList<MapScheme> QGeoNetworkManager::schemes() const {
-    return mapSchemes.values();
+    Q_D(const QGeoNetworkManager);
+    return d->mapSchemes.values();
+}
+
+/*****************************************************************************
+ *****************************************************************************/
+
+QGeoNetworkManagerPrivate::QGeoNetworkManagerPrivate() :
+    netManager(),
+    geocdProx(QNetworkProxy::NoProxy),
+    rtProx(QNetworkProxy::NoProxy),
+    mapProx(QNetworkProxy::NoProxy)
+{
+    geocdSrv = "dev-a7.bln.gate5.de";
+    mapSrv = "dev-a7.bln.gate5.de";
+    //mapSrv = "maptile.mapplayer.maps.svc.ovi.com";
+    rtSrv = "172.24.32.155";
+}
+
+QGeoNetworkManagerPrivate::~QGeoNetworkManagerPrivate()
+{
+    QList<QNetworkReply*> keys = replyMap.keys();
+
+    while (keys.length() > 0) {
+        QNetworkReply* key = keys[0];
+        QGeoReply* locReply = replyMap[key];
+        replyMap.remove(key);
+        delete locReply;
+        keys.pop_front();
+        delete key;
+    }
 }
 
 /*!
     Parses \a netReply to populates \a routeReply.
 */
-bool QGeoNetworkManager::parseRouteReply(QNetworkReply* netReply, QRouteReply* routeReply)
+bool QGeoNetworkManagerPrivate::parseRouteReply(QNetworkReply* netReply, QRouteReply* routeReply)
 {
     QRouteXmlParser parser;
     return parser.parse(netReply, routeReply);
@@ -525,7 +568,7 @@ bool QGeoNetworkManager::parseRouteReply(QNetworkReply* netReply, QRouteReply* r
 /*!
     * Parses \a netReply to populate \a codingReply.
 */
-bool QGeoNetworkManager::parseCodingReply(QNetworkReply* netReply, QGeocodingReply* codingReply)
+bool QGeoNetworkManagerPrivate::parseCodingReply(QNetworkReply* netReply, QGeocodingReply* codingReply)
 {
     QGeocodingXmlParser parser;
     return parser.parse(netReply, codingReply);
@@ -534,7 +577,7 @@ bool QGeoNetworkManager::parseCodingReply(QNetworkReply* netReply, QGeocodingRep
 /*!
     Returns a string representation of degree value with at most DEGREE_DECIMALS decimals.
 */
-QString QGeoNetworkManager::trimGeoCoordinate(qreal degree)
+QString QGeoNetworkManagerPrivate::trimGeoCoordinate(qreal degree)
 {
     QString sDegree = QString::number(degree, 'f', DEGREE_DECIMALS);
     int index;

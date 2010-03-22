@@ -103,6 +103,15 @@ QRouteRequest::QRouteRequest()
 }
 
 /*!
+    Destroys the route request.
+*/
+QRouteRequest::~QRouteRequest()
+{
+    Q_D(QRouteRequest);
+    delete d;
+}
+
+/*!
     Returns the service version.
 
     Currently the only supported version is 1.0.

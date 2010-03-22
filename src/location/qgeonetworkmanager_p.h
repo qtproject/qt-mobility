@@ -39,54 +39,50 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_ROUTEREPLY_H
-#define QLOCATION_ROUTEREPLY_H
+#ifndef QLOCATION_GEONETWORKMANAGERPRIVATE_P_H
+#define QLOCATION_GEONETWORKMANAGERPRIVATE_P_H
 
 #include <QString>
-#include <QDateTime>
-#include <QList>
+#include <QHash>
+#include <QNetworkProxy>
+#include <QNetworkAccessManager>
 
-#include "qroute.h"
-#include "qgeoreply.h"
+#include "qmaptilecache.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QRouteReplyPrivate;
-class Q_LOCATION_EXPORT QRouteReply : public QGeoReply
+class QGeoNetworkManagerPrivate
 {
-    Q_OBJECT
-
-    friend class QRouteXmlParser;
-    friend class QGeoNetworkManager;
-
 public:
-
-    enum ResultCode {
-        OK = 0,
-        Failed,
-        FailedWithAlternative
-    };
-
-public:
-
-    ResultCode resultCode() const;
-    void setResultCode(ResultCode result);
-    QString resultDescription() const;
-    QString language() const;
-    void setResultDescription(QString description);
-    void setLanguage(QString language);
-    int count() const;
-    const QList<QRoute>& routes() const;
-    void addRoute(QRoute route);
+    QGeoNetworkManagerPrivate();
+    ~QGeoNetworkManagerPrivate();
     
-private:
-    Q_DISABLE_COPY(QRouteReply);
+    bool parseRouteReply(QNetworkReply* netReply, QRouteReply* routeReply);
+    bool parseCodingReply(QNetworkReply* netReply, QGeocodingReply* codingReply);
 
-    QRouteReply();
+    static QString trimGeoCoordinate(qreal degree);
+    
+    QNetworkAccessManager netManager; //!< The internal network manager
+    QString geocdSrv;
+    QString rtSrv;
+    QString mapSrv;
+    QNetworkProxy geocdProx;
+    QNetworkProxy rtProx;
+    QNetworkProxy mapProx;
+    QString token;
+    QString referrer;
+    QMapTileCache cache; //!< The map tile cache
 
-private:
-    QRouteReplyPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QRouteReply)
+    //! maps QNetworkReplies to their corresponding QGeoReplies
+    QHash<QNetworkReply*, QGeoReply*> replyMap;
+    //! maps a QGeoReply to its corresponding QNetworkReply
+    QHash<QGeoReply*, QNetworkReply*> revReplyMap;
+
+    QHash<QString, MapVersion> mapVersions;
+    QHash<QString, MapResolution> mapResolutions;
+    QHash<QString, MapFormat> mapFormats;
+    QHash<QString, MapScheme> mapSchemes;
+
 };
 
 QTM_END_NAMESPACE

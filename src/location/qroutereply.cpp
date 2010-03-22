@@ -41,6 +41,7 @@
 
 
 #include "qroutereply.h"
+#include "qroutereply_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -65,34 +66,71 @@ QTM_BEGIN_NAMESPACE
         request failed, but a close alternative was found
 */
 
-QRouteReply::QRouteReply() : rCode(Failed) {}
+QRouteReply::QRouteReply()
+    : d_ptr(new QRouteReplyPrivate())
+{
+}
 
 /*!
     Returns the result code as reported by the geo engine.
 */
-QRouteReply::ResultCode QRouteReply::resultCode() const {
-    return rCode;
+QRouteReply::ResultCode QRouteReply::resultCode() const
+{
+    Q_D(const QRouteReply);
+    return d->rCode;
+}
+/*!
+    Sets the result code
+*/
+void QRouteReply::setResultCode(QRouteReply::ResultCode result)
+{
+    Q_D(QRouteReply);
+    d->rCode = result;
 }
 
 /*!
     Returns a textual description of the result.
 */
-QString QRouteReply::resultDescription() const {
-    return descr;
+QString QRouteReply::resultDescription() const
+{
+    Q_D(const QRouteReply);
+    return d->descr;
+}
+
+/*!
+    Sets a textual description of the result.
+*/
+void QRouteReply::setResultDescription(QString description)
+{
+    Q_D(QRouteReply);
+    d->descr = description;
 }
 
 /*!
     Returns the RFC 3066 language code of the reply.
 */
-QString QRouteReply::language() const {
-    return lang;
+QString QRouteReply::language() const
+{
+    Q_D(const QRouteReply);
+    return d->lang;
+}
+
+/*!
+    Sets the RFC 3066 language code of the reply.
+*/
+void QRouteReply::setLanguage(QString language)
+{
+    Q_D(QRouteReply);
+    d->lang = language;
 }
 
 /*!
     Returns the number of routes contained in this reply.
 */
-int QRouteReply::count() const {
-    return rt.size();
+int QRouteReply::count() const
+{
+    Q_D(const QRouteReply);
+    return d->rt.size();
 }
 
 /*!
@@ -100,8 +138,18 @@ int QRouteReply::count() const {
 
     \sa QRoute
 */
-const QList<QRoute>& QRouteReply::routes() const {
-    return rt;
+const QList<QRoute>& QRouteReply::routes() const
+{
+    Q_D(const QRouteReply);
+    return d->rt;
+}
+/*!
+    Adds a route to the list of found routes.
+*/
+void QRouteReply::addRoute(QRoute route)
+{
+    Q_D(QRouteReply);
+    d->rt.append(route);
 }
 
 #include "moc_qroutereply.cpp"
