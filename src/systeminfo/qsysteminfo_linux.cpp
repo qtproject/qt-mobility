@@ -560,12 +560,12 @@ QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
 
 QString QSystemDeviceInfoPrivate::imei()
 {
-        return QLatin1String("Sim Not Available");
+        return QLatin1String("");
 }
 
 QString QSystemDeviceInfoPrivate::imsi()
 {
-        return QLatin1String("Sim Not Available");
+        return QLatin1String("");
 }
 
 QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
