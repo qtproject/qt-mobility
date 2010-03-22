@@ -118,19 +118,17 @@ void ContactEditor::setCurrentContact(QContactManager* manager, QContactLocalId 
     m_manager = manager;
     m_contactId = currentId;
     m_newAvatarPath = QString();
-
-    if (manager == 0 || currentId == 0) {
-        // clear the UI and return.
-        m_nameEdit->setText("");
-        m_phoneEdit->setText("");
-        m_emailEdit->setText("");
-        m_addrEdit->setText("");
-        m_avatarBtn->setText("Add image");
-        m_avatarBtn->setIcon(QIcon());
-
-        if (manager == 0)
-            m_saveBtn->setEnabled(false);
-
+    
+    // Clear UI
+    m_nameEdit->setText("");
+    m_phoneEdit->setText("");
+    m_emailEdit->setText("");
+    m_addrEdit->setText("");
+    m_avatarBtn->setText("Add image");
+    m_avatarBtn->setIcon(QIcon());
+    
+    if (manager == 0) {
+        m_saveBtn->setEnabled(false);
         return;
     }
 
@@ -138,33 +136,65 @@ void ContactEditor::setCurrentContact(QContactManager* manager, QContactLocalId 
     m_saveBtn->setEnabled(true);
 
     // otherwise, build from the contact details.
-    QContact curr = manager->contact(m_contactId);
-    QContactName nm = curr.detail(QContactName::DefinitionName);
+    QContact curr;
+    if (m_contactId != QContactLocalId(0))
+        curr = manager->contact(m_contactId);
+    
+    // Disable fields & buttons according to what the backend supports
+    QMap<QString, QContactDetailDefinition> defs = m_manager->detailDefinitions(QContactType::TypeContact);
+    
+    // name
+    //QContactName nm = curr.detail(QContactName::DefinitionName);
+    if (m_contactId != QContactLocalId(0))
+        m_nameEdit->setText(manager->synthesizedDisplayLabel(curr));
+    
+    // phonenumber
     QContactPhoneNumber phn = curr.detail(QContactPhoneNumber::DefinitionName);
-    QContactEmailAddress em = curr.detail(QContactEmailAddress::DefinitionName);
-    QContactAddress adr = curr.detail(QContactAddress::DefinitionName);
-    QContactAvatar av = curr.detail(QContactAvatar::DefinitionName);
-    QContactThumbnail thumb = curr.detail(QContactThumbnail::DefinitionName);
-
-    m_nameEdit->setText(manager->synthesizedDisplayLabel(curr));
     m_phoneEdit->setText(phn.value(QContactPhoneNumber::FieldNumber));
-    m_emailEdit->setText(em.value(QContactEmailAddress::FieldEmailAddress));
-    m_addrEdit->setText(adr.value(QContactAddress::FieldStreet)); // ugly hack.
     
-    m_avatarBtn->setText(QString());
-    m_avatarBtn->setIcon(QIcon());
-    
-    if (thumb.thumbnail().isNull()) {
-        if (av.imageUrl().isEmpty()) {
-            m_avatarBtn->setText("Add image");
-        } else {
-            m_avatarBtn->setIcon(QIcon(QPixmap(av.imageUrl().toLocalFile())));
-            m_thumbnail = QImage(av.imageUrl().toLocalFile());
-        }
+    // email
+    if (defs.contains(QContactEmailAddress::DefinitionName)) {
+        QContactEmailAddress em = curr.detail(QContactEmailAddress::DefinitionName);
+        m_emailEdit->setText(em.value(QContactEmailAddress::FieldEmailAddress));
+        m_emailEdit->setReadOnly(false);
     } else {
-        m_newAvatarPath = av.imageUrl().toLocalFile();
-        m_thumbnail = thumb.thumbnail();
-        m_avatarBtn->setIcon(QIcon(QPixmap::fromImage(thumb.thumbnail())));
+        m_emailEdit->setText("<not supported>");
+        m_emailEdit->setReadOnly(true);
+    }
+    
+    // address
+    if (defs.contains(QContactAddress::DefinitionName)) {
+        QContactAddress adr = curr.detail(QContactAddress::DefinitionName);
+        m_addrEdit->setText(adr.value(QContactAddress::FieldStreet)); // ugly hack.
+        m_addrEdit->setReadOnly(false);
+    } else {
+        m_addrEdit->setText("<not supported>");
+        m_addrEdit->setReadOnly(true);
+    }    
+    
+    // avatar button
+    if (defs.contains(QContactAvatar::DefinitionName)) {
+        QContactAvatar av = curr.detail(QContactAvatar::DefinitionName);
+        QContactThumbnail thumb = curr.detail(QContactThumbnail::DefinitionName);    
+        m_avatarBtn->setText(QString());
+        m_avatarBtn->setIcon(QIcon());
+        if (thumb.thumbnail().isNull()) {
+            if (av.imageUrl().isEmpty()) {
+                m_avatarBtn->setText("Add image");
+            } else {
+                m_avatarBtn->setIcon(QIcon(QPixmap(av.imageUrl().toLocalFile())));
+                m_thumbnail = QImage(av.imageUrl().toLocalFile());
+            }
+        } else {
+            m_newAvatarPath = av.imageUrl().toLocalFile();
+            m_thumbnail = thumb.thumbnail();
+            m_avatarBtn->setIcon(QIcon(QPixmap::fromImage(thumb.thumbnail())));
+        }
+        m_avatarBtn->setDisabled(false);
+    } else {
+        m_avatarBtn->setIcon(QIcon());
+        m_avatarBtn->setText("<not supported>");
+        m_avatarBtn->setDisabled(true);
     }
 }
 
@@ -207,43 +237,54 @@ void ContactEditor::saveClicked()
         QContact curr;
         if (m_contactId != QContactLocalId(0))
             curr = m_manager->contact(m_contactId);
-        QContactName nm = curr.detail(QContactName::DefinitionName);
-        QContactPhoneNumber phn = curr.detail(QContactPhoneNumber::DefinitionName);
-        QContactEmailAddress em = curr.detail(QContactEmailAddress::DefinitionName);
-        QContactAddress adr = curr.detail(QContactAddress::DefinitionName);
-        QContactAvatar av = curr.detail(QContactAvatar::DefinitionName);
-        QContactThumbnail thumb = curr.detail(QContactThumbnail::DefinitionName);
-
-        QString saveNameField = nameField();
-        if (!saveNameField.isEmpty()) {
-            // if the name has changed (ie, is different to the synthed label) then save it as a custom label.
-            if (m_nameEdit->text() != m_manager->synthesizedDisplayLabel(curr)) {
-                nm.setValue(nameField(), m_nameEdit->text());
-            }
+        
+        if (m_nameEdit->text().isEmpty()) {
+            QMessageBox::information(this, "Failed!", "You must give a name for the contact!");
+            return;
         }
+        
+        if (m_nameEdit->text() != m_manager->synthesizedDisplayLabel(curr)) {
+            // if the name has changed (ie, is different to the synthed label) then save it as a custom label.
+            QString saveNameField = nameField();
+            if (!saveNameField.isEmpty()) {
+                QContactName nm = curr.detail(QContactName::DefinitionName);
+                nm.setValue(saveNameField, m_nameEdit->text());
+                curr.saveDetail(&nm);
+            }
+        }        
+        
+        QContactPhoneNumber phn = curr.detail(QContactPhoneNumber::DefinitionName);
         phn.setNumber(m_phoneEdit->text());
-        em.setEmailAddress(m_emailEdit->text());
-        adr.setStreet(m_addrEdit->text());
-        av.setImageUrl(QUrl::fromLocalFile(m_newAvatarPath));
-
-
-        QImage img(m_thumbnail);
-        thumb.setThumbnail(img);
-
-        curr.saveDetail(&nm);
         curr.saveDetail(&phn);
-        curr.saveDetail(&em);
-        curr.saveDetail(&adr);
-        curr.saveDetail(&av);
-        curr.saveDetail(&thumb);
+        
+        if (!m_emailEdit->isReadOnly()) {
+            QContactEmailAddress em = curr.detail(QContactEmailAddress::DefinitionName);
+            em.setEmailAddress(m_emailEdit->text());
+            curr.saveDetail(&em);
+        }
+        
+        if (!m_addrEdit->isReadOnly()) {
+            QContactAddress adr = curr.detail(QContactAddress::DefinitionName);
+            adr.setStreet(m_addrEdit->text());
+            curr.saveDetail(&adr);
+        }
+        
+        if (m_avatarBtn->isEnabled()) {
+            QContactAvatar av = curr.detail(QContactAvatar::DefinitionName);
+            av.setAvatar(m_newAvatarPath);
+            curr.saveDetail(&av);
+            
+            QContactThumbnail thumb = curr.detail(QContactThumbnail::DefinitionName);
+            QImage img(m_thumbnail);
+            thumb.setThumbnail(img);
+            curr.saveDetail(&thumb);
+        }
 
         bool success = m_manager->saveContact(&curr);
         if (success)
             QMessageBox::information(this, "Success!", "Contact saved successfully!");
-        else {
-            QMessageBox::information(this, "Failed!", "Failed to save contact!");
-            qDebug() << m_manager->error();
-        }
+        else
+            QMessageBox::information(this, "Failed!", QString("Failed to save contact!\n(error code %1)").arg(m_manager->error()));
     }
 
     emit showListPage();

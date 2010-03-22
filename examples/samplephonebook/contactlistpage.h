@@ -96,6 +96,7 @@ private:
     QMap<QString, QContactManager*> m_initialisedManagers;
 
     QContactFilter m_currentFilter;
+    QMap<QString, QString> m_availableManagers;
 };
 
 #endif // CONTACTLISTPAGE_H
