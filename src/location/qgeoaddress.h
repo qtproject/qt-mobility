@@ -58,6 +58,8 @@ public:
     ~QGeoAddress();
 
     QGeoAddress &operator=(const QGeoAddress &other);
+    bool operator==(const QGeoAddress &other) const;
+    bool operator!=(const QGeoAddress &other) const {return !(other==*this);}
 
     QString country() const;
     void setCountry(const QString &country);

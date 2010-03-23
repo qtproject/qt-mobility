@@ -111,6 +111,30 @@ QGeoAddress &QGeoAddress::operator=(const QGeoAddress &address)
 }
 
 /*!
+    Returns true if this address is equal to \a other,
+    otherwise returns false.
+*/
+bool QGeoAddress::operator==(const QGeoAddress &other) const
+{
+    return d->sCountry == other.country() &&
+           d->sCountryCode == other.countryCode() &&
+           d->sState == other.state() &&
+           d->sCounty == other.county() &&
+           d->sCity == other.city() &&
+           d->sDistrict == other.district() &&
+           d->sThoroughfareName == other.thoroughfareName() &&
+           d->sThoroughfareNumber == other.thoroughfareNumber() &&
+           d->sPostCode == other.postCode();
+}
+
+/*!
+    \fn bool QGeoAddress::operator!=(const QGeoAddress &other) const
+
+    Returns true if this address is not equal to \a other,
+    otherwise returns false.
+*/
+
+/*!
     Returns the country name according to ISO 3166-1 alpha-3
 */
 QString QGeoAddress::country() const

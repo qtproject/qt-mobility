@@ -42,7 +42,7 @@
 #define QLANDMARK_P_H
 
 #include "qlandmark.h"
-
+#include "qgeoaddress.h"
 #include <QList>
 #include <QHash>
 #include <QSharedData>
@@ -69,11 +69,7 @@ public:
     QUrl iconUrl;
     double radius;
     QHash<QString, QVariant> attributes;
-    QString street;
-    QString locality;
-    QString region;
-    QString country;
-    QString postcode;
+    QGeoAddress address;
     QString phone;
     QString url;
 };

@@ -58,6 +58,8 @@ QTM_BEGIN_NAMESPACE
 
 class QLandmarkId;
 class QLandmarkCategoryId;
+class QGeoAddress;
+
 class QLandmarkPrivate;
 class Q_LOCATION_EXPORT QLandmark
 {
@@ -95,23 +97,8 @@ public:
     void setAttribute(const QString &attributeName, const QVariant &value);
     QStringList attributes() const;
 
-    QString street() const;
-    void setStreet(const QString &street);
-
-    QString locality() const;
-    void setLocality(const QString &locality);
-
-    QString region() const;
-    void setRegion(const QString &region);
-
-    QString country() const;
-    void setCountry(const QString &country);
-
-    QString postcode() const;
-    void setPostcode(const QString &postCode);
-
-    QString postOfficeBox() const;
-    void setPostOfficeBox(const QString &postOfficeBox);
+    QGeoAddress address() const;
+    void setAddress(const QGeoAddress &address);
 
     QString phone() const;
     void setPhone(const QString &phone);
