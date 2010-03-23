@@ -1,5 +1,5 @@
 #include "wlancond.h"
-#include "maemo-icd.h"
+#include "maemo_icd.h"
 #include "icd/dbus-api.h"
 #include "iapconf.h"
 #include "iapmonitor.h"
