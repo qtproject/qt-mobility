@@ -67,13 +67,12 @@ public:
     const char* HasManager;
     const char* HasSpouse;
 #else
-    Q_DECLARE_LATIN1_LITERAL(HasMember, "HasMember");
-    Q_DECLARE_LATIN1_LITERAL(Aggregates, "Aggregates");
-    Q_DECLARE_LATIN1_LITERAL(Is, "IsSameAs"); // deprecated
-    Q_DECLARE_LATIN1_LITERAL(IsSameAs, "IsSameAs");
-    Q_DECLARE_LATIN1_LITERAL(HasAssistant, "HasAssistant");
-    Q_DECLARE_LATIN1_LITERAL(HasManager, "HasManager");
-    Q_DECLARE_LATIN1_LITERAL(HasSpouse, "HasSpouse");
+    Q_DECLARE_LATIN1_CONSTANT(HasMember, "HasMember");
+    Q_DECLARE_LATIN1_CONSTANT(Aggregates, "Aggregates");
+    Q_DECLARE_LATIN1_CONSTANT(IsSameAs, "IsSameAs");
+    Q_DECLARE_LATIN1_CONSTANT(HasAssistant, "HasAssistant");
+    Q_DECLARE_LATIN1_CONSTANT(HasManager, "HasManager");
+    Q_DECLARE_LATIN1_CONSTANT(HasSpouse, "HasSpouse");
 #endif
 
     QContactRelationship();
@@ -92,9 +91,20 @@ public:
     void setSecond(const QContactId& secondId);
     void setRelationshipType(const QString& relationshipType);
 
+    enum Role {
+        First = 0,
+        Second,
+        Either
+    };
+
 private:
     QSharedDataPointer<QContactRelationshipPrivate> d;
 };
+
+Q_CONTACTS_EXPORT uint qHash(const QContactRelationship& key);
+#ifndef QT_NO_DEBUG_STREAM
+Q_CONTACTS_EXPORT QDebug operator<<(QDebug dbg, const QContactRelationship& rel);
+#endif
 
 QTM_END_NAMESPACE
 

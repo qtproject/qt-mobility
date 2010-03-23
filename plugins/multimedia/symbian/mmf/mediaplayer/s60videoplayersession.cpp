@@ -69,7 +69,7 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service)
     , m_screenDevice(*CCoeEnv::Static()->ScreenDevice())
     , m_window(0)
     , m_service(*service)
-    , m_aspectRatioMode(QVideoWidget::KeepAspectRatio)
+    , m_aspectRatioMode(Qt::KeepAspectRatio)
     , m_originalSize(1, 1)
     , m_audioOutput(0)
 {  
@@ -158,7 +158,7 @@ bool S60VideoPlayerSession::resetNativeHandles()
     QVideoOutputControl* videoControl = qobject_cast<QVideoOutputControl *>(m_service.control(QVideoOutputControl_iid));
     WId newId = 0;
     TRect newRect = TRect(0,0,0,0);
-    QVideoWidget::AspectRatioMode aspectRatioMode = QVideoWidget::KeepAspectRatio;
+    Qt::AspectRatioMode aspectRatioMode = Qt::KeepAspectRatio;
     
     if (videoControl->output() == QVideoOutputControl::WidgetOutput) {
         S60VideoWidgetControl* widgetControl = qobject_cast<S60VideoWidgetControl *>(m_service.control(QVideoWidgetControl_iid));
@@ -246,10 +246,10 @@ void S60VideoPlayerSession::doSetVolumeL(int volume)
 QPair<qreal, qreal> S60VideoPlayerSession::scaleFactor()
 {
     QSize scaled = m_originalSize;
-    if (m_aspectRatioMode == QVideoWidget::IgnoreAspectRatio)
-        scaled.scale(TRect2QRect(m_rect).size(), Qt::IgnoreAspectRatio);    
-    else if(m_aspectRatioMode == QVideoWidget::KeepAspectRatio)
-        scaled.scale(TRect2QRect(m_rect).size(), Qt::KeepAspectRatio);    
+    if (m_aspectRatioMode == Qt::IgnoreAspectRatio)
+        scaled.scale(qt_TRect2QRect(m_rect).size(), Qt::IgnoreAspectRatio);    
+    else if(m_aspectRatioMode == Qt::KeepAspectRatio)
+        scaled.scale(qt_TRect2QRect(m_rect).size(), Qt::KeepAspectRatio);    
     
     qreal width = qreal(scaled.width()) / qreal(m_originalSize.width()) * qreal(100);
     qreal height = qreal(scaled.height()) / qreal(m_originalSize.height()) * qreal(100);

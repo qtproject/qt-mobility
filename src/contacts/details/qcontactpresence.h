@@ -43,8 +43,8 @@
 #ifndef QCONTACTPRESENCE_H
 #define QCONTACTPRESENCE_H
 
-#include <QtDebug>
 #include <QString>
+#include <QUrl>
 
 #include "qtcontactsglobal.h"
 #include "qcontactdetail.h"
@@ -58,40 +58,44 @@ class Q_CONTACTS_EXPORT QContactPresence : public QContactDetail
 public:
 #ifdef Q_QDOC
     const char* DefinitionName;
-    const char* FieldAccountUri;
+    const char* FieldTimestamp;
     const char* FieldNickname;
-    const char* FieldPresence;
-    const char* FieldStatusMessage;
-    const char* PresenceAvailable;
-    const char* PresenceHidden;
-    const char* PresenceBusy;
-    const char* PresenceAway;
-    const char* PresenceExtendedAway;
-    const char* PresenceUnknown;
-    const char* PresenceOffline;
+    const char* FieldPresenceState;
+    const char* FieldPresenceStateText;
+    const char* FieldPresenceStateImageUrl;
+    const char* FieldCustomMessage;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactPresence, "Presence")
-    Q_DECLARE_LATIN1_LITERAL(FieldAccountUri, "AccountUri");
-    Q_DECLARE_LATIN1_LITERAL(FieldNickname, "Nickname");
-    Q_DECLARE_LATIN1_LITERAL(FieldPresence, "Presence");
-    Q_DECLARE_LATIN1_LITERAL(FieldStatusMessage, "StatusMessage");
-    Q_DECLARE_LATIN1_LITERAL(PresenceAvailable, "Available");
-    Q_DECLARE_LATIN1_LITERAL(PresenceHidden, "Hidden");
-    Q_DECLARE_LATIN1_LITERAL(PresenceBusy, "Busy");
-    Q_DECLARE_LATIN1_LITERAL(PresenceAway, "Away");
-    Q_DECLARE_LATIN1_LITERAL(PresenceExtendedAway, "ExtendedAway");
-    Q_DECLARE_LATIN1_LITERAL(PresenceUnknown, "Unknown");
-    Q_DECLARE_LATIN1_LITERAL(PresenceOffline, "Offline");
+    Q_DECLARE_LATIN1_CONSTANT(FieldTimestamp, "Timestamp");
+    Q_DECLARE_LATIN1_CONSTANT(FieldNickname, "Nickname");
+    Q_DECLARE_LATIN1_CONSTANT(FieldPresenceState, "PresenceState");
+    Q_DECLARE_LATIN1_CONSTANT(FieldPresenceStateText, "PresenceStateText");
+    Q_DECLARE_LATIN1_CONSTANT(FieldPresenceStateImageUrl, "PresenceStateImageUrl");
+    Q_DECLARE_LATIN1_CONSTANT(FieldCustomMessage, "CustomMessage");
 #endif
 
-    void Q_DECL_DEPRECATED setAccountUri(const QString& accountUri) {qWarning("This class has been deprecated!  Please use QContactOnlineAccount and Read-Only Field Constraints!"); setValue(FieldAccountUri, accountUri);}
-    QString Q_DECL_DEPRECATED accountUri() const {qWarning("This class has been deprecated!  Please use QContactOnlineAccount and Read-Only Field Constraints!"); return value(FieldAccountUri);}
-    void Q_DECL_DEPRECATED setNickname(const QString& nickname) {qWarning("This class has been deprecated!  Please use QContactOnlineAccount and Read-Only Field Constraints!"); setValue(FieldNickname, nickname);}
-    QString Q_DECL_DEPRECATED nickname() const {qWarning("This class has been deprecated!  Please use QContactOnlineAccount and Read-Only Field Constraints!"); return value(FieldNickname);}
-    void Q_DECL_DEPRECATED setPresence(const QString& presence) {qWarning("This class has been deprecated!  Please use QContactOnlineAccount and Read-Only Field Constraints!"); setValue(FieldPresence, presence);}
-    QString Q_DECL_DEPRECATED presence() const {qWarning("This class has been deprecated!  Please use QContactOnlineAccount and Read-Only Field Constraints!"); return value(FieldPresence);}
-    void Q_DECL_DEPRECATED setStatusMessage(const QString& statusMessage) {qWarning("This class has been deprecated!  Please use QContactOnlineAccount and Read-Only Field Constraints!"); setValue(FieldStatusMessage, statusMessage);}
-    QString Q_DECL_DEPRECATED statusMessage() const {qWarning("This class has been deprecated!  Please use QContactOnlineAccount and Read-Only Field Constraints!"); return value(FieldStatusMessage);}
+    enum PresenceState {
+        PresenceUnknown = 0,
+        PresenceAvailable,
+        PresenceHidden,
+        PresenceBusy,
+        PresenceAway,
+        PresenceExtendedAway,
+        PresenceOffline,
+    };
+
+    void setTimestamp(const QDateTime& timestamp) {setValue(FieldTimestamp, timestamp);}
+    QDateTime timestamp() const {return value<QDateTime>(FieldTimestamp);}
+    void setNickname(const QString& nickname) {setValue(FieldNickname, nickname);}
+    QString nickname() const {return value(FieldNickname);}
+    void setPresenceState(PresenceState presence) {setValue(FieldPresenceState, static_cast<int>(presence));}
+    PresenceState presenceState() const {return static_cast<PresenceState>(value<int>(FieldPresenceState));}
+    void setPresenceStateText(const QString& presenceStateText) {setValue(FieldPresenceStateText, presenceStateText);}
+    QString presenceStateText() const {return value(FieldPresenceStateText);}
+    void setPresenceStateImageUrl(const QUrl& presenceStateImageUrl) {setValue(FieldPresenceStateImageUrl, presenceStateImageUrl);}
+    QUrl presenceStateImageUrl() const {return value(FieldPresenceStateImageUrl);}
+    void setCustomMessage(const QString& customMessage) {setValue(FieldCustomMessage, customMessage);}
+    QString customMessage() const {return value(FieldCustomMessage);}
 };
 
 QTM_END_NAMESPACE

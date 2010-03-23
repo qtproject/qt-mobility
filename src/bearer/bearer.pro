@@ -19,6 +19,13 @@ SOURCES += qnetworksession.cpp \
            qnetworkconfiguration.cpp
 
 symbian: {
+    contains (occ_enabled, yes) {
+        message("Building with OCC enabled")
+        DEFINES += OCC_FUNCTIONALITY_AVAILABLE=1
+        LIBS += -lextendedconnpref
+    } else {
+        message("Building without OCC support")
+    }
     contains(snap_enabled, yes) {
         message("Building with SNAP support")
         DEFINES += SNAP_FUNCTIONALITY_AVAILABLE=1
@@ -54,32 +61,33 @@ symbian: {
     QtBearerManagement.path = /sys/bin
     DEPLOYMENT += QtBearerManagement
 } else {
-    maemo6 {
-	CONFIG += link_pkgconfig
+    maemo6|maemo5 {
+        CONFIG += link_pkgconfig
+        QT += dbus
 
-	exists(../debug) {
-		message("Enabling debug messages.")
-		DEFINES += BEARER_MANAGEMENT_DEBUG
-	}
+        exists(../debug) {
+                message("Enabling debug messages.")
+                DEFINES += BEARER_MANAGEMENT_DEBUG
+        }
 
         HEADERS += qnetworksession_maemo_p.h \
                    qnetworkconfigmanager_maemo_p.h \
                    qnetworkconfiguration_maemo_p.h
 
         SOURCES += qnetworkconfigmanager_maemo.cpp \
-		   qnetworksession_maemo.cpp
+                   qnetworksession_maemo.cpp
 
-	documentation.path = $$QT_MOBILITY_PREFIX/doc
+        documentation.path = $$QT_MOBILITY_PREFIX/doc
         documentation.files = doc/html
 
-	PKGCONFIG += glib-2.0 dbus-glib-1 gconf-2.0 osso-ic conninet
+        PKGCONFIG += glib-2.0 dbus-glib-1 gconf-2.0 osso-ic conninet
 
-	CONFIG += create_pc create_prl
-	QMAKE_PKGCONFIG_REQUIRES = glib-2.0 dbus-glib-1 gconf-2.0 osso-ic conninet
-	pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
-	pkgconfig.files = QtBearer.pc
+        CONFIG += create_pc create_prl
+        QMAKE_PKGCONFIG_REQUIRES = glib-2.0 dbus-glib-1 gconf-2.0 osso-ic conninet
+        pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
+        pkgconfig.files = QtBearer.pc
 
-	INSTALLS += pkgconfig documentation
+        INSTALLS += pkgconfig documentation
 
     } else {
 

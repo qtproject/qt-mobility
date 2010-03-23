@@ -114,7 +114,6 @@ maemo5 {
     SOURCES += qgraphicsvideoitem.cpp
 }
 
-include (experimental/experimental.pri)
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
 symbian {

@@ -67,15 +67,15 @@ public:
     const char* SubTypeMemorial;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactAnniversary, "Anniversary")
-    Q_DECLARE_LATIN1_LITERAL(FieldCalendarId, "CalendarId");
-    Q_DECLARE_LATIN1_LITERAL(FieldOriginalDate, "OriginalDate");
-    Q_DECLARE_LATIN1_LITERAL(FieldEvent, "Event");
-    Q_DECLARE_LATIN1_LITERAL(FieldSubType, "SubType");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeWedding, "Wedding");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeEngagement, "Engagement");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeHouse, "House");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeEmployment, "Employment");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeMemorial, "Memorial");
+    Q_DECLARE_LATIN1_CONSTANT(FieldCalendarId, "CalendarId");
+    Q_DECLARE_LATIN1_CONSTANT(FieldOriginalDate, "OriginalDate");
+    Q_DECLARE_LATIN1_CONSTANT(FieldEvent, "Event");
+    Q_DECLARE_LATIN1_CONSTANT(FieldSubType, "SubType");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeWedding, "Wedding");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeEngagement, "Engagement");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeHouse, "House");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeEmployment, "Employment");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeMemorial, "Memorial");
 #endif
 
     void setOriginalDate(const QDate& date) {setValue(FieldOriginalDate, date);}

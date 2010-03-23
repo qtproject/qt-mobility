@@ -69,6 +69,7 @@ private slots: //test methods
     void testValue();
     void testEmbeddedDocument();
     void testEquality();
+    void testHash();
 
 private:
     QVersitProperty* mVersitProperty;

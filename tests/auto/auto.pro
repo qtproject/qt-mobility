@@ -101,7 +101,6 @@ contains(mobility_modules,versit) {
 contains(mobility_modules,multimedia) {
     SUBDIRS += \             #Multimedia
         qaudiocapturesource \
-        qcamera \
         qgraphicsvideoitem \
         qmediaimageviewer \
         qmediaobject \
@@ -122,6 +121,11 @@ contains(mobility_modules,multimedia) {
     symbian: {
         #symbian spesific autotests
         SUBDIRS += symbian 
+        SUBDIRS -= \
+                qmediaplayer_s60 \
+                qradiotuner_s60 \
+                qmediaobject_s60 \
+                qmediarecorder_s60
     }
 }
 #Messaging

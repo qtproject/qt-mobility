@@ -64,8 +64,12 @@ public:
 #endif    
     QMessage::TypeFlags _types;
 
-#if defined(Q_OS_WIN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+#if defined(Q_OS_WIN)
     static QMessageAccount from(const QMessageAccountId &id, const QString &name, const QMessageAddress &address, const QMessage::TypeFlags &types);
+#endif
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    static QMessageAccount from(const QMessageAccountId &id, const QString &name, const QMessageAddress &address, const QMessage::TypeFlags &types);
+    static QMessageAccountPrivate* implementation(const QMessageAccount &account);
 #endif
 #if defined(Q_OS_SYMBIAN)
     static QMessageAccount from(const QMessageAccountId &id, const QString &name, long int service1EntryId, long int service2EntryId, const QMessage::TypeFlags &types);

@@ -73,6 +73,13 @@ private:
 
 typedef QPair<int,int> qrange;
 typedef QList<qrange> qrangelist;
+struct qoutputrange
+{
+    qreal minimum;
+    qreal maximum;
+    qreal accuracy;
+};
+typedef QList<qoutputrange> qoutputrangelist;
 
 class Q_SENSORS_EXPORT QSensor : public QObject
 {
@@ -80,30 +87,25 @@ class Q_SENSORS_EXPORT QSensor : public QObject
 
     Q_OBJECT
     Q_PROPERTY(QByteArray sensorid READ identifier WRITE setIdentifier)
-    Q_PROPERTY(QByteArray type READ type WRITE setType)
+    Q_PROPERTY(QByteArray type READ type)
     Q_PROPERTY(bool connected READ isConnected)
     Q_PROPERTY(QtMobility::qrangelist availableDataRates READ availableDataRates)
-    Q_PROPERTY(bool supportsPolling READ supportsPolling)
     Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval)
     Q_PROPERTY(QSensorReading* reading READ reading NOTIFY readingChanged)
     Q_PROPERTY(bool busy READ isBusy)
     Q_PROPERTY(bool active READ isActive)
-    Q_PROPERTY(qreal measurementMinimum READ measurementMinimum)
-    Q_PROPERTY(qreal measurementMaximum READ measurementMaximum)
-    Q_PROPERTY(qreal measurementAccuracy READ measurementAccuracy)
-    Q_PROPERTY(int outputRangeCount READ outputRangeCount)
+    Q_PROPERTY(QtMobility::qoutputrangelist outputRanges READ outputRanges)
     Q_PROPERTY(int outputRange READ outputRange WRITE setOutputRange)
     Q_PROPERTY(QString description READ description)
     Q_PROPERTY(int error READ error NOTIFY sensorError)
 public:
-    explicit QSensor(QObject *parent = 0);
+    explicit QSensor(const QByteArray &type, QObject *parent = 0);
     virtual ~QSensor();
 
     QByteArray identifier() const;
     void setIdentifier(const QByteArray &identifier);
 
     QByteArray type() const;
-    void setType(const QByteArray &type);
 
     Q_INVOKABLE bool connect();
     bool isConnected() const;
@@ -111,19 +113,11 @@ public:
     bool isBusy() const;
     bool isActive() const;
 
-    bool isSignalEnabled() const;
-    void setSignalEnabled(bool enabled);
-
     qrangelist availableDataRates() const;
-    bool supportsPolling() const;
     int updateInterval() const;
     void setUpdateInterval(int interval);
 
-    qreal measurementMinimum() const;
-    qreal measurementMaximum() const;
-    qreal measurementAccuracy() const;
-
-    int outputRangeCount() const;
+    qoutputrangelist outputRanges() const;
     int outputRange() const;
     void setOutputRange(int index);
 
@@ -134,13 +128,11 @@ public:
     void addFilter(QSensorFilter *filter);
     void removeFilter(QSensorFilter *filter);
 
-    // Poll for sensor change (only if using PolledUpdates)
-    void poll();
-
     // The readings are exposed via this object
     QSensorReading *reading() const;
 
     // Information about available sensors
+    // These functions are implemented in qsensormanager.cpp
     static QList<QByteArray> sensorTypes();
     static QList<QByteArray> sensorsForType(const QByteArray &type);
     static QByteArray defaultSensorForType(const QByteArray &type);
@@ -258,6 +250,7 @@ QTM_END_NAMESPACE
 Q_DECLARE_METATYPE(QtMobility::qtimestamp)
 Q_DECLARE_METATYPE(QtMobility::qrange)
 Q_DECLARE_METATYPE(QtMobility::qrangelist)
+Q_DECLARE_METATYPE(QtMobility::qoutputrangelist)
 
 #endif
 

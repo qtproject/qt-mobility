@@ -134,7 +134,7 @@ private:
     CWsScreenDevice &m_screenDevice;
     RWindowBase *m_window;
     QMediaService &m_service;
-    QVideoWidget::AspectRatioMode m_aspectRatioMode;
+    Qt::AspectRatioMode m_aspectRatioMode;
     QSize m_originalSize;
     CAudioOutput *m_audioOutput;
 };

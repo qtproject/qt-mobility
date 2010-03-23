@@ -45,7 +45,6 @@ n900filebasedsensor::n900filebasedsensor(QSensor *sensor)
     : QSensorBackend(sensor)
     , m_timerid(0)
 {
-    enablePolling();
 }
 
 n900filebasedsensor::~n900filebasedsensor()

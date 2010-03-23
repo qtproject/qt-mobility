@@ -35,6 +35,6 @@ symbian {
     #addFiles.path = xmldata
     #DEPLOYMENT += addFiles
 
-    #TARGET.CAPABILITY = ALL -TCB
+    #TARGET.CAPABILITY = ReadUserData WriteUserData
     #FORMS += sfwnotes.ui #change to sfwnotes_small.ui
 }

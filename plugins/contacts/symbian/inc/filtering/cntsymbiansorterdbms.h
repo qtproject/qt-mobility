@@ -59,11 +59,11 @@ public:
     /* from CntAbstractContactFilter */
     QList<QContactLocalId> contacts(
             const QList<QContactSortOrder>& sortOrders,
-            QContactManager::Error& error);
+            QContactManager::Error* error);
     QList<QContactLocalId> sort(
         QList<QContactLocalId> contactIds,
         const QList<QContactSortOrder>& sortOrders,
-        QContactManager::Error& error);
+        QContactManager::Error* error);
     bool sortOrderSupported(const QList<QContactSortOrder>& sortOrders);
 
 private:

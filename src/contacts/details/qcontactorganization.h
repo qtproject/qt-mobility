@@ -43,6 +43,7 @@
 #define QCONTACTORGANIZATION_H
 
 #include <QString>
+#include <QUrl>
 
 #include "qtcontactsglobal.h"
 #include "qcontactdetail.h"
@@ -57,7 +58,7 @@ public:
 #ifdef Q_QDOC
     const char* DefinitionName;
     const char* FieldName;
-    const char* FieldLogo;
+    const char* FieldLogoUrl;
     const char* FieldDepartment;
     const char* FieldLocation;
     const char* FieldRole;
@@ -65,19 +66,19 @@ public:
     const char* FieldAssistantName;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactOrganization, "Organization")
-    Q_DECLARE_LATIN1_LITERAL(FieldName, "Name");
-    Q_DECLARE_LATIN1_LITERAL(FieldLogo, "Logo");
-    Q_DECLARE_LATIN1_LITERAL(FieldDepartment, "Department");
-    Q_DECLARE_LATIN1_LITERAL(FieldLocation, "Location");
-    Q_DECLARE_LATIN1_LITERAL(FieldRole, "Role");
-    Q_DECLARE_LATIN1_LITERAL(FieldTitle, "Title");
-    Q_DECLARE_LATIN1_LITERAL(FieldAssistantName, "AssistantName");
+    Q_DECLARE_LATIN1_CONSTANT(FieldName, "Name");
+    Q_DECLARE_LATIN1_CONSTANT(FieldLogoUrl, "LogoUrl");
+    Q_DECLARE_LATIN1_CONSTANT(FieldDepartment, "Department");
+    Q_DECLARE_LATIN1_CONSTANT(FieldLocation, "Location");
+    Q_DECLARE_LATIN1_CONSTANT(FieldRole, "Role");
+    Q_DECLARE_LATIN1_CONSTANT(FieldTitle, "Title");
+    Q_DECLARE_LATIN1_CONSTANT(FieldAssistantName, "AssistantName");
 #endif
 
     void setName(const QString& name) {setValue(FieldName, name);}
     QString name() const {return value(FieldName);}
-    void setLogo(const QString& logo) {setValue(FieldLogo, logo);}
-    QString logo() const {return value(FieldLogo);}
+    void setLogoUrl(const QUrl& logo) {setValue(FieldLogoUrl, logo);}
+    QUrl logoUrl() const {return value(FieldLogoUrl);}
     void setDepartment(const QStringList& department) {setValue(FieldDepartment, department);}
     QStringList department() const {return value<QStringList>(FieldDepartment);}
     void setLocation(const QString& location) {setValue(FieldLocation, location);}
@@ -87,7 +88,7 @@ public:
     void setTitle(const QString& title) {setValue(FieldTitle, title);}
     QString title() const {return value(FieldTitle);}
     void setAssistantName(const QString& assistantName) {setValue(FieldAssistantName, assistantName);}
-    QString assistantName() const {return value(FieldAssistantName);} 
+    QString assistantName() const {return value(FieldAssistantName);}
 };
 
 QTM_END_NAMESPACE

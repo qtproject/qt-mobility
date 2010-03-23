@@ -69,8 +69,6 @@ public:
     virtual QVariantMap actionMetadata(const QContactActionDescriptor& descriptor) const = 0;
 };
 
-uint qHash(const QContactActionDescriptor& ad);
-
 QTM_END_NAMESPACE
 
 QT_BEGIN_NAMESPACE

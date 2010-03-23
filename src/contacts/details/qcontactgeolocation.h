@@ -69,15 +69,15 @@ public:
     const char* FieldTimestamp;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactGeoLocation, "GeoLocation")
-    Q_DECLARE_LATIN1_LITERAL(FieldLabel, "Label");
-    Q_DECLARE_LATIN1_LITERAL(FieldLatitude, "Latitude");
-    Q_DECLARE_LATIN1_LITERAL(FieldLongitude, "Longitude");
-    Q_DECLARE_LATIN1_LITERAL(FieldAccuracy, "Accuracy");
-    Q_DECLARE_LATIN1_LITERAL(FieldAltitude, "Altitude");
-    Q_DECLARE_LATIN1_LITERAL(FieldAltitudeAccuracy, "AltitudeAccuracy");
-    Q_DECLARE_LATIN1_LITERAL(FieldHeading, "Heading");
-    Q_DECLARE_LATIN1_LITERAL(FieldSpeed, "Speed");
-    Q_DECLARE_LATIN1_LITERAL(FieldTimestamp, "Timestamp");
+    Q_DECLARE_LATIN1_CONSTANT(FieldLabel, "Label");
+    Q_DECLARE_LATIN1_CONSTANT(FieldLatitude, "Latitude");
+    Q_DECLARE_LATIN1_CONSTANT(FieldLongitude, "Longitude");
+    Q_DECLARE_LATIN1_CONSTANT(FieldAccuracy, "Accuracy");
+    Q_DECLARE_LATIN1_CONSTANT(FieldAltitude, "Altitude");
+    Q_DECLARE_LATIN1_CONSTANT(FieldAltitudeAccuracy, "AltitudeAccuracy");
+    Q_DECLARE_LATIN1_CONSTANT(FieldHeading, "Heading");
+    Q_DECLARE_LATIN1_CONSTANT(FieldSpeed, "Speed");
+    Q_DECLARE_LATIN1_CONSTANT(FieldTimestamp, "Timestamp");
 #endif
 
     void setLabel(const QString& label) {setValue(FieldLabel, label);}

@@ -93,7 +93,6 @@ tst_qsystemstorageinfo.exe
 
 ::QMedia
 tst_qaudiocapturesource.exe
-tst_qcamera.exe
 tst_qgraphicsvideoitem.exe
 tst_qmediacontent.exe
 tst_qmediaimageviewer.exe
