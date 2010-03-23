@@ -56,6 +56,7 @@ public:
     void registerSensors()
     {
         QSensorManager::registerBackend(TestSensor::type, testsensorimpl::id, this);
+        QSensorManager::registerBackend(TestSensor::type, "test sensor 2", this);
     }
 
     QSensorBackend *createBackend(QSensor *sensor)
@@ -64,6 +65,7 @@ public:
             return new testsensorimpl(sensor);
         }
 
+        qWarning() << "Can't create backend" << sensor->identifier();
         return 0;
     }
 };

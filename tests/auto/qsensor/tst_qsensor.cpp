@@ -41,8 +41,11 @@
 #include <QObject>
 #include <QTest>
 #include <QDebug>
+#include <QSettings>
 
 #include "qsensor.h"
+#include "test_sensor.h"
+#include "test_sensorimpl.h"
 
 QTM_USE_NAMESPACE
 
@@ -54,47 +57,169 @@ class tst_QSensor : public QObject
     Q_OBJECT
 
 public:
-    tst_QSensor();
-    virtual ~tst_QSensor();
+    tst_QSensor()
+    {
+    }
 
 private slots:
-    void initTestCase();
-    void cleanup();
-    void cleanupTestCase();
+    void initTestCase()
+    {
+        QSettings settings(QLatin1String("Nokia"), QLatin1String("Sensors"));
+        settings.clear();
+    }
 
-    void testType();
+    void cleanupTestCase()
+    {
+        QSettings settings(QLatin1String("Nokia"), QLatin1String("Sensors"));
+        settings.clear();
+    }
+
+
+    void testTypeRegistered()
+    {
+        QList<QByteArray> expected;
+        expected << TestSensor::type;
+        QList<QByteArray> actual = QSensor::sensorTypes();
+        QCOMPARE(actual, expected);
+    }
+
+    void testSensorRegistered()
+    {
+        QList<QByteArray> expected;
+        expected << testsensorimpl::id << "test sensor 2";
+        QList<QByteArray> actual = QSensor::sensorsForType(TestSensor::type);
+        QCOMPARE(actual, expected);
+    }
+
+    void testSensorDefault()
+    {
+        QByteArray expected = testsensorimpl::id;
+        QByteArray actual = QSensor::defaultSensorForType(TestSensor::type);
+        QCOMPARE(actual, expected);
+    }
+
+    void testBadDefaultFromConfig()
+    {
+        QSettings settings(QLatin1String("Nokia"), QLatin1String("Sensors"));
+        settings.setValue(QString(QLatin1String("Default/%1")).arg(QString::fromLatin1(TestSensor::type)), QByteArray("bogus id"));
+        settings.sync();
+
+        QByteArray expected = testsensorimpl::id;
+        QByteArray actual = QSensor::defaultSensorForType(TestSensor::type);
+        QCOMPARE(actual, expected);
+    }
+
+    void testGoodDefaultFromConfig()
+    {
+        QSettings settings(QLatin1String("Nokia"), QLatin1String("Sensors"));
+        settings.setValue(QString(QLatin1String("Default/%1")).arg(QString::fromLatin1(TestSensor::type)), QByteArray(testsensorimpl::id));
+        settings.sync();
+
+        QByteArray expected = testsensorimpl::id;
+        QByteArray actual = QSensor::defaultSensorForType(TestSensor::type);
+        QCOMPARE(actual, expected);
+    }
+
+    void testNoSensorsForType()
+    {
+        QList<QByteArray> expected;
+        QList<QByteArray> actual = QSensor::sensorsForType("bogus type");
+        QCOMPARE(actual, expected);
+    }
+
+    void testNoDefaultForType()
+    {
+        QByteArray expected;
+        QByteArray actual = QSensor::defaultSensorForType("bogus type");
+        QCOMPARE(actual, expected);
+    }
+
+    void testCreation()
+    {
+        TestSensor sensor;
+        sensor.connect();
+        QByteArray expected = testsensorimpl::id;
+        QByteArray actual = sensor.identifier();
+        QCOMPARE(actual, expected);
+    }
+
+    void testBadDefaultCreation()
+    {
+        QSettings settings(QLatin1String("Nokia"), QLatin1String("Sensors"));
+        settings.setValue(QString(QLatin1String("Default/%1")).arg(QString::fromLatin1(TestSensor::type)), QByteArray("test sensor 2"));
+        settings.sync();
+
+        TestSensor sensor;
+        QTest::ignoreMessage(QtWarningMsg, "Can't create backend \"test sensor 2\" ");
+        sensor.connect();
+        QByteArray expected = testsensorimpl::id;
+        QByteArray actual = sensor.identifier();
+        QCOMPARE(actual, expected);
+    }
+
+    void testBadCreation()
+    {
+        QSensor sensor("bogus type");
+        sensor.connect();
+        QByteArray expected; // should be null
+        QByteArray actual = sensor.identifier();
+        QCOMPARE(actual, expected);
+    }
+
+    void resetSettings()
+    {
+        QSettings settings(QLatin1String("Nokia"), QLatin1String("Sensors"));
+        settings.setValue(QString(QLatin1String("Default/%1")).arg(QString::fromLatin1(TestSensor::type)), QByteArray(testsensorimpl::id));
+        settings.sync();
+    }
+
+    void testTimestamp()
+    {
+        TestSensor sensor;
+        sensor.connect();
+        QVERIFY(sensor.reading() != 0);
+        quint64 timestamp = sensor.reading()->timestamp();
+        QVERIFY(timestamp == qtimestamp());
+    }
+
+    void testStart()
+    {
+        TestSensor sensor;
+        sensor.start();
+        QVERIFY(sensor.isActive());
+        sensor.start();
+        QVERIFY(sensor.isActive());
+    }
+
+    void testBadStart()
+    {
+        QSensor sensor("bogus type");
+        sensor.start();
+        QVERIFY(!sensor.isActive());
+    }
+
+    void testStop()
+    {
+        TestSensor sensor;
+        sensor.stop();
+        QVERIFY(!sensor.isActive());
+        sensor.start();
+        QVERIFY(sensor.isActive());
+        sensor.stop();
+        QVERIFY(!sensor.isActive());
+    }
+
+    void testMetaData()
+    {
+        TestSensor sensor;
+        sensor.connect();
+
+        QString actual = sensor.description();
+        QString expected = "sensor description";
+        QCOMPARE(actual, expected);
+    }
 };
 
 QTEST_MAIN(tst_QSensor)
 
 #include "tst_qsensor.moc"
-
-tst_QSensor::tst_QSensor()
-{
-}
-
-tst_QSensor::~tst_QSensor()
-{
-}
-
-void tst_QSensor::initTestCase()
-{
-    qDebug() << "initTestCase";
-}
-
-void tst_QSensor::cleanup()
-{
-    qDebug() << "cleanup";
-}
-
-void tst_QSensor::cleanupTestCase()
-{
-    qDebug() << "cleanupTestCase";
-}
-
-void tst_QSensor::testType()
-{
-    QSensor sensor("test sensor");
-    QVERIFY(sensor.connect());
-}
-

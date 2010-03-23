@@ -48,6 +48,7 @@ testsensorimpl::testsensorimpl(QSensor *sensor)
     : QSensorBackend(sensor)
 {
     setReading<TestSensorReading>(&m_reading);
+    setDescription("sensor description");
 }
 
 void testsensorimpl::start()
