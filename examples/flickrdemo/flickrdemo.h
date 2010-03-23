@@ -42,8 +42,19 @@
 #ifndef FLICKRDEMO_H
 #define FLICKRDEMO_H
 
-#include <QtGui>
-#include <QtNetwork>
+#include <QDialog>
+#include <QMainWindow>
+#include <QNetworkReply>
+#include <QSize>
+
+class QAction;
+class QDialogButtonBox;
+class QLabel;
+class QNetworkAccessManager;
+class QNetworkRequest;
+class QProgressDialog;
+class QPushButton;
+class QWidget;
 
 //// QtMobility API headers
 #include <qmobilityglobal.h>
@@ -86,9 +97,25 @@ private Q_SLOTS:
     void downloadButtonClicked();
     void cancelDownload();
 
-    void httpRequestFinished(int requestId, bool error);
-    void readResponseHeader(const QHttpResponseHeader& responseHeader);
-    void updateDataReadProgress(int bytesRead, int totalBytes);
+    /*
+        void httpRequestFinished(int requestId, bool error);
+        void readResponseHeader(const QHttpResponseHeader& responseHeader);
+        void updateDataReadProgress(int bytesRead, int totalBytes);
+    */
+
+    void pictureListDownloadProgress(qint64 bytesReceived, qint64 bytesTotal);
+    void pictureListFinished();
+    void pictureListError(QNetworkReply::NetworkError code);
+    void clearPictureListRequest();
+
+    void thumbnailFinished();
+    void thumbnailError(QNetworkReply::NetworkError code);
+    void clearThumbnailRequest();
+
+    void pictureDownloadProgress(qint64 bytesReceived, qint64 bytesTotal);
+    void pictureFinished();
+    void pictureError(QNetworkReply::NetworkError code);
+    void clearPictureRequest();
 
     // QGeoPositionInfoSource
     void positionUpdated(const QGeoPositionInfo &gpsPos);
@@ -104,7 +131,7 @@ private:
     static const QString apikey;
     static const QString savePath;
 
-    void displayImage();
+    void displayImage(const QPixmap &pixmap);
 
     QLabel *locationLabel;
     QLabel *satellitesLabel;
@@ -121,12 +148,11 @@ private:
     ConnectivityHelper *m_connectivityHelper;
 
     QProgressDialog *m_progressDialog;
-    QHttp *m_http;
-    QString m_filePath;
-    QFile* m_file;
-    int m_httpGetId;
-    int m_httpThumbnailGetId;
-    bool m_httpRequestAborted;
+
+    QNetworkAccessManager *m_nam;
+    QNetworkReply *m_pictureListReply;
+    QNetworkReply *m_thumbnailReply;
+    QNetworkReply *m_pictureReply;
 
     int m_pages;
     int m_page;
@@ -137,10 +163,9 @@ private:
     double m_longitude;
 
     bool m_downloadPictureList;
-
-    bool m_downloadingThumbnails;
     int m_nameCounter;
     QStringList m_names;
+    bool m_shuttingDown;
 };
 
 class PictureDialog: public QDialog
@@ -148,11 +173,9 @@ class PictureDialog: public QDialog
     Q_OBJECT
 
 public:
-    PictureDialog(const QString& filePath, const QString& pictureName, QWidget* parent = 0);
+    PictureDialog(const QPixmap& pixmapd, const QString& pictureName, QWidget* parent = 0);
 
 private:
-    static const QSize imageSize;
-
     QLabel *label;
     QLabel *imageLabel;
     QDialogButtonBox *buttonBox;
