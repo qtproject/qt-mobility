@@ -42,9 +42,9 @@
 #ifndef QMEDIARECORDER_H
 #define QMEDIARECORDER_H
 
-#include <qmediaobject.h>
-#include <qmediaserviceprovider.h>
-#include <qmediaencodersettings.h>
+#include "qmediaobject.h"
+#include "qmediaserviceprovider.h"
+#include "qmediaencodersettings.h"
 
 #include <QtCore/qpair.h>
 
