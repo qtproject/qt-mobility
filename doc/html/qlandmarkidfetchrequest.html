@@ -15,7 +15,7 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QLandmarkIdFetchRequest Class Reference</h1>
 <p>The QLandmarkIdFetchRequest class allows a client to asynchronously request a list of landmark identifiers from a landmark manager. <a href="#details">More...</a></p>
-<pre>    #include &lt;QLandmarkIdFetchRequest&gt;</pre><p>Inherits <a href="qlandmarkabstractrequest.html">QLandmarkAbstractRequest</a> (private).</p>
+<pre>    #include &lt;QLandmarkIdFetchRequest&gt;</pre><p>Inherits <a href="qlandmarkabstractrequest.html">QLandmarkAbstractRequest</a>.</p>
 <ul>
 <li><a href="qlandmarkidfetchrequest-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -28,8 +28,8 @@
 <tr><td class="memItemLeft" align="right" valign="top">QLandmarkFilter &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkidfetchrequest.html#filter">filter</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QLandmarkId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkidfetchrequest.html#ids">ids</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkidfetchrequest.html#setFilter">setFilter</a></b> ( const QLandmarkFilter &amp; <i>filter</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkidfetchrequest.html#setSorting">setSorting</a></b> ( QList&lt;QLandmarkSortOrder *&gt; &amp; <i>sorting</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QLandmarkSortOrder *&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkidfetchrequest.html#sorting">sorting</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkidfetchrequest.html#setSorting">setSorting</a></b> ( QList&lt;QLandmarkSortOrder&gt; &amp; <i>sorting</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QLandmarkSortOrder&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkidfetchrequest.html#sorting">sorting</a></b> () const</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>10 public functions inherited from <a href="qlandmarkabstractrequest.html#public-functions">QLandmarkAbstractRequest</a></li>
@@ -51,7 +51,7 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QLandmarkIdFetchRequest class allows a client to asynchronously request a list of landmark identifiers from a landmark manager.</p>
-<p>For a QLandmarkIdFetchRequest, the <a href="qlandmarkabstractrequest.html#resultsAvailable">resultsAvailable</a>() signal will be emitted when the resultant manager-local contact ids (which may be retrieved by calling <a href="qlandmarkidfetchrequest.html#ids">ids</a>()), are updated, as well as if the overall operation error (which may be retrieved by calling <a href="qlandmarkabstractrequest.html#error">error</a>()) is updated.</p>
+<p>For a QLandmarkIdFetchRequest, the <a href="qlandmarkabstractrequest.html#resultsAvailable">resultsAvailable</a>() signal will be emitted when the resultant identifiers (which may be retrieved by calling <a href="qlandmarkidfetchrequest.html#ids">ids</a>()), are updated, as well as if the overall operation error (which may be retrieved by calling <a href="qlandmarkabstractrequest.html#error">error</a>()) is updated.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QLandmarkIdFetchRequest/QLandmarkIdFetchRequest"></a>
@@ -62,7 +62,8 @@
 <p>Destroys the request object.</p>
 <a name="//apple_ref/cpp/instm/QLandmarkIdFetchRequest/filter"></a>
 <h3 class="fn"><a name="filter"></a><a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; QLandmarkIdFetchRequest::filter () const</h3>
-<p>Returns the filter which will be used to select the landmarks whose identifiers will be returned</p>
+<p>Returns the filter which will be used to select the landmarks whose identifiers will be returned.</p>
+<p>By default, the filter's type will be a LandmarkFilter::DefaultFilter and thus match all landmarks.</p>
 <p>See also <a href="qlandmarkidfetchrequest.html#setFilter">setFilter</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkIdFetchRequest/ids"></a>
 <h3 class="fn"><a name="ids"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; QLandmarkIdFetchRequest::ids () const</h3>
@@ -72,11 +73,11 @@
 <p>Sets the <i>filter</i> which will be used to select landmark identifiers.</p>
 <p>See also <a href="qlandmarkidfetchrequest.html#filter">filter</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkIdFetchRequest/setSorting"></a>
-<h3 class="fn"><a name="setSorting"></a>void QLandmarkIdFetchRequest::setSorting ( <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarksortorder.html">QLandmarkSortOrder</a> *&gt; &amp; <i>sorting</i> )</h3>
+<h3 class="fn"><a name="setSorting"></a>void QLandmarkIdFetchRequest::setSorting ( <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarksortorder.html">QLandmarkSortOrder</a>&gt; &amp; <i>sorting</i> )</h3>
 <p>Sets the sort ordering of the request to <i>sorting</i>. This function will only have an effect on the results if invoked prior to calling <tt>start()</tt></p>
 <p>See also <a href="qlandmarkidfetchrequest.html#sorting">sorting</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkIdFetchRequest/sorting"></a>
-<h3 class="fn"><a name="sorting"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarksortorder.html">QLandmarkSortOrder</a> *&gt; QLandmarkIdFetchRequest::sorting () const</h3>
+<h3 class="fn"><a name="sorting"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarksortorder.html">QLandmarkSortOrder</a>&gt; QLandmarkIdFetchRequest::sorting () const</h3>
 <p>Returns the sort ordering which is used to sort the result.</p>
 <p>See also <a href="qlandmarkidfetchrequest.html#setSorting">setSorting</a>().</p>
 <p /><address><hr /><div align="center">

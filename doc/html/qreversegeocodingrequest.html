@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qreversegeocodingrequest.cpp -->
+<head>
+  <title>Qt Mobility Project 1.0: QReverseGeocodingRequest Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QReverseGeocodingRequest"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QReverseGeocodingRequest Class Reference</h1>
+<p>The QReverseGeocodingRequest class represents a reverse geocoding request. <a href="#details">More...</a></p>
+<pre>    #include &lt;QReverseGeocodingRequest&gt;</pre><ul>
+<li><a href="qreversegeocodingrequest-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qreversegeocodingrequest.html#QReverseGeocodingRequest">QReverseGeocodingRequest</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qreversegeocodingrequest.html#QReverseGeocodingRequest-2">QReverseGeocodingRequest</a></b> ( const QGeoCoordinate &amp; <i>coordinate</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoCoordinate </td><td class="memItemRight" valign="bottom"><b><a href="qreversegeocodingrequest.html#coordinate">coordinate</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qreversegeocodingrequest.html#language">language</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qreversegeocodingrequest.html#setCoordinate">setCoordinate</a></b> ( const QGeoCoordinate &amp; <i>coordinate</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qreversegeocodingrequest.html#setLanguage">setLanguage</a></b> ( const QString &amp; <i>language</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qreversegeocodingrequest.html#version">version</a></b> () const</td></tr>
+</table>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QReverseGeocodingRequest class represents a reverse geocoding request.</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QReverseGeocodingRequest/QReverseGeocodingRequest"></a>
+<h3 class="fn"><a name="QReverseGeocodingRequest"></a>QReverseGeocodingRequest::QReverseGeocodingRequest ()</h3>
+<p>Default constructor.</p>
+<h3 class="fn"><a name="QReverseGeocodingRequest-2"></a>QReverseGeocodingRequest::QReverseGeocodingRequest ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i> )</h3>
+<p>Constructs a request for the geocoordinate <i>coordinate</i>.</p>
+<a name="//apple_ref/cpp/instm/QReverseGeocodingRequest/coordinate"></a>
+<h3 class="fn"><a name="coordinate"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QReverseGeocodingRequest::coordinate () const</h3>
+<p>Return the geocoordinate for this request.</p>
+<p>See also <a href="qreversegeocodingrequest.html#setCoordinate">setCoordinate</a>().</p>
+<a name="//apple_ref/cpp/instm/QReverseGeocodingRequest/language"></a>
+<h3 class="fn"><a name="language"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QReverseGeocodingRequest::language () const</h3>
+<p>Returns the MARC language code.</p>
+<p>See also <a href="qreversegeocodingrequest.html#setLanguage">setLanguage</a>().</p>
+<a name="//apple_ref/cpp/instm/QReverseGeocodingRequest/setCoordinate"></a>
+<h3 class="fn"><a name="setCoordinate"></a>void QReverseGeocodingRequest::setCoordinate ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i> )</h3>
+<p>Sets the geocoordinate for this request to <i>coordinate</i>.</p>
+<p>See also <a href="qreversegeocodingrequest.html#coordinate">coordinate</a>().</p>
+<a name="//apple_ref/cpp/instm/QReverseGeocodingRequest/setLanguage"></a>
+<h3 class="fn"><a name="setLanguage"></a>void QReverseGeocodingRequest::setLanguage ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>language</i> )</h3>
+<p>Sets the language code to <i>language</i>.</p>
+<p>This function assumes that <i>language</i> is a MARC language code.</p>
+<p>See also <a href="qreversegeocodingrequest.html#language">language</a>().</p>
+<a name="//apple_ref/cpp/instm/QReverseGeocodingRequest/version"></a>
+<h3 class="fn"><a name="version"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QReverseGeocodingRequest::version () const</h3>
+<p>Returns the service version.</p>
+<p>Currently the only supported version is 1.0&#x2e;</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+</tr></table></div></address></body>
+</html>

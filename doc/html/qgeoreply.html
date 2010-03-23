@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qgeoreply.cpp -->
+<head>
+  <title>Qt Mobility Project 1.0: QGeoReply Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QGeoReply"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGeoReply Class Reference</h1>
+<p>The QGeoReply class is the base class for all maps and navigation replies. <a href="#details">More...</a></p>
+<pre>    #include &lt;QGeoReply&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
+<p>Inherited by <a href="qgeocodingreply.html">QGeocodingReply</a> and <a href="qroutereply.html">QRouteReply</a>.</p>
+<ul>
+<li><a href="qgeoreply-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-types"></a>
+<h2>Public Types</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">typedef </td><td class="memItemRight" valign="bottom"><b><a href="qgeoreply.html#ErrorCode-typedef">ErrorCode</a></b></td></tr>
+</table>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeoreply.html#QGeoReply">QGeoReply</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qgeoreply.html#isFinished">isFinished</a></b> () const</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+</ul>
+<hr />
+<a name="signals"></a>
+<h2>Signals</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoreply.html#error">error</a></b> ( ErrorCode <i>code</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoreply.html#finished">finished</a></b> ()</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
+</ul>
+<hr />
+<a name="protected-variables"></a>
+<h2>Protected Variables</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgeoreply.html#fin-var">fin</a></b></td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QGeoReply class is the base class for all maps and navigation replies.</p>
+<p>This is the base class of all classes that represent replies to (reverse) geocoding, route, and map tile requests.</p>
+<hr />
+<h2>Member Type Documentation</h2>
+<a name="//apple_ref/cpp/tdef/QGeoReply/ErrorCode"></a>
+<h3 class="fn"><a name="ErrorCode-typedef"></a>typedef QGeoReply::ErrorCode</h3>
+<p>Error codes that might occur</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QGeoReply/QGeoReply"></a>
+<h3 class="fn"><a name="QGeoReply"></a>QGeoReply::QGeoReply ()</h3>
+<p>Default constructor.</p>
+<a name="//apple_ref/cpp/instm/QGeoReply/error"></a>
+<h3 class="fn"><a name="error"></a>void QGeoReply::error ( <a href="qgeoreply.html#ErrorCode-typedef">ErrorCode</a> <i>code</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted when an error occured. This signal will be emitted after its corresponding <a href="qgeoengine.html#error">QGeoEngine::error</a>() signal. <b>Note:</b> When <a href="qgeonetworkmanager.html">QGeoNetworkManager</a> is used, the error code will be identical to <a href="http://qt.nokia.com/doc/4.6/qnetworkreply.html#NetworkError-enum">QNetworkReply::NetworkError</a>.</p>
+<a name="//apple_ref/cpp/instm/QGeoReply/finished"></a>
+<h3 class="fn"><a name="finished"></a>void QGeoReply::finished ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted when the reply is finished. This signal will be emitted after its corresponding <a href="qgeoengine.html#finished">QGeoEngine::finished</a>() signal.</p>
+<a name="//apple_ref/cpp/instm/QGeoReply/isFinished"></a>
+<h3 class="fn"><a name="isFinished"></a>bool QGeoReply::isFinished () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Returns true if the reply finished and returns false if the reply has not finished yet.</p>
+<hr />
+<h2>Member Variable Documentation</h2>
+<a name="//apple_ref/cpp/data/QGeoReply/fin"></a>
+<h3 class="fn"><a name="fin-var"></a>bool QGeoReply::fin</h3>
+<p>This variable holds finished flag;.</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+</tr></table></div></address></body>
+</html>

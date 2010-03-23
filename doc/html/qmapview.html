@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qmapview.cpp -->
+<head>
+  <title>Qt Mobility Project 1.0: QMapView Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QMapView"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMapView Class Reference</h1>
+<p>The QMapView class displays a map. It supports panning, zooming, different map formats, and the adding of map objects (overlays). <a href="#details">More...</a></p>
+<pre>    #include &lt;QMapView&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html">QGraphicsWidget</a>.</p>
+<ul>
+<li><a href="qmapview-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-types"></a>
+<h2>Public Types</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">class </td><td class="memItemRight" valign="bottom"><b><a href="qmapview-tileiterator.html">TileIterator</a></b></td></tr>
+</table>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#QMapView">QMapView</a></b> ( QGraphicsItem * <i>parent</i> = 0, Qt::WindowFlags <i>wFlags</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#dtor.QMapView">~QMapView</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#addMapObject">addMapObject</a></b> ( QMapObject * <i>mapObject</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoCoordinate </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#center">center</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#centerOn">centerOn</a></b> ( const QPointF &amp; <i>pos</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#centerOn-2">centerOn</a></b> ( qreal <i>x</i>, qreal <i>y</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#centerOn-3">centerOn</a></b> ( const QGeoCoordinate &amp; <i>geoPos</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QLineF </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#connectShortest">connectShortest</a></b> ( const QGeoCoordinate &amp; <i>point1</i>, const QGeoCoordinate &amp; <i>point2</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">MapFormat </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#format">format</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QPointF </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#geoToMap">geoToMap</a></b> ( const QGeoCoordinate &amp; <i>geoCoordinate</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">quint64 </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#getTileIndex">getTileIndex</a></b> ( quint32 <i>col</i>, quint32 <i>row</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QRectF </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#getTileRect">getTileRect</a></b> ( quint32 <i>col</i>, quint32 <i>row</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QMapObject * </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#getTopmostMapObject">getTopmostMapObject</a></b> ( const QGeoCoordinate &amp; <i>geoCoordinate</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QMapObject * </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#getTopmostMapObject-2">getTopmostMapObject</a></b> ( const QPointF &amp; <i>mapCoordinate</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">quint32 </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#horizontalPadding">horizontalPadding</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#init">init</a></b> ( QGeoEngine * <i>geoEngine</i>, const QGeoCoordinate &amp; <i>center</i> = QGeoCoordinate( 0, 0 ) )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#isPannable">isPannable</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QPointF </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#mapCenter">mapCenter</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">quint64 </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#mapHeight">mapHeight</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoCoordinate </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#mapToGeo">mapToGeo</a></b> ( const QPointF &amp; <i>mapCoordinate</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QPointF </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#mapToMercator">mapToMercator</a></b> ( const QPointF &amp; <i>mapCoordinate</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#mapToTile">mapToTile</a></b> ( const QPointF &amp; <i>mapCoordinate</i>, quint32 * <i>col</i>, quint32 * <i>row</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">quint64 </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#mapWidth">mapWidth</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">quint16 </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#maxZoomLevel">maxZoomLevel</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QPointF </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#mercatorToMap">mercatorToMap</a></b> ( const QPointF &amp; <i>mercatorCoordinate</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#moveViewPort">moveViewPort</a></b> ( int <i>deltaX</i>, int <i>deltaY</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#removeMapObject">removeMapObject</a></b> ( QMapObject * <i>mapObject</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">MapResolution </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#resolution">resolution</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">quint32 </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#routeDetailLevel">routeDetailLevel</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">MapScheme </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#scheme">scheme</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#setHorizontalPadding">setHorizontalPadding</a></b> ( quint32 <i>range</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#setPannable">setPannable</a></b> ( bool <i>isPannable</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#setRouteDetailLevel">setRouteDetailLevel</a></b> ( quint32 <i>pixels</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#setScheme">setScheme</a></b> ( const MapScheme &amp; <i>mapScheme</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#setVerticalPadding">setVerticalPadding</a></b> ( quint32 <i>range</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">MapVersion </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#version">version</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">quint32 </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#verticalPadding">verticalPadding</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">quint16 </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#zoomLevel">zoomLevel</a></b> () const</td></tr>
+</table>
+<hr />
+<a name="reimplemented-public-functions"></a>
+<h2>Reimplemented Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#paint">paint</a></b> ( QPainter * <i>painter</i>, const QStyleOptionGraphicsItem * <i>option</i>, QWidget * <i>widget</i> = 0 )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>51 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#public-functions">QGraphicsWidget</a></li>
+<li><div bar="2" class="fn"></div>35 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicslayoutitem.html#public-functions">QGraphicsLayoutItem</a></li>
+<li><div bar="2" class="fn"></div>167 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#public-functions">QGraphicsItem</a></li>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+</ul>
+<hr />
+<a name="public-slots"></a>
+<h2>Public Slots</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#releaseRemoteTiles">releaseRemoteTiles</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#setZoomLevel">setZoomLevel</a></b> ( int <i>zoomLevel</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#tileFetched">tileFetched</a></b> ( QMapTileReply * <i>reply</i> )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#public-slots">QGraphicsWidget</a></li>
+<li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+</ul>
+<hr />
+<a name="signals"></a>
+<h2>Signals</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#centerChanged">centerChanged</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#mapClicked">mapClicked</a></b> ( QGeoCoordinate <i>geoCoord</i>, QGraphicsSceneMouseEvent * <i>mouseEvent</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#mapObjectSelected">mapObjectSelected</a></b> ( QMapObject * <i>mapObject</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#zoomLevelChanged">zoomLevelChanged</a></b> ( quint16 <i>oldZoomLevel</i>, quint16 <i>newZoomLevel</i> )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>9 signals inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicsobject.html#signals">QGraphicsObject</a></li>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
+</ul>
+<hr />
+<a name="reimplemented-protected-functions"></a>
+<h2>Reimplemented Protected Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#mouseMoveEvent">mouseMoveEvent</a></b> ( QGraphicsSceneMouseEvent * <i>event</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#mousePressEvent">mousePressEvent</a></b> ( QGraphicsSceneMouseEvent * <i>event</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#mouseReleaseEvent">mouseReleaseEvent</a></b> ( QGraphicsSceneMouseEvent * <i>event</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#resizeEvent">resizeEvent</a></b> ( QGraphicsSceneResizeEvent * <i>event</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#wheelEvent">wheelEvent</a></b> ( QGraphicsSceneWheelEvent * <i>event</i> )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>24 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#protected-functions">QGraphicsWidget</a></li>
+<li><div bar="2" class="fn"></div>3 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicslayoutitem.html#protected-functions">QGraphicsLayoutItem</a></li>
+<li><div bar="2" class="fn"></div>23 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#protected-functions">QGraphicsItem</a></li>
+<li><div bar="2" class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>8 properties inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#properties">QGraphicsWidget</a></li>
+<li><div class="fn"></div>12 properties inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicsobject.html#properties">QGraphicsObject</a></li>
+<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#public-variables">QGraphicsWidget</a></li>
+<li><div class="fn"></div>2 public variables inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#public-variables">QGraphicsItem</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 static public member inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#static-public-members">QGraphicsWidget</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>24 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#protected-functions">QGraphicsWidget</a></li>
+<li><div class="fn"></div>3 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicslayoutitem.html#protected-functions">QGraphicsLayoutItem</a></li>
+<li><div class="fn"></div>23 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#protected-functions">QGraphicsItem</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+<li><div class="fn"></div>1 protected type inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicslayoutitem.html#protected-variables">QGraphicsLayoutItem</a></li>
+<li><div class="fn"></div>1 protected type inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#protected-variables">QGraphicsItem</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QMapView class displays a map. It supports panning, zooming, different map formats, and the adding of map objects (overlays).</p>
+<p>The map is a 2D Mercator projection of geo coordinates. The map allows seamless continual panning along the x-axis. The map is logically 2^zoomLevel * width(map tile) pixels wide, and 2^zoomLevel * height(map tile) high, with the top left corner being (0,0). This logical 2D map space is spit equally into 2^zoomLevel map tiles along each axis. The QMapView provides a view port onto that logical map space that is always QMapView::width() wide and QMapView::height() high.</p>
+<p>Instead of using a full-blown quad tree, QMapView exploits the fact that the map is made up of map tiles. Internally, it uses efficient hash maps (tileToObjectsMap, itemToObjectMap) to map each internal <a href="qmapobject.html">QMapObject</a> to its corresponding tiles. These mappings are then used to determine which map objects need to be shown in the current view port.</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QMapView/QMapView"></a>
+<h3 class="fn"><a name="QMapView"></a>QMapView::QMapView ( <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html">QGraphicsItem</a> * <i>parent</i> = 0, <a href="http://qt.nokia.com/doc/4.6/qt.html#WindowFlags-typedef">Qt::WindowFlags</a> <i>wFlags</i> = 0 )</h3>
+<p>Constructor.</p>
+<a name="//apple_ref/cpp/instm/QMapView/~QMapView"></a>
+<h3 class="fn"><a name="dtor.QMapView"></a>QMapView::~QMapView ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Destructor. Destroys the map view.</p>
+<a name="//apple_ref/cpp/instm/QMapView/addMapObject"></a>
+<h3 class="fn"><a name="addMapObject"></a>void QMapView::addMapObject ( <a href="qmapobject.html">QMapObject</a> * <i>mapObject</i> )</h3>
+<p>Adds <i>mapObject</i> to the <a href="qmapview.html">QMapView</a>. The <a href="qmapview.html">QMapView</a> takes ownership of the <i>mapObject</i>.</p>
+<a name="//apple_ref/cpp/instm/QMapView/center"></a>
+<h3 class="fn"><a name="center"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QMapView::center () const</h3>
+<p>Returns the geo coordinate at the center of the map's current view port.</p>
+<a name="//apple_ref/cpp/instm/QMapView/centerChanged"></a>
+<h3 class="fn"><a name="centerChanged"></a>void QMapView::centerChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<a name="//apple_ref/cpp/instm/QMapView/centerOn"></a>
+<h3 class="fn"><a name="centerOn"></a>void QMapView::centerOn ( const <a href="http://qt.nokia.com/doc/4.6/qpointf.html">QPointF</a> &amp; <i>pos</i> )</h3>
+<p>Centers the view port on the given map coordinate <i>pos</i>.</p>
+<h3 class="fn"><a name="centerOn-2"></a>void QMapView::centerOn ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>x</i>, <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>y</i> )</h3>
+<h3 class="fn"><a name="centerOn-3"></a>void QMapView::centerOn ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>geoPos</i> )</h3>
+<a name="//apple_ref/cpp/instm/QMapView/connectShortest"></a>
+<h3 class="fn"><a name="connectShortest"></a><a href="http://qt.nokia.com/doc/4.6/qlinef.html">QLineF</a> QMapView::connectShortest ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>point1</i>, const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>point2</i> ) const</h3>
+<a name="//apple_ref/cpp/instm/QMapView/format"></a>
+<h3 class="fn"><a name="format"></a>MapFormat QMapView::format () const</h3>
+<p>Returns the current map format.</p>
+<a name="//apple_ref/cpp/instm/QMapView/geoToMap"></a>
+<h3 class="fn"><a name="geoToMap"></a><a href="http://qt.nokia.com/doc/4.6/qpointf.html">QPointF</a> QMapView::geoToMap ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>geoCoordinate</i> ) const</h3>
+<p>Converts a <i>geoCoordinate</i> to a map coordinate (in pixels).</p>
+<a name="//apple_ref/cpp/instm/QMapView/getTileIndex"></a>
+<h3 class="fn"><a name="getTileIndex"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint64-typedef">quint64</a> QMapView::getTileIndex ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint32-typedef">quint32</a> <i>col</i>, <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint32-typedef">quint32</a> <i>row</i> ) const</h3>
+<p>Maps a two-dimensional map tile index (<i>col</i>, <i>row</i>) onto a one-dimensional one.</p>
+<a name="//apple_ref/cpp/instm/QMapView/getTileRect"></a>
+<h3 class="fn"><a name="getTileRect"></a><a href="http://qt.nokia.com/doc/4.6/qrectf.html">QRectF</a> QMapView::getTileRect ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint32-typedef">quint32</a> <i>col</i>, <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint32-typedef">quint32</a> <i>row</i> ) const</h3>
+<p>Returns the bounding box of the map tile given by its <i>col</i> and <i>row</i> index for the current zoom level and map configuration.</p>
+<a name="//apple_ref/cpp/instm/QMapView/getTopmostMapObject"></a>
+<h3 class="fn"><a name="getTopmostMapObject"></a><a href="qmapobject.html">QMapObject</a> * QMapView::getTopmostMapObject ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>geoCoordinate</i> )</h3>
+<p>Convenience method for getTopmostMapObject(const <a href="http://qt.nokia.com/doc/4.6/qpointf.html">QPointF</a>&amp; mapCoordinate).</p>
+<h3 class="fn"><a name="getTopmostMapObject-2"></a><a href="qmapobject.html">QMapObject</a> * QMapView::getTopmostMapObject ( const <a href="http://qt.nokia.com/doc/4.6/qpointf.html">QPointF</a> &amp; <i>mapCoordinate</i> )</h3>
+<p>Returns the map object with the highest z-index that intersects the given <i>mapCoordinate</i>. If more than object with the same (highest) z-index intersect that point, the first one found is returned.</p>
+<a name="//apple_ref/cpp/instm/QMapView/horizontalPadding"></a>
+<h3 class="fn"><a name="horizontalPadding"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint32-typedef">quint32</a> QMapView::horizontalPadding () const</h3>
+<p>Returns the horizontal range beyond the immediate limits of the view port, for which map tiles should also be loaded.</p>
+<p>See also <a href="qmapview.html#setHorizontalPadding">setHorizontalPadding</a>().</p>
+<a name="//apple_ref/cpp/instm/QMapView/init"></a>
+<h3 class="fn"><a name="init"></a>void QMapView::init ( <a href="qgeoengine.html">QGeoEngine</a> * <i>geoEngine</i>, const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>center</i> = QGeoCoordinate( 0, 0 ) )</h3>
+<p>Initializes a the map view with a given <i>geoEngine</i> and centers the map at <i>center</i>.</p>
+<a name="//apple_ref/cpp/instm/QMapView/isPannable"></a>
+<h3 class="fn"><a name="isPannable"></a>bool QMapView::isPannable () const</h3>
+<p>Returns whether the map is pannable.</p>
+<a name="//apple_ref/cpp/instm/QMapView/mapCenter"></a>
+<h3 class="fn"><a name="mapCenter"></a><a href="http://qt.nokia.com/doc/4.6/qpointf.html">QPointF</a> QMapView::mapCenter () const</h3>
+<p>Returns the map coordinate (in pixels) at the center of the map's current view port.</p>
+<a name="//apple_ref/cpp/instm/QMapView/mapClicked"></a>
+<h3 class="fn"><a name="mapClicked"></a>void QMapView::mapClicked ( <a href="qgeocoordinate.html">QGeoCoordinate</a> <i>geoCoord</i>, <a href="http://qt.nokia.com/doc/4.6/qgraphicsscenemouseevent.html">QGraphicsSceneMouseEvent</a> * <i>mouseEvent</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted when the map receieves a <i>mouseEvent</i> (clicked) at <i>geoCoord</i>.</p>
+<a name="//apple_ref/cpp/instm/QMapView/mapHeight"></a>
+<h3 class="fn"><a name="mapHeight"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint64-typedef">quint64</a> QMapView::mapHeight () const</h3>
+<p>Returns the height of the logical map space in pixels - i.e&#x2e; the pixel range from 90N to 90S.</p>
+<a name="//apple_ref/cpp/instm/QMapView/mapObjectSelected"></a>
+<h3 class="fn"><a name="mapObjectSelected"></a>void QMapView::mapObjectSelected ( <a href="qmapobject.html">QMapObject</a> * <i>mapObject</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted when a <i>mapObject</i> was selected by left-clicking on it.</p>
+<a name="//apple_ref/cpp/instm/QMapView/mapToGeo"></a>
+<h3 class="fn"><a name="mapToGeo"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QMapView::mapToGeo ( const <a href="http://qt.nokia.com/doc/4.6/qpointf.html">QPointF</a> &amp; <i>mapCoordinate</i> ) const</h3>
+<p>Converts a <i>mapCoordinate</i> (in pixels) into its corresponding geo coordinate.</p>
+<a name="//apple_ref/cpp/instm/QMapView/mapToMercator"></a>
+<h3 class="fn"><a name="mapToMercator"></a><a href="http://qt.nokia.com/doc/4.6/qpointf.html">QPointF</a> QMapView::mapToMercator ( const <a href="http://qt.nokia.com/doc/4.6/qpointf.html">QPointF</a> &amp; <i>mapCoordinate</i> ) const</h3>
+<p>Computes the normalized mercator coordinate for the given <i>mapCoordinate</i> (in pixels).</p>
+<a name="//apple_ref/cpp/instm/QMapView/mapToTile"></a>
+<h3 class="fn"><a name="mapToTile"></a>void QMapView::mapToTile ( const <a href="http://qt.nokia.com/doc/4.6/qpointf.html">QPointF</a> &amp; <i>mapCoordinate</i>, <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint32-typedef">quint32</a> * <i>col</i>, <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint32-typedef">quint32</a> * <i>row</i> ) const</h3>
+<p>Determines the <i>col</i> and <i>row</i> index of the tile that the given <i>mapCoordinate</i> (in pixels) lies on.</p>
+<a name="//apple_ref/cpp/instm/QMapView/mapWidth"></a>
+<h3 class="fn"><a name="mapWidth"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint64-typedef">quint64</a> QMapView::mapWidth () const</h3>
+<p>Returns the width of the logical map space in pixels - i.e&#x2e; the pixel range from 180W to 180E.</p>
+<a name="//apple_ref/cpp/instm/QMapView/maxZoomLevel"></a>
+<h3 class="fn"><a name="maxZoomLevel"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint16-typedef">quint16</a> QMapView::maxZoomLevel () const</h3>
+<p>Returns the maximum zoom level.</p>
+<a name="//apple_ref/cpp/instm/QMapView/mercatorToMap"></a>
+<h3 class="fn"><a name="mercatorToMap"></a><a href="http://qt.nokia.com/doc/4.6/qpointf.html">QPointF</a> QMapView::mercatorToMap ( const <a href="http://qt.nokia.com/doc/4.6/qpointf.html">QPointF</a> &amp; <i>mercatorCoordinate</i> ) const</h3>
+<p>Converts a normalized <i>mercatorCoordinate</i> to a map coordinate (in pixels).</p>
+<a name="//apple_ref/cpp/instm/QMapView/mouseMoveEvent"></a>
+<h3 class="fn"><a name="mouseMoveEvent"></a>void QMapView::mouseMoveEvent ( <a href="http://qt.nokia.com/doc/4.6/qgraphicsscenemouseevent.html">QGraphicsSceneMouseEvent</a> * <i>event</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
+<a name="//apple_ref/cpp/instm/QMapView/mousePressEvent"></a>
+<h3 class="fn"><a name="mousePressEvent"></a>void QMapView::mousePressEvent ( <a href="http://qt.nokia.com/doc/4.6/qgraphicsscenemouseevent.html">QGraphicsSceneMouseEvent</a> * <i>event</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
+<a name="//apple_ref/cpp/instm/QMapView/mouseReleaseEvent"></a>
+<h3 class="fn"><a name="mouseReleaseEvent"></a>void QMapView::mouseReleaseEvent ( <a href="http://qt.nokia.com/doc/4.6/qgraphicsscenemouseevent.html">QGraphicsSceneMouseEvent</a> * <i>event</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
+<a name="//apple_ref/cpp/instm/QMapView/moveViewPort"></a>
+<h3 class="fn"><a name="moveViewPort"></a>void QMapView::moveViewPort ( int <i>deltaX</i>, int <i>deltaY</i> )</h3>
+<p>Moves the view port relative to its current position, with <i>deltaX</i> specifying the number of pixels the view port is moved along the x-axis and <i>deltaY</i> specifying the number of pixels the view port is moved along the y-axis.</p>
+<a name="//apple_ref/cpp/instm/QMapView/paint"></a>
+<h3 class="fn"><a name="paint"></a>void QMapView::paint ( <a href="http://qt.nokia.com/doc/4.6/qpainter.html">QPainter</a> * <i>painter</i>, const <a href="http://qt.nokia.com/doc/4.6/qstyleoptiongraphicsitem.html">QStyleOptionGraphicsItem</a> * <i>option</i>, <a href="http://qt.nokia.com/doc/4.6/qwidget.html">QWidget</a> * <i>widget</i> = 0 )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<a name="//apple_ref/cpp/instm/QMapView/releaseRemoteTiles"></a>
+<h3 class="fn"><a name="releaseRemoteTiles"></a>void QMapView::releaseRemoteTiles ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<p>Releases all map tiles that are not currently covered by the view port.</p>
+<a name="//apple_ref/cpp/instm/QMapView/removeMapObject"></a>
+<h3 class="fn"><a name="removeMapObject"></a>void QMapView::removeMapObject ( <a href="qmapobject.html">QMapObject</a> * <i>mapObject</i> )</h3>
+<p>Removes the given <i>mapObject</i> from the map. The <i>mapObject</i> is deleted in the process.</p>
+<a name="//apple_ref/cpp/instm/QMapView/resizeEvent"></a>
+<h3 class="fn"><a name="resizeEvent"></a>void QMapView::resizeEvent ( <a href="http://qt.nokia.com/doc/4.6/qgraphicssceneresizeevent.html">QGraphicsSceneResizeEvent</a> * <i>event</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
+<a name="//apple_ref/cpp/instm/QMapView/resolution"></a>
+<h3 class="fn"><a name="resolution"></a>MapResolution QMapView::resolution () const</h3>
+<p>Returns the current map resolution.</p>
+<a name="//apple_ref/cpp/instm/QMapView/routeDetailLevel"></a>
+<h3 class="fn"><a name="routeDetailLevel"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint32-typedef">quint32</a> QMapView::routeDetailLevel () const</h3>
+<p>Returns the minum manhattan distance between two consecutive visible route way points.</p>
+<p>See also <a href="qmapview.html#setRouteDetailLevel">setRouteDetailLevel</a>().</p>
+<a name="//apple_ref/cpp/instm/QMapView/scheme"></a>
+<h3 class="fn"><a name="scheme"></a>MapScheme QMapView::scheme () const</h3>
+<p>Returns the current map scheme.</p>
+<p>See also <a href="qmapview.html#setScheme">setScheme</a>().</p>
+<a name="//apple_ref/cpp/instm/QMapView/setHorizontalPadding"></a>
+<h3 class="fn"><a name="setHorizontalPadding"></a>void QMapView::setHorizontalPadding ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint32-typedef">quint32</a> <i>range</i> )</h3>
+<p>This method sets the horizontal <i>range</i> (in pixels) beyond the immediate limits of the view port, for which map tiles should also be loaded. This can make for a smoother panning experience.</p>
+<p>See also <a href="qmapview.html#horizontalPadding">horizontalPadding</a>().</p>
+<a name="//apple_ref/cpp/instm/QMapView/setPannable"></a>
+<h3 class="fn"><a name="setPannable"></a>void QMapView::setPannable ( bool <i>isPannable</i> )</h3>
+<p>Sets whether the map is pannable.</p>
+<p>See also <a href="qmapview.html#isPannable">isPannable</a>().</p>
+<a name="//apple_ref/cpp/instm/QMapView/setRouteDetailLevel"></a>
+<h3 class="fn"><a name="setRouteDetailLevel"></a>void QMapView::setRouteDetailLevel ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint32-typedef">quint32</a> <i>pixels</i> )</h3>
+<p>A route can consist of 10,000+ individual legs. Drawing them all into the view port (e.g&#x2e; when the map is zoomed to a continent scale) can be prhobitively expensive. Therefore, the map view will suppress some route legs according to the current zoom level.</p>
+<p>This method sets the minimum manhattan distance in <i>pixels</i> between two consecutive visible route way points. In other words, specifying <i>0</i> here, will force the map view to always draw all individual route legs that are in the current view port. Higher values will allow for much faster rendering, especially at far out zoom levels, but the route may appear less smooth.&lt;br&gt; The default value is 20 pixels. At <a href="qgeoengine.html#maxZoomLevel">QGeoEngine::maxZoomLevel</a>(), all route legs are always shown.</p>
+<p>See also <a href="qmapview.html#routeDetailLevel">routeDetailLevel</a>().</p>
+<a name="//apple_ref/cpp/instm/QMapView/setScheme"></a>
+<h3 class="fn"><a name="setScheme"></a>void QMapView::setScheme ( const MapScheme &amp; <i>mapScheme</i> )</h3>
+<p>Sets the map scheme.</p>
+<p>See also <a href="qmapview.html#scheme">scheme</a>().</p>
+<a name="//apple_ref/cpp/instm/QMapView/setVerticalPadding"></a>
+<h3 class="fn"><a name="setVerticalPadding"></a>void QMapView::setVerticalPadding ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint32-typedef">quint32</a> <i>range</i> )</h3>
+<p>This method sets the vertical <i>range</i> (in pixels) beyond the immediate limits of the view port, for which map tiles should also be loaded. This can make for a smoother panning experience.</p>
+<p>See also <a href="qmapview.html#verticalPadding">verticalPadding</a>().</p>
+<a name="//apple_ref/cpp/instm/QMapView/setZoomLevel"></a>
+<h3 class="fn"><a name="setZoomLevel"></a>void QMapView::setZoomLevel ( int <i>zoomLevel</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<p>Sets the current zoom level.</p>
+<p>See also <a href="qmapview.html#zoomLevel">zoomLevel</a>().</p>
+<a name="//apple_ref/cpp/instm/QMapView/tileFetched"></a>
+<h3 class="fn"><a name="tileFetched"></a>void QMapView::tileFetched ( QMapTileReply * <i>reply</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<p>This slot is called when a requested map tile has become available. Internally, this slot is connected to QGeoEngine::finished(QMapTileReply*).</p>
+<a name="//apple_ref/cpp/instm/QMapView/version"></a>
+<h3 class="fn"><a name="version"></a>MapVersion QMapView::version () const</h3>
+<p>Returns the current map version.</p>
+<a name="//apple_ref/cpp/instm/QMapView/verticalPadding"></a>
+<h3 class="fn"><a name="verticalPadding"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint32-typedef">quint32</a> QMapView::verticalPadding () const</h3>
+<p>* <a href="http://qt.nokia.com/doc/4.6/qdialog.html">@return</a> The vertical range beyond the immediate limits of * the view port, for which map tiles should also be loaded.</p>
+<p>See also <a href="qmapview.html#setVerticalPadding">setVerticalPadding</a>().</p>
+<a name="//apple_ref/cpp/instm/QMapView/wheelEvent"></a>
+<h3 class="fn"><a name="wheelEvent"></a>void QMapView::wheelEvent ( <a href="http://qt.nokia.com/doc/4.6/qgraphicsscenewheelevent.html">QGraphicsSceneWheelEvent</a> * <i>event</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
+<a name="//apple_ref/cpp/instm/QMapView/zoomLevel"></a>
+<h3 class="fn"><a name="zoomLevel"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint16-typedef">quint16</a> QMapView::zoomLevel () const</h3>
+<p>Returns the current zoom level.</p>
+<p>See also <a href="qmapview.html#setZoomLevel">setZoomLevel</a>().</p>
+<a name="//apple_ref/cpp/instm/QMapView/zoomLevelChanged"></a>
+<h3 class="fn"><a name="zoomLevelChanged"></a>void QMapView::zoomLevelChanged ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint16-typedef">quint16</a> <i>oldZoomLevel</i>, <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint16-typedef">quint16</a> <i>newZoomLevel</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted after the map has changed its zoom level.</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+</tr></table></div></address></body>
+</html>

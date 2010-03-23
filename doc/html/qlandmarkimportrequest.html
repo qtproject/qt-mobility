@@ -26,9 +26,11 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkimportrequest.html#QLandmarkImportRequest">QLandmarkImportRequest</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkimportrequest.html#dtor.QLandmarkImportRequest">~QLandmarkImportRequest</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QIODevice * </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkimportrequest.html#device">device</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkimportrequest.html#fileName">fileName</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QLandmarkManager::Format </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkimportrequest.html#format">format</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QLandmarkId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkimportrequest.html#ids">ids</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkimportrequest.html#setDevice">setDevice</a></b> ( QIODevice * <i>device</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkimportrequest.html#setFileName">setFileName</a></b> ( const QString &amp; <i>fileName</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkimportrequest.html#setFormat">setFormat</a></b> ( QLandmarkManager::Format <i>format</i> )</td></tr>
 </table>
 <ul>
@@ -64,6 +66,10 @@
 <h3 class="fn"><a name="device"></a><a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> * QLandmarkImportRequest::device () const</h3>
 <p>Returns the device from which landmarks are read.</p>
 <p>See also <a href="qlandmarkimportrequest.html#setDevice">setDevice</a>().</p>
+<a name="//apple_ref/cpp/instm/QLandmarkImportRequest/fileName"></a>
+<h3 class="fn"><a name="fileName"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QLandmarkImportRequest::fileName () const</h3>
+<p>If the currently assigned device is a <a href="http://qt.nokia.com/doc/4.6/qfile.html">QFile</a>, or if <a href="qlandmarkimportrequest.html#setFileName">setFileName</a>() has been called, this function returns the name of the file to be read from. In all other cases, it returns an empty string.</p>
+<p>See also <a href="qlandmarkimportrequest.html#setFileName">setFileName</a>() and <a href="qlandmarkimportrequest.html#setDevice">setDevice</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkImportRequest/format"></a>
 <h3 class="fn"><a name="format"></a><a href="qlandmarkmanager.html#Format-enum">QLandmarkManager::Format</a> QLandmarkImportRequest::format () const</h3>
 <p>Returns the expected data format for the import operation.</p>
@@ -75,6 +81,10 @@
 <h3 class="fn"><a name="setDevice"></a>void QLandmarkImportRequest::setDevice ( <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> * <i>device</i> )</h3>
 <p>Sets the <i>device</i> from which landmarks are read.</p>
 <p>See also <a href="qlandmarkimportrequest.html#device">device</a>().</p>
+<a name="//apple_ref/cpp/instm/QLandmarkImportRequest/setFileName"></a>
+<h3 class="fn"><a name="setFileName"></a>void QLandmarkImportRequest::setFileName ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>fileName</i> )</h3>
+<p>Sets the name of the file to be read from to <i>fileName</i>. Internally, <a href="qlandmarkexportrequest.html">QLandmarkExportRequest</a> will create a <a href="http://qt.nokia.com/doc/4.6/qfile.html">QFile</a> and open it in <a href="http://qt.nokia.com/doc/4.6/qiodevice.html#OpenModeFlag-enum">QIODevice::WriteOnly</a> mode, and use this file to export to.</p>
+<p>See also <a href="qlandmarkimportrequest.html#fileName">fileName</a>() and <a href="qlandmarkimportrequest.html#setDevice">setDevice</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkImportRequest/setFormat"></a>
 <h3 class="fn"><a name="setFormat"></a>void QLandmarkImportRequest::setFormat ( <a href="qlandmarkmanager.html#Format-enum">QLandmarkManager::Format</a> <i>format</i> )</h3>
 <p>Sets the expected data <i>format</i> for the import operation.</p>
