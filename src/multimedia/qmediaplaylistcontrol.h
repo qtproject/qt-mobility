@@ -43,8 +43,8 @@
 #ifndef QMEDIAPLAYLISTCONTROL_H
 #define QMEDIAPLAYLISTCONTROL_H
 
-#include <qmediacontrol.h>
-#include <qmediaplaylistnavigator.h>
+#include "qmediacontrol.h"
+#include "qmediaplaylistnavigator.h"
 
 
 QTM_BEGIN_NAMESPACE
