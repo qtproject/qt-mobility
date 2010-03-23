@@ -828,7 +828,7 @@ void tst_QVersitContactImporter::testAvatarThumbnail()
 
     mImporter->setResourceHandler(mResourceHandler);
 
-    // Empty photo.  The thumbnail and avatar should not be added to the QContact.
+    // Empty photo.  The avatar should not be added to the QContact and the thumbnail will be empty.
     QVersitProperty property;
     property.setName(QLatin1String("PHOTO"));
     property.setValue(QByteArray());
@@ -838,7 +838,8 @@ void tst_QVersitContactImporter::testAvatarThumbnail()
     QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
     contact = mImporter->contacts().first();
     QCOMPARE(contact.details<QContactAvatar>().size(), 0);
-    QCOMPARE(contact.details<QContactThumbnail>().size(), 0);
+    thumbnail = contact.detail<QContactThumbnail>();
+    QVERIFY(thumbnail.isEmpty());
 
     // Test multiple PHOTOs.  The chosen Thumbnail should be the smallest image supplied.
     // All should be made into Avatars
