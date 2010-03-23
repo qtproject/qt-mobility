@@ -1589,10 +1589,11 @@ QString QContactAvatar::avatar() const
    Sets the location of an avatar file associated with the contact to \a avatar.
    This function is deprecated and will be removed after the transition period has elapsed.
  */
-void QContactAvatar::setAvatar(const QString& avatar)
+bool QContactAvatar::setAvatar(const QString& avatar)
 {
     Q_UNUSED(avatar);
     qWarning("QContactAvatar::setAvatar() This function is deprecated and will be removed after the transition period has elapsed!  Use setImageUri() or QContactThumbnail instead!");
+    return false;
 }
 
 /*!

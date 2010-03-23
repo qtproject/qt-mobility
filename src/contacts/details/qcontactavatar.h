@@ -95,7 +95,7 @@ public:
 
     // old, deprecated API: to be removed after the transition period has elapsed.
     QString Q_DECL_DEPRECATED avatar() const;
-    void Q_DECL_DEPRECATED setAvatar(const QString& avatar);
+    bool Q_DECL_DEPRECATED setAvatar(const QString& avatar);
     QPixmap Q_DECL_DEPRECATED pixmap() const;
     bool Q_DECL_DEPRECATED setPixmap(const QPixmap& pixmap);
     QString Q_DECL_DEPRECATED subType() const;
