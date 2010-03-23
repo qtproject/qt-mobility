@@ -44,6 +44,7 @@
 #include "s60mediaplayerservice.h"
 #include "s60videooverlay.h"
 
+#include <QtCore/private/qcore_symbian_p.h> // For qt_TRect2QRect 
 #include <QtCore/qdebug.h>
 #include <QtGui/qwidget.h>
 #include <QtCore/qtimer.h>
