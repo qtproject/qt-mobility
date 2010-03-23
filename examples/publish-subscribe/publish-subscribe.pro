@@ -13,10 +13,6 @@ symbian {
     TARGET.UID3 = 0x2002AC79
 }
 
-symbian|maemo* {
-    DEFINES += QTM_SMALL_SCREEN
-}
-
 HEADERS = publisherdialog.h \
           subscriberdialog.h
 
