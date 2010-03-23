@@ -43,6 +43,7 @@
 #define QLOCATION_GEOADDRESS_H
 
 #include "qmobilityglobal.h"
+#include <QSharedDataPointer>
 
 class QString;
 
@@ -53,6 +54,10 @@ class Q_LOCATION_EXPORT QGeoAddress
 {
 public:
     QGeoAddress();
+    QGeoAddress(const QGeoAddress &other);
+    ~QGeoAddress();
+
+    QGeoAddress &operator=(const QGeoAddress &other);
 
     QString country() const;
     void setCountry(const QString &country);
@@ -87,8 +92,7 @@ public:
     bool isEmpty() const;
 
 private:
-    QGeoAddressPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QGeoAddress);
+    QSharedDataPointer<QGeoAddressPrivate> d;
 };
 
 QTM_END_NAMESPACE

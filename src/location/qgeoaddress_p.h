@@ -54,13 +54,16 @@
 //
 
 #include <QString>
+#include <QSharedData>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoAddressPrivate
+class QGeoAddressPrivate : public QSharedData
 {
 public:
     QGeoAddressPrivate();
+    QGeoAddressPrivate(const QGeoAddressPrivate &other);
+    ~QGeoAddressPrivate();
 
     QString sCountry; //!< country field
     QString sCountryCode; //!< country code field

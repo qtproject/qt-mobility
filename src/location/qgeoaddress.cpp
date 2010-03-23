@@ -45,6 +45,29 @@
 
 QTM_BEGIN_NAMESPACE
 
+QGeoAddressPrivate::QGeoAddressPrivate()
+{
+}
+
+QGeoAddressPrivate::QGeoAddressPrivate(const QGeoAddressPrivate &other)
+    :QSharedData(other),
+     sCountry(other.sCountry),
+     sCountryCode(other.sCountryCode),
+     sState(other.sState),
+     sCounty(other.sCounty),
+     sCity(other.sCity),
+     sDistrict(other.sDistrict),
+     sThoroughfareName(other.sThoroughfareName),
+     sThoroughfareNumber(other.sThoroughfareNumber),
+     sPostCode(other.sPostCode),
+     sPostOfficeBox(other.sPostOfficeBox)
+{
+}
+
+QGeoAddressPrivate::~QGeoAddressPrivate()
+{
+}
+
 /*!
     \class QGeoAddress
     \brief The QGeoAddress class represents an address
@@ -63,11 +86,35 @@ QGeoAddress::QGeoAddress()
 }
 
 /*!
+    Constructs a copy of \a other.
+*/
+QGeoAddress::QGeoAddress(const QGeoAddress &other)
+    :d(other.d)
+{
+}
+
+/*!
+    Destroys the address
+*/
+QGeoAddress::~QGeoAddress()
+{
+}
+
+/*!
+    Assigns the given \a address to this address and
+    returns a reference to this address.
+*/
+QGeoAddress &QGeoAddress::operator=(const QGeoAddress &address)
+{
+    d = address.d;
+    return *this;
+}
+
+/*!
     Returns the country name according to ISO 3166-1 alpha-3
 */
 QString QGeoAddress::country() const
 {
-    Q_D(const QGeoAddress);
     return d->sCountry;
 }
 
@@ -76,7 +123,6 @@ QString QGeoAddress::country() const
 */
 void QGeoAddress::setCountry(const QString &country)
 {
-    Q_D(QGeoAddress);
     d->sCountry = country;
 }
 
@@ -85,7 +131,6 @@ void QGeoAddress::setCountry(const QString &country)
 */
 QString QGeoAddress::countryCode() const
 {
-    Q_D(const QGeoAddress);
     return d->sCountryCode;
 }
 
@@ -94,7 +139,6 @@ QString QGeoAddress::countryCode() const
 */
 void QGeoAddress::setCountryCode(const QString &countryCode)
 {
-    Q_D(QGeoAddress);
     d->sCountryCode = countryCode;
 }
 
@@ -103,7 +147,6 @@ void QGeoAddress::setCountryCode(const QString &countryCode)
 */
 QString QGeoAddress::state() const
 {
-    Q_D(const QGeoAddress);
     return d->sState;
 }
 
@@ -112,7 +155,6 @@ QString QGeoAddress::state() const
 */
 void QGeoAddress::setState(const QString &state)
 {
-    Q_D(QGeoAddress);
     d->sState = state;
 }
 
@@ -121,7 +163,6 @@ void QGeoAddress::setState(const QString &state)
 */
 QString QGeoAddress::county() const
 {
-    Q_D(const QGeoAddress);
     return d->sCounty;
 }
 
@@ -130,7 +171,6 @@ QString QGeoAddress::county() const
 */
 void QGeoAddress::setCounty(const QString &county)
 {
-    Q_D(QGeoAddress);
     d->sCounty = county;
 }
 
@@ -139,7 +179,6 @@ void QGeoAddress::setCounty(const QString &county)
 */
 QString QGeoAddress::city() const
 {
-    Q_D(const QGeoAddress);
     return d->sCity;
 }
 
@@ -148,7 +187,6 @@ QString QGeoAddress::city() const
 */
 void QGeoAddress::setCity(const QString &city)
 {
-    Q_D(QGeoAddress);
     d->sCity = city;
 }
 
@@ -157,7 +195,6 @@ void QGeoAddress::setCity(const QString &city)
 */
 QString QGeoAddress::district() const
 {
-    Q_D(const QGeoAddress);
     return d->sDistrict;
 }
 
@@ -166,7 +203,6 @@ QString QGeoAddress::district() const
 */
 void QGeoAddress::setDistrict(const QString &district)
 {
-    Q_D(QGeoAddress);
     d->sDistrict = district;
 }
 
@@ -175,7 +211,6 @@ void QGeoAddress::setDistrict(const QString &district)
 */
 QString QGeoAddress::thoroughfareName() const
 {
-    Q_D(const QGeoAddress);
     return d->sThoroughfareName;
 }
 
@@ -184,7 +219,6 @@ QString QGeoAddress::thoroughfareName() const
 */
 void QGeoAddress::setThoroughfareName(const QString &thoroughfareName)
 {
-    Q_D(QGeoAddress);
     d->sThoroughfareName = thoroughfareName;
 }
 
@@ -193,7 +227,6 @@ void QGeoAddress::setThoroughfareName(const QString &thoroughfareName)
 */
 QString QGeoAddress::thoroughfareNumber() const
 {
-    Q_D(const QGeoAddress);
     return d->sThoroughfareNumber;
 }
 
@@ -202,7 +235,6 @@ QString QGeoAddress::thoroughfareNumber() const
 */
 void QGeoAddress::setThoroughfareNumber(const QString &thoroughfareNumber)
 {
-    Q_D(QGeoAddress);
     d->sThoroughfareNumber = thoroughfareNumber;
 }
 
@@ -211,7 +243,6 @@ void QGeoAddress::setThoroughfareNumber(const QString &thoroughfareNumber)
 */
 QString QGeoAddress::postCode() const
 {
-    Q_D(const QGeoAddress);
     return d->sPostCode;
 }
 
@@ -220,7 +251,6 @@ QString QGeoAddress::postCode() const
 */
 void QGeoAddress::setPostCode(const QString &postCode)
 {
-    Q_D(QGeoAddress);
     d->sPostCode = postCode;
 }
 
@@ -229,7 +259,6 @@ void QGeoAddress::setPostCode(const QString &postCode)
 */
 QString QGeoAddress::postOfficeBox() const
 {
-    Q_D(const QGeoAddress);
     return d->sPostOfficeBox;
 }
 
@@ -238,7 +267,6 @@ QString QGeoAddress::postOfficeBox() const
 */
 void QGeoAddress::setPostOfficeBox(const QString &postOfficeBox)
 {
-    Q_D(QGeoAddress);
     d->sPostOfficeBox = postOfficeBox;
 }
 
@@ -248,7 +276,6 @@ void QGeoAddress::setPostOfficeBox(const QString &postOfficeBox)
 */
 bool QGeoAddress::isEmpty() const
 {
-    Q_D(const QGeoAddress);
     return d->sCountry.isEmpty() &&
            d->sCountryCode.isEmpty() &&
            d->sState.isEmpty() &&
