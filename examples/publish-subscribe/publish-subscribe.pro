@@ -13,6 +13,8 @@ symbian {
     TARGET.UID3 = 0x2002AC79
 }
 
+include(../examples.pri)
+
 symbian|maemo* {
     DEFINES += QTM_SMALL_SCREEN
 }
@@ -31,8 +33,6 @@ maemo* {
     FORMS = publisherdialog.ui \
             subscriberdialog.ui
 }
-
-include(../examples.pri)
 
 CONFIG += mobility
 MOBILITY = publishsubscribe
