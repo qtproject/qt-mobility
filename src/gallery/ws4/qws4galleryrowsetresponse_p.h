@@ -68,7 +68,8 @@ public:
     {
         Progress = QEvent::User,
         Stop,
-        ItemsInserted
+        ItemsInserted,
+        ItemsChanged
     };
 
     QWS4GalleryEvent(Type type) : QEvent(QEvent::Type(type)) {}
@@ -111,7 +112,6 @@ public:
 
     const int count;
 };
-
 
 class QWS4GalleryRowSetResponse
     : public QGalleryAbstractResponse

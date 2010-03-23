@@ -43,8 +43,12 @@
 #include "qabstractgallery_p.h"
 
 #include "qgalleryerrorresponse_p.h"
+#include "qws4gallerycopyresponse_p.h"
+#include "qws4gallerycountresponse_p.h"
 #include "qws4galleryitemresponse_p.h"
+#include "qws4gallerymoveresponse_p.h"
 #include "qws4galleryquerybuilder_p.h"
+#include "qws4galleryremoveresponse_p.h"
 
 #include <QtCore/qstringbuilder.h>
 
@@ -71,6 +75,10 @@ public:
     IRowsetScroll *execute(const QString &query, bool live, int *result);
 
     QGalleryAbstractResponse *createItemResponse(QGalleryItemRequest *request);
+    QGalleryAbstractResponse *createCountResponse(QGalleryCountRequest *request);
+    QGalleryAbstractResponse *createCopyResponse(QGalleryCopyRequest *request);
+    QGalleryAbstractResponse *createMoveResponse(QGalleryMoveRequest *request);
+    QGalleryAbstractResponse *createRemoveResponse(QGalleryRemoveRequest *request);
 };
 
 void QDocumentGalleryPrivate::open()
@@ -172,6 +180,40 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(
     return new QGalleryErrorResponse(result);
 }
 
+
+QGalleryAbstractResponse *QDocumentGalleryPrivate::createCountResponse(
+        QGalleryCountRequest *request)
+{
+    QWS4GalleryQueryBuilder builder;
+
+    builder.setItemType(request->itemType());
+    builder.setFilter(request->filter());
+
+    int result = builder.buildQuery();
+
+    if (result == 0) {
+        if (IRowsetScroll *rowSet = execute(builder.query(), request->isLive(), &result))
+            return new QWS4GalleryCountResponse(rowSet);
+    }
+
+    return new QGalleryErrorResponse(result);
+}
+
+QGalleryAbstractResponse *QDocumentGalleryPrivate::createCopyResponse(QGalleryCopyRequest *request)
+{
+    return new QWS4GalleryCopyResponse(*request);
+}
+
+QGalleryAbstractResponse *QDocumentGalleryPrivate::createMoveResponse(QGalleryMoveRequest *request)
+{
+    return new QWS4GalleryMoveResponse(*request);
+}
+
+QGalleryAbstractResponse *QDocumentGalleryPrivate::createRemoveResponse(QGalleryRemoveRequest *request)
+{
+    return new QWS4GalleryRemoveResponse(*request);
+}
+
 QDocumentGallery::QDocumentGallery(QObject *parent)
     : QAbstractGallery(*new QDocumentGalleryPrivate, parent)
 {
@@ -192,6 +234,10 @@ bool QDocumentGallery::isRequestSupported(QGalleryAbstractRequest::Type type) co
 {
     switch (type) {
     case QGalleryAbstractRequest::Item:
+    case QGalleryAbstractRequest::Count:
+    case QGalleryAbstractRequest::Copy:
+    case QGalleryAbstractRequest::Move:
+    case QGalleryAbstractRequest::Remove:
         return true;
     default:
         return false;
@@ -211,6 +257,14 @@ QGalleryAbstractResponse *QDocumentGallery::createResponse(QGalleryAbstractReque
     switch (request->type()) {
     case QGalleryAbstractRequest::Item:
         return d_func()->createItemResponse(static_cast<QGalleryItemRequest *>(request));
+    case QGalleryAbstractRequest::Count:
+        return d_func()->createCountResponse(static_cast<QGalleryCountRequest *>(request));
+    case QGalleryAbstractRequest::Copy:
+        return d_func()->createCopyResponse(static_cast<QGalleryCopyRequest *>(request));
+    case QGalleryAbstractRequest::Move:
+        return d_func()->createMoveResponse(static_cast<QGalleryMoveRequest *>(request));
+    case QGalleryAbstractRequest::Remove:
+        return d_func()->createRemoveResponse(static_cast<QGalleryRemoveRequest *>(request));
     default:
         return 0;
     }

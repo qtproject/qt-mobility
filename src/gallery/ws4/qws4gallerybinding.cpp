@@ -181,7 +181,7 @@ template <> QVariant qws4ReadVariant<VARIANT>(const char *buffer)
     case VT_UI2:
         return variant->uiVal;
     case VT_UI4:
-        return uint(variant->ulVal);
+        return quint32(variant->ulVal);
     case VT_UI8:
         return variant->ullVal;
     case VT_UINT:
