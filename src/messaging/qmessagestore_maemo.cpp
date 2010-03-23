@@ -227,14 +227,92 @@ bool QMessageStore::removeMessages(const QMessageFilter& filter, QMessageManager
 
 bool QMessageStore::addMessage(QMessage *m)
 {
-    Q_UNUSED(m)
-    return true; // stub
+    bool retVal = true;
+
+    QMessageAccountId accountId = m->parentAccountId();
+    QMessage::Type msgType = QMessage::NoType;
+
+    // Check message type
+    if (m->type() == QMessage::AnyType || m->type() == QMessage::NoType) {
+        if (accountId.isValid()) {
+            // ParentAccountId was defined => Message type can be read
+            // from parent account
+            QMessageAccount account = QMessageAccount(accountId);
+            QMessage::TypeFlags types = account.messageTypes();
+            if (types & QMessage::Sms) {
+                msgType = QMessage::Sms;
+            } else if (account.messageTypes() & QMessage::InstantMessage) {
+                msgType = QMessage::InstantMessage;
+            } else if (types & QMessage::Mms) {
+                msgType = QMessage::Mms;
+            } else if (types & QMessage::Email) {
+                msgType = QMessage::Email;
+            }
+        }
+        if (msgType == QMessage::NoType) {
+            retVal = false;
+        }
+    }
+
+    if (retVal) {
+        // Check account
+        if (!accountId.isValid()) {
+            accountId = QMessageAccount::defaultAccount(m->type());
+            if (!accountId.isValid()) {
+                retVal = false;
+            }
+        }
+    }
+
+    QMessageAccount account(accountId);
+    if (retVal) {
+        // Check account/message type compatibility
+        if (!(account.messageTypes() & m->type()) && (msgType == QMessage::NoType)) {
+            retVal = false;
+        }
+    }
+
+    if (retVal) {
+        // Set default account if unset
+        if (!m->parentAccountId().isValid()) {
+            m->setParentAccountId(accountId);
+        }
+
+        if (account.messageTypes() & QMessage::Sms) {
+            retVal = false; //TODO:
+            qWarning() << "QMessageManager::add not yet implemented for SMS";
+        } else if (account.messageTypes() & QMessage::InstantMessage) {
+            retVal = false; //TODO:
+            qWarning() << "QMessageManager::add not yet implemented for Instant Message";
+        } else if (account.messageTypes() & QMessage::Mms) {
+            retVal = false; //TODO:
+            qWarning() << "QMessageManager::add not yet implemented for MMS";
+        } else if (account.messageTypes() & QMessage::Email) {
+            retVal = ModestEngine::instance()->addMessage(*m);
+        }
+    }
+
+    return retVal;
 }
 
 bool QMessageStore::updateMessage(QMessage *m)
 {
-    Q_UNUSED(m)
-    return true; // stub
+    bool retVal = false;
+
+    if (m->type() == QMessage::Sms) {
+        retVal = false; //TODO:
+        qWarning() << "QMessageManager::update not yet implemented for SMS";
+    } else if (m->type() == QMessage::InstantMessage) {
+        retVal = false; //TODO:
+        qWarning() << "QMessageManager::update not yet implemented for Instant Message";
+    } else if (m->type() == QMessage::Mms) {
+        retVal = false; //TODO:
+        qWarning() << "QMessageManager::update not yet implemented for Instant MMS";
+    } else if (m->type() == QMessage::Email) {
+        retVal = ModestEngine::instance()->updateMessage(*m);
+    }
+
+    return retVal;
 }
 
 QMessage QMessageStore::message(const QMessageId& id) const
