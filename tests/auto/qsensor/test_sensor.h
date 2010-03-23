@@ -58,7 +58,7 @@ public:
     void setTest(bool test);
 };
 
-class TestFilter : public QSensorFilter
+class TestSensorFilter : public QSensorFilter
 {
 public:
     virtual bool filter(TestSensorReading *reading) = 0;

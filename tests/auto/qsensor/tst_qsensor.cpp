@@ -49,6 +49,14 @@
 
 QTM_USE_NAMESPACE
 
+class MyFilter : public TestSensorFilter
+{
+    bool filter(TestSensorReading *reading)
+    {
+        return reading->test();
+    }
+};
+
 /*
     Unit test for QSensor class.
 */
@@ -217,7 +225,80 @@ private slots:
         QString actual = sensor.description();
         QString expected = "sensor description";
         QCOMPARE(actual, expected);
+        sensor.outputRange();
+        sensor.setOutputRange(1);
+        sensor.outputRanges();
+        sensor.availableDataRates();
+        sensor.setUpdateInterval(1000);
+        sensor.updateInterval();
+        sensor.isBusy();
+        sensor.error();
+        sensor.isConnected();
+
+        TestSensorReading *reading = sensor.reading();
+        reading->test();
+        QCOMPARE(reading->valueCount(), 1);
+        reading->value(0).toBool();
     }
+
+    void testMetaData2()
+    {
+        TestSensor sensor;
+        sensor.setProperty("doThis", "rates(0)");
+        QTest::ignoreMessage(QtWarningMsg, "ERROR: Cannot call QSensorBackend::setDataRates with 0 ");
+        sensor.connect();
+    }
+
+    void testMetaData3()
+    {
+        TestSensor sensor;
+        sensor.setProperty("doThis", "rates");
+        sensor.connect();
+
+        sensor.availableDataRates();
+    }
+
+    void testFilter()
+    {
+        TestSensor sensor;
+        sensor.connect();
+
+        MyFilter filter;
+        sensor.addFilter(&filter);
+        sensor.removeFilter(&filter);
+        sensor.addFilter(&filter);
+    }
+
+    void testStart2()
+    {
+        TestSensor sensor;
+        sensor.connect();
+
+        sensor.setProperty("doThis", "busy");
+        sensor.start();
+        QVERIFY(!sensor.isActive());
+
+        sensor.setProperty("doThis", "stop");
+        sensor.start();
+        QVERIFY(!sensor.isActive());
+
+        sensor.setProperty("doThis", "error");
+        sensor.start();
+        QVERIFY(sensor.error() == 1);
+        QVERIFY(sensor.isActive());
+
+        MyFilter filter;
+        sensor.addFilter(&filter);
+        sensor.setProperty("doThis", "setFalse");
+        sensor.start();
+        QVERIFY(sensor.isActive());
+
+        sensor.setProperty("doThis", "setTrue");
+        sensor.start();
+        QVERIFY(sensor.isActive());
+
+    }
+
 };
 
 QTEST_MAIN(tst_QSensor)
