@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qrouterequest.cpp -->
+<head>
+  <title>Qt Mobility Project 1.0: QRouteRequest Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QRouteRequest"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QRouteRequest Class Reference</h1>
+<p>The QRouteRequest class represents a request for a route between two points. <a href="#details">More...</a></p>
+<pre>    #include &lt;QRouteRequest&gt;</pre><ul>
+<li><a href="qrouterequest-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-types"></a>
+<h2>Public Types</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qrouterequest.html#RouteAvoid-enum">RouteAvoid</a></b> { Highways, Tollroads, Ferries, Tunnels, Dirtroads, RailFerries }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qrouterequest.html#RouteMode-enum">RouteMode</a></b> { Car, Pedestrian, PublicTransport }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qrouterequest.html#RouteType-enum">RouteType</a></b> { Fastest, Shortest, Economic }</td></tr>
+</table>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qrouterequest.html#QRouteRequest">QRouteRequest</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qrouterequest.html#dtor.QRouteRequest">~QRouteRequest</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qrouterequest.html#addStopOver">addStopOver</a></b> ( const QGeoCoordinate &amp; <i>stopOver</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">quint16 </td><td class="memItemRight" valign="bottom"><b><a href="qrouterequest.html#alternatives">alternatives</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QDateTime </td><td class="memItemRight" valign="bottom"><b><a href="qrouterequest.html#arrivalTime">arrivalTime</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;RouteAvoid&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qrouterequest.html#avoid">avoid</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QDateTime </td><td class="memItemRight" valign="bottom"><b><a href="qrouterequest.html#departureTime">departureTime</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoCoordinate </td><td class="memItemRight" valign="bottom"><b><a href="qrouterequest.html#destination">destination</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qrouterequest.html#language">language</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">RouteMode </td><td class="memItemRight" valign="bottom"><b><a href="qrouterequest.html#mode">mode</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qrouterequest.html#removeStopOver">removeStopOver</a></b> ( const QGeoCoordinate &amp; <i>stopOver</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qrouterequest.html#setAlternatives">setAlternatives</a></b> ( quint16 <i>nAlternatives</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qrouterequest.html#setArrivalTime">setArrivalTime</a></b> ( const QDateTime &amp; <i>arrivalTime</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qrouterequest.html#setAvoid">setAvoid</a></b> ( QList&lt;RouteAvoid&gt; <i>avoid</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qrouterequest.html#setDepartureTime">setDepartureTime</a></b> ( const QDateTime &amp; <i>departureTime</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qrouterequest.html#setDestination">setDestination</a></b> ( const QGeoCoordinate &amp; <i>destination</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qrouterequest.html#setLanguage">setLanguage</a></b> ( const QString &amp; <i>code</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qrouterequest.html#setMode">setMode</a></b> ( RouteMode <i>mode</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qrouterequest.html#setSource">setSource</a></b> ( const QGeoCoordinate &amp; <i>source</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qrouterequest.html#setTotalResults">setTotalResults</a></b> ( quint32 <i>totalResults</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qrouterequest.html#setType">setType</a></b> ( RouteType <i>type</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoCoordinate </td><td class="memItemRight" valign="bottom"><b><a href="qrouterequest.html#source">source</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const QList&lt;QGeoCoordinate&gt; &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qrouterequest.html#stopOvers">stopOvers</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">quint32 </td><td class="memItemRight" valign="bottom"><b><a href="qrouterequest.html#totalResults">totalResults</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">RouteType </td><td class="memItemRight" valign="bottom"><b><a href="qrouterequest.html#type">type</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qrouterequest.html#version">version</a></b> () const</td></tr>
+</table>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QRouteRequest class represents a request for a route between two points.</p>
+<p>This is the base class representing a route request from a given source to a given destination.</p>
+<hr />
+<h2>Member Type Documentation</h2>
+<a name="//apple_ref/cpp/tag/QRouteRequest/RouteAvoid"></a>
+<a name="//apple_ref/cpp/econst/QRouteRequest/Highways"></a>
+<a name="//apple_ref/cpp/econst/QRouteRequest/Tollroads"></a>
+<a name="//apple_ref/cpp/econst/QRouteRequest/Ferries"></a>
+<a name="//apple_ref/cpp/econst/QRouteRequest/Tunnels"></a>
+<a name="//apple_ref/cpp/econst/QRouteRequest/Dirtroads"></a>
+<a name="//apple_ref/cpp/econst/QRouteRequest/RailFerries"></a>
+<h3 class="fn"><a name="RouteAvoid-enum"></a>enum QRouteRequest::RouteAvoid</h3>
+<p>Values that specify which components the route will not contain.</p>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QRouteRequest::Highways</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">avoid highways</td></tr>
+<tr><td valign="top"><tt>QRouteRequest::Tollroads</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">avoid tollroads</td></tr>
+<tr><td valign="top"><tt>QRouteRequest::Ferries</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">avoid ferries</td></tr>
+<tr><td valign="top"><tt>QRouteRequest::Tunnels</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">avoid tunnels</td></tr>
+<tr><td valign="top"><tt>QRouteRequest::Dirtroads</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">avoid dirt roads</td></tr>
+<tr><td valign="top"><tt>QRouteRequest::RailFerries</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">avoid rail ferries</td></tr>
+</table></p>
+<a name="//apple_ref/cpp/tag/QRouteRequest/RouteMode"></a>
+<a name="//apple_ref/cpp/econst/QRouteRequest/Car"></a>
+<a name="//apple_ref/cpp/econst/QRouteRequest/Pedestrian"></a>
+<a name="//apple_ref/cpp/econst/QRouteRequest/PublicTransport"></a>
+<h3 class="fn"><a name="RouteMode-enum"></a>enum QRouteRequest::RouteMode</h3>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QRouteRequest::Car</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">car route (default)</td></tr>
+<tr><td valign="top"><tt>QRouteRequest::Pedestrian</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">pedestrian route</td></tr>
+<tr><td valign="top"><tt>QRouteRequest::PublicTransport</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">public transport route</td></tr>
+</table></p>
+<a name="//apple_ref/cpp/tag/QRouteRequest/RouteType"></a>
+<a name="//apple_ref/cpp/econst/QRouteRequest/Fastest"></a>
+<a name="//apple_ref/cpp/econst/QRouteRequest/Shortest"></a>
+<a name="//apple_ref/cpp/econst/QRouteRequest/Economic"></a>
+<h3 class="fn"><a name="RouteType-enum"></a>enum QRouteRequest::RouteType</h3>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QRouteRequest::Fastest</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">fastest route (default)</td></tr>
+<tr><td valign="top"><tt>QRouteRequest::Shortest</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">shortest route</td></tr>
+<tr><td valign="top"><tt>QRouteRequest::Economic</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">economic route</td></tr>
+</table></p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QRouteRequest/QRouteRequest"></a>
+<h3 class="fn"><a name="QRouteRequest"></a>QRouteRequest::QRouteRequest ()</h3>
+<p>The default constructor.</p>
+<a name="//apple_ref/cpp/instm/QRouteRequest/~QRouteRequest"></a>
+<h3 class="fn"><a name="dtor.QRouteRequest"></a>QRouteRequest::~QRouteRequest ()</h3>
+<p>Destroys the route request.</p>
+<a name="//apple_ref/cpp/instm/QRouteRequest/addStopOver"></a>
+<h3 class="fn"><a name="addStopOver"></a>void QRouteRequest::addStopOver ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>stopOver</i> )</h3>
+<p>Adds the stop over <i>stopOver</i> to the requested route.</p>
+<p>The server calculates a route that contains these waypoints (in the given order) as part of the route. These waypoints must be between the destination and the source.</p>
+<a name="//apple_ref/cpp/instm/QRouteRequest/alternatives"></a>
+<h3 class="fn"><a name="alternatives"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint16-typedef">quint16</a> QRouteRequest::alternatives () const</h3>
+<p>Returns the maximum number of alternatives to be returned.</p>
+<p>See also <a href="qrouterequest.html#setAlternatives">setAlternatives</a>().</p>
+<a name="//apple_ref/cpp/instm/QRouteRequest/arrivalTime"></a>
+<h3 class="fn"><a name="arrivalTime"></a><a href="http://qt.nokia.com/doc/4.6/qdatetime.html">QDateTime</a> QRouteRequest::arrivalTime () const</h3>
+<p>Returns the planned time of departure.</p>
+<p>See also <a href="qrouterequest.html#setArrivalTime">setArrivalTime</a>().</p>
+<a name="//apple_ref/cpp/instm/QRouteRequest/avoid"></a>
+<h3 class="fn"><a name="avoid"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qrouterequest.html#RouteAvoid-enum">RouteAvoid</a>&gt; QRouteRequest::avoid () const</h3>
+<p>Returns a list containing all routes components to be avoided.</p>
+<p>See also <a href="qrouterequest.html#setAvoid">setAvoid</a>().</p>
+<a name="//apple_ref/cpp/instm/QRouteRequest/departureTime"></a>
+<h3 class="fn"><a name="departureTime"></a><a href="http://qt.nokia.com/doc/4.6/qdatetime.html">QDateTime</a> QRouteRequest::departureTime () const</h3>
+<p>Returns the planned time of departure.</p>
+<p>See also <a href="qrouterequest.html#setDepartureTime">setDepartureTime</a>().</p>
+<a name="//apple_ref/cpp/instm/QRouteRequest/destination"></a>
+<h3 class="fn"><a name="destination"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QRouteRequest::destination () const</h3>
+<p>Returns the destination geo coordinate for this request.</p>
+<p>See also <a href="qrouterequest.html#setDestination">setDestination</a>().</p>
+<a name="//apple_ref/cpp/instm/QRouteRequest/language"></a>
+<h3 class="fn"><a name="language"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QRouteRequest::language () const</h3>
+<p>Returns the RFC 3066 language code of the response.</p>
+<p>See also <a href="qrouterequest.html#setLanguage">setLanguage</a>().</p>
+<a name="//apple_ref/cpp/instm/QRouteRequest/mode"></a>
+<h3 class="fn"><a name="mode"></a><a href="qrouterequest.html#RouteMode-enum">RouteMode</a> QRouteRequest::mode () const</h3>
+<p>Returns the route mode.</p>
+<p>See also <a href="qrouterequest.html#setMode">setMode</a>().</p>
+<a name="//apple_ref/cpp/instm/QRouteRequest/removeStopOver"></a>
+<h3 class="fn"><a name="removeStopOver"></a>void QRouteRequest::removeStopOver ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>stopOver</i> )</h3>
+<p>Removes the stop over <i>stopOver</i> from the requested route.</p>
+<p>See also <a href="qrouterequest.html#addStopOver">addStopOver</a>().</p>
+<a name="//apple_ref/cpp/instm/QRouteRequest/setAlternatives"></a>
+<h3 class="fn"><a name="setAlternatives"></a>void QRouteRequest::setAlternatives ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint16-typedef">quint16</a> <i>nAlternatives</i> )</h3>
+<p>Sets the maximum number of alternative routes the server will try to generate.</p>
+<p>If set to 0 the result will contain no alternative routes (only one result is returned if any).</p>
+<p>See also <a href="qrouterequest.html#alternatives">alternatives</a>().</p>
+<a name="//apple_ref/cpp/instm/QRouteRequest/setArrivalTime"></a>
+<h3 class="fn"><a name="setArrivalTime"></a>void QRouteRequest::setArrivalTime ( const <a href="http://qt.nokia.com/doc/4.6/qdatetime.html">QDateTime</a> &amp; <i>arrivalTime</i> )</h3>
+<p>Sets the planned time of arrival to <i>toa</i>.</p>
+<p>See also <a href="qrouterequest.html#arrivalTime">arrivalTime</a>().</p>
+<a name="//apple_ref/cpp/instm/QRouteRequest/setAvoid"></a>
+<h3 class="fn"><a name="setAvoid"></a>void QRouteRequest::setAvoid ( <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qrouterequest.html#RouteAvoid-enum">RouteAvoid</a>&gt; <i>avoid</i> )</h3>
+<p>Specifies which route components should not be part of the calculated route to <i>avoid</i>.</p>
+<p>The components are avoided on a best effort basis.</p>
+<p>See also <a href="qrouterequest.html#avoid">avoid</a>() and <a href="qrouterequest.html#RouteAvoid-enum">RouteAvoid</a>.</p>
+<a name="//apple_ref/cpp/instm/QRouteRequest/setDepartureTime"></a>
+<h3 class="fn"><a name="setDepartureTime"></a>void QRouteRequest::setDepartureTime ( const <a href="http://qt.nokia.com/doc/4.6/qdatetime.html">QDateTime</a> &amp; <i>departureTime</i> )</h3>
+<p>Sets the planned time of departure to <i>tod</i>.</p>
+<p>See also <a href="qrouterequest.html#departureTime">departureTime</a>().</p>
+<a name="//apple_ref/cpp/instm/QRouteRequest/setDestination"></a>
+<h3 class="fn"><a name="setDestination"></a>void QRouteRequest::setDestination ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>destination</i> )</h3>
+<p>Sets the destination geo coordinate for this request to <i>destination</i>.</p>
+<p>See also <a href="qrouterequest.html#destination">destination</a>().</p>
+<a name="//apple_ref/cpp/instm/QRouteRequest/setLanguage"></a>
+<h3 class="fn"><a name="setLanguage"></a>void QRouteRequest::setLanguage ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>code</i> )</h3>
+<p>Sets he RFC 3066 language code of the response to <i>code</i>.</p>
+<p>The language code should look like en-US or de-DE.</p>
+<p>See also <a href="qrouterequest.html#language">language</a>().</p>
+<a name="//apple_ref/cpp/instm/QRouteRequest/setMode"></a>
+<h3 class="fn"><a name="setMode"></a>void QRouteRequest::setMode ( <a href="qrouterequest.html#RouteMode-enum">RouteMode</a> <i>mode</i> )</h3>
+<p>Sets the movement mode of the route to <i>mode</i>.</p>
+<p>See also <a href="qrouterequest.html#mode">mode</a>() and <a href="qrouterequest.html#RouteMode-enum">RouteMode</a>.</p>
+<a name="//apple_ref/cpp/instm/QRouteRequest/setSource"></a>
+<h3 class="fn"><a name="setSource"></a>void QRouteRequest::setSource ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>source</i> )</h3>
+<p>Sets the source geo coordinate for this request to <i>source</i>.</p>
+<p>See also <a href="qrouterequest.html#source">source</a>().</p>
+<a name="//apple_ref/cpp/instm/QRouteRequest/setTotalResults"></a>
+<h3 class="fn"><a name="setTotalResults"></a>void QRouteRequest::setTotalResults ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint32-typedef">quint32</a> <i>totalResults</i> )</h3>
+<p>Sets the maximum number of response results.</p>
+<p>If set to 0 all possible results will be returned.</p>
+<p>See also <a href="qrouterequest.html#totalResults">totalResults</a>().</p>
+<a name="//apple_ref/cpp/instm/QRouteRequest/setType"></a>
+<h3 class="fn"><a name="setType"></a>void QRouteRequest::setType ( <a href="qrouterequest.html#RouteType-enum">RouteType</a> <i>type</i> )</h3>
+<p>Sets the type of the route the server will calculate to <i>type</i>.</p>
+<p>See also <a href="qrouterequest.html#type">type</a>() and <a href="qrouterequest.html#RouteType-enum">RouteType</a>.</p>
+<a name="//apple_ref/cpp/instm/QRouteRequest/source"></a>
+<h3 class="fn"><a name="source"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QRouteRequest::source () const</h3>
+<p>Returns the source geo coordinate for this request.</p>
+<p>See also <a href="qrouterequest.html#setSource">setSource</a>().</p>
+<a name="//apple_ref/cpp/instm/QRouteRequest/stopOvers"></a>
+<h3 class="fn"><a name="stopOvers"></a>const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qgeocoordinate.html">QGeoCoordinate</a>&gt; &amp; QRouteRequest::stopOvers () const</h3>
+<p>Returns all added stop overs.</p>
+<a name="//apple_ref/cpp/instm/QRouteRequest/totalResults"></a>
+<h3 class="fn"><a name="totalResults"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint32-typedef">quint32</a> QRouteRequest::totalResults () const</h3>
+<p>Returns the maximum number of response results.</p>
+<p>See also <a href="qrouterequest.html#setTotalResults">setTotalResults</a>().</p>
+<a name="//apple_ref/cpp/instm/QRouteRequest/type"></a>
+<h3 class="fn"><a name="type"></a><a href="qrouterequest.html#RouteType-enum">RouteType</a> QRouteRequest::type () const</h3>
+<p>Returns the route type.</p>
+<p>See also <a href="qrouterequest.html#setType">setType</a>().</p>
+<a name="//apple_ref/cpp/instm/QRouteRequest/version"></a>
+<h3 class="fn"><a name="version"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QRouteRequest::version () const</h3>
+<p>Returns the service version.</p>
+<p>Currently the only supported version is 1.0&#x2e;</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+</tr></table></div></address></body>
+</html>

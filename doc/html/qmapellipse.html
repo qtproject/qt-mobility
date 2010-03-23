@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qmapellipse.cpp -->
+<head>
+  <title>Qt Mobility Project 1.0: QMapEllipse Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QMapEllipse"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMapEllipse Class Reference</h1>
+<p>The QMapEllipse class represents an ellipse that has been added to the map. * <a href="#details">More...</a></p>
+<pre>    #include &lt;QMapEllipse&gt;</pre><p>Inherits <a href="qmapobject.html">QMapObject</a>.</p>
+<ul>
+<li><a href="qmapellipse-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmapellipse.html#QMapEllipse">QMapEllipse</a></b> ( const QGeoCoordinate &amp; <i>topLeft</i>, const QGeoCoordinate &amp; <i>bottomRight</i>, const QPen &amp; <i>pen</i> = QPen(), const QBrush &amp; <i>brush</i> = QBrush(), quint16 <i>layerIndex</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoCoordinate </td><td class="memItemRight" valign="bottom"><b><a href="qmapellipse.html#bottomRight">bottomRight</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QBrush </td><td class="memItemRight" valign="bottom"><b><a href="qmapellipse.html#brush">brush</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QPen </td><td class="memItemRight" valign="bottom"><b><a href="qmapellipse.html#pen">pen</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoCoordinate </td><td class="memItemRight" valign="bottom"><b><a href="qmapellipse.html#topLeft">topLeft</a></b> () const</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>2 public functions inherited from <a href="qmapobject.html#public-functions">QMapObject</a></li>
+</ul>
+<hr />
+<a name="reimplemented-protected-functions"></a>
+<h2>Reimplemented Protected Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmapellipse.html#compMapCoords">compMapCoords</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qmapellipse.html#intersects">intersects</a></b> ( const QRectF &amp; <i>rect</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmapellipse.html#paint">paint</a></b> ( QPainter * <i>painter</i>, const QRectF &amp; <i>viewPort</i> )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>5 protected functions inherited from <a href="qmapobject.html#protected-functions">QMapObject</a></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>2 static public members inherited from <a href="qmapobject.html#static-public-members">QMapObject</a></li>
+<li><div class="fn"></div>5 protected functions inherited from <a href="qmapobject.html#protected-functions">QMapObject</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>* *</p>
+<p>The QMapEllipse class represents an ellipse that has been added to the map. *</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QMapEllipse/QMapEllipse"></a>
+<h3 class="fn"><a name="QMapEllipse"></a>QMapEllipse::QMapEllipse ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>topLeft</i>, const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>bottomRight</i>, const <a href="http://qt.nokia.com/doc/4.6/qpen.html">QPen</a> &amp; <i>pen</i> = QPen(), const <a href="http://qt.nokia.com/doc/4.6/qbrush.html">QBrush</a> &amp; <i>brush</i> = QBrush(), <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint16-typedef">quint16</a> <i>layerIndex</i> = 0 )</h3>
+<p>Constructs an ellipse with bounding box corners specified by <i>topLeft</i> and <i>bottomRight</i>. The ellipse outline is drawn with the given <i>pen</i> and filled with the given <i>brush</i>. The ellipse is displayed at the layer specified by <i>layerIndex</i>.</p>
+<a name="//apple_ref/cpp/instm/QMapEllipse/bottomRight"></a>
+<h3 class="fn"><a name="bottomRight"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QMapEllipse::bottomRight () const</h3>
+<p>Returns the bottom right geo coordinate of the bounding box of the ellipse.</p>
+<a name="//apple_ref/cpp/instm/QMapEllipse/brush"></a>
+<h3 class="fn"><a name="brush"></a><a href="http://qt.nokia.com/doc/4.6/qbrush.html">QBrush</a> QMapEllipse::brush () const</h3>
+<p>* Returns the brush used for drawing the ellipse.</p>
+<a name="//apple_ref/cpp/instm/QMapEllipse/compMapCoords"></a>
+<h3 class="fn"><a name="compMapCoords"></a>void QMapEllipse::compMapCoords ()&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
+<a name="//apple_ref/cpp/instm/QMapEllipse/intersects"></a>
+<h3 class="fn"><a name="intersects"></a>bool QMapEllipse::intersects ( const <a href="http://qt.nokia.com/doc/4.6/qrectf.html">QRectF</a> &amp; <i>rect</i> ) const&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
+<a name="//apple_ref/cpp/instm/QMapEllipse/paint"></a>
+<h3 class="fn"><a name="paint"></a>void QMapEllipse::paint ( <a href="http://qt.nokia.com/doc/4.6/qpainter.html">QPainter</a> * <i>painter</i>, const <a href="http://qt.nokia.com/doc/4.6/qrectf.html">QRectF</a> &amp; <i>viewPort</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
+<a name="//apple_ref/cpp/instm/QMapEllipse/pen"></a>
+<h3 class="fn"><a name="pen"></a><a href="http://qt.nokia.com/doc/4.6/qpen.html">QPen</a> QMapEllipse::pen () const</h3>
+<p>Returns the pen used for drawing the ellipse.</p>
+<a name="//apple_ref/cpp/instm/QMapEllipse/topLeft"></a>
+<h3 class="fn"><a name="topLeft"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QMapEllipse::topLeft () const</h3>
+<p>Returns the top left geo coordinate of the bounding box of the ellipse.</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+</tr></table></div></address></body>
+</html>
