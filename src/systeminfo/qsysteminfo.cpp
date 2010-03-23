@@ -590,6 +590,44 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfo::currentMode()
     return netInfoPrivate()->currentMode();
 }
 
+/*!
+    \internal
+
+    This function is called when the client connects to the networkSignalStrengthChanged()
+    signal.
+*/
+void QSystemNetworkInfo::connectNotify(const char *signal)
+{
+    //check for networkSignalStrengthChanged() signal connect notification
+    //This is not required on all platforms
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+                                 networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int))))) {
+        netInfoPrivate()->setWlanSignalStrengthCheckEnabled(true);
+    }
+#endif
+}
+
+/*!
+    \internal
+
+    This function is called when the client disconnects from the networkSignalStrengthChanged()
+    signal.
+
+    \sa connectNotify()
+*/
+void QSystemNetworkInfo::disconnectNotify(const char *signal)
+{
+    //check for networkSignalStrengthChanged() signal disconnect notification
+    //This is not required on all platforms
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+                                 networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int))))) {
+        netInfoPrivate()->setWlanSignalStrengthCheckEnabled(false);
+    }
+#endif
+}
+
 // display
  /*!
    \fn QSystemDisplayInfo::QSystemDisplayInfo(QObject *parent)
