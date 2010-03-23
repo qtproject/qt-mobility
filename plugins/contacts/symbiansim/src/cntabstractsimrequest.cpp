@@ -43,27 +43,45 @@
 #include "cntsymbiansimengine.h"
 #include "cntsimstore.h"
 #include <QTimer>
-#include <QDebug>
-#include <QCoreApplication>
 
-const int KRetryCount = 10;
-const int KRetryTime = 100; // in ms
-
-CntAbstractSimRequest::CntAbstractSimRequest(CntSymbianSimEngine *engine)
+CntAbstractSimRequest::CntAbstractSimRequest(CntSymbianSimEngine *engine, QContactAbstractRequest *req)
     :QObject(engine),
+    m_request(req),
     m_timer(0),
     m_retryCount(0)
 {
     
 }
 
+bool CntAbstractSimRequest::start()
+{
+    if (m_request->isActive())
+        return false;
+    
+    m_retryCount = 0;
+    
+    singleShotTimer(KRequestDelay, this, SLOT(run()));
+    QContactManagerEngine::updateRequestState(m_request, QContactAbstractRequest::ActiveState);
+    return true;
+}
+
+bool CntAbstractSimRequest::cancel()
+{
+    if (m_request->isActive()) {
+        cancelTimer();
+        simStore()->cancel();
+        QContactManagerEngine::updateRequestState(m_request, QContactAbstractRequest::CanceledState);
+        return true;
+    }
+    return false;
+}
+
 bool CntAbstractSimRequest::waitAndRetry()
 {
-    if (m_retryCount < KRetryCount)
+    if (m_retryCount < KMaxRetryCount)
     {
-        singleShotTimer(KRetryTime, this, SLOT(retry()));
+        singleShotTimer(KRequestDelay, this, SLOT(run()));
         m_retryCount++;
-        qDebug() << "retrying request" << m_retryCount;
         return true;
     }
     return false;

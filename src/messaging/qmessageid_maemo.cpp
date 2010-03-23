@@ -123,7 +123,7 @@ bool QMessageId::isValid() const
 
 uint qHash(const QMessageId &id)
 {
-    //TODO: return qHash(id.toString());
+    return qHash(id.toString());
 }
 
 QTM_END_NAMESPACE

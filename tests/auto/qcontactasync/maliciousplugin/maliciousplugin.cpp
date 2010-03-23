@@ -58,15 +58,10 @@ MaliciousAsyncManagerEngine::MaliciousAsyncManagerEngine()
 {
 }
 
-void MaliciousAsyncManagerEngine::deref()
-{
-    // does this leak?
-}
-
-QString MaliciousAsyncManagerEngine::synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const
+QString MaliciousAsyncManagerEngine::synthesizedDisplayLabel(const QContact& contact, QContactManager::Error* error) const
 {
     Q_UNUSED(contact);
-    error = QContactManager::NotSupportedError;
+    *error = QContactManager::NotSupportedError;
     return QString();
 }
 
@@ -113,9 +108,9 @@ QString MaliciousEngineFactory::managerName() const
 }
 Q_EXPORT_PLUGIN2(MALICIOUSPLUGINTARGET, MaliciousEngineFactory);
 
-QContactManagerEngine* MaliciousEngineFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
+QContactManagerEngine* MaliciousEngineFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error* error)
 {
     Q_UNUSED(parameters);
-    error = QContactManager::NoError;
-    return &mame;
+    *error = QContactManager::NoError;
+    return new MaliciousAsyncManagerEngine();
 }

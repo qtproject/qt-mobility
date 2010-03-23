@@ -60,7 +60,6 @@ class QVersitReaderPrivate;
 class Q_VERSIT_EXPORT QVersitReader : public QObject
 {
     Q_OBJECT
-
 public:
     enum Error {
         NoError = 0,
@@ -79,19 +78,17 @@ public:
     };
 
     QVersitReader();
+    QVersitReader(QIODevice* inputDevice);
+    QVersitReader(const QByteArray& inputData);
     ~QVersitReader();
 
     // input:
-    void setDevice(QIODevice* device);
+    void setDevice(QIODevice* inputDevice);
     QIODevice* device() const;
+    void setData(const QByteArray& inputData);
 
     void setDefaultCodec(QTextCodec* codec);
     QTextCodec* defaultCodec() const;
-
-    // reading:
-    bool startReading();
-    void cancel();
-    bool waitForFinished(int msec = -1);
 
     // output:
     QList<QVersitDocument> results() const;
@@ -99,9 +96,15 @@ public:
     State state() const;
     Error error() const;
 
+    // reading:
+public Q_SLOTS:
+    bool startReading();
+    void cancel();
+public:
+    Q_INVOKABLE bool waitForFinished(int msec = -1);
+
 Q_SIGNALS:
     void stateChanged(QVersitReader::State state);
-    void resultsAvailable(QList<QVersitDocument>& results);
     void resultsAvailable();
 
 private: // data

@@ -66,9 +66,12 @@
 #include <QIODevice>
 #include <QList>
 #include <QPointer>
+#include <QScopedPointer>
 #include <QByteArray>
 #include <QMutex>
 #include <QWaitCondition>
+
+class QBuffer;
 
 QTM_BEGIN_NAMESPACE
 
@@ -126,10 +129,11 @@ class Q_AUTOTEST_EXPORT QVersitReaderPrivate : public QThread
 public: // Constructors and destructor
     QVersitReaderPrivate();
     ~QVersitReaderPrivate();
+    void init(QVersitReader* reader);
 
 signals:
     void stateChanged(QVersitReader::State state);
-    void resultsAvailable(QList<QVersitDocument>& results);
+    void resultsAvailable();
 
 protected: // From QThread
      void run();
@@ -202,6 +206,7 @@ public: // New functions
 
 public: // Data
     QPointer<QIODevice> mIoDevice;
+    QScopedPointer<QBuffer> mInputBytes; // Holds the data set by setData()
     QList<QVersitDocument> mVersitDocuments;
     int mDocumentNestingLevel; // Depth in parsing nested Versit documents
     QTextCodec* mDefaultCodec;

@@ -61,6 +61,14 @@ class QVersitPropertyPrivate;
 class Q_VERSIT_EXPORT QVersitProperty
 {
 public:
+    enum ValueType {
+        PlainType,
+        CompoundType,
+        ListType,
+        BinaryType,
+        VersitDocumentType
+    };
+
     QVersitProperty();
     QVersitProperty(const QVersitProperty& other);
     ~QVersitProperty();
@@ -90,6 +98,9 @@ public:
     }
     QString value() const;
 
+    void setValueType(ValueType type);
+    ValueType valueType() const;
+
     bool isEmpty() const;
     void clear();
 
@@ -97,6 +108,11 @@ private:
 
     QSharedDataPointer<QVersitPropertyPrivate> d;
 };
+
+Q_VERSIT_EXPORT uint qHash(const QVersitProperty& key);
+#ifndef QT_NO_DEBUG_STREAM
+Q_VERSIT_EXPORT QDebug operator<<(QDebug dbg, const QVersitProperty& property);
+#endif
 
 QTM_END_NAMESPACE
 

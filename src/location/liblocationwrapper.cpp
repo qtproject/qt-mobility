@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "liblocationwrapper.h"
+#include "liblocationwrapper_p.h"
 
 using namespace std;
 
@@ -88,6 +88,7 @@ bool LiblocationWrapper::inited()
                                      static_cast<void*>(this));
                 locationState = LiblocationWrapper::Inited;
                 retval = true;
+                startcounter = 0;
             }
         }
     } else {
@@ -221,7 +222,7 @@ void LiblocationWrapper::locationChanged(LocationGPSDevice *device,
 void LiblocationWrapper::setLocation(const QGeoPositionInfo &update, 
                                      bool location3D)
 {
-    if(!location3D)
+    if (!location3D)
         validLastSatUpdate = false;
     else
         validLastSatUpdate = true;
@@ -323,6 +324,8 @@ QList<QGeoSatelliteInfo> LiblocationWrapper::satellitesInUse()
 }
 
 void LiblocationWrapper::start() {
+    startcounter++;
+
     if ((locationState & LiblocationWrapper::Inited) &&
         !(locationState & LiblocationWrapper::Started)) {
         if (!errorHandlerId) {
@@ -347,6 +350,11 @@ void LiblocationWrapper::start() {
 }
 
 void LiblocationWrapper::stop() {
+    startcounter--;
+
+    if (startcounter > 0)
+        return;
+    
     if ((locationState & (LiblocationWrapper::Started |
                           LiblocationWrapper::Inited)) &&
         !(locationState & LiblocationWrapper::Stopped)) {
@@ -358,7 +366,7 @@ void LiblocationWrapper::stop() {
                                         posChangedId);
         errorHandlerId = 0;
         posChangedId = 0;
-
+        startcounter = 0;
         location_gpsd_control_stop(locationControl);
 
         locationState &= ~LiblocationWrapper::Started;
@@ -366,6 +374,13 @@ void LiblocationWrapper::stop() {
     }
 }
 
-#include "moc_liblocationwrapper.cpp"
+bool LiblocationWrapper::isActive() {
+    if (locationState & LiblocationWrapper::Started)
+        return true;
+    else
+        return false;
+}
+
+#include "moc_liblocationwrapper_p.cpp"
 QTM_END_NAMESPACE
 

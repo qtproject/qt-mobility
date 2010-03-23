@@ -55,15 +55,13 @@ public:
     
 public Q_SLOTS:    
     // from CntAbstractSimRequest
-    bool start();
-    bool cancel();
+    void run();
     
 private Q_SLOTS:
     void writeComplete(QContact contact, QContactManager::Error error);
     void writeNext();  
 
 private:
-    QContactSaveRequest *m_req;
     QList<QContact> m_contacts;
     int m_index;
     QMap<int, QContactManager::Error> m_errorMap;
