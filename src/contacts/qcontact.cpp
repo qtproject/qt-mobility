@@ -108,13 +108,13 @@ QContact::QContact(const QContact& other)
  */
 bool QContact::isEmpty() const
 {
-    /* Every contact has a display label field.. */
-    if (d->m_details.count() > 2)
+    /* Every contact has a display label field, type field, thumbnail field */
+    if (d->m_details.count() > 3)
         return false;
-
-    /* We know we have two details (a display label and a type) */
     const QContactDisplayLabel& label = d->m_details.at(0);
-    return label.label().isEmpty();
+    //const QContactType& type = d->m_details.at(1);
+    const QContactThumbnail& thumbnail = d->m_details.at(2);
+    return (label.label().isEmpty() && thumbnail.thumbnail().isNull());
 }
 
 /*!
@@ -139,6 +139,12 @@ void QContact::clearDetails()
     contactType.d->m_id = 2;
     contactType.d->m_access = QContactDetail::Irremovable;
     d->m_details.insert(1, contactType);
+
+    // and the thumbnail detail.
+    QContactThumbnail contactThumbnail;
+    contactThumbnail.d->m_id = 3;
+    contactThumbnail.d->m_access = QContactDetail::Irremovable;
+    d->m_details.insert(2, contactThumbnail);
 }
 
 /*! Replace the contents of this QContact with \a other */
@@ -317,6 +323,12 @@ bool QContact::saveDetail(QContactDetail* detail)
     if (detail->accessConstraints() & QContactDetail::ReadOnly)
         return false;
 
+    /* Handle display label specially - only one, and read only */
+    if (detail->definitionName() == QContactDisplayLabel::DefinitionName) {
+        detail->d->m_access = QContactDetail::Irremovable | QContactDetail::ReadOnly;
+        return false;
+    }
+
     /* Also handle contact type specially - only one of them. */
     if (detail->definitionName() == QContactType::DefinitionName) {
         detail->d->m_access = QContactDetail::Irremovable;
@@ -324,10 +336,11 @@ bool QContact::saveDetail(QContactDetail* detail)
         return true;
     }
 
-    /* And display label.. */
-    if (detail->definitionName() == QContactDisplayLabel::DefinitionName) {
-        detail->d->m_access = QContactDetail::Irremovable | QContactDetail::ReadOnly;
-        return false;
+    /* Also handle contact thumbnail specially - only one of them. */
+    if (detail->definitionName() == QContactThumbnail::DefinitionName) {
+        detail->d->m_access = QContactDetail::Irremovable;
+        d->m_details[2] = *detail;
+        return true;
     }
 
     // try to find the "old version" of this field
