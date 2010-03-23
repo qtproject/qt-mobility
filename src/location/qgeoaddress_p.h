@@ -39,69 +39,41 @@
 **
 ****************************************************************************/
 
-#include "qgeolocation.h"
+#ifndef QLOCATION_GEOADDRESS_P_H
+#define QLOCATION_GEOADDRESS_P_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include <QString>
 
 QTM_BEGIN_NAMESPACE
 
-/*!
-    \class QGeoLocation
-    \brief The QGeoLocation class represents a geolocation.
-    \ingroup location
+class QGeoAddressPrivate
+{
+public:
+    QGeoAddressPrivate();
 
-    This class represent a geo location as returned by QGeocodingReply::places().
-*/
-
-/*!
-    Default constructor.
-*/
-QGeoLocation::QGeoLocation() {}
-
-/*!
-    Returns the bounding box that completely encloses the location.
-
-    The x coordinates of the corner points represent longitudes,
-    the y coordinates represent latitudes.
-*/
-QRectF QGeoLocation::boundingBox() const
-{
-    return box;
-}
-/*!
-    Returns the geocoordinate of this location.
-*/
-QGeoCoordinate QGeoLocation::position() const
-{
-    return pos;
-}
-/*!
-    Returns a description of the location.
-*/
-QString QGeoLocation::title() const
-{
-    return ttl;
-}
-/*!
-    Returns the MARC language used in the description of this location.
-*/
-QString QGeoLocation::language() const
-{
-    return lang;
-}
-/*!
-    Returns the address found.
-*/
-QGeoAddress QGeoLocation::address() const
-{
-    return addr;
-}
-/*!
-    Returns alternatives to the address found.
-*/
-QAlternativeAddress QGeoLocation::alternatives() const
-{
-    return altern;
-}
+    QString sCountry; //!< country field
+    QString sCountryCode; //!< country code field
+    QString sState; //!< state field
+    QString sCounty; //!< county field
+    QString sCity; //!< city field
+    QString sDistrict; //!< district field
+    QString sThoroughfareName; //!< thoroughfare name field
+    QString sThoroughfareNumber; //!< thoroughfare number field
+    QString sPostCode; //!< post code field
+    QString sPostOfficeBox; //!< post office box field
+};
 
 QTM_END_NAMESPACE
 
+#endif

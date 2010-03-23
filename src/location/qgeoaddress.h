@@ -39,44 +39,56 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_ADDRESS_H
-#define QLOCATION_ADDRESS_H
+#ifndef QLOCATION_GEOADDRESS_H
+#define QLOCATION_GEOADDRESS_H
 
 #include "qmobilityglobal.h"
 
-#include <QString>
+class QString;
 
 QTM_BEGIN_NAMESPACE
 
-class Q_LOCATION_EXPORT QAddress
+class QGeoAddressPrivate;
+class Q_LOCATION_EXPORT QGeoAddress
 {
-    friend class QGeocodingXmlParser;
-
 public:
-    QAddress();
+    QGeoAddress();
 
     QString country() const;
+    void setCountry(const QString &country);
+
     QString countryCode() const;
+    void setCountryCode(const QString &countryCode);
+
     QString state() const;
+    void setState(const QString &state);
+
     QString county() const;
+    void setCounty(const QString &county);
+
     QString city() const;
+    void setCity(const QString &city);
+
     QString district() const;
+    void setDistrict(const QString &district);
+
     QString thoroughfareName() const;
+    void setThoroughfareName(const QString &thoroughfareName);
+
     QString thoroughfareNumber() const;
+    void setThoroughfareNumber(const QString &thoroughfareNumber);
+
     QString postCode() const;
+    void setPostCode(const QString &postCode);
+
+    QString postOfficeBox() const;
+    void setPostOfficeBox(const QString &postOfficeBox);
 
     bool isEmpty() const;
 
 private:
-    QString sCountry; //!< country field
-    QString sCountryCode; //!< country code field
-    QString sState; //!< state field
-    QString sCounty; //!< county field
-    QString sCity; //!< city field
-    QString sDistrict; //!< district field
-    QString sThoroughfareName; //!< thoroughfare name field
-    QString sThoroughfareNumber; //!< thoroughfare number field
-    QString sPostCode; //!< post code field
+    QGeoAddressPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QGeoAddress);
 };
 
 QTM_END_NAMESPACE

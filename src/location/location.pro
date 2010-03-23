@@ -129,7 +129,7 @@ maemo5 {
 }
 
 # maps header files - sort into public and private later
-HEADERS += qaddress.h \
+HEADERS += qgeoaddress.h \
            qalternativeaddress.h \
            qgeocodingreply.h \
            qgeocodingreply_p.h \
@@ -171,7 +171,8 @@ HEADERS += qaddress.h \
            qrouterequest.h \
            qrouterequest_p.h \
            qroutexmlparser.h \
-           qlandmarkfilter_p.h
+           qlandmarkfilter_p.h \
+           qgeoaddress_p.h
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
@@ -214,8 +215,8 @@ SOURCES += qlocationutils.cpp \
            qlandmarkmanagerenginefactory.cpp
 
 # maps source files
-SOURCES += qaddress.cpp \
-            qalternativeaddress.cpp \
+SOURCES += qgeoaddress.cpp \
+           qalternativeaddress.cpp \
            qgeocodingreply.cpp \
            qgeocodingrequest.cpp \
            qgeocodingxmlparser.cpp \

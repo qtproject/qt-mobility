@@ -46,7 +46,7 @@
 #include <QObject>
 
 #include "qgeolocation.h"
-#include "qaddress.h"
+#include "qgeoaddress.h"
 #include "qgeoreply.h"
 
 QTM_BEGIN_NAMESPACE
@@ -73,7 +73,7 @@ public:
     quint32 count() const;
     QList<QGeoLocation> places() const;
     void addPlace(QGeoLocation place);
-    
+
 private:
     Q_DISABLE_COPY(QGeocodingReply)
 

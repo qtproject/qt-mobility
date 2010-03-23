@@ -72,7 +72,7 @@ QTM_BEGIN_NAMESPACE
 * An address can either be specified by a "one box location" description, or by its individual
 * country, state, city, post code, street name and street number fields.<br>
 * Depending on the address input, the corresponding QGeocodingReply can contain several QGeoLocation<i></i>s, each
-* containing a QGeoCoordinate, a QAddress and possibly a QAlternativeAddress.
+* containing a QGeoCoordinate, a QGeoAddress and possibly a QAlternativeAddress.
 
 * \section sec_reverse_geocoding Reverse Geocoding Requests and Replies
 * A QReverseGeocodingRequests tries to map a QGeoCoordinate to an address.<br>
@@ -124,8 +124,8 @@ QGeoEngine::~QGeoEngine() {}
 
     Submits the route request \a request and returns the corresponding QRouteReply.
 
-    \note Due to the potentially asynchronous nature of requests, you should 
-    never directly start working with the returned reply, but instead wait for 
+    \note Due to the potentially asynchronous nature of requests, you should
+    never directly start working with the returned reply, but instead wait for
     the finished(QRouteReply*) signal.
 */
 
@@ -134,8 +134,8 @@ QGeoEngine::~QGeoEngine() {}
 
     Submits a geocoding request \a request and returns the corresponding QGeocodingReply.
 
-    \note Due to the potentially asynchronous nature of requests, you should 
-    never directly start working with the returned reply, but instead wait for 
+    \note Due to the potentially asynchronous nature of requests, you should
+    never directly start working with the returned reply, but instead wait for
     the finished(QGeocodingReply*) signal.
 */
 
@@ -144,8 +144,8 @@ QGeoEngine::~QGeoEngine() {}
 
     Submits a reverse geocoding request \a request and returns the corresponding QGeocodingReply.
 
-    \note Due to the potentially asynchronous nature of requests, you should 
-    never directly start working with the returned reply, but instead wait for 
+    \note Due to the potentially asynchronous nature of requests, you should
+    never directly start working with the returned reply, but instead wait for
     the finished(QGeocodingReply*) signal.
 */
 
@@ -154,8 +154,8 @@ QGeoEngine::~QGeoEngine() {}
 
     Submits a map tile request \a request and returns the corresponding QMapTileReply.
 
-    \note Due to the potentially asynchronous nature of requests, you should 
-    never directly start working with the returned reply, but instead wait for 
+    \note Due to the potentially asynchronous nature of requests, you should
+    never directly start working with the returned reply, but instead wait for
     the finished(QMapTileReply*) signal.
 */
 
@@ -228,7 +228,7 @@ QGeoEngine::~QGeoEngine() {}
 /*!
     \fn void QGeoEngine::error(QRouteReply* reply, QGeoReply::ErrorCode code)
 
-    This signal is emitted when a QRouteReply encountered an error 
+    This signal is emitted when a QRouteReply encountered an error
     in response to a previously submitted QRouteRequest.
     \note For QGeoNetworkManager, the error code will be identical to QNetworkReply::NetworkError.
 */
@@ -236,7 +236,7 @@ QGeoEngine::~QGeoEngine() {}
 /*!
     \fn void QGeoEngine::error(QGeocodingReply* reply, QGeoReply::ErrorCode code)
 
-    This signal is emitted when a QGeocodingReply encountered an error 
+    This signal is emitted when a QGeocodingReply encountered an error
     in response to a previously submitted QGeocodingReques or QReverseGeocodingRequest.
     \note For QGeoNetworkManager, the error code will be identical to QNetworkReply::NetworkError.
 */
@@ -253,8 +253,8 @@ QGeoEngine::~QGeoEngine() {}
     The map tile server uses a Mercator projection to map geo coordinates into a 2D map.
     For each zoom level, that map is then split into 2^zoomLevel x 2^zoomLevel map tiles.
 
-    For the given \a zoomLevel, this function  determines the row and column indices of the 
-    map tile from the 2D map which contains the geo coordinate \a coordinate and stores 
+    For the given \a zoomLevel, this function  determines the row and column indices of the
+    map tile from the 2D map which contains the geo coordinate \a coordinate and stores
     the indices in \a row and \a col respectively.
 
     \note This does not mean that the coordinate lies in the center of the calculated tile.
