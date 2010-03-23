@@ -48,7 +48,7 @@ QTM_USE_NAMESPACE
 class CntSymbianSimTransformError
 {
 public:
-    static void transformError(TInt symbianError, QContactManager::Error& qtError);
+    static void transformError(TInt symbianError, QContactManager::Error* qtError);
 };
 
 #endif // CNTSYMBIANSIMTRANSFORMERROR_H

@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 #include "messagingex.h"
-#include "QMessageFilter.h"
+#include "qmessagefilter.h"
 #include <QFileDialog>
 
 MessagingEx::MessagingEx(QWidget* parent)
@@ -783,7 +783,7 @@ void MessagingEx::messagesFound(const QMessageIdList &ids)
     stackedWidget->setCurrentIndex(12);
     for (int i=0; i < ids.count(); i++) {
         QMessage message = m_manager.message(ids[i]);
-        QString from = message.from().recipient();
+        QString from = message.from().addressee();
         QString subject = message.subject();
         if (subject.length() == 0) {
             subject = message.textContent();

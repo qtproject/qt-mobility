@@ -44,7 +44,6 @@
 
 #include "cntabstractcontactfilter.h"
 #include "cntsymbiansrvconnection.h"
-#include "qcontactdetailfilter.h"
 #include "cntdbinfo.h"
 
 #include <qmobilityglobal.h>
@@ -60,17 +59,17 @@ public:
             const QContactFilter &filter,
             const QList<QContactSortOrder> &sortOrders,
             bool &filterSupported,
-            QContactManager::Error &error);
+            QContactManager::Error* error);
     bool filterSupported(const QContactFilter& filter) ;
     
     //bool isFilterSupported(const QContactFilter& filter) const;
 
     void CntFilterRelationship::getSqlquery( const QContactRelationshipFilter& relationfilter,
                                                    QString& sqlquery ,
-                                                   QContactManager::Error& error) const;
+                                                   QContactManager::Error* error) const;
     void CntFilterRelationship::createSelectQuery(const QContactFilter& detailFilter,
                                   QString& sqlQuery,
-                                  QContactManager::Error& error);
+                                  QContactManager::Error* error);
 protected:
     CContactDatabase& m_contactdatabase;
     CntSymbianSrvConnection &m_srvConnection;

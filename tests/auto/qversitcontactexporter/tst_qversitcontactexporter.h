@@ -45,6 +45,7 @@
 #include <qcontactdetail.h>
 #include <QObject>
 #include <qmobilityglobal.h>
+#include <qcontact.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -79,17 +80,20 @@ private slots:
     void testEncodeGeoLocation();
     void testEncodeOrganization();
     void testEncodeEmbeddedContent();
-    void testIsValidRemoteUrl();
+    void testEncodeRingtone();
     void testEncodeGender();
     void testEncodeNickName();
+    void testEncodeTag();
     void testEncodeAnniversary();
     void testEncodeOnlineAccount();
     void testEncodeFamily();
     void testEncodeAvatar();
+    void testEncodeThumbnail();
     void testEncodeDisplayLabel();
     void testDefaultResourceHandler();
 
-    // Test Utility Function
+    // Test Utility Functions
+    QContact createContactWithName(QString name);
     QContactDetail searchDetail(QList<QContactDetail> details, QString search);
 
 private: // Data

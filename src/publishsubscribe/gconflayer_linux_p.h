@@ -45,10 +45,9 @@
 #include "qvaluespace_p.h"
 #include "qvaluespacepublisher.h"
 
-#include <QHash>
 #include <QSet>
-#include <QByteArray>
-#include <QMultiMap>
+#include "gconfitem_p.h"
+#include <QMutex>
 
 QTM_BEGIN_NAMESPACE
 
@@ -95,6 +94,9 @@ protected:
 public:
     static GConfLayer *instance();
 
+private slots:
+    void notifyChanged(const QString &key, const QVariant &value);
+
 private:
     struct GConfHandle {
         GConfHandle(const QString &p)
@@ -120,9 +122,15 @@ private:
         return 0;
     }
 
+    //private methods not locking a mutex
+    bool getValue(Handle handle, const QString &subPath, QVariant *data);
+    Handle getItem(Handle parent, const QString &subPath);
+    void doRemoveHandle(Handle handle);
+
 private:    //data
-    QHash<QByteArray, GConfHandle *> m_monitoringHandles;
-    QSet<QString> m_monitoringPaths;
+    QSet<GConfHandle *> m_monitoringHandles;
+    QMap<QString, GConfItem *> m_monitoringItems;
+    QMutex m_mutex;
 };
 
 QTM_END_NAMESPACE

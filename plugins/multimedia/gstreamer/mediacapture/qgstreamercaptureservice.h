@@ -62,6 +62,7 @@ class QGstreamerVideoWidgetControl;
 class QGstreamerElementFactory;
 class QGstreamerCaptureMetaDataControl;
 class QGstreamerImageCaptureControl;
+class QGstreamerV4L2Input;
 
 class QGstreamerCaptureService : public QMediaService
 {
@@ -74,13 +75,13 @@ public:
     QMediaControl *control(const char *name) const;
 
 private slots:
-    void videoOutputChanged(QVideoOutputControl::Output output);
+    void videoOutputChanged(QVideoOutputControl::Output output);    
 
 private:
     void setAudioPreview(GstElement*);
 
     QGstreamerCaptureSession *m_captureSession;
-    QGstreamerCameraControl *m_cameraControl;
+    QGstreamerV4L2Input *m_videoInput;
     QGstreamerCaptureMetaDataControl *m_metaDataControl;
 
     QAudioEndpointSelector *m_audioInputEndpointSelector;
@@ -93,7 +94,6 @@ private:
     QGstreamerElementFactory *m_videoWindowFactory;
     QGstreamerVideoWidgetControl *m_videoWidgetControl;
     QGstreamerElementFactory *m_videoWidgetFactory;
-    QGstreamerImageCaptureControl *m_imageCaptureControl;
 };
 
 #endif // QGSTREAMERCAPTURESERVICE_H

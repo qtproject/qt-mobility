@@ -73,6 +73,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreFoundation/CFLocale.h>
 #include <ScreenSaver/ScreenSaverDefaults.h>
+#include <dns_sd.h>
 
 #include <QTKit/QTKit.h>
 
@@ -172,7 +173,7 @@ bool hasIOServiceMatching(const QString &classstr)
 
 #ifdef MAC_SDK_10_6
 
-@interface QNSListener : NSObject
+@interface QtMNSListener : NSObject
 {
     NSNotificationCenter *center;
     CWInterface * currentInterface;
@@ -181,7 +182,7 @@ bool hasIOServiceMatching(const QString &classstr)
 - (void)remove;
 @end
 
-@implementation QNSListener
+@implementation QtMNSListener
 - (id) init
 {
    [super init];
@@ -213,12 +214,12 @@ bool hasIOServiceMatching(const QString &classstr)
 
 - (void)notificationHandler:(NSNotification *)notification
 {
-    QTM_NAMESPACE::QSystemNetworkInfoPrivate::instance()->networkChanged( nsstringToQString([notification name]), nsstringToQString([[notification object]name]));
+    QTM_NAMESPACE::QSystemNetworkInfoPrivate::instance()->wifiNetworkChanged( nsstringToQString([notification name]), nsstringToQString([[notification object]name]));
 }
 @end
 
 
-@interface QLangListener : NSObject
+@interface QtMLangListener : NSObject
 {
     NSNotificationCenter *center;
     QString currentLanguage;
@@ -230,7 +231,7 @@ bool hasIOServiceMatching(const QString &classstr)
 
 
 
-@implementation QLangListener
+@implementation QtMLangListener
 - (id) init
 {
     [super init];
@@ -272,7 +273,37 @@ bool hasIOServiceMatching(const QString &classstr)
 @end
 
 
+@interface RemoteDeviceRSSIHostControllerDelegate : NSObject
+{
+}
+// See IOBluetoothHostControllerDelegate
+- (void)readRSSIForDeviceComplete:(id)controller device:(IOBluetoothDevice*)device info:(BluetoothHCIRSSIInfo*)info error:(IOReturn)error;
+@end
+
+@implementation RemoteDeviceRSSIHostControllerDelegate
+- (id) init
+{
+   [super init];
+   return self;
+}
+
+- (void)readRSSIForDeviceComplete:(id)controller device:(IOBluetoothDevice*)device info:(BluetoothHCIRSSIInfo*)info error:(IOReturn)error
+{
+    Q_UNUSED(controller);
+    Q_UNUSED(device);
+
+    if ((error != kIOReturnSuccess) || (info == NULL)) {
+        qWarning() << "ERROR: readRSSIForDeviceComplete return error";
+
+    } else if (info->handle == kBluetoothConnectionHandleNone) {
+        qWarning() << "ERROR: readRSSIForDeviceComplete no connection";
+    } else {
+        NSLog(@"Rssi value: %@", info->RSSIValue);
+    }
+}
+@end
 #endif
+NSObject* delegate;
 
 QTM_BEGIN_NAMESPACE
 
@@ -281,16 +312,16 @@ QSystemInfoPrivate *QSystemInfoPrivate::self = 0;
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
  : QObject(parent)
 {
-    langloopThread = new QLangLoopThread(this);
-    langloopThread->start();
     if(!self)
         self = this;
 }
 
 QSystemInfoPrivate::~QSystemInfoPrivate()
 {
-    langloopThread->quit();
-    langloopThread->wait();
+    if(langloopThread->isRunning()) {
+        langloopThread->quit();
+        langloopThread->wait();
+    }
 }
 
 QString QSystemInfoPrivate::currentLanguage() const
@@ -304,6 +335,7 @@ QString QSystemInfoPrivate::currentLanguage() const
 
 QStringList QSystemInfoPrivate::availableLanguages() const
 {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     NSUserDefaults* defs = [NSUserDefaults standardUserDefaults];
     NSArray* languages = [defs objectForKey:@"AppleLanguages"];
@@ -315,6 +347,7 @@ QStringList QSystemInfoPrivate::availableLanguages() const
      if(!returnList.contains(language))
          returnList << language;
     }
+    [pool drain];
     return returnList;
 }
 
@@ -323,6 +356,23 @@ void QSystemInfoPrivate::languageChanged(const QString &lang)
     Q_EMIT currentLanguageChanged(lang);
 }
 
+void QSystemInfoPrivate::connectNotify(const char *signal)
+{
+    if (QLatin1String(signal) == SIGNAL(currentLanguageChanged(QString))) {
+        langloopThread = new QLangLoopThread(this);
+        langloopThread->start();
+    }
+}
+
+void QSystemInfoPrivate::disconnectNotify(const char *signal)
+{
+    if (QLatin1String(signal) == SIGNAL(currentLanguageChanged(QString))) {
+        if(langloopThread->isRunning()) {
+            langloopThread->quit();
+            langloopThread->wait();
+        }
+    }
+}
 
 QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &parameter)
 {
@@ -415,20 +465,17 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::VibFeature:
         {
-
         }
         break;
     case QSystemInfo::WlanFeature:
         {
             if(!QSystemNetworkInfoPrivate::instance()->interfaceForMode(QSystemNetworkInfo::WlanMode).name().isEmpty()) {
                 featureSupported = true;
-
             }
         }
         break;
     case QSystemInfo::SimFeature:
         {
-
         }
         break;
     case QSystemInfo::LocationFeature:
@@ -462,9 +509,17 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 QSystemNetworkInfoPrivate *QSystemNetworkInfoPrivate::self = 0;
 
 
-void networkChangeCallback(SCDynamicStoreRef/* store*/, CFArrayRef /*changedKeys*/, void */*info*/)
+void networkChangeCallback(SCDynamicStoreRef /*dynamicStore*/, CFArrayRef changedKeys, void */*networkConfigurationManagerPrivate*/)
 {
-    QTM_NAMESPACE::QSystemNetworkInfoPrivate::instance()->getDefaultInterface();
+// NSLog(@"changed keys %@", changedKeys);
+    QStringList keyList = nsarrayToQStringList((void*)changedKeys);
+    if(keyList.contains("State:/Network/Global/DNS")) {
+    }
+    if(keyList.contains("State:/Network/Global/IPv4")) {
+        QTM_NAMESPACE::QSystemNetworkInfoPrivate::instance()->ethernetChanged();
+        QTM_NAMESPACE::QSystemNetworkInfoPrivate::instance()->getDefaultInterface();
+    }
+
     return;
 }
 
@@ -494,15 +549,14 @@ void QLangLoopThread::run()
     mutex.unlock();
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
-    QLangListener *listener;
-    listener = [[QLangListener alloc] init];
+    QtMLangListener *listener;
+    listener = [[QtMLangListener alloc] init];
 
     NSDate *loopUntil = [NSDate dateWithTimeIntervalSinceNow:1.0];
     while (keepRunning &&
         [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode beforeDate: loopUntil]) {
         loopUntil = [NSDate dateWithTimeIntervalSinceNow:1.0];
     }
-  //  [listener release]; //crash
     [pool release];
 #endif
 }
@@ -515,31 +569,31 @@ QRunLoopThread::QRunLoopThread(QObject *parent)
 
 QRunLoopThread::~QRunLoopThread()
 {
-    CFRelease(storeSession);
-    CFRelease(runloopSource);
 }
 
 void QRunLoopThread::quit()
 {
-
+    CFRelease(runloopSource);
     mutex.lock();
     keepRunning = false;
     mutex.unlock();
+    CFRelease(storeSession);
 }
 
 void QRunLoopThread::run()
 {
 #ifdef MAC_SDK_10_6
 
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     startNetworkChangeLoop();
+    delegate = [[RemoteDeviceRSSIHostControllerDelegate alloc] init];
 
     mutex.lock();
     keepRunning = true;
     mutex.unlock();
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
-    QNSListener *listener;
-    listener = [[QNSListener alloc] init];
+    QtMNSListener *listener;
+    listener = [[QtMNSListener alloc] init];
 
     NSDate *loopUntil = [NSDate dateWithTimeIntervalSinceNow:1.0];
     while (keepRunning &&
@@ -554,8 +608,8 @@ void QRunLoopThread::startNetworkChangeLoop()
 {
     storeSession = NULL;
 
-    SCDynamicStoreContext dynStoreContext = { 0, (void *)storeSession, NULL, NULL, NULL };
-    storeSession  = SCDynamicStoreCreate(NULL,
+    SCDynamicStoreContext dynStoreContext = { 0, this /*(void *)storeSession*/, NULL, NULL, NULL };
+    storeSession = SCDynamicStoreCreate(NULL,
                                  CFSTR("networkChangeCallback"),
                                  networkChangeCallback,
                                  &dynStoreContext);
@@ -570,6 +624,33 @@ void QRunLoopThread::startNetworkChangeLoop()
     patternsArray = CFArrayCreateMutable(NULL, 0, &kCFTypeArrayCallBacks);
 
     CFStringRef storeKey;
+
+    storeKey = SCDynamicStoreKeyCreateNetworkGlobalEntity(NULL,
+                                                     kSCDynamicStoreDomainState,
+                                                     kSCEntNetLink);
+    CFArrayAppendValue(notificationKeys, storeKey);
+    CFRelease(storeKey);
+
+    storeKey = SCDynamicStoreKeyCreateNetworkServiceEntity(NULL,
+                                                      kSCDynamicStoreDomainState,
+                                                      kSCCompAnyRegex,
+                                                      kSCEntNetLink);
+    CFArrayAppendValue(patternsArray, storeKey);
+    CFRelease(storeKey);
+
+    storeKey = SCDynamicStoreKeyCreateNetworkGlobalEntity(NULL,
+                                                     kSCDynamicStoreDomainState,
+                                                     kSCEntNetDNS);
+    CFArrayAppendValue(notificationKeys, storeKey);
+    CFRelease(storeKey);
+
+    storeKey = SCDynamicStoreKeyCreateNetworkServiceEntity(NULL,
+                                                      kSCDynamicStoreDomainState,
+                                                      kSCCompAnyRegex,
+                                                      kSCEntNetDNS);
+    CFArrayAppendValue(patternsArray, storeKey);
+    CFRelease(storeKey);
+
     storeKey = SCDynamicStoreKeyCreateNetworkGlobalEntity(NULL,
                                                      kSCDynamicStoreDomainState,
                                                      kSCEntNetIPv4);
@@ -596,7 +677,7 @@ void QRunLoopThread::startNetworkChangeLoop()
     runloopSource = SCDynamicStoreCreateRunLoopSource(NULL, storeSession , 0);
     if (!runloopSource) {
         qWarning() << "runloop source error:"<< SCErrorString(SCError());
-        CFRelease(storeSession );
+        CFRelease(storeSession);
         return;
     }
 
@@ -612,12 +693,14 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
     qRegisterMetaType<QSystemNetworkInfo::NetworkMode>("QSystemNetworkInfo::NetworkMode");
     qRegisterMetaType<QSystemNetworkInfo::NetworkStatus>("QSystemNetworkInfo::NetworkStatus");
 #ifdef MAC_SDK_10_6
-    runloopThread = new QRunLoopThread(this);
-    runloopThread->start();
+if([[CWInterface supportedInterfaces] count] > 0 ) {
+        hasWifi = true;
+    } else {
+        hasWifi = false;
+    }
 #endif
     rssiTimer = new QTimer(this);
 
-    connect(rssiTimer, SIGNAL(timeout()), this, SLOT(rssiTimeout()));
     if(!self)
         self = this;
     QTimer::singleShot(200, this, SLOT(primaryInterface()));
@@ -626,14 +709,52 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
 #ifdef MAC_SDK_10_6
-    runloopThread->quit();
-    runloopThread->wait();
+    if(hasWifi && runloopThread->isRunning()) {
+        runloopThread->quit();
+        runloopThread->wait();
+        [delegate release];
+    }
 #endif
 }
 
 void QSystemNetworkInfoPrivate::primaryInterface()
 {
     defaultInterface = getDefaultInterface();
+}
+
+void QSystemNetworkInfoPrivate::connectNotify(const char *signal)
+{
+    if (QLatin1String(signal) == SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int))) {
+        connect(rssiTimer, SIGNAL(timeout()), this, SLOT(rssiTimeout()));
+        rssiTimer->start(5000);
+    }
+    if (QLatin1String(signal) == SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString))
+        || QLatin1String(signal) == SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus))) {
+#ifdef MAC_SDK_10_6
+        if(hasWifi) {
+            runloopThread = new QRunLoopThread(this);
+            runloopThread->start();
+        }
+#endif
+    }
+}
+
+void QSystemNetworkInfoPrivate::disconnectNotify(const char *signal)
+{
+    if (QLatin1String(signal) == SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int))) {
+        rssiTimer->stop();
+        disconnect(rssiTimer, SIGNAL(timeout()), this, SLOT(rssiTimeout()));
+    }
+    if (QLatin1String(signal) == SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString))
+        || QLatin1String(signal) == SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus))) {
+#ifdef MAC_SDK_10_6
+        if(hasWifi && runloopThread->isRunning()) {
+            runloopThread->quit();
+            runloopThread->wait();
+            [delegate release];
+        }
+#endif
+    }
 }
 
 QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::modeForInterface(QString interfaceName)
@@ -698,15 +819,14 @@ QString QSystemNetworkInfoPrivate::getDefaultInterface()
              defaultInterface = interfaceName;
         }
     }
+
     return interfaceName;
 }
 
 void QSystemNetworkInfoPrivate::rssiTimeout()
 {
-    networkStatus(QSystemNetworkInfo::WlanMode);
     networkSignalStrength(QSystemNetworkInfo::WlanMode);
 }
-
 
 bool QSystemNetworkInfoPrivate::isInterfaceActive(const char* netInterface)
 {
@@ -722,6 +842,21 @@ bool QSystemNetworkInfoPrivate::isInterfaceActive(const char* netInterface)
     return false;
 }
 
+void QSystemNetworkInfoPrivate::ethernetChanged()
+{
+    QSystemNetworkInfo::NetworkStatus status = QSystemNetworkInfo::NoNetworkAvailable;
+    int carrier = 0;
+
+    if(isInterfaceActive(interfaceForMode(QSystemNetworkInfo::EthernetMode).name().toLocal8Bit())) {
+        status = QSystemNetworkInfo::Connected;
+        carrier = 100;
+    }
+    Q_EMIT networkStatusChanged(QSystemNetworkInfo::EthernetMode,status);
+    Q_EMIT networkSignalStrengthChanged(QSystemNetworkInfo::EthernetMode,carrier);
+    Q_EMIT networkNameChanged(QSystemNetworkInfo::EthernetMode, networkName(QSystemNetworkInfo::EthernetMode));
+    Q_EMIT networkModeChanged(modeForInterface(getDefaultInterface()));
+}
+
 QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSystemNetworkInfo::NetworkMode mode)
 {
     QSystemNetworkInfo::NetworkStatus status = QSystemNetworkInfo::NoNetworkAvailable;
@@ -735,31 +870,34 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
     case QSystemNetworkInfo::WlanMode:
         {
 #ifdef MAC_SDK_10_6
-            NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
-            CWInterface *wifiInterface = [CWInterface interfaceWithName:  qstringToNSString(interfaceForMode(mode).name())];
+            if(hasWifi) {
+                NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
+                CWInterface *wifiInterface = [CWInterface interfaceWithName:  qstringToNSString(interfaceForMode(mode).name())];
 
-            if([wifiInterface power]) {
-                if(!rssiTimer->isActive())
-                    rssiTimer->start(1000);
-            }  else {
-                if(rssiTimer->isActive())
-                    rssiTimer->stop();
+                if([wifiInterface power]) {
+                    if(!rssiTimer->isActive())
+                        rssiTimer->start(5000);
+                }  else {
+                    if(rssiTimer->isActive())
+                        rssiTimer->stop();
+                }
+
+                switch([[wifiInterface interfaceState]intValue]) {
+                case  kCWInterfaceStateInactive:
+                    status = QSystemNetworkInfo::NoNetworkAvailable;
+                    break;
+                case kCWInterfaceStateScanning:
+                case kCWInterfaceStateAuthenticating:
+                case kCWInterfaceStateAssociating:
+                    status = QSystemNetworkInfo::Searching;
+                    break;
+                case kCWInterfaceStateRunning:
+                    status = QSystemNetworkInfo::Connected;
+                    break;
+                };
+                [autoreleasepool release];
             }
 
-            switch([[wifiInterface interfaceState]intValue]) {
-            case  kCWInterfaceStateInactive:
-                status = QSystemNetworkInfo::NoNetworkAvailable;
-                break;
-            case kCWInterfaceStateScanning:
-            case kCWInterfaceStateAuthenticating:
-            case kCWInterfaceStateAssociating:
-                status = QSystemNetworkInfo::Searching;
-                break;
-            case kCWInterfaceStateRunning:
-                status = QSystemNetworkInfo::Connected;
-                break;
-            };
-            [autoreleasepool release];
 #else
             if(isInterfaceActive(interfaceForMode(mode).name().toLatin1())) {
                 status = QSystemNetworkInfo::Connected;
@@ -769,7 +907,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
         break;
     case QSystemNetworkInfo::EthernetMode:
         {
-            if(networkSignalStrength(mode) == 100) {
+            if(isInterfaceActive(interfaceForMode(mode).name().toLatin1())) {
                 return QSystemNetworkInfo::Connected;
             } else {
                 return QSystemNetworkInfo::NoNetworkAvailable;
@@ -801,41 +939,43 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
     case QSystemNetworkInfo::WlanMode:
         {
             int signalQuality = 0;
+            if(hasWifi) {
 #ifdef MAC_SDK_10_6
-            NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
-            QString name = interfaceForMode(mode).name();
-            CWInterface *wifiInterface = [CWInterface interfaceWithName:qstringToNSString(name)];
+                NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
+                QString name = interfaceForMode(mode).name();
+                CWInterface *wifiInterface = [CWInterface interfaceWithName:qstringToNSString(name)];
 
-            if([wifiInterface power]) {
-                if(!rssiTimer->isActive())
-                    rssiTimer->start(1000);
-            }  else {
-                if(rssiTimer->isActive())
-                    rssiTimer->stop();
-            }
-
-            int rssiSignal = [[wifiInterface rssi] intValue];
-
-            if(rssiSignal !=0 ) {
-                int maxRssi = -40;
-                int minRssi = [[wifiInterface noise] intValue];
-                signalQuality = ( 100 * (maxRssi - minRssi) * (maxRssi - minRssi) - (maxRssi - rssiSignal) *
-                                  (15 * (maxRssi - minRssi) + 62 * (maxRssi - rssiSignal)) ) /
-                                ((maxRssi - minRssi) * (maxRssi - minRssi));
-
-            } else {
-                signalQuality = 0;
-            }
-
-            if(signalStrengthCache != signalQuality) {
-                if(signalStrengthCache == 0) {
-                    networkStatus(QSystemNetworkInfo::WlanMode);
+                if([wifiInterface power]) {
+                    if(!rssiTimer->isActive())
+                        rssiTimer->start(5000);
+                }  else {
+                    if(rssiTimer->isActive())
+                        rssiTimer->stop();
                 }
-                signalStrengthCache = signalQuality;
-                Q_EMIT networkSignalStrengthChanged(mode, signalQuality);
-            }
-            [autoreleasepool release];
+
+                int rssiSignal = [[wifiInterface rssi] intValue];
+
+                if(rssiSignal !=0 ) {
+                    int maxRssi = -40;
+                    int minRssi = [[wifiInterface noise] intValue];
+                    signalQuality = ( 100 * (maxRssi - minRssi) * (maxRssi - minRssi) - (maxRssi - rssiSignal) *
+                                      (15 * (maxRssi - minRssi) + 62 * (maxRssi - rssiSignal)) ) /
+                                    ((maxRssi - minRssi) * (maxRssi - minRssi));
+
+                } else {
+                    signalQuality = 0;
+                }
+
+                if(signalStrengthCache != signalQuality) {
+                    if(signalStrengthCache == 0) {
+                        networkStatus(QSystemNetworkInfo::WlanMode);
+                    }
+                    signalStrengthCache = signalQuality;
+                    Q_EMIT networkSignalStrengthChanged(mode, signalQuality);
+                }
+                [autoreleasepool release];
 #endif
+            }
             return signalQuality;
         }
         break;
@@ -846,9 +986,32 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
         }
         break;
     case QSystemNetworkInfo::BluetoothMode:
-        // link quality for which device?
-        // [controller readRSSIForDevice: blah?];
-        break;
+        {
+#ifdef  MAC_SDK_10_6
+            NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+            IOBluetoothHostController* controller = IOBluetoothHostController.defaultController;
+            if (controller != NULL) {
+
+                NSArray *devices = [IOBluetoothDevice recentDevices:0];
+                for ( IOBluetoothDevice *btDevice in devices ) {
+                    if([btDevice isConnected]) {
+                        qWarning() <<"IOBluetoothDevice connected"<< nsstringToQString([btDevice getName]);
+//                        delegate = [[RemoteDeviceRSSIHostControllerDelegate alloc] init];
+                        [delegate retain];
+                        [controller setDelegate:delegate];
+                        IOReturn rc = [controller readRSSIForDevice:btDevice];
+                        if (rc != noErr) {
+                            qWarning() << "ERROR: call readRSSIForDevice failed";
+                        }
+//[delegate release];
+                    }
+                }
+//              [devices release];
+  //  [controller release];
+            }
+            [pool release];
+#endif
+        }
     case QSystemNetworkInfo::WimaxMode:
         break;
     default:
@@ -870,9 +1033,12 @@ int QSystemNetworkInfoPrivate::locationAreaCode()
 QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
 {
 #if defined(MAC_SDK_10_6)
-    CWInterface *primary = [CWInterface interface ];
-    if([primary power])
-        return  nsstringToQString( [primary countryCode]);
+    if(hasWifi) {
+        CWInterface *primary = [CWInterface interface ];
+        if([primary power]) {
+            return  nsstringToQString( [primary countryCode]);
+        }
+    }
 #endif
     return "";
 }
@@ -906,17 +1072,32 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
         break;
     case QSystemNetworkInfo::WlanMode:
         {
-#ifdef MAC_SDK_10_6
             QString name = interfaceForMode(mode).name();
-            CWInterface *wifiInterface = [CWInterface interfaceWithName:qstringToNSString(name)];
-            return nsstringToQString([wifiInterface ssid]);
+#ifdef MAC_SDK_10_6
+            if(hasWifi) {
+                CWInterface *wifiInterface = [CWInterface interfaceWithName:qstringToNSString(name)];
+                return nsstringToQString([wifiInterface ssid]);
+            }
 #else
+            SCDynamicStoreRef theDynamicStore;
+            theDynamicStore = SCDynamicStoreCreate(nil, CFSTR("FindCurrentInterfaceAndIP"), nil, nil);
+
+            NSMutableString *interfaceName = [NSMutableString string];
+            NSString *airportPath = [NSString stringWithFormat:@"State:/Network/Interface/%@/AirPort", qstringToNSString(name)];
+
+            CFDictionaryRef airportPlist = (const __CFDictionary*)SCDynamicStoreCopyValue(theDynamicStore, (CFStringRef)airportPath);
+
+            CFRelease(theDynamicStore);
+
+            return nsstringToQString([(NSDictionary *)airportPlist valueForKey:@"SSID_STR"]);
 #endif
         }
         break;
     case QSystemNetworkInfo::EthernetMode:
         {
-            return QHostInfo::localDomainName();
+            if(isInterfaceActive(interfaceForMode(mode).name().toLocal8Bit())) {
+                return QHostInfo::localDomainName();
+            }
         }
         break;
     case QSystemNetworkInfo::BluetoothMode:
@@ -931,39 +1112,37 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
 
 QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mode)
 {
-    QString mac;
-#ifdef  MAC_SDK_10_6
-    if(mode == QSystemNetworkInfo::BluetoothMode) {
-        NSString *addy;
-        IOBluetoothHostController* controller = [IOBluetoothHostController defaultController];
-        if (controller != NULL) {
-            addy = [controller addressAsString];
-            mac = QLatin1String([addy UTF8String]);
-            mac.replace("-",":");
-        }
-        return mac;
-    }
-#endif
-    mac = interfaceForMode(mode).hardwareAddress();
-    return mac;
+    return interfaceForMode(mode).hardwareAddress();
 }
 
 QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
 {
     QNetworkInterface netInterface;
-
     CFArrayRef interfaceArray = SCNetworkInterfaceCopyAll(); //10.4
     CFStringRef iName;
     CFStringRef type;
-
     for ( long i = 0; i < CFArrayGetCount(interfaceArray); i++) {
         SCNetworkInterfaceRef thisInterface =  (SCNetworkInterfaceRef ) CFArrayGetValueAtIndex(interfaceArray, i);
         type = SCNetworkInterfaceGetInterfaceType(thisInterface);
         iName = SCNetworkInterfaceGetBSDName(thisInterface);
+
         if (type != NULL) {
             if (CFEqual(type, kSCNetworkInterfaceTypeBluetooth) && mode == QSystemNetworkInfo::BluetoothMode) {
                 netInterface = QNetworkInterface::interfaceFromName(stringFromCFString(iName));
-                break;
+                // workaround for null MAC from SCNetworkInterfaceGetHardwareAddressString and bogus BSD name here
+#ifdef  MAC_SDK_10_6
+                IOBluetoothHostController* controller = IOBluetoothHostController.defaultController;
+                QString macbtMac = nsstringToQString([controller addressAsString]).replace("-",":").toUpper();
+                if(!macbtMac.isEmpty()) {
+                    QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
+                    foreach(const QNetworkInterface thisNetInterface, interfaces) {
+                        if( thisNetInterface.hardwareAddress() == macbtMac) {
+                            netInterface = thisNetInterface;
+                            break;
+                        }
+                    }
+                }
+#endif
             } else if (CFEqual(type, kSCNetworkInterfaceTypeEthernet) && mode == QSystemNetworkInfo::EthernetMode) {
                 netInterface = QNetworkInterface::interfaceFromName(stringFromCFString(iName));
                 break;
@@ -977,8 +1156,10 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
     return netInterface;
 }
 
-void QSystemNetworkInfoPrivate::networkChanged(const QString &notification, const QString interfaceName)
+void QSystemNetworkInfoPrivate::wifiNetworkChanged(const QString &notification, const QString interfaceName)
 {
+    getDefaultInterface();
+
     if(notification == QLatin1String("SSID_CHANGED_NOTIFICATION")) {
         Q_EMIT networkNameChanged(QSystemNetworkInfo::WlanMode, networkName(QSystemNetworkInfo::WlanMode));
     }
@@ -992,14 +1173,14 @@ void QSystemNetworkInfoPrivate::networkChanged(const QString &notification, cons
         CWInterface *wifiInterface = [CWInterface interfaceWithName:  qstringToNSString(interfaceName)];
         if([wifiInterface power]) {
             if(!rssiTimer->isActive()) {
-                qWarning() << __FUNCTION__ << "start timer";
-                rssiTimer->start(1000);
+                rssiTimer->start(5000);
+
             }
         }  else {
             if(rssiTimer->isActive()) {
-                qWarning() << __FUNCTION__ << "stop timer";
-            rssiTimer->stop();
-        }
+                rssiTimer->stop();
+            }
+            Q_EMIT networkSignalStrengthChanged(QSystemNetworkInfo::WlanMode, 0);
         }
 #endif
     }
@@ -1285,12 +1466,12 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 
 QString QSystemDeviceInfoPrivate::imei()
 {
-        return "Sim Not Available";
+    return "";
 }
 
 QString QSystemDeviceInfoPrivate::imsi()
 {
-        return "Sim Not Available";
+    return "";
 }
 
 QString QSystemDeviceInfoPrivate::manufacturer()
@@ -1340,7 +1521,7 @@ int QSystemDeviceInfoPrivate::batteryLevel()
     }
 
     CFRelease(powerSourcesInfoBlob);
-    CFRelease(powerSourcesList);    
+    CFRelease(powerSourcesList);
 
     if(batteryLevelCache != level) {
         batteryLevelCache = level;

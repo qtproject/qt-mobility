@@ -60,7 +60,7 @@ public:
     const char* FieldSyncTarget;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactSyncTarget, "SyncTarget")
-    Q_DECLARE_LATIN1_LITERAL(FieldSyncTarget, "SyncTarget");
+    Q_DECLARE_LATIN1_CONSTANT(FieldSyncTarget, "SyncTarget");
 #endif
 
     void setSyncTarget(const QString& syncTarget) {setValue(FieldSyncTarget, syncTarget);}

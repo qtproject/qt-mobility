@@ -54,10 +54,9 @@ QTM_USE_NAMESPACE
 
 // ![0]
 QMLContactManagerAsync::QMLContactManagerAsync(QObject *parent)
-: QObject(parent)
+    : QObject(parent)
 {
     qc = new QContactManager();
-
 }
 
 QMLContactManagerAsync::~QMLContactManagerAsync()
@@ -84,21 +83,17 @@ void QMLContactManagerAsync::fillContactsIntoMemoryEngine(QContactManager* manag
        reader.setDevice(&file);
        if (reader.startReading() && reader.waitForFinished()) {
            QVersitContactImporter importer;
-           QList<QContact> contacts = importer.importContacts(reader.results());
-           QMap<int, QContactManager::Error> errors;
-           manager->saveContacts(&contacts, &errors);
+           importer.importDocuments(reader.results());
+           QList<QContact> contacts = importer.contacts();
+           manager->saveContacts(&contacts, 0);
        }
     }
-    
-
 }
 
 void QMLContactManagerAsync::setManager(QString manager)
 {
     delete qc;
     qc = new QContactManager(manager);
-    if(!qc)
-        qc = new QContactManager();
     connect(qc, SIGNAL(contactsAdded(QList<QContactLocalId>)), this, SIGNAL(contactsAdded(QList<QContactLocalId>)));
     connect(qc, SIGNAL(contactsChanged(QList<QContactLocalId>)), this, SIGNAL(contactsChanged(QList<QContactLocalId>)));
     connect(qc, SIGNAL(contactsRemoved(QList<QContactLocalId>)), this, SIGNAL(contactsRemoved(QList<QContactLocalId>)));
@@ -116,11 +111,10 @@ void QMLContactManagerAsync::setManager(QString manager)
 QString QMLContactManagerAsync::contactListToQString(const QList<QContactLocalId>& contactIds) const
 {
     QString list;
-    int i;
 
-    for (i = 0; i < contactIds.count(); i++) {           
-            list += QString::number(contactIds.at(i)) +  " ";
-        }
+    for (int i = 0; i < contactIds.count(); i++) {
+        list += QString::number(contactIds.at(i)) +  " ";
+    }
 
     return list;
 }
@@ -128,9 +122,8 @@ QString QMLContactManagerAsync::contactListToQString(const QList<QContactLocalId
 QStringList QMLContactManagerAsync::contactListToQString(const QList<QContact>& contact) const
 {
     QStringList list;
-    int i;
 
-    for (i = 0; i < contact.count(); i++) {
+    for (int i = 0; i < contact.count(); i++) {
         list += qc->synthesizedDisplayLabel(contact.at(i));
      }
 
@@ -139,11 +132,7 @@ QStringList QMLContactManagerAsync::contactListToQString(const QList<QContact>& 
 
 int QMLContactManagerAsync::numContacts()
 {
-    QList<QContactLocalId> qlid;
-
-    qlid = qc->contactIds();
-
-    return qlid.count();
+    return qc->contactIds().count();
 }
 
 void QMLContactManagerAsync::contacts()
@@ -182,7 +171,6 @@ void QMLContactManagerAsync::contactProgress(QContactAbstractRequest::State newS
         request->deleteLater();
         emit contactsLoadedDone();
     }
-
 }
 
 QString QMLContactManagerAsync::idToName(QString name)
@@ -194,5 +182,3 @@ QString QMLContactManagerAsync::idToName(QString name)
 // ![0]
 
 #include "moc_qmlcontactsa.cpp"
-
-QML_DEFINE_TYPE(QMLContactManagerAsync, 1, 0, QMLContactManagerAsync, QMLContactManagerAsync);

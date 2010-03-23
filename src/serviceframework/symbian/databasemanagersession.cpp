@@ -81,10 +81,10 @@ void CDatabaseManagerServerSession::ConstructL()
     }
 
 CDatabaseManagerServerSession::CDatabaseManagerServerSession(CDatabaseManagerServer& aServer) 
-    : iDatabaseManagerSignalHandler(NULL),
+    : iServer(aServer),
+      iDatabaseManagerSignalHandler(NULL),
       iDb(NULL),
-      m_watcher(NULL),
-      iServer(aServer)
+      m_watcher(NULL)
     {
     iServer.IncreaseSessions();
     }
@@ -555,25 +555,16 @@ void CDatabaseManagerServerSession::ServiceRemoved(const QString& aServiceName)
 
 void CDatabaseManagerServerSession::initDbPath()
     {
-    QSettings::Scope settingsScope = QSettings::SystemScope;;
     QString dbIdentifier = "_system";
     ServiceDatabase *db = iDb;
-    QSettings settings(QSettings::IniFormat, settingsScope,
-            QLatin1String("Nokia"), QLatin1String("QtServiceFramework"));
-    QFileInfo fi(settings.fileName());
 #ifdef __WINS__
     // In emulator use commmon place for service database
-    // instead of server's private directory (server is in thread, so each
-    // application gets its own private directory)
-    QDir dir;
-    QString serviceDbPath = QDir::toNativeSeparators("C:/Data/temp/QtServiceFW");
-    dir.mkpath(serviceDbPath);
-    if (!dir.cd(serviceDbPath)) {
-        qWarning() << "Fatal error: could not create needed path for serviceDatabase: " << serviceDbPath;
-        User::Panic(_L("PLAT (emulator)"), 0);
-    }
+    // instead of server's private directory (on emulator server is in thread so it
+    // doesn't get its own private directory).
+    QDir dir(QDir::toNativeSeparators("C:\\Data\\temp\\QtServiceFW"));
 #else
-    QDir dir = fi.dir();
+    // On hardware, use this DB server's private directory (C:/Private/<UID3>)    
+    QDir dir(QDir::toNativeSeparators(QCoreApplication::applicationDirPath() + "\\Nokia"));
 #endif
     QString qtVersion(qVersion());
     qtVersion = qtVersion.left(qtVersion.size() -2); //strip off patch version

@@ -74,7 +74,7 @@ CntSymbianSorterDbms::~CntSymbianSorterDbms()
 
 QList<QContactLocalId> CntSymbianSorterDbms::contacts(
             const QList<QContactSortOrder>& sortOrders,
-            QContactManager::Error& error)
+            QContactManager::Error* error)
 {
     // Create an empty list
     // See QT_TRYCATCH_LEAVING note at the begginning of this file
@@ -92,7 +92,7 @@ QList<QContactLocalId> CntSymbianSorterDbms::contacts(
 QList<QContactLocalId> CntSymbianSorterDbms::sort(
             QList<QContactLocalId> contactIds,
             const QList<QContactSortOrder>& sortOrders,
-            QContactManager::Error& error)
+            QContactManager::Error* error)
 {
     // Create an empty list
     // See QT_TRYCATCH_LEAVING note at the begginning of this file

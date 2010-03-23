@@ -238,7 +238,7 @@ void SymbianSettingsLayer::setProperty(Handle handle, Properties properties)
     if (!sh)
         return;
 
-    foreach (QString fullPath, m_pathMapper.childPaths(sh->path)) {
+    foreach (const QString fullPath, m_pathMapper.childPaths(sh->path)) {
         PathMapper::Target target;
         quint32 category;
         quint32 key;

@@ -434,7 +434,7 @@ void Player::displayErrorMessage()
 {
 #ifdef Q_OS_SYMBIAN
     if(player->error()!=QMediaPlayer::NoError)
-        QMessageBox::critical(NULL, tr("Error"), player->errorString());
+        QMessageBox::critical(NULL, tr("Error"), player->errorString(), QMessageBox::Ok);
 #else
     setStatusInfo(player->errorString());
 #endif
@@ -514,11 +514,11 @@ void Player::handleAspectRatio(bool aspectRatio)
 {
     if(aspectRatio) {
         toggleAspectRatio->setText(tr("Keep Aspect Ratio"));
-        videoWidget->setAspectRatioMode(QVideoWidget::IgnoreAspectRatio);
+        videoWidget->setAspectRatioMode(Qt::IgnoreAspectRatio);
 
     } else {
         toggleAspectRatio->setText(tr("Ignore Aspect Ratio"));
-        videoWidget->setAspectRatioMode(QVideoWidget::KeepAspectRatio);
+        videoWidget->setAspectRatioMode(Qt::KeepAspectRatio);
     }
 }
 

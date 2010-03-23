@@ -56,10 +56,10 @@ public:
     virtual ~CntAbstractRelationship();
     
 public:
-    virtual QList<QContactRelationship> relationshipsL(const QContactId &participantId, QContactRelationshipFilter::Role role, QContactManager::Error &error) = 0;
-    virtual bool saveRelationshipL(QSet<QContactLocalId> *affectedContactIds, QContactRelationship *relationship, QContactManager::Error &error) = 0;
-    virtual bool removeRelationshipL(QSet<QContactLocalId> *affectedContactIds, const QContactRelationship &relationship, QContactManager::Error &error) = 0;
-    virtual bool validateRelationship(const QContactRelationship &relationship, QContactManager::Error &error) = 0;
+    virtual QList<QContactRelationship> relationshipsL(const QContactId &participantId, QContactRelationship::Role role, QContactManager::Error *error) = 0;
+    virtual bool saveRelationshipL(QSet<QContactLocalId> *affectedContactIds, QContactRelationship *relationship, QContactManager::Error *error) = 0;
+    virtual bool removeRelationshipL(QSet<QContactLocalId> *affectedContactIds, const QContactRelationship &relationship, QContactManager::Error *error) = 0;
+    virtual bool validateRelationship(const QContactRelationship &relationship, QContactManager::Error *error) = 0;
     QString relationshipType() const;
 
 protected:

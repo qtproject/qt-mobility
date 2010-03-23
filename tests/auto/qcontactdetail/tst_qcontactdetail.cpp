@@ -43,6 +43,7 @@
 
 #include "qtcontacts.h"
 #include "qcontactmanagerdataholder.h" //QContactManagerDataHolder
+#include <QSet>
 
 //TESTED_CLASS=
 //TESTED_FILES=
@@ -68,7 +69,7 @@ private slots:
     void templates();
     void contexts();
     void values();
-    void preferredActions();
+    void hash();
     void traits();
 };
 
@@ -542,25 +543,21 @@ void tst_QContactDetail::values()
     QVERIFY(!p.removeValue("does not exist"));
 }
 
-void tst_QContactDetail::preferredActions()
+void tst_QContactDetail::hash()
 {
-    QList<QContactActionDescriptor> prefs;
-    QContactActionDescriptor ad;
-    QContactDetail det;
-
-    ad.setActionName("test");
-    ad.setImplementationVersion(1);
-    ad.setVendorName("Nokia");
-
-    prefs.append(ad);
-
-    ad.setActionName("test-two");
-    ad.setImplementationVersion(1);
-    ad.setVendorName("Nokia");
-
-    prefs.append(ad);
-    det.setPreferredActions(prefs);
-    QVERIFY(det.preferredActions() == prefs);
+    QContactDetail detail1("definition");
+    detail1.setValue("key", "value");
+    QContactDetail detail2("definition");
+    detail2.setValue("key", "value");
+    QContactDetail detail3("definition");
+    detail3.setValue("key", "different value");
+    QVERIFY(qHash(detail1) == qHash(detail2));
+    QVERIFY(qHash(detail1) != qHash(detail3));
+    QSet<QContactDetail> set;
+    set.insert(detail1);
+    set.insert(detail2);
+    set.insert(detail3);
+    QCOMPARE(set.size(), 2);
 }
 
 void tst_QContactDetail::traits()
