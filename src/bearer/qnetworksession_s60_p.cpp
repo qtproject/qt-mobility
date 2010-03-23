@@ -58,12 +58,6 @@ QNetworkSessionPrivate::QNetworkSessionPrivate()
 {
     CActiveScheduler::Add(this);
     
-    // Try to load "Open C" dll dynamically and
-    // try to attach to setdefaultif function dynamically.
-    if (iOpenCLibrary.Load(_L("libc")) == KErrNone) {
-        iDynamicSetdefaultif = (TOpenCSetdefaultifFunction)iOpenCLibrary.Lookup(564);
-    }
-
     TRAP_IGNORE(iConnectionMonitor.ConnectL());
 }
 
@@ -89,14 +83,12 @@ QNetworkSessionPrivate::~QNetworkSessionPrivate()
 
     iConnection.Close();
     iSocketServ.Close();
-    if (iDynamicSetdefaultif) {
-        iDynamicSetdefaultif(0);
-    }
+    
+    // Close global 'Open C' RConnection
+    setdefaultif(0);
 
     iConnectionMonitor.CancelNotifications();
     iConnectionMonitor.Close();
-
-    iOpenCLibrary.Close();
 }
 
 void QNetworkSessionPrivate::syncStateWithInterface()
@@ -321,14 +313,12 @@ void QNetworkSessionPrivate::open()
                             activeInterface = interface(activeConfig.d.data()->numericId);
                             connected = ETrue;
                             startTime = QDateTime::currentDateTime();
-                            if (iDynamicSetdefaultif) {
-                                // Use name of the IAP to set default IAP
-                                QByteArray nameAsByteArray = publicConfig.name().toUtf8();
-                                ifreq ifr;
-                                strcpy(ifr.ifr_name, nameAsByteArray.constData());
-
-                                error = iDynamicSetdefaultif(&ifr);
-                            }
+                            // Use name of the IAP to open global 'Open C' RConnection
+                            QByteArray nameAsByteArray = publicConfig.name().toUtf8();
+                            ifreq ifr;
+                            memset(&ifr, 0, sizeof(struct ifreq));
+                            strcpy(ifr.ifr_name, nameAsByteArray.constData());
+                            error = setdefaultif(&ifr);
                             isOpen = true;
                             // Make sure that state will be Connected
                             newState(QNetworkSession::Connected);
@@ -450,9 +440,9 @@ void QNetworkSessionPrivate::close(bool allowSignals)
     
     iConnection.Close();
     iSocketServ.Close();
-    if (iDynamicSetdefaultif) {
-        iDynamicSetdefaultif(0);
-    }
+    
+    // Close global 'Open C' RConnection
+    setdefaultif(0);
 
 #ifdef Q_CC_NOKIAX86
     if ((allowSignals && iapClientCount(activeIap) <= 0) ||
@@ -517,6 +507,10 @@ void QNetworkSessionPrivate::stop()
 void QNetworkSessionPrivate::migrate()
 {
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE
+    // Close global 'Open C' RConnection
+    setdefaultif(0);
+    
+    // Start migrating to new IAP
     iMobility->MigrateToPreferredCarrier();
 #endif
 }
@@ -537,14 +531,16 @@ void QNetworkSessionPrivate::accept()
 {
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE
     iMobility->NewCarrierAccepted();
-    if (iDynamicSetdefaultif) {
-        // Use name of the IAP to set default IAP
-        QByteArray nameAsByteArray = activeConfig.name().toUtf8();
-        ifreq ifr;
-        strcpy(ifr.ifr_name, nameAsByteArray.constData());
+    
+    QNetworkConfiguration newActiveConfig = activeConfiguration(iNewRoamingIap);
 
-        iDynamicSetdefaultif(&ifr);
-    }
+    // Use name of the new IAP to open global 'Open C' RConnection
+    QByteArray nameAsByteArray = newActiveConfig.name().toUtf8();
+    ifreq ifr;
+    memset(&ifr, 0, sizeof(struct ifreq));
+    strcpy(ifr.ifr_name, nameAsByteArray.constData());
+    setdefaultif(&ifr);
+    
     newState(QNetworkSession::Connected, iNewRoamingIap);
 #endif
 }
@@ -553,9 +549,19 @@ void QNetworkSessionPrivate::reject()
 {
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE
     iMobility->NewCarrierRejected();
+
     if (!iALRUpgradingConnection) {
         newState(QNetworkSession::Disconnected);
     } else {
+        QNetworkConfiguration newActiveConfig = activeConfiguration(iOldRoamingIap);
+
+        // Use name of the old IAP to open global 'Open C' RConnection
+        QByteArray nameAsByteArray = newActiveConfig.name().toUtf8();
+        ifreq ifr;
+        memset(&ifr, 0, sizeof(struct ifreq));
+        strcpy(ifr.ifr_name, nameAsByteArray.constData());
+        setdefaultif(&ifr);
+
         newState(QNetworkSession::Connected, iOldRoamingIap);
     }
 #endif
@@ -825,13 +831,13 @@ void QNetworkSessionPrivate::RunL()
             QNetworkConfiguration newActiveConfig = activeConfiguration();
             if (!newActiveConfig.isValid()) {
                 error = KErrGeneral;
-            } else if (iDynamicSetdefaultif) {
-                // Use name of the IAP to set default IAP
-                QByteArray nameAsByteArray = newActiveConfig.name().toUtf8();
+            } else {
+                // Use name of the IAP to open global 'Open C' RConnection
                 ifreq ifr;
+                memset(&ifr, 0, sizeof(struct ifreq));
+                QByteArray nameAsByteArray = newActiveConfig.name().toUtf8();
                 strcpy(ifr.ifr_name, nameAsByteArray.constData());
-
-                error = iDynamicSetdefaultif(&ifr);
+                error = setdefaultif(&ifr);
             }
             
             if (error != KErrNone) {
