@@ -2516,7 +2516,7 @@ void tst_QContactManager::relationships()
         retrieveList = cm->relationships(source.id(), QContactRelationship::Second);
         QVERIFY(retrieveList.isEmpty());
         QVERIFY(cm->error() == QContactManager::NotSupportedError);
-        retrieveList = cm->relationships(source.id()); // Either
+        retrieveList = cm->relationships(source.id(), QContactRelationship::Either); // Either
         QVERIFY(retrieveList.isEmpty());
         QVERIFY(cm->error() == QContactManager::NotSupportedError);
 
@@ -2780,7 +2780,7 @@ void tst_QContactManager::relationships()
     maliciousRel.setRelationshipType("nokia-test-invalid-relationship-type");
     QVERIFY(!cm->saveRelationship(&maliciousRel));
 
-    // attempt to save a circular relationship
+    // attempt to save a circular relationship - should fail!
     maliciousRel.setFirst(source.id());
     maliciousRel.setSecond(source.id());
     maliciousRel.setRelationshipType(availableRelationshipTypes.at(0));
@@ -2815,9 +2815,20 @@ void tst_QContactManager::relationships()
     QVERIFY(cm->error() == QContactManager::DoesNotExistError || cm->error() == QContactManager::InvalidRelationshipError);
     QCOMPARE(cm->relationships().count(), relationshipsCount); // should be unchanged.
 
+    // now we want to ensure that a relationship is removed if one of the contacts is removed.
+    customRelationshipOne.setFirst(source.id());
+    customRelationshipOne.setSecond(dest2.id());
+    customRelationshipOne.setRelationshipType(availableRelationshipTypes.at(0));
+    QVERIFY(cm->saveRelationship(&customRelationshipOne));
+    source = cm->contact(source.localId());
+    dest2 = cm->contact(dest2.localId());
+    QVERIFY(cm->removeContact(dest2.localId())); // remove dest2, the relationship should be removed
+    QVERIFY(cm->relationships(availableRelationshipTypes.at(0), dest2.id(), QContactRelationship::Second).isEmpty());
+    source = cm->contact(source.localId());
+    QVERIFY(!source.relatedContacts().contains(dest2.id())); // and it shouldn't appear in cache.
+
     // now clean up and remove our dests.
     QVERIFY(cm->removeContact(source.localId()));
-    QVERIFY(cm->removeContact(dest2.localId()));
     QVERIFY(cm->removeContact(dest3.localId()));
 
     // attempt to save relationships with nonexistent contacts
