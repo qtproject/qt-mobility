@@ -216,6 +216,10 @@ QList<QByteArray> QSensor::sensorsForType(const QByteArray &type)
     if (!d->pluginsLoaded)
         loadPlugins();
 
+    // no sensors of that type exist
+    if (!d->backendsByType.contains(type))
+        return QList<QByteArray>();
+
     return d->backendsByType[type].keys();
 }
 
