@@ -1,6 +1,7 @@
 TEMPLATE = app
 TARGET = cubehouse
 CONFIG += qt debug warn_on
+requires(contains(QT_CONFIG,opengl))
 QT += opengl
 include(../../examples.pri)
 CONFIG+=mobility
