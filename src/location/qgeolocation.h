@@ -44,7 +44,7 @@
 
 #include <QRectF>
 
-#include "qaddress.h"
+#include "qgeoaddress.h"
 #include "qalternativeaddress.h"
 #include "qgeocoordinate.h"
 
@@ -61,7 +61,7 @@ public:
     QGeoCoordinate position() const;
     QString title() const;
     QString language() const;
-    QAddress address() const;
+    QGeoAddress address() const;
     QAlternativeAddress alternatives() const;
 
 private:
@@ -69,7 +69,7 @@ private:
     QGeoCoordinate  pos;
     QString         ttl;
     QString         lang;
-    QAddress        addr;
+    QGeoAddress     addr;
     QAlternativeAddress altern;
 };
 

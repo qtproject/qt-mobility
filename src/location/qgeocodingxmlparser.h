@@ -12,7 +12,7 @@ QTM_BEGIN_NAMESPACE
 class QGeoCoordinate;
 class QGeocodingReply;
 class QGeoLocation;
-class QAddress;
+class QGeoAddress;
 
 class QGeocodingXmlParser
 {
@@ -28,7 +28,7 @@ private:
     bool readRootElement(QGeocodingReply *output);
     bool readPlace(QGeoLocation *location);
     bool readLocation(QGeoLocation *location);
-    bool readAddress(QAddress *address);
+    bool readAddress(QGeoAddress *address);
     bool readBoundingBox(QRectF *rect);
     bool readCoordinate(QGeoCoordinate *coordinate, const QString &elementName);
 

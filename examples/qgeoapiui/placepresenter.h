@@ -58,7 +58,7 @@ public:
 private:
     QTreeWidgetItem* showPlaces();
     void showPlace(QTreeWidgetItem* top, const QGeoLocation& place);
-    void showAddress(QTreeWidgetItem* addrItem, const QAddress& address);
+    void showAddress(QTreeWidgetItem* addrItem, const QGeoAddress& address);
 
 private:
     const QGeocodingReply* codingReply;

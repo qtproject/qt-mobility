@@ -58,6 +58,11 @@ namespace Ui
 {
 class MainWindow;
 }
+#ifdef Q_OS_SYMBIAN
+QTM_BEGIN_NAMESPACE
+class QNetworkSession;
+QTM_END_NAMESPACE
+#endif
 
 QTM_USE_NAMESPACE
 
@@ -74,6 +79,7 @@ protected:
 
 private slots:
     void mapClicked(QGeoCoordinate geoCoord, QGraphicsSceneMouseEvent* mouseEvent);
+    void mapObjectSelected(QMapObject* mapObject);
     void routeReplyFinished(QRouteReply* reply);
     void setRtFromTo(bool checked);
     void zoomLevelChanged(quint16 oldZoomLevel, quint16 newZoomLevel);
@@ -83,6 +89,8 @@ private slots:
     void drawRect(bool checked);
     void drawEllipse(bool checked);
     void drawPolygon(bool checked);
+    void customContextMenuRequest(const QPoint&);
+    void delayedInit();
 
 private:
     Ui::MainWindow *ui;
@@ -93,21 +101,17 @@ private:
     QMapView* mapView;
     QSlider* slider;
     QMenu* popupMenu;
-    QAction* mnMarker;
-    QAction* mnRoute;
-    QAction* mnLine;
-    QAction* mnRect;
-    QAction* mnEllipse;
-    QAction* mnPolygon;
     QAction* mnDay;
     QAction* mnSat;
     QAction* mnTer;
-    QAction* mnSep1;
-    QAction* mnSep2;
-
+    
     QGeoCoordinate lastClicked;
 
     QList<const QMapMarker*> selectedMarkers;
+#ifdef Q_OS_SYMBIAN
+    QNetworkSession *session;
+#endif
+
 };
 
 #endif // MAINWINDOW_H

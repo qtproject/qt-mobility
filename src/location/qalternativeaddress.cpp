@@ -57,7 +57,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QAlternativeAddress::AltValue
-    \brief The AltValue class holds an alternative value for a QAddress field.
+    \brief The AltValue class holds an alternative value for a QGeoAddress field.
     \ingroup location
 
     This struct holds an alternative value for a QAddress field.

@@ -132,7 +132,7 @@ bool QLandmarkManager::saveLandmark(QLandmark *landmark)
     occurs when saving a new landmark, the identifier will be cleared
     (and become an invalid identifier).
 */
-bool QLandmarkManager::saveLandmarks(QList<QLandmark *> landmarks,
+bool QLandmarkManager::saveLandmarks(QList<QLandmark> *landmarks,
                                      QMap<int, QLandmarkManager::Error> *errorMap )
 {
     return false;
@@ -150,7 +150,7 @@ bool QLandmarkManager::removeLandmark(const QLandmarkId &landmarkId)
 }
 
 /*!
-    Remove every landmark whose identifier is contained in the list
+    Removes every landmark whose identifier is contained in the list
     of \a landmarkIds.  Returns true if all landmarks were removed
     successfully, otherwise false.
 
@@ -186,7 +186,7 @@ bool QLandmarkManager::removeLandmarks(const QList<QLandmarkId> &landmarkIds,
     within the database.
 
     Returns false on failure or true on success.  On successful save
-    of a landmark with an empty id, it will be assigned a valid
+    of a category with an invalid id, it will be assigned a valid
     id and have its manager URI set to the URI of this manager.
 */
 bool QLandmarkManager::saveCategory(QLandmarkCategory *category)
@@ -216,6 +216,16 @@ QLandmarkCategory QLandmarkManager::category(const QLandmarkCategoryId &category
 }
 
 /*!
+    Returns a list of categories identified by \a categoryIds.
+
+    If any of the \a categoryIds are not found by the manager, they are simply ignored.
+ */
+QList<QLandmarkCategory> QLandmarkManager::categories(const QList<QLandmarkCategoryId> &categoryIds)
+{
+    return QList<QLandmarkCategory>();
+}
+
+/*!
     Returns a list of all category identifiers.
 */
 QList<QLandmarkCategoryId> QLandmarkManager::categoryIds() const
@@ -232,7 +242,24 @@ QLandmark QLandmarkManager::landmark(const QLandmarkId &landmarkId)
 }
 
 /*!
-    Returns a list of landmark ids that match the given \a filter, sorted
+    Returns a list of landmarks which match the given \a filter and are sorted according to the \a sortOrders.
+*/
+QList<QLandmark> QLandmarkManager::landmarks( const QLandmarkFilter &filter, const QList<QLandmarkSortOrder> &sortOrders) const
+{
+    return QList<QLandmark>();
+}
+
+/*!
+    Returns a list of landmarks which match the given \a landmarkIds.
+
+*/
+QList<QLandmark> QLandmarkManager::landmarks(const QList<QLandmarkId> &landmarkIds) const
+{
+    return QList<QLandmark>();
+}
+
+/*!
+    Returns a list of landmark identifiers of landmarks that match the given \a filter, sorted
     according to the given \a sortOrders.
 */
 QList<QLandmarkId> QLandmarkManager::landmarkIds( const QLandmarkFilter &filter,
@@ -242,7 +269,7 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds( const QLandmarkFilter &filter,
 }
 
 /*!
-    Reads landmarks from the given \a device.  The data from the \a device
+    Reads landmarks from the given \a device and saves them.  The data from the \a device
     is expected to adhere to the provided \a format.
 
     Returns true if all landmarks could be imported, otherwise
@@ -371,51 +398,64 @@ bool QLandmarkManager::setDefaultManager(const QString &name)
 }
 
 /*!
-    \fn void QLandmarkManager::landmarkAdded(const QLandmarkId &landmarkId)
-
-    This signal is emitted when a new landmark has been added to the
-    database.   \a landmarkId is the identifier of new landmark.
-
-    This signal will not be emitted as a result of importing landmarks.
-    \sa landmarkUpdated(), landmarkRemoved()
+    \fn QLandmarkManager::dataChanged()
+    This signal is emitted by the manager if its internal state changes and it is unable to precisely determine
+    the changes which occurred, or if the manager considers the changes to be radical enough to require clients to reload
+    all data.  If the signal is emitted, no other signals will be emitted for the associated changes.
 */
 
 /*!
-    \fn void QLandmarkManager::landmarkUpdated(const QLandmarkId &landmarkId)
+    \fn void QLandmarkManager::landmarksAdded(const QList<QLandmarkId> &landmarkIds)
 
-    This signal is emitted when an existing landmark has had its details
-    updated.  \a landmarkId is the identifier of the updated landmark.
+    This signal is emitted when landmarks (identified by \a landmarkIds) have been added to the datastore managed by this manager.
+    This signal is not emitted if the dataChanged() signal was previously emitted for these changes.
+
+    \sa landmarksChanged(), landmarksRemoved()
 */
 
 /*!
-    \fn void QLandmarkManager::landmarkRemoved(const QLandmarkId &landmarkId)
+    \fn void QLandmarkManager::landmarksChanged(const QList<QLandmarkId> &landmarkIds)
 
-    This signal is emitted when a landmark has been removed from the
-    database.  \a landmarkId is the identifier of the removed landmark.
+    This signal is emitted when landmarks (identified by \a landmarkIds) have been modified in the datastore managed by this manager.
+    This signal is not emitted if the dataChanged() signal was previously emitted for these changes.
+
+    \sa landmarksAdded(), landmarksRemoved()
 */
 
 /*!
-    \fn void QLandmarkManager::categoryAdded(const QLandmarkCategoryId &categoryId)
+    \fn void QLandmarkManager::landmarksRemoved(const QList<QLandmarkId> &landmarkIds)
 
-    This signal is emitted when a new landmark has been added to the
-    database.  \a categoryId is the identifier of new landmark.
+    This signal is emitted when landmarks (identified by \a landmarkIds) have been removed from the datastore managed by this manager.
+    This signal is not emitted if the dataChanged() signal was previously emitted for these changes.
 
-    This signal will not be emitted as a result of importing landmarks.
-    \sa landmarkUpdated(), landmarkRemoved()
+    \sa landmarksAdded(), landmarksChanged()
 */
 
 /*!
-    \fn void QLandmarkManager::categoryUpdated(const QLandmarkCategoryId &categoryId)
+    \fn void QLandmarkManager::categoriesAdded(const QList<QLandmarkCategoryId> &categoryIds)
 
-    This signal is emitted when an existing landmark has had its details
-    updated.  \a categoryId is the identifier of the updated landmark.
+    This signal is emitted when categories (identified by \a categoryIds) have been added to the datastore managed by this manager.
+    This signal is not emitted if the dataChanged() signal was previously emitted for these changes.
+
+    \sa categoriesChanged(), categoriesRemoved()
 */
 
 /*!
-    \fn void QLandmarkManager::categoryRemoved(const QLandmarkCategoryId &categoryId)
+    \fn void QLandmarkManager::categoriesChanged(const QList<QLandmarkCategoryId> &categoryIds)
 
-    This signal is emitted when a landmark has been removed from the
-    database.  \a categoryId is the identifier of the removed landmark.
+    This signal is emitted when categories (identified by \a categoryIds) have been modified in the datastore managed by this manager.
+    This signal is not emitted if the dataChanged() signal was previously emitted for these changes.
+
+    \sa categoriesAdded(), categoriesRemoved()
+*/
+
+/*!
+    \fn void QLandmarkManager::categoriesRemoved(const QList<QLandmarkCategoryId> &categoryIds)
+
+    This signal is emitted when categories (identified by \a categoryIds) have been removed from the datastore managed by this manager.
+    This signal is not emitted if the dataChanged() signal was previously emitted for these changes.
+
+    \sa categoriesAdded(), categoriesChanged()
 */
 
 #include "moc_qlandmarkmanager.cpp"

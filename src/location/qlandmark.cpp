@@ -61,13 +61,9 @@ QLandmarkPrivate::QLandmarkPrivate(const QLandmarkPrivate &other)
     name = other.name;
     coordinate = other.coordinate;
     description = other.description;
-    icon = other.icon;
+    iconUrl = other.iconUrl;
     radius = other.radius;
-    street = other.street;
-    locality = other.locality;
-    region = other.region;
-    country = other.country;
-    postcode = other.postcode;
+    address = other.address;
     phone = other.phone;
     url = other.url;
     categories = other.categories;
@@ -81,13 +77,9 @@ QLandmarkPrivate& QLandmarkPrivate::operator= (const QLandmarkPrivate & other)
     name = other.name;
     coordinate = other.coordinate;
     description = other.description;
-    icon = other.icon;
+    iconUrl = other.iconUrl;
     radius = other.radius;
-    street = other.street;
-    locality = other.locality;
-    region = other.region;
-    country = other.country;
-    postcode = other.postcode;
+    address = other.address;
     phone = other.phone;
     url = other.url;
     categories = other.categories;
@@ -101,13 +93,9 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
     return ((name == other.name)
             && (coordinate == other.coordinate)
             && (description == other.description)
-            && (icon == other.icon)
+            && (iconUrl == other.iconUrl)
             && (radius == other.radius)
-            && (street == other.street)
-            && (locality == other.locality)
-            && (region == other.region)
-            && (country == other.country)
-            && (postcode == other.postcode)
+            && (address == other.address)
             && (phone == other.phone)
             && (url == other.url)
             && (categories == other.categories)
@@ -122,7 +110,7 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
 
 
     Each landmark consists of a number of properties such as name,
-    coordinates, icon etc.  Landmarks may also be assigned a set of
+    coordinates, icon url etc.  Landmarks may also be assigned a set of
     generic attributes which may be accessed and modified by using the attribute()
     and setAttribute() functions.
 
@@ -274,19 +262,19 @@ void QLandmark::setDescription(const QString &description)
 }
 
 /*!
-    Returns the file path of the landmark's icon.
+    Returns the url of the landmark's icon.
 */
-QString QLandmark::icon() const
+QUrl QLandmark::iconUrl() const
 {
-    return d->icon;
+    return d->iconUrl;
 }
 
 /*!
-    Sets the \a filePath of the landmark's icon.
+    Sets the \a url of the landmark's icon.
 */
-void QLandmark::setIcon(const QString &filePath)
+void QLandmark::setIconUrl(const QUrl &url)
 {
-    d->icon = filePath;
+    d->iconUrl = url;
 }
 
 /*!
@@ -334,98 +322,19 @@ QStringList QLandmark::attributes() const
 }
 
 /*!
-    Returns the street of the landmark.
+    Returns the landmark's address.
 */
-QString QLandmark::street() const
+QGeoAddress QLandmark::address() const
 {
-    return d->street;
+    return d->address;
 }
 
 /*!
-    Sets the \a street of the landmark.
+    Sets the \a address of the landmark.
 */
-void QLandmark::setStreet(const QString &street)
+void QLandmark::setAddress(const QGeoAddress &address)
 {
-    d->street = street;
-}
-
-/*!
-    Returns the locality of the landmark.
-*/
-QString QLandmark::locality() const
-{
-    return d->locality;
-}
-
-/*!
-    Sets the \a locality of the landmark.
-*/
-void QLandmark::setLocality(const QString &locality)
-{
-    d->locality = locality;
-}
-
-/*!
-    Returns the region of the landmark.
-*/
-QString QLandmark::region() const
-{
-    return d->region;
-}
-
-/*!
-    Sets the \a region of the landmark
-*/
-void QLandmark::setRegion(const QString &region)
-{
-    d->region = region;
-}
-
-/*!
-    Returns the country of the landmark.
-*/
-QString QLandmark::country() const
-{
-    return d->country;
-}
-
-/*!
-    Sets the \a country of the landmark.
-*/
-void QLandmark::setCountry(const QString &country)
-{
-    d->country = country;
-}
-
-/*!
-    Returns the postcode of the landmark.
-*/
-QString QLandmark::postcode() const
-{
-    return d->postcode;
-}
-
-/*!
-    Sets the \a postcode of the landmark.
-*/
-void QLandmark::setPostcode(const QString &postcode)
-{
-    d->postcode = postcode;
-}
-
-/*!
-    Returns the post office box of the landmark.
-*/
-QString QLandmark::postOfficeBox() const
-{
-    return QString();
-}
-
-/*!
-    Sets the \a postOfficeBox of the landmark.
-*/
-void QLandmark::setPostOfficeBox(const QString &postOfficeBox)
-{
+    d->address = address;
 }
 
 /*!

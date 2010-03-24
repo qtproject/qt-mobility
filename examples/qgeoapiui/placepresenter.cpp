@@ -124,7 +124,7 @@ void PlacePresenter::showPlace(QTreeWidgetItem* top, const QGeoLocation& place)
     */
 }
 
-void PlacePresenter::showAddress(QTreeWidgetItem* addrItem, const QAddress& address)
+void PlacePresenter::showAddress(QTreeWidgetItem* addrItem, const QGeoAddress& address)
 {
     QTreeWidgetItem* prop;
     QString s = address.country();

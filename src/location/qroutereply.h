@@ -51,6 +51,7 @@
 
 QTM_BEGIN_NAMESPACE
 
+class QRouteReplyPrivate;
 class Q_LOCATION_EXPORT QRouteReply : public QGeoReply
 {
     Q_OBJECT
@@ -69,20 +70,21 @@ public:
 public:
     QRouteReply();
     ResultCode resultCode() const;
+    void setResultCode(ResultCode result);
     QString resultDescription() const;
     QString language() const;
+    void setResultDescription(QString description);
+    void setLanguage(QString language);
     int count() const;
     const QList<QRoute>& routes() const;
-
+    void addRoute(QRoute route);
+    
 private:
     Q_DISABLE_COPY(QRouteReply);
 
 private:
-    ResultCode rCode;
-    QString    descr;
-    QString    lang;
-
-    QList<QRoute> rt;
+    QRouteReplyPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QRouteReply)
 };
 
 QTM_END_NAMESPACE

@@ -91,7 +91,7 @@ QString QGeoLocation::language() const
 /*!
     Returns the address found.
 */
-QAddress QGeoLocation::address() const
+QGeoAddress QGeoLocation::address() const
 {
     return addr;
 }

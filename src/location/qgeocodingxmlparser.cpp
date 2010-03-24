@@ -4,7 +4,7 @@
 #include "qgeocoordinate.h"
 #include "qgeocodingreply.h"
 #include "qgeolocation.h"
-#include "qaddress.h"
+#include "qgeoaddress.h"
 
 #include <QXmlStreamReader>
 #include <QIODevice>
@@ -68,16 +68,16 @@ bool QGeocodingXmlParser::readRootElement(QGeocodingReply *output)
             if (m_reader->attributes().hasAttribute("resultCode")) {
                 QStringRef result = m_reader->attributes().value("resultCode");
                 if (result == "OK") {
-                    output->code = QGeocodingReply::OK;
+                    output->setResultCode(QGeocodingReply::OK);
                 } else if (result == "FAILED") {
-                    output->code = QGeocodingReply::Failed;
+                    output->setResultCode(QGeocodingReply::Failed);
                 } else {
                     m_reader->raiseError(QString("The attribute \"resultCode\" of the element \"places\" has an unknown value (value was %1).").arg(result.toString()));
                     return false;
                 }
             }
             if (m_reader->attributes().hasAttribute("resultDescription")) {
-                output->descr = m_reader->attributes().value("resultDescription").toString();
+                output->setResultDescription(m_reader->attributes().value("resultDescription").toString());
             }
 
             while (m_reader->readNextStartElement()) {
@@ -87,7 +87,7 @@ bool QGeocodingXmlParser::readRootElement(QGeocodingReply *output)
                     if (!readPlace(&location))
                         return false;
 
-                    output->plcs.append(location);
+                    output->addPlace(location);
                 } else {
                     m_reader->raiseError(QString("The element \"places\" did not expect a child element named \"%1\".").arg(m_reader->name().toString()));
                     return false;
@@ -264,7 +264,7 @@ bool QGeocodingXmlParser::readLocation(QGeoLocation *location)
     return true;
 }
 
-bool QGeocodingXmlParser::readAddress(QAddress *address)
+bool QGeocodingXmlParser::readAddress(QGeoAddress *address)
 {
     qWarning() << "address";
     /*
@@ -304,16 +304,16 @@ bool QGeocodingXmlParser::readAddress(QAddress *address)
         return true;
 
     if (m_reader->name() == "country") {
-        address->sCountry = m_reader->readElementText();
+        address->setCountry(m_reader->readElementText());
         if (!m_reader->readNextStartElement())
             return true;
     }
 
     if (m_reader->name() == "countryCode") {
-        address->sCountryCode = m_reader->readElementText();
+        address->setCountryCode(m_reader->readElementText());
 
-        if (address->sCountryCode.length() != 3) {
-            m_reader->raiseError(QString("The text of the element \"countryCode\" was not of length 3 (length was %1).").arg(address->sCountryCode.length()));
+        if (address->countryCode().length() != 3) {
+            m_reader->raiseError(QString("The text of the element \"countryCode\" was not of length 3 (length was %1).").arg(address->countryCode().length()));
             return false;
         }
 
@@ -322,25 +322,25 @@ bool QGeocodingXmlParser::readAddress(QAddress *address)
     }
 
     if (m_reader->name() == "state") {
-        address->sState = m_reader->readElementText();
+        address->setState(m_reader->readElementText());
         if (!m_reader->readNextStartElement())
             return true;
     }
 
     if (m_reader->name() == "county") {
-        address->sCounty = m_reader->readElementText();
+        address->setCounty(m_reader->readElementText());
         if (!m_reader->readNextStartElement())
             return true;
     }
 
     if (m_reader->name() == "city") {
-        address->sCity = m_reader->readElementText();
+        address->setCity (m_reader->readElementText());
         if (!m_reader->readNextStartElement())
             return true;
     }
 
     if (m_reader->name() == "district") {
-        address->sDistrict = m_reader->readElementText();
+        address->setDistrict(m_reader->readElementText());
         if (!m_reader->readNextStartElement())
             return true;
     }
@@ -351,13 +351,13 @@ bool QGeocodingXmlParser::readAddress(QAddress *address)
         inThoroughfare = m_reader->readNextStartElement();
 
         if (inThoroughfare && (m_reader->name() == "name")) {
-            address->sThoroughfareName = m_reader->readElementText();
+            address->setThoroughfareName(m_reader->readElementText());
             if (!m_reader->readNextStartElement())
                 inThoroughfare = false;
         }
 
         if (inThoroughfare && (m_reader->name() == "number")) {
-            address->sThoroughfareNumber = m_reader->readElementText();
+            address->setThoroughfareNumber(m_reader->readElementText());
             if (!m_reader->readNextStartElement())
                 inThoroughfare = false;
         }
@@ -372,7 +372,7 @@ bool QGeocodingXmlParser::readAddress(QAddress *address)
     }
 
     if (m_reader->name() == "postCode") {
-        address->sPostCode = m_reader->readElementText();
+        address->setPostCode(m_reader->readElementText());
         if (!m_reader->readNextStartElement())
             return true;
     }

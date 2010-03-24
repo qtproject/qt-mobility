@@ -26,9 +26,11 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkexportrequest.html#QLandmarkExportRequest">QLandmarkExportRequest</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkexportrequest.html#dtor.QLandmarkExportRequest">~QLandmarkExportRequest</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QIODevice * </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkexportrequest.html#device">device</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkexportrequest.html#fileName">fileName</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QLandmarkManager::Format </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkexportrequest.html#format">format</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QLandmarkId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkexportrequest.html#landmarkIds">landmarkIds</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkexportrequest.html#setDevice">setDevice</a></b> ( QIODevice * <i>device</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkexportrequest.html#setFileName">setFileName</a></b> ( const QString &amp; <i>fileName</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkexportrequest.html#setFormat">setFormat</a></b> ( QLandmarkManager::Format <i>format</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkexportrequest.html#setLandmarkIds">setLandmarkIds</a></b> ( QList&lt;QLandmarkId&gt; &amp; <i>landmarkIds</i> )</td></tr>
 </table>
@@ -58,7 +60,7 @@
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QLandmarkExportRequest/QLandmarkExportRequest"></a>
 <h3 class="fn"><a name="QLandmarkExportRequest"></a>QLandmarkExportRequest::QLandmarkExportRequest ()</h3>
-<p>Constructs a landmark export request</p>
+<p>Constructs a landmark export request.</p>
 <a name="//apple_ref/cpp/instm/QLandmarkExportRequest/~QLandmarkExportRequest"></a>
 <h3 class="fn"><a name="dtor.QLandmarkExportRequest"></a>QLandmarkExportRequest::~QLandmarkExportRequest ()</h3>
 <p>Destroys the request object.</p>
@@ -66,6 +68,10 @@
 <h3 class="fn"><a name="device"></a><a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> * QLandmarkExportRequest::device () const</h3>
 <p>Returns the device to which landmarks are written.</p>
 <p>See also <a href="qlandmarkexportrequest.html#setDevice">setDevice</a>().</p>
+<a name="//apple_ref/cpp/instm/QLandmarkExportRequest/fileName"></a>
+<h3 class="fn"><a name="fileName"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QLandmarkExportRequest::fileName () const</h3>
+<p>If the currently assigned device is a <a href="http://qt.nokia.com/doc/4.6/qfile.html">QFile</a>, or if <a href="qlandmarkexportrequest.html#setFileName">setFileName</a>() has been called, this function returns the name of the file to be written to. In all other cases, it returns an empty string.</p>
+<p>See also <a href="qlandmarkexportrequest.html#setFileName">setFileName</a>() and <a href="qlandmarkexportrequest.html#setDevice">setDevice</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkExportRequest/format"></a>
 <h3 class="fn"><a name="format"></a><a href="qlandmarkmanager.html#Format-enum">QLandmarkManager::Format</a> QLandmarkExportRequest::format () const</h3>
 <p>Returns the data format for the export operation.</p>
@@ -78,13 +84,17 @@
 <h3 class="fn"><a name="setDevice"></a>void QLandmarkExportRequest::setDevice ( <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> * <i>device</i> )</h3>
 <p>Sets the <i>device</i> to which landmarks are written.</p>
 <p>See also <a href="qlandmarkexportrequest.html#device">device</a>().</p>
+<a name="//apple_ref/cpp/instm/QLandmarkExportRequest/setFileName"></a>
+<h3 class="fn"><a name="setFileName"></a>void QLandmarkExportRequest::setFileName ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>fileName</i> )</h3>
+<p>Sets the name of the file to be written to <i>fileName</i>. Internally, <a href="qlandmarkexportrequest.html">QLandmarkExportRequest</a> will create a <a href="http://qt.nokia.com/doc/4.6/qfile.html">QFile</a> and open it in <a href="http://qt.nokia.com/doc/4.6/qiodevice.html#OpenModeFlag-enum">QIODevice::WriteOnly</a> mode, and use this file to export to.</p>
+<p>See also <a href="qlandmarkexportrequest.html#fileName">fileName</a>() and <a href="qlandmarkexportrequest.html#setDevice">setDevice</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkExportRequest/setFormat"></a>
 <h3 class="fn"><a name="setFormat"></a>void QLandmarkExportRequest::setFormat ( <a href="qlandmarkmanager.html#Format-enum">QLandmarkManager::Format</a> <i>format</i> )</h3>
 <p>Sets the data <i>format</i> for the export operation.</p>
 <p>See also <a href="qlandmarkexportrequest.html#format">format</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkExportRequest/setLandmarkIds"></a>
 <h3 class="fn"><a name="setLandmarkIds"></a>void QLandmarkExportRequest::setLandmarkIds ( <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; &amp; <i>landmarkIds</i> )</h3>
-<p>Sets the landmarks to be exported by specifying a list of <i>landmarkIds</i></p>
+<p>Sets the landmarks to be exported by specifying a list of <i>landmarkIds</i>.</p>
 <p>See also <a href="qlandmarkexportrequest.html#landmarkIds">landmarkIds</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

@@ -40,11 +40,16 @@ PUBLIC_HEADERS += qgeocoordinate.h \
                   qlandmarkproximityfilter.h \
                   qlandmarknearestfilter.h \
                   qlandmarkcategoryfilter.h \
+                  qlandmarkintersectionfilter.h \
+                  qlandmarkunionfilter.h \
+                  qlandmarkunionfilter.h \
                   qlandmarkcustomfilter.h \
                   qlandmarksortorder.h \
                   qlandmarknamesort.h \
                   qlandmarkdistancesort.h \
-                  qlandmarkcustomsort.h
+                  qlandmarkcustomsort.h \
+                  qlandmarkmanagerengine.h \
+                  qlandmarkmanagerenginefactory.h
 
 PRIVATE_HEADERS += qlocationutils_p.h \
                    qnmeapositioninfosource_p.h \
@@ -124,34 +129,50 @@ maemo5 {
 }
 
 # maps header files - sort into public and private later
-HEADERS += qaddress.h \
+HEADERS += qgeoaddress.h \
            qalternativeaddress.h \
            qgeocodingreply.h \
+           qgeocodingreply_p.h \
            qgeocodingrequest.h \
+           qgeocodingrequest_p.h \
            qgeocodingxmlparser.h \
            qgeoengine.h \
            qgeolocation.h \
            qgeonetworkmanager.h \
+           qgeonetworkmanager_p.h \
            qgeoreply.h \
            qmaneuver.h \
            qmapellipse.h \
+           qmapellipse_p.h \
            qmapline.h \
+           qmapline_p.h \
            qmapmarker.h \
+           qmapmarker_p.h \
            qmapobject.h \
+           qmapobject_p.h \
            qmappixmap.h \
+           qmappixmap_p.h \
            qmappolygon.h \
+           qmappolygon_p.h \
            qmaprect.h \
+           qmaprect_p.h\
            qmaproute.h \
+           qmaproute_p.h \
            qmaptile.h \
            qmaptilecache.h \
            qmaptilereply.h \
            qmaptilerequest.h \
            qmapview.h \
+           qmapview_p.h \
            qreversegeocodingrequest.h \
            qroute.h \
            qroutereply.h \
+           qroutereply_p.h \
            qrouterequest.h \
-           qroutexmlparser.h
+           qrouterequest_p.h \
+           qroutexmlparser.h \
+           qlandmarkfilter_p.h \
+           qgeoaddress_p.h
 
 # my experimental qgeoengine files
 PUBLIC_HEADERS +=   qdlgeoreply.h \
@@ -194,15 +215,19 @@ SOURCES += qlocationutils.cpp \
            qlandmarkproximityfilter.cpp \
            qlandmarknearestfilter.cpp \
            qlandmarkcategoryfilter.cpp \
+           qlandmarkintersectionfilter.cpp \
+           qlandmarkunionfilter.cpp \
            qlandmarkcustomfilter.cpp \
            qlandmarksortorder.cpp \
            qlandmarknamesort.cpp \
            qlandmarkdistancesort.cpp \
-           qlandmarkcustomsort.cpp
+           qlandmarkcustomsort.cpp \
+           qlandmarkmanagerengine.cpp \
+           qlandmarkmanagerenginefactory.cpp
 
 # maps source files
-SOURCES += qaddress.cpp \
-            qalternativeaddress.cpp \
+SOURCES += qgeoaddress.cpp \
+           qalternativeaddress.cpp \
            qgeocodingreply.cpp \
            qgeocodingrequest.cpp \
            qgeocodingxmlparser.cpp \
@@ -211,11 +236,19 @@ SOURCES += qaddress.cpp \
            qgeonetworkmanager.cpp \
            qgeoreply.cpp \
            qmaneuver.cpp \
-           qmapobjects.cpp \
+           qmapobject.cpp \
+           qmapline.cpp \
+           qmapmarker.cpp \
+           qmaproute.cpp \
+           qmaprect.cpp \
+           qmappolygon.cpp \
+           qmappixmap.cpp \
+           qmapellipse.cpp \
            qmaptilerequest.cpp \
            qmaptilecache.cpp \
            qmaptilereply.cpp \
            qmapview.cpp \
+           qmapview_p.cpp \
            qreversegeocodingrequest.cpp \
            qroute.cpp \
            qroutereply.cpp \

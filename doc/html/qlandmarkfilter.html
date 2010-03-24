@@ -14,8 +14,8 @@
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QLandmarkFilter Class Reference</h1>
-<p>The QLandmarkFilter class is used to select landmarks made available through <a href="qlandmarkmanager.html">QLandmarkManager</a>. <a href="#details">More...</a></p>
-<pre>    #include &lt;QLandmarkFilter&gt;</pre><p>Inherited by <a href="qlandmarkboxfilter.html">QLandmarkBoxFilter</a>, <a href="qlandmarkcategoryfilter.html">QLandmarkCategoryFilter</a>, <a href="qlandmarkcustomfilter.html">QLandmarkCustomFilter</a>, <a href="qlandmarknamefilter.html">QLandmarkNameFilter</a>, <a href="qlandmarknearestfilter.html">QLandmarkNearestFilter</a>, and <a href="qlandmarkproximityfilter.html">QLandmarkProximityFilter</a>.</p>
+<p>The QLandmarkFilter class is used to select landmarks. <a href="#details">More...</a></p>
+<pre>    #include &lt;QLandmarkFilter&gt;</pre><p>Inherited by <a href="qlandmarkboxfilter.html">QLandmarkBoxFilter</a>, <a href="qlandmarkcategoryfilter.html">QLandmarkCategoryFilter</a>, <a href="qlandmarkcustomfilter.html">QLandmarkCustomFilter</a>, <a href="qlandmarkintersectionfilter.html">QLandmarkIntersectionFilter</a>, <a href="qlandmarknamefilter.html">QLandmarkNameFilter</a>, <a href="qlandmarknearestfilter.html">QLandmarkNearestFilter</a>, <a href="qlandmarkproximityfilter.html">QLandmarkProximityFilter</a>, and <a href="qlandmarkunionfilter.html">QLandmarkUnionFilter</a>.</p>
 <ul>
 <li><a href="qlandmarkfilter-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -23,16 +23,16 @@
 <a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfilter.html#FilterType-enum">FilterType</a></b> { InvalidFilter, LandmarkNameFilter, LandmarkProximityFilter, LandmarkNearestFilter, ..., LandmarkCustomFilter }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfilter.html#FilterType-enum">FilterType</a></b> { LandmarkInvalidFilter, LandmarkNameFilter, LandmarkProximityFilter, LandmarkNearestFilter, ..., LandmarkCustomFilter }</td></tr>
 </table>
 <hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfilter.html#QLandmarkFilter">QLandmarkFilter</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfilter.html#dtor.QLandmarkFilter">~QLandmarkFilter</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfilter.html#maxMatches">maxMatches</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfilter.html#setMaxMatches">setMaxMatches</a></b> ( int <i>maxMatches</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfilter.html#dtor.QLandmarkFilter">~QLandmarkFilter</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfilter.html#maximumMatches">maximumMatches</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfilter.html#setMaximumMatches">setMaximumMatches</a></b> ( int <i>maxMatches</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">FilterType </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfilter.html#type">type</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfilter.html#operator-not-eq">operator!=</a></b> ( const QLandmarkFilter &amp; <i>other</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QLandmarkFilter &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfilter.html#operator-eq">operator=</a></b> ( const QLandmarkFilter &amp; <i>other</i> )</td></tr>
@@ -41,58 +41,66 @@
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
-<p>The QLandmarkFilter class is used to select landmarks made available through <a href="qlandmarkmanager.html">QLandmarkManager</a>.</p>
-<p>This class is used as a parameter to various functions offered by <a href="qlandmarkmanager.html">QLandmarkManager</a>, to allow selection of landmarks which have certain details or properties.</p>
+<p>The QLandmarkFilter class is used to select landmarks.</p>
+<p>This class is used as a parameter to search for landmarks using <a href="qlandmarkmanager.html#landmarkIds">QLandmarkManager::landmarkIds</a>() or a <a href="qlandmarkidfetchrequest.html">QLandmarkIdFetchRequest</a>. It allows selection of landmarks which meet certain criteria.</p>
+<p>The QLandmarkFilter is primarily intended to serve as the base class for all filter types. However it also has the type of a QLandmark::DefaultFilter, and may thus be used as a filter to match all landmarks.</p>
+<p>If the existing collection of filter types is not sufficient then custom filter should be created by inheriting from <a href="qlandmarkcustomfilter.html">QLandmarkCustomFilter</a>.</p>
 <hr />
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QLandmarkFilter/FilterType"></a>
-<a name="//apple_ref/cpp/econst/QLandmarkFilter/InvalidFilter"></a>
+<a name="//apple_ref/cpp/econst/QLandmarkFilter/LandmarkInvalidFilter"></a>
 <a name="//apple_ref/cpp/econst/QLandmarkFilter/LandmarkNameFilter"></a>
 <a name="//apple_ref/cpp/econst/QLandmarkFilter/LandmarkProximityFilter"></a>
 <a name="//apple_ref/cpp/econst/QLandmarkFilter/LandmarkNearestFilter"></a>
 <a name="//apple_ref/cpp/econst/QLandmarkFilter/LandmarkCategoryFilter"></a>
 <a name="//apple_ref/cpp/econst/QLandmarkFilter/LandmarkBoxFilter"></a>
+<a name="//apple_ref/cpp/econst/QLandmarkFilter/LandmarkIntersectionFilter"></a>
+<a name="//apple_ref/cpp/econst/QLandmarkFilter/LandmarkUnionFilter"></a>
+<a name="//apple_ref/cpp/econst/QLandmarkFilter/LandmarkDefaultFilter"></a>
 <a name="//apple_ref/cpp/econst/QLandmarkFilter/LandmarkCustomFilter"></a>
 <h3 class="fn"><a name="FilterType-enum"></a>enum QLandmarkFilter::FilterType</h3>
 <p>Describes the type of the filter</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QLandmarkFilter::InvalidFilter</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">, An invalid filter which matches nothing</td></tr>
-<tr><td valign="top"><tt>QLandmarkFilter::LandmarkNameFilter</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">A filter which matches landmarks based on name</td></tr>
-<tr><td valign="top"><tt>QLandmarkFilter::LandmarkProximityFilter</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">A filter which matches landmarks within a certain range of a given coordinate.</td></tr>
-<tr><td valign="top"><tt>QLandmarkFilter::LandmarkNearestFilter</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">A filter which matches a landmark closest to a given coordinate.</td></tr>
-<tr><td valign="top"><tt>QLandmarkFilter::LandmarkCategoryFilter</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">A filter which matches landmarks that belong to a given category</td></tr>
-<tr><td valign="top"><tt>QLandmarkFilter::LandmarkBoxFilter</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">A filter which matches landmarks within a given bounding box.</td></tr>
+<tr><td valign="top"><tt>QLandmarkFilter::LandmarkInvalidFilter</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">, An invalid filter which matches nothing</td></tr>
+<tr><td valign="top"><tt>QLandmarkFilter::LandmarkNameFilter</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">A filter which matches landmarks based on name</td></tr>
+<tr><td valign="top"><tt>QLandmarkFilter::LandmarkProximityFilter</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">A filter which matches landmarks within a certain range of a given coordinate.</td></tr>
+<tr><td valign="top"><tt>QLandmarkFilter::LandmarkNearestFilter</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">A filter which matches a landmark closest to a given coordinate.</td></tr>
+<tr><td valign="top"><tt>QLandmarkFilter::LandmarkCategoryFilter</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">A filter which matches landmarks that belong to a given category</td></tr>
+<tr><td valign="top"><tt>QLandmarkFilter::LandmarkBoxFilter</tt></td><td align="center" valign="top"><tt>6</tt></td><td valign="top">A filter which matches landmarks within a given bounding box.</td></tr>
+<tr><td valign="top"><tt>QLandmarkFilter::LandmarkIntersectionFilter</tt></td><td align="center" valign="top"><tt>7</tt></td><td valign="top">A filter which performs an AND operation with its constituent filters</td></tr>
+<tr><td valign="top"><tt>QLandmarkFilter::LandmarkUnionFilter</tt></td><td align="center" valign="top"><tt>8</tt></td><td valign="top">A filter which performs an OR operation with its constiuent filters</td></tr>
+<tr><td valign="top"><tt>QLandmarkFilter::LandmarkDefaultFilter</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">A filter which matches all landmarks.</td></tr>
 <tr><td valign="top"><tt>QLandmarkFilter::LandmarkCustomFilter</tt></td><td align="center" valign="top"><tt>500</tt></td><td valign="top">A filter which matches landmarks based on a custom made algorithm.</td></tr>
 </table></p>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QLandmarkFilter/QLandmarkFilter"></a>
 <h3 class="fn"><a name="QLandmarkFilter"></a>QLandmarkFilter::QLandmarkFilter ()</h3>
-<p>Constructs an empty filter</p>
+<p>Constructs an default landmark filter.</p>
 <a name="//apple_ref/cpp/instm/QLandmarkFilter/~QLandmarkFilter"></a>
-<h3 class="fn"><a name="dtor.QLandmarkFilter"></a>QLandmarkFilter::~QLandmarkFilter ()</h3>
-<p>Destroys the filter</p>
-<a name="//apple_ref/cpp/instm/QLandmarkFilter/maxMatches"></a>
-<h3 class="fn"><a name="maxMatches"></a>int QLandmarkFilter::maxMatches () const</h3>
+<h3 class="fn"><a name="dtor.QLandmarkFilter"></a>QLandmarkFilter::~QLandmarkFilter ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Destroys the filter.</p>
+<a name="//apple_ref/cpp/instm/QLandmarkFilter/maximumMatches"></a>
+<h3 class="fn"><a name="maximumMatches"></a>int QLandmarkFilter::maximumMatches () const</h3>
 <p>Returns the maximum number of matches this filter will make.</p>
-<p>See also <a href="qlandmarkfilter.html#setMaxMatches">setMaxMatches</a>().</p>
-<a name="//apple_ref/cpp/instm/QLandmarkFilter/setMaxMatches"></a>
-<h3 class="fn"><a name="setMaxMatches"></a>void QLandmarkFilter::setMaxMatches ( int <i>maxMatches</i> )</h3>
+<p>See also <a href="qlandmarkfilter.html#setMaximumMatches">setMaximumMatches</a>().</p>
+<a name="//apple_ref/cpp/instm/QLandmarkFilter/setMaximumMatches"></a>
+<h3 class="fn"><a name="setMaximumMatches"></a>void QLandmarkFilter::setMaximumMatches ( int <i>maxMatches</i> )</h3>
 <p>Set the maximum number of matches this filter will make to <i>maxMatches</i>.</p>
-<p>See also <a href="qlandmarkfilter.html#maxMatches">maxMatches</a>().</p>
+<p>See also <a href="qlandmarkfilter.html#maximumMatches">maximumMatches</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkFilter/type"></a>
 <h3 class="fn"><a name="type"></a><a href="qlandmarkfilter.html#FilterType-enum">FilterType</a> QLandmarkFilter::type () const</h3>
-<p>Returns the type of the filter</p>
+<p>Returns the type of the filter.</p>
 <a name="//apple_ref/cpp/instm/QLandmarkFilter/operator!="></a>
 <h3 class="fn"><a name="operator-not-eq"></a>bool QLandmarkFilter::operator!= ( const QLandmarkFilter &amp; <i>other</i> ) const</h3>
 <p>Returns true if this filter is not identical to <i>other</i>.</p>
 <a name="//apple_ref/cpp/instm/QLandmarkFilter/operator="></a>
 <h3 class="fn"><a name="operator-eq"></a>QLandmarkFilter &amp; QLandmarkFilter::operator= ( const QLandmarkFilter &amp; <i>other</i> )</h3>
-<p>Assigns <i>other</i> to this filter and returns a reference to this filter</p>
+<p>Assigns <i>other</i> to this filter and returns a reference to this filter.</p>
 <a name="//apple_ref/cpp/instm/QLandmarkFilter/operator=="></a>
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QLandmarkFilter::operator== ( const QLandmarkFilter &amp; <i>other</i> ) const</h3>
-<p>Returns true if the filter has the same type and criteria as <i>other</i></p>
+<p>Returns true if the filter has the same type and criteria as <i>other</i>.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

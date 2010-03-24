@@ -51,6 +51,8 @@
 
 QTM_BEGIN_NAMESPACE
 
+class QRouteRequestPrivate;
+
 class Q_LOCATION_EXPORT QRouteRequest
 {
     friend class QGeoNetworkManager;
@@ -80,6 +82,7 @@ public:
 
 public:
     QRouteRequest();
+    ~QRouteRequest();
 
     QString version() const;
 
@@ -98,11 +101,11 @@ public:
     void setLanguage(const QString& code);
     QString language() const;
 
-    void setDeparture(const QDateTime& tod);
-    QDateTime departure() const;
+    void setDepartureTime(const QDateTime& departureTime);
+    QDateTime departureTime() const;
 
-    void setArrival(const QDateTime& toa);
-    QDateTime arrival() const;
+    void setArrivalTime(const QDateTime& arrivalTime);
+    QDateTime arrivalTime() const;
 
     void setType(RouteType type);
     RouteType type() const;
@@ -120,27 +123,10 @@ public:
     QString requestString(const QString &host) const;
 
 private:
+    QRouteRequestPrivate *d_ptr;
+
+    Q_DECLARE_PRIVATE(QRouteRequest)
     Q_DISABLE_COPY(QRouteRequest)
-
-private:
-    QString typeToString() const;
-    QString modeToString() const;
-    QString avoidToString() const;
-
-    QString trimDouble(qreal degree, int decimalDigits = 10) const;
-
-    QString vers;
-    QGeoCoordinate src;
-    QGeoCoordinate dst;
-    quint32 nTotal;
-    quint16 nAlternatives;
-    QString languageCode;
-    QDateTime tod;
-    QDateTime toa;
-    RouteType rType;
-    RouteMode rMode;
-    QList<RouteAvoid> rAvoid;
-    QList<QGeoCoordinate> stpOvers;
 };
 
 QTM_END_NAMESPACE

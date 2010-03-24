@@ -77,6 +77,10 @@ QTM_BEGIN_NAMESPACE
     \value LandmarkNearestFilter A filter which matches a landmark closest to a given coordinate.
     \value LandmarkCategoryFilter A filter which matches landmarks that belong to a given category
     \value LandmarkBoxFilter A filter which matches landmarks within a given bounding box.
+    \value LandmarkIntersectionFilter A filter which performs an AND operation with its
+                                      constituent filters
+    \value LandmarkUnionFilter A filter which performs an OR operation with its constiuent
+                               filters
     \value LandmarkDefaultFilter A filter which matches all landmarks.
     \value LandmarkCustomFilter A filter which matches landmarks based on a custom made algorithm.
 */
@@ -85,6 +89,14 @@ QTM_BEGIN_NAMESPACE
     Constructs an default landmark filter.
 */
 QLandmarkFilter::QLandmarkFilter()
+{
+    //TODO: implement
+}
+
+/*!
+    \internal
+*/
+QLandmarkFilter::QLandmarkFilter(QLandmarkFilterPrivate *dd)
 {
     //TODO: implement
 }

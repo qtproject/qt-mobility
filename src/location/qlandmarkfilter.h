@@ -43,6 +43,7 @@
 #define QLANDMARKFILTER_H
 
 #include "qmobilityglobal.h"
+#include <QSharedDataPointer>
 
 QT_BEGIN_HEADER
 
@@ -55,9 +56,10 @@ public:
     enum FilterType{LandmarkInvalidFilter, LandmarkDefaultFilter,
                     LandmarkNameFilter, LandmarkProximityFilter,
                     LandmarkNearestFilter, LandmarkCategoryFilter,
-                    LandmarkBoxFilter,LandmarkCustomFilter =500};
+                    LandmarkBoxFilter, LandmarkIntersectionFilter,
+                    LandmarkUnionFilter, LandmarkCustomFilter =500};
     QLandmarkFilter();
-    ~QLandmarkFilter();
+    virtual ~QLandmarkFilter();
 
     FilterType type() const;
 
@@ -67,8 +69,9 @@ public:
     bool operator!=(const QLandmarkFilter &other) const;
     bool operator==(const QLandmarkFilter &other) const;
     QLandmarkFilter &operator=(const QLandmarkFilter &other);
-private:
-    QLandmarkFilterPrivate *d;
+protected:
+    QLandmarkFilter(QLandmarkFilterPrivate *dd);
+    //QSharedDataPointer<QLandmarkFilterPrivate> d_ptr;
 };
 
 QTM_END_NAMESPACE

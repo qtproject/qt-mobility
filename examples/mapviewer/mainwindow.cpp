@@ -42,6 +42,12 @@
 #include <QPointF>
 #include <QNetworkProxy>
 
+#ifdef Q_OS_SYMBIAN
+#include <QMessageBox>
+#include <qnetworksession.h>
+#include <qnetworkconfigmanager.h>
+#endif
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -87,15 +93,18 @@ MainWindow::MainWindow(QWidget *parent) :
                      this, SLOT(mapClicked(QGeoCoordinate, QGraphicsSceneMouseEvent*)));
     QObject::connect(mapView, SIGNAL(zoomLevelChanged(quint16, quint16)),
                      this, SLOT(zoomLevelChanged(quint16, quint16)));
-
-    //mapView->init(&geoNetworkManager, QPointF(13, 52.35));
-    mapView->init(&geoNetworkManager, QGeoCoordinate(52.35, 13));
+    QObject::connect(mapView, SIGNAL(mapObjectSelected(QMapObject*)),
+                     this, SLOT(mapObjectSelected(QMapObject*)));
 
     slider = new QSlider(Qt::Vertical, this);
     slider->setMinimum(0);
     slider->setMaximum(18);
     slider->setSliderPosition(4);
+#ifdef Q_OS_SYMBIAN
+    slider->setGeometry(10, 10, 80, 170);
+#else
     slider->setGeometry(10, 10, 30, 100);
+#endif
     slider->setVisible(true);
     QObject::connect(slider, SIGNAL(sliderMoved(int)),
                      mapView, SLOT(setZoomLevel(int)));
@@ -103,58 +112,105 @@ MainWindow::MainWindow(QWidget *parent) :
     //QGraphicsProxyWidget* proxy = qgv->scene()->addWidget(slider);
 
     popupMenu = new QMenu(this);
-    mnMarker = popupMenu->addAction("Add marker here");
-    mnSep1 = popupMenu->addSeparator();
-    mnRoute = popupMenu->addAction("Add route");
-    mnLine = popupMenu->addAction("Draw line");
-    mnRect = popupMenu->addAction("Draw rectangle");
-    mnEllipse = popupMenu->addAction("Draw ellipse");
-    mnPolygon = popupMenu->addAction("Draw polygon");
-    mnSep2 = popupMenu->addSeparator();
-    mnDay = popupMenu->addAction("Normal daylight");
-    mnSat = popupMenu->addAction("Satellite");
-    mnTer = popupMenu->addAction("Terrain");
-    QObject::connect(mnMarker, SIGNAL(triggered(bool)),
+    QAction* menuItem;    
+    menuItem = new QAction(tr("Add marker here"), this);
+    popupMenu->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(addMarker(bool)));
-    QObject::connect(mnLine, SIGNAL(triggered(bool)),
-                     this, SLOT(drawLine(bool)));
-    QObject::connect(mnRect, SIGNAL(triggered(bool)),
-                     this, SLOT(drawRect(bool)));
-    QObject::connect(mnEllipse, SIGNAL(triggered(bool)),
-                     this, SLOT(drawEllipse(bool)));
-    QObject::connect(mnPolygon, SIGNAL(triggered(bool)),
-                     this, SLOT(drawPolygon(bool)));
-    QObject::connect(mnRoute, SIGNAL(triggered(bool)),
+    
+    menuItem = new QAction(tr(""), this);
+    menuItem->setSeparator(true);
+    popupMenu->addAction(menuItem);
+
+    menuItem = new QAction(tr("Add route"), this);
+    popupMenu->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(setRtFromTo(bool)));
+    
+    QMenu* subMenuItem = new QMenu(tr("Draw"), this);
+    popupMenu->addMenu(subMenuItem);
+    
+    menuItem = new QAction(tr("Line"), this);
+    subMenuItem->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
+                     this, SLOT(drawLine(bool)));
+
+    menuItem = new QAction(tr("Rectangle"), this);
+    subMenuItem->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
+                     this, SLOT(drawRect(bool)));
+
+    menuItem = new QAction(tr("Ellipse"), this);
+    subMenuItem->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
+                     this, SLOT(drawEllipse(bool)));
+
+    menuItem = new QAction(tr("Polygon"), this);
+    subMenuItem->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
+                     this, SLOT(drawPolygon(bool)));
+    
+    menuItem = new QAction(tr(""), this);
+    menuItem->setSeparator(true);
+    popupMenu->addAction(menuItem);
+
+    mnDay = new QAction(tr("Normal daylight"), this);
+    popupMenu->addAction(mnDay);
     QObject::connect(mnDay, SIGNAL(triggered(bool)),
                      this, SLOT(setScheme(bool)));
+    
+    mnSat = new QAction(tr("Satellite"), this);
+    popupMenu->addAction(mnSat);
     QObject::connect(mnSat, SIGNAL(triggered(bool)),
                      this, SLOT(setScheme(bool)));
+    
+    mnTer = new QAction(tr("Terrain"), this);
+    popupMenu->addAction(mnTer);
     QObject::connect(mnTer, SIGNAL(triggered(bool)),
                      this, SLOT(setScheme(bool)));
+    
+    menuItem = new QAction(tr(""), this);
+    menuItem->setSeparator(true);
+    popupMenu->addAction(menuItem);
+    
+    menuItem = new QAction(tr("Exit"), this);
+    popupMenu->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
+                     this, SLOT(close()));
+
+    setContextMenuPolicy(Qt::CustomContextMenu);
+    QObject::connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
+            this, SLOT(customContextMenuRequest(const QPoint&)));
+    
+    QTimer::singleShot(0, this, SLOT(delayedInit()));
 }
 
 MainWindow::~MainWindow()
 {
-    delete qgv;
-    delete mapView;
-    delete slider;
-    delete mnMarker;
-    delete mnRoute;
-    delete mnLine;
-    delete mnRect;
-    delete mnEllipse;
-    delete mnPolygon;
-    delete mnDay;
-    delete mnSat;
-    delete mnTer;
-    delete mnSep1;
-    delete mnSep2;
-    delete popupMenu;
-
     delete ui;
 }
+void MainWindow::delayedInit()
+{
+#ifdef Q_OS_SYMBIAN
+    // Set Internet Access Point
+    QNetworkConfigurationManager manager;
+    const bool canStartIAP = (manager.capabilities()
+                              & QNetworkConfigurationManager::CanStartAndStopInterfaces);
+    // Is there default access point, use it
+    QNetworkConfiguration cfg = manager.defaultConfiguration();
+    if (!cfg.isValid() || (!canStartIAP && cfg.state() != QNetworkConfiguration::Active)) {
+        QMessageBox::information(this, tr("MapViewer Example"), tr(
+                                     "Available Access Points not found."));
+        return;
+    }
+  
+    session = new QNetworkSession(cfg, this);
+    session->open();
+    session->waitForOpened(-1);
+#endif
 
+    mapView->init(&geoNetworkManager, QGeoCoordinate(52.35, 13));
+}
 void MainWindow::resizeEvent(QResizeEvent* event)
 {
     qgv->resize(event->size());
@@ -188,12 +244,21 @@ void MainWindow::routeReplyFinished(QRouteReply* reply)
     }
 }
 
-void MainWindow::mapClicked(QGeoCoordinate geoCoord, QGraphicsSceneMouseEvent* mouseEvent)
+void MainWindow::mapClicked(QGeoCoordinate geoCoord, QGraphicsSceneMouseEvent* /*mouseEvent*/)
 {
-    if (mouseEvent->buttons() & Qt::RightButton) {
-        lastClicked = geoCoord;
-        popupMenu->popup(mouseEvent->screenPos());
-    }
+    lastClicked = geoCoord;
+}
+
+void MainWindow::customContextMenuRequest(const QPoint& point)
+{
+    if(focusWidget()==qgv)
+        popupMenu->popup(mapToGlobal(point));
+}
+
+void MainWindow::mapObjectSelected(QMapObject* /*mapObject*/)
+{
+    int x = 0;
+    x++; //just a stub
 }
 
 void MainWindow::setRtFromTo(bool /*checked*/)

@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qgeocodingrequest.h"
+#include "qgeocodingrequest_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -51,13 +52,18 @@ QTM_BEGIN_NAMESPACE
     This class represents a geocoding request.
 */
 
+QGeocodingRequestPrivate::QGeocodingRequestPrivate()
+{
+    vers = "1.0";
+    languageMARC = "eng";
+}
+
 /*!
     Default constructor.
 */
 QGeocodingRequest::QGeocodingRequest()
+    : d_ptr(new QGeocodingRequestPrivate())
 {
-    vers = "1.0";
-    languageMARC = "eng";
 }
 
 /*!
@@ -67,7 +73,8 @@ QGeocodingRequest::QGeocodingRequest()
 */
 QString QGeocodingRequest::version() const
 {
-    return vers;
+    Q_D(const QGeocodingRequest);
+    return d->vers;
 }
 
 /*!
@@ -75,7 +82,8 @@ QString QGeocodingRequest::version() const
 */
 QString QGeocodingRequest::language() const
 {
-    return languageMARC;
+    Q_D(const QGeocodingRequest);
+    return d->languageMARC;
 }
 
 /*!
@@ -85,10 +93,11 @@ QString QGeocodingRequest::language() const
 */
 void QGeocodingRequest::setLanguage(const QString& language)
 {
+    Q_D(QGeocodingRequest);
     if (language.length() != 3)
         return; //ignore
 
-    languageMARC = language;
+    d->languageMARC = language;
 }
 
 /*!
@@ -96,7 +105,8 @@ void QGeocodingRequest::setLanguage(const QString& language)
 */
 QString QGeocodingRequest::oneBoxLocation() const
 {
-    return obloc;
+    Q_D(const QGeocodingRequest);
+    return d->obloc;
 }
 
 /*!
@@ -116,7 +126,8 @@ QString QGeocodingRequest::oneBoxLocation() const
 */
 void QGeocodingRequest::setOneBoxLocation(const QString& obloc)
 {
-    this->obloc = obloc;
+    Q_D(QGeocodingRequest);
+    d->obloc = obloc;
 }
 
 /*!
@@ -124,7 +135,8 @@ void QGeocodingRequest::setOneBoxLocation(const QString& obloc)
 */
 QString QGeocodingRequest::country() const
 {
-    return cntry;
+    Q_D(const QGeocodingRequest);
+    return d->cntry;
 }
 
 /*!
@@ -134,7 +146,8 @@ QString QGeocodingRequest::country() const
 */
 void QGeocodingRequest::setCountry(const QString& country)
 {
-    this->cntry = country;
+    Q_D(QGeocodingRequest);
+    d->cntry = country;
 }
 
 /*!
@@ -142,7 +155,8 @@ void QGeocodingRequest::setCountry(const QString& country)
 */
 QString QGeocodingRequest::state() const
 {
-    return st;
+    Q_D(const QGeocodingRequest);
+    return d->st;
 }
 
 /*!
@@ -150,7 +164,8 @@ QString QGeocodingRequest::state() const
 */
 void QGeocodingRequest::setState(const QString& state)
 {
-    this->st = state;
+    Q_D(QGeocodingRequest);
+    d->st = state;
 }
 
 /*!
@@ -158,7 +173,8 @@ void QGeocodingRequest::setState(const QString& state)
 */
 QString QGeocodingRequest::city() const
 {
-    return cty;
+    Q_D(const QGeocodingRequest);
+    return d->cty;
 }
 
 /*!
@@ -166,7 +182,8 @@ QString QGeocodingRequest::city() const
 */
 void QGeocodingRequest::setCity(const QString& city)
 {
-    this->cty = city;
+    Q_D(QGeocodingRequest);
+    d->cty = city;
 }
 
 /*!
@@ -174,7 +191,8 @@ void QGeocodingRequest::setCity(const QString& city)
 */
 QString QGeocodingRequest::postCode() const
 {
-    return pCode;
+    Q_D(const QGeocodingRequest);
+    return d->pCode;
 }
 
 /*!
@@ -182,7 +200,8 @@ QString QGeocodingRequest::postCode() const
 */
 void QGeocodingRequest::setPostCode(const QString& postCode)
 {
-    this->pCode = postCode;
+    Q_D(QGeocodingRequest);
+    d->pCode = postCode;
 }
 
 /*!
@@ -190,7 +209,8 @@ void QGeocodingRequest::setPostCode(const QString& postCode)
 */
 QString QGeocodingRequest::street() const
 {
-    return strt;
+    Q_D(const QGeocodingRequest);
+    return d->strt;
 }
 
 /*!
@@ -198,7 +218,8 @@ QString QGeocodingRequest::street() const
 */
 void QGeocodingRequest::setStreet(const QString& street)
 {
-    this->strt = street;
+    Q_D(QGeocodingRequest);
+    d->strt = street;
 }
 
 /*!
@@ -206,7 +227,8 @@ void QGeocodingRequest::setStreet(const QString& street)
 */
 QString QGeocodingRequest::number() const
 {
-    return num;
+    Q_D(const QGeocodingRequest);
+    return d->num;
 }
 
 /*!
@@ -214,7 +236,8 @@ QString QGeocodingRequest::number() const
 */
 void QGeocodingRequest::setNumber(const QString& number)
 {
-    this->num = number;
+    Q_D(QGeocodingRequest);
+    d->num = number;
 }
 
 QString QGeocodingRequest::requestString(const QString &host) const

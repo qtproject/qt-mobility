@@ -46,11 +46,15 @@
 #include <QObject>
 
 #include "qgeolocation.h"
-#include "qaddress.h"
+#include "qgeoaddress.h"
 #include "qgeoreply.h"
 
 QTM_BEGIN_NAMESPACE
 
+<<<<<<< HEAD
+=======
+class QGeocodingReplyPrivate;
+>>>>>>> 1.1-mapsintegrate
 class Q_LOCATION_EXPORT QGeocodingReply : public QGeoReply
 {
     Q_OBJECT
@@ -68,17 +72,19 @@ public:
     QGeocodingReply();
 
     ResultCode resultCode() const;
+    void setResultCode(ResultCode result);
     QString resultDescription() const;
+    void setResultDescription(QString resultDescription);
     quint32 count() const;
     QList<QGeoLocation> places() const;
+    void addPlace(QGeoLocation place);
 
 private:
     Q_DISABLE_COPY(QGeocodingReply)
 
 private:
-    ResultCode code;
-    QString descr;
-    QList<QGeoLocation> plcs;
+    QGeocodingReplyPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QGeocodingReply)
 };
 
 

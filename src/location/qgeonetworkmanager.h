@@ -42,22 +42,16 @@
 #ifndef QLOCATION_GEONETWORKMANAGER_H
 #define QLOCATION_GEONETWORKMANAGER_H
 
-#include <QNetworkAccessManager>
-#include <QHash>
 #include <QNetworkReply>
-#include <QNetworkRequest>
-#include <QNetworkProxy>
-#include <QPair>
-#include <QPointF>
 #include <QString>
 
 #include "qgeoengine.h"
-#include "qmaptilecache.h"
 
 #define MAPTILE_MAX_ZOOMLEVEL 18
 
 QTM_BEGIN_NAMESPACE
 
+class QGeoNetworkManagerPrivate;
 class Q_LOCATION_EXPORT QGeoNetworkManager : public QGeoEngine
 {
     Q_OBJECT
@@ -95,32 +89,9 @@ public:
 private:
     Q_DISABLE_COPY(QGeoNetworkManager)
 
-private slots:
-    void finishedRouteRequest();
-    void finishedGeocodingRequest();
-    void finishedMapTileRequest();
-
-    void errorRouteRequest(QDLGeoReply::ErrorCode errorCode, const QString &errorString = QString());
-    void errorGeocodingRequest(QDLGeoReply::ErrorCode errorCode, const QString &errorString = QString());
-    void errorMapTileRequest(QDLGeoReply::ErrorCode errorCode, const QString &errorString = QString());
-
 private:
-    QNetworkAccessManager netManager; //!< The internal network manager
-    QMapTileCache cache; //!< The map tile cache
-
-    QString geocdSrv;
-    QString rtSrv;
-    QString mapSrv;
-    QNetworkProxy geocdProx;
-    QNetworkProxy rtProx;
-    QNetworkProxy mapProx;
-    QString token;
-    QString referrer;
-
-    QHash<QString, MapVersion> mapVersions;
-    QHash<QString, MapResolution> mapResolutions;
-    QHash<QString, MapFormat> mapFormats;
-    QHash<QString, MapScheme> mapSchemes;
+    QGeoNetworkManagerPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QGeoNetworkManager)
 };
 
 QTM_END_NAMESPACE

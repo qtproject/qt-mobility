@@ -77,11 +77,11 @@ bool QRouteXmlParser::readRootElement(QRouteReply *output)
     if (m_reader->attributes().hasAttribute("resultCode")) {
         QStringRef result = m_reader->attributes().value("resultCode");
         if (result == "OK") {
-            output->rCode = QRouteReply::OK;
+            output->setResultCode(QRouteReply::OK);
         } else if (result == "FAILED") {
-            output->rCode = QRouteReply::Failed;
+            output->setResultCode(QRouteReply::Failed);
         } else if (result == "FAILED WITH ALTERNATIVE") {
-            output->rCode = QRouteReply::FailedWithAlternative;
+            output->setResultCode(QRouteReply::FailedWithAlternative);
         } else {
             m_reader->raiseError(QString("The attribute \"resultCode\" of the element \"routes\" has an unknown value (value was %1).").arg(result.toString()));
             return false;
@@ -89,14 +89,14 @@ bool QRouteXmlParser::readRootElement(QRouteReply *output)
     }
 
     if (m_reader->attributes().hasAttribute("resultDescription")) {
-        output->descr = m_reader->attributes().value("resultDescription").toString();
+        output->setResultDescription(m_reader->attributes().value("resultDescription").toString());
     }
 
     if (!m_reader->attributes().hasAttribute("language")) {
         //m_reader->raiseError("The element \"routes\" did not have the required attribute \"language\".");
         //return false;
     } else {
-        output->lang = m_reader->attributes().value("language").toString();
+        output->setLanguage(m_reader->attributes().value("language").toString());
         // TODO - check that's in xsd:language format?
     }
 
@@ -107,7 +107,7 @@ bool QRouteXmlParser::readRootElement(QRouteReply *output)
             if (!readRoute(&route))
                 return false;
 
-            output->rt.append(route);
+            output->addRoute(route);
         } else {
             m_reader->raiseError(QString("The element \"routes\" did not expect a child element named \"%1\".").arg(m_reader->name().toString()));
             return false;

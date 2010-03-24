@@ -55,7 +55,7 @@ QLandmarkCategoryPrivate::QLandmarkCategoryPrivate() {}
 QLandmarkCategoryPrivate::QLandmarkCategoryPrivate(const QLandmarkCategoryPrivate &other)
 {
     name = other.name;
-    icon = other.icon;
+    iconUrl = other.iconUrl;
     description = other.description;
 }
 
@@ -64,7 +64,7 @@ QLandmarkCategoryPrivate::~QLandmarkCategoryPrivate() {}
 QLandmarkCategoryPrivate& QLandmarkCategoryPrivate::operator= (const QLandmarkCategoryPrivate & other)
 {
     name = other.name;
-    icon = other.icon;
+    iconUrl = other.iconUrl;
     description = other.description;
 
     return *this;
@@ -73,7 +73,7 @@ QLandmarkCategoryPrivate& QLandmarkCategoryPrivate::operator= (const QLandmarkCa
 bool QLandmarkCategoryPrivate::operator == (const QLandmarkCategoryPrivate &other) const
 {
     return ((name == other.name)
-                    && (icon == other.icon)
+                    && (iconUrl == other.iconUrl)
                     && (description == other.description));
 }
 
@@ -88,7 +88,7 @@ bool QLandmarkCategoryPrivate::operator == (const QLandmarkCategoryPrivate &othe
     Landmarks of similar type may be grouped together into categories,
     e.g. restaurants, accommodation etc.  A QLandmarkCategory object
     represents one of these and allows access to category properties
-    such as description and icon.
+    such as description and icon url.
 
     More than one category can be assigned to a landmark.  Assignment
     of a category to a landmark is achieved by using the QLandmark class
@@ -162,19 +162,19 @@ void QLandmarkCategory::setName(const QString &name){
 }
 
 /*!
-    Returns the filepath of the category icon
+    Returns the url of the category's icon
 */
-QString QLandmarkCategory::icon() const
+QUrl QLandmarkCategory::iconUrl() const
 {
-    return d->icon;
+    return d->iconUrl;
 }
 
 /*!
-    Sets the \a filePath of the category icon
+    Sets the \a url of the category's icon
 */
-void QLandmarkCategory::setIcon(const QString &filePath)
+void QLandmarkCategory::setIconUrl(const QUrl &url)
 {
-    d->icon = filePath;
+    d->iconUrl = url;
 }
 
 /*!
