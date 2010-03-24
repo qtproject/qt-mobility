@@ -357,6 +357,7 @@ QList<QContactLocalId> QContactManager::contactIds(const QContactFilter& filter,
  */
 QList<QContact> QContactManager::contacts(const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions) const
 {
+    qWarning("QContactManager::contacts() This function is deprecated and will be removed after the transition period has elapsed!  Use contacts taking a QContactFetchHint instead!");
     QContactFetchHint fetchHint;
     fetchHint.setDetailDefinitionsHint(definitionRestrictions);
     return d->m_engine->contacts(QContactFilter(), sortOrders, fetchHint, &d->m_error);
@@ -378,6 +379,7 @@ QList<QContact> QContactManager::contacts(const QList<QContactSortOrder>& sortOr
  */
 QList<QContact> QContactManager::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions) const
 {
+    qWarning("QContactManager::contacts() This function is deprecated and will be removed after the transition period has elapsed!  Use contacts taking a QContactFetchHint instead!");
     QContactFetchHint fetchHint;
     fetchHint.setDetailDefinitionsHint(definitionRestrictions);
     return d->m_engine->contacts(filter, sortOrders, fetchHint, &d->m_error);
@@ -399,6 +401,7 @@ QList<QContact> QContactManager::contacts(const QContactFilter& filter, const QL
  */
 QContact QContactManager::contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions) const
 {
+    qWarning("QContactManager::contact() This function is deprecated and will be removed after the transition period has elapsed!  Use contacts taking a QContactFetchHint instead!");
     QContactFetchHint fetchHint;
     fetchHint.setDetailDefinitionsHint(definitionRestrictions);
     return d->m_engine->contact(contactId, fetchHint, &d->m_error);
@@ -537,6 +540,7 @@ bool QContactManager::removeContact(const QContactLocalId& contactId)
  */
 QList<QContactManager::Error> QContactManager::saveContacts(QList<QContact>* contactList)
 {
+    qWarning("QContactManager::saveContacts() This function is deprecated and will be removed after the transition period has elapsed!  Use saveContacts taking an error map instead!");
     if (contactList) {
         QMap<int, QContactManager::Error> errorMap;
         QList<QContactManager::Error> errorList;
@@ -608,6 +612,7 @@ bool QContactManager::saveContacts(QList<QContact>* contacts, QMap<int, QContact
  */
 bool QContactManager::removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap)
 {
+    qWarning("QContactManager::removeContacts() This function is deprecated and will be removed after the transition period has elapsed!  Use removeContacts taking an error map and a const list instead!");
     // DEPRECATED to be removed once transition period has elapsed.
     if (errorMap)
         errorMap->clear();
@@ -678,6 +683,7 @@ QContact QContactManager::compatibleContact(const QContact& original)
  */
 QList<QContactManager::Error> QContactManager::removeContacts(QList<QContactLocalId>* idList)
 {
+    qWarning("QContactManager::removeContacts() This function is deprecated and will be removed after the transition period has elapsed!  Use removeContacts taking an error map and a const list instead!");
     if (idList) {
         QMap<int, QContactManager::Error> errorMap;
         QList<QContactManager::Error> errorList;
@@ -743,6 +749,7 @@ QContactLocalId QContactManager::selfContactId() const
  */
 QList<QContactRelationship> QContactManager::relationships(const QContactId& participantId, QContactRelationshipFilter::Role role) const
 {
+    qWarning("QContactManager::relationships() This function is deprecated and will be removed after the transition period has elapsed!  Use relationships taking QContactRelationship::Role instead!");
     return d->m_engine->relationships(QString(), participantId, static_cast<QContactRelationship::Role>(role), &d->m_error);
 }
 
@@ -757,6 +764,7 @@ QList<QContactRelationship> QContactManager::relationships(const QContactId& par
  */
 QList<QContactRelationship> QContactManager::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role) const
 {
+    qWarning("QContactManager::relationships() This function is deprecated and will be removed after the transition period has elapsed!  Use relationships taking QContactRelationship::Role instead!");
     return d->m_engine->relationships(relationshipType, participantId, static_cast<QContactRelationship::Role>(role), &d->m_error);
 }
 
@@ -811,6 +819,7 @@ bool QContactManager::saveRelationship(QContactRelationship* relationship)
  */
 QList<QContactManager::Error> QContactManager::saveRelationships(QList<QContactRelationship>* relationships)
 {
+    qWarning("QContactManager::saveRelationships() This function is deprecated and will be removed after the transition period has elapsed!  Use saveRelationships taking an error map pointer instead!");
     if (relationships) {
         QMap<int, QContactManager::Error> errorMap;
         QList<QContactManager::Error> errorList;
@@ -868,6 +877,7 @@ bool QContactManager::removeRelationship(const QContactRelationship& relationshi
  */
 QList<QContactManager::Error> QContactManager::removeRelationships(const QList<QContactRelationship>& relationships)
 {
+    qWarning("QContactManager::removeRelationships() This function is deprecated and will be removed after the transition period has elapsed!  Use removeRelationships taking an error map pointer instead!");
     QMap<int, QContactManager::Error> errorMap;
     QList<QContactManager::Error> errorList;
     int size = relationships.size();
