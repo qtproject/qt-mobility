@@ -263,7 +263,7 @@ QDebug operator<<(QDebug dbg, const QContactDetail& detail)
 #endif
 
 /*!
- * \obsolete
+ * \deprecated
  * Sets the preferred actions for this detail to be the given list of \a preferredActions.
  * This functionality may not be supported on all backends.
  * This function is deprecated and will be removed after the transition period has elapsed.
@@ -274,7 +274,7 @@ void QContactDetail::setPreferredActions(const QList<QContactActionDescriptor>& 
 }
 
 /*!
- * \obsolete
+ * \deprecated
  * Returns the list of preferred actions for this detail.
  * This functionality may not be supported on all backends.
  * This function is deprecated and will be removed after the transition period has elapsed.

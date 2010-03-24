@@ -62,7 +62,7 @@ QTM_BEGIN_NAMESPACE
 /*!
   \enum QContactDetailDefinition::AccessConstraint
 
-  \obsolete
+  \deprecated
 
   This enum defines the access constraints which may be set on all details of this definition in the store for which the definition is valid.
 
@@ -173,7 +173,7 @@ void QContactDetailDefinition::removeField(const QString& key)
 /*!
   Returns the access constraint that is applied to details of this definition
 
-  \obsolete
+  \deprecated
 
   This function is obsolete - use \l QContactDetail::accessConstraints()
  */
@@ -185,7 +185,7 @@ QContactDetailDefinition::AccessConstraint QContactDetailDefinition::accessConst
 /*!
   Sets the access constraint that is applied to details of this definition to \a constraint
 
-  \obsolete
+  \deprecated
 
   This function is obsolete.
  */

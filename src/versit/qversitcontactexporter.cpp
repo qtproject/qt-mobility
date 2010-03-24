@@ -244,7 +244,11 @@ QVersitResourceHandler* QVersitContactExporter::resourceHandler() const
 
 // Deprecated:
 
-/*! \internal */
+/*!
+  \deprecated
+
+  Use the version of the function returning a bool, instead.
+*/
 QList<QVersitDocument> QVersitContactExporter::exportContacts(const QList<QContact>& contacts)
 {
     exportContacts(contacts, QVersitDocument::VCard30Type);

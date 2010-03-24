@@ -489,7 +489,7 @@ QList<QContactRelationship> QContact::relationships(const QString& relationshipT
 }
 
 /*!
-  \obsolete
+  \deprecated
   Returns a list of ids of contacts which are related to this contact in a relationship of the
   given \a relationshipType, where those other contacts participate in the relationship in the
   given \a role.
@@ -575,7 +575,7 @@ QList<QContactId> QContact::relatedContacts(const QString& relationshipType, QCo
 }
 
 /*!
- * \obsolete
+ * \deprecated
  * Sets the order of importance of the relationships for this contact by saving a \a reordered list of relationships which involve the contact.
  * The list must include all of the relationships in which the contact is involved, and must not include any relationships which do
  * not involve the contact.  In order for the ordering preference to be persisted, the contact must be saved in its manager.
@@ -595,7 +595,7 @@ void QContact::setRelationshipOrder(const QList<QContactRelationship>& reordered
 }
 
 /*!
- * \obsolete
+ * \deprecated
  * Returns the ordered list of relationships in which the contact is involved.  By default, this list is equal to the cached
  * list of relationships which is available by calling relationships().
  *

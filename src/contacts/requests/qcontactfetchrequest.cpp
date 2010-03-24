@@ -97,7 +97,7 @@ void QContactFetchRequest::setFetchHint(const QContactFetchHint &fetchHint)
 }
 
 /*!
-  \internal
+  \deprecated
   Sets the list of allowable detail definition names to \a definitionNames.  Any contacts retrieved
   by the request will have any details whose definition name is not on the restricted list
   removed prior to being returned.
@@ -139,7 +139,7 @@ QContactFetchHint QContactFetchRequest::fetchHint() const
 }
 
 /*!
-  \internal
+  \deprecated
   Returns the list of definition names which define which details contacts in the result list will be limited to.
   This function is deprecated and will be removed after the transition period has been elapsed.  Use fetchHint() instead.
  */

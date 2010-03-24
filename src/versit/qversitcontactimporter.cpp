@@ -243,7 +243,9 @@ QVersitResourceHandler* QVersitContactImporter::resourceHandler() const
 
 // Deprecated:
 
-/*! \internal */
+/*! \deprecated
+  Use the version of the function that returns a bool instead.
+    */
 QList<QContact> QVersitContactImporter::importContacts(const QList<QVersitDocument> &documents)
 {
     importDocuments(documents);

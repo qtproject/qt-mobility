@@ -96,7 +96,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactRelationship::Aggregates, "Aggregates");
 
 /*!
  * \variable QContactRelationship::Is
- * \obsolete
+ * \deprecated
  * Deprecated - use QContactRelationship::IsSameAs instead.
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactRelationship::Is, "IsSameAs");

@@ -345,7 +345,7 @@ QList<QContactLocalId> QContactManager::contactIds(const QContactFilter& filter,
 }
 
 /*!
-  \internal
+  \deprecated
   Returns the list of contacts stored in the manager sorted according to the given list of \a sortOrders.
 
   The \a definitionRestrictions parameter describes the details that are of
@@ -363,7 +363,7 @@ QList<QContact> QContactManager::contacts(const QList<QContactSortOrder>& sortOr
 }
 
 /*!
-  \internal
+  \deprecated
   Returns a list of contacts that match the given \a filter, sorted according to the given list of \a sortOrders.
 
   Depending on the manager implementation, this filtering operation might be slow and involve retrieving all the
@@ -384,7 +384,7 @@ QList<QContact> QContactManager::contacts(const QContactFilter& filter, const QL
 }
 
 /*!
-  \internal
+  \deprecated
   Returns the contact in the database identified by \a contactId.
 
   If the contact does not exist, an empty, default constructed QContact will be returned,
@@ -519,7 +519,7 @@ bool QContactManager::removeContact(const QContactLocalId& contactId)
 }
 
 /*!
-  \obsolete
+  \deprecated
   Adds the list of contacts given by \a contactList to the database.
   Returns a list of the error codes corresponding to the contacts in
   the \a contactList.  The \l QContactManager::error() function will
@@ -584,7 +584,7 @@ bool QContactManager::saveContacts(QList<QContact>* contacts, QMap<int, QContact
 }
 
 /*!
-  \obsolete
+  \deprecated
 
   Remove every contact whose id is contained in the list of contacts ids
   \a contactIds.  Returns true if all contacts were removed successfully,
@@ -658,7 +658,7 @@ QContact QContactManager::compatibleContact(const QContact& original)
 }
 
 /*!
-  \obsolete
+  \deprecated
   Remove the list of contacts identified in \a idList.
   Returns a list of the error codes corresponding to the contact ids in
   the \a idList.  The \l QContactManager::error() function will
@@ -734,7 +734,7 @@ QContactLocalId QContactManager::selfContactId() const
 }
 
 /*!
-  \obsolete
+  \deprecated
   Returns a list of relationships in which the contact identified by the given \a participantId participates in the given \a role.
   If \a participantId is the default-constructed id, \a role is ignored and all relationships are returned.
 
@@ -747,7 +747,7 @@ QList<QContactRelationship> QContactManager::relationships(const QContactId& par
 }
 
 /*!
-  \obsolete
+  \deprecated
   Returns a list of relationships of the given \a relationshipType in which the contact identified by the given \a participantId participates in the given \a role.
   If \a participantId is the default-constructed id, \a role is ignored and all relationships of the given \a relationshipType are returned.
   If \a relationshipType is empty, relationships of any type are returned.
@@ -803,7 +803,7 @@ bool QContactManager::saveRelationship(QContactRelationship* relationship)
 }
 
 /*!
-  \obsolete
+  \deprecated
   Saves the given \a relationships in the database and returns a list of error codes.
 
   This function is deprecated and will be removed after the transition period has elapsed.
@@ -860,7 +860,7 @@ bool QContactManager::removeRelationship(const QContactRelationship& relationshi
 }
 
 /*!
-  \obsolete
+  \deprecated
   Removes the given \a relationships from the database and returns a list of error codes.
 
   This function is deprecated and will be removed after the transition period has elapsed.

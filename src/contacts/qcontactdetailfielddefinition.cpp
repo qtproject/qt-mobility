@@ -55,7 +55,7 @@ QTM_BEGIN_NAMESPACE
 /*!
  * \enum QContactDetailFieldDefinition::AccessConstraint
  *
- * \obsolete
+ * \deprecated
  *
  * This enum defines the access constraints which may be set on fields of a detail definition in the store for which the definition is valid.
  * The constraint which applies to the definition takes precedence over a constraint which applies to a field of that definition.
@@ -133,7 +133,7 @@ void QContactDetailFieldDefinition::setAllowableValues(const QVariantList values
 /*!
  * Returns the access constraints which apply to this field
  *
- * \obsolete
+ * \deprecated
  * Obsolete - use \l QContactDetail::accessConstraints() instead.
  */
 QContactDetailFieldDefinition::AccessConstraint QContactDetailFieldDefinition::accessConstraint() const
@@ -144,7 +144,7 @@ QContactDetailFieldDefinition::AccessConstraint QContactDetailFieldDefinition::a
 /*!
  * Sets the access constraints which apply to this field to \a constraint
  *
- * \obsolete
+ * \deprecated
  *
  * This is no longer used.
  */
