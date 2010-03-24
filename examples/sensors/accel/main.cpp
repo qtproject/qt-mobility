@@ -68,7 +68,6 @@ int main(int argc, char **argv)
     accelerometer = &sensor;
     AccelerometerFilter filter;
     sensor.addFilter(&filter);
-    sensor.setUpdateInterval(100); // as fast as the sensor can go!
     sensor.start();
 
     if (!sensor.isActive()) {

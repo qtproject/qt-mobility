@@ -59,7 +59,7 @@ gruesensorimpl::gruesensorimpl(QSensor *sensor)
 
 void gruesensorimpl::start()
 {
-    lightSensor->setUpdateInterval(sensor()->updateInterval());
+    lightSensor->setDataRate(sensor()->dataRate());
     lightSensor->start();
 }
 

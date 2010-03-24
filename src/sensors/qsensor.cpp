@@ -180,7 +180,10 @@ bool QSensor::connectToBackend()
     if (d->backend)
         return true;
 
+    int rate = d->dataRate;
     d->backend = QSensorManager::createBackend(this);
+    if (rate != 0)
+        setDataRate(rate);
     return (d->backend != 0);
 }
 
@@ -235,7 +238,7 @@ bool QSensor::isActive() const
     See the sensor_explorer example for an example of how to interpret and use
     this information.
 
-    \sa updateInterval
+    \sa QSensor::dataRate
 */
 
 qrangelist QSensor::availableDataRates() const
@@ -244,29 +247,35 @@ qrangelist QSensor::availableDataRates() const
 }
 
 /*!
-    \property QSensor::updateInterval
-    \brief the update interval of the sensor (measured in milliseconds).
+    \property QSensor::dataRate
+    \brief the data rate that the sensor should be run at.
 
-    The default value is 0. Note that this causes undefined behaviour.
+    The default value is determined by the backend.
 
     This should be set before calling start() because the sensor may not
     notice changes to this value while it is running.
 
-    Note that some sensors can only operate at particular rates.
-    The system will attempt to run the sensor at an appropriate rate
-    while delivering updates as often as requested.
-
-    \sa availableDataRates
+    \sa QSensor::availableDataRates
 */
 
-int QSensor::updateInterval() const
+int QSensor::dataRate() const
 {
-    return d->updateInterval;
+    return d->dataRate;
 }
 
-void QSensor::setUpdateInterval(int interval)
+void QSensor::setDataRate(int rate)
 {
-    d->updateInterval = interval;
+    bool warn = true;
+    Q_FOREACH (const qrange &range, d->availableDataRates) {
+        if (rate >= range.first && rate <= range.second) {
+            warn = false;
+            d->dataRate = rate;
+            break;
+        }
+    }
+    if (warn) {
+        qWarning() << "setDataRate: rate" << rate << "is not supported by the sensor.";
+    }
 }
 
 /*!
@@ -282,6 +291,8 @@ bool QSensor::start()
     if (d->active)
         return true;
     if (!connectToBackend())
+        return false;
+    if (d->availableDataRates.count() == 0)
         return false;
     // Set these flags to their defaults
     d->active = true;

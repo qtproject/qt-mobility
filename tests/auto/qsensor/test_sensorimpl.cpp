@@ -53,12 +53,20 @@ testsensorimpl::testsensorimpl(QSensor *sensor)
     addOutputRange(0, 1, 0.5);
     addOutputRange(0, 2, 1);
     QString doThis = sensor->property("doThis").toString();
-    if (doThis == "rates(0)")
+    if (doThis == "rates(0)") {
         setDataRates(0);
-    else if (doThis == "rates")
+    } else if (doThis == "rates") {
         setDataRates(new QAccelerometer(this));
-    else
+        if (sensor->availableDataRates().count()) {
+            sensor->setDataRate(sensor->availableDataRates().first().first);
+        } else {
+            addDataRate(100, 100);
+            sensor->setDataRate(100);
+        }
+    } else {
         addDataRate(100, 100);
+        sensor->setDataRate(100);
+    }
     reading();
 }
 

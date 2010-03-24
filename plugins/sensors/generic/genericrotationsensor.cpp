@@ -62,7 +62,7 @@ genericrotationsensor::genericrotationsensor(QSensor *sensor)
 
 void genericrotationsensor::start()
 {
-    accelerometer->setUpdateInterval(sensor()->updateInterval());
+    accelerometer->setDataRate(sensor()->dataRate());
     accelerometer->start();
     if (!accelerometer->isActive())
         sensorStopped();

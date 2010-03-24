@@ -135,7 +135,6 @@ void Explorer::on_sensors_currentItemChanged()
         qWarning() << "Can't connect to the sensor!";
         return;
     }
-    m_sensor->setUpdateInterval(200);
 
     loadSensorProperties();
     loadReading();

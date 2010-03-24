@@ -229,8 +229,8 @@ private slots:
         sensor.setOutputRange(1);
         sensor.outputRanges();
         sensor.availableDataRates();
-        sensor.setUpdateInterval(1000);
-        sensor.updateInterval();
+        sensor.setDataRate(100);
+        sensor.dataRate();
         sensor.isBusy();
         sensor.error();
         sensor.isConnectedToBackend();
@@ -246,6 +246,8 @@ private slots:
         TestSensor sensor;
         sensor.setProperty("doThis", "rates(0)");
         QTest::ignoreMessage(QtWarningMsg, "ERROR: Cannot call QSensorBackend::setDataRates with 0 ");
+        QTest::ignoreMessage(QtWarningMsg, "\"test sensor impl\" backend does not support any data rates. It cannot be used. ");
+        QTest::ignoreMessage(QtWarningMsg, "\"test sensor impl\" backend did not supply default data rate. ");
         sensor.connectToBackend();
     }
 
@@ -299,6 +301,14 @@ private slots:
 
     }
 
+    void testSetBadRate()
+    {
+        TestSensor sensor;
+        sensor.connectToBackend();
+
+        QTest::ignoreMessage(QtWarningMsg, "setDataRate: rate 300 is not supported by the sensor. ");
+        sensor.setDataRate(300);
+    }
 };
 
 QTEST_MAIN(tst_QSensor)

@@ -64,7 +64,6 @@ View::View(QWidget *parent)
 
     sensor = new QAccelerometer(this);
     connect(sensor, SIGNAL(readingChanged()), this, SLOT(accelerometerTimeout()));
-    sensor->setUpdateInterval(10);
     sensor->start();
 
     time.start();
