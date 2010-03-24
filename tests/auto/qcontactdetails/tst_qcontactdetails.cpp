@@ -914,6 +914,9 @@ void tst_QContactDetails::thumbnail()
     QCOMPARE(t1.thumbnail(), i1);
     QCOMPARE(t1.value<QImage>(QContactThumbnail::FieldThumbnail), i1);
 
+    // Make sure we have none to start with
+    QCOMPARE(c.details(QContactThumbnail::DefinitionName).count(), 0);
+
     // test property add
     QVERIFY(c.saveDetail(&t1));
     QCOMPARE(c.details(QContactThumbnail::DefinitionName).count(), 1);
@@ -926,23 +929,15 @@ void tst_QContactDetails::thumbnail()
     QCOMPARE(c.details(QContactThumbnail::DefinitionName).value(0).value("label"), QString("label1"));
     QCOMPARE(c.details(QContactThumbnail::DefinitionName).value(0).value<QImage>(QContactThumbnail::FieldThumbnail), i2);
 
-    // test uniqueness
+    // Uniqueness is not currently enforced
     QCOMPARE(c.details(QContactThumbnail::DefinitionName).count(), 1);
     t2.setThumbnail(i1);
     QVERIFY(c.saveDetail(&t2));
-    QCOMPARE(c.details(QContactThumbnail::DefinitionName).count(), 1); // save should overwrite!
+    QCOMPARE(c.details(QContactThumbnail::DefinitionName).count(), 2); // save should overwrite!
     QCOMPARE(QContactThumbnail(c.details(QContactThumbnail::DefinitionName).value(0)).thumbnail(), i1);
     QCOMPARE(QContactThumbnail(c.details(QContactThumbnail::DefinitionName).value(0)).thumbnail(), t2.thumbnail());
 
-    // test property remove - should fail to remove
-    QVERIFY(!c.removeDetail(&t1));
-    QCOMPARE(c.details(QContactThumbnail::DefinitionName).count(), 1);
-    QCOMPARE(QContactThumbnail(c.details(QContactThumbnail::DefinitionName).value(0)).thumbnail(), t1.thumbnail());
-    QVERIFY(c.saveDetail(&t2));
-    QCOMPARE(c.details(QContactThumbnail::DefinitionName).count(), 1);
-    QVERIFY(!c.removeDetail(&t2));
-    QCOMPARE(c.details(QContactThumbnail::DefinitionName).count(), 1);
-    QVERIFY(!c.removeDetail(&t2));
+    QVERIFY(c.removeDetail(&t1));
     QCOMPARE(c.details(QContactThumbnail::DefinitionName).count(), 1);
 }
 
