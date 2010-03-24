@@ -363,6 +363,11 @@ bool QContactMemoryEngine::removeContact(const QContactLocalId& contactId, QCont
 /*! \reimp */
 bool QContactMemoryEngine::removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
 {
+    if (contactIds.count() == 0) {
+        *error = QContactManager::BadArgumentError;
+        return false;
+    }
+    
     QContactChangeSet changeSet;
     QContactLocalId current;
     QContactManager::Error operationError = QContactManager::NoError;

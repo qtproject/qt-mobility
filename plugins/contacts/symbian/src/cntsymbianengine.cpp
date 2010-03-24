@@ -648,7 +648,12 @@ bool CntSymbianEngine::removeContacts(const QList<QContactLocalId>& contactIds, 
     if (errorMap) {
         // if the errormap argument is null, we just don't do fine-grained reporting.            
         errorMap->clear();
-    }    
+    }
+    
+    if (contactIds.count() == 0) {
+        *error = QContactManager::BadArgumentError;
+        return false;
+    }
     
     QContactManager::Error err;
     QContactLocalId selfCntId = selfContactId(&err); // err ignored
