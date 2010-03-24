@@ -44,7 +44,7 @@
 
 #include "ui_sessionwidget.h"
 
-#include <qnetworksession.h>
+#include "../../src/bearer/qnetworksession.h"
 
 QTM_USE_NAMESPACE
 

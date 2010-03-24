@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#include <qnetworkconfiguration.h>
-#include <qnetworksession.h>
+#include "../../src/bearer/qnetworkconfiguration.h"
+#include "../../src/bearer/qnetworksession.h"
 
 #include <QGraphicsItem>
 QTM_USE_NAMESPACE

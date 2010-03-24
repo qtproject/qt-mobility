@@ -42,8 +42,8 @@
 #ifndef BEARERMONITOR_H
 #define BEARERMONITOR_H
 
-#include <qnetworkconfigmanager.h>
-#include <qnetworksession.h>
+#include "../../src/bearer/qnetworkconfigmanager.h"
+#include "../../src/bearer/qnetworksession.h"
 #if defined (Q_OS_SYMBIAN) || defined(Q_OS_WINCE)	
 #include "ui_bearermonitor_240_320.h"
 #else

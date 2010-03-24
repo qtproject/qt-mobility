@@ -44,7 +44,7 @@
 
 #include <QObject>
 
-#include <qserviceplugininterface.h>
+#include "../../src/serviceframework/qserviceplugininterface.h"
 
 QTM_USE_NAMESPACE
 
