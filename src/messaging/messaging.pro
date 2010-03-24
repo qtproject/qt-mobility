@@ -132,6 +132,9 @@ symbian|win32|maemo6|maemo5|mac {
         INSTALLS += pkgconfig \
             documentation
     }
+    maemo5 { 
+        LIBS += -lgconf-2 -lrtcom-eventlogger -lmodest-dbus-client-1.0 -losso -ldbus-glib-1 -ldbus-1 -lgobject-2.0 -lglib-2.0 -ltpsession -ltelepathy-qt4
+    }
     symbian { 
         INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 	exists($${EPOCROOT}epoc32\include\platform\app\emailinterfacefactory.h) {
