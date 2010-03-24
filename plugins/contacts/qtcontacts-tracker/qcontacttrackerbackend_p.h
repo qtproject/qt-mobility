@@ -160,7 +160,7 @@ public:
     QList<QContactRelationship> relationships(const QString&, const QContactId&, QContactRelationship::Role, QContactManager::Error* error) const {*error = QContactManager::NotSupportedError; return QList<QContactRelationship>();}
     bool saveRelationships(QList<QContactRelationship>*, QMap<int, QContactManager::Error>*, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
     bool removeRelationships(const QList<QContactRelationship>&, QMap<int, QContactManager::Error>*, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
-    QContact compatibleContact(const QContact&, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
+    QContact compatibleContact(const QContact&, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return QContact();}
     bool validateContact(const QContact&, QContactManager::Error* error) const {*error = QContactManager::NotSupportedError; return false;}
     bool validateDefinition(const QContactDetailDefinition&, QContactManager::Error* error) const {*error = QContactManager::NotSupportedError; return false;}
     QContactDetailDefinition detailDefinition(const QString&, const QString&, QContactManager::Error* error) const {*error = QContactManager::NotSupportedError; return QContactDetailDefinition();}
