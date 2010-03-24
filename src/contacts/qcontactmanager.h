@@ -145,10 +145,10 @@ public:
     QContactLocalId selfContactId() const;
 
     /* Relationships */
-    QList<QContactRelationship> Q_DECL_DEPRECATED relationships(const QContactId& participantId, QContactRelationshipFilter::Role role = QContactRelationshipFilter::Either) const;
-    QList<QContactRelationship> Q_DECL_DEPRECATED relationships(const QString& relationshipType = QString(), const QContactId& participantId = QContactId(), QContactRelationshipFilter::Role role = QContactRelationshipFilter::Either) const;
-    QList<QContactRelationship> relationships(const QContactId& participantId, QContactRelationship::Role role /* = QContactRelationship::Either */) const;
-    QList<QContactRelationship> relationships(const QString& relationshipType /* = QString() */, const QContactId& participantId /* = QContactId() */, QContactRelationship::Role role /* = QContactRelationship::Either */) const;
+    QList<QContactRelationship> Q_DECL_DEPRECATED relationships(const QContactId& participantId, QContactRelationshipFilter::Role role) const;
+    QList<QContactRelationship> Q_DECL_DEPRECATED relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role) const;
+    QList<QContactRelationship> relationships(const QContactId& participantId, QContactRelationship::Role role = QContactRelationship::Either) const;
+    QList<QContactRelationship> relationships(const QString& relationshipType = QString(), const QContactId& participantId = QContactId(), QContactRelationship::Role role = QContactRelationship::Either ) const;
     bool saveRelationship(QContactRelationship* relationship);
     QList<QContactManager::Error> Q_DECL_DEPRECATED saveRelationships(QList<QContactRelationship>* relationships); // deprecated
     bool saveRelationships(QList<QContactRelationship>* relationships, QMap<int, QContactManager::Error>* errorMap); // replaces the above
