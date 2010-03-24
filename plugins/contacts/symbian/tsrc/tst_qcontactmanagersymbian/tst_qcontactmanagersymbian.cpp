@@ -94,8 +94,6 @@ public:
     virtual ~tst_QContactManagerSymbian();
 
 public slots:
-    //void initTestCase();
-    //void cleanupTestCase();
     void init();
     void cleanup();
 
@@ -106,6 +104,7 @@ private slots:
     void avatarImage_data();
     void thumbnail_data();
     void thumbnail();
+    void ringTone();
     void displayLabel_data();
     void displayLabel();
     void invalidContactItems();
@@ -148,7 +147,8 @@ void tst_QContactManagerSymbian::init()
 
 void tst_QContactManagerSymbian::cleanup()
 {
-    // Commented out => leave generated contacts into database
+    // If the following is commented out => the generated contacts are left into
+    // the database
     QVERIFY(m_cm->removeContact(m_contactId.localId()));
 }
 
@@ -396,11 +396,54 @@ void tst_QContactManagerSymbian::thumbnail()
     QVERIFY(!thumb.thumbnail().isNull());
 }
 
+/*
+ * Special ringing tone cases that cannot be covered in QtMobility system level
+ * test cases.
+ */
+void tst_QContactManagerSymbian::ringTone()
+{
+    QContact testContact = m_cm->contact(m_contactId.localId());
+
+    // these files are not actually included to the test data
+    QString audio("C:\\Data\\Sounds\\tone.wav");
+    QString video("C:\\Data\\Videos\\video.3gp");
+    
+    // Set audio ringtone
+    QContactRingtone tone = testContact.detail(QContactRingtone::DefinitionName);
+    QUrl audioRingtone(audio);
+    tone.setAudioRingtone(audioRingtone);
+    QVERIFY(testContact.saveDetail(&tone));
+    QVERIFY(m_cm->saveContact(&testContact));
+
+    // Get and verify ringtone
+    testContact = m_cm->contact(m_contactId.localId());
+    tone = testContact.detail(QContactRingtone::DefinitionName);
+    QVERIFY(!tone.isEmpty());
+    QCOMPARE(tone.audioRingtone(), audioRingtone);
+    QCOMPARE(tone.videoRingtone(), QUrl());
+    QCOMPARE(tone.vibrationRingtone(), QUrl());
+
+    // Set video ringtone
+    QUrl videoRingtone(video);
+    tone.setVideoRingtone(videoRingtone);
+    QVERIFY(testContact.saveDetail(&tone));
+    QVERIFY(m_cm->saveContact(&testContact));
+
+    // Get and verify ringtone
+    testContact = m_cm->contact(m_contactId.localId());
+    tone = testContact.detail(QContactRingtone::DefinitionName);
+    QVERIFY(!tone.isEmpty());
+    QCOMPARE(tone.audioRingtone(), audioRingtone);
+    QCOMPARE(tone.videoRingtone(), videoRingtone);
+    QCOMPARE(tone.vibrationRingtone(), QUrl());
+}
+
 void tst_QContactManagerSymbian::displayLabel_data()
 {
+    // Expected display label
+    QTest::addColumn<QString>("displayLabel");
     // A string list containing the detail fields in format <detail definition name>:<field name>:<value>
     // For example first name: Name:First:James
-    QTest::addColumn<QString>("displayLabel");
     // Note: With the current implementation the value must not contain a ':' character
     QTest::addColumn<QStringList>("details");
 
