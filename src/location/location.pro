@@ -42,7 +42,6 @@ PUBLIC_HEADERS += qgeocoordinate.h \
                   qlandmarkcategoryfilter.h \
                   qlandmarkintersectionfilter.h \
                   qlandmarkunionfilter.h \
-                  qlandmarkunionfilter.h \
                   qlandmarkcustomfilter.h \
                   qlandmarksortorder.h \
                   qlandmarknamesort.h \
