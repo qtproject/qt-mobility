@@ -51,8 +51,7 @@ class reading_perf : public QObject
 private slots:
     void reading_speed_direct();
     void reading_speed_propname();
-    void reading_speed_propindex_slow();
-    void reading_speed_propindex_fast();
+    void reading_speed_propindex();
 };
 
 void reading_perf::reading_speed_direct()
@@ -66,28 +65,16 @@ void reading_perf::reading_speed_direct()
 
 void reading_perf::reading_speed_propname()
 {
-    QSensor sensor;
-    sensor.setType("QAccelerometer");
+    QSensor sensor("QAccelerometer");
     QVERIFY(sensor.connect());
     QSensorReading *reading = sensor.reading();
     qreal x;
     QBENCHMARK { x = reading->property("x").value<qreal>(); }
 }
 
-void reading_perf::reading_speed_propindex_slow()
+void reading_perf::reading_speed_propindex()
 {
-    QSensor sensor;
-    sensor.setType("QAccelerometer");
-    QVERIFY(sensor.connect());
-    QSensorReading *reading = sensor.reading();
-    qreal x;
-    QBENCHMARK { x = reading->QSensorReading::value(0).value<qreal>(); }
-}
-
-void reading_perf::reading_speed_propindex_fast()
-{
-    QSensor sensor;
-    sensor.setType("QAccelerometer");
+    QSensor sensor("QAccelerometer");
     QVERIFY(sensor.connect());
     QSensorReading *reading = sensor.reading();
     qreal x;

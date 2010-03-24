@@ -16,7 +16,7 @@
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGalleryAbstractRequest Class Reference</h1>
 <p>The QGalleryAbstractRequest class provides a base class for gallery requests. <a href="#details">More...</a></p>
 <pre>    #include &lt;QGalleryAbstractRequest&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
-<p>Inherited by <a href="qgallerycopyrequest.html">QGalleryCopyRequest</a>, <a href="qgallerydocumentrequest.html">QGalleryDocumentRequest</a>, <a href="qgalleryinsertrequest.html">QGalleryInsertRequest</a>, <a href="qgallerymoverequest.html">QGalleryMoveRequest</a>, and <a href="qgalleryremoverequest.html">QGalleryRemoveRequest</a>.</p>
+<p>Inherited by <a href="qgallerycopyrequest.html">QGalleryCopyRequest</a>, <a href="qgallerycountrequest.html">QGalleryCountRequest</a>, <a href="qgalleryinsertrequest.html">QGalleryInsertRequest</a>, <a href="qgalleryitemrequest.html">QGalleryItemRequest</a>, <a href="qgallerymoverequest.html">QGalleryMoveRequest</a>, and <a href="qgalleryremoverequest.html">QGalleryRemoveRequest</a>.</p>
 <ul>
 <li><a href="qgalleryabstractrequest-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -26,17 +26,23 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractrequest.html#Result-enum">Result</a></b> { NoResult, Succeeded, Cancelled, NoGallery, NotSupported, RequestError }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractrequest.html#State-enum">State</a></b> { Inactive, Active, Cancelling, Idle }</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractrequest.html#Type-enum">Type</a></b> { Document, Insert, Remove, Copy, Move }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractrequest.html#Type-enum">Type</a></b> { Item, Insert, Remove, Copy, Move }</td></tr>
 </table>
 <hr />
 <a name="properties"></a>
 <h2>Properties</h2>
-<ul>
+<p><table class="propsummary" width="100%" border="0" cellpadding="0" cellspacing="0">
+<tr><td width="45%" valign="top"><ul>
+<li><div class="fn"><b><a href="qgalleryabstractrequest.html#currentProgress-prop">currentProgress</a></b> : const int</div></li>
 <li><div class="fn"><b><a href="qgalleryabstractrequest.html#gallery-prop">gallery</a></b> : QAbstractGallery *</div></li>
+<li><div class="fn"><b><a href="qgalleryabstractrequest.html#maximumProgress-prop">maximumProgress</a></b> : const int</div></li>
+</ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="qgalleryabstractrequest.html#result-prop">result</a></b> : const int</div></li>
 <li><div class="fn"><b><a href="qgalleryabstractrequest.html#state-prop">state</a></b> : const State</div></li>
 <li><div class="fn"><b><a href="qgalleryabstractrequest.html#supported-prop">supported</a></b> : const bool</div></li>
 </ul>
+</td></tr>
+</table></p>
 <ul>
 <li><div bar="2" class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 </ul>
@@ -47,8 +53,10 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractrequest.html#QGalleryAbstractRequest">QGalleryAbstractRequest</a></b> ( Type <i>type</i>, QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractrequest.html#QGalleryAbstractRequest-2">QGalleryAbstractRequest</a></b> ( QAbstractGallery * <i>gallery</i>, Type <i>type</i>, QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractrequest.html#dtor.QGalleryAbstractRequest">~QGalleryAbstractRequest</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractrequest.html#currentProgress-prop">currentProgress</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QAbstractGallery * </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractrequest.html#gallery-prop">gallery</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractrequest.html#supported-prop">isSupported</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractrequest.html#maximumProgress-prop">maximumProgress</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractrequest.html#result-prop">result</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractrequest.html#gallery-prop">setGallery</a></b> ( QAbstractGallery * <i>gallery</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">State </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractrequest.html#state-prop">state</a></b> () const</td></tr>
@@ -76,6 +84,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractrequest.html#cancelled">cancelled</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractrequest.html#failed">failed</a></b> ( int <i>result</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractrequest.html#finished">finished</a></b> ( int <i>result</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractrequest.html#progressChanged">progressChanged</a></b> ( int <i>current</i>, int <i>maximum</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractrequest.html#resultChanged">resultChanged</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractrequest.html#stateChanged">stateChanged</a></b> ( QGalleryAbstractRequest::State <i>state</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractrequest.html#succeeded">succeeded</a></b> ()</td></tr>
@@ -138,7 +147,7 @@
 <tr><td valign="top"><tt>QGalleryAbstractRequest::Idle</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The request has finished, and is monitoring its return values for changes.</td></tr>
 </table></p>
 <a name="//apple_ref/cpp/tag/QGalleryAbstractRequest/Type"></a>
-<a name="//apple_ref/cpp/econst/QGalleryAbstractRequest/Document"></a>
+<a name="//apple_ref/cpp/econst/QGalleryAbstractRequest/Item"></a>
 <a name="//apple_ref/cpp/econst/QGalleryAbstractRequest/Insert"></a>
 <a name="//apple_ref/cpp/econst/QGalleryAbstractRequest/Remove"></a>
 <a name="//apple_ref/cpp/econst/QGalleryAbstractRequest/Copy"></a>
@@ -147,14 +156,26 @@
 <p>Identifies the type of a request.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QGalleryAbstractRequest::Document</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The request is a <a href="qgallerydocumentrequest.html">QGalleryDocumentRequest</a>.</td></tr>
-<tr><td valign="top"><tt>QGalleryAbstractRequest::Insert</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The request is a <a href="qgalleryinsertrequest.html">QGalleryInsertRequest</a>.</td></tr>
-<tr><td valign="top"><tt>QGalleryAbstractRequest::Remove</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The request is a <a href="qgalleryremoverequest.html">QGalleryRemoveRequest</a>.</td></tr>
-<tr><td valign="top"><tt>QGalleryAbstractRequest::Copy</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The request is a <a href="qgallerycopyrequest.html">QGalleryCopyRequest</a>.</td></tr>
-<tr><td valign="top"><tt>QGalleryAbstractRequest::Move</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The request is a <a href="qgallerymoverequest.html">QGalleryMoveRequest</a>.</td></tr>
+<tr><td valign="top"><tt>QGalleryAbstractRequest::Item</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The request is a <a href="qgalleryitemrequest.html">QGalleryItemRequest</a>.</td></tr>
+<tr><td valign="top"><tt>QGalleryAbstractRequest::Insert</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The request is a <a href="qgalleryinsertrequest.html">QGalleryInsertRequest</a>.</td></tr>
+<tr><td valign="top"><tt>QGalleryAbstractRequest::Remove</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The request is a <a href="qgalleryremoverequest.html">QGalleryRemoveRequest</a>.</td></tr>
+<tr><td valign="top"><tt>QGalleryAbstractRequest::Copy</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The request is a <a href="qgallerycopyrequest.html">QGalleryCopyRequest</a>.</td></tr>
+<tr><td valign="top"><tt>QGalleryAbstractRequest::Move</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">The request is a <a href="qgallerymoverequest.html">QGalleryMoveRequest</a>.</td></tr>
 </table></p>
 <hr />
 <h2>Property Documentation</h2>
+<a name="//apple_ref/cpp/instm/QGalleryAbstractRequest/currentProgress"></a>
+<a name="//apple_ref/cpp/instm/QGalleryAbstractRequest/progressChanged"></a>
+<h3 class="fn"><a name="currentProgress-prop"></a>currentProgress : const int</h3>
+<p>This property holds the current progress of a request.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>currentProgress</b> () const</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractrequest.html#progressChanged">progressChanged</a></b> ( int <i>current</i>, int <i>maximum</i> )</td></tr>
+</table>
 <a name="//apple_ref/cpp/instm/QGalleryAbstractRequest/gallery"></a>
 <a name="//apple_ref/cpp/instm/QGalleryAbstractRequest/setGallery"></a>
 <h3 class="fn"><a name="gallery-prop"></a>gallery : <a href="qabstractgallery.html">QAbstractGallery</a> *</h3>
@@ -163,6 +184,18 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QAbstractGallery * </td><td class="memItemRight" valign="bottom"><b>gallery</b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setGallery</b> ( QAbstractGallery * <i>gallery</i> )</td></tr>
+</table>
+<a name="//apple_ref/cpp/instm/QGalleryAbstractRequest/maximumProgress"></a>
+<a name="//apple_ref/cpp/instm/QGalleryAbstractRequest/progressChanged"></a>
+<h3 class="fn"><a name="maximumProgress-prop"></a>maximumProgress : const int</h3>
+<p>This property holds the maximum value of currentProgress.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>maximumProgress</b> () const</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractrequest.html#progressChanged">progressChanged</a></b> ( int <i>current</i>, int <i>maximum</i> )</td></tr>
 </table>
 <a name="//apple_ref/cpp/instm/QGalleryAbstractRequest/result"></a>
 <a name="//apple_ref/cpp/instm/QGalleryAbstractRequest/resultChanged"></a>
@@ -233,6 +266,9 @@
 <a name="//apple_ref/cpp/instm/QGalleryAbstractRequest/finished"></a>
 <h3 class="fn"><a name="finished"></a>void QGalleryAbstractRequest::finished ( int <i>result</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that a request has finished with the given <i>result</i>.</p>
+<a name="//apple_ref/cpp/instm/QGalleryAbstractRequest/progressChanged"></a>
+<h3 class="fn"><a name="progressChanged"></a>void QGalleryAbstractRequest::progressChanged ( int <i>current</i>, int <i>maximum</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signals that the <i>current</i> or <i>maximum</i> progress value has changed.</p>
 <a name="//apple_ref/cpp/instm/QGalleryAbstractRequest/resultChanged"></a>
 <h3 class="fn"><a name="resultChanged"></a>void QGalleryAbstractRequest::resultChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that the result of a request has changed.</p>

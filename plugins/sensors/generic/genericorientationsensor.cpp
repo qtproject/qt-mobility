@@ -48,16 +48,21 @@ genericorientationsensor::genericorientationsensor(QSensor *sensor)
     : QSensorBackend(sensor)
 {
     accelerometer = new QAccelerometer(this);
-    accelerometer->setUpdatePolicy(QSensor::FrequentUpdates);
     accelerometer->addFilter(this);
+    accelerometer->connect();
 
-    setSupportedUpdatePolicies(QSensor::OnChangeUpdates);
     setReading<QOrientationReading>(&m_reading);
+    setDataRates(accelerometer);
 }
 
 void genericorientationsensor::start()
 {
+    accelerometer->setUpdateInterval(sensor()->updateInterval());
     accelerometer->start();
+    if (!accelerometer->isActive())
+        sensorStopped();
+    if (accelerometer->isBusy())
+        sensorBusy();
 }
 
 void genericorientationsensor::stop()
@@ -65,28 +70,22 @@ void genericorientationsensor::stop()
     accelerometer->stop();
 }
 
-void genericorientationsensor::poll()
-{
-    accelerometer->poll();
-}
-
 bool genericorientationsensor::filter(QAccelerometerReading *reading)
 {
     QOrientationReading::Orientation o = m_reading.orientation();
 
-    if (reading->x() < -7.35) {
-        o = QOrientationReading::LeftUp;
-    } else if (reading->y() < -7.35) {
-        o = QOrientationReading::BottomUp;
-    } else if (reading->x() > 7.35) {
+    if (reading->y() > 7.35)
+        o = QOrientationReading::TopUp;
+    else if (reading->y() < -7.35)
+        o = QOrientationReading::TopDown;
+    else if (reading->x() > 7.35)
         o = QOrientationReading::RightUp;
-    } else if (reading->y() > 7.35) {
-        o = QOrientationReading::BottomDown;
-    } else if (reading->z() > 7.35) {
+    else if (reading->x() < -7.35)
+        o = QOrientationReading::LeftUp;
+    else if (reading->z() > 7.35)
         o = QOrientationReading::FaceUp;
-    } else if (reading->z() < -7.35) {
+    else if (reading->z() < -7.35)
         o = QOrientationReading::FaceDown;
-    }
 
     if (o != m_reading.orientation()) {
         m_reading.setTimestamp(reading->timestamp());

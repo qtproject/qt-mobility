@@ -194,6 +194,15 @@ bool LineReader::tryReadLine(VersitCursor &cursor, bool atEnd)
     }
 }
 
+/*! Links the signals from this to the signals of \a reader. */
+void QVersitReaderPrivate::init(QVersitReader* reader)
+{
+    connect(this, SIGNAL(stateChanged(QVersitReader::State)),
+            reader, SIGNAL(stateChanged(QVersitReader::State)),Qt::DirectConnection);
+    connect(this, SIGNAL(resultsAvailable()),
+            reader, SIGNAL(resultsAvailable()), Qt::DirectConnection);
+}
+
 /*! Construct a reader. */
 QVersitReaderPrivate::QVersitReaderPrivate()
     : mIoDevice(0),
@@ -245,7 +254,7 @@ void QVersitReaderPrivate::read()
             else {
                 QMutexLocker locker(&mMutex);
                 mVersitDocuments.append(document);
-                emit resultsAvailable(mVersitDocuments);
+                emit resultsAvailable();
             }
         } else {
             setError(QVersitReader::ParseError);

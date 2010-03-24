@@ -1,13 +1,16 @@
 TEMPLATE = lib
 CONFIG += plugin
 INCLUDEPATH += ../../src/serviceframework
-HEADERS += notesmanagerplugin.h \
+HEADERS += note.h \
+           notesmanagerplugin.h \
            notesmanager.h
 SOURCES += notesmanagerplugin.cpp \
            notesmanager.cpp
 QT += sql
 TARGET = serviceframework_notesmanagerplugin
 DESTDIR = .
+
+contains(QT_CONFIG, declarative):DEFINES += DECLARATIVE
 
 include(../examples.pri)
 CONFIG += mobility
@@ -20,7 +23,7 @@ symbian {
     DEPLOYMENT += pluginDep
 
     TARGET.EPOCALLOWDLLDATA = 1
-    TARGET.CAPABILITY = ALL -TCB
+    TARGET.CAPABILITY = LocalServices Location NetworkServices ReadUserData UserEnvironment WriteUserData
 }
 
 xml.path = $$DESTDIR/xmldata

@@ -42,7 +42,7 @@
 #include <QtCore>
 #define private public
 #include <qserviceinterfacedescriptor.h>
-#include "../../../serviceframework/qserviceinterfacedescriptor_p.h"
+#include "qserviceinterfacedescriptor_p.h"
 #include <qservicefilter.h>
 #include "../qsfwtestutil.h"
 #include "servicemetadata_p.h"

@@ -50,14 +50,17 @@ QTM_USE_NAMESPACE
 
 Explorer::Explorer(QWidget *parent)
     : QMainWindow(parent)
+    , m_sensor(0)
+    , ignoreItemChanged(false)
 {
-    setupUi(this);
+    ui.setupUi(this);
+#ifdef MAEMO5
+    ui.label->hide();
+#endif
     // Clear out example data from the .ui file
-    m_sensors->clear();
+    ui.sensors->clear();
+    clearSensorProperties();
     clearReading();
-    // We need to know when this widget resizes
-    // so we can resize the columns
-    m_reading->installEventFilter(this);
 }
 
 Explorer::~Explorer()
@@ -69,90 +72,92 @@ void Explorer::loadSensors()
     qDebug() << "Explorer::loadSensors";
 
     // Clear out anything that's in there now
-    m_sensors->clear();
+    ui.sensors->clear();
 
     foreach (const QByteArray &type, QSensor::sensorTypes()) {
         qDebug() << "Found type" << type;
-        // The type item. We don't add it yet because there may not be any sensors of this type
-        // and we only show types that have sensors available.
-        QTreeWidgetItem *typeItem = new QTreeWidgetItem(QStringList() << QString::fromLatin1(type));
-        bool added = false;
         foreach (const QByteArray &identifier, QSensor::sensorsForType(type)) {
             qDebug() << "Found identifier" << identifier;
             // Don't put in sensors we can't connect to
-            QSensor sensor;
-            sensor.setType(type);
+            QSensor sensor(type);
             sensor.setIdentifier(identifier);
             if (!sensor.connect()) {
                 qDebug() << "Couldn't connect to" << identifier;
                 continue;
             }
 
-            // Since we're adding a sensor we can go ahead and add the type (unless it has
-            // already been added).
-            if (!added) {
-                qDebug() << "Adding type" << type;
-                m_sensors->addTopLevelItem(typeItem);
-                added = true;
-            }
             qDebug() << "Adding identifier" << identifier;
-            (void)new QTreeWidgetItem(typeItem, QStringList() << QString::fromLatin1(identifier));
-        }
-        // Cleanup if we didn't add the type
-        if (!added) {
-            qDebug() << "Didn't add type" << type;
-            delete typeItem;
+            QTreeWidgetItem *item = new QTreeWidgetItem(QStringList() << QString::fromLatin1(identifier));
+            item->setData(0, Qt::UserRole, QString::fromLatin1(type));
+            ui.sensors->addTopLevelItem(item);
         }
     }
 
-    // Don't hide stuff
-    m_sensors->expandAll();
+    resizeSensors();
 }
 
-void Explorer::clearReading()
+void Explorer::resizeSensors()
 {
-    m_reading->setRowCount(0);
+    ui.sensors->resizeColumnToContents(0);
+    int length = ui.sensors->header()->length() + 4;
+    ui.sensors->setFixedWidth(length);
 }
 
-void Explorer::loadReading()
+void Explorer::on_sensors_currentItemChanged()
 {
-    qDebug() << "Explorer::loadReading";
+    qDebug() << "Explorer::sensorSelected";
 
     // Clear out anything that's in there now
+    if (m_sensor) {
+        delete m_sensor;
+        m_sensor = 0;
+    }
+    clearSensorProperties();
     clearReading();
 
     // Check that we've selected an item
-    QTreeWidgetItem *item = m_sensors->currentItem();
+    QTreeWidgetItem *item = ui.sensors->currentItem();
     if (!item) {
         qWarning() << "Didn't select an item!";
         return;
     }
 
-    // Check that we've selected a sensor (which has a parent)
-    QTreeWidgetItem *parent = item->parent();
-    if (!parent) {
-        qWarning() << "Didn't select a sensor!";
-        return;
-    }
-
-    QByteArray type = parent->data(0, Qt::DisplayRole).toString().toLatin1();
+    QByteArray type = item->data(0, Qt::UserRole).toString().toLatin1();
     QByteArray identifier = item->data(0, Qt::DisplayRole).toString().toLatin1();
 
     // Connect to the sensor so we can probe it
-    QSensor sensor;
-    sensor.setType(type);
-    sensor.setIdentifier(identifier);
-    if (!sensor.connect()) {
+    m_sensor = new QSensor(type, this);
+    connect(m_sensor, SIGNAL(readingChanged()), this, SLOT(sensor_changed()));
+    m_sensor->setIdentifier(identifier);
+    if (!m_sensor->connect()) {
+        delete m_sensor;
+        m_sensor = 0;
         qWarning() << "Can't connect to the sensor!";
         return;
     }
+    m_sensor->setUpdateInterval(200);
 
+    loadSensorProperties();
+    loadReading();
+
+    adjustTableColumns(ui.sensorprops);
+    adjustTableColumns(ui.reading);
+    QTimer::singleShot(100, this, SLOT(adjustSizes()));
+}
+
+void Explorer::clearReading()
+{
+    ui.reading->setRowCount(0);
+}
+
+void Explorer::loadReading()
+{
     // Probe the reading using Qt's meta-object facilities
-    QSensorReading *reading = sensor.reading();
+    QSensorReading *reading = m_sensor->reading();
     const QMetaObject *mo = reading->metaObject();
     int firstProperty = QSensorReading::staticMetaObject.propertyOffset();
 
-    m_reading->setRowCount(mo->propertyCount() - firstProperty);
+    ui.reading->setRowCount(mo->propertyCount() - firstProperty);
 
     for(int i = firstProperty; i < mo->propertyCount(); ++i) {
         int row = i - firstProperty;
@@ -163,13 +168,100 @@ void Explorer::loadReading()
         else
             index = new QTableWidgetItem(QVariant(row - 1).toString());
         QTableWidgetItem *prop = new QTableWidgetItem(mo->property(i).name());
-        QTableWidgetItem *type = new QTableWidgetItem(mo->property(i).typeName());
-        m_reading->setItem(row, 0, index);
-        m_reading->setItem(row, 1, prop);
-        m_reading->setItem(row, 2, type);
+        QString typeName = QLatin1String(mo->property(i).typeName());
+        int crap = typeName.lastIndexOf("::");
+        if (crap != -1)
+            typeName = typeName.mid(crap + 2);
+        QTableWidgetItem *type = new QTableWidgetItem(typeName);
+        QTableWidgetItem *value = new QTableWidgetItem();
+
+        index->setFlags(value->flags() ^ Qt::ItemIsEditable);
+        prop->setFlags(value->flags() ^ Qt::ItemIsEditable);
+        type->setFlags(value->flags() ^ Qt::ItemIsEditable);
+        value->setFlags(value->flags() ^ Qt::ItemIsEditable);
+
+        ui.reading->setItem(row, 0, index);
+        ui.reading->setItem(row, 1, prop);
+        ui.reading->setItem(row, 2, type);
+        ui.reading->setItem(row, 3, value);
+    }
+}
+
+void Explorer::clearSensorProperties()
+{
+    ui.sensorprops->setRowCount(0);
+}
+
+void Explorer::loadSensorProperties()
+{
+    ignoreItemChanged = true;
+
+    // Probe the sensor using Qt's meta-object facilities
+    const QMetaObject *mo = m_sensor->metaObject();
+    int firstProperty = QSensor::staticMetaObject.propertyOffset();
+
+    int rows = mo->propertyCount() - firstProperty;
+    ui.sensorprops->setRowCount(rows);
+
+    int offset = 0;
+    for(int i = firstProperty; i < mo->propertyCount(); ++i) {
+        int row = i - firstProperty - offset;
+        QLatin1String name(mo->property(i).name());
+        if (name == "sensorid" ||
+            //name == "type" ||
+            name == "reading" ||
+            name == "connected" ||
+            name == "running" ||
+            name == "supportsPolling") {
+            ++offset;
+            continue;
+        }
+        QTableWidgetItem *prop = new QTableWidgetItem(name);
+        QString typeName = QLatin1String(mo->property(i).typeName());
+        int crap = typeName.lastIndexOf("::");
+        if (crap != -1)
+            typeName = typeName.mid(crap + 2);
+        QTableWidgetItem *type = new QTableWidgetItem(typeName);
+        QVariant v = mo->property(i).read(m_sensor);
+        QString val;
+        if (typeName == "qrangelist") {
+            qrangelist rl = v.value<qrangelist>();
+            QStringList out;
+            foreach (const qrange &r, rl) {
+                if (r.first == r.second)
+                    out << QString("%1 Hz").arg(r.first);
+                else
+                    out << QString("%1-%2 Hz").arg(r.first).arg(r.second);
+            }
+            val = out.join(", ");
+        } else if (typeName == "qoutputrangelist") {
+            qoutputrangelist rl = v.value<qoutputrangelist>();
+            QStringList out;
+            foreach (const qoutputrange &r, rl) {
+                out << QString("(%1, %2) += %3").arg(r.minimum).arg(r.maximum).arg(r.accuracy);
+            }
+            val = out.join(", ");
+        } else {
+            val = v.toString();
+        }
+        QTableWidgetItem *value = new QTableWidgetItem(val);
+
+        prop->setFlags(value->flags() ^ Qt::ItemIsEditable);
+        type->setFlags(value->flags() ^ Qt::ItemIsEditable);
+        if (!mo->property(i).isWritable()) {
+            // clear the editable flag
+            value->setFlags(value->flags() ^ Qt::ItemIsEditable);
+        }
+
+        ui.sensorprops->setItem(row, 0, prop);
+        ui.sensorprops->setItem(row, 1, type);
+        ui.sensorprops->setItem(row, 2, value);
     }
 
-    adjustReadingColumns();
+    // We don't add all properties
+    ui.sensorprops->setRowCount(rows - offset);
+
+    ignoreItemChanged = false;
 }
 
 void Explorer::showEvent(QShowEvent *event)
@@ -183,17 +275,32 @@ void Explorer::showEvent(QShowEvent *event)
 
 // Resize columns to fit the space.
 // This shouldn't be so hard!
-void Explorer::adjustReadingColumns()
+void Explorer::adjustTableColumns(QTableWidget *table)
 {
+    if (table->rowCount() == 0) {
+        table->setFixedHeight(0);
+        return;
+    }
+
     // At least this is easy to do
-    m_reading->resizeColumnsToContents();
+    table->resizeColumnsToContents();
+    int length = table->verticalHeader()->length();
+    length += (length / static_cast<qreal>(table->verticalHeader()->count())); // Add 1 more (the header itself)
+#ifdef MAEMO5
+    length += 10; // required for N900 UI
+#endif
+    table->setFixedHeight(length);
 
-    int indexWidth = m_reading->columnWidth(0);
-    int propWidth = m_reading->columnWidth(1);
-    int typeWidth = m_reading->columnWidth(2);
+    int columns = table->columnCount();
+    QList<int> width;
+    int suggestedWidth = 0;
+    for (int i = 0; i < columns; ++i) {
+        int cwidth = table->columnWidth(i);
+        width << cwidth;
+        suggestedWidth += cwidth;
+    }
 
-    int suggestedWidth = indexWidth + propWidth + typeWidth;
-    int actualWidth = m_reading->size().width();
+    int actualWidth = table->size().width();
     //qDebug() << "suggestedWidth" << suggestedWidth << "actualWidth" << actualWidth;
 
     // We only scale the columns up, we don't scale down
@@ -201,40 +308,124 @@ void Explorer::adjustReadingColumns()
         return;
 
     qreal multiplier = actualWidth / static_cast<qreal>(suggestedWidth);
-    indexWidth = multiplier * indexWidth;
-    propWidth = multiplier * propWidth;
-    typeWidth = multiplier * typeWidth;
+    int currentSpace = 4;
+    for (int i = 0; i < columns; ++i) {
+        width[i] = multiplier * width[i];
+        currentSpace += width[i];
+    }
 
     // It ends up too big due to cell decorations or something.
     // Make things smaller one pixel at a time in round robin fashion until we're good.
-    int currentSpace = indexWidth + propWidth + typeWidth + 4;
-    while (actualWidth < currentSpace) {
-        if (actualWidth < currentSpace) {
-            --indexWidth;
-            --currentSpace;
-        }
-        if (actualWidth < currentSpace) {
-            --propWidth;
-            --currentSpace;
-        }
-        if (actualWidth < currentSpace) {
-            --typeWidth;
-            --currentSpace;
-        }
+    int i = 0;
+    while (currentSpace > actualWidth) {
+        --width[i];
+        --currentSpace;
+        i = (i + 1) % columns;
     }
 
-    m_reading->setColumnWidth(0, indexWidth);
-    m_reading->setColumnWidth(1, propWidth);
-    m_reading->setColumnWidth(2, typeWidth);
+    for (int i = 0; i < columns; ++i) {
+        table->setColumnWidth(i, width[i]);
+    }
+
+    table->setMinimumWidth(suggestedWidth);
 }
 
-bool Explorer::eventFilter(QObject *obj, QEvent *event)
+void Explorer::adjustSizes()
 {
-    if (obj == m_reading && event->type() == QEvent::Resize) {
-        // If the table resizes, adjust the column sizes automatically
-        adjustReadingColumns();
+    adjustTableColumns(ui.reading);
+    adjustTableColumns(ui.sensorprops);
+}
+
+void Explorer::resizeEvent(QResizeEvent *event)
+{
+    resizeSensors();
+    adjustSizes();
+
+    QMainWindow::resizeEvent(event);
+}
+
+void Explorer::on_start_clicked()
+{
+    m_sensor->start();
+    QTimer::singleShot(0, this, SLOT(loadSensorProperties()));
+}
+
+void Explorer::on_stop_clicked()
+{
+    m_sensor->stop();
+    QTimer::singleShot(0, this, SLOT(loadSensorProperties()));
+}
+
+void Explorer::sensor_changed()
+{
+    QSensorReading *reading = m_sensor->reading();
+    filter(reading);
+}
+
+bool Explorer::filter(QSensorReading *reading)
+{
+    const QMetaObject *mo = reading->metaObject();
+    int firstProperty = QSensorReading::staticMetaObject.propertyOffset();
+
+    for(int i = firstProperty; i < mo->propertyCount(); ++i) {
+        int row = i - firstProperty;
+        QString typeName = QLatin1String(mo->property(i).typeName());
+        int crap = typeName.lastIndexOf("::");
+        if (crap != -1)
+            typeName = typeName.mid(crap + 2);
+        QLatin1String name(mo->property(i).name());
+        QTableWidgetItem *value = ui.reading->item(row, 3);
+        QVariant val = mo->property(i).read(reading);
+        if (typeName == "qtimestamp") {
+            value->setText(QString("%1").arg(val.value<qtimestamp>()));
+        } else if (typeName == "LightLevel") {
+            QString text;
+            switch (val.toInt()) {
+            case 1:
+                text = "Dark";
+                break;
+            case 2:
+                text = "Twilight";
+                break;
+            case 3:
+                text = "Light";
+                break;
+            case 4:
+                text = "Bright";
+                break;
+            case 5:
+                text = "Sunny";
+                break;
+            default:
+                text = "Undefined";
+                break;
+            }
+            value->setText(text);
+        } else {
+            value->setText(val.toString());
+        }
     }
 
-    return QMainWindow::eventFilter(obj, event);
+    adjustTableColumns(ui.reading);
+    //QTimer::singleShot(0, this, SLOT(adjustSizes()));
+
+    return false;
+}
+
+void Explorer::on_sensorprops_itemChanged(QTableWidgetItem *item)
+{
+    if (ignoreItemChanged)
+        return;
+    if (!(item->flags() & Qt::ItemIsEditable))
+        return;
+
+    int row = item->row();
+    QString name = ui.sensorprops->item(row, 0)->text();
+    QVariant value = item->text();
+
+    qDebug() << "setProperty" << name << value;
+    m_sensor->setProperty(name.toLatin1().constData(), QVariant(value));
+
+    QTimer::singleShot(0, this, SLOT(loadSensorProperties()));
 }
 

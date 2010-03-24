@@ -37,14 +37,11 @@
     CONFIG += mobility
     MOBILITY = location bearer
 
+    ICON = flickr_icon.svg
+
     symbian:TARGET.CAPABILITY += Location \
         NetworkServices \
         ReadUserData
-
-    symbian: {
-        license.depends = &quot;\&quot;install.txt\&quot; - \&quot;\&quot;, FILETEXT, TEXTEXIT&quot;
-        DEPLOYMENT += license
-    }
 
     symbian: {
         addFiles.sources = nmealog.txt

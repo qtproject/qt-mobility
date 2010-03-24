@@ -50,6 +50,7 @@
 #include <QMutexLocker>
 #include <QScopedPointer>
 #include <QTextCodec>
+#include <QBuffer>
 
 QTM_USE_NAMESPACE
 
@@ -68,13 +69,20 @@ QVersitWriterPrivate::~QVersitWriterPrivate()
 {
 }
 
+/*! Links the signals from this to the signals of \a writer. */
+void QVersitWriterPrivate::init(QVersitWriter* writer)
+{
+    connect(this, SIGNAL(stateChanged(QVersitWriter::State)),
+            writer, SIGNAL(stateChanged(QVersitWriter::State)), Qt::DirectConnection);
+}
+
 /*!
  * Do the actual writing and set the error and state appropriately.
  */
 void QVersitWriterPrivate::write()
 {
     bool canceled = false;
-    foreach (QVersitDocument document, mInput) {
+    foreach (const QVersitDocument& document, mInput) {
         if (isCanceling()) {
             canceled = true;
             break;

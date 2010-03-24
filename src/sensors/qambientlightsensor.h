@@ -68,8 +68,6 @@ public:
     void setLightLevel(LightLevel lightLevel);
 };
 
-// begin generated code
-
 class Q_SENSORS_EXPORT QAmbientLightFilter : public QSensorFilter
 {
 public:
@@ -82,13 +80,11 @@ class Q_SENSORS_EXPORT QAmbientLightSensor : public QSensor
 {
     Q_OBJECT
 public:
-    explicit QAmbientLightSensor(QObject *parent = 0) : QSensor(parent)
-    { setType(QAmbientLightSensor::type); }
+    explicit QAmbientLightSensor(QObject *parent = 0) : QSensor(QAmbientLightSensor::type, parent) {}
     virtual ~QAmbientLightSensor() {}
     QAmbientLightReading *reading() const { return static_cast<QAmbientLightReading*>(QSensor::reading()); }
     static const char *type;
 };
-// end generated code
 
 QTM_END_NAMESPACE
 

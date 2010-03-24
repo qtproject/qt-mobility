@@ -80,40 +80,42 @@
         , rateBox(0)
     #endif
     {
-        playButton = new QToolButton;
+        playButton = new QToolButton(this);
         playButton-&gt;setIcon(style()-&gt;standardIcon(QStyle::SP_MediaPlay));
 
         connect(playButton, SIGNAL(clicked()), this, SLOT(playClicked()));
 
-        stopButton = new QToolButton;
+        stopButton = new QToolButton(this);
         stopButton-&gt;setIcon(style()-&gt;standardIcon(QStyle::SP_MediaStop));
         stopButton-&gt;setEnabled(false);
 
         connect(stopButton, SIGNAL(clicked()), this, SIGNAL(stop()));
 
-        nextButton = new QToolButton;
+        nextButton = new QToolButton(this);
         nextButton-&gt;setIcon(style()-&gt;standardIcon(QStyle::SP_MediaSkipForward));
 
         connect(nextButton, SIGNAL(clicked()), this, SIGNAL(next()));
 
-        previousButton = new QToolButton;
+        previousButton = new QToolButton(this);
         previousButton-&gt;setIcon(style()-&gt;standardIcon(QStyle::SP_MediaSkipBackward));
 
         connect(previousButton, SIGNAL(clicked()), this, SIGNAL(previous()));
 
-        muteButton = new QToolButton;
+        muteButton = new QToolButton(this);
         muteButton-&gt;setIcon(style()-&gt;standardIcon(QStyle::SP_MediaVolume));
 
         connect(muteButton, SIGNAL(clicked()), this, SLOT(muteClicked()));
 
-    #ifdef Q_OS_SYMBIAN
-    #else
-        volumeSlider = new QSlider(Qt::Horizontal);
+    #ifndef Q_OS_SYMBIAN
+        volumeSlider = new QSlider(Qt::Horizontal, this);
+
+    #ifndef Q_WS_MAEMO_5
         volumeSlider-&gt;setRange(0, 100);
 
         connect(volumeSlider, SIGNAL(sliderMoved(int)), this, SIGNAL(changeVolume(int)));
+    #endif
 
-        rateBox = new QComboBox;
+        rateBox = new QComboBox(this);
         rateBox-&gt;addItem(&quot;0.5x&quot;, QVariant(0.5));
         rateBox-&gt;addItem(&quot;1.0x&quot;, QVariant(1.0));
         rateBox-&gt;addItem(&quot;2.0x&quot;, QVariant(2.0));
@@ -141,11 +143,11 @@
         connect(openButton, SIGNAL(clicked()), this, SIGNAL(open()));
 
         fullScreenButton = new QToolButton(this);
-        fullScreenButton-&gt;setIcon(style()-&gt;standardIcon(QStyle::SP_DesktopIcon));
+        fullScreenButton-&gt;setIcon(style()-&gt;standardIcon(QStyle::SP_ComputerIcon));
         fullScreenButton-&gt;setCheckable(true);
         fullScreenButton-&gt;setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
         fullScreenButton-&gt;setMinimumSize(1, 1);
-        connect(fullScreenButton, SIGNAL(clicked(bool)), this, SIGNAL(fullScreen(bool)));
+        connect(fullScreenButton, SIGNAL(toggled(bool)), this, SIGNAL(fullScreen(bool)));
 
         playListButton = new QToolButton(this);
         playListButton-&gt;setIcon(style()-&gt;standardIcon(QStyle::SP_FileDialogDetailedView));
@@ -167,8 +169,11 @@
         layout-&gt;addWidget(playListButton);
         layout-&gt;addWidget(fullScreenButton);
     #else
-        layout-&gt;addWidget(volumeSlider);
-        layout-&gt;addWidget(rateBox);
+        if (volumeSlider)
+            layout-&gt;addWidget(volumeSlider);
+
+        if (rateBox)
+            layout-&gt;addWidget(rateBox);
     #endif
         setLayout(layout);
     }
@@ -205,15 +210,15 @@
     #ifdef Q_OS_SYMBIAN
         return 0;
     #else
-        return volumeSlider-&gt;value();
+        return volumeSlider ? volumeSlider-&gt;value() : 0;
     #endif
     }
 
     void PlayerControls::setVolume(int volume)
     {
-    #ifdef Q_OS_SYMBIAN
-    #else
-        volumeSlider-&gt;setValue(volume);
+    #ifndef Q_OS_SYMBIAN
+        if (volumeSlider)
+            volumeSlider-&gt;setValue(volume);
     #endif
     }
 
@@ -262,8 +267,7 @@
 
     void PlayerControls::setPlaybackRate(float rate)
     {
-    #ifdef Q_OS_SYMBIAN
-    #else
+    #ifndef Q_OS_SYMBIAN
         for (int i=0; i&lt;rateBox-&gt;count(); i++) {
             if (qFuzzyCompare(rate, float(rateBox-&gt;itemData(i).toDouble()))) {
                 rateBox-&gt;setCurrentIndex(i);
@@ -278,8 +282,7 @@
 
     void PlayerControls::updateRate()
     {
-    #ifdef Q_OS_SYMBIAN
-    #else
+    #ifndef Q_OS_SYMBIAN
         emit changeRate(playbackRate());
     #endif
     }</pre>

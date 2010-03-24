@@ -635,7 +635,7 @@ void tst_QContactFilter::relationshipFilter()
     QVERIFY(crf.relationshipType() == QString());
     QVERIFY(crf.relatedContactId() == newId);
 
-    crf.setRelatedContactRole(QContactRelationshipFilter::First);
+    crf.setRelatedContactRole(QContactRelationship::First);
     
     QVERIFY(crf.relationshipType() == QString());
     QVERIFY(crf.relatedContactId() == newId);

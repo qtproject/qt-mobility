@@ -45,11 +45,6 @@
 */
 
 /*!
-    \example cameracapture
-    \title Camera Capture Example
-*/
-
-/*!
     \example declarative
     \title Declarative Example
 */
@@ -102,11 +97,6 @@
 /*!
     \example slideshow
     \title Slideshow Example
-*/
-
-/*!
-    \example streamplayer
-    \title Stream Player Example
 */
 
 /*!

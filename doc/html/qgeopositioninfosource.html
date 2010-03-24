@@ -135,6 +135,7 @@
 <p>This property holds this property holds the requested interval in milliseconds between each update.</p>
 <p>If the update interval is not set (or is set to 0) the source will provide updates as often as necessary.</p>
 <p>If the update interval is set, the source will provide updates at an interval as close to the requested interval as possible. If the requested interval is less than the <a href="qgeopositioninfosource.html#minimumUpdateInterval-prop">minimumUpdateInterval</a>(), the minimum interval is used instead.</p>
+<p>Changes to the update interval will happen as soon as is practical, however the time the change takes may vary between implementations. Whether or not the elapsed time from the previous interval is counted as part of the new interval is also implementation dependent.</p>
 <p>The default value for this property is 0.</p>
 <p>Note: Subclass implementations must call the base implementation of setUpdateInterval() so that updateInterval() returns the correct value.</p>
 <p><b>Access functions:</b></p>

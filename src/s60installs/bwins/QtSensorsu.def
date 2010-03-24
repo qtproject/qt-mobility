@@ -1,0 +1,347 @@
+EXPORTS
+	?metaObject@QRotationReading@QtMobility@@UBEPBUQMetaObject@@XZ @ 1 NONAME ; struct QMetaObject const * QtMobility::QRotationReading::metaObject(void) const
+	??1QSensorReading@QtMobility@@UAE@XZ @ 2 NONAME ; QtMobility::QSensorReading::~QSensorReading(void)
+	?metaObject@QCompassReading@QtMobility@@UBEPBUQMetaObject@@XZ @ 3 NONAME ; struct QMetaObject const * QtMobility::QCompassReading::metaObject(void) const
+	??1QRotationReading@QtMobility@@UAE@XZ @ 4 NONAME ; QtMobility::QRotationReading::~QRotationReading(void)
+	?getStaticMetaObject@QSensorReading@QtMobility@@SAABUQMetaObject@@XZ @ 5 NONAME ; struct QMetaObject const & QtMobility::QSensorReading::getStaticMetaObject(void)
+	?tr@QRotationReading@QtMobility@@SA?AVQString@@PBD0@Z @ 6 NONAME ; class QString QtMobility::QRotationReading::tr(char const *, char const *)
+	?staticMetaObject@QAccelerometer@QtMobility@@2UQMetaObject@@B @ 7 NONAME ; struct QMetaObject const QtMobility::QAccelerometer::staticMetaObject
+	??0QAmbientLightSensor@QtMobility@@QAE@PAVQObject@@@Z @ 8 NONAME ; QtMobility::QAmbientLightSensor::QAmbientLightSensor(class QObject *)
+	?staticMetaObject@QSensor@QtMobility@@2UQMetaObject@@B @ 9 NONAME ; struct QMetaObject const QtMobility::QSensor::staticMetaObject
+	?tr@QAccelerometerReading@QtMobility@@SA?AVQString@@PBD0@Z @ 10 NONAME ; class QString QtMobility::QAccelerometerReading::tr(char const *, char const *)
+	?filter@QCompassFilter@QtMobility@@EAE_NPAVQSensorReading@2@@Z @ 11 NONAME ; bool QtMobility::QCompassFilter::filter(class QtMobility::QSensorReading *)
+	?trUtf8@QRotationSensor@QtMobility@@SA?AVQString@@PBD0H@Z @ 12 NONAME ; class QString QtMobility::QRotationSensor::trUtf8(char const *, char const *, int)
+	?getStaticMetaObject@QAccelerometerReading@QtMobility@@SAABUQMetaObject@@XZ @ 13 NONAME ; struct QMetaObject const & QtMobility::QAccelerometerReading::getStaticMetaObject(void)
+	?identifier@QSensor@QtMobility@@QBE?AVQByteArray@@XZ @ 14 NONAME ; class QByteArray QtMobility::QSensor::identifier(void) const
+	?trUtf8@QOrientationReading@QtMobility@@SA?AVQString@@PBD0@Z @ 15 NONAME ; class QString QtMobility::QOrientationReading::trUtf8(char const *, char const *)
+	?getStaticMetaObject@QMagnetometer@QtMobility@@SAABUQMetaObject@@XZ @ 16 NONAME ; struct QMetaObject const & QtMobility::QMagnetometer::getStaticMetaObject(void)
+	?trUtf8@QMagnetometer@QtMobility@@SA?AVQString@@PBD0H@Z @ 17 NONAME ; class QString QtMobility::QMagnetometer::trUtf8(char const *, char const *, int)
+	?tr@QCompass@QtMobility@@SA?AVQString@@PBD0H@Z @ 18 NONAME ; class QString QtMobility::QCompass::tr(char const *, char const *, int)
+	?tr@QAccelerometer@QtMobility@@SA?AVQString@@PBD0@Z @ 19 NONAME ; class QString QtMobility::QAccelerometer::tr(char const *, char const *)
+	?qt_metacall@QTapReading@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 20 NONAME ; int QtMobility::QTapReading::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacast@QMagnetometerReading@QtMobility@@UAEPAXPBD@Z @ 21 NONAME ; void * QtMobility::QMagnetometerReading::qt_metacast(char const *)
+	?qt_metacast@QAmbientLightSensor@QtMobility@@UAEPAXPBD@Z @ 22 NONAME ; void * QtMobility::QAmbientLightSensor::qt_metacast(char const *)
+	?setX@QRotationReading@QtMobility@@QAEXM@Z @ 23 NONAME ; void QtMobility::QRotationReading::setX(float)
+	?getStaticMetaObject@QRotationSensor@QtMobility@@SAABUQMetaObject@@XZ @ 24 NONAME ; struct QMetaObject const & QtMobility::QRotationSensor::getStaticMetaObject(void)
+	?updateInterval@QSensor@QtMobility@@QBEHXZ @ 25 NONAME ; int QtMobility::QSensor::updateInterval(void) const
+	?trUtf8@QSensor@QtMobility@@SA?AVQString@@PBD0H@Z @ 26 NONAME ; class QString QtMobility::QSensor::trUtf8(char const *, char const *, int)
+	?tr@QMagnetometerReading@QtMobility@@SA?AVQString@@PBD0H@Z @ 27 NONAME ; class QString QtMobility::QMagnetometerReading::tr(char const *, char const *, int)
+	?type@QCompass@QtMobility@@2PBDB @ 28 NONAME ; char const * const QtMobility::QCompass::type
+	?metaObject@QSensorBackend@QtMobility@@UBEPBUQMetaObject@@XZ @ 29 NONAME ; struct QMetaObject const * QtMobility::QSensorBackend::metaObject(void) const
+	?trUtf8@QCompass@QtMobility@@SA?AVQString@@PBD0@Z @ 30 NONAME ; class QString QtMobility::QCompass::trUtf8(char const *, char const *)
+	?setY@QRotationReading@QtMobility@@QAEXM@Z @ 31 NONAME ; void QtMobility::QRotationReading::setY(float)
+	?qt_metacast@QMagnetometer@QtMobility@@UAEPAXPBD@Z @ 32 NONAME ; void * QtMobility::QMagnetometer::qt_metacast(char const *)
+	?setTapDirection@QTapReading@QtMobility@@QAEXW4TapDirection@12@@Z @ 33 NONAME ; void QtMobility::QTapReading::setTapDirection(enum QtMobility::QTapReading::TapDirection)
+	?tr@QAmbientLightSensor@QtMobility@@SA?AVQString@@PBD0@Z @ 34 NONAME ; class QString QtMobility::QAmbientLightSensor::tr(char const *, char const *)
+	?getStaticMetaObject@QRotationReading@QtMobility@@SAABUQMetaObject@@XZ @ 35 NONAME ; struct QMetaObject const & QtMobility::QRotationReading::getStaticMetaObject(void)
+	?setZ@QRotationReading@QtMobility@@QAEXM@Z @ 36 NONAME ; void QtMobility::QRotationReading::setZ(float)
+	?qt_metacall@QOrientationSensor@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 37 NONAME ; int QtMobility::QOrientationSensor::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacast@QOrientationReading@QtMobility@@UAEPAXPBD@Z @ 38 NONAME ; void * QtMobility::QOrientationReading::qt_metacast(char const *)
+	?tr@QProximityReading@QtMobility@@SA?AVQString@@PBD0@Z @ 39 NONAME ; class QString QtMobility::QProximityReading::tr(char const *, char const *)
+	?tr@QMagnetometer@QtMobility@@SA?AVQString@@PBD0H@Z @ 40 NONAME ; class QString QtMobility::QMagnetometer::tr(char const *, char const *, int)
+	?reading@QSensorBackend@QtMobility@@QBEPAVQSensorReading@2@XZ @ 41 NONAME ; class QtMobility::QSensorReading * QtMobility::QSensorBackend::reading(void) const
+	??0QTapReading@QtMobility@@QAE@PAVQObject@@@Z @ 42 NONAME ; QtMobility::QTapReading::QTapReading(class QObject *)
+	?copyValuesFrom@QRotationReading@QtMobility@@UAEXPAVQSensorReading@2@@Z @ 43 NONAME ; void QtMobility::QRotationReading::copyValuesFrom(class QtMobility::QSensorReading *)
+	?tr@QAccelerometerReading@QtMobility@@SA?AVQString@@PBD0H@Z @ 44 NONAME ; class QString QtMobility::QAccelerometerReading::tr(char const *, char const *, int)
+	?staticMetaObject@QCompassReading@QtMobility@@2UQMetaObject@@B @ 45 NONAME ; struct QMetaObject const QtMobility::QCompassReading::staticMetaObject
+	?setReadings@QSensorBackend@QtMobility@@AAEXPAVQSensorReading@2@00@Z @ 46 NONAME ; void QtMobility::QSensorBackend::setReadings(class QtMobility::QSensorReading *, class QtMobility::QSensorReading *, class QtMobility::QSensorReading *)
+	?qt_metacast@QAmbientLightReading@QtMobility@@UAEPAXPBD@Z @ 47 NONAME ; void * QtMobility::QAmbientLightReading::qt_metacast(char const *)
+	?qt_metacast@QProximitySensor@QtMobility@@UAEPAXPBD@Z @ 48 NONAME ; void * QtMobility::QProximitySensor::qt_metacast(char const *)
+	?isDoubleTap@QTapReading@QtMobility@@QBE_NXZ @ 49 NONAME ; bool QtMobility::QTapReading::isDoubleTap(void) const
+	?tr@QSensor@QtMobility@@SA?AVQString@@PBD0H@Z @ 50 NONAME ; class QString QtMobility::QSensor::tr(char const *, char const *, int)
+	?qt_metacast@QAccelerometerReading@QtMobility@@UAEPAXPBD@Z @ 51 NONAME ; void * QtMobility::QAccelerometerReading::qt_metacast(char const *)
+	?d_ptr@QSensorReading@QtMobility@@IAEPAV?$QScopedPointer@VQSensorReadingPrivate@QtMobility@@U?$QScopedPointerDeleter@VQSensorReadingPrivate@QtMobility@@@@@@XZ @ 52 NONAME ; class QScopedPointer<class QtMobility::QSensorReadingPrivate, struct QScopedPointerDeleter<class QtMobility::QSensorReadingPrivate> > * QtMobility::QSensorReading::d_ptr(void)
+	?tr@QCompass@QtMobility@@SA?AVQString@@PBD0@Z @ 53 NONAME ; class QString QtMobility::QCompass::tr(char const *, char const *)
+	??0QProximityReading@QtMobility@@QAE@PAVQObject@@@Z @ 54 NONAME ; QtMobility::QProximityReading::QProximityReading(class QObject *)
+	??_EQProximityReading@QtMobility@@UAE@I@Z @ 55 NONAME ; QtMobility::QProximityReading::~QProximityReading(unsigned int)
+	?qt_metacall@QSensorReading@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 56 NONAME ; int QtMobility::QSensorReading::qt_metacall(enum QMetaObject::Call, int, void * *)
+	??1QCompass@QtMobility@@UAE@XZ @ 57 NONAME ; QtMobility::QCompass::~QCompass(void)
+	?staticMetaObject@QAmbientLightReading@QtMobility@@2UQMetaObject@@B @ 58 NONAME ; struct QMetaObject const QtMobility::QAmbientLightReading::staticMetaObject
+	?qt_metacall@QSensorBackend@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 59 NONAME ; int QtMobility::QSensorBackend::qt_metacall(enum QMetaObject::Call, int, void * *)
+	??_EQOrientationSensor@QtMobility@@UAE@I@Z @ 60 NONAME ; QtMobility::QOrientationSensor::~QOrientationSensor(unsigned int)
+	?trUtf8@QMagnetometerReading@QtMobility@@SA?AVQString@@PBD0@Z @ 61 NONAME ; class QString QtMobility::QMagnetometerReading::trUtf8(char const *, char const *)
+	?qt_metacall@QAccelerometer@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 62 NONAME ; int QtMobility::QAccelerometer::qt_metacall(enum QMetaObject::Call, int, void * *)
+	??0QMagnetometerReading@QtMobility@@QAE@PAVQObject@@@Z @ 63 NONAME ; QtMobility::QMagnetometerReading::QMagnetometerReading(class QObject *)
+	?filter@QRotationFilter@QtMobility@@EAE_NPAVQSensorReading@2@@Z @ 64 NONAME ; bool QtMobility::QRotationFilter::filter(class QtMobility::QSensorReading *)
+	??1QSensorBackendFactory@QtMobility@@IAE@XZ @ 65 NONAME ; QtMobility::QSensorBackendFactory::~QSensorBackendFactory(void)
+	?staticMetaObject@QAccelerometerReading@QtMobility@@2UQMetaObject@@B @ 66 NONAME ; struct QMetaObject const QtMobility::QAccelerometerReading::staticMetaObject
+	??1QSensor@QtMobility@@UAE@XZ @ 67 NONAME ; QtMobility::QSensor::~QSensor(void)
+	?qt_metacast@QOrientationSensor@QtMobility@@UAEPAXPBD@Z @ 68 NONAME ; void * QtMobility::QOrientationSensor::qt_metacast(char const *)
+	?copyValuesFrom@QAccelerometerReading@QtMobility@@UAEXPAVQSensorReading@2@@Z @ 69 NONAME ; void QtMobility::QAccelerometerReading::copyValuesFrom(class QtMobility::QSensorReading *)
+	?reading@QCompass@QtMobility@@QBEPAVQCompassReading@2@XZ @ 70 NONAME ; class QtMobility::QCompassReading * QtMobility::QCompass::reading(void) const
+	?qt_metacall@QMagnetometerReading@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 71 NONAME ; int QtMobility::QMagnetometerReading::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QAmbientLightSensor@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 72 NONAME ; int QtMobility::QAmbientLightSensor::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?isBusy@QSensor@QtMobility@@QBE_NXZ @ 73 NONAME ; bool QtMobility::QSensor::isBusy(void) const
+	?z@QRotationReading@QtMobility@@QBEMXZ @ 74 NONAME ; float QtMobility::QRotationReading::z(void) const
+	?tr@QRotationSensor@QtMobility@@SA?AVQString@@PBD0@Z @ 75 NONAME ; class QString QtMobility::QRotationSensor::tr(char const *, char const *)
+	?trUtf8@QProximitySensor@QtMobility@@SA?AVQString@@PBD0H@Z @ 76 NONAME ; class QString QtMobility::QProximitySensor::trUtf8(char const *, char const *, int)
+	?outputRanges@QSensor@QtMobility@@QBE?AV?$QList@Uqoutputrange@QtMobility@@@@XZ @ 77 NONAME ; class QList<struct QtMobility::qoutputrange> QtMobility::QSensor::outputRanges(void) const
+	?trUtf8@QSensorBackend@QtMobility@@SA?AVQString@@PBD0@Z @ 78 NONAME ; class QString QtMobility::QSensorBackend::trUtf8(char const *, char const *)
+	?filter@QOrientationFilter@QtMobility@@EAE_NPAVQSensorReading@2@@Z @ 79 NONAME ; bool QtMobility::QOrientationFilter::filter(class QtMobility::QSensorReading *)
+	?trUtf8@QAmbientLightReading@QtMobility@@SA?AVQString@@PBD0@Z @ 80 NONAME ; class QString QtMobility::QAmbientLightReading::trUtf8(char const *, char const *)
+	?tr@QOrientationSensor@QtMobility@@SA?AVQString@@PBD0@Z @ 81 NONAME ; class QString QtMobility::QOrientationSensor::tr(char const *, char const *)
+	?setDescription@QSensorBackend@QtMobility@@QAEXABVQString@@@Z @ 82 NONAME ; void QtMobility::QSensorBackend::setDescription(class QString const &)
+	?reading@QOrientationSensor@QtMobility@@QBEPAVQOrientationReading@2@XZ @ 83 NONAME ; class QtMobility::QOrientationReading * QtMobility::QOrientationSensor::reading(void) const
+	??0QSensorFilter@QtMobility@@IAE@XZ @ 84 NONAME ; QtMobility::QSensorFilter::QSensorFilter(void)
+	?setIdentifier@QSensor@QtMobility@@QAEXABVQByteArray@@@Z @ 85 NONAME ; void QtMobility::QSensor::setIdentifier(class QByteArray const &)
+	??0QSensorReading@QtMobility@@IAE@PAVQObject@@PAVQSensorReadingPrivate@1@@Z @ 86 NONAME ; QtMobility::QSensorReading::QSensorReading(class QObject *, class QtMobility::QSensorReadingPrivate *)
+	?reading@QAmbientLightSensor@QtMobility@@QBEPAVQAmbientLightReading@2@XZ @ 87 NONAME ; class QtMobility::QAmbientLightReading * QtMobility::QAmbientLightSensor::reading(void) const
+	?calibrationLevel@QMagnetometerReading@QtMobility@@QBEMXZ @ 88 NONAME ; float QtMobility::QMagnetometerReading::calibrationLevel(void) const
+	?readingChanged@QSensor@QtMobility@@IAEXXZ @ 89 NONAME ; void QtMobility::QSensor::readingChanged(void)
+	?tr@QRotationSensor@QtMobility@@SA?AVQString@@PBD0H@Z @ 90 NONAME ; class QString QtMobility::QRotationSensor::tr(char const *, char const *, int)
+	?copyValuesFrom@QTapReading@QtMobility@@UAEXPAVQSensorReading@2@@Z @ 91 NONAME ; void QtMobility::QTapReading::copyValuesFrom(class QtMobility::QSensorReading *)
+	?tr@QSensorBackend@QtMobility@@SA?AVQString@@PBD0@Z @ 92 NONAME ; class QString QtMobility::QSensorBackend::tr(char const *, char const *)
+	?filter@QMagnetometerFilter@QtMobility@@EAE_NPAVQSensorReading@2@@Z @ 93 NONAME ; bool QtMobility::QMagnetometerFilter::filter(class QtMobility::QSensorReading *)
+	?setTimestamp@QSensorReading@QtMobility@@QAEXVqtimestamp@2@@Z @ 94 NONAME ; void QtMobility::QSensorReading::setTimestamp(class QtMobility::qtimestamp)
+	?copyValuesFrom@QMagnetometerReading@QtMobility@@UAEXPAVQSensorReading@2@@Z @ 95 NONAME ; void QtMobility::QMagnetometerReading::copyValuesFrom(class QtMobility::QSensorReading *)
+	?getStaticMetaObject@QMagnetometerReading@QtMobility@@SAABUQMetaObject@@XZ @ 96 NONAME ; struct QMetaObject const & QtMobility::QMagnetometerReading::getStaticMetaObject(void)
+	?trUtf8@QSensorReading@QtMobility@@SA?AVQString@@PBD0@Z @ 97 NONAME ; class QString QtMobility::QSensorReading::trUtf8(char const *, char const *)
+	?value@QSensorReading@QtMobility@@QBE?AVQVariant@@H@Z @ 98 NONAME ; class QVariant QtMobility::QSensorReading::value(int) const
+	??1QSensorFilter@QtMobility@@IAE@XZ @ 99 NONAME ; QtMobility::QSensorFilter::~QSensorFilter(void)
+	?calibrationLevel@QCompassReading@QtMobility@@QBEMXZ @ 100 NONAME ; float QtMobility::QCompassReading::calibrationLevel(void) const
+	?trUtf8@QOrientationSensor@QtMobility@@SA?AVQString@@PBD0H@Z @ 101 NONAME ; class QString QtMobility::QOrientationSensor::trUtf8(char const *, char const *, int)
+	?qt_metacast@QCompass@QtMobility@@UAEPAXPBD@Z @ 102 NONAME ; void * QtMobility::QCompass::qt_metacast(char const *)
+	??_EQTapReading@QtMobility@@UAE@I@Z @ 103 NONAME ; QtMobility::QTapReading::~QTapReading(unsigned int)
+	?metaObject@QAmbientLightSensor@QtMobility@@UBEPBUQMetaObject@@XZ @ 104 NONAME ; struct QMetaObject const * QtMobility::QAmbientLightSensor::metaObject(void) const
+	?error@QSensor@QtMobility@@QBEHXZ @ 105 NONAME ; int QtMobility::QSensor::error(void) const
+	??1QMagnetometer@QtMobility@@UAE@XZ @ 106 NONAME ; QtMobility::QMagnetometer::~QMagnetometer(void)
+	?metaObject@QAccelerometer@QtMobility@@UBEPBUQMetaObject@@XZ @ 107 NONAME ; struct QMetaObject const * QtMobility::QAccelerometer::metaObject(void) const
+	?sensorError@QSensor@QtMobility@@IAEXH@Z @ 108 NONAME ; void QtMobility::QSensor::sensorError(int)
+	?setClose@QProximityReading@QtMobility@@QAEX_N@Z @ 109 NONAME ; void QtMobility::QProximityReading::setClose(bool)
+	?reading@QSensor@QtMobility@@QBEPAVQSensorReading@2@XZ @ 110 NONAME ; class QtMobility::QSensorReading * QtMobility::QSensor::reading(void) const
+	?sensorBusy@QSensorBackend@QtMobility@@QAEXXZ @ 111 NONAME ; void QtMobility::QSensorBackend::sensorBusy(void)
+	?staticMetaObject@QSensorBackend@QtMobility@@2UQMetaObject@@B @ 112 NONAME ; struct QMetaObject const QtMobility::QSensorBackend::staticMetaObject
+	?qt_metacast@QSensorReading@QtMobility@@UAEPAXPBD@Z @ 113 NONAME ; void * QtMobility::QSensorReading::qt_metacast(char const *)
+	?availableDataRates@QSensor@QtMobility@@QBE?AV?$QList@U?$QPair@HH@@@@XZ @ 114 NONAME ; class QList<struct QPair<int, int> > QtMobility::QSensor::availableDataRates(void) const
+	?getStaticMetaObject@QAmbientLightReading@QtMobility@@SAABUQMetaObject@@XZ @ 115 NONAME ; struct QMetaObject const & QtMobility::QAmbientLightReading::getStaticMetaObject(void)
+	?addDataRate@QSensorBackend@QtMobility@@QAEXMM@Z @ 116 NONAME ; void QtMobility::QSensorBackend::addDataRate(float, float)
+	?reading@QRotationSensor@QtMobility@@QBEPAVQRotationReading@2@XZ @ 117 NONAME ; class QtMobility::QRotationReading * QtMobility::QRotationSensor::reading(void) const
+	??0QCompassReading@QtMobility@@QAE@PAVQObject@@@Z @ 118 NONAME ; QtMobility::QCompassReading::QCompassReading(class QObject *)
+	?tr@QAmbientLightReading@QtMobility@@SA?AVQString@@PBD0H@Z @ 119 NONAME ; class QString QtMobility::QAmbientLightReading::tr(char const *, char const *, int)
+	??_EQCompass@QtMobility@@UAE@I@Z @ 120 NONAME ; QtMobility::QCompass::~QCompass(unsigned int)
+	?qt_metacast@QSensor@QtMobility@@UAEPAXPBD@Z @ 121 NONAME ; void * QtMobility::QSensor::qt_metacast(char const *)
+	?tr@QSensorReading@QtMobility@@SA?AVQString@@PBD0@Z @ 122 NONAME ; class QString QtMobility::QSensorReading::tr(char const *, char const *)
+	?timestamp@QSensorReading@QtMobility@@QBE?AVqtimestamp@2@XZ @ 123 NONAME ; class QtMobility::qtimestamp QtMobility::QSensorReading::timestamp(void) const
+	?trUtf8@QSensor@QtMobility@@SA?AVQString@@PBD0@Z @ 124 NONAME ; class QString QtMobility::QSensor::trUtf8(char const *, char const *)
+	?trUtf8@QRotationSensor@QtMobility@@SA?AVQString@@PBD0@Z @ 125 NONAME ; class QString QtMobility::QRotationSensor::trUtf8(char const *, char const *)
+	?tr@QProximitySensor@QtMobility@@SA?AVQString@@PBD0H@Z @ 126 NONAME ; class QString QtMobility::QProximitySensor::tr(char const *, char const *, int)
+	?x@QMagnetometerReading@QtMobility@@QBEMXZ @ 127 NONAME ; float QtMobility::QMagnetometerReading::x(void) const
+	??0QTapSensor@QtMobility@@QAE@PAVQObject@@@Z @ 128 NONAME ; QtMobility::QTapSensor::QTapSensor(class QObject *)
+	??0QOrientationReading@QtMobility@@QAE@PAVQObject@@@Z @ 129 NONAME ; QtMobility::QOrientationReading::QOrientationReading(class QObject *)
+	?type@QAmbientLightSensor@QtMobility@@2PBDB @ 130 NONAME ; char const * const QtMobility::QAmbientLightSensor::type
+	?sensorsForType@QSensor@QtMobility@@SA?AV?$QList@VQByteArray@@@@ABVQByteArray@@@Z @ 131 NONAME ; class QList<class QByteArray> QtMobility::QSensor::sensorsForType(class QByteArray const &)
+	?reading@QTapSensor@QtMobility@@QBEPAVQTapReading@2@XZ @ 132 NONAME ; class QtMobility::QTapReading * QtMobility::QTapSensor::reading(void) const
+	?getStaticMetaObject@QOrientationReading@QtMobility@@SAABUQMetaObject@@XZ @ 133 NONAME ; struct QMetaObject const & QtMobility::QOrientationReading::getStaticMetaObject(void)
+	??_EQAmbientLightSensor@QtMobility@@UAE@I@Z @ 134 NONAME ; QtMobility::QAmbientLightSensor::~QAmbientLightSensor(unsigned int)
+	?defaultSensorForType@QSensor@QtMobility@@SA?AVQByteArray@@ABV3@@Z @ 135 NONAME ; class QByteArray QtMobility::QSensor::defaultSensorForType(class QByteArray const &)
+	?getStaticMetaObject@QTapSensor@QtMobility@@SAABUQMetaObject@@XZ @ 136 NONAME ; struct QMetaObject const & QtMobility::QTapSensor::getStaticMetaObject(void)
+	?getStaticMetaObject@QProximityReading@QtMobility@@SAABUQMetaObject@@XZ @ 137 NONAME ; struct QMetaObject const & QtMobility::QProximityReading::getStaticMetaObject(void)
+	?metaObject@QSensorReading@QtMobility@@UBEPBUQMetaObject@@XZ @ 138 NONAME ; struct QMetaObject const * QtMobility::QSensorReading::metaObject(void) const
+	??0QMagnetometer@QtMobility@@QAE@PAVQObject@@@Z @ 139 NONAME ; QtMobility::QMagnetometer::QMagnetometer(class QObject *)
+	??0QSensorBackend@QtMobility@@QAE@PAVQSensor@1@@Z @ 140 NONAME ; QtMobility::QSensorBackend::QSensorBackend(class QtMobility::QSensor *)
+	??_EQRotationSensor@QtMobility@@UAE@I@Z @ 141 NONAME ; QtMobility::QRotationSensor::~QRotationSensor(unsigned int)
+	?metaObject@QRotationSensor@QtMobility@@UBEPBUQMetaObject@@XZ @ 142 NONAME ; struct QMetaObject const * QtMobility::QRotationSensor::metaObject(void) const
+	??1QAccelerometerReading@QtMobility@@UAE@XZ @ 143 NONAME ; QtMobility::QAccelerometerReading::~QAccelerometerReading(void)
+	?sensorStopped@QSensorBackend@QtMobility@@QAEXXZ @ 144 NONAME ; void QtMobility::QSensorBackend::sensorStopped(void)
+	?metaObject@QSensor@QtMobility@@UBEPBUQMetaObject@@XZ @ 145 NONAME ; struct QMetaObject const * QtMobility::QSensor::metaObject(void) const
+	?setCalibrationLevel@QMagnetometerReading@QtMobility@@QAEXM@Z @ 146 NONAME ; void QtMobility::QMagnetometerReading::setCalibrationLevel(float)
+	?metaObject@QProximityReading@QtMobility@@UBEPBUQMetaObject@@XZ @ 147 NONAME ; struct QMetaObject const * QtMobility::QProximityReading::metaObject(void) const
+	?metaObject@QAccelerometerReading@QtMobility@@UBEPBUQMetaObject@@XZ @ 148 NONAME ; struct QMetaObject const * QtMobility::QAccelerometerReading::metaObject(void) const
+	??_EQSensorBackend@QtMobility@@UAE@I@Z @ 149 NONAME ; QtMobility::QSensorBackend::~QSensorBackend(unsigned int)
+	?trUtf8@QAmbientLightSensor@QtMobility@@SA?AVQString@@PBD0@Z @ 150 NONAME ; class QString QtMobility::QAmbientLightSensor::trUtf8(char const *, char const *)
+	?setOutputRange@QSensor@QtMobility@@QAEXH@Z @ 151 NONAME ; void QtMobility::QSensor::setOutputRange(int)
+	?metaObject@QCompass@QtMobility@@UBEPBUQMetaObject@@XZ @ 152 NONAME ; struct QMetaObject const * QtMobility::QCompass::metaObject(void) const
+	?tr@QTapSensor@QtMobility@@SA?AVQString@@PBD0@Z @ 153 NONAME ; class QString QtMobility::QTapSensor::tr(char const *, char const *)
+	?d_func@QSensor@QtMobility@@IBEPAVQSensorPrivate@2@XZ @ 154 NONAME ; class QtMobility::QSensorPrivate * QtMobility::QSensor::d_func(void) const
+	?setLightLevel@QAmbientLightReading@QtMobility@@QAEXW4LightLevel@12@@Z @ 155 NONAME ; void QtMobility::QAmbientLightReading::setLightLevel(enum QtMobility::QAmbientLightReading::LightLevel)
+	?trUtf8@QAmbientLightSensor@QtMobility@@SA?AVQString@@PBD0H@Z @ 156 NONAME ; class QString QtMobility::QAmbientLightSensor::trUtf8(char const *, char const *, int)
+	??0QAccelerometer@QtMobility@@QAE@PAVQObject@@@Z @ 157 NONAME ; QtMobility::QAccelerometer::QAccelerometer(class QObject *)
+	??0QSensor@QtMobility@@QAE@ABVQByteArray@@PAVQObject@@@Z @ 158 NONAME ; QtMobility::QSensor::QSensor(class QByteArray const &, class QObject *)
+	?qt_metacast@QTapSensor@QtMobility@@UAEPAXPBD@Z @ 159 NONAME ; void * QtMobility::QTapSensor::qt_metacast(char const *)
+	?tr@QMagnetometerReading@QtMobility@@SA?AVQString@@PBD0@Z @ 160 NONAME ; class QString QtMobility::QMagnetometerReading::tr(char const *, char const *)
+	?setX@QAccelerometerReading@QtMobility@@QAEXM@Z @ 161 NONAME ; void QtMobility::QAccelerometerReading::setX(float)
+	?metaObject@QOrientationReading@QtMobility@@UBEPBUQMetaObject@@XZ @ 162 NONAME ; struct QMetaObject const * QtMobility::QOrientationReading::metaObject(void) const
+	?z@QAccelerometerReading@QtMobility@@QBEMXZ @ 163 NONAME ; float QtMobility::QAccelerometerReading::z(void) const
+	?staticMetaObject@QOrientationSensor@QtMobility@@2UQMetaObject@@B @ 164 NONAME ; struct QMetaObject const QtMobility::QOrientationSensor::staticMetaObject
+	?reading@QAccelerometer@QtMobility@@QBEPAVQAccelerometerReading@2@XZ @ 165 NONAME ; class QtMobility::QAccelerometerReading * QtMobility::QAccelerometer::reading(void) const
+	?qt_metacast@QRotationReading@QtMobility@@UAEPAXPBD@Z @ 166 NONAME ; void * QtMobility::QRotationReading::qt_metacast(char const *)
+	?qt_metacall@QCompassReading@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 167 NONAME ; int QtMobility::QCompassReading::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?copyValuesFrom@QProximityReading@QtMobility@@UAEXPAVQSensorReading@2@@Z @ 168 NONAME ; void QtMobility::QProximityReading::copyValuesFrom(class QtMobility::QSensorReading *)
+	?registerBackend@QSensorManager@QtMobility@@SAXABVQByteArray@@0PAVQSensorBackendFactory@2@@Z @ 169 NONAME ; void QtMobility::QSensorManager::registerBackend(class QByteArray const &, class QByteArray const &, class QtMobility::QSensorBackendFactory *)
+	?y@QRotationReading@QtMobility@@QBEMXZ @ 170 NONAME ; float QtMobility::QRotationReading::y(void) const
+	?qt_metacall@QTapSensor@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 171 NONAME ; int QtMobility::QTapSensor::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?tr@QAmbientLightReading@QtMobility@@SA?AVQString@@PBD0@Z @ 172 NONAME ; class QString QtMobility::QAmbientLightReading::tr(char const *, char const *)
+	?qt_metacast@QRotationSensor@QtMobility@@UAEPAXPBD@Z @ 173 NONAME ; void * QtMobility::QRotationSensor::qt_metacast(char const *)
+	?filter@QTapFilter@QtMobility@@EAE_NPAVQSensorReading@2@@Z @ 174 NONAME ; bool QtMobility::QTapFilter::filter(class QtMobility::QSensorReading *)
+	?reading@QProximitySensor@QtMobility@@QBEPAVQProximityReading@2@XZ @ 175 NONAME ; class QtMobility::QProximityReading * QtMobility::QProximitySensor::reading(void) const
+	?staticMetaObject@QRotationReading@QtMobility@@2UQMetaObject@@B @ 176 NONAME ; struct QMetaObject const QtMobility::QRotationReading::staticMetaObject
+	?trUtf8@QTapReading@QtMobility@@SA?AVQString@@PBD0@Z @ 177 NONAME ; class QString QtMobility::QTapReading::trUtf8(char const *, char const *)
+	?setZ@QAccelerometerReading@QtMobility@@QAEXM@Z @ 178 NONAME ; void QtMobility::QAccelerometerReading::setZ(float)
+	??0QRotationReading@QtMobility@@QAE@PAVQObject@@@Z @ 179 NONAME ; QtMobility::QRotationReading::QRotationReading(class QObject *)
+	?type@QProximitySensor@QtMobility@@2PBDB @ 180 NONAME ; char const * const QtMobility::QProximitySensor::type
+	?metaObject@QMagnetometer@QtMobility@@UBEPBUQMetaObject@@XZ @ 181 NONAME ; struct QMetaObject const * QtMobility::QMagnetometer::metaObject(void) const
+	?type@QOrientationSensor@QtMobility@@2PBDB @ 182 NONAME ; char const * const QtMobility::QOrientationSensor::type
+	?addFilter@QSensor@QtMobility@@QAEXPAVQSensorFilter@2@@Z @ 183 NONAME ; void QtMobility::QSensor::addFilter(class QtMobility::QSensorFilter *)
+	??_EQAccelerometerReading@QtMobility@@UAE@I@Z @ 184 NONAME ; QtMobility::QAccelerometerReading::~QAccelerometerReading(unsigned int)
+	??1QAmbientLightSensor@QtMobility@@UAE@XZ @ 185 NONAME ; QtMobility::QAmbientLightSensor::~QAmbientLightSensor(void)
+	?staticMetaObject@QCompass@QtMobility@@2UQMetaObject@@B @ 186 NONAME ; struct QMetaObject const QtMobility::QCompass::staticMetaObject
+	?tr@QTapReading@QtMobility@@SA?AVQString@@PBD0@Z @ 187 NONAME ; class QString QtMobility::QTapReading::tr(char const *, char const *)
+	?tr@QMagnetometer@QtMobility@@SA?AVQString@@PBD0@Z @ 188 NONAME ; class QString QtMobility::QMagnetometer::tr(char const *, char const *)
+	?setSensor@QSensorFilter@QtMobility@@MAEXPAVQSensor@2@@Z @ 189 NONAME ; void QtMobility::QSensorFilter::setSensor(class QtMobility::QSensor *)
+	?tr@QSensor@QtMobility@@SA?AVQString@@PBD0@Z @ 190 NONAME ; class QString QtMobility::QSensor::tr(char const *, char const *)
+	?staticMetaObject@QProximityReading@QtMobility@@2UQMetaObject@@B @ 191 NONAME ; struct QMetaObject const QtMobility::QProximityReading::staticMetaObject
+	?trUtf8@QCompass@QtMobility@@SA?AVQString@@PBD0H@Z @ 192 NONAME ; class QString QtMobility::QCompass::trUtf8(char const *, char const *, int)
+	?tr@QProximityReading@QtMobility@@SA?AVQString@@PBD0H@Z @ 193 NONAME ; class QString QtMobility::QProximityReading::tr(char const *, char const *, int)
+	?tr@QSensorBackend@QtMobility@@SA?AVQString@@PBD0H@Z @ 194 NONAME ; class QString QtMobility::QSensorBackend::tr(char const *, char const *, int)
+	??0QOrientationSensor@QtMobility@@QAE@PAVQObject@@@Z @ 195 NONAME ; QtMobility::QOrientationSensor::QOrientationSensor(class QObject *)
+	?stop@QSensor@QtMobility@@QAEXXZ @ 196 NONAME ; void QtMobility::QSensor::stop(void)
+	?busyChanged@QSensor@QtMobility@@IAEXXZ @ 197 NONAME ; void QtMobility::QSensor::busyChanged(void)
+	?metaObject@QProximitySensor@QtMobility@@UBEPBUQMetaObject@@XZ @ 198 NONAME ; struct QMetaObject const * QtMobility::QProximitySensor::metaObject(void) const
+	?trUtf8@QAccelerometerReading@QtMobility@@SA?AVQString@@PBD0@Z @ 199 NONAME ; class QString QtMobility::QAccelerometerReading::trUtf8(char const *, char const *)
+	?y@QAccelerometerReading@QtMobility@@QBEMXZ @ 200 NONAME ; float QtMobility::QAccelerometerReading::y(void) const
+	??_EQRotationReading@QtMobility@@UAE@I@Z @ 201 NONAME ; QtMobility::QRotationReading::~QRotationReading(unsigned int)
+	?metaObject@QTapReading@QtMobility@@UBEPBUQMetaObject@@XZ @ 202 NONAME ; struct QMetaObject const * QtMobility::QTapReading::metaObject(void) const
+	?trUtf8@QOrientationSensor@QtMobility@@SA?AVQString@@PBD0@Z @ 203 NONAME ; class QString QtMobility::QOrientationSensor::trUtf8(char const *, char const *)
+	?setDoubleTap@QTapReading@QtMobility@@QAEX_N@Z @ 204 NONAME ; void QtMobility::QTapReading::setDoubleTap(bool)
+	??0QRotationSensor@QtMobility@@QAE@PAVQObject@@@Z @ 205 NONAME ; QtMobility::QRotationSensor::QRotationSensor(class QObject *)
+	?copyValuesFrom@QOrientationReading@QtMobility@@UAEXPAVQSensorReading@2@@Z @ 206 NONAME ; void QtMobility::QOrientationReading::copyValuesFrom(class QtMobility::QSensorReading *)
+	?setZ@QMagnetometerReading@QtMobility@@QAEXM@Z @ 207 NONAME ; void QtMobility::QMagnetometerReading::setZ(float)
+	?trUtf8@QMagnetometerReading@QtMobility@@SA?AVQString@@PBD0H@Z @ 208 NONAME ; class QString QtMobility::QMagnetometerReading::trUtf8(char const *, char const *, int)
+	?staticMetaObject@QTapReading@QtMobility@@2UQMetaObject@@B @ 209 NONAME ; struct QMetaObject const QtMobility::QTapReading::staticMetaObject
+	?copyValuesFrom@QCompassReading@QtMobility@@UAEXPAVQSensorReading@2@@Z @ 210 NONAME ; void QtMobility::QCompassReading::copyValuesFrom(class QtMobility::QSensorReading *)
+	?filter@QAmbientLightFilter@QtMobility@@EAE_NPAVQSensorReading@2@@Z @ 211 NONAME ; bool QtMobility::QAmbientLightFilter::filter(class QtMobility::QSensorReading *)
+	?qt_metacast@QSensorBackend@QtMobility@@UAEPAXPBD@Z @ 212 NONAME ; void * QtMobility::QSensorBackend::qt_metacast(char const *)
+	?type@QTapSensor@QtMobility@@2PBDB @ 213 NONAME ; char const * const QtMobility::QTapSensor::type
+	?trUtf8@QOrientationReading@QtMobility@@SA?AVQString@@PBD0H@Z @ 214 NONAME ; class QString QtMobility::QOrientationReading::trUtf8(char const *, char const *, int)
+	?copyValuesFrom@QAmbientLightReading@QtMobility@@UAEXPAVQSensorReading@2@@Z @ 215 NONAME ; void QtMobility::QAmbientLightReading::copyValuesFrom(class QtMobility::QSensorReading *)
+	??_EQSensor@QtMobility@@UAE@I@Z @ 216 NONAME ; QtMobility::QSensor::~QSensor(unsigned int)
+	??0QAccelerometerReading@QtMobility@@QAE@PAVQObject@@@Z @ 217 NONAME ; QtMobility::QAccelerometerReading::QAccelerometerReading(class QObject *)
+	?filter@QProximityFilter@QtMobility@@EAE_NPAVQSensorReading@2@@Z @ 218 NONAME ; bool QtMobility::QProximityFilter::filter(class QtMobility::QSensorReading *)
+	?setAzimuth@QCompassReading@QtMobility@@QAEXM@Z @ 219 NONAME ; void QtMobility::QCompassReading::setAzimuth(float)
+	?trUtf8@QRotationReading@QtMobility@@SA?AVQString@@PBD0H@Z @ 220 NONAME ; class QString QtMobility::QRotationReading::trUtf8(char const *, char const *, int)
+	?sensorTypes@QSensor@QtMobility@@SA?AV?$QList@VQByteArray@@@@XZ @ 221 NONAME ; class QList<class QByteArray> QtMobility::QSensor::sensorTypes(void)
+	?connect@QSensor@QtMobility@@QAE_NXZ @ 222 NONAME ; bool QtMobility::QSensor::connect(void)
+	?getStaticMetaObject@QOrientationSensor@QtMobility@@SAABUQMetaObject@@XZ @ 223 NONAME ; struct QMetaObject const & QtMobility::QOrientationSensor::getStaticMetaObject(void)
+	?description@QSensor@QtMobility@@QBE?AVQString@@XZ @ 224 NONAME ; class QString QtMobility::QSensor::description(void) const
+	?createBackend@QSensorManager@QtMobility@@SAPAVQSensorBackend@2@PAVQSensor@2@@Z @ 225 NONAME ; class QtMobility::QSensorBackend * QtMobility::QSensorManager::createBackend(class QtMobility::QSensor *)
+	?qt_metacall@QProximitySensor@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 226 NONAME ; int QtMobility::QProximitySensor::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?setOrientation@QOrientationReading@QtMobility@@QAEXW4Orientation@12@@Z @ 227 NONAME ; void QtMobility::QOrientationReading::setOrientation(enum QtMobility::QOrientationReading::Orientation)
+	?y@QMagnetometerReading@QtMobility@@QBEMXZ @ 228 NONAME ; float QtMobility::QMagnetometerReading::y(void) const
+	?getStaticMetaObject@QTapReading@QtMobility@@SAABUQMetaObject@@XZ @ 229 NONAME ; struct QMetaObject const & QtMobility::QTapReading::getStaticMetaObject(void)
+	??1QProximityReading@QtMobility@@UAE@XZ @ 230 NONAME ; QtMobility::QProximityReading::~QProximityReading(void)
+	?staticMetaObject@QMagnetometer@QtMobility@@2UQMetaObject@@B @ 231 NONAME ; struct QMetaObject const QtMobility::QMagnetometer::staticMetaObject
+	?trUtf8@QProximitySensor@QtMobility@@SA?AVQString@@PBD0@Z @ 232 NONAME ; class QString QtMobility::QProximitySensor::trUtf8(char const *, char const *)
+	?trUtf8@QCompassReading@QtMobility@@SA?AVQString@@PBD0H@Z @ 233 NONAME ; class QString QtMobility::QCompassReading::trUtf8(char const *, char const *, int)
+	??1QTapReading@QtMobility@@UAE@XZ @ 234 NONAME ; QtMobility::QTapReading::~QTapReading(void)
+	?x@QAccelerometerReading@QtMobility@@QBEMXZ @ 235 NONAME ; float QtMobility::QAccelerometerReading::x(void) const
+	?newReadingAvailable@QSensorBackend@QtMobility@@QAEXXZ @ 236 NONAME ; void QtMobility::QSensorBackend::newReadingAvailable(void)
+	??_EQMagnetometerReading@QtMobility@@UAE@I@Z @ 237 NONAME ; QtMobility::QMagnetometerReading::~QMagnetometerReading(unsigned int)
+	?getStaticMetaObject@QCompassReading@QtMobility@@SAABUQMetaObject@@XZ @ 238 NONAME ; struct QMetaObject const & QtMobility::QCompassReading::getStaticMetaObject(void)
+	?orientation@QOrientationReading@QtMobility@@QBE?AW4Orientation@12@XZ @ 239 NONAME ; enum QtMobility::QOrientationReading::Orientation QtMobility::QOrientationReading::orientation(void) const
+	?qt_metacall@QProximityReading@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 240 NONAME ; int QtMobility::QProximityReading::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacast@QProximityReading@QtMobility@@UAEPAXPBD@Z @ 241 NONAME ; void * QtMobility::QProximityReading::qt_metacast(char const *)
+	?trUtf8@QSensorBackend@QtMobility@@SA?AVQString@@PBD0H@Z @ 242 NONAME ; class QString QtMobility::QSensorBackend::trUtf8(char const *, char const *, int)
+	??0QCompass@QtMobility@@QAE@PAVQObject@@@Z @ 243 NONAME ; QtMobility::QCompass::QCompass(class QObject *)
+	?setY@QMagnetometerReading@QtMobility@@QAEXM@Z @ 244 NONAME ; void QtMobility::QMagnetometerReading::setY(float)
+	?staticMetaObject@QProximitySensor@QtMobility@@2UQMetaObject@@B @ 245 NONAME ; struct QMetaObject const QtMobility::QProximitySensor::staticMetaObject
+	?getStaticMetaObject@QAmbientLightSensor@QtMobility@@SAABUQMetaObject@@XZ @ 246 NONAME ; struct QMetaObject const & QtMobility::QAmbientLightSensor::getStaticMetaObject(void)
+	?type@QMagnetometer@QtMobility@@2PBDB @ 247 NONAME ; char const * const QtMobility::QMagnetometer::type
+	?getStaticMetaObject@QCompass@QtMobility@@SAABUQMetaObject@@XZ @ 248 NONAME ; struct QMetaObject const & QtMobility::QCompass::getStaticMetaObject(void)
+	?qt_metacall@QMagnetometer@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 249 NONAME ; int QtMobility::QMagnetometer::qt_metacall(enum QMetaObject::Call, int, void * *)
+	??1QAmbientLightReading@QtMobility@@UAE@XZ @ 250 NONAME ; QtMobility::QAmbientLightReading::~QAmbientLightReading(void)
+	?tr@QOrientationReading@QtMobility@@SA?AVQString@@PBD0@Z @ 251 NONAME ; class QString QtMobility::QOrientationReading::tr(char const *, char const *)
+	?tr@QAmbientLightSensor@QtMobility@@SA?AVQString@@PBD0H@Z @ 252 NONAME ; class QString QtMobility::QAmbientLightSensor::tr(char const *, char const *, int)
+	??1QOrientationSensor@QtMobility@@UAE@XZ @ 253 NONAME ; QtMobility::QOrientationSensor::~QOrientationSensor(void)
+	?trUtf8@QMagnetometer@QtMobility@@SA?AVQString@@PBD0@Z @ 254 NONAME ; class QString QtMobility::QMagnetometer::trUtf8(char const *, char const *)
+	?staticMetaObject@QSensorReading@QtMobility@@2UQMetaObject@@B @ 255 NONAME ; struct QMetaObject const QtMobility::QSensorReading::staticMetaObject
+	??_EQMagnetometer@QtMobility@@UAE@I@Z @ 256 NONAME ; QtMobility::QMagnetometer::~QMagnetometer(unsigned int)
+	?trUtf8@QTapSensor@QtMobility@@SA?AVQString@@PBD0H@Z @ 257 NONAME ; class QString QtMobility::QTapSensor::trUtf8(char const *, char const *, int)
+	??_EQOrientationReading@QtMobility@@UAE@I@Z @ 258 NONAME ; QtMobility::QOrientationReading::~QOrientationReading(unsigned int)
+	?metaObject@QMagnetometerReading@QtMobility@@UBEPBUQMetaObject@@XZ @ 259 NONAME ; struct QMetaObject const * QtMobility::QMagnetometerReading::metaObject(void) const
+	?getStaticMetaObject@QAccelerometer@QtMobility@@SAABUQMetaObject@@XZ @ 260 NONAME ; struct QMetaObject const & QtMobility::QAccelerometer::getStaticMetaObject(void)
+	??1QMagnetometerReading@QtMobility@@UAE@XZ @ 261 NONAME ; QtMobility::QMagnetometerReading::~QMagnetometerReading(void)
+	??1QCompassReading@QtMobility@@UAE@XZ @ 262 NONAME ; QtMobility::QCompassReading::~QCompassReading(void)
+	?trUtf8@QTapReading@QtMobility@@SA?AVQString@@PBD0H@Z @ 263 NONAME ; class QString QtMobility::QTapReading::trUtf8(char const *, char const *, int)
+	?type@QSensor@QtMobility@@QBE?AVQByteArray@@XZ @ 264 NONAME ; class QByteArray QtMobility::QSensor::type(void) const
+	?isActive@QSensor@QtMobility@@QBE_NXZ @ 265 NONAME ; bool QtMobility::QSensor::isActive(void) const
+	??0QAmbientLightReading@QtMobility@@QAE@PAVQObject@@@Z @ 266 NONAME ; QtMobility::QAmbientLightReading::QAmbientLightReading(class QObject *)
+	?tr@QTapSensor@QtMobility@@SA?AVQString@@PBD0H@Z @ 267 NONAME ; class QString QtMobility::QTapSensor::tr(char const *, char const *, int)
+	?tr@QRotationReading@QtMobility@@SA?AVQString@@PBD0H@Z @ 268 NONAME ; class QString QtMobility::QRotationReading::tr(char const *, char const *, int)
+	?tr@QAccelerometer@QtMobility@@SA?AVQString@@PBD0H@Z @ 269 NONAME ; class QString QtMobility::QAccelerometer::tr(char const *, char const *, int)
+	?azimuth@QCompassReading@QtMobility@@QBEMXZ @ 270 NONAME ; float QtMobility::QCompassReading::azimuth(void) const
+	??1QTapSensor@QtMobility@@UAE@XZ @ 271 NONAME ; QtMobility::QTapSensor::~QTapSensor(void)
+	?x@QRotationReading@QtMobility@@QBEMXZ @ 272 NONAME ; float QtMobility::QRotationReading::x(void) const
+	?qt_metacall@QOrientationReading@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 273 NONAME ; int QtMobility::QOrientationReading::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?staticMetaObject@QRotationSensor@QtMobility@@2UQMetaObject@@B @ 274 NONAME ; struct QMetaObject const QtMobility::QRotationSensor::staticMetaObject
+	?lightLevel@QAmbientLightReading@QtMobility@@QBE?AW4LightLevel@12@XZ @ 275 NONAME ; enum QtMobility::QAmbientLightReading::LightLevel QtMobility::QAmbientLightReading::lightLevel(void) const
+	?setUpdateInterval@QSensor@QtMobility@@QAEXH@Z @ 276 NONAME ; void QtMobility::QSensor::setUpdateInterval(int)
+	?valueCount@QSensorReading@QtMobility@@QBEHXZ @ 277 NONAME ; int QtMobility::QSensorReading::valueCount(void) const
+	?trUtf8@QRotationReading@QtMobility@@SA?AVQString@@PBD0@Z @ 278 NONAME ; class QString QtMobility::QRotationReading::trUtf8(char const *, char const *)
+	?qt_metacall@QRotationReading@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 279 NONAME ; int QtMobility::QRotationReading::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?setX@QMagnetometerReading@QtMobility@@QAEXM@Z @ 280 NONAME ; void QtMobility::QMagnetometerReading::setX(float)
+	?removeFilter@QSensor@QtMobility@@QAEXPAVQSensorFilter@2@@Z @ 281 NONAME ; void QtMobility::QSensor::removeFilter(class QtMobility::QSensorFilter *)
+	??1QSensorPluginInterface@QtMobility@@IAE@XZ @ 282 NONAME ; QtMobility::QSensorPluginInterface::~QSensorPluginInterface(void)
+	?tr@QCompassReading@QtMobility@@SA?AVQString@@PBD0@Z @ 283 NONAME ; class QString QtMobility::QCompassReading::tr(char const *, char const *)
+	??_EQProximitySensor@QtMobility@@UAE@I@Z @ 284 NONAME ; QtMobility::QProximitySensor::~QProximitySensor(unsigned int)
+	?sensorError@QSensorBackend@QtMobility@@QAEXH@Z @ 285 NONAME ; void QtMobility::QSensorBackend::sensorError(int)
+	?setCalibrationLevel@QCompassReading@QtMobility@@QAEXM@Z @ 286 NONAME ; void QtMobility::QCompassReading::setCalibrationLevel(float)
+	?setDataRates@QSensorBackend@QtMobility@@QAEXPBVQSensor@2@@Z @ 287 NONAME ; void QtMobility::QSensorBackend::setDataRates(class QtMobility::QSensor const *)
+	?metaObject@QTapSensor@QtMobility@@UBEPBUQMetaObject@@XZ @ 288 NONAME ; struct QMetaObject const * QtMobility::QTapSensor::metaObject(void) const
+	?tr@QSensorReading@QtMobility@@SA?AVQString@@PBD0H@Z @ 289 NONAME ; class QString QtMobility::QSensorReading::tr(char const *, char const *, int)
+	?qt_metacall@QAmbientLightReading@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 290 NONAME ; int QtMobility::QAmbientLightReading::qt_metacall(enum QMetaObject::Call, int, void * *)
+	??1QAccelerometer@QtMobility@@UAE@XZ @ 291 NONAME ; QtMobility::QAccelerometer::~QAccelerometer(void)
+	?staticMetaObject@QTapSensor@QtMobility@@2UQMetaObject@@B @ 292 NONAME ; struct QMetaObject const QtMobility::QTapSensor::staticMetaObject
+	?trUtf8@QAmbientLightReading@QtMobility@@SA?AVQString@@PBD0H@Z @ 293 NONAME ; class QString QtMobility::QAmbientLightReading::trUtf8(char const *, char const *, int)
+	?staticMetaObject@QOrientationReading@QtMobility@@2UQMetaObject@@B @ 294 NONAME ; struct QMetaObject const QtMobility::QOrientationReading::staticMetaObject
+	??_EQAccelerometer@QtMobility@@UAE@I@Z @ 295 NONAME ; QtMobility::QAccelerometer::~QAccelerometer(unsigned int)
+	?staticMetaObject@QAmbientLightSensor@QtMobility@@2UQMetaObject@@B @ 296 NONAME ; struct QMetaObject const QtMobility::QAmbientLightSensor::staticMetaObject
+	??_EQAmbientLightReading@QtMobility@@UAE@I@Z @ 297 NONAME ; QtMobility::QAmbientLightReading::~QAmbientLightReading(unsigned int)
+	??1QOrientationReading@QtMobility@@UAE@XZ @ 298 NONAME ; QtMobility::QOrientationReading::~QOrientationReading(void)
+	?tr@QProximitySensor@QtMobility@@SA?AVQString@@PBD0@Z @ 299 NONAME ; class QString QtMobility::QProximitySensor::tr(char const *, char const *)
+	?tr@QCompassReading@QtMobility@@SA?AVQString@@PBD0H@Z @ 300 NONAME ; class QString QtMobility::QCompassReading::tr(char const *, char const *, int)
+	?isConnected@QSensor@QtMobility@@QBE_NXZ @ 301 NONAME ; bool QtMobility::QSensor::isConnected(void) const
+	?qt_metacast@QCompassReading@QtMobility@@UAEPAXPBD@Z @ 302 NONAME ; void * QtMobility::QCompassReading::qt_metacast(char const *)
+	?tr@QTapReading@QtMobility@@SA?AVQString@@PBD0H@Z @ 303 NONAME ; class QString QtMobility::QTapReading::tr(char const *, char const *, int)
+	?reading@QMagnetometer@QtMobility@@QBEPAVQMagnetometerReading@2@XZ @ 304 NONAME ; class QtMobility::QMagnetometerReading * QtMobility::QMagnetometer::reading(void) const
+	?qt_metacall@QAccelerometerReading@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 305 NONAME ; int QtMobility::QAccelerometerReading::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?type@QRotationSensor@QtMobility@@2PBDB @ 306 NONAME ; char const * const QtMobility::QRotationSensor::type
+	?tr@QOrientationReading@QtMobility@@SA?AVQString@@PBD0H@Z @ 307 NONAME ; class QString QtMobility::QOrientationReading::tr(char const *, char const *, int)
+	?metaObject@QOrientationSensor@QtMobility@@UBEPBUQMetaObject@@XZ @ 308 NONAME ; struct QMetaObject const * QtMobility::QOrientationSensor::metaObject(void) const
+	?qt_metacast@QAccelerometer@QtMobility@@UAEPAXPBD@Z @ 309 NONAME ; void * QtMobility::QAccelerometer::qt_metacast(char const *)
+	??_EQTapSensor@QtMobility@@UAE@I@Z @ 310 NONAME ; QtMobility::QTapSensor::~QTapSensor(unsigned int)
+	??1QRotationSensor@QtMobility@@UAE@XZ @ 311 NONAME ; QtMobility::QRotationSensor::~QRotationSensor(void)
+	??0QProximitySensor@QtMobility@@QAE@PAVQObject@@@Z @ 312 NONAME ; QtMobility::QProximitySensor::QProximitySensor(class QObject *)
+	?qt_metacast@QTapReading@QtMobility@@UAEPAXPBD@Z @ 313 NONAME ; void * QtMobility::QTapReading::qt_metacast(char const *)
+	?trUtf8@QAccelerometerReading@QtMobility@@SA?AVQString@@PBD0H@Z @ 314 NONAME ; class QString QtMobility::QAccelerometerReading::trUtf8(char const *, char const *, int)
+	?trUtf8@QAccelerometer@QtMobility@@SA?AVQString@@PBD0H@Z @ 315 NONAME ; class QString QtMobility::QAccelerometer::trUtf8(char const *, char const *, int)
+	?getStaticMetaObject@QSensor@QtMobility@@SAABUQMetaObject@@XZ @ 316 NONAME ; struct QMetaObject const & QtMobility::QSensor::getStaticMetaObject(void)
+	?trUtf8@QProximityReading@QtMobility@@SA?AVQString@@PBD0H@Z @ 317 NONAME ; class QString QtMobility::QProximityReading::trUtf8(char const *, char const *, int)
+	?tapDirection@QTapReading@QtMobility@@QBE?AW4TapDirection@12@XZ @ 318 NONAME ; enum QtMobility::QTapReading::TapDirection QtMobility::QTapReading::tapDirection(void) const
+	?trUtf8@QTapSensor@QtMobility@@SA?AVQString@@PBD0@Z @ 319 NONAME ; class QString QtMobility::QTapSensor::trUtf8(char const *, char const *)
+	??1QSensorBackend@QtMobility@@UAE@XZ @ 320 NONAME ; QtMobility::QSensorBackend::~QSensorBackend(void)
+	??1QProximitySensor@QtMobility@@UAE@XZ @ 321 NONAME ; QtMobility::QProximitySensor::~QProximitySensor(void)
+	?qt_metacall@QSensor@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 322 NONAME ; int QtMobility::QSensor::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?getStaticMetaObject@QSensorBackend@QtMobility@@SAABUQMetaObject@@XZ @ 323 NONAME ; struct QMetaObject const & QtMobility::QSensorBackend::getStaticMetaObject(void)
+	?outputRange@QSensor@QtMobility@@QBEHXZ @ 324 NONAME ; int QtMobility::QSensor::outputRange(void) const
+	??_EQSensorReading@QtMobility@@UAE@I@Z @ 325 NONAME ; QtMobility::QSensorReading::~QSensorReading(unsigned int)
+	?qt_metacall@QCompass@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 326 NONAME ; int QtMobility::QCompass::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?tr@QOrientationSensor@QtMobility@@SA?AVQString@@PBD0H@Z @ 327 NONAME ; class QString QtMobility::QOrientationSensor::tr(char const *, char const *, int)
+	?getStaticMetaObject@QProximitySensor@QtMobility@@SAABUQMetaObject@@XZ @ 328 NONAME ; struct QMetaObject const & QtMobility::QProximitySensor::getStaticMetaObject(void)
+	?close@QProximityReading@QtMobility@@QBE_NXZ @ 329 NONAME ; bool QtMobility::QProximityReading::close(void) const
+	?start@QSensor@QtMobility@@QAE_NXZ @ 330 NONAME ; bool QtMobility::QSensor::start(void)
+	?trUtf8@QCompassReading@QtMobility@@SA?AVQString@@PBD0@Z @ 331 NONAME ; class QString QtMobility::QCompassReading::trUtf8(char const *, char const *)
+	?type@QAccelerometer@QtMobility@@2PBDB @ 332 NONAME ; char const * const QtMobility::QAccelerometer::type
+	?trUtf8@QProximityReading@QtMobility@@SA?AVQString@@PBD0@Z @ 333 NONAME ; class QString QtMobility::QProximityReading::trUtf8(char const *, char const *)
+	?sensor@QSensorBackend@QtMobility@@QBEPAVQSensor@2@XZ @ 334 NONAME ; class QtMobility::QSensor * QtMobility::QSensorBackend::sensor(void) const
+	??_EQCompassReading@QtMobility@@UAE@I@Z @ 335 NONAME ; QtMobility::QCompassReading::~QCompassReading(unsigned int)
+	?qt_metacall@QRotationSensor@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 336 NONAME ; int QtMobility::QRotationSensor::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?addOutputRange@QSensorBackend@QtMobility@@QAEXMMM@Z @ 337 NONAME ; void QtMobility::QSensorBackend::addOutputRange(float, float, float)
+	?registerStaticPlugin@QSensorManager@QtMobility@@SAXP6APAVQSensorPluginInterface@2@XZ@Z @ 338 NONAME ; void QtMobility::QSensorManager::registerStaticPlugin(class QtMobility::QSensorPluginInterface * (*)(void))
+	?setY@QAccelerometerReading@QtMobility@@QAEXM@Z @ 339 NONAME ; void QtMobility::QAccelerometerReading::setY(float)
+	?trUtf8@QSensorReading@QtMobility@@SA?AVQString@@PBD0H@Z @ 340 NONAME ; class QString QtMobility::QSensorReading::trUtf8(char const *, char const *, int)
+	?metaObject@QAmbientLightReading@QtMobility@@UBEPBUQMetaObject@@XZ @ 341 NONAME ; struct QMetaObject const * QtMobility::QAmbientLightReading::metaObject(void) const
+	?trUtf8@QAccelerometer@QtMobility@@SA?AVQString@@PBD0@Z @ 342 NONAME ; class QString QtMobility::QAccelerometer::trUtf8(char const *, char const *)
+	?z@QMagnetometerReading@QtMobility@@QBEMXZ @ 343 NONAME ; float QtMobility::QMagnetometerReading::z(void) const
+	?filter@QAccelerometerFilter@QtMobility@@EAE_NPAVQSensorReading@2@@Z @ 344 NONAME ; bool QtMobility::QAccelerometerFilter::filter(class QtMobility::QSensorReading *)
+	?staticMetaObject@QMagnetometerReading@QtMobility@@2UQMetaObject@@B @ 345 NONAME ; struct QMetaObject const QtMobility::QMagnetometerReading::staticMetaObject
+

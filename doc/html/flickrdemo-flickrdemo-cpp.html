@@ -597,29 +597,15 @@
 
         verticalLayout-&gt;addWidget(imageLabel);
 
-        keepButton = new QPushButton(tr(&quot;Keep&quot;));
-        keepButton-&gt;setDefault(true);
-        discardButton = new QPushButton(tr(&quot;Discard&quot;));
-
         buttonBox = new QDialogButtonBox();
-        buttonBox-&gt;addButton(keepButton, QDialogButtonBox::AcceptRole);
-        buttonBox-&gt;addButton(discardButton, QDialogButtonBox::DestructiveRole);
-        connect(buttonBox, SIGNAL(clicked(QAbstractButton *)), this, SLOT(clicked(QAbstractButton *)));
+        buttonBox-&gt;setStandardButtons(QDialogButtonBox::Close);
+        connect(buttonBox, SIGNAL(rejected()), this, SLOT(accept()));
 
         verticalLayout-&gt;addWidget(buttonBox);
 
         setLayout(verticalLayout);
 
         setWindowTitle(tr(&quot;Flickr Demo&quot;));
-    }
-
-    void PictureDialog::clicked(QAbstractButton* button)
-    {
-        if (button == keepButton) {
-            accept();
-        } else if (button == discardButton) {
-            reject();
-        }
     }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

@@ -230,10 +230,12 @@
             reader.setDevice(&amp;file);
             if (reader.startReading() &amp;&amp; reader.waitForFinished()) {
                 QVersitContactImporter importer;
-                QList&lt;QContact&gt; contacts = importer.importContacts(reader.results());
-                QMap&lt;int, QContactManager::Error&gt; errorMap;
-                m_manager-&gt;saveContacts(&amp;contacts, &amp;errorMap);
-                rebuildList(m_currentFilter);
+                if (importer.importDocuments(reader.results())) {
+                    QList&lt;QContact&gt; contacts = importer.contacts();
+                    QMap&lt;int, QContactManager::Error&gt; errorMap;
+                    m_manager-&gt;saveContacts(&amp;contacts, &amp;errorMap);
+                    rebuildList(m_currentFilter);
+                }
             }
         }
     #endif
@@ -246,7 +248,7 @@
             qWarning() &lt;&lt; &quot;No manager selected; cannot import&quot;;
             return;
         }
-        QList&lt;QContact&gt; contacts = m_manager-&gt;contacts(QList&lt;QContactSortOrder&gt;(), QStringList());
+        QList&lt;QContact&gt; contacts = m_manager-&gt;contacts(QList&lt;QContactSortOrder&gt;(), QContactFetchHint());
         QString fileName = QFileDialog::getSaveFileName(this, tr(&quot;Save vCard&quot;),
                                                         &quot;./contacts.vcf&quot;,
                                                         tr(&quot;vCards (*.vcf)&quot;));
@@ -254,11 +256,13 @@
         file.open(QIODevice::WriteOnly);
         if (file.isWritable()) {
             QVersitContactExporter exporter;
-            QList&lt;QVersitDocument&gt; documents = exporter.exportContacts(contacts);
-            QVersitWriter writer;
-            writer.setDevice(&amp;file);
-            writer.startWriting(documents);
-            writer.waitForFinished();
+            if(exporter.exportContacts(contacts, QVersitDocument::VCard30Type)) {
+                QList&lt;QVersitDocument&gt; documents = exporter.documents();
+                QVersitWriter writer;
+                writer.setDevice(&amp;file);
+                writer.startWriting(documents);
+                writer.waitForFinished();
+            }
         }
     #endif
     }</pre>

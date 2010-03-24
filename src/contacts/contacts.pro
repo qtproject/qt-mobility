@@ -26,6 +26,7 @@ PUBLIC_HEADERS += \
     qcontactdetail.h \
     qcontactdetaildefinition.h \
     qcontactdetailfielddefinition.h \
+    qcontactfetchhint.h \
     qcontactfilter.h \
     qcontactid.h \
     qcontactmanager.h \
@@ -45,6 +46,7 @@ PRIVATE_HEADERS += \
     qcontactdetail_p.h \
     qcontactdetaildefinition_p.h \
     qcontactdetailfielddefinition_p.h \
+    qcontactfetchhint_p.h \
     qcontactfilter_p.h \
     qcontactid_p.h \
     qcontactmanager_p.h \
@@ -61,6 +63,7 @@ SOURCES += \
     qcontactdetail.cpp \
     qcontactdetaildefinition.cpp \
     qcontactdetailfielddefinition.cpp \
+    qcontactfetchhint.cpp \
     qcontactfilter.cpp \
     qcontactid.cpp \
     qcontactmanager_p.cpp \
@@ -73,6 +76,10 @@ SOURCES += \
 HEADERS += \
     $$PUBLIC_HEADERS \
     $$PRIVATE_HEADERS
+
+maemo5 {
+    isEmpty(CONTACTS_DEFAULT_ENGINE): CONTACTS_DEFAULT_ENGINE=maemo5
+}
 
 maemo6 {
     isEmpty(CONTACTS_DEFAULT_ENGINE): CONTACTS_DEFAULT_ENGINE=tracker

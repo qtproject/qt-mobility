@@ -44,18 +44,6 @@
 
 #include "cntabstractsimrequest.h"
 
-#ifdef SYMBIANSIM_BACKEND_USE_ETEL_TESTSERVER
-#include <mpbutil_etel_test_server.h>
-#else
-#include <mpbutil.h>
-#endif
-#include <qcontactmanager.h>
-
-QTM_BEGIN_NAMESPACE
-class QContactRemoveRequest;
-QTM_END_NAMESPACE
-class CntSymbianSimEngine;
-
 QTM_USE_NAMESPACE
 
 class CntSimContactRemoveRequest : public CntAbstractSimRequest
@@ -64,18 +52,22 @@ Q_OBJECT
 public:
     CntSimContactRemoveRequest(CntSymbianSimEngine *engine, QContactRemoveRequest *req);
     virtual ~CntSimContactRemoveRequest();
-    bool start();
-    bool cancel();
-    
-public Q_SLOTS:
+
+public Q_SLOTS:    
+    // from CntAbstractSimRequest
+    void run();
+   
+private Q_SLOTS:
     void removeComplete(QContactManager::Error error);
     void removeNext();
-
+    void getReservedSlotsComplete(QList<int> reservedSlots, QContactManager::Error error);
+    void getReservedSlots();
+    
 private:
-    QContactRemoveRequest *m_req;
     QList<QContactLocalId> m_contactIds;
     int m_index;
-    QMap<int, QContactManager::Error> m_errorMap;    
+    QMap<int, QContactManager::Error> m_errorMap;
+    QList<int> m_reservedSlots;
 };
 
 #endif // CNTSIMCONTACTREMOVEREQUEST_H_

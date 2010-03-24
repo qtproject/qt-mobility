@@ -42,7 +42,6 @@
 #ifndef QTRACKERCONTACTSLIVE_H
 #define QTRACKERCONTACTSLIVE_H
 
-#include <qmobilityglobal.h>
 #include <qcontact.h>
 #include <qcontactdetail.h>
 #include <qcontactphonenumber.h>

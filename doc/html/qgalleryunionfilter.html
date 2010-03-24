@@ -23,7 +23,9 @@
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryunionfilter.html#QGalleryUnionFilter">QGalleryUnionFilter</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryunionfilter.html#QGalleryUnionFilter-2">QGalleryUnionFilter</a></b> ( const QGalleryUnionFilter &amp; <i>filter</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryunionfilter.html#QGalleryUnionFilter-2">QGalleryUnionFilter</a></b> ( const QGalleryMetaDataFilter &amp; <i>filter</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryunionfilter.html#QGalleryUnionFilter-3">QGalleryUnionFilter</a></b> ( const QGalleryMetaDataRangeFilter &amp; <i>filter</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryunionfilter.html#QGalleryUnionFilter-4">QGalleryUnionFilter</a></b> ( const QGalleryUnionFilter &amp; <i>filter</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryunionfilter.html#dtor.QGalleryUnionFilter">~QGalleryUnionFilter</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryunionfilter.html#append">append</a></b> ( const QGalleryMetaDataFilter &amp; <i>filter</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryunionfilter.html#append-2">append</a></b> ( const QGalleryMetaDataRangeFilter &amp; <i>filter</i> )</td></tr>
@@ -40,6 +42,12 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryunionfilter.html#replace-2">replace</a></b> ( int <i>index</i>, const QGalleryMetaDataRangeFilter &amp; <i>filter</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QGalleryUnionFilter &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryunionfilter.html#operator-eq">operator=</a></b> ( const QGalleryUnionFilter &amp; <i>filter</i> )</td></tr>
 </table>
+<hr />
+<a name="related-non-members"></a>
+<h2>Related Non-Members</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QGalleryUnionFilter </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryunionfilter.html#operator-and-and">operator&amp;&amp;</a></b> ( const QGalleryUnionFilter &amp; <i>filter1</i>, const T &amp; <i>filter2</i> )</td></tr>
+</table>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
@@ -49,7 +57,11 @@
 <a name="//apple_ref/cpp/instm/QGalleryUnionFilter/QGalleryUnionFilter"></a>
 <h3 class="fn"><a name="QGalleryUnionFilter"></a>QGalleryUnionFilter::QGalleryUnionFilter ()</h3>
 <p>Constructs an empty union.</p>
-<h3 class="fn"><a name="QGalleryUnionFilter-2"></a>QGalleryUnionFilter::QGalleryUnionFilter ( const QGalleryUnionFilter &amp; <i>filter</i> )</h3>
+<h3 class="fn"><a name="QGalleryUnionFilter-2"></a>QGalleryUnionFilter::QGalleryUnionFilter ( const <a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> &amp; <i>filter</i> )</h3>
+<p>Constructs a union filter from a meta data <i>filter</i>.</p>
+<h3 class="fn"><a name="QGalleryUnionFilter-3"></a>QGalleryUnionFilter::QGalleryUnionFilter ( const <a href="qgallerymetadatarangefilter.html">QGalleryMetaDataRangeFilter</a> &amp; <i>filter</i> )</h3>
+<p>Constructs a union filter from a meta-data range <i>filter</i>.</p>
+<h3 class="fn"><a name="QGalleryUnionFilter-4"></a>QGalleryUnionFilter::QGalleryUnionFilter ( const QGalleryUnionFilter &amp; <i>filter</i> )</h3>
 <p>Constructs a copy of a union <i>filter</i>.</p>
 <a name="//apple_ref/cpp/instm/QGalleryUnionFilter/~QGalleryUnionFilter"></a>
 <h3 class="fn"><a name="dtor.QGalleryUnionFilter"></a>QGalleryUnionFilter::~QGalleryUnionFilter ()</h3>
@@ -91,6 +103,11 @@
 <a name="//apple_ref/cpp/instm/QGalleryUnionFilter/operator="></a>
 <h3 class="fn"><a name="operator-eq"></a>QGalleryUnionFilter &amp; QGalleryUnionFilter::operator= ( const QGalleryUnionFilter &amp; <i>filter</i> )</h3>
 <p>Assigns the value of <i>filter</i> to another union filter.</p>
+<hr />
+<h2>Related Non-Members</h2>
+<a name="//apple_ref/cpp/func//operator&amp;&amp;"></a>
+<h3 class="fn"><a name="operator-and-and"></a>QGalleryUnionFilter operator&amp;&amp; ( const QGalleryUnionFilter &amp; <i>filter1</i>, const T &amp; <i>filter2</i> )</h3>
+<p>Returns a gallery filter which matches the union of <i>filter1</i> and <i>filter2</i>.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

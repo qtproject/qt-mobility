@@ -13,6 +13,11 @@ CONFIG(debug, debug|release) {
 
 include(staticconfig.pri)
 
+symbian:contains(symbian_symbols_unfrozen,1) {
+    #see configure.bat for details
+    MMP_RULES+="EXPORTUNFROZEN"
+}
+
 mac {
     contains(QT_CONFIG, qt_framework):contains(TEMPLATE, lib) {
         #MacOSX always builds debug and release libs when using mac framework
@@ -80,8 +85,12 @@ contains(build_unit_tests, yes):DEFINES+=QTM_BUILD_UNITTESTS
 !testcase {
     OBJECTS_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET
     !plugin {
-        contains(TEMPLATE,.*lib):DESTDIR = $$OUTPUT_DIR/lib
-        else:DESTDIR = $$OUTPUT_DIR/bin
+        contains(TEMPLATE,.*lib) {
+            DESTDIR = $$OUTPUT_DIR/lib
+            symbian:defFilePath=../s60installs
+        } else {
+            DESTDIR = $$OUTPUT_DIR/bin
+        }
     } else {
         testplugin:DESTDIR = $$OUTPUT_DIR/build/tests/bin/plugins/$$PLUGIN_TYPE
         !testplugin:DESTDIR = $$OUTPUT_DIR/plugins/$$PLUGIN_TYPE
@@ -114,7 +123,7 @@ maemo6 {
 }
 maemo5 {
     DEFINES+= Q_WS_MAEMO_5
-}
+    LIBS += -lgconf-2 -lrtcom-eventlogger -lmodest-dbus-client-1.0 -losso -ldbus-glib-1 -ldbus-1 -lgobject-2.0 -lglib-2.0 -ltpsession -ltelepathy-qt4}
 maemo* {
     LIBS += -L/opt/qt4-maemo5/lib
     QMAKE_LFLAGS += -Wl,-rpath,/opt/qt4-maemo5/lib
@@ -160,8 +169,6 @@ mac:contains(QT_CONFIG,qt_framework) {
 }
 LIBS += -L$$OUTPUT_DIR/lib
 
-# For symbian, we are not freezing yet
-symbian:MMP_RULES += "EXPORTUNFROZEN"
 
 DEPENDPATH += . $$SOURCE_DIR
 INCLUDEPATH += $$SOURCE_DIR/src/global

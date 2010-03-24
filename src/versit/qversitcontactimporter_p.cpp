@@ -65,6 +65,8 @@
 #include <qcontactonlineaccount.h>
 #include <qcontactfamily.h>
 #include <qcontactdisplaylabel.h>
+#include <qcontactthumbnail.h>
+#include <qcontactringtone.h>
 
 #include <QHash>
 #include <QFile>
@@ -122,24 +124,34 @@ QVersitContactImporterPrivate::~QVersitContactImporterPrivate()
 /*!
  * Generates a QContact from \a versitDocument.
  */
-QContact QVersitContactImporterPrivate::importContact(
-     const QVersitDocument& document, int contactIndex)
+bool QVersitContactImporterPrivate::importContact(
+        const QVersitDocument& document, int contactIndex, QContact* contact,
+        QVersitContactImporter::Error* error)
 {
-    QContact contact;
+    if (document.type() != QVersitDocument::VCard21Type
+        && document.type() != QVersitDocument::VCard30Type) {
+        *error = QVersitContactImporter::InvalidDocumentError;
+        return false;
+    }
     const QList<QVersitProperty> properties = document.properties();
+    if (properties.size() == 0) {
+        *error = QVersitContactImporter::EmptyDocumentError;
+        return false;
+    }
+
     // First, do the properties with PREF set so they appear first in the contact details
     foreach (const QVersitProperty& property, properties) {
         if (property.parameters().contains(QLatin1String("TYPE"), QLatin1String("PREF")))
-            importProperty(document, property, contactIndex, &contact);
+            importProperty(document, property, contactIndex, contact);
     }
     // ... then, do the rest of the properties.
     foreach (const QVersitProperty& property, properties) {
         if (!property.parameters().contains(QLatin1String("TYPE"), QLatin1String("PREF")))
-            importProperty(document, property, contactIndex, &contact);
+            importProperty(document, property, contactIndex, contact);
     }
 
-    contact.setType(QContactType::TypeContact);
-    return contact;
+    contact->setType(QContactType::TypeContact);
+    return true;
 }
 
 void QVersitContactImporterPrivate::importProperty(
@@ -166,8 +178,10 @@ void QVersitContactImporterPrivate::importProperty(
         success = createOrganization(property, contact);
     } else if (detailDefinitionName == QContactNickname::DefinitionName) {
         success = createNicknames(property, contact);
-    } else if (detailDefinitionName == QContactAvatar::DefinitionName) {
-        success = createAvatar(property,detailDefinition.second, contact);
+    } else if (detailDefinitionName == QContactRingtone::DefinitionName) {
+        success = createRingtone(property, contact);
+    } else if (detailDefinitionName == QContactThumbnail::DefinitionName) {
+        success = createThumbnail(property, contact);
     } else if (detailDefinitionName == QContactTimestamp::DefinitionName) {
         success = createTimeStamp(property, contact);
     } else if (detailDefinitionName == QContactPhoneNumber::DefinitionName) {
@@ -178,6 +192,8 @@ void QVersitContactImporterPrivate::importProperty(
         success = createFamily(property, contact);
     } else if (detailDefinitionName == QContactOnlineAccount::DefinitionName) {
         success = createOnlineAccount(property, contact);
+    } else if (detailDefinitionName == QContactTag::DefinitionName) {
+        success = createTags(property, contact);
     } else if (detailDefinitionName == QContactDisplayLabel::DefinitionName) {
         // This actually sets the QContactName's customLabel field (not QContactDisplayLabel)
         success = createLabel(property, contact);
@@ -199,7 +215,7 @@ bool QVersitContactImporterPrivate::createName(
     QContactDetail detail = contact->detail(QContactName::DefinitionName);
     if (!detail.isEmpty()) {
         // If multiple name properties exist,
-        // discard all except the first occurence
+        // discard all except the first occurrence
         if (!detail.value(QContactName::FieldFirstName).isEmpty())
             return false;
         else
@@ -266,7 +282,7 @@ bool QVersitContactImporterPrivate::createOrganization(
         mDetailMappings.value(property.name());
     QString fieldName = detailNameAndFieldName.second;
     QList<QContactOrganization> organizations = contact->details<QContactOrganization>();
-    foreach(QContactOrganization current, organizations) {
+    foreach(const QContactOrganization& current, organizations) {
         if (current.value(fieldName).length() == 0) {
             organization = current;
             break;
@@ -278,7 +294,7 @@ bool QVersitContactImporterPrivate::createOrganization(
         organization.setTitle(property.value());
     } else if (fieldName == QContactOrganization::FieldRole) {
         organization.setRole(property.value());
-    } else if (fieldName == QContactOrganization::FieldLogo) {
+    } else if (fieldName == QContactOrganization::FieldLogoUrl) {
         setOrganizationLogo(organization, property);
     } else if (fieldName == QContactOrganization::FieldAssistantName) {
         organization.setAssistantName(property.value());
@@ -319,7 +335,7 @@ void QVersitContactImporterPrivate::setOrganizationLogo(
     QByteArray data;
     saveDataFromProperty(property, &location, &data);
     if (!location.isEmpty())
-        org.setLogo(location);
+        org.setLogoUrl(QUrl(location));
 }
 
 /*!
@@ -381,10 +397,26 @@ bool QVersitContactImporterPrivate::createNicknames(
 {
     QStringList values = property.value().split(QLatin1Char(','), QString::SkipEmptyParts);
     QStringList contexts = extractContexts(property);
-    foreach(QString value, values) {
+    foreach(const QString& value, values) {
         QContactNickname nickName;
         nickName.setNickname(value);
-        saveDetailWithContext(contact, &nickName, extractContexts(property));
+        saveDetailWithContext(contact, &nickName, contexts);
+    }
+    return true;
+}
+
+/*!
+ * Creates QContactTags from \a property and adds them to \a contact
+ */
+bool QVersitContactImporterPrivate::createTags(
+    const QVersitProperty& property, QContact* contact) const
+{
+    QStringList values = property.value().split(QLatin1Char(','), QString::SkipEmptyParts);
+    QStringList contexts = extractContexts(property);
+    foreach(const QString& value, values) {
+        QContactTag tag;
+        tag.setTag(value);
+        saveDetailWithContext(contact, &tag, contexts);
     }
     return true;
 }
@@ -416,31 +448,50 @@ bool QVersitContactImporterPrivate::createOnlineAccount(
     return true;
 }
 
-/*!
- * Creates a QContactAvatar from \a property
- */
-bool QVersitContactImporterPrivate::createAvatar(
-    const QVersitProperty& property, const QString& subType, QContact* contact) const
+bool QVersitContactImporterPrivate::createRingtone(const QVersitProperty &property,
+                                                   QContact *contact) const
 {
     QString location;
     QByteArray data;
-    if (!(saveDataFromProperty(property, &location, &data)))
-        return false;
+    if (saveDataFromProperty(property, &location, &data) && !location.isEmpty()) {
+        QContactRingtone ringtone;
+        ringtone.setAudioRingtone(location);
+        saveDetailWithContext(contact, &ringtone, extractContexts(property));
+        return true;
+    }
+    return false;
+}
 
-    QContactAvatar avatar;
-    if (!location.isEmpty())
-        avatar.setAvatar(location);
-    // Creating a pixmap in a non-GUI thread crashes on S60.
-    // XXX reenable this when the QtContacts stores QImages.
-//    if (subType == QContactAvatar::SubTypeImage && !data.isEmpty()) {
-//        QPixmap pixmap;
-//        if (pixmap.loadFromData(data))
-//            avatar.setPixmap(pixmap);
-//    }
-    avatar.setSubType(subType);
+/*!
+ * Creates a QContactAvatar from \a property
+ */
+bool QVersitContactImporterPrivate::createThumbnail(
+    const QVersitProperty& property, QContact* contact) const
+{
+    QString location;
+    QByteArray data;
+    bool success = false;
 
-    saveDetailWithContext(contact, &avatar, extractContexts(property));
-    return true;
+    if (saveDataFromProperty(property, &location, &data) && !location.isEmpty()) {
+        QContactAvatar avatar;
+        avatar.setImageUrl(location);
+        saveDetailWithContext(contact, &avatar, extractContexts(property));
+        success = true;
+    }
+    if (!data.isEmpty()) {
+        QImage image;
+        if (image.loadFromData(data)) {
+            QContactThumbnail thumbnail = contact->detail<QContactThumbnail>();
+            // In the case of multiple thumbnails, pick the smallest one.
+            if (thumbnail.isEmpty() || image.byteCount() < thumbnail.thumbnail().byteCount()) {
+                thumbnail.setThumbnail(image);
+            }
+            saveDetailWithContext(contact, &thumbnail, extractContexts(property));
+            success = true;
+        }
+    }
+
+    return success;
 }
 
 /*!
@@ -521,7 +572,7 @@ QStringList QVersitContactImporterPrivate::extractContexts(
     QStringList types =
         property.parameters().values(QLatin1String("TYPE"));
     QStringList contexts;
-    foreach (QString type, types) {
+    foreach (const QString& type, types) {
         QString value = mContextMappings.value(type);
         if (value.length() > 0)
             contexts.append(value);
@@ -538,7 +589,7 @@ QStringList QVersitContactImporterPrivate::extractSubTypes(
     QStringList types =
         property.parameters().values(QLatin1String("TYPE"));
     QStringList subTypes;
-    foreach (QString type, types) {
+    foreach (const QString& type, types) {
         QString subType = mSubTypeMappings.value(type);
         if (subType.length() > 0)
             subTypes += subType;

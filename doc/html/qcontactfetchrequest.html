@@ -26,9 +26,9 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactfetchrequest.html#QContactFetchRequest">QContactFetchRequest</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactfetchrequest.html#dtor.QContactFetchRequest">~QContactFetchRequest</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QContact&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactfetchrequest.html#contacts">contacts</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qcontactfetchrequest.html#definitionRestrictions">definitionRestrictions</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QContactFetchHint </td><td class="memItemRight" valign="bottom"><b><a href="qcontactfetchrequest.html#fetchHint">fetchHint</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QContactFilter </td><td class="memItemRight" valign="bottom"><b><a href="qcontactfetchrequest.html#filter">filter</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactfetchrequest.html#setDefinitionRestrictions">setDefinitionRestrictions</a></b> ( const QStringList &amp; <i>definitionNames</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactfetchrequest.html#setFetchHint">setFetchHint</a></b> ( const QContactFetchHint &amp; <i>fetchHint</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactfetchrequest.html#setFilter">setFilter</a></b> ( const QContactFilter &amp; <i>filter</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactfetchrequest.html#setSorting">setSorting</a></b> ( const QList&lt;QContactSortOrder&gt; &amp; <i>sorting</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QContactSortOrder&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactfetchrequest.html#sorting">sorting</a></b> () const</td></tr>
@@ -65,18 +65,18 @@
 <a name="//apple_ref/cpp/instm/QContactFetchRequest/contacts"></a>
 <h3 class="fn"><a name="contacts"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontact.html">QContact</a>&gt; QContactFetchRequest::contacts () const</h3>
 <p>Returns the list of contacts retrieved by this request</p>
-<a name="//apple_ref/cpp/instm/QContactFetchRequest/definitionRestrictions"></a>
-<h3 class="fn"><a name="definitionRestrictions"></a><a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> QContactFetchRequest::definitionRestrictions () const</h3>
-<p>Returns the list of definition names which define which details contacts in the result list will be limited to</p>
-<p>See also <a href="qcontactfetchrequest.html#setDefinitionRestrictions">setDefinitionRestrictions</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactFetchRequest/fetchHint"></a>
+<h3 class="fn"><a name="fetchHint"></a><a href="qcontactfetchhint.html">QContactFetchHint</a> QContactFetchRequest::fetchHint () const</h3>
+<p>Returns the fetch hint which may be used by the backend to optimize contact retrieval to <i>fetchHint</i>. A client should not make changes to a contact which has been retrieved using a fetch hint other than the default fetch hint. Doing so will result in information loss when saving the contact back to the manager (as the &quot;new&quot; restricted contact will replace the previously saved contact in the backend).</p>
+<p>See also <a href="qcontactfetchrequest.html#setFetchHint">setFetchHint</a>() and <a href="qcontactfetchhint.html">QContactFetchHint</a>.</p>
 <a name="//apple_ref/cpp/instm/QContactFetchRequest/filter"></a>
 <h3 class="fn"><a name="filter"></a><a href="qcontactfilter.html">QContactFilter</a> QContactFetchRequest::filter () const</h3>
 <p>Returns the filter that will be used to select contacts to be returned</p>
 <p>See also <a href="qcontactfetchrequest.html#setFilter">setFilter</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactFetchRequest/setDefinitionRestrictions"></a>
-<h3 class="fn"><a name="setDefinitionRestrictions"></a>void QContactFetchRequest::setDefinitionRestrictions ( const <a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> &amp; <i>definitionNames</i> )</h3>
-<p>Sets the list of allowable detail definition names to <i>definitionNames</i>. Any contacts retrieved by the request will have any details whose definition name is not on the restricted list removed prior to being returned.</p>
-<p>See also <a href="qcontactfetchrequest.html#definitionRestrictions">definitionRestrictions</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactFetchRequest/setFetchHint"></a>
+<h3 class="fn"><a name="setFetchHint"></a>void QContactFetchRequest::setFetchHint ( const <a href="qcontactfetchhint.html">QContactFetchHint</a> &amp; <i>fetchHint</i> )</h3>
+<p>Sets the fetch hint which may be used by the backend to optimize contact retrieval to <i>fetchHint</i>. A client should not make changes to a contact which has been retrieved using a fetch hint other than the default fetch hint. Doing so will result in information loss when saving the contact back to the manager (as the &quot;new&quot; restricted contact will replace the previously saved contact in the backend).</p>
+<p>See also <a href="qcontactfetchrequest.html#fetchHint">fetchHint</a>() and <a href="qcontactfetchhint.html">QContactFetchHint</a>.</p>
 <a name="//apple_ref/cpp/instm/QContactFetchRequest/setFilter"></a>
 <h3 class="fn"><a name="setFilter"></a>void QContactFetchRequest::setFilter ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>filter</i> )</h3>
 <p>Sets the contact filter used to determine which contacts will be retrieved to <i>filter</i></p>

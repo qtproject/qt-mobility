@@ -23,7 +23,10 @@
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryintersectionfilter.html#QGalleryIntersectionFilter">QGalleryIntersectionFilter</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryintersectionfilter.html#QGalleryIntersectionFilter-2">QGalleryIntersectionFilter</a></b> ( const QGalleryIntersectionFilter &amp; <i>filter</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryintersectionfilter.html#QGalleryIntersectionFilter-2">QGalleryIntersectionFilter</a></b> ( const QGalleryUnionFilter &amp; <i>filter</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryintersectionfilter.html#QGalleryIntersectionFilter-3">QGalleryIntersectionFilter</a></b> ( const QGalleryMetaDataFilter &amp; <i>filter</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryintersectionfilter.html#QGalleryIntersectionFilter-4">QGalleryIntersectionFilter</a></b> ( const QGalleryMetaDataRangeFilter &amp; <i>filter</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryintersectionfilter.html#QGalleryIntersectionFilter-5">QGalleryIntersectionFilter</a></b> ( const QGalleryIntersectionFilter &amp; <i>filter</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryintersectionfilter.html#dtor.QGalleryIntersectionFilter">~QGalleryIntersectionFilter</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryintersectionfilter.html#append">append</a></b> ( const QGalleryUnionFilter &amp; <i>filter</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryintersectionfilter.html#append-2">append</a></b> ( const QGalleryMetaDataFilter &amp; <i>filter</i> )</td></tr>
@@ -43,6 +46,12 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryintersectionfilter.html#replace-3">replace</a></b> ( int <i>index</i>, const QGalleryMetaDataRangeFilter &amp; <i>filter</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QGalleryIntersectionFilter &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryintersectionfilter.html#operator-eq">operator=</a></b> ( const QGalleryIntersectionFilter &amp; <i>filter</i> )</td></tr>
 </table>
+<hr />
+<a name="related-non-members"></a>
+<h2>Related Non-Members</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QGalleryIntersectionFilter </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryintersectionfilter.html#operator-7c-7c">operator||</a></b> ( const QGalleryIntersectionFilter &amp; <i>filter1</i>, const T &amp; <i>filter2</i> )</td></tr>
+</table>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
@@ -52,7 +61,13 @@
 <a name="//apple_ref/cpp/instm/QGalleryIntersectionFilter/QGalleryIntersectionFilter"></a>
 <h3 class="fn"><a name="QGalleryIntersectionFilter"></a>QGalleryIntersectionFilter::QGalleryIntersectionFilter ()</h3>
 <p>Constructs an empty intersection.</p>
-<h3 class="fn"><a name="QGalleryIntersectionFilter-2"></a>QGalleryIntersectionFilter::QGalleryIntersectionFilter ( const QGalleryIntersectionFilter &amp; <i>filter</i> )</h3>
+<h3 class="fn"><a name="QGalleryIntersectionFilter-2"></a>QGalleryIntersectionFilter::QGalleryIntersectionFilter ( const <a href="qgalleryunionfilter.html">QGalleryUnionFilter</a> &amp; <i>filter</i> )</h3>
+<p>Constructs an intersection filter from a union <i>filter</i>.</p>
+<h3 class="fn"><a name="QGalleryIntersectionFilter-3"></a>QGalleryIntersectionFilter::QGalleryIntersectionFilter ( const <a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> &amp; <i>filter</i> )</h3>
+<p>Constructs an intersection filter from a meta-data <i>filter</i>.</p>
+<h3 class="fn"><a name="QGalleryIntersectionFilter-4"></a>QGalleryIntersectionFilter::QGalleryIntersectionFilter ( const <a href="qgallerymetadatarangefilter.html">QGalleryMetaDataRangeFilter</a> &amp; <i>filter</i> )</h3>
+<p>Constructs an intersection filter from a meta-data range <i>filter</i>.</p>
+<h3 class="fn"><a name="QGalleryIntersectionFilter-5"></a>QGalleryIntersectionFilter::QGalleryIntersectionFilter ( const QGalleryIntersectionFilter &amp; <i>filter</i> )</h3>
 <p>Constructs a copy of an intersection <i>filter</i>.</p>
 <a name="//apple_ref/cpp/instm/QGalleryIntersectionFilter/~QGalleryIntersectionFilter"></a>
 <h3 class="fn"><a name="dtor.QGalleryIntersectionFilter"></a>QGalleryIntersectionFilter::~QGalleryIntersectionFilter ()</h3>
@@ -100,6 +115,11 @@
 <a name="//apple_ref/cpp/instm/QGalleryIntersectionFilter/operator="></a>
 <h3 class="fn"><a name="operator-eq"></a>QGalleryIntersectionFilter &amp; QGalleryIntersectionFilter::operator= ( const QGalleryIntersectionFilter &amp; <i>filter</i> )</h3>
 <p>Assigns the value of <i>filter</i> to another intersection filter.</p>
+<hr />
+<h2>Related Non-Members</h2>
+<a name="//apple_ref/cpp/func//operator||"></a>
+<h3 class="fn"><a name="operator-7c-7c"></a>QGalleryIntersectionFilter operator|| ( const QGalleryIntersectionFilter &amp; <i>filter1</i>, const T &amp; <i>filter2</i> )</h3>
+<p>Returns a gallery filter matches the intersection of <i>filter1</i> and <i>filter2</i>.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

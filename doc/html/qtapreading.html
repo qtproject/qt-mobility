@@ -65,7 +65,7 @@
 <p>The QTapReading class represents one reading from the tap sensor.</p>
 <a name="qtapreading-units"></a>
 <h3>QTapReading Units</h3>
-<p>The tap sensor registers tap and double tap events in one of the six directions. There are 3 axes that originate from the phone. They are arranged as follows.</p>
+<p>The tap sensor registers tap events in one of the six directions. There are 3 axes that originate from the phone. They are arranged as follows.</p>
 <pre>             +z
               |
               |      +y
@@ -83,6 +83,7 @@
     /         /  /
     ----------  /
     |_________!/</pre>
+<p>By default it returns double tap events. The <a href="qtapsensor.html#returnDoubleTapEvents-prop">QTapSensor::returnDoubleTapEvents</a> property must be set to false to return individual tap events.</p>
 <hr />
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QTapReading/TapDirection"></a>

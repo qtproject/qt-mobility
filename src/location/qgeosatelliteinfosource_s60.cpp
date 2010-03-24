@@ -45,6 +45,7 @@
 #include "qgeopositioninfosource_s60_p.h"
 #include "qgeosatelliteinfosource_s60_p.h"
 #include "qgeosatelliteinfosource.h"
+#include "qgeosatelliteinfo.h"
 
 #include <QList>
 
@@ -154,6 +155,8 @@ void CQGeoSatelliteInfoSourceS60::ConstructL()
             mRegUpdateAO = temp;
             mRegUpdateAO->setUpdateInterval(0);
             mCurrentModuleId = mList[index].mUid;
+        } else {
+            delete temp;
         }
 
         CleanupStack::Pop(2);
@@ -212,7 +215,8 @@ TInt CQGeoSatelliteInfoSourceS60::getIndexPositionModule(TUint8 aBits) const
 //lesser than timeout
 TInt CQGeoSatelliteInfoSourceS60::getMoreAccurateMethod(TInt aTimeout, TUint8 aBits)
 {
-    TInt index = -1, temp = INT_MAX;
+    TInt index = -1;
+    double temp = -1.0;
 
     TTimeIntervalMicroSeconds microSeconds;
 
@@ -228,7 +232,7 @@ TInt CQGeoSatelliteInfoSourceS60::getMoreAccurateMethod(TInt aTimeout, TUint8 aB
                 && (mList[i].mStatus != TPositionModuleStatus::EDeviceError)
                 && (((aBits >> i) & 1))
                 && (mList[i].mTimeToFirstFix < microSeconds)) {
-            if (mList[i].mHorizontalAccuracy < temp) {
+            if ((temp == -1.0) || (mList[i].mHorizontalAccuracy < temp)) {
                 index = i;
                 temp = mList[i].mHorizontalAccuracy;
             }
@@ -266,7 +270,6 @@ void CQGeoSatelliteInfoSourceS60::updateStatus(TPositionModuleInfo aModInfo, TIn
 
     //time taken for the subsequent fix
     time_to_next_fix = quality.TimeToNextFix();
-
 
     if ((i = checkModule(id)) == -1) {
         //update the properties of the module
@@ -325,6 +328,8 @@ void CQGeoSatelliteInfoSourceS60::updateStatus(TPositionModuleInfo aModInfo, TIn
             if ((ret == KErrNone) && (temp != NULL)) {
                 temp->setUpdateInterval(interval);
 
+                if  (mRegUpdateAO)
+                    delete mRegUpdateAO;
                 mRegUpdateAO = temp;
 
                 //to be uncommented when startUpdates are done
@@ -350,8 +355,8 @@ void CQGeoSatelliteInfoSourceS60::updateStatus(TPositionModuleInfo aModInfo, TIn
 
                 TUint8 bits;
 
-                delete  mRegUpdateAO;
-
+                if (mRegUpdateAO)
+                    delete  mRegUpdateAO;
 
                 bits = mModuleFlags;
 
@@ -395,7 +400,8 @@ void CQGeoSatelliteInfoSourceS60::updateStatus(TPositionModuleInfo aModInfo, TIn
 
             //check if device status of the request update module changed
             if (id == mReqModuleId) {
-                delete mReqUpdateAO;
+                if (mRegUpdateAO)
+                    delete mReqUpdateAO;
                 mReqUpdateAO = NULL;
                 mReqModuleId = TUid::Null();
                 emit requestTimeout();
@@ -421,7 +427,7 @@ void CQGeoSatelliteInfoSourceS60::updateDeviceStatus(void)
         //count on the modules currently supported by the device
         mPositionServer.GetNumModules(modCount);
 
-        for (TInt i = 0; i < modCount; i++) {
+        for (TUint i = 0; i < modCount; i++) {
             //get module information
             mPositionServer.GetModuleInfoByIndex(i, moduleInfo);
 
@@ -465,7 +471,6 @@ void CQGeoSatelliteInfoSourceS60::TPositionSatelliteInfo2QGeoSatelliteInfo(
     QList<QGeoSatelliteInfo> &qListSatInUse)
 {
     TInt satInView = aSatInfo.NumSatellitesInView();
-    TInt satUsed  = aSatInfo.NumSatellitesUsed();
     TSatelliteData satData;
     QGeoSatelliteInfo qInfo;
 
@@ -518,7 +523,7 @@ void CQGeoSatelliteInfoSourceS60::requestUpdate(int aTimeout)
     TInt index = -1;
     TUint8 bits;
 
-    CQMLBackendAO *temp;
+    CQMLBackendAO *temp = NULL;
 
     //requestupdate
     //return if already a request update is pending
@@ -552,7 +557,8 @@ void CQGeoSatelliteInfoSourceS60::requestUpdate(int aTimeout)
 
         if ((ret == KErrNone) && (temp != NULL)) {
             //delete the old reqest update
-            delete mReqUpdateAO;
+            if (mReqUpdateAO)
+                delete mReqUpdateAO;
 
             //set the requestAO to the newly created AO
             mReqUpdateAO = temp;
@@ -573,6 +579,7 @@ void CQGeoSatelliteInfoSourceS60::requestUpdate(int aTimeout)
     //cleanup resources if the invalid requpdate is still stored
     if (mReqUpdateAO) {
         delete mReqUpdateAO;
+        mReqUpdateAO = NULL;
         mReqModuleId = TUid::Null();
     }
 

@@ -1718,48 +1718,48 @@ void tst_QContactManagerFiltering::relationshipFiltering_data()
         QContactManager *manager = managers.at(i);
 
         // HasMember
-        QTest::newRow("RF-1") << manager << static_cast<int>(QContactRelationshipFilter::Second) << QString(QLatin1String(QContactRelationship::HasMember)) << static_cast<unsigned int>(0) << QString() << "a";
-        QTest::newRow("RF-2") << manager << static_cast<int>(QContactRelationshipFilter::First) << QString(QLatin1String(QContactRelationship::HasMember)) << static_cast<unsigned int>(0) << QString() << "b";
-        QTest::newRow("RF-3") << manager << static_cast<int>(QContactRelationshipFilter::Either) << QString(QLatin1String(QContactRelationship::HasMember)) << static_cast<unsigned int>(0) << QString() << "ab";
+        QTest::newRow("RF-1") << manager << static_cast<int>(QContactRelationship::Second) << QString(QLatin1String(QContactRelationship::HasMember)) << static_cast<unsigned int>(0) << QString() << "a";
+        QTest::newRow("RF-2") << manager << static_cast<int>(QContactRelationship::First) << QString(QLatin1String(QContactRelationship::HasMember)) << static_cast<unsigned int>(0) << QString() << "b";
+        QTest::newRow("RF-3") << manager << static_cast<int>(QContactRelationship::Either) << QString(QLatin1String(QContactRelationship::HasMember)) << static_cast<unsigned int>(0) << QString() << "ab";
 
         // match any contact that has an assistant
-        QTest::newRow("RF-4") << manager << static_cast<int>(QContactRelationshipFilter::Second) << QString(QLatin1String(QContactRelationship::HasAssistant)) << static_cast<unsigned int>(0) << QString() << "a";
+        QTest::newRow("RF-4") << manager << static_cast<int>(QContactRelationship::Second) << QString(QLatin1String(QContactRelationship::HasAssistant)) << static_cast<unsigned int>(0) << QString() << "a";
         // match any contact that is an assistant
-        QTest::newRow("RF-5") << manager << static_cast<int>(QContactRelationshipFilter::First) << QString(QLatin1String(QContactRelationship::HasAssistant)) << static_cast<unsigned int>(0) << QString() << "b";
+        QTest::newRow("RF-5") << manager << static_cast<int>(QContactRelationship::First) << QString(QLatin1String(QContactRelationship::HasAssistant)) << static_cast<unsigned int>(0) << QString() << "b";
         // match any contact that has an assistant or is an assistant
-        QTest::newRow("RF-6") << manager << static_cast<int>(QContactRelationshipFilter::Either) << QString(QLatin1String(QContactRelationship::HasAssistant)) << static_cast<unsigned int>(0) << QString() << "ab";
+        QTest::newRow("RF-6") << manager << static_cast<int>(QContactRelationship::Either) << QString(QLatin1String(QContactRelationship::HasAssistant)) << static_cast<unsigned int>(0) << QString() << "ab";
 
         // IsSameAs
-        QTest::newRow("RF-7") << manager << static_cast<int>(QContactRelationshipFilter::Second) << QString(QLatin1String(QContactRelationship::IsSameAs)) << static_cast<unsigned int>(0) << QString() << "a";
-        QTest::newRow("RF-8") << manager << static_cast<int>(QContactRelationshipFilter::First) << QString(QLatin1String(QContactRelationship::IsSameAs)) << static_cast<unsigned int>(0) << QString() << "b";
-        QTest::newRow("RF-9") << manager << static_cast<int>(QContactRelationshipFilter::Either) << QString(QLatin1String(QContactRelationship::IsSameAs)) << static_cast<unsigned int>(0) << QString() << "ab";
+        QTest::newRow("RF-7") << manager << static_cast<int>(QContactRelationship::Second) << QString(QLatin1String(QContactRelationship::IsSameAs)) << static_cast<unsigned int>(0) << QString() << "a";
+        QTest::newRow("RF-8") << manager << static_cast<int>(QContactRelationship::First) << QString(QLatin1String(QContactRelationship::IsSameAs)) << static_cast<unsigned int>(0) << QString() << "b";
+        QTest::newRow("RF-9") << manager << static_cast<int>(QContactRelationship::Either) << QString(QLatin1String(QContactRelationship::IsSameAs)) << static_cast<unsigned int>(0) << QString() << "ab";
 
         // Aggregates
-        QTest::newRow("RF-10") << manager << static_cast<int>(QContactRelationshipFilter::Second) << QString(QLatin1String(QContactRelationship::Aggregates)) << static_cast<unsigned int>(0) << QString() << "a";
-        QTest::newRow("RF-11") << manager << static_cast<int>(QContactRelationshipFilter::First) << QString(QLatin1String(QContactRelationship::Aggregates)) << static_cast<unsigned int>(0) << QString() << "b";
-        QTest::newRow("RF-12") << manager << static_cast<int>(QContactRelationshipFilter::Either) << QString(QLatin1String(QContactRelationship::Aggregates)) << static_cast<unsigned int>(0) << QString() << "ab";
+        QTest::newRow("RF-10") << manager << static_cast<int>(QContactRelationship::Second) << QString(QLatin1String(QContactRelationship::Aggregates)) << static_cast<unsigned int>(0) << QString() << "a";
+        QTest::newRow("RF-11") << manager << static_cast<int>(QContactRelationship::First) << QString(QLatin1String(QContactRelationship::Aggregates)) << static_cast<unsigned int>(0) << QString() << "b";
+        QTest::newRow("RF-12") << manager << static_cast<int>(QContactRelationship::Either) << QString(QLatin1String(QContactRelationship::Aggregates)) << static_cast<unsigned int>(0) << QString() << "ab";
 
         // HasManager
-        QTest::newRow("RF-13") << manager << static_cast<int>(QContactRelationshipFilter::Second) << QString(QLatin1String(QContactRelationship::HasManager)) << static_cast<unsigned int>(0) << QString() << "a";
-        QTest::newRow("RF-14") << manager << static_cast<int>(QContactRelationshipFilter::First) << QString(QLatin1String(QContactRelationship::HasManager)) << static_cast<unsigned int>(0) << QString() << "b";
-        QTest::newRow("RF-15") << manager << static_cast<int>(QContactRelationshipFilter::Either) << QString(QLatin1String(QContactRelationship::HasManager)) << static_cast<unsigned int>(0) << QString() << "ab";
+        QTest::newRow("RF-13") << manager << static_cast<int>(QContactRelationship::Second) << QString(QLatin1String(QContactRelationship::HasManager)) << static_cast<unsigned int>(0) << QString() << "a";
+        QTest::newRow("RF-14") << manager << static_cast<int>(QContactRelationship::First) << QString(QLatin1String(QContactRelationship::HasManager)) << static_cast<unsigned int>(0) << QString() << "b";
+        QTest::newRow("RF-15") << manager << static_cast<int>(QContactRelationship::Either) << QString(QLatin1String(QContactRelationship::HasManager)) << static_cast<unsigned int>(0) << QString() << "ab";
 
         // HasSpouse
-        QTest::newRow("RF-16") << manager << static_cast<int>(QContactRelationshipFilter::Second) << QString(QLatin1String(QContactRelationship::HasSpouse)) << static_cast<unsigned int>(0) << QString() << "a";
-        QTest::newRow("RF-17") << manager << static_cast<int>(QContactRelationshipFilter::First) << QString(QLatin1String(QContactRelationship::HasSpouse)) << static_cast<unsigned int>(0) << QString() << "b";
-        QTest::newRow("RF-18") << manager << static_cast<int>(QContactRelationshipFilter::Either) << QString(QLatin1String(QContactRelationship::HasSpouse)) << static_cast<unsigned int>(0) << QString() << "ab";
+        QTest::newRow("RF-16") << manager << static_cast<int>(QContactRelationship::Second) << QString(QLatin1String(QContactRelationship::HasSpouse)) << static_cast<unsigned int>(0) << QString() << "a";
+        QTest::newRow("RF-17") << manager << static_cast<int>(QContactRelationship::First) << QString(QLatin1String(QContactRelationship::HasSpouse)) << static_cast<unsigned int>(0) << QString() << "b";
+        QTest::newRow("RF-18") << manager << static_cast<int>(QContactRelationship::Either) << QString(QLatin1String(QContactRelationship::HasSpouse)) << static_cast<unsigned int>(0) << QString() << "ab";
 
         // Unknown relationship
-        QTest::newRow("RF-19") << manager << static_cast<int>(QContactRelationshipFilter::Second) << QString(QLatin1String("UnknownRelationship")) << static_cast<unsigned int>(0) << QString() << "";
-        QTest::newRow("RF-20") << manager << static_cast<int>(QContactRelationshipFilter::First) << QString(QLatin1String("UnknownRelationship")) << static_cast<unsigned int>(0) << QString() << "";
-        QTest::newRow("RF-21") << manager << static_cast<int>(QContactRelationshipFilter::Either) << QString(QLatin1String("UnknownRelationship")) << static_cast<unsigned int>(0) << QString() << "";
+        QTest::newRow("RF-19") << manager << static_cast<int>(QContactRelationship::Second) << QString(QLatin1String("UnknownRelationship")) << static_cast<unsigned int>(0) << QString() << "";
+        QTest::newRow("RF-20") << manager << static_cast<int>(QContactRelationship::First) << QString(QLatin1String("UnknownRelationship")) << static_cast<unsigned int>(0) << QString() << "";
+        QTest::newRow("RF-21") << manager << static_cast<int>(QContactRelationship::Either) << QString(QLatin1String("UnknownRelationship")) << static_cast<unsigned int>(0) << QString() << "";
 
         // match any contact that is the related contact in a relationship with contact-A
-        //QTest::newRow("RF-19") << manager << static_cast<int>(QContactRelationshipFilter::Second) << QString() << static_cast<unsigned int>(contactAId.value(manager).localId()) << contactAId.value(manager).managerUri() << "h";
+        //QTest::newRow("RF-19") << manager << static_cast<int>(QContactRelationship::Second) << QString() << static_cast<unsigned int>(contactAId.value(manager).localId()) << contactAId.value(manager).managerUri() << "h";
         // match any contact has contact-A as the related contact
-        //QTest::newRow("RF-20") << manager << static_cast<int>(QContactRelationshipFilter::First) << QString() << static_cast<unsigned int>(contactAId.value(manager).localId()) << contactAId.value(manager).managerUri() << "i";
+        //QTest::newRow("RF-20") << manager << static_cast<int>(QContactRelationship::First) << QString() << static_cast<unsigned int>(contactAId.value(manager).localId()) << contactAId.value(manager).managerUri() << "i";
         // match any contact that has any relationship with contact-A
-        //QTest::newRow("RF-21") << manager << static_cast<int>(QContactRelationshipFilter::Either) << QString() << static_cast<unsigned int>(contactAId.value(manager).localId()) << contactAId.value(manager).managerUri() << "hi";
+        //QTest::newRow("RF-21") << manager << static_cast<int>(QContactRelationship::Either) << QString() << static_cast<unsigned int>(contactAId.value(manager).localId()) << contactAId.value(manager).managerUri() << "hi";
     }
 }
 
@@ -1815,7 +1815,7 @@ void tst_QContactManagerFiltering::relationshipFiltering()
     // save and check error code
     bool succeeded = false;
     if((cm->hasFeature(QContactManager::Relationships)
-        && cm->supportedRelationshipTypes().contains(relationshipType))
+        && cm->isRelationshipTypeSupported(relationshipType))
         || cm->hasFeature(QContactManager::ArbitraryRelationshipTypes)) {
         succeeded = true;
         QVERIFY(cm->saveRelationship(&h2i));
@@ -1831,7 +1831,7 @@ void tst_QContactManagerFiltering::relationshipFiltering()
     relatedContactId.setManagerUri(otherManagerUri);
 
     QContactRelationshipFilter crf;
-    crf.setRelatedContactRole(static_cast<QContactRelationshipFilter::Role>(relatedContactRole));
+    crf.setRelatedContactRole(static_cast<QContactRelationship::Role>(relatedContactRole));
     crf.setRelationshipType(relationshipType);
     crf.setRelatedContactId(relatedContactId);
 
@@ -1861,7 +1861,7 @@ void tst_QContactManagerFiltering::relationshipFiltering()
     if (!cm->hasFeature(QContactManager::Relationships)) {
         QSKIP("Manager does not support relationships; skipping relationship filtering", SkipSingle);
     } else if(relationshipType.isEmpty()
-        || cm->supportedRelationshipTypes().contains(relationshipType)) {
+        || cm->isRelationshipTypeSupported(relationshipType)) {
         QCOMPARE_UNSORTED(output, expected);
     } else {
         QSKIP("Manager does not support relationship type; skipping", SkipSingle);

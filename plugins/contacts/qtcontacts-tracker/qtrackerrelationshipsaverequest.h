@@ -43,12 +43,12 @@
 #define QTRACKERRELATIONSHIPSAVEREQUEST_H_
 
 #include <QObject>
-
-#include <QtTracker/QLive>
 #include <qtrackercontactasyncrequest.h>
-
-#include <qmobilityglobal.h>
 #include <qtcontacts.h>
+#include <QtTracker/QLive>
+
+#include <QtTracker/ontologies/nco.h>
+
 
 QTM_BEGIN_NAMESPACE
 class QContactAbstractRequest;
@@ -71,7 +71,8 @@ private slots:
     void nodesDataReady();
 
 private:
-    SopranoLive::LiveNodes nodes;
+    void mergeContacts(const SopranoLive::Live<SopranoLive::Ontologies::nco::PersonContact>&, const SopranoLive::Live<SopranoLive::Ontologies::nco::PersonContact>&);
+    SopranoLive::LiveNodes m_nodes;
 };
 
 #endif /* QTRACKERCONTACTSAVEREQUEST_H_ */

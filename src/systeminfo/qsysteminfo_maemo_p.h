@@ -64,6 +64,20 @@
 #if !defined(QT_NO_DBUS)
 #include <qhalservice_linux_p.h>
 
+typedef enum
+{
+    NM_DEVICE_STATE_UNKNOWN = 0,
+    NM_DEVICE_STATE_UNMANAGED,
+    NM_DEVICE_STATE_UNAVAILABLE,
+    NM_DEVICE_STATE_DISCONNECTED,
+    NM_DEVICE_STATE_PREPARE,
+    NM_DEVICE_STATE_CONFIG,
+    NM_DEVICE_STATE_NEED_AUTH,
+    NM_DEVICE_STATE_IP_CONFIG,
+    NM_DEVICE_STATE_ACTIVATED,
+    NM_DEVICE_STATE_FAILED
+} NMDeviceState;
+
 struct ProfileDataValue {
     QString key;
     QString val;
@@ -127,7 +141,42 @@ public:
     QString macAddress(QSystemNetworkInfo::NetworkMode mode);
 
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
+    QSystemNetworkInfo::NetworkMode currentMode();
 
+protected:
+    void setupNetworkInfo();
+
+private Q_SLOTS:
+    void cellNetworkSignalStrengthChanged(uchar,uchar);
+    void icdStatusChanged(QString,QString,QString,QString);
+    void networkModeChanged(int);
+    void operatorNameChanged(uchar,QString,QString,uint,uint);
+    void registrationStatusChanged(uchar,ushort,uint,uint,uint,uchar,uchar);
+    void usbCableAction();
+
+private:
+    // The index of wanted argument in the QDBusMessage which is received as a
+    // reply to the sent get_registration_status message via interface Phone.Net
+
+    enum {                // In the received QDBusMessage..
+        STATUS_INDEX = 0, // the original type of status argument is byte
+        LAC_INDEX,        // the original type of lac argument is uint16
+        CELLID_INDEX,     // the original type of cellId argument is uint32
+        MNC_INDEX,        // the original type of mnc argument is uint32
+        MCC_INDEX         // the original type of mcc argument is uint32
+    };
+
+    int cellSignalStrength;
+    int currentCellId;
+    int currentCellNetworkStatus;
+    int currentEthernetSignalStrength;
+    int currentLac;
+    QString currentEthernetState;
+    QString currentMCC;
+    QString currentMNC;
+    QString currentOperatorName;
+    int currentWlanSignalStrength;
+    int radioAccessTechnology;
 };
 
 class QSystemDisplayInfoPrivate : public QSystemDisplayInfoLinuxCommonPrivate

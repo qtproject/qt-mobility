@@ -25,10 +25,12 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediacontent.html#QMediaContent">QMediaContent</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediacontent.html#QMediaContent-2">QMediaContent</a></b> ( const QUrl &amp; <i>url</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediacontent.html#QMediaContent-3">QMediaContent</a></b> ( const QMediaResource &amp; <i>resource</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediacontent.html#QMediaContent-4">QMediaContent</a></b> ( const QMediaResourceList &amp; <i>resources</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediacontent.html#QMediaContent-5">QMediaContent</a></b> ( const QMediaContent &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediacontent.html#QMediaContent-3">QMediaContent</a></b> ( const QNetworkRequest &amp; <i>request</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediacontent.html#QMediaContent-4">QMediaContent</a></b> ( const QMediaResource &amp; <i>resource</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediacontent.html#QMediaContent-5">QMediaContent</a></b> ( const QMediaResourceList &amp; <i>resources</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediacontent.html#QMediaContent-6">QMediaContent</a></b> ( const QMediaContent &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediacontent.html#dtor.QMediaContent">~QMediaContent</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QNetworkRequest </td><td class="memItemRight" valign="bottom"><b><a href="qmediacontent.html#canonicalRequest">canonicalRequest</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMediaResource </td><td class="memItemRight" valign="bottom"><b><a href="qmediacontent.html#canonicalResource">canonicalResource</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QUrl </td><td class="memItemRight" valign="bottom"><b><a href="qmediacontent.html#canonicalUrl">canonicalUrl</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediacontent.html#isNull">isNull</a></b> () const</td></tr>
@@ -50,15 +52,21 @@
 <p>Constructs a null <a href="qmediacontent.html">QMediaContent</a>.</p>
 <h3 class="fn"><a name="QMediaContent-2"></a>QMediaContent::QMediaContent ( const <a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a> &amp; <i>url</i> )</h3>
 <p>Constructs a media content with <i>url</i> providing a reference to the content.</p>
-<h3 class="fn"><a name="QMediaContent-3"></a>QMediaContent::QMediaContent ( const <a href="qmediaresource.html">QMediaResource</a> &amp; <i>resource</i> )</h3>
+<h3 class="fn"><a name="QMediaContent-3"></a>QMediaContent::QMediaContent ( const <a href="http://qt.nokia.com/doc/4.6/qnetworkrequest.html">QNetworkRequest</a> &amp; <i>request</i> )</h3>
+<p>Constructs a media content with <i>request</i> providing a reference to the content.</p>
+<p>This constructor can be used to reference media content via network protocols such as HTTP. This may include additional information required to obtain the resource, such as Cookies or HTTP headers.</p>
+<h3 class="fn"><a name="QMediaContent-4"></a>QMediaContent::QMediaContent ( const <a href="qmediaresource.html">QMediaResource</a> &amp; <i>resource</i> )</h3>
 <p>Constructs a media content with <i>resource</i> providing a reference to the content.</p>
-<h3 class="fn"><a name="QMediaContent-4"></a>QMediaContent::QMediaContent ( const QMediaResourceList &amp; <i>resources</i> )</h3>
+<h3 class="fn"><a name="QMediaContent-5"></a>QMediaContent::QMediaContent ( const QMediaResourceList &amp; <i>resources</i> )</h3>
 <p>Constructs a media content with <i>resources</i> providing a reference to the content.</p>
-<h3 class="fn"><a name="QMediaContent-5"></a>QMediaContent::QMediaContent ( const QMediaContent &amp; <i>other</i> )</h3>
+<h3 class="fn"><a name="QMediaContent-6"></a>QMediaContent::QMediaContent ( const QMediaContent &amp; <i>other</i> )</h3>
 <p>Constructs a copy of the media content <i>other</i>.</p>
 <a name="//apple_ref/cpp/instm/QMediaContent/~QMediaContent"></a>
 <h3 class="fn"><a name="dtor.QMediaContent"></a>QMediaContent::~QMediaContent ()</h3>
 <p>Destroys the media content object.</p>
+<a name="//apple_ref/cpp/instm/QMediaContent/canonicalRequest"></a>
+<h3 class="fn"><a name="canonicalRequest"></a><a href="http://qt.nokia.com/doc/4.6/qnetworkrequest.html">QNetworkRequest</a> QMediaContent::canonicalRequest () const</h3>
+<p>Returns a <a href="http://qt.nokia.com/doc/4.6/qnetworkrequest.html">QNetworkRequest</a> that represents that canonical resource for this media content.</p>
 <a name="//apple_ref/cpp/instm/QMediaContent/canonicalResource"></a>
 <h3 class="fn"><a name="canonicalResource"></a><a href="qmediaresource.html">QMediaResource</a> QMediaContent::canonicalResource () const</h3>
 <p>Returns a <a href="qmediaresource.html">QMediaResource</a> that represents that canonical resource for this media content.</p>

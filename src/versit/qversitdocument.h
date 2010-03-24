@@ -47,6 +47,7 @@
 #include <QList>
 #include <QSharedDataPointer>
 #include <QVariant>
+#include <QDebug>
 
 QT_BEGIN_NAMESPACE
 class QTextCodec;
@@ -60,20 +61,20 @@ class QVersitProperty;
 class Q_VERSIT_EXPORT QVersitDocument
 {
 public:
-    QVersitDocument();
-    QVersitDocument(const QVersitDocument& other);
-    ~QVersitDocument();
-
-    QVersitDocument& operator=(const QVersitDocument& other);
-    bool operator==(const QVersitDocument& other) const;
-    bool operator!=(const QVersitDocument& other) const;
-
-    /*! Versit document type */
     enum VersitType {
         InvalidType,
         VCard21Type,   // vCard version 2.1
         VCard30Type    // vCard version 3.0 (RFC 2426)
     };
+
+    QVersitDocument();
+    QVersitDocument(const QVersitDocument& other);
+    QVersitDocument(VersitType type);
+    ~QVersitDocument();
+
+    QVersitDocument& operator=(const QVersitDocument& other);
+    bool operator==(const QVersitDocument& other) const;
+    bool operator!=(const QVersitDocument& other) const;
 
     // metadata about the versit document itself.
     void setType(VersitType type);
@@ -91,6 +92,11 @@ private:
 
     QSharedDataPointer<QVersitDocumentPrivate> d;
 };
+
+Q_VERSIT_EXPORT uint qHash(const QVersitDocument& key);
+#ifndef QT_NO_DEBUG_STREAM
+Q_VERSIT_EXPORT QDebug operator<<(QDebug dbg, const QVersitDocument& property);
+#endif
 
 QTM_END_NAMESPACE
 

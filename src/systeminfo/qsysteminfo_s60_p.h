@@ -117,6 +117,7 @@ public:
     QString macAddress(QSystemNetworkInfo::NetworkMode mode);
 
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
+    QSystemNetworkInfo::NetworkMode currentMode();
 
 Q_SIGNALS:
     void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
@@ -177,7 +178,7 @@ private:
 class DeviceInfo;
 QTM_END_NAMESPACE
 
-#include <mproengprofileactivationobserver.h>
+#include <MProEngProfileActivationObserver.h>
 #include <cenrepnotifyhandler.h>
 
 class MProEngEngine;

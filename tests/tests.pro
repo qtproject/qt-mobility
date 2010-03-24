@@ -15,6 +15,6 @@ contains(mobility_modules,gallery): SUBDIRS += documentlist
 
 symbian {
     contains(mobility_modules,messaging): SUBDIRS += messagingex
-    contains(mobility_modules,multimedia): SUBDIRS += cameracapture_s60 playerex_s60
+    contains(mobility_modules,multimedia): SUBDIRS += playerex_s60
     contains(mobility_modules,publishsubscribe): SUBDIRS += publishsubscribeex
 }

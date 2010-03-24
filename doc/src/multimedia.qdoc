@@ -56,9 +56,6 @@
 collection of media content.
 \ingroup mobility
 
-\warning The camera support classes are in a technology preview state. They
-are in development and subject to change.
-
 Multimedia provides a set of APIs that allow the developer to play, record
 and manage a collection of media content. It is dependent on the
 QtMultimedia API. This API is planned to replace Phonon at a later stage.
@@ -112,9 +109,6 @@ recording application, excluding the supporting user interface code.
 
 
 \section2 Video
-
-Support for the camera is not included in this release but will be part of
-a future update.
 
 For playing and manipulating video sources the API enables us to easily
 implement a player application. If we examine the \l{player}{Player}

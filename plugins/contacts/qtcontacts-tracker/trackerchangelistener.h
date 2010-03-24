@@ -44,44 +44,15 @@
 
 #include <QObject>
 #include <QHash>
+#include <qcontact.h>
 #include <QSharedPointer>
-
 #include <QtTracker/QLive>
 #include <QtTracker/Tracker>
-
-#include <qmobilityglobal.h>
-#include <qcontact.h>
+#include <qcontactmanagerengine.h>
 
 QTM_USE_NAMESPACE
 
 QContactLocalId url2UniqueId(const QString &contactUrl);
-
-/*!
- * Helper class to handle multiple async queries at the same time inside TrackerChangeListener.
- * This class is designed to be generic, and initially used to get all contacts that correspond
- * to list of IMAccounts. When we get signal that multiple IMAccounts have changed, we read
- * all contacts and emit signal contacts changed for them.
- *
- * Usage: construct AsyncQuery with RDFSelect query. When signal queryReady(AsyncQuery *self)
- * is received, read data from rows in self->nodes (self-nodes()->rowCount() ...)
- *
- * Intention: The class has been created to wrap LiveNodes::modelUpdated signal,
- * and to know which query it corresponds to (not possible to fetch it from sender()).
- * \sa queryReady(AsyncQuery *)
- */
-class AsyncQuery: public QObject
-{
-    Q_OBJECT
-public:
-    AsyncQuery(SopranoLive::RDFSelect selectQuery);
-    SopranoLive::LiveNodes nodes;
-
-private slots:
-    void queryReady();
-signals:
-    // emitted when modelUpdated() from LiveNodes related to selectQuery is received
-    void queryReady(AsyncQuery *self);
-};
 
 /*!
  * \class TrackerChangeListener
@@ -94,7 +65,7 @@ class TrackerChangeListener : public QObject
 {
     Q_OBJECT
 public:
-    TrackerChangeListener(QObject *parent=0);
+    explicit TrackerChangeListener(QContactManagerEngine *engine, QObject *parent);
     virtual ~TrackerChangeListener();
 
 signals:
@@ -104,16 +75,16 @@ signals:
     void contactsRemoved(const QList<QContactLocalId>& contactIds);
 
 private slots:
-    void subjectsAdded(const QStringList &subjects);
-    void subjectsRemoved(const QStringList &subjects);
-    void subjectsChanged(const QStringList &subjects);
+    void contactsAdded(const QStringList &subjects);
+    void contactsRemoved(const QStringList &subjects);
+    void contactsChanged(const QStringList &subjects);
+    void imAccountsChanged(const QStringList &subjects);
+    void imAddressesChanged(const QStringList &subjects);
 private:
     SopranoLive::BackEnds::Tracker::ClassUpdateSignaler *signaler_contact;
     SopranoLive::BackEnds::Tracker::ClassUpdateSignaler *signaler_imaccount;
-
-    void connectSignals(SopranoLive::BackEnds::Tracker::ClassUpdateSignaler *signaler);
-
-    QHash<AsyncQuery*, QSharedPointer<AsyncQuery> > pendingQueries;
+    SopranoLive::BackEnds::Tracker::ClassUpdateSignaler *signaler_imaddress;
+    QContactManagerEngine *engine;
 };
 
 

@@ -93,7 +93,7 @@
 
     QString simpleAddress(const QMessageAddress &amp;address)
     {
-        return simpleAddress(address.recipient());
+        return simpleAddress(address.addressee());
     }
 
     QString contactDisplayName(const QMessageAddress &amp;address)
@@ -122,7 +122,7 @@
         }
 
         <span class="comment">// We couldn't match anything, so return the original address</span>
-        return address.recipient();
+        return address.addressee();
     }
 
     }

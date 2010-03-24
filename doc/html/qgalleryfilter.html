@@ -24,7 +24,7 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#RangeFlag-enum">RangeFlag</a></b> { EqualsMinimum, GreaterThanMinimum, GreaterThanEqualsMinimum, LessThanMaximum, ..., ExclusiveRange }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#RangeFlag-enum">RangeFlags</a></b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#Type-enum">Type</a></b> { Invalid, Document, DocumentUrl, Container, ..., MetaDataRange }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#Type-enum">Type</a></b> { Invalid, Item, ItemUrl, Container, ..., MetaDataRange }</td></tr>
 </table>
 <hr />
 <a name="public-functions"></a>
@@ -32,8 +32,8 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#QGalleryFilter">QGalleryFilter</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#QGalleryFilter-2">QGalleryFilter</a></b> ( const QGalleryFilter &amp; <i>filter</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#QGalleryFilter-3">QGalleryFilter</a></b> ( const QGalleryDocumentFilter &amp; <i>filter</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#QGalleryFilter-4">QGalleryFilter</a></b> ( const QGalleryDocumentUrlFilter &amp; <i>filter</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#QGalleryFilter-3">QGalleryFilter</a></b> ( const QGalleryItemFilter &amp; <i>filter</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#QGalleryFilter-4">QGalleryFilter</a></b> ( const QGalleryItemUrlFilter &amp; <i>filter</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#QGalleryFilter-5">QGalleryFilter</a></b> ( const QGalleryContainerFilter &amp; <i>filter</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#QGalleryFilter-6">QGalleryFilter</a></b> ( const QGalleryContainerUrlFilter &amp; <i>filter</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#QGalleryFilter-7">QGalleryFilter</a></b> ( const QGalleryIntersectionFilter &amp; <i>filter</i> )</td></tr>
@@ -43,9 +43,9 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#dtor.QGalleryFilter">~QGalleryFilter</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QGalleryContainerFilter </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#toContainerFilter">toContainerFilter</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QGalleryContainerUrlFilter </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#toContainerUrlFilter">toContainerUrlFilter</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QGalleryDocumentFilter </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#toDocumentFilter">toDocumentFilter</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QGalleryDocumentUrlFilter </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#toDocumentUrlFilter">toDocumentUrlFilter</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QGalleryIntersectionFilter </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#toIntersectionFilter">toIntersectionFilter</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGalleryItemFilter </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#toItemFilter">toItemFilter</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGalleryItemUrlFilter </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#toItemUrlFilter">toItemUrlFilter</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QGalleryMetaDataFilter </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#toMetaDataFilter">toMetaDataFilter</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QGalleryMetaDataRangeFilter </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#toMetaDataRangeFilter">toMetaDataRangeFilter</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QGalleryUnionFilter </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryfilter.html#toUnionFilter">toUnionFilter</a></b> () const</td></tr>
@@ -84,8 +84,8 @@
 <p>The RangeFlags type is a typedef for <a href="qflags.html">QFlags</a>&lt;RangeFlag&gt;. It stores an OR combination of RangeFlag values.</p>
 <a name="//apple_ref/cpp/tag/QGalleryFilter/Type"></a>
 <a name="//apple_ref/cpp/econst/QGalleryFilter/Invalid"></a>
-<a name="//apple_ref/cpp/econst/QGalleryFilter/Document"></a>
-<a name="//apple_ref/cpp/econst/QGalleryFilter/DocumentUrl"></a>
+<a name="//apple_ref/cpp/econst/QGalleryFilter/Item"></a>
+<a name="//apple_ref/cpp/econst/QGalleryFilter/ItemUrl"></a>
 <a name="//apple_ref/cpp/econst/QGalleryFilter/Container"></a>
 <a name="//apple_ref/cpp/econst/QGalleryFilter/ContainerUrl"></a>
 <a name="//apple_ref/cpp/econst/QGalleryFilter/Intersection"></a>
@@ -97,8 +97,8 @@
 <p><table  class="valuelist" border="1" cellpadding="2" cellspacing="1" width="40%">
 <tr><th width="60%">Constant</th><th width="40%">Value</th></tr>
 <tr><td valign="top"><tt>QGalleryFilter::Invalid</tt></td><td align="center" valign="top"><tt>0</tt></td></tr>
-<tr><td valign="top"><tt>QGalleryFilter::Document</tt></td><td align="center" valign="top"><tt>1</tt></td></tr>
-<tr><td valign="top"><tt>QGalleryFilter::DocumentUrl</tt></td><td align="center" valign="top"><tt>2</tt></td></tr>
+<tr><td valign="top"><tt>QGalleryFilter::Item</tt></td><td align="center" valign="top"><tt>1</tt></td></tr>
+<tr><td valign="top"><tt>QGalleryFilter::ItemUrl</tt></td><td align="center" valign="top"><tt>2</tt></td></tr>
 <tr><td valign="top"><tt>QGalleryFilter::Container</tt></td><td align="center" valign="top"><tt>3</tt></td></tr>
 <tr><td valign="top"><tt>QGalleryFilter::ContainerUrl</tt></td><td align="center" valign="top"><tt>4</tt></td></tr>
 <tr><td valign="top"><tt>QGalleryFilter::Intersection</tt></td><td align="center" valign="top"><tt>5</tt></td></tr>
@@ -113,10 +113,10 @@
 <p>Constructs a gallery filter of type <a href="qgalleryfilter.html#Type-enum">Invalid</a>.</p>
 <h3 class="fn"><a name="QGalleryFilter-2"></a>QGalleryFilter::QGalleryFilter ( const QGalleryFilter &amp; <i>filter</i> )</h3>
 <p>Constructs a copy of a gallery <i>filter</i>.</p>
-<h3 class="fn"><a name="QGalleryFilter-3"></a>QGalleryFilter::QGalleryFilter ( const <a href="qgallerydocumentfilter.html">QGalleryDocumentFilter</a> &amp; <i>filter</i> )</h3>
-<p>Constructs a copy of a gallery document <i>filter</i>.</p>
-<h3 class="fn"><a name="QGalleryFilter-4"></a>QGalleryFilter::QGalleryFilter ( const <a href="qgallerydocumenturlfilter.html">QGalleryDocumentUrlFilter</a> &amp; <i>filter</i> )</h3>
-<p>Constructs a copy of a gallery document URL <i>filter</i>.</p>
+<h3 class="fn"><a name="QGalleryFilter-3"></a>QGalleryFilter::QGalleryFilter ( const <a href="qgalleryitemfilter.html">QGalleryItemFilter</a> &amp; <i>filter</i> )</h3>
+<p>Constructs a copy of a gallery item <i>filter</i>.</p>
+<h3 class="fn"><a name="QGalleryFilter-4"></a>QGalleryFilter::QGalleryFilter ( const <a href="qgalleryitemurlfilter.html">QGalleryItemUrlFilter</a> &amp; <i>filter</i> )</h3>
+<p>Constructs a copy of a gallery item URL <i>filter</i>.</p>
 <h3 class="fn"><a name="QGalleryFilter-5"></a>QGalleryFilter::QGalleryFilter ( const <a href="qgallerycontainerfilter.html">QGalleryContainerFilter</a> &amp; <i>filter</i> )</h3>
 <p>Constructs a copy of a gallery container <i>filter</i>.</p>
 <h3 class="fn"><a name="QGalleryFilter-6"></a>QGalleryFilter::QGalleryFilter ( const <a href="qgallerycontainerurlfilter.html">QGalleryContainerUrlFilter</a> &amp; <i>filter</i> )</h3>
@@ -140,18 +140,18 @@
 <h3 class="fn"><a name="toContainerUrlFilter"></a><a href="qgallerycontainerurlfilter.html">QGalleryContainerUrlFilter</a> QGalleryFilter::toContainerUrlFilter () const</h3>
 <p>Casts a filter to a container URL filter. The filter must be of type <a href="qgalleryfilter.html#Type-enum">ContainerUrl</a> or this will return an Invalid filter.</p>
 <p>Returns a <a href="qgallerycontainerurlfilter.html">QGalleryContainerUrlFilter</a>.</p>
-<a name="//apple_ref/cpp/instm/QGalleryFilter/toDocumentFilter"></a>
-<h3 class="fn"><a name="toDocumentFilter"></a><a href="qgallerydocumentfilter.html">QGalleryDocumentFilter</a> QGalleryFilter::toDocumentFilter () const</h3>
-<p>Casts a filter to a document filter. The filter must be of type Document or this will return an Invalid filter.</p>
-<p>Returns a <a href="qgallerydocumentfilter.html">QGalleryDocumentFilter</a>.</p>
-<a name="//apple_ref/cpp/instm/QGalleryFilter/toDocumentUrlFilter"></a>
-<h3 class="fn"><a name="toDocumentUrlFilter"></a><a href="qgallerydocumenturlfilter.html">QGalleryDocumentUrlFilter</a> QGalleryFilter::toDocumentUrlFilter () const</h3>
-<p>Casts a filter to a document URL filter. The filter must be of type <a href="qgalleryfilter.html#Type-enum">DocumentUrl</a> or this will return an Invalid filter.</p>
-<p>Returns a <a href="qgallerydocumenturlfilter.html">QGalleryDocumentUrlFilter</a>.</p>
 <a name="//apple_ref/cpp/instm/QGalleryFilter/toIntersectionFilter"></a>
 <h3 class="fn"><a name="toIntersectionFilter"></a><a href="qgalleryintersectionfilter.html">QGalleryIntersectionFilter</a> QGalleryFilter::toIntersectionFilter () const</h3>
 <p>Casts a filter to an intersection filter. The filter must be of type Intersection or this will return an Invalid filter.</p>
 <p>Returns a <a href="qgalleryintersectionfilter.html">QGalleryIntersectionFilter</a>.</p>
+<a name="//apple_ref/cpp/instm/QGalleryFilter/toItemFilter"></a>
+<h3 class="fn"><a name="toItemFilter"></a><a href="qgalleryitemfilter.html">QGalleryItemFilter</a> QGalleryFilter::toItemFilter () const</h3>
+<p>Casts a filter to a item filter. The filter must be of type Item or this will return an Invalid filter.</p>
+<p>Returns a <a href="qgalleryitemfilter.html">QGalleryItemFilter</a>.</p>
+<a name="//apple_ref/cpp/instm/QGalleryFilter/toItemUrlFilter"></a>
+<h3 class="fn"><a name="toItemUrlFilter"></a><a href="qgalleryitemurlfilter.html">QGalleryItemUrlFilter</a> QGalleryFilter::toItemUrlFilter () const</h3>
+<p>Casts a filter to a item URL filter. The filter must be of type <a href="qgalleryfilter.html#Type-enum">ItemUrl</a> or this will return an Invalid filter.</p>
+<p>Returns a <a href="qgalleryitemurlfilter.html">QGalleryItemUrlFilter</a>.</p>
 <a name="//apple_ref/cpp/instm/QGalleryFilter/toMetaDataFilter"></a>
 <h3 class="fn"><a name="toMetaDataFilter"></a><a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> QGalleryFilter::toMetaDataFilter () const</h3>
 <p>Casts a filter to a meta-data filter. The filter must be of type <a href="qgalleryfilter.html#Type-enum">MetaData</a> or this will return an Invalid filter.</p>

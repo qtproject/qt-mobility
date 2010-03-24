@@ -54,7 +54,7 @@ QTM_BEGIN_NAMESPACE
 QNetworkSessionPrivate::QNetworkSessionPrivate()
     : CActive(CActive::EPriorityStandard), state(QNetworkSession::Invalid),
       isOpen(false), ipConnectionNotifier(0), iError(QNetworkSession::UnknownSessionError),
-      iALREnabled(0)
+      iALREnabled(0), iConnectInBackground(false)
 {
     CActiveScheduler::Add(this);
     
@@ -202,13 +202,24 @@ QNetworkInterface QNetworkSessionPrivate::currentInterface() const
     return activeInterface;
 }
 
-QVariant QNetworkSessionPrivate::sessionProperty(const QString& /*key*/) const
+QVariant QNetworkSessionPrivate::sessionProperty(const QString& key) const
 {
+    if (key == "ConnectInBackground") {
+        return QVariant(iConnectInBackground);
+    }
     return QVariant();
 }
 
-void QNetworkSessionPrivate::setSessionProperty(const QString& /*key*/, const QVariant& /*value*/)
+void QNetworkSessionPrivate::setSessionProperty(const QString& key, const QVariant& value)
 {
+    // Valid value means adding property, invalid means removing it.
+    if (key == "ConnectInBackground") {
+        if (value.isValid()) {
+            iConnectInBackground = value.toBool();
+        } else {
+            iConnectInBackground = EFalse;
+        }
+    }
 }
 
 QString QNetworkSessionPrivate::errorString() const
@@ -244,13 +255,22 @@ void QNetworkSessionPrivate::open()
     // => RConnection::ProgressNotification will be used for IAP/SNAP monitoring
     iConnectionMonitor.CancelNotifications();
 
-    // Configuration must be at least in Discovered - state for connecting purposes.
-    if ((publicConfig.state() & QNetworkConfiguration::Discovered) !=
-                QNetworkConfiguration::Discovered) {
+    // Configuration may have been invalidated after session creation by platform
+    // (e.g. configuration has been deleted).
+    if (!publicConfig.isValid()) {
         newState(QNetworkSession::Invalid);
         iError = QNetworkSession::InvalidConfigurationError;
         emit q->error(iError);
         syncStateWithInterface();
+        return;
+    }
+    // If opening a (un)defined configuration, session emits error and enters
+    // NotAvailable -state.
+    if (publicConfig.state() == QNetworkConfiguration::Undefined ||
+        publicConfig.state() == QNetworkConfiguration::Defined) {
+        newState(QNetworkSession::NotAvailable);
+        iError = QNetworkSession::InvalidConfigurationError;
+        emit q->error(iError);
         return;
     }
     
@@ -320,9 +340,21 @@ void QNetworkSessionPrivate::open()
             }
         }
         if (!connected) {
+#ifdef OCC_FUNCTIONALITY_AVAILABLE
+            // With One Click Connectivity (Symbian^3 onwards) it is possible
+            // to connect silently, without any popups.
+            TConnPrefList pref;
+            TExtendedConnPref prefs;
+            prefs.SetIapId(publicConfig.d.data()->numericId);
+            if (iConnectInBackground) {
+                prefs.SetNoteBehaviour( TExtendedConnPref::ENoteBehaviourConnSilent );
+            }
+            pref.AppendL(&prefs);
+#else
             TCommDbConnPref pref;
             pref.SetDialogPreference(ECommDbDialogPrefDoNotPrompt);
             pref.SetIapId(publicConfig.d.data()->numericId);
+#endif
             iConnection.Start(pref, iStatus);
             if (!IsActive()) {
                 SetActive();
@@ -330,7 +362,17 @@ void QNetworkSessionPrivate::open()
             newState(QNetworkSession::Connecting);
         }
     } else if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork) {
+#ifdef OCC_FUNCTIONALITY_AVAILABLE
+        TConnPrefList snapPref;
+        TExtendedConnPref prefs;
+        prefs.SetSnapId(publicConfig.d.data()->numericId);
+        if (iConnectInBackground) {
+            prefs.SetNoteBehaviour( TExtendedConnPref::ENoteBehaviourConnSilent );
+        }
+        snapPref.AppendL(&prefs);
+#else
         TConnSnapPref snapPref(publicConfig.d.data()->numericId);
+#endif
         iConnection.Start(snapPref, iStatus);
         if (!IsActive()) {
             SetActive();
@@ -432,15 +474,44 @@ void QNetworkSessionPrivate::close(bool allowSignals)
 
 void QNetworkSessionPrivate::stop()
 {
-    if (!isOpen) {
-        return;
+    if (!isOpen &&
+        publicConfig.isValid() &&
+        publicConfig.type() == QNetworkConfiguration::InternetAccessPoint) {
+        // If the publicConfig is type of IAP, enumerate through connections at
+        // connection monitor. If publicConfig is active in that list, stop it.
+        // Otherwise there is nothing to stop. Note: because this QNetworkSession is not open,
+        // activeConfig is not usable.
+        TUint count;
+        TRequestStatus status;
+        iConnectionMonitor.GetConnectionCount(count, status);
+        User::WaitForRequest(status);
+        if (status.Int() != KErrNone) {
+            return;
+        }
+        TUint numSubConnections; // Not used but needed by GetConnectionInfo i/f
+        TUint connectionId;
+        for (TInt i = 1; i <= count; ++i) {
+            // Get (connection monitor's assigned) connection ID
+            TInt ret = iConnectionMonitor.GetConnectionInfo(i, connectionId, numSubConnections);            
+            if (ret == KErrNone) {
+                // See if connection Id matches with our Id. If so, stop() it.
+                if (publicConfig.d.data()->connectionId == connectionId) {
+                    ret = iConnectionMonitor.SetBoolAttribute(connectionId,
+                                                              0, // subConnectionId don't care
+                                                              KConnectionStop,
+                                                              ETrue);
+                }
+            }
+        }
+    } else if (isOpen) {
+        // Since we are open, use RConnection to stop the interface
+        isOpen = false;
+        newState(QNetworkSession::Closing);
+        iConnection.Stop(RConnection::EStopAuthoritative);
+        isOpen = true;
+        close(false);
+        emit q->closed();
     }
-    isOpen = false;
-    newState(QNetworkSession::Closing);
-    iConnection.Stop(RConnection::EStopAuthoritative);
-    isOpen = true;
-    close(false);
-    emit q->closed();
 }
 
 void QNetworkSessionPrivate::migrate()
@@ -748,7 +819,7 @@ void QNetworkSessionPrivate::RunL()
     TInt statusCode = iStatus.Int();
 
     switch (statusCode) {
-        case KErrNone: // Connection created succesfully
+        case KErrNone: // Connection created successfully
             {
             TInt error = KErrNone;
             QNetworkConfiguration newActiveConfig = activeConfiguration();

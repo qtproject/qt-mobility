@@ -45,8 +45,13 @@
 #include "s60mediaplayersession.h"
 #include <videoplayer.h>
 #include <QtGui/qwidget.h>
+#include <QVideoWidget>
 
-class S60VideoPlayerSession : public S60MediaPlayerSession, public MVideoPlayerUtilityObserver
+class QTimer;
+
+class S60VideoPlayerSession : public S60MediaPlayerSession, 
+                              public MVideoPlayerUtilityObserver, 
+                              public MVideoLoadingObserver
 {
     Q_OBJECT
 
@@ -59,6 +64,10 @@ public:
     bool isAudioAvailable() const;
     void setVideoRenderer(QObject *renderer);
     
+    //From MVideoLoadingObserver
+    void MvloLoadingStarted();
+    void MvloLoadingComplete();
+    
 protected:
     //From S60MediaPlayerSession
     void doLoadL(const TDesC &path);
@@ -70,14 +79,20 @@ protected:
     qint64 doGetPositionL() const;
     void doSetPositionL(qint64 microSeconds);
     void updateMetaDataEntriesL();
-    int doGetMediaLoadingProgressL() const;
-    int doGetDurationL() const;
+    int doGetBufferStatusL() const;
+    qint64 doGetDurationL() const;
     
 private slots: 
     void resetVideoDisplay();
+    void suspendDirectScreenAccess();
+    void resumeDirectScreenAccess();
     
 private: 
     bool resetNativeHandles();
+    QPair<qreal, qreal> S60VideoPlayerSession::scaleFactor();
+    void startDirectScreenAccess();
+    bool stopDirectScreenAccess();
+    
     
     // From MVideoPlayerUtilityObserver
     void MvpuoOpenComplete(TInt aError);
@@ -89,17 +104,19 @@ private:
 private:
     // Qwn
     CVideoPlayerUtility *m_player;
-    TRect m_clipRect;
-    TRect m_windowRect;
+    TRect m_rect;
     QVideoOutputControl::Output m_output;
     WId m_windowId;
-
+    bool m_dsaActive;
+    bool m_dsaStopped;
     
     //Reference
-    RWsSession *m_wsSession;
-    CWsScreenDevice *m_screenDevice;
+    RWsSession &m_wsSession;
+    CWsScreenDevice &m_screenDevice;
     RWindowBase *m_window;
     QMediaService &m_service;
+    Qt::AspectRatioMode m_aspectRatioMode;
+    QSize m_originalSize;
 };
 
 #endif

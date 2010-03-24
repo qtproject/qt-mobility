@@ -20,22 +20,16 @@
 <li><a href="qcontactrelationshipfilter-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
-<a name="public-types"></a>
-<h2>Public Types</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationshipfilter.html#Role-enum">Role</a></b> { First, Second, Either }</td></tr>
-</table>
-<hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationshipfilter.html#QContactRelationshipFilter">QContactRelationshipFilter</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationshipfilter.html#QContactRelationshipFilter-2">QContactRelationshipFilter</a></b> ( const QContactFilter &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QContactId </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationshipfilter.html#relatedContactId">relatedContactId</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QContactRelationshipFilter::Role </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationshipfilter.html#relatedContactRole">relatedContactRole</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QContactRelationship::Role </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationshipfilter.html#relatedContactRole">relatedContactRole</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationshipfilter.html#relationshipType">relationshipType</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationshipfilter.html#setRelatedContactId">setRelatedContactId</a></b> ( const QContactId &amp; <i>relatedContactId</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationshipfilter.html#setRelatedContactRole">setRelatedContactRole</a></b> ( QContactRelationshipFilter::Role <i>relatedContactRole</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationshipfilter.html#setRelatedContactRole">setRelatedContactRole</a></b> ( QContactRelationship::Role <i>relatedContactRole</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationshipfilter.html#setRelationshipType">setRelationshipType</a></b> ( const QString &amp; <i>relationshipType</i> )</td></tr>
 </table>
 <ul>
@@ -57,20 +51,6 @@
     whichGroupsFilter.setRelatedContactId(particularContact.id());                <span class="comment">// with the particular contact</span>
     whichGroupsFilter.setRelatedContactRole(QContactRelationshipFilter::Second);  <span class="comment">// where the particular contact is the second participant</span></pre>
 <hr />
-<h2>Member Type Documentation</h2>
-<a name="//apple_ref/cpp/tag/QContactRelationshipFilter/Role"></a>
-<a name="//apple_ref/cpp/econst/QContactRelationshipFilter/First"></a>
-<a name="//apple_ref/cpp/econst/QContactRelationshipFilter/Second"></a>
-<a name="//apple_ref/cpp/econst/QContactRelationshipFilter/Either"></a>
-<h3 class="fn"><a name="Role-enum"></a>enum QContactRelationshipFilter::Role</h3>
-<p>Describes the roles that a contact may take in a relationship</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QContactRelationshipFilter::First</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The contact is the first contact in the relationship</td></tr>
-<tr><td valign="top"><tt>QContactRelationshipFilter::Second</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The contact is the second contact in the relationship</td></tr>
-<tr><td valign="top"><tt>QContactRelationshipFilter::Either</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The contact is either the first or second contact in the relationship</td></tr>
-</table></p>
-<hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QContactRelationshipFilter/QContactRelationshipFilter"></a>
 <h3 class="fn"><a name="QContactRelationshipFilter"></a>QContactRelationshipFilter::QContactRelationshipFilter ()</h3>
@@ -82,7 +62,7 @@
 <p>Returns the id of the contact with whom the tested contact must have a relationship in order for the tested contact to match this filter</p>
 <p>See also <a href="qcontactrelationshipfilter.html#setRelatedContactId">setRelatedContactId</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactRelationshipFilter/relatedContactRole"></a>
-<h3 class="fn"><a name="relatedContactRole"></a><a href="qcontactrelationshipfilter.html#Role-enum">QContactRelationshipFilter::Role</a> QContactRelationshipFilter::relatedContactRole () const</h3>
+<h3 class="fn"><a name="relatedContactRole"></a><a href="qcontactrelationship.html#Role-enum">QContactRelationship::Role</a> QContactRelationshipFilter::relatedContactRole () const</h3>
 <p>Returns the role in the relationship with the tested contact that the related contact must play in order for the tested contact to match this filter</p>
 <p>See also <a href="qcontactrelationshipfilter.html#setRelatedContactRole">setRelatedContactRole</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactRelationshipFilter/relationshipType"></a>
@@ -94,7 +74,7 @@
 <p>Sets the id of the contact with whom the tested contact must have a relationship in order for the tested contact to match this filter to be <i>relatedContactId</i></p>
 <p>See also <a href="qcontactrelationshipfilter.html#relatedContactId">relatedContactId</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactRelationshipFilter/setRelatedContactRole"></a>
-<h3 class="fn"><a name="setRelatedContactRole"></a>void QContactRelationshipFilter::setRelatedContactRole ( <a href="qcontactrelationshipfilter.html#Role-enum">QContactRelationshipFilter::Role</a> <i>relatedContactRole</i> )</h3>
+<h3 class="fn"><a name="setRelatedContactRole"></a>void QContactRelationshipFilter::setRelatedContactRole ( <a href="qcontactrelationship.html#Role-enum">QContactRelationship::Role</a> <i>relatedContactRole</i> )</h3>
 <p>Sets the role in the relationship with the tested contact that the related contact must play in order for the tested contact to match this filter to be <i>relatedContactRole</i></p>
 <p>See also <a href="qcontactrelationshipfilter.html#relatedContactRole">relatedContactRole</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactRelationshipFilter/setRelationshipType"></a>

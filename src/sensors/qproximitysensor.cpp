@@ -55,45 +55,36 @@ IMPLEMENT_READING(QProximityReading)
            proximity sensor.
 
     \target QProximityReading_Units
-    The proximity sensor returns an indication of how far the user is
-    away from the device using the pre-defined values found in the
-    QProximityReading::Proximity enum.
+    The proximity sensor can only indicate if an object is close or not.
+
+    The distance at which an object is considered close is device-specific. This
+    distance may be available in the QSensor::outputRanges property.
 */
 
 /*!
-    \enum QProximityReading::Proximity
+    \property QProximityReading::close
+    \brief a value indicating if something is close.
 
-    This enum represents the proximity of the user.
+    Set to true if something is close.
+    Set to false is nothing is close.
 
-    \value Undefined  The proximity is unknown.
-    \value Close      The user is close to the device.
-    \value NotClose   The user is not close to the device.
-*/
-
-/*!
-    \property QProximityReading::proximity
-    \brief the proximity of the user.
-
-    The value is an indication of if the user is close or not.
     \sa QProximityReading_Units
 */
 
-QProximityReading::Proximity QProximityReading::proximity() const
+bool QProximityReading::close() const
 {
-    return static_cast<QProximityReading::Proximity>(d->proximity);
+    return d->close;
 }
 
 /*!
-    Sets the \a proximity of the user.
+    Sets the close value to \a close.
 */
-void QProximityReading::setProximity(QProximityReading::Proximity proximity)
+void QProximityReading::setClose(bool close)
 {
-    d->proximity = proximity;
+    d->close = close;
 }
 
 // =====================================================================
-
-// begin generated code
 
 /*!
     \class QProximityFilter
@@ -151,7 +142,6 @@ const char *QProximitySensor::type("QProximitySensor");
 
     \sa QSensor::reading()
 */
-// end generated code
 
 #include "moc_qproximitysensor.cpp"
 QTM_END_NAMESPACE

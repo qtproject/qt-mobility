@@ -25,7 +25,7 @@
 <h2>Public Types</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfigurationmanager.html#Capability-enum">Capabilities</a></b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfigurationmanager.html#Capability-enum">Capability</a></b> { CanStartAndStopInterfaces, DirectConnectionRouting, SystemSessionSupport, ApplicationLevelRoaming, ForcedRoaming, DataStatistics }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfigurationmanager.html#Capability-enum">Capability</a></b> { CanStartAndStopInterfaces, DirectConnectionRouting, SystemSessionSupport, ApplicationLevelRoaming, ..., NetworkSessionRequired }</td></tr>
 </table>
 <hr />
 <a name="public-functions"></a>
@@ -83,6 +83,7 @@
 <a name="//apple_ref/cpp/econst/QNetworkConfigurationManager/ApplicationLevelRoaming"></a>
 <a name="//apple_ref/cpp/econst/QNetworkConfigurationManager/ForcedRoaming"></a>
 <a name="//apple_ref/cpp/econst/QNetworkConfigurationManager/DataStatistics"></a>
+<a name="//apple_ref/cpp/econst/QNetworkConfigurationManager/NetworkSessionRequired"></a>
 <a name="//apple_ref/cpp/tdef/QNetworkConfigurationManager/Capabilities"></a>
 <h3 class="flags"><a name="Capability-enum"></a>enum QNetworkConfigurationManager::Capability<br />flags QNetworkConfigurationManager::Capabilities</h3>
 <p>Specifies the system capabilities of the bearer API. The possible values are:</p>
@@ -94,6 +95,7 @@
 <tr><td valign="top"><tt>QNetworkConfigurationManager::ApplicationLevelRoaming</tt></td><td align="center" valign="top"><tt>0x00000008</tt></td><td valign="top">The system gives applications control over the systems roaming behavior. Applications can initiate roaming (in case the current link is not suitable) and are consulted if the system has identified a more suitable access point.</td></tr>
 <tr><td valign="top"><tt>QNetworkConfigurationManager::ForcedRoaming</tt></td><td align="center" valign="top"><tt>0x00000010</tt></td><td valign="top">The system disconnects an existing access point and reconnects via a more suitable one. The application does not have any control over this process and has to reconnect its active sockets.</td></tr>
 <tr><td valign="top"><tt>QNetworkConfigurationManager::DataStatistics</tt></td><td align="center" valign="top"><tt>0x00000020</tt></td><td valign="top">If this flag is set <a href="qnetworksession.html">QNetworkSession</a> can provide statistics about transmitted and received data.</td></tr>
+<tr><td valign="top"><tt>QNetworkConfigurationManager::NetworkSessionRequired</tt></td><td align="center" valign="top"><tt>0x00000040</tt></td><td valign="top">If this flag is set the platform requires that a network session is created before network operations can be performed.</td></tr>
 </table></p>
 <p>The Capabilities type is a typedef for <a href="qflags.html">QFlags</a>&lt;Capability&gt;. It stores an OR combination of Capability values.</p>
 <hr />

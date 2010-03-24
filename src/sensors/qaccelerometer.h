@@ -64,11 +64,7 @@ public:
 
     qreal z() const;
     void setZ(qreal z);
-
-    QVariant value(int index) const;
 };
-
-// begin generated code
 
 class Q_SENSORS_EXPORT QAccelerometerFilter : public QSensorFilter
 {
@@ -82,13 +78,11 @@ class Q_SENSORS_EXPORT QAccelerometer : public QSensor
 {
     Q_OBJECT
 public:
-    explicit QAccelerometer(QObject *parent = 0) : QSensor(parent)
-    { setType(QAccelerometer::type); }
+    explicit QAccelerometer(QObject *parent = 0) : QSensor(QAccelerometer::type, parent) {}
     virtual ~QAccelerometer() {}
     QAccelerometerReading *reading() const { return static_cast<QAccelerometerReading*>(QSensor::reading()); }
     static const char *type;
 };
-// end generated code
 
 QTM_END_NAMESPACE
 

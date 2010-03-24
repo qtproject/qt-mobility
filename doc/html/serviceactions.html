@@ -194,7 +194,7 @@
             else
                 bodyText = QString(&quot;&lt;p align=\&quot;center\&quot;&gt;&lt;a href=\&quot;%1\&quot;&gt;Download&lt;/a&gt;&lt;/p&gt;&quot;).arg(downloadLinkURL());
             m_messageBrowser-&gt;setHtml(htmlTemplate\
-                                     .arg(message.from().recipient())\
+                                     .arg(message.from().addressee())\
                                      .arg(message.subject())\
                                      .arg(message.receivedDate().toString())\
                                      .arg(bodyText));

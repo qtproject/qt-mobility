@@ -26,20 +26,20 @@
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactorganization.html#assistantName">assistantName</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qcontactorganization.html#department">department</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactorganization.html#location">location</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactorganization.html#logo">logo</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QUrl </td><td class="memItemRight" valign="bottom"><b><a href="qcontactorganization.html#logoUrl">logoUrl</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactorganization.html#name">name</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactorganization.html#role">role</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactorganization.html#setAssistantName">setAssistantName</a></b> ( const QString &amp; <i>assistantName</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactorganization.html#setDepartment">setDepartment</a></b> ( const QStringList &amp; <i>department</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactorganization.html#setLocation">setLocation</a></b> ( const QString &amp; <i>location</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactorganization.html#setLogo">setLogo</a></b> ( const QString &amp; <i>logo</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactorganization.html#setLogoUrl">setLogoUrl</a></b> ( const QUrl &amp; <i>logo</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactorganization.html#setName">setName</a></b> ( const QString &amp; <i>name</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactorganization.html#setRole">setRole</a></b> ( const QString &amp; <i>role</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactorganization.html#setTitle">setTitle</a></b> ( const QString &amp; <i>title</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactorganization.html#title">title</a></b> () const</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>25 public functions inherited from <a href="qcontactdetail.html#public-functions">QContactDetail</a></li>
+<li><div bar="2" class="fn"></div>23 public functions inherited from <a href="qcontactdetail.html#public-functions">QContactDetail</a></li>
 </ul>
 <hr />
 <a name="public-variables"></a>
@@ -49,7 +49,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactorganization.html#FieldAssistantName-var">FieldAssistantName</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactorganization.html#FieldDepartment-var">FieldDepartment</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactorganization.html#FieldLocation-var">FieldLocation</a></b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactorganization.html#FieldLogo-var">FieldLogo</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactorganization.html#FieldLogoUrl-var">FieldLogoUrl</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactorganization.html#FieldName-var">FieldName</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactorganization.html#FieldRole-var">FieldRole</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactorganization.html#FieldTitle-var">FieldTitle</a></b></td></tr>
@@ -76,10 +76,10 @@
 <h3 class="fn"><a name="location"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QContactOrganization::location () const</h3>
 <p>Returns the location of the organization stored in this detail.</p>
 <p>See also <a href="qcontactorganization.html#setLocation">setLocation</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactOrganization/logo"></a>
-<h3 class="fn"><a name="logo"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QContactOrganization::logo () const</h3>
-<p>Returns the logo of the organization stored in this detail.</p>
-<p>See also <a href="qcontactorganization.html#setLogo">setLogo</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactOrganization/logoUrl"></a>
+<h3 class="fn"><a name="logoUrl"></a><a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a> QContactOrganization::logoUrl () const</h3>
+<p>Returns the url of the logo of the organization stored in this detail.</p>
+<p>See also <a href="qcontactorganization.html#setLogoUrl">setLogoUrl</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactOrganization/name"></a>
 <h3 class="fn"><a name="name"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QContactOrganization::name () const</h3>
 <p>Returns the name of the organization stored in this detail.</p>
@@ -100,10 +100,10 @@
 <h3 class="fn"><a name="setLocation"></a>void QContactOrganization::setLocation ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>location</i> )</h3>
 <p>Sets the location (e.g&#x2e; city or suburb) of the organization stored in this detail to <i>location</i>.</p>
 <p>See also <a href="qcontactorganization.html#location">location</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactOrganization/setLogo"></a>
-<h3 class="fn"><a name="setLogo"></a>void QContactOrganization::setLogo ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>logo</i> )</h3>
-<p>Sets the logo of the organization stored in this detail to <i>logo</i>.</p>
-<p>See also <a href="qcontactorganization.html#logo">logo</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactOrganization/setLogoUrl"></a>
+<h3 class="fn"><a name="setLogoUrl"></a>void QContactOrganization::setLogoUrl ( const <a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a> &amp; <i>logo</i> )</h3>
+<p>Sets the url of the logo of the organization stored in this detail to <i>logo</i>.</p>
+<p>See also <a href="qcontactorganization.html#logoUrl">logoUrl</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactOrganization/setName"></a>
 <h3 class="fn"><a name="setName"></a>void QContactOrganization::setName ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>name</i> )</h3>
 <p>Sets the name of the organization stored in this detail to <i>name</i>.</p>
@@ -134,9 +134,9 @@
 <a name="//apple_ref/cpp/data/QContactOrganization/FieldLocation"></a>
 <h3 class="fn"><a name="FieldLocation-var"></a>const char * QContactOrganization::FieldLocation</h3>
 <p>The constant key for which the organization's location (or the location of the contact's part of the organization) value is stored in details of the <a href="qcontactorganization.html">QContactOrganization</a> type.</p>
-<a name="//apple_ref/cpp/data/QContactOrganization/FieldLogo"></a>
-<h3 class="fn"><a name="FieldLogo-var"></a>const char * QContactOrganization::FieldLogo</h3>
-<p>The constant key for which the logo path value is stored in details of the <a href="qcontactorganization.html">QContactOrganization</a> type.</p>
+<a name="//apple_ref/cpp/data/QContactOrganization/FieldLogoUrl"></a>
+<h3 class="fn"><a name="FieldLogoUrl-var"></a>const char * QContactOrganization::FieldLogoUrl</h3>
+<p>The constant key for which the logo url is stored in details of the <a href="qcontactorganization.html">QContactOrganization</a> type.</p>
 <a name="//apple_ref/cpp/data/QContactOrganization/FieldName"></a>
 <h3 class="fn"><a name="FieldName-var"></a>const char * QContactOrganization::FieldName</h3>
 <p>The constant key for which the name value is stored in details of the <a href="qcontactorganization.html">QContactOrganization</a> type.</p>

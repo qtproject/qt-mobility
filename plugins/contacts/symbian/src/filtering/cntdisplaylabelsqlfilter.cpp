@@ -59,9 +59,9 @@ CntDisplayLabelSqlFilter::~CntDisplayLabelSqlFilter()
 
 void CntDisplayLabelSqlFilter::createSqlQuery(const QContactDetailFilter& filter,
                         QString& sqlQuery,
-                        QContactManager::Error& error)
+                        QContactManager::Error* error)
 {
-    error = QContactManager::NoError;
+    *error = QContactManager::NoError;
     
     //get the contact fields that should be checked
     CntDisplayLabel displayLabel;
@@ -98,15 +98,15 @@ void CntDisplayLabelSqlFilter::createSqlQuery(const QContactDetailFilter& filter
         }
         
         if(!subQuery.isEmpty()){
-            sqlQuery += " AND (" + subQuery + ")";
+            sqlQuery += " AND (" + subQuery + ')';
         }
    
-        error = QContactManager::NoError;
+        *error = QContactManager::NoError;
     }
     
     //if specified more filter criterias than contact fields return error
     else if(searchStrings.count() > contactFields.count()){
-        error = QContactManager::BadArgumentError;
+        *error = QContactManager::BadArgumentError;
     }
 }
 
@@ -155,7 +155,7 @@ void CntDisplayLabelSqlFilter::createQueryMultipleSearchValues(QString& sqlQuery
  */
 QString CntDisplayLabelSqlFilter::createSubQuery(const QString &searchValue, const QString &column) const
 {
-    return ("(" + column + " LIKE \'" + searchValue + "%\' OR " + column + " LIKE \'% " + searchValue + "%\')");
+    return ('(' + column + " LIKE \'" + searchValue + "%\' OR " + column + " LIKE \'% " + searchValue + "%\')");
 }
 
 /*
@@ -171,12 +171,12 @@ QString CntDisplayLabelSqlFilter::columnName(const QPair<QLatin1String, QLatin1S
     //Name detail
     if(detail.first == QContactName::DefinitionName)
     {
-        if(detail.second == QContactName::FieldFirst)
+        if(detail.second == QContactName::FieldFirstName)
         {
             columnName = "first_name";
         }
         
-        else if(detail.second == QContactName::FieldLast)
+        else if(detail.second == QContactName::FieldLastName)
         {
             columnName = "last_name";
         }

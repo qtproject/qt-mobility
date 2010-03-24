@@ -15,7 +15,7 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGalleryAbstractResponse Class Reference</h1>
 <p>The QGalleryAbstractResponse class provides a base class for responses to gallery requests. <a href="#details">More...</a></p>
-<pre>    #include &lt;QGalleryAbstractResponse&gt;</pre><p>Inherits <a href="qgallerydocumentlist.html">QGalleryDocumentList</a>.</p>
+<pre>    #include &lt;QGalleryAbstractResponse&gt;</pre><p>Inherits <a href="qgalleryitemlist.html">QGalleryItemList</a>.</p>
 <ul>
 <li><a href="qgalleryabstractresponse-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -26,24 +26,23 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractresponse.html#QGalleryAbstractResponse">QGalleryAbstractResponse</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractresponse.html#dtor.QGalleryAbstractResponse">~QGalleryAbstractResponse</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractresponse.html#cancel">cancel</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractresponse.html#documentCount">documentCount</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractresponse.html#isIdle">isIdle</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractresponse.html#result">result</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractresponse.html#waitForFinished">waitForFinished</a></b> ( int <i>msecs</i> ) = 0</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>11 public functions inherited from <a href="qgallerydocumentlist.html#public-functions">QGalleryDocumentList</a></li>
+<li><div bar="2" class="fn"></div>12 public functions inherited from <a href="qgalleryitemlist.html#public-functions">QGalleryItemList</a></li>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
 <hr />
 <a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractresponse.html#documentCountChanged">documentCountChanged</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractresponse.html#finished">finished</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractresponse.html#progressChanged">progressChanged</a></b> ( int <i>current</i>, int <i>maximum</i> )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>4 signals inherited from <a href="qgallerydocumentlist.html#signals">QGalleryDocumentList</a></li>
+<li><div bar="2" class="fn"></div>4 signals inherited from <a href="qgalleryitemlist.html#signals">QGalleryItemList</a></li>
 <li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
 </ul>
 <hr />
@@ -51,14 +50,15 @@
 <h2>Protected Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractresponse.html#finish">finish</a></b> ( int <i>result</i>, bool <i>idle</i> = false )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractresponse.html#updateDocumentCount">updateDocumentCount</a></b> ( int <i>count</i> )</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>
+<li><div class="fn"></div>2 properties inherited from <a href="qgalleryitemlist.html#properties">QGalleryItemList</a></li>
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+<li><div class="fn"></div>1 public slot inherited from <a href="qgalleryitemlist.html#public-slots">QGalleryItemList</a></li>
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
 <li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
@@ -81,28 +81,21 @@
 <h3 class="fn"><a name="cancel"></a>void QGalleryAbstractResponse::cancel ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Cancels an active or idle gallery response.</p>
 <p>The default implementation finishes the an active response with the <a href="qgalleryabstractrequest.html#Result-enum">QGalleryAbstractRequest::Cancelled</a> result. If the reponse is idle the <a href="qgalleryabstractresponse.html#finished">finished</a>() signal will be re-emitted with idle</p>
-<a name="//apple_ref/cpp/instm/QGalleryAbstractResponse/documentCount"></a>
-<h3 class="fn"><a name="documentCount"></a>int QGalleryAbstractResponse::documentCount () const</h3>
-<p>Returns the number of documents affected by a gallery response.</p>
-<a name="//apple_ref/cpp/instm/QGalleryAbstractResponse/documentCountChanged"></a>
-<h3 class="fn"><a name="documentCountChanged"></a>void QGalleryAbstractResponse::documentCountChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signals that the number of documents related to a gallery response has changed.</p>
 <a name="//apple_ref/cpp/instm/QGalleryAbstractResponse/finish"></a>
 <h3 class="fn"><a name="finish"></a>void QGalleryAbstractResponse::finish ( int <i>result</i>, bool <i>idle</i> = false )&nbsp;&nbsp;<tt> [protected]</tt></h3>
 <p>Finalizes a gallery response, and sets the <i>result</i>.</p>
-<p>If <i>idle</i> is true the documents returned by a response will be monitored for changes and updated as appropriate.</p>
+<p>If <i>idle</i> is true the items returned by a response will be monitored for changes and updated as appropriate.</p>
 <a name="//apple_ref/cpp/instm/QGalleryAbstractResponse/finished"></a>
 <h3 class="fn"><a name="finished"></a>void QGalleryAbstractResponse::finished ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <a name="//apple_ref/cpp/instm/QGalleryAbstractResponse/isIdle"></a>
 <h3 class="fn"><a name="isIdle"></a>bool QGalleryAbstractResponse::isIdle () const</h3>
-<p>Identifies if the documents returned by a response are being monitored for changes.</p>
+<p>Identifies if the items returned by a response are being monitored for changes.</p>
 <p>Returns true if a response is in an idle state, and false otherwise.</p>
+<a name="//apple_ref/cpp/instm/QGalleryAbstractResponse/progressChanged"></a>
+<h3 class="fn"><a name="progressChanged"></a>void QGalleryAbstractResponse::progressChanged ( int <i>current</i>, int <i>maximum</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <a name="//apple_ref/cpp/instm/QGalleryAbstractResponse/result"></a>
 <h3 class="fn"><a name="result"></a>int QGalleryAbstractResponse::result () const</h3>
 <p>Returns the result of a gallery request.</p>
-<a name="//apple_ref/cpp/instm/QGalleryAbstractResponse/updateDocumentCount"></a>
-<h3 class="fn"><a name="updateDocumentCount"></a>void QGalleryAbstractResponse::updateDocumentCount ( int <i>count</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
-<p>Updates the <i>count</i> of documents affected by a gallery response.</p>
 <a name="//apple_ref/cpp/instm/QGalleryAbstractResponse/waitForFinished"></a>
 <h3 class="fn"><a name="waitForFinished"></a>bool QGalleryAbstractResponse::waitForFinished ( int <i>msecs</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Waits for <i>msecs</i> for the a response to finish.</p>

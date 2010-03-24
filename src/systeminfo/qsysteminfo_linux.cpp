@@ -47,7 +47,6 @@
 #include <QTextStream>
 #include <QLocale>
 #include <QLibraryInfo>
-#include <QtGui>
 #include <QDebug>
 #include <QTimer>
 #include <QDir>
@@ -92,8 +91,8 @@ QStringList QSystemInfoPrivate::availableLanguages() const
     if(transDir.exists()) {
         QStringList localeList = transDir.entryList( QStringList() << QLatin1String("qt_*.qm") ,QDir::Files
                                                      | QDir::NoDotAndDotDot, QDir::Name);
-        foreach(QString localeName, localeList) {
-            QString lang = localeName.mid(3,2);
+        foreach(const QString localeName, localeList) {
+            const QString lang = localeName.mid(3,2);
             if(!langList.contains(lang) && !lang.isEmpty() && !lang.contains(QLatin1String("help"))) {
                 langList <<lang;
             }
@@ -156,7 +155,6 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QSystemNetworkInfoLinuxComm
 #if !defined(QT_NO_NETWORKMANAGER)
     setupNmConnections();
     updateActivePaths();
-    QTimer::singleShot(200, this,SLOT(getPrimaryMode()));
 #endif
 }
 
@@ -169,7 +167,7 @@ void QSystemNetworkInfoPrivate::setupNmConnections()
 {
     iface = new QNetworkManagerInterface(this);
 
-   foreach(QDBusObjectPath path, iface->getDevices()) {
+   foreach(const QDBusObjectPath path, iface->getDevices()) {
         QNetworkManagerInterfaceDevice *devIface = new QNetworkManagerInterfaceDevice(path.path(), this);
 
         switch(devIface->deviceType()) {
@@ -221,29 +219,9 @@ bool QSystemNetworkInfoPrivate::isDefaultConnectionPath(const QString &path)
     return isDefault;
 }
 
-void QSystemNetworkInfoPrivate::getPrimaryMode()
+void QSystemNetworkInfoPrivate::primaryModeChanged()
 {
-    // try to see if there are any default route
-    bool anyDefaultRoute = false;
-
-    QMapIterator<QString, QString> i(activePaths);
-    QString devicepath;
-    while (i.hasNext()) {
-        i.next();
-        QScopedPointer<QNetworkManagerConnectionActive> activeCon;
-        activeCon.reset(new QNetworkManagerConnectionActive(i.key(), this));
-
-        if(activeCon->defaultRoute()) {
-            anyDefaultRoute = activeCon->defaultRoute();
-            QNetworkManagerInterfaceDevice *devIface = new QNetworkManagerInterfaceDevice(i.value(), this);
-            emit networkModeChanged(deviceTypeToMode(devIface->deviceType()));
-        }
-        devicepath = i.value();
-    }
-
-    if(!anyDefaultRoute) {
-        emit networkModeChanged(QSystemNetworkInfo::UnknownMode);
-    }
+    emit networkModeChanged(currentMode());
 }
 
 
@@ -305,10 +283,7 @@ QString QSystemNetworkInfoPrivate::getNetworkNameForConnectionPath(const QString
             QScopedPointer<QNetworkManagerSettingsConnection> settingsConIface;
             settingsConIface.reset(new QNetworkManagerSettingsConnection(activeCon->serviceName(),activeCon->connection().path(), this));
             if(settingsConIface->isValid()) {
-                qWarning() << settingsConIface->getId();
                 return settingsConIface->getId();
-            } else {
-                //qWarning() << "not valid";
             }
         }
     }
@@ -321,15 +296,14 @@ void QSystemNetworkInfoPrivate::updateActivePaths()
     QScopedPointer<QNetworkManagerInterface> dbIface;
     dbIface.reset(new QNetworkManagerInterface(this));
 
-    QList <QDBusObjectPath> connections = dbIface->activeConnections();
+    const QList <QDBusObjectPath> connections = dbIface->activeConnections();
 
-    foreach(QDBusObjectPath activeconpath, connections) {
-
+    foreach(const QDBusObjectPath activeconpath, connections) {
         QScopedPointer<QNetworkManagerConnectionActive> activeCon;
         activeCon.reset(new QNetworkManagerConnectionActive(activeconpath.path(), this));
 
-        QList<QDBusObjectPath> devices = activeCon->devices();
-        foreach(QDBusObjectPath device, devices) {
+        const QList<QDBusObjectPath> devices = activeCon->devices();
+        foreach(const QDBusObjectPath device, devices) {
             activePaths.insert(activeconpath.path(),device.path());
         }
     }
@@ -384,7 +358,6 @@ void QSystemNetworkInfoPrivate::nmPropertiesChanged( const QString & path, QMap<
             accessPointIface->setConnections();
             if(!connect(accessPointIface, SIGNAL(propertiesChanged(const QString &,QMap<QString,QVariant>)),
                         this,SLOT(nmAPPropertiesChanged( const QString &, QMap<QString,QVariant>)))) {
-             //   qWarning() << "connect is false";
             }
 
         }
@@ -401,7 +374,7 @@ void QSystemNetworkInfoPrivate::nmPropertiesChanged( const QString & path, QMap<
         }
         if( i.key() == QLatin1String("Ip4Config")) {
             // || i.key() == "Ip46Config") {
-            getPrimaryMode();
+            primaryModeChanged();
         }
     }
 }
@@ -442,10 +415,10 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
     case QSystemNetworkInfo::WlanMode:
         {
             QString result;
-            QString baseSysDir = QLatin1String("/sys/class/net/");
-            QDir wDir(baseSysDir);
-            QStringList dirs = wDir.entryList(QStringList() << QLatin1String("*"), QDir::AllDirs | QDir::NoDotAndDotDot);
-            foreach(QString dir, dirs) {
+            const QString baseSysDir = QLatin1String("/sys/class/net/");
+            const QDir wDir(baseSysDir);
+            const QStringList dirs = wDir.entryList(QStringList() << QLatin1String("*"), QDir::AllDirs | QDir::NoDotAndDotDot);
+            foreach(const QString dir, dirs) {
                 QString devFile = baseSysDir + dir;
                 QFileInfo fi(devFile + QLatin1String("/wireless/link"));
                 if(fi.exists()) {
@@ -464,10 +437,10 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
     case QSystemNetworkInfo::EthernetMode:
         {
             QString result;
-            QString baseSysDir = QLatin1String("/sys/class/net/");
-            QDir eDir(baseSysDir);
-            QStringList dirs = eDir.entryList(QStringList() << QLatin1String("eth*"), QDir::AllDirs | QDir::NoDotAndDotDot);
-            foreach(QString dir, dirs) {
+            const QString baseSysDir = QLatin1String("/sys/class/net/");
+            const QDir eDir(baseSysDir);
+            const QStringList dirs = eDir.entryList(QStringList() << QLatin1String("eth*"), QDir::AllDirs | QDir::NoDotAndDotDot);
+            foreach(const QString dir, dirs) {
                 QString devFile = baseSysDir + dir;
                 QFileInfo fi(devFile + QLatin1String("/carrier"));
                 if(fi.exists()) {
@@ -527,6 +500,32 @@ QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
     return QString();
 }
 
+QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
+{
+    QSystemNetworkInfo::NetworkMode mode = QSystemNetworkInfo::UnknownMode;
+
+#if !defined(QT_NO_NETWORKMANAGER)
+    bool anyDefaultRoute = false;
+
+    QMapIterator<QString, QString> i(activePaths);
+    QString devicepath;
+    while (i.hasNext()) {
+        i.next();
+        QScopedPointer<QNetworkManagerConnectionActive> activeCon;
+        activeCon.reset(new QNetworkManagerConnectionActive(i.key(), this));
+
+        if(activeCon->defaultRoute()) {
+            anyDefaultRoute = activeCon->defaultRoute();
+            QNetworkManagerInterfaceDevice *devIface = new QNetworkManagerInterfaceDevice(i.value(), this);
+            return deviceTypeToMode(devIface->deviceType());
+        }
+        devicepath = i.value();
+    }
+#endif
+
+    return mode;
+}
+
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent)
         : QSystemDisplayInfoLinuxCommonPrivate(parent)
 {
@@ -561,12 +560,12 @@ QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
 
 QString QSystemDeviceInfoPrivate::imei()
 {
-        return QLatin1String("Sim Not Available");
+        return QLatin1String("");
 }
 
 QString QSystemDeviceInfoPrivate::imsi()
 {
-        return QLatin1String("Sim Not Available");
+        return QLatin1String("");
 }
 
 QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
@@ -587,7 +586,7 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
 }
 
  QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QSystemScreenSaverLinuxCommonPrivate *parent)
-         : QSystemScreenSaverLinuxCommonPrivate(parent)
+         : QSystemScreenSaverLinuxCommonPrivate(parent), currentPid(0)
  {
      kdeIsRunning = false;
      gnomeIsRunning = false;
@@ -596,33 +595,50 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
 
  QSystemScreenSaverPrivate::~QSystemScreenSaverPrivate()
  {
- }
-
- bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
- {
-     if(kdeIsRunning || gnomeIsRunning) {
-#if !defined(QT_NO_DBUS)
-         pid_t pid = getppid();
+     if(currentPid != 0) {
          QDBusConnection dbusConnection = QDBusConnection::sessionBus();
 
          QStringList ifaceList;
          ifaceList <<  QLatin1String("org.freedesktop.ScreenSaver");
          ifaceList << QLatin1String("org.gnome.ScreenSaver");
          QDBusInterface *connectionInterface;
-         foreach(QString iface, ifaceList) {
+         foreach(const QString iface, ifaceList) {
              connectionInterface = new QDBusInterface(QLatin1String(iface.toLatin1()),
                                                       QLatin1String("/ScreenSaver"),
                                                       QLatin1String(iface.toLatin1()),
                                                       dbusConnection);
-             QDBusReply<uint> reply =  connectionInterface->call(QLatin1String("Inhibit"),
-                                                                 QString::number((int)pid),
-                                                                 QLatin1String("QSystemScreenSaver"));
-             if(reply.isValid()) {
-                 currentPid = reply.value();
-                 qWarning() << "Inhibit" << currentPid;
-                 return reply.isValid();
-             } else {
-                 qWarning() << reply.error();
+             if(connectionInterface->isValid()) {
+                 QDBusReply<uint> reply =  connectionInterface->call(QLatin1String("UnInhibit"),
+                                                                     currentPid);
+             }
+         }
+     }
+ }
+
+ bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
+ {
+     if(kdeIsRunning || gnomeIsRunning) {
+#if !defined(QT_NO_DBUS)
+         const pid_t pid = getppid();
+         QDBusConnection dbusConnection = QDBusConnection::sessionBus();
+
+         QStringList ifaceList;
+         ifaceList <<  QLatin1String("org.freedesktop.ScreenSaver");
+         ifaceList << QLatin1String("org.gnome.ScreenSaver");
+         QDBusInterface *connectionInterface;
+         foreach(const QString iface, ifaceList) {
+             connectionInterface = new QDBusInterface(QLatin1String(iface.toLatin1()),
+                                                      QLatin1String("/ScreenSaver"),
+                                                      QLatin1String(iface.toLatin1()),
+                                                      dbusConnection);
+             if(connectionInterface->isValid()) {
+                 QDBusReply<uint> reply =  connectionInterface->call(QLatin1String("Inhibit"),
+                                                                     QString::number((int)pid),
+                                                                     QLatin1String("QSystemScreenSaver"));
+                 if(reply.isValid()) {
+                     currentPid = reply.value();
+                     return reply.isValid();
+                 }
              }
          }
 #endif
@@ -643,23 +659,12 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
 
 bool QSystemScreenSaverPrivate::screenSaverInhibited()
 {
-    if(kdeIsRunning) {
-        QString kdeSSConfig;
-        if(QDir( QDir::homePath()+QLatin1String("/.kde4/")).exists()) {
-            kdeSSConfig = QDir::homePath()+QLatin1String("/.kde4/share/config/kscreensaverrc");
-        } else if(QDir(QDir::homePath()+QLatin1String("/.kde/")).exists()) {
-            kdeSSConfig = QDir::homePath()+QLatin1String("/.kde/share/config/kscreensaverrc");
+    if(kdeIsRunning || gnomeIsRunning) {
+        if(currentPid != 0) {
+            return true;
+        } else {
+            return false;
         }
-        QSettings kdeScreenSaveConfig(kdeSSConfig, QSettings::IniFormat);
-        kdeScreenSaveConfig.beginGroup(QLatin1String("ScreenSaver"));
-        if(kdeScreenSaveConfig.status() == QSettings::NoError) {
-            if(kdeScreenSaveConfig.value(QLatin1String("Enabled")).toBool() == false) {
-            } else {
-                return true;
-            }
-        }
-    } else if(gnomeIsRunning) {
-
     }
 
 #ifdef Q_WS_X11
@@ -726,20 +731,20 @@ bool QSystemScreenSaverPrivate::isScreenSaverActive()
 {
     if(kdeIsRunning || gnomeIsRunning) {
 #if !defined(QT_NO_DBUS)
-        pid_t pid = getppid();
+        const pid_t pid = getppid();
         QDBusConnection dbusConnection = QDBusConnection::sessionBus();
 
         QStringList ifaceList;
         ifaceList <<  QLatin1String("org.freedesktop.ScreenSaver");
         ifaceList << QLatin1String("org.gnome.ScreenSaver");
         QDBusInterface *connectionInterface;
-        foreach(QString iface, ifaceList) {
+        foreach(const QString iface, ifaceList) {
             connectionInterface = new QDBusInterface(QLatin1String(iface.toLatin1()),
                                                      QLatin1String("/ScreenSaver"),
                                                      QLatin1String(iface.toLatin1()),
                                                      dbusConnection);
 
-            QDBusReply<bool> reply =  connectionInterface->call(QLatin1String("GetActive"),
+            const QDBusReply<bool> reply =  connectionInterface->call(QLatin1String("GetActive"),
                                                                 QString::number((int)pid),
                                                                 QLatin1String("QSystemScreenSaver"));
             if(reply.isValid()) {

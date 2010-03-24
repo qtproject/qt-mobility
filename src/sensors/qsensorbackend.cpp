@@ -41,6 +41,7 @@
 
 #include "qsensorbackend.h"
 #include "qsensor_p.h"
+#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
@@ -71,17 +72,6 @@ QSensorBackend::~QSensorBackend()
 }
 
 /*!
-    Set the supported \a policies for this sensor.
-    If this isn't called the sensor will not report
-    any supported policies to the user.
-*/
-void QSensorBackend::setSupportedUpdatePolicies(QSensor::UpdatePolicies policies)
-{
-    QSensorPrivate *d = m_sensor->d_func();
-    d->supportedUpdatePolicies = policies;
-}
-
-/*!
     Notify the QSensor class that a new reading is available.
 */
 void QSensorBackend::newReadingAvailable()
@@ -100,11 +90,7 @@ void QSensorBackend::newReadingAvailable()
     // Copy the values from the filter reading to the cached reading
     d->cache_reading->copyValuesFrom(d->filter_reading);
 
-    if (d->updatePolicy == QSensor::PolledUpdates)
-        return; // We don't emit the signal if we're polling
-
-    if (d->signalEnabled)
-        Q_EMIT m_sensor->readingChanged();
+    Q_EMIT m_sensor->readingChanged();
 }
 
 /*!
@@ -117,12 +103,6 @@ void QSensorBackend::newReadingAvailable()
     \fn QSensorBackend::stop()
 
     Stop reporting values.
-*/
-
-/*!
-    \fn QSensorBackend::poll()
-
-    Poll the sensor for a reading.
 */
 
 /*!
@@ -139,6 +119,12 @@ QSensorReading *QSensorBackend::reading() const
     QSensorPrivate *d = m_sensor->d_func();
     return d->device_reading;
 }
+
+/*!
+    \fn QSensorBackend::sensor() const
+
+    Returns the sensor front end associated with this backend.
+*/
 
 /*!
     \fn QSensorBackend::setReading(T *reading)
@@ -213,6 +199,125 @@ void QSensorBackend::setReadings(QSensorReading *device, QSensorReading *filter,
     d->device_reading = device;
     d->filter_reading = filter;
     d->cache_reading = cache;
+}
+
+/*!
+    Add a data rate (consisting of \a min and \a max values) for the sensor.
+
+    Note that this function should be called from the constructor so that the information
+    is available immediately.
+
+    \sa QSensor::availableDataRates
+*/
+void QSensorBackend::addDataRate(qreal min, qreal max)
+{
+    QSensorPrivate *d = m_sensor->d_func();
+    d->availableDataRates << qrange(min, max);
+}
+
+/*!
+    Set the data rates for the sensor based on \a otherSensor.
+
+    This is designed for sensors that are based on other sensors.
+
+    \code
+    setDataRates(otherSensor);
+    \endcode
+
+    Note that this function should be called from the constructor so that the information
+    is available immediately.
+
+    \sa QSensor::availableDataRates, addDataRate()
+*/
+void QSensorBackend::setDataRates(const QSensor *otherSensor)
+{
+    if (!otherSensor) {
+        qWarning() << "ERROR: Cannot call QSensorBackend::setDataRates with 0";
+        return;
+    }
+    QSensorPrivate *d = m_sensor->d_func();
+    d->availableDataRates = otherSensor->availableDataRates();
+}
+
+/*!
+    Add an output range (consisting of \a min, \a max values and \a accuracy) for the sensor.
+
+    Note that this function should be called from the constructor so that the information
+    is available immediately.
+
+    \sa QSensor::outputRange, QSensor::outputRanges
+*/
+void QSensorBackend::addOutputRange(qreal min, qreal max, qreal accuracy)
+{
+    QSensorPrivate *d = m_sensor->d_func();
+
+    qoutputrange details = {min, max, accuracy};
+
+    d->outputRanges << details;
+
+    // When adding the first range, set outputRage to it
+    if (d->outputRange == -1) {
+        d->outputRange = 0;
+    }
+}
+
+/*!
+    Set the \a description for the sensor.
+
+    Note that this function should be called from the constructor so that the information
+    is available immediately.
+*/
+void QSensorBackend::setDescription(const QString &description)
+{
+    QSensorPrivate *d = m_sensor->d_func();
+    d->description = description;
+}
+
+/*!
+    Inform the front end that the sensor has stopped.
+    This can be due to start() failing or for some
+    unexpected reason (eg. hardware failure).
+
+    Note that the front end must call QSensor::isActive() to see if
+    the sensor has stopped. If the sensor has stopped due to an error
+    the sensorError() function should be called to notify the class
+    of the error condition.
+*/
+void QSensorBackend::sensorStopped()
+{
+    QSensorPrivate *d = m_sensor->d_func();
+    d->active = false;
+}
+
+/*!
+    Inform the front end that the sensor is busy.
+    This implicitly calls sensorStopped() and
+    is typically called from start().
+
+    Note that the front end must call QSensor::isBusy() to see if
+    the sensor is busy. If the sensor has stopped due to an error
+    the sensorError() function should be called to notify the class
+    of the error condition.
+*/
+void QSensorBackend::sensorBusy()
+{
+    QSensorPrivate *d = m_sensor->d_func();
+    d->active = false;
+    d->busy = true;
+}
+
+/*!
+    Inform the front end that a sensor error occurred.
+    Note that this only reports an \a error code. It does
+    not stop the sensor.
+
+    \sa sensorStopped()
+*/
+void QSensorBackend::sensorError(int error)
+{
+    QSensorPrivate *d = m_sensor->d_func();
+    d->error = error;
+    Q_EMIT m_sensor->sensorError(error);
 }
 
 #include "moc_qsensorbackend.cpp"

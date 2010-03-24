@@ -14,7 +14,7 @@
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGalleryContainerFilter Class Reference</h1>
-<p>The QGalleryContainerFilter class provides a filter which matches content belonging to a container document. <a href="#details">More...</a></p>
+<p>The QGalleryContainerFilter class provides a filter which matches content belonging to a container item. <a href="#details">More...</a></p>
 <pre>    #include &lt;QGalleryContainerFilter&gt;</pre><ul>
 <li><a href="qgallerycontainerfilter-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -33,14 +33,14 @@
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
-<p>The QGalleryContainerFilter class provides a filter which matches content belonging to a container document.</p>
+<p>The QGalleryContainerFilter class provides a filter which matches content belonging to a container item.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QGalleryContainerFilter/QGalleryContainerFilter"></a>
 <h3 class="fn"><a name="QGalleryContainerFilter"></a>QGalleryContainerFilter::QGalleryContainerFilter ()</h3>
 <p>Constructs an empty container filter.</p>
 <h3 class="fn"><a name="QGalleryContainerFilter-2"></a>QGalleryContainerFilter::QGalleryContainerFilter ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>id</i> )</h3>
-<p>Constructs a container filter which matches the contents of a container document with the given <i>id</i>.</p>
+<p>Constructs a container filter which matches the contents of a container item with the given <i>id</i>.</p>
 <h3 class="fn"><a name="QGalleryContainerFilter-3"></a>QGalleryContainerFilter::QGalleryContainerFilter ( const QGalleryContainerFilter &amp; <i>filter</i> )</h3>
 <p>Constructs a copy of a container <i>filter</i>.</p>
 <a name="//apple_ref/cpp/instm/QGalleryContainerFilter/~QGalleryContainerFilter"></a>
@@ -48,11 +48,11 @@
 <p>Destroys a container filter.</p>
 <a name="//apple_ref/cpp/instm/QGalleryContainerFilter/containerId"></a>
 <h3 class="fn"><a name="containerId"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QGalleryContainerFilter::containerId () const</h3>
-<p>Returns the ID of the container document a filter matches the contents of.</p>
+<p>Returns the ID of the container item a filter matches the contents of.</p>
 <p>See also <a href="qgallerycontainerfilter.html#setContainerId">setContainerId</a>().</p>
 <a name="//apple_ref/cpp/instm/QGalleryContainerFilter/setContainerId"></a>
 <h3 class="fn"><a name="setContainerId"></a>void QGalleryContainerFilter::setContainerId ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>id</i> )</h3>
-<p>Sets the <i>id</i> of the container document a filter should match the contents of.</p>
+<p>Sets the <i>id</i> of the container item a filter should match the contents of.</p>
 <p>See also <a href="qgallerycontainerfilter.html#containerId">containerId</a>().</p>
 <a name="//apple_ref/cpp/instm/QGalleryContainerFilter/operator="></a>
 <h3 class="fn"><a name="operator-eq"></a>QGalleryContainerFilter &amp; QGalleryContainerFilter::operator= ( const QGalleryContainerFilter &amp; <i>filter</i> )</h3>

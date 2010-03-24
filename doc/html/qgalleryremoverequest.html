@@ -14,7 +14,7 @@
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGalleryRemoveRequest Class Reference</h1>
-<p>The QGalleryRemoveRequest class provides a request which removes documents from a gallery. <a href="#details">More...</a></p>
+<p>The QGalleryRemoveRequest class provides a request which removes items from a gallery. <a href="#details">More...</a></p>
 <pre>    #include &lt;QGalleryRemoveRequest&gt;</pre><p>Inherits <a href="qgalleryabstractrequest.html">QGalleryAbstractRequest</a>.</p>
 <ul>
 <li><a href="qgalleryremoverequest-members.html">List of all members, including inherited members</a></li>
@@ -23,11 +23,12 @@
 <a name="properties"></a>
 <h2>Properties</h2>
 <ul>
-<li><div class="fn"><b><a href="qgalleryremoverequest.html#documentId-prop">documentId</a></b> : QString</div></li>
-<li><div class="fn"><b><a href="qgalleryremoverequest.html#documentIds-prop">documentIds</a></b> : QStringList</div></li>
+<li><div class="fn"><b><a href="qgalleryremoverequest.html#currentItem-prop">currentItem</a></b> : QGalleryItemList * const</div></li>
+<li><div class="fn"><b><a href="qgalleryremoverequest.html#itemId-prop">itemId</a></b> : QString</div></li>
+<li><div class="fn"><b><a href="qgalleryremoverequest.html#itemIds-prop">itemIds</a></b> : QStringList</div></li>
 </ul>
 <ul>
-<li><div bar="2" class="fn"></div>4 properties inherited from <a href="qgalleryabstractrequest.html#properties">QGalleryAbstractRequest</a></li>
+<li><div bar="2" class="fn"></div>6 properties inherited from <a href="qgalleryabstractrequest.html#properties">QGalleryAbstractRequest</a></li>
 <li><div bar="2" class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 </ul>
 <hr />
@@ -37,23 +38,27 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryremoverequest.html#QGalleryRemoveRequest">QGalleryRemoveRequest</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryremoverequest.html#QGalleryRemoveRequest-2">QGalleryRemoveRequest</a></b> ( QAbstractGallery * <i>gallery</i>, QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryremoverequest.html#dtor.QGalleryRemoveRequest">~QGalleryRemoveRequest</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryremoverequest.html#documentId-prop">documentId</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryremoverequest.html#documentIds-prop">documentIds</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryremoverequest.html#documentId-prop">setDocumentId</a></b> ( const QString &amp; <i>id</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryremoverequest.html#documentIds-prop">setDocumentIds</a></b> ( const QStringList &amp; <i>id</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGalleryItemList * </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryremoverequest.html#currentItem-prop">currentItem</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryremoverequest.html#fields">fields</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryremoverequest.html#itemId-prop">itemId</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryremoverequest.html#itemIds-prop">itemIds</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryremoverequest.html#setFields">setFields</a></b> ( const QStringList &amp; <i>fields</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryremoverequest.html#itemId-prop">setItemId</a></b> ( const QString &amp; <i>id</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryremoverequest.html#itemIds-prop">setItemIds</a></b> ( const QStringList &amp; <i>id</i> )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>7 public functions inherited from <a href="qgalleryabstractrequest.html#public-functions">QGalleryAbstractRequest</a></li>
+<li><div bar="2" class="fn"></div>9 public functions inherited from <a href="qgalleryabstractrequest.html#public-functions">QGalleryAbstractRequest</a></li>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
 <hr />
 <a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryremoverequest.html#documentIdsChanged">documentIdsChanged</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryremoverequest.html#currentItemChanged">currentItemChanged</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryremoverequest.html#itemIdsChanged">itemIdsChanged</a></b> ()</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>7 signals inherited from <a href="qgalleryabstractrequest.html#signals">QGalleryAbstractRequest</a></li>
+<li><div bar="2" class="fn"></div>8 signals inherited from <a href="qgalleryabstractrequest.html#signals">QGalleryAbstractRequest</a></li>
 <li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
 </ul>
 <hr />
@@ -79,38 +84,50 @@
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
-<p>The QGalleryRemoveRequest class provides a request which removes documents from a gallery.</p>
+<p>The QGalleryRemoveRequest class provides a request which removes items from a gallery.</p>
 <hr />
 <h2>Property Documentation</h2>
-<a name="//apple_ref/cpp/instm/QGalleryRemoveRequest/documentId"></a>
-<a name="//apple_ref/cpp/instm/QGalleryRemoveRequest/setDocumentId"></a>
-<a name="//apple_ref/cpp/instm/QGalleryRemoveRequest/documentIdsChanged"></a>
-<h3 class="fn"><a name="documentId-prop"></a>documentId : <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a></h3>
-<p>This property holds the ID of an document to remove from a gallery.</p>
-<p>This is equivalent to <a href="qgalleryremoverequest.html#documentIds-prop">documentIds</a> with a single ID. If there are multiple <a href="qgalleryremoverequest.html#documentIds-prop">documentIds</a> this will be null.</p>
+<a name="//apple_ref/cpp/instm/QGalleryRemoveRequest/currentItem"></a>
+<a name="//apple_ref/cpp/instm/QGalleryRemoveRequest/currentItemChanged"></a>
+<h3 class="fn"><a name="currentItem-prop"></a>currentItem : <a href="qgalleryitemlist.html">QGalleryItemList</a> * const</h3>
+<p>This property holds a list containing the current item being removed by a request.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>documentId</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setDocumentId</b> ( const QString &amp; <i>id</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGalleryItemList * </td><td class="memItemRight" valign="bottom"><b>currentItem</b> () const</td></tr>
 </table>
 <p><b>Notifier signal:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryremoverequest.html#documentIdsChanged">documentIdsChanged</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryremoverequest.html#currentItemChanged">currentItemChanged</a></b> ()</td></tr>
 </table>
-<a name="//apple_ref/cpp/instm/QGalleryRemoveRequest/documentIds"></a>
-<a name="//apple_ref/cpp/instm/QGalleryRemoveRequest/setDocumentIds"></a>
-<a name="//apple_ref/cpp/instm/QGalleryRemoveRequest/documentIdsChanged"></a>
-<h3 class="fn"><a name="documentIds-prop"></a>documentIds : <a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a></h3>
-<p>This property holds a list of IDs of documents to remove from a gallery.</p>
-<p>If the list only contains one ID this is equivalent to <a href="qgalleryremoverequest.html#documentId-prop">documentId</a>.</p>
+<a name="//apple_ref/cpp/instm/QGalleryRemoveRequest/itemId"></a>
+<a name="//apple_ref/cpp/instm/QGalleryRemoveRequest/setItemId"></a>
+<a name="//apple_ref/cpp/instm/QGalleryRemoveRequest/itemIdsChanged"></a>
+<h3 class="fn"><a name="itemId-prop"></a>itemId : <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a></h3>
+<p>This property holds the ID of an item to remove from a gallery.</p>
+<p>This is equivalent to <a href="qgalleryremoverequest.html#itemIds-prop">itemIds</a> with a single ID. If there are multiple <a href="qgalleryremoverequest.html#itemIds-prop">itemIds</a> this will be null.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b>documentIds</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setDocumentIds</b> ( const QStringList &amp; <i>id</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>itemId</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setItemId</b> ( const QString &amp; <i>id</i> )</td></tr>
 </table>
 <p><b>Notifier signal:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryremoverequest.html#documentIdsChanged">documentIdsChanged</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryremoverequest.html#itemIdsChanged">itemIdsChanged</a></b> ()</td></tr>
+</table>
+<a name="//apple_ref/cpp/instm/QGalleryRemoveRequest/itemIds"></a>
+<a name="//apple_ref/cpp/instm/QGalleryRemoveRequest/setItemIds"></a>
+<a name="//apple_ref/cpp/instm/QGalleryRemoveRequest/itemIdsChanged"></a>
+<h3 class="fn"><a name="itemIds-prop"></a>itemIds : <a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a></h3>
+<p>This property holds a list of IDs of items to remove from a gallery.</p>
+<p>If the list only contains one ID this is equivalent to <a href="qgalleryremoverequest.html#itemId-prop">itemId</a>.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b>itemIds</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setItemIds</b> ( const QStringList &amp; <i>id</i> )</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryremoverequest.html#itemIdsChanged">itemIdsChanged</a></b> ()</td></tr>
 </table>
 <hr />
 <h2>Member Function Documentation</h2>
@@ -124,9 +141,18 @@
 <a name="//apple_ref/cpp/instm/QGalleryRemoveRequest/~QGalleryRemoveRequest"></a>
 <h3 class="fn"><a name="dtor.QGalleryRemoveRequest"></a>QGalleryRemoveRequest::~QGalleryRemoveRequest ()</h3>
 <p>Destroys a gallery remove request.</p>
-<a name="//apple_ref/cpp/instm/QGalleryRemoveRequest/documentIdsChanged"></a>
-<h3 class="fn"><a name="documentIdsChanged"></a>void QGalleryRemoveRequest::documentIdsChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signals that the <a href="qgalleryremoverequest.html#documentId-prop">documentId</a> and <a href="qgalleryremoverequest.html#documentIds-prop">documentIds</a> properties have changed.</p>
+<a name="//apple_ref/cpp/instm/QGalleryRemoveRequest/currentItemChanged"></a>
+<h3 class="fn"><a name="currentItemChanged"></a>void QGalleryRemoveRequest::currentItemChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signals the <a href="qgalleryremoverequest.html#currentItem-prop">currentItem</a> property has changed.</p>
+<a name="//apple_ref/cpp/instm/QGalleryRemoveRequest/fields"></a>
+<h3 class="fn"><a name="fields"></a><a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> QGalleryRemoveRequest::fields () const</h3>
+<p>See also <a href="qgalleryremoverequest.html#setFields">setFields</a>().</p>
+<a name="//apple_ref/cpp/instm/QGalleryRemoveRequest/itemIdsChanged"></a>
+<h3 class="fn"><a name="itemIdsChanged"></a>void QGalleryRemoveRequest::itemIdsChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signals that the <a href="qgalleryremoverequest.html#itemId-prop">itemId</a> and <a href="qgalleryremoverequest.html#itemIds-prop">itemIds</a> properties have changed.</p>
+<a name="//apple_ref/cpp/instm/QGalleryRemoveRequest/setFields"></a>
+<h3 class="fn"><a name="setFields"></a>void QGalleryRemoveRequest::setFields ( const <a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> &amp; <i>fields</i> )</h3>
+<p>See also <a href="qgalleryremoverequest.html#fields">fields</a>().</p>
 <a name="//apple_ref/cpp/instm/QGalleryRemoveRequest/setResponse"></a>
 <h3 class="fn"><a name="setResponse"></a>void QGalleryRemoveRequest::setResponse ( <a href="qgalleryabstractresponse.html">QGalleryAbstractResponse</a> * <i>response</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
 <p>Reimplemented from <a href="qgalleryabstractrequest.html#setResponse">QGalleryAbstractRequest::setResponse</a>().</p>

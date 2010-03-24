@@ -34,8 +34,7 @@
 <li><a href="#system-information">System Information</a></li>
 </ul>
 <li><a href="#included-technology-preview-apis">Included Technology Preview APIs</a></li>
-<ul><li><a href="#camera">Camera</a></li>
-<li><a href="#sensors">Sensors</a></li>
+<ul><li><a href="#sensors">Sensors</a></li>
 <li><a href="#versit">Versit</a></li>
 </ul>
 <li><a href="#the-qtmobility-namespace">The QtMobility Namespace</a></li>
@@ -64,7 +63,7 @@
 <ul>
 <li>Locate services on-board or remotely. Find an optimal connection to the network for the particular service.</li>
 <li>Services built on top of these APIs would include Internet applications such as email and web browsing.</li>
-<li>Multimedia features enable image and video capture with audio , audio recording, and the playing of music or video clips. However, camera ability is not part of this release.</li>
+<li>Multimedia features enable image and video capture with audio , audio recording, and the playing of music or video clips.</li>
 <li>Location will make the device aware of its geographical location to support GIS applications.</li>
 <li>Publish-Subscribe enables communication between separate objects whether local or remote to the device.</li>
 </ul>
@@ -133,10 +132,6 @@
 <h3>Included Technology Preview APIs</h3>
 <p>Two additional APIs are included which show future additional APIs. These are pre-release versions and the API will likely change before they are officially released. You may use these APIs in accordance with the terms and conditions contained in the Technology Preview License Agreement accompanying this package.</p>
 <p>We are making these available so that developers can see that future updates will not only refine the API but add important features. We are proud of the work we have done on this project and want to show not only what we are delivering now but what is around the corner.</p>
-<a name="camera"></a>
-<h4>Camera</h4>
-<p>A technology preview of the Camera API will be made available with this release. The Camera will be treated separately from Multimedia at this stage because of the different level of maturity of the APIs.</p>
-<p>For more details see the <a href="preview.html#camera-support">Camera classes</a>.</p>
 <a name="sensors"></a>
 <h4>Sensors</h4>
 <p>An API for accessing hardware sensors. This covers both high-level sensors such as screen orientation (portrait, landscape) and low-level, real-time sensors such as accelerometer data.</p>
@@ -194,13 +189,13 @@
     </tr>
     <tr>
     <td>Service Framework (in-process)</td>
-    <td>BETA</td>
+    <td>FINAL</td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="lightgreen"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -210,13 +205,13 @@
     </tr>
     <tr>
     <td>Messaging</td>
-    <td>BETA</td>
+    <td>FINAL</td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="lightgray"></td>
     <td bgcolor="lightgray"></td>
-    <td bgcolor="lightgray"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="lightgreen"></td>
     <td bgcolor="green">Using MAPI and Pocket Outlook Object Model</td>
     <td bgcolor="lightgreen">Using MAPI and Outlook</td>
@@ -226,13 +221,13 @@
     </tr>
     <tr>
     <td>Bearer Management</td>
-    <td>BETA</td>
+    <td>FINAL</td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="lightgray"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -242,13 +237,13 @@
     </tr>
     <tr>
     <td>Publish and Subscribe</td>
-    <td>BETA</td>
+    <td>FINAL</td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="lightgreen"></td>
     <td bgcolor="lightgreen"></td>
-    <td bgcolor="lightgreen"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="lightgreen"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -258,13 +253,13 @@
     </tr>
     <tr>
     <td>Contacts</td>
-    <td>BETA</td>
+    <td>FINAL</td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="lightgray"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="gray"></td>
@@ -274,13 +269,13 @@
     </tr>
     <tr>
     <td>Location</td>
-    <td>BETA</td>
+    <td>FINAL</td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="lightgreen"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="lightgreen"></td>
     <td bgcolor="green"></td>
     <td bgcolor="gray"></td>
@@ -306,7 +301,7 @@
     </tr>
     <tr>
     <td>System Information</td>
-    <td>BETA</td>
+    <td>FINAL</td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -321,32 +316,17 @@
     <td></td>
     </tr>
     <td>Sensors</td>
-    <td>TP</td>
-    <td bgcolor="lightgray"></td>
-    <td bgcolor="lightgray"></td>
-    <td bgcolor="lightgray"></td>
-    <td bgcolor="lightgray"></td>
-    <td bgcolor="lightgray"></td>
-    <td bgcolor="lightgreen"></td>
-    <td bgcolor="lightgray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td></td>
-    </tr>
-    <td>Camera</td>
-    <td>TP</td>
-    <td bgcolor="lightgreen"></td>
-    <td bgcolor="lightgreen"></td>
+    <td>FINAL</td>
     <td bgcolor="lightgreen"></td>
     <td bgcolor="lightgray"></td>
     <td bgcolor="lightgray"></td>
+    <td bgcolor="lightgray"></td>
+    <td bgcolor="lightgray"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="lightgray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="lightgreen"></td>
     <td bgcolor="gray"></td>
     <td></td>
     </tr>

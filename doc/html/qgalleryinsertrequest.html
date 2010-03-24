@@ -14,7 +14,7 @@
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGalleryInsertRequest Class Reference</h1>
-<p>The QGalleryInsertRequest class provides a request which inserts existing documents into a gallery. <a href="#details">More...</a></p>
+<p>The QGalleryInsertRequest class provides a request which inserts existing items into a gallery. <a href="#details">More...</a></p>
 <pre>    #include &lt;QGalleryInsertRequest&gt;</pre><p>Inherits <a href="qgalleryabstractrequest.html">QGalleryAbstractRequest</a>.</p>
 <ul>
 <li><a href="qgalleryinsertrequest-members.html">List of all members, including inherited members</a></li>
@@ -24,17 +24,17 @@
 <h2>Properties</h2>
 <p><table class="propsummary" width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td width="45%" valign="top"><ul>
-<li><div class="fn"><b><a href="qgalleryinsertrequest.html#documentUrl-prop">documentUrl</a></b> : QUrl</div></li>
-<li><div class="fn"><b><a href="qgalleryinsertrequest.html#documentUrls-prop">documentUrls</a></b> : QList&lt;QUrl&gt;</div></li>
-<li><div class="fn"><b><a href="qgalleryinsertrequest.html#documents-prop">documents</a></b> : QGalleryDocumentList * const</div></li>
-</ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="qgalleryinsertrequest.html#fields-prop">fields</a></b> : QStringList</div></li>
+<li><div class="fn"><b><a href="qgalleryinsertrequest.html#insertedItems-prop">insertedItems</a></b> : QGalleryItemList * const</div></li>
+<li><div class="fn"><b><a href="qgalleryinsertrequest.html#itemUrl-prop">itemUrl</a></b> : QUrl</div></li>
+</ul></td><td valign="top"><ul>
+<li><div class="fn"><b><a href="qgalleryinsertrequest.html#itemUrls-prop">itemUrls</a></b> : QList&lt;QUrl&gt;</div></li>
 <li><div class="fn"><b><a href="qgalleryinsertrequest.html#sortFields-prop">sortFields</a></b> : QStringList</div></li>
 </ul>
 </td></tr>
 </table></p>
 <ul>
-<li><div bar="2" class="fn"></div>4 properties inherited from <a href="qgalleryabstractrequest.html#properties">QGalleryAbstractRequest</a></li>
+<li><div bar="2" class="fn"></div>6 properties inherited from <a href="qgalleryabstractrequest.html#properties">QGalleryAbstractRequest</a></li>
 <li><div bar="2" class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 </ul>
 <hr />
@@ -44,29 +44,29 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryinsertrequest.html#QGalleryInsertRequest">QGalleryInsertRequest</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryinsertrequest.html#QGalleryInsertRequest-2">QGalleryInsertRequest</a></b> ( QAbstractGallery * <i>gallery</i>, QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryinsertrequest.html#dtor.QGalleryInsertRequest">~QGalleryInsertRequest</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QUrl </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryinsertrequest.html#documentUrl-prop">documentUrl</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QUrl&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryinsertrequest.html#documentUrls-prop">documentUrls</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QGalleryDocumentList * </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryinsertrequest.html#documents-prop">documents</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryinsertrequest.html#fields-prop">fields</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryinsertrequest.html#documentUrl-prop">setDocumentUrl</a></b> ( const QUrl &amp; <i>url</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryinsertrequest.html#documentUrls-prop">setDocumentUrls</a></b> ( const QList&lt;QUrl&gt; &amp; <i>urls</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGalleryItemList * </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryinsertrequest.html#insertedItems-prop">insertedItems</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QUrl </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryinsertrequest.html#itemUrl-prop">itemUrl</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QUrl&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryinsertrequest.html#itemUrls-prop">itemUrls</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryinsertrequest.html#fields-prop">setFields</a></b> ( const QStringList &amp; <i>fields</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryinsertrequest.html#itemUrl-prop">setItemUrl</a></b> ( const QUrl &amp; <i>url</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryinsertrequest.html#itemUrls-prop">setItemUrls</a></b> ( const QList&lt;QUrl&gt; &amp; <i>urls</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryinsertrequest.html#sortFields-prop">setSortFields</a></b> ( const QStringList &amp; <i>fields</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryinsertrequest.html#sortFields-prop">sortFields</a></b> () const</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>7 public functions inherited from <a href="qgalleryabstractrequest.html#public-functions">QGalleryAbstractRequest</a></li>
+<li><div bar="2" class="fn"></div>9 public functions inherited from <a href="qgalleryabstractrequest.html#public-functions">QGalleryAbstractRequest</a></li>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
 <hr />
 <a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryinsertrequest.html#documentUrlsChanged">documentUrlsChanged</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryinsertrequest.html#documentsChanged">documentsChanged</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryinsertrequest.html#insertedItemsChanged">insertedItemsChanged</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryinsertrequest.html#itemUrlsChanged">itemUrlsChanged</a></b> ()</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>7 signals inherited from <a href="qgalleryabstractrequest.html#signals">QGalleryAbstractRequest</a></li>
+<li><div bar="2" class="fn"></div>8 signals inherited from <a href="qgalleryabstractrequest.html#signals">QGalleryAbstractRequest</a></li>
 <li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
 </ul>
 <hr />
@@ -92,59 +92,59 @@
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
-<p>The QGalleryInsertRequest class provides a request which inserts existing documents into a gallery.</p>
+<p>The QGalleryInsertRequest class provides a request which inserts existing items into a gallery.</p>
 <hr />
 <h2>Property Documentation</h2>
-<a name="//apple_ref/cpp/instm/QGalleryInsertRequest/documentUrl"></a>
-<a name="//apple_ref/cpp/instm/QGalleryInsertRequest/setDocumentUrl"></a>
-<a name="//apple_ref/cpp/instm/QGalleryInsertRequest/documentUrlsChanged"></a>
-<h3 class="fn"><a name="documentUrl-prop"></a>documentUrl : <a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a></h3>
-<p>This property holds the URL of an document to insert into a gallery.</p>
-<p>This is equivalent to <i>documentUrls</i> with a single value. If multiple <i>documentUrls</i> are set this will be null.</p>
-<p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QUrl </td><td class="memItemRight" valign="bottom"><b>documentUrl</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setDocumentUrl</b> ( const QUrl &amp; <i>url</i> )</td></tr>
-</table>
-<p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryinsertrequest.html#documentUrlsChanged">documentUrlsChanged</a></b> ()</td></tr>
-</table>
-<a name="//apple_ref/cpp/instm/QGalleryInsertRequest/documentUrls"></a>
-<a name="//apple_ref/cpp/instm/QGalleryInsertRequest/setDocumentUrls"></a>
-<a name="//apple_ref/cpp/instm/QGalleryInsertRequest/documentUrlsChanged"></a>
-<h3 class="fn"><a name="documentUrls-prop"></a>documentUrls : <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a>&gt;</h3>
-<p>This property holds a list of URLs to insert into a gallery.</p>
-<p>If the list only contains one URL this is equivalent to <a href="qgalleryinsertrequest.html#documentUrl-prop">documentUrl</a>.</p>
-<p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QUrl&gt; </td><td class="memItemRight" valign="bottom"><b>documentUrls</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setDocumentUrls</b> ( const QList&lt;QUrl&gt; &amp; <i>urls</i> )</td></tr>
-</table>
-<p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryinsertrequest.html#documentUrlsChanged">documentUrlsChanged</a></b> ()</td></tr>
-</table>
-<a name="//apple_ref/cpp/instm/QGalleryInsertRequest/documents"></a>
-<a name="//apple_ref/cpp/instm/QGalleryInsertRequest/documentsChanged"></a>
-<h3 class="fn"><a name="documents-prop"></a>documents : <a href="qgallerydocumentlist.html">QGalleryDocumentList</a> * const</h3>
-<p>This property holds the documents inserted into a gallery.</p>
-<p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QGalleryDocumentList * </td><td class="memItemRight" valign="bottom"><b>documents</b> () const</td></tr>
-</table>
-<p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryinsertrequest.html#documentsChanged">documentsChanged</a></b> ()</td></tr>
-</table>
 <a name="//apple_ref/cpp/instm/QGalleryInsertRequest/fields"></a>
 <a name="//apple_ref/cpp/instm/QGalleryInsertRequest/setFields"></a>
 <h3 class="fn"><a name="fields-prop"></a>fields : <a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a></h3>
-<p>This property holds a list of meta-data fields a request should return values for.</p>
+<p>This property holds a list of meta-data fields the insertedItems list should contain values for.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b>fields</b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setFields</b> ( const QStringList &amp; <i>fields</i> )</td></tr>
+</table>
+<a name="//apple_ref/cpp/instm/QGalleryInsertRequest/insertedItems"></a>
+<a name="//apple_ref/cpp/instm/QGalleryInsertRequest/insertedItemsChanged"></a>
+<h3 class="fn"><a name="insertedItems-prop"></a>insertedItems : <a href="qgalleryitemlist.html">QGalleryItemList</a> * const</h3>
+<p>This property holds a list of items inserted into a gallery.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QGalleryItemList * </td><td class="memItemRight" valign="bottom"><b>insertedItems</b> () const</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryinsertrequest.html#insertedItemsChanged">insertedItemsChanged</a></b> ()</td></tr>
+</table>
+<a name="//apple_ref/cpp/instm/QGalleryInsertRequest/itemUrl"></a>
+<a name="//apple_ref/cpp/instm/QGalleryInsertRequest/setItemUrl"></a>
+<a name="//apple_ref/cpp/instm/QGalleryInsertRequest/itemUrlsChanged"></a>
+<h3 class="fn"><a name="itemUrl-prop"></a>itemUrl : <a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a></h3>
+<p>This property holds the URL of an item to insert into a gallery.</p>
+<p>This is equivalent to <i>itemUrls</i> with a single value. If multiple <i>itemUrls</i> are set this will be null.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QUrl </td><td class="memItemRight" valign="bottom"><b>itemUrl</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setItemUrl</b> ( const QUrl &amp; <i>url</i> )</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryinsertrequest.html#itemUrlsChanged">itemUrlsChanged</a></b> ()</td></tr>
+</table>
+<a name="//apple_ref/cpp/instm/QGalleryInsertRequest/itemUrls"></a>
+<a name="//apple_ref/cpp/instm/QGalleryInsertRequest/setItemUrls"></a>
+<a name="//apple_ref/cpp/instm/QGalleryInsertRequest/itemUrlsChanged"></a>
+<h3 class="fn"><a name="itemUrls-prop"></a>itemUrls : <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a>&gt;</h3>
+<p>This property holds a list of URLs to insert into a gallery.</p>
+<p>If the list only contains one URL this is equivalent to <a href="qgalleryinsertrequest.html#itemUrl-prop">itemUrl</a>.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QUrl&gt; </td><td class="memItemRight" valign="bottom"><b>itemUrls</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setItemUrls</b> ( const QList&lt;QUrl&gt; &amp; <i>urls</i> )</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryinsertrequest.html#itemUrlsChanged">itemUrlsChanged</a></b> ()</td></tr>
 </table>
 <a name="//apple_ref/cpp/instm/QGalleryInsertRequest/sortFields"></a>
 <a name="//apple_ref/cpp/instm/QGalleryInsertRequest/setSortFields"></a>
@@ -168,12 +168,12 @@
 <a name="//apple_ref/cpp/instm/QGalleryInsertRequest/~QGalleryInsertRequest"></a>
 <h3 class="fn"><a name="dtor.QGalleryInsertRequest"></a>QGalleryInsertRequest::~QGalleryInsertRequest ()</h3>
 <p>Destroys a gallery insert request.</p>
-<a name="//apple_ref/cpp/instm/QGalleryInsertRequest/documentUrlsChanged"></a>
-<h3 class="fn"><a name="documentUrlsChanged"></a>void QGalleryInsertRequest::documentUrlsChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signals the <a href="qgalleryinsertrequest.html#documentUrl-prop">documentUrl</a> and <a href="qgalleryinsertrequest.html#documentUrls-prop">documentUrls</a> properties have changed.</p>
-<a name="//apple_ref/cpp/instm/QGalleryInsertRequest/documentsChanged"></a>
-<h3 class="fn"><a name="documentsChanged"></a>void QGalleryInsertRequest::documentsChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signals the <a href="qgalleryinsertrequest.html#documents-prop">documents</a> property has changed.</p>
+<a name="//apple_ref/cpp/instm/QGalleryInsertRequest/insertedItemsChanged"></a>
+<h3 class="fn"><a name="insertedItemsChanged"></a>void QGalleryInsertRequest::insertedItemsChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signals the <a href="qgalleryinsertrequest.html#insertedItems-prop">insertedItems</a> property has changed.</p>
+<a name="//apple_ref/cpp/instm/QGalleryInsertRequest/itemUrlsChanged"></a>
+<h3 class="fn"><a name="itemUrlsChanged"></a>void QGalleryInsertRequest::itemUrlsChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signals the <a href="qgalleryinsertrequest.html#itemUrl-prop">itemUrl</a> and <a href="qgalleryinsertrequest.html#itemUrls-prop">itemUrls</a> properties have changed.</p>
 <a name="//apple_ref/cpp/instm/QGalleryInsertRequest/setResponse"></a>
 <h3 class="fn"><a name="setResponse"></a>void QGalleryInsertRequest::setResponse ( <a href="qgalleryabstractresponse.html">QGalleryAbstractResponse</a> * <i>response</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
 <p>Reimplemented from <a href="qgalleryabstractrequest.html#setResponse">QGalleryAbstractRequest::setResponse</a>().</p>

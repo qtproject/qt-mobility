@@ -60,7 +60,7 @@ public:
     const char* FieldLabel;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactDisplayLabel, "DisplayLabel")
-    Q_DECLARE_LATIN1_LITERAL(FieldLabel, "Label");
+    Q_DECLARE_LATIN1_CONSTANT(FieldLabel, "Label");
 #endif
 
     QString label() const {return value(FieldLabel);}

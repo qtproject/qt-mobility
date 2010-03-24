@@ -20,7 +20,7 @@ PUBLIC_HEADERS += qgeocoordinate.h \
 PRIVATE_HEADERS += qlocationutils_p.h \
                    qnmeapositioninfosource_p.h
 
-symbian {
+symbian { 
     PRIVATE_HEADERS += qgeopositioninfosource_s60_p.h \
                        qmlbackendao_s60_p.h \
                        qgeosatelliteinfosource_s60_p.h \
@@ -51,20 +51,18 @@ symbian {
     }
 }
 
-wince* {
+wince* { 
     PRIVATE_HEADERS += qgeopositioninfosource_wince_p.h \
                        qgeosatelliteinfosource_wince_p.h \
                        qgeoinfothread_wince_p.h
     SOURCES += qgeopositioninfosource_wince.cpp \
                qgeosatelliteinfosource_wince.cpp \
                qgeoinfothread_wince.cpp
- 
     LIBS += -lgpsapi
 }
 
 maemo6 {
     CONFIG += qdbus link_pkgconfig
-
     SOURCES += qgeopositioninfosource_maemo.cpp \
                 qgeosatelliteinfosource_maemo.cpp \
                 dbuscomm_maemo.cpp \
@@ -75,23 +73,43 @@ maemo6 {
                 dbusserver_maemo_p.h
 }
 
+maemo5 {
+    CONFIG += qdbus link_pkgconfig
+    SOURCES += gconfitem.cpp \
+               liblocationwrapper.cpp \
+               qgeopositioninfosource_maemo5.cpp \
+               qgeosatelliteinfosource_maemo5.cpp \
+               qgeoareamonitor_maemo.cpp
+    HEADERS += gconfitem.h  \
+               liblocationwrapper_p.h \
+               qgeopositioninfosource_maemo5_p.h \
+               qgeosatelliteinfosource_maemo5_p.h \
+               qgeoareamonitor_maemo_p.h
+    PKGCONFIG += glib-2.0  gconf-2.0
+    CONFIG += create_pc create_prl
+    LIBS += -llocation
+    QMAKE_PKGCONFIG_REQUIRES = glib-2.0 gconf-2.0
+    pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
+    pkgconfig.files = QtLocation.pc
+}
+
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
-SOURCES +=  qlocationutils.cpp \
-            qgeocoordinate.cpp \
-            qgeopositioninfo.cpp \
-            qgeosatelliteinfo.cpp \
-            qgeosatelliteinfosource.cpp \
-            qgeopositioninfosource.cpp \
-            qgeoareamonitor.cpp \
-            qnmeapositioninfosource.cpp
-
-symbian {
+SOURCES += qlocationutils.cpp \
+           qgeocoordinate.cpp \
+           qgeopositioninfo.cpp \
+           qgeosatelliteinfo.cpp \
+           qgeosatelliteinfosource.cpp \
+           qgeopositioninfosource.cpp \
+           qgeoareamonitor.cpp \
+           qnmeapositioninfosource.cpp
+symbian { 
     TARGET.CAPABILITY = ALL -TCB
     TARGET.UID3 = 0x2002AC83
 
-    INCLUDEPATH += $$EPOCROOT\epoc32\include\osextensions \
-                   $$EPOCROOT\epoc32\include\LBTHeaders
+    INCLUDEPATH += $${EPOCROOT}epoc32\include\osextensions \
+                   $${EPOCROOT}epoc32\include\LBTHeaders \
+                   $${EPOCROOT}epoc32\include\platform
     LIBS += -llbs
     contains(lbt_enabled, yes) {
         LIBS += -llbt

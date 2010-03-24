@@ -43,40 +43,54 @@
 
 #include <QtGui/private/qwidget_p.h>
 
-class QBlackWidget : public QWidget
+#include <coemain.h>    // For CCoeEnv
+
+QBlackWidget::QBlackWidget(QWidget *parent)
+    : QWidget(parent)
 {
-public:
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    setAttribute(Qt::WA_OpaquePaintEvent, true);
+    setAttribute(Qt::WA_NoSystemBackground, true);
+    setAutoFillBackground(false);
+    setPalette(QPalette(Qt::black));
     
-    QBlackWidget(QWidget *parent = 0)
-        : QWidget(parent)
-    {
-        setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-        setAttribute(Qt::WA_OpaquePaintEvent, true);
-        setAttribute(Qt::WA_NoSystemBackground, true);
-        setAutoFillBackground(false);
-    }
+#if QT_VERSION >= 0x040601 && !defined(__WINSCW__)
+    qt_widget_private(this)->extraData()->nativePaintMode = QWExtra::ZeroFill;
+    qt_widget_private(this)->extraData()->receiveNativePaintEvents = true;
+#endif
+}
+
+QBlackWidget::~QBlackWidget()
+{
+}
+
+void QBlackWidget::beginNativePaintEvent(const QRect& /*controlRect*/) 
+{
+    emit beginVideoWindowNativePaint();
+}
     
-protected:
-    
-    void paintEvent(QPaintEvent *)
-    {
-        if (!updatesEnabled())
-            return;
-        
-        QPainter painter(this);
-        painter.fillRect(rect(), Qt::black);
-    }
-};
+void QBlackWidget::endNativePaintEvent(const QRect& /*controlRect*/)
+{
+    CCoeEnv::Static()->WsSession().Flush();
+    emit endVideoWindowNativePaint();
+}
+
+void QBlackWidget::paintEvent(QPaintEvent *event)
+{
+    Q_UNUSED(event);
+    // Do nothing
+}
 
 S60VideoWidgetControl::S60VideoWidgetControl(QObject *parent)
     : QVideoWidgetControl(parent)
     , m_widget(0)
-    , m_windowId(0)
-    , m_aspectRatioMode(QVideoWidget::KeepAspectRatio)
+    , m_aspectRatioMode(Qt::KeepAspectRatio)
 {
     m_widget = new QBlackWidget();
-    m_windowId = m_widget->winId();
+    connect(m_widget, SIGNAL(beginVideoWindowNativePaint()), this, SIGNAL(beginVideoWindowNativePaint()));
+    connect(m_widget, SIGNAL(endVideoWindowNativePaint()), this, SIGNAL(endVideoWindowNativePaint()));
     m_widget->installEventFilter(this);
+    m_widget->winId();
 }
 
 S60VideoWidgetControl::~S60VideoWidgetControl()
@@ -89,15 +103,18 @@ QWidget *S60VideoWidgetControl::videoWidget()
     return m_widget;
 }
 
-QVideoWidget::AspectRatioMode S60VideoWidgetControl::aspectRatioMode() const
+Qt::AspectRatioMode S60VideoWidgetControl::aspectRatioMode() const
 {
     return m_aspectRatioMode;
 }
 
-void S60VideoWidgetControl::setAspectRatioMode(QVideoWidget::AspectRatioMode ratio)
+void S60VideoWidgetControl::setAspectRatioMode(Qt::AspectRatioMode ratio)
 {
-    if (m_aspectRatioMode != ratio)
-        m_aspectRatioMode = ratio;
+    if (m_aspectRatioMode == ratio)
+        return;
+
+    m_aspectRatioMode = ratio;
+    emit widgetUpdated();
 }
 
 bool S60VideoWidgetControl::isFullScreen() const
@@ -153,26 +170,37 @@ void S60VideoWidgetControl::setSaturation(int saturation)
 bool S60VideoWidgetControl::eventFilter(QObject *object, QEvent *e)
 {
     if (object == m_widget) {
-        if ((e->type() == QEvent::ParentChange || e->type() == QEvent::Show) &&
-            m_widget->winId() != m_windowId) {
-                m_windowId = m_widget->winId();
-                emit widgetUpdated();
-            }
-
-        if (e->type() == QEvent::Resize || e->type() == QEvent::Move)
+        if (   e->type() == QEvent::Resize 
+            || e->type() == QEvent::Move 
+            || e->type() == QEvent::WinIdChange
+            || e->type() == QEvent::ParentChange 
+            || e->type() == QEvent::Show) 
             emit widgetUpdated();
     }    
-	return QVideoWidgetControl::eventFilter(object, e);
+    return false;
+}
+
+WId S60VideoWidgetControl::videoWidgetWId()
+{
+    if (m_widget->internalWinId())
+        return m_widget->internalWinId();
+     
+    if (m_widget->effectiveWinId())
+        return m_widget->effectiveWinId();
+     
+    return NULL;
 }
 
 void S60VideoWidgetControl::videoStateChanged(QMediaPlayer::State state)
 {
     if (state == QMediaPlayer::StoppedState) {
-        qt_widget_private(m_widget)->extraData()->nativePaintMode = QWExtra::ZeroFill;
-        m_widget->setUpdatesEnabled(true);
+#if QT_VERSION <= 0x040600
+        qt_widget_private(m_widget)->extraData()->disableBlit = false;
+#endif        
         m_widget->repaint();
     } else if (state == QMediaPlayer::PlayingState) {
-        qt_widget_private(m_widget)->extraData()->nativePaintMode = QWExtra::Default;
-        m_widget->setUpdatesEnabled(false);
+#if QT_VERSION <= 0x040600        
+        qt_widget_private(m_widget)->extraData()->disableBlit = true;
+#endif  
     }
 }

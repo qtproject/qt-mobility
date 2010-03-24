@@ -55,39 +55,37 @@ IMPLEMENT_READING(QRotationReading)
            rotation sensor.
 
     \section2 QRotationReading Units
-    The rotation sensor returns the rotation of the device along the X, Y and Z
-    axes. The scale of the values is radians. The axes are arranged as follows.
 
-\code
-             +z
-              |
-              |      +y
-              |     /
-              |----/----
-             /| NOKIA  /|
-            //|--/--- / |
-           // | /   //  /
-          //  |/   //  /
-         //   '--------------- +x
-        //       //  /
-       //       //  /
-      /---------/  /
-     /    O    /  /
-    /         /  /
-    ----------  /
-    |_________!/
-\endcode
+    The rotation reading contains 3 angles, measured in degrees that define the orientation
+    of the device in three-dimensional space. The three angles are applied to the device in the
+    following order.
 
-    Note that the values for the rotation sensor come from an accelerometer
-    so a device resting on its back will not be able to detect rotation around the
-    Z axis. Rotation can only be detected when it happens relative to gravity.
+    \list
+    \o Right-handed rotation z (-180, 180]. Starting from the x axis and incrementing towards the
+       y axis.
+    \o Right-handed rotation x (-90, 90]. Starting from the new (once-rotated) y axis and
+       incrementing towards the z axis.
+    \o Right-handed rotation y (-180, 180]. Starting from the new (twice-rotated) z axis and
+       incrementing towards the x axis.
+    \endlist
+
+    \image Rotation_angles.png Visual representation of the rotation angles.
+
+    The 0 point for the z angle is defined as a fixed, external entity and is device-specific. While magnetic
+    north is typically used as this reference point it may not be. Do not attempt to compare values
+    for the z angle between devices or even on the same device if it has moved a significant distance.
+    If the device cannot detect a fixed, external entity the z angle will always be 0 and the
+    QRotationSensor::hasZ property will be set to false.
+
+    The 0 point for the x and y angles are defined as when the x and y axes of the device are oriented
+    towards the horizon.
 */
 
 /*!
     \property QRotationReading::x
-    \brief the rotation on the X axis.
+    \brief the rotation around the x axis.
 
-    Measured as radians.
+    Measured as degrees.
     \sa {QRotationReading Units}
 */
 
@@ -97,7 +95,7 @@ qreal QRotationReading::x() const
 }
 
 /*!
-    Sets the rotation on the X axis to \a x.
+    Sets the rotation around the x axis to \a x.
 */
 void QRotationReading::setX(qreal x)
 {
@@ -106,9 +104,9 @@ void QRotationReading::setX(qreal x)
 
 /*!
     \property QRotationReading::y
-    \brief the rotation on the Y axis.
+    \brief the rotation around the y axis.
 
-    Measured as radians.
+    Measured as degrees.
     \sa {QRotationReading Units}
 */
 
@@ -118,7 +116,7 @@ qreal QRotationReading::y() const
 }
 
 /*!
-    Sets the rotation on the Y axis to \a y.
+    Sets the rotation around the y axis to \a y.
 */
 void QRotationReading::setY(qreal y)
 {
@@ -127,9 +125,9 @@ void QRotationReading::setY(qreal y)
 
 /*!
     \property QRotationReading::z
-    \brief the rotation on the Z axis.
+    \brief the rotation around the z axis.
 
-    Measured as radians.
+    Measured as degrees.
     \sa {QRotationReading Units}
 */
 
@@ -139,7 +137,7 @@ qreal QRotationReading::z() const
 }
 
 /*!
-    Sets the rotation on the Z axis to \a z.
+    Sets the rotation around the z axis to \a z.
 */
 void QRotationReading::setZ(qreal z)
 {
@@ -147,8 +145,6 @@ void QRotationReading::setZ(qreal z)
 }
 
 // =====================================================================
-
-// begin generated code
 
 /*!
     \class QRotationFilter
@@ -206,7 +202,14 @@ const char *QRotationSensor::type("QRotationSensor");
 
     \sa QSensor::reading()
 */
-// end generated code
+
+/*!
+    \property QRotationSensor::hasZ
+    \brief a value indicating if the z angle is available.
+
+    Returns true if z is available.
+    Returns false if z is not available.
+*/
 
 #include "moc_qrotationsensor.cpp"
 QTM_END_NAMESPACE

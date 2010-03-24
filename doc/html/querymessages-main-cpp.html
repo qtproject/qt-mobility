@@ -119,11 +119,11 @@
                         } else if ((arg == &quot;to&quot;) || (arg == &quot;cc&quot;) || (arg == &quot;bcc&quot;)) {
                             QStringList addresses;
                             foreach (const QMessageAddress &amp;addr, (arg == &quot;to&quot; ? message.to() : (arg == &quot;cc&quot; ? message.cc() : message.bcc()))) {
-                                addresses.append(addr.recipient());
+                                addresses.append(addr.addressee());
                             }
                             result.append(addresses.join(&quot;,&quot;));
                         } else if (arg == &quot;from&quot;) {
-                            result.append(message.from().recipient());
+                            result.append(message.from().addressee());
                         } else if (arg == &quot;type&quot;) {
                             result.append(message.contentType() + '/' + message.contentSubType());
                         } else if (arg == &quot;body&quot;) {

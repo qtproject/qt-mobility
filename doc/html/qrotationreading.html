@@ -62,31 +62,20 @@
 <p>The QRotationReading class represents one reading from the rotation sensor.</p>
 <a name="qrotationreading-units"></a>
 <h3>QRotationReading Units</h3>
-<p>The rotation sensor returns the rotation of the device along the X, Y and Z axes. The scale of the values is radians. The axes are arranged as follows.</p>
-<pre>             +z
-              |
-              |      +y
-              |     /
-              |----/----
-             /| NOKIA  /|
-            <span class="comment">//|--/--- / |</span>
-           <span class="comment">// | /   //  /</span>
-          <span class="comment">//  |/   //  /</span>
-         <span class="comment">//   '--------------- +x</span>
-        <span class="comment">//       //  /</span>
-       <span class="comment">//       //  /</span>
-      /---------/  /
-     /    O    /  /
-    /         /  /
-    ----------  /
-    |_________!/</pre>
-<p>Note that the values for the rotation sensor come from an accelerometer so a device resting on its back will not be able to detect rotation around the Z axis. Rotation can only be detected when it happens relative to gravity.</p>
+<p>The rotation reading contains 3 angles, measured in degrees that define the orientation of the device in three-dimensional space. The three angles are applied to the device in the following order.</p>
+<ul>
+<li>Right-handed rotation z (-180, 180]. Starting from the x axis and incrementing towards the y axis.</li>
+<li>Right-handed rotation x (-90, 90]. Starting from the new (once-rotated) y axis and incrementing towards the z axis.</li>
+<li>Right-handed rotation y (-180, 180]. Starting from the new (twice-rotated) z axis and incrementing towards the x axis.</li>
+</ul>
+<p align="center"><img src="images/Rotation_angles.png" alt="Visual representation of the rotation angles." /></p><p>The 0 point for the z angle is defined as a fixed, external entity and is device-specific. While magnetic north is typically used as this reference point it may not be. Do not attempt to compare values for the z angle between devices or even on the same device if it has moved a significant distance. If the device cannot detect a fixed, external entity the z angle will always be 0 and the <a href="qrotationsensor.html#hasZ-prop">QRotationSensor::hasZ</a> property will be set to false.</p>
+<p>The 0 point for the x and y angles are defined as when the x and y axes of the device are oriented towards the horizon.</p>
 <hr />
 <h2>Property Documentation</h2>
 <a name="//apple_ref/cpp/instm/QRotationReading/x"></a>
 <h3 class="fn"><a name="x-prop"></a>x : const <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a></h3>
-<p>This property holds the rotation on the X axis.</p>
-<p>Measured as radians.</p>
+<p>This property holds the rotation around the x axis.</p>
+<p>Measured as degrees.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b>x</b> () const</td></tr>
@@ -94,8 +83,8 @@
 <p>See also <a href="qrotationreading.html#qrotationreading-units">QRotationReading Units</a>.</p>
 <a name="//apple_ref/cpp/instm/QRotationReading/y"></a>
 <h3 class="fn"><a name="y-prop"></a>y : const <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a></h3>
-<p>This property holds the rotation on the Y axis.</p>
-<p>Measured as radians.</p>
+<p>This property holds the rotation around the y axis.</p>
+<p>Measured as degrees.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b>y</b> () const</td></tr>
@@ -103,8 +92,8 @@
 <p>See also <a href="qrotationreading.html#qrotationreading-units">QRotationReading Units</a>.</p>
 <a name="//apple_ref/cpp/instm/QRotationReading/z"></a>
 <h3 class="fn"><a name="z-prop"></a>z : const <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a></h3>
-<p>This property holds the rotation on the Z axis.</p>
-<p>Measured as radians.</p>
+<p>This property holds the rotation around the z axis.</p>
+<p>Measured as degrees.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b>z</b> () const</td></tr>
@@ -114,15 +103,15 @@
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QRotationReading/setX"></a>
 <h3 class="fn"><a name="setX"></a>void QRotationReading::setX ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>x</i> )</h3>
-<p>Sets the rotation on the X axis to <i>x</i>.</p>
+<p>Sets the rotation around the x axis to <i>x</i>.</p>
 <p>See also <a href="qrotationreading.html#x-prop">x</a>().</p>
 <a name="//apple_ref/cpp/instm/QRotationReading/setY"></a>
 <h3 class="fn"><a name="setY"></a>void QRotationReading::setY ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>y</i> )</h3>
-<p>Sets the rotation on the Y axis to <i>y</i>.</p>
+<p>Sets the rotation around the y axis to <i>y</i>.</p>
 <p>See also <a href="qrotationreading.html#y-prop">y</a>().</p>
 <a name="//apple_ref/cpp/instm/QRotationReading/setZ"></a>
 <h3 class="fn"><a name="setZ"></a>void QRotationReading::setZ ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>z</i> )</h3>
-<p>Sets the rotation on the Z axis to <i>z</i>.</p>
+<p>Sets the rotation around the z axis to <i>z</i>.</p>
 <p>See also <a href="qrotationreading.html#z-prop">z</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

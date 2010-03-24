@@ -56,7 +56,7 @@ QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
 
 // ![0]
-#include <qml.h>
+#include <QtDeclarative>
 
 class QMLContactManagerAsync : public QObject {
 Q_OBJECT
