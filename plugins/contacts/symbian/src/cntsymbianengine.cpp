@@ -967,7 +967,7 @@ void CntSymbianEngine::performAsynchronousOperation()
             QContactFetchHint fh = r->fetchHint();
 
             QContactManager::Error operationError;
-            QList<QContact> requestedContacts = QContactManagerEngine::contacts(filter, sorting, fh, &operationError);
+            QList<QContact> requestedContacts = contacts(filter, sorting, fh, &operationError);
 
             // update the request with the results.
             updateContactFetchRequest(r, requestedContacts, operationError, QContactAbstractRequest::FinishedState); // emit resultsAvailable()
@@ -981,7 +981,7 @@ void CntSymbianEngine::performAsynchronousOperation()
             QList<QContactSortOrder> sorting = r->sorting();
 
             QContactManager::Error operationError = QContactManager::NoError;
-            QList<QContactLocalId> requestedContactIds = QContactManagerEngine::contactIds(filter, sorting, &operationError);
+            QList<QContactLocalId> requestedContactIds = contactIds(filter, sorting, &operationError);
 
             updateContactLocalIdFetchRequest(r, requestedContactIds, operationError, QContactAbstractRequest::FinishedState);
         }
