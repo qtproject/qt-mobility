@@ -162,6 +162,8 @@ void CntTransformAvatar::detailDefinitions(QMap<QString, QContactDetailDefinitio
 
         // We only support imageUrl
         fields.remove(QContactAvatar::FieldVideoUrl);
+        // Context not supported in symbian back-end, remove
+        fields.remove(QContactAvatar::FieldContext);
 
         d.setFields(fields);
         d.setUnique(true);
