@@ -81,7 +81,7 @@ void CntSimStorePrivate::ConstructL()
     TBuf<RMobilePhoneBookStore::KMaxPBIDSize> storeName;
     convertStoreNameL(storeName);
     
-    // SDN store is allways read only
+    // SDN store is always read only
     if (m_storeName == KParameterValueSimStoreNameSdn)
         m_readOnlyAccess = true;
 

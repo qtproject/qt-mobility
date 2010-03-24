@@ -2063,11 +2063,11 @@ QList<QContactLocalId> QContactManagerEngine::sortContacts(const QList<QContact>
             QContactManagerEngine::addSorted(&sortedContacts, c, sortOrders);
         }
 
-        foreach(const QContact c, sortedContacts) {
+        foreach(const QContact& c, sortedContacts) {
             sortedIds.append(c.localId());
         }
     } else {
-        foreach(const QContact c, cs) {
+        foreach(const QContact& c, cs) {
             sortedIds.append(c.localId());
         }
     }
