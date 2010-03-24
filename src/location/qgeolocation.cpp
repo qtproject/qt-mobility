@@ -99,6 +99,7 @@ QGeoLocation::~QGeoLocation()
 QGeoLocation &QGeoLocation::operator=(const QGeoLocation &other)
 {
     d = other.d;
+    return *this;
 }
 
 /*!
