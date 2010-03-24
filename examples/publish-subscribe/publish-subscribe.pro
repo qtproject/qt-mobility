@@ -22,7 +22,7 @@ SOURCES = main.cpp \
           publisherdialog.cpp \
           subscriberdialog.cpp
 
-maemo* {
+maemo5|maemo6 {
     FORMS = publisherdialog_hor.ui \
             subscriberdialog_hor.ui
 } else {
