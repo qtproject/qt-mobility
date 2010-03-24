@@ -75,50 +75,7 @@ void QmlContact::setContact(QContact& contact)
 
 QString QmlContact::name()
 {
-    QList<QContactDetail> allNames = m_contact.details(QContactName::DefinitionName);
-
-    const QLatin1String space(" ");
-
-    // synthesise the display label from the name.
-    for (int i=0; i < allNames.size(); i++) {
-        const QContactName& name = allNames.at(i);
-
-        QString result;
-        if (!name.value(QContactName::FieldPrefix).trimmed().isEmpty()) {
-           result += name.value(QContactName::FieldPrefix);
-        }
-
-        if (!name.value(QContactName::FieldFirst).trimmed().isEmpty()) {
-            if (!result.isEmpty())
-                result += space;
-            result += name.value(QContactName::FieldFirst);
-        }
-
-        if (!name.value(QContactName::FieldMiddle).trimmed().isEmpty()) {
-            if (!result.isEmpty())
-                result += space;
-            result += name.value(QContactName::FieldMiddle);
-        }
-
-        if (!name.value(QContactName::FieldLast).trimmed().isEmpty()) {
-            if (!result.isEmpty())
-                result += space;
-            result += name.value(QContactName::FieldLast);
-        }
-
-        if (!name.value(QContactName::FieldSuffix).trimmed().isEmpty()) {
-            if (!result.isEmpty())
-                result += space;
-            result += name.value(QContactName::FieldSuffix);
-        }
-
-        if (!result.isEmpty()) {
-            return result;
-        }
-    }
-
-
-    return QString("noName");
+    return m_contact.displayLabel();
 }
 
 void QmlContact::setName(QString name)
