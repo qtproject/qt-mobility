@@ -51,6 +51,8 @@ QTM_BEGIN_NAMESPACE
 
 class QVersitContactExporter;
 class QVersitContactExporterPrivate;
+class QVersitDocument;
+class QVersitProperty;
 class MyQVersitResourceHandler;
 class MyQVersitContactExporterDetailHandler;
 
@@ -92,9 +94,11 @@ private slots:
     void testEncodeDisplayLabel();
     void testDefaultResourceHandler();
 
+private:
     // Test Utility Functions
     QContact createContactWithName(QString name);
     QContactDetail searchDetail(QList<QContactDetail> details, QString search);
+    QVersitProperty findPropertyByName(const QVersitDocument& document,const QString& propertyName);
 
 private: // Data
     QVersitContactExporter* mExporter;

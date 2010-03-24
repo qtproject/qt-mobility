@@ -271,7 +271,7 @@ void ContactEditor::saveClicked()
         
         if (m_avatarBtn->isEnabled()) {
             QContactAvatar av = curr.detail(QContactAvatar::DefinitionName);
-            av.setAvatar(m_newAvatarPath);
+            av.setImageUrl(QUrl(m_newAvatarPath));
             curr.saveDetail(&av);
             
             QContactThumbnail thumb = curr.detail(QContactThumbnail::DefinitionName);

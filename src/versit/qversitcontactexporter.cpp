@@ -155,7 +155,7 @@ QVersitContactExporter::~QVersitContactExporter()
  * Converts \a contacts into a list of corresponding QVersitDocuments, using the format given by
  * \a versitType.
  * Returns true on success.  If any of the contacts could not be exported, false is returned and
- * errors() will return a list describing the errors that occured.  The successfully exported
+ * errors() will return a list describing the errors that occurred.  The successfully exported
  * documents will still be available via documents().
  */
 bool QVersitContactExporter::exportContacts(
@@ -194,7 +194,7 @@ QList<QVersitDocument> QVersitContactExporter::documents() const
 
 /*!
  * Returns the map of errors encountered in the most recent call to exportContacts().  The key is
- * the index into the input list of contacts and the value is the error that occured on that
+ * the index into the input list of contacts and the value is the error that occurred on that
  * contact.
  *
  * \sa exportContacts()

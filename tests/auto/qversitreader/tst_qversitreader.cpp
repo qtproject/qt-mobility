@@ -75,7 +75,6 @@ void tst_QVersitReader::init()
     mReader = new QVersitReader;
     mReaderPrivate = new QVersitReaderPrivate;
     mSignalCatcher = new SignalCatcher;
-    qRegisterMetaType<QVersitReader::State>("QVersitReader::State");
     connect(mReader, SIGNAL(stateChanged(QVersitReader::State)),
             mSignalCatcher, SLOT(stateChanged(QVersitReader::State)));
     connect(mReader, SIGNAL(resultsAvailable()),

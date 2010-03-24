@@ -197,6 +197,7 @@ bool LineReader::tryReadLine(VersitCursor &cursor, bool atEnd)
 /*! Links the signals from this to the signals of \a reader. */
 void QVersitReaderPrivate::init(QVersitReader* reader)
 {
+    qRegisterMetaType<QVersitReader::State>("QVersitReader::State");
     connect(this, SIGNAL(stateChanged(QVersitReader::State)),
             reader, SIGNAL(stateChanged(QVersitReader::State)),Qt::DirectConnection);
     connect(this, SIGNAL(resultsAvailable()),
