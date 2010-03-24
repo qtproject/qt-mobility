@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QWS4GALLERYITEMRESPONSE_P_H
-#define QWS4GALLERYITEMRESPONSE_P_H
+#ifndef QGALLERYITEMRESPONSE_P_H
+#define QGALLERYITEMRESPONSE_P_H
 
 //
 //  W A R N I N G
@@ -53,16 +53,19 @@
 // We mean it.
 //
 
-#include "qws4galleryrowsetresponse_p.h"
+#include "qgalleryrowsetresponse_p.h"
 
 
-#include "qws4galleryquerybuilder_p.h"
+#include "qgalleryquerybuilder_p.h"
 
 #include <searchapi.h>
 
-class QWS4GalleryBinding;
+namespace QWindowsSearch
+{
 
-struct QWS4GalleryItemListRow : public QSharedData
+class QGalleryBinding;
+
+struct QGalleryItemListRow : public QSharedData
 {
 public:
     qint32 workId;
@@ -72,16 +75,16 @@ public:
     QVector<QVariant> metaData;
 };
 
-class QWS4GalleryItemResponse : public QWS4GalleryRowSetResponse
+class QGalleryItemResponse : public QGalleryRowSetResponse
 {
     Q_OBJECT
 public:
-    QWS4GalleryItemResponse(
+    QGalleryItemResponse(
             IRowsetScroll *rowSet,
             const QGalleryItemRequest &request,
-            const QVector<QWS4GalleryQueryBuilder::Column> &columns,
+            const QVector<QGalleryQueryBuilder::Column> &columns,
             QObject *parent = 0);
-    ~QWS4GalleryItemResponse();
+    ~QGalleryItemResponse();
 
     QList<int> keys() const;
     QString toString(int key) const;
@@ -105,7 +108,7 @@ protected:
     void customEvent(QEvent *event);
 
 private:
-    typedef QSharedDataPointer<QWS4GalleryItemListRow> Row;
+    typedef QSharedDataPointer<QGalleryItemListRow> Row;
 
     const Row row(int index) const { return m_rows.value(index - m_rowOffset, m_placeholderRow); }
 
@@ -120,12 +123,14 @@ private:
     int m_count;
     const int m_minimumPagedItems;
     IRowsetScroll *m_rowSet;
-    QWS4GalleryBinding *m_binding;
+    QGalleryBinding *m_binding;
     Row m_placeholderRow;
     QStringList m_fields;
     QList<int> m_keys;
     QList<int> m_columnIndexes;
     QVector<Row> m_rows;
 };
+
+}
 
 #endif

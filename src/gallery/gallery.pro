@@ -33,7 +33,7 @@ SOURCES = \
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
 win32 {
-    include (ws4/ws4.pri)
+    include (ws/ws.pri)
 } else {
     DEFINES += QT_DOCUMENT_GALLERY_NULL
 }

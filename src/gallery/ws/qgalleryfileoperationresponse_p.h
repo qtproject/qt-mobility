@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QWS4GALLERYFILEOPERATIONRESPONSE_P_H
-#define QWS4GALLERYFILEOPERATIONRESPONSE_P_H
+#ifndef QGALLERYFILEOPERATIONRESPONSE_P_H
+#define QGALLERYFILEOPERATIONRESPONSE_P_H
 
 //
 //  W A R N I N G
@@ -59,14 +59,17 @@
 
 #include <shobjidl.h>
 
-class QWS4GalleryFileOperationResponse
+namespace QWindowsSearch
+{
+
+class QGalleryFileOperationResponse
     : public QGalleryAbstractResponse
     , public IFileOperationProgressSink
 {
     Q_OBJECT
 public:
-    QWS4GalleryFileOperationResponse(const QStringList &fields, QObject *parent = 0);
-    ~QWS4GalleryFileOperationResponse();
+    QGalleryFileOperationResponse(const QStringList &fields, QObject *parent = 0);
+    ~QGalleryFileOperationResponse();
 
     QList<int> keys() const;
     QString toString(int key) const;
@@ -184,7 +187,9 @@ private:
     Item m_current;
     Item m_pending;
 
-    friend class QWS4GalleryFileOperationResponseThread;
+    friend class QGalleryFileOperationResponseThread;
 };
+
+}
 
 #endif

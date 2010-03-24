@@ -39,14 +39,17 @@
 **
 ****************************************************************************/
 
-#include "qws4galleryrowsetresponse_p.h"
+#include "qgalleryrowsetresponse_p.h"
 
 #include <QtCore/qcoreapplication.h>
 #include <QtCore/qcoreevent.h>
 
 #include <oledberr.h>
 
-QWS4GalleryRowSetResponse::QWS4GalleryRowSetResponse(IRowsetScroll *rowSet, QObject *parent)
+namespace QWindowsSearch
+{
+
+QGalleryRowSetResponse::QGalleryRowSetResponse(IRowsetScroll *rowSet, QObject *parent)
     : QGalleryAbstractResponse(parent)
     , m_ref(1)
     , m_asynchNotifyCookie(0)
@@ -68,7 +71,7 @@ QWS4GalleryRowSetResponse::QWS4GalleryRowSetResponse(IRowsetScroll *rowSet, QObj
     }
 }
 
-QWS4GalleryRowSetResponse::~QWS4GalleryRowSetResponse()
+QGalleryRowSetResponse::~QGalleryRowSetResponse()
 {
     IConnectionPointContainer *container = 0;
     if (SUCCEEDED(m_rowSet->QueryInterface(
@@ -91,7 +94,7 @@ QWS4GalleryRowSetResponse::~QWS4GalleryRowSetResponse()
     Q_ASSERT(m_ref == 1);
 }
 
-void QWS4GalleryRowSetResponse::cancel()
+void QGalleryRowSetResponse::cancel()
 {
     IDBAsynchStatus *status = 0;
     if (SUCCEEDED(m_rowSet->QueryInterface(
@@ -101,7 +104,7 @@ void QWS4GalleryRowSetResponse::cancel()
     }
 }
 
-bool QWS4GalleryRowSetResponse::waitForFinished(int msecs)
+bool QGalleryRowSetResponse::waitForFinished(int msecs)
 {
     IDBAsynchStatus *status = 0;
     if (SUCCEEDED(m_rowSet->QueryInterface(
@@ -128,7 +131,7 @@ bool QWS4GalleryRowSetResponse::waitForFinished(int msecs)
 }
 
 // IUnknown
-HRESULT QWS4GalleryRowSetResponse::QueryInterface(REFIID riid, void **ppvObject)
+HRESULT QGalleryRowSetResponse::QueryInterface(REFIID riid, void **ppvObject)
 {
     if (!ppvObject) {
         return E_POINTER;
@@ -148,12 +151,12 @@ HRESULT QWS4GalleryRowSetResponse::QueryInterface(REFIID riid, void **ppvObject)
     return S_OK;
 }
 
-ULONG QWS4GalleryRowSetResponse::AddRef()
+ULONG QGalleryRowSetResponse::AddRef()
 {
     return InterlockedIncrement(&m_ref);
 }
 
-ULONG QWS4GalleryRowSetResponse::Release()
+ULONG QGalleryRowSetResponse::Release()
 {
     ULONG ref = InterlockedDecrement(&m_ref);
 
@@ -163,12 +166,12 @@ ULONG QWS4GalleryRowSetResponse::Release()
 }
 
 // IDBAsynchNotify
-HRESULT QWS4GalleryRowSetResponse::OnLowResource(DB_DWRESERVE)
+HRESULT QGalleryRowSetResponse::OnLowResource(DB_DWRESERVE)
 {
     return E_NOTIMPL;
 }
 
-HRESULT QWS4GalleryRowSetResponse::OnProgress(
+HRESULT QGalleryRowSetResponse::OnProgress(
         HCHAPTER hChapter,
         DBASYNCHOP,
         DBCOUNTITEM ulProgress,
@@ -189,46 +192,46 @@ HRESULT QWS4GalleryRowSetResponse::OnProgress(
     }
 
     if (count > 0)
-        QCoreApplication::postEvent(this, new QWS4GalleryItemsInsertedEvent(count));
+        QCoreApplication::postEvent(this, new QGalleryItemsInsertedEvent(count));
 
-    QCoreApplication::postEvent(this, new QWS4GalleryProgressEvent(ulProgress, ulProgressMax));
+    QCoreApplication::postEvent(this, new QGalleryProgressEvent(ulProgress, ulProgressMax));
 
     return S_OK;
 }
 
-HRESULT QWS4GalleryRowSetResponse::OnStop(HCHAPTER, DBASYNCHOP, HRESULT hrStatus, LPOLESTR)
+HRESULT QGalleryRowSetResponse::OnStop(HCHAPTER, DBASYNCHOP, HRESULT hrStatus, LPOLESTR)
 {
-    QCoreApplication::postEvent(this, new QWS4GalleryStopEvent(hrStatus));
+    QCoreApplication::postEvent(this, new QGalleryStopEvent(hrStatus));
 
     return S_OK;
 }
 
 // IRowsetNotify
-HRESULT QWS4GalleryRowSetResponse::OnFieldChange(
+HRESULT QGalleryRowSetResponse::OnFieldChange(
         IRowset *, HROW, DBORDINAL, DBORDINAL[], DBREASON, DBEVENTPHASE, BOOL)
 {
     return DB_S_UNWANTEDREASON;
 }
 
-HRESULT QWS4GalleryRowSetResponse::OnRowChange(
+HRESULT QGalleryRowSetResponse::OnRowChange(
         IRowset *, DBCOUNTITEM, const HROW[], DBREASON, DBEVENTPHASE, BOOL)
 {
     return DB_S_UNWANTEDREASON;
 }
 
-HRESULT QWS4GalleryRowSetResponse::OnRowsetChange(IRowset *, DBREASON, DBEVENTPHASE, BOOL)
+HRESULT QGalleryRowSetResponse::OnRowsetChange(IRowset *, DBREASON, DBEVENTPHASE, BOOL)
 {
     return DB_S_UNWANTEDREASON;
 }
 
-void QWS4GalleryRowSetResponse::customEvent(QEvent *event)
+void QGalleryRowSetResponse::customEvent(QEvent *event)
 {
-    if (event->type() == QWS4GalleryEvent::Progress) {
-        QWS4GalleryProgressEvent *progressEvent = static_cast<QWS4GalleryProgressEvent *>(event);
+    if (event->type() == QGalleryEvent::Progress) {
+        QGalleryProgressEvent *progressEvent = static_cast<QGalleryProgressEvent *>(event);
 
         emit progressChanged(progressEvent->currentProgress, progressEvent->maximumProgress);
-    } else if (event->type() == QWS4GalleryEvent::Stop) {
-        QWS4GalleryStopEvent *stopEvent = static_cast<QWS4GalleryStopEvent *>(event);
+    } else if (event->type() == QGalleryEvent::Stop) {
+        QGalleryStopEvent *stopEvent = static_cast<QGalleryStopEvent *>(event);
 
         if (SUCCEEDED(stopEvent->result)) {
             finish(QGalleryAbstractRequest::Succeeded);
@@ -236,4 +239,6 @@ void QWS4GalleryRowSetResponse::customEvent(QEvent *event)
             finish(QGalleryAbstractRequest::ConnectionError);
         }
     }
+}
+
 }

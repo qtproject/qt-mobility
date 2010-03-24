@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QWS4GALLERYCOUNTRESPONSE_P_H
-#define QWS4GALLERYCOUNTRESPONSE_P_H
+#ifndef QGALLERYCOUNTRESPONSE_P_H
+#define QGALLERYCOUNTRESPONSE_P_H
 
 //
 //  W A R N I N G
@@ -53,14 +53,17 @@
 // We mean it.
 //
 
-#include "qws4galleryrowsetresponse_p.h"
+#include "qgalleryrowsetresponse_p.h"
 
-class QWS4GalleryCountResponse : public QWS4GalleryRowSetResponse
+namespace QWindowsSearch
+{
+
+class QGalleryCountResponse : public QGalleryRowSetResponse
 {
     Q_OBJECT
 public:
-    QWS4GalleryCountResponse(IRowsetScroll *rowSet, QObject *parent = 0);
-    ~QWS4GalleryCountResponse();
+    QGalleryCountResponse(IRowsetScroll *rowSet, QObject *parent = 0);
+    ~QGalleryCountResponse();
 
     QList<int> keys() const;
     QString toString(int key) const;
@@ -83,5 +86,7 @@ protected:
 private:
     int m_count;
 };
+
+}
 
 #endif

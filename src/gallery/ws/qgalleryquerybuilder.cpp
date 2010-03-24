@@ -39,18 +39,21 @@
 **
 ****************************************************************************/
 
-#include "qws4galleryquerybuilder_p.h"
+#include "qgalleryquerybuilder_p.h"
 
 #include "qgalleryrequest.h"
 
 #include <QtCore/qstringbuilder.h>
 
-namespace QWS4Gallery
+namespace QWindowsSearch
+{
+
+namespace
 {
     typedef QString (*buildQuery)(
             int *error,
-            QVector<QWS4GalleryQueryBuilder::Column> *columns,
-            const QWS4GalleryQueryBuilder &builder);
+            QVector<QGalleryQueryBuilder::Column> *columns,
+            const QGalleryQueryBuilder &builder);
 
     typedef QString (*buildMetaDataFragment)(
             int *error, const QLatin1String &field, int flags, const QVariant &value);
@@ -88,7 +91,7 @@ namespace QWS4Gallery
         QLatin1String type;
         buildQuery buildQuery;
     };
-};
+}
 
 template <typename T>
 static QString qt_encodeMetaData(const QVariant &value)
@@ -217,9 +220,9 @@ int qt_arraySize(const T (&)[N]) { return N; }
 
 static QStringList qt_buildAggregates(
         int *,
-        QVector<QWS4GalleryQueryBuilder::Column> *columns,
+        QVector<QGalleryQueryBuilder::Column> *columns,
         QStringList *fields,
-        const QWS4Gallery::AggregateMap map[], int count)
+        const AggregateMap map[], int count)
 {
     QStringList fragments;
 
@@ -245,9 +248,9 @@ static QStringList qt_buildAggregates(
 
 static QStringList qt_buildSelect(
         int *,
-        QVector<QWS4GalleryQueryBuilder::Column> *columns,
+        QVector<QGalleryQueryBuilder::Column> *columns,
         const QStringList &fields,
-        const QWS4Gallery::FieldMap map[],
+        const FieldMap map[],
         int count)
 {
     QStringList fragments;
@@ -268,7 +271,7 @@ static QStringList qt_buildSelect(
 }
 
 static QString qt_buildOrderBy(
-        int *, const QStringList &fields, const QWS4Gallery::FieldMap map[], int count)
+        int *, const QStringList &fields, const FieldMap map[], int count)
 {
     QStringList fragments;
 
@@ -301,7 +304,7 @@ static QString qt_buildOrderBy(
 static QString qt_buildWhere(
         int *error,
         const QGalleryMetaDataFilter &filter,
-        const QWS4Gallery::WhereFragmentMap map[],
+        const WhereFragmentMap map[],
         int count)
 {
     const QString field = filter.fieldName();
@@ -321,7 +324,7 @@ static QString qt_buildWhere(
 static QString qt_buildWhere(
         int *error,
         const QGalleryMetaDataRangeFilter &filter,
-        const QWS4Gallery::WhereFragmentMap map[],
+        const WhereFragmentMap map[],
         int count)
 {
     const QString field = filter.fieldName();
@@ -345,7 +348,7 @@ static QString qt_buildWhere(
 static QString qt_buildWhere(
         int *error,
         const QGalleryUnionFilter &filter,
-        const QWS4Gallery::WhereFragmentMap map[],
+        const WhereFragmentMap map[],
         int count)
 {
     const QList<QGalleryFilter> filters = filter.filters();
@@ -374,7 +377,7 @@ static QString qt_buildWhere(
 static QString qt_buildWhere(
         int *error,
         const QGalleryIntersectionFilter &filter,
-        const QWS4Gallery::WhereFragmentMap map[],
+        const WhereFragmentMap map[],
         int count)
 {
     const QList<QGalleryFilter> filters = filter.filters();
@@ -410,7 +413,7 @@ static QString qt_buildWhere(
 // Media Queries.
 //
 /////////////////
-static const QWS4Gallery::WhereFragmentMap qt_mediaWhereFragmentMap[] =
+static const WhereFragmentMap qt_mediaWhereFragmentMap[] =
 {
     QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, author, "System.Author"),
     QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, copyright, "System.Copyright"),
@@ -450,7 +453,7 @@ static const QWS4Gallery::WhereFragmentMap qt_mediaWhereFragmentMap[] =
     QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, director, "System.Video.Director")
 };
 
-static const QWS4Gallery::FieldMap qt_mediaFieldMap[] =
+static const FieldMap qt_mediaFieldMap[] =
 {
     QT_DEFINE_GALLERY_FIELD_MAP(author, "System.Author"),
     QT_DEFINE_GALLERY_FIELD_MAP(copyright, "System.Copyright"),
@@ -548,8 +551,8 @@ static QString qt_buildMediaWhere(int *error, const QGalleryContainerUrlFilter &
 
 static QString qt_buildMediaQuery(
         int *error,
-        QVector<QWS4GalleryQueryBuilder::Column> *columns,
-        const QWS4GalleryQueryBuilder &builder)
+        QVector<QGalleryQueryBuilder::Column> *columns,
+        const QGalleryQueryBuilder &builder)
 {
     QString where;
 
@@ -637,7 +640,7 @@ static QString qt_buildMediaQuery(
 // Artist Queries.
 //
 /////////////////
-static const QWS4Gallery::WhereFragmentMap qt_artistWhereFragmentMap[] =
+static const WhereFragmentMap qt_artistWhereFragmentMap[] =
 {
     QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, title, "System.Music.Artist"),
 
@@ -647,7 +650,7 @@ static const QWS4Gallery::WhereFragmentMap qt_artistWhereFragmentMap[] =
     QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, genre, "System.Music.Genre")
 };
 
-static const QWS4Gallery::AggregateMap qt_artistAggregateFieldMap[] =
+static const AggregateMap qt_artistAggregateFieldMap[] =
 {
     QT_DEFINE_GALLERY_AGGREGATE_MAP(rating, "AVG(System.Rating)", "AVG_System.Rating"),
 
@@ -659,14 +662,14 @@ static const QWS4Gallery::AggregateMap qt_artistAggregateFieldMap[] =
     QT_DEFINE_GALLERY_AGGREGATE_MAP(trackCount, "COUNT()", "COUNT")
 };
 
-static const QWS4Gallery::FieldMap qt_artistSelectFieldMap[] =
+static const FieldMap qt_artistSelectFieldMap[] =
 {
     QT_DEFINE_GALLERY_FIELD_MAP(title, "System.Music.Artist"),
     // Audio/Music
     QT_DEFINE_GALLERY_FIELD_MAP(artist, "System.Music.Artist")
 };
 
-static const QWS4Gallery::FieldMap qt_artistOrderByFieldMap[] =
+static const FieldMap qt_artistOrderByFieldMap[] =
 {
     QT_DEFINE_GALLERY_FIELD_MAP(title, "System.Music.Artist"),
     QT_DEFINE_GALLERY_FIELD_MAP(rating, "AVG(System.Rating)"),
@@ -696,8 +699,8 @@ static QString qt_buildArtistWhere(int *error, const QGalleryContainerFilter &fi
 
 static QString qt_buildArtistQuery(
         int *error,
-        QVector<QWS4GalleryQueryBuilder::Column> *columns,
-        const QWS4GalleryQueryBuilder &builder)
+        QVector<QGalleryQueryBuilder::Column> *columns,
+        const QGalleryQueryBuilder &builder)
 {
     QString where;
 
@@ -803,7 +806,7 @@ static QString qt_buildArtistQuery(
 //
 /////////////////
 
-static const QWS4Gallery::WhereFragmentMap qt_albumWhereFragmentMap[] =
+static const WhereFragmentMap qt_albumWhereFragmentMap[] =
 {
     QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, title, "System.Music.AlbumTitle"),
     QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, rating, "System.Rating"),
@@ -821,7 +824,7 @@ static const QWS4Gallery::WhereFragmentMap qt_albumWhereFragmentMap[] =
     QT_DEFINE_GALLERY_WHERE_FRAGMENT_MAP(QString, genre, "System.Music.Genre")
 };
 
-static const QWS4Gallery::AggregateMap qt_albumAggregateFieldMap[] =
+static const AggregateMap qt_albumAggregateFieldMap[] =
 {
     QT_DEFINE_GALLERY_AGGREGATE_MAP(rating, "AVG(System.Rating)", "AVG_System.Rating"),
 
@@ -833,7 +836,7 @@ static const QWS4Gallery::AggregateMap qt_albumAggregateFieldMap[] =
     QT_DEFINE_GALLERY_AGGREGATE_MAP(trackCount, "COUNT()", "COUNT")
 };
 
-static const QWS4Gallery::FieldMap qt_albumSelectFieldMap[] =
+static const FieldMap qt_albumSelectFieldMap[] =
 {
     QT_DEFINE_GALLERY_FIELD_MAP(title, "System.Music.AlbumTitle"),
 
@@ -843,7 +846,7 @@ static const QWS4Gallery::FieldMap qt_albumSelectFieldMap[] =
     QT_DEFINE_GALLERY_FIELD_MAP(albumTitle, "System.Music.AlbumTitle")
 };
 
-static const QWS4Gallery::FieldMap qt_albumOrderByFieldMap[] =
+static const FieldMap qt_albumOrderByFieldMap[] =
 {
     QT_DEFINE_GALLERY_FIELD_MAP(title, "System.Music.AlbumTitle"),
     QT_DEFINE_GALLERY_FIELD_MAP(rating, "AVG(System.Rating)"),
@@ -874,8 +877,8 @@ static QString qt_buildAlbumWhere(int *error, const QGalleryContainerFilter &fil
 
 static QString qt_buildAlbumQuery(
         int *error,
-        QVector<QWS4GalleryQueryBuilder::Column> *columns,
-        const QWS4GalleryQueryBuilder &builder)
+        QVector<QGalleryQueryBuilder::Column> *columns,
+        const QGalleryQueryBuilder &builder)
 {
     QString where;
 
@@ -977,25 +980,25 @@ static QString qt_buildAlbumQuery(
 
 //////////////////////////
 //
-// QWS4GalleryQueryBuilder
+// QGalleryQueryBuilder
 //
 //////////////////////////
 
-static const QWS4Gallery::TypeMap qt_queryTypeMap[] =
+static const TypeMap qt_queryTypeMap[] =
 {
     { QLatin1String("Artist"), qt_buildArtistQuery },
     { QLatin1String("Album"), qt_buildAlbumQuery },
 };
 
-QWS4GalleryQueryBuilder::QWS4GalleryQueryBuilder()
+QGalleryQueryBuilder::QGalleryQueryBuilder()
 {
 }
 
-QWS4GalleryQueryBuilder::~QWS4GalleryQueryBuilder()
+QGalleryQueryBuilder::~QGalleryQueryBuilder()
 {
 }
 
-int QWS4GalleryQueryBuilder::buildQuery()
+int QGalleryQueryBuilder::buildQuery()
 {
     int error = 0;
     m_columns.clear();
@@ -1016,4 +1019,6 @@ int QWS4GalleryQueryBuilder::buildQuery()
     qDebug("Built Query:\n%s", qPrintable(m_query));
 
     return error;
+}
+
 }

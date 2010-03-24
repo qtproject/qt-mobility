@@ -39,17 +39,20 @@
 **
 ****************************************************************************/
 
-#include "qws4gallerymoveresponse_p.h"
+#include "qgallerymoveresponse_p.h"
 
-QWS4GalleryMoveResponse::QWS4GalleryMoveResponse(
+namespace QWindowsSearch
+{
+
+QGalleryMoveResponse::QGalleryMoveResponse(
         const QGalleryMoveRequest &request, QObject *parent)
-    : QWS4GalleryFileOperationResponse(request.fields(), parent)
+    : QGalleryFileOperationResponse(request.fields(), parent)
     , m_ids(request.itemIds())
     , m_destination(request.destinationId())
 {
 }
 
-int QWS4GalleryMoveResponse::initialize(IFileOperation *operation)
+int QGalleryMoveResponse::initialize(IFileOperation *operation)
 {
     if (IShellItem *destinationItem = createShellItem(m_destination)) {
         for (QStringList::const_iterator it = m_ids.begin(), end = m_ids.end(); it != end; ++it) {
@@ -61,4 +64,6 @@ int QWS4GalleryMoveResponse::initialize(IFileOperation *operation)
         destinationItem->Release();
     }
     return QGalleryAbstractRequest::NoResult;
+}
+
 }

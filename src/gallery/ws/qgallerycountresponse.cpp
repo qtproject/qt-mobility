@@ -39,79 +39,83 @@
 **
 ****************************************************************************/
 
-#include "qws4gallerycountresponse_p.h"
+#include "qgallerycountresponse_p.h"
 
+namespace QWindowsSearch
+{
 
-QWS4GalleryCountResponse::QWS4GalleryCountResponse(IRowsetScroll *rowSet, QObject *parent)
-    : QWS4GalleryRowSetResponse(rowSet, parent)
+QGalleryCountResponse::QGalleryCountResponse(IRowsetScroll *rowSet, QObject *parent)
+    : QGalleryRowSetResponse(rowSet, parent)
     , m_count(0)
 {
 }
 
-QWS4GalleryCountResponse::~QWS4GalleryCountResponse()
+QGalleryCountResponse::~QGalleryCountResponse()
 {
 }
 
-QList<int> QWS4GalleryCountResponse::keys() const
+QList<int> QGalleryCountResponse::keys() const
 {
     return QList<int>();
 }
 
-QString QWS4GalleryCountResponse::toString(int) const
+QString QGalleryCountResponse::toString(int) const
 {
     return QString();
 }
 
-int QWS4GalleryCountResponse::count() const
+int QGalleryCountResponse::count() const
 {
     return m_count;
 }
 
-QString QWS4GalleryCountResponse::id(int) const
+QString QGalleryCountResponse::id(int) const
 {
     return QString();
 }
 
-QUrl QWS4GalleryCountResponse::url(int) const
+QUrl QGalleryCountResponse::url(int) const
 {
     return QUrl();
 }
 
-QString QWS4GalleryCountResponse::type(int) const
+QString QGalleryCountResponse::type(int) const
 {
     return QString();
 }
 
-QList<QGalleryResource> QWS4GalleryCountResponse::resources(int) const
+QList<QGalleryResource> QGalleryCountResponse::resources(int) const
 {
     return QList<QGalleryResource>();
 }
 
-QVariant QWS4GalleryCountResponse::metaData(int, int) const
+QVariant QGalleryCountResponse::metaData(int, int) const
 {
     return QVariant();
 }
 
-void QWS4GalleryCountResponse::setMetaData(int, int, const QVariant &)
+void QGalleryCountResponse::setMetaData(int, int, const QVariant &)
 {
 }
 
-QGalleryItemList::MetaDataFlags QWS4GalleryCountResponse::metaDataFlags(int, int) const
+QGalleryItemList::MetaDataFlags QGalleryCountResponse::metaDataFlags(int, int) const
 {
     return 0;
 }
 
-void QWS4GalleryCountResponse::customEvent(QEvent *event)
+void QGalleryCountResponse::customEvent(QEvent *event)
 {
-    if (event->type() == QWS4GalleryEvent::ItemsInserted) {
-        QWS4GalleryItemsInsertedEvent *insertEvent
-                = static_cast<QWS4GalleryItemsInsertedEvent *>(event);
+    if (event->type() == QGalleryEvent::ItemsInserted) {
+        QGalleryItemsInsertedEvent *insertEvent
+                = static_cast<QGalleryItemsInsertedEvent *>(event);
         int index = m_count;
 
         m_count += insertEvent->count;
 
         emit inserted(index, insertEvent->count);
     } else {
-        QWS4GalleryRowSetResponse::customEvent(event);
+        QGalleryRowSetResponse::customEvent(event);
     }
+}
+
 }

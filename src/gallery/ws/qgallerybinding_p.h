@@ -39,19 +39,22 @@
 **
 ****************************************************************************/
 
-#ifndef QWS4GALLERYBINDING_P_H
-#define QWS4GALLERYBINDING_P_H
+#ifndef QGALLERYBINDING_P_H
+#define QGALLERYBINDING_P_H
 
 #include <QtCore/qvariant.h>
 #include <QtCore/qvector.h>
 
 #include <oledb.h>
 
-class QWS4GalleryBinding
+namespace QWindowsSearch
+{
+
+class QGalleryBinding
 {
 public:
-    QWS4GalleryBinding(IRowset *rowSet);
-    ~QWS4GalleryBinding();
+    QGalleryBinding(IRowset *rowSet);
+    ~QGalleryBinding();
 
     HACCESSOR handle() const { return m_handle; }
 
@@ -81,5 +84,7 @@ private:
     QVector<readVariant> m_variantReaders;
     QVector<QString> m_columnNames;
 };
+
+}
 
 #endif

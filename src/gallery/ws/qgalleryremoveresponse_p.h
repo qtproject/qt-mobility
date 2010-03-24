@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QWS4GALLERYREMOVERESPONSE_P_H
-#define QWS4GALLERYREMOVERESPONSE_P_H
+#ifndef QGALLERYREMOVERESPONSE_P_H
+#define QGALLERYREMOVERESPONSE_P_H
 
 //
 //  W A R N I N G
@@ -53,13 +53,16 @@
 // We mean it.
 //
 
-#include "qws4galleryfileoperationresponse_p.h"
+#include "qgalleryfileoperationresponse_p.h"
 
-class QWS4GalleryRemoveResponse : public QWS4GalleryFileOperationResponse
+namespace QWindowsSearch
+{
+
+class QGalleryRemoveResponse : public QGalleryFileOperationResponse
 {
     Q_OBJECT
 public:
-    QWS4GalleryRemoveResponse(const QGalleryRemoveRequest &request, QObject *parent = 0);
+    QGalleryRemoveResponse(const QGalleryRemoveRequest &request, QObject *parent = 0);
 
 protected:
     int initialize(IFileOperation *operation);
@@ -67,5 +70,7 @@ protected:
 private:
     QStringList m_ids;
 };
+
+}
 
 #endif

@@ -43,17 +43,19 @@
 #include "qabstractgallery_p.h"
 
 #include "qgalleryerrorresponse_p.h"
-#include "qws4gallerycopyresponse_p.h"
-#include "qws4gallerycountresponse_p.h"
-#include "qws4galleryitemresponse_p.h"
-#include "qws4gallerymoveresponse_p.h"
-#include "qws4galleryquerybuilder_p.h"
-#include "qws4galleryremoveresponse_p.h"
+#include "qgallerycopyresponse_p.h"
+#include "qgallerycountresponse_p.h"
+#include "qgalleryitemresponse_p.h"
+#include "qgallerymoveresponse_p.h"
+#include "qgalleryquerybuilder_p.h"
+#include "qgalleryremoveresponse_p.h"
 
 #include <QtCore/qstringbuilder.h>
 
 #include <msdasc.h>
 #include <searchapi.h>
+
+using namespace QWindowsSearch;
 
 class QDocumentGalleryPrivate : public QAbstractGalleryPrivate
 {
@@ -163,7 +165,7 @@ IRowsetScroll *QDocumentGalleryPrivate::execute(const QString &query, bool live,
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(
         QGalleryItemRequest *request)
 {
-    QWS4GalleryQueryBuilder builder;
+    QGalleryQueryBuilder builder;
 
     builder.setFields(request->fields());
     builder.setSortFields(request->sortFields());
@@ -174,7 +176,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(
 
     if (result == 0) {
         if (IRowsetScroll *rowSet = execute(builder.query(), request->isLive(), &result))
-            return new QWS4GalleryItemResponse(rowSet, *request, builder.columns());
+            return new QGalleryItemResponse(rowSet, *request, builder.columns());
     }
 
     return new QGalleryErrorResponse(result);
@@ -184,7 +186,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createCountResponse(
         QGalleryCountRequest *request)
 {
-    QWS4GalleryQueryBuilder builder;
+    QGalleryQueryBuilder builder;
 
     builder.setItemType(request->itemType());
     builder.setFilter(request->filter());
@@ -193,7 +195,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createCountResponse(
 
     if (result == 0) {
         if (IRowsetScroll *rowSet = execute(builder.query(), request->isLive(), &result))
-            return new QWS4GalleryCountResponse(rowSet);
+            return new QGalleryCountResponse(rowSet);
     }
 
     return new QGalleryErrorResponse(result);
@@ -201,17 +203,17 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createCountResponse(
 
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createCopyResponse(QGalleryCopyRequest *request)
 {
-    return new QWS4GalleryCopyResponse(*request);
+    return new QGalleryCopyResponse(*request);
 }
 
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createMoveResponse(QGalleryMoveRequest *request)
 {
-    return new QWS4GalleryMoveResponse(*request);
+    return new QGalleryMoveResponse(*request);
 }
 
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createRemoveResponse(QGalleryRemoveRequest *request)
 {
-    return new QWS4GalleryRemoveResponse(*request);
+    return new QGalleryRemoveResponse(*request);
 }
 
 QDocumentGallery::QDocumentGallery(QObject *parent)

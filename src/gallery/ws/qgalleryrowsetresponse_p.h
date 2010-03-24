@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QWS4GALLERYROWSETRESPONSE_P_H
-#define QWS4GALLERYROWSETRESPONSE_P_H
+#ifndef QGALLERYROWSETRESPONSE_P_H
+#define QGALLERYROWSETRESPONSE_P_H
 
 //
 //  W A R N I N G
@@ -61,7 +61,10 @@
 
 #include <searchapi.h>
 
-class QWS4GalleryEvent : public QEvent
+namespace QWindowsSearch
+{
+
+class QGalleryEvent : public QEvent
 {
 public:
     enum Type
@@ -72,14 +75,14 @@ public:
         ItemsChanged
     };
 
-    QWS4GalleryEvent(Type type) : QEvent(QEvent::Type(type)) {}
+    QGalleryEvent(Type type) : QEvent(QEvent::Type(type)) {}
 };
 
-class QWS4GalleryProgressEvent : public QWS4GalleryEvent
+class QGalleryProgressEvent : public QGalleryEvent
 {
 public:
-    QWS4GalleryProgressEvent(int current, int maximum)
-        : QWS4GalleryEvent(Progress)
+    QGalleryProgressEvent(int current, int maximum)
+        : QGalleryEvent(Progress)
         , currentProgress(current)
         , maximumProgress(maximum)
     {
@@ -89,11 +92,11 @@ public:
     const int maximumProgress;
 };
 
-class QWS4GalleryStopEvent : public QWS4GalleryEvent
+class QGalleryStopEvent : public QGalleryEvent
 {
 public:
-    QWS4GalleryStopEvent(HRESULT result)
-        : QWS4GalleryEvent(Stop)
+    QGalleryStopEvent(HRESULT result)
+        : QGalleryEvent(Stop)
         , result(result)
     {
     }
@@ -101,11 +104,11 @@ public:
     const HRESULT result;
 };
 
-class QWS4GalleryItemsInsertedEvent : public QWS4GalleryEvent
+class QGalleryItemsInsertedEvent : public QGalleryEvent
 {
 public:
-    QWS4GalleryItemsInsertedEvent(int count)
-        : QWS4GalleryEvent(ItemsInserted)
+    QGalleryItemsInsertedEvent(int count)
+        : QGalleryEvent(ItemsInserted)
         , count(count)
     {
     }
@@ -113,15 +116,15 @@ public:
     const int count;
 };
 
-class QWS4GalleryRowSetResponse
+class QGalleryRowSetResponse
     : public QGalleryAbstractResponse
     , public IDBAsynchNotify
     , public IRowsetNotify
 {
     Q_OBJECT
 public:
-    QWS4GalleryRowSetResponse(IRowsetScroll *rowSet, QObject *parent = 0);
-    ~QWS4GalleryRowSetResponse();
+    QGalleryRowSetResponse(IRowsetScroll *rowSet, QObject *parent = 0);
+    ~QGalleryRowSetResponse();
 
     void cancel();
 
@@ -180,5 +183,7 @@ private:
     QWaitCondition m_asynchWait;
     QMutex m_asynchMutex;
 };
+
+}
 
 #endif

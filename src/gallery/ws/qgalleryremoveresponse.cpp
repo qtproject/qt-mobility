@@ -39,34 +39,27 @@
 **
 ****************************************************************************/
 
-#ifndef QWS4GALLERYMOVERESPONSE_P_H
-#define QWS4GALLERYMOVERESPONSE_P_H
+#include "qgalleryremoveresponse_p.h"
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API. It exists purely as an
-// implementation detail. This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include "qws4galleryfileoperationresponse_p.h"
-
-class QWS4GalleryMoveResponse : public QWS4GalleryFileOperationResponse
+namespace QWindowsSearch
 {
-    Q_OBJECT
-public:
-    QWS4GalleryMoveResponse(const QGalleryMoveRequest &request, QObject *parent = 0);
 
-protected:
-    int initialize(IFileOperation *operation);
+QGalleryRemoveResponse::QGalleryRemoveResponse(
+        const QGalleryRemoveRequest &request, QObject *parent)
+    : QGalleryFileOperationResponse(request.fields(), parent)
+    , m_ids(request.itemIds())
+{
+}
 
-private:
-    QStringList m_ids;
-    QString m_destination;
-};
+int QGalleryRemoveResponse::initialize(IFileOperation *operation)
+{
+    for (QStringList::const_iterator it = m_ids.begin(), end = m_ids.end(); it != end; ++it) {
+        if (IShellItem *item = createShellItem(*it)) {
+            operation->DeleteItem(item, 0);
+            item->Release();
+        }
+    }
+    return QGalleryAbstractRequest::NoResult;
+}
 
-#endif
+}

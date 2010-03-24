@@ -39,14 +39,17 @@
 **
 ****************************************************************************/
 
-#include "qws4galleryfileoperationresponse_p.h"
+#include "qgalleryfileoperationresponse_p.h"
 
-#include "qws4galleryrowsetresponse_p.h"
+#include "qgalleryrowsetresponse_p.h"
 
 #include <QtCore/qcoreapplication.h>
 #include <QtCore/qthread.h>
 
 #include <propkey.h>
+
+namespace QWindowsSearch
+{
 
 static QString qReadStringProperty(IPropertyStore *store, const PROPERTYKEY &property)
 {
@@ -190,7 +193,7 @@ static QVariant qReadVariantProperty(IPropertyStore *store, const PROPERTYKEY &p
     return value;
 }
 
-namespace QWS4Gallery
+namespace QGallery
 {
     struct PropertyKeyMap
     {
@@ -205,7 +208,7 @@ int qt_arraySize(const T (&)[N]) { return N; }
 #define QT_DEFINE_GALLERY_PROPERTY_MAP(FIELD, PROPERTY) \
     { QLatin1String(#FIELD), PROPERTY }
 
-static const QWS4Gallery::PropertyKeyMap qt_propertyKeyMap[] =
+static const QGallery::PropertyKeyMap qt_propertyKeyMap[] =
 {
     QT_DEFINE_GALLERY_PROPERTY_MAP(author, PKEY_Author),
     QT_DEFINE_GALLERY_PROPERTY_MAP(copyright, PKEY_Copyright),
@@ -243,10 +246,10 @@ static const QWS4Gallery::PropertyKeyMap qt_propertyKeyMap[] =
     QT_DEFINE_GALLERY_PROPERTY_MAP(director, PKEY_Video_Director)
 };
 
-class QWS4GalleryFileOperationResponseThread : public QThread
+class QGalleryFileOperationResponseThread : public QThread
 {
 public:
-    QWS4GalleryFileOperationResponseThread(QWS4GalleryFileOperationResponse *response)
+    QGalleryFileOperationResponseThread(QGalleryFileOperationResponse *response)
         : m_response(response)
     {
     }
@@ -258,15 +261,15 @@ protected:
     }
 
 private:
-    QWS4GalleryFileOperationResponse *m_response;
+    QGalleryFileOperationResponse *m_response;
 };
 
-QWS4GalleryFileOperationResponse::QWS4GalleryFileOperationResponse(
+QGalleryFileOperationResponse::QGalleryFileOperationResponse(
         const QStringList &fields, QObject *parent)
     : QGalleryAbstractResponse(parent)
     , m_ref(1)
     , m_adviseCookie(0)
-    , m_thread(new QWS4GalleryFileOperationResponseThread(this))
+    , m_thread(new QGalleryFileOperationResponseThread(this))
     , m_result(QGalleryAbstractRequest::NoResult)
     , m_cancelled(false)
     , m_currentEmpty(true)
@@ -293,7 +296,7 @@ QWS4GalleryFileOperationResponse::QWS4GalleryFileOperationResponse(
     m_thread->start();
 }
 
-QWS4GalleryFileOperationResponse::~QWS4GalleryFileOperationResponse()
+QGalleryFileOperationResponse::~QGalleryFileOperationResponse()
 {
     cancel();
 
@@ -304,67 +307,67 @@ QWS4GalleryFileOperationResponse::~QWS4GalleryFileOperationResponse()
     Q_ASSERT(m_ref == 1);
 }
 
-QList<int> QWS4GalleryFileOperationResponse::keys() const
+QList<int> QGalleryFileOperationResponse::keys() const
 {
     return m_listKeys;
 }
 
-QString QWS4GalleryFileOperationResponse::toString(int key) const
+QString QGalleryFileOperationResponse::toString(int key) const
 {
     return m_fields.at(key);
 }
 
-int QWS4GalleryFileOperationResponse::count() const
+int QGalleryFileOperationResponse::count() const
 {
     return !m_currentEmpty ? 1 : 0;
 }
 
-QString QWS4GalleryFileOperationResponse::id(int) const
+QString QGalleryFileOperationResponse::id(int) const
 {
     return m_current.url;
 }
 
-QUrl QWS4GalleryFileOperationResponse::url(int) const
+QUrl QGalleryFileOperationResponse::url(int) const
 {
     return m_current.url;
 }
 
-QString QWS4GalleryFileOperationResponse::type(int) const
+QString QGalleryFileOperationResponse::type(int) const
 {
     return m_current.type;
 }
 
-QList<QGalleryResource> QWS4GalleryFileOperationResponse::resources(int) const
+QList<QGalleryResource> QGalleryFileOperationResponse::resources(int) const
 {
     return !m_currentEmpty
             ? QList<QGalleryResource>() << QGalleryResource(m_current.url)
             : QList<QGalleryResource>();
 }
 
-QVariant QWS4GalleryFileOperationResponse::metaData(int index, int key) const
+QVariant QGalleryFileOperationResponse::metaData(int index, int key) const
 {
     return !m_currentEmpty && index == 0
             ? m_current.metaData.at(key)
             : QVariant();
 }
 
-void QWS4GalleryFileOperationResponse::setMetaData(int, int, const QVariant &)
+void QGalleryFileOperationResponse::setMetaData(int, int, const QVariant &)
 {
 }
 
-QGalleryItemList::MetaDataFlags QWS4GalleryFileOperationResponse::metaDataFlags(int, int) const
+QGalleryItemList::MetaDataFlags QGalleryFileOperationResponse::metaDataFlags(int, int) const
 {
     return 0;
 }
 
-void QWS4GalleryFileOperationResponse::cancel()
+void QGalleryFileOperationResponse::cancel()
 {
     QMutexLocker locker(&m_mutex);
 
     m_cancelled = true;
 }
 
-bool QWS4GalleryFileOperationResponse::waitForFinished(int msecs)
+bool QGalleryFileOperationResponse::waitForFinished(int msecs)
 {
     if (m_thread->wait(msecs)) {
         finish(m_result);
@@ -376,7 +379,7 @@ bool QWS4GalleryFileOperationResponse::waitForFinished(int msecs)
 }
 
 // IUnknown
-HRESULT QWS4GalleryFileOperationResponse::QueryInterface(REFIID riid, void **ppvObject)
+HRESULT QGalleryFileOperationResponse::QueryInterface(REFIID riid, void **ppvObject)
 {
     if (!ppvObject) {
         return E_POINTER;
@@ -394,12 +397,12 @@ HRESULT QWS4GalleryFileOperationResponse::QueryInterface(REFIID riid, void **ppv
     return S_OK;
 }
 
-ULONG QWS4GalleryFileOperationResponse::AddRef()
+ULONG QGalleryFileOperationResponse::AddRef()
 {
     return InterlockedIncrement(&m_ref);
 }
 
-ULONG QWS4GalleryFileOperationResponse::Release()
+ULONG QGalleryFileOperationResponse::Release()
 {
     ULONG ref = InterlockedDecrement(&m_ref);
 
@@ -409,97 +412,97 @@ ULONG QWS4GalleryFileOperationResponse::Release()
 }
 
 // IFileOperationProgressSink
-HRESULT QWS4GalleryFileOperationResponse::StartOperations()
+HRESULT QGalleryFileOperationResponse::StartOperations()
 {
     return S_OK;
 }
 
-HRESULT QWS4GalleryFileOperationResponse::FinishOperations(HRESULT)
+HRESULT QGalleryFileOperationResponse::FinishOperations(HRESULT)
 {
     return S_OK;
 }
 
-HRESULT QWS4GalleryFileOperationResponse::PreRenameItem(DWORD, IShellItem *psiItem, LPCWSTR)
+HRESULT QGalleryFileOperationResponse::PreRenameItem(DWORD, IShellItem *psiItem, LPCWSTR)
 {
     return setCurrentItem(psiItem) ? S_OK : COPYENGINE_E_USER_CANCELLED;
 }
 
-HRESULT QWS4GalleryFileOperationResponse::PostRenameItem(
+HRESULT QGalleryFileOperationResponse::PostRenameItem(
         DWORD, IShellItem *, LPCWSTR, HRESULT, IShellItem *)
 {
     return clearCurrentItem() ? S_OK : COPYENGINE_E_USER_CANCELLED;
 }
 
-HRESULT QWS4GalleryFileOperationResponse::PreMoveItem(
+HRESULT QGalleryFileOperationResponse::PreMoveItem(
         DWORD, IShellItem *psiItem, IShellItem *, LPCWSTR)
 {
     return setCurrentItem(psiItem) ? S_OK : COPYENGINE_E_USER_CANCELLED;
 }
 
-HRESULT QWS4GalleryFileOperationResponse::PostMoveItem(
+HRESULT QGalleryFileOperationResponse::PostMoveItem(
         DWORD, IShellItem *, IShellItem *, LPCWSTR, HRESULT, IShellItem *)
 {
     return clearCurrentItem() ? S_OK : COPYENGINE_E_USER_CANCELLED;
 }
 
-HRESULT QWS4GalleryFileOperationResponse::PreCopyItem(
+HRESULT QGalleryFileOperationResponse::PreCopyItem(
         DWORD, IShellItem *psiItem, IShellItem *, LPCWSTR)
 {
     return setCurrentItem(psiItem) ? S_OK : COPYENGINE_E_USER_CANCELLED;
 }
 
-HRESULT QWS4GalleryFileOperationResponse::PostCopyItem(
+HRESULT QGalleryFileOperationResponse::PostCopyItem(
         DWORD, IShellItem *, IShellItem *, LPCWSTR, HRESULT, IShellItem *)
 {
     return clearCurrentItem() ? S_OK : COPYENGINE_E_USER_CANCELLED;
 }
 
-HRESULT QWS4GalleryFileOperationResponse::PreDeleteItem(DWORD, IShellItem *psiItem)
+HRESULT QGalleryFileOperationResponse::PreDeleteItem(DWORD, IShellItem *psiItem)
 {
     return setCurrentItem(psiItem) ? S_OK : COPYENGINE_E_USER_CANCELLED;
 }
 
-HRESULT QWS4GalleryFileOperationResponse::PostDeleteItem(DWORD, IShellItem *, HRESULT, IShellItem *)
+HRESULT QGalleryFileOperationResponse::PostDeleteItem(DWORD, IShellItem *, HRESULT, IShellItem *)
 {
     return clearCurrentItem() ? S_OK : COPYENGINE_E_USER_CANCELLED;
 }
 
-HRESULT QWS4GalleryFileOperationResponse::PreNewItem(DWORD, IShellItem *, LPCWSTR)
+HRESULT QGalleryFileOperationResponse::PreNewItem(DWORD, IShellItem *, LPCWSTR)
 {
     return S_OK;
 }
 
-HRESULT QWS4GalleryFileOperationResponse::PostNewItem(
+HRESULT QGalleryFileOperationResponse::PostNewItem(
         DWORD, IShellItem *, LPCWSTR, LPCWSTR, DWORD, HRESULT, IShellItem *)
 {
     return S_OK;
 }
 
-HRESULT QWS4GalleryFileOperationResponse::UpdateProgress(UINT iWorkTotal, UINT iWorkSoFar)
+HRESULT QGalleryFileOperationResponse::UpdateProgress(UINT iWorkTotal, UINT iWorkSoFar)
 {
-    QCoreApplication::postEvent(this, new QWS4GalleryProgressEvent(iWorkSoFar, iWorkTotal));
+    QCoreApplication::postEvent(this, new QGalleryProgressEvent(iWorkSoFar, iWorkTotal));
 
     QMutexLocker locker(&m_mutex);
 
     return m_cancelled ? COPYENGINE_E_USER_CANCELLED : S_OK;
 }
 
-HRESULT QWS4GalleryFileOperationResponse::ResetTimer()
+HRESULT QGalleryFileOperationResponse::ResetTimer()
 {
     return S_OK;
 }
 
-HRESULT QWS4GalleryFileOperationResponse::PauseTimer()
+HRESULT QGalleryFileOperationResponse::PauseTimer()
 {
     return S_OK;
 }
 
-HRESULT QWS4GalleryFileOperationResponse::ResumeTimer()
+HRESULT QGalleryFileOperationResponse::ResumeTimer()
 {
     return S_OK;
 }
 
-IShellItem *QWS4GalleryFileOperationResponse::createShellItem(const QString &id) const
+IShellItem *QGalleryFileOperationResponse::createShellItem(const QString &id) const
 {
     IShellItem *item = 0;
     // Can't invoke directly as not available in XP.
@@ -511,13 +514,13 @@ IShellItem *QWS4GalleryFileOperationResponse::createShellItem(const QString &id)
     return item;
 }
 
-void QWS4GalleryFileOperationResponse::customEvent(QEvent *event)
+void QGalleryFileOperationResponse::customEvent(QEvent *event)
 {
-    if (event->type() == QWS4GalleryEvent::Progress) {
-        QWS4GalleryProgressEvent *progressEvent = static_cast<QWS4GalleryProgressEvent *>(event);
+    if (event->type() == QGalleryEvent::Progress) {
+        QGalleryProgressEvent *progressEvent = static_cast<QGalleryProgressEvent *>(event);
 
         emit progressChanged(progressEvent->currentProgress, progressEvent->maximumProgress);
-    } else if (event->type() == QWS4GalleryEvent::ItemsChanged) {
+    } else if (event->type() == QGalleryEvent::ItemsChanged) {
         bool pendingEmpty;
         {
             QMutexLocker locker(&m_mutex);
@@ -541,12 +544,12 @@ void QWS4GalleryFileOperationResponse::customEvent(QEvent *event)
     }
 }
 
-void QWS4GalleryFileOperationResponse::threadFinished()
+void QGalleryFileOperationResponse::threadFinished()
 {
     finish(m_result);
 }
 
-void QWS4GalleryFileOperationResponse::run()
+void QGalleryFileOperationResponse::run()
 {
     ::CoInitialize(0);
 
@@ -588,7 +591,7 @@ void QWS4GalleryFileOperationResponse::run()
     ::CoUninitialize();
 }
 
-bool QWS4GalleryFileOperationResponse::setCurrentItem(IShellItem *shellItem)
+bool QGalleryFileOperationResponse::setCurrentItem(IShellItem *shellItem)
 {
     Item item;
     bool itemValid = false;
@@ -618,13 +621,13 @@ bool QWS4GalleryFileOperationResponse::setCurrentItem(IShellItem *shellItem)
         if (!m_changePending) {
             m_changePending = true;
 
-            QCoreApplication::postEvent(this, new QWS4GalleryEvent(QWS4GalleryEvent::ItemsChanged));
+            QCoreApplication::postEvent(this, new QGalleryEvent(QGalleryEvent::ItemsChanged));
         }
     }
     return true;
 }
 
-bool QWS4GalleryFileOperationResponse::clearCurrentItem()
+bool QGalleryFileOperationResponse::clearCurrentItem()
 {
     QMutexLocker locker(&m_mutex);
 
@@ -633,8 +636,10 @@ bool QWS4GalleryFileOperationResponse::clearCurrentItem()
     if (!m_changePending) {
         m_changePending = true;
 
-        QCoreApplication::postEvent(this, new QWS4GalleryEvent(QWS4GalleryEvent::ItemsChanged));
+        QCoreApplication::postEvent(this, new QGalleryEvent(QGalleryEvent::ItemsChanged));
     }
 
     return m_cancelled;
+}
+
 }

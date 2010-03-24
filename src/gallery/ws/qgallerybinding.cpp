@@ -39,22 +39,25 @@
 **
 ****************************************************************************/
 
-#include "qws4gallerybinding_p.h"
+#include "qgallerybinding_p.h"
 
 #include <QtCore/qstringlist.h>
 
-struct QWS4GalleryWStr
+namespace QWindowsSearch
+{
+
+struct QGalleryWStr
 {
     DBLENGTH length;
     wchar_t characters[1];
 };
 
-template <typename T> qint32 qws4ReadInt32(const char *buffer)
+template <typename T> qint32 qReadInt32(const char *buffer)
 {
     return *reinterpret_cast<const T *>(buffer);
 }
 
-template <> qint32 qws4ReadInt32<VARIANT>(const char *buffer)
+template <> qint32 qReadInt32<VARIANT>(const char *buffer)
 {
     const VARIANT *variant = reinterpret_cast<const VARIANT *>(buffer);
 
@@ -81,26 +84,26 @@ template <> qint32 qws4ReadInt32<VARIANT>(const char *buffer)
 }
 
 // Assume a numeric type if not specialized.
-template <typename T> QString qws4ReadString(const char *buffer)
+template <typename T> QString qReadString(const char *buffer)
 {
     return QString::number(*reinterpret_cast<const T *>(buffer));
 }
 
-template <> QString qws4ReadString<BSTR>(const char *buffer)
+template <> QString qReadString<BSTR>(const char *buffer)
 {
     return QString::fromWCharArray(
         reinterpret_cast<const wchar_t *>(buffer),
         ::SysStringLen(*reinterpret_cast<const BSTR *>(buffer)));
 }
 
-template <> QString qws4ReadString<QWS4GalleryWStr>(const char *buffer)
+template <> QString qReadString<QGalleryWStr>(const char *buffer)
 {
-    const QWS4GalleryWStr *string = reinterpret_cast<const QWS4GalleryWStr *>(buffer);
+    const QGalleryWStr *string = reinterpret_cast<const QGalleryWStr *>(buffer);
 
     return QString::fromWCharArray(string->characters, string->length / sizeof(wchar_t));
 }
 
-template <> QString qws4ReadString<VARIANT>(const char *buffer)
+template <> QString qReadString<VARIANT>(const char *buffer)
 {
     const VARIANT *variant = reinterpret_cast<const VARIANT *>(buffer);
 
@@ -152,26 +155,26 @@ template <> QString qws4ReadString<VARIANT>(const char *buffer)
     }
 }
 
-template <typename T> QVariant qws4ReadVariant(const char *buffer)
+template <typename T> QVariant qReadVariant(const char *buffer)
 {
     return qVariantFromValue<T>(*reinterpret_cast<const T *>(buffer));
 }
 
-template <> QVariant qws4ReadVariant<BSTR>(const char *buffer)
+template <> QVariant qReadVariant<BSTR>(const char *buffer)
 {
     return QString::fromWCharArray(
         reinterpret_cast<const wchar_t *>(buffer),
         ::SysStringLen(*reinterpret_cast<const BSTR *>(buffer)));
 }
 
-template <> QVariant qws4ReadVariant<QWS4GalleryWStr>(const char *buffer)
+template <> QVariant qReadVariant<QGalleryWStr>(const char *buffer)
 {
-    const QWS4GalleryWStr *string = reinterpret_cast<const QWS4GalleryWStr *>(buffer);
+    const QGalleryWStr *string = reinterpret_cast<const QGalleryWStr *>(buffer);
 
     return QString::fromWCharArray(string->characters, string->length / sizeof(wchar_t));
 }
 
-template <> QVariant qws4ReadVariant<VARIANT>(const char *buffer)
+template <> QVariant qReadVariant<VARIANT>(const char *buffer)
 {
     const VARIANT *variant = reinterpret_cast<const VARIANT *>(buffer);
 
@@ -223,17 +226,17 @@ template <> QVariant qws4ReadVariant<VARIANT>(const char *buffer)
     }
 }
 
-template <typename R> R qws4ReadNull(const char *)
+template <typename R> R qReadNull(const char *)
 {
     return R();
 }
 
-template <typename T> int qws4Aligned(int offset)
+template <typename T> int qAligned(int offset)
 {
     return (offset + sizeof(T) - 1) & ~(sizeof(T) - 1);
 }
 
-QWS4GalleryBinding::QWS4GalleryBinding(IRowset *rowSet)
+QGalleryBinding::QGalleryBinding(IRowset *rowSet)
     : m_bufferSize(0)
     , m_count(0)
     , m_handle(0)
@@ -291,9 +294,9 @@ QWS4GalleryBinding::QWS4GalleryBinding(IRowset *rowSet)
                         m_count = m_offsets.count();
 
                         m_offsets.append(0);
-                        m_int32Readers.append(qws4ReadNull<qint32>);
-                        m_stringReaders.append(qws4ReadNull<QString>);
-                        m_variantReaders.append(qws4ReadNull<QVariant>);
+                        m_int32Readers.append(qReadNull<qint32>);
+                        m_stringReaders.append(qReadNull<QString>);
+                        m_variantReaders.append(qReadNull<QVariant>);
                     } else {
                         if (hr == 0x80040E21) {
                             QVector<DBBINDSTATUS>::const_iterator it = status.constBegin();
@@ -318,7 +321,7 @@ QWS4GalleryBinding::QWS4GalleryBinding(IRowset *rowSet)
     }
 }
 
-QWS4GalleryBinding::~QWS4GalleryBinding()
+QGalleryBinding::~QGalleryBinding()
 {
     if (m_accessor) {
         m_accessor->ReleaseAccessor(m_handle, 0);
@@ -326,22 +329,22 @@ QWS4GalleryBinding::~QWS4GalleryBinding()
     }
 }
 
-qint32 QWS4GalleryBinding::toInt32(const char *buffer, int column) const
+qint32 QGalleryBinding::toInt32(const char *buffer, int column) const
 {
     return m_int32Readers.at(column)(buffer + m_offsets.at(column));
 }
 
-QString QWS4GalleryBinding::toString(const char *buffer, int column) const
+QString QGalleryBinding::toString(const char *buffer, int column) const
 {
     return m_stringReaders.at(column)(buffer + m_offsets.at(column));
 }
 
-QVariant QWS4GalleryBinding::toVariant(const char *buffer, int column) const
+QVariant QGalleryBinding::toVariant(const char *buffer, int column) const
 {
     return m_variantReaders.at(column)(buffer + m_offsets.at(column));
 }
 
-bool QWS4GalleryBinding::generateColumnBinding(DBBINDING *binding, const DBCOLUMNINFO &column)
+bool QGalleryBinding::generateColumnBinding(DBBINDING *binding, const DBCOLUMNINFO &column)
 {
     int valueOffset = 0;
     int valueSize = 0;
@@ -368,127 +371,127 @@ bool QWS4GalleryBinding::generateColumnBinding(DBBINDING *binding, const DBCOLUM
 
     switch (column.wType) {
     case DBTYPE_I1:
-        m_int32Readers.append(qws4ReadInt32<qint8>);
-        m_stringReaders.append(qws4ReadString<qint8>);
-        m_variantReaders.append(qws4ReadVariant<quint8>);
+        m_int32Readers.append(qReadInt32<qint8>);
+        m_stringReaders.append(qReadString<qint8>);
+        m_variantReaders.append(qReadVariant<quint8>);
 
-        valueOffset = qws4Aligned<qint8>(m_bufferSize);
+        valueOffset = qAligned<qint8>(m_bufferSize);
         valueSize = sizeof(qint8);
         columnOffset = valueOffset;
         columnSize = valueSize;
 
         break;
     case DBTYPE_I2:
-        m_int32Readers.append(qws4ReadInt32<qint16>);
-        m_stringReaders.append(qws4ReadString<qint16>);
-        m_variantReaders.append(qws4ReadVariant<qint16>);
+        m_int32Readers.append(qReadInt32<qint16>);
+        m_stringReaders.append(qReadString<qint16>);
+        m_variantReaders.append(qReadVariant<qint16>);
 
-        valueOffset = qws4Aligned<qint16>(m_bufferSize);
+        valueOffset = qAligned<qint16>(m_bufferSize);
         valueSize = sizeof(qint16);
         columnOffset = valueOffset;
         columnSize = valueSize;
 
         break;
     case DBTYPE_I4:
-        m_int32Readers.append(qws4ReadInt32<qint32>);
-        m_stringReaders.append(qws4ReadString<qint32>);
-        m_variantReaders.append(qws4ReadVariant<qint32>);
+        m_int32Readers.append(qReadInt32<qint32>);
+        m_stringReaders.append(qReadString<qint32>);
+        m_variantReaders.append(qReadVariant<qint32>);
 
-        valueOffset = qws4Aligned<qint32>(m_bufferSize);
+        valueOffset = qAligned<qint32>(m_bufferSize);
         valueSize = sizeof(qint32);
         columnOffset = valueOffset;
         columnSize = valueSize;
         break;
     case DBTYPE_I8:
-        m_int32Readers.append(qws4ReadNull<qint32>);
-        m_stringReaders.append(qws4ReadString<qint64>);
-        m_variantReaders.append(qws4ReadVariant<qint64>);
+        m_int32Readers.append(qReadNull<qint32>);
+        m_stringReaders.append(qReadString<qint64>);
+        m_variantReaders.append(qReadVariant<qint64>);
 
-        valueOffset = qws4Aligned<qint64>(m_bufferSize);
+        valueOffset = qAligned<qint64>(m_bufferSize);
         valueSize = sizeof(qint64);
         columnOffset = valueOffset;
         columnSize = valueSize;
         break;
     case DBTYPE_UI1:
-        m_int32Readers.append(qws4ReadInt32<quint8>);
-        m_stringReaders.append(qws4ReadString<quint8>);
-        m_variantReaders.append(qws4ReadVariant<quint8>);
+        m_int32Readers.append(qReadInt32<quint8>);
+        m_stringReaders.append(qReadString<quint8>);
+        m_variantReaders.append(qReadVariant<quint8>);
 
-        valueOffset = qws4Aligned<quint8>(m_bufferSize);
+        valueOffset = qAligned<quint8>(m_bufferSize);
         valueSize = sizeof(quint8);
         columnOffset = valueOffset;
         columnSize = valueSize;
         break;
     case DBTYPE_UI2:
-        m_int32Readers.append(qws4ReadInt32<quint16>);
-        m_stringReaders.append(qws4ReadString<quint16>);
-        m_variantReaders.append(qws4ReadVariant<quint16>);
+        m_int32Readers.append(qReadInt32<quint16>);
+        m_stringReaders.append(qReadString<quint16>);
+        m_variantReaders.append(qReadVariant<quint16>);
 
-        valueOffset = qws4Aligned<quint16>(m_bufferSize);
+        valueOffset = qAligned<quint16>(m_bufferSize);
         valueSize = sizeof(quint16);
         columnOffset = valueOffset;
         columnSize = valueSize;
 
         break;
     case DBTYPE_UI4:
-        m_int32Readers.append(qws4ReadInt32<quint32>);
-        m_stringReaders.append(qws4ReadString<quint32>);
-        m_variantReaders.append(qws4ReadVariant<quint32>);
+        m_int32Readers.append(qReadInt32<quint32>);
+        m_stringReaders.append(qReadString<quint32>);
+        m_variantReaders.append(qReadVariant<quint32>);
 
-        valueOffset = qws4Aligned<quint32>(m_bufferSize);
+        valueOffset = qAligned<quint32>(m_bufferSize);
         valueSize = sizeof(quint32);
         columnOffset = valueOffset;
         columnSize = valueSize;
         break;
     case DBTYPE_UI8:
-        m_int32Readers.append(qws4ReadNull<qint32>);
-        m_stringReaders.append(qws4ReadString<quint64>);
-        m_variantReaders.append(qws4ReadVariant<quint64>);
+        m_int32Readers.append(qReadNull<qint32>);
+        m_stringReaders.append(qReadString<quint64>);
+        m_variantReaders.append(qReadVariant<quint64>);
 
-        valueOffset = qws4Aligned<quint64>(m_bufferSize);
+        valueOffset = qAligned<quint64>(m_bufferSize);
         valueSize = sizeof(quint64);
         columnOffset = valueOffset;
         columnSize = valueSize;
         break;
     case DBTYPE_R4:
-        m_int32Readers.append(qws4ReadNull<qint32>);
-        m_stringReaders.append(qws4ReadString<float>);
-        m_variantReaders.append(qws4ReadVariant<float>);
+        m_int32Readers.append(qReadNull<qint32>);
+        m_stringReaders.append(qReadString<float>);
+        m_variantReaders.append(qReadVariant<float>);
 
-        valueOffset = qws4Aligned<float>(m_bufferSize);
+        valueOffset = qAligned<float>(m_bufferSize);
         valueSize = sizeof(float);
         columnOffset = valueOffset;
         columnSize = valueSize;
 
         break;
     case DBTYPE_R8:
-        m_int32Readers.append(qws4ReadNull<qint32>);
-        m_stringReaders.append(qws4ReadString<double>);
-        m_variantReaders.append(qws4ReadVariant<double>);
+        m_int32Readers.append(qReadNull<qint32>);
+        m_stringReaders.append(qReadString<double>);
+        m_variantReaders.append(qReadVariant<double>);
 
-        valueOffset = qws4Aligned<double>(m_bufferSize);
+        valueOffset = qAligned<double>(m_bufferSize);
         valueSize = sizeof(double);
         columnOffset = valueOffset;
         columnSize = valueSize;
 
         break;
     case DBTYPE_BSTR:
-        m_int32Readers.append(qws4ReadNull<qint32>);
-        m_stringReaders.append(qws4ReadString<BSTR>);
-        m_variantReaders.append(qws4ReadVariant<BSTR>);
+        m_int32Readers.append(qReadNull<qint32>);
+        m_stringReaders.append(qReadString<BSTR>);
+        m_variantReaders.append(qReadVariant<BSTR>);
 
-        valueOffset = qws4Aligned<BSTR>(m_bufferSize);
+        valueOffset = qAligned<BSTR>(m_bufferSize);
         valueSize = sizeof(BSTR);
         columnOffset = valueOffset;
         columnSize = valueSize;
 
         break;
     case DBTYPE_WSTR:
-        m_int32Readers.append(qws4ReadNull<qint32>);
-        m_stringReaders.append(qws4ReadString<QWS4GalleryWStr>);
-        m_variantReaders.append(qws4ReadVariant<QWS4GalleryWStr>);
+        m_int32Readers.append(qReadNull<qint32>);
+        m_stringReaders.append(qReadString<QGalleryWStr>);
+        m_variantReaders.append(qReadVariant<QGalleryWStr>);
    
-        lengthOffset = qws4Aligned<DBLENGTH>(m_bufferSize);
+        lengthOffset = qAligned<DBLENGTH>(m_bufferSize);
         valueOffset = lengthOffset + sizeof(DBLENGTH);
         valueSize = column.ulColumnSize;
         columnOffset = lengthOffset;
@@ -497,11 +500,11 @@ bool QWS4GalleryBinding::generateColumnBinding(DBBINDING *binding, const DBCOLUM
         part = DBPART_VALUE | DBPART_LENGTH;
         break;
     case DBTYPE_VARIANT:
-        m_int32Readers.append(qws4ReadInt32<VARIANT>);
-        m_stringReaders.append(qws4ReadString<VARIANT>);
-        m_variantReaders.append(qws4ReadVariant<VARIANT>);
+        m_int32Readers.append(qReadInt32<VARIANT>);
+        m_stringReaders.append(qReadString<VARIANT>);
+        m_variantReaders.append(qReadVariant<VARIANT>);
 
-        valueOffset = qws4Aligned<VARIANT>(m_bufferSize);
+        valueOffset = qAligned<VARIANT>(m_bufferSize);
         valueSize = sizeof(VARIANT);
         columnOffset = valueOffset;
         columnSize = valueSize;
@@ -548,4 +551,6 @@ bool QWS4GalleryBinding::generateColumnBinding(DBBINDING *binding, const DBCOLUM
     m_bufferSize = columnOffset + columnSize;
 
     return true;
+}
+
 }

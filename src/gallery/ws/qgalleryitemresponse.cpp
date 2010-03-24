@@ -39,21 +39,24 @@
 **
 ****************************************************************************/
 
-#include "qws4galleryitemresponse_p.h"
+#include "qgalleryitemresponse_p.h"
 
-#include "qws4gallerybinding_p.h"
+#include "qgallerybinding_p.h"
 
 #include <QtCore/qcoreapplication.h>
 #include <QtCore/qcoreevent.h>
 
 #include <oledberr.h>
 
-QWS4GalleryItemResponse::QWS4GalleryItemResponse(
+namespace QWindowsSearch
+{
+
+QGalleryItemResponse::QGalleryItemResponse(
             IRowsetScroll *rowSet,
             const QGalleryItemRequest &request,
-            const QVector<QWS4GalleryQueryBuilder::Column> &columns,
+            const QVector<QGalleryQueryBuilder::Column> &columns,
             QObject *parent)
-    : QWS4GalleryRowSetResponse(rowSet, parent)
+    : QGalleryRowSetResponse(rowSet, parent)
     , m_urlIndex(0)
     , m_typeIndex(0)
     , m_rowOffset(0)
@@ -61,10 +64,10 @@ QWS4GalleryItemResponse::QWS4GalleryItemResponse(
     , m_minimumPagedItems(qMax<int>(PageSize, request.minimumPagedItems()))
     , m_rowSet(rowSet)
     , m_binding(0)
-    , m_placeholderRow(new QWS4GalleryItemListRow)
+    , m_placeholderRow(new QGalleryItemListRow)
     , m_fields(request.fields())
 {
-    m_binding = new QWS4GalleryBinding(m_rowSet);
+    m_binding = new QGalleryBinding(m_rowSet);
     m_placeholderRow->metaData.resize(m_fields.count());
 
     if (m_binding->handle()) {    
@@ -118,22 +121,22 @@ QWS4GalleryItemResponse::QWS4GalleryItemResponse(
     }
 }
 
-QWS4GalleryItemResponse::~QWS4GalleryItemResponse()
+QGalleryItemResponse::~QGalleryItemResponse()
 {
     delete m_binding;
 }
 
-QList<int> QWS4GalleryItemResponse::keys() const
+QList<int> QGalleryItemResponse::keys() const
 {
     return m_keys;
 }
 
-QString QWS4GalleryItemResponse::toString(int key) const
+QString QGalleryItemResponse::toString(int key) const
 {
     return m_fields.value(key);
 }
 
-void QWS4GalleryItemResponse::setCursorPosition(int position)
+void QGalleryItemResponse::setCursorPosition(int position)
 {
     if (position > cursorPosition()) {
         appendRows(qMax(0, position));
@@ -146,49 +149,49 @@ void QWS4GalleryItemResponse::setCursorPosition(int position)
     }
 }
 
-int QWS4GalleryItemResponse::minimumPagedItems() const
+int QGalleryItemResponse::minimumPagedItems() const
 {
     return m_minimumPagedItems;
 }
 
-int QWS4GalleryItemResponse::count() const
+int QGalleryItemResponse::count() const
 {
     return m_count;
 }
 
-QString QWS4GalleryItemResponse::id(int index) const
+QString QGalleryItemResponse::id(int index) const
 {
     return row(index)->url;
 }
 
-QUrl QWS4GalleryItemResponse::url(int index) const
+QUrl QGalleryItemResponse::url(int index) const
 {
     return QUrl(row(index)->url);
 }
 
-QString QWS4GalleryItemResponse::type(int index) const
+QString QGalleryItemResponse::type(int index) const
 {
     return row(index)->type;
 }
 
-QList<QGalleryResource> QWS4GalleryItemResponse::resources(int index) const
+QList<QGalleryResource> QGalleryItemResponse::resources(int index) const
 {
     return QList<QGalleryResource>() << QGalleryResource(QUrl(row(index)->url));
 }
 
-QVariant QWS4GalleryItemResponse::metaData(int index, int key) const
+QVariant QGalleryItemResponse::metaData(int index, int key) const
 {
     return row(index)->metaData.at(key);
 }
 
-void QWS4GalleryItemResponse::setMetaData(int index, int key, const QVariant &value)
+void QGalleryItemResponse::setMetaData(int index, int key, const QVariant &value)
 {
     Q_UNUSED(index);
     Q_UNUSED(key);
     Q_UNUSED(value);
 }
 
-QGalleryItemList::MetaDataFlags QWS4GalleryItemResponse::metaDataFlags(
+QGalleryItemList::MetaDataFlags QGalleryItemResponse::metaDataFlags(
         int index, int key) const
 {
     Q_UNUSED(index);
@@ -197,11 +200,11 @@ QGalleryItemList::MetaDataFlags QWS4GalleryItemResponse::metaDataFlags(
     return 0;
 }
 
-void QWS4GalleryItemResponse::customEvent(QEvent *event)
+void QGalleryItemResponse::customEvent(QEvent *event)
 {
-    if (event->type() == QWS4GalleryEvent::ItemsInserted) {
-        QWS4GalleryItemsInsertedEvent *insertEvent
-                = static_cast<QWS4GalleryItemsInsertedEvent *>(event);
+    if (event->type() == QGalleryEvent::ItemsInserted) {
+        QGalleryItemsInsertedEvent *insertEvent
+                = static_cast<QGalleryItemsInsertedEvent *>(event);
         int index = m_count;
 
         m_count += insertEvent->count;
@@ -210,11 +213,11 @@ void QWS4GalleryItemResponse::customEvent(QEvent *event)
 
         appendRows(cursorPosition());
     } else {
-        QWS4GalleryRowSetResponse::customEvent(event);
+        QGalleryRowSetResponse::customEvent(event);
     }
 }
 
-void QWS4GalleryItemResponse::appendRows(int position)
+void QGalleryItemResponse::appendRows(int position)
 {
     const int alignedPosition = ~(PageSize - 1) & qMin(
             position, qMax(0, m_count - m_minimumPagedItems));
@@ -249,7 +252,7 @@ void QWS4GalleryItemResponse::appendRows(int position)
                 &pRows))) {
             for (DBCOUNTITEM i = 0; i < rowsFetched; ++i) {
                 if (SUCCEEDED(m_rowSet->GetData(rows[i], m_binding->handle(), buffer.data()))) {
-                    Row row = Row(new QWS4GalleryItemListRow);
+                    Row row = Row(new QGalleryItemListRow);
                     row->workId = 0;
                     row->flags = 0;
                     row->url = m_binding->toString(buffer.data(), m_urlIndex);
@@ -298,7 +301,7 @@ void QWS4GalleryItemResponse::appendRows(int position)
     qDebug("Appended items\n\tOffset: %d\n\tCached Items: %d", m_rowOffset, m_rows.count());
 }
 
-void QWS4GalleryItemResponse::prependRows(int position)
+void QGalleryItemResponse::prependRows(int position)
 {
     const int alignedPosition = ~(PageSize - 1) & qMin(
             position, qMax(0, m_count - m_minimumPagedItems));
@@ -333,7 +336,7 @@ void QWS4GalleryItemResponse::prependRows(int position)
                 &pRows))) {
             for (DBCOUNTITEM i = 0; i < rowsFetched; ++i) {
                 if (SUCCEEDED(m_rowSet->GetData(rows[i], m_binding->handle(), buffer.data()))) {
-                    Row row = Row(new QWS4GalleryItemListRow);
+                    Row row = Row(new QGalleryItemListRow);
                     row->workId = 0;
                     row->flags = 0;
                     row->url = m_binding->toString(buffer.data(), m_urlIndex);
@@ -374,3 +377,4 @@ void QWS4GalleryItemResponse::prependRows(int position)
     qDebug("Prepended items\n\tOffset: %d\n\tCached Items: %d", m_rowOffset, m_rows.count());
 }
 
+}

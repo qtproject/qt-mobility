@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QWS4GALLERYQUERYBUILDER_P_H
-#define QWS4GALLERYQUERYBUILDER_P_H
+#ifndef QGALLERYQUERYBUILDER_P_H
+#define QGALLERYQUERYBUILDER_P_H
 
 //
 //  W A R N I N G
@@ -57,13 +57,16 @@
 
 #include <QtCore/qstringlist.h>
 
-class QWS4GalleryQueryBuilder
+namespace QWindowsSearch
+{
+
+class QGalleryQueryBuilder
 {
 public:
     typedef QPair<QString, QString> Column;
 
-    QWS4GalleryQueryBuilder();
-    ~QWS4GalleryQueryBuilder();
+    QGalleryQueryBuilder();
+    ~QGalleryQueryBuilder();
 
     QStringList fields() const { return m_fields; }
     void setFields(const QStringList &fields) { m_fields = fields; }
@@ -90,5 +93,7 @@ private:
     QString m_query;
     QGalleryFilter m_filter;
 };
+
+}
 
 #endif
