@@ -47,10 +47,15 @@
 #include <stdio.h>
 #include "qaccelerometer.h"
 
+#if defined(QT_OPENGL_ES)
+#define USE_BUFFERS 1
+#endif
+
 View::View(QWidget *parent)
     : QGLWidget(parent),
       sensitivity(0.1f),
-      painter(0)
+      painter(0),
+      showFrameRate(false)
 {
     mainCamera = new Camera(this);
 
@@ -61,6 +66,11 @@ View::View(QWidget *parent)
     connect(sensor, SIGNAL(readingChanged()), this, SLOT(accelerometerTimeout()));
     sensor->setUpdateInterval(10);
     sensor->start();
+
+    time.start();
+
+    vertexBuffer = 0;
+    indexBuffer = 0;
 }
 
 View::~View()
@@ -111,10 +121,30 @@ void View::initializeGL()
     painter->setLight(light);
 
     texture = bindTexture(QImage(QLatin1String(":/qtlogo.png")));
+
+#ifdef USE_BUFFERS
+    // Upload the teapot data into GL buffers for quicker rendering.
+    glGenBuffers(1, &vertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER,
+                 teapotVertexCount * teapotVertexStride * sizeof(float),
+                 teapotVertexData, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glGenBuffers(1, &indexBuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+                 teapotTriangleCount * 3 * sizeof(ushort),
+                 teapotTriangleData, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+#endif
 }
 
 void View::paintGL()
 {
+    if (showFrameRate)
+        qWarning("time since last frame: %d ms", time.restart());
+
     qreal aspectRatio = qreal(width()) / qreal(height());
     QMatrix4x4 mv, mv2;
     QMatrix4x4 proj;
@@ -172,11 +202,23 @@ void View::paintGL()
     mv2.translate(-0.8f, -1.5f, -3.0f);
     painter->setMatrices(mv2, proj);
     painter->selectMaterial(teapotMaterial);
+#ifdef USE_BUFFERS
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    painter->setVertices(0, 8);
+    painter->setNormals(reinterpret_cast<float *>(3 * sizeof(float)), 8);
+    painter->setTexCoords(reinterpret_cast<float *>(6 * sizeof(float)), 8);
+    glDrawElements(GL_TRIANGLES, teapotTriangleCount * 3,
+                   GL_UNSIGNED_SHORT, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+#else
     painter->setVertices(teapotVertexData, 8);
     painter->setNormals(teapotVertexData + 3, 8);
     painter->setTexCoords(teapotVertexData + 6, 8);
     glDrawElements(GL_TRIANGLES, teapotTriangleCount * 3,
                    GL_UNSIGNED_SHORT, teapotTriangleData);
+#endif
 }
 
 void View::accelerometerTimeout()

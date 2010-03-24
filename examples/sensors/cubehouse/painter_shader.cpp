@@ -66,6 +66,9 @@ ShaderPainter::ShaderPainter()
     textureProgram->bindAttributeLocation("normal", 1);
     textureProgram->bindAttributeLocation("texcoord", 2);
     textureProgram->link();
+
+    currentProgram = 0;
+    matricesChanged = false;
 }
 
 ShaderPainter::~ShaderPainter()
@@ -79,30 +82,45 @@ void ShaderPainter::setMatrices(const QMatrix4x4 &mv, const QMatrix4x4 &proj)
     combinedMatrix = proj * mv;
     modelViewMatrix = mv;
     normalMatrix = mv.normalMatrix();
+    matricesChanged = true;
 }
 
 void ShaderPainter::selectMaterial(Material *material)
 {
-    materialProgram->bind();
-    materialProgram->enableAttributeArray(0);
-    materialProgram->enableAttributeArray(1);
-    materialProgram->disableAttributeArray(2);
-    materialProgram->setUniformValue("matrix", combinedMatrix);
-    materialProgram->setUniformValue("modelView", modelViewMatrix);
-    materialProgram->setUniformValue("normalMatrix", normalMatrix);
+    if (currentProgram != materialProgram) {
+        materialProgram->bind();
+        materialProgram->enableAttributeArray(0);
+        materialProgram->enableAttributeArray(1);
+        materialProgram->disableAttributeArray(2);
+        currentProgram = materialProgram;
+        matricesChanged = true;
+    }
+    if (matricesChanged) {
+        materialProgram->setUniformValue("matrix", combinedMatrix);
+        materialProgram->setUniformValue("modelView", modelViewMatrix);
+        materialProgram->setUniformValue("normalMatrix", normalMatrix);
+        matricesChanged = false;
+    }
     updateMaterials(materialProgram, material);
 }
 
 void ShaderPainter::selectTexturedMaterial(Material *material)
 {
-    textureProgram->bind();
-    textureProgram->enableAttributeArray(0);
-    textureProgram->enableAttributeArray(1);
-    textureProgram->enableAttributeArray(2);
-    textureProgram->setUniformValue("matrix", combinedMatrix);
-    textureProgram->setUniformValue("modelView", modelViewMatrix);
-    textureProgram->setUniformValue("normalMatrix", normalMatrix);
-    textureProgram->setUniformValue("tex", 0);
+    if (currentProgram != textureProgram) {
+        textureProgram->bind();
+        textureProgram->enableAttributeArray(0);
+        textureProgram->enableAttributeArray(1);
+        textureProgram->enableAttributeArray(2);
+        textureProgram->setUniformValue("tex", 0);
+        currentProgram = textureProgram;
+        matricesChanged = true;
+    }
+    if (matricesChanged) {
+        textureProgram->setUniformValue("matrix", combinedMatrix);
+        textureProgram->setUniformValue("modelView", modelViewMatrix);
+        textureProgram->setUniformValue("normalMatrix", normalMatrix);
+        matricesChanged = false;
+    }
     updateMaterials(textureProgram, material);
 }
 
@@ -122,55 +140,21 @@ void ShaderPainter::setNormals(const float *array, int stride)
     materialProgram->setAttributeArray(1, array, 3, stride * sizeof(float));
 }
 
-static inline QVector4D colorToVector4(const QColor& color)
-{
-    return QVector4D(color.redF(), color.greenF(),
-                     color.blueF(), color.alphaF());
-}
-
 void ShaderPainter::updateMaterials
     (QGLShaderProgram *program, Material *material)
 {
     // Set the uniform variables for the light.
-    program->setUniformValue("acli", light->ambientColor());
-    program->setUniformValue("dcli", light->diffuseColor());
-    program->setUniformValue("scli", light->specularColor());
-    program->setUniformValue
-        ("sdli", light->eyeSpotDirection(QMatrix4x4()));
     QVector4D pli = light->eyePosition(QMatrix4x4());
     program->setUniformValue("pli", QVector3D(pli.x(), pli.y(), pli.z()));
     program->setUniformValue("pliw", GLfloat(pli.w()));
-    program->setUniformValue("srli", GLfloat(light->spotExponent()));
-    program->setUniformValue("crli", GLfloat(light->spotAngle()));
-    program->setUniformValue("ccrli", GLfloat(light->spotCosAngle()));
-    program->setUniformValue("k0", GLfloat(light->constantAttenuation()));
-    program->setUniformValue("k1", GLfloat(light->linearAttenuation()));
-    program->setUniformValue("k2", GLfloat(light->quadraticAttenuation()));
 
     // Set the uniform variables for the light model.
-    program->setUniformValue("twoSided", (int)(lightModel->model() == LightModel::TwoSided));
     program->setUniformValue("viewerAtInfinity", (int)(lightModel->viewerPosition() == LightModel::ViewerAtInfinity));
     program->setUniformValue("acs", lightModel->ambientSceneColor());
 
-    static const int MaxMaterials = 2;
-    QVector4D acm[MaxMaterials];
-    QVector4D dcm[MaxMaterials];
-    QVector4D scm[MaxMaterials];
-    QVector4D ecm[MaxMaterials];
-    float srm[MaxMaterials];
-    acm[0] = colorToVector4(material->ambientColor());
-    dcm[0] = colorToVector4(material->diffuseColor());
-    scm[0] = colorToVector4(material->specularColor());
-    ecm[0] = colorToVector4(material->emittedLight());
-    srm[0] = (float)(material->shininess());
-    acm[1] = colorToVector4(material->ambientColor());
-    dcm[1] = colorToVector4(material->diffuseColor());
-    scm[1] = colorToVector4(material->specularColor());
-    ecm[1] = colorToVector4(material->emittedLight());
-    srm[1] = (float)(material->shininess());
-    program->setUniformValueArray("acm", (const GLfloat *)acm, MaxMaterials, 4);
-    program->setUniformValueArray("dcm", (const GLfloat *)dcm, MaxMaterials, 4);
-    program->setUniformValueArray("scm", (const GLfloat *)scm, MaxMaterials, 4);
-    program->setUniformValueArray("ecm", (const GLfloat *)ecm, MaxMaterials, 4);
-    program->setUniformValueArray("srm", srm, MaxMaterials, 1);
+    // Set the uniform variables for the material.
+    program->setUniformValue("acm", material->ambientColor());
+    program->setUniformValue("dcm", material->diffuseColor());
+    program->setUniformValue("scm", material->specularColor());
+    program->setUniformValue("srm", (float)(material->shininess()));
 }

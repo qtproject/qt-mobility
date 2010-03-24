@@ -104,9 +104,11 @@ public:
 private:
     QGLShaderProgram *materialProgram;
     QGLShaderProgram *textureProgram;
+    QGLShaderProgram *currentProgram;
     QMatrix4x4 combinedMatrix;
     QMatrix4x4 modelViewMatrix;
     QMatrix3x3 normalMatrix;
+    bool matricesChanged;
 
     void updateMaterials(QGLShaderProgram *program, Material *material);
 };

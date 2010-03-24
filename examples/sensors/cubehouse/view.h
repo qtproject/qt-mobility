@@ -44,6 +44,7 @@
 
 #include <QtOpenGL/qgl.h>
 #include <QtGui/qvector3d.h>
+#include <QtCore/qdatetime.h>
 #include "camera.h"
 #include "light.h"
 #include "lightmodel.h"
@@ -62,6 +63,8 @@ public:
     View(QWidget *parent = 0);
     ~View();
 
+    void setShowFrameRate(bool value) { showFrameRate = value; }
+
 protected:
     void resizeGL(int width, int height);
     void initializeGL();
@@ -72,6 +75,8 @@ private slots:
 
 private:
     GLuint texture;
+    GLuint vertexBuffer;
+    GLuint indexBuffer;
     Camera *mainCamera;
     Camera *roomCamera;
     qreal sensitivity;
@@ -83,6 +88,8 @@ private:
     Material *roomMaterialLeftRight;
     Material *roomMaterialTopBottom;
     Painter *painter;
+    QTime time;
+    bool showFrameRate;
     QAccelerometer *sensor;
 
     QVector3D gravity() const;

@@ -46,6 +46,8 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     View view;
+    if (QApplication::arguments().contains("-framerate"))
+        view.setShowFrameRate(true);
     if (QApplication::arguments().contains("-maximize"))
         view.showMaximized();
     else if (QApplication::arguments().contains("-fullscreen"))
