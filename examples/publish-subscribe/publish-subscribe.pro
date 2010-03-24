@@ -15,10 +15,6 @@ symbian {
 
 include(../examples.pri)
 
-symbian|maemo* {
-    DEFINES += QTM_SMALL_SCREEN
-}
-
 HEADERS = publisherdialog.h \
           subscriberdialog.h
 
