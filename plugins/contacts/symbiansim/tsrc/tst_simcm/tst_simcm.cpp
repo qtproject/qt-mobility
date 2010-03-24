@@ -1165,7 +1165,7 @@ void tst_SimCM::parseDetails(QContact &contact, QStringList details, QList<QCont
  */
 void tst_SimCM::compareDetails(QContact contact, QList<QContactDetail> expectedDetails)
 {
-    foreach (const QContactDetail& expectedDetail, expectedDetails) {
+    foreach (QContactDetail expectedDetail, expectedDetails) {
         QContactDetail actualDetail = contact.detail(expectedDetail.definitionName());
         QVERIFY(!actualDetail.isEmpty());
 
