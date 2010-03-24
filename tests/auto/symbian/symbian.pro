@@ -10,7 +10,6 @@ include(../../../staticconfig.pri)
 contains(mobility_modules,multimedia) {
 #Multimedia
     SUBDIRS += \             
-            qcamera_s60 \
             qmediaobject_s60 \
             qmediaplayer_s60 \
             qmediaplaylist_s60 \

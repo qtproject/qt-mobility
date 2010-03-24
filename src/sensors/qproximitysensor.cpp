@@ -55,37 +55,33 @@ IMPLEMENT_READING(QProximityReading)
            proximity sensor.
 
     \target QProximityReading_Units
-    The proximity sensor measures the distance to the user in meters.
+    The proximity sensor can only indicate if an object is close or not.
 
-    Note that the maximum value supported by the sensor is reported if the user is
-    out of range of the sensor.
-
-    Some proximity sensors can only detect close/not close with a threshold. These
-    sensors will set the maximum to their threshold and their accuracy to the same
-    value. They will return 0 to indicate close and their maximum to indicate not close.
-
-    \sa QSensor::measurementMaximum, QSensor::measurementAccuracy
+    The distance at which an object is considered close is device-specific. This
+    distance may be available in the QSensor::outputRanges property.
 */
 
 /*!
-    \property QProximityReading::distance
-    \brief the distance of the user.
+    \property QProximityReading::close
+    \brief a value indicating if something is close.
 
-    Measured in meters.
+    Set to true if something is close.
+    Set to false is nothing is close.
+
     \sa QProximityReading_Units
 */
 
-qreal QProximityReading::distance() const
+bool QProximityReading::close() const
 {
-    return d->distance;
+    return d->close;
 }
 
 /*!
-    Sets the \a distance to the user.
+    Sets the close value to \a close.
 */
-void QProximityReading::setDistance(qreal distance)
+void QProximityReading::setClose(bool close)
 {
-    d->distance = distance;
+    d->close = close;
 }
 
 // =====================================================================

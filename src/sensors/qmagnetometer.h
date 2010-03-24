@@ -57,9 +57,6 @@ class Q_SENSORS_EXPORT QMagnetometerReading : public QSensorReading
     Q_PROPERTY(qreal x READ x)
     Q_PROPERTY(qreal y READ y)
     Q_PROPERTY(qreal z READ z)
-    Q_PROPERTY(qreal geo_x READ geo_x)
-    Q_PROPERTY(qreal geo_y READ geo_y)
-    Q_PROPERTY(qreal geo_z READ geo_z)
     Q_PROPERTY(qreal calibrationLevel READ calibrationLevel)
     DECLARE_READING(QMagnetometerReading)
 public:
@@ -71,15 +68,6 @@ public:
 
     qreal z() const;
     void setZ(qreal z);
-
-    qreal geo_x() const;
-    void setGeo_x(qreal geo_x);
-
-    qreal geo_y() const;
-    void setGeo_y(qreal geo_y);
-
-    qreal geo_z() const;
-    void setGeo_z(qreal geo_z);
 
     qreal calibrationLevel() const;
     void setCalibrationLevel(qreal calibrationLevel);
@@ -97,12 +85,10 @@ class Q_SENSORS_EXPORT QMagnetometer : public QSensor
 {
     Q_OBJECT
 #ifdef Q_QDOC
-    Q_PROPERTY(bool returnRawValues)
     Q_PROPERTY(bool returnGeoValues)
 #endif
 public:
-    explicit QMagnetometer(QObject *parent = 0) : QSensor(parent)
-    { setType(QMagnetometer::type); }
+    explicit QMagnetometer(QObject *parent = 0) : QSensor(QMagnetometer::type, parent) {}
     virtual ~QMagnetometer() {}
     QMagnetometerReading *reading() const { return static_cast<QMagnetometerReading*>(QSensor::reading()); }
     static const char *type;

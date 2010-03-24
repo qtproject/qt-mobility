@@ -60,8 +60,8 @@ public:
     const char* FieldCreationTimestamp;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactTimestamp, "Timestamp")
-    Q_DECLARE_LATIN1_LITERAL(FieldModificationTimestamp, "ModificationTimestamp");
-    Q_DECLARE_LATIN1_LITERAL(FieldCreationTimestamp, "CreationTimestamp");
+    Q_DECLARE_LATIN1_CONSTANT(FieldModificationTimestamp, "ModificationTimestamp");
+    Q_DECLARE_LATIN1_CONSTANT(FieldCreationTimestamp, "CreationTimestamp");
 #endif
 
     void setLastModified(const QDateTime& timestamp) {setValue(FieldModificationTimestamp, timestamp);}

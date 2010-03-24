@@ -65,7 +65,7 @@ unix:!symbian {
             SOURCES += gconflayer_linux.cpp
 
             #As a workaround build GConfItem wrapper class with the project
-            HEADERS += gconfitem.h
+            HEADERS += gconfitem_p.h
             SOURCES += gconfitem.cpp
 
             CONFIG += link_pkgconfig

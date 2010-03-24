@@ -49,7 +49,6 @@
 #include <qmediaobject.h>
 #include <qmediaservice.h>
 #include <qmediaplayer.h>
-#include <experimental/qcamera.h>
 #include <qaudiocapturesource.h>
 
 QTM_USE_NAMESPACE
@@ -75,8 +74,7 @@ public:
     QStringList keys() const
     {
         return QStringList() <<
-                QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER) <<
-                QLatin1String(Q_MEDIASERVICE_CAMERA);
+                QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER);
     }
 
     QMediaService* create(QString const& key)
@@ -112,8 +110,6 @@ public:
     QList<QByteArray> devices(const QByteArray &service) const
     {
         QList<QByteArray> res;
-        if (service == QByteArray(Q_MEDIASERVICE_CAMERA))
-            res << "camera1" << "camera2";        
         return res;
     }
 
@@ -157,7 +153,7 @@ public:
         Q_UNUSED(codecs);
 
         if (mimeType == "audio/wav")
-            return QtMedia::PreferedService;        
+            return QtMedia::PreferredService;
 
         return QtMedia::NotSupported;
     }
@@ -187,7 +183,6 @@ public:
     {
         return QStringList() <<
                QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER) <<
-               QLatin1String(Q_MEDIASERVICE_CAMERA) <<
                QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE);
     }
 
@@ -207,9 +202,7 @@ public:
     QList<QByteArray> devices(const QByteArray &service) const
     {
         QList<QByteArray> res;
-        if (service == QByteArray(Q_MEDIASERVICE_CAMERA))
-            res << "camera3" << "camera4";
-        else if (service == QByteArray(Q_MEDIASERVICE_AUDIOSOURCE))
+        if (service == QByteArray(Q_MEDIASERVICE_AUDIOSOURCE))
             res << "audiosource1" << "audiosource2";
 
         return res;
@@ -299,12 +292,11 @@ class tst_QMediaServiceProvider : public QObject
 public slots:
     void initTestCase();
 
-private slots:    
+private slots:
     void testDefaultProviderAvailable();
     void testObtainService();
     void testHasSupport();
     void testSupportedMimeTypes();
-    void testDevices();
     void testProviderHints();
 
 private:
@@ -414,43 +406,6 @@ void tst_QMediaServiceProvider::testSupportedMimeTypes()
     QVERIFY(provider->supportedMimeTypes(QByteArray(Q_MEDIASERVICE_MEDIAPLAYER)).contains("audio/ogg"));
     QVERIFY(!provider->supportedMimeTypes(QByteArray(Q_MEDIASERVICE_MEDIAPLAYER)).contains("audio/mp3"));
 }
-
-void tst_QMediaServiceProvider::testDevices()
-{
-    MockMediaServiceProvider mockProvider;
-    QVERIFY(mockProvider.devices(QByteArray(Q_MEDIASERVICE_CAMERA)).isEmpty());
-    QVERIFY(mockProvider.deviceDescription(QByteArray(Q_MEDIASERVICE_CAMERA),
-                                           QByteArray()).isEmpty());
-
-    QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider();
-
-    QList<QByteArray> cameraDevices = provider->devices(QByteArray(Q_MEDIASERVICE_CAMERA));
-    QCOMPARE(cameraDevices.count(), 4);
-    QVERIFY(cameraDevices.contains(QByteArray("camera1")));
-    QVERIFY(cameraDevices.contains(QByteArray("camera2")));
-    QVERIFY(cameraDevices.contains(QByteArray("camera3")));
-    QVERIFY(cameraDevices.contains(QByteArray("camera4")));
-
-    //ensure the right plugin is choosen for a device
-    QCamera camera1(QByteArray("camera1"));
-    QCOMPARE( camera1.service()->objectName(), QLatin1String("MockServicePlugin1") );
-    QCamera camera2(QByteArray("camera2"));
-    QCOMPARE( camera2.service()->objectName(), QLatin1String("MockServicePlugin1") );
-    QCamera camera3(QByteArray("camera3"));
-    QCOMPARE( camera3.service()->objectName(), QLatin1String("MockServicePlugin3") );
-    QCamera camera4(QByteArray("camera4"));
-    QCOMPARE( camera4.service()->objectName(), QLatin1String("MockServicePlugin3") );
-
-    QList<QByteArray> audioSourceDevices = provider->devices(QByteArray(Q_MEDIASERVICE_AUDIOSOURCE));
-    QCOMPARE(audioSourceDevices.count(), 2);
-    QVERIFY(audioSourceDevices.contains(QByteArray("audiosource1")));
-    QVERIFY(audioSourceDevices.contains(QByteArray("audiosource2")));
-
-    QVERIFY(provider->devices(QByteArray("non existing service")).isEmpty());
-}
-
-
-
 
 void tst_QMediaServiceProvider::testProviderHints()
 {

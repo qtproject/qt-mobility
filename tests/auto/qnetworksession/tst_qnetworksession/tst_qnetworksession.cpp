@@ -47,7 +47,7 @@
 #include <qnetworkconfigmanager.h>
 #include <qnetworksession.h>
 
-#ifdef Q_WS_MAEMO_6
+#if defined(Q_WS_MAEMO_6) || defined(Q_WS_MAEMO_5)
 #include <stdio.h>
 #include <iapconf.h>
 #endif
@@ -55,7 +55,7 @@
 QTM_USE_NAMESPACE
 
 // Can be used to configure tests that require manual attention (such as roaming)
-// #define QNETWORKSESSION_MANUAL_TESTS 1
+//#define QNETWORKSESSION_MANUAL_TESTS 1
 
 Q_DECLARE_METATYPE(QNetworkConfiguration)
 Q_DECLARE_METATYPE(QNetworkConfiguration::Type);
@@ -97,7 +97,7 @@ private:
 
     uint inProcessSessionManagementCount;
 
-#ifdef Q_WS_MAEMO_6
+#if defined(Q_WS_MAEMO_6) || defined(Q_WS_MAEMO_5)
     Maemo::IAPConf *iapconf;
     Maemo::IAPConf *iapconf2;
     Maemo::IAPConf *gprsiap;
@@ -120,7 +120,7 @@ void tst_QNetworkSession::initTestCase()
     qRegisterMetaType<QNetworkConfiguration>("QNetworkConfiguration");
     qRegisterMetaType<QNetworkConfiguration::Type>("QNetworkConfiguration::Type");
 
-#ifdef Q_WS_MAEMO_6
+#if defined(Q_WS_MAEMO_6) || defined(Q_WS_MAEMO_5)
     iapconf = new Maemo::IAPConf("007");
     iapconf->setValue("ipv4_type", "AUTO");
     iapconf->setValue("wlan_wepkey1", "connt");
@@ -206,7 +206,7 @@ void tst_QNetworkSession::cleanupTestCase()
               "tests in inProcessSessionManagement()");
     }
 
-#ifdef Q_WS_MAEMO_6
+#if defined(Q_WS_MAEMO_6) || defined(Q_WS_MAEMO_5)
     iapconf->clear();
     delete iapconf;
     iapconf2->clear();
@@ -489,7 +489,7 @@ void tst_QNetworkSession::sessionStop()
     QFETCH(QString, bearerType);
     QFETCH(QNetworkConfiguration::Type, configurationType);
     
-    int configWaitdelayInMs = 1000;
+    int configWaitdelayInMs = 2000;
     
     QNetworkConfiguration config = suitableConfiguration(bearerType, configurationType);
     if (!config.isValid()) {
@@ -526,7 +526,7 @@ void tst_QNetworkSession::sessionStop()
 
     QVERIFY(openedSession.state() == QNetworkSession::Disconnected);
     QTest::qWait(configWaitdelayInMs); // Wait to get all relevant configurationChange() signals
-    QVERIFY(config.state() == QNetworkConfiguration::Discovered);
+    QVERIFY(config.state() != QNetworkConfiguration::Active);
     
     // 2. Verify that stopping a session based on non-connected configuration does nothing
     qDebug("----------2. Verify that stopping a session based on non-connected configuration does nothing");
@@ -1367,8 +1367,8 @@ bool closeSession(QNetworkSession *session, bool lastSessionOnConfiguration) {
         return false;
     }
     if (lastSessionOnConfiguration &&
-        session->configuration().state() != QNetworkConfiguration::Discovered) {
-         qDebug("tst_QNetworkSession::closeSession() failure: session's configuration is not back in 'Discovered' -state.");
+        session->configuration().state() == QNetworkConfiguration::Active) {
+         qDebug("tst_QNetworkSession::closeSession() failure: session's configuration is still in active state.");
          return false;
     }
     return true;

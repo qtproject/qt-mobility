@@ -44,7 +44,6 @@
 
 #include "cntabstractcontactfilter.h"
 #include "cntsymbiansrvconnection.h"
-#include "qcontactdetailfilter.h"
 #include "cntdbinfo.h"
 
 #include <qmobilityglobal.h>
@@ -60,7 +59,7 @@ public:
             const QContactFilter &filter,
             const QList<QContactSortOrder> &sortOrders,
             bool &filterSupported,
-            QContactManager::Error &error);
+            QContactManager::Error* error);
     bool filterSupported(const QContactFilter& filter) ;
     
     //bool isFilterSupported(const QContactFilter& filter) const;
@@ -68,19 +67,19 @@ public:
     void getTableNameWhereClause( const QContactDetailFilter& filter,
                                   QString& tableName,
                                   QString& sqlWhereClause ,
-                                  QContactManager::Error& error) const;
+                                  QContactManager::Error* error) const;
     void createSelectQuery(const QContactFilter& filter,
                                  QString& sqlQuery,
-                                 QContactManager::Error& error);
+                                 QContactManager::Error* error);
 private:
 
     
     void updateForMatchFlag( const QContactDetailFilter& filter,
                              QString& fieldToUpdate ,
-                             QContactManager::Error& error) const;
+                             QContactManager::Error* error) const;
     QList<QContactLocalId> HandlePhonenumberDetailFilter(const QContactFilter& filter);
     QList<QContactLocalId>  HandlePredictiveSearchFilter(const QContactFilter& filter,
-                                                         QContactManager::Error& error);
+                                                         QContactManager::Error* error);
 
     TInt CntFilterDetail::searchPhoneNumbers(
             CContactIdArray*& idArray,

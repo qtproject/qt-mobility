@@ -41,8 +41,9 @@ symbian: {
         inc/transform/cnttransformbirthday.h \
         inc/transform/cnttransformonlineaccount.h \
         inc/transform/cnttransformorganisation.h \
+        inc/transform/cnttransformringtone.h \
+        inc/transform/cnttransformthumbnail.h \
         inc/transform/cnttransformavatar.h \
-        inc/transform/cnttransformavatarsimple.h \
         inc/transform/cntthumbnailcreator.h \
         inc/transform/cnttransformsynctarget.h \
         inc/transform/cnttransformgender.h \
@@ -85,8 +86,9 @@ symbian: {
         src/transform/cnttransformbirthday.cpp \
         src/transform/cnttransformonlineaccount.cpp \
         src/transform/cnttransformorganisation.cpp \
+        src/transform/cnttransformringtone.cpp \
+        src/transform/cnttransformthumbnail.cpp \
         src/transform/cnttransformavatar.cpp \
-        src/transform/cnttransformavatarsimple.cpp \
         src/transform/cntthumbnailcreator.cpp\
         src/transform/cnttransformsynctarget.cpp \
         src/transform/cnttransformgender.cpp \

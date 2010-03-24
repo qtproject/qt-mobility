@@ -33,6 +33,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactactiondescriptor.html#setVendorName">setVendorName</a></b> ( const QString &amp; <i>vendorName</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactactiondescriptor.html#vendorName">vendorName</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactactiondescriptor.html#operator-not-eq">operator!=</a></b> ( const QContactActionDescriptor &amp; <i>other</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactactiondescriptor.html#operator-lt">operator&lt;</a></b> ( const QContactActionDescriptor &amp; <i>other</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QContactActionDescriptor &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactactiondescriptor.html#operator-eq">operator=</a></b> ( const QContactActionDescriptor &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactactiondescriptor.html#operator-eq-eq">operator==</a></b> ( const QContactActionDescriptor &amp; <i>other</i> ) const</td></tr>
 </table>
@@ -80,6 +81,9 @@
 <a name="//apple_ref/cpp/instm/QContactActionDescriptor/operator!="></a>
 <h3 class="fn"><a name="operator-not-eq"></a>bool QContactActionDescriptor::operator!= ( const QContactActionDescriptor &amp; <i>other</i> ) const</h3>
 <p>Returns true if the action name, vendor name or vendor-specified implementation version specified by this action descriptor are different to that specified by <i>other</i></p>
+<a name="//apple_ref/cpp/instm/QContactActionDescriptor/operator&lt;"></a>
+<h3 class="fn"><a name="operator-lt"></a>bool QContactActionDescriptor::operator&lt; ( const QContactActionDescriptor &amp; <i>other</i> ) const</h3>
+<p>Returns true if the action descriptor is less than the <i>other</i> action descriptor. The comparison is performed first on the vendor name, then the action name, then the implementation version.</p>
 <a name="//apple_ref/cpp/instm/QContactActionDescriptor/operator="></a>
 <h3 class="fn"><a name="operator-eq"></a>QContactActionDescriptor &amp; QContactActionDescriptor::operator= ( const QContactActionDescriptor &amp; <i>other</i> )</h3>
 <p>Assigns this action descriptor to be equal to <i>other</i></p>

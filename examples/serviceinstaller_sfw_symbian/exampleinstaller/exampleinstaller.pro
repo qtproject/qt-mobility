@@ -12,5 +12,5 @@ SOURCES += exampleinstaller.cpp
 
 symbian {
     TARGET.UID3 = 0xE00b7e42
-    TARGET.CAPABILITY = ALL -TCB
+    TARGET.CAPABILITY = ReadUserData WriteUserData
 }

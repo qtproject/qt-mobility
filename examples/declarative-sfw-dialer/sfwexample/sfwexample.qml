@@ -127,8 +127,7 @@ Rectangle {
     //! [1]
     Connections {
         target: dialScreen
-        signal: "stateChanged()"
-        script: { 
+        onStateChanged: { 
             if (dialScreen.currentDialer.state == 1) {
                 status.text += "\nRinging";
             } 

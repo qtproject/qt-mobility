@@ -71,24 +71,25 @@ echo QT_MOBILITY_BUILD_TREE = %BUILD_PATH% >> %QMAKE_CACHE%
 set QMAKE_CACHE=
 
 :cmdline_parsing
-if "%1" == ""               goto startProcessing
-if "%1" == "-debug"         goto debugTag
-if "%1" == "-release"       goto releaseTag
-if "%1" == "-silent"        goto silentTag
-if "%1" == "-prefix"        goto prefixTag
-if "%1" == "-libdir"        goto libTag
-if "%1" == "-bindir"        goto binTag
-if "%1" == "-headerdir"     goto headerTag
-if "%1" == "-tests"         goto testTag
-if "%1" == "-examples"      goto exampleTag
-if "%1" == "-qt"            goto qtTag
-if "%1" == "-vc"            goto vcTag
-if "%1" == "-no-docs"       goto nodocsTag
-if "%1" == "-modules"       goto modulesTag
-if "%1" == "/?"             goto usage
-if "%1" == "-h"             goto usage
-if "%1" == "-help"          goto usage
-if "%1" == "--help"         goto usage
+if "%1" == ""                   goto startProcessing
+if "%1" == "-debug"             goto debugTag
+if "%1" == "-release"           goto releaseTag
+if "%1" == "-silent"            goto silentTag
+if "%1" == "-prefix"            goto prefixTag
+if "%1" == "-libdir"            goto libTag
+if "%1" == "-bindir"            goto binTag
+if "%1" == "-headerdir"         goto headerTag
+if "%1" == "-tests"             goto testTag
+if "%1" == "-examples"          goto exampleTag
+if "%1" == "-qt"                goto qtTag
+if "%1" == "-vc"                goto vcTag
+if "%1" == "-no-docs"           goto nodocsTag
+if "%1" == "-modules"           goto modulesTag
+if "%1" == "/?"                 goto usage
+if "%1" == "-h"                 goto usage
+if "%1" == "-help"              goto usage
+if "%1" == "--help"             goto usage
+if "%1" == "-symbian-unfrozen"  goto unfrozenTag
 
 
 echo Unknown option: "%1"
@@ -175,6 +176,18 @@ goto cmdline_parsing
 :headerTag
 shift
 echo QT_MOBILITY_INCLUDE = %1 >> %PROJECT_CONFIG%
+shift
+goto cmdline_parsing
+
+:unfrozenTag
+REM Should never be used in release builds
+REM Some SDK's seem to exclude Q_AUTOTEST_EXPORT symbols if the 
+REM libraries are frozen. This breaks unit tests relying on the auto test exports
+REM This flag unfreezes the SYMBIAN libraries for the purpose of unit test building.
+REM Ideally this should be connected to '-tests' option but that would prevent 
+REM integration testing for frozen symbols as the CI system should test unit tests
+REM and frozen symbol compliance.
+echo symbian_symbols_unfrozen = 1 >> %PROJECT_CONFIG%
 shift
 goto cmdline_parsing
 
@@ -433,6 +446,7 @@ echo Start of compile tests
 REM compile tests go here.
 call :compileTest LBT lbt
 call :compileTest SNAP snap
+call :compileTest OCC occ
 call :compileTest SymbianContactSIM symbiancntsim
 echo End of compile tests
 echo.

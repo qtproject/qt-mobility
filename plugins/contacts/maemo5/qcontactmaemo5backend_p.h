@@ -65,7 +65,7 @@ class Q_DECL_EXPORT ContactMaemo5Factory : public QObject, public QContactManage
   Q_OBJECT
   Q_INTERFACES(QtMobility::QContactManagerEngineFactory)
   public:
-    QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error&);
+    QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error*);
     QString managerName() const;
 };
 
@@ -75,14 +75,14 @@ public:
     QContactMaemo5EngineData()
         : QSharedData(),
         m_refCount(QAtomicInt(1)),
-	m_abook(new QContactABook)
+        m_abook(new QContactABook)
     {  
     }
 
     QContactMaemo5EngineData(const QContactMaemo5EngineData& other)
         : QSharedData(other),
         m_refCount(QAtomicInt(1)),
-	m_abook(other.m_abook)
+        m_abook(other.m_abook)
     {
     }
 
@@ -104,30 +104,61 @@ class QContactMaemo5Engine : public QContactManagerEngine
     
     void deref();
     QString managerName() const;
-    QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
+    QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error* error) const;
 
     /* "Self" contact id (MyCard) */
-    //bool setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& error);
-    //QContactLocalId selfContactId(QContactManager::Error& error) const;
+    // bool setSelfContactId(const QContactLocalId& contactId, QContactManager::Error* error); /* Not supported */
+    QContactLocalId selfContactId(QContactManager::Error* errors) const;
 
     /* Filtering */
-    QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const;
 
     /* Contacts - Accessors and Mutators */
-    QContact contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const;
-
-    //QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QContactManager::Error& error);
-    bool saveContact(QContact* contact, QContactManager::Error& error);
-    //QList<QContactManager::Error> removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error);
-    bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
+    QContact contact(const QContactLocalId& contactId, const QContactFetchHint& fetchHint, QContactManager::Error* error) const;
+    QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fetchHint, QContactManager::Error* error ) const;
+    
+    bool saveContact(QContact* contact, QContactManager::Error* error);
+    
+    //QList<QContactManager::Error> removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error* error);
+    bool removeContact(const QContactLocalId& contactId, QContactManager::Error* error);
     
     /* Definitions - Accessors and Mutators */
-    QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error& error) const;
-    //bool saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType, QContactManager::Error& error);
-    //bool removeDetailDefinition(const QString& definitionId, const QString& contactType, QContactManager::Error& error);
+    QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error* error) const;
+    //bool saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType, QContactManager::Error* error);
+    //bool removeDetailDefinition(const QString& definitionId, const QString& contactType, QContactManager::Error* error);
     
     /* Version Reporting */
     int implementationVersion() const { return MAEMO5_ENGINE_VERSION; };
+    
+    /* Capabilities reporting */
+    bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const;
+    QStringList supportedRelationshipTypes(const QString& contactType) const;
+    bool isFilterSupported(const QContactFilter& filter) const;
+    QList<QVariant::Type> supportedDataTypes() const;
+
+
+
+
+    // XXX TODO: FIXME - these are pure virtual and so MUST be implemented by the backend.  Stubs here.
+    QMap<QString, QString> managerParameters() const {return QMap<QString,QString>();}
+    int managerVersion() const {return 1;}
+    bool saveContacts(QList<QContact>*, QMap<int, QContactManager::Error>*, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
+    bool removeContacts(const QList<QContactLocalId>&, QMap<int, QContactManager::Error>*, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
+    bool setSelfContactId(const QContactLocalId&, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
+    QList<QContactRelationship> relationships(const QString&, const QContactId&, QContactRelationship::Role, QContactManager::Error* error) const {*error = QContactManager::NotSupportedError; return QList<QContactRelationship>();}
+    bool saveRelationships(QList<QContactRelationship>*, QMap<int, QContactManager::Error>*, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
+    bool removeRelationships(const QList<QContactRelationship>&, QMap<int, QContactManager::Error>*, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
+    bool validateContact(const QContact&, QContactManager::Error* error) const {*error = QContactManager::NotSupportedError; return false;}
+    bool validateDefinition(const QContactDetailDefinition&, QContactManager::Error* error) const {*error = QContactManager::NotSupportedError; return false;}
+    QContactDetailDefinition detailDefinition(const QString&, const QString&, QContactManager::Error* error) const {*error = QContactManager::NotSupportedError; return QContactDetailDefinition();}
+    bool saveDetailDefinition(const QContactDetailDefinition&, const QString&, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
+    bool removeDetailDefinition(const QString&, const QString&, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
+    void requestDestroyed(QContactAbstractRequest*) {}
+    bool startRequest(QContactAbstractRequest*) {return false;}
+    bool cancelRequest(QContactAbstractRequest*) {return false;}
+    bool waitForRequestFinished(QContactAbstractRequest*, int) {return false;}
+    bool isRelationshipTypeSupported(const QString&, const QString&) const {return false;}
+    QStringList supportedContactTypes() const {return (QStringList() << QContactType::TypeContact);}
 
   private:
     QSharedDataPointer<QContactMaemo5EngineData> d;

@@ -12,6 +12,7 @@ contains(QT_CONFIG, opengl): QT += opengl
 
 !static:DEFINES += QT_MAKEDLL
 DEFINES += QT_BUILD_MEDIA_LIB
+!symbian:DEFINES += QTM_PLUGIN_PATH=\\\"$$replace(QT_MOBILITY_PREFIX, \\\\, /)/plugins\\\"
 
 PRIVATE_HEADERS += \
     qmediacontrol_p.h \
@@ -113,7 +114,6 @@ maemo5 {
     SOURCES += qgraphicsvideoitem.cpp
 }
 
-include (experimental/experimental.pri)
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
 symbian {

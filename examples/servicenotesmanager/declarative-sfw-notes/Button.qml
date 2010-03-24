@@ -24,7 +24,7 @@ Rectangle {
         source: container.image; anchors.centerIn: container
     }
 
-    MouseRegion { id: mr; anchors.fill: parent; onClicked: container.clicked() }
+    MouseArea { id: mr; anchors.fill: parent; onClicked: container.clicked() }
 
     Text {
         id: txtItem; text: container.text; anchors.centerIn: container; color: activePalette.buttonText

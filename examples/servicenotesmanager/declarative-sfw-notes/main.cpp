@@ -42,7 +42,7 @@
 #include <QApplication>
 #include <QUrl>
 #include <QtCore>
-#include <QDeclarativeView>
+#include <QtDeclarative/QDeclarativeView>
 #include <qserviceinterfacedescriptor.h>
 #include <qservicemanager.h>
 #include <qdeclarative.h>
@@ -52,7 +52,8 @@
 
 int main(int argc, char* argv[])
 {
-    QML_REGISTER_TYPE(QtSFW,1,0,Service, ServiceWrapper);
+    qmlRegisterType<ServiceWrapper>("QtSFW", 1, 0, "Service");
+    //QML_REGISTER_TYPE(QtSFW,1,0,Service, ServiceWrapper);
     //QML_REGISTER_NOCREATE_TYPE(Note);
 
     QApplication app(argc, argv);

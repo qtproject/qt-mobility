@@ -57,9 +57,6 @@ public:
 #ifdef Q_QDOC
     const char* DefinitionName;
     const char* FieldPrefix;
-    const char* FieldFirst; // deprecated
-    const char* FieldMiddle;// deprecated
-    const char* FieldLast;  // deprecated
     const char* FieldFirstName;
     const char* FieldMiddleName;
     const char* FieldLastName;
@@ -67,15 +64,12 @@ public:
     const char* FieldCustomLabel;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactName, "Name")
-    Q_DECLARE_LATIN1_LITERAL(FieldPrefix, "Prefix");
-    Q_DECLARE_LATIN1_LITERAL(FieldFirst, "FirstName");  // deprecated
-    Q_DECLARE_LATIN1_LITERAL(FieldMiddle, "MiddleName");// deprecated
-    Q_DECLARE_LATIN1_LITERAL(FieldLast, "LastName");    // deprecated
-    Q_DECLARE_LATIN1_LITERAL(FieldFirstName, "FirstName");
-    Q_DECLARE_LATIN1_LITERAL(FieldMiddleName, "MiddleName");
-    Q_DECLARE_LATIN1_LITERAL(FieldLastName, "LastName");
-    Q_DECLARE_LATIN1_LITERAL(FieldSuffix, "Suffix");
-    Q_DECLARE_LATIN1_LITERAL(FieldCustomLabel, "CustomLabel");
+    Q_DECLARE_LATIN1_CONSTANT(FieldPrefix, "Prefix");
+    Q_DECLARE_LATIN1_CONSTANT(FieldFirstName, "FirstName");
+    Q_DECLARE_LATIN1_CONSTANT(FieldMiddleName, "MiddleName");
+    Q_DECLARE_LATIN1_CONSTANT(FieldLastName, "LastName");
+    Q_DECLARE_LATIN1_CONSTANT(FieldSuffix, "Suffix");
+    Q_DECLARE_LATIN1_CONSTANT(FieldCustomLabel, "CustomLabel");
 #endif
 
     QString prefix() const {return value(FieldPrefix);}

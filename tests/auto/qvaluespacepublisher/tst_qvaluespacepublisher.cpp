@@ -56,6 +56,8 @@
 #include <windows.h>
 #endif
 
+#include <QProcess>
+
 #define QTRY_COMPARE(a,e)                       \
     for (int _i = 0; _i < 5000; _i += 100) {    \
         if ((a) == (e)) break;                  \
@@ -132,6 +134,13 @@ void tst_QValueSpacePublisher::initTestCase()
 #endif
 
     QValueSpace::initValueSpaceServer();
+
+    if (QValueSpace::availableLayers().contains(QVALUESPACE_GCONF_LAYER)) {
+        QCOMPARE(QProcess::execute("gconftool-2 -u /value"), 0);
+        QCOMPARE(QProcess::execute("gconftool-2 -u /testConstructor/value"), 0);
+        QCOMPARE(QProcess::execute("gconftool-2 -u /testConstructor/subpath/value"), 0);
+    }
+
 }
 
 void tst_QValueSpacePublisher::cleanupTestCase()
@@ -474,10 +483,16 @@ void tst_QValueSpacePublisher::threads_data()
 
     QList<QAbstractValueSpaceLayer *> layers = QValueSpaceManager::instance()->getLayers();
 
+    int foundLayers = 0;
     for (int i = 0; i < layers.count(); ++i) {
         QAbstractValueSpaceLayer *layer = layers.at(i);
 
         if (layer->id() == QVALUESPACE_NONVOLATILEREGISTRY_LAYER)
+            continue;
+
+        //GConfLayer can't provide thread-safety because it eventually depends on
+        //DBus which isn't fully thread-safe
+        if (layer->id() == QVALUESPACE_GCONF_LAYER)
             continue;
 
 #ifdef Q_OS_WINCE
@@ -571,7 +586,11 @@ void tst_QValueSpacePublisher::threads_data()
             QTest::newRow("100 threads, 100 items")
                 << layer->id() << uint(100) << uint(100) << false;
         }
+        foundLayers++;
     }
+
+    if (foundLayers == 0)
+        QSKIP("No layers providing thread-safety found", SkipAll);
 }
 
 void tst_QValueSpacePublisher::threads()
@@ -581,6 +600,9 @@ void tst_QValueSpacePublisher::threads()
     QFETCH(unsigned int, count);
     QFETCH(bool, sequential);
 
+    if (QValueSpace::availableLayers().contains(QVALUESPACE_GCONF_LAYER)) {
+        QCOMPARE(QProcess::execute("gconftool-2 --recursive-unset /threads"), 0);
+    }
     QStringList expectedPaths;
     for (unsigned int i = 0; i < threads; ++i)
         expectedPaths.append(QString("thread%1").arg(i));

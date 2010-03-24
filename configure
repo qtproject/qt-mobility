@@ -40,6 +40,39 @@
 ##
 #############################################################################
 
+# return status of 1 if absolute path as first argument
+# also prints the return status
+function isAbsPath() {
+    slash=$(echo $1 | cut -c 1)
+    if [ "$slash" != "/" ]; then
+        echo 0
+        return 0
+    fi
+    echo 1
+    return 1
+}
+
+# Returns the absolute path for $1 for target $2
+# as an example $2 might have value "maemo5".
+# This is required because when building in scratchbox for
+# maemo we do not want to follow symbolic links that are 
+# introduced by scratchbox
+function absPath() {
+    
+    if [ "$2" = "maemo5" -o "$2" = "maemo6" ]; then
+        if [ `isAbsPath $1` = '1' ]; then
+            echo $1;
+        else
+            echo "Relative prefix paths are not supported for Maemo"
+            exit 1;
+        fi
+    else
+        RESULT=`(cd "$1"; /bin/pwd)`
+        echo $RESULT
+    fi
+}
+
+
 # the current directory (shadow build dir)
 shadowpath=`/bin/pwd`
 # the name of this script
@@ -248,12 +281,11 @@ fi
 
 #process PREFIX
 if [ -d "$QT_MOBILITY_PREFIX" ]; then
-    QT_MOBILITY_PREFIX=`(cd "$QT_MOBILITY_PREFIX"; /bin/pwd)`
+    QT_MOBILITY_PREFIX=`absPath $QT_MOBILITY_PREFIX $LINUX_TARGET`
 else
     mkdir -p "$QT_MOBILITY_PREFIX"
-    absPath=`(cd "$QT_MOBILITY_PREFIX"; /bin/pwd)`
+    QT_MOBILITY_PREFIX=`absPath $QT_MOBILITY_PREFIX $LINUX_TARGET`
     rm -rf "$QT_MOBILITY_PREFIX"
-    QT_MOBILITY_PREFIX="$absPath"
 fi
 echo "QT_MOBILITY_PREFIX = $QT_MOBILITY_PREFIX" >> "$CONFIG_IN"
 
@@ -261,12 +293,11 @@ echo "QT_MOBILITY_PREFIX = $QT_MOBILITY_PREFIX" >> "$CONFIG_IN"
 if [ -z "$QT_MOBILITY_INCLUDE" ]; then
     QT_MOBILITY_INCLUDE="$QT_MOBILITY_PREFIX/include"
 elif [ -d "$QT_MOBILITY_INCLUDE" ]; then
-    QT_MOBILITY_INCLUDE=`(cd "$QT_MOBILITY_INCLUDE"; /bin/pwd)`
+    QT_MOBILITY_INCLUDE=`absPath $QT_MOBILITY_INCLUDE $LINUX_TARGET`
 else
     mkdir -p "$QT_MOBILITY_INCLUDE"
-    absPath=`(cd "$QT_MOBILITY_INCLUDE"; /bin/pwd)`
+    QT_MOBILITY_INCLUDE=`absPath $QT_MOBILITY_INCLUDE $LINUX_TARGET`
     rm -rf "$QT_MOBILITY_INCLUDE"
-    QT_MOBILITY_INCLUDE="$absPath"
 fi
 echo "QT_MOBILITY_INCLUDE = $QT_MOBILITY_INCLUDE" >> "$CONFIG_IN"
 
@@ -275,12 +306,11 @@ echo "QT_MOBILITY_INCLUDE = $QT_MOBILITY_INCLUDE" >> "$CONFIG_IN"
 if [ -z "$QT_MOBILITY_LIB" ]; then
     QT_MOBILITY_LIB="$QT_MOBILITY_PREFIX/$LIB_PATH"
 elif [ -d "$QT_MOBILITY_LIB" ]; then
-    QT_MOBILITY_LIB=`(cd "$QT_MOBILITY_LIB"; /bin/pwd)`
+    QT_MOBILITY_LIB=`absPath $QT_MOBILITY_LIB $LINUX_TARGET`
 else
     mkdir -p "$QT_MOBILITY_LIB"
-    absPath=`(cd "$QT_MOBILITY_LIB"; /bin/pwd)`
+    QT_MOBILITY_LIB=`absPath $QT_MOBILITY_LIB $LINUX_TARGET`
     rm -rf "$QT_MOBILITY_LIB"
-    QT_MOBILITY_LIB="$absPath"
 fi
 echo "QT_MOBILITY_LIB = $QT_MOBILITY_LIB" >> "$CONFIG_IN"
 
@@ -288,12 +318,11 @@ echo "QT_MOBILITY_LIB = $QT_MOBILITY_LIB" >> "$CONFIG_IN"
 if [ -z "$QT_MOBILITY_BIN" ]; then
     QT_MOBILITY_BIN="$QT_MOBILITY_PREFIX/$BIN_PATH"
 elif [ -d "$QT_MOBILITY_BIN" ]; then
-    QT_MOBILITY_BIN=`(cd "$QT_MOBILITY_BIN"; /bin/pwd)`
+    QT_MOBILITY_BIN=`absPath $QT_MOBILITY_BIN $LINUX_TARGET`
 else
     mkdir -p "$QT_MOBILITY_BIN"
-    absPath=`(cd "$QT_MOBILITY_BIN"; /bin/pwd)`
+    QT_MOBILITY_BIN=`absPath $QT_MOBILITY_BIN $LINUX_TARGET`
     rm -rf "$QT_MOBILITY_BIN"
-    QT_MOBILITY_BIN="$absPath"
 fi
 echo "QT_MOBILITY_BIN = $QT_MOBILITY_BIN" >> "$CONFIG_IN"
 
@@ -367,7 +396,7 @@ compileTest()
         cd config.tests/$2
     fi
 
-    qmake "$relpath/config.tests/$2/$2.pro" >> "$CONFIG_LOG"
+    qmake "$relpath/config.tests/$2/$2.pro" 2>> "$CONFIG_LOG" >> "$CONFIG_LOG"
     printf  " ."
     "$MAKE" clean >> "$CONFIG_LOG"
     printf "."
@@ -387,6 +416,7 @@ compileTest()
 compileTest QMF qmf
 compileTest NetworkManager networkmanager
 compileTest "CoreWLAN (MacOS 10.6)" corewlan
+compileTest "Maemo ICD" maemo-icd
 
 # Now module selection
 # using 'expr match ....' should help a bit
@@ -398,6 +428,7 @@ compileTest "CoreWLAN (MacOS 10.6)" corewlan
 # It's a lot easier to make qmake do the dependency checking...
 echo "mobility_modules = $MOBILITY_MODULES" >> "$CONFIG_IN"
 echo "contains(mobility_modules,versit): mobility_modules *= contacts" >> "$CONFIG_IN"
+echo "maemo5|maemo6:contains(maemo-icd_enabled, no): mobility_modules -= bearer" >> "$CONFIG_IN"
 
 # Ideally we'd skip generating headers for modules that are not enabled
 echo "Generating Mobility Headers..."
@@ -429,7 +460,6 @@ for module in $MOBILITY_MODULES; do
             ;;
         multimedia)
             $relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia/experimental
             ;;
         messaging)
             $relpath/bin/syncheaders $shadowpath/include $relpath/src/messaging
@@ -465,3 +495,4 @@ else
     echo ""
     echo "configure failed."
 fi
+
