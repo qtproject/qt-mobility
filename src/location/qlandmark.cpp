@@ -47,6 +47,9 @@
 #include "qlandmarkid.h"
 #include "qlandmarkid_p.h"
 
+#include "qgeoaddress.h"
+#include "qgeocoordinate.h"
+
 #include <QVariant>
 #include <QStringList>
 
@@ -57,17 +60,17 @@ QTM_USE_NAMESPACE
 QLandmarkPrivate::QLandmarkPrivate() {}
 
 QLandmarkPrivate::QLandmarkPrivate(const QLandmarkPrivate &other)
+    : QSharedData(other),
+      name(other.name),
+      categories(other.categories),
+      location(other.location),
+      description(other.description),
+      iconUrl(other.iconUrl),
+      radius(other.radius),
+      attributes(other.attributes),
+      phone(other.phone),
+      url(other.url)
 {
-    name = other.name;
-    coordinate = other.coordinate;
-    description = other.description;
-    iconUrl = other.iconUrl;
-    radius = other.radius;
-    address = other.address;
-    phone = other.phone;
-    url = other.url;
-    categories = other.categories;
-    attributes = other.attributes;
 }
 
 QLandmarkPrivate::~QLandmarkPrivate() {}
@@ -75,11 +78,10 @@ QLandmarkPrivate::~QLandmarkPrivate() {}
 QLandmarkPrivate& QLandmarkPrivate::operator= (const QLandmarkPrivate & other)
 {
     name = other.name;
-    coordinate = other.coordinate;
+    location = other.location;
     description = other.description;
     iconUrl = other.iconUrl;
     radius = other.radius;
-    address = other.address;
     phone = other.phone;
     url = other.url;
     categories = other.categories;
@@ -91,11 +93,10 @@ QLandmarkPrivate& QLandmarkPrivate::operator= (const QLandmarkPrivate & other)
 bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
 {
     return ((name == other.name)
-            && (coordinate == other.coordinate)
+            && (location == other.location)
             && (description == other.description)
             && (iconUrl == other.iconUrl)
             && (radius == other.radius)
-            && (address == other.address)
             && (phone == other.phone)
             && (url == other.url)
             && (categories == other.categories)
@@ -150,15 +151,14 @@ QLandmark::QLandmark(const QLandmark &other)
 */
 QLandmark::~QLandmark()
 {
-    delete d;
 }
 
 /*!
     Assigns \a other to this landmark and returns a reference to this landmark.
 */
-QLandmark& QLandmark::operator= (const QLandmark & other)
+QLandmark &QLandmark::operator= (const QLandmark & other)
 {
-    *d = *(other.d);
+    d = other.d;
     return *this;
 }
 
@@ -168,7 +168,7 @@ QLandmark& QLandmark::operator= (const QLandmark & other)
 */
 bool QLandmark::operator== (const QLandmark &other) const
 {
-    return (*d == *(other.d));
+    return d == other.d;
 }
 
 /*!
@@ -188,19 +188,72 @@ void QLandmark::setName(const QString &name)
 }
 
 /*!
+    Returns the location (both coordinate and address) of the landmark.
+    \sa address(), coordinate()
+*/
+QGeoLocation QLandmark::location() const
+{
+    return d->location;
+}
+
+/*!
+    Sets the \a location (both coordinate and address) of the landmark.
+*/
+void QLandmark::setLocation(const QGeoLocation &location)
+{
+    d->location = location;
+}
+
+/*!
     Returns the coordinate of the landmark.
+
+    This is a convenience function to return the
+    coordinate of the landmark's location.
+
+    \sa location(), address()
 */
 QGeoCoordinate QLandmark::coordinate() const
 {
-    return d->coordinate;
+    return d->location.coordinate();
 }
 
 /*!
     Sets the \a coordinate of the landmark.
+
+    This is a convenience function to set the coordinate
+    of the landmark's location.
+
+    \sa setLocation(), setAddress()
 */
 void QLandmark::setCoordinate(const QGeoCoordinate& coordinate)
 {
-    d->coordinate = coordinate;
+    d->location.setCoordinate(coordinate);
+}
+
+/*!
+    Returns the landmark's address.
+
+    This is a convenience function to return the
+    address of the landmark's location.
+
+    \sa location(), coordinate()
+*/
+QGeoAddress QLandmark::address() const
+{
+    return d->location.address();
+}
+
+/*!
+    Sets the \a address of the landmark.
+
+    This is a convenience function to set the address
+    of the landmark's location.
+
+    \sa setLocation(), setCoordinate()
+*/
+void QLandmark::setAddress(const QGeoAddress &address)
+{
+    d->location.setAddress(address);
 }
 
 /*!
@@ -319,22 +372,6 @@ void QLandmark::setAttribute(const QString &attributeName, const QVariant &value
 QStringList QLandmark::attributes() const
 {
     return d->attributes.keys();
-}
-
-/*!
-    Returns the landmark's address.
-*/
-QGeoAddress QLandmark::address() const
-{
-    return d->address;
-}
-
-/*!
-    Sets the \a address of the landmark.
-*/
-void QLandmark::setAddress(const QGeoAddress &address)
-{
-    d->address = address;
 }
 
 /*!

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,49 +39,38 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_ALTERNATIVEADDRESS_H
-#define QLOCATION_ALTERNATIVEADDRESS_H
+#ifndef QLOCATION_GEOLOCATION_P_H
+#define QLOCATION_GEOLOCATION_P_H
 
-#include "qmobilityglobal.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include <QString>
-#include <QList>
+#include <QRectF>
+#include <QSharedData>
+
+#include "qgeocoordinate.h"
+#include "qgeoaddress.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QAlternativeAddress
+class QGeoLocationPrivate : public QSharedData
 {
-    friend class QGeocodingXmlParser;
-
 public:
-    struct AltValue {
-        QString value; //!< The string value of a given alternative.
-        QString language; //!< The MARC language code
-    };
+    QGeoLocationPrivate();
+    QGeoLocationPrivate(const QGeoLocationPrivate &other);
+    ~QGeoLocationPrivate();
 
-public:
-    QAlternativeAddress();
-
-    QList<AltValue> country() const;
-    QList<AltValue> countryCode() const;
-    QList<AltValue> state() const;
-    QList<AltValue> county() const;
-    QList<AltValue> city() const;
-    QList<AltValue> district() const;
-    QList<AltValue> thoroughfareName() const;
-    QList<AltValue> thoroughfareNumber() const;
-    QList<AltValue> postCode() const;
-
-private:
-    QList<AltValue> lCountry;
-    QList<AltValue> lCountryCode;
-    QList<AltValue> lState;
-    QList<AltValue> lCounty;
-    QList<AltValue> lCity;
-    QList<AltValue> lDistrict;
-    QList<AltValue> lThoroughfareName;
-    QList<AltValue> lThoroughfareNumber;
-    QList<AltValue> lPostCode;
+    QRectF          box;
+    QGeoCoordinate  coord;
+    QGeoAddress     addr;
 };
 
 QTM_END_NAMESPACE

@@ -41,8 +41,19 @@
 #ifndef QLANDMARK_P_H
 #define QLANDMARK_P_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
 #include "qlandmark.h"
-#include "qgeoaddress.h"
+#include "qgeolocation.h"
 #include <QList>
 #include <QHash>
 #include <QSharedData>
@@ -50,7 +61,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QLandmarkPrivate
+class QLandmarkPrivate : public QSharedData
 {
 public:
     QLandmarkPrivate();
@@ -63,13 +74,12 @@ public:
     // consider inline != in terms of ==?
 
     QString name;
-    QGeoCoordinate coordinate;
     QList<QLandmarkCategoryId> categories;
+    QGeoLocation location;
     QString description;
     QUrl iconUrl;
     double radius;
     QHash<QString, QVariant> attributes;
-    QGeoAddress address;
     QString phone;
     QString url;
 };

@@ -83,28 +83,12 @@ void PlacePresenter::showPlace(QTreeWidgetItem* top, const QGeoLocation& place)
     QTreeWidgetItem* placeItem = new QTreeWidgetItem(top);
     placeItem->setText(0, "place");
 
-    QString s = place.title();
-
-    if (!s.isEmpty()) {
-        prop = new QTreeWidgetItem(placeItem);
-        prop->setText(0, "title");
-        prop->setText(1, s);
-    }
-
-    s = place.language();
-
-    if (!s.isEmpty()) {
-        prop = new QTreeWidgetItem(placeItem);
-        prop->setText(0, "language");
-        prop->setText(1, s);
-    }
-
     if (!place.boundingBox().isEmpty())
         showBoundingBox(placeItem, place.boundingBox());
 
     prop = new QTreeWidgetItem(placeItem);
     prop->setText(0, "position");
-    prop->setText(1, formatGeoCoordinate(place.position()));
+    prop->setText(1, formatGeoCoordinate(place.coordinate()));
 
     if (!place.address().isEmpty()) {
         prop = new QTreeWidgetItem(placeItem);

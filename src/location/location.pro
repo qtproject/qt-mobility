@@ -53,7 +53,8 @@ PUBLIC_HEADERS += qgeocoordinate.h \
 
 PRIVATE_HEADERS += qlocationutils_p.h \
                    qnmeapositioninfosource_p.h \
-                   qlandmark_p.h
+                   qlandmark_p.h \
+                   qgeolocation_p.h
 
 symbian {
     PRIVATE_HEADERS += qgeopositioninfosource_s60_p.h \
@@ -130,7 +131,6 @@ maemo5 {
 
 # maps header files - sort into public and private later
 HEADERS += qgeoaddress.h \
-           qalternativeaddress.h \
            qgeocodingreply.h \
            qgeocodingreply_p.h \
            qgeocodingrequest.h \
@@ -216,7 +216,6 @@ SOURCES += qlocationutils.cpp \
 
 # maps source files
 SOURCES += qgeoaddress.cpp \
-           qalternativeaddress.cpp \
            qgeocodingreply.cpp \
            qgeocodingrequest.cpp \
            qgeocodingxmlparser.cpp \

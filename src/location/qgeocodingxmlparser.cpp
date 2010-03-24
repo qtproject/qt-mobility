@@ -138,16 +138,14 @@ bool QGeocodingXmlParser::readPlace(QGeoLocation *location)
         return false;
     }
 
-    location->ttl = m_reader->attributes().value("title").toString();
-
     if (!m_reader->attributes().hasAttribute("language")) {
         //m_reader->raiseError("The element \"place\" did not have the required attribute \"language\".");
         //return false;
     } else {
-        location->lang = m_reader->attributes().value("language").toString();
+        QString lang = m_reader->attributes().value("language").toString();
 
-        if (location->lang.length() != 3) {
-            m_reader->raiseError(QString("The attribute \"language\" of the element \"place\" was not of length 3 (length was %1).").arg(location->lang.length()));
+        if (lang.length() != 3) {
+            m_reader->raiseError(QString("The attribute \"language\" of the element \"place\" was not of length 3 (length was %1).").arg(lang.length()));
             return false;
         }
     }
@@ -174,8 +172,11 @@ bool QGeocodingXmlParser::readPlace(QGeoLocation *location)
                 return false;
             }
 
-            if (!readAddress(&(location->addr)))
+            QGeoAddress address;
+            if (!readAddress(&address))
                 return false;
+            else
+                location->setAddress(address);
 
             parsedAddress = true;
         } else if (name == "alternatives") {
@@ -236,8 +237,11 @@ bool QGeocodingXmlParser::readLocation(QGeoLocation *location)
                 return false;
             }
 
-            if (!readCoordinate(&(location->pos), "position"))
+            QGeoCoordinate coordinate;
+            if (!readCoordinate(&coordinate, "position"))
                 return false;
+            else
+                location->setCoordinate(coordinate);
 
             parsedPosition = true;
         } else if (name == "boundingBox") {
@@ -246,8 +250,10 @@ bool QGeocodingXmlParser::readLocation(QGeoLocation *location)
                 return false;
             }
 
-            if (!readBoundingBox(&(location->box)))
+            QRectF box;
+            if (!readBoundingBox(&box))
                 return false;
+            location->setBoundingBox(box);
 
             parsedBox = true;
         } else {

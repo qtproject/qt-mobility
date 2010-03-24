@@ -40,9 +40,27 @@
 ****************************************************************************/
 
 #include "qgeolocation.h"
+#include "qgeolocation_p.h"
+
 
 
 QTM_BEGIN_NAMESPACE
+
+QGeoLocationPrivate::QGeoLocationPrivate()
+{
+}
+
+QGeoLocationPrivate::QGeoLocationPrivate(const QGeoLocationPrivate &other)
+    :QSharedData(other),
+     box(other.box),
+     coord(other.coord),
+     addr(other.addr)
+{
+}
+
+QGeoLocationPrivate::~QGeoLocationPrivate()
+{
+}
 
 /*!
     \class QGeoLocation
@@ -55,7 +73,51 @@ QTM_BEGIN_NAMESPACE
 /*!
     Default constructor.
 */
-QGeoLocation::QGeoLocation() {}
+QGeoLocation::QGeoLocation()
+{
+}
+
+/*!
+    Constructs a copy of \a other.
+*/
+QGeoLocation::QGeoLocation(const QGeoLocation &other)
+    :d(other.d)
+{
+}
+
+/*!
+    Destroys the location
+*/
+QGeoLocation::~QGeoLocation()
+{
+}
+
+/*!
+    Assigns \a other to this location and returns a reference
+    to this location.
+*/
+QGeoLocation &QGeoLocation::operator=(const QGeoLocation &other)
+{
+    d = other.d;
+}
+
+/*!
+    Returns true if \a other is equal to this location,
+    otherwise returns false.
+*/
+bool QGeoLocation::operator==(const QGeoLocation &other) const
+{
+    return (d->box == other.boundingBox())
+            && (d->coord == other.coordinate())
+            && (d->addr == other.address());
+}
+
+/*!
+    \fn bool QGeoLocation::operator!=(const QGeoLocation &other) const
+
+    Returns true if \a other is not equal to this location,
+    otherwise returns false.
+*/
 
 /*!
     Returns the bounding box that completely encloses the location.
@@ -65,42 +127,47 @@ QGeoLocation::QGeoLocation() {}
 */
 QRectF QGeoLocation::boundingBox() const
 {
-    return box;
+    return d->box;
 }
+
+/*!
+    Sets the \a boundingBox of the location.
+*/
+void QGeoLocation::setBoundingBox(const QRectF &boundingBox)
+{
+    d->box = boundingBox;
+}
+
 /*!
     Returns the geocoordinate of this location.
 */
-QGeoCoordinate QGeoLocation::position() const
+QGeoCoordinate QGeoLocation::coordinate() const
 {
-    return pos;
+    return d->coord;
 }
+
 /*!
-    Returns a description of the location.
+    Sets the \a coordinate of this location.
 */
-QString QGeoLocation::title() const
+void QGeoLocation::setCoordinate(const QGeoCoordinate &coordinate)
 {
-    return ttl;
+    d->coord = coordinate;
 }
-/*!
-    Returns the MARC language used in the description of this location.
-*/
-QString QGeoLocation::language() const
-{
-    return lang;
-}
+
 /*!
     Returns the address found.
 */
 QGeoAddress QGeoLocation::address() const
 {
-    return addr;
+    return d->addr;
 }
+
 /*!
-    Returns alternatives to the address found.
+    Sets the \a address of this location.
 */
-QAlternativeAddress QGeoLocation::alternatives() const
+void QGeoLocation::setAddress(const QGeoAddress &address)
 {
-    return altern;
+    d->addr = address;
 }
 
 QTM_END_NAMESPACE
