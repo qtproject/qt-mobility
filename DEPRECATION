@@ -2,14 +2,13 @@ Deprecation guide (23 March 2010)
 =================
 Known source breaks:
     There are a number of source breaks that nearly all just affect engine writers - marked with [!] in this document.  Largely
-    these fall into three classes - 1) interface functions becoming pure virtual, 2) non const refs being removed, and
-    3) return type changing.
+    these fall into two classes - 1) interface functions becoming pure virtual and 2) return type changing.
 
-    Of these categories, client code is only somewhat likely to encounter the third case (QContactRelationshipFilter::relatedContactRole
+    Of these categories, client code is only somewhat likely to encounter the second case (QContactRelationshipFilter::relatedContactRole
     changed return type from QContactRelationshipFilter::Role to QContactRelationship::Role).  You can search and replace this
     change, however.  This function is usually more useful to engine writers, though.
 
-    The other two categories of breaks in this release affect engine writers.  All engines that were in the
+    The other category of break in this release affects engine writers.  All engines that were in the
     qtmobility repository have been updated.
 
     The QContactManagerEngine interface has been made largely pure virtual to avoid problems when implementing an engine
@@ -104,9 +103,9 @@ QContactActionDescriptor:
     Constructor is now explicit, no other change
 
 QContactChangeSet:
-    [!] Class for engine writers, some large changes:
-        No longer has non-const refs in API - split into const accessor and insert/clear functions
-        Old and new self contact API changed to explicit function rather than QPair
+    Class for engine writers, some large changes:
+    Non-const refs in API deprecated - split into const accessor and insert/clear functions
+    Old and new self contact API changed to explicit function rather than QPair
 
 QContactAddress:
     DefinitionName (value changed from StreetAddress -> Address)
