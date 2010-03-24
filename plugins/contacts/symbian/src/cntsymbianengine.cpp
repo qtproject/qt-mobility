@@ -489,10 +489,13 @@ int CntSymbianEngine::addContactL(QContact &contact)
         contactId->setLocalId(QContactLocalId(id));
         contactId->setManagerUri(m_managerUri);
         contact.setId(*contactId);
+        CleanupStack::PopAndDestroy(contactItem);
+        contactItem = 0;
 
         //update contact, will add the fields to the already saved group
         updateContactL(contact);
         // Transform details that are not available until the contact has been saved
+        contactItem = m_dataBase->contactDatabase()->ReadContactLC(id);
         m_transformContact->transformPostSaveDetailsL(*contactItem, contact, *m_dataBase->contactDatabase(), m_managerUri);
 
         CleanupStack::PopAndDestroy(contactItem);
