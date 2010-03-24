@@ -80,9 +80,13 @@ bool QMessageServicePrivate::sendMMS(QMessage &message)
 
 bool QMessageServicePrivate::sendEmail(QMessage &message)
 {
-  //  if (SymbianHelpers::isFreestyleMessage(message.parentAccountId()))
-  //      return CFSEngine::instance()->sendEmail(message);
-  //  else
+    if (SymbianHelpers::isFreestyleMessage(message.parentAccountId())) {
+#ifdef FREESTYLEMAILUSED
+        return CFSEngine::instance()->sendEmail(message);
+#else
+        return false;
+#endif
+    } else
         return CMTMEngine::instance()->sendEmail(message);
 }
 

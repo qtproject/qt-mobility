@@ -48,11 +48,13 @@
 QTM_BEGIN_NAMESPACE
 
 class QMessageId;
+class QMessageAccountId;
 
 namespace SymbianHelpers {
 
     bool isFreestyleMessage(const QMessageId& msgId);
     bool isFreestyleMessage(const QString& msgId);
+    bool isFreestyleMessage(const QMessageAccountId &accountId);
     QMessageId addFreestylePrefix(const QMessageId& msgId);
     QString addFreestylePrefix(const QString& msgId);
     QMessageId removeFreestylePrefix(const QMessageId& msgId);

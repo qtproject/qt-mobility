@@ -121,7 +121,7 @@ private:
     
 private:
     MEmailClientApi* m_clientApi;
-
+    RMailboxPtrArray m_mailboxes;
     mutable QHash<QString, QMessageAccount> m_accounts;
 
 };

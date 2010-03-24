@@ -53,6 +53,10 @@ bool isFreestyleMessage(const QMessageId &msgId) {
     return msgId.toString().indexOf(FreestylePrefix)==0?true:false;
 }
 
+bool isFreestyleMessage(const QMessageAccountId &accountId) {
+    return accountId.toString().indexOf(FreestylePrefix)==0?true:false;
+}
+
 QMessageId addFreestylePrefix(const QMessageId &msgId) {
     return QMessageId(FreestylePrefix+msgId.toString());
 }

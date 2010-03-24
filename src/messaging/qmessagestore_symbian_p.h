@@ -100,6 +100,7 @@ private:
     QMessageStore* q_ptr;
 
     CMTMEngine* _mtmEngine;
+
     QMessageManager::Error _error;
     
     NotificationType _notificationType;

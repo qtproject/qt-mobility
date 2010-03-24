@@ -54,12 +54,14 @@
 #include <emailapidefs.h>
 #include <memailmailbox.h>
 #include <memailfolder.h>
+#include <memailmessage.h>
 
 using namespace EmailInterface;
 
 QTM_BEGIN_NAMESPACE
 
 using namespace SymbianHelpers;
+using namespace EmailInterface;
 
 Q_GLOBAL_STATIC(CFSEngine,fsEngine);
 
@@ -69,6 +71,8 @@ CFSEngine::CFSEngine()
     CleanupStack::PushL(factory); 
     MEmailInterface* ifPtr = factory->InterfaceL(KEmailClientApiInterface); 
     m_clientApi = static_cast<MEmailClientApi*>(ifPtr); 
+    m_clientApi->GetMailboxesL(m_mailboxes);
+
     CleanupStack::PopAndDestroy(factory); // factory
 }
 
@@ -85,7 +89,7 @@ CFSEngine* CFSEngine::instance()
 QMessageAccountIdList CFSEngine::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder, uint limit, uint offset) const
 {
     QMessageAccountIdList accountIds;
-    
+
     TRAPD(err, updateEmailAccountsL());
     
     QMessageAccountFilterPrivate* privateMessageAccountFilter = QMessageAccountFilterPrivate::implementation(filter);
@@ -93,6 +97,7 @@ QMessageAccountIdList CFSEngine::queryAccounts(const QMessageAccountFilter &filt
         if (!privateMessageAccountFilter->_notFilter) {
             // All accounts are returned for empty filter
             foreach (QMessageAccount value, m_accounts) {
+                QString v = value.id().toString();
                 accountIds.append(value.id());
             }
         }
@@ -128,7 +133,6 @@ QMessageAccount CFSEngine::account(const QMessageAccountId &id) const
     Q_UNUSED(err)
     return m_accounts[id.toString()];
 }
-
 QMessageAccountId CFSEngine::defaultAccount(QMessage::Type type) const
 {
     return QMessageAccountId();
@@ -137,21 +141,17 @@ QMessageAccountId CFSEngine::defaultAccount(QMessage::Type type) const
 void CFSEngine::updateEmailAccountsL() const
 {
     QStringList keys = m_accounts.keys();
-    
-    RMailboxPtrArray mailboxes;
-    m_clientApi->GetMailboxesL(mailboxes);
-    CleanupClosePushL(mailboxes);
 
-    for (TInt i = 0; i < mailboxes.Count(); i++) {
-        MEmailMailbox *mailbox = mailboxes[i];
+    for (TInt i = 0; i < m_mailboxes.Count(); i++) {
+        MEmailMailbox *mailbox = m_mailboxes[i];
         QString idAsString = QString::number(mailbox->MailboxId().iId);
         QString fsIdAsString = addFreestylePrefix(idAsString);
 
         if (!m_accounts.contains(fsIdAsString)) {
             
             QMessageAccount account = QMessageAccountPrivate::from(
-                QMessageAccountId(addFreestylePrefix(fsIdAsString)),
-                QString::fromUtf16(mailbox->MailboxName().Ptr(), mailbox->MailboxName().Length()),
+                QMessageAccountId(idAsString),
+                addFreestylePrefix(QString::fromUtf16(mailbox->MailboxName().Ptr(), mailbox->MailboxName().Length())),
                 0, //TODO: ID for IMAP service if needed
                 0, //TODO: ID for SMTP service if needed
                 QMessage::Email);
@@ -162,7 +162,7 @@ void CFSEngine::updateEmailAccountsL() const
         }
     }
     
-    CleanupStack::PopAndDestroy(&mailboxes);  // mailboxes
+  //  CleanupStack::PopAndDestroy(&mailboxes);  // mailboxes
     
     for (int i=0; i < keys.count(); i++) {
         m_accounts.remove(keys[i]);
@@ -303,6 +303,15 @@ bool CFSEngine::storeEmail(QMessage &message)
 
 bool CFSEngine::sendEmail(QMessage &message)
 {
+    TMailboxId mailboxId(removeFreestylePrefix(message.parentAccountId().toString()).toInt());
+    MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
+    
+    MEmailMessage* fsMessage = mailbox->CreateDraftMessageL();
+    CleanupReleasePushL( *fsMessage );
+    fsMessage->SetPlainTextBodyL( _L("So say we all!") );
+    //fsMessage->AddAttachmentL( _L( "BSG.png" ) ); 
+    fsMessage->SendL();
+    CleanupStack::PopAndDestroy(); // fsMessage
     return false;
 }
 

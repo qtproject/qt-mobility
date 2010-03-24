@@ -40,6 +40,9 @@
 ****************************************************************************/
 #include "qmessagestore_symbian_p.h"
 #include "qmtmengine_symbian_p.h"
+#ifdef FREESTYLEMAILUSED
+#include "qfsengine_symbian_p.h"
+#endif
 
 #include <QString>
 
@@ -62,6 +65,7 @@ void QMessageStorePrivate::initialize(QMessageStore *store)
 {
     q_ptr = store;
     _mtmEngine = CMTMEngine::instance();
+  //  _fsEngine = CFSEngine::instance();
 }
 
 QMessageIdList QMessageStorePrivate::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
@@ -130,6 +134,7 @@ void QMessageStorePrivate::messagesCounted(int count)
 
 QMessageAccountIdList QMessageStorePrivate::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder, uint limit, uint offset) const
 {
+    //return CFSEngine::instance()->queryAccounts(filter, sortOrder, limit, offset);
     return _mtmEngine->queryAccounts(filter, sortOrder, limit, offset);
 }
 
@@ -202,6 +207,7 @@ QMessage QMessageStorePrivate::message(const QMessageId& id) const
 QMessageAccount QMessageStorePrivate::account(const QMessageAccountId &id) const
 {
     return _mtmEngine->account(id);
+    //return CFSEngine::instance()->account(id);
 }
 
 QMessageManager::NotificationFilterId QMessageStorePrivate::registerNotificationFilter(const QMessageFilter &filter)
