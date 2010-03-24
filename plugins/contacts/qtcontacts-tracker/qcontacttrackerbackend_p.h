@@ -109,15 +109,15 @@ Q_OBJECT
 
 public:
     QContactTrackerEngine(const QString& managerName, int managerVersion, const QMap<QString, QString>& parameters);
-    QContactTrackerEngine(const QMap<QString, QString>& parameters);
-    QContactTrackerEngine(const QContactTrackerEngine& other);
+    QContactTrackerEngine(const QMap<QString, QString>& parameters);        // XXX FIXME: I don't think this is used in your factory code either?
+    QContactTrackerEngine(const QContactTrackerEngine& other);              // XXX FIXME: not used in your factory code...?
     ~QContactTrackerEngine();
-    QContactTrackerEngine& operator=(const QContactTrackerEngine& other);
-    QContactManagerEngine* clone();
-    void deref();
+    QContactTrackerEngine& operator=(const QContactTrackerEngine& other);   // XXX FIXME: not used in your factory code...?
+    QContactManagerEngine* clone();                                         // XXX FIXME: no longer part of the engine API
+    void deref();                                                           // XXX FIXME: no longer part of the engine API
 
     // sync methods, wrapping async methods & waitForFinished
-    QList<QContactLocalId> contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const;
+    QList<QContactLocalId> contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const; // XXX FIXME: no longer part of engine API.
     QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const;
     QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fetchHint, QContactManager::Error* error) const;
     QContact contact(const QContactLocalId& contactId, const QContactFetchHint& fetchHint, QContactManager::Error* error) const;
@@ -160,6 +160,7 @@ public:
     QList<QContactRelationship> relationships(const QString&, const QContactId&, QContactRelationship::Role, QContactManager::Error* error) const {*error = QContactManager::NotSupportedError; return QList<QContactRelationship>();}
     bool saveRelationships(QList<QContactRelationship>*, QMap<int, QContactManager::Error>*, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
     bool removeRelationships(const QList<QContactRelationship>&, QMap<int, QContactManager::Error>*, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
+    QContact compatibleContact(const QContact&, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
     bool validateContact(const QContact&, QContactManager::Error* error) const {*error = QContactManager::NotSupportedError; return false;}
     bool validateDefinition(const QContactDetailDefinition&, QContactManager::Error* error) const {*error = QContactManager::NotSupportedError; return false;}
     QContactDetailDefinition detailDefinition(const QString&, const QString&, QContactManager::Error* error) const {*error = QContactManager::NotSupportedError; return QContactDetailDefinition();}
@@ -168,37 +169,6 @@ public:
     bool cancelRequest(QContactAbstractRequest*) {return false;}
     bool isRelationshipTypeSupported(const QString&, const QString&) const {return false;}
     QStringList supportedContactTypes() const {return (QStringList() << QContactType::TypeContact);}
-
-/* XXX FIXME: trampoline functions added to fix compile breakage due to updateRequestStatus functions becoming protected in QCME */
-public:
-    static void updateRequestStateTrampoline(QContactAbstractRequest *req, QContactAbstractRequest::State state)
-    {
-        QContactManagerEngine::updateRequestState(req, state);
-    }
-    static void updateContactFetchRequestTrampoline(QContactFetchRequest *req, const QList<QContact> &result, QContactManager::Error error, QContactAbstractRequest::State state)
-    {
-        QContactManagerEngine::updateContactFetchRequest(req, result, error, state);
-    }
-    static void updateContactSaveRequestTrampoline(QContactSaveRequest *req, const QList<QContact> &result, QContactManager::Error error, const QMap<int, QContactManager::Error> &errorMap, QContactAbstractRequest::State state)
-    {
-        QContactManagerEngine::updateContactSaveRequest(req, result, error, errorMap, state);
-    }
-    static void updateRelationshipFetchRequestTrampoline(QContactRelationshipFetchRequest *req, const QList<QContactRelationship> &result, QContactManager::Error error, QContactAbstractRequest::State state)
-    {
-        QContactManagerEngine::updateRelationshipFetchRequest(req, result, error, state);
-    }
-    static void updateRelationshipSaveRequestTrampoline(QContactRelationshipSaveRequest *req, const QList<QContactRelationship> &result, QContactManager::Error error, const QMap<int, QContactManager::Error> &errorMap, QContactAbstractRequest::State state)
-    {
-        QContactManagerEngine::updateRelationshipSaveRequest(req, result, error, errorMap, state);
-    }
-    static void updateContactLocalIdFetchRequestTrampoline(QContactLocalIdFetchRequest *req, const QList<QContactLocalId> &result, QContactManager::Error error, QContactAbstractRequest::State state)
-    {
-        QContactManagerEngine::updateContactLocalIdFetchRequest(req, result, error, state);
-    }
-    static QContact setContactDisplayLabelTrampoline(const QString &displayLabel, const QContact &contact)
-    {
-        return QContactManagerEngine::setContactDisplayLabel(displayLabel, contact);
-    }
 
 
 private:
