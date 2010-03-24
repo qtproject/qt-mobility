@@ -56,6 +56,7 @@ QTM_USE_NAMESPACE
 /*!
   \class LineReader
   \brief The LineReader class is a wrapper around a QIODevice that allows line-by-line reading.
+  \internal
 
   This class keeps an internal buffer which it uses to temporarily store data which it has read from
   the device but not returned to the user.
