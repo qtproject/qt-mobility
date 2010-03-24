@@ -128,8 +128,8 @@ public:
     void deleteConfiguration(QString &iap_id);
     void addConfiguration(QString &iap_id);
     void configurationChanged(QNetworkConfigurationPrivate *ptr);
-    uint32_t getNetworkAttrs(bool is_iap_id, QString& iap_id,
-			     QString& iap_type, QString security_method);
+    uint32_t getNetworkAttrs(bool is_iap_id, const QString& iap_id,
+                             const QString& iap_type, QString security_method);
 
     QDBusInterface *m_dbusInterface;
     QTimer m_scanTimer;

@@ -301,9 +301,9 @@ void QNetworkConfigurationManagerPrivate::deleteConfiguration(QString& iap_id)
 
 
 uint32_t QNetworkConfigurationManagerPrivate::getNetworkAttrs(bool is_iap_id,
-							    QString& iap_id,
-							    QString& iap_type,
-							    QString security_method)
+                                                              const QString& iap_id,
+                                                              const QString& iap_type,
+                                                              QString security_method)
 {
     guint network_attr = 0;
     dbus_uint32_t cap = 0;
@@ -490,7 +490,7 @@ void QNetworkConfigurationManagerPrivate::doUpdateConfigurations(QList<Maemo::Ic
     /* Contains all known WLAN network ids (like ssid) from storage */
     QMultiHash<QByteArray, SSIDInfo* > notDiscoveredWLANConfigs;
 
-    const QList<QString> all_iaps;
+    QList<QString> all_iaps;
     Maemo::IAPConf::getAll(all_iaps);
 
     foreach (const QString iap_id, all_iaps) {

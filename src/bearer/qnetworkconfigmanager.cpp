@@ -43,7 +43,7 @@
 
 #ifdef Q_OS_SYMBIAN
 #include "qnetworkconfigmanager_s60_p.h"
-#if defined(Q_WS_MAEMO_6) || defined(Q_WS_MAEMO_5)
+#elif defined(Q_WS_MAEMO_6) || defined(Q_WS_MAEMO_5)
 #include "qnetworkconfigmanager_maemo_p.h"
 #else
 #include "qnetworkconfigmanager_p.h"
