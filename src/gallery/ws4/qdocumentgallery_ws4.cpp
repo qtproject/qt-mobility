@@ -251,7 +251,7 @@ QStringList QDocumentGallery::itemTypes() const
 
 QGalleryAbstractResponse *QDocumentGallery::createResponse(QGalleryAbstractRequest *request)
 {
-    if (!d_func()->commandFactory) // Should return a connection error.
+    if (!d_func()->commandFactory)
         return new QGalleryErrorResponse(QGalleryAbstractRequest::ConnectionError);
 
     switch (request->type()) {

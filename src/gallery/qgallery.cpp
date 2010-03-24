@@ -101,54 +101,56 @@ QAbstractGallery::~QAbstractGallery()
     Creates a response to a gallery \a request.
 */
 
-#define QT_GALLERY_DEFINE_LATIN1_LITERAL(Name, String) \
-    const QLatin1String Name(String)
+const QGalleryType QDocumentGallery::File("File");
+const QGalleryType QDocumentGallery::Folder("Folder");
+const QGalleryType QDocumentGallery::Document("Document");
+const QGalleryType QDocumentGallery::Media("Media");
+const QGalleryType QDocumentGallery::Audio("Audio");
+const QGalleryType QDocumentGallery::Image("Image");
+const QGalleryType QDocumentGallery::Video("Video");
+const QGalleryType QDocumentGallery::Location("Location");
+const QGalleryType QDocumentGallery::Artist("Artist");
+const QGalleryType QDocumentGallery::AlbumArtist("AlbumArtist");
+const QGalleryType QDocumentGallery::Album("Album");
 
-QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::Media, "Media");
-QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::Audio, "Audio");
-QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::Image, "Image");
-QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::Video, "Video");
-QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::Artist, "Artist");
-QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::AlbumArtist, "AlbumArtist");
-QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::Album, "Album");
 
-// Item
-QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::author, "author");
-QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::copyright, "copyright");
-QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::description, "description");
-QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::mimeType, "mimeType");
-QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::rating, "rating");
-QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::title, "title");
-QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::url, "url");
-QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::thumbnail, "thumbnail");
+// File
+const QGalleryKey QDocumentGallery::author("author");
+const QGalleryKey QDocumentGallery::copyright("copyright");
+const QGalleryKey QDocumentGallery::description("description");
+const QGalleryKey QDocumentGallery::mimeType("mimeType");
+const QGalleryKey QDocumentGallery::rating("rating");
+const QGalleryKey QDocumentGallery::title("title");
+const QGalleryKey QDocumentGallery::url("url");
+const QGalleryKey QDocumentGallery::thumbnail("thumbnail");
 
 // Media
-QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::duration, "duration");
-QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::producer, "producer");
-QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::writer, "writer");
+
+const QGalleryKey QDocumentGallery::duration("duration");
+const QGalleryKey QDocumentGallery::producer("producer");
+const QGalleryKey QDocumentGallery::writer("writer");
 
 // Audio/Music
-QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::artist, "artist");
-QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::albumArtist, "albumArtist");
-QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::albumId, "albumId");
-QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::albumTitle, "albumTitle");
-QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::composer, "composer");
-QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::discNumber, "discNumber");
-QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::genre, "genre");
-QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::trackCount, "trackCount");
-QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::trackNumber, "trackNumber");
+const QGalleryKey QDocumentGallery::artist("artist");
+const QGalleryKey QDocumentGallery::albumArtist("albumArtist");
+const QGalleryKey QDocumentGallery::albumTitle("albumTitle");
+const QGalleryKey QDocumentGallery::composer("composer");
+const QGalleryKey QDocumentGallery::discNumber("discNumber");
+const QGalleryKey QDocumentGallery::genre("genre");
+const QGalleryKey QDocumentGallery::trackCount("trackCount");
+const QGalleryKey QDocumentGallery::trackNumber("trackNumber");
 
 // Image, Video common.
-QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::width, "width");
-QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::height, "height");
+const QGalleryKey QDocumentGallery::width("width");
+const QGalleryKey QDocumentGallery::height("height");
 
 // Image/Photo
-QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::dateTaken, "dateTaken");
-QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::cameraManufacturer, "cameraManufacturer");
-QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::cameraModel, "cameraModel");
+const QGalleryKey QDocumentGallery::dateTaken("author");
+const QGalleryKey QDocumentGallery::cameraManufacturer("cameraManufacturer");
+const QGalleryKey QDocumentGallery::cameraModel("cameraModel");
 
 // Video
-QT_GALLERY_DEFINE_LATIN1_LITERAL(QDocumentGallery::director, "director");
+const QGalleryKey QDocumentGallery::director("director");
 
 
 #ifdef QT_DOCUMENT_GALLERY_NULL

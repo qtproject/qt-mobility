@@ -231,7 +231,10 @@ class Q_GALLERY_EXPORT QGalleryIntersectionFilter
 {
 public:
     QGalleryIntersectionFilter();
-    QGalleryIntersectionFilter(const QGalleryIntersectionFilter &other);
+    QGalleryIntersectionFilter(const QGalleryUnionFilter &filter);
+    QGalleryIntersectionFilter(const QGalleryMetaDataFilter &filter);
+    QGalleryIntersectionFilter(const QGalleryMetaDataRangeFilter &filter);
+    QGalleryIntersectionFilter(const QGalleryIntersectionFilter &filter);
     ~QGalleryIntersectionFilter();
 
     QGalleryIntersectionFilter &operator =(const QGalleryIntersectionFilter &filter);
@@ -266,12 +269,22 @@ private:
     friend class QGalleryFilter;
 };
 
+template <typename T>
+QGalleryIntersectionFilter operator ||(const QGalleryIntersectionFilter &filter1, const T &filter2)
+{
+    QGalleryIntersectionFilter filter = filter1;
+    filter.append(filter2);
+    return filter;
+}
+
 class QGalleryUnionFilterPrivate;
 
 class Q_GALLERY_EXPORT QGalleryUnionFilter
 {
 public:
     QGalleryUnionFilter();
+    QGalleryUnionFilter(const QGalleryMetaDataFilter &filter);
+    QGalleryUnionFilter(const QGalleryMetaDataRangeFilter &filter);
     QGalleryUnionFilter(const QGalleryUnionFilter &other);
     ~QGalleryUnionFilter();
 
@@ -303,6 +316,14 @@ private:
 
     friend class QGalleryFilter;
 };
+
+template <typename T>
+QGalleryUnionFilter operator &&(const QGalleryUnionFilter &filter1, const T &filter2)
+{
+    QGalleryUnionFilter filter = filter1;
+    filter.append(filter2);
+    return filter;
+}
 
 class QGalleryMetaDataFilterPrivate;
 

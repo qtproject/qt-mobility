@@ -1070,6 +1070,36 @@ QGalleryIntersectionFilter::QGalleryIntersectionFilter()
 }
 
 /*!
+    Constructs an intersection filter from a union \a filter.
+*/
+
+QGalleryIntersectionFilter::QGalleryIntersectionFilter(const QGalleryUnionFilter &filter)
+    : d(new QGalleryIntersectionFilterPrivate)
+{
+    d->filters.append(filter);
+}
+
+/*!
+    Constructs an intersection filter from a meta-data \a filter.
+*/
+
+QGalleryIntersectionFilter::QGalleryIntersectionFilter(const QGalleryMetaDataFilter &filter)
+    : d(new QGalleryIntersectionFilterPrivate)
+{
+    d->filters.append(filter);
+}
+
+/*!
+    Constructs an intersection filter from a meta-data range \a filter.
+*/
+
+QGalleryIntersectionFilter::QGalleryIntersectionFilter(const QGalleryMetaDataRangeFilter &filter)
+    : d(new QGalleryIntersectionFilterPrivate)
+{
+    d->filters.append(filter);
+}
+
+/*!
     Constructs a copy of an intersection \a filter.
 */
 
@@ -1259,6 +1289,15 @@ void QGalleryIntersectionFilter::clear()
 }
 
 /*!
+    \fn QGalleryIntersectionFilter operator ||(const QGalleryIntersectionFilter &filter1, const T &filter2)
+
+    Returns a gallery filter matches the intersection of \a filter1 and
+    \a filter2.
+
+    \relates QGalleryIntersectionFilter
+*/
+
+/*!
     \class QGalleryUnionFilter
 
     \ingroup gallery
@@ -1275,6 +1314,26 @@ void QGalleryIntersectionFilter::clear()
 QGalleryUnionFilter::QGalleryUnionFilter()
     : d(new QGalleryUnionFilterPrivate)
 {
+}
+
+/*!
+    Constructs a union filter from a meta data \a filter.
+*/
+
+QGalleryUnionFilter::QGalleryUnionFilter(const QGalleryMetaDataFilter &filter)
+    : d(new QGalleryUnionFilterPrivate)
+{
+    d->filters.append(filter);
+}
+
+/*!
+    Constructs a union filter from a meta-data range \a filter.
+*/
+
+QGalleryUnionFilter::QGalleryUnionFilter(const QGalleryMetaDataRangeFilter &filter)
+    : d(new QGalleryUnionFilterPrivate)
+{
+    d->filters.append(filter);
 }
 
 /*!
@@ -1433,6 +1492,15 @@ void QGalleryUnionFilter::clear()
 {
     d->filters.clear();
 }
+
+/*!
+    \fn QGalleryUnionFilter operator &&(const QGalleryUnionFilter &filter1, const T &filter2)
+
+    Returns a gallery filter which matches the union of \a filter1 and
+    \a filter2.
+
+    \relates QGalleryUnionFilter
+*/
 
 /*!
     \class QGalleryMetaDataFilter

@@ -17,14 +17,18 @@ PUBLIC_HEADERS = \
         qgallery.h \
         qgalleryfilter.h \
         qgalleryitemlist.h \
-        qgalleryrequest.h
+        qgallerykey.h \
+        qgalleryrequest.h \
+        qgallerytype.h
 
 SOURCES = \
         qgallery.cpp \
         qgalleryerrorresponse.cpp \
         qgalleryfilter.cpp \
         qgalleryitemlist.cpp \
-        qgalleryrequest.cpp
+        qgallerykey.cpp \
+        qgalleryrequest.cpp \
+        qgallerytype.cpp
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 

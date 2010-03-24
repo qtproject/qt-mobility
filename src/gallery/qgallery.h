@@ -42,9 +42,9 @@
 #ifndef QGALLERY_H
 #define QGALLERY_H
 
+#include <qgallerykey.h>
 #include <qgalleryrequest.h>
-
-#include <QtCore/qstringbuilder.h>
+#include <qgallerytype.h>
 
 class QGalleryAbstractResponse;
 class QGalleryAbstractRequest;
@@ -78,51 +78,55 @@ class Q_GALLERY_EXPORT QDocumentGallery : public QAbstractGallery
     Q_PROPERTY(QStringList itemTypes READ itemTypes)
     Q_DECLARE_PRIVATE(QDocumentGallery)
 public:
-    static const QLatin1String Media;
-    static const QLatin1String Audio;
-    static const QLatin1String Image;
-    static const QLatin1String Video;
-    static const QLatin1String Artist;
-    static const QLatin1String AlbumArtist;
-    static const QLatin1String Album;
+    static const QGalleryType File;
+    static const QGalleryType Folder;
+    static const QGalleryType Document;
+    static const QGalleryType Media;
+    static const QGalleryType Audio;
+    static const QGalleryType Image;
+    static const QGalleryType Video;
+    static const QGalleryType Location;
+    static const QGalleryType Artist;
+    static const QGalleryType AlbumArtist;
+    static const QGalleryType Album;
 
     // Item
-    static const QLatin1String author;
-    static const QLatin1String copyright;
-    static const QLatin1String description;
-    static const QLatin1String mimeType;
-    static const QLatin1String rating;
-    static const QLatin1String title;
-    static const QLatin1String url;
-    static const QLatin1String thumbnail;
+    static const QGalleryKey author;
+    static const QGalleryKey copyright;
+    static const QGalleryKey description;
+    static const QGalleryKey mimeType;
+    static const QGalleryKey rating;
+    static const QGalleryKey title;
+    static const QGalleryKey url;
+    static const QGalleryKey thumbnail;
 
     // Media
-    static const QLatin1String duration;
-    static const QLatin1String producer;
-    static const QLatin1String writer;
+    static const QGalleryKey duration;
+    static const QGalleryKey producer;
+    static const QGalleryKey writer;
 
     // Audio/Music
-    static const QLatin1String artist;
-    static const QLatin1String albumArtist;
-    static const QLatin1String albumId;
-    static const QLatin1String albumTitle;
-    static const QLatin1String composer;
-    static const QLatin1String discNumber;
-    static const QLatin1String genre;
-    static const QLatin1String trackCount;
-    static const QLatin1String trackNumber;
+    static const QGalleryKey artist;
+    static const QGalleryKey albumArtist;
+    static const QGalleryKey albumId;
+    static const QGalleryKey albumTitle;
+    static const QGalleryKey composer;
+    static const QGalleryKey discNumber;
+    static const QGalleryKey genre;
+    static const QGalleryKey trackCount;
+    static const QGalleryKey trackNumber;
 
     // Image, Video common.
-    static const QLatin1String width;
-    static const QLatin1String height;
+    static const QGalleryKey width;
+    static const QGalleryKey height;
 
     // Image/Photo
-    static const QLatin1String dateTaken;
-    static const QLatin1String cameraManufacturer;
-    static const QLatin1String cameraModel;
+    static const QGalleryKey dateTaken;
+    static const QGalleryKey cameraManufacturer;
+    static const QGalleryKey cameraModel;
 
     // Video
-    static const QLatin1String director;
+    static const QGalleryKey director;
 
     QDocumentGallery(QObject *parent = 0);
     ~QDocumentGallery();
