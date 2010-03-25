@@ -1700,12 +1700,12 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 
 QString QSystemDeviceInfoPrivate::imei()
 {
-        return "Sim Not Available";
+        return "";
 }
 
 QString QSystemDeviceInfoPrivate::imsi()
 {
-        return "Sim Not Available";
+        return "";
 }
 
 QString QSystemDeviceInfoPrivate::manufacturer()
